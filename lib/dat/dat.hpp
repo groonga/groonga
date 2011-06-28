@@ -107,59 +107,83 @@ const UInt32 EXCEPT_EXACT_MATCH   = 0x04000;
 const UInt32 CURSOR_OPTIONS_MASK  = 0xFF000;
 
 // To be determined...
-//enum ErrorCode {
-//  PARAM_ERROR  = -1,
-//  IO_ERROR     = -2,
-//  MEMORY_ERROR = -3,
-//  SIZE_ERROR   = -4
-//};
+enum ErrorCode {
+  NO_ERROR          =  0,
+  PARAM_ERROR      = -1,
+  IO_ERROR         = -2,
+  MEMORY_ERROR     = -3,
+  SIZE_ERROR       = -4,
+  UNEXPECTED_ERROR = -5
+};
 
 class Exception : public std::exception {
  public:
   Exception() throw()
-      : what_("") {}
-  Exception(const char *what) throw()
-      : what_((what != NULL) ? what : "") {}
+      : file_(""),
+        line_(-1),
+        what_("") {}
+  Exception(const char *file, int line, const char *what) throw()
+      : file_(file),
+        line_(line),
+        what_((what != NULL) ? what : "") {}
   Exception(const Exception &ex) throw()
-      : what_(ex.what_) {}
+      : file_(ex.file_),
+        line_(ex.line_),
+        what_(ex.what_) {}
   virtual ~Exception() throw() {}
 
-  Exception &operator=(const Exception &ex) throw() {
+  virtual Exception &operator=(const Exception &ex) throw() {
+    file_ = ex.file_;
+    line_ = ex.line_;
     what_ = ex.what_;
     return *this;
   }
 
+  virtual ErrorCode code() const throw() {
+    return NO_ERROR;
+  }
+  virtual const char *file() const throw() {
+    return file_;
+  }
+  virtual int line() const throw() {
+    return line_;
+  }
   virtual const char *what() const throw() {
     return what_;
   }
 
  private:
+  const char *file_;
+  int line_;
   const char *what_;
 };
 
-#define GRN_DAT_DEFINE_ERROR(error_type) \
-    class error_type : public Exception { \
-     public: \
-      error_type() throw() \
-          : Exception() {} \
-      error_type(const char *what) throw() \
-          : Exception(what) {} \
-      error_type(const error_type &ex) throw() \
-          : Exception(ex) {} \
-      virtual ~error_type() throw() {} \
-     \
-      error_type &operator=(const error_type &ex) throw() { \
-        *static_cast<Exception *>(this) = ex; \
-        return *this; \
-      } \
-    }
+template <ErrorCode T>
+class Error : public Exception {
+ public:
+  Error() throw()
+      : Exception() {}
+  Error(const char *file, int line, const char *what) throw()
+      : Exception(file, line, what) {}
+  Error(const Error &ex) throw()
+      : Exception(ex) {}
+  virtual ~Error() throw() {}
 
-GRN_DAT_DEFINE_ERROR(ParamError);
-GRN_DAT_DEFINE_ERROR(IOError);
-GRN_DAT_DEFINE_ERROR(MemoryError);
-GRN_DAT_DEFINE_ERROR(SizeError);
+  virtual Error &operator=(const Error &ex) throw() {
+      *static_cast<Exception *>(this) = ex;
+      return *this;
+  }
 
-#undef GRN_DAT_DEFINE_ERROR
+  virtual ErrorCode code() const throw() {
+    return T;
+  }
+};
+
+typedef Error<PARAM_ERROR> ParamError;
+typedef Error<IO_ERROR> IOError;
+typedef Error<MEMORY_ERROR> MemoryError;
+typedef Error<SIZE_ERROR> SizeError;
+typedef Error<UNEXPECTED_ERROR> UnexpectedError;
 
 #define GRN_DAT_INT_TO_STR(value) \
     #value
@@ -168,23 +192,15 @@ GRN_DAT_DEFINE_ERROR(SizeError);
 #define GRN_DAT_LINE_STR \
     GRN_DAT_LINE_TO_STR(__LINE__)
 
-#define GRN_DAT_THROW(exception, what) \
-    (throw exception(__FILE__ ":" GRN_DAT_LINE_STR ": " what))
-#define GRN_DAT_THROW_IF(cond) \
-    (void)((!(cond)) || (GRN_DAT_THROW(grn::dat::Exception, #cond), 0))
-
-#define GRN_DAT_PARAM_ERROR_IF(cond) \
-    (void)((!(cond)) || (GRN_DAT_THROW(grn::dat::ParamError, #cond), 0))
-#define GRN_DAT_IO_ERROR_IF(cond) \
-    (void)((!(cond)) || (GRN_DAT_THROW(grn::dat::IOError, #cond), 0))
-#define GRN_DAT_MEMORY_ERROR_IF(cond) \
-    (void)((!(cond)) || (GRN_DAT_THROW(grn::dat::MemoryError, #cond), 0))
-#define GRN_DAT_SIZE_ERROR_IF(cond) \
-    (void)((!(cond)) || (GRN_DAT_THROW(grn::dat::SizeError, #cond), 0))
+#define GRN_DAT_THROW(code, msg) \
+    (throw grn::dat::Error<code>(__FILE__, __LINE__, \
+     __FILE__ ":" GRN_DAT_LINE_STR ": " #code ": " msg))
+#define GRN_DAT_THROW_IF(code, cond) \
+    (void)((!(cond)) || (GRN_DAT_THROW(code, #cond), 0))
 
 #ifdef _DEBUG
  #define GRN_DAT_DEBUG_THROW_IF(cond) \
-     GRN_DAT_THROW_IF(cond)
+     GRN_DAT_THROW_IF(grn::dat::UNEXPECTED_ERROR, cond)
  #define GRN_DAT_DEBUG_LOG(var) \
      (std::clog << __FILE__ ":" GRN_DAT_LINE_STR ": " #var ": " \
                 << (var) << std::endl)

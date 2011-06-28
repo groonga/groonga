@@ -4,18 +4,18 @@ if !OS_WIN32
 noinst_LTLIBRARIES = libgrndat.la
 
 libgrndat_la_SOURCES =				\
-	common-prefix-search-cursor.cpp		\
+	common-prefix-cursor.cpp		\
 	cursor-factory.cpp			\
 	id-cursor.cpp				\
 	key-cursor.cpp				\
-	predictive-search-cursor.cpp		\
+	predictive-cursor.cpp			\
 	trie.cpp
 
 noinst_HEADERS =				\
 	base.hpp				\
 	block.hpp				\
 	check.hpp				\
-	common-prefix-search-cursor.hpp		\
+	common-prefix-cursor.hpp		\
 	cursor-factory.hpp			\
 	cursor.hpp				\
 	dat.hpp					\
@@ -25,7 +25,7 @@ noinst_HEADERS =				\
 	key-info.hpp				\
 	key.hpp					\
 	node.hpp				\
-	predictive-search-cursor.hpp		\
+	predictive-cursor.hpp			\
 	timer.hpp				\
 	trie.hpp				\
 	usage.hpp

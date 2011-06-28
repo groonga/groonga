@@ -23,21 +23,21 @@ void IdCursor::open(const Trie &trie,
                     UInt32 offset,
                     UInt32 limit,
                     UInt32 flags) {
-  GRN_DAT_PARAM_ERROR_IF((min_ptr == NULL) && (min_length != 0));
-  GRN_DAT_PARAM_ERROR_IF((max_ptr == NULL) && (max_length != 0));
+  GRN_DAT_THROW_IF(PARAM_ERROR, (min_ptr == NULL) && (min_length != 0));
+  GRN_DAT_THROW_IF(PARAM_ERROR, (max_ptr == NULL) && (max_length != 0));
 
   Key min_key;
   if (min_ptr == NULL) {
     min_key.set_id(INVALID_KEY_ID);
   } else {
-    GRN_DAT_PARAM_ERROR_IF(!trie.search(min_ptr, min_length, &min_key));
+    GRN_DAT_THROW_IF(PARAM_ERROR, !trie.search(min_ptr, min_length, &min_key));
   }
 
   Key max_key;
   if (max_ptr == NULL) {
     max_key.set_id(INVALID_KEY_ID);
   } else {
-    GRN_DAT_PARAM_ERROR_IF(!trie.search(max_ptr, max_length, &max_key));
+    GRN_DAT_THROW_IF(PARAM_ERROR, !trie.search(max_ptr, max_length, &max_key));
   }
 
   open(trie, min_key.id(), max_key.id(), offset, limit, flags);
@@ -79,20 +79,20 @@ bool IdCursor::next(Key *key) {
 
 UInt32 IdCursor::fix_flags(UInt32 flags) const {
   const UInt32 cursor_type = flags & CURSOR_TYPE_MASK;
-  GRN_DAT_PARAM_ERROR_IF((cursor_type != 0) &&
-                         (cursor_type != ID_RANGE_CURSOR));
+  GRN_DAT_THROW_IF(PARAM_ERROR, (cursor_type != 0) &&
+                                (cursor_type != ID_RANGE_CURSOR));
   flags |= ID_RANGE_CURSOR;
 
   const UInt32 cursor_order = flags & CURSOR_ORDER_MASK;
-  GRN_DAT_PARAM_ERROR_IF((cursor_order != 0) &&
-                         (cursor_order != ASCENDING_CURSOR) &&
-                         (cursor_order != DESCENDING_CURSOR));
+  GRN_DAT_THROW_IF(PARAM_ERROR, (cursor_order != 0) &&
+                                (cursor_order != ASCENDING_CURSOR) &&
+                                (cursor_order != DESCENDING_CURSOR));
   if (cursor_order == 0) {
     flags |= ASCENDING_CURSOR;
   }
 
   const UInt32 cursor_options = flags & CURSOR_OPTIONS_MASK;
-  GRN_DAT_PARAM_ERROR_IF(
+  GRN_DAT_THROW_IF(PARAM_ERROR,
       cursor_options & ~(EXCEPT_LOWER_BOUND | EXCEPT_UPPER_BOUND));
 
   return flags;

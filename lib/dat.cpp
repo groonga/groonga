@@ -21,7 +21,7 @@
 #include "dat.h"
 #include "util.h"
 #include "dat/trie.hpp"
-#include "dat/common-prefix-search-cursor.hpp"
+#include "dat/common-prefix-cursor.hpp"
 
 extern "C" {
 
@@ -304,8 +304,8 @@ grn_dat_cursor_open(grn_ctx *ctx, grn_dat *dat,
         if (max && max_size) {
           if ((dat->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE)) {
             grn::dat::Trie *trie = static_cast<grn::dat::Trie *>(dat->handle);
-            grn::dat::CommonPrefixSearchCursor *cursor;
-            cursor = new grn::dat::CommonPrefixSearchCursor;
+            grn::dat::CommonPrefixCursor *cursor;
+            cursor = new grn::dat::CommonPrefixCursor;
             cursor->open(*trie, max, min_size, max_size, offset, limit);
             dc->cursor = cursor;
           } else {

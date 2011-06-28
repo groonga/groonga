@@ -1,4 +1,4 @@
-#include "common-prefix-search-cursor.hpp"
+#include "common-prefix-cursor.hpp"
 
 #include <algorithm>
 #include <cstring>
@@ -6,7 +6,7 @@
 namespace grn {
 namespace dat {
 
-CommonPrefixSearchCursor::CommonPrefixSearchCursor()
+CommonPrefixCursor::CommonPrefixCursor()
     : trie_(NULL),
       offset_(0),
       limit_(UINT32_MAX),
@@ -15,27 +15,27 @@ CommonPrefixSearchCursor::CommonPrefixSearchCursor()
       cur_(0),
       end_(0) {}
 
-CommonPrefixSearchCursor::~CommonPrefixSearchCursor() {
+CommonPrefixCursor::~CommonPrefixCursor() {
   close();
 }
 
-void CommonPrefixSearchCursor::open(const Trie &trie,
+void CommonPrefixCursor::open(const Trie &trie,
                                     const void *ptr,
                                     UInt32 min_length,
                                     UInt32 max_length,
                                     UInt32 offset,
                                     UInt32 limit,
                                     UInt32 flags) {
-  GRN_DAT_PARAM_ERROR_IF((ptr == NULL) && (max_length != 0));
-  GRN_DAT_PARAM_ERROR_IF(min_length > max_length);
+  GRN_DAT_THROW_IF(PARAM_ERROR, (ptr == NULL) && (max_length != 0));
+  GRN_DAT_THROW_IF(PARAM_ERROR, min_length > max_length);
 
   flags = fix_flags(flags);
-  CommonPrefixSearchCursor new_cursor(trie, offset, limit, flags);
+  CommonPrefixCursor new_cursor(trie, offset, limit, flags);
   new_cursor.init(static_cast<const UInt8 *>(ptr), min_length, max_length);
   new_cursor.swap(this);
 }
 
-void CommonPrefixSearchCursor::close() {
+void CommonPrefixCursor::close() {
   trie_ = NULL;
   offset_ = 0;
   limit_ = UINT32_MAX;
@@ -45,7 +45,7 @@ void CommonPrefixSearchCursor::close() {
   end_ = 0;
 }
 
-bool CommonPrefixSearchCursor::next(Key *key) {
+bool CommonPrefixCursor::next(Key *key) {
   if (cur_ == end_) {
     return false;
   }
@@ -57,27 +57,27 @@ bool CommonPrefixSearchCursor::next(Key *key) {
   return true;
 }
 
-UInt32 CommonPrefixSearchCursor::fix_flags(UInt32 flags) const {
+UInt32 CommonPrefixCursor::fix_flags(UInt32 flags) const {
   const UInt32 cursor_type = flags & CURSOR_TYPE_MASK;
-  GRN_DAT_PARAM_ERROR_IF((cursor_type != 0) &&
-                         (cursor_type != COMMON_PREFIX_CURSOR));
+  GRN_DAT_THROW_IF(PARAM_ERROR, (cursor_type != 0) &&
+                                (cursor_type != COMMON_PREFIX_CURSOR));
   flags |= COMMON_PREFIX_CURSOR;
 
   const UInt32 cursor_order = flags & CURSOR_ORDER_MASK;
-  GRN_DAT_PARAM_ERROR_IF((cursor_order != 0) &&
-                         (cursor_order != ASCENDING_CURSOR) &&
-                         (cursor_order != DESCENDING_CURSOR));
+  GRN_DAT_THROW_IF(PARAM_ERROR, (cursor_order != 0) &&
+                                (cursor_order != ASCENDING_CURSOR) &&
+                                (cursor_order != DESCENDING_CURSOR));
   if (cursor_order == 0) {
     flags |= ASCENDING_CURSOR;
   }
 
   const UInt32 cursor_options = flags & CURSOR_OPTIONS_MASK;
-  GRN_DAT_PARAM_ERROR_IF(cursor_options & ~EXCEPT_EXACT_MATCH);
+  GRN_DAT_THROW_IF(PARAM_ERROR, cursor_options & ~EXCEPT_EXACT_MATCH);
 
   return flags;
 }
 
-CommonPrefixSearchCursor::CommonPrefixSearchCursor(const Trie &trie,
+CommonPrefixCursor::CommonPrefixCursor(const Trie &trie,
                                                    UInt32 offset,
                                                    UInt32 limit,
                                                    UInt32 flags)
@@ -89,7 +89,7 @@ CommonPrefixSearchCursor::CommonPrefixSearchCursor(const Trie &trie,
       cur_(0),
       end_(0) {}
 
-void CommonPrefixSearchCursor::init(const UInt8 *ptr,
+void CommonPrefixCursor::init(const UInt8 *ptr,
                                     UInt32 min_length,
                                     UInt32 max_length) {
   if ((limit_ == 0) || (offset_ > (max_length - min_length))) {
@@ -156,7 +156,7 @@ void CommonPrefixSearchCursor::init(const UInt8 *ptr,
   }
 }
 
-void CommonPrefixSearchCursor::swap(CommonPrefixSearchCursor *cursor) {
+void CommonPrefixCursor::swap(CommonPrefixCursor *cursor) {
   std::swap(trie_, cursor->trie_);
   std::swap(offset_, cursor->offset_);
   std::swap(limit_, cursor->limit_);

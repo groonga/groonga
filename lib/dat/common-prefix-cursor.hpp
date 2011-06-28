@@ -1,5 +1,5 @@
-#ifndef GRN_DAT_COMMON_PREFIX_SEARCH_CURSOR_H
-#define GRN_DAT_COMMON_PREFIX_SEARCH_CURSOR_H
+#ifndef GRN_DAT_COMMON_PREFIX_CURSOR_H
+#define GRN_DAT_COMMON_PREFIX_CURSOR_H
 
 #include "cursor.hpp"
 #include "trie.hpp"
@@ -9,10 +9,10 @@
 namespace grn {
 namespace dat {
 
-class CommonPrefixSearchCursor : public Cursor {
+class CommonPrefixCursor : public Cursor {
  public:
-  CommonPrefixSearchCursor();
-  ~CommonPrefixSearchCursor();
+  CommonPrefixCursor();
+  ~CommonPrefixCursor();
 
   void open(const Trie &trie,
             const void *ptr,
@@ -47,17 +47,17 @@ class CommonPrefixSearchCursor : public Cursor {
   UInt32 end_;
 
   UInt32 fix_flags(UInt32 flags) const;
-  CommonPrefixSearchCursor(const Trie &trie,
-                           UInt32 offset, UInt32 limit, UInt32 flags);
+  CommonPrefixCursor(const Trie &trie,
+                     UInt32 offset, UInt32 limit, UInt32 flags);
   void init(const UInt8 *ptr, UInt32 min_length, UInt32 max_length);
-  void swap(CommonPrefixSearchCursor *cursor);
+  void swap(CommonPrefixCursor *cursor);
 
   // Disallows copy and assignment.
-  CommonPrefixSearchCursor(const CommonPrefixSearchCursor &);
-  CommonPrefixSearchCursor &operator=(const CommonPrefixSearchCursor &);
+  CommonPrefixCursor(const CommonPrefixCursor &);
+  CommonPrefixCursor &operator=(const CommonPrefixCursor &);
 };
 
 }  // namespace grn
 }  // namespace dat
 
-#endif  // GRN_DAT_COMMON_PREFIX_SEARCH_CURSOR_H
+#endif  // GRN_DAT_COMMON_PREFIX_CURSOR_H

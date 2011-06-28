@@ -1,5 +1,5 @@
-#ifndef GRN_DAT_PREDICTIVE_SEARCH_CURSOR_HPP_
-#define GRN_DAT_PREDICTIVE_SEARCH_CURSOR_HPP_
+#ifndef GRN_DAT_PREDICTIVE_CURSOR_HPP_
+#define GRN_DAT_PREDICTIVE_CURSOR_HPP_
 
 #include "cursor.hpp"
 #include "trie.hpp"
@@ -9,10 +9,10 @@
 namespace grn {
 namespace dat {
 
-class PredictiveSearchCursor : public Cursor {
+class PredictiveCursor : public Cursor {
  public:
-  PredictiveSearchCursor();
-  ~PredictiveSearchCursor();
+  PredictiveCursor();
+  ~PredictiveCursor();
 
   void open(const Trie &trie,
             const void *ptr,
@@ -47,10 +47,10 @@ class PredictiveSearchCursor : public Cursor {
   UInt32 min_length_;
 
   UInt32 fix_flags(UInt32 flags) const;
-  PredictiveSearchCursor(const Trie &trie,
-                         UInt32 offset, UInt32 limit, UInt32 flags);
+  PredictiveCursor(const Trie &trie,
+                   UInt32 offset, UInt32 limit, UInt32 flags);
   void init(const UInt8 *ptr, UInt32 length);
-  void swap(PredictiveSearchCursor *cursor);
+  void swap(PredictiveCursor *cursor);
 
   bool ascending_next(Key *key);
   bool descending_next(Key *key);
@@ -58,11 +58,11 @@ class PredictiveSearchCursor : public Cursor {
   static const UInt32 POST_ORDER_FLAG = 0x80000000U;
 
   // Disallows copy and assignment.
-  PredictiveSearchCursor(const PredictiveSearchCursor &);
-  PredictiveSearchCursor &operator=(const PredictiveSearchCursor &);
+  PredictiveCursor(const PredictiveCursor &);
+  PredictiveCursor &operator=(const PredictiveCursor &);
 };
 
 }  // namespace grn
 }  // namespace dat
 
-#endif  // GRN_DAT_PREDICTIVE_SEARCH_CURSOR_HPP_
+#endif  // GRN_DAT_PREDICTIVE_CURSOR_HPP_

@@ -1,6 +1,7 @@
 #ifndef GRN_DAT_NODE_HPP_
 #define GRN_DAT_NODE_HPP_
 
+// See base.hpp and check.hpp for details.
 #include "base.hpp"
 #include "check.hpp"
 

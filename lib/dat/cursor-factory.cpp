@@ -1,8 +1,8 @@
 #include "cursor-factory.hpp"
 #include "id-cursor.hpp"
 #include "key-cursor.hpp"
-#include "common-prefix-search-cursor.hpp"
-#include "predictive-search-cursor.hpp"
+#include "common-prefix-cursor.hpp"
+#include "predictive-cursor.hpp"
 
 namespace grn {
 namespace dat {
@@ -38,7 +38,7 @@ Cursor *CursorFactory::open(const Trie &trie,
       return cursor;
     }
     case COMMON_PREFIX_CURSOR: {
-      CommonPrefixSearchCursor *cursor = new CommonPrefixSearchCursor;
+      CommonPrefixCursor *cursor = new CommonPrefixCursor;
       try {
         cursor->open(trie, max_ptr, min_length, max_length,
                      offset, limit, flags);
@@ -49,7 +49,7 @@ Cursor *CursorFactory::open(const Trie &trie,
       return cursor;
     }
     case PREDICTIVE_CURSOR: {
-      PredictiveSearchCursor *cursor = new PredictiveSearchCursor;
+      PredictiveCursor *cursor = new PredictiveCursor;
       try {
         cursor->open(trie, min_ptr, min_length,
                      offset, limit, flags);
@@ -60,10 +60,7 @@ Cursor *CursorFactory::open(const Trie &trie,
       return cursor;
     }
     default: {
-      GRN_DAT_PARAM_ERROR_IF((cursor_type != ID_RANGE_CURSOR) &&
-                             (cursor_type != KEY_RANGE_CURSOR) &&
-                             (cursor_type != COMMON_PREFIX_CURSOR) &&
-                             (cursor_type != PREDICTIVE_CURSOR));
+      GRN_DAT_THROW(PARAM_ERROR, "unknown cursor type");
     }
   }
   return NULL;

@@ -6,12 +6,6 @@
 namespace grn {
 namespace dat {
 
-// The most significant bit (MSB) represents whether or not the node ID is used
-// as an offset. This bit is independent of the other bits.
-// The second most significant bit represents whether or not the node is a
-// phantom node. If it is true, next() and prev() are available. These
-// functions return the next/previous phantom node respectively.
-// A non-phantom node 
 class Check {
  public:
   Check()
@@ -50,7 +44,7 @@ class Check {
 
   // A label is attached to each non-phantom node. A label is represented by
   // a byte except for a terminal label '\256'. Note that a phantom node always
-  // returns an invalid label with its phantom flag bit so as to reject a
+  // returns an invalid label with its phantom bit flag so as to reject a
   // transition to the phantom node.
   UInt32 label() const {
     return check_ & (IS_PHANTOM_FLAG | LABEL_MASK);
@@ -83,8 +77,8 @@ class Check {
     check_ = (check_ & IS_OFFSET_FLAG) | x;
   }
 
-  // To reject a transition to an incomplete node, its label is overwritten
-  // with an invalid label when it becomes a non-phantom node.
+  // To reject a transition to an incomplete node, set_is_phantom() overwrites
+  // its label with an invalid label when a node becomes a non-phantom node.
   void set_is_phantom(bool x) {
     if (x) {
       GRN_DAT_DEBUG_THROW_IF(is_phantom());

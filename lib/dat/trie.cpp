@@ -28,25 +28,25 @@ void Trie::create(const char *file_name,
                   UInt32 max_num_keys,
                   double num_nodes_per_key,
                   double average_key_length) {
-  GRN_DAT_PARAM_ERROR_IF((file_size != 0) && (max_num_keys != 0));
+  GRN_DAT_THROW_IF(PARAM_ERROR, (file_size != 0) && (max_num_keys != 0));
 
   if (num_nodes_per_key == 0.0) {
     num_nodes_per_key = DEFAULT_NUM_NODES_PER_KEY;
   }
-  GRN_DAT_PARAM_ERROR_IF(num_nodes_per_key < 1.0);
+  GRN_DAT_THROW_IF(PARAM_ERROR, num_nodes_per_key < 1.0);
 
   if (average_key_length == 0.0) {
     average_key_length = DEFAULT_AVERAGE_KEY_LENGTH;
   }
-  GRN_DAT_PARAM_ERROR_IF(average_key_length < 1.0);
-  GRN_DAT_PARAM_ERROR_IF(average_key_length > MAX_KEY_LENGTH);
+  GRN_DAT_THROW_IF(PARAM_ERROR, average_key_length < 1.0);
+  GRN_DAT_THROW_IF(PARAM_ERROR, average_key_length > MAX_KEY_LENGTH);
 
   if (max_num_keys == 0) {
     if (file_size == 0) {
       file_size = DEFAULT_FILE_SIZE;
     }
   } else {
-    GRN_DAT_PARAM_ERROR_IF(max_num_keys > MAX_NUM_KEYS);
+    GRN_DAT_THROW_IF(PARAM_ERROR, max_num_keys > MAX_NUM_KEYS);
   }
 
   Trie new_trie;
@@ -61,7 +61,7 @@ void Trie::create(const Trie &trie,
                   UInt32 max_num_keys,
                   double num_nodes_per_key,
                   double average_key_length) {
-  GRN_DAT_PARAM_ERROR_IF((file_size != 0) && (max_num_keys != 0));
+  GRN_DAT_THROW_IF(PARAM_ERROR, (file_size != 0) && (max_num_keys != 0));
 
   if (num_nodes_per_key == 0.0) {
     if (trie.num_keys() == 0) {
@@ -70,7 +70,7 @@ void Trie::create(const Trie &trie,
       num_nodes_per_key = 1.0 * trie.num_nodes() / trie.num_keys();
     }
   }
-  GRN_DAT_PARAM_ERROR_IF(num_nodes_per_key < 1.0);
+  GRN_DAT_THROW_IF(PARAM_ERROR, num_nodes_per_key < 1.0);
 
   if (average_key_length == 0.0) {
     if (trie.num_keys() == 0) {
@@ -79,17 +79,17 @@ void Trie::create(const Trie &trie,
       average_key_length = 1.0 * trie.total_key_length() / trie.num_keys();
     }
   }
-  GRN_DAT_PARAM_ERROR_IF(average_key_length < 1.0);
-  GRN_DAT_PARAM_ERROR_IF(average_key_length > MAX_KEY_LENGTH);
+  GRN_DAT_THROW_IF(PARAM_ERROR, average_key_length < 1.0);
+  GRN_DAT_THROW_IF(PARAM_ERROR, average_key_length > MAX_KEY_LENGTH);
 
   if (max_num_keys == 0) {
     if (file_size == 0) {
       file_size = trie.file_size();
     }
-    GRN_DAT_PARAM_ERROR_IF(file_size < trie.virtual_size());
+    GRN_DAT_THROW_IF(PARAM_ERROR, file_size < trie.virtual_size());
   } else {
-    GRN_DAT_PARAM_ERROR_IF(max_num_keys < trie.num_keys());
-    GRN_DAT_PARAM_ERROR_IF(max_num_keys > MAX_KEY_ID);
+    GRN_DAT_THROW_IF(PARAM_ERROR, max_num_keys < trie.num_keys());
+    GRN_DAT_THROW_IF(PARAM_ERROR, max_num_keys > MAX_KEY_ID);
   }
 
   Trie new_trie;
@@ -102,7 +102,7 @@ void Trie::create(const Trie &trie,
 }
 
 void Trie::open(const char *file_name) {
-  GRN_DAT_PARAM_ERROR_IF(file_name == NULL);
+  GRN_DAT_THROW_IF(PARAM_ERROR, file_name == NULL);
 
   Trie new_trie;
   new_trie.open_file(file_name);
@@ -133,8 +133,8 @@ void Trie::create_file(const char *file_name,
                        UInt32 max_num_keys,
                        double num_nodes_per_key,
                        double average_key_length) {
-  GRN_DAT_PARAM_ERROR_IF((file_size == 0) && (max_num_keys == 0));
-  GRN_DAT_PARAM_ERROR_IF((file_size != 0) && (max_num_keys != 0));
+  GRN_DAT_THROW_IF(PARAM_ERROR, (file_size == 0) && (max_num_keys == 0));
+  GRN_DAT_THROW_IF(PARAM_ERROR, (file_size != 0) && (max_num_keys != 0));
 
   UInt32 max_num_blocks;
   UInt32 key_buf_size;
@@ -143,22 +143,22 @@ void Trie::create_file(const char *file_name,
     const double num_bytes_per_key = (sizeof(Node) * num_nodes_per_key)
         + (1.0 * sizeof(Block) / BLOCK_SIZE * num_nodes_per_key)
         + sizeof(KeyInfo) + average_key_length;
-    GRN_DAT_PARAM_ERROR_IF((avail / num_bytes_per_key) > MAX_NUM_KEYS);
+    GRN_DAT_THROW_IF(PARAM_ERROR, (avail / num_bytes_per_key) > MAX_NUM_KEYS);
     max_num_keys = (UInt32)(avail / num_bytes_per_key);
-    GRN_DAT_PARAM_ERROR_IF(max_num_keys == 0);
+    GRN_DAT_THROW_IF(PARAM_ERROR, max_num_keys == 0);
   }
 
   {
     const double max_num_nodes = num_nodes_per_key * max_num_keys;
-    GRN_DAT_PARAM_ERROR_IF(max_num_nodes > MAX_NUM_NODES);
+    GRN_DAT_THROW_IF(PARAM_ERROR, max_num_nodes > MAX_NUM_NODES);
     max_num_blocks = ((UInt32)max_num_nodes + BLOCK_SIZE - 1) / BLOCK_SIZE;
-    GRN_DAT_PARAM_ERROR_IF(max_num_blocks == 0);
-    GRN_DAT_PARAM_ERROR_IF(max_num_blocks > MAX_NUM_BLOCKS);
+    GRN_DAT_THROW_IF(PARAM_ERROR, max_num_blocks == 0);
+    GRN_DAT_THROW_IF(PARAM_ERROR, max_num_blocks > MAX_NUM_BLOCKS);
   }
 
   if (file_size == 0) {
     const double total_key_length = average_key_length * max_num_keys;
-    GRN_DAT_PARAM_ERROR_IF(total_key_length > MAX_KEY_BUF_SIZE);
+    GRN_DAT_THROW_IF(PARAM_ERROR, total_key_length > MAX_KEY_BUF_SIZE);
     key_buf_size = (UInt32)total_key_length;
 
     file_size = sizeof(Header)
@@ -171,8 +171,8 @@ void Trie::create_file(const char *file_name,
         - (sizeof(Block) * max_num_blocks)
         - (sizeof(Node) * BLOCK_SIZE * max_num_blocks)
         - (sizeof(KeyInfo) * (max_num_keys + 1));
-    GRN_DAT_PARAM_ERROR_IF(avail == 0);
-    GRN_DAT_PARAM_ERROR_IF(avail > MAX_KEY_BUF_SIZE);
+    GRN_DAT_THROW_IF(PARAM_ERROR, avail == 0);
+    GRN_DAT_THROW_IF(PARAM_ERROR, avail > MAX_KEY_BUF_SIZE);
     key_buf_size = (UInt32)avail;
   }
 
@@ -185,7 +185,7 @@ void Trie::create_file(const char *file_name,
                        UInt32 max_num_keys,
                        UInt32 max_num_blocks,
                        UInt32 key_buf_size) {
-  GRN_DAT_PARAM_ERROR_IF(file_size != (sizeof(Header)
+  GRN_DAT_THROW_IF(PARAM_ERROR, file_size != (sizeof(Header)
       + (sizeof(Block) * max_num_blocks)
       + (sizeof(Node) * BLOCK_SIZE * max_num_blocks)
       + (sizeof(KeyInfo) * (max_num_keys + 1))
@@ -194,10 +194,10 @@ void Trie::create_file(const char *file_name,
   int fd = -1;
   if ((file_name != NULL) && (file_name[0] != '\0')) {
     fd = ::open(file_name, O_RDWR | O_CREAT | O_TRUNC, 0666);
-    GRN_DAT_IO_ERROR_IF(fd == -1);
+    GRN_DAT_THROW_IF(IO_ERROR, fd == -1);
     if (::ftruncate(fd, file_size) == -1) {
       ::close(fd);
-      GRN_DAT_THROW(IOError, "::ftruncate(fd, file_size) == -1");
+      GRN_DAT_THROW(IO_ERROR, "::ftruncate(fd, file_size) == -1");
     }
   }
 
@@ -208,10 +208,10 @@ void Trie::create_file(const char *file_name,
     if (fd != -1) {
       ::close(fd);
     }
-    GRN_DAT_THROW(IOError, "address == MAP_FAILED");
+    GRN_DAT_THROW(IO_ERROR, "address == MAP_FAILED");
   } else if ((fd != -1) && (::close(fd) == -1)) {
     ::munmap(address, file_size);
-    GRN_DAT_THROW(IOError, "(fd != -1) && (::close(fd) == -1)");
+    GRN_DAT_THROW(IO_ERROR, "(fd != -1) && (::close(fd) == -1)");
   }
 
   Header * const header = static_cast<Header *>(address);
@@ -229,37 +229,37 @@ void Trie::create_file(const char *file_name,
 }
 
 void Trie::open_file(const char *file_name) {
-  GRN_DAT_PARAM_ERROR_IF(file_name == NULL);
+  GRN_DAT_THROW_IF(PARAM_ERROR, file_name == NULL);
 
   const int fd = ::open(file_name, O_RDWR);
-  GRN_DAT_IO_ERROR_IF(fd == -1);
+  GRN_DAT_THROW_IF(IO_ERROR, fd == -1);
 
   void *address = ::mmap(NULL, sizeof(Header), PROT_READ, MAP_PRIVATE, fd, 0);
   if (address == MAP_FAILED) {
     ::close(fd);
-    GRN_DAT_THROW(IOError, "address == MAP_FAILED");
+    GRN_DAT_THROW(IO_ERROR, "address == MAP_FAILED");
   }
 
   const UInt64 file_size = static_cast<const Header *>(address)->file_size();
   if (::munmap(address, sizeof(Header)) == -1) {
     ::close(fd);
-    GRN_DAT_THROW(IOError, "::munmap(address, sizeof(Header)) == -1");
+    GRN_DAT_THROW(IO_ERROR, "::munmap(address, sizeof(Header)) == -1");
   }
 
   address = ::mmap(NULL, file_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
   if (address == MAP_FAILED) {
     ::close(fd);
-    GRN_DAT_THROW(IOError, "address == MAP_FAILED");
+    GRN_DAT_THROW(IO_ERROR, "address == MAP_FAILED");
   } else if (::close(fd) == -1) {
     ::munmap(address, file_size);
-    GRN_DAT_THROW(IOError, "::close(fd) == -1");
+    GRN_DAT_THROW(IO_ERROR, "::close(fd) == -1");
   }
 
   map_address(address);
 }
 
 void Trie::map_address(void *address) {
-  GRN_DAT_PARAM_ERROR_IF(address == NULL);
+  GRN_DAT_THROW_IF(PARAM_ERROR, address == NULL);
 
   header_ = static_cast<Header *>(address);
   nodes_ = static_cast<Node *>(static_cast<void *>(header_ + 1));
@@ -463,11 +463,11 @@ bool Trie::insert_from_terminal(const UInt8 *ptr,
     return false;
   }
 
-  GRN_DAT_SIZE_ERROR_IF(num_keys() >= max_num_keys());
+  GRN_DAT_THROW_IF(SIZE_ERROR, num_keys() >= max_num_keys());
   key_id = max_key_id() + 1;
 
   const UInt32 key_offset = ith_key_info(key_id).offset();
-  GRN_DAT_SIZE_ERROR_IF(length > (key_buf_size() - key_offset));
+  GRN_DAT_THROW_IF(SIZE_ERROR, length > (key_buf_size() - key_offset));
 
   for (UInt32 k = i; k < j; ++k) {
     node_id = insert_node(node_id, ptr[k]);
@@ -497,11 +497,11 @@ bool Trie::insert_from_nonterminal(const UInt8 *ptr,
   GRN_DAT_DEBUG_THROW_IF(ith_node(node_id).is_terminal());
   GRN_DAT_DEBUG_THROW_IF(i > length);
 
-  GRN_DAT_SIZE_ERROR_IF(num_keys() >= max_num_keys());
+  GRN_DAT_THROW_IF(SIZE_ERROR, num_keys() >= max_num_keys());
   const UInt32 key_id = max_key_id() + 1;
 
   const UInt32 key_offset = ith_key_info(key_id).offset();
-  GRN_DAT_SIZE_ERROR_IF(length > (key_buf_size() - key_offset));
+  GRN_DAT_THROW_IF(SIZE_ERROR, length > (key_buf_size() - key_offset));
 
   const UInt16 label = (i < length) ? (UInt16)ptr[i] : (UInt16)TERMINAL_LABEL;
   const Base base = ith_node(node_id).base();
@@ -807,7 +807,7 @@ void Trie::reserve_node(UInt32 node_id) {
 
 void Trie::reserve_block(UInt32 block_id) {
   GRN_DAT_DEBUG_THROW_IF(block_id != num_blocks());
-  GRN_DAT_SIZE_ERROR_IF(block_id >= max_num_blocks());
+  GRN_DAT_THROW_IF(SIZE_ERROR, block_id >= max_num_blocks());
 
   header_->set_num_blocks(block_id + 1);
   ith_block(block_id).set_fail_count(0);

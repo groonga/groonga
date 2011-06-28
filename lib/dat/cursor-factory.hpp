@@ -2,10 +2,11 @@
 #define GRN_DAT_CURSOR_FACTORY_H
 
 #include "cursor.hpp"
-#include "trie.hpp"
 
 namespace grn {
 namespace dat {
+
+class Trie;
 
 class CursorFactory {
  public:

@@ -1,4 +1,4 @@
-#include "predictive-search-cursor.hpp"
+#include "predictive-cursor.hpp"
 
 #include <algorithm>
 #include <cstring>
@@ -6,7 +6,7 @@
 namespace grn {
 namespace dat {
 
-PredictiveSearchCursor::PredictiveSearchCursor()
+PredictiveCursor::PredictiveCursor()
     : trie_(NULL),
       offset_(0),
       limit_(UINT32_MAX),
@@ -16,25 +16,25 @@ PredictiveSearchCursor::PredictiveSearchCursor()
       end_(0),
       min_length_(0) {}
 
-PredictiveSearchCursor::~PredictiveSearchCursor() {
+PredictiveCursor::~PredictiveCursor() {
   close();
 }
 
-void PredictiveSearchCursor::open(const Trie &trie,
+void PredictiveCursor::open(const Trie &trie,
                                   const void *ptr,
                                   UInt32 length,
                                   UInt32 offset,
                                   UInt32 limit,
                                   UInt32 flags) {
-  GRN_DAT_PARAM_ERROR_IF((ptr == NULL) && (length != 0));
+  GRN_DAT_THROW_IF(PARAM_ERROR, (ptr == NULL) && (length != 0));
 
   flags = fix_flags(flags);
-  PredictiveSearchCursor new_cursor(trie, offset, limit, flags);
+  PredictiveCursor new_cursor(trie, offset, limit, flags);
   new_cursor.init(static_cast<const UInt8 *>(ptr), length);
   new_cursor.swap(this);
 }
 
-void PredictiveSearchCursor::close() {
+void PredictiveCursor::close() {
   trie_ = NULL;
   offset_ = 0;
   limit_ = UINT32_MAX;
@@ -45,7 +45,7 @@ void PredictiveSearchCursor::close() {
   min_length_ = 0;
 }
 
-bool PredictiveSearchCursor::next(Key *key) {
+bool PredictiveCursor::next(Key *key) {
   if (cur_ == end_) {
     return false;
   }
@@ -57,27 +57,27 @@ bool PredictiveSearchCursor::next(Key *key) {
   }
 }
 
-UInt32 PredictiveSearchCursor::fix_flags(UInt32 flags) const {
+UInt32 PredictiveCursor::fix_flags(UInt32 flags) const {
   const UInt32 cursor_type = flags & CURSOR_TYPE_MASK;
-  GRN_DAT_PARAM_ERROR_IF((cursor_type != 0) &&
-                         (cursor_type != PREDICTIVE_CURSOR));
+  GRN_DAT_THROW_IF(PARAM_ERROR, (cursor_type != 0) &&
+                                (cursor_type != PREDICTIVE_CURSOR));
   flags |= PREDICTIVE_CURSOR;
 
   const UInt32 cursor_order = flags & CURSOR_ORDER_MASK;
-  GRN_DAT_PARAM_ERROR_IF((cursor_order != 0) &&
-                         (cursor_order != ASCENDING_CURSOR) &&
-                         (cursor_order != DESCENDING_CURSOR));
+  GRN_DAT_THROW_IF(PARAM_ERROR, (cursor_order != 0) &&
+                                (cursor_order != ASCENDING_CURSOR) &&
+                                (cursor_order != DESCENDING_CURSOR));
   if (cursor_order == 0) {
     flags |= ASCENDING_CURSOR;
   }
 
   const UInt32 cursor_options = flags & CURSOR_OPTIONS_MASK;
-  GRN_DAT_PARAM_ERROR_IF(cursor_options & ~(EXCEPT_EXACT_MATCH));
+  GRN_DAT_THROW_IF(PARAM_ERROR, cursor_options & ~(EXCEPT_EXACT_MATCH));
 
   return flags;
 }
 
-PredictiveSearchCursor::PredictiveSearchCursor(const Trie &trie,
+PredictiveCursor::PredictiveCursor(const Trie &trie,
                                                UInt32 offset,
                                                UInt32 limit,
                                                UInt32 flags)
@@ -90,7 +90,7 @@ PredictiveSearchCursor::PredictiveSearchCursor(const Trie &trie,
       end_(0),
       min_length_(0) {}
 
-void PredictiveSearchCursor::init(const UInt8 *ptr, UInt32 length) {
+void PredictiveCursor::init(const UInt8 *ptr, UInt32 length) {
   if (limit_ == 0) {
     return;
   }
@@ -124,7 +124,7 @@ void PredictiveSearchCursor::init(const UInt8 *ptr, UInt32 length) {
   buf_.push_back(node_id);
 }
 
-void PredictiveSearchCursor::swap(PredictiveSearchCursor *cursor) {
+void PredictiveCursor::swap(PredictiveCursor *cursor) {
   std::swap(trie_, cursor->trie_);
   std::swap(offset_, cursor->offset_);
   std::swap(limit_, cursor->limit_);
@@ -135,7 +135,7 @@ void PredictiveSearchCursor::swap(PredictiveSearchCursor *cursor) {
   std::swap(min_length_, cursor->min_length_);
 }
 
-bool PredictiveSearchCursor::ascending_next(Key *key) {
+bool PredictiveCursor::ascending_next(Key *key) {
   while (!buf_.empty()) {
     const UInt32 node_id = buf_.back();
     buf_.pop_back();
@@ -161,7 +161,7 @@ bool PredictiveSearchCursor::ascending_next(Key *key) {
   return false;
 }
 
-bool PredictiveSearchCursor::descending_next(Key *key) {
+bool PredictiveCursor::descending_next(Key *key) {
   while (!buf_.empty()) {
     const bool post_order = (buf_.back() & POST_ORDER_FLAG) == POST_ORDER_FLAG;
     const UInt32 node_id = buf_.back() & ~POST_ORDER_FLAG;
