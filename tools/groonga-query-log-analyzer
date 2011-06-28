@@ -8,6 +8,31 @@ require 'shellwords'
 require 'time'
 require 'erb'
 
+# For ruby 1.8.5 on CentOS 5.6.
+class String
+  unless method_defined?(:start_with?)
+    def start_with?(string)
+      /\A#{Regexp.escape(string)}/ =~ self
+    end
+  end
+end
+
+class Array
+  unless method_defined?(:each_slice)
+    def each_slice(n)
+      sub_elements = []
+      each do |element|
+        sub_elements << element
+        if sub_elements.size == n
+          yield(sub_elements)
+          sub_elements = []
+        end
+      end
+      yield(sub_elements) unless sub_elements.empty?
+    end
+  end
+end
+
 class GroongaQueryLogAnaylzer
   class Error < StandardError
   end
