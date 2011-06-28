@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-29 12:28\n"
-"PO-Revision-Date: 2011-05-28 16:26+0900\n"
+"POT-Creation-Date: 2011-06-28 23:32\n"
+"PO-Revision-Date: 2011-06-28 23:47+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -129,9 +129,8 @@ msgid ""
 msgstr ""
 
 #: ../../../source/install.txt:126
-#, fuzzy
 msgid "Fedora 15"
-msgstr "Fedora 14"
+msgstr ""
 
 #: ../../../source/install.txt:134
 msgid ""
@@ -168,39 +167,36 @@ msgstr "x64版のみ提供で32bit版は未提供。"
 
 #: ../../../source/install.txt:161
 msgid ""
-"You just download zip-file from `packages.groonga.org/windows/`_ and extract "
-"it. We doesn't distribute installer for now. Sorry."
-msgstr ""
-"`packages.groonga.org/windows/`_ からzipファイルをダウンロードして展開するだ"
-"けで使えます。今のところインストーラは配布していません。"
+"You just download zip-file from `packages.groonga.org/windows/ <http://"
+"packages.groonga.org/windows/groonga/>`_ and extract it. We doesn't "
+"distribute installer for now. Sorry."
+msgstr "`packages.groonga.org/windows/ <http://packages.groonga.org/windows/groonga/>`_ からzipファイルをダウンロードして展開するだけで使えます。今のところインストーラは配布していません。"
 
-#: ../../../source/install.txt:168
+#: ../../../source/install.txt:166
 msgid "Others"
 msgstr "その他"
 
-#: ../../../source/install.txt:170
+#: ../../../source/install.txt:168
 msgid ""
 "If you will use indexes of tokenizing of each morpheme for full-text search, "
-"you should install MeCab_ before you install groonga."
-msgstr ""
-"形態素単位でトークナイズした全文検索索引を使用したい場合は、groongaをインス"
-"トールする前に MeCab_ をインストールしてください。"
+"you should install `MeCab <http://mecab.sourceforge.net/>`_ before you "
+"install groonga."
+msgstr "形態素単位でトークナイズした全文検索索引を使用したい場合は、groongaをインストールする前に `MeCab <http://mecab.sourceforge.net/>`_ をインストールしてください。"
 
-#: ../../../source/install.txt:173
+#: ../../../source/install.txt:172
 msgid ""
-"After, you should download tar.gz-file from `packages.groonga.org/source/`_ "
-"for installing groonga. You should extract this file in place to install, "
-"and run commands below-mentioned. ::"
-msgstr ""
-"`packages.groonga.org/source/`_ よりtar.gzファイルを取得し、インストール先の"
-"環境にファイルを展開して、以下のように実行することでインストールできます。::"
+"After, you should download tar.gz-file from `packages.groonga.org/source/ "
+"<http://packages.groonga.org/source/groonga/>`_ for installing groonga. You "
+"should extract this file in place to install, and run commands below-"
+"mentioned. ::"
+msgstr "`packages.groonga.org/source/ <http://packages.groonga.org/source/groonga/>`_ よりtar.gzファイルを取得し、インストール先の環境にファイルを展開して、以下のように実行することでインストールできます。::"
 
-#: ../../../source/install.txt:178
+#: ../../../source/install.txt:177
 msgid ""
 "./configure --prefix=/usr --localstatedir=/var && make && sudo make install"
 msgstr ""
 
-#: ../../../source/install.txt:180
+#: ../../../source/install.txt:179
 msgid ""
 "The \"prefix\" option is the paramater for specified place to install. If "
 "you won't specify the option, \"/usr/local\" is specified. Please specify \"/"
