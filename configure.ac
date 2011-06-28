@@ -1,5 +1,5 @@
 AC_PREREQ(2.59)
-AC_INIT([groonga],[1.2.3],[groonga@razil.jp])
+AC_INIT([groonga],[1.2.4],[groonga@razil.jp])
 AM_CONFIG_HEADER(config.h)
 
 AM_INIT_AUTOMAKE(tar-pax)
