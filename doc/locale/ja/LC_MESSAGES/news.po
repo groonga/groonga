@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-06-27 16:35\n"
-"PO-Revision-Date: 2011-06-27 16:40+0900\n"
+"POT-Creation-Date: 2011-06-28 14:12\n"
+"PO-Revision-Date: 2011-06-28 14:12+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -46,8 +46,8 @@ msgid "groonga command shows file name and line no on error."
 msgstr "groongaコマンドのエラー時にファイル名と行番号を表示するようになった。"
 
 #: ../../../source/news.txt:20
-msgid "Improved error message of :doc:`column_create`. #952"
-msgstr ":doc:`column_create` のエラーメッセージを改善。#952"
+msgid "Improved error message of :doc:`commands/column_create`. #952"
+msgstr ":doc:`commands/column_create` のエラーメッセージを改善。#952"
 
 #: ../../../source/news.txt:21
 msgid "Added GRN_OBJ_TABLE_DAT_KEY, double array trie, table. (experimental)"
