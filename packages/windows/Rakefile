@@ -22,6 +22,8 @@ base_dir = Pathname.new(__FILE__).dirname
 groonga_win32_i386_p = ENV["GROONGA32"] == "yes"
 groonga_version = ENV["VERSION"]
 groonga_source = Pathname.new(ENV["SOURCE"]).expand_path
+debug_build_p = ENV["DEBUG_BUILD"] == "yes"
+debug_flags = ["CFLAGS=-ggdb3 -O0", "CXXFLAGS=-ggdb3 -O0"]
 
 dist_dir = Pathname.new("dist")
 binary_dir = base_dir + dist_dir
@@ -125,17 +127,18 @@ namespace :build do
     end
     Dir.chdir(tmp_dir + "groonga-#{groonga_version}") do
       mecab_config = binary_dir + "bin" + "mecab-config"
-      args = ["./configure",
-              "--prefix=#{binary_dir}",
-              "--host=#{host}",
-              "--without-cutter",
-              "--disable-benchmark"]
+      options = ["./configure",
+                 "--prefix=#{binary_dir}",
+                 "--host=#{host}",
+                 "--without-cutter",
+                 "--disable-benchmark"]
       if mecab_config.exist?
-        args << "--with-mecab-config=#{mecab_config}"
+        options << "--with-mecab-config=#{mecab_config}"
       else
-        args << "--without-mecab"
+        options << "--without-mecab"
       end
-      sh(*args) or exit(false)
+      options.concat(debug_flags) if debug_build_p
+      sh("./configure", *options) or exit(false)
       sh("env", "GREP_OPTIONS=--text", "nice", "make", "-j8") or exit(false)
       sh("env", "GREP_OPTIONS=--text", "make", "install") or exit(false)
 

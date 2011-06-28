@@ -17,11 +17,16 @@ download: ensure-rsync-path
 upload: ensure-rsync-path
 	rsync -avz --delete files/ $(RSYNC_PATH)/windows/groonga
 
+build_options =					\
+	VERSION=$(VERSION)			\
+	SOURCE=$(SOURCE)			\
+	DEBUG_BUILD=$(DEBUG_BUILD)
+
 build: source
-	$(RUBY) -S rake build VERSION=$(VERSION) SOURCE=$(SOURCE)
+	$(RUBY) -S rake build $(build_options)
 
 build-groonga: source
-	$(RUBY) -S rake build:groonga VERSION=$(VERSION) SOURCE=$(SOURCE)
+	$(RUBY) -S rake build:groonga $(build_options)
 
 SOURCE=../$(PACKAGE)-$(VERSION).tar.gz
 
