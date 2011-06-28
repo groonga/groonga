@@ -6,17 +6,13 @@ po_files = \
 	community.po \
 	conf.po \
 	contribution.po \
-	execfile.po \
+	executables.po \
 	expr.po \
 	functions.po \
-	grnslap.po \
-	grntest.po \
-	http.po \
 	index.po \
 	install.po \
 	limitations.po \
 	news.po \
-	process.po \
 	pseudo_column.po \
 	reference.po \
 	spec.po \
@@ -60,17 +56,13 @@ mo_files = \
 	community.mo \
 	conf.mo \
 	contribution.mo \
-	execfile.mo \
+	executables.mo \
 	expr.mo \
 	functions.mo \
-	grnslap.mo \
-	grntest.mo \
-	http.mo \
 	index.mo \
 	install.mo \
 	limitations.mo \
 	news.mo \
-	process.mo \
 	pseudo_column.mo \
 	reference.mo \
 	spec.mo \
@@ -87,17 +79,13 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/community.mo \
 	LC_MESSAGES/conf.mo \
 	LC_MESSAGES/contribution.mo \
-	LC_MESSAGES/execfile.mo \
+	LC_MESSAGES/executables.mo \
 	LC_MESSAGES/expr.mo \
 	LC_MESSAGES/functions.mo \
-	LC_MESSAGES/grnslap.mo \
-	LC_MESSAGES/grntest.mo \
-	LC_MESSAGES/http.mo \
 	LC_MESSAGES/index.mo \
 	LC_MESSAGES/install.mo \
 	LC_MESSAGES/limitations.mo \
 	LC_MESSAGES/news.mo \
-	LC_MESSAGES/process.mo \
 	LC_MESSAGES/pseudo_column.mo \
 	LC_MESSAGES/reference.mo \
 	LC_MESSAGES/spec.mo \

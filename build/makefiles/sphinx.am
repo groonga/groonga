@@ -204,7 +204,11 @@ html_files = \
 	html/_sources/contribution/documentation/c-api.txt \
 	html/_sources/contribution/documentation/i18n.txt \
 	html/_sources/contribution/report.txt \
-	html/_sources/execfile.txt \
+	html/_sources/executables.txt \
+	html/_sources/executables/grnslap.txt \
+	html/_sources/executables/grntest.txt \
+	html/_sources/executables/groonga.txt \
+	html/_sources/executables/http.txt \
 	html/_sources/expr.txt \
 	html/_sources/functions.txt \
 	html/_sources/functions/edit_distance.txt \
@@ -213,9 +217,6 @@ html_files = \
 	html/_sources/functions/geo_in_rectangle.txt \
 	html/_sources/functions/now.txt \
 	html/_sources/functions/rand.txt \
-	html/_sources/grnslap.txt \
-	html/_sources/grntest.txt \
-	html/_sources/http.txt \
 	html/_sources/index.txt \
 	html/_sources/install.txt \
 	html/_sources/limitations.txt \
@@ -223,7 +224,6 @@ html_files = \
 	html/_sources/news/0.x.txt \
 	html/_sources/news/1.0.x.txt \
 	html/_sources/news/1.1.x.txt \
-	html/_sources/process.txt \
 	html/_sources/pseudo_column.txt \
 	html/_sources/reference.txt \
 	html/_sources/spec.txt \
@@ -308,7 +308,11 @@ html_files = \
 	html/contribution/documentation/c-api.html \
 	html/contribution/documentation/i18n.html \
 	html/contribution/report.html \
-	html/execfile.html \
+	html/executables.html \
+	html/executables/grnslap.html \
+	html/executables/grntest.html \
+	html/executables/groonga.html \
+	html/executables/http.html \
 	html/expr.html \
 	html/functions.html \
 	html/functions/edit_distance.html \
@@ -318,9 +322,6 @@ html_files = \
 	html/functions/now.html \
 	html/functions/rand.html \
 	html/genindex.html \
-	html/grnslap.html \
-	html/grntest.html \
-	html/http.html \
 	html/index.html \
 	html/install.html \
 	html/limitations.html \
@@ -329,7 +330,6 @@ html_files = \
 	html/news/1.0.x.html \
 	html/news/1.1.x.html \
 	html/objects.inv \
-	html/process.html \
 	html/pseudo_column.html \
 	html/reference.html \
 	html/search.html \

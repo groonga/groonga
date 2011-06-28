@@ -1,123 +1,45 @@
-# English translations for 1.2.1 package.
+# English translations for 1.2.3 package.
 # Copyright (C) 2009-2011, Brazil, Inc
 # This file is distributed under the same license as the groonga package.
 # Kouhei Sutou <kou@clear-code.com>, 2011.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: 1.2.1\n"
+"Project-Id-Version: 1.2.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-29 00:56\n"
-"PO-Revision-Date: 2011-05-18 15:16+0900\n"
+"POT-Creation-Date: 2011-06-28 23:53\n"
+"PO-Revision-Date: 2011-06-28 23:54+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
-"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../../../source/news.txt:6
-msgid "News"
-msgstr ""
-
-#: ../../../source/news.txt:11
-msgid "Release 1.2.2 - 2011/05/29"
-msgstr ""
-
-#: ../../../source/news.txt:14
-msgid "Improvements"
-msgstr ""
-
-#: ../../../source/news.txt:16
-msgid "Added packages for Ubuntu 11.04 Natty Narwhal."
-msgstr ""
-
-#: ../../../source/news.txt:17
-msgid "Removed packages for Ubuntu 10.10 Maverick Meerkat."
-msgstr ""
-
-#: ../../../source/news.txt:18
-msgid "RPM: Split server related packages to groonga-server package."
-msgstr ""
-
-#: ../../../source/news.txt:19
-msgid "suggest: Added target object name into error messages."
-msgstr ""
-
-#: ../../../source/news.txt:20
-msgid "document: Started English support. (not completed yet.)"
-msgstr ""
-
-#: ../../../source/news.txt:21
-msgid "groonga-suggest-httpd: Added --disable-max-fd-check option."
-msgstr ""
-
-#: ../../../source/news.txt:22
+#: ../../../source/news/1.0.x.txt:135
 msgid ""
-"groonga: Renamed :option:`--address <-a>` option to :option:`--bind-address`."
+"プラグインの置き場所を変更: lib/groonga/modules/ -> lib/groonga/plugins/ #624"
 msgstr ""
+"プラグインの置き場所を変更: lib/groonga/modules/ -> lib/groonga/plugins/ #624"
 
-#: ../../../source/news.txt:23
-msgid "groonga-suggest-httpd: Renamed --address option to --bind-address."
-msgstr ""
-
-#: ../../../source/news.txt:24
+#: ../../../source/news/1.0.x.txt:34
 msgid ""
-"Changed admin HTML install directory to $PREFIX/share/groonga/html/admin/ "
-"from $PREFIX/share/groonga/admin_html/."
+"ベクタの値を :doc:`/commands/load` するときにキャストに失敗したら、そ のこと"
+"を報告するようにした。"
 msgstr ""
+"ベクタの値を :doc:`/commands/load` するときにキャストに失敗したら、そ のこと"
+"を報告するようにした。"
 
-#: ../../../source/news.txt:27
-msgid ""
-"groonga-suggest-httpd: Used \"application/json\" for JSON response instead "
-"of \"text/javascript\"."
-msgstr ""
+#: ../../../source/news/0.x.txt:112
+msgid "データ投入後のインデックスカラム作成に対応。"
+msgstr "データ投入後のインデックスカラム作成に対応。"
 
-#: ../../../source/news.txt:29
-msgid ""
-"Windows: Used DLL relative path instead of executable file relative path."
-msgstr ""
+#: ../../../source/news/0.x.txt:98
+msgid "データに不整合が発生する場合はデータを削除しないように変更。"
+msgstr "データに不整合が発生する場合はデータを削除しないように変更。"
 
-#: ../../../source/news.txt:31
-msgid "MeCab: Added error message from MeCab on MeCab initialize error."
-msgstr ""
-
-#: ../../../source/news.txt:32
-msgid "suggest: Added prefix_search parameter to suggest command. #909"
-msgstr ""
-
-#: ../../../source/news.txt:34
-msgid ""
-"plugin: Added grn_plugin_get_system_plugins_dir() and grn_plugin_get_suffix"
-"() API."
-msgstr ""
-
-#: ../../../source/news.txt:36
-msgid "Added grn_obj_is_builtin() API."
-msgstr ""
-
-#: ../../../source/news.txt:37
-msgid ":doc:`/commands/load`: Added table name check. #934"
-msgstr ""
-
-#: ../../../source/news.txt:38
-msgid "Showed invalid name context in error message. #935"
-msgstr ""
-
-#: ../../../source/news.txt:41
-msgid "Fixes"
-msgstr ""
-
-#: ../../../source/news.txt:43
-msgid "Fixed a data breaking bug on multi process update. #890"
-msgstr ""
-
-#: ../../../source/news.txt:46
-msgid "1.2.1リリース - 2011/04/29"
-msgstr "1.2.1リリース - 2011/04/29"
-
-#: ../../../source/news.txt:49 ../../../source/news.txt:74
+#: ../../../source/news.txt:75 ../../../source/news.txt:100
 #: ../../../source/news/0.x.txt:12 ../../../source/news/0.x.txt:39
 #: ../../../source/news/1.0.x.txt:27 ../../../source/news/1.0.x.txt:75
 #: ../../../source/news/1.0.x.txt:115 ../../../source/news/1.0.x.txt:156
@@ -126,958 +48,13 @@ msgstr "1.2.1リリース - 2011/04/29"
 msgid "改良"
 msgstr "改良"
 
-#: ../../../source/news.txt:51
-msgid "suggestコマンドにthresholdパラメーターを追加。#895"
-msgstr "suggestコマンドにthresholdパラメーターを追加。#895"
-
-#: ../../../source/news.txt:52
-msgid "suggestのHTTPサーバにlimitパラメーターを追加。#899"
-msgstr "suggestのHTTPサーバにlimitパラメーターを追加。#899"
-
-#: ../../../source/news.txt:53
-msgid "grntest: SIGINTでの中断に対応。"
-msgstr "grntest: SIGINTでの中断に対応。"
-
-#: ../../../source/news.txt:56 ../../../source/news.txt:90
-#: ../../../source/news/0.x.txt:27 ../../../source/news/0.x.txt:115
-#: ../../../source/news/1.0.x.txt:12 ../../../source/news/1.0.x.txt:41
-#: ../../../source/news/1.0.x.txt:62 ../../../source/news/1.0.x.txt:93
-#: ../../../source/news/1.0.x.txt:139 ../../../source/news/1.0.x.txt:185
-#: ../../../source/news/1.0.x.txt:231 ../../../source/news/1.0.x.txt:255
-#: ../../../source/news/1.0.x.txt:278 ../../../source/news/1.1.x.txt:22
-msgid "修正"
-msgstr "修正"
-
-#: ../../../source/news.txt:58
-msgid ""
-"同時に複数のデータベースを開いているとき、1つでもデータベー スを閉じると関連"
-"するプラグインも閉じられてしまう問題を修正。 #894"
-msgstr ""
-"同時に複数のデータベースを開いているとき、1つでもデータベー スを閉じると関連"
-"するプラグインも閉じられてしまう問題を修正。 #894"
-
-#: ../../../source/news.txt:60
-msgid ""
-"configureの--helpで出力される--with-deafult-encodingの値が 間違っていた問題を"
-"修正。（ICHII Takashiさんが報告）"
-msgstr ""
-"configureの--helpで出力される--with-deafult-encodingの値が 間違っていた問題を"
-"修正。（ICHII Takashiさんが報告）"
-
-#: ../../../source/news.txt:62
-msgid "チュートリアル中のtypoを修正。（moozさんが修正）"
-msgstr "チュートリアル中のtypoを修正。（moozさんが修正）"
-
-#: ../../../source/news.txt:65 ../../../source/news.txt:114
-#: ../../../source/news/0.x.txt:124 ../../../source/news/1.0.x.txt:19
-#: ../../../source/news/1.0.x.txt:53 ../../../source/news/1.0.x.txt:67
-#: ../../../source/news/1.0.x.txt:106 ../../../source/news/1.0.x.txt:146
-#: ../../../source/news/1.0.x.txt:209 ../../../source/news/1.0.x.txt:237
-#: ../../../source/news/1.0.x.txt:262 ../../../source/news/1.0.x.txt:287
-#: ../../../source/news/1.1.x.txt:29
-msgid "感謝"
-msgstr "感謝"
-
-#: ../../../source/news.txt:67
-msgid "ICHII Takashiさん"
-msgstr "ICHII Takashiさん"
-
-#: ../../../source/news.txt:68
-msgid "moozさん"
-msgstr "moozさん"
-
-#: ../../../source/news.txt:71
-msgid "1.2.0リリース - 2011/03/29"
-msgstr "1.2.0リリース - 2011/03/29"
-
-#: ../../../source/news.txt:76
-msgid "MacPortsでのインストールドキュメントを追加。"
-msgstr "MacPortsでのインストールドキュメントを追加。"
-
-#: ../../../source/news.txt:77
-msgid "Homebrewでのインストールドキュメントを追加。"
-msgstr "Homebrewでのインストールドキュメントを追加。"
-
-#: ../../../source/news.txt:78
-msgid "WindowsではMinGWでもpthreadを使わないようにした。"
-msgstr "WindowsではMinGWでもpthreadを使わないようにした。"
-
-#: ../../../source/news.txt:79
-msgid "オーバーフローチェックを強化。"
-msgstr "オーバーフローチェックを強化。"
-
-#: ../../../source/news.txt:80
-msgid "位置情報の入力値チェックを強化。"
-msgstr "位置情報の入力値チェックを強化。"
-
-#: ../../../source/news.txt:81
-msgid "インデックスを用いたジオサーチの例をチュートリアルに追加。 #438"
-msgstr "インデックスを用いたジオサーチの例をチュートリアルに追加。 #438"
-
-#: ../../../source/news.txt:82
-msgid "Debian GNU/Linux wheezyのパッケージを追加。"
-msgstr "Debian GNU/Linux wheezyのパッケージを追加。"
-
-#: ../../../source/news.txt:83
-msgid "Debian GNU/Linux lennyのパッケージを削除。"
-msgstr "Debian GNU/Linux lennyのパッケージを削除。"
-
-#: ../../../source/news.txt:84
-msgid ""
-"Debianパッケージをcdbsベースからdebhelperベースへ移行。 パッケージ名の変更あ"
-"り。 #887"
-msgstr ""
-"Debianパッケージをcdbsベースからdebhelperベースへ移行。 パッケージ名の変更あ"
-"り。 #887"
-
-#: ../../../source/news.txt:86
-msgid ""
-"MeCabトークナイザーの読み込みエラーを無視するようにした。た だし、ログには残"
-"る。 #893"
-msgstr ""
-"MeCabトークナイザーの読み込みエラーを無視するようにした。た だし、ログには残"
-"る。 #893"
-
-#: ../../../source/news.txt:92
-msgid ""
-"autoconf 2.59環境において、ファイルシステムのルート直下に groongaディレクトリ"
-"を作成しようとする問題を修正。 #833"
-msgstr ""
-"autoconf 2.59環境において、ファイルシステムのルート直下に groongaディレクトリ"
-"を作成しようとする問題を修正。 #833"
-
-#: ../../../source/news.txt:94
-msgid "JSONPが動作しなくなっていた問題を修正。"
-msgstr "JSONPが動作しなくなっていた問題を修正。"
-
-#: ../../../source/news.txt:95
-msgid ""
-"MeCabトークナイザーの読み込みに失敗したときにクラッシュする問題を修正。 "
-"（@tomotaka_itoさんが報告）"
-msgstr ""
-"MeCabトークナイザーの読み込みに失敗したときにクラッシュする問題を修正。 "
-"（@tomotaka_itoさんが報告）"
-
-#: ../../../source/news.txt:97
-msgid "[非互換] 位置情報の小数表記からミリ秒への変換誤差が大きい問題を修正。"
-msgstr "[非互換] 位置情報の小数表記からミリ秒への変換誤差が大きい問題を修正。"
-
-#: ../../../source/news.txt:98
-#, fuzzy
-msgid ""
-":doc:`/functions/geo_in_rectangle` の ``top_left`` と ``bottom_right`` に同じ"
-"位置を指定するとクラッシュする問題を修正。"
-msgstr ""
-":ref:`geo_in_rectangle` の ``top_left`` と ``bottom_right`` に同じ位置を指定"
-"するとクラッシュする問題を修正。"
-
-#: ../../../source/news.txt:100 ../../../source/news/1.0.x.txt:188
-msgid "メモリリークを修正。"
-msgstr "メモリリークを修正。"
-
-#: ../../../source/news.txt:101
-msgid "小数形式のTimeリテラルをロードするとミリ秒情報が落ちる問題を修正。 #880"
-msgstr ""
-"小数形式のTimeリテラルをロードするとミリ秒情報が落ちる問題を修正。 #880"
-
-#: ../../../source/news.txt:102
-#, fuzzy
-msgid ":doc:`/commands/column_list` のドキュメントを修正。 #758"
-msgstr ":ref:`column_list` のドキュメントを修正。 #758"
-
-#: ../../../source/news.txt:103
-#, fuzzy
-msgid ":doc:`/commands/table_list` のドキュメントを修正。"
-msgstr ":ref:`table_list` のドキュメントを修正。"
-
-#: ../../../source/news.txt:104
-#, fuzzy
-msgid ""
-":doc:`/commands/load` で_valueを指定するとメモリリークする問題を修正。 #878"
-msgstr ":ref:`load` で_valueを指定するとメモリリークする問題を修正。 #878"
-
-#: ../../../source/news.txt:105
-#, fuzzy
-msgid ":doc:`/commands/load` でクラッシュする問題を修正。 #661"
-msgstr ":ref:`load` でクラッシュする問題を修正。 #661"
-
-#: ../../../source/news.txt:108
-msgid "実験的"
-msgstr "実験的"
-
-#: ../../../source/news.txt:110
-msgid "grn_table_truncate()を追加。（実験的。問題あり）"
-msgstr "grn_table_truncate()を追加。（実験的。問題あり）"
-
-#: ../../../source/news.txt:111
-msgid "truncateコマンドを追加。（実験的。問題あり） #888"
-msgstr "truncateコマンドを追加。（実験的。問題あり） #888"
-
-#: ../../../source/news.txt:116
-msgid "@tomotaka_itoさん"
-msgstr "@tomotaka_itoさん"
-
-#: ../../../source/news.txt:119
-msgid "過去のリリース"
-msgstr ""
-
-#: ../../../source/news/0.x.txt:6
-msgid "バージョン0.xのお知らせ"
-msgstr ""
-
-#: ../../../source/news/0.x.txt:9
-msgid "0.7.7リリース - 2010/08/25"
-msgstr "0.7.7リリース - 2010/08/25"
-
-#: ../../../source/news/0.x.txt:14
-#, fuzzy
-msgid ""
-"編集距離（レーベンシュタイン距離）を計算する :doc:`/functions/edit_distance` "
-"()関数の追加。"
-msgstr ""
-"編集距離（レーベンシュタイン距離）を計算する :ref:`edit_distance` ()関数の追"
-"加。"
-
-#: ../../../source/news/0.x.txt:17
-msgid "manを追加。"
-msgstr "manを追加。"
-
-#: ../../../source/news/0.x.txt:19
-#, fuzzy
-msgid ""
-":doc:`/commands/delete` コマンドでデータの整合性が壊れる場合はエラー を返すよ"
-"うにした。"
-msgstr ""
-":ref:`delete` コマンドでデータの整合性が壊れる場合はエラー を返すようにした。"
-
-#: ../../../source/news/0.x.txt:22
-msgid "MeCabの辞書のエンコーディング検出処理を改善。"
-msgstr "MeCabの辞書のエンコーディング検出処理を改善。"
-
-#: ../../../source/news/0.x.txt:24
-msgid "デフォルトの設定ファイルを追加。"
-msgstr "デフォルトの設定ファイルを追加。"
-
-#: ../../../source/news/0.x.txt:29
-#, fuzzy
-msgid ""
-":doc:`/functions/geo_in_rectangle` ()関数が引数を「左上」と「右下」で はな"
-"く、「左下」と「右上」と扱っていた問題を修正。"
-msgstr ""
-":ref:`geo_in_rectangle` ()関数が引数を「左上」と「右下」で はなく、「左下」と"
-"「右上」と扱っていた問題を修正。"
-
-#: ../../../source/news/0.x.txt:32
-msgid "前方一致検索がマッチしない問題を修正。"
-msgstr "前方一致検索がマッチしない問題を修正。"
-
-#: ../../../source/news/0.x.txt:36
-msgid "0.7.6リリース - 2010/08/19"
-msgstr "0.7.6リリース - 2010/08/19"
-
-#: ../../../source/news/0.x.txt:41
-msgid "デーモンになるときは標準出力を閉じるようにした。"
-msgstr "デーモンになるときは標準出力を閉じるようにした。"
-
-#: ../../../source/news/0.x.txt:43
-msgid "PIDファイルを指定する``--pid-path``オプションを追加。"
-msgstr "PIDファイルを指定する``--pid-path``オプションを追加。"
-
-#: ../../../source/news/0.x.txt:45
-msgid "設定ファイルを指定する``--config-path``オプションを追加。"
-msgstr "設定ファイルを指定する``--config-path``オプションを追加。"
-
-#: ../../../source/news/0.x.txt:47
-msgid "最大キャッシュ数を指定する``--cache-limit``オプションを追加。"
-msgstr "最大キャッシュ数を指定する``--cache-limit``オプションを追加。"
-
-#: ../../../source/news/0.x.txt:49
-msgid "設定値を表示する``--show-config``オプションを追加。"
-msgstr "設定値を表示する``--show-config``オプションを追加。"
-
-#: ../../../source/news/0.x.txt:51
-msgid "指定したファイルからコマンドを読み込む``--file``オプションを追加。"
-msgstr "指定したファイルからコマンドを読み込む``--file``オプションを追加。"
-
-#: ../../../source/news/0.x.txt:53
-msgid ""
-"groongaとMeCabの辞書のエンコーディングが同じかどうかを確 認するようにした。"
-msgstr ""
-"groongaとMeCabの辞書のエンコーディングが同じかどうかを確 認するようにした。"
-
-#: ../../../source/news/0.x.txt:56
-msgid "Web管理画面:"
-msgstr "Web管理画面:"
-
-#: ../../../source/news/0.x.txt:58
-msgid "データロード機能を追加。"
-msgstr "データロード機能を追加。"
-
-#: ../../../source/news/0.x.txt:59
-msgid "uptimeの表示形式を読みやすい形式に変更。"
-msgstr "uptimeの表示形式を読みやすい形式に変更。"
-
-#: ../../../source/news/0.x.txt:61
-msgid "Muninプラグインの追加。"
-msgstr "Muninプラグインの追加。"
-
-#: ../../../source/news/0.x.txt:63
-msgid "クエリパフォーマンス計測用"
-msgstr "クエリパフォーマンス計測用"
-
-#: ../../../source/news/0.x.txt:64
-msgid "ディスク使用量計測用"
-msgstr "ディスク使用量計測用"
-
-#: ../../../source/news/0.x.txt:66
-msgid "libedit対応。"
-msgstr "libedit対応。"
-
-#: ../../../source/news/0.x.txt:68
-msgid "存在しないデータベースを指定したときのエラーメッセージを改善。"
-msgstr "存在しないデータベースを指定したときのエラーメッセージを改善。"
-
-#: ../../../source/news/0.x.txt:70
-msgid "loadコマンド:"
-msgstr "loadコマンド:"
-
-#: ../../../source/news/0.x.txt:72
-msgid "不正な文字を見つけた場合はログに出力。"
-msgstr "不正な文字を見つけた場合はログに出力。"
-
-#: ../../../source/news/0.x.txt:73
-msgid "必要な項目がない場合はログに出力。"
-msgstr "必要な項目がない場合はログに出力。"
-
-#: ../../../source/news/0.x.txt:74
-msgid "true/false/nullリテラルをサポート。"
-msgstr "true/false/nullリテラルをサポート。"
-
-#: ../../../source/news/0.x.txt:75
-msgid ""
-"GeoPointの度での指定をサポート。 （例: "
-"\"35.6954581363924,139.564207350021\"）"
-msgstr ""
-"GeoPointの度での指定をサポート。 （例: "
-"\"35.6954581363924,139.564207350021\"）"
-
-#: ../../../source/news/0.x.txt:77
-msgid "NO_KEYテーブルを参照しているカラム値をサポート。"
-msgstr "NO_KEYテーブルを参照しているカラム値をサポート。"
-
-#: ../../../source/news/0.x.txt:78
-msgid "数値のベクタをサポート。"
-msgstr "数値のベクタをサポート。"
-
-#: ../../../source/news/0.x.txt:80
-msgid "selectコマンド"
-msgstr "selectコマンド"
-
-#: ../../../source/news/0.x.txt:82
-msgid "索引を用いた高速なGeoPointの検索機能を追加。"
-msgstr "索引を用いた高速なGeoPointの検索機能を追加。"
-
-#: ../../../source/news/0.x.txt:83
-msgid ""
-"索引を用いた高速なGeoPointのソート機能を追加。 （ただし複数のソートキーと一緒"
-"に使うことはできない。）"
-msgstr ""
-"索引を用いた高速なGeoPointのソート機能を追加。 （ただし複数のソートキーと一緒"
-"に使うことはできない。）"
-
-#: ../../../source/news/0.x.txt:85
-msgid "ベクタのGeoPointの出力に対応。"
-msgstr "ベクタのGeoPointの出力に対応。"
-
-#: ../../../source/news/0.x.txt:86
-msgid "不正な入力値に対してエラーを出力するようにした。"
-msgstr "不正な入力値に対してエラーを出力するようにした。"
-
-#: ../../../source/news/0.x.txt:88
-msgid "dumpコマンド:"
-msgstr "dumpコマンド:"
-
-#: ../../../source/news/0.x.txt:90
-msgid "フラグを数値ではなくキーワードで出力するように変更。"
-msgstr "フラグを数値ではなくキーワードで出力するように変更。"
-
-#: ../../../source/news/0.x.txt:92
-msgid "column_listコマンド:"
-msgstr "column_listコマンド:"
-
-#: ../../../source/news/0.x.txt:94
-msgid "_keyカラムの出力に対応。"
-msgstr "_keyカラムの出力に対応。"
-
-#: ../../../source/news/0.x.txt:96
-msgid "deleteコマンド:"
-msgstr "deleteコマンド:"
-
-#: ../../../source/news/0.x.txt:98
-msgid "データに不整合が発生する場合はデータを削除しないように変更。"
-msgstr "データに不整合が発生する場合はデータを削除しないように変更。"
-
-#: ../../../source/news/0.x.txt:100
-msgid "statusコマンド:"
-msgstr "statusコマンド:"
-
-#: ../../../source/news/0.x.txt:102
-msgid "キャッシュ情報を追加。"
-msgstr "キャッシュ情報を追加。"
-
-#: ../../../source/news/0.x.txt:104
-msgid "データの整合性を確認するcheckコマンドの追加。"
-msgstr "データの整合性を確認するcheckコマンドの追加。"
-
-#: ../../../source/news/0.x.txt:106
-msgid "強制的にロックを解除するclearlockコマンドの追加。"
-msgstr "強制的にロックを解除するclearlockコマンドの追加。"
-
-#: ../../../source/news/0.x.txt:108
-msgid "最大キャッシュ数を指定するcache_limitコマンドの追加。"
-msgstr "最大キャッシュ数を指定するcache_limitコマンドの追加。"
-
-#: ../../../source/news/0.x.txt:110
-msgid "フラグメンテーションを解消するdefragコマンドの追加。"
-msgstr "フラグメンテーションを解消するdefragコマンドの追加。"
-
-#: ../../../source/news/0.x.txt:112
-msgid "データ投入後のインデックスカラム作成に対応。"
-msgstr "データ投入後のインデックスカラム作成に対応。"
-
-#: ../../../source/news/0.x.txt:117
-msgid "不正なsortキーを指定された場合はSEGVする問題の修正。"
-msgstr "不正なsortキーを指定された場合はSEGVする問題の修正。"
-
-#: ../../../source/news/0.x.txt:118
-msgid "selectの出力に不正なカラムを指定された時にSEGVする問題を修正。"
-msgstr "selectの出力に不正なカラムを指定された時にSEGVする問題を修正。"
-
-#: ../../../source/news/0.x.txt:119
-msgid "空のベクタをloadするとSEGVする問題の修正。"
-msgstr "空のベクタをloadするとSEGVする問題の修正。"
-
-#: ../../../source/news/0.x.txt:120
-msgid "メモリリークの修正。"
-msgstr "メモリリークの修正。"
-
-#: ../../../source/news/0.x.txt:121
-msgid "drilldown時に参照先が存在しない場合にSEGVする問題の修正。"
-msgstr "drilldown時に参照先が存在しない場合にSEGVする問題の修正。"
-
-#: ../../../source/news/0.x.txt:126
-msgid "おばたさん"
-msgstr "おばたさん"
-
-#: ../../../source/news/1.0.x.txt:6
-msgid "バージョン1.0.xのお知らせ"
-msgstr ""
-
-#: ../../../source/news/1.0.x.txt:9
-msgid "1.0.8リリース - 2011/02/02"
-msgstr "1.0.8リリース - 2011/02/02"
-
-#: ../../../source/news/1.0.x.txt:14
-msgid ""
-"ShortText型カラムへデータ追加・削除を繰り返すとデータが壊れ ることがある問題"
-"を修正。 （Mitsuhiro Shibuyaさんが報告）"
-msgstr ""
-"ShortText型カラムへデータ追加・削除を繰り返すとデータが壊れ ることがある問題"
-"を修正。 （Mitsuhiro Shibuyaさんが報告）"
-
-#: ../../../source/news/1.0.x.txt:21
-msgid "Mitsuhiro Shibuyaさん"
-msgstr "Mitsuhiro Shibuyaさん"
-
-#: ../../../source/news/1.0.x.txt:24
-msgid "1.0.7リリース - 2011/01/29"
-msgstr "1.0.7リリース - 2011/01/29"
-
-#: ../../../source/news/1.0.x.txt:29
-msgid "automake 1.9.6でも動作するようにした。 #508"
-msgstr "automake 1.9.6でも動作するようにした。 #508"
-
-#: ../../../source/news/1.0.x.txt:30
-msgid "configureの最後に検出したMeCabの情報も表示するようにした。"
-msgstr "configureの最後に検出したMeCabの情報も表示するようにした。"
-
-#: ../../../source/news/1.0.x.txt:31
-msgid "エラーメッセージをわかりやすくした。"
-msgstr "エラーメッセージをわかりやすくした。"
-
-#: ../../../source/news/1.0.x.txt:32
-msgid ""
-"--enable-memory-debug付きでビルドしたときに終了時に未開放のメモリが 割り当て"
-"られた場所を表示するようにした。"
-msgstr ""
-"--enable-memory-debug付きでビルドしたときに終了時に未開放のメモリが 割り当て"
-"られた場所を表示するようにした。"
-
-#: ../../../source/news/1.0.x.txt:34
-#, fuzzy
-msgid ""
-"ベクタの値を :doc:`/commands/load` するときにキャストに失敗したら、そ のこと"
-"を報告するようにした。"
-msgstr ""
-"ベクタの値を :ref:`load` するときにキャストに失敗したら、そ のことを報告する"
-"ようにした。"
-
-#: ../../../source/news/1.0.x.txt:36
-msgid ""
-"groongaのメモリリークを検出するユーティリティツール groonga-check-memory-"
-"leak.rbを追加。（インストールはされない。）"
-msgstr ""
-"groongaのメモリリークを検出するユーティリティツール groonga-check-memory-"
-"leak.rbを追加。（インストールはされない。）"
-
-#: ../../../source/news/1.0.x.txt:38
-#, fuzzy
-msgid ":doc:`/commands/dump` がテーブル単位のダンプに対応。"
-msgstr ":ref:`dump` がテーブル単位のダンプに対応。"
-
-#: ../../../source/news/1.0.x.txt:43
-msgid ""
-"Mac OS Xでモジュールの拡張子の検出に失敗する問題を修正。 （ongaeshiさんが報"
-"告）"
-msgstr ""
-"Mac OS Xでモジュールの拡張子の検出に失敗する問題を修正。 （ongaeshiさんが報"
-"告）"
-
-#: ../../../source/news/1.0.x.txt:45
-msgid "Mac OS Xではrealloc(ptr, 0)ではなくfree()を使うように修正。"
-msgstr "Mac OS Xではrealloc(ptr, 0)ではなくfree()を使うように修正。"
-
-#: ../../../source/news/1.0.x.txt:46
-msgid "grntestで結果の比較が常に失敗していた問題を修正。"
-msgstr "grntestで結果の比較が常に失敗していた問題を修正。"
-
-#: ../../../source/news/1.0.x.txt:47
-msgid "groonga-suggest-learnerのメモリリークを修正。"
-msgstr "groonga-suggest-learnerのメモリリークを修正。"
-
-#: ../../../source/news/1.0.x.txt:48
-#, fuzzy
-msgid ""
-":doc:`/commands/load` 時のメモリリークを修正。 （Kenichi Aramakiさんが報告）"
-msgstr ":ref:`load` 時のメモリリークを修正。 （Kenichi Aramakiさんが報告）"
-
-#: ../../../source/news/1.0.x.txt:50
-msgid "ベクタの値を出力するときのメモリリークを修正。"
-msgstr "ベクタの値を出力するときのメモリリークを修正。"
-
-#: ../../../source/news/1.0.x.txt:55
-msgid "ongaeshiさん"
-msgstr "ongaeshiさん"
-
-#: ../../../source/news/1.0.x.txt:56
-msgid "Kenichi Aramakiさん"
-msgstr "Kenichi Aramakiさん"
-
-#: ../../../source/news/1.0.x.txt:59
-msgid "1.0.6リリース - 2010/12/31"
-msgstr "1.0.6リリース - 2010/12/31"
-
-#: ../../../source/news/1.0.x.txt:64
-#, fuzzy
-msgid "\\*BSDでビルドできない問題を修正。（OBATA Akioさんが報告）"
-msgstr "*BSDでビルドできない問題を修正。（OBATA Akioさんが報告）"
-
-#: ../../../source/news/1.0.x.txt:69 ../../../source/news/1.0.x.txt:109
-#: ../../../source/news/1.0.x.txt:149 ../../../source/news/1.0.x.txt:239
-#: ../../../source/news/1.0.x.txt:265
-msgid "OBATA Akioさん"
-msgstr "OBATA Akioさん"
-
-#: ../../../source/news/1.0.x.txt:72
-msgid "1.0.5リリース - 2010/12/29"
-msgstr "1.0.5リリース - 2010/12/29"
-
-#: ../../../source/news/1.0.x.txt:77
-msgid "サジェスト機能用の学習プログラムを追加。"
-msgstr "サジェスト機能用の学習プログラムを追加。"
-
-#: ../../../source/news/1.0.x.txt:78
-msgid "groongaスクリプト内での行コメントに対応。（「#」以降を無視） #723"
-msgstr "groongaスクリプト内での行コメントに対応。（「#」以降を無視） #723"
-
-#: ../../../source/news/1.0.x.txt:79
-#, fuzzy
-msgid ":doc:`/commands/column_list` のXML出力対応。 #748"
-msgstr ":ref:`column_list` のXML出力対応。 #748"
-
-#: ../../../source/news/1.0.x.txt:80
-msgid "主キーが数値のテーブルを参照しているカラムでの比較演算に対応。 #776"
-msgstr "主キーが数値のテーブルを参照しているカラムでの比較演算に対応。 #776"
-
 #: ../../../source/news/1.0.x.txt:81
 msgid "grntestがmlockの情報出力に対応。"
 msgstr "grntestがmlockの情報出力に対応。"
 
-#: ../../../source/news/1.0.x.txt:82
-msgid "NetBSDでのビルドに対応。 （OBATA Akioさんがパッチ作成）"
-msgstr "NetBSDでのビルドに対応。 （OBATA Akioさんがパッチ作成）"
-
-#: ../../../source/news/1.0.x.txt:83
-msgid ""
-"MeCabトークナイザーが見つからない時のエラーメッセージをより親切にした。 #790"
-msgstr ""
-"MeCabトークナイザーが見つからない時のエラーメッセージをより親切にした。 #790"
-
-#: ../../../source/news/1.0.x.txt:84
-msgid ""
-"開いているファイルディスクリプタが多すぎてacceptできない状態の負荷を低減。 "
-"#802"
-msgstr ""
-"開いているファイルディスクリプタが多すぎてacceptできない状態の負荷を低減。 "
-"#802"
-
-#: ../../../source/news/1.0.x.txt:85
-msgid "DragonFlyでのビルドに対応。 （OBATA Akioさんが報告）"
-msgstr "DragonFlyでのビルドに対応。 （OBATA Akioさんが報告）"
-
-#: ../../../source/news/1.0.x.txt:88 ../../../source/news/1.0.x.txt:133
-#: ../../../source/news/1.0.x.txt:177 ../../../source/news/1.0.x.txt:225
-msgid "変更"
-msgstr "変更"
-
-#: ../../../source/news/1.0.x.txt:90
-#, fuzzy
-msgid ""
-":doc:`/commands/table_list` のXML出力のタグ名をより適切な名前に変更。 #757"
-msgstr ":ref:`table_list` のXML出力のタグ名をより適切な名前に変更。 #757"
-
-#: ../../../source/news/1.0.x.txt:95
-#, fuzzy
-msgid ""
-":doc:`/commands/load` で存在しないカラムを--columnsで指定するとクラッシュする"
-"問題を修正。 （Masahiro Tomitaさんが報告） #751"
-msgstr ""
-":ref:`load` で存在しないカラムを--columnsで指定するとクラッシュする問題を修"
-"正。 （Masahiro Tomitaさんが報告） #751"
-
-#: ../../../source/news/1.0.x.txt:97
-#, fuzzy
-msgid ""
-":doc:`/commands/load` で配列でTABLE_NO_KEYなテーブルにレコードをロードできな"
-"い問題を修正。 （Masahiro Tomitaさんが報告） #750"
-msgstr ""
-":ref:`load` で配列でTABLE_NO_KEYなテーブルにレコードをロードできない問題を修"
-"正。 （Masahiro Tomitaさんが報告） #750"
-
-#: ../../../source/news/1.0.x.txt:99
-#, fuzzy
-msgid ""
-":doc:`/commands/delete` でTABLE_NO_KEYなテーブルのレコードを削除するとテーブ"
-"ルが壊れる 問題を修正。 （Masahiro Tomitaさんがパッチ作成） #794"
-msgstr ""
-":ref:`delete` でTABLE_NO_KEYなテーブルのレコードを削除するとテーブルが壊れる "
-"問題を修正。 （Masahiro Tomitaさんがパッチ作成） #794"
-
-#: ../../../source/news/1.0.x.txt:102
-#, fuzzy
-msgid ""
-":doc:`/commands/load` で不正なJSONを指定した場合にそれ以降コマンドを受け付け"
-"なくなる 問題を修正。 #807"
-msgstr ""
-":ref:`load` で不正なJSONを指定した場合にそれ以降コマンドを受け付けなくなる 問"
-"題を修正。 #807"
-
-#: ../../../source/news/1.0.x.txt:108
-msgid "Tomita Masahiroさん"
-msgstr "Tomita Masahiroさん"
-
-#: ../../../source/news/1.0.x.txt:112
-msgid "1.0.4リリース - 2010/11/29"
-msgstr "1.0.4リリース - 2010/11/29"
-
-#: ../../../source/news/1.0.x.txt:117
-msgid "すべてのモジュールで同じ名前の関数をエクスポートするようにした。#624"
-msgstr "すべてのモジュールで同じ名前の関数をエクスポートするようにした。#624"
-
-#: ../../../source/news/1.0.x.txt:118
-msgid "不正な名前を指定したときに指定された名前も報告するようにした。"
-msgstr "不正な名前を指定したときに指定された名前も報告するようにした。"
-
-#: ../../../source/news/1.0.x.txt:119
-#, fuzzy
-msgid ""
-":doc:`/commands/select` の--filter内での数値比較演算をサポート。 （@s3kiさん"
-"が報告）"
-msgstr ""
-":ref:`select` の--filter内での数値比較演算をサポート。 （@s3kiさんが報告）"
-
-#: ../../../source/news/1.0.x.txt:120
-#, fuzzy
-msgid ":doc:`/grntest` の一行あたりの最大バイト数の制限を撤廃。 #608, #690"
-msgstr ":ref:`grntest` の一行あたりの最大バイト数の制限を撤廃。 #608, #690"
-
-#: ../../../source/news/1.0.x.txt:121
-msgid "Int8/UInt8/Int16/UInt16の等値比較にC言語の比較演算子を使用。 #660"
-msgstr "Int8/UInt8/Int16/UInt16の等値比較にC言語の比較演算子を使用。 #660"
-
-#: ../../../source/news/1.0.x.txt:122
-msgid ""
-"HTTP経由で存在しないパスにアクセスした時に存在しないパスを報告するように し"
-"た。"
-msgstr ""
-"HTTP経由で存在しないパスにアクセスした時に存在しないパスを報告するように し"
-"た。"
-
-#: ../../../source/news/1.0.x.txt:124
-msgid "grn_table_cursor_next()をGRN_CURSOR_COLUMN_INDEX対応にした。"
-msgstr "grn_table_cursor_next()をGRN_CURSOR_COLUMN_INDEX対応にした。"
-
-#: ../../../source/news/1.0.x.txt:125
-msgid "右辺が式の演算代入演算子をサポート。 #669"
-msgstr "右辺が式の演算代入演算子をサポート。 #669"
-
-#: ../../../source/news/1.0.x.txt:126
-msgid "zlib/LZOサポート付きでビルドされているかをチェックするAPIを追加。 #686"
-msgstr "zlib/LZOサポート付きでビルドされているかをチェックするAPIを追加。 #686"
-
-#: ../../../source/news/1.0.x.txt:127
-msgid "grn_table_at()を公開。"
-msgstr "grn_table_at()を公開。"
-
-#: ../../../source/news/1.0.x.txt:128
-msgid "grn_db_touch()を公開。 #703"
-msgstr "grn_db_touch()を公開。 #703"
-
-#: ../../../source/news/1.0.x.txt:129
-msgid "コメント行に対応。 #723"
-msgstr "コメント行に対応。 #723"
-
-#: ../../../source/news/1.0.x.txt:130
-msgid "grn_bool型を追加。 #713"
-msgstr "grn_bool型を追加。 #713"
-
-#: ../../../source/news/1.0.x.txt:135
-msgid ""
-"プラグインの置き場所を変更: lib/groonga/modules/ -> lib/groonga/plugins/ #624"
-msgstr ""
-"プラグインの置き場所を変更: lib/groonga/modules/ -> lib/groonga/plugins/ #624"
-
-#: ../../../source/news/1.0.x.txt:141
-msgid "ドキュメントの誤字を修正。（OBATA Akioさんが報告）"
-msgstr "ドキュメントの誤字を修正。（OBATA Akioさんが報告）"
-
-#: ../../../source/news/1.0.x.txt:142
-msgid "GRN_CURSOR_PREFIXが動作しない問題を修正。"
-msgstr "GRN_CURSOR_PREFIXが動作しない問題を修正。"
-
-#: ../../../source/news/1.0.x.txt:143
-msgid "索引が不正に大きくなる問題を修正。（Tomoatsu Shimadaさんが報告） #689"
-msgstr "索引が不正に大きくなる問題を修正。（Tomoatsu Shimadaさんが報告） #689"
-
-#: ../../../source/news/1.0.x.txt:148
-msgid "@s3kiさん"
-msgstr "@s3kiさん"
-
-#: ../../../source/news/1.0.x.txt:150
-msgid "Tomoatsu Shimadaさん"
-msgstr "Tomoatsu Shimadaさん"
-
-#: ../../../source/news/1.0.x.txt:153
-msgid "1.0.3リリース - 2010/10/29"
-msgstr "1.0.3リリース - 2010/10/29"
-
-#: ../../../source/news/1.0.x.txt:158
-msgid ""
-"CentOS/Fedora用パッケージをディストリビューションのルールに従うように改良。 "
-"（上野乃毅さん）"
-msgstr ""
-"CentOS/Fedora用パッケージをディストリビューションのルールに従うように改良。 "
-"（上野乃毅さん）"
-
-#: ../../../source/news/1.0.x.txt:160
-msgid "Fedoraのオフィシャルリポジトリに登録。（Daiki Uenoさん）"
-msgstr "Fedoraのオフィシャルリポジトリに登録。（Daiki Uenoさん）"
-
-#: ../../../source/news/1.0.x.txt:161
-msgid "GeoPointのキャストに対応。#515"
-msgstr "GeoPointのキャストに対応。#515"
-
-#: ../../../source/news/1.0.x.txt:162
-msgid "groongaコマンドに、--defalt-command-versionオプションの追加。"
-msgstr "groongaコマンドに、--defalt-command-versionオプションの追加。"
-
-#: ../../../source/news/1.0.x.txt:163
-msgid "statusの出力結果にコマンドバージョンを追加。"
-msgstr "statusの出力結果にコマンドバージョンを追加。"
-
-#: ../../../source/news/1.0.x.txt:164
-#, fuzzy
-msgid ":doc:`/spec/search` の仕様を追加。"
-msgstr ":ref:`spec_search` の仕様を追加。"
-
-#: ../../../source/news/1.0.x.txt:165
-#, fuzzy
-msgid ":doc:`/troubleshooting` を追加。"
-msgstr ":ref:`troubleshooting` を追加。"
-
-#: ../../../source/news/1.0.x.txt:166
-msgid "辞書検索のサンプルアプリケーションを追加。"
-msgstr "辞書検索のサンプルアプリケーションを追加。"
-
-#: ../../../source/news/1.0.x.txt:167
-msgid "pkg-configがない場合はlibeditを検出しないようにした。 #540"
-msgstr "pkg-configがない場合はlibeditを検出しないようにした。 #540"
-
-#: ../../../source/news/1.0.x.txt:168
-msgid "メモリデバッグ用オプション--enable-memory-debugを追加。"
-msgstr "メモリデバッグ用オプション--enable-memory-debugを追加。"
-
-#: ../../../source/news/1.0.x.txt:169
-msgid "不正な関数呼び出しをチェックするようにした。#596"
-msgstr "不正な関数呼び出しをチェックするようにした。#596"
-
-#: ../../../source/news/1.0.x.txt:170
-msgid ""
-"テキストから数値へのキャスト処理を強化。#612, #613 （Itagaki Takahiroさんが報"
-"告）"
-msgstr ""
-"テキストから数値へのキャスト処理を強化。#612, #613 （Itagaki Takahiroさんが報"
-"告）"
-
-#: ../../../source/news/1.0.x.txt:172
-msgid "クライアントモードでの--fileオプションのサポート。#578"
-msgstr "クライアントモードでの--fileオプションのサポート。#578"
-
-#: ../../../source/news/1.0.x.txt:173
-#, fuzzy
-msgid ""
-":doc:`/spec/search` の挙動を動的に変更する``--match-escalation-threashold`` "
-"起動オプションと``--match_escalation_threshold``selectオプションを追加。 #628"
-msgstr ""
-":ref:`spec_search` の挙動を動的に変更する``--match-escalation-threashold`` 起"
-"動オプションと``--match_escalation_threshold``selectオプションを追加。 #628"
-
-#: ../../../source/news/1.0.x.txt:179
-msgid "記号でトークンを区切るTokenBigramSplitSymbolを使用。 #225"
-msgstr "記号でトークンを区切るTokenBigramSplitSymbolを使用。 #225"
-
-#: ../../../source/news/1.0.x.txt:180
-msgid "時間の解像度をナノ秒に変更。"
-msgstr "時間の解像度をナノ秒に変更。"
-
-#: ../../../source/news/1.0.x.txt:181
-msgid ""
-"パッケージを提供するUbuntuのバージョンをHardy, Lucidから Lucid, Marverickに変"
-"更。"
-msgstr ""
-"パッケージを提供するUbuntuのバージョンをHardy, Lucidから Lucid, Marverickに変"
-"更。"
-
-#: ../../../source/news/1.0.x.txt:187
-msgid "grn_table_cursor_open()のドキュメントを修正。"
-msgstr "grn_table_cursor_open()のドキュメントを修正。"
-
-#: ../../../source/news/1.0.x.txt:189
-msgid ""
-"--disable-libeditオプションがヘルプメッセージと違う問題の修正。 （MATSUU "
-"Takutoさんが報告）"
-msgstr ""
-"--disable-libeditオプションがヘルプメッセージと違う問題の修正。 （MATSUU "
-"Takutoさんが報告）"
-
-#: ../../../source/news/1.0.x.txt:191
-msgid "警告を除去。（MATSUU Takutoさんが報告）"
-msgstr "警告を除去。（MATSUU Takutoさんが報告）"
-
-#: ../../../source/news/1.0.x.txt:192
-msgid ""
-"grn_pat_at()でエンコードされたキーが常にGRN_NILになってしまう問題を修正。#514"
-msgstr ""
-"grn_pat_at()でエンコードされたキーが常にGRN_NILになってしまう問題を修正。#514"
-
-#: ../../../source/news/1.0.x.txt:193
-msgid ""
-"固定長カラムにカラム長より短いデータを設定するとゴミが残ってしまう問題を修"
-"正。"
-msgstr ""
-"固定長カラムにカラム長より短いデータを設定するとゴミが残ってしまう問題を修"
-"正。"
-
-#: ../../../source/news/1.0.x.txt:194
-msgid "不正なレコードがあるときにdumpすると落ちてしまう問題を修正。"
-msgstr "不正なレコードがあるときにdumpすると落ちてしまう問題を修正。"
-
-#: ../../../source/news/1.0.x.txt:195
-msgid "geo_in_rectangle()が無限ループする問題を修正。#563"
-msgstr "geo_in_rectangle()が無限ループする問題を修正。#563"
-
-#: ../../../source/news/1.0.x.txt:196
-msgid ""
-"インデックスがついたカラムでソートすると結果がおかしくなる問題を修正。#571"
-msgstr ""
-"インデックスがついたカラムでソートすると結果がおかしくなる問題を修正。#571"
-
-#: ../../../source/news/1.0.x.txt:197
-msgid "deleteが常に失敗する問題を修正。#541"
-msgstr "deleteが常に失敗する問題を修正。#541"
-
-#: ../../../source/news/1.0.x.txt:198
-msgid ""
-"レコードを追加・削除したパトリシアトライからID順に取り出すカーソルが おかしな"
-"結果を返す問題を修正。#538"
-msgstr ""
-"レコードを追加・削除したパトリシアトライからID順に取り出すカーソルが おかしな"
-"結果を返す問題を修正。#538"
-
-#: ../../../source/news/1.0.x.txt:200
-msgid "値が存在しないレコードがあるカラムでソートすると落ちる問題を修正。"
-msgstr "値が存在しないレコードがあるカラムでソートすると落ちる問題を修正。"
-
-#: ../../../source/news/1.0.x.txt:201
-msgid "モジュールの初期化関数が複数回呼ばれる問題を修正。#567"
-msgstr "モジュールの初期化関数が複数回呼ばれる問題を修正。#567"
-
-#: ../../../source/news/1.0.x.txt:202
-msgid "shutdownで終了しない問題を修正。#114"
-msgstr "shutdownで終了しない問題を修正。#114"
-
-#: ../../../source/news/1.0.x.txt:203
-msgid "全文検索時に削除したレコードが返る問題を修正。#617"
-msgstr "全文検索時に削除したレコードが返る問題を修正。#617"
-
-#: ../../../source/news/1.0.x.txt:204
-msgid "必要な時以外にMeCabの辞書チェックをしてしまう問題を修正。#555"
-msgstr "必要な時以外にMeCabの辞書チェックをしてしまう問題を修正。#555"
-
-#: ../../../source/news/1.0.x.txt:205
-msgid "存在しないパトリシアトライのレコードを参照すると落ちる問題を修正。#630"
-msgstr "存在しないパトリシアトライのレコードを参照すると落ちる問題を修正。#630"
-
-#: ../../../source/news/1.0.x.txt:206
-msgid "インストールドキュメントの誤字を修正。（SHIMODA Hiroshiさんが報告）"
-msgstr "インストールドキュメントの誤字を修正。（SHIMODA Hiroshiさんが報告）"
-
-#: ../../../source/news/1.0.x.txt:211 ../../../source/news/1.0.x.txt:264
-#: ../../../source/news/1.1.x.txt:31
-msgid "Daiki Uenoさん"
-msgstr "Daiki Uenoさん"
-
-#: ../../../source/news/1.0.x.txt:212
-msgid "MATSUU Takutoさん"
-msgstr "MATSUU Takutoさん"
-
-#: ../../../source/news/1.0.x.txt:213 ../../../source/news/1.0.x.txt:289
-msgid "Itagaki Takahiroさん"
-msgstr "Itagaki Takahiroさん"
-
-#: ../../../source/news/1.0.x.txt:214
-msgid "SHIMODA Hiroshiさん"
-msgstr "SHIMODA Hiroshiさん"
-
-#: ../../../source/news/1.0.x.txt:217
-msgid "1.0.2リリース - 2010/09/09"
-msgstr "1.0.2リリース - 2010/09/09"
-
-#: ../../../source/news/1.0.x.txt:222
-#, fuzzy
-msgid ""
-":doc:`/commands/suggest` コマンドのサンプルを追加。（examples/dictionary/）"
-msgstr ":ref:`suggest` コマンドのサンプルを追加。（examples/dictionary/）"
+#: ../../../source/news/0.x.txt:68
+msgid "存在しないデータベースを指定したときのエラーメッセージを改善。"
+msgstr "存在しないデータベースを指定したときのエラーメッセージを改善。"
 
 #: ../../../source/news/1.0.x.txt:227
 msgid ""
@@ -1087,122 +64,675 @@ msgstr ""
 "HTTPで公開するディレクトリを指定する--admin-html-pathを--document-rootに変"
 "更。"
 
-#: ../../../source/news/1.0.x.txt:228
-#, fuzzy
-msgid ""
-":doc:`/commands/select` コマンドのデフォルトの--output_columnsから_valueを削"
-"除。"
-msgstr ":ref:`select` コマンドのデフォルトの--output_columnsから_valueを削除。"
-
-#: ../../../source/news/1.0.x.txt:233
-msgid "パッケージミスを修正。 （OBATA Akioさんが報告）"
-msgstr "パッケージミスを修正。 （OBATA Akioさんが報告）"
-
-#: ../../../source/news/1.0.x.txt:234
-msgid "GeoPointの度表記の解釈を修正。 #460"
-msgstr "GeoPointの度表記の解釈を修正。 #460"
+#: ../../../source/news.txt:109
+msgid "Debian GNU/Linux lennyのパッケージを削除。"
+msgstr "Debian GNU/Linux lennyのパッケージを削除。"
 
 #: ../../../source/news/1.0.x.txt:243
 msgid "1.0.1リリース - 2010/09/06"
 msgstr "1.0.1リリース - 2010/09/06"
 
-#: ../../../source/news/1.0.x.txt:248
-msgid "CentOS 5/Fedora 13用RPMの提供。（Daiki Uenoさん作成のspecがベース）"
-msgstr "CentOS 5/Fedora 13用RPMの提供。（Daiki Uenoさん作成のspecがベース）"
+#: ../../../source/news/1.0.x.txt:201
+msgid "モジュールの初期化関数が複数回呼ばれる問題を修正。#567"
+msgstr "モジュールの初期化関数が複数回呼ばれる問題を修正。#567"
 
-#: ../../../source/news/1.0.x.txt:250
-msgid "ログパスのデフォルト値に--localstatedirを使用。（OBATA Akioさんが提案）"
-msgstr ""
-"ログパスのデフォルト値に--localstatedirを使用。（OBATA Akioさんが提案）"
+#: ../../../source/news/1.0.x.txt:200
+msgid "値が存在しないレコードがあるカラムでソートすると落ちる問題を修正。"
+msgstr "値が存在しないレコードがあるカラムでソートすると落ちる問題を修正。"
 
-#: ../../../source/news/1.0.x.txt:252
-msgid "BOM付きUTF-8に対応。"
-msgstr "BOM付きUTF-8に対応。"
-
-#: ../../../source/news/1.0.x.txt:257
-msgid "JSON JQueryプラグインが同梱されていない問題の修正。"
-msgstr "JSON JQueryプラグインが同梱されていない問題の修正。"
-
-#: ../../../source/news/1.0.x.txt:259
-msgid "テストが失敗する問題の修正。（OBATA Akioさんが報告）"
-msgstr "テストが失敗する問題の修正。（OBATA Akioさんが報告）"
-
-#: ../../../source/news/1.0.x.txt:268
-msgid "1.0.0リリース - 2010/08/29"
-msgstr "1.0.0リリース - 2010/08/29"
-
-#: ../../../source/news/1.0.x.txt:273
-#, fuzzy
+#: ../../../source/news/1.0.x.txt:90
 msgid ""
-"指定したクエリに対する補完・修正・提案を行う :doc:`/commands/suggest` コマン"
-"ドを追加。"
+":doc:`/commands/table_list` のXML出力のタグ名をより適切な名前に変更。 #757"
 msgstr ""
-"指定したクエリに対する補完・修正・提案を行う :ref:`suggest` コマンドを追加。"
+":doc:`/commands/table_list` のXML出力のタグ名をより適切な名前に変更。 #757"
 
-#: ../../../source/news/1.0.x.txt:275
-#, fuzzy
+#: ../../../source/news/1.0.x.txt:121
+msgid "Int8/UInt8/Int16/UInt16の等値比較にC言語の比較演算子を使用。 #660"
+msgstr "Int8/UInt8/Int16/UInt16の等値比較にC言語の比較演算子を使用。 #660"
+
+#: ../../../source/news/0.x.txt:59
+msgid "uptimeの表示形式を読みやすい形式に変更。"
+msgstr "uptimeの表示形式を読みやすい形式に変更。"
+
+#: ../../../source/news/1.0.x.txt:119
 msgid ""
-":doc:`/commands/delete` コマンドが失敗したらfalseを返すように変更。（Itagaki "
-"Takahiroさんが提案）"
+":doc:`/commands/select` の--filter内での数値比較演算をサポート。 （@s3kiさん"
+"が報告）"
 msgstr ""
-":ref:`delete` コマンドが失敗したらfalseを返すように変更。（Itagaki Takahiroさ"
-"んが提案）"
+":doc:`/commands/select` の--filter内での数値比較演算をサポート。 （@s3kiさん"
+"が報告）"
+
+#: ../../../source/news/1.0.x.txt:38
+msgid ":doc:`/commands/dump` がテーブル単位のダンプに対応。"
+msgstr ":doc:`/commands/dump` がテーブル単位のダンプに対応。"
+
+#: ../../../source/news/1.0.x.txt:162
+msgid "groongaコマンドに、--defalt-command-versionオプションの追加。"
+msgstr "groongaコマンドに、--defalt-command-versionオプションの追加。"
 
 #: ../../../source/news/1.0.x.txt:280
 msgid "関数もコマンドとして呼び出してしまう問題を修正。#431"
 msgstr "関数もコマンドとして呼び出してしまう問題を修正。#431"
 
-#: ../../../source/news/1.0.x.txt:282
-msgid "索引付きカラムを等価条件で検索できない問題を修正。"
-msgstr "索引付きカラムを等価条件で検索できない問題を修正。"
+#: ../../../source/news/1.0.x.txt:142
+msgid "GRN_CURSOR_PREFIXが動作しない問題を修正。"
+msgstr "GRN_CURSOR_PREFIXが動作しない問題を修正。"
 
-#: ../../../source/news/1.0.x.txt:284
-#, fuzzy
+#: ../../../source/news.txt:134
+msgid "実験的"
+msgstr "実験的"
+
+#: ../../../source/news.txt:142
+msgid "@tomotaka_itoさん"
+msgstr "@tomotaka_itoさん"
+
+#: ../../../source/news/0.x.txt:83
 msgid ""
-":doc:`/commands/delete` コマンドでキーがShortText以外のレコードを削除できない"
-"問題の修正。（Itagaki Takahiroさんが報告）"
+"索引を用いた高速なGeoPointのソート機能を追加。 （ただし複数のソートキーと一緒"
+"に使うことはできない。）"
 msgstr ""
-":ref:`delete` コマンドでキーがShortText以外のレコードを削除できない問題の修"
-"正。（Itagaki Takahiroさんが報告）"
+"索引を用いた高速なGeoPointのソート機能を追加。 （ただし複数のソートキーと一緒"
+"に使うことはできない。）"
 
-#: ../../../source/news/1.1.x.txt:6
-msgid "バージョン1.1.xのお知らせ"
+#: ../../../source/news.txt:21
+msgid "Added GRN_OBJ_TABLE_DAT_KEY, double array trie, table. (experimental)"
+msgstr "Added GRN_OBJ_TABLE_DAT_KEY, double array trie, table. (experimental)"
+
+#: ../../../source/news/1.0.x.txt:84
+msgid ""
+"開いているファイルディスクリプタが多すぎてacceptできない状態の負荷を低減。 "
+"#802"
 msgstr ""
+"開いているファイルディスクリプタが多すぎてacceptできない状態の負荷を低減。 "
+"#802"
+
+#: ../../../source/news/1.0.x.txt:56
+msgid "Kenichi Aramakiさん"
+msgstr "Kenichi Aramakiさん"
+
+#: ../../../source/news/1.0.x.txt:124
+msgid "grn_table_cursor_next()をGRN_CURSOR_COLUMN_INDEX対応にした。"
+msgstr "grn_table_cursor_next()をGRN_CURSOR_COLUMN_INDEX対応にした。"
+
+#: ../../../source/news/1.0.x.txt:129
+msgid "コメント行に対応。 #723"
+msgstr "コメント行に対応。 #723"
+
+#: ../../../source/news/0.x.txt:92
+msgid "column_listコマンド:"
+msgstr "column_listコマンド:"
+
+#: ../../../source/news.txt:6
+msgid "News"
+msgstr "News"
+
+#: ../../../source/news/1.0.x.txt:14
+msgid ""
+"ShortText型カラムへデータ追加・削除を繰り返すとデータが壊れ ることがある問題"
+"を修正。 （Mitsuhiro Shibuyaさんが報告）"
+msgstr ""
+"ShortText型カラムへデータ追加・削除を繰り返すとデータが壊れ ることがある問題"
+"を修正。 （Mitsuhiro Shibuyaさんが報告）"
+
+#: ../../../source/news/1.0.x.txt:222
+msgid ""
+":doc:`/commands/suggest` コマンドのサンプルを追加。（examples/dictionary/）"
+msgstr ""
+":doc:`/commands/suggest` コマンドのサンプルを追加。（examples/dictionary/）"
+
+#: ../../../source/news/0.x.txt:100
+msgid "statusコマンド:"
+msgstr "statusコマンド:"
+
+#: ../../../source/news/0.x.txt:24
+msgid "デフォルトの設定ファイルを追加。"
+msgstr "デフォルトの設定ファイルを追加。"
+
+#: ../../../source/news/0.x.txt:17
+msgid "manを追加。"
+msgstr "manを追加。"
+
+#: ../../../source/news.txt:69
+msgid "Fixed a data breaking bug on multi process update. #890"
+msgstr "Fixed a data breaking bug on multi process update. #890"
+
+#: ../../../source/news.txt:45
+msgid "suggest: Added target object name into error messages."
+msgstr "suggest: Added target object name into error messages."
+
+#: ../../../source/news/0.x.txt:74
+msgid "true/false/nullリテラルをサポート。"
+msgstr "true/false/nullリテラルをサポート。"
+
+#: ../../../source/news/1.0.x.txt:192
+msgid ""
+"grn_pat_at()でエンコードされたキーが常にGRN_NILになってしまう問題を修正。#514"
+msgstr ""
+"grn_pat_at()でエンコードされたキーが常にGRN_NILになってしまう問題を修正。#514"
+
+#: ../../../source/news/1.0.x.txt:181
+msgid ""
+"パッケージを提供するUbuntuのバージョンをHardy, Lucidから Lucid, Marverickに変"
+"更。"
+msgstr ""
+"パッケージを提供するUbuntuのバージョンをHardy, Lucidから Lucid, Marverickに変"
+"更。"
+
+#: ../../../source/news.txt:24 ../../../source/news.txt:67
+msgid "Fixes"
+msgstr "Fixes"
+
+#: ../../../source/news/1.0.x.txt:102
+msgid ""
+":doc:`/commands/load` で不正なJSONを指定した場合にそれ以降コマンドを受け付け"
+"なくなる 問題を修正。 #807"
+msgstr ""
+":doc:`/commands/load` で不正なJSONを指定した場合にそれ以降コマンドを受け付け"
+"なくなる 問題を修正。 #807"
+
+#: ../../../source/news.txt:121
+msgid ""
+"MeCabトークナイザーの読み込みに失敗したときにクラッシュする問題を修正。 "
+"（@tomotaka_itoさんが報告）"
+msgstr ""
+"MeCabトークナイザーの読み込みに失敗したときにクラッシュする問題を修正。 "
+"（@tomotaka_itoさんが報告）"
+
+#: ../../../source/news.txt:120
+msgid "JSONPが動作しなくなっていた問題を修正。"
+msgstr "JSONPが動作しなくなっていた問題を修正。"
+
+#: ../../../source/news/0.x.txt:9
+msgid "0.7.7リリース - 2010/08/25"
+msgstr "0.7.7リリース - 2010/08/25"
+
+#: ../../../source/news.txt:16
+msgid "Added invalid table name check. #912"
+msgstr "Added invalid table name check. #912"
+
+#: ../../../source/news/0.x.txt:6
+msgid "バージョン0.xのお知らせ"
+msgstr "バージョン0.xのお知らせ"
+
+#: ../../../source/news/1.0.x.txt:196
+msgid ""
+"インデックスがついたカラムでソートすると結果がおかしくなる問題を修正。#571"
+msgstr ""
+"インデックスがついたカラムでソートすると結果がおかしくなる問題を修正。#571"
+
+#: ../../../source/news/1.0.x.txt:31
+msgid "エラーメッセージをわかりやすくした。"
+msgstr "エラーメッセージをわかりやすくした。"
+
+#: ../../../source/news/1.0.x.txt:127
+msgid "grn_table_at()を公開。"
+msgstr "grn_table_at()を公開。"
+
+#: ../../../source/news/1.0.x.txt:259
+msgid "テストが失敗する問題の修正。（OBATA Akioさんが報告）"
+msgstr "テストが失敗する問題の修正。（OBATA Akioさんが報告）"
+
+#: ../../../source/news.txt:11
+msgid "Release 1.2.3 - 2011/06/29"
+msgstr "Release 1.2.3 - 2011/06/29"
+
+#: ../../../source/news/1.0.x.txt:211 ../../../source/news/1.0.x.txt:264
+#: ../../../source/news/1.1.x.txt:31
+msgid "Daiki Uenoさん"
+msgstr "Daiki Uenoさん"
+
+#: ../../../source/news/1.0.x.txt:194
+msgid "不正なレコードがあるときにdumpすると落ちてしまう問題を修正。"
+msgstr "不正なレコードがあるときにdumpすると落ちてしまう問題を修正。"
+
+#: ../../../source/news/0.x.txt:86
+msgid "不正な入力値に対してエラーを出力するようにした。"
+msgstr "不正な入力値に対してエラーを出力するようにした。"
+
+#: ../../../source/news.txt:105
+msgid "オーバーフローチェックを強化。"
+msgstr "オーバーフローチェックを強化。"
+
+#: ../../../source/news.txt:94
+msgid "moozさん"
+msgstr "moozさん"
+
+#: ../../../source/news.txt:129
+msgid ":doc:`/commands/table_list` のドキュメントを修正。"
+msgstr ":doc:`/commands/table_list` のドキュメントを修正。"
+
+#: ../../../source/news.txt:37
+msgid "Release 1.2.2 - 2011/05/29"
+msgstr "Release 1.2.2 - 2011/05/29"
+
+#: ../../../source/news.txt:30
+msgid "Thanks"
+msgstr "Thanks"
+
+#: ../../../source/news.txt:126 ../../../source/news/1.0.x.txt:188
+msgid "メモリリークを修正。"
+msgstr "メモリリークを修正。"
+
+#: ../../../source/news/0.x.txt:64
+msgid "ディスク使用量計測用"
+msgstr "ディスク使用量計測用"
+
+#: ../../../source/news/1.0.x.txt:126
+msgid "zlib/LZOサポート付きでビルドされているかをチェックするAPIを追加。 #686"
+msgstr "zlib/LZOサポート付きでビルドされているかをチェックするAPIを追加。 #686"
+
+#: ../../../source/news/1.0.x.txt:166
+msgid "辞書検索のサンプルアプリケーションを追加。"
+msgstr "辞書検索のサンプルアプリケーションを追加。"
+
+#: ../../../source/news/1.0.x.txt:161
+msgid "GeoPointのキャストに対応。#515"
+msgstr "GeoPointのキャストに対応。#515"
+
+#: ../../../source/news/0.x.txt:14
+msgid ""
+"編集距離（レーベンシュタイン距離）を計算する :doc:`/functions/edit_distance` "
+"()関数の追加。"
+msgstr ""
+"編集距離（レーベンシュタイン距離）を計算する :doc:`/functions/edit_distance` "
+"()関数の追加。"
+
+#: ../../../source/news/0.x.txt:75
+msgid ""
+"GeoPointの度での指定をサポート。 （例: "
+"\"35.6954581363924,139.564207350021\"）"
+msgstr ""
+"GeoPointの度での指定をサポート。 （例: "
+"\"35.6954581363924,139.564207350021\"）"
+
+#: ../../../source/news/0.x.txt:120
+msgid "メモリリークの修正。"
+msgstr "メモリリークの修正。"
+
+#: ../../../source/news/1.0.x.txt:202
+msgid "shutdownで終了しない問題を修正。#114"
+msgstr "shutdownで終了しない問題を修正。#114"
+
+#: ../../../source/news/0.x.txt:94
+msgid "_keyカラムの出力に対応。"
+msgstr "_keyカラムの出力に対応。"
+
+#: ../../../source/news/1.0.x.txt:9
+msgid "1.0.8リリース - 2011/02/02"
+msgstr "1.0.8リリース - 2011/02/02"
+
+#: ../../../source/news/1.0.x.txt:30
+msgid "configureの最後に検出したMeCabの情報も表示するようにした。"
+msgstr "configureの最後に検出したMeCabの情報も表示するようにした。"
+
+#: ../../../source/news.txt:43
+msgid "Removed packages for Ubuntu 10.10 Maverick Meerkat."
+msgstr "Removed packages for Ubuntu 10.10 Maverick Meerkat."
+
+#: ../../../source/news.txt:62
+msgid "Added grn_obj_is_builtin() API."
+msgstr "Added grn_obj_is_builtin() API."
+
+#: ../../../source/news/1.0.x.txt:47
+msgid "groonga-suggest-learnerのメモリリークを修正。"
+msgstr "groonga-suggest-learnerのメモリリークを修正。"
+
+#: ../../../source/news.txt:53
+msgid ""
+"groonga-suggest-httpd: Used \"application/json\" for JSON response instead "
+"of \"text/javascript\"."
+msgstr ""
+"groonga-suggest-httpd: Used \"application/json\" for JSON response instead "
+"of \"text/javascript\"."
+
+#: ../../../source/news.txt:108
+msgid "Debian GNU/Linux wheezyのパッケージを追加。"
+msgstr "Debian GNU/Linux wheezyのパッケージを追加。"
+
+#: ../../../source/news/1.0.x.txt:117
+msgid "すべてのモジュールで同じ名前の関数をエクスポートするようにした。#624"
+msgstr "すべてのモジュールで同じ名前の関数をエクスポートするようにした。#624"
+
+#: ../../../source/news.txt:18
+msgid "groonga command shows failed command on error."
+msgstr "groonga command shows failed command on error."
+
+#: ../../../source/news/1.0.x.txt:55
+msgid "ongaeshiさん"
+msgstr "ongaeshiさん"
+
+#: ../../../source/news/1.0.x.txt:83
+msgid ""
+"MeCabトークナイザーが見つからない時のエラーメッセージをより親切にした。 #790"
+msgstr ""
+"MeCabトークナイザーが見つからない時のエラーメッセージをより親切にした。 #790"
+
+#: ../../../source/news/0.x.txt:108
+msgid "最大キャッシュ数を指定するcache_limitコマンドの追加。"
+msgstr "最大キャッシュ数を指定するcache_limitコマンドの追加。"
+
+#: ../../../source/news/1.0.x.txt:252
+msgid "BOM付きUTF-8に対応。"
+msgstr "BOM付きUTF-8に対応。"
+
+#: ../../../source/news/0.x.txt:85
+msgid "ベクタのGeoPointの出力に対応。"
+msgstr "ベクタのGeoPointの出力に対応。"
+
+#: ../../../source/news/1.0.x.txt:46
+msgid "grntestで結果の比較が常に失敗していた問題を修正。"
+msgstr "grntestで結果の比較が常に失敗していた問題を修正。"
+
+#: ../../../source/news/1.0.x.txt:82
+msgid "NetBSDでのビルドに対応。 （OBATA Akioさんがパッチ作成）"
+msgstr "NetBSDでのビルドに対応。 （OBATA Akioさんがパッチ作成）"
+
+#: ../../../source/news.txt:17
+msgid "Added groonga-query-log-analyzer that analyze query log."
+msgstr "Added groonga-query-log-analyzer that analyze query log."
+
+#: ../../../source/news/0.x.txt:73
+msgid "必要な項目がない場合はログに出力。"
+msgstr "必要な項目がない場合はログに出力。"
 
 #: ../../../source/news/1.1.x.txt:9
 msgid "1.1.0リリース - 2011/02/09"
 msgstr "1.1.0リリース - 2011/02/09"
 
+#: ../../../source/news.txt:60
+msgid ""
+"plugin: Added grn_plugin_get_system_plugins_dir() and grn_plugin_get_suffix"
+"() API."
+msgstr ""
+"plugin: Added grn_plugin_get_system_plugins_dir() and grn_plugin_get_suffix"
+"() API."
+
+#: ../../../source/news/1.1.x.txt:17
+msgid ""
+":doc:`/commands/select` の--query内で前方一致検索構文\"キーワード*\"対応。 "
+"#837"
+msgstr ""
+":doc:`/commands/select` の--query内で前方一致検索構文\"キーワード*\"対応。 "
+"#837"
+
+#: ../../../source/news.txt:104
+msgid "WindowsではMinGWでもpthreadを使わないようにした。"
+msgstr "WindowsではMinGWでもpthreadを使わないようにした。"
+
+#: ../../../source/news/0.x.txt:53
+msgid ""
+"groongaとMeCabの辞書のエンコーディングが同じかどうかを確 認するようにした。"
+msgstr ""
+"groongaとMeCabの辞書のエンコーディングが同じかどうかを確 認するようにした。"
+
+#: ../../../source/news/0.x.txt:106
+msgid "強制的にロックを解除するclearlockコマンドの追加。"
+msgstr "強制的にロックを解除するclearlockコマンドの追加。"
+
+#: ../../../source/news/1.0.x.txt:29
+msgid "automake 1.9.6でも動作するようにした。 #508"
+msgstr "automake 1.9.6でも動作するようにした。 #508"
+
+#: ../../../source/news/1.0.x.txt:6
+msgid "バージョン1.0.xのお知らせ"
+msgstr "バージョン1.0.xのお知らせ"
+
+#: ../../../source/news.txt:78
+msgid "suggestのHTTPサーバにlimitパラメーターを追加。#899"
+msgstr "suggestのHTTPサーバにlimitパラメーターを追加。#899"
+
+#: ../../../source/news/0.x.txt:22
+msgid "MeCabの辞書のエンコーディング検出処理を改善。"
+msgstr "MeCabの辞書のエンコーディング検出処理を改善。"
+
+#: ../../../source/news/1.0.x.txt:150
+msgid "Tomoatsu Shimadaさん"
+msgstr "Tomoatsu Shimadaさん"
+
+#: ../../../source/news.txt:32
+msgid "OBATA Akio"
+msgstr "OBATA Akio"
+
+#: ../../../source/news/1.0.x.txt:191
+msgid "警告を除去。（MATSUU Takutoさんが報告）"
+msgstr "警告を除去。（MATSUU Takutoさんが報告）"
+
+#: ../../../source/news/1.0.x.txt:125
+msgid "右辺が式の演算代入演算子をサポート。 #669"
+msgstr "右辺が式の演算代入演算子をサポート。 #669"
+
+#: ../../../source/news.txt:57
+msgid "MeCab: Added error message from MeCab on MeCab initialize error."
+msgstr "MeCab: Added error message from MeCab on MeCab initialize error."
+
+#: ../../../source/news/0.x.txt:61
+msgid "Muninプラグインの追加。"
+msgstr "Muninプラグインの追加。"
+
+#: ../../../source/news/0.x.txt:88
+msgid "dumpコマンド:"
+msgstr "dumpコマンド:"
+
+#: ../../../source/news/1.0.x.txt:128
+msgid "grn_db_touch()を公開。 #703"
+msgstr "grn_db_touch()を公開。 #703"
+
+#: ../../../source/news.txt:48
+msgid ""
+"groonga: Renamed :option:`--address <-a>` option to :option:`--bind-address`."
+msgstr ""
+"groonga: Renamed :option:`--address <-a>` option to :option:`--bind-address`."
+
+#: ../../../source/news.txt:20
+msgid "Improved error message of :doc:`commands/column_create`. #952"
+msgstr "Improved error message of :doc:`commands/column_create`. #952"
+
+#: ../../../source/news/1.0.x.txt:160
+msgid "Fedoraのオフィシャルリポジトリに登録。（Daiki Uenoさん）"
+msgstr "Fedoraのオフィシャルリポジトリに登録。（Daiki Uenoさん）"
+
+#: ../../../source/news/1.0.x.txt:122
+msgid ""
+"HTTP経由で存在しないパスにアクセスした時に存在しないパスを報告するように し"
+"た。"
+msgstr ""
+"HTTP経由で存在しないパスにアクセスした時に存在しないパスを報告するように し"
+"た。"
+
+#: ../../../source/news.txt:19
+msgid "groonga command shows file name and line no on error."
+msgstr "groonga command shows file name and line no on error."
+
+#: ../../../source/news/0.x.txt:70
+msgid "loadコマンド:"
+msgstr "loadコマンド:"
+
+#: ../../../source/news/1.0.x.txt:79
+msgid ":doc:`/commands/column_list` のXML出力対応。 #748"
+msgstr ":doc:`/commands/column_list` のXML出力対応。 #748"
+
+#: ../../../source/news/0.x.txt:19
+msgid ""
+":doc:`/commands/delete` コマンドでデータの整合性が壊れる場合はエラー を返すよ"
+"うにした。"
+msgstr ""
+":doc:`/commands/delete` コマンドでデータの整合性が壊れる場合はエラー を返すよ"
+"うにした。"
+
+#: ../../../source/news.txt:84
+msgid ""
+"同時に複数のデータベースを開いているとき、1つでもデータベー スを閉じると関連"
+"するプラグインも閉じられてしまう問題を修正。 #894"
+msgstr ""
+"同時に複数のデータベースを開いているとき、1つでもデータベー スを閉じると関連"
+"するプラグインも閉じられてしまう問題を修正。 #894"
+
+#: ../../../source/news/1.0.x.txt:21
+msgid "Mitsuhiro Shibuyaさん"
+msgstr "Mitsuhiro Shibuyaさん"
+
+#: ../../../source/news/1.0.x.txt:268
+msgid "1.0.0リリース - 2010/08/29"
+msgstr "1.0.0リリース - 2010/08/29"
+
+#: ../../../source/news/1.0.x.txt:48
+msgid ""
+":doc:`/commands/load` 時のメモリリークを修正。 （Kenichi Aramakiさんが報告）"
+msgstr ""
+":doc:`/commands/load` 時のメモリリークを修正。 （Kenichi Aramakiさんが報告）"
+
+#: ../../../source/news/0.x.txt:90
+msgid "フラグを数値ではなくキーワードで出力するように変更。"
+msgstr "フラグを数値ではなくキーワードで出力するように変更。"
+
+#: ../../../source/news/1.0.x.txt:108
+msgid "Tomita Masahiroさん"
+msgstr "Tomita Masahiroさん"
+
+#: ../../../source/news.txt:79
+msgid "grntest: SIGINTでの中断に対応。"
+msgstr "grntest: SIGINTでの中断に対応。"
+
+#: ../../../source/news/1.0.x.txt:153
+msgid "1.0.3リリース - 2010/10/29"
+msgstr "1.0.3リリース - 2010/10/29"
+
+#: ../../../source/news/1.0.x.txt:165
+msgid ":doc:`/troubleshooting` を追加。"
+msgstr ":doc:`/troubleshooting` を追加。"
+
+#: ../../../source/news/0.x.txt:56
+msgid "Web管理画面:"
+msgstr "Web管理画面:"
+
+#: ../../../source/news/1.0.x.txt:179
+msgid "記号でトークンを区切るTokenBigramSplitSymbolを使用。 #225"
+msgstr "記号でトークンを区切るTokenBigramSplitSymbolを使用。 #225"
+
+#: ../../../source/news.txt:42
+msgid "Added packages for Ubuntu 11.04 Natty Narwhal."
+msgstr "Added packages for Ubuntu 11.04 Natty Narwhal."
+
+#: ../../../source/news/1.0.x.txt:198
+msgid ""
+"レコードを追加・削除したパトリシアトライからID順に取り出すカーソルが おかしな"
+"結果を返す問題を修正。#538"
+msgstr ""
+"レコードを追加・削除したパトリシアトライからID順に取り出すカーソルが おかしな"
+"結果を返す問題を修正。#538"
+
+#: ../../../source/news/0.x.txt:45
+msgid "設定ファイルを指定する``--config-path``オプションを追加。"
+msgstr "設定ファイルを指定する``--config-path``オプションを追加。"
+
+#: ../../../source/news.txt:72
+msgid "1.2.1リリース - 2011/04/29"
+msgstr "1.2.1リリース - 2011/04/29"
+
+#: ../../../source/news.txt:103
+msgid "Homebrewでのインストールドキュメントを追加。"
+msgstr "Homebrewでのインストールドキュメントを追加。"
+
+#: ../../../source/news/0.x.txt:104
+msgid "データの整合性を確認するcheckコマンドの追加。"
+msgstr "データの整合性を確認するcheckコマンドの追加。"
+
+#: ../../../source/news/1.0.x.txt:189
+msgid ""
+"--disable-libeditオプションがヘルプメッセージと違う問題の修正。 （MATSUU "
+"Takutoさんが報告）"
+msgstr ""
+"--disable-libeditオプションがヘルプメッセージと違う問題の修正。 （MATSUU "
+"Takutoさんが報告）"
+
+#: ../../../source/news/0.x.txt:32
+msgid "前方一致検索がマッチしない問題を修正。"
+msgstr "前方一致検索がマッチしない問題を修正。"
+
+#: ../../../source/news.txt:49
+msgid "groonga-suggest-httpd: Renamed --address option to --bind-address."
+msgstr "groonga-suggest-httpd: Renamed --address option to --bind-address."
+
+#: ../../../source/news/1.0.x.txt:36
+msgid ""
+"groongaのメモリリークを検出するユーティリティツール groonga-check-memory-"
+"leak.rbを追加。（インストールはされない。）"
+msgstr ""
+"groongaのメモリリークを検出するユーティリティツール groonga-check-memory-"
+"leak.rbを追加。（インストールはされない。）"
+
+#: ../../../source/news/1.0.x.txt:233
+msgid "パッケージミスを修正。 （OBATA Akioさんが報告）"
+msgstr "パッケージミスを修正。 （OBATA Akioさんが報告）"
+
+#: ../../../source/news.txt:50
+msgid ""
+"Changed admin HTML install directory to $PREFIX/share/groonga/html/admin/ "
+"from $PREFIX/share/groonga/admin_html/."
+msgstr ""
+"Changed admin HTML install directory to $PREFIX/share/groonga/html/admin/ "
+"from $PREFIX/share/groonga/admin_html/."
+
+#: ../../../source/news/1.0.x.txt:85
+msgid "DragonFlyでのビルドに対応。 （OBATA Akioさんが報告）"
+msgstr "DragonFlyでのビルドに対応。 （OBATA Akioさんが報告）"
+
 #: ../../../source/news/1.1.x.txt:14
 msgid "TokenDelimitNullトークナイザーを追加。"
 msgstr "TokenDelimitNullトークナイザーを追加。"
 
-#: ../../../source/news/1.1.x.txt:15
+#: ../../../source/news/0.x.txt:82
+msgid "索引を用いた高速なGeoPointの検索機能を追加。"
+msgstr "索引を用いた高速なGeoPointの検索機能を追加。"
+
+#: ../../../source/news/1.0.x.txt:217
+msgid "1.0.2リリース - 2010/09/09"
+msgstr "1.0.2リリース - 2010/09/09"
+
+#: ../../../source/news/1.0.x.txt:187
+msgid "grn_table_cursor_open()のドキュメントを修正。"
+msgstr "grn_table_cursor_open()のドキュメントを修正。"
+
+#: ../../../source/news/1.0.x.txt:284
 msgid ""
-"プラグイン登録APIの名前を改良。 grn_db_register_by_name() -> "
-"grn_plugin_register() #834"
+":doc:`/commands/delete` コマンドでキーがShortText以外のレコードを削除できない"
+"問題の修正。（Itagaki Takahiroさんが報告）"
 msgstr ""
-"プラグイン登録APIの名前を改良。 grn_db_register_by_name() -> "
-"grn_plugin_register() #834"
+":doc:`/commands/delete` コマンドでキーがShortText以外のレコードを削除できない"
+"問題の修正。（Itagaki Takahiroさんが報告）"
 
-#: ../../../source/news/1.1.x.txt:17
-#, fuzzy
+#: ../../../source/news.txt:130
 msgid ""
-":doc:`/commands/select` の--query内で前方一致検索構文\"キーワード*\"対応。 "
-"#837"
-msgstr ":ref:`select` の--query内で前方一致検索構文\"キーワード*\"対応。 #837"
-
-#: ../../../source/news/1.1.x.txt:18
-msgid ""
-"groonga.pcにgroonga-suggest-create-datasetのパスが設定されている "
-"groonga_suggest_create_dataset変数を追加。"
+":doc:`/commands/load` で_valueを指定するとメモリリークする問題を修正。 #878"
 msgstr ""
-"groonga.pcにgroonga-suggest-create-datasetのパスが設定されている "
-"groonga_suggest_create_dataset変数を追加。"
+":doc:`/commands/load` で_valueを指定するとメモリリークする問題を修正。 #878"
 
-#: ../../../source/news/1.1.x.txt:24
-msgid "ログにタイムスタンプの秒より小さい値が常に0になる問題を修正。"
-msgstr "ログにタイムスタンプの秒より小さい値が常に0になる問題を修正。"
+#: ../../../source/news/1.0.x.txt:43
+msgid ""
+"Mac OS Xでモジュールの拡張子の検出に失敗する問題を修正。 （ongaeshiさんが報"
+"告）"
+msgstr ""
+"Mac OS Xでモジュールの拡張子の検出に失敗する問題を修正。 （ongaeshiさんが報"
+"告）"
+
+#: ../../../source/news/0.x.txt:126
+msgid "おばたさん"
+msgstr "おばたさん"
+
+#: ../../../source/news.txt:82 ../../../source/news.txt:116
+#: ../../../source/news/0.x.txt:27 ../../../source/news/0.x.txt:115
+#: ../../../source/news/1.0.x.txt:12 ../../../source/news/1.0.x.txt:41
+#: ../../../source/news/1.0.x.txt:62 ../../../source/news/1.0.x.txt:93
+#: ../../../source/news/1.0.x.txt:139 ../../../source/news/1.0.x.txt:185
+#: ../../../source/news/1.0.x.txt:231 ../../../source/news/1.0.x.txt:255
+#: ../../../source/news/1.0.x.txt:278 ../../../source/news/1.1.x.txt:22
+msgid "修正"
+msgstr "修正"
+
+#: ../../../source/news/1.0.x.txt:88 ../../../source/news/1.0.x.txt:133
+#: ../../../source/news/1.0.x.txt:177 ../../../source/news/1.0.x.txt:225
+msgid "変更"
+msgstr "変更"
 
 #: ../../../source/news/1.1.x.txt:25
 msgid ""
@@ -1212,5 +742,506 @@ msgstr ""
 "サンプル内のスクリプトに実行属性がつかない問題を修正。 （Daiki Uenoさんが報"
 "告）"
 
-#~ msgid "お知らせ"
-#~ msgstr "お知らせ"
+#: ../../../source/news.txt:136
+msgid "grn_table_truncate()を追加。（実験的。問題あり）"
+msgstr "grn_table_truncate()を追加。（実験的。問題あり）"
+
+#: ../../../source/news.txt:46
+msgid "document: Started English support. (not completed yet.)"
+msgstr "document: Started English support. (not completed yet.)"
+
+#: ../../../source/news.txt:128
+msgid ":doc:`/commands/column_list` のドキュメントを修正。 #758"
+msgstr ":doc:`/commands/column_list` のドキュメントを修正。 #758"
+
+#: ../../../source/news/0.x.txt:119
+msgid "空のベクタをloadするとSEGVする問題の修正。"
+msgstr "空のベクタをloadするとSEGVする問題の修正。"
+
+#: ../../../source/news/1.1.x.txt:24
+msgid "ログにタイムスタンプの秒より小さい値が常に0になる問題を修正。"
+msgstr "ログにタイムスタンプの秒より小さい値が常に0になる問題を修正。"
+
+#: ../../../source/news/1.0.x.txt:168
+msgid "メモリデバッグ用オプション--enable-memory-debugを追加。"
+msgstr "メモリデバッグ用オプション--enable-memory-debugを追加。"
+
+#: ../../../source/news/1.0.x.txt:78
+msgid "groongaスクリプト内での行コメントに対応。（「#」以降を無視） #723"
+msgstr "groongaスクリプト内での行コメントに対応。（「#」以降を無視） #723"
+
+#: ../../../source/news/0.x.txt:58
+msgid "データロード機能を追加。"
+msgstr "データロード機能を追加。"
+
+#: ../../../source/news/1.0.x.txt:206
+msgid "インストールドキュメントの誤字を修正。（SHIMODA Hiroshiさんが報告）"
+msgstr "インストールドキュメントの誤字を修正。（SHIMODA Hiroshiさんが報告）"
+
+#: ../../../source/news.txt:118
+msgid ""
+"autoconf 2.59環境において、ファイルシステムのルート直下に groongaディレクトリ"
+"を作成しようとする問題を修正。 #833"
+msgstr ""
+"autoconf 2.59環境において、ファイルシステムのルート直下に groongaディレクトリ"
+"を作成しようとする問題を修正。 #833"
+
+#: ../../../source/news/1.0.x.txt:197
+msgid "deleteが常に失敗する問題を修正。#541"
+msgstr "deleteが常に失敗する問題を修正。#541"
+
+#: ../../../source/news.txt:44
+msgid "RPM: Split server related packages to groonga-server package."
+msgstr "RPM: Split server related packages to groonga-server package."
+
+#: ../../../source/news/0.x.txt:63
+msgid "クエリパフォーマンス計測用"
+msgstr "クエリパフォーマンス計測用"
+
+#: ../../../source/news/1.0.x.txt:45
+msgid "Mac OS Xではrealloc(ptr, 0)ではなくfree()を使うように修正。"
+msgstr "Mac OS Xではrealloc(ptr, 0)ではなくfree()を使うように修正。"
+
+#: ../../../source/news.txt:131
+msgid ":doc:`/commands/load` でクラッシュする問題を修正。 #661"
+msgstr ":doc:`/commands/load` でクラッシュする問題を修正。 #661"
+
+#: ../../../source/news/1.0.x.txt:170
+msgid ""
+"テキストから数値へのキャスト処理を強化。#612, #613 （Itagaki Takahiroさんが報"
+"告）"
+msgstr ""
+"テキストから数値へのキャスト処理を強化。#612, #613 （Itagaki Takahiroさんが報"
+"告）"
+
+#: ../../../source/news/0.x.txt:41
+msgid "デーモンになるときは標準出力を閉じるようにした。"
+msgstr "デーモンになるときは標準出力を閉じるようにした。"
+
+#: ../../../source/news.txt:127
+msgid "小数形式のTimeリテラルをロードするとミリ秒情報が落ちる問題を修正。 #880"
+msgstr ""
+"小数形式のTimeリテラルをロードするとミリ秒情報が落ちる問題を修正。 #880"
+
+#: ../../../source/news/1.0.x.txt:248
+msgid "CentOS 5/Fedora 13用RPMの提供。（Daiki Uenoさん作成のspecがベース）"
+msgstr "CentOS 5/Fedora 13用RPMの提供。（Daiki Uenoさん作成のspecがベース）"
+
+#: ../../../source/news.txt:106
+msgid "位置情報の入力値チェックを強化。"
+msgstr "位置情報の入力値チェックを強化。"
+
+#: ../../../source/news.txt:93
+msgid "ICHII Takashiさん"
+msgstr "ICHII Takashiさん"
+
+#: ../../../source/news/1.0.x.txt:141
+msgid "ドキュメントの誤字を修正。（OBATA Akioさんが報告）"
+msgstr "ドキュメントの誤字を修正。（OBATA Akioさんが報告）"
+
+#: ../../../source/news/1.0.x.txt:173
+msgid ""
+":doc:`/spec/search` の挙動を動的に変更する``--match-escalation-threashold`` "
+"起動オプションと``--match_escalation_threshold``selectオプションを追加。 #628"
+msgstr ""
+":doc:`/spec/search` の挙動を動的に変更する``--match-escalation-threashold`` "
+"起動オプションと``--match_escalation_threshold``selectオプションを追加。 #628"
+
+#: ../../../source/news/1.0.x.txt:234
+msgid "GeoPointの度表記の解釈を修正。 #460"
+msgstr "GeoPointの度表記の解釈を修正。 #460"
+
+#: ../../../source/news.txt:88
+msgid "チュートリアル中のtypoを修正。（moozさんが修正）"
+msgstr "チュートリアル中のtypoを修正。（moozさんが修正）"
+
+#: ../../../source/news/1.0.x.txt:213 ../../../source/news/1.0.x.txt:289
+msgid "Itagaki Takahiroさん"
+msgstr "Itagaki Takahiroさん"
+
+#: ../../../source/news.txt:58
+msgid "suggest: Added prefix_search parameter to suggest command. #909"
+msgstr "suggest: Added prefix_search parameter to suggest command. #909"
+
+#: ../../../source/news/1.1.x.txt:6
+msgid "バージョン1.1.xのお知らせ"
+msgstr "バージョン1.1.xのお知らせ"
+
+#: ../../../source/news/1.0.x.txt:50
+msgid "ベクタの値を出力するときのメモリリークを修正。"
+msgstr "ベクタの値を出力するときのメモリリークを修正。"
+
+#: ../../../source/news.txt:107
+msgid "インデックスを用いたジオサーチの例をチュートリアルに追加。 #438"
+msgstr "インデックスを用いたジオサーチの例をチュートリアルに追加。 #438"
+
+#: ../../../source/news.txt:14 ../../../source/news.txt:40
+msgid "Improvements"
+msgstr "Improvements"
+
+#: ../../../source/news/0.x.txt:47
+msgid "最大キャッシュ数を指定する``--cache-limit``オプションを追加。"
+msgstr "最大キャッシュ数を指定する``--cache-limit``オプションを追加。"
+
+#: ../../../source/news.txt:26
+msgid "fix get command crash. (Reported by OBATA Akio)"
+msgstr "fix get command crash. (Reported by OBATA Akio)"
+
+#: ../../../source/news/1.0.x.txt:59
+msgid "1.0.6リリース - 2010/12/31"
+msgstr "1.0.6リリース - 2010/12/31"
+
+#: ../../../source/news.txt:77
+msgid "suggestコマンドにthresholdパラメーターを追加。#895"
+msgstr "suggestコマンドにthresholdパラメーターを追加。#895"
+
+#: ../../../source/news/1.0.x.txt:273
+msgid ""
+"指定したクエリに対する補完・修正・提案を行う :doc:`/commands/suggest` コマン"
+"ドを追加。"
+msgstr ""
+"指定したクエリに対する補完・修正・提案を行う :doc:`/commands/suggest` コマン"
+"ドを追加。"
+
+#: ../../../source/news/1.0.x.txt:193
+msgid ""
+"固定長カラムにカラム長より短いデータを設定するとゴミが残ってしまう問題を修"
+"正。"
+msgstr ""
+"固定長カラムにカラム長より短いデータを設定するとゴミが残ってしまう問題を修"
+"正。"
+
+#: ../../../source/news/0.x.txt:96
+msgid "deleteコマンド:"
+msgstr "deleteコマンド:"
+
+#: ../../../source/news/1.0.x.txt:130
+msgid "grn_bool型を追加。 #713"
+msgstr "grn_bool型を追加。 #713"
+
+#: ../../../source/news/1.1.x.txt:15
+msgid ""
+"プラグイン登録APIの名前を改良。 grn_db_register_by_name() -> "
+"grn_plugin_register() #834"
+msgstr ""
+"プラグイン登録APIの名前を改良。 grn_db_register_by_name() -> "
+"grn_plugin_register() #834"
+
+#: ../../../source/news.txt:91 ../../../source/news.txt:140
+#: ../../../source/news/0.x.txt:124 ../../../source/news/1.0.x.txt:19
+#: ../../../source/news/1.0.x.txt:53 ../../../source/news/1.0.x.txt:67
+#: ../../../source/news/1.0.x.txt:106 ../../../source/news/1.0.x.txt:146
+#: ../../../source/news/1.0.x.txt:209 ../../../source/news/1.0.x.txt:237
+#: ../../../source/news/1.0.x.txt:262 ../../../source/news/1.0.x.txt:287
+#: ../../../source/news/1.1.x.txt:29
+msgid "感謝"
+msgstr "感謝"
+
+#: ../../../source/news/1.0.x.txt:112
+msgid "1.0.4リリース - 2010/11/29"
+msgstr "1.0.4リリース - 2010/11/29"
+
+#: ../../../source/news/1.0.x.txt:97
+msgid ""
+":doc:`/commands/load` で配列でTABLE_NO_KEYなテーブルにレコードをロードできな"
+"い問題を修正。 （Masahiro Tomitaさんが報告） #750"
+msgstr ""
+":doc:`/commands/load` で配列でTABLE_NO_KEYなテーブルにレコードをロードできな"
+"い問題を修正。 （Masahiro Tomitaさんが報告） #750"
+
+#: ../../../source/news/1.0.x.txt:158
+msgid ""
+"CentOS/Fedora用パッケージをディストリビューションのルールに従うように改良。 "
+"（上野乃毅さん）"
+msgstr ""
+"CentOS/Fedora用パッケージをディストリビューションのルールに従うように改良。 "
+"（上野乃毅さん）"
+
+#: ../../../source/news/0.x.txt:36
+msgid "0.7.6リリース - 2010/08/19"
+msgstr "0.7.6リリース - 2010/08/19"
+
+#: ../../../source/news/0.x.txt:51
+msgid "指定したファイルからコマンドを読み込む``--file``オプションを追加。"
+msgstr "指定したファイルからコマンドを読み込む``--file``オプションを追加。"
+
+#: ../../../source/news/1.0.x.txt:180
+msgid "時間の解像度をナノ秒に変更。"
+msgstr "時間の解像度をナノ秒に変更。"
+
+#: ../../../source/news.txt:137
+msgid "truncateコマンドを追加。（実験的。問題あり） #888"
+msgstr "truncateコマンドを追加。（実験的。問題あり） #888"
+
+#: ../../../source/news/1.0.x.txt:282
+msgid "索引付きカラムを等価条件で検索できない問題を修正。"
+msgstr "索引付きカラムを等価条件で検索できない問題を修正。"
+
+#: ../../../source/news/1.0.x.txt:32
+msgid ""
+"--enable-memory-debug付きでビルドしたときに終了時に未開放のメモリが 割り当て"
+"られた場所を表示するようにした。"
+msgstr ""
+"--enable-memory-debug付きでビルドしたときに終了時に未開放のメモリが 割り当て"
+"られた場所を表示するようにした。"
+
+#: ../../../source/news/1.0.x.txt:257
+msgid "JSON JQueryプラグインが同梱されていない問題の修正。"
+msgstr "JSON JQueryプラグインが同梱されていない問題の修正。"
+
+#: ../../../source/news/0.x.txt:78
+msgid "数値のベクタをサポート。"
+msgstr "数値のベクタをサポート。"
+
+#: ../../../source/news/1.0.x.txt:214
+msgid "SHIMODA Hiroshiさん"
+msgstr "SHIMODA Hiroshiさん"
+
+#: ../../../source/news/1.0.x.txt:203
+msgid "全文検索時に削除したレコードが返る問題を修正。#617"
+msgstr "全文検索時に削除したレコードが返る問題を修正。#617"
+
+#: ../../../source/news.txt:47
+msgid "groonga-suggest-httpd: Added --disable-max-fd-check option."
+msgstr "groonga-suggest-httpd: Added --disable-max-fd-check option."
+
+#: ../../../source/news.txt:86
+msgid ""
+"configureの--helpで出力される--with-deafult-encodingの値が 間違っていた問題を"
+"修正。（ICHII Takashiさんが報告）"
+msgstr ""
+"configureの--helpで出力される--with-deafult-encodingの値が 間違っていた問題を"
+"修正。（ICHII Takashiさんが報告）"
+
+#: ../../../source/news.txt:123
+msgid "[非互換] 位置情報の小数表記からミリ秒への変換誤差が大きい問題を修正。"
+msgstr "[非互換] 位置情報の小数表記からミリ秒への変換誤差が大きい問題を修正。"
+
+#: ../../../source/news/1.0.x.txt:228
+msgid ""
+":doc:`/commands/select` コマンドのデフォルトの--output_columnsから_valueを削"
+"除。"
+msgstr ""
+":doc:`/commands/select` コマンドのデフォルトの--output_columnsから_valueを削"
+"除。"
+
+#: ../../../source/news/0.x.txt:43
+msgid "PIDファイルを指定する``--pid-path``オプションを追加。"
+msgstr "PIDファイルを指定する``--pid-path``オプションを追加。"
+
+#: ../../../source/news/1.0.x.txt:195
+msgid "geo_in_rectangle()が無限ループする問題を修正。#563"
+msgstr "geo_in_rectangle()が無限ループする問題を修正。#563"
+
+#: ../../../source/news.txt:97
+msgid "1.2.0リリース - 2011/03/29"
+msgstr "1.2.0リリース - 2011/03/29"
+
+#: ../../../source/news/1.0.x.txt:64
+msgid "\\*BSDでビルドできない問題を修正。（OBATA Akioさんが報告）"
+msgstr "\\*BSDでビルドできない問題を修正。（OBATA Akioさんが報告）"
+
+#: ../../../source/news/1.0.x.txt:212
+msgid "MATSUU Takutoさん"
+msgstr "MATSUU Takutoさん"
+
+#: ../../../source/news.txt:124
+msgid ""
+":doc:`/functions/geo_in_rectangle` の ``top_left`` と ``bottom_right`` に同じ"
+"位置を指定するとクラッシュする問題を修正。"
+msgstr ""
+":doc:`/functions/geo_in_rectangle` の ``top_left`` と ``bottom_right`` に同じ"
+"位置を指定するとクラッシュする問題を修正。"
+
+#: ../../../source/news/0.x.txt:49
+msgid "設定値を表示する``--show-config``オプションを追加。"
+msgstr "設定値を表示する``--show-config``オプションを追加。"
+
+#: ../../../source/news/1.1.x.txt:18
+msgid ""
+"groonga.pcにgroonga-suggest-create-datasetのパスが設定されている "
+"groonga_suggest_create_dataset変数を追加。"
+msgstr ""
+"groonga.pcにgroonga-suggest-create-datasetのパスが設定されている "
+"groonga_suggest_create_dataset変数を追加。"
+
+#: ../../../source/news/1.0.x.txt:143
+msgid "索引が不正に大きくなる問題を修正。（Tomoatsu Shimadaさんが報告） #689"
+msgstr "索引が不正に大きくなる問題を修正。（Tomoatsu Shimadaさんが報告） #689"
+
+#: ../../../source/news/1.0.x.txt:120
+msgid ":doc:`/grntest` の一行あたりの最大バイト数の制限を撤廃。 #608, #690"
+msgstr ":doc:`/grntest` の一行あたりの最大バイト数の制限を撤廃。 #608, #690"
+
+#: ../../../source/news/0.x.txt:80
+msgid "selectコマンド"
+msgstr "selectコマンド"
+
+#: ../../../source/news/1.0.x.txt:95
+msgid ""
+":doc:`/commands/load` で存在しないカラムを--columnsで指定するとクラッシュする"
+"問題を修正。 （Masahiro Tomitaさんが報告） #751"
+msgstr ""
+":doc:`/commands/load` で存在しないカラムを--columnsで指定するとクラッシュする"
+"問題を修正。 （Masahiro Tomitaさんが報告） #751"
+
+#: ../../../source/news/1.0.x.txt:99
+msgid ""
+":doc:`/commands/delete` でTABLE_NO_KEYなテーブルのレコードを削除するとテーブ"
+"ルが壊れる 問題を修正。 （Masahiro Tomitaさんがパッチ作成） #794"
+msgstr ""
+":doc:`/commands/delete` でTABLE_NO_KEYなテーブルのレコードを削除するとテーブ"
+"ルが壊れる 問題を修正。 （Masahiro Tomitaさんがパッチ作成） #794"
+
+#: ../../../source/news/1.0.x.txt:169
+msgid "不正な関数呼び出しをチェックするようにした。#596"
+msgstr "不正な関数呼び出しをチェックするようにした。#596"
+
+#: ../../../source/news.txt:145
+msgid "過去のリリース"
+msgstr "過去のリリース"
+
+#: ../../../source/news.txt:102
+msgid "MacPortsでのインストールドキュメントを追加。"
+msgstr "MacPortsでのインストールドキュメントを追加。"
+
+#: ../../../source/news/0.x.txt:72
+msgid "不正な文字を見つけた場合はログに出力。"
+msgstr "不正な文字を見つけた場合はログに出力。"
+
+#: ../../../source/news/1.0.x.txt:80
+msgid "主キーが数値のテーブルを参照しているカラムでの比較演算に対応。 #776"
+msgstr "主キーが数値のテーブルを参照しているカラムでの比較演算に対応。 #776"
+
+#: ../../../source/news/1.0.x.txt:167
+msgid "pkg-configがない場合はlibeditを検出しないようにした。 #540"
+msgstr "pkg-configがない場合はlibeditを検出しないようにした。 #540"
+
+#: ../../../source/news.txt:55
+msgid ""
+"Windows: Used DLL relative path instead of executable file relative path."
+msgstr ""
+"Windows: Used DLL relative path instead of executable file relative path."
+
+#: ../../../source/news.txt:112
+msgid ""
+"MeCabトークナイザーの読み込みエラーを無視するようにした。た だし、ログには残"
+"る。 #893"
+msgstr ""
+"MeCabトークナイザーの読み込みエラーを無視するようにした。た だし、ログには残"
+"る。 #893"
+
+#: ../../../source/news/1.0.x.txt:69 ../../../source/news/1.0.x.txt:109
+#: ../../../source/news/1.0.x.txt:149 ../../../source/news/1.0.x.txt:239
+#: ../../../source/news/1.0.x.txt:265
+msgid "OBATA Akioさん"
+msgstr "OBATA Akioさん"
+
+#: ../../../source/news/1.0.x.txt:148
+msgid "@s3kiさん"
+msgstr "@s3kiさん"
+
+#: ../../../source/news/0.x.txt:110
+msgid "フラグメンテーションを解消するdefragコマンドの追加。"
+msgstr "フラグメンテーションを解消するdefragコマンドの追加。"
+
+#: ../../../source/news.txt:63
+msgid ":doc:`/commands/load`: Added table name check. #934"
+msgstr ":doc:`/commands/load`: Added table name check. #934"
+
+#: ../../../source/news/0.x.txt:77
+msgid "NO_KEYテーブルを参照しているカラム値をサポート。"
+msgstr "NO_KEYテーブルを参照しているカラム値をサポート。"
+
+#: ../../../source/news/0.x.txt:121
+msgid "drilldown時に参照先が存在しない場合にSEGVする問題の修正。"
+msgstr "drilldown時に参照先が存在しない場合にSEGVする問題の修正。"
+
+#: ../../../source/news/1.0.x.txt:72
+msgid "1.0.5リリース - 2010/12/29"
+msgstr "1.0.5リリース - 2010/12/29"
+
+#: ../../../source/news/1.0.x.txt:205
+msgid "存在しないパトリシアトライのレコードを参照すると落ちる問題を修正。#630"
+msgstr "存在しないパトリシアトライのレコードを参照すると落ちる問題を修正。#630"
+
+#: ../../../source/news/1.0.x.txt:164
+msgid ":doc:`/spec/search` の仕様を追加。"
+msgstr ":doc:`/spec/search` の仕様を追加。"
+
+#: ../../../source/news/1.0.x.txt:118
+msgid "不正な名前を指定したときに指定された名前も報告するようにした。"
+msgstr "不正な名前を指定したときに指定された名前も報告するようにした。"
+
+#: ../../../source/news/1.0.x.txt:77
+msgid "サジェスト機能用の学習プログラムを追加。"
+msgstr "サジェスト機能用の学習プログラムを追加。"
+
+#: ../../../source/news/0.x.txt:118
+msgid "selectの出力に不正なカラムを指定された時にSEGVする問題を修正。"
+msgstr "selectの出力に不正なカラムを指定された時にSEGVする問題を修正。"
+
+#: ../../../source/news/1.0.x.txt:204
+msgid "必要な時以外にMeCabの辞書チェックをしてしまう問題を修正。#555"
+msgstr "必要な時以外にMeCabの辞書チェックをしてしまう問題を修正。#555"
+
+#: ../../../source/news/0.x.txt:102
+msgid "キャッシュ情報を追加。"
+msgstr "キャッシュ情報を追加。"
+
+#: ../../../source/news.txt:110
+msgid ""
+"Debianパッケージをcdbsベースからdebhelperベースへ移行。 パッケージ名の変更あ"
+"り。 #887"
+msgstr ""
+"Debianパッケージをcdbsベースからdebhelperベースへ移行。 パッケージ名の変更あ"
+"り。 #887"
+
+#: ../../../source/news/1.0.x.txt:24
+msgid "1.0.7リリース - 2011/01/29"
+msgstr "1.0.7リリース - 2011/01/29"
+
+#: ../../../source/news.txt:27
+msgid "fix elapsed time overflow in query log. #944"
+msgstr "fix elapsed time overflow in query log. #944"
+
+#: ../../../source/news/1.0.x.txt:275
+msgid ""
+":doc:`/commands/delete` コマンドが失敗したらfalseを返すように変更。（Itagaki "
+"Takahiroさんが提案）"
+msgstr ""
+":doc:`/commands/delete` コマンドが失敗したらfalseを返すように変更。（Itagaki "
+"Takahiroさんが提案）"
+
+#: ../../../source/news.txt:64
+msgid "Showed invalid name context in error message. #935"
+msgstr "Showed invalid name context in error message. #935"
+
+#: ../../../source/news/0.x.txt:66
+msgid "libedit対応。"
+msgstr "libedit対応。"
+
+#: ../../../source/news/1.0.x.txt:172
+msgid "クライアントモードでの--fileオプションのサポート。#578"
+msgstr "クライアントモードでの--fileオプションのサポート。#578"
+
+#: ../../../source/news/1.0.x.txt:163
+msgid "statusの出力結果にコマンドバージョンを追加。"
+msgstr "statusの出力結果にコマンドバージョンを追加。"
+
+#: ../../../source/news/0.x.txt:117
+msgid "不正なsortキーを指定された場合はSEGVする問題の修正。"
+msgstr "不正なsortキーを指定された場合はSEGVする問題の修正。"
+
+#: ../../../source/news/0.x.txt:29
+msgid ""
+":doc:`/functions/geo_in_rectangle` ()関数が引数を「左上」と「右下」で はな"
+"く、「左下」と「右上」と扱っていた問題を修正。"
+msgstr ""
+":doc:`/functions/geo_in_rectangle` ()関数が引数を「左上」と「右下」で はな"
+"く、「左下」と「右上」と扱っていた問題を修正。"
+
+#: ../../../source/news/1.0.x.txt:250
+msgid "ログパスのデフォルト値に--localstatedirを使用。（OBATA Akioさんが提案）"
+msgstr ""
+"ログパスのデフォルト値に--localstatedirを使用。（OBATA Akioさんが提案）"

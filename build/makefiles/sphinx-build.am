@@ -128,7 +128,11 @@ source_files = \
 	$(top_srcdir)/doc/source/example/tutorial10-7.log \
 	$(top_srcdir)/doc/source/example/tutorial10-8.log \
 	$(top_srcdir)/doc/source/example/tutorial10-9.log \
-	$(top_srcdir)/doc/source/execfile.txt \
+	$(top_srcdir)/doc/source/executables.txt \
+	$(top_srcdir)/doc/source/executables/grnslap.txt \
+	$(top_srcdir)/doc/source/executables/grntest.txt \
+	$(top_srcdir)/doc/source/executables/groonga.txt \
+	$(top_srcdir)/doc/source/executables/http.txt \
 	$(top_srcdir)/doc/source/expr.txt \
 	$(top_srcdir)/doc/source/functions.txt \
 	$(top_srcdir)/doc/source/functions/edit_distance.txt \
@@ -137,9 +141,6 @@ source_files = \
 	$(top_srcdir)/doc/source/functions/geo_in_rectangle.txt \
 	$(top_srcdir)/doc/source/functions/now.txt \
 	$(top_srcdir)/doc/source/functions/rand.txt \
-	$(top_srcdir)/doc/source/grnslap.txt \
-	$(top_srcdir)/doc/source/grntest.txt \
-	$(top_srcdir)/doc/source/http.txt \
 	$(top_srcdir)/doc/source/index.txt \
 	$(top_srcdir)/doc/source/install.txt \
 	$(top_srcdir)/doc/source/limitations.txt \
@@ -147,7 +148,6 @@ source_files = \
 	$(top_srcdir)/doc/source/news/0.x.txt \
 	$(top_srcdir)/doc/source/news/1.0.x.txt \
 	$(top_srcdir)/doc/source/news/1.1.x.txt \
-	$(top_srcdir)/doc/source/process.txt \
 	$(top_srcdir)/doc/source/pseudo_column.txt \
 	$(top_srcdir)/doc/source/rdoc.py \
 	$(top_srcdir)/doc/source/reference.txt \

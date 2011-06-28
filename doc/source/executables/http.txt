@@ -2,13 +2,13 @@
 
 .. highlightlang:: none
 
-http
-====
+groonga HTTPサービス
+====================
 
 名前
 ----
 
-groonga httpサービス
+groonga HTTPサービス
 
 書式
 ----
