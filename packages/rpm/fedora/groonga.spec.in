@@ -16,6 +16,7 @@ BuildRequires:	mecab-devel
 #BuildRequires:	libevent-devel
 BuildRequires:	python2-devel
 BuildRequires:	php-devel
+BuildRequires:	ruby
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	%{name}-plugin-suggest = %{version}-%{release}
 Requires:	%{name}-tokenizer-mecab = %{version}-%{release}
