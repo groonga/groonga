@@ -3,7 +3,7 @@ EXTRA_DIST = Rakefile
 
 all:
 
-release: build upload
+release: build source upload
 
 ensure-rsync-path:
 	@if test -z "$(RSYNC_PATH)"; then				\
@@ -27,6 +27,13 @@ build: source
 
 build-groonga: source
 	$(RUBY) -S rake build:groonga $(build_options)
+
+package:
+	mkdir -p files
+	rm -rf files/$(PACKAGE)-$(VERSION)
+	cp -a dist files/$(PACKAGE)-$(VERSION)
+	(cd files && zip -r $(PACKAGE)-$(VERSION).zip $(PACKAGE)-$(VERSION))
+	rm -rf files/$(PACKAGE)-$(VERSION)
 
 SOURCE=../$(PACKAGE)-$(VERSION).tar.gz
 
