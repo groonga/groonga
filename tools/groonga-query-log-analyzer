@@ -36,9 +36,13 @@ class GroongaQueryLogAnaylzer
       full_statistics = []
       parser = QueryLogParser.new(full_statistics)
     end
-    log_paths.each do |log_path|
-      File.open(log_path) do |log|
-        parser.parse(log)
+    if log_paths.empty?
+      parser.parse(ARGF)
+    else
+      log_paths.each do |log_path|
+        File.open(log_path) do |log|
+          parser.parse(log)
+        end
       end
     end
     if stream
