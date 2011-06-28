@@ -2,3 +2,4 @@ debhelper
 autotools-dev
 pkg-config
 libmecab-dev
+ruby
