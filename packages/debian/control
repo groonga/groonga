@@ -8,7 +8,8 @@ Build-Depends:
   libmsgpack-dev,
   libzmq-dev,
   libevent-dev,
-  libmecab-dev
+  libmecab-dev,
+  ruby
 Standards-Version: 3.9.1
 Homepage: http://groonga.org/
 

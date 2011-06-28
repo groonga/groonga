@@ -1,4 +1,4 @@
-# release: update-latest-release (commit) update-changelog (commit) tag
+# release: update-latest-release (commit) tag
 
 ACLOCAL_AMFLAGS = $$ACLOCAL_ARGS -I .
 AUTOMAKE_OPTIONS = 1.9.6
@@ -28,6 +28,7 @@ include $(srcdir)/version.sh
 
 dist-hook:
 	echo "$(GROONGA_VERSION)" > $(distdir)/version
+	cd $(top_srcdir) && release/gitlog2changelog.py > $(distdir)/ChangeLog
 
 benchmark:
 	cd test/benchmark && $(MAKE) $(AM_MAKEFLAGS) benchmark
@@ -43,9 +44,6 @@ win32-installer: all
 	cp -rp $(builddir)/include/groonga/ dist/include/
 	nkf -Wsc $(builddir)/doc/ja/README > dist/doc/README.txt
 	makensis setup.nsi
-
-update-changelog:
-	cd $(top_srcdir) && release/gitlog2changelog.py
 
 tag:
 	cd $(top_srcdir) && git tag v$(VERSION) -a -m 'groonga $(VERSION)!!!'
