@@ -8,7 +8,6 @@
 
 #include <algorithm>
 #include <cstring>
-#include <new>
 
 namespace grn {
 namespace dat {

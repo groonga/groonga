@@ -12,7 +12,8 @@ CommonPrefixSearchCursor::CommonPrefixSearchCursor()
       limit_(UINT32_MAX),
       flags_(COMMON_PREFIX_CURSOR),
       buf_(),
-      count_(0) {}
+      cur_(0),
+      end_(0) {}
 
 CommonPrefixSearchCursor::~CommonPrefixSearchCursor() {
   close();
@@ -40,17 +41,18 @@ void CommonPrefixSearchCursor::close() {
   limit_ = UINT32_MAX;
   flags_ = COMMON_PREFIX_CURSOR;
   buf_.clear();
-  count_ = 0;
+  cur_ = 0;
+  end_ = 0;
 }
 
 bool CommonPrefixSearchCursor::next(Key *key) {
-  if (count_ >= buf_.size()) {
+  if (cur_ == end_) {
     return false;
   }
   if ((flags_ & ASCENDING_CURSOR) == ASCENDING_CURSOR) {
-    trie_->ith_key(buf_[count_++], key);
+    trie_->ith_key(buf_[cur_++], key);
   } else {
-    trie_->ith_key(buf_[buf_.size() - ++count_], key);
+    trie_->ith_key(buf_[--cur_], key);
   }
   return true;
 }
@@ -84,7 +86,8 @@ CommonPrefixSearchCursor::CommonPrefixSearchCursor(const Trie &trie,
       limit_(limit),
       flags_(flags),
       buf_(),
-      count_(0) {}
+      cur_(0),
+      end_(0) {}
 
 void CommonPrefixSearchCursor::init(const UInt8 *ptr,
                                     UInt32 min_length,
@@ -94,61 +97,62 @@ void CommonPrefixSearchCursor::init(const UInt8 *ptr,
   }
 
   UInt32 node_id = ROOT_NODE_ID;
-  UInt32 skip_count = 0;
-  for (UInt32 i = 0; i < max_length; ++i) {
+  UInt32 i;
+  for (i = 0; i < max_length; ++i) {
     const Base base = trie_->ith_node(node_id).base();
     if (base.is_terminal()) {
       Key key;
       trie_->ith_key(base.key_id(), &key);
       if ((key.length() >= min_length) && (key.length() <= max_length) &&
-          (std::memcmp(ptr + i, key.ptr() + i, key.length() - i) == 0)) {
-        if (skip_count < offset_) {
-          ++skip_count;
-        } else {
-          buf_.push_back(key.id());
-        }
+          (std::memcmp(ptr + i, key.ptr() + i, key.length() - i) == 0) &&
+          ((key.length() < max_length) ||
+           ((flags_ & EXCEPT_EXACT_MATCH) != EXCEPT_EXACT_MATCH))) {
+        buf_.push_back(key.id());
       }
-      return;
+      break;
     }
 
-    if (trie_->ith_node(node_id).child() == TERMINAL_LABEL) {
-      if (i >= min_length) {
-        if (skip_count < offset_) {
-          ++skip_count;
-        } else {
-          const UInt32 terminal = base.offset() ^ TERMINAL_LABEL;
-          buf_.push_back(trie_->ith_node(terminal).key_id());
-          if (buf_.size() >= limit_) {
-            return;
-          }
-        }
-      }
+    if ((i >= min_length) &&
+        (trie_->ith_node(node_id).child() == TERMINAL_LABEL)) {
+      const UInt32 terminal = base.offset() ^ TERMINAL_LABEL;
+      buf_.push_back(trie_->ith_node(terminal).key_id());
     }
 
     node_id = base.offset() ^ ptr[i];
     if (trie_->ith_node(node_id).label() != ptr[i]) {
-      return;
+      break;
     }
   }
 
-  if (skip_count < offset_) {
+  if ((i == max_length) &&
+      (flags_ & EXCEPT_EXACT_MATCH) != EXCEPT_EXACT_MATCH) {
+    const Base base = trie_->ith_node(node_id).base();
+    if (base.is_terminal()) {
+      Key key;
+      trie_->ith_key(base.key_id(), &key);
+      if ((key.length() >= min_length) && (key.length() <= max_length)) {
+        buf_.push_back(key.id());
+      }
+    } else if (trie_->ith_node(node_id).child() == TERMINAL_LABEL) {
+      const UInt32 terminal = base.offset() ^ TERMINAL_LABEL;
+      Key key;
+      trie_->ith_key(trie_->ith_node(terminal).key_id(), &key);
+      if ((key.length() >= min_length) && (key.length() <= max_length)) {
+        buf_.push_back(key.id());
+      }
+    }
+  }
+
+  if (buf_.size() <= offset_) {
     return;
   }
 
-  const Base base = trie_->ith_node(node_id).base();
-  if (base.is_terminal()) {
-    Key key;
-    trie_->ith_key(base.key_id(), &key);
-    if (key.length() <= max_length) {
-      buf_.push_back(key.id());
-    }
-  } else if (trie_->ith_node(node_id).child() == TERMINAL_LABEL) {
-    const UInt32 terminal = base.offset() ^ TERMINAL_LABEL;
-    Key key;
-    trie_->ith_key(trie_->ith_node(terminal).key_id(), &key);
-    if ((key.length() >= min_length) && (key.length() <= max_length)) {
-      buf_.push_back(key.id());
-    }
+  if ((flags_ & ASCENDING_CURSOR) == ASCENDING_CURSOR) {
+    cur_ = offset_;
+    end_ = (limit_ < (buf_.size() - cur_)) ? (cur_ + limit_) : buf_.size();
+  } else {
+    cur_ = buf_.size() - offset_;
+    end_ = (limit_ < cur_) ? (cur_ - limit_) : 0;
   }
 }
 
@@ -158,7 +162,8 @@ void CommonPrefixSearchCursor::swap(CommonPrefixSearchCursor *cursor) {
   std::swap(limit_, cursor->limit_);
   std::swap(flags_, cursor->flags_);
   buf_.swap(cursor->buf_);
-  std::swap(count_, cursor->count_);
+  std::swap(cur_, cursor->cur_);
+  std::swap(end_, cursor->end_);
 }
 
 }  // namespace grn

@@ -43,7 +43,8 @@ class CommonPrefixSearchCursor : public Cursor {
   UInt32 flags_;
 
   std::vector<UInt32> buf_;
-  UInt32 count_;
+  UInt32 cur_;
+  UInt32 end_;
 
   UInt32 fix_flags(UInt32 flags) const;
   CommonPrefixSearchCursor(const Trie &trie,
