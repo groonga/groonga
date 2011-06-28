@@ -89,6 +89,7 @@ version.sh
 /packages/source/files/
 /packages/windows/tmp/
 /packages/windows/dist/
+/packages/windows/files/
 /packages/*.tar.gz
 /examples/dictionary/db/
 /examples/dictionary/*.gz
