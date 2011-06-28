@@ -741,6 +741,14 @@ class GroongaQueryLogAnaylzer
     def write(*args)
       @output.write(*args)
     end
+
+    def format_time(time)
+      if time.nil?
+        "NaN"
+      else
+        time.strftime("%Y-%m-%d %H:%M:%S.%u")
+      end
+    end
   end
 
   class ConsoleQueryLogReporter < QueryLogReporter
@@ -991,12 +999,7 @@ class GroongaQueryLogAnaylzer
     end
 
     def format_time(time)
-      if time.nil?
-        formatted_time = "NaN"
-      else
-        formatted_time = time.strftime("%Y-%m-%d %H:%M:%S.%u")
-      end
-      colorize(formatted_time, :time)
+      colorize(super, :time)
     end
 
     def colorize(text, schema_name)
@@ -1330,7 +1333,7 @@ td.name
     end
 
     def format_time(time)
-      span({:class => "time"}, h(time.strftime("%Y-%m-%d %H:%M:%S.%u")))
+      span({:class => "time"}, h(super))
     end
 
     def format_elapsed(elapsed, options={})
