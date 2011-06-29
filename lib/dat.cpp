@@ -25,6 +25,8 @@
 
 extern "C" {
 
+std::size_t INITIAL_FILE_SIZE = 1 << 20;
+
 static void
 grn_dat_init(grn_dat *dat) {
   GRN_DB_OBJ_SET_TYPE(dat, GRN_TABLE_DAT_KEY);
@@ -183,11 +185,11 @@ grn_dat_add(grn_ctx *ctx, grn_dat *dat, const void *key,
         char buffer[PATH_MAX];
         gen_pathname(path, buffer, file_id);
         grn::dat::Trie *new_trie = new grn::dat::Trie;
-        new_trie->open(buffer);
+        new_trie->create(buffer, INITIAL_FILE_SIZE);
         dat->handle = new_trie;
       } else {
         grn::dat::Trie *new_trie = new grn::dat::Trie;
-        new_trie->open(NULL);
+        new_trie->create(NULL, INITIAL_FILE_SIZE);
         dat->handle = new_trie;
       }
       dat->file_id = dat->header->file_id = file_id;
