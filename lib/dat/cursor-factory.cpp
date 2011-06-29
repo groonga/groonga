@@ -4,6 +4,8 @@
 #include "common-prefix-cursor.hpp"
 #include "predictive-cursor.hpp"
 
+#include <new>
+
 namespace grn {
 namespace dat {
 
@@ -16,7 +18,8 @@ Cursor *CursorFactory::open(const Trie &trie,
   const UInt32 cursor_type = flags & CURSOR_TYPE_MASK;
   switch (cursor_type) {
     case ID_RANGE_CURSOR: {
-      IdCursor *cursor = new IdCursor;
+      IdCursor *cursor = new (std::nothrow) IdCursor;
+      GRN_DAT_THROW_IF(MEMORY_ERROR, cursor == NULL);
       try {
         cursor->open(trie, min_ptr, min_length, max_ptr, max_length,
                      offset, limit, flags);
@@ -27,7 +30,8 @@ Cursor *CursorFactory::open(const Trie &trie,
       return cursor;
     }
     case KEY_RANGE_CURSOR: {
-      KeyCursor *cursor = new KeyCursor;
+      KeyCursor *cursor = new (std::nothrow) KeyCursor;
+      GRN_DAT_THROW_IF(MEMORY_ERROR, cursor == NULL);
       try {
         cursor->open(trie, min_ptr, min_length, max_ptr, max_length,
                      offset, limit, flags);
@@ -38,7 +42,8 @@ Cursor *CursorFactory::open(const Trie &trie,
       return cursor;
     }
     case COMMON_PREFIX_CURSOR: {
-      CommonPrefixCursor *cursor = new CommonPrefixCursor;
+      CommonPrefixCursor *cursor = new (std::nothrow) CommonPrefixCursor;
+      GRN_DAT_THROW_IF(MEMORY_ERROR, cursor == NULL);
       try {
         cursor->open(trie, max_ptr, min_length, max_length,
                      offset, limit, flags);
@@ -49,7 +54,8 @@ Cursor *CursorFactory::open(const Trie &trie,
       return cursor;
     }
     case PREDICTIVE_CURSOR: {
-      PredictiveCursor *cursor = new PredictiveCursor;
+      PredictiveCursor *cursor = new (std::nothrow) PredictiveCursor;
+      GRN_DAT_THROW_IF(MEMORY_ERROR, cursor == NULL);
       try {
         cursor->open(trie, min_ptr, min_length,
                      offset, limit, flags);
@@ -63,7 +69,6 @@ Cursor *CursorFactory::open(const Trie &trie,
       GRN_DAT_THROW(PARAM_ERROR, "unknown cursor type");
     }
   }
-  return NULL;
 }
 
 }  // namespace grn

@@ -8,6 +8,8 @@ libgrndat_la_SOURCES =				\
 	cursor-factory.cpp			\
 	id-cursor.cpp				\
 	key-cursor.cpp				\
+	memory-mapped-file-impl.cpp		\
+	memory-mapped-file.cpp			\
 	predictive-cursor.cpp			\
 	trie.cpp
 
@@ -24,6 +26,8 @@ noinst_HEADERS =				\
 	key-cursor.hpp				\
 	key-info.hpp				\
 	key.hpp					\
+	memory-mapped-file-impl.hpp		\
+	memory-mapped-file.hpp			\
 	node.hpp				\
 	predictive-cursor.hpp			\
 	timer.hpp				\

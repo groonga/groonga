@@ -6,7 +6,7 @@
 #include "block.hpp"
 #include "key-info.hpp"
 #include "key.hpp"
-#include "cursor.hpp"
+#include "memory-mapped-file.hpp"
 
 namespace grn {
 namespace dat {
@@ -120,6 +120,7 @@ class Trie {
   }
 
  private:
+  MemoryMappedFile memory_mapped_file_;
   Header *header_;
   Node *nodes_;
   Block *blocks_;

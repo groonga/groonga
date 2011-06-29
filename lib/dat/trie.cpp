@@ -1,23 +1,14 @@
 #include "trie.hpp"
 
-#include <fcntl.h>
-#include <sys/mman.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <unistd.h>
-
 #include <algorithm>
 #include <cstring>
-
-#if defined(MAP_ANON) && !defined(MAP_ANONYMOUS)
-#define MAP_ANONYMOUS MAP_ANON
-#endif
 
 namespace grn {
 namespace dat {
 
 Trie::Trie()
-    : header_(NULL),
+    : memory_mapped_file_(),
+      header_(NULL),
       nodes_(NULL),
       blocks_(NULL),
       key_infos_(NULL),
@@ -114,9 +105,7 @@ void Trie::open(const char *file_name) {
 }
 
 void Trie::close() {
-  if (header_ != NULL) {
-    ::munmap(header_, header_->file_size());
-  }
+  memory_mapped_file_.close();
   header_ = NULL;
   nodes_ = NULL;
   blocks_ = NULL;
@@ -125,6 +114,7 @@ void Trie::close() {
 }
 
 void Trie::swap(Trie *trie) {
+  memory_mapped_file_.swap(&trie->memory_mapped_file_);
   std::swap(header_, trie->header_);
   std::swap(nodes_, trie->nodes_);
   std::swap(blocks_, trie->blocks_);
@@ -195,37 +185,16 @@ void Trie::create_file(const char *file_name,
       + (sizeof(KeyInfo) * (max_num_keys + 1))
       + key_buf_size));
 
-  int fd = -1;
-  if ((file_name != NULL) && (file_name[0] != '\0')) {
-    fd = ::open(file_name, O_RDWR | O_CREAT | O_TRUNC, 0666);
-    GRN_DAT_THROW_IF(IO_ERROR, fd == -1);
-    if (::ftruncate(fd, file_size) == -1) {
-      ::close(fd);
-      GRN_DAT_THROW(IO_ERROR, "::ftruncate(fd, file_size) == -1");
-    }
-  }
+  memory_mapped_file_.create(file_name, file_size);
 
-  const int flags = (fd == -1) ? (MAP_PRIVATE | MAP_ANONYMOUS) : MAP_SHARED;
-  void * const address = ::mmap(NULL, file_size, PROT_READ | PROT_WRITE,
-                                flags, fd, 0);
-  if (address == MAP_FAILED) {
-    if (fd != -1) {
-      ::close(fd);
-    }
-    GRN_DAT_THROW(IO_ERROR, "address == MAP_FAILED");
-  } else if ((fd != -1) && (::close(fd) == -1)) {
-    ::munmap(address, file_size);
-    GRN_DAT_THROW(IO_ERROR, "(fd != -1) && (::close(fd) == -1)");
-  }
-
-  Header * const header = static_cast<Header *>(address);
+  Header * const header = static_cast<Header *>(memory_mapped_file_.ptr());
   *header = Header();
   header->set_file_size(file_size);
   header->set_max_num_keys(max_num_keys);
   header->set_max_num_blocks(max_num_blocks);
   header->set_key_buf_size(key_buf_size);
 
-  map_address(address);
+  map_address(memory_mapped_file_.ptr());
 
   reserve_node(ROOT_NODE_ID);
   ith_node(INVALID_OFFSET).set_is_offset(true);
@@ -235,31 +204,8 @@ void Trie::create_file(const char *file_name,
 void Trie::open_file(const char *file_name) {
   GRN_DAT_THROW_IF(PARAM_ERROR, file_name == NULL);
 
-  const int fd = ::open(file_name, O_RDWR);
-  GRN_DAT_THROW_IF(IO_ERROR, fd == -1);
-
-  void *address = ::mmap(NULL, sizeof(Header), PROT_READ, MAP_PRIVATE, fd, 0);
-  if (address == MAP_FAILED) {
-    ::close(fd);
-    GRN_DAT_THROW(IO_ERROR, "address == MAP_FAILED");
-  }
-
-  const UInt64 file_size = static_cast<const Header *>(address)->file_size();
-  if (::munmap(address, sizeof(Header)) == -1) {
-    ::close(fd);
-    GRN_DAT_THROW(IO_ERROR, "::munmap(address, sizeof(Header)) == -1");
-  }
-
-  address = ::mmap(NULL, file_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-  if (address == MAP_FAILED) {
-    ::close(fd);
-    GRN_DAT_THROW(IO_ERROR, "address == MAP_FAILED");
-  } else if (::close(fd) == -1) {
-    ::munmap(address, file_size);
-    GRN_DAT_THROW(IO_ERROR, "::close(fd) == -1");
-  }
-
-  map_address(address);
+  memory_mapped_file_.open(file_name);
+  map_address(memory_mapped_file_.ptr());
 }
 
 void Trie::map_address(void *address) {
