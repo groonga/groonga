@@ -130,7 +130,11 @@ relative_source_files = \
 	source/example/tutorial10-7.log \
 	source/example/tutorial10-8.log \
 	source/example/tutorial10-9.log \
-	source/execfile.txt \
+	source/executables.txt \
+	source/executables/grnslap.txt \
+	source/executables/grntest.txt \
+	source/executables/groonga.txt \
+	source/executables/http.txt \
 	source/expr.txt \
 	source/functions.txt \
 	source/functions/edit_distance.txt \
@@ -139,9 +143,6 @@ relative_source_files = \
 	source/functions/geo_in_rectangle.txt \
 	source/functions/now.txt \
 	source/functions/rand.txt \
-	source/grnslap.txt \
-	source/grntest.txt \
-	source/http.txt \
 	source/index.txt \
 	source/install.txt \
 	source/limitations.txt \
@@ -149,7 +150,6 @@ relative_source_files = \
 	source/news/0.x.txt \
 	source/news/1.0.x.txt \
 	source/news/1.1.x.txt \
-	source/process.txt \
 	source/pseudo_column.txt \
 	source/rdoc.py \
 	source/reference.txt \

@@ -1,57 +1,29 @@
-# English translations for 1.2.1 package.
+# English translations for 1.2.3 package.
 # Copyright (C) 2009-2011, Brazil, Inc
 # This file is distributed under the same license as the groonga package.
 # Kouhei Sutou <kou@clear-code.com>, 2011.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: 1.2.1\n"
+"Project-Id-Version: 1.2.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-24 18:19\n"
-"PO-Revision-Date: 2011-05-18 15:16+0900\n"
+"POT-Creation-Date: 2011-06-28 23:53\n"
+"PO-Revision-Date: 2011-06-28 23:54+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
-"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../../../source/pseudo_column.txt:6
-msgid "疑似カラム (pseudo_column)"
-msgstr "疑似カラム (pseudo_column)"
+#: ../../../source/pseudo_column.txt:24
+msgid "``_key``"
+msgstr "``_key``"
 
-#: ../../../source/pseudo_column.txt:9
-msgid "名前"
-msgstr "名前"
-
-#: ../../../source/pseudo_column.txt:11
-msgid "疑似カラム"
-msgstr "疑似カラム"
-
-#: ../../../source/pseudo_column.txt:14
-msgid "説明"
-msgstr "説明"
-
-#: ../../../source/pseudo_column.txt:16
-msgid ""
-"groongaのデータベースで作成したテーブルには、いくつかのカラムが自動的に定義さ"
-"れます。"
-msgstr ""
-"groongaのデータベースで作成したテーブルには、いくつかのカラムが自動的に定義さ"
-"れます。"
-
-#: ../../../source/pseudo_column.txt:18
-msgid ""
-"これらのカラムはいずれもアンダースコア('_')で始まる名前が付与されます。定義さ"
-"れる疑似カラムは、テーブルの種類によって異なります。"
-msgstr ""
-"これらのカラムはいずれもアンダースコア('_')で始まる名前が付与されます。定義さ"
-"れる疑似カラムは、テーブルの種類によって異なります。"
-
-#: ../../../source/pseudo_column.txt:20
-msgid "``_id``"
-msgstr "``_id``"
+#: ../../../source/pseudo_column.txt:32
+msgid "``_score``"
+msgstr "``_score``"
 
 #: ../../../source/pseudo_column.txt:22
 msgid ""
@@ -65,49 +37,9 @@ msgstr ""
 "は不変で、レコードが存在する限り変更することはできません。ただし、削除された"
 "レコードの_idの値は再利用されます。"
 
-#: ../../../source/pseudo_column.txt:24
-msgid "``_key``"
-msgstr "``_key``"
-
-#: ../../../source/pseudo_column.txt:26
-msgid ""
-"レコードの主キー値を表します。主キーを持つテーブルのみに定義されます。主キー"
-"値はテーブルの中で一意であり、変更することはできません。"
-msgstr ""
-"レコードの主キー値を表します。主キーを持つテーブルのみに定義されます。主キー"
-"値はテーブルの中で一意であり、変更することはできません。"
-
-#: ../../../source/pseudo_column.txt:28
-msgid "``_value``"
-msgstr "``_value``"
-
-#: ../../../source/pseudo_column.txt:30
-msgid ""
-"レコードの値を表します。value_typeを指定したテーブルのみに定義されます。自由"
-"に変更可能です。"
-msgstr ""
-"レコードの値を表します。value_typeを指定したテーブルのみに定義されます。自由"
-"に変更可能です。"
-
-#: ../../../source/pseudo_column.txt:32
-msgid "``_score``"
-msgstr "``_score``"
-
-#: ../../../source/pseudo_column.txt:34
-msgid ""
-"各レコードのスコア値を表します。検索結果として生成されたテーブルのみに定義さ"
-"れます。"
-msgstr ""
-"各レコードのスコア値を表します。検索結果として生成されたテーブルのみに定義さ"
-"れます。"
-
-#: ../../../source/pseudo_column.txt:36
-msgid "検索処理を実行する過程で値が設定されますが、自由に変更可能です。"
-msgstr "検索処理を実行する過程で値が設定されますが、自由に変更可能です。"
-
-#: ../../../source/pseudo_column.txt:38
-msgid "``_nsubrecs``"
-msgstr "``_nsubrecs``"
+#: ../../../source/pseudo_column.txt:6
+msgid "疑似カラム (pseudo_column)"
+msgstr "疑似カラム (pseudo_column)"
 
 #: ../../../source/pseudo_column.txt:40
 msgid ""
@@ -120,3 +52,71 @@ msgstr ""
 "テーブルのみに定義されます。グループ化(drilldown)処理を実行すると、グループ化"
 "前のテーブルにおいて、グループ化キーの値が同一であったレコードの件数が、グ"
 "ループ化処理の結果を格納するテーブルの_nsubrecsに記録されます。"
+
+#: ../../../source/pseudo_column.txt:28
+msgid "``_value``"
+msgstr "``_value``"
+
+#: ../../../source/pseudo_column.txt:26
+msgid ""
+"レコードの主キー値を表します。主キーを持つテーブルのみに定義されます。主キー"
+"値はテーブルの中で一意であり、変更することはできません。"
+msgstr ""
+"レコードの主キー値を表します。主キーを持つテーブルのみに定義されます。主キー"
+"値はテーブルの中で一意であり、変更することはできません。"
+
+#: ../../../source/pseudo_column.txt:14
+msgid "説明"
+msgstr "説明"
+
+#: ../../../source/pseudo_column.txt:30
+msgid ""
+"レコードの値を表します。value_typeを指定したテーブルのみに定義されます。自由"
+"に変更可能です。"
+msgstr ""
+"レコードの値を表します。value_typeを指定したテーブルのみに定義されます。自由"
+"に変更可能です。"
+
+#: ../../../source/pseudo_column.txt:9
+msgid "名前"
+msgstr "名前"
+
+#: ../../../source/pseudo_column.txt:38
+msgid "``_nsubrecs``"
+msgstr "``_nsubrecs``"
+
+#: ../../../source/pseudo_column.txt:11
+msgid "疑似カラム"
+msgstr "疑似カラム"
+
+#: ../../../source/pseudo_column.txt:34
+msgid ""
+"各レコードのスコア値を表します。検索結果として生成されたテーブルのみに定義さ"
+"れます。"
+msgstr ""
+"各レコードのスコア値を表します。検索結果として生成されたテーブルのみに定義さ"
+"れます。"
+
+#: ../../../source/pseudo_column.txt:16
+msgid ""
+"groongaのデータベースで作成したテーブルには、いくつかのカラムが自動的に定義さ"
+"れます。"
+msgstr ""
+"groongaのデータベースで作成したテーブルには、いくつかのカラムが自動的に定義さ"
+"れます。"
+
+#: ../../../source/pseudo_column.txt:36
+msgid "検索処理を実行する過程で値が設定されますが、自由に変更可能です。"
+msgstr "検索処理を実行する過程で値が設定されますが、自由に変更可能です。"
+
+#: ../../../source/pseudo_column.txt:18
+msgid ""
+"これらのカラムはいずれもアンダースコア('_')で始まる名前が付与されます。定義さ"
+"れる疑似カラムは、テーブルの種類によって異なります。"
+msgstr ""
+"これらのカラムはいずれもアンダースコア('_')で始まる名前が付与されます。定義さ"
+"れる疑似カラムは、テーブルの種類によって異なります。"
+
+#: ../../../source/pseudo_column.txt:20
+msgid "``_id``"
+msgstr "``_id``"
