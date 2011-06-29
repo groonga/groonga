@@ -9,6 +9,10 @@
 #include <algorithm>
 #include <cstring>
 
+#if defined(MAP_ANON) && !defined(MAP_ANONYMOUS)
+#define MAP_ANONYMOUS MAP_ANON
+#endif
+
 namespace grn {
 namespace dat {
 
