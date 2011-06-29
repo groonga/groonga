@@ -10,14 +10,10 @@ EXTRA_DIST =					\
 	$(noinstall_ruby_scripts)
 
 if WITH_RUBY
-bin_SCRIPTS = $(install_ruby_scripts)
-endif
-
-if WITH_RUBY
 install-exec-hook:
-	for script in $(install_ruby_scripts); do	\
-	  sed -i''					\
-	    -e '1s,#!.*,#!$(RUBY),'			\
-	    $(DESTDIR)$(bindir)/$${script};		\
+	for script in $(install_ruby_scripts); do		\
+	  sed -e '1s,#!.*,#!$(RUBY),'				\
+	    $${script} > $(DESTDIR)$(bindir)/$${script};	\
+	  chmod +x $(DESTDIR)$(bindir)/$${script};		\
 	done
 endif
