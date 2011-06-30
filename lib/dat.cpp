@@ -209,7 +209,7 @@ grn_dat_add(grn_ctx *ctx, grn_dat *dat, const void *key,
       grn::dat::Trie *new_trie = new grn::dat::Trie;
       new_trie->create(*trie, buffer, trie->file_size() * 2);
       dat->handle = new_trie;
-      dat->file_id = file_id;
+      dat->header->file_id = dat->file_id = file_id;
       /* UNLOCK */
       /* should be deleted after enough interval */
       if (new_trie == NULL) { goto exit; }
