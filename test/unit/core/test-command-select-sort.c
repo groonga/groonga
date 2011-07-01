@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2010  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2010-2011  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -27,6 +27,7 @@ void test_int(void);
 void test_drilldown(void);
 void test_score_without_query(void);
 void test_score_drilldown_without_query(void);
+void test_nonexistent(void);
 void test_index(void);
 
 static gchar *tmp_directory;
@@ -200,28 +201,66 @@ test_drilldown(void)
 void
 test_score_without_query(void)
 {
-  grn_test_assert_send_command_error(
-    context,
-    GRN_INVALID_ARGUMENT,
-    "invalid sort key: <_score>(<_score>)",
-    "select Sites "
-    "--sortby \"_score\" "
-    "--output_columns \"_key\"");
+  cut_assert_equal_string(
+    "[[[3],"
+      "[[\"_key\",\"ShortText\"]],"
+      "[\"2ch.net\"],"
+      "[\"groonga.org\"],"
+      "[\"qwik.jp/senna/FrontPageJ.html\"]]]",
+    send_command("select Sites "
+                 "--sortby \"_score\" "
+                 "--output_columns \"_key\""));
 }
 
 void
 test_score_drilldown_without_query(void)
 {
+  cut_assert_equal_string(
+    "[[[5],"
+      "[[\"_id\",\"UInt32\"],"
+       "[\"site._key\",\"ShortText\"],"
+       "[\"user._key\",\"ShortText\"]],"
+      "[5,\"2ch.net\",\"yu\"],"
+      "[4,\"2ch.net\",\"gunyara-kun\"],"
+      "[3,\"groonga.org\",\"yu\"],"
+      "[2,\"groonga.org\",\"gunyara-kun\"],"
+      "[1,\"groonga.org\",\"morita\"]],"
+     "[[2],"
+      "[[\"_key\",\"ShortText\"],"
+       "[\"_nsubrecs\",\"Int32\"]],"
+      "[\"2ch.net\",2],"
+      "[\"groonga.org\",3]],"
+     "[[3],"
+      "[[\"_key\",\"ShortText\"],"
+       "[\"_nsubrecs\",\"Int32\"]],"
+      "[\"gunyara-kun\",2],"
+      "[\"morita\",1],"
+      "[\"yu\",2]],"
+    "[[4],"
+     "[[\"_key\",\"Int32\"],"
+      "[\"_nsubrecs\",\"Int32\"]],"
+     "[0,1],"
+     "[10,1],"
+     "[50,1],"
+     "[100,2]]]",
+    send_command("select Bookmarks "
+                 "--sortby \"_score,-_id\" "
+                 "--output_columns \"_id, site._key, user._key\" "
+                 "--drilldown \"site user rank\" "
+                 "--drilldown_output_columns \"_key, _nsubrecs\" "
+                 "--drilldown_sortby \"_key\""));
+}
+
+void
+test_nonexistent(void)
+{
   grn_test_assert_send_command_error(
     context,
     GRN_INVALID_ARGUMENT,
-    "invalid sort key: <_score>(<_score>)",
-    "select Bookmarks "
-    "--sortby \"_score\" "
-    "--output_columns \"site._key, user._key\" "
-    "--drilldown \"site user rank\" "
-    "--drilldown_output_columns \"_key, _nsubrecs\" "
-    "--drilldown_sortby \"_key\"");
+    "invalid sort key: <nonexistent>(<_score,nonexistent>)",
+    "select Sites "
+    "--sortby \"_score,nonexistent\" "
+    "--output_columns \"_key\"");
 }
 
 void

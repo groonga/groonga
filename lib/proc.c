@@ -199,31 +199,32 @@ grn_select(grn_ctx *ctx, const char *table, unsigned table_len,
 
       grn_normalize_offset_and_limit(ctx, nhits, &offset, &limit);
 
-      if (sortby_len) {
+      if (sortby_len &&
+          (keys = grn_table_sort_key_from_str(ctx, sortby, sortby_len, res, &nkeys))) {
         if ((sorted = grn_table_create(ctx, NULL, 0, NULL,
                                        GRN_OBJ_TABLE_NO_KEY, NULL, res))) {
-          if ((keys = grn_table_sort_key_from_str(ctx, sortby, sortby_len, res, &nkeys))) {
-            grn_table_sort(ctx, res, offset, limit, sorted, keys, nkeys);
-            LAP(":", "sort(%d)", limit);
-            GRN_OBJ_FORMAT_INIT(&format, nhits, 0, limit, offset);
-            format.flags =
-              GRN_OBJ_FORMAT_WITH_COLUMN_NAMES|
-              GRN_OBJ_FORMAT_XML_ELEMENT_RESULTSET;
-            grn_obj_columns(ctx, sorted, output_columns, output_columns_len, &format.columns);
-            GRN_OUTPUT_OBJ(sorted, &format);
-            GRN_OBJ_FORMAT_FIN(ctx, &format);
-            grn_table_sort_key_close(ctx, keys, nkeys);
-          }
+          grn_table_sort(ctx, res, offset, limit, sorted, keys, nkeys);
+          LAP(":", "sort(%d)", limit);
+          GRN_OBJ_FORMAT_INIT(&format, nhits, 0, limit, offset);
+          format.flags =
+            GRN_OBJ_FORMAT_WITH_COLUMN_NAMES|
+            GRN_OBJ_FORMAT_XML_ELEMENT_RESULTSET;
+          grn_obj_columns(ctx, sorted, output_columns, output_columns_len, &format.columns);
+          GRN_OUTPUT_OBJ(sorted, &format);
+          GRN_OBJ_FORMAT_FIN(ctx, &format);
           grn_obj_unlink(ctx, sorted);
         }
+        grn_table_sort_key_close(ctx, keys, nkeys);
       } else {
-        GRN_OBJ_FORMAT_INIT(&format, nhits, offset, limit, offset);
-        format.flags =
-          GRN_OBJ_FORMAT_WITH_COLUMN_NAMES|
-          GRN_OBJ_FORMAT_XML_ELEMENT_RESULTSET;
-        grn_obj_columns(ctx, res, output_columns, output_columns_len, &format.columns);
-        GRN_OUTPUT_OBJ(res, &format);
-        GRN_OBJ_FORMAT_FIN(ctx, &format);
+        if (!ctx->rc) {
+          GRN_OBJ_FORMAT_INIT(&format, nhits, offset, limit, offset);
+          format.flags =
+            GRN_OBJ_FORMAT_WITH_COLUMN_NAMES|
+            GRN_OBJ_FORMAT_XML_ELEMENT_RESULTSET;
+          grn_obj_columns(ctx, res, output_columns, output_columns_len, &format.columns);
+          GRN_OUTPUT_OBJ(res, &format);
+          GRN_OBJ_FORMAT_FIN(ctx, &format);
+        }
       }
       LAP(":", "output(%d)", limit);
       if (!ctx->rc && drilldown_len) {
