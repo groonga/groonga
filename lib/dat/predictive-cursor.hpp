@@ -2,12 +2,12 @@
 #define GRN_DAT_PREDICTIVE_CURSOR_HPP_
 
 #include "cursor.hpp"
-#include "trie.hpp"
-
-#include <vector>
+#include "vector.hpp"
 
 namespace grn {
 namespace dat {
+
+class Trie;
 
 class PredictiveCursor : public Cursor {
  public:
@@ -41,7 +41,7 @@ class PredictiveCursor : public Cursor {
   UInt32 limit_;
   UInt32 flags_;
 
-  std::vector<UInt32> buf_;
+  Vector<UInt32> buf_;
   UInt32 cur_;
   UInt32 end_;
   UInt32 min_length_;

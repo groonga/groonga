@@ -1,7 +1,8 @@
 #include "memory-mapped-file.hpp"
-#include "memory-mapped-file-impl.hpp"
 
 #include <new>
+
+#include "memory-mapped-file-impl.hpp"
 
 namespace grn {
 namespace dat {

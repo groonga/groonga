@@ -2,12 +2,12 @@
 #define GRN_DAT_COMMON_PREFIX_CURSOR_H
 
 #include "cursor.hpp"
-#include "trie.hpp"
-
-#include <vector>
+#include "vector.hpp"
 
 namespace grn {
 namespace dat {
+
+class Trie;
 
 class CommonPrefixCursor : public Cursor {
  public:
@@ -42,7 +42,7 @@ class CommonPrefixCursor : public Cursor {
   UInt32 limit_;
   UInt32 flags_;
 
-  std::vector<UInt32> buf_;
+  Vector<UInt32> buf_;
   UInt32 cur_;
   UInt32 end_;
 

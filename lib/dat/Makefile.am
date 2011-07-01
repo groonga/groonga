@@ -32,7 +32,8 @@ noinst_HEADERS =				\
 	predictive-cursor.hpp			\
 	timer.hpp				\
 	trie.hpp				\
-	usage.hpp
+	usage.hpp				\
+	vector.hpp
 endif
 
 CLEANFILES = *.gcno *.gcda

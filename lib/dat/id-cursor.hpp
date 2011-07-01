@@ -2,10 +2,11 @@
 #define GRN_DAT_ID_CURSOR_H
 
 #include "cursor.hpp"
-#include "trie.hpp"
 
 namespace grn {
 namespace dat {
+
+class Trie;
 
 class IdCursor : public Cursor {
  public:

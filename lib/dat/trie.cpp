@@ -14,9 +14,7 @@ Trie::Trie()
       key_infos_(NULL),
       key_buf_(NULL) {}
 
-Trie::~Trie() {
-  close();
-}
+Trie::~Trie() {}
 
 void Trie::create(const char *file_name,
                   UInt64 file_size,
@@ -105,12 +103,8 @@ void Trie::open(const char *file_name) {
 }
 
 void Trie::close() {
-  memory_mapped_file_.close();
-  header_ = NULL;
-  nodes_ = NULL;
-  blocks_ = NULL;
-  key_infos_ = NULL;
-  key_buf_ = NULL;
+  Trie new_trie;
+  new_trie.swap(this);
 }
 
 void Trie::swap(Trie *trie) {
@@ -303,11 +297,7 @@ bool Trie::search_from_root(const UInt8 *ptr,
   GRN_DAT_DEBUG_THROW_IF(!ith_node(node_id).is_terminal());
 
   if (key != NULL) {
-    const UInt32 key_id = ith_node(node_id).key_id();
-    key->set_ptr(key_buf_ + ith_key_info(key_id).offset());
-    key->set_length(ith_key_info(key_id + 1).offset()
-        - ith_key_info(key_id).offset());
-    key->set_id(key_id);
+    ith_key(ith_node(node_id).key_id(), key);
   }
   return true;
 }
@@ -373,11 +363,7 @@ bool Trie::insert_from_root(const UInt8 *ptr,
   GRN_DAT_DEBUG_THROW_IF(!ith_node(next).is_terminal());
 
   if (key != NULL) {
-    const UInt32 key_id = ith_node(next).key_id();
-    key->set_ptr(key_buf_ + ith_key_info(key_id).offset());
-    key->set_length(ith_key_info(key_id + 1).offset()
-        - ith_key_info(key_id).offset());
-    key->set_id(key_id);
+    ith_key(ith_node(next).key_id(), key);
   }
   return false;
 }

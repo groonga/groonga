@@ -1,11 +1,11 @@
-#ifndef GRN_DAT_MEMORY_MAPPED_FILE_IMPL_H_
-#define GRN_DAT_MEMORY_MAPPED_FILE_IMPL_H_
-
-#include "dat.hpp"
+#ifndef GRN_DAT_MEMORY_MAPPED_FILE_IMPL_HPP_
+#define GRN_DAT_MEMORY_MAPPED_FILE_IMPL_HPP_
 
 #ifdef WIN32
 #include <Windows.h>
 #endif  // WIN32
+
+#include "dat.hpp"
 
 namespace grn {
 namespace dat {
@@ -45,9 +45,6 @@ class MemoryMappedFileImpl {
   void create_(const char *path, UInt64 size);
   void open_(const char *path);
 
-  template <typename T>
-  void swap(T &lhs, T &rhs) const;
-
   // Disallows copy and assignment.
   MemoryMappedFileImpl(const MemoryMappedFileImpl &);
   MemoryMappedFileImpl &operator=(const MemoryMappedFileImpl &);
@@ -56,4 +53,4 @@ class MemoryMappedFileImpl {
 }  // namespace grn
 }  // namespace dat
 
-#endif  // GRN_DAT_MEMORY_MAPPED_FILE_IMPL_H_
+#endif  // GRN_DAT_MEMORY_MAPPED_FILE_IMPL_HPP_

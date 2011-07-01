@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <cstring>
 
+#include "trie.hpp"
+
 namespace grn {
 namespace dat {
 
@@ -19,7 +21,9 @@ KeyCursor::KeyCursor()
       end_length_(0) {}
 
 KeyCursor::~KeyCursor() {
-  close();
+  if ((end_ptr_ != NULL) && (end_length_ != 0)) {
+    delete [] end_ptr_;
+  }
 }
 
 void KeyCursor::open(const Trie &trie,
@@ -39,19 +43,8 @@ void KeyCursor::open(const Trie &trie,
 }
 
 void KeyCursor::close() {
-  trie_ = NULL;
-  offset_ = 0;
-  limit_ = UINT32_MAX;
-  flags_ = KEY_RANGE_CURSOR;
-  buf_.clear();
-  count_ = 0;
-  max_count_ = 0;
-  end_ = false;
-  if ((end_ptr_ != NULL) && (end_length_ != 0)) {
-    delete [] end_ptr_;
-  }
-  end_ptr_ = NULL;
-  end_length_ = 0;
+  KeyCursor new_cursor;
+  new_cursor.swap(this);
 }
 
 bool KeyCursor::next(Key *key) {
@@ -140,7 +133,7 @@ void KeyCursor::ascending_init(const UInt8 *min_ptr, UInt32 min_length,
       const int result = compare(key, min_ptr, min_length, i);
       if ((result > 0) || ((result == 0) &&
           ((flags_ & EXCEPT_LOWER_BOUND) != EXCEPT_LOWER_BOUND))) {
-        buf_.push_back(node_id);
+        GRN_DAT_THROW_IF(MEMORY_ERROR, !buf_.push_back(node_id));
       }
       return;
     }
@@ -153,7 +146,8 @@ void KeyCursor::ascending_init(const UInt8 *min_ptr, UInt32 min_length,
       }
       while (label != INVALID_LABEL) {
         if (label > min_ptr[i]) {
-          buf_.push_back(node.offset() ^ label);
+          GRN_DAT_THROW_IF(MEMORY_ERROR,
+                           !buf_.push_back(node.offset() ^ label));
           break;
         }
         label = trie_->ith_node(node.offset() ^ label).sibling();
@@ -163,7 +157,8 @@ void KeyCursor::ascending_init(const UInt8 *min_ptr, UInt32 min_length,
 
     node = trie_->ith_node(node_id);
     if (node.sibling() != INVALID_LABEL) {
-      buf_.push_back(node_id ^ min_ptr[i] ^ node.sibling());
+      GRN_DAT_THROW_IF(MEMORY_ERROR,
+                       !buf_.push_back(node_id ^ min_ptr[i] ^ node.sibling()));
     }
   }
 
@@ -173,7 +168,7 @@ void KeyCursor::ascending_init(const UInt8 *min_ptr, UInt32 min_length,
     trie_->ith_key(base.key_id(), &key);
     if ((key.length() != min_length) ||
         ((flags_ & EXCEPT_LOWER_BOUND) != EXCEPT_LOWER_BOUND)) {
-      buf_.push_back(node_id);
+      GRN_DAT_THROW_IF(MEMORY_ERROR, !buf_.push_back(node_id));
     }
     return;
   }
@@ -184,7 +179,7 @@ void KeyCursor::ascending_init(const UInt8 *min_ptr, UInt32 min_length,
     label = trie_->ith_node(base.offset() ^ label).sibling();
   }
   if (label != INVALID_LABEL) {
-    buf_.push_back(base.offset() ^ label);
+    GRN_DAT_THROW_IF(MEMORY_ERROR, !buf_.push_back(base.offset() ^ label));
   }
 }
 
@@ -209,7 +204,8 @@ void KeyCursor::descending_init(const UInt8 *min_ptr, UInt32 min_length,
       const int result = compare(key, max_ptr, max_length, i);
       if ((result < 0) || ((result == 0) &&
           ((flags_ & EXCEPT_UPPER_BOUND) != EXCEPT_UPPER_BOUND))) {
-        buf_.push_back(node_id | POST_ORDER_FLAG);
+        GRN_DAT_THROW_IF(MEMORY_ERROR,
+                         !buf_.push_back(node_id | POST_ORDER_FLAG));
       }
       return;
     }
@@ -217,13 +213,14 @@ void KeyCursor::descending_init(const UInt8 *min_ptr, UInt32 min_length,
     UInt32 label = trie_->ith_node(node_id).child();
     if (label == TERMINAL_LABEL) {
       node_id = base.offset() ^ label;
-      buf_.push_back(node_id | POST_ORDER_FLAG);
+      GRN_DAT_THROW_IF(MEMORY_ERROR,
+                       !buf_.push_back(node_id | POST_ORDER_FLAG));
       label = trie_->ith_node(node_id).sibling();
     }
     while (label != INVALID_LABEL) {
       node_id = base.offset() ^ label;
       if (label < max_ptr[i]) {
-        buf_.push_back(node_id);
+        GRN_DAT_THROW_IF(MEMORY_ERROR, !buf_.push_back(node_id));
       } else if (label > max_ptr[i]) {
         return;
       } else {
@@ -242,7 +239,8 @@ void KeyCursor::descending_init(const UInt8 *min_ptr, UInt32 min_length,
     trie_->ith_key(base.key_id(), &key);
     if ((key.length() == max_length) &&
         ((flags_ & EXCEPT_UPPER_BOUND) != EXCEPT_UPPER_BOUND)) {
-      buf_.push_back(node_id | POST_ORDER_FLAG);
+      GRN_DAT_THROW_IF(MEMORY_ERROR,
+                       !buf_.push_back(node_id | POST_ORDER_FLAG));
     }
     return;
   }
@@ -250,7 +248,8 @@ void KeyCursor::descending_init(const UInt8 *min_ptr, UInt32 min_length,
   UInt16 label = trie_->ith_node(node_id).child();
   if ((label == TERMINAL_LABEL) &&
       ((flags_ & EXCEPT_UPPER_BOUND) != EXCEPT_UPPER_BOUND)) {
-    buf_.push_back((base.offset() ^ label) | POST_ORDER_FLAG);
+    GRN_DAT_THROW_IF(MEMORY_ERROR,
+        !buf_.push_back((base.offset() ^ label) | POST_ORDER_FLAG));
   }
 }
 
@@ -259,7 +258,7 @@ void KeyCursor::swap(KeyCursor *cursor) {
   std::swap(offset_, cursor->offset_);
   std::swap(limit_, cursor->limit_);
   std::swap(flags_, cursor->flags_);
-  buf_.swap(cursor->buf_);
+  buf_.swap(&cursor->buf_);
   std::swap(count_, cursor->count_);
   std::swap(max_count_, cursor->max_count_);
   std::swap(end_, cursor->end_);
@@ -274,11 +273,13 @@ bool KeyCursor::ascending_next(Key *key) {
 
     const Node node = trie_->ith_node(node_id);
     if (node.sibling() != INVALID_LABEL) {
-      buf_.push_back(node_id ^ node.label() ^ node.sibling());
+      GRN_DAT_THROW_IF(MEMORY_ERROR,
+          !buf_.push_back(node_id ^ node.label() ^ node.sibling()));
     }
 
     if (node.child() != INVALID_LABEL) {
-      buf_.push_back(node.offset() ^ node.child());
+      GRN_DAT_THROW_IF(MEMORY_ERROR,
+                       !buf_.push_back(node.offset() ^ node.child()));
     }
 
     if (node.is_terminal()) {
@@ -329,7 +330,7 @@ bool KeyCursor::descending_next(Key *key) {
       buf_.back() |= POST_ORDER_FLAG;
       UInt16 label = trie_->ith_node(node_id).child();
       while (label != INVALID_LABEL) {
-        buf_.push_back(base.offset() ^ label);
+        GRN_DAT_THROW_IF(MEMORY_ERROR, !buf_.push_back(base.offset() ^ label));
         label = trie_->ith_node(base.offset() ^ label).sibling();
       }
     }

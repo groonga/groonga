@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <cstring>
 
+#include "trie.hpp"
+
 namespace grn {
 namespace dat {
 
@@ -16,16 +18,14 @@ PredictiveCursor::PredictiveCursor()
       end_(0),
       min_length_(0) {}
 
-PredictiveCursor::~PredictiveCursor() {
-  close();
-}
+PredictiveCursor::~PredictiveCursor() {}
 
 void PredictiveCursor::open(const Trie &trie,
-                                  const void *ptr,
-                                  UInt32 length,
-                                  UInt32 offset,
-                                  UInt32 limit,
-                                  UInt32 flags) {
+                            const void *ptr,
+                            UInt32 length,
+                            UInt32 offset,
+                            UInt32 limit,
+                            UInt32 flags) {
   GRN_DAT_THROW_IF(PARAM_ERROR, (ptr == NULL) && (length != 0));
 
   flags = fix_flags(flags);
@@ -35,14 +35,8 @@ void PredictiveCursor::open(const Trie &trie,
 }
 
 void PredictiveCursor::close() {
-  trie_ = NULL;
-  offset_ = 0;
-  limit_ = UINT32_MAX;
-  flags_ = PREDICTIVE_CURSOR;
-  buf_.clear();
-  cur_ = 0;
-  end_ = 0;
-  min_length_ = 0;
+  PredictiveCursor new_cursor;
+  new_cursor.swap(this);
 }
 
 bool PredictiveCursor::next(Key *key) {
@@ -78,9 +72,9 @@ UInt32 PredictiveCursor::fix_flags(UInt32 flags) const {
 }
 
 PredictiveCursor::PredictiveCursor(const Trie &trie,
-                                               UInt32 offset,
-                                               UInt32 limit,
-                                               UInt32 flags)
+                                   UInt32 offset,
+                                   UInt32 limit,
+                                   UInt32 flags)
     : trie_(&trie),
       offset_(offset),
       limit_(limit),
@@ -110,7 +104,7 @@ void PredictiveCursor::init(const UInt8 *ptr, UInt32 length) {
         trie_->ith_key(base.key_id(), &key);
         if ((key.length() >= length) &&
             (std::memcmp(ptr + i, key.ptr() + i, length - i) == 0)) {
-          buf_.push_back(node_id);
+          GRN_DAT_THROW_IF(MEMORY_ERROR, !buf_.push_back(node_id));
         }
       }
       return;
@@ -121,7 +115,7 @@ void PredictiveCursor::init(const UInt8 *ptr, UInt32 length) {
       return;
     }
   }
-  buf_.push_back(node_id);
+  GRN_DAT_THROW_IF(MEMORY_ERROR, !buf_.push_back(node_id));
 }
 
 void PredictiveCursor::swap(PredictiveCursor *cursor) {
@@ -129,7 +123,7 @@ void PredictiveCursor::swap(PredictiveCursor *cursor) {
   std::swap(offset_, cursor->offset_);
   std::swap(limit_, cursor->limit_);
   std::swap(flags_, cursor->flags_);
-  buf_.swap(cursor->buf_);
+  buf_.swap(&cursor->buf_);
   std::swap(cur_, cursor->cur_);
   std::swap(end_, cursor->end_);
   std::swap(min_length_, cursor->min_length_);
@@ -142,7 +136,8 @@ bool PredictiveCursor::ascending_next(Key *key) {
 
     const Node node = trie_->ith_node(node_id);
     if (node.sibling() != INVALID_LABEL) {
-      buf_.push_back(node_id ^ node.label() ^ node.sibling());
+      GRN_DAT_THROW_IF(MEMORY_ERROR,
+          !buf_.push_back(node_id ^ node.label() ^ node.sibling()));
     }
 
     if (node.is_terminal()) {
@@ -155,7 +150,8 @@ bool PredictiveCursor::ascending_next(Key *key) {
         }
       }
     } else if (node.child() != INVALID_LABEL) {
-      buf_.push_back(node.offset() ^ node.child());
+      GRN_DAT_THROW_IF(MEMORY_ERROR,
+                       !buf_.push_back(node.offset() ^ node.child()));
     }
   }
   return false;
@@ -183,7 +179,7 @@ bool PredictiveCursor::descending_next(Key *key) {
       buf_.back() |= POST_ORDER_FLAG;
       UInt16 label = trie_->ith_node(node_id).child();
       while (label != INVALID_LABEL) {
-        buf_.push_back(base.offset() ^ label);
+        GRN_DAT_THROW_IF(MEMORY_ERROR, !buf_.push_back(base.offset() ^ label));
         label = trie_->ith_node(base.offset() ^ label).sibling();
       }
     }

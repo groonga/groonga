@@ -2,6 +2,8 @@
 
 #include <algorithm>
 
+#include "trie.hpp"
+
 namespace grn {
 namespace dat {
 
@@ -13,9 +15,7 @@ IdCursor::IdCursor()
       cur_(INVALID_KEY_ID),
       end_(INVALID_KEY_ID) {}
 
-IdCursor::~IdCursor() {
-  close();
-}
+IdCursor::~IdCursor() {}
 
 void IdCursor::open(const Trie &trie,
                     const void *min_ptr, UInt32 min_length,
@@ -26,21 +26,21 @@ void IdCursor::open(const Trie &trie,
   GRN_DAT_THROW_IF(PARAM_ERROR, (min_ptr == NULL) && (min_length != 0));
   GRN_DAT_THROW_IF(PARAM_ERROR, (max_ptr == NULL) && (max_length != 0));
 
-  Key min_key;
-  if (min_ptr == NULL) {
-    min_key.set_id(INVALID_KEY_ID);
-  } else {
-    GRN_DAT_THROW_IF(PARAM_ERROR, !trie.search(min_ptr, min_length, &min_key));
+  UInt32 min_id = INVALID_KEY_ID;
+  if (min_ptr != NULL) {
+    Key key;
+    GRN_DAT_THROW_IF(PARAM_ERROR, !trie.search(min_ptr, min_length, &key));
+    min_id = key.id();
   }
 
-  Key max_key;
-  if (max_ptr == NULL) {
-    max_key.set_id(INVALID_KEY_ID);
-  } else {
-    GRN_DAT_THROW_IF(PARAM_ERROR, !trie.search(max_ptr, max_length, &max_key));
+  UInt32 max_id = INVALID_KEY_ID;
+  if (max_ptr != NULL) {
+    Key key;
+    GRN_DAT_THROW_IF(PARAM_ERROR, !trie.search(max_ptr, max_length, &key));
+    max_id = key.id();
   }
 
-  open(trie, min_key.id(), max_key.id(), offset, limit, flags);
+  open(trie, min_id, max_id, offset, limit, flags);
 }
 
 void IdCursor::open(const Trie &trie,
@@ -50,18 +50,15 @@ void IdCursor::open(const Trie &trie,
                     UInt32 limit,
                     UInt32 flags) {
   flags = fix_flags(flags);
+
   IdCursor new_cursor(trie, offset, limit, flags);
   new_cursor.init(min_id, max_id);
   new_cursor.swap(this);
 }
 
 void IdCursor::close() {
-  trie_ = NULL;
-  offset_ = 0;
-  limit_ = UINT32_MAX;
-  flags_ = ID_RANGE_CURSOR;
-  cur_ = INVALID_KEY_ID;
-  end_ = INVALID_KEY_ID;
+  IdCursor new_cursor;
+  new_cursor.swap(this);
 }
 
 bool IdCursor::next(Key *key) {

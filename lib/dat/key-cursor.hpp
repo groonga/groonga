@@ -2,12 +2,12 @@
 #define GRN_DAT_KEY_CURSOR_HPP_
 
 #include "cursor.hpp"
-#include "trie.hpp"
-
-#include <vector>
+#include "vector.hpp"
 
 namespace grn {
 namespace dat {
+
+class Trie;
 
 class KeyCursor : public Cursor {
  public:
@@ -41,7 +41,7 @@ class KeyCursor : public Cursor {
   UInt32 limit_;
   UInt32 flags_;
 
-  std::vector<UInt32> buf_;
+  Vector<UInt32> buf_;
   UInt32 count_;
   UInt32 max_count_;
   bool end_;

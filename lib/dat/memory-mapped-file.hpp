@@ -1,5 +1,5 @@
-#ifndef GRN_DAT_MEMORY_MAPPED_FILE_H_
-#define GRN_DAT_MEMORY_MAPPED_FILE_H_
+#ifndef GRN_DAT_MEMORY_MAPPED_FILE_HPP_
+#define GRN_DAT_MEMORY_MAPPED_FILE_HPP_
 
 #include "dat.hpp"
 
@@ -33,4 +33,4 @@ class MemoryMappedFile {
 }  // namespace grn
 }  // namespace dat
 
-#endif  // GRN_DAT_MEMORY_MAPPED_FILE_H_
+#endif  // GRN_DAT_MEMORY_MAPPED_FILE_HPP_
