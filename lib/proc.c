@@ -2063,8 +2063,10 @@ proc_check(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     case GRN_TABLE_PAT_KEY :
       grn_pat_check(ctx, (grn_pat *)obj);
       break;
-    case GRN_TABLE_DAT_KEY :
     case GRN_TABLE_HASH_KEY :
+      grn_hash_check(ctx, (grn_hash *)obj);
+      break;
+    case GRN_TABLE_DAT_KEY :
     case GRN_TABLE_NO_KEY :
     case GRN_COLUMN_FIX_SIZE :
       GRN_OUTPUT_BOOL(!ctx->rc);

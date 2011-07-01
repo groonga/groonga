@@ -16,6 +16,7 @@
 */
 #include "hash.h"
 #include "pat.h"
+#include "output.h"
 #include <string.h>
 #include <limits.h>
 
@@ -2130,6 +2131,42 @@ grn_hash_sort(grn_ctx *ctx, grn_hash *hash,
     GRN_FREE(res);
     return i;
   }
+}
+
+void
+grn_hash_check(grn_ctx *ctx, grn_hash *hash)
+{
+  char buf[8];
+  struct grn_hash_header *h = hash->header;
+  GRN_OUTPUT_ARRAY_OPEN("RESULT", 1);
+  GRN_OUTPUT_MAP_OPEN("SUMMARY", 12);
+  GRN_OUTPUT_CSTR("flags");
+  grn_itoh(h->flags, buf, 8);
+  GRN_OUTPUT_STR(buf, 8);
+  GRN_OUTPUT_CSTR("key_size");
+  GRN_OUTPUT_INT64(hash->key_size);
+  GRN_OUTPUT_CSTR("value_size");
+  GRN_OUTPUT_INT64(hash->value_size);
+  GRN_OUTPUT_CSTR("tokenizer");
+  GRN_OUTPUT_INT64(h->tokenizer);
+  GRN_OUTPUT_CSTR("curr_rec");
+  GRN_OUTPUT_INT64(h->curr_rec);
+  GRN_OUTPUT_CSTR("curr_key");
+  GRN_OUTPUT_INT64(h->curr_key);
+  GRN_OUTPUT_CSTR("idx_offset");
+  GRN_OUTPUT_INT64(h->idx_offset);
+  GRN_OUTPUT_CSTR("entry_size");
+  GRN_OUTPUT_INT64(hash->entry_size);
+  GRN_OUTPUT_CSTR("max_offset");
+  GRN_OUTPUT_INT64(*hash->max_offset);
+  GRN_OUTPUT_CSTR("n_entries");
+  GRN_OUTPUT_INT64(*hash->n_entries);
+  GRN_OUTPUT_CSTR("n_garbages");
+  GRN_OUTPUT_INT64(*hash->n_garbages);
+  GRN_OUTPUT_CSTR("lock");
+  GRN_OUTPUT_INT64(h->lock);
+  GRN_OUTPUT_MAP_CLOSE();
+  GRN_OUTPUT_ARRAY_CLOSE();
 }
 
 /* todo : not completed yet
