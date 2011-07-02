@@ -60,7 +60,7 @@ class Vector {
   Vector &operator=(const Vector &);
 };
 
-}  // namespace grn
 }  // namespace dat
+}  // namespace grn
 
 #endif  // GRN_DAT_VECTOR_HPP_

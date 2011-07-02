@@ -15,8 +15,7 @@ class PredictiveCursor : public Cursor {
   ~PredictiveCursor();
 
   void open(const Trie &trie,
-            const void *ptr,
-            UInt32 length,
+            const String &str,
             UInt32 offset = 0,
             UInt32 limit = UINT32_MAX,
             UInt32 flags = 0);
@@ -46,10 +45,11 @@ class PredictiveCursor : public Cursor {
   UInt32 end_;
   UInt32 min_length_;
 
-  UInt32 fix_flags(UInt32 flags) const;
   PredictiveCursor(const Trie &trie,
                    UInt32 offset, UInt32 limit, UInt32 flags);
-  void init(const UInt8 *ptr, UInt32 length);
+
+  UInt32 fix_flags(UInt32 flags) const;
+  void init(const String &str);
   void swap(PredictiveCursor *cursor);
 
   bool ascending_next(Key *key);
@@ -62,7 +62,7 @@ class PredictiveCursor : public Cursor {
   PredictiveCursor &operator=(const PredictiveCursor &);
 };
 
-}  // namespace grn
 }  // namespace dat
+}  // namespace grn
 
 #endif  // GRN_DAT_PREDICTIVE_CURSOR_HPP_

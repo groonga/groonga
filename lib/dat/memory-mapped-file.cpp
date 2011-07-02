@@ -58,5 +58,5 @@ void MemoryMappedFile::swap(MemoryMappedFile *rhs) {
   rhs->impl_ = temp;
 }
 
-}  // namespace grn
 }  // namespace dat
+}  // namespace grn

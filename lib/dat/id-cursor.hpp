@@ -1,5 +1,5 @@
-#ifndef GRN_DAT_ID_CURSOR_H
-#define GRN_DAT_ID_CURSOR_H
+#ifndef GRN_DAT_ID_CURSOR_HPP_
+#define GRN_DAT_ID_CURSOR_HPP_
 
 #include "cursor.hpp"
 
@@ -14,8 +14,8 @@ class IdCursor : public Cursor {
   ~IdCursor();
 
   void open(const Trie &trie,
-            const void *min_ptr, UInt32 min_length,
-            const void *max_ptr, UInt32 max_length,
+            const String &min_str,
+            const String &max_str,
             UInt32 offset = 0,
             UInt32 limit = UINT32_MAX,
             UInt32 flags = 0);
@@ -50,8 +50,9 @@ class IdCursor : public Cursor {
   UInt32 cur_;
   UInt32 end_;
 
-  UInt32 fix_flags(UInt32 flags) const;
   IdCursor(const Trie &trie, UInt32 offset, UInt32 limit, UInt32 flags);
+
+  UInt32 fix_flags(UInt32 flags) const;
   void init(UInt32 min_id, UInt32 max_id);
   void swap(IdCursor *cursor);
 
@@ -60,7 +61,7 @@ class IdCursor : public Cursor {
   IdCursor &operator=(const IdCursor &);
 };
 
-}  // namespace grn
 }  // namespace dat
+}  // namespace grn
 
-#endif  // GRN_DAT_ID_CURSOR_H
+#endif  // GRN_DAT_ID_CURSOR_HPP_

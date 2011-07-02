@@ -50,7 +50,7 @@ class MemoryMappedFileImpl {
   MemoryMappedFileImpl &operator=(const MemoryMappedFileImpl &);
 };
 
-}  // namespace grn
 }  // namespace dat
+}  // namespace grn
 
 #endif  // GRN_DAT_MEMORY_MAPPED_FILE_IMPL_HPP_

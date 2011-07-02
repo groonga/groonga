@@ -21,8 +21,8 @@ Cursor *CursorFactory::open(const Trie &trie,
       IdCursor *cursor = new (std::nothrow) IdCursor;
       GRN_DAT_THROW_IF(MEMORY_ERROR, cursor == NULL);
       try {
-        cursor->open(trie, min_ptr, min_length, max_ptr, max_length,
-                     offset, limit, flags);
+        cursor->open(trie, String(min_ptr, min_length),
+                     String(max_ptr, max_length), offset, limit, flags);
       } catch (...) {
         delete cursor;
         throw;
@@ -33,8 +33,8 @@ Cursor *CursorFactory::open(const Trie &trie,
       KeyCursor *cursor = new (std::nothrow) KeyCursor;
       GRN_DAT_THROW_IF(MEMORY_ERROR, cursor == NULL);
       try {
-        cursor->open(trie, min_ptr, min_length, max_ptr, max_length,
-                     offset, limit, flags);
+        cursor->open(trie, String(min_ptr, min_length),
+                     String(max_ptr, max_length), offset, limit, flags);
       } catch (...) {
         delete cursor;
         throw;
@@ -45,7 +45,7 @@ Cursor *CursorFactory::open(const Trie &trie,
       CommonPrefixCursor *cursor = new (std::nothrow) CommonPrefixCursor;
       GRN_DAT_THROW_IF(MEMORY_ERROR, cursor == NULL);
       try {
-        cursor->open(trie, max_ptr, min_length, max_length,
+        cursor->open(trie, String(max_ptr, max_length), min_length,
                      offset, limit, flags);
       } catch (...) {
         delete cursor;
@@ -57,7 +57,7 @@ Cursor *CursorFactory::open(const Trie &trie,
       PredictiveCursor *cursor = new (std::nothrow) PredictiveCursor;
       GRN_DAT_THROW_IF(MEMORY_ERROR, cursor == NULL);
       try {
-        cursor->open(trie, min_ptr, min_length,
+        cursor->open(trie, String(min_ptr, min_length),
                      offset, limit, flags);
       } catch (...) {
         delete cursor;
@@ -71,5 +71,5 @@ Cursor *CursorFactory::open(const Trie &trie,
   }
 }
 
-}  // namespace grn
 }  // namespace dat
+}  // namespace grn

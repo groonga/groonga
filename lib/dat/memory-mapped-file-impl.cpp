@@ -212,5 +212,5 @@ void MemoryMappedFileImpl::open_(const char *path) {
 
 #endif  // WIN32
 
-}  // namespace grn
 }  // namespace dat
+}  // namespace grn

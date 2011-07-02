@@ -30,6 +30,7 @@ noinst_HEADERS =				\
 	memory-mapped-file.hpp			\
 	node.hpp				\
 	predictive-cursor.hpp			\
+	string.hpp				\
 	timer.hpp				\
 	trie.hpp				\
 	usage.hpp				\

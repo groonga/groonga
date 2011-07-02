@@ -1,5 +1,5 @@
-#ifndef GRN_DAT_CURSOR_FACTORY_H
-#define GRN_DAT_CURSOR_FACTORY_H
+#ifndef GRN_DAT_CURSOR_FACTORY_HPP_
+#define GRN_DAT_CURSOR_FACTORY_HPP_
 
 #include "cursor.hpp"
 
@@ -23,7 +23,7 @@ class CursorFactory {
   CursorFactory &operator=(const CursorFactory &);
 };
 
-}  // namespace grn
 }  // namespace dat
+}  // namespace grn
 
-#endif  // GRN_DAT_CURSOR_FACTORY_H
+#endif  // GRN_DAT_CURSOR_FACTORY_HPP_

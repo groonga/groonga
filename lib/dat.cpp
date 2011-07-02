@@ -259,7 +259,7 @@ grn_dat_get_key2(grn_ctx *ctx, grn_dat *dat, grn_id id, grn_obj *bulk)
       grn::dat::Trie *trie = static_cast<grn::dat::Trie *>(dat->handle);
       trie->ith_key(id, &k);
       len = k.length();
-      const char *key = k.ptr();
+      const char *key = static_cast<const char *>(k.ptr());
       if (bulk->header.impl_flags & GRN_OBJ_REFER) {
         bulk->u.b.head = (char *)key;
         bulk->u.b.curr = (char *)key + len;
@@ -308,7 +308,7 @@ grn_dat_cursor_open(grn_ctx *ctx, grn_dat *dat,
             grn::dat::Trie *trie = static_cast<grn::dat::Trie *>(dat->handle);
             grn::dat::CommonPrefixCursor *cursor;
             cursor = new grn::dat::CommonPrefixCursor;
-            cursor->open(*trie, max, min_size, max_size, offset, limit);
+            cursor->open(*trie, grn::dat::String(max, max_size), min_size, offset, limit);
             dc->cursor = cursor;
           } else {
             /* todo: near */
@@ -423,7 +423,7 @@ _grn_dat_key(grn_ctx *ctx, grn_dat *dat, grn_id id, uint32_t *key_size)
       grn::dat::Trie *trie = static_cast<grn::dat::Trie *>(dat->handle);
       trie->ith_key(id, &k);
       *key_size = k.length();
-      key = k.ptr();
+      key = static_cast<const char *>(k.ptr());
     } catch (const grn::dat::Exception &ex) {
       key = NULL;
     }

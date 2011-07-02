@@ -18,25 +18,24 @@ IdCursor::IdCursor()
 IdCursor::~IdCursor() {}
 
 void IdCursor::open(const Trie &trie,
-                    const void *min_ptr, UInt32 min_length,
-                    const void *max_ptr, UInt32 max_length,
+                    const String &min_str,
+                    const String &max_str,
                     UInt32 offset,
                     UInt32 limit,
                     UInt32 flags) {
-  GRN_DAT_THROW_IF(PARAM_ERROR, (min_ptr == NULL) && (min_length != 0));
-  GRN_DAT_THROW_IF(PARAM_ERROR, (max_ptr == NULL) && (max_length != 0));
-
   UInt32 min_id = INVALID_KEY_ID;
-  if (min_ptr != NULL) {
+  if (min_str.ptr() != NULL) {
     Key key;
-    GRN_DAT_THROW_IF(PARAM_ERROR, !trie.search(min_ptr, min_length, &key));
+    GRN_DAT_THROW_IF(PARAM_ERROR,
+                     !trie.search(min_str.ptr(), min_str.length(), &key));
     min_id = key.id();
   }
 
   UInt32 max_id = INVALID_KEY_ID;
-  if (max_ptr != NULL) {
+  if (max_str.ptr() != NULL) {
     Key key;
-    GRN_DAT_THROW_IF(PARAM_ERROR, !trie.search(max_ptr, max_length, &key));
+    GRN_DAT_THROW_IF(PARAM_ERROR,
+                     !trie.search(max_str.ptr(), max_str.length(), &key));
     max_id = key.id();
   }
 
@@ -74,6 +73,15 @@ bool IdCursor::next(Key *key) {
   return true;
 }
 
+IdCursor::IdCursor(const Trie &trie,
+                   UInt32 offset, UInt32 limit, UInt32 flags)
+    : trie_(&trie),
+      offset_(offset),
+      limit_(limit),
+      flags_(flags),
+      cur_(INVALID_KEY_ID),
+      end_(INVALID_KEY_ID) {}
+
 UInt32 IdCursor::fix_flags(UInt32 flags) const {
   const UInt32 cursor_type = flags & CURSOR_TYPE_MASK;
   GRN_DAT_THROW_IF(PARAM_ERROR, (cursor_type != 0) &&
@@ -94,15 +102,6 @@ UInt32 IdCursor::fix_flags(UInt32 flags) const {
 
   return flags;
 }
-
-IdCursor::IdCursor(const Trie &trie,
-                   UInt32 offset, UInt32 limit, UInt32 flags)
-    : trie_(&trie),
-      offset_(offset),
-      limit_(limit),
-      flags_(flags),
-      cur_(INVALID_KEY_ID),
-      end_(INVALID_KEY_ID) {}
 
 void IdCursor::init(UInt32 min_id, UInt32 max_id) {
   if (min_id == INVALID_KEY_ID) {
@@ -154,5 +153,5 @@ void IdCursor::swap(IdCursor *cursor) {
   std::swap(end_, cursor->end_);
 }
 
-}  // namespace grn
 }  // namespace dat
+}  // namespace grn
