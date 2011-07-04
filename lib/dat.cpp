@@ -334,9 +334,14 @@ grn_dat_cursor_open(grn_ctx *ctx, grn_dat *dat,
           }
         }
       } else {
-        // Cursor is now an abstract type;
-        // dc->cursor = new grn::dat::Cursor;
-        /* todo */
+        grn::dat::Trie *trie = static_cast<grn::dat::Trie *>(dat->handle);
+        grn::dat::Cursor *cursor = grn::dat::CursorFactory::open(*trie,
+            min, min_size, max, max_size, offset, limit,
+            grn::dat::KEY_RANGE_CURSOR |
+            ((flags & GRN_CURSOR_DESCENDING) ? grn::dat::DESCENDING_CURSOR : 0) |
+            ((flags & GRN_CURSOR_GT) ? grn::dat::EXCEPT_LOWER_BOUND : 0) |
+            ((flags & GRN_CURSOR_LT) ? grn::dat::EXCEPT_UPPER_BOUND : 0));
+        dc->cursor = cursor;
       }
     }
 //    if (flags & GRN_CURSOR_DESCENDING) {
