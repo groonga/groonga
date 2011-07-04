@@ -101,6 +101,9 @@ void PredictiveCursor::init(const String &str) {
         trie_->ith_key(base.key_id(), &key);
         if ((key.length() >= str.length()) &&
             (key.str().substr(0, str.length()).compare(str, i) == 0)) {
+          if ((flags_ & ASCENDING_CURSOR) == ASCENDING_CURSOR) {
+            node_id |= IS_ROOT_FLAG;
+          }
           GRN_DAT_THROW_IF(MEMORY_ERROR, !buf_.push_back(node_id));
         }
       }
@@ -111,6 +114,10 @@ void PredictiveCursor::init(const String &str) {
     if (trie_->ith_node(node_id).label() != str[i]) {
       return;
     }
+  }
+
+  if ((flags_ & ASCENDING_CURSOR) == ASCENDING_CURSOR) {
+    node_id |= IS_ROOT_FLAG;
   }
   GRN_DAT_THROW_IF(MEMORY_ERROR, !buf_.push_back(node_id));
 }
@@ -128,11 +135,12 @@ void PredictiveCursor::swap(PredictiveCursor *cursor) {
 
 bool PredictiveCursor::ascending_next(Key *key) {
   while (!buf_.empty()) {
-    const UInt32 node_id = buf_.back();
+    const bool is_root = (buf_.back() & IS_ROOT_FLAG) == IS_ROOT_FLAG;
+    const UInt32 node_id = buf_.back() & ~IS_ROOT_FLAG;
     buf_.pop_back();
 
     const Node node = trie_->ith_node(node_id);
-    if (node.sibling() != INVALID_LABEL) {
+    if (!is_root && (node.sibling() != INVALID_LABEL)) {
       GRN_DAT_THROW_IF(MEMORY_ERROR,
           !buf_.push_back(node_id ^ node.label() ^ node.sibling()));
     }
