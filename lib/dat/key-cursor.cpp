@@ -121,9 +121,15 @@ void KeyCursor::ascending_init(const String &min_str, const String &max_str) {
     }
   }
 
+  if ((min_str.ptr() == NULL) || (min_str.length() == 0)) {
+    GRN_DAT_THROW_IF(MEMORY_ERROR, !buf_.push_back(ROOT_NODE_ID));
+    return;
+  }
+
   UInt32 node_id = ROOT_NODE_ID;
-  Node node = trie_->ith_node(node_id);
+  Node node;
   for (UInt32 i = 0; i < min_str.length(); ++i) {
+    node = trie_->ith_node(node_id);
     if (node.is_terminal()) {
       Key key;
       trie_->ith_key(node.key_id(), &key);
@@ -131,8 +137,14 @@ void KeyCursor::ascending_init(const String &min_str, const String &max_str) {
       if ((result > 0) || ((result == 0) &&
           ((flags_ & EXCEPT_LOWER_BOUND) != EXCEPT_LOWER_BOUND))) {
         GRN_DAT_THROW_IF(MEMORY_ERROR, !buf_.push_back(node_id));
+      } else if (node.sibling() != INVALID_LABEL) {
+        GRN_DAT_THROW_IF(MEMORY_ERROR,
+            !buf_.push_back(node_id ^ node.label() ^ node.sibling()));
       }
       return;
+    } else if (node.sibling() != INVALID_LABEL) {
+      GRN_DAT_THROW_IF(MEMORY_ERROR,
+          !buf_.push_back(node_id ^ node.label() ^ node.sibling()));
     }
 
     node_id = node.offset() ^ min_str[i];
@@ -151,32 +163,29 @@ void KeyCursor::ascending_init(const String &min_str, const String &max_str) {
       }
       return;
     }
-
-    node = trie_->ith_node(node_id);
-    if (node.sibling() != INVALID_LABEL) {
-      GRN_DAT_THROW_IF(MEMORY_ERROR,
-                       !buf_.push_back(node_id ^ min_str[i] ^ node.sibling()));
-    }
   }
 
-  const Base base = trie_->ith_node(node_id).base();
-  if (base.is_terminal()) {
+  node = trie_->ith_node(node_id);
+  if (node.is_terminal()) {
     Key key;
-    trie_->ith_key(base.key_id(), &key);
+    trie_->ith_key(node.key_id(), &key);
     if ((key.length() != min_str.length()) ||
         ((flags_ & EXCEPT_LOWER_BOUND) != EXCEPT_LOWER_BOUND)) {
       GRN_DAT_THROW_IF(MEMORY_ERROR, !buf_.push_back(node_id));
+    } else if (node.sibling() != INVALID_LABEL) {
+      GRN_DAT_THROW_IF(MEMORY_ERROR,
+          !buf_.push_back(node_id ^ node.label() ^ node.sibling()));
     }
     return;
   }
 
-  UInt16 label = trie_->ith_node(node_id).child();
+  UInt16 label = node.child();
   if ((label == TERMINAL_LABEL) &&
       ((flags_ & EXCEPT_LOWER_BOUND) == EXCEPT_LOWER_BOUND)) {
-    label = trie_->ith_node(base.offset() ^ label).sibling();
+    label = trie_->ith_node(node.offset() ^ label).sibling();
   }
   if (label != INVALID_LABEL) {
-    GRN_DAT_THROW_IF(MEMORY_ERROR, !buf_.push_back(base.offset() ^ label));
+    GRN_DAT_THROW_IF(MEMORY_ERROR, !buf_.push_back(node.offset() ^ label));
   }
 }
 
@@ -187,6 +196,11 @@ void KeyCursor::descending_init(const String &min_str, const String &max_str) {
       std::memcpy(end_buf_, min_str.ptr(), min_str.length());
       end_str_.assign(end_buf_, min_str.length());
     }
+  }
+
+  if ((max_str.ptr() == NULL) || (max_str.length() == 0)) {
+    GRN_DAT_THROW_IF(MEMORY_ERROR, !buf_.push_back(ROOT_NODE_ID));
+    return;
   }
 
   UInt32 node_id = ROOT_NODE_ID;
@@ -271,11 +285,6 @@ bool KeyCursor::ascending_next(Key *key) {
           !buf_.push_back(node_id ^ node.label() ^ node.sibling()));
     }
 
-    if (node.child() != INVALID_LABEL) {
-      GRN_DAT_THROW_IF(MEMORY_ERROR,
-                       !buf_.push_back(node.offset() ^ node.child()));
-    }
-
     if (node.is_terminal()) {
       Key temp_key;
       trie_->ith_key(node.key_id(), &temp_key);
@@ -291,6 +300,9 @@ bool KeyCursor::ascending_next(Key *key) {
         *key = temp_key;
         return true;
       }
+    } else if (node.child() != INVALID_LABEL) {
+      GRN_DAT_THROW_IF(MEMORY_ERROR,
+                       !buf_.push_back(node.offset() ^ node.child()));
     }
   }
   return false;
