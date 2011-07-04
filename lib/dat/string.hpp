@@ -64,15 +64,14 @@ class String {
     GRN_DAT_DEBUG_THROW_IF(offset > length());
     GRN_DAT_DEBUG_THROW_IF(offset > rhs.length());
 
-    UInt32 i;
-    for (i = offset; i < length(); ++i) {
+    for (UInt32 i = offset; i < length(); ++i) {
       if (i >= rhs.length()) {
         return 1;
       } else if ((*this)[i] != rhs[i]) {
         return (*this)[i] - rhs[i];
       }
     }
-    return (i == rhs.length()) ? 0 : -1;
+    return (length() == rhs.length()) ? 0 : -1;
   }
 
   bool starts_with(const String &str) const {

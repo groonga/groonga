@@ -21,7 +21,7 @@
 #include "dat.h"
 #include "util.h"
 #include "dat/trie.hpp"
-#include "dat/common-prefix-cursor.hpp"
+#include "dat/cursor-factory.hpp"
 
 extern "C" {
 
@@ -298,27 +298,38 @@ grn_dat_cursor_open(grn_ctx *ctx, grn_dat *dat,
     dc->cursor = NULL;
     GRN_DB_OBJ_SET_TYPE(dc, GRN_CURSOR_TABLE_DAT_KEY);
     if ((flags & GRN_CURSOR_BY_ID)) {
-      // Cursor is now an abstract type;
-      // dc->cursor = new grn::dat::Cursor;
-      /* todo */
+      grn::dat::Trie *trie = static_cast<grn::dat::Trie *>(dat->handle);
+      grn::dat::Cursor *cursor = grn::dat::CursorFactory::open(*trie,
+          min, min_size, max, max_size, offset, limit,
+          grn::dat::ID_RANGE_CURSOR |
+          ((flags & GRN_CURSOR_DESCENDING) ? grn::dat::DESCENDING_CURSOR : 0) |
+          ((flags & GRN_CURSOR_GT) ? grn::dat::EXCEPT_LOWER_BOUND : 0) |
+          ((flags & GRN_CURSOR_LT) ? grn::dat::EXCEPT_UPPER_BOUND : 0));
+      dc->cursor = cursor;
     } else {
       if ((flags & GRN_CURSOR_PREFIX)) {
         if (max && max_size) {
-          if ((dat->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE)) {
+//          if ((dat->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE)) {
             grn::dat::Trie *trie = static_cast<grn::dat::Trie *>(dat->handle);
-            grn::dat::CommonPrefixCursor *cursor;
-            cursor = new grn::dat::CommonPrefixCursor;
-            cursor->open(*trie, grn::dat::String(max, max_size), min_size, offset, limit);
+            grn::dat::Cursor *cursor = grn::dat::CursorFactory::open(*trie,
+                NULL, min_size, max, max_size, offset, limit,
+                grn::dat::COMMON_PREFIX_CURSOR | grn::dat::DESCENDING_CURSOR);
             dc->cursor = cursor;
-          } else {
-            /* todo: near */
-          }
+//          } else {
+//            /* todo: near */
+//          }
         } else {
           if (min && min_size) {
             if (flags & GRN_CURSOR_RK) {
               /* todo: rk search */
             } else {
-              /* todo: prefix */
+              grn::dat::Trie *trie = static_cast<grn::dat::Trie *>(dat->handle);
+              grn::dat::Cursor *cursor = grn::dat::CursorFactory::open(*trie,
+                  min, min_size, NULL, 0, offset, limit,
+                  grn::dat::PREDICTIVE_CURSOR |
+                  ((flags & GRN_CURSOR_DESCENDING) ? grn::dat::DESCENDING_CURSOR : 0) |
+                  ((flags & GRN_CURSOR_GT) ? grn::dat::EXCEPT_EXACT_MATCH : 0));
+              dc->cursor = cursor;
             }
           }
         }
@@ -328,25 +339,25 @@ grn_dat_cursor_open(grn_ctx *ctx, grn_dat *dat,
         /* todo */
       }
     }
-    if (flags & GRN_CURSOR_DESCENDING) {
-      if (min && min_size) {
-        /* todo */
-      }
-      if (max && max_size) {
-        /* todo */
-      } else {
-        /* todo */
-      }
-    } else {
-      if (max && max_size) {
-        /* todo */
-      }
-      if (min && min_size) {
-        /* todo */
-      } else {
-        /* todo */
-      }
-    }
+//    if (flags & GRN_CURSOR_DESCENDING) {
+//      if (min && min_size) {
+//        /* todo */
+//      }
+//      if (max && max_size) {
+//        /* todo */
+//      } else {
+//        /* todo */
+//      }
+//    } else {
+//      if (max && max_size) {
+//        /* todo */
+//      }
+//      if (min && min_size) {
+//        /* todo */
+//      } else {
+//        /* todo */
+//      }
+//    }
     if (dc->cursor) {
       dc->dat = dat;
       /* open stuff */
