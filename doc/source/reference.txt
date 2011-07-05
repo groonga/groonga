@@ -14,3 +14,4 @@
    pseudo_column
    expr
    functions
+   log
