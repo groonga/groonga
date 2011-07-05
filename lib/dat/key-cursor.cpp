@@ -177,6 +177,9 @@ void KeyCursor::ascending_init(const String &min_str, const String &max_str) {
           !buf_.push_back(node_id ^ node.label() ^ node.sibling()));
     }
     return;
+  } else if (node.sibling() != INVALID_LABEL) {
+    GRN_DAT_THROW_IF(MEMORY_ERROR,
+        !buf_.push_back(node_id ^ node.label() ^ node.sibling()));
   }
 
   UInt16 label = node.child();
