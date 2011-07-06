@@ -2288,7 +2288,7 @@ main(int argc, char **argv)
 #ifdef HAVE_LIBEDIT
   if (!batchmode) {
     setlocale(LC_ALL, "");
-    edit_line = el_init(argv[0],stdin,stdout,stderr);
+    edit_line = el_init(argv[0], stdin, stdout, stderr);
     el_wset(edit_line, EL_PROMPT, &disp_prompt);
     el_wset(edit_line, EL_EDITOR, L"emacs");
     command_history = history_winit();
