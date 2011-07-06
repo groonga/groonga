@@ -2293,7 +2293,7 @@ main(int argc, char **argv)
     el_wset(el, EL_EDITOR, L"emacs");
     elh = history_winit();
     history_w(elh, &elhv, H_SETSIZE, 200);
-    el_set(el, EL_HIST, history_w, elh);
+    el_wset(el, EL_HIST, history_w, elh);
   }
 #endif
   if (grn_init()) { return -1; }
