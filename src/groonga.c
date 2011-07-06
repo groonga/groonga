@@ -2288,11 +2288,13 @@ main(int argc, char **argv)
 #ifdef HAVE_LIBEDIT
   if (!batchmode) {
     setlocale(LC_ALL, "");
+
+    command_history = history_winit();
+    history_w(command_history, &command_history_event, H_SETSIZE, 200);
+
     edit_line = el_init(argv[0], stdin, stdout, stderr);
     el_wset(edit_line, EL_PROMPT, &disp_prompt);
     el_wset(edit_line, EL_EDITOR, L"emacs");
-    command_history = history_winit();
-    history_w(command_history, &command_history_event, H_SETSIZE, 200);
     el_wset(edit_line, EL_HIST, history_w, command_history);
   }
 #endif
@@ -2370,8 +2372,8 @@ main(int argc, char **argv)
   }
 #ifdef HAVE_LIBEDIT
   if (!batchmode) {
-    history_wend(command_history);
     el_end(edit_line);
+    history_wend(command_history);
   }
 #endif
   grn_fin();
