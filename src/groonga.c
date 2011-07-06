@@ -75,9 +75,9 @@ static const char *input_path = NULL;
 #ifdef HAVE_LIBEDIT
 #include <locale.h>
 #include <histedit.h>
-static EditLine   *el;
-static HistoryW   *elh;
-static HistEventW elhv;
+static EditLine   *edit_line;
+static HistoryW   *command_history;
+static HistEventW command_history_event;
 
 inline static const wchar_t *
 disp_prompt(EditLine *e __attribute__((unused)))
@@ -182,18 +182,18 @@ prompt(grn_ctx *ctx, grn_obj *buf)
   grn_rc rc;
   if (!batchmode) {
 #ifdef HAVE_LIBEDIT
-    const wchar_t *es;
+    const wchar_t *line;
     int nchar;
-    es = el_wgets(el, &nchar);
+    line = el_wgets(edit_line, &nchar);
     if (nchar > 0) {
       int i;
       char multibyte_buf[10]; /* enough for a wide char? */
       size_t multibyte_len;
       mbstate_t ps;
-      history_w(elh, &elhv, H_ENTER, es);
+      history_w(command_history, &command_history_event, H_ENTER, line);
       wcrtomb(NULL, L'\0', &ps);
       for (i = 0; i < nchar; i++) {
-        multibyte_len = wcrtomb(multibyte_buf, es[i], &ps);
+        multibyte_len = wcrtomb(multibyte_buf, line[i], &ps);
         GRN_TEXT_PUT(ctx, buf, multibyte_buf, multibyte_len);
       }
       rc = GRN_SUCCESS;
@@ -2288,12 +2288,12 @@ main(int argc, char **argv)
 #ifdef HAVE_LIBEDIT
   if (!batchmode) {
     setlocale(LC_ALL, "");
-    el = el_init(argv[0],stdin,stdout,stderr);
-    el_wset(el, EL_PROMPT, &disp_prompt);
-    el_wset(el, EL_EDITOR, L"emacs");
-    elh = history_winit();
-    history_w(elh, &elhv, H_SETSIZE, 200);
-    el_wset(el, EL_HIST, history_w, elh);
+    edit_line = el_init(argv[0],stdin,stdout,stderr);
+    el_wset(edit_line, EL_PROMPT, &disp_prompt);
+    el_wset(edit_line, EL_EDITOR, L"emacs");
+    command_history = history_winit();
+    history_w(command_history, &command_history_event, H_SETSIZE, 200);
+    el_wset(edit_line, EL_HIST, history_w, command_history);
   }
 #endif
   if (grn_init()) { return -1; }
@@ -2370,8 +2370,8 @@ main(int argc, char **argv)
   }
 #ifdef HAVE_LIBEDIT
   if (!batchmode) {
-    history_wend(elh);
-    el_end(el);
+    history_wend(command_history);
+    el_end(edit_line);
   }
 #endif
   grn_fin();
