@@ -2296,6 +2296,7 @@ main(int argc, char **argv)
     el_wset(edit_line, EL_PROMPT, &disp_prompt);
     el_wset(edit_line, EL_EDITOR, L"emacs");
     el_wset(edit_line, EL_HIST, history_w, command_history);
+    el_source(edit_line, NULL);
   }
 #endif
   if (grn_init()) { return -1; }
