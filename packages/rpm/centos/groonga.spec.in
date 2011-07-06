@@ -8,7 +8,7 @@ Summary:	An Embeddable Fulltext Search Engine
 Group:		Applications/Text
 License:	LGPLv2
 URL:		http://groonga.org/
-Source0:	http://groonga.org/files/groonga/groonga-@VERSION@.tar.gz
+Source0:	http://packages.groonga.org/source/groonga/groonga-%{version}.tar.gz
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-%(%{__id_u} -n)
 BuildRequires:	mecab-devel
