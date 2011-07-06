@@ -174,8 +174,6 @@ show_version(void)
 #endif
 }
 
-#define BUFSIZE 0x1000000
-
 inline static grn_rc
 prompt(grn_ctx *ctx, grn_obj *buf)
 {
@@ -187,19 +185,21 @@ prompt(grn_ctx *ctx, grn_obj *buf)
     const wchar_t *es;
     int nchar;
     es = el_wgets(el, &nchar);
-    if (nchar > 0 && BUFSIZE > (MB_LEN_MAX * nchar + 1)) {
+    if (nchar > 0) {
       int i;
-      char *p;
+      char multibyte_buf[10]; /* enough for a wide char? */
+      size_t multibyte_len;
       mbstate_t ps;
       history_w(elh, &elhv, H_ENTER, es);
       wcrtomb(NULL, L'\0', &ps);
-      p = buf;
       for (i = 0; i < nchar; i++) {
-        p += wcrtomb(p, es[i], &ps);
+        multibyte_len = wcrtomb(multibyte_buf, es[i], &ps);
+        GRN_TEXT_PUT(ctx, buf, multibyte_buf, multibyte_len);
       }
-      p[0] = '\0';
-      len = p - buf;
+      rc = GRN_SUCCESS;
+      len = GRN_TEXT_LEN(buf);
     } else {
+      rc = GRN_END_OF_DATA;
       len = 0;
     }
 #else
