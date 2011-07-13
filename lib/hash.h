@@ -311,6 +311,8 @@ grn_rc grn_array_remove(grn_ctx *ctx, const char *path);
 grn_id grn_hash_at(grn_ctx *ctx, grn_hash *hash, grn_id id);
 grn_id grn_array_at(grn_ctx *ctx, grn_array *array, grn_id id);
 
+void grn_hash_check(grn_ctx *ctx, grn_hash *hash);
+
 #ifdef __cplusplus
 }
 #endif

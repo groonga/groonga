@@ -2,12 +2,12 @@
 #define GRN_DAT_KEY_CURSOR_HPP_
 
 #include "cursor.hpp"
-#include "trie.hpp"
-
-#include <vector>
+#include "vector.hpp"
 
 namespace grn {
 namespace dat {
+
+class Trie;
 
 class KeyCursor : public Cursor {
  public:
@@ -15,8 +15,8 @@ class KeyCursor : public Cursor {
   ~KeyCursor();
 
   void open(const Trie &trie,
-            const void *min_ptr, UInt32 min_length,
-            const void *max_ptr, UInt32 max_length,
+            const String &min_str,
+            const String &max_str,
             UInt32 offset = 0,
             UInt32 limit = UINT32_MAX,
             UInt32 flags = 0);
@@ -41,30 +41,24 @@ class KeyCursor : public Cursor {
   UInt32 limit_;
   UInt32 flags_;
 
-  std::vector<UInt32> buf_;
+  Vector<UInt32> buf_;
   UInt32 count_;
   UInt32 max_count_;
-  bool end_;
-  UInt8 *end_ptr_;
-  UInt32 end_length_;
+  bool finished_;
+  UInt8 *end_buf_;
+  String end_str_;
+
+  KeyCursor(const Trie &trie,
+            UInt32 offset, UInt32 limit, UInt32 flags);
 
   UInt32 fix_flags(UInt32 flags) const;
-  KeyCursor(const Trie &trie,
-                         UInt32 offset, UInt32 limit, UInt32 flags);
-  void init(const UInt8 *min_ptr, UInt32 min_length,
-            const UInt8 *max_ptr, UInt32 max_length);
-  void ascending_init(const UInt8 *min_ptr, UInt32 min_length,
-                      const UInt8 *max_ptr, UInt32 max_length);
-  void descending_init(const UInt8 *min_ptr, UInt32 min_length,
-                       const UInt8 *max_ptr, UInt32 max_length);
+  void init(const String &min_str, const String &max_str);
+  void ascending_init(const String &min_str, const String &max_str);
+  void descending_init(const String &min_str, const String &max_str);
   void swap(KeyCursor *cursor);
 
   bool ascending_next(Key *key);
   bool descending_next(Key *key);
-
-  int compare(const Key &key,
-              const UInt8 *ptr, UInt32 length,
-              UInt32 offset) const;
 
   static const UInt32 POST_ORDER_FLAG = 0x80000000U;
 
@@ -73,7 +67,7 @@ class KeyCursor : public Cursor {
   KeyCursor &operator=(const KeyCursor &);
 };
 
-}  // namespace grn
 }  // namespace dat
+}  // namespace grn
 
 #endif  // GRN_DAT_KEY_CURSOR_HPP_

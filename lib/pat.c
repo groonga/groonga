@@ -2201,8 +2201,8 @@ grn_pat_check(grn_ctx *ctx, grn_pat *pat)
 {
   char buf[8];
   struct grn_pat_header *h = pat->header;
-  GRN_OUTPUT_ARRAY_OPEN("RESULT", 8);
-  GRN_OUTPUT_MAP_OPEN("SUMMARY", 8);
+  GRN_OUTPUT_ARRAY_OPEN("RESULT", 1);
+  GRN_OUTPUT_MAP_OPEN("SUMMARY", 11);
   GRN_OUTPUT_CSTR("flags");
   grn_itoh(h->flags, buf, 8);
   GRN_OUTPUT_STR(buf, 8);

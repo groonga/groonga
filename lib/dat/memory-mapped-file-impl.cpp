@@ -16,6 +16,7 @@
 #include <unistd.h>
 #endif  // WIN32
 
+#include <algorithm>
 #include <limits>
 
 namespace grn {
@@ -92,11 +93,11 @@ void MemoryMappedFileImpl::close() {
 #ifdef WIN32
 
 void MemoryMappedFileImpl::swap(MemoryMappedFileImpl *rhs) {
-  swap(ptr_, rhs->ptr_);
-  swap(size_, rhs->size_);
-  swap(file_, rhs->file_);
-  swap(map_, rhs->map_);
-  swap(addr_, rhs->addr_);
+  std::swap(ptr_, rhs->ptr_);
+  std::swap(size_, rhs->size_);
+  std::swap(file_, rhs->file_);
+  std::swap(map_, rhs->map_);
+  std::swap(addr_, rhs->addr_);
 }
 
 void MemoryMappedFileImpl::create_(const char *path, UInt64 size) {
@@ -157,11 +158,11 @@ void MemoryMappedFileImpl::open_(const char *path) {
 #else  // WIN32
 
 void MemoryMappedFileImpl::swap(MemoryMappedFileImpl *rhs) {
-  swap(ptr_, rhs->ptr_);
-  swap(size_, rhs->size_);
-  swap(fd_, rhs->fd_);
-  swap(addr_, rhs->addr_);
-  swap(length_, rhs->length_);
+  std::swap(ptr_, rhs->ptr_);
+  std::swap(size_, rhs->size_);
+  std::swap(fd_, rhs->fd_);
+  std::swap(addr_, rhs->addr_);
+  std::swap(length_, rhs->length_);
 }
 
 void MemoryMappedFileImpl::create_(const char *path, UInt64 size) {
@@ -211,12 +212,5 @@ void MemoryMappedFileImpl::open_(const char *path) {
 
 #endif  // WIN32
 
-template <typename T>
-void MemoryMappedFileImpl::swap(T &lhs, T &rhs) const {
-  T temp = lhs;
-  lhs = rhs;
-  rhs = temp;
-}
-
-}  // namespace grn
 }  // namespace dat
+}  // namespace grn

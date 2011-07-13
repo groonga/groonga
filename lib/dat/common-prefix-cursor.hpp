@@ -1,13 +1,13 @@
-#ifndef GRN_DAT_COMMON_PREFIX_CURSOR_H
-#define GRN_DAT_COMMON_PREFIX_CURSOR_H
+#ifndef GRN_DAT_COMMON_PREFIX_CURSOR_HPP_
+#define GRN_DAT_COMMON_PREFIX_CURSOR_HPP_
 
 #include "cursor.hpp"
-#include "trie.hpp"
-
-#include <vector>
+#include "vector.hpp"
 
 namespace grn {
 namespace dat {
+
+class Trie;
 
 class CommonPrefixCursor : public Cursor {
  public:
@@ -15,9 +15,8 @@ class CommonPrefixCursor : public Cursor {
   ~CommonPrefixCursor();
 
   void open(const Trie &trie,
-            const void *ptr,
+            const String &str,
             UInt32 min_length,
-            UInt32 max_length,
             UInt32 offset = 0,
             UInt32 limit = UINT32_MAX,
             UInt32 flags = 0);
@@ -42,14 +41,15 @@ class CommonPrefixCursor : public Cursor {
   UInt32 limit_;
   UInt32 flags_;
 
-  std::vector<UInt32> buf_;
+  Vector<UInt32> buf_;
   UInt32 cur_;
   UInt32 end_;
 
-  UInt32 fix_flags(UInt32 flags) const;
   CommonPrefixCursor(const Trie &trie,
                      UInt32 offset, UInt32 limit, UInt32 flags);
-  void init(const UInt8 *ptr, UInt32 min_length, UInt32 max_length);
+
+  UInt32 fix_flags(UInt32 flags) const;
+  void init(const String &str, UInt32 min_length);
   void swap(CommonPrefixCursor *cursor);
 
   // Disallows copy and assignment.
@@ -57,7 +57,7 @@ class CommonPrefixCursor : public Cursor {
   CommonPrefixCursor &operator=(const CommonPrefixCursor &);
 };
 
-}  // namespace grn
 }  // namespace dat
+}  // namespace grn
 
-#endif  // GRN_DAT_COMMON_PREFIX_CURSOR_H
+#endif  // GRN_DAT_COMMON_PREFIX_CURSOR_HPP_

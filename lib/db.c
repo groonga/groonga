@@ -1315,6 +1315,7 @@ grn_table_delete(grn_ctx *ctx, grn_obj *table, const void *key, unsigned key_siz
     if (key && key_size) { rid = grn_table_get(ctx, table, key, key_size); }
     if (is_deletable(ctx, table, rid)) {
       call_delete_hook(ctx, table, rid, key, key_size);
+      clear_column_values(ctx, table, rid);
       switch (table->header.type) {
       case GRN_DB :
         /* todo : delete tables and columns from db */
@@ -1349,7 +1350,6 @@ grn_table_delete(grn_ctx *ctx, grn_obj *table, const void *key, unsigned key_siz
         });
         break;
       }
-      clear_column_values(ctx, table, rid);
       grn_obj_touch(ctx, table, NULL);
     }
   }
@@ -7673,7 +7673,7 @@ grn_table_sort_key_from_str_geo(grn_ctx *ctx, const char *str, unsigned str_size
     }
     GRN_FREE(tokbuf);
   }
-  if (!ctx->rc) {
+  if (!ctx->rc && k - keys > 0) {
     *nkeys = k - keys;
   } else {
     grn_table_sort_key_close(ctx, keys, k - keys);
@@ -7709,19 +7709,27 @@ grn_table_sort_key_from_str(grn_ctx *ctx, const char *str, unsigned str_size,
             k->flags = GRN_TABLE_SORT_DESC;
             p++;
           }
-          if (!(k->key = grn_obj_column(ctx, table, p, r - p))) {
-            WARN(GRN_INVALID_ARGUMENT, "invalid sort key: <%.*s>(<%.*s>)",
-                 tokbuf[i] - p, p, str_size, str);
-            break;
+          if ((k->key = grn_obj_column(ctx, table, p, r - p))) {
+            k++;
+          } else {
+            if (r - p == 6 && memcmp(p, "_score", 6) == 0) {
+              GRN_LOG(ctx, GRN_WARN,
+                      "ignore invalid sore key: <%.*s>(<%.*s>)",
+                      r - p, p, str_size, str);
+            } else {
+              WARN(GRN_INVALID_ARGUMENT,
+                   "invalid sort key: <%.*s>(<%.*s>)",
+                   r - p, p, str_size, str);
+              break;
+            }
           }
-          k++;
         }
         p = r;
       }
     }
     GRN_FREE(tokbuf);
   }
-  if (!ctx->rc) {
+  if (!ctx->rc && k - keys > 0) {
     *nkeys = k - keys;
   } else {
     grn_table_sort_key_close(ctx, keys, k - keys);

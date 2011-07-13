@@ -75,9 +75,10 @@ static const char *input_path = NULL;
 #ifdef HAVE_LIBEDIT
 #include <locale.h>
 #include <histedit.h>
-static EditLine   *el;
-static HistoryW   *elh;
-static HistEventW elhv;
+static EditLine   *edit_line;
+static HistoryW   *command_history;
+static HistEventW command_history_event;
+static char       command_history_path[PATH_MAX];
 
 inline static const wchar_t *
 disp_prompt(EditLine *e __attribute__((unused)))
@@ -174,8 +175,6 @@ show_version(void)
 #endif
 }
 
-#define BUFSIZE 0x1000000
-
 inline static grn_rc
 prompt(grn_ctx *ctx, grn_obj *buf)
 {
@@ -184,22 +183,24 @@ prompt(grn_ctx *ctx, grn_obj *buf)
   grn_rc rc;
   if (!batchmode) {
 #ifdef HAVE_LIBEDIT
-    const wchar_t *es;
+    const wchar_t *line;
     int nchar;
-    es = el_wgets(el, &nchar);
-    if (nchar > 0 && BUFSIZE > (MB_LEN_MAX * nchar + 1)) {
+    line = el_wgets(edit_line, &nchar);
+    if (nchar > 0) {
       int i;
-      char *p;
+      char multibyte_buf[10]; /* enough for a wide char? */
+      size_t multibyte_len;
       mbstate_t ps;
-      history_w(elh, &elhv, H_ENTER, es);
+      history_w(command_history, &command_history_event, H_ENTER, line);
       wcrtomb(NULL, L'\0', &ps);
-      p = buf;
       for (i = 0; i < nchar; i++) {
-        p += wcrtomb(p, es[i], &ps);
+        multibyte_len = wcrtomb(multibyte_buf, line[i], &ps);
+        GRN_TEXT_PUT(ctx, buf, multibyte_buf, multibyte_len);
       }
-      p[0] = '\0';
-      len = p - buf;
+      rc = GRN_SUCCESS;
+      len = GRN_TEXT_LEN(buf);
     } else {
+      rc = GRN_END_OF_DATA;
       len = 0;
     }
 #else
@@ -2287,13 +2288,29 @@ main(int argc, char **argv)
   }
 #ifdef HAVE_LIBEDIT
   if (!batchmode) {
+    static const char groonga_history_path[] = "/.groonga-history";
+
     setlocale(LC_ALL, "");
-    el = el_init(argv[0],stdin,stdout,stderr);
-    el_wset(el, EL_PROMPT, &disp_prompt);
-    el_wset(el, EL_EDITOR, L"emacs");
-    elh = history_winit();
-    history_w(elh, &elhv, H_SETSIZE, 200);
-    el_set(el, EL_HIST, history_w, elh);
+
+    command_history_path[0] = '\0';
+    if (getenv("HOME") &&
+        (strlen(getenv("HOME")) + strlen(groonga_history_path) < PATH_MAX)) {
+      strcat(command_history_path, getenv("HOME"));
+      strcat(command_history_path, "/.groonga-history");
+    }
+
+    command_history = history_winit();
+    history_w(command_history, &command_history_event, H_SETSIZE, 200);
+    if (command_history_path[0]) {
+      history_w(command_history, &command_history_event,
+                H_LOAD, command_history_path);
+    }
+
+    edit_line = el_init(argv[0], stdin, stdout, stderr);
+    el_wset(edit_line, EL_PROMPT, &disp_prompt);
+    el_wset(edit_line, EL_EDITOR, L"emacs");
+    el_wset(edit_line, EL_HIST, history_w, command_history);
+    el_source(edit_line, NULL);
   }
 #endif
   if (grn_init()) { return -1; }
@@ -2370,8 +2387,12 @@ main(int argc, char **argv)
   }
 #ifdef HAVE_LIBEDIT
   if (!batchmode) {
-    history_wend(elh);
-    el_end(el);
+    el_end(edit_line);
+    if (command_history_path[0]) {
+      history_w(command_history, &command_history_event,
+                H_SAVE, command_history_path);
+    }
+    history_wend(command_history);
   }
 #endif
   grn_fin();

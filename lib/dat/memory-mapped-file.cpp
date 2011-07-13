@@ -1,7 +1,8 @@
 #include "memory-mapped-file.hpp"
-#include "memory-mapped-file-impl.hpp"
 
 #include <new>
+
+#include "memory-mapped-file-impl.hpp"
 
 namespace grn {
 namespace dat {
@@ -57,5 +58,5 @@ void MemoryMappedFile::swap(MemoryMappedFile *rhs) {
   rhs->impl_ = temp;
 }
 
-}  // namespace grn
 }  // namespace dat
+}  // namespace grn

@@ -1,41 +1,50 @@
 #ifndef GRN_DAT_KEY_HPP_
 #define GRN_DAT_KEY_HPP_
 
-#include "dat.hpp"
+#include "string.hpp"
 
 namespace grn {
 namespace dat {
 
 class Key {
  public:
-  const char &operator[](UInt32 i) const {
-    GRN_DAT_DEBUG_THROW_IF(i > length_);
-    return ptr_[i];
+  Key()
+      : str_(),
+        id_(INVALID_KEY_ID) {}
+
+  const UInt8 &operator[](UInt32 i) const {
+    GRN_DAT_DEBUG_THROW_IF(i >= str_.length());
+    return str_[i];
   }
 
-  const char *ptr() const {
-    return ptr_;
+  const String &str() const {
+    return str_;
+  }
+  const void *ptr() const {
+    return str_.ptr();
   }
   UInt32 length() const {
-    return length_;
+    return str_.length();
   }
   UInt32 id() const {
     return id_;
   }
 
-  void set_ptr(const char *x) {
-    ptr_ = x;
+  void set_str(const void *ptr, UInt32 length) {
+    str_.assign(ptr, length);
+  }
+  void set_ptr(const void *x) {
+    str_.set_ptr(x);
   }
   void set_length(UInt32 x) {
-    length_ = x;
+    str_.set_length(x);
   }
   void set_id(UInt32 x) {
     id_ = x;
   }
 
  private:
-  const char *ptr_;
-  UInt32 length_;
+  String str_;
   UInt32 id_;
 };
 

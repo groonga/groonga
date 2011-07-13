@@ -1,5 +1,5 @@
-#ifndef GRN_DAT_CURSOR_H
-#define GRN_DAT_CURSOR_H
+#ifndef GRN_DAT_CURSOR_HPP_
+#define GRN_DAT_CURSOR_HPP_
 
 #include "key.hpp"
 
@@ -25,7 +25,7 @@ class Cursor {
   Cursor &operator=(const Cursor &);
 };
 
-}  // namespace grn
 }  // namespace dat
+}  // namespace grn
 
-#endif  // GRN_DAT_CURSOR_H
+#endif  // GRN_DAT_CURSOR_HPP_
