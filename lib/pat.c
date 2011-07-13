@@ -2015,7 +2015,11 @@ grn_pat_cursor_open_by_id(grn_ctx *ctx, grn_pat *pat,
       }
     }
   } else {
-    c->curr_rec += dir * offset;
+    if ((dir * (c->tail - c->curr_rec)) < offset) {
+      c->curr_rec = c->tail;
+    } else {
+      c->curr_rec += dir * offset;
+    }
   }
   c->rest = (limit < 0) ? GRN_ID_MAX : limit;
 exit :
