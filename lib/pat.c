@@ -1845,7 +1845,7 @@ set_cursor_ascend(grn_ctx *ctx, grn_pat *pat, grn_pat_cursor *c,
     c2 = len < ch ? len : ch;
     if ((check += 2) < c2) {
       if (!(k = pat_node_get_key(ctx, pat, node))) { return GRN_FILE_CORRUPT; }
-      if ((r = bitcmp(key, k, check >> 1, (c2 - check) >> 1))) {
+      if ((r = bitcmp(key, k, check >> 1, ((c2 + 1) >> 1) - (check >> 1)))) {
         if (r < 0) {
           push(c, node->lr[1], ch);
           push(c, node->lr[0], ch);
@@ -1854,7 +1854,11 @@ set_cursor_ascend(grn_ctx *ctx, grn_pat *pat, grn_pat_cursor *c,
       }
     }
     check = ch;
-    if (len <= check) { break; }
+    if (len <= check) {
+      push(c, node->lr[1], ch);
+      push(c, node->lr[0], ch);
+      break;
+    }
     if (check & 1) {
       if (check + 1 < len) {
         id = node->lr[1];
@@ -1909,7 +1913,7 @@ set_cursor_descend(grn_ctx *ctx, grn_pat *pat, grn_pat_cursor *c,
     c2 = len < ch ? len : ch;
     if ((check += 2) < c2) {
       if (!(k = pat_node_get_key(ctx, pat, node))) { return GRN_FILE_CORRUPT; }
-      if ((r = bitcmp(key, k, check >> 1, (c2 - check) >> 1))) {
+      if ((r = bitcmp(key, k, check >> 1, ((c2 + 1) >> 1) - (check >> 1)))) {
         if (r >= 0) {
           push(c, node->lr[0], ch);
           push(c, node->lr[1], ch);
@@ -1918,11 +1922,7 @@ set_cursor_descend(grn_ctx *ctx, grn_pat *pat, grn_pat_cursor *c,
       }
     }
     check = ch;
-    if (len <= check) {
-      push(c, node->lr[0], check);
-      push(c, node->lr[1], check);
-      break;
-    }
+    if (len <= check) { break; }
     if (check & 1) {
       if (check + 1 < len) {
         push(c, node->lr[0], check);
