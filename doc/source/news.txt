@@ -5,6 +5,40 @@
 News
 ====
 
+.. _release-1-2-4:
+
+Release 1.2.4 - 2011/07/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* Re-supported *BSD. (Reported by OBATA Akio)
+* Improved sed related portability. (Suggested by OBATA Akio)
+* Re-supported Visual C++ 2008.
+* Supported :doc:`commands/check` for hash table.
+* Ignored invalid _score in --sortby of :doc:`commands/select`
+  for convenience. #1030
+* Added document about :doc:`log`.
+* Supported ~/.editrc.
+* Supported ~/.groonga-history.
+* Improved consistency on record deletion.
+
+Fixes
+^^^^^
+
+* Fixed broken libedit support. (Reported by Daiki Ueno)
+* Fixed source URL in *.spec (Reported by Daiki Ueno)
+* Fixed patricia trie cursor returns wrong records.
+* Added missing database lock clear for grn_obj_clear_lock()
+  for database.
+
+Thanks
+^^^^^^
+
+* OBATA Akio
+* Daiki Ueno
+
 .. _release-1-2-3:
 
 Release 1.2.3 - 2011/06/29
