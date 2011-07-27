@@ -22,7 +22,6 @@ Improvements
 * Added document about :doc:`log`.
 * Supported ~/.editrc.
 * Supported ~/.groonga-history.
-* Improved consistency on record deletion.
 
 Fixes
 ^^^^^
@@ -32,6 +31,8 @@ Fixes
 * Fixed patricia trie cursor returns wrong records.
 * Added missing database lock clear for grn_obj_clear_lock()
   for database.
+* Fixed wrong record's column values deletion possible on
+  record deletion.
 
 Thanks
 ^^^^^^
