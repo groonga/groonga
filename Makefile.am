@@ -1,5 +1,7 @@
 # release: update-latest-release (commit) tag
 
+LOCALES = ja
+
 ACLOCAL_AMFLAGS = $$ACLOCAL_ARGS -I .
 AUTOMAKE_OPTIONS = 1.9.6
 SUBDIRS =					\
@@ -71,6 +73,11 @@ update-latest-release:
 	  packages/rpm/fedora/groonga.spec.in			\
 	  packages/rpm/centos/groonga.spec.in			\
 	  packages/debian/changelog
+
+update-po:
+	@for lang in $(LOCALES); do						\
+	  (cd $(top_srcdir)/doc/locale/$$lang/LC_MESSAGES && make update)	\
+	done
 
 update-document:
 	@if test -z "$(GROONGA_GITHUB_COM_PATH)"; then			\
