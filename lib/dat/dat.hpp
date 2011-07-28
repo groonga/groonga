@@ -106,6 +106,11 @@ const UInt32 EXCEPT_UPPER_BOUND   = 0x02000;
 const UInt32 EXCEPT_EXACT_MATCH   = 0x04000;
 const UInt32 CURSOR_OPTIONS_MASK  = 0xFF000;
 
+// for x86_64-w64-mingw32
+#ifdef NO_ERROR
+#  undef NO_ERROR
+#endif // NO_ERROR
+
 // To be determined...
 enum ErrorCode {
   NO_ERROR          =  0,
