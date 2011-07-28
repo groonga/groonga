@@ -256,6 +256,9 @@ fi
 %config(noreplace) %{_sysconfdir}/munin/plugin-conf.d/*
 
 %changelog
+* Fri Jul 29 2011 Kouhei Sutou <kou@clear-code.com> - 1.2.4-0
+- new upstream release.
+
 * Wed Jun 29 2011 Kouhei Sutou <kou@clear-code.com> - 1.2.3-0
 - new upstream release.
 - add a new groong-tools package.
