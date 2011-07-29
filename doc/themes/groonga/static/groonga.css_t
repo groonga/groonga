@@ -103,6 +103,7 @@ div.header div.facebook-buttons
     padding-left: 10px;
     width: 320px;
     height: 90px;
+    overflow: hidden;
 }
 
 div.header div.other-language-links
