@@ -58,8 +58,8 @@ LANGUAGE_TO_LOCALE = {
 def insert_facebook_html_header(html)
   html.gsub(/<\/head>/) do
     <<-HTML
-    <meta property="fb:page_id" content="groonga" />
-    <meta property="fb:admins" content="kouhei.sutou" />
+    <meta property="fb:page_id" content="201193596592346" /><!-- groonga -->
+    <meta property="fb:admins" content="664204556" /><!-- kouhei.sutou -->
     <meta property="og:type" content="product" />
     <meta property="og:image" content="http://groonga.org/images/groonga.png" />
     <meta property="og:site_name" content="groonga" />
