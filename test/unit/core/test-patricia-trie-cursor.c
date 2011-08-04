@@ -24,8 +24,7 @@ void data_next_with_one_entry(void);
 void test_next_with_one_entry(gconstpointer data);
 void data_next_with_multi_entries(void);
 void test_next_with_multi_entries(gconstpointer data);
-void data_digit(void);
-void test_digit(gconstpointer data);
+void test_by_key_descending_max(void);
 void data_value(void);
 void test_value(gconstpointer data);
 void data_delete(void);
@@ -835,53 +834,23 @@ test_next_with_multi_entries(gconstpointer data)
                                 retrieve_all_keys());
 }
 
-static void
-set_min_digit(void)
+void
+test_by_key_descending_max(void)
 {
   default_cursor_min = g_strdup("0");
   default_cursor_min_size = strlen(default_cursor_min);
-}
-
-static void
-set_max_digit(void)
-{
   default_cursor_max = g_strdup("9989");
   default_cursor_max_size = strlen(default_cursor_max);
-}
-
-void
-data_digit(void)
-{
-  cut_add_data("min - max - descending",
-               test_data_new(gcut_list_string_new("997",
-                                                  NULL),
-                             set_min_digit, set_max_digit, set_descending, NULL),
-               test_data_free,
-               NULL);
-}
-
-void
-test_digit(gconstpointer data)
-{
-  const grn_trie_test_data *test_data = data;
-  const GList *keys;
-
-  keys = gcut_take_new_list_string("997",
-                                   "999",
-                                   "9998",
-                                   NULL);
-
-  trie_test_data_set_parameters(test_data);
+  default_cursor_flags |= GRN_CURSOR_DESCENDING;
 
   cut_assert_create_trie();
 
-  for (; keys; keys = g_list_next(keys)) {
-    const gchar *key = keys->data;
-    cut_assert_lookup_add(key);
-  }
+  cut_assert_lookup_add("997");
+  cut_assert_lookup_add("999");
+  cut_assert_lookup_add("9998");
 
   cut_assert_open_cursor();
-  gcut_assert_equal_list_string(test_data->expected_strings,
+  gcut_assert_equal_list_string(gcut_take_new_list_string("997", NULL),
                                 retrieve_all_keys());
 }
 
