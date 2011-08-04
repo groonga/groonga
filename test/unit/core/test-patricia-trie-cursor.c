@@ -25,6 +25,7 @@ void test_next_with_one_entry(gconstpointer data);
 void data_next_with_multi_entries(void);
 void test_next_with_multi_entries(gconstpointer data);
 void test_by_key_descending_max(void);
+void test_by_id_over_offset(void);
 void data_value(void);
 void test_value(gconstpointer data);
 void data_delete(void);
@@ -851,6 +852,19 @@ test_by_key_descending_max(void)
 
   cut_assert_open_cursor();
   gcut_assert_equal_list_string(gcut_take_new_list_string("997", NULL),
+                                retrieve_all_keys());
+}
+
+void
+test_by_id_over_offset(void)
+{
+  default_cursor_flags |= GRN_CURSOR_BY_ID;
+  default_cursor_offset = 1;
+
+  cut_assert_create_trie();
+
+  cut_assert_open_cursor();
+  gcut_assert_equal_list_string(NULL,
                                 retrieve_all_keys());
 }
 

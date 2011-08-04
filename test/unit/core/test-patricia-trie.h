@@ -51,6 +51,8 @@ static gchar *default_cursor_min;
 static uint32_t default_cursor_min_size;
 static gchar *default_cursor_max;
 static uint32_t default_cursor_max_size;
+static int default_cursor_offset;
+static int default_cursor_limit;
 static int default_cursor_flags;
 
 static uint32_t default_context_flags;
@@ -82,6 +84,8 @@ setup_trie_common(const gchar *default_path_component)
   default_cursor_min_size = 0;
   default_cursor_max = NULL;
   default_cursor_max_size = 0;
+  default_cursor_offset = 0;
+  default_cursor_limit = -1;
   default_cursor_flags = 0;
 
   default_context_flags = GRN_CTX_USE_QL;
@@ -283,7 +287,9 @@ typedef int grn_search_flags;
                                default_cursor_min_size, \
                                default_cursor_max,      \
                                default_cursor_max_size, \
-                               0, -1, default_cursor_flags)
+                               default_cursor_offset,   \
+                               default_cursor_limit,    \
+                               default_cursor_flags)
 
 #define cut_assert_open_cursor() do                     \
 {                                                       \
