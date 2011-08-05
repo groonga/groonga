@@ -20,7 +20,7 @@ SetCompressor lzma
 !define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\modern-uninstall.ico"
 !insertmacro MUI_PAGE_WELCOME
 !define MUI_LICENSEPAGE_CHECKBOX
-!insertmacro MUI_PAGE_LICENSE "COPYING"
+!insertmacro MUI_PAGE_LICENSE "..\..\COPYING"
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_DIRECTORY
 var ICONS_GROUP
@@ -40,7 +40,7 @@ var ICONS_GROUP
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
 OutFile "${PRODUCT_NAME}-${PRODUCT_VERSION}-x64.exe"
-InstallDir "${PROGRAMFILES}\${PRODUCT_NAME}"
+InstallDir "$PROGRAMFILES64\${PRODUCT_NAME}"
 ShowInstDetails show
 ShowUnInstDetails show
 
@@ -59,14 +59,14 @@ Section -AdditionalIcons
   SetOutPath $INSTDIR
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
   CreateDirectory "$SMPROGRAMS\$ICONS_GROUP"
-  CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\Uninstall.lnk" $INSTDIR\uninstall_${PACKAGE_NAME}.exe
+  CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\Uninstall.lnk" $INSTDIR\uninstall_${PRODUCT_NAME}.exe
   !insertmacro MUI_STARTMENU_WRITE_END
 SectionEnd
 
 Section -Post
-  WriteUninstaller $INSTDIR\uninstall_${PACKAGE_NAME}.exe
+  WriteUninstaller $INSTDIR\uninstall_${PRODUCT_NAME}.exe
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayName" "$(^Name)"
-  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "UninstallString" $INSTDIR\uninstall_${PACAKGE_NAME}.exe
+  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "UninstallString" $INSTDIR\uninstall_${PRODUCT_NAME}.exe
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayVersion" "${PRODUCT_VERSION}"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "URLInfoAbout" "${PRODUCT_WEB_SITE}"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "Publisher" "${PRODUCT_PUBLISHER}"
