@@ -134,6 +134,7 @@ AC_CONFIG_FILES([
   packages/source/Makefile
   packages/windows/Makefile
   packages/windows/patches/Makefile
+  packages/windows/setup.nsi
   data/Makefile
   data/html/Makefile
   data/munin/Makefile

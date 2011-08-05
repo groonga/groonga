@@ -3,7 +3,7 @@ EXTRA_DIST = Rakefile
 
 all:
 
-release: build source upload
+release: build package installer upload
 
 ensure-rsync-path:
 	@if test -z "$(RSYNC_PATH)"; then				\
@@ -27,6 +27,9 @@ build: source
 
 build-groonga: source
 	$(RUBY) -S rake build:groonga $(build_options)
+
+installer:
+	makensis setup.nsi
 
 package:
 	mkdir -p files
