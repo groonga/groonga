@@ -30,7 +30,7 @@ binary_dir = base_dir + dist_dir
 
 patches_dir = (base_dir + "patches").expand_path
 if groonga_win32_i386_p
-  host = "i586-mingw32msvc"
+  host = "i686-w64-mingw32"
   mecab_patches = []
 else
   host = "x86_64-w64-mingw32"
