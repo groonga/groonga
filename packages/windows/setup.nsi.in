@@ -39,7 +39,7 @@ var ICONS_GROUP
 !insertmacro MUI_LANGUAGE "Japanese"
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
-OutFile "${PRODUCT_NAME}-${PRODUCT_VERSION}-x64.exe"
+OutFile "files\${PRODUCT_NAME}-${PRODUCT_VERSION}-x64.exe"
 InstallDir "$PROGRAMFILES64\${PRODUCT_NAME}"
 ShowInstDetails show
 ShowUnInstDetails show
