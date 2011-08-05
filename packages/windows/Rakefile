@@ -42,6 +42,8 @@ else
 end
 
 namespace :build do
+  download_dir = Pathname.new("tmp/download").expand_path
+
   desc "Build MeCab and install it into #{dist_dir}."
   task(:mecab) do
     tmp_dir = Pathname.new("tmp/mecab")
@@ -53,9 +55,13 @@ namespace :build do
     mecab_tar_gz = "#{mecab_base}.tar.gz"
     mecab_tar_gz_url = "http://sourceforge.net/projects/mecab/files/mecab/#{mecab_version}/#{mecab_tar_gz}/download"
     Dir.chdir(tmp_dir) do
-      open(mecab_tar_gz_url) do |downloaded_tar_gz|
-        File.open(mecab_tar_gz, "wb") do |tar_gz|
-          tar_gz.print(downloaded_tar_gz.read)
+      mecab_tar_gz = download_dir + mecab_tar_gz
+      unless File.exist?(mecab_tar_gz)
+        mkdir_p(download_dir)
+        open(mecab_tar_gz_url) do |downloaded_tar_gz|
+          File.open(mecab_tar_gz, "wb") do |tar_gz|
+            tar_gz.print(downloaded_tar_gz.read)
+          end
         end
       end
       sh("tar", "xzf", mecab_tar_gz) or exit(false)
@@ -90,9 +96,13 @@ namespace :build do
     naist_jdic_tar_gz = "#{naist_jdic_base}.tar.gz"
     naist_jdic_tar_gz_url = "http://osdn.dl.sourceforge.jp/naist-jdic/48487/#{naist_jdic_tar_gz}"
     Dir.chdir(tmp_dir) do
-      open(naist_jdic_tar_gz_url) do |downloaded_tar_gz|
-        File.open(naist_jdic_tar_gz, "wb") do |tar_gz|
-          tar_gz.print(downloaded_tar_gz.read)
+      mecab_tar_gz = download_dir + naist_jdic_tar_gz
+      unless File.exist?(naist_jdic_tar_gz)
+        mkdir_p(download_dir)
+        open(naist_jdic_tar_gz_url) do |downloaded_tar_gz|
+          File.open(naist_jdic_tar_gz, "wb") do |tar_gz|
+            tar_gz.print(downloaded_tar_gz.read)
+          end
         end
       end
       sh("tar", "xzf", naist_jdic_tar_gz) or exit(false)
