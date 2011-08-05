@@ -29,6 +29,30 @@ build-groonga: source
 	$(RUBY) -S rake build:groonga $(build_options)
 
 installer:
+	(echo "groonga";					\
+	 echo "----";						\
+	 echo "AUTHORS"; cat dist/groonga/AUTHORS;		\
+	 echo "----";						\
+	 echo "COPYING"; cat dist/groonga/COPYING;		\
+	 echo "====";						\
+	 echo "MeCab";						\
+	 echo "----";						\
+	 echo "AUTHORS"; cat dist/mecab/AUTHORS;		\
+	 echo "----";						\
+	 echo "COPYING"; cat dist/mecab/COPYING;		\
+	 echo "----";						\
+	 echo "BSD"; cat dist/mecab/BSD;			\
+	 echo "----";						\
+	 echo "GPL"; cat dist/mecab/GPL;			\
+	 echo "----";						\
+	 echo "LGPL"; cat dist/mecab/LGPL;			\
+	 echo "====";						\
+	 echo "NAIST-jdic";					\
+	 echo "----";						\
+	 echo "AUTHORS"; cat dist/mecab-naist-jdic/AUTHORS;	\
+	 echo "----";						\
+	 echo "COPYING"; cat dist/mecab-naist-jdic/COPYING;	\
+	) > COPYING
 	makensis setup.nsi
 
 package:
