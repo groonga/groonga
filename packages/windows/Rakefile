@@ -114,7 +114,7 @@ namespace :build do
       sh("make", "-j8") or exit(false)
       sh("make", "install-data") or exit(false)
 
-      naist_jdic_license_dir = license_dir + "mecab-naist-jdic"
+      naist_jdic_license_dir = license_dir + "naist-jdic"
       mkdir_p(naist_jdic_license_dir)
       files = ["AUTHORS", "COPYING"]
       cp(files, naist_jdic_license_dir)

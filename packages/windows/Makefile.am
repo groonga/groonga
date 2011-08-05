@@ -79,12 +79,12 @@ installer:
 	 echo "AUTHORS";				\
 	 echo "-------";				\
 	 echo;						\
-	 cat $(LICENSE_DIR)/mecab-naist-jdic/AUTHORS;	\
+	 cat $(LICENSE_DIR)/naist-jdic/AUTHORS;		\
 	 echo;						\
 	 echo "COPYING";				\
 	 echo "-------";				\
 	 echo;						\
-	 cat $(LICENSE_DIR)/mecab-naist-jdic/COPYING;	\
+	 cat $(LICENSE_DIR)/naist-jdic/COPYING;		\
 	) > LICENSE
 	makensis setup.nsi
 
