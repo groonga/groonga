@@ -26,6 +26,7 @@ debug_build_p = ENV["DEBUG_BUILD"] == "yes"
 debug_flags = ["CFLAGS=-ggdb3 -O0", "CXXFLAGS=-ggdb3 -O0"]
 
 dist_dir = Pathname.new("dist").expand_path
+license_dir = dist_dir + "share" + "license"
 binary_dir = base_dir + dist_dir
 
 patches_dir = (base_dir + "patches").expand_path

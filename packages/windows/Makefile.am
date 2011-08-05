@@ -28,30 +28,31 @@ build: source
 build-groonga: source
 	$(RUBY) -S rake build:groonga $(build_options)
 
+LICENSE_DIR = dist/share/license
 installer:
-	(echo "groonga";					\
-	 echo "----";						\
-	 echo "AUTHORS"; cat dist/groonga/AUTHORS;		\
-	 echo "----";						\
-	 echo "COPYING"; cat dist/groonga/COPYING;		\
-	 echo "====";						\
-	 echo "MeCab";						\
-	 echo "----";						\
-	 echo "AUTHORS"; cat dist/mecab/AUTHORS;		\
-	 echo "----";						\
-	 echo "COPYING"; cat dist/mecab/COPYING;		\
-	 echo "----";						\
-	 echo "BSD"; cat dist/mecab/BSD;			\
-	 echo "----";						\
-	 echo "GPL"; cat dist/mecab/GPL;			\
-	 echo "----";						\
-	 echo "LGPL"; cat dist/mecab/LGPL;			\
-	 echo "====";						\
-	 echo "NAIST-jdic";					\
-	 echo "----";						\
-	 echo "AUTHORS"; cat dist/mecab-naist-jdic/AUTHORS;	\
-	 echo "----";						\
-	 echo "COPYING"; cat dist/mecab-naist-jdic/COPYING;	\
+	(echo "groonga";						\
+	 echo "----";							\
+	 echo "AUTHORS"; cat $(LICENSE_DIR)/groonga/AUTHORS;		\
+	 echo "----";							\
+	 echo "COPYING"; cat $(LICENSE_DIR)/groonga/COPYING;		\
+	 echo "====";							\
+	 echo "MeCab";							\
+	 echo "----";							\
+	 echo "AUTHORS"; cat $(LICENSE_DIR)/mecab/AUTHORS;		\
+	 echo "----";							\
+	 echo "COPYING"; cat $(LICENSE_DIR)/mecab/COPYING;		\
+	 echo "----";							\
+	 echo "BSD"; cat $(LICENSE_DIR)/mecab/BSD;			\
+	 echo "----";							\
+	 echo "GPL"; cat $(LICENSE_DIR)/mecab/GPL;			\
+	 echo "----";							\
+	 echo "LGPL"; cat $(LICENSE_DIR)/mecab/LGPL;			\
+	 echo "====";							\
+	 echo "NAIST-jdic";						\
+	 echo "----";							\
+	 echo "AUTHORS"; cat $(LICENSE_DIR)/mecab-naist-jdic/AUTHORS;	\
+	 echo "----";							\
+	 echo "COPYING"; cat $(LICENSE_DIR)/mecab-naist-jdic/COPYING;	\
 	) > COPYING
 	makensis setup.nsi
 
