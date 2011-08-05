@@ -30,30 +30,62 @@ build-groonga: source
 
 LICENSE_DIR = dist/share/license
 installer:
-	(echo "groonga";						\
-	 echo "----";							\
-	 echo "AUTHORS"; cat $(LICENSE_DIR)/groonga/AUTHORS;		\
-	 echo "----";							\
-	 echo "COPYING"; cat $(LICENSE_DIR)/groonga/COPYING;		\
-	 echo "====";							\
-	 echo "MeCab";							\
-	 echo "----";							\
-	 echo "AUTHORS"; cat $(LICENSE_DIR)/mecab/AUTHORS;		\
-	 echo "----";							\
-	 echo "COPYING"; cat $(LICENSE_DIR)/mecab/COPYING;		\
-	 echo "----";							\
-	 echo "BSD"; cat $(LICENSE_DIR)/mecab/BSD;			\
-	 echo "----";							\
-	 echo "GPL"; cat $(LICENSE_DIR)/mecab/GPL;			\
-	 echo "----";							\
-	 echo "LGPL"; cat $(LICENSE_DIR)/mecab/LGPL;			\
-	 echo "====";							\
-	 echo "NAIST-jdic";						\
-	 echo "----";							\
-	 echo "AUTHORS"; cat $(LICENSE_DIR)/mecab-naist-jdic/AUTHORS;	\
-	 echo "----";							\
-	 echo "COPYING"; cat $(LICENSE_DIR)/mecab-naist-jdic/COPYING;	\
-	) > COPYING
+	(echo "groonga";				\
+	 echo "=======";				\
+	 echo;						\
+	 echo "AUTHORS";				\
+	 echo "-------";				\
+	 echo;						\
+	 cat $(LICENSE_DIR)/groonga/AUTHORS;		\
+	 echo;						\
+	 echo "COPYING";				\
+	 echo "-------";				\
+	 echo;						\
+	 cat $(LICENSE_DIR)/groonga/COPYING;		\
+	 echo;						\
+	 echo;						\
+	 echo "MeCab";					\
+	 echo "=====";					\
+	 echo;						\
+	 echo "AUTHORS";				\
+	 echo "-------";				\
+	 echo;						\
+	 cat $(LICENSE_DIR)/mecab/AUTHORS;		\
+	 echo;						\
+	 echo "COPYING";				\
+	 echo "-------";				\
+	 echo;						\
+	 cat $(LICENSE_DIR)/mecab/COPYING;		\
+	 echo;						\
+	 echo "BSD";					\
+	 echo "---";					\
+	 echo;						\
+	 echo; cat $(LICENSE_DIR)/mecab/BSD;		\
+	 echo;						\
+	 echo "GPL";					\
+	 echo "---";					\
+	 echo;						\
+	 cat $(LICENSE_DIR)/mecab/GPL;			\
+	 echo;						\
+	 echo "LGPL";					\
+	 echo "----";					\
+	 echo;						\
+	 cat $(LICENSE_DIR)/mecab/LGPL;			\
+	 echo;						\
+	 echo;						\
+	 echo "NAIST-jdic";				\
+	 echo "==========";				\
+	 echo;						\
+	 echo "AUTHORS";				\
+	 echo "-------";				\
+	 echo;						\
+	 cat $(LICENSE_DIR)/mecab-naist-jdic/AUTHORS;	\
+	 echo;						\
+	 echo "COPYING";				\
+	 echo "-------";				\
+	 echo;						\
+	 cat $(LICENSE_DIR)/mecab-naist-jdic/COPYING;	\
+	) > LICENSE
 	makensis setup.nsi
 
 package:
