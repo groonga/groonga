@@ -82,7 +82,7 @@ test_invalid_name(void)
   grn_test_assert_send_command_error(
     context,
     GRN_INVALID_ARGUMENT,
-    "[table][create]: name can't start with '_' and 0-9, "
-    "and contains only 0-9, A-Z, a-z, or _: <_Users>",
+    "[table][create]: name can't start with '_' and "
+    "contains only 0-9, A-Z, a-z, #, - or _: <_Users>",
     "table_create _Users");
 }

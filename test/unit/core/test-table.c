@@ -33,6 +33,8 @@ void test_temporary_table_add(gpointer data);
 void data_array_sort(void);
 void test_array_sort(gpointer data);
 void test_nonexistent_column(void);
+void data_create_with_valid_name(void);
+void test_create_with_valid_name(gpointer data);
 void data_create_with_invalid_name(void);
 void test_create_with_invalid_name(gpointer data);
 void test_array_truncate(void);
@@ -351,6 +353,42 @@ test_nonexistent_column(void)
 }
 
 void
+data_create_with_valid_name(void)
+{
+#define ADD_DATUM(label, name)                  \
+  gcut_add_datum(label,                         \
+                 "name", G_TYPE_STRING, name,   \
+                 NULL)
+
+  ADD_DATUM("start with number", "0table");
+  ADD_DATUM("include '-'", "table-name");
+
+#define ADD_DATUM_VALID_CHARACTER(name)               \
+  ADD_DATUM(name, name)
+
+  ADD_DATUM_VALID_CHARACTER("#");
+  ADD_DATUM_VALID_CHARACTER("-");
+
+#undef ADD_DATUM_INVALID_CHARACTER
+
+#undef ADD_DATUM
+}
+
+void
+test_create_with_valid_name(gpointer data)
+{
+  grn_obj *table;
+  const gchar *table_name;
+
+  table_name = gcut_data_get_string(data, "name");
+  table = grn_table_create(context, table_name, strlen(table_name),
+                           NULL,
+                           GRN_OBJ_TABLE_NO_KEY | GRN_OBJ_PERSISTENT,
+                           NULL, NULL);
+  grn_test_assert_context(context);
+}
+
+void
 data_create_with_invalid_name(void)
 {
 #define ADD_DATUM(label, name)                  \
@@ -359,8 +397,6 @@ data_create_with_invalid_name(void)
                  NULL)
 
   ADD_DATUM("start with '_'", "_users");
-  ADD_DATUM("start with number", "0table");
-  ADD_DATUM("include '-'", "table-name");
   ADD_DATUM("include a space", "table name");
   ADD_DATUM("space", " ");
 
@@ -369,7 +405,6 @@ data_create_with_invalid_name(void)
 
   ADD_DATUM_INVALID_CHARACTER("!");
   ADD_DATUM_INVALID_CHARACTER("\"");
-  ADD_DATUM_INVALID_CHARACTER("#");
   ADD_DATUM_INVALID_CHARACTER("$");
   ADD_DATUM_INVALID_CHARACTER("%");
   ADD_DATUM_INVALID_CHARACTER("&");
@@ -379,7 +414,6 @@ data_create_with_invalid_name(void)
   ADD_DATUM_INVALID_CHARACTER("*");
   ADD_DATUM_INVALID_CHARACTER("+");
   ADD_DATUM_INVALID_CHARACTER(",");
-  ADD_DATUM_INVALID_CHARACTER("-");
   ADD_DATUM_INVALID_CHARACTER(".");
   ADD_DATUM_INVALID_CHARACTER("/");
   ADD_DATUM_INVALID_CHARACTER(":");
@@ -414,12 +448,12 @@ test_create_with_invalid_name(gpointer data)
   table_name = gcut_data_get_string(data, "name");
   table = grn_table_create(context, table_name, strlen(table_name),
                            NULL,
-                           GRN_OBJ_TABLE_NO_KEY,
+                           GRN_OBJ_TABLE_NO_KEY | GRN_OBJ_PERSISTENT,
                            NULL, NULL);
   grn_test_assert_error(
     GRN_INVALID_ARGUMENT,
     cut_take_printf("[table][create]: name can't start with '_' and "
-                    "0-9, and contains only 0-9, A-Z, a-z, or _: <%s>",
+                    "contains only 0-9, A-Z, a-z, #, - or _: <%s>",
                     table_name),
     context);
 }

@@ -276,15 +276,17 @@ grn_db_check_name(grn_ctx *ctx, const char *name, unsigned int name_size)
 {
   int len;
   const char *name_end = name + name_size;
-  if (name < name_end &&
-      (*name == GRN_DB_PSEUDO_COLUMN_PREFIX ||
-       (unsigned int)(*name - '0') < 10u)) {
+  if (name_size > 0 &&
+      *name == GRN_DB_PSEUDO_COLUMN_PREFIX) {
     return GRN_INVALID_ARGUMENT;
   }
   while (name < name_end) {
     char c = *name;
     if ((unsigned int)((c | 0x20) - 'a') >= 26u &&
-        (unsigned int)(c - '0') >= 10u && c != '_') {
+        (unsigned int)(c - '0') >= 10u &&
+        c != '_' &&
+        c != '-' &&
+        c != '#') {
       return GRN_INVALID_ARGUMENT;
     }
     if (!(len = grn_charlen(ctx, name, name_end))) { break; }

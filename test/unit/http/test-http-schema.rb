@@ -200,8 +200,8 @@ class HTTPSchemaTest < Test::Unit::TestCase
     response = get(command_path(:table_create, :name => "mori.daijiro"))
     assert_error_response(Result::INVALID_ARGUMENT,
                           "[table][create]: " +
-                          "name can't start with '_' and 0-9, " +
-                          "and contains only 0-9, A-Z, a-z, or _: " +
+                          "name can't start with '_' " +
+                          "and contains only 0-9, A-Z, a-z, #, - or _: " +
                           "<mori.daijiro>",
                           response,
                           :content_type => "application/json")
@@ -211,8 +211,8 @@ class HTTPSchemaTest < Test::Unit::TestCase
     response = get(command_path(:table_create, :name => "_mori"))
     assert_error_response(Result::INVALID_ARGUMENT,
                           "[table][create]: " +
-                          "name can't start with '_' and 0-9, " +
-                          "and contains only 0-9, A-Z, a-z, or _: " +
+                          "name can't start with '_' " +
+                          "and contains only 0-9, A-Z, a-z, #, - or _: " +
                           "<_mori>",
                           response,
                           :content_type => "application/json")
@@ -227,8 +227,8 @@ class HTTPSchemaTest < Test::Unit::TestCase
     response = get(command_path(:table_create, :name => "daijiro:mori"))
     assert_error_response(Result::INVALID_ARGUMENT,
                           "[table][create]: " +
-                          "name can't start with '_' and 0-9, " +
-                          "and contains only 0-9, A-Z, a-z, or _: " +
+                          "name can't start with '_' " +
+                          "and contains only 0-9, A-Z, a-z, #, - or _: " +
                           "<daijiro:mori>",
                           response,
                           :content_type => "application/json")
