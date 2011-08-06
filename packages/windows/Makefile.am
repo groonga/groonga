@@ -1,5 +1,8 @@
-SUBDIRS = patches
+SUBDIRS =					\
+	patches					\
+	language-files
 EXTRA_DIST = Rakefile
+LICENSE_DIR = dist/share/license
 
 all:
 
@@ -28,8 +31,7 @@ build: source
 build-groonga: source
 	$(RUBY) -S rake build:groonga $(build_options)
 
-LICENSE_DIR = dist/share/license
-installer:
+installer: setup.nsi
 	(echo "groonga";				\
 	 echo "=======";				\
 	 echo;						\

@@ -90,6 +90,8 @@ version.sh
 /packages/windows/tmp/
 /packages/windows/dist/
 /packages/windows/files/
+/packages/windows/LICENSE
+/packages/windows/setup.nsi
 /packages/*.tar.gz
 /examples/dictionary/db/
 /examples/dictionary/*.gz

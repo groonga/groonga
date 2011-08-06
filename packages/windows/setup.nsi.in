@@ -16,6 +16,7 @@ SetCompressor lzma
 
 ; MUI Settings
 !define MUI_ABORTWARNING
+!define MUI_LANGDLL_ALLLANGUAGES
 !define MUI_ICON "${NSISDIR}\Contrib\Graphics\Icons\modern-install.ico"
 !define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\modern-uninstall.ico"
 !insertmacro MUI_PAGE_WELCOME
@@ -33,10 +34,19 @@ var ICONS_GROUP
 !insertmacro MUI_PAGE_INSTFILES
 ; !define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\doc\README.txt"
 !insertmacro MUI_PAGE_FINISH
-
 !insertmacro MUI_UNPAGE_INSTFILES
 
+!insertmacro MUI_LANGUAGE "English" ; first language is the default language
 !insertmacro MUI_LANGUAGE "Japanese"
+!insertmacro MUI_RESERVEFILE_LANGDLL
+
+!include "language-files\english.nsi"
+!include "language-files\japanese.nsi"
+
+Function .onInit
+  !insertmacro MUI_LANGDLL_DISPLAY
+FunctionEnd
+
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
 OutFile "files\${PRODUCT_NAME}-${PRODUCT_VERSION}-x64.exe"
@@ -76,14 +86,18 @@ SectionEnd
 
 Function un.onUninstSuccess
   HideWindow
-  MessageBox MB_ICONINFORMATION|MB_OK "$(^Name)を完全に削除しました。"
+  MessageBox MB_ICONINFORMATION|MB_OK $(FinishUninstallSuccessfully)
 FunctionEnd
 
 Function un.onInit
-  !insertmacro MUI_STARTMENU_GETFOLDER "Application" $ICONS_GROUP
+  !insertmacro MUI_UNGETLANGUAGE
+FunctionEnd
 
-  MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "本当に$(^Name)をアンインストールしていいですか？" IDYES +2
+Section "Uninstall"
+  MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 $(ConfirmUninstall) IDYES +2
   Abort
+
+  !insertmacro MUI_STARTMENU_GETFOLDER "Application" $ICONS_GROUP
 
   RMDir /r $INSTDIR
   DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
