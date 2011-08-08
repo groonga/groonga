@@ -39,7 +39,8 @@ void test_invalid_start_with_symbol(void);
 void test_no_key_table_without_columns(void);
 void test_nonexistent_table_name(void);
 void test_invalid_table_name(void);
-void test_each_brace(void);
+void data_each(void);
+void test_each(gconstpointer data);
 
 static gchar *tmp_directory;
 static const gchar *database_path;
@@ -497,7 +498,27 @@ test_invalid_table_name(void)
 }
 
 void
-test_each_brace(void)
+data_each(void)
+{
+#define ADD_DATUM(label, load_values_format)                            \
+  gcut_add_datum(label,                                                 \
+                 "load-values-format", G_TYPE_STRING, load_values_format, \
+                 NULL)
+
+  ADD_DATUM("brace",
+            "{\"_key\": \"alice\", \"location\": \"%s\"},"
+            "{\"_key\": \"bob\", \"location\": \"%s\"}");
+
+  ADD_DATUM("bracket",
+            "[\"_key\", \"location\"],"
+            "[\"alice\", \"%s\"],"
+            "[\"bob\", \"%s\"]");
+
+#undef ADD_DATUM
+}
+
+void
+test_each(gconstpointer data)
 {
   gdouble tokyo_tocho_latitude = 35.689444;
   gdouble tokyo_tocho_longitude = 139.691667;
@@ -518,14 +539,13 @@ test_each_brace(void)
         "load "
         "--table Users "
         "--each 'distance_from_tokyo_tocho = geo_distance(location, \"%s\")' "
-        "--values "
-        "'["
-        "{\"_key\": \"alice\", \"location\": \"%s\"},"
-        "{\"_key\": \"bob\", \"location\": \"%s\"}"
-        "]'",
+        "--values '[%s]'",
         grn_test_location_string(tokyo_tocho_latitude, tokyo_tocho_longitude),
-        grn_test_location_string(yurakucho_latitude, yurakucho_longitude),
-        grn_test_location_string(asagaya_latitude, asagaya_longitude))));
+        cut_take_printf(gcut_data_get_string(data, "load-values-format"),
+                        grn_test_location_string(yurakucho_latitude,
+                                                 yurakucho_longitude),
+                        grn_test_location_string(asagaya_latitude,
+                                                 asagaya_longitude)))));
   cut_assert_equal_string(
     "[[[2],"
      "[[\"_id\",\"UInt32\"],"
@@ -536,3 +556,4 @@ test_each_brace(void)
      "[2,\"bob\",\"128536272x502686360\",5364]]]",
     send_command("select Users"));
 }
+
