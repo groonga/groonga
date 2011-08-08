@@ -8034,6 +8034,11 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
           cols++;
           i++;
         }
+        if (loader->each) {
+          grn_obj *v = grn_expr_get_var_by_offset(ctx, loader->each, 0);
+          GRN_RECORD_SET(ctx, v, id);
+          grn_expr_exec(ctx, loader->each, 0);
+        }
         loader->nrecords++;
       }
     }
