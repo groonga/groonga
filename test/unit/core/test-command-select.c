@@ -460,7 +460,7 @@ test_nonexistent_table(void)
 
   grn_ctx_send(context, command, strlen(command), 0);
   grn_test_assert_error(GRN_INVALID_ARGUMENT,
-                        "invalid table name: nonexistent",
+                        "invalid table name: <nonexistent>",
                         context);
 }
 
