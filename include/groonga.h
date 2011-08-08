@@ -685,6 +685,7 @@ GRN_API grn_obj *grn_table_create(grn_ctx *ctx,
  * keyに対応するrecordがすでにtableに存在するならば、そのrecordのIDを返す。
  * GRN_OBJ_TABLE_NO_KEYが指定されたtableでは、key, key_size は無視される。
  **/
+/* TODO: int *added -> grn_bool *added */
 GRN_API grn_id grn_table_add(grn_ctx *ctx, grn_obj *table,
                              const void *key, unsigned key_size, int *added);
 
