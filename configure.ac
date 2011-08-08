@@ -160,6 +160,7 @@ AC_CONFIG_FILES([
   test/unit/fixtures/plugins/Makefile
   test/unit/fixtures/story/Makefile
   test/unit/fixtures/story/taiyaki/Makefile
+  test/unit/fixtures/story/rurema/Makefile
   test/unit/util/Makefile
   test/unit/core/Makefile
   test/unit/memcached/Makefile
