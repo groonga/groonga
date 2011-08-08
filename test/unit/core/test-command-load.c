@@ -39,6 +39,7 @@ void test_invalid_start_with_symbol(void);
 void test_no_key_table_without_columns(void);
 void test_nonexistent_table_name(void);
 void test_invalid_table_name(void);
+void test_each_brace(void);
 
 static gchar *tmp_directory;
 static const gchar *database_path;
@@ -493,4 +494,45 @@ test_invalid_table_name(void)
     "[\n"
     "[\"_key\": \"alice\"]\n"
     "]");
+}
+
+void
+test_each_brace(void)
+{
+  gdouble tokyo_tocho_latitude = 35.689444;
+  gdouble tokyo_tocho_longitude = 139.691667;
+  gdouble yurakucho_latitude = 35.67487;
+  gdouble yurakucho_longitude = 139.76352;
+  gdouble asagaya_latitude = 35.70452;
+  gdouble asagaya_longitude = 139.6351;
+
+  assert_send_command("table_create Users TABLE_HASH_KEY ShortText");
+  assert_send_command("column_create Users location "
+                      "COLUMN_SCALAR WGS84GeoPoint");
+  assert_send_command("column_create Users distance_from_tokyo_tocho "
+                      "COLUMN_SCALAR UInt32");
+  cut_assert_equal_string(
+    "2",
+    send_command(
+      cut_take_printf(
+        "load "
+        "--table Users "
+        "--each 'distance_from_tokyo_tocho = geo_distance(location, \"%s\")' "
+        "--values "
+        "'["
+        "{\"_key\": \"alice\", \"location\": \"%s\"},"
+        "{\"_key\": \"bob\", \"location\": \"%s\"}"
+        "]'",
+        grn_test_location_string(tokyo_tocho_latitude, tokyo_tocho_longitude),
+        grn_test_location_string(yurakucho_latitude, yurakucho_longitude),
+        grn_test_location_string(asagaya_latitude, asagaya_longitude))));
+  cut_assert_equal_string(
+    "[[[2],"
+     "[[\"_id\",\"UInt32\"],"
+      "[\"_key\",\"ShortText\"],"
+      "[\"location\",\"WGS84GeoPoint\"],"
+      "[\"distance_from_tokyo_tocho\",\"UInt32\"]],"
+     "[1,\"alice\",\"128429532x503148672\",6674],"
+     "[2,\"bob\",\"128536272x502686360\",5364]]]",
+    send_command("select Users"));
 }
