@@ -18,6 +18,7 @@ groonga ドキュメント
    install
    community
    tutorial
+   suggest
    reference
    spec
    limitations

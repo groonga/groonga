@@ -1,0 +1,14 @@
+.. -*- rst -*-
+
+.. highlightlang:: none
+
+Suggest
+=======
+
+Groonga has suggest feature. This section describes how to use it and how it works.
+
+.. toctree::
+   :maxdepth: 1
+   :glob:
+
+   suggest/introduction.txt
