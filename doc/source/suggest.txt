@@ -8,7 +8,6 @@ Suggest
 Groonga has suggest feature. This section describes how to use it and how it works.
 
 .. toctree::
-   :maxdepth: 1
-   :glob:
+   :maxdepth: 2
 
-   suggest/introduction.txt
+   suggest/introduction
