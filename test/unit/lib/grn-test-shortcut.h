@@ -25,6 +25,9 @@
 #define send_command(command)                   \
   grn_test_send_command(context, (command))
 
+#define send_commands(commands)                  \
+  grn_test_send_commands(context, (commands))
+
 #define assert_send_command(command, ...)                       \
   cut_trace_with_info_expression(                               \
     cut_test_with_user_message(                                 \
