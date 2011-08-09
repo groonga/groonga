@@ -144,6 +144,7 @@ source_files = \
 	$(top_srcdir)/doc/source/index.txt \
 	$(top_srcdir)/doc/source/install.txt \
 	$(top_srcdir)/doc/source/limitations.txt \
+	$(top_srcdir)/doc/source/log.txt \
 	$(top_srcdir)/doc/source/news.txt \
 	$(top_srcdir)/doc/source/news/0.x.txt \
 	$(top_srcdir)/doc/source/news/1.0.x.txt \
@@ -153,6 +154,8 @@ source_files = \
 	$(top_srcdir)/doc/source/reference.txt \
 	$(top_srcdir)/doc/source/spec.txt \
 	$(top_srcdir)/doc/source/spec/search.txt \
+	$(top_srcdir)/doc/source/suggest.txt \
+	$(top_srcdir)/doc/source/suggest/introduction.txt \
 	$(top_srcdir)/doc/source/textile.py \
 	$(top_srcdir)/doc/source/troubleshooting.txt \
 	$(top_srcdir)/doc/source/troubleshooting/different_results_with_the_same_keyword.txt \

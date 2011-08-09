@@ -146,6 +146,7 @@ relative_source_files = \
 	source/index.txt \
 	source/install.txt \
 	source/limitations.txt \
+	source/log.txt \
 	source/news.txt \
 	source/news/0.x.txt \
 	source/news/1.0.x.txt \
@@ -155,6 +156,8 @@ relative_source_files = \
 	source/reference.txt \
 	source/spec.txt \
 	source/spec/search.txt \
+	source/suggest.txt \
+	source/suggest/introduction.txt \
 	source/textile.py \
 	source/troubleshooting.txt \
 	source/troubleshooting/different_results_with_the_same_keyword.txt \
