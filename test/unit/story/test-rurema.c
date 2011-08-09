@@ -23,6 +23,7 @@
 
 void test_complete_cooccurrence(void);
 void test_correct_cooccurrence(void);
+void test_suggest_cooccurrence(void);
 
 static gchar *tmp_directory;
 
@@ -120,4 +121,22 @@ test_correct_coocurrence(void)
         "--types correct "
         "--threshold 0 "
         "--query 'avg'"));
+}
+
+void
+test_suggest_coocurrence(void)
+{
+  cut_assert_equal_string(
+    "{\"suggest\":"
+     "[[1],"
+      "[[\"_key\",\"ShortText\"],"
+       "[\"_score\",\"Int32\"]],"
+      "[\"csv generate\",1]]}",
+    send_command(
+        "suggest "
+        "--table item_rurema "
+        "--column kana "
+        "--types suggest "
+        "--threshold 0 "
+        "--query 'CSV'"));
 }
