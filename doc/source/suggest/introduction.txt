@@ -43,10 +43,13 @@ correction pairs.
 
 For example, there are registered correction pairs:
 
++------------+--------------+
 | wrong word | correct word |
++============+==============+
 | grroonga   | groonga      |
 | gronga     | groonga      |
 | gronnga    | groonga      |
++------------+--------------+
 
 An user inputs "gronga" and groonga returns "groonga" because
 "gronga" is in wrong word and corresponding correct word is
@@ -65,10 +68,20 @@ pairs.
 
 For example, there are registered related query pairs:
 
-| keyword | related query         |
-| groonga | groonga search engine |
-| search  | Google search         |
-| speed   | groonga speed         |
++--------+-------+
+|keyword |related|
+|        |query  |
++========+=======+
+|groonga |groonga|
+|        |search |
+|        |engine |
++--------+-------+
+|search  |Google |
+|        |search |
++--------+-------+
+| speed  |groonga|
+|        |speed  |
++--------+-------+
 
 An user inputs "groonga" and groonga returns "groonga search
 engine" because "groonga" is in keyword and related query
@@ -77,10 +90,10 @@ is "groonga search engine".
 An user inputs "MySQL" and groonga returns nothing because
 "MySQL" isn't in keyword
 
-Leaning
--------
+Learning
+--------
 
 The suggest feature requires registered data before using
 the feature. Those data can be registered from user inputs.
-Gronnga-suggest-httpd and groonga-suggest-leaner commands
+Gronnga-suggest-httpd and groonga-suggest-learner commands
 are provided for the propose.
