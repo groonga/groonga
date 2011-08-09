@@ -108,7 +108,7 @@ test_complete_coocurrence(void)
         "--table item_rurema "
         "--column kana "
         "--types complete "
-        "--threshold 0 "
+        "--threshold 1 "
         "--query 'ｓｔりん'"));
 }
 
@@ -126,7 +126,7 @@ test_correct_coocurrence(void)
         "--table item_rurema "
         "--column kana "
         "--types correct "
-        "--threshold 0 "
+        "--threshold 1 "
         "--query 'avg'"));
 }
 
@@ -144,6 +144,6 @@ test_suggest_coocurrence(void)
         "--table item_rurema "
         "--column kana "
         "--types suggest "
-        "--threshold 0 "
+        "--threshold 1 "
         "--query 'CSV'"));
 }

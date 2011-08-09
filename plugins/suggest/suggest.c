@@ -110,7 +110,7 @@ cooccurrence_search(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost, grn_id i
         pfreq = GRN_INT32_VALUE(&pair_freq);
         ifreq = GRN_INT32_VALUE(&item_freq);
         boost = GRN_INT32_VALUE(&item_boost);
-        if (pfreq > threshold && ifreq > threshold && boost >= 0) {
+        if (pfreq >= threshold && ifreq >= threshold && boost >= 0) {
           grn_rset_recinfo *ri;
           void *value;
           int32_t score = pfreq;
