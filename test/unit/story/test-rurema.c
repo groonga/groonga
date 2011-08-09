@@ -30,20 +30,6 @@ static gchar *tmp_directory;
 static grn_ctx *context;
 static grn_obj *database;
 
-void
-cut_startup(void)
-{
-  tmp_directory = g_build_filename(grn_test_get_tmp_dir(),
-                                   "rurema",
-                                   NULL);
-}
-
-void
-cut_shutdown(void)
-{
-  g_free(tmp_directory);
-}
-
 static void
 remove_tmp_directory(void)
 {
@@ -51,21 +37,49 @@ remove_tmp_directory(void)
 }
 
 void
+cut_startup(void)
+{
+  tmp_directory = g_build_filename(grn_test_get_tmp_dir(),
+                                   "rurema",
+                                   NULL);
+
+  remove_tmp_directory();
+  g_mkdir_with_parents(tmp_directory, 0700);
+
+  context = NULL;
+}
+
+void
+cut_shutdown(void)
+{
+  if (context) {
+    grn_obj_unlink(context, database);
+    grn_ctx_fin(context);
+    g_free(context);
+  }
+
+  remove_tmp_directory();
+
+  g_free(tmp_directory);
+}
+
+void
 cut_setup(void)
 {
   const gchar *database_path;
+
+  if (context) {
+    return;
+  }
+
+  context = g_new0(grn_ctx, 1);
+  grn_ctx_init(context, 0);
 
   cut_set_fixture_data_dir(grn_test_get_base_dir(),
                            "fixtures",
                            "story",
                            "rurema",
                            NULL);
-
-  remove_tmp_directory();
-  g_mkdir_with_parents(tmp_directory, 0700);
-
-  context = g_new0(grn_ctx, 1);
-  grn_ctx_init(context, 0);
 
   database_path = cut_build_path(tmp_directory, "database.groonga", NULL);
   database = grn_db_create(context, database_path, NULL);
@@ -78,13 +92,6 @@ cut_setup(void)
 void
 cut_teardown(void)
 {
-  if (context) {
-    grn_obj_unlink(context, database);
-    grn_ctx_fin(context);
-    g_free(context);
-  }
-
-  remove_tmp_directory();
 }
 
 void
