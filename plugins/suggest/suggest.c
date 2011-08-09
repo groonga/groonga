@@ -64,8 +64,8 @@ grn_parse_suggest_types(const char *nptr, const char *end)
 }
 
 static int32_t
-cooccur_search(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost, grn_id id,
-               grn_obj *res, int query_type, int threshold)
+cooccurrence_search(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost, grn_id id,
+                    grn_obj *res, int query_type, int threshold)
 {
   int32_t max_score = 0;
   if (id) {
@@ -238,7 +238,7 @@ complete(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost, grn_obj *col,
         }
         grn_str_close(ctx, norm);
       }
-      cooccur_search(ctx, items, items_boost, tid, res, COMPLETE, threshold);
+      cooccurrence_search(ctx, items, items_boost, tid, res, COMPLETE, threshold);
       if (((prefix_search_mode == GRN_SUGGEST_PREFIX_SEARCH_YES) ||
            (prefix_search_mode == GRN_SUGGEST_PREFIX_SEARCH_AUTO &&
             !grn_table_size(ctx, res))) &&
@@ -288,7 +288,7 @@ correct(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost,
   if ((res = grn_table_create(ctx, NULL, 0, NULL,
                               GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, items, NULL))) {
     grn_id tid = grn_table_get(ctx, items, TEXT_VALUE_LEN(query));
-    int32_t max_score = cooccur_search(ctx, items, items_boost, tid, res, CORRECT, threshold);
+    int32_t max_score = cooccurrence_search(ctx, items, items_boost, tid, res, CORRECT, threshold);
     LAP(":", "cooccur(%d)", max_score);
     if (GRN_TEXT_LEN(query) && max_score < threshold) {
       grn_obj *key, *index;
@@ -392,7 +392,7 @@ suggest(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost,
   if ((res = grn_table_create(ctx, NULL, 0, NULL,
                               GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, items, NULL))) {
     grn_id tid = grn_table_get(ctx, items, TEXT_VALUE_LEN(query));
-    cooccur_search(ctx, items, items_boost, tid, res, SUGGEST, threshold);
+    cooccurrence_search(ctx, items, items_boost, tid, res, SUGGEST, threshold);
     output(ctx, items, res, tid, sortby, output_columns, offset, limit);
     grn_obj_close(ctx, res);
   } else {

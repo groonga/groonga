@@ -21,7 +21,7 @@
 
 #include "../lib/grn-assertions.h"
 
-void test_complete(void);
+void test_complete_cooccurrence(void);
 
 static gchar *tmp_directory;
 
@@ -86,7 +86,7 @@ cut_teardown(void)
 }
 
 void
-test_complete(void)
+test_complete_coocurrence(void)
 {
   cut_assert_equal_string(
     "{\"complete\":"
