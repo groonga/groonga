@@ -22,6 +22,7 @@
 #include "../lib/grn-assertions.h"
 
 void test_complete_cooccurrence(void);
+void test_correct_cooccurrence(void);
 
 static gchar *tmp_directory;
 
@@ -101,4 +102,22 @@ test_complete_coocurrence(void)
         "--types complete "
         "--threshold 0 "
         "--query 'ｓｔりん'"));
+}
+
+void
+test_correct_coocurrence(void)
+{
+  cut_assert_equal_string(
+    "{\"correct\":"
+     "[[1],"
+      "[[\"_key\",\"ShortText\"],"
+       "[\"_score\",\"Int32\"]],"
+      "[\"sum\",1]]}",
+    send_command(
+        "suggest "
+        "--table item_rurema "
+        "--column kana "
+        "--types correct "
+        "--threshold 0 "
+        "--query 'avg'"));
 }
