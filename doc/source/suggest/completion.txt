@@ -1,0 +1,32 @@
+.. -*- rst -*-
+
+.. highlightlang:: none
+
+Completion
+==========
+
+This section describes about the following of the completion
+feature:
+
+  * How it works
+  * How to learn
+
+How it works
+------------
+
+The completion uses three searches to compute completed
+words:
+
+  1. Prefix RK search against registered words.
+  2. Cooccurrence search against learned data.
+  3. Optional prefix search against registered words.
+
+Prefix RK search
+^^^^^^^^^^^^^^^^
+
+RK means Romaji and Katakana. Prefix RK search can find
+registered words by romaji, katakana or hiragana.
+
+For example, there is a registered word "日本". "ニホン" (it
+must be katakana) is registered as its reading. An user can
+find "日本" by "ni", "二" or "に".
