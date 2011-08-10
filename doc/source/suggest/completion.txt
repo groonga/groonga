@@ -18,8 +18,8 @@ feature:
 How it works
 ------------
 
-The completion uses three searches to compute completed
-words:
+The completion feature uses three searches to compute
+completed words:
 
   1. Prefix RK search against registered words.
   2. Cooccurrence search against learned data.

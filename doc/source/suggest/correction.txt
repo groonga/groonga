@@ -1,0 +1,52 @@
+.. -*- rst -*-
+
+.. highlightlang:: none
+
+.. groonga-command
+.. % groonga-suggest-create-dataset /tmp/example.db query
+
+Correction
+==========
+
+This section describes about the following of the correction
+feature:
+
+  * How it works
+  * How to use
+  * How to learn
+
+How it works
+------------
+
+The correction feature uses three searches to compute completed
+words:
+
+  1. Cooccurrence search against learned data.
+  3. Similar search against registered words. (optional)
+
+Cooccurrence search
+^^^^^^^^^^^^^^^^^^^
+
+Cooccurrence search can find registered words from user's
+wrong input. It uses user submit sequences that will be
+learned from query logs, access logs and so on.
+
+For example, there is the following user input sequence:
+
++-----------------+
+|   submit        |
++=================+
+| serach (typo!)  |
++-----------------+
+| search (fixed!) |
++-----------------+
+
+Groonga creates the following completion pair:
+
++----------+--------------------+
+|  input   |   corrected word   |
++----------+--------------------+
+|serach    |search              |
++----------+--------------------+
+
+...

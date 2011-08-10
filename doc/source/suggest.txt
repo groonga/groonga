@@ -12,3 +12,5 @@ Groonga has suggest feature. This section describes how to use it and how it wor
 
    suggest/introduction
    suggest/completion
+   suggest/correction
+   suggest/suggestion
