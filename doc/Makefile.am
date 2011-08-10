@@ -6,7 +6,9 @@ all:
 include $(top_srcdir)/build/makefiles/sphinx-build.am
 
 update-examples:
-	GROONGA=$(GROONGA) $(srcdir)/source/update_execution_example.py
+	PATH=$(top_builddir)/src:$(top_builddir)/src/suggest:$$PATH	\
+	  $(srcdir)/source/update_execution_example.py			\
+	  $(srcdir)/source
 
 man pdf clean-html:
 	for dir in $(SUBDIRS); do		\

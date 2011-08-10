@@ -3,7 +3,10 @@
 .. highlightlang:: none
 
 .. groonga-command
-.. % groonga-suggest-create-dataset /tmp/example.db query
+.. % rm -rf /tmp/completion/db
+.. % mkdir -p /tmp/completion
+.. % groonga -n /tmp/completion/db shutdown
+.. % groonga-suggest-create-dataset /tmp/completion/db query
 
 Completion
 ==========

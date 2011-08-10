@@ -1,0 +1,5 @@
+Execution example::
+
+  > suggest --table item_query --column kana --types correction --threshold 1 --query saerch
+  [[0,1312990993.62398,0.000350034],{"correct":[[1],[["_key","ShortText"],["_score","Int32"]],["search",2]]}]
+  

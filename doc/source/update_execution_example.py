@@ -5,6 +5,7 @@ from subprocess import *
 from select import select
 from sys import argv,stdout
 import os
+import os.path
 
 GROONGA_PATH = os.environ.get("GROONGA")
 if GROONGA_PATH is None:
@@ -104,10 +105,13 @@ def readfile(fname, outflag):
       print '###<<< include end'
 
 
-if len(argv) > 1:
-  readfile(argv[1], 0)
+entry_point = "./"
+if len(argv) == 1:
+  entry_point = argv[1]
+if os.path.isfile(entry_point):
+  readfile(entry_point, 0)
 else:
-  for root, dirs, files in os.walk('./'):
+  for root, dirs, files in os.walk(entry_point):
     for fname in files:
       if fname.lower().endswith('.txt'):
         b = os.path.join(root, fname)
