@@ -25,7 +25,7 @@ def execmd(cmd, fout):
   ioin.write(cmd + "\n")
   ioin.flush()
   if fout:
-    fout.write(a + " ")
+    fout.write(a + "  ")
   while True:
     out = select([ioout], [], [], 0.2)
     if len(out[0]):
@@ -34,7 +34,7 @@ def execmd(cmd, fout):
         stdout.write(a)
         if fout:
           if a == '\n':
-            fout.write(a + " ")
+            fout.write(a + "  ")
           else:
             fout.write(a)
     else:
