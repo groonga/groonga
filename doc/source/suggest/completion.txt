@@ -2,6 +2,9 @@
 
 .. highlightlang:: none
 
+.. groonga-command
+.. % groonga-suggest-create-dataset /tmp/example.db query
+
 Completion
 ==========
 
@@ -9,6 +12,7 @@ This section describes about the following of the completion
 feature:
 
   * How it works
+  * How to use
   * How to learn
 
 How it works
@@ -19,7 +23,7 @@ words:
 
   1. Prefix RK search against registered words.
   2. Cooccurrence search against learned data.
-  3. Optional prefix search against registered words.
+  3. Prefix search against registered words. (optional)
 
 Prefix RK search
 ^^^^^^^^^^^^^^^^
@@ -116,4 +120,75 @@ an user submission". Groonga doesn't treat user inputs
 before a minute ago.
 
 If an user inputs "sea" and cooccurrence search returns
-"search" because "sea".
+"search" because "sea" is in input column and completed word
+column is "search".
+
+Prefix search
+^^^^^^^^^^^^^
+
+Prefix search can find registered word that start with
+user's input. This search doesn't care about romaji,
+katakana and hiragana not like Prefix RK search.
+
+This search isn't always ran. It's just ran when it's
+requested explicitly or prefix both RK search and
+Cooccurrence search return nothing.
+
+For example, there is a registered word "search". An user
+can find "search" by "s", "se", "sea", "sear", "searc" and
+"search".
+
+How to use
+----------
+
+.. groonga-command
+.. load --table event_query --each 'suggest_preparer(_id, type, item, sequence, time, pair_query)'
+.. [
+.. {"sequence": "1", "time": 1312950803.86057, "item": "e"},
+.. {"sequence": "1", "time": 1312950803.96857, "item": "en"},
+.. {"sequence": "1", "time": 1312950804.26057, "item": "eng"},
+.. {"sequence": "1", "time": 1312950804.56057, "item": "engi"},
+.. {"sequence": "1", "time": 1312950804.76057, "item": "engin"},
+.. {"sequence": "1", "time": 1312950805.86057, "item": "engine", "type": "submit"}
+.. ]
+
+Groonga provides :doc:`commands/suggest` command to use
+completion. `--type complete` option requests completion.
+
+For example, here is an command to get completion results by
+"en":
+
+.. groonga-command
+.. include:: ../example/completion-1.log
+.. suggest --table item_query --column kana --types complete --threshold 1 --query en
+
+How it learns
+-------------
+
+Cooccurrence search uses learned data. They are based on
+query logs, access logs and so on. To create learned data,
+groonga needs user input sequence with time stamp and user
+submit input with time stamp.
+
+For example, an user wants to search by "engine". The user
+inputs the query with the following sequence:
+
+  1. 2011-08-10T13:33:23+09:00: e
+  2. 2011-08-10T13:33:23+09:00: en
+  3. 2011-08-10T13:33:24+09:00: eng
+  4. 2011-08-10T13:33:24+09:00: engi
+  5. 2011-08-10T13:33:24+09:00: engin
+  6. 2011-08-10T13:33:25+09:00: engine (submit!)
+
+Groonga can be learned from the input sequence by the
+following command::
+
+  load --table event_query --each 'suggest_preparer(_id, type, item, sequence, time, pair_query)'
+  [
+  {"sequence": "1", "time": 1312950803.86057, "item": "e"},
+  {"sequence": "1", "time": 1312950803.96857, "item": "en"},
+  {"sequence": "1", "time": 1312950804.26057, "item": "eng"},
+  {"sequence": "1", "time": 1312950804.56057, "item": "engi"},
+  {"sequence": "1", "time": 1312950804.76057, "item": "engin"},
+  {"sequence": "1", "time": 1312950805.86057, "item": "engine", "type": "submit"}
+  ]

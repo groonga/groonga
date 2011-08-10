@@ -79,8 +79,8 @@ For example, there are registered related query pairs:
 +----------------------------+--------------------------+
 
 An user inputs "groonga" and groonga returns "groonga search
-engine" because "groonga" is in keyword and related query
-is "groonga search engine".
+engine" because "groonga" is in keyword column and related
+query column is "groonga search engine".
 
 An user inputs "MySQL" and groonga returns nothing because
 "MySQL" isn't in keyword

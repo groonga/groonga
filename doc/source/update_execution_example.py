@@ -25,7 +25,7 @@ def execmd(cmd, fout):
   ioin.write(cmd + "\n")
   ioin.flush()
   if fout:
-    fout.write(a + "  ")
+    fout.write(a + " ")
   while True:
     out = select([ioout], [], [], 0.2)
     if len(out[0]):
@@ -34,7 +34,7 @@ def execmd(cmd, fout):
         stdout.write(a)
         if fout:
           if a == '\n':
-            fout.write(a + "  ")
+            fout.write(a + " ")
           else:
             fout.write(a)
     else:
@@ -71,7 +71,13 @@ def readfile(fname, outflag):
               os.makedirs(dir_name)
             fout = open(a, 'w')
             print '### write start : ' + a
-            fout.write("実行例 ::\n\n  ")
+            fout.write("Execution example::\n\n  ")
+        elif cmd.startswith('.. % '):
+          a = cmd[5:]
+          if fout:
+            fout.write(a + "\n  ")
+          print a
+          os.system(a)
         elif cmd.startswith('.. .. '):
           a = cmd[6:]
           if fout:
