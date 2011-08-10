@@ -25,8 +25,95 @@ Prefix RK search
 ^^^^^^^^^^^^^^^^
 
 RK means Romaji and Katakana. Prefix RK search can find
-registered words by romaji, katakana or hiragana.
+registered words that start with user's input by romaji,
+katakana or hiragana. It's useful for searching in Japanese.
 
-For example, there is a registered word "日本". "ニホン" (it
-must be katakana) is registered as its reading. An user can
-find "日本" by "ni", "二" or "に".
+For example, there is a registered word "日本". And "ニホン"
+(it must be katakana) is registered as its reading. An user
+can find "日本" by "ni", "二" or "に".
+
+Cooccurrence search
+^^^^^^^^^^^^^^^^^^^
+
+Cooccurrence search can find registered words from user's
+partial input. It uses user input sequences that will be
+learned from query logs, access logs and so on.
+
+For example, there is the following user input sequence:
+
++----------+----------+
+|  input   |  submit  |
++----------+----------+
+|s         |no        |
++----------+----------+
+|se        |no        |
++----------+----------+
+|sea       |no        |
++----------+----------+
+|sear      |no        |
++----------+----------+
+|searc     |no        |
++----------+----------+
+|search    |yes       |
++----------+----------+
+|e         |no        |
++----------+----------+
+|en        |no        |
++----------+----------+
+|eng       |no        |
++----------+----------+
+|engi      |no        |
++----------+----------+
+|engin     |no        |
++----------+----------+
+|engine    |no        |
++----------+----------+
+|enginen   |no (typo!)|
++----------+----------+
+|engine    |yes       |
++----------+----------+
+
+Groonga creates the following completion pairs:
+
++----------+--------------------+
+|  input   |   completed word   |
++----------+--------------------+
+|s         |search              |
++----------+--------------------+
+|se        |search              |
++----------+--------------------+
+|sea       |search              |
++----------+--------------------+
+|sear      |search              |
++----------+--------------------+
+|searc     |search              |
++----------+--------------------+
+|e         |engine              |
++----------+--------------------+
+|en        |engine              |
++----------+--------------------+
+|eng       |engine              |
++----------+--------------------+
+|engi      |engine              |
++----------+--------------------+
+|engin     |engine              |
++----------+--------------------+
+|engine    |engine              |
++----------+--------------------+
+|enginen   |engine              |
++----------+--------------------+
+
+All user not-submitted inputs (e.g. "s", "se" and so on)
+before each an user submission maps to the submitted input
+(e.g. "search").
+
+To be precise, this description isn't correct because it
+omits about time stamp. Groonga doesn't case about "all user
+not-submitted inputs before each an user
+submission". Groonga just case about "all user not-submitted
+inputs within a minute from an user submission before each
+an user submission". Groonga doesn't treat user inputs
+before a minute ago.
+
+If an user inputs "sea" and cooccurrence search returns
+"search" because "sea".
