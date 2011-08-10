@@ -120,8 +120,8 @@ an user submission". Groonga doesn't treat user inputs
 before a minute ago.
 
 If an user inputs "sea" and cooccurrence search returns
-"search" because "sea" is in input column and completed word
-column is "search".
+"search" because "sea" is in input column and corresponding
+completed word column value is "search".
 
 Prefix search
 ^^^^^^^^^^^^^
