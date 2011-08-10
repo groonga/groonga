@@ -68,20 +68,15 @@ pairs.
 
 For example, there are registered related query pairs:
 
-+--------+-------+
-|keyword |related|
-|        |query  |
-+========+=======+
-|groonga |groonga|
-|        |search |
-|        |engine |
-+--------+-------+
-|search  |Google |
-|        |search |
-+--------+-------+
-| speed  |groonga|
-|        |speed  |
-+--------+-------+
++----------------------------+--------------------------+
+|          keyword           |      related query       |
++============================+==========================+
+| groonga                    | groonga search engine    |
++----------------------------+--------------------------+
+| search                     | Google search            |
++----------------------------+--------------------------+
+| speed                      | groonga speed            |
++----------------------------+--------------------------+
 
 An user inputs "groonga" and groonga returns "groonga search
 engine" because "groonga" is in keyword and related query
