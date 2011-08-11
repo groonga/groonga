@@ -1,0 +1,1045 @@
+# English translations for 1.2.4 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.4\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-08-11 11:28\n"
+"PO-Revision-Date: 2011-08-11 11:28+0900\n"
+"Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
+"Language-Team: English\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+# 544a44f0cc2749e6a23fe832b2d9b21c
+#: suggest.txt:6
+msgid "Suggest"
+msgstr "Suggest"
+
+# 96a71d1c516b478cbd9b2f705315b8ed
+#: suggest.txt:8
+msgid ""
+"Groonga has suggest feature. This section describes how to use it and how it "
+"works."
+msgstr ""
+"Groonga has suggest feature. This section describes how to use it and how it "
+"works."
+
+# 0c50282d52dc416094278e4dc3c5bc47
+# 47ce998d1c3e48158d93271a0ab40866
+# a7225d84e256451da2a32d85ec878e7a
+#: suggest/completion.txt:12, suggest/introduction.txt:10,
+#: suggest/introduction.txt:15
+msgid "Completion"
+msgstr "Completion"
+
+# 7dd8bc9d52cd4e82b4c1cf8a3f2c166f
+# e84a8689c661433cb8b846fb1ee60b22
+#: suggest/completion.txt:14, suggest/suggestion.txt:14
+msgid "This section describes about the following completion features:"
+msgstr "This section describes about the following completion features:"
+
+# 583352ff44d04635b00580cbf783f998
+# 7cd354cf1a9a4f4eab643b4508c8b640
+# ad43a629cb28426bba3186e55ba37052
+# 422a670715554294a80374bb2faa1037
+# 4427890fd1f24ce5bc9452274088ca18
+# 9eba5247e0c04f63ab7dc375c3c9bc79
+#: suggest/completion.txt:17, suggest/completion.txt:22,
+#: suggest/correction.txt:17, suggest/correction.txt:22,
+#: suggest/suggestion.txt:17, suggest/suggestion.txt:22
+msgid "How it works"
+msgstr "How it works"
+
+# c0b181e8c86049c587e985dd8eb15a25
+# d72626bae40b4aa783bd3a93ec88e70c
+# f3fbea863b794a299dad52e3f7709bd4
+# 2717466b67dc44a5a57154cc3b66e033
+# e1dc14518615427b9c684abd17c5008d
+# ec320aea3aae41f89fdbbf1404fc13b0
+#: suggest/completion.txt:18, suggest/completion.txt:145,
+#: suggest/correction.txt:18, suggest/correction.txt:91,
+#: suggest/suggestion.txt:18, suggest/suggestion.txt:77
+msgid "How to use"
+msgstr "How to use"
+
+# 3f9606d2cb774e659719154be9426287
+# e668a6b01aa8482a9fa0f57c4b5facbf
+# f896690b26464e11aac13e0d5338b1f9
+#: suggest/completion.txt:19, suggest/correction.txt:19,
+#: suggest/suggestion.txt:19
+msgid "How to learn"
+msgstr "How to learn"
+
+# 70ad57cb30ec4c96a318d232da26850f
+#: suggest/completion.txt:24
+msgid "The completion feature uses three searches to compute completed words:"
+msgstr "The completion feature uses three searches to compute completed words:"
+
+# 0a684b5f1a3c4b1ca6aa145459855b1e
+#: suggest/completion.txt:27
+msgid "Prefix RK search against registered words."
+msgstr "Prefix RK search against registered words."
+
+# e2d74e5050494f17bb7a55dc68adefb2
+# 799c7965e8614c55a156fd26b2c51a0e
+#: suggest/completion.txt:28, suggest/suggestion.txt:27
+msgid "Cooccurrence search against learned data."
+msgstr "Cooccurrence search against learned data."
+
+# 0e2936ca8bbe4af3adf39a3ba006e6d7
+#: suggest/completion.txt:29
+msgid "Prefix search against registered words. (optional)"
+msgstr "Prefix search against registered words. (optional)"
+
+# e1a047416bcd4be5a44cbcee6091834a
+#: suggest/completion.txt:32
+msgid "Prefix RK search"
+msgstr "Prefix RK search"
+
+# 7eb8d70febf94718ba98ddf969ffde92
+#: suggest/completion.txt:34
+msgid ""
+"RK means Romaji and Katakana. Prefix RK search can find registered words "
+"that start with user's input by romaji, katakana or hiragana. It's useful "
+"for searching in Japanese."
+msgstr ""
+"RK means Romaji and Katakana. Prefix RK search can find registered words "
+"that start with user's input by romaji, katakana or hiragana. It's useful "
+"for searching in Japanese."
+
+# d27e2a4c855c4da387b7a008d21c3ec7
+#: suggest/completion.txt:38
+msgid ""
+"For example, there is a registered word \"日本\". And \"ニホン\" (it must be "
+"katakana) is registered as its reading. An user can find \"日本\" by \"ni\", "
+"\"二\" or \"に\"."
+msgstr ""
+"For example, there is a registered word \"日本\". And \"ニホン\" (it must be "
+"katakana) is registered as its reading. An user can find \"日本\" by \"ni\", "
+"\"二\" or \"に\"."
+
+# 0edcce106c5446959f65a6af05a638cc
+# 43018a3e1e47440dab23b383e890f28b
+# 55fb2ce4474343a18deb7ebb937aafe6
+#: suggest/completion.txt:43, suggest/correction.txt:31,
+#: suggest/suggestion.txt:30
+msgid "Cooccurrence search"
+msgstr "Cooccurrence search"
+
+# 86d322eef68048f396dacbd26ce46461
+#: suggest/completion.txt:45
+msgid ""
+"Cooccurrence search can find registered words from user's partial input. It "
+"uses user input sequences that will be learned from query logs, access logs "
+"and so on."
+msgstr ""
+"Cooccurrence search can find registered words from user's partial input. It "
+"uses user input sequences that will be learned from query logs, access logs "
+"and so on."
+
+# d93fd84446414c938258c73eaefb3e44
+#: suggest/completion.txt:49
+msgid "For example, there is the following user input sequence:"
+msgstr "For example, there is the following user input sequence:"
+
+# 3004e04f9b8a4c50a370ce6cb90f9a10
+# 758334173faa47c08b41cc0cd61b1136
+# 0feb077bd1e84251883e4f4cd3eac330
+# 60c8cdefd3db43f9b1c96a89db9aa9f9
+#: suggest/completion.txt:52, suggest/completion.txt:86,
+#: suggest/correction.txt:51, suggest/suggestion.txt:49
+msgid "input"
+msgstr "input"
+
+# 1127454261104c188de840b382f78442
+#: suggest/completion.txt:52
+msgid "submit"
+msgstr "submit"
+
+# 8ee812dd155c4362aa3ecc01811bc6b8
+# 85e543b3094a47ea995e045d693368ab
+#: suggest/completion.txt:54, suggest/completion.txt:88
+msgid "s"
+msgstr "s"
+
+# a29f054f3926440a9abe9f56fc805c10
+# 2b967ee7673c4cbc945dfd068058e616
+# d45b1c469d9147a78e393c440ed1a608
+# 9f800239dc574bb2974c7e08019223b9
+# 96c70656bdb046e191e0154b7c6dcfbe
+# b131e75d288d4fde90283ef81bb7a669
+# 649077edc4034d7f8a41397e85e2ecf3
+# 339a2947d9a946ca9b5eb95bd38feb72
+# dff171424d304bee89ebd6c0cf8413f4
+# 0fb6e419ca714b2c89e6e98fca63b1a2
+# 3de1863bc06341b288f2b24e600eb9e8
+#: suggest/completion.txt:54, suggest/completion.txt:56,
+#: suggest/completion.txt:58, suggest/completion.txt:60,
+#: suggest/completion.txt:62, suggest/completion.txt:66,
+#: suggest/completion.txt:68, suggest/completion.txt:70,
+#: suggest/completion.txt:72, suggest/completion.txt:74,
+#: suggest/completion.txt:76
+msgid "no"
+msgstr "no"
+
+# e374b95f0bfa48a88ef2149624b8f209
+# f153db8ae93b4757b8491a1d791a0ae9
+#: suggest/completion.txt:56, suggest/completion.txt:90
+msgid "se"
+msgstr "se"
+
+# abbf17bece0243008b1f28fccfba9b00
+# ee4773d5a3f043859d2af020bc8967e6
+#: suggest/completion.txt:58, suggest/completion.txt:92
+msgid "sea"
+msgstr "sea"
+
+# ad0a81f8bfe0441dba2b53a0110dcd0c
+# 4e14a2f6c156453096a964acae43c223
+#: suggest/completion.txt:60, suggest/completion.txt:94
+msgid "sear"
+msgstr "sear"
+
+# eeec4f898761403a817c883483fc2cf0
+# cafe2011b11541b393418e05fe504a21
+#: suggest/completion.txt:62, suggest/completion.txt:96
+msgid "searc"
+msgstr "searc"
+
+# f62c764d4c354c6e8540b3a06dd1c8f7
+# e8efe7e10c344baf89a5d26240841806
+# dfb1310e01644e709a8ebf66205d4b73
+# a9b768d6b1784b82891dd1a7cff4ced4
+# ab9265781f424f7bba5d2fb7f5cd64dc
+# bc37d600c4a54586bb197501ad608015
+# f530d15f84cd4e418ef9821d98f71724
+# 3bcdfd70d49c4952bbdd6f49f70ddc0f
+# e720c7b291224713a09fa9ed5a95d6a0
+# fe9923c923134eeb8b3118d863eb0975
+#: suggest/completion.txt:64, suggest/completion.txt:88,
+#: suggest/completion.txt:90, suggest/completion.txt:92,
+#: suggest/completion.txt:94, suggest/completion.txt:96,
+#: suggest/correction.txt:53, suggest/introduction.txt:76,
+#: suggest/suggestion.txt:51, suggest/suggestion.txt:57
+msgid "search"
+msgstr "search"
+
+# b04cc12967e64057ba1807d28d760d48
+# 5939158a8f3e46b69f66494ffa568454
+#: suggest/completion.txt:64, suggest/completion.txt:80
+msgid "yes"
+msgstr "yes"
+
+# a8a5318b5f394851aff4ba0cbf6176d3
+# dc28ed5eee034fd5a7efc37f3a389a56
+#: suggest/completion.txt:66, suggest/completion.txt:98
+msgid "e"
+msgstr "e"
+
+# b9b237b69ae4423e91b6b1df943ac425
+# ecd2e36d0e89486bb16b1c8369ec5a4c
+#: suggest/completion.txt:68, suggest/completion.txt:100
+msgid "en"
+msgstr "en"
+
+# 708b820a9b9a45fd8b2bca4040733668
+# 40b09e6ebd294fba8c8cdfed7cb02150
+#: suggest/completion.txt:70, suggest/completion.txt:102
+msgid "eng"
+msgstr "eng"
+
+# 5b7902e7425c496193c4f87b9c003800
+# d84491bf005149e6a7bbe1ba14564039
+#: suggest/completion.txt:72, suggest/completion.txt:104
+msgid "engi"
+msgstr "engi"
+
+# ed7cfdbaf1c745bca055890629ad518d
+# f61bb6a0f7d6435cafb8b1671728019b
+#: suggest/completion.txt:74, suggest/completion.txt:106
+msgid "engin"
+msgstr "engin"
+
+# 1cc967e6fc9d4fd2ace8ee489d488ef2
+# 1e39381103c94870ae6bd5c1c7eec111
+# e0730a77ccbd4b919282e569e238b86b
+# 00bdad47c7f346aaa54fb0a0bbf7e971
+# e663d52e887543f0a6cffae5fc00e581
+# b057711ffaf34d5f8d9bd0da7de0ac4b
+# c2f62ac511704b79a23e78dd27aaebad
+# d5fdf1bec19a45fa899daa1d079c8d8e
+# 1d896708d2964bbc8f9ed6a9b9faae02
+# ca19c36abefe48819a1b2bf1684c2444
+# 81ef318eb83c40e8b62556d22dce9971
+#: suggest/completion.txt:76, suggest/completion.txt:80,
+#: suggest/completion.txt:98, suggest/completion.txt:100,
+#: suggest/completion.txt:102, suggest/completion.txt:104,
+#: suggest/completion.txt:106, suggest/completion.txt:108,
+#: suggest/completion.txt:110, suggest/suggestion.txt:53
+msgid "engine"
+msgstr "engine"
+
+# d200d7a42f0c48898f81f05fde74489c
+# e47a6b8ce2a34559b30ab254e4d611e3
+#: suggest/completion.txt:78, suggest/completion.txt:110
+msgid "enginen"
+msgstr "enginen"
+
+# a1f8704db5734b438e4f82f7a9d22265
+#: suggest/completion.txt:78
+msgid "no (typo!)"
+msgstr "no (typo!)"
+
+# 58aed9a4df8045d88c70ffe99c67104d
+#: suggest/completion.txt:83
+msgid "Groonga creates the following completion pairs:"
+msgstr "Groonga creates the following completion pairs:"
+
+# aeaccdb88e6f4b2f820cd290a5fd74f4
+#: suggest/completion.txt:86
+msgid "completed word"
+msgstr "completed word"
+
+# f2e3fb3a0e9c47599c1846e1a04fcb1c
+#: suggest/completion.txt:113
+msgid ""
+"All user not-submitted inputs (e.g. \"s\", \"se\" and so on) before each an "
+"user submission maps to the submitted input (e.g. \"search\")."
+msgstr ""
+"All user not-submitted inputs (e.g. \"s\", \"se\" and so on) before each an "
+"user submission maps to the submitted input (e.g. \"search\")."
+
+# 270a87b78e3142d789fb945c57c97d80
+#: suggest/completion.txt:117
+msgid ""
+"To be precise, this description isn't correct because it omits about time "
+"stamp. Groonga doesn't case about \"all user not-submitted inputs before "
+"each an user submission\". Groonga just case about \"all user not-submitted "
+"inputs within a minute from an user submission before each an user submission"
+"\". Groonga doesn't treat user inputs before a minute ago."
+msgstr ""
+"To be precise, this description isn't correct because it omits about time "
+"stamp. Groonga doesn't case about \"all user not-submitted inputs before "
+"each an user submission\". Groonga just case about \"all user not-submitted "
+"inputs within a minute from an user submission before each an user submission"
+"\". Groonga doesn't treat user inputs before a minute ago."
+
+# e55eb3ef79914c98ab60cd137adf7592
+#: suggest/completion.txt:125
+msgid ""
+"If an user inputs \"sea\" and cooccurrence search returns \"search\" because "
+"\"sea\" is in input column and corresponding completed word column value is "
+"\"search\"."
+msgstr ""
+"If an user inputs \"sea\" and cooccurrence search returns \"search\" because "
+"\"sea\" is in input column and corresponding completed word column value is "
+"\"search\"."
+
+# 94e3ad2e1cd948ae9ea51fd7c76c0496
+#: suggest/completion.txt:130
+msgid "Prefix search"
+msgstr "Prefix search"
+
+# 0f0a4bf51abf440f882c992d093848a3
+#: suggest/completion.txt:132
+msgid ""
+"Prefix search can find registered word that start with user's input. This "
+"search doesn't care about romaji, katakana and hiragana not like Prefix RK "
+"search."
+msgstr ""
+"Prefix search can find registered word that start with user's input. This "
+"search doesn't care about romaji, katakana and hiragana not like Prefix RK "
+"search."
+
+# bdbdf6c890514c8a8ad2291105558eee
+#: suggest/completion.txt:136
+msgid ""
+"This search isn't always ran. It's just ran when it's requested explicitly "
+"or prefix both RK search and Cooccurrence search return nothing."
+msgstr ""
+"This search isn't always ran. It's just ran when it's requested explicitly "
+"or prefix both RK search and Cooccurrence search return nothing."
+
+# 69829ee8979c48fa83ace2d4c963ad30
+#: suggest/completion.txt:140
+msgid ""
+"For example, there is a registered word \"search\". An user can find \"search"
+"\" by \"s\", \"se\", \"sea\", \"sear\", \"searc\" and \"search\"."
+msgstr ""
+"For example, there is a registered word \"search\". An user can find \"search"
+"\" by \"s\", \"se\", \"sea\", \"sear\", \"searc\" and \"search\"."
+
+# 88cddcae0a714a0faac0520bf592a161
+#: suggest/completion.txt:158
+msgid ""
+"Groonga provides :doc:`commands/suggest` command to use completion. `--type "
+"complete` option requests completion."
+msgstr ""
+"Groonga provides :doc:`commands/suggest` command to use completion. `--type "
+"complete` option requests completion."
+
+# 888c8da1468c4844b3f74a02cd839b2d
+#: suggest/completion.txt:161
+msgid "For example, here is an command to get completion results by \"en\":"
+msgstr "For example, here is an command to get completion results by \"en\":"
+
+# 59848e411ebb4539a4abce68c1bf1cbc
+# c2ae0577aa4d4910b2d59917aed0d9cd
+#: example/completion-1.log:1, example/correction-1.log:1
+msgid "Execution example::"
+msgstr "Execution example::"
+
+# cc367508cd2f48318169b5ccead8bc57
+# 1b1b93726f274a9a9b18eb03d53c4f3a
+# 1d6b9a2acc4a40e18436cb697beda4ab
+#: suggest/completion.txt:169, suggest/correction.txt:117,
+#: suggest/suggestion.txt:97
+msgid "How it learns"
+msgstr "How it learns"
+
+# b81b28b344254bc5b9f89b427f6d3f45
+# b8235b14d5ef4b078a5dafe49c70ced5
+#: suggest/completion.txt:171, suggest/suggestion.txt:99
+msgid ""
+"Cooccurrence search uses learned data. They are based on query logs, access "
+"logs and so on. To create learned data, groonga needs user input sequence "
+"with time stamp and user submit input with time stamp."
+msgstr ""
+"Cooccurrence search uses learned data. They are based on query logs, access "
+"logs and so on. To create learned data, groonga needs user input sequence "
+"with time stamp and user submit input with time stamp."
+
+# 839b01c8cb924d40962c7214ecca9c8f
+# dfdb8b4ebee84dba81f1f5245d09cb6d
+#: suggest/completion.txt:176, suggest/suggestion.txt:104
+msgid ""
+"For example, an user wants to search by \"engine\". The user inputs the "
+"query with the following sequence:"
+msgstr ""
+"For example, an user wants to search by \"engine\". The user inputs the "
+"query with the following sequence:"
+
+# e7fa5a22b6e840ec8b4678dc70eddfc8
+#: suggest/completion.txt:179
+msgid "2011-08-10T13:33:23+09:00: e"
+msgstr "2011-08-10T13:33:23+09:00: e"
+
+# 7048b8ca7f66409a85a8310af317804e
+#: suggest/completion.txt:180
+msgid "2011-08-10T13:33:23+09:00: en"
+msgstr "2011-08-10T13:33:23+09:00: en"
+
+# 9a7c57bb3542446bba99e116dbcf782f
+#: suggest/completion.txt:181
+msgid "2011-08-10T13:33:24+09:00: eng"
+msgstr "2011-08-10T13:33:24+09:00: eng"
+
+# 3138c8bc3f2c40fe9f2774a0bb4dcb4b
+#: suggest/completion.txt:182
+msgid "2011-08-10T13:33:24+09:00: engi"
+msgstr "2011-08-10T13:33:24+09:00: engi"
+
+# b01068cec3c44f9db5eccada06526ab8
+#: suggest/completion.txt:183
+msgid "2011-08-10T13:33:24+09:00: engin"
+msgstr "2011-08-10T13:33:24+09:00: engin"
+
+# df30f2ff3f6f482082e3efb7da48be9e
+#: suggest/completion.txt:184
+msgid "2011-08-10T13:33:25+09:00: engine (submit!)"
+msgstr "2011-08-10T13:33:25+09:00: engine (submit!)"
+
+# 0d880731226b46368dd4fda8a243978e
+# bbdd1e5afe2b4bfa9ad772e08c82182b
+#: suggest/completion.txt:186, suggest/correction.txt:136
+msgid ""
+"Groonga can be learned from the input sequence by the following command::"
+msgstr ""
+"Groonga can be learned from the input sequence by the following command::"
+
+# bd594f80a4224ab88c888eea39727c04
+# 9351064dac39412597b18f2782b94c62
+# 47d68e7fa73e48099a8980f6f2e5f482
+#: suggest/correction.txt:12, suggest/introduction.txt:11,
+#: suggest/introduction.txt:38
+msgid "Correction"
+msgstr "Correction"
+
+# 61c047c0ac784e78aa2f84f88045fda0
+#: suggest/correction.txt:14
+msgid "This section describes about the following correction features:"
+msgstr "This section describes about the following correction features:"
+
+# d6d8f9e525ca4e7aa14d7fb179fd33c3
+#: suggest/correction.txt:24
+msgid "The correction feature uses three searches to compute completed words:"
+msgstr "The correction feature uses three searches to compute completed words:"
+
+# f34afa9b2e1348c28cddfd8d2e4d46c6
+#: suggest/correction.txt:27
+msgid ""
+"1. Cooccurrence search against learned data. 3. Similar search against "
+"registered words. (optional)"
+msgstr ""
+"1. Cooccurrence search against learned data. 3. Similar search against "
+"registered words. (optional)"
+
+# 7f228af2d3984a04b2b9549ba4d4d896
+#: suggest/correction.txt:33
+msgid ""
+"Cooccurrence search can find registered words from user's wrong input. It "
+"uses user submit sequences that will be learned from query logs, access logs "
+"and so on."
+msgstr ""
+"Cooccurrence search can find registered words from user's wrong input. It "
+"uses user submit sequences that will be learned from query logs, access logs "
+"and so on."
+
+# 64f3de1df2d0472395502556a4e0a4fe
+# 0b818c397acc4b57a6f3f633e2d71d54
+#: suggest/correction.txt:37, suggest/suggestion.txt:36
+msgid "For example, there are the following user submissions:"
+msgstr "For example, there are the following user submissions:"
+
+# 0a029c4470084e1ab3277ef26d6249a6
+# f4f43a51522f4b00bea6c115d49c8f1d
+#: suggest/correction.txt:40, suggest/suggestion.txt:39
+msgid "query"
+msgstr "query"
+
+# c7490824be3f46eca74de119318cb68f
+#: suggest/correction.txt:40
+msgid "time"
+msgstr "time"
+
+# 00ed34b2933a493d9775985d39ef36b6
+#: suggest/correction.txt:42
+msgid "serach (typo!)"
+msgstr "serach (typo!)"
+
+# acd0986289dc44e38e51528f96a2298e
+#: suggest/correction.txt:42
+msgid "2011-08-10T22:20:50+09:00"
+msgstr "2011-08-10T22:20:50+09:00"
+
+# ab32d7ab815a4fddaf9ceb3eccb21ca3
+#: suggest/correction.txt:44
+msgid "search (fixed!)"
+msgstr "search (fixed!)"
+
+# 756d9ccc31e04418baa76405cffecf0b
+#: suggest/correction.txt:44
+msgid "2011-08-10T22:20:52+09:00"
+msgstr "2011-08-10T22:20:52+09:00"
+
+# 3775cbada1374e21b8d93f719ce98c66
+#: suggest/correction.txt:47
+msgid ""
+"Groonga creates the following completion pair from the above submissions:"
+msgstr ""
+"Groonga creates the following completion pair from the above submissions:"
+
+# 985ff131c06c42a09aecdb4141e64e20
+#: suggest/correction.txt:51
+msgid "corrected word"
+msgstr "corrected word"
+
+# 23e993b4a4e24a119aa7869276130132
+#: suggest/correction.txt:53
+msgid "serach"
+msgstr "serach"
+
+# 05e40fe3f7a847a7a48dad8bed2e7922
+#: suggest/correction.txt:56
+msgid ""
+"Groonga treats continuous submissions within a minute as input correction by "
+"user. Not submitted user input sequence between two submissions isn't used "
+"as learned data for correction."
+msgstr ""
+"Groonga treats continuous submissions within a minute as input correction by "
+"user. Not submitted user input sequence between two submissions isn't used "
+"as learned data for correction."
+
+# 47c2541ab60c4f5082087fd9a142d114
+#: suggest/correction.txt:61
+msgid ""
+"If an user inputs \"serach\" and cooccurrence search returns \"search\" "
+"because \"serach\" is in input column and corresponding corrected word "
+"column value is \"search\"."
+msgstr ""
+"If an user inputs \"serach\" and cooccurrence search returns \"search\" "
+"because \"serach\" is in input column and corresponding corrected word "
+"column value is \"search\"."
+
+# 2c21aa0074a4401dbefd0c46875f2c46
+#: suggest/correction.txt:66
+msgid "Similar search"
+msgstr "Similar search"
+
+# 6230afc0d90f42a8a1edddf780db93da
+#: suggest/correction.txt:68
+msgid ""
+"Similar search can find registered words that has one or more the same "
+"tokens as user input. TokenBigram tokenizer is used for tokenization because "
+"suggest dataset schema created by :doc:`executables/groonga-suggest-create-"
+"dataset` uses TokenBigram tokenizer as the default tokenizer."
+msgstr ""
+"Similar search can find registered words that has one or more the same "
+"tokens as user input. TokenBigram tokenizer is used for tokenization because "
+"suggest dataset schema created by :doc:`executables/groonga-suggest-create-"
+"dataset` uses TokenBigram tokenizer as the default tokenizer."
+
+# 1ac6074e3c494d36ae95c8ecf3709e2c
+#: suggest/correction.txt:74
+msgid ""
+"For example, there is a registered query \"search engine\". An user can find "
+"\"search engine\" by \"web search service\", \"sound engine\" and so on. "
+"Because \"search engine\" and \"web search engine\" have the same token "
+"\"search\" and \"search engine\" and \"sound engine\" have the same token "
+"\"engine\"."
+msgstr ""
+"For example, there is a registered query \"search engine\". An user can find "
+"\"search engine\" by \"web search service\", \"sound engine\" and so on. "
+"Because \"search engine\" and \"web search engine\" have the same token "
+"\"search\" and \"search engine\" and \"sound engine\" have the same token "
+"\"engine\"."
+
+# 7fa04a91a2744d08a4d08840137a389f
+#: suggest/correction.txt:80
+msgid ""
+"\"search engine\" is tokenized to \"search\" and \"engine\" tokens. "
+"(Groonga's TokenBigram tokenizer doesn't tokenize two characters for "
+"continuous alphabets and continuous digits for reducing search noise. "
+"TokenBigramSplitSymbolAlphaDigit tokenizer should be used to ensure "
+"tokenizing to two characters.) \"web search service\" is tokenized to \"web"
+"\", \"search\" and \"service\". \"sound engine\" is tokenized to \"sound\" "
+"and \"engine\"."
+msgstr ""
+"\"search engine\" is tokenized to \"search\" and \"engine\" tokens. "
+"(Groonga's TokenBigram tokenizer doesn't tokenize two characters for "
+"continuous alphabets and continuous digits for reducing search noise. "
+"TokenBigramSplitSymbolAlphaDigit tokenizer should be used to ensure "
+"tokenizing to two characters.) \"web search service\" is tokenized to \"web"
+"\", \"search\" and \"service\". \"sound engine\" is tokenized to \"sound\" "
+"and \"engine\"."
+
+# 6b1b7ab9b7bd4bec8dec14a0bc23d68a
+#: suggest/correction.txt:106
+msgid ""
+"Groonga provides :doc:`commands/suggest` command to use completion. `--type "
+"correct` option requests corrections"
+msgstr ""
+"Groonga provides :doc:`commands/suggest` command to use completion. `--type "
+"correct` option requests corrections"
+
+# 16773693f316429f8124e17e65445b43
+#: suggest/correction.txt:109
+msgid ""
+"For example, here is an command to get correction results by \"saerch\":"
+msgstr ""
+"For example, here is an command to get correction results by \"saerch\":"
+
+# a2c7b36762dd4b9ba9a394feeffec57b
+#: suggest/correction.txt:119
+msgid ""
+"Cooccurrence search uses learned data. They are based on query logs, access "
+"logs and so on. To create learned data, groonga needs user submit inputs "
+"with time stamp."
+msgstr ""
+"Cooccurrence search uses learned data. They are based on query logs, access "
+"logs and so on. To create learned data, groonga needs user submit inputs "
+"with time stamp."
+
+# 307636d51a4642878066b2cb65c356b9
+#: suggest/correction.txt:123
+msgid ""
+"For example, an user wants to search by \"search\" but the user has typo "
+"\"saerch\" before inputs the correct query. The user inputs the query with "
+"the following sequence:"
+msgstr ""
+"For example, an user wants to search by \"search\" but the user has typo "
+"\"saerch\" before inputs the correct query. The user inputs the query with "
+"the following sequence:"
+
+# 30a33c9be56e4b069dde5f2520465693
+#: suggest/correction.txt:127
+msgid "2011-08-10T13:33:23+09:00: s"
+msgstr "2011-08-10T13:33:23+09:00: s"
+
+# 0a4d974d792948a2a401ffc13ff9cea3
+#: suggest/correction.txt:128
+msgid "2011-08-10T13:33:23+09:00: sa"
+msgstr "2011-08-10T13:33:23+09:00: sa"
+
+# 1c70c017fc284ab1bdebff4dfaea6d6e
+#: suggest/correction.txt:129
+msgid "2011-08-10T13:33:24+09:00: sae"
+msgstr "2011-08-10T13:33:24+09:00: sae"
+
+# 6ee053fbf0a948f88e594d9802ecad4c
+#: suggest/correction.txt:130
+msgid "2011-08-10T13:33:24+09:00: saer"
+msgstr "2011-08-10T13:33:24+09:00: saer"
+
+# 0b4b69da48794c6c9865c00df6f4789a
+#: suggest/correction.txt:131
+msgid ""
+"5. 2011-08-10T13:33:24+09:00: saerc 5. 2011-08-10T13:33:25+09:00: saerch "
+"(submit!) 5. 2011-08-10T13:33:29+09:00: serch (correcting...) 6. "
+"2011-08-10T13:33:30+09:00: search (submit!)"
+msgstr ""
+"5. 2011-08-10T13:33:24+09:00: saerc 5. 2011-08-10T13:33:25+09:00: saerch "
+"(submit!) 5. 2011-08-10T13:33:29+09:00: serch (correcting...) 6. "
+"2011-08-10T13:33:30+09:00: search (submit!)"
+
+# 3eee5fd599d148858f1b3f30e703684a
+#: suggest/introduction.txt:6
+msgid "Introduction"
+msgstr "Introduction"
+
+# 2917c5fac7d24fd6b265897614194b65
+#: suggest/introduction.txt:8
+msgid "The suggest feature in groonga provides the following features:"
+msgstr "The suggest feature in groonga provides the following features:"
+
+# f3b4718ca28e485a8a76ff152abc6273
+# fb27250a0f2e411ea1dd938cfe703fee
+# dd5d255978cb423582ff0b29b5519ed3
+#: suggest/introduction.txt:12, suggest/introduction.txt:62,
+#: suggest/suggestion.txt:12
+msgid "Suggestion"
+msgstr "Suggestion"
+
+# d4a73bff1a2a4daa8b3531834a74ac9d
+#: suggest/introduction.txt:17
+msgid ""
+"Completion helps user input. If user inputs a partial word, groonga can "
+"return complete words from registered words."
+msgstr ""
+"Completion helps user input. If user inputs a partial word, groonga can "
+"return complete words from registered words."
+
+# ced8de1b08ef45cb81c5840d94b90e85
+#: suggest/introduction.txt:21
+msgid "For example, there are registered words:"
+msgstr "For example, there are registered words:"
+
+# ac08336e63e146e89781e0af4ea9af6f
+#: suggest/introduction.txt:23
+msgid "\"groonga\""
+msgstr "\"groonga\""
+
+# b15864a6aeed46e299ea8f00f088b7ca
+#: suggest/introduction.txt:24
+msgid "\"complete\""
+msgstr "\"complete\""
+
+# 1931624698a249eaab0d279c56ceda36
+#: suggest/introduction.txt:25
+msgid "\"correction\""
+msgstr "\"correction\""
+
+# 246ec56e3569435c994178108ebfe6b1
+#: suggest/introduction.txt:26
+msgid "\"suggest\""
+msgstr "\"suggest\""
+
+# 188d85be2a444e77ba922a1ef32fecbc
+#: suggest/introduction.txt:28
+msgid ""
+"An user inputs \"co\" and groonga returns \"complete\" and \"correction\" "
+"because they starts with \"co\"."
+msgstr ""
+"An user inputs \"co\" and groonga returns \"complete\" and \"correction\" "
+"because they starts with \"co\"."
+
+# 6b3f526adfbb4144927dcfcf18abbe69
+#: suggest/introduction.txt:31
+msgid ""
+"An user inputs \"sug\" and groonga returns \"suggest\" because \"suggest\" "
+"starts with \"sug\"."
+msgstr ""
+"An user inputs \"sug\" and groonga returns \"suggest\" because \"suggest\" "
+"starts with \"sug\"."
+
+# a4d0a4797c624cf1bc0bfa3be8ef4d73
+#: suggest/introduction.txt:34
+msgid ""
+"An user inputs \"ab\" and groonga returns nothing because no word starts "
+"with \"ab\"."
+msgstr ""
+"An user inputs \"ab\" and groonga returns nothing because no word starts "
+"with \"ab\"."
+
+# 49607655ee874a0183b97d7775877c69
+#: suggest/introduction.txt:40
+msgid ""
+"Correction also helps user input. If user inputs a wrong word, groonga can "
+"return correct words from registered correction pairs."
+msgstr ""
+"Correction also helps user input. If user inputs a wrong word, groonga can "
+"return correct words from registered correction pairs."
+
+# e12256250f1b4f01a29728478a3f76e3
+#: suggest/introduction.txt:44
+msgid "For example, there are registered correction pairs:"
+msgstr "For example, there are registered correction pairs:"
+
+# caf94b868635453db017775e24e057da
+#: suggest/introduction.txt:47
+msgid "wrong word"
+msgstr "wrong word"
+
+# 5d5acfbc174f4df38e48cdabc16a707e
+#: suggest/introduction.txt:47
+msgid "correct word"
+msgstr "correct word"
+
+# fdd735a4601a4aacba1c81b308bcb18d
+#: suggest/introduction.txt:49
+msgid "grroonga gronga gronnga"
+msgstr "grroonga gronga gronnga"
+
+# 76227622b06c490bb8fb9e3f5e8b9a6d
+#: suggest/introduction.txt:49
+msgid "groonga groonga groonga"
+msgstr "groonga groonga groonga"
+
+# 2ff52376033c4282986ae309d7e4fa2a
+#: suggest/introduction.txt:54
+msgid ""
+"An user inputs \"gronga\" and groonga returns \"groonga\" because \"gronga\" "
+"is in wrong word and corresponding correct word is \"groonga\"."
+msgstr ""
+"An user inputs \"gronga\" and groonga returns \"groonga\" because \"gronga\" "
+"is in wrong word and corresponding correct word is \"groonga\"."
+
+# c9cf3dba70f04835b185ec23cb6bfc9c
+#: suggest/introduction.txt:58
+msgid ""
+"An user inputs \"roonga\" and groonga returns nothing because \"roonga\" "
+"isn't in wrong word."
+msgstr ""
+"An user inputs \"roonga\" and groonga returns nothing because \"roonga\" "
+"isn't in wrong word."
+
+# 432e6081b45c45d9aff43c81f06ac2a3
+#: suggest/introduction.txt:64
+msgid ""
+"Suggestion helps that user filters many found documents. If user inputs a "
+"query, groonga can return new queries that has more additional keywords from "
+"registered related query pairs."
+msgstr ""
+"Suggestion helps that user filters many found documents. If user inputs a "
+"query, groonga can return new queries that has more additional keywords from "
+"registered related query pairs."
+
+# c57062ba53c14d85ac57f51d1523bdac
+#: suggest/introduction.txt:69
+msgid "For example, there are registered related query pairs:"
+msgstr "For example, there are registered related query pairs:"
+
+# f5dd0f622be048c89b96d86bfa81c0ce
+#: suggest/introduction.txt:72
+msgid "keyword"
+msgstr "keyword"
+
+# 08119ff5d3324a6cbf96f44a0197f699
+#: suggest/introduction.txt:72
+msgid "related query"
+msgstr "related query"
+
+# fe2dd4b325cf4e0b9656c9aeebfde012
+#: suggest/introduction.txt:74
+msgid "groonga"
+msgstr "groonga"
+
+# 6a5cf520fa86430997235b3279223d52
+#: suggest/introduction.txt:74
+msgid "groonga search engine"
+msgstr "groonga search engine"
+
+# a04ed3ab2cf44ee18637f76a0322bb97
+#: suggest/introduction.txt:76
+msgid "Google search"
+msgstr "Google search"
+
+# 28e0ad663d784a3cbaadd41e150e78a3
+#: suggest/introduction.txt:78
+msgid "speed"
+msgstr "speed"
+
+# d215c4ef05bc4565828484a4d25ff607
+#: suggest/introduction.txt:78
+msgid "groonga speed"
+msgstr "groonga speed"
+
+# 6b0d31f7246540df9619218ad9ae8ff8
+#: suggest/introduction.txt:81
+msgid ""
+"An user inputs \"groonga\" and groonga returns \"groonga search engine\" "
+"because \"groonga\" is in keyword column and related query column is "
+"\"groonga search engine\"."
+msgstr ""
+"An user inputs \"groonga\" and groonga returns \"groonga search engine\" "
+"because \"groonga\" is in keyword column and related query column is "
+"\"groonga search engine\"."
+
+# 0d9040ffa1184966b14e5ab93208543c
+#: suggest/introduction.txt:85
+msgid ""
+"An user inputs \"MySQL\" and groonga returns nothing because \"MySQL\" isn't "
+"in keyword column values."
+msgstr ""
+"An user inputs \"MySQL\" and groonga returns nothing because \"MySQL\" isn't "
+"in keyword column values."
+
+# 7c1c9def4a2a4826a222d945f3d83861
+#: suggest/introduction.txt:89
+msgid "Learning"
+msgstr "Learning"
+
+# ad742bf5d3744a1a8cac1cc7b5bf83a4
+#: suggest/introduction.txt:91
+msgid ""
+"The suggest feature requires registered data before using the feature. Those "
+"data can be registered from user inputs. Gronnga-suggest-httpd and groonga-"
+"suggest-learner commands are provided for the propose."
+msgstr ""
+"The suggest feature requires registered data before using the feature. Those "
+"data can be registered from user inputs. Gronnga-suggest-httpd and groonga-"
+"suggest-learner commands are provided for the propose."
+
+# 809cfb60f40345649a57ad9f847bae55
+#: suggest/suggestion.txt:24
+msgid "The suggestion feature uses a search to compute suggested words:"
+msgstr "The suggestion feature uses a search to compute suggested words:"
+
+# d387570aea4746179f95a0fa619f78ef
+#: suggest/suggestion.txt:32
+msgid ""
+"Cooccurrence search can find related words from user's input. It uses user "
+"submissions that will be learned from query logs, access logs and so on."
+msgstr ""
+"Cooccurrence search can find related words from user's input. It uses user "
+"submissions that will be learned from query logs, access logs and so on."
+
+# 5a3fad92374e4583946d2542a4458e98
+# 0c8931bdc31140e4880a57e4dd7f12ea
+# 6c5ae40dbc904e849df9dfddff2932dc
+#: suggest/suggestion.txt:41, suggest/suggestion.txt:51,
+#: suggest/suggestion.txt:53
+msgid "search engine"
+msgstr "search engine"
+
+# 3a17c9c9ed7446898a480b985fd80f2f
+# 9ba65c989f2c496bb2606b6aa886388e
+# 0be292eaf67041df985b9c41ddaa1947
+# dcd6291d83254c51a96b4573429121d3
+#: suggest/suggestion.txt:43, suggest/suggestion.txt:55,
+#: suggest/suggestion.txt:57, suggest/suggestion.txt:59
+msgid "web search realtime"
+msgstr "web search realtime"
+
+# 6d38592821e04cfbba8e7e56e8a1b278
+#: suggest/suggestion.txt:46
+msgid "Groonga creates the following suggestion pairs:"
+msgstr "Groonga creates the following suggestion pairs:"
+
+# ba74e06e82e34e7d98512e7cf4185ba4
+#: suggest/suggestion.txt:49
+msgid "suggested words"
+msgstr "suggested words"
+
+# 620a95ed355846b88542c45d3ec6e465
+#: suggest/suggestion.txt:55
+msgid "web"
+msgstr "web"
+
+# 8b41c585505f477ead4a4a98f0c3a8fc
+#: suggest/suggestion.txt:59
+msgid "realtime"
+msgstr "realtime"
+
+# 0606782e72504edc97fa4ea0b425c301
+#: suggest/suggestion.txt:62
+msgid "Those pairs are created by the following steps:"
+msgstr "Those pairs are created by the following steps:"
+
+# 69253882785440f695f22635432b1dfe
+#: suggest/suggestion.txt:64
+msgid ""
+"Tokenizes user input query by TokenDelimit tokenizer that uses a space as "
+"token delimiter. (e.g. \"search engine\" is tokenized to two tokens \"search"
+"\" and \"engine\".)"
+msgstr ""
+"Tokenizes user input query by TokenDelimit tokenizer that uses a space as "
+"token delimiter. (e.g. \"search engine\" is tokenized to two tokens \"search"
+"\" and \"engine\".)"
+
+# 3c1e3f82ce694a4585d100666512c6bf
+#: suggest/suggestion.txt:68
+msgid ""
+"Creates a pair that is consists of a token and original query for each token."
+msgstr ""
+"Creates a pair that is consists of a token and original query for each token."
+
+# abfe1548c6f14be89a2a1ca016f991b8
+#: suggest/suggestion.txt:71
+msgid ""
+"If an user inputs \"seach\" and cooccurrence search returns \"search engine"
+"\" and \"web search realtime\" because \"seach\" is in two input columns and "
+"corresponding completed word columns have \"search engine\" and \"web search "
+"realtime\"."
+msgstr ""
+"If an user inputs \"seach\" and cooccurrence search returns \"search engine"
+"\" and \"web search realtime\" because \"seach\" is in two input columns and "
+"corresponding completed word columns have \"search engine\" and \"web search "
+"realtime\"."
+
+# 42e0108273b340f19801ec2cb2ea37c9
+#: suggest/suggestion.txt:86
+msgid ""
+"Groonga provides :doc:`commands/suggest` command to use completion. `--type "
+"suggest` option requests suggestion"
+msgstr ""
+"Groonga provides :doc:`commands/suggest` command to use completion. `--type "
+"suggest` option requests suggestion"
+
+# 78604f97643e4d4b8fdd2ae6c83641fb
+#: suggest/suggestion.txt:89
+msgid ""
+"For example, here is an command to get completion results by \"search\":"
+msgstr ""
+"For example, here is an command to get completion results by \"search\":"
+
+# d6ee5d3441334e1e9ebca41ce2f8a89b
+#: suggest/suggestion.txt:107
+msgid ""
+"1. 2011-08-10T13:33:23+09:00: search engine (submit) 1. "
+"2011-08-10T13:33:28+09:00: web search realtime (submit)"
+msgstr ""
+"1. 2011-08-10T13:33:23+09:00: search engine (submit) 1. "
+"2011-08-10T13:33:28+09:00: web search realtime (submit)"
+
+# 377e369ff4044177926b7b5fd6a54247
+#: suggest/suggestion.txt:110
+msgid "Groonga can be learned from the submissions by the following command::"
+msgstr "Groonga can be learned from the submissions by the following command::"
+
+# 961a1b68b2354bba8b2c92413ffec14a
+#: suggest/tutorial.txt:6
+msgid "Tutorial"
+msgstr "Tutorial"
+
+# 85fa1e0a5d03451da3ca78b30a62e9a5
+#: suggest/tutorial.txt:8
+msgid "TODO..."
+msgstr "TODO..."
