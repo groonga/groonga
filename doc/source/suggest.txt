@@ -11,6 +11,7 @@ Groonga has suggest feature. This section describes how to use it and how it wor
    :maxdepth: 2
 
    suggest/introduction
+   suggest/tutorial
    suggest/completion
    suggest/correction
    suggest/suggestion
