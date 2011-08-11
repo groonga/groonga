@@ -3,7 +3,7 @@
 .. highlightlang:: none
 
 .. groonga-command
-.. % rm -rf /tmp/completion/db
+.. % rm -rf /tmp/completion
 .. % mkdir -p /tmp/completion
 .. % groonga -n /tmp/completion/db shutdown
 .. % groonga-suggest-create-dataset /tmp/completion/db query
@@ -11,8 +11,8 @@
 Completion
 ==========
 
-This section describes about the following of the completion
-feature:
+This section describes about the following completion
+features:
 
   * How it works
   * How to use

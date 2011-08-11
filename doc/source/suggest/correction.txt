@@ -3,7 +3,7 @@
 .. highlightlang:: none
 
 .. groonga-command
-.. % rm -rf /tmp/correction/db
+.. % rm -rf /tmp/correction
 .. % mkdir -p /tmp/correction
 .. % groonga -n /tmp/correction/db shutdown
 .. % groonga-suggest-create-dataset /tmp/correction/db query
@@ -11,8 +11,8 @@
 Correction
 ==========
 
-This section describes about the following of the correction
-feature:
+This section describes about the following correction
+features:
 
   * How it works
   * How to use
@@ -34,7 +34,7 @@ Cooccurrence search can find registered words from user's
 wrong input. It uses user submit sequences that will be
 learned from query logs, access logs and so on.
 
-For example, there is the following user submissions:
+For example, there are the following user submissions:
 
 +-------------------+---------------------------+
 |  query            |    time                   |
