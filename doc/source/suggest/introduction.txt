@@ -58,10 +58,10 @@ An user inputs "gronga" and groonga returns "groonga" because
 An user inputs "roonga" and groonga returns nothing because
 "roonga" isn't in wrong word.
 
-Suggest
--------
+Suggestion
+----------
 
-Suggest helps that user filters many found documents. If
+Suggestion helps that user filters many found documents. If
 user inputs a query, groonga can return new queries that has
 more additional keywords from registered related query
 pairs.
@@ -83,7 +83,7 @@ engine" because "groonga" is in keyword column and related
 query column is "groonga search engine".
 
 An user inputs "MySQL" and groonga returns nothing because
-"MySQL" isn't in keyword
+"MySQL" isn't in keyword column values.
 
 Learning
 --------
