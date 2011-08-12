@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-07-27 23:43\n"
+"POT-Creation-Date: 2011-08-12 15:03\n"
 "PO-Revision-Date: 2011-07-27 23:44+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -24,11 +24,6 @@ msgstr "お知らせ"
 #: ../../../source/news.txt:11
 msgid "Release 1.2.4 - 2011/07/29"
 msgstr "1.2.4リリース - 2011/07/29"
-
-#: ../../../source/news.txt:14 ../../../source/news.txt:49
-#: ../../../source/news.txt:75
-msgid "Improvements"
-msgstr "改良"
 
 #: ../../../source/news.txt:16
 msgid "Re-supported *BSD. (Reported by OBATA Akio)"
@@ -66,11 +61,6 @@ msgstr "~/.editrcをサポート。"
 msgid "Supported ~/.groonga-history."
 msgstr "~/.groonga-historyをサポート。"
 
-#: ../../../source/news.txt:27 ../../../source/news.txt:59
-#: ../../../source/news.txt:102
-msgid "Fixes"
-msgstr "修正"
-
 #: ../../../source/news.txt:29
 msgid "Fixed broken libedit support. (Reported by Daiki Ueno)"
 msgstr "libeditサポートが壊れていた問題を修正。（うえのさんが報告）"
@@ -93,15 +83,9 @@ msgstr ""
 #: ../../../source/news.txt:34
 msgid ""
 "Fixed wrong record's column values deletion possible on record deletion."
-msgstr "レコード削除時に他のレコードのデータを削除してしまう可能性があるという問題を修正。"
-
-#: ../../../source/news.txt:38 ../../../source/news.txt:65
-msgid "Thanks"
-msgstr "感謝"
-
-#: ../../../source/news.txt:40 ../../../source/news.txt:67
-msgid "OBATA Akio"
-msgstr "おばたさん"
+msgstr ""
+"レコード削除時に他のレコードのデータを削除してしまう可能性があるという問題を"
+"修正。"
 
 #: ../../../source/news.txt:41
 msgid "Daiki Ueno"
@@ -143,9 +127,22 @@ msgstr "getコマンドでクラッシュする問題を修正。（おばたさ
 msgid "fix elapsed time overflow in query log. #944"
 msgstr "クエリログで経過時間がオーバーフローする問題を修正。#944"
 
+#: ../../../source/news.txt:65 ../../../source/news.txt:38,
+msgid "Thanks"
+msgstr "感謝"
+
+#: ../../../source/news.txt:67 ../../../source/news.txt:40,
+msgid "OBATA Akio"
+msgstr "おばたさん"
+
 #: ../../../source/news.txt:72
 msgid "Release 1.2.2 - 2011/05/29"
 msgstr "1.2.2リリース - 2011/05/29"
+
+#: ../../../source/news.txt:75 ../../../source/news.txt:14,
+#: ../../../source/news.txt:49,
+msgid "Improvements"
+msgstr "改良"
 
 #: ../../../source/news.txt:77
 msgid "Added packages for Ubuntu 11.04 Natty Narwhal."
@@ -237,6 +234,11 @@ msgstr ""
 "不正な名前が指定された時のエラーメッセージにどこで指定されたかの情報を含める"
 "ようにした。 #935"
 
+#: ../../../source/news.txt:102 ../../../source/news.txt:27,
+#: ../../../source/news.txt:59,
+msgid "Fixes"
+msgstr "修正"
+
 #: ../../../source/news.txt:104
 msgid "Fixed a data breaking bug on multi process update. #890"
 msgstr ""
@@ -245,15 +247,6 @@ msgstr ""
 
 #: ../../../source/news.txt:107
 msgid "1.2.1リリース - 2011/04/29"
-msgstr ""
-
-#: ../../../source/news.txt:110 ../../../source/news.txt:135
-#: ../../../source/news/0.x.txt:12 ../../../source/news/0.x.txt:39
-#: ../../../source/news/1.0.x.txt:27 ../../../source/news/1.0.x.txt:75
-#: ../../../source/news/1.0.x.txt:115 ../../../source/news/1.0.x.txt:156
-#: ../../../source/news/1.0.x.txt:220 ../../../source/news/1.0.x.txt:246
-#: ../../../source/news/1.0.x.txt:271 ../../../source/news/1.1.x.txt:12
-msgid "改良"
 msgstr ""
 
 #: ../../../source/news.txt:112
@@ -266,16 +259,6 @@ msgstr ""
 
 #: ../../../source/news.txt:114
 msgid "grntest: SIGINTでの中断に対応。"
-msgstr ""
-
-#: ../../../source/news.txt:117 ../../../source/news.txt:151
-#: ../../../source/news/0.x.txt:27 ../../../source/news/0.x.txt:115
-#: ../../../source/news/1.0.x.txt:12 ../../../source/news/1.0.x.txt:41
-#: ../../../source/news/1.0.x.txt:62 ../../../source/news/1.0.x.txt:93
-#: ../../../source/news/1.0.x.txt:139 ../../../source/news/1.0.x.txt:185
-#: ../../../source/news/1.0.x.txt:231 ../../../source/news/1.0.x.txt:255
-#: ../../../source/news/1.0.x.txt:278 ../../../source/news/1.1.x.txt:22
-msgid "修正"
 msgstr ""
 
 #: ../../../source/news.txt:119
@@ -292,16 +275,6 @@ msgstr ""
 
 #: ../../../source/news.txt:123
 msgid "チュートリアル中のtypoを修正。（moozさんが修正）"
-msgstr ""
-
-#: ../../../source/news.txt:126 ../../../source/news.txt:175
-#: ../../../source/news/0.x.txt:124 ../../../source/news/1.0.x.txt:19
-#: ../../../source/news/1.0.x.txt:53 ../../../source/news/1.0.x.txt:67
-#: ../../../source/news/1.0.x.txt:106 ../../../source/news/1.0.x.txt:146
-#: ../../../source/news/1.0.x.txt:209 ../../../source/news/1.0.x.txt:237
-#: ../../../source/news/1.0.x.txt:262 ../../../source/news/1.0.x.txt:287
-#: ../../../source/news/1.1.x.txt:29
-msgid "感謝"
 msgstr ""
 
 #: ../../../source/news.txt:128
@@ -386,10 +359,6 @@ msgid ""
 "位置を指定するとクラッシュする問題を修正。"
 msgstr ""
 
-#: ../../../source/news.txt:161 ../../../source/news/1.0.x.txt:188
-msgid "メモリリークを修正。"
-msgstr ""
-
 #: ../../../source/news.txt:162
 msgid "小数形式のTimeリテラルをロードするとミリ秒情報が落ちる問題を修正。 #880"
 msgstr ""
@@ -429,6 +398,39 @@ msgstr ""
 
 #: ../../../source/news.txt:180
 msgid "過去のリリース"
+msgstr ""
+
+#: ../../../source/news.txt:110, ../../../source/news.txt:135,
+#: ../../../source/news/0.x.txt:12, ../../../source/news/0.x.txt:39,
+#: ../../../source/news/1.0.x.txt:115, ../../../source/news/1.0.x.txt:156,
+#: ../../../source/news/1.0.x.txt:220, ../../../source/news/1.0.x.txt:246,
+#: ../../../source/news/1.0.x.txt:27, ../../../source/news/1.0.x.txt:271,
+#: ../../../source/news/1.0.x.txt:75, ../../../source/news/1.1.x.txt:12
+msgid "改良"
+msgstr ""
+
+#: ../../../source/news.txt:117, ../../../source/news.txt:151,
+#: ../../../source/news/0.x.txt:115, ../../../source/news/0.x.txt:27,
+#: ../../../source/news/1.0.x.txt:12, ../../../source/news/1.0.x.txt:139,
+#: ../../../source/news/1.0.x.txt:185, ../../../source/news/1.0.x.txt:231,
+#: ../../../source/news/1.0.x.txt:255, ../../../source/news/1.0.x.txt:278,
+#: ../../../source/news/1.0.x.txt:41, ../../../source/news/1.0.x.txt:62,
+#: ../../../source/news/1.0.x.txt:93, ../../../source/news/1.1.x.txt:22
+msgid "修正"
+msgstr ""
+
+#: ../../../source/news.txt:126, ../../../source/news.txt:175,
+#: ../../../source/news/0.x.txt:124, ../../../source/news/1.0.x.txt:106,
+#: ../../../source/news/1.0.x.txt:146, ../../../source/news/1.0.x.txt:19,
+#: ../../../source/news/1.0.x.txt:209, ../../../source/news/1.0.x.txt:237,
+#: ../../../source/news/1.0.x.txt:262, ../../../source/news/1.0.x.txt:287,
+#: ../../../source/news/1.0.x.txt:53, ../../../source/news/1.0.x.txt:67,
+#: ../../../source/news/1.1.x.txt:29
+msgid "感謝"
+msgstr ""
+
+#: ../../../source/news.txt:161, ../../../source/news/1.0.x.txt:188
+msgid "メモリリークを修正。"
 msgstr ""
 
 #: ../../../source/news/0.x.txt:6
@@ -765,12 +767,6 @@ msgstr ""
 msgid "\\*BSDでビルドできない問題を修正。（OBATA Akioさんが報告）"
 msgstr ""
 
-#: ../../../source/news/1.0.x.txt:69 ../../../source/news/1.0.x.txt:109
-#: ../../../source/news/1.0.x.txt:149 ../../../source/news/1.0.x.txt:239
-#: ../../../source/news/1.0.x.txt:265
-msgid "OBATA Akioさん"
-msgstr ""
-
 #: ../../../source/news/1.0.x.txt:72
 msgid "1.0.5リリース - 2010/12/29"
 msgstr ""
@@ -812,11 +808,6 @@ msgstr ""
 
 #: ../../../source/news/1.0.x.txt:85
 msgid "DragonFlyでのビルドに対応。 （OBATA Akioさんが報告）"
-msgstr ""
-
-#: ../../../source/news/1.0.x.txt:88 ../../../source/news/1.0.x.txt:133
-#: ../../../source/news/1.0.x.txt:177 ../../../source/news/1.0.x.txt:225
-msgid "変更"
 msgstr ""
 
 #: ../../../source/news/1.0.x.txt:90
@@ -1093,17 +1084,8 @@ msgstr ""
 msgid "インストールドキュメントの誤字を修正。（SHIMODA Hiroshiさんが報告）"
 msgstr ""
 
-#: ../../../source/news/1.0.x.txt:211 ../../../source/news/1.0.x.txt:264
-#: ../../../source/news/1.1.x.txt:31
-msgid "Daiki Uenoさん"
-msgstr ""
-
 #: ../../../source/news/1.0.x.txt:212
 msgid "MATSUU Takutoさん"
-msgstr ""
-
-#: ../../../source/news/1.0.x.txt:213 ../../../source/news/1.0.x.txt:289
-msgid "Itagaki Takahiroさん"
 msgstr ""
 
 #: ../../../source/news/1.0.x.txt:214
@@ -1117,6 +1099,11 @@ msgstr ""
 #: ../../../source/news/1.0.x.txt:222
 msgid ""
 ":doc:`/commands/suggest` コマンドのサンプルを追加。（examples/dictionary/）"
+msgstr ""
+
+#: ../../../source/news/1.0.x.txt:225 ../../../source/news/1.0.x.txt:133,
+#: ../../../source/news/1.0.x.txt:177, ../../../source/news/1.0.x.txt:88,
+msgid "変更"
 msgstr ""
 
 #: ../../../source/news/1.0.x.txt:227
@@ -1163,6 +1150,12 @@ msgstr ""
 msgid "テストが失敗する問題の修正。（OBATA Akioさんが報告）"
 msgstr ""
 
+#: ../../../source/news/1.0.x.txt:265 ../../../source/news/1.0.x.txt:109,
+#: ../../../source/news/1.0.x.txt:149, ../../../source/news/1.0.x.txt:239,
+#: ../../../source/news/1.0.x.txt:69,
+msgid "OBATA Akioさん"
+msgstr ""
+
 #: ../../../source/news/1.0.x.txt:268
 msgid "1.0.0リリース - 2010/08/29"
 msgstr ""
@@ -1191,6 +1184,15 @@ msgstr ""
 msgid ""
 ":doc:`/commands/delete` コマンドでキーがShortText以外のレコードを削除できない"
 "問題の修正。（Itagaki Takahiroさんが報告）"
+msgstr ""
+
+#: ../../../source/news/1.0.x.txt:289 ../../../source/news/1.0.x.txt:213,
+msgid "Itagaki Takahiroさん"
+msgstr ""
+
+#: ../../../source/news/1.0.x.txt:211, ../../../source/news/1.0.x.txt:264,
+#: ../../../source/news/1.1.x.txt:31
+msgid "Daiki Uenoさん"
 msgstr ""
 
 #: ../../../source/news/1.1.x.txt:6

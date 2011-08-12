@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-24 18:26\n"
+"POT-Creation-Date: 2011-08-12 14:57\n"
 "PO-Revision-Date: 2011-05-09 00:36+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -25,36 +25,8 @@ msgstr ""
 msgid "edit_distance"
 msgstr ""
 
-#: ../../../source/functions/edit_distance.txt:9
-#: ../../../source/functions/geo_distance.txt:9
-#: ../../../source/functions/geo_in_circle.txt:9
-#: ../../../source/functions/geo_in_rectangle.txt:9
-#: ../../../source/functions/now.txt:9 ../../../source/functions/rand.txt:9
-msgid "名前"
-msgstr ""
-
 #: ../../../source/functions/edit_distance.txt:11
 msgid "edit_distance - 指定した2つの文字列の編集距離を計算する"
-msgstr ""
-
-#: ../../../source/functions/edit_distance.txt:14
-#: ../../../source/functions/geo_distance.txt:14
-#: ../../../source/functions/geo_in_circle.txt:14
-#: ../../../source/functions/geo_in_rectangle.txt:14
-#: ../../../source/functions/now.txt:14 ../../../source/functions/rand.txt:14
-msgid "書式"
-msgstr ""
-
-#: ../../../source/functions/edit_distance.txt:17
-msgid "edit_distance(string1, string2)"
-msgstr ""
-
-#: ../../../source/functions/edit_distance.txt:20
-#: ../../../source/functions/geo_distance.txt:20
-#: ../../../source/functions/geo_in_circle.txt:20
-#: ../../../source/functions/geo_in_rectangle.txt:20
-#: ../../../source/functions/now.txt:20 ../../../source/functions/rand.txt:20
-msgid "説明"
 msgstr ""
 
 #: ../../../source/functions/edit_distance.txt:22
@@ -67,14 +39,6 @@ msgstr ""
 msgid ""
 "edit_distance() 関数は、string1に指定した文字列とstring2に指定した文字列の間"
 "の編集距離を求めます。"
-msgstr ""
-
-#: ../../../source/functions/edit_distance.txt:27
-#: ../../../source/functions/geo_distance.txt:28
-#: ../../../source/functions/geo_in_circle.txt:27
-#: ../../../source/functions/geo_in_rectangle.txt:27
-#: ../../../source/functions/rand.txt:27
-msgid "引数"
 msgstr ""
 
 #: ../../../source/functions/edit_distance.txt:29
@@ -93,28 +57,56 @@ msgstr ""
 msgid "もうひとつの文字列を指定します"
 msgstr ""
 
-#: ../../../source/functions/edit_distance.txt:39
-#: ../../../source/functions/geo_distance.txt:40
-#: ../../../source/functions/geo_in_circle.txt:43
-#: ../../../source/functions/geo_in_rectangle.txt:42
-#: ../../../source/functions/now.txt:27 ../../../source/functions/rand.txt:34
-msgid "返値"
-msgstr ""
-
 #: ../../../source/functions/edit_distance.txt:41
 msgid "指定した2つ文字列の編集距離をUint32型の値として返します。"
 msgstr ""
 
-#: ../../../source/functions/edit_distance.txt:44
-#: ../../../source/functions/geo_distance.txt:45
-#: ../../../source/functions/geo_in_circle.txt:48
-#: ../../../source/functions/geo_in_rectangle.txt:47
-#: ../../../source/functions/now.txt:32 ../../../source/functions/rand.txt:39
+#: ../../../source/functions/edit_distance.txt:14,
+#: ../../../source/functions/geo_distance.txt:14,
+#: ../../../source/functions/geo_in_circle.txt:14,
+#: ../../../source/functions/geo_in_rectangle.txt:14,
+#: ../../../source/functions/now.txt:14, ../../../source/functions/rand.txt:14
+msgid "書式"
+msgstr ""
+
+#: ../../../source/functions/edit_distance.txt:20,
+#: ../../../source/functions/geo_distance.txt:20,
+#: ../../../source/functions/geo_in_circle.txt:20,
+#: ../../../source/functions/geo_in_rectangle.txt:20,
+#: ../../../source/functions/now.txt:20, ../../../source/functions/rand.txt:20
+msgid "説明"
+msgstr ""
+
+#: ../../../source/functions/edit_distance.txt:27,
+#: ../../../source/functions/geo_distance.txt:28,
+#: ../../../source/functions/geo_in_circle.txt:27,
+#: ../../../source/functions/geo_in_rectangle.txt:27,
+#: ../../../source/functions/rand.txt:27
+msgid "引数"
+msgstr ""
+
+#: ../../../source/functions/edit_distance.txt:39,
+#: ../../../source/functions/geo_distance.txt:40,
+#: ../../../source/functions/geo_in_circle.txt:43,
+#: ../../../source/functions/geo_in_rectangle.txt:42,
+#: ../../../source/functions/now.txt:27, ../../../source/functions/rand.txt:34
+msgid "返値"
+msgstr ""
+
+#: ../../../source/functions/edit_distance.txt:44,
+#: ../../../source/functions/geo_distance.txt:45,
+#: ../../../source/functions/geo_in_circle.txt:48,
+#: ../../../source/functions/geo_in_rectangle.txt:47,
+#: ../../../source/functions/now.txt:32, ../../../source/functions/rand.txt:39
 msgid "例"
 msgstr ""
 
-#: ../../../source/functions/edit_distance.txt:47
-msgid "edit_distance(title, \"hoge\") 1"
+#: ../../../source/functions/edit_distance.txt:9,
+#: ../../../source/functions/geo_distance.txt:9,
+#: ../../../source/functions/geo_in_circle.txt:9,
+#: ../../../source/functions/geo_in_rectangle.txt:9,
+#: ../../../source/functions/now.txt:9, ../../../source/functions/rand.txt:9
+msgid "名前"
 msgstr ""
 
 #: ../../../source/functions/geo_distance.txt:6
@@ -123,10 +115,6 @@ msgstr ""
 
 #: ../../../source/functions/geo_distance.txt:11
 msgid "geo_distance - 指定した2点の距離を計算する"
-msgstr ""
-
-#: ../../../source/functions/geo_distance.txt:17
-msgid "geo_distance(point1, point2)"
 msgstr ""
 
 #: ../../../source/functions/geo_distance.txt:22
@@ -166,18 +154,14 @@ msgstr ""
 msgid "指定した2点の距離をFloat型の値(単位:メートル)として返します。"
 msgstr ""
 
-#: ../../../source/functions/geo_distance.txt:48
-msgid "geo_distance(pos, \"150x150\") 100"
-msgstr ""
-
-#: ../../../source/functions/geo_distance.txt:52
-#: ../../../source/functions/geo_in_circle.txt:55
+#: ../../../source/functions/geo_distance.txt:52,
+#: ../../../source/functions/geo_in_circle.txt:55,
 #: ../../../source/functions/geo_in_rectangle.txt:54
 msgid "脚注"
 msgstr ""
 
-#: ../../../source/functions/geo_distance.txt:53
-#: ../../../source/functions/geo_in_circle.txt:56
+#: ../../../source/functions/geo_distance.txt:53,
+#: ../../../source/functions/geo_in_circle.txt:56,
 #: ../../../source/functions/geo_in_rectangle.txt:55
 msgid ""
 "TokyoGeoPoint(日本測地系座標)かWGS84GeoPoint(世界測地系座標)のいずれかを指定"
@@ -192,10 +176,6 @@ msgstr ""
 msgid "geo_in_circle - 座標が円の範囲内に存在するかどうかを調べます。"
 msgstr ""
 
-#: ../../../source/functions/geo_in_circle.txt:17
-msgid "geo_in_circle(point, center, radious_or_point)"
-msgstr ""
-
 #: ../../../source/functions/geo_in_circle.txt:22
 msgid ""
 "groonga組込関数の一つであるgeo_in_circleについて説明します。組込関数は、"
@@ -206,11 +186,6 @@ msgstr ""
 msgid ""
 "geo_in_circle() 関数は、pointに指定した座標が、centerに指定した座標を中心とす"
 "る円の範囲内にあるかどうかを調べます。"
-msgstr ""
-
-#: ../../../source/functions/geo_in_circle.txt:29
-#: ../../../source/functions/geo_in_rectangle.txt:29
-msgid "``point``"
 msgstr ""
 
 #: ../../../source/functions/geo_in_circle.txt:31
@@ -244,8 +219,9 @@ msgstr ""
 msgid "pointに指定した座標が円の範囲内にあるかどうかをBool型の値で返します。"
 msgstr ""
 
-#: ../../../source/functions/geo_in_circle.txt:51
-msgid "geo_in_circle(pos, \"100x100\", 100) true"
+#: ../../../source/functions/geo_in_circle.txt:29,
+#: ../../../source/functions/geo_in_rectangle.txt:29
+msgid "``point``"
 msgstr ""
 
 #: ../../../source/functions/geo_in_rectangle.txt:6
@@ -254,10 +230,6 @@ msgstr ""
 
 #: ../../../source/functions/geo_in_rectangle.txt:11
 msgid "geo_in_rectangle - 座標が矩形の範囲内に存在するかどうかを調べます。"
-msgstr ""
-
-#: ../../../source/functions/geo_in_rectangle.txt:17
-msgid "geo_in_rectangle(point, top_left, bottom_right)"
 msgstr ""
 
 #: ../../../source/functions/geo_in_rectangle.txt:22
@@ -302,20 +274,12 @@ msgstr ""
 msgid "pointに指定した座標が矩形の範囲内にあるかどうかをBool型の値で返します。"
 msgstr ""
 
-#: ../../../source/functions/geo_in_rectangle.txt:50
-msgid "geo_in_rectangle(pos, \"150x100\", \"100x150\") true"
-msgstr ""
-
 #: ../../../source/functions/now.txt:6
 msgid "now"
 msgstr ""
 
 #: ../../../source/functions/now.txt:11
 msgid "now - 現在時刻を返す"
-msgstr ""
-
-#: ../../../source/functions/now.txt:17
-msgid "now()"
 msgstr ""
 
 #: ../../../source/functions/now.txt:22
@@ -332,20 +296,12 @@ msgstr ""
 msgid "現在時刻に対応するTime型のオブジェクトを返します。"
 msgstr ""
 
-#: ../../../source/functions/now.txt:35
-msgid "now() 1256791194.55541"
-msgstr ""
-
 #: ../../../source/functions/rand.txt:6
 msgid "rand"
 msgstr ""
 
 #: ../../../source/functions/rand.txt:11
 msgid "rand - 乱数を生成する"
-msgstr ""
-
-#: ../../../source/functions/rand.txt:17
-msgid "rand([max])"
 msgstr ""
 
 #: ../../../source/functions/rand.txt:22
@@ -370,8 +326,4 @@ msgstr ""
 
 #: ../../../source/functions/rand.txt:36
 msgid "0 と max の間の数を表すInt32型の値を返します。"
-msgstr ""
-
-#: ../../../source/functions/rand.txt:42
-msgid "rand(10) 3"
 msgstr ""

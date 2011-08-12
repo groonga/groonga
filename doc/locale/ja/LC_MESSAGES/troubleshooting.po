@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-24 18:26\n"
+"POT-Creation-Date: 2011-08-12 15:03\n"
 "PO-Revision-Date: 2011-05-09 00:37+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -45,33 +45,12 @@ msgid ""
 "使ってトークナイズしてからインデックスを作成しています。::"
 msgstr ""
 
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:17
-msgid ""
-"table_create Blogs TABLE_NO_KEY column_create Blogs body COLUMN_SCALAR "
-"ShortText column_create Blogs updated_at COLUMN_SCALAR Time table_create "
-"Terms TABLE_PAT_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenMecab "
-"column_create Terms blog_body COLUMN_INDEX|WITH_POSITION Blogs body"
-msgstr ""
-
 #: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:23
 msgid "テスト用のデータは1件だけ投入します。::"
 msgstr ""
 
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:25
-msgid ""
-"load --table Blogs [   [\"body\", \"updated_at\"],   [\"東京都民に深刻なダ"
-"メージを与えました。\", \"2010/9/21 10:18:34\"], ]"
-msgstr ""
-
 #: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:31
 msgid "まず、全文検索のみで検索します。この場合ヒットします。::"
-msgstr ""
-
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:33
-msgid ""
-"> select Blogs --filter 'body @ \"東京都\"' [[0,4102.268052438,0.000743783],"
-"[[[1],[[\"_id\",\"UInt32\"],[\"updated_at\",\"Time\"],[\"body\",\"ShortText"
-"\"]],[1,1285031914.0,\"東京都民に深刻なダメージを与えました。\"]]]]"
 msgstr ""
 
 #: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:36
@@ -80,25 +59,10 @@ msgid ""
 "0:0:0の秒表記）。この場合もヒットします。::"
 msgstr ""
 
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:38
-msgid ""
-"> select Blogs --filter 'body @ \"東京都\" && updated_at < "
-"1285858800' [[0,4387.524084839,0.001525487],[[[1],[[\"_id\",\"UInt32\"],"
-"[\"updated_at\",\"Time\"],[\"body\",\"ShortText\"]],[1,1285031914.0,\"東京都"
-"民に深刻なダメージを与えました。\"]]]]"
-msgstr ""
-
 #: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:41
 msgid ""
 "最後に、範囲指定と全文検索の順番を入れ替えて検索します。個々の条件は同じです"
 "が、この場合はヒットしません。::"
-msgstr ""
-
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:43
-msgid ""
-"> select Blogs --filter 'updated_at < 1285858800 && body @ \"東京都"
-"\"' [[0,4400.292570838,0.000647716],[[[0],[[\"_id\",\"UInt32\"],[\"updated_at"
-"\",\"Time\"],[\"body\",\"ShortText\"]]]]]"
 msgstr ""
 
 #: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:46
@@ -174,10 +138,6 @@ msgid ""
 "しない場合でも部分一致検索などを行いません。::"
 msgstr ""
 
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:75
-msgid "select Blogs --filter 'updated_at < 1285858800 && body @ \"東京都\"'"
-msgstr ""
-
 #: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:77
 msgid ""
 "そのため、条件の順序を変えると検索結果が変わるという状況が発生します。以下"
@@ -213,24 +173,9 @@ msgid ""
 "加します。::"
 msgstr ""
 
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:88
-msgid ""
-"table_create Bigram TABLE_PAT_KEY|KEY_NORMALIZE ShortText --"
-"default_tokenizer TokenBigram column_create Bigram blog_body COLUMN_INDEX|"
-"WITH_POSITION Blogs body"
-msgstr ""
-
 #: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:91
 msgid ""
 "この状態でも以前はマッチしなかったレコードがヒットするようになります。::"
-msgstr ""
-
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:93
-msgid ""
-"> select Blogs --filter 'updated_at < 1285858800 && body @ \"東京都"
-"\"' [[0,7163.448064902,0.000418127],[[[1],[[\"_id\",\"UInt32\"],[\"updated_at"
-"\",\"Time\"],[\"body\",\"ShortText\"]],[1,1285031914.0,\"東京都民に深刻なダ"
-"メージを与えました。\"]]]]"
 msgstr ""
 
 #: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:96
@@ -246,14 +191,6 @@ msgid ""
 "そこで、TokenMecabトークナイザーを使って作った索引の方をTokenBigramトークナイ"
 "ザーを使って作った索引よりも重視するように重み付けを指定します。これは、"
 "match_columnsオプションで指定できます。::"
-msgstr ""
-
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:100
-msgid ""
-"> select Blogs --match_columns 'Terms.blog_body * 10 || Bigram.blog_body * "
-"3' --query '東京都' --output_columns '_score, "
-"body' [[0,8167.364602632,0.000647003],[[[1],[[\"_score\",\"Int32\"],[\"body"
-"\",\"ShortText\"]],[13,\"東京都民に深刻なダメージを与えました。\"]]]]"
 msgstr ""
 
 #: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:103
@@ -358,10 +295,6 @@ msgid ""
 "escalation-threshold configureオプションで変更することができます。以下のよう"
 "に指定すると、100件以下のヒット数であれば、たとえ完全一致検索でヒットしても、"
 "非わかち書き検索・部分一致検索を行います。::"
-msgstr ""
-
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:133
-msgid "% ./configure --with-match-escalation-threashold=100"
 msgstr ""
 
 #: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:135

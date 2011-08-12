@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-07-27 23:09\n"
+"POT-Creation-Date: 2011-08-12 14:57\n"
 "PO-Revision-Date: 2011-06-29 00:00+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -29,33 +29,8 @@ msgstr ""
 msgid "grnslap"
 msgstr ""
 
-#: ../../../source/executables/grnslap.txt:9
-#: ../../../source/executables/grntest.txt:9
-#: ../../../source/executables/groonga.txt:9
-#: ../../../source/executables/http.txt:9
-msgid "名前"
-msgstr ""
-
 #: ../../../source/executables/grnslap.txt:11
 msgid "grnslap - groongaプロセスの通信層のパフォーマンスをチェックするツール"
-msgstr ""
-
-#: ../../../source/executables/grnslap.txt:14
-#: ../../../source/executables/grntest.txt:14
-#: ../../../source/executables/groonga.txt:14
-#: ../../../source/executables/http.txt:14
-msgid "書式"
-msgstr ""
-
-#: ../../../source/executables/grnslap.txt:18
-msgid "grnslap [options] [dest]"
-msgstr ""
-
-#: ../../../source/executables/grnslap.txt:21
-#: ../../../source/executables/grntest.txt:21
-#: ../../../source/executables/groonga.txt:21
-#: ../../../source/executables/http.txt:20
-msgid "説明"
 msgstr ""
 
 #: ../../../source/executables/grnslap.txt:23
@@ -79,12 +54,6 @@ msgstr ""
 
 #: ../../../source/executables/grnslap.txt:29
 msgid "現在は、make installしてもインストールは行われない。"
-msgstr ""
-
-#: ../../../source/executables/grnslap.txt:32
-#: ../../../source/executables/grntest.txt:32
-#: ../../../source/executables/groonga.txt:27
-msgid "オプション"
 msgstr ""
 
 #: ../../../source/executables/grnslap.txt:36
@@ -115,33 +84,52 @@ msgstr ""
 msgid "リクエストの多重度を指定します。初期値は10です。"
 msgstr ""
 
-#: ../../../source/executables/grnslap.txt:51
-#: ../../../source/executables/grntest.txt:64
-#: ../../../source/executables/groonga.txt:129
-msgid "引数"
-msgstr ""
-
 #: ../../../source/executables/grnslap.txt:55
 msgid ""
 "接続先のホスト名とポート番号をを指定します(デフォルト値は'localhost:10041')。"
 "ポート番号を指定しない場合には、10041が指定されたものとします。"
 msgstr ""
 
-#: ../../../source/executables/grnslap.txt:58
-#: ../../../source/executables/grntest.txt:140
-msgid "サンプル"
-msgstr ""
-
 #: ../../../source/executables/grnslap.txt:60
 msgid "http://localhost:10041/d/status に、多重度100でリクエストを行う。"
 msgstr ""
 
-#: ../../../source/executables/grnslap.txt:64
-msgid ""
-"> yes /d/status | head -n 100 | grnslap -P http -m 100 localhost:10041 "
-"2009-11-12 19:34:09.998696|begin: max_concurrency=100 max_tp=10000 "
-"2009-11-12 19:34:10.011208|end  : n=100 min=46 max=382 avg=0 qps=7992.966190 "
-"etime=0.012511"
+#: ../../../source/executables/grnslap.txt:14,
+#: ../../../source/executables/grntest.txt:14,
+#: ../../../source/executables/groonga.txt:14,
+#: ../../../source/executables/http.txt:14
+msgid "書式"
+msgstr ""
+
+#: ../../../source/executables/grnslap.txt:21,
+#: ../../../source/executables/grntest.txt:21,
+#: ../../../source/executables/groonga.txt:21,
+#: ../../../source/executables/http.txt:20
+msgid "説明"
+msgstr ""
+
+#: ../../../source/executables/grnslap.txt:32,
+#: ../../../source/executables/grntest.txt:32,
+#: ../../../source/executables/groonga.txt:27
+msgid "オプション"
+msgstr ""
+
+#: ../../../source/executables/grnslap.txt:51,
+#: ../../../source/executables/grntest.txt:64,
+#: ../../../source/executables/groonga.txt:129
+msgid "引数"
+msgstr ""
+
+#: ../../../source/executables/grnslap.txt:58,
+#: ../../../source/executables/grntest.txt:140
+msgid "サンプル"
+msgstr ""
+
+#: ../../../source/executables/grnslap.txt:9,
+#: ../../../source/executables/grntest.txt:9,
+#: ../../../source/executables/groonga.txt:9,
+#: ../../../source/executables/http.txt:9
+msgid "名前"
 msgstr ""
 
 #: ../../../source/executables/grntest.txt:6
@@ -150,10 +138,6 @@ msgstr ""
 
 #: ../../../source/executables/grntest.txt:11
 msgid "grntest - groongaテストプログラム"
-msgstr ""
-
-#: ../../../source/executables/grntest.txt:18
-msgid "grntest  [options...] [script] [db]"
 msgstr ""
 
 #: ../../../source/executables/grntest.txt:23
@@ -248,16 +232,8 @@ msgstr ""
 msgid "まず、シェル上(Windowsならコマンドプロンプト上)で::"
 msgstr ""
 
-#: ../../../source/executables/grntest.txt:79
-msgid "grntest test.scr 任意のDB名"
-msgstr ""
-
 #: ../../../source/executables/grntest.txt:81
 msgid "とタイプしてください。もしgrntestが正常に動作すれば、::"
-msgstr ""
-
-#: ../../../source/executables/grntest.txt:83
-msgid "test-ユーザ名-数字.log"
 msgstr ""
 
 #: ../../../source/executables/grntest.txt:85
@@ -375,12 +351,6 @@ msgstr ""
 msgid "スクリプトファイルのサンプルです。::"
 msgstr ""
 
-#: ../../../source/executables/grntest.txt:144
-msgid ""
-"# sample script rep_local test.ddl do_local test.load; do_gqtp test.select "
-"10 10; do_local test.status 10"
-msgstr ""
-
 #: ../../../source/executables/grntest.txt:150
 msgid "上記の意味は以下のとおりです。"
 msgstr ""
@@ -443,18 +413,8 @@ msgstr ""
 msgid "例えば、"
 msgstr ""
 
-#: ../../../source/executables/grntest.txt:179
-msgid "$ ./grntest --port 20010 test.scr testdb"
-msgstr ""
-
 #: ../../../source/executables/grntest.txt:181
 msgid "とコマンド上でポートを指定した場合でも、もしtest.scrの中身が"
-msgstr ""
-
-#: ../../../source/executables/grntest.txt:185
-msgid ""
-"#SET_PORT 10900 rep_local test.ddl do_local test.load; rep_gqtp test.select "
-"10 10; rep_local test.status 10 #SET_PORT 10400"
 msgstr ""
 
 #: ../../../source/executables/grntest.txt:191
@@ -472,46 +432,6 @@ msgid ""
 "刻.logという形式のログファイルがカレントディレクトリに作られます。ログファイ"
 "ルは自動的にftp.groonga.org に送信されます。ログファイルは以下のようなjson形"
 "式のテキストです。"
-msgstr ""
-
-#: ../../../source/executables/grntest.txt:202
-msgid ""
-"[{\"script\": \"test.scr\",   \"user\": \"homepage\",   \"date\": "
-"\"2010-04-14 22:47:04\",   \"CPU\": Intel(R) Pentium(R) 4 CPU 2.80GHz\",   "
-"\"BIT\": 32,   \"CORE\": 1,   \"RAM\": \"975MBytes\",   \"HDD\": "
-"\"257662232KBytes\",   \"OS\": \"Linux 2.4.20-24.7-i686\",   \"HOST\": "
-"\"localhost\",   \"PORT\": \"10041\",   \"VERSION\": \"0.1.8-100-"
-"ga54c5f8\" }, {\"jobs\": \"rep_local test.ddl\", \"detail\": [ [0, "
-"\"table_create res_table --key_type ShortText\", 1490, 3086, "
-"[0,1271252824.25846,0.00144 7]], [0, \"column_create res_table res_column --"
-"type Text\", 3137, 5956, [0,1271252824.2601,0.002 741]], [0, \"column_create "
-"res_table user_column --type Text\", 6020, 8935, [0,1271252824.26298,0.0 "
-"02841]], [0, \"column_create res_table mail_column --type Text\", 8990, "
-"11925, [0,1271252824.26595,0. 002861]], [0, \"column_create res_table "
-"time_column --type Time\", 12008, 13192, [0,1271252824.26897,0 .001147]], "
-"[0, \"status\", 13214, 13277, [0,1271252824.27018,3.0e-05]], [0, "
-"\"table_create thread_table --key_type ShortText\", 13289, 14541, "
-"[0,1271252824.27025,0. 001213]], [0, \"column_create thread_table "
-"thread_title_column --type ShortText\", 14570, 17380, [0,12 "
-"71252824.27153,0.002741]], [0, \"status\", 17435, 17480, "
-"[0,1271252824.2744,2.7e-05]], [0, \"table_create lexicon_table --flags 129 --"
-"key_type ShortText --default_tokenizer Token Bigram\", 17491, 18970, "
-"[0,1271252824.27446,0.001431]], [0, \"column_create lexicon_table "
-"inv_res_column 514 res_table res_column \", 18998, 33248, "
-"[0,1271252824.27596,0.01418]], [0, \"column_create lexicon_table "
-"inv_thread_column 514 thread_table thread_title_column \",  33285, 48472, "
-"[0,1271252824.29025,0.015119]], [0, \"status\", 48509, 48554, "
-"[0,1271252824.30547,2.7e-05]]], \"summary\" :[{\"job\": \"rep_local test.ddl"
-"\", \"latency\": 48607, \"self\": 47719, \"qps\": 272.4281 73, \"min\": 45, "
-"\"max\": 15187, \"queries\": 13}]}, {\"jobs\": \"do_local test.load; \", "
-"\"summary\" :[{\"job\": \"do_local test.load\", \"latency\": 68693, \"self"
-"\": 19801, \"qps\": 1010.049 997, \"min\": 202, \"max\": 5453, \"queries\": "
-"20}]}, {\"jobs\": \"do_gqtp test.select 10 10; do_local test.status 10\", "
-"\"summary\" :[{\"job\": \" do_local test.status 10\", \"latency\": 805990, "
-"\"self\": 737014, \"qps\": 54.273053, \"min\": 24, \"max\": 218, \"queries"
-"\": 40},{\"job\": \"do_gqtp test.select 10 10\", \"lat ency\": 831495, \"self"
-"\": 762519, \"qps\": 1967.164097, \"min\": 73, \"max\": 135631, \"queries\": "
-"15 00}]}, {\"total\": 915408, \"qps\": 1718.359464, \"queries\": 1573}]"
 msgstr ""
 
 #: ../../../source/executables/grntest.txt:255
@@ -571,10 +491,6 @@ msgstr ""
 
 #: ../../../source/executables/groonga.txt:11
 msgid "groonga - 列指向データベース機能を持つ全文検索エンジンソフトウェア"
-msgstr ""
-
-#: ../../../source/executables/groonga.txt:18
-msgid "groonga [options] [dest] [command [args]]"
 msgstr ""
 
 #: ../../../source/executables/groonga.txt:23
@@ -683,15 +599,6 @@ msgid ""
 "ます。::"
 msgstr ""
 
-#: ../../../source/executables/groonga.txt:107
-msgid ""
-"# '#'以降はコメント。 ; ';'以降もコメント。  # 'キー = 値'でオプションを指"
-"定。 pid-file = /var/run/groonga.pid  # '='の前後の空白はは無視される。↓は↑と"
-"同じ意味。 pid-file=/var/run/groonga.pid  # 'キー'は'--XXX'スタイルのオプショ"
-"ン名と同じものが使える。 # 例えば、'--pid-path'に対応するキーは'pid-path'。 "
-"# ただし、キーが'config-path'のオプションは無視される。"
-msgstr ""
-
 #: ../../../source/executables/groonga.txt:122
 msgid "キャッシュ数の最大値を指定します。(デフォルトは100です)"
 msgstr ""
@@ -719,11 +626,6 @@ msgid ""
 "ます。"
 msgstr ""
 
-#: ../../../source/executables/groonga.txt:142
-#: ../../../source/executables/http.txt:27
-msgid "コマンド"
-msgstr ""
-
 #: ../../../source/executables/groonga.txt:144
 msgid ""
 "groonga実行ファイルを通してデータベースを操作する命令をコマンドと呼びます。コ"
@@ -734,12 +636,6 @@ msgstr ""
 
 #: ../../../source/executables/groonga.txt:147
 msgid "引数は以下の2種類の方法のいずれかで指定することができます。::"
-msgstr ""
-
-#: ../../../source/executables/groonga.txt:149
-msgid ""
-"形式1: コマンド名 値1 値2,..  形式2: コマンド名 --引数名1 値1 --引数名2 値"
-"2,.."
 msgstr ""
 
 #: ../../../source/executables/groonga.txt:153
@@ -841,53 +737,30 @@ msgstr ""
 msgid "新しいデータベースを作成します。::"
 msgstr ""
 
-#: ../../../source/executables/groonga.txt:216
-msgid "% groonga -n /tmp/hoge.db quit %"
-msgstr ""
-
 #: ../../../source/executables/groonga.txt:219
 msgid "作成済みのデータベースにテーブルを定義します。::"
-msgstr ""
-
-#: ../../../source/executables/groonga.txt:221
-msgid "% groonga /tmp/hoge.db table_create Table 0 ShortText [[0]] %"
 msgstr ""
 
 #: ../../../source/executables/groonga.txt:225
 msgid "サーバを起動します。::"
 msgstr ""
 
-#: ../../../source/executables/groonga.txt:227
-msgid "% groonga -d /tmp/hoge.db %"
-msgstr ""
-
 #: ../../../source/executables/groonga.txt:230
 msgid "httpサーバとして起動します。::"
-msgstr ""
-
-#: ../../../source/executables/groonga.txt:232
-msgid ""
-"% groonga -d -p 80 --protocol http --document-root /usr/share/groonga/"
-"admin_html /tmp/hoge.db %"
 msgstr ""
 
 #: ../../../source/executables/groonga.txt:235
 msgid "サーバに接続し、テーブル一覧を表示します。::"
 msgstr ""
 
-#: ../../../source/executables/groonga.txt:237
-msgid ""
-"% groonga -c localhost table_list [[0],[[\"id\",\"name\",\"path\",\"flags\","
-"\"domain\"],[256,\"Table\",\"/tmp/hoge.db.0000100\",49152,14]]] %"
+#: ../../../source/executables/groonga.txt:142,
+#: ../../../source/executables/http.txt:27
+msgid "コマンド"
 msgstr ""
 
-#: ../../../source/executables/http.txt:6
 #: ../../../source/executables/http.txt:11
+#: ../../../source/executables/http.txt:6,
 msgid "groonga HTTPサービス"
-msgstr ""
-
-#: ../../../source/executables/http.txt:17
-msgid "groonga -d --protocol http DB_PATH"
 msgstr ""
 
 #: ../../../source/executables/http.txt:22
@@ -944,10 +817,6 @@ msgid ""
 "す。::"
 msgstr ""
 
-#: ../../../source/executables/http.txt:43
-msgid "形式: /d/コマンド名.output_type?引数名1=値1&引数名2=値2&..."
-msgstr ""
-
 #: ../../../source/executables/http.txt:45
 msgid "ただし、コマンド名、引数名、値はURLエンコードが必要です。"
 msgstr ""
@@ -972,8 +841,4 @@ msgstr ""
 
 #: ../../../source/executables/http.txt:56
 msgid "output_typeの指定に従って、コマンドの実行結果を出力します。"
-msgstr ""
-
-#: sphinx-built-in-message:0
-msgid "groonga < コマンドファイル > 出力ファイル"
 msgstr ""

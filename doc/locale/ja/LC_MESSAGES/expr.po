@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-29 13:49\n"
+"POT-Creation-Date: 2011-08-12 14:57\n"
 "PO-Revision-Date: 2011-05-09 00:36+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -102,16 +102,4 @@ msgstr ""
 
 #: ../../../source/expr.txt:45
 msgid "脚注"
-msgstr ""
-
-#: sphinx-built-in-message:0
-msgid "カラム名"
-msgstr ""
-
-#: sphinx-built-in-message:0
-msgid "型名・関数名・テーブル名"
-msgstr ""
-
-#: sphinx-built-in-message:0
-msgid "引数名"
 msgstr ""

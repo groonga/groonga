@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-24 18:26\n"
+"POT-Creation-Date: 2011-08-12 15:03\n"
 "PO-Revision-Date: 2011-05-09 00:37+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -39,22 +39,14 @@ msgstr ""
 msgid "検索の挙動には以下の3種類あり、検索結果によって動的に使い分けています。"
 msgstr ""
 
-#: ../../../source/spec/search.txt:15 ../../../source/spec/search.txt:22
-msgid "完全一致検索"
-msgstr ""
-
-#: ../../../source/spec/search.txt:16 ../../../source/spec/search.txt:70
-msgid "非わかち書き検索"
-msgstr ""
-
-#: ../../../source/spec/search.txt:17 ../../../source/spec/search.txt:85
-msgid "部分一致検索"
-msgstr ""
-
 #: ../../../source/spec/search.txt:19
 msgid ""
 "どのように検索の挙動を使い分けているかを説明する前に、まず、それぞれの検索の"
 "挙動を説明します。"
+msgstr ""
+
+#: ../../../source/spec/search.txt:22 ../../../source/spec/search.txt:15,
+msgid "完全一致検索"
 msgstr ""
 
 #: ../../../source/spec/search.txt:24
@@ -174,6 +166,10 @@ msgid ""
 "致でヒットします。"
 msgstr ""
 
+#: ../../../source/spec/search.txt:70 ../../../source/spec/search.txt:16,
+msgid "非わかち書き検索"
+msgstr ""
+
 #: ../../../source/spec/search.txt:72
 msgid ""
 "非わかち書き検索はパトリシア木で語彙表を構築している場合のみ利用可能です。"
@@ -209,6 +205,10 @@ msgid ""
 "（1単語扱い）にヒットしますが、「スープカレー」（\"スープ\"と\"カレー\"の2単"
 "語扱い）や「スープカレーライス」（\"スープ\"と\"カレーライス\"の2単語扱い）に"
 "はヒットしません。"
+msgstr ""
+
+#: ../../../source/spec/search.txt:85 ../../../source/spec/search.txt:17,
+msgid "部分一致検索"
 msgstr ""
 
 #: ../../../source/spec/search.txt:87
@@ -271,19 +271,10 @@ msgid ""
 "い場合は完全一致検索、非わかち書き検索、部分一致検索を順に行います。::"
 msgstr ""
 
-#: ../../../source/spec/search.txt:109
-msgid "select Shops --match_column description --query スープカレー"
-msgstr ""
-
 #: ../../../source/spec/search.txt:111
 msgid ""
 "しかし、以下のように全文検索を行う前に検索結果セットが存在する場合は完全一致"
 "検索のみを行います。（point > 3で閾値の件数以上ヒットしている場合）::"
-msgstr ""
-
-#: ../../../source/spec/search.txt:113
-msgid ""
-"select Shops --filter '\"point > 3 && description @ \\\"スープカレー\\\"\"'"
 msgstr ""
 
 #: ../../../source/spec/search.txt:115
