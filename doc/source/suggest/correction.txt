@@ -66,7 +66,7 @@ Similar search
 Similar search can find registered words that has one or
 more the same tokens as user input. TokenBigram tokenizer is
 used for tokenization because suggest dataset schema
-created by :doc:`executables/groonga-suggest-create-dataset`
+created by :doc:`/executables/groonga-suggest-create-dataset`
 uses TokenBigram tokenizer as the default tokenizer.
 
 For example, there is a registered query "search engine". An
