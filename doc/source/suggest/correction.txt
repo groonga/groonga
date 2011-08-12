@@ -3,10 +3,8 @@
 .. highlightlang:: none
 
 .. groonga-command
-.. % rm -rf /tmp/correction
-.. % mkdir -p /tmp/correction
-.. % groonga -n /tmp/correction/db shutdown
-.. % groonga-suggest-create-dataset /tmp/correction/db query
+.. % groonga-suggest-create-dataset /tmp/groonga-databases/correction query
+.. database: correction
 
 Correction
 ==========

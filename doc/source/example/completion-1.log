@@ -1,5 +1,5 @@
 Execution example::
 
   > suggest --table item_query --column kana --types complete --threshold 1 --query en
- [[0,1312956152.1091,0.001121197],{"complete":[[5],[["_key","ShortText"],["_score","Int32"]],["en",1],["engine",1],["engi",1],["engin",1],["eng",1]]}]
- 
+  [[0,1313131879.64588,0.000913584],{"complete":[[1],[["_key","ShortText"],["_score","Int32"]],["engine",1]]}]
+  

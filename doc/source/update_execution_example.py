@@ -6,16 +6,31 @@ from select import select
 from sys import argv,stdout
 import os
 import os.path
+import shutil
 
-GROONGA_PATH = os.environ.get("GROONGA")
-if GROONGA_PATH is None:
-  GROONGA_PATH = "groonga"
-DB_PATH = "/tmp/example.db"
+DB_DIRECTORY = "/tmp/groonga-databases"
 
-os.system('rm -rf %s*' % DB_PATH)
-ioobj = Popen([GROONGA_PATH, '-n', DB_PATH], stdin = PIPE, stdout = PIPE)
-ioin  = ioobj.stdin
-ioout = ioobj.stdout
+shutil.rmtree(DB_DIRECTORY, ignore_errors=True)
+os.makedirs(DB_DIRECTORY)
+
+groonga_process = None
+def close_groonga():
+  global groonga_process
+  if groonga_process:
+    groonga_process.stdin.close()
+    groonga_process.stdout.close()
+    groonga_process = None
+    print '###<<< database: close'
+
+def reconnect(name):
+  global groonga_process
+  close_groonga()
+  db_path = os.path.join(DB_DIRECTORY, name)
+  if os.path.exists(db_path):
+    groonga_process = Popen(["groonga", db_path], stdin=PIPE, stdout=PIPE)
+  else:
+    groonga_process = Popen(["groonga", "-n", db_path], stdin=PIPE, stdout=PIPE)
+  print '###>>> database: open <%s>' % db_path
 
 fout = None
 
@@ -23,14 +38,14 @@ def execmd(cmd, fout):
   a = '> ' + cmd + "\n"
   stdout.write(a)
   stdout.flush()
-  ioin.write(cmd + "\n")
-  ioin.flush()
+  groonga_process.stdin.write(cmd + "\n")
+  groonga_process.stdin.flush()
   if fout:
     fout.write(a + "  ")
   while True:
-    out = select([ioout], [], [], 0.2)
+    out = select([groonga_process.stdout], [], [], 0.2)
     if len(out[0]):
-      a = ioout.read(1)
+      a = groonga_process.stdout.read(1)
       if a != None:
         stdout.write(a)
         if fout:
@@ -64,7 +79,10 @@ def readfile(fname, outflag):
       fout = None
       while len(dat):
         cmd = dat.pop(0)
-        if cmd.startswith('.. include:: '):
+        if cmd.startswith('.. database:'):
+          database_name = cmd[cmd.index(":")+1:].strip()
+          reconnect(database_name)
+        elif cmd.startswith('.. include:: '):
           a = rootdir + cmd[13:]
           if outflag == 0:
             dir_name = os.path.dirname(a)
@@ -104,9 +122,8 @@ def readfile(fname, outflag):
       readfile(a, outflag + 1)
       print '###<<< include end'
 
-
 entry_point = "./"
-if len(argv) == 1:
+if len(argv) == 2:
   entry_point = argv[1]
 if os.path.isfile(entry_point):
   readfile(entry_point, 0)
@@ -120,6 +137,5 @@ else:
 
 if fout:
   fout.close()
-ioin.close()
-ioout.close()
+close_groonga()
 
