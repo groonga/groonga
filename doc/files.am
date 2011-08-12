@@ -473,67 +473,6 @@ html_files_relative_from_locale_dir = \
 	html/_sources/contribution/documentation/c-api.txt \
 	html/_sources/contribution/documentation/i18n.txt \
 	html/_sources/contribution/report.txt \
-	html/_sources/example/completion-1.log \
-	html/_sources/example/correction-1.log \
-	html/_sources/example/tutorial01-1.log \
-	html/_sources/example/tutorial01-10.log \
-	html/_sources/example/tutorial01-11.log \
-	html/_sources/example/tutorial01-12.log \
-	html/_sources/example/tutorial01-13.log \
-	html/_sources/example/tutorial01-14.log \
-	html/_sources/example/tutorial01-15.log \
-	html/_sources/example/tutorial01-16.log \
-	html/_sources/example/tutorial01-17.log \
-	html/_sources/example/tutorial01-2.log \
-	html/_sources/example/tutorial01-3.log \
-	html/_sources/example/tutorial01-4.log \
-	html/_sources/example/tutorial01-5.log \
-	html/_sources/example/tutorial01-6.log \
-	html/_sources/example/tutorial01-7.log \
-	html/_sources/example/tutorial01-8.log \
-	html/_sources/example/tutorial01-9.log \
-	html/_sources/example/tutorial02-1.log \
-	html/_sources/example/tutorial02-2.log \
-	html/_sources/example/tutorial02-3.log \
-	html/_sources/example/tutorial03-1.log \
-	html/_sources/example/tutorial03-2.log \
-	html/_sources/example/tutorial03-3.log \
-	html/_sources/example/tutorial04-1.log \
-	html/_sources/example/tutorial04-2.log \
-	html/_sources/example/tutorial04-3.log \
-	html/_sources/example/tutorial04-4.log \
-	html/_sources/example/tutorial04-5.log \
-	html/_sources/example/tutorial04-6.log \
-	html/_sources/example/tutorial04-7.log \
-	html/_sources/example/tutorial05-1.log \
-	html/_sources/example/tutorial05-2.log \
-	html/_sources/example/tutorial05-3.log \
-	html/_sources/example/tutorial05-4.log \
-	html/_sources/example/tutorial05-5.log \
-	html/_sources/example/tutorial05-6.log \
-	html/_sources/example/tutorial06-1.log \
-	html/_sources/example/tutorial06-2.log \
-	html/_sources/example/tutorial06-3.log \
-	html/_sources/example/tutorial06-4.log \
-	html/_sources/example/tutorial06-5.log \
-	html/_sources/example/tutorial06-6.log \
-	html/_sources/example/tutorial06-7.log \
-	html/_sources/example/tutorial07-1.log \
-	html/_sources/example/tutorial07-2.log \
-	html/_sources/example/tutorial07-3.log \
-	html/_sources/example/tutorial07-4.log \
-	html/_sources/example/tutorial08-1.log \
-	html/_sources/example/tutorial08-2.log \
-	html/_sources/example/tutorial10-1.log \
-	html/_sources/example/tutorial10-10.log \
-	html/_sources/example/tutorial10-2.log \
-	html/_sources/example/tutorial10-3.log \
-	html/_sources/example/tutorial10-4.log \
-	html/_sources/example/tutorial10-5.log \
-	html/_sources/example/tutorial10-6.log \
-	html/_sources/example/tutorial10-7.log \
-	html/_sources/example/tutorial10-8.log \
-	html/_sources/example/tutorial10-9.log \
 	html/_sources/executables.txt \
 	html/_sources/executables/grnslap.txt \
 	html/_sources/executables/grntest.txt \

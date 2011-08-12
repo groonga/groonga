@@ -1,58 +1,80 @@
-# English translations for 1.2.3 package.
+# English translations for 1.2.4 package.
 # Copyright (C) 2009-2011, Brazil, Inc
 # This file is distributed under the same license as the groonga package.
 # Kouhei Sutou <kou@clear-code.com>, 2011.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: 1.2.3\n"
+"Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-06-28 23:53\n"
-"PO-Revision-Date: 2011-06-28 23:55+0900\n"
+"POT-Creation-Date: 2011-08-12 22:06\n"
+"PO-Revision-Date: 2011-08-12 22:01+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
+"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:98
-msgid ""
-"そこで、TokenMecabトークナイザーを使って作った索引の方をTokenBigramトークナイ"
-"ザーを使って作った索引よりも重視するように重み付けを指定します。これは、"
-"match_columnsオプションで指定できます。::"
-msgstr ""
-"そこで、TokenMecabトークナイザーを使って作った索引の方をTokenBigramトークナイ"
-"ザーを使って作った索引よりも重視するように重み付けを指定します。これは、"
-"match_columnsオプションで指定できます。::"
+# f7f7e82671ec486cb9b27225fbae9511
+#: ../../../source/troubleshooting.txt:6
+msgid "トラブルシューティング"
+msgstr "トラブルシューティング"
 
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:59
-msgid ""
-"groongaは基本的に完全一致検索のみを行います。上記の例では「東京都民に深刻なダ"
-"メージを与えました。」を「東京都」というクエリで検索していますが、TokenMecab"
-"トークナイザーを使っている場合はこのクエリはマッチしません。"
-msgstr ""
-"groongaは基本的に完全一致検索のみを行います。上記の例では「東京都民に深刻なダ"
-"メージを与えました。」を「東京都」というクエリで検索していますが、TokenMecab"
-"トークナイザーを使っている場合はこのクエリはマッチしません。"
+# 00ab10388df04e6493147453041ec23f
+#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:6
+msgid "同じ検索キーワードなのに全文検索結果が異なる"
+msgstr "同じ検索キーワードなのに全文検索結果が異なる"
 
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:17
+# ba6b2591961042e7bbaeb95f981f499e
+#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:8
 msgid ""
-"table_create Blogs TABLE_NO_KEY column_create Blogs body COLUMN_SCALAR "
-"ShortText column_create Blogs updated_at COLUMN_SCALAR Time table_create "
-"Terms TABLE_PAT_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenMecab "
-"column_create Terms blog_body COLUMN_INDEX|WITH_POSITION Blogs body"
+"同じ検索キーワードでも一緒に指定するクエリによっては全文検索の結果が異なるこ"
+"とがあります。ここでは、その原因と対策方法を説明します。"
 msgstr ""
-"table_create Blogs TABLE_NO_KEY column_create Blogs body COLUMN_SCALAR "
-"ShortText column_create Blogs updated_at COLUMN_SCALAR Time table_create "
-"Terms TABLE_PAT_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenMecab "
-"column_create Terms blog_body COLUMN_INDEX|WITH_POSITION Blogs body"
+"同じ検索キーワードでも一緒に指定するクエリによっては全文検索の結果が異なるこ"
+"とがあります。ここでは、その原因と対策方法を説明します。"
 
+# 1244633718314076a09051bc539fdcb6
 #: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:11
 msgid "例"
 msgstr "例"
 
+# af4c1d6ba0cc4840b8b7b27e264c0081
+#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:13
+msgid "まず、実際に検索結果が異なる例を説明します。"
+msgstr "まず、実際に検索結果が異なる例を説明します。"
+
+# c31a816168be493b8fd6edcf77945f73
+#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:15
+msgid ""
+"DDLは以下の通りです。BlogsテーブルのbodyカラムをTokenMecabトークナイザーを"
+"使ってトークナイズしてからインデックスを作成しています。::"
+msgstr ""
+"DDLは以下の通りです。BlogsテーブルのbodyカラムをTokenMecabトークナイザーを"
+"使ってトークナイズしてからインデックスを作成しています。::"
+
+# 83b06b80c8f746328566c9508cd78ba0
+#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:23
+msgid "テスト用のデータは1件だけ投入します。::"
+msgstr "テスト用のデータは1件だけ投入します。::"
+
+# 0c632c3c4b91498aa2575f8cea6158f1
+#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:31
+msgid "まず、全文検索のみで検索します。この場合ヒットします。::"
+msgstr "まず、全文検索のみで検索します。この場合ヒットします。::"
+
+# b478a1274e654b12b170b0db9e6c1f3b
+#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:36
+msgid ""
+"続いて、範囲指定と全文検索を組み合わせて検索します（1285858800は2010/10/1 "
+"0:0:0の秒表記）。この場合もヒットします。::"
+msgstr ""
+"続いて、範囲指定と全文検索を組み合わせて検索します（1285858800は2010/10/1 "
+"0:0:0の秒表記）。この場合もヒットします。::"
+
+# 3e2b9502b2224bdfadaba7188be5037d
 #: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:41
 msgid ""
 "最後に、範囲指定と全文検索の順番を入れ替えて検索します。個々の条件は同じです"
@@ -61,216 +83,17 @@ msgstr ""
 "最後に、範囲指定と全文検索の順番を入れ替えて検索します。個々の条件は同じです"
 "が、この場合はヒットしません。::"
 
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:88
-msgid ""
-"table_create Bigram TABLE_PAT_KEY|KEY_NORMALIZE ShortText --"
-"default_tokenizer TokenBigram column_create Bigram blog_body COLUMN_INDEX|"
-"WITH_POSITION Blogs body"
-msgstr ""
-"table_create Bigram TABLE_PAT_KEY|KEY_NORMALIZE ShortText --"
-"default_tokenizer TokenBigram column_create Bigram blog_body COLUMN_INDEX|"
-"WITH_POSITION Blogs body"
-
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:57
-msgid "部分一致検索"
-msgstr "部分一致検索"
-
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:84
-msgid ""
-"このようにN-gram系のトークナイザーを指定することにより再現率をあげることがで"
-"きますが、適合率が下がり検索ノイズが含まれる可能性が高くなります。この度合い"
-"を調整するためには :doc:`/commands/select` のmatch_columnsで使用する索引毎に"
-"重み付けを指定します。"
-msgstr ""
-"このようにN-gram系のトークナイザーを指定することにより再現率をあげることがで"
-"きますが、適合率が下がり検索ノイズが含まれる可能性が高くなります。この度合い"
-"を調整するためには :doc:`/commands/select` のmatch_columnsで使用する索引毎に"
-"重み付けを指定します。"
-
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:61
-msgid "検索対象の「東京都民に深刻なダメージを与えました。」は"
-msgstr "検索対象の「東京都民に深刻なダメージを与えました。」は"
-
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:96
-msgid ""
-"しかし、N-gram系のトークナイザーの方がTokenMecabトークナイザーよりも語のヒッ"
-"ト数が多いため、N-gram系のヒットスコアの方が重く扱われてしまいます。N-gram系"
-"のトークナイザーの方がTokenMecabトークナイザーよりも適合率の低い場合が多いの"
-"で、このままでは検索ノイズが上位に表示される可能性が高くなります。"
-msgstr ""
-"しかし、N-gram系のトークナイザーの方がTokenMecabトークナイザーよりも語のヒッ"
-"ト数が多いため、N-gram系のヒットスコアの方が重く扱われてしまいます。N-gram系"
-"のトークナイザーの方がTokenMecabトークナイザーよりも適合率の低い場合が多いの"
-"で、このままでは検索ノイズが上位に表示される可能性が高くなります。"
-
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:55
-msgid "完全一致検索"
-msgstr "完全一致検索"
-
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:105
-msgid ""
-"この例は日本語だったのでTokenBigramトークナイザーでよかったのですが、アルファ"
-"ベットの場合はTokenBigramSplitSymbolAlphaトークナイザーなども利用する必要があ"
-"ります。例えば、「楽しいbilliard」はTokenBigramトークナイザーでは"
-msgstr ""
-"この例は日本語だったのでTokenBigramトークナイザーでよかったのですが、アルファ"
-"ベットの場合はTokenBigramSplitSymbolAlphaトークナイザーなども利用する必要があ"
-"ります。例えば、「楽しいbilliard」はTokenBigramトークナイザーでは"
-
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:56
-msgid "非わかち書き検索"
-msgstr "非わかち書き検索"
-
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:129
-msgid "対策方法2: 閾値をあげる"
-msgstr "対策方法2: 閾値をあげる"
-
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:67
-msgid "東京 / 都"
-msgstr "東京 / 都"
-
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:43
-msgid ""
-"> select Blogs --filter 'updated_at < 1285858800 && body @ \"東京都"
-"\"' [[0,4400.292570838,0.000647716],[[[0],[[\"_id\",\"UInt32\"],[\"updated_at"
-"\",\"Time\"],[\"body\",\"ShortText\"]]]]]"
-msgstr ""
-"> select Blogs --filter 'updated_at < 1285858800 && body @ \"東京都"
-"\"' [[0,4400.292570838,0.000647716],[[[0],[[\"_id\",\"UInt32\"],[\"updated_at"
-"\",\"Time\"],[\"body\",\"ShortText\"]]]]]"
-
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:80
-msgid "対策方法1: トークナイザーを変更する"
-msgstr "対策方法1: トークナイザーを変更する"
-
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:121
-msgid ""
-"TokenBigramSplitSymbolAlpha: 記号とアルファベットもバイグラムでトークナイズす"
-"る。連続する数字は一語として扱う。"
-msgstr ""
-"TokenBigramSplitSymbolAlpha: 記号とアルファベットもバイグラムでトークナイズす"
-"る。連続する数字は一語として扱う。"
-
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:25
-msgid ""
-"load --table Blogs [   [\"body\", \"updated_at\"],   [\"東京都民に深刻なダ"
-"メージを与えました。\", \"2010/9/21 10:18:34\"], ]"
-msgstr ""
-"load --table Blogs [   [\"body\", \"updated_at\"],   [\"東京都民に深刻なダ"
-"メージを与えました。\", \"2010/9/21 10:18:34\"], ]"
-
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:33
-msgid ""
-"> select Blogs --filter 'body @ \"東京都\"' [[0,4102.268052438,0.000743783],"
-"[[[1],[[\"_id\",\"UInt32\"],[\"updated_at\",\"Time\"],[\"body\",\"ShortText"
-"\"]],[1,1285031914.0,\"東京都民に深刻なダメージを与えました。\"]]]]"
-msgstr ""
-"> select Blogs --filter 'body @ \"東京都\"' [[0,4102.268052438,0.000743783],"
-"[[[1],[[\"_id\",\"UInt32\"],[\"updated_at\",\"Time\"],[\"body\",\"ShortText"
-"\"]],[1,1285031914.0,\"東京都民に深刻なダメージを与えました。\"]]]]"
-
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:6
-msgid "同じ検索キーワードなのに全文検索結果が異なる"
-msgstr "同じ検索キーワードなのに全文検索結果が異なる"
-
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:13
-msgid "まず、実際に検索結果が異なる例を説明します。"
-msgstr "まず、実際に検索結果が異なる例を説明します。"
-
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:75
-msgid "select Blogs --filter 'updated_at < 1285858800 && body @ \"東京都\"'"
-msgstr "select Blogs --filter 'updated_at < 1285858800 && body @ \"東京都\"'"
-
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:73
-msgid ""
-"しかし、以下のように全文検索前にすでに閾値が越えている場合（「updated_at < "
-"1285858800」で1件ヒットし、閾値を越える）は、たとえ完全一致検索で1件もヒット"
-"しない場合でも部分一致検索などを行いません。::"
-msgstr ""
-"しかし、以下のように全文検索前にすでに閾値が越えている場合（「updated_at < "
-"1285858800」で1件ヒットし、閾値を越える）は、たとえ完全一致検索で1件もヒット"
-"しない場合でも部分一致検索などを行いません。::"
-
+# 3560e91d9a1448e6b142753bc52a1c7e
 #: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:46
 msgid "どうしてこのような挙動になるかを説明します。"
 msgstr "どうしてこのような挙動になるかを説明します。"
 
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:93
-msgid ""
-"> select Blogs --filter 'updated_at < 1285858800 && body @ \"東京都"
-"\"' [[0,7163.448064902,0.000418127],[[[1],[[\"_id\",\"UInt32\"],[\"updated_at"
-"\",\"Time\"],[\"body\",\"ShortText\"]],[1,1285031914.0,\"東京都民に深刻なダ"
-"メージを与えました。\"]]]]"
-msgstr ""
-"> select Blogs --filter 'updated_at < 1285858800 && body @ \"東京都"
-"\"' [[0,7163.448064902,0.000418127],[[[1],[[\"_id\",\"UInt32\"],[\"updated_at"
-"\",\"Time\"],[\"body\",\"ShortText\"]],[1,1285031914.0,\"東京都民に深刻なダ"
-"メージを与えました。\"]]]]"
+# 6ddfed39585941a4bcb046b0b8119262
+#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:49
+msgid "原因"
+msgstr "原因"
 
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:69
-msgid "とトークナイズされるため、完全一致しません。"
-msgstr "とトークナイズされるため、完全一致しません。"
-
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:38
-msgid ""
-"> select Blogs --filter 'body @ \"東京都\" && updated_at < "
-"1285858800' [[0,4387.524084839,0.001525487],[[[1],[[\"_id\",\"UInt32\"],"
-"[\"updated_at\",\"Time\"],[\"body\",\"ShortText\"]],[1,1285031914.0,\"東京都"
-"民に深刻なダメージを与えました。\"]]]]"
-msgstr ""
-"> select Blogs --filter 'body @ \"東京都\" && updated_at < "
-"1285858800' [[0,4387.524084839,0.001525487],[[[1],[[\"_id\",\"UInt32\"],"
-"[\"updated_at\",\"Time\"],[\"body\",\"ShortText\"]],[1,1285031914.0,\"東京都"
-"民に深刻なダメージを与えました。\"]]]]"
-
-#: ../../../source/troubleshooting.txt:6
-msgid "トラブルシューティング"
-msgstr "トラブルシューティング"
-
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:111
-msgid "楽し / しい / いb / bi / il / ll / li / ia / ar / rd / d"
-msgstr "楽し / しい / いb / bi / il / ll / li / ia / ar / rd / d"
-
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:63
-msgid "東京 / 都民 / に / 深刻 / な / ダメージ / を / 与え / まし / た / 。"
-msgstr "東京 / 都民 / に / 深刻 / な / ダメージ / を / 与え / まし / た / 。"
-
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:124
-msgid ""
-"TokenBigramIgnoreBlankSplitSymbol: 記号もバイグラムでトークナイズする。連続す"
-"るアルファベット・数字は一語として扱う。空白は無視する。"
-msgstr ""
-"TokenBigramIgnoreBlankSplitSymbol: 記号もバイグラムでトークナイズする。連続す"
-"るアルファベット・数字は一語として扱う。空白は無視する。"
-
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:86
-msgid ""
-"ここでも、前述の例を使って具体例を示します。まず、TokenBigramを用いた索引を追"
-"加します。::"
-msgstr ""
-"ここでも、前述の例を使って具体例を示します。まず、TokenBigramを用いた索引を追"
-"加します。::"
-
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:23
-msgid "テスト用のデータは1件だけ投入します。::"
-msgstr "テスト用のデータは1件だけ投入します。::"
-
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:109
-msgid ""
-"となり、「bill」では完全一致しません。一方、TokenBigramSplitSymbolAlphaトーク"
-"ナイザーを使うと"
-msgstr ""
-"となり、「bill」では完全一致しません。一方、TokenBigramSplitSymbolAlphaトーク"
-"ナイザーを使うと"
-
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:119
-msgid ""
-"TokenBigram: バイグラムでトークナイズする。連続する記号・アルファベット・数字"
-"は一語として扱う。"
-msgstr ""
-"TokenBigram: バイグラムでトークナイズする。連続する記号・アルファベット・数字"
-"は一語として扱う。"
-
+# 57cd436397384f5f96410f801c46aee1
 #: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:51
 msgid ""
 "このような挙動になるのは全文検索時に複数の検索の挙動を使い分けているからで"
@@ -281,68 +104,103 @@ msgstr ""
 "す。ここでは簡単に説明するので、詳細は :doc:`/spec/search` を参照してくださ"
 "い。"
 
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:31
-msgid "まず、全文検索のみで検索します。この場合ヒットします。::"
-msgstr "まず、全文検索のみで検索します。この場合ヒットします。::"
+# 7df8572fbd5849e8b78a7e44b182aae2
+#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:53
+msgid "検索の挙動には以下の3種類があります。"
+msgstr "検索の挙動には以下の3種類があります。"
 
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:131
+# 0f88b53483da4b7c841aec3c95ab2349
+#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:55
+msgid "完全一致検索"
+msgstr "完全一致検索"
+
+# 9c3cb905da26449782eef737c8680ea6
+#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:56
+msgid "非わかち書き検索"
+msgstr "非わかち書き検索"
+
+# cc94131e2e4f49b69538c7eb09af08d2
+#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:57
+msgid "部分一致検索"
+msgstr "部分一致検索"
+
+# 0fb9ee63127f482eae7fecc16e36e936
+#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:59
 msgid ""
-"非わかち書き検索・部分一致検索を利用するかどうかの閾値は--with-match-"
-"escalation-threshold configureオプションで変更することができます。以下のよう"
-"に指定すると、100件以下のヒット数であれば、たとえ完全一致検索でヒットしても、"
-"非わかち書き検索・部分一致検索を行います。::"
+"groongaは基本的に完全一致検索のみを行います。上記の例では「東京都民に深刻なダ"
+"メージを与えました。」を「東京都」というクエリで検索していますが、TokenMecab"
+"トークナイザーを使っている場合はこのクエリはマッチしません。"
 msgstr ""
-"非わかち書き検索・部分一致検索を利用するかどうかの閾値は--with-match-"
-"escalation-threshold configureオプションで変更することができます。以下のよう"
-"に指定すると、100件以下のヒット数であれば、たとえ完全一致検索でヒットしても、"
-"非わかち書き検索・部分一致検索を行います。::"
+"groongaは基本的に完全一致検索のみを行います。上記の例では「東京都民に深刻なダ"
+"メージを与えました。」を「東京都」というクエリで検索していますが、TokenMecab"
+"トークナイザーを使っている場合はこのクエリはマッチしません。"
 
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:126
+# 8495b8b105bd4c419e453c75cab056fa
+#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:61
+msgid "検索対象の「東京都民に深刻なダメージを与えました。」は"
+msgstr "検索対象の「東京都民に深刻なダメージを与えました。」は"
+
+# b91d56b6af3140819c4c9d62906e6f48
+#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:63
+msgid "東京 / 都民 / に / 深刻 / な / ダメージ / を / 与え / まし / た / 。"
+msgstr "東京 / 都民 / に / 深刻 / な / ダメージ / を / 与え / まし / た / 。"
+
+# c1a80d04d8e74563a04c9fac1874a1d4
+#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:65
+msgid "とトークナイズされますが、クエリの「東京都」は"
+msgstr "とトークナイズされますが、クエリの「東京都」は"
+
+# 8db2a47df50c434a8e0fb0a8d7090314
+#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:67
+msgid "東京 / 都"
+msgstr "東京 / 都"
+
+# 7f8e1faee97b4681a82906c008fd446b
+#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:69
+msgid "とトークナイズされるため、完全一致しません。"
+msgstr "とトークナイズされるため、完全一致しません。"
+
+# 4cde758131874b1bba448b1bec041cf1
+#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:71
 msgid ""
-"TokenBigramIgnoreBlankSplitSymbolAlphaDigit: 記号・アルファベット・数字もバイ"
-"グラムでトークナイズする。空白は無視する。"
+"groongaは完全一致検索した結果のヒット件数が所定の閾値を超えない場合に限り、非"
+"わかち書き検索を行い、それでもヒット件数が閾値を超えない場合は部分一致検索を"
+"行います（閾値は1がデフォルト値となっています）。このケースのデータは部分一致"
+"検索ではヒットするので、「東京都」クエリのみを指定するとヒットします。"
 msgstr ""
-"TokenBigramIgnoreBlankSplitSymbolAlphaDigit: 記号・アルファベット・数字もバイ"
-"グラムでトークナイズする。空白は無視する。"
+"groongaは完全一致検索した結果のヒット件数が所定の閾値を超えない場合に限り、非"
+"わかち書き検索を行い、それでもヒット件数が閾値を超えない場合は部分一致検索を"
+"行います（閾値は1がデフォルト値となっています）。このケースのデータは部分一致"
+"検索ではヒットするので、「東京都」クエリのみを指定するとヒットします。"
 
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:135
+# a02af3898e4c4023a96d29d3e8ede23f
+#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:73
 msgid ""
-"この場合も対策方法1同様、検索ノイズが上位に現れる可能性が高くなることに注意し"
-"てください。検索ノイズが多くなった場合は指定する値を低くする必要があります。"
+"しかし、以下のように全文検索前にすでに閾値が越えている場合（「updated_at < "
+"1285858800」で1件ヒットし、閾値を越える）は、たとえ完全一致検索で1件もヒット"
+"しない場合でも部分一致検索などを行いません。::"
 msgstr ""
-"この場合も対策方法1同様、検索ノイズが上位に現れる可能性が高くなることに注意し"
-"てください。検索ノイズが多くなった場合は指定する値を低くする必要があります。"
+"しかし、以下のように全文検索前にすでに閾値が越えている場合（「updated_at < "
+"1285858800」で1件ヒットし、閾値を越える）は、たとえ完全一致検索で1件もヒット"
+"しない場合でも部分一致検索などを行いません。::"
 
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:122
+# d932aa9e0b8b41868cce52716d672df7
+#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:77
 msgid ""
-"TokenBigramSplitSymbolAlphaDigit: 記号・アルファベット・数字もバイグラムで"
-"トークナイズする。"
+"そのため、条件の順序を変えると検索結果が変わるという状況が発生します。以下"
+"で、この情報を回避する方法を2種類紹介しますが、それぞれトレードオフとなる条件"
+"があるので採用するかどうかを十分検討してください。"
 msgstr ""
-"TokenBigramSplitSymbolAlphaDigit: 記号・アルファベット・数字もバイグラムで"
-"トークナイズする。"
+"そのため、条件の順序を変えると検索結果が変わるという状況が発生します。以下"
+"で、この情報を回避する方法を2種類紹介しますが、それぞれトレードオフとなる条件"
+"があるので採用するかどうかを十分検討してください。"
 
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:120
-msgid ""
-"TokenBigramSplitSymbol: 記号もバイグラムでトークナイズする。連続するアルファ"
-"ベット・数字は一語として扱う。"
-msgstr ""
-"TokenBigramSplitSymbol: 記号もバイグラムでトークナイズする。連続するアルファ"
-"ベット・数字は一語として扱う。"
+# a2103e875492455cb8fdd0e4da283ee8
+#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:80
+msgid "対策方法1: トークナイザーを変更する"
+msgstr "対策方法1: トークナイザーを変更する"
 
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:103
-msgid ""
-"この場合はスコアが11になっています。内訳は、Terms.blog_body索引（TokenMecab"
-"トークナイザーを使用）でマッチしたので10、Bigram.blog_body索引（TokenBigram"
-"トークナイザーを使用）でマッチしたので3、これらを合計して13になっています。こ"
-"のようにTokenMecabトークナイザーの重みを高くすることにより、検索ノイズが上位"
-"にくることを抑えつつ再現率を上げることができます。"
-msgstr ""
-"この場合はスコアが11になっています。内訳は、Terms.blog_body索引（TokenMecab"
-"トークナイザーを使用）でマッチしたので10、Bigram.blog_body索引（TokenBigram"
-"トークナイザーを使用）でマッチしたので3、これらを合計して13になっています。こ"
-"のようにTokenMecabトークナイザーの重みを高くすることにより、検索ノイズが上位"
-"にくることを抑えつつ再現率を上げることができます。"
-
+# 930143b37bad40439f702cb3fd22fb3e
 #: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:82
 msgid ""
 "TokenMecabトークナイザーは事前に準備した辞書を用いてトークナイズするため、再"
@@ -359,34 +217,110 @@ msgstr ""
 "TokenBigramでは完全一致します。一方、TokenMecabでは「東京都民」に完全一致しま"
 "せんが、TokenBigramでは完全一致します。"
 
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:113
-msgid "となり、「bill」でも完全一致します。"
-msgstr "となり、「bill」でも完全一致します。"
-
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:133
-msgid "% ./configure --with-match-escalation-threashold=100"
-msgstr "% ./configure --with-match-escalation-threashold=100"
-
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:117
-msgid "利用できるバイグラム系のトークナイザーの一覧は以下の通りです。"
-msgstr "利用できるバイグラム系のトークナイザーの一覧は以下の通りです。"
-
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:77
+# a14036a295994d3d80deb2b795a7a4b7
+#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:84
 msgid ""
-"そのため、条件の順序を変えると検索結果が変わるという状況が発生します。以下"
-"で、この情報を回避する方法を2種類紹介しますが、それぞれトレードオフとなる条件"
-"があるので採用するかどうかを十分検討してください。"
+"このようにN-gram系のトークナイザーを指定することにより再現率をあげることがで"
+"きますが、適合率が下がり検索ノイズが含まれる可能性が高くなります。この度合い"
+"を調整するためには :doc:`/commands/select` のmatch_columnsで使用する索引毎に"
+"重み付けを指定します。"
 msgstr ""
-"そのため、条件の順序を変えると検索結果が変わるという状況が発生します。以下"
-"で、この情報を回避する方法を2種類紹介しますが、それぞれトレードオフとなる条件"
-"があるので採用するかどうかを十分検討してください。"
+"このようにN-gram系のトークナイザーを指定することにより再現率をあげることがで"
+"きますが、適合率が下がり検索ノイズが含まれる可能性が高くなります。この度合い"
+"を調整するためには :doc:`/commands/select` のmatch_columnsで使用する索引毎に"
+"重み付けを指定します。"
 
+# 24d54f7e26f845e68a0636c7afc151d3
+#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:86
+msgid ""
+"ここでも、前述の例を使って具体例を示します。まず、TokenBigramを用いた索引を追"
+"加します。::"
+msgstr ""
+"ここでも、前述の例を使って具体例を示します。まず、TokenBigramを用いた索引を追"
+"加します。::"
+
+# 22e2fa21008b42afa58c72c1e344442e
 #: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:91
 msgid ""
 "この状態でも以前はマッチしなかったレコードがヒットするようになります。::"
 msgstr ""
 "この状態でも以前はマッチしなかったレコードがヒットするようになります。::"
 
+# 6bf9cec5b286476f97ae5e520c556468
+#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:96
+msgid ""
+"しかし、N-gram系のトークナイザーの方がTokenMecabトークナイザーよりも語のヒッ"
+"ト数が多いため、N-gram系のヒットスコアの方が重く扱われてしまいます。N-gram系"
+"のトークナイザーの方がTokenMecabトークナイザーよりも適合率の低い場合が多いの"
+"で、このままでは検索ノイズが上位に表示される可能性が高くなります。"
+msgstr ""
+"しかし、N-gram系のトークナイザーの方がTokenMecabトークナイザーよりも語のヒッ"
+"ト数が多いため、N-gram系のヒットスコアの方が重く扱われてしまいます。N-gram系"
+"のトークナイザーの方がTokenMecabトークナイザーよりも適合率の低い場合が多いの"
+"で、このままでは検索ノイズが上位に表示される可能性が高くなります。"
+
+# 2cb93a3b2dfd44cba8dd64fc2c0ccc87
+#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:98
+msgid ""
+"そこで、TokenMecabトークナイザーを使って作った索引の方をTokenBigramトークナイ"
+"ザーを使って作った索引よりも重視するように重み付けを指定します。これは、"
+"match_columnsオプションで指定できます。::"
+msgstr ""
+"そこで、TokenMecabトークナイザーを使って作った索引の方をTokenBigramトークナイ"
+"ザーを使って作った索引よりも重視するように重み付けを指定します。これは、"
+"match_columnsオプションで指定できます。::"
+
+# 24d790228f654c4e923bfeb07b54b531
+#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:103
+msgid ""
+"この場合はスコアが11になっています。内訳は、Terms.blog_body索引（TokenMecab"
+"トークナイザーを使用）でマッチしたので10、Bigram.blog_body索引（TokenBigram"
+"トークナイザーを使用）でマッチしたので3、これらを合計して13になっています。こ"
+"のようにTokenMecabトークナイザーの重みを高くすることにより、検索ノイズが上位"
+"にくることを抑えつつ再現率を上げることができます。"
+msgstr ""
+"この場合はスコアが11になっています。内訳は、Terms.blog_body索引（TokenMecab"
+"トークナイザーを使用）でマッチしたので10、Bigram.blog_body索引（TokenBigram"
+"トークナイザーを使用）でマッチしたので3、これらを合計して13になっています。こ"
+"のようにTokenMecabトークナイザーの重みを高くすることにより、検索ノイズが上位"
+"にくることを抑えつつ再現率を上げることができます。"
+
+# b49da06a7b824f5cb18405c66d88cafa
+#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:105
+msgid ""
+"この例は日本語だったのでTokenBigramトークナイザーでよかったのですが、アルファ"
+"ベットの場合はTokenBigramSplitSymbolAlphaトークナイザーなども利用する必要があ"
+"ります。例えば、「楽しいbilliard」はTokenBigramトークナイザーでは"
+msgstr ""
+"この例は日本語だったのでTokenBigramトークナイザーでよかったのですが、アルファ"
+"ベットの場合はTokenBigramSplitSymbolAlphaトークナイザーなども利用する必要があ"
+"ります。例えば、「楽しいbilliard」はTokenBigramトークナイザーでは"
+
+# 2471b2074fe24acfb91976bcabc3e9c1
+#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:107
+msgid "楽し / しい / billiard"
+msgstr "楽し / しい / billiard"
+
+# 03c59aa83afb46dc8dba3b3d71eec3d5
+#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:109
+msgid ""
+"となり、「bill」では完全一致しません。一方、TokenBigramSplitSymbolAlphaトーク"
+"ナイザーを使うと"
+msgstr ""
+"となり、「bill」では完全一致しません。一方、TokenBigramSplitSymbolAlphaトーク"
+"ナイザーを使うと"
+
+# 44282f5e0a5a4bcb8b7ccdbc41012123
+#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:111
+msgid "楽し / しい / いb / bi / il / ll / li / ia / ar / rd / d"
+msgstr "楽し / しい / いb / bi / il / ll / li / ia / ar / rd / d"
+
+# 1f062a9e45ac454b9bf79449e76acc8a
+#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:113
+msgid "となり、「bill」でも完全一致します。"
+msgstr "となり、「bill」でも完全一致します。"
+
+# 9fc2fa8c3132470eb0947bf64677f1b9
 #: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:115
 msgid ""
 "TokenBigramSplitSymbolAlphaトークナイザーを使う場合も重み付けを考慮する必要が"
@@ -395,10 +329,48 @@ msgstr ""
 "TokenBigramSplitSymbolAlphaトークナイザーを使う場合も重み付けを考慮する必要が"
 "あることはかわりありません。"
 
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:65
-msgid "とトークナイズされますが、クエリの「東京都」は"
-msgstr "とトークナイズされますが、クエリの「東京都」は"
+# b25640eddab04213a659a154739d44b8
+#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:117
+msgid "利用できるバイグラム系のトークナイザーの一覧は以下の通りです。"
+msgstr "利用できるバイグラム系のトークナイザーの一覧は以下の通りです。"
 
+# 258fc05266a447afa25f72d05bcff308
+#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:119
+msgid ""
+"TokenBigram: バイグラムでトークナイズする。連続する記号・アルファベット・数字"
+"は一語として扱う。"
+msgstr ""
+"TokenBigram: バイグラムでトークナイズする。連続する記号・アルファベット・数字"
+"は一語として扱う。"
+
+# 8ff5fe0eda794bf7b115931e8932326f
+#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:120
+msgid ""
+"TokenBigramSplitSymbol: 記号もバイグラムでトークナイズする。連続するアルファ"
+"ベット・数字は一語として扱う。"
+msgstr ""
+"TokenBigramSplitSymbol: 記号もバイグラムでトークナイズする。連続するアルファ"
+"ベット・数字は一語として扱う。"
+
+# 3bc0abde87a241cdbce95d414bb18543
+#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:121
+msgid ""
+"TokenBigramSplitSymbolAlpha: 記号とアルファベットもバイグラムでトークナイズす"
+"る。連続する数字は一語として扱う。"
+msgstr ""
+"TokenBigramSplitSymbolAlpha: 記号とアルファベットもバイグラムでトークナイズす"
+"る。連続する数字は一語として扱う。"
+
+# 02a6513b04a1416e8bfc1bc190d8de06
+#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:122
+msgid ""
+"TokenBigramSplitSymbolAlphaDigit: 記号・アルファベット・数字もバイグラムで"
+"トークナイズする。"
+msgstr ""
+"TokenBigramSplitSymbolAlphaDigit: 記号・アルファベット・数字もバイグラムで"
+"トークナイズする。"
+
+# a8e4b7446b1d42ccb99a71ad027087d4
 #: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:123
 msgid ""
 "TokenBigramIgnoreBlank: バイグラムでトークナイズする。連続する記号・アルファ"
@@ -407,22 +379,16 @@ msgstr ""
 "TokenBigramIgnoreBlank: バイグラムでトークナイズする。連続する記号・アルファ"
 "ベット・数字は一語として扱う。空白は無視する。"
 
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:107
-msgid "楽し / しい / billiard"
-msgstr "楽し / しい / billiard"
-
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:53
-msgid "検索の挙動には以下の3種類があります。"
-msgstr "検索の挙動には以下の3種類があります。"
-
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:36
+# 0666ffb1c8494b5ca984b2bade1e8228
+#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:124
 msgid ""
-"続いて、範囲指定と全文検索を組み合わせて検索します（1285858800は2010/10/1 "
-"0:0:0の秒表記）。この場合もヒットします。::"
+"TokenBigramIgnoreBlankSplitSymbol: 記号もバイグラムでトークナイズする。連続す"
+"るアルファベット・数字は一語として扱う。空白は無視する。"
 msgstr ""
-"続いて、範囲指定と全文検索を組み合わせて検索します（1285858800は2010/10/1 "
-"0:0:0の秒表記）。この場合もヒットします。::"
+"TokenBigramIgnoreBlankSplitSymbol: 記号もバイグラムでトークナイズする。連続す"
+"るアルファベット・数字は一語として扱う。空白は無視する。"
 
+# 21df12864d2943d08c7b3318986b2383
 #: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:125
 msgid ""
 "TokenBigramIgnoreBlankSplitSymbolAlpha: 記号とアルファベットもバイグラムで"
@@ -431,46 +397,38 @@ msgstr ""
 "TokenBigramIgnoreBlankSplitSymbolAlpha: 記号とアルファベットもバイグラムで"
 "トークナイズする。連続する数字は一語として扱う。空白は無視する。"
 
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:8
+# d91d3bb17b144ee09de81d1cfa21a9b5
+#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:126
 msgid ""
-"同じ検索キーワードでも一緒に指定するクエリによっては全文検索の結果が異なるこ"
-"とがあります。ここでは、その原因と対策方法を説明します。"
+"TokenBigramIgnoreBlankSplitSymbolAlphaDigit: 記号・アルファベット・数字もバイ"
+"グラムでトークナイズする。空白は無視する。"
 msgstr ""
-"同じ検索キーワードでも一緒に指定するクエリによっては全文検索の結果が異なるこ"
-"とがあります。ここでは、その原因と対策方法を説明します。"
+"TokenBigramIgnoreBlankSplitSymbolAlphaDigit: 記号・アルファベット・数字もバイ"
+"グラムでトークナイズする。空白は無視する。"
 
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:15
+# ba7abb8f60964ab6b364c967fbce9fd9
+#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:129
+msgid "対策方法2: 閾値をあげる"
+msgstr "対策方法2: 閾値をあげる"
+
+# 9cba0b1efc2c4d39928e665ce9fd5154
+#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:131
 msgid ""
-"DDLは以下の通りです。BlogsテーブルのbodyカラムをTokenMecabトークナイザーを"
-"使ってトークナイズしてからインデックスを作成しています。::"
+"非わかち書き検索・部分一致検索を利用するかどうかの閾値は--with-match-"
+"escalation-threshold configureオプションで変更することができます。以下のよう"
+"に指定すると、100件以下のヒット数であれば、たとえ完全一致検索でヒットしても、"
+"非わかち書き検索・部分一致検索を行います。::"
 msgstr ""
-"DDLは以下の通りです。BlogsテーブルのbodyカラムをTokenMecabトークナイザーを"
-"使ってトークナイズしてからインデックスを作成しています。::"
+"非わかち書き検索・部分一致検索を利用するかどうかの閾値は--with-match-"
+"escalation-threshold configureオプションで変更することができます。以下のよう"
+"に指定すると、100件以下のヒット数であれば、たとえ完全一致検索でヒットしても、"
+"非わかち書き検索・部分一致検索を行います。::"
 
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:100
+# 5490376af3f348b8998ed55c7d6e0ebf
+#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:135
 msgid ""
-"> select Blogs --match_columns 'Terms.blog_body * 10 || Bigram.blog_body * "
-"3' --query '東京都' --output_columns '_score, "
-"body' [[0,8167.364602632,0.000647003],[[[1],[[\"_score\",\"Int32\"],[\"body"
-"\",\"ShortText\"]],[13,\"東京都民に深刻なダメージを与えました。\"]]]]"
+"この場合も対策方法1同様、検索ノイズが上位に現れる可能性が高くなることに注意し"
+"てください。検索ノイズが多くなった場合は指定する値を低くする必要があります。"
 msgstr ""
-"> select Blogs --match_columns 'Terms.blog_body * 10 || Bigram.blog_body * "
-"3' --query '東京都' --output_columns '_score, "
-"body' [[0,8167.364602632,0.000647003],[[[1],[[\"_score\",\"Int32\"],[\"body"
-"\",\"ShortText\"]],[13,\"東京都民に深刻なダメージを与えました。\"]]]]"
-
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:71
-msgid ""
-"groongaは完全一致検索した結果のヒット件数が所定の閾値を超えない場合に限り、非"
-"わかち書き検索を行い、それでもヒット件数が閾値を超えない場合は部分一致検索を"
-"行います（閾値は1がデフォルト値となっています）。このケースのデータは部分一致"
-"検索ではヒットするので、「東京都」クエリのみを指定するとヒットします。"
-msgstr ""
-"groongaは完全一致検索した結果のヒット件数が所定の閾値を超えない場合に限り、非"
-"わかち書き検索を行い、それでもヒット件数が閾値を超えない場合は部分一致検索を"
-"行います（閾値は1がデフォルト値となっています）。このケースのデータは部分一致"
-"検索ではヒットするので、「東京都」クエリのみを指定するとヒットします。"
-
-#: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:49
-msgid "原因"
-msgstr "原因"
+"この場合も対策方法1同様、検索ノイズが上位に現れる可能性が高くなることに注意し"
+"てください。検索ノイズが多くなった場合は指定する値を低くする必要があります。"

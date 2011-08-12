@@ -1,56 +1,33 @@
-# English translations for 1.2.3 package.
+# English translations for 1.2.4 package.
 # Copyright (C) 2009-2011, Brazil, Inc
 # This file is distributed under the same license as the groonga package.
 # Kouhei Sutou <kou@clear-code.com>, 2011.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: 1.2.3\n"
+"Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-06-28 23:53\n"
-"PO-Revision-Date: 2011-06-28 23:53+0900\n"
+"POT-Creation-Date: 2011-08-12 22:06\n"
+"PO-Revision-Date: 2011-08-12 22:00+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
+"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../../../source/characteristic.txt:44
-msgid "Sennaの転置インデックス実装をさらに改良"
-msgstr "Sennaの転置インデックス実装をさらに改良"
+# a86ae6fbdf824b80a239b9453c80a7e6
+#: ../../../source/characteristic.txt:6
+msgid "groongaの特徴"
+msgstr "groongaの特徴"
 
-#: ../../../source/characteristic.txt:37
-msgid "ドリルダウンなどの集計系クエリを高速に実現"
-msgstr "ドリルダウンなどの集計系クエリを高速に実現"
+# 18ad647d9e394a87ac2ce43d78eb5c2d
+#: ../../../source/characteristic.txt:9
+msgid "全文検索ライブラリSennaの後継"
+msgstr "全文検索ライブラリSennaの後継"
 
-#: ../../../source/characteristic.txt:30
-msgid "複数プロセス・複数スレッドで共有できるストレージ"
-msgstr "複数プロセス・複数スレッドで共有できるストレージ"
-
-#: ../../../source/characteristic.txt:32
-msgid ""
-"groongaのストレージファイルは、複数プロセスや複数スレッドで共有することができ"
-"ます。明示的なロックなどは必要ありません。"
-msgstr ""
-"groongaのストレージファイルは、複数プロセスや複数スレッドで共有することができ"
-"ます。明示的なロックなどは必要ありません。"
-
-#: ../../../source/characteristic.txt:56
-msgid "自動クエリキャッシュ機構"
-msgstr "自動クエリキャッシュ機構"
-
-#: ../../../source/characteristic.txt:41
-msgid ""
-"全文検索結果のうち、特定のカラム値ごとにグループ分けをし、それぞれのグループ"
-"のレコード数を数えるような処理をドリルダウンといいます。groongaはカラム指向"
-"データベースを生かして、このような処理を高速に実行します。"
-msgstr ""
-"全文検索結果のうち、特定のカラム値ごとにグループ分けをし、それぞれのグループ"
-"のレコード数を数えるような処理をドリルダウンといいます。groongaはカラム指向"
-"データベースを生かして、このような処理を高速に実行します。"
-
+# 6ca25d6b17884b3a98cdddc8c8744458
 #: ../../../source/characteristic.txt:11
 msgid ""
 "groongaは、広く使われている全文検索ライブラリSennaの後継として開発されていま"
@@ -61,96 +38,12 @@ msgstr ""
 "す。Sennaの特徴である、高速・高精度・高柔軟性という特徴を引き継ぎつつ、さらに"
 "それらの特徴を追求するために開発が始められました。"
 
+# 2d1d42bb711d47f4be79f92371ea64a8
 #: ../../../source/characteristic.txt:14
 msgid "HTTPなどの複数プロトコルに対応したサーバ"
 msgstr "HTTPなどの複数プロトコルに対応したサーバ"
 
-#: ../../../source/characteristic.txt:27
-msgid ""
-"より即時性の高い検索サービスを実現するために、groongaでは参照lockが不要なスト"
-"レージを実装しました。"
-msgstr ""
-"より即時性の高い検索サービスを実現するために、groongaでは参照lockが不要なスト"
-"レージを実装しました。"
-
-#: ../../../source/characteristic.txt:51
-msgid "位置情報（緯度・経度）検索"
-msgstr "位置情報（緯度・経度）検索"
-
-#: ../../../source/characteristic.txt:23
-msgid ""
-"groongaの前身であるSennaは、ストレージを持たない全文検索ライブラリでした。そ"
-"のため、MySQLのMyISAMストレージエンジンと組み合わせて用いるTritonnや、"
-"PostgreSQLと組み合わせて用いるLudiaを通じて利用するのが一般的でした。しかし、"
-"これらの形態では、全文検索インデックス更新における参照lockが不要というSennaの"
-"性能特性を生かすことができませんでした。"
-msgstr ""
-"groongaの前身であるSennaは、ストレージを持たない全文検索ライブラリでした。そ"
-"のため、MySQLのMyISAMストレージエンジンと組み合わせて用いるTritonnや、"
-"PostgreSQLと組み合わせて用いるLudiaを通じて利用するのが一般的でした。しかし、"
-"これらの形態では、全文検索インデックス更新における参照lockが不要というSennaの"
-"性能特性を生かすことができませんでした。"
-
-#: ../../../source/characteristic.txt:46
-msgid ""
-"groongaの転置インデックスは、Sennaにおける転置インデックスの実装を改良し、よ"
-"り高速かつ汎用的なものとなりました。"
-msgstr ""
-"groongaの転置インデックスは、Sennaにおける転置インデックスの実装を改良し、よ"
-"り高速かつ汎用的なものとなりました。"
-
-#: ../../../source/characteristic.txt:25
-msgid ""
-"たとえば、MyISAMではレコードが更新される際には、多くの場合テーブルロックが必"
-"要となります。このような場合には、いかに全文検索インデックスの更新が速くと"
-"も、MyISAMでのデータ更新がボトルネックとなってしまいます。"
-msgstr ""
-"たとえば、MyISAMではレコードが更新される際には、多くの場合テーブルロックが必"
-"要となります。このような場合には、いかに全文検索インデックスの更新が速くと"
-"も、MyISAMでのデータ更新がボトルネックとなってしまいます。"
-
-#: ../../../source/characteristic.txt:6
-msgid "groongaの特徴"
-msgstr "groongaの特徴"
-
-#: ../../../source/characteristic.txt:21
-msgid "高速なデータ更新"
-msgstr "高速なデータ更新"
-
-#: ../../../source/characteristic.txt:39
-msgid ""
-"groongaのストレージは、カラムごとにデータを保存するカラム指向データベースを採"
-"用しています。カラム指向データベースはOLAPなどの集計クエリを高速に実現するの"
-"に向いています。"
-msgstr ""
-"groongaのストレージは、カラムごとにデータを保存するカラム指向データベースを採"
-"用しています。カラム指向データベースはOLAPなどの集計クエリを高速に実現するの"
-"に向いています。"
-
-#: ../../../source/characteristic.txt:9
-msgid "全文検索ライブラリSennaの後継"
-msgstr "全文検索ライブラリSennaの後継"
-
-#: ../../../source/characteristic.txt:34
-msgid ""
-"Tritonnの次期バージョンは、MySQLのプラガブルストレージエンジンとして実装予定"
-"です。Tritonnで開いているgroongaストレージファイルも共有可能です。たとえば、"
-"MySQLプロトコルでデータの更新を行い、HTTPでデータの参照を行うことができます。"
-msgstr ""
-"Tritonnの次期バージョンは、MySQLのプラガブルストレージエンジンとして実装予定"
-"です。Tritonnで開いているgroongaストレージファイルも共有可能です。たとえば、"
-"MySQLプロトコルでデータの更新を行い、HTTPでデータの参照を行うことができます。"
-
-#: ../../../source/characteristic.txt:53
-msgid ""
-"日本測地系のみならず、世界測地系にも対応した位置情報での絞込が可能です。位置"
-"情報の範囲は、円や矩形を指定することができます。また、任意の２点間の距離も計"
-"算可能です。"
-msgstr ""
-"日本測地系のみならず、世界測地系にも対応した位置情報での絞込が可能です。位置"
-"情報の範囲は、円や矩形を指定することができます。また、任意の２点間の距離も計"
-"算可能です。"
-
+# 1b451e719f6c440db03a43e87e059070
 #: ../../../source/characteristic.txt:16
 msgid ""
 "Sennaは、全文検索を行うアプリケーションで用いるための部品でした。groongaで"
@@ -165,6 +58,118 @@ msgstr ""
 "TCP/IP通信を行うことができます。よって、ライブラリをインストールできないレン"
 "タルサーバなどの環境でも利用しやすくなりました。"
 
+# d6e1dfb7b60849d4996252dfdb242825
+#: ../../../source/characteristic.txt:18
+msgid "Sennaと同様に、groongaもC言語のライブラリとして利用できます。"
+msgstr "Sennaと同様に、groongaもC言語のライブラリとして利用できます。"
+
+# 6db68e4d636f4b34b88bc640e18656bb
+#: ../../../source/characteristic.txt:21
+msgid "高速なデータ更新"
+msgstr "高速なデータ更新"
+
+# f64819b494bc4207bd26d796f65ac53d
+#: ../../../source/characteristic.txt:23
+msgid ""
+"groongaの前身であるSennaは、ストレージを持たない全文検索ライブラリでした。そ"
+"のため、MySQLのMyISAMストレージエンジンと組み合わせて用いるTritonnや、"
+"PostgreSQLと組み合わせて用いるLudiaを通じて利用するのが一般的でした。しかし、"
+"これらの形態では、全文検索インデックス更新における参照lockが不要というSennaの"
+"性能特性を生かすことができませんでした。"
+msgstr ""
+"groongaの前身であるSennaは、ストレージを持たない全文検索ライブラリでした。そ"
+"のため、MySQLのMyISAMストレージエンジンと組み合わせて用いるTritonnや、"
+"PostgreSQLと組み合わせて用いるLudiaを通じて利用するのが一般的でした。しかし、"
+"これらの形態では、全文検索インデックス更新における参照lockが不要というSennaの"
+"性能特性を生かすことができませんでした。"
+
+# 60e7b8aedb7844779fc5edb6ba0a0355
+#: ../../../source/characteristic.txt:25
+msgid ""
+"たとえば、MyISAMではレコードが更新される際には、多くの場合テーブルロックが必"
+"要となります。このような場合には、いかに全文検索インデックスの更新が速くと"
+"も、MyISAMでのデータ更新がボトルネックとなってしまいます。"
+msgstr ""
+"たとえば、MyISAMではレコードが更新される際には、多くの場合テーブルロックが必"
+"要となります。このような場合には、いかに全文検索インデックスの更新が速くと"
+"も、MyISAMでのデータ更新がボトルネックとなってしまいます。"
+
+# 850727a949884d82a170b53960954a84
+#: ../../../source/characteristic.txt:27
+msgid ""
+"より即時性の高い検索サービスを実現するために、groongaでは参照lockが不要なスト"
+"レージを実装しました。"
+msgstr ""
+"より即時性の高い検索サービスを実現するために、groongaでは参照lockが不要なスト"
+"レージを実装しました。"
+
+# a7057938ee0142c6bd38b0096c41f3a5
+#: ../../../source/characteristic.txt:30
+msgid "複数プロセス・複数スレッドで共有できるストレージ"
+msgstr "複数プロセス・複数スレッドで共有できるストレージ"
+
+# 692e67163e014a50ab13d2e915eb33a2
+#: ../../../source/characteristic.txt:32
+msgid ""
+"groongaのストレージファイルは、複数プロセスや複数スレッドで共有することができ"
+"ます。明示的なロックなどは必要ありません。"
+msgstr ""
+"groongaのストレージファイルは、複数プロセスや複数スレッドで共有することができ"
+"ます。明示的なロックなどは必要ありません。"
+
+# 4e0f0af8603e4e9388fbdcd6d89853c5
+#: ../../../source/characteristic.txt:34
+msgid ""
+"Tritonnの次期バージョンは、MySQLのプラガブルストレージエンジンとして実装予定"
+"です。Tritonnで開いているgroongaストレージファイルも共有可能です。たとえば、"
+"MySQLプロトコルでデータの更新を行い、HTTPでデータの参照を行うことができます。"
+msgstr ""
+"Tritonnの次期バージョンは、MySQLのプラガブルストレージエンジンとして実装予定"
+"です。Tritonnで開いているgroongaストレージファイルも共有可能です。たとえば、"
+"MySQLプロトコルでデータの更新を行い、HTTPでデータの参照を行うことができます。"
+
+# e1cbf246876d495ba52e717bfedfcfc0
+#: ../../../source/characteristic.txt:37
+msgid "ドリルダウンなどの集計系クエリを高速に実現"
+msgstr "ドリルダウンなどの集計系クエリを高速に実現"
+
+# 4a795277c467453e887f5d36b46d39f6
+#: ../../../source/characteristic.txt:39
+msgid ""
+"groongaのストレージは、カラムごとにデータを保存するカラム指向データベースを採"
+"用しています。カラム指向データベースはOLAPなどの集計クエリを高速に実現するの"
+"に向いています。"
+msgstr ""
+"groongaのストレージは、カラムごとにデータを保存するカラム指向データベースを採"
+"用しています。カラム指向データベースはOLAPなどの集計クエリを高速に実現するの"
+"に向いています。"
+
+# f4fa8ecd09d6413a96142dfc78f912f0
+#: ../../../source/characteristic.txt:41
+msgid ""
+"全文検索結果のうち、特定のカラム値ごとにグループ分けをし、それぞれのグループ"
+"のレコード数を数えるような処理をドリルダウンといいます。groongaはカラム指向"
+"データベースを生かして、このような処理を高速に実行します。"
+msgstr ""
+"全文検索結果のうち、特定のカラム値ごとにグループ分けをし、それぞれのグループ"
+"のレコード数を数えるような処理をドリルダウンといいます。groongaはカラム指向"
+"データベースを生かして、このような処理を高速に実行します。"
+
+# 4d6ac5454f2740499c824cc6bd021525
+#: ../../../source/characteristic.txt:44
+msgid "Sennaの転置インデックス実装をさらに改良"
+msgstr "Sennaの転置インデックス実装をさらに改良"
+
+# 300c23d32dd84a799deff0175b6f9240
+#: ../../../source/characteristic.txt:46
+msgid ""
+"groongaの転置インデックスは、Sennaにおける転置インデックスの実装を改良し、よ"
+"り高速かつ汎用的なものとなりました。"
+msgstr ""
+"groongaの転置インデックスは、Sennaにおける転置インデックスの実装を改良し、よ"
+"り高速かつ汎用的なものとなりました。"
+
+# cf6aca9e418346adb8c68b8d8e5df4b3
 #: ../../../source/characteristic.txt:48
 msgid ""
 "転置インデックスを生かすことにより、SQLでも実現が難しい複雑なクエリを高速に実"
@@ -175,10 +180,28 @@ msgstr ""
 "行することができます。いわゆるタグ検索やドリルダウンにおいて、転置インデック"
 "スを利用した高速な処理を行うことができます。"
 
-#: ../../../source/characteristic.txt:18
-msgid "Sennaと同様に、groongaもC言語のライブラリとして利用できます。"
-msgstr "Sennaと同様に、groongaもC言語のライブラリとして利用できます。"
+# 6252f3e627ea41d0bf5a7a69275102a1
+#: ../../../source/characteristic.txt:51
+msgid "位置情報（緯度・経度）検索"
+msgstr "位置情報（緯度・経度）検索"
 
+# d43fbcadab814756ad3fd2c9baa6c2f4
+#: ../../../source/characteristic.txt:53
+msgid ""
+"日本測地系のみならず、世界測地系にも対応した位置情報での絞込が可能です。位置"
+"情報の範囲は、円や矩形を指定することができます。また、任意の２点間の距離も計"
+"算可能です。"
+msgstr ""
+"日本測地系のみならず、世界測地系にも対応した位置情報での絞込が可能です。位置"
+"情報の範囲は、円や矩形を指定することができます。また、任意の２点間の距離も計"
+"算可能です。"
+
+# 31f12e409c17443db3018c82c3f04038
+#: ../../../source/characteristic.txt:56
+msgid "自動クエリキャッシュ機構"
+msgstr "自動クエリキャッシュ機構"
+
+# 9068e14eaf154c3184903bcac65b1f6d
 #: ../../../source/characteristic.txt:58
 msgid "参照系のクエリについて、自動的にクエリキャッシュを行います。"
 msgstr "参照系のクエリについて、自動的にクエリキャッシュを行います。"

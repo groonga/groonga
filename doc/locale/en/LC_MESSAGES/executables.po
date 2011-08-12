@@ -1,118 +1,262 @@
-# English translations for 1.2.3 package.
+# English translations for 1.2.4 package.
 # Copyright (C) 2009-2011, Brazil, Inc
 # This file is distributed under the same license as the groonga package.
 # Kouhei Sutou <kou@clear-code.com>, 2011.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: 1.2.3\n"
+"Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-06-28 23:53\n"
-"PO-Revision-Date: 2011-06-28 23:53+0900\n"
+"POT-Creation-Date: 2011-08-12 22:06\n"
+"PO-Revision-Date: 2011-08-12 22:01+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
+"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../../../source/executables/grntest.txt:255
-msgid "制限事項"
-msgstr "制限事項"
+# 0347307a3995470aa6767b247e784e35
+#: ../../../source/executables.txt:6
+msgid "実行ファイル"
+msgstr "実行ファイル"
 
-#: ../../../source/executables/groonga.txt:93
-msgid ""
-"クエリーログを出力するファイルのパスを指定します。(デフォルトでは出力されませ"
-"ん)"
-msgstr ""
-"クエリーログを出力するファイルのパスを指定します。(デフォルトでは出力されませ"
-"ん)"
+# 592d4f8867c1416c811be33094697fd1
+#: ../../../source/executables.txt:8
+msgid "groongaパッケージが提供する実行ファイルについて説明します。"
+msgstr "groongaパッケージが提供する実行ファイルについて説明します。"
 
-#: ../../../source/executables/grntest.txt:265
-msgid "もし、grntestが正常に動作しない場合、まず以下を確認してください。"
-msgstr "もし、grntestが正常に動作しない場合、まず以下を確認してください。"
-
-#: ../../../source/executables/grnslap.txt:36
-msgid "リクエストのプロトコルを指定します。"
-msgstr "リクエストのプロトコルを指定します。"
-
-#: ../../../source/executables/groonga.txt:18
-msgid "groonga [options] [dest] [command [args]]"
-msgstr "groonga [options] [dest] [command [args]]"
-
-#: ../../../source/executables/grntest.txt:81
-msgid "とタイプしてください。もしgrntestが正常に動作すれば、::"
-msgstr "とタイプしてください。もしgrntestが正常に動作すれば、::"
-
-#: ../../../source/executables/grntest.txt:6
-msgid "grntest"
-msgstr "grntest"
-
-#: ../../../source/executables/groonga.txt:81
-msgid ""
-"デフォルトでは、データベースを管理するための汎用的なページに対応するファイル"
-"が/usr/share/groonga/admin_html以下にインストールされます。このディレクトリを"
-"document-rootオプションの値に指定して起動した場合、ウェブブラウザでhttp://"
-"hostname:port/index.htmlにアクセスすると、ウェブベースのデータベース管理ツー"
-"ルを使用できます。"
-msgstr ""
-"デフォルトでは、データベースを管理するための汎用的なページに対応するファイル"
-"が/usr/share/groonga/admin_html以下にインストールされます。このディレクトリを"
-"document-rootオプションの値に指定して起動した場合、ウェブブラウザでhttp://"
-"hostname:port/index.htmlにアクセスすると、ウェブベースのデータベース管理ツー"
-"ルを使用できます。"
-
-#: ../../../source/executables/grntest.txt:124
-msgid "とした場合と同じです。"
-msgstr "とした場合と同じです。"
-
-#: ../../../source/executables/grntest.txt:11
-msgid "grntest - groongaテストプログラム"
-msgstr "grntest - groongaテストプログラム"
-
-#: ../../../source/executables/groonga.txt:85
-msgid "http,gqtpのいずれかを指定します。(デフォルトはgqtp)"
-msgstr "http,gqtpのいずれかを指定します。(デフォルトはgqtp)"
-
-#: ../../../source/executables/grntest.txt:100
-msgid "現在サポートされているgrntest命令は以下の8つです。"
-msgstr "現在サポートされているgrntest命令は以下の8つです。"
-
-#: ../../../source/executables/grntest.txt:179
-msgid "$ ./grntest --port 20010 test.scr testdb"
-msgstr "$ ./grntest --port 20010 test.scr testdb"
-
+# c8ce30adf13a4c00a61835284ff78a3e
 #: ../../../source/executables/grnslap.txt:6
 msgid "grnslap"
 msgstr "grnslap"
 
+# 63fc02719cb0463385a4bd43e5581c27
+#: ../../../source/executables/grnslap.txt:11
+msgid "grnslap - groongaプロセスの通信層のパフォーマンスをチェックするツール"
+msgstr "grnslap - groongaプロセスの通信層のパフォーマンスをチェックするツール"
+
+# fa381668fbc2495fa3413b8ae5081aa3
+#: ../../../source/executables/grnslap.txt:23
+msgid ""
+"grnslapは、groongaプロセスに対してリクエストを多重に行い、パフォーマンスを"
+"チェックするためのツールです。"
+msgstr ""
+"grnslapは、groongaプロセスに対してリクエストを多重に行い、パフォーマンスを"
+"チェックするためのツールです。"
+
+# e0f6a61ef21240e7a27b80f49320c835
+#: ../../../source/executables/grnslap.txt:25
+msgid ""
+"groonga独自プロトコルであるgqtpと、httpの両プロトコルでリクエストを行うことが"
+"できます。また、リクエストの多重度を指定することができます。"
+msgstr ""
+"groonga独自プロトコルであるgqtpと、httpの両プロトコルでリクエストを行うことが"
+"できます。また、リクエストの多重度を指定することができます。"
+
+# 5425d7e7c74a46669f2f7449d9c9522e
+#: ../../../source/executables/grnslap.txt:27
+msgid ""
+"クエリの内容を標準入力から与えることができます。実稼動環境でのクエリパタンに"
+"近いクエリを標準入力に与えることによって、実稼動環境に近い状態での検証を行う"
+"ことができます。"
+msgstr ""
+"クエリの内容を標準入力から与えることができます。実稼動環境でのクエリパタンに"
+"近いクエリを標準入力に与えることによって、実稼動環境に近い状態での検証を行う"
+"ことができます。"
+
+# 44dab7e92fd1424e8708df18b92c0bfa
+#: ../../../source/executables/grnslap.txt:29
+msgid "現在は、make installしてもインストールは行われない。"
+msgstr "現在は、make installしてもインストールは行われない。"
+
+# 35adea532c6845e3ad8dc07cb96c4dba
+#: ../../../source/executables/grnslap.txt:36
+msgid "リクエストのプロトコルを指定します。"
+msgstr "リクエストのプロトコルを指定します。"
+
+# d6aeb35c778a4f15bc8756255087f58a
+#: ../../../source/executables/grnslap.txt:38
+msgid "`http`"
+msgstr "`http`"
+
+# c4454a8449d7455bb89a1d1412d4a454
+#: ../../../source/executables/grnslap.txt:40
+msgid ""
+"httpでリクエストします。対象のhttpのパス群(GETパラメータを含む)をLF区切り形式"
+"で標準入力に与えると、それらのパスに順次アクセスします。"
+msgstr ""
+"httpでリクエストします。対象のhttpのパス群(GETパラメータを含む)をLF区切り形式"
+"で標準入力に与えると、それらのパスに順次アクセスします。"
+
+# 2d5adda8b4d74b46b34cfc1bc2ab8172
+#: ../../../source/executables/grnslap.txt:42
+msgid "`gqtp`"
+msgstr "`gqtp`"
+
+# 65a23aac98904d26bcc85503c73e8127
+#: ../../../source/executables/grnslap.txt:44
+msgid ""
+"gqtpでリクエストします。gqtpのリクエストをLF区切り形式で標準入力に与えると、"
+"それらのリクエストを順次行います。"
+msgstr ""
+"gqtpでリクエストします。gqtpのリクエストをLF区切り形式で標準入力に与えると、"
+"それらのリクエストを順次行います。"
+
+# 983a6544ea944808a0bee991a4097d51
 #: ../../../source/executables/grnslap.txt:48
 msgid "リクエストの多重度を指定します。初期値は10です。"
 msgstr "リクエストの多重度を指定します。初期値は10です。"
 
-#: ../../../source/executables/grntest.txt:170
+# 956ba9c4cf384f2992f3d3a71696147d
+#: ../../../source/executables/grnslap.txt:55
 msgid ""
-"-p, --port オプションと同等の機能です。コマンドラインオプションに指定したポー"
-"ト番号とSET_PORTで指定したポート番号が異なる場合、またコマンドラインオプショ"
-"ンを指定しなかった場合にもSET_PORTが優先されます。"
+"接続先のホスト名とポート番号をを指定します(デフォルト値は'localhost:10041')。"
+"ポート番号を指定しない場合には、10041が指定されたものとします。"
 msgstr ""
-"-p, --port オプションと同等の機能です。コマンドラインオプションに指定したポー"
-"ト番号とSET_PORTで指定したポート番号が異なる場合、またコマンドラインオプショ"
-"ンを指定しなかった場合にもSET_PORTが優先されます。"
+"接続先のホスト名とポート番号をを指定します(デフォルト値は'localhost:10041')。"
+"ポート番号を指定しない場合には、10041が指定されたものとします。"
 
-#: ../../../source/executables/grntest.txt:173
+# 1d9430e18d2f4c7e91ee36f058f80a2b
+#: ../../../source/executables/grnslap.txt:60
+msgid "http://localhost:10041/d/status に、多重度100でリクエストを行う。"
+msgstr "http://localhost:10041/d/status に、多重度100でリクエストを行う。"
+
+# 46c89c61669a4ee9b8a55b63c6453d9a
+# 772cb83991cf4e03b8c15e3f3770ef2a
+# 077f65c6093d42d18a1ba38580ab22c4
+# fab2af7b8f564d26ab48fb7e606c22f9
+#: ../../../source/executables/grnslap.txt:14,
+#: ../../../source/executables/grntest.txt:14,
+#: ../../../source/executables/groonga.txt:14,
+#: ../../../source/executables/http.txt:14
+msgid "書式"
+msgstr "書式"
+
+# d71c481348394cc599ba49575e4b2086
+# 48b3d2c1d87f4b708bbda092ab387519
+# 5ec2f623b04b4a809d57fc55fa390188
+# b66b361fb61146ad89d1f4be9f0bbea9
+#: ../../../source/executables/grnslap.txt:21,
+#: ../../../source/executables/grntest.txt:21,
+#: ../../../source/executables/groonga.txt:21,
+#: ../../../source/executables/http.txt:20
+msgid "説明"
+msgstr "説明"
+
+# 6cdd7c9400eb49a9b0003eaa7b8a2b6b
+# 2cb21f4ec51c4f3a845b44b162488dfc
+# 6203c552391f46d3bd59557ba6353bc1
+#: ../../../source/executables/grnslap.txt:32,
+#: ../../../source/executables/grntest.txt:32,
+#: ../../../source/executables/groonga.txt:27
+msgid "オプション"
+msgstr "オプション"
+
+# 59685a6d850e451e8a950dff8e1ffe4c
+# 61de0b45adb8479189da71a5eb56737d
+# 37327acb643f454099c491ebf3d10ee3
+#: ../../../source/executables/grnslap.txt:51,
+#: ../../../source/executables/grntest.txt:64,
+#: ../../../source/executables/groonga.txt:129
+msgid "引数"
+msgstr "引数"
+
+# ae2d8c6d455141249caecc8f94967e08
+# a80bd90f79c644b392a2eb40c437b085
+#: ../../../source/executables/grnslap.txt:58,
+#: ../../../source/executables/grntest.txt:140
+msgid "サンプル"
+msgstr "サンプル"
+
+# 87178c95f3cb4a26a5fcc9cd2ddfa882
+# 5005f845e4c441f4a2f7e12f58904213
+# 5fd60d3563254a62bda9baeb2e7a1bbf
+# 452b001734724b32848b2c0792ada182
+#: ../../../source/executables/grnslap.txt:9,
+#: ../../../source/executables/grntest.txt:9,
+#: ../../../source/executables/groonga.txt:9,
+#: ../../../source/executables/http.txt:9
+msgid "名前"
+msgstr "名前"
+
+# 718aa8b945f04bb2a648e2133ead6023
+#: ../../../source/executables/grntest.txt:6
+msgid "grntest"
+msgstr "grntest"
+
+# 72b7c43dfba746cfb04d14b48474437d
+#: ../../../source/executables/grntest.txt:11
+msgid "grntest - groongaテストプログラム"
+msgstr "grntest - groongaテストプログラム"
+
+# 21faedc8d86546d8ac3046cfb17f5641
+#: ../../../source/executables/grntest.txt:23
+msgid "grntestは、groonga汎用テストツールです。"
+msgstr "grntestは、groonga汎用テストツールです。"
+
+# 388048492e1a4bb88d33b8fa29f38250
+#: ../../../source/executables/grntest.txt:25
 msgid ""
-"特殊命令はスクリプトファイルの任意の場所に書き込むことができます。同一ファイ"
-"ル内に複数回特殊命令を記述した場合、「最後の」特殊命令が有効となります。"
+"groongaを単独のプロセスとして利用する場合はもちろん、サーバプログラムとして利"
+"用する場合の動作確認や実行速度測定が可能です。"
 msgstr ""
-"特殊命令はスクリプトファイルの任意の場所に書き込むことができます。同一ファイ"
-"ル内に複数回特殊命令を記述した場合、「最後の」特殊命令が有効となります。"
+"groongaを単独のプロセスとして利用する場合はもちろん、サーバプログラムとして利"
+"用する場合の動作確認や実行速度測定が可能です。"
 
-#: ../../../source/executables/grntest.txt:142
-msgid "スクリプトファイルのサンプルです。::"
-msgstr "スクリプトファイルのサンプルです。::"
+# 0acf910ee79247d19bd29efc7d8cdd69
+#: ../../../source/executables/grntest.txt:27
+msgid ""
+"grntest を利用するために必要なデータファイルは、ftp.groonga.orgから必要に応じ"
+"ダウンロードしますので、groonga及びgrntestが動作し、インターネットに接続でき"
+"る環境であればgroongaコマンドの知識がなくてもgroongaの動作を確認できます。"
+msgstr ""
+"grntest を利用するために必要なデータファイルは、ftp.groonga.orgから必要に応じ"
+"ダウンロードしますので、groonga及びgrntestが動作し、インターネットに接続でき"
+"る環境であればgroongaコマンドの知識がなくてもgroongaの動作を確認できます。"
 
+# 6372811fbddf4509a446565230011e20
+#: ../../../source/executables/grntest.txt:29
+msgid ""
+"現在は、linux 及びWindows上で動作します。make installしてもインストールは行わ"
+"れません。"
+msgstr ""
+"現在は、linux 及びWindows上で動作します。make installしてもインストールは行わ"
+"れません。"
+
+# 4a80b5d0e54e403db340b27a6bdd9146
+#: ../../../source/executables/grntest.txt:35
+msgid ""
+"接続するgroongaサーバを、ipアドレスまたはホスト名で指定します。指定先に"
+"groongaサーバが立ち上がっていない場合、接続不能となることに注意してください。"
+"このオプションを指定しない場合、grntestは自動的にlocalhostのgroongaサーバを起"
+"動して接続します。"
+msgstr ""
+"接続するgroongaサーバを、ipアドレスまたはホスト名で指定します。指定先に"
+"groongaサーバが立ち上がっていない場合、接続不能となることに注意してください。"
+"このオプションを指定しない場合、grntestは自動的にlocalhostのgroongaサーバを起"
+"動して接続します。"
+
+# 82f1628a634f44779f3608bfb9de0f53
+#: ../../../source/executables/grntest.txt:40
+msgid ""
+"自動的に起動するgroongaサーバ、または明示的に指定した接続先のgroonga サーバが"
+"利用するポート番号を指定します。接続先のgroongaサーバが利用しているポートと、"
+"このオプションで指定したポート番号が異なる場合、接続不能となることに注意して"
+"ください。"
+msgstr ""
+"自動的に起動するgroongaサーバ、または明示的に指定した接続先のgroonga サーバが"
+"利用するポート番号を指定します。接続先のgroongaサーバが利用しているポートと、"
+"このオプションで指定したポート番号が異なる場合、接続不能となることに注意して"
+"ください。"
+
+# 174b5b1f3dfa413abfb533ca5b0bcb82
+#: ../../../source/executables/grntest.txt:45
+msgid "ftp.groonga.org に用意されているスクリプトファイルを表示します。"
+msgstr "ftp.groonga.org に用意されているスクリプトファイルを表示します。"
+
+# 9c99b2beab5d453ba7fbfc5542dfccd9
 #: ../../../source/executables/grntest.txt:49
 msgid ""
 "通常grntestはftp.groonga.orgとftp通信を行い、scriptファイルの同期やログファイ"
@@ -125,281 +269,7 @@ msgstr ""
 "になります。存在しないスクリプトファイルを指定した場合、エラーとなることに注"
 "意してください。"
 
-#: ../../../source/executables/grntest.txt:157
-msgid ""
-"test.load というコマンドファイルをgroonga単体で実行する。(最後の\";\"セミコロ"
-"ンは複数のgrntest命令を記述する場合に必要ですが、この例のように1つのgrntest命"
-"令を実行する場合に付与しても問題ありません。)"
-msgstr ""
-"test.load というコマンドファイルをgroonga単体で実行する。(最後の\";\"セミコロ"
-"ンは複数のgrntest命令を記述する場合に必要ですが、この例のように1つのgrntest命"
-"令を実行する場合に付与しても問題ありません。)"
-
-#: ../../../source/executables/groonga.txt:166
-msgid "DBに定義されているテーブルのリストを表示します。"
-msgstr "DBに定義されているテーブルのリストを表示します。"
-
-#: ../../../source/executables/groonga.txt:147
-msgid "引数は以下の2種類の方法のいずれかで指定することができます。::"
-msgstr "引数は以下の2種類の方法のいずれかで指定することができます。::"
-
-#: ../../../source/executables/http.txt:39
-msgid ""
-"形式1と形式2は混在させることができます。これらの形式では、output_typeという引"
-"数名を用いてoutput_typeを指定します。"
-msgstr ""
-"形式1と形式2は混在させることができます。これらの形式では、output_typeという引"
-"数名を用いてoutput_typeを指定します。"
-
-#: ../../../source/executables.txt:8
-msgid "groongaパッケージが提供する実行ファイルについて説明します。"
-msgstr "groongaパッケージが提供する実行ファイルについて説明します。"
-
-#: ../../../source/executables/grntest.txt:159
-msgid ""
-"test.select というコマンドファイルをgroongaサーバで10個のスレッドで同時に実行"
-"する。各スレッドはtest.selectの中身を10回繰り返す。また同時に、groonga単体で"
-"test.statusというコマンドファイルを10個のスレッドで実行する。"
-msgstr ""
-"test.select というコマンドファイルをgroongaサーバで10個のスレッドで同時に実行"
-"する。各スレッドはtest.selectの中身を10回繰り返す。また同時に、groonga単体で"
-"test.statusというコマンドファイルを10個のスレッドで実行する。"
-
-#: ../../../source/executables/grnslap.txt:29
-msgid "現在は、make installしてもインストールは行われない。"
-msgstr "現在は、make installしてもインストールは行われない。"
-
-#: ../../../source/executables/groonga.txt:144
-msgid ""
-"groonga実行ファイルを通してデータベースを操作する命令をコマンドと呼びます。コ"
-"マンドは主にC言語で記述され、groongaプロセスにロードすることによって使用でき"
-"るようになります。 それぞれのコマンドは一意な名前と、0個以上の引数を持ちま"
-"す。"
-msgstr ""
-"groonga実行ファイルを通してデータベースを操作する命令をコマンドと呼びます。コ"
-"マンドは主にC言語で記述され、groongaプロセスにロードすることによって使用でき"
-"るようになります。 それぞれのコマンドは一意な名前と、0個以上の引数を持ちま"
-"す。"
-
-#: ../../../source/executables/groonga.txt:232
-msgid ""
-"% groonga -d -p 80 --protocol http --document-root /usr/share/groonga/"
-"admin_html /tmp/hoge.db %"
-msgstr ""
-"% groonga -d -p 80 --protocol http --document-root /usr/share/groonga/"
-"admin_html /tmp/hoge.db %"
-
-#: ../../../source/executables/grnslap.txt:58
-#: ../../../source/executables/grntest.txt:140
-msgid "サンプル"
-msgstr "サンプル"
-
-#: ../../../source/executables/grnslap.txt:25
-msgid ""
-"groonga独自プロトコルであるgqtpと、httpの両プロトコルでリクエストを行うことが"
-"できます。また、リクエストの多重度を指定することができます。"
-msgstr ""
-"groonga独自プロトコルであるgqtpと、httpの両プロトコルでリクエストを行うことが"
-"できます。また、リクエストの多重度を指定することができます。"
-
-#: ../../../source/executables/grnslap.txt:44
-msgid ""
-"gqtpでリクエストします。gqtpのリクエストをLF区切り形式で標準入力に与えると、"
-"それらのリクエストを順次行います。"
-msgstr ""
-"gqtpでリクエストします。gqtpのリクエストをLF区切り形式で標準入力に与えると、"
-"それらのリクエストを順次行います。"
-
-#: ../../../source/executables/grntest.txt:29
-msgid ""
-"現在は、linux 及びWindows上で動作します。make installしてもインストールは行わ"
-"れません。"
-msgstr ""
-"現在は、linux 及びWindows上で動作します。make installしてもインストールは行わ"
-"れません。"
-
-#: ../../../source/executables/groonga.txt:126
-msgid "検索の挙動をエスカレーションする閾値を指定します。(デフォルトは0です)"
-msgstr "検索の挙動をエスカレーションする閾値を指定します。(デフォルトは0です)"
-
-#: ../../../source/executables/grntest.txt:98
-msgid "grntest命令"
-msgstr "grntest命令"
-
-#: ../../../source/executables/grntest.txt:83
-msgid "test-ユーザ名-数字.log"
-msgstr "test-ユーザ名-数字.log"
-
-#: ../../../source/executables/http.txt:56
-msgid "output_typeの指定に従って、コマンドの実行結果を出力します。"
-msgstr "output_typeの指定に従って、コマンドの実行結果を出力します。"
-
-#: ../../../source/executables/grntest.txt:61
-msgid ""
-"groongaコマンドが使うプロトコルとして``gqtp``または``http``を指定します。"
-msgstr ""
-"groongaコマンドが使うプロトコルとして``gqtp``または``http``を指定します。"
-
-#: ../../../source/executables/groonga.txt:160
-msgid "以下のコマンドは組み込みコマンドとして予め定義されています。"
-msgstr "以下のコマンドは組み込みコマンドとして予め定義されています。"
-
-#: ../../../source/executables/groonga.txt:89
-msgid ""
-"ログを出力するファイルのパスを指定します。(デフォルトは/var/log/groonga/"
-"groonga.logです)"
-msgstr ""
-"ログを出力するファイルのパスを指定します。(デフォルトは/var/log/groonga/"
-"groonga.logです)"
-
-#: ../../../source/executables/http.txt:33
-msgid ""
-"スタンドアロンやクライアントモードでは、コマンドは以下のような形式で指定しま"
-"す。"
-msgstr ""
-"スタンドアロンやクライアントモードでは、コマンドは以下のような形式で指定しま"
-"す。"
-
-#: ../../../source/executables/grnslap.txt:32
-#: ../../../source/executables/grntest.txt:32
-#: ../../../source/executables/groonga.txt:27
-msgid "オプション"
-msgstr "オプション"
-
-#: ../../../source/executables/groonga.txt:105
-msgid ""
-"設定ファイルのパスを指定します。設定ファイルは以下のようなフォーマットになり"
-"ます。::"
-msgstr ""
-"設定ファイルのパスを指定します。設定ファイルは以下のようなフォーマットになり"
-"ます。::"
-
-#: ../../../source/executables/groonga.txt:221
-msgid "% groonga /tmp/hoge.db table_create Table 0 ShortText [[0]] %"
-msgstr "% groonga /tmp/hoge.db table_create Table 0 ShortText [[0]] %"
-
-#: ../../../source/executables/groonga.txt:225
-msgid "サーバを起動します。::"
-msgstr "サーバを起動します。::"
-
-#: ../../../source/executables/groonga.txt:23
-msgid ""
-"groongaは列指向のデータベース機能を持つ高速でスケーラブルな全文検索エンジンで"
-"す。 groongaのデータベースは、groonga実行ファイルかCライブラリインタフェース"
-"を通して操作することができます。このマニュアルページでは、groonga実行ファイル"
-"の使い方について説明します。"
-msgstr ""
-"groongaは列指向のデータベース機能を持つ高速でスケーラブルな全文検索エンジンで"
-"す。 groongaのデータベースは、groonga実行ファイルかCライブラリインタフェース"
-"を通して操作することができます。このマニュアルページでは、groonga実行ファイル"
-"の使い方について説明します。"
-
-#: ../../../source/executables/groonga.txt:163
-msgid "groongaプロセスの状態を表示します。"
-msgstr "groongaプロセスの状態を表示します。"
-
-#: ../../../source/executables/grnslap.txt:42
-msgid "`gqtp`"
-msgstr "`gqtp`"
-
-#: ../../../source/executables/grntest.txt:153
-msgid "コメント行。"
-msgstr "コメント行。"
-
-#: ../../../source/executables/grntest.txt:102
-msgid "do_local コマンドファイル [スレッド数] [繰り返し数]"
-msgstr "do_local コマンドファイル [スレッド数] [繰り返し数]"
-
-#: ../../../source/executables/grntest.txt:126
-msgid "out_gqtp コマンドファイル 出力ファイル名"
-msgstr "out_gqtp コマンドファイル 出力ファイル名"
-
-#: ../../../source/executables/grntest.txt:128
-msgid ""
-"コマンドファイルをgroongaサーバで実行します。その他はout_local命令と同等で"
-"す。"
-msgstr ""
-"コマンドファイルをgroongaサーバで実行します。その他はout_local命令と同等で"
-"す。"
-
-#: ../../../source/executables/groonga.txt:175
-msgid "テーブルにカラムを追加します。"
-msgstr "テーブルにカラムを追加します。"
-
-#: ../../../source/executables/http.txt:35
-msgid "形式1: コマンド名 値1 値2,.."
-msgstr "形式1: コマンド名 値1 値2,.."
-
-#: ../../../source/executables/groonga.txt:214
-msgid "新しいデータベースを作成します。::"
-msgstr "新しいデータベースを作成します。::"
-
-#: ../../../source/executables/grntest.txt:175
-msgid "例えば、"
-msgstr "例えば、"
-
-#: ../../../source/executables/http.txt:37
-msgid "形式2: コマンド名 --引数名1 値1 --引数名2 値2,.."
-msgstr "形式2: コマンド名 --引数名1 値1 --引数名2 値2,.."
-
-#: ../../../source/executables/groonga.txt:202
-msgid "ログ出力レベルを設定します。"
-msgstr "ログ出力レベルを設定します。"
-
-#: ../../../source/executables/groonga.txt:75
-msgid "ヘルプメッセージを出力します。"
-msgstr "ヘルプメッセージを出力します。"
-
-#: ../../../source/executables/grntest.txt:144
-msgid ""
-"# sample script rep_local test.ddl do_local test.load; do_gqtp test.select "
-"10 10; do_local test.status 10"
-msgstr ""
-"# sample script rep_local test.ddl do_local test.load; do_gqtp test.select "
-"10 10; do_local test.status 10"
-
-#: ../../../source/executables/groonga.txt:169
-msgid "テーブルに定義されているカラムのリストを表示します。"
-msgstr "テーブルに定義されているカラムのリストを表示します。"
-
-#: ../../../source/executables/groonga.txt:184
-msgid "VIEW型のテーブルに要素となるテーブルを定義します。"
-msgstr "VIEW型のテーブルに要素となるテーブルを定義します。"
-
-#: ../../../source/executables/grnslap.txt:27
-msgid ""
-"クエリの内容を標準入力から与えることができます。実稼動環境でのクエリパタンに"
-"近いクエリを標準入力に与えることによって、実稼動環境に近い状態での検証を行う"
-"ことができます。"
-msgstr ""
-"クエリの内容を標準入力から与えることができます。実稼動環境でのクエリパタンに"
-"近いクエリを標準入力に与えることによって、実稼動環境に近い状態での検証を行う"
-"ことができます。"
-
-#: ../../../source/executables/http.txt:31
-msgid ""
-"コマンドは、複数の引数をとります。引数にはそれぞれ名前があります。また、特殊"
-"な引数である「output_type」と「command_version」があります。"
-msgstr ""
-"コマンドは、複数の引数をとります。引数にはそれぞれ名前があります。また、特殊"
-"な引数である「output_type」と「command_version」があります。"
-
-#: ../../../source/executables/http.txt:22
-msgid ""
-"groongaサーバを起動する時に--protocolオプションにhttpを指定すると、httpで通信"
-"可能になります。また、--document-root によって静的ページのパスを指定すると、"
-"httpリクエストに指定されたURIに対応する、パス配下に置かれたファイルを出力しま"
-"す。"
-msgstr ""
-"groongaサーバを起動する時に--protocolオプションにhttpを指定すると、httpで通信"
-"可能になります。また、--document-root によって静的ページのパスを指定すると、"
-"httpリクエストに指定されたURIに対応する、パス配下に置かれたファイルを出力しま"
-"す。"
-
-#: ../../../source/executables/groonga.txt:199
-msgid "サーバ(デーモン)プロセスを停止します。"
-msgstr "サーバ(デーモン)プロセスを停止します。"
-
+# 9171d42362a24a468aa979edc6ca13fe
 #: ../../../source/executables/grntest.txt:53
 msgid ""
 "デフォルトでは、grntest終了後のログファイルの出力先ははカレントディレクトリで"
@@ -410,92 +280,76 @@ msgstr ""
 "す。このオプションを利用すると、任意のディレクトリに出力先を変更することがで"
 "きます。"
 
-#: ../../../source/executables/grnslap.txt:64
+# 003e6923947b4a14b371658bfb578841
+#: ../../../source/executables/grntest.txt:57
 msgid ""
-"> yes /d/status | head -n 100 | grnslap -P http -m 100 localhost:10041 "
-"2009-11-12 19:34:09.998696|begin: max_concurrency=100 max_tp=10000 "
-"2009-11-12 19:34:10.011208|end  : n=100 min=46 max=382 avg=0 qps=7992.966190 "
-"etime=0.012511"
+"groongaコマンドのパスを指定します。デフォルトでは、PATHの中からgroongaコマン"
+"ドを探します。"
 msgstr ""
-"> yes /d/status | head -n 100 | grnslap -P http -m 100 localhost:10041 "
-"2009-11-12 19:34:09.998696|begin: max_concurrency=100 max_tp=10000 "
-"2009-11-12 19:34:10.011208|end  : n=100 min=46 max=382 avg=0 qps=7992.966190 "
-"etime=0.012511"
+"groongaコマンドのパスを指定します。デフォルトでは、PATHの中からgroongaコマン"
+"ドを探します。"
 
-#: ../../../source/executables/http.txt:24
+# 2afb4e46ecfa410caff7cd26e44fda97
+#: ../../../source/executables/grntest.txt:61
 msgid ""
-"groongaにはHTML + JavaScriptで実装された管理ツールが標準で付属しています。--"
-"document-rootを指定しない場合は管理ツールがインストールされているパスが指定さ"
-"れたとみなされますので、ウェブブラウザでhttp://hostname:port/にアクセスする"
-"と、管理ツールを利用できます。"
+"groongaコマンドが使うプロトコルとして``gqtp``または``http``を指定します。"
 msgstr ""
-"groongaにはHTML + JavaScriptで実装された管理ツールが標準で付属しています。--"
-"document-rootを指定しない場合は管理ツールがインストールされているパスが指定さ"
-"れたとみなされますので、ウェブブラウザでhttp://hostname:port/にアクセスする"
-"と、管理ツールを利用できます。"
+"groongaコマンドが使うプロトコルとして``gqtp``または``http``を指定します。"
 
-#: ../../../source/executables/groonga.txt:172
-msgid "DBにテーブルを追加します。"
-msgstr "DBにテーブルを追加します。"
-
-#: ../../../source/executables/grntest.txt:273
+# 80c86de39e334964be3725b996b6f14a
+#: ../../../source/executables/grntest.txt:68
 msgid ""
-"以上の原因でなければ、問題はgrntestかgroongaにあります。ご報告をお願いしま"
-"す。"
+"grntestの動作方法(以下、grntest命令と呼びます)を記述したテキストファイルで"
+"す。拡張子は.scrです。"
 msgstr ""
-"以上の原因でなければ、問題はgrntestかgroongaにあります。ご報告をお願いしま"
-"す。"
+"grntestの動作方法(以下、grntest命令と呼びます)を記述したテキストファイルで"
+"す。拡張子は.scrです。"
 
-#: ../../../source/executables/groonga.txt:158
-msgid "組み込みコマンド"
-msgstr "組み込みコマンド"
-
-#: ../../../source/executables/groonga.txt:97
+# adb8788bf2b7472c91755e968bdfaa2b
+#: ../../../source/executables/grntest.txt:72
 msgid ""
-"最大で利用するスレッド数を指定します。(デフォルトはマシンのCPUコア数と同じ数"
-"です)"
+"grntestが利用するgroonga データベースです。指定されたデータベースが存在しない"
+"場合、grntestが新規に作成します。またgroonga サーバを自動的に起動する場合もこ"
+"の引数で指定したデータベースが利用されます。接続するgroonga サーバを明示的に"
+"指定した場合に利用するデータベースは、接続先サーバが使用中のデータベースにな"
+"ることに注意してください。"
 msgstr ""
-"最大で利用するスレッド数を指定します。(デフォルトはマシンのCPUコア数と同じ数"
-"です)"
+"grntestが利用するgroonga データベースです。指定されたデータベースが存在しない"
+"場合、grntestが新規に作成します。またgroonga サーバを自動的に起動する場合もこ"
+"の引数で指定したデータベースが利用されます。接続するgroonga サーバを明示的に"
+"指定した場合に利用するデータベースは、接続先サーバが使用中のデータベースにな"
+"ることに注意してください。"
 
+# 9148ff128a9c4c5698c8043034ba21d8
+#: ../../../source/executables/grntest.txt:76
+msgid "使い方"
+msgstr "使い方"
+
+# 3046d261490942faa531cae8c179c322
+#: ../../../source/executables/grntest.txt:77
+msgid "まず、シェル上(Windowsならコマンドプロンプト上)で::"
+msgstr "まず、シェル上(Windowsならコマンドプロンプト上)で::"
+
+# b80387664c0d4d8ba3f98e3bd3cb03ba
+#: ../../../source/executables/grntest.txt:81
+msgid "とタイプしてください。もしgrntestが正常に動作すれば、::"
+msgstr "とタイプしてください。もしgrntestが正常に動作すれば、::"
+
+# 94e2be1a7d074d82a7493123df3e4170
+#: ../../../source/executables/grntest.txt:85
+msgid ""
+"というファイルが作成されるはずです。作成されない場合、このドキュメントの「ト"
+"ラブルシューティング」の章を参照してください。"
+msgstr ""
+"というファイルが作成されるはずです。作成されない場合、このドキュメントの「ト"
+"ラブルシューティング」の章を参照してください。"
+
+# 6df6bd33fb734f2ebc84f7948f05b2af
 #: ../../../source/executables/grntest.txt:89
 msgid "スクリプトファイル"
 msgstr "スクリプトファイル"
 
-#: ../../../source/executables/groonga.txt:39
-msgid "サーバモードで実行します。"
-msgstr "サーバモードで実行します。"
-
-#: ../../../source/executables/groonga.txt:35
-msgid "クライアントモードで実行します。"
-msgstr "クライアントモードで実行します。"
-
-#: ../../../source/executables/grntest.txt:259
-msgid "コマンドファイル中のgroongaコマンドの長さは最長5000000byteです。"
-msgstr "コマンドファイル中のgroongaコマンドの長さは最長5000000byteです。"
-
-#: ../../../source/executables/grntest.txt:137
-msgid ""
-"コマンドファイルは、groonga組み込みコマンドを1行に1つずつ記述したテキストファ"
-"イルです。拡張子に制限はありません。groonga組み込みコマンドに関しては :doc:"
-"`commands` を参照してください。"
-msgstr ""
-"コマンドファイルは、groonga組み込みコマンドを1行に1つずつ記述したテキストファ"
-"イルです。拡張子に制限はありません。groonga組み込みコマンドに関しては :doc:"
-"`commands` を参照してください。"
-
-#: ../../../source/executables/groonga.txt:133
-msgid "使用するデータベースのパス名を指定します。"
-msgstr "使用するデータベースのパス名を指定します。"
-
-#: ../../../source/executables/grntest.txt:108
-msgid ""
-"コマンドファイルをgroongaサーバで実行します。スレッド数や繰り返し数の意味は"
-"do_localの場合と同じです。"
-msgstr ""
-"コマンドファイルをgroongaサーバで実行します。スレッド数や繰り返し数の意味は"
-"do_localの場合と同じです。"
-
+# 0fdeb7a1498b4d399bfe79a63f96843b
 #: ../../../source/executables/grntest.txt:91
 msgid ""
 "スクリプトファイルは、grntest命令を記述したテキストファイルです。 \";\"セミコ"
@@ -508,94 +362,186 @@ msgstr ""
 "grntest命令がある場合、各命令は並列に実行されます。 \"#\"で始まる行はコメント"
 "として扱われます。"
 
-#: ../../../source/executables/grntest.txt:202
+# 8c10efaaa55a4dc6b6f92ff62005637e
+#: ../../../source/executables/grntest.txt:98
+msgid "grntest命令"
+msgstr "grntest命令"
+
+# df129371787b4f81aa11ef1404d9d8ab
+#: ../../../source/executables/grntest.txt:100
+msgid "現在サポートされているgrntest命令は以下の8つです。"
+msgstr "現在サポートされているgrntest命令は以下の8つです。"
+
+# 03c056669c1d40f19b3529f67dad7dc7
+#: ../../../source/executables/grntest.txt:102
+msgid "do_local コマンドファイル [スレッド数] [繰り返し数]"
+msgstr "do_local コマンドファイル [スレッド数] [繰り返し数]"
+
+# 602b42ad4bcd4e2e9207e17956100d02
+#: ../../../source/executables/grntest.txt:104
 msgid ""
-"[{\"script\": \"test.scr\",   \"user\": \"homepage\",   \"date\": "
-"\"2010-04-14 22:47:04\",   \"CPU\": Intel(R) Pentium(R) 4 CPU 2.80GHz\",   "
-"\"BIT\": 32,   \"CORE\": 1,   \"RAM\": \"975MBytes\",   \"HDD\": "
-"\"257662232KBytes\",   \"OS\": \"Linux 2.4.20-24.7-i686\",   \"HOST\": "
-"\"localhost\",   \"PORT\": \"10041\",   \"VERSION\": \"0.1.8-100-"
-"ga54c5f8\" }, {\"jobs\": \"rep_local test.ddl\", \"detail\": [ [0, "
-"\"table_create res_table --key_type ShortText\", 1490, 3086, "
-"[0,1271252824.25846,0.00144 7]], [0, \"column_create res_table res_column --"
-"type Text\", 3137, 5956, [0,1271252824.2601,0.002 741]], [0, \"column_create "
-"res_table user_column --type Text\", 6020, 8935, [0,1271252824.26298,0.0 "
-"02841]], [0, \"column_create res_table mail_column --type Text\", 8990, "
-"11925, [0,1271252824.26595,0. 002861]], [0, \"column_create res_table "
-"time_column --type Time\", 12008, 13192, [0,1271252824.26897,0 .001147]], "
-"[0, \"status\", 13214, 13277, [0,1271252824.27018,3.0e-05]], [0, "
-"\"table_create thread_table --key_type ShortText\", 13289, 14541, "
-"[0,1271252824.27025,0. 001213]], [0, \"column_create thread_table "
-"thread_title_column --type ShortText\", 14570, 17380, [0,12 "
-"71252824.27153,0.002741]], [0, \"status\", 17435, 17480, "
-"[0,1271252824.2744,2.7e-05]], [0, \"table_create lexicon_table --flags 129 --"
-"key_type ShortText --default_tokenizer Token Bigram\", 17491, 18970, "
-"[0,1271252824.27446,0.001431]], [0, \"column_create lexicon_table "
-"inv_res_column 514 res_table res_column \", 18998, 33248, "
-"[0,1271252824.27596,0.01418]], [0, \"column_create lexicon_table "
-"inv_thread_column 514 thread_table thread_title_column \",  33285, 48472, "
-"[0,1271252824.29025,0.015119]], [0, \"status\", 48509, 48554, "
-"[0,1271252824.30547,2.7e-05]]], \"summary\" :[{\"job\": \"rep_local test.ddl"
-"\", \"latency\": 48607, \"self\": 47719, \"qps\": 272.4281 73, \"min\": 45, "
-"\"max\": 15187, \"queries\": 13}]}, {\"jobs\": \"do_local test.load; \", "
-"\"summary\" :[{\"job\": \"do_local test.load\", \"latency\": 68693, \"self"
-"\": 19801, \"qps\": 1010.049 997, \"min\": 202, \"max\": 5453, \"queries\": "
-"20}]}, {\"jobs\": \"do_gqtp test.select 10 10; do_local test.status 10\", "
-"\"summary\" :[{\"job\": \" do_local test.status 10\", \"latency\": 805990, "
-"\"self\": 737014, \"qps\": 54.273053, \"min\": 24, \"max\": 218, \"queries"
-"\": 40},{\"job\": \"do_gqtp test.select 10 10\", \"lat ency\": 831495, \"self"
-"\": 762519, \"qps\": 1967.164097, \"min\": 73, \"max\": 135631, \"queries\": "
-"15 00}]}, {\"total\": 915408, \"qps\": 1718.359464, \"queries\": 1573}]"
+"コマンドファイルをgrntest単体で実行します。スレッド数が指定されている場合、複"
+"数のスレッドで同じコマンドファイルを同時に実行します。繰り返し数が指定されて"
+"い場合、コマンドファイルの内容を繰り返し実行します。スレッド数、繰り返し数と"
+"も省略時は1です。1スレッドで複数回動作させたい場合は、do_local コマンドファイ"
+"ル 1 [繰り返し数]と明示的に指定してください。"
 msgstr ""
-"[{\"script\": \"test.scr\",   \"user\": \"homepage\",   \"date\": "
-"\"2010-04-14 22:47:04\",   \"CPU\": Intel(R) Pentium(R) 4 CPU 2.80GHz\",   "
-"\"BIT\": 32,   \"CORE\": 1,   \"RAM\": \"975MBytes\",   \"HDD\": "
-"\"257662232KBytes\",   \"OS\": \"Linux 2.4.20-24.7-i686\",   \"HOST\": "
-"\"localhost\",   \"PORT\": \"10041\",   \"VERSION\": \"0.1.8-100-"
-"ga54c5f8\" }, {\"jobs\": \"rep_local test.ddl\", \"detail\": [ [0, "
-"\"table_create res_table --key_type ShortText\", 1490, 3086, "
-"[0,1271252824.25846,0.00144 7]], [0, \"column_create res_table res_column --"
-"type Text\", 3137, 5956, [0,1271252824.2601,0.002 741]], [0, \"column_create "
-"res_table user_column --type Text\", 6020, 8935, [0,1271252824.26298,0.0 "
-"02841]], [0, \"column_create res_table mail_column --type Text\", 8990, "
-"11925, [0,1271252824.26595,0. 002861]], [0, \"column_create res_table "
-"time_column --type Time\", 12008, 13192, [0,1271252824.26897,0 .001147]], "
-"[0, \"status\", 13214, 13277, [0,1271252824.27018,3.0e-05]], [0, "
-"\"table_create thread_table --key_type ShortText\", 13289, 14541, "
-"[0,1271252824.27025,0. 001213]], [0, \"column_create thread_table "
-"thread_title_column --type ShortText\", 14570, 17380, [0,12 "
-"71252824.27153,0.002741]], [0, \"status\", 17435, 17480, "
-"[0,1271252824.2744,2.7e-05]], [0, \"table_create lexicon_table --flags 129 --"
-"key_type ShortText --default_tokenizer Token Bigram\", 17491, 18970, "
-"[0,1271252824.27446,0.001431]], [0, \"column_create lexicon_table "
-"inv_res_column 514 res_table res_column \", 18998, 33248, "
-"[0,1271252824.27596,0.01418]], [0, \"column_create lexicon_table "
-"inv_thread_column 514 thread_table thread_title_column \",  33285, 48472, "
-"[0,1271252824.29025,0.015119]], [0, \"status\", 48509, 48554, "
-"[0,1271252824.30547,2.7e-05]]], \"summary\" :[{\"job\": \"rep_local test.ddl"
-"\", \"latency\": 48607, \"self\": 47719, \"qps\": 272.4281 73, \"min\": 45, "
-"\"max\": 15187, \"queries\": 13}]}, {\"jobs\": \"do_local test.load; \", "
-"\"summary\" :[{\"job\": \"do_local test.load\", \"latency\": 68693, \"self"
-"\": 19801, \"qps\": 1010.049 997, \"min\": 202, \"max\": 5453, \"queries\": "
-"20}]}, {\"jobs\": \"do_gqtp test.select 10 10; do_local test.status 10\", "
-"\"summary\" :[{\"job\": \" do_local test.status 10\", \"latency\": 805990, "
-"\"self\": 737014, \"qps\": 54.273053, \"min\": 24, \"max\": 218, \"queries"
-"\": 40},{\"job\": \"do_gqtp test.select 10 10\", \"lat ency\": 831495, \"self"
-"\": 762519, \"qps\": 1967.164097, \"min\": 73, \"max\": 135631, \"queries\": "
-"15 00}]}, {\"total\": 915408, \"qps\": 1718.359464, \"queries\": 1573}]"
+"コマンドファイルをgrntest単体で実行します。スレッド数が指定されている場合、複"
+"数のスレッドで同じコマンドファイルを同時に実行します。繰り返し数が指定されて"
+"い場合、コマンドファイルの内容を繰り返し実行します。スレッド数、繰り返し数と"
+"も省略時は1です。1スレッドで複数回動作させたい場合は、do_local コマンドファイ"
+"ル 1 [繰り返し数]と明示的に指定してください。"
 
-#: ../../../source/executables/groonga.txt:219
-msgid "作成済みのデータベースにテーブルを定義します。::"
-msgstr "作成済みのデータベースにテーブルを定義します。::"
+# 361574ea45c941b09baadb9cfd2b5d9a
+#: ../../../source/executables/grntest.txt:106
+msgid "do_gqpt コマンドファイル [スレッド数] [繰り返し数]"
+msgstr "do_gqpt コマンドファイル [スレッド数] [繰り返し数]"
 
-#: ../../../source/executables/groonga.txt:66
+# 948d6fdddc9f4873951a1e812e59eb1d
+#: ../../../source/executables/grntest.txt:108
 msgid ""
-"クライアント、サーバ、またはデーモンモードで使用するTCPポート番号。 (デフォル"
-"トは10041番)"
+"コマンドファイルをgroongaサーバで実行します。スレッド数や繰り返し数の意味は"
+"do_localの場合と同じです。"
 msgstr ""
-"クライアント、サーバ、またはデーモンモードで使用するTCPポート番号。 (デフォル"
-"トは10041番)"
+"コマンドファイルをgroongaサーバで実行します。スレッド数や繰り返し数の意味は"
+"do_localの場合と同じです。"
 
+# 2583efe6c5a3456b846caeddbec4b423
+#: ../../../source/executables/grntest.txt:110
+msgid "rep_local コマンドファイル [スレッド数] [繰り返し数]"
+msgstr "rep_local コマンドファイル [スレッド数] [繰り返し数]"
+
+# 57e92e8cdacf4ef8b1f8350dd4e53f83
+#: ../../../source/executables/grntest.txt:112
+msgid "コマンドファイルをgrntest単体で実行し、より詳細な報告を行います。"
+msgstr "コマンドファイルをgrntest単体で実行し、より詳細な報告を行います。"
+
+# b647b3d1fdc64cb084a0aae586916897
+#: ../../../source/executables/grntest.txt:114
+msgid "rep_gqpt コマンドファイル [スレッド数] [繰り返し数]"
+msgstr "rep_gqpt コマンドファイル [スレッド数] [繰り返し数]"
+
+# 583a34860c104f26bdff509615cd9213
+#: ../../../source/executables/grntest.txt:116
+msgid ""
+"コマンドファイルをgroongaサーバで実行し、より詳細な報告を行います。 スレッド"
+"数や繰り返し数の意味はdo_localと 同じです。"
+msgstr ""
+"コマンドファイルをgroongaサーバで実行し、より詳細な報告を行います。 スレッド"
+"数や繰り返し数の意味はdo_localと 同じです。"
+
+# 87bcb634bdbd4a339390a5321be9040e
+#: ../../../source/executables/grntest.txt:118
+msgid "out_local コマンドファイル 入力ファイル名"
+msgstr "out_local コマンドファイル 入力ファイル名"
+
+# 51402a5a948c45d2b9434da0aeca60a6
+#: ../../../source/executables/grntest.txt:120
+msgid ""
+"コマンドファイルをgrntest単体で実行し、各コマンドの実行結果をすべて”出力ファ"
+"イル\"に書きだします。この結果は、test_local,　test_gqtp命令で利用します。な"
+"おこの命令の「出力ファイル」とは、grntest実行時に自動的に作成されるログとは別"
+"のものです。grntestではコメントが利用できる以外、::"
+msgstr ""
+"コマンドファイルをgrntest単体で実行し、各コマンドの実行結果をすべて”出力ファ"
+"イル\"に書きだします。この結果は、test_local,　test_gqtp命令で利用します。な"
+"おこの命令の「出力ファイル」とは、grntest実行時に自動的に作成されるログとは別"
+"のものです。grntestではコメントが利用できる以外、::"
+
+# 2078220e1692448282d21495694a5065
+#: ../../../source/executables/grntest.txt:124
+msgid "とした場合と同じです。"
+msgstr "とした場合と同じです。"
+
+# d0224ca0815341c6bea6ef042776d07c
+#: ../../../source/executables/grntest.txt:126
+msgid "out_gqtp コマンドファイル 出力ファイル名"
+msgstr "out_gqtp コマンドファイル 出力ファイル名"
+
+# b92a8b7b9ac347dda64957c4caf970a7
+#: ../../../source/executables/grntest.txt:128
+msgid ""
+"コマンドファイルをgroongaサーバで実行します。その他はout_local命令と同等で"
+"す。"
+msgstr ""
+"コマンドファイルをgroongaサーバで実行します。その他はout_local命令と同等で"
+"す。"
+
+# f54fb8ac5ad441d292aaeabe2a494ab0
+#: ../../../source/executables/grntest.txt:131
+msgid ""
+"コマンドファイルをgrntest単体で実行し、各コマンドの実行結果を入力ファイルと比"
+"較します。処理時間など本質的要素以外に差分があった場合、差分を、入力ファイル."
+"diffというファイルに書きだします。"
+msgstr ""
+"コマンドファイルをgrntest単体で実行し、各コマンドの実行結果を入力ファイルと比"
+"較します。処理時間など本質的要素以外に差分があった場合、差分を、入力ファイル."
+"diffというファイルに書きだします。"
+
+# 1b8899bbfcee4f3abaaf9c76cb25813b
+#: ../../../source/executables/grntest.txt:135
+msgid "コマンドファイル"
+msgstr "コマンドファイル"
+
+# dbc98a3389ae489d88a62b20174a3d25
+#: ../../../source/executables/grntest.txt:137
+msgid ""
+"コマンドファイルは、groonga組み込みコマンドを1行に1つずつ記述したテキストファ"
+"イルです。拡張子に制限はありません。groonga組み込みコマンドに関しては :doc:"
+"`commands` を参照してください。"
+msgstr ""
+"コマンドファイルは、groonga組み込みコマンドを1行に1つずつ記述したテキストファ"
+"イルです。拡張子に制限はありません。groonga組み込みコマンドに関しては :doc:"
+"`commands` を参照してください。"
+
+# b529c0c65e60465b9af02ed4631d228e
+#: ../../../source/executables/grntest.txt:142
+msgid "スクリプトファイルのサンプルです。::"
+msgstr "スクリプトファイルのサンプルです。::"
+
+# 68385191141c4b0599008af780004ca2
+#: ../../../source/executables/grntest.txt:150
+msgid "上記の意味は以下のとおりです。"
+msgstr "上記の意味は以下のとおりです。"
+
+# 88ee31714b264883b0449b8b5da390de
+#: ../../../source/executables/grntest.txt:153
+msgid "コメント行。"
+msgstr "コメント行。"
+
+# fa5e953b31ea49c38ec86c50f0800e53
+#: ../../../source/executables/grntest.txt:155
+msgid "test.dll というコマンドファイルをgroonga単体で実行し、詳細に報告する。"
+msgstr "test.dll というコマンドファイルをgroonga単体で実行し、詳細に報告する。"
+
+# ef311ebf79b2471da8d1d4edaf5763cf
+#: ../../../source/executables/grntest.txt:157
+msgid ""
+"test.load というコマンドファイルをgroonga単体で実行する。(最後の\";\"セミコロ"
+"ンは複数のgrntest命令を記述する場合に必要ですが、この例のように1つのgrntest命"
+"令を実行する場合に付与しても問題ありません。)"
+msgstr ""
+"test.load というコマンドファイルをgroonga単体で実行する。(最後の\";\"セミコロ"
+"ンは複数のgrntest命令を記述する場合に必要ですが、この例のように1つのgrntest命"
+"令を実行する場合に付与しても問題ありません。)"
+
+# b9d6a10f7ed749d4b0fa9a23816c38e3
+#: ../../../source/executables/grntest.txt:159
+msgid ""
+"test.select というコマンドファイルをgroongaサーバで10個のスレッドで同時に実行"
+"する。各スレッドはtest.selectの中身を10回繰り返す。また同時に、groonga単体で"
+"test.statusというコマンドファイルを10個のスレッドで実行する。"
+msgstr ""
+"test.select というコマンドファイルをgroongaサーバで10個のスレッドで同時に実行"
+"する。各スレッドはtest.selectの中身を10回繰り返す。また同時に、groonga単体で"
+"test.statusというコマンドファイルを10個のスレッドで実行する。"
+
+# cfb7dd11731a402882a5b5c4f944c06d
+#: ../../../source/executables/grntest.txt:162
+msgid "特殊命令"
+msgstr "特殊命令"
+
+# 21f538fe9274485094a878229cc15cf4
 #: ../../../source/executables/grntest.txt:164
 msgid ""
 "スクリプトファイルのコメント行には特殊コマンドを埋め込むことが可能です。現在"
@@ -604,18 +550,7 @@ msgstr ""
 "スクリプトファイルのコメント行には特殊コマンドを埋め込むことが可能です。現在"
 "サポートされている特殊命令は以下の二つです。"
 
-#: sphinx-built-in-message:0
-msgid "groonga < コマンドファイル > 出力ファイル"
-msgstr "groonga < コマンドファイル > 出力ファイル"
-
-#: ../../../source/executables/grnslap.txt:18
-msgid "grnslap [options] [dest]"
-msgstr "grnslap [options] [dest]"
-
-#: ../../../source/executables/grntest.txt:181
-msgid "とコマンド上でポートを指定した場合でも、もしtest.scrの中身が"
-msgstr "とコマンド上でポートを指定した場合でも、もしtest.scrの中身が"
-
+# 1d9ccd167ae341aeb57a46463a7121e9
 #: ../../../source/executables/grntest.txt:167
 msgid ""
 "-i, --hostオプションと同等の機能です。コマンドラインオプションに指定したIPア"
@@ -630,117 +565,115 @@ msgstr ""
 "SET_HOSTを利用した場合、サーバが自動的には起動されないのもコマンドラインオプ"
 "ションで指定した場合と同様です。"
 
-#: ../../../source/executables/grntest.txt:118
-msgid "out_local コマンドファイル 入力ファイル名"
-msgstr "out_local コマンドファイル 入力ファイル名"
-
-#: ../../../source/executables/grnslap.txt:38
-msgid "`http`"
-msgstr "`http`"
-
-#: ../../../source/executables/grnslap.txt:21
-#: ../../../source/executables/grntest.txt:21
-#: ../../../source/executables/groonga.txt:21
-#: ../../../source/executables/http.txt:20
-msgid "説明"
-msgstr "説明"
-
-#: ../../../source/executables/groonga.txt:212
-msgid "例"
-msgstr "例"
-
-#: ../../../source/executables/http.txt:43
-msgid "形式: /d/コマンド名.output_type?引数名1=値1&引数名2=値2&..."
-msgstr "形式: /d/コマンド名.output_type?引数名1=値1&引数名2=値2&..."
-
-#: ../../../source/executables/grntest.txt:35
+# be40ecb17f404ffcabceac750ecdf030
+#: ../../../source/executables/grntest.txt:170
 msgid ""
-"接続するgroongaサーバを、ipアドレスまたはホスト名で指定します。指定先に"
-"groongaサーバが立ち上がっていない場合、接続不能となることに注意してください。"
-"このオプションを指定しない場合、grntestは自動的にlocalhostのgroongaサーバを起"
-"動して接続します。"
+"-p, --port オプションと同等の機能です。コマンドラインオプションに指定したポー"
+"ト番号とSET_PORTで指定したポート番号が異なる場合、またコマンドラインオプショ"
+"ンを指定しなかった場合にもSET_PORTが優先されます。"
 msgstr ""
-"接続するgroongaサーバを、ipアドレスまたはホスト名で指定します。指定先に"
-"groongaサーバが立ち上がっていない場合、接続不能となることに注意してください。"
-"このオプションを指定しない場合、grntestは自動的にlocalhostのgroongaサーバを起"
-"動して接続します。"
+"-p, --port オプションと同等の機能です。コマンドラインオプションに指定したポー"
+"ト番号とSET_PORTで指定したポート番号が異なる場合、またコマンドラインオプショ"
+"ンを指定しなかった場合にもSET_PORTが優先されます。"
 
-#: ../../../source/executables/groonga.txt:187
-msgid "テーブルにレコードを挿入します。"
-msgstr "テーブルにレコードを挿入します。"
-
-#: ../../../source/executables/http.txt:47
-msgid "GETメソッドのみが使用可能です。"
-msgstr "GETメソッドのみが使用可能です。"
-
-#: ../../../source/executables/groonga.txt:51
+# 33dce3ddb6274a0e98fcf621a589668c
+#: ../../../source/executables/grntest.txt:173
 msgid ""
-"ログレベルを指定します。0〜8までの数値が指定可能で、数が大きいほど多くのログ"
-"が出力されます。"
+"特殊命令はスクリプトファイルの任意の場所に書き込むことができます。同一ファイ"
+"ル内に複数回特殊命令を記述した場合、「最後の」特殊命令が有効となります。"
 msgstr ""
-"ログレベルを指定します。0〜8までの数値が指定可能で、数が大きいほど多くのログ"
-"が出力されます。"
+"特殊命令はスクリプトファイルの任意の場所に書き込むことができます。同一ファイ"
+"ル内に複数回特殊命令を記述した場合、「最後の」特殊命令が有効となります。"
 
-#: ../../../source/executables/grnslap.txt:40
+# ad1a17da33884a79a76424776afc672b
+#: ../../../source/executables/grntest.txt:175
+msgid "例えば、"
+msgstr "例えば、"
+
+# 293bbde3239149d598dd6a1b9bc5a47f
+#: ../../../source/executables/grntest.txt:181
+msgid "とコマンド上でポートを指定した場合でも、もしtest.scrの中身が"
+msgstr "とコマンド上でポートを指定した場合でも、もしtest.scrの中身が"
+
+# 9f283881e48c4763a3aad5a92ff93cf1
+#: ../../../source/executables/grntest.txt:191
 msgid ""
-"httpでリクエストします。対象のhttpのパス群(GETパラメータを含む)をLF区切り形式"
-"で標準入力に与えると、それらのパスに順次アクセスします。"
+"であれば、自動的に起動されるgroongaサーバはポート番号10400を利用します。"
 msgstr ""
-"httpでリクエストします。対象のhttpのパス群(GETパラメータを含む)をLF区切り形式"
-"で標準入力に与えると、それらのパスに順次アクセスします。"
+"であれば、自動的に起動されるgroongaサーバはポート番号10400を利用します。"
 
-#: ../../../source/executables/grntest.txt:25
+# 4ac4c2b09cd34d8298e5886cdc8c4e22
+#: ../../../source/executables/grntest.txt:195
+msgid "grntest実行結果"
+msgstr "grntest実行結果"
+
+# 8acbff42384b4ff28c28ebfe505bb946
+#: ../../../source/executables/grntest.txt:197
 msgid ""
-"groongaを単独のプロセスとして利用する場合はもちろん、サーバプログラムとして利"
-"用する場合の動作確認や実行速度測定が可能です。"
+"grntestが正常に終了すると、(拡張子を除いた)スクリプト名-ユーザ名-実行開始時"
+"刻.logという形式のログファイルがカレントディレクトリに作られます。ログファイ"
+"ルは自動的にftp.groonga.org に送信されます。ログファイルは以下のようなjson形"
+"式のテキストです。"
 msgstr ""
-"groongaを単独のプロセスとして利用する場合はもちろん、サーバプログラムとして利"
-"用する場合の動作確認や実行速度測定が可能です。"
+"grntestが正常に終了すると、(拡張子を除いた)スクリプト名-ユーザ名-実行開始時"
+"刻.logという形式のログファイルがカレントディレクトリに作られます。ログファイ"
+"ルは自動的にftp.groonga.org に送信されます。ログファイルは以下のようなjson形"
+"式のテキストです。"
 
-#: ../../../source/executables/groonga.txt:122
-msgid "キャッシュ数の最大値を指定します。(デフォルトは100です)"
-msgstr "キャッシュ数の最大値を指定します。(デフォルトは100です)"
+# 17b1dbda1b6d46339613d75a607ed8b7
+#: ../../../source/executables/grntest.txt:255
+msgid "制限事項"
+msgstr "制限事項"
 
-#: ../../../source/executables/grnslap.txt:60
-msgid "http://localhost:10041/d/status に、多重度100でリクエストを行う。"
-msgstr "http://localhost:10041/d/status に、多重度100でリクエストを行う。"
-
-#: ../../../source/executables/grntest.txt:27
+# c8dc217c78be486ebd57d3b5af95e5bc
+#: ../../../source/executables/grntest.txt:257
 msgid ""
-"grntest を利用するために必要なデータファイルは、ftp.groonga.orgから必要に応じ"
-"ダウンロードしますので、groonga及びgrntestが動作し、インターネットに接続でき"
-"る環境であればgroongaコマンドの知識がなくてもgroongaの動作を確認できます。"
+"スクリプトファイルの一行には複数のgrntest命令を記述できますが、すべてのスレッ"
+"ド数の合計は最大64までに制限されます。"
 msgstr ""
-"grntest を利用するために必要なデータファイルは、ftp.groonga.orgから必要に応じ"
-"ダウンロードしますので、groonga及びgrntestが動作し、インターネットに接続でき"
-"る環境であればgroongaコマンドの知識がなくてもgroongaの動作を確認できます。"
+"スクリプトファイルの一行には複数のgrntest命令を記述できますが、すべてのスレッ"
+"ド数の合計は最大64までに制限されます。"
 
-#: ../../../source/executables/grntest.txt:135
-msgid "コマンドファイル"
-msgstr "コマンドファイル"
+# ceda447061564aa599c08c92c26a1d84
+#: ../../../source/executables/grntest.txt:259
+msgid "コマンドファイル中のgroongaコマンドの長さは最長5000000byteです。"
+msgstr "コマンドファイル中のgroongaコマンドの長さは最長5000000byteです。"
 
-#: ../../../source/executables/groonga.txt:216
-msgid "% groonga -n /tmp/hoge.db quit %"
-msgstr "% groonga -n /tmp/hoge.db quit %"
+# a52c389ef69d47dfa7cf54828662e0e4
+#: ../../../source/executables/grntest.txt:263
+msgid "トラブルシューティング"
+msgstr "トラブルシューティング"
 
-#: ../../../source/executables/groonga.txt:193
-msgid "検索条件をカスタマイズした新たな検索コマンドを定義します。"
-msgstr "検索条件をカスタマイズした新たな検索コマンドを定義します。"
+# cf249e7cfd874294891d0589da6be089
+#: ../../../source/executables/grntest.txt:265
+msgid "もし、grntestが正常に動作しない場合、まず以下を確認してください。"
+msgstr "もし、grntestが正常に動作しない場合、まず以下を確認してください。"
 
-#: ../../../source/executables/groonga.txt:107
+# 342bdb3aaff24b73bf9110fb59edfeeb
+#: ../../../source/executables/grntest.txt:267
 msgid ""
-"# '#'以降はコメント。 ; ';'以降もコメント。  # 'キー = 値'でオプションを指"
-"定。 pid-file = /var/run/groonga.pid  # '='の前後の空白はは無視される。↓は↑と"
-"同じ意味。 pid-file=/var/run/groonga.pid  # 'キー'は'--XXX'スタイルのオプショ"
-"ン名と同じものが使える。 # 例えば、'--pid-path'に対応するキーは'pid-path'。 "
-"# ただし、キーが'config-path'のオプションは無視される。"
+"インターネットに接続しているか？　--noftp モードを指定しない限り、grntestは動"
+"作のたびにftp.groonga.orgと通信します。ftp.groonga.orgと通信可能でない場合、"
+"grntestは正常に動作しません。"
 msgstr ""
-"# '#'以降はコメント。 ; ';'以降もコメント。  # 'キー = 値'でオプションを指"
-"定。 pid-file = /var/run/groonga.pid  # '='の前後の空白はは無視される。↓は↑と"
-"同じ意味。 pid-file=/var/run/groonga.pid  # 'キー'は'--XXX'スタイルのオプショ"
-"ン名と同じものが使える。 # 例えば、'--pid-path'に対応するキーは'pid-path'。 "
-"# ただし、キーが'config-path'のオプションは無視される。"
+"インターネットに接続しているか？　--noftp モードを指定しない限り、grntestは動"
+"作のたびにftp.groonga.orgと通信します。ftp.groonga.orgと通信可能でない場合、"
+"grntestは正常に動作しません。"
 
+# 41e44e70646c4215b0eb40ede1090d48
+#: ../../../source/executables/grntest.txt:269
+msgid ""
+"groonga サーバが動作していないか？　grntestは、-i, --host オプションで明示的"
+"にサーバを指定しないかぎり、自動的にlocalhostのgroongaサーバを立ち上げます。"
+"すでにgroongaサーバが動作している場合、grntestは正常に動作しない可能性があり"
+"ます。"
+msgstr ""
+"groonga サーバが動作していないか？　grntestは、-i, --host オプションで明示的"
+"にサーバを指定しないかぎり、自動的にlocalhostのgroongaサーバを立ち上げます。"
+"すでにgroongaサーバが動作している場合、grntestは正常に動作しない可能性があり"
+"ます。"
+
+# 858097b76a2644978990bb26ede2d2f5
 #: ../../../source/executables/grntest.txt:271
 msgid ""
 "指定したDBが適切か？ grntestは、引数で指定したDBの中身はチェックしません。も"
@@ -753,18 +686,337 @@ msgstr ""
 "在する場合は中身に関わらず動作を続けてしまい、結果が異常になる可能性がありま"
 "す。"
 
-#: ../../../source/executables/grntest.txt:150
-msgid "上記の意味は以下のとおりです。"
-msgstr "上記の意味は以下のとおりです。"
+# b55ae712d6684f4d85338c26859bb007
+#: ../../../source/executables/grntest.txt:273
+msgid ""
+"以上の原因でなければ、問題はgrntestかgroongaにあります。ご報告をお願いしま"
+"す。"
+msgstr ""
+"以上の原因でなければ、問題はgrntestかgroongaにあります。ご報告をお願いしま"
+"す。"
 
-#: ../../../source/executables.txt:6
-msgid "実行ファイル"
-msgstr "実行ファイル"
+# 046285bcfad94c8ea8d790d032161e5b
+#: ../../../source/executables/groonga-suggest-create-dataset.txt:6
+msgid "groonga-suggest-create-dataset"
+msgstr "groonga-suggest-create-dataset"
 
-#: ../../../source/executables/grntest.txt:77
-msgid "まず、シェル上(Windowsならコマンドプロンプト上)で::"
-msgstr "まず、シェル上(Windowsならコマンドプロンプト上)で::"
+# 9ef71d213a9347dbbfb8e739169adde6
+#: ../../../source/executables/groonga-suggest-create-dataset.txt:9
+msgid "NAME"
+msgstr "NAME"
 
+# ce25f4f34e844d50aac13b0d4ad4fbb9
+#: ../../../source/executables/groonga-suggest-create-dataset.txt:11
+msgid ""
+"groonga-suggest-create-dataset - Defines schema for a suggestion dataset"
+msgstr ""
+"groonga-suggest-create-dataset - Defines schema for a suggestion dataset"
+
+# dec215aeb3e444d1b525d3acc817f9c3
+#: ../../../source/executables/groonga-suggest-create-dataset.txt:14
+msgid "SYNOPSTIS"
+msgstr "SYNOPSTIS"
+
+# e76660ac79364c40a591083339380c75
+#: ../../../source/executables/groonga-suggest-create-dataset.txt:21
+msgid "DESCTIPION"
+msgstr "DESCTIPION"
+
+# ef9d4ab18d5a437d98038aa54b10d3f9
+#: ../../../source/executables/groonga-suggest-create-dataset.txt:23
+msgid ""
+"groonga-suggest-create-dataset creates a dataset for :doc:`/suggest`. A "
+"database has many datasets. This command just defines schea for a suggestion "
+"dataset."
+msgstr ""
+"groonga-suggest-create-dataset creates a dataset for :doc:`/suggest`. A "
+"database has many datasets. This command just defines schea for a suggestion "
+"dataset."
+
+# 2b55ab7263674565bf18ab70a77091b2
+#: ../../../source/executables/groonga-suggest-create-dataset.txt:26
+msgid "OPTIONS"
+msgstr "OPTIONS"
+
+# 52ad6774ebfc4c45b4e7e379562a61dc
+#: ../../../source/executables/groonga-suggest-create-dataset.txt:28
+msgid "None."
+msgstr "None."
+
+# 30653f481f734d2c9bdea6fda0373c79
+#: ../../../source/executables/groonga-suggest-create-dataset.txt:31
+msgid "EXIT STATUS"
+msgstr "EXIT STATUS"
+
+# 174515eb1dc447bf855718d1603d04d1
+#: ../../../source/executables/groonga-suggest-create-dataset.txt:36
+msgid "FILES"
+msgstr "FILES"
+
+# 7fb319826f36432cade72046483d2fa9
+#: ../../../source/executables/groonga-suggest-create-dataset.txt:41
+msgid "EXAMPLE"
+msgstr "EXAMPLE"
+
+# 68f4dcdb5525450e96eaa76a27f54a03
+# b39e013841854e10adeec0e31a818bc8
+# de9ec08009074ec5a64608898257ace9
+#: ../../../source/executables/groonga-suggest-create-dataset.txt:43
+#: ../../../source/executables/groonga-suggest-create-dataset.txt:33,
+#: ../../../source/executables/groonga-suggest-create-dataset.txt:38,
+msgid "TODO"
+msgstr "TODO"
+
+# 0afe9b92aac5403ca2bc921e1a32c8ed
+#: ../../../source/executables/groonga-suggest-create-dataset.txt:46
+msgid "SEE ALSO"
+msgstr "SEE ALSO"
+
+# a3244873bbe846b2b4cc203d764fa9cd
+#: ../../../source/executables/groonga-suggest-create-dataset.txt:48
+msgid ""
+":doc:`/suggest` .. : doc:`groonga-suggest-httpd` .. : doc:`groonga-suggest-"
+"learner`"
+msgstr ""
+":doc:`/suggest` .. : doc:`groonga-suggest-httpd` .. : doc:`groonga-suggest-"
+"learner`"
+
+# 2a6e1a2440564ae2b33996b98a18c5d4
+#: ../../../source/executables/groonga.txt:6
+msgid "groonga実行ファイル"
+msgstr "groonga実行ファイル"
+
+# 2c10caa536ad4c87b562b30f114da358
+#: ../../../source/executables/groonga.txt:11
+msgid "groonga - 列指向データベース機能を持つ全文検索エンジンソフトウェア"
+msgstr "groonga - 列指向データベース機能を持つ全文検索エンジンソフトウェア"
+
+# 6070375e52dc4065b0703331077e5741
+#: ../../../source/executables/groonga.txt:23
+msgid ""
+"groongaは列指向のデータベース機能を持つ高速でスケーラブルな全文検索エンジンで"
+"す。 groongaのデータベースは、groonga実行ファイルかCライブラリインタフェース"
+"を通して操作することができます。このマニュアルページでは、groonga実行ファイル"
+"の使い方について説明します。"
+msgstr ""
+"groongaは列指向のデータベース機能を持つ高速でスケーラブルな全文検索エンジンで"
+"す。 groongaのデータベースは、groonga実行ファイルかCライブラリインタフェース"
+"を通して操作することができます。このマニュアルページでは、groonga実行ファイル"
+"の使い方について説明します。"
+
+# 3724d0d3450645f889402bdad6b5853b
+#: ../../../source/executables/groonga.txt:31
+msgid "新たなデータベースを作成します。"
+msgstr "新たなデータベースを作成します。"
+
+# 4260d5bcecf74df099a237257b431f7b
+#: ../../../source/executables/groonga.txt:35
+msgid "クライアントモードで実行します。"
+msgstr "クライアントモードで実行します。"
+
+# ca93e8c69c624e9485baa2f8724a8890
+#: ../../../source/executables/groonga.txt:39
+msgid "サーバモードで実行します。"
+msgstr "サーバモードで実行します。"
+
+# f04ed85dc8444c20ac3e68b1f015eef6
+#: ../../../source/executables/groonga.txt:43
+msgid "デーモンモードで実行します。(forkする点がサーバモードと異なる)"
+msgstr "デーモンモードで実行します。(forkする点がサーバモードと異なる)"
+
+# 30476dc7d8584e159fa481f2a7ecaaa6
+#: ../../../source/executables/groonga.txt:47
+msgid ""
+"データベースで使用する文字エンコーディング方式を指定します。新たなデータベー"
+"スを作成する時のみ有効です。none, euc, utf8, sjis, latin, koi8rのいずれかが指"
+"定できます。"
+msgstr ""
+"データベースで使用する文字エンコーディング方式を指定します。新たなデータベー"
+"スを作成する時のみ有効です。none, euc, utf8, sjis, latin, koi8rのいずれかが指"
+"定できます。"
+
+# 05cfc09064a343d2956d5b1f4a7d8d3d
+#: ../../../source/executables/groonga.txt:51
+msgid ""
+"ログレベルを指定します。0〜8までの数値が指定可能で、数が大きいほど多くのログ"
+"が出力されます。"
+msgstr ""
+"ログレベルを指定します。0〜8までの数値が指定可能で、数が大きいほど多くのログ"
+"が出力されます。"
+
+# 7adfb02a84894dd6aaf6bc70ac9da09c
+#: ../../../source/executables/groonga.txt:62
+msgid ""
+"サーバモードかデーモンモードで実行するとき、listenするアドレスを指定します。"
+"(デフォルトは `hostname` の返すホスト名)"
+msgstr ""
+"サーバモードかデーモンモードで実行するとき、listenするアドレスを指定します。"
+"(デフォルトは `hostname` の返すホスト名)"
+
+# 1015e5dddf40463ebab7b4a4ac6a328b
+#: ../../../source/executables/groonga.txt:66
+msgid ""
+"クライアント、サーバ、またはデーモンモードで使用するTCPポート番号。 (デフォル"
+"トは10041番)"
+msgstr ""
+"クライアント、サーバ、またはデーモンモードで使用するTCPポート番号。 (デフォル"
+"トは10041番)"
+
+# 7ef714a305274e60be97717f9a6416c7
+#: ../../../source/executables/groonga.txt:71
+msgid ""
+"サーバモードかデーモンモードで実行するとき、サーバのIDとなるアドレスを指定し"
+"ます。(デフォルトは`hostname`の返すホスト名)"
+msgstr ""
+"サーバモードかデーモンモードで実行するとき、サーバのIDとなるアドレスを指定し"
+"ます。(デフォルトは`hostname`の返すホスト名)"
+
+# 39cc309eef964a7e9c00447007a430ff
+#: ../../../source/executables/groonga.txt:75
+msgid "ヘルプメッセージを出力します。"
+msgstr "ヘルプメッセージを出力します。"
+
+# 3439bcc813244403a76868179e08cc53
+#: ../../../source/executables/groonga.txt:79
+msgid ""
+"httpサーバとしてgroongaを使用する場合に静的ページを格納するディレクトリを指定"
+"します。"
+msgstr ""
+"httpサーバとしてgroongaを使用する場合に静的ページを格納するディレクトリを指定"
+"します。"
+
+# 0959e6ccda484598ad0d69f1b0d5f2e7
+#: ../../../source/executables/groonga.txt:81
+msgid ""
+"デフォルトでは、データベースを管理するための汎用的なページに対応するファイル"
+"が/usr/share/groonga/admin_html以下にインストールされます。このディレクトリを"
+"document-rootオプションの値に指定して起動した場合、ウェブブラウザでhttp://"
+"hostname:port/index.htmlにアクセスすると、ウェブベースのデータベース管理ツー"
+"ルを使用できます。"
+msgstr ""
+"デフォルトでは、データベースを管理するための汎用的なページに対応するファイル"
+"が/usr/share/groonga/admin_html以下にインストールされます。このディレクトリを"
+"document-rootオプションの値に指定して起動した場合、ウェブブラウザでhttp://"
+"hostname:port/index.htmlにアクセスすると、ウェブベースのデータベース管理ツー"
+"ルを使用できます。"
+
+# 7898c15f2f7b4e65a952253cd46596fb
+#: ../../../source/executables/groonga.txt:85
+msgid "http,gqtpのいずれかを指定します。(デフォルトはgqtp)"
+msgstr "http,gqtpのいずれかを指定します。(デフォルトはgqtp)"
+
+# c4da819579be4f7ebeb2e6c7c9111643
+#: ../../../source/executables/groonga.txt:89
+msgid ""
+"ログを出力するファイルのパスを指定します。(デフォルトは/var/log/groonga/"
+"groonga.logです)"
+msgstr ""
+"ログを出力するファイルのパスを指定します。(デフォルトは/var/log/groonga/"
+"groonga.logです)"
+
+# 01826ca9aa724ce0899edfac077f5a2e
+#: ../../../source/executables/groonga.txt:93
+msgid ""
+"クエリーログを出力するファイルのパスを指定します。(デフォルトでは出力されませ"
+"ん)"
+msgstr ""
+"クエリーログを出力するファイルのパスを指定します。(デフォルトでは出力されませ"
+"ん)"
+
+# 54855452fc0c4ff8bafb1c9ebfa07c62
+#: ../../../source/executables/groonga.txt:97
+msgid ""
+"最大で利用するスレッド数を指定します。(デフォルトはマシンのCPUコア数と同じ数"
+"です)"
+msgstr ""
+"最大で利用するスレッド数を指定します。(デフォルトはマシンのCPUコア数と同じ数"
+"です)"
+
+# 03d897af5c794c859ac4ff37a6709e91
+#: ../../../source/executables/groonga.txt:101
+msgid "PIDを保存するパスを指定します。(デフォルトでは保存しません)"
+msgstr "PIDを保存するパスを指定します。(デフォルトでは保存しません)"
+
+# 3f2c460777944eb784717e066a98c75a
+#: ../../../source/executables/groonga.txt:105
+msgid ""
+"設定ファイルのパスを指定します。設定ファイルは以下のようなフォーマットになり"
+"ます。::"
+msgstr ""
+"設定ファイルのパスを指定します。設定ファイルは以下のようなフォーマットになり"
+"ます。::"
+
+# 86c19a4f43c743a882b42a55c96ead32
+#: ../../../source/executables/groonga.txt:122
+msgid "キャッシュ数の最大値を指定します。(デフォルトは100です)"
+msgstr "キャッシュ数の最大値を指定します。(デフォルトは100です)"
+
+# 5c0e8a62a2804197bd1ced1c65ecd62c
+#: ../../../source/executables/groonga.txt:126
+msgid "検索の挙動をエスカレーションする閾値を指定します。(デフォルトは0です)"
+msgstr "検索の挙動をエスカレーションする閾値を指定します。(デフォルトは0です)"
+
+# e3db797865c247bd8f9e9fd77ebb0ffd
+#: ../../../source/executables/groonga.txt:133
+msgid "使用するデータベースのパス名を指定します。"
+msgstr "使用するデータベースのパス名を指定します。"
+
+# e2202f6b348a477ab259e539e9a84615
+#: ../../../source/executables/groonga.txt:135
+msgid ""
+"クライアントモードの場合は接続先のホスト名とポート番号を指定します(デフォルト"
+"値は'localhost:10041')。ポート番号を指定しない場合には、10041が指定されたもの"
+"とします。"
+msgstr ""
+"クライアントモードの場合は接続先のホスト名とポート番号を指定します(デフォルト"
+"値は'localhost:10041')。ポート番号を指定しない場合には、10041が指定されたもの"
+"とします。"
+
+# 5a66bf2da0824850857e6c16fdb47838
+#: ../../../source/executables/groonga.txt:139
+msgid ""
+"スタンドアロンおよびクライアントモードの場合は、実行するコマンドとその引数を"
+"コマンドライン引数に指定できます。コマンドライン引数にcommandを与えなかった場"
+"合は、標準入力から一行ずつEOFに達するまでコマンド文字列を読み取り、順次実行し"
+"ます。"
+msgstr ""
+"スタンドアロンおよびクライアントモードの場合は、実行するコマンドとその引数を"
+"コマンドライン引数に指定できます。コマンドライン引数にcommandを与えなかった場"
+"合は、標準入力から一行ずつEOFに達するまでコマンド文字列を読み取り、順次実行し"
+"ます。"
+
+# eaffeb97e6ef4ac481ef4063ce405314
+#: ../../../source/executables/groonga.txt:144
+msgid ""
+"groonga実行ファイルを通してデータベースを操作する命令をコマンドと呼びます。コ"
+"マンドは主にC言語で記述され、groongaプロセスにロードすることによって使用でき"
+"るようになります。 それぞれのコマンドは一意な名前と、0個以上の引数を持ちま"
+"す。"
+msgstr ""
+"groonga実行ファイルを通してデータベースを操作する命令をコマンドと呼びます。コ"
+"マンドは主にC言語で記述され、groongaプロセスにロードすることによって使用でき"
+"るようになります。 それぞれのコマンドは一意な名前と、0個以上の引数を持ちま"
+"す。"
+
+# 658cfdea72c0414291db62644cf795fc
+#: ../../../source/executables/groonga.txt:147
+msgid "引数は以下の2種類の方法のいずれかで指定することができます。::"
+msgstr "引数は以下の2種類の方法のいずれかで指定することができます。::"
+
+# 98e707ad31c34e7bbf4e95b46a62c536
+#: ../../../source/executables/groonga.txt:153
+msgid ""
+"形式1でコマンドを実行する場合は、定義された順番で値を指定しなければならず、途"
+"中の引数の値を省略することはできません。形式2でコマンドを実行する場合は、「--"
+"引数名」のように引数の名前を明示しなければならない代わりに、任意の順番で引数"
+"を指定することが可能で、途中の引数の指定を省略することもできます。"
+msgstr ""
+"形式1でコマンドを実行する場合は、定義された順番で値を指定しなければならず、途"
+"中の引数の値を省略することはできません。形式2でコマンドを実行する場合は、「--"
+"引数名」のように引数の名前を明示しなければならない代わりに、任意の順番で引数"
+"を指定することが可能で、途中の引数の指定を省略することもできます。"
+
+# 64d370a30ca740c89d3ba2831ed761ec
 #: ../../../source/executables/groonga.txt:155
 msgid ""
 "標準入力からコマンド文字列を与える場合は、コマンド名と引数名と値は、空白( )で"
@@ -783,112 +1035,167 @@ msgstr ""
 "バックスラッシュ文字自身を値として指定する場合には、その前にバックスラッシュ"
 "を指定します。"
 
-#: ../../../source/executables/groonga.txt:43
-msgid "デーモンモードで実行します。(forkする点がサーバモードと異なる)"
-msgstr "デーモンモードで実行します。(forkする点がサーバモードと異なる)"
+# cb04c7b160224d7fa5cc9cb2111a1d06
+#: ../../../source/executables/groonga.txt:158
+msgid "組み込みコマンド"
+msgstr "組み込みコマンド"
 
-#: ../../../source/executables/groonga.txt:101
-msgid "PIDを保存するパスを指定します。(デフォルトでは保存しません)"
-msgstr "PIDを保存するパスを指定します。(デフォルトでは保存しません)"
+# 0bbc1ddeeabb473fa3e5ffd452a6428d
+#: ../../../source/executables/groonga.txt:160
+msgid "以下のコマンドは組み込みコマンドとして予め定義されています。"
+msgstr "以下のコマンドは組み込みコマンドとして予め定義されています。"
 
-#: ../../../source/executables/grnslap.txt:23
+# 4ee13938df38413fb06a94b63be39370
+#: ../../../source/executables/groonga.txt:163
+msgid "groongaプロセスの状態を表示します。"
+msgstr "groongaプロセスの状態を表示します。"
+
+# e88ff17677284eacb24bd41cd338babf
+#: ../../../source/executables/groonga.txt:166
+msgid "DBに定義されているテーブルのリストを表示します。"
+msgstr "DBに定義されているテーブルのリストを表示します。"
+
+# 2b4082ab10bd4b97894d0529ebcf77b2
+#: ../../../source/executables/groonga.txt:169
+msgid "テーブルに定義されているカラムのリストを表示します。"
+msgstr "テーブルに定義されているカラムのリストを表示します。"
+
+# 77f1f800ab5d469e9d251b0c4f632993
+#: ../../../source/executables/groonga.txt:172
+msgid "DBにテーブルを追加します。"
+msgstr "DBにテーブルを追加します。"
+
+# 8c18f64053324232b8c2d6a0b0e19052
+#: ../../../source/executables/groonga.txt:175
+msgid "テーブルにカラムを追加します。"
+msgstr "テーブルにカラムを追加します。"
+
+# 7096b8b508d54c7f85d2b9f5266d3903
+#: ../../../source/executables/groonga.txt:178
+msgid "DBに定義されているテーブルを削除します。"
+msgstr "DBに定義されているテーブルを削除します。"
+
+# 2d3ae13f81024748a2d22bd9efecab38
+#: ../../../source/executables/groonga.txt:181
+msgid "テーブルに定義されているカラムを削除します。"
+msgstr "テーブルに定義されているカラムを削除します。"
+
+# d99e1ced89324c81aa43958346107449
+#: ../../../source/executables/groonga.txt:184
+msgid "VIEW型のテーブルに要素となるテーブルを定義します。"
+msgstr "VIEW型のテーブルに要素となるテーブルを定義します。"
+
+# 3a1fdf57e29c450c9badbae913f65829
+#: ../../../source/executables/groonga.txt:187
+msgid "テーブルにレコードを挿入します。"
+msgstr "テーブルにレコードを挿入します。"
+
+# b1f794ddfa9b4c76892fed396655cb81
+#: ../../../source/executables/groonga.txt:190
+msgid "テーブルに含まれるレコードを検索して表示します。"
+msgstr "テーブルに含まれるレコードを検索して表示します。"
+
+# 1dbcc171a10e4f3eb5db13cf0a14ea62
+#: ../../../source/executables/groonga.txt:193
+msgid "検索条件をカスタマイズした新たな検索コマンドを定義します。"
+msgstr "検索条件をカスタマイズした新たな検索コマンドを定義します。"
+
+# 66698733d49d4e57b724cc7472fda91d
+#: ../../../source/executables/groonga.txt:196
+msgid "データベースとのセッションを終了します。"
+msgstr "データベースとのセッションを終了します。"
+
+# 27b77b2af1374861b106682f04ad4668
+#: ../../../source/executables/groonga.txt:199
+msgid "サーバ(デーモン)プロセスを停止します。"
+msgstr "サーバ(デーモン)プロセスを停止します。"
+
+# f0119114a0084ae7a50efda3f0c5ed68
+#: ../../../source/executables/groonga.txt:202
+msgid "ログ出力レベルを設定します。"
+msgstr "ログ出力レベルを設定します。"
+
+# c35d78c5df1440ccbb49495ba0c3c4c2
+#: ../../../source/executables/groonga.txt:205
+msgid "ログ出力を行います。"
+msgstr "ログ出力を行います。"
+
+# 4525ae003ede41588b4fbd08cf14c75d
+#: ../../../source/executables/groonga.txt:208
+msgid "ロックを解除します。"
+msgstr "ロックを解除します。"
+
+# 58908b825e184e3789e240a161adc982
+#: ../../../source/executables/groonga.txt:212
+msgid "例"
+msgstr "例"
+
+# e5e4376072ac4c299b4880777238ee1a
+#: ../../../source/executables/groonga.txt:214
+msgid "新しいデータベースを作成します。::"
+msgstr "新しいデータベースを作成します。::"
+
+# 44baecd5f176435585e1cc078214b30f
+#: ../../../source/executables/groonga.txt:219
+msgid "作成済みのデータベースにテーブルを定義します。::"
+msgstr "作成済みのデータベースにテーブルを定義します。::"
+
+# dd79e9d27e9f4fc3ba0b7cb2db24364f
+#: ../../../source/executables/groonga.txt:225
+msgid "サーバを起動します。::"
+msgstr "サーバを起動します。::"
+
+# 34de6bca61834a089e44c90714088160
+#: ../../../source/executables/groonga.txt:230
+msgid "httpサーバとして起動します。::"
+msgstr "httpサーバとして起動します。::"
+
+# a324c2a3552d4a8bbe33e2234addb997
+#: ../../../source/executables/groonga.txt:235
+msgid "サーバに接続し、テーブル一覧を表示します。::"
+msgstr "サーバに接続し、テーブル一覧を表示します。::"
+
+# 8f8f2f238c1f461082d13c73c9121dd6
+# b6763490280145b0a0a5454707e4783c
+#: ../../../source/executables/groonga.txt:142,
+#: ../../../source/executables/http.txt:27
+msgid "コマンド"
+msgstr "コマンド"
+
+# 4a4305b841f6414a815f56e35c52688e
+# f5128ab21cfc4963817379e0e034a38d
+#: ../../../source/executables/http.txt:11
+#: ../../../source/executables/http.txt:6,
+msgid "groonga HTTPサービス"
+msgstr "groonga HTTPサービス"
+
+# a532c0ae68424be9a82287d730dbbfae
+#: ../../../source/executables/http.txt:22
 msgid ""
-"grnslapは、groongaプロセスに対してリクエストを多重に行い、パフォーマンスを"
-"チェックするためのツールです。"
+"groongaサーバを起動する時に--protocolオプションにhttpを指定すると、httpで通信"
+"可能になります。また、--document-root によって静的ページのパスを指定すると、"
+"httpリクエストに指定されたURIに対応する、パス配下に置かれたファイルを出力しま"
+"す。"
 msgstr ""
-"grnslapは、groongaプロセスに対してリクエストを多重に行い、パフォーマンスを"
-"チェックするためのツールです。"
+"groongaサーバを起動する時に--protocolオプションにhttpを指定すると、httpで通信"
+"可能になります。また、--document-root によって静的ページのパスを指定すると、"
+"httpリクエストに指定されたURIに対応する、パス配下に置かれたファイルを出力しま"
+"す。"
 
-#: ../../../source/executables/groonga.txt:237
+# 645766550f684bad85991a28ca5ca41a
+#: ../../../source/executables/http.txt:24
 msgid ""
-"% groonga -c localhost table_list [[0],[[\"id\",\"name\",\"path\",\"flags\","
-"\"domain\"],[256,\"Table\",\"/tmp/hoge.db.0000100\",49152,14]]] %"
+"groongaにはHTML + JavaScriptで実装された管理ツールが標準で付属しています。--"
+"document-rootを指定しない場合は管理ツールがインストールされているパスが指定さ"
+"れたとみなされますので、ウェブブラウザでhttp://hostname:port/にアクセスする"
+"と、管理ツールを利用できます。"
 msgstr ""
-"% groonga -c localhost table_list [[0],[[\"id\",\"name\",\"path\",\"flags\","
-"\"domain\"],[256,\"Table\",\"/tmp/hoge.db.0000100\",49152,14]]] %"
+"groongaにはHTML + JavaScriptで実装された管理ツールが標準で付属しています。--"
+"document-rootを指定しない場合は管理ツールがインストールされているパスが指定さ"
+"れたとみなされますので、ウェブブラウザでhttp://hostname:port/にアクセスする"
+"と、管理ツールを利用できます。"
 
-#: ../../../source/executables/grntest.txt:23
-msgid "grntestは、groonga汎用テストツールです。"
-msgstr "grntestは、groonga汎用テストツールです。"
-
-#: ../../../source/executables/grntest.txt:40
-msgid ""
-"自動的に起動するgroongaサーバ、または明示的に指定した接続先のgroonga サーバが"
-"利用するポート番号を指定します。接続先のgroongaサーバが利用しているポートと、"
-"このオプションで指定したポート番号が異なる場合、接続不能となることに注意して"
-"ください。"
-msgstr ""
-"自動的に起動するgroongaサーバ、または明示的に指定した接続先のgroonga サーバが"
-"利用するポート番号を指定します。接続先のgroongaサーバが利用しているポートと、"
-"このオプションで指定したポート番号が異なる場合、接続不能となることに注意して"
-"ください。"
-
-#: ../../../source/executables/groonga.txt:227
-msgid "% groonga -d /tmp/hoge.db %"
-msgstr "% groonga -d /tmp/hoge.db %"
-
-#: ../../../source/executables/grntest.txt:197
-msgid ""
-"grntestが正常に終了すると、(拡張子を除いた)スクリプト名-ユーザ名-実行開始時"
-"刻.logという形式のログファイルがカレントディレクトリに作られます。ログファイ"
-"ルは自動的にftp.groonga.org に送信されます。ログファイルは以下のようなjson形"
-"式のテキストです。"
-msgstr ""
-"grntestが正常に終了すると、(拡張子を除いた)スクリプト名-ユーザ名-実行開始時"
-"刻.logという形式のログファイルがカレントディレクトリに作られます。ログファイ"
-"ルは自動的にftp.groonga.org に送信されます。ログファイルは以下のようなjson形"
-"式のテキストです。"
-
-#: ../../../source/executables/grntest.txt:18
-msgid "grntest  [options...] [script] [db]"
-msgstr "grntest  [options...] [script] [db]"
-
-#: ../../../source/executables/grntest.txt:263
-msgid "トラブルシューティング"
-msgstr "トラブルシューティング"
-
-#: ../../../source/executables/grntest.txt:195
-msgid "grntest実行結果"
-msgstr "grntest実行結果"
-
-#: ../../../source/executables/http.txt:41
-msgid ""
-"httpでgroongaサーバと通信する際には、以下のような形式でコマンドを指定しま"
-"す。::"
-msgstr ""
-"httpでgroongaサーバと通信する際には、以下のような形式でコマンドを指定しま"
-"す。::"
-
-#: ../../../source/executables/groonga.txt:139
-msgid ""
-"スタンドアロンおよびクライアントモードの場合は、実行するコマンドとその引数を"
-"コマンドライン引数に指定できます。コマンドライン引数にcommandを与えなかった場"
-"合は、標準入力から一行ずつEOFに達するまでコマンド文字列を読み取り、順次実行し"
-"ます。"
-msgstr ""
-"スタンドアロンおよびクライアントモードの場合は、実行するコマンドとその引数を"
-"コマンドライン引数に指定できます。コマンドライン引数にcommandを与えなかった場"
-"合は、標準入力から一行ずつEOFに達するまでコマンド文字列を読み取り、順次実行し"
-"ます。"
-
-#: ../../../source/executables/groonga.txt:135
-msgid ""
-"クライアントモードの場合は接続先のホスト名とポート番号を指定します(デフォルト"
-"値は'localhost:10041')。ポート番号を指定しない場合には、10041が指定されたもの"
-"とします。"
-msgstr ""
-"クライアントモードの場合は接続先のホスト名とポート番号を指定します(デフォルト"
-"値は'localhost:10041')。ポート番号を指定しない場合には、10041が指定されたもの"
-"とします。"
-
-#: ../../../source/executables/grntest.txt:68
-msgid ""
-"grntestの動作方法(以下、grntest命令と呼びます)を記述したテキストファイルで"
-"す。拡張子は.scrです。"
-msgstr ""
-"grntestの動作方法(以下、grntest命令と呼びます)を記述したテキストファイルで"
-"す。拡張子は.scrです。"
-
+# c45af6dcf9824e9280ea90172f081583
 #: ../../../source/executables/http.txt:29
 msgid ""
 "httpを指定して起動したgroongaサーバに対しても、他のモードで起動したgroongaと"
@@ -897,31 +1204,68 @@ msgstr ""
 "httpを指定して起動したgroongaサーバに対しても、他のモードで起動したgroongaと"
 "同じコマンドが使用できます。"
 
-#: ../../../source/executables/grntest.txt:162
-msgid "特殊命令"
-msgstr "特殊命令"
-
-#: ../../../source/executables/groonga.txt:31
-msgid "新たなデータベースを作成します。"
-msgstr "新たなデータベースを作成します。"
-
-#: ../../../source/executables/grnslap.txt:11
-msgid "grnslap - groongaプロセスの通信層のパフォーマンスをチェックするツール"
-msgstr "grnslap - groongaプロセスの通信層のパフォーマンスをチェックするツール"
-
-#: ../../../source/executables/grntest.txt:185
+# bdc27935441746ea91883033493e54f5
+#: ../../../source/executables/http.txt:31
 msgid ""
-"#SET_PORT 10900 rep_local test.ddl do_local test.load; rep_gqtp test.select "
-"10 10; rep_local test.status 10 #SET_PORT 10400"
+"コマンドは、複数の引数をとります。引数にはそれぞれ名前があります。また、特殊"
+"な引数である「output_type」と「command_version」があります。"
 msgstr ""
-"#SET_PORT 10900 rep_local test.ddl do_local test.load; rep_gqtp test.select "
-"10 10; rep_local test.status 10 #SET_PORT 10400"
+"コマンドは、複数の引数をとります。引数にはそれぞれ名前があります。また、特殊"
+"な引数である「output_type」と「command_version」があります。"
 
-#: ../../../source/executables/http.txt:6
-#: ../../../source/executables/http.txt:11
-msgid "groonga HTTPサービス"
-msgstr "groonga HTTPサービス"
+# 4152823d68424188824f95287fe5beac
+#: ../../../source/executables/http.txt:33
+msgid ""
+"スタンドアロンやクライアントモードでは、コマンドは以下のような形式で指定しま"
+"す。"
+msgstr ""
+"スタンドアロンやクライアントモードでは、コマンドは以下のような形式で指定しま"
+"す。"
 
+# dce16e79364048a29a2a553c2b8764b5
+#: ../../../source/executables/http.txt:35
+msgid "形式1: コマンド名 値1 値2,.."
+msgstr "形式1: コマンド名 値1 値2,.."
+
+# 89d80a5610d74a58a1479d152aba7210
+#: ../../../source/executables/http.txt:37
+msgid "形式2: コマンド名 --引数名1 値1 --引数名2 値2,.."
+msgstr "形式2: コマンド名 --引数名1 値1 --引数名2 値2,.."
+
+# 0ba2232a7bcd48d482dedcdd0292966b
+#: ../../../source/executables/http.txt:39
+msgid ""
+"形式1と形式2は混在させることができます。これらの形式では、output_typeという引"
+"数名を用いてoutput_typeを指定します。"
+msgstr ""
+"形式1と形式2は混在させることができます。これらの形式では、output_typeという引"
+"数名を用いてoutput_typeを指定します。"
+
+# c24cfdde6735400292bb364495c9e71b
+#: ../../../source/executables/http.txt:41
+msgid ""
+"httpでgroongaサーバと通信する際には、以下のような形式でコマンドを指定しま"
+"す。::"
+msgstr ""
+"httpでgroongaサーバと通信する際には、以下のような形式でコマンドを指定しま"
+"す。::"
+
+# b8dffe9996684fad9d62bb7acd69ae1c
+#: ../../../source/executables/http.txt:45
+msgid "ただし、コマンド名、引数名、値はURLエンコードが必要です。"
+msgstr "ただし、コマンド名、引数名、値はURLエンコードが必要です。"
+
+# dba9727e67224792874a1cbf5148b303
+#: ../../../source/executables/http.txt:47
+msgid "GETメソッドのみが使用可能です。"
+msgstr "GETメソッドのみが使用可能です。"
+
+# 047380707f294275b594652231bbf3c7
+#: ../../../source/executables/http.txt:49
+msgid "output_typeにはjson, tsv, xmlが指定可能です。"
+msgstr "output_typeにはjson, tsv, xmlが指定可能です。"
+
+# 62602bc4a2ec4f65abb58e37529e8159
 #: ../../../source/executables/http.txt:51
 msgid ""
 "command_versionはコマンドの仕様の互換性を指定します。詳細は :doc:"
@@ -930,287 +1274,12 @@ msgstr ""
 "command_versionはコマンドの仕様の互換性を指定します。詳細は :doc:"
 "`command_version` を参照してください。"
 
-#: ../../../source/executables/grnslap.txt:51
-#: ../../../source/executables/grntest.txt:64
-#: ../../../source/executables/groonga.txt:129
-msgid "引数"
-msgstr "引数"
-
-#: ../../../source/executables/grntest.txt:76
-msgid "使い方"
-msgstr "使い方"
-
-#: ../../../source/executables/groonga.txt:178
-msgid "DBに定義されているテーブルを削除します。"
-msgstr "DBに定義されているテーブルを削除します。"
-
-#: ../../../source/executables/grntest.txt:120
-msgid ""
-"コマンドファイルをgrntest単体で実行し、各コマンドの実行結果をすべて”出力ファ"
-"イル\"に書きだします。この結果は、test_local,　test_gqtp命令で利用します。な"
-"おこの命令の「出力ファイル」とは、grntest実行時に自動的に作成されるログとは別"
-"のものです。grntestではコメントが利用できる以外、::"
-msgstr ""
-"コマンドファイルをgrntest単体で実行し、各コマンドの実行結果をすべて”出力ファ"
-"イル\"に書きだします。この結果は、test_local,　test_gqtp命令で利用します。な"
-"おこの命令の「出力ファイル」とは、grntest実行時に自動的に作成されるログとは別"
-"のものです。grntestではコメントが利用できる以外、::"
-
-#: ../../../source/executables/grntest.txt:267
-msgid ""
-"インターネットに接続しているか？　--noftp モードを指定しない限り、grntestは動"
-"作のたびにftp.groonga.orgと通信します。ftp.groonga.orgと通信可能でない場合、"
-"grntestは正常に動作しません。"
-msgstr ""
-"インターネットに接続しているか？　--noftp モードを指定しない限り、grntestは動"
-"作のたびにftp.groonga.orgと通信します。ftp.groonga.orgと通信可能でない場合、"
-"grntestは正常に動作しません。"
-
-#: ../../../source/executables/grntest.txt:116
-msgid ""
-"コマンドファイルをgroongaサーバで実行し、より詳細な報告を行います。 スレッド"
-"数や繰り返し数の意味はdo_localと 同じです。"
-msgstr ""
-"コマンドファイルをgroongaサーバで実行し、より詳細な報告を行います。 スレッド"
-"数や繰り返し数の意味はdo_localと 同じです。"
-
-#: ../../../source/executables/groonga.txt:230
-msgid "httpサーバとして起動します。::"
-msgstr "httpサーバとして起動します。::"
-
-#: ../../../source/executables/grnslap.txt:55
-msgid ""
-"接続先のホスト名とポート番号をを指定します(デフォルト値は'localhost:10041')。"
-"ポート番号を指定しない場合には、10041が指定されたものとします。"
-msgstr ""
-"接続先のホスト名とポート番号をを指定します(デフォルト値は'localhost:10041')。"
-"ポート番号を指定しない場合には、10041が指定されたものとします。"
-
+# 45e97eb983c043bb8e050b6bf83564aa
 #: ../../../source/executables/http.txt:54
 msgid "返値"
 msgstr "返値"
 
-#: ../../../source/executables/grnslap.txt:9
-#: ../../../source/executables/grntest.txt:9
-#: ../../../source/executables/groonga.txt:9
-#: ../../../source/executables/http.txt:9
-msgid "名前"
-msgstr "名前"
-
-#: ../../../source/executables/groonga.txt:47
-msgid ""
-"データベースで使用する文字エンコーディング方式を指定します。新たなデータベー"
-"スを作成する時のみ有効です。none, euc, utf8, sjis, latin, koi8rのいずれかが指"
-"定できます。"
-msgstr ""
-"データベースで使用する文字エンコーディング方式を指定します。新たなデータベー"
-"スを作成する時のみ有効です。none, euc, utf8, sjis, latin, koi8rのいずれかが指"
-"定できます。"
-
-#: ../../../source/executables/groonga.txt:196
-msgid "データベースとのセッションを終了します。"
-msgstr "データベースとのセッションを終了します。"
-
-#: ../../../source/executables/grntest.txt:104
-msgid ""
-"コマンドファイルをgrntest単体で実行します。スレッド数が指定されている場合、複"
-"数のスレッドで同じコマンドファイルを同時に実行します。繰り返し数が指定されて"
-"い場合、コマンドファイルの内容を繰り返し実行します。スレッド数、繰り返し数と"
-"も省略時は1です。1スレッドで複数回動作させたい場合は、do_local コマンドファイ"
-"ル 1 [繰り返し数]と明示的に指定してください。"
-msgstr ""
-"コマンドファイルをgrntest単体で実行します。スレッド数が指定されている場合、複"
-"数のスレッドで同じコマンドファイルを同時に実行します。繰り返し数が指定されて"
-"い場合、コマンドファイルの内容を繰り返し実行します。スレッド数、繰り返し数と"
-"も省略時は1です。1スレッドで複数回動作させたい場合は、do_local コマンドファイ"
-"ル 1 [繰り返し数]と明示的に指定してください。"
-
-#: ../../../source/executables/grntest.txt:72
-msgid ""
-"grntestが利用するgroonga データベースです。指定されたデータベースが存在しない"
-"場合、grntestが新規に作成します。またgroonga サーバを自動的に起動する場合もこ"
-"の引数で指定したデータベースが利用されます。接続するgroonga サーバを明示的に"
-"指定した場合に利用するデータベースは、接続先サーバが使用中のデータベースにな"
-"ることに注意してください。"
-msgstr ""
-"grntestが利用するgroonga データベースです。指定されたデータベースが存在しない"
-"場合、grntestが新規に作成します。またgroonga サーバを自動的に起動する場合もこ"
-"の引数で指定したデータベースが利用されます。接続するgroonga サーバを明示的に"
-"指定した場合に利用するデータベースは、接続先サーバが使用中のデータベースにな"
-"ることに注意してください。"
-
-#: ../../../source/executables/groonga.txt:6
-msgid "groonga実行ファイル"
-msgstr "groonga実行ファイル"
-
-#: ../../../source/executables/groonga.txt:142
-#: ../../../source/executables/http.txt:27
-msgid "コマンド"
-msgstr "コマンド"
-
-#: ../../../source/executables/grntest.txt:257
-msgid ""
-"スクリプトファイルの一行には複数のgrntest命令を記述できますが、すべてのスレッ"
-"ド数の合計は最大64までに制限されます。"
-msgstr ""
-"スクリプトファイルの一行には複数のgrntest命令を記述できますが、すべてのスレッ"
-"ド数の合計は最大64までに制限されます。"
-
-#: ../../../source/executables/groonga.txt:205
-msgid "ログ出力を行います。"
-msgstr "ログ出力を行います。"
-
-#: ../../../source/executables/groonga.txt:190
-msgid "テーブルに含まれるレコードを検索して表示します。"
-msgstr "テーブルに含まれるレコードを検索して表示します。"
-
-#: ../../../source/executables/grntest.txt:269
-msgid ""
-"groonga サーバが動作していないか？　grntestは、-i, --host オプションで明示的"
-"にサーバを指定しないかぎり、自動的にlocalhostのgroongaサーバを立ち上げます。"
-"すでにgroongaサーバが動作している場合、grntestは正常に動作しない可能性があり"
-"ます。"
-msgstr ""
-"groonga サーバが動作していないか？　grntestは、-i, --host オプションで明示的"
-"にサーバを指定しないかぎり、自動的にlocalhostのgroongaサーバを立ち上げます。"
-"すでにgroongaサーバが動作している場合、grntestは正常に動作しない可能性があり"
-"ます。"
-
-#: ../../../source/executables/grntest.txt:155
-msgid "test.dll というコマンドファイルをgroonga単体で実行し、詳細に報告する。"
-msgstr "test.dll というコマンドファイルをgroonga単体で実行し、詳細に報告する。"
-
-#: ../../../source/executables/groonga.txt:235
-msgid "サーバに接続し、テーブル一覧を表示します。::"
-msgstr "サーバに接続し、テーブル一覧を表示します。::"
-
-#: ../../../source/executables/groonga.txt:149
-msgid ""
-"形式1: コマンド名 値1 値2,..  形式2: コマンド名 --引数名1 値1 --引数名2 値"
-"2,.."
-msgstr ""
-"形式1: コマンド名 値1 値2,..  形式2: コマンド名 --引数名1 値1 --引数名2 値"
-"2,.."
-
-#: ../../../source/executables/grntest.txt:110
-msgid "rep_local コマンドファイル [スレッド数] [繰り返し数]"
-msgstr "rep_local コマンドファイル [スレッド数] [繰り返し数]"
-
-#: ../../../source/executables/grntest.txt:131
-msgid ""
-"コマンドファイルをgrntest単体で実行し、各コマンドの実行結果を入力ファイルと比"
-"較します。処理時間など本質的要素以外に差分があった場合、差分を、入力ファイル."
-"diffというファイルに書きだします。"
-msgstr ""
-"コマンドファイルをgrntest単体で実行し、各コマンドの実行結果を入力ファイルと比"
-"較します。処理時間など本質的要素以外に差分があった場合、差分を、入力ファイル."
-"diffというファイルに書きだします。"
-
-#: ../../../source/executables/groonga.txt:71
-msgid ""
-"サーバモードかデーモンモードで実行するとき、サーバのIDとなるアドレスを指定し"
-"ます。(デフォルトは`hostname`の返すホスト名)"
-msgstr ""
-"サーバモードかデーモンモードで実行するとき、サーバのIDとなるアドレスを指定し"
-"ます。(デフォルトは`hostname`の返すホスト名)"
-
-#: ../../../source/executables/http.txt:45
-msgid "ただし、コマンド名、引数名、値はURLエンコードが必要です。"
-msgstr "ただし、コマンド名、引数名、値はURLエンコードが必要です。"
-
-#: ../../../source/executables/groonga.txt:153
-msgid ""
-"形式1でコマンドを実行する場合は、定義された順番で値を指定しなければならず、途"
-"中の引数の値を省略することはできません。形式2でコマンドを実行する場合は、「--"
-"引数名」のように引数の名前を明示しなければならない代わりに、任意の順番で引数"
-"を指定することが可能で、途中の引数の指定を省略することもできます。"
-msgstr ""
-"形式1でコマンドを実行する場合は、定義された順番で値を指定しなければならず、途"
-"中の引数の値を省略することはできません。形式2でコマンドを実行する場合は、「--"
-"引数名」のように引数の名前を明示しなければならない代わりに、任意の順番で引数"
-"を指定することが可能で、途中の引数の指定を省略することもできます。"
-
-#: ../../../source/executables/groonga.txt:11
-msgid "groonga - 列指向データベース機能を持つ全文検索エンジンソフトウェア"
-msgstr "groonga - 列指向データベース機能を持つ全文検索エンジンソフトウェア"
-
-#: ../../../source/executables/grntest.txt:114
-msgid "rep_gqpt コマンドファイル [スレッド数] [繰り返し数]"
-msgstr "rep_gqpt コマンドファイル [スレッド数] [繰り返し数]"
-
-#: ../../../source/executables/grntest.txt:57
-msgid ""
-"groongaコマンドのパスを指定します。デフォルトでは、PATHの中からgroongaコマン"
-"ドを探します。"
-msgstr ""
-"groongaコマンドのパスを指定します。デフォルトでは、PATHの中からgroongaコマン"
-"ドを探します。"
-
-#: ../../../source/executables/grntest.txt:191
-msgid ""
-"であれば、自動的に起動されるgroongaサーバはポート番号10400を利用します。"
-msgstr ""
-"であれば、自動的に起動されるgroongaサーバはポート番号10400を利用します。"
-
-#: ../../../source/executables/groonga.txt:208
-msgid "ロックを解除します。"
-msgstr "ロックを解除します。"
-
-#: ../../../source/executables/http.txt:17
-msgid "groonga -d --protocol http DB_PATH"
-msgstr "groonga -d --protocol http DB_PATH"
-
-#: ../../../source/executables/grnslap.txt:14
-#: ../../../source/executables/grntest.txt:14
-#: ../../../source/executables/groonga.txt:14
-#: ../../../source/executables/http.txt:14
-msgid "書式"
-msgstr "書式"
-
-#: ../../../source/executables/groonga.txt:62
-msgid ""
-"サーバモードかデーモンモードで実行するとき、listenするアドレスを指定します。"
-"(デフォルトは `hostname` の返すホスト名)"
-msgstr ""
-"サーバモードかデーモンモードで実行するとき、listenするアドレスを指定します。"
-"(デフォルトは `hostname` の返すホスト名)"
-
-#: ../../../source/executables/grntest.txt:79
-msgid "grntest test.scr 任意のDB名"
-msgstr "grntest test.scr 任意のDB名"
-
-#: ../../../source/executables/grntest.txt:112
-msgid "コマンドファイルをgrntest単体で実行し、より詳細な報告を行います。"
-msgstr "コマンドファイルをgrntest単体で実行し、より詳細な報告を行います。"
-
-#: ../../../source/executables/http.txt:49
-msgid "output_typeにはjson, tsv, xmlが指定可能です。"
-msgstr "output_typeにはjson, tsv, xmlが指定可能です。"
-
-#: ../../../source/executables/grntest.txt:45
-msgid "ftp.groonga.org に用意されているスクリプトファイルを表示します。"
-msgstr "ftp.groonga.org に用意されているスクリプトファイルを表示します。"
-
-#: ../../../source/executables/grntest.txt:85
-msgid ""
-"というファイルが作成されるはずです。作成されない場合、このドキュメントの「ト"
-"ラブルシューティング」の章を参照してください。"
-msgstr ""
-"というファイルが作成されるはずです。作成されない場合、このドキュメントの「ト"
-"ラブルシューティング」の章を参照してください。"
-
-#: ../../../source/executables/groonga.txt:79
-msgid ""
-"httpサーバとしてgroongaを使用する場合に静的ページを格納するディレクトリを指定"
-"します。"
-msgstr ""
-"httpサーバとしてgroongaを使用する場合に静的ページを格納するディレクトリを指定"
-"します。"
-
-#: ../../../source/executables/grntest.txt:106
-msgid "do_gqpt コマンドファイル [スレッド数] [繰り返し数]"
-msgstr "do_gqpt コマンドファイル [スレッド数] [繰り返し数]"
-
-#: ../../../source/executables/groonga.txt:181
-msgid "テーブルに定義されているカラムを削除します。"
-msgstr "テーブルに定義されているカラムを削除します。"
+# 2623a29742394a97a067bcdf57fef6ce
+#: ../../../source/executables/http.txt:56
+msgid "output_typeの指定に従って、コマンドの実行結果を出力します。"
+msgstr "output_typeの指定に従って、コマンドの実行結果を出力します。"

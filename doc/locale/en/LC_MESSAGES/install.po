@@ -1,56 +1,33 @@
-# English translations for 1.2.3 package.
+# English translations for 1.2.4 package.
 # Copyright (C) 2009-2011, Brazil, Inc
 # This file is distributed under the same license as the groonga package.
 # Kouhei Sutou <kou@clear-code.com>, 2011.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: 1.2.3\n"
+"Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-06-28 23:53\n"
-"PO-Revision-Date: 2011-06-28 23:54+0900\n"
+"POT-Creation-Date: 2011-08-12 22:06\n"
+"PO-Revision-Date: 2011-08-12 22:01+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
+"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../../../source/install.txt:143
-msgid ""
-"% git clone https://github.com/groonga/macports.git ~/groonga-macports % "
-"(echo; echo file://$HOME/groonga-macports) | sudo sh -c \"cat >> /opt/local/"
-"etc/macports/sources.conf\" % sudo port install groonga"
-msgstr ""
-"% git clone https://github.com/groonga/macports.git ~/groonga-macports % "
-"(echo; echo file://$HOME/groonga-macports) | sudo sh -c \"cat >> /opt/local/"
-"etc/macports/sources.conf\" % sudo port install groonga"
+# be7a3f5316914d9a8bb2f4b7fa0103e3
+#: ../../../source/install.txt:6
+msgid "Install"
+msgstr "Install"
 
+# aa3163085e7349a08907b2f615c595c3
 #: ../../../source/install.txt:8
 msgid "We will explain of how to install Groonga for each environments."
 msgstr "We will explain of how to install Groonga for each environments."
 
-#: ../../../source/install.txt:139
-msgid "Mac OS X (MacPorts)"
-msgstr "Mac OS X (MacPorts)"
-
-#: ../../../source/install.txt:134
-msgid ""
-"% sudo rpm -ivh http://packages.groonga.org/fedora/groonga-"
-"repository-1.0.0-0.noarch.rpm % sudo yum update % sudo yum install -y groonga"
-msgstr ""
-"% sudo rpm -ivh http://packages.groonga.org/fedora/groonga-"
-"repository-1.0.0-0.noarch.rpm % sudo yum update % sudo yum install -y groonga"
-
-#: ../../../source/install.txt:80
-msgid ""
-"deb http://packages.groonga.org/ubuntu/ lucid universe deb-src http://"
-"packages.groonga.org/ubuntu/ lucid universe"
-msgstr ""
-"deb http://packages.groonga.org/ubuntu/ lucid universe deb-src http://"
-"packages.groonga.org/ubuntu/ lucid universe"
-
+# 99dfd361399246a5a17cac1f32007d73
 #: ../../../source/install.txt:10
 msgid ""
 "The packages for 64-bit binary are only distributed. Please attention not to "
@@ -59,80 +36,114 @@ msgstr ""
 "The packages for 64-bit binary are only distributed. Please attention not to "
 "distributing others for 32-bit binaly."
 
-#: ../../../source/install.txt:49
-msgid "Debian GNU/Linux sid"
-msgstr "Debian GNU/Linux sid"
-
-#: ../../../source/install.txt:75 ../../../source/install.txt:98
-msgid ""
-"You should specify universe section of Ubuntu for installing by add file(ex. "
-"below-mentioned)."
-msgstr ""
-"You should specify universe section of Ubuntu for installing by add file(ex. "
-"below-mentioned)."
-
-#: ../../../source/install.txt:148
-msgid "Mac OS X (Homebrew)"
-msgstr "Mac OS X (Homebrew)"
-
-#: ../../../source/install.txt:19 ../../../source/install.txt:37
-#: ../../../source/install.txt:55 ../../../source/install.txt:78
-#: ../../../source/install.txt:101
-msgid "/etc/apt/sources.list.d/groonga.list::"
-msgstr "/etc/apt/sources.list.d/groonga.list::"
-
-#: ../../../source/install.txt:67
-msgid "Ubuntu 10.04 LTS Lucid Lynx"
-msgstr "Ubuntu 10.04 LTS Lucid Lynx"
-
-#: ../../../source/install.txt:39
-msgid ""
-"deb http://packages.groonga.org/debian/ wheezy main deb-src http://packages."
-"groonga.org/debian/ wheezy main"
-msgstr ""
-"deb http://packages.groonga.org/debian/ wheezy main deb-src http://packages."
-"groonga.org/debian/ wheezy main"
-
-#: ../../../source/install.txt:26 ../../../source/install.txt:44
-#: ../../../source/install.txt:62 ../../../source/install.txt:85
-#: ../../../source/install.txt:108
-msgid ""
-"% sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 1C837F31 % "
-"sudo aptitude update % sudo aptitude -V -D -y install groonga"
-msgstr ""
-"% sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 1C837F31 % "
-"sudo aptitude update % sudo aptitude -V -D -y install groonga"
-
-#: ../../../source/install.txt:159
-msgid "We only distribute the package for x64."
-msgstr "We only distribute the package for x64."
-
-#: ../../../source/install.txt:166
-msgid "Others"
-msgstr "Others"
-
-#: ../../../source/install.txt:113
-msgid "CentOS 5"
-msgstr "CentOS 5"
-
-#: ../../../source/install.txt:177
-msgid ""
-"./configure --prefix=/usr --localstatedir=/var && make && sudo make install"
-msgstr ""
-"./configure --prefix=/usr --localstatedir=/var && make && sudo make install"
-
-#: ../../../source/install.txt:155
-msgid "Windows"
-msgstr "Windows"
-
+# 5ef120f61d6f4e0e9cacd8c4c3e391d3
 #: ../../../source/install.txt:13
 msgid "Debian GNU/Linux squeeze"
 msgstr "Debian GNU/Linux squeeze"
 
-#: ../../../source/install.txt:152
-msgid "% brew install groonga"
-msgstr "% brew install groonga"
+# 21b5bda0701a4496b2a96f22b584cd5f
+#: ../../../source/install.txt:31
+msgid "Debian GNU/Linux wheezy"
+msgstr "Debian GNU/Linux wheezy"
 
+# 1e9c5a4888024c8ba64bc8b4187f5739
+#: ../../../source/install.txt:49
+msgid "Debian GNU/Linux sid"
+msgstr "Debian GNU/Linux sid"
+
+# f220271e1a594afcb9cd46251b9eb562
+#: ../../../source/install.txt:67
+msgid "Ubuntu 10.04 LTS Lucid Lynx"
+msgstr "Ubuntu 10.04 LTS Lucid Lynx"
+
+# 558f0ab1f9fd4fe0be52a1edf8760e5b
+#: ../../../source/install.txt:90
+msgid "Ubuntu 11.04 Natty Narwhal"
+msgstr "Ubuntu 11.04 Natty Narwhal"
+
+# 5e21956d346843e6abb886d4a180827b
+# d539c3a58a164842b69324e085fe812b
+#: ../../../source/install.txt:98 ../../../source/install.txt:75,
+msgid ""
+"You should specify universe section of Ubuntu for installing by add file(ex. "
+"below-mentioned)."
+msgstr ""
+"You should specify universe section of Ubuntu for installing by add file(ex. "
+"below-mentioned)."
+
+# a6affb262e7448ca85a3c6ff063f57bb
+# 29c82119eb624dc8844f95d2c10c53ec
+# 43cf905995ea4f04a62b8a18a3d1b545
+# 4ac836972ca24570bff5b779cff4a157
+# 7aaf94cdc8d54b1699a678e3163e3368
+#: ../../../source/install.txt:101 ../../../source/install.txt:19,
+#: ../../../source/install.txt:37, ../../../source/install.txt:55,
+#: ../../../source/install.txt:78,
+msgid "/etc/apt/sources.list.d/groonga.list::"
+msgstr "/etc/apt/sources.list.d/groonga.list::"
+
+# 1381f8f8e0cd4cf19dac8913296d28bb
+#: ../../../source/install.txt:113
+msgid "CentOS 5"
+msgstr "CentOS 5"
+
+# 3caa22ff903942c696f4851bf466bb47
+#: ../../../source/install.txt:126
+msgid "Fedora 15"
+msgstr "Fedora 15"
+
+# 9c38d593bbc04d41b83f8bf863128b21
+# c96d0a4345fc41819ef8147099b26ab8
+# be0f49f1aa38425c8bf58bddb03d65b0
+# 099668c9763b4cef92f96acfb664c9fd
+# f838ed136191498b9021698515afb048
+# 6a762bb39109415ea5d973eb8834a864
+# ed8cd4d1e10f4fa386381da6f0896acf
+#: ../../../source/install.txt:130 ../../../source/install.txt:117,
+#: ../../../source/install.txt:17, ../../../source/install.txt:35,
+#: ../../../source/install.txt:53, ../../../source/install.txt:71,
+#: ../../../source/install.txt:94,
+msgid "We only distribute the package for amd64."
+msgstr "We only distribute the package for amd64."
+
+# 77d2e93b432140ae98734e8644bc48c4
+#: ../../../source/install.txt:139
+msgid "Mac OS X (MacPorts)"
+msgstr "Mac OS X (MacPorts)"
+
+# 8a96b18f276e4774bbe108b831bc4b44
+#: ../../../source/install.txt:148
+msgid "Mac OS X (Homebrew)"
+msgstr "Mac OS X (Homebrew)"
+
+# 2836395b15b74eb6999a99f6fc208a70
+# 4cd945bfd5cc4dafad6e960db4c8c5d4
+# 162f0c44afac4cebaa28679d6c99f7ea
+# 9b02457263b0407bac95dd69933bf1b6
+# 122082ec685a48dbabf5f2815c9be817
+# 2ee21d0abdf7491c83c922f17d1ba786
+# b9a5cd372395403482e63973852931fa
+# b04374c21d2749598231eb96c8b501f4
+# 5a69bf25ed774abfb2945544e052a29a
+#: ../../../source/install.txt:150 ../../../source/install.txt:106,
+#: ../../../source/install.txt:119, ../../../source/install.txt:132,
+#: ../../../source/install.txt:141, ../../../source/install.txt:24,
+#: ../../../source/install.txt:42, ../../../source/install.txt:60,
+#: ../../../source/install.txt:83,
+msgid "Install::"
+msgstr "Install::"
+
+# bb1ec1d3b1354b1ca3109795f2138b33
+#: ../../../source/install.txt:155
+msgid "Windows"
+msgstr "Windows"
+
+# 326d5e4062c4421997a40a87a9858b02
+#: ../../../source/install.txt:159
+msgid "We only distribute the package for x64."
+msgstr "We only distribute the package for x64."
+
+# 021e6457a01a4d7589cd7c04343456c4
 #: ../../../source/install.txt:161
 msgid ""
 "You just download zip-file from `packages.groonga.org/windows/ <http://"
@@ -143,26 +154,23 @@ msgstr ""
 "packages.groonga.org/windows/groonga/>`_ and extract it. We doesn't "
 "distribute installer for now. Sorry."
 
-#: ../../../source/install.txt:121
+# 9cc94da552584de88b44cd3b52dccde5
+#: ../../../source/install.txt:166
+msgid "Others"
+msgstr "Others"
+
+# f4a274e52bb34f80a210842035ac1028
+#: ../../../source/install.txt:168
 msgid ""
-"% sudo rpm -ivh http://packages.groonga.org/centos/groonga-"
-"repository-1.0.0-0.noarch.rpm % sudo yum update % sudo yum install -y groonga"
+"If you will use indexes of tokenizing of each morpheme for full-text search, "
+"you should install `MeCab <http://mecab.sourceforge.net/>`_ before you "
+"install groonga."
 msgstr ""
-"% sudo rpm -ivh http://packages.groonga.org/centos/groonga-"
-"repository-1.0.0-0.noarch.rpm % sudo yum update % sudo yum install -y groonga"
+"If you will use indexes of tokenizing of each morpheme for full-text search, "
+"you should install `MeCab <http://mecab.sourceforge.net/>`_ before you "
+"install groonga."
 
-#: ../../../source/install.txt:6
-msgid "Install"
-msgstr "Install"
-
-#: ../../../source/install.txt:103
-msgid ""
-"deb http://packages.groonga.org/ubuntu/ natty universe deb-src http://"
-"packages.groonga.org/ubuntu/ natty universe"
-msgstr ""
-"deb http://packages.groonga.org/ubuntu/ natty universe deb-src http://"
-"packages.groonga.org/ubuntu/ natty universe"
-
+# 8de0e8776b574f77be06e087fbed9a68
 #: ../../../source/install.txt:172
 msgid ""
 "After, you should download tar.gz-file from `packages.groonga.org/source/ "
@@ -175,30 +183,7 @@ msgstr ""
 "should extract this file in place to install, and run commands below-"
 "mentioned. ::"
 
-#: ../../../source/install.txt:126
-msgid "Fedora 15"
-msgstr "Fedora 15"
-
-#: ../../../source/install.txt:24 ../../../source/install.txt:42
-#: ../../../source/install.txt:60 ../../../source/install.txt:83
-#: ../../../source/install.txt:106 ../../../source/install.txt:119
-#: ../../../source/install.txt:132 ../../../source/install.txt:141
-#: ../../../source/install.txt:150
-msgid "Install::"
-msgstr "Install::"
-
-#: ../../../source/install.txt:57
-msgid ""
-"deb http://packages.groonga.org/debian/ unstable main deb-src http://"
-"packages.groonga.org/debian/ unstable main"
-msgstr ""
-"deb http://packages.groonga.org/debian/ unstable main deb-src http://"
-"packages.groonga.org/debian/ unstable main"
-
-#: ../../../source/install.txt:90
-msgid "Ubuntu 11.04 Natty Narwhal"
-msgstr "Ubuntu 11.04 Natty Narwhal"
-
+# d38c66cb520244d3b06a823965c1a606
 #: ../../../source/install.txt:179
 msgid ""
 "The \"prefix\" option is the paramater for specified place to install. If "
@@ -210,32 +195,3 @@ msgstr ""
 "you won't specify the option, \"/usr/local\" is specified. Please specify \"/"
 "usr\" for this option if you don't know environment variables"
 "(LD_LIBRARY_PATH and so on) well."
-
-#: ../../../source/install.txt:17 ../../../source/install.txt:35
-#: ../../../source/install.txt:53 ../../../source/install.txt:71
-#: ../../../source/install.txt:94 ../../../source/install.txt:117
-#: ../../../source/install.txt:130
-msgid "We only distribute the package for amd64."
-msgstr "We only distribute the package for amd64."
-
-#: ../../../source/install.txt:168
-msgid ""
-"If you will use indexes of tokenizing of each morpheme for full-text search, "
-"you should install `MeCab <http://mecab.sourceforge.net/>`_ before you "
-"install groonga."
-msgstr ""
-"If you will use indexes of tokenizing of each morpheme for full-text search, "
-"you should install `MeCab <http://mecab.sourceforge.net/>`_ before you "
-"install groonga."
-
-#: ../../../source/install.txt:21
-msgid ""
-"deb http://packages.groonga.org/debian/ squeeze main deb-src http://packages."
-"groonga.org/debian/ squeeze main"
-msgstr ""
-"deb http://packages.groonga.org/debian/ squeeze main deb-src http://packages."
-"groonga.org/debian/ squeeze main"
-
-#: ../../../source/install.txt:31
-msgid "Debian GNU/Linux wheezy"
-msgstr "Debian GNU/Linux wheezy"

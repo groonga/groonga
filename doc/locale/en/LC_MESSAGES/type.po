@@ -1,176 +1,48 @@
-# English translations for 1.2.3 package.
+# English translations for 1.2.4 package.
 # Copyright (C) 2009-2011, Brazil, Inc
 # This file is distributed under the same license as the groonga package.
 # Kouhei Sutou <kou@clear-code.com>, 2011.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: 1.2.3\n"
+"Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-06-28 23:53\n"
-"PO-Revision-Date: 2011-06-28 23:55+0900\n"
+"POT-Creation-Date: 2011-08-12 22:06\n"
+"PO-Revision-Date: 2011-08-12 22:01+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
+"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../../../source/type.txt:16
-msgid "groonga は、格納するデータの型を区別します。"
-msgstr "groonga は、格納するデータの型を区別します。"
-
-#: ../../../source/type.txt:43
-msgid "``UInt8``"
-msgstr "``UInt8``"
-
-#: ../../../source/type.txt:99
-msgid ""
-"世界測地系緯度経度座標。緯度と経度はミリ秒単位での整数。 \"経度のミリ秒x緯度"
-"のミリ秒\"という文字列表現を持つ。 度分秒形式であれば、x度y分z秒は(((x * 60) "
-"+ y) * 60 + z) * 1000という計算式で変換した値を代入します。"
-msgstr ""
-"世界測地系緯度経度座標。緯度と経度はミリ秒単位での整数。 \"経度のミリ秒x緯度"
-"のミリ秒\"という文字列表現を持つ。 度分秒形式であれば、x度y分z秒は(((x * 60) "
-"+ y) * 60 + z) * 1000という計算式で変換した値を代入します。"
-
-#: ../../../source/type.txt:77
-msgid ""
-"1970年1月1日0時0分0秒からの経過マイクロ秒数を64bit符号付き整数で表現した値。"
-msgstr ""
-"1970年1月1日0時0分0秒からの経過マイクロ秒数を64bit符号付き整数で表現した値。"
-
-#: ../../../source/type.txt:14
-msgid "説明"
-msgstr "説明"
-
-#: ../../../source/type.txt:37
-msgid "bool型。trueとfalse。"
-msgstr "bool型。trueとfalse。"
-
-#: ../../../source/type.txt:22
-msgid ""
-"主キーの型に他のテーブルを指定する場合は、そのテーブルは、主キーの型となる"
-"テーブルのサブセットとなります。"
-msgstr ""
-"主キーの型に他のテーブルを指定する場合は、そのテーブルは、主キーの型となる"
-"テーブルのサブセットとなります。"
-
-#: ../../../source/type.txt:71
-msgid "``Float``"
-msgstr "``Float``"
-
-#: ../../../source/type.txt:85
-msgid "64Kbyte以下の文字列。"
-msgstr "64Kbyte以下の文字列。"
-
-#: ../../../source/type.txt:55
-msgid "``Int32``"
-msgstr "``Int32``"
-
-#: ../../../source/type.txt:11
-msgid "groonga データ型"
-msgstr "groonga データ型"
-
-#: ../../../source/type.txt:27
-msgid "組込型"
-msgstr "組込型"
-
-#: ../../../source/type.txt:41
-msgid "8bit符号付き整数。"
-msgstr "8bit符号付き整数。"
-
-#: ../../../source/type.txt:57
-msgid "32bit符号付き整数。"
-msgstr "32bit符号付き整数。"
-
-#: ../../../source/type.txt:73
-msgid "ieee754形式の64bit浮動小数点数。"
-msgstr "ieee754形式の64bit浮動小数点数。"
-
-#: ../../../source/type.txt:29
-msgid "以下の型が組込型としてあらかじめ定義されています。"
-msgstr "以下の型が組込型としてあらかじめ定義されています。"
-
-#: ../../../source/type.txt:112
-msgid "ベクトルとして格納できない型"
-msgstr "ベクトルとして格納できない型"
-
-#: ../../../source/type.txt:47
-msgid "``Int16``"
-msgstr "``Int16``"
-
-#: ../../../source/type.txt:119
-msgid "脚注"
-msgstr "脚注"
-
-#: ../../../source/type.txt:97
-msgid "``WGS84GeoPoint``"
-msgstr "``WGS84GeoPoint``"
-
-#: ../../../source/type.txt:9
-msgid "名前"
-msgstr "名前"
-
-#: ../../../source/type.txt:49
-msgid "16bit符号付き整数。"
-msgstr "16bit符号付き整数。"
-
-#: ../../../source/type.txt:89
-msgid "2Gbyte以下の文字列。"
-msgstr "2Gbyte以下の文字列。"
-
-#: ../../../source/type.txt:107
-msgid "テーブルの主キーに指定できない型"
-msgstr "テーブルの主キーに指定できない型"
-
-#: ../../../source/type.txt:45
-msgid "8bit符号なし整数。"
-msgstr "8bit符号なし整数。"
-
-#: ../../../source/type.txt:120
-msgid "Object型はv1.2でサポートされます。"
-msgstr "Object型はv1.2でサポートされます。"
-
-#: ../../../source/type.txt:31
-msgid "``Object``"
-msgstr "``Object``"
-
-#: ../../../source/type.txt:81
-msgid "4Kbyte以下の文字列。"
-msgstr "4Kbyte以下の文字列。"
-
-#: ../../../source/type.txt:53
-msgid "16bit符号なし整数。"
-msgstr "16bit符号なし整数。"
-
+# 8a9a5e16fd074c398a771e0a5fa80bd0
 #: ../../../source/type.txt:6
 msgid "データ型"
 msgstr "データ型"
 
-#: ../../../source/type.txt:79
-msgid "``ShortText``"
-msgstr "``ShortText``"
+# d755b68d34604e9f832d2dfc07dacfd0
+#: ../../../source/type.txt:9
+msgid "名前"
+msgstr "名前"
 
-#: ../../../source/type.txt:39
-msgid "``Int8``"
-msgstr "``Int8``"
+# 5f13e392c6664b92baac253e0bd0a97f
+#: ../../../source/type.txt:11
+msgid "groonga データ型"
+msgstr "groonga データ型"
 
-#: ../../../source/type.txt:33
-msgid "任意のテーブルに属する全てのレコード [#]_"
-msgstr "任意のテーブルに属する全てのレコード [#]_"
+# 35cbfeb86b8641329d34c93d3d75dc0a
+#: ../../../source/type.txt:14
+msgid "説明"
+msgstr "説明"
 
-#: ../../../source/type.txt:93
-msgid ""
-"日本測地系緯度経度座標。緯度と経度はミリ秒単位での整数。 \"経度のミリ秒x緯度"
-"のミリ秒\"という文字列表現を持つ。 度分秒形式であれば、x度y分z秒は(((x * 60) "
-"+ y) * 60 + z) * 1000という計算式で変換した値を代入します。"
-msgstr ""
-"日本測地系緯度経度座標。緯度と経度はミリ秒単位での整数。 \"経度のミリ秒x緯度"
-"のミリ秒\"という文字列表現を持つ。 度分秒形式であれば、x度y分z秒は(((x * 60) "
-"+ y) * 60 + z) * 1000という計算式で変換した値を代入します。"
+# 2d1ec90f39354ac49e6075327a9eca1c
+#: ../../../source/type.txt:16
+msgid "groonga は、格納するデータの型を区別します。"
+msgstr "groonga は、格納するデータの型を区別します。"
 
+# 5a41bd5ae03d42759f9970ec443bb6d7
 #: ../../../source/type.txt:18
 msgid ""
 "groongaのデータベースでは、テーブルの主キーや、カラムの値はいずれも何らかの型"
@@ -181,60 +53,7 @@ msgstr ""
 "に属します。また通常は、一つのテーブルの中の全てのレコードについて、カラムの"
 "値は共通となります。"
 
-#: ../../../source/type.txt:61
-msgid "32bit符号なし整数。"
-msgstr "32bit符号なし整数。"
-
-#: ../../../source/type.txt:51
-msgid "``UInt16``"
-msgstr "``UInt16``"
-
-#: ../../../source/type.txt:35
-msgid "``Bool``"
-msgstr "``Bool``"
-
-#: ../../../source/type.txt:59
-msgid "``UInt32``"
-msgstr "``UInt32``"
-
-#: ../../../source/type.txt:67
-msgid "``UInt64``"
-msgstr "``UInt64``"
-
-#: ../../../source/type.txt:83
-msgid "``Text``"
-msgstr "``Text``"
-
-#: ../../../source/type.txt:63
-msgid "``Int64``"
-msgstr "``Int64``"
-
-#: ../../../source/type.txt:75
-msgid "``Time``"
-msgstr "``Time``"
-
-#: ../../../source/type.txt:104
-msgid "型に関する制限事項"
-msgstr "型に関する制限事項"
-
-#: ../../../source/type.txt:87
-msgid "``LongText``"
-msgstr "``LongText``"
-
-#: ../../../source/type.txt:109
-msgid ""
-"Text型とLongText型については、テーブルの主キーに指定することはできません。"
-msgstr ""
-"Text型とLongText型については、テーブルの主キーに指定することはできません。"
-
-#: ../../../source/type.txt:24
-msgid ""
-"カラムの型に他のテーブルを指定する場合は、そのカラムは、カラムの型となるテー"
-"ブルの参照キーとなります。"
-msgstr ""
-"カラムの型に他のテーブルを指定する場合は、そのカラムは、カラムの型となるテー"
-"ブルの参照キーとなります。"
-
+# 6b2180d18937424f8a14bcbf4d6df5bd
 #: ../../../source/type.txt:20
 msgid ""
 "主キーの型とカラムの型には、groongaで予め定義済みの型か、ユーザが定義する型、"
@@ -243,16 +62,241 @@ msgstr ""
 "主キーの型とカラムの型には、groongaで予め定義済みの型か、ユーザが定義する型、"
 "またはユーザが定義したテーブルを指定することができます。"
 
-#: ../../../source/type.txt:116
+# 01ac570eab644375a9185c95c2b02dbe
+#: ../../../source/type.txt:22
 msgid ""
-"テーブル型は、ベクトルとして格納することができます。よって、ShortTextのベクト"
-"ルを保存したい場合には、主キーがShortText型のテーブルを別途作成し、そのテーブ"
-"ルを型として利用します。"
+"主キーの型に他のテーブルを指定する場合は、そのテーブルは、主キーの型となる"
+"テーブルのサブセットとなります。"
 msgstr ""
-"テーブル型は、ベクトルとして格納することができます。よって、ShortTextのベクト"
-"ルを保存したい場合には、主キーがShortText型のテーブルを別途作成し、そのテーブ"
-"ルを型として利用します。"
+"主キーの型に他のテーブルを指定する場合は、そのテーブルは、主キーの型となる"
+"テーブルのサブセットとなります。"
 
+# db91fcd49f1842daa67ca7414aaf175c
+#: ../../../source/type.txt:24
+msgid ""
+"カラムの型に他のテーブルを指定する場合は、そのカラムは、カラムの型となるテー"
+"ブルの参照キーとなります。"
+msgstr ""
+"カラムの型に他のテーブルを指定する場合は、そのカラムは、カラムの型となるテー"
+"ブルの参照キーとなります。"
+
+# 009e929f80a04309a4c9d5c648a81b03
+#: ../../../source/type.txt:27
+msgid "組込型"
+msgstr "組込型"
+
+# 6588a21aad4247f89dcb7d11693f7797
+#: ../../../source/type.txt:29
+msgid "以下の型が組込型としてあらかじめ定義されています。"
+msgstr "以下の型が組込型としてあらかじめ定義されています。"
+
+# 3fd89bbdb18a4e3b8098cece9b845c7f
+#: ../../../source/type.txt:31
+msgid "``Object``"
+msgstr "``Object``"
+
+# a558b029261442dcaa3ce833f73b58f7
+#: ../../../source/type.txt:33
+msgid "任意のテーブルに属する全てのレコード [#]_"
+msgstr "任意のテーブルに属する全てのレコード [#]_"
+
+# 1ef94ecd62574089bdfaadd6e8569c89
+#: ../../../source/type.txt:35
+msgid "``Bool``"
+msgstr "``Bool``"
+
+# 06b766be959c41d587a3848bc4219af2
+#: ../../../source/type.txt:37
+msgid "bool型。trueとfalse。"
+msgstr "bool型。trueとfalse。"
+
+# 93dd8338c8ac4589bfeac7f19b399b27
+#: ../../../source/type.txt:39
+msgid "``Int8``"
+msgstr "``Int8``"
+
+# fbf7e0c1c7864a5ba9dc87118f79e0fe
+#: ../../../source/type.txt:41
+msgid "8bit符号付き整数。"
+msgstr "8bit符号付き整数。"
+
+# 80ed876111e1443486e296629264b19a
+#: ../../../source/type.txt:43
+msgid "``UInt8``"
+msgstr "``UInt8``"
+
+# 0151416fedc545e7a5352d7184891c39
+#: ../../../source/type.txt:45
+msgid "8bit符号なし整数。"
+msgstr "8bit符号なし整数。"
+
+# ee6ccbaa643e453084a05a9c1cb0ae76
+#: ../../../source/type.txt:47
+msgid "``Int16``"
+msgstr "``Int16``"
+
+# 871861d32c204656bc57054fb7b4979e
+#: ../../../source/type.txt:49
+msgid "16bit符号付き整数。"
+msgstr "16bit符号付き整数。"
+
+# 30a666b058314d2787d0b4e85ad2224f
+#: ../../../source/type.txt:51
+msgid "``UInt16``"
+msgstr "``UInt16``"
+
+# 363c8bda3f4547c9b3d4a9871bba3975
+#: ../../../source/type.txt:53
+msgid "16bit符号なし整数。"
+msgstr "16bit符号なし整数。"
+
+# 15763f637178454aafdd501740d2d898
+#: ../../../source/type.txt:55
+msgid "``Int32``"
+msgstr "``Int32``"
+
+# 9f63577fc3564b3aa3453f584fe60ec0
+#: ../../../source/type.txt:57
+msgid "32bit符号付き整数。"
+msgstr "32bit符号付き整数。"
+
+# 534bdd6f211641919c220ebf03cdf36d
+#: ../../../source/type.txt:59
+msgid "``UInt32``"
+msgstr "``UInt32``"
+
+# b4dd91c7886f4679bd6455ba6634c4be
+#: ../../../source/type.txt:61
+msgid "32bit符号なし整数。"
+msgstr "32bit符号なし整数。"
+
+# 52ffc263a7d24762baec5ddc014affaf
+#: ../../../source/type.txt:63
+msgid "``Int64``"
+msgstr "``Int64``"
+
+# e6fc08979cc948df958f1b44dd60e382
+#: ../../../source/type.txt:65
+msgid "64bit符号付き整数。"
+msgstr "64bit符号付き整数。"
+
+# 85d83fbe61c043a0a0e3216e72636a14
+#: ../../../source/type.txt:67
+msgid "``UInt64``"
+msgstr "``UInt64``"
+
+# 7fae4dfe0b3e4c26b2cb12a10278f5c8
+#: ../../../source/type.txt:69
+msgid "64bit符号なし整数。"
+msgstr "64bit符号なし整数。"
+
+# 15dc7f12506a459d937f6955773ec3ff
+#: ../../../source/type.txt:71
+msgid "``Float``"
+msgstr "``Float``"
+
+# 73aaf11274c14948a8d34d33b21202c9
+#: ../../../source/type.txt:73
+msgid "ieee754形式の64bit浮動小数点数。"
+msgstr "ieee754形式の64bit浮動小数点数。"
+
+# 335af65aa9344d5da9b78d643aa089cd
+#: ../../../source/type.txt:75
+msgid "``Time``"
+msgstr "``Time``"
+
+# 42851257024c4b76af13ed1ace20c7bd
+#: ../../../source/type.txt:77
+msgid ""
+"1970年1月1日0時0分0秒からの経過マイクロ秒数を64bit符号付き整数で表現した値。"
+msgstr ""
+"1970年1月1日0時0分0秒からの経過マイクロ秒数を64bit符号付き整数で表現した値。"
+
+# 8a0d37e5a07045f58398f21d2cc2e9f3
+#: ../../../source/type.txt:79
+msgid "``ShortText``"
+msgstr "``ShortText``"
+
+# c4e0af65c3814f62a917d157d1850478
+#: ../../../source/type.txt:81
+msgid "4Kbyte以下の文字列。"
+msgstr "4Kbyte以下の文字列。"
+
+# 70bb06bb913648e0831cab3924f129b0
+#: ../../../source/type.txt:83
+msgid "``Text``"
+msgstr "``Text``"
+
+# 35cb289f91294070a52a269449c47aad
+#: ../../../source/type.txt:85
+msgid "64Kbyte以下の文字列。"
+msgstr "64Kbyte以下の文字列。"
+
+# 33f50d291f9e4861a5cd58b92a492da4
+#: ../../../source/type.txt:87
+msgid "``LongText``"
+msgstr "``LongText``"
+
+# 0f76b1bbd87a44afae7b7cd79d38f297
+#: ../../../source/type.txt:89
+msgid "2Gbyte以下の文字列。"
+msgstr "2Gbyte以下の文字列。"
+
+# a415a8781b524d419730c46967edf013
+#: ../../../source/type.txt:91
+msgid "``TokyoGeoPoint``"
+msgstr "``TokyoGeoPoint``"
+
+# cc757fe5faa743909f1dd1ff051b8c28
+#: ../../../source/type.txt:93
+msgid ""
+"日本測地系緯度経度座標。緯度と経度はミリ秒単位での整数。 \"経度のミリ秒x緯度"
+"のミリ秒\"という文字列表現を持つ。 度分秒形式であれば、x度y分z秒は(((x * 60) "
+"+ y) * 60 + z) * 1000という計算式で変換した値を代入します。"
+msgstr ""
+"日本測地系緯度経度座標。緯度と経度はミリ秒単位での整数。 \"経度のミリ秒x緯度"
+"のミリ秒\"という文字列表現を持つ。 度分秒形式であれば、x度y分z秒は(((x * 60) "
+"+ y) * 60 + z) * 1000という計算式で変換した値を代入します。"
+
+# ee5230da91304412809063b128ce1bc0
+#: ../../../source/type.txt:97
+msgid "``WGS84GeoPoint``"
+msgstr "``WGS84GeoPoint``"
+
+# 34b37ce1314e49bd95b5de66aaff9ad0
+#: ../../../source/type.txt:99
+msgid ""
+"世界測地系緯度経度座標。緯度と経度はミリ秒単位での整数。 \"経度のミリ秒x緯度"
+"のミリ秒\"という文字列表現を持つ。 度分秒形式であれば、x度y分z秒は(((x * 60) "
+"+ y) * 60 + z) * 1000という計算式で変換した値を代入します。"
+msgstr ""
+"世界測地系緯度経度座標。緯度と経度はミリ秒単位での整数。 \"経度のミリ秒x緯度"
+"のミリ秒\"という文字列表現を持つ。 度分秒形式であれば、x度y分z秒は(((x * 60) "
+"+ y) * 60 + z) * 1000という計算式で変換した値を代入します。"
+
+# 18037c9f064d48b6a531836299b837c0
+#: ../../../source/type.txt:104
+msgid "型に関する制限事項"
+msgstr "型に関する制限事項"
+
+# 5f2d85e7d1ff4a73bd824adb8494fffe
+#: ../../../source/type.txt:107
+msgid "テーブルの主キーに指定できない型"
+msgstr "テーブルの主キーに指定できない型"
+
+# 7f94e16203bd4025bdbfdaca1fd2e7d7
+#: ../../../source/type.txt:109
+msgid ""
+"Text型とLongText型については、テーブルの主キーに指定することはできません。"
+msgstr ""
+"Text型とLongText型については、テーブルの主キーに指定することはできません。"
+
+# e941829719764b55b66e974cc6528b80
+#: ../../../source/type.txt:112
+msgid "ベクトルとして格納できない型"
+msgstr "ベクトルとして格納できない型"
+
+# c928d41a440d43a98a88ecd13ff908fd
 #: ../../../source/type.txt:114
 msgid ""
 "groongaのカラムは、ある型のベクトルを保存することができます。しかし、"
@@ -263,14 +307,23 @@ msgstr ""
 "ShortText, Text, LongTextの３つの型についてはベクトルとして保存することはでき"
 "ません。"
 
-#: ../../../source/type.txt:65
-msgid "64bit符号付き整数。"
-msgstr "64bit符号付き整数。"
+# f19c37d68cb6468f940df5811e1a5d4d
+#: ../../../source/type.txt:116
+msgid ""
+"テーブル型は、ベクトルとして格納することができます。よって、ShortTextのベクト"
+"ルを保存したい場合には、主キーがShortText型のテーブルを別途作成し、そのテーブ"
+"ルを型として利用します。"
+msgstr ""
+"テーブル型は、ベクトルとして格納することができます。よって、ShortTextのベクト"
+"ルを保存したい場合には、主キーがShortText型のテーブルを別途作成し、そのテーブ"
+"ルを型として利用します。"
 
-#: ../../../source/type.txt:91
-msgid "``TokyoGeoPoint``"
-msgstr "``TokyoGeoPoint``"
+# 0357982c0c6542a0a26c57accd1e556f
+#: ../../../source/type.txt:119
+msgid "脚注"
+msgstr "脚注"
 
-#: ../../../source/type.txt:69
-msgid "64bit符号なし整数。"
-msgstr "64bit符号なし整数。"
+# a30b33bfaf3b43d7b3e6fe2ed176caab
+#: ../../../source/type.txt:120
+msgid "Object型はv1.2でサポートされます。"
+msgstr "Object型はv1.2でサポートされます。"
