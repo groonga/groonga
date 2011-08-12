@@ -1,3 +1,4 @@
+include $(top_srcdir)/doc/files.am
 include $(top_srcdir)/build/makefiles/sphinx-build.am
 
 doc_localedir = $(docdir)/$(LOCALE)
