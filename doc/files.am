@@ -43,6 +43,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/contribution/report.txt \
 	$(top_srcdir)/doc/source/example/completion-1.log \
 	$(top_srcdir)/doc/source/example/correction-1.log \
+	$(top_srcdir)/doc/source/example/suggestion-1.log \
 	$(top_srcdir)/doc/source/example/tutorial01-1.log \
 	$(top_srcdir)/doc/source/example/tutorial01-10.log \
 	$(top_srcdir)/doc/source/example/tutorial01-11.log \
@@ -105,6 +106,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/executables.txt \
 	$(top_srcdir)/doc/source/executables/grnslap.txt \
 	$(top_srcdir)/doc/source/executables/grntest.txt \
+	$(top_srcdir)/doc/source/executables/groonga-suggest-create-dataset.txt \
 	$(top_srcdir)/doc/source/executables/groonga.txt \
 	$(top_srcdir)/doc/source/executables/http.txt \
 	$(top_srcdir)/doc/source/expr.txt \
@@ -211,6 +213,7 @@ source_files_relative_from_doc_dir = \
 	source/contribution/report.txt \
 	source/example/completion-1.log \
 	source/example/correction-1.log \
+	source/example/suggestion-1.log \
 	source/example/tutorial01-1.log \
 	source/example/tutorial01-10.log \
 	source/example/tutorial01-11.log \
@@ -273,6 +276,7 @@ source_files_relative_from_doc_dir = \
 	source/executables.txt \
 	source/executables/grnslap.txt \
 	source/executables/grntest.txt \
+	source/executables/groonga-suggest-create-dataset.txt \
 	source/executables/groonga.txt \
 	source/executables/http.txt \
 	source/expr.txt \
@@ -469,6 +473,8 @@ html_files_relative_from_locale_dir = \
 	html/_sources/contribution/documentation/c-api.txt \
 	html/_sources/contribution/documentation/i18n.txt \
 	html/_sources/contribution/report.txt \
+	html/_sources/example/completion-1.log \
+	html/_sources/example/correction-1.log \
 	html/_sources/example/tutorial01-1.log \
 	html/_sources/example/tutorial01-10.log \
 	html/_sources/example/tutorial01-11.log \
@@ -531,6 +537,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/executables.txt \
 	html/_sources/executables/grnslap.txt \
 	html/_sources/executables/grntest.txt \
+	html/_sources/executables/groonga-suggest-create-dataset.txt \
 	html/_sources/executables/groonga.txt \
 	html/_sources/executables/http.txt \
 	html/_sources/expr.txt \
@@ -642,6 +649,7 @@ html_files_relative_from_locale_dir = \
 	html/executables.html \
 	html/executables/grnslap.html \
 	html/executables/grntest.html \
+	html/executables/groonga-suggest-create-dataset.html \
 	html/executables/groonga.html \
 	html/executables/http.html \
 	html/expr.html \

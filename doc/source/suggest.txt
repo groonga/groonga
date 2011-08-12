@@ -5,7 +5,7 @@
 Suggest
 =======
 
-Groonga has suggest feature. This section describes how to use it and how it works.
+Groonga has the suggest feature. This section describes how to use it and how it works.
 
 .. toctree::
    :maxdepth: 2

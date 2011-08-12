@@ -14,6 +14,8 @@ files.am: update-files.sh
 	update-files
 
 update-files:
+	cd locale/en/LC_MESSAGES && $(MAKE) gettext
+	cd locale/en && $(MAKE) html
 	cd $(srcdir); ./update-files.sh > files.am
 
 man pdf clean-html:

@@ -1,0 +1,50 @@
+.. -*- rst -*-
+
+.. highlightlang:: none
+
+groonga-suggest-create-dataset
+==============================
+
+NAME
+----
+
+groonga-suggest-create-dataset - Defines schema for a suggestion dataset
+
+SYNOPSTIS
+---------
+
+::
+
+ groonga-suggest-create-dataset [options] DATABASE DATASET
+
+DESCTIPION
+----------
+
+groonga-suggest-create-dataset creates a dataset for :doc:`/suggestion`. A database has many datasets. This command just defines schea for a suggestion dataset.
+
+OPTIONS
+-------
+
+None.
+
+EXIT STATUS
+-----------
+
+TODO
+
+FILES
+-----
+
+TODO
+
+EXAMPLE
+-------
+
+TODO
+
+SEE ALSO
+--------
+
+:doc:`/suggest`
+.. :doc:`groonga-suggest-httpd`
+.. :doc:`groonga-suggest-learner`

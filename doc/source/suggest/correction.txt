@@ -101,7 +101,7 @@ How to use
 .. {"sequence": "1", "time": 1312950810.86057, "item": "search", "type": "submit"}
 .. ]
 
-Groonga provides :doc:`commands/suggest` command to use
+Groonga provides :doc:`/commands/suggest` command to use
 completion. `--type correct` option requests corrections
 
 For example, here is an command to get correction results by
@@ -127,9 +127,9 @@ user inputs the query with the following sequence:
   3. 2011-08-10T13:33:24+09:00: sae
   4. 2011-08-10T13:33:24+09:00: saer
   5. 2011-08-10T13:33:24+09:00: saerc
-  5. 2011-08-10T13:33:25+09:00: saerch (submit!)
-  5. 2011-08-10T13:33:29+09:00: serch (correcting...)
-  6. 2011-08-10T13:33:30+09:00: search (submit!)
+  6. 2011-08-10T13:33:25+09:00: saerch (submit!)
+  7. 2011-08-10T13:33:29+09:00: serch (correcting...)
+  8. 2011-08-10T13:33:30+09:00: search (submit!)
 
 Groonga can be learned from the input sequence by the
 following command::
