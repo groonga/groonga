@@ -245,10 +245,10 @@ complete(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost, grn_obj *col,
             }
             grn_table_cursor_close(ctx, cur);
           } else {
-            ERR(GRN_UNKNOWN_ERROR, "cannot open cursor for pk.");
+            ERR(GRN_UNKNOWN_ERROR, "cannot open cursor for prefix RK search.");
           }
         } else {
-          ERR(GRN_UNKNOWN_ERROR, "cannot find index for prefix search.");
+          ERR(GRN_UNKNOWN_ERROR, "cannot find index for prefix RK search.");
         }
         grn_str_close(ctx, norm);
       }
