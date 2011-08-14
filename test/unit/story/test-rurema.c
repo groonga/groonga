@@ -199,14 +199,14 @@ test_complete_prefix_search_force(void)
      "[[1],"
       "[[\"_key\",\"ShortText\"],"
        "[\"_score\",\"Int32\"]],"
-      "[\"置換\",0]]}",
+      "[\"置換\",1]]}",
     send_command(
       "suggest "
       "--table item_rurema "
       "--column kana "
       "--types complete "
       "--prefix_search yes "
-      "--threshold 0 "
+      "--threshold 1 "
       "--query '置'"));
 }
 
@@ -224,7 +224,7 @@ test_complete_prefix_search_disable(void)
       "--column kana "
       "--types complete "
       "--prefix_search no "
-      "--threshold -1 "
+      "--threshold 1 "
       "--query '置'"));
 }
 
@@ -236,13 +236,13 @@ test_complete_prefix_search_threshold_found(void)
      "[[1],"
       "[[\"_key\",\"ShortText\"],"
        "[\"_score\",\"Int32\"]],"
-      "[\"変数\",100]]}",
+      "[\"変数\",101]]}",
     send_command(
       "suggest "
       "--table item_rurema "
       "--column kana "
       "--types complete "
-      "--threshold 100 "
+      "--threshold 101 "
       "--query '変'"));
 }
 
@@ -259,7 +259,7 @@ test_complete_prefix_search_threshold_not_fuond(void)
       "--table item_rurema "
       "--column kana "
       "--types complete "
-      "--threshold 101 "
+      "--threshold 102 "
       "--query '変'"));
 }
 

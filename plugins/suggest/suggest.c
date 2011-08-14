@@ -256,7 +256,8 @@ complete(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost, grn_obj *col,
           if (GRN_INT32_VALUE(&item_boost) >= 0) {
             void *value;
             int32_t score;
-            score = GRN_INT32_VALUE(&item_freq) +
+            score = 1 +
+                    GRN_INT32_VALUE(&item_freq) +
                     GRN_INT32_VALUE(&item_boost);
             if (score >= threshold) {
               grn_rset_recinfo *ri;
