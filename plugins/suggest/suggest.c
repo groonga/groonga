@@ -218,7 +218,8 @@ complete(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost, grn_obj *col,
                     void *value;
                     int32_t score;
                     grn_rset_recinfo *ri;
-                    score = GRN_INT32_VALUE(&item_freq) +
+                    score = 1 +
+                            GRN_INT32_VALUE(&item_freq) +
                             GRN_INT32_VALUE(&item_boost);
                     if (score >= threshold) {
                       grn_hash_add(ctx, (grn_hash *)res,

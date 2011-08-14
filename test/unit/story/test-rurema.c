@@ -106,10 +106,10 @@ data_complete_prefix_rk_search(void)
                  "query", G_TYPE_STRING, query, \
                  NULL)
 
-  ADD_DATUM("romaji", "tan");
-  ADD_DATUM("katakana", "タン");
-  ADD_DATUM("hiragana", "たん");
-  ADD_DATUM("hiragana + romaji", "たｎ");
+  ADD_DATUM("romaji", "saku");
+  ADD_DATUM("katakana", "サク");
+  ADD_DATUM("hiragana", "さく");
+  ADD_DATUM("hiragana + romaji", "さｋ");
 
 #undef ADD_DATUM
 }
@@ -122,7 +122,7 @@ test_complete_prefix_rk_search(gconstpointer data)
      "[[1],"
       "[[\"_key\",\"ShortText\"],"
        "[\"_score\",\"Int32\"]],"
-      "[\"短縮\",1]]}",
+      "[\"削除\",1]]}",
     send_command(
       cut_take_printf(
         "suggest "
@@ -142,13 +142,13 @@ test_complete_prefix_rk_search_threshold_found(void)
      "[[1],"
       "[[\"_key\",\"ShortText\"],"
        "[\"_score\",\"Int32\"]],"
-      "[\"変数\",100]]}",
+      "[\"変数\",101]]}",
     send_command(
       "suggest "
       "--table item_rurema "
       "--column kana "
       "--types complete "
-      "--threshold 100 "
+      "--threshold 101 "
       "--query 'hen'"));
 }
 
@@ -165,7 +165,7 @@ test_complete_prefix_rk_search_threshold_not_fuond(void)
       "--table item_rurema "
       "--column kana "
       "--types complete "
-      "--threshold 101 "
+      "--threshold 102 "
       "--query 'hen'"));
 }
 
