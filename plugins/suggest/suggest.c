@@ -220,10 +220,12 @@ complete(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost, grn_obj *col,
                     grn_rset_recinfo *ri;
                     score = GRN_INT32_VALUE(&item_freq) +
                             GRN_INT32_VALUE(&item_boost);
-                    grn_hash_add(ctx, (grn_hash *)res,
-                                 &p->rid, sizeof(grn_id), &value, NULL);
-                    ri = value;
-                    ri->score += score;
+                    if (score >= threshold) {
+                      grn_hash_add(ctx, (grn_hash *)res,
+                                   &p->rid, sizeof(grn_id), &value, NULL);
+                      ri = value;
+                      ri->score += score;
+                    }
                   }
                 }
                 grn_ii_cursor_close(ctx, icur);

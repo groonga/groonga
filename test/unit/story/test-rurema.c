@@ -23,6 +23,8 @@
 
 void data_complete_prefix_rk_search(void);
 void test_complete_prefix_rk_search(gconstpointer data);
+void test_complete_prefix_rk_search_threshold_found(void);
+void test_complete_prefix_rk_search_threshold_not_found(void);
 void test_complete_cooccurrence(void);
 void test_correct_cooccurrence(void);
 void test_suggest_cooccurrence(void);
@@ -130,6 +132,41 @@ test_complete_prefix_rk_search(gconstpointer data)
         "--threshold 1 "
         "--query '%s'",
         gcut_data_get_string(data, "query"))));
+}
+
+void
+test_complete_prefix_rk_search_threshold_found(void)
+{
+  cut_assert_equal_string(
+    "{\"complete\":"
+     "[[1],"
+      "[[\"_key\",\"ShortText\"],"
+       "[\"_score\",\"Int32\"]],"
+      "[\"変数\",100]]}",
+    send_command(
+      "suggest "
+      "--table item_rurema "
+      "--column kana "
+      "--types complete "
+      "--threshold 100 "
+      "--query 'hen'"));
+}
+
+void
+test_complete_prefix_rk_search_threshold_not_fuond(void)
+{
+  cut_assert_equal_string(
+    "{\"complete\":"
+     "[[0],"
+      "[[\"_key\",\"ShortText\"],"
+       "[\"_score\",\"Int32\"]]]}",
+    send_command(
+      "suggest "
+      "--table item_rurema "
+      "--column kana "
+      "--types complete "
+      "--threshold 101 "
+      "--query 'hen'"));
 }
 
 void
