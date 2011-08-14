@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright(C) 2010 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2010-2011 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -24,6 +24,7 @@
 #include "../lib/grn-assertions.h"
 
 void test_no_operator_and_parentheses_column(void);
+void test_match_against_not_string(void);
 
 static gchar *tmp_directory;
 
@@ -100,4 +101,14 @@ test_no_operator_and_parentheses_column(void)
     GRN_INVALID_ARGUMENT,
     "invalid function: <\"groonga\">",
     "select Sites --filter \"_key != \\\"groonga\\\" ()\"");
+}
+
+void
+test_match_against_not_string(void)
+{
+  grn_test_assert_send_command_error(
+    context,
+    GRN_INVALID_ARGUMENT,
+    "invalid function: <\"groonga\">",
+    "select Sites --filter \"_key @ uri");
 }
