@@ -132,7 +132,7 @@ user's input. This search doesn't care about romaji,
 katakana and hiragana not like Prefix RK search.
 
 This search isn't always ran. It's just ran when it's
-requested explicitly or prefix both RK search and
+requested explicitly or both prefix RK search and
 Cooccurrence search return nothing.
 
 For example, there is a registered word "search". An user
