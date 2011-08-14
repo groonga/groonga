@@ -31,6 +31,7 @@ void test_complete_prefix_search(gconstpointer data);
 void test_complete_prefix_search_threshold_found(void);
 void test_complete_prefix_search_threshold_not_found(void);
 void test_correct_cooccurrence(void);
+void test_correct_similar(void);
 void test_suggest_cooccurrence(void);
 
 static gchar *tmp_directory;
@@ -279,6 +280,24 @@ test_correct_coocurrence(void)
         "--types correct "
         "--threshold 1 "
         "--query 'avg'"));
+}
+
+void
+test_correct_similar(void)
+{
+  cut_assert_equal_string(
+    "{\"correct\":"
+     "[[1],"
+      "[[\"_key\",\"ShortText\"],"
+       "[\"_score\",\"Int32\"]],"
+      "[\"file.join\",1048573]]}",
+    send_command(
+        "suggest "
+        "--table item_rurema "
+        "--column kana "
+        "--types correct "
+        "--threshold 1 "
+        "--query 'join'"));
 }
 
 void

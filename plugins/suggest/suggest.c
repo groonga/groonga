@@ -324,7 +324,8 @@ correct(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost,
                   if (GRN_INT32_VALUE(&item_boost) >= 0) {
                     int32_t score;
                     grn_rset_recinfo *ri;
-                    score = (GRN_INT32_VALUE(&item_freq2) >> 4) +
+                    score = 1 +
+                            (GRN_INT32_VALUE(&item_freq2) >> 4) +
                             GRN_INT32_VALUE(&item_boost);
                     ri = value;
                     ri->score += score;
