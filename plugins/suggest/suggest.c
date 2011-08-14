@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2010 Brazil
+/* Copyright(C) 2010-2011 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -256,13 +256,15 @@ complete(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost, grn_obj *col,
           if (GRN_INT32_VALUE(&item_boost) >= 0) {
             void *value;
             int32_t score;
-            grn_rset_recinfo *ri;
-            grn_hash_add(ctx, (grn_hash *)res, &id, sizeof(grn_id),
-                         &value, NULL);
             score = GRN_INT32_VALUE(&item_freq) +
                     GRN_INT32_VALUE(&item_boost);
-            ri = value;
-            ri->score += score;
+            if (score >= threshold) {
+              grn_rset_recinfo *ri;
+              grn_hash_add(ctx, (grn_hash *)res, &id, sizeof(grn_id),
+                           &value, NULL);
+              ri = value;
+              ri->score += score;
+            }
           }
         }
         grn_table_cursor_close(ctx, cur);

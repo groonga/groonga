@@ -26,6 +26,10 @@ void test_complete_prefix_rk_search(gconstpointer data);
 void test_complete_prefix_rk_search_threshold_found(void);
 void test_complete_prefix_rk_search_threshold_not_found(void);
 void test_complete_cooccurrence(void);
+void data_complete_prefix_search(void);
+void test_complete_prefix_search(gconstpointer data);
+void test_complete_prefix_search_threshold_found(void);
+void test_complete_prefix_search_threshold_not_found(void);
 void test_correct_cooccurrence(void);
 void test_suggest_cooccurrence(void);
 
@@ -185,6 +189,78 @@ test_complete_coocurrence(void)
         "--types complete "
         "--threshold 1 "
         "--query 'ｓｔりん'"));
+}
+
+void
+test_complete_prefix_search_force(void)
+{
+  cut_assert_equal_string(
+    "{\"complete\":"
+     "[[1],"
+      "[[\"_key\",\"ShortText\"],"
+       "[\"_score\",\"Int32\"]],"
+      "[\"置換\",0]]}",
+    send_command(
+      "suggest "
+      "--table item_rurema "
+      "--column kana "
+      "--types complete "
+      "--prefix_search yes "
+      "--threshold 0 "
+      "--query '置'"));
+}
+
+void
+test_complete_prefix_search_disable(void)
+{
+  cut_assert_equal_string(
+    "{\"complete\":"
+     "[[0],"
+      "[[\"_key\",\"ShortText\"],"
+       "[\"_score\",\"Int32\"]]]}",
+    send_command(
+      "suggest "
+      "--table item_rurema "
+      "--column kana "
+      "--types complete "
+      "--prefix_search no "
+      "--threshold -1 "
+      "--query '置'"));
+}
+
+void
+test_complete_prefix_search_threshold_found(void)
+{
+  cut_assert_equal_string(
+    "{\"complete\":"
+     "[[1],"
+      "[[\"_key\",\"ShortText\"],"
+       "[\"_score\",\"Int32\"]],"
+      "[\"変数\",100]]}",
+    send_command(
+      "suggest "
+      "--table item_rurema "
+      "--column kana "
+      "--types complete "
+      "--threshold 100 "
+      "--query '変'"));
+}
+
+void
+test_complete_prefix_search_threshold_not_fuond(void)
+{
+  cut_assert_equal_string(
+    "{\"complete\":"
+     "[[0],"
+      "[[\"_key\",\"ShortText\"],"
+       "[\"_score\",\"Int32\"]]]}",
+    send_command(
+      "suggest "
+      "--table item_rurema "
+      "--column kana "
+      "--types complete "
+      "--threshold 101 "
+      "--query '変'"));
 }
 
 void
