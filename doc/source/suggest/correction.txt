@@ -19,11 +19,11 @@ features:
 How it works
 ------------
 
-The correction feature uses three searches to compute completed
+The correction feature uses three searches to compute corrected
 words:
 
   1. Cooccurrence search against learned data.
-  3. Similar search against registered words. (optional)
+  2. Similar search against registered words. (optional)
 
 Cooccurrence search
 ^^^^^^^^^^^^^^^^^^^
@@ -42,7 +42,7 @@ For example, there are the following user submissions:
 | search (fixed!)   | 2011-08-10T22:20:52+09:00 |
 +-------------------+---------------------------+
 
-Groonga creates the following completion pair from the above
+Groonga creates the following correction pair from the above
 submissions:
 
 +----------+--------------------+
@@ -102,7 +102,7 @@ How to use
 .. ]
 
 Groonga provides :doc:`/commands/suggest` command to use
-completion. `--type correct` option requests corrections
+correction. `--type correct` option requests corrections.
 
 For example, here is an command to get correction results by
 "saerch":

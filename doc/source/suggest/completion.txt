@@ -133,7 +133,7 @@ katakana and hiragana not like Prefix RK search.
 
 This search isn't always ran. It's just ran when it's
 requested explicitly or both prefix RK search and
-Cooccurrence search return nothing.
+cooccurrence search return nothing.
 
 For example, there is a registered word "search". An user
 can find "search" by "s", "se", "sea", "sear", "searc" and
