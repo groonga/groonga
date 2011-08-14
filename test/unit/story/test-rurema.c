@@ -21,6 +21,8 @@
 
 #include "../lib/grn-assertions.h"
 
+void data_complete_prefix_rk_search(void);
+void test_complete_prefix_rk_search(gconstpointer data);
 void test_complete_cooccurrence(void);
 void test_correct_cooccurrence(void);
 void test_suggest_cooccurrence(void);
@@ -92,6 +94,42 @@ cut_setup(void)
 void
 cut_teardown(void)
 {
+}
+
+void
+data_complete_prefix_rk_search(void)
+{
+#define ADD_DATUM(label, query)                 \
+  gcut_add_datum(label " - " query,             \
+                 "query", G_TYPE_STRING, query, \
+                 NULL)
+
+  ADD_DATUM("romaji", "tan");
+  ADD_DATUM("katakana", "タン");
+  ADD_DATUM("hiragana", "たん");
+  ADD_DATUM("hiragana + romaji", "たｎ");
+
+#undef ADD_DATUM
+}
+
+void
+test_complete_prefix_rk_search(gconstpointer data)
+{
+  cut_assert_equal_string(
+    "{\"complete\":"
+     "[[1],"
+      "[[\"_key\",\"ShortText\"],"
+       "[\"_score\",\"Int32\"]],"
+      "[\"短縮\",1]]}",
+    send_command(
+      cut_take_printf(
+        "suggest "
+        "--table item_rurema "
+        "--column kana "
+        "--types complete "
+        "--threshold 1 "
+        "--query '%s'",
+        gcut_data_get_string(data, "query"))));
 }
 
 void
