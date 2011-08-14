@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-12 22:06\n"
-"PO-Revision-Date: 2011-08-12 22:01+0900\n"
+"POT-Creation-Date: 2011-08-14 18:18\n"
+"PO-Revision-Date: 2011-08-14 18:52+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
 "Language: en\n"
@@ -1133,8 +1133,10 @@ msgstr ""
 
 # 7e4bb34952334540a60396ec772093ee
 #: ../../../source/news/1.0.x.txt:120
-msgid ":doc:`/grntest` の一行あたりの最大バイト数の制限を撤廃。 #608, #690"
-msgstr ":doc:`/grntest` の一行あたりの最大バイト数の制限を撤廃。 #608, #690"
+msgid ""
+":doc:`/executables/grntest` の一行あたりの最大バイト数の制限を撤廃。 #608, "
+"#690"
+msgstr ":doc:`/executables/grntest` の一行あたりの最大バイト数の制限を撤廃。 #608, #690"
 
 # 92e23d4ce2024131a93730f6f30ae53c
 #: ../../../source/news/1.0.x.txt:121

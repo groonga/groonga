@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-12 22:06\n"
-"PO-Revision-Date: 2011-08-12 22:01+0900\n"
+"POT-Creation-Date: 2011-08-14 18:18\n"
+"PO-Revision-Date: 2011-08-14 18:53+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
 "Language: en\n"
@@ -129,8 +129,8 @@ msgstr "http://localhost:10041/d/status に、多重度100でリクエストを�
 # fab2af7b8f564d26ab48fb7e606c22f9
 #: ../../../source/executables/grnslap.txt:14,
 #: ../../../source/executables/grntest.txt:14,
+#: ../../../source/executables/groonga-http.txt:14
 #: ../../../source/executables/groonga.txt:14,
-#: ../../../source/executables/http.txt:14
 msgid "書式"
 msgstr "書式"
 
@@ -140,8 +140,8 @@ msgstr "書式"
 # b66b361fb61146ad89d1f4be9f0bbea9
 #: ../../../source/executables/grnslap.txt:21,
 #: ../../../source/executables/grntest.txt:21,
+#: ../../../source/executables/groonga-http.txt:20
 #: ../../../source/executables/groonga.txt:21,
-#: ../../../source/executables/http.txt:20
 msgid "説明"
 msgstr "説明"
 
@@ -176,8 +176,8 @@ msgstr "サンプル"
 # 452b001734724b32848b2c0792ada182
 #: ../../../source/executables/grnslap.txt:9,
 #: ../../../source/executables/grntest.txt:9,
+#: ../../../source/executables/groonga-http.txt:9
 #: ../../../source/executables/groonga.txt:9,
-#: ../../../source/executables/http.txt:9
 msgid "名前"
 msgstr "名前"
 
@@ -487,12 +487,9 @@ msgstr "コマンドファイル"
 #: ../../../source/executables/grntest.txt:137
 msgid ""
 "コマンドファイルは、groonga組み込みコマンドを1行に1つずつ記述したテキストファ"
-"イルです。拡張子に制限はありません。groonga組み込みコマンドに関しては :doc:"
-"`commands` を参照してください。"
-msgstr ""
-"コマンドファイルは、groonga組み込みコマンドを1行に1つずつ記述したテキストファ"
-"イルです。拡張子に制限はありません。groonga組み込みコマンドに関しては :doc:"
-"`commands` を参照してください。"
+"イルです。拡張子に制限はありません。groonga組み込みコマンドに関しては :doc:`/"
+"commands` を参照してください。"
+msgstr "コマンドファイルは、groonga組み込みコマンドを1行に1つずつ記述したテキストファイルです。拡張子に制限はありません。groonga組み込みコマンドに関しては :doc:`/commands` を参照してください。"
 
 # b529c0c65e60465b9af02ed4631d228e
 #: ../../../source/executables/grntest.txt:142
@@ -694,6 +691,133 @@ msgid ""
 msgstr ""
 "以上の原因でなければ、問題はgrntestかgroongaにあります。ご報告をお願いしま"
 "す。"
+
+# 4a4305b841f6414a815f56e35c52688e
+# f5128ab21cfc4963817379e0e034a38d
+#: ../../../source/executables/groonga-http.txt:11
+#: ../../../source/executables/groonga-http.txt:6,
+msgid "groonga HTTPサービス"
+msgstr "groonga HTTPサービス"
+
+# a532c0ae68424be9a82287d730dbbfae
+#: ../../../source/executables/groonga-http.txt:22
+msgid ""
+"groongaサーバを起動する時に--protocolオプションにhttpを指定すると、httpで通信"
+"可能になります。また、--document-root によって静的ページのパスを指定すると、"
+"httpリクエストに指定されたURIに対応する、パス配下に置かれたファイルを出力しま"
+"す。"
+msgstr ""
+"groongaサーバを起動する時に--protocolオプションにhttpを指定すると、httpで通信"
+"可能になります。また、--document-root によって静的ページのパスを指定すると、"
+"httpリクエストに指定されたURIに対応する、パス配下に置かれたファイルを出力しま"
+"す。"
+
+# 645766550f684bad85991a28ca5ca41a
+#: ../../../source/executables/groonga-http.txt:24
+msgid ""
+"groongaにはHTML + JavaScriptで実装された管理ツールが標準で付属しています。--"
+"document-rootを指定しない場合は管理ツールがインストールされているパスが指定さ"
+"れたとみなされますので、ウェブブラウザでhttp://hostname:port/にアクセスする"
+"と、管理ツールを利用できます。"
+msgstr ""
+"groongaにはHTML + JavaScriptで実装された管理ツールが標準で付属しています。--"
+"document-rootを指定しない場合は管理ツールがインストールされているパスが指定さ"
+"れたとみなされますので、ウェブブラウザでhttp://hostname:port/にアクセスする"
+"と、管理ツールを利用できます。"
+
+# 8f8f2f238c1f461082d13c73c9121dd6
+# b6763490280145b0a0a5454707e4783c
+#: ../../../source/executables/groonga-http.txt:27
+#: ../../../source/executables/groonga.txt:142,
+msgid "コマンド"
+msgstr "コマンド"
+
+# c45af6dcf9824e9280ea90172f081583
+#: ../../../source/executables/groonga-http.txt:29
+msgid ""
+"httpを指定して起動したgroongaサーバに対しても、他のモードで起動したgroongaと"
+"同じコマンドが使用できます。"
+msgstr ""
+"httpを指定して起動したgroongaサーバに対しても、他のモードで起動したgroongaと"
+"同じコマンドが使用できます。"
+
+# bdc27935441746ea91883033493e54f5
+#: ../../../source/executables/groonga-http.txt:31
+msgid ""
+"コマンドは、複数の引数をとります。引数にはそれぞれ名前があります。また、特殊"
+"な引数である「output_type」と「command_version」があります。"
+msgstr ""
+"コマンドは、複数の引数をとります。引数にはそれぞれ名前があります。また、特殊"
+"な引数である「output_type」と「command_version」があります。"
+
+# 4152823d68424188824f95287fe5beac
+#: ../../../source/executables/groonga-http.txt:33
+msgid ""
+"スタンドアロンやクライアントモードでは、コマンドは以下のような形式で指定しま"
+"す。"
+msgstr ""
+"スタンドアロンやクライアントモードでは、コマンドは以下のような形式で指定しま"
+"す。"
+
+# dce16e79364048a29a2a553c2b8764b5
+#: ../../../source/executables/groonga-http.txt:35
+msgid "形式1: コマンド名 値1 値2,.."
+msgstr "形式1: コマンド名 値1 値2,.."
+
+# 89d80a5610d74a58a1479d152aba7210
+#: ../../../source/executables/groonga-http.txt:37
+msgid "形式2: コマンド名 --引数名1 値1 --引数名2 値2,.."
+msgstr "形式2: コマンド名 --引数名1 値1 --引数名2 値2,.."
+
+# 0ba2232a7bcd48d482dedcdd0292966b
+#: ../../../source/executables/groonga-http.txt:39
+msgid ""
+"形式1と形式2は混在させることができます。これらの形式では、output_typeという引"
+"数名を用いてoutput_typeを指定します。"
+msgstr ""
+"形式1と形式2は混在させることができます。これらの形式では、output_typeという引"
+"数名を用いてoutput_typeを指定します。"
+
+# c24cfdde6735400292bb364495c9e71b
+#: ../../../source/executables/groonga-http.txt:41
+msgid ""
+"httpでgroongaサーバと通信する際には、以下のような形式でコマンドを指定しま"
+"す。::"
+msgstr ""
+"httpでgroongaサーバと通信する際には、以下のような形式でコマンドを指定しま"
+"す。::"
+
+# b8dffe9996684fad9d62bb7acd69ae1c
+#: ../../../source/executables/groonga-http.txt:45
+msgid "ただし、コマンド名、引数名、値はURLエンコードが必要です。"
+msgstr "ただし、コマンド名、引数名、値はURLエンコードが必要です。"
+
+# dba9727e67224792874a1cbf5148b303
+#: ../../../source/executables/groonga-http.txt:47
+msgid "GETメソッドのみが使用可能です。"
+msgstr "GETメソッドのみが使用可能です。"
+
+# 047380707f294275b594652231bbf3c7
+#: ../../../source/executables/groonga-http.txt:49
+msgid "output_typeにはjson, tsv, xmlが指定可能です。"
+msgstr "output_typeにはjson, tsv, xmlが指定可能です。"
+
+# 62602bc4a2ec4f65abb58e37529e8159
+#: ../../../source/executables/groonga-http.txt:51
+msgid ""
+"command_versionはコマンドの仕様の互換性を指定します。詳細は :doc:`/"
+"command_version` を参照してください。"
+msgstr "command_versionはコマンドの仕様の互換性を指定します。詳細は :doc:`/command_version` を参照してください。"
+
+# 45e97eb983c043bb8e050b6bf83564aa
+#: ../../../source/executables/groonga-http.txt:54
+msgid "返値"
+msgstr "返値"
+
+# 2623a29742394a97a067bcdf57fef6ce
+#: ../../../source/executables/groonga-http.txt:56
+msgid "output_typeの指定に従って、コマンドの実行結果を出力します。"
+msgstr "output_typeの指定に従って、コマンドの実行結果を出力します。"
 
 # 046285bcfad94c8ea8d790d032161e5b
 #: ../../../source/executables/groonga-suggest-create-dataset.txt:6
@@ -1154,132 +1278,3 @@ msgstr "httpサーバとして起動します。::"
 #: ../../../source/executables/groonga.txt:235
 msgid "サーバに接続し、テーブル一覧を表示します。::"
 msgstr "サーバに接続し、テーブル一覧を表示します。::"
-
-# 8f8f2f238c1f461082d13c73c9121dd6
-# b6763490280145b0a0a5454707e4783c
-#: ../../../source/executables/groonga.txt:142,
-#: ../../../source/executables/http.txt:27
-msgid "コマンド"
-msgstr "コマンド"
-
-# 4a4305b841f6414a815f56e35c52688e
-# f5128ab21cfc4963817379e0e034a38d
-#: ../../../source/executables/http.txt:11
-#: ../../../source/executables/http.txt:6,
-msgid "groonga HTTPサービス"
-msgstr "groonga HTTPサービス"
-
-# a532c0ae68424be9a82287d730dbbfae
-#: ../../../source/executables/http.txt:22
-msgid ""
-"groongaサーバを起動する時に--protocolオプションにhttpを指定すると、httpで通信"
-"可能になります。また、--document-root によって静的ページのパスを指定すると、"
-"httpリクエストに指定されたURIに対応する、パス配下に置かれたファイルを出力しま"
-"す。"
-msgstr ""
-"groongaサーバを起動する時に--protocolオプションにhttpを指定すると、httpで通信"
-"可能になります。また、--document-root によって静的ページのパスを指定すると、"
-"httpリクエストに指定されたURIに対応する、パス配下に置かれたファイルを出力しま"
-"す。"
-
-# 645766550f684bad85991a28ca5ca41a
-#: ../../../source/executables/http.txt:24
-msgid ""
-"groongaにはHTML + JavaScriptで実装された管理ツールが標準で付属しています。--"
-"document-rootを指定しない場合は管理ツールがインストールされているパスが指定さ"
-"れたとみなされますので、ウェブブラウザでhttp://hostname:port/にアクセスする"
-"と、管理ツールを利用できます。"
-msgstr ""
-"groongaにはHTML + JavaScriptで実装された管理ツールが標準で付属しています。--"
-"document-rootを指定しない場合は管理ツールがインストールされているパスが指定さ"
-"れたとみなされますので、ウェブブラウザでhttp://hostname:port/にアクセスする"
-"と、管理ツールを利用できます。"
-
-# c45af6dcf9824e9280ea90172f081583
-#: ../../../source/executables/http.txt:29
-msgid ""
-"httpを指定して起動したgroongaサーバに対しても、他のモードで起動したgroongaと"
-"同じコマンドが使用できます。"
-msgstr ""
-"httpを指定して起動したgroongaサーバに対しても、他のモードで起動したgroongaと"
-"同じコマンドが使用できます。"
-
-# bdc27935441746ea91883033493e54f5
-#: ../../../source/executables/http.txt:31
-msgid ""
-"コマンドは、複数の引数をとります。引数にはそれぞれ名前があります。また、特殊"
-"な引数である「output_type」と「command_version」があります。"
-msgstr ""
-"コマンドは、複数の引数をとります。引数にはそれぞれ名前があります。また、特殊"
-"な引数である「output_type」と「command_version」があります。"
-
-# 4152823d68424188824f95287fe5beac
-#: ../../../source/executables/http.txt:33
-msgid ""
-"スタンドアロンやクライアントモードでは、コマンドは以下のような形式で指定しま"
-"す。"
-msgstr ""
-"スタンドアロンやクライアントモードでは、コマンドは以下のような形式で指定しま"
-"す。"
-
-# dce16e79364048a29a2a553c2b8764b5
-#: ../../../source/executables/http.txt:35
-msgid "形式1: コマンド名 値1 値2,.."
-msgstr "形式1: コマンド名 値1 値2,.."
-
-# 89d80a5610d74a58a1479d152aba7210
-#: ../../../source/executables/http.txt:37
-msgid "形式2: コマンド名 --引数名1 値1 --引数名2 値2,.."
-msgstr "形式2: コマンド名 --引数名1 値1 --引数名2 値2,.."
-
-# 0ba2232a7bcd48d482dedcdd0292966b
-#: ../../../source/executables/http.txt:39
-msgid ""
-"形式1と形式2は混在させることができます。これらの形式では、output_typeという引"
-"数名を用いてoutput_typeを指定します。"
-msgstr ""
-"形式1と形式2は混在させることができます。これらの形式では、output_typeという引"
-"数名を用いてoutput_typeを指定します。"
-
-# c24cfdde6735400292bb364495c9e71b
-#: ../../../source/executables/http.txt:41
-msgid ""
-"httpでgroongaサーバと通信する際には、以下のような形式でコマンドを指定しま"
-"す。::"
-msgstr ""
-"httpでgroongaサーバと通信する際には、以下のような形式でコマンドを指定しま"
-"す。::"
-
-# b8dffe9996684fad9d62bb7acd69ae1c
-#: ../../../source/executables/http.txt:45
-msgid "ただし、コマンド名、引数名、値はURLエンコードが必要です。"
-msgstr "ただし、コマンド名、引数名、値はURLエンコードが必要です。"
-
-# dba9727e67224792874a1cbf5148b303
-#: ../../../source/executables/http.txt:47
-msgid "GETメソッドのみが使用可能です。"
-msgstr "GETメソッドのみが使用可能です。"
-
-# 047380707f294275b594652231bbf3c7
-#: ../../../source/executables/http.txt:49
-msgid "output_typeにはjson, tsv, xmlが指定可能です。"
-msgstr "output_typeにはjson, tsv, xmlが指定可能です。"
-
-# 62602bc4a2ec4f65abb58e37529e8159
-#: ../../../source/executables/http.txt:51
-msgid ""
-"command_versionはコマンドの仕様の互換性を指定します。詳細は :doc:"
-"`command_version` を参照してください。"
-msgstr ""
-"command_versionはコマンドの仕様の互換性を指定します。詳細は :doc:"
-"`command_version` を参照してください。"
-
-# 45e97eb983c043bb8e050b6bf83564aa
-#: ../../../source/executables/http.txt:54
-msgid "返値"
-msgstr "返値"
-
-# 2623a29742394a97a067bcdf57fef6ce
-#: ../../../source/executables/http.txt:56
-msgid "output_typeの指定に従って、コマンドの実行結果を出力します。"
-msgstr "output_typeの指定に従って、コマンドの実行結果を出力します。"

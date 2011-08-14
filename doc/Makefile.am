@@ -29,6 +29,8 @@ EXTRA_DIST =					\
 if ENABLE_DOCUMENT
 dist-hook: html man
 	@touch $(distdir)/build-stamp
+BUILT_SOURCES =					\
+	$(relative_source_files)
 nobase_dist_doc_DATA =				\
 	$(relative_source_files)
 else
