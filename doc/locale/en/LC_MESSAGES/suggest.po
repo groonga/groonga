@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-14 20:23\n"
+"POT-Creation-Date: 2011-08-14 21:26\n"
 "PO-Revision-Date: 2011-08-14 18:56+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -591,8 +591,9 @@ msgstr "search (fixed!)"
 
 # 17879ff384ea4d659ebd89f08a33a641
 #: ../../../source/suggest/correction.txt:45
+#, fuzzy
 msgid ""
-"Groonga creates the following completion pair from the above submissions:"
+"Groonga creates the following correction pair from the above submissions:"
 msgstr ""
 "Groonga creates the following completion pair from the above submissions:"
 
@@ -682,9 +683,10 @@ msgstr ""
 
 # a932483df2df4313ac68313c704ff88c
 #: ../../../source/suggest/correction.txt:104
+#, fuzzy
 msgid ""
-"Groonga provides :doc:`/commands/suggest` command to use completion. `--type "
-"correct` option requests corrections"
+"Groonga provides :doc:`/commands/suggest` command to use correction. `--type "
+"correct` option requests corrections."
 msgstr ""
 "Groonga provides :doc:`/commands/suggest` command to use completion. `--type "
 "correct` option requests corrections"
@@ -1056,11 +1058,12 @@ msgstr ""
 
 # 1f8975d390b24d84abce98387aa370b4
 #: ../../../source/suggest/suggestion.txt:69
+#, fuzzy
 msgid ""
-"If an user inputs \"seach\" and cooccurrence search returns \"search engine"
-"\" and \"web search realtime\" because \"seach\" is in two input columns and "
-"corresponding completed word columns have \"search engine\" and \"web search "
-"realtime\"."
+"If an user inputs \"search\" and cooccurrence search returns \"search engine"
+"\" and \"web search realtime\" because \"search\" is in two input columns "
+"and corresponding suggested word columns have \"search engine\" and \"web "
+"search realtime\"."
 msgstr ""
 "If an user inputs \"seach\" and cooccurrence search returns \"search engine"
 "\" and \"web search realtime\" because \"seach\" is in two input columns and "
@@ -1069,8 +1072,9 @@ msgstr ""
 
 # b2c19f33393e4d5d8ab431eaed170e99
 #: ../../../source/suggest/suggestion.txt:84
+#, fuzzy
 msgid ""
-"Groonga provides :doc:`/commands/suggest` command to use completion. `--type "
+"Groonga provides :doc:`/commands/suggest` command to use suggestion. `--type "
 "suggest` option requests suggestion"
 msgstr ""
 "Groonga provides :doc:`/commands/suggest` command to use completion. `--type "
@@ -1078,19 +1082,23 @@ msgstr ""
 
 # aaf337fb38f746c993c1821cdef78fe8
 #: ../../../source/suggest/suggestion.txt:87
+#, fuzzy
 msgid ""
-"For example, here is an command to get completion results by \"search\":"
+"For example, here is an command to get suggestion results by \"search\":"
 msgstr ""
 "For example, here is an command to get completion results by \"search\":"
 
-# e481536cd8294a1ea67db89948c7db23
+# 4f65ee881deb4e7eb4ecff8562931af3
 #: ../../../source/suggest/suggestion.txt:105
-msgid ""
-"1. 2011-08-10T13:33:23+09:00: search engine (submit) 1. "
-"2011-08-10T13:33:28+09:00: web search realtime (submit)"
-msgstr ""
-"1. 2011-08-10T13:33:23+09:00: search engine (submit) 1. "
-"2011-08-10T13:33:28+09:00: web search realtime (submit)"
+#, fuzzy
+msgid "2011-08-10T13:33:23+09:00: search engine (submit)"
+msgstr "2011-08-10T13:33:25+09:00: engine (submit!)"
+
+# 55a20d480f6a4c3fb9d7f6350b400687
+#: ../../../source/suggest/suggestion.txt:106
+#, fuzzy
+msgid "2011-08-10T13:33:28+09:00: web search realtime (submit)"
+msgstr "2011-08-10T13:33:30+09:00: search (submit!)"
 
 # a64e6bbcaae648c5850756e9e8e9898b
 #: ../../../source/suggest/suggestion.txt:108
@@ -1114,3 +1122,11 @@ msgstr "TODO..."
 #~ msgstr ""
 #~ "1. Cooccurrence search against learned data. 3. Similar search against "
 #~ "registered words. (optional)"
+
+# e481536cd8294a1ea67db89948c7db23
+#~ msgid ""
+#~ "1. 2011-08-10T13:33:23+09:00: search engine (submit) 1. "
+#~ "2011-08-10T13:33:28+09:00: web search realtime (submit)"
+#~ msgstr ""
+#~ "1. 2011-08-10T13:33:23+09:00: search engine (submit) 1. "
+#~ "2011-08-10T13:33:28+09:00: web search realtime (submit)"
