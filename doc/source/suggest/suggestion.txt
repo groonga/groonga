@@ -45,7 +45,7 @@ Groonga creates the following suggestion pairs:
 
 +----------+------------------------------------+
 |  input   |          suggested words           |
-+----------+------------------------------------+
++==========+====================================+
 |search    |search engine                       |
 +----------+------------------------------------+
 |engine    |search engine                       |
@@ -66,9 +66,9 @@ Those pairs are created by the following steps:
   2. Creates a pair that is consists of a token and original
      query for each token.
 
-If an user inputs "seach" and cooccurrence search returns
-"search engine" and "web search realtime" because "seach" is
-in two input columns and corresponding completed word
+If an user inputs "search" and cooccurrence search returns
+"search engine" and "web search realtime" because "search" is
+in two input columns and corresponding suggested word
 columns have "search engine" and "web search realtime".
 
 How to use
@@ -82,9 +82,9 @@ How to use
 .. ]
 
 Groonga provides :doc:`/commands/suggest` command to use
-completion. `--type suggest` option requests suggestion
+suggestion. `--type suggest` option requests suggestion
 
-For example, here is an command to get completion results by
+For example, here is an command to get suggestion results by
 "search":
 
 .. groonga-command
@@ -103,7 +103,7 @@ For example, an user wants to search by "engine". The user
 inputs the query with the following sequence:
 
   1. 2011-08-10T13:33:23+09:00: search engine (submit)
-  1. 2011-08-10T13:33:28+09:00: web search realtime (submit)
+  2. 2011-08-10T13:33:28+09:00: web search realtime (submit)
 
 Groonga can be learned from the submissions by the
 following command::

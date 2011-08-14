@@ -48,7 +48,7 @@ For example, there is the following user input sequence:
 
 +----------+----------+
 |  input   |  submit  |
-+----------+----------+
++==========+==========+
 |s         |no        |
 +----------+----------+
 |se        |no        |
@@ -82,7 +82,7 @@ Groonga creates the following completion pairs:
 
 +----------+--------------------+
 |  input   |   completed word   |
-+----------+--------------------+
++==========+====================+
 |s         |search              |
 +----------+--------------------+
 |se        |search              |
