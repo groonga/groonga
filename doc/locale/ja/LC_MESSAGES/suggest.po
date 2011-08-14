@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-08-12 15:03\n"
-"PO-Revision-Date: 2011-08-12 15:00+0900\n"
+"PO-Revision-Date: 2011-08-14 18:51+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -22,39 +22,39 @@ msgstr ""
 #: ../../../source/example/completion-1.log:1,
 #: ../../../source/example/correction-1.log:1
 msgid "Execution example::"
-msgstr ""
+msgstr "実行例::"
 
 # 5aa76f567d1346f3ad5280a78b2ee1af
 #: ../../../source/suggest.txt:6
 msgid "Suggest"
-msgstr ""
+msgstr "サジェスト"
 
 # fbf1080ed4a94221aa01e5d7c8d38502
 #: ../../../source/suggest.txt:8
 msgid ""
 "Groonga has suggest feature. This section describes how to use it and how it "
 "works."
-msgstr ""
+msgstr "groongaにはサジェスト機能があります。このセクションではこの機能の使い方とどのように動作しているかを説明します。"
 
 # 66782136d9f9465e8f5fcad0b3fe942d
 #: ../../../source/suggest/completion.txt:24
 msgid "The completion feature uses three searches to compute completed words:"
-msgstr ""
+msgstr "補完機能は補完される語を計算するために3種類の検索を使います。"
 
 # d214adc6ee2647fe82e1374543432e7e
 #: ../../../source/suggest/completion.txt:27
 msgid "Prefix RK search against registered words."
-msgstr ""
+msgstr "登録されている語を前方一致RK検索。"
 
 # 5b8f0479194e46969a3b8986d1efded2
 #: ../../../source/suggest/completion.txt:29
 msgid "Prefix search against registered words. (optional)"
-msgstr ""
+msgstr "登録されている語を前方一致検索。（実行しないこともある）"
 
 # c73a3a0ad67745768a57d89ce3d395fc
 #: ../../../source/suggest/completion.txt:32
 msgid "Prefix RK search"
-msgstr ""
+msgstr "前方一致RK検索"
 
 # 035a01d3ce7d4bee90f1cc3b5ad7a38e
 #: ../../../source/suggest/completion.txt:34
@@ -62,7 +62,7 @@ msgid ""
 "RK means Romaji and Katakana. Prefix RK search can find registered words "
 "that start with user's input by romaji, katakana or hiragana. It's useful "
 "for searching in Japanese."
-msgstr ""
+msgstr "RKはローマ字（Romaji）とカタカナ（Katakana）を意味しています。前方一致RK検索は登録されている語をユーザの入力から前方一致検索します。このとき、ユーザの入力はローマ字でもカタカナでもひらがなでも構いません。この機能は日本語を検索するときに便利です。"
 
 # b3b103edcc8d4e4c81acb870a028319e
 #: ../../../source/suggest/completion.txt:38
@@ -70,7 +70,7 @@ msgid ""
 "For example, there is a registered word \"日本\". And \"ニホン\" (it must be "
 "katakana) is registered as its reading. An user can find \"日本\" by \"ni\", "
 "\"二\" or \"に\"."
-msgstr ""
+msgstr "例えば、\"日本\"という語が登録されているとします。そして、その読みとして\"ニホン\"（カタカナにしないといけません）が登録されているとします。このとき、ユーザの入力が\"ni\"でも\"二\"でも\"に\"でも\"日本\"を見つけることができます。"
 
 # b4d542ba13254115ac3e0d1744947ef5
 #: ../../../source/suggest/completion.txt:45
@@ -78,17 +78,17 @@ msgid ""
 "Cooccurrence search can find registered words from user's partial input. It "
 "uses user input sequences that will be learned from query logs, access logs "
 "and so on."
-msgstr ""
+msgstr "共起検索は入力途中のユーザのクエリから登録されている語を見つけます。共起検索では検索データベースとしてユーザの入力シーケンスを使います。これはクエリログやアクセスログなどから学習します。"
 
 # 3411dbbeeae04bc28de2a0b96cf3cf39
 #: ../../../source/suggest/completion.txt:49
 msgid "For example, there is the following user input sequence:"
-msgstr ""
+msgstr "例えば、以下のようなユーザの入力シーケンスがあるとします。"
 
 # aab717a62b314abeb7552e6707342fb3
 #: ../../../source/suggest/completion.txt:52
 msgid "submit"
-msgstr ""
+msgstr "検索実行"
 
 # 65ef0f763cb8482fa7391eea89f2ea65
 # 328aa03b35774a169ff950e38fdc2a7d
@@ -113,29 +113,29 @@ msgstr ""
 #: ../../../source/suggest/completion.txt:72,
 #: ../../../source/suggest/completion.txt:74,
 msgid "no"
-msgstr ""
+msgstr "していない"
 
 # 831d5129e1e9495fa8db1ec4da78239c
 #: ../../../source/suggest/completion.txt:78
 msgid "no (typo!)"
-msgstr ""
+msgstr "していない（入力ミス！）"
 
 # d3708cc35ae64675827a0301ba8fbe9c
 # 462133a2b6db4555aa28e39d4762c20c
 #: ../../../source/suggest/completion.txt:80
 #: ../../../source/suggest/completion.txt:64,
 msgid "yes"
-msgstr ""
+msgstr "した"
 
 # 70da73db787b444fa868ea08b0c7d598
 #: ../../../source/suggest/completion.txt:83
 msgid "Groonga creates the following completion pairs:"
-msgstr ""
+msgstr "groongaは以下のような補完ペアを作ります。:"
 
 # 9bc9abc19d4b4b5eb8df89459609e31a
 #: ../../../source/suggest/completion.txt:86
 msgid "completed word"
-msgstr ""
+msgstr "補完語"
 
 # 491ba9c0a20b40e8bd69286d43218b49
 # 9f2823d31be44783904990f5c90dae02
@@ -219,7 +219,7 @@ msgstr ""
 msgid ""
 "All user not-submitted inputs (e.g. \"s\", \"se\" and so on) before each an "
 "user submission maps to the submitted input (e.g. \"search\")."
-msgstr ""
+msgstr "ユーザが検索を実行する前のすべての入力（例では\"s\"、\"se\"など）を検索を実行した語（例では\"search\"）に対応付けます。"
 
 # 3613d2ea23904a5c96beaa385e926dc7
 #: ../../../source/suggest/completion.txt:117
@@ -229,7 +229,7 @@ msgid ""
 "each an user submission\". Groonga just case about \"all user not-submitted "
 "inputs within a minute from an user submission before each an user submission"
 "\". Groonga doesn't treat user inputs before a minute ago."
-msgstr ""
+msgstr "厳密に言うとこの説明は正しくありません。なぜならタイムスタンプに関することを省略しているからです。groongaは本当は「ユーザが検索を実行する前のすべての入力を」使いません。厳密には「ユーザが検索を実行する前の1分以内の入力のみ」を使います。検索実行時から1分より前の入力は使われません。"
 
 # 0062f0e9d21746d6bf7c1b8dcba4ad16
 #: ../../../source/suggest/completion.txt:125
@@ -237,12 +237,12 @@ msgid ""
 "If an user inputs \"sea\" and cooccurrence search returns \"search\" because "
 "\"sea\" is in input column and corresponding completed word column value is "
 "\"search\"."
-msgstr ""
+msgstr "ユーザが\"sea\"と入力したら、共起検索は\"search\"を返します。なぜなら、「入力」カラムには\"sea\"という値があり、対応する「補完語」カラムには\"search\"という値が入っているからです。"
 
 # c31f1a98c9784f508c4008d71a79780e
 #: ../../../source/suggest/completion.txt:130
 msgid "Prefix search"
-msgstr ""
+msgstr "前方一致検索"
 
 # 347ab3d462fb4118bd0845f75f8b0ef5
 #: ../../../source/suggest/completion.txt:132
@@ -250,33 +250,33 @@ msgid ""
 "Prefix search can find registered word that start with user's input. This "
 "search doesn't care about romaji, katakana and hiragana not like Prefix RK "
 "search."
-msgstr ""
+msgstr "前方一致検索はユーザが入力した文字列から始まる登録済みの語を検索します。この検索は前方一致RK検索とは違ってローマ字、カタカナ、ひらがなを特別扱いしません。"
 
 # 738bf820ee2c482aa61b90975be1ff94
 #: ../../../source/suggest/completion.txt:136
 msgid ""
 "This search isn't always ran. It's just ran when it's requested explicitly "
 "or prefix both RK search and Cooccurrence search return nothing."
-msgstr ""
+msgstr "この検索はいつも実行されるわけではありません。この検索は明示的に実行するように指示するか、前方一致RK検索と共起検索の両方がなにもヒットしないときのみ実行されます。"
 
 # 42b839f545d04be095324811c38b4bd7
 #: ../../../source/suggest/completion.txt:140
 msgid ""
 "For example, there is a registered word \"search\". An user can find \"search"
 "\" by \"s\", \"se\", \"sea\", \"sear\", \"searc\" and \"search\"."
-msgstr ""
+msgstr "例えば、\"search\"が登録されているとします。ユーザは\"s\"、\"se\"、\"sea\"、\"sear\"、\"searc\"、\"search\"のどれでも\"search\"を補完候補として利用できます。"
 
 # 4941066c272e4c8d9fea28523b205609
 #: ../../../source/suggest/completion.txt:158
 msgid ""
 "Groonga provides :doc:`commands/suggest` command to use completion. `--type "
 "complete` option requests completion."
-msgstr ""
+msgstr "groongaは補完機能を使うために :doc:`commands/suggest` コマンドを用意しています。 `--type complete` オプションを使うと補完機能を利用できます。"
 
 # 5c176e739a484fccb0d12746750fbab9
 #: ../../../source/suggest/completion.txt:161
 msgid "For example, here is an command to get completion results by \"en\":"
-msgstr ""
+msgstr "例えば、\"en\"と入力したときの補完結果を取得するコマンドは以下のようになります。:"
 
 # 161cb0041a5c42d3a6a17335fca6ef18
 #: ../../../source/suggest/completion.txt:179
@@ -306,7 +306,7 @@ msgstr ""
 # b251c458da8e4bf79e406c4f84211260
 #: ../../../source/suggest/completion.txt:184
 msgid "2011-08-10T13:33:25+09:00: engine (submit!)"
-msgstr ""
+msgstr "2011-08-10T13:33:25+09:00: engine （検索実行！）"
 
 # 1313647921cf4cc2a915731238b9eef6
 # 988c9622ea884550ab22d3d501e5f82f
