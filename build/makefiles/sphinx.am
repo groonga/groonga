@@ -58,6 +58,11 @@ mo-build-stamp: $(po_files_relative_from_locale_dir)
 	cd LC_MESSAGES && $(MAKE) build
 	@touch $@
 
+clean-local: $(clean_targets) clean-doctrees
+
+clean-doctrees:
+	rm -rf $(DOCTREES_BASE)
+
 maintainer-clean: maintainer-clean-local
 maintainer-clean-local:
 	rm -rf -- $(generated_files)
@@ -122,7 +127,7 @@ clean_targets =					\
 	clean-doctest
 
 $(clean_targets):
-	@target=`echo $@ | sed -e 's/^clean-//'`;	\
+	target=`echo $@ | sed -e 's/^clean-//'`;	\
 	  rm -rf $${target}-build-stamp $${target}
 
 build_stamps =					\
