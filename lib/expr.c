@@ -3737,7 +3737,23 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
         }
         break;
       case SCAN_COL1 :
-        si->args[si->nargs - 1] = NULL;
+        {
+          int j;
+          grn_obj inspected;
+          GRN_TEXT_INIT(&inspected, 0);
+          GRN_TEXT_PUTS(ctx, &inspected, "<");
+          grn_inspect_name(ctx, &inspected, c->value);
+          GRN_TEXT_PUTS(ctx, &inspected, ">: <");
+          grn_inspect(ctx, &inspected, expr);
+          GRN_TEXT_PUTS(ctx, &inspected, ">");
+          ERR(GRN_INVALID_ARGUMENT,
+              "invalid expression: can't use column as a value: %.*s",
+              GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));
+          GRN_OBJ_FIN(ctx, &inspected);
+          for (j = 0; j < i; j++) { SI_FREE(sis[j]); }
+          GRN_FREE(sis);
+          return NULL;
+        }
         stat = SCAN_COL2;
         break;
       case SCAN_COL2 :

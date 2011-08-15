@@ -109,6 +109,8 @@ test_match_against_not_string(void)
   grn_test_assert_send_command_error(
     context,
     GRN_INVALID_ARGUMENT,
-    "invalid function: <\"groonga\">",
+    "invalid expression: can't use column as a value: "
+    "<Sites.uri>: "
+    "<noname($1:\"\"){2_key GET_VALUE,0uri GET_VALUE,0MATCH}>",
     "select Sites --filter \"_key @ uri");
 }
