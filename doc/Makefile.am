@@ -26,6 +26,8 @@ man pdf clean-html update-po:
 EXTRA_DIST =					\
 	$(relative_theme_files)
 
+$(relative_source_files): html
+
 if ENABLE_DOCUMENT
 dist-hook: html man
 	@touch $(distdir)/build-stamp

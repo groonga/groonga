@@ -4,7 +4,7 @@ include $(top_srcdir)/build/makefiles/sphinx-build.am
 doc_localedir = $(docdir)/$(LOCALE)
 
 if ENABLE_DOCUMENT
-$(html_files): html-build-stamp
+$(html_files_relative_from_locale_dir): html-build-stamp
 $(man_files): man-build-stamp
 
 nobase_dist_doc_locale_DATA =			\
