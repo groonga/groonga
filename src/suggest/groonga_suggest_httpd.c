@@ -78,6 +78,7 @@ typedef struct {
   const char *log_base_path;
   FILE *log_file;
   uint32_t log_count;
+  grn_bool request_reopen_log_file;
 } thd_data;
 
 typedef struct {
@@ -89,7 +90,9 @@ typedef struct {
 
 #define CMD_BUF_SIZE 1024
 
+static thd_data threads[MAX_THREADS];
 static uint32_t default_max_threads = DEFAULT_MAX_THREADS;
+static uint32_t max_threads;
 static volatile sig_atomic_t loop = 1;
 static grn_obj *db;
 
@@ -249,6 +252,14 @@ cleanup_httpd_thread(thd_data *thd) {
 }
 
 static void
+close_log_file(thd_data *thread)
+{
+  fclose(thread->log_file);
+  thread->log_file = NULL;
+  thread->request_reopen_log_file = GRN_FALSE;
+}
+
+static void
 generic_handler(struct evhttp_request *req, void *arg)
 {
   struct evkeyvalq args;
@@ -280,6 +291,9 @@ generic_handler(struct evhttp_request *req, void *arg)
     /* logging */
     {
       if (thd->log_base_path) {
+        if (thd->log_file && thd->request_reopen_log_file) {
+          close_log_file(thd);
+        }
         if (!thd->log_file) {
           time_t n;
           struct tm *t_st;
@@ -302,8 +316,7 @@ generic_handler(struct evhttp_request *req, void *arg)
         if (thd->log_file) {
           fprintf(thd->log_file, "%s\n", req->uri);
           if (++thd->log_count >= LOG_SPLIT_LINES) {
-            fclose(thd->log_file);
-            thd->log_file = NULL;
+            close_log_file(thd);
           }
         }
       }
@@ -349,6 +362,16 @@ static void
 signal_handler(int sig)
 {
   loop = 0;
+}
+
+static void
+signal_reopen_log_file(int sig)
+{
+  uint32_t i;
+
+  for (i = 0; i < max_threads; i++) {
+    threads[i].request_reopen_log_file = GRN_TRUE;
+  }
 }
 
 void
@@ -524,55 +547,54 @@ serve_threads(int nthreads, int port, const char *db_path, void *zmq_ctx,
 {
   int nfd;
   uint32_t i;
-  thd_data thds[nthreads];
-
   if ((nfd = bind_socket(port)) < 0) {
     print_error("cannot bind socket. please check port number with netstat.");
     return -1;
   }
 
   for (i = 0; i < nthreads; i++) {
-    memset(&thds[i], 0, sizeof(thds[i]));
-    if (!(thds[i].base = event_init())) {
+    memset(&threads[i], 0, sizeof(threads[i]));
+    threads[i].request_reopen_log_file = GRN_FALSE;
+    if (!(threads[i].base = event_init())) {
       print_error("error in event_init() on thread %d.", i);
     } else {
-      if (!(thds[i].httpd = evhttp_new(thds[i].base))) {
+      if (!(threads[i].httpd = evhttp_new(threads[i].base))) {
         print_error("error in evhttp_new() on thread %d.", i);
       } else {
         int r;
-        if ((r = evhttp_accept_socket(thds[i].httpd, nfd))) {
+        if ((r = evhttp_accept_socket(threads[i].httpd, nfd))) {
           print_error("error in evhttp_accept_socket() on thread %d.", i);
         } else {
           if (send_endpoint) {
-            if (!(thds[i].zmq_sock = zmq_socket(zmq_ctx, ZMQ_PUB))) {
+            if (!(threads[i].zmq_sock = zmq_socket(zmq_ctx, ZMQ_PUB))) {
               print_error("cannot create zmq_socket.");
-            } else if (zmq_connect(thds[i].zmq_sock, send_endpoint)) {
+            } else if (zmq_connect(threads[i].zmq_sock, send_endpoint)) {
               print_error("cannot connect zmq_socket.");
-              zmq_close(thds[i].zmq_sock);
-              thds[i].zmq_sock = NULL;
+              zmq_close(threads[i].zmq_sock);
+              threads[i].zmq_sock = NULL;
             } else {
               uint64_t hwm = 1;
-              zmq_setsockopt(thds[i].zmq_sock, ZMQ_HWM, &hwm, sizeof(uint64_t));
+              zmq_setsockopt(threads[i].zmq_sock, ZMQ_HWM, &hwm, sizeof(uint64_t));
             }
           } else {
-            thds[i].zmq_sock = NULL;
+            threads[i].zmq_sock = NULL;
           }
-          if (!(thds[i].ctx = grn_ctx_open(0))) {
+          if (!(threads[i].ctx = grn_ctx_open(0))) {
             print_error("error in grn_ctx_open() on thread %d.", i);
-          } else if (grn_ctx_use(thds[i].ctx, db)) {
+          } else if (grn_ctx_use(threads[i].ctx, db)) {
             print_error("error in grn_db_open() on thread %d.", i);
           } else {
-            GRN_TEXT_INIT(&(thds[i].cmd_buf), 0);
-            thds[i].log_base_path = log_base_path;
-            thds[i].thread_id = i;
-            evhttp_set_gencb(thds[i].httpd, generic_handler, &thds[i]);
-            evhttp_set_timeout(thds[i].httpd, 10);
+            GRN_TEXT_INIT(&(threads[i].cmd_buf), 0);
+            threads[i].log_base_path = log_base_path;
+            threads[i].thread_id = i;
+            evhttp_set_gencb(threads[i].httpd, generic_handler, &threads[i]);
+            evhttp_set_timeout(threads[i].httpd, 10);
             {
               struct timeval tv = {1, 0};
-              evtimer_set(&(thds[i].pulse), timeout_handler, &thds[i]);
-              evtimer_add(&(thds[i].pulse), &tv);
+              evtimer_set(&(threads[i].pulse), timeout_handler, &threads[i]);
+              evtimer_add(&(threads[i].pulse), &tv);
             }
-            if ((r = pthread_create(&(thds[i].thd), NULL, dispatch, thds[i].base))) {
+            if ((r = pthread_create(&(threads[i].thd), NULL, dispatch, threads[i].base))) {
               print_error("error in pthread_create() on thread %d.", i);
             }
           }
@@ -598,10 +620,10 @@ serve_threads(int nthreads, int port, const char *db_path, void *zmq_ctx,
 
   /* join all httpd thread */
   for (i = 0; i < nthreads; i++) {
-    if (thds[i].thd) {
-      pthread_join(thds[i].thd, NULL);
+    if (threads[i].thd) {
+      pthread_join(threads[i].thd, NULL);
     }
-    cleanup_httpd_thread(&(thds[i]));
+    cleanup_httpd_thread(&(threads[i]));
   }
   return 0;
 }
@@ -714,7 +736,6 @@ main(int argc, char **argv)
   } else {
     grn_ctx ctx;
     void *zmq_ctx;
-    int max_threads;
 
     if (max_threads_string) {
       max_threads = atoi(max_threads_string);
@@ -754,6 +775,7 @@ main(int argc, char **argv)
         signal(SIGTERM, signal_handler);
         signal(SIGINT, signal_handler);
         signal(SIGQUIT, signal_handler);
+        signal(SIGUSR1, signal_reopen_log_file);
 
         serve_threads(max_threads, port_no, argv[n_processed_args], zmq_ctx,
                       send_endpoint, recv_endpoint, log_base_path);
