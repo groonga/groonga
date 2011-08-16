@@ -299,6 +299,7 @@ correct(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost,
           memset(&optarg, 0, sizeof(grn_select_optarg));
           optarg.mode = GRN_OP_SIMILAR;
           optarg.similarity_threshold = 0;
+          optarg.max_size = 2;
           grn_ii_select(ctx, (grn_ii *)index, TEXT_VALUE_LEN(query),
                         (grn_hash *)res, GRN_OP_OR, &optarg);
           grn_obj_unlink(ctx, index);
@@ -358,9 +359,18 @@ correct(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost,
               grn_expr_append_op(ctx, expr, GRN_OP_MINUS_ASSIGN, 2);
 
               if ((tc = grn_table_cursor_open(ctx, res, NULL, 0, NULL, 0, 0, -1, 0))) {
+                grn_obj score_value;
+                GRN_INT32_INIT(&score_value, 0);
                 while (!grn_table_cursor_next_o(ctx, tc, var)) {
                   grn_expr_exec(ctx, expr, 0);
+                  GRN_BULK_REWIND(&score_value);
+                  grn_obj_get_value(ctx, score, GRN_RECORD_VALUE(var),
+                                    &score_value);
+                  if (GRN_INT32_VALUE(&score_value) < threshold) {
+                    grn_table_cursor_delete(ctx, tc);
+                  }
                 }
+                grn_obj_unlink(ctx, &score_value);
                 grn_table_cursor_close(ctx, tc);
               }
               grn_obj_unlink(ctx, score);

@@ -290,14 +290,14 @@ test_correct_similar(void)
      "[[1],"
       "[[\"_key\",\"ShortText\"],"
        "[\"_score\",\"Int32\"]],"
-      "[\"file.join\",1048573]]}",
+      "[\"kernel.\",1]]}",
     send_command(
         "suggest "
         "--table item_rurema "
         "--column kana "
         "--types correct "
         "--threshold 1 "
-        "--query 'join'"));
+        "--query 'kernel'"));
 }
 
 void
