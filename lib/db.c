@@ -4776,7 +4776,7 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
               {
                 grn_token *token;
                 if (v && s &&
-                    (token = grn_token_open(ctx, lexicon, v, s, GRN_TABLE_ADD))) {
+                    (token = grn_token_open(ctx, lexicon, v, s, grn_token_add))) {
                   while (!token->status) {
                     grn_id tid = grn_token_next(ctx, token);
                     grn_bulk_write(ctx, &buf, (char *)&tid, sizeof(grn_id));
