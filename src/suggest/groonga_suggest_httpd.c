@@ -51,7 +51,6 @@ grn_rc grn_ctx_close(grn_ctx *ctx);
 
 #define LISTEN_BACKLOG 756
 #define MIN_MAX_FDS 2048
-#define LOG_SPLIT_LINES 1000000
 #define MAX_THREADS 128 /* max 256 */
 
 typedef enum {
@@ -95,6 +94,7 @@ static uint32_t default_max_threads = DEFAULT_MAX_THREADS;
 static uint32_t max_threads;
 static volatile sig_atomic_t loop = 1;
 static grn_obj *db;
+static uint32_t n_lines_per_log_file = 1000000;
 
 static int
 suggest_result(struct evbuffer *res_buf, const char *types, const char *query,
@@ -315,7 +315,9 @@ generic_handler(struct evhttp_request *req, void *arg)
         }
         if (thd->log_file) {
           fprintf(thd->log_file, "%s\n", req->uri);
-          if (++thd->log_count >= LOG_SPLIT_LINES) {
+          thd->log_count++;
+          if (n_lines_per_log_file > 0 &&
+              thd->log_count >= n_lines_per_log_file) {
             close_log_file(thd);
           }
         }
@@ -676,10 +678,13 @@ usage(FILE *output)
     "  -r, --receive-endpoint <receive endpoint> : receive endpoint\n"
     "                                              (ex. tcp://example.com:1235)\n"
     "  -l, --log-base-path <path prefix>         : log path prefix\n"
+    "  --n-lines-per-log-file <lines number>     : number of lines in a log file\n"
+    "                                              use 0 for disabling this\n"
+    "                                              (default: %d)\n"
     "  -d, --daemon                              : daemonize\n"
     "  --disable-max-fd-check                    : disable max FD check on start\n"
     "  -h, --help                                : show this message\n",
-    DEFAULT_PORT, default_max_threads);
+    DEFAULT_PORT, default_max_threads, n_lines_per_log_file);
 }
 
 int
@@ -689,6 +694,7 @@ main(int argc, char **argv)
   const char *max_threads_string = NULL, *port_string = NULL;
   const char *address;
   const char *send_endpoint = NULL, *recv_endpoint = NULL, *log_base_path = NULL;
+  const char *n_lines_per_log_file_string = NULL;
   int n_processed_args, flags = RUN_MODE_ENABLE_MAX_FD_CHECK;
   run_mode mode = run_mode_none;
 
@@ -707,6 +713,7 @@ main(int argc, char **argv)
       {'s', "send-endpoint", NULL, 0, getopt_op_none},
       {'r', "receive-endpoint", NULL, 0, getopt_op_none},
       {'l', "log-base-path", NULL, 0, getopt_op_none},
+      {'\0', "n-lines-per-log-file", NULL, 0, getopt_op_none},
       {'d', "daemon", NULL, run_mode_daemon, getopt_op_update},
       {'\0', "disable-max-fd-check", NULL, RUN_MODE_ENABLE_MAX_FD_CHECK,
        getopt_op_off},
@@ -719,6 +726,7 @@ main(int argc, char **argv)
     opts[5].arg = &send_endpoint;
     opts[6].arg = &recv_endpoint;
     opts[7].arg = &log_base_path;
+    opts[8].arg = &n_lines_per_log_file_string;
 
     n_processed_args = grn_str_getopt(argc, argv, opts, &flags);
   }
@@ -762,6 +770,24 @@ main(int argc, char **argv)
         rlim.rlim_cur = rlim.rlim_cur;
         setrlimit(RLIMIT_NOFILE, &rlim);
       }
+    }
+
+    if (n_lines_per_log_file_string) {
+      int64_t n_lines;
+      n_lines = grn_atoll(n_lines_per_log_file_string,
+                          n_lines_per_log_file_string + strlen(n_lines_per_log_file_string),
+                          NULL);
+      if (n_lines < 0) {
+        print_error("--n-lines-per-log-file must be >= 0: <%s>",
+                    n_lines_per_log_file_string);
+        return(EXIT_FAILURE);
+      }
+      if (n_lines > UINT32_MAX) {
+        print_error("--n-lines-per-log-file must be <= %ld: <%s>",
+                    UINT32_MAX, n_lines_per_log_file_string);
+        return(EXIT_FAILURE);
+      }
+      n_lines_per_log_file = (uint32_t)n_lines;
     }
 
     if (mode == run_mode_daemon) {
