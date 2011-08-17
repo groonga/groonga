@@ -89,7 +89,7 @@ OPTIONS
     ``-_score``
 
 ``output_columns``
-  It specifies output column values.
+  It specifies output columns.
 
   Default:
     ``_key,_score``
@@ -101,7 +101,7 @@ OPTIONS
     ``0``
 
 ``limit``
-  It specifies number of returned records
+  It specifies number of returned records.
 
   Default:
     ``10``

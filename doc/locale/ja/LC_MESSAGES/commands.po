@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-12 14:57\n"
-"PO-Revision-Date: 2011-05-09 00:36+0900\n"
+"POT-Creation-Date: 2011-08-17 16:50\n"
+"PO-Revision-Date: 2011-08-17 16:52+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -31,8 +31,76 @@ msgstr ""
 msgid "cache_limit"
 msgstr ""
 
+#: ../../../source/commands/cache_limit.txt:9
+#: ../../../source/commands/check.txt:9
+#: ../../../source/commands/clearlock.txt:9
+#: ../../../source/commands/column_create.txt:9
+#: ../../../source/commands/column_list.txt:9
+#: ../../../source/commands/column_remove.txt:9
+#: ../../../source/commands/define_selector.txt:9
+#: ../../../source/commands/defrag.txt:9 ../../../source/commands/delete.txt:9
+#: ../../../source/commands/dump.txt:9 ../../../source/commands/load.txt:9
+#: ../../../source/commands/log_level.txt:9
+#: ../../../source/commands/log_put.txt:9
+#: ../../../source/commands/log_reopen.txt:9
+#: ../../../source/commands/quit.txt:9 ../../../source/commands/select.txt:9
+#: ../../../source/commands/shutdown.txt:9
+#: ../../../source/commands/status.txt:9
+#: ../../../source/commands/table_create.txt:9
+#: ../../../source/commands/table_list.txt:9
+#: ../../../source/commands/table_remove.txt:9
+#: ../../../source/commands/view_add.txt:9
+msgid "名前"
+msgstr ""
+
 #: ../../../source/commands/cache_limit.txt:11
 msgid "cache_limit - cacheサイズの設定・取得"
+msgstr ""
+
+#: ../../../source/commands/cache_limit.txt:14
+#: ../../../source/commands/check.txt:14
+#: ../../../source/commands/clearlock.txt:14
+#: ../../../source/commands/column_create.txt:14
+#: ../../../source/commands/column_list.txt:14
+#: ../../../source/commands/column_remove.txt:14
+#: ../../../source/commands/define_selector.txt:14
+#: ../../../source/commands/defrag.txt:14
+#: ../../../source/commands/delete.txt:14 ../../../source/commands/dump.txt:14
+#: ../../../source/commands/load.txt:14
+#: ../../../source/commands/log_level.txt:14
+#: ../../../source/commands/log_put.txt:14
+#: ../../../source/commands/log_reopen.txt:14
+#: ../../../source/commands/quit.txt:14 ../../../source/commands/select.txt:14
+#: ../../../source/commands/shutdown.txt:14
+#: ../../../source/commands/status.txt:14
+#: ../../../source/commands/table_create.txt:14
+#: ../../../source/commands/table_list.txt:14
+#: ../../../source/commands/table_remove.txt:14
+#: ../../../source/commands/view_add.txt:14
+msgid "書式"
+msgstr ""
+
+#: ../../../source/commands/cache_limit.txt:20
+#: ../../../source/commands/check.txt:20
+#: ../../../source/commands/clearlock.txt:20
+#: ../../../source/commands/column_create.txt:20
+#: ../../../source/commands/column_list.txt:20
+#: ../../../source/commands/column_remove.txt:20
+#: ../../../source/commands/define_selector.txt:22
+#: ../../../source/commands/defrag.txt:20
+#: ../../../source/commands/delete.txt:20 ../../../source/commands/dump.txt:20
+#: ../../../source/commands/load.txt:20
+#: ../../../source/commands/log_level.txt:20
+#: ../../../source/commands/log_put.txt:20
+#: ../../../source/commands/log_reopen.txt:20
+#: ../../../source/commands/quit.txt:20 ../../../source/commands/select.txt:23
+#: ../../../source/commands/shutdown.txt:20
+#: ../../../source/commands/status.txt:20
+#: ../../../source/commands/table_create.txt:20
+#: ../../../source/commands/table_list.txt:20
+#: ../../../source/commands/table_remove.txt:20
+#: ../../../source/commands/view_add.txt:20
+msgid "説明"
 msgstr ""
 
 #: ../../../source/commands/cache_limit.txt:22
@@ -46,6 +114,29 @@ msgstr ""
 msgid "cache_limitは、クエリキャッシュの最大件数を取得したり設定したりします。"
 msgstr ""
 
+#: ../../../source/commands/cache_limit.txt:27
+#: ../../../source/commands/check.txt:27
+#: ../../../source/commands/clearlock.txt:27
+#: ../../../source/commands/column_create.txt:27
+#: ../../../source/commands/column_list.txt:27
+#: ../../../source/commands/column_remove.txt:28
+#: ../../../source/commands/define_selector.txt:29
+#: ../../../source/commands/defrag.txt:27
+#: ../../../source/commands/delete.txt:27 ../../../source/commands/dump.txt:33
+#: ../../../source/commands/load.txt:27
+#: ../../../source/commands/log_level.txt:27
+#: ../../../source/commands/log_put.txt:27
+#: ../../../source/commands/log_reopen.txt:29
+#: ../../../source/commands/quit.txt:27 ../../../source/commands/select.txt:30
+#: ../../../source/commands/shutdown.txt:27
+#: ../../../source/commands/status.txt:27
+#: ../../../source/commands/table_create.txt:29
+#: ../../../source/commands/table_list.txt:27
+#: ../../../source/commands/table_remove.txt:27
+#: ../../../source/commands/view_add.txt:27
+msgid "引数"
+msgstr ""
+
 #: ../../../source/commands/cache_limit.txt:29
 msgid "``max``"
 msgstr ""
@@ -56,154 +147,54 @@ msgid ""
 "は、クエリキャッシュの最大件数は変更せず、 現在の設定値のみが返されます。"
 msgstr ""
 
-#: ../../../source/commands/cache_limit.txt:39
-msgid "json"
-msgstr ""
-
-#: ../../../source/commands/cache_limit.txt:14,
-#: ../../../source/commands/check.txt:14,
-#: ../../../source/commands/clearlock.txt:14,
-#: ../../../source/commands/column_create.txt:14,
-#: ../../../source/commands/column_list.txt:14,
-#: ../../../source/commands/column_remove.txt:14,
-#: ../../../source/commands/define_selector.txt:14,
-#: ../../../source/commands/defrag.txt:14,
-#: ../../../source/commands/delete.txt:14,
-#: ../../../source/commands/dump.txt:14, ../../../source/commands/load.txt:14,
-#: ../../../source/commands/log_level.txt:14,
-#: ../../../source/commands/log_put.txt:14,
-#: ../../../source/commands/log_reopen.txt:14,
-#: ../../../source/commands/quit.txt:14,
-#: ../../../source/commands/select.txt:14,
-#: ../../../source/commands/shutdown.txt:14,
-#: ../../../source/commands/status.txt:14,
-#: ../../../source/commands/suggest.txt:16,
-#: ../../../source/commands/table_create.txt:14,
-#: ../../../source/commands/table_list.txt:14,
-#: ../../../source/commands/table_remove.txt:14,
-#: ../../../source/commands/view_add.txt:14
-msgid "書式"
-msgstr ""
-
-#: ../../../source/commands/cache_limit.txt:20,
-#: ../../../source/commands/check.txt:20,
-#: ../../../source/commands/clearlock.txt:20,
-#: ../../../source/commands/column_create.txt:20,
-#: ../../../source/commands/column_list.txt:20,
-#: ../../../source/commands/column_remove.txt:20,
-#: ../../../source/commands/define_selector.txt:22,
-#: ../../../source/commands/defrag.txt:20,
-#: ../../../source/commands/delete.txt:20,
-#: ../../../source/commands/dump.txt:20, ../../../source/commands/load.txt:20,
-#: ../../../source/commands/log_level.txt:20,
-#: ../../../source/commands/log_put.txt:20,
-#: ../../../source/commands/log_reopen.txt:20,
-#: ../../../source/commands/quit.txt:20,
-#: ../../../source/commands/select.txt:23,
-#: ../../../source/commands/shutdown.txt:20,
-#: ../../../source/commands/status.txt:20,
-#: ../../../source/commands/suggest.txt:22,
-#: ../../../source/commands/table_create.txt:20,
-#: ../../../source/commands/table_list.txt:20,
-#: ../../../source/commands/table_remove.txt:20,
-#: ../../../source/commands/view_add.txt:20
-msgid "説明"
-msgstr ""
-
-#: ../../../source/commands/cache_limit.txt:27,
-#: ../../../source/commands/check.txt:27,
-#: ../../../source/commands/clearlock.txt:27,
-#: ../../../source/commands/column_create.txt:27,
-#: ../../../source/commands/column_list.txt:27,
-#: ../../../source/commands/column_remove.txt:28,
-#: ../../../source/commands/define_selector.txt:29,
-#: ../../../source/commands/defrag.txt:27,
-#: ../../../source/commands/delete.txt:27,
-#: ../../../source/commands/dump.txt:33, ../../../source/commands/load.txt:27,
-#: ../../../source/commands/log_level.txt:27,
-#: ../../../source/commands/log_put.txt:27,
-#: ../../../source/commands/log_reopen.txt:29,
-#: ../../../source/commands/quit.txt:27,
-#: ../../../source/commands/select.txt:30,
-#: ../../../source/commands/shutdown.txt:27,
-#: ../../../source/commands/status.txt:27,
-#: ../../../source/commands/suggest.txt:29,
-#: ../../../source/commands/table_create.txt:29,
-#: ../../../source/commands/table_list.txt:27,
-#: ../../../source/commands/table_remove.txt:27,
-#: ../../../source/commands/view_add.txt:27
-msgid "引数"
-msgstr ""
-
-#: ../../../source/commands/cache_limit.txt:36,
-#: ../../../source/commands/check.txt:34,
-#: ../../../source/commands/column_create.txt:71,
-#: ../../../source/commands/column_list.txt:33,
-#: ../../../source/commands/column_remove.txt:37,
-#: ../../../source/commands/define_selector.txt:92,
-#: ../../../source/commands/defrag.txt:34,
-#: ../../../source/commands/dump.txt:40, ../../../source/commands/load.txt:66,
-#: ../../../source/commands/log_level.txt:43,
-#: ../../../source/commands/log_put.txt:47,
-#: ../../../source/commands/log_reopen.txt:34,
-#: ../../../source/commands/quit.txt:32,
-#: ../../../source/commands/select.txt:181,
-#: ../../../source/commands/shutdown.txt:32,
-#: ../../../source/commands/status.txt:32,
-#: ../../../source/commands/suggest.txt:60,
-#: ../../../source/commands/table_create.txt:89,
-#: ../../../source/commands/table_list.txt:32,
-#: ../../../source/commands/table_remove.txt:33,
+#: ../../../source/commands/cache_limit.txt:36
+#: ../../../source/commands/check.txt:34
+#: ../../../source/commands/column_create.txt:71
+#: ../../../source/commands/column_list.txt:33
+#: ../../../source/commands/column_remove.txt:37
+#: ../../../source/commands/define_selector.txt:92
+#: ../../../source/commands/defrag.txt:34 ../../../source/commands/dump.txt:40
+#: ../../../source/commands/load.txt:66
+#: ../../../source/commands/log_level.txt:43
+#: ../../../source/commands/log_put.txt:47
+#: ../../../source/commands/log_reopen.txt:34
+#: ../../../source/commands/quit.txt:32
+#: ../../../source/commands/select.txt:181
+#: ../../../source/commands/shutdown.txt:32
+#: ../../../source/commands/status.txt:32
+#: ../../../source/commands/table_create.txt:89
+#: ../../../source/commands/table_list.txt:32
+#: ../../../source/commands/table_remove.txt:33
 #: ../../../source/commands/view_add.txt:38
 msgid "返値"
 msgstr ""
 
-#: ../../../source/commands/cache_limit.txt:50,
-#: ../../../source/commands/check.txt:130,
-#: ../../../source/commands/clearlock.txt:48,
-#: ../../../source/commands/column_create.txt:85,
-#: ../../../source/commands/column_list.txt:89,
-#: ../../../source/commands/column_remove.txt:51,
-#: ../../../source/commands/define_selector.txt:106,
-#: ../../../source/commands/defrag.txt:48,
-#: ../../../source/commands/delete.txt:56,
-#: ../../../source/commands/dump.txt:45, ../../../source/commands/load.txt:80,
-#: ../../../source/commands/log_level.txt:57,
-#: ../../../source/commands/log_put.txt:61,
-#: ../../../source/commands/log_reopen.txt:48,
-#: ../../../source/commands/quit.txt:37,
-#: ../../../source/commands/select.txt:247,
-#: ../../../source/commands/shutdown.txt:37,
-#: ../../../source/commands/status.txt:54,
-#: ../../../source/commands/table_create.txt:103,
-#: ../../../source/commands/table_list.txt:80,
-#: ../../../source/commands/table_remove.txt:47,
-#: ../../../source/commands/view_add.txt:52
-msgid "例"
+#: ../../../source/commands/cache_limit.txt:39
+msgid "json"
 msgstr ""
 
-#: ../../../source/commands/cache_limit.txt:9,
-#: ../../../source/commands/check.txt:9,
-#: ../../../source/commands/clearlock.txt:9,
-#: ../../../source/commands/column_create.txt:9,
-#: ../../../source/commands/column_list.txt:9,
-#: ../../../source/commands/column_remove.txt:9,
-#: ../../../source/commands/define_selector.txt:9,
-#: ../../../source/commands/defrag.txt:9,
-#: ../../../source/commands/delete.txt:9, ../../../source/commands/dump.txt:9,
-#: ../../../source/commands/load.txt:9,
-#: ../../../source/commands/log_level.txt:9,
-#: ../../../source/commands/log_put.txt:9,
-#: ../../../source/commands/log_reopen.txt:9,
-#: ../../../source/commands/quit.txt:9, ../../../source/commands/select.txt:9,
-#: ../../../source/commands/shutdown.txt:9,
-#: ../../../source/commands/status.txt:9,
-#: ../../../source/commands/suggest.txt:11,
-#: ../../../source/commands/table_create.txt:9,
-#: ../../../source/commands/table_list.txt:9,
-#: ../../../source/commands/table_remove.txt:9,
-#: ../../../source/commands/view_add.txt:9
-msgid "名前"
+#: ../../../source/commands/cache_limit.txt:50
+#: ../../../source/commands/check.txt:130
+#: ../../../source/commands/clearlock.txt:48
+#: ../../../source/commands/column_create.txt:85
+#: ../../../source/commands/column_list.txt:89
+#: ../../../source/commands/column_remove.txt:51
+#: ../../../source/commands/define_selector.txt:106
+#: ../../../source/commands/defrag.txt:48
+#: ../../../source/commands/delete.txt:56 ../../../source/commands/dump.txt:45
+#: ../../../source/commands/load.txt:80
+#: ../../../source/commands/log_level.txt:57
+#: ../../../source/commands/log_put.txt:61
+#: ../../../source/commands/log_reopen.txt:48
+#: ../../../source/commands/quit.txt:37
+#: ../../../source/commands/select.txt:247
+#: ../../../source/commands/shutdown.txt:37
+#: ../../../source/commands/status.txt:54
+#: ../../../source/commands/table_create.txt:103
+#: ../../../source/commands/table_list.txt:80
+#: ../../../source/commands/table_remove.txt:47
+#: ../../../source/commands/view_add.txt:52
+msgid "例"
 msgstr ""
 
 #: ../../../source/commands/check.txt:6
@@ -237,6 +228,25 @@ msgstr ""
 msgid "状態を表示するオブジェクトの名前を指定します。"
 msgstr ""
 
+#: ../../../source/commands/check.txt:37
+#: ../../../source/commands/clearlock.txt:37
+#: ../../../source/commands/column_create.txt:74
+#: ../../../source/commands/column_list.txt:36
+#: ../../../source/commands/column_remove.txt:40
+#: ../../../source/commands/define_selector.txt:95
+#: ../../../source/commands/defrag.txt:37
+#: ../../../source/commands/delete.txt:45
+#: ../../../source/commands/log_level.txt:46
+#: ../../../source/commands/log_put.txt:50
+#: ../../../source/commands/log_reopen.txt:37
+#: ../../../source/commands/status.txt:35
+#: ../../../source/commands/table_create.txt:92
+#: ../../../source/commands/table_list.txt:35
+#: ../../../source/commands/table_remove.txt:36
+#: ../../../source/commands/view_add.txt:41
+msgid "json形式"
+msgstr ""
+
 #: ../../../source/commands/check.txt:39
 msgid "チェックするオブジェクトにより返される値が変わります。"
 msgstr ""
@@ -247,26 +257,6 @@ msgstr ""
 
 #: ../../../source/commands/check.txt:132
 msgid "テーブルTermsのインデックスカラムnameの状態を表示します。::"
-msgstr ""
-
-#: ../../../source/commands/check.txt:37,
-#: ../../../source/commands/clearlock.txt:37,
-#: ../../../source/commands/column_create.txt:74,
-#: ../../../source/commands/column_list.txt:36,
-#: ../../../source/commands/column_remove.txt:40,
-#: ../../../source/commands/define_selector.txt:95,
-#: ../../../source/commands/defrag.txt:37,
-#: ../../../source/commands/delete.txt:45,
-#: ../../../source/commands/log_level.txt:46,
-#: ../../../source/commands/log_put.txt:50,
-#: ../../../source/commands/log_reopen.txt:37,
-#: ../../../source/commands/status.txt:35,
-#: ../../../source/commands/suggest.txt:63,
-#: ../../../source/commands/table_create.txt:92,
-#: ../../../source/commands/table_list.txt:35,
-#: ../../../source/commands/table_remove.txt:36,
-#: ../../../source/commands/view_add.txt:41
-msgid "json形式"
 msgstr ""
 
 #: ../../../source/commands/clearlock.txt:6
@@ -290,6 +280,23 @@ msgid ""
 "定し、オブジェクトにかけられたロックを再帰的に解除します。"
 msgstr ""
 
+#: ../../../source/commands/clearlock.txt:29
+#: ../../../source/commands/defrag.txt:29
+msgid "``objname``"
+msgstr ""
+
+#: ../../../source/commands/clearlock.txt:31
+#: ../../../source/commands/defrag.txt:31
+msgid ""
+"対象となるオブジェクト名を指定します。空の場合、開いているdbオブジェクトが対"
+"象となります。"
+msgstr ""
+
+#: ../../../source/commands/clearlock.txt:33
+#: ../../../source/commands/delete.txt:41
+msgid "返値 ---"
+msgstr ""
+
 #: ../../../source/commands/clearlock.txt:50
 msgid "開いているデータベースのロックをすべて解除する::"
 msgstr ""
@@ -298,35 +305,17 @@ msgstr ""
 msgid "テーブル名 Entry のカラム body のロックを解除する::"
 msgstr ""
 
-#: ../../../source/commands/clearlock.txt:29,
-#: ../../../source/commands/defrag.txt:29
-msgid "``objname``"
-msgstr ""
-
-#: ../../../source/commands/clearlock.txt:31,
-#: ../../../source/commands/defrag.txt:31
-msgid ""
-"対象となるオブジェクト名を指定します。空の場合、開いているdbオブジェクトが対"
-"象となります。"
-msgstr ""
-
-#: ../../../source/commands/clearlock.txt:33,
-#: ../../../source/commands/delete.txt:41
-msgid "返値 ---"
-msgstr ""
-
-#: ../../../source/commands/clearlock.txt:61,
-#: ../../../source/commands/define_selector.txt:114,
-#: ../../../source/commands/delete.txt:65,
-#: ../../../source/commands/load.txt:98,
-#: ../../../source/commands/log_level.txt:64,
-#: ../../../source/commands/log_put.txt:68,
-#: ../../../source/commands/log_reopen.txt:65,
+#: ../../../source/commands/clearlock.txt:61
+#: ../../../source/commands/define_selector.txt:114
+#: ../../../source/commands/delete.txt:65 ../../../source/commands/load.txt:98
+#: ../../../source/commands/log_level.txt:64
+#: ../../../source/commands/log_put.txt:68
+#: ../../../source/commands/log_reopen.txt:65
 #: ../../../source/commands/select.txt:256
 msgid "関連項目"
 msgstr ""
 
-#: ../../../source/commands/clearlock.txt:63,
+#: ../../../source/commands/clearlock.txt:63
 #: ../../../source/commands/delete.txt:67
 msgid ":doc:`load`"
 msgstr ""
@@ -352,8 +341,24 @@ msgid ""
 "す。"
 msgstr ""
 
+#: ../../../source/commands/column_create.txt:29
+#: ../../../source/commands/define_selector.txt:35
+#: ../../../source/commands/delete.txt:29 ../../../source/commands/load.txt:49
+#: ../../../source/commands/select.txt:32
+#: ../../../source/commands/view_add.txt:33
+msgid "``table``"
+msgstr ""
+
 #: ../../../source/commands/column_create.txt:31
 msgid "カラムを追加するテーブルの名前を指定します。"
+msgstr ""
+
+#: ../../../source/commands/column_create.txt:33
+#: ../../../source/commands/column_list.txt:51
+#: ../../../source/commands/define_selector.txt:31
+#: ../../../source/commands/table_create.txt:31
+#: ../../../source/commands/table_list.txt:50
+msgid "``name``"
 msgstr ""
 
 #: ../../../source/commands/column_create.txt:35
@@ -366,6 +371,13 @@ msgstr ""
 msgid ""
 "ピリオド('.'), コロン(':')を含む名前のカラムは作成できません。また、アンダー"
 "スコア('_')で始まる名前は予約済みであり、使用できません。"
+msgstr ""
+
+#: ../../../source/commands/column_create.txt:39
+#: ../../../source/commands/column_list.txt:63
+#: ../../../source/commands/table_create.txt:35
+#: ../../../source/commands/table_list.txt:58
+msgid "``flags``"
 msgstr ""
 
 #: ../../../source/commands/column_create.txt:41
@@ -404,10 +416,21 @@ msgstr ""
 msgid "位置情報を格納するインデックス(完全転置インデックス)を作成します。"
 msgstr ""
 
+#: ../../../source/commands/column_create.txt:62
+#: ../../../source/commands/column_list.txt:59
+#: ../../../source/commands/suggest.txt:151
+msgid "``type``"
+msgstr ""
+
 #: ../../../source/commands/column_create.txt:64
 msgid ""
 "値の型を指定します。groongaの組込型か、同一データベースに定義済みのユーザ定義"
 "型、定義済みのテーブルを指定することができます。"
+msgstr ""
+
+#: ../../../source/commands/column_create.txt:66
+#: ../../../source/commands/column_list.txt:75
+msgid "``source``"
 msgstr ""
 
 #: ../../../source/commands/column_create.txt:68
@@ -424,41 +447,6 @@ msgstr ""
 msgid ""
 "テーブルTermに、Entryテーブルのbodyカラムの値を対象とする完全転置インデックス"
 "型カラム、entry_bodyを作成します。::"
-msgstr ""
-
-#: ../../../source/commands/column_create.txt:29,
-#: ../../../source/commands/define_selector.txt:35,
-#: ../../../source/commands/delete.txt:29,
-#: ../../../source/commands/load.txt:49,
-#: ../../../source/commands/select.txt:32,
-#: ../../../source/commands/suggest.txt:47,
-#: ../../../source/commands/view_add.txt:33
-msgid "``table``"
-msgstr ""
-
-#: ../../../source/commands/column_create.txt:33,
-#: ../../../source/commands/column_list.txt:51,
-#: ../../../source/commands/define_selector.txt:31,
-#: ../../../source/commands/table_create.txt:31,
-#: ../../../source/commands/table_list.txt:50
-msgid "``name``"
-msgstr ""
-
-#: ../../../source/commands/column_create.txt:39,
-#: ../../../source/commands/column_list.txt:63,
-#: ../../../source/commands/table_create.txt:35,
-#: ../../../source/commands/table_list.txt:58
-msgid "``flags``"
-msgstr ""
-
-#: ../../../source/commands/column_create.txt:62,
-#: ../../../source/commands/column_list.txt:59
-msgid "``type``"
-msgstr ""
-
-#: ../../../source/commands/column_create.txt:66,
-#: ../../../source/commands/column_list.txt:75
-msgid "``source``"
 msgstr ""
 
 #: ../../../source/commands/column_list.txt:6
@@ -498,8 +486,24 @@ msgid ""
 "示す名前を出力します。 情報名は以下の通りです。"
 msgstr ""
 
+#: ../../../source/commands/column_list.txt:47
+#: ../../../source/commands/delete.txt:37
+#: ../../../source/commands/table_list.txt:46
+msgid "``id``"
+msgstr ""
+
 #: ../../../source/commands/column_list.txt:49
 msgid "カラムオブジェクトに割り当てられたID"
+msgstr ""
+
+#: ../../../source/commands/column_list.txt:53
+#: ../../../source/commands/select.txt:40
+msgid "カラム名"
+msgstr ""
+
+#: ../../../source/commands/column_list.txt:55
+#: ../../../source/commands/table_list.txt:54
+msgid "``path``"
 msgstr ""
 
 #: ../../../source/commands/column_list.txt:57
@@ -514,8 +518,18 @@ msgstr ""
 msgid "カラムのflags属性"
 msgstr ""
 
+#: ../../../source/commands/column_list.txt:67
+#: ../../../source/commands/table_list.txt:62
+msgid "``domain``"
+msgstr ""
+
 #: ../../../source/commands/column_list.txt:69
 msgid "カラムの値の属する型"
+msgstr ""
+
+#: ../../../source/commands/column_list.txt:71
+#: ../../../source/commands/table_list.txt:66
+msgid "``range``"
 msgstr ""
 
 #: ../../../source/commands/column_list.txt:73
@@ -544,35 +558,9 @@ msgid ""
 "報名n`` の順序と同じです。"
 msgstr ""
 
-#: ../../../source/commands/column_list.txt:111,
+#: ../../../source/commands/column_list.txt:111
 #: ../../../source/commands/table_list.txt:104
 msgid "注: 実際は改行が入りません。"
-msgstr ""
-
-#: ../../../source/commands/column_list.txt:47,
-#: ../../../source/commands/delete.txt:37,
-#: ../../../source/commands/table_list.txt:46
-msgid "``id``"
-msgstr ""
-
-#: ../../../source/commands/column_list.txt:53,
-#: ../../../source/commands/select.txt:40
-msgid "カラム名"
-msgstr ""
-
-#: ../../../source/commands/column_list.txt:55,
-#: ../../../source/commands/table_list.txt:54
-msgid "``path``"
-msgstr ""
-
-#: ../../../source/commands/column_list.txt:67,
-#: ../../../source/commands/table_list.txt:62
-msgid "``domain``"
-msgstr ""
-
-#: ../../../source/commands/column_list.txt:71,
-#: ../../../source/commands/table_list.txt:66
-msgid "``range``"
 msgstr ""
 
 #: ../../../source/commands/column_remove.txt:6
@@ -596,6 +584,11 @@ msgid ""
 "ンデックスも削除されます。[#]_"
 msgstr ""
 
+#: ../../../source/commands/column_remove.txt:31
+#: ../../../source/commands/table_remove.txt:30
+msgid "削除対象のカラムが定義されているテーブルの名前を指定します。"
+msgstr ""
+
 #: ../../../source/commands/column_remove.txt:34
 msgid "削除対象のカラム名を指定します。"
 msgstr ""
@@ -607,11 +600,6 @@ msgstr ""
 #: ../../../source/commands/column_remove.txt:60
 msgid ""
 "マルチセクションインデックスの一部である場合も、インデックスが削除されます。"
-msgstr ""
-
-#: ../../../source/commands/column_remove.txt:31,
-#: ../../../source/commands/table_remove.txt:30
-msgid "削除対象のカラムが定義されているテーブルの名前を指定します。"
 msgstr ""
 
 #: ../../../source/commands/define_selector.txt:6
@@ -642,24 +630,54 @@ msgstr ""
 msgid "検索対象のテーブルを指定します。"
 msgstr ""
 
+#: ../../../source/commands/define_selector.txt:39
+#: ../../../source/commands/select.txt:36
+msgid "``match_columns``"
+msgstr ""
+
 #: ../../../source/commands/define_selector.txt:41
 msgid "追加するselectorコマンドのmatch_columns引数のデフォルト値を指定します。"
+msgstr ""
+
+#: ../../../source/commands/define_selector.txt:43
+#: ../../../source/commands/select.txt:52
+msgid "``query``"
 msgstr ""
 
 #: ../../../source/commands/define_selector.txt:45
 msgid "追加するselectorコマンドのquery引数のデフォルト値を指定します。"
 msgstr ""
 
+#: ../../../source/commands/define_selector.txt:47
+#: ../../../source/commands/select.txt:106
+msgid "``filter``"
+msgstr ""
+
 #: ../../../source/commands/define_selector.txt:49
 msgid "追加するselectorコマンドのfilter引数のデフォルト値を指定します。"
+msgstr ""
+
+#: ../../../source/commands/define_selector.txt:51
+#: ../../../source/commands/select.txt:112
+msgid "``scorer``"
 msgstr ""
 
 #: ../../../source/commands/define_selector.txt:53
 msgid "追加するselectorコマンドのscorer引数のデフォルト値を指定します。"
 msgstr ""
 
+#: ../../../source/commands/define_selector.txt:55
+#: ../../../source/commands/select.txt:118
+msgid "``sortby``"
+msgstr ""
+
 #: ../../../source/commands/define_selector.txt:57
 msgid "追加するselectorコマンドのsortby引数のデフォルト値を指定します。"
+msgstr ""
+
+#: ../../../source/commands/define_selector.txt:59
+#: ../../../source/commands/select.txt:128
+msgid "``output_columns``"
 msgstr ""
 
 #: ../../../source/commands/define_selector.txt:61
@@ -667,21 +685,46 @@ msgid ""
 "追加するselectorコマンドのoutput_columns引数のデフォルト値を指定します。"
 msgstr ""
 
+#: ../../../source/commands/define_selector.txt:63
+#: ../../../source/commands/select.txt:134
+msgid "``offset``"
+msgstr ""
+
 #: ../../../source/commands/define_selector.txt:65
 msgid "追加するselectorコマンドのoffset引数のデフォルト値を指定します。"
+msgstr ""
+
+#: ../../../source/commands/define_selector.txt:67
+#: ../../../source/commands/select.txt:138
+msgid "``limit``"
 msgstr ""
 
 #: ../../../source/commands/define_selector.txt:69
 msgid "追加するselectorコマンドのlimit引数のデフォルト値を指定します。"
 msgstr ""
 
+#: ../../../source/commands/define_selector.txt:71
+#: ../../../source/commands/select.txt:142
+msgid "``drilldown``"
+msgstr ""
+
 #: ../../../source/commands/define_selector.txt:73
 msgid "追加するselectorコマンドのdrilldown引数のデフォルト値を指定します。"
+msgstr ""
+
+#: ../../../source/commands/define_selector.txt:75
+#: ../../../source/commands/select.txt:146
+msgid "``drilldown_sortby``"
 msgstr ""
 
 #: ../../../source/commands/define_selector.txt:77
 msgid ""
 "追加するselectorコマンドのdrilldown_sortby引数のデフォルト値を指定します。"
+msgstr ""
+
+#: ../../../source/commands/define_selector.txt:79
+#: ../../../source/commands/select.txt:150
+msgid "``drilldown_output_columns``"
 msgstr ""
 
 #: ../../../source/commands/define_selector.txt:81
@@ -690,9 +733,19 @@ msgid ""
 "ます。"
 msgstr ""
 
+#: ../../../source/commands/define_selector.txt:83
+#: ../../../source/commands/select.txt:154
+msgid "``drilldown_offset``"
+msgstr ""
+
 #: ../../../source/commands/define_selector.txt:85
 msgid ""
 "追加するselectorコマンドのdrilldown_offset引数のデフォルト値を指定します。"
+msgstr ""
+
+#: ../../../source/commands/define_selector.txt:87
+#: ../../../source/commands/select.txt:158
+msgid "``drilldown_limit``"
 msgstr ""
 
 #: ../../../source/commands/define_selector.txt:89
@@ -706,76 +759,10 @@ msgid ""
 "す。::"
 msgstr ""
 
-#: ../../../source/commands/define_selector.txt:116,
-#: ../../../source/commands/load.txt:100,
+#: ../../../source/commands/define_selector.txt:116
+#: ../../../source/commands/load.txt:100
 #: ../../../source/commands/select.txt:258
 msgid ":doc:`../expr`"
-msgstr ""
-
-#: ../../../source/commands/define_selector.txt:39,
-#: ../../../source/commands/select.txt:36
-msgid "``match_columns``"
-msgstr ""
-
-#: ../../../source/commands/define_selector.txt:43,
-#: ../../../source/commands/select.txt:52,
-#: ../../../source/commands/suggest.txt:55
-msgid "``query``"
-msgstr ""
-
-#: ../../../source/commands/define_selector.txt:47,
-#: ../../../source/commands/select.txt:106
-msgid "``filter``"
-msgstr ""
-
-#: ../../../source/commands/define_selector.txt:51,
-#: ../../../source/commands/select.txt:112
-msgid "``scorer``"
-msgstr ""
-
-#: ../../../source/commands/define_selector.txt:55,
-#: ../../../source/commands/select.txt:118
-msgid "``sortby``"
-msgstr ""
-
-#: ../../../source/commands/define_selector.txt:59,
-#: ../../../source/commands/select.txt:128
-msgid "``output_columns``"
-msgstr ""
-
-#: ../../../source/commands/define_selector.txt:63,
-#: ../../../source/commands/select.txt:134
-msgid "``offset``"
-msgstr ""
-
-#: ../../../source/commands/define_selector.txt:67,
-#: ../../../source/commands/select.txt:138
-msgid "``limit``"
-msgstr ""
-
-#: ../../../source/commands/define_selector.txt:71,
-#: ../../../source/commands/select.txt:142
-msgid "``drilldown``"
-msgstr ""
-
-#: ../../../source/commands/define_selector.txt:75,
-#: ../../../source/commands/select.txt:146
-msgid "``drilldown_sortby``"
-msgstr ""
-
-#: ../../../source/commands/define_selector.txt:79,
-#: ../../../source/commands/select.txt:150
-msgid "``drilldown_output_columns``"
-msgstr ""
-
-#: ../../../source/commands/define_selector.txt:83,
-#: ../../../source/commands/select.txt:154
-msgid "``drilldown_offset``"
-msgstr ""
-
-#: ../../../source/commands/define_selector.txt:87,
-#: ../../../source/commands/select.txt:158
-msgid "``drilldown_limit``"
 msgstr ""
 
 #: ../../../source/commands/defrag.txt:6
@@ -1045,23 +1032,23 @@ msgstr ""
 msgid "log_levelは、ログ出力レベルを設定します。"
 msgstr ""
 
-#: ../../../source/commands/log_level.txt:66
-msgid ":doc:`log_put` :doc:`log_reopen`"
-msgstr ""
-
-#: ../../../source/commands/log_level.txt:29,
+#: ../../../source/commands/log_level.txt:29
 #: ../../../source/commands/log_put.txt:29
 msgid "``level``"
 msgstr ""
 
-#: ../../../source/commands/log_level.txt:31,
+#: ../../../source/commands/log_level.txt:31
 #: ../../../source/commands/log_put.txt:31
 msgid "設定するログ出力レベルの値を以下のいずれかで指定します。"
 msgstr ""
 
-#: ../../../source/commands/log_level.txt:33,
+#: ../../../source/commands/log_level.txt:33
 #: ../../../source/commands/log_put.txt:33
 msgid "EMERG ALERT CRIT error warning notice info debug"
+msgstr ""
+
+#: ../../../source/commands/log_level.txt:66
+msgid ":doc:`log_put` :doc:`log_reopen`"
 msgstr ""
 
 #: ../../../source/commands/log_put.txt:6
@@ -1118,6 +1105,15 @@ msgstr ""
 msgid "現在、デフォルトのログ関数を用いている場合のみに対応しています。"
 msgstr ""
 
+#: ../../../source/commands/log_reopen.txt:31
+#: ../../../source/commands/quit.txt:29 ../../../source/commands/quit.txt:34
+#: ../../../source/commands/shutdown.txt:29
+#: ../../../source/commands/shutdown.txt:34
+#: ../../../source/commands/status.txt:29
+#: ../../../source/commands/table_list.txt:29
+msgid "ありません。"
+msgstr ""
+
 #: ../../../source/commands/log_reopen.txt:56
 msgid "log_reopenを用いたログのローテーション"
 msgstr ""
@@ -1140,15 +1136,6 @@ msgstr ""
 
 #: ../../../source/commands/log_reopen.txt:67
 msgid ":doc:`log_level` :doc:`log_put`"
-msgstr ""
-
-#: ../../../source/commands/log_reopen.txt:31,
-#: ../../../source/commands/quit.txt:29, ../../../source/commands/quit.txt:34,
-#: ../../../source/commands/shutdown.txt:29,
-#: ../../../source/commands/shutdown.txt:34,
-#: ../../../source/commands/status.txt:29,
-#: ../../../source/commands/table_list.txt:29
-msgid "ありません。"
 msgstr ""
 
 #: ../../../source/commands/quit.txt:6
@@ -1503,9 +1490,19 @@ msgstr ""
 msgid "検索件数が出力されます。"
 msgstr ""
 
+#: ../../../source/commands/select.txt:212
+#: ../../../source/commands/select.txt:234
+msgid "``カラム名n``"
+msgstr ""
+
 #: ../../../source/commands/select.txt:214
 msgid ""
 "output_columnsに指定された条件に従って、対象となるカラム名が出力されます。"
+msgstr ""
+
+#: ../../../source/commands/select.txt:216
+#: ../../../source/commands/select.txt:238
+msgid "``カラム型n``"
 msgstr ""
 
 #: ../../../source/commands/select.txt:218
@@ -1539,20 +1536,10 @@ msgstr ""
 msgid "drilldownに指定されたカラムの値の異なり数が出力されます。"
 msgstr ""
 
-#: ../../../source/commands/select.txt:234
-#: ../../../source/commands/select.txt:212,
-msgid "``カラム名n``"
-msgstr ""
-
 #: ../../../source/commands/select.txt:236
 msgid ""
 "drilldown_output_columnsに指定された条件に従って、対象となるカラム名が出力さ"
 "れます。"
-msgstr ""
-
-#: ../../../source/commands/select.txt:238
-#: ../../../source/commands/select.txt:216,
-msgid "``カラム型n``"
 msgstr ""
 
 #: ../../../source/commands/select.txt:240
@@ -1615,81 +1602,332 @@ msgid ""
 "スに対して使用することを想定しています。"
 msgstr ""
 
-#: ../../../source/commands/suggest.txt:6
+# 93ab9bd318c04422910e1b1ac0fc30a5
+# 0b90b367e60e42b885b8b946475b209a
+# 51342ba09623457685383886d069c31c
+# 159117e256634d889b632d75f8fef37c
+# 0fb68b0a127c469d8fb88119267bac61
+# 58e554e8b19c48c28027b15482ca20c5
+# 35ea0643d15f40ffa5d3c11325a495ec
+#: ../../../source/commands/suggest-completion.log:1
+#: ../../../source/commands/suggest-correction.log:1
+#: ../../../source/commands/suggest-learn-completion.log:1
+#: ../../../source/commands/suggest-learn-correction.log:1
+#: ../../../source/commands/suggest-learn-suggestion.log:1
+#: ../../../source/commands/suggest-mixed.log:1
+#: ../../../source/commands/suggest-suggestion.log:1
+msgid "Execution example::"
+msgstr ""
+
+#: ../../../source/commands/suggest.txt:10
 msgid "suggest"
 msgstr ""
 
-#: ../../../source/commands/suggest.txt:8
+# 910b456e73ff48ff90101bb93b2ebf7c
+#: ../../../source/commands/suggest.txt:14
 msgid ""
-"** 未だ仕様は確定しておりません。利用のためには特定のデータを持つテーブルが必"
-"要となります。 **"
+"The suggest feature specification isn't stable. The specification may be "
+"changed."
 msgstr ""
+"サジェスト機能の仕様はまだ確定していません。仕様は変更される可能性がありま"
+"す。"
 
-#: ../../../source/commands/suggest.txt:13
-msgid "suggest - 指定したクエリに対する補完・修正・提案を行う。"
-msgstr ""
+# d74c796a015c43d6b804d619b0d027b5
+#: ../../../source/commands/suggest.txt:18
+msgid "NAME"
+msgstr "名前"
 
-#: ../../../source/commands/suggest.txt:24
-msgid "suggestコマンドは、指定したクエリに対して補完・修正・提案を行います。"
-msgstr ""
+# 3ce300f326c94090b2d7d9ed09befc52
+#: ../../../source/commands/suggest.txt:20
+msgid "suggest - returns completion, correction and/or suggestion for a query."
+msgstr "suggest - 指定されたクエリに対する補完・補正・提案候補を返す。"
 
-#: ../../../source/commands/suggest.txt:26
-msgid ""
-"補完とは、クエリの未入力・未変換部分を補うことです。修正とは、クエリ内のミス"
-"タイプや誤変換を修正することです。提案とは、さらなる絞込みを行うための候補と"
-"なるクエリを提案することです。"
-msgstr ""
+# a205a9fff5cc41e2bd9f1c1d2ee99f74
+#: ../../../source/commands/suggest.txt:23
+msgid "SYNOPSIS"
+msgstr "書式"
 
+# 1e5ceb4f7c0a46f98503c76312be3325
+#: ../../../source/commands/suggest.txt:29
+msgid "DESCRIPTION"
+msgstr "説明"
+
+# 33eef40a265e4762af378ff5bc3033ba
 #: ../../../source/commands/suggest.txt:31
-msgid "``types``"
-msgstr ""
-
-#: ../../../source/commands/suggest.txt:33
 msgid ""
-"補完・修正・提案のいずれを行うかを、パイプ('|')で組み合わせたシンボル名で指定"
-"します(例: correct|suggest)"
+"The suggest command returns completion, correction and/or suggestion for a "
+"specified query."
 msgstr ""
+"suggestコマンドは指定されたクエリに対する補完・補正・提案候補を返します。"
 
-#: ../../../source/commands/suggest.txt:35
-msgid "``complete``"
+# 9eb3a4793ad445ef8fc208133e9ee271
+#: ../../../source/commands/suggest.txt:34
+msgid ""
+"See :doc:`/suggest/introduction` about completion, correction and suggestion."
 msgstr ""
+"補完・補正・提案については :doc:`/suggest/introduction` を参照してください。"
 
-#: ../../../source/commands/suggest.txt:37
-msgid "補完を行います。"
-msgstr ""
+# ce7d9de80ef549e5bf877ec01529d0dd
+#: ../../../source/commands/suggest.txt:38
+msgid "OPTIONS"
+msgstr "オプション"
 
-#: ../../../source/commands/suggest.txt:39
-msgid "``correct``"
-msgstr ""
-
+# 0bb1005232a24f52889e1ec9832cf1fe
 #: ../../../source/commands/suggest.txt:41
-msgid "修正を行います。"
-msgstr ""
+msgid "It specifies what types are returned by the suggest command."
+msgstr "suggestコマンドでどの種類の候補を返すかを指定します。"
 
-#: ../../../source/commands/suggest.txt:43
-msgid "``suggest``"
-msgstr ""
+# 40c028a45fb64c6091aed8fac22298d1
+#: ../../../source/commands/suggest.txt:44
+msgid "Here are available types:"
+msgstr "指定できる種類は以下の通りです。"
 
-#: ../../../source/commands/suggest.txt:45
-msgid "提案を行います。"
-msgstr ""
+# bf4547e3857c413b9ffd3b54b1253050
+#: ../../../source/commands/suggest.txt:47
+msgid "The suggest command does completion."
+msgstr "補完を実行します。"
 
-#: ../../../source/commands/suggest.txt:49
-msgid "基礎となるデータが格納されているテーブル名を指定します。"
-msgstr ""
+# c48e12132c3a4894a59bec8f90aceb10
+#: ../../../source/commands/suggest.txt:50
+msgid "The suggest command does correction."
+msgstr "補正を実行します。"
 
-#: ../../../source/commands/suggest.txt:51
-msgid "``column``"
-msgstr ""
-
+# 0ec670d3a67e433f9c59096cd97c130b
 #: ../../../source/commands/suggest.txt:53
+msgid "The suggest command does suggestion."
+msgstr "提案を実行します。"
+
+# 6fc76dcf2ecf4f1eb4154773e683279a
+#: ../../../source/commands/suggest.txt:55
 msgid ""
-"基礎となるデータが格納されているテーブルにおいて、「ヨミガナ」が格納されてい"
-"るカラム名を指定します。"
+"You can specify one or more types separated by ``|``. Here are examples:"
+msgstr ""
+"1つ以上の種類を指定できます。複数の種類を指定する場合は ``|`` で区切ります。"
+"以下が例です。:"
+
+# 512740795e784e9b82018a641c07f509
+#: ../../../source/commands/suggest.txt:58
+msgid "It returns correction::"
+msgstr "補正候補を返します::"
+
+# f91abaf865e94fc9969ea908a2edd454
+#: ../../../source/commands/suggest.txt:62
+msgid "It returns correction and suggestion::"
+msgstr "補正候補と提案候補を返します::"
+
+# f2e19c1bfce8404e9f84bbf22ef7e7f3
+#: ../../../source/commands/suggest.txt:66
+msgid "It returns complete, correction and suggestion::"
+msgstr "補完候補と補正候補と提案候補を返します::"
+
+# 985ad3050dc94aa2af334799d30a6280
+#: ../../../source/commands/suggest.txt:71
+msgid ""
+"It specifies table name that has ``item_${DATA_SET_NAME}` format. For "
+"example, ``item_query`` is a table name if you created dataset by the "
+"following command::"
+msgstr ""
+"``item_${データセット名}`` というフォーマットのテーブル名を指定します。例え"
+"ば、以下のコマンドでデータセットを作成した場合はテーブル名として "
+"``item_query`` を指定します::"
+
+# 9c86b1a0b1024d89b6c9e4e8f2d4b5ad
+#: ../../../source/commands/suggest.txt:78
+msgid ""
+"It specifies a column name that has furigana in Katakana in ``table`` table."
+msgstr ""
+"``table`` で指定したテーブルにあるふりがな情報を含むカラムを指定します。ふり"
+"がなはカタカナで指定します。"
+
+# cd2310abb9f2492f91eef8fa9f9b7880
+#: ../../../source/commands/suggest.txt:82
+msgid "It specifies query for completion, correction and/or suggestion."
+msgstr "補完・補正・提案対象のクエリを指定します。"
+
+# ffa8ab8997a74ec381047804746e748d
+#: ../../../source/commands/suggest.txt:86
+msgid "It specifies sort key."
+msgstr "ソートキーを指定します。"
+
+# 5f84d811cf90473394d906528670bbc2
+#: ../../../source/commands/suggest.txt:89
+msgid "``-_score``"
 msgstr ""
 
-#: ../../../source/commands/suggest.txt:57
-msgid "補完・修正・提案の対象となるクエリを指定します。"
+# 4beb7f0f3d704fd0b3176496d7f55eb9
+#: ../../../source/commands/suggest.txt:92
+msgid "It specifies output columns."
+msgstr "出力するカラムを指定します。"
+
+# 09023cafc6fb4bf8b9a213a70bc69194
+#: ../../../source/commands/suggest.txt:95
+msgid "``_key,_score``"
+msgstr ""
+
+# a65cc4912be144a69b5abc1169f897cc
+#: ../../../source/commands/suggest.txt:98
+msgid "It specifies returned records offset."
+msgstr "返されるレコードのオフセットを指定します。"
+
+# dcb1f7f1e0704f7690a85a5588010127
+#: ../../../source/commands/suggest.txt:101
+msgid "``0``"
+msgstr ""
+
+# 5b15837993434e1f840340d7cdc11ac9
+#: ../../../source/commands/suggest.txt:104
+msgid "It specifies number of returned records."
+msgstr "返されるレコード数を指定します。"
+
+# 9fd5f2c3537b4938a4781a830f319d51
+#: ../../../source/commands/suggest.txt:107
+msgid "``10``"
+msgstr ""
+
+# b86f5f5ae3824fa9872d31c9b5358a17
+#: ../../../source/commands/suggest.txt:110
+msgid ""
+"It specifies threshold. Returned records must have ``_score`` that is "
+"greater than or equal to ``threshold``."
+msgstr ""
+"閾値を指定します。返されるレコードの ``_score`` 値は ``threshold`` 以上になり"
+"ます。"
+
+# 9f4f75b3b75a4b4eb864557ed5d1959d
+#: ../../../source/commands/suggest.txt:114
+msgid "``100``"
+msgstr ""
+
+# 5f30603cc625409db0e45398974db88f
+#: ../../../source/commands/suggest.txt:117
+msgid ""
+"It specifies whether optional prefix search is used or not in completion."
+msgstr "補完時に前方一致検索を実行するかどうかを指定します。"
+
+# 77b120c7869549b5855bc906a84570a2
+#: ../../../source/commands/suggest.txt:120
+msgid "Here are available values:"
+msgstr "指定可能な値は以下の通りです。"
+
+# 5db279e0f9214776bb9ca618f1fd5dff
+#: ../../../source/commands/suggest.txt:123
+msgid "Prefix search is always used."
+msgstr "常に前方一致検索を実行します。"
+
+# 438823df94bb4fa0a191f62272fdf842
+#: ../../../source/commands/suggest.txt:126
+msgid "Prefix search is never used."
+msgstr "前方一致検索を実行しません。"
+
+# dde877dd95914333a45cc814785510b7
+#: ../../../source/commands/suggest.txt:129
+msgid "Prefix search is used only when other search can't find any records."
+msgstr "他の検索でレコードが見つからない場合のみ前方一致検索を実行します。"
+
+# 505007fef66f4168951b2c0f2f50d9ed
+#: ../../../source/commands/suggest.txt:133
+msgid "``auto``"
+msgstr ""
+
+# d0742adf4f42420b9247bde497ec24cc
+#: ../../../source/commands/suggest.txt:136
+msgid "RETURN VALUE"
+msgstr "返値"
+
+# 087e0df0505742cbb57a12e069347eee
+#: ../../../source/commands/suggest.txt:139
+msgid "JSON format"
+msgstr "JSON形式"
+
+# 7ad70f64fc3b4ad2a3516442a882aebd
+#: ../../../source/commands/suggest.txt:141
+msgid "Here is a returned JSON format::"
+msgstr "返されるJSON形式は以下の通りです::"
+
+# 14e557e5a1844af3af69880584f44a31
+#: ../../../source/commands/suggest.txt:153
+msgid "A type specified by ``types``."
+msgstr "``types`` で指定した値。"
+
+# eb2ffb3d76a444a8b0ff641c74edc842
+#: ../../../source/commands/suggest.txt:155
+msgid "``candidate``"
+msgstr ""
+
+# 870c6dab5a904787bd236c07ae08767a
+#: ../../../source/commands/suggest.txt:157
+msgid "A candidate for completion, correction or suggestion."
+msgstr "補完・補正・提案候補。"
+
+# 196d1fdc58194122af525e7a901a74f2
+#: ../../../source/commands/suggest.txt:159
+msgid "``score of candidate``"
+msgstr "``score of candidate``"
+
+# e66a1a503c9b46ac826e2c698f25671b
+#: ../../../source/commands/suggest.txt:161
+msgid ""
+"A score of corresponding ``candidate``. It means that higher score candidate "
+"is more likely candidate for completion, correction or suggestion. Returned "
+"candidates are sorted by ``score of candidate`` descending by default."
+msgstr ""
+"対応する ``candidate`` のスコアです。スコアが高いほど補完・補正・提案候補とし"
+"て有力という意味になります。デフォルトでは候補は ``score of candidate`` の降"
+"順でソートされています。"
+
+# b6413e09d91345aeacffb24f7f75ac87
+#: ../../../source/commands/suggest.txt:168
+msgid "EXAMPLE"
+msgstr "例"
+
+# db00b600530e41579eb5a5d9fb84395a
+#: ../../../source/commands/suggest.txt:170
+msgid "Here are learned data for completion."
+msgstr "以下は補完用の学習データです。"
+
+# 9799739db173449f93101e68bf2c6807
+#: ../../../source/commands/suggest.txt:184
+msgid "Here are learned data for correction."
+msgstr "以下は補正用の学習データです。"
+
+# 2adaed1daed64d3882d466505eeba9d0
+#: ../../../source/commands/suggest.txt:200
+msgid "Here are learned data for suggestion."
+msgstr "以下は提案用の学習データです。"
+
+# 19c0a971f31d469f940d93c9f303237e
+#: ../../../source/commands/suggest.txt:210
+msgid "Here is a completion example."
+msgstr "以下は補完例です。"
+
+# 449ed0bdac704b538d9921980c4bdac0
+#: ../../../source/commands/suggest.txt:216
+msgid "Here is a correction example."
+msgstr "以下は補正例です。"
+
+# 1ccd84b3f15a4567b23bb0e7d8c66fcd
+#: ../../../source/commands/suggest.txt:222
+msgid "Here is a suggestion example."
+msgstr "以下は提案例です。"
+
+# 32f4677c99c747c3b22375acfee0e901
+#: ../../../source/commands/suggest.txt:228
+msgid "Here is a mixed example."
+msgstr "以下は補完・補正・提案を混ぜた例です。"
+
+# 33bfc7742f5d470480ab25360297ded1
+#: ../../../source/commands/suggest.txt:236
+msgid "SEE ALSO"
+msgstr "参考"
+
+# 4c39096882c84cbca65ef8263527859a
+#: ../../../source/commands/suggest.txt:238
+msgid ":doc:`/suggest`"
+msgstr ""
+
+# afd8e4f3e799444d9b7f8f7a97d9d72a
+#: ../../../source/commands/suggest.txt:239
+msgid ":doc:`/executables/groonga-suggest-create-dataset`"
 msgstr ""
 
 #: ../../../source/commands/table_create.txt:6
