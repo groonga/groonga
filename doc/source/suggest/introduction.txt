@@ -7,9 +7,9 @@ Introduction
 
 The suggest feature in groonga provides the following features:
 
-  * Completion
-  * Correction
-  * Suggestion
+* Completion
+* Correction
+* Suggestion
 
 Completion
 ----------
@@ -20,10 +20,10 @@ words.
 
 For example, there are registered words:
 
-  * "groonga"
-  * "complete"
-  * "correction"
-  * "suggest"
+* "groonga"
+* "complete"
+* "correction"
+* "suggest"
 
 An user inputs "co" and groonga returns "complete" and
 "correction" because they starts with "co".

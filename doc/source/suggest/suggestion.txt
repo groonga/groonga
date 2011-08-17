@@ -12,9 +12,9 @@ Suggestion
 This section describes about the following completion
 features:
 
-  * How it works
-  * How to use
-  * How to learn
+* How it works
+* How to use
+* How to learn
 
 How it works
 ------------

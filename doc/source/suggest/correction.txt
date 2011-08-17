@@ -12,9 +12,9 @@ Correction
 This section describes about the following correction
 features:
 
-  * How it works
-  * How to use
-  * How to learn
+* How it works
+* How to use
+* How to learn
 
 How it works
 ------------

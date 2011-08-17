@@ -235,5 +235,5 @@ Here is a mixed example.
 SEE ALSO
 --------
 
-  * :doc:`/suggest`
-  * :doc:`/executables/groonga-suggest-create-dataset`
+* :doc:`/suggest`
+* :doc:`/executables/groonga-suggest-create-dataset`
