@@ -41,6 +41,7 @@ void test_nonexistent_table_name(void);
 void test_invalid_table_name(void);
 void data_each(void);
 void test_each(gconstpointer data);
+void test_vector_reference_column(void);
 
 static gchar *tmp_directory;
 static const gchar *database_path;
@@ -554,6 +555,28 @@ test_each(gconstpointer data)
       "[\"distance_from_tokyo_tocho\",\"UInt32\"]],"
      "[1,\"alice\",\"128429532x503148672\",6674],"
      "[2,\"bob\",\"128536272x502686360\",5364]]]",
+    send_command("select Users"));
+}
+
+void
+test_vector_reference_column(void)
+{
+  assert_send_command("table_create Tags TABLE_HASH_KEY ShortText "
+                      "--default_tokenizer TokenDelimit");
+  assert_send_command("table_create Users TABLE_HASH_KEY ShortText");
+  assert_send_command("column_create Users tags COLUMN_VECTOR Tags");
+  cut_assert_equal_string(
+    "1",
+    send_command(
+      "load "
+      "--table Users "
+      "--values '[{\"_key\": \"mori\", \"tags\": \"groonga search engine\"}]'"));
+  cut_assert_equal_string(
+    "[[[1],"
+     "[[\"_id\",\"UInt32\"],"
+      "[\"_key\",\"ShortText\"],"
+      "[\"tags\",\"Tags\"]],"
+     "[1,\"mori\",[\"groonga\",\"search\",\"engine\"]]]]",
     send_command("select Users"));
 }
 
