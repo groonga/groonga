@@ -5,62 +5,102 @@
 suggest
 =======
 
-** 未だ仕様は確定しておりません。利用のためには特定のデータを持つテーブルが必要となります。 **
+.. note::
 
-名前
+   The suggest feature specification isn't stable. The
+   specification may be changed.
+
+NAME
 ----
 
-suggest - 指定したクエリに対する補完・修正・提案を行う。
+suggest - returns completion, correction and/or suggestion for a query.
 
-書式
-----
+SYNOPSIS
+--------
 ::
 
- suggest types table column query
+ suggest types table column query [sortby [output_columns [offset [limit [threshold [prefix_search]]]]]]
 
-説明
-----
+DESCRIPTION
+-----------
 
-suggestコマンドは、指定したクエリに対して補完・修正・提案を行います。
+The suggest command returns completion, correction and/or
+suggestion for a specified query.
 
-補完とは、クエリの未入力・未変換部分を補うことです。修正とは、クエリ内のミスタイプや誤変換を修正することです。提案とは、さらなる絞込みを行うための候補となるクエリを提案することです。
+See :doc:`/suggest/introduction` about completion,
+correction and suggestion.
 
-引数
-----
+OPTIONS
+-------
 
 ``types``
+  It specifies what types are returned by the suggest
+  command.
 
-  補完・修正・提案のいずれを行うかを、パイプ('|')で組み合わせたシンボル名で指定します(例: correct|suggest)
+  Here are available types:
 
-  ``complete``
+    ``complete``
+      The suggest command does completion.
 
-    補完を行います。
+    ``correct``
+      The suggest command does correction.
 
-  ``correct``
+    ``suggest``
+      The suggest command does suggestion.
 
-    修正を行います。
+  You can specify one or more types separated by ``|``.
+  Here are examples:
 
-  ``suggest``
+    It returns correction::
 
-    提案を行います。
+      correct
+
+    It returns correction and suggestion::
+
+      correct|suggest
+
+    It returns complete, correction and suggestion::
+
+      complete|correct|suggest
 
 ``table``
+  It specifies table name that has ``item_${DATA_SET_NAME}` format.
+  For example, ``item_shops`` is a table name if you created
+  dataset by the following command::
 
-  基礎となるデータが格納されているテーブル名を指定します。
+    groonga-suggest-create-dataset /tmp/db-path shops
 
 ``column``
-
-  基礎となるデータが格納されているテーブルにおいて、「ヨミガナ」が格納されているカラム名を指定します。
+  It specifies a column name that has furigana in
+  Katakana in ``table`` table.
 
 ``query``
+  It specifies query for completion, correction and/or
+  suggestion.
 
-  補完・修正・提案の対象となるクエリを指定します。
+``sortby``
+  TODO
 
-返値
-----
+``output_columns``
+  TODO
 
-json形式
-^^^^^^^^
+``offset``
+  TODO
+
+``limit``
+  TODO
+
+``threshold``
+  TODO
+
+``prefix_search``
+  TODO
+
+RETURN VALUE
+------------
+
+JSON Format
+^^^^^^^^^^^
 
 ::
 
