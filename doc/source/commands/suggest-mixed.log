@@ -1,0 +1,5 @@
+Execution example::
+
+  > suggest --table item_query --column kana --types complete|correct|suggest --threshold 1 --query search
+  [[0,1313562878.42973,0.001223259],{"complete":[[2],[["_key","ShortText"],["_score","Int32"]],["search",2],["search engine",2]],"correct":[[1],[["_key","ShortText"],["_score","Int32"]],["search",2]],"suggest":[[2],[["_key","ShortText"],["_score","Int32"]],["search engine",1],["web search realtime",1]]}]
+  
