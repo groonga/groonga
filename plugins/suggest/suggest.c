@@ -65,7 +65,8 @@ grn_parse_suggest_types(const char *nptr, const char *end)
 
 static int32_t
 cooccurrence_search(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost, grn_id id,
-                    grn_obj *res, int query_type, int threshold)
+                    grn_obj *res, int query_type, int frequency_threshold,
+                    double conditional_probability_threshold)
 {
   int32_t max_score = 0;
   if (id) {
@@ -73,6 +74,7 @@ cooccurrence_search(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost, grn_id i
     grn_obj *co = grn_obj_column(ctx, items, CONST_STR_LEN("co"));
     grn_obj *pairs = grn_ctx_at(ctx, grn_obj_get_range(ctx, co));
     grn_obj *items_freq = grn_obj_column(ctx, items, CONST_STR_LEN("freq"));
+    grn_obj *items_freq2 = grn_obj_column(ctx, items, CONST_STR_LEN("freq2"));
     grn_obj *pairs_freq, *pairs_post = grn_obj_column(ctx, pairs, CONST_STR_LEN("post"));
     switch (query_type) {
     case COMPLETE :
@@ -90,42 +92,59 @@ cooccurrence_search(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost, grn_id i
     if ((c = grn_ii_cursor_open(ctx, (grn_ii *)co, id, GRN_ID_NIL, GRN_ID_MAX,
                                 ((grn_ii *)co)->n_elements - 1, 0))) {
       grn_ii_posting *p;
-      grn_obj post, pair_freq, item_freq, item_boost;
+      grn_obj post, pair_freq, item_freq, item_freq2, item_boost;
       GRN_RECORD_INIT(&post, 0, grn_obj_id(ctx, items));
       GRN_INT32_INIT(&pair_freq, 0);
       GRN_INT32_INIT(&item_freq, 0);
+      GRN_INT32_INIT(&item_freq2, 0);
       GRN_INT32_INIT(&item_boost, 0);
       while ((p = grn_ii_cursor_next(ctx, c))) {
         grn_id post_id;
-        int pfreq, ifreq, boost;
+        int pfreq, ifreq, ifreq2, boost;
+        double conditional_probability;
         GRN_BULK_REWIND(&post);
         GRN_BULK_REWIND(&pair_freq);
         GRN_BULK_REWIND(&item_freq);
+        GRN_BULK_REWIND(&item_freq2);
         GRN_BULK_REWIND(&item_boost);
         grn_obj_get_value(ctx, pairs_post, p->rid, &post);
         grn_obj_get_value(ctx, pairs_freq, p->rid, &pair_freq);
         post_id = GRN_RECORD_VALUE(&post);
         grn_obj_get_value(ctx, items_freq, post_id, &item_freq);
+        grn_obj_get_value(ctx, items_freq2, post_id, &item_freq2);
         grn_obj_get_value(ctx, items_boost, post_id, &item_boost);
         pfreq = GRN_INT32_VALUE(&pair_freq);
         ifreq = GRN_INT32_VALUE(&item_freq);
+        ifreq2 = GRN_INT32_VALUE(&item_freq2);
+        if (ifreq2 > 0) {
+          conditional_probability = (double)pfreq / (double)ifreq2;
+        } else {
+          conditional_probability = 0.0;
+        }
         boost = GRN_INT32_VALUE(&item_boost);
-        if (pfreq >= threshold && ifreq >= threshold && boost >= 0) {
+        if (pfreq >= frequency_threshold && ifreq >= frequency_threshold &&
+            conditional_probability >= conditional_probability_threshold &&
+            boost >= 0) {
           grn_rset_recinfo *ri;
           void *value;
           int32_t score = pfreq;
-          if (max_score < score) { max_score = score; }
+          int added;
+          if (max_score < score + boost) { max_score = score + boost; }
           /* put any formula if desired */
           if (grn_hash_add(ctx, (grn_hash *)res,
-                           &post_id, sizeof(grn_id), &value, NULL)) {
+                           &post_id, sizeof(grn_id), &value, &added)) {
             ri = value;
             ri->score += score;
+            if (added) {
+              ri->score += boost;
+            }
           }
         }
       }
       GRN_OBJ_FIN(ctx, &post);
       GRN_OBJ_FIN(ctx, &pair_freq);
       GRN_OBJ_FIN(ctx, &item_freq);
+      GRN_OBJ_FIN(ctx, &item_freq2);
       GRN_OBJ_FIN(ctx, &item_boost);
       grn_ii_cursor_close(ctx, c);
     }
@@ -136,7 +155,8 @@ cooccurrence_search(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost, grn_id i
 #define DEFAULT_LIMIT           10
 #define DEFAULT_SORTBY          "-_score"
 #define DEFAULT_OUTPUT_COLUMNS  "_key,_score"
-#define DEFAULT_THRESHOLD       100
+#define DEFAULT_FREQUENCY_THRESHOLD 100
+#define DEFAULT_CONDITIONAL_PROBABILITY_THRESHOLD 0.5
 
 static void
 output(grn_ctx *ctx, grn_obj *table, grn_obj *res, grn_id tid,
@@ -178,7 +198,7 @@ output(grn_ctx *ctx, grn_obj *table, grn_obj *res, grn_id tid,
 }
 
 static inline void
-complete_add_item(grn_ctx *ctx, grn_id id, grn_obj *res, int threshold,
+complete_add_item(grn_ctx *ctx, grn_id id, grn_obj *res, int frequency_threshold,
                   grn_obj *items_freq, grn_obj *items_boost,
                   grn_obj *item_freq, grn_obj *item_boost)
 {
@@ -191,7 +211,7 @@ complete_add_item(grn_ctx *ctx, grn_id id, grn_obj *res, int threshold,
     score = 1 +
             GRN_INT32_VALUE(item_freq) +
             GRN_INT32_VALUE(item_boost);
-    if (score >= threshold) {
+    if (score >= frequency_threshold) {
       void *value;
       if (grn_hash_add(ctx, (grn_hash *)res, &id, sizeof(grn_id),
                        &value, NULL)) {
@@ -207,7 +227,7 @@ static void
 complete(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost, grn_obj *col,
          grn_obj *query, grn_obj *sortby,
          grn_obj *output_columns, int offset, int limit,
-         int threshold,
+         int frequency_threshold, double conditional_probability_threshold,
          grn_suggest_prefix_search_mode prefix_search_mode)
 {
   grn_obj *res;
@@ -236,7 +256,7 @@ complete(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost, grn_obj *col,
                                              GRN_ID_NIL, GRN_ID_MAX, 1, 0))) {
                 grn_ii_posting *p;
                 while ((p = grn_ii_cursor_next(ctx, icur))) {
-                  complete_add_item(ctx, p->rid, res, threshold,
+                  complete_add_item(ctx, p->rid, res, frequency_threshold,
                                     items_freq, items_boost,
                                     &item_freq, &item_boost);
                 }
@@ -252,7 +272,9 @@ complete(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost, grn_obj *col,
         }
         grn_str_close(ctx, norm);
       }
-      cooccurrence_search(ctx, items, items_boost, tid, res, COMPLETE, threshold);
+      cooccurrence_search(ctx, items, items_boost, tid, res, COMPLETE,
+                          frequency_threshold,
+                          conditional_probability_threshold);
       if (((prefix_search_mode == GRN_SUGGEST_PREFIX_SEARCH_YES) ||
            (prefix_search_mode == GRN_SUGGEST_PREFIX_SEARCH_AUTO &&
             !grn_table_size(ctx, res))) &&
@@ -260,7 +282,7 @@ complete(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost, grn_obj *col,
                                        NULL, 0, 0, -1, GRN_CURSOR_PREFIX))) {
         grn_id id;
         while ((id = grn_table_cursor_next(ctx, cur))) {
-          complete_add_item(ctx, id, res, threshold,
+          complete_add_item(ctx, id, res, frequency_threshold,
                             items_freq, items_boost, &item_freq, &item_boost);
         }
         grn_table_cursor_close(ctx, cur);
@@ -279,7 +301,7 @@ static void
 correct(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost,
         grn_obj *query, grn_obj *sortby,
         grn_obj *output_columns, int offset, int limit,
-        int threshold)
+        int frequency_threshold, double conditional_probability_threshold)
 {
   grn_obj *res;
   grn_obj *items_freq2 = grn_obj_column(ctx, items, CONST_STR_LEN("freq2"));
@@ -289,9 +311,12 @@ correct(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost,
   if ((res = grn_table_create(ctx, NULL, 0, NULL,
                               GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, items, NULL))) {
     grn_id tid = grn_table_get(ctx, items, TEXT_VALUE_LEN(query));
-    int32_t max_score = cooccurrence_search(ctx, items, items_boost, tid, res, CORRECT, threshold);
+    int32_t max_score;
+    max_score = cooccurrence_search(ctx, items, items_boost, tid, res, CORRECT,
+                                    frequency_threshold,
+                                    conditional_probability_threshold);
     LAP(":", "cooccur(%d)", max_score);
-    if (GRN_TEXT_LEN(query) && max_score < threshold) {
+    if (GRN_TEXT_LEN(query) && max_score < frequency_threshold) {
       grn_obj *key, *index;
       if ((key = grn_obj_column(ctx, items, CONST_STR_LEN("_key")))) {
         if (grn_column_index(ctx, key, GRN_OP_MATCH, &index, 1, NULL)) {
@@ -325,9 +350,9 @@ correct(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost,
                             GRN_INT32_VALUE(&item_boost);
                     ri = value;
                     ri->score += score;
-                    if (score >= threshold) { continue; }
+                    if (score >= frequency_threshold) { continue; }
                   }
-                  /* score < threshold || item_boost < 0 */
+                  /* score < frequency_threshold || item_boost < 0 */
                   grn_hash_cursor_delete(ctx, hc, NULL);
                 }
               }
@@ -366,7 +391,7 @@ correct(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost,
                   GRN_BULK_REWIND(&score_value);
                   grn_obj_get_value(ctx, score, GRN_RECORD_VALUE(var),
                                     &score_value);
-                  if (GRN_INT32_VALUE(&score_value) < threshold) {
+                  if (GRN_INT32_VALUE(&score_value) < frequency_threshold) {
                     grn_table_cursor_delete(ctx, tc);
                   }
                 }
@@ -398,13 +423,14 @@ static void
 suggest(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost,
         grn_obj *query, grn_obj *sortby,
         grn_obj *output_columns, int offset, int limit,
-        int threshold)
+        int frequency_threshold, double conditional_probability_threshold)
 {
   grn_obj *res;
   if ((res = grn_table_create(ctx, NULL, 0, NULL,
                               GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, items, NULL))) {
     grn_id tid = grn_table_get(ctx, items, TEXT_VALUE_LEN(query));
-    cooccurrence_search(ctx, items, items_boost, tid, res, SUGGEST, threshold);
+    cooccurrence_search(ctx, items, items_boost, tid, res, SUGGEST,
+                        frequency_threshold, conditional_probability_threshold);
     output(ctx, items, res, tid, sortby, output_columns, offset, limit);
     grn_obj_close(ctx, res);
   } else {
@@ -416,27 +442,41 @@ static grn_obj *
 command_suggest(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_obj *items, *col, *items_boost;
-  int types = grn_parse_suggest_types(GRN_TEXT_VALUE(VAR(0)), GRN_BULK_CURR(VAR(0)));
-  int offset = GRN_TEXT_LEN(VAR(6))
-    ? grn_atoi(GRN_TEXT_VALUE(VAR(6)), GRN_BULK_CURR(VAR(6)), NULL)
-    : 0;
-  int limit = GRN_TEXT_LEN(VAR(7))
-    ? grn_atoi(GRN_TEXT_VALUE(VAR(7)), GRN_BULK_CURR(VAR(7)), NULL)
-    : DEFAULT_LIMIT;
-  int threshold = GRN_TEXT_LEN(VAR(8))
-    ? grn_atoi(GRN_TEXT_VALUE(VAR(8)), GRN_BULK_CURR(VAR(8)), NULL)
-    : DEFAULT_THRESHOLD;
-  int prefix_search_len = GRN_TEXT_LEN(VAR(9));
+  int types;
+  int offset = 0;
+  int limit = DEFAULT_LIMIT;
+  int frequency_threshold = DEFAULT_FREQUENCY_THRESHOLD;
+  int prefix_search_len;
+  double conditional_probability_threshold =
+    DEFAULT_CONDITIONAL_PROBABILITY_THRESHOLD;
   grn_suggest_prefix_search_mode prefix_search_mode;
+
+  types = grn_parse_suggest_types(GRN_TEXT_VALUE(VAR(0)), GRN_BULK_CURR(VAR(0)));
+  if (GRN_TEXT_LEN(VAR(6)) > 0) {
+    offset = grn_atoi(GRN_TEXT_VALUE(VAR(6)), GRN_BULK_CURR(VAR(6)), NULL);
+  }
+  if (GRN_TEXT_LEN(VAR(7)) > 0) {
+    limit = grn_atoi(GRN_TEXT_VALUE(VAR(7)), GRN_BULK_CURR(VAR(7)), NULL);
+  }
+  if (GRN_TEXT_LEN(VAR(8)) > 0) {
+    frequency_threshold = grn_atoi(GRN_TEXT_VALUE(VAR(8)), GRN_BULK_CURR(VAR(8)), NULL);
+  }
+  if (GRN_TEXT_LEN(VAR(9)) > 0) {
+    GRN_TEXT_PUTC(ctx, VAR(9), '\0');
+    conditional_probability_threshold = strtod(GRN_TEXT_VALUE(VAR(9)), NULL);
+  }
+
+  prefix_search_len = GRN_TEXT_LEN(VAR(10));
   if (prefix_search_len == 3 &&
-      strncasecmp("yes", GRN_TEXT_VALUE(VAR(9)), 3) == 0) {
+      strncasecmp("yes", GRN_TEXT_VALUE(VAR(10)), 3) == 0) {
     prefix_search_mode = GRN_SUGGEST_PREFIX_SEARCH_YES;
   } else if (prefix_search_len == 2 &&
-             strncasecmp("no", GRN_TEXT_VALUE(VAR(9)), 2) == 0) {
+             strncasecmp("no", GRN_TEXT_VALUE(VAR(10)), 2) == 0) {
     prefix_search_mode = GRN_SUGGEST_PREFIX_SEARCH_NO;
   } else {
     prefix_search_mode = GRN_SUGGEST_PREFIX_SEARCH_AUTO;
   }
+
   if ((items = grn_ctx_get(ctx, TEXT_VALUE_LEN(VAR(1))))) {
     if ((items_boost = grn_obj_column(ctx, items, CONST_STR_LEN("boost")))) {
       GRN_OUTPUT_MAP_OPEN("RESULT_SET", -1);
@@ -444,7 +484,9 @@ command_suggest(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
         if ((col = grn_obj_column(ctx, items, TEXT_VALUE_LEN(VAR(2))))) {
           GRN_OUTPUT_CSTR("complete");
           complete(ctx, items, items_boost, col, VAR(3), VAR(4),
-                   VAR(5), offset, limit, threshold, prefix_search_mode);
+                   VAR(5), offset, limit,
+                   frequency_threshold, conditional_probability_threshold,
+                   prefix_search_mode);
         } else {
           ERR(GRN_INVALID_ARGUMENT, "invalid column.");
         }
@@ -452,12 +494,14 @@ command_suggest(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
       if (types & CORRECT) {
         GRN_OUTPUT_CSTR("correct");
         correct(ctx, items, items_boost, VAR(3), VAR(4),
-                VAR(5), offset, limit, threshold);
+                VAR(5), offset, limit,
+                frequency_threshold, conditional_probability_threshold);
       }
       if (types & SUGGEST) {
         GRN_OUTPUT_CSTR("suggest");
         suggest(ctx, items, items_boost, VAR(3), VAR(4),
-                VAR(5), offset, limit, threshold);
+                VAR(5), offset, limit,
+                frequency_threshold, conditional_probability_threshold);
       }
       GRN_OUTPUT_MAP_CLOSE();
     } else {
@@ -585,7 +629,6 @@ GRN_PLUGIN_INIT(grn_ctx *ctx)
 grn_rc
 GRN_PLUGIN_REGISTER(grn_ctx *ctx)
 {
-  /* TODO: offset/limit */
   grn_expr_var vars[] = {
     {CONST_STR_LEN("types")},
     {CONST_STR_LEN("table")},
@@ -595,7 +638,8 @@ GRN_PLUGIN_REGISTER(grn_ctx *ctx)
     {CONST_STR_LEN("output_columns")},
     {CONST_STR_LEN("offset")},
     {CONST_STR_LEN("limit")},
-    {CONST_STR_LEN("threshold")},
+    {CONST_STR_LEN("frequency_threshold")},
+    {CONST_STR_LEN("conditional_probability_threshold")},
     {CONST_STR_LEN("prefix_search")}
   };
   GRN_TEXT_INIT(&vars[0].value, 0);
@@ -608,8 +652,9 @@ GRN_PLUGIN_REGISTER(grn_ctx *ctx)
   GRN_TEXT_INIT(&vars[7].value, 0);
   GRN_TEXT_INIT(&vars[8].value, 0);
   GRN_TEXT_INIT(&vars[9].value, 0);
+  GRN_TEXT_INIT(&vars[10].value, 0);
   grn_proc_create(ctx, CONST_STR_LEN("suggest"), GRN_PROC_COMMAND,
-                  command_suggest, NULL, NULL, 10, vars);
+                  command_suggest, NULL, NULL, 11, vars);
 
   grn_proc_create(ctx, CONST_STR_LEN("suggest_preparer"), GRN_PROC_FUNCTION,
                   func_suggest_preparer, NULL, NULL, 0, NULL);

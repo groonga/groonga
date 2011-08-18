@@ -134,7 +134,7 @@ test_complete_prefix_rk_search(gconstpointer data)
         "--table item_rurema "
         "--column kana "
         "--types complete "
-        "--threshold 1 "
+        "--frequency_threshold 1 "
         "--query '%s'",
         gcut_data_get_string(data, "query"))));
 }
@@ -153,7 +153,7 @@ test_complete_prefix_rk_search_threshold_found(void)
       "--table item_rurema "
       "--column kana "
       "--types complete "
-      "--threshold 101 "
+      "--frequency_threshold 101 "
       "--query 'hen'"));
 }
 
@@ -170,7 +170,7 @@ test_complete_prefix_rk_search_threshold_not_fuond(void)
       "--table item_rurema "
       "--column kana "
       "--types complete "
-      "--threshold 102 "
+      "--frequency_threshold 102 "
       "--query 'hen'"));
 }
 
@@ -188,7 +188,8 @@ test_complete_coocurrence(void)
         "--table item_rurema "
         "--column kana "
         "--types complete "
-        "--threshold 1 "
+        "--frequency_threshold 1 "
+        "--conditional_probability_threshold 0.1 "
         "--query 'ｓｔりん'"));
 }
 
@@ -207,7 +208,7 @@ test_complete_prefix_search_force(void)
       "--column kana "
       "--types complete "
       "--prefix_search yes "
-      "--threshold 1 "
+      "--frequency_threshold 1 "
       "--query '置'"));
 }
 
@@ -225,7 +226,7 @@ test_complete_prefix_search_disable(void)
       "--column kana "
       "--types complete "
       "--prefix_search no "
-      "--threshold 1 "
+      "--frequency_threshold 1 "
       "--query '置'"));
 }
 
@@ -243,7 +244,7 @@ test_complete_prefix_search_threshold_found(void)
       "--table item_rurema "
       "--column kana "
       "--types complete "
-      "--threshold 101 "
+      "--frequency_threshold 101 "
       "--query '変'"));
 }
 
@@ -260,7 +261,7 @@ test_complete_prefix_search_threshold_not_fuond(void)
       "--table item_rurema "
       "--column kana "
       "--types complete "
-      "--threshold 102 "
+      "--frequency_threshold 102 "
       "--query '変'"));
 }
 
@@ -278,7 +279,7 @@ test_correct_coocurrence(void)
         "--table item_rurema "
         "--column kana "
         "--types correct "
-        "--threshold 1 "
+        "--frequency_threshold 1 "
         "--query 'avg'"));
 }
 
@@ -296,7 +297,7 @@ test_correct_similar(void)
         "--table item_rurema "
         "--column kana "
         "--types correct "
-        "--threshold 1 "
+        "--frequency_threshold 1 "
         "--query 'kernel'"));
 }
 
@@ -314,6 +315,6 @@ test_suggest_coocurrence(void)
         "--table item_rurema "
         "--column kana "
         "--types suggest "
-        "--threshold 1 "
+        "--frequency_threshold 1 "
         "--query 'CSV'"));
 }
