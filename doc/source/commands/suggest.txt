@@ -23,7 +23,7 @@ SYNOPSIS
 --------
 ::
 
- suggest types table column query [sortby [output_columns [offset [limit [threshold [prefix_search]]]]]]
+ suggest types table column query [sortby [output_columns [offset [limit [frequency_threshold [conditional_probability_threshold [prefix_search]]]]]]]
 
 DESCRIPTION
 -----------
@@ -106,12 +106,24 @@ OPTIONS
   Default:
     ``10``
 
-``threshold``
-  It specifies threshold. Returned records must have
-  ``_score`` that is greater than or equal to ``threshold``.
+``frequency_threshold``
+  It specifies threshold for item frequency. Returned records must have
+  ``_score`` that is greater than or equal to ``frequency_threshold``.
 
   Default:
     ``100``
+
+``conditional_probability_threshold``
+
+  It specifies threshold for conditional
+  probability. Conditional probability is used for learned
+  data. It is probability of query submission when ``query``
+  is occurred. Returned records must have conditional
+  probability that is greater than or equal to
+  ``conditional_probability_threshold``.
+
+  Default:
+    ``0.2``
 
 ``prefix_search``
   It specifies whether optional prefix search is used or not
@@ -211,25 +223,25 @@ Here is a completion example.
 
 .. groonga-command
 .. include:: ../commands/suggest-completion.log
-.. suggest --table item_query --column kana --types complete --threshold 1 --query en
+.. suggest --table item_query --column kana --types complete --frequency_threshold 1 --query en
 
 Here is a correction example.
 
 .. groonga-command
 .. include:: ../commands/suggest-correction.log
-.. suggest --table item_query --column kana --types correct --threshold 1 --query saerch
+.. suggest --table item_query --column kana --types correct --frequency_threshold 1 --query saerch
 
 Here is a suggestion example.
 
 .. groonga-command
 .. include:: ../commands/suggest-suggestion.log
-.. suggest --table item_query --column kana --types suggest --threshold 1 --query search
+.. suggest --table item_query --column kana --types suggest --frequency_threshold 1 --query search
 
 Here is a mixed example.
 
 .. groonga-command
 .. include:: ../commands/suggest-mixed.log
-.. suggest --table item_query --column kana --types complete|correct|suggest --threshold 1 --query search
+.. suggest --table item_query --column kana --types complete|correct|suggest --frequency_threshold 1 --query search
 
 
 SEE ALSO
