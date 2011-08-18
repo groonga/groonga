@@ -29,7 +29,8 @@ void parse_keyval(struct evkeyvalq *get_args,
                   const char **learn_target_name,
                   const char **callback,
                   uint64_t *millisec,
-                  int *threshold,
+                  int *frequency_threshold,
+                  double *conditional_probability_threshold,
                   int *limit);
 
 #endif /* GRN_SUGGEST_UTIL_H */

@@ -98,7 +98,8 @@ static uint32_t n_lines_per_log_file = 1000000;
 
 static int
 suggest_result(struct evbuffer *res_buf, const char *types, const char *query,
-               const char *target_name, int threshold, int limit,
+               const char *target_name, int frequency_threshold,
+               double conditional_probability_threshold, int limit,
                grn_obj *cmd_buf, grn_ctx *ctx)
 {
   if (target_name && types && query) {
@@ -109,8 +110,10 @@ suggest_result(struct evbuffer *res_buf, const char *types, const char *query,
     grn_text_urlenc(ctx, cmd_buf, types, strlen(types));
     GRN_TEXT_PUTS(ctx, cmd_buf, "&query=");
     grn_text_urlenc(ctx, cmd_buf, query, strlen(query));
-    GRN_TEXT_PUTS(ctx, cmd_buf, "&threshold=");
-    grn_text_itoa(ctx, cmd_buf, threshold);
+    GRN_TEXT_PUTS(ctx, cmd_buf, "&frequency_threshold=");
+    grn_text_itoa(ctx, cmd_buf, frequency_threshold);
+    GRN_TEXT_PUTS(ctx, cmd_buf, "&conditional_probability_threshold=");
+    grn_text_ftoa(ctx, cmd_buf, conditional_probability_threshold);
     GRN_TEXT_PUTS(ctx, cmd_buf, "&limit=");
     grn_text_itoa(ctx, cmd_buf, limit);
     {
@@ -135,12 +138,14 @@ log_send(struct evkeyvalq *output_headers, struct evbuffer *res_buf,
          thd_data *thd, struct evkeyvalq *get_args)
 {
   uint64_t millisec;
-  int threshold, limit;
+  int frequency_threshold, limit;
+  double conditional_probability_threshold;
   const char *callback, *types, *query, *client_id, *target_name,
              *learn_target_name;
 
   parse_keyval(get_args, &query, &types, &client_id, &target_name,
-               &learn_target_name, &callback, &millisec, &threshold, &limit);
+               &learn_target_name, &callback, &millisec, &frequency_threshold,
+               &conditional_probability_threshold, &limit);
 
   /* send data to learn client */
   if (thd->zmq_sock && millisec && client_id && query && learn_target_name) {
@@ -215,15 +220,17 @@ log_send(struct evkeyvalq *output_headers, struct evbuffer *res_buf,
       evbuffer_add(res_buf, callback, content_length);
       evbuffer_add(res_buf, "(", 1);
       content_length += suggest_result(res_buf, types, query, target_name,
-                                       threshold, limit,
-                                       &(thd->cmd_buf), thd->ctx) + 3;
+                                       frequency_threshold,
+                                       conditional_probability_threshold,
+                                       limit, &(thd->cmd_buf), thd->ctx) + 3;
       evbuffer_add(res_buf, ");", 2);
     } else {
       evhttp_add_header(output_headers,
                         "Content-Type", "application/json; charset=UTF-8");
       content_length = suggest_result(res_buf, types, query, target_name,
-                                      threshold, limit,
-                                      &(thd->cmd_buf), thd->ctx);
+                                      frequency_threshold,
+                                      conditional_probability_threshold,
+                                      limit, &(thd->cmd_buf), thd->ctx);
     }
     if (content_length >= 0) {
       char num_buf[16];

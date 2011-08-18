@@ -28,7 +28,8 @@
 
 #include "util.h"
 
-#define DEFAULT_THRESHOLD 100
+#define DEFAULT_FREQUENCY_THRESHOLD 100
+#define DEFAULT_CONDITIONAL_PROBABILITY_THRESHOLD 0.2
 
 int
 print_error(const char *format, ...)
@@ -100,7 +101,8 @@ parse_keyval(struct evkeyvalq *get_args,
              const char **learn_target_name,
              const char **callback,
              uint64_t *millisec,
-             int *threshold,
+             int *frequency_threshold,
+             double *conditional_probability_threshold,
              int *limit)
 {
   struct evkeyval *get;
@@ -112,7 +114,12 @@ parse_keyval(struct evkeyvalq *get_args,
   if (learn_target_name) { *learn_target_name = NULL; }
   if (callback) { *callback = NULL; }
   if (millisec) { *millisec = 0; }
-  if (threshold) { *threshold = DEFAULT_THRESHOLD; }
+  if (frequency_threshold) {
+    *frequency_threshold = DEFAULT_FREQUENCY_THRESHOLD;
+  }
+  if (conditional_probability_threshold) {
+    *conditional_probability_threshold = DEFAULT_CONDITIONAL_PROBABILITY_THRESHOLD;
+  }
   if (limit) { *limit = -1; }
 
   TAILQ_FOREACH(get, get_args, next) {
@@ -155,8 +162,13 @@ parse_keyval(struct evkeyvalq *get_args,
       }
       break;
     case 'h':
-      if (threshold) {
-        *threshold = atoi(get->value);
+      if (frequency_threshold) {
+        *frequency_threshold = atoi(get->value);
+      }
+      break;
+    case 'p':
+      if (conditional_probability_threshold) {
+        *conditional_probability_threshold = strtod(get->value, NULL);
       }
       break;
     case 'm':
