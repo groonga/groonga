@@ -109,7 +109,7 @@ For example, here is an command to get correction results by
 
 .. groonga-command
 .. include:: ../example/correction-1.log
-.. suggest --table item_query --column kana --types correction --threshold 1 --query saerch
+.. suggest --table item_query --column kana --types correction --frequency_threshold 1 --query saerch
 
 How it learns
 -------------
