@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-17 16:50\n"
-"PO-Revision-Date: 2011-08-17 16:52+0900\n"
+"POT-Creation-Date: 2011-08-18 18:09\n"
+"PO-Revision-Date: 2011-08-18 18:15+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -418,7 +418,7 @@ msgstr ""
 
 #: ../../../source/commands/column_create.txt:62
 #: ../../../source/commands/column_list.txt:59
-#: ../../../source/commands/suggest.txt:151
+#: ../../../source/commands/suggest.txt:163
 msgid "``type``"
 msgstr ""
 
@@ -1787,85 +1787,102 @@ msgstr ""
 # b86f5f5ae3824fa9872d31c9b5358a17
 #: ../../../source/commands/suggest.txt:110
 msgid ""
-"It specifies threshold. Returned records must have ``_score`` that is "
-"greater than or equal to ``threshold``."
-msgstr ""
-"閾値を指定します。返されるレコードの ``_score`` 値は ``threshold`` 以上になり"
-"ます。"
+"It specifies threshold for item frequency. Returned records must have "
+"``_score`` that is greater than or equal to ``frequency_threshold``."
+msgstr "出現頻度に対する閾値を指定します。返されるレコードの ``_score`` 値は ``frequency_threshold`` 以上になります。"
 
 # 9f4f75b3b75a4b4eb864557ed5d1959d
 #: ../../../source/commands/suggest.txt:114
 msgid "``100``"
 msgstr ""
 
+# 5297adcaa84d4ce0b2263b39fcd9e683
+#: ../../../source/commands/suggest.txt:116
+msgid "``conditional_probability_threshold``"
+msgstr ""
+
+# 0ab1f90ef28e4243b1625c0666fa0d0f
+#: ../../../source/commands/suggest.txt:118
+msgid ""
+"It specifies threshold for conditional probability. Conditional probability "
+"is used for learned data. It is probability of query submission when "
+"``query`` is occurred. Returned records must have conditional probability "
+"that is greater than or equal to ``conditional_probability_threshold``."
+msgstr "条件付き確率に対する閾値を指定します。学習データに対して条件付き確率を使います。ここで使う条件付き確率は、入力した ``query`` と同じ入力があったときにクエリが検索された確率です。返されるレコードの条件付き確率は ``conditional_probability_threshold`` 以上になります。"
+
+# dcb1f7f1e0704f7690a85a5588010127
+#: ../../../source/commands/suggest.txt:126
+msgid "``0.2``"
+msgstr ""
+
 # 5f30603cc625409db0e45398974db88f
-#: ../../../source/commands/suggest.txt:117
+#: ../../../source/commands/suggest.txt:129
 msgid ""
 "It specifies whether optional prefix search is used or not in completion."
 msgstr "補完時に前方一致検索を実行するかどうかを指定します。"
 
 # 77b120c7869549b5855bc906a84570a2
-#: ../../../source/commands/suggest.txt:120
+#: ../../../source/commands/suggest.txt:132
 msgid "Here are available values:"
 msgstr "指定可能な値は以下の通りです。"
 
 # 5db279e0f9214776bb9ca618f1fd5dff
-#: ../../../source/commands/suggest.txt:123
+#: ../../../source/commands/suggest.txt:135
 msgid "Prefix search is always used."
 msgstr "常に前方一致検索を実行します。"
 
 # 438823df94bb4fa0a191f62272fdf842
-#: ../../../source/commands/suggest.txt:126
+#: ../../../source/commands/suggest.txt:138
 msgid "Prefix search is never used."
 msgstr "前方一致検索を実行しません。"
 
 # dde877dd95914333a45cc814785510b7
-#: ../../../source/commands/suggest.txt:129
+#: ../../../source/commands/suggest.txt:141
 msgid "Prefix search is used only when other search can't find any records."
 msgstr "他の検索でレコードが見つからない場合のみ前方一致検索を実行します。"
 
 # 505007fef66f4168951b2c0f2f50d9ed
-#: ../../../source/commands/suggest.txt:133
+#: ../../../source/commands/suggest.txt:145
 msgid "``auto``"
 msgstr ""
 
 # d0742adf4f42420b9247bde497ec24cc
-#: ../../../source/commands/suggest.txt:136
+#: ../../../source/commands/suggest.txt:148
 msgid "RETURN VALUE"
 msgstr "返値"
 
 # 087e0df0505742cbb57a12e069347eee
-#: ../../../source/commands/suggest.txt:139
+#: ../../../source/commands/suggest.txt:151
 msgid "JSON format"
 msgstr "JSON形式"
 
 # 7ad70f64fc3b4ad2a3516442a882aebd
-#: ../../../source/commands/suggest.txt:141
+#: ../../../source/commands/suggest.txt:153
 msgid "Here is a returned JSON format::"
 msgstr "返されるJSON形式は以下の通りです::"
 
 # 14e557e5a1844af3af69880584f44a31
-#: ../../../source/commands/suggest.txt:153
+#: ../../../source/commands/suggest.txt:165
 msgid "A type specified by ``types``."
 msgstr "``types`` で指定した値。"
 
 # eb2ffb3d76a444a8b0ff641c74edc842
-#: ../../../source/commands/suggest.txt:155
+#: ../../../source/commands/suggest.txt:167
 msgid "``candidate``"
 msgstr ""
 
 # 870c6dab5a904787bd236c07ae08767a
-#: ../../../source/commands/suggest.txt:157
+#: ../../../source/commands/suggest.txt:169
 msgid "A candidate for completion, correction or suggestion."
 msgstr "補完・補正・提案候補。"
 
 # 196d1fdc58194122af525e7a901a74f2
-#: ../../../source/commands/suggest.txt:159
+#: ../../../source/commands/suggest.txt:171
 msgid "``score of candidate``"
 msgstr "``score of candidate``"
 
 # e66a1a503c9b46ac826e2c698f25671b
-#: ../../../source/commands/suggest.txt:161
+#: ../../../source/commands/suggest.txt:173
 msgid ""
 "A score of corresponding ``candidate``. It means that higher score candidate "
 "is more likely candidate for completion, correction or suggestion. Returned "
@@ -1876,57 +1893,57 @@ msgstr ""
 "順でソートされています。"
 
 # b6413e09d91345aeacffb24f7f75ac87
-#: ../../../source/commands/suggest.txt:168
+#: ../../../source/commands/suggest.txt:180
 msgid "EXAMPLE"
 msgstr "例"
 
 # db00b600530e41579eb5a5d9fb84395a
-#: ../../../source/commands/suggest.txt:170
+#: ../../../source/commands/suggest.txt:182
 msgid "Here are learned data for completion."
 msgstr "以下は補完用の学習データです。"
 
 # 9799739db173449f93101e68bf2c6807
-#: ../../../source/commands/suggest.txt:184
+#: ../../../source/commands/suggest.txt:196
 msgid "Here are learned data for correction."
 msgstr "以下は補正用の学習データです。"
 
 # 2adaed1daed64d3882d466505eeba9d0
-#: ../../../source/commands/suggest.txt:200
+#: ../../../source/commands/suggest.txt:212
 msgid "Here are learned data for suggestion."
 msgstr "以下は提案用の学習データです。"
 
 # 19c0a971f31d469f940d93c9f303237e
-#: ../../../source/commands/suggest.txt:210
+#: ../../../source/commands/suggest.txt:222
 msgid "Here is a completion example."
 msgstr "以下は補完例です。"
 
 # 449ed0bdac704b538d9921980c4bdac0
-#: ../../../source/commands/suggest.txt:216
+#: ../../../source/commands/suggest.txt:228
 msgid "Here is a correction example."
 msgstr "以下は補正例です。"
 
 # 1ccd84b3f15a4567b23bb0e7d8c66fcd
-#: ../../../source/commands/suggest.txt:222
+#: ../../../source/commands/suggest.txt:234
 msgid "Here is a suggestion example."
 msgstr "以下は提案例です。"
 
 # 32f4677c99c747c3b22375acfee0e901
-#: ../../../source/commands/suggest.txt:228
+#: ../../../source/commands/suggest.txt:240
 msgid "Here is a mixed example."
 msgstr "以下は補完・補正・提案を混ぜた例です。"
 
 # 33bfc7742f5d470480ab25360297ded1
-#: ../../../source/commands/suggest.txt:236
+#: ../../../source/commands/suggest.txt:248
 msgid "SEE ALSO"
 msgstr "参考"
 
 # 4c39096882c84cbca65ef8263527859a
-#: ../../../source/commands/suggest.txt:238
+#: ../../../source/commands/suggest.txt:250
 msgid ":doc:`/suggest`"
 msgstr ""
 
 # afd8e4f3e799444d9b7f8f7a97d9d72a
-#: ../../../source/commands/suggest.txt:239
+#: ../../../source/commands/suggest.txt:251
 msgid ":doc:`/executables/groonga-suggest-create-dataset`"
 msgstr ""
 
