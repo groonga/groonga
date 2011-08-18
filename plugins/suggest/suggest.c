@@ -156,7 +156,7 @@ cooccurrence_search(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost, grn_id i
 #define DEFAULT_SORTBY          "-_score"
 #define DEFAULT_OUTPUT_COLUMNS  "_key,_score"
 #define DEFAULT_FREQUENCY_THRESHOLD 100
-#define DEFAULT_CONDITIONAL_PROBABILITY_THRESHOLD 0.5
+#define DEFAULT_CONDITIONAL_PROBABILITY_THRESHOLD 0.2
 
 static void
 output(grn_ctx *ctx, grn_obj *table, grn_obj *res, grn_id tid,
