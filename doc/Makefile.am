@@ -24,17 +24,17 @@ man pdf clean-html update-po:
 	done
 
 EXTRA_DIST =					\
-	$(relative_theme_files)
+	$(theme_files_relative_from_doc_dir)
 
-$(relative_source_files): html
+$(source_files_relative_from_doc_dir): html
 
 if ENABLE_DOCUMENT
 dist-hook: html man
 	@touch $(distdir)/build-stamp
 BUILT_SOURCES =					\
-	$(relative_source_files)
+	$(source_files_relative_from_doc_dir)
 nobase_dist_doc_DATA =				\
-	$(relative_source_files)
+	$(source_files_relative_from_doc_dir)
 else
 dist-hook:
 	@echo "must specify --enable-document for 'make dist'"
