@@ -38,6 +38,9 @@ benchmark:
 tag:
 	cd $(top_srcdir) && git tag v$(VERSION) -a -m 'groonga $(VERSION)!!!'
 
+echo-version:
+	@echo $(VERSION)
+
 update-latest-release:
 	@if test -z "$(OLD_RELEASE)"; then	\
 	  echo "\$$(OLD_RELEASE) is missing";	\
