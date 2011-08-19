@@ -583,6 +583,7 @@ array_entry_new(grn_ctx *ctx, grn_array *array)
       e = ++hh->curr_rec;
     }
     GRN_IO_ARRAY_BIT_ON(array->io, array_seg_bitmap, e);
+    (*array->n_garbages)--;
   } else {
     if ((e = array->garbages)) {
       void *ee;
@@ -593,6 +594,7 @@ array_entry_new(grn_ctx *ctx, grn_array *array)
       e = ++array->a.max;
     }
     GRN_TINY_ARRAY_BIT_ON(&array->bitmap, e);
+    (*array->n_garbages)--;
   }
   return e;
 }
@@ -1659,7 +1661,7 @@ grn_hash_cursor_open(grn_ctx *ctx, grn_hash *hash,
     }
     if (c->tail < c->curr_rec) { c->tail = c->curr_rec; }
   }
-  if (*hash->n_garbages) {
+  if (*hash->n_entries != HASH_CURR_MAX(hash)) {
     while (offset && c->curr_rec != c->tail) {
       uint8_t res;
       c->curr_rec += c->dir;
@@ -1680,7 +1682,7 @@ grn_hash_cursor_next(grn_ctx *ctx, grn_hash_cursor *c)
   if (c && c->rest) {
     while (c->curr_rec != c->tail) {
       c->curr_rec += c->dir;
-      if (*c->hash->n_garbages) {
+      if (*c->hash->n_entries != HASH_CURR_MAX(c->hash)) {
         uint8_t res;
         BITMAP_AT(c->hash, c->curr_rec, res);
         if (!res) { continue; }
