@@ -579,22 +579,22 @@ array_entry_new(grn_ctx *ctx, grn_array *array)
       if (!ee) { return GRN_ID_NIL; }
       hh->garbages = *((grn_id *)ee);
       memset(ee, 0, hh->value_size);
+      (*array->n_garbages)--;
     } else {
       e = ++hh->curr_rec;
     }
     GRN_IO_ARRAY_BIT_ON(array->io, array_seg_bitmap, e);
-    (*array->n_garbages)--;
   } else {
     if ((e = array->garbages)) {
       void *ee;
       GRN_TINY_ARRAY_AT(&array->a, e, ee);
       array->garbages = *((grn_id *)ee);
       memset(ee, 0, array->value_size);
+      (*array->n_garbages)--;
     } else {
       e = ++array->a.max;
     }
     GRN_TINY_ARRAY_BIT_ON(&array->bitmap, e);
-    (*array->n_garbages)--;
   }
   return e;
 }
