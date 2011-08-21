@@ -583,7 +583,6 @@ array_entry_new(grn_ctx *ctx, grn_array *array)
       e = ++hh->curr_rec;
     }
     GRN_IO_ARRAY_BIT_ON(array->io, array_seg_bitmap, e);
-    (*array->n_garbages)--;
   } else {
     if ((e = array->garbages)) {
       void *ee;
@@ -594,7 +593,6 @@ array_entry_new(grn_ctx *ctx, grn_array *array)
       e = ++array->a.max;
     }
     GRN_TINY_ARRAY_BIT_ON(&array->bitmap, e);
-    (*array->n_garbages)--;
   }
   return e;
 }
