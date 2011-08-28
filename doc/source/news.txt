@@ -5,6 +5,39 @@
 News
 ====
 
+.. _release-1-2-5:
+
+Release 1.2.5 - 2011/08/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* Added experimental Windows installer support.
+* Accepted "#" and "-" as a valid name characters. #1043.
+* Accepted all valid characters except "_" as the first character. #1043.
+* Supported `--each` for `[...]` form :doc:`/commands/load`. #1044
+* Supported :doc:`/commands/check` for hash table.
+* Added documentation for :doc:`/suggest`.
+* Supported threshold as `--frequency_threshold` and
+  `--conditional_probability_threshold` options in all
+  :doc:`/commands/suggest` types. #1042
+* [groonga-suggest-httpd] Supported log reopen by SIGUSR1. #1048
+* Supported string input for vector column value. #1051
+* [groonga-suggest-httpd] Added `--n-lines-per-log-file`
+  option that changes log line limitation for a file.
+* [groonga-suggest-httpd] Added `p` parameter for
+  `--conditional_probability_threshold`.
+* Added GRN_CTX_PER_DB flag for grn_ctx_open(). #1053
+* Exported grn_ctx_close(). #1035
+
+Fixes
+^^^^^
+
+* Fixed a crash bug that invalid value is passed as match expression
+  argument in :doc:`/commands/select`. #1047
+* Fixed a bug that hash table cursor returns garbage records.
+
 .. _release-1-2-4:
 
 Release 1.2.4 - 2011/07/29
