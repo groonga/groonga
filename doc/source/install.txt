@@ -151,8 +151,19 @@ Install::
 
   % brew install groonga
 
-Windows
--------
+Windows (Installer)
+-------------------
+
+.. note::
+
+   We only distribute the package for x64.
+
+You just download installer (.exe file) from
+`packages.groonga.org/windows/ <http://packages.groonga.org/windows/groonga/>`_
+and execute it.
+
+Windows (zip)
+-------------
 
 .. note::
 
@@ -160,7 +171,7 @@ Windows
 
 You just download zip-file from
 `packages.groonga.org/windows/ <http://packages.groonga.org/windows/groonga/>`_
-and extract it. We doesn't distribute installer for now. Sorry.
+and extract it.
 
 Others
 ------
