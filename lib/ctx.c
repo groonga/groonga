@@ -532,6 +532,9 @@ grn_ctx_init(grn_ctx *ctx, int flags)
   // if (ctx->stat != GRN_CTX_FIN) { return GRN_INVALID_ARGUMENT; }
   ERRCLR(ctx);
   ctx->flags = flags;
+  if (getenv("GRN_CTX_PER_DB") && strcmp(getenv("GRN_CTX_PER_DB"), "yes") == 0) {
+    ctx->flags |= GRN_CTX_PER_DB;
+  }
   ctx->stat = GRN_QL_WAIT_EXPR;
   ctx->encoding = grn_gctx.encoding;
   ctx->seqno = 0;
@@ -637,6 +640,11 @@ grn_ctx_fin(grn_ctx *ctx)
       });
     }
     grn_hash_close(ctx, ctx->impl->expr_vars);
+    if (ctx->impl->db && ctx->flags & GRN_CTX_PER_DB) {
+      grn_obj *db = ctx->impl->db;
+      ctx->impl->db = NULL;
+      grn_obj_close(ctx, db);
+    }
     {
       int i;
       grn_io_mapinfo *mi;

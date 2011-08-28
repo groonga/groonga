@@ -206,6 +206,7 @@ struct _grn_ctx {
 
 #define GRN_CTX_USE_QL                 (0x03)
 #define GRN_CTX_BATCH_MODE             (0x04)
+#define GRN_CTX_PER_DB                 (0x08)
 
 GRN_API grn_rc grn_ctx_init(grn_ctx *ctx, int flags);
 
