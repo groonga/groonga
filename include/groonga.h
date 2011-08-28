@@ -515,6 +515,8 @@ GRN_API void grn_db_touch(grn_ctx *ctx, grn_obj *db);
  *
  * ctxが操作対象とするdbを指定します。NULLを指定した場合は、
  * dbを操作しない状態(init直後の状態)になります。
+ *
+ * Don't use it with grn_ctx that has GRN_CTX_PER_DB flag.
  **/
 GRN_API grn_rc grn_ctx_use(grn_ctx *ctx, grn_obj *db);
 
