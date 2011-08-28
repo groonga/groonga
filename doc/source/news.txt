@@ -14,21 +14,20 @@ Improvements
 ^^^^^^^^^^^^
 
 * Added experimental Windows installer support.
-* Accepted "#" and "-" as a valid name characters. #1043.
-* Accepted all valid characters except "_" as the first character. #1043.
+* Accepted "#" and "-" as a valid name characters. #1043
+* Accepted all valid characters except "_" as the first character. #1043
 * Supported `--each` for `[...]` form :doc:`/commands/load`. #1044
-* Supported :doc:`/commands/check` for hash table.
 * Added documentation for :doc:`/suggest`.
 * Supported threshold as `--frequency_threshold` and
   `--conditional_probability_threshold` options in all
   :doc:`/commands/suggest` types. #1042
 * [groonga-suggest-httpd] Supported log reopen by SIGUSR1. #1048
-* Supported string input for vector column value. #1051
+* Supported string input for reference vector column value. #1051
 * [groonga-suggest-httpd] Added `--n-lines-per-log-file`
   option that changes log line limitation for a file.
 * [groonga-suggest-httpd] Added `p` parameter for
   `--conditional_probability_threshold`.
-* Added GRN_CTX_PER_DB flag for grn_ctx_open(). #1053
+* Added GRN_CTX_PER_DB flag for grn_ctx_init() and grn_ctx_open(). #1053
 * Exported grn_ctx_close(). #1035
 
 Fixes
@@ -49,8 +48,8 @@ Improvements
 * Re-supported *BSD. (Reported by OBATA Akio)
 * Improved sed related portability. (Suggested by OBATA Akio)
 * Re-supported Visual C++ 2008.
-* Supported :doc:`commands/check` for hash table.
-* Ignored invalid _score in --sortby of :doc:`commands/select`
+* Supported :doc:`/commands/check` for hash table.
+* Ignored invalid _score in --sortby of :doc:`/commands/select`
   for convenience. #1030
 * Added document about :doc:`log`.
 * Supported ~/.editrc.
@@ -85,7 +84,7 @@ Improvements
 * Added groonga-query-log-analyzer that analyze query log.
 * groonga command shows failed command on error.
 * groonga command shows file name and line no on error.
-* Improved error message of :doc:`commands/column_create`. #952
+* Improved error message of :doc:`/commands/column_create`. #952
 * Added GRN_OBJ_TABLE_DAT_KEY, double array trie, table. (experimental)
 
 Fixes
