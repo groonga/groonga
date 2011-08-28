@@ -63,7 +63,9 @@ update-latest-release:
 	  $(VERSION) $(NEW_RELEASE_DATE)			\
 	  packages/rpm/fedora/groonga.spec.in			\
 	  packages/rpm/centos/groonga.spec.in			\
-	  packages/debian/changelog
+	  packages/debian/changelog				\
+	  $(GROONGA_GITHUB_COM_PATH)/index.html			\
+	  $(GROONGA_GITHUB_COM_PATH)/ja/index.html
 
 update-po:
 	@for lang in $(LOCALES); do						\
