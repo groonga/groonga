@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-12 14:57\n"
+"POT-Creation-Date: 2011-08-28 18:54\n"
 "PO-Revision-Date: 2011-05-09 00:36+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -25,8 +25,32 @@ msgstr ""
 msgid "edit_distance"
 msgstr ""
 
+#: ../../../source/functions/edit_distance.txt:9
+#: ../../../source/functions/geo_distance.txt:9
+#: ../../../source/functions/geo_in_circle.txt:9
+#: ../../../source/functions/geo_in_rectangle.txt:9
+#: ../../../source/functions/now.txt:9 ../../../source/functions/rand.txt:9
+msgid "名前"
+msgstr ""
+
 #: ../../../source/functions/edit_distance.txt:11
 msgid "edit_distance - 指定した2つの文字列の編集距離を計算する"
+msgstr ""
+
+#: ../../../source/functions/edit_distance.txt:14
+#: ../../../source/functions/geo_distance.txt:14
+#: ../../../source/functions/geo_in_circle.txt:14
+#: ../../../source/functions/geo_in_rectangle.txt:14
+#: ../../../source/functions/now.txt:14 ../../../source/functions/rand.txt:14
+msgid "書式"
+msgstr ""
+
+#: ../../../source/functions/edit_distance.txt:20
+#: ../../../source/functions/geo_distance.txt:20
+#: ../../../source/functions/geo_in_circle.txt:20
+#: ../../../source/functions/geo_in_rectangle.txt:20
+#: ../../../source/functions/now.txt:20 ../../../source/functions/rand.txt:20
+msgid "説明"
 msgstr ""
 
 #: ../../../source/functions/edit_distance.txt:22
@@ -39,6 +63,14 @@ msgstr ""
 msgid ""
 "edit_distance() 関数は、string1に指定した文字列とstring2に指定した文字列の間"
 "の編集距離を求めます。"
+msgstr ""
+
+#: ../../../source/functions/edit_distance.txt:27
+#: ../../../source/functions/geo_distance.txt:28
+#: ../../../source/functions/geo_in_circle.txt:27
+#: ../../../source/functions/geo_in_rectangle.txt:27
+#: ../../../source/functions/rand.txt:27
+msgid "引数"
 msgstr ""
 
 #: ../../../source/functions/edit_distance.txt:29
@@ -57,56 +89,24 @@ msgstr ""
 msgid "もうひとつの文字列を指定します"
 msgstr ""
 
+#: ../../../source/functions/edit_distance.txt:39
+#: ../../../source/functions/geo_distance.txt:40
+#: ../../../source/functions/geo_in_circle.txt:43
+#: ../../../source/functions/geo_in_rectangle.txt:42
+#: ../../../source/functions/now.txt:27 ../../../source/functions/rand.txt:34
+msgid "返値"
+msgstr ""
+
 #: ../../../source/functions/edit_distance.txt:41
 msgid "指定した2つ文字列の編集距離をUint32型の値として返します。"
 msgstr ""
 
-#: ../../../source/functions/edit_distance.txt:14,
-#: ../../../source/functions/geo_distance.txt:14,
-#: ../../../source/functions/geo_in_circle.txt:14,
-#: ../../../source/functions/geo_in_rectangle.txt:14,
-#: ../../../source/functions/now.txt:14, ../../../source/functions/rand.txt:14
-msgid "書式"
-msgstr ""
-
-#: ../../../source/functions/edit_distance.txt:20,
-#: ../../../source/functions/geo_distance.txt:20,
-#: ../../../source/functions/geo_in_circle.txt:20,
-#: ../../../source/functions/geo_in_rectangle.txt:20,
-#: ../../../source/functions/now.txt:20, ../../../source/functions/rand.txt:20
-msgid "説明"
-msgstr ""
-
-#: ../../../source/functions/edit_distance.txt:27,
-#: ../../../source/functions/geo_distance.txt:28,
-#: ../../../source/functions/geo_in_circle.txt:27,
-#: ../../../source/functions/geo_in_rectangle.txt:27,
-#: ../../../source/functions/rand.txt:27
-msgid "引数"
-msgstr ""
-
-#: ../../../source/functions/edit_distance.txt:39,
-#: ../../../source/functions/geo_distance.txt:40,
-#: ../../../source/functions/geo_in_circle.txt:43,
-#: ../../../source/functions/geo_in_rectangle.txt:42,
-#: ../../../source/functions/now.txt:27, ../../../source/functions/rand.txt:34
-msgid "返値"
-msgstr ""
-
-#: ../../../source/functions/edit_distance.txt:44,
-#: ../../../source/functions/geo_distance.txt:45,
-#: ../../../source/functions/geo_in_circle.txt:48,
-#: ../../../source/functions/geo_in_rectangle.txt:47,
-#: ../../../source/functions/now.txt:32, ../../../source/functions/rand.txt:39
+#: ../../../source/functions/edit_distance.txt:44
+#: ../../../source/functions/geo_distance.txt:45
+#: ../../../source/functions/geo_in_circle.txt:48
+#: ../../../source/functions/geo_in_rectangle.txt:47
+#: ../../../source/functions/now.txt:32 ../../../source/functions/rand.txt:39
 msgid "例"
-msgstr ""
-
-#: ../../../source/functions/edit_distance.txt:9,
-#: ../../../source/functions/geo_distance.txt:9,
-#: ../../../source/functions/geo_in_circle.txt:9,
-#: ../../../source/functions/geo_in_rectangle.txt:9,
-#: ../../../source/functions/now.txt:9, ../../../source/functions/rand.txt:9
-msgid "名前"
 msgstr ""
 
 #: ../../../source/functions/geo_distance.txt:6
@@ -154,14 +154,14 @@ msgstr ""
 msgid "指定した2点の距離をFloat型の値(単位:メートル)として返します。"
 msgstr ""
 
-#: ../../../source/functions/geo_distance.txt:52,
-#: ../../../source/functions/geo_in_circle.txt:55,
+#: ../../../source/functions/geo_distance.txt:52
+#: ../../../source/functions/geo_in_circle.txt:55
 #: ../../../source/functions/geo_in_rectangle.txt:54
 msgid "脚注"
 msgstr ""
 
-#: ../../../source/functions/geo_distance.txt:53,
-#: ../../../source/functions/geo_in_circle.txt:56,
+#: ../../../source/functions/geo_distance.txt:53
+#: ../../../source/functions/geo_in_circle.txt:56
 #: ../../../source/functions/geo_in_rectangle.txt:55
 msgid ""
 "TokyoGeoPoint(日本測地系座標)かWGS84GeoPoint(世界測地系座標)のいずれかを指定"
@@ -186,6 +186,11 @@ msgstr ""
 msgid ""
 "geo_in_circle() 関数は、pointに指定した座標が、centerに指定した座標を中心とす"
 "る円の範囲内にあるかどうかを調べます。"
+msgstr ""
+
+#: ../../../source/functions/geo_in_circle.txt:29
+#: ../../../source/functions/geo_in_rectangle.txt:29
+msgid "``point``"
 msgstr ""
 
 #: ../../../source/functions/geo_in_circle.txt:31
@@ -217,11 +222,6 @@ msgstr ""
 
 #: ../../../source/functions/geo_in_circle.txt:45
 msgid "pointに指定した座標が円の範囲内にあるかどうかをBool型の値で返します。"
-msgstr ""
-
-#: ../../../source/functions/geo_in_circle.txt:29,
-#: ../../../source/functions/geo_in_rectangle.txt:29
-msgid "``point``"
 msgstr ""
 
 #: ../../../source/functions/geo_in_rectangle.txt:6

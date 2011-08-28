@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-12 14:57\n"
+"POT-Creation-Date: 2011-08-28 18:54\n"
 "PO-Revision-Date: 2011-05-09 00:36+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -131,6 +131,11 @@ msgid ""
 "ます。 (configファイルの中に指定することも可能です)"
 msgstr ""
 
+#: ../../../source/command_version.txt:60
+#: ../../../source/command_version.txt:71
+msgid "実行例::"
+msgstr ""
+
 #: ../../../source/command_version.txt:64
 msgid ""
 "そのプロセスで実行するすべてのコマンドについて、デフォルトのコマンドバージョ"
@@ -149,11 +154,6 @@ msgstr ""
 #: ../../../source/command_version.txt:69
 msgid ""
 "select,loadなどのすべてのgroongaコマンドにcommand_versionが指定できます。"
-msgstr ""
-
-#: ../../../source/command_version.txt:71
-#: ../../../source/command_version.txt:60,
-msgid "実行例::"
 msgstr ""
 
 #: ../../../source/command_version.txt:75

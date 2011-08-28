@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-12 14:57\n"
+"POT-Creation-Date: 2011-08-28 18:54\n"
 "PO-Revision-Date: 2011-05-29 14:00+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -122,6 +122,11 @@ msgstr ""
 msgid "以下のコマンドでhtmlが作成されます。::"
 msgstr ""
 
+#: ../../../source/contribution/development/document.txt:24
+#: ../../../source/contribution/development/document.txt:36
+msgid "pdfの作成"
+msgstr ""
+
 #: ../../../source/contribution/development/document.txt:26
 msgid ""
 "groongaのドキュメントは、pdf出力することもできます。rst2pdfと、IPAフォント"
@@ -134,11 +139,6 @@ msgstr ""
 
 #: ../../../source/contribution/development/document.txt:31
 msgid "以下のようにしてインストールできます。::"
-msgstr ""
-
-#: ../../../source/contribution/development/document.txt:36
-#: ../../../source/contribution/development/document.txt:24,
-msgid "pdfの作成"
 msgstr ""
 
 #: ../../../source/contribution/development/document.txt:38
@@ -482,13 +482,13 @@ msgstr ""
 msgid "テストの動作"
 msgstr ""
 
-#: ../../../source/contribution/development/test.txt:50
-msgid "カバレッジ情報"
+#: ../../../source/contribution/development/test.txt:45
+#: ../../../source/contribution/development/test.txt:52
+msgid "groongaのトップディレクトリで、以下のコマンドを実行します。::"
 msgstr ""
 
-#: ../../../source/contribution/development/test.txt:52
-#: ../../../source/contribution/development/test.txt:45,
-msgid "groongaのトップディレクトリで、以下のコマンドを実行します。::"
+#: ../../../source/contribution/development/test.txt:50
+msgid "カバレッジ情報"
 msgstr ""
 
 #: ../../../source/contribution/development/test.txt:56
@@ -530,6 +530,13 @@ msgid ""
 "特定のテスト関数(Cutterではテストと呼ぶ)のみをテストすることができます。"
 msgstr ""
 
+#: ../../../source/contribution/development/test.txt:72
+#: ../../../source/contribution/development/test.txt:81
+#: ../../../source/contribution/development/test.txt:92
+#: ../../../source/contribution/development/test.txt:103
+msgid "実行例::"
+msgstr ""
+
 #: ../../../source/contribution/development/test.txt:77
 msgid "特定のテストファイルのみテストする"
 msgstr ""
@@ -550,6 +557,11 @@ msgid ""
 "スやメモリリークを検出しつつ、テストを動作させることができます。"
 msgstr ""
 
+#: ../../../source/contribution/development/test.txt:90
+#: ../../../source/contribution/development/test.txt:101
+msgid "run-test.shのみならず、make checkでも利用可能です。"
+msgstr ""
+
 #: ../../../source/contribution/development/test.txt:97
 msgid "デバッガ上でのテスト実行"
 msgstr ""
@@ -558,18 +570,6 @@ msgstr ""
 msgid ""
 "環境変数CUTTER_DEBUGをyesと設定すると、テストが実行できる環境が整ったgdbが実"
 "行されます。gdb上でrunを行うと、テストの実行が開始されます。"
-msgstr ""
-
-#: ../../../source/contribution/development/test.txt:101
-#: ../../../source/contribution/development/test.txt:90,
-msgid "run-test.shのみならず、make checkでも利用可能です。"
-msgstr ""
-
-#: ../../../source/contribution/development/test.txt:103
-#: ../../../source/contribution/development/test.txt:72,
-#: ../../../source/contribution/development/test.txt:81,
-#: ../../../source/contribution/development/test.txt:92,
-msgid "実行例::"
 msgstr ""
 
 #: ../../../source/contribution/development/test.txt:108
