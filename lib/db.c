@@ -4221,7 +4221,7 @@ grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, int addp)
         char *end;
         grn_obj buf, *buf_p = NULL;
         latitude = grn_atoi(str, str_end, &cur);
-        if (cur[0] == '.') {
+        if (cur < str_end && cur[0] == '.') {
           GRN_TEXT_INIT(&buf, 0);
           GRN_TEXT_PUT(ctx, &buf, str, GRN_TEXT_LEN(src));
           GRN_TEXT_PUTC(ctx, &buf, '\0');
@@ -4238,7 +4238,7 @@ grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, int addp)
         if (!rc && (cur[0] == 'x' || cur[0] == ',') && cur + 1 < str_end) {
           const char *c = cur + 1;
           longitude = grn_atoi(c, str_end, &cur);
-          if (cur[0] == '.') {
+          if (cur < str_end && cur[0] == '.') {
             if (!buf_p) {
               GRN_TEXT_INIT(&buf, 0);
               GRN_TEXT_PUT(ctx, &buf, str, GRN_TEXT_LEN(src));
