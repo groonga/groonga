@@ -4269,7 +4269,14 @@ grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, int addp)
             }
           }
           if (!rc && cur == str_end) {
-            GRN_GEO_POINT_SET(ctx, dest, latitude, longitude);
+            if ((-GRN_GEO_MAX_LATITUDE <= latitude &&
+                 latitude <= GRN_GEO_MAX_LATITUDE) &&
+                (-GRN_GEO_MAX_LONGITUDE <= longitude &&
+                 longitude <= GRN_GEO_MAX_LONGITUDE)) {
+              GRN_GEO_POINT_SET(ctx, dest, latitude, longitude);
+            } else {
+              rc = GRN_INVALID_ARGUMENT;
+            }
           } else {
             rc = GRN_INVALID_ARGUMENT;
           }
