@@ -4847,7 +4847,7 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
         uint32_t element_size = ((grn_ra *)obj)->header->element_size;
         GRN_OBJ_INIT(&buf, GRN_BULK, 0, range);
         if (range != value->header.domain) {
-          grn_obj_cast(ctx, value, &buf, 1);
+          grn_obj_cast(ctx, value, &buf, GRN_TRUE);
           value_ = &buf;
           v = GRN_BULK_HEAD(&buf);
           s = GRN_BULK_VSIZE(&buf);
