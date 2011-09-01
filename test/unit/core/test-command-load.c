@@ -330,7 +330,7 @@ test_index_geo_point(void)
     "[{\"_key\": \"たかね\", \"location\": \"128514964x502419287\"}]";
   const gchar *load_takane_with_empty_location =
     "load --table Shops\n"
-    "[{\"_key\": \"たかね\", \"location\": \"\"}]";
+    "[{\"_key\": \"たかね\", \"location\": null}]";
 
   assert_send_command("table_create Shops TABLE_HASH_KEY ShortText");
   assert_send_command("column_create Shops location COLUMN_SCALAR WGS84GeoPoint");
