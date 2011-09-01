@@ -4278,6 +4278,9 @@ grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, int addp)
       rc = GRN_FUNCTION_NOT_IMPLEMENTED;
     }
     break;
+  case GRN_VOID :
+    rc = grn_obj_reinit(ctx, dest, dest->header.domain, dest->header.flags);
+    break;
   default :
     rc = GRN_FUNCTION_NOT_IMPLEMENTED;
     break;
