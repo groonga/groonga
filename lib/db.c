@@ -7845,7 +7845,7 @@ set_vector(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *vector)
       grn_obj record, *element = v;
       if (range_id != element->header.domain) {
         GRN_RECORD_INIT(&record, 0, range_id);
-        if (grn_obj_cast(ctx, element, &record, 1)) {
+        if (grn_obj_cast(ctx, element, &record, GRN_TRUE)) {
           cast_failed = GRN_TRUE;
           REPORT_CAST_ERROR(element);
         }
@@ -7891,7 +7891,7 @@ set_vector(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *vector)
         grn_obj casted_element, *element = v;
         if (range_id != element->header.domain) {
           GRN_OBJ_INIT(&casted_element, GRN_BULK, 0, range_id);
-          if (grn_obj_cast(ctx, element, &casted_element, 1)) {
+          if (grn_obj_cast(ctx, element, &casted_element, GRN_TRUE)) {
             cast_failed = GRN_TRUE;
             REPORT_CAST_ERROR(element);
           }
