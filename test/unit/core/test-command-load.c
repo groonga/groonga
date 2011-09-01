@@ -494,7 +494,7 @@ test_invalid_table_name(void)
     "and contains only 0-9, A-Z, a-z, #, - or _: <_Users>",
     "load --table _Users\n"
     "[\n"
-    "[\"_key\": \"alice\"]\n"
+    "{\"_key\": \"alice\"}\n"
     "]");
 }
 
