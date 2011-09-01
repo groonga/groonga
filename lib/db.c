@@ -4864,12 +4864,23 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
         uint32_t element_size = ((grn_ra *)obj)->header->element_size;
         GRN_OBJ_INIT(&buf, GRN_BULK, 0, range);
         if (range != value->header.domain) {
-          grn_obj_cast(ctx, value, &buf, GRN_TRUE);
-          value_ = &buf;
-          v = GRN_BULK_HEAD(&buf);
-          s = GRN_BULK_VSIZE(&buf);
+          rc = grn_obj_cast(ctx, value, &buf, GRN_TRUE);
+          if (rc) {
+            grn_obj *range_obj;
+            range_obj = grn_ctx_at(ctx, range);
+            REPORT_CAST_ERROR(range_obj, value);
+            grn_obj_unlink(ctx, range_obj);
+          } else {
+            value_ = &buf;
+            v = GRN_BULK_HEAD(&buf);
+            s = GRN_BULK_VSIZE(&buf);
+          }
+        } else {
+          rc = GRN_SUCCESS;
         }
-        if (element_size < s) {
+        if (rc) {
+          /* do nothing because it already has error. */
+        } else if (element_size < s) {
           ERR(GRN_INVALID_ARGUMENT, "too long value (%d)", s);
         } else {
           void *p = grn_ra_ref(ctx, (grn_ra *)obj, id);
