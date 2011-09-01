@@ -112,7 +112,7 @@ test_array_set_data(void)
                            NULL, value_type);
   record_id = grn_table_add(context, table, NULL, 0, NULL);
 
-  record_value = grn_obj_open(context, GRN_BULK, 0, 0);
+  record_value = grn_obj_open(context, GRN_BULK, 0, GRN_DB_TEXT);
   grn_bulk_write(context, record_value, value, sizeof(value));
   grn_test_assert(grn_obj_set_value(context, table, record_id,
                                     record_value, GRN_OBJ_SET));
