@@ -4066,6 +4066,14 @@ grn_obj_is_persistent(grn_ctx *ctx, grn_obj *obj)
   case GRN_DB_LONG_TEXT :\
     totext(ctx, dest, getvalue(src));\
     break;\
+  case GRN_DB_TOKYO_GEO_POINT :\
+  case GRN_DB_WGS84_GEO_POINT :\
+    if (getvalue(src) == 0) {\
+      /* REMOVE ME. just ignore zero for backward compatibility. */\
+    } else {\
+      rc = GRN_INVALID_ARGUMENT;\
+    }\
+    break;\
   default :\
     SRC2RECORD();\
   }

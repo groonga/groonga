@@ -61,6 +61,8 @@ void test_int32_to_int64(void);
 void test_int32_to_uint64(void);
 void test_int32_to_float(void);
 void test_int32_to_time(void);
+void test_int32_to_geo_point_zero(void);
+void test_int32_to_geo_point_invalid(void);
 
 void data_uint32_to_bool(void);
 void test_uint32_to_bool(gconstpointer data);
@@ -394,10 +396,16 @@ test_text_error(gconstpointer data)
 }
 
 static void
-cast_int32(gint32 number)
+set_int32(gint32 number)
 {
   grn_obj_reinit(&context, &src, GRN_DB_INT32, 0);
   GRN_INT32_SET(&context, &src, number);
+}
+
+static void
+cast_int32(gint32 number)
+{
+  set_int32(number);
   grn_test_assert(grn_obj_cast(&context, &src, &dest, GRN_FALSE));
 }
 
@@ -518,6 +526,27 @@ test_int32_to_text(void)
   grn_obj_reinit(&context, &dest, GRN_DB_TEXT, 0);
   cast_int32(2929);
   cut_assert_equal_string("2929", GRN_TEXT_VALUE(&dest));
+}
+
+void
+test_int32_to_geo_point_zero(void)
+{
+  gint zero_latitude, zero_longitude;
+
+  grn_obj_reinit(&context, &dest, GRN_DB_WGS84_GEO_POINT, 0);
+  cast_int32(0);
+  GRN_GEO_POINT_VALUE(&dest, zero_latitude, zero_longitude);
+  cut_assert_equal_int(0, zero_latitude);
+  cut_assert_equal_int(0, zero_longitude);
+}
+
+void
+test_int32_to_geo_point_invalid(void)
+{
+  grn_obj_reinit(&context, &dest, GRN_DB_WGS84_GEO_POINT, 0);
+  set_int32(1);
+  grn_test_assert_equal_rc(GRN_INVALID_ARGUMENT,
+                           grn_obj_cast(&context, &src, &dest, GRN_FALSE));
 }
 
 static void
