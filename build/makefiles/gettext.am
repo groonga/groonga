@@ -1,8 +1,10 @@
 include $(top_srcdir)/doc/files.am
 include $(top_srcdir)/build/makefiles/sphinx-build.am
 
+if ENABLE_DOCUMENT
 BUILT_SOURCES +=				\
 	$(mo_files)
+endif
 
 EXTRA_DIST +=					\
 	$(po_files)				\
