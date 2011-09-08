@@ -531,13 +531,10 @@ test_int32_to_text(void)
 void
 test_int32_to_geo_point_zero(void)
 {
-  gint zero_latitude, zero_longitude;
-
   grn_obj_reinit(&context, &dest, GRN_DB_WGS84_GEO_POINT, 0);
-  cast_int32(0);
-  GRN_GEO_POINT_VALUE(&dest, zero_latitude, zero_longitude);
-  cut_assert_equal_int(0, zero_latitude);
-  cut_assert_equal_int(0, zero_longitude);
+  set_int32(0);
+  grn_test_assert_equal_rc(GRN_INVALID_ARGUMENT,
+                           grn_obj_cast(&context, &src, &dest, GRN_FALSE));
 }
 
 void
