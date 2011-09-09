@@ -41,7 +41,7 @@ const char *grn_document_root = NULL;
 /**** query expander ****/
 
 static grn_rc
-query_subst(grn_ctx *ctx, grn_obj *table, grn_obj *column,
+substitute_query(grn_ctx *ctx, grn_obj *table, grn_obj *column,
             const char *key, size_t key_size, grn_obj *dest)
 {
   grn_id id;
@@ -54,12 +54,12 @@ query_subst(grn_ctx *ctx, grn_obj *table, grn_obj *column,
 }
 
 static grn_rc
-query_expand(grn_ctx *ctx, grn_obj *table, grn_obj *column, grn_expr_flags flags,
-             const char *str, const char *str_end, grn_obj *dest)
+expand_query(grn_ctx *ctx, grn_obj *table, grn_obj *column, grn_expr_flags flags,
+             const char *str, unsigned str_len, grn_obj *dest)
 {
   grn_obj buf;
   unsigned int len;
-  const char *start, *cur = str;
+  const char *start, *cur = str, *str_end = str + (size_t)str_len;
   GRN_TEXT_INIT(&buf, 0);
   for (;;) {
     while (cur < str_end && grn_isspace(cur, ctx->encoding)) {
@@ -99,7 +99,7 @@ query_expand(grn_ctx *ctx, grn_obj *table, grn_obj *column, grn_expr_flags flags
         }
         GRN_TEXT_PUT(ctx, &buf, cur, len);
       }
-      if (query_subst(ctx, table, column, GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf), dest)) {
+      if (substitute_query(ctx, table, column, GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf), dest)) {
         GRN_TEXT_PUT(ctx, dest, start, cur - start);
       }
       break;
@@ -151,7 +151,7 @@ query_expand(grn_ctx *ctx, grn_obj *table, grn_obj *column, grn_expr_flags flags
         }
       }
       if (start < cur) {
-        if (query_subst(ctx, table, column, start, cur - start, dest)) {
+        if (substitute_query(ctx, table, column, start, cur - start, dest)) {
           GRN_TEXT_PUT(ctx, dest, start, cur - start);
         }
       }
@@ -185,7 +185,8 @@ grn_select(grn_ctx *ctx, const char *table, unsigned table_len,
            const char *drilldown_output_columns, unsigned drilldown_output_columns_len,
            int drilldown_offset, int drilldown_limit,
            const char *cache, unsigned cache_len,
-           const char *match_escalation_threshold, unsigned match_escalation_threshold_len)
+           const char *match_escalation_threshold, unsigned match_escalation_threshold_len,
+           const char *query_expand, unsigned query_expand_len)
 {
   uint32_t nkeys, nhits;
   uint16_t cacheable = 1, taintable = 0;
@@ -198,7 +199,7 @@ grn_select(grn_ctx *ctx, const char *table, unsigned table_len,
   uint32_t cache_key_size = table_len + 1 + match_columns_len + 1 + query_len + 1 +
     filter_len + 1 + scorer_len + 1 + sortby_len + 1 + output_columns_len + 1 +
     drilldown_len + 1 + drilldown_sortby_len + 1 + drilldown_output_columns_len +
-    match_escalation_threshold_len + 1 +
+    match_escalation_threshold_len + 1 + query_expand_len + 1 +
     sizeof(grn_content_type) + sizeof(int) * 4;
   long long int threshold, original_threshold;
   if (cache_key_size <= GRN_TABLE_MAX_KEY_SIZE) {
@@ -224,8 +225,10 @@ grn_select(grn_ctx *ctx, const char *table, unsigned table_len,
     cp += drilldown_sortby_len; *cp++ = '\0';
     memcpy(cp, drilldown_output_columns, drilldown_output_columns_len);
     cp += drilldown_output_columns_len; *cp++ = '\0';
-    memcpy(cp, &match_escalation_threshold, match_escalation_threshold_len);
+    memcpy(cp, match_escalation_threshold, match_escalation_threshold_len);
     cp += match_escalation_threshold_len; *cp++ = '\0';
+    memcpy(cp, query_expand, query_expand_len);
+    cp += query_expand_len; *cp++ = '\0';
     memcpy(cp, &output_type, sizeof(grn_content_type)); cp += sizeof(grn_content_type);
     memcpy(cp, &offset, sizeof(int)); cp += sizeof(int);
     memcpy(cp, &limit, sizeof(int)); cp += sizeof(int);
@@ -264,9 +267,21 @@ grn_select(grn_ctx *ctx, const char *table, unsigned table_len,
           }
         }
         if (query_len) {
+          grn_expr_flags flags;
+          grn_obj query_expand_buf, *query_expand_column, *query_expand_table;
+          GRN_TEXT_INIT(&query_expand_buf, 0);
+          flags = GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_PRAGMA|GRN_EXPR_ALLOW_COLUMN;
+          if (query_expand_len &&
+              (query_expand_column = grn_ctx_get(ctx, query_expand, query_expand_len)) &&
+              (query_expand_table = grn_column_table(ctx, query_expand_column))) {
+            expand_query(ctx, query_expand_table, query_expand_column, flags,
+                         query, query_len, &query_expand_buf);
+            query = GRN_TEXT_VALUE(&query_expand_buf);
+            query_len = GRN_TEXT_LEN(&query_expand_buf);
+          }
           grn_expr_parse(ctx, cond, query, query_len,
-                         match_columns_, GRN_OP_MATCH, GRN_OP_AND,
-                         GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_PRAGMA|GRN_EXPR_ALLOW_COLUMN);
+                         match_columns_, GRN_OP_MATCH, GRN_OP_AND, flags);
+          GRN_OBJ_FIN(ctx, &query_expand_buf);
           if (!ctx->rc && filter_len) {
             grn_expr_parse(ctx, cond, filter, filter_len,
                            match_columns_, GRN_OP_MATCH, GRN_OP_AND,
@@ -470,7 +485,8 @@ proc_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                  drilldown_output_columns, drilldown_output_columns_len,
                  drilldown_offset, drilldown_limit,
                  GRN_TEXT_VALUE(VAR(14)), GRN_TEXT_LEN(VAR(14)),
-                 GRN_TEXT_VALUE(VAR(15)), GRN_TEXT_LEN(VAR(15)))) {
+                 GRN_TEXT_VALUE(VAR(15)), GRN_TEXT_LEN(VAR(15)),
+                 GRN_TEXT_VALUE(VAR(16)), GRN_TEXT_LEN(VAR(16)))) {
   }
   return NULL;
 }
@@ -2468,7 +2484,7 @@ func_edit_distance(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
 void
 grn_db_init_builtin_query(grn_ctx *ctx)
 {
-  grn_expr_var vars[17];
+  grn_expr_var vars[18];
 
   DEF_VAR(vars[0], "name");
   DEF_VAR(vars[1], "table");
@@ -2487,8 +2503,9 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[14], "drilldown_limit");
   DEF_VAR(vars[15], "cache");
   DEF_VAR(vars[16], "match_escalation_threshold");
-  DEF_COMMAND("define_selector", proc_define_selector, 17, vars);
-  DEF_COMMAND("select", proc_select, 16, vars + 1);
+  DEF_VAR(vars[17], "query_expand");
+  DEF_COMMAND("define_selector", proc_define_selector, 18, vars);
+  DEF_COMMAND("select", proc_select, 17, vars + 1);
 
   DEF_VAR(vars[0], "values");
   DEF_VAR(vars[1], "table");
