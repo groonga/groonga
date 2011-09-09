@@ -38,6 +38,131 @@ const char *grn_document_root = NULL;
 
 #define VAR GRN_PROC_GET_VAR_BY_OFFSET
 
+/**** query expander ****/
+
+static grn_rc
+query_subst(grn_ctx *ctx, grn_obj *table, grn_obj *column,
+            const char *key, size_t key_size, grn_obj *dest)
+{
+  grn_id id;
+  grn_rc rc = GRN_END_OF_DATA;
+  if ((id = grn_table_get(ctx, table, (const void *)key, (unsigned) key_size))) {
+    grn_obj_get_value(ctx, column, id, dest);
+    rc = GRN_SUCCESS;
+  }
+  return rc;
+}
+
+static grn_rc
+query_expand(grn_ctx *ctx, grn_obj *table, grn_obj *column, grn_expr_flags flags,
+             const char *str, const char *str_end, grn_obj *dest)
+{
+  grn_obj buf;
+  unsigned int len;
+  const char *start, *cur = str;
+  GRN_TEXT_INIT(&buf, 0);
+  for (;;) {
+    while (cur < str_end && grn_isspace(cur, ctx->encoding)) {
+      if (!(len = grn_charlen(ctx, cur, str_end))) { goto exit; }
+      GRN_TEXT_PUT(ctx, dest, cur, len);
+      cur += len;
+    }
+    if (str_end <= cur) { break; }
+    switch (*cur) {
+    case '\0' :
+      goto exit;
+      break;
+    case GRN_QUERY_AND :
+    case GRN_QUERY_ADJ_INC :
+    case GRN_QUERY_ADJ_DEC :
+    case GRN_QUERY_ADJ_NEG :
+    case GRN_QUERY_BUT :
+    case GRN_QUERY_PARENL :
+    case GRN_QUERY_PARENR :
+    case GRN_QUERY_PREFIX :
+      GRN_TEXT_PUTC(ctx, dest, *cur);
+      cur++;
+      break;
+    case GRN_QUERY_QUOTEL :
+      GRN_BULK_REWIND(&buf);
+      for (start = cur++; cur < str_end; cur += len) {
+        if (!(len = grn_charlen(ctx, cur, str_end))) {
+          goto exit;
+        } else if (len == 1) {
+          if (*cur == GRN_QUERY_QUOTER) {
+            cur++;
+            break;
+          } else if (cur + 1 < str_end && *cur == GRN_QUERY_ESCAPE) {
+            cur++;
+            len = grn_charlen(ctx, cur, str_end);
+          }
+        }
+        GRN_TEXT_PUT(ctx, &buf, cur, len);
+      }
+      if (query_subst(ctx, table, column, GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf), dest)) {
+        GRN_TEXT_PUT(ctx, dest, start, cur - start);
+      }
+      break;
+    case 'O' :
+      if (cur + 2 < str_end && cur[1] == 'R' && grn_isspace(cur + 2, ctx->encoding)) {
+        GRN_TEXT_PUT(ctx, dest, cur, 2);
+        cur += 2;
+        break;
+      }
+      /* fallthru */
+    default :
+      for (start = cur; cur < str_end; cur += len) {
+        if (!(len = grn_charlen(ctx, cur, str_end))) {
+          goto exit;
+        } else if (grn_isspace(cur, ctx->encoding)) {
+          break;
+        } else if (len == 1) {
+          if (*cur == GRN_QUERY_PARENL ||
+              *cur == GRN_QUERY_PARENR ||
+              *cur == GRN_QUERY_PREFIX) {
+            break;
+          } else if (flags & GRN_EXPR_ALLOW_COLUMN && *cur == GRN_QUERY_COLUMN) {
+            if (cur + 1 < str_end) {
+              switch (cur[1]) {
+              case '!' :
+              case '@' :
+              case '^' :
+              case '$' :
+                cur += 2;
+                break;
+              case '=' :
+                cur += (flags & GRN_EXPR_ALLOW_UPDATE) ? 2 : 1;
+                break;
+              case '<' :
+              case '>' :
+                cur += (cur + 2 < str_end && cur[2] == '=') ? 3 : 2;
+                break;
+              default :
+                cur += 1;
+                break;
+              }
+            } else {
+              cur += 1;
+            }
+            GRN_TEXT_PUT(ctx, dest, start, cur - start);
+            start = cur;
+            break;
+          }
+        }
+      }
+      if (start < cur) {
+        if (query_subst(ctx, table, column, start, cur - start, dest)) {
+          GRN_TEXT_PUT(ctx, dest, start, cur - start);
+        }
+      }
+      break;
+    }
+  }
+exit :
+  GRN_OBJ_FIN(ctx, &buf);
+  return GRN_SUCCESS;
+}
+
 /**** procs ****/
 
 #define DEFAULT_LIMIT           10
