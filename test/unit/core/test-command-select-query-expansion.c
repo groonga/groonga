@@ -227,6 +227,22 @@ test_expand_column_value(void)
 }
 
 void
+test_expand_column_value_with_space(void)
+{
+  cut_assert_equal_string(
+      "[[[2],"
+       "[[\"_id\",\"UInt32\"],"
+        "[\"_key\",\"Time\"],"
+        "[\"content\",\"Text\"]],"
+       "[2,1315753200.0,\"Start mroonga!\"],"
+       "[6,1316098800.0,\"Setup groonga storage engine!\"]]]",
+    send_command("select Diaries --sortby _id "
+                 "--match_columns content "
+                 "--query 'content:@\"groonga storage engine\"' "
+                 "--query_expand Synonyms.words"));
+}
+
+void
 test_expand_equal(void)
 {
   cut_assert_equal_string(
