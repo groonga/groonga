@@ -26,8 +26,9 @@
 void test_expand(void);
 void test_expand_recursive_not_supported(void);
 void test_expand_OR_quoted(void);
-void test_expand_OR_at_the_end(void);
-void test_expand_OR_with_leading_space(void);
+void test_not_expand_OR(void);
+void test_not_expand_OR_at_the_end(void);
+void test_not_expand_OR_with_leading_space(void);
 void test_no_expand(void);
 void test_nonexistent_expansion_column(void);
 
@@ -77,7 +78,7 @@ setup_data(void)
                       "[\"2011-09-15 00:00:00\", \"Start MySQL!\"],\n"
                       "[\"2011-09-16 00:00:00\", "
                        "\"Setup groonga storage engine!\"],\n"
-                      "[\"2011-09-17 00:00:00\", \"Leaning MySQL...\"],\n"
+                      "[\"2011-09-17 00:00:00\", \"Learning MySQL...\"],\n"
                       "[\"2011-09-18 00:00:00\", "
                        "\"Learning MySQL and groonga...\"],\n"
                       "[\"2011-09-19 00:00:00\", "
@@ -175,7 +176,25 @@ test_expand_OR_quoted(void)
 }
 
 void
-test_expand_OR_at_the_end(void)
+test_not_expand_OR(void)
+{
+  cut_assert_equal_string(
+      "[[[5],"
+       "[[\"_id\",\"UInt32\"],"
+        "[\"_key\",\"Time\"],"
+        "[\"content\",\"Text\"]],"
+       "[4,1315926000.0,\"Start Ruby!\"],"
+       "[5,1316012400.0,\"Start MySQL!\"],"
+       "[7,1316185200.0,\"Learning MySQL...\"],"
+       "[8,1316271600.0,\"Learning MySQL and groonga...\"],"
+       "[9,1316358000.0,\"Learning Ruby and groonga...\"]]]",
+    send_command("select Diaries --sortby _id "
+                 "--match_columns content --query 'Ruby OR MySQL' "
+                 "--query_expand Synonyms.words"));
+}
+
+void
+test_not_expand_OR_at_the_end(void)
 {
   cut_assert_equal_string(
       "[[[0],"
@@ -188,7 +207,7 @@ test_expand_OR_at_the_end(void)
 }
 
 void
-test_expand_OR_with_leading_space(void)
+test_not_expand_OR_with_leading_space(void)
 {
   cut_assert_equal_string(
       "[[[0],"
