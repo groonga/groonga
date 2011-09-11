@@ -25,6 +25,8 @@
 
 void test_expand(void);
 void test_expand_recursive_not_supported(void);
+void test_expand_OR(void);
+void test_expand_OR_with_leading_space(void);
 void test_no_expand(void);
 void test_nonexistent_expansion_column(void);
 
@@ -69,25 +71,28 @@ setup_data(void)
                       "[\"_key\", \"content\"],\n"
                       "[\"2011-09-11 00:00:00\", \"Start groonga!\"],\n"
                       "[\"2011-09-12 00:00:00\", \"Start mroonga!\"],\n"
-                      "[\"2011-09-13 00:00:00\", \"Start rroonga!\"]\n"
-                      "[\"2011-09-14 00:00:00\", \"Start Ruby!\"]\n"
-                      "[\"2011-09-15 00:00:00\", \"Start MySQL!\"]\n"
+                      "[\"2011-09-13 00:00:00\", \"Start rroonga!\"],\n"
+                      "[\"2011-09-14 00:00:00\", \"Start Ruby!\"],\n"
+                      "[\"2011-09-15 00:00:00\", \"Start MySQL!\"],\n"
                       "[\"2011-09-16 00:00:00\", "
-                       "\"Setup groonga storage engine!\"]\n"
-                      "[\"2011-09-17 00:00:00\", \"Leaning MySQL...\"]\n"
+                       "\"Setup groonga storage engine!\"],\n"
+                      "[\"2011-09-17 00:00:00\", \"Leaning MySQL...\"],\n"
                       "[\"2011-09-18 00:00:00\", "
-                       "\"Learning MySQL and groonga...\"]\n"
+                       "\"Learning MySQL and groonga...\"],\n"
                       "[\"2011-09-19 00:00:00\", "
-                       "\"Learning Ruby and groonga...\"]\n"
+                       "\"Learning Ruby and groonga...\"],\n"
+                      "[\"2011-09-20 00:00:00\", "
+                       "\"明日は日本語あるいは中国語を勉強します。\"]\n"
                       "]");
   assert_send_command("load --table Synonyms\n"
                       "[\n"
                       "[\"_key\", \"words\"],\n"
-                      "[\"groonga\", \"(groonga OR rroonga OR mroonga)\"]\n"
-                      "[\"rroonga\", \"(rroonga OR (Ruby groonga))\"]\n"
+                      "[\"groonga\", \"(groonga OR rroonga OR mroonga)\"],\n"
+                      "[\"rroonga\", \"(rroonga OR (Ruby groonga))\"],\n"
                       "[\"mroonga\", "
                        "\"(mroonga OR (groonga MySQL) OR "
-                          "\\\"groonga storage engine\\\")\"]\n"
+                          "\\\"groonga storage engine\\\")\"],\n"
+                      "[\"OR\", \"あるいは\"]\n"
                       "]");
 }
 
@@ -151,6 +156,33 @@ test_expand_recursive_not_supported(void)
        "[9,1316358000.0,\"Learning Ruby and groonga...\"]]]",
     send_command("select Diaries --sortby _id "
                  "--match_columns content --query groonga "
+                 "--query_expand Synonyms.words"));
+}
+
+void
+test_expand_OR(void)
+{
+  cut_assert_equal_string(
+      "[[[1],"
+       "[[\"_id\",\"UInt32\"],"
+        "[\"_key\",\"Time\"],"
+        "[\"content\",\"Text\"]],"
+       "[10,1316444400.0,\"明日は日本語あるいは中国語を勉強します。\"]]]",
+    send_command("select Diaries --sortby _id "
+                 "--match_columns content --query OR "
+                 "--query_expand Synonyms.words"));
+}
+
+void
+test_expand_OR_with_leading_space(void)
+{
+  cut_assert_equal_string(
+      "[[[0],"
+       "[[\"_id\",\"UInt32\"],"
+        "[\"_key\",\"Time\"],"
+        "[\"content\",\"Text\"]]]]",
+    send_command("select Diaries --sortby _id "
+                 "--match_columns content --query '\"OR \"' "
                  "--query_expand Synonyms.words"));
 }
 
