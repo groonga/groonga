@@ -42,7 +42,7 @@ const char *grn_document_root = NULL;
 
 static grn_rc
 substitute_query(grn_ctx *ctx, grn_obj *table, grn_obj *column,
-            const char *key, size_t key_size, grn_obj *dest)
+                 const char *key, size_t key_size, grn_obj *dest)
 {
   grn_id id;
   grn_rc rc = GRN_END_OF_DATA;
