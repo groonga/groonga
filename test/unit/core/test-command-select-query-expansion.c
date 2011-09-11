@@ -24,6 +24,8 @@
 #include "../lib/grn-assertions.h"
 
 void test_expand(void);
+void test_no_expand(void);
+void test_nonexistent_expansion_column(void);
 
 static gchar *tmp_directory;
 
@@ -129,4 +131,15 @@ test_no_expand(void)
        "[3,1315839600.0,\"Start rroonga!\"]]]",
     send_command("select Diaries --match_columns content --query rroonga "
                  "--query_expand Synonyms.words"));
+}
+
+void
+test_nonexistent_expansion_column(void)
+{
+  grn_test_assert_send_command_error(
+    context,
+    GRN_INVALID_ARGUMENT,
+    "nonexistent query expansion column: <Synonyms.nonexistent>",
+    "select Diaries --match_columns content --query groonga "
+    "--query_expand Synonyms.nonexistent");
 }
