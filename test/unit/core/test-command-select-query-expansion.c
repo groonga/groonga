@@ -27,6 +27,7 @@ void test_expand(void);
 void test_expand_word_with_space(void);
 void test_not_expand_recursively(void);
 void test_expand_OR_quoted(void);
+void test_expand_column_value(void);
 void test_not_expand_OR(void);
 void test_not_expand_OR_at_the_end(void);
 void test_not_expand_OR_with_leading_space(void);
@@ -112,7 +113,7 @@ setup_data(void)
                       "[\"~\", \"補集合\"],\n"
                       "[\"*\", \"前方一致\"],\n"
                       "[\"(\", \"かっこ\"],\n"
-                      "[\")\", \"こっか\"],\n"
+                      "[\")\", \"こっか\"]\n"
                       "]");
 }
 
@@ -205,6 +206,21 @@ test_expand_OR_quoted(void)
        "[10,1316444400.0,\"明日は日本語あるいは中国語を勉強します。\"]]]",
     send_command("select Diaries --sortby _id "
                  "--match_columns content --query '\"OR\"' "
+                 "--query_expand Synonyms.words"));
+}
+
+void
+test_expand_column_value(void)
+{
+  cut_assert_equal_string(
+      "[[[2],"
+       "[[\"_id\",\"UInt32\"],"
+        "[\"_key\",\"Time\"],"
+        "[\"content\",\"Text\"]],"
+        "[3,1315839600.0,\"Start rroonga!\"],"
+        "[9,1316358000.0,\"Learning Ruby and groonga...\"]]]",
+    send_command("select Diaries --sortby _id "
+                 "--match_columns content --query 'content:@rroonga' "
                  "--query_expand Synonyms.words"));
 }
 
