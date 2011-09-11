@@ -24,6 +24,7 @@
 #include "../lib/grn-assertions.h"
 
 void test_expand(void);
+void test_expand_recursive_not_supported(void);
 void test_no_expand(void);
 void test_nonexistent_expansion_column(void);
 
@@ -69,11 +70,24 @@ setup_data(void)
                       "[\"2011-09-11 00:00:00\", \"Start groonga!\"],\n"
                       "[\"2011-09-12 00:00:00\", \"Start mroonga!\"],\n"
                       "[\"2011-09-13 00:00:00\", \"Start rroonga!\"]\n"
+                      "[\"2011-09-14 00:00:00\", \"Start Ruby!\"]\n"
+                      "[\"2011-09-15 00:00:00\", \"Start MySQL!\"]\n"
+                      "[\"2011-09-16 00:00:00\", "
+                       "\"Setup groonga storage engine!\"]\n"
+                      "[\"2011-09-17 00:00:00\", \"Leaning MySQL...\"]\n"
+                      "[\"2011-09-18 00:00:00\", "
+                       "\"Learning MySQL and groonga...\"]\n"
+                      "[\"2011-09-19 00:00:00\", "
+                       "\"Learning Ruby and groonga...\"]\n"
                       "]");
   assert_send_command("load --table Synonyms\n"
                       "[\n"
                       "[\"_key\", \"words\"],\n"
-                      "[\"groonga\", \"(groonga OR mroonga)\"]\n"
+                      "[\"groonga\", \"(groonga OR rroonga OR mroonga)\"]\n"
+                      "[\"rroonga\", \"(rroonga OR (Ruby groonga))\"]\n"
+                      "[\"mroonga\", "
+                       "\"(mroonga OR (groonga MySQL) OR "
+                          "\\\"groonga storage engine\\\")\"]\n"
                       "]");
 }
 
@@ -114,9 +128,29 @@ test_expand(void)
        "[[\"_id\",\"UInt32\"],"
         "[\"_key\",\"Time\"],"
         "[\"content\",\"Text\"]],"
+       "[3,1315839600.0,\"Start rroonga!\"],"
+       "[9,1316358000.0,\"Learning Ruby and groonga...\"]]]",
+    send_command("select Diaries --sortby _id "
+                 "--match_columns content --query rroonga "
+                 "--query_expand Synonyms.words"));
+}
+
+void
+test_expand_recursive_not_supported(void)
+{
+  cut_assert_equal_string(
+      "[[[6],"
+       "[[\"_id\",\"UInt32\"],"
+        "[\"_key\",\"Time\"],"
+        "[\"content\",\"Text\"]],"
        "[1,1315666800.0,\"Start groonga!\"],"
-       "[2,1315753200.0,\"Start mroonga!\"]]]",
-    send_command("select Diaries --match_columns content --query groonga "
+       "[2,1315753200.0,\"Start mroonga!\"],"
+       "[3,1315839600.0,\"Start rroonga!\"],"
+       "[6,1316098800.0,\"Setup groonga storage engine!\"],"
+       "[8,1316271600.0,\"Learning MySQL and groonga...\"],"
+       "[9,1316358000.0,\"Learning Ruby and groonga...\"]]]",
+    send_command("select Diaries --sortby _id "
+                 "--match_columns content --query groonga "
                  "--query_expand Synonyms.words"));
 }
 
@@ -124,12 +158,13 @@ void
 test_no_expand(void)
 {
   cut_assert_equal_string(
-      "[[[1],"
+      "[[[2],"
        "[[\"_id\",\"UInt32\"],"
         "[\"_key\",\"Time\"],"
         "[\"content\",\"Text\"]],"
-       "[3,1315839600.0,\"Start rroonga!\"]]]",
-    send_command("select Diaries --match_columns content --query rroonga "
+       "[4,1315926000.0,\"Start Ruby!\"],"
+       "[9,1316358000.0,\"Learning Ruby and groonga...\"]]]",
+    send_command("select Diaries --match_columns content --query Ruby "
                  "--query_expand Synonyms.words"));
 }
 
