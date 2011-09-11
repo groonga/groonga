@@ -24,12 +24,14 @@
 #include "../lib/grn-assertions.h"
 
 void test_expand(void);
+void test_expand_word_with_space(void);
 void test_not_expand_recursively(void);
 void test_expand_OR_quoted(void);
 void test_not_expand_OR(void);
 void test_not_expand_OR_at_the_end(void);
 void test_not_expand_OR_with_leading_space(void);
 void test_no_expand(void);
+void test_no_expand_word_with_space(void);
 void test_nonexistent_expansion_column(void);
 
 static gchar *tmp_directory;
@@ -247,6 +249,20 @@ test_no_expand(void)
        "[4,1315926000.0,\"Start Ruby!\"],"
        "[9,1316358000.0,\"Learning Ruby and groonga...\"]]]",
     send_command("select Diaries --match_columns content --query Ruby "
+                 "--query_expand Synonyms.words"));
+}
+
+void
+test_no_expand_word_with_space(void)
+{
+  cut_assert_equal_string(
+      "[[[1],"
+       "[[\"_id\",\"UInt32\"],"
+        "[\"_key\",\"Time\"],"
+        "[\"content\",\"Text\"]],"
+       "[9,1316358000.0,\"Learning Ruby and groonga...\"]]]",
+    send_command("select Diaries "
+                 "--match_columns content --query '\"Ruby and groonga\"' "
                  "--query_expand Synonyms.words"));
 }
 
