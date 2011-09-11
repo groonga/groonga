@@ -30,6 +30,9 @@ void test_expand_OR_quoted(void);
 void test_not_expand_OR(void);
 void test_not_expand_OR_at_the_end(void);
 void test_not_expand_OR_with_leading_space(void);
+void test_not_expand_and(void);
+void test_not_expand_but(void);
+void test_not_expand_paren(void);
 void test_no_expand(void);
 void test_no_expand_word_with_space(void);
 void test_nonexistent_expansion_column(void);
@@ -86,7 +89,10 @@ setup_data(void)
                       "[\"2011-09-19 00:00:00\", "
                        "\"Learning Ruby and groonga...\"],\n"
                       "[\"2011-09-20 00:00:00\", "
-                       "\"明日は日本語あるいは中国語を勉強します。\"]\n"
+                       "\"明日は日本語あるいは中国語を勉強します。\"],\n"
+                      "[\"2011-09-21 00:00:00\", "
+                       "\"かつ 差集合 より重要 重要度を下げる "
+                         "補集合 前方一致 かっこ こっか\"]\n"
                       "]");
   assert_send_command("load --table Synonyms\n"
                       "[\n"
@@ -98,7 +104,15 @@ setup_data(void)
                           "\\\"groonga storage engine\\\")\"],\n"
                       "[\"groonga storage engine\", "
                        "\"(\\\"groonga storage engine\\\" OR mroonga)\"],\n"
-                      "[\"OR\", \"あるいは\"]\n"
+                      "[\"OR\", \"あるいは\"],\n"
+                      "[\"+\", \"かつ\"],\n"
+                      "[\"-\", \"差集合\"],\n"
+                      "[\">\", \"より重要\"],\n"
+                      "[\"<\", \"重要度を下げる\"],\n"
+                      "[\"~\", \"補集合\"],\n"
+                      "[\"*\", \"前方一致\"],\n"
+                      "[\"(\", \"かっこ\"],\n"
+                      "[\")\", \"こっか\"],\n"
                       "]");
 }
 
@@ -235,6 +249,49 @@ test_not_expand_OR_with_leading_space(void)
         "[\"content\",\"Text\"]]]]",
     send_command("select Diaries --sortby _id "
                  "--match_columns content --query '\"OR \"' "
+                 "--query_expand Synonyms.words"));
+}
+
+void
+test_not_expand_and(void)
+{
+  cut_assert_equal_string(
+      "[[[1],"
+       "[[\"_id\",\"UInt32\"],"
+        "[\"_key\",\"Time\"],"
+        "[\"content\",\"Text\"]],"
+        "[9,1316358000.0,\"Learning Ruby and groonga...\"]]]",
+    send_command("select Diaries --sortby _id "
+                 "--match_columns content --query 'Ruby + groonga' "
+                 "--query_expand Synonyms.words"));
+}
+
+void
+test_not_expand_but(void)
+{
+  cut_assert_equal_string(
+      "[[[1],"
+       "[[\"_id\",\"UInt32\"],"
+        "[\"_key\",\"Time\"],"
+        "[\"content\",\"Text\"]],"
+        "[9,1316358000.0,\"Learning Ruby and groonga...\"]]]",
+    send_command("select Diaries --sortby _id "
+                 "--match_columns content --query 'Ruby - Start' "
+                 "--query_expand Synonyms.words"));
+}
+
+void
+test_not_expand_paren(void)
+{
+  cut_assert_equal_string(
+      "[[[2],"
+       "[[\"_id\",\"UInt32\"],"
+        "[\"_key\",\"Time\"],"
+        "[\"content\",\"Text\"]],"
+        "[4,1315926000.0,\"Start Ruby!\"],"
+        "[9,1316358000.0,\"Learning Ruby and groonga...\"]]]",
+    send_command("select Diaries --sortby _id "
+                 "--match_columns content --query '(Ruby)' "
                  "--query_expand Synonyms.words"));
 }
 
