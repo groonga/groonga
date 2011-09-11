@@ -28,7 +28,9 @@ void test_expand_word_with_space(void);
 void test_not_expand_recursively(void);
 void test_expand_OR_quoted(void);
 void test_expand_column_value(void);
+void test_expand_column_value_with_space(void);
 void test_expand_equal(void);
+void test_expand_prefix(void);
 void test_not_expand_OR(void);
 void test_not_expand_OR_at_the_end(void);
 void test_not_expand_OR_with_leading_space(void);
@@ -115,7 +117,8 @@ setup_data(void)
                       "[\"*\", \"前方一致\"],\n"
                       "[\"(\", \"かっこ\"],\n"
                       "[\")\", \"こっか\"]\n"
-                      "[\"=start-rroonga\", \"\\\"Start rroonga!\\\"\"]\n"
+                      "[\"=start-rroonga\", \"\\\"Start rroonga!\\\"\"],\n"
+                      "[\"Japan\", \"日本\"]\n"
                       "]");
 }
 
@@ -253,6 +256,20 @@ test_expand_equal(void)
         "[3,1315839600.0,\"Start rroonga!\"]]]",
     send_command("select Diaries --sortby _id "
                  "--match_columns content --query 'content:=start-rroonga' "
+                 "--query_expand Synonyms.words"));
+}
+
+void
+test_expand_prefix(void)
+{
+  cut_assert_equal_string(
+      "[[[1],"
+       "[[\"_id\",\"UInt32\"],"
+        "[\"_key\",\"Time\"],"
+        "[\"content\",\"Text\"]],"
+        "[10,1316444400.0,\"明日は日本語あるいは中国語を勉強します。\"]]]",
+    send_command("select Diaries --sortby _id "
+                 "--match_columns content --query 'Japan*' "
                  "--query_expand Synonyms.words"));
 }
 
