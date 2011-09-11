@@ -115,7 +115,7 @@ setup_data(void)
                       "[\"*\", \"前方一致\"],\n"
                       "[\"(\", \"かっこ\"],\n"
                       "[\")\", \"こっか\"]\n"
-                      "[\"=\", \"\\\"Start rroonga!\\\"\"]\n"
+                      "[\"=start-rroonga\", \"\\\"Start rroonga!\\\"\"]\n"
                       "]");
 }
 
@@ -236,7 +236,7 @@ test_expand_equal(void)
         "[\"content\",\"Text\"]],"
         "[3,1315839600.0,\"Start rroonga!\"]]]",
     send_command("select Diaries --sortby _id "
-                 "--match_columns content --query 'content:=' "
+                 "--match_columns content --query 'content:=start-rroonga' "
                  "--query_expand Synonyms.words"));
 }
 
