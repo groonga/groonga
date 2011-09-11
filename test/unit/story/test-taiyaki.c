@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2010  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2010-2011  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -37,6 +37,7 @@ void test_but_white(void);
 void test_drilldown(void);
 void test_drilldown_with_broken_reference(void);
 void test_weight_match(void);
+void test_query_expansion(void);
 
 static gchar *tmp_directory;
 
@@ -87,6 +88,7 @@ cut_setup(void)
   assert_send_command(cut_get_fixture_data_string("areas.grn", NULL));
   assert_send_command(cut_get_fixture_data_string("categories.grn", NULL));
   assert_send_command(cut_get_fixture_data_string("shops.grn", NULL));
+  assert_send_command(cut_get_fixture_data_string("synonyms.grn", NULL));
 }
 
 void
@@ -600,4 +602,24 @@ test_multi_geo_in_circle(void)
         grn_test_location_string(yurakucho_latitude, yurakucho_longitude),
         distance,
         grn_test_location_string(yurakucho_latitude, yurakucho_longitude))));
+}
+
+void
+test_query_expansion(void)
+{
+  cut_assert_equal_string(
+    "[[[16],"
+    "[[\"name\",\"ShortText\"]],"
+    "[\"おめで鯛焼き本舗錦糸町東急店\"],"
+    "[\"そばたいやき空\"],"
+    "[\"たいやきひいらぎ\"]"
+    "]]",
+    send_command(
+      "select Shops "
+      "--sortby '+name' "
+      "--output_columns 'name' "
+      "--limit 3 "
+      "--match_columns name "
+      "--query たいやき "
+      "--query_expand Synonyms.words"));
 }
