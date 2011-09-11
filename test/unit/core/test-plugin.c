@@ -132,9 +132,11 @@ test_register_too_long_name(void)
   for (i = 0; i < max_name_length; i++) {
     g_string_append_c(long_name, 'x');
   }
+  full_path = cut_take_string(g_build_filename(plugins_dir,
+                                               long_name->str,
+                                               NULL));
   error_message_without_path =
-    "cannot open shared object file: No such file or directory: "
-    "<xxxxx.so> and <";
+    "cannot open shared object file: No such file or directory: <";
   grn_test_assert_send_command_error(
     context,
     GRN_NO_SUCH_FILE_OR_DIRECTORY,
@@ -143,7 +145,7 @@ test_register_too_long_name(void)
                     (int)(GRN_CTX_MSGSIZE -
                           strlen(error_message_without_path) -
                           1),
-                    plugins_dir),
+                    full_path),
     cut_take_printf("register %s", long_name->str));
 
   g_string_append_c(long_name, 'x');
