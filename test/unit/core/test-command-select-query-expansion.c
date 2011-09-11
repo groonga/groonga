@@ -50,35 +50,8 @@ remove_tmp_directory(void)
   cut_remove_path(tmp_directory, NULL);
 }
 
-void
-cut_setup(void)
-{
-  const gchar *database_path;
-
-  remove_tmp_directory();
-  g_mkdir_with_parents(tmp_directory, 0700);
-
-  context = g_new0(grn_ctx, 1);
-  grn_ctx_init(context, 0);
-
-  database_path = cut_build_path(tmp_directory, "database.groonga", NULL);
-  database = grn_db_create(context, database_path, NULL);
-}
-
-void
-cut_teardown(void)
-{
-  if (context) {
-    grn_obj_unlink(context, database);
-    grn_ctx_fin(context);
-    g_free(context);
-  }
-
-  remove_tmp_directory();
-}
-
-void
-test_expand(void)
+static void
+setup_data(void)
 {
   assert_send_command("table_create Diaries TABLE_HASH_KEY Time");
   assert_send_command("column_create Diaries content COLUMN_SCALAR Text");
@@ -100,6 +73,40 @@ test_expand(void)
                       "[\"_key\", \"words\"],\n"
                       "[\"groonga\", \"(groonga OR mroonga)\"]\n"
                       "]");
+}
+
+void
+cut_setup(void)
+{
+  const gchar *database_path;
+
+  remove_tmp_directory();
+  g_mkdir_with_parents(tmp_directory, 0700);
+
+  context = g_new0(grn_ctx, 1);
+  grn_ctx_init(context, 0);
+
+  database_path = cut_build_path(tmp_directory, "database.groonga", NULL);
+  database = grn_db_create(context, database_path, NULL);
+
+  setup_data();
+}
+
+void
+cut_teardown(void)
+{
+  if (context) {
+    grn_obj_unlink(context, database);
+    grn_ctx_fin(context);
+    g_free(context);
+  }
+
+  remove_tmp_directory();
+}
+
+void
+test_expand(void)
+{
   cut_assert_equal_string(
       "[[[2],"
        "[[\"_id\",\"UInt32\"],"
@@ -108,5 +115,18 @@ test_expand(void)
        "[1,1315666800.0,\"Start groonga!\"],"
        "[2,1315753200.0,\"Start mroonga!\"]]]",
     send_command("select Diaries --match_columns content --query groonga "
+                 "--query_expand Synonyms.words"));
+}
+
+void
+test_no_expand(void)
+{
+  cut_assert_equal_string(
+      "[[[1],"
+       "[[\"_id\",\"UInt32\"],"
+        "[\"_key\",\"Time\"],"
+        "[\"content\",\"Text\"]],"
+       "[3,1315839600.0,\"Start rroonga!\"]]]",
+    send_command("select Diaries --match_columns content --query rroonga "
                  "--query_expand Synonyms.words"));
 }
