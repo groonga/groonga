@@ -46,7 +46,7 @@ substitute_query(grn_ctx *ctx, grn_obj *table, grn_obj *column,
 {
   grn_id id;
   grn_rc rc = GRN_END_OF_DATA;
-  if ((id = grn_table_get(ctx, table, (const void *)key, (unsigned) key_size))) {
+  if ((id = grn_table_get(ctx, table, (const void *)key, (unsigned)key_size))) {
     grn_obj_get_value(ctx, column, id, dest);
     rc = GRN_SUCCESS;
   }
