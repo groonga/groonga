@@ -104,7 +104,8 @@ expand_query(grn_ctx *ctx, grn_obj *table, grn_obj *column, grn_expr_flags flags
       }
       break;
     case 'O' :
-      if (cur + 2 < str_end && cur[1] == 'R' && grn_isspace(cur + 2, ctx->encoding)) {
+      if (cur + 2 <= str_end && cur[1] == 'R' &&
+          (cur + 2 == str_end || grn_isspace(cur + 2, ctx->encoding))) {
         GRN_TEXT_PUT(ctx, dest, cur, 2);
         cur += 2;
         break;

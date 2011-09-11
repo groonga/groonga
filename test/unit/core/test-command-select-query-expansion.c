@@ -25,7 +25,7 @@
 
 void test_expand(void);
 void test_expand_recursive_not_supported(void);
-void test_expand_OR(void);
+void test_expand_OR_at_the_end(void);
 void test_expand_OR_with_leading_space(void);
 void test_no_expand(void);
 void test_nonexistent_expansion_column(void);
@@ -160,14 +160,13 @@ test_expand_recursive_not_supported(void)
 }
 
 void
-test_expand_OR(void)
+test_expand_OR_at_the_end(void)
 {
   cut_assert_equal_string(
-      "[[[1],"
+      "[[[0],"
        "[[\"_id\",\"UInt32\"],"
         "[\"_key\",\"Time\"],"
-        "[\"content\",\"Text\"]],"
-       "[10,1316444400.0,\"明日は日本語あるいは中国語を勉強します。\"]]]",
+        "[\"content\",\"Text\"]]]]",
     send_command("select Diaries --sortby _id "
                  "--match_columns content --query OR "
                  "--query_expand Synonyms.words"));
