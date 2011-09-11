@@ -24,7 +24,7 @@
 #include "../lib/grn-assertions.h"
 
 void test_expand(void);
-void test_expand_recursive_not_supported(void);
+void test_not_expand_recursively(void);
 void test_expand_OR_quoted(void);
 void test_not_expand_OR(void);
 void test_not_expand_OR_at_the_end(void);
@@ -94,6 +94,8 @@ setup_data(void)
                       "[\"mroonga\", "
                        "\"(mroonga OR (groonga MySQL) OR "
                           "\\\"groonga storage engine\\\")\"],\n"
+                      "[\"groonga storage engine\", "
+                       "\"(\\\"groonga storage engine\\\" OR mroonga)\"],\n"
                       "[\"OR\", \"あるいは\"]\n"
                       "]");
 }
@@ -143,7 +145,22 @@ test_expand(void)
 }
 
 void
-test_expand_recursive_not_supported(void)
+test_expand_word_with_space(void)
+{
+  cut_assert_equal_string(
+      "[[[2],"
+       "[[\"_id\",\"UInt32\"],"
+        "[\"_key\",\"Time\"],"
+        "[\"content\",\"Text\"]],"
+       "[2,1315753200.0,\"Start mroonga!\"],"
+       "[6,1316098800.0,\"Setup groonga storage engine!\"]]]",
+    send_command("select Diaries --sortby _id "
+                 "--match_columns content --query '\"groonga storage engine\"' "
+                 "--query_expand Synonyms.words"));
+}
+
+void
+test_not_expand_recursively(void)
 {
   cut_assert_equal_string(
       "[[[6],"
