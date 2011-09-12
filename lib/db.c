@@ -4106,13 +4106,6 @@ grn_obj_is_persistent(grn_ctx *ctx, grn_obj *obj)
 #define FLOAT2TIME(ctx, dest, value)\
   GRN_TIME_SET(ctx, dest, (long long int)(value * GRN_TIME_USEC_PER_SEC));
 
-#define DEGREE_ACCURACY 10000000
-
-#define DEGREE2MSEC(degree)\
-  ((int)(((int)degree * 60 * 60 * 1000) +\
-         (((long)(degree * DEGREE_ACCURACY) % DEGREE_ACCURACY) * 60 / DEGREE_ACCURACY * 60 * 1000) +\
-         (((long)(degree * DEGREE_ACCURACY) % DEGREE_ACCURACY) * 60 % DEGREE_ACCURACY * 60 / 10000)))
-
 grn_rc
 grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, int addp)
 {
@@ -4249,7 +4242,7 @@ grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, int addp)
           if (errno) {
             rc = GRN_INVALID_ARGUMENT;
           } else {
-            latitude = DEGREE2MSEC(degree);
+            latitude = GRN_GEO_DEGREE2MSEC(degree);
             cur = str + (end - GRN_TEXT_VALUE(buf_p));
           }
         }
@@ -4268,7 +4261,7 @@ grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, int addp)
             if (errno) {
               rc = GRN_INVALID_ARGUMENT;
             } else {
-              longitude = DEGREE2MSEC(degree);
+              longitude = GRN_GEO_DEGREE2MSEC(degree);
               cur = str + (end - GRN_TEXT_VALUE(buf_p));
             }
           }
