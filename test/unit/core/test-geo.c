@@ -252,11 +252,11 @@ data_distance(void)
 /*
   ADD_DATUM("text - tokyo",
             GRN_DB_SHORT_TEXT, GRN_DB_TOKYO_GEO_POINT);
+*/
   ADD_DATUM("text - wgs84",
             GRN_DB_SHORT_TEXT, GRN_DB_WGS84_GEO_POINT);
   ADD_DATUM("text - text",
             GRN_DB_SHORT_TEXT, GRN_DB_SHORT_TEXT);
-*/
 
 #undef ADD_DATUM
 }
