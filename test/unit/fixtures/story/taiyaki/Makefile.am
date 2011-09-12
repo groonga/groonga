@@ -3,4 +3,4 @@ EXTRA_DIST =					\
 	shops.grn				\
 	areas.grn				\
 	categories.grn				\
-	synoyms.grn
+	synonyms.grn
