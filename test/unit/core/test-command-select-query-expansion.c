@@ -40,6 +40,7 @@ void test_not_expand_paren(void);
 void test_no_expand(void);
 void test_no_expand_word_with_space(void);
 void test_nonexistent_expansion_column(void);
+void test_key_normalize(void);
 
 static gchar *tmp_directory;
 
@@ -398,3 +399,31 @@ test_nonexistent_expansion_column(void)
     "select Diaries --match_columns content --query groonga "
     "--query_expand Synonyms.nonexistent");
 }
+
+void
+test_key_normalize(void)
+{
+  assert_send_command("table_create NormalizedSynonyms "
+                      "TABLE_PAT_KEY|KEY_NORMALIZE ShortText");
+  assert_send_command("column_create NormalizedSynonyms words "
+                      "COLUMN_SCALAR ShortText");
+  assert_send_command("load --table NormalizedSynonyms\n"
+                      "[\n"
+                      "[\"_key\", \"words\"],\n"
+                      "[\"Ruby\", \"(Ruby OR rroonga)\"]\n"
+                      "]");
+
+  cut_assert_equal_string(
+      "[[[3],"
+       "[[\"_id\",\"UInt32\"],"
+        "[\"_key\",\"Time\"],"
+        "[\"content\",\"Text\"]],"
+       "[3,1315839600.0,\"Start rroonga!\"],"
+       "[4,1315926000.0,\"Start Ruby!\"],"
+       "[9,1316358000.0,\"Learning Ruby and groonga...\"]]]",
+    send_command("select Diaries "
+                 "--sortby _id "
+                 "--match_columns content --query ruby "
+                 "--query_expand NormalizedSynonyms.words"));
+}
+
