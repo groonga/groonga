@@ -237,25 +237,25 @@ data_distance(void)
 
 /*
   ADD_DATUM("tokyo - tokyo",
-            shinjuku_tokyo, takane_tokyo);
+            GRN_DB_TOKYO_GEO_POINT, GRN_DB_TOKYO_GEO_POINT);
   ADD_DATUM("tokyo - wgs84",
-            shinjuku_tokyo, takane_wgs84);
+            GRN_DB_TOKYO_GEO_POINT, GRN_DB_WGS84_GEO_POINT);
   ADD_DATUM("tokyo - text",
-            shinjuku_tokyo, takane_text);
+            GRN_DB_TOKYO_GEO_POINT, GRN_DB_SHORT_TEXT);
   ADD_DATUM("wgs84 - tokyo",
-            shinjuku_wgs84, takane_tokyo);
+            GRN_DB_WGS84_GEO_POINT, GRN_DB_TOKYO_GEO_POINT);
 */
   ADD_DATUM("wgs84 - wgs84",
             GRN_DB_WGS84_GEO_POINT, GRN_DB_WGS84_GEO_POINT);
-/*
   ADD_DATUM("wgs84 - text",
-            shinjuku_wgs84, takane_text);
+            GRN_DB_WGS84_GEO_POINT, GRN_DB_SHORT_TEXT);
+/*
   ADD_DATUM("text - tokyo",
-            shinjuku_text, takane_tokyo);
+            GRN_DB_SHORT_TEXT, GRN_DB_TOKYO_GEO_POINT);
   ADD_DATUM("text - wgs84",
-            shinjuku_text, takane_wgs84);
+            GRN_DB_SHORT_TEXT, GRN_DB_WGS84_GEO_POINT);
   ADD_DATUM("text - text",
-            shinjuku_text, takane_text);
+            GRN_DB_SHORT_TEXT, GRN_DB_SHORT_TEXT);
 */
 
 #undef ADD_DATUM
