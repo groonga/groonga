@@ -14,7 +14,7 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.48.1 r9760"
-   sodipodi:docname="points-distance.svg">
+   sodipodi:docname="geo-points-distance.svg">
   <defs
      id="defs4" />
   <sodipodi:namedview
@@ -25,15 +25,15 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="2.8284271"
-     inkscape:cx="68.858608"
+     inkscape:cx="-3.0895076"
      inkscape:cy="113.71792"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1152"
-     inkscape:window-height="880"
-     inkscape:window-x="232"
-     inkscape:window-y="131"
+     inkscape:window-height="689"
+     inkscape:window-x="212"
+     inkscape:window-y="25"
      inkscape:window-maximized="0" />
   <metadata
      id="metadata7">
@@ -293,19 +293,8 @@
        style="color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:block;overflow:visible;enable-background:accumulate"
        sodipodi:type="arc" />
     <path
-       style="fill:none;stroke:#ff0000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;display:inline"
-       d="M 56.345602,102.41164 66.337425,89.345416"
-       id="path4260"
-       inkscape:connector-type="polyline"
-       inkscape:connector-curvature="0"
-       inkscape:connection-start="#path3769-06"
-       inkscape:connection-start-point="d4"
-       transform="translate(0,852.36218)"
-       inkscape:connection-end="#path3769-06-7"
-       inkscape:connection-end-point="d4" />
-    <path
        transform="translate(17.860805,883.8501)"
-       d="m 53.5,55.375 a 3.125,3.125 0 1 1 -6.25,0 3.125,3.125 0 1 1 6.25,0 z"
+       d="m 53.5,55.375 c 0,1.72589 -1.39911,3.125 -3.125,3.125 -1.72589,0 -3.125,-1.39911 -3.125,-3.125 0,-1.72589 1.39911,-3.125 3.125,-3.125 1.72589,0 3.125,1.39911 3.125,3.125 z"
        sodipodi:ry="3.125"
        sodipodi:rx="3.125"
        sodipodi:cy="55.375"
@@ -313,5 +302,16 @@
        id="path3769-06-7"
        style="color:#000000;fill:#ff0000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:block;overflow:visible;enable-background:accumulate"
        sodipodi:type="arc" />
+    <path
+       style="fill:none;stroke:#ff0000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 66.337425,89.345416 56.345602,102.41164"
+       id="path3008"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#path3769-06-7"
+       inkscape:connection-start-point="d4"
+       inkscape:connection-end="#path3769-06"
+       inkscape:connection-end-point="d4"
+       transform="translate(0,852.36218)" />
   </g>
 </svg>
