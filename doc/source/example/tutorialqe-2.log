@@ -1,0 +1,6 @@
+実行例 ::
+
+  > select Doc --match_columns body --query "シークァーサー"
+  > select Doc --match_columns body --query "シークヮーサー"
+  [[0,1315902890.34086,0.001523795],[[[1],[["_id","UInt32"],["_key","ShortText"],["body","ShortText"]],[1,"001","すっぱいブドウと甘いシークァーサー"]]]]
+  [[0,1315902896.11284,0.00103016],[[[1],[["_id","UInt32"],["_key","ShortText"],["body","ShortText"]],[2,"002","シークヮーサージュースとゴーヤチャンプル"]]]]

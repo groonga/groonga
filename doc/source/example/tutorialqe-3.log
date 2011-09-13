@@ -1,0 +1,6 @@
+実行例 ::
+
+  > select Doc --match_columns body --query "シークァーサー" --query_expand Synonym.body
+  > select Doc --match_columns body --query "シークヮーサー" --query_expand Synonym.body
+  [[0,1315903097.36968,0.007449833],[[[2],[["_id","UInt32"],["_key","ShortText"],["body","ShortText"]],[1,"001","すっぱいブドウと甘いシークァーサー"],[2,"002","シークヮーサージュースとゴーヤチャンプル"]]]]
+  [[0,1315903109.46887,0.001223129],[[[2],[["_id","UInt32"],["_key","ShortText"],["body","ShortText"]],[1,"001","すっぱいブドウと甘いシークァーサー"],[2,"002","シークヮーサージュースとゴーヤチャンプル"]]]]

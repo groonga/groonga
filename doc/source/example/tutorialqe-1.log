@@ -1,0 +1,26 @@
+実行例 ::
+
+  > table_create Doc TABLE_PAT_KEY ShortText
+  > column_create Doc body COLUMN_SCALAR ShortText
+  > table_create Term TABLE_PAT_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenBigram
+  > column_create Term Doc_body COLUMN_INDEX|WITH_POSITION Doc body
+  > table_create Synonym TABLE_PAT_KEY ShortText
+  > column_create Synonym body COLUMN_SCALAR ShortText
+  > load --table Doc
+  > [
+  > {"_key": "001", "body": "すっぱいブドウと甘いシークァーサー"},
+  > {"_key": "002", "body": "シークヮーサージュースとゴーヤチャンプル"},
+  > ]
+  > load --table Synonym
+  > [
+  > {"_key": "シークァーサー", "body": "(シークァーサー OR シークヮーサー)"},
+  > {"_key": "シークヮーサー", "body": "(シークァーサー OR シークヮーサー)"},
+  > ]
+  [[0,1315902793.79405,0.067835793],true]
+  [[0,1315902793.86204,0.055032625],true]
+  [[0,1315902793.91716,0.033071456],true]
+  [[0,1315902793.95031,0.084515422],true]
+  [[0,1315902794.03489,0.039670759],true]
+  [[0,1315902794.07463,0.047553673],true]
+  [[0,1315902794.12225,0.030597533],2]
+  [[0,1315902794.15293,0.001469182],2]
