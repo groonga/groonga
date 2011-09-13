@@ -28,7 +28,8 @@
 
 void test_in_circle(void);
 void test_in_rectangle(void);
-void test_distance(void);
+void data_distance(void);
+void test_distance(gconstpointer data);
 void test_distance2(void);
 void test_distance3(void);
 
@@ -37,8 +38,16 @@ static gchar *tmp_directory;
 static grn_ctx *context;
 static grn_obj *database;
 
-static grn_obj *nedu_no_taiyaki, *takane, *sazare, *yanagi_ya, *hiiragi;
-static grn_obj *tokyo, *shinjuku;
+#define DEFINE_GEO_POINT(name) \
+  static grn_obj *name, *name ## _tokyo, *name ## _wgs84, *name ## _text
+DEFINE_GEO_POINT(nedu_no_taiyaki);
+DEFINE_GEO_POINT(takane);
+DEFINE_GEO_POINT(sazare);
+DEFINE_GEO_POINT(yanagi_ya);
+DEFINE_GEO_POINT(hiiragi);
+DEFINE_GEO_POINT(tokyo);
+DEFINE_GEO_POINT(shinjuku);
+#undef DEFINE_GEO_POINT
 
 void
 cut_startup(void)
@@ -61,6 +70,18 @@ remove_tmp_directory(void)
 }
 
 static grn_obj *
+tokyo_geo_point_open(int latitude, int longitude)
+{
+  grn_obj *point;
+
+  point = grn_obj_open(context, GRN_BULK, 0, GRN_DB_TOKYO_GEO_POINT);
+  /* TODO: latitude and longitude are wgs84 format. They
+   * should be converted to tokyo from wgs84. */
+  GRN_GEO_POINT_SET(context, point, latitude, longitude);
+  return point;
+}
+
+static grn_obj *
 wgs84_geo_point_open(int latitude, int longitude)
 {
   grn_obj *point;
@@ -70,17 +91,34 @@ wgs84_geo_point_open(int latitude, int longitude)
   return point;
 }
 
+static grn_obj *
+text_geo_point_open(int latitude, int longitude)
+{
+  grn_obj *point;
+
+  point = grn_obj_open(context, GRN_BULK, 0, GRN_DB_SHORT_TEXT);
+  GRN_TEXT_PUTS(context, point, cut_take_printf("%d,%d", latitude, longitude));
+  return point;
+}
+
 static void
 setup_values(void)
 {
-  nedu_no_taiyaki = wgs84_geo_point_open(130322053, 504985073);
-  takane = wgs84_geo_point_open(130226001, 503769013);
-  sazare = wgs84_geo_point_open(130306053, 504530043);
-  yanagi_ya = wgs84_geo_point_open(130133052, 505120058);
-  hiiragi = wgs84_geo_point_open(129917001, 504675017);
+#define SETUP_GEO_POINT(name, latitude, longitude)              \
+  name ## _tokyo = tokyo_geo_point_open(latitude, longitude);   \
+  name ## _wgs84 = wgs84_geo_point_open(latitude, longitude);   \
+  name ## _text = text_geo_point_open(latitude, longitude)
 
-  tokyo = wgs84_geo_point_open(130101399, 505020000);
-  shinjuku = wgs84_geo_point_open(130158300, 504604000);
+  SETUP_GEO_POINT(nedu_no_taiyaki, 130322053, 504985073);
+  SETUP_GEO_POINT(takane, 130226001, 503769013);
+  SETUP_GEO_POINT(sazare, 130306053, 504530043);
+  SETUP_GEO_POINT(yanagi_ya, 130133052, 505120058);
+  SETUP_GEO_POINT(hiiragi, 129917001, 504675017);
+
+  SETUP_GEO_POINT(tokyo, 130101399, 505020000);
+  SETUP_GEO_POINT(shinjuku, 130158300, 504604000);
+
+#undef SETUP_GEO_POINT
 }
 
 void
@@ -103,13 +141,21 @@ cut_setup(void)
 static void
 teardown_values(void)
 {
-  grn_obj_unlink(context, nedu_no_taiyaki);
-  grn_obj_unlink(context, takane);
-  grn_obj_unlink(context, sazare);
-  grn_obj_unlink(context, yanagi_ya);
-  grn_obj_unlink(context, hiiragi);
-  grn_obj_unlink(context, tokyo);
-  grn_obj_unlink(context, shinjuku);
+#define UNLINK_GEO_POINT(name)                  \
+  grn_obj_unlink(context, name ## _tokyo);      \
+  grn_obj_unlink(context, name ## _wgs84);      \
+  grn_obj_unlink(context, name ## _text)
+
+  UNLINK_GEO_POINT(nedu_no_taiyaki);
+  UNLINK_GEO_POINT(takane);
+  UNLINK_GEO_POINT(sazare);
+  UNLINK_GEO_POINT(yanagi_ya);
+  UNLINK_GEO_POINT(hiiragi);
+
+  UNLINK_GEO_POINT(tokyo);
+  UNLINK_GEO_POINT(shinjuku);
+
+#undef UNLINK_GEO_POINT
 }
 
 void
@@ -128,31 +174,97 @@ void
 test_in_circle(void)
 {
   cut_assert_true(grn_geo_in_circle(context,
-                                    hiiragi,
-                                    shinjuku,
-                                    tokyo));
+                                    hiiragi_wgs84,
+                                    shinjuku_wgs84,
+                                    tokyo_wgs84));
   cut_assert_false(grn_geo_in_circle(context,
-                                     takane,
-                                     shinjuku,
-                                     tokyo));
+                                     takane_wgs84,
+                                     shinjuku_wgs84,
+                                     tokyo_wgs84));
 }
 
 void
 test_in_rectangle(void)
 {
   cut_assert_true(grn_geo_in_rectangle(context,
-                                       shinjuku,
-                                       sazare,
-                                       hiiragi));
+                                       shinjuku_wgs84,
+                                       sazare_wgs84,
+                                       hiiragi_wgs84));
   cut_assert_false(grn_geo_in_rectangle(context,
-                                        tokyo,
-                                        sazare,
-                                        hiiragi));
+                                        tokyo_wgs84,
+                                        sazare_wgs84,
+                                        hiiragi_wgs84));
+}
+
+static void
+assign_shinjuku_and_takane(gconstpointer data)
+{
+  switch (gcut_data_get_int(data, "shinjuku-geographic-coordinate-system")) {
+  case GRN_DB_TOKYO_GEO_POINT:
+    shinjuku = shinjuku_tokyo;
+    break;
+  case GRN_DB_WGS84_GEO_POINT:
+    shinjuku = shinjuku_wgs84;
+    break;
+  default:
+    shinjuku = shinjuku_text;
+    break;
+  }
+
+  switch (gcut_data_get_int(data, "takane-geographic-coordinate-system")) {
+  case GRN_DB_TOKYO_GEO_POINT:
+    takane = takane_tokyo;
+    break;
+  case GRN_DB_WGS84_GEO_POINT:
+    takane = takane_wgs84;
+    break;
+  default:
+    takane = takane_text;
+    break;
+  }
 }
 
 void
-test_distance(void)
+data_distance(void)
 {
+#define ADD_DATUM(label, shinjuku, takane)                      \
+  gcut_add_datum(label,                                         \
+                 "shinjuku-geographic-coordinate-system",       \
+                 G_TYPE_INT, shinjuku,                          \
+                 "takane-geographic-coordinate-system",         \
+                 G_TYPE_INT, takane,                            \
+                 NULL)
+
+/*
+  ADD_DATUM("tokyo - tokyo",
+            GRN_DB_TOKYO_GEO_POINT, GRN_DB_TOKYO_GEO_POINT);
+  ADD_DATUM("tokyo - wgs84",
+            GRN_DB_TOKYO_GEO_POINT, GRN_DB_WGS84_GEO_POINT);
+  ADD_DATUM("tokyo - text",
+            GRN_DB_TOKYO_GEO_POINT, GRN_DB_SHORT_TEXT);
+  ADD_DATUM("wgs84 - tokyo",
+            GRN_DB_WGS84_GEO_POINT, GRN_DB_TOKYO_GEO_POINT);
+*/
+  ADD_DATUM("wgs84 - wgs84",
+            GRN_DB_WGS84_GEO_POINT, GRN_DB_WGS84_GEO_POINT);
+  ADD_DATUM("wgs84 - text",
+            GRN_DB_WGS84_GEO_POINT, GRN_DB_SHORT_TEXT);
+/*
+  ADD_DATUM("text - tokyo",
+            GRN_DB_SHORT_TEXT, GRN_DB_TOKYO_GEO_POINT);
+*/
+  ADD_DATUM("text - wgs84",
+            GRN_DB_SHORT_TEXT, GRN_DB_WGS84_GEO_POINT);
+  ADD_DATUM("text - text",
+            GRN_DB_SHORT_TEXT, GRN_DB_SHORT_TEXT);
+
+#undef ADD_DATUM
+}
+
+void
+test_distance(gconstpointer data)
+{
+  assign_shinjuku_and_takane(data);
   cut_assert_equal_double(20881.0, 10,
                           grn_geo_distance(context, shinjuku, takane));
 }
@@ -161,12 +273,16 @@ void
 test_distance2(void)
 {
   cut_assert_equal_double(20881.0, 10,
-                          grn_geo_distance2(context, shinjuku, takane));
+                          grn_geo_distance2(context,
+                                            shinjuku_wgs84,
+                                            takane_wgs84));
 }
 
 void
 test_distance3(void)
 {
   cut_assert_equal_double(20973.0, 10,
-                          grn_geo_distance3(context, shinjuku, takane));
+                          grn_geo_distance3(context,
+                                            shinjuku_wgs84,
+                                            takane_wgs84));
 }

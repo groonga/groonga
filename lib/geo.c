@@ -975,23 +975,45 @@ double
 grn_geo_distance(grn_ctx *ctx, grn_obj *point1, grn_obj *point2)
 {
   double d = 0;
+  grn_bool point1_initialized = GRN_FALSE;
   grn_bool point2_initialized = GRN_FALSE;
-  grn_obj point2_;
-  grn_id domain = point1->header.domain;
-  if (domain == GRN_DB_TOKYO_GEO_POINT || domain == GRN_DB_WGS84_GEO_POINT) {
-    if (point2->header.domain != domain) {
-      GRN_OBJ_INIT(&point2_, GRN_BULK, 0, domain);
+  grn_obj point1_, point2_;
+  grn_id domain1 = point1->header.domain;
+  grn_id domain2 = point2->header.domain;
+  if (domain1 == GRN_DB_TOKYO_GEO_POINT || domain1 == GRN_DB_WGS84_GEO_POINT) {
+    if (domain1 != domain2) {
+      GRN_OBJ_INIT(&point2_, GRN_BULK, 0, domain1);
       point2_initialized = GRN_TRUE;
       if (grn_obj_cast(ctx, point2, &point2_, 0)) { goto exit; }
       point2 = &point2_;
     }
-    d = grn_geo_distance_raw(ctx,
-                             GRN_GEO_POINT_VALUE_RAW(point1),
-                             GRN_GEO_POINT_VALUE_RAW(point2));
+  } else if (domain2 == GRN_DB_TOKYO_GEO_POINT ||
+             domain2 == GRN_DB_WGS84_GEO_POINT) {
+    GRN_OBJ_INIT(&point1_, GRN_BULK, 0, domain2);
+    point1_initialized = GRN_TRUE;
+    if (grn_obj_cast(ctx, point1, &point1_, 0)) { goto exit; }
+    point1 = &point1_;
+  } else if ((GRN_DB_SHORT_TEXT <= domain1 && domain1 <= GRN_DB_LONG_TEXT) &&
+             (GRN_DB_SHORT_TEXT <= domain2 && domain2 <= GRN_DB_LONG_TEXT)) {
+    GRN_OBJ_INIT(&point1_, GRN_BULK, 0, GRN_DB_WGS84_GEO_POINT);
+    point1_initialized = GRN_TRUE;
+    if (grn_obj_cast(ctx, point1, &point1_, 0)) { goto exit; }
+    point1 = &point1_;
+
+    GRN_OBJ_INIT(&point2_, GRN_BULK, 0, GRN_DB_WGS84_GEO_POINT);
+    point2_initialized = GRN_TRUE;
+    if (grn_obj_cast(ctx, point2, &point2_, 0)) { goto exit; }
+    point2 = &point2_;
   } else {
-    /* todo */
+    goto exit;
   }
+  d = grn_geo_distance_raw(ctx,
+                           GRN_GEO_POINT_VALUE_RAW(point1),
+                           GRN_GEO_POINT_VALUE_RAW(point2));
 exit :
+  if (point1_initialized) {
+    GRN_OBJ_FIN(ctx, &point1_);
+  }
   if (point2_initialized) {
     GRN_OBJ_FIN(ctx, &point2_);
   }

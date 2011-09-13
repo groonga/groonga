@@ -25,6 +25,9 @@ column_create Shops longitude_in_degree COLUMN_SCALAR Float
 column_create Shops categories COLUMN_VECTOR Categories
 column_create Shops area COLUMN_SCALAR Areas
 
+table_create Synonyms TABLE_HASH_KEY ShortText
+column_create Synonyms words COLUMN_SCALAR ShortText
+
 column_create Tags index COLUMN_INDEX Shops tags
 column_create Locations shop COLUMN_INDEX Shops location
 column_create Locations shop1 COLUMN_INDEX Shops location1

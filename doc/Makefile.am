@@ -28,6 +28,20 @@ EXTRA_DIST =					\
 
 $(source_files_relative_from_doc_dir): html
 
+images =								\
+	$(srcdir)/source/_static/images/geo-encode-leading-2bit.png	\
+	$(srcdir)/source/_static/images/geo-encode-leading-4bit.png	\
+	$(srcdir)/source/_static/images/geo-points-distance.png		\
+	$(srcdir)/source/_static/images/geo-points-in-circle.png	\
+	$(srcdir)/source/_static/images/geo-points-in-rectangle.png	\
+	$(srcdir)/source/_static/images/geo-points-sort.png		\
+	$(srcdir)/source/_static/images/geo-points.png			\
+	$(srcdir)/source/_static/images/geo-search-in-circle.png	\
+	$(srcdir)/source/_static/images/geo-search-in-rectangle.png
+
+.svg.png:
+	inkscape --export-dpi 90 --export-background white --export-png $@ $<
+
 if ENABLE_DOCUMENT
 dist-hook: html man
 	@touch $(distdir)/build-stamp

@@ -2,4 +2,5 @@ EXTRA_DIST =					\
 	ddl.grn					\
 	shops.grn				\
 	areas.grn				\
-	categories.grn
+	categories.grn				\
+	synonyms.grn
