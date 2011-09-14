@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-12 14:57\n"
-"PO-Revision-Date: 2011-05-09 00:36+0900\n"
+"POT-Creation-Date: 2011-09-14 20:06\n"
+"PO-Revision-Date: 2011-09-14 20:08+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -17,37 +17,46 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+# 5134941b94334ac487d34f8670afe5cc
 #: ../../../source/characteristic.txt:6
-msgid "groongaの特徴"
-msgstr ""
+msgid "The characteristics of groonga"
+msgstr "groongaの特徴"
 
+# 9508a291f54644a0b7a10886ff743b58
 #: ../../../source/characteristic.txt:9
-msgid "全文検索ライブラリSennaの後継"
-msgstr ""
+msgid ""
+"The successor to the Senna that is an embeddable full text search engine"
+msgstr "全文検索ライブラリSennaの後継"
 
+# 0fc579f364aa43c3be0248e617470747
 #: ../../../source/characteristic.txt:11
 msgid ""
-"groongaは、広く使われている全文検索ライブラリSennaの後継として開発されていま"
-"す。Sennaの特徴である、高速・高精度・高柔軟性という特徴を引き継ぎつつ、さらに"
-"それらの特徴を追求するために開発が始められました。"
-msgstr ""
+"Groonga is developed as the successor project to Senna. Senna is an "
+"embeddable full text search engine and it is used widely. Groonga takes over "
+"from Senna's characteristics that are fast, high precision and high "
+"flexibility. We started to develop groonga to improve those Senna' "
+"characteristics."
+msgstr "groongaは、広く使われている全文検索ライブラリSennaの後継として開発されています。Sennaの特徴である、高速・高精度・高柔軟性という特徴を引き継ぎつつ、さらにそれらの特徴を追求するために開発が始められました。"
 
+# f70b1a82fdea45cba4fc5702622ed291
 #: ../../../source/characteristic.txt:14
-msgid "HTTPなどの複数プロトコルに対応したサーバ"
-msgstr ""
+msgid "Groonga sever supports multi-protocols such as HTTP"
+msgstr "HTTPなどの複数プロトコルに対応したサーバ"
 
+# 68561476b5bd46f99c6afd130e989472
 #: ../../../source/characteristic.txt:16
 msgid ""
-"Sennaは、全文検索を行うアプリケーションで用いるための部品でした。groongaで"
-"は、全文検索サービスを行うためのサーバが存在します。groongaサーバは、HTTPや"
-"memcached binaryプロトコル、独自プロトコルであるgqtpを用いてクライアントと"
-"TCP/IP通信を行うことができます。よって、ライブラリをインストールできないレン"
-"タルサーバなどの環境でも利用しやすくなりました。"
-msgstr ""
+"Senna is an component for an application that supports full text search. "
+"Groonga can be a server that provides search service. The groonga server "
+"supports HTTP, memcached binary protocol and gqtp (groonga query transfer "
+"protocol). Clients can search by those protocols via TCP/IP connection. It "
+"makes easy to use on a rental server that can install a library."
+msgstr "Sennaは、全文検索を行うアプリケーションで用いるための部品でした。groongaでは、全文検索サービスを行うためのサーバが存在します。groongaサーバは、HTTPやmemcached binaryプロトコル、独自プロトコルであるgqtpを用いてクライアントとTCP/IP通信を行うことができます。よって、ライブラリをインストールできないレンタルサーバなどの環境でも利用しやすくなりました。"
 
+# 5d2e155a7588463ab76856becc09768b
 #: ../../../source/characteristic.txt:18
-msgid "Sennaと同様に、groongaもC言語のライブラリとして利用できます。"
-msgstr ""
+msgid "Groonga also can be used as a C library like Senna."
+msgstr "Sennaと同様に、groongaもC言語のライブラリとして利用できます。"
 
 #: ../../../source/characteristic.txt:21
 msgid "高速なデータ更新"

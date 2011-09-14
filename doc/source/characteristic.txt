@@ -2,20 +2,20 @@
 
 .. highlightlang:: none
 
-groongaの特徴
-=============
+The characteristics of groonga
+==============================
 
-全文検索ライブラリSennaの後継
------------------------------
+The successor to the Senna that is an embeddable full text search engine
+------------------------------------------------------------------------
 
-groongaは、広く使われている全文検索ライブラリSennaの後継として開発されています。Sennaの特徴である、高速・高精度・高柔軟性という特徴を引き継ぎつつ、さらにそれらの特徴を追求するために開発が始められました。
+Groonga is developed as the successor project to Senna. Senna is an embeddable full text search engine and it is used widely. Groonga takes over from Senna's characteristics that are fast, high precision and high flexibility. We started to develop groonga to improve those Senna' characteristics.
 
-HTTPなどの複数プロトコルに対応したサーバ
-----------------------------------------
+Groonga sever supports multi-protocols such as HTTP
+---------------------------------------------------
 
-Sennaは、全文検索を行うアプリケーションで用いるための部品でした。groongaでは、全文検索サービスを行うためのサーバが存在します。groongaサーバは、HTTPやmemcached binaryプロトコル、独自プロトコルであるgqtpを用いてクライアントとTCP/IP通信を行うことができます。よって、ライブラリをインストールできないレンタルサーバなどの環境でも利用しやすくなりました。
+Senna is an component for an application that supports full text search. Groonga can be a server that provides search service. The groonga server supports HTTP, memcached binary protocol and gqtp (groonga query transfer protocol). Clients can search by those protocols via TCP/IP connection. It makes easy to use on a rental server that can install a library.
 
-Sennaと同様に、groongaもC言語のライブラリとして利用できます。
+Groonga also can be used as a C library like Senna.
 
 高速なデータ更新
 ----------------
