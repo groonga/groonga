@@ -17,7 +17,7 @@ select - テーブルの中から条件にマッチするレコードを検索�
  select table [match_columns [query [filter [scorer [sortby [output_columns
               [offset [limit [drilldown [drilldown_sortby [drilldown_output_columns
               [drilldown_offset [drilldown_limit [cache
-              [match_escalation_threshold [query_expand]]]]]]]]]]]]]]]]
+              [match_escalation_threshold [query_expansion]]]]]]]]]]]]]]]]
 
 説明
 ----
@@ -177,7 +177,7 @@ a - b
 
   クエリのヒット件数が閾値を越えない場合は :doc:`/spec/search` で説明している方法で検索方法をエスカレーションしてきます。
 
-``query_expand``
+``query_expansion``
 
   queryパラメータに指定された文字列を、置換(拡張)する条件を与えるテーブルとそのカラムを、「テーブル名.カラム名」という形式で設定します。指定するテーブルは文字列を主キーとするハッシュ型あるいはパトリシア木型のテーブルで、一つ以上の文字列型のカラムが定義されている必要があります。(ここでは置換テーブルと呼びます)。queryパラメータに指定された文字列が、指定されたテーブルの主キーと完全一致する場合、その文字列を指定されたカラム値の文字列に置換します。queryパラメータが、空白、括弧、演算子などを含む場合は、その演算子によって区切られた文字列の単位で置換が実行されます。ダブルクォート("")で括られた範囲は、その内部に空白を含んでいても一つの置換される単位と見なされます。検索文字列と置換テーブルの主キー値との比較に際して大文字小文字等を区別したくない場合には、置換テーブルを定義する際にKEY_NORMALIZEを指定します。置換後の文字列となるカラムの値には、括弧や*, ORなど、queryパラメータで利用可能な全ての演算子を指定することができます。
 

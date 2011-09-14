@@ -2,17 +2,17 @@
 
 .. highlightlang:: none
 
-selectコマンドのquery_expandパラメータの使い方
-==============================================
+selectコマンドのquery_expansionパラメータの使い方
+================================================
 
-groongaでは、selectコマンドにquery_expandパラメータを指定することによって、ユーザが指定した検索文字列を適宜拡張することが可能です。
+groongaでは、selectコマンドにquery_expansionパラメータを指定することによって、ユーザが指定した検索文字列を適宜拡張することが可能です。
 
 たとえば、ユーザが'シークヮーサー'という文字列で検索した場合に、'シークヮーサー OR シークァーサー'で検索した場合と同一の結果を返すことによって、本来ユーザが必要とする結果をよりもれなく検索できるようになります。
 
 準備
 ----
 
-query_expand機能を使用するためには、検索対象となる文書を格納するテーブル(ここでは文書テーブルと呼びます)以外に、ユーザの指定した検索文字列を置換するためのテーブル(ここでは置換テーブルと呼びます)を準備します。置換テーブルでは、その主キーが置換前の文字列となり、文字列型(ShortText等)のカラムの値が置換後の文字列となります。
+query_expansion機能を使用するためには、検索対象となる文書を格納するテーブル(ここでは文書テーブルと呼びます)以外に、ユーザの指定した検索文字列を置換するためのテーブル(ここでは置換テーブルと呼びます)を準備します。置換テーブルでは、その主キーが置換前の文字列となり、文字列型(ShortText等)のカラムの値が置換後の文字列となります。
 
 実際に文書テーブルと置換テーブルを作成してみましょう。
 
@@ -40,18 +40,18 @@ query_expand機能を使用するためには、検索対象となる文書を�
 検索
 ----
 
-それでは実際に、準備した置換テーブルを使ってみましょう。まずは、query_expandパラメータを指定せずにselectコマンドを使って検索してみます。
+それでは実際に、準備した置換テーブルを使ってみましょう。まずは、query_expansionパラメータを指定せずにselectコマンドを使って検索してみます。
 
 .. groonga-command
 .. include:: ../example/tutorialqe-2.log
 .. select Doc --match_columns body --query "シークァーサー"
 .. select Doc --match_columns body --query "シークヮーサー"
 
-指定された文字列に完全に一致するレコードのみがそれぞれヒットします。次に、query_expandパラメータに、準備したSynonymテーブルのbodyカラムを指定してみましょう。
+指定された文字列に完全に一致するレコードのみがそれぞれヒットします。次に、query_expansionパラメータに、準備したSynonymテーブルのbodyカラムを指定してみましょう。
 
 .. groonga-command
 .. include:: ../example/tutorialqe-3.log
-.. select Doc --match_columns body --query "シークァーサー" --query_expand Synonym.body
-.. select Doc --match_columns body --query "シークヮーサー" --query_expand Synonym.body
+.. select Doc --match_columns body --query "シークァーサー" --query_expansion Synonym.body
+.. select Doc --match_columns body --query "シークヮーサー" --query_expansion Synonym.body
 
 どちらのクエリ文字列も、"(シークァーサー OR シークヮーサー)"という文字列に置換されてから検索されるため、表記の揺れを吸収して検索できるようになりました。

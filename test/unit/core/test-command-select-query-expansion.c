@@ -164,7 +164,7 @@ test_expand(void)
        "[9,1316358000.0,\"Learning Ruby and groonga...\"]]]",
     send_command("select Diaries --sortby _id "
                  "--match_columns content --query rroonga "
-                 "--query_expand Synonyms.words"));
+                 "--query_expansion Synonyms.words"));
 }
 
 void
@@ -179,7 +179,7 @@ test_expand_word_with_space(void)
        "[6,1316098800.0,\"Setup groonga storage engine!\"]]]",
     send_command("select Diaries --sortby _id "
                  "--match_columns content --query '\"groonga storage engine\"' "
-                 "--query_expand Synonyms.words"));
+                 "--query_expansion Synonyms.words"));
 }
 
 void
@@ -198,7 +198,7 @@ test_not_expand_recursively(void)
        "[9,1316358000.0,\"Learning Ruby and groonga...\"]]]",
     send_command("select Diaries --sortby _id "
                  "--match_columns content --query groonga "
-                 "--query_expand Synonyms.words"));
+                 "--query_expansion Synonyms.words"));
 }
 
 void
@@ -212,7 +212,7 @@ test_expand_OR_quoted(void)
        "[10,1316444400.0,\"明日は日本語あるいは中国語を勉強します。\"]]]",
     send_command("select Diaries --sortby _id "
                  "--match_columns content --query '\"OR\"' "
-                 "--query_expand Synonyms.words"));
+                 "--query_expansion Synonyms.words"));
 }
 
 void
@@ -227,7 +227,7 @@ test_expand_column_value(void)
         "[9,1316358000.0,\"Learning Ruby and groonga...\"]]]",
     send_command("select Diaries --sortby _id "
                  "--match_columns content --query 'content:@rroonga' "
-                 "--query_expand Synonyms.words"));
+                 "--query_expansion Synonyms.words"));
 }
 
 void
@@ -243,7 +243,7 @@ test_expand_column_value_with_space(void)
     send_command("select Diaries --sortby _id "
                  "--match_columns content "
                  "--query 'content:@\"groonga storage engine\"' "
-                 "--query_expand Synonyms.words"));
+                 "--query_expansion Synonyms.words"));
 }
 
 void
@@ -257,7 +257,7 @@ test_expand_equal(void)
         "[3,1315839600.0,\"Start rroonga!\"]]]",
     send_command("select Diaries --sortby _id "
                  "--match_columns content --query 'content:=start-rroonga' "
-                 "--query_expand Synonyms.words"));
+                 "--query_expansion Synonyms.words"));
 }
 
 void
@@ -271,7 +271,7 @@ test_expand_prefix(void)
         "[10,1316444400.0,\"明日は日本語あるいは中国語を勉強します。\"]]]",
     send_command("select Diaries --sortby _id "
                  "--match_columns content --query 'Japan*' "
-                 "--query_expand Synonyms.words"));
+                 "--query_expansion Synonyms.words"));
 }
 
 void
@@ -289,7 +289,7 @@ test_not_expand_OR(void)
        "[9,1316358000.0,\"Learning Ruby and groonga...\"]]]",
     send_command("select Diaries --sortby _id "
                  "--match_columns content --query 'Ruby OR MySQL' "
-                 "--query_expand Synonyms.words"));
+                 "--query_expansion Synonyms.words"));
 }
 
 void
@@ -302,7 +302,7 @@ test_not_expand_OR_at_the_end(void)
         "[\"content\",\"Text\"]]]]",
     send_command("select Diaries --sortby _id "
                  "--match_columns content --query OR "
-                 "--query_expand Synonyms.words"));
+                 "--query_expansion Synonyms.words"));
 }
 
 void
@@ -315,7 +315,7 @@ test_not_expand_OR_with_leading_space(void)
         "[\"content\",\"Text\"]]]]",
     send_command("select Diaries --sortby _id "
                  "--match_columns content --query '\"OR \"' "
-                 "--query_expand Synonyms.words"));
+                 "--query_expansion Synonyms.words"));
 }
 
 void
@@ -329,7 +329,7 @@ test_not_expand_and(void)
         "[9,1316358000.0,\"Learning Ruby and groonga...\"]]]",
     send_command("select Diaries --sortby _id "
                  "--match_columns content --query 'Ruby + groonga' "
-                 "--query_expand Synonyms.words"));
+                 "--query_expansion Synonyms.words"));
 }
 
 void
@@ -343,7 +343,7 @@ test_not_expand_but(void)
         "[9,1316358000.0,\"Learning Ruby and groonga...\"]]]",
     send_command("select Diaries --sortby _id "
                  "--match_columns content --query 'Ruby - Start' "
-                 "--query_expand Synonyms.words"));
+                 "--query_expansion Synonyms.words"));
 }
 
 void
@@ -358,7 +358,7 @@ test_not_expand_paren(void)
         "[9,1316358000.0,\"Learning Ruby and groonga...\"]]]",
     send_command("select Diaries --sortby _id "
                  "--match_columns content --query '(Ruby)' "
-                 "--query_expand Synonyms.words"));
+                 "--query_expansion Synonyms.words"));
 }
 
 void
@@ -372,7 +372,7 @@ test_no_expand(void)
        "[4,1315926000.0,\"Start Ruby!\"],"
        "[9,1316358000.0,\"Learning Ruby and groonga...\"]]]",
     send_command("select Diaries --match_columns content --query Ruby "
-                 "--query_expand Synonyms.words"));
+                 "--query_expansion Synonyms.words"));
 }
 
 void
@@ -386,7 +386,7 @@ test_no_expand_word_with_space(void)
        "[9,1316358000.0,\"Learning Ruby and groonga...\"]]]",
     send_command("select Diaries "
                  "--match_columns content --query '\"Ruby and groonga\"' "
-                 "--query_expand Synonyms.words"));
+                 "--query_expansion Synonyms.words"));
 }
 
 void
@@ -397,7 +397,7 @@ test_nonexistent_expansion_column(void)
     GRN_INVALID_ARGUMENT,
     "nonexistent query expansion column: <Synonyms.nonexistent>",
     "select Diaries --match_columns content --query groonga "
-    "--query_expand Synonyms.nonexistent");
+    "--query_expansion Synonyms.nonexistent");
 }
 
 void
@@ -424,6 +424,5 @@ test_key_normalize(void)
     send_command("select Diaries "
                  "--sortby _id "
                  "--match_columns content --query ruby "
-                 "--query_expand NormalizedSynonyms.words"));
+                 "--query_expansion NormalizedSynonyms.words"));
 }
-
