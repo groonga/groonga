@@ -17,42 +17,43 @@ Senna is an component for an application that supports full text search. Groonga
 
 Groonga also can be used as a C library like Senna.
 
-高速なデータ更新
+Fast data update
 ----------------
 
-groongaの前身であるSennaは、ストレージを持たない全文検索ライブラリでした。そのため、MySQLのMyISAMストレージエンジンと組み合わせて用いるTritonnや、PostgreSQLと組み合わせて用いるLudiaを通じて利用するのが一般的でした。しかし、これらの形態では、全文検索インデックス更新における参照lockが不要というSennaの性能特性を生かすことができませんでした。
+Senna that is predecessor of groonga is a full text search engine without storage. Senna was commonly used with MySQL or PostgreSQL. Tritonn is a custom MyISAM storage engine that uses Senna as full text search engine. Ludia is a extension module for a PostgreSQL to use Senna as full text search engine. But those approaches can't fully utilize the performance characteristics of Senna. Senna can update index without read lock.
 
-たとえば、MyISAMではレコードが更新される際には、多くの場合テーブルロックが必要となります。このような場合には、いかに全文検索インデックスの更新が速くとも、MyISAMでのデータ更新がボトルネックとなってしまいます。
+For example, MyISAM acquires table lock while updating records in many cases. In those cases, data update by MyISAM is a bottleneck however Senna updates an index full text search fast.
 
-より即時性の高い検索サービスを実現するために、groongaでは参照lockが不要なストレージを実装しました。
+Groonga implements a storage that doesn't acquires read lock to realize search service that has immediacy.
 
-複数プロセス・複数スレッドで共有できるストレージ
-------------------------------------------------
 
-groongaのストレージファイルは、複数プロセスや複数スレッドで共有することができます。明示的なロックなどは必要ありません。
+Storage that can be shared with multi-processes and multi-threads
+-----------------------------------------------------------------
 
-Tritonnの次期バージョンは、MySQLのプラガブルストレージエンジンとして実装予定です。Tritonnで開いているgroongaストレージファイルも共有可能です。たとえば、MySQLプロトコルでデータの更新を行い、HTTPでデータの参照を行うことができます。
+Groonga's storage file can be shared with multi-processes and multi-threads. It doesn't require explicit lock.
 
-ドリルダウンなどの集計系クエリを高速に実現
-------------------------------------------
+`Groonga storage engine <http://mroonga.github.com/>`_ that is the successor to the Tritonn is implemented as a MySQL pruggable storage engine. Groonga storage files that are opened by groonga storage engine can also be shared with groonga server. For example, you can update your data via SQL and search your data via HTTP.
 
-groongaのストレージは、カラムごとにデータを保存するカラム指向データベースを採用しています。カラム指向データベースはOLAPなどの集計クエリを高速に実現するのに向いています。
+Fast aggregate query processing such as drilldown
+-------------------------------------------------
 
-全文検索結果のうち、特定のカラム値ごとにグループ分けをし、それぞれのグループのレコード数を数えるような処理をドリルダウンといいます。groongaはカラム指向データベースを生かして、このような処理を高速に実行します。
+Groonga's storage uses column oriented database model that stores data for each column. Column oriented database is suitable for fast aggregate query processing such as OLAP.
 
-Sennaの転置インデックス実装をさらに改良
----------------------------------------
+"Drilldown" is a processing that groups full text search result by each specified column values and counts number of records in each group. Groonga does the processing fast because groonga uses column oriented database.
 
-groongaの転置インデックスは、Sennaにおける転置インデックスの実装を改良し、より高速かつ汎用的なものとなりました。
+Improved Senna's inverted index implementation
+----------------------------------------------
 
-転置インデックスを生かすことにより、SQLでも実現が難しい複雑なクエリを高速に実行することができます。いわゆるタグ検索やドリルダウンにおいて、転置インデックスを利用した高速な処理を行うことができます。
+Groonga's inverted index is the improved Senna's inverted index. It is more faster and more versatile.
 
-位置情報（緯度・経度）検索
+Groonga can also process some complex queries fast by utilizing inverted index. Those queries are difficult to process with SQL and RDB. For example, tag search and drilldown can be processed fast by utilizing inverted index.
+
+Geolocation (latitude and longitude) search
+-------------------------------------------
+
+Groonga supports geolocation search. Supported geodetic systems are Japan geodetic system and world geodetic system (WGS 84). Supported geolocation refinement region types are circle and rectangle. Groonga also supports distance between two coordinates.
+
+Auto query cache mechanism
 --------------------------
 
-日本測地系のみならず、世界測地系にも対応した位置情報での絞込が可能です。位置情報の範囲は、円や矩形を指定することができます。また、任意の２点間の距離も計算可能です。
-
-自動クエリキャッシュ機構
-------------------------
-
-参照系のクエリについて、自動的にクエリキャッシュを行います。
+Groonga caches reference queries automatically.
