@@ -1,5 +1,24 @@
 absolute_source_files = \
 	$(top_srcdir)/doc/source/__init__.py \
+	$(top_srcdir)/doc/source/_static/images/geo-encode-leading-2bit.png \
+	$(top_srcdir)/doc/source/_static/images/geo-encode-leading-2bit.svg \
+	$(top_srcdir)/doc/source/_static/images/geo-encode-leading-4bit.png \
+	$(top_srcdir)/doc/source/_static/images/geo-encode-leading-4bit.svg \
+	$(top_srcdir)/doc/source/_static/images/geo-in-rectangle.png \
+	$(top_srcdir)/doc/source/_static/images/geo-points-distance.png \
+	$(top_srcdir)/doc/source/_static/images/geo-points-distance.svg \
+	$(top_srcdir)/doc/source/_static/images/geo-points-in-circle.png \
+	$(top_srcdir)/doc/source/_static/images/geo-points-in-circle.svg \
+	$(top_srcdir)/doc/source/_static/images/geo-points-in-rectangle.png \
+	$(top_srcdir)/doc/source/_static/images/geo-points-in-rectangle.svg \
+	$(top_srcdir)/doc/source/_static/images/geo-points-sort.png \
+	$(top_srcdir)/doc/source/_static/images/geo-points-sort.svg \
+	$(top_srcdir)/doc/source/_static/images/geo-points.png \
+	$(top_srcdir)/doc/source/_static/images/geo-points.svg \
+	$(top_srcdir)/doc/source/_static/images/geo-search-in-circle.png \
+	$(top_srcdir)/doc/source/_static/images/geo-search-in-circle.svg \
+	$(top_srcdir)/doc/source/_static/images/geo-search-in-rectangle.png \
+	$(top_srcdir)/doc/source/_static/images/geo-search-in-rectangle.svg \
 	$(top_srcdir)/doc/source/characteristic.txt \
 	$(top_srcdir)/doc/source/command_version.txt \
 	$(top_srcdir)/doc/source/commands.txt \
@@ -21,6 +40,13 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/commands/select.txt \
 	$(top_srcdir)/doc/source/commands/shutdown.txt \
 	$(top_srcdir)/doc/source/commands/status.txt \
+	$(top_srcdir)/doc/source/commands/suggest-completion.log \
+	$(top_srcdir)/doc/source/commands/suggest-correction.log \
+	$(top_srcdir)/doc/source/commands/suggest-learn-completion.log \
+	$(top_srcdir)/doc/source/commands/suggest-learn-correction.log \
+	$(top_srcdir)/doc/source/commands/suggest-learn-suggestion.log \
+	$(top_srcdir)/doc/source/commands/suggest-mixed.log \
+	$(top_srcdir)/doc/source/commands/suggest-suggestion.log \
 	$(top_srcdir)/doc/source/commands/suggest.txt \
 	$(top_srcdir)/doc/source/commands/table_create.txt \
 	$(top_srcdir)/doc/source/commands/table_list.txt \
@@ -103,6 +129,9 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/tutorial10-7.log \
 	$(top_srcdir)/doc/source/example/tutorial10-8.log \
 	$(top_srcdir)/doc/source/example/tutorial10-9.log \
+	$(top_srcdir)/doc/source/example/tutorial11-1.log \
+	$(top_srcdir)/doc/source/example/tutorial11-2.log \
+	$(top_srcdir)/doc/source/example/tutorial11-3.log \
 	$(top_srcdir)/doc/source/executables.txt \
 	$(top_srcdir)/doc/source/executables/grnslap.txt \
 	$(top_srcdir)/doc/source/executables/grntest.txt \
@@ -150,6 +179,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/tutorial/tutorial08.txt \
 	$(top_srcdir)/doc/source/tutorial/tutorial09.txt \
 	$(top_srcdir)/doc/source/tutorial/tutorial10.txt \
+	$(top_srcdir)/doc/source/tutorial/tutorial11.txt \
 	$(top_srcdir)/doc/source/type.txt \
 	$(top_srcdir)/doc/source/update_execution_example.py \
 	$(NULL)
@@ -170,6 +200,25 @@ absolute_theme_files = \
 
 source_files_relative_from_doc_dir = \
 	source/__init__.py \
+	source/_static/images/geo-encode-leading-2bit.png \
+	source/_static/images/geo-encode-leading-2bit.svg \
+	source/_static/images/geo-encode-leading-4bit.png \
+	source/_static/images/geo-encode-leading-4bit.svg \
+	source/_static/images/geo-in-rectangle.png \
+	source/_static/images/geo-points-distance.png \
+	source/_static/images/geo-points-distance.svg \
+	source/_static/images/geo-points-in-circle.png \
+	source/_static/images/geo-points-in-circle.svg \
+	source/_static/images/geo-points-in-rectangle.png \
+	source/_static/images/geo-points-in-rectangle.svg \
+	source/_static/images/geo-points-sort.png \
+	source/_static/images/geo-points-sort.svg \
+	source/_static/images/geo-points.png \
+	source/_static/images/geo-points.svg \
+	source/_static/images/geo-search-in-circle.png \
+	source/_static/images/geo-search-in-circle.svg \
+	source/_static/images/geo-search-in-rectangle.png \
+	source/_static/images/geo-search-in-rectangle.svg \
 	source/characteristic.txt \
 	source/command_version.txt \
 	source/commands.txt \
@@ -191,6 +240,13 @@ source_files_relative_from_doc_dir = \
 	source/commands/select.txt \
 	source/commands/shutdown.txt \
 	source/commands/status.txt \
+	source/commands/suggest-completion.log \
+	source/commands/suggest-correction.log \
+	source/commands/suggest-learn-completion.log \
+	source/commands/suggest-learn-correction.log \
+	source/commands/suggest-learn-suggestion.log \
+	source/commands/suggest-mixed.log \
+	source/commands/suggest-suggestion.log \
 	source/commands/suggest.txt \
 	source/commands/table_create.txt \
 	source/commands/table_list.txt \
@@ -273,6 +329,9 @@ source_files_relative_from_doc_dir = \
 	source/example/tutorial10-7.log \
 	source/example/tutorial10-8.log \
 	source/example/tutorial10-9.log \
+	source/example/tutorial11-1.log \
+	source/example/tutorial11-2.log \
+	source/example/tutorial11-3.log \
 	source/executables.txt \
 	source/executables/grnslap.txt \
 	source/executables/grntest.txt \
@@ -320,6 +379,7 @@ source_files_relative_from_doc_dir = \
 	source/tutorial/tutorial08.txt \
 	source/tutorial/tutorial09.txt \
 	source/tutorial/tutorial10.txt \
+	source/tutorial/tutorial11.txt \
 	source/type.txt \
 	source/update_execution_example.py \
 	$(NULL)
@@ -518,6 +578,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/tutorial/tutorial08.txt \
 	html/_sources/tutorial/tutorial09.txt \
 	html/_sources/tutorial/tutorial10.txt \
+	html/_sources/tutorial/tutorial11.txt \
 	html/_sources/type.txt \
 	html/_static/ajax-loader.gif \
 	html/_static/basic.css \
@@ -634,6 +695,7 @@ html_files_relative_from_locale_dir = \
 	html/tutorial/tutorial08.html \
 	html/tutorial/tutorial09.html \
 	html/tutorial/tutorial10.html \
+	html/tutorial/tutorial11.html \
 	html/type.html \
 	$(NULL)
 
