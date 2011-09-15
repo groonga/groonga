@@ -79,15 +79,8 @@ build()
 {
     architecture=$1
     distribution=$2
+    distribution_version=$3
 
-    case $distribution in
-	fedora)
-	    distribution_version=15
-	    ;;
-	centos)
-	    distribution_version=5
-	    ;;
-    esac
     target=${distribution}-${distribution_version}-${architecture}
     base_dir=${CHROOT_BASE}/${target}
     if [ ! -d $base_dir ]; then
@@ -134,11 +127,21 @@ build()
 
 for architecture in $ARCHITECTURES; do
     for distribution in $DISTRIBUTIONS; do
-	if test "$parallel" = "yes"; then
-	    build $architecture $distribution &
-	else
-	    build $architecture $distribution
-	fi;
+	case $distribution in
+	    fedora)
+		distribution_versions="15"
+		;;
+	    centos)
+		distribution_versions="5 6"
+		;;
+	esac
+	for distribution_version in $distribution_versions; do
+	    if test "$parallel" = "yes"; then
+		build $architecture $distribution $distribution_version &
+	    else
+		build $architecture $distribution $distribution_version
+	    fi;
+	done;
     done;
 done
 
