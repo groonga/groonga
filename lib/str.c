@@ -2271,7 +2271,7 @@ grn_text_unesc_tok(grn_ctx *ctx, grn_obj *buf, const char *s, const char *e, cha
     }
     switch (stat) {
     case GRN_TOK_VOID :
-      if (grn_isspace(p, ctx->encoding)) { continue; }
+      if (*p == ' ') { continue; }
       switch (*p) {
       case '"' :
         stat = GRN_TOK_STRING;
@@ -2295,7 +2295,7 @@ grn_text_unesc_tok(grn_ctx *ctx, grn_obj *buf, const char *s, const char *e, cha
       }
       break;
     case GRN_TOK_SYMBOL :
-      if (grn_isspace(p, ctx->encoding)) { goto exit; }
+      if (*p == ' ') { goto exit; }
       switch (*p) {
       case '\'' :
       case '"' :

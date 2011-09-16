@@ -1,5 +1,7 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
-/* Copyright(C) 2009-2010 Brazil
+/*
+  Copyright(C) 2009-2010 Brazil
+  Copyright(C) 2011 Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -45,6 +47,8 @@ void data_less_than_or_equal(void);
 void test_less_than_or_equal(gconstpointer data);
 void data_equal_numeric(void);
 void test_equal_numeric(gconstpointer data);
+void data_not_tokenize_by_full_width_space(void);
+void test_not_tokenize_by_full_width_space(gconstpointer data);
 
 static gchar *tmp_directory;
 
@@ -660,4 +664,53 @@ test_equal_numeric(gconstpointer data)
                  "--sortby -score "
                  "--output_columns _key,score "
                  "--filter 'score == 4'"));
+}
+
+void
+data_not_tokenize_by_full_width_space(void)
+{
+#define ADD_DATA(label, error_message, command)                 \
+  gcut_add_datum(label,                                         \
+                 "error-message", G_TYPE_STRING, error_message, \
+                 "command", G_TYPE_STRING, command,             \
+                 NULL)
+
+  ADD_DATA("separator",
+           "invalid table name: <Sites　--output_columns>",
+           "select Sites"
+           "　"
+           "--output_columns _key");
+
+  ADD_DATA("prepend",
+           "invalid table name: <　Sites>",
+           "select "
+           " 　Sites"
+           " "
+           "--output_columns _key");
+
+#undef ADD_DATA
+}
+
+void
+test_not_tokenize_by_full_width_space(gconstpointer data)
+{
+  const gchar *error_message;
+  const gchar *command;
+
+  error_message = gcut_data_get_string(data, "error-message");
+  command = gcut_data_get_string(data, "command");
+
+  assert_send_command("table_create Sites TABLE_HASH_KEY ShortText");
+  cut_assert_equal_string(
+    "3",
+    send_command("load --table Sites --columns '_key' \n"
+                 "[\n"
+                 " [\"groonga.org\"],\n"
+                 " [\"ruby-lang.org\"],\n"
+                 " [\"qwik.jp/senna/\"]\n"
+                 "]"));
+
+  assert_send_command_error(GRN_INVALID_ARGUMENT,
+                            error_message,
+                            command);
 }
