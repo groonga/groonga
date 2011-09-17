@@ -621,5 +621,5 @@ test_query_expansion(void)
       "--limit 3 "
       "--match_columns name "
       "--query たいやき "
-      "--query_expand Synonyms.words"));
+      "--query_expansion Synonyms.words"));
 }
