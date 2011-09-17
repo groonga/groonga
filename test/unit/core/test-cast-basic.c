@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2009-2010  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2009-2011  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -103,8 +103,10 @@ void test_uint64_to_uint64(void);
 void test_uint64_to_float(void);
 void test_uint64_to_time(void);
 
-void test_geo_point_to_geo_point_same(void);
-void test_geo_point_to_geo_point_different(void);
+void test_tokyo_geo_point_to_tokyo_geo_point(void);
+void test_tokyo_geo_point_to_wgs84_geo_point(void);
+void test_wgs84_geo_point_to_wgs84_geo_point(void);
+void test_wgs84_geo_point_to_tokyo_geo_point(void);
 
 static grn_logger_info *logger;
 static grn_ctx context;
@@ -928,27 +930,89 @@ test_uint64_to_text(void)
 }
 
 void
-test_geo_point_to_geo_point_same(void)
+test_tokyo_geo_point_to_tokyo_geo_point(void)
 {
   gint takane_latitude, takane_longitude;
+  gint takane_latitude_in_tokyo_geodetic_system = 130183139;
+  gint takane_longitude_in_tokyo_geodetic_system = 503813760;
 
-  grn_obj_reinit(&context, &src, GRN_DB_WGS84_GEO_POINT, 0);
-  GRN_GEO_POINT_SET(&context, &src, 130194581, 503802073);
+  grn_obj_reinit(&context, &src, GRN_DB_TOKYO_GEO_POINT, 0);
+  GRN_GEO_POINT_SET(&context, &src,
+                    takane_latitude_in_tokyo_geodetic_system,
+                    takane_longitude_in_tokyo_geodetic_system);
+
+  grn_obj_reinit(&context, &dest, GRN_DB_TOKYO_GEO_POINT, 0);
+  grn_test_assert(grn_obj_cast(&context, &src, &dest, GRN_FALSE));
+  GRN_GEO_POINT_VALUE(&dest, takane_latitude, takane_longitude);
+  cut_assert_equal_int(takane_latitude_in_tokyo_geodetic_system,
+                       takane_latitude);
+  cut_assert_equal_int(takane_longitude_in_tokyo_geodetic_system,
+                       takane_longitude);
+}
+
+void
+test_tokyo_geo_point_to_wgs84_geo_point(void)
+{
+  gint takane_latitude, takane_longitude;
+  gint takane_latitude_in_tokyo_geodetic_system = 130183139;
+  gint takane_longitude_in_tokyo_geodetic_system = 503813760;
+  gint takane_latitude_in_wgs84 = 130194580;
+  gint takane_longitude_in_wgs84 = 503802072;
+
+  grn_obj_reinit(&context, &src, GRN_DB_TOKYO_GEO_POINT, 0);
+  GRN_GEO_POINT_SET(&context, &src,
+                    takane_latitude_in_tokyo_geodetic_system,
+                    takane_longitude_in_tokyo_geodetic_system);
 
   grn_obj_reinit(&context, &dest, GRN_DB_WGS84_GEO_POINT, 0);
   grn_test_assert(grn_obj_cast(&context, &src, &dest, GRN_FALSE));
   GRN_GEO_POINT_VALUE(&dest, takane_latitude, takane_longitude);
-  cut_assert_equal_int(130194581, takane_latitude);
-  cut_assert_equal_int(503802073, takane_longitude);
+  cut_assert_equal_int(takane_latitude_in_wgs84,
+                       takane_latitude);
+  cut_assert_equal_int(takane_longitude_in_wgs84,
+                       takane_longitude);
 }
 
 void
-test_geo_point_to_geo_point_different(void)
+test_wgs84_geo_point_to_wgs84_geo_point(void)
 {
+  gint takane_latitude, takane_longitude;
+  gint takane_latitude_in_wgs84 = 130194581;
+  gint takane_longitude_in_wgs84 = 503802073;
+
   grn_obj_reinit(&context, &src, GRN_DB_WGS84_GEO_POINT, 0);
-  GRN_GEO_POINT_SET(&context, &src, 130194581, 503802073);
+  GRN_GEO_POINT_SET(&context, &src,
+                    takane_latitude_in_wgs84,
+                    takane_longitude_in_wgs84);
+
+  grn_obj_reinit(&context, &dest, GRN_DB_WGS84_GEO_POINT, 0);
+  grn_test_assert(grn_obj_cast(&context, &src, &dest, GRN_FALSE));
+  GRN_GEO_POINT_VALUE(&dest, takane_latitude, takane_longitude);
+  cut_assert_equal_int(takane_latitude_in_wgs84,
+                       takane_latitude);
+  cut_assert_equal_int(takane_longitude_in_wgs84,
+                       takane_longitude);
+}
+
+void
+test_wgs84_geo_point_to_tokyo_geo_point(void)
+{
+  gint takane_latitude, takane_longitude;
+  gint takane_latitude_in_wgs84 = 130194581;
+  gint takane_longitude_in_wgs84 = 503802073;
+  gint takane_latitude_in_tokyo_geodetic_system = 130183139;
+  gint takane_longitude_in_tokyo_geodetic_system = 503813760;
+
+  grn_obj_reinit(&context, &src, GRN_DB_WGS84_GEO_POINT, 0);
+  GRN_GEO_POINT_SET(&context, &src,
+                    takane_latitude_in_wgs84,
+                    takane_longitude_in_wgs84);
 
   grn_obj_reinit(&context, &dest, GRN_DB_TOKYO_GEO_POINT, 0);
-  grn_test_assert_equal_rc(GRN_FUNCTION_NOT_IMPLEMENTED,
-                           grn_obj_cast(&context, &src, &dest, GRN_FALSE));
+  grn_test_assert(grn_obj_cast(&context, &src, &dest, GRN_FALSE));
+  GRN_GEO_POINT_VALUE(&dest, takane_latitude, takane_longitude);
+  cut_assert_equal_int(takane_latitude_in_tokyo_geodetic_system,
+                       takane_latitude);
+  cut_assert_equal_int(takane_longitude_in_tokyo_geodetic_system,
+                       takane_longitude);
 }
