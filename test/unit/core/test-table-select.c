@@ -564,6 +564,7 @@ test_match_without_index(void)
 {
   grn_obj *v;
 
+  create_properties_table();
   create_documents_table();
   insert_data();
 
