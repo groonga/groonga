@@ -303,6 +303,9 @@ test_near_geo_point(gpointer data)
   GRN_OBJ_FIN(context, &base_string);
 
   offset = gcut_data_get_int(data, "offset");
+  if (offset > 0) {
+    cut_omit("geo sort doesn't support offset yet.");
+  }
   limit = gcut_data_get_int(data, "limit");
   keys[0].key = column;
   keys[0].flags = GRN_TABLE_SORT_GEO;

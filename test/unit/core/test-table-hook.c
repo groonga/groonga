@@ -160,6 +160,7 @@ test_old_value_zero(void)
   grn_id id;
   GList *expected_keys, *actual_keys = NULL;
 
+  cut_omit("null value support is required.");
   create_int32_table(" [0],\n"
                      " [1],\n"
                      " [2],\n"
