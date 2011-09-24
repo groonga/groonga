@@ -26,10 +26,10 @@ void test_in_rectangle_long_latitude(void);
 void test_in_rectangle_long_longitude(void);
 void test_in_rectangle_same_locations(void);
 void test_in_rectangle_over_border(void);
-void test_in_rectangle_over_latitude1(void);
-void test_in_rectangle_over_longitude1(void);
-void test_in_rectangle_over_latitude2(void);
-void test_in_rectangle_over_longitude2(void);
+void test_in_rectangle_over_top_left_latitude(void);
+void test_in_rectangle_over_top_left_longitude(void);
+void test_in_rectangle_over_bottom_right_latitude(void);
+void test_in_rectangle_over_bottom_right_longitude(void);
 void test_sort(void);
 void test_filter_by_tag_and_sort_by_distance_from_tokyo_tocho(void);
 void test_in_circle_and_tag(void);
@@ -230,7 +230,7 @@ test_in_rectangle_over_border(void)
   grn_test_assert_send_command_error(
     context,
     GRN_FUNCTION_NOT_IMPLEMENTED,
-    "geo_in_rectangle() with negative coordinate is not implemented.",
+    "geo_in_rectangle(): negative coordinate is not implemented.",
     "select Shops "
     "--sortby '+name' "
     "--output_columns 'name, location' "
@@ -239,14 +239,14 @@ test_in_rectangle_over_border(void)
 }
 
 void
-test_in_rectangle_over_latitude1(void)
+test_in_rectangle_over_top_left_latitude(void)
 {
   grn_test_assert_send_command_error(
     context,
     GRN_INVALID_ARGUMENT,
-    "geo_in_rectangle(): geo point1's latitude is too big: "
+    "geo_in_rectangle(): top left point's latitude is too big: "
     "<324000000>(max:324000000): "
-    "(324000000,503061840) (128254104,503177040)",
+    "(324000000,503061840) (128254104,50317704",
     "select Shops "
     "--sortby '+name' "
     "--output_columns 'name, location' "
@@ -255,14 +255,14 @@ test_in_rectangle_over_latitude1(void)
 }
 
 void
-test_in_rectangle_over_longitude1(void)
+test_in_rectangle_over_top_left_longitude(void)
 {
   grn_test_assert_send_command_error(
     context,
     GRN_INVALID_ARGUMENT,
-    "geo_in_rectangle(): geo point1's longitude is too big: "
+    "geo_in_rectangle(): top left point's longitude is too big: "
     "<648000000>(max:648000000): "
-    "(128640960,648000000) (128254104,503177040)",
+    "(128640960,648000000) (128254104,5031770",
     "select Shops "
     "--sortby '+name' "
     "--output_columns 'name, location' "
@@ -271,14 +271,14 @@ test_in_rectangle_over_longitude1(void)
 }
 
 void
-test_in_rectangle_over_latitude2(void)
+test_in_rectangle_over_bottom_right_latitude(void)
 {
   grn_test_assert_send_command_error(
     context,
     GRN_INVALID_ARGUMENT,
-    "geo_in_rectangle(): geo point2's latitude is too big: "
+    "geo_in_rectangle(): bottom right point's latitude is too big: "
     "<324000000>(max:324000000): "
-    "(128640960,503061840) (324000000,503177040)",
+    "(128640960,503061840) (324000000,5031",
     "select Shops "
     "--sortby '+name' "
     "--output_columns 'name, location' "
@@ -287,14 +287,14 @@ test_in_rectangle_over_latitude2(void)
 }
 
 void
-test_in_rectangle_over_longitude2(void)
+test_in_rectangle_over_bottom_right_longitude(void)
 {
   grn_test_assert_send_command_error(
     context,
     GRN_INVALID_ARGUMENT,
-    "geo_in_rectangle(): geo point2's longitude is too big: "
+    "geo_in_rectangle(): bottom right point's longitude is too big: "
     "<648000000>(max:648000000): "
-    "(128640960,503061840) (128254104,648000000)",
+    "(128640960,503061840) (128254104,648",
     "select Shops "
     "--sortby '+name' "
     "--output_columns 'name, location' "

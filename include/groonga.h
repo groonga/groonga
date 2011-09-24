@@ -1715,6 +1715,65 @@ GRN_API grn_obj *grn_obj_open(grn_ctx *ctx, unsigned char type, grn_obj_flags fl
 GRN_API int grn_column_index(grn_ctx *ctx, grn_obj *column, grn_operator op,
                              grn_obj **indexbuf, int buf_size, int *section);
 
+/* geo */
+
+typedef struct {
+  int latitude;
+  int longitude;
+} grn_geo_point;
+
+
+/**
+ * grn_geo_select_in_circle:
+ * @index: the index column for TokyoGeoPoint or WGS84GeoPpoint type.
+ * @center_point: the center point of the target circle. (ShortText, Text,
+ * LongText, TokyoGeoPoint or WGS84GeoPoint)
+ * @distance: the radius of the target circle (Int32,
+ * UInt32, Int64, UInt64 or Float) or the point
+ * on the circumference of the target circle. (ShortText, Text, LongText,
+ * TokyoGeoPoint or WGS84GeoPoint)
+ * @res: the table to store found record IDs. It must be
+ * GRN_TABLE_HASH_KEY type table.
+ * @op: the operator for matched records.
+ *
+ * It selects records that are in the circle specified by
+ * @center_point and @distance from @center_point. Records
+ * are search by @index. Found records are added to @res
+ * table with @op operation.
+ **/
+GRN_API grn_rc grn_geo_select_in_circle(grn_ctx *ctx,
+                                        grn_obj *index,
+                                        grn_obj *center_point,
+                                        grn_obj *distance,
+                                        grn_obj *res,
+                                        grn_operator op);
+
+/**
+ * grn_geo_select_in_rectangle:
+ * @index: the index column for TokyoGeoPoint or WGS84GeoPpoint type.
+ * @top_left_point: the top left point of the target
+ * rectangle. (ShortText, Text, LongText, TokyoGeoPoint or
+ * WGS84GeoPoint)
+ * @bottom_right_point: the bottom right point of the target
+ * rectangle. (ShortText, Text, LongText, TokyoGeoPoint or
+ * WGS84GeoPoint)
+ * @res: the table to store found record IDs. It must be
+ * GRN_TABLE_HASH_KEY type table.
+ * @op: the operator for matched records.
+ *
+ * It selects records that are in the rectangle specified by
+ * @top_left_point and @bottom_right_point. Records are
+ * search by @index. Found records are added to @res table
+ * with @op operation.
+ **/
+GRN_API grn_rc grn_geo_select_in_rectangle(grn_ctx *ctx,
+                                           grn_obj *index,
+                                           grn_obj *top_left_point,
+                                           grn_obj *bottom_right_point,
+                                           grn_obj *res,
+                                           grn_operator op);
+
+
 /* query & snippet */
 
 #ifndef GRN_QUERY_AND
@@ -2071,11 +2130,6 @@ GRN_API grn_rc grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj,
          (((long)((degree) * GRN_GEO_DEGREE_ACCURACY) % GRN_GEO_DEGREE_ACCURACY) * 60 % GRN_GEO_DEGREE_ACCURACY * 60 / 10000)))
 #define GRN_GEO_MSEC2DEGREE(msec)\
   ((((int)(msec)) / 3600.0) * 0.001)
-
-typedef struct {
-  int latitude;
-  int longitude;
-} grn_geo_point;
 
 #define GRN_GEO_POINT_SET(ctx,obj,_latitude,_longitude) do {\
   grn_geo_point _val;\
