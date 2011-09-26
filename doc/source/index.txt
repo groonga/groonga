@@ -19,6 +19,7 @@ groonga ドキュメント
    community
    tutorial
    suggest
+   geolocation_search
    reference
    spec
    limitations
