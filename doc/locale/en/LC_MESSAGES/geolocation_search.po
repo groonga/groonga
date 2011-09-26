@@ -1,0 +1,129 @@
+# English translations for 1.2.5 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.5\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-09-26 23:29\n"
+"PO-Revision-Date: 2011-09-26 23:26+0900\n"
+"Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
+"Language-Team: English\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+# 2c4e3ce37412415fa43ec10e85d1aa0c
+#: ../../../source/geolocation_search.txt:6
+msgid "Geolocation Search"
+msgstr "Geolocation Search"
+
+# c1e4da5d9f7c49c294701d2d655f873d
+#: ../../../source/geolocation_search.txt:8
+msgid ""
+"Groonga supports geolocation search. It uses index for search. It means that "
+"you can search by geolocation fast like fulltext search."
+msgstr ""
+"Groonga supports geolocation search. It uses index for search. It means that "
+"you can search by geolocation fast like fulltext search."
+
+# 818d6212e8434db4a880a4c1b1678edb
+#: ../../../source/geolocation_search.txt:13
+msgid "Supported features"
+msgstr "Supported features"
+
+# 5464847965594bdbb11e57853573ed10
+#: ../../../source/geolocation_search.txt:15
+msgid ""
+"Groonga supports only point as data type. Line, surface and so on aren't "
+"supported yet. Here is a feature list:"
+msgstr ""
+"Groonga supports only point as data type. Line, surface and so on aren't "
+"supported yet. Here is a feature list:"
+
+# e88ec9214ed343b29803e5c1169ff093
+#: ../../../source/geolocation_search.txt:18
+msgid "Groonga can store a point to a column."
+msgstr "Groonga can store a point to a column."
+
+# d5e095010d5f47eeb7392b641a4d5429
+#: ../../../source/geolocation_search.txt:19
+msgid ""
+"Groonga can search records that have a point in the specified rectangle."
+msgstr ""
+"Groonga can search records that have a point in the specified rectangle."
+
+# c96ef54fb9ec46aa81469389d5f497d8
+#: ../../../source/geolocation_search.txt:20
+msgid "Groonga can calculate distance between two points."
+msgstr "Groonga can calculate distance between two points."
+
+# 1dbd3cd2f10643f3bd4c145855d09e3f
+#: ../../../source/geolocation_search.txt:21
+msgid ""
+"Groonga can sort records by distance from the specified point in ascending "
+"order."
+msgstr ""
+"Groonga can sort records by distance from the specified point in ascending "
+"order."
+
+# e9e6ad9be3c442048d87b2cd2b769758
+#: ../../../source/geolocation_search.txt:24
+msgid "Here are use cases for groonga's geolocation search:"
+msgstr "Here are use cases for groonga's geolocation search:"
+
+# c114ed6f8d3442639678c95055860993
+#: ../../../source/geolocation_search.txt:26
+msgid "You list McDonald's around a station."
+msgstr "You list McDonald's around a station."
+
+# 6141c8966e3c475d85257060cc77faf1
+#: ../../../source/geolocation_search.txt:27
+msgid ""
+"You list KFS around the current location sort by distance from the current "
+"location in ascending order with distance."
+msgstr ""
+"You list KFS around the current location sort by distance from the current "
+"location in ascending order with distance."
+
+# 82beeb87cf8f418f82c287b21feb05c5
+#: ../../../source/geolocation_search.txt:30
+msgid "Here are not use cases:"
+msgstr "Here are not use cases:"
+
+# bfe79473f7de4e80a628018a642bf2cc
+#: ../../../source/geolocation_search.txt:32
+msgid ""
+"You search McDonald's in a city. (Groonga doesn't support geolocation search "
+"by a shape except a rectangle and a circle.)"
+msgstr ""
+"You search McDonald's in a city. (Groonga doesn't support geolocation search "
+"by a shape except a rectangle and a circle.)"
+
+# 3ff77c4d040a4f9da245a12828d42848
+#: ../../../source/geolocation_search.txt:35
+msgid ""
+"You store a region instead of a point as a lake record. (A column can't has "
+"geolocation data except a point.)"
+msgstr ""
+"You store a region instead of a point as a lake record. (A column can't has "
+"geolocation data except a point.)"
+
+# a204aa5b22e343dbb4a364019a4c1f07
+#: ../../../source/geolocation_search.txt:39
+msgid "The following figures show about groonga's geolocation search features."
+msgstr ""
+"The following figures show about groonga's geolocation search features."
+
+# 55b104a0830e44dbadad0531049848aa
+#: ../../../source/geolocation_search.txt:42
+msgid ""
+"Here is a figure that only has records. A black point describes a record. "
+"The following figures shows how records are treated."
+msgstr ""
+"Here is a figure that only has records. A black point describes a record. "
+"The following figures shows how records are treated."
