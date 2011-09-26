@@ -1,24 +1,5 @@
 absolute_source_files = \
 	$(top_srcdir)/doc/source/__init__.py \
-	$(top_srcdir)/doc/source/_static/images/geo-encode-leading-2bit.png \
-	$(top_srcdir)/doc/source/_static/images/geo-encode-leading-2bit.svg \
-	$(top_srcdir)/doc/source/_static/images/geo-encode-leading-4bit.png \
-	$(top_srcdir)/doc/source/_static/images/geo-encode-leading-4bit.svg \
-	$(top_srcdir)/doc/source/_static/images/geo-in-rectangle.png \
-	$(top_srcdir)/doc/source/_static/images/geo-points-distance.png \
-	$(top_srcdir)/doc/source/_static/images/geo-points-distance.svg \
-	$(top_srcdir)/doc/source/_static/images/geo-points-in-circle.png \
-	$(top_srcdir)/doc/source/_static/images/geo-points-in-circle.svg \
-	$(top_srcdir)/doc/source/_static/images/geo-points-in-rectangle.png \
-	$(top_srcdir)/doc/source/_static/images/geo-points-in-rectangle.svg \
-	$(top_srcdir)/doc/source/_static/images/geo-points-sort.png \
-	$(top_srcdir)/doc/source/_static/images/geo-points-sort.svg \
-	$(top_srcdir)/doc/source/_static/images/geo-points.png \
-	$(top_srcdir)/doc/source/_static/images/geo-points.svg \
-	$(top_srcdir)/doc/source/_static/images/geo-search-in-circle.png \
-	$(top_srcdir)/doc/source/_static/images/geo-search-in-circle.svg \
-	$(top_srcdir)/doc/source/_static/images/geo-search-in-rectangle.png \
-	$(top_srcdir)/doc/source/_static/images/geo-search-in-rectangle.svg \
 	$(top_srcdir)/doc/source/characteristic.txt \
 	$(top_srcdir)/doc/source/command_version.txt \
 	$(top_srcdir)/doc/source/commands.txt \
@@ -146,6 +127,26 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/functions/geo_in_rectangle.txt \
 	$(top_srcdir)/doc/source/functions/now.txt \
 	$(top_srcdir)/doc/source/functions/rand.txt \
+	$(top_srcdir)/doc/source/geolocation_search.txt \
+	$(top_srcdir)/doc/source/images/geo-encode-leading-2bit.png \
+	$(top_srcdir)/doc/source/images/geo-encode-leading-2bit.svg \
+	$(top_srcdir)/doc/source/images/geo-encode-leading-4bit.png \
+	$(top_srcdir)/doc/source/images/geo-encode-leading-4bit.svg \
+	$(top_srcdir)/doc/source/images/geo-in-rectangle.png \
+	$(top_srcdir)/doc/source/images/geo-points-distance.png \
+	$(top_srcdir)/doc/source/images/geo-points-distance.svg \
+	$(top_srcdir)/doc/source/images/geo-points-in-circle.png \
+	$(top_srcdir)/doc/source/images/geo-points-in-circle.svg \
+	$(top_srcdir)/doc/source/images/geo-points-in-rectangle.png \
+	$(top_srcdir)/doc/source/images/geo-points-in-rectangle.svg \
+	$(top_srcdir)/doc/source/images/geo-points-sort.png \
+	$(top_srcdir)/doc/source/images/geo-points-sort.svg \
+	$(top_srcdir)/doc/source/images/geo-points.png \
+	$(top_srcdir)/doc/source/images/geo-points.svg \
+	$(top_srcdir)/doc/source/images/geo-search-in-circle.png \
+	$(top_srcdir)/doc/source/images/geo-search-in-circle.svg \
+	$(top_srcdir)/doc/source/images/geo-search-in-rectangle.png \
+	$(top_srcdir)/doc/source/images/geo-search-in-rectangle.svg \
 	$(top_srcdir)/doc/source/index.txt \
 	$(top_srcdir)/doc/source/install.txt \
 	$(top_srcdir)/doc/source/limitations.txt \
@@ -200,25 +201,6 @@ absolute_theme_files = \
 
 source_files_relative_from_doc_dir = \
 	source/__init__.py \
-	source/_static/images/geo-encode-leading-2bit.png \
-	source/_static/images/geo-encode-leading-2bit.svg \
-	source/_static/images/geo-encode-leading-4bit.png \
-	source/_static/images/geo-encode-leading-4bit.svg \
-	source/_static/images/geo-in-rectangle.png \
-	source/_static/images/geo-points-distance.png \
-	source/_static/images/geo-points-distance.svg \
-	source/_static/images/geo-points-in-circle.png \
-	source/_static/images/geo-points-in-circle.svg \
-	source/_static/images/geo-points-in-rectangle.png \
-	source/_static/images/geo-points-in-rectangle.svg \
-	source/_static/images/geo-points-sort.png \
-	source/_static/images/geo-points-sort.svg \
-	source/_static/images/geo-points.png \
-	source/_static/images/geo-points.svg \
-	source/_static/images/geo-search-in-circle.png \
-	source/_static/images/geo-search-in-circle.svg \
-	source/_static/images/geo-search-in-rectangle.png \
-	source/_static/images/geo-search-in-rectangle.svg \
 	source/characteristic.txt \
 	source/command_version.txt \
 	source/commands.txt \
@@ -346,6 +328,26 @@ source_files_relative_from_doc_dir = \
 	source/functions/geo_in_rectangle.txt \
 	source/functions/now.txt \
 	source/functions/rand.txt \
+	source/geolocation_search.txt \
+	source/images/geo-encode-leading-2bit.png \
+	source/images/geo-encode-leading-2bit.svg \
+	source/images/geo-encode-leading-4bit.png \
+	source/images/geo-encode-leading-4bit.svg \
+	source/images/geo-in-rectangle.png \
+	source/images/geo-points-distance.png \
+	source/images/geo-points-distance.svg \
+	source/images/geo-points-in-circle.png \
+	source/images/geo-points-in-circle.svg \
+	source/images/geo-points-in-rectangle.png \
+	source/images/geo-points-in-rectangle.svg \
+	source/images/geo-points-sort.png \
+	source/images/geo-points-sort.svg \
+	source/images/geo-points.png \
+	source/images/geo-points.svg \
+	source/images/geo-search-in-circle.png \
+	source/images/geo-search-in-circle.svg \
+	source/images/geo-search-in-rectangle.png \
+	source/images/geo-search-in-rectangle.svg \
 	source/index.txt \
 	source/install.txt \
 	source/limitations.txt \
@@ -408,6 +410,7 @@ po_files = \
 	executables.po \
 	expr.po \
 	functions.po \
+	geolocation_search.po \
 	index.po \
 	install.po \
 	limitations.po \
@@ -432,6 +435,7 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/executables.po \
 	LC_MESSAGES/expr.po \
 	LC_MESSAGES/functions.po \
+	LC_MESSAGES/geolocation_search.po \
 	LC_MESSAGES/index.po \
 	LC_MESSAGES/install.po \
 	LC_MESSAGES/limitations.po \
@@ -456,6 +460,7 @@ mo_files = \
 	executables.mo \
 	expr.mo \
 	functions.mo \
+	geolocation_search.mo \
 	index.mo \
 	install.mo \
 	limitations.mo \
@@ -480,6 +485,7 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/executables.mo \
 	LC_MESSAGES/expr.mo \
 	LC_MESSAGES/functions.mo \
+	LC_MESSAGES/geolocation_search.mo \
 	LC_MESSAGES/index.mo \
 	LC_MESSAGES/install.mo \
 	LC_MESSAGES/limitations.mo \
@@ -496,6 +502,7 @@ mo_files_relative_from_locale_dir = \
 
 html_files_relative_from_locale_dir = \
 	html/.buildinfo \
+	html/_images/geo-points.png \
 	html/_sources/characteristic.txt \
 	html/_sources/command_version.txt \
 	html/_sources/commands.txt \
@@ -547,6 +554,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/functions/geo_in_rectangle.txt \
 	html/_sources/functions/now.txt \
 	html/_sources/functions/rand.txt \
+	html/_sources/geolocation_search.txt \
 	html/_sources/index.txt \
 	html/_sources/install.txt \
 	html/_sources/limitations.txt \
@@ -661,6 +669,7 @@ html_files_relative_from_locale_dir = \
 	html/functions/now.html \
 	html/functions/rand.html \
 	html/genindex.html \
+	html/geolocation_search.html \
 	html/index.html \
 	html/install.html \
 	html/limitations.html \
