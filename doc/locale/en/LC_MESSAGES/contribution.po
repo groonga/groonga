@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-12 22:06\n"
+"POT-Creation-Date: 2011-09-26 23:25\n"
 "PO-Revision-Date: 2011-08-12 22:01+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -148,6 +148,13 @@ msgstr "htmlの作成"
 msgid "以下のコマンドでhtmlが作成されます。::"
 msgstr "以下のコマンドでhtmlが作成されます。::"
 
+# 554f4357153b4da3af054ea729d74d32
+# 1582267a5346401f81379d7cd8bb9a65
+#: ../../../source/contribution/development/document.txt:24
+#: ../../../source/contribution/development/document.txt:36
+msgid "pdfの作成"
+msgstr "pdfの作成"
+
 # 354e9c55e4824d9eb203acb610b469f3
 #: ../../../source/contribution/development/document.txt:26
 msgid ""
@@ -166,13 +173,6 @@ msgstr "rst2pdfのインストール"
 #: ../../../source/contribution/development/document.txt:31
 msgid "以下のようにしてインストールできます。::"
 msgstr "以下のようにしてインストールできます。::"
-
-# 554f4357153b4da3af054ea729d74d32
-# 1582267a5346401f81379d7cd8bb9a65
-#: ../../../source/contribution/development/document.txt:36
-#: ../../../source/contribution/development/document.txt:24,
-msgid "pdfの作成"
-msgstr "pdfの作成"
 
 # b5d40efed0584044b792c7434373f128
 #: ../../../source/contribution/development/document.txt:38
@@ -658,17 +658,17 @@ msgstr ""
 msgid "テストの動作"
 msgstr "テストの動作"
 
+# c022ced7535c4d93a060695228e49e21
+# 32fcc7e2b91b4f2a915a056479ccb953
+#: ../../../source/contribution/development/test.txt:45
+#: ../../../source/contribution/development/test.txt:52
+msgid "groongaのトップディレクトリで、以下のコマンドを実行します。::"
+msgstr "groongaのトップディレクトリで、以下のコマンドを実行します。::"
+
 # 7461209329e345479813441eb15f6e94
 #: ../../../source/contribution/development/test.txt:50
 msgid "カバレッジ情報"
 msgstr "カバレッジ情報"
-
-# c022ced7535c4d93a060695228e49e21
-# 32fcc7e2b91b4f2a915a056479ccb953
-#: ../../../source/contribution/development/test.txt:52
-#: ../../../source/contribution/development/test.txt:45,
-msgid "groongaのトップディレクトリで、以下のコマンドを実行します。::"
-msgstr "groongaのトップディレクトリで、以下のコマンドを実行します。::"
 
 # d8a0d94c619b476f83e8ccab9fb5418e
 #: ../../../source/contribution/development/test.txt:56
@@ -727,6 +727,17 @@ msgid ""
 msgstr ""
 "特定のテスト関数(Cutterではテストと呼ぶ)のみをテストすることができます。"
 
+# 5f744d84fec543aa9e3ccedc3f7c3cd3
+# b70cdcc4a0ce4cd59998e76ea1649d9b
+# cb456f095215476bb8d903c907ff53bc
+# a1c720d3f497422880816a90d3cc4807
+#: ../../../source/contribution/development/test.txt:72
+#: ../../../source/contribution/development/test.txt:81
+#: ../../../source/contribution/development/test.txt:92
+#: ../../../source/contribution/development/test.txt:103
+msgid "実行例::"
+msgstr "実行例::"
+
 # 935fea45584f4260afbe2bf0ec21fb0b
 #: ../../../source/contribution/development/test.txt:77
 msgid "特定のテストファイルのみテストする"
@@ -755,6 +766,13 @@ msgstr ""
 "環境変数CUTTER_CHECK_LEAKをyesと設定すると、valgrindを用いて不正メモリアクセ"
 "スやメモリリークを検出しつつ、テストを動作させることができます。"
 
+# 9aeb81918cea40d3acc6a1b490156a41
+# 938539a275044fbcbfbb7d5a91671527
+#: ../../../source/contribution/development/test.txt:90
+#: ../../../source/contribution/development/test.txt:101
+msgid "run-test.shのみならず、make checkでも利用可能です。"
+msgstr "run-test.shのみならず、make checkでも利用可能です。"
+
 # 0f8f3136ef5d451da6cdfe14d05d94bb
 #: ../../../source/contribution/development/test.txt:97
 msgid "デバッガ上でのテスト実行"
@@ -768,24 +786,6 @@ msgid ""
 msgstr ""
 "環境変数CUTTER_DEBUGをyesと設定すると、テストが実行できる環境が整ったgdbが実"
 "行されます。gdb上でrunを行うと、テストの実行が開始されます。"
-
-# 9aeb81918cea40d3acc6a1b490156a41
-# 938539a275044fbcbfbb7d5a91671527
-#: ../../../source/contribution/development/test.txt:101
-#: ../../../source/contribution/development/test.txt:90,
-msgid "run-test.shのみならず、make checkでも利用可能です。"
-msgstr "run-test.shのみならず、make checkでも利用可能です。"
-
-# 5f744d84fec543aa9e3ccedc3f7c3cd3
-# b70cdcc4a0ce4cd59998e76ea1649d9b
-# cb456f095215476bb8d903c907ff53bc
-# a1c720d3f497422880816a90d3cc4807
-#: ../../../source/contribution/development/test.txt:103
-#: ../../../source/contribution/development/test.txt:72,
-#: ../../../source/contribution/development/test.txt:81,
-#: ../../../source/contribution/development/test.txt:92,
-msgid "実行例::"
-msgstr "実行例::"
 
 # 50682805b4d24452953737f4e7aa661d
 #: ../../../source/contribution/development/test.txt:108

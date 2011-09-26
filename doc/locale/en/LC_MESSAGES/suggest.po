@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-14 21:26\n"
+"POT-Creation-Date: 2011-09-26 23:26\n"
 "PO-Revision-Date: 2011-08-14 18:56+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -31,8 +31,15 @@ msgstr "Execution example::"
 msgid "Suggest"
 msgstr "Suggest"
 
+# 16244ced188b4701a1d230d460dbea7c
+#: ../../../source/suggest.txt:10
+msgid ""
+"The suggest feature specification isn't stable. The specification may be "
+"changed."
+msgstr ""
+
 # 8865b53d7ba2431e871354d61c479fc7
-#: ../../../source/suggest.txt:8
+#: ../../../source/suggest.txt:13
 msgid ""
 "Groonga has the suggest feature. This section describes how to use it and "
 "how it works."
@@ -1115,14 +1122,6 @@ msgstr "Tutorial"
 msgid "TODO..."
 msgstr "TODO..."
 
-# 70b8d609c0964ed38cb1d5767fae1bbb
-#~ msgid ""
-#~ "1. Cooccurrence search against learned data. 3. Similar search against "
-#~ "registered words. (optional)"
-#~ msgstr ""
-#~ "1. Cooccurrence search against learned data. 3. Similar search against "
-#~ "registered words. (optional)"
-
 # e481536cd8294a1ea67db89948c7db23
 #~ msgid ""
 #~ "1. 2011-08-10T13:33:23+09:00: search engine (submit) 1. "
@@ -1130,3 +1129,11 @@ msgstr "TODO..."
 #~ msgstr ""
 #~ "1. 2011-08-10T13:33:23+09:00: search engine (submit) 1. "
 #~ "2011-08-10T13:33:28+09:00: web search realtime (submit)"
+
+# 70b8d609c0964ed38cb1d5767fae1bbb
+#~ msgid ""
+#~ "1. Cooccurrence search against learned data. 3. Similar search against "
+#~ "registered words. (optional)"
+#~ msgstr ""
+#~ "1. Cooccurrence search against learned data. 3. Similar search against "
+#~ "registered words. (optional)"

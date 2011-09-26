@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-12 22:06\n"
+"POT-Creation-Date: 2011-09-26 23:26\n"
 "PO-Revision-Date: 2011-08-12 22:01+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -47,6 +47,24 @@ msgid "検索の挙動には以下の3種類あり、検索結果によって動
 msgstr ""
 "検索の挙動には以下の3種類あり、検索結果によって動的に使い分けています。"
 
+# 5944673086f846c783cf29ea46d74a20
+# 9f62f95fae664e4f845d0a79bf8340d5
+#: ../../../source/spec/search.txt:15 ../../../source/spec/search.txt:22
+msgid "完全一致検索"
+msgstr "完全一致検索"
+
+# cc14ee3c8ea14b3c961ede1de20a1890
+# 5d03ab5617894006b4b6aecbb9867744
+#: ../../../source/spec/search.txt:16 ../../../source/spec/search.txt:70
+msgid "非わかち書き検索"
+msgstr "非わかち書き検索"
+
+# 3d317d2784834db98f0693d211144b34
+# e3a3429861f045baa271d517fa538332
+#: ../../../source/spec/search.txt:17 ../../../source/spec/search.txt:85
+msgid "部分一致検索"
+msgstr "部分一致検索"
+
 # 854a5d215b2d4588b36d40b354327e24
 #: ../../../source/spec/search.txt:19
 msgid ""
@@ -55,12 +73,6 @@ msgid ""
 msgstr ""
 "どのように検索の挙動を使い分けているかを説明する前に、まず、それぞれの検索の"
 "挙動を説明します。"
-
-# 5944673086f846c783cf29ea46d74a20
-# 9f62f95fae664e4f845d0a79bf8340d5
-#: ../../../source/spec/search.txt:22 ../../../source/spec/search.txt:15,
-msgid "完全一致検索"
-msgstr "完全一致検索"
 
 # 57beff946afb47b282b451e15652ef7f
 #: ../../../source/spec/search.txt:24
@@ -230,12 +242,6 @@ msgstr ""
 "bi / il / ll / li / ia / ar / rd / d」という語彙の並びに含まれるので、完全一"
 "致でヒットします。"
 
-# cc14ee3c8ea14b3c961ede1de20a1890
-# 5d03ab5617894006b4b6aecbb9867744
-#: ../../../source/spec/search.txt:70 ../../../source/spec/search.txt:16,
-msgid "非わかち書き検索"
-msgstr "非わかち書き検索"
-
 # 2c3d05c0a7984b4ea8aa85957ab12f81
 #: ../../../source/spec/search.txt:72
 msgid ""
@@ -291,12 +297,6 @@ msgstr ""
 "（1単語扱い）にヒットしますが、「スープカレー」（\"スープ\"と\"カレー\"の2単"
 "語扱い）や「スープカレーライス」（\"スープ\"と\"カレーライス\"の2単語扱い）に"
 "はヒットしません。"
-
-# 3d317d2784834db98f0693d211144b34
-# e3a3429861f045baa271d517fa538332
-#: ../../../source/spec/search.txt:85 ../../../source/spec/search.txt:17,
-msgid "部分一致検索"
-msgstr "部分一致検索"
 
 # c26ed17dffd14f7d98168b641ebd14c3
 #: ../../../source/spec/search.txt:87

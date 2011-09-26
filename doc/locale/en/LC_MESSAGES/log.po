@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-12 22:06\n"
+"POT-Creation-Date: 2011-09-26 23:26\n"
 "PO-Revision-Date: 2011-08-12 22:01+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -51,10 +51,85 @@ msgstr ""
 "groonga process' log level, it's not logged. Log level can be customized by :"
 "option:`-l` or :doc:`commands/log_level`."
 
+# 74e9e6d3b1b244e6800ea679047c3f00
+# 84b18ac6e8c5482a8bbfda680bd430a0
+#: ../../../source/log.txt:22 ../../../source/log.txt:112
+msgid "Format"
+msgstr "Format"
+
 # 1c7a52e6ec094041bb630a9475d37e30
 #: ../../../source/log.txt:24
 msgid "Process log uses the following format::"
 msgstr "Process log uses the following format::"
+
+# d89f61bce6c34f5c8a0a1a7c242c772b
+# cff7b5db312a496fb6619af683e764d0
+#: ../../../source/log.txt:29 ../../../source/log.txt:122
+msgid "It's time stamp uses the following format::"
+msgstr "It's time stamp uses the following format::"
+
+# 89aaf081caf744bfa12a944a6c4a1109
+# 5cabf08e0c0c4f74b1ce459997e82928
+#: ../../../source/log.txt:34 ../../../source/log.txt:127
+msgid "Year with four digits."
+msgstr "Year with four digits."
+
+# 967ba4699e2d446c82f9ffea9e9a5e21
+# 900483a239ee41e98e16ba12ed6b0ace
+#: ../../../source/log.txt:37 ../../../source/log.txt:130
+msgid "Month with two digits."
+msgstr "Month with two digits."
+
+# 7c8a874ec4304ae5b10409f6294e0790
+# b88514f28928433991bcf8aaf6f05053
+#: ../../../source/log.txt:40 ../../../source/log.txt:133
+msgid "Day with two digits."
+msgstr "Day with two digits."
+
+# 90edcde2d6e3479fa463a8aabcea4284
+# e6adce8ebccd4c929f1bc76dfc96c8ad
+#: ../../../source/log.txt:43 ../../../source/log.txt:136
+msgid "Hour with two digits."
+msgstr "Hour with two digits."
+
+# c3886fe186c343f68195d9cbd804c7e8
+# f7a5d69ee97c4c84bdbb5ff1d40f4a99
+#: ../../../source/log.txt:46 ../../../source/log.txt:139
+msgid "Minute with two digits."
+msgstr "Minute with two digits."
+
+# a1edcc5a976b476abb92ac9739ab2136
+# 2ad08861b66949198f6e06afc2854cbc
+#: ../../../source/log.txt:49 ../../../source/log.txt:142
+msgid "Second with two digits."
+msgstr "Second with two digits."
+
+# b81cf0521551418ca7a42b70baef1dc1
+# 85d662e5098841fea594f2c9311e010c
+#: ../../../source/log.txt:52 ../../../source/log.txt:145
+msgid "Microsecond with six digits."
+msgstr "Microsecond with six digits."
+
+# 6c6deceadda643018aaa22bd695c2cb2
+# 9b7f0c33b4f649538688db24bb380558
+# d3d0857ad9e54910aebeb9c5bede4f8b
+# 76e7d67f2c81430287e4668c6aeda8eb
+# c85e113e151c43d29463314d8587ab74
+# fe8365961fd84bcc9f8a653c84915da7
+# 65399b249a234724860f19bc797cf68f
+# 33a2a31f4c06429fad957554e8ed4a5d
+# 6fa608730d034728a0e36a507ac9df1d
+# c2dbd036a5734ec3b397727976dba3cc
+# 7d78332372124c87b375c3a151326eb5
+# c2fe5fdcc446430e8e533bf6e96fbe5a
+#: ../../../source/log.txt:54 ../../../source/log.txt:89
+#: ../../../source/log.txt:96 ../../../source/log.txt:100
+#: ../../../source/log.txt:147 ../../../source/log.txt:157
+#: ../../../source/log.txt:173 ../../../source/log.txt:180
+#: ../../../source/log.txt:187 ../../../source/log.txt:195
+#: ../../../source/log.txt:203 ../../../source/log.txt:208
+msgid "Example::"
+msgstr "Example::"
 
 # 5515ad2b445649f3a25c924b62f582a5
 #: ../../../source/log.txt:59
@@ -106,6 +181,12 @@ msgstr "Debug"
 msgid "Dump"
 msgstr "Dump"
 
+# c6e393ebd2c3416b98c2c7eae721103e
+# 0561df21d3c84bf28f1e712d54aa2a3c
+#: ../../../source/log.txt:94 ../../../source/log.txt:171
+msgid "Details about the log with free format."
+msgstr "Details about the log with free format."
+
 # 0b86fa995e9c4c9a9a747b1697977f2d
 #: ../../../source/log.txt:106
 msgid "Query log"
@@ -120,64 +201,10 @@ msgstr ""
 "Query log is disabled by default. It can be enabled by :option:`--query-log-"
 "path` option."
 
-# 74e9e6d3b1b244e6800ea679047c3f00
-# 84b18ac6e8c5482a8bbfda680bd430a0
-#: ../../../source/log.txt:112 ../../../source/log.txt:22,
-msgid "Format"
-msgstr "Format"
-
 # 8d139c7391a04bb39e3baeb795234669
 #: ../../../source/log.txt:114
 msgid "Query log uses the following formats::"
 msgstr "Query log uses the following formats::"
-
-# d89f61bce6c34f5c8a0a1a7c242c772b
-# cff7b5db312a496fb6619af683e764d0
-#: ../../../source/log.txt:122 ../../../source/log.txt:29,
-msgid "It's time stamp uses the following format::"
-msgstr "It's time stamp uses the following format::"
-
-# 89aaf081caf744bfa12a944a6c4a1109
-# 5cabf08e0c0c4f74b1ce459997e82928
-#: ../../../source/log.txt:127 ../../../source/log.txt:34,
-msgid "Year with four digits."
-msgstr "Year with four digits."
-
-# 967ba4699e2d446c82f9ffea9e9a5e21
-# 900483a239ee41e98e16ba12ed6b0ace
-#: ../../../source/log.txt:130 ../../../source/log.txt:37,
-msgid "Month with two digits."
-msgstr "Month with two digits."
-
-# 7c8a874ec4304ae5b10409f6294e0790
-# b88514f28928433991bcf8aaf6f05053
-#: ../../../source/log.txt:133 ../../../source/log.txt:40,
-msgid "Day with two digits."
-msgstr "Day with two digits."
-
-# 90edcde2d6e3479fa463a8aabcea4284
-# e6adce8ebccd4c929f1bc76dfc96c8ad
-#: ../../../source/log.txt:136 ../../../source/log.txt:43,
-msgid "Hour with two digits."
-msgstr "Hour with two digits."
-
-# c3886fe186c343f68195d9cbd804c7e8
-# f7a5d69ee97c4c84bdbb5ff1d40f4a99
-#: ../../../source/log.txt:139 ../../../source/log.txt:46,
-msgid "Minute with two digits."
-msgstr "Minute with two digits."
-
-# a1edcc5a976b476abb92ac9739ab2136
-# 2ad08861b66949198f6e06afc2854cbc
-#: ../../../source/log.txt:142 ../../../source/log.txt:49,
-msgid "Second with two digits."
-msgstr "Second with two digits."
-
-# b81cf0521551418ca7a42b70baef1dc1
-# 85d662e5098841fea594f2c9311e010c
-#: ../../../source/log.txt:145 ../../../source/log.txt:52,
-msgid "Microsecond with six digits."
-msgstr "Microsecond with six digits."
 
 # b9122d70e83c49f49f9b67b80f15478a
 #: ../../../source/log.txt:152
@@ -205,12 +232,6 @@ msgstr "A character that indicates query is processing."
 msgid "A character that indicates query is finished."
 msgstr "A character that indicates query is finished."
 
-# c6e393ebd2c3416b98c2c7eae721103e
-# 0561df21d3c84bf28f1e712d54aa2a3c
-#: ../../../source/log.txt:171 ../../../source/log.txt:94,
-msgid "Details about the log with free format."
-msgstr "Details about the log with free format."
-
 # bd9ed3d4fad24cadb7def9eed65ca919
 #: ../../../source/log.txt:178
 msgid "A query to be processed."
@@ -230,24 +251,3 @@ msgstr "A processed work at the time."
 #: ../../../source/log.txt:201
 msgid "A return code for the query."
 msgstr "A return code for the query."
-
-# 6c6deceadda643018aaa22bd695c2cb2
-# 9b7f0c33b4f649538688db24bb380558
-# d3d0857ad9e54910aebeb9c5bede4f8b
-# 76e7d67f2c81430287e4668c6aeda8eb
-# c85e113e151c43d29463314d8587ab74
-# fe8365961fd84bcc9f8a653c84915da7
-# 65399b249a234724860f19bc797cf68f
-# 33a2a31f4c06429fad957554e8ed4a5d
-# 6fa608730d034728a0e36a507ac9df1d
-# c2dbd036a5734ec3b397727976dba3cc
-# 7d78332372124c87b375c3a151326eb5
-# c2fe5fdcc446430e8e533bf6e96fbe5a
-#: ../../../source/log.txt:208 ../../../source/log.txt:100,
-#: ../../../source/log.txt:147, ../../../source/log.txt:157,
-#: ../../../source/log.txt:173, ../../../source/log.txt:180,
-#: ../../../source/log.txt:187, ../../../source/log.txt:195,
-#: ../../../source/log.txt:203, ../../../source/log.txt:54,
-#: ../../../source/log.txt:89, ../../../source/log.txt:96,
-msgid "Example::"
-msgstr "Example::"

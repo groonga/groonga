@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-14 18:18\n"
+"POT-Creation-Date: 2011-09-26 23:25\n"
 "PO-Revision-Date: 2011-08-14 18:53+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -32,10 +32,43 @@ msgstr "groongaパッケージが提供する実行ファイルについて説�
 msgid "grnslap"
 msgstr "grnslap"
 
+# 87178c95f3cb4a26a5fcc9cd2ddfa882
+# 5005f845e4c441f4a2f7e12f58904213
+# 5fd60d3563254a62bda9baeb2e7a1bbf
+# 452b001734724b32848b2c0792ada182
+#: ../../../source/executables/grnslap.txt:9
+#: ../../../source/executables/grntest.txt:9
+#: ../../../source/executables/groonga-http.txt:9
+#: ../../../source/executables/groonga.txt:9
+msgid "名前"
+msgstr "名前"
+
 # 63fc02719cb0463385a4bd43e5581c27
 #: ../../../source/executables/grnslap.txt:11
 msgid "grnslap - groongaプロセスの通信層のパフォーマンスをチェックするツール"
 msgstr "grnslap - groongaプロセスの通信層のパフォーマンスをチェックするツール"
+
+# 46c89c61669a4ee9b8a55b63c6453d9a
+# 772cb83991cf4e03b8c15e3f3770ef2a
+# 077f65c6093d42d18a1ba38580ab22c4
+# fab2af7b8f564d26ab48fb7e606c22f9
+#: ../../../source/executables/grnslap.txt:14
+#: ../../../source/executables/grntest.txt:14
+#: ../../../source/executables/groonga-http.txt:14
+#: ../../../source/executables/groonga.txt:14
+msgid "書式"
+msgstr "書式"
+
+# d71c481348394cc599ba49575e4b2086
+# 48b3d2c1d87f4b708bbda092ab387519
+# 5ec2f623b04b4a809d57fc55fa390188
+# b66b361fb61146ad89d1f4be9f0bbea9
+#: ../../../source/executables/grnslap.txt:21
+#: ../../../source/executables/grntest.txt:21
+#: ../../../source/executables/groonga-http.txt:20
+#: ../../../source/executables/groonga.txt:21
+msgid "説明"
+msgstr "説明"
 
 # fa381668fbc2495fa3413b8ae5081aa3
 #: ../../../source/executables/grnslap.txt:23
@@ -70,6 +103,15 @@ msgstr ""
 #: ../../../source/executables/grnslap.txt:29
 msgid "現在は、make installしてもインストールは行われない。"
 msgstr "現在は、make installしてもインストールは行われない。"
+
+# 6cdd7c9400eb49a9b0003eaa7b8a2b6b
+# 2cb21f4ec51c4f3a845b44b162488dfc
+# 6203c552391f46d3bd59557ba6353bc1
+#: ../../../source/executables/grnslap.txt:32
+#: ../../../source/executables/grntest.txt:32
+#: ../../../source/executables/groonga.txt:27
+msgid "オプション"
+msgstr "オプション"
 
 # 35adea532c6845e3ad8dc07cb96c4dba
 #: ../../../source/executables/grnslap.txt:36
@@ -109,6 +151,15 @@ msgstr ""
 msgid "リクエストの多重度を指定します。初期値は10です。"
 msgstr "リクエストの多重度を指定します。初期値は10です。"
 
+# 59685a6d850e451e8a950dff8e1ffe4c
+# 61de0b45adb8479189da71a5eb56737d
+# 37327acb643f454099c491ebf3d10ee3
+#: ../../../source/executables/grnslap.txt:51
+#: ../../../source/executables/grntest.txt:64
+#: ../../../source/executables/groonga.txt:129
+msgid "引数"
+msgstr "引数"
+
 # 956ba9c4cf384f2992f3d3a71696147d
 #: ../../../source/executables/grnslap.txt:55
 msgid ""
@@ -118,68 +169,17 @@ msgstr ""
 "接続先のホスト名とポート番号をを指定します(デフォルト値は'localhost:10041')。"
 "ポート番号を指定しない場合には、10041が指定されたものとします。"
 
-# 1d9430e18d2f4c7e91ee36f058f80a2b
-#: ../../../source/executables/grnslap.txt:60
-msgid "http://localhost:10041/d/status に、多重度100でリクエストを行う。"
-msgstr "http://localhost:10041/d/status に、多重度100でリクエストを行う。"
-
-# 46c89c61669a4ee9b8a55b63c6453d9a
-# 772cb83991cf4e03b8c15e3f3770ef2a
-# 077f65c6093d42d18a1ba38580ab22c4
-# fab2af7b8f564d26ab48fb7e606c22f9
-#: ../../../source/executables/grnslap.txt:14,
-#: ../../../source/executables/grntest.txt:14,
-#: ../../../source/executables/groonga-http.txt:14
-#: ../../../source/executables/groonga.txt:14,
-msgid "書式"
-msgstr "書式"
-
-# d71c481348394cc599ba49575e4b2086
-# 48b3d2c1d87f4b708bbda092ab387519
-# 5ec2f623b04b4a809d57fc55fa390188
-# b66b361fb61146ad89d1f4be9f0bbea9
-#: ../../../source/executables/grnslap.txt:21,
-#: ../../../source/executables/grntest.txt:21,
-#: ../../../source/executables/groonga-http.txt:20
-#: ../../../source/executables/groonga.txt:21,
-msgid "説明"
-msgstr "説明"
-
-# 6cdd7c9400eb49a9b0003eaa7b8a2b6b
-# 2cb21f4ec51c4f3a845b44b162488dfc
-# 6203c552391f46d3bd59557ba6353bc1
-#: ../../../source/executables/grnslap.txt:32,
-#: ../../../source/executables/grntest.txt:32,
-#: ../../../source/executables/groonga.txt:27
-msgid "オプション"
-msgstr "オプション"
-
-# 59685a6d850e451e8a950dff8e1ffe4c
-# 61de0b45adb8479189da71a5eb56737d
-# 37327acb643f454099c491ebf3d10ee3
-#: ../../../source/executables/grnslap.txt:51,
-#: ../../../source/executables/grntest.txt:64,
-#: ../../../source/executables/groonga.txt:129
-msgid "引数"
-msgstr "引数"
-
 # ae2d8c6d455141249caecc8f94967e08
 # a80bd90f79c644b392a2eb40c437b085
-#: ../../../source/executables/grnslap.txt:58,
+#: ../../../source/executables/grnslap.txt:58
 #: ../../../source/executables/grntest.txt:140
 msgid "サンプル"
 msgstr "サンプル"
 
-# 87178c95f3cb4a26a5fcc9cd2ddfa882
-# 5005f845e4c441f4a2f7e12f58904213
-# 5fd60d3563254a62bda9baeb2e7a1bbf
-# 452b001734724b32848b2c0792ada182
-#: ../../../source/executables/grnslap.txt:9,
-#: ../../../source/executables/grntest.txt:9,
-#: ../../../source/executables/groonga-http.txt:9
-#: ../../../source/executables/groonga.txt:9,
-msgid "名前"
-msgstr "名前"
+# 1d9430e18d2f4c7e91ee36f058f80a2b
+#: ../../../source/executables/grnslap.txt:60
+msgid "http://localhost:10041/d/status に、多重度100でリクエストを行う。"
+msgstr "http://localhost:10041/d/status に、多重度100でリクエストを行う。"
 
 # 718aa8b945f04bb2a648e2133ead6023
 #: ../../../source/executables/grntest.txt:6
@@ -489,7 +489,10 @@ msgid ""
 "コマンドファイルは、groonga組み込みコマンドを1行に1つずつ記述したテキストファ"
 "イルです。拡張子に制限はありません。groonga組み込みコマンドに関しては :doc:`/"
 "commands` を参照してください。"
-msgstr "コマンドファイルは、groonga組み込みコマンドを1行に1つずつ記述したテキストファイルです。拡張子に制限はありません。groonga組み込みコマンドに関しては :doc:`/commands` を参照してください。"
+msgstr ""
+"コマンドファイルは、groonga組み込みコマンドを1行に1つずつ記述したテキストファ"
+"イルです。拡張子に制限はありません。groonga組み込みコマンドに関しては :doc:`/"
+"commands` を参照してください。"
 
 # b529c0c65e60465b9af02ed4631d228e
 #: ../../../source/executables/grntest.txt:142
@@ -694,8 +697,8 @@ msgstr ""
 
 # 4a4305b841f6414a815f56e35c52688e
 # f5128ab21cfc4963817379e0e034a38d
+#: ../../../source/executables/groonga-http.txt:6
 #: ../../../source/executables/groonga-http.txt:11
-#: ../../../source/executables/groonga-http.txt:6,
 msgid "groonga HTTPサービス"
 msgstr "groonga HTTPサービス"
 
@@ -728,7 +731,7 @@ msgstr ""
 # 8f8f2f238c1f461082d13c73c9121dd6
 # b6763490280145b0a0a5454707e4783c
 #: ../../../source/executables/groonga-http.txt:27
-#: ../../../source/executables/groonga.txt:142,
+#: ../../../source/executables/groonga.txt:142
 msgid "コマンド"
 msgstr "コマンド"
 
@@ -807,7 +810,9 @@ msgstr "output_typeにはjson, tsv, xmlが指定可能です。"
 msgid ""
 "command_versionはコマンドの仕様の互換性を指定します。詳細は :doc:`/"
 "command_version` を参照してください。"
-msgstr "command_versionはコマンドの仕様の互換性を指定します。詳細は :doc:`/command_version` を参照してください。"
+msgstr ""
+"command_versionはコマンドの仕様の互換性を指定します。詳細は :doc:`/"
+"command_version` を参照してください。"
 
 # 45e97eb983c043bb8e050b6bf83564aa
 #: ../../../source/executables/groonga-http.txt:54
@@ -872,6 +877,15 @@ msgstr "None."
 msgid "EXIT STATUS"
 msgstr "EXIT STATUS"
 
+# 68f4dcdb5525450e96eaa76a27f54a03
+# b39e013841854e10adeec0e31a818bc8
+# de9ec08009074ec5a64608898257ace9
+#: ../../../source/executables/groonga-suggest-create-dataset.txt:33
+#: ../../../source/executables/groonga-suggest-create-dataset.txt:38
+#: ../../../source/executables/groonga-suggest-create-dataset.txt:43
+msgid "TODO"
+msgstr "TODO"
+
 # 174515eb1dc447bf855718d1603d04d1
 #: ../../../source/executables/groonga-suggest-create-dataset.txt:36
 msgid "FILES"
@@ -881,15 +895,6 @@ msgstr "FILES"
 #: ../../../source/executables/groonga-suggest-create-dataset.txt:41
 msgid "EXAMPLE"
 msgstr "EXAMPLE"
-
-# 68f4dcdb5525450e96eaa76a27f54a03
-# b39e013841854e10adeec0e31a818bc8
-# de9ec08009074ec5a64608898257ace9
-#: ../../../source/executables/groonga-suggest-create-dataset.txt:43
-#: ../../../source/executables/groonga-suggest-create-dataset.txt:33,
-#: ../../../source/executables/groonga-suggest-create-dataset.txt:38,
-msgid "TODO"
-msgstr "TODO"
 
 # 0afe9b92aac5403ca2bc921e1a32c8ed
 #: ../../../source/executables/groonga-suggest-create-dataset.txt:46

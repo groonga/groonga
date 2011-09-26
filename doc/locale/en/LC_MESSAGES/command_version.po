@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-12 22:06\n"
+"POT-Creation-Date: 2011-09-26 23:25\n"
 "PO-Revision-Date: 2011-08-12 22:01+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -188,6 +188,13 @@ msgstr ""
 "groonga実行モジュールの引数としてdefault-command-versionパラメータを指定でき"
 "ます。 (configファイルの中に指定することも可能です)"
 
+# 30e66e4034b548cf8bc2061e8a9b1f3a
+# aa4c80d90ddb4d5f913b7b00271e7f7a
+#: ../../../source/command_version.txt:60
+#: ../../../source/command_version.txt:71
+msgid "実行例::"
+msgstr "実行例::"
+
 # a3ff517777f34b76a16286bdf5efd659
 #: ../../../source/command_version.txt:64
 msgid ""
@@ -218,13 +225,6 @@ msgid ""
 "select,loadなどのすべてのgroongaコマンドにcommand_versionが指定できます。"
 msgstr ""
 "select,loadなどのすべてのgroongaコマンドにcommand_versionが指定できます。"
-
-# 30e66e4034b548cf8bc2061e8a9b1f3a
-# aa4c80d90ddb4d5f913b7b00271e7f7a
-#: ../../../source/command_version.txt:71
-#: ../../../source/command_version.txt:60,
-msgid "実行例::"
-msgstr "実行例::"
 
 # ec63cdbba84e4e07b76c4fa9969b4083
 #: ../../../source/command_version.txt:75

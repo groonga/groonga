@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-12 22:06\n"
+"POT-Creation-Date: 2011-09-26 23:26\n"
 "PO-Revision-Date: 2011-08-12 22:01+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -76,65 +76,65 @@ msgstr ""
 # f51b410a46b6460d95caa516722f07b1
 # 136f1fd9c4774955b2810481dac2973f
 # d8b096fbb11340ae847009f7f3bafb4c
-#: ../../../source/example/tutorial01-1.log:1,
-#: ../../../source/example/tutorial01-10.log:1,
-#: ../../../source/example/tutorial01-11.log:1,
-#: ../../../source/example/tutorial01-12.log:1,
-#: ../../../source/example/tutorial01-13.log:1,
-#: ../../../source/example/tutorial01-14.log:1,
-#: ../../../source/example/tutorial01-15.log:1,
-#: ../../../source/example/tutorial01-16.log:1,
-#: ../../../source/example/tutorial01-17.log:1,
-#: ../../../source/example/tutorial01-2.log:1,
-#: ../../../source/example/tutorial01-3.log:1,
-#: ../../../source/example/tutorial01-4.log:1,
-#: ../../../source/example/tutorial01-5.log:1,
-#: ../../../source/example/tutorial01-6.log:1,
-#: ../../../source/example/tutorial01-7.log:1,
-#: ../../../source/example/tutorial01-8.log:1,
-#: ../../../source/example/tutorial01-9.log:1,
-#: ../../../source/example/tutorial02-1.log:1,
-#: ../../../source/example/tutorial02-2.log:1,
-#: ../../../source/example/tutorial02-3.log:1,
-#: ../../../source/example/tutorial03-1.log:1,
-#: ../../../source/example/tutorial03-2.log:1,
-#: ../../../source/example/tutorial03-3.log:1,
-#: ../../../source/example/tutorial04-1.log:1,
-#: ../../../source/example/tutorial04-2.log:1,
-#: ../../../source/example/tutorial04-3.log:1,
-#: ../../../source/example/tutorial04-4.log:1,
-#: ../../../source/example/tutorial04-5.log:1,
-#: ../../../source/example/tutorial04-6.log:1,
-#: ../../../source/example/tutorial04-7.log:1,
-#: ../../../source/example/tutorial05-1.log:1,
-#: ../../../source/example/tutorial05-2.log:1,
-#: ../../../source/example/tutorial05-3.log:1,
-#: ../../../source/example/tutorial05-4.log:1,
-#: ../../../source/example/tutorial05-5.log:1,
-#: ../../../source/example/tutorial05-6.log:1,
-#: ../../../source/example/tutorial06-1.log:1,
-#: ../../../source/example/tutorial06-2.log:1,
-#: ../../../source/example/tutorial06-3.log:1,
-#: ../../../source/example/tutorial06-4.log:1,
-#: ../../../source/example/tutorial06-5.log:1,
-#: ../../../source/example/tutorial06-6.log:1,
-#: ../../../source/example/tutorial06-7.log:1,
-#: ../../../source/example/tutorial07-1.log:1,
-#: ../../../source/example/tutorial07-2.log:1,
-#: ../../../source/example/tutorial07-3.log:1,
-#: ../../../source/example/tutorial07-4.log:1,
-#: ../../../source/example/tutorial08-1.log:1,
-#: ../../../source/example/tutorial08-2.log:1,
-#: ../../../source/example/tutorial10-1.log:1,
-#: ../../../source/example/tutorial10-10.log:1
-#: ../../../source/example/tutorial10-2.log:1,
-#: ../../../source/example/tutorial10-3.log:1,
-#: ../../../source/example/tutorial10-4.log:1,
-#: ../../../source/example/tutorial10-5.log:1,
-#: ../../../source/example/tutorial10-6.log:1,
-#: ../../../source/example/tutorial10-7.log:1,
-#: ../../../source/example/tutorial10-8.log:1,
-#: ../../../source/example/tutorial10-9.log:1,
+#: ../../../source/example/tutorial/drilldown-1.log:1
+#: ../../../source/example/tutorial/drilldown-2.log:1
+#: ../../../source/example/tutorial/drilldown-3.log:1
+#: ../../../source/example/tutorial/drilldown-4.log:1
+#: ../../../source/example/tutorial/drilldown-5.log:1
+#: ../../../source/example/tutorial/drilldown-6.log:1
+#: ../../../source/example/tutorial/index-1.log:1
+#: ../../../source/example/tutorial/index-2.log:1
+#: ../../../source/example/tutorial/index-3.log:1
+#: ../../../source/example/tutorial/index-4.log:1
+#: ../../../source/example/tutorial/index-5.log:1
+#: ../../../source/example/tutorial/index-6.log:1
+#: ../../../source/example/tutorial/index-7.log:1
+#: ../../../source/example/tutorial/introduction-1.log:1
+#: ../../../source/example/tutorial/introduction-10.log:1
+#: ../../../source/example/tutorial/introduction-11.log:1
+#: ../../../source/example/tutorial/introduction-12.log:1
+#: ../../../source/example/tutorial/introduction-13.log:1
+#: ../../../source/example/tutorial/introduction-14.log:1
+#: ../../../source/example/tutorial/introduction-15.log:1
+#: ../../../source/example/tutorial/introduction-16.log:1
+#: ../../../source/example/tutorial/introduction-17.log:1
+#: ../../../source/example/tutorial/introduction-2.log:1
+#: ../../../source/example/tutorial/introduction-3.log:1
+#: ../../../source/example/tutorial/introduction-4.log:1
+#: ../../../source/example/tutorial/introduction-5.log:1
+#: ../../../source/example/tutorial/introduction-6.log:1
+#: ../../../source/example/tutorial/introduction-7.log:1
+#: ../../../source/example/tutorial/introduction-8.log:1
+#: ../../../source/example/tutorial/introduction-9.log:1
+#: ../../../source/example/tutorial/match_columns-1.log:1
+#: ../../../source/example/tutorial/match_columns-2.log:1
+#: ../../../source/example/tutorial/match_columns-3.log:1
+#: ../../../source/example/tutorial/match_columns-4.log:1
+#: ../../../source/example/tutorial/micro_blog-1.log:1
+#: ../../../source/example/tutorial/micro_blog-10.log:1
+#: ../../../source/example/tutorial/micro_blog-2.log:1
+#: ../../../source/example/tutorial/micro_blog-3.log:1
+#: ../../../source/example/tutorial/micro_blog-4.log:1
+#: ../../../source/example/tutorial/micro_blog-5.log:1
+#: ../../../source/example/tutorial/micro_blog-6.log:1
+#: ../../../source/example/tutorial/micro_blog-7.log:1
+#: ../../../source/example/tutorial/micro_blog-8.log:1
+#: ../../../source/example/tutorial/micro_blog-9.log:1
+#: ../../../source/example/tutorial/network-1.log:1
+#: ../../../source/example/tutorial/network-2.log:1
+#: ../../../source/example/tutorial/network-3.log:1
+#: ../../../source/example/tutorial/patricia_trie-1.log:1
+#: ../../../source/example/tutorial/patricia_trie-2.log:1
+#: ../../../source/example/tutorial/query_expansion-1.log:1
+#: ../../../source/example/tutorial/query_expansion-2.log:1
+#: ../../../source/example/tutorial/query_expansion-3.log:1
+#: ../../../source/example/tutorial/search-1.log:1
+#: ../../../source/example/tutorial/search-2.log:1
+#: ../../../source/example/tutorial/search-3.log:1
+#: ../../../source/example/tutorial/search-4.log:1
+#: ../../../source/example/tutorial/search-5.log:1
+#: ../../../source/example/tutorial/search-6.log:1
+#: ../../../source/example/tutorial/search-7.log:1
 msgid "実行例 ::"
 msgstr "実行例 ::"
 
@@ -143,839 +143,23 @@ msgstr "実行例 ::"
 msgid "チュートリアル"
 msgstr "チュートリアル"
 
-# 8e9f1d4a7a5d4d66b6a9ece6d0bac17d
-#: ../../../source/tutorial/tutorial01.txt:11
-msgid "基本的な操作"
-msgstr "基本的な操作"
-
-# 325a39d7d5b148a58cbe099aa88feced
-#: ../../../source/tutorial/tutorial01.txt:13
-msgid ""
-"groongaは、Cのライブラリとして使用する方法と、groonga実行ファイルを通して使用"
-"する方法があります。"
-msgstr ""
-"groongaは、Cのライブラリとして使用する方法と、groonga実行ファイルを通して使用"
-"する方法があります。"
-
-# 78d1620c7aae4e399210b87b88d42b75
-#: ../../../source/tutorial/tutorial01.txt:15
-msgid ""
-"本チュートリアルでは、groonga実行ファイルを使用する方法について説明します。"
-msgstr ""
-"本チュートリアルでは、groonga実行ファイルを使用する方法について説明します。"
-
-# bf051807fb7b4b87839da04e1c46d2be
-#: ../../../source/tutorial/tutorial01.txt:17
-msgid ""
-"groonga実行ファイルを使って、DBの作成・操作・サーバの起動・サーバへの接続など"
-"の操作が行えます。"
-msgstr ""
-"groonga実行ファイルを使って、DBの作成・操作・サーバの起動・サーバへの接続など"
-"の操作が行えます。"
-
-# 8722aaef363547f08c9f9e9e17b5795d
-#: ../../../source/tutorial/tutorial01.txt:20
-msgid "DBの作成"
-msgstr "DBの作成"
-
-# 3833a48532ce4a75b48ced3aff74f21e
-#: ../../../source/tutorial/tutorial01.txt:22
-msgid ""
-"以下のようなコマンドを実行すると、データベースを新規に作成することができま"
-"す。"
-msgstr ""
-"以下のようなコマンドを実行すると、データベースを新規に作成することができま"
-"す。"
-
-# d05233bd48464cf181a04d4b6d891591
-#: ../../../source/tutorial/tutorial01.txt:28
-msgid "-nオプションは、データベースを作ることを示します。"
-msgstr "-nオプションは、データベースを作ることを示します。"
-
-# 762ec5efb0e14856942ab006bdb3ad6f
-#: ../../../source/tutorial/tutorial01.txt:30
-msgid ""
-"データベースパス名には、新しく作成するデータベースのフルパス名を指定します。"
-msgstr ""
-"データベースパス名には、新しく作成するデータベースのフルパス名を指定します。"
-
-# 69acdee6521348e1971f3adc9597c6d8
-#: ../../../source/tutorial/tutorial01.txt:32
-msgid ""
-"上記コマンドでデータベースを作成すると、そのまま対話モードと呼ばれるコマンド"
-"を受け付けるモードになります。Ctrlキーを押しながらdキーを押すと、対話モードか"
-"ら抜けることができます。"
-msgstr ""
-"上記コマンドでデータベースを作成すると、そのまま対話モードと呼ばれるコマンド"
-"を受け付けるモードになります。Ctrlキーを押しながらdキーを押すと、対話モードか"
-"ら抜けることができます。"
-
-# de10f4e642de4b3f81c939e104dcb7a1
-#: ../../../source/tutorial/tutorial01.txt:41
-msgid "DBの操作"
-msgstr "DBの操作"
-
-# 31b4e64c4d0b47e0a114bac4ffad3e5e
-#: ../../../source/tutorial/tutorial01.txt:47
-msgid ""
-"既存のデータベースのフルパス名をDBパス名に指定します。 コマンドを指定すると、"
-"実行結果を返します。"
-msgstr ""
-"既存のデータベースのフルパス名をDBパス名に指定します。 コマンドを指定すると、"
-"実行結果を返します。"
-
-# eae7fe9921874cce9e237baa319a2ac8
-#: ../../../source/tutorial/tutorial01.txt:50
-msgid ""
-"コマンドを指定しない場合には、対話モードに入ります。 対話モードでは、標準入力"
-"からコマンドを読み込み、順次実行します。 本チュートリアルでは、対話モードを主"
-"に使用します。"
-msgstr ""
-"コマンドを指定しない場合には、対話モードに入ります。 対話モードでは、標準入力"
-"からコマンドを読み込み、順次実行します。 本チュートリアルでは、対話モードを主"
-"に使用します。"
-
-# a35066d279e647389badd82cf68378ed
-#: ../../../source/tutorial/tutorial01.txt:54
-msgid ""
-"たとえば、statusというコマンドを実行してみましょう。statusコマンドは、groonga"
-"の実行状態を返すコマンドです。"
-msgstr ""
-"たとえば、statusというコマンドを実行してみましょう。statusコマンドは、groonga"
-"の実行状態を返すコマンドです。"
-
-# 1897113c9531493d896d88d17a729ec7
-#: ../../../source/tutorial/tutorial01.txt:61
-msgid ""
-"以上のように、コマンドの実行結果は基本的にjson形式で返却されます。jsonの配列"
-"の0番目の要素に、エラーコードや実行時間などの情報が入ります。jsonの配列の1番"
-"目の様子に、コマンドの実行結果が入ります。"
-msgstr ""
-"以上のように、コマンドの実行結果は基本的にjson形式で返却されます。jsonの配列"
-"の0番目の要素に、エラーコードや実行時間などの情報が入ります。jsonの配列の1番"
-"目の様子に、コマンドの実行結果が入ります。"
-
-# a490abef2a5241f282873ec870cfacfe
-#: ../../../source/tutorial/tutorial01.txt:64
-msgid "コマンド"
-msgstr "コマンド"
-
-# c0c38b4f437e4f06ad1bda05b823d564
-#: ../../../source/tutorial/tutorial01.txt:66
-msgid ""
-"groonga実行ファイルやgroongaサーバを介して様々なコマンドを実行して、DBを操作"
-"することができます。 コマンドは以下の書式のうちいずれかで与えることができま"
-"す。 ::"
-msgstr ""
-"groonga実行ファイルやgroongaサーバを介して様々なコマンドを実行して、DBを操作"
-"することができます。 コマンドは以下の書式のうちいずれかで与えることができま"
-"す。 ::"
-
-# 37c7972d7a0546b3baf40cd17a73b403
-#: ../../../source/tutorial/tutorial01.txt:73
-msgid "書式1と2は混ぜて使うことができます。"
-msgstr "書式1と2は混ぜて使うことができます。"
-
-# 0700f865d7664c3c8ee83b24ffec4638
-#: ../../../source/tutorial/tutorial01.txt:75
-msgid ""
-"書式2において、空白や、記号「\"'()\\」のうちいずれかを含む値を指定したい場合"
-"は、シングルクォート(')かダブルクォート(\")で値を囲みます。"
-msgstr ""
-"書式2において、空白や、記号「\"'()\\」のうちいずれかを含む値を指定したい場合"
-"は、シングルクォート(')かダブルクォート(\")で値を囲みます。"
-
-# 69ab19d4663d4655b68a7b9b2a573305
-#: ../../../source/tutorial/tutorial01.txt:77
-msgid ""
-"詳しくは、 :doc:`/executables/groonga` のコマンドの項を参考にしてください。"
-msgstr ""
-"詳しくは、 :doc:`/executables/groonga` のコマンドの項を参考にしてください。"
-
-# 4196ca43620244e795440363b5d3648a
-#: ../../../source/tutorial/tutorial01.txt:80
-msgid "主なコマンド"
-msgstr "主なコマンド"
-
-# 2f3e5578b0cf4b81abacd8404201f61b
-#: ../../../source/tutorial/tutorial01.txt:83
-msgid "groongaプロセスの状態を表示します。"
-msgstr "groongaプロセスの状態を表示します。"
-
-# 9b454ebc474a42d3934475fbb940e87b
-#: ../../../source/tutorial/tutorial01.txt:85
-msgid "DBに定義されているテーブルのリストを表示します。"
-msgstr "DBに定義されているテーブルのリストを表示します。"
-
-# 729deadad2d6431aa2e6fe900750bce9
-#: ../../../source/tutorial/tutorial01.txt:87
-msgid "テーブルに定義されているカラムのリストを表示します。"
-msgstr "テーブルに定義されているカラムのリストを表示します。"
-
-# b782c1192e854f68960b406376eff7fc
-#: ../../../source/tutorial/tutorial01.txt:89
-msgid "DBにテーブルを追加します。"
-msgstr "DBにテーブルを追加します。"
-
-# 3c7ff7d7a5734f369d9bc7f5faac38fd
-#: ../../../source/tutorial/tutorial01.txt:91
-msgid "テーブルにカラムを追加します。"
-msgstr "テーブルにカラムを追加します。"
-
-# f048fe57b2854ea68efb3a6819c8a2ba
-#: ../../../source/tutorial/tutorial01.txt:93
-msgid "テーブルに含まれるレコードを検索して表示します。"
-msgstr "テーブルに含まれるレコードを検索して表示します。"
-
-# 21987da3e8cf4bed8ee9b0a31dd4eb55
-#: ../../../source/tutorial/tutorial01.txt:95
-msgid "テーブルにレコードを挿入します。"
-msgstr "テーブルにレコードを挿入します。"
-
-# c4534913587349bba17957fc049d1755
-#: ../../../source/tutorial/tutorial01.txt:100
-msgid ":doc:`/commands/table_create` コマンドを使用してテーブルを作成します。"
-msgstr ":doc:`/commands/table_create` コマンドを使用してテーブルを作成します。"
-
-# 270970f8b2a34e0c89f09e3a95bd6c25
-#: ../../../source/tutorial/tutorial01.txt:102
-msgid ""
-"groongaでは、多くの場合テーブルを作成する際に主キーが必要となります。また、主"
-"キーには型と、その格納方法を指定する必要があります。"
-msgstr ""
-"groongaでは、多くの場合テーブルを作成する際に主キーが必要となります。また、主"
-"キーには型と、その格納方法を指定する必要があります。"
-
-# 2f514aa95d054f66b5191a97d121af3f
-#: ../../../source/tutorial/tutorial01.txt:104
-msgid ""
-"型については、のちのチュートリアルで触れます。データの種類をあらわしているも"
-"の、とイメージしてください。"
-msgstr ""
-"型については、のちのチュートリアルで触れます。データの種類をあらわしているも"
-"の、とイメージしてください。"
-
-# cfbf854dce4344db921a2b37696646ec
-#: ../../../source/tutorial/tutorial01.txt:106
-msgid ""
-"主キーの格納方法によって、主キーでの検索速度や、前方一致検索の可否が決まりま"
-"す。これも、のちのチュートリアルで触れます。"
-msgstr ""
-"主キーの格納方法によって、主キーでの検索速度や、前方一致検索の可否が決まりま"
-"す。これも、のちのチュートリアルで触れます。"
-
-# 46c1654d9617491fb8713102dbaabbcb
-#: ../../../source/tutorial/tutorial01.txt:108
-msgid ""
-"ここでは、ShortText型の主キー値を持ち、主キーの格納方法はHASHである、'Site'と"
-"いう名前のテーブルを作成します。"
-msgstr ""
-"ここでは、ShortText型の主キー値を持ち、主キーの格納方法はHASHである、'Site'と"
-"いう名前のテーブルを作成します。"
-
-# 67a9d938e79b4cce9284c8be3a95d433
-#: ../../../source/tutorial/tutorial01.txt:117
-msgid ""
-":doc:`/commands/select` コマンドを用いて、テーブルの中身を表示することができ"
-"ます。"
-msgstr ""
-":doc:`/commands/select` コマンドを用いて、テーブルの中身を表示することができ"
-"ます。"
-
-# eab40de4161e4111b0048f9875b12ae4
-#: ../../../source/tutorial/tutorial01.txt:123
-msgid ""
-"selectにテーブル名を指定すると、指定したテーブルの中身を10件表示します。[0]は"
-"検索されたレコードの件数、[\"_id\",\"Uint32\"]は値がUInt32型である\"_id'とい"
-"う名前のカラム、[\"_key\",\"ShortText\"]は値がShortText型である'_key'という名"
-"前のカラムを示しています。"
-msgstr ""
-"selectにテーブル名を指定すると、指定したテーブルの中身を10件表示します。[0]は"
-"検索されたレコードの件数、[\"_id\",\"Uint32\"]は値がUInt32型である\"_id'とい"
-"う名前のカラム、[\"_key\",\"ShortText\"]は値がShortText型である'_key'という名"
-"前のカラムを示しています。"
-
-# 47ebdd6d40614dd0ad50e45ae527f8d0
-#: ../../../source/tutorial/tutorial01.txt:125
-msgid ""
-"table_createコマンドで作成したテーブルには、最初から'_id'/'_key'という２つの"
-"カラムがあります。'_id'はgroongaが自動的に付与するID番号が格納されるカラムで"
-"す。'_key'は主キーが格納されるカラムです。これらのカラム名を変更することはで"
-"きません。"
-msgstr ""
-"table_createコマンドで作成したテーブルには、最初から'_id'/'_key'という２つの"
-"カラムがあります。'_id'はgroongaが自動的に付与するID番号が格納されるカラムで"
-"す。'_key'は主キーが格納されるカラムです。これらのカラム名を変更することはで"
-"きません。"
-
-# 8c685136ca6b48009ebfa0f1763ef28a
-#: ../../../source/tutorial/tutorial01.txt:128
-msgid "カラムの作成"
-msgstr "カラムの作成"
-
-# 38fa336311a44a618d75c25ebd3af1ba
-#: ../../../source/tutorial/tutorial01.txt:130
-msgid ""
-":doc:`/commands/column_create` コマンドを用いて、カラムを作成することができま"
-"す。"
-msgstr ""
-":doc:`/commands/column_create` コマンドを用いて、カラムを作成することができま"
-"す。"
-
-# 11b47aadd83d44a09bd8494ef010bcd0
-#: ../../../source/tutorial/tutorial01.txt:132
-msgid ""
-"ShortText型の値を持つ、'comment'という名前のカラムを'Site'テーブルに追加しま"
-"しょう。"
-msgstr ""
-"ShortText型の値を持つ、'comment'という名前のカラムを'Site'テーブルに追加しま"
-"しょう。"
-
-# f3a576a06d4049f2a6214534279d4ed7
-#: ../../../source/tutorial/tutorial01.txt:139
-msgid "COLUMN_SCALARについては、通常のカラムであることを示しています。"
-msgstr "COLUMN_SCALARについては、通常のカラムであることを示しています。"
-
-# 6f052a8ae09b4541b9f98a9842b6cf3d
-#: ../../../source/tutorial/tutorial01.txt:142
-msgid "全文検索用の語彙表の作成"
-msgstr "全文検索用の語彙表の作成"
-
-# 58773e08c6c244639dca58fe8e556c38
-#: ../../../source/tutorial/tutorial01.txt:144
-msgid ""
-"このチュートリアルでは、groongaに登録したデータを用いた全文検索を行います。"
-msgstr ""
-"このチュートリアルでは、groongaに登録したデータを用いた全文検索を行います。"
-
-# a2b3bf952a07403189d0c7ff7627db51
-#: ../../../source/tutorial/tutorial01.txt:146
-msgid ""
-"全文検索を行う場合は、まず語彙表を作成する必要があります。 語彙表とは、文書の"
-"中にある単語が主キーとなるテーブルです。 ここでは、ShortText型の主キー値を持"
-"つ、'Terms'という名前のテーブルを作成しました。"
-msgstr ""
-"全文検索を行う場合は、まず語彙表を作成する必要があります。 語彙表とは、文書の"
-"中にある単語が主キーとなるテーブルです。 ここでは、ShortText型の主キー値を持"
-"つ、'Terms'という名前のテーブルを作成しました。"
-
-# 537f15a279aa488f899e98c8311e3ac2
-#: ../../../source/tutorial/tutorial01.txt:154
-msgid ""
-"この実行例には、多くのパラメータが指定されています。本チュートリアルでは、こ"
-"れらをすべて理解する必要はありません。以下に簡単な説明を記しますが、読み飛ば"
-"してもらってかまいません。"
-msgstr ""
-"この実行例には、多くのパラメータが指定されています。本チュートリアルでは、こ"
-"れらをすべて理解する必要はありません。以下に簡単な説明を記しますが、読み飛ば"
-"してもらってかまいません。"
-
-# ad38d76b32b249a0803cdf8e1c2418c5
-#: ../../../source/tutorial/tutorial01.txt:156
-msgid ""
-"実行例にある、TABLE_PAT_KEY|KEY_NORMALIZEという値は、主キー値をパトリシア木に"
-"格納し、各語彙を正規化して登録することを示しています。"
-msgstr ""
-"実行例にある、TABLE_PAT_KEY|KEY_NORMALIZEという値は、主キー値をパトリシア木に"
-"格納し、各語彙を正規化して登録することを示しています。"
-
-# dc412451163648dd8f17fa3a686c7de3
-#: ../../../source/tutorial/tutorial01.txt:158
-msgid ""
-"実行例にある、TokenBigramという値は、 語彙表として使用するテーブルは、対象の"
-"文書をトークナイズする方式を、default_tokenizerパラメータで与えます。この例で"
-"はTokenBigramを指定しています。よって、一般的にN-gramと呼ばれるようなインデッ"
-"クス方式を選択しています。"
-msgstr ""
-"実行例にある、TokenBigramという値は、 語彙表として使用するテーブルは、対象の"
-"文書をトークナイズする方式を、default_tokenizerパラメータで与えます。この例で"
-"はTokenBigramを指定しています。よって、一般的にN-gramと呼ばれるようなインデッ"
-"クス方式を選択しています。"
-
-# db3d7419cc4745bcb3a1298dd0687b0f
-#: ../../../source/tutorial/tutorial01.txt:161
-msgid "全文検索用のインデックスカラムの作成"
-msgstr "全文検索用のインデックスカラムの作成"
-
-# c340273a95444bad96b800e5b2e07ef2
-#: ../../../source/tutorial/tutorial01.txt:163
-msgid ""
-"Siteテーブルのtitleカラムを全文検索の対象としたいとしましょう。その場合には、"
-"語彙表にインデックス型のカラムを作成します。"
-msgstr ""
-"Siteテーブルのtitleカラムを全文検索の対象としたいとしましょう。その場合には、"
-"語彙表にインデックス型のカラムを作成します。"
-
-# 94df1155a71a42acb207ce7e12843fb5
-#: ../../../source/tutorial/tutorial01.txt:169
-msgid ""
-"Siteテーブルのtitleカラムを検索対象とする、'blog_title'という名前のインデック"
-"ス型カラムをTermsテーブルに作成しました。インデックス対象となるテーブルをtype"
-"に、インデックス対象となるカラムをsourceに指定します。"
-msgstr ""
-"Siteテーブルのtitleカラムを検索対象とする、'blog_title'という名前のインデック"
-"ス型カラムをTermsテーブルに作成しました。インデックス対象となるテーブルをtype"
-"に、インデックス対象となるカラムをsourceに指定します。"
-
-# 21737d2becb9444e8889cfac8e754c1d
-#: ../../../source/tutorial/tutorial01.txt:171
-msgid ""
-"実行例のflagsのCOLUMN_INDEX|WITH_POSITIONという値は、語彙の位置情報を格納する"
-"インデックス型のカラムであることを示しています。通常の全文検索インデックスで"
-"は、COLUMN_INDEX|WITH_POSITIONを指定してください。語彙の位置情報を格納する意"
-"味については、本チュートリアルでは触れません。"
-msgstr ""
-"実行例のflagsのCOLUMN_INDEX|WITH_POSITIONという値は、語彙の位置情報を格納する"
-"インデックス型のカラムであることを示しています。通常の全文検索インデックスで"
-"は、COLUMN_INDEX|WITH_POSITIONを指定してください。語彙の位置情報を格納する意"
-"味については、本チュートリアルでは触れません。"
-
-# 31f66f45882c410d89be714bd04dfd53
-#: ../../../source/tutorial/tutorial01.txt:176
-msgid ""
-":doc:`/commands/load` コマンドを使用します。loadコマンドでは、jsonで受け取っ"
-"たデータをテーブルに格納します。"
-msgstr ""
-":doc:`/commands/load` コマンドを使用します。loadコマンドでは、jsonで受け取っ"
-"たデータをテーブルに格納します。"
-
-# 1f325f7e3a2f44009ac2764149ccbdd3
-#: ../../../source/tutorial/tutorial01.txt:193
-msgid "selectコマンドで、データが入っていることを確認しましょう。"
-msgstr "selectコマンドで、データが入っていることを確認しましょう。"
-
-# 8b781927f6cb428da6b7ea88eadffae5
-#: ../../../source/tutorial/tutorial01.txt:200
-msgid "データの検索"
-msgstr "データの検索"
-
-# 7216fbb6457f491ba242f49db6b13959
-#: ../../../source/tutorial/tutorial01.txt:202
-msgid ""
-"groongaでは、'_id'カラムと'_key'カラムの値はテーブル中で一意です。よって、そ"
-"れを用いて検索してみましょう。"
-msgstr ""
-"groongaでは、'_id'カラムと'_key'カラムの値はテーブル中で一意です。よって、そ"
-"れを用いて検索してみましょう。"
-
-# 9a5461ac15b14289a2451ba2502ffb68
-#: ../../../source/tutorial/tutorial01.txt:204
-msgid ""
-"selectコマンドにおいて、queryパラメータを用いるとデータの検索を行うことができ"
-"ます。"
-msgstr ""
-"selectコマンドにおいて、queryパラメータを用いるとデータの検索を行うことができ"
-"ます。"
-
-# 4e5bb4a1deb045c5bad14b8f397782f5
-#: ../../../source/tutorial/tutorial01.txt:210
-msgid ""
-"queryパラメータに与えた「_id:1」というのは、'_id'という名前のカラムに'1'とい"
-"う値が入っているレコードを検索する、という意味です。"
-msgstr ""
-"queryパラメータに与えた「_id:1」というのは、'_id'という名前のカラムに'1'とい"
-"う値が入っているレコードを検索する、という意味です。"
-
-# 44245230acc242158e50390aa143a6e9
-#: ../../../source/tutorial/tutorial01.txt:212
-msgid "_keyでも検索してみましょう。"
-msgstr "_keyでも検索してみましょう。"
-
-# 0c2fefd95ec1494688d1df6651d737ae
-#: ../../../source/tutorial/tutorial01.txt:218
-msgid ""
-"queryパラメータに与えた「_key:\\\"http://example.org/\\\"」というの"
-"は、'_key'という名前のカラムに'\"http://example.org/\"'という値が入っているレ"
-"コードを検索する、という意味です。"
-msgstr ""
-"queryパラメータに与えた「_key:\\\"http://example.org/\\\"」というの"
-"は、'_key'という名前のカラムに'\"http://example.org/\"'という値が入っているレ"
-"コードを検索する、という意味です。"
-
-# 7936c3a8939a41fe8f6cd623fcdefd06
-#: ../../../source/tutorial/tutorial01.txt:221
-msgid "全文検索"
-msgstr "全文検索"
-
-# f2032fb1b3ac4774be0a8b21112e852d
-#: ../../../source/tutorial/tutorial01.txt:223
-msgid "queryパラメータでは、インデックスを用いた全文検索を行うこともできます。"
-msgstr ""
-"queryパラメータでは、インデックスを用いた全文検索を行うこともできます。"
-
-# 230b003f4f1042c6a3a10f2009724666
-#: ../../../source/tutorial/tutorial01.txt:229
-msgid ""
-"titleカラムに対して、'this'という文字列で全文検索を行った結果を返します。"
-msgstr ""
-"titleカラムに対して、'this'という文字列で全文検索を行った結果を返します。"
-
-# 201838d0017945cfa28f6e88cd26318f
-#: ../../../source/tutorial/tutorial01.txt:231
-msgid ""
-"queryパラメータに与えた「title:@this」というのが、'title'という名前のカラム"
-"に'this'という文字列が含まれているレコードを検索する、という意味です。"
-msgstr ""
-"queryパラメータに与えた「title:@this」というのが、'title'という名前のカラム"
-"に'this'という文字列が含まれているレコードを検索する、という意味です。"
-
-# b50119ea5fcf432ea995b91ba154d630
-#: ../../../source/tutorial/tutorial01.txt:233
-msgid ""
-"selectコマンドには、match_columnsというパラメータが存在します。これを指定する"
-"と、query内にカラム名を指定しない条件があった場合、match_columnsで指定された"
-"カラムに対しての検索であることを示します。[1]_"
-msgstr ""
-"selectコマンドには、match_columnsというパラメータが存在します。これを指定する"
-"と、query内にカラム名を指定しない条件があった場合、match_columnsで指定された"
-"カラムに対しての検索であることを示します。[1]_"
-
-# 37ca49da41cf432596586dcd6eb29664
-#: ../../../source/tutorial/tutorial01.txt:235
-msgid ""
-"match_columnsパラメータに'title'、queryパラメータに'this'という文字列を指定す"
-"ると、上記のクエリと同じ結果を得ることができます。"
-msgstr ""
-"match_columnsパラメータに'title'、queryパラメータに'this'という文字列を指定す"
-"ると、上記のクエリと同じ結果を得ることができます。"
-
-# 8e360dc79b984b28895a837f64cfdc70
-#: ../../../source/tutorial/tutorial01.txt:242
-msgid "出力カラムの指定"
-msgstr "出力カラムの指定"
-
-# 18198112850a4629a6f5b793b7c48ab2
-#: ../../../source/tutorial/tutorial01.txt:244
-msgid ""
-"selectコマンドにおいて、output_columnsパラメータを用いることで、検索結果で表"
-"示するカラムを指定することが出来ます。"
-msgstr ""
-"selectコマンドにおいて、output_columnsパラメータを用いることで、検索結果で表"
-"示するカラムを指定することが出来ます。"
-
-# 6c18544634914219a777936fb3868df4
-#: ../../../source/tutorial/tutorial01.txt:246
-msgid "複数のカラムを指定する場合は、カンマ(,)区切りで指定します。"
-msgstr "複数のカラムを指定する場合は、カンマ(,)区切りで指定します。"
-
-# 577f3a74cdc340d3a9e92f714d81e039
-#: ../../../source/tutorial/tutorial01.txt:252
-msgid ""
-"groongaの検索結果には、「_score」という名前のカラムが追加されています。このカ"
-"ラムは、全文検索の条件が合致する文書ほど高い数値が入ります。"
-msgstr ""
-"groongaの検索結果には、「_score」という名前のカラムが追加されています。このカ"
-"ラムは、全文検索の条件が合致する文書ほど高い数値が入ります。"
-
-# 98f463fee3764c17847af37d59b293fd
-#: ../../../source/tutorial/tutorial01.txt:256
-msgid "表示範囲指定"
-msgstr "表示範囲指定"
-
-# 0b617f18d752477ca79a0dada2a998ca
-#: ../../../source/tutorial/tutorial01.txt:258
-msgid ""
-"selectコマンドにおいて、offset,limitパラメータを用いることで、検索結果から指"
-"定された範囲のみを表示することが出来ます。大量の検索結果をページで分けて、1"
-"ページ分のみを表示したい場合に有効です。"
-msgstr ""
-"selectコマンドにおいて、offset,limitパラメータを用いることで、検索結果から指"
-"定された範囲のみを表示することが出来ます。大量の検索結果をページで分けて、1"
-"ページ分のみを表示したい場合に有効です。"
-
-# f8d0a67b03524968a11064881be1b39b
-#: ../../../source/tutorial/tutorial01.txt:260
-msgid ""
-"offsetパラメータには、検索結果を返す始点を指定します。1件目から結果を返す場合"
-"には、0を指定します。"
-msgstr ""
-"offsetパラメータには、検索結果を返す始点を指定します。1件目から結果を返す場合"
-"には、0を指定します。"
-
-# 1c376d6544214d07894515e78044e52c
-#: ../../../source/tutorial/tutorial01.txt:262
-msgid "limitパラメータには、検索結果を何件表示するのかを指定します。"
-msgstr "limitパラメータには、検索結果を何件表示するのかを指定します。"
-
-# 8341f26e24624cb3bb990defd9db706e
-#: ../../../source/tutorial/tutorial01.txt:271
-msgid "並び替え"
-msgstr "並び替え"
-
-# 35fa4d9064a542e5a2db9e1b45ff7789
-#: ../../../source/tutorial/tutorial01.txt:273
-msgid ""
-"selectコマンドにおいて、sortbyパラメータを用いることで、検索結果を並び替える"
-"ことが出来ます。"
-msgstr ""
-"selectコマンドにおいて、sortbyパラメータを用いることで、検索結果を並び替える"
-"ことが出来ます。"
-
-# a22654bea4d748d78baa4cc814add169
-#: ../../../source/tutorial/tutorial01.txt:275
-msgid ""
-"sortbyパラメータにカラム名を指定することで、そのカラムの値で昇順にソートしま"
-"す。また、カラム名の前にハイフン（-）を付けることで、降順にソートすることも出"
-"来ます。"
-msgstr ""
-"sortbyパラメータにカラム名を指定することで、そのカラムの値で昇順にソートしま"
-"す。また、カラム名の前にハイフン（-）を付けることで、降順にソートすることも出"
-"来ます。"
-
-# d566902b69524c75b48b3986bbc65ca1
-#: ../../../source/tutorial/tutorial01.txt:281
-msgid ""
-"出力カラムの指定で紹介した「_score」カラムは、ソートの条件としても使うことが"
-"できます。"
-msgstr ""
-"出力カラムの指定で紹介した「_score」カラムは、ソートの条件としても使うことが"
-"できます。"
-
-# 010c6ba00b0544989d85dc277a4e43ae
-#: ../../../source/tutorial/tutorial01.txt:287
-msgid ""
-"ソートするカラム名を複数指定したい場合は、カンマ(,)区切りで指定します。複数の"
-"カラムを指定した場合、最初のカラムで同一の値のレコードがあった場合に、次のカ"
-"ラムの値でソートさせることができます。"
-msgstr ""
-"ソートするカラム名を複数指定したい場合は、カンマ(,)区切りで指定します。複数の"
-"カラムを指定した場合、最初のカラムで同一の値のレコードがあった場合に、次のカ"
-"ラムの値でソートさせることができます。"
-
-# 7eaa6b0153ce460eaa2f0a99d57d744c
-#: ../../../source/tutorial/tutorial01.txt:294
-msgid "脚注"
-msgstr "脚注"
-
-# e716a41e60bc46e38eb2c8f141a5c1c3
-#: ../../../source/tutorial/tutorial01.txt:295
-msgid ""
-"現在のバージョンでは、全文検索インデックスが存在する場合にのみ、match_columns"
-"パラメータを利用することができます。通常のカラムでの絞り込みには利用できませ"
-"ん。"
-msgstr ""
-"現在のバージョンでは、全文検索インデックスが存在する場合にのみ、match_columns"
-"パラメータを利用することができます。通常のカラムでの絞り込みには利用できませ"
-"ん。"
-
-# b37370424ad24117aef915a2ff039fe9
-# 6828235e6eb94f7ea8f7dc6c9462a698
-#: ../../../source/tutorial/tutorial01.txt:115,
-#: ../../../source/tutorial/tutorial10.txt:373
-msgid "検索"
-msgstr "検索"
-
-# 6710378117924fcd84a3de2ec178b179
-# 34368e490193448aac17f1c4d603d2ec
-#: ../../../source/tutorial/tutorial01.txt:174,
-#: ../../../source/tutorial/tutorial10.txt:141
-msgid "データのロード"
-msgstr "データのロード"
-
-# 8f2b6e4207fb4318a4ef80a72dfcc061
-# 7b9ec1f05c794eccb371903b81f11e83
-# bc7e3f6fa8e2422f83a7eb2e59a40ad7
-# c21694138d5f46cf831dd9da313a0543
-# 5c8411ae738c4cff8b639c204e504fd3
-#: ../../../source/tutorial/tutorial01.txt:24,
-#: ../../../source/tutorial/tutorial01.txt:43,
-#: ../../../source/tutorial/tutorial02.txt:70
-#: ../../../source/tutorial/tutorial02.txt:18,
-#: ../../../source/tutorial/tutorial02.txt:37,
-msgid "書式 ::"
-msgstr "書式 ::"
-
-# 638b840c3ef946d0b5629e4cf2da5987
-# 09508cf85d454bd08d2085a874659bd9
-#: ../../../source/tutorial/tutorial01.txt:34,
-#: ../../../source/tutorial/tutorial02.txt:26
-msgid "実行例::"
-msgstr "実行例::"
-
-# 358ddaf22d9b4d9e96819e02a3ef51fd
-# d0e6a0198c284c77aa2d9db8c6c85856
-#: ../../../source/tutorial/tutorial01.txt:98,
-#: ../../../source/tutorial/tutorial10.txt:17
-msgid "テーブルの作成"
-msgstr "テーブルの作成"
-
-# 9d7e658c84e04a5b8e3b3dc28c0e071a
-#: ../../../source/tutorial/tutorial02.txt:8
-msgid "ネットワークを通じた利用"
-msgstr "ネットワークを通じた利用"
-
-# f4ffb358be9d4141ac9565afdd4751eb
-#: ../../../source/tutorial/tutorial02.txt:10
-msgid ""
-"groongaはネットワークを通じて利用することができます。groonga独自プロトコルも"
-"しくはHTTPのどちらかを選択してgroongaを起動することにより、groongaはネット"
-"ワーク接続を待ち受けます。"
-msgstr ""
-"groongaはネットワークを通じて利用することができます。groonga独自プロトコルも"
-"しくはHTTPのどちらかを選択してgroongaを起動することにより、groongaはネット"
-"ワーク接続を待ち受けます。"
-
-# ba46fe69e8194848b2f7d54e22e82761
-#: ../../../source/tutorial/tutorial02.txt:13
-msgid "groonga専用プロトコルによる通信"
-msgstr "groonga専用プロトコルによる通信"
-
-# c6137d7ac533406b96774f22f28ae928
-#: ../../../source/tutorial/tutorial02.txt:16
-msgid "groongaデーモンの起動"
-msgstr "groongaデーモンの起動"
-
-# b0c10a22d3764741a9c7f2f82ab3bbbf
-#: ../../../source/tutorial/tutorial02.txt:22
-msgid ""
-"既存のデータベースのフルパス名をDBパス名に指定します。 groongaがデーモンモー"
-"ドで起動し、指定したポート番号でgroongaの専用プロトコルを用いた通信をすること"
-"ができます。 (ポート番号を省略した場合は10041が使用されます)"
-msgstr ""
-"既存のデータベースのフルパス名をDBパス名に指定します。 groongaがデーモンモー"
-"ドで起動し、指定したポート番号でgroongaの専用プロトコルを用いた通信をすること"
-"ができます。 (ポート番号を省略した場合は10041が使用されます)"
-
-# 4439c6e5628a464abbb1cdbb31d0ba1f
-#: ../../../source/tutorial/tutorial02.txt:32
-msgid "デーモンモードで起動後、プロセス番号が表示されます。"
-msgstr "デーモンモードで起動後、プロセス番号が表示されます。"
-
-# a1b5aebec95248e98a5eb7f5db8bdf0c
-#: ../../../source/tutorial/tutorial02.txt:35
-msgid "groongaサーバへの接続"
-msgstr "groongaサーバへの接続"
-
-# b764fadbcad24522bba310f11ca70ad2
-#: ../../../source/tutorial/tutorial02.txt:41
-msgid "対象ホストで動作しているgroongaサーバに接続します。"
-msgstr "対象ホストで動作しているgroongaサーバに接続します。"
-
-# b3d026dd11734f86b224b84a1b612a49
-#: ../../../source/tutorial/tutorial02.txt:43
-msgid ""
-"対象ホスト名を省略した場合はlocalhostに対して接続し、対象ポート番号を省略した"
-"場合は10041ポートに対して接続します。"
-msgstr ""
-"対象ホスト名を省略した場合はlocalhostに対して接続し、対象ポート番号を省略した"
-"場合は10041ポートに対して接続します。"
-
-# 2f7fa46eabe84172b6c8d1051c4d096d
-#: ../../../source/tutorial/tutorial02.txt:45
-msgid ""
-"接続に成功すると対話モードに入り、標準入力からコマンドを読み込んで順次実行し"
-"ます。"
-msgstr ""
-"接続に成功すると対話モードに入り、標準入力からコマンドを読み込んで順次実行し"
-"ます。"
-
-# e513248eb926485692c90836a25ac7d3
-#: ../../../source/tutorial/tutorial02.txt:55
-msgid "groongaデーモンの終了"
-msgstr "groongaデーモンの終了"
-
-# 00ff6804dbdf42e1b2c202a165c458bd
-#: ../../../source/tutorial/tutorial02.txt:57
-msgid ""
-"groongaデーモンにshutdownコマンドを発行することにより、終了させることができま"
-"す。"
-msgstr ""
-"groongaデーモンにshutdownコマンドを発行することにより、終了させることができま"
-"す。"
-
-# 35e9e17b730a42f9a05439abd1b66a43
-#: ../../../source/tutorial/tutorial02.txt:66
-msgid "HTTPによる通信"
-msgstr "HTTPによる通信"
-
-# f0e9843de4164fa79d9a47e03bf59da9
-#: ../../../source/tutorial/tutorial02.txt:68
-msgid ""
-"groongaをHTTP経由で利用したい場合には、HTTPプロトコルモードで起動します。"
-msgstr ""
-"groongaをHTTP経由で利用したい場合には、HTTPプロトコルモードで起動します。"
-
-# e2510f967a9546bf97b7c9a55156e32b
-#: ../../../source/tutorial/tutorial02.txt:74
-msgid ""
-"protocolオプションで、groongaが受け付けるプロトコルを指定できます。httpを指定"
-"すると、groongaはHTTPプロトコルでの通信を受け付けます。"
-msgstr ""
-"protocolオプションで、groongaが受け付けるプロトコルを指定できます。httpを指定"
-"すると、groongaはHTTPプロトコルでの通信を受け付けます。"
-
-# 96a617672d8e469ea6b6cba8447d8e41
-#: ../../../source/tutorial/tutorial02.txt:77
-msgid "HTML管理ツール"
-msgstr "HTML管理ツール"
-
-# bc9fe887dc594daeb5274275fee3147d
-#: ../../../source/tutorial/tutorial02.txt:79
-msgid ""
-"コマンド実行後、http://[IPアドレスまたはホスト名]:[ポート番号]/ というURLにブ"
-"ラウザからアクセスすると、HTML管理ツールが表示されます。ブラウザは、"
-"JavaScriptの実行が有効になっている必要があります。"
-msgstr ""
-"コマンド実行後、http://[IPアドレスまたはホスト名]:[ポート番号]/ というURLにブ"
-"ラウザからアクセスすると、HTML管理ツールが表示されます。ブラウザは、"
-"JavaScriptの実行が有効になっている必要があります。"
-
-# c71f98616ea14b25addda00ac2097941
-#: ../../../source/tutorial/tutorial02.txt:82
-msgid "HTTPでのコマンド実行"
-msgstr "HTTPでのコマンド実行"
-
-# 21f48a4786434f87b6f5fe3db1e16a1d
-#: ../../../source/tutorial/tutorial02.txt:84
-msgid ""
-"groongaがHTTPプロトコルモードで起動されているとき、「/d/コマンド名」というURL"
-"にアクセスすると、コマンドを実行することが出来ます。"
-msgstr ""
-"groongaがHTTPプロトコルモードで起動されているとき、「/d/コマンド名」というURL"
-"にアクセスすると、コマンドを実行することが出来ます。"
-
-# b68b71d402224a229b5d9a9e652796f3
-#: ../../../source/tutorial/tutorial02.txt:86
-msgid ""
-"コマンドのオプションは、HTTPのGETパラメータで渡します。つまり、「?オプション="
-"値&オプション=値 …」という書式になります。"
-msgstr ""
-"コマンドのオプションは、HTTPのGETパラメータで渡します。つまり、「?オプション="
-"値&オプション=値 …」という書式になります。"
-
-# 7469f5e928174ceba72c10f863f27253
-#: ../../../source/tutorial/tutorial02.txt:100
-msgid "セキュリティ"
-msgstr "セキュリティ"
-
-# d19c256829484372b06542245e5b9e70
-#: ../../../source/tutorial/tutorial02.txt:102
-msgid ""
-"groongaのネットワークサービスにはは認証機能がありません。誰でもデータベースの"
-"内容を閲覧・修正することができます。iptablesなどを用いて、アクセス元IPアドレ"
-"スを制限することを薦めます。"
-msgstr ""
-"groongaのネットワークサービスにはは認証機能がありません。誰でもデータベースの"
-"内容を閲覧・修正することができます。iptablesなどを用いて、アクセス元IPアドレ"
-"スを制限することを薦めます。"
-
 # b3df0c1c17f84945ac060d0bde3834f0
-#: ../../../source/tutorial/tutorial03.txt:8
+#: ../../../source/tutorial/data.txt:8
 msgid "さまざまな種類をもったデータの保存"
 msgstr "さまざまな種類をもったデータの保存"
 
 # 9436f248bd4d4273aa9924a2ee462f24
-#: ../../../source/tutorial/tutorial03.txt:10
+#: ../../../source/tutorial/data.txt:10
 msgid "groongaでは、さまざまなデータを格納させることが出来ます。"
 msgstr "groongaでは、さまざまなデータを格納させることが出来ます。"
 
 # a81487eb91e247cfa6508ec5618d6765
-#: ../../../source/tutorial/tutorial03.txt:13
+#: ../../../source/tutorial/data.txt:13
 msgid "データ型"
 msgstr "データ型"
 
 # 09bef6ddeb5d4e8382b4da0a899bc61a
-#: ../../../source/tutorial/tutorial03.txt:15
+#: ../../../source/tutorial/data.txt:15
 msgid ""
 "groongaでは、数値（整数・小数）や文字列や時刻や経緯度などの情報を格納すること"
 "ができます。"
@@ -984,7 +168,7 @@ msgstr ""
 "ができます。"
 
 # c6e41a97b45248d880800066fefae56a
-#: ../../../source/tutorial/tutorial03.txt:17
+#: ../../../source/tutorial/data.txt:17
 msgid ""
 "ここでは、Int32型のカラムに整数を格納、Float型のカラムに浮動小数点の小数を、"
 "ShortText型のカラムに文字列を、Time型のカラムに時間を格納する例を示します。経"
@@ -995,22 +179,23 @@ msgstr ""
 "緯度の格納については、のちのチュートリアルで触れます。"
 
 # 24877fef3f77409d9e2de55ebcf26968
-#: ../../../source/tutorial/tutorial03.txt:19
-msgid "その他のデータ型の一覧は、 :doc:`../type` を参照してください。"
+#: ../../../source/tutorial/data.txt:19
+#, fuzzy
+msgid "その他のデータ型の一覧は、 :doc:`/type` を参照してください。"
 msgstr "その他のデータ型の一覧は、 :doc:`../type` を参照してください。"
 
 # 0a09da3201fb4fe384dd40504548c369
-#: ../../../source/tutorial/tutorial03.txt:35
+#: ../../../source/tutorial/data.txt:35
 msgid "テーブル型"
 msgstr "テーブル型"
 
 # b812299840f54ea5bf03bbb09e4981ff
-#: ../../../source/tutorial/tutorial03.txt:37
+#: ../../../source/tutorial/data.txt:37
 msgid "table_createで作成したテーブルを、カラムの型として使うことが出来ます。"
 msgstr "table_createで作成したテーブルを、カラムの型として使うことが出来ます。"
 
 # 081a8e4a2ead408a93220e45e9360417
-#: ../../../source/tutorial/tutorial03.txt:39
+#: ../../../source/tutorial/data.txt:39
 msgid ""
 "また、output_columnsにおいて「.」を区切りとして、参照先のテーブルに存在するカ"
 "ラムを指定すると、指定したカラムの値を表示することができます。"
@@ -1019,7 +204,7 @@ msgstr ""
 "ラムを指定すると、指定したカラムの値を表示することができます。"
 
 # 2963c108f984484e91c526eb5090704f
-#: ../../../source/tutorial/tutorial03.txt:41
+#: ../../../source/tutorial/data.txt:41
 msgid ""
 "ここでは、先のチュートリアルで作成したSiteテーブルに手を加え、どのサイトをリ"
 "ンクしているのかを保存してみましょう。"
@@ -1028,7 +213,7 @@ msgstr ""
 "ンクしているのかを保存してみましょう。"
 
 # a451a47b8f984acba50d86643f880bad
-#: ../../../source/tutorial/tutorial03.txt:43
+#: ../../../source/tutorial/data.txt:43
 msgid ""
 "他のテーブルを参照するカラムにデータを入力する場合には、参照先のテーブルの"
 "_keyカラムの値を代入する必要があります。"
@@ -1037,7 +222,7 @@ msgstr ""
 "_keyカラムの値を代入する必要があります。"
 
 # 0854b6af3cd0481f9c3b23b0905101ae
-#: ../../../source/tutorial/tutorial03.txt:52
+#: ../../../source/tutorial/data.txt:52
 msgid ""
 "このように、linkカラムに他のサイトへの参照を保存することができました。また、"
 "参照先の_keyとtitleカラムの内容を表示することができました。"
@@ -1046,12 +231,12 @@ msgstr ""
 "参照先の_keyとtitleカラムの内容を表示することができました。"
 
 # 9f03f17e029848bbb2fab6a6590767a5
-#: ../../../source/tutorial/tutorial03.txt:55
+#: ../../../source/tutorial/data.txt:55
 msgid "ベクターカラム"
 msgstr "ベクターカラム"
 
 # 3387e3b50b6843adb2f9d5af37550b5e
-#: ../../../source/tutorial/tutorial03.txt:57
+#: ../../../source/tutorial/data.txt:57
 msgid ""
 "column_createコマンドでカラムを作成するとき、--flagsオプションでCOLUMN_VECTOR"
 "フラグを指定すると、複数の値を配列で格納できるカラムが作成されます。"
@@ -1060,13 +245,13 @@ msgstr ""
 "フラグを指定すると、複数の値を配列で格納できるカラムが作成されます。"
 
 # bbe0601c573d41a4b10722bd098ba98d
-#: ../../../source/tutorial/tutorial03.txt:59
+#: ../../../source/tutorial/data.txt:59
 msgid "テーブル型で配列を格納するカラムは、1対多の参照関係を表すのに有効です。"
 msgstr ""
 "テーブル型で配列を格納するカラムは、1対多の参照関係を表すのに有効です。"
 
 # 077849042c924e72bbde31b8b993f54f
-#: ../../../source/tutorial/tutorial03.txt:61
+#: ../../../source/tutorial/data.txt:61
 msgid ""
 "テーブル型のチュートリアルでは、Siteテーブルに手を加え、どのサイトをリンクし"
 "ているのかを保存しました。しかし、通常は1つのサイトから多くのサイトにリンクが"
@@ -1079,7 +264,7 @@ msgstr ""
 "ラムを作成してみましょう。"
 
 # 6259b904b4dd42b3a85acadcfa6e68e5
-#: ../../../source/tutorial/tutorial03.txt:63
+#: ../../../source/tutorial/data.txt:63
 msgid ""
 "他のテーブルを参照するベクターカラムにデータを入力する場合には、参照先のテー"
 "ブルの_keyカラムの値の「配列」を代入する必要があります。"
@@ -1088,272 +273,21 @@ msgstr ""
 "ブルの_keyカラムの値の「配列」を代入する必要があります。"
 
 # c0da6e69e159441893fc9601820aabce
-#: ../../../source/tutorial/tutorial03.txt:74
+#: ../../../source/tutorial/data.txt:74
 msgid ""
 "このように、複数の参照関係が保存できました。また、output_columnsによって、複"
 "数の参照先のカラム値も表示させることができました。"
 msgstr ""
 "このように、複数の参照関係が保存できました。また、output_columnsによって、複"
 "数の参照先のカラム値も表示させることができました。"
-
-# 9e5bd80c9da34646a4f65b0909c23e3f
-#: ../../../source/tutorial/tutorial04.txt:8
-msgid "さまざまな検索条件の指定"
-msgstr "さまざまな検索条件の指定"
-
-# bd3b2bdd2841462cafc0592df2e19512
-#: ../../../source/tutorial/tutorial04.txt:10
-msgid ""
-"groongaは、JavaScriptに似た文法での条件絞込や、計算した値を用いたソートを行う"
-"ことができます。また、位置情報(緯度・経度)を用いた絞込・ソートを行うことがで"
-"きます。"
-msgstr ""
-"groongaは、JavaScriptに似た文法での条件絞込や、計算した値を用いたソートを行う"
-"ことができます。また、位置情報(緯度・経度)を用いた絞込・ソートを行うことがで"
-"きます。"
-
-# e97ca2f450ca4471875d5008f4caa1be
-#: ../../../source/tutorial/tutorial04.txt:13
-msgid "JavaScriptに似た文法での絞込・全文検索"
-msgstr "JavaScriptに似た文法での絞込・全文検索"
-
-# b76e65f57e244b5098d65555943fd2d5
-#: ../../../source/tutorial/tutorial04.txt:15
-msgid ""
-"selectコマンドのfilterパラメータは、queryパラメータと同様に、レコードの検索条"
-"件を指定します。filterパラメータとqueryパラメータが異なる点は、filterパラメー"
-"タには、JavaScriptの式に似た文法で条件を指定する点です。"
-msgstr ""
-"selectコマンドのfilterパラメータは、queryパラメータと同様に、レコードの検索条"
-"件を指定します。filterパラメータとqueryパラメータが異なる点は、filterパラメー"
-"タには、JavaScriptの式に似た文法で条件を指定する点です。"
-
-# c82f7751a88f4b32a0d9d37c44a778fb
-#: ../../../source/tutorial/tutorial04.txt:21
-msgid "ここで、filterパラメータには"
-msgstr "ここで、filterパラメータには"
-
-# 70b78935cd6f44b5809c7f5b0cc32ec2
-#: ../../../source/tutorial/tutorial04.txt:23
-msgid "_id <= 1"
-msgstr "_id <= 1"
-
-# 8c9421fb13e04953bcf88ac42b76b4f6
-#: ../../../source/tutorial/tutorial04.txt:25
-msgid ""
-"という条件を指定しています。この場合は_idの値が1以下のレコードが検索結果とし"
-"て得られます。"
-msgstr ""
-"という条件を指定しています。この場合は_idの値が1以下のレコードが検索結果とし"
-"て得られます。"
-
-# 93878389cc154c2c9f7db0e1a3603c74
-#: ../../../source/tutorial/tutorial04.txt:27
-msgid "また、&& や || を使って、条件のAND・OR指定をすることもできます。"
-msgstr "また、&& や || を使って、条件のAND・OR指定をすることもできます。"
-
-# c516e2be8eb74535bdc093169d2692ba
-#: ../../../source/tutorial/tutorial04.txt:34
-msgid ""
-"queryパラメータとfilterパラメータを同時に指定すると、両者の条件をともに満たす"
-"レコードが結果として返ります。"
-msgstr ""
-"queryパラメータとfilterパラメータを同時に指定すると、両者の条件をともに満たす"
-"レコードが結果として返ります。"
-
-# 0cfbe9ff89484471a70af99ba5734e1a
-#: ../../../source/tutorial/tutorial04.txt:37
-msgid "scorerを利用したソート"
-msgstr "scorerを利用したソート"
-
-# e585796b68ce4013bb1d74e914c227bf
-#: ../../../source/tutorial/tutorial04.txt:39
-msgid ""
-"selectコマンドのscorerパラメータは、 全文検索を行った結果の各レコードに対して"
-"処理を行うためのパラメータです。"
-msgstr ""
-"selectコマンドのscorerパラメータは、 全文検索を行った結果の各レコードに対して"
-"処理を行うためのパラメータです。"
-
-# 5a04db4506d3499aa8924e904fffac8a
-#: ../../../source/tutorial/tutorial04.txt:42
-msgid ""
-"filterパラメータと同様に、 JavaScriptの式に似たな文法で様々な条件を指定するこ"
-"とができます。"
-msgstr ""
-"filterパラメータと同様に、 JavaScriptの式に似たな文法で様々な条件を指定するこ"
-"とができます。"
-
-# 71468697ad494c3bac085d967ca22395
-#: ../../../source/tutorial/tutorial04.txt:50
-msgid ""
-"検索結果には、'_score'という名前の、全文検索のスコアが代入されている仮想的な"
-"カラムが付与されることをチュートリアル中ソートの項目で説明しました。"
-msgstr ""
-"検索結果には、'_score'という名前の、全文検索のスコアが代入されている仮想的な"
-"カラムが付与されることをチュートリアル中ソートの項目で説明しました。"
-
-# 72cfaa33567145049a23d2fa457f23d8
-#: ../../../source/tutorial/tutorial04.txt:52
-msgid "上記の実行例では、scorerパラメータに"
-msgstr "上記の実行例では、scorerパラメータに"
-
-# a181131c43514a7b97bca5bec7ac2cf8
-#: ../../../source/tutorial/tutorial04.txt:54
-msgid "_score = rand()"
-msgstr "_score = rand()"
-
-# c8d8f33cf926445ab1ae48d82ab5d99d
-#: ../../../source/tutorial/tutorial04.txt:56
-msgid ""
-"という条件を指定しています。ここでは、rand()という乱数を返す関数を用いて、全"
-"文検索のスコアを乱数で上書きしています。"
-msgstr ""
-"という条件を指定しています。ここでは、rand()という乱数を返す関数を用いて、全"
-"文検索のスコアを乱数で上書きしています。"
-
-# cecbdfff2e244f7487e45b8bd99373ac
-#: ../../../source/tutorial/tutorial04.txt:58
-msgid "sortbyパラメータには、"
-msgstr "sortbyパラメータには、"
-
-# 04cf3e4f782b4f8d8c4770794f30c574
-#: ../../../source/tutorial/tutorial04.txt:60
-msgid "_score"
-msgstr "_score"
-
-# e5b5b494a3bb4082b63b8ce1500af7d9
-#: ../../../source/tutorial/tutorial04.txt:62
-msgid ""
-"を指定しています。これは、スコア順に昇順にソートすることを意味しています。"
-msgstr ""
-"を指定しています。これは、スコア順に昇順にソートすることを意味しています。"
-
-# 662f236ab2cf446a94b699b3bb8eeb4d
-#: ../../../source/tutorial/tutorial04.txt:64
-msgid ""
-"よって、上記のクエリは実行されるたびに検索結果の並び順がランダムに変わりま"
-"す。"
-msgstr ""
-"よって、上記のクエリは実行されるたびに検索結果の並び順がランダムに変わりま"
-"す。"
-
-# 6173827ee4b14c38afeff8243ec6e9a8
-#: ../../../source/tutorial/tutorial04.txt:67
-msgid "位置情報を用いた絞込・ソート"
-msgstr "位置情報を用いた絞込・ソート"
-
-# f16f62eefdb84950a80644a3572ab933
-#: ../../../source/tutorial/tutorial04.txt:69
-msgid ""
-"groongaでは、位置情報（経緯度）を保存することができます。また、保存した経緯度"
-"を用いて絞込やソートができます。"
-msgstr ""
-"groongaでは、位置情報（経緯度）を保存することができます。また、保存した経緯度"
-"を用いて絞込やソートができます。"
-
-# 46e1de443f3a4f34905e2215404a6562
-#: ../../../source/tutorial/tutorial04.txt:71
-msgid ""
-"位置情報を保存するためのカラムの型として、TokyoGeoPoint/WGS84GeoPointの２つの"
-"型があります。前者は日本測地系、後者は世界測地系(WGS84相当)の経緯度を保存しま"
-"す。"
-msgstr ""
-"位置情報を保存するためのカラムの型として、TokyoGeoPoint/WGS84GeoPointの２つの"
-"型があります。前者は日本測地系、後者は世界測地系(WGS84相当)の経緯度を保存しま"
-"す。"
-
-# 7554e480715d4812ab7d26513cf42d30
-#: ../../../source/tutorial/tutorial04.txt:73
-msgid ""
-"経緯度をデータを入力するためには、\"緯度のミリ秒x経度のミリ秒\"という形式の文"
-"字列を代入する必要があります。"
-msgstr ""
-"経緯度をデータを入力するためには、\"緯度のミリ秒x経度のミリ秒\"という形式の文"
-"字列を代入する必要があります。"
-
-# b96720fcfedc49c989aa9823ff44dd86
-#: ../../../source/tutorial/tutorial04.txt:75
-msgid ""
-"ここでは、ためしに東京駅と新宿駅とついて、世界測地系での位置情報を保存してみ"
-"ましょう。東京駅は緯度が35度40分52.975秒、経度が139度45分57.902秒です。新宿駅"
-"は緯度が35度41分27.316秒、経度が139度42分0.929秒です。よって、代入する文字列"
-"はそれぞれ\"128452975x503157902\"/\"128487316x502920929\"となります。"
-msgstr ""
-"ここでは、ためしに東京駅と新宿駅とついて、世界測地系での位置情報を保存してみ"
-"ましょう。東京駅は緯度が35度40分52.975秒、経度が139度45分57.902秒です。新宿駅"
-"は緯度が35度41分27.316秒、経度が139度42分0.929秒です。よって、代入する文字列"
-"はそれぞれ\"128452975x503157902\"/\"128487316x502920929\"となります。"
-
-# c435ef26eccc4ee99e170d2aa490f38d
-#: ../../../source/tutorial/tutorial04.txt:87
-msgid ""
-"scorerパラメータにおいて、 :doc:`../functions/geo_distance` 関数を用いること"
-"により、２点間の距離を計算することができます。"
-msgstr ""
-"scorerパラメータにおいて、 :doc:`../functions/geo_distance` 関数を用いること"
-"により、２点間の距離を計算することができます。"
-
-# bce2aea472c14a4082b7ef5a78d67e56
-#: ../../../source/tutorial/tutorial04.txt:89
-msgid ""
-"ここでは、秋葉原駅からの距離を表示させてみましょう。世界測地系では、秋葉原駅"
-"の位置は緯度が35度41分55.259秒、経度が139度46分27.188秒です。よって、"
-"geo_distance関数に与える文字列は\"128515259x503187188\"となります。"
-msgstr ""
-"ここでは、秋葉原駅からの距離を表示させてみましょう。世界測地系では、秋葉原駅"
-"の位置は緯度が35度41分55.259秒、経度が139度46分27.188秒です。よって、"
-"geo_distance関数に与える文字列は\"128515259x503187188\"となります。"
-
-# 93e8df37e52c4b47a8ccb51270d7e5b8
-#: ../../../source/tutorial/tutorial04.txt:95
-msgid ""
-"この結果を見ると、東京駅と秋葉原駅は2054m、秋葉原駅と新宿駅は6720m離れている"
-"ようです。"
-msgstr ""
-"この結果を見ると、東京駅と秋葉原駅は2054m、秋葉原駅と新宿駅は6720m離れている"
-"ようです。"
-
-# 343c23027ede4543889d7dc9e3e1baa6
-#: ../../../source/tutorial/tutorial04.txt:97
-msgid "geo_distance関数は、_scoreを通じてソートでも用いることができます。"
-msgstr "geo_distance関数は、_scoreを通じてソートでも用いることができます。"
-
-# bb0f600710a342d6af8ede422d6c9008
-#: ../../../source/tutorial/tutorial04.txt:103
-msgid "「ある地点から何m以内に存在する」といった絞込も可能です。"
-msgstr "「ある地点から何m以内に存在する」といった絞込も可能です。"
-
-# 33b23262e0514f6e84d31832f185030f
-#: ../../../source/tutorial/tutorial04.txt:105
-msgid ""
-"filterパラメータにおいて、 :doc:`../functions/geo_in_circle` 関数を用いること"
-"により、２点間の距離が指定のm以下におさまるかどうかを判定することができます。"
-msgstr ""
-"filterパラメータにおいて、 :doc:`../functions/geo_in_circle` 関数を用いること"
-"により、２点間の距離が指定のm以下におさまるかどうかを判定することができます。"
-
-# 92e6e88d24a14031a2a39b1e9235b006
-#: ../../../source/tutorial/tutorial04.txt:107
-msgid "たとえば、秋葉原駅から5000m以内にあるレコードを検索してみましょう。"
-msgstr "たとえば、秋葉原駅から5000m以内にあるレコードを検索してみましょう。"
-
-# 248d65529bc544a5b986dfe728999000
-#: ../../../source/tutorial/tutorial04.txt:113
-msgid ""
-"また、経緯度が指定の矩形領域内であるかどうかを判定する :doc:`../functions/"
-"geo_in_rectangle` 関数も存在します。"
-msgstr ""
-"また、経緯度が指定の矩形領域内であるかどうかを判定する :doc:`../functions/"
-"geo_in_rectangle` 関数も存在します。"
 
 # 14a64fbca6034a798ebb84f31404f99a
-#: ../../../source/tutorial/tutorial05.txt:12
+#: ../../../source/tutorial/drilldown.txt:13
 msgid "ドリルダウン"
 msgstr "ドリルダウン"
 
 # 149b9d819dda41359542325cc017fa48
-#: ../../../source/tutorial/tutorial05.txt:14
+#: ../../../source/tutorial/drilldown.txt:15
 msgid ""
 "groongaでは、特定のカラム値で検索結果をグループ化することができます。これをド"
 "リルダウンと呼びます。"
@@ -1362,7 +296,7 @@ msgstr ""
 "リルダウンと呼びます。"
 
 # b06048c8a141470ba3d7cbd6e5d52519
-#: ../../../source/tutorial/tutorial05.txt:16
+#: ../../../source/tutorial/drilldown.txt:17
 msgid ""
 "Siteテーブルに２つのカラムを追加します。TLDドメイン名を格納するdomainカラム"
 "と、国名を格納するcountryカラムです。これらのカラムの型は、それぞれドメイン名"
@@ -1375,12 +309,12 @@ msgstr ""
 "ます。"
 
 # 262961d48bdb4772a081baac5052b384
-#: ../../../source/tutorial/tutorial05.txt:37
+#: ../../../source/tutorial/drilldown.txt:38
 msgid "domainカラムとcountryカラムでドリルダウンを行う例を以下に示します。"
 msgstr "domainカラムとcountryカラムでドリルダウンを行う例を以下に示します。"
 
 # 3fa9cc32e9cb4ffe932c4ac1b4ae6695
-#: ../../../source/tutorial/tutorial05.txt:43
+#: ../../../source/tutorial/drilldown.txt:44
 msgid ""
 "テーブル型を持つカラムに対してドリルダウンを行った場合、参照先のテーブルに存"
 "在するカラム値を取得することもできます。ドリルダウンを行ったテーブルには、"
@@ -1393,7 +327,7 @@ msgstr ""
 "レコード数が入ります。"
 
 # a8843ef18fb146c2a81e18f279cad1e6
-#: ../../../source/tutorial/tutorial05.txt:49
+#: ../../../source/tutorial/drilldown.txt:50
 msgid ""
 "複数のカラムに対してドリルダウンを行うことができます。複数のカラムに対してド"
 "リルダウンを行う場合には、drilldownパラメータにカラム名をカンマ区切りで与えま"
@@ -1404,7 +338,7 @@ msgstr ""
 "す。"
 
 # 9da7c7f5bf884bdab32e77789cc71531
-#: ../../../source/tutorial/tutorial05.txt:55
+#: ../../../source/tutorial/drilldown.txt:56
 msgid ""
 "ドリルダウン結果を並びかえることができます。例えば、_nsubrecsパラメータの降順"
 "で並び替えることができます。"
@@ -1413,7 +347,7 @@ msgstr ""
 "で並び替えることができます。"
 
 # d65d5b538c50488b98c0f4b66a8a09e2
-#: ../../../source/tutorial/tutorial05.txt:61
+#: ../../../source/tutorial/drilldown.txt:62
 msgid ""
 "ドリルダウン結果は、デフォルトでは10件のみ表示されます。drilldown_offsetパラ"
 "メータと、drilldown_limitパラメータによって、offsetとlimitを指定することがで"
@@ -1424,7 +358,7 @@ msgstr ""
 "きます。"
 
 # a0854f2f0385431fa866d1e83a215ec8
-#: ../../../source/tutorial/tutorial05.txt:67
+#: ../../../source/tutorial/drilldown.txt:68
 msgid ""
 "文字列型のカラムに対するドリルダウンは、他の型でのドリルダウンに比べて低速で"
 "す。文字列でのドリルダウンを行いたい場合には、このチュートリアルのように、文"
@@ -1437,12 +371,12 @@ msgstr ""
 "します。"
 
 # 1e09dfdd591e4092ae149c2fa181e859
-#: ../../../source/tutorial/tutorial06.txt:10
+#: ../../../source/tutorial/index.txt:10
 msgid "タグ検索・参照関係の逆引き"
 msgstr "タグ検索・参照関係の逆引き"
 
 # 9c7ff715318c4c3fb4122844c18e016c
-#: ../../../source/tutorial/tutorial06.txt:12
+#: ../../../source/tutorial/index.txt:12
 msgid ""
 "本チュートリアルで、groongaはカラム値として他のテーブルへの参照の配列を持つこ"
 "とができることを紹介いたしました。実は、テーブルへの参照の配列データを用いる"
@@ -1453,19 +387,19 @@ msgstr ""
 "ことによって、いわゆるタグ検索を行うことが可能となります。"
 
 # 15f50b12e8904438b6bc22a6ac52fd03
-#: ../../../source/tutorial/tutorial06.txt:14
+#: ../../../source/tutorial/index.txt:14
 msgid ""
 "タグ検索はgroongaの転置インデックスというデータ構造を用いて高速に行われます。"
 msgstr ""
 "タグ検索はgroongaの転置インデックスというデータ構造を用いて高速に行われます。"
 
 # 103964f16fe94ca0889bac5cfb22be47
-#: ../../../source/tutorial/tutorial06.txt:17
+#: ../../../source/tutorial/index.txt:17
 msgid "タグ検索"
 msgstr "タグ検索"
 
 # 2c402c6c40e64cedabbada4aed88584d
-#: ../../../source/tutorial/tutorial06.txt:19
+#: ../../../source/tutorial/index.txt:19
 msgid ""
 "動画共有サイトの検索エンジンを作ることを想定します。1つの動画には、その動画の"
 "特徴を表す、複数の語句が付与されています。「ある語句が付与されている動画の一"
@@ -1476,12 +410,12 @@ msgstr ""
 "覧を取得する」検索を行いたいとします。"
 
 # 0d51e9f14b49403a96db7625a5c3b7c2
-#: ../../../source/tutorial/tutorial06.txt:21
+#: ../../../source/tutorial/index.txt:21
 msgid "実際に、動画情報のテーブルを作成し、検索をしてみましょう。"
 msgstr "実際に、動画情報のテーブルを作成し、検索をしてみましょう。"
 
 # 0d6d21999f804edfb1e5a1e377a5de86
-#: ../../../source/tutorial/tutorial06.txt:23
+#: ../../../source/tutorial/index.txt:23
 msgid ""
 "動画の情報を保存する、Videoテーブルを作成します。Videoテーブルでは、動画のタ"
 "イトルをtitleカラムに、動画のタグ情報をtagsカラムにTagテーブル型で複数格納し"
@@ -1496,7 +430,7 @@ msgstr ""
 "index_tagsカラムに格納しています。"
 
 # 1c2c5b347fef4cb880a70345e96666c9
-#: ../../../source/tutorial/tutorial06.txt:45
+#: ../../../source/tutorial/index.txt:45
 msgid ""
 "インデックスカラムを作成すると、全文検索が高速に行えるようになります。イン"
 "デックスカラムは、対象のカラムに保存されたデータに更新があったとき、自動的に"
@@ -1507,12 +441,12 @@ msgstr ""
 "更新されます。"
 
 # cd51234f804e4ad4b87c138457fa609e
-#: ../../../source/tutorial/tutorial06.txt:47
+#: ../../../source/tutorial/index.txt:47
 msgid "「ある語句が付与されている動画の一覧を取得する」検索を行いましょう。"
 msgstr "「ある語句が付与されている動画の一覧を取得する」検索を行いましょう。"
 
 # 170161328e124064a315aeb7e0dc22cc
-#: ../../../source/tutorial/tutorial06.txt:55
+#: ../../../source/tutorial/index.txt:55
 msgid ""
 "このように、「Variety」、「Sports」、「Animation」のようなタグで検索を行うこ"
 "とができました。"
@@ -1521,12 +455,12 @@ msgstr ""
 "とができました。"
 
 # 05b29a17a2c54484a67143e870e00470
-#: ../../../source/tutorial/tutorial06.txt:58
+#: ../../../source/tutorial/index.txt:58
 msgid "参照関係の逆引き"
 msgstr "参照関係の逆引き"
 
 # cc38bb9fb53349c8883e27eba3c04c5f
-#: ../../../source/tutorial/tutorial06.txt:60
+#: ../../../source/tutorial/index.txt:60
 msgid ""
 "groongaはテーブル間の参照関係の逆引きを高速に行うためのインデックスを付与する"
 "ことができます。タグ検索は、その1例にすぎません。"
@@ -1535,7 +469,7 @@ msgstr ""
 "ことができます。タグ検索は、その1例にすぎません。"
 
 # b1ac68ec57484187be241b7c1a479630
-#: ../../../source/tutorial/tutorial06.txt:62
+#: ../../../source/tutorial/index.txt:62
 msgid ""
 "例えば、ソーシャルネットワーキングサイトにおける友人関係を逆引き検索すること"
 "ができます。"
@@ -1544,7 +478,7 @@ msgstr ""
 "ができます。"
 
 # 6b4b2e201c6e4d2da47155e54fa90cdb
-#: ../../../source/tutorial/tutorial06.txt:64
+#: ../../../source/tutorial/index.txt:64
 msgid ""
 "以下の例では、ユーザー情報を格納するUserテーブルを作成し、ユーザー名を格納す"
 "るusernameカラム、ユーザーの友人一覧を配列で格納するfriendsカラムとそのイン"
@@ -1555,14 +489,14 @@ msgstr ""
 "デックスのindex_friendsカラムを追加しています。"
 
 # 63a619ea017048a0b6782980a9d1f981
-#: ../../../source/tutorial/tutorial06.txt:82
+#: ../../../source/tutorial/index.txt:82
 msgid ""
 "指定したユーザーを友人リストに入れているユーザーの一覧を表示してみましょう。"
 msgstr ""
 "指定したユーザーを友人リストに入れているユーザーの一覧を表示してみましょう。"
 
 # 2e75058924914794a60d255a5690d339
-#: ../../../source/tutorial/tutorial06.txt:89
+#: ../../../source/tutorial/index.txt:89
 msgid ""
 "さらに、ドリルダウンを使って、友人リストに入っている数の一覧を表示してみま"
 "しょう。"
@@ -1571,17 +505,17 @@ msgstr ""
 "しょう。"
 
 # c92c02794ed743c29ec41c164e13ed8e
-#: ../../../source/tutorial/tutorial06.txt:95
+#: ../../../source/tutorial/index.txt:95
 msgid "このように、テーブルの参照関係を逆にたどる検索ができました。"
 msgstr "このように、テーブルの参照関係を逆にたどる検索ができました。"
 
 # af1ad5cd2e214ab0b8e2cefa8429d106
-#: ../../../source/tutorial/tutorial06.txt:98
+#: ../../../source/tutorial/index.txt:98
 msgid "インデックス付きジオサーチ"
 msgstr "インデックス付きジオサーチ"
 
 # ae57d365b07440b98bb73b2630fc6119
-#: ../../../source/tutorial/tutorial06.txt:100
+#: ../../../source/tutorial/index.txt:100
 msgid ""
 "位置情報のカラムに対して、インデックスを付与することが出来ます。大量の位置情"
 "報レコードを検索する場合に、検索速度が速くなります。"
@@ -1590,24 +524,702 @@ msgstr ""
 "報レコードを検索する場合に、検索速度が速くなります。"
 
 # 85a5d768a12f4dc9ac5221ff131043ef
-#: ../../../source/tutorial/tutorial06.txt:113
+#: ../../../source/tutorial/index.txt:113
 msgid ""
 "同様に、位置情報レコードを用いてソートする場合に、ソート速度が速くなります。"
 msgstr ""
 "同様に、位置情報レコードを用いてソートする場合に、ソート速度が速くなります。"
 
+# 8e9f1d4a7a5d4d66b6a9ece6d0bac17d
+#: ../../../source/tutorial/introduction.txt:11
+msgid "基本的な操作"
+msgstr "基本的な操作"
+
+# 325a39d7d5b148a58cbe099aa88feced
+#: ../../../source/tutorial/introduction.txt:13
+msgid ""
+"groongaは、Cのライブラリとして使用する方法と、groonga実行ファイルを通して使用"
+"する方法があります。"
+msgstr ""
+"groongaは、Cのライブラリとして使用する方法と、groonga実行ファイルを通して使用"
+"する方法があります。"
+
+# 78d1620c7aae4e399210b87b88d42b75
+#: ../../../source/tutorial/introduction.txt:15
+msgid ""
+"本チュートリアルでは、groonga実行ファイルを使用する方法について説明します。"
+msgstr ""
+"本チュートリアルでは、groonga実行ファイルを使用する方法について説明します。"
+
+# bf051807fb7b4b87839da04e1c46d2be
+#: ../../../source/tutorial/introduction.txt:17
+msgid ""
+"groonga実行ファイルを使って、DBの作成・操作・サーバの起動・サーバへの接続など"
+"の操作が行えます。"
+msgstr ""
+"groonga実行ファイルを使って、DBの作成・操作・サーバの起動・サーバへの接続など"
+"の操作が行えます。"
+
+# 8722aaef363547f08c9f9e9e17b5795d
+#: ../../../source/tutorial/introduction.txt:20
+msgid "DBの作成"
+msgstr "DBの作成"
+
+# 3833a48532ce4a75b48ced3aff74f21e
+#: ../../../source/tutorial/introduction.txt:22
+msgid ""
+"以下のようなコマンドを実行すると、データベースを新規に作成することができま"
+"す。"
+msgstr ""
+"以下のようなコマンドを実行すると、データベースを新規に作成することができま"
+"す。"
+
+# 8f2b6e4207fb4318a4ef80a72dfcc061
+# 7b9ec1f05c794eccb371903b81f11e83
+# bc7e3f6fa8e2422f83a7eb2e59a40ad7
+# c21694138d5f46cf831dd9da313a0543
+# 5c8411ae738c4cff8b639c204e504fd3
+#: ../../../source/tutorial/introduction.txt:24
+#: ../../../source/tutorial/introduction.txt:43
+#: ../../../source/tutorial/network.txt:18
+#: ../../../source/tutorial/network.txt:37
+#: ../../../source/tutorial/network.txt:70
+msgid "書式 ::"
+msgstr "書式 ::"
+
+# d05233bd48464cf181a04d4b6d891591
+#: ../../../source/tutorial/introduction.txt:28
+msgid "-nオプションは、データベースを作ることを示します。"
+msgstr "-nオプションは、データベースを作ることを示します。"
+
+# 762ec5efb0e14856942ab006bdb3ad6f
+#: ../../../source/tutorial/introduction.txt:30
+msgid ""
+"データベースパス名には、新しく作成するデータベースのフルパス名を指定します。"
+msgstr ""
+"データベースパス名には、新しく作成するデータベースのフルパス名を指定します。"
+
+# 69acdee6521348e1971f3adc9597c6d8
+#: ../../../source/tutorial/introduction.txt:32
+msgid ""
+"上記コマンドでデータベースを作成すると、そのまま対話モードと呼ばれるコマンド"
+"を受け付けるモードになります。Ctrlキーを押しながらdキーを押すと、対話モードか"
+"ら抜けることができます。"
+msgstr ""
+"上記コマンドでデータベースを作成すると、そのまま対話モードと呼ばれるコマンド"
+"を受け付けるモードになります。Ctrlキーを押しながらdキーを押すと、対話モードか"
+"ら抜けることができます。"
+
+# 638b840c3ef946d0b5629e4cf2da5987
+# 09508cf85d454bd08d2085a874659bd9
+#: ../../../source/tutorial/introduction.txt:34
+#: ../../../source/tutorial/network.txt:26
+msgid "実行例::"
+msgstr "実行例::"
+
+# de10f4e642de4b3f81c939e104dcb7a1
+#: ../../../source/tutorial/introduction.txt:41
+msgid "DBの操作"
+msgstr "DBの操作"
+
+# 31b4e64c4d0b47e0a114bac4ffad3e5e
+#: ../../../source/tutorial/introduction.txt:47
+msgid ""
+"既存のデータベースのフルパス名をDBパス名に指定します。 コマンドを指定すると、"
+"実行結果を返します。"
+msgstr ""
+"既存のデータベースのフルパス名をDBパス名に指定します。 コマンドを指定すると、"
+"実行結果を返します。"
+
+# eae7fe9921874cce9e237baa319a2ac8
+#: ../../../source/tutorial/introduction.txt:50
+msgid ""
+"コマンドを指定しない場合には、対話モードに入ります。 対話モードでは、標準入力"
+"からコマンドを読み込み、順次実行します。 本チュートリアルでは、対話モードを主"
+"に使用します。"
+msgstr ""
+"コマンドを指定しない場合には、対話モードに入ります。 対話モードでは、標準入力"
+"からコマンドを読み込み、順次実行します。 本チュートリアルでは、対話モードを主"
+"に使用します。"
+
+# a35066d279e647389badd82cf68378ed
+#: ../../../source/tutorial/introduction.txt:54
+msgid ""
+"たとえば、statusというコマンドを実行してみましょう。statusコマンドは、groonga"
+"の実行状態を返すコマンドです。"
+msgstr ""
+"たとえば、statusというコマンドを実行してみましょう。statusコマンドは、groonga"
+"の実行状態を返すコマンドです。"
+
+# 1897113c9531493d896d88d17a729ec7
+#: ../../../source/tutorial/introduction.txt:61
+msgid ""
+"以上のように、コマンドの実行結果は基本的にjson形式で返却されます。jsonの配列"
+"の0番目の要素に、エラーコードや実行時間などの情報が入ります。jsonの配列の1番"
+"目の様子に、コマンドの実行結果が入ります。"
+msgstr ""
+"以上のように、コマンドの実行結果は基本的にjson形式で返却されます。jsonの配列"
+"の0番目の要素に、エラーコードや実行時間などの情報が入ります。jsonの配列の1番"
+"目の様子に、コマンドの実行結果が入ります。"
+
+# a490abef2a5241f282873ec870cfacfe
+#: ../../../source/tutorial/introduction.txt:64
+msgid "コマンド"
+msgstr "コマンド"
+
+# c0c38b4f437e4f06ad1bda05b823d564
+#: ../../../source/tutorial/introduction.txt:66
+msgid ""
+"groonga実行ファイルやgroongaサーバを介して様々なコマンドを実行して、DBを操作"
+"することができます。 コマンドは以下の書式のうちいずれかで与えることができま"
+"す。 ::"
+msgstr ""
+"groonga実行ファイルやgroongaサーバを介して様々なコマンドを実行して、DBを操作"
+"することができます。 コマンドは以下の書式のうちいずれかで与えることができま"
+"す。 ::"
+
+# 37c7972d7a0546b3baf40cd17a73b403
+#: ../../../source/tutorial/introduction.txt:73
+msgid "書式1と2は混ぜて使うことができます。"
+msgstr "書式1と2は混ぜて使うことができます。"
+
+# 0700f865d7664c3c8ee83b24ffec4638
+#: ../../../source/tutorial/introduction.txt:75
+msgid ""
+"書式2において、空白や、記号「\"'()\\」のうちいずれかを含む値を指定したい場合"
+"は、シングルクォート(')かダブルクォート(\")で値を囲みます。"
+msgstr ""
+"書式2において、空白や、記号「\"'()\\」のうちいずれかを含む値を指定したい場合"
+"は、シングルクォート(')かダブルクォート(\")で値を囲みます。"
+
+# 69ab19d4663d4655b68a7b9b2a573305
+#: ../../../source/tutorial/introduction.txt:77
+msgid ""
+"詳しくは、 :doc:`/executables/groonga` のコマンドの項を参考にしてください。"
+msgstr ""
+"詳しくは、 :doc:`/executables/groonga` のコマンドの項を参考にしてください。"
+
+# 4196ca43620244e795440363b5d3648a
+#: ../../../source/tutorial/introduction.txt:80
+msgid "主なコマンド"
+msgstr "主なコマンド"
+
+# 2f3e5578b0cf4b81abacd8404201f61b
+#: ../../../source/tutorial/introduction.txt:83
+msgid "groongaプロセスの状態を表示します。"
+msgstr "groongaプロセスの状態を表示します。"
+
+# 9b454ebc474a42d3934475fbb940e87b
+#: ../../../source/tutorial/introduction.txt:85
+msgid "DBに定義されているテーブルのリストを表示します。"
+msgstr "DBに定義されているテーブルのリストを表示します。"
+
+# 729deadad2d6431aa2e6fe900750bce9
+#: ../../../source/tutorial/introduction.txt:87
+msgid "テーブルに定義されているカラムのリストを表示します。"
+msgstr "テーブルに定義されているカラムのリストを表示します。"
+
+# b782c1192e854f68960b406376eff7fc
+#: ../../../source/tutorial/introduction.txt:89
+msgid "DBにテーブルを追加します。"
+msgstr "DBにテーブルを追加します。"
+
+# 3c7ff7d7a5734f369d9bc7f5faac38fd
+#: ../../../source/tutorial/introduction.txt:91
+msgid "テーブルにカラムを追加します。"
+msgstr "テーブルにカラムを追加します。"
+
+# f048fe57b2854ea68efb3a6819c8a2ba
+#: ../../../source/tutorial/introduction.txt:93
+msgid "テーブルに含まれるレコードを検索して表示します。"
+msgstr "テーブルに含まれるレコードを検索して表示します。"
+
+# 21987da3e8cf4bed8ee9b0a31dd4eb55
+#: ../../../source/tutorial/introduction.txt:95
+msgid "テーブルにレコードを挿入します。"
+msgstr "テーブルにレコードを挿入します。"
+
+# 358ddaf22d9b4d9e96819e02a3ef51fd
+# d0e6a0198c284c77aa2d9db8c6c85856
+#: ../../../source/tutorial/introduction.txt:98
+#: ../../../source/tutorial/micro_blog.txt:17
+msgid "テーブルの作成"
+msgstr "テーブルの作成"
+
+# c4534913587349bba17957fc049d1755
+#: ../../../source/tutorial/introduction.txt:100
+msgid ":doc:`/commands/table_create` コマンドを使用してテーブルを作成します。"
+msgstr ":doc:`/commands/table_create` コマンドを使用してテーブルを作成します。"
+
+# 270970f8b2a34e0c89f09e3a95bd6c25
+#: ../../../source/tutorial/introduction.txt:102
+msgid ""
+"groongaでは、多くの場合テーブルを作成する際に主キーが必要となります。また、主"
+"キーには型と、その格納方法を指定する必要があります。"
+msgstr ""
+"groongaでは、多くの場合テーブルを作成する際に主キーが必要となります。また、主"
+"キーには型と、その格納方法を指定する必要があります。"
+
+# 2f514aa95d054f66b5191a97d121af3f
+#: ../../../source/tutorial/introduction.txt:104
+msgid ""
+"型については、のちのチュートリアルで触れます。データの種類をあらわしているも"
+"の、とイメージしてください。"
+msgstr ""
+"型については、のちのチュートリアルで触れます。データの種類をあらわしているも"
+"の、とイメージしてください。"
+
+# cfbf854dce4344db921a2b37696646ec
+#: ../../../source/tutorial/introduction.txt:106
+msgid ""
+"主キーの格納方法によって、主キーでの検索速度や、前方一致検索の可否が決まりま"
+"す。これも、のちのチュートリアルで触れます。"
+msgstr ""
+"主キーの格納方法によって、主キーでの検索速度や、前方一致検索の可否が決まりま"
+"す。これも、のちのチュートリアルで触れます。"
+
+# 46c1654d9617491fb8713102dbaabbcb
+#: ../../../source/tutorial/introduction.txt:108
+msgid ""
+"ここでは、ShortText型の主キー値を持ち、主キーの格納方法はHASHである、'Site'と"
+"いう名前のテーブルを作成します。"
+msgstr ""
+"ここでは、ShortText型の主キー値を持ち、主キーの格納方法はHASHである、'Site'と"
+"いう名前のテーブルを作成します。"
+
+# b37370424ad24117aef915a2ff039fe9
+# 6828235e6eb94f7ea8f7dc6c9462a698
+#: ../../../source/tutorial/introduction.txt:115
+#: ../../../source/tutorial/micro_blog.txt:373
+#: ../../../source/tutorial/query_expansion.txt:41
+msgid "検索"
+msgstr "検索"
+
+# 67a9d938e79b4cce9284c8be3a95d433
+#: ../../../source/tutorial/introduction.txt:117
+msgid ""
+":doc:`/commands/select` コマンドを用いて、テーブルの中身を表示することができ"
+"ます。"
+msgstr ""
+":doc:`/commands/select` コマンドを用いて、テーブルの中身を表示することができ"
+"ます。"
+
+# eab40de4161e4111b0048f9875b12ae4
+#: ../../../source/tutorial/introduction.txt:123
+msgid ""
+"selectにテーブル名を指定すると、指定したテーブルの中身を10件表示します。[0]は"
+"検索されたレコードの件数、[\"_id\",\"Uint32\"]は値がUInt32型である\"_id'とい"
+"う名前のカラム、[\"_key\",\"ShortText\"]は値がShortText型である'_key'という名"
+"前のカラムを示しています。"
+msgstr ""
+"selectにテーブル名を指定すると、指定したテーブルの中身を10件表示します。[0]は"
+"検索されたレコードの件数、[\"_id\",\"Uint32\"]は値がUInt32型である\"_id'とい"
+"う名前のカラム、[\"_key\",\"ShortText\"]は値がShortText型である'_key'という名"
+"前のカラムを示しています。"
+
+# 47ebdd6d40614dd0ad50e45ae527f8d0
+#: ../../../source/tutorial/introduction.txt:125
+msgid ""
+"table_createコマンドで作成したテーブルには、最初から'_id'/'_key'という２つの"
+"カラムがあります。'_id'はgroongaが自動的に付与するID番号が格納されるカラムで"
+"す。'_key'は主キーが格納されるカラムです。これらのカラム名を変更することはで"
+"きません。"
+msgstr ""
+"table_createコマンドで作成したテーブルには、最初から'_id'/'_key'という２つの"
+"カラムがあります。'_id'はgroongaが自動的に付与するID番号が格納されるカラムで"
+"す。'_key'は主キーが格納されるカラムです。これらのカラム名を変更することはで"
+"きません。"
+
+# 8c685136ca6b48009ebfa0f1763ef28a
+#: ../../../source/tutorial/introduction.txt:128
+msgid "カラムの作成"
+msgstr "カラムの作成"
+
+# 38fa336311a44a618d75c25ebd3af1ba
+#: ../../../source/tutorial/introduction.txt:130
+msgid ""
+":doc:`/commands/column_create` コマンドを用いて、カラムを作成することができま"
+"す。"
+msgstr ""
+":doc:`/commands/column_create` コマンドを用いて、カラムを作成することができま"
+"す。"
+
+# 11b47aadd83d44a09bd8494ef010bcd0
+#: ../../../source/tutorial/introduction.txt:132
+msgid ""
+"ShortText型の値を持つ、'comment'という名前のカラムを'Site'テーブルに追加しま"
+"しょう。"
+msgstr ""
+"ShortText型の値を持つ、'comment'という名前のカラムを'Site'テーブルに追加しま"
+"しょう。"
+
+# f3a576a06d4049f2a6214534279d4ed7
+#: ../../../source/tutorial/introduction.txt:139
+msgid "COLUMN_SCALARについては、通常のカラムであることを示しています。"
+msgstr "COLUMN_SCALARについては、通常のカラムであることを示しています。"
+
+# 6f052a8ae09b4541b9f98a9842b6cf3d
+#: ../../../source/tutorial/introduction.txt:142
+msgid "全文検索用の語彙表の作成"
+msgstr "全文検索用の語彙表の作成"
+
+# 58773e08c6c244639dca58fe8e556c38
+#: ../../../source/tutorial/introduction.txt:144
+msgid ""
+"このチュートリアルでは、groongaに登録したデータを用いた全文検索を行います。"
+msgstr ""
+"このチュートリアルでは、groongaに登録したデータを用いた全文検索を行います。"
+
+# a2b3bf952a07403189d0c7ff7627db51
+#: ../../../source/tutorial/introduction.txt:146
+msgid ""
+"全文検索を行う場合は、まず語彙表を作成する必要があります。 語彙表とは、文書の"
+"中にある単語が主キーとなるテーブルです。 ここでは、ShortText型の主キー値を持"
+"つ、'Terms'という名前のテーブルを作成しました。"
+msgstr ""
+"全文検索を行う場合は、まず語彙表を作成する必要があります。 語彙表とは、文書の"
+"中にある単語が主キーとなるテーブルです。 ここでは、ShortText型の主キー値を持"
+"つ、'Terms'という名前のテーブルを作成しました。"
+
+# 537f15a279aa488f899e98c8311e3ac2
+#: ../../../source/tutorial/introduction.txt:154
+msgid ""
+"この実行例には、多くのパラメータが指定されています。本チュートリアルでは、こ"
+"れらをすべて理解する必要はありません。以下に簡単な説明を記しますが、読み飛ば"
+"してもらってかまいません。"
+msgstr ""
+"この実行例には、多くのパラメータが指定されています。本チュートリアルでは、こ"
+"れらをすべて理解する必要はありません。以下に簡単な説明を記しますが、読み飛ば"
+"してもらってかまいません。"
+
+# ad38d76b32b249a0803cdf8e1c2418c5
+#: ../../../source/tutorial/introduction.txt:156
+msgid ""
+"実行例にある、TABLE_PAT_KEY|KEY_NORMALIZEという値は、主キー値をパトリシア木に"
+"格納し、各語彙を正規化して登録することを示しています。"
+msgstr ""
+"実行例にある、TABLE_PAT_KEY|KEY_NORMALIZEという値は、主キー値をパトリシア木に"
+"格納し、各語彙を正規化して登録することを示しています。"
+
+# dc412451163648dd8f17fa3a686c7de3
+#: ../../../source/tutorial/introduction.txt:158
+msgid ""
+"実行例にある、TokenBigramという値は、 語彙表として使用するテーブルは、対象の"
+"文書をトークナイズする方式を、default_tokenizerパラメータで与えます。この例で"
+"はTokenBigramを指定しています。よって、一般的にN-gramと呼ばれるようなインデッ"
+"クス方式を選択しています。"
+msgstr ""
+"実行例にある、TokenBigramという値は、 語彙表として使用するテーブルは、対象の"
+"文書をトークナイズする方式を、default_tokenizerパラメータで与えます。この例で"
+"はTokenBigramを指定しています。よって、一般的にN-gramと呼ばれるようなインデッ"
+"クス方式を選択しています。"
+
+# db3d7419cc4745bcb3a1298dd0687b0f
+#: ../../../source/tutorial/introduction.txt:161
+msgid "全文検索用のインデックスカラムの作成"
+msgstr "全文検索用のインデックスカラムの作成"
+
+# c340273a95444bad96b800e5b2e07ef2
+#: ../../../source/tutorial/introduction.txt:163
+msgid ""
+"Siteテーブルのtitleカラムを全文検索の対象としたいとしましょう。その場合には、"
+"語彙表にインデックス型のカラムを作成します。"
+msgstr ""
+"Siteテーブルのtitleカラムを全文検索の対象としたいとしましょう。その場合には、"
+"語彙表にインデックス型のカラムを作成します。"
+
+# 94df1155a71a42acb207ce7e12843fb5
+#: ../../../source/tutorial/introduction.txt:169
+msgid ""
+"Siteテーブルのtitleカラムを検索対象とする、'blog_title'という名前のインデック"
+"ス型カラムをTermsテーブルに作成しました。インデックス対象となるテーブルをtype"
+"に、インデックス対象となるカラムをsourceに指定します。"
+msgstr ""
+"Siteテーブルのtitleカラムを検索対象とする、'blog_title'という名前のインデック"
+"ス型カラムをTermsテーブルに作成しました。インデックス対象となるテーブルをtype"
+"に、インデックス対象となるカラムをsourceに指定します。"
+
+# 21737d2becb9444e8889cfac8e754c1d
+#: ../../../source/tutorial/introduction.txt:171
+msgid ""
+"実行例のflagsのCOLUMN_INDEX|WITH_POSITIONという値は、語彙の位置情報を格納する"
+"インデックス型のカラムであることを示しています。通常の全文検索インデックスで"
+"は、COLUMN_INDEX|WITH_POSITIONを指定してください。語彙の位置情報を格納する意"
+"味については、本チュートリアルでは触れません。"
+msgstr ""
+"実行例のflagsのCOLUMN_INDEX|WITH_POSITIONという値は、語彙の位置情報を格納する"
+"インデックス型のカラムであることを示しています。通常の全文検索インデックスで"
+"は、COLUMN_INDEX|WITH_POSITIONを指定してください。語彙の位置情報を格納する意"
+"味については、本チュートリアルでは触れません。"
+
+# 6710378117924fcd84a3de2ec178b179
+# 34368e490193448aac17f1c4d603d2ec
+#: ../../../source/tutorial/introduction.txt:174
+#: ../../../source/tutorial/micro_blog.txt:141
+msgid "データのロード"
+msgstr "データのロード"
+
+# 31f66f45882c410d89be714bd04dfd53
+#: ../../../source/tutorial/introduction.txt:176
+msgid ""
+":doc:`/commands/load` コマンドを使用します。loadコマンドでは、jsonで受け取っ"
+"たデータをテーブルに格納します。"
+msgstr ""
+":doc:`/commands/load` コマンドを使用します。loadコマンドでは、jsonで受け取っ"
+"たデータをテーブルに格納します。"
+
+# 1f325f7e3a2f44009ac2764149ccbdd3
+#: ../../../source/tutorial/introduction.txt:193
+msgid "selectコマンドで、データが入っていることを確認しましょう。"
+msgstr "selectコマンドで、データが入っていることを確認しましょう。"
+
+# 8b781927f6cb428da6b7ea88eadffae5
+#: ../../../source/tutorial/introduction.txt:200
+msgid "データの検索"
+msgstr "データの検索"
+
+# 7216fbb6457f491ba242f49db6b13959
+#: ../../../source/tutorial/introduction.txt:202
+msgid ""
+"groongaでは、'_id'カラムと'_key'カラムの値はテーブル中で一意です。よって、そ"
+"れを用いて検索してみましょう。"
+msgstr ""
+"groongaでは、'_id'カラムと'_key'カラムの値はテーブル中で一意です。よって、そ"
+"れを用いて検索してみましょう。"
+
+# 9a5461ac15b14289a2451ba2502ffb68
+#: ../../../source/tutorial/introduction.txt:204
+msgid ""
+"selectコマンドにおいて、queryパラメータを用いるとデータの検索を行うことができ"
+"ます。"
+msgstr ""
+"selectコマンドにおいて、queryパラメータを用いるとデータの検索を行うことができ"
+"ます。"
+
+# 4e5bb4a1deb045c5bad14b8f397782f5
+#: ../../../source/tutorial/introduction.txt:210
+msgid ""
+"queryパラメータに与えた「_id:1」というのは、'_id'という名前のカラムに'1'とい"
+"う値が入っているレコードを検索する、という意味です。"
+msgstr ""
+"queryパラメータに与えた「_id:1」というのは、'_id'という名前のカラムに'1'とい"
+"う値が入っているレコードを検索する、という意味です。"
+
+# 44245230acc242158e50390aa143a6e9
+#: ../../../source/tutorial/introduction.txt:212
+msgid "_keyでも検索してみましょう。"
+msgstr "_keyでも検索してみましょう。"
+
+# 0c2fefd95ec1494688d1df6651d737ae
+#: ../../../source/tutorial/introduction.txt:218
+msgid ""
+"queryパラメータに与えた「_key:\\\"http://example.org/\\\"」というの"
+"は、'_key'という名前のカラムに'\"http://example.org/\"'という値が入っているレ"
+"コードを検索する、という意味です。"
+msgstr ""
+"queryパラメータに与えた「_key:\\\"http://example.org/\\\"」というの"
+"は、'_key'という名前のカラムに'\"http://example.org/\"'という値が入っているレ"
+"コードを検索する、という意味です。"
+
+# 7936c3a8939a41fe8f6cd623fcdefd06
+#: ../../../source/tutorial/introduction.txt:221
+msgid "全文検索"
+msgstr "全文検索"
+
+# f2032fb1b3ac4774be0a8b21112e852d
+#: ../../../source/tutorial/introduction.txt:223
+msgid "queryパラメータでは、インデックスを用いた全文検索を行うこともできます。"
+msgstr ""
+"queryパラメータでは、インデックスを用いた全文検索を行うこともできます。"
+
+# 230b003f4f1042c6a3a10f2009724666
+#: ../../../source/tutorial/introduction.txt:229
+msgid ""
+"titleカラムに対して、'this'という文字列で全文検索を行った結果を返します。"
+msgstr ""
+"titleカラムに対して、'this'という文字列で全文検索を行った結果を返します。"
+
+# 201838d0017945cfa28f6e88cd26318f
+#: ../../../source/tutorial/introduction.txt:231
+msgid ""
+"queryパラメータに与えた「title:@this」というのが、'title'という名前のカラム"
+"に'this'という文字列が含まれているレコードを検索する、という意味です。"
+msgstr ""
+"queryパラメータに与えた「title:@this」というのが、'title'という名前のカラム"
+"に'this'という文字列が含まれているレコードを検索する、という意味です。"
+
+# b50119ea5fcf432ea995b91ba154d630
+#: ../../../source/tutorial/introduction.txt:233
+msgid ""
+"selectコマンドには、match_columnsというパラメータが存在します。これを指定する"
+"と、query内にカラム名を指定しない条件があった場合、match_columnsで指定された"
+"カラムに対しての検索であることを示します。[1]_"
+msgstr ""
+"selectコマンドには、match_columnsというパラメータが存在します。これを指定する"
+"と、query内にカラム名を指定しない条件があった場合、match_columnsで指定された"
+"カラムに対しての検索であることを示します。[1]_"
+
+# 37ca49da41cf432596586dcd6eb29664
+#: ../../../source/tutorial/introduction.txt:235
+msgid ""
+"match_columnsパラメータに'title'、queryパラメータに'this'という文字列を指定す"
+"ると、上記のクエリと同じ結果を得ることができます。"
+msgstr ""
+"match_columnsパラメータに'title'、queryパラメータに'this'という文字列を指定す"
+"ると、上記のクエリと同じ結果を得ることができます。"
+
+# 8e360dc79b984b28895a837f64cfdc70
+#: ../../../source/tutorial/introduction.txt:242
+msgid "出力カラムの指定"
+msgstr "出力カラムの指定"
+
+# 18198112850a4629a6f5b793b7c48ab2
+#: ../../../source/tutorial/introduction.txt:244
+msgid ""
+"selectコマンドにおいて、output_columnsパラメータを用いることで、検索結果で表"
+"示するカラムを指定することが出来ます。"
+msgstr ""
+"selectコマンドにおいて、output_columnsパラメータを用いることで、検索結果で表"
+"示するカラムを指定することが出来ます。"
+
+# 6c18544634914219a777936fb3868df4
+#: ../../../source/tutorial/introduction.txt:246
+msgid "複数のカラムを指定する場合は、カンマ(,)区切りで指定します。"
+msgstr "複数のカラムを指定する場合は、カンマ(,)区切りで指定します。"
+
+# 577f3a74cdc340d3a9e92f714d81e039
+#: ../../../source/tutorial/introduction.txt:252
+msgid ""
+"groongaの検索結果には、「_score」という名前のカラムが追加されています。このカ"
+"ラムは、全文検索の条件が合致する文書ほど高い数値が入ります。"
+msgstr ""
+"groongaの検索結果には、「_score」という名前のカラムが追加されています。このカ"
+"ラムは、全文検索の条件が合致する文書ほど高い数値が入ります。"
+
+# 98f463fee3764c17847af37d59b293fd
+#: ../../../source/tutorial/introduction.txt:256
+msgid "表示範囲指定"
+msgstr "表示範囲指定"
+
+# 0b617f18d752477ca79a0dada2a998ca
+#: ../../../source/tutorial/introduction.txt:258
+msgid ""
+"selectコマンドにおいて、offset,limitパラメータを用いることで、検索結果から指"
+"定された範囲のみを表示することが出来ます。大量の検索結果をページで分けて、1"
+"ページ分のみを表示したい場合に有効です。"
+msgstr ""
+"selectコマンドにおいて、offset,limitパラメータを用いることで、検索結果から指"
+"定された範囲のみを表示することが出来ます。大量の検索結果をページで分けて、1"
+"ページ分のみを表示したい場合に有効です。"
+
+# f8d0a67b03524968a11064881be1b39b
+#: ../../../source/tutorial/introduction.txt:260
+msgid ""
+"offsetパラメータには、検索結果を返す始点を指定します。1件目から結果を返す場合"
+"には、0を指定します。"
+msgstr ""
+"offsetパラメータには、検索結果を返す始点を指定します。1件目から結果を返す場合"
+"には、0を指定します。"
+
+# 1c376d6544214d07894515e78044e52c
+#: ../../../source/tutorial/introduction.txt:262
+msgid "limitパラメータには、検索結果を何件表示するのかを指定します。"
+msgstr "limitパラメータには、検索結果を何件表示するのかを指定します。"
+
+# 8341f26e24624cb3bb990defd9db706e
+#: ../../../source/tutorial/introduction.txt:271
+msgid "並び替え"
+msgstr "並び替え"
+
+# 35fa4d9064a542e5a2db9e1b45ff7789
+#: ../../../source/tutorial/introduction.txt:273
+msgid ""
+"selectコマンドにおいて、sortbyパラメータを用いることで、検索結果を並び替える"
+"ことが出来ます。"
+msgstr ""
+"selectコマンドにおいて、sortbyパラメータを用いることで、検索結果を並び替える"
+"ことが出来ます。"
+
+# a22654bea4d748d78baa4cc814add169
+#: ../../../source/tutorial/introduction.txt:275
+msgid ""
+"sortbyパラメータにカラム名を指定することで、そのカラムの値で昇順にソートしま"
+"す。また、カラム名の前にハイフン（-）を付けることで、降順にソートすることも出"
+"来ます。"
+msgstr ""
+"sortbyパラメータにカラム名を指定することで、そのカラムの値で昇順にソートしま"
+"す。また、カラム名の前にハイフン（-）を付けることで、降順にソートすることも出"
+"来ます。"
+
+# d566902b69524c75b48b3986bbc65ca1
+#: ../../../source/tutorial/introduction.txt:281
+msgid ""
+"出力カラムの指定で紹介した「_score」カラムは、ソートの条件としても使うことが"
+"できます。"
+msgstr ""
+"出力カラムの指定で紹介した「_score」カラムは、ソートの条件としても使うことが"
+"できます。"
+
+# 010c6ba00b0544989d85dc277a4e43ae
+#: ../../../source/tutorial/introduction.txt:287
+msgid ""
+"ソートするカラム名を複数指定したい場合は、カンマ(,)区切りで指定します。複数の"
+"カラムを指定した場合、最初のカラムで同一の値のレコードがあった場合に、次のカ"
+"ラムの値でソートさせることができます。"
+msgstr ""
+"ソートするカラム名を複数指定したい場合は、カンマ(,)区切りで指定します。複数の"
+"カラムを指定した場合、最初のカラムで同一の値のレコードがあった場合に、次のカ"
+"ラムの値でソートさせることができます。"
+
+# 7eaa6b0153ce460eaa2f0a99d57d744c
+#: ../../../source/tutorial/introduction.txt:294
+msgid "脚注"
+msgstr "脚注"
+
+# e716a41e60bc46e38eb2c8f141a5c1c3
+#: ../../../source/tutorial/introduction.txt:295
+msgid ""
+"現在のバージョンでは、全文検索インデックスが存在する場合にのみ、match_columns"
+"パラメータを利用することができます。通常のカラムでの絞り込みには利用できませ"
+"ん。"
+msgstr ""
+"現在のバージョンでは、全文検索インデックスが存在する場合にのみ、match_columns"
+"パラメータを利用することができます。通常のカラムでの絞り込みには利用できませ"
+"ん。"
+
+# 47a40a8c0cd3462a99e34f7a845e7e95
+#: ../../../source/tutorial/lexicon.txt:6
+msgid "全文検索の語彙表に対する追加情報"
+msgstr "全文検索の語彙表に対する追加情報"
+
+# 5673889fff764417875f7c7d4a7308f4
+#: ../../../source/tutorial/lexicon.txt:8
+msgid ""
+"groongaでは、全文検索に用いるための語意表がテーブルとして扱えます。よって、語"
+"彙ごとに複数の情報を保持することができます。例えば、語彙の出現数や検索ストッ"
+"プワードのフラグ、単語の重要度などを保持することができます。"
+msgstr ""
+"groongaでは、全文検索に用いるための語意表がテーブルとして扱えます。よって、語"
+"彙ごとに複数の情報を保持することができます。例えば、語彙の出現数や検索ストッ"
+"プワードのフラグ、単語の重要度などを保持することができます。"
+
+# 35a9d861678d44daac349d3e2a5e395f
+#: ../../../source/tutorial/lexicon.txt:10
+msgid "この項目については、現在執筆中です。"
+msgstr "この項目については、現在執筆中です。"
+
 # 17996bb4634846c48f1201b1e44ffd3e
-#: ../../../source/tutorial/tutorial07.txt:12
+#: ../../../source/tutorial/match_columns.txt:12
 msgid "match_columnsパラメータ"
 msgstr "match_columnsパラメータ"
 
 # da17d4aa467044b686967b0c62f691a2
-#: ../../../source/tutorial/tutorial07.txt:15
+#: ../../../source/tutorial/match_columns.txt:15
 msgid "複数のカラムを対象とした全文検索"
 msgstr "複数のカラムを対象とした全文検索"
 
 # 8933a02694f14367a239a7e2cb8ebbc5
-#: ../../../source/tutorial/tutorial07.txt:17
+#: ../../../source/tutorial/match_columns.txt:17
 msgid ""
 "groongaでは、複数のカラムを対象とした全文検索を行うことができます。例えば、ブ"
 "ログのテーブルで、タイトルと内容とがそれぞれ別のカラムに入ったものがあるとし"
@@ -1618,7 +1230,7 @@ msgstr ""
 "ましょう。「タイトルもしくは内容に特定の単語を含む」検索を行いたいとします。"
 
 # 8318415b0c874b3c99b85053f047f4eb
-#: ../../../source/tutorial/tutorial07.txt:19
+#: ../../../source/tutorial/match_columns.txt:19
 msgid ""
 "この場合、2つのインデックス作成方式があります。1つは、それぞれのカラムに1つず"
 "つインデックスを付与する方式です。もう1つは、複数のカラムに対して1つのイン"
@@ -1631,12 +1243,12 @@ msgstr ""
 "いる場合でも、同一の記法で全文検索を行うことができます。"
 
 # 94c1f11442a14ab187a7585194021d3e
-#: ../../../source/tutorial/tutorial07.txt:22
+#: ../../../source/tutorial/match_columns.txt:22
 msgid "カラムごとにインデックスを付与する場合"
 msgstr "カラムごとにインデックスを付与する場合"
 
 # 0772c49085e1463da254d81d77101967
-#: ../../../source/tutorial/tutorial07.txt:24
+#: ../../../source/tutorial/match_columns.txt:24
 msgid ""
 "Blog1テーブルを作り、タイトル文字列のtitleカラム、本文のmessageカラムを追加し"
 "ています。 インデックス用のIndexBlog1テーブルも作り、titleカラムのインデック"
@@ -1649,7 +1261,7 @@ msgstr ""
 "それぞれ1カラムごとに1つずつ追加しています。"
 
 # 262b219ad57349c594e926b5a13bea03
-#: ../../../source/tutorial/tutorial07.txt:42
+#: ../../../source/tutorial/match_columns.txt:42
 msgid ""
 "match_columnsオプションで、検索対象のカラムを複数指定することが出来ます。検索"
 "する文字列はqueryオプションで指定します。これを使うことで、タイトルと本文を全"
@@ -1660,17 +1272,17 @@ msgstr ""
 "文検索することができます。"
 
 # 7c8b22d6ecc1495dba2c10c44d78e221
-#: ../../../source/tutorial/tutorial07.txt:44
+#: ../../../source/tutorial/match_columns.txt:44
 msgid "実際に検索してみましょう。"
 msgstr "実際に検索してみましょう。"
 
 # 3a5e8f939ba84a0faedf57dca4a514a0
-#: ../../../source/tutorial/tutorial07.txt:53
+#: ../../../source/tutorial/match_columns.txt:53
 msgid "複数のカラムにまたがったインデックスを付与する場合"
 msgstr "複数のカラムにまたがったインデックスを付与する場合"
 
 # 11ff096d657140cc9f5f8f5fa0fa4e33
-#: ../../../source/tutorial/tutorial07.txt:55
+#: ../../../source/tutorial/match_columns.txt:55
 msgid ""
 "内容は上の例とほぼ同じですが、titleとmessageの2つのカラムに対するインデックス"
 "が共通になっており、インデックスカラムが1つしかありません。"
@@ -1679,7 +1291,7 @@ msgstr ""
 "が共通になっており、インデックスカラムが1つしかありません。"
 
 # 7d162d69ab9d49b5935ca9598b71208c
-#: ../../../source/tutorial/tutorial07.txt:57
+#: ../../../source/tutorial/match_columns.txt:57
 msgid ""
 "共通のインデックスを用いても、titleカラムのみでの検索、messageカラムのみでの"
 "検索、titleもしくはmessageカラムでの検索、全ての検索を行うことができます。"
@@ -1688,120 +1300,34 @@ msgstr ""
 "検索、titleもしくはmessageカラムでの検索、全ての検索を行うことができます。"
 
 # d7b77e5e3a554037a327ab8f44b584a7
-#: ../../../source/tutorial/tutorial07.txt:74
+#: ../../../source/tutorial/match_columns.txt:74
 msgid "実際に検索してみましょう。結果は上の例と同じになります。"
 msgstr "実際に検索してみましょう。結果は上の例と同じになります。"
 
 # 134d3fc1cb484bb491b280b7208e2d4b
-#: ../../../source/tutorial/tutorial07.txt:83
+#: ../../../source/tutorial/match_columns.txt:83
 msgid "インデックス名を指定した全文検索"
 msgstr "インデックス名を指定した全文検索"
 
-# d7899bb55d3c4ea3b2375ba1580a124d
-#: ../../../source/tutorial/tutorial07.txt:90
-msgid "インデックスの重み"
-msgstr "インデックスの重み"
-
 # 2655c08ec2f94672b555aeee8a00498c
 # efdf0048edaa4f40a9852f64bf1c8312
-#: ../../../source/tutorial/tutorial07.txt:92
-#: ../../../source/tutorial/tutorial07.txt:85,
+#: ../../../source/tutorial/match_columns.txt:85
+#: ../../../source/tutorial/match_columns.txt:92
 msgid "執筆中です。"
 msgstr "執筆中です。"
 
-# d29c1c3c06464f85881048102e282d52
-#: ../../../source/tutorial/tutorial08.txt:12
-msgid ""
-"groongaのテーブルは、テーブル作成時にパトリシア木オプションを指定すると、前方"
-"一致検索を行うことができます。また、追加のオプションを指定することにより、主"
-"キーの後方一致検索をも行うことができます。"
-msgstr ""
-"groongaのテーブルは、テーブル作成時にパトリシア木オプションを指定すると、前方"
-"一致検索を行うことができます。また、追加のオプションを指定することにより、主"
-"キーの後方一致検索をも行うことができます。"
-
-# d13b69ca1da3452594360e61ddd9c9db
-# 1fb6459d41a3463799c02a4e8d57ceea
-#: ../../../source/tutorial/tutorial08.txt:15
-#: ../../../source/tutorial/tutorial08.txt:10,
-msgid "主キーによる前方一致検索"
-msgstr "主キーによる前方一致検索"
-
-# 22ba76375b634c94a5c60040e165342f
-#: ../../../source/tutorial/tutorial08.txt:17
-msgid ""
-"table_createコマンドのflagsオプションにTABLE_PAT_KEYを指定することで、主キー"
-"による前方一致検索ができるようになります。"
-msgstr ""
-"table_createコマンドのflagsオプションにTABLE_PAT_KEYを指定することで、主キー"
-"による前方一致検索ができるようになります。"
-
-# 0c931d6ba389418b8abc8d2cee3467a2
-#: ../../../source/tutorial/tutorial08.txt:32
-msgid "主キーによる後方一致検索"
-msgstr "主キーによる後方一致検索"
-
-# 269a41e5df8d4cb2b1de49e573bb8946
-#: ../../../source/tutorial/tutorial08.txt:34
-msgid ""
-"table_createコマンドのflagsオプションにTABLE_PAT_KEYとKEY_WITH_SISを指定する"
-"ことで、主キーによる前方一致検索・後方一致検索の両方が可能となります。"
-msgstr ""
-"table_createコマンドのflagsオプションにTABLE_PAT_KEYとKEY_WITH_SISを指定する"
-"ことで、主キーによる前方一致検索・後方一致検索の両方が可能となります。"
-
-# 5a41bb6fd9ec41b1b47618a87b6801fd
-#: ../../../source/tutorial/tutorial08.txt:36
-msgid ""
-"KEY_WITH_SISフラグを付与すると、データを追加する際に後方一致用のレコードも追"
-"加されてしまいます。そのため、単純に検索すると、元のレコードに加えて自動的に"
-"追加されたレコードまでヒットしてしまいます。元のレコードのみ検索するために、"
-"一工夫必要になります。"
-msgstr ""
-"KEY_WITH_SISフラグを付与すると、データを追加する際に後方一致用のレコードも追"
-"加されてしまいます。そのため、単純に検索すると、元のレコードに加えて自動的に"
-"追加されたレコードまでヒットしてしまいます。元のレコードのみ検索するために、"
-"一工夫必要になります。"
-
-# 5a6853d3aba34df58c1445a1cae17aa4
-#: ../../../source/tutorial/tutorial08.txt:38
-msgid ""
-"例えば、元のレコードと自動的に追加されたレコードとの区別をつけるために、元の"
-"レコードであることを示すoriginalカラムを追加して、検索時にはoriginalカラムが "
-"``true`` も検索条件に加えます。"
-msgstr ""
-"例えば、元のレコードと自動的に追加されたレコードとの区別をつけるために、元の"
-"レコードであることを示すoriginalカラムを追加して、検索時にはoriginalカラムが "
-"``true`` も検索条件に加えます。"
-
-# 47a40a8c0cd3462a99e34f7a845e7e95
-#: ../../../source/tutorial/tutorial09.txt:6
-msgid "全文検索の語彙表に対する追加情報"
-msgstr "全文検索の語彙表に対する追加情報"
-
-# 5673889fff764417875f7c7d4a7308f4
-#: ../../../source/tutorial/tutorial09.txt:8
-msgid ""
-"groongaでは、全文検索に用いるための語意表がテーブルとして扱えます。よって、語"
-"彙ごとに複数の情報を保持することができます。例えば、語彙の出現数や検索ストッ"
-"プワードのフラグ、単語の重要度などを保持することができます。"
-msgstr ""
-"groongaでは、全文検索に用いるための語意表がテーブルとして扱えます。よって、語"
-"彙ごとに複数の情報を保持することができます。例えば、語彙の出現数や検索ストッ"
-"プワードのフラグ、単語の重要度などを保持することができます。"
-
-# 35a9d861678d44daac349d3e2a5e395f
-#: ../../../source/tutorial/tutorial09.txt:10
-msgid "この項目については、現在執筆中です。"
-msgstr "この項目については、現在執筆中です。"
+# d7899bb55d3c4ea3b2375ba1580a124d
+#: ../../../source/tutorial/match_columns.txt:90
+msgid "インデックスの重み"
+msgstr "インデックスの重み"
 
 # a4950577c58d44379cd8199105725075
-#: ../../../source/tutorial/tutorial10.txt:12
+#: ../../../source/tutorial/micro_blog.txt:12
 msgid "マイクロブログ検索システムの作成"
 msgstr "マイクロブログ検索システムの作成"
 
 # 598798565f5d41e19d088de337f171db
-#: ../../../source/tutorial/tutorial10.txt:14
+#: ../../../source/tutorial/micro_blog.txt:14
 msgid ""
 "これまで学んだgroongaの機能を用いて、マイクロブログの検索システムを作成してみ"
 "ましょう。マイクロブログとは、Twitterのような短いメッセージを投稿するブログで"
@@ -1812,17 +1338,17 @@ msgstr ""
 "す。"
 
 # 765f7db9c413452693485b64529b6cc8
-#: ../../../source/tutorial/tutorial10.txt:19
+#: ../../../source/tutorial/micro_blog.txt:19
 msgid "まずは、テーブルを作成します。"
 msgstr "まずは、テーブルを作成します。"
 
 # e6b4ebe86f304962b71fba1eb3b8f11a
-#: ../../../source/tutorial/tutorial10.txt:51
+#: ../../../source/tutorial/micro_blog.txt:51
 msgid "Usersテーブル"
 msgstr "Usersテーブル"
 
 # bfa361723c9f4426b7650ed4cbf20332
-#: ../../../source/tutorial/tutorial10.txt:53
+#: ../../../source/tutorial/micro_blog.txt:53
 msgid ""
 "ユーザーの名前や自己紹介文、フォローしているユーザー一覧など、ユーザー情報を"
 "格納するためのテーブルです。"
@@ -1831,42 +1357,42 @@ msgstr ""
 "格納するためのテーブルです。"
 
 # 4289624a5c0a48ef8ab2e6f18e45def7
-#: ../../../source/tutorial/tutorial10.txt:56
+#: ../../../source/tutorial/micro_blog.txt:56
 msgid "ユーザーID"
 msgstr "ユーザーID"
 
 # 713773c788124270be7ceae911dbb9db
-#: ../../../source/tutorial/tutorial10.txt:59
+#: ../../../source/tutorial/micro_blog.txt:59
 msgid "ユーザー名"
 msgstr "ユーザー名"
 
 # b6ecc71ac9944ee7b2fe04b13e7141dd
-#: ../../../source/tutorial/tutorial10.txt:62
+#: ../../../source/tutorial/micro_blog.txt:62
 msgid "フォローしているユーザーの一覧"
 msgstr "フォローしているユーザーの一覧"
 
 # 7751d808293440f7a02a1f28b4cb9324
-#: ../../../source/tutorial/tutorial10.txt:65
+#: ../../../source/tutorial/micro_blog.txt:65
 msgid "お気に入りのコメント一覧"
 msgstr "お気に入りのコメント一覧"
 
 # f29d6ff3210849c2a544c7aec7f06d7c
-#: ../../../source/tutorial/tutorial10.txt:68
+#: ../../../source/tutorial/micro_blog.txt:68
 msgid "ユーザーの現在地（緯度経度座標）"
 msgstr "ユーザーの現在地（緯度経度座標）"
 
 # 7059718c4ad949319acccab050621145
-#: ../../../source/tutorial/tutorial10.txt:71
+#: ../../../source/tutorial/micro_blog.txt:71
 msgid "ユーザーの現在地（文字列）"
 msgstr "ユーザーの現在地（文字列）"
 
 # ba5ca1678f254315a9c44e0bba843fec
-#: ../../../source/tutorial/tutorial10.txt:74
+#: ../../../source/tutorial/micro_blog.txt:74
 msgid "ユーザーの自己紹介"
 msgstr "ユーザーの自己紹介"
 
 # b467dd52b4cf4ce9b34db1eaa5d20e4b
-#: ../../../source/tutorial/tutorial10.txt:77
+#: ../../../source/tutorial/micro_blog.txt:77
 msgid ""
 "Usersテーブルのfollowerカラムに対するインデックス。 このインデックスを作るこ"
 "とで、あるユーザーをフォローしているユーザーを検索できるようになります。"
@@ -1875,12 +1401,12 @@ msgstr ""
 "とで、あるユーザーをフォローしているユーザーを検索できるようになります。"
 
 # 917365e662a143f6a62e1120d70abb52
-#: ../../../source/tutorial/tutorial10.txt:81
+#: ../../../source/tutorial/micro_blog.txt:81
 msgid "Commentsテーブル"
 msgstr "Commentsテーブル"
 
 # 6968654e5e784c16adad5ebed9d3ccdb
-#: ../../../source/tutorial/tutorial10.txt:83
+#: ../../../source/tutorial/micro_blog.txt:83
 msgid ""
 "コメント内容や投稿日時、返信先情報など、コメントに関する内容を格納するテーブ"
 "ルです。"
@@ -1889,47 +1415,47 @@ msgstr ""
 "ルです。"
 
 # fc1e17f98cfc4094af9cf5925ee00010
-#: ../../../source/tutorial/tutorial10.txt:86
+#: ../../../source/tutorial/micro_blog.txt:86
 msgid "コメントID"
 msgstr "コメントID"
 
 # fdcc034f932440248d2df23003809b99
-#: ../../../source/tutorial/tutorial10.txt:89
+#: ../../../source/tutorial/micro_blog.txt:89
 msgid "コメント内容"
 msgstr "コメント内容"
 
 # 7570ac1dc78c4ade8522f0fa9bd3a9d1
-#: ../../../source/tutorial/tutorial10.txt:92
+#: ../../../source/tutorial/micro_blog.txt:92
 msgid "投稿日時"
 msgstr "投稿日時"
 
 # f2df06b7b74549c3829722d9896c0b10
-#: ../../../source/tutorial/tutorial10.txt:95
+#: ../../../source/tutorial/micro_blog.txt:95
 msgid "返信元のコメント内容"
 msgstr "返信元のコメント内容"
 
 # 1e1c6e6a078b488fb83ba1a7ac7ff95e
-#: ../../../source/tutorial/tutorial10.txt:98
+#: ../../../source/tutorial/micro_blog.txt:98
 msgid "返信先のユーザーの一覧"
 msgstr "返信先のユーザーの一覧"
 
 # 0d71086b830247c3bbe6184396dd8c02
-#: ../../../source/tutorial/tutorial10.txt:101
+#: ../../../source/tutorial/micro_blog.txt:101
 msgid "コメントのハッシュタグの一覧"
 msgstr "コメントのハッシュタグの一覧"
 
 # a68a5e357f844618bc54424d5c442a95
-#: ../../../source/tutorial/tutorial10.txt:104
+#: ../../../source/tutorial/micro_blog.txt:104
 msgid "投稿場所(緯度経度座標のため)"
 msgstr "投稿場所(緯度経度座標のため)"
 
 # 6f327015de5b412aaeec9524717f0f3f
-#: ../../../source/tutorial/tutorial10.txt:107
+#: ../../../source/tutorial/micro_blog.txt:107
 msgid "コメントを書いたユーザー"
 msgstr "コメントを書いたユーザー"
 
 # 1a8b589b3fa84b819cb0402b7a0936a6
-#: ../../../source/tutorial/tutorial10.txt:110
+#: ../../../source/tutorial/micro_blog.txt:110
 msgid ""
 "Usersテーブルのfavoritesカラムに対するインデックス。 このインデックスを作るこ"
 "とで、指定したコメントを誰がお気に入りに入れているのかを検索できるようになり"
@@ -1940,22 +1466,22 @@ msgstr ""
 "ます。"
 
 # 92fd9dd1406544e5b998c67e717b861f
-#: ../../../source/tutorial/tutorial10.txt:114
+#: ../../../source/tutorial/micro_blog.txt:114
 msgid "HashTagsテーブル"
 msgstr "HashTagsテーブル"
 
 # a38eb3c69a6f4bc28d4315dc810cae5f
-#: ../../../source/tutorial/tutorial10.txt:116
+#: ../../../source/tutorial/micro_blog.txt:116
 msgid "コメントのハッシュタグを一覧で保存するためのテーブルです。"
 msgstr "コメントのハッシュタグを一覧で保存するためのテーブルです。"
 
 # a626f278c6de4d77a4b5c486bf4789b5
-#: ../../../source/tutorial/tutorial10.txt:119
+#: ../../../source/tutorial/micro_blog.txt:119
 msgid "ハッシュタグ"
 msgstr "ハッシュタグ"
 
 # 7adfac8495c6499096b9816263f51aca
-#: ../../../source/tutorial/tutorial10.txt:122
+#: ../../../source/tutorial/micro_blog.txt:122
 msgid ""
 "「Comments.hash_tags」のインデックス。 このインデックスを作ることで、指定した"
 "ハッシュタグのついているコメントの一覧を出すことが出来るようになります。"
@@ -1964,12 +1490,12 @@ msgstr ""
 "ハッシュタグのついているコメントの一覧を出すことが出来るようになります。"
 
 # dea54554162c4ebeba7ee6586339cc0f
-#: ../../../source/tutorial/tutorial10.txt:126
+#: ../../../source/tutorial/micro_blog.txt:126
 msgid "Bigramテーブル"
 msgstr "Bigramテーブル"
 
 # ccf135b1ab0648728da259210fad3c84
-#: ../../../source/tutorial/tutorial10.txt:128
+#: ../../../source/tutorial/micro_blog.txt:128
 msgid ""
 "ユーザー情報・コメントで全文検索が出来るようにするためのインデックスを格納す"
 "るテーブルです。"
@@ -1978,12 +1504,12 @@ msgstr ""
 "るテーブルです。"
 
 # 50b90d51462a4f4a94035df9ea0241e0
-#: ../../../source/tutorial/tutorial10.txt:131
+#: ../../../source/tutorial/micro_blog.txt:131
 msgid "単語"
 msgstr "単語"
 
 # 57413a4faabc4859a0dbb7813158eb02
-#: ../../../source/tutorial/tutorial10.txt:134
+#: ../../../source/tutorial/micro_blog.txt:134
 msgid ""
 "ユーザー情報のインデックス。 このカラムは、ユーザー名「Users.name」、現在地"
 "「Users.location_str」、自己紹介文「Users.description」のインデックスになって"
@@ -1994,17 +1520,17 @@ msgstr ""
 "います。"
 
 # a001d0969e2e4c62896acb9d9859e181
-#: ../../../source/tutorial/tutorial10.txt:138
+#: ../../../source/tutorial/micro_blog.txt:138
 msgid "コメント内容「Comments.comment」のインデックス"
 msgstr "コメント内容「Comments.comment」のインデックス"
 
 # 7f3b0f4c50544866919b6cc40e8873dc
-#: ../../../source/tutorial/tutorial10.txt:143
+#: ../../../source/tutorial/micro_blog.txt:143
 msgid "つづいて、テスト用データをロードします。"
 msgstr "つづいて、テスト用データをロードします。"
 
 # 14ca0eb2be6542f38717c852c0f95d9a
-#: ../../../source/tutorial/tutorial10.txt:241
+#: ../../../source/tutorial/micro_blog.txt:241
 msgid ""
 "Usersテーブルのfollowerカラムとfavoritesカラム、そしてCommentsテーブルの"
 "replied_usersカラムは、ベクターカラムです。そのため、これらのカラムは配列で値"
@@ -2015,7 +1541,7 @@ msgstr ""
 "を指定します。"
 
 # 256ade2553934f1791c561a96379fb89
-#: ../../../source/tutorial/tutorial10.txt:243
+#: ../../../source/tutorial/micro_blog.txt:243
 msgid ""
 "Usersテーブルのlocationカラムと、Commentsテーブルのlocationカラムは、GeoPoint"
 "型です。この型での値の指定は、\"[緯度]x[経度]\"と記述して指定します。"
@@ -2024,7 +1550,7 @@ msgstr ""
 "型です。この型での値の指定は、\"[緯度]x[経度]\"と記述して指定します。"
 
 # 3de6a334340b4622bdbf3274367aadf1
-#: ../../../source/tutorial/tutorial10.txt:245
+#: ../../../source/tutorial/micro_blog.txt:245
 msgid ""
 "Commentsテーブルのlast_modifiedカラムは、Time型です。この型での値の指定方法"
 "は、マイクロ秒数の値を直接指定する方法のほかに、文字列で指定する方法もありま"
@@ -2037,26 +1563,27 @@ msgstr ""
 "に文字列からキャストされ、マイクロ秒数の値が格納されます。"
 
 # 2f9584c9c176496581b77fe5fad3998a
-#: ../../../source/tutorial/tutorial10.txt:375
+#: ../../../source/tutorial/micro_blog.txt:375
 msgid "それでは、実際に検索をしてみましょう。"
 msgstr "それでは、実際に検索をしてみましょう。"
 
 # 4e4ce77f76d9406c8f4da85cfda6d52a
-#: ../../../source/tutorial/tutorial10.txt:378
+#: ../../../source/tutorial/micro_blog.txt:378
 msgid "キーワードでユーザー検索"
 msgstr "キーワードでユーザー検索"
 
 # b0b7949815ae494d98e27bd2dd301d18
-#: ../../../source/tutorial/tutorial10.txt:379
+#: ../../../source/tutorial/micro_blog.txt:379
+#, fuzzy
 msgid ""
-"ここでは、 :doc:`tutorial07` で扱った、複数カラムを対象とした検索を行いま"
+"ここでは、 :doc:`match_columns` で扱った、複数カラムを対象とした検索を行いま"
 "す。 指定された文字列で、ユーザー名・現在地・自己紹介文を対象に検索をします。"
 msgstr ""
 "ここでは、 :doc:`tutorial07` で扱った、複数カラムを対象とした検索を行いま"
 "す。 指定された文字列で、ユーザー名・現在地・自己紹介文を対象に検索をします。"
 
 # 8a485bccaa8a479a97b46fcc67b1e07a
-#: ../../../source/tutorial/tutorial10.txt:386
+#: ../../../source/tutorial/micro_blog.txt:386
 msgid ""
 "「東京」をキーワードにユーザー検索した結果、東京都に住んでいる「グニャラく"
 "ん」と「OffGao」がヒットしました。"
@@ -2065,21 +1592,22 @@ msgstr ""
 "ん」と「OffGao」がヒットしました。"
 
 # 36c9a0727fb34742bd93f0e35591c7da
-#: ../../../source/tutorial/tutorial10.txt:389
+#: ../../../source/tutorial/micro_blog.txt:389
 msgid "GeoPointでユーザー検索"
 msgstr "GeoPointでユーザー検索"
 
 # 628911f911bd4d7bb3d6000469736842
-#: ../../../source/tutorial/tutorial10.txt:391
+#: ../../../source/tutorial/micro_blog.txt:391
+#, fuzzy
 msgid ""
-"ここでは、 :doc:`tutorial04` で扱った、GeoPoint型のカラムで検索をします。 以"
-"下の例では、指定された位置から5000m以内にいるユーザーを検索しています。"
+"ここでは、 :doc:`search` で扱った、GeoPoint型のカラムで検索をします。 以下の"
+"例では、指定された位置から5000m以内にいるユーザーを検索しています。"
 msgstr ""
 "ここでは、 :doc:`tutorial04` で扱った、GeoPoint型のカラムで検索をします。 以"
 "下の例では、指定された位置から5000m以内にいるユーザーを検索しています。"
 
 # 8a30839f59354e128639ec3ec3ee2161
-#: ../../../source/tutorial/tutorial10.txt:398
+#: ../../../source/tutorial/micro_blog.txt:398
 msgid ""
 "新宿駅から5km以内にすんでいるユーザーを検索したところ、「グニャラくん」と"
 "「OffGao」がヒットしました。"
@@ -2088,21 +1616,22 @@ msgstr ""
 "「OffGao」がヒットしました。"
 
 # 3d52b53001674deeb4cdfbe30e3d8b7f
-#: ../../../source/tutorial/tutorial10.txt:401
+#: ../../../source/tutorial/micro_blog.txt:401
 msgid "あるユーザーをフォローしているユーザーの検索"
 msgstr "あるユーザーをフォローしているユーザーの検索"
 
 # c631125fd2ee4c53b3636f747434b860
-#: ../../../source/tutorial/tutorial10.txt:403
+#: ../../../source/tutorial/micro_blog.txt:403
+#, fuzzy
 msgid ""
-"ここでは、 :doc:`tutorial06` で扱った、参照関係の逆引きをします。 以下の例で"
-"は、Usersテーブルのfollowerカラムにあるフォローリストを逆引きします。"
+"ここでは、 :doc:`index` で扱った、参照関係の逆引きをします。 以下の例では、"
+"Usersテーブルのfollowerカラムにあるフォローリストを逆引きします。"
 msgstr ""
 "ここでは、 :doc:`tutorial06` で扱った、参照関係の逆引きをします。 以下の例で"
 "は、Usersテーブルのfollowerカラムにあるフォローリストを逆引きします。"
 
 # 5b855bd315444ef19a69688c911a88d9
-#: ../../../source/tutorial/tutorial10.txt:410
+#: ../../../source/tutorial/micro_blog.txt:410
 msgid ""
 "「グニャラくん」をフォローしている「hsiomaneki」と「OffGao」がヒットしまし"
 "た。"
@@ -2111,23 +1640,24 @@ msgstr ""
 "た。"
 
 # 95d6ee8c1b1c48d0860872e584322f01
-#: ../../../source/tutorial/tutorial10.txt:413
+#: ../../../source/tutorial/micro_blog.txt:413
 msgid "GeoPointでコメント検索"
 msgstr "GeoPointでコメント検索"
 
 # 9ed3b99036f041f594f409f011e5021c
-#: ../../../source/tutorial/tutorial10.txt:414
+#: ../../../source/tutorial/micro_blog.txt:414
+#, fuzzy
 msgid ""
-"ある範囲内で書かれたコメントを検索します。 また、 :doc:`tutorial05` で扱った"
-"ドリルダウンも行います。検索結果をハッシュタグとユーザーでドリルダウンし、"
-"ユーザー別・ハッシュタグ別のカウントを出します。"
+"ある範囲内で書かれたコメントを検索します。 また、 :doc:`drilldown` で扱ったド"
+"リルダウンも行います。検索結果をハッシュタグとユーザーでドリルダウンし、ユー"
+"ザー別・ハッシュタグ別のカウントを出します。"
 msgstr ""
 "ある範囲内で書かれたコメントを検索します。 また、 :doc:`tutorial05` で扱った"
 "ドリルダウンも行います。検索結果をハッシュタグとユーザーでドリルダウンし、"
 "ユーザー別・ハッシュタグ別のカウントを出します。"
 
 # 776e9f5ec43e441cac054fbbf1e7bbcb
-#: ../../../source/tutorial/tutorial10.txt:421
+#: ../../../source/tutorial/micro_blog.txt:421
 msgid ""
 "範囲を広く指定したため、位置情報のあるすべてのコメントがヒットしました。そし"
 "て、ヒットしたコメントからドリルダウンされた結果も返ってきており、ハッシュタ"
@@ -2140,21 +1670,22 @@ msgstr ""
 "それぞれ2件ずつであることがわかります。"
 
 # e6b590f762a44c9fb35cfeadf5ecec37
-#: ../../../source/tutorial/tutorial10.txt:424
+#: ../../../source/tutorial/micro_blog.txt:424
 msgid "キーワードでコメント検索"
 msgstr "キーワードでコメント検索"
 
 # ebeae04d0d8b471f92467b47b36e0180
-#: ../../../source/tutorial/tutorial10.txt:425
+#: ../../../source/tutorial/micro_blog.txt:425
+#, fuzzy
 msgid ""
-"あるキーワードを含むコメントを検索します。 さらに、 :doc:`tutorial04` で扱っ"
-"た、スコア値_scoreも出してみましょう。"
+"あるキーワードを含むコメントを検索します。 さらに、 :doc:`search` で扱った、"
+"スコア値_scoreも出してみましょう。"
 msgstr ""
 "あるキーワードを含むコメントを検索します。 さらに、 :doc:`tutorial04` で扱っ"
 "た、スコア値_scoreも出してみましょう。"
 
 # 34a3ae956eb44386800dc5adb5da90c3
-#: ../../../source/tutorial/tutorial10.txt:432
+#: ../../../source/tutorial/micro_blog.txt:432
 msgid ""
 "「なう」をキーワードにコメント検索した結果、2件のコメントがヒットしました。ま"
 "た、_scoreの値も返ってきており、「なう」の数が出力されていることが確認できま"
@@ -2165,12 +1696,12 @@ msgstr ""
 "す。"
 
 # e49292e2294f42cd934ff3cf1c742cab
-#: ../../../source/tutorial/tutorial10.txt:435
+#: ../../../source/tutorial/micro_blog.txt:435
 msgid "GeoPointとキーワードでコメント検索"
 msgstr "GeoPointとキーワードでコメント検索"
 
 # 7fe7f25031624f14a85508625e6a880b
-#: ../../../source/tutorial/tutorial10.txt:436
+#: ../../../source/tutorial/micro_blog.txt:436
 msgid ""
 "今度は、キーワードとGeoPointの両方を条件に検索をしてみます。--queryと--filter"
 "の両方を使用した場合、両方の条件に一致するレコードがヒットします。"
@@ -2179,7 +1710,7 @@ msgstr ""
 "の両方を使用した場合、両方の条件に一致するレコードがヒットします。"
 
 # bef09e07cd274c77a4cb00038d8efb00
-#: ../../../source/tutorial/tutorial10.txt:442
+#: ../../../source/tutorial/micro_blog.txt:442
 msgid ""
 "両方の条件を満たすコメントが1件ヒットしました。また、ドリルダウンの結果も返っ"
 "てきており、「グニャラくん」のコメント1件であることがわかります。"
@@ -2188,21 +1719,22 @@ msgstr ""
 "てきており、「グニャラくん」のコメント1件であることがわかります。"
 
 # 2dd54600585c4a378496e6b6f3e9d14b
-#: ../../../source/tutorial/tutorial10.txt:445
+#: ../../../source/tutorial/micro_blog.txt:445
 msgid "ハッシュタグでコメント検索"
 msgstr "ハッシュタグでコメント検索"
 
 # 4aa697f2ed1c45e0bab6c7a437fe89e8
-#: ../../../source/tutorial/tutorial10.txt:446
+#: ../../../source/tutorial/micro_blog.txt:446
+#, fuzzy
 msgid ""
-"あるハッシュタグのついているコメントを検索します。 これも、 :doc:"
-"`tutorial06` で扱った、参照関係の逆引きを使います。"
+"あるハッシュタグのついているコメントを検索します。 これも、 :doc:`index` で"
+"扱った、参照関係の逆引きを使います。"
 msgstr ""
 "あるハッシュタグのついているコメントを検索します。 これも、 :doc:"
 "`tutorial06` で扱った、参照関係の逆引きを使います。"
 
 # dd68fe56263d4edead278dcac69bbef8
-#: ../../../source/tutorial/tutorial10.txt:453
+#: ../../../source/tutorial/micro_blog.txt:453
 msgid ""
 "#groongaタグの付いている2件のコメントがヒットしました。また、投稿者のドリルダ"
 "ウンも返ってきており、2件とも「グニャラくん」のものであることがわかります。"
@@ -2211,17 +1743,17 @@ msgstr ""
 "ウンも返ってきており、2件とも「グニャラくん」のものであることがわかります。"
 
 # c7458ca6b4104573b74e818a8ada7d2e
-#: ../../../source/tutorial/tutorial10.txt:456
+#: ../../../source/tutorial/micro_blog.txt:456
 msgid "ユーザーIDでコメント検索"
 msgstr "ユーザーIDでコメント検索"
 
 # 17dfbba15aba46828680158c6238bdd8
-#: ../../../source/tutorial/tutorial10.txt:457
+#: ../../../source/tutorial/micro_blog.txt:457
 msgid "あるユーザーが投稿したコメントを検索します。"
 msgstr "あるユーザーが投稿したコメントを検索します。"
 
 # c5f0f98cb9384f0483e6ee72340e7405
-#: ../../../source/tutorial/tutorial10.txt:463
+#: ../../../source/tutorial/micro_blog.txt:463
 msgid ""
 "「グニャラくん」が書き込んだ4件のコメントがヒットしました。また、ハッシュタグ"
 "でドリルダウンした結果も返ってきており、ハッシュタグは「#groonga」が2つに"
@@ -2232,39 +1764,39 @@ msgstr ""
 "「#travel」が1つあることがわかります。"
 
 # ed56b1cb6a5f4e9c95788ecf3cf6e5a0
-#: ../../../source/tutorial/tutorial10.txt:466
+#: ../../../source/tutorial/micro_blog.txt:466
 msgid "ユーザーのお気に入りコメントを検索"
 msgstr "ユーザーのお気に入りコメントを検索"
 
 # 00c9fd18ae8944bc828d56392938eb1b
-#: ../../../source/tutorial/tutorial10.txt:467
+#: ../../../source/tutorial/micro_blog.txt:467
 msgid "あるユーザーがお気に入りに入れているコメントを検索します。"
 msgstr "あるユーザーがお気に入りに入れているコメントを検索します。"
 
 # b27b417f399e411ebc3377483239a39a
-#: ../../../source/tutorial/tutorial10.txt:473
+#: ../../../source/tutorial/micro_blog.txt:473
 msgid "「グニャラくん」がお気に入りに入れている2件のコメントがヒットしました。"
 msgstr ""
 "「グニャラくん」がお気に入りに入れている2件のコメントがヒットしました。"
 
 # 45637c0271aa437d89452234ccefa9cf
-#: ../../../source/tutorial/tutorial10.txt:476
+#: ../../../source/tutorial/micro_blog.txt:476
 msgid "投稿時間でコメント検索"
 msgstr "投稿時間でコメント検索"
 
 # 6e4185dbc4c54807a7badd9606416b2f
-#: ../../../source/tutorial/tutorial10.txt:477
+#: ../../../source/tutorial/micro_blog.txt:477
+#, fuzzy
 msgid ""
-"コメントの投稿時間で検索をします。Time型については :doc:`tutorial03` で扱って"
-"います。 この例では、指定した時間よりも前に投稿されているコメントを検索しま"
-"す。"
+"コメントの投稿時間で検索をします。Time型については :doc:`data` で扱っていま"
+"す。 この例では、指定した時間よりも前に投稿されているコメントを検索します。"
 msgstr ""
 "コメントの投稿時間で検索をします。Time型については :doc:`tutorial03` で扱って"
 "います。 この例では、指定した時間よりも前に投稿されているコメントを検索しま"
 "す。"
 
 # d1e27dd30db849d7ac12d5349fab149b
-#: ../../../source/tutorial/tutorial10.txt:484
+#: ../../../source/tutorial/micro_blog.txt:484
 msgid ""
 "2010/03/17 14:00:00以前に書かれたコメント5件がヒットしました。また、ドリルダ"
 "ウンの結果も返ってきており、「hsiomaneki」が2件、「グニャラくん」が3件ヒット"
@@ -2273,3 +1805,559 @@ msgstr ""
 "2010/03/17 14:00:00以前に書かれたコメント5件がヒットしました。また、ドリルダ"
 "ウンの結果も返ってきており、「hsiomaneki」が2件、「グニャラくん」が3件ヒット"
 "していることがわかります。"
+
+# 9d7e658c84e04a5b8e3b3dc28c0e071a
+#: ../../../source/tutorial/network.txt:8
+msgid "ネットワークを通じた利用"
+msgstr "ネットワークを通じた利用"
+
+# f4ffb358be9d4141ac9565afdd4751eb
+#: ../../../source/tutorial/network.txt:10
+msgid ""
+"groongaはネットワークを通じて利用することができます。groonga独自プロトコルも"
+"しくはHTTPのどちらかを選択してgroongaを起動することにより、groongaはネット"
+"ワーク接続を待ち受けます。"
+msgstr ""
+"groongaはネットワークを通じて利用することができます。groonga独自プロトコルも"
+"しくはHTTPのどちらかを選択してgroongaを起動することにより、groongaはネット"
+"ワーク接続を待ち受けます。"
+
+# ba46fe69e8194848b2f7d54e22e82761
+#: ../../../source/tutorial/network.txt:13
+msgid "groonga専用プロトコルによる通信"
+msgstr "groonga専用プロトコルによる通信"
+
+# c6137d7ac533406b96774f22f28ae928
+#: ../../../source/tutorial/network.txt:16
+msgid "groongaデーモンの起動"
+msgstr "groongaデーモンの起動"
+
+# b0c10a22d3764741a9c7f2f82ab3bbbf
+#: ../../../source/tutorial/network.txt:22
+msgid ""
+"既存のデータベースのフルパス名をDBパス名に指定します。 groongaがデーモンモー"
+"ドで起動し、指定したポート番号でgroongaの専用プロトコルを用いた通信をすること"
+"ができます。 (ポート番号を省略した場合は10041が使用されます)"
+msgstr ""
+"既存のデータベースのフルパス名をDBパス名に指定します。 groongaがデーモンモー"
+"ドで起動し、指定したポート番号でgroongaの専用プロトコルを用いた通信をすること"
+"ができます。 (ポート番号を省略した場合は10041が使用されます)"
+
+# 4439c6e5628a464abbb1cdbb31d0ba1f
+#: ../../../source/tutorial/network.txt:32
+msgid "デーモンモードで起動後、プロセス番号が表示されます。"
+msgstr "デーモンモードで起動後、プロセス番号が表示されます。"
+
+# a1b5aebec95248e98a5eb7f5db8bdf0c
+#: ../../../source/tutorial/network.txt:35
+msgid "groongaサーバへの接続"
+msgstr "groongaサーバへの接続"
+
+# b764fadbcad24522bba310f11ca70ad2
+#: ../../../source/tutorial/network.txt:41
+msgid "対象ホストで動作しているgroongaサーバに接続します。"
+msgstr "対象ホストで動作しているgroongaサーバに接続します。"
+
+# b3d026dd11734f86b224b84a1b612a49
+#: ../../../source/tutorial/network.txt:43
+msgid ""
+"対象ホスト名を省略した場合はlocalhostに対して接続し、対象ポート番号を省略した"
+"場合は10041ポートに対して接続します。"
+msgstr ""
+"対象ホスト名を省略した場合はlocalhostに対して接続し、対象ポート番号を省略した"
+"場合は10041ポートに対して接続します。"
+
+# 2f7fa46eabe84172b6c8d1051c4d096d
+#: ../../../source/tutorial/network.txt:45
+msgid ""
+"接続に成功すると対話モードに入り、標準入力からコマンドを読み込んで順次実行し"
+"ます。"
+msgstr ""
+"接続に成功すると対話モードに入り、標準入力からコマンドを読み込んで順次実行し"
+"ます。"
+
+# e513248eb926485692c90836a25ac7d3
+#: ../../../source/tutorial/network.txt:55
+msgid "groongaデーモンの終了"
+msgstr "groongaデーモンの終了"
+
+# 00ff6804dbdf42e1b2c202a165c458bd
+#: ../../../source/tutorial/network.txt:57
+msgid ""
+"groongaデーモンにshutdownコマンドを発行することにより、終了させることができま"
+"す。"
+msgstr ""
+"groongaデーモンにshutdownコマンドを発行することにより、終了させることができま"
+"す。"
+
+# 35e9e17b730a42f9a05439abd1b66a43
+#: ../../../source/tutorial/network.txt:66
+msgid "HTTPによる通信"
+msgstr "HTTPによる通信"
+
+# f0e9843de4164fa79d9a47e03bf59da9
+#: ../../../source/tutorial/network.txt:68
+msgid ""
+"groongaをHTTP経由で利用したい場合には、HTTPプロトコルモードで起動します。"
+msgstr ""
+"groongaをHTTP経由で利用したい場合には、HTTPプロトコルモードで起動します。"
+
+# e2510f967a9546bf97b7c9a55156e32b
+#: ../../../source/tutorial/network.txt:74
+msgid ""
+"protocolオプションで、groongaが受け付けるプロトコルを指定できます。httpを指定"
+"すると、groongaはHTTPプロトコルでの通信を受け付けます。"
+msgstr ""
+"protocolオプションで、groongaが受け付けるプロトコルを指定できます。httpを指定"
+"すると、groongaはHTTPプロトコルでの通信を受け付けます。"
+
+# 96a617672d8e469ea6b6cba8447d8e41
+#: ../../../source/tutorial/network.txt:77
+msgid "HTML管理ツール"
+msgstr "HTML管理ツール"
+
+# bc9fe887dc594daeb5274275fee3147d
+#: ../../../source/tutorial/network.txt:79
+msgid ""
+"コマンド実行後、http://[IPアドレスまたはホスト名]:[ポート番号]/ というURLにブ"
+"ラウザからアクセスすると、HTML管理ツールが表示されます。ブラウザは、"
+"JavaScriptの実行が有効になっている必要があります。"
+msgstr ""
+"コマンド実行後、http://[IPアドレスまたはホスト名]:[ポート番号]/ というURLにブ"
+"ラウザからアクセスすると、HTML管理ツールが表示されます。ブラウザは、"
+"JavaScriptの実行が有効になっている必要があります。"
+
+# c71f98616ea14b25addda00ac2097941
+#: ../../../source/tutorial/network.txt:82
+msgid "HTTPでのコマンド実行"
+msgstr "HTTPでのコマンド実行"
+
+# 21f48a4786434f87b6f5fe3db1e16a1d
+#: ../../../source/tutorial/network.txt:84
+msgid ""
+"groongaがHTTPプロトコルモードで起動されているとき、「/d/コマンド名」というURL"
+"にアクセスすると、コマンドを実行することが出来ます。"
+msgstr ""
+"groongaがHTTPプロトコルモードで起動されているとき、「/d/コマンド名」というURL"
+"にアクセスすると、コマンドを実行することが出来ます。"
+
+# b68b71d402224a229b5d9a9e652796f3
+#: ../../../source/tutorial/network.txt:86
+msgid ""
+"コマンドのオプションは、HTTPのGETパラメータで渡します。つまり、「?オプション="
+"値&オプション=値 …」という書式になります。"
+msgstr ""
+"コマンドのオプションは、HTTPのGETパラメータで渡します。つまり、「?オプション="
+"値&オプション=値 …」という書式になります。"
+
+# 7469f5e928174ceba72c10f863f27253
+#: ../../../source/tutorial/network.txt:100
+msgid "セキュリティ"
+msgstr "セキュリティ"
+
+# d19c256829484372b06542245e5b9e70
+#: ../../../source/tutorial/network.txt:102
+msgid ""
+"groongaのネットワークサービスにはは認証機能がありません。誰でもデータベースの"
+"内容を閲覧・修正することができます。iptablesなどを用いて、アクセス元IPアドレ"
+"スを制限することを薦めます。"
+msgstr ""
+"groongaのネットワークサービスにはは認証機能がありません。誰でもデータベースの"
+"内容を閲覧・修正することができます。iptablesなどを用いて、アクセス元IPアドレ"
+"スを制限することを薦めます。"
+
+# d13b69ca1da3452594360e61ddd9c9db
+# 1fb6459d41a3463799c02a4e8d57ceea
+#: ../../../source/tutorial/patricia_trie.txt:10
+#, fuzzy
+msgid "パトリシア木による前方一致検索"
+msgstr "主キーによる前方一致検索"
+
+# d29c1c3c06464f85881048102e282d52
+#: ../../../source/tutorial/patricia_trie.txt:12
+msgid ""
+"groongaのテーブルは、テーブル作成時にパトリシア木オプションを指定すると、前方"
+"一致検索を行うことができます。また、追加のオプションを指定することにより、主"
+"キーの後方一致検索をも行うことができます。"
+msgstr ""
+"groongaのテーブルは、テーブル作成時にパトリシア木オプションを指定すると、前方"
+"一致検索を行うことができます。また、追加のオプションを指定することにより、主"
+"キーの後方一致検索をも行うことができます。"
+
+# d13b69ca1da3452594360e61ddd9c9db
+# 1fb6459d41a3463799c02a4e8d57ceea
+#: ../../../source/tutorial/patricia_trie.txt:15
+msgid "主キーによる前方一致検索"
+msgstr "主キーによる前方一致検索"
+
+# 22ba76375b634c94a5c60040e165342f
+#: ../../../source/tutorial/patricia_trie.txt:17
+msgid ""
+"table_createコマンドのflagsオプションにTABLE_PAT_KEYを指定することで、主キー"
+"による前方一致検索ができるようになります。"
+msgstr ""
+"table_createコマンドのflagsオプションにTABLE_PAT_KEYを指定することで、主キー"
+"による前方一致検索ができるようになります。"
+
+# 0c931d6ba389418b8abc8d2cee3467a2
+#: ../../../source/tutorial/patricia_trie.txt:32
+msgid "主キーによる後方一致検索"
+msgstr "主キーによる後方一致検索"
+
+# 269a41e5df8d4cb2b1de49e573bb8946
+#: ../../../source/tutorial/patricia_trie.txt:34
+msgid ""
+"table_createコマンドのflagsオプションにTABLE_PAT_KEYとKEY_WITH_SISを指定する"
+"ことで、主キーによる前方一致検索・後方一致検索の両方が可能となります。"
+msgstr ""
+"table_createコマンドのflagsオプションにTABLE_PAT_KEYとKEY_WITH_SISを指定する"
+"ことで、主キーによる前方一致検索・後方一致検索の両方が可能となります。"
+
+# 5a41bb6fd9ec41b1b47618a87b6801fd
+#: ../../../source/tutorial/patricia_trie.txt:36
+msgid ""
+"KEY_WITH_SISフラグを付与すると、データを追加する際に後方一致用のレコードも追"
+"加されてしまいます。そのため、単純に検索すると、元のレコードに加えて自動的に"
+"追加されたレコードまでヒットしてしまいます。元のレコードのみ検索するために、"
+"一工夫必要になります。"
+msgstr ""
+"KEY_WITH_SISフラグを付与すると、データを追加する際に後方一致用のレコードも追"
+"加されてしまいます。そのため、単純に検索すると、元のレコードに加えて自動的に"
+"追加されたレコードまでヒットしてしまいます。元のレコードのみ検索するために、"
+"一工夫必要になります。"
+
+# 5a6853d3aba34df58c1445a1cae17aa4
+#: ../../../source/tutorial/patricia_trie.txt:38
+msgid ""
+"例えば、元のレコードと自動的に追加されたレコードとの区別をつけるために、元の"
+"レコードであることを示すoriginalカラムを追加して、検索時にはoriginalカラムが "
+"``true`` も検索条件に加えます。"
+msgstr ""
+"例えば、元のレコードと自動的に追加されたレコードとの区別をつけるために、元の"
+"レコードであることを示すoriginalカラムを追加して、検索時にはoriginalカラムが "
+"``true`` も検索条件に加えます。"
+
+# 9ae8941a486f4e41800e903bdccefd1b
+#: ../../../source/tutorial/query_expansion.txt:6
+msgid "クエリ拡張"
+msgstr ""
+
+# 25589848c6a548eb9c84fed490d7eace
+#: ../../../source/tutorial/query_expansion.txt:8
+msgid ""
+"groongaでは、 :doc:`/commands/select` コマンドにquery_expansionパラメータを指"
+"定することによって、ユーザが指定した検索文字列を適宜拡張することが可能です。"
+msgstr ""
+
+# e6482e5c98df4d508203f29bef88dc60
+#: ../../../source/tutorial/query_expansion.txt:10
+msgid ""
+"たとえば、ユーザが'シークヮーサー'という文字列で検索した場合に、'シークヮー"
+"サー OR シークァーサー'で検索した場合と同一の結果を返すことによって、本来ユー"
+"ザが必要とする結果をよりもれなく検索できるようになります。"
+msgstr ""
+
+# 82fe8b83077043ca89361863bc88c74c
+#: ../../../source/tutorial/query_expansion.txt:13
+msgid "準備"
+msgstr ""
+
+# b93c8546da5d4dc987c8dd58c7a1f313
+#: ../../../source/tutorial/query_expansion.txt:15
+msgid ""
+"クエリ拡張機能を使用するためには、検索対象となる文書を格納するテーブル(ここで"
+"は文書テーブルと呼びます)以外に、ユーザの指定した検索文字列を置換するための"
+"テーブル(ここでは置換テーブルと呼びます)を準備します。置換テーブルでは、その"
+"主キーが置換前の文字列となり、文字列型(ShortText)のカラムの値が置換後の文字列"
+"となります。"
+msgstr ""
+
+# 0d51e9f14b49403a96db7625a5c3b7c2
+#: ../../../source/tutorial/query_expansion.txt:17
+#, fuzzy
+msgid "実際に文書テーブルと置換テーブルを作成してみましょう。"
+msgstr "実際に、動画情報のテーブルを作成し、検索をしてみましょう。"
+
+# bf24938993604657a926f24e262d2898
+#: ../../../source/tutorial/query_expansion.txt:38
+msgid ""
+"この例では、ユーザが\"シークァーサー\"と入力しても、\"シークヮーサー\"と入力"
+"しても、それぞれの異なる表記の文書をもれなく検索するための置換テーブルを作成"
+"しています。"
+msgstr ""
+
+# d04f069b84844a0b83023d62cf6a27ec
+#: ../../../source/tutorial/query_expansion.txt:43
+msgid ""
+"それでは実際に、準備した置換テーブルを使ってみましょう。まずは、"
+"query_expansionパラメータを指定せずにselectコマンドを使って検索してみます。"
+msgstr ""
+
+# 052cb4ed3b1046ba9a0cefde985895ee
+#: ../../../source/tutorial/query_expansion.txt:50
+msgid ""
+"指定された文字列に完全に一致するレコードのみがそれぞれヒットします。次に、"
+"query_expansionパラメータに、準備したSynonymテーブルのbodyカラムを指定してみ"
+"ましょう。"
+msgstr ""
+
+# cee76fea62784c29915f53200915a318
+#: ../../../source/tutorial/query_expansion.txt:57
+msgid ""
+"どちらのクエリ文字列も、\"(シークァーサー OR シークヮーサー)\"という文字列に"
+"置換されてから検索されるため、表記の揺れを吸収して検索できるようになりまし"
+"た。"
+msgstr ""
+
+# 9e5bd80c9da34646a4f65b0909c23e3f
+#: ../../../source/tutorial/search.txt:8
+msgid "さまざまな検索条件の指定"
+msgstr "さまざまな検索条件の指定"
+
+# bd3b2bdd2841462cafc0592df2e19512
+#: ../../../source/tutorial/search.txt:10
+msgid ""
+"groongaは、JavaScriptに似た文法での条件絞込や、計算した値を用いたソートを行う"
+"ことができます。また、位置情報(緯度・経度)を用いた絞込・ソートを行うことがで"
+"きます。"
+msgstr ""
+"groongaは、JavaScriptに似た文法での条件絞込や、計算した値を用いたソートを行う"
+"ことができます。また、位置情報(緯度・経度)を用いた絞込・ソートを行うことがで"
+"きます。"
+
+# e97ca2f450ca4471875d5008f4caa1be
+#: ../../../source/tutorial/search.txt:13
+msgid "JavaScriptに似た文法での絞込・全文検索"
+msgstr "JavaScriptに似た文法での絞込・全文検索"
+
+# b76e65f57e244b5098d65555943fd2d5
+#: ../../../source/tutorial/search.txt:15
+msgid ""
+"selectコマンドのfilterパラメータは、queryパラメータと同様に、レコードの検索条"
+"件を指定します。filterパラメータとqueryパラメータが異なる点は、filterパラメー"
+"タには、JavaScriptの式に似た文法で条件を指定する点です。"
+msgstr ""
+"selectコマンドのfilterパラメータは、queryパラメータと同様に、レコードの検索条"
+"件を指定します。filterパラメータとqueryパラメータが異なる点は、filterパラメー"
+"タには、JavaScriptの式に似た文法で条件を指定する点です。"
+
+# c82f7751a88f4b32a0d9d37c44a778fb
+#: ../../../source/tutorial/search.txt:21
+msgid "ここで、filterパラメータには"
+msgstr "ここで、filterパラメータには"
+
+# 70b78935cd6f44b5809c7f5b0cc32ec2
+#: ../../../source/tutorial/search.txt:23
+msgid "_id <= 1"
+msgstr "_id <= 1"
+
+# 8c9421fb13e04953bcf88ac42b76b4f6
+#: ../../../source/tutorial/search.txt:25
+msgid ""
+"という条件を指定しています。この場合は_idの値が1以下のレコードが検索結果とし"
+"て得られます。"
+msgstr ""
+"という条件を指定しています。この場合は_idの値が1以下のレコードが検索結果とし"
+"て得られます。"
+
+# 93878389cc154c2c9f7db0e1a3603c74
+#: ../../../source/tutorial/search.txt:27
+msgid "また、&& や || を使って、条件のAND・OR指定をすることもできます。"
+msgstr "また、&& や || を使って、条件のAND・OR指定をすることもできます。"
+
+# c516e2be8eb74535bdc093169d2692ba
+#: ../../../source/tutorial/search.txt:34
+msgid ""
+"queryパラメータとfilterパラメータを同時に指定すると、両者の条件をともに満たす"
+"レコードが結果として返ります。"
+msgstr ""
+"queryパラメータとfilterパラメータを同時に指定すると、両者の条件をともに満たす"
+"レコードが結果として返ります。"
+
+# 0cfbe9ff89484471a70af99ba5734e1a
+#: ../../../source/tutorial/search.txt:37
+msgid "scorerを利用したソート"
+msgstr "scorerを利用したソート"
+
+# e585796b68ce4013bb1d74e914c227bf
+#: ../../../source/tutorial/search.txt:39
+msgid ""
+"selectコマンドのscorerパラメータは、 全文検索を行った結果の各レコードに対して"
+"処理を行うためのパラメータです。"
+msgstr ""
+"selectコマンドのscorerパラメータは、 全文検索を行った結果の各レコードに対して"
+"処理を行うためのパラメータです。"
+
+# 5a04db4506d3499aa8924e904fffac8a
+#: ../../../source/tutorial/search.txt:42
+msgid ""
+"filterパラメータと同様に、 JavaScriptの式に似たな文法で様々な条件を指定するこ"
+"とができます。"
+msgstr ""
+"filterパラメータと同様に、 JavaScriptの式に似たな文法で様々な条件を指定するこ"
+"とができます。"
+
+# 71468697ad494c3bac085d967ca22395
+#: ../../../source/tutorial/search.txt:50
+msgid ""
+"検索結果には、'_score'という名前の、全文検索のスコアが代入されている仮想的な"
+"カラムが付与されることをチュートリアル中ソートの項目で説明しました。"
+msgstr ""
+"検索結果には、'_score'という名前の、全文検索のスコアが代入されている仮想的な"
+"カラムが付与されることをチュートリアル中ソートの項目で説明しました。"
+
+# 72cfaa33567145049a23d2fa457f23d8
+#: ../../../source/tutorial/search.txt:52
+msgid "上記の実行例では、scorerパラメータに"
+msgstr "上記の実行例では、scorerパラメータに"
+
+# a181131c43514a7b97bca5bec7ac2cf8
+#: ../../../source/tutorial/search.txt:54
+msgid "_score = rand()"
+msgstr "_score = rand()"
+
+# c8d8f33cf926445ab1ae48d82ab5d99d
+#: ../../../source/tutorial/search.txt:56
+msgid ""
+"という条件を指定しています。ここでは、rand()という乱数を返す関数を用いて、全"
+"文検索のスコアを乱数で上書きしています。"
+msgstr ""
+"という条件を指定しています。ここでは、rand()という乱数を返す関数を用いて、全"
+"文検索のスコアを乱数で上書きしています。"
+
+# cecbdfff2e244f7487e45b8bd99373ac
+#: ../../../source/tutorial/search.txt:58
+msgid "sortbyパラメータには、"
+msgstr "sortbyパラメータには、"
+
+# 04cf3e4f782b4f8d8c4770794f30c574
+#: ../../../source/tutorial/search.txt:60
+msgid "_score"
+msgstr "_score"
+
+# e5b5b494a3bb4082b63b8ce1500af7d9
+#: ../../../source/tutorial/search.txt:62
+msgid ""
+"を指定しています。これは、スコア順に昇順にソートすることを意味しています。"
+msgstr ""
+"を指定しています。これは、スコア順に昇順にソートすることを意味しています。"
+
+# 662f236ab2cf446a94b699b3bb8eeb4d
+#: ../../../source/tutorial/search.txt:64
+msgid ""
+"よって、上記のクエリは実行されるたびに検索結果の並び順がランダムに変わりま"
+"す。"
+msgstr ""
+"よって、上記のクエリは実行されるたびに検索結果の並び順がランダムに変わりま"
+"す。"
+
+# 6173827ee4b14c38afeff8243ec6e9a8
+#: ../../../source/tutorial/search.txt:67
+msgid "位置情報を用いた絞込・ソート"
+msgstr "位置情報を用いた絞込・ソート"
+
+# f16f62eefdb84950a80644a3572ab933
+#: ../../../source/tutorial/search.txt:69
+msgid ""
+"groongaでは、位置情報（経緯度）を保存することができます。また、保存した経緯度"
+"を用いて絞込やソートができます。"
+msgstr ""
+"groongaでは、位置情報（経緯度）を保存することができます。また、保存した経緯度"
+"を用いて絞込やソートができます。"
+
+# 46e1de443f3a4f34905e2215404a6562
+#: ../../../source/tutorial/search.txt:71
+msgid ""
+"位置情報を保存するためのカラムの型として、TokyoGeoPoint/WGS84GeoPointの２つの"
+"型があります。前者は日本測地系、後者は世界測地系(WGS84相当)の経緯度を保存しま"
+"す。"
+msgstr ""
+"位置情報を保存するためのカラムの型として、TokyoGeoPoint/WGS84GeoPointの２つの"
+"型があります。前者は日本測地系、後者は世界測地系(WGS84相当)の経緯度を保存しま"
+"す。"
+
+# 7554e480715d4812ab7d26513cf42d30
+#: ../../../source/tutorial/search.txt:73
+msgid ""
+"経緯度をデータを入力するためには、\"緯度のミリ秒x経度のミリ秒\"という形式の文"
+"字列を代入する必要があります。"
+msgstr ""
+"経緯度をデータを入力するためには、\"緯度のミリ秒x経度のミリ秒\"という形式の文"
+"字列を代入する必要があります。"
+
+# b96720fcfedc49c989aa9823ff44dd86
+#: ../../../source/tutorial/search.txt:75
+msgid ""
+"ここでは、ためしに東京駅と新宿駅とついて、世界測地系での位置情報を保存してみ"
+"ましょう。東京駅は緯度が35度40分52.975秒、経度が139度45分57.902秒です。新宿駅"
+"は緯度が35度41分27.316秒、経度が139度42分0.929秒です。よって、代入する文字列"
+"はそれぞれ\"128452975x503157902\"/\"128487316x502920929\"となります。"
+msgstr ""
+"ここでは、ためしに東京駅と新宿駅とついて、世界測地系での位置情報を保存してみ"
+"ましょう。東京駅は緯度が35度40分52.975秒、経度が139度45分57.902秒です。新宿駅"
+"は緯度が35度41分27.316秒、経度が139度42分0.929秒です。よって、代入する文字列"
+"はそれぞれ\"128452975x503157902\"/\"128487316x502920929\"となります。"
+
+# c435ef26eccc4ee99e170d2aa490f38d
+#: ../../../source/tutorial/search.txt:87
+#, fuzzy
+msgid ""
+"scorerパラメータにおいて、 :doc:`/functions/geo_distance` 関数を用いることに"
+"より、２点間の距離を計算することができます。"
+msgstr ""
+"scorerパラメータにおいて、 :doc:`../functions/geo_distance` 関数を用いること"
+"により、２点間の距離を計算することができます。"
+
+# bce2aea472c14a4082b7ef5a78d67e56
+#: ../../../source/tutorial/search.txt:89
+msgid ""
+"ここでは、秋葉原駅からの距離を表示させてみましょう。世界測地系では、秋葉原駅"
+"の位置は緯度が35度41分55.259秒、経度が139度46分27.188秒です。よって、"
+"geo_distance関数に与える文字列は\"128515259x503187188\"となります。"
+msgstr ""
+"ここでは、秋葉原駅からの距離を表示させてみましょう。世界測地系では、秋葉原駅"
+"の位置は緯度が35度41分55.259秒、経度が139度46分27.188秒です。よって、"
+"geo_distance関数に与える文字列は\"128515259x503187188\"となります。"
+
+# 93e8df37e52c4b47a8ccb51270d7e5b8
+#: ../../../source/tutorial/search.txt:95
+msgid ""
+"この結果を見ると、東京駅と秋葉原駅は2054m、秋葉原駅と新宿駅は6720m離れている"
+"ようです。"
+msgstr ""
+"この結果を見ると、東京駅と秋葉原駅は2054m、秋葉原駅と新宿駅は6720m離れている"
+"ようです。"
+
+# 343c23027ede4543889d7dc9e3e1baa6
+#: ../../../source/tutorial/search.txt:97
+msgid "geo_distance関数は、_scoreを通じてソートでも用いることができます。"
+msgstr "geo_distance関数は、_scoreを通じてソートでも用いることができます。"
+
+# bb0f600710a342d6af8ede422d6c9008
+#: ../../../source/tutorial/search.txt:103
+msgid "「ある地点から何m以内に存在する」といった絞込も可能です。"
+msgstr "「ある地点から何m以内に存在する」といった絞込も可能です。"
+
+# 33b23262e0514f6e84d31832f185030f
+#: ../../../source/tutorial/search.txt:105
+#, fuzzy
+msgid ""
+"filterパラメータにおいて、 :doc:`/functions/geo_in_circle` 関数を用いることに"
+"より、２点間の距離が指定のm以下におさまるかどうかを判定することができます。"
+msgstr ""
+"filterパラメータにおいて、 :doc:`../functions/geo_in_circle` 関数を用いること"
+"により、２点間の距離が指定のm以下におさまるかどうかを判定することができます。"
+
+# 92e6e88d24a14031a2a39b1e9235b006
+#: ../../../source/tutorial/search.txt:107
+msgid "たとえば、秋葉原駅から5000m以内にあるレコードを検索してみましょう。"
+msgstr "たとえば、秋葉原駅から5000m以内にあるレコードを検索してみましょう。"
+
+# 248d65529bc544a5b986dfe728999000
+#: ../../../source/tutorial/search.txt:113
+msgid ""
+"また、経緯度が指定の矩形領域内であるかどうかを判定する :doc:`../functions/"
+"geo_in_rectangle` 関数も存在します。"
+msgstr ""
+"また、経緯度が指定の矩形領域内であるかどうかを判定する :doc:`../functions/"
+"geo_in_rectangle` 関数も存在します。"
