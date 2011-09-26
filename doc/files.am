@@ -70,68 +70,68 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/completion-1.log \
 	$(top_srcdir)/doc/source/example/correction-1.log \
 	$(top_srcdir)/doc/source/example/suggestion-1.log \
-	$(top_srcdir)/doc/source/example/tutorial01-1.log \
-	$(top_srcdir)/doc/source/example/tutorial01-10.log \
-	$(top_srcdir)/doc/source/example/tutorial01-11.log \
-	$(top_srcdir)/doc/source/example/tutorial01-12.log \
-	$(top_srcdir)/doc/source/example/tutorial01-13.log \
-	$(top_srcdir)/doc/source/example/tutorial01-14.log \
-	$(top_srcdir)/doc/source/example/tutorial01-15.log \
-	$(top_srcdir)/doc/source/example/tutorial01-16.log \
-	$(top_srcdir)/doc/source/example/tutorial01-17.log \
-	$(top_srcdir)/doc/source/example/tutorial01-2.log \
-	$(top_srcdir)/doc/source/example/tutorial01-3.log \
-	$(top_srcdir)/doc/source/example/tutorial01-4.log \
-	$(top_srcdir)/doc/source/example/tutorial01-5.log \
-	$(top_srcdir)/doc/source/example/tutorial01-6.log \
-	$(top_srcdir)/doc/source/example/tutorial01-7.log \
-	$(top_srcdir)/doc/source/example/tutorial01-8.log \
-	$(top_srcdir)/doc/source/example/tutorial01-9.log \
-	$(top_srcdir)/doc/source/example/tutorial02-1.log \
-	$(top_srcdir)/doc/source/example/tutorial02-2.log \
-	$(top_srcdir)/doc/source/example/tutorial02-3.log \
-	$(top_srcdir)/doc/source/example/tutorial03-1.log \
-	$(top_srcdir)/doc/source/example/tutorial03-2.log \
-	$(top_srcdir)/doc/source/example/tutorial03-3.log \
-	$(top_srcdir)/doc/source/example/tutorial04-1.log \
-	$(top_srcdir)/doc/source/example/tutorial04-2.log \
-	$(top_srcdir)/doc/source/example/tutorial04-3.log \
-	$(top_srcdir)/doc/source/example/tutorial04-4.log \
-	$(top_srcdir)/doc/source/example/tutorial04-5.log \
-	$(top_srcdir)/doc/source/example/tutorial04-6.log \
-	$(top_srcdir)/doc/source/example/tutorial04-7.log \
-	$(top_srcdir)/doc/source/example/tutorial05-1.log \
-	$(top_srcdir)/doc/source/example/tutorial05-2.log \
-	$(top_srcdir)/doc/source/example/tutorial05-3.log \
-	$(top_srcdir)/doc/source/example/tutorial05-4.log \
-	$(top_srcdir)/doc/source/example/tutorial05-5.log \
-	$(top_srcdir)/doc/source/example/tutorial05-6.log \
-	$(top_srcdir)/doc/source/example/tutorial06-1.log \
-	$(top_srcdir)/doc/source/example/tutorial06-2.log \
-	$(top_srcdir)/doc/source/example/tutorial06-3.log \
-	$(top_srcdir)/doc/source/example/tutorial06-4.log \
-	$(top_srcdir)/doc/source/example/tutorial06-5.log \
-	$(top_srcdir)/doc/source/example/tutorial06-6.log \
-	$(top_srcdir)/doc/source/example/tutorial06-7.log \
-	$(top_srcdir)/doc/source/example/tutorial07-1.log \
-	$(top_srcdir)/doc/source/example/tutorial07-2.log \
-	$(top_srcdir)/doc/source/example/tutorial07-3.log \
-	$(top_srcdir)/doc/source/example/tutorial07-4.log \
-	$(top_srcdir)/doc/source/example/tutorial08-1.log \
-	$(top_srcdir)/doc/source/example/tutorial08-2.log \
-	$(top_srcdir)/doc/source/example/tutorial10-1.log \
-	$(top_srcdir)/doc/source/example/tutorial10-10.log \
-	$(top_srcdir)/doc/source/example/tutorial10-2.log \
-	$(top_srcdir)/doc/source/example/tutorial10-3.log \
-	$(top_srcdir)/doc/source/example/tutorial10-4.log \
-	$(top_srcdir)/doc/source/example/tutorial10-5.log \
-	$(top_srcdir)/doc/source/example/tutorial10-6.log \
-	$(top_srcdir)/doc/source/example/tutorial10-7.log \
-	$(top_srcdir)/doc/source/example/tutorial10-8.log \
-	$(top_srcdir)/doc/source/example/tutorial10-9.log \
-	$(top_srcdir)/doc/source/example/tutorial11-1.log \
-	$(top_srcdir)/doc/source/example/tutorial11-2.log \
-	$(top_srcdir)/doc/source/example/tutorial11-3.log \
+	$(top_srcdir)/doc/source/example/tutorial/data-1.log \
+	$(top_srcdir)/doc/source/example/tutorial/data-2.log \
+	$(top_srcdir)/doc/source/example/tutorial/data-3.log \
+	$(top_srcdir)/doc/source/example/tutorial/drilldown-1.log \
+	$(top_srcdir)/doc/source/example/tutorial/drilldown-2.log \
+	$(top_srcdir)/doc/source/example/tutorial/drilldown-3.log \
+	$(top_srcdir)/doc/source/example/tutorial/drilldown-4.log \
+	$(top_srcdir)/doc/source/example/tutorial/drilldown-5.log \
+	$(top_srcdir)/doc/source/example/tutorial/drilldown-6.log \
+	$(top_srcdir)/doc/source/example/tutorial/index-1.log \
+	$(top_srcdir)/doc/source/example/tutorial/index-2.log \
+	$(top_srcdir)/doc/source/example/tutorial/index-3.log \
+	$(top_srcdir)/doc/source/example/tutorial/index-4.log \
+	$(top_srcdir)/doc/source/example/tutorial/index-5.log \
+	$(top_srcdir)/doc/source/example/tutorial/index-6.log \
+	$(top_srcdir)/doc/source/example/tutorial/index-7.log \
+	$(top_srcdir)/doc/source/example/tutorial/introduction-1.log \
+	$(top_srcdir)/doc/source/example/tutorial/introduction-10.log \
+	$(top_srcdir)/doc/source/example/tutorial/introduction-11.log \
+	$(top_srcdir)/doc/source/example/tutorial/introduction-12.log \
+	$(top_srcdir)/doc/source/example/tutorial/introduction-13.log \
+	$(top_srcdir)/doc/source/example/tutorial/introduction-14.log \
+	$(top_srcdir)/doc/source/example/tutorial/introduction-15.log \
+	$(top_srcdir)/doc/source/example/tutorial/introduction-16.log \
+	$(top_srcdir)/doc/source/example/tutorial/introduction-17.log \
+	$(top_srcdir)/doc/source/example/tutorial/introduction-2.log \
+	$(top_srcdir)/doc/source/example/tutorial/introduction-3.log \
+	$(top_srcdir)/doc/source/example/tutorial/introduction-4.log \
+	$(top_srcdir)/doc/source/example/tutorial/introduction-5.log \
+	$(top_srcdir)/doc/source/example/tutorial/introduction-6.log \
+	$(top_srcdir)/doc/source/example/tutorial/introduction-7.log \
+	$(top_srcdir)/doc/source/example/tutorial/introduction-8.log \
+	$(top_srcdir)/doc/source/example/tutorial/introduction-9.log \
+	$(top_srcdir)/doc/source/example/tutorial/match_columns-1.log \
+	$(top_srcdir)/doc/source/example/tutorial/match_columns-2.log \
+	$(top_srcdir)/doc/source/example/tutorial/match_columns-3.log \
+	$(top_srcdir)/doc/source/example/tutorial/match_columns-4.log \
+	$(top_srcdir)/doc/source/example/tutorial/micro_blog-1.log \
+	$(top_srcdir)/doc/source/example/tutorial/micro_blog-10.log \
+	$(top_srcdir)/doc/source/example/tutorial/micro_blog-2.log \
+	$(top_srcdir)/doc/source/example/tutorial/micro_blog-3.log \
+	$(top_srcdir)/doc/source/example/tutorial/micro_blog-4.log \
+	$(top_srcdir)/doc/source/example/tutorial/micro_blog-5.log \
+	$(top_srcdir)/doc/source/example/tutorial/micro_blog-6.log \
+	$(top_srcdir)/doc/source/example/tutorial/micro_blog-7.log \
+	$(top_srcdir)/doc/source/example/tutorial/micro_blog-8.log \
+	$(top_srcdir)/doc/source/example/tutorial/micro_blog-9.log \
+	$(top_srcdir)/doc/source/example/tutorial/network-1.log \
+	$(top_srcdir)/doc/source/example/tutorial/network-2.log \
+	$(top_srcdir)/doc/source/example/tutorial/network-3.log \
+	$(top_srcdir)/doc/source/example/tutorial/patricia_trie-1.log \
+	$(top_srcdir)/doc/source/example/tutorial/patricia_trie-2.log \
+	$(top_srcdir)/doc/source/example/tutorial/query_expansion-1.log \
+	$(top_srcdir)/doc/source/example/tutorial/query_expansion-2.log \
+	$(top_srcdir)/doc/source/example/tutorial/query_expansion-3.log \
+	$(top_srcdir)/doc/source/example/tutorial/search-1.log \
+	$(top_srcdir)/doc/source/example/tutorial/search-2.log \
+	$(top_srcdir)/doc/source/example/tutorial/search-3.log \
+	$(top_srcdir)/doc/source/example/tutorial/search-4.log \
+	$(top_srcdir)/doc/source/example/tutorial/search-5.log \
+	$(top_srcdir)/doc/source/example/tutorial/search-6.log \
+	$(top_srcdir)/doc/source/example/tutorial/search-7.log \
 	$(top_srcdir)/doc/source/executables.txt \
 	$(top_srcdir)/doc/source/executables/grnslap.txt \
 	$(top_srcdir)/doc/source/executables/grntest.txt \
@@ -169,17 +169,17 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/troubleshooting.txt \
 	$(top_srcdir)/doc/source/troubleshooting/different_results_with_the_same_keyword.txt \
 	$(top_srcdir)/doc/source/tutorial.txt \
-	$(top_srcdir)/doc/source/tutorial/tutorial01.txt \
-	$(top_srcdir)/doc/source/tutorial/tutorial02.txt \
-	$(top_srcdir)/doc/source/tutorial/tutorial03.txt \
-	$(top_srcdir)/doc/source/tutorial/tutorial04.txt \
-	$(top_srcdir)/doc/source/tutorial/tutorial05.txt \
-	$(top_srcdir)/doc/source/tutorial/tutorial06.txt \
-	$(top_srcdir)/doc/source/tutorial/tutorial07.txt \
-	$(top_srcdir)/doc/source/tutorial/tutorial08.txt \
-	$(top_srcdir)/doc/source/tutorial/tutorial09.txt \
-	$(top_srcdir)/doc/source/tutorial/tutorial10.txt \
-	$(top_srcdir)/doc/source/tutorial/tutorial11.txt \
+	$(top_srcdir)/doc/source/tutorial/data.txt \
+	$(top_srcdir)/doc/source/tutorial/drilldown.txt \
+	$(top_srcdir)/doc/source/tutorial/index.txt \
+	$(top_srcdir)/doc/source/tutorial/introduction.txt \
+	$(top_srcdir)/doc/source/tutorial/lexicon.txt \
+	$(top_srcdir)/doc/source/tutorial/match_columns.txt \
+	$(top_srcdir)/doc/source/tutorial/micro_blog.txt \
+	$(top_srcdir)/doc/source/tutorial/network.txt \
+	$(top_srcdir)/doc/source/tutorial/patricia_trie.txt \
+	$(top_srcdir)/doc/source/tutorial/query_expansion.txt \
+	$(top_srcdir)/doc/source/tutorial/search.txt \
 	$(top_srcdir)/doc/source/type.txt \
 	$(top_srcdir)/doc/source/update_execution_example.py \
 	$(NULL)
@@ -270,68 +270,68 @@ source_files_relative_from_doc_dir = \
 	source/example/completion-1.log \
 	source/example/correction-1.log \
 	source/example/suggestion-1.log \
-	source/example/tutorial01-1.log \
-	source/example/tutorial01-10.log \
-	source/example/tutorial01-11.log \
-	source/example/tutorial01-12.log \
-	source/example/tutorial01-13.log \
-	source/example/tutorial01-14.log \
-	source/example/tutorial01-15.log \
-	source/example/tutorial01-16.log \
-	source/example/tutorial01-17.log \
-	source/example/tutorial01-2.log \
-	source/example/tutorial01-3.log \
-	source/example/tutorial01-4.log \
-	source/example/tutorial01-5.log \
-	source/example/tutorial01-6.log \
-	source/example/tutorial01-7.log \
-	source/example/tutorial01-8.log \
-	source/example/tutorial01-9.log \
-	source/example/tutorial02-1.log \
-	source/example/tutorial02-2.log \
-	source/example/tutorial02-3.log \
-	source/example/tutorial03-1.log \
-	source/example/tutorial03-2.log \
-	source/example/tutorial03-3.log \
-	source/example/tutorial04-1.log \
-	source/example/tutorial04-2.log \
-	source/example/tutorial04-3.log \
-	source/example/tutorial04-4.log \
-	source/example/tutorial04-5.log \
-	source/example/tutorial04-6.log \
-	source/example/tutorial04-7.log \
-	source/example/tutorial05-1.log \
-	source/example/tutorial05-2.log \
-	source/example/tutorial05-3.log \
-	source/example/tutorial05-4.log \
-	source/example/tutorial05-5.log \
-	source/example/tutorial05-6.log \
-	source/example/tutorial06-1.log \
-	source/example/tutorial06-2.log \
-	source/example/tutorial06-3.log \
-	source/example/tutorial06-4.log \
-	source/example/tutorial06-5.log \
-	source/example/tutorial06-6.log \
-	source/example/tutorial06-7.log \
-	source/example/tutorial07-1.log \
-	source/example/tutorial07-2.log \
-	source/example/tutorial07-3.log \
-	source/example/tutorial07-4.log \
-	source/example/tutorial08-1.log \
-	source/example/tutorial08-2.log \
-	source/example/tutorial10-1.log \
-	source/example/tutorial10-10.log \
-	source/example/tutorial10-2.log \
-	source/example/tutorial10-3.log \
-	source/example/tutorial10-4.log \
-	source/example/tutorial10-5.log \
-	source/example/tutorial10-6.log \
-	source/example/tutorial10-7.log \
-	source/example/tutorial10-8.log \
-	source/example/tutorial10-9.log \
-	source/example/tutorial11-1.log \
-	source/example/tutorial11-2.log \
-	source/example/tutorial11-3.log \
+	source/example/tutorial/data-1.log \
+	source/example/tutorial/data-2.log \
+	source/example/tutorial/data-3.log \
+	source/example/tutorial/drilldown-1.log \
+	source/example/tutorial/drilldown-2.log \
+	source/example/tutorial/drilldown-3.log \
+	source/example/tutorial/drilldown-4.log \
+	source/example/tutorial/drilldown-5.log \
+	source/example/tutorial/drilldown-6.log \
+	source/example/tutorial/index-1.log \
+	source/example/tutorial/index-2.log \
+	source/example/tutorial/index-3.log \
+	source/example/tutorial/index-4.log \
+	source/example/tutorial/index-5.log \
+	source/example/tutorial/index-6.log \
+	source/example/tutorial/index-7.log \
+	source/example/tutorial/introduction-1.log \
+	source/example/tutorial/introduction-10.log \
+	source/example/tutorial/introduction-11.log \
+	source/example/tutorial/introduction-12.log \
+	source/example/tutorial/introduction-13.log \
+	source/example/tutorial/introduction-14.log \
+	source/example/tutorial/introduction-15.log \
+	source/example/tutorial/introduction-16.log \
+	source/example/tutorial/introduction-17.log \
+	source/example/tutorial/introduction-2.log \
+	source/example/tutorial/introduction-3.log \
+	source/example/tutorial/introduction-4.log \
+	source/example/tutorial/introduction-5.log \
+	source/example/tutorial/introduction-6.log \
+	source/example/tutorial/introduction-7.log \
+	source/example/tutorial/introduction-8.log \
+	source/example/tutorial/introduction-9.log \
+	source/example/tutorial/match_columns-1.log \
+	source/example/tutorial/match_columns-2.log \
+	source/example/tutorial/match_columns-3.log \
+	source/example/tutorial/match_columns-4.log \
+	source/example/tutorial/micro_blog-1.log \
+	source/example/tutorial/micro_blog-10.log \
+	source/example/tutorial/micro_blog-2.log \
+	source/example/tutorial/micro_blog-3.log \
+	source/example/tutorial/micro_blog-4.log \
+	source/example/tutorial/micro_blog-5.log \
+	source/example/tutorial/micro_blog-6.log \
+	source/example/tutorial/micro_blog-7.log \
+	source/example/tutorial/micro_blog-8.log \
+	source/example/tutorial/micro_blog-9.log \
+	source/example/tutorial/network-1.log \
+	source/example/tutorial/network-2.log \
+	source/example/tutorial/network-3.log \
+	source/example/tutorial/patricia_trie-1.log \
+	source/example/tutorial/patricia_trie-2.log \
+	source/example/tutorial/query_expansion-1.log \
+	source/example/tutorial/query_expansion-2.log \
+	source/example/tutorial/query_expansion-3.log \
+	source/example/tutorial/search-1.log \
+	source/example/tutorial/search-2.log \
+	source/example/tutorial/search-3.log \
+	source/example/tutorial/search-4.log \
+	source/example/tutorial/search-5.log \
+	source/example/tutorial/search-6.log \
+	source/example/tutorial/search-7.log \
 	source/executables.txt \
 	source/executables/grnslap.txt \
 	source/executables/grntest.txt \
@@ -369,17 +369,17 @@ source_files_relative_from_doc_dir = \
 	source/troubleshooting.txt \
 	source/troubleshooting/different_results_with_the_same_keyword.txt \
 	source/tutorial.txt \
-	source/tutorial/tutorial01.txt \
-	source/tutorial/tutorial02.txt \
-	source/tutorial/tutorial03.txt \
-	source/tutorial/tutorial04.txt \
-	source/tutorial/tutorial05.txt \
-	source/tutorial/tutorial06.txt \
-	source/tutorial/tutorial07.txt \
-	source/tutorial/tutorial08.txt \
-	source/tutorial/tutorial09.txt \
-	source/tutorial/tutorial10.txt \
-	source/tutorial/tutorial11.txt \
+	source/tutorial/data.txt \
+	source/tutorial/drilldown.txt \
+	source/tutorial/index.txt \
+	source/tutorial/introduction.txt \
+	source/tutorial/lexicon.txt \
+	source/tutorial/match_columns.txt \
+	source/tutorial/micro_blog.txt \
+	source/tutorial/network.txt \
+	source/tutorial/patricia_trie.txt \
+	source/tutorial/query_expansion.txt \
+	source/tutorial/search.txt \
 	source/type.txt \
 	source/update_execution_example.py \
 	$(NULL)
@@ -568,17 +568,17 @@ html_files_relative_from_locale_dir = \
 	html/_sources/troubleshooting.txt \
 	html/_sources/troubleshooting/different_results_with_the_same_keyword.txt \
 	html/_sources/tutorial.txt \
-	html/_sources/tutorial/tutorial01.txt \
-	html/_sources/tutorial/tutorial02.txt \
-	html/_sources/tutorial/tutorial03.txt \
-	html/_sources/tutorial/tutorial04.txt \
-	html/_sources/tutorial/tutorial05.txt \
-	html/_sources/tutorial/tutorial06.txt \
-	html/_sources/tutorial/tutorial07.txt \
-	html/_sources/tutorial/tutorial08.txt \
-	html/_sources/tutorial/tutorial09.txt \
-	html/_sources/tutorial/tutorial10.txt \
-	html/_sources/tutorial/tutorial11.txt \
+	html/_sources/tutorial/data.txt \
+	html/_sources/tutorial/drilldown.txt \
+	html/_sources/tutorial/index.txt \
+	html/_sources/tutorial/introduction.txt \
+	html/_sources/tutorial/lexicon.txt \
+	html/_sources/tutorial/match_columns.txt \
+	html/_sources/tutorial/micro_blog.txt \
+	html/_sources/tutorial/network.txt \
+	html/_sources/tutorial/patricia_trie.txt \
+	html/_sources/tutorial/query_expansion.txt \
+	html/_sources/tutorial/search.txt \
 	html/_sources/type.txt \
 	html/_static/ajax-loader.gif \
 	html/_static/basic.css \
@@ -685,17 +685,17 @@ html_files_relative_from_locale_dir = \
 	html/troubleshooting.html \
 	html/troubleshooting/different_results_with_the_same_keyword.html \
 	html/tutorial.html \
-	html/tutorial/tutorial01.html \
-	html/tutorial/tutorial02.html \
-	html/tutorial/tutorial03.html \
-	html/tutorial/tutorial04.html \
-	html/tutorial/tutorial05.html \
-	html/tutorial/tutorial06.html \
-	html/tutorial/tutorial07.html \
-	html/tutorial/tutorial08.html \
-	html/tutorial/tutorial09.html \
-	html/tutorial/tutorial10.html \
-	html/tutorial/tutorial11.html \
+	html/tutorial/data.html \
+	html/tutorial/drilldown.html \
+	html/tutorial/index.html \
+	html/tutorial/introduction.html \
+	html/tutorial/lexicon.html \
+	html/tutorial/match_columns.html \
+	html/tutorial/micro_blog.html \
+	html/tutorial/network.html \
+	html/tutorial/patricia_trie.html \
+	html/tutorial/query_expansion.html \
+	html/tutorial/search.html \
 	html/type.html \
 	$(NULL)
 
