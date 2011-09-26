@@ -5,5 +5,5 @@ EXTRA_DIST =
 
 include $(top_srcdir)/build/makefiles/sphinx.am
 
-update-po:
-	cd LC_MESSAGES && $(MAKE) update
+init update-po:
+	cd LC_MESSAGES && $(MAKE) $@

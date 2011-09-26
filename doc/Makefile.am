@@ -23,6 +23,11 @@ man pdf clean-html update-po:
 	  (cd $${dir} && $(MAKE) $@);		\
 	done
 
+init-locale:
+	for dir in $(SUBDIRS); do		\
+	  (cd $${dir} && $(MAKE) init);		\
+	done
+
 EXTRA_DIST =					\
 	$(theme_files_relative_from_doc_dir)	\
 	images.mk
