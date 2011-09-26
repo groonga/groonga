@@ -2,7 +2,7 @@
 
 .. highlightlang:: none
 
-.. groonga-include : tutorial01.txt
+.. groonga-include : introduction.txt
 
 ネットワークを通じた利用
 ========================
@@ -45,7 +45,7 @@ groongaサーバへの接続
 接続に成功すると対話モードに入り、標準入力からコマンドを読み込んで順次実行します。
 
 .. groonga-command
-.. include:: ../example/tutorial02-1.log
+.. include:: ../example/tutorial/network-1.log
 .. .. % groonga -c
 .. status
 .. .. > ctrl-d
@@ -57,7 +57,7 @@ groongaデーモンの終了
 groongaデーモンにshutdownコマンドを発行することにより、終了させることができます。
 
 .. groonga-command
-.. include:: ../example/tutorial02-2.log
+.. include:: ../example/tutorial/network-2.log
 .. .. % groonga -c
 .. .. > shutdown
 .. .. %
@@ -86,7 +86,7 @@ groongaがHTTPプロトコルモードで起動されているとき、「/d/コ
 コマンドのオプションは、HTTPのGETパラメータで渡します。つまり、「?オプション=値&オプション=値 …」という書式になります。
 
 .. groonga-command
-.. include:: ../example/tutorial02-3.log
+.. include:: ../example/tutorial/network-3.log
 .. .. http://[IPまたはホスト名]:[ポート番号]/d/status
 .. .. 実行される処理：
 .. status

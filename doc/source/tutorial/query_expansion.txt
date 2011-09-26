@@ -17,7 +17,7 @@ groongaでは、 :doc:`/commands/select` コマンドにquery_expansionパラメ
 実際に文書テーブルと置換テーブルを作成してみましょう。
 
 .. groonga-command
-.. include:: ../example/tutorial11-1.log
+.. include:: ../example/tutorial/query_expansion-1.log
 .. table_create Doc TABLE_PAT_KEY ShortText
 .. column_create Doc body COLUMN_SCALAR ShortText
 .. table_create Term TABLE_PAT_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenBigram
@@ -43,14 +43,14 @@ groongaでは、 :doc:`/commands/select` コマンドにquery_expansionパラメ
 それでは実際に、準備した置換テーブルを使ってみましょう。まずは、query_expansionパラメータを指定せずにselectコマンドを使って検索してみます。
 
 .. groonga-command
-.. include:: ../example/tutorial11-2.log
+.. include:: ../example/tutorial/query_expansion-2.log
 .. select Doc --match_columns body --query "シークァーサー"
 .. select Doc --match_columns body --query "シークヮーサー"
 
 指定された文字列に完全に一致するレコードのみがそれぞれヒットします。次に、query_expansionパラメータに、準備したSynonymテーブルのbodyカラムを指定してみましょう。
 
 .. groonga-command
-.. include:: ../example/tutorial11-3.log
+.. include:: ../example/tutorial/query_expansion-3.log
 .. select Doc --match_columns body --query "シークァーサー" --query_expansion Synonym.body
 .. select Doc --match_columns body --query "シークヮーサー" --query_expansion Synonym.body
 

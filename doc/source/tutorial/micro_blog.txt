@@ -380,7 +380,7 @@ Commentsテーブルのlast_modifiedカラムは、Time型です。この型で�
 指定された文字列で、ユーザー名・現在地・自己紹介文を対象に検索をします。
 
 .. groonga-command
-.. include:: ../example/tutorial10-1.log
+.. include:: ../example/tutorial/micro_blog-1.log
 .. select --table Users --match_columns name,location_str,description --query 東京 --output_columns _key,name
 
 「東京」をキーワードにユーザー検索した結果、東京都に住んでいる「グニャラくん」と「OffGao」がヒットしました。
@@ -392,7 +392,7 @@ GeoPointでユーザー検索
 以下の例では、指定された位置から5000m以内にいるユーザーを検索しています。
 
 .. groonga-command
-.. include:: ../example/tutorial10-2.log
+.. include:: ../example/tutorial/micro_blog-2.log
 .. select --table Users --filter 'geo_in_circle(location,"128484216x502919856",5000)' --output_columns _key,name
 
 新宿駅から5km以内にすんでいるユーザーを検索したところ、「グニャラくん」と「OffGao」がヒットしました。
@@ -404,7 +404,7 @@ GeoPointでユーザー検索
 以下の例では、Usersテーブルのfollowerカラムにあるフォローリストを逆引きします。
 
 .. groonga-command
-.. include:: ../example/tutorial10-3.log
+.. include:: ../example/tutorial/micro_blog-3.log
 .. select --table Users --query follower:@tasukuchan --output_columns _key,name
 
 「グニャラくん」をフォローしている「hsiomaneki」と「OffGao」がヒットしました。
@@ -415,7 +415,7 @@ GeoPointでコメント検索
 また、 :doc:`tutorial05` で扱ったドリルダウンも行います。検索結果をハッシュタグとユーザーでドリルダウンし、ユーザー別・ハッシュタグ別のカウントを出します。
 
 .. groonga-command
-.. include:: ../example/tutorial10-4.log
+.. include:: ../example/tutorial/micro_blog-4.log
 .. select --table Comments --filter 'geo_in_circle(location,"127975798x502919856",20000)' --output_columns posted_by.name,comment --drilldown hash_tags,posted_by
 
 範囲を広く指定したため、位置情報のあるすべてのコメントがヒットしました。そして、ヒットしたコメントからドリルダウンされた結果も返ってきており、ハッシュタグは「#groonga」が2つに「#travel」が1つ、投稿者は「グニャラくん」「OffGao」がそれぞれ2件ずつであることがわかります。
@@ -426,7 +426,7 @@ GeoPointでコメント検索
 さらに、 :doc:`tutorial04` で扱った、スコア値_scoreも出してみましょう。
 
 .. groonga-command
-.. include:: ../example/tutorial10-5.log
+.. include:: ../example/tutorial/micro_blog-5.log
 .. select --table Comments --query comment:@なう --output_columns comment,_score
 
 「なう」をキーワードにコメント検索した結果、2件のコメントがヒットしました。また、_scoreの値も返ってきており、「なう」の数が出力されていることが確認できます。
@@ -436,7 +436,7 @@ GeoPointとキーワードでコメント検索
 今度は、キーワードとGeoPointの両方を条件に検索をしてみます。--queryと--filterの両方を使用した場合、両方の条件に一致するレコードがヒットします。
 
 .. groonga-command
-.. include:: ../example/tutorial10-6.log
+.. include:: ../example/tutorial/micro_blog-6.log
 .. select --table Comments --query comment:@羽田 --filter 'geo_in_circle(location,"127975798x502919856",20000)' --output_columns posted_by.name,comment --drilldown hash_tags,posted_by
 
 両方の条件を満たすコメントが1件ヒットしました。また、ドリルダウンの結果も返ってきており、「グニャラくん」のコメント1件であることがわかります。
@@ -447,7 +447,7 @@ GeoPointとキーワードでコメント検索
 これも、 :doc:`tutorial06` で扱った、参照関係の逆引きを使います。
 
 .. groonga-command
-.. include:: ../example/tutorial10-7.log
+.. include:: ../example/tutorial/micro_blog-7.log
 .. select --table Comments --query hash_tags:@groonga --output_columns posted_by.name,comment --drilldown posted_by
 
 #groongaタグの付いている2件のコメントがヒットしました。また、投稿者のドリルダウンも返ってきており、2件とも「グニャラくん」のものであることがわかります。
@@ -457,7 +457,7 @@ GeoPointとキーワードでコメント検索
 あるユーザーが投稿したコメントを検索します。
 
 .. groonga-command
-.. include:: ../example/tutorial10-8.log
+.. include:: ../example/tutorial/micro_blog-8.log
 .. select --table Comments --query posted_by:tasukuchan --output_columns comment --drilldown hash_tags
 
 「グニャラくん」が書き込んだ4件のコメントがヒットしました。また、ハッシュタグでドリルダウンした結果も返ってきており、ハッシュタグは「#groonga」が2つに「#travel」が1つあることがわかります。
@@ -467,7 +467,7 @@ GeoPointとキーワードでコメント検索
 あるユーザーがお気に入りに入れているコメントを検索します。
 
 .. groonga-command
-.. include:: ../example/tutorial10-9.log
+.. include:: ../example/tutorial/micro_blog-9.log
 .. select --table Users --query _key:tasukuchan --output_columns favorites.posted_by,favorites.comment
 
 「グニャラくん」がお気に入りに入れている2件のコメントがヒットしました。
@@ -478,7 +478,7 @@ GeoPointとキーワードでコメント検索
 この例では、指定した時間よりも前に投稿されているコメントを検索します。
 
 .. groonga-command
-.. include:: ../example/tutorial10-10.log
+.. include:: ../example/tutorial/micro_blog-10.log
 .. select Comments --filter 'last_modified<=1268802000' --output_columns posted_by.name,comment,last_modified --drilldown hash_tags,posted_by
 
 2010/03/17 14:00:00以前に書かれたコメント5件がヒットしました。また、ドリルダウンの結果も返ってきており、「hsiomaneki」が2件、「グニャラくん」が3件ヒットしていることがわかります。

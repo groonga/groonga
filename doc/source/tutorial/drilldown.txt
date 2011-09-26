@@ -2,7 +2,8 @@
 
 .. highlightlang:: none
 
-.. groonga-include : tutorial04.txt
+.. groonga-include : search.txt
+
 .. groonga-command
 .. table_remove SiteDomain
 .. table_remove SiteCountry
@@ -16,7 +17,7 @@ groongaでは、特定のカラム値で検索結果をグループ化するこ�
 Siteテーブルに２つのカラムを追加します。TLDドメイン名を格納するdomainカラムと、国名を格納するcountryカラムです。これらのカラムの型は、それぞれドメイン名を主キーとするSiteDomainテーブルと、国名を主キーとするSiteCountryテーブルとします。
 
 .. groonga-command
-.. include:: ../example/tutorial05-1.log
+.. include:: ../example/tutorial/drilldown-1.log
 .. table_create --name SiteDomain --flags TABLE_HASH_KEY --key_type ShortText
 .. table_create --name SiteCountry --flags TABLE_HASH_KEY --key_type ShortText
 .. column_create --table Site --name domain --flags COLUMN_SCALAR --type SiteDomain
@@ -37,31 +38,31 @@ Siteテーブルに２つのカラムを追加します。TLDドメイン名を�
 domainカラムとcountryカラムでドリルダウンを行う例を以下に示します。
 
 .. groonga-command
-.. include:: ../example/tutorial05-2.log
+.. include:: ../example/tutorial/drilldown-2.log
 .. select --table Site --limit 0 --drilldown domain
 
 テーブル型を持つカラムに対してドリルダウンを行った場合、参照先のテーブルに存在するカラム値を取得することもできます。ドリルダウンを行ったテーブルには、_nsubrecsという仮想的なカラムが追加されます。このカラムには、グループ化されたレコード数が入ります。
 
 .. groonga-command
-.. include:: ../example/tutorial05-3.log
+.. include:: ../example/tutorial/drilldown-3.log
 .. select --table Site --limit 0 --drilldown domain --drilldown_output_columns _id,_key,_nsubrecs
 
 複数のカラムに対してドリルダウンを行うことができます。複数のカラムに対してドリルダウンを行う場合には、drilldownパラメータにカラム名をカンマ区切りで与えます。
 
 .. groonga-command
-.. include:: ../example/tutorial05-4.log
+.. include:: ../example/tutorial/drilldown-4.log
 .. select --table Site --limit 0 --drilldown domain,country
 
 ドリルダウン結果を並びかえることができます。例えば、_nsubrecsパラメータの降順で並び替えることができます。
 
 .. groonga-command
-.. include:: ../example/tutorial05-5.log
+.. include:: ../example/tutorial/drilldown-5.log
 .. select --table Site --limit 0 --drilldown country --drilldown_sortby _nsubrecs
 
 ドリルダウン結果は、デフォルトでは10件のみ表示されます。drilldown_offsetパラメータと、drilldown_limitパラメータによって、offsetとlimitを指定することができます。
 
 .. groonga-command
-.. include:: ../example/tutorial05-6.log
+.. include:: ../example/tutorial/drilldown-6.log
 .. select --table Site --limit 0 --drilldown country --drilldown_sortby _nsubrecs --drilldown_limit 2 --drilldown_offset 2
 
 文字列型のカラムに対するドリルダウンは、他の型でのドリルダウンに比べて低速です。文字列でのドリルダウンを行いたい場合には、このチュートリアルのように、文字列型を主キーとするテーブルを別途作成し、そのテーブルを型とするカラムを作成します。

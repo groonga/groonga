@@ -2,7 +2,7 @@
 
 .. highlightlang:: none
 
-.. groonga-include : tutorial03.txt
+.. groonga-include : data.txt
 
 さまざまな検索条件の指定
 ========================
@@ -15,7 +15,7 @@ JavaScriptに似た文法での絞込・全文検索
 selectコマンドのfilterパラメータは、queryパラメータと同様に、レコードの検索条件を指定します。filterパラメータとqueryパラメータが異なる点は、filterパラメータには、JavaScriptの式に似た文法で条件を指定する点です。
 
 .. groonga-command
-.. include:: ../example/tutorial04-1.log
+.. include:: ../example/tutorial/search-1.log
 .. select --table Site --filter "_id <= 1" --output_columns _id,_key
 
 ここで、filterパラメータには
@@ -27,7 +27,7 @@ selectコマンドのfilterパラメータは、queryパラメータと同様に
 また、&& や || を使って、条件のAND・OR指定をすることもできます。
 
 .. groonga-command
-.. include:: ../example/tutorial04-2.log
+.. include:: ../example/tutorial/search-2.log
 .. select --table Site --filter "_id >= 4 && _id <= 6" --output_columns _id,_key
 .. select --table Site --filter "_id <= 2 || _id >= 7" --output_columns _id,_key
 
@@ -43,7 +43,7 @@ filterパラメータと同様に、
 JavaScriptの式に似たな文法で様々な条件を指定することができます。
 
 .. groonga-command
-.. include:: ../example/tutorial04-3.log
+.. include:: ../example/tutorial/search-3.log
 .. select --table Site --filter "1" --scorer "_score = rand()" --output_columns _id,_key,_score --sortby _score
 .. select --table Site --filter "1" --scorer "_score = rand()" --output_columns _id,_key,_score --sortby _score
 
@@ -75,7 +75,7 @@ groongaでは、位置情報（経緯度）を保存することができます�
 ここでは、ためしに東京駅と新宿駅とついて、世界測地系での位置情報を保存してみましょう。東京駅は緯度が35度40分52.975秒、経度が139度45分57.902秒です。新宿駅は緯度が35度41分27.316秒、経度が139度42分0.929秒です。よって、代入する文字列はそれぞれ"128452975x503157902"/"128487316x502920929"となります。
 
 .. groonga-command
-.. include:: ../example/tutorial04-4.log
+.. include:: ../example/tutorial/search-4.log
 .. column_create --table Site --name location --type WGS84GeoPoint
 .. load --table Site
 .. [
@@ -89,7 +89,7 @@ scorerパラメータにおいて、 :doc:`/functions/geo_distance` 関数を用
 ここでは、秋葉原駅からの距離を表示させてみましょう。世界測地系では、秋葉原駅の位置は緯度が35度41分55.259秒、経度が139度46分27.188秒です。よって、geo_distance関数に与える文字列は"128515259x503187188"となります。
 
 .. groonga-command
-.. include:: ../example/tutorial04-5.log
+.. include:: ../example/tutorial/search-5.log
 .. select --table Site --query "_id:1 OR _id:2" --output_columns _key,location,_score --scorer '_score = geo_distance(location, "128515259x503187188")'
 
 この結果を見ると、東京駅と秋葉原駅は2054m、秋葉原駅と新宿駅は6720m離れているようです。
@@ -97,7 +97,7 @@ scorerパラメータにおいて、 :doc:`/functions/geo_distance` 関数を用
 geo_distance関数は、_scoreを通じてソートでも用いることができます。
 
 .. groonga-command
-.. include:: ../example/tutorial04-6.log
+.. include:: ../example/tutorial/search-6.log
 .. select --table Site --query "_id:1 OR _id:2" --output_columns _key,location,_score --scorer '_score = geo_distance(location, "128515259x503187188")' --sortby -_score
 
 「ある地点から何m以内に存在する」といった絞込も可能です。
@@ -107,7 +107,7 @@ filterパラメータにおいて、 :doc:`/functions/geo_in_circle` 関数を�
 たとえば、秋葉原駅から5000m以内にあるレコードを検索してみましょう。
 
 .. groonga-command
-.. include:: ../example/tutorial04-7.log
+.. include:: ../example/tutorial/search-7.log
 .. select --table Site --output_columns _key,location --filter 'geo_in_circle(location, "128515259x503187188", 5000)'
 
 また、経緯度が指定の矩形領域内であるかどうかを判定する :doc:`../functions/geo_in_rectangle` 関数も存在します。

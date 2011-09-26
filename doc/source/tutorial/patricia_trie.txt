@@ -6,8 +6,8 @@
 .. table_remove PatPrefix
 .. table_remove PatSuffix
 
-主キーによる前方一致検索
-========================
+パトリシア木による前方一致検索
+============================
 
 groongaのテーブルは、テーブル作成時にパトリシア木オプションを指定すると、前方一致検索を行うことができます。また、追加のオプションを指定することにより、主キーの後方一致検索をも行うことができます。
 
@@ -17,7 +17,7 @@ groongaのテーブルは、テーブル作成時にパトリシア木オプシ�
 table_createコマンドのflagsオプションにTABLE_PAT_KEYを指定することで、主キーによる前方一致検索ができるようになります。
 
 .. groonga-command
-.. include:: ../example/tutorial08-1.log
+.. include:: ../example/tutorial/patricia_trie-1.log
 ..
 .. table_create --name PatPrefix --flags TABLE_PAT_KEY --key_type ShortText
 .. load --table PatPrefix
@@ -38,7 +38,7 @@ KEY_WITH_SISフラグを付与すると、データを追加する際に後方�
 例えば、元のレコードと自動的に追加されたレコードとの区別をつけるために、元のレコードであることを示すoriginalカラムを追加して、検索時にはoriginalカラムが ``true`` も検索条件に加えます。
 
 .. groonga-command
-.. include:: ../example/tutorial08-2.log
+.. include:: ../example/tutorial/patricia_trie-2.log
 ..
 .. table_create --name PatSuffix --flags TABLE_PAT_KEY|KEY_WITH_SIS --key_type ShortText
 .. column_create --table PatSuffix --name original --type Bool

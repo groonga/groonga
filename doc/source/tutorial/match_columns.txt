@@ -25,7 +25,7 @@ Blog1テーブルを作り、タイトル文字列のtitleカラム、本文のm
 インデックス用のIndexBlog1テーブルも作り、titleカラムのインデックス用にindex_titleカラム、messageカラムのインデック用にindex_messageカラムと、それぞれ1カラムごとに1つずつ追加しています。
 
 .. groonga-command
-.. include:: ../example/tutorial07-1.log
+.. include:: ../example/tutorial/match_columns-1.log
 .. table_create --name Blog1 --flags TABLE_HASH_KEY --key_type ShortText
 .. column_create --table Blog1 --name title --flags COLUMN_SCALAR --type ShortText
 .. column_create --table Blog1 --name message --flags COLUMN_SCALAR --type ShortText
@@ -44,7 +44,7 @@ match_columnsオプションで、検索対象のカラムを複数指定する�
 実際に検索してみましょう。
 
 .. groonga-command
-.. include:: ../example/tutorial07-2.log
+.. include:: ../example/tutorial/match_columns-2.log
 .. select --table Blog1 --match_columns title||message --query groonga
 .. select --table Blog1 --match_columns title||message --query message
 .. select --table Blog1 --match_columns title --query message
@@ -58,7 +58,7 @@ match_columnsオプションで、検索対象のカラムを複数指定する�
 
 
 .. groonga-command
-.. include:: ../example/tutorial07-3.log
+.. include:: ../example/tutorial/match_columns-3.log
 .. table_create --name Blog2 --flags TABLE_HASH_KEY --key_type ShortText
 .. column_create --table Blog2 --name title --flags COLUMN_SCALAR --type ShortText
 .. column_create --table Blog2 --name message --flags COLUMN_SCALAR --type ShortText
@@ -74,7 +74,7 @@ match_columnsオプションで、検索対象のカラムを複数指定する�
 実際に検索してみましょう。結果は上の例と同じになります。
 
 .. groonga-command
-.. include:: ../example/tutorial07-4.log
+.. include:: ../example/tutorial/match_columns-4.log
 .. select --table Blog2 --match_columns title||message --query groonga
 .. select --table Blog2 --match_columns title||message --query message
 .. select --table Blog2 --match_columns title --query message

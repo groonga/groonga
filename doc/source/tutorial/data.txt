@@ -2,7 +2,7 @@
 
 .. highlightlang:: none
 
-.. groonga-include : tutorial01.txt
+.. groonga-include : introduction.txt
 
 さまざまな種類をもったデータの保存
 ==================================
@@ -20,7 +20,7 @@ groongaでは、数値（整数・小数）や文字列や時刻や経緯度な�
 
 .. groonga-command
 .. table_remove Type
-.. include:: ../example/tutorial03-1.log
+.. include:: ../example/tutorial/introduction-1.log
 .. table_create --name Type --flags TABLE_HASH_KEY --key_type ShortText
 .. column_create --table Type --name number --type Int32
 .. column_create --table Type --name float --type Float
@@ -43,7 +43,7 @@ table_createで作成したテーブルを、カラムの型として使うこ�
 他のテーブルを参照するカラムにデータを入力する場合には、参照先のテーブルの_keyカラムの値を代入する必要があります。
 
 .. groonga-command
-.. include:: ../example/tutorial03-2.log
+.. include:: ../example/tutorial/introduction-2.log
 .. column_create --table Site --name link --type Site
 .. load --table Site
 .. [{"_key":"http://example.org/","link":"http://example.net/"}]
@@ -65,7 +65,7 @@ column_createコマンドでカラムを作成するとき、--flagsオプショ
 .. FIXME: _idの配列ではダメなのかどうか。検証する。
 
 .. groonga-command
-.. include:: ../example/tutorial03-3.log
+.. include:: ../example/tutorial/introduction-3.log
 .. column_create --table Site --name links --flags COLUMN_VECTOR --type Site
 .. load --table Site
 .. [{"_key":"http://example.org/","links":["http://example.net/","http://example.org/","http://example.com/"]}]
