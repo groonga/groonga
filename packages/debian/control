@@ -84,7 +84,6 @@ Depends:
   ${misc:Depends},
   ${shlibs:Depends},
   libgroonga0 (= ${binary:Version}),
-  libmecab1
 Description: MeCab tokenizer for groonga.
  Groonga is an open-source fulltext search engine and column store.
  It lets you write high-performance applications that requires fulltext search.
@@ -99,9 +98,6 @@ Breaks: libgroonga-plugin-suggest (<< 1.2.0-1)
 Depends:
   ${misc:Depends},
   ${shlibs:Depends},
-  libmsgpack3,
-  libzmq0,
-  libevent-1.4-2,
   libgroonga0 (= ${binary:Version})
 Description: Suggest plugin for groonga.
  Groonga is an open-source fulltext search engine and column store.
