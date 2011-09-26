@@ -5,6 +5,32 @@
 News
 ====
 
+.. _release-1-2-6:
+
+Release 1.2.6 - 2011/09/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* Improved error message on type cast.
+* Added geo point value validation on type cast.
+* Supported :doc:`/tutorial/query_expansion`.
+* Added `--query_expansion` option to
+  :doc:`/commands/select` for query expansion.
+* Added geometry conversion macro between degree and msec.
+* Supported type cast in :doc:`/functions/geo_distance` ().
+* Don't split tokens with full width space in command line. #986
+* Supported conversion between TokyoGeoPoint and WGS84GeoPoint.
+* Exported grn_geo_select_in_circle() and grn_geo_select_in_rectangle().
+* Supported CentOS 6.
+
+Fixes
+^^^^^
+
+* Fixed a bug that geo point is loaded as broken value.
+  argument in :doc:`/commands/select`. #1047
+
 .. _release-1-2-5:
 
 Release 1.2.5 - 2011/08/29
