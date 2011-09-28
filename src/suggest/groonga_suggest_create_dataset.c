@@ -67,8 +67,7 @@ send_command(grn_ctx *ctx, grn_obj *buffer, const char *command,
     p = dataset_place_holder_position + strlen(dataset_place_holder);
   }
   GRN_TEXT_PUTS(ctx, buffer, p);
-  GRN_TEXT_PUTS(ctx, buffer, "\n");
-  printf("> %.*s", (int)GRN_TEXT_LEN(buffer), GRN_TEXT_VALUE(buffer));
+  printf("> %.*s\n", (int)GRN_TEXT_LEN(buffer), GRN_TEXT_VALUE(buffer));
   grn_ctx_send(ctx, GRN_TEXT_VALUE(buffer), GRN_TEXT_LEN(buffer), 0);
   output(ctx);
 }
