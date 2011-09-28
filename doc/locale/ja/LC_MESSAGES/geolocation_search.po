@@ -7,20 +7,20 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-26 23:42\n"
-"PO-Revision-Date: 2011-09-26 23:42+0900\n"
+"POT-Creation-Date: 2011-09-28 21:40\n"
+"PO-Revision-Date: 2011-09-28 21:43+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
+"Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: ja\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 # fcc488cceb2d4f25b633a839493f4148
 #: ../../../source/geolocation_search.txt:6
 msgid "Geolocation Search"
-msgstr ""
+msgstr "位置情報検索"
 
 # a702e143852440cfa260ef1124b0468b
 #: ../../../source/geolocation_search.txt:8
@@ -28,11 +28,13 @@ msgid ""
 "Groonga supports geolocation search. It uses index for search. It means that "
 "you can search by geolocation fast like fulltext search."
 msgstr ""
+"groongaは位置情報検索をサポートしています。検索にはインデックスを使うので全文"
+"検索と同様に位置情報も高速に検索できます。"
 
 # 6de86dadeb2d49209f6e035211a026b8
 #: ../../../source/geolocation_search.txt:13
 msgid "Supported features"
-msgstr ""
+msgstr "対応している機能"
 
 # ada504addaeb4065a4f94096200ebac4
 #: ../../../source/geolocation_search.txt:15
@@ -40,74 +42,94 @@ msgid ""
 "Groonga supports only point as data type. Line, surface and so on aren't "
 "supported yet. Here is a feature list:"
 msgstr ""
+"groongaは位置情報データのうち座標データのみサポートしています。線や面などはサ"
+"ポートしています。よってgroongaができることは以下の通りです。"
 
 # 015337893515489bac205c621b1b3682
 #: ../../../source/geolocation_search.txt:18
 msgid "Groonga can store a point to a column."
-msgstr ""
+msgstr "カラムに座標データを保存できる。"
 
 # 352248f89d9442e887a7e4629b43f7a5
 #: ../../../source/geolocation_search.txt:19
 msgid ""
 "Groonga can search records that have a point in the specified rectangle."
-msgstr ""
+msgstr "指定した四角形の中にある座標を持つレコードを検索できる。"
+
+# 352248f89d9442e887a7e4629b43f7a5
+#: ../../../source/geolocation_search.txt:20
+msgid "Groonga can search records that have a point in the specified circle."
+msgstr "指定した円の中にある座標を持つレコードを検索できる。"
 
 # dd77efe16d424dce832df9bc9759e4f7
-#: ../../../source/geolocation_search.txt:20
+#: ../../../source/geolocation_search.txt:21
 msgid "Groonga can calculate distance between two points."
-msgstr ""
+msgstr "2点間の距離を計算できる。"
 
 # 3fd5d2d0cde5408f9cf07cd4cb2e5702
-#: ../../../source/geolocation_search.txt:21
+#: ../../../source/geolocation_search.txt:22
 msgid ""
 "Groonga can sort records by distance from the specified point in ascending "
 "order."
-msgstr ""
+msgstr "指定した座標からの距離が近い順にレコードをソートできる。"
 
 # 10616bad24bc46dfa2a3b55dcd9dd973
-#: ../../../source/geolocation_search.txt:24
+#: ../../../source/geolocation_search.txt:25
 msgid "Here are use cases for groonga's geolocation search:"
-msgstr ""
+msgstr "以下はgroongaの位置情報検索を利用例です。"
 
 # cebb6a413d3d4698a7d58f9a31e126e8
-#: ../../../source/geolocation_search.txt:26
+#: ../../../source/geolocation_search.txt:27
 msgid "You list McDonald's around a station."
-msgstr ""
+msgstr "駅の近くにあるマクドナルドをリストする。"
 
 # d9f1a03322bd4c15a18464a18f1d784b
-#: ../../../source/geolocation_search.txt:27
+#: ../../../source/geolocation_search.txt:28
 msgid ""
 "You list KFS around the current location sort by distance from the current "
 "location in ascending order with distance."
 msgstr ""
+"現在地から近い順にケンタッキーをソートし、現在地からの距離付きでリストする。"
 
 # 5b10433ab2f94a22908b374aa81428d9
-#: ../../../source/geolocation_search.txt:30
+#: ../../../source/geolocation_search.txt:31
 msgid "Here are not use cases:"
-msgstr ""
+msgstr "以下はgroongaではできないことです。"
 
 # 702f4bcb13ba4ea484b83f23812048aa
-#: ../../../source/geolocation_search.txt:32
+#: ../../../source/geolocation_search.txt:33
 msgid ""
 "You search McDonald's in a city. (Groonga doesn't support geolocation search "
 "by a shape except a rectangle and a circle.)"
 msgstr ""
+"市内にあるマクドナルドを検索する。（groongaは四角形と円以外の形状の位置情報検"
+"索をサポートしていません。）"
 
 # fd8ea3e7f68a454eaaaff589f40672bc
-#: ../../../source/geolocation_search.txt:35
+#: ../../../source/geolocation_search.txt:36
 msgid ""
 "You store a region instead of a point as a lake record. (A column can't has "
 "geolocation data except a point.)"
 msgstr ""
+"湖を表すレコードに位置情報として座標ではなく範囲を格納する。（カラムには座標"
+"データ以外を格納できません。）"
 
 # f4d7cab659164b0a96aa573ea80f7ed5
-#: ../../../source/geolocation_search.txt:39
+#: ../../../source/geolocation_search.txt:40
 msgid "The following figures show about groonga's geolocation search features."
-msgstr ""
+msgstr "以下の図はgroongaの位置情報検索機能を示しています。"
 
 # e88ed916865340dfb3e65b5fb5f7fe4c
-#: ../../../source/geolocation_search.txt:42
+#: ../../../source/geolocation_search.txt:43
 msgid ""
 "Here is a figure that only has records. A black point describes a record. "
 "The following figures shows how records are treated."
 msgstr ""
+"以下の図はレコードのみがある図です。黒い点がレコードを表しています。以降の図"
+"ではレコードがどのように扱われるかを示します。"
+
+# 62b280fc696d4ab1a31f094a4d4bd39c
+#: ../../../source/geolocation_search.txt:52
+msgid "Coming soon..."
+msgstr ""
+"執筆中。。。 （ `下書き <http://www.clear-code.com/blog/2011/9/13.html>`_ ）"

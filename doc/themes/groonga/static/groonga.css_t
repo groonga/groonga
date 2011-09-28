@@ -187,6 +187,15 @@ div.document
     position: relative;
 }
 
+div.document div.body img
+{
+    border: 1px solid #AAAAAA;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0.5em;
+}
+
 div.sphinxsidebar
 {
     position: absolute;

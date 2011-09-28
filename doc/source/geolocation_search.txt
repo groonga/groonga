@@ -17,6 +17,7 @@ so on aren't supported yet. Here is a feature list:
 
 #. Groonga can store a point to a column.
 #. Groonga can search records that have a point in the specified rectangle.
+#. Groonga can search records that have a point in the specified circle.
 #. Groonga can calculate distance between two points.
 #. Groonga can sort records by distance from the specified
    point in ascending order.
@@ -45,5 +46,7 @@ are treated.
 
 .. image:: /images/geo-points.png
    :alt: only records
-   :align: center
+
+
+Coming soon...
 
