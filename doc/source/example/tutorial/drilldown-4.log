@@ -1,5 +1,5 @@
-実行例 ::
+Execution example::
 
   > select --table Site --limit 0 --drilldown domain,country
-  [[0,1308821018.62463,0.00042405],[[[9],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"],["location","WGS84GeoPoint"],["links","Site"],["link","Site"],["domain","SiteDomain"],["country","SiteCountry"]]],[[3],[["_key","ShortText"],["_nsubrecs","Int32"]],[".org",3],[".net",3],[".com",3]],[[5],[["_key","ShortText"],["_nsubrecs","Int32"]],["japan",3],["brazil",1],["usa",2],["korea",1],["china",2]]]]
+  [[0,1317212754.89542,0.000263258],[[[9],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"],["location","WGS84GeoPoint"],["links","Site"],["link","Site"],["domain","SiteDomain"],["country","SiteCountry"]]],[[3],[["_key","ShortText"],["_nsubrecs","Int32"]],[".org",3],[".net",3],[".com",3]],[[5],[["_key","ShortText"],["_nsubrecs","Int32"]],["japan",3],["brazil",1],["usa",2],["korea",1],["china",2]]]]
   

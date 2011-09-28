@@ -1,13 +1,13 @@
-実行例 ::
+Execution example::
 
   > table_create --name User --flags TABLE_HASH_KEY --key_type ShortText
-  [[-22,1308820916.63478,0.000187163,"already used name was assigned: <User>",[["grn_obj_register","db.c",5938,"(stdin)",1293,"table_create --name User --flags TABLE_HASH_KEY --key_type ShortText"]]],false]
+  [[0,1317212836.80268,0.048923839],true]
   > column_create --table User --name username --flags COLUMN_SCALAR --type ShortText
-  [[-22,1308820916.8372,0.000179938,"already used name was assigned: <User.username>",[["grn_obj_register","db.c",5938,"(stdin)",1294,"column_create --table User --name username --flags COLUMN_SCALAR --type ShortText"]]],false]
+  [[0,1317212837.05226,0.040322616],true]
   > column_create --table User --name friends --flags COLUMN_VECTOR --type User
-  [[-22,1308820917.03936,0.000393764,"already used name was assigned: <User.friends>",[["grn_obj_register","db.c",5938,"(stdin)",1295,"column_create --table User --name friends --flags COLUMN_VECTOR --type User"]]],false]
+  [[0,1317212837.29306,0.039978793],true]
   > column_create --table User --name index_friends --flags COLUMN_INDEX --type User --source friends
-  [[-22,1308820917.24229,0.00020492,"already used name was assigned: <User.index_friends>",[["grn_obj_register","db.c",5938,"(stdin)",1296,"column_create --table User --name index_friends --flags COLUMN_INDEX --type User --source friends"]]],false]
+  [[0,1317212837.53369,0.067271637],true]
   > load --table User
   > [
   > {"_key":"ken","username":"健作","friends":["taro","jiro","tomo","moritapo"]}
@@ -17,5 +17,5 @@
   > {"_key":"tomo","username":"トモちゃん","friends":["ken","hana"]}
   > {"_key":"hana","username":"花子","friends":["ken","taro","jiro","moritapo","tomo"]}
   > ]
-  [[0,1308820917.44495,1.609341731],6]
+  [[0,1317212837.80152,1.602221355],6]
   

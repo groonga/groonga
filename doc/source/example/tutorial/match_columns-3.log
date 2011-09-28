@@ -1,20 +1,20 @@
-実行例 ::
+Execution example::
 
   > table_create --name Blog2 --flags TABLE_HASH_KEY --key_type ShortText
-  [[0,1308820993.46608,0.05057593],true]
+  [[0,1317212798.90253,0.052986511],true]
   > column_create --table Blog2 --name title --flags COLUMN_SCALAR --type ShortText
-  [[0,1308820993.71836,0.038892177],true]
+  [[0,1317212799.156,0.028355347],true]
   > column_create --table Blog2 --name message --flags COLUMN_SCALAR --type ShortText
-  [[0,1308820993.95896,0.050752981],true]
+  [[0,1317212799.38486,0.040142104],true]
   > table_create --name IndexBlog2 --flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type ShortText --default_tokenizer TokenBigram
-  [[0,1308820994.21131,0.038689527],true]
+  [[0,1317212799.62539,0.039673533],true]
   > column_create --table IndexBlog2 --name index_blog --flags COLUMN_INDEX|WITH_POSITION|WITH_SECTION --type Blog2 --source title,message
-  [[0,1308820994.45174,0.089530422],true]
+  [[0,1317212799.86551,0.079790187],true]
   > load --table Blog2
   > [
   > {"_key":"grn1","title":"groonga test","message":"groonga message"},
   > {"_key":"grn2","title":"baseball result","message":"rakutan eggs 4 - 4 groonga moritars"},
   > {"_key":"grn3","title":"groonga message","message":"none"}
   > ]
-  [[0,1308820994.74295,1.006034383],3]
+  [[0,1317212800.14589,1.001367315],3]
   

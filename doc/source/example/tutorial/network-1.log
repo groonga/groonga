@@ -1,8 +1,8 @@
-実行例 ::
+Execution example::
 
   % groonga -c
   > status
-  [[0,1308820928.88213,4.1937e-05],{"alloc_count":548,"starttime":1308820641,"uptime":287,"version":"1.2.2-104-gf48051d","n_queries":375,"cache_hit_rate":0.533333333333333,"command_version":1,"default_command_version":1,"max_command_version":2}]
+  [[0,1317212813.13814,0.000102148],{"alloc_count":184,"starttime":1317212806,"uptime":7,"version":"1.2.5-84-g5c190df","n_queries":14,"cache_hit_rate":0.0,"command_version":1,"default_command_version":1,"max_command_version":2}]
   > ctrl-d
   %
   

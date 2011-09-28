@@ -1,5 +1,5 @@
-実行例 ::
+Execution example::
 
   > select --table Site --limit 0 --drilldown domain --drilldown_output_columns _id,_key,_nsubrecs
-  [[0,1308821018.42021,0.000313807],[[[9],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"],["location","WGS84GeoPoint"],["links","Site"],["link","Site"],["domain","SiteDomain"],["country","SiteCountry"]]],[[3],[["_id","UInt32"],["_key","ShortText"],["_nsubrecs","Int32"]],[1,".org",3],[2,".net",3],[3,".com",3]]]]
+  [[0,1317212754.69307,0.000359614],[[[9],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"],["location","WGS84GeoPoint"],["links","Site"],["link","Site"],["domain","SiteDomain"],["country","SiteCountry"]]],[[3],[["_id","UInt32"],["_key","ShortText"],["_nsubrecs","Int32"]],[1,".org",3],[2,".net",3],[3,".com",3]]]]
   

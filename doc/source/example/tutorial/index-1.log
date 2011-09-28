@@ -1,15 +1,15 @@
-実行例 ::
+Execution example::
 
   > table_create --name Video --flags TABLE_HASH_KEY --key_type UInt32
-  [[-22,1308820912.80154,0.000455314,"already used name was assigned: <Video>",[["grn_obj_register","db.c",5938,"(stdin)",1274,"table_create --name Video --flags TABLE_HASH_KEY --key_type UInt32"]]],false]
+  [[0,1317212832.70606,0.061331715],true]
   > table_create --name Tag --flags TABLE_HASH_KEY --key_type ShortText
-  [[-22,1308820913.00517,0.00046206,"already used name was assigned: <Tag>",[["grn_obj_register","db.c",5938,"(stdin)",1275,"table_create --name Tag --flags TABLE_HASH_KEY --key_type ShortText"]]],false]
+  [[0,1317212832.968,0.039868236],true]
   > column_create --table Video --name title --flags COLUMN_SCALAR --type ShortText
-  [[-22,1308820913.20848,0.000212757,"already used name was assigned: <Video.title>",[["grn_obj_register","db.c",5938,"(stdin)",1276,"column_create --table Video --name title --flags COLUMN_SCALAR --type ShortText"]]],false]
+  [[0,1317212833.20833,0.040494862],true]
   > column_create --table Video --name tags --flags COLUMN_VECTOR --type Tag
-  [[-22,1308820913.41095,0.000428695,"already used name was assigned: <Video.tags>",[["grn_obj_register","db.c",5938,"(stdin)",1277,"column_create --table Video --name tags --flags COLUMN_VECTOR --type Tag"]]],false]
+  [[0,1317212833.44939,0.051861409],true]
   > column_create --table Tag --name index_tags --flags COLUMN_INDEX --type Video --source tags
-  [[-22,1308820913.61454,0.00024036,"already used name was assigned: <Tag.index_tags>",[["grn_obj_register","db.c",5938,"(stdin)",1278,"column_create --table Tag --name index_tags --flags COLUMN_INDEX --type Video --source tags"]]],false]
+  [[0,1317212833.70185,0.092878953],true]
   > load --table Video
   > [
   > {"_key":1,"title":"Soccer 2010","tags":["Sports","Soccer"]},
@@ -21,5 +21,5 @@
   > {"_key":7,"title":"Draw 8 Month","tags":["Animation","Raccoon"]},
   > {"_key":8,"title":"K.O.","tags":["Animation","Music"]}
   > ]
-  [[0,1308820913.81791,2.009808857],8]
+  [[0,1317212833.99531,2.002850011],8]
   

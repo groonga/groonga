@@ -1,6 +1,18 @@
-実行例 ::
+Execution example::
 
-  % groonga /tmp/tutorial.db
-  > status
-  [[0,1308820929.89434,5.7777e-05],{"alloc_count":525,"starttime":1308820641,"uptime":288,"version":"1.2.2-104-gf48051d","n_queries":376,"cache_hit_rate":0.797872340425532,"command_version":1,"default_command_version":1,"max_command_version":2}]
+  > table_create --name Type --flags TABLE_HASH_KEY --key_type ShortText
+  [[0,1317212791.02322,0.03942904],true]
+  > column_create --table Type --name number --type Int32
+  [[0,1317212791.26314,0.124383285],true]
+  > column_create --table Type --name float --type Float
+  [[0,1317212791.58803,0.027924039],true]
+  > column_create --table Type --name string --type ShortText
+  [[0,1317212791.81654,0.040399047],true]
+  > column_create --table Type --name time --type Time
+  [[0,1317212792.05751,0.027354067],true]
+  > load --table Type
+  > [{"_key":"sample","number":12345,"float":42.195,"string":"GROONGA","time":1234567890.12}]
+  [[0,1317212792.28516,0.200775839],1]
+  > select --table Type
+  [[0,1317212792.68655,0.000199477],[[[1],[["_id","UInt32"],["_key","ShortText"],["time","Time"],["string","ShortText"],["number","Int32"],["float","Float"]],[1,"sample",1234567890.12,"GROONGA",12345,42.195]]]]
   

@@ -1,4 +1,4 @@
-実行例 ::
+Execution example::
 
   > load --table Site
   > [
@@ -12,5 +12,5 @@
   > {"_key":"http://example.org/gat","title":"test test record eight."},
   > {"_key":"http://example.com/vdw","title":"test test record nine."},
   > ]
-  [[0,1308820931.65233,2.210007023],9]
+  [[0,1317212714.08816,2.203527402],9]
   

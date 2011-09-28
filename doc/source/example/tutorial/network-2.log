@@ -1,4 +1,4 @@
-実行例 ::
+Execution example::
 
   % groonga -c
   > shutdown

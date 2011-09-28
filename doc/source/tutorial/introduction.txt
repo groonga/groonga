@@ -55,7 +55,7 @@ DBの操作
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-1.log
-.. .. % groonga /tmp/tutorial.db
+.. .. % groonga -n /tmp/groonga-databases/introduction.db
 .. status
 
 以上のように、コマンドの実行結果は基本的にjson形式で返却されます。jsonの配列の0番目の要素に、エラーコードや実行時間などの情報が入ります。jsonの配列の1番目の様子に、コマンドの実行結果が入ります。
