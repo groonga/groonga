@@ -25,13 +25,12 @@ Improvements
 * Exported grn_geo_select_in_circle() and grn_geo_select_in_rectangle().
 * Supported CentOS 6.
 * Supported the current Debian GNU/Linux sid.
-  Patch by SATOH Fumiyasu. [GitHub#3]
+  Patch by SATOH Fumiyasu. GitHub#3
 
 Fixes
 ^^^^^
 
 * Fixed a bug that geo point is loaded as broken value.
-  argument in :doc:`/commands/select`. #1047
 
 Thanks
 ^^^^^^
