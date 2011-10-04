@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-09-28 21:08\n"
-"PO-Revision-Date: 2011-09-28 21:09+0900\n"
+"PO-Revision-Date: 2011-10-04 22:52+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -113,7 +113,7 @@ msgstr "感謝"
 # 398c1424a9fb4ae5b87e9d7314131536
 #: ../../../source/news.txt:38
 msgid "SATOH Fumiyasu"
-msgstr ""
+msgstr "SATOH Fumiyasuさん"
 
 #: ../../../source/news.txt:43
 msgid "Release 1.2.5 - 2011/08/29"
