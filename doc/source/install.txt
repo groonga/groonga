@@ -122,6 +122,19 @@ Install::
   % sudo yum update
   % sudo yum install -y groonga
 
+CentOS 6
+--------
+
+.. note::
+
+   We only distribute the package for amd64.
+
+Install::
+
+  % sudo rpm -ivh http://packages.groonga.org/centos/groonga-repository-1.0.0-0.noarch.rpm
+  % sudo yum update
+  % sudo yum install -y groonga
+
 Fedora 15
 ---------
 
