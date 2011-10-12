@@ -188,7 +188,7 @@ prompt(grn_ctx *ctx, grn_obj *buf)
     line = el_wgets(edit_line, &nchar);
     if (nchar > 0) {
       int i;
-      char multibyte_buf[10]; /* enough for a wide char? */
+      char multibyte_buf[MB_CUR_MAX];
       size_t multibyte_len;
       mbstate_t ps;
       history_w(command_history, &command_history_event, H_ENTER, line);
