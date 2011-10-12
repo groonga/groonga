@@ -195,7 +195,13 @@ prompt(grn_ctx *ctx, grn_obj *buf)
       wcrtomb(NULL, L'\0', &ps);
       for (i = 0; i < nchar; i++) {
         multibyte_len = wcrtomb(multibyte_buf, line[i], &ps);
-        GRN_TEXT_PUT(ctx, buf, multibyte_buf, multibyte_len);
+        if (multibyte_len == (size_t)-1) {
+          GRN_LOG(ctx, GRN_LOG_WARNING,
+                  "[prompt][libedit] failed to read input: %s", strerror(errno));
+          rc = GRN_INVALID_ARGUMENT;
+        } else {
+          GRN_TEXT_PUT(ctx, buf, multibyte_buf, multibyte_len);
+        }
       }
       rc = GRN_SUCCESS;
       len = GRN_TEXT_LEN(buf);
