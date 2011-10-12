@@ -33,7 +33,7 @@ class Array
   end
 end
 
-class GroongaQueryLogAnaylzer
+class GroongaQueryLogAnalyzer
   class Error < StandardError
   end
 
@@ -1404,10 +1404,10 @@ td.name
 end
 
 if __FILE__ == $0
-  analyzer = GroongaQueryLogAnaylzer.new
+  analyzer = GroongaQueryLogAnalyzer.new
   begin
     analyzer.run
-  rescue GroongaQueryLogAnaylzer::Error
+  rescue GroongaQueryLogAnalyzer::Error
     $stderr.puts($!.message)
     exit(false)
   end

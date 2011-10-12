@@ -22,7 +22,7 @@ module QueryLogAalyzerTest
   module CommandParseTestUtils
     private
     def command(name, parameters)
-      GroongaQueryLogAnaylzer::Command.new(name, parameters)
+      GroongaQueryLogAnalyzer::Command.new(name, parameters)
     end
 
     def parse_http_path(command, parameters)
@@ -30,7 +30,7 @@ module QueryLogAalyzerTest
       path << parameters.collect do |key, value|
         [CGI.escape(key.to_s), CGI.escape(value.to_s)].join("=")
       end.join("&")
-      GroongaQueryLogAnaylzer::Command.parse(path)
+      GroongaQueryLogAnalyzer::Command.parse(path)
     end
 
     def parse_command_line(command, parameters)
@@ -43,7 +43,7 @@ module QueryLogAalyzerTest
         end
         command_line << " --#{key} #{escaped_value}"
       end
-      GroongaQueryLogAnaylzer::Command.parse(command_line)
+      GroongaQueryLogAnalyzer::Command.parse(command_line)
     end
   end
 
@@ -167,10 +167,10 @@ EOL
     end
 
     def statistics
-      statistics = GroongaQueryLogAnaylzer::SizedStatistics.new
+      statistics = GroongaQueryLogAnalyzer::SizedStatistics.new
       statistics.apply_options(:n_entries => 100,
                                :order => "-elapsed")
-      parser = GroongaQueryLogAnaylzer::QueryLogParser.new(statistics)
+      parser = GroongaQueryLogAnalyzer::QueryLogParser.new(statistics)
       parser.parse(StringIO.new(log))
       statistics
     end
