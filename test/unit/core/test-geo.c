@@ -40,7 +40,7 @@ static grn_obj *database;
 
 #define DEFINE_GEO_POINT(name) \
   static grn_obj *name, *name ## _tokyo, *name ## _wgs84, *name ## _text
-DEFINE_GEO_POINT(nedu_no_taiyaki);
+DEFINE_GEO_POINT(nezu_no_taiyaki);
 DEFINE_GEO_POINT(takane);
 DEFINE_GEO_POINT(sazare);
 DEFINE_GEO_POINT(yanagi_ya);
@@ -109,14 +109,14 @@ setup_values(void)
   name ## _wgs84 = wgs84_geo_point_open(latitude, longitude);   \
   name ## _text = text_geo_point_open(latitude, longitude)
 
-  SETUP_GEO_POINT(nedu_no_taiyaki, 130322053, 504985073);
-  SETUP_GEO_POINT(takane, 130226001, 503769013);
-  SETUP_GEO_POINT(sazare, 130306053, 504530043);
-  SETUP_GEO_POINT(yanagi_ya, 130133052, 505120058);
-  SETUP_GEO_POINT(hiiragi, 129917001, 504675017);
+  SETUP_GEO_POINT(nezu_no_taiyaki, 128592911, 503145263);
+  SETUP_GEO_POINT(takane, 128514964, 502419287);
+  SETUP_GEO_POINT(sazare, 128572751, 502866155);
+  SETUP_GEO_POINT(yanagi_ya, 128467228, 503222332);
+  SETUP_GEO_POINT(hiiragi, 128331724, 502961461);
 
-  SETUP_GEO_POINT(tokyo, 130101399, 505020000);
-  SETUP_GEO_POINT(shinjuku, 130158300, 504604000);
+  SETUP_GEO_POINT(tokyo, 128452975, 503157902);
+  SETUP_GEO_POINT(shinjuku, 128487316, 502920929);
 
 #undef SETUP_GEO_POINT
 }
@@ -146,7 +146,7 @@ teardown_values(void)
   grn_obj_unlink(context, name ## _wgs84);      \
   grn_obj_unlink(context, name ## _text)
 
-  UNLINK_GEO_POINT(nedu_no_taiyaki);
+  UNLINK_GEO_POINT(nezu_no_taiyaki);
   UNLINK_GEO_POINT(takane);
   UNLINK_GEO_POINT(sazare);
   UNLINK_GEO_POINT(yanagi_ya);
@@ -265,14 +265,14 @@ void
 test_distance(gconstpointer data)
 {
   assign_shinjuku_and_takane(data);
-  cut_assert_equal_double(20881.0, 10,
+  cut_assert_equal_double(12585.4, 10,
                           grn_geo_distance(context, shinjuku, takane));
 }
 
 void
 test_distance2(void)
 {
-  cut_assert_equal_double(20881.0, 10,
+  cut_assert_equal_double(12585.4, 10,
                           grn_geo_distance2(context,
                                             shinjuku_wgs84,
                                             takane_wgs84));
@@ -281,7 +281,7 @@ test_distance2(void)
 void
 test_distance3(void)
 {
-  cut_assert_equal_double(20973.0, 10,
+  cut_assert_equal_double(12640.8, 10,
                           grn_geo_distance3(context,
                                             shinjuku_wgs84,
                                             takane_wgs84));
