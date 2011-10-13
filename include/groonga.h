@@ -1738,7 +1738,7 @@ typedef struct {
  *
  * It selects records that are in the circle specified by
  * @center_point and @distance from @center_point. Records
- * are search by @index. Found records are added to @res
+ * are searched by @index. Found records are added to @res
  * table with @op operation.
  **/
 GRN_API grn_rc grn_geo_select_in_circle(grn_ctx *ctx,
@@ -1763,7 +1763,7 @@ GRN_API grn_rc grn_geo_select_in_circle(grn_ctx *ctx,
  *
  * It selects records that are in the rectangle specified by
  * @top_left_point and @bottom_right_point. Records are
- * search by @index. Found records are added to @res table
+ * searched by @index. Found records are added to @res table
  * with @op operation.
  **/
 GRN_API grn_rc grn_geo_select_in_rectangle(grn_ctx *ctx,
