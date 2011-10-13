@@ -23,6 +23,11 @@
 #include "pat.h"
 #include "util.h"
 
+typedef enum {
+  MESH_LATITUDE,
+  MESH_LONGITUDE
+} mesh_direction;
+
 typedef struct {
   grn_id id;
   double d;
@@ -33,6 +38,22 @@ typedef struct
   grn_geo_point key;
   int key_size;
 } mesh_entry;
+
+typedef struct {
+  grn_obj *pat;
+  grn_obj top_left_point_buffer;
+  grn_obj bottom_right_point_buffer;
+  grn_geo_point *top_left;
+  grn_geo_point *bottom_right;
+  grn_geo_point base;
+  grn_geo_point min;
+  grn_geo_point max;
+  int start;
+  int end;
+  int distance;
+  int diff_bit;
+  mesh_direction direction;
+} in_rectangle_data;
 
 static int
 compute_diff_bit(uint8_t *geo_key1, uint8_t *geo_key2)
@@ -693,11 +714,6 @@ exit :
   return ctx->rc;
 }
 
-typedef enum {
-  MESH_LATITUDE,
-  MESH_LONGITUDE
-} mesh_direction;
-
 grn_rc
 grn_selector_geo_in_rectangle(grn_ctx *ctx, grn_obj *obj,
                               grn_obj **args, int nargs,
@@ -718,17 +734,17 @@ grn_selector_geo_in_rectangle(grn_ctx *ctx, grn_obj *obj,
   return ctx->rc;
 }
 
-grn_rc
-grn_geo_select_in_rectangle(grn_ctx *ctx, grn_obj *index,
-                            grn_obj *top_left_point, grn_obj *bottom_right_point,
-                            grn_obj *res, grn_operator op)
+static grn_rc
+in_rectangle_data_prepare(grn_ctx *ctx, grn_obj *index,
+                          grn_obj *top_left_point,
+                          grn_obj *bottom_right_point,
+                          const char *process_name,
+                          in_rectangle_data *data)
 {
   grn_id domain;
-  grn_obj *pat, top_left_point_, bottom_right_point_;
-  grn_geo_point *top_left, *bottom_right;
 
-  pat = grn_ctx_at(ctx, index->header.domain);
-  domain = pat->header.domain;
+  data->pat = grn_ctx_at(ctx, index->header.domain);
+  domain = data->pat->header.domain;
   if (domain != GRN_DB_TOKYO_GEO_POINT && domain != GRN_DB_WGS84_GEO_POINT) {
     char name[GRN_TABLE_MAX_KEY_SIZE];
     int name_size = 0;
@@ -742,45 +758,50 @@ grn_geo_select_in_rectangle(grn_ctx *ctx, grn_obj *index,
       name_size = strlen(name);
     }
     ERR(GRN_INVALID_ARGUMENT,
-        "geo_in_rectangle(): index table must be "
+        "%s: index table must be "
         "TokyoGeoPoint or WGS84GeoPoint key type table: <%.*s>",
-        name_size, name);
+        process_name, name_size, name);
     goto exit;
   }
 
   if (top_left_point->header.domain != domain) {
-    GRN_OBJ_INIT(&top_left_point_, GRN_BULK, 0, domain);
-    if (grn_obj_cast(ctx, top_left_point, &top_left_point_, 0)) { goto exit; }
-    top_left_point = &top_left_point_;
-  }
-  top_left = GRN_GEO_POINT_VALUE_RAW(top_left_point);
-  if (bottom_right_point->header.domain != domain) {
-    GRN_OBJ_INIT(&bottom_right_point_, GRN_BULK, 0, domain);
-    if (grn_obj_cast(ctx, bottom_right_point, &bottom_right_point_, 0)) {
+    grn_obj_reinit(ctx, &(data->top_left_point_buffer), domain, GRN_BULK);
+    if (grn_obj_cast(ctx, top_left_point, &(data->top_left_point_buffer),
+                     GRN_FALSE)) {
       goto exit;
     }
-    bottom_right_point = &bottom_right_point_;
+    top_left_point = &(data->top_left_point_buffer);
   }
-  bottom_right = GRN_GEO_POINT_VALUE_RAW(bottom_right_point);
+  data->top_left = GRN_GEO_POINT_VALUE_RAW(top_left_point);
+
+  if (bottom_right_point->header.domain != domain) {
+    grn_obj_reinit(ctx, &(data->bottom_right_point_buffer), domain, GRN_BULK);
+    if (grn_obj_cast(ctx, bottom_right_point, &(data->bottom_right_point_buffer),
+                     GRN_FALSE)) {
+      goto exit;
+    }
+    bottom_right_point = &(data->bottom_right_point_buffer);
+  }
+  data->bottom_right = GRN_GEO_POINT_VALUE_RAW(bottom_right_point);
+
   {
-    mesh_direction direction;
-    int distance, latitude_distance, longitude_distance;
-    int i, start, end, diff_bit;
-    grn_geo_point *geo_point_input, geo_point_base, geo_point_min, geo_point_max;
-    uint8_t geo_key_input[sizeof(grn_geo_point)];
-    uint8_t geo_key_base[sizeof(grn_geo_point)];
+    grn_geo_point *top_left, *bottom_right;
+
+    top_left = data->top_left;
+    bottom_right = data->bottom_right;
 
     if (top_left->latitude < 0 || top_left->longitude < 0 ||
         bottom_right->latitude < 0 || bottom_right->longitude < 0) {
       ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
-          "geo_in_rectangle(): negative coordinate is not implemented.");
+          "%s: negative coordinate is not implemented.", process_name);
       goto exit;
     }
 
     if (top_left->latitude >= GRN_GEO_MAX_LATITUDE) {
       ERR(GRN_INVALID_ARGUMENT,
-          "geo_in_rectangle(): top left point's latitude is too big: "
+          "%s: top left point's latitude is too big: "
           "<%d>(max:%d): (%d,%d) (%d,%d)",
+          process_name,
           GRN_GEO_MAX_LATITUDE, top_left->latitude,
           top_left->latitude, top_left->longitude,
           bottom_right->latitude, bottom_right->longitude);
@@ -789,8 +810,9 @@ grn_geo_select_in_rectangle(grn_ctx *ctx, grn_obj *index,
 
     if (top_left->longitude >= GRN_GEO_MAX_LONGITUDE) {
       ERR(GRN_INVALID_ARGUMENT,
-          "geo_in_rectangle(): top left point's longitude is too big: "
+          "%s: top left point's longitude is too big: "
           "<%d>(max:%d): (%d,%d) (%d,%d)",
+          process_name,
           GRN_GEO_MAX_LONGITUDE, top_left->longitude,
           top_left->latitude, top_left->longitude,
           bottom_right->latitude, bottom_right->longitude);
@@ -799,8 +821,9 @@ grn_geo_select_in_rectangle(grn_ctx *ctx, grn_obj *index,
 
     if (bottom_right->latitude >= GRN_GEO_MAX_LATITUDE) {
       ERR(GRN_INVALID_ARGUMENT,
-          "geo_in_rectangle(): bottom right point's latitude is too big: "
+          "%s: bottom right point's latitude is too big: "
           "<%d>(max:%d): (%d,%d) (%d,%d)",
+          process_name,
           GRN_GEO_MAX_LATITUDE, bottom_right->latitude,
           top_left->latitude, top_left->longitude,
           bottom_right->latitude, bottom_right->longitude);
@@ -809,76 +832,122 @@ grn_geo_select_in_rectangle(grn_ctx *ctx, grn_obj *index,
 
     if (bottom_right->longitude >= GRN_GEO_MAX_LONGITUDE) {
       ERR(GRN_INVALID_ARGUMENT,
-          "geo_in_rectangle(): bottom right point's longitude is too big: "
+          "%s: bottom right point's longitude is too big: "
           "<%d>(max:%d): (%d,%d) (%d,%d)",
+          process_name,
           GRN_GEO_MAX_LONGITUDE, bottom_right->longitude,
           top_left->latitude, top_left->longitude,
           bottom_right->latitude, bottom_right->longitude);
       goto exit;
     }
+  }
+
+  {
+    int distance, latitude_distance, longitude_distance;
+    grn_geo_point *top_left, *bottom_right;
+    grn_geo_point *geo_point_input;
+    uint8_t geo_key_input[sizeof(grn_geo_point)];
+    uint8_t geo_key_base[sizeof(grn_geo_point)];
+
+    top_left = data->top_left;
+    bottom_right = data->bottom_right;
 
     latitude_distance = top_left->latitude - bottom_right->latitude;
     longitude_distance = bottom_right->longitude - top_left->longitude;
     if (latitude_distance > longitude_distance) {
-      direction = MESH_LATITUDE;
+      data->direction = MESH_LATITUDE;
       geo_point_input = bottom_right;
-      geo_point_base.latitude = bottom_right->latitude;
-      geo_point_base.longitude = bottom_right->longitude - longitude_distance;
+      data->base.latitude = bottom_right->latitude;
+      data->base.longitude = bottom_right->longitude - longitude_distance;
     } else {
-      direction = MESH_LONGITUDE;
+      data->direction = MESH_LONGITUDE;
       geo_point_input = top_left;
-      geo_point_base.latitude = top_left->latitude - latitude_distance;
-      geo_point_base.longitude = top_left->longitude;
+      data->base.latitude = top_left->latitude - latitude_distance;
+      data->base.longitude = top_left->longitude;
     }
     grn_gton(geo_key_input, geo_point_input, sizeof(grn_geo_point));
-    grn_gton(geo_key_base, &geo_point_base, sizeof(grn_geo_point));
-    diff_bit = compute_diff_bit(geo_key_input, geo_key_base);
-    compute_min_and_max(&geo_point_base, diff_bit,
-                        &geo_point_min, &geo_point_max);
-    if (direction == MESH_LATITUDE) {
-      distance = geo_point_max.latitude - geo_point_min.latitude + 1;
-      start = geo_point_min.latitude;
-      end = top_left->latitude;
+    grn_gton(geo_key_base, &(data->base), sizeof(grn_geo_point));
+    data->diff_bit = compute_diff_bit(geo_key_input, geo_key_base);
+    compute_min_and_max(&(data->base), data->diff_bit,
+                        &(data->min), &(data->max));
+    if (data->direction == MESH_LATITUDE) {
+      data->distance = data->max.latitude - data->min.latitude + 1;
+      data->start = data->min.latitude;
+      data->end = top_left->latitude;
     } else {
-      distance = geo_point_max.longitude - geo_point_min.longitude + 1;
-      start = geo_point_min.longitude;
-      end = bottom_right->longitude;
+      data->distance = data->max.longitude - data->min.longitude + 1;
+      data->start = data->min.longitude;
+      data->end = bottom_right->longitude;
     }
 #ifdef GEO_DEBUG
     printf("direction: %s\n",
-           direction == MESH_LATITUDE ? "latitude" : "longitude");
+           data->direction == MESH_LATITUDE ? "latitude" : "longitude");
     printf("base:         ");
-    grn_p_geo_point(ctx, &geo_point_base);
+    grn_p_geo_point(ctx, &(data->base));
     printf("input:        ");
     grn_p_geo_point(ctx, geo_point_input);
     printf("min:          ");
-    grn_p_geo_point(ctx, &geo_point_min);
+    grn_p_geo_point(ctx, &(data->min));
     printf("max:          ");
-    grn_p_geo_point(ctx, &geo_point_max);
+    grn_p_geo_point(ctx, &(data->max));
     printf("top-left:     ");
     grn_p_geo_point(ctx, top_left);
     printf("bottom-right: ");
     grn_p_geo_point(ctx, bottom_right);
-    printf("diff-bit:            %10d\n", diff_bit);
-    printf("start:               %10d\n", start);
-    printf("end:                 %10d\n", end);
-    printf("distance:            %10d\n", distance);
+    printf("diff-bit:            %10d\n", data->diff_bit);
+    printf("start:               %10d\n", data->start);
+    printf("end:                 %10d\n", data->end);
+    printf("distance:            %10d\n", data->distance);
     printf("distance(latitude):  %10d\n", latitude_distance);
     printf("distance(longitude): %10d\n", longitude_distance);
 #endif
-    memcpy(&geo_point_base, &geo_point_min, sizeof(grn_geo_point));
+    memcpy(&(data->base), &(data->min), sizeof(grn_geo_point));
+  }
 
+exit :
+  return ctx->rc;
+}
+
+grn_rc
+grn_geo_select_in_rectangle(grn_ctx *ctx, grn_obj *index,
+                            grn_obj *top_left_point, grn_obj *bottom_right_point,
+                            grn_obj *res, grn_operator op)
+{
+  in_rectangle_data data;
+
+  GRN_VOID_INIT(&(data.top_left_point_buffer));
+  GRN_VOID_INIT(&(data.bottom_right_point_buffer));
+  if (in_rectangle_data_prepare(ctx, index, top_left_point, bottom_right_point,
+                                "geo_in_rectangle()", &data)) {
+    goto exit;
+  }
+
+  {
+    grn_obj *pat;
+    int diff_bit, i, start, end, distance;
+    grn_geo_point *top_left, *bottom_right, *base;
+    mesh_direction direction;
+
+    pat = data.pat;
+    start = data.start;
+    end = data.end;
+    distance = data.distance;
+    direction = data.direction;
+    top_left = data.top_left;
+    bottom_right = data.bottom_right;
+    base = &(data.base);
+    diff_bit = data.diff_bit;
     for (i = start; i < end + distance; i += distance) {
       grn_table_cursor *tc;
       tc = grn_table_cursor_open(ctx, pat,
-                                 &geo_point_base, diff_bit,
+                                 base, diff_bit,
                                  NULL, 0,
                                  0, -1,
                                  GRN_CURSOR_PREFIX|GRN_CURSOR_SIZE_BY_BIT);
 #ifdef GEO_DEBUG
       printf("i:                   %10d\n", i);
 #endif
-      inspect_mesh(ctx, &geo_point_base, diff_bit, (i - start) / distance);
+      inspect_mesh(ctx, base, diff_bit, (i - data.start) / distance);
       if (tc) {
         grn_id tid;
         grn_geo_point point;
@@ -893,15 +962,114 @@ grn_geo_select_in_rectangle(grn_ctx *ctx, grn_obj *index,
         grn_table_cursor_close(ctx, tc);
       }
       if (direction == MESH_LATITUDE) {
-        geo_point_base.latitude += distance;
+        base->latitude += distance;
       } else {
-        geo_point_base.longitude += distance;
+        base->longitude += distance;
       }
     }
   }
 exit :
+  grn_obj_unlink(ctx, &(data.top_left_point_buffer));
+  grn_obj_unlink(ctx, &(data.bottom_right_point_buffer));
   grn_ii_resolve_sel_and(ctx, (grn_hash *)res, op);
   return ctx->rc;
+}
+
+static grn_rc
+geo_point_get(grn_ctx *ctx, grn_obj *pat, int flags, grn_geo_point *geo_point)
+{
+  grn_rc rc = GRN_SUCCESS;
+  grn_id id;
+  grn_table_cursor *cursor = NULL;
+
+  cursor = grn_table_cursor_open(ctx, pat,
+                                 NULL, 0,
+                                 NULL, 0,
+                                 0, 1,
+                                 GRN_CURSOR_BY_KEY | flags);
+  if (!cursor) {
+    rc = ctx->rc;
+    goto exit;
+  }
+
+  id = grn_table_cursor_next(ctx, cursor);
+  if (id == GRN_ID_NIL) {
+    rc = GRN_END_OF_DATA;
+  } else {
+    void *key;
+    int key_size;
+    key_size = grn_table_cursor_get_key(ctx, cursor, &key);
+    memcpy(geo_point, key, key_size);
+  }
+
+exit:
+  if (cursor) {
+    grn_table_cursor_close(ctx, cursor);
+  }
+  return rc;
+}
+
+int
+grn_geo_estimate_in_rectangle(grn_ctx *ctx,
+                              grn_obj *index,
+                              grn_obj *top_left_point,
+                              grn_obj *bottom_right_point)
+{
+  int n = 0;
+  int total_records;
+  grn_rc rc;
+  in_rectangle_data data;
+
+  GRN_VOID_INIT(&(data.top_left_point_buffer));
+  GRN_VOID_INIT(&(data.bottom_right_point_buffer));
+  if (in_rectangle_data_prepare(ctx, index, top_left_point, bottom_right_point,
+                                "grn_geo_estimate_in_rectangle()", &data)) {
+    n = -1;
+    goto exit;
+  }
+
+  total_records = grn_table_size(ctx, data.pat);
+  if (total_records > 0) {
+    grn_geo_point min, max;
+    int select_latitude_distance, select_longitude_distance;
+    int total_latitude_distance, total_longitude_distance;
+    double select_ratio;
+
+    rc = geo_point_get(ctx, data.pat, GRN_CURSOR_ASCENDING, &min);
+    if (!rc) {
+      rc = geo_point_get(ctx, data.pat, GRN_CURSOR_DESCENDING, &max);
+    }
+    if (rc) {
+      if (rc == GRN_END_OF_DATA) {
+        n = total_records;
+        rc = GRN_SUCCESS;
+      } else {
+        n = -1;
+      }
+      goto exit;
+    }
+
+    select_latitude_distance = abs(data.max.latitude - data.min.latitude);
+    select_longitude_distance = abs(data.max.longitude - data.min.longitude);
+    total_latitude_distance = abs(max.latitude - min.latitude);
+    total_longitude_distance = abs(max.longitude - min.longitude);
+
+    select_ratio = 1.0;
+    if (select_latitude_distance < total_latitude_distance) {
+      select_ratio *= ((double)select_latitude_distance /
+                       (double)total_latitude_distance);
+    }
+    if (select_longitude_distance < total_longitude_distance) {
+      select_ratio *= ((double)select_longitude_distance /
+                       (double)total_longitude_distance);
+    }
+    n = (int)(ceil(total_records * select_ratio));
+  }
+
+exit :
+  grn_obj_unlink(ctx, &(data.top_left_point_buffer));
+  grn_obj_unlink(ctx, &(data.bottom_right_point_buffer));
+  return n;
 }
 
 grn_bool

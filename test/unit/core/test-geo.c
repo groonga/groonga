@@ -32,6 +32,7 @@ void data_distance(void);
 void test_distance(gconstpointer data);
 void test_distance2(void);
 void test_distance3(void);
+void test_estimate_in_rectangle(void);
 
 static gchar *tmp_directory;
 
@@ -125,6 +126,12 @@ void
 cut_setup(void)
 {
   const gchar *database_path;
+
+  cut_set_fixture_data_dir(grn_test_get_base_dir(),
+                           "fixtures",
+                           "story",
+                           "taiyaki",
+                           NULL);
 
   remove_tmp_directory();
   g_mkdir_with_parents(tmp_directory, 0700);
@@ -285,4 +292,20 @@ test_distance3(void)
                           grn_geo_distance3(context,
                                             shinjuku_wgs84,
                                             takane_wgs84));
+}
+
+void
+test_estimate_in_rectangle(void)
+{
+  grn_obj *location_index;
+
+  assert_send_commands(cut_get_fixture_data_string("ddl.grn", NULL));
+  assert_send_command(cut_get_fixture_data_string("shops.grn", NULL));
+
+  location_index = get("Locations.shop");
+  cut_assert_equal_int(4,
+                       grn_geo_estimate_in_rectangle(context,
+                                                     location_index,
+                                                     sazare_wgs84,
+                                                     tokyo_wgs84));
 }
