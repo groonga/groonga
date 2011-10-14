@@ -169,6 +169,8 @@ AC_CONFIG_FILES([
   test/unit/story/Makefile
   test/unit/grntest/Makefile
   test/benchmark/Makefile
+  test/benchmark/fixtures/Makefile
+  test/benchmark/fixtures/geo-select/Makefile
   test/benchmark/lib/Makefile
 ])
 

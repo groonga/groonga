@@ -1,4 +1,5 @@
-SUBDIRS =	\
+SUBDIRS =					\
+	fixtures				\
 	lib
 
 if WITH_BENCHMARK
