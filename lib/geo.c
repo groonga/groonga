@@ -743,6 +743,11 @@ in_rectangle_data_prepare(grn_ctx *ctx, grn_obj *index,
 {
   grn_id domain;
 
+  if (!index) {
+    ERR(GRN_INVALID_ARGUMENT, "%s: index column is missing", process_name);
+    goto exit;
+  }
+
   data->pat = grn_ctx_at(ctx, index->header.domain);
   domain = data->pat->header.domain;
   if (domain != GRN_DB_TOKYO_GEO_POINT && domain != GRN_DB_WGS84_GEO_POINT) {
