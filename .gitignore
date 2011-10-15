@@ -62,6 +62,10 @@ version.sh
 /coverage
 /coverage.info
 /test/unit/lib/*-*.*.*/
+/test/benchmark/tmp/
+/test/benchmark/fixtures/geo-select/13_2010.CSV
+/test/benchmark/fixtures/geo-select/load.grn
+/test/benchmark/bench-geo-select
 /packages/apt/debian/pool/*/*/*/*/*.diff.gz
 /packages/apt/debian/pool/*/*/*/*/*.tar.gz
 /packages/apt/debian/pool/*/*/*/*/*.build
