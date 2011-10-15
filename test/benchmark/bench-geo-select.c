@@ -17,7 +17,7 @@
 */
 
 /*
-  groonga: 3ad91b868909444f66a36dbcbdbe2292ed14bd72
+  groonga: e65e87f0039f6bb2da3d9b959423774d3f66b567
   CFLAGS: -O0 -g
   CPU: Intel(R) Core(TM) i5 CPU       U 470  @ 1.33GHz stepping 05
 
