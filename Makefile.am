@@ -33,7 +33,7 @@ dist-hook:
 	cd $(top_srcdir) && release/gitlog2changelog.py > $(distdir)/ChangeLog
 
 benchmark:
-	cd test/benchmark && $(MAKE) $(AM_MAKEFLAGS) benchmark
+	cd test/benchmark && $(MAKE) benchmark
 
 tag:
 	cd $(top_srcdir) && git tag v$(VERSION) -a -m 'groonga $(VERSION)!!!'
