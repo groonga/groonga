@@ -6373,6 +6373,9 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
         GRN_FREE(ic);
       }
       break;
+    case GRN_CURSOR_GEO :
+      grn_geo_cursor_close(ctx, obj);
+      break;
     case GRN_TYPE :
       GRN_FREE(obj);
       rc = GRN_SUCCESS;

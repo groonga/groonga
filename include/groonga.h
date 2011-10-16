@@ -419,6 +419,7 @@ typedef unsigned short int grn_obj_flags;
 #define GRN_CURSOR_TABLE_NO_KEY        (0x13)
 #define GRN_CURSOR_TABLE_VIEW          (0x14)
 #define GRN_CURSOR_COLUMN_INDEX        (0x18)
+#define GRN_CURSOR_GEO                 (0x1a)
 #define GRN_TYPE                       (0x20)
 #define GRN_PROC                       (0x21)
 #define GRN_EXPR                       (0x22)
@@ -1792,6 +1793,39 @@ GRN_API int grn_geo_estimate_in_rectangle(grn_ctx *ctx,
                                           grn_obj *index,
                                           grn_obj *top_left_point,
                                           grn_obj *bottom_right_point);
+
+/**
+ * grn_geo_cursor_open_in_rectangle:
+ * @index: the index column for TokyoGeoPoint or WGS84GeoPpoint type.
+ * @top_left_point: the top left point of the target
+ * rectangle. (ShortText, Text, LongText, TokyoGeoPoint or
+ * WGS84GeoPoint)
+ * @bottom_right_point: the bottom right point of the target
+ * rectangle. (ShortText, Text, LongText, TokyoGeoPoint or
+ * WGS84GeoPoint)
+ * @offset: the cursor returns records from @offset
+ * position. @offset is based on 0.
+ * @limit: the cursor returns at most @limit records. -1
+ * means no limit.
+ *
+ * It opens a cursor to get records in the rectangle
+ * specfied by @top_left_point and @bottom_right_point.
+ **/
+GRN_API grn_obj *grn_geo_cursor_open_in_rectangle(grn_ctx *ctx,
+                                                  grn_obj *index,
+                                                  grn_obj *top_left_point,
+                                                  grn_obj *bottom_right_point,
+                                                  int offset,
+                                                  int limit);
+
+/**
+ * grn_geo_cursor_next:
+ * @cursor: the geo cursor.
+ *
+ * It returns the next posting that has record ID. It
+ * returns NULL after all records are returned.
+ **/
+GRN_API grn_posting *grn_geo_cursor_next(grn_ctx *ctx, grn_obj *cursor);
 
 
 /* query & snippet */

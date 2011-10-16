@@ -18,13 +18,16 @@
 
 /*
   groonga: e65e87f0039f6bb2da3d9b959423774d3f66b567
-  CFLAGS: -O0 -g
-  CPU: Intel(R) Core(TM) i5 CPU       U 470  @ 1.33GHz stepping 05
+  CFLAGS: -O0 -ggdb3
+  CPU: Intel(R) Core(TM) i7 CPU         860  @ 2.80GHz stepping 05
 
   % (cd test/benchmark; make --quiet run-bench-geo-select)
   run-bench-geo-select:
-                         (time)
-    select_in_rectangle: (1.84038)
+                                        (time)
+    select_in_rectangle (1st)   (loop): (0.943075)
+    select_in_rectangle (1st) (cursor): (0.937281)
+    select_in_rectangle (2nd)   (loop): (0.928663)
+    select_in_rectangle (2nd) (cursor): (0.947011)
 */
 
 #include <string.h>
@@ -48,6 +51,8 @@ typedef struct _BenchmarkData
 
   grn_obj top_left_point;
   grn_obj bottom_right_point;
+
+  const gchar *original_in_rectangle_implementation;
 } BenchmarkData;
 
 static void
@@ -62,11 +67,14 @@ set_geo_point(grn_ctx *context, grn_obj *geo_point, const gchar *geo_point_text)
 }
 
 static void
-bench_setup(gpointer user_data)
+bench_setup_common(gpointer user_data)
 {
   BenchmarkData *data = user_data;
   const gchar *tokyo_station = "35.68136,139.76609";
   const gchar *ikebukuro_station = "35.72890,139.71036";
+
+  data->original_in_rectangle_implementation =
+    g_getenv("GRN_GEO_SELECT_IN_RECTANGLE");
 
   data->result = grn_table_create(data->context, NULL, 0, NULL,
                                   GRN_OBJ_TABLE_HASH_KEY | GRN_OBJ_WITH_SUBREC,
@@ -76,6 +84,76 @@ bench_setup(gpointer user_data)
                 ikebukuro_station);
   set_geo_point(data->context, &(data->bottom_right_point),
                 tokyo_station);
+}
+
+static void
+bench_setup_implementation_loop(gpointer user_data)
+{
+  g_setenv("GRN_GEO_SELECT_IN_RECTANGLE", "loop", TRUE);
+}
+
+static void
+bench_setup_implementation_cursor(gpointer user_data)
+{
+  g_setenv("GRN_GEO_SELECT_IN_RECTANGLE", "cursor", TRUE);
+}
+
+static void
+bench_setup_query_partial(gpointer user_data)
+{
+  BenchmarkData *data = user_data;
+  const gchar *tokyo_station = "35.68136,139.76609";
+  const gchar *ikebukuro_station = "35.72890,139.71036";
+
+  set_geo_point(data->context, &(data->top_left_point),
+                ikebukuro_station);
+  set_geo_point(data->context, &(data->bottom_right_point),
+                tokyo_station);
+}
+
+static void
+bench_setup_query_all(gpointer user_data)
+{
+  BenchmarkData *data = user_data;
+  const gchar *tokyo_station = "35.0,140.0";
+  const gchar *ikebukuro_station = "36.0,139.0";
+
+  set_geo_point(data->context, &(data->top_left_point),
+                ikebukuro_station);
+  set_geo_point(data->context, &(data->bottom_right_point),
+                tokyo_station);
+}
+
+static void
+bench_setup_in_rectangle_loop_partial(gpointer user_data)
+{
+  bench_setup_common(user_data);
+  bench_setup_implementation_loop(user_data);
+  bench_setup_query_partial(user_data);
+}
+
+static void
+bench_setup_in_rectangle_cursor_partial(gpointer user_data)
+{
+  bench_setup_common(user_data);
+  bench_setup_implementation_cursor(user_data);
+  bench_setup_query_partial(user_data);
+}
+
+static void
+bench_setup_in_rectangle_loop_all(gpointer user_data)
+{
+  bench_setup_common(user_data);
+  bench_setup_implementation_loop(user_data);
+  bench_setup_query_all(user_data);
+}
+
+static void
+bench_setup_in_rectangle_cursor_all(gpointer user_data)
+{
+  bench_setup_common(user_data);
+  bench_setup_implementation_cursor(user_data);
+  bench_setup_query_all(user_data);
 }
 
 static void
@@ -101,6 +179,15 @@ bench_teardown(gpointer user_data)
   }
 
   grn_obj_unlink(data->context, data->result);
+
+  if (data->original_in_rectangle_implementation) {
+    g_setenv("GRN_GEO_SELECT_IN_RECTANGLE",
+             data->original_in_rectangle_implementation,
+             TRUE);
+  } else {
+    g_unsetenv("GRN_GEO_SELECT_IN_RECTANGLE");
+  }
+  data->original_in_rectangle_implementation = NULL;
 }
 
 static gchar *
@@ -169,13 +256,31 @@ main(int argc, gchar **argv)
 
   reporter = bench_reporter_new();
 
-#define REGISTER(label, type)                           \
-  bench_reporter_register(reporter, label, n,           \
-                          bench_setup,                  \
-                          bench_geo_select_ ## type,    \
-                          bench_teardown,               \
-                          &data)
-  REGISTER("select_in_rectangle", in_rectangle);
+#define REGISTER(label, type, implementation, area)                     \
+  bench_reporter_register(                                              \
+    reporter,                                                           \
+    label,                                                              \
+    n,                                                                  \
+    bench_setup_ ## type ## _ ## implementation ## _ ## area,           \
+    bench_geo_select_ ## type,                                          \
+    bench_teardown,                                                     \
+    &data)
+  REGISTER("1st: select_in_rectangle   (loop) (partial)",
+           in_rectangle, loop, partial);
+  REGISTER("1st: select_in_rectangle (cursor) (partial)",
+           in_rectangle, cursor, partial);
+  REGISTER("2nd: select_in_rectangle   (loop) (partial)",
+           in_rectangle, loop, partial);
+  REGISTER("2nd: select_in_rectangle (cursor) (partial)",
+           in_rectangle, cursor, partial);
+  REGISTER("1st: select_in_rectangle   (loop)     (all)",
+           in_rectangle, loop, all);
+  REGISTER("1st: select_in_rectangle (cursor)     (all)",
+           in_rectangle, cursor, all);
+  REGISTER("2nd: select_in_rectangle   (loop)     (all)",
+           in_rectangle, loop, all);
+  REGISTER("2nd: select_in_rectangle (cursor)     (all)",
+           in_rectangle, cursor, all);
 #undef REGISTER
 
   bench_reporter_run(reporter);

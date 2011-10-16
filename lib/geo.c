@@ -18,15 +18,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include "geo.h"
-#include "ii.h"
-#include "db.h"
 #include "pat.h"
 #include "util.h"
-
-typedef enum {
-  MESH_LATITUDE,
-  MESH_LONGITUDE
-} mesh_direction;
 
 typedef struct {
   grn_id id;
@@ -52,7 +45,7 @@ typedef struct {
   int end;
   int distance;
   int diff_bit;
-  mesh_direction direction;
+  grn_geo_mesh_direction direction;
 } in_rectangle_data;
 
 static int
@@ -860,12 +853,12 @@ in_rectangle_data_prepare(grn_ctx *ctx, grn_obj *index,
     latitude_distance = top_left->latitude - bottom_right->latitude;
     longitude_distance = bottom_right->longitude - top_left->longitude;
     if (latitude_distance > longitude_distance) {
-      data->direction = MESH_LATITUDE;
+      data->direction = GRN_GEO_MESH_LATITUDE;
       geo_point_input = bottom_right;
       data->base.latitude = bottom_right->latitude;
       data->base.longitude = bottom_right->longitude - longitude_distance;
     } else {
-      data->direction = MESH_LONGITUDE;
+      data->direction = GRN_GEO_MESH_LONGITUDE;
       geo_point_input = top_left;
       data->base.latitude = top_left->latitude - latitude_distance;
       data->base.longitude = top_left->longitude;
@@ -875,18 +868,21 @@ in_rectangle_data_prepare(grn_ctx *ctx, grn_obj *index,
     data->diff_bit = compute_diff_bit(geo_key_input, geo_key_base);
     compute_min_and_max(&(data->base), data->diff_bit,
                         &(data->min), &(data->max));
-    if (data->direction == MESH_LATITUDE) {
+    switch (data->direction) {
+    case GRN_GEO_MESH_LATITUDE :
       data->distance = data->max.latitude - data->min.latitude + 1;
       data->start = data->min.latitude;
       data->end = top_left->latitude;
-    } else {
+      break;
+    case GRN_GEO_MESH_LONGITUDE :
       data->distance = data->max.longitude - data->min.longitude + 1;
       data->start = data->min.longitude;
       data->end = bottom_right->longitude;
+      break;
     }
 #ifdef GEO_DEBUG
     printf("direction: %s\n",
-           data->direction == MESH_LATITUDE ? "latitude" : "longitude");
+           data->direction == GRN_GEO_MESH_LATITUDE ? "latitude" : "longitude");
     printf("base:         ");
     grn_p_geo_point(ctx, &(data->base));
     printf("input:        ");
@@ -913,10 +909,218 @@ exit :
   return ctx->rc;
 }
 
+grn_obj *
+grn_geo_cursor_open_in_rectangle(grn_ctx *ctx,
+                                 grn_obj *index,
+                                 grn_obj *top_left_point,
+                                 grn_obj *bottom_right_point,
+                                 int offset,
+                                 int limit)
+{
+  grn_geo_cursor_in_rectangle *cursor = NULL;
+  in_rectangle_data data;
+
+  GRN_VOID_INIT(&(data.top_left_point_buffer));
+  GRN_VOID_INIT(&(data.bottom_right_point_buffer));
+  if (in_rectangle_data_prepare(ctx, index, top_left_point, bottom_right_point,
+                                "geo_in_rectangle()", &data)) {
+    goto exit;
+  }
+
+  cursor = GRN_MALLOCN(grn_geo_cursor_in_rectangle, 1);
+  if (!cursor) {
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "[geo][cursor][in-rectangle] failed to allocate memory for geo cursor");
+    goto exit;
+  }
+
+  cursor->obj.header.type = GRN_CURSOR_GEO;
+  cursor->obj.header.impl_flags = GRN_OBJ_ALLOCATED;
+  cursor->obj.header.flags = 0;
+  cursor->obj.header.domain = GRN_ID_NIL;
+
+  cursor->pat = data.pat;
+  cursor->index = index;
+  cursor->diff_bit = data.diff_bit;
+  cursor->start_mesh_point = data.start;
+  cursor->end_mesh_point = data.end;
+  cursor->distance = data.distance;
+  cursor->direction = data.direction;
+  memcpy(&(cursor->top_left), data.top_left, sizeof(grn_geo_point));
+  memcpy(&(cursor->bottom_right), data.bottom_right, sizeof(grn_geo_point));
+  memcpy(&(cursor->base), &(data.base), sizeof(grn_geo_point));
+  cursor->pat_cursor = NULL;
+  cursor->ii_cursor = NULL;
+  cursor->offset = offset;
+  cursor->rest = limit;
+
+exit :
+  grn_obj_unlink(ctx, &(data.top_left_point_buffer));
+  grn_obj_unlink(ctx, &(data.bottom_right_point_buffer));
+  return (grn_obj *)cursor;
+}
+
+typedef grn_bool (*grn_geo_cursor_callback)(grn_ctx *ctx, grn_ii_posting *posting, void *user_data);
+
+static void
+grn_geo_cursor_each(grn_ctx *ctx, grn_obj *geo_cursor,
+                    grn_geo_cursor_callback callback, void *user_data)
+{
+  grn_geo_cursor_in_rectangle *cursor;
+  grn_obj *pat;
+  grn_table_cursor *pat_cursor;
+  grn_ii *ii;
+  grn_ii_cursor *ii_cursor;
+  grn_ii_posting *posting = NULL;
+  grn_geo_point *current, *base, *top_left, *bottom_right;
+  int diff_bit, distance, end_mesh_point;
+  grn_geo_mesh_direction direction;
+  int i = 0;
+  int mesh_point;
+  grn_id index_id;
+
+  cursor = (grn_geo_cursor_in_rectangle *)geo_cursor;
+  if (cursor->rest == 0) {
+    return;
+  }
+
+  pat = cursor->pat;
+  pat_cursor = cursor->pat_cursor;
+  ii = (grn_ii *)(cursor->index);
+  ii_cursor = cursor->ii_cursor;
+  current = &(cursor->current);
+  base = &(cursor->base);
+  top_left = &(cursor->top_left);
+  bottom_right = &(cursor->bottom_right);
+  diff_bit = cursor->diff_bit;
+  distance = cursor->distance;
+  end_mesh_point = cursor->end_mesh_point;
+  direction = cursor->direction;
+
+  while (GRN_TRUE) {
+    if (!pat_cursor) {
+      if (!(cursor->pat_cursor = pat_cursor =
+            grn_table_cursor_open(ctx,
+                                  pat,
+                                  base,
+                                  diff_bit,
+                                  NULL, 0,
+                                  0, -1,
+                                  GRN_CURSOR_PREFIX|GRN_CURSOR_SIZE_BY_BIT))) {
+        cursor->rest = 0;
+        return;
+      }
+#ifdef GEO_DEBUG
+      {
+        switch (direction) {
+        case GRN_GEO_MESH_LATITUDE :
+          mesh_point = base->latitude;
+          break;
+        case GRN_GEO_MESH_LONGITUDE :
+          mesh_point = base->longitude;
+          break;
+        }
+        printf("mesh-point:          %10d\n", mesh_point);
+        inspect_mesh(ctx, base, diff_bit,
+                     (mesh_point - cursor->start_mesh_point) /
+                     distance);
+      }
+#endif
+    }
+
+    while (ii_cursor || (index_id = grn_table_cursor_next(ctx, pat_cursor))) {
+      if (!ii_cursor) {
+        grn_table_get_key(ctx, pat, index_id, current, sizeof(grn_geo_point));
+        if (grn_geo_in_rectangle_raw(ctx, current, top_left, bottom_right)) {
+          inspect_tid(ctx, index_id, current, 0);
+          if (!(cursor->ii_cursor = ii_cursor =
+                grn_ii_cursor_open(ctx,
+                                   ii,
+                                   index_id,
+                                   GRN_ID_NIL,
+                                   GRN_ID_MAX,
+                                   ii->n_elements,
+                                   0))) {
+            continue;
+          }
+        } else {
+          continue;
+        }
+      }
+
+      while ((posting = grn_ii_cursor_next(ctx, ii_cursor))) {
+        if (cursor->offset == 0) {
+          if (!callback(ctx, posting, user_data)) {
+            return;
+          }
+          if (cursor->rest > 0) {
+            if (--(cursor->rest) == 0) {
+              return;
+            }
+          }
+        } else {
+          cursor->offset--;
+        }
+      }
+      grn_ii_cursor_close(ctx, ii_cursor);
+      cursor->ii_cursor = ii_cursor = NULL;
+    }
+    grn_table_cursor_close(ctx, pat_cursor);
+    cursor->pat_cursor = pat_cursor = NULL;
+
+    switch (direction) {
+    case GRN_GEO_MESH_LATITUDE :
+      mesh_point = (base->latitude += distance);
+      break;
+    case GRN_GEO_MESH_LONGITUDE :
+      mesh_point = (base->longitude += distance);
+      break;
+    }
+    if (mesh_point > end_mesh_point + distance) {
+      cursor->rest = 0;
+      return;
+    }
+  }
+}
+
+static grn_bool
+grn_geo_cursor_next_callback(grn_ctx *ctx, grn_ii_posting *posting,
+                             void *user_data)
+{
+  grn_ii_posting **return_posting = user_data;
+  *return_posting = posting;
+}
+
+grn_posting *
+grn_geo_cursor_next(grn_ctx *ctx, grn_obj *geo_cursor)
+{
+  grn_ii_posting *posting = NULL;
+  grn_geo_cursor_each(ctx, geo_cursor, grn_geo_cursor_next_callback, &posting);
+  return (grn_posting *)posting;
+}
+
 grn_rc
-grn_geo_select_in_rectangle(grn_ctx *ctx, grn_obj *index,
-                            grn_obj *top_left_point, grn_obj *bottom_right_point,
-                            grn_obj *res, grn_operator op)
+grn_geo_cursor_close(grn_ctx *ctx, grn_obj *geo_cursor)
+{
+  grn_geo_cursor_in_rectangle *cursor;
+
+  if (!geo_cursor) { return GRN_INVALID_ARGUMENT; }
+
+  cursor = (grn_geo_cursor_in_rectangle *)geo_cursor;
+  if (cursor->pat) { grn_obj_unlink(ctx, cursor->pat); }
+  if (cursor->index) { grn_obj_unlink(ctx, cursor->index); }
+  if (cursor->pat_cursor) { grn_table_cursor_close(ctx, cursor->pat_cursor); }
+  if (cursor->ii_cursor) { grn_ii_cursor_close(ctx, cursor->ii_cursor); }
+  GRN_FREE(cursor);
+
+  return GRN_SUCCESS;
+}
+
+static inline grn_rc
+grn_geo_select_in_rectangle_loop(grn_ctx *ctx, grn_obj *index,
+                                 grn_obj *top_left_point,
+                                 grn_obj *bottom_right_point,
+                                 grn_obj *res, grn_operator op)
 {
   in_rectangle_data data;
 
@@ -929,9 +1133,9 @@ grn_geo_select_in_rectangle(grn_ctx *ctx, grn_obj *index,
 
   {
     grn_obj *pat;
-    int diff_bit, i, start, end, distance;
+    int diff_bit, mesh_point, start, end, distance;
     grn_geo_point *top_left, *bottom_right, *base;
-    mesh_direction direction;
+    grn_geo_mesh_direction direction;
 
     pat = data.pat;
     start = data.start;
@@ -942,7 +1146,7 @@ grn_geo_select_in_rectangle(grn_ctx *ctx, grn_obj *index,
     bottom_right = data.bottom_right;
     base = &(data.base);
     diff_bit = data.diff_bit;
-    for (i = start; i < end + distance; i += distance) {
+    for (mesh_point = start; mesh_point < end + distance; mesh_point += distance) {
       grn_table_cursor *tc;
       tc = grn_table_cursor_open(ctx, pat,
                                  base, diff_bit,
@@ -950,9 +1154,9 @@ grn_geo_select_in_rectangle(grn_ctx *ctx, grn_obj *index,
                                  0, -1,
                                  GRN_CURSOR_PREFIX|GRN_CURSOR_SIZE_BY_BIT);
 #ifdef GEO_DEBUG
-      printf("i:                   %10d\n", i);
+      printf("mesh-point:          %10d\n", mesh_point);
 #endif
-      inspect_mesh(ctx, base, diff_bit, (i - data.start) / distance);
+      inspect_mesh(ctx, base, diff_bit, (mesh_point - start) / distance);
       if (tc) {
         grn_id tid;
         grn_geo_point point;
@@ -966,7 +1170,7 @@ grn_geo_select_in_rectangle(grn_ctx *ctx, grn_obj *index,
         }
         grn_table_cursor_close(ctx, tc);
       }
-      if (direction == MESH_LATITUDE) {
+      if (direction == GRN_GEO_MESH_LATITUDE) {
         base->latitude += distance;
       } else {
         base->longitude += distance;
@@ -978,6 +1182,66 @@ exit :
   grn_obj_unlink(ctx, &(data.bottom_right_point_buffer));
   grn_ii_resolve_sel_and(ctx, (grn_hash *)res, op);
   return ctx->rc;
+}
+
+typedef struct {
+  grn_hash *res;
+  grn_operator op;
+} grn_geo_select_in_rectangle_data;
+
+static grn_bool
+grn_geo_select_in_rectangle_callback(grn_ctx *ctx, grn_ii_posting *posting,
+                                     void *user_data)
+{
+  grn_geo_select_in_rectangle_data *data = user_data;
+  grn_ii_posting_add(ctx, posting, data->res, data->op);
+  return GRN_TRUE;
+}
+
+static inline grn_rc
+grn_geo_select_in_rectangle_cursor(grn_ctx *ctx, grn_obj *index,
+                                   grn_obj *top_left_point,
+                                   grn_obj *bottom_right_point,
+                                   grn_obj *res, grn_operator op)
+{
+  grn_obj *cursor;
+  grn_posting *posting;
+
+  cursor = grn_geo_cursor_open_in_rectangle(ctx, index,
+                                            top_left_point, bottom_right_point,
+                                            0, -1);
+  if (cursor) {
+    grn_geo_cursor_in_rectangle *geo_cursor = (grn_geo_cursor_in_rectangle *)cursor;
+    grn_geo_select_in_rectangle_data data;
+    data.res = (grn_hash *)res;
+    data.op = op;
+    grn_geo_cursor_each(ctx, cursor, grn_geo_select_in_rectangle_callback,
+                        &data);
+    grn_obj_unlink(ctx, cursor);
+    grn_ii_resolve_sel_and(ctx, (grn_hash *)res, op);
+  }
+
+  return ctx->rc;
+}
+
+grn_rc
+grn_geo_select_in_rectangle(grn_ctx *ctx, grn_obj *index,
+                            grn_obj *top_left_point, grn_obj *bottom_right_point,
+                            grn_obj *res, grn_operator op)
+{
+  char *grn_geo_select_in_rectangle_env;
+
+  grn_geo_select_in_rectangle_env = getenv("GRN_GEO_SELECT_IN_RECTANGLE");
+  if (grn_geo_select_in_rectangle_env &&
+      strcmp(grn_geo_select_in_rectangle_env, "cursor") == 0) {
+    return grn_geo_select_in_rectangle_cursor(ctx, index,
+                                              top_left_point, bottom_right_point,
+                                              res, op);
+  } else {
+    return grn_geo_select_in_rectangle_loop(ctx, index,
+                                            top_left_point, bottom_right_point,
+                                            res, op);
+  }
 }
 
 static grn_rc

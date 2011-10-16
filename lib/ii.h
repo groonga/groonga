@@ -129,6 +129,9 @@ typedef struct {
 
 typedef struct _grn_ii_cursor grn_ii_cursor;
 
+GRN_API grn_rc grn_ii_posting_add(grn_ctx *ctx, grn_ii_posting *pos,
+                                  grn_hash *s, grn_operator op);
+
 GRN_API grn_ii_cursor *grn_ii_cursor_open(grn_ctx *ctx, grn_ii *ii, grn_id tid,
                                           grn_id min, grn_id max, int nelements, int flags);
 grn_ii_cursor *grn_ii_cursor_openv1(grn_ii *ii, uint32_t key);

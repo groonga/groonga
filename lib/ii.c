@@ -5472,6 +5472,13 @@ res_add(grn_ctx *ctx, grn_hash *s, grn_rset_posinfo *pi, uint32_t score,
   }
 }
 
+grn_rc
+grn_ii_posting_add(grn_ctx *ctx, grn_ii_posting *pos, grn_hash *s, grn_operator op)
+{
+  res_add(ctx, s, (grn_rset_posinfo *)(pos), (1 + pos->weight), op);
+  return ctx->rc;
+}
+
 #ifdef USE_BHEAP
 
 /* todo */

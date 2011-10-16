@@ -21,6 +21,9 @@
 #include "groonga_in.h"
 #endif /* GROONGA_IN_H */
 
+#include "ii.h"
+#include "db.h"
+
 #ifdef WIN32
 #define _USE_MATH_DEFINES
 #endif /* WIN32 */
@@ -50,6 +53,35 @@ extern "C" {
   _latitude = GRN_GEO_INT2RAD(_val->latitude);\
   _longitude = GRN_GEO_INT2RAD(_val->longitude);\
 } while (0)
+
+typedef enum _grn_geo_mesh_direction grn_geo_mesh_direction;
+enum _grn_geo_mesh_direction {
+  GRN_GEO_MESH_LATITUDE,
+  GRN_GEO_MESH_LONGITUDE
+};
+
+typedef struct _grn_geo_cursor_in_rectangle grn_geo_cursor_in_rectangle;
+struct _grn_geo_cursor_in_rectangle {
+  grn_db_obj obj;
+  grn_obj *pat;
+  grn_obj *index;
+  int diff_bit;
+  int start_mesh_point;
+  int end_mesh_point;
+  int distance;
+  grn_geo_mesh_direction direction;
+  grn_geo_point top_left;
+  grn_geo_point bottom_right;
+  grn_geo_point base;
+  grn_geo_point current;
+  grn_table_cursor *pat_cursor;
+  grn_ii_cursor *ii_cursor;
+  int offset;
+  int rest;
+};
+
+grn_rc grn_geo_cursor_close(grn_ctx *ctx, grn_obj *geo_cursor);
+
 
 int grn_geo_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
                        grn_obj *result, grn_table_sort_key *keys, int n_keys);
