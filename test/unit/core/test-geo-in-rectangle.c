@@ -270,6 +270,25 @@ data_cursor(void)
                                 "nezu-no-taiyaki",
                                 NULL),
            0, -1);
+  ADD_DATA("offset",
+           gcut_list_string_new("hirose-ya",
+                                "taiyaki-kataoka",
+                                "kuruma",
+                                "nezu-no-taiyaki",
+                                NULL),
+           2, -1);
+  ADD_DATA("limit",
+           gcut_list_string_new("soba-taiyaki-ku",
+                                "sazare",
+                                "hirose-ya",
+                                NULL),
+           0, 3);
+  ADD_DATA("offset - limit",
+           gcut_list_string_new("hirose-ya",
+                                "taiyaki-kataoka",
+                                "kuruma",
+                                NULL),
+           2, 3);
 
 #undef ADD_DATA
 }

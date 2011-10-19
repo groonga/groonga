@@ -1050,13 +1050,15 @@ grn_geo_cursor_each(grn_ctx *ctx, grn_obj *geo_cursor,
 
       while ((posting = grn_ii_cursor_next(ctx, ii_cursor))) {
         if (cursor->offset == 0) {
-          if (!callback(ctx, posting, user_data)) {
-            return;
-          }
+          grn_bool keep_each;
+          keep_each = callback(ctx, posting, user_data);
           if (cursor->rest > 0) {
             if (--(cursor->rest) == 0) {
-              return;
+              keep_each = GRN_FALSE;
             }
+          }
+          if (!keep_each) {
+            return;
           }
         } else {
           cursor->offset--;
