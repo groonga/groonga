@@ -289,6 +289,12 @@ data_cursor(void)
                                 "kuruma",
                                 NULL),
            2, 3);
+  ADD_DATA("over offset",
+           NULL,
+           100, -1);
+  ADD_DATA("0 limit",
+           NULL,
+           0, 0);
 
 #undef ADD_DATA
 }
