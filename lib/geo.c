@@ -1119,74 +1119,6 @@ grn_geo_cursor_close(grn_ctx *ctx, grn_obj *geo_cursor)
   return GRN_SUCCESS;
 }
 
-static inline grn_rc
-grn_geo_select_in_rectangle_loop(grn_ctx *ctx, grn_obj *index,
-                                 grn_obj *top_left_point,
-                                 grn_obj *bottom_right_point,
-                                 grn_obj *res, grn_operator op)
-{
-  in_rectangle_data data;
-
-  GRN_VOID_INIT(&(data.top_left_point_buffer));
-  GRN_VOID_INIT(&(data.bottom_right_point_buffer));
-  if (in_rectangle_data_prepare(ctx, index, top_left_point, bottom_right_point,
-                                "geo_in_rectangle()", &data)) {
-    goto exit;
-  }
-
-  {
-    grn_obj *pat;
-    int diff_bit, mesh_point, start, end, distance;
-    grn_geo_point *top_left, *bottom_right, *base;
-    grn_geo_mesh_direction direction;
-
-    pat = data.pat;
-    start = data.start;
-    end = data.end;
-    distance = data.distance;
-    direction = data.direction;
-    top_left = data.top_left;
-    bottom_right = data.bottom_right;
-    base = &(data.base);
-    diff_bit = data.diff_bit;
-    for (mesh_point = start; mesh_point < end + distance; mesh_point += distance) {
-      grn_table_cursor *tc;
-      tc = grn_table_cursor_open(ctx, pat,
-                                 base, diff_bit,
-                                 NULL, 0,
-                                 0, -1,
-                                 GRN_CURSOR_PREFIX|GRN_CURSOR_SIZE_BY_BIT);
-#ifdef GEO_DEBUG
-      printf("mesh-point:          %10d\n", mesh_point);
-#endif
-      inspect_mesh(ctx, base, diff_bit, (mesh_point - start) / distance);
-      if (tc) {
-        grn_id tid;
-        grn_geo_point point;
-        while ((tid = grn_table_cursor_next(ctx, tc))) {
-          grn_table_get_key(ctx, pat, tid, &point, sizeof(grn_geo_point));
-          if (!grn_geo_in_rectangle_raw(ctx, &point, top_left, bottom_right)) {
-            continue;
-          }
-          inspect_tid(ctx, tid, &point, 0);
-          grn_ii_at(ctx, (grn_ii *)index, tid, (grn_hash *)res, op);
-        }
-        grn_table_cursor_close(ctx, tc);
-      }
-      if (direction == GRN_GEO_MESH_LATITUDE) {
-        base->latitude += distance;
-      } else {
-        base->longitude += distance;
-      }
-    }
-  }
-exit :
-  grn_obj_unlink(ctx, &(data.top_left_point_buffer));
-  grn_obj_unlink(ctx, &(data.bottom_right_point_buffer));
-  grn_ii_resolve_sel_and(ctx, (grn_hash *)res, op);
-  return ctx->rc;
-}
-
 typedef struct {
   grn_hash *res;
   grn_operator op;
@@ -1201,11 +1133,11 @@ grn_geo_select_in_rectangle_callback(grn_ctx *ctx, grn_ii_posting *posting,
   return GRN_TRUE;
 }
 
-static inline grn_rc
-grn_geo_select_in_rectangle_cursor(grn_ctx *ctx, grn_obj *index,
-                                   grn_obj *top_left_point,
-                                   grn_obj *bottom_right_point,
-                                   grn_obj *res, grn_operator op)
+grn_rc
+grn_geo_select_in_rectangle(grn_ctx *ctx, grn_obj *index,
+                            grn_obj *top_left_point,
+                            grn_obj *bottom_right_point,
+                            grn_obj *res, grn_operator op)
 {
   grn_obj *cursor;
   grn_posting *posting;
@@ -1225,26 +1157,6 @@ grn_geo_select_in_rectangle_cursor(grn_ctx *ctx, grn_obj *index,
   }
 
   return ctx->rc;
-}
-
-grn_rc
-grn_geo_select_in_rectangle(grn_ctx *ctx, grn_obj *index,
-                            grn_obj *top_left_point, grn_obj *bottom_right_point,
-                            grn_obj *res, grn_operator op)
-{
-  char *grn_geo_select_in_rectangle_env;
-
-  grn_geo_select_in_rectangle_env = getenv("GRN_GEO_SELECT_IN_RECTANGLE");
-  if (grn_geo_select_in_rectangle_env &&
-      strcmp(grn_geo_select_in_rectangle_env, "cursor") == 0) {
-    return grn_geo_select_in_rectangle_cursor(ctx, index,
-                                              top_left_point, bottom_right_point,
-                                              res, op);
-  } else {
-    return grn_geo_select_in_rectangle_loop(ctx, index,
-                                            top_left_point, bottom_right_point,
-                                            res, op);
-  }
 }
 
 static grn_rc
