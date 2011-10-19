@@ -1089,6 +1089,7 @@ grn_geo_cursor_next_callback(grn_ctx *ctx, grn_ii_posting *posting,
 {
   grn_ii_posting **return_posting = user_data;
   *return_posting = posting;
+  return GRN_FALSE;
 }
 
 grn_posting *

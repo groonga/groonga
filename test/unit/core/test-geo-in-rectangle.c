@@ -29,6 +29,8 @@
 void test_in(void);
 void test_not_in(void);
 void test_select(void);
+void data_cursor(void);
+void test_cursor(gconstpointer data);
 void test_estimate(void);
 
 static gchar *tmp_directory;
@@ -247,6 +249,59 @@ test_select(void)
                               "nezu-no-taiyaki",
                               NULL),
     result_to_list());
+}
+
+void
+data_cursor(void)
+{
+#define ADD_DATA(label, expected, offset, limit)                        \
+  gcut_add_datum(label,                                                 \
+                 "expected", G_TYPE_POINTER, expected, gcut_list_string_free, \
+                 "offset", G_TYPE_INT, offset,                          \
+                 "limit", G_TYPE_INT, limit,                            \
+                 NULL)
+
+  ADD_DATA("all",
+           gcut_list_string_new("soba-taiyaki-ku",
+                                "sazare",
+                                "hirose-ya",
+                                "taiyaki-kataoka",
+                                "kuruma",
+                                "nezu-no-taiyaki",
+                                NULL),
+           0, -1);
+
+#undef ADD_DATA
+}
+
+void
+test_cursor(gconstpointer data)
+{
+  GList *expected, *records = NULL;
+  gint offset, limit;
+  grn_obj *geo_cursor;
+  grn_posting *posting;
+
+  offset = gcut_data_get_int(data, "offset");
+  limit = gcut_data_get_int(data, "limit");
+  geo_cursor = grn_geo_cursor_open_in_rectangle(context,
+                                                location_index,
+                                                nerima_wgs84, tokyo_wgs84,
+                                                offset, limit);
+  while ((posting = grn_geo_cursor_next(context, geo_cursor))) {
+    grn_id shop_id = posting->rid;
+    gchar key[GRN_TABLE_MAX_KEY_SIZE];
+    gint key_size;
+
+    key_size = grn_table_get_key(context, shops, shop_id,
+                                 &key, GRN_TABLE_MAX_KEY_SIZE);
+    records = g_list_append(records, g_strndup(key, key_size));
+  }
+  grn_obj_unlink(context, geo_cursor);
+
+  expected = (GList *)gcut_data_get_pointer(data, "expected");
+  gcut_take_list(records, g_free);
+  gcut_assert_equal_list_string(expected, records);
 }
 
 void
