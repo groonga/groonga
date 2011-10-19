@@ -37,6 +37,8 @@ EOH
       headers.each_with_index do |header, i|
         record[header] = row[i]
       end
+      central_value_p = record["代表フラグ"] == "1"
+      next unless central_value_p
       name =
         record["都道府県名"] + record["市区町村名"] +
         record["大字・町丁目"] + record["街区符号・地番"]
