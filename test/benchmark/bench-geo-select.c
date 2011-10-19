@@ -17,17 +17,17 @@
 */
 
 /*
-  groonga: e65e87f0039f6bb2da3d9b959423774d3f66b567
+  groonga: 9df80ce876d391d4531786f862edd70ab9fea042
   CFLAGS: -O0 -ggdb3
   CPU: Intel(R) Core(TM) i7 CPU         860  @ 2.80GHz stepping 05
 
   % (cd test/benchmark; make --quiet run-bench-geo-select)
   run-bench-geo-select:
                                         (time)
-    select_in_rectangle (1st)   (loop): (0.943075)
-    select_in_rectangle (1st) (cursor): (0.937281)
-    select_in_rectangle (2nd)   (loop): (0.928663)
-    select_in_rectangle (2nd) (cursor): (0.947011)
+    1st: select_in_rectangle (partial): (0.77974)
+    2nd: select_in_rectangle (partial): (0.778425)
+    1st: select_in_rectangle     (all): (8.98407)
+    2nd: select_in_rectangle     (all): (9.12714)
 */
 
 #include <string.h>
