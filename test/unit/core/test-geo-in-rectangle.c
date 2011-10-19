@@ -202,6 +202,35 @@ test_not_in(void)
                                         hiiragi_wgs84));
 }
 
+static GList *
+result_to_list(void)
+{
+  GList *list = NULL;
+  grn_table_cursor *cursor;
+
+  cursor = grn_table_cursor_open(context, result,
+                                 NULL, 0,
+                                 NULL, 0,
+                                 0, -1,
+                                 GRN_CURSOR_ASCENDING | GRN_CURSOR_BY_ID);
+  while ((grn_table_cursor_next(context, cursor))) {
+    void *result_key;
+    gint result_key_size;
+    grn_id shop_id;
+    gchar key[GRN_TABLE_MAX_KEY_SIZE];
+    gint key_size;
+
+    result_key_size = grn_table_cursor_get_key(context, cursor, &result_key);
+    memcpy(&shop_id, result_key, result_key_size);
+    key_size = grn_table_get_key(context, shops, shop_id,
+                                 &key, GRN_TABLE_MAX_KEY_SIZE);
+    list = g_list_append(list, g_strndup(key, key_size));
+  }
+  gcut_take_list(list, g_free);
+
+  return list;
+}
+
 void
 test_select(void)
 {
@@ -209,8 +238,15 @@ test_select(void)
                                               location_index,
                                               nerima_wgs84, tokyo_wgs84,
                                               result, GRN_OP_OR));
-  cut_assert_equal_int(6,
-                       grn_table_size(context, result));
+  gcut_assert_equal_list_string(
+    gcut_take_new_list_string("soba-taiyaki-ku",
+                              "sazare",
+                              "hirose-ya",
+                              "taiyaki-kataoka",
+                              "kuruma",
+                              "nezu-no-taiyaki",
+                              NULL),
+    result_to_list());
 }
 
 void
