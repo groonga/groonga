@@ -51,22 +51,29 @@ class GroongaQueryLogAnalyzer
     dynamic_sort = @options[:dynamic_sort]
     statistics = SizedStatistics.new
     statistics.apply_options(@options)
+    parser = QueryLogParser.new
     if stream
       streamer = Streamer.new(create_reporter(statistics))
       streamer.start
-      parser = QueryLogParser.new(streamer)
+      process_statistic = lambda do |statistic|
+        streamer << statistic
+      end
     elsif dynamic_sort
-      parser = QueryLogParser.new(statistics)
+      process_statistic = lambda do |statistic|
+        statistics << statistic
+      end
     else
       full_statistics = []
-      parser = QueryLogParser.new(full_statistics)
+      process_statistic = lambda do |statistic|
+        full_statistics << statistic
+      end
     end
     if log_paths.empty?
-      parser.parse(ARGF)
+      parser.parse(ARGF, &process_statistic)
     else
       log_paths.each do |log_path|
         File.open(log_path) do |log|
-          parser.parse(log)
+          parser.parse(log, &process_statistic)
         end
       end
     end
@@ -631,13 +638,11 @@ class GroongaQueryLogAnalyzer
   end
 
   class QueryLogParser
-    attr_reader :statistics
-    def initialize(statistics)
+    def initialize
       @mutex = Mutex.new
-      @statistics = statistics
     end
 
-    def parse(input)
+    def parse(input, &block)
       current_statistics = {}
       input.each_line do |line|
         case line
@@ -649,15 +654,15 @@ class GroongaQueryLogAnalyzer
           rest = $POSTMATCH.strip
           time_stamp = Time.local(year, month, day, hour, minutes, seconds,
                                   micro_seconds)
-          parse_line(statistics, current_statistics,
-                     time_stamp, context_id, type, rest)
+          parse_line(current_statistics,
+                     time_stamp, context_id, type, rest, &block)
         end
       end
     end
 
     private
-    def parse_line(statistics, current_statistics,
-                   time_stamp, context_id, type, rest)
+    def parse_line(current_statistics,
+                   time_stamp, context_id, type, rest, &block)
       case type
       when ">"
         statistic = Statistic.new(context_id)
@@ -680,7 +685,7 @@ class GroongaQueryLogAnalyzer
         statistic = current_statistics.delete(context_id)
         return if statistic.nil?
         statistic.finish(elapsed.to_i, return_code.to_i)
-        statistics << statistic
+        block.call(statistic)
       end
     end
   end
