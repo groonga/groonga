@@ -1,3 +1,6 @@
+msgid "参考"
+msgstr ""
+
 # Japanese translations for 1.2.1 package.
 # Copyright (C) 2009-2011, Brazil, Inc
 # This file is distributed under the same license as the groonga package.
@@ -7,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-28 18:54\n"
+"POT-Creation-Date: 2011-10-21 13:14\n"
 "PO-Revision-Date: 2011-05-29 14:00+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -114,12 +117,20 @@ msgid ""
 "以下のように導入します。::"
 msgstr ""
 
+#: ../../../source/contribution/development/document.txt:13
+msgid "# aptitude install python-setuptools # easy_install -U sphinx"
+msgstr ""
+
 #: ../../../source/contribution/development/document.txt:17
 msgid "htmlの作成"
 msgstr ""
 
 #: ../../../source/contribution/development/document.txt:19
 msgid "以下のコマンドでhtmlが作成されます。::"
+msgstr ""
+
+#: ../../../source/contribution/development/document.txt:21
+msgid "% make html"
 msgstr ""
 
 #: ../../../source/contribution/development/document.txt:24
@@ -141,8 +152,16 @@ msgstr ""
 msgid "以下のようにしてインストールできます。::"
 msgstr ""
 
+#: ../../../source/contribution/development/document.txt:33
+msgid "# easy_install rst2pdf"
+msgstr ""
+
 #: ../../../source/contribution/development/document.txt:38
 msgid "以下のコマンドでpdfが作成されます。::"
+msgstr ""
+
+#: ../../../source/contribution/development/document.txt:40
+msgid "% make pdf"
 msgstr ""
 
 #: ../../../source/contribution/development/query.txt:6
@@ -229,10 +248,20 @@ msgstr ""
 msgid "論理演算子は、以下の3種類があります。 ::"
 msgstr ""
 
+#: ../../../source/contribution/development/query.txt:40
+msgid "&& (論理積) || (論理和) !  (否定)"
+msgstr ""
+
 #: ../../../source/contribution/development/query.txt:44
 msgid ""
 "関係式は、下記の11種類が用意されています。また、ユーザが定義した関数を新たな"
 "関係式として使うこともできます。 ::"
+msgstr ""
+
+#: ../../../source/contribution/development/query.txt:47
+msgid ""
+"equal(==) not_equal(!=) less(<) greater(>) less_equal(<=) greater_equal(>=) "
+"contain() near() similar() prefix() suffix()"
 msgstr ""
 
 #: ../../../source/contribution/development/query.txt:60
@@ -245,6 +274,10 @@ msgid ""
 "ます。引数として、検索対象となるテーブル、クエリを表すgrn_expr、検索結果を格"
 "納するテーブル、それに検索にマッチしたレコードを検索結果にどのように反映する"
 "かを指定する演算子を渡します。演算子と指定できるのは下記の4種類です。 ::"
+msgstr ""
+
+#: ../../../source/contribution/development/query.txt:65
+msgid "GRN_OP_OR GRN_OP_AND GRN_OP_BUT GRN_OP_ADJUST"
 msgstr ""
 
 #: ../../../source/contribution/development/query.txt:70
@@ -335,6 +368,14 @@ msgid ""
 "かを指定することができます。"
 msgstr ""
 
+#: ../../../source/contribution/development/query.txt:109
+msgid ""
+"EXACT: v2の値もv1の値と同様に要素に分解したとき、それぞれの要素が完全に一致す"
+"る(デフォルト) UNSPLIT: v2の値は要素に分解しない PREFIX: v1の値の要素がv2の値"
+"に前方一致する SUFFIX: v1の値の要素がv2の値に後方一致する PARTIAL: v1の値の要"
+"素がv2の値に中間一致する"
+msgstr ""
+
 #: ../../../source/contribution/development/query.txt:116
 msgid "near(v1, v2, arg, callback)"
 msgstr ""
@@ -381,6 +422,15 @@ msgstr ""
 msgid "検索例1"
 msgstr ""
 
+#: ../../../source/contribution/development/query.txt:140
+msgid ""
+"GRN_EXPR_CREATE_FOR_QUERY(ctx, table, query, var); grn_expr_append_obj(ctx, "
+"query, contain, GRN_OP_PUSH, 1); grn_expr_append_obj(ctx, query, column, "
+"GRN_OP_PUSH, 1); grn_expr_append_const(ctx, query, string, GRN_OP_PUSH, 1); "
+"grn_expr_append_op(ctx, query, GRN_OP_CALL, 3); result = grn_table_select"
+"(ctx, table, query, NULL, GRN_OP_OR);"
+msgstr ""
+
 #: ../../../source/contribution/development/query.txt:147
 msgid ""
 "tableのcolumnの値がstringを含むレコードをresultに返します。columnの値"
@@ -391,6 +441,24 @@ msgstr ""
 
 #: ../../../source/contribution/development/query.txt:151
 msgid "検索例2"
+msgstr ""
+
+#: ../../../source/contribution/development/query.txt:154
+msgid ""
+"GRN_EXPR_CREATE_FOR_QUERY(ctx, table, query, var); grn_expr_append_obj(ctx, "
+"query, contain, GRN_OP_PUSH, 1); grn_expr_append_obj(ctx, query, column1, "
+"GRN_OP_PUSH, 1); grn_expr_append_const(ctx, query, string, GRN_OP_PUSH, 1); "
+"grn_expr_append_const(ctx, query, exact, GRN_OP_PUSH, 1); "
+"grn_expr_append_const(ctx, query, score1, GRN_OP_PUSH, 1); grn_expr_append_op"
+"(ctx, query, GRN_OP_CALL, 5); result = grn_table_select(ctx, table, query, "
+"NULL, GRN_OP_OR); grn_obj_close(ctx, query); GRN_EXPR_CREATE_FOR_QUERY(ctx, "
+"table, query, var); grn_expr_append_obj(ctx, query, contain, GRN_OP_PUSH, "
+"1); grn_expr_append_obj(ctx, query, column2, GRN_OP_PUSH, 1); "
+"grn_expr_append_const(ctx, query, string, GRN_OP_PUSH, 1); "
+"grn_expr_append_const(ctx, query, exact, GRN_OP_PUSH, 1); "
+"grn_expr_append_const(ctx, query, score2, GRN_OP_PUSH, 1); grn_expr_append_op"
+"(ctx, query, GRN_OP_CALL, 5); grn_table_select(ctx, table, query, result, "
+"GRN_OP_ADJUST); grn_obj_close(ctx, query);"
 msgstr ""
 
 #: ../../../source/contribution/development/query.txt:173
@@ -405,6 +473,25 @@ msgstr ""
 msgid "検索例3"
 msgstr ""
 
+#: ../../../source/contribution/development/query.txt:179
+msgid ""
+"GRN_EXPR_CREATE_FOR_QUERY(ctx, table, query, var); grn_expr_append_obj(ctx, "
+"query, contain, GRN_OP_PUSH, 1); grn_expr_append_obj(ctx, query, column1, "
+"GRN_OP_PUSH, 1); grn_expr_append_const(ctx, query, string, GRN_OP_PUSH, 1); "
+"grn_expr_append_const(ctx, query, exact, GRN_OP_PUSH, 1); "
+"grn_expr_append_const(ctx, query, score1, GRN_OP_PUSH, 1); grn_expr_append_op"
+"(ctx, query, GRN_OP_CALL, 5); result = grn_table_select(ctx, table, query, "
+"NULL, GRN_OP_OR); grn_obj_close(ctx, query); if (grn_table_size(ctx, result) "
+"< t1) {   GRN_EXPR_CREATE_FOR_QUERY(ctx, table, query, var);   "
+"grn_expr_append_obj(ctx, query, contain, GRN_OP_PUSH, 1);   "
+"grn_expr_append_obj(ctx, query, column1, GRN_OP_PUSH, 1);   "
+"grn_expr_append_const(ctx, query, string, GRN_OP_PUSH, 1);   "
+"grn_expr_append_const(ctx, query, partial, GRN_OP_PUSH, 1);   "
+"grn_expr_append_const(ctx, query, score2, GRN_OP_PUSH, 1);   "
+"grn_expr_append_op(ctx, query, GRN_OP_CALL, 3);   grn_table_select(ctx, "
+"table, query, result, GRN_OP_OR);   grn_obj_close(ctx, query); }"
+msgstr ""
+
 #: ../../../source/contribution/development/query.txt:200
 msgid ""
 "tableのcolumn1の値がstringにexactモードでヒットするレコードについて得られるス"
@@ -415,6 +502,15 @@ msgstr ""
 
 #: ../../../source/contribution/development/query.txt:203
 msgid "検索例4"
+msgstr ""
+
+#: ../../../source/contribution/development/query.txt:206
+msgid ""
+"GRN_EXPR_CREATE_FOR_QUERY(ctx, table, query, var); grn_expr_append_obj(ctx, "
+"query, contain, GRN_OP_PUSH, 1); grn_expr_append_const(ctx, query, string, "
+"GRN_OP_PUSH, 1); grn_expr_append_obj(ctx, query, column, GRN_OP_PUSH, 1); "
+"grn_expr_append_op(ctx, query, GRN_OP_CALL, 3); result = grn_table_select"
+"(ctx, table, query, NULL, GRN_OP_OR);"
 msgstr ""
 
 #: ../../../source/contribution/development/query.txt:213
@@ -457,6 +553,10 @@ msgid ""
 "以下のようにしてインストールできます。::"
 msgstr ""
 
+#: ../../../source/contribution/development/test.txt:26
+msgid "% sudo aptitude install -y lcov"
+msgstr ""
+
 #: ../../../source/contribution/development/test.txt:29
 msgid "clangのインストール"
 msgstr ""
@@ -465,6 +565,10 @@ msgstr ""
 msgid ""
 "ソースコードの静的解析を行うためには、clang(scan-build)をインストールする必要"
 "があります。DebianやUbuntuでは以下のようにしてインストールできます。::"
+msgstr ""
+
+#: ../../../source/contribution/development/test.txt:33
+msgid "% sudo aptitude install -y clang"
 msgstr ""
 
 #: ../../../source/contribution/development/test.txt:36
@@ -478,6 +582,10 @@ msgid ""
 "トールできます。::"
 msgstr ""
 
+#: ../../../source/contribution/development/test.txt:40
+msgid "% sudo aptitude install -y libmemcached-dev"
+msgstr ""
+
 #: ../../../source/contribution/development/test.txt:43
 msgid "テストの動作"
 msgstr ""
@@ -487,8 +595,16 @@ msgstr ""
 msgid "groongaのトップディレクトリで、以下のコマンドを実行します。::"
 msgstr ""
 
+#: ../../../source/contribution/development/test.txt:47
+msgid "make check"
+msgstr ""
+
 #: ../../../source/contribution/development/test.txt:50
 msgid "カバレッジ情報"
+msgstr ""
+
+#: ../../../source/contribution/development/test.txt:54
+msgid "make coverage"
 msgstr ""
 
 #: ../../../source/contribution/development/test.txt:56
@@ -537,6 +653,10 @@ msgstr ""
 msgid "実行例::"
 msgstr ""
 
+#: ../../../source/contribution/development/test.txt:74
+msgid "% ./run-test.sh -n test_text_otoj"
+msgstr ""
+
 #: ../../../source/contribution/development/test.txt:77
 msgid "特定のテストファイルのみテストする"
 msgstr ""
@@ -545,6 +665,10 @@ msgstr ""
 msgid ""
 "特定のテストファイル(Cutterではテストケースと呼ぶ)のみテストすることができま"
 "す。"
+msgstr ""
+
+#: ../../../source/contribution/development/test.txt:83
+msgid "% ./run-test.sh -t test_string"
 msgstr ""
 
 #: ../../../source/contribution/development/test.txt:86
@@ -562,6 +686,10 @@ msgstr ""
 msgid "run-test.shのみならず、make checkでも利用可能です。"
 msgstr ""
 
+#: ../../../source/contribution/development/test.txt:94
+msgid "% CUTTER_CHECK_LEAK=yes make check"
+msgstr ""
+
 #: ../../../source/contribution/development/test.txt:97
 msgid "デバッガ上でのテスト実行"
 msgstr ""
@@ -572,6 +700,10 @@ msgid ""
 "行されます。gdb上でrunを行うと、テストの実行が開始されます。"
 msgstr ""
 
+#: ../../../source/contribution/development/test.txt:105
+msgid "% CUTTER_DEBUG=yes make check"
+msgstr ""
+
 #: ../../../source/contribution/development/test.txt:108
 msgid "静的解析"
 msgstr ""
@@ -580,6 +712,12 @@ msgstr ""
 msgid ""
 "scan-buildを用いて、ソースコードの静的解析を行うことができます。scan_buildと"
 "いうディレクトリに解析結果のhtmlが出力されます。::"
+msgstr ""
+
+#: ../../../source/contribution/development/test.txt:112
+msgid ""
+"% scan-build ./configure --prefix=/usr % make clean % scan-build -o ./"
+"scan_build make -j4"
 msgstr ""
 
 #: ../../../source/contribution/development/test.txt:116
@@ -686,6 +824,17 @@ msgid ""
 msgstr ""
 "上記の流れを実行するコマンドラインです。詳細は以降のセクションで説明します。"
 
+#: ../../../source/contribution/documentation/i18n.txt:42
+msgid ""
+"# Please fork https://github.com/groonga/groonga on GitHub % git clone "
+"https://github.com/${YOUR_GITHUB_ACCOUNT}/groonga.git % ./autogen.sh % ./"
+"configure % cd doc/locale/${LANGUAGE}/LC_MESSAGES # ${LANGUAGE} is language "
+"code such as 'ja'. % make update # *.po are updated % editor *.po # "
+"translate *.po # you can use your favorite editor % cd .. % make html % "
+"browser html/index.html # confirm translation % git add LC_MESSAGES/*.po % "
+"git commit % git push"
+msgstr ""
+
 #: ../../../source/contribution/documentation/i18n.txt:57
 msgid "How to clone groonga repository"
 msgstr "groongaリポジトリのcloneの仕方"
@@ -700,9 +849,17 @@ msgstr ""
 "groonga/groonga にアクセスして `Fork` ボタンを押すだけです。これで自分の"
 "groongaリポジトリをcloneすることができます。::"
 
+#: ../../../source/contribution/documentation/i18n.txt:63
+msgid "% git clone https://github.com/${YOUR_GITHUB_ACCOUNT}/groonga.git"
+msgstr ""
+
 #: ../../../source/contribution/documentation/i18n.txt:65
 msgid "Then you need to configure your cloned repository::"
 msgstr "cloneした後はconfigureする必要があります。::"
+
+#: ../../../source/contribution/documentation/i18n.txt:67
+msgid "% cd groonga % ./autogen.sh % ./configure"
+msgstr ""
 
 #: ../../../source/contribution/documentation/i18n.txt:71
 msgid "The above steps are just needed at the first setup."
@@ -729,6 +886,10 @@ msgstr ""
 "doc/locale/${LANGUAGE}/LC_MESSAGESディレクトリで `make update` を実行すると."
 "poファイルを更新できます。（`${LANGUAGE}` は'ja'など自分の言語の言語コードに"
 "置き換えてください。）::"
+
+#: ../../../source/contribution/documentation/i18n.txt:83
+msgid "% cd doc/locale/ja/LC_MESSAGES % make update"
+msgstr ""
 
 #: ../../../source/contribution/documentation/i18n.txt:87
 msgid "How to edit .po"
@@ -761,16 +922,34 @@ msgid "How to generate HTML files"
 msgstr "HTMLファイルの生成方法"
 
 #: ../../../source/contribution/documentation/i18n.txt:109
+#, fuzzy
 msgid ""
 "You can generate HTML files with updated .po files by running `make html` on "
-"doc/locale/${LANGUAGE}. (Please substitute `${LANGUAGE}` with your language "
-"code such as 'ja'.)::"
+"doc/locale/${LANGUAGE}. You can"
 msgstr ""
 "doc/locale/${LANGUAGE}/LC_MESSAGESディレクトリで `make html` を実行すると更新"
 "した.poファイルを使ってHTMLファイルを生成できます。（`${LANGUAGE}` は'ja'など"
 "自分の言語の言語コードに置き換えてください。）::"
 
-#: ../../../source/contribution/documentation/i18n.txt:119
+#: ../../../source/contribution/documentation/i18n.txt:111
+#, fuzzy
+msgid ""
+"also generate all languages files by runningthis command on doc/locale."
+"(Pleasesubstitute `${LANGUAGE}` with your"
+msgstr ""
+"doc/locale/${LANGUAGE}/LC_MESSAGESディレクトリで `make html` を実行すると更新"
+"した.poファイルを使ってHTMLファイルを生成できます。（`${LANGUAGE}` は'ja'など"
+"自分の言語の言語コードに置き換えてください。）::"
+
+#: ../../../source/contribution/documentation/i18n.txt:113
+msgid "language code such as 'ja'.)::"
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:115
+msgid "% cd doc/locale/ja/ % make html"
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:120
 msgid ""
 ".mo files are updated automatically by `make html`. So you don't care about ."
 "mo files."
@@ -778,11 +957,11 @@ msgstr ""
 ".moファイルは `make html` で自動的に更新されるので、.moファイルのことを気にす"
 "る必要はありません。"
 
-#: ../../../source/contribution/documentation/i18n.txt:123
+#: ../../../source/contribution/documentation/i18n.txt:124
 msgid "How to confirm HTML output"
 msgstr "HTML出力の確認の仕方"
 
-#: ../../../source/contribution/documentation/i18n.txt:125
+#: ../../../source/contribution/documentation/i18n.txt:126
 msgid ""
 "HTML files are generated in doc/locale/${LANGUAGE}/html/. (Please substitute "
 "`${LANGUAGE}` with your language code such as 'ja'.) You can confirm HTML "
@@ -792,11 +971,15 @@ msgstr ""
 "` は'ja'など自分の言語の言語コードに置き換えてください。）好きなブラウザで出"
 "力されたHTMLを確認してください。::"
 
-#: ../../../source/contribution/documentation/i18n.txt:133
+#: ../../../source/contribution/documentation/i18n.txt:131
+msgid "% firefox doc/locale/ja/html/index.html"
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:134
 msgid "How to send your works"
 msgstr "翻訳の成果の送り方"
 
-#: ../../../source/contribution/documentation/i18n.txt:135
+#: ../../../source/contribution/documentation/i18n.txt:136
 msgid ""
 "We can receive your works via pull request on GitHub or E-mail attachment "
 "patch or .po files themselves."
@@ -804,15 +987,19 @@ msgstr ""
 "翻訳の成果はGitHubのpull requestかメールで送ってください。メールで送る場合は"
 "パッチでも.poファイルそのものでも構いません。"
 
-#: ../../../source/contribution/documentation/i18n.txt:139
+#: ../../../source/contribution/documentation/i18n.txt:140
 msgid "How to send pull request"
 msgstr "pull requestの送り方"
 
-#: ../../../source/contribution/documentation/i18n.txt:141
+#: ../../../source/contribution/documentation/i18n.txt:142
 msgid "Here are command lines to send pull request::"
 msgstr "pull requestを送るためのコマンドライン::"
 
-#: ../../../source/contribution/documentation/i18n.txt:147
+#: ../../../source/contribution/documentation/i18n.txt:144
+msgid "% git add doc/locale/ja/LC_MESSAGES/*.po % git commit % git push"
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:148
 msgid ""
 "Now you can send pull request on GitHub. You just access your repository "
 "page on GitHub and press `Pull Request` button."
@@ -820,15 +1007,21 @@ msgstr ""
 "これでGitHub上でpull requestを送る準備ができました。あとは、GitHub上の自分の"
 "リポジトリのページへアクセスして `Pull Request` ボタンを押すだけです。"
 
-#: ../../../source/contribution/documentation/i18n.txt:156
+#: ../../../source/contribution/documentation/i18n.txt:157
 msgid "How to send patch"
 msgstr "パッチの送り方"
 
-#: ../../../source/contribution/documentation/i18n.txt:158
+#: ../../../source/contribution/documentation/i18n.txt:159
 msgid "Here are command lines to create patch::"
 msgstr "パッチを作るためのコマンドライン"
 
-#: ../../../source/contribution/documentation/i18n.txt:164
+#: ../../../source/contribution/documentation/i18n.txt:161
+msgid ""
+"% git add doc/locale/ja/LC_MESSAGES/*.po % git commit % git format-patch "
+"origin/master"
+msgstr ""
+
+#: ../../../source/contribution/documentation/i18n.txt:165
 msgid ""
 "You can find 000X-YYY.patch files in the current directory. Please send "
 "those files to us!"
@@ -836,11 +1029,11 @@ msgstr ""
 "カレントディレクトリに000X-YYY.patchという名前のファイルができていると思いま"
 "す。これをgroongaプロジェクトに送ってください！"
 
-#: ../../../source/contribution/documentation/i18n.txt:170
+#: ../../../source/contribution/documentation/i18n.txt:171
 msgid "How to send .po files"
 msgstr ".poファイルの送り方"
 
-#: ../../../source/contribution/documentation/i18n.txt:172
+#: ../../../source/contribution/documentation/i18n.txt:173
 msgid ""
 "Please archive doc/locale/${LANGUAGE}/LC_MESSAGES/ (Please substitute `"
 "${LANGUAGE}` with your language code such as 'ja'.) and send it to us! We "
@@ -850,15 +1043,22 @@ msgstr ""
 "groongaプロジェクトに送ってください！（`${LANGUAGE}` は'ja'など自分の言語の言"
 "語コードに置き換えてください。）こちらでアーカイブの中の内容をマージします。"
 
-#: ../../../source/contribution/documentation/i18n.txt:180
+#: ../../../source/contribution/documentation/i18n.txt:181
 msgid "How to add new language"
 msgstr "新しい言語の追加方法"
 
-#: ../../../source/contribution/documentation/i18n.txt:182
+#: ../../../source/contribution/documentation/i18n.txt:183
 msgid "Here are command lines to add new translation language::"
 msgstr "新しい翻訳対象の言語を追加するコマンドライン::"
 
-#: ../../../source/contribution/documentation/i18n.txt:187
+#: ../../../source/contribution/documentation/i18n.txt:185
+#, fuzzy
+msgid ""
+"% cd doc/locale % make add LOCALE=${LANGUAGE} # specify your language code "
+"such as 'de'."
+msgstr "`${LANGUAGE}` は'ja'などの自分の言語の言語コードに置き換えてください。"
+
+#: ../../../source/contribution/documentation/i18n.txt:188
 msgid "Please substitute `${LANGUAGE}` with your language code such as 'ja'."
 msgstr "`${LANGUAGE}` は'ja'などの自分の言語の言語コードに置き換えてください。"
 
