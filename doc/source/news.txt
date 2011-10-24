@@ -18,6 +18,7 @@ Improvements
 * Added grn_geo_estimate_in_rectangle().
 * Added cursor API to geo search in rectangle.
 * Improved geo search in rectangle speed.
+* Supported Ubuntu Oneiric Ocelot.
 
 Fixes
 ^^^^^
