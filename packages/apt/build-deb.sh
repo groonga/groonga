@@ -17,6 +17,22 @@ run()
     fi
 }
 
+distribution=debian
+lsb_release=/etc/lsb-release
+if [ -f $lsb_release ]; then
+    case $(grep "DISTRIB_ID=" $lsb_release) in
+	*Ubuntu*)
+	    distribution=ubuntu
+	    ;;
+    esac
+fi
+
+sources_list=/etc/apt/sources.list
+if [ "$distribution" = "ubuntu" ] && \
+    ! (grep '^deb' $sources_list | grep -q universe); then
+    run sed -i'' -e 's/main$/main universe/g' $sources_list
+fi
+
 if [ ! -x /usr/bin/aptitude ]; then
     run apt-get update
     run apt-get install -y aptitude
