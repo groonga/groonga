@@ -72,8 +72,8 @@ Ubuntu 10.04 LTS Lucid Lynx
 
 .. note::
 
-   You should specify universe section of Ubuntu for
-   installing by add file(ex. below-mentioned).
+   You should add universe section in the official Ubuntu
+   repository. The following describes how to add it.
 
 /etc/apt/sources.list.d/groonga.list::
 
@@ -95,13 +95,36 @@ Ubuntu 11.04 Natty Narwhal
 
 .. note::
 
-   You should specify universe section of Ubuntu for
-   installing by add file(ex. below-mentioned).
+   You should add universe section in the official Ubuntu
+   repository. The following describes how to add it.
 
 /etc/apt/sources.list.d/groonga.list::
 
   deb http://packages.groonga.org/ubuntu/ natty universe
   deb-src http://packages.groonga.org/ubuntu/ natty universe
+
+Install::
+
+  % sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 1C837F31
+  % sudo aptitude update
+  % sudo aptitude -V -D -y install groonga
+
+Ubuntu 11.10 Oneiric Ocelot
+---------------------------
+
+.. note::
+
+   We only distribute the package for amd64.
+
+.. note::
+
+   You should add universe section in the official Ubuntu
+   repository. The following describes how to add it.
+
+/etc/apt/sources.list.d/groonga.list::
+
+  deb http://packages.groonga.org/ubuntu/ oneiric universe
+  deb-src http://packages.groonga.org/ubuntu/ oneiric universe
 
 Install::
 
