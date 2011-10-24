@@ -2,13 +2,14 @@
 
 script_base_dir=`dirname $0`
 
-if [ $# != 1 ]; then
-    echo "Usage: $0 DISTRIBUTIONS"
-    echo " e.g.: $0 'fedora centos'"
+if [ $# != 2 ]; then
+    echo "Usage: $0 GPG_KEY_NAME DISTRIBUTIONS"
+    echo " e.g.: $0 mitler-manager 'fedora centos'"
     exit 1
 fi
 
-DISTRIBUTIONS=$1
+GPG_KEY_NAME=$1
+DISTRIBUTIONS=$2
 
 run()
 {
@@ -21,9 +22,9 @@ run()
 
 for distribution in ${DISTRIBUTIONS}; do
     for dir in $script_base_dir/${distribution}/*/*; do
-	run createrepo $dir
+	test -d $dir &&	run createrepo $dir
     done;
 
     run $script_base_dir/gpg-public-key.sh > \
-	$script_base_dir/${distribution}/RPM-GPG-KEY-groonga;
+	$script_base_dir/${distribution}/RPM-GPG-KEY-${GPG_KEY_NAME};
 done

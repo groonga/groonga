@@ -2,14 +2,17 @@
 
 script_base_dir=`dirname $0`
 
-if [ $# != 2 ]; then
-    echo "Usage: $0 PACKAGE DISTRIBUTIONS"
-    echo " e.g.: $0 groonga 'fedora centos'"
+if [ $# != 5 ]; then
+    echo "Usage: $0 PACKAGE PACKAGE_TITLE BASE_URL_PREFIX DISTRIBUTIONS HAVE_DEVELOPMENT_BRANCH"
+    echo " e.g.: $0 milter-manager 'milter manager' http://downloads.sourceforge.net/milter-manager' 'fedora centos' yes"
     exit 1
 fi
 
 PACKAGE=$1
-DISTRIBUTIONS=$2
+PACKAGE_TITLE=$2
+BASE_URL_PREFIX=$3
+DISTRIBUTIONS=$4
+HAVE_DEVELOPMENT_BRANCH=$5
 
 run()
 {
@@ -44,14 +47,32 @@ for distribution in ${DISTRIBUTIONS}; do
 	    ;;
     esac
     repo=${PACKAGE}.repo
-    run cat <<EOR > $repo
-[groonga]
-name=groonga for $distribution_label \$releasever - \$basearch
-baseurl=http://packages.groonga.org/$distribution/\$releasever/\$basearch/
+    if test "$HAVE_DEVELOPMENT_BRANCH" = "yes"; then
+	run cat <<EOR > $repo
+[$PACKAGE]
+name=$PACKAGE_TITLE for $distribution_label \$releasever - \$basearch
+baseurl=$BASE_URL_PREFIX/$distribution/\$releasever/stable/\$basearch/
 gpgcheck=1
 enabled=1
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-groonga
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-$PACKAGE
+
+[$PACKAGE-development]
+name=$PACKAGE_TITLE for $distribution_label \$releasever - development - \$basearch
+baseurl=$BASE_URL_PREFIX/$distribution/\$releasever/development/\$basearch/
+gpgcheck=1
+enabled=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-$PACKAGE
 EOR
+    else
+	run cat <<EOR > $repo
+[$PACKAGE]
+name=$PACKAGE_TITLE for $distribution_label \$releasever - \$basearch
+baseurl=$BASE_URL_PREFIX/$distribution/\$releasever/\$basearch/
+gpgcheck=1
+enabled=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-$PACKAGE
+EOR
+    fi
     run tar cfz $rpm_base_dir/SOURCES/${PACKAGE}-repository.tar.gz \
 	-C ${script_base_dir} ${repo} RPM-GPG-KEY-${PACKAGE}
     run cp ${script_base_dir}/${PACKAGE}-repository.spec $rpm_base_dir/SPECS/

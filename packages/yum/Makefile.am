@@ -1,15 +1,13 @@
+SERVER_PATH = $(RSYNC_PATH)
 DISTRIBUTIONS = fedora centos
 ARCHITECTURES = x86_64
 CHROOT_BASE = /var/lib/chroot
+BASE_URL_PREFIX = http://packages.groonga.org
+HAVE_DEVELOPMENT_BRANCH = no
+USE_RPMFORGE = no
+USE_ATRPMS = no
 
-all:
-
-release: build sign update upload
-
-remove-existing-packages:
-	for distribution in $(DISTRIBUTIONS); do	\
-	  find $${distribution} -name "*.rpm" -delete;	\
-	done
+release: download build sign update upload
 
 ensure-rsync-path:
 	@if test -z "$(RSYNC_PATH)"; then				\
@@ -17,37 +15,56 @@ ensure-rsync-path:
 	  false;							\
 	fi
 
-download: ensure-rsync-path
-	for distribution in $(DISTRIBUTIONS); do			\
-	  rsync -avz $(RSYNC_PATH)/$${distribution}/ $${distribution};	\
-	done
-
 sign:
 	./sign-rpm.sh '$(DISTRIBUTIONS)'
 
 update:
-	./update-repository.sh '$(DISTRIBUTIONS)'
+	./update-repository.sh $(PACKAGE) '$(DISTRIBUTIONS)'
 
 upload: ensure-rsync-path
 	for distribution in $(DISTRIBUTIONS); do		\
 	  rsync -avz --delete --exclude .gitignore		\
-	    $${distribution}/ $(RSYNC_PATH)/$${distribution};	\
+	    $${distribution}/ $(SERVER_PATH)/$${distribution};	\
 	done
 
-build: source build-in-chroot build-repository-rpm
+download: ensure-rsync-path
+	for distribution in $(DISTRIBUTIONS); do		\
+	  (rm -rf $${distribution} &&				\
+	   mkdir -p $${distribution} &&				\
+	   rsync -avz						\
+	     $(SERVER_PATH)/$${distribution}/ $${distribution};	\
+	done
+
+build: build-in-chroot build-repository-rpm
+
+build-in-chroot: source
+	./build-in-chroot.sh			\
+	  $(PACKAGE)				\
+	  $(VERSION)				\
+	  $(top_builddir)/$(PACKAGE)		\
+	  ../rpm				\
+	  $(CHROOT_BASE)			\
+	  '$(ARCHITECTURES)'			\
+	  '$(DISTRIBUTIONS)'			\
+	  '$(HAVE_DEVELOPMENT_BRANCH)'		\
+	  '$(USE_RPMFORGE)'			\
+	  '$(USE_ATRPMS)'
+
+build-repository-rpm: RPM-GPG-KEY-$(PACKAGE)
+	./build-repository-rpm.sh		\
+	  $(PACKAGE)				\
+	  '$(PACKAGE_TITLE)'			\
+	  $(BASE_URL_PREFIX)			\
+	  '$(DISTRIBUTIONS)'			\
+	  $(HAVE_DEVELOPMENT_BRANCH)
+
+RPM-GPG-KEY-$(PACKAGE):
+	./gpg-public-key.sh > $@
 
 source: ../$(PACKAGE)-$(VERSION).tar.gz
 
-../$(PACKAGE)-$(VERSION).tar.gz:
+../$(PACKAGE)-$(VERSION).tar.gz: $(abs_top_builddir)/$(PACKAGE)-$(VERSION).tar.gz
 	ln -s $(abs_top_builddir)/$(PACKAGE)-$(VERSION).tar.gz ../
 
-build-in-chroot:
-	./build-in-chroot.sh			\
-	  $(PACKAGE) $(VERSION) $(CHROOT_BASE)	\
-	  '$(ARCHITECTURES)' '$(DISTRIBUTIONS)'
-
-build-repository-rpm: RPM-GPG-KEY-groonga
-	./build-repository-rpm.sh $(PACKAGE) '$(DISTRIBUTIONS)'
-
-RPM-GPG-KEY-groonga:
-	./gpg-public-key.sh > $@
+$(abs_top_builddir)/$(PACKAGE)-$(VERSION).tar.gz:
+	cd $(abs_top_builddir) && make dist
