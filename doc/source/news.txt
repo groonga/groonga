@@ -7,7 +7,7 @@ News
 
 .. _release-1-2-7:
 
-Release 1.2.6 - 2011/09/29
+Release 1.2.7 - 2011/10/29
 --------------------------
 
 Improvements
