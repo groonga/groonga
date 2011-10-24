@@ -5,6 +5,31 @@
 News
 ====
 
+.. _release-1-2-7:
+
+Release 1.2.6 - 2011/09/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [libedit] Added error check for wide character to
+  multibyte sequence conversion. [Reported by SHIDARA Yoji]
+* Added grn_geo_estimate_in_rectangle().
+* Added cursor API to geo search in rectangle.
+* Improved geo search in rectangle speed.
+
+Fixes
+^^^^^
+
+* Fixed a typo in document. [Reported by @soundkitchen]
+
+Thanks
+^^^^^^
+
+* SHIDARA Yoji
+* @soundkitchen
+
 .. _release-1-2-6:
 
 Release 1.2.6 - 2011/09/29
