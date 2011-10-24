@@ -109,10 +109,15 @@ How to generate HTML files
 You can generate HTML files with updated .po files by
 running `make html` on doc/locale/${LANGUAGE}. (Please
 substitute `${LANGUAGE}` with your language code such as
-'ja'.) You can also generate all languages files by running
-this command on doc/locale.::
+'ja'.)::
 
   % cd doc/locale/ja/
+  % make html
+
+You can also generate HTML files for all languages by
+running `make html` on doc/locale::
+
+  % cd doc/locale
   % make html
 
 .. note::
