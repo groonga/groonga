@@ -128,6 +128,66 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/functions/now.txt \
 	$(top_srcdir)/doc/source/functions/rand.txt \
 	$(top_srcdir)/doc/source/geolocation_search.txt \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/array.png \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/array.svg \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/columns.png \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/columns.svg \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/hash-table.png \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/hash-table.svg \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/index-column.png \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/index-column.svg \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/inverted-index.png \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/inverted-index.svg \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/patricia-trie.png \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/patricia-trie.svg \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/prefix-search.png \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/prefix-search.svg \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/record-id.png \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/record-id.svg \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/record.png \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/record.svg \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/scalar-column.png \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/scalar-column.svg \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/search-bigram-index-column-value.png \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/search-bigram-index-column-value.svg \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/search-bigram-token-id.png \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/search-bigram-token-id.svg \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/search-bigram.png \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/search-bigram.svg \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/search-choose-tokenizer.png \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/search-choose-tokenizer.svg \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/search-first-index-column-value.png \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/search-first-index-column-value.svg \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/search-first-token-id.png \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/search-first-token-id.svg \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/search-initial-state.png \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/search-initial-state.svg \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/search-on-key-table.png \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/search-on-key-table.svg \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/search-result.png \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/search-result.svg \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/search-second-index-column-value.png \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/search-second-index-column-value.svg \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/search-second-token-id.png \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/search-second-token-id.svg \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/tokenizer.png \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/tokenizer.svg \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/update-initial.png \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/update-initial.svg \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/update-process-first-data-first-token.png \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/update-process-first-data-first-token.svg \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/update-process-first-data-second-token.png \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/update-process-first-data-second-token.svg \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/update-process-second-data-first-token.png \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/update-process-second-data-first-token.svg \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/update-process-second-data-second-token.png \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/update-process-second-data-second-token.svg \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/update-save-first-data.png \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/update-save-first-data.svg \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/update-save-second-data.png \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/update-save-second-data.svg \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/vector-column.png \
+	$(top_srcdir)/doc/source/images/fulltext-introduction/vector-column.svg \
 	$(top_srcdir)/doc/source/images/geo-encode-leading-2bit.png \
 	$(top_srcdir)/doc/source/images/geo-encode-leading-2bit.svg \
 	$(top_srcdir)/doc/source/images/geo-encode-leading-4bit.png \
@@ -155,6 +215,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/news/0.x.txt \
 	$(top_srcdir)/doc/source/news/1.0.x.txt \
 	$(top_srcdir)/doc/source/news/1.1.x.txt \
+	$(top_srcdir)/doc/source/news/senna.txt \
 	$(top_srcdir)/doc/source/pseudo_column.txt \
 	$(top_srcdir)/doc/source/rdoc.py \
 	$(top_srcdir)/doc/source/reference.txt \
@@ -329,6 +390,66 @@ source_files_relative_from_doc_dir = \
 	source/functions/now.txt \
 	source/functions/rand.txt \
 	source/geolocation_search.txt \
+	source/images/fulltext-introduction/array.png \
+	source/images/fulltext-introduction/array.svg \
+	source/images/fulltext-introduction/columns.png \
+	source/images/fulltext-introduction/columns.svg \
+	source/images/fulltext-introduction/hash-table.png \
+	source/images/fulltext-introduction/hash-table.svg \
+	source/images/fulltext-introduction/index-column.png \
+	source/images/fulltext-introduction/index-column.svg \
+	source/images/fulltext-introduction/inverted-index.png \
+	source/images/fulltext-introduction/inverted-index.svg \
+	source/images/fulltext-introduction/patricia-trie.png \
+	source/images/fulltext-introduction/patricia-trie.svg \
+	source/images/fulltext-introduction/prefix-search.png \
+	source/images/fulltext-introduction/prefix-search.svg \
+	source/images/fulltext-introduction/record-id.png \
+	source/images/fulltext-introduction/record-id.svg \
+	source/images/fulltext-introduction/record.png \
+	source/images/fulltext-introduction/record.svg \
+	source/images/fulltext-introduction/scalar-column.png \
+	source/images/fulltext-introduction/scalar-column.svg \
+	source/images/fulltext-introduction/search-bigram-index-column-value.png \
+	source/images/fulltext-introduction/search-bigram-index-column-value.svg \
+	source/images/fulltext-introduction/search-bigram-token-id.png \
+	source/images/fulltext-introduction/search-bigram-token-id.svg \
+	source/images/fulltext-introduction/search-bigram.png \
+	source/images/fulltext-introduction/search-bigram.svg \
+	source/images/fulltext-introduction/search-choose-tokenizer.png \
+	source/images/fulltext-introduction/search-choose-tokenizer.svg \
+	source/images/fulltext-introduction/search-first-index-column-value.png \
+	source/images/fulltext-introduction/search-first-index-column-value.svg \
+	source/images/fulltext-introduction/search-first-token-id.png \
+	source/images/fulltext-introduction/search-first-token-id.svg \
+	source/images/fulltext-introduction/search-initial-state.png \
+	source/images/fulltext-introduction/search-initial-state.svg \
+	source/images/fulltext-introduction/search-on-key-table.png \
+	source/images/fulltext-introduction/search-on-key-table.svg \
+	source/images/fulltext-introduction/search-result.png \
+	source/images/fulltext-introduction/search-result.svg \
+	source/images/fulltext-introduction/search-second-index-column-value.png \
+	source/images/fulltext-introduction/search-second-index-column-value.svg \
+	source/images/fulltext-introduction/search-second-token-id.png \
+	source/images/fulltext-introduction/search-second-token-id.svg \
+	source/images/fulltext-introduction/tokenizer.png \
+	source/images/fulltext-introduction/tokenizer.svg \
+	source/images/fulltext-introduction/update-initial.png \
+	source/images/fulltext-introduction/update-initial.svg \
+	source/images/fulltext-introduction/update-process-first-data-first-token.png \
+	source/images/fulltext-introduction/update-process-first-data-first-token.svg \
+	source/images/fulltext-introduction/update-process-first-data-second-token.png \
+	source/images/fulltext-introduction/update-process-first-data-second-token.svg \
+	source/images/fulltext-introduction/update-process-second-data-first-token.png \
+	source/images/fulltext-introduction/update-process-second-data-first-token.svg \
+	source/images/fulltext-introduction/update-process-second-data-second-token.png \
+	source/images/fulltext-introduction/update-process-second-data-second-token.svg \
+	source/images/fulltext-introduction/update-save-first-data.png \
+	source/images/fulltext-introduction/update-save-first-data.svg \
+	source/images/fulltext-introduction/update-save-second-data.png \
+	source/images/fulltext-introduction/update-save-second-data.svg \
+	source/images/fulltext-introduction/vector-column.png \
+	source/images/fulltext-introduction/vector-column.svg \
 	source/images/geo-encode-leading-2bit.png \
 	source/images/geo-encode-leading-2bit.svg \
 	source/images/geo-encode-leading-4bit.png \
@@ -356,6 +477,7 @@ source_files_relative_from_doc_dir = \
 	source/news/0.x.txt \
 	source/news/1.0.x.txt \
 	source/news/1.1.x.txt \
+	source/news/senna.txt \
 	source/pseudo_column.txt \
 	source/rdoc.py \
 	source/reference.txt \
@@ -563,6 +685,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/news/0.x.txt \
 	html/_sources/news/1.0.x.txt \
 	html/_sources/news/1.1.x.txt \
+	html/_sources/news/senna.txt \
 	html/_sources/pseudo_column.txt \
 	html/_sources/reference.txt \
 	html/_sources/spec.txt \
@@ -678,6 +801,7 @@ html_files_relative_from_locale_dir = \
 	html/news/0.x.html \
 	html/news/1.0.x.html \
 	html/news/1.1.x.html \
+	html/news/senna.html \
 	html/objects.inv \
 	html/pseudo_column.html \
 	html/reference.html \
