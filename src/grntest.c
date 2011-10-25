@@ -37,7 +37,6 @@
 #include <netinet/in.h>
 #endif /* HAVE_NETINET_IN_H */
 
-#define __USE_XOPEN
 #include "lib/str.h"
 #include "lib/com.h"
 #include "lib/db.h"
