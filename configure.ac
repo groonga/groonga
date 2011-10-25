@@ -39,6 +39,17 @@ AC_MSG_RESULT([$platform_win32])
 AM_CONDITIONAL(OS_WIN32, test "$os_win32" = "yes")
 AM_CONDITIONAL(PLATFORM_WIN32, test "$platform_win32" = "yes")
 
+AC_MSG_CHECKING([for NetBSD.])
+case "$host_os" in
+  netbsd*)
+    netbsd=yes
+    ;;
+  *)
+    netbsd=no
+    ;;
+esac
+AC_MSG_RESULT([$netbsd])
+
 AC_C_BIGENDIAN
 AC_PROG_CXX
 AC_PROG_CC
@@ -174,6 +185,26 @@ AC_CONFIG_FILES([
   test/benchmark/lib/Makefile
 ])
 
+if test "$GCC" = "yes"; then
+  AC_DEFINE(_GNU_SOURCE, [1], [Define to 1 if you use GCC.])
+fi
+
+if test "$netbsd" = "yes"; then
+  AC_DEFINE(_NETBSD_SOURCE, [1], [Define to 1 if you are on NetBSD.])
+fi
+
+# AIO
+AC_ARG_ENABLE(aio,
+  [AS_HELP_STRING([--enable-aio],
+                  [use aio/dio based cache. [default=no]])],
+  ,
+  [enable_aio="no"])
+if test "x$enable_aio" != "xno"; then
+  AC_DEFINE(_XOPEN_SOURCE, [600], [Define to 600 for use AIO.])
+  AC_CHECK_LIB(rt, nanosleep, [], [AC_MSG_ERROR("No librt found")])
+  AC_DEFINE(USE_AIO, [1], [use AIO/DIO])
+fi
+
 AC_CHECK_HEADERS(sys/mman.h sys/time.h sys/timeb.h sys/param.h sys/types.h sys/resource.h)
 AC_CHECK_HEADERS(netdb.h sys/wait.h sys/socket.h netinet/in.h netinet/tcp.h)
 AC_CHECK_HEADERS(ucontext.h signal.h errno.h execinfo.h sys/sysctl.h)
@@ -251,16 +282,6 @@ fi
 AC_CHECK_LIB(nsl, gethostbyname, [NSL_LIBS="-lnsl"])
 AC_CHECK_LIB(socket, socket, [SOCKET_LIBS="-lsocket"])
 AC_CHECK_LIB(dl, dlopen, [NSL_LIBS="-ldl"])
-
-# aio
-AC_ARG_ENABLE(aio,
-  [AS_HELP_STRING([--enable-aio],
-    [use aio/dio based cache. [default=no]])],,
-  [enable_aio="no"])
-if test "x$enable_aio" != "xno"; then
-  AC_CHECK_LIB(rt, nanosleep, [], [AC_MSG_ERROR("No librt found")])
-  AC_DEFINE(USE_AIO, [1], [use AIO/DIO])
-fi
 
 # nfkc
 AC_ARG_ENABLE(nfkc,
