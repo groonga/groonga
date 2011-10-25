@@ -258,7 +258,7 @@ AC_ARG_ENABLE(aio,
     [use aio/dio based cache. [default=no]])],,
   [enable_aio="no"])
 if test "x$enable_aio" != "xno"; then
- 	AC_CHECK_LIB(rt, nanosleep, [], [AC_MSG_ERROR("No librt found")])
+  AC_CHECK_LIB(rt, nanosleep, [], [AC_MSG_ERROR("No librt found")])
   AC_DEFINE(USE_AIO, [1], [use AIO/DIO])
 fi
 
