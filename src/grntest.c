@@ -2951,7 +2951,8 @@ main(int argc, char **argv)
   int qnum, i, mode = 0;
   grn_ctx context;
   char sysinfo[BUF_LEN];
-  char log[BUF_LEN];
+  char log_path_buffer[BUF_LEN];
+  const char *log_path = NULL;
   const char *portstr=NULL, *hoststr=NULL, *dbname=NULL, *scrname=NULL, *outdir=NULL, *outtype=NULL;
   time_t sec;
 
@@ -2968,6 +2969,7 @@ main(int argc, char **argv)
     {'\0', "owndb", NULL, MODE_OWNDB, getopt_op_on},
     {'\0', "groonga", NULL, 0, getopt_op_none},
     {'\0', "protocol", NULL, 0, getopt_op_none},
+    {'\0', "log-path", NULL, 0, getopt_op_none},
     {'\0', NULL, NULL, 0, 0}
   };
 
@@ -2977,6 +2979,7 @@ main(int argc, char **argv)
   opts[3].arg = &outtype;
   opts[10].arg = &groonga_path;
   opts[11].arg = &groonga_protocol;
+  opts[12].arg = &log_path;
 
   i = grn_str_getopt(argc, argv, opts, &mode);
   if (i < 0) {
@@ -3073,17 +3076,24 @@ main(int argc, char **argv)
   sec = (time_t)(GRN_TIME_VALUE(&grntest_starttime)/1000000);
   get_date(grntest_date, &sec);
 
-  if (outdir) {
-    sprintf(log, "%s/%s-%s-%" GRN_FMT_LLD "-%s.log", outdir, grntest_scriptname,
-            grntest_username, GRN_TIME_VALUE(&grntest_starttime), grn_get_version());
-  } else {
-    sprintf(log, "%s-%s-%" GRN_FMT_LLD "-%s.log", grntest_scriptname,
-            grntest_username, GRN_TIME_VALUE(&grntest_starttime), grn_get_version());
+  if (!log_path) {
+    if (outdir) {
+      sprintf(log_path_buffer,
+              "%s/%s-%s-%" GRN_FMT_LLD "-%s.log", outdir, grntest_scriptname,
+              grntest_username,
+              GRN_TIME_VALUE(&grntest_starttime), grn_get_version());
+    } else {
+      sprintf(log_path_buffer,
+              "%s-%s-%" GRN_FMT_LLD "-%s.log", grntest_scriptname,
+              grntest_username,
+              GRN_TIME_VALUE(&grntest_starttime), grn_get_version());
+    }
+    log_path = log_path_buffer;
   }
 
-  grntest_logfp = fopen(log, "w+b");
+  grntest_logfp = fopen(log_path, "w+b");
   if (!grntest_logfp) {
-    fprintf(stderr, "Cannot open logfile:%s\n", log);
+    fprintf(stderr, "Cannot open log file: <%s>\n", log_path);
     goto exit;
   }
 
@@ -3098,10 +3108,10 @@ main(int argc, char **argv)
   fclose(grntest_logfp);
 
   if (grntest_ftp_mode) {
-    ftp_sub(FTPUSER, FTPPASSWD, FTPSERVER, log, 3,
+    ftp_sub(FTPUSER, FTPPASSWD, FTPSERVER, log_path, 3,
             "report", NULL);
   }
-  fprintf(stderr, "grntest done. logfile=%s\n", log);
+  fprintf(stderr, "grntest done. logfile=%s\n", log_path);
 
 exit:
   shutdown_server();
