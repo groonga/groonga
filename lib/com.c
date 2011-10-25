@@ -972,11 +972,13 @@ grn_com_sopen(grn_ctx *ctx, grn_com_event *ev,
                                    NULL, &bind_address_info);
   if (getaddrinfo_result != 0) {
     switch (getaddrinfo_result) {
+#ifdef EAI_MEMORY
     case EAI_MEMORY:
       ERR(GRN_NO_MEMORY_AVAILABLE,
           "getaddrinfo: <%s:%s>: %s",
           bind_address, port_string, gai_strerror(getaddrinfo_result));
       break;
+#endif
 #ifdef EAI_SYSTEM
     case EAI_SYSTEM:
       SERR("getaddrinfo");
