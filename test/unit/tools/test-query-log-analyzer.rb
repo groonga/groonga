@@ -170,8 +170,10 @@ EOL
       statistics = GroongaQueryLogAnalyzer::SizedStatistics.new
       statistics.apply_options(:n_entries => 100,
                                :order => "-elapsed")
-      parser = GroongaQueryLogAnalyzer::QueryLogParser.new(statistics)
-      parser.parse(StringIO.new(log))
+      parser = GroongaQueryLogAnalyzer::QueryLogParser.new
+      parser.parse(StringIO.new(log)) do |statistic|
+        statistics << statistic
+      end
       statistics
     end
   end
