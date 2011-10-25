@@ -207,6 +207,8 @@ fi
 if test "$solaris" = "yes"; then
   AC_DEFINE(_XPG4_2, [1],
             [Define to 1 for msghdr.msg_control if you are on Solaris.])
+  AC_DEFINE(__EXTENSIONS__, [1],
+            [Define to 1 for singal.h with _XPG4_2 if you are on Solaris.])
 fi
 
 # AIO
