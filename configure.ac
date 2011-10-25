@@ -896,6 +896,7 @@ echo "$PACKAGE_NAME $PACKAGE_VERSION configuration:"
 echo "-----------------------"
 echo "  Compiler:              ${CC}"
 echo "  CFLAGS:                ${CFLAGS}"
+echo "  CXXFLAGS:              ${CXXFLAGS}"
 echo "  Libraries:             ${LIBS}"
 echo "  Documentation:         ${document_available}"
 echo
