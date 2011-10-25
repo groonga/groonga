@@ -1,5 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2010 Brazil
+/*
+  Copyright(C) 2010-2011 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -76,7 +77,7 @@ static int grntest_remote_mode = 0;
 static int grntest_localonly_mode = 0;
 static int grntest_owndb_mode = 0;
 static int grntest_onmemory_mode = 0;
-static int grntest_noftp_mode = 0;
+static grn_bool grntest_ftp_mode = GRN_FALSE;
 #define TMPFILE "_grntest.tmp"
 
 static grn_ctx grntest_server_context;
@@ -2771,7 +2772,7 @@ usage(void)
          "  -i, --host <ip/hostname>:  server address to listen (default: %s)\n"
          "  --localonly:               omit server connection\n"
          "  --log-output-dir:          specify output dir (default: current)\n"
-         "  --noftp:                   omit ftp connection\n"
+         "  --ftp:                     connect to ftp server\n"
          "  --onmemory:                load all commands into memory\n"
          "  --output-type <tsv/json>:  specify output-type (default: json)\n"
          "  --owndb:                   open dbs for each ctx\n"
@@ -2790,7 +2791,7 @@ enum {
 };
 
 #define MODE_MASK      0x007f
-#define MODE_NOFTP     0x0080
+#define MODE_FTP       0x0080
 #define MODE_LOCALONLY 0x0100
 #define MODE_OWNDB     0x0800
 #define MODE_ONMEMORY  0x1000
@@ -2960,7 +2961,7 @@ main(int argc, char **argv)
     {'\0', "log-output-dir", NULL, 0, getopt_op_none},
     {'\0', "output-type", NULL, 0, getopt_op_none},
     {'\0', "dir", NULL, mode_list, getopt_op_update},
-    {'\0', "noftp", NULL, MODE_NOFTP, getopt_op_on},
+    {'\0', "ftp", NULL, MODE_FTP, getopt_op_on},
     {'h', "help", NULL, mode_usage, getopt_op_update},
     {'\0', "localonly", NULL, MODE_LOCALONLY, getopt_op_on},
     {'\0', "onmemory", NULL, MODE_ONMEMORY, getopt_op_on},
@@ -3018,8 +3019,8 @@ main(int argc, char **argv)
     grntest_onmemory_mode= 1;
   }
 
-  if (mode & MODE_NOFTP) {
-    grntest_noftp_mode= 1;
+  if (mode & MODE_FTP) {
+    grntest_ftp_mode = GRN_TRUE;
   }
 
   if ((scrname == NULL) || (dbname == NULL)) {
@@ -3048,7 +3049,7 @@ main(int argc, char **argv)
   grn_db_create(&grntest_server_context, NULL, NULL);
   grn_set_default_encoding(GRN_ENC_UTF8);
 
-  if (!grntest_noftp_mode) {
+  if (grntest_ftp_mode) {
     sync_script(&context, scrname);
   }
   check_script(scrname);
@@ -3096,7 +3097,7 @@ main(int argc, char **argv)
   output_result_final(&context, qnum);
   fclose(grntest_logfp);
 
-  if (!grntest_noftp_mode) {
+  if (grntest_ftp_mode) {
     ftp_sub(FTPUSER, FTPPASSWD, FTPSERVER, log, 3,
             "report", NULL);
   }

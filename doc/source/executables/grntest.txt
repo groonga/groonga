@@ -24,9 +24,9 @@ grntestは、groonga汎用テストツールです。
 
 groongaを単独のプロセスとして利用する場合はもちろん、サーバプログラムとして利用する場合の動作確認や実行速度測定が可能です。
 
-grntest を利用するために必要なデータファイルは、ftp.groonga.orgから必要に応じダウンロードしますので、groonga及びgrntestが動作し、インターネットに接続できる環境であればgroongaコマンドの知識がなくてもgroongaの動作を確認できます。
+grntest用のデータファイルは自分で作成することも既存のものを利用することもできます。既存のデータファイルは、ftp.groonga.orgから必要に応じダウンロードします。そのため、groonga及びgrntestが動作し、インターネットに接続できる環境であればgroongaコマンドの知識がなくてもgroongaの動作を確認できます。
 
-現在は、linux 及びWindows上で動作します。make installしてもインストールは行われません。
+現在は、Linux 及びWindows上で動作します。make installしてもインストールは行われません。
 
 オプション
 ----------
@@ -44,9 +44,9 @@ grntest を利用するために必要なデータファイルは、ftp.groonga.
 
   ftp.groonga.org に用意されているスクリプトファイルを表示します。
 
-.. cmdoption:: --noftp
+.. cmdoption:: --ftp
 
-  通常grntestはftp.groonga.orgとftp通信を行い、scriptファイルの同期やログファイルの送信を行います。--noftp オプションを指定するとftp 通信を一切行わないようになります。存在しないスクリプトファイルを指定した場合、エラーとなることに注意してください。
+  ftp.groonga.orgとFTP通信を行い、scriptファイルの同期やログファイルの送信を行います。
 
 .. cmdoption:: --log-output-dir
 
@@ -58,7 +58,7 @@ grntest を利用するために必要なデータファイルは、ftp.groonga.
 
 .. cmdoption:: --protocol <gqtp|http>
 
-  groongaコマンドが使うプロトコルとして``gqtp``または``http``を指定します。
+  groongaコマンドが使うプロトコルとして `gqtp` または `http` を指定します。
 
 引数
 ----
@@ -264,7 +264,7 @@ grntestが正常に終了すると、(拡張子を除いた)スクリプト名-�
 
 もし、grntestが正常に動作しない場合、まず以下を確認してください。
 
-* インターネットに接続しているか？　--noftp モードを指定しない限り、grntestは動作のたびにftp.groonga.orgと通信します。ftp.groonga.orgと通信可能でない場合、grntestは正常に動作しません。
+* インターネットに接続しているか？ `--ftp` オプションを指定すると、grntestは動作のたびにftp.groonga.orgと通信します。ftp.groonga.orgと通信可能でない場合、grntestは正常に動作しません。
 
 * groonga サーバが動作していないか？　grntestは、-i, --host オプションで明示的にサーバを指定しないかぎり、自動的にlocalhostのgroongaサーバを立ち上げます。すでにgroongaサーバが動作している場合、grntestは正常に動作しない可能性があります。
 

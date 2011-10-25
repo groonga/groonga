@@ -36,8 +36,7 @@ class GrnTestHTTPTest < Test::Unit::TestCase
     script = tempfile("script") do |file|
       file.puts("out_http #{command.path} #{expected.path}")
     end
-    output, error, status = invoke_grntest("--noftp",
-                                           "--groonga", groonga,
+    output, error, status = invoke_grntest("--groonga", groonga,
                                            "--protocol", "http",
                                            "--log-output-dir", @tmp_dir,
                                            script.path, @database_path)
@@ -74,8 +73,7 @@ class GrnTestHTTPTest < Test::Unit::TestCase
     script_file = tempfile("script") do |file|
       file.puts("test_http #{command_file.path} #{expected_file.path}")
     end
-    output, error, status = invoke_grntest("--noftp",
-                                           "--groonga", groonga,
+    output, error, status = invoke_grntest("--groonga", groonga,
                                            "--protocol", "http",
                                            "--log-output-dir", @tmp_dir,
                                            script_file.path,
@@ -113,8 +111,7 @@ class GrnTestHTTPTest < Test::Unit::TestCase
     script_file = tempfile("script") do |file|
       file.puts("test_http #{command_file.path} #{expected_file.path}")
     end
-    output, error, status = invoke_grntest("--noftp",
-                                           "--groonga", groonga,
+    output, error, status = invoke_grntest("--groonga", groonga,
                                            "--protocol", "http",
                                            "--log-output-dir", @tmp_dir,
                                            script_file.path,

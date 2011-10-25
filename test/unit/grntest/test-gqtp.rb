@@ -37,8 +37,7 @@ class GrnTestGQTPTest < Test::Unit::TestCase
       file.puts("do_gqtp #{command_file.path} 10 5")
       file.puts("do_gqtp #{command_file.path} 4 2")
     end
-    output, error, status = invoke_grntest("--noftp",
-                                           "--groonga", groonga,
+    output, error, status = invoke_grntest("--groonga", groonga,
                                            "--protocol", "gqtp",
                                            "--log-output-dir", @tmp_dir,
                                            script_file.path,
