@@ -53,13 +53,13 @@ AC_MSG_RESULT([$netbsd])
 AC_MSG_CHECKING([for Solaris.])
 case "$host_os" in
   solaris*)
-    soralis=yes
+    solaris=yes
     ;;
   *)
-    soralis=no
+    solaris=no
     ;;
 esac
-AC_MSG_RESULT([$soralis])
+AC_MSG_RESULT([$solaris])
 
 AC_C_BIGENDIAN
 AC_PROG_CXX
@@ -204,7 +204,7 @@ if test "$netbsd" = "yes"; then
   AC_DEFINE(_NETBSD_SOURCE, [1], [Define to 1 if you are on NetBSD.])
 fi
 
-if test "$soralis" = "yes"; then
+if test "$solaris" = "yes"; then
   AC_DEFINE(_XPG4_2, [1],
             [Define to 1 for msghdr.msg_control if you are on Solaris.])
 fi
