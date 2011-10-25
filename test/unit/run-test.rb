@@ -25,5 +25,4 @@ require 'groonga-local-gqtp-test-utils'
 require 'groonga-grntest-test-utils'
 
 ARGV.unshift("--exclude", "run-test.rb")
-ARGV.unshift("--show-detail-immediately")
 exit Test::Unit::AutoRunner.run(true, File.dirname($0))
