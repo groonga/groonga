@@ -19,6 +19,7 @@ Improvements
 * Added cursor API to geo search in rectangle.
 * Improved geo search in rectangle speed.
 * Added packages for Ubuntu 11.10 Oneiric Ocelot
+* [experimental] Supported Oracle Solaris 10 8/11. (just buildable with system gcc.)
 
 Fixes
 ^^^^^
