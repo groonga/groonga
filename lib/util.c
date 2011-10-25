@@ -15,12 +15,13 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include <string.h>
-#include <stdio.h>
 #include "db.h"
 #include "pat.h"
 #include "ii.h"
 #include "util.h"
+
+#include <string.h>
+#include <stdio.h>
 
 grn_rc
 grn_normalize_offset_and_limit(grn_ctx *ctx, int size, int *p_offset, int *p_limit)

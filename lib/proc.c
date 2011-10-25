@@ -15,11 +15,6 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include <string.h>
-#include <stdlib.h>
-#define __USE_GNU
-#include <fcntl.h>
-#include <sys/stat.h>
 #include "proc.h"
 #include "ql.h"
 #include "ii.h"
@@ -28,6 +23,12 @@
 #include "output.h"
 #include "pat.h"
 #include "geo.h"
+
+#include <string.h>
+#include <stdlib.h>
+#define __USE_GNU
+#include <fcntl.h>
+#include <sys/stat.h>
 
 #ifndef O_NOFOLLOW
 #define O_NOFOLLOW 0

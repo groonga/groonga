@@ -16,10 +16,10 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include <string.h>
-
 #include <str.h>
 #include <groonga/plugin.h>
+
+#include <string.h>
 
 static grn_obj *
 func_str_len(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)

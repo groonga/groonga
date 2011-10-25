@@ -15,12 +15,13 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include <stdio.h>
-#include <string.h>
 #include "db.h"
 #include "plugin_in.h"
 #include "ql.h"
 #include "util.h"
+
+#include <stdio.h>
+#include <string.h>
 
 static grn_hash *grn_plugins = NULL;
 
