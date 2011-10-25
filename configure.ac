@@ -299,7 +299,7 @@ if test "$os_win32" != "yes"; then
 fi
 AC_CHECK_LIB(nsl, gethostbyname, [NSL_LIBS="-lnsl"])
 AC_CHECK_LIB(socket, socket, [SOCKET_LIBS="-lsocket"])
-AC_CHECK_LIB(dl, dlopen, [NSL_LIBS="-ldl"])
+AC_CHECK_LIB(dl, dlopen, [DL_LIBS="-ldl"])
 
 # nfkc
 AC_ARG_ENABLE(nfkc,
@@ -857,7 +857,7 @@ GRN_DEFS="$GRN_DEFS -DGRN_DEFAULT_RELATIVE_DOCUMENT_ROOT=\\\"\"share/\$(PACKAGE)
 AC_SUBST(GRN_DEFS)
 CFLAGS="$CFLAGS $OPT_CFLAGS "
 LIBS="$LIBS $ZLIB_LIBS $LZO_LIBS $BACKTRACE_LIBS $RT_LIBS $PTHREAD_LIBS"
-LIBS="$LIBS $M_LIBS $NSL_LIBS $SOCKET_LIBS $WINDOWS_LIBS"
+LIBS="$LIBS $M_LIBS $NSL_LIBS $SOCKET_LIBS $DL_LIBS $WINDOWS_LIBS"
 AC_DEFINE_UNQUOTED(CONFIGURE_OPTIONS, "$ac_configure_args", "specified configure options")
 
 # For groonga.org
