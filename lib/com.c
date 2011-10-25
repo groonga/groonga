@@ -33,6 +33,9 @@
 #  ifdef HAVE_NETINET_TCP_H
 #   include <netinet/tcp.h>
 #  endif /* HAVE_NETINET_TCP_H */
+#  ifdef HAVE_SIGNAL_H
+#   include <signal.h>
+#  endif /* HAVE_SIGNAL_H */
 #endif /* WIN32 */
 
 #include "ctx.h"
