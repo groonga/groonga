@@ -964,6 +964,7 @@ grn_com_sopen(grn_ctx *ctx, grn_com_event *ev,
   grn_com *cs = NULL;
   int getaddrinfo_result;
   struct addrinfo *bind_address_info = NULL;
+  struct addrinfo hints;
   char port_string[6]; /* ceil(log10(65535)) + 1 ('\0')*/
 
   GRN_API_ENTER;
@@ -971,8 +972,12 @@ grn_com_sopen(grn_ctx *ctx, grn_com_event *ev,
     bind_address = "0.0.0.0";
   }
   snprintf(port_string, sizeof(port_string), "%d", port);
+  memset(&hints, 0, sizeof(struct addrinfo));
+  hints.ai_family = PF_UNSPEC;
+  hints.ai_socktype = SOCK_STREAM;
+  hints.ai_flags = AI_NUMERICSERV;
   getaddrinfo_result = getaddrinfo(bind_address, port_string,
-                                   NULL, &bind_address_info);
+                                   &hints, &bind_address_info);
   if (getaddrinfo_result != 0) {
     switch (getaddrinfo_result) {
 #ifdef EAI_MEMORY
