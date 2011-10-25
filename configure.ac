@@ -50,6 +50,17 @@ case "$host_os" in
 esac
 AC_MSG_RESULT([$netbsd])
 
+AC_MSG_CHECKING([for Solaris.])
+case "$host_os" in
+  solaris*)
+    soralis=yes
+    ;;
+  *)
+    soralis=no
+    ;;
+esac
+AC_MSG_RESULT([$soralis])
+
 AC_C_BIGENDIAN
 AC_PROG_CXX
 AC_PROG_CC
@@ -191,6 +202,11 @@ fi
 
 if test "$netbsd" = "yes"; then
   AC_DEFINE(_NETBSD_SOURCE, [1], [Define to 1 if you are on NetBSD.])
+fi
+
+if test "$soralis" = "yes"; then
+  AC_DEFINE(_XPG4_2, [1],
+            [Define to 1 for msghdr.msg_control if you are on Solaris.])
 fi
 
 # AIO
