@@ -15,8 +15,8 @@ AC_DEFINE_UNQUOTED(HOST_CPU, ["$host_cpu"], [host CPU])
 AC_DEFINE_UNQUOTED(HOST_OS, ["$host_os"], [host OS])
 
 AC_MSG_CHECKING([for native Win32])
-case "$host" in
-  *-*-mingw*)
+case "$host_os" in
+  mingw*)
     os_win32=yes
     ;;
   *)
@@ -26,8 +26,8 @@ esac
 AC_MSG_RESULT([$os_win32])
 
 AC_MSG_CHECKING([for some Win32 platform])
-case "$host" in
-  *-*-mingw*|*-*-cygwin*)
+case "$host_os" in
+  mingw*|cygwin*)
     platform_win32=yes
     ;;
   *)
