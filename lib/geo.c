@@ -935,11 +935,7 @@ grn_geo_cursor_open_in_rectangle(grn_ctx *ctx,
     goto exit;
   }
 
-  cursor->obj.header.type = GRN_CURSOR_COLUMN_GEO_INDEX;
-  cursor->obj.header.impl_flags = GRN_OBJ_ALLOCATED;
-  cursor->obj.header.flags = 0;
-  cursor->obj.header.domain = GRN_ID_NIL;
-
+  GRN_DB_OBJ_SET_TYPE(cursor, GRN_CURSOR_COLUMN_GEO_INDEX);
   cursor->pat = data.pat;
   cursor->index = index;
   cursor->diff_bit = data.diff_bit;
