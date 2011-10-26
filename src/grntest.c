@@ -647,7 +647,11 @@ command_send_http(grn_ctx *ctx, char *command, int type, int task_id)
 
   GRN_TEXT_INIT(&buf, 0);
   GRN_TEXT_PUTS(ctx, &buf, "GET ");
-  command_line_to_uri_path(ctx, &buf, command);
+  if (strncmp(command, "/d/", 3) == 0) {
+    GRN_TEXT_PUTS(ctx, &buf, command);
+  } else {
+    command_line_to_uri_path(ctx, &buf, command);
+  }
 #ifdef DEBUG_HTTP
   fprintf(stderr, "command: <%s>\n", command);
   fprintf(stderr, "path:    <%.*s>\n",
