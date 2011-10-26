@@ -7,43 +7,43 @@
 How to use groonga with network
 ===============================
 
-You can use groonga with network. When you run groonga by using the groonga's own protocol or HTTP, groonga accepts connection for network.
+You can use groonga with network. When you run groonga by using the groonga original protocol or HTTP, groonga accepts connection for network.
 
-Connection by groonga's own protocol
----------------------------------------
+Connect with groonga's original protocol
+----------------------------------------
 
 Run groonga daemon
 ^^^^^^^^^^^^^^^^^^
 
-form ::
+Form::
 
-  groonga [-p port_number] -d DB_pathname
+  groonga [-p PORT_NUMBER] -d DB_PATH_NAME
 
-The DB_pathname is set the full-path of existed-database.
-With this form, you can run groonga as daemon and connect by groonga's own protocol with port_number.
-(The port_number is 10041 when you don't specify port_number.)
+The DB_PATH_NAME is set the full-path of existing database.
+With this form, you can run groonga as a daemon and connect by
+with groonga original protocol on PORT_NUMBER.
+(The port number is 10041 when you don't specify PORT_NUMBER.)
 
-execution example::
+Execution example::
 
   % groonga -d /tmp/groonga-databases/introduction.db
   12345
   %
 
-After groonga is run as daemon, show its pid.
+Groonga shows its process ID on daemon mode.
 
-Connection with groonga server
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Connect to groonga server
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
-form ::
+Form::
 
-  groonga [-p port_number] -c [host_name or IP_address]
+  groonga [-p PORT_NUMBER] -c [HOST_NAME_OR_IP_ADDRESS]
 
-This command connect groonga server running at specified host_name or IP_address.
+This command connects to groonga server running at specified HOST_NAME_OR_IP_ADDRESS.
 
-When you don't specify host_name, this command connect at localhost. When you don't specify post_number, it is 10041.
+When you don't specify HOST_NAME_OR_IP_ADDRESS, this command connects to groonga server running at localhost. When you don't specify PORT_NUMBER, 10041 is used.
 
-You can use interactive-mode after connection is succeeded.
-Groonga in interactive-mode runs commands input in standard-input.
+Groonga runs in interactive mode after connect to groonga server successfully. Groonga reads command from standard input and evaluates it repeatedly.
 
 .. groonga-command
 .. include:: ../example/tutorial/network-1.log
@@ -63,43 +63,41 @@ You can terminate groonga daemon with shutdown command.
 .. .. > shutdown
 .. .. %
 
-Connection by HTTP
-------------------
+Connect with HTTP
+-----------------
 
-If you use groonga by HTTP connection, you run groonga as HTTP-protocol-mode with this command.
+You need to run groonga in HTTP protocol mode when you want to use groonga via HTTP.
 
-form ::
+Form::
 
-  groonga [-p port_number] -d --protocol http DB_pathname
+  groonga [-p PORT_NUMBER] -d --protocol http DB_PATH_NAME
 
-With option of "--protocol" you can specify protocol accepted by groonga.
-If you specify http for this option, groonga accept connection with HTTP-protocol.
+`--protocol` option specifies a protocol of groonga server. `http` means that groonga accepts connections via HTTP.
 
-HTML management
-^^^^^^^^^^^^^^^
+Administration tool based on HTML
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-After the above command is run, you can look at HTML-management tool when you access "http://[host_name or IP_address]:[port_number]/" in your favorite browser.
-You need to accept JavaScript running in your browser.
+You can access administration tool based on HTML at `http://[HOST_NAME_OR_IP_ADDRESS]:[PORT_NUMBER]/` after the above command is ran. Your browser must enables JavaScript.
 
 Run command with HTTP
 ^^^^^^^^^^^^^^^^^^^^^
 
-When groonga is run by HTTP protocol mode, you can run command by access of the url of "/d/command-name".
+You can run command at `/d/COMMAND_NAME` when groonga is ran in HTTP protocol mode.
 
-You specify option of command as GET parametor of HTTP, in a word a form of any command with option is "?option=value&option=value ...".
+Command options are passed as HTTP's GET parameters. They are in `?OPTION=VALUE&OPTION=VALUE&...` form.
 
 .. groonga-command
 .. include:: ../example/tutorial/network-3.log
-.. .. http://[host_name or IP_address]:[port_nuber]/d/status
-.. .. execute routine：
+.. .. http://[HOST_NAME_OR_IP_ADDRESS]:[PORT_NUMBER]/d/status
+.. .. Executed command:
 .. status
 .. .. 
-.. .. http://[host_name or IP_address]:[port_nuber]/d/select?table=Site&query=title:@this
-.. .. executed routine：
+.. .. http://[HOST_NAME_OR_IP_ADDRESS]:[PORT_NUMBER]/d/select?table=Site&query=title:@this
+.. .. Executed command:
 .. select --table Site --query title:@this
 
 
 Security
 --------
 
-Network service of groonga doesn't have cirtification. Everyone can view and modify the databace. So we reccomend restriction for access from the IP-address with iptables.
+Network service of groonga doesn't support authentication. Everyone can view and modify the database. We recommend that you restrict client accesses by IP address. You can use iptables or any similar tool for it.
