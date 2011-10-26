@@ -2777,7 +2777,8 @@ usage(void)
          "  --owndb:                   open dbs for each ctx\n"
          "  -p, --port <port number>:  server port number (default: %d)\n"
          "  --groonga <groonga_path>:  groonga command path (default: %s)\n"
-         "  --protocol <gqtp|http>:    groonga server protocol (default: %s)\n",
+         "  --protocol <gqtp|http>:    groonga server protocol (default: %s)\n"
+         "  --log-path <path>:         specify log file path\n",
           DEFAULT_DEST, DEFAULT_PORT,
           groonga_path, groonga_protocol);
   exit(1);
