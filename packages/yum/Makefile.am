@@ -32,7 +32,7 @@ download: ensure-rsync-path
 	  (rm -rf $${distribution} &&				\
 	   mkdir -p $${distribution} &&				\
 	   rsync -avz						\
-	     $(SERVER_PATH)/$${distribution}/ $${distribution};	\
+	     $(SERVER_PATH)/$${distribution}/ $${distribution});\
 	done
 
 build: build-in-chroot build-repository-rpm
