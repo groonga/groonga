@@ -28,6 +28,8 @@ void test_int64_compare_float_literal(void);
 void test_int32_key_table_reference_compare(void);
 void test_prefix_search(void);
 void test_full_width_space(void);
+void test_leading_plus(void);
+void test_leading_plus_in_parenthesis(void);
 
 static gchar *tmp_directory;
 
@@ -167,3 +169,40 @@ test_full_width_space(void)
     send_command("select Users --match_columns _key --query 森　二郎"));
 }
 
+void
+test_leading_plus(void)
+{
+  assert_send_command("table_create Users TABLE_PAT_KEY ShortText");
+  assert_send_command("table_create Terms TABLE_PAT_KEY ShortText "
+                      "--default_tokenizer TokenBigram");
+  assert_send_command("column_create Terms users COLUMN_INDEX|WITH_POSITION "
+                      "Users _key");
+  assert_send_command("load --table Users\n"
+                      "[\n"
+                      "{\"_key\":\"森 大二郎\"}\n"
+                      "]");
+  cut_assert_equal_string(
+      "[[[1],"
+       "[[\"_id\",\"UInt32\"],[\"_key\",\"ShortText\"]],"
+       "[1,\"森 大二郎\"]]]",
+    send_command("select Users --match_columns _key --query '+森 +二郎'"));
+}
+
+void
+test_leading_plus_in_parenthesis(void)
+{
+  assert_send_command("table_create Users TABLE_PAT_KEY ShortText");
+  assert_send_command("table_create Terms TABLE_PAT_KEY ShortText "
+                      "--default_tokenizer TokenBigram");
+  assert_send_command("column_create Terms users COLUMN_INDEX|WITH_POSITION "
+                      "Users _key");
+  assert_send_command("load --table Users\n"
+                      "[\n"
+                      "{\"_key\":\"森 大二郎\"}\n"
+                      "]");
+  cut_assert_equal_string(
+      "[[[1],"
+       "[[\"_id\",\"UInt32\"],[\"_key\",\"ShortText\"]],"
+       "[1,\"森 大二郎\"]]]",
+    send_command("select Users --match_columns _key --query '(+森 +二郎)'"));
+}

@@ -4901,6 +4901,9 @@ parse_query(grn_ctx *ctx, efs_info *q)
   int option = 0;
   grn_operator mode;
   efs_op op_, *op = &op_;
+  grn_bool first_token = GRN_TRUE;
+  grn_bool block_started = GRN_FALSE;
+
   op->op = q->default_op;
   op->weight = DEFAULT_WEIGHT;
   while (!ctx->rc) {
@@ -4968,8 +4971,10 @@ parse_query(grn_ctx *ctx, efs_info *q)
       break;
     case GRN_QUERY_AND :
       q->cur++;
-      op->op = GRN_OP_AND;
-      PARSE(GRN_EXPR_TOKEN_LOGICAL_AND);
+      if (!first_token) {
+        op->op = GRN_OP_AND;
+        PARSE(GRN_EXPR_TOKEN_LOGICAL_AND);
+      }
       break;
     case GRN_QUERY_BUT :
       q->cur++;
@@ -4997,6 +5002,7 @@ parse_query(grn_ctx *ctx, efs_info *q)
     case GRN_QUERY_PARENL :
       q->cur++;
       PARSE(GRN_EXPR_TOKEN_PARENL);
+      block_started = GRN_TRUE;
       break;
     case '=' :
     case 'O' :
@@ -5010,6 +5016,8 @@ parse_query(grn_ctx *ctx, efs_info *q)
       get_word_(ctx, q);
       break;
     }
+    first_token = block_started;
+    block_started = GRN_FALSE;
   }
 exit :
   PARSE(0);
