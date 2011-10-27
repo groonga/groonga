@@ -53,6 +53,49 @@ class GrnTestHTTPTest < Test::Unit::TestCase
                  [status[0], result])
   end
 
+  def test_report_http_json
+    command = tempfile("command") do |file|
+      file.puts('select Shops --sortby _id --limit 5 --output_columns "name"')
+    end
+    grntest_command = "rep_http #{command.path}"
+    script = tempfile("script") do |file|
+      file.puts(grntest_command)
+    end
+    log = tempfile("log")
+    output, error, status = invoke_grntest("--groonga", groonga,
+                                           "--protocol", "http",
+                                           "--log-path", log.path,
+                                           script.path, @database_path)
+    assert_predicate(status, :success?, [output, error])
+    jobs_list = JSON.parse(log.read).find_all do |element|
+      element.has_key?("jobs")
+    end
+    assert_equal([grntest_command],
+                 jobs_list.collect {|jobs| jobs["jobs"]})
+  end
+
+  def test_report_http_xml
+    command = tempfile("command") do |file|
+      file.puts('select Shops --sortby _id --limit 5 --output_columns "name" ' +
+                '--output_type xml')
+    end
+    grntest_command = "rep_http #{command.path}"
+    script = tempfile("script") do |file|
+      file.puts(grntest_command)
+    end
+    log = tempfile("log")
+    output, error, status = invoke_grntest("--groonga", groonga,
+                                           "--protocol", "http",
+                                           "--log-path", log.path,
+                                           script.path, @database_path)
+    assert_predicate(status, :success?, [output, error])
+    jobs_list = JSON.parse(log.read).find_all do |element|
+      element.has_key?("jobs")
+    end
+    assert_equal([grntest_command],
+                 jobs_list.collect {|jobs| jobs["jobs"]})
+  end
+
   def test_test_http_same
     command = 'select Shops --sortby _id --limit 5 --output_columns "name"'
     command_file = tempfile("command") do |file|

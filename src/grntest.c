@@ -322,56 +322,16 @@ escape_command(grn_ctx *ctx, char *in, int ilen, grn_obj *escaped_command)
   GRN_TEXT_PUTC(ctx, escaped_command, '\0');
 }
 
-
-static int
-report_load_command(grn_ctx *ctx, char *ret, int task_id, long long int start_time,
-                    grn_obj *end_time)
-{
-  int i, len;
-  long long int start, end;
-  char rettmp[BUF_LEN];
-
-  if ((ret[0] == '[') && (ret[1] == '[')) {
-    i = 2;
-    len = 1;
-    while (ret[i] != ']') {
-      i++;
-      len++;
-      if (ret[i] == '\0') {
-        fprintf(stderr, "Error results:load\n");
-        error_exit_in_thread(3);
-      }
-    }
-    len++;
-    strncpy(rettmp, &ret[1], len);
-    rettmp[len] = '\0';
-  } else {
-    strcpy(rettmp, ret);
-  }
-
-  start = start_time - GRN_TIME_VALUE(&grntest_starttime);
-  end = GRN_TIME_VALUE(end_time) - GRN_TIME_VALUE(&grntest_starttime);
-  if (grntest_outtype == OUT_TSV) {
-    fprintf(grntest_log_file, "report\t%d\tload\t%" GRN_FMT_LLD "\t%" GRN_FMT_LLD "\t%s\n",
-            task_id,  start, end, rettmp);
-  } else {
-    fprintf(grntest_log_file, "[%d, \"load\", %" GRN_FMT_LLD ", %" GRN_FMT_LLD ", %s],\n",
-            task_id,  start, end, rettmp);
-  }
-  fflush(grntest_log_file);
-  return 0;
-}
-
 static int
 report_command(grn_ctx *ctx, char *command, char *ret, int task_id,
                grn_obj *start_time, grn_obj *end_time)
 {
   int i, len, clen;
   long long int start, end;
-  char rettmp[BUF_LEN];
-  grn_obj escaped_command;
+  grn_obj result, escaped_command;
 
-  if ((ret[0] == '[') && (ret[1] == '[')) {
+  GRN_TEXT_INIT(&result, 0);
+  if (strncmp(ret, "[[", 2) == 0) {
     i = 2;
     len = 1;
     while (ret[i] != ']') {
@@ -383,10 +343,9 @@ report_command(grn_ctx *ctx, char *command, char *ret, int task_id,
       }
     }
     len++;
-    strncpy(rettmp, &ret[1], len);
-    rettmp[len] = '\0';
+    grn_text_esc(ctx, &result, ret + 1, len);
   } else {
-    strcpy(rettmp, ret);
+    grn_text_esc(ctx, &result, ret, strlen(ret));
   }
 
   start = GRN_TIME_VALUE(start_time) - GRN_TIME_VALUE(&grntest_starttime);
@@ -395,14 +354,17 @@ report_command(grn_ctx *ctx, char *command, char *ret, int task_id,
   GRN_TEXT_INIT(&escaped_command, 0);
   escape_command(ctx, command, clen, &escaped_command);
   if (grntest_outtype == OUT_TSV) {
-    fprintf(grntest_log_file, "report\t%d\t%s\t%" GRN_FMT_LLD "\t%" GRN_FMT_LLD "\t%s\n",
-            task_id, GRN_TEXT_VALUE(&escaped_command), start, end, rettmp);
+    fprintf(grntest_log_file, "report\t%d\t%s\t%" GRN_FMT_LLD "\t%" GRN_FMT_LLD "\t%.*s\n",
+            task_id, GRN_TEXT_VALUE(&escaped_command), start, end,
+            GRN_TEXT_LEN(&result), GRN_TEXT_VALUE(&result));
   } else {
-    fprintf(grntest_log_file, "[%d, \"%s\", %" GRN_FMT_LLD ", %" GRN_FMT_LLD ", %s],\n",
-            task_id, GRN_TEXT_VALUE(&escaped_command), start, end, rettmp);
+    fprintf(grntest_log_file, "[%d, \"%s\", %" GRN_FMT_LLD ", %" GRN_FMT_LLD ", %.*s],\n",
+            task_id, GRN_TEXT_VALUE(&escaped_command), start, end,
+            GRN_TEXT_LEN(&result), GRN_TEXT_VALUE(&result));
   }
   fflush(grntest_log_file);
   GRN_OBJ_FIN(ctx, &escaped_command);
+  GRN_OBJ_FIN(ctx, &result);
   return 0;
 }
 
@@ -794,11 +756,12 @@ do_load_command(grn_ctx *ctx, char *command, int type, int task_id,
   int res_len, flags, ret;
   grn_obj start_time, end_time;
 
+  GRN_TIME_INIT(&start_time, 0);
   if (*load_start == 0) {
-    GRN_TIME_INIT(&start_time, 0);
     GRN_TIME_NOW(ctx, &start_time);
     *load_start = GRN_TIME_VALUE(&start_time);
-    grn_obj_close(ctx, &start_time);
+  } else {
+    GRN_TIME_SET(ctx, &start_time, *load_start);
   }
 
   command_send(ctx, command, type, task_id);
@@ -828,7 +791,7 @@ do_load_command(grn_ctx *ctx, char *command, int type, int task_id,
           strncpy(tmpbuf, res, BUF_LEN - 2);
           tmpbuf[BUF_LEN -2] = '\0';
         }
-        report_load_command(ctx, tmpbuf, task_id, *load_start, &end_time);
+        report_command(ctx, "load", tmpbuf, task_id, &start_time, &end_time);
       }
       if (out_p(grntest_task[task_id].jobtype)) {
         fwrite(res, 1, res_len, grntest_job[grntest_task[task_id].job_id].outputlog);
@@ -870,6 +833,7 @@ do_load_command(grn_ctx *ctx, char *command, int type, int task_id,
       break;
     }
   } while ((flags & GRN_CTX_MORE));
+    grn_obj_close(ctx, &start_time);
 
   return ret;
 }
