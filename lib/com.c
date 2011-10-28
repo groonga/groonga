@@ -975,7 +975,9 @@ grn_com_sopen(grn_ctx *ctx, grn_com_event *ev,
   memset(&hints, 0, sizeof(struct addrinfo));
   hints.ai_family = PF_UNSPEC;
   hints.ai_socktype = SOCK_STREAM;
+#ifdef AI_NUMERICSERV
   hints.ai_flags = AI_NUMERICSERV;
+#endif
   getaddrinfo_result = getaddrinfo(bind_address, port_string,
                                    &hints, &bind_address_info);
   if (getaddrinfo_result != 0) {
