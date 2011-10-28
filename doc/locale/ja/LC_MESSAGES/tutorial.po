@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-10-28 10:29\n"
-"PO-Revision-Date: 2011-10-28 11:03+0900\n"
+"PO-Revision-Date: 2011-10-28 11:20+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -78,7 +78,7 @@ msgstr ""
 #: ../../../source/example/tutorial/search-7.log:1
 #: ../../../source/tutorial/network.txt:27
 msgid "Execution example::"
-msgstr ""
+msgstr "実行例::"
 
 #: ../../../source/tutorial.txt:6
 msgid "チュートリアル"
