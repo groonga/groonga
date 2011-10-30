@@ -15,8 +15,8 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-class GrnTestOptionTest < Test::Unit::TestCase
-  include GroongaGrnTestTestUtils
+class GrntestOptionTest < Test::Unit::TestCase
+  include GroongaGrntestTestUtils
 
   def setup
     setup_database
