@@ -1077,15 +1077,34 @@ exit:
     grntest_jobdone++;
     if (grntest_outtype == OUT_TSV) {
       sprintf(tmpbuf,
-              "job\t%s\t%" GRN_FMT_LLD "\t%" GRN_FMT_LLD "\t%f\t%" GRN_FMT_LLD "\t%" GRN_FMT_LLD "\t%d\n",
-              grntest_job[grntest_task[task_id].job_id].jobname, total_elapsed_time, job_elapsed_time, qps,
+              "job\t"
+              "%s\t"
+              "%" GRN_FMT_LLD "\t"
+              "%" GRN_FMT_LLD "\t"
+              "%f\t"
+              "%" GRN_FMT_LLD "\t"
+              "%" GRN_FMT_LLD "\t"
+              "%d\n",
+              grntest_job[grntest_task[task_id].job_id].jobname,
+              total_elapsed_time,
+              job_elapsed_time,
+              qps,
               grntest_job[grntest_task[task_id].job_id].min,
               grntest_job[grntest_task[task_id].job_id].max,
               grntest_job[grntest_task[task_id].job_id].qnum);
     } else {
       sprintf(tmpbuf,
-              "{\"job\": \"%s\", \"total_elapsed_time\": %" GRN_FMT_LLD ", \"job_elapsed_time\": %" GRN_FMT_LLD ", \"qps\": %f, \"min\": %" GRN_FMT_LLD ", \"max\": %" GRN_FMT_LLD ", \"queries\": %d}",
-              grntest_job[grntest_task[task_id].job_id].jobname, total_elapsed_time, job_elapsed_time, qps,
+              "{\"job\": \"%s\", "
+              "\"total_elapsed_time\": %" GRN_FMT_LLD ", "
+              "\"job_elapsed_time\": %" GRN_FMT_LLD ", "
+              "\"qps\": %f, "
+              "\"min\": %" GRN_FMT_LLD ", "
+              "\"max\": %" GRN_FMT_LLD ", "
+              "\"queries\": %d}",
+              grntest_job[grntest_task[task_id].job_id].jobname,
+              total_elapsed_time,
+              job_elapsed_time,
+              qps,
               grntest_job[grntest_task[task_id].job_id].min,
               grntest_job[grntest_task[task_id].job_id].max,
               grntest_job[grntest_task[task_id].job_id].qnum);
