@@ -2046,7 +2046,7 @@ static int
 do_script(grn_ctx *ctx, const char *script_file_path)
 {
   int n_lines = 0;
-  int job_num;
+  int n_jobs;
   int qnum, qnum_total = 0;
   FILE *script_file;
   grn_obj line;
@@ -2064,10 +2064,10 @@ do_script(grn_ctx *ctx, const char *script_file_path)
     }
     n_lines++;
     grntest_jobdone = 0;
-    job_num = get_jobs(ctx, GRN_TEXT_VALUE(&line), n_lines);
-    grntest_jobnum = job_num;
+    n_jobs = get_jobs(ctx, GRN_TEXT_VALUE(&line), n_lines);
+    grntest_jobnum = n_jobs;
 
-    if (job_num > 0) {
+    if (n_jobs > 0) {
       GRN_TIME_INIT(&grntest_jobs_start, 0);
       GRN_TIME_NOW(ctx, &grntest_jobs_start);
       if (grntest_outtype == OUT_TSV) {
@@ -2075,7 +2075,7 @@ do_script(grn_ctx *ctx, const char *script_file_path)
       } else {
         fprintf(grntest_log_file, "{\"jobs\": \"%s\",\n", GRN_TEXT_VALUE(&line));
       }
-      qnum = do_jobs(ctx, job_num, n_lines);
+      qnum = do_jobs(ctx, n_jobs, n_lines);
       if (grntest_outtype == OUT_TSV) {
         fprintf(grntest_log_file, "jobs-end\t%s\n", GRN_TEXT_VALUE(&line));
       } else {
