@@ -2045,42 +2045,39 @@ printf("%d:type =%d:file=%s:con=%d:ntimes=%d\n", i, grntest_job[i].jobtype,
 static int
 do_script(grn_ctx *ctx, const char *script_file_path)
 {
-  int line = 0;
+  int n_lines = 0;
   int job_num;
   int qnum, qnum_total = 0;
   FILE *script_file;
-  char buf[BUF_LEN];
+  grn_obj line;
 
   script_file = fopen(script_file_path, "r");
   if (script_file == NULL) {
     fprintf(stderr, "Cannot open script file: <%s>\n", script_file_path);
     error_exit(ctx, 1);
   }
-  buf[BUF_LEN-2] = '\0';
-  while (fgets(buf, BUF_LEN, script_file) != NULL) {
-    if (grntest_sigint ) {
+
+  GRN_TEXT_INIT(&line, 0);
+  while (grn_text_fgets(ctx, &line, script_file) != GRN_SUCCESS) {
+    if (grntest_sigint) {
       break;
     }
-    line++;
-    if (buf[BUF_LEN-2] != '\0') {
-      fprintf(stderr, "Too long line in script file:%d\n", line);
-      error_exit(ctx, 1);
-    }
+    n_lines++;
     grntest_jobdone = 0;
-    job_num = get_jobs(ctx, buf, line);
+    job_num = get_jobs(ctx, GRN_TEXT_VALUE(&line), n_lines);
     grntest_jobnum = job_num;
 
     if (job_num > 0) {
       GRN_TIME_INIT(&grntest_jobs_start, 0);
       GRN_TIME_NOW(ctx, &grntest_jobs_start);
       if (grntest_outtype == OUT_TSV) {
-        fprintf(grntest_log_file, "jobs-start\t%s\n", buf);
+        fprintf(grntest_log_file, "jobs-start\t%s\n", GRN_TEXT_VALUE(&line));
       } else {
-        fprintf(grntest_log_file, "{\"jobs\": \"%s\",\n", buf);
+        fprintf(grntest_log_file, "{\"jobs\": \"%s\",\n", GRN_TEXT_VALUE(&line));
       }
-      qnum = do_jobs(ctx, job_num, line);
+      qnum = do_jobs(ctx, job_num, n_lines);
       if (grntest_outtype == OUT_TSV) {
-        fprintf(grntest_log_file, "jobs-end\t%s\n", buf);
+        fprintf(grntest_log_file, "jobs-end\t%s\n", GRN_TEXT_VALUE(&line));
       } else {
         fprintf(grntest_log_file, "},\n");
       }
@@ -2092,8 +2089,12 @@ do_script(grn_ctx *ctx, const char *script_file_path)
       fprintf(stderr, "Error:Quit\n");
       break;
     }
+    GRN_BULK_REWIND(&line);
   }
+  grn_obj_unlink(ctx, &line);
+
   fclose(script_file);
+
   return qnum_total;
 }
 
