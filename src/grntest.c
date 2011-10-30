@@ -955,7 +955,7 @@ worker_sub(grn_ctx *ctx, grn_obj *log, int task_id)
 {
   int i, load_mode, load_count;
   grn_obj end_time;
-  long long int total_elapsed_time, self;
+  long long int total_elapsed_time, job_elapsed_time;
   double sec, qps;
   long long int load_start;
 
@@ -1057,7 +1057,7 @@ exit:
   GRN_TIME_INIT(&end_time, 0);
   GRN_TIME_NOW(&grntest_ctx[task_id], &end_time);
   total_elapsed_time = GRN_TIME_VALUE(&end_time) - GRN_TIME_VALUE(&grntest_starttime);
-  self = GRN_TIME_VALUE(&end_time) - GRN_TIME_VALUE(&grntest_jobs_start);
+  job_elapsed_time = GRN_TIME_VALUE(&end_time) - GRN_TIME_VALUE(&grntest_jobs_start);
 
   CRITICAL_SECTION_ENTER(grntest_cs);
   if (grntest_job[grntest_task[task_id].job_id].max < grntest_task[task_id].max) {
@@ -1072,20 +1072,20 @@ exit:
   if (grntest_job[grntest_task[task_id].job_id].done ==
       grntest_job[grntest_task[task_id].job_id].concurrency) {
     char tmpbuf[BUF_LEN];
-    sec = self / (double)1000000;
+    sec = job_elapsed_time / (double)1000000;
     qps = (double)grntest_job[grntest_task[task_id].job_id].qnum/ sec;
     grntest_jobdone++;
     if (grntest_outtype == OUT_TSV) {
       sprintf(tmpbuf,
               "job\t%s\t%" GRN_FMT_LLD "\t%" GRN_FMT_LLD "\t%f\t%" GRN_FMT_LLD "\t%" GRN_FMT_LLD "\t%d\n",
-              grntest_job[grntest_task[task_id].job_id].jobname, total_elapsed_time, self, qps,
+              grntest_job[grntest_task[task_id].job_id].jobname, total_elapsed_time, job_elapsed_time, qps,
               grntest_job[grntest_task[task_id].job_id].min,
               grntest_job[grntest_task[task_id].job_id].max,
               grntest_job[grntest_task[task_id].job_id].qnum);
     } else {
       sprintf(tmpbuf,
-              "{\"job\": \"%s\", \"total_elapsed_time\": %" GRN_FMT_LLD ", \"self\": %" GRN_FMT_LLD ", \"qps\": %f, \"min\": %" GRN_FMT_LLD ", \"max\": %" GRN_FMT_LLD ", \"queries\": %d}",
-              grntest_job[grntest_task[task_id].job_id].jobname, total_elapsed_time, self, qps,
+              "{\"job\": \"%s\", \"total_elapsed_time\": %" GRN_FMT_LLD ", \"job_elapsed_time\": %" GRN_FMT_LLD ", \"qps\": %f, \"min\": %" GRN_FMT_LLD ", \"max\": %" GRN_FMT_LLD ", \"queries\": %d}",
+              grntest_job[grntest_task[task_id].job_id].jobname, total_elapsed_time, job_elapsed_time, qps,
               grntest_job[grntest_task[task_id].job_id].min,
               grntest_job[grntest_task[task_id].job_id].max,
               grntest_job[grntest_task[task_id].job_id].qnum);
