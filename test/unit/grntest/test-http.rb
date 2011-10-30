@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2010  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2010-2011  Kouhei Sutou <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -38,6 +38,7 @@ class GrnTestHTTPTest < Test::Unit::TestCase
     end
     output, error, status = invoke_grntest("--groonga", groonga,
                                            "--protocol", "http",
+                                           "--port", "20041",
                                            "--log-output-dir", @tmp_dir,
                                            script.path, @database_path)
     assert_predicate(status, :success?, [output, error])
@@ -64,6 +65,7 @@ class GrnTestHTTPTest < Test::Unit::TestCase
     log = tempfile("log")
     output, error, status = invoke_grntest("--groonga", groonga,
                                            "--protocol", "http",
+                                           "--port", "20041",
                                            "--log-path", log.path,
                                            script.path, @database_path)
     assert_predicate(status, :success?, [output, error])
@@ -86,6 +88,7 @@ class GrnTestHTTPTest < Test::Unit::TestCase
     log = tempfile("log")
     output, error, status = invoke_grntest("--groonga", groonga,
                                            "--protocol", "http",
+                                           "--port", "20041",
                                            "--log-path", log.path,
                                            script.path, @database_path)
     assert_predicate(status, :success?, [output, error])
@@ -118,6 +121,7 @@ class GrnTestHTTPTest < Test::Unit::TestCase
     end
     output, error, status = invoke_grntest("--groonga", groonga,
                                            "--protocol", "http",
+                                           "--port", "20041",
                                            "--log-output-dir", @tmp_dir,
                                            script_file.path,
                                            @database_path)
@@ -156,6 +160,7 @@ class GrnTestHTTPTest < Test::Unit::TestCase
     end
     output, error, status = invoke_grntest("--groonga", groonga,
                                            "--protocol", "http",
+                                           "--port", "20041",
                                            "--log-output-dir", @tmp_dir,
                                            script_file.path,
                                            @database_path)

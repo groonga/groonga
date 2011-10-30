@@ -39,6 +39,7 @@ class GrnTestGQTPTest < Test::Unit::TestCase
     end
     output, error, status = invoke_grntest("--groonga", groonga,
                                            "--protocol", "gqtp",
+                                           "--port", "20041",
                                            "--log-output-dir", @tmp_dir,
                                            script_file.path,
                                            @database_path)
