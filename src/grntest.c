@@ -958,16 +958,19 @@ worker_sub(grn_ctx *ctx, grn_obj *log, int task_id)
   long long int total_elapsed_time, job_elapsed_time;
   double sec, qps;
   long long int load_start;
+  struct task *task;
+  struct job *job;
 
-  grntest_task[task_id].max = 0LL;
-  grntest_task[task_id].min = 9223372036854775807LL;
-  grntest_task[task_id].qnum = 0;
+  task = &(grntest_task[task_id]);
+  task->max = 0LL;
+  task->min = 9223372036854775807LL;
+  task->qnum = 0;
 
-  for (i = 0; i < grntest_task[task_id].ntimes; i++) {
-    if (grntest_task[task_id].file != NULL) {
+  for (i = 0; i < task->ntimes; i++) {
+    if (task->file != NULL) {
       FILE *fp;
       grn_obj line;
-      fp = fopen(grntest_task[task_id].file, "r");
+      fp = fopen(task->file, "r");
       if (!fp) {
         fprintf(stderr, "Cannot open %s\n",grntest_task[task_id].file);
         error_exit_in_thread(1);
@@ -995,9 +998,9 @@ worker_sub(grn_ctx *ctx, grn_obj *log, int task_id)
         }
         if (load_mode == 1) {
           if (do_load_command(&grntest_ctx[task_id], GRN_TEXT_VALUE(&line),
-                              grntest_task[task_id].jobtype,
+                              task->jobtype,
                               task_id, &load_start)) {
-            grntest_task[task_id].qnum += load_count;
+            task->qnum += load_count;
             load_mode = 0;
             load_count = 0;
             load_start = 0LL;
@@ -1007,9 +1010,9 @@ worker_sub(grn_ctx *ctx, grn_obj *log, int task_id)
           continue;
         }
         do_command(&grntest_ctx[task_id], GRN_TEXT_VALUE(&line),
-                   grntest_task[task_id].jobtype,
+                   task->jobtype,
                    task_id);
-        grntest_task[task_id].qnum++;
+        task->qnum++;
         GRN_BULK_REWIND(&line);
         if (grntest_sigint) {
           goto exit;
@@ -1020,7 +1023,7 @@ worker_sub(grn_ctx *ctx, grn_obj *log, int task_id)
     } else {
       int i, n_commands;
       grn_obj *commands;
-      commands = grntest_task[task_id].commands;
+      commands = task->commands;
       if (!commands) {
         error_exit_in_thread(1);
       }
@@ -1035,17 +1038,17 @@ worker_sub(grn_ctx *ctx, grn_obj *log, int task_id)
         if (load_mode == 1) {
           if (do_load_command(&grntest_ctx[task_id],
                               GRN_TEXT_VALUE(command),
-                              grntest_task[task_id].jobtype, task_id, &load_start)) {
+                              task->jobtype, task_id, &load_start)) {
             load_mode = 0;
             load_start = 0LL;
-            grntest_task[task_id].qnum++;
+            task->qnum++;
           }
           continue;
         }
         do_command(&grntest_ctx[task_id],
                    GRN_TEXT_VALUE(command),
-                   grntest_task[task_id].jobtype, task_id);
-        grntest_task[task_id].qnum++;
+                   task->jobtype, task_id);
+        task->qnum++;
         if (grntest_sigint) {
           goto exit;
         }
@@ -1054,26 +1057,27 @@ worker_sub(grn_ctx *ctx, grn_obj *log, int task_id)
   }
 
 exit:
-  GRN_TIME_INIT(&end_time, 0);
+GRN_TIME_INIT(&end_time, 0);
   GRN_TIME_NOW(&grntest_ctx[task_id], &end_time);
   total_elapsed_time = GRN_TIME_VALUE(&end_time) - GRN_TIME_VALUE(&grntest_starttime);
   job_elapsed_time = GRN_TIME_VALUE(&end_time) - GRN_TIME_VALUE(&grntest_jobs_start);
 
   CRITICAL_SECTION_ENTER(grntest_cs);
-  if (grntest_job[grntest_task[task_id].job_id].max < grntest_task[task_id].max) {
-    grntest_job[grntest_task[task_id].job_id].max = grntest_task[task_id].max;
+  job = &(grntest_job[task->job_id]);
+  if (job->max < task->max) {
+    job->max = task->max;
   }
-  if (grntest_job[grntest_task[task_id].job_id].min > grntest_task[task_id].min) {
-    grntest_job[grntest_task[task_id].job_id].min = grntest_task[task_id].min;
+  if (job->min > task->min) {
+    job->min = task->min;
   }
 
-  grntest_job[grntest_task[task_id].job_id].qnum += grntest_task[task_id].qnum;
-  grntest_job[grntest_task[task_id].job_id].done++;
-  if (grntest_job[grntest_task[task_id].job_id].done ==
-      grntest_job[grntest_task[task_id].job_id].concurrency) {
+  job->qnum += task->qnum;
+  job->done++;
+  if (job->done ==
+      job->concurrency) {
     char tmpbuf[BUF_LEN];
     sec = job_elapsed_time / (double)1000000;
-    qps = (double)grntest_job[grntest_task[task_id].job_id].qnum/ sec;
+    qps = (double)job->qnum/ sec;
     grntest_jobdone++;
     if (grntest_outtype == OUT_TSV) {
       sprintf(tmpbuf,
@@ -1085,13 +1089,13 @@ exit:
               "%" GRN_FMT_LLD "\t"
               "%" GRN_FMT_LLD "\t"
               "%d\n",
-              grntest_job[grntest_task[task_id].job_id].jobname,
+              job->jobname,
               total_elapsed_time,
               job_elapsed_time,
               qps,
-              grntest_job[grntest_task[task_id].job_id].min,
-              grntest_job[grntest_task[task_id].job_id].max,
-              grntest_job[grntest_task[task_id].job_id].qnum);
+              job->min,
+              job->max,
+              job->qnum);
     } else {
       sprintf(tmpbuf,
               "{\"job\": \"%s\", "
@@ -1101,13 +1105,13 @@ exit:
               "\"min\": %" GRN_FMT_LLD ", "
               "\"max\": %" GRN_FMT_LLD ", "
               "\"queries\": %d}",
-              grntest_job[grntest_task[task_id].job_id].jobname,
+              job->jobname,
               total_elapsed_time,
               job_elapsed_time,
               qps,
-              grntest_job[grntest_task[task_id].job_id].min,
-              grntest_job[grntest_task[task_id].job_id].max,
-              grntest_job[grntest_task[task_id].job_id].qnum);
+              job->min,
+              job->max,
+              job->qnum);
       if (grntest_jobdone < grntest_jobnum) {
         strcat(tmpbuf, ",");
       }
