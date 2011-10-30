@@ -170,7 +170,7 @@ static int grntest_jobnum;
 static grn_ctx grntest_ctx[MAX_CON];
 static grn_obj *grntest_owndb[MAX_CON];
 
-grn_obj grntest_starttime, grntest_jobs_start;
+static grn_obj grntest_starttime, grntest_jobs_start;
 
 static int
 grntest_atoi(const char *str, const char *end, const char **rest)
