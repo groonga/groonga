@@ -2058,7 +2058,7 @@ do_script(grn_ctx *ctx, const char *script_file_path)
   }
 
   GRN_TEXT_INIT(&line, 0);
-  while (grn_text_fgets(ctx, &line, script_file) != GRN_SUCCESS) {
+  while (grn_text_fgets(ctx, &line, script_file) == GRN_SUCCESS) {
     if (grntest_sigint) {
       break;
     }
