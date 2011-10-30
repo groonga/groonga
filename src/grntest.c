@@ -2047,7 +2047,7 @@ do_script(grn_ctx *ctx, const char *script_file_path)
 {
   int n_lines = 0;
   int n_jobs;
-  int qnum, qnum_total = 0;
+  int n_queries, total_n_queries = 0;
   FILE *script_file;
   grn_obj line;
 
@@ -2075,13 +2075,13 @@ do_script(grn_ctx *ctx, const char *script_file_path)
       } else {
         fprintf(grntest_log_file, "{\"jobs\": \"%s\",\n", GRN_TEXT_VALUE(&line));
       }
-      qnum = do_jobs(ctx, n_jobs, n_lines);
+      n_queries = do_jobs(ctx, n_jobs, n_lines);
       if (grntest_outtype == OUT_TSV) {
         fprintf(grntest_log_file, "jobs-end\t%s\n", GRN_TEXT_VALUE(&line));
       } else {
         fprintf(grntest_log_file, "},\n");
       }
-      qnum_total = qnum_total + qnum;
+      total_n_queries += n_queries;
 
       grn_obj_close(ctx, &grntest_jobs_start);
     }
@@ -2095,7 +2095,7 @@ do_script(grn_ctx *ctx, const char *script_file_path)
 
   fclose(script_file);
 
-  return qnum_total;
+  return total_n_queries;
 }
 
 static int
