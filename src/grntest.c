@@ -1057,7 +1057,7 @@ worker_sub(grn_ctx *ctx, grn_obj *log, int task_id)
   }
 
 exit:
-GRN_TIME_INIT(&end_time, 0);
+  GRN_TIME_INIT(&end_time, 0);
   GRN_TIME_NOW(&grntest_ctx[task_id], &end_time);
   total_elapsed_time = GRN_TIME_VALUE(&end_time) - GRN_TIME_VALUE(&grntest_starttime);
   job_elapsed_time = GRN_TIME_VALUE(&end_time) - GRN_TIME_VALUE(&grntest_jobs_start);
@@ -1073,8 +1073,7 @@ GRN_TIME_INIT(&end_time, 0);
 
   job->qnum += task->qnum;
   job->done++;
-  if (job->done ==
-      job->concurrency) {
+  if (job->done == job->concurrency) {
     char tmpbuf[BUF_LEN];
     sec = job_elapsed_time / (double)1000000;
     qps = (double)job->qnum/ sec;
@@ -1124,7 +1123,7 @@ GRN_TIME_INIT(&end_time, 0);
       } else {
         if (grntest_detail_on) {
           fseek(grntest_log_file, -2, SEEK_CUR);
-          fprintf(grntest_log_file, "], \n");
+          fprintf(grntest_log_file, "],\n");
         }
         fprintf(grntest_log_file, "\"summary\": [");
         fprintf(grntest_log_file, "%.*s",
