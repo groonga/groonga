@@ -1103,7 +1103,7 @@ exit:
           fseek(grntest_log_file, -2, SEEK_CUR);
           fprintf(grntest_log_file, "], \n");
         }
-        fprintf(grntest_log_file, "\"summary\" :[");
+        fprintf(grntest_log_file, "\"summary\": [");
         fprintf(grntest_log_file, "%.*s",
                 (int)GRN_TEXT_LEN(log), GRN_TEXT_VALUE(log));
         fprintf(grntest_log_file, "]");
