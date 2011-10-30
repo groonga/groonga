@@ -2048,16 +2048,16 @@ do_script(grn_ctx *ctx, const char *script_file_path)
   int line = 0;
   int job_num;
   int qnum, qnum_total = 0;
-  FILE *fp;
+  FILE *script_file;
   char buf[BUF_LEN];
 
-  fp = fopen(script_file_path, "r");
-  if (fp == NULL) {
+  script_file = fopen(script_file_path, "r");
+  if (script_file == NULL) {
     fprintf(stderr, "Cannot open script file: <%s>\n", script_file_path);
     error_exit(ctx, 1);
   }
   buf[BUF_LEN-2] = '\0';
-  while (fgets(buf, BUF_LEN, fp) != NULL) {
+  while (fgets(buf, BUF_LEN, script_file) != NULL) {
     if (grntest_sigint ) {
       break;
     }
@@ -2093,7 +2093,7 @@ do_script(grn_ctx *ctx, const char *script_file_path)
       break;
     }
   }
-  fclose(fp);
+  fclose(script_file);
   return qnum_total;
 }
 
