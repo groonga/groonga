@@ -2747,7 +2747,8 @@ usage(void)
          "  -p, --port <port number>:  server port number (default: %d)\n"
          "  --groonga <groonga_path>:  groonga command path (default: %s)\n"
          "  --protocol <gqtp|http>:    groonga server protocol (default: %s)\n"
-         "  --log-path <path>:         specify log file path\n",
+         "  --log-path <path>:         specify log file path\n"
+         "  --pid-path <path>:         specify file path to store PID file\n",
           DEFAULT_DEST, DEFAULT_PORT,
           groonga_path, groonga_protocol);
   exit(1);
@@ -2922,7 +2923,8 @@ main(int argc, char **argv)
   char sysinfo[BUF_LEN];
   char log_path_buffer[BUF_LEN];
   const char *log_path = NULL;
-  const char *portstr=NULL, *hoststr=NULL, *dbname=NULL, *scrname=NULL, *outdir=NULL, *outtype=NULL;
+  const char *pid_path = NULL;
+  const char *portstr = NULL, *hoststr = NULL, *dbname = NULL, *scrname = NULL, *outdir = NULL, *outtype = NULL;
   time_t sec;
 
   static grn_str_getopt_opt opts[] = {
@@ -2939,6 +2941,7 @@ main(int argc, char **argv)
     {'\0', "groonga", NULL, 0, getopt_op_none},
     {'\0', "protocol", NULL, 0, getopt_op_none},
     {'\0', "log-path", NULL, 0, getopt_op_none},
+    {'\0', "pid-path", NULL, 0, getopt_op_none},
     {'\0', NULL, NULL, 0, 0}
   };
 
@@ -2949,6 +2952,7 @@ main(int argc, char **argv)
   opts[10].arg = &groonga_path;
   opts[11].arg = &groonga_protocol;
   opts[12].arg = &log_path;
+  opts[13].arg = &pid_path;
 
   i = grn_str_getopt(argc, argv, opts, &mode);
   if (i < 0) {
@@ -2967,7 +2971,20 @@ main(int argc, char **argv)
   default :
     break;
   }
-  
+
+  if (pid_path) {
+    FILE *pid_file;
+    pid_file = fopen(pid_path, "w");
+    if (pid_file) {
+      fprintf(pid_file, "%d", getpid());
+      fclose(pid_file);
+    } else {
+      fprintf(stderr,
+              "failed to open PID file: <%s>: %s\n",
+              pid_file, strerror(errno));
+    }
+  }
+
   if (i < argc) {
     scrname = argv[i];
   }
@@ -3083,6 +3100,10 @@ main(int argc, char **argv)
   fprintf(stderr, "grntest done. logfile=%s\n", log_path);
 
 exit:
+  if (pid_path) {
+    remove(pid_path);
+  }
+
   shutdown_server();
 #ifdef WIN32
   if (!grntest_remote_mode) {
