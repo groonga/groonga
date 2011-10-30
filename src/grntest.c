@@ -2043,7 +2043,7 @@ printf("%d:type =%d:file=%s:con=%d:ntimes=%d\n", i, grntest_job[i].jobtype,
 
 /* return num of query */
 static int
-do_script(grn_ctx *ctx, const char *sfile)
+do_script(grn_ctx *ctx, const char *script_file_path)
 {
   int line = 0;
   int job_num;
@@ -2051,9 +2051,9 @@ do_script(grn_ctx *ctx, const char *sfile)
   FILE *fp;
   char buf[BUF_LEN];
 
-  fp = fopen(sfile, "r");
+  fp = fopen(script_file_path, "r");
   if (fp == NULL) {
-    fprintf(stderr, "Cannot open script file:%s\n", sfile);
+    fprintf(stderr, "Cannot open script file: <%s>\n", script_file_path);
     error_exit(ctx, 1);
   }
   buf[BUF_LEN-2] = '\0';
@@ -2670,7 +2670,7 @@ cache_file(grn_ctx *ctx, char **flist, char *file, int fnum)
 }
 
 static int
-sync_datafile(grn_ctx *ctx, const char *sfile)
+sync_datafile(grn_ctx *ctx, const char *script_file_path)
 {
   int line = 0;
   int fnum = 0;
@@ -2679,9 +2679,9 @@ sync_datafile(grn_ctx *ctx, const char *sfile)
   char buf[BUF_LEN];
   char *filelist[BUF_LEN];
 
-  fp = fopen(sfile, "r");
+  fp = fopen(script_file_path, "r");
   if (fp == NULL) {
-    fprintf(stderr, "Cannot open script file:%s\n", sfile);
+    fprintf(stderr, "Cannot open script file: <%s>\n", script_file_path);
     error_exit(ctx, 1);
   }
   buf[BUF_LEN-2] = '\0';
