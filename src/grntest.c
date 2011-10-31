@@ -2847,10 +2847,10 @@ get_token(char *line, char *token, int maxlen, char **next)
 
 /* SET_PORT and SET_HOST */
 static grn_bool
-check_script(const char *script_file_path)
+check_script(grn_ctx *ctx, const char *script_file_path)
 {
   FILE *script_file;
-  char tmpbuf[BUF_LEN];
+  grn_obj line;
   char token[BUF_LEN];
   char prev[BUF_LEN];
   char *next = NULL;
@@ -2861,14 +2861,10 @@ check_script(const char *script_file_path)
     return GRN_FALSE;
   }
 
-  tmpbuf[BUF_LEN-2] = '\0';
-  while (fgets(tmpbuf, BUF_LEN, script_file) != NULL) {
-    if (tmpbuf[BUF_LEN-2] != '\0') {
-      fprintf(stderr, "Too long line in script:%s\n", script_file_path);
-      return GRN_FALSE;
-    }
-    tmpbuf[strlen(tmpbuf)-1] = '\0';
-    get_token(tmpbuf, token, BUF_LEN, &next);
+  GRN_TEXT_INIT(&line, 0);
+  while (grn_text_fgets(ctx, &line, script_file) == GRN_SUCCESS) {
+    GRN_TEXT_VALUE(&line)[GRN_TEXT_LEN(&line) - 1] = '\0';
+    get_token(GRN_TEXT_VALUE(&line), token, BUF_LEN, &next);
     strcpy(prev, token);
 
     while (next) {
@@ -2883,6 +2879,7 @@ check_script(const char *script_file_path)
       strcpy(prev, token);
     }
   }
+  grn_obj_unlink(ctx, &line);
 
   fclose(script_file);
   return GRN_TRUE;
@@ -3064,7 +3061,7 @@ main(int argc, char **argv)
   if (grntest_ftp_mode) {
     sync_script(&context, scrname);
   }
-  if (!check_script(scrname)) {
+  if (!check_script(&context, scrname)) {
     exit_code = EXIT_FAILURE;
     goto exit;
   }
