@@ -2846,7 +2846,7 @@ get_token(char *line, char *token, int maxlen, char **next)
 }
 
 /* SET_PORT and SET_HOST */
-static int
+static grn_bool
 check_script(const char *script_file_path)
 {
   FILE *script_file;
@@ -2858,14 +2858,14 @@ check_script(const char *script_file_path)
   script_file = fopen(script_file_path, "r");
   if (!script_file) {
     fprintf(stderr, "check_script:Cannot open script:%s\n", script_file_path);
-    exit(1);
+    return GRN_FALSE;
   }
 
   tmpbuf[BUF_LEN-2] = '\0';
   while (fgets(tmpbuf, BUF_LEN, script_file) != NULL) {
     if (tmpbuf[BUF_LEN-2] != '\0') {
       fprintf(stderr, "Too long line in script:%s\n", script_file_path);
-      exit(1);
+      return GRN_FALSE;
     }
     tmpbuf[strlen(tmpbuf)-1] = '\0';
     get_token(tmpbuf, token, BUF_LEN, &next);
@@ -2885,7 +2885,7 @@ check_script(const char *script_file_path)
   }
 
   fclose(script_file);
-  return 0;
+  return GRN_TRUE;
 }
 
 #ifndef WIN32
@@ -2941,6 +2941,7 @@ int
 main(int argc, char **argv)
 {
   int qnum, i, mode = 0;
+  int exit_code = EXIT_SUCCESS;
   grn_ctx context;
   char sysinfo[BUF_LEN];
   char log_path_buffer[BUF_LEN];
@@ -3063,7 +3064,10 @@ main(int argc, char **argv)
   if (grntest_ftp_mode) {
     sync_script(&context, scrname);
   }
-  check_script(scrname);
+  if (!check_script(scrname)) {
+    exit_code = EXIT_FAILURE;
+    goto exit;
+  }
 
   start_local(&context, dbname);
   if (!grntest_remote_mode) {
@@ -3161,5 +3165,5 @@ exit:
   grn_obj_close(&grntest_server_context, grn_ctx_db(&grntest_server_context));
   grn_ctx_fin(&grntest_server_context);
   grn_fin();
-  return 0;
+  return exit_code;
 }
