@@ -2849,20 +2849,20 @@ get_token(char *line, char *token, int maxlen, char **next)
 static int
 check_script(const char *script_file_path)
 {
-  FILE *fp;
+  FILE *script_file;
   char tmpbuf[BUF_LEN];
   char token[BUF_LEN];
   char prev[BUF_LEN];
   char *next = NULL;
 
-  fp = fopen(script_file_path, "r");
-  if (!fp) {
+  script_file = fopen(script_file_path, "r");
+  if (!script_file) {
     fprintf(stderr, "check_script:Cannot open script:%s\n", script_file_path);
     exit(1);
   }
 
   tmpbuf[BUF_LEN-2] = '\0';
-  while (fgets(tmpbuf, BUF_LEN, fp) != NULL) {
+  while (fgets(tmpbuf, BUF_LEN, script_file) != NULL) {
     if (tmpbuf[BUF_LEN-2] != '\0') {
       fprintf(stderr, "Too long line in script:%s\n", script_file_path);
       exit(1);
@@ -2884,7 +2884,7 @@ check_script(const char *script_file_path)
     }
   }
 
-  fclose(fp);
+  fclose(script_file);
   return 0;
 }
 
