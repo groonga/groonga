@@ -2857,7 +2857,7 @@ check_script(const char *script_file_path)
 
   script_file = fopen(script_file_path, "r");
   if (!script_file) {
-    fprintf(stderr, "check_script:Cannot open script:%s\n", script_file_path);
+    fprintf(stderr, "Cannot open script file: <%s>\n", script_file_path);
     return GRN_FALSE;
   }
 
