@@ -26,7 +26,8 @@
 namespace {
 
 void
-grn_dat_init(grn_dat *dat) {
+grn_dat_init(grn_dat *dat)
+{
   GRN_DB_OBJ_SET_TYPE(dat, GRN_TABLE_DAT_KEY);
   dat->io = NULL;
   dat->header = NULL;
@@ -37,7 +38,8 @@ grn_dat_init(grn_dat *dat) {
 }
 
 void
-grn_dat_end(grn_dat *dat) {
+grn_dat_end(grn_dat *dat)
+{
   if (dat->handle) {
 #ifndef WIN32
     delete static_cast<grn::dat::Trie *>(dat->handle);
@@ -47,7 +49,7 @@ grn_dat_end(grn_dat *dat) {
 }
 
 void
-gen_pathname(const char *path, char *buffer, int fno)
+grn_dat_gen_pathname(const char *path, char *buffer, int fno)
 {
   size_t len = strlen(path);
   memcpy(buffer, path, len);
@@ -66,7 +68,7 @@ grn_dat_confirm_handle(grn_ctx *ctx, grn_dat *dat)
   int file_id = dat->header->file_id;
   if (!dat->handle || (dat->file_id != file_id)) {
     char buffer[PATH_MAX];
-    gen_pathname(grn_io_path(dat->io), buffer, file_id);
+    grn_dat_gen_pathname(grn_io_path(dat->io), buffer, file_id);
     /* LOCK */
     grn_dat_handle handle = dat->handle;
     grn::dat::Trie *new_trie = new grn::dat::Trie;
@@ -186,7 +188,7 @@ grn_dat_add(grn_ctx *ctx, grn_dat *dat, const void *key,
       file_id++;
       if (path && *path) {
         char buffer[PATH_MAX];
-        gen_pathname(path, buffer, file_id);
+        grn_dat_gen_pathname(path, buffer, file_id);
         grn::dat::Trie *new_trie = new grn::dat::Trie;
         new_trie->create(buffer);
         dat->handle = new_trie;
@@ -207,7 +209,7 @@ grn_dat_add(grn_ctx *ctx, grn_dat *dat, const void *key,
       if (added) { *added = (int)res; }
     } catch (const grn::dat::Exception &ex) {
       char buffer[PATH_MAX];
-      gen_pathname(grn_io_path(dat->io), buffer, ++file_id);
+      grn_dat_gen_pathname(grn_io_path(dat->io), buffer, ++file_id);
       /* LOCK */
       grn::dat::Trie *new_trie = new grn::dat::Trie;
       new_trie->create(*trie, buffer, trie->file_size() * 2);
