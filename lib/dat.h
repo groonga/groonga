@@ -27,7 +27,6 @@
 extern "C" {
 #endif
 
-typedef void *grn_dat_handle;
 typedef struct _grn_dat grn_dat;
 typedef struct _grn_dat_cursor grn_dat_cursor;
 
@@ -37,7 +36,8 @@ struct _grn_dat {
   struct grn_dat_header *header;
   uint32_t file_id;
   grn_encoding encoding;
-  grn_dat_handle handle;
+  void *trie;
+  void *old_trie;
   grn_obj *tokenizer;
 };
 
