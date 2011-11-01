@@ -31,6 +31,10 @@ class String {
   String(const void *ptr, UInt32 length)
       : ptr_(static_cast<const UInt8 *>(ptr)),
         length_(length) {}
+  template <UInt32 T>
+  explicit String(const char (&str)[T])
+      : ptr_(reinterpret_cast<const UInt8 *>(str)),
+        length_(T - 1) {}
   String(const String &rhs)
       : ptr_(rhs.ptr_),
         length_(rhs.length_) {}

@@ -25,44 +25,83 @@ namespace dat {
 
 class Key {
  public:
-  Key()
-      : str_(),
-        id_(INVALID_KEY_ID) {}
-
   const UInt8 &operator[](UInt32 i) const {
-    GRN_DAT_DEBUG_THROW_IF(i >= str_.length());
-    return str_[i];
+    GRN_DAT_DEBUG_THROW_IF(i >= length());
+    return buf_[i];
   }
 
-  const String &str() const {
-    return str_;
+  bool is_valid() const {
+    return id() != INVALID_KEY_ID;
   }
+
+  String str() const {
+    return String(ptr(), length());
+  }
+
   const void *ptr() const {
-    return str_.ptr();
+    return buf_;
   }
   UInt32 length() const {
-    return str_.length();
+    return (length_high_ << 4) | (id_and_length_low_ & 0x0F);
   }
   UInt32 id() const {
-    return id_;
+    return id_and_length_low_ >> 4;
   }
 
-  void set_str(const void *ptr, UInt32 length) {
-    str_.assign(ptr, length);
+  bool equals_to(const void *ptr, UInt32 length, UInt32 offset = 0) const {
+    if (length != this->length()) {
+      return false;
+    }
+    for ( ; offset < length; ++offset) {
+      if ((*this)[offset] != static_cast<const UInt8 *>(ptr)[offset]) {
+        return false;
+      }
+    }
+    return true;
   }
-  void set_ptr(const void *x) {
-    str_.set_ptr(x);
+
+  // Creates an object of Key from given parameters. Then, the created object
+  // is embedded into a specified buffer.
+  static const Key &create(UInt32 *buf, UInt32 key_id,
+                           const void *key_ptr, UInt32 key_length) {
+    GRN_DAT_DEBUG_THROW_IF(buf == NULL);
+    GRN_DAT_DEBUG_THROW_IF(key_id > MAX_KEY_ID);
+    GRN_DAT_DEBUG_THROW_IF((key_ptr == NULL) && (key_length != 0));
+    GRN_DAT_DEBUG_THROW_IF(key_length > MAX_KEY_LENGTH);
+
+    *buf = (key_id << 4) | (key_length & 0x0F);
+    UInt8 *ptr = reinterpret_cast<UInt8 *>(buf + 1);
+    *ptr++ = key_length >> 4;
+    for (UInt32 i = 0; i < key_length; ++i) {
+      ptr[i] = static_cast<const UInt8 *>(key_ptr)[i];
+    }
+    return *reinterpret_cast<const Key *>(buf);
   }
-  void set_length(UInt32 x) {
-    str_.set_length(x);
+
+  // Calculates how many UInt32s are required for a string. It is guaranteed
+  // that the estimated size is not less than the actual size.
+  static UInt32 estimate_size(UInt32 length) {
+    return 2 + (length / sizeof(UInt32));
   }
-  void set_id(UInt32 x) {
-    id_ = x;
+
+  // Returns a reference to an invalid key.
+  static const Key &invalid_key() {
+    static const UInt32 invalid_key_buf[2] = { INVALID_KEY_ID << 4, 0 };
+    return *reinterpret_cast<const Key *>(invalid_key_buf);
   }
 
  private:
-  String str_;
-  UInt32 id_;
+  const UInt32 id_and_length_low_;
+  const UInt8 length_high_;
+  const UInt8 buf_[3];
+
+  // Disallows instantiation.
+  Key();
+  ~Key();
+
+  // Disallows copy and assignment.
+  Key(const Key &);
+  Key &operator=(const Key &);
 };
 
 }  // namespace dat

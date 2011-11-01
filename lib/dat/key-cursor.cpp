@@ -65,15 +65,15 @@ void KeyCursor::close() {
   new_cursor.swap(this);
 }
 
-bool KeyCursor::next(Key *key) {
+const Key &KeyCursor::next() {
   if (finished_ || (count_ >= max_count_)) {
-    return false;
+    return Key::invalid_key();
   }
 
   if ((flags_ & ASCENDING_CURSOR) == ASCENDING_CURSOR) {
-    return ascending_next(key);
+    return ascending_next();
   } else {
-    return descending_next(key);
+    return descending_next();
   }
 }
 
@@ -139,7 +139,7 @@ void KeyCursor::ascending_init(const String &min_str, const String &max_str) {
   }
 
   if ((min_str.ptr() == NULL) || (min_str.length() == 0)) {
-    GRN_DAT_THROW_IF(MEMORY_ERROR, !buf_.push_back(ROOT_NODE_ID));
+    buf_.push_back(ROOT_NODE_ID);
     return;
   }
 
@@ -147,21 +147,18 @@ void KeyCursor::ascending_init(const String &min_str, const String &max_str) {
   Node node;
   for (UInt32 i = 0; i < min_str.length(); ++i) {
     node = trie_->ith_node(node_id);
-    if (node.is_terminal()) {
-      Key key;
-      trie_->ith_key(node.key_id(), &key);
+    if (node.is_linker()) {
+      const Key &key = trie_->get_key(node.key_pos());
       const int result = key.str().compare(min_str, i);
       if ((result > 0) || ((result == 0) &&
           ((flags_ & EXCEPT_LOWER_BOUND) != EXCEPT_LOWER_BOUND))) {
-        GRN_DAT_THROW_IF(MEMORY_ERROR, !buf_.push_back(node_id));
+        buf_.push_back(node_id);
       } else if (node.sibling() != INVALID_LABEL) {
-        GRN_DAT_THROW_IF(MEMORY_ERROR,
-            !buf_.push_back(node_id ^ node.label() ^ node.sibling()));
+        buf_.push_back(node_id ^ node.label() ^ node.sibling());
       }
       return;
     } else if (node.sibling() != INVALID_LABEL) {
-      GRN_DAT_THROW_IF(MEMORY_ERROR,
-          !buf_.push_back(node_id ^ node.label() ^ node.sibling()));
+      buf_.push_back(node_id ^ node.label() ^ node.sibling());
     }
 
     node_id = node.offset() ^ min_str[i];
@@ -172,8 +169,7 @@ void KeyCursor::ascending_init(const String &min_str, const String &max_str) {
       }
       while (label != INVALID_LABEL) {
         if (label > min_str[i]) {
-          GRN_DAT_THROW_IF(MEMORY_ERROR,
-                           !buf_.push_back(node.offset() ^ label));
+          buf_.push_back(node.offset() ^ label);
           break;
         }
         label = trie_->ith_node(node.offset() ^ label).sibling();
@@ -183,20 +179,17 @@ void KeyCursor::ascending_init(const String &min_str, const String &max_str) {
   }
 
   node = trie_->ith_node(node_id);
-  if (node.is_terminal()) {
-    Key key;
-    trie_->ith_key(node.key_id(), &key);
+  if (node.is_linker()) {
+    const Key &key = trie_->get_key(node.key_pos());
     if ((key.length() != min_str.length()) ||
         ((flags_ & EXCEPT_LOWER_BOUND) != EXCEPT_LOWER_BOUND)) {
-      GRN_DAT_THROW_IF(MEMORY_ERROR, !buf_.push_back(node_id));
+      buf_.push_back(node_id);
     } else if (node.sibling() != INVALID_LABEL) {
-      GRN_DAT_THROW_IF(MEMORY_ERROR,
-          !buf_.push_back(node_id ^ node.label() ^ node.sibling()));
+      buf_.push_back(node_id ^ node.label() ^ node.sibling());
     }
     return;
   } else if (node.sibling() != INVALID_LABEL) {
-    GRN_DAT_THROW_IF(MEMORY_ERROR,
-        !buf_.push_back(node_id ^ node.label() ^ node.sibling()));
+    buf_.push_back(node_id ^ node.label() ^ node.sibling());
   }
 
   UInt16 label = node.child();
@@ -205,7 +198,7 @@ void KeyCursor::ascending_init(const String &min_str, const String &max_str) {
     label = trie_->ith_node(node.offset() ^ label).sibling();
   }
   if (label != INVALID_LABEL) {
-    GRN_DAT_THROW_IF(MEMORY_ERROR, !buf_.push_back(node.offset() ^ label));
+    buf_.push_back(node.offset() ^ label);
   }
 }
 
@@ -219,21 +212,19 @@ void KeyCursor::descending_init(const String &min_str, const String &max_str) {
   }
 
   if ((max_str.ptr() == NULL) || (max_str.length() == 0)) {
-    GRN_DAT_THROW_IF(MEMORY_ERROR, !buf_.push_back(ROOT_NODE_ID));
+    buf_.push_back(ROOT_NODE_ID);
     return;
   }
 
   UInt32 node_id = ROOT_NODE_ID;
   for (UInt32 i = 0; i < max_str.length(); ++i) {
     const Base base = trie_->ith_node(node_id).base();
-    if (base.is_terminal()) {
-      Key key;
-      trie_->ith_key(base.key_id(), &key);
+    if (base.is_linker()) {
+      const Key &key = trie_->get_key(base.key_pos());
       const int result = key.str().compare(max_str, i);
       if ((result < 0) || ((result == 0) &&
           ((flags_ & EXCEPT_UPPER_BOUND) != EXCEPT_UPPER_BOUND))) {
-        GRN_DAT_THROW_IF(MEMORY_ERROR,
-                         !buf_.push_back(node_id | POST_ORDER_FLAG));
+        buf_.push_back(node_id | POST_ORDER_FLAG);
       }
       return;
     }
@@ -241,14 +232,13 @@ void KeyCursor::descending_init(const String &min_str, const String &max_str) {
     UInt32 label = trie_->ith_node(node_id).child();
     if (label == TERMINAL_LABEL) {
       node_id = base.offset() ^ label;
-      GRN_DAT_THROW_IF(MEMORY_ERROR,
-                       !buf_.push_back(node_id | POST_ORDER_FLAG));
+      buf_.push_back(node_id | POST_ORDER_FLAG);
       label = trie_->ith_node(node_id).sibling();
     }
     while (label != INVALID_LABEL) {
       node_id = base.offset() ^ label;
       if (label < max_str[i]) {
-        GRN_DAT_THROW_IF(MEMORY_ERROR, !buf_.push_back(node_id));
+        buf_.push_back(node_id);
       } else if (label > max_str[i]) {
         return;
       } else {
@@ -262,13 +252,11 @@ void KeyCursor::descending_init(const String &min_str, const String &max_str) {
   }
 
   const Base base = trie_->ith_node(node_id).base();
-  if (base.is_terminal()) {
-    Key key;
-    trie_->ith_key(base.key_id(), &key);
+  if (base.is_linker()) {
+    const Key &key = trie_->get_key(base.key_pos());
     if ((key.length() == max_str.length()) &&
         ((flags_ & EXCEPT_UPPER_BOUND) != EXCEPT_UPPER_BOUND)) {
-      GRN_DAT_THROW_IF(MEMORY_ERROR,
-                       !buf_.push_back(node_id | POST_ORDER_FLAG));
+      buf_.push_back(node_id | POST_ORDER_FLAG);
     }
     return;
   }
@@ -276,8 +264,7 @@ void KeyCursor::descending_init(const String &min_str, const String &max_str) {
   UInt16 label = trie_->ith_node(node_id).child();
   if ((label == TERMINAL_LABEL) &&
       ((flags_ & EXCEPT_UPPER_BOUND) != EXCEPT_UPPER_BOUND)) {
-    GRN_DAT_THROW_IF(MEMORY_ERROR,
-        !buf_.push_back((base.offset() ^ label) | POST_ORDER_FLAG));
+    buf_.push_back((base.offset() ^ label) | POST_ORDER_FLAG);
   }
 }
 
@@ -294,41 +281,37 @@ void KeyCursor::swap(KeyCursor *cursor) {
   end_str_.swap(&cursor->end_str_);
 }
 
-bool KeyCursor::ascending_next(Key *key) {
+const Key &KeyCursor::ascending_next() {
   while (!buf_.empty()) {
     const UInt32 node_id = buf_.back();
     buf_.pop_back();
 
     const Node node = trie_->ith_node(node_id);
     if (node.sibling() != INVALID_LABEL) {
-      GRN_DAT_THROW_IF(MEMORY_ERROR,
-          !buf_.push_back(node_id ^ node.label() ^ node.sibling()));
+      buf_.push_back(node_id ^ node.label() ^ node.sibling());
     }
 
-    if (node.is_terminal()) {
-      Key temp_key;
-      trie_->ith_key(node.key_id(), &temp_key);
+    if (node.is_linker()) {
+      const Key &key = trie_->get_key(node.key_pos());
       if (end_buf_ != NULL) {
-        const int result = temp_key.str().compare(end_str_);
+        const int result = key.str().compare(end_str_);
         if ((result > 0) || ((result == 0) &&
             ((flags_ & EXCEPT_UPPER_BOUND) == EXCEPT_UPPER_BOUND))) {
           finished_ = true;
-          return false;
+          return Key::invalid_key();
         }
       }
       if (count_++ >= offset_) {
-        *key = temp_key;
-        return true;
+        return key;
       }
     } else if (node.child() != INVALID_LABEL) {
-      GRN_DAT_THROW_IF(MEMORY_ERROR,
-                       !buf_.push_back(node.offset() ^ node.child()));
+      buf_.push_back(node.offset() ^ node.child());
     }
   }
-  return false;
+  return Key::invalid_key();
 }
 
-bool KeyCursor::descending_next(Key *key) {
+const Key &KeyCursor::descending_next() {
   while (!buf_.empty()) {
     const bool post_order = (buf_.back() & POST_ORDER_FLAG) == POST_ORDER_FLAG;
     const UInt32 node_id = buf_.back() & ~POST_ORDER_FLAG;
@@ -336,33 +319,30 @@ bool KeyCursor::descending_next(Key *key) {
     const Base base = trie_->ith_node(node_id).base();
     if (post_order) {
       buf_.pop_back();
-      if (base.is_terminal()) {
-        Key temp_key;
-        trie_->ith_key(base.key_id(), &temp_key);
+      if (base.is_linker()) {
+        const Key &key = trie_->get_key(base.key_pos());
         if (end_buf_ != NULL) {
-          const int result =
-              temp_key.str().compare(end_str_);
+          const int result = key.str().compare(end_str_);
           if ((result < 0) || ((result == 0) &&
               ((flags_ & EXCEPT_LOWER_BOUND) == EXCEPT_LOWER_BOUND))) {
             finished_ = true;
-            return false;
+            return Key::invalid_key();
           }
         }
         if (count_++ >= offset_) {
-          trie_->ith_key(base.key_id(), key);
-          return true;
+          return key;
         }
       }
     } else {
       buf_.back() |= POST_ORDER_FLAG;
       UInt16 label = trie_->ith_node(node_id).child();
       while (label != INVALID_LABEL) {
-        GRN_DAT_THROW_IF(MEMORY_ERROR, !buf_.push_back(base.offset() ^ label));
+        buf_.push_back(base.offset() ^ label);
         label = trie_->ith_node(base.offset() ^ label).sibling();
       }
     }
   }
-  return false;
+  return Key::invalid_key();
 }
 
 }  // namespace dat

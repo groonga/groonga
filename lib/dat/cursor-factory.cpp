@@ -18,7 +18,7 @@
 #include "cursor-factory.hpp"
 #include "id-cursor.hpp"
 #include "key-cursor.hpp"
-#include "common-prefix-cursor.hpp"
+#include "prefix-cursor.hpp"
 #include "predictive-cursor.hpp"
 
 #include <new>
@@ -62,8 +62,8 @@ Cursor *CursorFactory::open(const Trie &trie,
       }
       return cursor;
     }
-    case COMMON_PREFIX_CURSOR: {
-      CommonPrefixCursor *cursor = new (std::nothrow) CommonPrefixCursor;
+    case PREFIX_CURSOR: {
+      PrefixCursor *cursor = new (std::nothrow) PrefixCursor;
       GRN_DAT_THROW_IF(MEMORY_ERROR, cursor == NULL);
       try {
         if (&trie != NULL) {

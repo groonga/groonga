@@ -15,8 +15,8 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef GRN_DAT_COMMON_PREFIX_CURSOR_HPP_
-#define GRN_DAT_COMMON_PREFIX_CURSOR_HPP_
+#ifndef GRN_DAT_PREFIX_CURSOR_HPP_
+#define GRN_DAT_PREFIX_CURSOR_HPP_
 
 #include "cursor.hpp"
 #include "vector.hpp"
@@ -26,21 +26,21 @@ namespace dat {
 
 class Trie;
 
-class CommonPrefixCursor : public Cursor {
+class PrefixCursor : public Cursor {
  public:
-  CommonPrefixCursor();
-  ~CommonPrefixCursor();
+  PrefixCursor();
+  ~PrefixCursor();
 
   void open(const Trie &trie,
             const String &str,
-            UInt32 min_length,
+            UInt32 min_length = 0,
             UInt32 offset = 0,
             UInt32 limit = UINT32_MAX,
             UInt32 flags = 0);
 
   void close();
 
-  bool next(Key *key);
+  const Key &next();
 
   UInt32 offset() const {
     return offset_;
@@ -62,19 +62,19 @@ class CommonPrefixCursor : public Cursor {
   UInt32 cur_;
   UInt32 end_;
 
-  CommonPrefixCursor(const Trie &trie,
-                     UInt32 offset, UInt32 limit, UInt32 flags);
+  PrefixCursor(const Trie &trie,
+               UInt32 offset, UInt32 limit, UInt32 flags);
 
   UInt32 fix_flags(UInt32 flags) const;
   void init(const String &str, UInt32 min_length);
-  void swap(CommonPrefixCursor *cursor);
+  void swap(PrefixCursor *cursor);
 
   // Disallows copy and assignment.
-  CommonPrefixCursor(const CommonPrefixCursor &);
-  CommonPrefixCursor &operator=(const CommonPrefixCursor &);
+  PrefixCursor(const PrefixCursor &);
+  PrefixCursor &operator=(const PrefixCursor &);
 };
 
 }  // namespace dat
 }  // namespace grn
 
-#endif  // GRN_DAT_COMMON_PREFIX_CURSOR_HPP_
+#endif  // GRN_DAT_PREFIX_CURSOR_HPP_

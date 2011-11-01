@@ -23,46 +23,44 @@
 namespace grn {
 namespace dat {
 
-// The most significant bit represents whether or not the node is a terminal
-// node. The BASE of a terminal node represents the ID of its associated key.
-// On the other hand, the BASE of a non-terminal node represents the offset to
-// its child nodes.
+// The most significant bit represents whether or not the node is a linker.
+// BASE of a linker represents the position of its associated key and BASE of
+// a non-linker represents the offset to its child nodes.
 class Base {
  public:
-  Base()
-      : base_(0) {}
+  Base() : value_(0) {}
 
-  UInt32 base() const {
-    return base_;
+  bool operator==(const Base &rhs) const {
+    return value_ == rhs.value_;
   }
-  bool is_terminal() const {
-    return (base_ & IS_TERMINAL_FLAG) == IS_TERMINAL_FLAG;
+
+  bool is_linker() const {
+    return (value_ & IS_LINKER_FLAG) == IS_LINKER_FLAG;
   }
   UInt32 offset() const {
-    GRN_DAT_DEBUG_THROW_IF(is_terminal());
-    return base_;
+    GRN_DAT_DEBUG_THROW_IF(is_linker());
+    return value_;
   }
-  UInt32 key_id() const {
-    GRN_DAT_DEBUG_THROW_IF(!is_terminal());
-    return base_ & ~IS_TERMINAL_FLAG;
+  UInt32 key_pos() const {
+    GRN_DAT_DEBUG_THROW_IF(!is_linker());
+    return value_ & ~IS_LINKER_FLAG;
   }
 
-  void set_base(UInt32 x) {
-    base_ = x;
-  }
   void set_offset(UInt32 x) {
+    GRN_DAT_DEBUG_THROW_IF((x & IS_LINKER_FLAG) != 0);
     GRN_DAT_DEBUG_THROW_IF(x > MAX_OFFSET);
-    base_ = x;
+    value_ = x;
   }
-  void set_key_id(UInt32 x) {
-    GRN_DAT_DEBUG_THROW_IF(x > MAX_KEY_ID);
-    base_ = IS_TERMINAL_FLAG | x;
+  void set_key_pos(UInt32 x) {
+    GRN_DAT_DEBUG_THROW_IF((x & IS_LINKER_FLAG) != 0);
+    GRN_DAT_DEBUG_THROW_IF(x > MAX_OFFSET);
+    value_ = IS_LINKER_FLAG | x;
   }
 
  private:
-  UInt32 base_;
+  UInt32 value_;
 
-  static const UInt32 IS_TERMINAL_FLAG = 0x80000000U;
+  static const UInt32 IS_LINKER_FLAG = 0x80000000U;
 };
 
 }  // namespace dat

@@ -15,51 +15,59 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef GRN_DAT_USAGE_HPP_
-#define GRN_DAT_USAGE_HPP_
+#ifndef GRN_DAT_FILE_IMPL_HPP_
+#define GRN_DAT_FILE_IMPL_HPP_
+
+#ifdef WIN32
+#include <Windows.h>
+#endif  // WIN32
 
 #include "dat.hpp"
-
-#include <sys/time.h>
-#include <sys/resource.h>
 
 namespace grn {
 namespace dat {
 
-class Usage {
+class FileImpl {
  public:
-  Usage()
-      : usage_() {
-    ::getrusage(RUSAGE_SELF, &usage_);
+  FileImpl();
+  ~FileImpl();
+
+  void create(const char *path, UInt64 size);
+  void open(const char *path);
+  void close();
+
+  void *ptr() const {
+    return ptr_;
+  }
+  UInt64 size() const {
+    return size_;
   }
 
-  double user_time() const {
-    return usage_.ru_utime.tv_sec + (usage_.ru_utime.tv_usec * 0.000001);
-  }
-  double system_time() const {
-    return usage_.ru_stime.tv_sec + (usage_.ru_stime.tv_usec * 0.000001);
-  }
-  long max_resident_set_size() const {
-    return usage_.ru_maxrss;
-  }
-  long minor_page_faults() const {
-    return usage_.ru_minflt;
-  }
-  long major_page_faults() const {
-    return usage_.ru_majflt;
-  }
-  long file_system_inputs() const {
-    return usage_.ru_inblock;
-  }
-  long file_system_outputs() const {
-    return usage_.ru_oublock;
-  }
+  void swap(FileImpl *rhs);
 
  private:
-  struct rusage usage_;
+  void *ptr_;
+  UInt64 size_;
+
+#ifdef WIN32
+  HANDLE file_;
+  HANDLE map_;
+  LPVOID addr_;
+#else  // WIN32
+  int fd_;
+  void *addr_;
+  ::size_t length_;
+#endif  // WIN32
+
+  void create_(const char *path, UInt64 size);
+  void open_(const char *path);
+
+  // Disallows copy and assignment.
+  FileImpl(const FileImpl &);
+  FileImpl &operator=(const FileImpl &);
 };
 
 }  // namespace dat
 }  // namespace grn
 
-#endif  // GRN_DAT_USAGE_HPP_
+#endif  // GRN_DAT_FILE_IMPL_HPP_

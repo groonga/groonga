@@ -24,12 +24,12 @@ namespace grn {
 namespace dat {
 
 Trie::Trie()
-    : memory_mapped_file_(),
+    : file_(),
       header_(NULL),
-      nodes_(NULL),
-      blocks_(NULL),
-      key_infos_(NULL),
-      key_buf_(NULL) {}
+      nodes_(),
+      blocks_(),
+      entries_(),
+      key_buf_() {}
 
 Trie::~Trie() {}
 
@@ -54,6 +54,9 @@ void Trie::create(const char *file_name,
   if (max_num_keys == 0) {
     if (file_size == 0) {
       file_size = DEFAULT_FILE_SIZE;
+    } else {
+      GRN_DAT_THROW_IF(PARAM_ERROR, file_size < MIN_FILE_SIZE);
+      GRN_DAT_THROW_IF(PARAM_ERROR, file_size > MAX_FILE_SIZE);
     }
   } else {
     GRN_DAT_THROW_IF(PARAM_ERROR, max_num_keys > MAX_NUM_KEYS);
@@ -96,18 +99,19 @@ void Trie::create(const Trie &trie,
     if (file_size == 0) {
       file_size = trie.file_size();
     }
+    GRN_DAT_THROW_IF(PARAM_ERROR, file_size < MIN_FILE_SIZE);
+    GRN_DAT_THROW_IF(PARAM_ERROR, file_size > MAX_FILE_SIZE);
     GRN_DAT_THROW_IF(PARAM_ERROR, file_size < trie.virtual_size());
   } else {
     GRN_DAT_THROW_IF(PARAM_ERROR, max_num_keys < trie.num_keys());
-    GRN_DAT_THROW_IF(PARAM_ERROR, max_num_keys > MAX_KEY_ID);
+    GRN_DAT_THROW_IF(PARAM_ERROR, max_num_keys < trie.max_key_id());
+    GRN_DAT_THROW_IF(PARAM_ERROR, max_num_keys > MAX_NUM_KEYS);
   }
 
   Trie new_trie;
   new_trie.create_file(file_name, file_size, max_num_keys,
                        num_nodes_per_key, average_key_length);
-  if (trie.num_keys() != 0) {
-    new_trie.build_from_trie(trie);
-  }
+  new_trie.build_from_trie(trie);
   new_trie.swap(this);
 }
 
@@ -120,17 +124,16 @@ void Trie::open(const char *file_name) {
 }
 
 void Trie::close() {
-  Trie new_trie;
-  new_trie.swap(this);
+  Trie().swap(this);
 }
 
 void Trie::swap(Trie *trie) {
-  memory_mapped_file_.swap(&trie->memory_mapped_file_);
+  file_.swap(&trie->file_);
   std::swap(header_, trie->header_);
-  std::swap(nodes_, trie->nodes_);
-  std::swap(blocks_, trie->blocks_);
-  std::swap(key_infos_, trie->key_infos_);
-  std::swap(key_buf_, trie->key_buf_);
+  nodes_.swap(&trie->nodes_);
+  blocks_.swap(&trie->blocks_);
+  entries_.swap(&trie->entries_);
+  key_buf_.swap(&trie->key_buf_);
 }
 
 void Trie::create_file(const char *file_name,
@@ -140,45 +143,56 @@ void Trie::create_file(const char *file_name,
                        double average_key_length) {
   GRN_DAT_THROW_IF(PARAM_ERROR, (file_size == 0) && (max_num_keys == 0));
   GRN_DAT_THROW_IF(PARAM_ERROR, (file_size != 0) && (max_num_keys != 0));
-
-  UInt32 max_num_blocks;
-  UInt32 key_buf_size;
   if (max_num_keys == 0) {
     const UInt64 avail = file_size - sizeof(Header);
     const double num_bytes_per_key = (sizeof(Node) * num_nodes_per_key)
         + (1.0 * sizeof(Block) / BLOCK_SIZE * num_nodes_per_key)
-        + sizeof(KeyInfo) + average_key_length;
-    GRN_DAT_THROW_IF(PARAM_ERROR, (avail / num_bytes_per_key) > MAX_NUM_KEYS);
-    max_num_keys = (UInt32)(avail / num_bytes_per_key);
+        + sizeof(Entry)
+        + sizeof(UInt32) + sizeof(UInt8) + average_key_length + 1.5;
+    if ((avail / num_bytes_per_key) > MAX_NUM_KEYS) {
+      max_num_keys = MAX_NUM_KEYS;
+    } else {
+      max_num_keys = (UInt32)(avail / num_bytes_per_key);
+    }
     GRN_DAT_THROW_IF(PARAM_ERROR, max_num_keys == 0);
   }
 
+  UInt32 max_num_blocks;
   {
     const double max_num_nodes = num_nodes_per_key * max_num_keys;
-    GRN_DAT_THROW_IF(PARAM_ERROR, max_num_nodes > MAX_NUM_NODES);
+    GRN_DAT_THROW_IF(PARAM_ERROR, (max_num_nodes - 1.0) >= MAX_NUM_NODES);
     max_num_blocks = ((UInt32)max_num_nodes + BLOCK_SIZE - 1) / BLOCK_SIZE;
     GRN_DAT_THROW_IF(PARAM_ERROR, max_num_blocks == 0);
     GRN_DAT_THROW_IF(PARAM_ERROR, max_num_blocks > MAX_NUM_BLOCKS);
   }
 
+  UInt32 key_buf_size;
   if (file_size == 0) {
     const double total_key_length = average_key_length * max_num_keys;
-    GRN_DAT_THROW_IF(PARAM_ERROR, total_key_length > MAX_KEY_BUF_SIZE);
-    key_buf_size = (UInt32)total_key_length;
+    GRN_DAT_THROW_IF(PARAM_ERROR,
+        (total_key_length - 1.0) >= MAX_TOTAL_KEY_LENGTH);
+
+    // The last term is the estimated number of bytes that will be used for
+    // 32-bit alignment.
+    const UInt64 total_num_bytes = total_key_length
+        + (UInt64)(sizeof(UInt32) + sizeof(UInt8)) * max_num_keys
+        + (UInt32)(max_num_keys * 1.5);
+    GRN_DAT_THROW_IF(PARAM_ERROR,
+        (total_num_bytes / sizeof(UInt32)) >= MAX_KEY_BUF_SIZE);
+    key_buf_size = (UInt32)(total_num_bytes / sizeof(UInt32));
 
     file_size = sizeof(Header)
         + (sizeof(Block) * max_num_blocks)
         + (sizeof(Node) * BLOCK_SIZE * max_num_blocks)
-        + (sizeof(KeyInfo) * (max_num_keys + 1))
-        + key_buf_size;
+        + (sizeof(Entry) * max_num_keys)
+        + (sizeof(UInt32) * key_buf_size);
   } else {
     const UInt64 avail = file_size - sizeof(Header)
         - (sizeof(Block) * max_num_blocks)
         - (sizeof(Node) * BLOCK_SIZE * max_num_blocks)
-        - (sizeof(KeyInfo) * (max_num_keys + 1));
-    GRN_DAT_THROW_IF(PARAM_ERROR, avail == 0);
-    GRN_DAT_THROW_IF(PARAM_ERROR, avail > MAX_KEY_BUF_SIZE);
-    key_buf_size = (UInt32)avail;
+        - (sizeof(Entry) * max_num_keys);
+    GRN_DAT_THROW_IF(PARAM_ERROR, (avail / sizeof(UInt32)) > MAX_KEY_BUF_SIZE);
+    key_buf_size = (UInt32)(avail / sizeof(UInt32));
   }
 
   create_file(file_name, file_size, max_num_keys,
@@ -190,65 +204,73 @@ void Trie::create_file(const char *file_name,
                        UInt32 max_num_keys,
                        UInt32 max_num_blocks,
                        UInt32 key_buf_size) {
-  GRN_DAT_THROW_IF(PARAM_ERROR, file_size != (sizeof(Header)
+  GRN_DAT_THROW_IF(PARAM_ERROR, file_size < (sizeof(Header)
       + (sizeof(Block) * max_num_blocks)
       + (sizeof(Node) * BLOCK_SIZE * max_num_blocks)
-      + (sizeof(KeyInfo) * (max_num_keys + 1))
-      + key_buf_size));
+      + (sizeof(Entry) * max_num_keys)
+      + (sizeof(UInt32) * key_buf_size)));
 
-  memory_mapped_file_.create(file_name, file_size);
+  file_.create(file_name, file_size);
 
-  Header * const header = static_cast<Header *>(memory_mapped_file_.ptr());
+  Header * const header = static_cast<Header *>(file_.ptr());
   *header = Header();
   header->set_file_size(file_size);
   header->set_max_num_keys(max_num_keys);
   header->set_max_num_blocks(max_num_blocks);
   header->set_key_buf_size(key_buf_size);
 
-  map_address(memory_mapped_file_.ptr());
+  map_address(file_.ptr());
 
   reserve_node(ROOT_NODE_ID);
   ith_node(INVALID_OFFSET).set_is_offset(true);
-  ith_key_info(MIN_KEY_ID).set_offset(0);
 }
 
 void Trie::open_file(const char *file_name) {
   GRN_DAT_THROW_IF(PARAM_ERROR, file_name == NULL);
 
-  memory_mapped_file_.open(file_name);
-  map_address(memory_mapped_file_.ptr());
+  file_.open(file_name);
+  map_address(file_.ptr());
+  GRN_DAT_THROW_IF(FORMAT_ERROR, file_size() != file_.size());
 }
 
 void Trie::map_address(void *address) {
   GRN_DAT_THROW_IF(PARAM_ERROR, address == NULL);
 
   header_ = static_cast<Header *>(address);
-  nodes_ = static_cast<Node *>(static_cast<void *>(header_ + 1));
-  blocks_ = static_cast<Block *>(static_cast<void *>(
-      nodes_ + max_num_nodes()));
-  key_infos_ = static_cast<KeyInfo *>(static_cast<void *>(
-      blocks_ + max_num_blocks()));
-  key_buf_ = static_cast<char *>(static_cast<void *>(
-      key_infos_ + (max_num_keys() + 1)));
+  nodes_.assign(header_ + 1, max_num_nodes());
+  blocks_.assign(nodes_.end(), max_num_blocks());
+  entries_.assign(reinterpret_cast<Entry *>(blocks_.end()) - 1,
+      max_num_keys() + 1);
+  key_buf_.assign(entries_.end(), key_buf_size());
+
+  GRN_DAT_THROW_IF(UNEXPECTED_ERROR, static_cast<void *>(key_buf_.end())
+      > static_cast<void *>(static_cast<char *>(address) + file_size()));
 }
 
 void Trie::build_from_trie(const Trie &trie) {
-  GRN_DAT_DEBUG_THROW_IF(trie.num_keys() == 0);
+  GRN_DAT_THROW_IF(SIZE_ERROR, max_num_keys() < trie.num_keys());
+  GRN_DAT_THROW_IF(SIZE_ERROR, max_num_keys() < trie.max_key_id());
 
+  header_->set_total_key_length(trie.total_key_length());
   header_->set_num_keys(trie.num_keys());
-  std::memcpy(key_infos_, trie.key_infos_,
-              sizeof(KeyInfo) * (num_keys() + 1));
-  std::memcpy(key_buf_, trie.key_buf_,
-              ith_key_info(max_key_id() + 1).offset());
+  header_->set_max_key_id(trie.max_key_id());
+  header_->set_next_key_id(trie.next_key_id());
+  for (UInt32 i = min_key_id(); i <= max_key_id(); ++i) {
+    ith_entry(i) = trie.ith_entry(i);
+  }
   build_from_trie(trie, ROOT_NODE_ID, ROOT_NODE_ID);
 }
 
-void Trie::build_from_trie(const Trie &trie,
-                           UInt32 src,
-                           UInt32 dest) {
-  ith_node(dest).set_except_is_offset(trie.ith_node(src).except_is_offset());
-  if (trie.ith_node(src).is_terminal()) {
-    ith_node(dest).set_key_id(trie.ith_node(src).key_id());
+void Trie::build_from_trie(const Trie &trie, UInt32 src, UInt32 dest) {
+  // Keys are sorted in lexicographic order.
+  if (trie.ith_node(src).is_linker()) {
+    const Key &key = trie.get_key(trie.ith_node(src).key_pos());
+    Key::create(key_buf_.ptr() + next_key_pos(),
+        key.id(), key.ptr(), key.length());
+    ith_node(dest).set_key_pos(next_key_pos());
+    ith_entry(key.id()).set_key_pos(next_key_pos());
+    header_->set_next_key_pos(
+        next_key_pos() + Key::estimate_size(key.length()));
     return;
   }
 
@@ -259,233 +281,237 @@ void Trie::build_from_trie(const Trie &trie,
     UInt32 num_labels = 0;
 
     UInt32 label = trie.ith_node(src).child();
-    GRN_DAT_DEBUG_THROW_IF(label == INVALID_LABEL);
     while (label != INVALID_LABEL) {
       GRN_DAT_DEBUG_THROW_IF(label > MAX_LABEL);
-      labels[num_labels++] = label;
-      label = trie.ith_node(src_offset ^ label).sibling();
+      const UInt32 child = src_offset ^ label;
+      if (trie.ith_node(child).is_linker() ||
+          (trie.ith_node(child).child() != INVALID_LABEL)) {
+        labels[num_labels++] = label;
+      }
+      label = trie.ith_node(child).sibling();
     }
-    GRN_DAT_DEBUG_THROW_IF(num_labels == 0);
+    if (num_labels == 0) {
+      return;
+    }
 
     dest_offset = find_offset(labels, num_labels);
     for (UInt32 i = 0; i < num_labels; ++i) {
-      reserve_node(dest_offset ^ labels[i]);
+      const UInt32 child = dest_offset ^ labels[i];
+      reserve_node(child);
+      ith_node(child).set_label(labels[i]);
+      if ((i + 1) < num_labels) {
+        ith_node(child).set_sibling(labels[i + 1]);
+      }
     }
 
     GRN_DAT_DEBUG_THROW_IF(ith_node(dest_offset).is_offset());
     ith_node(dest_offset).set_is_offset(true);
     ith_node(dest).set_offset(dest_offset);
+    ith_node(dest).set_child(labels[0]);
   }
 
-  UInt32 label = trie.ith_node(src).child();
+  UInt32 label = ith_node(dest).child();
   while (label != INVALID_LABEL) {
     build_from_trie(trie, src_offset ^ label, dest_offset ^ label);
-    label = trie.ith_node(src_offset ^ label).sibling();
+    label = ith_node(dest_offset ^ label).sibling();
   }
 }
 
-bool Trie::search_from_root(const UInt8 *ptr,
-                            UInt32 length,
-                            Key *key) const {
+bool Trie::search_key(const UInt8 *ptr, UInt32 length, UInt32 *key_pos) const {
   GRN_DAT_DEBUG_THROW_IF((ptr == NULL) && (length != 0));
 
   UInt32 node_id = ROOT_NODE_ID;
-  for (UInt32 i = 0; i < length; ++i) {
-    const Base base = ith_node(node_id).base();
-    if (base.is_terminal()) {
-      return search_from_terminal(ptr, length, key, base.key_id(), i);
-    }
-
-    node_id = base.offset() ^ ptr[i];
-    if (ith_node(node_id).label() != ptr[i]) {
-      return false;
-    }
+  UInt32 query_pos = 0;
+  if (!search_linker(ptr, length, node_id, query_pos)) {
+    return false;
   }
 
   const Base base = ith_node(node_id).base();
-  if (base.is_terminal()) {
-    return search_from_terminal(ptr, length, key, base.key_id(), length);
-  }
-
-  node_id = base.offset() ^ TERMINAL_LABEL;
-  if (ith_node(node_id).label() != TERMINAL_LABEL) {
-    return false;
-  }
-  GRN_DAT_DEBUG_THROW_IF(!ith_node(node_id).is_terminal());
-
-  if (key != NULL) {
-    ith_key(ith_node(node_id).key_id(), key);
-  }
-  return true;
-}
-
-bool Trie::search_from_terminal(const UInt8 *ptr,
-                                UInt32 length,
-                                Key *key,
-                                UInt32 key_id,
-                                UInt32 i) const {
-  GRN_DAT_DEBUG_THROW_IF(i > length);
-  GRN_DAT_DEBUG_THROW_IF(key_id < min_key_id());
-  GRN_DAT_DEBUG_THROW_IF(key_id > max_key_id());
-
-  const UInt32 key_length = ith_key_info(key_id + 1).offset()
-      - ith_key_info(key_id).offset();
-  if (key_length != length) {
+  if (!base.is_linker()) {
     return false;
   }
 
-  const char * const key_ptr = key_buf_ + ith_key_info(key_id).offset();
-  for ( ; i < length; ++i) {
-    if (ptr[i] != (UInt8)key_ptr[i]) {
-      return false;
+  if (get_key(base.key_pos()).equals_to(ptr, length, query_pos)) {
+    if (key_pos != NULL) {
+      *key_pos = base.key_pos();
     }
+    return true;
   }
-
-  if (key != NULL) {
-    key->set_ptr(key_ptr);
-    key->set_length(key_length);
-    key->set_id(key_id);
-  }
-  return true;
+  return false;
 }
 
-bool Trie::insert_from_root(const UInt8 *ptr,
-                            UInt32 length,
-                            Key *key) {
+bool Trie::search_linker(const UInt8 *ptr, UInt32 length,
+                         UInt32 &node_id, UInt32 &query_pos) const {
   GRN_DAT_DEBUG_THROW_IF((ptr == NULL) && (length != 0));
 
-  UInt32 node_id = ROOT_NODE_ID;
-  for (UInt32 i = 0; i < length; ++i) {
+  for ( ; query_pos < length; ++query_pos) {
     const Base base = ith_node(node_id).base();
-    if (base.is_terminal()) {
-      return insert_from_terminal(ptr, length, key, node_id, i);
+    if (base.is_linker()) {
+      return true;
     }
 
-    const UInt32 next = base.offset() ^ ptr[i];
-    if (ith_node(next).label() != ptr[i]) {
-      return insert_from_nonterminal(ptr, length, key, node_id, i);
+    const UInt32 next = base.offset() ^ ptr[query_pos];
+    if (ith_node(next).label() != ptr[query_pos]) {
+      return false;
     }
     node_id = next;
   }
 
   const Base base = ith_node(node_id).base();
-  if (base.is_terminal()) {
-    return insert_from_terminal(ptr, length, key, node_id, length);
+  if (base.is_linker()) {
+    return true;
   }
 
   const UInt32 next = base.offset() ^ TERMINAL_LABEL;
   if (ith_node(next).label() != TERMINAL_LABEL) {
-    return insert_from_nonterminal(ptr, length, key, node_id, length);
+    return false;
   }
-  GRN_DAT_DEBUG_THROW_IF(!ith_node(next).is_terminal());
-
-  if (key != NULL) {
-    ith_key(ith_node(next).key_id(), key);
-  }
-  return false;
+  node_id = next;
+  return ith_node(next).is_linker();
 }
 
-bool Trie::insert_from_terminal(const UInt8 *ptr,
-                                UInt32 length,
-                                Key *key,
-                                UInt32 node_id,
-                                UInt32 i) {
-  GRN_DAT_DEBUG_THROW_IF(node_id >= num_nodes());
-  GRN_DAT_DEBUG_THROW_IF(!ith_node(node_id).is_terminal());
-  GRN_DAT_DEBUG_THROW_IF(i > length);
+bool Trie::remove_key(const UInt8 *ptr, UInt32 length) {
+  GRN_DAT_DEBUG_THROW_IF((ptr == NULL) && (length != 0));
 
-  UInt32 key_id = ith_node(node_id).key_id();
-  const char *key_ptr = key_buf_ + ith_key_info(key_id).offset();
-  UInt32 key_length = ith_key_info(key_id + 1).offset()
-      - ith_key_info(key_id).offset();
-
-  UInt32 j = i;
-  while ((j < length) && (j < key_length)) {
-    if (ptr[j] != (UInt8)key_ptr[j]) {
-      break;
-    }
-    ++j;
+  UInt32 node_id = ROOT_NODE_ID;
+  UInt32 query_pos = 0;
+  if (!search_linker(ptr, length, node_id, query_pos)) {
+    return false;
   }
 
-  if ((j == length) && (j == key_length)) {
-    if (key != NULL) {
-      key->set_ptr(key_ptr);
-      key->set_length(key_length);
-      key->set_id(key_id);
+  const UInt32 key_pos = ith_node(node_id).key_pos();
+  if (!get_key(key_pos).equals_to(ptr, length, query_pos)) {
+    return false;
+  }
+
+  const UInt32 key_id = get_key(key_pos).id();
+  ith_node(node_id).set_offset(INVALID_OFFSET);
+  ith_entry(key_id).set_next(next_key_id());
+
+  header_->set_next_key_id(key_id);
+  header_->set_total_key_length(total_key_length() - length);
+  header_->set_num_keys(num_keys() - 1);
+  return true;
+}
+
+bool Trie::insert_key(const UInt8 *ptr, UInt32 length, UInt32 *key_pos) {
+  GRN_DAT_DEBUG_THROW_IF((ptr == NULL) && (length != 0));
+
+  UInt32 node_id = ROOT_NODE_ID;
+  UInt32 query_pos = 0;
+
+  search_linker(ptr, length, node_id, query_pos);
+  if (!insert_linker(ptr, length, node_id, query_pos)) {
+    if (key_pos != NULL) {
+      *key_pos = ith_node(node_id).key_pos();
     }
     return false;
   }
 
-  GRN_DAT_THROW_IF(SIZE_ERROR, num_keys() >= max_num_keys());
-  key_id = max_key_id() + 1;
+  const UInt32 new_key_id = next_key_id();
+  const UInt32 new_key_pos = append_key(ptr, length, new_key_id);
 
-  const UInt32 key_offset = ith_key_info(key_id).offset();
-  GRN_DAT_THROW_IF(SIZE_ERROR, length > (key_buf_size() - key_offset));
-
-  for (UInt32 k = i; k < j; ++k) {
-    node_id = insert_node(node_id, ptr[k]);
-  }
-  node_id = separate(ptr, length, node_id, j);
-
-  ith_key_info(key_id + 1).set_offset(key_offset + length);
-  std::memcpy(key_buf_ + key_offset, ptr, length);
+  header_->set_total_key_length(total_key_length() + length);
   header_->set_num_keys(num_keys() + 1);
+  if (new_key_id > max_key_id()) {
+    header_->set_max_key_id(new_key_id);
+    header_->set_next_key_id(new_key_id + 1);
+  } else {
+    header_->set_next_key_id(ith_entry(new_key_id).next());
+  }
 
-  ith_node(node_id).set_key_id(key_id);
-
-  if (key != NULL) {
-    key->set_ptr(key_buf_ + key_offset);
-    key->set_length(length);
-    key->set_id(key_id);
+  ith_entry(new_key_id).set_key_pos(new_key_pos);
+  ith_node(node_id).set_key_pos(new_key_pos);
+  if (key_pos != NULL) {
+    *key_pos = new_key_pos;
   }
   return true;
 }
 
-bool Trie::insert_from_nonterminal(const UInt8 *ptr,
-                                   UInt32 length,
-                                   Key *key,
-                                   UInt32 node_id,
-                                   UInt32 i) {
-  GRN_DAT_DEBUG_THROW_IF(node_id >= num_nodes());
-  GRN_DAT_DEBUG_THROW_IF(ith_node(node_id).is_terminal());
-  GRN_DAT_DEBUG_THROW_IF(i > length);
+bool Trie::insert_linker(const UInt8 *ptr, UInt32 length,
+                         UInt32 &node_id, UInt32 query_pos) {
+  if (ith_node(node_id).is_linker()) {
+    const Key &key = get_key(ith_node(node_id).key_pos());
+    UInt32 i = query_pos;
+    while ((i < length) && (i < key.length())) {
+      if (ptr[i] != key[i]) {
+        break;
+      }
+      ++i;
+    }
+    if ((i == length) && (i == key.length())) {
+      return false;
+    }
+    GRN_DAT_THROW_IF(SIZE_ERROR, num_keys() >= max_num_keys());
+    GRN_DAT_DEBUG_THROW_IF(next_key_id() > max_num_keys());
 
-  GRN_DAT_THROW_IF(SIZE_ERROR, num_keys() >= max_num_keys());
-  const UInt32 key_id = max_key_id() + 1;
-
-  const UInt32 key_offset = ith_key_info(key_id).offset();
-  GRN_DAT_THROW_IF(SIZE_ERROR, length > (key_buf_size() - key_offset));
-
-  const UInt16 label = (i < length) ? (UInt16)ptr[i] : (UInt16)TERMINAL_LABEL;
-  const Base base = ith_node(node_id).base();
-  if ((base.offset() == INVALID_OFFSET) ||
-      !ith_node(base.offset() ^ label).is_phantom()) {
-    resolve(node_id, label);
+    for (UInt32 j = query_pos; j < i; ++j) {
+      node_id = insert_node(node_id, ptr[j]);
+    }
+    node_id = separate(ptr, length, node_id, i);
+    return true;
+  } else if (ith_node(node_id).label() == TERMINAL_LABEL) {
+    return true;
+  } else {
+    GRN_DAT_THROW_IF(SIZE_ERROR, num_keys() >= max_num_keys());
+    const UInt16 label = (query_pos < length) ?
+        (UInt16)ptr[query_pos] : (UInt16)TERMINAL_LABEL;
+    const Base base = ith_node(node_id).base();
+    if ((base.offset() == INVALID_OFFSET) ||
+        !ith_node(base.offset() ^ label).is_phantom()) {
+      resolve(node_id, label);
+    }
+    node_id = insert_node(node_id, label);
+    return true;
   }
-  node_id = insert_node(node_id, label);
+}
 
-  ith_key_info(key_id + 1).set_offset(key_offset + length);
-  std::memcpy(key_buf_ + key_offset, ptr, length);
-  header_->set_num_keys(num_keys() + 1);
+bool Trie::update_key(UInt32 key_id, const UInt8 *ptr, UInt32 length,
+                      UInt32 *key_pos) {
+  GRN_DAT_DEBUG_THROW_IF((ptr == NULL) && (length != 0));
 
-  ith_node(node_id).set_key_id(key_id);
-
-  if (key != NULL) {
-    key->set_ptr(key_buf_ + key_offset);
-    key->set_length(length);
-    key->set_id(key_id);
+  if (!ith_entry(key_id).is_valid()) {
+    return false;
   }
+
+  UInt32 node_id = ROOT_NODE_ID;
+  UInt32 query_pos = 0;
+
+  search_linker(ptr, length, node_id, query_pos);
+  if (!insert_linker(ptr, length, node_id, query_pos)) {
+    if (key_pos != NULL) {
+      *key_pos = ith_node(node_id).key_pos();
+    }
+    return false;
+  }
+
+  const Key &key = ith_key(key_id);
+  const UInt32 new_key_pos = append_key(ptr, length, key_id);
+
+  header_->set_total_key_length(total_key_length() + length - key.length());
+
+  ith_entry(key_id).set_key_pos(new_key_pos);
+  ith_node(node_id).set_key_pos(new_key_pos);
+  if (key_pos != NULL) {
+    *key_pos = new_key_pos;
+  }
+
+  node_id = ROOT_NODE_ID;
+  query_pos = 0;
+  GRN_DAT_THROW_IF(UNEXPECTED_ERROR,
+      !search_linker(static_cast<const UInt8 *>(key.ptr()), key.length(),
+                     node_id, query_pos));
+  ith_node(node_id).set_offset(INVALID_OFFSET);
   return true;
 }
 
-UInt32 Trie::insert_node(UInt32 node_id,
-                         UInt16 label) {
+UInt32 Trie::insert_node(UInt32 node_id, UInt16 label) {
   GRN_DAT_DEBUG_THROW_IF(node_id >= num_nodes());
   GRN_DAT_DEBUG_THROW_IF(label > MAX_LABEL);
 
   const Base base = ith_node(node_id).base();
   UInt32 offset;
-  if (base.is_terminal() || (base.offset() == INVALID_OFFSET)) {
+  if (base.is_linker() || (base.offset() == INVALID_OFFSET)) {
     offset = find_offset(&label, 1);
   } else {
     offset = base.offset();
@@ -495,10 +521,10 @@ UInt32 Trie::insert_node(UInt32 node_id,
   reserve_node(next);
 
   ith_node(next).set_label(label);
-  if (base.is_terminal()) {
+  if (base.is_linker()) {
     GRN_DAT_DEBUG_THROW_IF(ith_node(offset).is_offset());
     ith_node(offset).set_is_offset(true);
-    ith_node(next).set_key_id(base.key_id());
+    ith_node(next).set_key_pos(base.key_pos());
   } else if (base.offset() == INVALID_OFFSET) {
     GRN_DAT_DEBUG_THROW_IF(ith_node(offset).is_offset());
     ith_node(offset).set_is_offset(true);
@@ -533,33 +559,41 @@ UInt32 Trie::insert_node(UInt32 node_id,
   return next;
 }
 
-UInt32 Trie::separate(const UInt8 *ptr,
-                      UInt32 length,
-                      UInt32 node_id,
-                      UInt32 i) {
+UInt32 Trie::append_key(const UInt8 *ptr, UInt32 length, UInt32 key_id) {
+  GRN_DAT_THROW_IF(SIZE_ERROR, key_id > max_num_keys());
+
+  const UInt32 key_pos = next_key_pos();
+  const UInt32 key_size = Key::estimate_size(length);
+
+  GRN_DAT_THROW_IF(SIZE_ERROR, key_size > (key_buf_size() - key_pos));
+  Key::create(key_buf_.ptr() + key_pos, key_id, ptr, length);
+
+  header_->set_next_key_pos(key_pos + key_size);
+  return key_pos;
+}
+
+UInt32 Trie::separate(const UInt8 *ptr, UInt32 length,
+                      UInt32 node_id, UInt32 i) {
   GRN_DAT_DEBUG_THROW_IF(node_id >= num_nodes());
-  GRN_DAT_DEBUG_THROW_IF(!ith_node(node_id).is_terminal());
+  GRN_DAT_DEBUG_THROW_IF(!ith_node(node_id).is_linker());
   GRN_DAT_DEBUG_THROW_IF(i > length);
 
-  const UInt32 key_id = ith_node(node_id).key_id();
-  const UInt32 key_offset = ith_key_info(key_id).offset();
-  const char *key_ptr = key_buf_ + key_offset;
-  const UInt32 key_length = ith_key_info(key_id + 1).offset() - key_offset;
+  const UInt32 key_pos = ith_node(node_id).key_pos();
+  const Key &key = get_key(key_pos);
 
   UInt16 labels[2];
-  labels[0] = (i < key_length) ?
-      (UInt16)(UInt8)key_ptr[i] : (UInt16)TERMINAL_LABEL;
+  labels[0] = (i < key.length()) ? (UInt16)key[i] : (UInt16)TERMINAL_LABEL;
   labels[1] = (i < length) ? (UInt16)ptr[i] : (UInt16)TERMINAL_LABEL;
   GRN_DAT_DEBUG_THROW_IF(labels[0] == labels[1]);
 
   const UInt32 offset = find_offset(labels, 2);
-  GRN_DAT_DEBUG_THROW_IF(ith_node(offset).is_offset());
 
   UInt32 next = offset ^ labels[0];
   reserve_node(next);
+  GRN_DAT_DEBUG_THROW_IF(ith_node(offset).is_offset());
 
   ith_node(next).set_label(labels[0]);
-  ith_node(next).set_key_id(key_id);
+  ith_node(next).set_key_pos(key_pos);
 
   next = offset ^ labels[1];
   reserve_node(next);
@@ -580,10 +614,9 @@ UInt32 Trie::separate(const UInt8 *ptr,
   return next;
 }
 
-void Trie::resolve(UInt32 node_id,
-                   UInt16 label) {
+void Trie::resolve(UInt32 node_id, UInt16 label) {
   GRN_DAT_DEBUG_THROW_IF(node_id >= num_nodes());
-  GRN_DAT_DEBUG_THROW_IF(ith_node(node_id).is_terminal());
+  GRN_DAT_DEBUG_THROW_IF(ith_node(node_id).is_linker());
   GRN_DAT_DEBUG_THROW_IF(label > MAX_LABEL);
 
   UInt32 offset = ith_node(node_id).offset();
@@ -602,7 +635,7 @@ void Trie::resolve(UInt32 node_id,
 
     labels[num_labels] = label;
     offset = find_offset(labels, num_labels + 1);
-    move_nodes(node_id, offset, labels, num_labels);
+    migrate_nodes(node_id, offset, labels, num_labels);
   } else {
     offset = find_offset(&label, 1);
     if (offset >= num_nodes()) {
@@ -614,12 +647,10 @@ void Trie::resolve(UInt32 node_id,
   }
 }
 
-void Trie::move_nodes(UInt32 node_id,
-                      UInt32 dest_offset,
-                      const UInt16 *labels,
-                      UInt32 num_labels) {
+void Trie::migrate_nodes(UInt32 node_id, UInt32 dest_offset,
+                         const UInt16 *labels, UInt32 num_labels) {
   GRN_DAT_DEBUG_THROW_IF(node_id >= num_nodes());
-  GRN_DAT_DEBUG_THROW_IF(ith_node(node_id).is_terminal());
+  GRN_DAT_DEBUG_THROW_IF(ith_node(node_id).is_linker());
   GRN_DAT_DEBUG_THROW_IF(labels == NULL);
   GRN_DAT_DEBUG_THROW_IF(num_labels == 0);
   GRN_DAT_DEBUG_THROW_IF(num_labels > (MAX_LABEL + 1));
@@ -646,14 +677,13 @@ void Trie::move_nodes(UInt32 node_id,
   ith_node(node_id).set_offset(dest_offset);
 }
 
-UInt32 Trie::find_offset(const UInt16 *labels,
-                         UInt32 num_labels) {
+UInt32 Trie::find_offset(const UInt16 *labels, UInt32 num_labels) {
   GRN_DAT_DEBUG_THROW_IF(labels == NULL);
   GRN_DAT_DEBUG_THROW_IF(num_labels == 0);
   GRN_DAT_DEBUG_THROW_IF(num_labels > (MAX_LABEL + 1));
 
-  // Blocks are tested in descending order of level, a lower level block
-  // contains more phantom nodes.
+  // Blocks are tested in descending order of level. Basically, a lower level
+  // block contains more phantom nodes.
   UInt32 level = 1;
   while (num_labels >= (1U << level)) {
     ++level;
@@ -662,13 +692,13 @@ UInt32 Trie::find_offset(const UInt16 *labels,
 
   UInt32 block_count = 0;
   do {
-    UInt32 entry = header_->ith_entry(level);
-    if (entry == INVALID_ENTRY) {
+    UInt32 leader = header_->ith_leader(level);
+    if (leader == INVALID_LEADER) {
       // This level has no blocks and it is thus skipped.
       continue;
     }
 
-    UInt32 block_id = entry;
+    UInt32 block_id = leader;
     do {
       const Block &block = ith_block(block_id);
       GRN_DAT_DEBUG_THROW_IF(block.level() != level);
@@ -695,21 +725,21 @@ UInt32 Trie::find_offset(const UInt16 *labels,
       const UInt32 prev = block_id;
       const UInt32 next = block.next();
       block_id = next;
-      ith_block(prev).set_fail_count(ith_block(prev).fail_count() + 1);
+      ith_block(prev).set_failure_count(ith_block(prev).failure_count() + 1);
 
       // The level of a block is updated when this function fails many times,
-      // actually MAX_FAIL_COUNT times, in that block.
-      if (ith_block(prev).fail_count() == MAX_FAIL_COUNT) {
+      // actually MAX_FAILURE_COUNT times, in that block.
+      if (ith_block(prev).failure_count() == MAX_FAILURE_COUNT) {
         update_block_level(prev, level + 1);
-        if (next == entry) {
+        if (next == leader) {
           break;
         } else {
-          // Note that the entry might be updated in the level update.
-          entry = header_->ith_entry(level);
+          // Note that the leader might be updated in the level update.
+          leader = header_->ith_leader(level);
           continue;
         }
       }
-    } while ((++block_count < MAX_BLOCK_COUNT) && (block_id != entry));
+    } while ((++block_count < MAX_BLOCK_COUNT) && (block_id != leader));
   } while ((block_count < MAX_BLOCK_COUNT) && (level-- != 0));
 
   return num_nodes() ^ labels[0];
@@ -763,7 +793,7 @@ void Trie::reserve_block(UInt32 block_id) {
   GRN_DAT_THROW_IF(SIZE_ERROR, block_id >= max_num_blocks());
 
   header_->set_num_blocks(block_id + 1);
-  ith_block(block_id).set_fail_count(0);
+  ith_block(block_id).set_failure_count(0);
   ith_block(block_id).set_first_phantom(0);
   ith_block(block_id).set_num_phantoms(BLOCK_SIZE);
 
@@ -784,35 +814,33 @@ void Trie::reserve_block(UInt32 block_id) {
     ith_node(i).set_check(check);
   }
 
-  // The leve of the new block is 0.
+  // The level of the new block is 0.
   set_block_level(block_id, 0);
   header_->set_num_phantoms(num_phantoms() + BLOCK_SIZE);
 }
 
-void Trie::update_block_level(UInt32 block_id,
-                              UInt32 level) {
+void Trie::update_block_level(UInt32 block_id, UInt32 level) {
   GRN_DAT_DEBUG_THROW_IF(block_id >= num_blocks());
   GRN_DAT_DEBUG_THROW_IF(level > MAX_BLOCK_LEVEL);
 
-  clear_block_level(block_id);
+  unset_block_level(block_id);
   set_block_level(block_id, level);
 }
 
-void Trie::set_block_level(UInt32 block_id,
-                           UInt32 level) {
+void Trie::set_block_level(UInt32 block_id, UInt32 level) {
   GRN_DAT_DEBUG_THROW_IF(block_id >= num_blocks());
   GRN_DAT_DEBUG_THROW_IF(level > MAX_BLOCK_LEVEL);
 
-  const UInt32 entry = header_->ith_entry(level);
-  if (entry == INVALID_ENTRY) {
+  const UInt32 leader = header_->ith_leader(level);
+  if (leader == INVALID_LEADER) {
     // The new block becomes the only one block of the linked list.
     ith_block(block_id).set_next(block_id);
     ith_block(block_id).set_prev(block_id);
-    header_->set_ith_entry(level, block_id);
+    header_->set_ith_leader(level, block_id);
   } else {
     // The new block is added to the end of the list.
-    const UInt32 next = entry;
-    const UInt32 prev = ith_block(entry).prev();
+    const UInt32 next = leader;
+    const UInt32 prev = ith_block(leader).prev();
     GRN_DAT_DEBUG_THROW_IF(next >= num_blocks());
     GRN_DAT_DEBUG_THROW_IF(prev >= num_blocks());
     ith_block(block_id).set_next(next);
@@ -821,17 +849,17 @@ void Trie::set_block_level(UInt32 block_id,
     ith_block(prev).set_next(block_id);
   }
   ith_block(block_id).set_level(level);
-  ith_block(block_id).set_fail_count(0);
+  ith_block(block_id).set_failure_count(0);
 }
 
-void Trie::clear_block_level(UInt32 block_id) {
+void Trie::unset_block_level(UInt32 block_id) {
   GRN_DAT_DEBUG_THROW_IF(block_id >= num_blocks());
 
   const UInt32 level = ith_block(block_id).level();
   GRN_DAT_DEBUG_THROW_IF(level > MAX_BLOCK_LEVEL);
 
-  const UInt32 entry = header_->ith_entry(level);
-  GRN_DAT_DEBUG_THROW_IF(entry == INVALID_ENTRY);
+  const UInt32 leader = header_->ith_leader(level);
+  GRN_DAT_DEBUG_THROW_IF(leader == INVALID_LEADER);
 
   const UInt32 next = ith_block(block_id).next();
   const UInt32 prev = ith_block(block_id).prev();
@@ -840,13 +868,13 @@ void Trie::clear_block_level(UInt32 block_id) {
 
   if (next == block_id) {
     // The linked list becomes empty.
-    header_->set_ith_entry(level, INVALID_ENTRY);
+    header_->set_ith_leader(level, INVALID_LEADER);
   } else {
     ith_block(next).set_prev(prev);
     ith_block(prev).set_next(next);
-    if (block_id == entry) {
-      // The second block becomes the entry to the linked list.
-      header_->set_ith_entry(level, next);
+    if (block_id == leader) {
+      // The second block becomes the leader of the linked list.
+      header_->set_ith_leader(level, next);
     }
   }
 }

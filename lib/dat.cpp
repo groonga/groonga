@@ -25,8 +25,6 @@
 
 extern "C" {
 
-std::size_t INITIAL_FILE_SIZE = 1 << 20;
-
 static void
 grn_dat_init(grn_dat *dat) {
   GRN_DB_OBJ_SET_TYPE(dat, GRN_TABLE_DAT_KEY);
@@ -160,10 +158,11 @@ grn_dat_get(grn_ctx *ctx, grn_dat *dat, const void *key,
   grn_id id = GRN_ID_NIL;
 #ifndef WIN32
   if (dat && dat->header->file_id) {
+    const grn::dat::Trie *trie = static_cast<grn::dat::Trie *>(dat->handle);
     grn_dat_confirm_handle(ctx, dat);
-    grn::dat::Key k;
-    if (static_cast<grn::dat::Trie *>(dat->handle)->search(key, key_size, &k)) {
-      id = k.id();
+    grn::dat::UInt32 key_pos;
+    if (trie->search(key, key_size, &key_pos)) {
+      id = trie->get_key(key_pos).id();
     }
   }
 #endif
@@ -185,11 +184,11 @@ grn_dat_add(grn_ctx *ctx, grn_dat *dat, const void *key,
         char buffer[PATH_MAX];
         gen_pathname(path, buffer, file_id);
         grn::dat::Trie *new_trie = new grn::dat::Trie;
-        new_trie->create(buffer, INITIAL_FILE_SIZE);
+        new_trie->create(buffer);
         dat->handle = new_trie;
       } else {
         grn::dat::Trie *new_trie = new grn::dat::Trie;
-        new_trie->create(NULL, INITIAL_FILE_SIZE);
+        new_trie->create(NULL);
         dat->handle = new_trie;
       }
       dat->file_id = dat->header->file_id = file_id;
@@ -198,9 +197,9 @@ grn_dat_add(grn_ctx *ctx, grn_dat *dat, const void *key,
     grn::dat::Trie *trie = static_cast<grn::dat::Trie *>(dat->handle);
     if (trie == NULL) { goto exit; }
     try {
-      grn::dat::Key k;
-      bool res = trie->insert(key, key_size, &k);
-      id = k.id();
+      grn::dat::UInt32 key_pos;
+      bool res = trie->insert(key, key_size, &key_pos);
+      id = trie->get_key(key_pos).id();
       if (added) { *added = (int)res; }
     } catch (const grn::dat::Exception &ex) {
       char buffer[PATH_MAX];
@@ -214,9 +213,9 @@ grn_dat_add(grn_ctx *ctx, grn_dat *dat, const void *key,
       /* should be deleted after enough interval */
       if (new_trie == NULL) { goto exit; }
       delete trie;
-      grn::dat::Key k;
-      bool res = new_trie->insert(key, key_size, &k);
-      id = k.id();
+      grn::dat::UInt32 key_pos;
+      bool res = new_trie->insert(key, key_size, &key_pos);
+      id = new_trie->get_key(key_pos).id();
     }
   }
 #endif
@@ -231,10 +230,9 @@ grn_dat_get_key(grn_ctx *ctx, grn_dat *dat, grn_id id, void *keybuf, int bufsize
 #ifndef WIN32
   if (dat && dat->header->file_id) {
     try {
-      grn::dat::Key k;
       grn_dat_confirm_handle(ctx, dat);
       grn::dat::Trie *trie = static_cast<grn::dat::Trie *>(dat->handle);
-      trie->ith_key(id, &k);
+      const grn::dat::Key &k = trie->ith_key(id);
       len = k.length();
       if (keybuf && bufsize >= len) {
         memcpy(keybuf, k.ptr(), len);
@@ -254,10 +252,9 @@ grn_dat_get_key2(grn_ctx *ctx, grn_dat *dat, grn_id id, grn_obj *bulk)
 #ifndef WIN32
   if (dat && dat->header->file_id) {
     try {
-      grn::dat::Key k;
       grn_dat_confirm_handle(ctx, dat);
       grn::dat::Trie *trie = static_cast<grn::dat::Trie *>(dat->handle);
-      trie->ith_key(id, &k);
+      const grn::dat::Key &k = trie->ith_key(id);
       len = k.length();
       const char *key = static_cast<const char *>(k.ptr());
       if (bulk->header.impl_flags & GRN_OBJ_REFER) {
@@ -313,7 +310,7 @@ grn_dat_cursor_open(grn_ctx *ctx, grn_dat *dat,
             grn::dat::Trie *trie = static_cast<grn::dat::Trie *>(dat->handle);
             grn::dat::Cursor *cursor = grn::dat::CursorFactory::open(*trie,
                 NULL, min_size, max, max_size, offset, limit,
-                grn::dat::COMMON_PREFIX_CURSOR | grn::dat::DESCENDING_CURSOR);
+                grn::dat::PREFIX_CURSOR | grn::dat::DESCENDING_CURSOR);
             dc->cursor = cursor;
 //          } else {
 //            /* todo: near */
@@ -381,9 +378,9 @@ grn_dat_cursor_next(grn_ctx *ctx, grn_dat_cursor *c)
   grn_id id = GRN_ID_NIL;
 #ifndef WIN32
   if (c && c->cursor) {
-    grn::dat::Key k;
     grn::dat::Cursor *cursor = static_cast<grn::dat::Cursor *>(c->cursor);
-    if (cursor->next(&k)) {
+    const grn::dat::Key &k = cursor->next();
+    if (k.is_valid()) {
       id = c->curr_rec = k.id();
     } else {
       c->curr_rec = GRN_ID_NIL;
@@ -434,10 +431,9 @@ _grn_dat_key(grn_ctx *ctx, grn_dat *dat, grn_id id, uint32_t *key_size)
 #ifndef WIN32
   if (dat && dat->header->file_id) {
     try {
-      grn::dat::Key k;
       grn_dat_confirm_handle(ctx, dat);
       grn::dat::Trie *trie = static_cast<grn::dat::Trie *>(dat->handle);
-      trie->ith_key(id, &k);
+      const grn::dat::Key &k = trie->ith_key(id);
       *key_size = k.length();
       key = static_cast<const char *>(k.ptr());
     } catch (const grn::dat::Exception &ex) {

@@ -42,18 +42,18 @@ void IdCursor::open(const Trie &trie,
                     UInt32 flags) {
   UInt32 min_id = INVALID_KEY_ID;
   if (min_str.ptr() != NULL) {
-    Key key;
+    UInt32 key_pos;
     GRN_DAT_THROW_IF(PARAM_ERROR,
-                     !trie.search(min_str.ptr(), min_str.length(), &key));
-    min_id = key.id();
+                     !trie.search(min_str.ptr(), min_str.length(), &key_pos));
+    min_id = trie.get_key(key_pos).id();
   }
 
   UInt32 max_id = INVALID_KEY_ID;
   if (max_str.ptr() != NULL) {
-    Key key;
+    UInt32 key_pos;
     GRN_DAT_THROW_IF(PARAM_ERROR,
-                     !trie.search(max_str.ptr(), max_str.length(), &key));
-    max_id = key.id();
+                     !trie.search(max_str.ptr(), max_str.length(), &key_pos));
+    max_id = trie.get_key(key_pos).id();
   }
 
   open(trie, min_id, max_id, offset, limit, flags);
@@ -77,17 +77,19 @@ void IdCursor::close() {
   new_cursor.swap(this);
 }
 
-bool IdCursor::next(Key *key) {
-  if (cur_ == end_) {
-    return false;
+const Key &IdCursor::next() {
+  while (cur_ != end_) {
+    const Key &key = trie_->ith_key(cur_);
+    if ((flags_ & ASCENDING_CURSOR) == ASCENDING_CURSOR) {
+      ++cur_;
+    } else {
+      --cur_;
+    }
+    if (key.is_valid()) {
+      return key;
+    }
   }
-  trie_->ith_key(cur_, key);
-  if ((flags_ & ASCENDING_CURSOR) == ASCENDING_CURSOR) {
-    ++cur_;
-  } else {
-    --cur_;
-  }
-  return true;
+  return Key::invalid_key();
 }
 
 IdCursor::IdCursor(const Trie &trie,

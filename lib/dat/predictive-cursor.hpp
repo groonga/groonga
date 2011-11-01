@@ -39,7 +39,7 @@ class PredictiveCursor : public Cursor {
 
   void close();
 
-  bool next(Key *key);
+  const Key &next();
 
   UInt32 offset() const {
     return offset_;
@@ -69,8 +69,8 @@ class PredictiveCursor : public Cursor {
   void init(const String &str);
   void swap(PredictiveCursor *cursor);
 
-  bool ascending_next(Key *key);
-  bool descending_next(Key *key);
+  const Key &ascending_next();
+  const Key &descending_next();
 
   static const UInt32 IS_ROOT_FLAG    = 0x80000000U;
   static const UInt32 POST_ORDER_FLAG = 0x80000000U;

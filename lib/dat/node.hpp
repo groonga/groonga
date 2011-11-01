@@ -32,17 +32,17 @@ class Node {
   Base base() const {
     return base_;
   }
-  bool is_terminal() const {
+  bool is_linker() const {
     GRN_DAT_DEBUG_THROW_IF(is_phantom());
-    return base_.is_terminal();
+    return base_.is_linker();
   }
   UInt32 offset() const {
     GRN_DAT_DEBUG_THROW_IF(is_phantom());
     return base_.offset();
   }
-  UInt32 key_id() const {
+  UInt32 key_pos() const {
     GRN_DAT_DEBUG_THROW_IF(is_phantom());
-    return base_.key_id();
+    return base_.key_pos();
   }
 
   Check check() const {
@@ -81,9 +81,9 @@ class Node {
     GRN_DAT_DEBUG_THROW_IF(is_phantom());
     base_.set_offset(x);
   }
-  void set_key_id(UInt32 x) {
+  void set_key_pos(UInt32 x) {
     GRN_DAT_DEBUG_THROW_IF(is_phantom());
-    base_.set_key_id(x);
+    base_.set_key_pos(x);
   }
 
   void set_check(Check x) {

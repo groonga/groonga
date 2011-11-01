@@ -20,7 +20,7 @@
 
 #include "dat.hpp"
 
-#include <vector>
+#include <new>
 
 namespace grn {
 namespace dat {
@@ -28,49 +28,159 @@ namespace dat {
 template <typename T>
 class Vector {
  public:
-  Vector()
-      : buf_() {}
-  ~Vector() {}
+  Vector() : buf_(NULL), size_(0), capacity_(0) {}
+  ~Vector() {
+    for (UInt32 i = 0; i < size(); ++i) {
+      buf_[i].~T();
+    }
+    delete [] reinterpret_cast<char *>(buf_);
+  }
 
   const T &operator[](UInt32 i) const {
+    GRN_DAT_DEBUG_THROW_IF(i >= size());
     return buf_[i];
   }
   T &operator[](UInt32 i) {
+    GRN_DAT_DEBUG_THROW_IF(i >= size());
     return buf_[i];
   }
 
-  const T &back() const {
-    return buf_.back();
+  const T &front() const {
+    GRN_DAT_DEBUG_THROW_IF(empty());
+    return buf_[0];
   }
-  T &back() {
-    return buf_.back();
+  T &front() {
+    GRN_DAT_DEBUG_THROW_IF(empty());
+    return buf_[0];
   }
 
-  bool push_back(const T &x) try {
-    buf_.push_back(x);
-    return true;
-  } catch (...) {
-    return false;
+  const T &back() const {
+    GRN_DAT_DEBUG_THROW_IF(empty());
+    return buf_[size() - 1];
+  }
+  T &back() {
+    GRN_DAT_DEBUG_THROW_IF(empty());
+    return buf_[size() - 1];
+  }
+
+  const T *begin() const {
+    return buf_;
+  }
+  T *begin() {
+    return buf_;
+  }
+
+  const T *end() const {
+    return buf_ + size_;
+  }
+  T *end() {
+    return buf_ + size_;
+  }
+
+  void push_back() {
+    reserve(size() + 1);
+    new (&buf_[size()]) T;
+    ++size_;
+  }
+  void push_back(const T &x) {
+    reserve(size() + 1);
+    new (&buf_[size()]) T(x);
+    ++size_;
   }
 
   void pop_back() {
-    buf_.pop_back();
+    GRN_DAT_DEBUG_THROW_IF(empty());
+    back().~T();
+    --size_;
+  }
+
+  void clear() {
+    resize(0);
+  }
+
+  void resize(UInt32 new_size) {
+    if (new_size > capacity()) {
+      reserve(new_size);
+    }
+    for (UInt32 i = size(); i < new_size; ++i) {
+      new (&buf_[i]) T;
+    }
+    for (UInt32 i = new_size; i < size(); ++i) {
+      buf_[i].~T();
+    }
+    size_ = new_size;
+  }
+  template <typename U>
+  void resize(UInt32 new_size, const U &value) {
+    if (new_size > capacity()) {
+      reserve(new_size);
+    }
+    for (UInt32 i = size(); i < new_size; ++i) {
+      new (&buf_[i]) T(value);
+    }
+    for (UInt32 i = new_size; i < size(); ++i) {
+      buf_[i].~T();
+    }
+    size_ = new_size;
+  }
+
+  void reserve(UInt32 new_capacity) {
+    if (new_capacity <= capacity()) {
+      return;
+    } else if ((new_capacity / 2) < capacity()) {
+      if (capacity() < (UINT32_MAX / 2)) {
+        new_capacity = capacity() * 2;
+      } else {
+        new_capacity = UINT32_MAX;
+      }
+    }
+
+    T *new_buf = reinterpret_cast<T *>(
+        new (std::nothrow) char[sizeof(new_capacity) * new_capacity]);
+    GRN_DAT_THROW_IF(MEMORY_ERROR, new_buf == NULL);
+
+    for (UInt32 i = 0; i < size(); ++i) {
+      new (&new_buf[i]) T(buf_[i]);
+    }
+    for (UInt32 i = 0; i < size(); ++i) {
+      buf_[i].~T();
+    }
+
+    T *old_buf = buf_;
+    buf_ = new_buf;
+    delete [] reinterpret_cast<char *>(old_buf);
+
+    capacity_ = new_capacity;
   }
 
   void swap(Vector *rhs) {
-    buf_.swap(rhs->buf_);
+    T * const temp_buf = buf_;
+    buf_ = rhs->buf_;
+    rhs->buf_ = temp_buf;
+
+    const UInt32 temp_size = size_;
+    size_ = rhs->size_;
+    rhs->size_ = temp_size;
+
+    const UInt32 temp_capacity = capacity_;
+    capacity_ = rhs->capacity_;
+    rhs->capacity_ = temp_capacity;
   }
 
   bool empty() const {
-    return buf_.empty();
+    return size_ == 0;
   }
-
   UInt32 size() const {
-    return static_cast<UInt32>(buf_.size());
+    return size_;
+  }
+  UInt32 capacity() const {
+    return capacity_;
   }
 
  private:
-  std::vector<T> buf_;
+  T *buf_;
+  UInt32 size_;
+  UInt32 capacity_;
 
   // Disallows copy and assignment.
   Vector(const Vector &);

@@ -68,49 +68,63 @@ const UInt16 MAX_LABEL       = TERMINAL_LABEL;
 const UInt32 INVALID_LABEL   = 0x1FF;
 const UInt32 LABEL_MASK      = 0x1FF;
 
-// The MSB of BASE is used to represent whether the node is a terminal node or
+// The MSB of BASE is used to represent whether the node is a linker node or
 // not and the other 31 bits represent the offset to its child nodes. So, the
-// maximum number of nodes is also limited to 2^31.
+// number of nodes is limited to 2^31.
 const UInt32 ROOT_NODE_ID    = 0;
 const UInt32 MAX_NODE_ID     = 0x7FFFFFFF;
 const UInt32 MAX_NUM_NODES   = MAX_NODE_ID + 1;
 const UInt32 INVALID_NODE_ID = MAX_NODE_ID + 1;
 
+// 0 is reserved for non-linker leaf nodes. For example, the root node of an
+// initial double-array is a non-linker leaf node.
 const UInt32 MAX_OFFSET      = MAX_NODE_ID;
 const UInt32 INVALID_OFFSET  = 0;
 
+// Phantom nodes are managed in each block because siblings are always put in
+// the same block.
 const UInt32 BLOCK_SIZE      = 0x200;
 const UInt32 BLOCK_MASK      = 0x1FF;
 const UInt32 MAX_BLOCK_ID    = MAX_NODE_ID / BLOCK_SIZE;
 const UInt32 MAX_NUM_BLOCKS  = MAX_BLOCK_ID + 1;
 
-// The level of a block is incremented when find_offset() has failed to find
-// a good offset MAX_FAIL_COUNT times in that block.
-const UInt32 MAX_FAIL_COUNT  = 4;
+// Blocks are divided by their levels, which indicate how easily update
+// operations can find a good offset in them. The level of a block rises when
+// find_offset() fails in that block many times. MAX_FAILURE_COUNT is the
+// threshold. Also, in order to limit the time cost, find_offset() scans at
+// most MAX_BLOCK_COUNT blocks.
+// Larger parameters bring more chances of finding good offsets but it leads to
+// more node renumberings, which are costly operations, and thus results in
+// a degradation of space/time efficiencies.
+const UInt32 MAX_FAILURE_COUNT  = 4;
+const UInt32 MAX_BLOCK_COUNT    = 16;
+const UInt32 MAX_BLOCK_LEVEL    = 5;
 
-// The maximum number of blocks tested in each call of find_offset().
-const UInt32 MAX_BLOCK_COUNT = 16;
-
-// A higher level block has less phantom nodes.
-const UInt32 MAX_BLOCK_LEVEL = 5;
-
-const UInt32 INVALID_ENTRY   = 0x7FFFFFFF;
+// Blocks in the same level compose a doubly linked list. The entry block of
+// a linked list is called a leader. INVALID_LEADER means that a linked list is
+// empty and there exists no leader.
+const UInt32 INVALID_LEADER     = 0x7FFFFFFF;
 
 const UInt32 MIN_KEY_ID      = 1;
 const UInt32 MAX_KEY_ID      = MAX_NODE_ID;
 const UInt32 INVALID_KEY_ID  = 0;
 
-const UInt32 MAX_KEY_LENGTH  = 0x7FFF;
-const UInt32 MAX_NUM_KEYS    = MAX_KEY_ID + 1;
+// A key length is represented as a 12-bit unsigned integer in Key.
+// A key ID is represented as a 28-bit unsigned integer in Key.
+const UInt32 MAX_KEY_LENGTH  = (1U << 12) - 1;
+const UInt32 MAX_NUM_KEYS    = (1U << 28) - 1;
 
+const UInt64 MIN_FILE_SIZE              = 1 << 16;
 const UInt64 DEFAULT_FILE_SIZE          = 1 << 20;
+const UInt64 MAX_FILE_SIZE              = (UInt64)1 << 40;
 const double DEFAULT_NUM_NODES_PER_KEY  = 4.0;
 const double DEFAULT_AVERAGE_KEY_LENGTH = 16.0;
-const UInt32 MAX_KEY_BUF_SIZE           = 0xFFFFFFFFU;
+const UInt32 MAX_KEY_BUF_SIZE           = 0x80000000U;
+const UInt32 MAX_TOTAL_KEY_LENGTH       = 0xFFFFFFFFU;
 
 const UInt32 ID_RANGE_CURSOR      = 0x00001;
 const UInt32 KEY_RANGE_CURSOR     = 0x00002;
-const UInt32 COMMON_PREFIX_CURSOR = 0x00004;
+const UInt32 PREFIX_CURSOR        = 0x00004;
 const UInt32 PREDICTIVE_CURSOR    = 0x00008;
 const UInt32 CURSOR_TYPE_MASK     = 0x000FF;
 
@@ -123,19 +137,13 @@ const UInt32 EXCEPT_UPPER_BOUND   = 0x02000;
 const UInt32 EXCEPT_EXACT_MATCH   = 0x04000;
 const UInt32 CURSOR_OPTIONS_MASK  = 0xFF000;
 
-// for x86_64-w64-mingw32
-#ifdef NO_ERROR
-#  undef NO_ERROR
-#endif // NO_ERROR
-
-// To be determined...
 enum ErrorCode {
-  NO_ERROR          =  0,
   PARAM_ERROR      = -1,
   IO_ERROR         = -2,
-  MEMORY_ERROR     = -3,
-  SIZE_ERROR       = -4,
-  UNEXPECTED_ERROR = -5
+  FORMAT_ERROR     = -3,
+  MEMORY_ERROR     = -4,
+  SIZE_ERROR       = -5,
+  UNEXPECTED_ERROR = -6
 };
 
 class Exception : public std::exception {
@@ -161,9 +169,7 @@ class Exception : public std::exception {
     return *this;
   }
 
-  virtual ErrorCode code() const throw() {
-    return NO_ERROR;
-  }
+  virtual ErrorCode code() const throw() = 0;
   virtual const char *file() const throw() {
     return file_;
   }
@@ -203,6 +209,7 @@ class Error : public Exception {
 
 typedef Error<PARAM_ERROR> ParamError;
 typedef Error<IO_ERROR> IOError;
+typedef Error<FORMAT_ERROR> FormatError;
 typedef Error<MEMORY_ERROR> MemoryError;
 typedef Error<SIZE_ERROR> SizeError;
 typedef Error<UNEXPECTED_ERROR> UnexpectedError;

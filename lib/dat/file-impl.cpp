@@ -15,7 +15,7 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "memory-mapped-file-impl.hpp"
+#include "file-impl.hpp"
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -41,14 +41,14 @@ namespace dat {
 
 #ifdef WIN32
 
-MemoryMappedFileImpl::MemoryMappedFileImpl()
+FileImpl::FileImpl()
     : ptr_(NULL),
       size_(0),
       file_(INVALID_HANDLE_VALUE),
       map_(INVALID_HANDLE_VALUE),
       addr_(NULL) {}
 
-MemoryMappedFileImpl::~MemoryMappedFileImpl() {
+FileImpl::~FileImpl() {
   if (addr_ != NULL) {
     ::UnmapViewOfFile(addr_);
   }
@@ -64,14 +64,14 @@ MemoryMappedFileImpl::~MemoryMappedFileImpl() {
 
 #else  // WIN32
 
-MemoryMappedFileImpl::MemoryMappedFileImpl()
+FileImpl::FileImpl()
     : ptr_(NULL),
       size_(0),
       fd_(-1),
       addr_(MAP_FAILED),
       length_(0) {}
 
-MemoryMappedFileImpl::~MemoryMappedFileImpl() {
+FileImpl::~FileImpl() {
   if (addr_ != MAP_FAILED) {
     ::munmap(addr_, length_);
   }
@@ -83,33 +83,33 @@ MemoryMappedFileImpl::~MemoryMappedFileImpl() {
 
 #endif  // WIN32
 
-void MemoryMappedFileImpl::create(const char *path, UInt64 size) {
+void FileImpl::create(const char *path, UInt64 size) {
   GRN_DAT_THROW_IF(PARAM_ERROR, size == 0);
   GRN_DAT_THROW_IF(PARAM_ERROR,
       size > static_cast<UInt64>(std::numeric_limits< ::size_t>::max()));
 
-  MemoryMappedFileImpl new_impl;
+  FileImpl new_impl;
   new_impl.create_(path, size);
   new_impl.swap(this);
 }
 
-void MemoryMappedFileImpl::open(const char *path) {
+void FileImpl::open(const char *path) {
   GRN_DAT_THROW_IF(PARAM_ERROR, path == NULL);
   GRN_DAT_THROW_IF(PARAM_ERROR, path[0] == '\0');
 
-  MemoryMappedFileImpl new_impl;
+  FileImpl new_impl;
   new_impl.open_(path);
   new_impl.swap(this);
 }
 
-void MemoryMappedFileImpl::close() {
-  MemoryMappedFileImpl new_impl;
+void FileImpl::close() {
+  FileImpl new_impl;
   new_impl.swap(this);
 }
 
 #ifdef WIN32
 
-void MemoryMappedFileImpl::swap(MemoryMappedFileImpl *rhs) {
+void FileImpl::swap(FileImpl *rhs) {
   std::swap(ptr_, rhs->ptr_);
   std::swap(size_, rhs->size_);
   std::swap(file_, rhs->file_);
@@ -117,7 +117,7 @@ void MemoryMappedFileImpl::swap(MemoryMappedFileImpl *rhs) {
   std::swap(addr_, rhs->addr_);
 }
 
-void MemoryMappedFileImpl::create_(const char *path, UInt64 size) {
+void FileImpl::create_(const char *path, UInt64 size) {
   if ((path != NULL) && (path[0] != '\0')) {
     file_ = ::CreateFileA(path, GENERIC_READ | GENERIC_WRITE,
                           FILE_SHARE_READ | FILE_SHARE_WRITE,
@@ -150,7 +150,7 @@ void MemoryMappedFileImpl::create_(const char *path, UInt64 size) {
   size_ = static_cast< ::size_t>(size);
 }
 
-void MemoryMappedFileImpl::open_(const char *path) {
+void FileImpl::open_(const char *path) {
   struct __stat64 st;
   GRN_DAT_THROW_IF(IO_ERROR, ::_stat64(path, &st) == -1);
   GRN_DAT_THROW_IF(IO_ERROR, st.st_size == 0);
@@ -174,7 +174,7 @@ void MemoryMappedFileImpl::open_(const char *path) {
 
 #else  // WIN32
 
-void MemoryMappedFileImpl::swap(MemoryMappedFileImpl *rhs) {
+void FileImpl::swap(FileImpl *rhs) {
   std::swap(ptr_, rhs->ptr_);
   std::swap(size_, rhs->size_);
   std::swap(fd_, rhs->fd_);
@@ -182,7 +182,7 @@ void MemoryMappedFileImpl::swap(MemoryMappedFileImpl *rhs) {
   std::swap(length_, rhs->length_);
 }
 
-void MemoryMappedFileImpl::create_(const char *path, UInt64 size) {
+void FileImpl::create_(const char *path, UInt64 size) {
   GRN_DAT_THROW_IF(PARAM_ERROR,
       size > static_cast<UInt64>(std::numeric_limits< ::off_t>::max()));
 
@@ -208,7 +208,7 @@ void MemoryMappedFileImpl::create_(const char *path, UInt64 size) {
   size_ = length_;
 }
 
-void MemoryMappedFileImpl::open_(const char *path) {
+void FileImpl::open_(const char *path) {
   struct stat st;
   GRN_DAT_THROW_IF(IO_ERROR, ::stat(path, &st) == -1);
   GRN_DAT_THROW_IF(IO_ERROR, (st.st_mode & S_IFMT) != S_IFREG);

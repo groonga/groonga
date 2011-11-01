@@ -55,15 +55,15 @@ void PredictiveCursor::close() {
   new_cursor.swap(this);
 }
 
-bool PredictiveCursor::next(Key *key) {
+const Key &PredictiveCursor::next() {
   if (cur_ == end_) {
-    return false;
+    return Key::invalid_key();
   }
 
   if ((flags_ & ASCENDING_CURSOR) == ASCENDING_CURSOR) {
-    return ascending_next(key);
+    return ascending_next();
   } else {
-    return descending_next(key);
+    return descending_next();
   }
 }
 
@@ -112,16 +112,15 @@ void PredictiveCursor::init(const String &str) {
   UInt32 node_id = ROOT_NODE_ID;
   for (UInt32 i = 0; i < str.length(); ++i) {
     const Base base = trie_->ith_node(node_id).base();
-    if (base.is_terminal()) {
+    if (base.is_linker()) {
       if (offset_ == 0) {
-        Key key;
-        trie_->ith_key(base.key_id(), &key);
+        const Key &key = trie_->get_key(base.key_pos());
         if ((key.length() >= str.length()) &&
             (key.str().substr(0, str.length()).compare(str, i) == 0)) {
           if ((flags_ & ASCENDING_CURSOR) == ASCENDING_CURSOR) {
             node_id |= IS_ROOT_FLAG;
           }
-          GRN_DAT_THROW_IF(MEMORY_ERROR, !buf_.push_back(node_id));
+          buf_.push_back(node_id);
         }
       }
       return;
@@ -136,7 +135,7 @@ void PredictiveCursor::init(const String &str) {
   if ((flags_ & ASCENDING_CURSOR) == ASCENDING_CURSOR) {
     node_id |= IS_ROOT_FLAG;
   }
-  GRN_DAT_THROW_IF(MEMORY_ERROR, !buf_.push_back(node_id));
+  buf_.push_back(node_id);
 }
 
 void PredictiveCursor::swap(PredictiveCursor *cursor) {
@@ -150,7 +149,7 @@ void PredictiveCursor::swap(PredictiveCursor *cursor) {
   std::swap(min_length_, cursor->min_length_);
 }
 
-bool PredictiveCursor::ascending_next(Key *key) {
+const Key &PredictiveCursor::ascending_next() {
   while (!buf_.empty()) {
     const bool is_root = (buf_.back() & IS_ROOT_FLAG) == IS_ROOT_FLAG;
     const UInt32 node_id = buf_.back() & ~IS_ROOT_FLAG;
@@ -158,28 +157,24 @@ bool PredictiveCursor::ascending_next(Key *key) {
 
     const Node node = trie_->ith_node(node_id);
     if (!is_root && (node.sibling() != INVALID_LABEL)) {
-      GRN_DAT_THROW_IF(MEMORY_ERROR,
-          !buf_.push_back(node_id ^ node.label() ^ node.sibling()));
+      buf_.push_back(node_id ^ node.label() ^ node.sibling());
     }
 
-    if (node.is_terminal()) {
-      Key temp_key;
-      trie_->ith_key(node.key_id(), &temp_key);
-      if (temp_key.length() >= min_length_) {
+    if (node.is_linker()) {
+      const Key &key = trie_->get_key(node.key_pos());
+      if (key.length() >= min_length_) {
         if (cur_++ >= offset_) {
-          *key = temp_key;
-          return true;
+          return key;
         }
       }
     } else if (node.child() != INVALID_LABEL) {
-      GRN_DAT_THROW_IF(MEMORY_ERROR,
-                       !buf_.push_back(node.offset() ^ node.child()));
+      buf_.push_back(node.offset() ^ node.child());
     }
   }
-  return false;
+  return Key::invalid_key();
 }
 
-bool PredictiveCursor::descending_next(Key *key) {
+const Key &PredictiveCursor::descending_next() {
   while (!buf_.empty()) {
     const bool post_order = (buf_.back() & POST_ORDER_FLAG) == POST_ORDER_FLAG;
     const UInt32 node_id = buf_.back() & ~POST_ORDER_FLAG;
@@ -187,13 +182,11 @@ bool PredictiveCursor::descending_next(Key *key) {
     const Base base = trie_->ith_node(node_id).base();
     if (post_order) {
       buf_.pop_back();
-      if (base.is_terminal()) {
-        Key temp_key;
-        trie_->ith_key(base.key_id(), &temp_key);
-        if (temp_key.length() >= min_length_) {
+      if (base.is_linker()) {
+        const Key &key = trie_->get_key(base.key_pos());
+        if (key.length() >= min_length_) {
           if (cur_++ >= offset_) {
-            *key = temp_key;
-            return true;
+            return key;
           }
         }
       }
@@ -201,12 +194,12 @@ bool PredictiveCursor::descending_next(Key *key) {
       buf_.back() |= POST_ORDER_FLAG;
       UInt16 label = trie_->ith_node(node_id).child();
       while (label != INVALID_LABEL) {
-        GRN_DAT_THROW_IF(MEMORY_ERROR, !buf_.push_back(base.offset() ^ label));
+        buf_.push_back(base.offset() ^ label);
         label = trie_->ith_node(base.offset() ^ label).sibling();
       }
     }
   }
-  return false;
+  return Key::invalid_key();
 }
 
 }  // namespace dat

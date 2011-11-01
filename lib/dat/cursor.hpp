@@ -30,7 +30,7 @@ class Cursor {
 
   virtual void close() = 0;
 
-  virtual bool next(Key *key) = 0;
+  virtual const Key &next() = 0;
 
   virtual UInt32 offset() const = 0;
   virtual UInt32 limit() const = 0;

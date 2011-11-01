@@ -15,8 +15,8 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef GRN_DAT_HPP_EADER_HPP_
-#define GRN_DAT_HPP_EADER_HPP_
+#ifndef GRN_DAT_HPP_HEADER_HPP_
+#define GRN_DAT_HPP_HEADER_HPP_
 
 #include "dat.hpp"
 
@@ -27,27 +27,41 @@ class Header {
  public:
   Header()
       : file_size_(0),
+        total_key_length_(0),
+        next_key_id_(grn::dat::MIN_KEY_ID),
+        max_key_id_(0),
         num_keys_(0),
         max_num_keys_(0),
         num_phantoms_(0),
         num_zombies_(0),
         num_blocks_(0),
         max_num_blocks_(0),
+        next_key_pos_(0),
         key_buf_size_(0),
-        entries_() {
+        leaders_(),
+        reserved_() {
     for (UInt32 i = 0; i <= MAX_BLOCK_LEVEL; ++i) {
-      entries_[i] = INVALID_ENTRY;
+      leaders_[i] = INVALID_LEADER;
+    }
+    for (UInt32 i = 0; i < (sizeof(reserved_) / sizeof(*reserved_)); ++i) {
+      reserved_[i] = 0;
     }
   }
 
   UInt64 file_size() const {
     return file_size_;
   }
+  UInt32 total_key_length() const {
+    return total_key_length_;
+  }
   UInt32 min_key_id() const {
     return MIN_KEY_ID;
   }
+  UInt32 next_key_id() const {
+    return next_key_id_;
+  }
   UInt32 max_key_id() const {
-    return num_keys();
+    return max_key_id_;
   }
   UInt32 num_keys() const {
     return num_keys_;
@@ -73,57 +87,89 @@ class Header {
   UInt32 max_num_blocks() const {
     return max_num_blocks_;
   }
+  UInt32 next_key_pos() const {
+    return next_key_pos_;
+  }
   UInt32 key_buf_size() const {
     return key_buf_size_;
   }
-  UInt32 ith_entry(UInt32 i) const {
+  UInt32 ith_leader(UInt32 i) const {
     GRN_DAT_DEBUG_THROW_IF(i > MAX_BLOCK_LEVEL);
-    return entries_[i];
+    return leaders_[i];
   }
 
   void set_file_size(UInt64 x) {
+    GRN_DAT_DEBUG_THROW_IF(x > MAX_FILE_SIZE);
     file_size_ = x;
   }
+  void set_total_key_length(UInt32 x) {
+    GRN_DAT_DEBUG_THROW_IF(x > MAX_TOTAL_KEY_LENGTH);
+    total_key_length_ = x;
+  }
+  void set_next_key_id(UInt32 x) {
+    GRN_DAT_DEBUG_THROW_IF((x - 1) > MAX_KEY_ID);
+    next_key_id_ = x;
+  }
+  void set_max_key_id(UInt32 x) {
+    GRN_DAT_DEBUG_THROW_IF(x > MAX_KEY_ID);
+    max_key_id_ = x;
+  }
   void set_num_keys(UInt32 x) {
+    GRN_DAT_DEBUG_THROW_IF(x > MAX_NUM_KEYS);
     num_keys_ = x;
   }
   void set_max_num_keys(UInt32 x) {
+    GRN_DAT_DEBUG_THROW_IF(x > MAX_NUM_KEYS);
     max_num_keys_ = x;
   }
   void set_num_phantoms(UInt32 x) {
+    GRN_DAT_DEBUG_THROW_IF(x > max_num_nodes());
     num_phantoms_ = x;
   }
   void set_num_zombies(UInt32 x) {
+    GRN_DAT_DEBUG_THROW_IF(x > max_num_nodes());
     num_zombies_ = x;
   }
   void set_num_blocks(UInt32 x) {
+    GRN_DAT_DEBUG_THROW_IF(x > max_num_blocks());
     num_blocks_ = x;
   }
   void set_max_num_blocks(UInt32 x) {
+    GRN_DAT_DEBUG_THROW_IF(x > MAX_NUM_BLOCKS);
     max_num_blocks_ = x;
   }
+  void set_next_key_pos(UInt32 x) {
+    GRN_DAT_DEBUG_THROW_IF(x > key_buf_size());
+    next_key_pos_ = x;
+  }
   void set_key_buf_size(UInt32 x) {
+    GRN_DAT_DEBUG_THROW_IF(x > MAX_KEY_BUF_SIZE);
     key_buf_size_ = x;
   }
-  void set_ith_entry(UInt32 i, UInt32 x) {
+  void set_ith_leader(UInt32 i, UInt32 x) {
     GRN_DAT_DEBUG_THROW_IF(i > MAX_BLOCK_LEVEL);
-    GRN_DAT_DEBUG_THROW_IF((x != INVALID_ENTRY) && (x >= num_blocks()));
-    entries_[i] = x;
+    GRN_DAT_DEBUG_THROW_IF((x != INVALID_LEADER) && (x >= num_blocks()));
+    leaders_[i] = x;
   }
 
  private:
   UInt64 file_size_;
+  UInt32 total_key_length_;
+  UInt32 next_key_id_;
+  UInt32 max_key_id_;
   UInt32 num_keys_;
   UInt32 max_num_keys_;
   UInt32 num_phantoms_;
   UInt32 num_zombies_;
   UInt32 num_blocks_;
   UInt32 max_num_blocks_;
+  UInt32 next_key_pos_;
   UInt32 key_buf_size_;
-  UInt32 entries_[MAX_BLOCK_LEVEL + 1];
+  UInt32 leaders_[MAX_BLOCK_LEVEL + 1];
+  UInt32 reserved_[13];
 };
 
 }  // namespace dat
 }  // namespace grn
 
-#endif  // GRN_DAT_HPP_EADER_HPP_
+#endif  // GRN_DAT_HPP_HEADER_HPP_

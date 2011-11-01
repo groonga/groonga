@@ -46,7 +46,7 @@ class IdCursor : public Cursor {
 
   void close();
 
-  bool next(Key *key);
+  const Key &next();
 
   UInt32 offset() const {
     return offset_;

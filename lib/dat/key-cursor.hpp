@@ -40,7 +40,7 @@ class KeyCursor : public Cursor {
 
   void close();
 
-  bool next(Key *key);
+  const Key &next();
 
   UInt32 offset() const {
     return offset_;
@@ -74,8 +74,8 @@ class KeyCursor : public Cursor {
   void descending_init(const String &min_str, const String &max_str);
   void swap(KeyCursor *cursor);
 
-  bool ascending_next(Key *key);
-  bool descending_next(Key *key);
+  const Key &ascending_next();
+  const Key &descending_next();
 
   static const UInt32 POST_ORDER_FLAG = 0x80000000U;
 

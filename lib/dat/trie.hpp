@@ -18,12 +18,13 @@
 #ifndef GRN_DAT_TRIE_HPP_
 #define GRN_DAT_TRIE_HPP_
 
+#include "array.hpp"
 #include "header.hpp"
 #include "node.hpp"
 #include "block.hpp"
-#include "key-info.hpp"
+#include "entry.hpp"
 #include "key.hpp"
-#include "memory-mapped-file.hpp"
+#include "file.hpp"
 
 namespace grn {
 namespace dat {
@@ -51,24 +52,45 @@ class Trie {
 
   void swap(Trie *trie);
 
-  void ith_key(UInt32 key_id, Key *key) const {
+  // Users can access a key by its position or ID.
+  const Key &get_key(UInt32 key_pos) const {
+    GRN_DAT_DEBUG_THROW_IF(key_pos >= key_buf_size());
+    return *reinterpret_cast<const Key *>(key_buf_.ptr() + key_pos);
+  }
+  // If a specified ID is invalid, e.g. the key is already deleted, this
+  // function returns a reference to an invalid key object whose id() returns
+  // INVALID_KEY_ID.
+  const Key &ith_key(UInt32 key_id) const {
     GRN_DAT_DEBUG_THROW_IF(key_id < min_key_id());
     GRN_DAT_DEBUG_THROW_IF(key_id > max_key_id());
-    GRN_DAT_DEBUG_THROW_IF(key == NULL);
-
-    key->set_ptr(key_buf_ + ith_key_info(key_id).offset());
-    key->set_length(ith_key_info(key_id + 1).offset()
-        - ith_key_info(key_id).offset());
-    key->set_id(key_id);
+    if (ith_entry(key_id).is_valid()) {
+      return get_key(ith_entry(key_id).key_pos());
+    }
+    return Key::invalid_key();
   }
 
-  bool search(const void *ptr, UInt32 length, Key *key = NULL) const {
-    GRN_DAT_DEBUG_THROW_IF((ptr == NULL) && (length != 0));
-    return search_from_root(static_cast<const UInt8 *>(ptr), length, key);
+  bool search(const void *ptr, UInt32 length, UInt32 *key_pos = NULL) const {
+    return search_key(static_cast<const UInt8 *>(ptr), length, key_pos);
   }
-  bool insert(const void *ptr, UInt32 length, Key *key = NULL) {
-    GRN_DAT_DEBUG_THROW_IF((ptr == NULL) && (length != 0));
-    return insert_from_root(static_cast<const UInt8 *>(ptr), length, key);
+
+  bool remove(const void *ptr, UInt32 length) {
+    return remove_key(static_cast<const UInt8 *>(ptr), length);
+  }
+  bool remove(UInt32 key_id) {
+    const Key &key = ith_key(key_id);
+    if (key.id() == INVALID_KEY_ID) {
+      return false;
+    }
+    return remove(key.ptr(), key.length());
+  }
+
+  bool insert(const void *ptr, UInt32 length, UInt32 *key_pos = NULL) {
+    return insert_key(static_cast<const UInt8 *>(ptr), length, key_pos);
+  }
+
+  bool update(UInt32 key_id, const void *ptr, UInt32 length,
+              UInt32 *key_pos = NULL) {
+    return update_key(key_id, static_cast<const UInt8 *>(ptr), length, key_pos);
   }
 
   const Node &ith_node(UInt32 i) const {
@@ -79,10 +101,10 @@ class Trie {
     GRN_DAT_DEBUG_THROW_IF(i >= num_blocks());
     return blocks_[i];
   }
-  const KeyInfo &ith_key_info(UInt32 i) const {
+  const Entry &ith_entry(UInt32 i) const {
     GRN_DAT_DEBUG_THROW_IF(i < min_key_id());
-    GRN_DAT_DEBUG_THROW_IF(i > (max_key_id() + 1));
-    return key_infos_[i - MIN_KEY_ID];
+    GRN_DAT_DEBUG_THROW_IF(i > max_key_id());
+    return entries_[i];
   }
 
   const Header &header() const {
@@ -94,19 +116,22 @@ class Trie {
   }
   UInt64 virtual_size() const {
     return sizeof(Header)
-        + (sizeof(KeyInfo) * (num_keys() + 1))
+        + (sizeof(Entry) * num_keys())
         + (sizeof(Block) * num_blocks())
         + (sizeof(Node) * num_nodes())
         + total_key_length();
   }
   UInt32 total_key_length() const {
-    return ith_key_info(num_keys() + 1).offset();
+    return header_->total_key_length();
   }
   UInt32 num_keys() const {
     return header_->num_keys();
   }
   UInt32 min_key_id() const {
     return header_->min_key_id();
+  }
+  UInt32 next_key_id() const {
+    return header_->next_key_id();
   }
   UInt32 max_key_id() const {
     return header_->max_key_id();
@@ -132,17 +157,20 @@ class Trie {
   UInt32 max_num_blocks() const {
     return header_->max_num_blocks();
   }
+  UInt32 next_key_pos() const {
+    return header_->next_key_pos();
+  }
   UInt32 key_buf_size() const {
     return header_->key_buf_size();
   }
 
  private:
-  MemoryMappedFile memory_mapped_file_;
+  File file_;
   Header *header_;
-  Node *nodes_;
-  Block *blocks_;
-  KeyInfo *key_infos_;
-  char *key_buf_;
+  Array<Node> nodes_;
+  Array<Block> blocks_;
+  Array<Entry> entries_;
+  Array<UInt32> key_buf_;
 
   void create_file(const char *file_name,
                    UInt64 file_size,
@@ -154,65 +182,44 @@ class Trie {
                    UInt32 max_num_keys,
                    UInt32 max_num_blocks,
                    UInt32 key_buf_size);
-  void create_root();
 
   void open_file(const char *file_name);
 
   void map_address(void *address);
 
   void build_from_trie(const Trie &trie);
-  void build_from_trie(const Trie &trie,
-                       UInt32 src,
-                       UInt32 dest);
+  void build_from_trie(const Trie &trie, UInt32 src, UInt32 dest);
 
-  bool search_from_root(const UInt8 *ptr,
-                        UInt32 length,
-                        Key *key) const;
-  bool search_from_terminal(const UInt8 *ptr,
-                            UInt32 length,
-                            Key *key,
-                            UInt32 key_id,
-                            UInt32 i) const;
+  bool search_key(const UInt8 *ptr, UInt32 length, UInt32 *key_pos) const;
+  bool search_linker(const UInt8 *ptr, UInt32 length,
+                     UInt32 &node_id, UInt32 &query_pos) const;
 
-  bool insert_from_root(const UInt8 *ptr,
-                        UInt32 length,
-                        Key *key);
-  bool insert_from_terminal(const UInt8 *ptr,
-                            UInt32 length,
-                            Key *key,
-                            UInt32 node_id,
-                            UInt32 i);
-  bool insert_from_nonterminal(const UInt8 *ptr,
-                               UInt32 length,
-                               Key *key,
-                               UInt32 node_id,
-                               UInt32 i);
+  bool remove_key(const UInt8 *ptr, UInt32 length);
 
-  UInt32 insert_node(UInt32 node_id,
-                     UInt16 label);
+  bool insert_key(const UInt8 *ptr, UInt32 length, UInt32 *key_pos);
+  bool insert_linker(const UInt8 *ptr, UInt32 length,
+                     UInt32 &node_id, UInt32 query_pos);
 
-  UInt32 separate(const UInt8 *ptr,
-                  UInt32 length,
-                  UInt32 node_id,
-                  UInt32 i);
-  void resolve(UInt32 node_id,
-               UInt16 label);
-  void move_nodes(UInt32 node_id,
-                  UInt32 dest_offset,
-                  const UInt16 *labels,
-                  UInt32 num_labels);
+  bool update_key(UInt32 key_id, const UInt8 *ptr, UInt32 length,
+                  UInt32 *key_pos);
 
-  UInt32 find_offset(const UInt16 *labels,
-                     UInt32 num_labels);
+  UInt32 insert_node(UInt32 node_id, UInt16 label);
+  UInt32 append_key(const UInt8 *ptr, UInt32 length, UInt32 key_id);
+
+  UInt32 separate(const UInt8 *ptr, UInt32 length,
+                  UInt32 node_id, UInt32 i);
+  void resolve(UInt32 node_id, UInt16 label);
+  void migrate_nodes(UInt32 node_id, UInt32 dest_offset,
+                     const UInt16 *labels, UInt32 num_labels);
+
+  UInt32 find_offset(const UInt16 *labels, UInt32 num_labels);
 
   void reserve_node(UInt32 node_id);
   void reserve_block(UInt32 block_id);
 
-  void update_block_level(UInt32 block_id,
-                          UInt32 level);
-  void set_block_level(UInt32 block_id,
-                       UInt32 level);
-  void clear_block_level(UInt32 block_id);
+  void update_block_level(UInt32 block_id, UInt32 level);
+  void set_block_level(UInt32 block_id, UInt32 level);
+  void unset_block_level(UInt32 block_id);
 
   Node &ith_node(UInt32 i) {
     GRN_DAT_DEBUG_THROW_IF(i >= num_nodes());
@@ -222,10 +229,10 @@ class Trie {
     GRN_DAT_DEBUG_THROW_IF(i >= num_blocks());
     return blocks_[i];
   }
-  KeyInfo &ith_key_info(UInt32 i) {
+  Entry &ith_entry(UInt32 i) {
     GRN_DAT_DEBUG_THROW_IF(i < min_key_id());
-    GRN_DAT_DEBUG_THROW_IF(i > (max_key_id() + 2));
-    return key_infos_[i - MIN_KEY_ID];
+    GRN_DAT_DEBUG_THROW_IF(i > (max_key_id() + 1));
+    return entries_[i];
   }
 
   // Disallows copy and assignment.

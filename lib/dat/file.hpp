@@ -15,59 +15,46 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef GRN_DAT_MEMORY_MAPPED_FILE_IMPL_HPP_
-#define GRN_DAT_MEMORY_MAPPED_FILE_IMPL_HPP_
-
-#ifdef WIN32
-#include <Windows.h>
-#endif  // WIN32
+#ifndef GRN_DAT_FILE_HPP_
+#define GRN_DAT_FILE_HPP_
 
 #include "dat.hpp"
 
 namespace grn {
 namespace dat {
 
-class MemoryMappedFileImpl {
- public:
-  MemoryMappedFileImpl();
-  ~MemoryMappedFileImpl();
+// This implementation class hides environment dependent codes required for
+// memory-mapped I/O.
+class FileImpl;
 
+class File {
+ public:
+  File();
+  ~File();
+
+  // This function creates a file and maps the entire file to a certain range
+  // of the address space. Note that a file is truncated if exists.
   void create(const char *path, UInt64 size);
+
+  // This function opens a file and maps the entire file to a certain range of
+  // the address space.
   void open(const char *path);
   void close();
 
-  void *ptr() const {
-    return ptr_;
-  }
-  UInt64 size() const {
-    return size_;
-  }
+  void *ptr() const;
+  UInt64 size() const;
 
-  void swap(MemoryMappedFileImpl *rhs);
+  void swap(File *rhs);
 
  private:
-  void *ptr_;
-  UInt64 size_;
-
-#ifdef WIN32
-  HANDLE file_;
-  HANDLE map_;
-  LPVOID addr_;
-#else  // WIN32
-  int fd_;
-  void *addr_;
-  ::size_t length_;
-#endif  // WIN32
-
-  void create_(const char *path, UInt64 size);
-  void open_(const char *path);
+  FileImpl *impl_;
 
   // Disallows copy and assignment.
-  MemoryMappedFileImpl(const MemoryMappedFileImpl &);
-  MemoryMappedFileImpl &operator=(const MemoryMappedFileImpl &);
+  File(const File &);
+  File &operator=(const File &);
 };
 
 }  // namespace dat
 }  // namespace grn
 
-#endif  // GRN_DAT_MEMORY_MAPPED_FILE_IMPL_HPP_
+#endif  // GRN_DAT_FILE_HPP_
