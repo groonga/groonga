@@ -423,7 +423,7 @@ grn_dat_curr_id(grn_ctx *ctx, grn_dat *dat)
     grn_dat_confirm_handle(ctx, dat);
     grn::dat::Trie *trie = static_cast<grn::dat::Trie *>(dat->handle);
     if (trie) {
-      id = trie->num_keys();
+      id = trie->max_key_id();
     }
   }
 #endif
