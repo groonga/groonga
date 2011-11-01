@@ -23,9 +23,9 @@
 #include "dat/trie.hpp"
 #include "dat/cursor-factory.hpp"
 
-extern "C" {
+namespace {
 
-static void
+void
 grn_dat_init(grn_dat *dat) {
   GRN_DB_OBJ_SET_TYPE(dat, GRN_TABLE_DAT_KEY);
   dat->io = NULL;
@@ -36,7 +36,7 @@ grn_dat_init(grn_dat *dat) {
   dat->tokenizer = NULL;
 }
 
-static void
+void
 grn_dat_end(grn_dat *dat) {
   if (dat->handle) {
 #ifndef WIN32
@@ -46,7 +46,7 @@ grn_dat_end(grn_dat *dat) {
   }
 }
 
-inline static void
+void
 gen_pathname(const char *path, char *buffer, int fno)
 {
   size_t len = strlen(path);
@@ -58,6 +58,33 @@ gen_pathname(const char *path, char *buffer, int fno)
     buffer[len] = '\0';
   }
 }
+
+void
+grn_dat_confirm_handle(grn_ctx *ctx, grn_dat *dat)
+{
+#ifndef WIN32
+  int file_id = dat->header->file_id;
+  if (!dat->handle || (dat->file_id != file_id)) {
+    char buffer[PATH_MAX];
+    gen_pathname(grn_io_path(dat->io), buffer, file_id);
+    /* LOCK */
+    grn_dat_handle handle = dat->handle;
+    grn::dat::Trie *new_trie = new grn::dat::Trie;
+    new_trie->open(buffer);
+    dat->handle = new_trie;
+    dat->file_id = file_id;
+    /* UNLOCK */
+    /* should be deleted after enough interval */
+    if (handle) {
+      delete static_cast<grn::dat::Trie *>(handle);
+    }
+  }
+#endif
+}
+
+}  // namespace
+
+extern "C" {
 
 grn_dat *
 grn_dat_create(grn_ctx *ctx, const char *path, uint32_t key_size,
@@ -126,29 +153,6 @@ grn_dat_remove(grn_ctx *ctx, const char *path)
   /* FIXME: trie file must be removed */
   grn_io_remove(ctx, path);
   return ctx->rc;
-}
-
-static void
-grn_dat_confirm_handle(grn_ctx *ctx, grn_dat *dat)
-{
-#ifndef WIN32
-  int file_id = dat->header->file_id;
-  if (!dat->handle || (dat->file_id != file_id)) {
-    char buffer[PATH_MAX];
-    gen_pathname(grn_io_path(dat->io), buffer, file_id);
-    /* LOCK */
-    grn_dat_handle handle = dat->handle;
-    grn::dat::Trie *new_trie = new grn::dat::Trie;
-    new_trie->open(buffer);
-    dat->handle = new_trie;
-    dat->file_id = file_id;
-    /* UNLOCK */
-    /* should be deleted after enough interval */
-    if (handle) {
-      delete static_cast<grn::dat::Trie *>(handle);
-    }
-  }
-#endif
 }
 
 grn_id
