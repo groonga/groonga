@@ -73,10 +73,10 @@ GRN_API grn_id grn_dat_add(grn_ctx *ctx, grn_dat *dat, const void *key,
 GRN_API int grn_dat_get_key(grn_ctx *ctx, grn_dat *dat, grn_id id, void *keybuf, int bufsize);
 GRN_API int grn_dat_get_key2(grn_ctx *ctx, grn_dat *dat, grn_id id, grn_obj *bulk);
 
-//GRN_API grn_rc grn_dat_delete_by_id(grn_ctx *ctx, grn_dat *dat, grn_id id,
-//                                    grn_table_delete_optarg *optarg);
-//GRN_API grn_rc grn_dat_delete(grn_ctx *ctx, grn_dat *dat, const void *key, unsigned int key_size,
-//                              grn_table_delete_optarg *optarg);
+GRN_API grn_rc grn_dat_delete_by_id(grn_ctx *ctx, grn_dat *dat, grn_id id,
+                                    grn_table_delete_optarg *optarg);
+GRN_API grn_rc grn_dat_delete(grn_ctx *ctx, grn_dat *dat, const void *key, unsigned int key_size,
+                              grn_table_delete_optarg *optarg);
 
 //GRN_API grn_rc grn_dat_update_by_id(grn_ctx *ctx, grn_dat *dat, grn_id id,
 //                                    const void *key, unsigned int key_size);

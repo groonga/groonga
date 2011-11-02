@@ -124,7 +124,9 @@ void grn_dat_cursor_init(grn_ctx *, grn_dat_cursor *cursor) {
 }
 
 void grn_dat_cursor_fin(grn_ctx *, grn_dat_cursor *cursor) {
+#ifndef WIN32
   delete static_cast<grn::dat::Cursor *>(cursor->cursor);
+#endif
 }
 
 }  // namespace
@@ -355,6 +357,22 @@ grn_dat_get_key2(grn_ctx *ctx, grn_dat *dat, grn_id id, grn_obj *bulk)
 #endif
 }
 
+grn_rc
+grn_dat_delete_by_id(grn_ctx *ctx, grn_dat *dat, grn_id id,
+                     grn_table_delete_optarg *optarg)
+{
+  if (!grn_dat_open_trie_if_needed(ctx, dat)) {
+  }
+  return GRN_SUCCESS;
+}
+
+grn_rc
+grn_dat_delete(grn_ctx *ctx, grn_dat *dat, const void *key, unsigned int key_size,
+               grn_table_delete_optarg *optarg)
+{
+  return GRN_SUCCESS;
+}
+
 unsigned int
 grn_dat_size(grn_ctx *ctx, grn_dat *dat)
 {
@@ -467,12 +485,10 @@ grn_dat_cursor_next(grn_ctx *ctx, grn_dat_cursor *c)
 void
 grn_dat_cursor_close(grn_ctx *ctx, grn_dat_cursor *c)
 {
-#ifndef WIN32
   if (c) {
     grn_dat_cursor_fin(ctx, c);
     GRN_FREE(c);
   }
-#endif
 }
 
 int
