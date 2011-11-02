@@ -371,7 +371,7 @@ grn_dat_cursor_open(grn_ctx *ctx, grn_dat *dat,
                     const void *min, unsigned int min_size,
                     const void *max, unsigned int max_size,
                     int offset, int limit, int flags)
-try {
+{
   if (!grn_dat_open_trie_if_needed(ctx, dat)) {
     if (!dat->header->file_id) {
       grn_dat_cursor * const dc = static_cast<grn_dat_cursor *>(GRN_MALLOC(sizeof(grn_dat_cursor)));
@@ -390,34 +390,32 @@ try {
   grn_dat_cursor_init(ctx, dc);
 
   const grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
-  if ((flags & GRN_CURSOR_BY_ID) != 0) {
-    dc->cursor = grn::dat::CursorFactory::open(*trie,
-        min, min_size, max, max_size, offset, limit,
-        grn::dat::ID_RANGE_CURSOR |
-        ((flags & GRN_CURSOR_DESCENDING) ? grn::dat::DESCENDING_CURSOR : 0) |
-        ((flags & GRN_CURSOR_GT) ? grn::dat::EXCEPT_LOWER_BOUND : 0) |
-        ((flags & GRN_CURSOR_LT) ? grn::dat::EXCEPT_UPPER_BOUND : 0));
-  } else {
-    if ((flags & GRN_CURSOR_PREFIX) != 0) {
+  try {
+    if ((flags & GRN_CURSOR_BY_ID) != 0) {
+      dc->cursor = grn::dat::CursorFactory::open(*trie,
+          min, min_size, max, max_size, offset, limit,
+          grn::dat::ID_RANGE_CURSOR |
+          ((flags & GRN_CURSOR_DESCENDING) ? grn::dat::DESCENDING_CURSOR : 0) |
+          ((flags & GRN_CURSOR_GT) ? grn::dat::EXCEPT_LOWER_BOUND : 0) |
+          ((flags & GRN_CURSOR_LT) ? grn::dat::EXCEPT_UPPER_BOUND : 0));
+    } else if ((flags & GRN_CURSOR_PREFIX) != 0) {
       if (max && max_size) {
-//        if ((dat->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) != 0) {
+        if ((dat->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) != 0) {
           dc->cursor = grn::dat::CursorFactory::open(*trie,
               NULL, min_size, max, max_size, offset, limit,
               grn::dat::PREFIX_CURSOR | grn::dat::DESCENDING_CURSOR);
-//        } else {
-//          // TODO: near
-//        }
-      } else {
-        if (min && min_size) {
-          if ((flags & GRN_CURSOR_RK) != 0) {
-            // TODO: rk search
-          } else {
-            dc->cursor = grn::dat::CursorFactory::open(*trie,
-                min, min_size, NULL, 0, offset, limit,
-                grn::dat::PREDICTIVE_CURSOR |
-                ((flags & GRN_CURSOR_DESCENDING) ? grn::dat::DESCENDING_CURSOR : 0) |
-                ((flags & GRN_CURSOR_GT) ? grn::dat::EXCEPT_EXACT_MATCH : 0));
-          }
+        } else {
+          // TODO: near
+        }
+      } else if (min && min_size) {
+        if ((flags & GRN_CURSOR_RK) != 0) {
+          // TODO: rk search
+        } else {
+          dc->cursor = grn::dat::CursorFactory::open(*trie,
+              min, min_size, NULL, 0, offset, limit,
+              grn::dat::PREDICTIVE_CURSOR |
+              ((flags & GRN_CURSOR_DESCENDING) ? grn::dat::DESCENDING_CURSOR : 0) |
+              ((flags & GRN_CURSOR_GT) ? grn::dat::EXCEPT_EXACT_MATCH : 0));
         }
       }
     } else {
@@ -428,8 +426,13 @@ try {
           ((flags & GRN_CURSOR_GT) ? grn::dat::EXCEPT_LOWER_BOUND : 0) |
           ((flags & GRN_CURSOR_LT) ? grn::dat::EXCEPT_UPPER_BOUND : 0));
     }
+  } catch (...) {
+    // ERR
+    GRN_FREE(dc);
+    return NULL;
   }
   if (!dc->cursor) {
+    // ERR
     GRN_FREE(dc);
     return NULL;
   }
@@ -438,94 +441,6 @@ try {
 #else
   return NULL;
 #endif
-
-
-
-//  grn_dat_cursor *dc = NULL;
-//#ifndef WIN32
-//  dc = static_cast<grn_dat_cursor *>(GRN_MALLOC(sizeof(grn_dat_cursor)));
-//  if (dc) {
-//    dc->cursor = NULL;
-//    GRN_DB_OBJ_SET_TYPE(dc, GRN_CURSOR_TABLE_DAT_KEY);
-//    if ((flags & GRN_CURSOR_BY_ID)) {
-//      grn::dat::Trie *trie = static_cast<grn::dat::Trie *>(dat->trie);
-//      grn::dat::Cursor *cursor = grn::dat::CursorFactory::open(*trie,
-//          min, min_size, max, max_size, offset, limit,
-//          grn::dat::ID_RANGE_CURSOR |
-//          ((flags & GRN_CURSOR_DESCENDING) ? grn::dat::DESCENDING_CURSOR : 0) |
-//          ((flags & GRN_CURSOR_GT) ? grn::dat::EXCEPT_LOWER_BOUND : 0) |
-//          ((flags & GRN_CURSOR_LT) ? grn::dat::EXCEPT_UPPER_BOUND : 0));
-//      dc->cursor = cursor;
-//    } else {
-//      if ((flags & GRN_CURSOR_PREFIX)) {
-//        if (max && max_size) {
-////          if ((dat->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE)) {
-//            grn::dat::Trie *trie = static_cast<grn::dat::Trie *>(dat->trie);
-//            grn::dat::Cursor *cursor = grn::dat::CursorFactory::open(*trie,
-//                NULL, min_size, max, max_size, offset, limit,
-//                grn::dat::PREFIX_CURSOR | grn::dat::DESCENDING_CURSOR);
-//            dc->cursor = cursor;
-////          } else {
-////            /* todo: near */
-////          }
-//        } else {
-//          if (min && min_size) {
-//            if (flags & GRN_CURSOR_RK) {
-//              /* todo: rk search */
-//            } else {
-//              grn::dat::Trie *trie = static_cast<grn::dat::Trie *>(dat->trie);
-//              grn::dat::Cursor *cursor = grn::dat::CursorFactory::open(*trie,
-//                  min, min_size, NULL, 0, offset, limit,
-//                  grn::dat::PREDICTIVE_CURSOR |
-//                  ((flags & GRN_CURSOR_DESCENDING) ? grn::dat::DESCENDING_CURSOR : 0) |
-//                  ((flags & GRN_CURSOR_GT) ? grn::dat::EXCEPT_EXACT_MATCH : 0));
-//              dc->cursor = cursor;
-//            }
-//          }
-//        }
-//      } else {
-//        grn::dat::Trie *trie = static_cast<grn::dat::Trie *>(dat->trie);
-//        grn::dat::Cursor *cursor = grn::dat::CursorFactory::open(*trie,
-//            min, min_size, max, max_size, offset, limit,
-//            grn::dat::KEY_RANGE_CURSOR |
-//            ((flags & GRN_CURSOR_DESCENDING) ? grn::dat::DESCENDING_CURSOR : 0) |
-//            ((flags & GRN_CURSOR_GT) ? grn::dat::EXCEPT_LOWER_BOUND : 0) |
-//            ((flags & GRN_CURSOR_LT) ? grn::dat::EXCEPT_UPPER_BOUND : 0));
-//        dc->cursor = cursor;
-//      }
-//    }
-////    if (flags & GRN_CURSOR_DESCENDING) {
-////      if (min && min_size) {
-////        /* todo */
-////      }
-////      if (max && max_size) {
-////        /* todo */
-////      } else {
-////        /* todo */
-////      }
-////    } else {
-////      if (max && max_size) {
-////        /* todo */
-////      }
-////      if (min && min_size) {
-////        /* todo */
-////      } else {
-////        /* todo */
-////      }
-////    }
-//    if (dc->cursor) {
-//      dc->dat = dat;
-//      /* open stuff */
-//    } else {
-//      GRN_FREE(dc);
-//      dc = NULL;
-//    }
-//  }
-//#endif
-//  return dc;
-} catch (...) {
-  // ERR
-  return NULL;
 }
 
 grn_id
