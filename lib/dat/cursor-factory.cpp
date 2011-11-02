@@ -32,16 +32,16 @@ Cursor *CursorFactory::open(const Trie &trie,
                             UInt32 offset,
                             UInt32 limit,
                             UInt32 flags) {
+  GRN_DAT_THROW_IF(PARAM_ERROR, &trie == NULL);
+
   const UInt32 cursor_type = flags & CURSOR_TYPE_MASK;
   switch (cursor_type) {
     case ID_RANGE_CURSOR: {
       IdCursor *cursor = new (std::nothrow) IdCursor;
       GRN_DAT_THROW_IF(MEMORY_ERROR, cursor == NULL);
       try {
-        if (&trie != NULL) {
-          cursor->open(trie, String(min_ptr, min_length),
-                       String(max_ptr, max_length), offset, limit, flags);
-        }
+        cursor->open(trie, String(min_ptr, min_length),
+                     String(max_ptr, max_length), offset, limit, flags);
       } catch (...) {
         delete cursor;
         throw;
@@ -52,10 +52,8 @@ Cursor *CursorFactory::open(const Trie &trie,
       KeyCursor *cursor = new (std::nothrow) KeyCursor;
       GRN_DAT_THROW_IF(MEMORY_ERROR, cursor == NULL);
       try {
-        if (&trie != NULL) {
-          cursor->open(trie, String(min_ptr, min_length),
-                       String(max_ptr, max_length), offset, limit, flags);
-        }
+        cursor->open(trie, String(min_ptr, min_length),
+                     String(max_ptr, max_length), offset, limit, flags);
       } catch (...) {
         delete cursor;
         throw;
@@ -66,10 +64,8 @@ Cursor *CursorFactory::open(const Trie &trie,
       PrefixCursor *cursor = new (std::nothrow) PrefixCursor;
       GRN_DAT_THROW_IF(MEMORY_ERROR, cursor == NULL);
       try {
-        if (&trie != NULL) {
-          cursor->open(trie, String(max_ptr, max_length), min_length,
-                       offset, limit, flags);
-        }
+        cursor->open(trie, String(max_ptr, max_length), min_length,
+                     offset, limit, flags);
       } catch (...) {
         delete cursor;
         throw;
@@ -80,10 +76,8 @@ Cursor *CursorFactory::open(const Trie &trie,
       PredictiveCursor *cursor = new (std::nothrow) PredictiveCursor;
       GRN_DAT_THROW_IF(MEMORY_ERROR, cursor == NULL);
       try {
-        if (&trie != NULL) {
-          cursor->open(trie, String(min_ptr, min_length),
-                       offset, limit, flags);
-        }
+        cursor->open(trie, String(min_ptr, min_length),
+                     offset, limit, flags);
       } catch (...) {
         delete cursor;
         throw;
