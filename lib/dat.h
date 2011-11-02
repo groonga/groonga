@@ -39,6 +39,7 @@ struct _grn_dat {
   void *trie;
   void *old_trie;
   grn_obj *tokenizer;
+  grn_critical_section lock;
 };
 
 struct grn_dat_header {
@@ -72,6 +73,17 @@ GRN_API grn_id grn_dat_add(grn_ctx *ctx, grn_dat *dat, const void *key,
 GRN_API int grn_dat_get_key(grn_ctx *ctx, grn_dat *dat, grn_id id, void *keybuf, int bufsize);
 GRN_API int grn_dat_get_key2(grn_ctx *ctx, grn_dat *dat, grn_id id, grn_obj *bulk);
 
+//GRN_API grn_rc grn_dat_delete_by_id(grn_ctx *ctx, grn_dat *dat, grn_id id,
+//                                    grn_table_delete_optarg *optarg);
+//GRN_API grn_rc grn_dat_delete(grn_ctx *ctx, grn_dat *dat, const void *key, unsigned int key_size,
+//                              grn_table_delete_optarg *optarg);
+
+//GRN_API grn_rc grn_dat_update_by_id(grn_ctx *ctx, grn_dat *dat, grn_id id,
+//                                    const void *key, unsigned int key_size);
+//GRN_API grn_rc grn_dat_update(grn_ctx *ctx, grn_dat *dat,
+//                              const void *src_key, unsigned int src_key_size,
+//                              const void *dest_key, unsigned int dest_key_size);
+
 GRN_API unsigned int grn_dat_size(grn_ctx *ctx, grn_dat *dat);
 
 GRN_API grn_dat_cursor *grn_dat_cursor_open(grn_ctx *ctx, grn_dat *dat,
@@ -81,7 +93,9 @@ GRN_API grn_dat_cursor *grn_dat_cursor_open(grn_ctx *ctx, grn_dat *dat,
 GRN_API grn_id grn_dat_cursor_next(grn_ctx *ctx, grn_dat_cursor *c);
 GRN_API void grn_dat_cursor_close(grn_ctx *ctx, grn_dat_cursor *c);
 
-GRN_API int grn_dat_cursor_get_key(grn_ctx *ctx, grn_dat_cursor *c, void **key);
+//GRN_API int grn_dat_cursor_get_key(grn_ctx *ctx, grn_dat_cursor *c, void **key);
+//GRN_API grn_rc grn_dat_cursor_delete(grn_ctx *ctx, grn_dat_cursor *c,
+//                                     grn_table_delete_optarg *optarg);
 
 grn_id grn_dat_curr_id(grn_ctx *ctx, grn_dat *dat);
 
