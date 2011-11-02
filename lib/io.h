@@ -349,10 +349,6 @@ uint32_t grn_io_is_locked(grn_io *io);
   if (ptr_) { *ptr_ ^= (1 << ((offset) & 7)); }\
 }
 
-#ifdef __cplusplus
-}
-#endif
-
 void *grn_io_anon_map(grn_ctx *ctx, grn_io_mapinfo *mi, size_t length);
 void grn_io_anon_unmap(grn_ctx *ctx, grn_io_mapinfo *mi, size_t length);
 uint32_t grn_io_detect_type(grn_ctx *ctx, const char *path);
@@ -479,5 +475,9 @@ uint32_t grn_expire(grn_ctx *ctx, int count_thresh, uint32_t limit);
   } \
   while (size--) { *p2++ = *p1++; } \
 }
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* GRN_IO_H */
