@@ -359,17 +359,43 @@ grn_dat_get_key2(grn_ctx *ctx, grn_dat *dat, grn_id id, grn_obj *bulk)
 
 grn_rc
 grn_dat_delete_by_id(grn_ctx *ctx, grn_dat *dat, grn_id id,
-                     grn_table_delete_optarg *optarg)
+                     grn_table_delete_optarg *)
 {
   if (!grn_dat_open_trie_if_needed(ctx, dat)) {
+    return ctx->rc;
   }
+#ifndef WIN32
+  try {
+    grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
+    if (!trie->remove(id)) {
+      return GRN_INVALID_ARGUMENT;
+    }
+  } catch (...) {
+    // ERR
+    return GRN_INVALID_ARGUMENT;
+  }
+#endif
   return GRN_SUCCESS;
 }
 
 grn_rc
 grn_dat_delete(grn_ctx *ctx, grn_dat *dat, const void *key, unsigned int key_size,
-               grn_table_delete_optarg *optarg)
+               grn_table_delete_optarg *)
 {
+  if (!grn_dat_open_trie_if_needed(ctx, dat)) {
+    return ctx->rc;
+  }
+#ifndef WIN32
+  try {
+    grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
+    if (!trie->remove(key, key_size)) {
+      return GRN_INVALID_ARGUMENT;
+    }
+  } catch (...) {
+    // ERR
+    return GRN_INVALID_ARGUMENT;
+  }
+#endif
   return GRN_SUCCESS;
 }
 
