@@ -1,3 +1,5 @@
+%{!?use_lzo:%define use_lzo 0}
+
 %global _initddir %{_sysconfdir}/init.d/
 
 Name:		groonga
@@ -12,6 +14,10 @@ Source0:	http://packages.groonga.org/source/groonga/groonga-%{version}.tar.gz
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-%(%{__id_u} -n)
 BuildRequires:	mecab-devel
+BuildRequires:	zlib-devel
+%if %{use_lzo}
+BuildRequires:	lzo-devel
+%endif
 BuildRequires:	ruby
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	%{name}-plugin-suggest = %{version}-%{release}
@@ -32,6 +38,10 @@ on relational data model.
 Summary:	Runtime libraries for groonga
 Group:		System Environment/Libraries
 License:	LGPLv2 and (MIT or GPLv2)
+Requires:	zlib
+%if %{use_lzo}
+Requires:	lzo
+%endif
 Requires(post):	/sbin/ldconfig
 Requires(postun):	/sbin/ldconfig
 
@@ -256,6 +266,11 @@ fi
 %config(noreplace) %{_sysconfdir}/munin/plugin-conf.d/*
 
 %changelog
+* Tue Nov 29 2011 Kouhei Sutou <kou@clear-code.com> - 1.2.8-0
+- new upstream release.
+- enable zlib support.
+- enable lzo support.
+
 * Sat Oct 29 2011 Kouhei Sutou <kou@clear-code.com> - 1.2.7-0
 - new upstream release.
 
