@@ -9,8 +9,8 @@ export DH_OPTIONS
 %:
 	dh $@
 
-# override_dh_auto_configure:
-#	dh_auto_configure -- --xxx=zzz
+override_dh_auto_configure:
+	dh_auto_configure -- --with-zlib --with-lzo
 
 # disable 'make check'.
 override_dh_auto_test:
