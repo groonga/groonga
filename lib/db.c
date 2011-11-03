@@ -1399,7 +1399,9 @@ _grn_table_delete_by_id(grn_ctx *ctx, grn_obj *table, grn_id id,
         rc = grn_array_delete_by_id(ctx, (grn_array *)table, id, optarg);
         break;
       }
-      clear_column_values(ctx, table, id);
+      if (rc == GRN_SUCCESS) {
+        clear_column_values(ctx, table, id);
+      }
     }
   }
   return rc;
