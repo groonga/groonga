@@ -1182,6 +1182,11 @@ grn_ja_put_zlib(grn_ctx *ctx, grn_ja *ja, grn_id id,
   z_stream zstream;
   void *zvalue;
   int zvalue_len;
+
+  if (value_len == 0) {
+    return grn_ja_put_raw(ctx, ja, id, value, value_len, flags, cas);
+  }
+
   zstream.next_in = value;
   zstream.avail_in = value_len;
   zstream.zalloc = Z_NULL;
@@ -1224,6 +1229,11 @@ grn_ja_put_lzo(grn_ctx *ctx, grn_ja *ja, grn_id id,
   grn_rc rc;
   void *lvalue, *lwork;
   lzo_uint lvalue_len = value_len + value_len / 16 + 64 + 3;
+
+  if (value_len == 0) {
+    return grn_ja_put_raw(ctx, ja, id, value, value_len, flags, cas);
+  }
+
   if (!(lvalue = GRN_MALLOC(lvalue_len + sizeof (uint64_t)))) { return GRN_NO_MEMORY_AVAILABLE; }
   if (!(lwork = GRN_MALLOC(LZO1X_1_MEM_COMPRESS))) { GRN_FREE(lvalue); return GRN_NO_MEMORY_AVAILABLE; }
   if (lzo1x_1_compress(value, value_len, (lzo_bytep)((uint64_t *)lvalue + 1), &lvalue_len, lwork) != LZO_E_OK) {
