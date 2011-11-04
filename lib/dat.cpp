@@ -26,6 +26,35 @@
 
 namespace {
 
+class CriticalSection {
+ public:
+  CriticalSection() : lock_(NULL) {}
+  explicit CriticalSection(grn_critical_section *lock) : lock_(lock) {
+    CRITICAL_SECTION_ENTER(*lock_);
+  }
+  ~CriticalSection() {
+    leave();
+  }
+
+  void enter(grn_critical_section *lock) {
+    leave();
+    lock_ = lock;
+  }
+  void leave() {
+    if (lock_ != NULL) {
+      CRITICAL_SECTION_LEAVE(*lock_);
+      lock_ = NULL;
+    }
+  }
+
+ private:
+  grn_critical_section *lock_;
+
+  // Disallows copy and assignment.
+  CriticalSection(const CriticalSection &);
+  CriticalSection &operator=(const CriticalSection &);
+};
+
 void
 grn_dat_init(grn_ctx *, grn_dat *dat)
 {
@@ -47,7 +76,7 @@ grn_dat_fin(grn_ctx *ctx, grn_dat *dat)
 #ifndef WIN32
   delete static_cast<grn::dat::Trie *>(dat->old_trie);
   delete static_cast<grn::dat::Trie *>(dat->trie);
-#endif  // WIN32
+#endif
   dat->old_trie = NULL;
   dat->trie = NULL;
   if (dat->io) {
@@ -84,7 +113,8 @@ grn_dat_open_trie_if_needed(grn_ctx *ctx, grn_dat *dat)
   if (dat->trie && (file_id <= dat->file_id)) {
     return true;
   }
-  CRITICAL_SECTION_ENTER(dat->lock);
+
+  CriticalSection critical_section(&dat->lock);
   if (dat->trie && (file_id <= dat->file_id)) {
     return true;
   }
@@ -110,7 +140,8 @@ grn_dat_open_trie_if_needed(grn_ctx *ctx, grn_dat *dat)
   dat->old_trie = trie;
   dat->trie = new_trie;
   dat->file_id = file_id;
-  CRITICAL_SECTION_LEAVE(dat->lock);
+  critical_section.leave();
+
   delete old_trie;
 #endif
   return true;
