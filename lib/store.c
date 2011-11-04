@@ -1048,46 +1048,43 @@ grn_ja_element_info(grn_ctx *ctx, grn_ja *ja, grn_id id,
 static void *
 grn_ja_ref_zlib(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *value_len)
 {
+  /* TODO: This function leaks a memory. The return value
+   * must be freed. */
   z_stream zstream;
   void *value, *zvalue;
-  uint32_t zvalue_len = *value_len + sizeof (uint64_t);
+  uint32_t zvalue_len;
   if (!(zvalue = grn_ja_ref_raw(ctx, ja, id, iw, &zvalue_len))) {
-    *value_len = 0; return NULL;
+    *value_len = 0;
+    return NULL;
   }
-  zstream.next_in = (Bytef *)((uint64_t *)zvalue + 1);
-  zstream.avail_in = zvalue_len - sizeof (uint64_t);
+  zstream.next_in = (Bytef *)(((uint64_t *)zvalue) + 1);
+  zstream.avail_in = zvalue_len + sizeof(uint64_t);
   zstream.zalloc = Z_NULL;
   zstream.zfree = Z_NULL;
   if (inflateInit2(&zstream, 15 /* windowBits */) != Z_OK) {
-    GRN_FREE((grn_io_ja_ehead *)zvalue - 1);
     *value_len = 0;
     return NULL;
   }
-  if (!(value = GRN_MALLOC(*(uint64_t *)zvalue + sizeof (grn_io_ja_ehead)))) {
+  if (!(value = GRN_MALLOC(*((uint64_t *)zvalue)))) {
     inflateEnd(&zstream);
-    GRN_FREE((grn_io_ja_ehead *)zvalue - 1);
     *value_len = 0;
     return NULL;
   }
-  zstream.next_out = (Bytef *)((grn_io_ja_ehead *)value + 1);
+  zstream.next_out = (Bytef *)value;
   zstream.avail_out = *(uint64_t *)zvalue;
   if (inflate(&zstream, Z_FINISH) != Z_STREAM_END) {
     inflateEnd(&zstream);
     GRN_FREE(value);
-    GRN_FREE((grn_io_ja_ehead *)zvalue - 1);
     *value_len = 0;
     return NULL;
   }
   *value_len = zstream.total_out;
   if (inflateEnd(&zstream) != Z_OK) {
     GRN_FREE(value);
-    GRN_FREE((grn_io_ja_ehead *)zvalue - 1);
     *value_len = 0;
     return NULL;
   }
-  *(grn_io_ja_ehead *)value = ((grn_io_ja_ehead *)zvalue)[-1];
-  GRN_FREE((grn_io_ja_ehead *)zvalue - 1);
-  return (grn_io_ja_ehead *)value + 1;
+  return value;
 }
 #endif /* NO_ZLIB */
 
@@ -1097,33 +1094,35 @@ grn_ja_ref_zlib(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *v
 static void *
 grn_ja_ref_lzo(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *value_len)
 {
+  /* TODO: This function leaks a memory. The return value
+   * must be freed. */
   void *value, *lvalue;
-  uint32_t lvalue_len = *value_len + sizeof (uint64_t);
-  lzo_uint loutlen;
+  uint32_t lvalue_len;
+  lzo_uint lout_len;
   if (!(lvalue = grn_ja_ref_raw(ctx, ja, id, iw, &lvalue_len))) {
-    *value_len = 0; return NULL;
-  }
-  if (!(value = GRN_MALLOC(*(uint64_t *)lvalue + sizeof (grn_io_ja_ehead)))) {
-    GRN_FREE((grn_io_ja_ehead *)lvalue - 1);
     *value_len = 0;
     return NULL;
   }
-  loutlen = *(uint64_t *)lvalue;
-  switch (lzo1x_decompress((lzo_bytep)((uint64_t *)lvalue + 1), lvalue_len - sizeof (uint64_t),
-                           (lzo_bytep)((grn_io_ja_ehead *)value + 1), &loutlen, NULL)) {
+  if (!(value = GRN_MALLOC(*((uint64_t *)lvalue)))) {
+    *value_len = 0;
+    return NULL;
+  }
+  lout_len = *((uint64_t *)lvalue);
+  switch (lzo1x_decompress((lzo_bytep)(((uint64_t *)lvalue) + 1),
+                           lvalue_len,
+                           (lzo_bytep)(value),
+                           &lout_len,
+                           NULL)) {
   case LZO_E_OK :
   case LZO_E_INPUT_NOT_CONSUMED :
     break;
   default :
     GRN_FREE(value);
-    GRN_FREE((grn_io_ja_ehead *)lvalue - 1);
     *value_len = 0;
     return NULL;
   }
-  *value_len = loutlen;
-  *(grn_io_ja_ehead *)value = ((grn_io_ja_ehead *)lvalue)[-1];
-  GRN_FREE((grn_io_ja_ehead *)lvalue - 1);
-  return (grn_io_ja_ehead *)value + 1;
+  *value_len = lout_len;
+  return value;
 }
 #endif /* NO_LZO */
 
@@ -1200,7 +1199,7 @@ grn_ja_put_zlib(grn_ctx *ctx, grn_ja *ja, grn_id id,
   }
   zvalue_len = deflateBound(&zstream, value_len);
   if (!(zvalue = GRN_MALLOC(zvalue_len + sizeof (uint64_t)))) { deflateEnd(&zstream); return GRN_NO_MEMORY_AVAILABLE; }
-  zstream.next_out = (Bytef *)((uint64_t *)zvalue + 1);
+  zstream.next_out = (Bytef *)(((uint64_t *)zvalue) + 1);
   zstream.avail_out = zvalue_len;
   if (deflate(&zstream, Z_FINISH) != Z_STREAM_END) {
     deflateEnd(&zstream);
