@@ -110,7 +110,7 @@ grn_dat_fin(grn_ctx *ctx, grn_dat *dat)
 void
 grn_dat_generate_trie_path(const char *base_path, char *trie_path, int file_id)
 {
-  if (base_path == NULL) {
+  if (!base_path) {
     trie_path[0] = '\0';
     return;
   }
@@ -146,7 +146,7 @@ grn_dat_open_trie_if_needed(grn_ctx *ctx, grn_dat *dat)
   grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
   grn::dat::Trie * const old_trie = static_cast<grn::dat::Trie *>(dat->old_trie);
   grn::dat::Trie * const new_trie = new (std::nothrow) grn::dat::Trie;
-  if (new_trie == NULL) {
+  if (!new_trie) {
     MERR(const_cast<char *>("new grn::dat::Trie failed"));
     return false;
   }
@@ -209,6 +209,11 @@ grn_dat *
 grn_dat_create(grn_ctx *ctx, const char *path, uint32_t key_size,
                uint32_t, uint32_t flags)
 {
+  if (path && (std::strlen(path) >= (PATH_MAX - 4))) {
+    ERR(GRN_FILENAME_TOO_LONG, const_cast<char *>("too long path"));
+    return NULL;
+  }
+
   grn_dat * const dat = static_cast<grn_dat *>(GRN_MALLOC(sizeof(grn_dat)));
   if (!dat) {
     return NULL;
@@ -245,6 +250,11 @@ grn_dat_create(grn_ctx *ctx, const char *path, uint32_t key_size,
 grn_dat *
 grn_dat_open(grn_ctx *ctx, const char *path)
 {
+  if (path && (std::strlen(path) >= (PATH_MAX - 4))) {
+    ERR(GRN_FILENAME_TOO_LONG, const_cast<char *>("too long path"));
+    return NULL;
+  }
+
   grn_dat * const dat = static_cast<grn_dat *>(GRN_MALLOC(sizeof(grn_dat)));
   if (!dat) {
     return NULL;
@@ -284,7 +294,7 @@ grn_rc
 grn_dat_remove(grn_ctx *ctx, const char *path)
 {
   grn_dat * const dat = grn_dat_open(ctx, path);
-  if (dat == NULL) {
+  if (!dat) {
     return ctx->rc;
   }
   uint32_t const file_id = dat->header->file_id;
@@ -334,7 +344,7 @@ grn_dat_add(grn_ctx *ctx, grn_dat *dat, const void *key,
     char trie_path[PATH_MAX];
     grn_dat_generate_trie_path(grn_io_path(dat->io), trie_path, 1);
     grn::dat::Trie * const new_trie = new (std::nothrow) grn::dat::Trie;
-    if (new_trie == NULL) {
+    if (!new_trie) {
       MERR(const_cast<char *>("new grn::dat::Trie failed"));
       return GRN_ID_NIL;
     }
