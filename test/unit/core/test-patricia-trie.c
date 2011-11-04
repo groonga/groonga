@@ -18,7 +18,7 @@
 
 #include "test-patricia-trie.h"
 
-void deta_create(void);
+void data_create(void);
 void test_create(gconstpointer data);
 void data_open_success(void);
 void test_open_success(gconstpointer data);
