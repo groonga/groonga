@@ -166,6 +166,10 @@ grn_dat_open_trie_if_needed(grn_ctx *ctx, grn_dat *dat)
   critical_section.leave();
 
   delete old_trie;
+  if (file_id >= 3) {
+    grn_dat_generate_trie_path(grn_io_path(dat->io), trie_path, file_id - 2);
+    grn_io_remove(ctx, trie_path);
+  }
 #endif
   return true;
 }
@@ -176,6 +180,7 @@ bool grn_dat_rebuild_trie(grn_ctx *ctx, grn_dat *dat) {
   try {
     const grn::dat::Trie * const trie = static_cast<const grn::dat::Trie *>(dat->trie);
     grn::dat::Trie().create(*trie, trie_path, trie->file_size() * 2);
+//    grn::dat::Trie().create(*trie, trie_path, (grn::dat::UInt64)(trie->file_size() * 1.5));
   } catch (const grn::dat::Exception &ex) {
     ERR(grn_dat_translate_error_code(ex.code()),
         const_cast<char *>("grn::dat::Trie::create failed"));
@@ -301,7 +306,9 @@ grn_dat_remove(grn_ctx *ctx, const char *path)
   grn_dat_close(ctx, dat);
 
   for (uint32_t i = file_id; i > 0; --i) {
-    if (grn_io_remove(ctx, path) != GRN_SUCCESS) {
+    char trie_path[PATH_MAX];
+    grn_dat_generate_trie_path(path, trie_path, i);
+    if (grn_io_remove(ctx, trie_path) != GRN_SUCCESS) {
       break;
     }
   }
