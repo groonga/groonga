@@ -399,18 +399,48 @@ grn_dat_delete(grn_ctx *ctx, grn_dat *dat, const void *key, unsigned int key_siz
   return GRN_SUCCESS;
 }
 
-//grn_rc
-//grn_dat_update_by_id(grn_ctx *ctx, grn_dat *dat, grn_id id,
-//                     const void *key, unsigned int key_size)
-//{
-//}
+grn_rc
+grn_dat_update_by_id(grn_ctx *ctx, grn_dat *dat, grn_id id,
+                     const void *key, unsigned int key_size)
+{
+  if (!grn_dat_open_trie_if_needed(ctx, dat)) {
+    return ctx->rc;
+  }
+#ifndef WIN32
+  try {
+    grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
+    if (!trie->update(id, key, key_size)) {
+      return GRN_INVALID_ARGUMENT;
+    }
+  } catch (...) {
+    // ERR
+    return GRN_INVALID_ARGUMENT;
+  }
+#endif
+  return GRN_SUCCESS;
+}
 
-//grn_rc
-//grn_dat_update(grn_ctx *ctx, grn_dat *dat,
-//               const void *src_key, unsigned int src_key_size,
-//               const void *dest_key, unsigned int dest_key_size)
-//{
-//}
+grn_rc
+grn_dat_update(grn_ctx *ctx, grn_dat *dat,
+               const void *src_key, unsigned int src_key_size,
+               const void *dest_key, unsigned int dest_key_size)
+{
+  if (!grn_dat_open_trie_if_needed(ctx, dat)) {
+    return ctx->rc;
+  }
+#ifndef WIN32
+  try {
+    grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
+    if (!trie->update(src_key, src_key_size, dest_key, dest_key_size)) {
+      return GRN_INVALID_ARGUMENT;
+    }
+  } catch (...) {
+    // ERR
+    return GRN_INVALID_ARGUMENT;
+  }
+#endif
+  return GRN_SUCCESS;
+}
 
 unsigned int
 grn_dat_size(grn_ctx *ctx, grn_dat *dat)
@@ -550,12 +580,21 @@ grn_dat_cursor_get_key(grn_ctx *ctx, grn_dat_cursor *c, void **key)
   return 0;
 }
 
-//grn_rc
-//grn_dat_cursor_delete(grn_ctx *ctx, grn_dat_cursor *c,
-//                      grn_table_delete_optarg *optarg)
-//{
-//  return GRN_SUCCESS;
-//}
+grn_rc
+grn_dat_cursor_delete(grn_ctx *ctx, grn_dat_cursor *c,
+                      grn_table_delete_optarg *optarg)
+{
+  if (!c || !c->cursor) {
+    return GRN_INVALID_ARGUMENT;
+  }
+#ifdef WIN32
+  grn::dat::Trie * const trie = static_cast<const grn::dat::Trie *>(c->cursor->dat->trie);
+  if (trie->remove(c->curr_rec)) {
+    return GRN_SUCCESS;
+  }
+#endif
+  return GRN_INVALID_ARGUMENT;
+}
 
 grn_id
 grn_dat_curr_id(grn_ctx *ctx, grn_dat *dat)

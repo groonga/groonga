@@ -466,11 +466,11 @@ bool Trie::insert_linker(const UInt8 *ptr, UInt32 length,
   }
 }
 
-bool Trie::update_key(UInt32 key_id, const UInt8 *ptr, UInt32 length,
+bool Trie::update_key(const Key &key, const UInt8 *ptr, UInt32 length,
                       UInt32 *key_pos) {
   GRN_DAT_DEBUG_THROW_IF((ptr == NULL) && (length != 0));
 
-  if (!ith_entry(key_id).is_valid()) {
+  if (!key.is_valid()) {
     return false;
   }
 
@@ -485,12 +485,9 @@ bool Trie::update_key(UInt32 key_id, const UInt8 *ptr, UInt32 length,
     return false;
   }
 
-  const Key &key = ith_key(key_id);
-  const UInt32 new_key_pos = append_key(ptr, length, key_id);
-
+  const UInt32 new_key_pos = append_key(ptr, length, key.id());
   header_->set_total_key_length(total_key_length() + length - key.length());
-
-  ith_entry(key_id).set_key_pos(new_key_pos);
+  ith_entry(key.id()).set_key_pos(new_key_pos);
   ith_node(node_id).set_key_pos(new_key_pos);
   if (key_pos != NULL) {
     *key_pos = new_key_pos;

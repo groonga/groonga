@@ -73,15 +73,15 @@ class Trie {
     return search_key(static_cast<const UInt8 *>(ptr), length, key_pos);
   }
 
-  bool remove(const void *ptr, UInt32 length) {
-    return remove_key(static_cast<const UInt8 *>(ptr), length);
-  }
   bool remove(UInt32 key_id) {
     const Key &key = ith_key(key_id);
     if (key.id() == INVALID_KEY_ID) {
       return false;
     }
     return remove(key.ptr(), key.length());
+  }
+  bool remove(const void *ptr, UInt32 length) {
+    return remove_key(static_cast<const UInt8 *>(ptr), length);
   }
 
   bool insert(const void *ptr, UInt32 length, UInt32 *key_pos = NULL) {
@@ -90,7 +90,19 @@ class Trie {
 
   bool update(UInt32 key_id, const void *ptr, UInt32 length,
               UInt32 *key_pos = NULL) {
-    return update_key(key_id, static_cast<const UInt8 *>(ptr), length, key_pos);
+    return update_key(ith_key(key_id), static_cast<const UInt8 *>(ptr),
+                      length, key_pos);
+  }
+  bool update(const void *src_ptr, UInt32 src_length,
+              const void *dest_ptr, UInt32 dest_length,
+              UInt32 *key_pos = NULL) {
+    UInt32 src_key_pos;
+    if (!search(src_ptr, src_length, &src_key_pos)) {
+      return false;
+    }
+    const Key &src_key = get_key(src_key_pos);
+    return update_key(src_key, static_cast<const UInt8 *>(dest_ptr),
+                      dest_length, key_pos);
   }
 
   const Node &ith_node(UInt32 i) const {
@@ -200,7 +212,7 @@ class Trie {
   bool insert_linker(const UInt8 *ptr, UInt32 length,
                      UInt32 &node_id, UInt32 query_pos);
 
-  bool update_key(UInt32 key_id, const UInt8 *ptr, UInt32 length,
+  bool update_key(const Key &key, const UInt8 *ptr, UInt32 length,
                   UInt32 *key_pos);
 
   UInt32 insert_node(UInt32 node_id, UInt16 label);
