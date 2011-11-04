@@ -356,11 +356,11 @@ report_command(grn_ctx *ctx, char *command, char *ret, int task_id,
   if (grntest_outtype == OUT_TSV) {
     fprintf(grntest_log_file, "report\t%d\t%s\t%" GRN_FMT_LLD "\t%" GRN_FMT_LLD "\t%.*s\n",
             task_id, GRN_TEXT_VALUE(&escaped_command), start, end,
-            GRN_TEXT_LEN(&result), GRN_TEXT_VALUE(&result));
+            (int)GRN_TEXT_LEN(&result), GRN_TEXT_VALUE(&result));
   } else {
     fprintf(grntest_log_file, "[%d, \"%s\", %" GRN_FMT_LLD ", %" GRN_FMT_LLD ", %.*s],\n",
             task_id, GRN_TEXT_VALUE(&escaped_command), start, end,
-            GRN_TEXT_LEN(&result), GRN_TEXT_VALUE(&result));
+            (int)GRN_TEXT_LEN(&result), GRN_TEXT_VALUE(&result));
   }
   fflush(grntest_log_file);
   GRN_OBJ_FIN(ctx, &escaped_command);
@@ -3001,7 +3001,7 @@ main(int argc, char **argv)
     } else {
       fprintf(stderr,
               "failed to open PID file: <%s>: %s\n",
-              pid_file, strerror(errno));
+              pid_path, strerror(errno));
     }
   }
 
