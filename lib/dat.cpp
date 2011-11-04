@@ -235,7 +235,7 @@ grn_dat_get(grn_ctx *ctx, grn_dat *dat, const void *key,
     return GRN_ID_NIL;
   }
 #ifndef WIN32
-  const grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
+  const grn::dat::Trie * const trie = static_cast<const grn::dat::Trie *>(dat->trie);
   grn::dat::UInt32 key_pos;
   try {
     if (trie->search(key, key_size, &key_pos)) {
@@ -319,7 +319,7 @@ grn_dat_get_key(grn_ctx *ctx, grn_dat *dat, grn_id id, void *keybuf, int bufsize
     return 0;
   }
 #ifndef WIN32
-  const grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
+  const grn::dat::Trie * const trie = static_cast<const grn::dat::Trie *>(dat->trie);
   const grn::dat::Key &key = trie->ith_key(id);
   if (!key.is_valid()) {
     return 0;
@@ -340,7 +340,7 @@ grn_dat_get_key2(grn_ctx *ctx, grn_dat *dat, grn_id id, grn_obj *bulk)
     return 0;
   }
 #ifndef WIN32
-  const grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
+  const grn::dat::Trie * const trie = static_cast<const grn::dat::Trie *>(dat->trie);
   const grn::dat::Key &key = trie->ith_key(id);
   if (!key.is_valid()) {
     return 0;
@@ -399,12 +399,25 @@ grn_dat_delete(grn_ctx *ctx, grn_dat *dat, const void *key, unsigned int key_siz
   return GRN_SUCCESS;
 }
 
+//grn_rc
+//grn_dat_update_by_id(grn_ctx *ctx, grn_dat *dat, grn_id id,
+//                     const void *key, unsigned int key_size)
+//{
+//}
+
+//grn_rc
+//grn_dat_update(grn_ctx *ctx, grn_dat *dat,
+//               const void *src_key, unsigned int src_key_size,
+//               const void *dest_key, unsigned int dest_key_size)
+//{
+//}
+
 unsigned int
 grn_dat_size(grn_ctx *ctx, grn_dat *dat)
 {
 #ifndef WIN32
   if (dat && dat->trie) {
-    return static_cast<grn::dat::Trie *>(dat->trie)->num_keys();
+    return static_cast<const grn::dat::Trie *>(dat->trie)->num_keys();
   }
 #endif
   return 0;
@@ -433,7 +446,7 @@ grn_dat_cursor_open(grn_ctx *ctx, grn_dat *dat,
   }
   grn_dat_cursor_init(ctx, dc);
 
-  const grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
+  const grn::dat::Trie * const trie = static_cast<const grn::dat::Trie *>(dat->trie);
   try {
     if ((flags & GRN_CURSOR_BY_ID) != 0) {
       dc->cursor = grn::dat::CursorFactory::open(*trie,
@@ -520,10 +533,29 @@ grn_dat_cursor_close(grn_ctx *ctx, grn_dat_cursor *c)
 int
 grn_dat_cursor_get_key(grn_ctx *ctx, grn_dat_cursor *c, void **key)
 {
-  // Hmm... grn_dat_cursor has to maintain the latest key?
-  // Or, this function should return 0 if it is deleted?
+  // Hmm... grn_dat_cursor should maintain the latest key?
+  // If not, this function returns 0 when it is deleted after the last next().
+  // Also, the key must not be modified.
+  if (!c || !c->cursor) {
+    return 0;
+  }
+#ifdef WIN32
+  const grn::dat::Trie * const trie = static_cast<const grn::dat::Trie *>(c->cursor->dat->trie);
+  const grn::dat::Key &key = trie->ith_key(c->curr_rec);
+  if (key.is_valid()) {
+    *key = key.ptr();
+    return (int)key.length();
+  }
+#endif
   return 0;
 }
+
+//grn_rc
+//grn_dat_cursor_delete(grn_ctx *ctx, grn_dat_cursor *c,
+//                      grn_table_delete_optarg *optarg)
+//{
+//  return GRN_SUCCESS;
+//}
 
 grn_id
 grn_dat_curr_id(grn_ctx *ctx, grn_dat *dat)
