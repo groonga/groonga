@@ -54,16 +54,15 @@ class Trie {
 
   // Users can access a key by its position or ID.
   const Key &get_key(UInt32 key_pos) const {
-    GRN_DAT_DEBUG_THROW_IF(key_pos >= key_buf_size());
+    GRN_DAT_DEBUG_THROW_IF(key_pos >= next_key_pos());
     return *reinterpret_cast<const Key *>(key_buf_.ptr() + key_pos);
   }
   // If a specified ID is invalid, e.g. the key is already deleted, this
   // function returns a reference to an invalid key object whose id() returns
   // INVALID_KEY_ID.
   const Key &ith_key(UInt32 key_id) const {
-    GRN_DAT_DEBUG_THROW_IF(key_id < min_key_id());
-    GRN_DAT_DEBUG_THROW_IF(key_id > max_key_id());
-    if (ith_entry(key_id).is_valid()) {
+    if ((key_id >= min_key_id()) && (key_id <= max_key_id()) &&
+        (ith_entry(key_id).is_valid())) {
       return get_key(ith_entry(key_id).key_pos());
     }
     return Key::invalid_key();

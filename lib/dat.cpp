@@ -55,6 +55,28 @@ class CriticalSection {
   CriticalSection &operator=(const CriticalSection &);
 };
 
+grn_rc grn_dat_translate_error_code(grn::dat::ErrorCode error_code) {
+  switch (error_code) {
+    case grn::dat::PARAM_ERROR: {
+      return GRN_INVALID_ARGUMENT;
+    }
+    case grn::dat::IO_ERROR: {
+      return GRN_INPUT_OUTPUT_ERROR;
+    }
+    case grn::dat::FORMAT_ERROR: {
+      return GRN_INVALID_FORMAT;
+    }
+    case grn::dat::MEMORY_ERROR: {
+      return GRN_NO_MEMORY_AVAILABLE;
+    }
+    case grn::dat::SIZE_ERROR:
+    case grn::dat::UNEXPECTED_ERROR:
+    default: {
+      return GRN_UNKNOWN_ERROR;
+    }
+  }
+}
+
 void
 grn_dat_init(grn_ctx *, grn_dat *dat)
 {
@@ -103,19 +125,19 @@ grn_dat_open_trie_if_needed(grn_ctx *ctx, grn_dat *dat)
 {
 #ifndef WIN32
   if (!dat) {
-    // ERR
-    return false;
-  } else if (!dat->header->file_id) {
+    ERR(GRN_INVALID_ARGUMENT, const_cast<char *>("dat is null"));
     return false;
   }
 
   const uint32_t file_id = dat->header->file_id;
-  if (dat->trie && (file_id <= dat->file_id)) {
+  if (!dat->header->file_id || (dat->trie && (file_id <= dat->file_id))) {
+    // There is no need to open file.
     return true;
   }
 
   CriticalSection critical_section(&dat->lock);
   if (dat->trie && (file_id <= dat->file_id)) {
+    // There is no need to open file if the new file has been opened by another thread.
     return true;
   }
 
@@ -125,14 +147,15 @@ grn_dat_open_trie_if_needed(grn_ctx *ctx, grn_dat *dat)
   grn::dat::Trie * const old_trie = static_cast<grn::dat::Trie *>(dat->old_trie);
   grn::dat::Trie * const new_trie = new (std::nothrow) grn::dat::Trie;
   if (new_trie == NULL) {
-    // ERR
+    MERR(const_cast<char *>("new grn::dat::Trie failed"));
     return false;
   }
 
   try {
     new_trie->open(trie_path);
-  } catch (...) {
-    // ERR
+  } catch (const grn::dat::Exception &ex) {
+    ERR(grn_dat_translate_error_code(ex.code()),
+        const_cast<char *>("grn::dat::Trie::open failed"));
     delete new_trie;
     return false;
   }
@@ -147,6 +170,21 @@ grn_dat_open_trie_if_needed(grn_ctx *ctx, grn_dat *dat)
   return true;
 }
 
+bool grn_dat_rebuild_trie(grn_ctx *ctx, grn_dat *dat) {
+  char trie_path[PATH_MAX];
+  grn_dat_generate_trie_path(grn_io_path(dat->io), trie_path, dat->header->file_id + 1);
+  try {
+    const grn::dat::Trie * const trie = static_cast<const grn::dat::Trie *>(dat->trie);
+    grn::dat::Trie().create(*trie, trie_path, trie->file_size() * 2);
+  } catch (const grn::dat::Exception &ex) {
+    ERR(grn_dat_translate_error_code(ex.code()),
+        const_cast<char *>("grn::dat::Trie::create failed"));
+    return false;
+  }
+  ++dat->header->file_id;
+  return grn_dat_open_trie_if_needed(ctx, dat);
+}
+
 void grn_dat_cursor_init(grn_ctx *, grn_dat_cursor *cursor) {
   GRN_DB_OBJ_SET_TYPE(cursor, GRN_CURSOR_TABLE_DAT_KEY);
   cursor->dat = NULL;
@@ -158,6 +196,9 @@ void grn_dat_cursor_fin(grn_ctx *, grn_dat_cursor *cursor) {
 #ifndef WIN32
   delete static_cast<grn::dat::Cursor *>(cursor->cursor);
 #endif
+  cursor->dat = NULL;
+  cursor->cursor = NULL;
+  cursor->curr_rec = GRN_ID_NIL;
 }
 
 }  // namespace
@@ -166,7 +207,7 @@ extern "C" {
 
 grn_dat *
 grn_dat_create(grn_ctx *ctx, const char *path, uint32_t key_size,
-               uint32_t value_size, uint32_t flags)
+               uint32_t, uint32_t flags)
 {
   grn_dat * const dat = static_cast<grn_dat *>(GRN_MALLOC(sizeof(grn_dat)));
   if (!dat) {
@@ -204,7 +245,7 @@ grn_dat_create(grn_ctx *ctx, const char *path, uint32_t key_size,
 grn_dat *
 grn_dat_open(grn_ctx *ctx, const char *path)
 {
-  grn_dat *dat = static_cast<grn_dat *>(GRN_MALLOC(sizeof(grn_dat)));
+  grn_dat * const dat = static_cast<grn_dat *>(GRN_MALLOC(sizeof(grn_dat)));
   if (!dat) {
     return NULL;
   }
@@ -262,7 +303,7 @@ grn_id
 grn_dat_get(grn_ctx *ctx, grn_dat *dat, const void *key,
             unsigned int key_size, void **value)
 {
-  if (!grn_dat_open_trie_if_needed(ctx, dat)) {
+  if (!grn_dat_open_trie_if_needed(ctx, dat) || !dat->trie) {
     return GRN_ID_NIL;
   }
 #ifndef WIN32
@@ -272,8 +313,9 @@ grn_dat_get(grn_ctx *ctx, grn_dat *dat, const void *key,
     if (trie->search(key, key_size, &key_pos)) {
       return trie->get_key(key_pos).id();
     }
-  } catch (...) {
-    // ERR
+  } catch (const grn::dat::Exception &ex) {
+    ERR(grn_dat_translate_error_code(ex.code()),
+        const_cast<char *>("grn::dat::Trie::search failed"));
   }
 #endif
   return GRN_ID_NIL;
@@ -285,20 +327,22 @@ grn_dat_add(grn_ctx *ctx, grn_dat *dat, const void *key,
 {
 #ifndef WIN32
   if (!grn_dat_open_trie_if_needed(ctx, dat)) {
-    if (dat->header->file_id) {
-      return GRN_ID_NIL;
-    }
+    return GRN_ID_NIL;
+  }
+
+  if (!dat->trie) {
     char trie_path[PATH_MAX];
     grn_dat_generate_trie_path(grn_io_path(dat->io), trie_path, 1);
     grn::dat::Trie * const new_trie = new (std::nothrow) grn::dat::Trie;
     if (new_trie == NULL) {
-      // ERR
+      MERR(const_cast<char *>("new grn::dat::Trie failed"));
       return GRN_ID_NIL;
     }
     try {
       new_trie->create(trie_path);
-    } catch (...) {
-      // ERR
+    } catch (const grn::dat::Exception &ex) {
+      ERR(grn_dat_translate_error_code(ex.code()),
+          const_cast<char *>("grn::dat::Trie::create failed"));
       delete new_trie;
       return GRN_ID_NIL;
     }
@@ -315,16 +359,7 @@ grn_dat_add(grn_ctx *ctx, grn_dat *dat, const void *key,
     }
     return trie->get_key(key_pos).id();
   } catch (const grn::dat::SizeError &ex) {
-    char trie_path[PATH_MAX];
-    grn_dat_generate_trie_path(grn_io_path(dat->io), trie_path, dat->header->file_id + 1);
-    try {
-      grn::dat::Trie().create(*trie, trie_path, trie->file_size() * 2);
-    } catch (...) {
-      // ERR
-      return GRN_ID_NIL;
-    }
-    ++dat->header->file_id;
-    if (!grn_dat_open_trie_if_needed(ctx, dat)) {
+    if (!grn_dat_rebuild_trie(ctx, dat)) {
       return GRN_ID_NIL;
     }
     grn::dat::Trie * const new_trie = static_cast<grn::dat::Trie *>(dat->trie);
@@ -334,8 +369,9 @@ grn_dat_add(grn_ctx *ctx, grn_dat *dat, const void *key,
       *added = res ? 1 : 0;
     }
     return new_trie->get_key(key_pos).id();
-  } catch (...) {
-    // ERR
+  } catch (const grn::dat::Exception &ex) {
+    ERR(grn_dat_translate_error_code(ex.code()),
+        const_cast<char *>("grn::dat::Trie::insert failed"));
     return GRN_ID_NIL;
   }
 #else
@@ -346,7 +382,7 @@ grn_dat_add(grn_ctx *ctx, grn_dat *dat, const void *key,
 int
 grn_dat_get_key(grn_ctx *ctx, grn_dat *dat, grn_id id, void *keybuf, int bufsize)
 {
-  if (!grn_dat_open_trie_if_needed(ctx, dat)) {
+  if (!grn_dat_open_trie_if_needed(ctx, dat) || !dat->trie) {
     return 0;
   }
 #ifndef WIN32
@@ -367,7 +403,7 @@ grn_dat_get_key(grn_ctx *ctx, grn_dat *dat, grn_id id, void *keybuf, int bufsize
 int
 grn_dat_get_key2(grn_ctx *ctx, grn_dat *dat, grn_id id, grn_obj *bulk)
 {
-  if (!grn_dat_open_trie_if_needed(ctx, dat)) {
+  if (!grn_dat_open_trie_if_needed(ctx, dat) || !dat->trie) {
     return 0;
   }
 #ifndef WIN32
@@ -394,6 +430,8 @@ grn_dat_delete_by_id(grn_ctx *ctx, grn_dat *dat, grn_id id,
 {
   if (!grn_dat_open_trie_if_needed(ctx, dat)) {
     return ctx->rc;
+  } else if (!dat->trie) {
+    return GRN_INVALID_ARGUMENT;
   }
 #ifndef WIN32
   try {
@@ -401,8 +439,9 @@ grn_dat_delete_by_id(grn_ctx *ctx, grn_dat *dat, grn_id id,
     if (!trie->remove(id)) {
       return GRN_INVALID_ARGUMENT;
     }
-  } catch (...) {
-    // ERR
+  } catch (const grn::dat::Exception &ex) {
+    ERR(grn_dat_translate_error_code(ex.code()),
+        const_cast<char *>("grn::dat::Trie::remove failed"));
     return GRN_INVALID_ARGUMENT;
   }
 #endif
@@ -415,6 +454,8 @@ grn_dat_delete(grn_ctx *ctx, grn_dat *dat, const void *key, unsigned int key_siz
 {
   if (!grn_dat_open_trie_if_needed(ctx, dat)) {
     return ctx->rc;
+  } else if (!dat->trie) {
+    return GRN_INVALID_ARGUMENT;
   }
 #ifndef WIN32
   try {
@@ -422,8 +463,9 @@ grn_dat_delete(grn_ctx *ctx, grn_dat *dat, const void *key, unsigned int key_siz
     if (!trie->remove(key, key_size)) {
       return GRN_INVALID_ARGUMENT;
     }
-  } catch (...) {
-    // ERR
+  } catch (const grn::dat::Exception &ex) {
+    ERR(grn_dat_translate_error_code(ex.code()),
+        const_cast<char *>("grn::dat::Trie::remove failed"));
     return GRN_INVALID_ARGUMENT;
   }
 #endif
@@ -436,15 +478,29 @@ grn_dat_update_by_id(grn_ctx *ctx, grn_dat *dat, grn_id id,
 {
   if (!grn_dat_open_trie_if_needed(ctx, dat)) {
     return ctx->rc;
+  } else if (!dat->trie) {
+    return GRN_INVALID_ARGUMENT;
   }
 #ifndef WIN32
   try {
-    grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
-    if (!trie->update(id, key, key_size)) {
-      return GRN_INVALID_ARGUMENT;
+    try {
+      grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
+      if (!trie->update(id, key, key_size)) {
+        return GRN_INVALID_ARGUMENT;
+      }
+    } catch (const grn::dat::SizeError &ex) {
+      if (!grn_dat_rebuild_trie(ctx, dat)) {
+        return ctx->rc;
+      }
+      grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
+      grn::dat::UInt32 key_pos;
+      if (!trie->update(id, key, key_size)) {
+        return GRN_INVALID_ARGUMENT;
+      }
     }
-  } catch (...) {
-    // ERR
+  } catch (const grn::dat::Exception &ex) {
+    ERR(grn_dat_translate_error_code(ex.code()),
+        const_cast<char *>("grn::dat::Trie::update failed"));
     return GRN_INVALID_ARGUMENT;
   }
 #endif
@@ -458,15 +514,29 @@ grn_dat_update(grn_ctx *ctx, grn_dat *dat,
 {
   if (!grn_dat_open_trie_if_needed(ctx, dat)) {
     return ctx->rc;
+  } else if (!dat->trie) {
+    return GRN_INVALID_ARGUMENT;
   }
 #ifndef WIN32
   try {
-    grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
-    if (!trie->update(src_key, src_key_size, dest_key, dest_key_size)) {
-      return GRN_INVALID_ARGUMENT;
+    try {
+      grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
+      if (!trie->update(src_key, src_key_size, dest_key, dest_key_size)) {
+        return GRN_INVALID_ARGUMENT;
+      }
+    } catch (const grn::dat::SizeError &ex) {
+      if (!grn_dat_rebuild_trie(ctx, dat)) {
+        return ctx->rc;
+      }
+      grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
+      grn::dat::UInt32 key_pos;
+      if (!trie->update(src_key, src_key_size, dest_key, dest_key_size)) {
+        return GRN_INVALID_ARGUMENT;
+      }
     }
-  } catch (...) {
-    // ERR
+  } catch (const grn::dat::Exception &ex) {
+    ERR(grn_dat_translate_error_code(ex.code()),
+        const_cast<char *>("grn::dat::Trie::update failed"));
     return GRN_INVALID_ARGUMENT;
   }
 #endif
@@ -477,7 +547,7 @@ unsigned int
 grn_dat_size(grn_ctx *ctx, grn_dat *dat)
 {
 #ifndef WIN32
-  if (dat && dat->trie) {
+  if (grn_dat_open_trie_if_needed(ctx, dat) && dat->trie) {
     return static_cast<const grn::dat::Trie *>(dat->trie)->num_keys();
   }
 #endif
@@ -491,22 +561,24 @@ grn_dat_cursor_open(grn_ctx *ctx, grn_dat *dat,
                     int offset, int limit, int flags)
 {
   if (!grn_dat_open_trie_if_needed(ctx, dat)) {
-    if (!dat->header->file_id) {
-      grn_dat_cursor * const dc = static_cast<grn_dat_cursor *>(GRN_MALLOC(sizeof(grn_dat_cursor)));
-      if (dc) {
-        grn_dat_cursor_init(ctx, dc);
-      }
-      return dc;
-    }
     return NULL;
+  } else if (!dat->trie) {
+    grn_dat_cursor * const dc =
+        static_cast<grn_dat_cursor *>(GRN_MALLOC(sizeof(grn_dat_cursor)));
+    if (dc) {
+      grn_dat_cursor_init(ctx, dc);
+    }
+    return dc;
   }
-#ifndef WIN32
-  grn_dat_cursor * const dc = static_cast<grn_dat_cursor *>(GRN_MALLOC(sizeof(grn_dat_cursor)));
+
+  grn_dat_cursor * const dc =
+      static_cast<grn_dat_cursor *>(GRN_MALLOC(sizeof(grn_dat_cursor)));
   if (!dc) {
     return NULL;
   }
   grn_dat_cursor_init(ctx, dc);
 
+#ifndef WIN32
   const grn::dat::Trie * const trie = static_cast<const grn::dat::Trie *>(dat->trie);
   try {
     if ((flags & GRN_CURSOR_BY_ID) != 0) {
@@ -544,21 +616,20 @@ grn_dat_cursor_open(grn_ctx *ctx, grn_dat *dat,
           ((flags & GRN_CURSOR_GT) ? grn::dat::EXCEPT_LOWER_BOUND : 0) |
           ((flags & GRN_CURSOR_LT) ? grn::dat::EXCEPT_UPPER_BOUND : 0));
     }
-  } catch (...) {
-    // ERR
+  } catch (const grn::dat::Exception &ex) {
+    ERR(grn_dat_translate_error_code(ex.code()),
+        const_cast<char *>("grn::dat::CursorFactory::open failed"));
     GRN_FREE(dc);
     return NULL;
   }
   if (!dc->cursor) {
-    // ERR
+    ERR(GRN_INVALID_ARGUMENT, const_cast<char *>("unsupported query"));
     GRN_FREE(dc);
     return NULL;
   }
   dc->dat = dat;
-  return dc;
-#else
-  return NULL;
 #endif
+  return dc;
 }
 
 grn_id
@@ -572,14 +643,13 @@ grn_dat_cursor_next(grn_ctx *ctx, grn_dat_cursor *c)
     grn::dat::Cursor * const cursor = static_cast<grn::dat::Cursor *>(c->cursor);
     const grn::dat::Key &key = cursor->next();
     c->curr_rec = key.is_valid() ? key.id() : GRN_ID_NIL;
-  } catch (...) {
-    // ERR
+  } catch (const grn::dat::Exception &ex) {
+    ERR(grn_dat_translate_error_code(ex.code()),
+        const_cast<char *>("grn::dat::Cursor::next failed"));
     return GRN_ID_NIL;
   }
-  return c->curr_rec;
-#else
-  return GRN_ID_NIL;
 #endif
+  return c->curr_rec;
 }
 
 void
@@ -601,7 +671,8 @@ grn_dat_cursor_get_key(grn_ctx *ctx, grn_dat_cursor *c, void **key)
     return 0;
   }
 #ifdef WIN32
-  const grn::dat::Trie * const trie = static_cast<const grn::dat::Trie *>(c->cursor->dat->trie);
+  const grn::dat::Trie * const trie =
+      static_cast<const grn::dat::Trie *>(c->cursor->dat->trie);
   const grn::dat::Key &key = trie->ith_key(c->curr_rec);
   if (key.is_valid()) {
     *key = key.ptr();
@@ -631,7 +702,7 @@ grn_id
 grn_dat_curr_id(grn_ctx *ctx, grn_dat *dat)
 {
 #ifndef WIN32
-  if (grn_dat_open_trie_if_needed(ctx, dat)) {
+  if (grn_dat_open_trie_if_needed(ctx, dat) && dat->trie) {
     return static_cast<grn::dat::Trie *>(dat->trie)->max_key_id();
   }
 #endif
@@ -641,7 +712,7 @@ grn_dat_curr_id(grn_ctx *ctx, grn_dat *dat)
 const char *
 _grn_dat_key(grn_ctx *ctx, grn_dat *dat, grn_id id, uint32_t *key_size)
 {
-  if (!grn_dat_open_trie_if_needed(ctx, dat)) {
+  if (!grn_dat_open_trie_if_needed(ctx, dat) || !dat->trie) {
     return NULL;
   }
 #ifndef WIN32
