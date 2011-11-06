@@ -3433,7 +3433,6 @@ _grn_ii_create(grn_ctx *ctx, grn_ii *ii, const char *path, grn_obj *lexicon, uin
     header->garbages[i] = NOT_ASSIGNED;
   }
   header->flags = flags;
-  GRN_DB_OBJ_SET_TYPE(ii, GRN_COLUMN_INDEX);
   ii->seg = seg;
   ii->chunk = chunk;
   ii->lexicon = lexicon;
@@ -3458,6 +3457,7 @@ grn_ii_create(grn_ctx *ctx, const char *path, grn_obj *lexicon, uint32_t flags)
     GRN_FREE(ii);
     return NULL;
   }
+  GRN_DB_OBJ_SET_TYPE(ii, GRN_COLUMN_INDEX);
   return ii;
 }
 

@@ -422,7 +422,6 @@ _grn_pat_create(grn_ctx *ctx, grn_pat *pat,
   header->curr_del3 = 0;
   header->n_garbages = 0;
   header->tokenizer = 0;
-  GRN_DB_OBJ_SET_TYPE(pat, GRN_TABLE_PAT_KEY);
   pat->io = io;
   pat->header = header;
   pat->key_size = key_size;
@@ -452,6 +451,7 @@ grn_pat_create(grn_ctx *ctx, const char *path, uint32_t key_size,
     GRN_FREE(pat);
     return NULL;
   }
+  GRN_DB_OBJ_SET_TYPE(pat, GRN_TABLE_PAT_KEY);
   return pat;
 }
 

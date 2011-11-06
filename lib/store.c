@@ -47,7 +47,6 @@ _grn_ra_create(grn_ctx *ctx, grn_ra *ra, const char *path, unsigned int element_
   header->element_size = actual_size;
   n_elm = GRN_RA_SEGMENT_SIZE / header->element_size;
   for (w_elm = 22; (1 << w_elm) > n_elm; w_elm--);
-  GRN_DB_OBJ_SET_TYPE(ra, GRN_COLUMN_FIX_SIZE);
   ra->io = io;
   ra->header = header;
   ra->element_mask =  n_elm - 1;
@@ -66,6 +65,7 @@ grn_ra_create(grn_ctx *ctx, const char *path, unsigned int element_size)
     GRN_FREE(ra);
     return NULL;
   }
+  GRN_DB_OBJ_SET_TYPE(ra, GRN_COLUMN_FIX_SIZE);
   return ra;
 }
 
@@ -323,7 +323,6 @@ _grn_ja_create(grn_ctx *ctx, grn_ja *ja, const char *path,
   header->curr_pos = JA_SEGMENT_SIZE;
   header->flags = flags;
   for (i = 0; i < JA_N_ESEGMENTS; i++) { header->esegs[i] = JA_ESEG_VOID; }
-  GRN_DB_OBJ_SET_TYPE(ja, GRN_COLUMN_VAR_SIZE);
   ja->io = io;
   ja->header = header;
   header->max_element_size = max_element_size;
@@ -343,6 +342,7 @@ grn_ja_create(grn_ctx *ctx, const char *path, unsigned int max_element_size, uin
     GRN_FREE(ja);
     return NULL;
   }
+  GRN_DB_OBJ_SET_TYPE(ja, GRN_COLUMN_VAR_SIZE);
   return ja;
 }
 

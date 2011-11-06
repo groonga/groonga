@@ -128,7 +128,6 @@ tiny_array_init(grn_ctx *ctx, grn_array *array, const char *path,
     ERR(GRN_INVALID_ARGUMENT, "failed to create array");
     return ctx->rc;
   }
-  GRN_DB_OBJ_SET_TYPE(array, GRN_TABLE_NO_KEY);
   array->obj.header.flags = flags;
   array->ctx = ctx;
   array->value_size = value_size;
@@ -172,7 +171,6 @@ io_array_init(grn_ctx *ctx, grn_array *array, const char *path,
   header->n_entries = 0;
   header->n_garbages = 0;
   header->garbages = GRN_ID_NIL;
-  GRN_DB_OBJ_SET_TYPE(array, GRN_TABLE_NO_KEY);
   array->obj.header.flags = flags;
   array->ctx = ctx;
   array->value_size = value_size;
@@ -208,6 +206,7 @@ grn_array_create(grn_ctx *ctx, const char *path, uint32_t value_size, uint32_t f
     }
     GRN_FREE(array);
   }
+  GRN_DB_OBJ_SET_TYPE(array, GRN_TABLE_NO_KEY);
   return NULL;
 }
 
@@ -866,7 +865,6 @@ io_hash_init(grn_hash *ih, grn_ctx *ctx, const char *path, uint32_t key_size,
   header->n_entries = 0;
   header->n_garbages = 0;
   header->tokenizer = 0;
-  GRN_DB_OBJ_SET_TYPE(ih, GRN_TABLE_HASH_KEY);
   ih->obj.header.flags = flags;
   ih->ctx = ctx;
   ih->key_size = key_size;
@@ -906,7 +904,6 @@ tiny_hash_init(grn_hash *ah, grn_ctx *ctx, const char *path, uint32_t key_size,
   if (entry_size != sizeof(uint32_t)) {
     entry_size = ((entry_size + (sizeof(intptr_t)) - 1) & ~((sizeof(intptr_t)) - 1));
   }
-  GRN_DB_OBJ_SET_TYPE(ah, GRN_TABLE_HASH_KEY);
   ah->obj.header.flags = flags;
   ah->ctx = ctx;
   ah->key_size = key_size;
@@ -953,6 +950,7 @@ grn_hash_create(grn_ctx *ctx, const char *path, uint32_t key_size, uint32_t valu
     GRN_FREE(hash);
     return NULL;
   }
+  GRN_DB_OBJ_SET_TYPE(hash, GRN_TABLE_HASH_KEY);
   return hash;
 }
 
