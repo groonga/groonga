@@ -26,6 +26,8 @@
 
 namespace {
 
+const int FILE_ID_LENGTH = 3;
+
 class CriticalSection {
  public:
   CriticalSection() : lock_(NULL) {}
@@ -108,7 +110,7 @@ grn_dat_fin(grn_ctx *ctx, grn_dat *dat)
 }
 
 void
-grn_dat_generate_trie_path(const char *base_path, char *trie_path, int file_id)
+grn_dat_generate_trie_path(const char *base_path, char *trie_path, uint32_t file_id)
 {
   if (!base_path) {
     trie_path[0] = '\0';
@@ -117,7 +119,7 @@ grn_dat_generate_trie_path(const char *base_path, char *trie_path, int file_id)
   const size_t len = std::strlen(base_path);
   std::memcpy(trie_path, base_path, len);
   trie_path[len] = '.';
-  grn_itoh(file_id, trie_path + len + 1, 3);
+  grn_itoh(file_id % (1U << (4 * FILE_ID_LENGTH)), trie_path + len + 1, FILE_ID_LENGTH);
 }
 
 bool
@@ -130,7 +132,7 @@ grn_dat_open_trie_if_needed(grn_ctx *ctx, grn_dat *dat)
   }
 
   const uint32_t file_id = dat->header->file_id;
-  if (!dat->header->file_id || (dat->trie && (file_id <= dat->file_id))) {
+  if (!file_id || (dat->trie && (file_id <= dat->file_id))) {
     // There is no need to open file.
     return true;
   }
@@ -216,7 +218,7 @@ grn_dat *
 grn_dat_create(grn_ctx *ctx, const char *path, uint32_t key_size,
                uint32_t, uint32_t flags)
 {
-  if (path && (std::strlen(path) >= (PATH_MAX - 4))) {
+  if (path && (std::strlen(path) >= (PATH_MAX - (FILE_ID_LENGTH + 1)))) {
     ERR(GRN_FILENAME_TOO_LONG, const_cast<char *>("too long path"));
     return NULL;
   }
@@ -257,7 +259,7 @@ grn_dat_create(grn_ctx *ctx, const char *path, uint32_t key_size,
 grn_dat *
 grn_dat_open(grn_ctx *ctx, const char *path)
 {
-  if (path && (std::strlen(path) >= (PATH_MAX - 4))) {
+  if (path && (std::strlen(path) >= (PATH_MAX - (FILE_ID_LENGTH + 1)))) {
     ERR(GRN_FILENAME_TOO_LONG, const_cast<char *>("too long path"));
     return NULL;
   }
@@ -304,7 +306,7 @@ grn_dat_remove(grn_ctx *ctx, const char *path)
   if (!dat) {
     return ctx->rc;
   }
-  uint32_t const file_id = dat->header->file_id;
+  const uint32_t file_id = dat->header->file_id;
   grn_dat_close(ctx, dat);
 
   for (uint32_t i = file_id; i > 0; --i) {
@@ -322,11 +324,14 @@ grn_id
 grn_dat_get(grn_ctx *ctx, grn_dat *dat, const void *key,
             unsigned int key_size, void **value)
 {
-  if (!grn_dat_open_trie_if_needed(ctx, dat) || !dat->trie) {
+  if (!grn_dat_open_trie_if_needed(ctx, dat)) {
     return GRN_ID_NIL;
   }
 #ifndef WIN32
   const grn::dat::Trie * const trie = static_cast<const grn::dat::Trie *>(dat->trie);
+  if (!trie) {
+    return GRN_ID_NIL;
+  }
   grn::dat::UInt32 key_pos;
   try {
     if (trie->search(key, key_size, &key_pos)) {
@@ -401,11 +406,14 @@ grn_dat_add(grn_ctx *ctx, grn_dat *dat, const void *key,
 int
 grn_dat_get_key(grn_ctx *ctx, grn_dat *dat, grn_id id, void *keybuf, int bufsize)
 {
-  if (!grn_dat_open_trie_if_needed(ctx, dat) || !dat->trie) {
+  if (!grn_dat_open_trie_if_needed(ctx, dat)) {
     return 0;
   }
 #ifndef WIN32
   const grn::dat::Trie * const trie = static_cast<const grn::dat::Trie *>(dat->trie);
+  if (!trie) {
+    return 0;
+  }
   const grn::dat::Key &key = trie->ith_key(id);
   if (!key.is_valid()) {
     return 0;
@@ -422,11 +430,14 @@ grn_dat_get_key(grn_ctx *ctx, grn_dat *dat, grn_id id, void *keybuf, int bufsize
 int
 grn_dat_get_key2(grn_ctx *ctx, grn_dat *dat, grn_id id, grn_obj *bulk)
 {
-  if (!grn_dat_open_trie_if_needed(ctx, dat) || !dat->trie) {
+  if (!grn_dat_open_trie_if_needed(ctx, dat)) {
     return 0;
   }
 #ifndef WIN32
   const grn::dat::Trie * const trie = static_cast<const grn::dat::Trie *>(dat->trie);
+  if (!trie) {
+    return 0;
+  }
   const grn::dat::Key &key = trie->ith_key(id);
   if (!key.is_valid()) {
     return 0;
@@ -592,9 +603,13 @@ grn_dat_update(grn_ctx *ctx, grn_dat *dat,
 unsigned int
 grn_dat_size(grn_ctx *ctx, grn_dat *dat)
 {
+  if (!grn_dat_open_trie_if_needed(ctx, dat)) {
+    return 0;
+  }
 #ifndef WIN32
-  if (grn_dat_open_trie_if_needed(ctx, dat) && dat->trie) {
-    return static_cast<const grn::dat::Trie *>(dat->trie)->num_keys();
+  const grn::dat::Trie * const trie = static_cast<const grn::dat::Trie *>(dat->trie);
+  if (trie) {
+    return trie->num_keys();
   }
 #endif
   return 0;
@@ -608,7 +623,11 @@ grn_dat_cursor_open(grn_ctx *ctx, grn_dat *dat,
 {
   if (!grn_dat_open_trie_if_needed(ctx, dat)) {
     return NULL;
-  } else if (!dat->trie) {
+  }
+
+#ifndef WIN32
+  grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
+  if (!trie) {
     grn_dat_cursor * const dc =
         static_cast<grn_dat_cursor *>(GRN_MALLOC(sizeof(grn_dat_cursor)));
     if (dc) {
@@ -624,8 +643,6 @@ grn_dat_cursor_open(grn_ctx *ctx, grn_dat *dat,
   }
   grn_dat_cursor_init(ctx, dc);
 
-#ifndef WIN32
-  const grn::dat::Trie * const trie = static_cast<const grn::dat::Trie *>(dat->trie);
   try {
     if ((flags & GRN_CURSOR_BY_ID) != 0) {
       dc->cursor = grn::dat::CursorFactory::open(*trie,
@@ -674,8 +691,10 @@ grn_dat_cursor_open(grn_ctx *ctx, grn_dat *dat,
     return NULL;
   }
   dc->dat = dat;
-#endif
   return dc;
+#else
+  return NULL;
+#endif
 }
 
 grn_id
@@ -749,22 +768,58 @@ grn_dat_cursor_delete(grn_ctx *ctx, grn_dat_cursor *c,
 grn_id
 grn_dat_curr_id(grn_ctx *ctx, grn_dat *dat)
 {
+  if (!grn_dat_open_trie_if_needed(ctx, dat)) {
+    return GRN_ID_NIL;
+  }
 #ifndef WIN32
-  if (grn_dat_open_trie_if_needed(ctx, dat) && dat->trie) {
-    return static_cast<grn::dat::Trie *>(dat->trie)->max_key_id();
+  const grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
+  if (trie) {
+    return trie->max_key_id();
   }
 #endif
   return GRN_ID_NIL;
 }
 
+grn_rc
+grn_dat_truncate(grn_ctx *ctx, grn_dat *dat)
+{
+  if (!grn_dat_open_trie_if_needed(ctx, dat)) {
+    return ctx->rc;
+  }
+#ifndef WIN32
+  const grn::dat::Trie * const trie = static_cast<const grn::dat::Trie *>(dat->trie);
+  if (!trie || !trie->max_key_id()) {
+    return GRN_SUCCESS;
+  }
+
+  char trie_path[PATH_MAX];
+  grn_dat_generate_trie_path(grn_io_path(dat->io), trie_path, dat->header->file_id + 1);
+  try {
+    grn::dat::Trie().create(trie_path);
+  } catch (const grn::dat::Exception &ex) {
+    const grn_rc error_code = grn_dat_translate_error_code(ex.code());
+    ERR(error_code, const_cast<char *>("grn::dat::Trie::create failed"));
+    return error_code;
+  }
+  ++dat->header->file_id;
+  if (!grn_dat_open_trie_if_needed(ctx, dat)) {
+    return ctx->rc;
+  }
+#endif
+  return GRN_SUCCESS;
+}
+
 const char *
 _grn_dat_key(grn_ctx *ctx, grn_dat *dat, grn_id id, uint32_t *key_size)
 {
-  if (!grn_dat_open_trie_if_needed(ctx, dat) || !dat->trie) {
+  if (!grn_dat_open_trie_if_needed(ctx, dat)) {
     return NULL;
   }
 #ifndef WIN32
   const grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
+  if (!trie) {
+    return NULL;
+  }
   const grn::dat::Key &key = trie->ith_key(id);
   if (!key.is_valid()) {
     return NULL;
