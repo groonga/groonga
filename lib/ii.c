@@ -3453,11 +3453,11 @@ grn_ii_create(grn_ctx *ctx, const char *path, grn_obj *lexicon, uint32_t flags)
   if (!(ii = GRN_GMALLOC(sizeof(grn_ii)))) {
     return NULL;
   }
+  GRN_DB_OBJ_SET_TYPE(ii, GRN_COLUMN_INDEX);
   if (!_grn_ii_create(ctx, ii, path, lexicon, flags)) {
     GRN_FREE(ii);
     return NULL;
   }
-  GRN_DB_OBJ_SET_TYPE(ii, GRN_COLUMN_INDEX);
   return ii;
 }
 

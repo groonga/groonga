@@ -61,11 +61,11 @@ grn_ra_create(grn_ctx *ctx, const char *path, unsigned int element_size)
   if (!(ra = GRN_GMALLOC(sizeof(grn_ra)))) {
     return NULL;
   }
+  GRN_DB_OBJ_SET_TYPE(ra, GRN_COLUMN_FIX_SIZE);
   if (!_grn_ra_create(ctx, ra, path, element_size)) {
     GRN_FREE(ra);
     return NULL;
   }
-  GRN_DB_OBJ_SET_TYPE(ra, GRN_COLUMN_FIX_SIZE);
   return ra;
 }
 
@@ -338,11 +338,11 @@ grn_ja_create(grn_ctx *ctx, const char *path, unsigned int max_element_size, uin
   if (!(ja = GRN_GMALLOC(sizeof(grn_ja)))) {
     return NULL;
   }
+  GRN_DB_OBJ_SET_TYPE(ja, GRN_COLUMN_VAR_SIZE);
   if (!_grn_ja_create(ctx, ja, path, max_element_size, flags)) {
     GRN_FREE(ja);
     return NULL;
   }
-  GRN_DB_OBJ_SET_TYPE(ja, GRN_COLUMN_VAR_SIZE);
   return ja;
 }
 

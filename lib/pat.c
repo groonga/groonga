@@ -447,11 +447,11 @@ grn_pat_create(grn_ctx *ctx, const char *path, uint32_t key_size,
   if (!(pat = GRN_MALLOC(sizeof(grn_pat)))) {
     return NULL;
   }
+  GRN_DB_OBJ_SET_TYPE(pat, GRN_TABLE_PAT_KEY);
   if (!_grn_pat_create(ctx, pat, path, key_size, value_size, flags)) {
     GRN_FREE(pat);
     return NULL;
   }
-  GRN_DB_OBJ_SET_TYPE(pat, GRN_TABLE_PAT_KEY);
   return pat;
 }
 
