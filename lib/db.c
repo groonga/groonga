@@ -1506,21 +1506,18 @@ grn_table_truncate(grn_ctx *ctx, grn_obj *table)
   GRN_API_ENTER;
   if (table) {
     grn_hook *hooks;
-    grn_obj cols, **p, **pe;
-    GRN_PTR_INIT(&cols, GRN_OBJ_VECTOR, GRN_ID_NIL);
-    if ((rc = grn_obj_columns(ctx, table, "", 0, &cols))) {
-      GRN_OBJ_FIN(ctx, &cols);
-      goto exit;
-    }
-    p = (grn_obj **)GRN_BULK_HEAD(&cols);
-    pe = (grn_obj **)GRN_BULK_CURR(&cols);
-    for (; p < pe; p++) {
-      if ((rc = grn_column_truncate(ctx, *p))) {
-        GRN_OBJ_FIN(ctx, &cols);
-        goto exit;
+    grn_hash *cols;
+    if ((cols = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
+                                GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY))) {
+      if (grn_table_columns(ctx, table, "", 0, (grn_obj *)cols)) {
+        grn_id *key;
+        GRN_HASH_EACH(ctx, cols, id, &key, NULL, NULL, {
+          grn_obj *col = grn_ctx_at(ctx, *key);
+          if (col) { grn_column_truncate(ctx, col); }
+        });
       }
+      grn_hash_close(ctx, cols);
     }
-    GRN_OBJ_FIN(ctx, &cols);
     switch (table->header.type) {
     case GRN_TABLE_PAT_KEY :
       for (hooks = DB_OBJ(table)->hooks[GRN_HOOK_INSERT]; hooks; hooks = hooks->next) {
