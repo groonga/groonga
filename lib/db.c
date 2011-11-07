@@ -1475,6 +1475,9 @@ grn_column_truncate(grn_ctx *ctx, grn_obj *column)
   if (column) {
     grn_hook *hooks;
     switch (column->header.type) {
+    case GRN_COLUMN_INDEX :
+      rc = grn_ii_truncate(ctx, (grn_ii *)column);
+      break;
     case GRN_COLUMN_VAR_SIZE :
       for (hooks = DB_OBJ(column)->hooks[GRN_HOOK_SET]; hooks; hooks = hooks->next) {
         default_set_value_hook_data *data = (void *)NEXT_ADDR(hooks);
