@@ -107,8 +107,6 @@ test_no_columns(void)
 void
 test_have_columns(void)
 {
-  cut_omit("This test is failed. See #892.");
-
   assert_send_command("table_create Users TABLE_PAT_KEY ShortText");
   assert_send_command("column_create Users name COLUMN_SCALAR ShortText");
   assert_send_command("load --table Users\n"
