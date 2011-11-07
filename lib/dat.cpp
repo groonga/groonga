@@ -443,14 +443,24 @@ grn_dat_get_key2(grn_ctx *ctx, grn_dat *dat, grn_id id, grn_obj *bulk)
 
 grn_rc
 grn_dat_delete_by_id(grn_ctx *ctx, grn_dat *dat, grn_id id,
-                     grn_table_delete_optarg *)
+                     grn_table_delete_optarg *optarg)
 {
   if (!grn_dat_open_trie_if_needed(ctx, dat)) {
     return ctx->rc;
   } else if (!dat->trie) {
     return GRN_INVALID_ARGUMENT;
   }
+
 #ifndef WIN32
+  if (optarg && optarg->func) {
+    const grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
+    if (!trie->ith_entry(id).is_valid()) {
+      return GRN_INVALID_ARGUMENT;
+    } else if (!optarg->func(ctx, reinterpret_cast<grn_obj *>(dat), id, optarg->func_arg)) {
+      return GRN_SUCCESS;
+    }
+  }
+
   try {
     grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
     if (!trie->remove(id)) {
@@ -467,14 +477,31 @@ grn_dat_delete_by_id(grn_ctx *ctx, grn_dat *dat, grn_id id,
 
 grn_rc
 grn_dat_delete(grn_ctx *ctx, grn_dat *dat, const void *key, unsigned int key_size,
-               grn_table_delete_optarg *)
+               grn_table_delete_optarg *optarg)
 {
   if (!grn_dat_open_trie_if_needed(ctx, dat)) {
     return ctx->rc;
   } else if (!dat->trie) {
     return GRN_INVALID_ARGUMENT;
   }
+
 #ifndef WIN32
+  if (optarg && optarg->func) {
+    try {
+      const grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
+      grn::dat::UInt32 key_pos;
+      if (!trie->search(key, key_size, &key_pos)) {
+        return GRN_INVALID_ARGUMENT;
+      } else if (!optarg->func(ctx, reinterpret_cast<grn_obj *>(dat),
+                               trie->get_key(key_pos).id(), optarg->func_arg)) {
+        return GRN_SUCCESS;
+      }
+    } catch (const grn::dat::Exception &ex) {
+      ERR(grn_dat_translate_error_code(ex.code()),
+          const_cast<char *>("grn::dat::Trie::search failed"));
+    }
+  }
+
   try {
     grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
     if (!trie->remove(key, key_size)) {
