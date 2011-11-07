@@ -100,6 +100,7 @@ GRN_API grn_rc grn_dat_cursor_delete(grn_ctx *ctx, grn_dat_cursor *c,
 
 grn_id grn_dat_curr_id(grn_ctx *ctx, grn_dat *dat);
 
+grn_rc grn_dat_truncate(grn_ctx *ctx, grn_dat *dat);
 const char *_grn_dat_key(grn_ctx *ctx, grn_dat *dat, grn_id id, uint32_t *key_size);
 
 #ifdef __cplusplus

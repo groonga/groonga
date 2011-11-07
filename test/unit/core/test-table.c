@@ -37,13 +37,16 @@ void data_create_with_valid_name(void);
 void test_create_with_valid_name(gpointer data);
 void data_create_with_invalid_name(void);
 void test_create_with_invalid_name(gpointer data);
-void test_array_truncate(void);
+void data_truncate_anonymous(void);
+void test_truncate_anonymous(gconstpointer data);
+void data_truncate_named(void);
+void test_truncate_named(gconstpointer data);
 
 static gchar *tmp_directory;
 
 static grn_logger_info *logger;
 static grn_ctx *context;
-static grn_obj *database;
+static grn_obj *database, *table, *column, buffer;
 
 void
 cut_startup(void)
@@ -80,14 +83,27 @@ cut_setup(void)
   database = grn_db_create(context,
                            cut_build_path(tmp_directory, "table.db", NULL),
                            NULL);
+
+  table = NULL;
+  column = NULL;
+  GRN_VOID_INIT(&buffer);
 }
 
 void
 cut_teardown(void)
 {
+  grn_obj_unlink(context, &buffer);
+  if (column) {
+    grn_obj_unlink(context, column);
+  }
+  if (table) {
+    grn_obj_unlink(context, table);
+  }
+
   grn_obj_close(context, database);
   grn_ctx_fin(context);
   g_free(context);
+
   teardown_grn_logger(logger);
   cut_remove_path(tmp_directory, NULL);
 }
@@ -459,22 +475,137 @@ test_create_with_invalid_name(gpointer data)
 }
 
 void
-test_array_truncate(void)
+data_truncate_anonymous(void)
 {
-  grn_obj *table;
-  gchar value[] = "sample value";
-  gchar *value_type_name = "value_type";
-  grn_obj *value_type;
+#define ADD_DATA(label, flags)			\
+  gcut_add_datum(label,				\
+		 "flags", G_TYPE_INT, flags,	\
+		 NULL)
 
-  value_type = grn_type_create(context,
-                               value_type_name, strlen(value_type_name),
-                               0, sizeof(value));
-  table = grn_table_create(context, NULL, 0, NULL,
-                           GRN_OBJ_TABLE_NO_KEY,
-                           NULL, value_type);
-  grn_test_assert_not_nil(grn_table_add(context, table, NULL, 0, NULL));
+  ADD_DATA("array", GRN_OBJ_TABLE_NO_KEY);
+  ADD_DATA("hash", GRN_OBJ_TABLE_HASH_KEY);
+  ADD_DATA("patricia trie", GRN_OBJ_TABLE_PAT_KEY);
+
+#undef ADD_DATA
+}
+
+void
+test_truncate_anonymous(gconstpointer data)
+{
+  grn_obj_flags flags;
+  const gchar *key;
+  grn_obj *key_type;
+  unsigned key_size;
+  grn_bool array_p;
+  int added;
+
+  flags = gcut_data_get_int(data, "flags");
+  array_p = ((flags & GRN_OBJ_TABLE_TYPE_MASK) == GRN_OBJ_TABLE_NO_KEY);
+
+  if (array_p) {
+    key = NULL;
+    key_size = 0;
+    key_type = NULL;
+  } else {
+    key = "groonga";
+    key_size = strlen(key);
+    key_type = grn_ctx_at(context, GRN_DB_SHORT_TEXT);
+  }
+  table = grn_table_create(context,
+			   NULL, 0, NULL,
+                           flags,
+                           key_type, NULL);
+  if (key_type) {
+    grn_obj_unlink(context, key_type);
+  }
+
+  grn_test_assert_not_nil(grn_table_add(context, table, key, key_size, &added));
+  cut_assert_true(added);
 
   cut_assert_equal_uint(1, grn_table_size(context, table));
   grn_test_assert(grn_table_truncate(context, table));
+  cut_assert_equal_uint(0, grn_table_size(context, table));
+}
+
+void
+data_truncate_named(void)
+{
+#define ADD_DATA(label, flags)			\
+  gcut_add_datum(label,				\
+		 "flags", G_TYPE_INT, flags,	\
+		 NULL)
+
+  ADD_DATA("array", GRN_OBJ_TABLE_NO_KEY);
+  ADD_DATA("hash", GRN_OBJ_TABLE_HASH_KEY);
+  ADD_DATA("patricia trie", GRN_OBJ_TABLE_PAT_KEY);
+
+#undef ADD_DATA
+}
+
+void
+test_truncate_named(gconstpointer data)
+{
+  grn_obj_flags flags;
+  const gchar *table_name = "SearchEngines";
+  const gchar *key;
+  grn_obj *key_type;
+  unsigned key_size;
+  const gchar *column_name = "description";
+  grn_obj *column_type;
+  const gchar *column_value = "An open-source fulltext search engine";
+  grn_bool array_p;
+  grn_id record_id;
+  int added;
+
+  flags = gcut_data_get_int(data, "flags");
+  array_p = ((flags & GRN_OBJ_TABLE_TYPE_MASK) == GRN_OBJ_TABLE_NO_KEY);
+
+  if (array_p) {
+    key = NULL;
+    key_size = 0;
+    key_type = NULL;
+  } else {
+    key = "groonga";
+    key_size = strlen(key);
+    key_type = grn_ctx_at(context, GRN_DB_SHORT_TEXT);
+  }
+  table = grn_table_create(context,
+			   table_name, strlen(table_name), NULL,
+                           flags | GRN_OBJ_PERSISTENT,
+                           key_type, NULL);
+  if (key_type) {
+    grn_obj_unlink(context, key_type);
+  }
+  grn_test_assert_context(context);
+
+  column_type = grn_ctx_at(context, GRN_DB_SHORT_TEXT);
+  column = grn_column_create(context, table, column_name, strlen(column_name),
+			     NULL,
+			     GRN_OBJ_COLUMN_SCALAR | GRN_OBJ_PERSISTENT,
+			     column_type);
+  grn_obj_unlink(context, column_type);
+  grn_test_assert_context(context);
+
+  record_id = grn_table_add(context, table, key, key_size, &added);
+  grn_test_assert_not_nil(record_id);
+  cut_assert_true(added);
+
+  grn_obj_reinit(context, &buffer, GRN_DB_SHORT_TEXT, 0);
+  GRN_TEXT_PUTS(context, &buffer, column_value);
+  grn_test_assert(grn_obj_set_value(context, column, record_id,
+				    &buffer, GRN_OBJ_SET));
+
+  GRN_BULK_REWIND(&buffer);
+  grn_obj_get_value(context, column, record_id, &buffer);
+  GRN_TEXT_PUTC(context, &buffer, '\0');
+  cut_assert_equal_string(column_value, GRN_TEXT_VALUE(&buffer));
+  cut_assert_equal_uint(1, grn_table_size(context, table));
+
+  grn_test_assert(grn_table_truncate(context, table));
+
+  GRN_BULK_REWIND(&buffer);
+  grn_obj_get_value(context, column, record_id, &buffer);
+  GRN_TEXT_PUTC(context, &buffer, '\0');
+  cut_assert_equal_string("", GRN_TEXT_VALUE(&buffer));
   cut_assert_equal_uint(0, grn_table_size(context, table));
 }
