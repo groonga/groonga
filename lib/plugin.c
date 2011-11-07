@@ -270,12 +270,21 @@ grn_plugin_register_by_path(grn_ctx *ctx, const char *path)
     grn_id id = GRN_ID_NIL;
     FILE *plugin_file;
     char complemented_path[PATH_MAX], complemented_libs_path[PATH_MAX];
+    size_t path_len;
 
+    if ((path_len = strlen(path)) >= PATH_MAX) {
+      ERR(GRN_FILENAME_TOO_LONG, "too long path");
+      GRN_API_RETURN(ctx->rc);
+    }
     plugin_file = fopen(path, "r");
     if (plugin_file) {
       fclose(plugin_file);
       id = grn_plugin_open(ctx, path);
     } else {
+      if ((path_len += strlen(grn_plugin_get_suffix())) >= PATH_MAX) {
+        ERR(GRN_FILENAME_TOO_LONG, "too long path");
+        GRN_API_RETURN(ctx->rc);
+      }
       strcpy(complemented_path, path);
       strcat(complemented_path, grn_plugin_get_suffix());
       plugin_file = fopen(complemented_path, "r");
@@ -290,6 +299,11 @@ grn_plugin_register_by_path(grn_ctx *ctx, const char *path)
 
         base_name = strrchr(path, '/');
         if (base_name) {
+          path_len = base_name - path + strlen("/.libs") + strlen(base_name);
+          if ((path_len += strlen(grn_plugin_get_suffix())) >= PATH_MAX) {
+            ERR(GRN_FILENAME_TOO_LONG, "too long path");
+            GRN_API_RETURN(ctx->rc);
+          }
           complemented_libs_path[0] = '\0';
           strncat(complemented_libs_path, path, base_name - path);
           strcat(complemented_libs_path, "/.libs");
