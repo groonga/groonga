@@ -194,6 +194,7 @@ void grn_dat_cursor_init(grn_ctx *, grn_dat_cursor *cursor) {
   GRN_DB_OBJ_SET_TYPE(cursor, GRN_CURSOR_TABLE_DAT_KEY);
   cursor->dat = NULL;
   cursor->cursor = NULL;
+  cursor->key = &grn::dat::Key::invalid_key();
   cursor->curr_rec = GRN_ID_NIL;
 }
 
@@ -203,6 +204,7 @@ void grn_dat_cursor_fin(grn_ctx *, grn_dat_cursor *cursor) {
 #endif
   cursor->dat = NULL;
   cursor->cursor = NULL;
+  cursor->key = &grn::dat::Key::invalid_key();
   cursor->curr_rec = GRN_ID_NIL;
 }
 
@@ -686,6 +688,7 @@ grn_dat_cursor_next(grn_ctx *ctx, grn_dat_cursor *c)
   try {
     grn::dat::Cursor * const cursor = static_cast<grn::dat::Cursor *>(c->cursor);
     const grn::dat::Key &key = cursor->next();
+    c->key = &key;
     c->curr_rec = key.is_valid() ? key.id() : GRN_ID_NIL;
   } catch (const grn::dat::Exception &ex) {
     ERR(grn_dat_translate_error_code(ex.code()),
@@ -706,18 +709,13 @@ grn_dat_cursor_close(grn_ctx *ctx, grn_dat_cursor *c)
 }
 
 int
-grn_dat_cursor_get_key(grn_ctx *ctx, grn_dat_cursor *c, void **key)
+grn_dat_cursor_get_key(grn_ctx *ctx, grn_dat_cursor *c, const void **key)
 {
-  // Hmm... grn_dat_cursor should maintain the latest key?
-  // If not, this function returns 0 when it is deleted after the last next().
-  // Also, the key must not be modified.
   if (!c || !c->cursor) {
     return 0;
   }
 #ifdef WIN32
-  const grn::dat::Trie * const trie =
-      static_cast<const grn::dat::Trie *>(c->cursor->dat->trie);
-  const grn::dat::Key &key = trie->ith_key(c->curr_rec);
+  const grn::dat::Key &key = static_cast<const grn::dat::Key *>(c->key);
   if (key.is_valid()) {
     *key = key.ptr();
     return (int)key.length();
@@ -734,9 +732,15 @@ grn_dat_cursor_delete(grn_ctx *ctx, grn_dat_cursor *c,
     return GRN_INVALID_ARGUMENT;
   }
 #ifdef WIN32
-  grn::dat::Trie * const trie = static_cast<const grn::dat::Trie *>(c->cursor->dat->trie);
-  if (trie->remove(c->curr_rec)) {
-    return GRN_SUCCESS;
+  try {
+    grn::dat::Trie * const trie = static_cast<const grn::dat::Trie *>(c->cursor->dat->trie);
+    if (trie->remove(c->curr_rec)) {
+      return GRN_SUCCESS;
+    }
+  } catch (const grn::dat::Exception &ex) {
+    ERR(grn_dat_translate_error_code(ex.code()),
+        const_cast<char *>("grn::dat::Trie::remove failed"));
+    return GRN_INVALID_ARGUMENT;
   }
 #endif
   return GRN_INVALID_ARGUMENT;

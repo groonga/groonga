@@ -2180,7 +2180,7 @@ grn_table_cursor_get_key(grn_ctx *ctx, grn_table_cursor *tc, void **key)
       len = grn_pat_cursor_get_key(ctx, (grn_pat_cursor *)tc, key);
       break;
     case GRN_CURSOR_TABLE_DAT_KEY :
-      len = grn_dat_cursor_get_key(ctx, (grn_dat_cursor *)tc, key);
+      len = grn_dat_cursor_get_key(ctx, (grn_dat_cursor *)tc, (const void **)key);
       break;
     case GRN_CURSOR_TABLE_HASH_KEY :
       len = grn_hash_cursor_get_key(ctx, (grn_hash_cursor *)tc, key);

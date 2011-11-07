@@ -53,6 +53,7 @@ struct _grn_dat_cursor {
   grn_db_obj obj;
   grn_dat *dat;
   void *cursor;
+  const void *key;
   grn_id curr_rec;
 };
 
@@ -93,7 +94,7 @@ GRN_API grn_dat_cursor *grn_dat_cursor_open(grn_ctx *ctx, grn_dat *dat,
 GRN_API grn_id grn_dat_cursor_next(grn_ctx *ctx, grn_dat_cursor *c);
 GRN_API void grn_dat_cursor_close(grn_ctx *ctx, grn_dat_cursor *c);
 
-GRN_API int grn_dat_cursor_get_key(grn_ctx *ctx, grn_dat_cursor *c, void **key);
+GRN_API int grn_dat_cursor_get_key(grn_ctx *ctx, grn_dat_cursor *c, const void **key);
 GRN_API grn_rc grn_dat_cursor_delete(grn_ctx *ctx, grn_dat_cursor *c,
                                      grn_table_delete_optarg *optarg);
 
