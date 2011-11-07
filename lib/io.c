@@ -133,6 +133,7 @@ grn_io_create_tmp(uint32_t header_size, uint32_t segment_size,
         io->count = 0;
         io->flags = GRN_IO_TEMPORARY;
         io->lock = &header->lock;
+        io->path[0] = '\0';
         return io;
       }
       GRN_GFREE(io);
