@@ -2,7 +2,7 @@
 
 case "$0" in
     */*)
-	cd "${0%/*}"
+	cd `dirname $0`
 	;;
 esac
 
