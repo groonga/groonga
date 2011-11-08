@@ -130,6 +130,11 @@ AC_SUBST(LT_VERSION_INFO)
 GRN_DLL_FILENAME="libgroonga-\$(LT_CURRENT).dll"
 AC_SUBST(GRN_DLL_FILENAME)
 
+if test "$srcdir/version.sh"; then
+  source "$srcdir/version.sh"
+  AC_SUBST(GROONGA_VERSION)
+fi
+
 AC_CONFIG_FILES([
   Makefile
   src/Makefile
