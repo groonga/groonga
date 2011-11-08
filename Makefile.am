@@ -21,7 +21,11 @@ EXTRA_DIST = bindings version-gen.sh
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = groonga.pc
 
-version.sh:
+.PHONY: FORCE
+
+FORCE:
+
+$(srcdir)/version.sh: FORCE
 	@$(SHELL_PATH) $(srcdir)/version-gen.sh
 
 include $(srcdir)/version.sh
