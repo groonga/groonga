@@ -174,7 +174,7 @@ void Trie::create_file(const char *file_name,
 
     // The last term is the estimated number of bytes that will be used for
     // 32-bit alignment.
-    const UInt64 total_num_bytes = total_key_length
+    const UInt64 total_num_bytes = (UInt64)(total_key_length)
         + (UInt64)(sizeof(UInt32) + sizeof(UInt8)) * max_num_keys
         + (UInt32)(max_num_keys * 1.5);
     GRN_DAT_THROW_IF(PARAM_ERROR,
