@@ -7271,7 +7271,8 @@ grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
     i = grn_geo_table_sort(ctx, table, offset, limit, result, keys, n_keys);
     goto exit;
   }
-  if (n_keys == 1 && grn_column_index(ctx, keys->key, GRN_OP_LESS, &index, 1, NULL)) {
+  if (n_keys == 1 && !GRN_ACCESSORP(keys->key) &&
+      grn_column_index(ctx, keys->key, GRN_OP_LESS, &index, 1, NULL)) {
     grn_id tid;
     grn_pat *lexicon = (grn_pat *)grn_ctx_at(ctx, index->header.domain);
     grn_pat_cursor *pc = grn_pat_cursor_open(ctx, lexicon, NULL, 0, NULL, 0,
