@@ -26,7 +26,7 @@
 
 namespace {
 
-const int FILE_ID_LENGTH = 3;
+const uint32_t FILE_ID_LENGTH = 3;
 
 class CriticalSection {
  public:
@@ -215,7 +215,7 @@ void grn_dat_cursor_fin(grn_ctx *, grn_dat_cursor *cursor) {
 extern "C" {
 
 grn_dat *
-grn_dat_create(grn_ctx *ctx, const char *path, uint32_t key_size,
+grn_dat_create(grn_ctx *ctx, const char *path, uint32_t,
                uint32_t, uint32_t flags)
 {
   if (path && (std::strlen(path) >= (PATH_MAX - (FILE_ID_LENGTH + 1)))) {
@@ -322,7 +322,7 @@ grn_dat_remove(grn_ctx *ctx, const char *path)
 
 grn_id
 grn_dat_get(grn_ctx *ctx, grn_dat *dat, const void *key,
-            unsigned int key_size, void **value)
+            unsigned int key_size, void **)
 {
   if (!grn_dat_open_trie_if_needed(ctx, dat)) {
     return GRN_ID_NIL;
@@ -347,7 +347,7 @@ grn_dat_get(grn_ctx *ctx, grn_dat *dat, const void *key,
 
 grn_id
 grn_dat_add(grn_ctx *ctx, grn_dat *dat, const void *key,
-            unsigned int key_size, void **value, int *added)
+            unsigned int key_size, void **, int *added)
 {
 #ifndef WIN32
   if (!grn_dat_open_trie_if_needed(ctx, dat)) {
@@ -530,8 +530,8 @@ grn_dat_delete(grn_ctx *ctx, grn_dat *dat, const void *key, unsigned int key_siz
 }
 
 grn_rc
-grn_dat_update_by_id(grn_ctx *ctx, grn_dat *dat, grn_id id,
-                     const void *key, unsigned int key_size)
+grn_dat_update_by_id(grn_ctx *ctx, grn_dat *dat, grn_id src_key_id,
+                     const void *dest_key, unsigned int dest_key_size)
 {
   if (!grn_dat_open_trie_if_needed(ctx, dat)) {
     return ctx->rc;
@@ -542,7 +542,7 @@ grn_dat_update_by_id(grn_ctx *ctx, grn_dat *dat, grn_id id,
   try {
     try {
       grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
-      if (!trie->update(id, key, key_size)) {
+      if (!trie->update(src_key_id, dest_key, dest_key_size)) {
         return GRN_INVALID_ARGUMENT;
       }
     } catch (const grn::dat::SizeError &ex) {
@@ -551,7 +551,7 @@ grn_dat_update_by_id(grn_ctx *ctx, grn_dat *dat, grn_id id,
       }
       grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
       grn::dat::UInt32 key_pos;
-      if (!trie->update(id, key, key_size)) {
+      if (!trie->update(src_key_id, dest_key, dest_key_size)) {
         return GRN_INVALID_ARGUMENT;
       }
     }

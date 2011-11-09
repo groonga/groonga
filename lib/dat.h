@@ -79,8 +79,8 @@ GRN_API grn_rc grn_dat_delete_by_id(grn_ctx *ctx, grn_dat *dat, grn_id id,
 GRN_API grn_rc grn_dat_delete(grn_ctx *ctx, grn_dat *dat, const void *key, unsigned int key_size,
                               grn_table_delete_optarg *optarg);
 
-GRN_API grn_rc grn_dat_update_by_id(grn_ctx *ctx, grn_dat *dat, grn_id id,
-                                    const void *key, unsigned int key_size);
+GRN_API grn_rc grn_dat_update_by_id(grn_ctx *ctx, grn_dat *dat, grn_id src_key_id,
+                                    const void *dest_key, unsigned int dest_key_size);
 GRN_API grn_rc grn_dat_update(grn_ctx *ctx, grn_dat *dat,
                               const void *src_key, unsigned int src_key_size,
                               const void *dest_key, unsigned int dest_key_size);
