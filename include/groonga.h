@@ -2708,10 +2708,6 @@ GRN_API int grn_dat_cursor_get_key(grn_ctx *ctx, grn_dat_cursor *c, const void *
 GRN_API grn_rc grn_dat_cursor_delete(grn_ctx *ctx, grn_dat_cursor *c,
                                      grn_table_delete_optarg *optarg);
 
-grn_id grn_dat_curr_id(grn_ctx *ctx, grn_dat *dat);
-
-grn_rc grn_dat_truncate(grn_ctx *ctx, grn_dat *dat);
-
 #ifdef __cplusplus
 }
 #endif
