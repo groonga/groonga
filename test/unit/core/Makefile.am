@@ -1,3 +1,6 @@
+SUBDIRS =					\
+	dat
+
 if WITH_CUTTER
 noinst_LTLIBRARIES =				\
 	test-context.la				\

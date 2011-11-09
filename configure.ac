@@ -190,6 +190,7 @@ AC_CONFIG_FILES([
   test/unit/fixtures/story/rurema/Makefile
   test/unit/util/Makefile
   test/unit/core/Makefile
+  test/unit/core/dat/Makefile
   test/unit/memcached/Makefile
   test/unit/http/Makefile
   test/unit/gqtp/Makefile
@@ -508,11 +509,16 @@ AC_SUBST(GRNTEST)
 
 # check Cutter with GLib support if available
 REQUIRED_MINIMUM_CUTTER_VERSION=1.1.6
+REQUIRED_MINIMUM_CPPCUTTER_VERSION=1.2.0
 m4_ifdef([AC_CHECK_GCUTTER],
          [AC_CHECK_GCUTTER(>= $REQUIRED_MINIMUM_CUTTER_VERSION)],
          [cutter_use_cutter="no"])
+m4_ifdef([AC_CHECK_CPPCUTTER],
+         [AC_CHECK_CPPCUTTER(>= $REQUIRED_MINIMUM_CPPCUTTER_VERSION)],
+         [cutter_use_cppcutter="no"])
 
 AM_CONDITIONAL([WITH_CUTTER], [test "$cutter_use_cutter" = "yes"])
+AM_CONDITIONAL([WITH_CPPCUTTER], [test "$cutter_use_cppcutter" = "yes"])
 if test "$cutter_use_cutter" = "yes"; then
   AC_DEFINE(WITH_CUTTER, 1, [Define to 1 if you use Cutter])
 
