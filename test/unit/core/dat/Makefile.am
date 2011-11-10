@@ -11,13 +11,14 @@ noinst_LTLIBRARIES =				\
 	test-key.la				\
 	test-node.la				\
 	test-string.la				\
+	test-trie.la				\
 	test-vector.la
 
 #	test-id-cursor.la			\
 #	test-key-cursor.la			\
 #	test-predictive-cursor.la		\
-#	test-prefix-cursor.la			\
-#	test-trie.la
+#	test-prefix-cursor.la
+
 endif
 
 INCLUDES =					\
@@ -55,5 +56,5 @@ test_node_la_SOURCES			= test-node.cpp
 #test_predictive_cursor_la_SOURCES	= test-predictive-cursor.cpp
 #test_prefix_cursor_la_SOURCES		= test-prefix-cursor.cpp
 test_string_la_SOURCES			= test-string.cpp
-#test_trie_la_SOURCES			= test-trie.cpp
+test_trie_la_SOURCES			= test-trie.cpp
 test_vector_la_SOURCES			= test-vector.cpp
