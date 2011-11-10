@@ -28,7 +28,9 @@ void test_drilldown(void);
 void test_score_without_query(void);
 void test_score_drilldown_without_query(void);
 void test_nonexistent(void);
-void test_index(void);
+void test_fulltext_search_index_with_query(void);
+void test_pat_integer_index_with_query(void);
+void test_pat_integer_index_without_query(void);
 
 static gchar *tmp_directory;
 
@@ -264,7 +266,7 @@ test_nonexistent(void)
 }
 
 void
-test_index(void)
+test_fulltext_search_index_with_query(void)
 {
   cut_assert_equal_string(
     "[[[2],"
@@ -278,4 +280,60 @@ test_index(void)
                  "--output_columns \"_key, description\" "
                  "--match_columns \"description\" "
                  "--query \"fulltext\""));
+}
+
+void
+test_pat_integer_index_with_query(void)
+{
+  assert_send_commands("table_create Ages TABLE_PAT_KEY Int32\n"
+                       "column_create Ages site_index COLUMN_INDEX Sites age");
+  assert_send_commands("load --table Sites\n"
+                       "[\n"
+                       "[\"_key\", \"score\", \"age\", \"description\"],\n"
+                       "[\"mroonga.github.com\", 100, 2, "
+                       "\"fast fulltext search on MySQL\"],\n"
+                       "[\"groonga.rubyforge.org\", 100, 1, "
+                       "\"Ruby bindings for groonga\"]\n"
+                       "]");
+
+  cut_assert_equal_string(
+    "[[[5],"
+      "[[\"age\",\"Int32\"],[\"_key\",\"ShortText\"]],"
+       "[1,\"groonga.rubyforge.org\"],"
+       "[2,\"groonga.org\"],"
+       "[2,\"mroonga.github.com\"],"
+       "[5,\"qwik.jp/senna/FrontPageJ.html\"],"
+       "[11,\"2ch.net\"]]]",
+    send_command("select Sites "
+                 "--sortby \"age\" "
+                 "--output_columns \"age, _key\" "
+                 "--match_columns \"description\" "
+                 "--query \"fulltext OR BBS OR groonga\""));
+}
+
+void
+test_pat_integer_index_without_query(void)
+{
+  assert_send_commands("table_create Ages TABLE_PAT_KEY Int32\n"
+                       "column_create Ages site_index COLUMN_INDEX Sites age");
+  assert_send_commands("load --table Sites\n"
+                       "[\n"
+                       "[\"_key\", \"score\", \"age\", \"description\"],\n"
+                       "[\"mroonga.github.com\", 100, 2, "
+                       "\"fast fulltext search on MySQL\"],\n"
+                       "[\"groonga.rubyforge.org\", 100, 1, "
+                       "\"Ruby bindings for groonga\"]\n"
+                       "]");
+
+  cut_assert_equal_string(
+    "[[[5],"
+      "[[\"age\",\"Int32\"],[\"_key\",\"ShortText\"]],"
+       "[1,\"groonga.rubyforge.org\"],"
+       "[2,\"groonga.org\"],"
+       "[2,\"mroonga.github.com\"],"
+       "[5,\"qwik.jp/senna/FrontPageJ.html\"],"
+       "[11,\"2ch.net\"]]]",
+    send_command("select Sites "
+                 "--sortby \"age\" "
+                 "--output_columns \"age, _key\""));
 }
