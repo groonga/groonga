@@ -56,6 +56,7 @@ namespace test_dat_trie
 
   void cut_setup(void)
   {
+    std::srand(static_cast<unsigned int>(std::time(NULL)));
     base_dir = grn_test_get_tmp_dir();
     cut_remove_path(base_dir, NULL);
     g_mkdir_with_parents(base_dir, 0755);
@@ -282,5 +283,37 @@ namespace test_dat_trie
       cppcut_assert_equal(total_key_length,
                           static_cast<std::size_t>(trie.total_key_length()));
     }
+  }
+
+  void test_create(void)
+  {
+    std::vector<std::string> keys;
+    create_keys(&keys, 1000, 1, 16);
+
+    grn::dat::Trie src_trie;
+    src_trie.create();
+
+    for (std::size_t i = 0; i < keys.size(); ++i) {
+      cppcut_assert_equal(src_trie.insert(keys[i].c_str(), keys[i].length()), true);
+    }
+
+    grn::dat::Trie dest_trie;
+    dest_trie.create(src_trie);
+
+    for (std::size_t i = 0; i < keys.size(); ++i) {
+      cppcut_assert_equal(dest_trie.search(keys[i].c_str(), keys[i].length()), true);
+    }
+
+    cppcut_assert_equal(dest_trie.file_size(), src_trie.file_size());
+    cppcut_assert_equal(dest_trie.total_key_length(), src_trie.total_key_length());
+    cppcut_assert_equal(dest_trie.min_key_id(), src_trie.min_key_id());
+    cppcut_assert_equal(dest_trie.next_key_id(), src_trie.next_key_id());
+    cppcut_assert_equal(dest_trie.max_key_id(), src_trie.max_key_id());
+    cppcut_assert_equal(dest_trie.num_keys(), src_trie.num_keys());
+    cppcut_assert_equal(dest_trie.next_key_pos(), src_trie.next_key_pos());
+
+    cut_assert(dest_trie.num_nodes() < src_trie.num_nodes());
+    cppcut_assert_equal(dest_trie.num_zombies(), static_cast<grn::dat::UInt32>(0));
+    cut_assert(dest_trie.num_blocks() < src_trie.num_nodes());
   }
 }
