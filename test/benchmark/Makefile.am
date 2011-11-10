@@ -2,6 +2,8 @@ SUBDIRS =					\
 	fixtures				\
 	lib
 
+NONEXISTENT_CXX_SOURCE = nonexistent.cpp
+
 if WITH_BENCHMARK
 noinst_PROGRAMS =		\
 	bench-table-factory	\
@@ -25,8 +27,13 @@ LIBS =								\
 	$(GLIB_LIBS)
 
 bench_table_factory_SOURCES = bench-table-factory.c
+nodist_EXTRA_bench_table_factory_SOURCES = $(NONEXISTENT_CXX_SOURCE)
+
 bench_geo_distance_SOURCES = bench-geo-distance.c
+nodist_EXTRA_bench_geo_distance_SOURCES = $(NONEXISTENT_CXX_SOURCE)
+
 bench_geo_select_SOURCES = bench-geo-select.c
+nodist_EXTRA_bench_geo_select_SOURCES = $(NONEXISTENT_CXX_SOURCE)
 
 benchmarks =					\
 	run-bench-table-factory			\
