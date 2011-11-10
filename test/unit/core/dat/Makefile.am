@@ -6,13 +6,13 @@ noinst_LTLIBRARIES =				\
 	test-check.la				\
 	test-cursor-factory.la			\
 	test-entry.la				\
+	test-file.la				\
 	test-header.la				\
 	test-key.la				\
 	test-node.la				\
 	test-string.la				\
 	test-vector.la
 
-#	test-file.la				\
 #	test-id-cursor.la			\
 #	test-key-cursor.la			\
 #	test-predictive-cursor.la		\
@@ -46,7 +46,7 @@ test_block_la_SOURCES			= test-block.cpp
 test_check_la_SOURCES			= test-check.cpp
 test_cursor_factory_la_SOURCES		= test-cursor-factory.cpp
 test_entry_la_SOURCES			= test-entry.cpp
-#test_file_la_SOURCES			= test-file.cpp
+test_file_la_SOURCES			= test-file.cpp
 test_header_la_SOURCES			= test-header.cpp
 #test_id_cursor_la_SOURCES		= test-id-cursor.cpp
 #test_key_cursor_la_SOURCES		= test-key-cursor.cpp
