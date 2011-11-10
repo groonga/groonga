@@ -22,6 +22,14 @@
 #include <grn-assertions.h>
 #include <dat/string.hpp>
 
+namespace cut
+{
+  std::ostream &operator<<(std::ostream &stream, const grn::dat::String &str)
+  {
+    return stream.write(static_cast<const char *>(str.ptr()), str.length());
+  }
+}
+
 namespace test_dat_string
 {
   void test_empty_string(void)
@@ -85,9 +93,9 @@ namespace test_dat_string
   {
     const grn::dat::String str("apple");
 
-    cut_assert(str.substr(3) == grn::dat::String("le"));
-    cut_assert(str.substr(0, 3) == grn::dat::String("app"));
-    cut_assert(str.substr(1, 3) == grn::dat::String("ppl"));
+    cppcut_assert_equal(str.substr(3), grn::dat::String("le"));
+    cppcut_assert_equal(str.substr(0, 3), grn::dat::String("app"));
+    cppcut_assert_equal(str.substr(1, 3), grn::dat::String("ppl"));
   }
 
   void test_compare(void)

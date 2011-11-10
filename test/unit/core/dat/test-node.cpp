@@ -24,7 +24,7 @@
 
 #include <iostream>
 
-namespace
+namespace cut
 {
   std::ostream &operator<<(std::ostream &stream, const grn::dat::Base &base)
   {
@@ -32,6 +32,23 @@ namespace
       stream << "linker: " << base.key_pos();
     } else {
       stream << "non-linker: " << base.offset();
+    }
+    return stream;
+  }
+
+  std::ostream &operator<<(std::ostream &stream, const grn::dat::Check &check)
+  {
+    if (check.is_offset()) {
+      stream << "offset: " << check.except_is_offset() << "; ";
+    } else {
+      stream << "not offset: " << check.except_is_offset() << "; ";
+    }
+
+    if (check.is_phantom()) {
+      stream << "phantom: " << check.next() << ", " << check.prev();
+    } else {
+      stream << "non-phantom: " << check.label()
+             << ", " << check.child() << ", " << check.sibling();
     }
     return stream;
   }
@@ -44,18 +61,17 @@ namespace test_dat_node
     grn::dat::Node node;
     grn::dat::Base base;
 
-    cut_assert(node.base() == base);
     cppcut_assert_equal(node.base(), base);
 
     node.set_key_pos(100);
     base.set_key_pos(100);
-    cut_assert(node.base() == base);
+    cppcut_assert_equal(node.base(), base);
     cppcut_assert_equal(node.is_linker(), base.is_linker());
     cppcut_assert_equal(node.key_pos(), base.key_pos());
 
     node.set_offset(1000);
     base.set_offset(1000);
-    cut_assert(node.base() == base);
+    cppcut_assert_equal(node.base(), base);
     cppcut_assert_equal(node.is_linker(), base.is_linker());
     cppcut_assert_equal(node.offset(), base.offset());
   }
@@ -65,31 +81,31 @@ namespace test_dat_node
     grn::dat::Node node;
     grn::dat::Check check;
 
-    cut_assert(node.check() == check);
+    cppcut_assert_equal(node.check(), check);
 
     node.set_is_offset(true);
     check.set_is_offset(true);
-    cut_assert(node.check() == check);
+    cppcut_assert_equal(node.check(), check);
     cppcut_assert_equal(node.is_offset(), check.is_offset());
 
     node.set_offset(grn::dat::INVALID_OFFSET);
 
     node.set_is_phantom(true);
     check.set_is_phantom(true);
-    cut_assert(node.check() == check);
+    cppcut_assert_equal(node.check(), check);
     cppcut_assert_equal(node.is_phantom(), check.is_phantom());
 
     node.set_next(101);
     node.set_prev(99);
     check.set_next(101);
     check.set_prev(99);
-    cut_assert(node.check() == check);
+    cppcut_assert_equal(node.check(), check);
     cppcut_assert_equal(node.next(), check.next());
     cppcut_assert_equal(node.prev(), check.prev());
 
     node.set_is_phantom(false);
     check.set_is_phantom(false);
-    cut_assert(node.check() == check);
+    cppcut_assert_equal(node.check(), check);
     cppcut_assert_equal(node.is_phantom(), check.is_phantom());
     cppcut_assert_equal(node.label(), check.label());
     cppcut_assert_equal(node.child(), check.child());
@@ -97,7 +113,7 @@ namespace test_dat_node
 
     node.set_label('a');
     check.set_label('a');
-    cut_assert(node.check() == check);
+    cppcut_assert_equal(node.check(), check);
     cppcut_assert_equal(node.label(), check.label());
   }
 }

@@ -23,6 +23,15 @@
 #include <dat/key.hpp>
 
 #include <cstring>
+#include <iostream>
+
+namespace cut
+{
+  std::ostream &operator<<(std::ostream &stream, const grn::dat::String &str)
+  {
+    return stream.write(static_cast<const char *>(str.ptr()), str.length());
+  }
+}
 
 namespace test_dat_key
 {
@@ -53,7 +62,7 @@ namespace test_dat_key
     grn::dat::UInt32 buf[16];
     const grn::dat::Key &key = grn::dat::Key::create(buf, 123, "groonga", 7);
 
-    cut_assert(key.str() == grn::dat::String("groonga"));
+    cppcut_assert_equal(key.str(), grn::dat::String("groonga"));
     cppcut_assert_equal(key.id(), static_cast<grn::dat::UInt32>(123));
     cppcut_assert_equal(key.length(), static_cast<grn::dat::UInt32>(7));
     cppcut_assert_equal(std::memcmp(key.ptr(), "groonga", 7), 0);
