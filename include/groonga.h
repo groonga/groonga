@@ -996,6 +996,9 @@ GRN_API grn_posting *grn_index_cursor_next(grn_ctx *ctx, grn_obj *ic, grn_id *ti
     case GRN_TABLE_PAT_KEY :\
       GRN_PAT_EACH((ctx), (grn_pat *)(table), (id), (key), (key_size), (value), block);\
       break;\
+    case GRN_TABLE_DAT_KEY :\
+      GRN_DAT_EACH((ctx), (grn_dat *)(table), (id), (key), (key_size), block);\
+      break;\
     case GRN_TABLE_HASH_KEY :\
       GRN_HASH_EACH((ctx), (grn_hash *)(table), (id), (key), (key_size), (value), block);\
       break;\
@@ -2707,6 +2710,26 @@ GRN_API void grn_dat_cursor_close(grn_ctx *ctx, grn_dat_cursor *c);
 GRN_API int grn_dat_cursor_get_key(grn_ctx *ctx, grn_dat_cursor *c, const void **key);
 GRN_API grn_rc grn_dat_cursor_delete(grn_ctx *ctx, grn_dat_cursor *c,
                                      grn_table_delete_optarg *optarg);
+
+#define GRN_DAT_EACH(ctx,dat,id,key,key_size,block) do {\
+  grn_dat_cursor *_sc = grn_dat_cursor_open(ctx, dat, NULL, 0, NULL, 0, 0, -1, 0);\
+  if (_sc) {\
+    grn_id id;\
+    int *_ks = (key_size);\
+    if (_ks) {\
+      while ((id = grn_dat_cursor_next(ctx, _sc))) {\
+        *(_ks) = grn_dat_cursor_get_key(ctx, _sc, (const void **)(key));\
+        block\
+      }\
+    } else {\
+      while ((id = grn_dat_cursor_next(ctx, _sc))) {\
+        grn_dat_cursor_get_key(ctx, _sc, (const void **)(key));\
+        block\
+      }\
+    }\
+    grn_dat_cursor_close(ctx, _sc);\
+  }\
+} while (0)
 
 #ifdef __cplusplus
 }
