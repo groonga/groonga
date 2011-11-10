@@ -26,6 +26,22 @@
 
 namespace test_dat_file
 {
+  const gchar *base_dir = NULL;
+
+  void cut_setup(void)
+  {
+    base_dir = grn_test_get_tmp_dir();
+    cut_remove_path(base_dir, NULL);
+    g_mkdir_with_parents(base_dir, 0755);
+  }
+
+  void cut_teardown(void)
+  {
+    if (base_dir) {
+      cut_remove_path(base_dir, NULL);
+    }
+  }
+
   void test_invalid_file(void)
   {
     const grn::dat::File file;
@@ -57,15 +73,19 @@ namespace test_dat_file
 
   void test_create_with_path(void)
   {
+    char path[PATH_MAX];
+    strcpy(path, base_dir);
+    strcat(path, "test_create_with_path.dat");
+
     grn::dat::File file;
 
     try {
-      file.create("test_dat_file.tmp", 0);
+      file.create(path, 0);
       cut_fail("A zero-byte request is not allowed.");
     } catch (const grn::dat::Exception &) {
     }
 
-    file.create("test_dat_file.tmp", 32);
+    file.create(path, 32);
     cut_assert(file.ptr() != NULL);
     cppcut_assert_equal(file.size(), static_cast<grn::dat::UInt64>(32));
 
@@ -78,6 +98,10 @@ namespace test_dat_file
 
   void test_open(void)
   {
+    char path[PATH_MAX];
+    strcpy(path, base_dir);
+    strcat(path, "test_open.dat");
+
     grn::dat::File file;
 
     try {
@@ -86,14 +110,14 @@ namespace test_dat_file
     } catch (const grn::dat::Exception &) {
     }
 
-    file.create("test_dat_file.tmp", 32);
+    file.create(path, 32);
     std::strcpy(static_cast<char *>(file.ptr()), "This is a pen.");
 
     file.close();
     cppcut_assert_equal(file.ptr(), static_cast<void *>(NULL));
     cppcut_assert_equal(file.size(), static_cast<grn::dat::UInt64>(0));
 
-    file.open("test_dat_file.tmp");
+    file.open(path);
     cut_assert(file.ptr() != NULL);
     cppcut_assert_equal(file.size(), static_cast<grn::dat::UInt64>(32));
     cut_assert(!std::strcmp(static_cast<char *>(file.ptr()), "This is a pen."));
