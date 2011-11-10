@@ -22,6 +22,21 @@
 #include <grn-assertions.h>
 #include <dat/node.hpp>
 
+#include <iostream>
+
+namespace
+{
+  std::ostream &operator<<(std::ostream &stream, const grn::dat::Base &base)
+  {
+    if (base.is_linker()) {
+      stream << "linker: " << base.key_pos();
+    } else {
+      stream << "non-linker: " << base.offset();
+    }
+    return stream;
+  }
+}
+
 namespace test_dat_node
 {
   void test_base(void)
@@ -30,6 +45,7 @@ namespace test_dat_node
     grn::dat::Base base;
 
     cut_assert(node.base() == base);
+    cppcut_assert_equal(node.base(), base);
 
     node.set_key_pos(100);
     base.set_key_pos(100);

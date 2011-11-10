@@ -48,7 +48,7 @@ namespace test_dat_header
     }
   }
 
-  void test_const_values(void)
+  void test_immutable_values(void)
   {
     grn::dat::Header header;
 
