@@ -25,6 +25,10 @@
 
 #include <string.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define GRN_TEST_ENV_TABLE_PATH "GRN_TEST_TABLE_PATH"
 #define GRN_TEST_ENV_TABLE_TYPE "GRN_TEST_TABLE_TYPE"
 #define GRN_TEST_ENV_HASH_PATH "GRN_TEST_HASH_PATH"
@@ -97,5 +101,8 @@ gdouble      grn_test_coordinate_in_degree (gint              coordinate_in_mill
 const gchar *grn_test_location_string      (gdouble           latitude_in_degree,
                                             gdouble           longitude_in_degree);
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif
