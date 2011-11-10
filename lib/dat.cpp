@@ -733,7 +733,7 @@ grn_dat_cursor_get_key(grn_ctx *ctx, grn_dat_cursor *c, const void **key)
   if (!c || !c->cursor) {
     return 0;
   }
-#ifdef WIN32
+#ifndef WIN32
   const grn::dat::Key &key = static_cast<const grn::dat::Key *>(c->key);
   if (key.is_valid()) {
     *key = key.ptr();
@@ -750,7 +750,7 @@ grn_dat_cursor_delete(grn_ctx *ctx, grn_dat_cursor *c,
   if (!c || !c->cursor) {
     return GRN_INVALID_ARGUMENT;
   }
-#ifdef WIN32
+#ifndef WIN32
   try {
     grn::dat::Trie * const trie = static_cast<const grn::dat::Trie *>(c->cursor->dat->trie);
     if (trie->remove(c->curr_rec)) {
