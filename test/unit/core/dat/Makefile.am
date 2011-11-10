@@ -8,17 +8,15 @@ noinst_LTLIBRARIES =				\
 	test-entry.la				\
 	test-file.la				\
 	test-header.la				\
+	test-id-cursor.la			\
+	test-key-cursor.la			\
 	test-key.la				\
 	test-node.la				\
+	test-predictive-cursor.la		\
+	test-prefix-cursor.la			\
 	test-string.la				\
 	test-trie.la				\
 	test-vector.la
-
-#	test-id-cursor.la			\
-#	test-key-cursor.la			\
-#	test-predictive-cursor.la		\
-#	test-prefix-cursor.la
-
 endif
 
 INCLUDES =					\
@@ -49,12 +47,12 @@ test_cursor_factory_la_SOURCES		= test-cursor-factory.cpp
 test_entry_la_SOURCES			= test-entry.cpp
 test_file_la_SOURCES			= test-file.cpp
 test_header_la_SOURCES			= test-header.cpp
-#test_id_cursor_la_SOURCES		= test-id-cursor.cpp
-#test_key_cursor_la_SOURCES		= test-key-cursor.cpp
+test_id_cursor_la_SOURCES		= test-id-cursor.cpp
+test_key_cursor_la_SOURCES		= test-key-cursor.cpp
 test_key_la_SOURCES			= test-key.cpp
 test_node_la_SOURCES			= test-node.cpp
-#test_predictive_cursor_la_SOURCES	= test-predictive-cursor.cpp
-#test_prefix_cursor_la_SOURCES		= test-prefix-cursor.cpp
+test_predictive_cursor_la_SOURCES	= test-predictive-cursor.cpp
+test_prefix_cursor_la_SOURCES		= test-prefix-cursor.cpp
 test_string_la_SOURCES			= test-string.cpp
 test_trie_la_SOURCES			= test-trie.cpp
 test_vector_la_SOURCES			= test-vector.cpp
