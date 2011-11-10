@@ -4,6 +4,7 @@ noinst_LTLIBRARIES =				\
 	test-base.la				\
 	test-block.la				\
 	test-check.la				\
+	test-cursor-factory.la			\
 	test-entry.la				\
 	test-header.la				\
 	test-key.la				\
@@ -11,7 +12,6 @@ noinst_LTLIBRARIES =				\
 	test-string.la				\
 	test-vector.la
 
-#	test-cursor-factory.la			\
 #	test-file.la				\
 #	test-id-cursor.la			\
 #	test-key-cursor.la			\
@@ -44,7 +44,7 @@ test_array_la_SOURCES			= test-array.cpp
 test_base_la_SOURCES			= test-base.cpp
 test_block_la_SOURCES			= test-block.cpp
 test_check_la_SOURCES			= test-check.cpp
-#test_cursor_factory_la_SOURCES		= test-cursor-factory.cpp
+test_cursor_factory_la_SOURCES		= test-cursor-factory.cpp
 test_entry_la_SOURCES			= test-entry.cpp
 #test_file_la_SOURCES			= test-file.cpp
 test_header_la_SOURCES			= test-header.cpp
