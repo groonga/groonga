@@ -74,10 +74,10 @@ class Trie {
 
   bool remove(UInt32 key_id) {
     const Key &key = ith_key(key_id);
-    if (key.id() == INVALID_KEY_ID) {
-      return false;
+    if (key.is_valid()) {
+      return remove(key.ptr(), key.length());
     }
-    return remove(key.ptr(), key.length());
+    return false;
   }
   bool remove(const void *ptr, UInt32 length) {
     return remove_key(static_cast<const UInt8 *>(ptr), length);
