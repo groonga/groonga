@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-11-11 13:25\n"
-"PO-Revision-Date: 2011-11-11 13:54+0900\n"
+"POT-Creation-Date: 2011-11-11 14:03\n"
+"PO-Revision-Date: 2011-11-11 14:04+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -359,7 +359,11 @@ msgid ""
 "There are how to use groonga as C-library or via an executable file. This "
 "tutorial explains how to use an executable file of groonga. With its file, "
 "you can create and operate databases, start and connect to server, and so on."
-msgstr "groongaは、Cのライブラリとして使用する方法と、groonga実行ファイルを通して使用する方法があります。本チュートリアルでは、groonga実行ファイルを使用する方法について説明します。groonga実行ファイルを使って、DBの作成・操作・サーバの起動・サーバへの接続などの操作が行えます。"
+msgstr ""
+"groongaは、Cのライブラリとして使用する方法と、groonga実行ファイルを通して使用"
+"する方法があります。本チュートリアルでは、groonga実行ファイルを使用する方法に"
+"ついて説明します。groonga実行ファイルを使って、DBの作成・操作・サーバの起動・"
+"サーバへの接続などの操作が行えます。"
 
 # 2053368aefe74a5d9363bf95cb157d4a
 #: ../../../source/tutorial/introduction.txt:18
@@ -369,7 +373,9 @@ msgstr "DBの作成"
 # 9efc31e145c34bb4a6aab938ae10a6a2
 #: ../../../source/tutorial/introduction.txt:20
 msgid "This command creates a new database."
-msgstr "以下のようなコマンドを実行すると、データベースを新規に作成することができます。"
+msgstr ""
+"以下のようなコマンドを実行すると、データベースを新規に作成することができま"
+"す。"
 
 #: ../../../source/tutorial/introduction.txt:22
 #: ../../../source/tutorial/introduction.txt:39
@@ -381,14 +387,19 @@ msgstr "書式::"
 msgid ""
 "'-n' option specifies to create database. DB_PATH_NAME specifies full-path "
 "of new database."
-msgstr "-nオプションは、データベースを作ることを示します。データベースパス名には、新しく作成するデータベースのフルパス名を指定します。"
+msgstr ""
+"-nオプションは、データベースを作ることを示します。データベースパス名には、新"
+"しく作成するデータベースのフルパス名を指定します。"
 
 #: ../../../source/tutorial/introduction.txt:28
 msgid ""
 "Groonga runs as interactive mode after create database with this command, "
 "and so groonga accepts command from standard input. This mode is terminated "
 "with Ctrl-d."
-msgstr "上記コマンドでデータベースを作成すると、そのまま対話モードと呼ばれるコマンドを受け付けるモードになります。Ctrlキーを押しながらdキーを押すと、対話モードから抜けることができます。"
+msgstr ""
+"上記コマンドでデータベースを作成すると、そのまま対話モードと呼ばれるコマンド"
+"を受け付けるモードになります。Ctrlキーを押しながらdキーを押すと、対話モードか"
+"ら抜けることができます。"
 
 # d658120aeaf84578b997493e5e6c9737
 #: ../../../source/tutorial/introduction.txt:37
@@ -400,7 +411,9 @@ msgstr "DBの操作"
 msgid ""
 "DB_PATH_NAME specifies full-path of existing database. If COMMAND is "
 "specified, result of COMMAND is returned."
-msgstr "既存のデータベースのフルパス名をDBパス名に指定します。コマンドを指定すると、実行結果を返します。"
+msgstr ""
+"既存のデータベースのフルパス名をDBパス名に指定します。コマンドを指定すると、"
+"実行結果を返します。"
 
 # bbd1e3b24ab142a9a23b30d186a1bfb5
 #: ../../../source/tutorial/introduction.txt:46
@@ -408,14 +421,19 @@ msgid ""
 "With no COMMAND, this command starts interactive-mode. Groonga reads command "
 "from standardd evaluates it repeatedly in this mode. Interactive-mode is "
 "used in this tutorial."
-msgstr "コマンドを指定しない場合には、対話モードに入ります。対話モードでは、標準入力からコマンドを読み込み、順次実行します。本チュートリアルでは、対話モードを主に使用します。"
+msgstr ""
+"コマンドを指定しない場合には、対話モードに入ります。対話モードでは、標準入力"
+"からコマンドを読み込み、順次実行します。本チュートリアルでは、対話モードを主"
+"に使用します。"
 
 # 0429f188f11447149c137087a9eaf33b
 #: ../../../source/tutorial/introduction.txt:50
 msgid ""
 "For example, we explain to run the \"status\" command. This command returns "
 "status of groonga's execution."
-msgstr "たとえば、statusというコマンドを実行してみましょう。statusコマンドは、groongaの実行状態を返すコマンドです。"
+msgstr ""
+"たとえば、statusというコマンドを実行してみましょう。statusコマンドは、groonga"
+"の実行状態を返すコマンドです。"
 
 # f20f73567cf74f89928a062e06b51594
 #: ../../../source/tutorial/introduction.txt:58
@@ -423,7 +441,10 @@ msgid ""
 "The mentioned above, result of executed command is json-style. The 0 place "
 "of json array has information of error-code and execution time, and so on. "
 "The 1 place of json array has reslt of exectuted command."
-msgstr "以上のように、コマンドの実行結果は基本的にjson形式で返却されます。jsonの配列の0番目の要素に、エラーコードや実行時間などの情報が入ります。jsonの配列の1番目の様子に、コマンドの実行結果が入ります。"
+msgstr ""
+"以上のように、コマンドの実行結果は基本的にjson形式で返却されます。jsonの配列"
+"の0番目の要素に、エラーコードや実行時間などの情報が入ります。jsonの配列の1番"
+"目の様子に、コマンドの実行結果が入ります。"
 
 # 039d52210dbb4bbf8923efd307eb8be8
 #: ../../../source/tutorial/introduction.txt:63
@@ -435,7 +456,10 @@ msgstr "コマンド"
 msgid ""
 "You can operate database with various commands via execution file of groonga "
 "or groonga server There are forms of commands in the following. ::"
-msgstr "groonga実行ファイルやgroongaサーバを介して様々なコマンドを実行して、DBを操作することができます。コマンドは以下の書式のうちいずれかで与えることができます。 ::"
+msgstr ""
+"groonga実行ファイルやgroongaサーバを介して様々なコマンドを実行して、DBを操作"
+"することができます。コマンドは以下の書式のうちいずれかで与えることができま"
+"す。 ::"
 
 # 57cd35a6b91748e6bc0a1b0a5ba28354
 #: ../../../source/tutorial/introduction.txt:72
@@ -447,14 +471,17 @@ msgstr "書式1と2は混ぜて使うことができます。"
 msgid ""
 "In Form2, if you want to specify value including some spaces or symbols"
 "(\"'()/), you should enclose its value with single-quote or double-quote."
-msgstr "書式2において、空白や、記号「\"'()\\」のうちいずれかを含む値を指定したい場合は、シングルクォート(')かダブルクォート(\")で値を囲みます。"
+msgstr ""
+"書式2において、空白や、記号「\"'()\\」のうちいずれかを含む値を指定したい場合"
+"は、シングルクォート(')かダブルクォート(\")で値を囲みます。"
 
 # 8ae549a22ed54274a31717f115927311
 #: ../../../source/tutorial/introduction.txt:76
 msgid ""
 "For detail, you can see paragraph of \"command\" in :doc:`/executables/"
 "groonga`."
-msgstr "詳しくは、 :doc:`/executables/groonga` のコマンドの項を参考にしてください。"
+msgstr ""
+"詳しくは、 :doc:`/executables/groonga` のコマンドの項を参考にしてください。"
 
 # 3da56138e9904419b4dcc5d036e81a07
 #: ../../../source/tutorial/introduction.txt:79
@@ -511,7 +538,9 @@ msgstr ":doc:`/commands/table_create` コマンドを使用してテーブルを
 msgid ""
 "In using groonga, to creating tables generally needed master key. Master key "
 "should be specified the types and the way to store."
-msgstr "groongaでは、多くの場合テーブルを作成する際に主キーが必要となります。また、主キーには型と、その格納方法を指定する必要があります。"
+msgstr ""
+"groongaでは、多くの場合テーブルを作成する際に主キーが必要となります。また、主"
+"キーには型と、その格納方法を指定する必要があります。"
 
 # cb639d26e77e41b6bb1803f474394d34
 #: ../../../source/tutorial/introduction.txt:104
@@ -520,14 +549,19 @@ msgid ""
 "expressing sort of data. How to store master key defines speed of search "
 "with master key and advisability of begins-with-match search. This is also "
 "explained in this tutorial later."
-msgstr "型については、のちのチュートリアルで触れます。データの種類をあらわしているもの、とイメージしてください。主キーの格納方法によって、主キーでの検索速度や、前方一致検索の可否が決まります。これも、のちのチュートリアルで触れます。"
+msgstr ""
+"型については、のちのチュートリアルで触れます。データの種類をあらわしているも"
+"の、とイメージしてください。主キーの格納方法によって、主キーでの検索速度や、"
+"前方一致検索の可否が決まります。これも、のちのチュートリアルで触れます。"
 
 # d453562a86794510ad66cf951cf62a3e
 #: ../../../source/tutorial/introduction.txt:108
 msgid ""
 "For example, we create 'Site' table. This table has master key of ShortText "
 "type, and the way to store its key is HASH."
-msgstr "ここでは、ShortText型の主キー値を持ち、主キーの格納方法はHASHである、'Site'という名前のテーブルを作成します。"
+msgstr ""
+"ここでは、ShortText型の主キー値を持ち、主キーの格納方法はHASHである、'Site'と"
+"いう名前のテーブルを作成します。"
 
 # 887ead8f9f404b36b6f6875f935d2d84
 #: ../../../source/tutorial/introduction.txt:115
@@ -537,7 +571,9 @@ msgstr "検索"
 # 8cb3ff01469d48e28b6875b2554741e8
 #: ../../../source/tutorial/introduction.txt:117
 msgid ":doc:`/commands/select` shows contents of table."
-msgstr ":doc:`/commands/select` コマンドを用いて、テーブルの中身を表示することができます。"
+msgstr ""
+":doc:`/commands/select` コマンドを用いて、テーブルの中身を表示することができ"
+"ます。"
 
 # bbda0bfc40c04aafb60c94bef91eaa9a
 #: ../../../source/tutorial/introduction.txt:123
@@ -546,7 +582,11 @@ msgid ""
 "shows the number of searched records. [\"_id\",\"Uint32\"] is column named "
 "\"_id\" and type of this column's value is UInt32. [\"_key\",\"ShortText\"] "
 "is \"_key\" column, type of this column's value is ShortText."
-msgstr "selectにテーブル名を指定すると、指定したテーブルの中身を10件表示します。[0]は検索されたレコードの件数、[\"_id\",\"Uint32\"]は値がUInt32型である\"_id'という名前のカラム、[\"_key\",\"ShortText\"]は値がShortText型である'_key'という名前のカラムを示しています。"
+msgstr ""
+"selectにテーブル名を指定すると、指定したテーブルの中身を10件表示します。[0]は"
+"検索されたレコードの件数、[\"_id\",\"Uint32\"]は値がUInt32型である\"_id'とい"
+"う名前のカラム、[\"_key\",\"ShortText\"]は値がShortText型である'_key'という名"
+"前のカラムを示しています。"
 
 # 1a57023af4614d00a11b2a36f650aa4b
 #: ../../../source/tutorial/introduction.txt:125
@@ -554,7 +594,11 @@ msgid ""
 "'table_create' command creates table including two columns, '_id' and '_key' "
 "first. '_id' has ID-number given automatically by groonga. '_key' column is "
 "stored master key. You cannot modify this column's name."
-msgstr "table_createコマンドで作成したテーブルには、最初から'_id'/'_key'という２つのカラムがあります。'_id'はgroongaが自動的に付与するID番号が格納されるカラムです。'_key'は主キーが格納されるカラムです。これらのカラム名を変更することはできません。"
+msgstr ""
+"table_createコマンドで作成したテーブルには、最初から'_id'/'_key'という２つの"
+"カラムがあります。'_id'はgroongaが自動的に付与するID番号が格納されるカラムで"
+"す。'_key'は主キーが格納されるカラムです。これらのカラム名を変更することはで"
+"きません。"
 
 # bb371206793e407ab12db2864ee8d152
 #: ../../../source/tutorial/introduction.txt:128
@@ -564,12 +608,16 @@ msgstr "カラムの作成"
 # 4e5488d852844f238c41dfc94e49fa73
 #: ../../../source/tutorial/introduction.txt:130
 msgid ":doc:`/commands/column_create` command create columns."
-msgstr ":doc:`/commands/column_create` コマンドを用いて、カラムを作成することができます。"
+msgstr ""
+":doc:`/commands/column_create` コマンドを用いて、カラムを作成することができま"
+"す。"
 
 # d553eaedc4a7491fa66012348f066b3c
 #: ../../../source/tutorial/introduction.txt:132
 msgid "We add a column named 'comment' stored value type is ShortText."
-msgstr "ShortText型の値を持つ、'comment'という名前のカラムを'Site'テーブルに追加しましょう。"
+msgstr ""
+"ShortText型の値を持つ、'comment'という名前のカラムを'Site'テーブルに追加しま"
+"しょう。"
 
 # ebaa9fac28bb433096e04d02e20cc877
 #: ../../../source/tutorial/introduction.txt:139
@@ -585,7 +633,8 @@ msgstr "全文検索用の語彙表の作成"
 #: ../../../source/tutorial/introduction.txt:144
 msgid ""
 "This tutorial explains fulltext searching with entried data in groonga table."
-msgstr "このチュートリアルでは、groongaに登録したデータを用いた全文検索を行います。"
+msgstr ""
+"このチュートリアルでは、groongaに登録したデータを用いた全文検索を行います。"
 
 # 9aa45fd5cc1f4271b2dcc0429819111b
 #: ../../../source/tutorial/introduction.txt:146
@@ -593,7 +642,10 @@ msgid ""
 "We need terminology table in fulltext-searching. Terminology table is a "
 "table whose master key's values are words in text. We create 'Terms' table, "
 "it has type of master key value is ShortText."
-msgstr "全文検索を行う場合は、まず語彙表を作成する必要があります。語彙表とは、文書の中にある単語が主キーとなるテーブルです。ここでは、ShortText型の主キー値を持つ、'Terms'という名前のテーブルを作成しました。"
+msgstr ""
+"全文検索を行う場合は、まず語彙表を作成する必要があります。語彙表とは、文書の"
+"中にある単語が主キーとなるテーブルです。ここでは、ShortText型の主キー値を持"
+"つ、'Terms'という名前のテーブルを作成しました。"
 
 # e9f3b51b11414cc694d2bd2e0b5eb935
 #: ../../../source/tutorial/introduction.txt:154
@@ -601,7 +653,10 @@ msgid ""
 "Many parametors is specified in this execution example. You don't hove to "
 "understand all parameters. There are the simple explaination, but you can "
 "skipped."
-msgstr "この実行例には、多くのパラメータが指定されています。本チュートリアルでは、これらをすべて理解する必要はありません。以下に簡単な説明を記しますが、読み飛ばしてもらってかまいません。"
+msgstr ""
+"この実行例には、多くのパラメータが指定されています。本チュートリアルでは、こ"
+"れらをすべて理解する必要はありません。以下に簡単な説明を記しますが、読み飛ば"
+"してもらってかまいません。"
 
 # 7cded565e72b46869c9d7e759dfcddb6
 #: ../../../source/tutorial/introduction.txt:158
@@ -611,7 +666,13 @@ msgid ""
 "'default_tokenizer' parametar specifies the way to tokenize target texts. In "
 "this examples, we specifies 'TokenBigram' as this parameter, and so we "
 "choose 'N-gram' generally called."
-msgstr "実行例にある、TABLE_PAT_KEY|KEY_NORMALIZEという値は、主キー値をパトリシア木に格納し、各語彙を正規化して登録することを示しています。実行例にある、TokenBigramという値は、 語彙表として使用するテーブルは、対象の文書をトークナイズする方式を、default_tokenizerパラメータで与えます。この例ではTokenBigramを指定しています。よって、一般的にN-gramと呼ばれるようなインデックス方式を選択しています。"
+msgstr ""
+"実行例にある、TABLE_PAT_KEY|KEY_NORMALIZEという値は、主キー値をパトリシア木に"
+"格納し、各語彙を正規化して登録することを示しています。実行例にある、"
+"TokenBigramという値は、 語彙表として使用するテーブルは、対象の文書をトークナ"
+"イズする方式を、default_tokenizerパラメータで与えます。この例ではTokenBigram"
+"を指定しています。よって、一般的にN-gramと呼ばれるようなインデックス方式を選"
+"択しています。"
 
 # 86701e6e96324ccba83052699027da21
 #: ../../../source/tutorial/introduction.txt:162
@@ -623,7 +684,9 @@ msgstr "全文検索用のインデックスカラムの作成"
 msgid ""
 "We will target 'title' column in 'Site' table for fulltext searching. In "
 "this case, we create column whose type index in terminology table."
-msgstr "Siteテーブルのtitleカラムを全文検索の対象としたいとしましょう。その場合には、語彙表にインデックス型のカラムを作成します。"
+msgstr ""
+"Siteテーブルのtitleカラムを全文検索の対象としたいとしましょう。その場合には、"
+"語彙表にインデックス型のカラムを作成します。"
 
 # 83e0fea2854347a48a4e1330fbd06a7e
 #: ../../../source/tutorial/introduction.txt:170
@@ -636,7 +699,14 @@ msgid ""
 "specified 'COLUMN_INDEX|WITH_POSITION' in generally fulltext searching. This "
 "tutorial does not explain why to store information of terminology existing "
 "position."
-msgstr "Siteテーブルのtitleカラムを検索対象とする、'blog_title'という名前のインデックス型カラムをTermsテーブルに作成しました。インデックス対象となるテーブルをtypeに、インデックス対象となるカラムをsourceに指定します。実行例のflagsのCOLUMN_INDEX|WITH_POSITIONという値は、語彙の位置情報を格納するインデックス型のカラムであることを示しています。通常の全文検索インデックスでは、COLUMN_INDEX|WITH_POSITIONを指定してください。語彙の位置情報を格納する意味については、本チュートリアルでは触れません。"
+msgstr ""
+"Siteテーブルのtitleカラムを検索対象とする、'blog_title'という名前のインデック"
+"ス型カラムをTermsテーブルに作成しました。インデックス対象となるテーブルをtype"
+"に、インデックス対象となるカラムをsourceに指定します。実行例のflagsの"
+"COLUMN_INDEX|WITH_POSITIONという値は、語彙の位置情報を格納するインデックス型"
+"のカラムであることを示しています。通常の全文検索インデックスでは、"
+"COLUMN_INDEX|WITH_POSITIONを指定してください。語彙の位置情報を格納する意味に"
+"ついては、本チュートリアルでは触れません。"
 
 # 38feede6a058434f83b272cfa520cfc2
 #: ../../../source/tutorial/introduction.txt:174
@@ -648,7 +718,9 @@ msgstr "データのロード"
 msgid ""
 ":doc:`/commands/load` is used to load data for groonga database. This "
 "command stores json-formatted data in a table."
-msgstr ":doc:`/commands/load` コマンドを使用します。loadコマンドでは、jsonで受け取ったデータをテーブルに格納します。"
+msgstr ""
+":doc:`/commands/load` コマンドを使用します。loadコマンドでは、jsonで受け取っ"
+"たデータをテーブルに格納します。"
 
 # 370b2f236b6f4af78389aafc61011d31
 #: ../../../source/tutorial/introduction.txt:193
@@ -665,19 +737,25 @@ msgstr "データの検索"
 msgid ""
 "'_id' and '_key' columns are unique in groonga's table, so let's search data "
 "in table using these columns."
-msgstr "groongaでは、'_id'カラムと'_key'カラムの値はテーブル中で一意です。よって、それを用いて検索してみましょう。"
+msgstr ""
+"groongaでは、'_id'カラムと'_key'カラムの値はテーブル中で一意です。よって、そ"
+"れを用いて検索してみましょう。"
 
 # 1941bed5dec1414cae47cdd2bc92d2cc
 #: ../../../source/tutorial/introduction.txt:204
 msgid "You can search data using 'select' command with 'query' parametor."
-msgstr "selectコマンドにおいて、queryパラメータを用いるとデータの検索を行うことができます。"
+msgstr ""
+"selectコマンドにおいて、queryパラメータを用いるとデータの検索を行うことができ"
+"ます。"
 
 # 5e2fb9da8d4148a4b788b09ee4e2f7af
 #: ../../../source/tutorial/introduction.txt:210
 msgid ""
 "'_id:1' specified 'query' parametor means to search records whose '_id' "
 "column has '1'."
-msgstr "queryパラメータに与えた「_id:1」というのは、'_id'という名前のカラムに'1'という値が入っているレコードを検索する、という意味です。"
+msgstr ""
+"queryパラメータに与えた「_id:1」というのは、'_id'という名前のカラムに'1'とい"
+"う値が入っているレコードを検索する、という意味です。"
 
 # a2906d3d980a48459c5d568ba84b0edd
 #: ../../../source/tutorial/introduction.txt:212
@@ -689,7 +767,10 @@ msgstr "_keyでも検索してみましょう。"
 msgid ""
 "'_key:\\\"http://example.org/\\\"' specified 'query' parametor means to "
 "search records whose '_key' column has '\"http://example.org/\"'."
-msgstr "queryパラメータに与えた「_key:\\\"http://example.org/\\\"」というのは、'_key'という名前のカラムに'\"http://example.org/\"'という値が入っているレコードを検索する、という意味です。"
+msgstr ""
+"queryパラメータに与えた「_key:\\\"http://example.org/\\\"」というの"
+"は、'_key'という名前のカラムに'\"http://example.org/\"'という値が入っているレ"
+"コードを検索する、という意味です。"
 
 # 889b663bc7ff431f888baf85574207d5
 #: ../../../source/tutorial/introduction.txt:222
@@ -699,21 +780,25 @@ msgstr "全文検索"
 # 31a6f02b4ef24fb6936866e5c852d736
 #: ../../../source/tutorial/introduction.txt:224
 msgid "Using 'query' parametor, you can fulltext search with index."
-msgstr "queryパラメータでは、インデックスを用いた全文検索を行うこともできます。"
+msgstr ""
+"queryパラメータでは、インデックスを用いた全文検索を行うこともできます。"
 
 # b89ef719f0f44722bb83c29d6ab9bd93
 #: ../../../source/tutorial/introduction.txt:230
 msgid ""
 "This command shows result of fulltext searching by string 'this' for 'title' "
 "column."
-msgstr "titleカラムに対して、'this'という文字列で全文検索を行った結果を返します。"
+msgstr ""
+"titleカラムに対して、'this'という文字列で全文検索を行った結果を返します。"
 
 # 50cf1378172d415cbd640da7f6b4066a
 #: ../../../source/tutorial/introduction.txt:232
 msgid ""
 "\"title:@this\" specified 'query' parametor means to search records whose "
 "'title' column including 'this' string."
-msgstr "queryパラメータに与えた「title:@this」というのが、'title'という名前のカラムに'this'という文字列が含まれているレコードを検索する、という意味です。"
+msgstr ""
+"queryパラメータに与えた「title:@this」というのが、'title'という名前のカラム"
+"に'this'という文字列が含まれているレコードを検索する、という意味です。"
 
 # ab95e69e121648e2b2dd0bc2e58305d5
 #: ../../../source/tutorial/introduction.txt:234
@@ -726,14 +811,18 @@ msgid ""
 "If this parametor is specified, it means to search in columns specified "
 "'match_columns' when 'query' parametor doesn't specify column-name condition."
 "[1]_"
-msgstr "これを指定すると、query内にカラム名を指定しない条件があった場合、match_columnsで指定されたカラムに対しての検索であることを示します。[1]_"
+msgstr ""
+"これを指定すると、query内にカラム名を指定しない条件があった場合、"
+"match_columnsで指定されたカラムに対しての検索であることを示します。[1]_"
 
 # fe9bfc13759d46b4a0b76f729a7d6c77
 #: ../../../source/tutorial/introduction.txt:238
 msgid ""
 "If you specify 'match_columns' is 'title' and 'query' is 'this', you can "
 "take same result as above query."
-msgstr "match_columnsパラメータに'title'、queryパラメータに'this'という文字列を指定すると、上記のクエリと同じ結果を得ることができます。"
+msgstr ""
+"match_columnsパラメータに'title'、queryパラメータに'this'という文字列を指定す"
+"ると、上記のクエリと同じ結果を得ることができます。"
 
 # 12e3b87c0ed64703a7ef66eff3bce8af
 #: ../../../source/tutorial/introduction.txt:245
@@ -745,7 +834,9 @@ msgstr "出力カラムの指定"
 msgid ""
 "'output_columns' parametor in 'select' command specifies columns shown in "
 "result of search."
-msgstr "selectコマンドにおいて、output_columnsパラメータを用いることで、検索結果で表示するカラムを指定することが出来ます。"
+msgstr ""
+"selectコマンドにおいて、output_columnsパラメータを用いることで、検索結果で表"
+"示するカラムを指定することが出来ます。"
 
 # c34254b5afdd4c1887acb9c5901a4d31
 #: ../../../source/tutorial/introduction.txt:249
@@ -759,7 +850,9 @@ msgstr "複数のカラムを指定する場合は、カンマ(,)区切りで指
 msgid ""
 "\"_score\" column is added to The groonga's result. This column has the "
 "higher number, the more condition of fulltext seaching matches text."
-msgstr "groongaの検索結果には、「_score」という名前のカラムが追加されています。このカラムは、全文検索の条件が合致する文書ほど高い数値が入ります。"
+msgstr ""
+"groongaの検索結果には、「_score」という名前のカラムが追加されています。このカ"
+"ラムは、全文検索の条件が合致する文書ほど高い数値が入ります。"
 
 # 9c82b01bc3f44e40857e3391ffd2aff6
 #: ../../../source/tutorial/introduction.txt:258
@@ -772,56 +865,55 @@ msgid ""
 "'select' command can display result in only specified ranges using 'offset' "
 "and 'limit' parametor. This parametors is available when you want to show "
 "only a page in much result of searching."
-msgstr ""
+msgstr "selectコマンドにおいて、offset,limitパラメータを用いることで、検索結果から指定された範囲のみを表示することが出来ます。大量の検索結果をページで分けて、1ページ分のみを表示したい場合に有効です。"
 
 # 67f72cba34ca403bb8331437e5020e9d
 #: ../../../source/tutorial/introduction.txt:262
 msgid ""
 "'offset' parametor specifies starting point of result. If you want 'select' "
-"command to return from first records, this parametor specifies '0'. offsetパ"
-"ラメータには、検索結果を返す始点を指定します。1件目から結果を返す場合には、0"
-"を指定します。"
-msgstr ""
+"command to return from first records, this parametor specifies '0'."
+msgstr "offsetパラメータには、検索結果を返す始点を指定します。1件目から結果を返す場合には、0を指定します。"
 
-#: ../../../source/tutorial/introduction.txt:265
-msgid "limitパラメータには、検索結果を何件表示するのかを指定します。"
-msgstr ""
+# b30a312ba55f40e3bc7c63a53a76c2b6
+#: ../../../source/tutorial/introduction.txt:264
+msgid "'limit' parametor specifies how many records of searching result."
+msgstr "limitパラメータには、検索結果を何件表示するのかを指定します。"
 
-#: ../../../source/tutorial/introduction.txt:274
+#: ../../../source/tutorial/introduction.txt:273
 msgid "並び替え"
 msgstr ""
 
-#: ../../../source/tutorial/introduction.txt:276
+#: ../../../source/tutorial/introduction.txt:275
 msgid ""
 "selectコマンドにおいて、sortbyパラメータを用いることで、検索結果を並び替える"
 "ことが出来ます。"
 msgstr ""
 
-#: ../../../source/tutorial/introduction.txt:278
+#: ../../../source/tutorial/introduction.txt:277
 msgid ""
 "sortbyパラメータにカラム名を指定することで、そのカラムの値で昇順にソートしま"
 "す。また、カラム名の前にハイフン（-）を付けることで、降順にソートすることも出"
 "来ます。"
 msgstr ""
 
-#: ../../../source/tutorial/introduction.txt:284
+#: ../../../source/tutorial/introduction.txt:283
 msgid ""
 "出力カラムの指定で紹介した「_score」カラムは、ソートの条件としても使うことが"
 "できます。"
 msgstr ""
 
-#: ../../../source/tutorial/introduction.txt:290
+#: ../../../source/tutorial/introduction.txt:289
 msgid ""
 "ソートするカラム名を複数指定したい場合は、カンマ(,)区切りで指定します。複数の"
 "カラムを指定した場合、最初のカラムで同一の値のレコードがあった場合に、次のカ"
 "ラムの値でソートさせることができます。"
 msgstr ""
 
-#: ../../../source/tutorial/introduction.txt:297
+#: ../../../source/tutorial/introduction.txt:296
 msgid "脚注"
 msgstr ""
 
-#: ../../../source/tutorial/introduction.txt:298
+#: ../../../source/tutorial/introduction.txt:297
 msgid ""
 "現在のバージョンでは、全文検索インデックスが存在する場合にのみ、match_columns"
 "パラメータを利用することができます。通常のカラムでの絞り込みには利用できませ"
@@ -1724,14 +1816,14 @@ msgid ""
 "geo_in_rectangle` 関数も存在します。"
 msgstr ""
 
-#~ msgid "groonga [-p PORT_NUMBER] -d --protocol http DB_PATH_NAME"
-#~ msgstr "groonga [-p ポート番号] -d --protocol http DBパス名"
-
-#~ msgid "groonga [-p PORT_NUMBER] -c [HOST_NAME_OR_IP_ADDRESS]"
-#~ msgstr "groonga [-p ポート番号] -c [対象ホスト名またはIPアドレス]"
+#~ msgid "groonga [-p PORT_NUMBER] -d DB_PATH_NAME"
+#~ msgstr "groonga [-p ポート番号] -d DBパス名"
 
 #~ msgid "% groonga -d /tmp/groonga-databases/introduction.db 12345 %"
 #~ msgstr "% groonga -d /tmp/groonga-databases/introduction.db 12345 %"
 
-#~ msgid "groonga [-p PORT_NUMBER] -d DB_PATH_NAME"
-#~ msgstr "groonga [-p ポート番号] -d DBパス名"
+#~ msgid "groonga [-p PORT_NUMBER] -c [HOST_NAME_OR_IP_ADDRESS]"
+#~ msgstr "groonga [-p ポート番号] -c [対象ホスト名またはIPアドレス]"
+
+#~ msgid "groonga [-p PORT_NUMBER] -d --protocol http DB_PATH_NAME"
+#~ msgstr "groonga [-p ポート番号] -d --protocol http DBパス名"
