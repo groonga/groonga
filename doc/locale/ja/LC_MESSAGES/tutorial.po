@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-11-11 14:35\n"
-"PO-Revision-Date: 2011-11-11 14:37+0900\n"
+"POT-Creation-Date: 2011-11-11 14:50\n"
+"PO-Revision-Date: 2011-11-11 14:51+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -854,9 +854,9 @@ msgstr ""
 "groongaの検索結果には、「_score」という名前のカラムが追加されています。このカ"
 "ラムは、全文検索の条件が合致する文書ほど高い数値が入ります。"
 
-# 9c82b01bc3f44e40857e3391ffd2aff6
+# 6c9a58714061481fb611ad043f57dc19
 #: ../../../source/tutorial/introduction.txt:258
-msgid "Display ranges"
+msgid "Ranges to display"
 msgstr "表示範囲指定"
 
 # 060f75a6fd234bc78d37513ffe8eeca8
@@ -884,9 +884,9 @@ msgstr ""
 msgid "'limit' parametor specifies how many records of searching result."
 msgstr "limitパラメータには、検索結果を何件表示するのかを指定します。"
 
-# 63eb253953b0479eb064b9e9385ccf48
+# 12e5037843f446c6a307a2e5c54237d7
 #: ../../../source/tutorial/introduction.txt:273
-msgid "Arrangement"
+msgid "Sort"
 msgstr "並び替え"
 
 # cada70fbbe534c64a949a3c07a6b0039
@@ -894,7 +894,9 @@ msgstr "並び替え"
 msgid ""
 "If you use 'sortby' parametor in 'select' command, this command puts result "
 "of searching in order."
-msgstr "selectコマンドにおいて、sortbyパラメータを用いることで、検索結果を並び替えることが出来ます。"
+msgstr ""
+"selectコマンドにおいて、sortbyパラメータを用いることで、検索結果を並び替える"
+"ことが出来ます。"
 
 # a5a5613c2bf640fabc845b6b549c6c5c
 #: ../../../source/tutorial/introduction.txt:277
@@ -902,14 +904,19 @@ msgid ""
 "When 'sortby' parametor specifies column name, result is sorted in ascending-"
 "order to its column's value. This 'select' command also sort in descending-"
 "order when you add hyphen(-) before column name."
-msgstr "sortbyパラメータにカラム名を指定することで、そのカラムの値で昇順にソートします。また、カラム名の前にハイフン（-）を付けることで、降順にソートすることも出来ます。"
+msgstr ""
+"sortbyパラメータにカラム名を指定することで、そのカラムの値で昇順にソートしま"
+"す。また、カラム名の前にハイフン（-）を付けることで、降順にソートすることも出"
+"来ます。"
 
 # 2e1a756a61d14f36b47386559a1dae4c
 #: ../../../source/tutorial/introduction.txt:283
 msgid ""
 "For condition of sort, you can use '_score' column introduced in the "
 "paragraph of \"Specify output column\"."
-msgstr "出力カラムの指定で紹介した「_score」カラムは、ソートの条件としても使うことができます。"
+msgstr ""
+"出力カラムの指定で紹介した「_score」カラムは、ソートの条件としても使うことが"
+"できます。"
 
 # 2e9985b721f34f789ec84264c3dcfb84
 #: ../../../source/tutorial/introduction.txt:289
@@ -917,7 +924,10 @@ msgid ""
 "If you want to specify some column names, you should use comma(,) between "
 "these names. In this case, when same value of records is existed in first "
 "column, this command sorts result of searching to value of second column."
-msgstr "ソートするカラム名を複数指定したい場合は、カンマ(,)区切りで指定します。複数のカラムを指定した場合、最初のカラムで同一の値のレコードがあった場合に、次のカラムの値でソートさせることができます。"
+msgstr ""
+"ソートするカラム名を複数指定したい場合は、カンマ(,)区切りで指定します。複数の"
+"カラムを指定した場合、最初のカラムで同一の値のレコードがあった場合に、次のカ"
+"ラムの値でソートさせることができます。"
 
 # 483e363f1f964ab3a2be02e9c2b67b17
 #: ../../../source/tutorial/introduction.txt:296
@@ -930,7 +940,10 @@ msgid ""
 "In now groonga's version, you can only use 'match_columns' parametor in the "
 "case of existing index of fulltext searching. This parametor cannot be use "
 "in searching for ordinary columns."
-msgstr "現在のバージョンでは、全文検索インデックスが存在する場合にのみ、match_columnsパラメータを利用することができます。通常のカラムでの絞り込みには利用できません。"
+msgstr ""
+"現在のバージョンでは、全文検索インデックスが存在する場合にのみ、match_columns"
+"パラメータを利用することができます。通常のカラムでの絞り込みには利用できませ"
+"ん。"
 
 #: ../../../source/tutorial/lexicon.txt:6
 msgid "全文検索の語彙表に対する追加情報"
@@ -1828,6 +1841,10 @@ msgid ""
 "geo_in_rectangle` 関数も存在します。"
 msgstr ""
 
+# 9c82b01bc3f44e40857e3391ffd2aff6
+#~ msgid "Display ranges"
+#~ msgstr "表示範囲指定"
+
 #~ msgid "groonga [-p PORT_NUMBER] -d --protocol http DB_PATH_NAME"
 #~ msgstr "groonga [-p ポート番号] -d --protocol http DBパス名"
 
@@ -1839,3 +1856,7 @@ msgstr ""
 
 #~ msgid "groonga [-p PORT_NUMBER] -d DB_PATH_NAME"
 #~ msgstr "groonga [-p ポート番号] -d DBパス名"
+
+# 63eb253953b0479eb064b9e9385ccf48
+#~ msgid "Arrangement"
+#~ msgstr "並び替え"
