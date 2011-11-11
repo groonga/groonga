@@ -64,7 +64,7 @@ namespace test_dat_id_cursor
     create_trie(&trie);
 
     grn::dat::UInt32 key_pos;
-    cut_assert(trie.search("スダチ", std::strlen("スダチ"), &key_pos));
+    cppcut_assert_equal(true, trie.search("スダチ", std::strlen("スダチ"), &key_pos));
     const grn::dat::UInt32 min_key_id = trie.get_key(key_pos).id();
 
     grn::dat::IdCursor cursor;
@@ -83,7 +83,7 @@ namespace test_dat_id_cursor
     create_trie(&trie);
 
     grn::dat::UInt32 key_pos;
-    cut_assert(trie.search("オレンジ", std::strlen("オレンジ"), &key_pos));
+    cppcut_assert_equal(true, trie.search("オレンジ", std::strlen("オレンジ"), &key_pos));
     const grn::dat::UInt32 max_key_id = trie.get_key(key_pos).id();
 
     grn::dat::IdCursor cursor;
@@ -102,9 +102,9 @@ namespace test_dat_id_cursor
     create_trie(&trie);
 
     grn::dat::UInt32 key_pos;
-    cut_assert(trie.search("みかん", std::strlen("みかん"), &key_pos));
+    cppcut_assert_equal(true, trie.search("みかん", std::strlen("みかん"), &key_pos));
     const grn::dat::UInt32 min_key_id = trie.get_key(key_pos).id();
-    cut_assert(trie.search("八朔", std::strlen("八朔"), &key_pos));
+    cppcut_assert_equal(true, trie.search("八朔", std::strlen("八朔"), &key_pos));
     const grn::dat::UInt32 max_key_id = trie.get_key(key_pos).id();
 
     grn::dat::IdCursor cursor;
@@ -138,7 +138,7 @@ namespace test_dat_id_cursor
     create_trie(&trie);
 
     grn::dat::UInt32 key_pos;
-    cut_assert(trie.search("伊予柑", std::strlen("伊予柑"), &key_pos));
+    cppcut_assert_equal(true, trie.search("伊予柑", std::strlen("伊予柑"), &key_pos));
     const grn::dat::UInt32 min_key_id = trie.get_key(key_pos).id();
 
     grn::dat::IdCursor cursor;
@@ -157,7 +157,7 @@ namespace test_dat_id_cursor
     create_trie(&trie);
 
     grn::dat::UInt32 key_pos;
-    cut_assert(trie.search("柚子", std::strlen("柚子"), &key_pos));
+    cppcut_assert_equal(true, trie.search("柚子", std::strlen("柚子"), &key_pos));
     const grn::dat::UInt32 max_key_id = trie.get_key(key_pos).id();
 
     grn::dat::IdCursor cursor;
@@ -176,9 +176,9 @@ namespace test_dat_id_cursor
     create_trie(&trie);
 
     grn::dat::UInt32 key_pos;
-    cut_assert(trie.search("グレープフルーツ", std::strlen("グレープフルーツ"), &key_pos));
+    cppcut_assert_equal(true, trie.search("グレープフルーツ", std::strlen("グレープフルーツ"), &key_pos));
     const grn::dat::UInt32 min_key_id = trie.get_key(key_pos).id();
-    cut_assert(trie.search("文旦", std::strlen("文旦"), &key_pos));
+    cppcut_assert_equal(true, trie.search("文旦", std::strlen("文旦"), &key_pos));
     const grn::dat::UInt32 max_key_id = trie.get_key(key_pos).id();
 
     grn::dat::IdCursor cursor;
