@@ -6,12 +6,12 @@ xで値を囲む：enclose its value with x
 項：paragraph
 'command'でdoする：'command' does
 groongaでは、：in using groonga
-主キー：master key
-全文一致検索：begins-with-match search
+主キー：primary key
+前方一致検索：prefix search
 ID番号：ID-number
 格納する：store
 xはyであることを示す：x specifies y
-語彙表：terminology table
+語彙表：lexicon
 全文検索：fulltext-searching
 実行例：execution example
 インデックスカラム：index-column
