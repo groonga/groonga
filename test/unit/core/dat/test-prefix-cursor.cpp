@@ -30,10 +30,10 @@ namespace
   void create_trie(grn::dat::Trie *trie)
   {
     trie->create();
-    trie->insert("東京", std::strlen("東京"));        // ID: 1, 3rd
-    trie->insert("京都", std::strlen("京都"));        // ID: 2, 1st
-    trie->insert("東京都", std::strlen("東京都"));     // ID: 3, 4th
-    trie->insert("京都府", std::strlen("京都府"));     // ID: 4, 2nd
+    trie->insert("東京", std::strlen("東京"));          // ID: 1, 3rd
+    trie->insert("京都", std::strlen("京都"));          // ID: 2, 1st
+    trie->insert("東京都", std::strlen("東京都"));      // ID: 3, 4th
+    trie->insert("京都府", std::strlen("京都府"));      // ID: 4, 2nd
     trie->insert("東京都庁", std::strlen("東京都庁"));  // ID: 5, 5th
   }
 }
