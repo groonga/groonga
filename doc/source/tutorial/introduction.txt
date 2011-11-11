@@ -170,10 +170,10 @@ We will target 'title' column in 'Site' table for fulltext searching. In this ca
 This command creates index column 'blog_title' in 'Term' table. '--type' option specifies target indexed table, and '--source' option does target index column.
 In execution example, 'COLUMN_INDEX|WITH_POSITION' for '--flags' option specifies that this column is index column for storing information of terminology existing position. This option should be specified 'COLUMN_INDEX|WITH_POSITION' in generally fulltext searching. This tutorial does not explain why to store information of terminology existing position.
 
-データのロード
---------------
+Load data
+---------
 
-:doc:`/commands/load` コマンドを使用します。loadコマンドでは、jsonで受け取ったデータをテーブルに格納します。
+:doc:`/commands/load` is used to load data for groonga database. This command stores json-formatted data in a table.
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-7.log
@@ -190,7 +190,7 @@ In execution example, 'COLUMN_INDEX|WITH_POSITION' for '--flags' option specifie
 .. {"_key":"http://example.com/vdw","title":"test test record nine."},
 .. ]
 
-selectコマンドで、データが入っていることを確認しましょう。
+Let's make sure that its table has data with 'select' command.
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-8.log
