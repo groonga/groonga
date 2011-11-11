@@ -217,26 +217,30 @@ Let's search records with '_key' column.
 
 '_key:\"http://example.org/\"' specified 'query' parametor means to search records whose '_key' column has '"http://example.org/"'.
 
-全文検索
---------
 
-queryパラメータでは、インデックスを用いた全文検索を行うこともできます。
+Fulltext searching
+------------------
+
+Using 'query' parametor, you can fulltext search with index.
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-11.log
 .. select --table Site --query title:@this
 
-titleカラムに対して、'this'という文字列で全文検索を行った結果を返します。
+This command shows result of fulltext searching by string 'this' for 'title' column.
 
-queryパラメータに与えた「title:@this」というのが、'title'という名前のカラムに'this'という文字列が含まれているレコードを検索する、という意味です。
+"title:@this" specified 'query' parametor means to search records whose 'title' column including 'this' string.
 
-selectコマンドには、match_columnsというパラメータが存在します。これを指定すると、query内にカラム名を指定しない条件があった場合、match_columnsで指定されたカラムに対しての検索であることを示します。[1]_
+'select' command has parametor 'match_columns'.
 
-match_columnsパラメータに'title'、queryパラメータに'this'という文字列を指定すると、上記のクエリと同じ結果を得ることができます。
+If this parametor is specified, it means to search in columns specified 'match_columns' when 'query' parametor doesn't specify column-name condition.[1]_
+
+If you specify 'match_columns' is 'title' and 'query' is 'this', you can take same result as above query.
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-12.log
 .. select --table Site --match_columns title --query this
+
 
 出力カラムの指定
 ----------------
