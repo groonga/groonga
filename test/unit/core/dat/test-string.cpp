@@ -37,7 +37,7 @@ namespace test_dat_string
     const grn::dat::String str;
 
     cppcut_assert_equal(str.ptr(), static_cast<const void *>(NULL));
-    cppcut_assert_equal(str.length(), static_cast<grn::dat::UInt32>(0));
+    cppcut_assert_equal(str.length(), grn::dat::UInt32(0));
   }
 
   void test_constructor_with_length(void)
@@ -46,7 +46,8 @@ namespace test_dat_string
     const grn::dat::String str(str_buf, sizeof(str_buf) - 1);
 
     cppcut_assert_equal(str.ptr(), static_cast<const void *>(str_buf));
-    cppcut_assert_equal(str.length(), static_cast<grn::dat::UInt32>(sizeof(str_buf) - 1));
+    cppcut_assert_equal(str.length(),
+                        static_cast<grn::dat::UInt32>(sizeof(str_buf) - 1));
   }
 
   void test_constructor_without_length(void)
@@ -55,7 +56,8 @@ namespace test_dat_string
     const grn::dat::String str(str_buf);
 
     cppcut_assert_equal(str.ptr(), static_cast<const void *>(str_buf));
-    cppcut_assert_equal(str.length(), static_cast<grn::dat::UInt32>(sizeof(str_buf) - 1));
+    cppcut_assert_equal(str.length(),
+                        static_cast<grn::dat::UInt32>(sizeof(str_buf) - 1));
   }
 
   void test_copy_constructor(void)
@@ -86,7 +88,8 @@ namespace test_dat_string
     str.assign(str_buf, sizeof(str_buf) - 1);
 
     cppcut_assert_equal(str.ptr(), static_cast<const void *>(str_buf));
-    cppcut_assert_equal(str.length(), static_cast<grn::dat::UInt32>(sizeof(str_buf) - 1));
+    cppcut_assert_equal(str.length(),
+                        static_cast<grn::dat::UInt32>(sizeof(str_buf) - 1));
   }
 
   void test_substr(void)

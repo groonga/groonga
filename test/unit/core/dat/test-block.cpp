@@ -28,12 +28,12 @@ namespace test_dat_block
   {
     const grn::dat::Block block;
 
-    cppcut_assert_equal(block.next(), static_cast<grn::dat::UInt32>(0));
-    cppcut_assert_equal(block.prev(), static_cast<grn::dat::UInt32>(0));
-    cppcut_assert_equal(block.level(), static_cast<grn::dat::UInt32>(0));
-    cppcut_assert_equal(block.failure_count(), static_cast<grn::dat::UInt32>(0));
-    cppcut_assert_equal(block.first_phantom(), static_cast<grn::dat::UInt32>(0));
-    cppcut_assert_equal(block.num_phantoms(), static_cast<grn::dat::UInt32>(0));
+    cppcut_assert_equal(block.next(), grn::dat::UInt32(0));
+    cppcut_assert_equal(block.prev(), grn::dat::UInt32(0));
+    cppcut_assert_equal(block.level(), grn::dat::UInt32(0));
+    cppcut_assert_equal(block.failure_count(), grn::dat::UInt32(0));
+    cppcut_assert_equal(block.first_phantom(), grn::dat::UInt32(0));
+    cppcut_assert_equal(block.num_phantoms(), grn::dat::UInt32(0));
   }
 
   void test_link_management(void)
@@ -42,8 +42,8 @@ namespace test_dat_block
 
     block.set_next(101);
     block.set_prev(99);
-    cppcut_assert_equal(block.next(), static_cast<grn::dat::UInt32>(101));
-    cppcut_assert_equal(block.prev(), static_cast<grn::dat::UInt32>(99));
+    cppcut_assert_equal(block.next(), grn::dat::UInt32(101));
+    cppcut_assert_equal(block.prev(), grn::dat::UInt32(99));
   }
 
   void test_level_management(void)
@@ -62,7 +62,7 @@ namespace test_dat_block
 
     block.set_first_phantom(37);
     block.set_num_phantoms(89);
-    cppcut_assert_equal(block.first_phantom(), static_cast<grn::dat::UInt32>(37));
-    cppcut_assert_equal(block.num_phantoms(), static_cast<grn::dat::UInt32>(89));
+    cppcut_assert_equal(block.first_phantom(), grn::dat::UInt32(37));
+    cppcut_assert_equal(block.num_phantoms(), grn::dat::UInt32(89));
   }
 }

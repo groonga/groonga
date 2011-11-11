@@ -50,8 +50,8 @@ namespace test_dat_cursor_factory
         grn::dat::EXCEPT_UPPER_BOUND));
     cut_assert(cursor.get() != static_cast<grn::dat::Cursor *>(NULL));
 
-    cppcut_assert_equal(cursor->offset(), static_cast<grn::dat::UInt32>(1));
-    cppcut_assert_equal(cursor->limit(), static_cast<grn::dat::UInt32>(2));
+    cppcut_assert_equal(cursor->offset(), grn::dat::UInt32(1));
+    cppcut_assert_equal(cursor->limit(), grn::dat::UInt32(2));
     cppcut_assert_equal(cursor->flags(),
                         grn::dat::KEY_RANGE_CURSOR | grn::dat::ASCENDING_CURSOR |
                         grn::dat::EXCEPT_LOWER_BOUND | grn::dat::EXCEPT_UPPER_BOUND);
@@ -67,8 +67,8 @@ namespace test_dat_cursor_factory
         grn::dat::ID_RANGE_CURSOR | grn::dat::ASCENDING_CURSOR));
     cut_assert(cursor.get() != static_cast<grn::dat::Cursor *>(NULL));
 
-    cppcut_assert_equal(cursor->offset(), static_cast<grn::dat::UInt32>(1));
-    cppcut_assert_equal(cursor->limit(), static_cast<grn::dat::UInt32>(2));
+    cppcut_assert_equal(cursor->offset(), grn::dat::UInt32(1));
+    cppcut_assert_equal(cursor->limit(), grn::dat::UInt32(2));
     cppcut_assert_equal(cursor->flags(),
                         grn::dat::ID_RANGE_CURSOR | grn::dat::ASCENDING_CURSOR);
   }
@@ -83,8 +83,8 @@ namespace test_dat_cursor_factory
         grn::dat::PREFIX_CURSOR | grn::dat::DESCENDING_CURSOR));
     cut_assert(cursor.get() != static_cast<grn::dat::Cursor *>(NULL));
 
-    cppcut_assert_equal(cursor->offset(), static_cast<grn::dat::UInt32>(0));
-    cppcut_assert_equal(cursor->limit(), static_cast<grn::dat::UInt32>(1));
+    cppcut_assert_equal(cursor->offset(), grn::dat::UInt32(0));
+    cppcut_assert_equal(cursor->limit(), grn::dat::UInt32(1));
     cppcut_assert_equal(cursor->flags(),
                         grn::dat::PREFIX_CURSOR | grn::dat::DESCENDING_CURSOR);
   }
@@ -99,8 +99,8 @@ namespace test_dat_cursor_factory
         grn::dat::PREDICTIVE_CURSOR | grn::dat::EXCEPT_EXACT_MATCH));
     cut_assert(cursor.get() != static_cast<grn::dat::Cursor *>(NULL));
 
-    cppcut_assert_equal(cursor->offset(), static_cast<grn::dat::UInt32>(1));
-    cppcut_assert_equal(cursor->limit(), static_cast<grn::dat::UInt32>(2));
+    cppcut_assert_equal(cursor->offset(), grn::dat::UInt32(1));
+    cppcut_assert_equal(cursor->limit(), grn::dat::UInt32(2));
     cppcut_assert_equal(cursor->flags(),
                         grn::dat::PREDICTIVE_CURSOR |
                         grn::dat::ASCENDING_CURSOR | grn::dat::EXCEPT_EXACT_MATCH);

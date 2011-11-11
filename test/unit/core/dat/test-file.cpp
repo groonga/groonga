@@ -47,7 +47,7 @@ namespace test_dat_file
     const grn::dat::File file;
 
     cppcut_assert_equal(file.ptr(), static_cast<void *>(NULL));
-    cppcut_assert_equal(file.size(), static_cast<grn::dat::UInt64>(0));
+    cppcut_assert_equal(file.size(), grn::dat::UInt64(0));
   }
 
   void test_create_without_path(void)
@@ -62,7 +62,7 @@ namespace test_dat_file
 
     file.create(NULL, 32);
     cut_assert(file.ptr() != NULL);
-    cppcut_assert_equal(file.size(), static_cast<grn::dat::UInt64>(32));
+    cppcut_assert_equal(file.size(), grn::dat::UInt64(32));
 
     grn::dat::UInt8 * const buf = static_cast<grn::dat::UInt8 *>(file.ptr());
     for (grn::dat::UInt64 i = 0; i < file.size(); ++i) {
@@ -87,7 +87,7 @@ namespace test_dat_file
 
     file.create(path, 32);
     cut_assert(file.ptr() != NULL);
-    cppcut_assert_equal(file.size(), static_cast<grn::dat::UInt64>(32));
+    cppcut_assert_equal(file.size(), grn::dat::UInt64(32));
 
     grn::dat::UInt8 * const buf = static_cast<grn::dat::UInt8 *>(file.ptr());
     for (grn::dat::UInt64 i = 0; i < file.size(); ++i) {
@@ -115,11 +115,11 @@ namespace test_dat_file
 
     file.close();
     cppcut_assert_equal(file.ptr(), static_cast<void *>(NULL));
-    cppcut_assert_equal(file.size(), static_cast<grn::dat::UInt64>(0));
+    cppcut_assert_equal(file.size(), grn::dat::UInt64(0));
 
     file.open(path);
     cut_assert(file.ptr() != NULL);
-    cppcut_assert_equal(file.size(), static_cast<grn::dat::UInt64>(32));
+    cppcut_assert_equal(file.size(), grn::dat::UInt64(32));
     cut_assert(!std::strcmp(static_cast<char *>(file.ptr()), "This is a pen."));
   }
 
@@ -129,15 +129,15 @@ namespace test_dat_file
 
     file.create(NULL, 100);
     cut_assert(file.ptr() != NULL);
-    cppcut_assert_equal(file.size(), static_cast<grn::dat::UInt64>(100));
+    cppcut_assert_equal(file.size(), grn::dat::UInt64(100));
 
     grn::dat::File file_new;
     file_new.swap(&file);
 
     cppcut_assert_equal(file.ptr(), static_cast<void *>(NULL));
-    cppcut_assert_equal(file.size(), static_cast<grn::dat::UInt64>(0));
+    cppcut_assert_equal(file.size(), grn::dat::UInt64(0));
 
     cut_assert(file_new.ptr() != NULL);
-    cppcut_assert_equal(file_new.size(), static_cast<grn::dat::UInt64>(100));
+    cppcut_assert_equal(file_new.size(), grn::dat::UInt64(100));
   }
 }

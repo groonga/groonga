@@ -75,22 +75,22 @@ namespace test_dat_trie
     trie.create();
 
     cppcut_assert_equal(trie.file_size(), grn::dat::DEFAULT_FILE_SIZE);
-    cppcut_assert_equal(trie.virtual_size(), static_cast<grn::dat::UInt64>(4236));
-    cppcut_assert_equal(trie.total_key_length(), static_cast<grn::dat::UInt32>(0));
-    cppcut_assert_equal(trie.num_keys(), static_cast<grn::dat::UInt32>(0));
-    cppcut_assert_equal(trie.min_key_id(), static_cast<grn::dat::UInt32>(1));
-    cppcut_assert_equal(trie.next_key_id(), static_cast<grn::dat::UInt32>(1));
-    cppcut_assert_equal(trie.max_key_id(), static_cast<grn::dat::UInt32>(0));
-    cppcut_assert_equal(trie.num_keys(), static_cast<grn::dat::UInt32>(0));
-    cppcut_assert_equal(trie.max_num_keys(), static_cast<grn::dat::UInt32>(17893));
-    cppcut_assert_equal(trie.num_nodes(), static_cast<grn::dat::UInt32>(512));
-    cppcut_assert_equal(trie.num_phantoms(), static_cast<grn::dat::UInt32>(511));
-    cppcut_assert_equal(trie.num_zombies(), static_cast<grn::dat::UInt32>(0));
-    cppcut_assert_equal(trie.max_num_nodes(), static_cast<grn::dat::UInt32>(71680));
-    cppcut_assert_equal(trie.num_blocks(), static_cast<grn::dat::UInt32>(1));
-    cppcut_assert_equal(trie.max_num_blocks(), static_cast<grn::dat::UInt32>(140));
-    cppcut_assert_equal(trie.next_key_pos(), static_cast<grn::dat::UInt32>(0));
-    cppcut_assert_equal(trie.key_buf_size(), static_cast<grn::dat::UInt32>(100439));
+    cppcut_assert_equal(trie.virtual_size(), grn::dat::UInt64(4236));
+    cppcut_assert_equal(trie.total_key_length(), grn::dat::UInt32(0));
+    cppcut_assert_equal(trie.num_keys(), grn::dat::UInt32(0));
+    cppcut_assert_equal(trie.min_key_id(), grn::dat::UInt32(1));
+    cppcut_assert_equal(trie.next_key_id(), grn::dat::UInt32(1));
+    cppcut_assert_equal(trie.max_key_id(), grn::dat::UInt32(0));
+    cppcut_assert_equal(trie.num_keys(), grn::dat::UInt32(0));
+    cppcut_assert_equal(trie.max_num_keys(), grn::dat::UInt32(17893));
+    cppcut_assert_equal(trie.num_nodes(), grn::dat::UInt32(512));
+    cppcut_assert_equal(trie.num_phantoms(), grn::dat::UInt32(511));
+    cppcut_assert_equal(trie.num_zombies(), grn::dat::UInt32(0));
+    cppcut_assert_equal(trie.max_num_nodes(), grn::dat::UInt32(71680));
+    cppcut_assert_equal(trie.num_blocks(), grn::dat::UInt32(1));
+    cppcut_assert_equal(trie.max_num_blocks(), grn::dat::UInt32(140));
+    cppcut_assert_equal(trie.next_key_pos(), grn::dat::UInt32(0));
+    cppcut_assert_equal(trie.key_buf_size(), grn::dat::UInt32(100439));
   }
 
   void test_trie_on_memory(void)
@@ -313,7 +313,7 @@ namespace test_dat_trie
     cppcut_assert_equal(dest_trie.next_key_pos(), src_trie.next_key_pos());
 
     cut_assert(dest_trie.num_nodes() < src_trie.num_nodes());
-    cppcut_assert_equal(dest_trie.num_zombies(), static_cast<grn::dat::UInt32>(0));
+    cppcut_assert_equal(dest_trie.num_zombies(), grn::dat::UInt32(0));
     cut_assert(dest_trie.num_blocks() < src_trie.num_nodes());
   }
 }

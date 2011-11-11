@@ -37,15 +37,11 @@ namespace test_dat_key
 {
   void test_size_estimation(void)
   {
-    cppcut_assert_equal(grn::dat::Key::estimate_size(0),
-                        static_cast<grn::dat::UInt32>(2));
-    cppcut_assert_equal(grn::dat::Key::estimate_size(3),
-                        static_cast<grn::dat::UInt32>(2));
+    cppcut_assert_equal(grn::dat::Key::estimate_size(0), grn::dat::UInt32(2));
+    cppcut_assert_equal(grn::dat::Key::estimate_size(3), grn::dat::UInt32(2));
 
-    cppcut_assert_equal(grn::dat::Key::estimate_size(4),
-                        static_cast<grn::dat::UInt32>(3));
-    cppcut_assert_equal(grn::dat::Key::estimate_size(7),
-                        static_cast<grn::dat::UInt32>(3));
+    cppcut_assert_equal(grn::dat::Key::estimate_size(4), grn::dat::UInt32(3));
+    cppcut_assert_equal(grn::dat::Key::estimate_size(7), grn::dat::UInt32(3));
   }
 
   void test_invalid_key(void)
@@ -53,7 +49,7 @@ namespace test_dat_key
     const grn::dat::Key &key = grn::dat::Key::invalid_key();
 
     cppcut_assert_equal(key.id(), grn::dat::INVALID_KEY_ID);
-    cppcut_assert_equal(key.length(), static_cast<grn::dat::UInt32>(0));
+    cppcut_assert_equal(key.length(), grn::dat::UInt32(0));
     cut_assert(key.ptr() != static_cast<const void *>(NULL));
   }
 
@@ -63,9 +59,10 @@ namespace test_dat_key
     const grn::dat::Key &key = grn::dat::Key::create(buf, 123, "groonga", 7);
 
     cppcut_assert_equal(key.str(), grn::dat::String("groonga"));
-    cppcut_assert_equal(key.id(), static_cast<grn::dat::UInt32>(123));
-    cppcut_assert_equal(key.length(), static_cast<grn::dat::UInt32>(7));
+    cppcut_assert_equal(key.id(), grn::dat::UInt32(123));
+    cppcut_assert_equal(key.length(), grn::dat::UInt32(7));
     cppcut_assert_equal(std::memcmp(key.ptr(), "groonga", 7), 0);
-    cppcut_assert_equal(key.ptr(), static_cast<const void *>(reinterpret_cast<char *>(buf) + 5));
+    cppcut_assert_equal(key.ptr(),
+                        static_cast<const void *>(reinterpret_cast<char *>(buf) + 5));
   }
 }

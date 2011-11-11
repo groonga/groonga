@@ -29,11 +29,11 @@ namespace test_dat_check
     const grn::dat::Check check;
 
     cppcut_assert_equal(check.is_offset(), false);
-    cppcut_assert_equal(check.except_is_offset(), static_cast<grn::dat::UInt32>(0));
+    cppcut_assert_equal(check.except_is_offset(), grn::dat::UInt32(0));
     cppcut_assert_equal(check.is_phantom(), false);
-    cppcut_assert_equal(check.label(), static_cast<grn::dat::UInt32>(0));
-    cppcut_assert_equal(check.child(), static_cast<grn::dat::UInt32>(0));
-    cppcut_assert_equal(check.sibling(), static_cast<grn::dat::UInt32>(0));
+    cppcut_assert_equal(check.label(), grn::dat::UInt32(0));
+    cppcut_assert_equal(check.child(), grn::dat::UInt32(0));
+    cppcut_assert_equal(check.sibling(), grn::dat::UInt32(0));
   }
 
   void test_phantomize(void)
@@ -42,13 +42,13 @@ namespace test_dat_check
 
     check.set_is_phantom(true);
     cppcut_assert_equal(check.is_phantom(), true);
-    cppcut_assert_equal(check.next(), static_cast<grn::dat::UInt32>(0));
-    cppcut_assert_equal(check.prev(), static_cast<grn::dat::UInt32>(0));
+    cppcut_assert_equal(check.next(), grn::dat::UInt32(0));
+    cppcut_assert_equal(check.prev(), grn::dat::UInt32(0));
 
     check.set_next(101);
     check.set_prev(99);
-    cppcut_assert_equal(check.next(), static_cast<grn::dat::UInt32>(101));
-    cppcut_assert_equal(check.prev(), static_cast<grn::dat::UInt32>(99));
+    cppcut_assert_equal(check.next(), grn::dat::UInt32(101));
+    cppcut_assert_equal(check.prev(), grn::dat::UInt32(99));
   }
 
   void test_unphantomize(void)
@@ -70,17 +70,17 @@ namespace test_dat_check
     cppcut_assert_equal(check.is_offset(), true);
 
     check.set_label('a');
-    cppcut_assert_equal(check.label(), static_cast<grn::dat::UInt32>('a'));
+    cppcut_assert_equal(check.label(), grn::dat::UInt32('a'));
 
     check.set_child('b');
-    cppcut_assert_equal(check.child(), static_cast<grn::dat::UInt32>('b'));
+    cppcut_assert_equal(check.child(), grn::dat::UInt32('b'));
 
     check.set_sibling('c');
-    cppcut_assert_equal(check.sibling(), static_cast<grn::dat::UInt32>('c'));
+    cppcut_assert_equal(check.sibling(), grn::dat::UInt32('c'));
 
     cppcut_assert_equal(check.is_offset(), true);
     cppcut_assert_equal(check.except_is_offset(),
-                        'a' | (static_cast<grn::dat::UInt32>('b' << 9)) | (static_cast<grn::dat::UInt32>('c' << 18)));
+                        'a' | grn::dat::UInt32('b' << 9) | grn::dat::UInt32('c' << 18));
     cppcut_assert_equal(check.is_phantom(), false);
   }
 }

@@ -53,8 +53,8 @@ namespace test_dat_vector
     const grn::dat::Vector<grn::dat::UInt32> vec;
 
     cppcut_assert_equal(vec.empty(), true);
-    cppcut_assert_equal(vec.size(), static_cast<grn::dat::UInt32>(0));
-    cppcut_assert_equal(vec.capacity(), static_cast<grn::dat::UInt32>(0));
+    cppcut_assert_equal(vec.size(), grn::dat::UInt32(0));
+    cppcut_assert_equal(vec.capacity(), grn::dat::UInt32(0));
   }
 
   void test_reserve(void)
@@ -63,33 +63,33 @@ namespace test_dat_vector
 
     vec.reserve(1);
     cppcut_assert_equal(vec.empty(), true);
-    cppcut_assert_equal(vec.size(), static_cast<grn::dat::UInt32>(0));
-    cppcut_assert_equal(vec.capacity(), static_cast<grn::dat::UInt32>(1));
+    cppcut_assert_equal(vec.size(), grn::dat::UInt32(0));
+    cppcut_assert_equal(vec.capacity(), grn::dat::UInt32(1));
 
     vec.reserve(2);
     cppcut_assert_equal(vec.empty(), true);
-    cppcut_assert_equal(vec.size(), static_cast<grn::dat::UInt32>(0));
-    cppcut_assert_equal(vec.capacity(), static_cast<grn::dat::UInt32>(2));
+    cppcut_assert_equal(vec.size(), grn::dat::UInt32(0));
+    cppcut_assert_equal(vec.capacity(), grn::dat::UInt32(2));
 
     vec.reserve(3);
     cppcut_assert_equal(vec.empty(), true);
-    cppcut_assert_equal(vec.size(), static_cast<grn::dat::UInt32>(0));
-    cppcut_assert_equal(vec.capacity(), static_cast<grn::dat::UInt32>(4));
+    cppcut_assert_equal(vec.size(), grn::dat::UInt32(0));
+    cppcut_assert_equal(vec.capacity(), grn::dat::UInt32(4));
 
     vec.reserve(100);
     cppcut_assert_equal(vec.empty(), true);
-    cppcut_assert_equal(vec.size(), static_cast<grn::dat::UInt32>(0));
-    cppcut_assert_equal(vec.capacity(), static_cast<grn::dat::UInt32>(100));
+    cppcut_assert_equal(vec.size(), grn::dat::UInt32(0));
+    cppcut_assert_equal(vec.capacity(), grn::dat::UInt32(100));
 
     vec.reserve(101);
     cppcut_assert_equal(vec.empty(), true);
-    cppcut_assert_equal(vec.size(), static_cast<grn::dat::UInt32>(0));
-    cppcut_assert_equal(vec.capacity(), static_cast<grn::dat::UInt32>(200));
+    cppcut_assert_equal(vec.size(), grn::dat::UInt32(0));
+    cppcut_assert_equal(vec.capacity(), grn::dat::UInt32(200));
 
     vec.reserve(0);
     cppcut_assert_equal(vec.empty(), true);
-    cppcut_assert_equal(vec.size(), static_cast<grn::dat::UInt32>(0));
-    cppcut_assert_equal(vec.capacity(), static_cast<grn::dat::UInt32>(200));
+    cppcut_assert_equal(vec.size(), grn::dat::UInt32(0));
+    cppcut_assert_equal(vec.capacity(), grn::dat::UInt32(200));
   }
 
   void test_resize(void)
@@ -98,33 +98,33 @@ namespace test_dat_vector
 
     vec.resize(1);
     cppcut_assert_equal(vec.empty(), false);
-    cppcut_assert_equal(vec.size(), static_cast<grn::dat::UInt32>(1));
-    cppcut_assert_equal(vec.capacity(), static_cast<grn::dat::UInt32>(1));
+    cppcut_assert_equal(vec.size(), grn::dat::UInt32(1));
+    cppcut_assert_equal(vec.capacity(), grn::dat::UInt32(1));
 
     vec.resize(2);
     cppcut_assert_equal(vec.empty(), false);
-    cppcut_assert_equal(vec.size(), static_cast<grn::dat::UInt32>(2));
-    cppcut_assert_equal(vec.capacity(), static_cast<grn::dat::UInt32>(2));
+    cppcut_assert_equal(vec.size(), grn::dat::UInt32(2));
+    cppcut_assert_equal(vec.capacity(), grn::dat::UInt32(2));
 
     vec.resize(3);
     cppcut_assert_equal(vec.empty(), false);
-    cppcut_assert_equal(vec.size(), static_cast<grn::dat::UInt32>(3));
-    cppcut_assert_equal(vec.capacity(), static_cast<grn::dat::UInt32>(4));
+    cppcut_assert_equal(vec.size(), grn::dat::UInt32(3));
+    cppcut_assert_equal(vec.capacity(), grn::dat::UInt32(4));
 
     vec.resize(100);
     cppcut_assert_equal(vec.empty(), false);
-    cppcut_assert_equal(vec.size(), static_cast<grn::dat::UInt32>(100));
-    cppcut_assert_equal(vec.capacity(), static_cast<grn::dat::UInt32>(100));
+    cppcut_assert_equal(vec.size(), grn::dat::UInt32(100));
+    cppcut_assert_equal(vec.capacity(), grn::dat::UInt32(100));
 
     vec.resize(101);
     cppcut_assert_equal(vec.empty(), false);
-    cppcut_assert_equal(vec.size(), static_cast<grn::dat::UInt32>(101));
-    cppcut_assert_equal(vec.capacity(), static_cast<grn::dat::UInt32>(200));
+    cppcut_assert_equal(vec.size(), grn::dat::UInt32(101));
+    cppcut_assert_equal(vec.capacity(), grn::dat::UInt32(200));
 
     vec.resize(0);
     cppcut_assert_equal(vec.empty(), true);
-    cppcut_assert_equal(vec.size(), static_cast<grn::dat::UInt32>(0));
-    cppcut_assert_equal(vec.capacity(), static_cast<grn::dat::UInt32>(200));
+    cppcut_assert_equal(vec.size(), grn::dat::UInt32(0));
+    cppcut_assert_equal(vec.capacity(), grn::dat::UInt32(200));
   }
 
   void test_push_pop(void)
@@ -133,37 +133,37 @@ namespace test_dat_vector
 
     vec.push_back();
     cppcut_assert_equal(vec.empty(), false);
-    cppcut_assert_equal(vec.size(), static_cast<grn::dat::UInt32>(1));
-    cppcut_assert_equal(vec.capacity(), static_cast<grn::dat::UInt32>(1));
+    cppcut_assert_equal(vec.size(), grn::dat::UInt32(1));
+    cppcut_assert_equal(vec.capacity(), grn::dat::UInt32(1));
 
     vec.pop_back();
     cppcut_assert_equal(vec.empty(), true);
-    cppcut_assert_equal(vec.size(), static_cast<grn::dat::UInt32>(0));
-    cppcut_assert_equal(vec.capacity(), static_cast<grn::dat::UInt32>(1));
+    cppcut_assert_equal(vec.size(), grn::dat::UInt32(0));
+    cppcut_assert_equal(vec.capacity(), grn::dat::UInt32(1));
 
     vec.push_back(5);
     cppcut_assert_equal(vec.empty(), false);
-    cppcut_assert_equal(vec.size(), static_cast<grn::dat::UInt32>(1));
-    cppcut_assert_equal(vec.capacity(), static_cast<grn::dat::UInt32>(1));
+    cppcut_assert_equal(vec.size(), grn::dat::UInt32(1));
+    cppcut_assert_equal(vec.capacity(), grn::dat::UInt32(1));
 
-    cppcut_assert_equal(vec.front(), static_cast<grn::dat::UInt32>(5));
-    cppcut_assert_equal(vec.back(), static_cast<grn::dat::UInt32>(5));
+    cppcut_assert_equal(vec.front(), grn::dat::UInt32(5));
+    cppcut_assert_equal(vec.back(), grn::dat::UInt32(5));
 
     vec.push_back(123);
     cppcut_assert_equal(vec.empty(), false);
-    cppcut_assert_equal(vec.size(), static_cast<grn::dat::UInt32>(2));
-    cppcut_assert_equal(vec.capacity(), static_cast<grn::dat::UInt32>(2));
+    cppcut_assert_equal(vec.size(), grn::dat::UInt32(2));
+    cppcut_assert_equal(vec.capacity(), grn::dat::UInt32(2));
 
-    cppcut_assert_equal(vec.front(), static_cast<grn::dat::UInt32>(5));
-    cppcut_assert_equal(vec.back(), static_cast<grn::dat::UInt32>(123));
+    cppcut_assert_equal(vec.front(), grn::dat::UInt32(5));
+    cppcut_assert_equal(vec.back(), grn::dat::UInt32(123));
 
     vec.pop_back();
     cppcut_assert_equal(vec.empty(), false);
-    cppcut_assert_equal(vec.size(), static_cast<grn::dat::UInt32>(1));
-    cppcut_assert_equal(vec.capacity(), static_cast<grn::dat::UInt32>(2));
+    cppcut_assert_equal(vec.size(), grn::dat::UInt32(1));
+    cppcut_assert_equal(vec.capacity(), grn::dat::UInt32(2));
 
-    cppcut_assert_equal(vec.front(), static_cast<grn::dat::UInt32>(5));
-    cppcut_assert_equal(vec.back(), static_cast<grn::dat::UInt32>(5));
+    cppcut_assert_equal(vec.front(), grn::dat::UInt32(5));
+    cppcut_assert_equal(vec.back(), grn::dat::UInt32(5));
 
     vec.clear();
 
