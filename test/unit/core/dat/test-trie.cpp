@@ -37,6 +37,43 @@
 
 namespace
 {
+  class Thread {
+   public:
+    Thread() : thread_(NULL) {}
+    ~Thread() {
+      join();
+    }
+
+    void create(GThreadFunc func, gpointer data) {
+      join();
+
+      GError *glib_error = NULL;
+      thread_ = g_thread_create(func, data, TRUE, &glib_error);
+      gcut_assert_error(glib_error, cut_message("g_thread_create() failed"));
+      cppcut_assert_equal(false, thread_ == NULL);
+    }
+
+    void join() {
+      if (thread_) {
+        g_thread_join(thread_);
+        thread_ = NULL;
+      }
+    }
+
+   private:
+    GThread *thread_;
+
+    // Disallows copy and assignment.
+    Thread(const Thread &);
+    Thread &operator=(const Thread &);
+  };
+
+  struct Context {
+    CutTestContext *cut_test_context;
+    grn::dat::Trie *trie;
+    bool continue_flag;
+  };
+
   void create_key(std::string *key, std::size_t min_length, std::size_t max_length)
   {
     key->resize(min_length + (std::rand() % (max_length - min_length + 1)));
@@ -188,7 +225,7 @@ namespace test_dat_trie
 
       const grn::dat::Key &key_by_pos = trie.get_key(key_pos);
       const grn::dat::Key &key_by_id = trie.ith_key(i + 1);
-      cppcut_assert_equal(&key_by_id, &key_by_pos);
+      cppcut_assert_equal(&key_by_pos, &key_by_id);
     }
   }
 
@@ -325,13 +362,13 @@ namespace test_dat_trie
     typedef std::map<std::string, grn::dat::UInt32> Keyset;
 
     grn::dat::Trie trie;
-    trie.create();
+    trie.create(NULL, 1 << 16);
 
     Keyset keyset;
     Stack stack;
     std::string str;
     for (std::size_t i = 0; i < 10000; ++i) {
-      create_key(&str, 3, 6);
+      create_key(&str, 2, 3);
       switch (static_cast<int>(4.0 * std::rand() / RAND_MAX)) {
         case 0: {
           const Keyset::const_iterator it = keyset.find(str);
@@ -391,7 +428,7 @@ namespace test_dat_trie
           const Keyset::iterator src_it = !src_key.is_valid() ? keyset.end() :
               keyset.find(std::string(
                   static_cast<const char *>(src_key.ptr()), src_key.length()));
-          cppcut_assert_equal(src_key.is_valid(), src_it != keyset.end());
+          cppcut_assert_equal(src_it != keyset.end(), src_key.is_valid());
           const bool to_be_updated = src_key.is_valid() &&
               (keyset.find(str) == keyset.end());
           grn::dat::UInt32 key_pos;
@@ -405,7 +442,7 @@ namespace test_dat_trie
           cppcut_assert_equal(to_be_updated, is_updated);
           if (is_updated) {
             const grn::dat::Key &key = trie.get_key(key_pos);
-            cppcut_assert_equal(key.id(), key_id);
+            cppcut_assert_equal(key_id, key.id());
             cppcut_assert_equal(grn::dat::String(str.c_str(), str.length()),
                                 key.str());
             keyset.erase(src_it);
@@ -415,5 +452,138 @@ namespace test_dat_trie
         }
       }
     }
+  }
+
+  gpointer sub_test_multi_threaded_random_queries(gpointer data)
+  {
+    volatile Context * const context = static_cast<Context *>(data);
+    cut_set_current_test_context(context->cut_test_context);
+
+    std::string str;
+    while (context->continue_flag) try {
+      const grn::dat::Trie * const trie = context->trie;
+      create_key(&str, 2, 3);
+      grn::dat::UInt32 key_pos;
+      if (trie->search(str.c_str(), str.length(), &key_pos)) {
+        const grn::dat::Key &key = trie->get_key(key_pos);
+        cppcut_assert_equal(str.length(), static_cast<std::size_t>(key.length()));
+        cppcut_assert_equal(grn::dat::String(str.c_str(), str.length()), key.str());
+      }
+    } catch (...) {
+      cut_fail("sub_test_multi_threaded_random_queries() failed.");
+    }
+    g_thread_exit(NULL);
+  }
+
+  void test_multi_threaded_random_queries(void)
+  {
+    typedef std::stack<grn::dat::UInt32> Stack;
+    typedef std::map<std::string, grn::dat::UInt32> Keyset;
+
+    grn::dat::Trie tries[32];
+    grn::dat::Trie *trie = &tries[0];
+    trie->create(NULL, 1 << 16);
+
+    Context context;
+    context.cut_test_context = cut_get_current_test_context();
+    context.trie = trie;
+    context.continue_flag = true;
+
+    Thread threads[2];
+    for (std::size_t i = 0; i < (sizeof(threads) / sizeof(*threads)); ++i) {
+      threads[i].create(sub_test_multi_threaded_random_queries, &context);
+    }
+
+    Keyset keyset;
+    Stack stack;
+    std::string str;
+    for (std::size_t i = 0; i < 10000; ++i) {
+      create_key(&str, 2, 3);
+      switch (static_cast<int>(4.0 * std::rand() / RAND_MAX)) {
+        case 0: {
+          const Keyset::const_iterator it = keyset.find(str);
+          const bool to_be_found = (it != keyset.end());
+          grn::dat::UInt32 key_pos;
+          const bool is_found = trie->search(str.c_str(), str.length(), &key_pos);
+          cppcut_assert_equal(to_be_found, is_found);
+          if (is_found) {
+            const grn::dat::Key &key = trie->get_key(key_pos);
+            cppcut_assert_equal(it->second, key.id());
+            cppcut_assert_equal(static_cast<grn::dat::UInt32>(str.length()),
+                                key.length());
+            cppcut_assert_equal(grn::dat::String(str.c_str(), str.length()),
+                                key.str());
+          }
+          break;
+        }
+        case 1: {
+          const Keyset::iterator it = keyset.find(str);
+          const bool to_be_removed = (it != keyset.end());
+          const bool is_removed = trie->remove(str.c_str(), str.length());
+          cppcut_assert_equal(to_be_removed, is_removed);
+          if (is_removed) {
+            stack.push(it->second);
+            keyset.erase(it);
+          }
+          break;
+        }
+        case 2: {
+          const grn::dat::UInt32 key_id =
+              stack.empty() ? (keyset.size() + 1) : stack.top();
+          const std::pair<Keyset::iterator, bool> it_bool_pair =
+              keyset.insert(std::make_pair(str, key_id));
+          const Keyset::const_iterator it = it_bool_pair.first;
+          const bool to_be_inserted = it_bool_pair.second;
+          if (!stack.empty() && to_be_inserted) {
+            stack.pop();
+          }
+          grn::dat::UInt32 key_pos;
+          bool is_inserted = !to_be_inserted;
+          try {
+            is_inserted = trie->insert(str.c_str(), str.length(), &key_pos);
+          } catch (const grn::dat::SizeError &ex) {
+            (trie + 1)->create(*trie, NULL, trie->file_size() * 2);
+            context.trie = ++trie;
+            is_inserted = trie->insert(str.c_str(), str.length(), &key_pos);
+          }
+          cppcut_assert_equal(to_be_inserted, is_inserted);
+          const grn::dat::Key &key = trie->get_key(key_pos);
+          cppcut_assert_equal(grn::dat::String(str.c_str(), str.length()),
+                              key.str());
+          break;
+        }
+        default: {
+          const grn::dat::UInt32 key_id = (trie->max_key_id()) ?
+              ((std::rand() % trie->max_key_id()) + 1) : 0;
+          const grn::dat::Key &src_key = trie->ith_key(key_id);
+          const Keyset::iterator src_it = !src_key.is_valid() ? keyset.end() :
+              keyset.find(std::string(
+                  static_cast<const char *>(src_key.ptr()), src_key.length()));
+          cppcut_assert_equal(src_it != keyset.end(), src_key.is_valid());
+          const bool to_be_updated = src_key.is_valid() &&
+              (keyset.find(str) == keyset.end());
+          grn::dat::UInt32 key_pos;
+          bool is_updated = !to_be_updated;
+          try {
+            is_updated = trie->update(key_id, str.c_str(), str.length(), &key_pos);
+          } catch (const grn::dat::SizeError &ex) {
+            (trie + 1)->create(*trie, NULL, trie->file_size() * 2);
+            context.trie = ++trie;
+            is_updated = trie->update(key_id, str.c_str(), str.length(), &key_pos);
+          }
+          cppcut_assert_equal(to_be_updated, is_updated);
+          if (is_updated) {
+            const grn::dat::Key &key = trie->get_key(key_pos);
+            cppcut_assert_equal(key_id, key.id());
+            cppcut_assert_equal(grn::dat::String(str.c_str(), str.length()),
+                                key.str());
+            keyset.erase(src_it);
+            keyset.insert(std::make_pair(str, key_id));
+          }
+          break;
+        }
+      }
+    }
+    context.continue_flag = false;
   }
 }
