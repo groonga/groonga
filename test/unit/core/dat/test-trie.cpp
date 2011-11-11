@@ -69,7 +69,6 @@ namespace test_dat_trie
     base_dir = grn_test_get_tmp_dir();
     cut_remove_path(base_dir, NULL);
     g_mkdir_with_parents(base_dir, 0755);
-std::cerr << "setup: " << base_dir << std::endl;
   }
 
   void cut_teardown(void)
@@ -77,7 +76,6 @@ std::cerr << "setup: " << base_dir << std::endl;
     if (base_dir) {
       cut_remove_path(base_dir, NULL);
     }
-std::cerr << "teardown: " << base_dir << std::endl;
   }
 
   void test_empty_trie(void)
