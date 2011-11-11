@@ -241,23 +241,22 @@ If you specify 'match_columns' is 'title' and 'query' is 'this', you can take sa
 .. include:: ../example/tutorial/introduction-12.log
 .. select --table Site --match_columns title --query this
 
+Specify output column
+---------------------
 
-出力カラムの指定
-----------------
+'output_columns' parametor in 'select' command specifies columns shown in result of search.
 
-selectコマンドにおいて、output_columnsパラメータを用いることで、検索結果で表示するカラムを指定することが出来ます。
-
-複数のカラムを指定する場合は、カンマ(,)区切りで指定します。
+If you want to specify some columns, you should use comma(,) between column names.
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-13.log
 .. select --table Site --output_columns _key,title,_score --query title:@test
 
-groongaの検索結果には、「_score」という名前のカラムが追加されています。このカラムは、全文検索の条件が合致する文書ほど高い数値が入ります。
+"_score" column is added to The groonga's result. This column has the higher number, the more condition of fulltext seaching matches text.
 
 
 表示範囲指定
-------------
+--------------
 
 selectコマンドにおいて、offset,limitパラメータを用いることで、検索結果から指定された範囲のみを表示することが出来ます。大量の検索結果をページで分けて、1ページ分のみを表示したい場合に有効です。
 
