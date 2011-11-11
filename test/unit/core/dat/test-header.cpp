@@ -98,7 +98,7 @@ namespace test_dat_header
     }
 
     for (grn::dat::UInt32 i = 0; i <= grn::dat::MAX_BLOCK_LEVEL; ++i) {
-      cppcut_assert_equal((i + 1), header.ith_leader(i));
+      cppcut_assert_equal(i + 1, header.ith_leader(i));
     }
   }
 }

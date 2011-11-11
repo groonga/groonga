@@ -30,7 +30,7 @@ namespace test_dat_string
   {
     const grn::dat::String str;
 
-    cppcut_assert_equal(static_cast<const void *>(NULL), str.ptr());
+    cut_assert_null(str.ptr());
     cppcut_assert_equal(grn::dat::UInt32(0), str.length());
   }
 

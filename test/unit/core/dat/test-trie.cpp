@@ -50,7 +50,7 @@ namespace
       GError *glib_error = NULL;
       thread_ = g_thread_create(func, data, TRUE, &glib_error);
       gcut_assert_error(glib_error, cut_message("g_thread_create() failed"));
-      cppcut_assert_equal(false, thread_ == NULL);
+      cut_assert_not_null(thread_);
     }
 
     void join() {
