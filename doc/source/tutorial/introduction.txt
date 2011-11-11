@@ -254,15 +254,14 @@ If you want to specify some columns, you should use comma(,) between column name
 
 "_score" column is added to The groonga's result. This column has the higher number, the more condition of fulltext seaching matches text.
 
-
-表示範囲指定
+Display ranges
 --------------
 
-selectコマンドにおいて、offset,limitパラメータを用いることで、検索結果から指定された範囲のみを表示することが出来ます。大量の検索結果をページで分けて、1ページ分のみを表示したい場合に有効です。
+'select' command can display result in only specified ranges using 'offset' and 'limit' parametor. This parametors is available when you want to show only a page in much result of searching.
 
-offsetパラメータには、検索結果を返す始点を指定します。1件目から結果を返す場合には、0を指定します。
+'offset' parametor specifies starting point of result. If you want 'select' command to return from first records, this parametor specifies '0'.
 
-limitパラメータには、検索結果を何件表示するのかを指定します。
+'limit' parametor specifies how many records of searching result.
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-14.log
