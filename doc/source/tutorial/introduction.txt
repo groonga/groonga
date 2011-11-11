@@ -170,10 +170,10 @@ We will target 'title' column in 'Site' table for fulltext searching. In this ca
 This command creates index column 'blog_title' in 'Term' table. '--type' option specifies target indexed table, and '--source' option does target index column.
 In execution example, 'COLUMN_INDEX|WITH_POSITION' for '--flags' option specifies that this column is index column for storing information of terminology existing position. This option should be specified 'COLUMN_INDEX|WITH_POSITION' in generally fulltext searching. This tutorial does not explain why to store information of terminology existing position.
 
-データのロード
---------------
+Load data
+---------
 
-:doc:`/commands/load` コマンドを使用します。loadコマンドでは、jsonで受け取ったデータをテーブルに格納します。
+:doc:`/commands/load` is used to load data for groonga database. This command stores json-formatted data in a table.
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-7.log
@@ -190,76 +190,78 @@ In execution example, 'COLUMN_INDEX|WITH_POSITION' for '--flags' option specifie
 .. {"_key":"http://example.com/vdw","title":"test test record nine."},
 .. ]
 
-selectコマンドで、データが入っていることを確認しましょう。
+Let's make sure that its table has data with 'select' command.
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-8.log
 .. select --table Site
 
-データの検索
-------------
+Search data
+-----------
 
-groongaでは、'_id'カラムと'_key'カラムの値はテーブル中で一意です。よって、それを用いて検索してみましょう。
+'_id' and '_key' columns are unique in groonga's table, so let's search data in table using these columns.
 
-selectコマンドにおいて、queryパラメータを用いるとデータの検索を行うことができます。
+You can search data using 'select' command with 'query' parametor.
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-9.log
 .. select --table Site --query _id:1
 
-queryパラメータに与えた「_id:1」というのは、'_id'という名前のカラムに'1'という値が入っているレコードを検索する、という意味です。
+'_id:1' specified 'query' parametor means to search records whose '_id' column has '1'.
 
-_keyでも検索してみましょう。
+Let's search records with '_key' column.
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-10.log
 .. select --table Site --query "_key:\"http://example.org/\""
 
-queryパラメータに与えた「_key:\"http://example.org/\"」というのは、'_key'という名前のカラムに'"http://example.org/"'という値が入っているレコードを検索する、という意味です。
+'_key:\"http://example.org/\"' specified 'query' parametor means to search records whose '_key' column has '"http://example.org/"'.
 
-全文検索
---------
 
-queryパラメータでは、インデックスを用いた全文検索を行うこともできます。
+Fulltext searching
+------------------
+
+Using 'query' parametor, you can fulltext search with index.
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-11.log
 .. select --table Site --query title:@this
 
-titleカラムに対して、'this'という文字列で全文検索を行った結果を返します。
+This command shows result of fulltext searching by string 'this' for 'title' column.
 
-queryパラメータに与えた「title:@this」というのが、'title'という名前のカラムに'this'という文字列が含まれているレコードを検索する、という意味です。
+"title:@this" specified 'query' parametor means to search records whose 'title' column including 'this' string.
 
-selectコマンドには、match_columnsというパラメータが存在します。これを指定すると、query内にカラム名を指定しない条件があった場合、match_columnsで指定されたカラムに対しての検索であることを示します。[1]_
+'select' command has parametor 'match_columns'.
 
-match_columnsパラメータに'title'、queryパラメータに'this'という文字列を指定すると、上記のクエリと同じ結果を得ることができます。
+If this parametor is specified, it means to search in columns specified 'match_columns' when 'query' parametor doesn't specify column-name condition.[1]_
+
+If you specify 'match_columns' is 'title' and 'query' is 'this', you can take same result as above query.
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-12.log
 .. select --table Site --match_columns title --query this
 
-出力カラムの指定
-----------------
+Specify output column
+---------------------
 
-selectコマンドにおいて、output_columnsパラメータを用いることで、検索結果で表示するカラムを指定することが出来ます。
+'output_columns' parametor in 'select' command specifies columns shown in result of search.
 
-複数のカラムを指定する場合は、カンマ(,)区切りで指定します。
+If you want to specify some columns, you should use comma(,) between column names.
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-13.log
 .. select --table Site --output_columns _key,title,_score --query title:@test
 
-groongaの検索結果には、「_score」という名前のカラムが追加されています。このカラムは、全文検索の条件が合致する文書ほど高い数値が入ります。
+"_score" column is added to The groonga's result. This column has the higher number, the more condition of fulltext seaching matches text.
 
+Display ranges
+--------------
 
-表示範囲指定
-------------
+'select' command can display result in only specified ranges using 'offset' and 'limit' parametor. This parametors is available when you want to show only a page in much result of searching.
 
-selectコマンドにおいて、offset,limitパラメータを用いることで、検索結果から指定された範囲のみを表示することが出来ます。大量の検索結果をページで分けて、1ページ分のみを表示したい場合に有効です。
+'offset' parametor specifies starting point of result. If you want 'select' command to return from first records, this parametor specifies '0'.
 
-offsetパラメータには、検索結果を返す始点を指定します。1件目から結果を返す場合には、0を指定します。
-
-limitパラメータには、検索結果を何件表示するのかを指定します。
+'limit' parametor specifies how many records of searching result.
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-14.log
