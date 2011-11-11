@@ -22,13 +22,7 @@
 #include <grn-assertions.h>
 #include <dat/string.hpp>
 
-namespace cut
-{
-  std::ostream &operator<<(std::ostream &stream, const grn::dat::String &str)
-  {
-    return stream.write(static_cast<const char *>(str.ptr()), str.length());
-  }
-}
+#include "test-string.hpp"
 
 namespace test_dat_string
 {

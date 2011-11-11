@@ -39,6 +39,9 @@ LIBS =								\
 	$(top_builddir)/test/unit/lib/libgrn-test-utils.la	\
 	$(top_builddir)/test/unit/lib/libgrn-test-hash-utils.la
 
+noinst_HEADERS =		\
+	test-string.hpp
+
 test_array_la_SOURCES			= test-array.cpp
 test_base_la_SOURCES			= test-base.cpp
 test_block_la_SOURCES			= test-block.cpp
