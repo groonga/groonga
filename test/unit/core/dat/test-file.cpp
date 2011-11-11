@@ -74,8 +74,8 @@ namespace test_dat_file
   void test_create_with_path(void)
   {
     char path[PATH_MAX];
-    strcpy(path, base_dir);
-    strcat(path, "test_create_with_path.dat");
+    std::strcpy(path, base_dir);
+    std::strcat(path, "/test_create_with_path.dat");
 
     grn::dat::File file;
 
@@ -99,8 +99,8 @@ namespace test_dat_file
   void test_open(void)
   {
     char path[PATH_MAX];
-    strcpy(path, base_dir);
-    strcat(path, "test_open.dat");
+    std::strcpy(path, base_dir);
+    std::strcat(path, "/test_open.dat");
 
     grn::dat::File file;
 

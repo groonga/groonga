@@ -69,6 +69,7 @@ namespace test_dat_trie
     base_dir = grn_test_get_tmp_dir();
     cut_remove_path(base_dir, NULL);
     g_mkdir_with_parents(base_dir, 0755);
+std::cerr << "setup: " << base_dir << std::endl;
   }
 
   void cut_teardown(void)
@@ -76,6 +77,7 @@ namespace test_dat_trie
     if (base_dir) {
       cut_remove_path(base_dir, NULL);
     }
+std::cerr << "teardown: " << base_dir << std::endl;
   }
 
   void test_empty_trie(void)
@@ -120,7 +122,7 @@ namespace test_dat_trie
   {
     char trie_path[PATH_MAX];
     std::strcpy(trie_path, base_dir);
-    std::strcat(trie_path, "test_trie_on_file.dat");
+    std::strcat(trie_path, "/test_trie_on_file.dat");
 
     std::vector<std::string> keys;
     create_keys(&keys, 1000, 1, 16);
@@ -330,7 +332,7 @@ namespace test_dat_trie
     Keyset keyset;
     Stack stack;
     std::string str;
-    for (std::size_t i = 0; i < (1 << 16); ++i) {
+    for (std::size_t i = 0; i < 10000; ++i) {
       create_key(&str, 3, 6);
       switch (static_cast<int>(4.0 * std::rand() / RAND_MAX)) {
         case 0: {
