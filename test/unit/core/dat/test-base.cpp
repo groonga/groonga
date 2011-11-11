@@ -28,8 +28,8 @@ namespace test_dat_base
   {
     grn::dat::Base base;
 
-    cppcut_assert_equal(base.is_linker(), false);
-    cppcut_assert_equal(base.offset(), grn::dat::UInt32(0));
+    cppcut_assert_equal(false, base.is_linker());
+    cppcut_assert_equal(grn::dat::UInt32(0), base.offset());
   }
 
   void test_linker(void)
@@ -37,8 +37,8 @@ namespace test_dat_base
     grn::dat::Base base;
 
     base.set_key_pos(100);
-    cppcut_assert_equal(base.is_linker(), true);
-    cppcut_assert_equal(base.key_pos(), grn::dat::UInt32(100));
+    cppcut_assert_equal(true, base.is_linker());
+    cppcut_assert_equal(grn::dat::UInt32(100), base.key_pos());
   }
 
   void test_nonlinker(void)
@@ -46,7 +46,7 @@ namespace test_dat_base
     grn::dat::Base base;
 
     base.set_offset(1000);
-    cppcut_assert_equal(base.is_linker(), false);
-    cppcut_assert_equal(base.offset(), grn::dat::UInt32(1000));
+    cppcut_assert_equal(false, base.is_linker());
+    cppcut_assert_equal(grn::dat::UInt32(1000), base.offset());
   }
 }

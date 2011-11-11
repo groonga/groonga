@@ -49,14 +49,14 @@ namespace test_dat_key_cursor
 
     grn::dat::KeyCursor cursor;
     cursor.open(trie, grn::dat::String(), grn::dat::String());
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(5));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(4));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(6));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(7));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(3));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(2));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(1));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(5), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(4), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(6), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(7), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(2), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(1), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
   }
 
   void test_min(void)
@@ -67,19 +67,19 @@ namespace test_dat_key_cursor
     grn::dat::KeyCursor cursor;
 
     cursor.open(trie, grn::dat::String("Hobbit"), grn::dat::String());
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(7));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(3));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(2));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(1));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(7), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(2), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(1), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("T"), grn::dat::String());
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(2));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(1));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(2), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(1), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("Z"), grn::dat::String());
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(false, cursor.next().is_valid());
   }
 
   void test_max_by_str(void)
@@ -90,17 +90,17 @@ namespace test_dat_key_cursor
     grn::dat::KeyCursor cursor;
 
     cursor.open(trie, grn::dat::String(), grn::dat::String("Elf"));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(5));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(4));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(5), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(4), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String(), grn::dat::String("F"));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(5));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(4));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(5), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(4), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String(), grn::dat::String("A"));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(false, cursor.next().is_valid());
   }
 
   void test_min_max(void)
@@ -110,11 +110,11 @@ namespace test_dat_key_cursor
 
     grn::dat::KeyCursor cursor;
     cursor.open(trie, grn::dat::String("Gnome"), grn::dat::String("Trebor"));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(6));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(7));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(3));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(2));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(6), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(7), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(2), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
   }
 
   void test_offset(void)
@@ -125,23 +125,23 @@ namespace test_dat_key_cursor
     grn::dat::KeyCursor cursor;
 
     cursor.open(trie, grn::dat::String("Hobbit"), grn::dat::String("Trebor"), 0);
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(7));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(3));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(2));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(7), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(2), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String(), grn::dat::String(), 5);
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(2));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(1));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(2), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(1), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("Gnome"), grn::dat::String("Trebor"), 2);
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(3));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(2));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(2), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("Gnome"), grn::dat::String("Trebor"), 100);
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(false, cursor.next().is_valid());
   }
 
   void test_limit(void)
@@ -153,27 +153,27 @@ namespace test_dat_key_cursor
 
     cursor.open(trie, grn::dat::String("Gnome"), grn::dat::String("Werdna"),
                 0, grn::dat::UINT32_MAX);
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(6));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(7));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(3));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(2));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(1));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(6), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(7), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(2), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(1), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("Gnome"), grn::dat::String("Werdna"),
                 0, 3);
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(6));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(7));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(3));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(6), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(7), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("A"), grn::dat::String("Z"), 3, 2);
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(7));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(3));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(7), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("A"), grn::dat::String("Z"), 0, 0);
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(false, cursor.next().is_valid());
   }
 
   void test_ascending_cursor(void)
@@ -185,28 +185,28 @@ namespace test_dat_key_cursor
 
     cursor.open(trie, grn::dat::String(), grn::dat::String(),
                 0, grn::dat::UINT32_MAX, grn::dat::ASCENDING_CURSOR);
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(5));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(4));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(6));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(7));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(3));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(2));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(1));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(5), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(4), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(6), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(7), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(2), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(1), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("Elf"), grn::dat::String("Human"),
                 0, grn::dat::UINT32_MAX, grn::dat::ASCENDING_CURSOR);
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(4));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(6));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(7));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(3));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(4), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(6), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(7), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("Dwarf"), grn::dat::String("Trebor"),
                 3, 2, grn::dat::ASCENDING_CURSOR);
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(7));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(3));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(7), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
   }
 
   void test_descending_cursor(void)
@@ -218,28 +218,28 @@ namespace test_dat_key_cursor
 
     cursor.open(trie, grn::dat::String(), grn::dat::String(),
                 0, grn::dat::UINT32_MAX, grn::dat::DESCENDING_CURSOR);
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(1));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(2));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(3));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(7));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(6));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(4));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(5));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(1), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(2), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(7), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(6), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(4), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(5), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("Elf"), grn::dat::String("Human"),
                 0, grn::dat::UINT32_MAX, grn::dat::DESCENDING_CURSOR);
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(3));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(7));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(6));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(4));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(7), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(6), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(4), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("Dwarf"), grn::dat::String("Trebor"),
                 3, 2, grn::dat::DESCENDING_CURSOR);
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(6));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(4));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(6), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(4), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
   }
 
   void test_except_boundary(void)
@@ -252,43 +252,43 @@ namespace test_dat_key_cursor
     cursor.open(trie, grn::dat::String(), grn::dat::String(),
                 0, grn::dat::UINT32_MAX,
                 grn::dat::EXCEPT_LOWER_BOUND | grn::dat::EXCEPT_UPPER_BOUND);
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(5));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(4));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(6));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(7));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(3));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(2));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(1));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(5), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(4), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(6), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(7), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(2), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(1), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("Dwarf"), grn::dat::String("Werdna"),
                 0, grn::dat::UINT32_MAX,
                 grn::dat::EXCEPT_LOWER_BOUND | grn::dat::EXCEPT_UPPER_BOUND);
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(4));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(6));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(7));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(3));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(2));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(4), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(6), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(7), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(2), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("Elf"), grn::dat::String("Trebor"),
                 2, 100, grn::dat::EXCEPT_LOWER_BOUND);
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(3));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(2));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(2), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("Elf"), grn::dat::String("Trebor"),
                 2, 100, grn::dat::EXCEPT_UPPER_BOUND);
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(7));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(3));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(7), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("Fighter"), grn::dat::String("Samurai"),
                 0, grn::dat::UINT32_MAX,
                 grn::dat::EXCEPT_LOWER_BOUND | grn::dat::EXCEPT_UPPER_BOUND);
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(6));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(7));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(3));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(6), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(7), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
   }
 }

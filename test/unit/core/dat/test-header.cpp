@@ -28,23 +28,23 @@ namespace test_dat_header
   {
     const grn::dat::Header header;
 
-    cppcut_assert_equal(header.file_size(), grn::dat::UInt64(0));
-    cppcut_assert_equal(header.total_key_length(), grn::dat::UInt32(0));
-    cppcut_assert_equal(header.min_key_id(), grn::dat::MIN_KEY_ID);
-    cppcut_assert_equal(header.next_key_id(), grn::dat::MIN_KEY_ID);
-    cppcut_assert_equal(header.max_key_id(), grn::dat::UInt32(0));
-    cppcut_assert_equal(header.num_keys(), grn::dat::UInt32(0));
-    cppcut_assert_equal(header.max_num_keys(), grn::dat::UInt32(0));
-    cppcut_assert_equal(header.num_nodes(), grn::dat::UInt32(0));
-    cppcut_assert_equal(header.num_phantoms(), grn::dat::UInt32(0));
-    cppcut_assert_equal(header.num_zombies(), grn::dat::UInt32(0));
-    cppcut_assert_equal(header.max_num_nodes(), grn::dat::UInt32(0));
-    cppcut_assert_equal(header.num_blocks(), grn::dat::UInt32(0));
-    cppcut_assert_equal(header.max_num_blocks(), grn::dat::UInt32(0));
-    cppcut_assert_equal(header.next_key_pos(), grn::dat::UInt32(0));
-    cppcut_assert_equal(header.key_buf_size(), grn::dat::UInt32(0));
+    cppcut_assert_equal(grn::dat::UInt64(0), header.file_size());
+    cppcut_assert_equal(grn::dat::UInt32(0), header.total_key_length());
+    cppcut_assert_equal(grn::dat::MIN_KEY_ID, header.min_key_id());
+    cppcut_assert_equal(grn::dat::MIN_KEY_ID, header.next_key_id());
+    cppcut_assert_equal(grn::dat::UInt32(0), header.max_key_id());
+    cppcut_assert_equal(grn::dat::UInt32(0), header.num_keys());
+    cppcut_assert_equal(grn::dat::UInt32(0), header.max_num_keys());
+    cppcut_assert_equal(grn::dat::UInt32(0), header.num_nodes());
+    cppcut_assert_equal(grn::dat::UInt32(0), header.num_phantoms());
+    cppcut_assert_equal(grn::dat::UInt32(0), header.num_zombies());
+    cppcut_assert_equal(grn::dat::UInt32(0), header.max_num_nodes());
+    cppcut_assert_equal(grn::dat::UInt32(0), header.num_blocks());
+    cppcut_assert_equal(grn::dat::UInt32(0), header.max_num_blocks());
+    cppcut_assert_equal(grn::dat::UInt32(0), header.next_key_pos());
+    cppcut_assert_equal(grn::dat::UInt32(0), header.key_buf_size());
     for (grn::dat::UInt32 i = 0; i <= grn::dat::MAX_BLOCK_LEVEL; ++i) {
-      cppcut_assert_equal(header.ith_leader(i), grn::dat::INVALID_LEADER);
+      cppcut_assert_equal(grn::dat::INVALID_LEADER, header.ith_leader(i));
     }
   }
 
@@ -57,11 +57,11 @@ namespace test_dat_header
     header.set_max_num_blocks(20);
     header.set_key_buf_size(800);
 
-    cppcut_assert_equal(header.file_size(), grn::dat::UInt64(10000));
-    cppcut_assert_equal(header.max_num_keys(), grn::dat::UInt32(30));
-    cppcut_assert_equal(header.max_num_nodes(), (grn::dat::BLOCK_SIZE * 20));
-    cppcut_assert_equal(header.max_num_blocks(), grn::dat::UInt32(20));
-    cppcut_assert_equal(header.key_buf_size(), grn::dat::UInt32(800));
+    cppcut_assert_equal(grn::dat::UInt64(10000), header.file_size());
+    cppcut_assert_equal(grn::dat::UInt32(30), header.max_num_keys());
+    cppcut_assert_equal(grn::dat::BLOCK_SIZE * 20, header.max_num_nodes());
+    cppcut_assert_equal(grn::dat::UInt32(20), header.max_num_blocks());
+    cppcut_assert_equal(grn::dat::UInt32(800), header.key_buf_size());
   }
 
   void test_mutable_values(void)
@@ -82,23 +82,23 @@ namespace test_dat_header
     header.set_num_blocks(10);
     header.set_next_key_pos(400);
 
-    cppcut_assert_equal(header.total_key_length(), grn::dat::UInt32(500));
-    cppcut_assert_equal(header.min_key_id(), grn::dat::MIN_KEY_ID);
-    cppcut_assert_equal(header.next_key_id(), grn::dat::UInt32(15));
-    cppcut_assert_equal(header.max_key_id(), grn::dat::UInt32(14));
-    cppcut_assert_equal(header.num_keys(), grn::dat::UInt32(20));
-    cppcut_assert_equal(header.num_nodes(), (grn::dat::BLOCK_SIZE * 10));
-    cppcut_assert_equal(header.num_phantoms(), grn::dat::UInt32(200));
-    cppcut_assert_equal(header.num_zombies(), grn::dat::UInt32(300));
-    cppcut_assert_equal(header.num_blocks(), grn::dat::UInt32(10));
-    cppcut_assert_equal(header.next_key_pos(), grn::dat::UInt32(400));
+    cppcut_assert_equal(grn::dat::UInt32(500), header.total_key_length());
+    cppcut_assert_equal(grn::dat::MIN_KEY_ID, header.min_key_id());
+    cppcut_assert_equal(grn::dat::UInt32(15), header.next_key_id());
+    cppcut_assert_equal(grn::dat::UInt32(14), header.max_key_id());
+    cppcut_assert_equal(grn::dat::UInt32(20), header.num_keys());
+    cppcut_assert_equal(grn::dat::BLOCK_SIZE * 10, header.num_nodes());
+    cppcut_assert_equal(grn::dat::UInt32(200), header.num_phantoms());
+    cppcut_assert_equal(grn::dat::UInt32(300), header.num_zombies());
+    cppcut_assert_equal(grn::dat::UInt32(10), header.num_blocks());
+    cppcut_assert_equal(grn::dat::UInt32(400), header.next_key_pos());
 
     for (grn::dat::UInt32 i = 0; i <= grn::dat::MAX_BLOCK_LEVEL; ++i) {
       header.set_ith_leader(i, i + 1);
     }
 
     for (grn::dat::UInt32 i = 0; i <= grn::dat::MAX_BLOCK_LEVEL; ++i) {
-      cppcut_assert_equal(header.ith_leader(i), (i + 1));
+      cppcut_assert_equal((i + 1), header.ith_leader(i));
     }
   }
 }

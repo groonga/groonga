@@ -47,7 +47,7 @@ namespace test_dat_prefix_cursor
 
     grn::dat::PrefixCursor cursor;
     cursor.open(trie, grn::dat::String());
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(false, cursor.next().is_valid());
   }
 
   void test_str(void)
@@ -58,33 +58,33 @@ namespace test_dat_prefix_cursor
     grn::dat::PrefixCursor cursor;
 
     cursor.open(trie, grn::dat::String("京都"));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(2));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(2), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("京都府"));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(2));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(4));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(2), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(4), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("東京"));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(1));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(1), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("東京都"));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(1));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(3));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(1), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("東京都庁"));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(1));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(3));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(5));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(1), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(5), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("東京都議会"));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(1));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(3));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(1), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
   }
 
   void test_min_length(void)
@@ -95,34 +95,34 @@ namespace test_dat_prefix_cursor
     grn::dat::PrefixCursor cursor;
 
     cursor.open(trie, grn::dat::String("東京都庁ビル"), std::strlen(""));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(1));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(3));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(5));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(1), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(5), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("東京都庁ビル"), std::strlen("東"));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(1));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(3));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(5));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(1), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(5), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("東京都庁ビル"), std::strlen("東京"));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(1));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(3));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(5));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(1), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(5), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("東京都庁ビル"), std::strlen("東京都"));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(3));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(5));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(5), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("東京都庁ビル"), std::strlen("東京都庁"));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(5));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(5), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("東京都庁ビル"), std::strlen("東京都庁ビル"));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(false, cursor.next().is_valid());
   }
 
   void test_offset(void)
@@ -133,22 +133,22 @@ namespace test_dat_prefix_cursor
     grn::dat::PrefixCursor cursor;
 
     cursor.open(trie, grn::dat::String("東京都庁ビル"), 0, 0);
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(1));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(3));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(5));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(1), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(5), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("東京都庁ビル"), 0, 1);
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(3));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(5));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(5), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("東京都庁ビル"), 0, 2);
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(5));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(5), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("東京都庁ビル"), 0, 3);
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(false, cursor.next().is_valid());
   }
 
   void test_limit(void)
@@ -159,36 +159,36 @@ namespace test_dat_prefix_cursor
     grn::dat::PrefixCursor cursor;
 
     cursor.open(trie, grn::dat::String("東京都庁ビル"), 0, 0, grn::dat::UINT32_MAX);
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(1));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(3));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(5));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(1), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(5), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("東京都庁ビル"), 0, 0, 3);
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(1));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(3));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(5));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(1), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(5), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("東京都庁ビル"), 0, 0, 2);
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(1));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(3));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(1), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("東京都庁ビル"), 0, 0, 1);
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(1));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(1), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("東京都庁ビル"), 0, 0, 0);
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("東京都庁ビル"), 0, 2, 100);
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(5));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(5), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("東京都庁ビル"), 0, 1, 1);
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(3));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
   }
 
   void test_ascending_cursor(void)
@@ -200,25 +200,25 @@ namespace test_dat_prefix_cursor
 
     cursor.open(trie, grn::dat::String("京都府"), 0,
                 0, grn::dat::UINT32_MAX, grn::dat::ASCENDING_CURSOR);
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(2));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(4));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(2), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(4), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("京都府"), std::strlen("京都"),
                 0, grn::dat::UINT32_MAX, grn::dat::ASCENDING_CURSOR);
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(2));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(4));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(2), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(4), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("京都府"), 0,
                 1, grn::dat::UINT32_MAX, grn::dat::ASCENDING_CURSOR);
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(4));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(4), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("京都府"), 0,
                 0, 1, grn::dat::ASCENDING_CURSOR);
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(2));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(2), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
   }
 
   void test_descending_cursor(void)
@@ -230,38 +230,38 @@ namespace test_dat_prefix_cursor
 
     cursor.open(trie, grn::dat::String("東京都庁"), 0,
                 0, grn::dat::UINT32_MAX, grn::dat::DESCENDING_CURSOR);
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(5));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(3));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(1));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(5), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(1), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("東京都庁"), std::strlen("東京都"),
                 0, grn::dat::UINT32_MAX, grn::dat::DESCENDING_CURSOR);
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(5));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(3));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(5), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("東京都庁"), std::strlen("東京都"),
                 1, grn::dat::UINT32_MAX, grn::dat::DESCENDING_CURSOR);
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(3));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("東京都庁"), std::strlen("東京都"),
                 0, 1, grn::dat::DESCENDING_CURSOR);
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(5));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(5), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("東京都庁"), 0,
                 1, grn::dat::UINT32_MAX, grn::dat::DESCENDING_CURSOR);
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(3));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(1));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(1), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("東京都庁"), 0,
                 0, 2, grn::dat::DESCENDING_CURSOR);
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(5));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(3));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(5), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
   }
 
   void test_except_boundary(void)
@@ -273,27 +273,27 @@ namespace test_dat_prefix_cursor
 
     cursor.open(trie, grn::dat::String("東京都庁ビル"), 0,
                 0, grn::dat::UINT32_MAX, grn::dat::EXCEPT_EXACT_MATCH);
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(1));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(3));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(5));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(1), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(5), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("東京都庁ビル"), std::strlen("東京"),
                 0, grn::dat::UINT32_MAX, grn::dat::EXCEPT_EXACT_MATCH);
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(1));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(3));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(5));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(1), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(5), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("東京都庁"), std::strlen("東京"),
                 0, grn::dat::UINT32_MAX, grn::dat::EXCEPT_EXACT_MATCH);
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(1));
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(3));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(1), cursor.next().id());
+    cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("京都府"), 0,
                 0, grn::dat::UINT32_MAX, grn::dat::EXCEPT_EXACT_MATCH);
-    cppcut_assert_equal(cursor.next().id(), grn::dat::UInt32(2));
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(grn::dat::UInt32(2), cursor.next().id());
+    cppcut_assert_equal(false, cursor.next().is_valid());
   }
 }

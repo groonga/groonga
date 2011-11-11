@@ -28,12 +28,12 @@ namespace test_dat_check
   {
     const grn::dat::Check check;
 
-    cppcut_assert_equal(check.is_offset(), false);
-    cppcut_assert_equal(check.except_is_offset(), grn::dat::UInt32(0));
-    cppcut_assert_equal(check.is_phantom(), false);
-    cppcut_assert_equal(check.label(), grn::dat::UInt32(0));
-    cppcut_assert_equal(check.child(), grn::dat::UInt32(0));
-    cppcut_assert_equal(check.sibling(), grn::dat::UInt32(0));
+    cppcut_assert_equal(false, check.is_offset());
+    cppcut_assert_equal(grn::dat::UInt32(0), check.except_is_offset());
+    cppcut_assert_equal(false, check.is_phantom());
+    cppcut_assert_equal(grn::dat::UInt32(0), check.label());
+    cppcut_assert_equal(grn::dat::UInt32(0), check.child());
+    cppcut_assert_equal(grn::dat::UInt32(0), check.sibling());
   }
 
   void test_phantomize(void)
@@ -41,14 +41,14 @@ namespace test_dat_check
     grn::dat::Check check;
 
     check.set_is_phantom(true);
-    cppcut_assert_equal(check.is_phantom(), true);
-    cppcut_assert_equal(check.next(), grn::dat::UInt32(0));
-    cppcut_assert_equal(check.prev(), grn::dat::UInt32(0));
+    cppcut_assert_equal(true, check.is_phantom());
+    cppcut_assert_equal(grn::dat::UInt32(0), check.next());
+    cppcut_assert_equal(grn::dat::UInt32(0), check.prev());
 
     check.set_next(101);
     check.set_prev(99);
-    cppcut_assert_equal(check.next(), grn::dat::UInt32(101));
-    cppcut_assert_equal(check.prev(), grn::dat::UInt32(99));
+    cppcut_assert_equal(grn::dat::UInt32(101), check.next());
+    cppcut_assert_equal(grn::dat::UInt32(99), check.prev());
   }
 
   void test_unphantomize(void)
@@ -57,9 +57,9 @@ namespace test_dat_check
 
     check.set_is_phantom(true);
     check.set_is_phantom(false);
-    cppcut_assert_equal(check.is_phantom(), false);
-    cppcut_assert_equal(check.child(), grn::dat::INVALID_LABEL);
-    cppcut_assert_equal(check.sibling(), grn::dat::INVALID_LABEL);
+    cppcut_assert_equal(false, check.is_phantom());
+    cppcut_assert_equal(grn::dat::INVALID_LABEL, check.child());
+    cppcut_assert_equal(grn::dat::INVALID_LABEL, check.sibling());
   }
 
   void test_nonphantom(void)
@@ -67,20 +67,20 @@ namespace test_dat_check
     grn::dat::Check check;
 
     check.set_is_offset(true);
-    cppcut_assert_equal(check.is_offset(), true);
+    cppcut_assert_equal(true, check.is_offset());
 
     check.set_label('a');
-    cppcut_assert_equal(check.label(), grn::dat::UInt32('a'));
+    cppcut_assert_equal(grn::dat::UInt32('a'), check.label());
 
     check.set_child('b');
-    cppcut_assert_equal(check.child(), grn::dat::UInt32('b'));
+    cppcut_assert_equal(grn::dat::UInt32('b'), check.child());
 
     check.set_sibling('c');
-    cppcut_assert_equal(check.sibling(), grn::dat::UInt32('c'));
+    cppcut_assert_equal(grn::dat::UInt32('c'), check.sibling());
 
-    cppcut_assert_equal(check.is_offset(), true);
-    cppcut_assert_equal(check.except_is_offset(),
-                        'a' | grn::dat::UInt32('b' << 9) | grn::dat::UInt32('c' << 18));
-    cppcut_assert_equal(check.is_phantom(), false);
+    cppcut_assert_equal(true, check.is_offset());
+    cppcut_assert_equal('a' | grn::dat::UInt32('b' << 9) | grn::dat::UInt32('c' << 18),
+                        check.except_is_offset());
+    cppcut_assert_equal(false, check.is_phantom());
   }
 }

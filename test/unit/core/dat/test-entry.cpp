@@ -28,8 +28,8 @@ namespace test_dat_entry
   {
     const grn::dat::Entry entry;
 
-    cppcut_assert_equal(entry.is_valid(), false);
-    cppcut_assert_equal(entry.next(), grn::dat::UInt32(0));
+    cppcut_assert_equal(false, entry.is_valid());
+    cppcut_assert_equal(grn::dat::UInt32(0), entry.next());
   }
 
   void test_valid_entry(void)
@@ -37,8 +37,8 @@ namespace test_dat_entry
     grn::dat::Entry entry;
 
     entry.set_key_pos(100);
-    cppcut_assert_equal(entry.is_valid(), true);
-    cppcut_assert_equal(entry.key_pos(), grn::dat::UInt32(100));
+    cppcut_assert_equal(true, entry.is_valid());
+    cppcut_assert_equal(grn::dat::UInt32(100), entry.key_pos());
   }
 
   void test_invalid_entry(void)
@@ -46,7 +46,7 @@ namespace test_dat_entry
     grn::dat::Entry entry;
 
     entry.set_next(200);
-    cppcut_assert_equal(entry.is_valid(), false);
-    cppcut_assert_equal(entry.next(), grn::dat::UInt32(200));
+    cppcut_assert_equal(false, entry.is_valid());
+    cppcut_assert_equal(grn::dat::UInt32(200), entry.next());
   }
 }

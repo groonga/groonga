@@ -37,19 +37,19 @@ namespace test_dat_key
 {
   void test_size_estimation(void)
   {
-    cppcut_assert_equal(grn::dat::Key::estimate_size(0), grn::dat::UInt32(2));
-    cppcut_assert_equal(grn::dat::Key::estimate_size(3), grn::dat::UInt32(2));
+    cppcut_assert_equal(grn::dat::UInt32(2), grn::dat::Key::estimate_size(0));
+    cppcut_assert_equal(grn::dat::UInt32(2), grn::dat::Key::estimate_size(3));
 
-    cppcut_assert_equal(grn::dat::Key::estimate_size(4), grn::dat::UInt32(3));
-    cppcut_assert_equal(grn::dat::Key::estimate_size(7), grn::dat::UInt32(3));
+    cppcut_assert_equal(grn::dat::UInt32(3), grn::dat::Key::estimate_size(4));
+    cppcut_assert_equal(grn::dat::UInt32(3), grn::dat::Key::estimate_size(7));
   }
 
   void test_invalid_key(void)
   {
     const grn::dat::Key &key = grn::dat::Key::invalid_key();
 
-    cppcut_assert_equal(key.id(), grn::dat::INVALID_KEY_ID);
-    cppcut_assert_equal(key.length(), grn::dat::UInt32(0));
+    cppcut_assert_equal(grn::dat::INVALID_KEY_ID, key.id());
+    cppcut_assert_equal(grn::dat::UInt32(0), key.length());
     cut_assert(key.ptr() != static_cast<const void *>(NULL));
   }
 
@@ -58,11 +58,11 @@ namespace test_dat_key
     grn::dat::UInt32 buf[16];
     const grn::dat::Key &key = grn::dat::Key::create(buf, 123, "groonga", 7);
 
-    cppcut_assert_equal(key.str(), grn::dat::String("groonga"));
-    cppcut_assert_equal(key.id(), grn::dat::UInt32(123));
-    cppcut_assert_equal(key.length(), grn::dat::UInt32(7));
-    cppcut_assert_equal(std::memcmp(key.ptr(), "groonga", 7), 0);
-    cppcut_assert_equal(key.ptr(),
-                        static_cast<const void *>(reinterpret_cast<char *>(buf) + 5));
+    cppcut_assert_equal(grn::dat::String("groonga"), key.str());
+    cppcut_assert_equal(grn::dat::UInt32(123), key.id());
+    cppcut_assert_equal(grn::dat::UInt32(7), key.length());
+    cppcut_assert_equal(0, std::memcmp(key.ptr(), "groonga", 7));
+    cppcut_assert_equal(static_cast<const void *>(reinterpret_cast<char *>(buf) + 5),
+                        key.ptr());
   }
 }

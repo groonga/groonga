@@ -52,10 +52,10 @@ namespace test_dat_id_cursor
     cursor.open(trie, grn::dat::String(), grn::dat::String());
     for (grn::dat::UInt32 i = trie.min_key_id(); i <= trie.max_key_id(); ++i) {
       const grn::dat::Key &key = cursor.next();
-      cppcut_assert_equal(key.is_valid(), true);
-      cppcut_assert_equal(key.id(), i);
+      cppcut_assert_equal(true, key.is_valid());
+      cppcut_assert_equal(i, key.id());
     }
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(false, cursor.next().is_valid());
   }
 
   void test_min_by_str(void)
@@ -71,10 +71,10 @@ namespace test_dat_id_cursor
     cursor.open(trie, grn::dat::String("スダチ"), grn::dat::String());
     for (grn::dat::UInt32 i = min_key_id; i <= trie.max_key_id(); ++i) {
       const grn::dat::Key &key = cursor.next();
-      cppcut_assert_equal(key.is_valid(), true);
-      cppcut_assert_equal(key.id(), i);
+      cppcut_assert_equal(true, key.is_valid());
+      cppcut_assert_equal(i, key.id());
     }
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(false, cursor.next().is_valid());
   }
 
   void test_max_by_str(void)
@@ -90,10 +90,10 @@ namespace test_dat_id_cursor
     cursor.open(trie, grn::dat::String(), grn::dat::String("オレンジ"));
     for (grn::dat::UInt32 i = trie.min_key_id(); i <= max_key_id; ++i) {
       const grn::dat::Key &key = cursor.next();
-      cppcut_assert_equal(key.is_valid(), true);
-      cppcut_assert_equal(key.id(), i);
+      cppcut_assert_equal(true, key.is_valid());
+      cppcut_assert_equal(i, key.id());
     }
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(false, cursor.next().is_valid());
   }
 
   void test_min_max_by_str(void)
@@ -111,10 +111,10 @@ namespace test_dat_id_cursor
     cursor.open(trie, grn::dat::String("みかん"), grn::dat::String("八朔"));
     for (grn::dat::UInt32 i = min_key_id; i <= max_key_id; ++i) {
       const grn::dat::Key &key = cursor.next();
-      cppcut_assert_equal(key.is_valid(), true);
-      cppcut_assert_equal(key.id(), i);
+      cppcut_assert_equal(true, key.is_valid());
+      cppcut_assert_equal(i, key.id());
     }
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(false, cursor.next().is_valid());
   }
 
   void test_invalid_id(void)
@@ -126,10 +126,10 @@ namespace test_dat_id_cursor
     cursor.open(trie, grn::dat::INVALID_KEY_ID, grn::dat::INVALID_KEY_ID);
     for (grn::dat::UInt32 i = trie.min_key_id(); i <= trie.max_key_id(); ++i) {
       const grn::dat::Key &key = cursor.next();
-      cppcut_assert_equal(key.is_valid(), true);
-      cppcut_assert_equal(key.id(), i);
+      cppcut_assert_equal(true, key.is_valid());
+      cppcut_assert_equal(i, key.id());
     }
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(false, cursor.next().is_valid());
   }
 
   void test_min_by_id(void)
@@ -145,10 +145,10 @@ namespace test_dat_id_cursor
     cursor.open(trie, min_key_id, grn::dat::INVALID_KEY_ID);
     for (grn::dat::UInt32 i = min_key_id; i <= trie.max_key_id(); ++i) {
       const grn::dat::Key &key = cursor.next();
-      cppcut_assert_equal(key.is_valid(), true);
-      cppcut_assert_equal(key.id(), i);
+      cppcut_assert_equal(true, key.is_valid());
+      cppcut_assert_equal(i, key.id());
     }
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(false, cursor.next().is_valid());
   }
 
   void test_max_by_id(void)
@@ -164,10 +164,10 @@ namespace test_dat_id_cursor
     cursor.open(trie, grn::dat::INVALID_KEY_ID, max_key_id);
     for (grn::dat::UInt32 i = trie.min_key_id(); i <= max_key_id; ++i) {
       const grn::dat::Key &key = cursor.next();
-      cppcut_assert_equal(key.is_valid(), true);
-      cppcut_assert_equal(key.id(), i);
+      cppcut_assert_equal(true, key.is_valid());
+      cppcut_assert_equal(i, key.id());
     }
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(false, cursor.next().is_valid());
   }
 
   void test_min_max_by_id(void)
@@ -185,10 +185,10 @@ namespace test_dat_id_cursor
     cursor.open(trie, min_key_id, max_key_id);
     for (grn::dat::UInt32 i = min_key_id; i <= max_key_id; ++i) {
       const grn::dat::Key &key = cursor.next();
-      cppcut_assert_equal(key.is_valid(), true);
-      cppcut_assert_equal(key.id(), i);
+      cppcut_assert_equal(true, key.is_valid());
+      cppcut_assert_equal(i, key.id());
     }
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(false, cursor.next().is_valid());
   }
 
   void test_offset(void)
@@ -201,29 +201,29 @@ namespace test_dat_id_cursor
     cursor.open(trie, 2, 5, 0);
     for (grn::dat::UInt32 i = 2; i <= 5; ++i) {
       const grn::dat::Key &key = cursor.next();
-      cppcut_assert_equal(key.is_valid(), true);
-      cppcut_assert_equal(key.id(), i);
+      cppcut_assert_equal(true, key.is_valid());
+      cppcut_assert_equal(i, key.id());
     }
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::INVALID_KEY_ID, grn::dat::INVALID_KEY_ID, 5);
     for (grn::dat::UInt32 i = trie.min_key_id() + 5; i <= trie.max_key_id(); ++i) {
       const grn::dat::Key &key = cursor.next();
-      cppcut_assert_equal(key.is_valid(), true);
-      cppcut_assert_equal(key.id(), i);
+      cppcut_assert_equal(true, key.is_valid());
+      cppcut_assert_equal(i, key.id());
     }
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, 3, 7, 2);
     for (grn::dat::UInt32 i = 3 + 2; i <= 7; ++i) {
       const grn::dat::Key &key = cursor.next();
-      cppcut_assert_equal(key.is_valid(), true);
-      cppcut_assert_equal(key.id(), i);
+      cppcut_assert_equal(true, key.is_valid());
+      cppcut_assert_equal(i, key.id());
     }
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, 2, 5, 100);
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(false, cursor.next().is_valid());
   }
 
   void test_limit(void)
@@ -236,29 +236,29 @@ namespace test_dat_id_cursor
     cursor.open(trie, 3, 6, 0, grn::dat::UINT32_MAX);
     for (grn::dat::UInt32 i = 3; i <= 6; ++i) {
       const grn::dat::Key &key = cursor.next();
-      cppcut_assert_equal(key.is_valid(), true);
-      cppcut_assert_equal(key.id(), i);
+      cppcut_assert_equal(true, key.is_valid());
+      cppcut_assert_equal(i, key.id());
     }
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::INVALID_KEY_ID, grn::dat::INVALID_KEY_ID, 0, 3);
     for (grn::dat::UInt32 i = trie.min_key_id(); i < (trie.min_key_id() + 3); ++i) {
       const grn::dat::Key &key = cursor.next();
-      cppcut_assert_equal(key.is_valid(), true);
-      cppcut_assert_equal(key.id(), i);
+      cppcut_assert_equal(true, key.is_valid());
+      cppcut_assert_equal(i, key.id());
     }
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, 3, 7, 1, 2);
     for (grn::dat::UInt32 i = 3 + 1; i < (3 + 1 + 2); ++i) {
       const grn::dat::Key &key = cursor.next();
-      cppcut_assert_equal(key.is_valid(), true);
-      cppcut_assert_equal(key.id(), i);
+      cppcut_assert_equal(true, key.is_valid());
+      cppcut_assert_equal(i, key.id());
     }
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, 2, 5, 0, 0);
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(false, cursor.next().is_valid());
   }
 
   void test_ascending_cursor(void)
@@ -272,27 +272,27 @@ namespace test_dat_id_cursor
                 0, grn::dat::UINT32_MAX, grn::dat::ASCENDING_CURSOR);
     for (grn::dat::UInt32 i = trie.min_key_id(); i <= trie.max_key_id(); ++i) {
       const grn::dat::Key &key = cursor.next();
-      cppcut_assert_equal(key.is_valid(), true);
-      cppcut_assert_equal(key.id(), i);
+      cppcut_assert_equal(true, key.is_valid());
+      cppcut_assert_equal(i, key.id());
     }
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, 2, 7, 0, grn::dat::UINT32_MAX,
                 grn::dat::ASCENDING_CURSOR);
     for (grn::dat::UInt32 i = 2; i <= 7; ++i) {
       const grn::dat::Key &key = cursor.next();
-      cppcut_assert_equal(key.is_valid(), true);
-      cppcut_assert_equal(key.id(), i);
+      cppcut_assert_equal(true, key.is_valid());
+      cppcut_assert_equal(i, key.id());
     }
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, 3, 6, 1, 5, grn::dat::ASCENDING_CURSOR);
     for (grn::dat::UInt32 i = 3 + 1; i <= 6; ++i) {
       const grn::dat::Key &key = cursor.next();
-      cppcut_assert_equal(key.is_valid(), true);
-      cppcut_assert_equal(key.id(), i);
+      cppcut_assert_equal(true, key.is_valid());
+      cppcut_assert_equal(i, key.id());
     }
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(false, cursor.next().is_valid());
   }
 
   void test_descending_cursor(void)
@@ -306,27 +306,27 @@ namespace test_dat_id_cursor
                 0, grn::dat::UINT32_MAX, grn::dat::DESCENDING_CURSOR);
     for (grn::dat::UInt32 i = trie.max_key_id(); i >= trie.min_key_id(); --i) {
       const grn::dat::Key &key = cursor.next();
-      cppcut_assert_equal(key.is_valid(), true);
-      cppcut_assert_equal(key.id(), i);
+      cppcut_assert_equal(true, key.is_valid());
+      cppcut_assert_equal(i, key.id());
     }
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, 2, 7, 0, grn::dat::UINT32_MAX,
                 grn::dat::DESCENDING_CURSOR);
     for (grn::dat::UInt32 i = 7; i >= 2; --i) {
       const grn::dat::Key &key = cursor.next();
-      cppcut_assert_equal(key.is_valid(), true);
-      cppcut_assert_equal(key.id(), i);
+      cppcut_assert_equal(true, key.is_valid());
+      cppcut_assert_equal(i, key.id());
     }
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, 2, 8, 2, 3, grn::dat::DESCENDING_CURSOR);
     for (grn::dat::UInt32 i = 8 - 2; i > (8 - 2 - 3); --i) {
       const grn::dat::Key &key = cursor.next();
-      cppcut_assert_equal(key.is_valid(), true);
-      cppcut_assert_equal(key.id(), i);
+      cppcut_assert_equal(true, key.is_valid());
+      cppcut_assert_equal(i, key.id());
     }
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(false, cursor.next().is_valid());
   }
 
   void test_except_boundary(void)
@@ -341,35 +341,35 @@ namespace test_dat_id_cursor
                 grn::dat::EXCEPT_LOWER_BOUND | grn::dat::EXCEPT_UPPER_BOUND);
     for (grn::dat::UInt32 i = trie.min_key_id(); i <= trie.max_key_id(); ++i) {
       const grn::dat::Key &key = cursor.next();
-      cppcut_assert_equal(key.is_valid(), true);
-      cppcut_assert_equal(key.id(), i);
+      cppcut_assert_equal(true, key.is_valid());
+      cppcut_assert_equal(i, key.id());
     }
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, trie.min_key_id(), trie.max_key_id(),
                 0, grn::dat::UINT32_MAX,
                 grn::dat::EXCEPT_LOWER_BOUND | grn::dat::EXCEPT_UPPER_BOUND);
     for (grn::dat::UInt32 i = trie.min_key_id() + 1; i <= (trie.max_key_id() - 1); ++i) {
       const grn::dat::Key &key = cursor.next();
-      cppcut_assert_equal(key.is_valid(), true);
-      cppcut_assert_equal(key.id(), i);
+      cppcut_assert_equal(true, key.is_valid());
+      cppcut_assert_equal(i, key.id());
     }
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, 2, 7, 1, 100, grn::dat::EXCEPT_LOWER_BOUND);
     for (grn::dat::UInt32 i = 2 + 1 + 1; i <= 7; ++i) {
       const grn::dat::Key &key = cursor.next();
-      cppcut_assert_equal(key.is_valid(), true);
-      cppcut_assert_equal(key.id(), i);
+      cppcut_assert_equal(true, key.is_valid());
+      cppcut_assert_equal(i, key.id());
     }
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, 2, 7, 1, 100, grn::dat::EXCEPT_UPPER_BOUND);
     for (grn::dat::UInt32 i = 2 + 1; i <= (7 - 1); ++i) {
       const grn::dat::Key &key = cursor.next();
-      cppcut_assert_equal(key.is_valid(), true);
-      cppcut_assert_equal(key.id(), i);
+      cppcut_assert_equal(true, key.is_valid());
+      cppcut_assert_equal(i, key.id());
     }
-    cppcut_assert_equal(cursor.next().is_valid(), false);
+    cppcut_assert_equal(false, cursor.next().is_valid());
   }
 }
