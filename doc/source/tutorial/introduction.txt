@@ -254,8 +254,8 @@ If you want to specify some columns, you should use comma(,) between column name
 
 "_score" column is added to The groonga's result. This column has the higher number, the more condition of fulltext seaching matches text.
 
-Display ranges
---------------
+Ranges to display
+-----------------
 
 'select' command can display result in only specified ranges using 'offset' and 'limit' parametor. This parametors is available when you want to show only a page in much result of searching.
 
@@ -269,8 +269,8 @@ Display ranges
 .. select --table Site --offset 3 --limit 3
 .. select --table Site --offset 7 --limit 3
 
-Arrangement
------------
+Sort
+-----
 
 If you use 'sortby' parametor in 'select' command, this command puts result of searching in order.
 
