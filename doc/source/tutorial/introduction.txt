@@ -254,8 +254,8 @@ If you want to specify some columns, you should use comma(,) between column name
 
 "_score" column is added to The groonga's result. This column has the higher number, the more condition of fulltext seaching matches text.
 
-Display ranges
---------------
+Ranges to display
+-----------------
 
 'select' command can display result in only specified ranges using 'offset' and 'limit' parametor. This parametors is available when you want to show only a page in much result of searching.
 
@@ -269,30 +269,29 @@ Display ranges
 .. select --table Site --offset 3 --limit 3
 .. select --table Site --offset 7 --limit 3
 
-並び替え
---------
+Sort
+-----
 
-selectコマンドにおいて、sortbyパラメータを用いることで、検索結果を並び替えることが出来ます。
+If you use 'sortby' parametor in 'select' command, this command puts result of searching in order.
 
-sortbyパラメータにカラム名を指定することで、そのカラムの値で昇順にソートします。また、カラム名の前にハイフン（-）を付けることで、降順にソートすることも出来ます。
+When 'sortby' parametor specifies column name, result is sorted in ascending-order to its column's value. This 'select' command also sort in descending-order when you add hyphen(-) before column name.
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-15.log
 .. select --table Site --sortby -_id
 
-出力カラムの指定で紹介した「_score」カラムは、ソートの条件としても使うことができます。
+For condition of sort, you can use '_score' column introduced in the paragraph of "Specify output column".
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-16.log
 .. select --table Site --query title:@test --output_columns _id,_score,title --sortby _score
 
-ソートするカラム名を複数指定したい場合は、カンマ(,)区切りで指定します。複数のカラムを指定した場合、最初のカラムで同一の値のレコードがあった場合に、次のカラムの値でソートさせることができます。
+If you want to specify some column names, you should use comma(,) between these names. In this case, when same value of records is existed in first column, this command sorts result of searching to value of second column.
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-17.log
 .. select --table Site --query title:@test --output_columns _id,_score,title --sortby _score,_id
 
-.. rubric:: 脚注
+.. rubric:: footnote
 
-.. [1] 現在のバージョンでは、全文検索インデックスが存在する場合にのみ、match_columnsパラメータを利用することができます。通常のカラムでの絞り込みには利用できません。
-
+.. [1] In now groonga's version, you can only use 'match_columns' parametor in the case of existing index of fulltext searching. This parametor cannot be use in searching for ordinary columns.
