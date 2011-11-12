@@ -45,8 +45,6 @@
 #define DEFAULT_PORT 8080
 #define DEFAULT_MAX_THREADS 8
 
-grn_rc grn_ctx_close(grn_ctx *ctx);
-
 #define CONST_STR_LEN(x) x, x ? sizeof(x) - 1 : 0
 
 #define LISTEN_BACKLOG 756
@@ -400,8 +398,6 @@ dispatch(void *arg)
   event_base_dispatch((struct event_base *)arg);
   return NULL;
 }
-
-grn_rc grn_text_ulltoa(grn_ctx *ctx, grn_obj *buf, unsigned long long int i);
 
 static void
 msgpack2json(msgpack_object *o, grn_ctx *ctx, grn_obj *buf)
