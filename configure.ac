@@ -139,7 +139,8 @@ if test "$GCC" = "yes"; then
 #  CHECK_CFLAG([-Wwrite-strings])
 #  CHECK_CFLAG([-Winline])
 
-  REMOVE_CXXFLAG([-fno-exceptions])
+  CHECK_CXXFLAG([-fexceptions])
+  CHECK_CXXFLAG([-fimplicit-templates])
 fi
 
 AC_LIBTOOL_WIN32_DLL
