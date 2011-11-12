@@ -71,14 +71,7 @@ m4_ifdef([PKG_PROG_PKG_CONFIG],
 AC_DEFUN([CHECK_CFLAG], [
   old_CFLAGS=$CFLAGS
   CFLAGS="$CFLAGS $1 -Werror"
-  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([
-#include <stdio.h>
-int main(int argc, char **argv)
-{
-  printf("test cflags, argc:%d argv[0]:%s", argc, argv[0]);
-  return 0;
-}
-    ])],
+  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
     [check_cflag=yes],
     [check_cflag=no])
   CFLAGS="$old_CFLAGS"
