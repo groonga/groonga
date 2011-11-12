@@ -99,6 +99,17 @@ AC_DEFUN([CHECK_CXXFLAG], [
   AC_MSG_RESULT([$check_cxxflag])
 ])
 
+AC_DEFUN([REMOVE_CXXFLAG], [
+  AC_MSG_CHECKING([whether g++ option $1 is needed to be removed])
+  if echo "$CXXFLAGS" | grep -q -- "$1"; then
+    CXXFLAGS=`echo "$CXXFLAGS" | sed -e 's,$1,,'`
+    remove_cxxflag=yes
+  else
+    remove_cxxflag=no
+  fi
+  AC_MSG_RESULT([$remove_cxxflag])
+])
+
 if test "$GCC" = "yes"; then
   CHECK_CFLAG([-Wall])
   CHECK_CFLAG([-Wextra])
@@ -128,7 +139,7 @@ if test "$GCC" = "yes"; then
 #  CHECK_CFLAG([-Wwrite-strings])
 #  CHECK_CFLAG([-Winline])
 
-  CHECK_CXXFLAG([-fexceptions])
+  REMOVE_CXXFLAG([-fno-exceptions])
 fi
 
 AC_LIBTOOL_WIN32_DLL
