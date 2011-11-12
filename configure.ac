@@ -944,6 +944,7 @@ echo "  CFLAGS:                ${CFLAGS}"
 echo "  CXXFLAGS:              ${CXXFLAGS}"
 echo "  Libraries:             ${LIBS}"
 echo "  Documentation:         ${document_available}"
+echo "  Munin plugins:         ${install_munin_plugins}"
 echo
 echo "Paths:"
 echo "  Install path prefix:   ${prefix}"
