@@ -68,6 +68,7 @@ AM_PROG_CC_C_O
 m4_ifdef([PKG_PROG_PKG_CONFIG],
          [PKG_PROG_PKG_CONFIG([0.19])
           m4_pattern_allow(PKG_CONFIG_LIBDIR)])
+
 AC_DEFUN([CHECK_CFLAG], [
   old_CFLAGS=$CFLAGS
   CFLAGS="$CFLAGS $1 -Werror"
@@ -79,6 +80,21 @@ AC_DEFUN([CHECK_CFLAG], [
     CFLAGS="$CFLAGS $1"
   fi
 ])
+
+AC_DEFUN([CHECK_CXXFLAG], [
+  old_CXXFLAGS=$CXXFLAGS
+  CXXFLAGS="$CXXFLAGS $1 -Werror"
+  AC_LANG_PUSH([C++])
+  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
+    [check_cxxflag=yes],
+    [check_cxxflag=no])
+  AC_LANG_POP([C++])
+  CXXFLAGS="$old_CXXFLAGS"
+  if test "x$check_cxxflag" = "xyes"; then
+    CXXFLAGS="$CXXFLAGS $1"
+  fi
+])
+
 if test "$GCC" = "yes"; then
   CHECK_CFLAG([-Wall])
   CHECK_CFLAG([-Wextra])
@@ -106,7 +122,10 @@ if test "$GCC" = "yes"; then
 #  CHECK_CFLAG([-Wconversion])
 #  CHECK_CFLAG([-Wwrite-strings])
 #  CHECK_CFLAG([-Winline])
+
+  CHECK_CXXFLAG([-fexceptions])
 fi
+
 AC_LIBTOOL_WIN32_DLL
 AM_PROG_LIBTOOL
 m4_ifdef([LT_OUTPUT], [LT_OUTPUT])
