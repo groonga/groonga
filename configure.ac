@@ -70,6 +70,7 @@ m4_ifdef([PKG_PROG_PKG_CONFIG],
           m4_pattern_allow(PKG_CONFIG_LIBDIR)])
 
 AC_DEFUN([CHECK_CFLAG], [
+  AC_MSG_CHECKING([if gcc supports $1])
   old_CFLAGS=$CFLAGS
   CFLAGS="$CFLAGS $1 -Werror"
   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
@@ -79,9 +80,11 @@ AC_DEFUN([CHECK_CFLAG], [
   if test "x$check_cflag" = "xyes"; then
     CFLAGS="$CFLAGS $1"
   fi
+  AC_MSG_RESULT([$check_cflag])
 ])
 
 AC_DEFUN([CHECK_CXXFLAG], [
+  AC_MSG_CHECKING([if g++ supports $1])
   old_CXXFLAGS=$CXXFLAGS
   CXXFLAGS="$CXXFLAGS $1 -Werror"
   AC_LANG_PUSH([C++])
@@ -93,6 +96,7 @@ AC_DEFUN([CHECK_CXXFLAG], [
   if test "x$check_cxxflag" = "xyes"; then
     CXXFLAGS="$CXXFLAGS $1"
   fi
+  AC_MSG_RESULT([$check_cxxflag])
 ])
 
 if test "$GCC" = "yes"; then
