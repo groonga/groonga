@@ -241,6 +241,34 @@ if test "x$enable_aio" != "xno"; then
   AC_DEFINE(USE_AIO, [1], [use AIO/DIO])
 fi
 
+AC_CHECK_LIB(m, log, [], [AC_MSG_ERROR("No libm found")])
+AC_MSG_CHECKING([for fpclassify])
+AC_LINK_IFELSE(
+  [AC_LANG_PROGRAM(
+    [#include <math.h>],
+    [if (fpclassify(0.0)) {return 0;}]
+   )],
+  [
+    AC_DEFINE(HAVE_FPCLASSIFY, [1], [use fpclassify])
+    AC_MSG_RESULT(yes)
+  ],
+  [
+    AC_LINK_IFELSE(
+      [AC_LANG_PROGRAM(
+	[#define _ISOC99_SOURCE
+         #include <math.h>],
+	[if (fpclassify(0.0)) {return 0;}]
+       )],
+      [
+        AC_DEFINE(_ISOC99_SOURCE, [1], [Define to 1 for fpclassify])
+	AC_DEFINE(HAVE_FPCLASSIFY, [1], [use fpclassify with _ISOC99_SOURCE])
+	AC_MSG_RESULT(yes)
+      ],
+      [
+        AC_MSG_RESULT(no)
+      ])
+  ])
+
 AC_CHECK_HEADERS(sys/mman.h sys/time.h sys/timeb.h sys/param.h sys/types.h sys/resource.h)
 AC_CHECK_HEADERS(netdb.h sys/wait.h sys/socket.h netinet/in.h netinet/tcp.h)
 AC_CHECK_HEADERS(ucontext.h signal.h errno.h execinfo.h sys/sysctl.h)
@@ -266,24 +294,6 @@ AC_TYPE_OFF_T
 AC_TYPE_SIZE_T
 AC_CHECK_SIZEOF(off_t)
 
-AC_MSG_CHECKING([for fpclassify])
-AC_COMPILE_IFELSE([AC_LANG_PROGRAM([
-#define _ISOC99_SOURCE
-#include <math.h>
-
-int main(int argc, char **argv)
-{
-  return fpclassify (0.0);
-}
-    ])],
-    [
-      AC_MSG_RESULT(yes)
-      AC_DEFINE(HAVE_FPCLASSIFY, [1], [use fpclassify])
-    ],
-    [
-      AC_MSG_RESULT(no)
-    ])
-
 # log path
 AC_ARG_WITH(log_path,
   [AS_HELP_STRING([--with-log-path=PATH],
@@ -308,7 +318,6 @@ AC_ARG_WITH(match_escalation_threshold,
   GRN_DEFAULT_MATCH_ESCALATION_THRESHOLD="0")
 AC_DEFINE_UNQUOTED(GRN_DEFAULT_MATCH_ESCALATION_THRESHOLD, $GRN_DEFAULT_MATCH_ESCALATION_THRESHOLD, "specified match escalation threshold")
 
-AC_CHECK_LIB(m, log, [M_LIBS="-lm"], [AC_MSG_ERROR("No libm found")])
 if test "$os_win32" != "yes"; then
   AC_CHECK_HEADERS(pthread.h)
   AC_CHECK_LIB(pthread, pthread_mutex_init,
@@ -880,7 +889,7 @@ GRN_DEFS="$GRN_DEFS -DGRN_DEFAULT_RELATIVE_DOCUMENT_ROOT=\\\"\"share/\$(PACKAGE)
 AC_SUBST(GRN_DEFS)
 CFLAGS="$CFLAGS $OPT_CFLAGS "
 LIBS="$LIBS $ZLIB_LIBS $LZO_LIBS $BACKTRACE_LIBS $RT_LIBS $PTHREAD_LIBS"
-LIBS="$LIBS $M_LIBS $NSL_LIBS $SOCKET_LIBS $DL_LIBS $WINDOWS_LIBS"
+LIBS="$LIBS $NSL_LIBS $SOCKET_LIBS $DL_LIBS $WINDOWS_LIBS"
 AC_DEFINE_UNQUOTED(CONFIGURE_OPTIONS, "$ac_configure_args", "specified configure options")
 
 # For groonga.org
