@@ -179,8 +179,8 @@ inline static grn_rc
 prompt(grn_ctx *ctx, grn_obj *buf)
 {
   static int the_first_read = GRN_TRUE;
-  int len;
   grn_rc rc;
+  GRN_BULK_REWIND(buf);
   if (!batchmode) {
 #ifdef HAVE_LIBEDIT
     const wchar_t *line;
@@ -205,10 +205,8 @@ prompt(grn_ctx *ctx, grn_obj *buf)
         }
       }
       rc = GRN_SUCCESS;
-      len = GRN_TEXT_LEN(buf);
     } else {
       rc = GRN_END_OF_DATA;
-      len = 0;
     }
 #else
     fprintf(stderr, "> ");
@@ -220,7 +218,7 @@ prompt(grn_ctx *ctx, grn_obj *buf)
       number_of_lines++;
     }
   }
-  if (the_first_read && len > 0) {
+  if (the_first_read && GRN_TEXT_LEN(buf) > 0) {
     const char bom[] = {0xef, 0xbb, 0xbf};
     if (GRN_CTX_GET_ENCODING(ctx) == GRN_ENC_UTF8 &&
         GRN_TEXT_LEN(buf) > 3 && !memcmp(GRN_TEXT_VALUE(buf), bom, 3)) {
@@ -689,7 +687,6 @@ do_alone(int argc, char **argv)
       while (prompt(ctx, &text) != GRN_END_OF_DATA) {
         GRN_TEXT_PUT(ctx, &command, GRN_TEXT_VALUE(&text), GRN_TEXT_LEN(&text));
         grn_ctx_send(ctx, GRN_TEXT_VALUE(&text), GRN_TEXT_LEN(&text), 0);
-        GRN_BULK_REWIND(&text);
         if (ctx->stat == GRN_CTX_QUIT) { break; }
       }
       rc = ctx->rc;
@@ -754,7 +751,6 @@ g_client(int argc, char **argv)
       GRN_TEXT_INIT(&text, 0);
       while (prompt(ctx, &text) != GRN_END_OF_DATA) {
         grn_ctx_send(ctx, GRN_TEXT_VALUE(&text), GRN_TEXT_LEN(&text), 0);
-        GRN_BULK_REWIND(&text);
         rc = ctx->rc;
         if (rc) { break; }
         if (c_output(ctx)) { goto exit; }

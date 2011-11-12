@@ -842,7 +842,7 @@ in_rectangle_data_prepare(grn_ctx *ctx, grn_obj *index,
   }
 
   {
-    int distance, latitude_distance, longitude_distance;
+    int latitude_distance, longitude_distance;
     grn_geo_point *top_left, *bottom_right;
     grn_geo_point *geo_point_input;
     uint8_t geo_key_input[sizeof(grn_geo_point)];
@@ -972,7 +972,6 @@ grn_geo_cursor_each(grn_ctx *ctx, grn_obj *geo_cursor,
   grn_geo_point *current, *base, *top_left, *bottom_right;
   int diff_bit, distance, end_mesh_point;
   grn_geo_mesh_direction direction;
-  int i = 0;
   int mesh_point;
   grn_id index_id;
 
@@ -1137,13 +1136,11 @@ grn_geo_select_in_rectangle(grn_ctx *ctx, grn_obj *index,
                             grn_obj *res, grn_operator op)
 {
   grn_obj *cursor;
-  grn_posting *posting;
 
   cursor = grn_geo_cursor_open_in_rectangle(ctx, index,
                                             top_left_point, bottom_right_point,
                                             0, -1);
   if (cursor) {
-    grn_geo_cursor_in_rectangle *geo_cursor = (grn_geo_cursor_in_rectangle *)cursor;
     grn_geo_select_in_rectangle_data data;
     data.res = (grn_hash *)res;
     data.op = op;

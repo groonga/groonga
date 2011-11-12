@@ -377,7 +377,6 @@ grn_plugin_register(grn_ctx *ctx, const char *name)
   const char *plugins_dir;
   char dir_last_char;
   char path[PATH_MAX];
-  char normalized_name[PATH_MAX];
   int name_length, max_name_length;
 
   if (name[0] == '/') {

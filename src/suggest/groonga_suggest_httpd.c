@@ -697,7 +697,7 @@ usage(FILE *output)
 int
 main(int argc, char **argv)
 {
-  int port_no = DEFAULT_PORT, daemon = 0;
+  int port_no = DEFAULT_PORT;
   const char *max_threads_string = NULL, *port_string = NULL;
   const char *address;
   const char *send_endpoint = NULL, *recv_endpoint = NULL, *log_base_path = NULL;
