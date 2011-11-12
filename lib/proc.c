@@ -202,7 +202,7 @@ grn_select(grn_ctx *ctx, const char *table, unsigned table_len,
     drilldown_len + 1 + drilldown_sortby_len + 1 + drilldown_output_columns_len +
     match_escalation_threshold_len + 1 + query_expansion_len + 1 +
     sizeof(grn_content_type) + sizeof(int) * 4;
-  long long int threshold, original_threshold;
+  long long int threshold, original_threshold = 0;
   if (cache_key_size <= GRN_TABLE_MAX_KEY_SIZE) {
     grn_obj *cache;
     char *cp = cache_key;
@@ -1505,7 +1505,7 @@ proc_get_resolve_parameters(grn_ctx *ctx, grn_user_data *user_data, grn_obj **ta
 static grn_obj *
 proc_get(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  grn_id id;
+  grn_id id = GRN_ID_NIL;
   grn_obj *table = NULL;
   if (!proc_get_resolve_parameters(ctx, user_data, &table, &id)) {
     grn_obj obj;
@@ -1524,13 +1524,14 @@ proc_get(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 static grn_obj *
 proc_delete(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  grn_rc rc;
+  grn_rc rc = GRN_INVALID_ARGUMENT;
   grn_obj *table = grn_ctx_get(ctx,
                                GRN_TEXT_VALUE(VAR(0)),
                                GRN_TEXT_LEN(VAR(0)));
   if (table) {
     if (GRN_TEXT_LEN(VAR(1)) && GRN_TEXT_LEN(VAR(2))) {
       ERR(GRN_INVALID_ARGUMENT, "both id and key are specified");
+      rc = ctx->rc;
     } else if (GRN_TEXT_LEN(VAR(1))) {
       grn_obj *p_key = VAR(1);
       grn_obj key;
@@ -1552,10 +1553,12 @@ proc_delete(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
         rc = grn_table_delete_by_id(ctx, table, id);
       } else {
         ERR(GRN_INVALID_ARGUMENT, "invalid id");
+        rc = ctx->rc;
       }
     }
   } else {
     ERR(GRN_INVALID_ARGUMENT, "unknown table name");
+    rc = ctx->rc;
   }
   GRN_OUTPUT_BOOL(!rc);
   return NULL;

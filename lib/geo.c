@@ -972,7 +972,7 @@ grn_geo_cursor_each(grn_ctx *ctx, grn_obj *geo_cursor,
   grn_geo_point *current, *base, *top_left, *bottom_right;
   int diff_bit, distance, end_mesh_point;
   grn_geo_mesh_direction direction;
-  int mesh_point;
+  int mesh_point = 0;
   grn_id index_id;
 
   cursor = (grn_geo_cursor_in_rectangle *)geo_cursor;

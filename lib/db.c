@@ -5882,9 +5882,9 @@ remove_columns(grn_ctx *ctx, grn_obj *obj)
 grn_rc
 grn_obj_remove(grn_ctx *ctx, grn_obj *obj)
 {
-  grn_id id;
+  grn_id id = GRN_ID_NIL;
+  grn_obj *db = NULL;
   char *path;
-  grn_obj *db;
   GRN_API_ENTER;
   if (ctx->impl && ctx->impl->db) {
     uint32_t s = 0;

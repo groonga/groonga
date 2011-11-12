@@ -3478,7 +3478,7 @@ grn_rc
 grn_ii_truncate(grn_ctx *ctx, grn_ii *ii)
 {
   grn_rc rc;
-  char *segpath, *chunkpath;
+  char *segpath, *chunkpath = NULL;
   grn_obj *lexicon;
   uint32_t flags;
   if ((segpath = (char *)grn_io_path(ii->seg)) && *segpath != '\0') {
