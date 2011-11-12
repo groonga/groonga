@@ -1212,6 +1212,7 @@ grn_geo_estimate_in_rectangle(grn_ctx *ctx,
     int select_latitude_distance, select_longitude_distance;
     int total_latitude_distance, total_longitude_distance;
     double select_ratio;
+    double estimated_n_records;
 
     rc = geo_point_get(ctx, data.pat, GRN_CURSOR_ASCENDING, &min);
     if (!rc) {
@@ -1241,7 +1242,8 @@ grn_geo_estimate_in_rectangle(grn_ctx *ctx,
       select_ratio *= ((double)select_longitude_distance /
                        (double)total_longitude_distance);
     }
-    n = (int)(ceil(total_records * select_ratio));
+    estimated_n_records = ceil(total_records * select_ratio);
+    n = (int)estimated_n_records;
   }
 
 exit :
