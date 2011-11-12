@@ -960,7 +960,7 @@ grn_com_sopen(grn_ctx *ctx, grn_com_event *ev,
               const char *bind_address, int port, grn_msg_handler *func,
               struct hostent *he)
 {
-  grn_sock lfd;
+  grn_sock lfd = -1;
   grn_com *cs = NULL;
   int getaddrinfo_result;
   struct addrinfo *bind_address_info = NULL;
@@ -1042,7 +1042,7 @@ grn_com_sopen(grn_ctx *ctx, grn_com_event *ev,
   }
   cs->accepting = GRN_TRUE;
 exit :
-  if (!cs) { grn_sock_close(lfd); }
+  if (!cs && lfd != 1) { grn_sock_close(lfd); }
   if (bind_address_info) { freeaddrinfo(bind_address_info); }
   GRN_API_RETURN(ctx->rc);
 }
