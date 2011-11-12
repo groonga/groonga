@@ -839,8 +839,6 @@ if test x"$enable_document" != x"no"; then
       if test x"$enable_document" = x"yes"; then
         AC_MSG_ERROR("No hg found")
       fi
-    else
-      document_available=yes
     fi
   fi
 fi
