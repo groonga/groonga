@@ -847,6 +847,18 @@ AM_CONDITIONAL([ENABLE_DOCUMENT],
 AC_MSG_CHECKING([whether document available])
 AC_MSG_RESULT($document_available)
 
+# Munin plugins
+AC_MSG_CHECKING([whether install munin plugins])
+AC_ARG_WITH(munin-plugins,
+  [AS_HELP_STRING([--with-munin-plugins],
+    [install Munin plugins. [default=no]])],
+  [install_munin_plugins="$withval"],
+  [install_munin_plugins="no"])
+AC_MSG_RESULT($install_munin_plugins)
+
+AM_CONDITIONAL([INSTALL_MUNIN_PLUGINS],
+               [test "${install_munin_plugins}" = "yes"])
+
 # plugins check
 relative_pluginsdir="\$(PACKAGE)/plugins"
 AC_SUBST(relative_pluginsdir)
