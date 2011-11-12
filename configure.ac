@@ -863,6 +863,19 @@ AC_MSG_RESULT($install_munin_plugins)
 AM_CONDITIONAL([INSTALL_MUNIN_PLUGINS],
                [test "${install_munin_plugins}" = "yes"])
 
+# platform
+AC_MSG_CHECKING([whether package platform])
+AC_ARG_WITH(package-platform,
+  [AS_HELP_STRING([--with-package-platform=PLATFORM],
+    [install package platform related files. [default=no]
+     (supported package platforms: redhat)])],
+  [package_platform="$withval"],
+  [package_platform="no"])
+AC_MSG_RESULT($package_platform)
+
+AM_CONDITIONAL([REDHAT_PLATFORM],
+               [test "${package_platform}" = "yes"])
+
 # plugins check
 relative_pluginsdir="\$(PACKAGE)/plugins"
 AC_SUBST(relative_pluginsdir)
@@ -949,6 +962,7 @@ echo "  CXXFLAGS:              ${CXXFLAGS}"
 echo "  Libraries:             ${LIBS}"
 echo "  Documentation:         ${document_available}"
 echo "  Munin plugins:         ${install_munin_plugins}"
+echo "  Package platform:      ${package_platform}"
 echo
 echo "Paths:"
 echo "  Install path prefix:   ${prefix}"
