@@ -32,8 +32,12 @@ include $(srcdir)/version.sh
 
 dist-hook:
 	echo "$(GROONGA_VERSION)" > $(distdir)/version
-	@test -d $(top_srcdir)/.git && \
-	  cd $(top_srcdir) && release/gitlog2changelog.py > $(distdir)/ChangeLog
+	@if test -d $(top_srcdir)/.git; then			\
+	  cd $(top_srcdir) && release/gitlog2changelog.py >	\
+	    $(distdir)/ChangeLog;				\
+	else							\
+	  :;							\
+	fi
 
 benchmark:
 	cd test/benchmark && $(MAKE) benchmark
