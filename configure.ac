@@ -214,6 +214,7 @@ AC_CONFIG_FILES([
   test/unit/fixtures/stress/Makefile
   test/unit/fixtures/performance/Makefile
   test/unit/fixtures/plugins/Makefile
+  test/unit/fixtures/geo/Makefile
   test/unit/fixtures/story/Makefile
   test/unit/fixtures/story/taiyaki/Makefile
   test/unit/fixtures/story/rurema/Makefile

@@ -3,6 +3,7 @@ SUBDIRS =					\
 	performance				\
 	inverted-index				\
 	plugins					\
+	geo					\
 	story
 
 if WITH_CUTTER
