@@ -245,7 +245,7 @@ data_cursor_bottom(void)
            4, 7,
            3, 8);
 
-  ADD_DATA("bottom - left - left",
+  ADD_DATA("bottom - left",
            gcut_list_string_new(
              "(03,03)", "(03,04)", "(03,05)", "(03,06)", "(03,07)", "(03,08)",
              "(04,03)", "(04,04)", "(04,05)", "(04,06)", "(04,07)", "(04,08)",
@@ -253,7 +253,7 @@ data_cursor_bottom(void)
            4, 3,
            3, 8);
 
-  ADD_DATA("bottom - right - right",
+  ADD_DATA("bottom - right",
            gcut_list_string_new(
              "(03,07)", "(03,08)", "(03,09)", "(03,10)", "(03,11)", "(03,12)",
              "(04,07)", "(04,08)", "(04,09)", "(04,10)", "(04,11)", "(04,12)",
@@ -272,7 +272,7 @@ data_cursor_top(void)
            12, 7,
            11, 8);
 
-  ADD_DATA("top - left - left",
+  ADD_DATA("top - left",
            gcut_list_string_new(
              "(11,03)", "(11,04)", "(11,05)", "(11,06)", "(11,07)", "(11,08)",
              "(12,03)", "(12,04)", "(12,05)", "(12,06)", "(12,07)", "(12,08)",
@@ -280,7 +280,7 @@ data_cursor_top(void)
            12, 3,
            11, 8);
 
-  ADD_DATA("bottom - right - right",
+  ADD_DATA("top - right",
            gcut_list_string_new(
              "(11,07)", "(11,08)", "(11,09)", "(11,10)", "(11,11)", "(11,12)",
              "(12,07)", "(12,08)", "(12,09)", "(12,10)", "(12,11)", "(12,12)",
@@ -289,12 +289,80 @@ data_cursor_top(void)
            11, 12);
 }
 
+static void
+data_cursor_left(void)
+{
+  ADD_DATA("left - minimum",
+           gcut_list_string_new("(07,03)", "(07,04)",
+                                "(08,03)", "(08,04)",
+                                NULL),
+           8, 3,
+           7, 4);
+
+  ADD_DATA("left - bottom",
+           gcut_list_string_new("(03,03)", "(03,04)",
+                                "(04,03)", "(04,04)",
+                                "(05,03)", "(05,04)",
+                                "(06,03)", "(06,04)",
+                                "(07,03)", "(07,04)",
+                                "(08,03)", "(08,04)",
+                                NULL),
+           8, 3,
+           3, 4);
+
+  ADD_DATA("left - top",
+           gcut_list_string_new("(07,03)", "(07,04)",
+                                "(08,03)", "(08,04)",
+                                "(09,03)", "(09,04)",
+                                "(10,03)", "(10,04)",
+                                "(11,03)", "(11,04)",
+                                "(12,03)", "(12,04)",
+                                NULL),
+           12, 3,
+           7, 4);
+}
+
+static void
+data_cursor_right(void)
+{
+  ADD_DATA("right - minimum",
+           gcut_list_string_new("(07,11)", "(07,12)",
+                                "(08,11)", "(08,12)",
+                                NULL),
+           8, 11,
+           7, 12);
+
+  ADD_DATA("right - bottom",
+           gcut_list_string_new("(03,11)", "(03,12)",
+                                "(04,11)", "(04,12)",
+                                "(05,11)", "(05,12)",
+                                "(06,11)", "(06,12)",
+                                "(07,11)", "(07,12)",
+                                "(08,11)", "(08,12)",
+                                NULL),
+           8, 11,
+           3, 12);
+
+  ADD_DATA("right - top",
+           gcut_list_string_new("(07,11)", "(07,12)",
+                                "(08,11)", "(08,12)",
+                                "(09,11)", "(09,12)",
+                                "(10,11)", "(10,12)",
+                                "(11,11)", "(11,12)",
+                                "(12,11)", "(12,12)",
+                                NULL),
+           12, 11,
+           7, 12);
+}
+
 void
 data_cursor(void)
 {
   data_cursor_all();
   data_cursor_bottom();
   data_cursor_top();
+  data_cursor_left();
+  data_cursor_right();
 }
 
 #undef ADD_DATA
