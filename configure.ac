@@ -847,9 +847,11 @@ if test x"$enable_document" != x"no"; then
   if test -f "$srcdir/doc/build-stamp"; then
     document_available=yes
   else
-    if test x"$HG" = x"hg-not-found"; then
-      if test x"$enable_document" = x"yes"; then
+    if test x"$enable_document" = x"yes"; then
+      if test x"$HG" = x"hg-not-found"; then
         AC_MSG_ERROR("No hg found")
+      else
+        document_available=yes
       fi
     fi
   fi
