@@ -40,7 +40,7 @@ static grn_ctx *context;
 static grn_obj *database;
 
 #define DEFINE_GEO_POINT(name) \
-  static grn_obj *name, *name ## _tokyo, *name ## _wgs84, *name ## _text
+  static grn_obj *name ## _tokyo, *name ## _wgs84, *name ## _text
 DEFINE_GEO_POINT(nezu_no_taiyaki);
 DEFINE_GEO_POINT(takane);
 DEFINE_GEO_POINT(sazare);
@@ -49,6 +49,8 @@ DEFINE_GEO_POINT(hiiragi);
 DEFINE_GEO_POINT(tokyo);
 DEFINE_GEO_POINT(shinjuku);
 #undef DEFINE_GEO_POINT
+
+static grn_obj *takane, *shinjuku;
 
 void
 cut_startup(void)

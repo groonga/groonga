@@ -39,7 +39,7 @@ static grn_ctx *context;
 static grn_obj *database, *shops, *location_index, *result;
 
 #define DEFINE_GEO_POINT(name) \
-  static grn_obj *name, *name ## _wgs84, *name ## _text
+  static grn_obj *name ## _wgs84, *name ## _text
 DEFINE_GEO_POINT(nezu_no_taiyaki);
 DEFINE_GEO_POINT(takane);
 DEFINE_GEO_POINT(sazare);
