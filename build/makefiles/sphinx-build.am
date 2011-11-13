@@ -20,6 +20,6 @@ $(SPHINX_BUILD):
 	$(HG) clone https://bitbucket.org/birkenfeld/sphinx $(SPHINX_DIR)
 
 sphinx-ensure-updated: $(SPHINX_BUILD)
-	if ! $(SPHINX_BUILD_COMMAND) 2>&1 | head -1 | grep v1.1 -q > /dev/null; then					\
+	if ! $(SPHINX_BUILD_COMMAND) 2>&1 | head -1 | grep 'v1.[12]' -q > /dev/null; then					\
 	  $(HG) pull $(SPHINX_DIR);						\
 	fi
