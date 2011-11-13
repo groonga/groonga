@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2010  Ryo Onodera <onodera@clear-code.com>
-# Copyright (C) 2010  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2010-2011  Kouhei Sutou <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -47,8 +47,8 @@ load --table Site
 COMMANDS
 
     expected= <<EXPECTED
-[[-63,0.0,0.0,"Syntax error! (<)",[["yy_syntax_error","ecmascript.y",19]]],[]]
-[[-63,0.0,0.0,"Syntax error! (<)",[["yy_syntax_error","ecmascript.y",19]]],[]]
+[[-63,0.0,0.0,"Syntax error! (<)",[["yy_syntax_error","ecmascript.y",19,"(stdin)",1,"select --table Site --filter \"<\""]]],[]]
+[[-63,0.0,0.0,"Syntax error! (<)",[["yy_syntax_error","ecmascript.y",19,"(stdin)",2,"select --table Site --filter \"<\""]]],[]]
 [[0,0.0,0.0],true]
 EXPECTED
 
