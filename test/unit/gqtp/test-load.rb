@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2009  Ryo Onodera <onodera@clear-code.com>
-# Copyright (C) 2010  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2010-2011  Kouhei Sutou <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -34,7 +34,7 @@ class LoadTest < Test::Unit::TestCase
 [[0,0.0,0.0],[[[2],[["_id","UInt32"],["_key","ShortText"]],[2,"bash"],[1,"gcc"]]]]
 [[0,0.0,0.0],true]
 EXPECTED
-table_create commands 1 ShortText
+table_create commands TABLE_PAT_KEY ShortText
 load --table commands
 [
 ["_key"],
@@ -53,8 +53,8 @@ COMMANDS
 [[0,0.0,0.0],[[[2],[["_id","UInt32"],["_key","ShortText"],["body","ShortText"]],[2,"bash","a shell"],[1,"gcc","a compiler"]]]]
 [[0,0.0,0.0],true]
 EXPECTED
-table_create commands 1 ShortText
-column_create commands body 0 ShortText
+table_create commands TABLE_PAT_KEY ShortText
+column_create commands body COLUMN_SCALAR ShortText
 load --table commands
 [
 ["_key","body"],
@@ -74,9 +74,9 @@ COMMANDS
 [[0,0.0,0.0],[[[2],[["_id","UInt32"],["_key","ShortText"],["location","ShortText"],["body","ShortText"]],[2,"bash","/bin/bash","a shell"],[1,"gcc","/usr/bin/gcc","a compiler"]]]]
 [[0,0.0,0.0],true]
 EXPECTED
-table_create commands 1 ShortText
-column_create commands body 0 ShortText
-column_create commands location 0 ShortText
+table_create commands TABLE_PAT_KEY ShortText
+column_create commands body COLUMN_SCALAR ShortText
+column_create commands location COLUMN_SCALAR ShortText
 load --table commands
 [
 ["_key","body","location"],
@@ -96,9 +96,9 @@ COMMANDS
 [[0,0.0,0.0],[[[2],[["_id","UInt32"],["_key","ShortText"],["location","ShortText"],["body","ShortText"]],[2,"bash","/bin/bash","a shell"],[1,"gcc","/usr/bin/gcc","a compiler"]]]]
 [[0,0.0,0.0],true]
 EXPECTED
-table_create commands 1 ShortText
-column_create commands body 0 ShortText
-column_create commands location 0 ShortText
+table_create commands TABLE_PAT_KEY ShortText
+column_create commands body COLUMN_SCALAR ShortText
+column_create commands location COLUMN_SCALAR ShortText
 load --table commands
 [
 ["body","location","_key"],
@@ -116,7 +116,7 @@ COMMANDS
 [[0,0.0,0.0],[[[2],[["_id","UInt32"]],[1],[2]]]]
 [[0,0.0,0.0],true]
 EXPECTED
-table_create commands 3
+table_create commands TABLE_NO_KEY
 load --table commands
 [
 [],
@@ -135,8 +135,8 @@ COMMANDS
 [[0,0.0,0.0],[[[2],[["_id","UInt32"],["body","ShortText"]],[1,\"a compiler\"],[2,\"a shell\"]]]]
 [[0,0.0,0.0],true]
 EXPECTED
-table_create commands 3
-column_create commands body 0 ShortText
+table_create commands TABLE_NO_KEY
+column_create commands body COLUMN_SCALAR ShortText
 load --table commands
 [
 ["body"],
@@ -156,9 +156,9 @@ COMMANDS
 [[0,0.0,0.0],[[[2],[["_id","UInt32"],["location","ShortText"],["body","ShortText"]],[1,"/usr/bin/gcc","a compiler"],[2,"/bin/bash","a shell"]]]]
 [[0,0.0,0.0],true]
 EXPECTED
-table_create commands 3
-column_create commands body 0 ShortText
-column_create commands location 0 ShortText
+table_create commands TABLE_NO_KEY
+column_create commands body COLUMN_SCALAR ShortText
+column_create commands location COLUMN_SCALAR ShortText
 load --table commands
 [
 ["body","location"],
