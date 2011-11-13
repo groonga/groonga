@@ -112,8 +112,8 @@ COMMANDS
   def test_table_with_no_key_with_no_column
     assert_commands(<<EXPECTED, <<COMMANDS)
 [[0,0.0,0.0],true]
-[[0,0.0,0.0],2]
-[[0,0.0,0.0],[[[2],[["_id","UInt32"]],[1],[2]]]]
+[[0,0.0,0.0],3]
+[[0,0.0,0.0],[[[3],[["_id","UInt32"]],[1],[2],[3]]]]
 [[0,0.0,0.0],true]
 EXPECTED
 table_create commands TABLE_NO_KEY
