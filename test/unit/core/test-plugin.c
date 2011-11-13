@@ -135,11 +135,10 @@ test_register_too_long_name(void)
   full_path = cut_take_string(g_build_filename(plugins_dir,
                                                long_name->str,
                                                NULL));
-  error_message_without_path =
-    "cannot open shared object file: No such file or directory: <";
+  error_message_without_path = "too long plugin path: <";
   grn_test_assert_send_command_error(
     context,
-    GRN_NO_SUCH_FILE_OR_DIRECTORY,
+    GRN_FILENAME_TOO_LONG,
     cut_take_printf("%s%.*s",
                     error_message_without_path,
                     (int)(GRN_CTX_MSGSIZE -

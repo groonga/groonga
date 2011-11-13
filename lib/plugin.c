@@ -273,8 +273,8 @@ grn_plugin_register_by_path(grn_ctx *ctx, const char *path)
     size_t path_len;
 
     if ((path_len = strlen(path)) >= PATH_MAX) {
-      ERR(GRN_FILENAME_TOO_LONG, "too long path");
-      GRN_API_RETURN(ctx->rc);
+      ERR(GRN_FILENAME_TOO_LONG, "too long plugin path: <%s>", path);
+      goto exit;
     }
     plugin_file = fopen(path, "r");
     if (plugin_file) {
@@ -282,8 +282,10 @@ grn_plugin_register_by_path(grn_ctx *ctx, const char *path)
       id = grn_plugin_open(ctx, path);
     } else {
       if ((path_len += strlen(grn_plugin_get_suffix())) >= PATH_MAX) {
-        ERR(GRN_FILENAME_TOO_LONG, "too long path");
-        GRN_API_RETURN(ctx->rc);
+        ERR(GRN_FILENAME_TOO_LONG,
+            "too long plugin path: <%s%s>",
+            path, grn_plugin_get_suffix());
+        goto exit;
       }
       strcpy(complemented_path, path);
       strcat(complemented_path, grn_plugin_get_suffix());
@@ -301,8 +303,10 @@ grn_plugin_register_by_path(grn_ctx *ctx, const char *path)
         if (base_name) {
           path_len = base_name - path + strlen("/.libs") + strlen(base_name);
           if ((path_len += strlen(grn_plugin_get_suffix())) >= PATH_MAX) {
-            ERR(GRN_FILENAME_TOO_LONG, "too long path");
-            GRN_API_RETURN(ctx->rc);
+            ERR(GRN_FILENAME_TOO_LONG,
+                "too long plugin path: <%.*s/.libs%s%s>",
+                base_name - path, path, base_name, grn_plugin_get_suffix());
+            goto exit;
           }
           complemented_libs_path[0] = '\0';
           strncat(complemented_libs_path, path, base_name - path);
@@ -337,6 +341,7 @@ grn_plugin_register_by_path(grn_ctx *ctx, const char *path)
   } else {
     ERR(GRN_INVALID_ARGUMENT, "invalid db assigned");
   }
+exit :
   GRN_API_RETURN(ctx->rc);
 }
 
