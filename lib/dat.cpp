@@ -302,6 +302,11 @@ grn_dat_close(grn_ctx *ctx, grn_dat *dat)
 grn_rc
 grn_dat_remove(grn_ctx *ctx, const char *path)
 {
+  if (!path) {
+    ERR(GRN_INVALID_ARGUMENT, const_cast<char *>("path is null"));
+    return GRN_INVALID_ARGUMENT;
+  }
+
   grn_dat * const dat = grn_dat_open(ctx, path);
   if (!dat) {
     return ctx->rc;
@@ -316,8 +321,7 @@ grn_dat_remove(grn_ctx *ctx, const char *path)
       break;
     }
   }
-  grn_io_remove(ctx, path);
-  return ctx->rc;
+  return grn_io_remove(ctx, path);
 }
 
 grn_id
