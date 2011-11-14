@@ -290,7 +290,7 @@ namespace test_dat_trie
   void test_update(void)
   {
     std::vector<std::string> keys;
-    create_keys(&keys, 1000 * 2, 1, 16);
+    create_keys(&keys, 1000, 1, 16);
 
     grn::dat::Trie trie;
     trie.create();
@@ -367,7 +367,7 @@ namespace test_dat_trie
     Keyset keyset;
     Stack stack;
     std::string str;
-    for (std::size_t i = 0; i < 10000; ++i) {
+    for (std::size_t i = 0; i < 1000; ++i) {
       create_key(&str, 2, 3);
       switch (static_cast<int>(4.0 * std::rand() / RAND_MAX)) {
         case 0: {
@@ -497,7 +497,7 @@ namespace test_dat_trie
     Keyset keyset;
     Stack stack;
     std::string str;
-    for (std::size_t i = 0; i < 10000; ++i) {
+    for (std::size_t i = 0; i < 1000; ++i) {
       create_key(&str, 2, 3);
       switch (static_cast<int>(4.0 * std::rand() / RAND_MAX)) {
         case 0: {
