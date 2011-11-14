@@ -2169,48 +2169,6 @@ grn_hash_check(grn_ctx *ctx, grn_hash *hash)
   GRN_OUTPUT_ARRAY_CLOSE();
 }
 
-/* todo : not completed yet
-grn_rc
-grn_hash_group(grn_ctx *ctx, grn_hash *hash,
-               int n_args, grn_table_group_arg *args)
-{
-  grn_id id;
-  uint32_t n = *hash->n_entries;
-  GRN_ASSERT(n_args && args);
-  {
-    int i;
-    for (i = 0; i < n_args; i++) {
-      ((grn_obj_db *)args[i].result)->range = ((grn_obj_db *)hash)->id;
-    }
-  }
-  for (id = 1; n; id++) {
-    uint32_t es;
-    entry_str *e;
-    uint8_t exist;
-    const uint8_t *ep;
-    grn_table_sort_optarg *arg = &args->sortarg;
-    BITMAP_AT(hash, id, exist);
-    if (!exist) { continue; }
-    n--;
-    ENTRY_AT(hash, id, e, 0);
-    if (!e) { return GRN_END_OF_DATA; }
-    PREPARE_VAL(e, ep, es);
-    {
-      uint32_t *val;
-      grn_id gid = (args->result->header.type == GRN_TABLE_PAT_KEY)
-        ? grn_pat_add(ctx, (grn_pat *)args->result, ep, es, (void **)&val, NULL)
-        : grn_hash_add(ctx, (grn_hash *)args->result, ep, es, (void **)&val, NULL);
-      if (!gid) { return ctx->rc; }
-      if (args->flags & GRN_TABLE_GROUP_CALC_COUNT) {
-        *val += 1;
-        val++;
-      }
-    }
-  }
-  return GRN_SUCCESS;
-}
-*/
-
 /* rhash : grn_hash with subrecs */
 
 #ifdef USE_GRN_INDEX2
