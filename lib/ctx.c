@@ -1920,7 +1920,6 @@ grn_ctx_use(grn_ctx *ctx, grn_obj *db)
       ctx->impl->db = db;
       if (db) {
         grn_obj buf;
-        if (ctx->impl->symbols) { grn_ql_def_db_funcs(ctx); }
         GRN_TEXT_INIT(&buf, 0);
         grn_obj_get_info(ctx, db, GRN_INFO_ENCODING, &buf);
         ctx->encoding = *(grn_encoding *)GRN_BULK_HEAD(&buf);
