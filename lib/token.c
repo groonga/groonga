@@ -20,6 +20,7 @@
 #include "ql.h"
 #include "token.h"
 #include "pat.h"
+#include "dat.h"
 #include "hash.h"
 
 grn_obj *grn_uvector_tokenizer = NULL;
@@ -479,6 +480,15 @@ grn_token_next(grn_ctx *ctx, grn_token *token)
           grn_io_unlock(((grn_pat *)table)->io);
         }
         break;
+      case GRN_TABLE_DAT_KEY :
+        if (grn_io_lock(ctx, ((grn_dat *)table)->io, 10000000)) {
+          tid = GRN_ID_NIL;
+        } else {
+          tid = grn_dat_add(ctx, (grn_dat *)table, token->curr, token->curr_size,
+                            NULL, NULL);
+          grn_io_unlock(((grn_dat *)table)->io);
+        }
+        break;
       case GRN_TABLE_HASH_KEY :
         if (grn_io_lock(ctx, ((grn_hash *)table)->io, 10000000)) {
           tid = GRN_ID_NIL;
@@ -500,6 +510,9 @@ grn_token_next(grn_ctx *ctx, grn_token *token)
       switch (table->header.type) {
       case GRN_TABLE_PAT_KEY :
         tid = grn_pat_get(ctx, (grn_pat *)table, token->curr, token->curr_size, NULL);
+        break;
+      case GRN_TABLE_DAT_KEY :
+        tid = grn_dat_get(ctx, (grn_dat *)table, token->curr, token->curr_size, NULL);
         break;
       case GRN_TABLE_HASH_KEY :
         tid = grn_hash_get(ctx, (grn_hash *)table, token->curr, token->curr_size, NULL);
