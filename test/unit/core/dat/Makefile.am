@@ -9,6 +9,7 @@ noinst_LTLIBRARIES =				\
 	test-file.la				\
 	test-header.la				\
 	test-id-cursor.la			\
+	test-dat.la				\
 	test-key-cursor.la			\
 	test-key.la				\
 	test-node.la				\
@@ -51,6 +52,7 @@ test_entry_la_SOURCES			= test-entry.cpp
 test_file_la_SOURCES			= test-file.cpp
 test_header_la_SOURCES			= test-header.cpp
 test_id_cursor_la_SOURCES		= test-id-cursor.cpp
+test_dat_la_SOURCES			= test-dat.cpp
 test_key_cursor_la_SOURCES		= test-key-cursor.cpp
 test_key_la_SOURCES			= test-key.cpp
 test_node_la_SOURCES			= test-node.cpp
