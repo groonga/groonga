@@ -243,8 +243,7 @@ namespace test_dat
   void test_get_key2_with_outplace(void)
   {
     grn_obj bulk;
-    GRN_OBJ_INIT(&bulk, 0, GRN_OBJ_OUTPLACE, 0);
-    cppcut_assert_equal(GRN_SUCCESS, grn_bulk_reserve(&ctx, &bulk, 16));
+    GRN_TEXT_INIT(&bulk, 0);
 
     std::vector<std::string> keys;
     create_keys(&keys, 1000, 6, 15);
@@ -261,8 +260,8 @@ namespace test_dat
 
       GRN_BULK_REWIND(&bulk);
       cppcut_assert_equal(length, grn_dat_get_key2(&ctx, dat, key_id, &bulk));
-      cppcut_assert_equal(keys[i], std::string(bulk.u.b.head, length));
-      cppcut_assert_equal(length, static_cast<int>(bulk.u.b.curr - bulk.u.b.head));
+      cppcut_assert_equal(length, static_cast<int>(GRN_TEXT_LEN(&bulk)));
+      cppcut_assert_equal(keys[i], std::string(GRN_TEXT_VALUE(&bulk), GRN_TEXT_LEN(&bulk)));
     }
     cppcut_assert_equal(0, grn_dat_get_key2(&ctx, dat, GRN_ID_NIL, &bulk));
     cppcut_assert_equal(GRN_SUCCESS, grn_dat_close(&ctx, dat));
