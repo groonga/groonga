@@ -212,12 +212,10 @@ namespace test_dat
     cppcut_assert_equal(GRN_SUCCESS, grn_dat_close(&ctx, dat));
   }
 
-  void test_get_key2(void)
+  void test_get_key2_with_refer(void)
   {
-    cut_omit("Not implemented yet.");
-
     grn_obj bulk;
-    GRN_OBJ_INIT(&bulk, 0, 0, 0);
+    GRN_OBJ_INIT(&bulk, 0, GRN_OBJ_REFER, 0);
 
     std::vector<std::string> keys;
     create_keys(&keys, 1000, 6, 15);
@@ -232,9 +230,38 @@ namespace test_dat
       cut_assert_not_null(key_ptr);
       cppcut_assert_equal(length, static_cast<int>(key_length));
 
-      bulk.header.impl_flags |= GRN_OBJ_REFER;
       cppcut_assert_equal(length, grn_dat_get_key2(&ctx, dat, key_id, &bulk));
       cppcut_assert_equal(key_ptr, bulk.u.b.head);
+      cppcut_assert_equal(length, static_cast<int>(bulk.u.b.curr - bulk.u.b.head));
+    }
+    cppcut_assert_equal(0, grn_dat_get_key2(&ctx, dat, GRN_ID_NIL, &bulk));
+    cppcut_assert_equal(GRN_SUCCESS, grn_dat_close(&ctx, dat));
+
+    GRN_OBJ_FIN(&ctx, &bulk);
+  }
+
+  void test_get_key2_with_outplace(void)
+  {
+    grn_obj bulk;
+    GRN_OBJ_INIT(&bulk, 0, GRN_OBJ_OUTPLACE, 0);
+    cppcut_assert_equal(GRN_SUCCESS, grn_bulk_reserve(&ctx, &bulk, 16));
+
+    std::vector<std::string> keys;
+    create_keys(&keys, 1000, 6, 15);
+
+    grn_dat * const dat = create_trie(keys, NULL);
+    for (std::size_t i = 0; i < keys.size(); ++i) {
+      const grn_id key_id = static_cast<grn_id>(i + 1);
+      const int length = static_cast<int>(keys[i].length());
+
+      uint32_t key_length;
+      const char * const key_ptr = _grn_dat_key(&ctx, dat, key_id, &key_length);
+      cut_assert_not_null(key_ptr);
+      cppcut_assert_equal(length, static_cast<int>(key_length));
+
+      GRN_BULK_REWIND(&bulk);
+      cppcut_assert_equal(length, grn_dat_get_key2(&ctx, dat, key_id, &bulk));
+      cppcut_assert_equal(keys[i], std::string(bulk.u.b.head, length));
       cppcut_assert_equal(length, static_cast<int>(bulk.u.b.curr - bulk.u.b.head));
     }
     cppcut_assert_equal(0, grn_dat_get_key2(&ctx, dat, GRN_ID_NIL, &bulk));
