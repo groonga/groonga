@@ -200,7 +200,6 @@ cast_to_geo_point(grn_obj *geo_point, const gchar *geo_point_string)
 
   GRN_TEXT_INIT(&geo_point_text, 0);
   GRN_TEXT_PUTS(context, &geo_point_text, geo_point_string);
-  GRN_WGS84_GEO_POINT_INIT(geo_point, 0);
   grn_obj_cast(context, &geo_point_text, geo_point, FALSE);
   grn_obj_unlink(context, &geo_point_text);
 }
@@ -545,6 +544,7 @@ test_prefix_geo_point(gpointer data)
   unsigned min_size;
   const GList *expected_keys;
   GList *actual_keys = NULL;
+  GRN_WGS84_GEO_POINT_INIT(&min, 0);
 
   create_geo_point_table(
     geo_byte_load_data(
@@ -1047,6 +1047,7 @@ test_near_geo_point(gpointer data)
   grn_obj max;
   const GList *expected_keys;
   GList *actual_keys = NULL;
+  GRN_WGS84_GEO_POINT_INIT(&max, 0);
 
   create_geo_point_table(
     cut_take_printf(" [\"%s\"],"
@@ -1280,6 +1281,8 @@ test_by_id_encoded(gpointer data)
   int offset, limit, flags;
   const GList *expected_keys;
   GList *actual_keys = NULL;
+  GRN_WGS84_GEO_POINT_INIT(&min, 0);
+  GRN_WGS84_GEO_POINT_INIT(&max, 0);
 
   create_geo_point_table("[\"128592911x503145263\"],\n"
                          "[\"128565076x502976128\"],\n"
