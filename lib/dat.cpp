@@ -112,7 +112,7 @@ grn_dat_fin(grn_ctx *ctx, grn_dat *dat)
 void
 grn_dat_generate_trie_path(const char *base_path, char *trie_path, uint32_t file_id)
 {
-  if (!base_path) {
+  if (!base_path || !base_path[0]) {
     trie_path[0] = '\0';
     return;
   }
@@ -218,9 +218,13 @@ grn_dat *
 grn_dat_create(grn_ctx *ctx, const char *path, uint32_t,
                uint32_t, uint32_t flags)
 {
-  if (path && (std::strlen(path) >= (PATH_MAX - (FILE_ID_LENGTH + 1)))) {
-    ERR(GRN_FILENAME_TOO_LONG, const_cast<char *>("too long path"));
-    return NULL;
+  if (path) {
+    if (path[0] == '\0') {
+      path = NULL;
+    } else if (std::strlen(path) >= (PATH_MAX - (FILE_ID_LENGTH + 1))) {
+      ERR(GRN_FILENAME_TOO_LONG, const_cast<char *>("too long path"));
+      return NULL;
+    }
   }
 
   grn_dat * const dat = static_cast<grn_dat *>(GRN_MALLOC(sizeof(grn_dat)));
