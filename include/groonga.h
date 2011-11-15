@@ -1431,6 +1431,17 @@ GRN_API grn_rc grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj 
 GRN_API grn_rc grn_obj_remove(grn_ctx *ctx, grn_obj *obj);
 
 /**
+ * grn_obj_rename:
+ * @obj: 対象object
+ * @name: 新しい名前
+ * @name_size: @nameのsize(byte)
+ *
+ * ctxが使用するdbにおいてobjに対応する名前をnameに更新する。
+ * objは永続オブジェクトでなければならない。
+ **/
+GRN_API grn_rc grn_obj_rename(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned name_size);
+
+/**
  * grn_obj_close:
  * @obj: 対象object
  *

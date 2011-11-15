@@ -6033,6 +6033,14 @@ exit :
 }
 
 grn_rc
+grn_obj_rename(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned name_size)
+{
+  GRN_API_ENTER;
+  /* coming soon! */
+  GRN_API_RETURN(GRN_SUCCESS);
+}
+
+grn_rc
 grn_obj_path_rename(grn_ctx *ctx, const char *old_path, const char *new_path)
 {
   GRN_API_ENTER;
