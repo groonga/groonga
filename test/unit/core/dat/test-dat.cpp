@@ -70,14 +70,12 @@ namespace test_dat
     cut_remove_path(base_dir, NULL);
     g_mkdir_with_parents(base_dir, 0755);
 
-    grn_init();
     grn_ctx_init(&ctx, 0);
   }
 
   void cut_teardown(void)
   {
     grn_ctx_fin(&ctx);
-    grn_fin();
 
     if (base_dir) {
       cut_remove_path(base_dir, NULL);
