@@ -399,7 +399,7 @@ handle_msg(msgpack_object *obj, grn_ctx *ctx, grn_obj *buf)
   uint64_t millisec = 0;
   const char *query = NULL,
              *client_id = NULL, *learn_target_names = NULL;
-  uint32_t query_len, client_id_len, learn_target_names_len;
+  uint32_t query_len = 0, client_id_len = 0, learn_target_names_len = 0;
   if (obj->type == MSGPACK_OBJECT_MAP) {
     int i;
     for (i = 0; i < obj->via.map.size; i++) {

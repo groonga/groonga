@@ -285,7 +285,7 @@ transform_xml(grn_ctx *ctx, grn_obj *output, grn_obj *transformed)
   grn_obj buf, name, columns, *expr;
   unsigned int len;
   int offset = 0, limit = 0, record_n = 0;
-  int column_n, column_text_n, result_set_n = -1;
+  int column_n = 0, column_text_n = 0, result_set_n = -1;
   int in_vector = 0, first_vector_element = 0;
 
   s = GRN_TEXT_VALUE(output);
