@@ -6033,7 +6033,7 @@ exit :
 }
 
 grn_rc
-grn_obj_rename(grn_ctx *ctx, const char *old_path, const char *new_path)
+grn_obj_path_rename(grn_ctx *ctx, const char *old_path, const char *new_path)
 {
   GRN_API_ENTER;
   GRN_API_RETURN(GRN_SUCCESS);

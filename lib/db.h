@@ -340,13 +340,13 @@ grn_obj *grn_column_open(grn_ctx *ctx, grn_obj *table,
                          const char *path, grn_obj *type);
 
 /**
- * grn_obj_rename:
+ * grn_obj_path_rename:
  * @old_path: 旧ファイルパス
  * @new_path: 新ファイルパス
  *
  * old_pathに該当するオブジェクトのファイル名をnew_pathに変更する。
  **/
-grn_rc grn_obj_rename(grn_ctx *ctx, const char *old_path, const char *new_path);
+grn_rc grn_obj_path_rename(grn_ctx *ctx, const char *old_path, const char *new_path);
 
 grn_rc grn_db_check_name(grn_ctx *ctx, const char *name, unsigned int name_size);
 #define GRN_DB_CHECK_NAME_ERR(error_context, name, name_size) ERR(GRN_INVALID_ARGUMENT, "%s: name can't start with '%c' and contains only 0-9, A-Z, a-z, #, - or _: <%.*s>", error_context, GRN_DB_PSEUDO_COLUMN_PREFIX, name_size, name)
