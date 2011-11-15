@@ -36,10 +36,8 @@ libgroonga_la_LDFLAGS =				\
 	-no-undefined				\
 	$(WINDOWS_LDFLAGS)
 
-if !OS_WIN32
 libgroonga_la_LIBADD =				\
 	dat/libgrndat.la
-endif
 
 noinst_HEADERS = 				\
 	com.h					\

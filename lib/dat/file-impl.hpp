@@ -19,7 +19,7 @@
 #define GRN_DAT_FILE_IMPL_HPP_
 
 #ifdef WIN32
-#include <Windows.h>
+#include <windows.h>
 #endif  // WIN32
 
 #include "dat.hpp"

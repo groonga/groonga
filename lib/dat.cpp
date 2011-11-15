@@ -21,6 +21,17 @@
 #include "io.h"
 #include "dat.h"
 #include "util.h"
+
+/*
+  When this code is compiled with MinGW, a macro "open" is defined to replace
+  "open()" by "_open()". This causes a critical problem because grn::dat::Trie
+  and grn::dat::CursorFactory have member functions named "open()". So, the
+  macro must be undefined before the following #includes.
+ */
+#ifdef open
+# undef open
+#endif
+
 #include "dat/trie.hpp"
 #include "dat/cursor-factory.hpp"
 
@@ -97,10 +108,8 @@ void
 grn_dat_fin(grn_ctx *ctx, grn_dat *dat)
 {
   CRITICAL_SECTION_FIN(dat->lock);
-#ifndef WIN32
   delete static_cast<grn::dat::Trie *>(dat->old_trie);
   delete static_cast<grn::dat::Trie *>(dat->trie);
-#endif
   dat->old_trie = NULL;
   dat->trie = NULL;
   if (dat->io) {
@@ -125,7 +134,6 @@ grn_dat_generate_trie_path(const char *base_path, char *trie_path, uint32_t file
 bool
 grn_dat_open_trie_if_needed(grn_ctx *ctx, grn_dat *dat)
 {
-#ifndef WIN32
   if (!dat) {
     ERR(GRN_INVALID_ARGUMENT, const_cast<char *>("dat is null"));
     return false;
@@ -172,7 +180,6 @@ grn_dat_open_trie_if_needed(grn_ctx *ctx, grn_dat *dat)
     grn_dat_generate_trie_path(grn_io_path(dat->io), trie_path, file_id - 2);
     grn_io_remove(ctx, trie_path);
   }
-#endif
   return true;
 }
 
@@ -201,9 +208,7 @@ void grn_dat_cursor_init(grn_ctx *, grn_dat_cursor *cursor) {
 }
 
 void grn_dat_cursor_fin(grn_ctx *, grn_dat_cursor *cursor) {
-#ifndef WIN32
   delete static_cast<grn::dat::Cursor *>(cursor->cursor);
-#endif
   cursor->dat = NULL;
   cursor->cursor = NULL;
   cursor->key = &grn::dat::Key::invalid_key();
@@ -335,7 +340,6 @@ grn_dat_get(grn_ctx *ctx, grn_dat *dat, const void *key,
   if (!grn_dat_open_trie_if_needed(ctx, dat)) {
     return GRN_ID_NIL;
   }
-#ifndef WIN32
   const grn::dat::Trie * const trie = static_cast<const grn::dat::Trie *>(dat->trie);
   if (!trie) {
     return GRN_ID_NIL;
@@ -349,7 +353,6 @@ grn_dat_get(grn_ctx *ctx, grn_dat *dat, const void *key,
     ERR(grn_dat_translate_error_code(ex.code()),
         const_cast<char *>("grn::dat::Trie::search failed"));
   }
-#endif
   return GRN_ID_NIL;
 }
 
@@ -357,7 +360,6 @@ grn_id
 grn_dat_add(grn_ctx *ctx, grn_dat *dat, const void *key,
             unsigned int key_size, void **, int *added)
 {
-#ifndef WIN32
   if (!grn_dat_open_trie_if_needed(ctx, dat)) {
     return GRN_ID_NIL;
   }
@@ -406,9 +408,6 @@ grn_dat_add(grn_ctx *ctx, grn_dat *dat, const void *key,
         const_cast<char *>("grn::dat::Trie::insert failed"));
     return GRN_ID_NIL;
   }
-#else
-  return GRN_ID_NIL;
-#endif
 }
 
 int
@@ -417,7 +416,6 @@ grn_dat_get_key(grn_ctx *ctx, grn_dat *dat, grn_id id, void *keybuf, int bufsize
   if (!grn_dat_open_trie_if_needed(ctx, dat)) {
     return 0;
   }
-#ifndef WIN32
   const grn::dat::Trie * const trie = static_cast<const grn::dat::Trie *>(dat->trie);
   if (!trie) {
     return 0;
@@ -430,9 +428,6 @@ grn_dat_get_key(grn_ctx *ctx, grn_dat *dat, grn_id id, void *keybuf, int bufsize
     std::memcpy(keybuf, key.ptr(), key.length());
   }
   return (int)key.length();
-#else
-  return 0;
-#endif
 }
 
 int
@@ -441,7 +436,6 @@ grn_dat_get_key2(grn_ctx *ctx, grn_dat *dat, grn_id id, grn_obj *bulk)
   if (!grn_dat_open_trie_if_needed(ctx, dat)) {
     return 0;
   }
-#ifndef WIN32
   const grn::dat::Trie * const trie = static_cast<const grn::dat::Trie *>(dat->trie);
   if (!trie) {
     return 0;
@@ -457,9 +451,6 @@ grn_dat_get_key2(grn_ctx *ctx, grn_dat *dat, grn_id id, grn_obj *bulk)
     grn_bulk_write(ctx, bulk, static_cast<const char *>(key.ptr()), key.length());
   }
   return (int)key.length();
-#else
-  return 0;
-#endif
 }
 
 grn_rc
@@ -472,7 +463,6 @@ grn_dat_delete_by_id(grn_ctx *ctx, grn_dat *dat, grn_id id,
     return GRN_INVALID_ARGUMENT;
   }
 
-#ifndef WIN32
   if (optarg && optarg->func) {
     const grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
     if (!trie->ith_entry(id).is_valid()) {
@@ -492,7 +482,6 @@ grn_dat_delete_by_id(grn_ctx *ctx, grn_dat *dat, grn_id id,
         const_cast<char *>("grn::dat::Trie::remove failed"));
     return GRN_INVALID_ARGUMENT;
   }
-#endif
   return GRN_SUCCESS;
 }
 
@@ -506,7 +495,6 @@ grn_dat_delete(grn_ctx *ctx, grn_dat *dat, const void *key, unsigned int key_siz
     return GRN_INVALID_ARGUMENT;
   }
 
-#ifndef WIN32
   if (optarg && optarg->func) {
     try {
       const grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
@@ -533,7 +521,6 @@ grn_dat_delete(grn_ctx *ctx, grn_dat *dat, const void *key, unsigned int key_siz
         const_cast<char *>("grn::dat::Trie::remove failed"));
     return GRN_INVALID_ARGUMENT;
   }
-#endif
   return GRN_SUCCESS;
 }
 
@@ -546,7 +533,6 @@ grn_dat_update_by_id(grn_ctx *ctx, grn_dat *dat, grn_id src_key_id,
   } else if (!dat->trie) {
     return GRN_INVALID_ARGUMENT;
   }
-#ifndef WIN32
   try {
     try {
       grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
@@ -568,7 +554,6 @@ grn_dat_update_by_id(grn_ctx *ctx, grn_dat *dat, grn_id src_key_id,
         const_cast<char *>("grn::dat::Trie::update failed"));
     return GRN_INVALID_ARGUMENT;
   }
-#endif
   return GRN_SUCCESS;
 }
 
@@ -582,7 +567,6 @@ grn_dat_update(grn_ctx *ctx, grn_dat *dat,
   } else if (!dat->trie) {
     return GRN_INVALID_ARGUMENT;
   }
-#ifndef WIN32
   try {
     try {
       grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
@@ -604,7 +588,6 @@ grn_dat_update(grn_ctx *ctx, grn_dat *dat,
         const_cast<char *>("grn::dat::Trie::update failed"));
     return GRN_INVALID_ARGUMENT;
   }
-#endif
   return GRN_SUCCESS;
 }
 
@@ -614,12 +597,10 @@ grn_dat_size(grn_ctx *ctx, grn_dat *dat)
   if (!grn_dat_open_trie_if_needed(ctx, dat)) {
     return 0;
   }
-#ifndef WIN32
   const grn::dat::Trie * const trie = static_cast<const grn::dat::Trie *>(dat->trie);
   if (trie) {
     return trie->num_keys();
   }
-#endif
   return 0;
 }
 
@@ -633,7 +614,6 @@ grn_dat_cursor_open(grn_ctx *ctx, grn_dat *dat,
     return NULL;
   }
 
-#ifndef WIN32
   grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
   if (!trie) {
     grn_dat_cursor * const dc =
@@ -700,9 +680,6 @@ grn_dat_cursor_open(grn_ctx *ctx, grn_dat *dat,
   }
   dc->dat = dat;
   return dc;
-#else
-  return NULL;
-#endif
 }
 
 grn_id
@@ -711,7 +688,6 @@ grn_dat_cursor_next(grn_ctx *ctx, grn_dat_cursor *c)
   if (!c || !c->cursor) {
     return GRN_ID_NIL;
   }
-#ifndef WIN32
   try {
     grn::dat::Cursor * const cursor = static_cast<grn::dat::Cursor *>(c->cursor);
     const grn::dat::Key &key = cursor->next();
@@ -722,7 +698,6 @@ grn_dat_cursor_next(grn_ctx *ctx, grn_dat_cursor *c)
         const_cast<char *>("grn::dat::Cursor::next failed"));
     return GRN_ID_NIL;
   }
-#endif
   return c->curr_rec;
 }
 
@@ -738,7 +713,6 @@ grn_dat_cursor_close(grn_ctx *ctx, grn_dat_cursor *c)
 int
 grn_dat_cursor_get_key(grn_ctx *ctx, grn_dat_cursor *c, const void **key)
 {
-#ifndef WIN32
   if (c) {
     const grn::dat::Key &key_ref = *static_cast<const grn::dat::Key *>(c->key);
     if (key_ref.is_valid()) {
@@ -746,7 +720,6 @@ grn_dat_cursor_get_key(grn_ctx *ctx, grn_dat_cursor *c, const void **key)
       return (int)key_ref.length();
     }
   }
-#endif
   return 0;
 }
 
@@ -759,7 +732,6 @@ grn_dat_cursor_delete(grn_ctx *ctx, grn_dat_cursor *c,
   } else if (!grn_dat_open_trie_if_needed(ctx, c->dat)) {
     return ctx->rc;
   }
-#ifndef WIN32
   grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(c->dat->trie);
   if (!trie) {
     return GRN_INVALID_ARGUMENT;
@@ -773,7 +745,6 @@ grn_dat_cursor_delete(grn_ctx *ctx, grn_dat_cursor *c,
         const_cast<char *>("grn::dat::Trie::remove failed"));
     return GRN_INVALID_ARGUMENT;
   }
-#endif
   return GRN_INVALID_ARGUMENT;
 }
 
@@ -783,12 +754,10 @@ grn_dat_curr_id(grn_ctx *ctx, grn_dat *dat)
   if (!grn_dat_open_trie_if_needed(ctx, dat)) {
     return GRN_ID_NIL;
   }
-#ifndef WIN32
   const grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
   if (trie) {
     return trie->max_key_id();
   }
-#endif
   return GRN_ID_NIL;
 }
 
@@ -798,7 +767,6 @@ grn_dat_truncate(grn_ctx *ctx, grn_dat *dat)
   if (!grn_dat_open_trie_if_needed(ctx, dat)) {
     return ctx->rc;
   }
-#ifndef WIN32
   const grn::dat::Trie * const trie = static_cast<const grn::dat::Trie *>(dat->trie);
   if (!trie || !trie->max_key_id()) {
     return GRN_SUCCESS;
@@ -817,7 +785,6 @@ grn_dat_truncate(grn_ctx *ctx, grn_dat *dat)
   if (!grn_dat_open_trie_if_needed(ctx, dat)) {
     return ctx->rc;
   }
-#endif
   return GRN_SUCCESS;
 }
 
@@ -827,7 +794,6 @@ _grn_dat_key(grn_ctx *ctx, grn_dat *dat, grn_id id, uint32_t *key_size)
   if (!grn_dat_open_trie_if_needed(ctx, dat)) {
     return NULL;
   }
-#ifndef WIN32
   const grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
   if (!trie) {
     return NULL;
@@ -838,9 +804,6 @@ _grn_dat_key(grn_ctx *ctx, grn_dat *dat, grn_id id, uint32_t *key_size)
   }
   *key_size = key.length();
   return static_cast<const char *>(key.ptr());
-#else
-  return NULL;
-#endif
 }
 
 }  // extern "C"

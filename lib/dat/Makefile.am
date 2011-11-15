@@ -1,6 +1,5 @@
 DEFS += -D_REENTRANT $(GRN_DEFS)
 
-if !OS_WIN32
 noinst_LTLIBRARIES = libgrndat.la
 
 libgrndat_la_SOURCES =			\
@@ -34,6 +33,5 @@ noinst_HEADERS =			\
 	string.hpp			\
 	trie.hpp			\
 	vector.hpp
-endif
 
 CLEANFILES = *.gcno *.gcda
