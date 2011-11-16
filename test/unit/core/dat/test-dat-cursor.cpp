@@ -59,29 +59,18 @@ namespace
 
 namespace test_dat_cursor
 {
-  const char *base_dir;
   grn_ctx ctx;
 
   void cut_setup(void)
   {
     std::srand(static_cast<unsigned int>(std::time(NULL)));
 
-    base_dir = grn_test_get_tmp_dir();
-    cut_remove_path(base_dir, NULL);
-    g_mkdir_with_parents(base_dir, 0755);
-
-    grn_init();
     grn_ctx_init(&ctx, 0);
   }
 
   void cut_teardown(void)
   {
     grn_ctx_fin(&ctx);
-    grn_fin();
-
-    if (base_dir) {
-      cut_remove_path(base_dir, NULL);
-    }
   }
 
   grn_dat *create_trie(const std::vector<std::string> &keys) {
