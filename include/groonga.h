@@ -790,7 +790,7 @@ GRN_API grn_rc grn_table_update_by_id(grn_ctx *ctx, grn_obj *table, grn_id id,
                                       const void *dest_key, unsigned int dest_key_size);
 
 /**
- * grn_table_update_by_id:
+ * grn_table_update:
  * @table: 対象table
  * @src_key: 対象レコードのkey
  * @src_key_size: 対象レコードのkeyの長さ(byte)
