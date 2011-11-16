@@ -772,10 +772,38 @@ GRN_API grn_rc grn_table_delete(grn_ctx *ctx, grn_obj *table,
  * @table: 対象table
  * @id: レコードID
  *
- * tableのkeyに対応するレコードを削除する。
+ * tableのidに対応するレコードを削除する。
  * 対応するレコードが存在しない場合はGRN_INVALID_ARGUMENTを返す。
  **/
 GRN_API grn_rc grn_table_delete_by_id(grn_ctx *ctx, grn_obj *table, grn_id id);
+
+/**
+ * grn_table_update_by_id:
+ * @table: 対象table
+ * @id: レコードID
+ *
+ * tableのidに対応するレコードのkeyを変更する。
+ * 新しいkeyとそのbyte長をdest_keyとdest_key_sizeに指定する。
+ * この操作は、GRN_TABLE_DAT_KEY型のテーブルのみ使用できる。
+ **/
+GRN_API grn_rc grn_table_update_by_id(grn_ctx *ctx, grn_obj *table, grn_id id,
+                                      const void *dest_key, unsigned int dest_key_size);
+
+/**
+ * grn_table_update_by_id:
+ * @table: 対象table
+ * @src_key: 対象レコードのkey
+ * @src_key_size: 対象レコードのkeyの長さ(byte)
+ * @dest_key: 変更後のkey
+ * @dest_key_size: 変更後のkeyの長さ(byte)
+ *
+ * tableのsrc_keyに対応するレコードのkeyを変更する。
+ * 新しいkeyとそのbyte長をdest_keyとdest_key_sizeに指定する。
+ * この操作は、GRN_TABLE_DAT_KEY型のテーブルのみ使用できる。
+ **/
+GRN_API grn_rc grn_table_update(grn_ctx *ctx, grn_obj *table,
+                                const void *src_key, unsigned int src_key_size,
+                                const void *dest_key, unsigned int dest_key_size);
 
 /**
  * grn_table_truncate:

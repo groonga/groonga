@@ -6033,11 +6033,43 @@ exit :
 }
 
 grn_rc
+grn_table_update_by_id(grn_ctx *ctx, grn_obj *table, grn_id id,
+                       const void *dest_key, unsigned int dest_key_size)
+{
+  grn_rc rc = GRN_OPERATION_NOT_SUPPORTED;
+  GRN_API_ENTER;
+  if (table->header.type == GRN_TABLE_DAT_KEY) {
+    rc = grn_dat_update_by_id(ctx, (grn_dat *)table, id, dest_key, dest_key_size);
+  }
+  GRN_API_RETURN(rc);
+}
+
+grn_rc
+grn_table_update(grn_ctx *ctx, grn_obj *table,
+                 const void *src_key, unsigned int src_key_size,
+                 const void *dest_key, unsigned int dest_key_size)
+{
+  grn_rc rc = GRN_OPERATION_NOT_SUPPORTED;
+  GRN_API_ENTER;
+  if (table->header.type == GRN_TABLE_DAT_KEY) {
+    rc = grn_dat_update(ctx, (grn_dat *)table,
+                        src_key, src_key_size,
+                        dest_key, dest_key_size);
+  }
+  GRN_API_RETURN(rc);
+}
+
+grn_rc
 grn_obj_rename(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned name_size)
 {
+  grn_rc rc = GRN_INVALID_ARGUMENT;
   GRN_API_ENTER;
-  /* coming soon! */
-  GRN_API_RETURN(GRN_SUCCESS);
+  if (ctx && ctx->impl && GRN_DB_P(ctx->impl->db) && GRN_DB_OBJP(obj) && !IS_TEMP(obj)) {
+    grn_db *s = (grn_db *)ctx->impl->db;
+    grn_obj *keys = (grn_obj *)s->keys;
+    rc = grn_table_update_by_id(ctx, keys, DB_OBJ(obj)->id, name, name_size);
+  }
+  GRN_API_RETURN(rc);
 }
 
 grn_rc
