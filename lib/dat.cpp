@@ -146,6 +146,7 @@ grn_dat_open_trie_if_needed(grn_ctx *ctx, grn_dat *dat)
   }
 
   CriticalSection critical_section(&dat->lock);
+
   if (dat->trie && (file_id <= dat->file_id)) {
     // There is no need to open file if the new file has been opened by another thread.
     return true;
@@ -173,6 +174,7 @@ grn_dat_open_trie_if_needed(grn_ctx *ctx, grn_dat *dat)
   dat->old_trie = trie;
   dat->trie = new_trie;
   dat->file_id = file_id;
+
   critical_section.leave();
 
   delete old_trie;
@@ -184,19 +186,38 @@ grn_dat_open_trie_if_needed(grn_ctx *ctx, grn_dat *dat)
 }
 
 bool grn_dat_rebuild_trie(grn_ctx *ctx, grn_dat *dat) {
-  char trie_path[PATH_MAX];
-  grn_dat_generate_trie_path(grn_io_path(dat->io), trie_path, dat->header->file_id + 1);
-  try {
-    const grn::dat::Trie * const trie = static_cast<const grn::dat::Trie *>(dat->trie);
-    grn::dat::Trie().create(*trie, trie_path, trie->file_size() * 2);
-//    grn::dat::Trie().create(*trie, trie_path, (grn::dat::UInt64)(trie->file_size() * 1.5));
-  } catch (const grn::dat::Exception &ex) {
-    ERR(grn_dat_translate_error_code(ex.code()),
-        const_cast<char *>("grn::dat::Trie::create failed"));
+  grn::dat::Trie * const new_trie = new (std::nothrow) grn::dat::Trie;
+  if (!new_trie) {
+    MERR(const_cast<char *>("new grn::dat::Trie failed"));
     return false;
   }
-  ++dat->header->file_id;
-  return grn_dat_open_trie_if_needed(ctx, dat);
+
+  const uint32_t file_id = dat->header->file_id;
+  try {
+    char trie_path[PATH_MAX];
+    grn_dat_generate_trie_path(grn_io_path(dat->io), trie_path, file_id + 1);
+    const grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
+    new_trie->create(*trie, trie_path, trie->file_size() * 2);
+//    new_trie->create(*trie, trie_path, (grn::dat::UInt64)(trie->file_size() * 1.5));
+  } catch (const grn::dat::Exception &ex) {
+    ERR(grn_dat_translate_error_code(ex.code()),
+        const_cast<char *>("grn::dat::Trie::open failed"));
+    delete new_trie;
+    return false;
+  }
+
+  grn::dat::Trie * const old_trie = static_cast<grn::dat::Trie *>(dat->old_trie);
+  dat->old_trie = dat->trie;
+  dat->trie = new_trie;
+  dat->header->file_id = dat->file_id = file_id + 1;
+
+  delete old_trie;
+  if (file_id >= 2) {
+    char trie_path[PATH_MAX];
+    grn_dat_generate_trie_path(grn_io_path(dat->io), trie_path, file_id - 1);
+    grn_io_remove(ctx, trie_path);
+  }
+  return true;
 }
 
 void grn_dat_cursor_init(grn_ctx *, grn_dat_cursor *cursor) {
