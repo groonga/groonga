@@ -103,6 +103,7 @@ namespace test_dat_trie
   void cut_setup(void)
   {
     std::srand(static_cast<unsigned int>(std::time(NULL)));
+
     base_dir = grn_test_get_tmp_dir();
     cut_remove_path(base_dir, NULL);
     g_mkdir_with_parents(base_dir, 0755);
