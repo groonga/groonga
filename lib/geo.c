@@ -46,6 +46,7 @@ typedef struct {
   int end;
   int distance;
   int diff_bit;
+  int rectangle_common_bit;
   grn_geo_mesh_direction direction;
 } in_rectangle_data;
 
@@ -139,10 +140,84 @@ inspect_tid(grn_ctx *ctx, grn_id tid, grn_geo_point *point, double d)
   printf("tid: %d:%g", tid, d);
   grn_p_geo_point(ctx, point);
 }
+
+static void
+inspect_key(grn_ctx *ctx, uint8_t *key)
+{
+  int i;
+  for (i = 0; i < 8; i++) {
+    int j;
+    for (j = 0; j < 8; j++) {
+      printf("%d", (key[i] & (1 << (7 - j))) >> (7 - j));
+    }
+    printf(" ");
+  }
+  printf("\n");
+}
+
+static void
+print_key_mark(grn_ctx *ctx, int target_bit)
+{
+  int i;
+
+  for (i = 0; i < target_bit; i++) {
+    printf(" ");
+    if (i > 0 && i % 8 == 0) {
+      printf(" ");
+    }
+  }
+  if (i > 0 && i % 8 == 0) {
+    printf(" ");
+  }
+  printf("^\n");
+}
+
+static void
+inspect_cursor_entry(grn_ctx *ctx, grn_geo_cursor_entry *entry)
+{
+  grn_geo_point point;
+
+  printf("entry: ");
+  grn_ntog((uint8_t *)&point, entry->base_key, sizeof(grn_geo_point));
+  grn_p_geo_point(ctx, &point);
+  inspect_key(ctx, entry->base_key);
+  print_key_mark(ctx, entry->target_bit);
+  printf("     target bit:    %d\n", entry->target_bit);
+  printf("   top included:    %s\n", entry->top_included ? "true" : "false");
+  printf("bottom included:    %s\n", entry->bottom_included ? "true" : "false");
+  printf("  left included:    %s\n", entry->left_included ? "true" : "false");
+  printf(" right included:    %s\n", entry->right_included ? "true" : "false");
+  printf(" latitude inner:    %s\n", entry->latitude_inner ? "true" : "false");
+  printf("longitude inner:    %s\n", entry->longitude_inner ? "true" : "false");
+}
+
+static void
+inspect_cursor_entry_targets(grn_ctx *ctx, grn_geo_cursor_entry *entry,
+                             uint8_t *top_left_key, uint8_t *bottom_right_key,
+                             grn_geo_cursor_entry *next_entry0,
+                             grn_geo_cursor_entry *next_entry1)
+{
+  printf("entry:        ");
+  inspect_key(ctx, entry->base_key);
+  printf("top-left:     ");
+  inspect_key(ctx, top_left_key);
+  printf("bottom-right: ");
+  inspect_key(ctx, bottom_right_key);
+  printf("next-entry-0: ");
+  inspect_key(ctx, next_entry0->base_key);
+  printf("next-entry-1: ");
+  inspect_key(ctx, next_entry1->base_key);
+  printf("              ");
+  print_key_mark(ctx, entry->target_bit + 1);
+}
 #else
 #  define inspect_mesh(...)
 #  define inspect_mesh_entry(...)
 #  define inspect_tid(...)
+#  define inspect_key(...)
+#  define print_key_mark(...)
+#  define inspect_cursor_entry(...)
+#  define inspect_cursor_entry_targets(...)
 #endif
 
 static int
@@ -661,6 +736,7 @@ grn_geo_select_in_circle(grn_ctx *ctx, grn_obj *index,
     grn_gton(geo_key1, center, sizeof(grn_geo_point));
     grn_gton(geo_key2, &on_circle, sizeof(grn_geo_point));
     diff_bit = compute_diff_bit(geo_key1, geo_key2);
+    diff_bit = compute_diff_bit(geo_key1, geo_key2);
 #ifdef GEO_DEBUG
     printf("center point: ");
     grn_p_geo_point(ctx, center);
@@ -847,6 +923,8 @@ in_rectangle_data_prepare(grn_ctx *ctx, grn_obj *index,
     grn_geo_point *geo_point_input;
     uint8_t geo_key_input[sizeof(grn_geo_point)];
     uint8_t geo_key_base[sizeof(grn_geo_point)];
+    uint8_t geo_key_top_left[sizeof(grn_geo_point)];
+    uint8_t geo_key_bottom_right[sizeof(grn_geo_point)];
 
     top_left = data->top_left;
     bottom_right = data->bottom_right;
@@ -866,7 +944,11 @@ in_rectangle_data_prepare(grn_ctx *ctx, grn_obj *index,
     }
     grn_gton(geo_key_input, geo_point_input, sizeof(grn_geo_point));
     grn_gton(geo_key_base, &(data->base), sizeof(grn_geo_point));
-    data->diff_bit = compute_diff_bit(geo_key_input, geo_key_base);
+    data->diff_bit = compute_diff_bit(geo_key_input, geo_key_base) - 1;
+    grn_gton(geo_key_top_left, top_left, sizeof(grn_geo_point));
+    grn_gton(geo_key_bottom_right, bottom_right, sizeof(grn_geo_point));
+    data->rectangle_common_bit =
+      compute_diff_bit(geo_key_top_left, geo_key_bottom_right) - 1;
     compute_min_and_max(&(data->base), data->diff_bit,
                         &(data->min), &(data->max));
     switch (data->direction) {
@@ -897,6 +979,7 @@ in_rectangle_data_prepare(grn_ctx *ctx, grn_obj *index,
     printf("bottom-right: ");
     grn_p_geo_point(ctx, bottom_right);
     printf("diff-bit:            %10d\n", data->diff_bit);
+    printf("rectangle-common-bit:%10d\n", data->rectangle_common_bit);
     printf("start:               %10d\n", data->start);
     printf("end:                 %10d\n", data->end);
     printf("distance:            %10d\n", data->distance);
@@ -909,6 +992,20 @@ in_rectangle_data_prepare(grn_ctx *ctx, grn_obj *index,
 exit :
   return ctx->rc;
 }
+
+#define SAME_BIT_P(a, b, n_bit)\
+  ((((uint8_t *)(a))[(n_bit) / 8] & (1 << (7 - ((n_bit) % 8)))) ==\
+   (((uint8_t *)(b))[(n_bit) / 8] & (1 << (7 - ((n_bit) % 8)))))
+
+#define ENTRY_CHECK_KEY(entry, key)\
+  SAME_BIT_P((entry)->base_key, (key), (entry)->target_bit)
+
+#define SET_N_BIT(a, n_bit)\
+  ((uint8_t *)(a))[((n_bit) / 8)] ^= (1 << (7 - ((n_bit) % 8)))
+
+#define N_BIT(a, n_bit)\
+  ((((uint8_t *)(a))[((n_bit) / 8)] &\
+    (1 << (7 - ((n_bit) % 8)))) >> (1 << (7 - ((n_bit) % 8))))
 
 grn_obj *
 grn_geo_cursor_open_in_rectangle(grn_ctx *ctx,
@@ -945,11 +1042,27 @@ grn_geo_cursor_open_in_rectangle(grn_ctx *ctx,
   cursor->direction = data.direction;
   memcpy(&(cursor->top_left), data.top_left, sizeof(grn_geo_point));
   memcpy(&(cursor->bottom_right), data.bottom_right, sizeof(grn_geo_point));
+  grn_gton(cursor->top_left_key, data.top_left, sizeof(grn_geo_point));
+  grn_gton(cursor->bottom_right_key, data.bottom_right, sizeof(grn_geo_point));
   memcpy(&(cursor->base), &(data.base), sizeof(grn_geo_point));
   cursor->pat_cursor = NULL;
   cursor->ii_cursor = NULL;
   cursor->offset = offset;
   cursor->rest = limit;
+
+  cursor->current_entry = 0;
+  {
+    grn_geo_cursor_entry *entry;
+    entry = &(cursor->entries[cursor->current_entry]);
+    entry->target_bit = data.rectangle_common_bit;
+    entry->top_included = GRN_TRUE;
+    entry->bottom_included = GRN_TRUE;
+    entry->left_included = GRN_TRUE;
+    entry->right_included = GRN_TRUE;
+    entry->latitude_inner = GRN_FALSE;
+    entry->longitude_inner = GRN_FALSE;
+    grn_gton(entry->base_key, &(data.base), sizeof(grn_geo_point));
+  }
 
 exit :
   grn_obj_unlink(ctx, &(data.top_left_point_buffer));
@@ -957,11 +1070,305 @@ exit :
   return (grn_obj *)cursor;
 }
 
+static inline grn_bool
+grn_geo_cursor_entry_next_push(grn_ctx *ctx,
+                               grn_geo_cursor_in_rectangle *cursor,
+                               grn_geo_cursor_entry *entry)
+{
+  grn_geo_cursor_entry *next_entry;
+  grn_geo_point entry_base;
+  grn_table_cursor *pat_cursor;
+  grn_bool pushed = GRN_FALSE;
+
+  grn_ntog((uint8_t*)(&entry_base), entry->base_key, sizeof(grn_geo_point));
+  pat_cursor = grn_table_cursor_open(ctx,
+                                     cursor->pat,
+                                     &entry_base,
+                                     entry->target_bit + 1,
+                                     NULL, 0,
+                                     0, -1,
+                                     GRN_CURSOR_PREFIX|GRN_CURSOR_SIZE_BY_BIT);
+  if (pat_cursor) {
+    if (grn_table_cursor_next(ctx, pat_cursor)) {
+      next_entry = &(cursor->entries[++cursor->current_entry]);
+      memcpy(next_entry, entry, sizeof(grn_geo_cursor_entry));
+      pushed = GRN_TRUE;
+    }
+    grn_table_cursor_close(ctx, pat_cursor);
+  }
+
+  return pushed;
+}
+
+static inline grn_bool
+grn_geo_cursor_entry_next(grn_ctx *ctx,
+                          grn_geo_cursor_in_rectangle *cursor,
+                          grn_geo_cursor_entry *entry)
+{
+  uint8_t *top_left_key = cursor->top_left_key;
+  uint8_t *bottom_right_key = cursor->bottom_right_key;
+
+  if (cursor->current_entry < 0) {
+    return GRN_FALSE;
+  }
+
+  memcpy(entry,
+         &(cursor->entries[cursor->current_entry--]),
+         sizeof(grn_geo_cursor_entry));
+  while (GRN_TRUE) {
+    grn_geo_cursor_entry next_entry0, next_entry1;
+    grn_bool pushed = GRN_FALSE;
+
+#ifdef GEO_DEBUG
+    inspect_cursor_entry(ctx, entry);
+#endif
+
+    if (entry->target_bit >= 55) {
+#ifdef GEO_DEBUG
+      printf("only 1 entry is remained\n");
+#endif
+      break;
+    }
+
+    if (entry->latitude_inner && entry->longitude_inner) {
+#ifdef GEO_DEBUG
+      printf("%d: inner entries\n", entry->target_bit);
+#endif
+      break;
+    }
+
+    memcpy(&next_entry0, entry, sizeof(grn_geo_cursor_entry));
+    next_entry0.target_bit++;
+    memcpy(&next_entry1, entry, sizeof(grn_geo_cursor_entry));
+    next_entry1.target_bit++;
+    SET_N_BIT(next_entry1.base_key, next_entry1.target_bit);
+
+#ifdef GEO_DEBUG
+    inspect_cursor_entry_targets(ctx, entry, top_left_key, bottom_right_key,
+                                 &next_entry0, &next_entry1);
+#endif
+
+    if ((entry->target_bit + 1) % 2 == 0) {
+      if (entry->top_included) {
+        next_entry0.top_included = ENTRY_CHECK_KEY(&next_entry0, top_left_key);
+        next_entry1.top_included = ENTRY_CHECK_KEY(&next_entry1, top_left_key);
+      }
+      if (entry->bottom_included) {
+        next_entry0.bottom_included =
+          ENTRY_CHECK_KEY(&next_entry0, bottom_right_key);
+        next_entry1.bottom_included =
+          ENTRY_CHECK_KEY(&next_entry1, bottom_right_key);
+      }
+
+      if (entry->top_included && !entry->bottom_included &&
+          next_entry1.top_included) {
+        next_entry0.latitude_inner = GRN_TRUE;
+      } else if (!entry->top_included && entry->bottom_included &&
+                 next_entry0.bottom_included) {
+        next_entry1.latitude_inner = GRN_TRUE;
+      }
+
+      if (next_entry0.latitude_inner ||
+          next_entry0.top_included || next_entry0.bottom_included) {
+        if (grn_geo_cursor_entry_next_push(ctx, cursor, &next_entry0)) {
+          pushed = GRN_TRUE;
+#ifdef GEO_DEBUG
+          printf("%d: latitude: push 0\n", next_entry0.target_bit);
+#endif
+        }
+      }
+      if (next_entry1.latitude_inner ||
+          next_entry1.top_included || next_entry1.bottom_included) {
+        if (grn_geo_cursor_entry_next_push(ctx, cursor, &next_entry1)) {
+          pushed = GRN_TRUE;
+#ifdef GEO_DEBUG
+          printf("%d: latitude: push 1\n", next_entry1.target_bit);
+#endif
+        }
+      }
+    } else {
+      if (entry->right_included) {
+        next_entry0.right_included =
+          ENTRY_CHECK_KEY(&next_entry0, bottom_right_key);
+        next_entry1.right_included =
+          ENTRY_CHECK_KEY(&next_entry1, bottom_right_key);
+      }
+      if (entry->left_included) {
+        next_entry0.left_included = ENTRY_CHECK_KEY(&next_entry0, top_left_key);
+        next_entry1.left_included = ENTRY_CHECK_KEY(&next_entry1, top_left_key);
+      }
+
+      if (entry->left_included && !entry->right_included &&
+          next_entry0.left_included) {
+        next_entry1.longitude_inner = GRN_TRUE;
+      } else if (!entry->left_included && entry->right_included &&
+                 next_entry1.right_included) {
+        next_entry0.longitude_inner = GRN_TRUE;
+      }
+
+      if (next_entry0.longitude_inner ||
+          next_entry0.left_included || next_entry0.right_included) {
+        if (grn_geo_cursor_entry_next_push(ctx, cursor, &next_entry0)) {
+          pushed = GRN_TRUE;
+#ifdef GEO_DEBUG
+          printf("%d: longitude: push 0\n", next_entry0.target_bit);
+#endif
+        }
+      }
+      if (next_entry1.longitude_inner ||
+          next_entry1.left_included || next_entry1.right_included) {
+        if (grn_geo_cursor_entry_next_push(ctx, cursor, &next_entry1)) {
+          pushed = GRN_TRUE;
+#ifdef GEO_DEBUG
+          printf("%d: longitude: push 1\n", next_entry1.target_bit);
+#endif
+        }
+      }
+    }
+
+    if (pushed) {
+#ifdef GEO_DEBUG
+      int i;
+
+      printf("%d: pushed\n", entry->target_bit);
+      printf("stack:\n");
+      for (i = cursor->current_entry; i >= 0; i--) {
+        grn_geo_cursor_entry *stack_entry;
+        stack_entry = &(cursor->entries[i]);
+        printf("%2d: ", i);
+        inspect_key(ctx, stack_entry->base_key);
+        printf("    ");
+        print_key_mark(ctx, stack_entry->target_bit);
+      }
+#endif
+      memcpy(entry,
+             &(cursor->entries[cursor->current_entry--]),
+             sizeof(grn_geo_cursor_entry));
+#ifdef GEO_DEBUG
+      printf("%d: pop entry\n", entry->target_bit);
+#endif
+    } else {
+      break;
+    }
+  }
+
+#ifdef GEO_DEBUG
+  printf("found:\n");
+  inspect_cursor_entry(ctx, entry);
+#endif
+
+  return GRN_TRUE;
+}
+
 typedef grn_bool (*grn_geo_cursor_callback)(grn_ctx *ctx, grn_ii_posting *posting, void *user_data);
 
 static void
-grn_geo_cursor_each(grn_ctx *ctx, grn_obj *geo_cursor,
-                    grn_geo_cursor_callback callback, void *user_data)
+grn_geo_cursor_each_strictly(grn_ctx *ctx, grn_obj *geo_cursor,
+                             grn_geo_cursor_callback callback, void *user_data)
+{
+  grn_geo_cursor_in_rectangle *cursor;
+  grn_obj *pat;
+  grn_table_cursor *pat_cursor;
+  grn_ii *ii;
+  grn_ii_cursor *ii_cursor;
+  grn_ii_posting *posting = NULL;
+  grn_geo_point *current, *base, *top_left, *bottom_right;
+  int diff_bit, distance, end_mesh_point;
+  grn_geo_mesh_direction direction;
+  grn_id index_id;
+
+  cursor = (grn_geo_cursor_in_rectangle *)geo_cursor;
+  if (cursor->rest == 0) {
+    return;
+  }
+
+  pat = cursor->pat;
+  pat_cursor = cursor->pat_cursor;
+  ii = (grn_ii *)(cursor->index);
+  ii_cursor = cursor->ii_cursor;
+  current = &(cursor->current);
+  base = &(cursor->base);
+  top_left = &(cursor->top_left);
+  bottom_right = &(cursor->bottom_right);
+  diff_bit = cursor->diff_bit;
+  distance = cursor->distance;
+  end_mesh_point = cursor->end_mesh_point;
+  direction = cursor->direction;
+
+  while (GRN_TRUE) {
+    if (!pat_cursor) {
+      grn_geo_cursor_entry entry;
+      grn_geo_point entry_base;
+      if (!grn_geo_cursor_entry_next(ctx, cursor, &entry)) {
+        cursor->rest = 0;
+        return;
+      }
+      grn_ntog((uint8_t*)(&entry_base), entry.base_key, sizeof(grn_geo_point));
+      if (!(cursor->pat_cursor = pat_cursor =
+            grn_table_cursor_open(ctx,
+                                  pat,
+                                  &entry_base,
+                                  entry.target_bit + 1,
+                                  NULL, 0,
+                                  0, -1,
+                                  GRN_CURSOR_PREFIX|GRN_CURSOR_SIZE_BY_BIT))) {
+        cursor->rest = 0;
+        return;
+      }
+#ifdef GEO_DEBUG
+      {
+        inspect_mesh(ctx, &entry_base, entry.target_bit, 0);
+      }
+#endif
+    }
+
+    while (ii_cursor || (index_id = grn_table_cursor_next(ctx, pat_cursor))) {
+      if (!ii_cursor) {
+        grn_table_get_key(ctx, pat, index_id, current, sizeof(grn_geo_point));
+        if (grn_geo_in_rectangle_raw(ctx, current, top_left, bottom_right)) {
+          inspect_tid(ctx, index_id, current, 0);
+          if (!(cursor->ii_cursor = ii_cursor =
+                grn_ii_cursor_open(ctx,
+                                   ii,
+                                   index_id,
+                                   GRN_ID_NIL,
+                                   GRN_ID_MAX,
+                                   ii->n_elements,
+                                   0))) {
+            continue;
+          }
+        } else {
+          continue;
+        }
+      }
+
+      while ((posting = grn_ii_cursor_next(ctx, ii_cursor))) {
+        if (cursor->offset == 0) {
+          grn_bool keep_each;
+          keep_each = callback(ctx, posting, user_data);
+          if (cursor->rest > 0) {
+            if (--(cursor->rest) == 0) {
+              keep_each = GRN_FALSE;
+            }
+          }
+          if (!keep_each) {
+            return;
+          }
+        } else {
+          cursor->offset--;
+        }
+      }
+      grn_ii_cursor_close(ctx, ii_cursor);
+      cursor->ii_cursor = ii_cursor = NULL;
+    }
+    grn_table_cursor_close(ctx, pat_cursor);
+    cursor->pat_cursor = pat_cursor = NULL;
+  }
+}
+
+static void
+grn_geo_cursor_each_loose(grn_ctx *ctx, grn_obj *geo_cursor,
+                          grn_geo_cursor_callback callback, void *user_data)
 {
   grn_geo_cursor_in_rectangle *cursor;
   grn_obj *pat;
@@ -1078,6 +1485,17 @@ grn_geo_cursor_each(grn_ctx *ctx, grn_obj *geo_cursor,
       cursor->rest = 0;
       return;
     }
+  }
+}
+
+static void
+grn_geo_cursor_each(grn_ctx *ctx, grn_obj *geo_cursor,
+                    grn_geo_cursor_callback callback, void *user_data)
+{
+  if (getenv("GRN_GEO_CURSOR_STRICTLY")) {
+    grn_geo_cursor_each_strictly(ctx, geo_cursor, callback, user_data);
+  } else {
+    grn_geo_cursor_each_loose(ctx, geo_cursor, callback, user_data);
   }
 }
 

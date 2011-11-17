@@ -60,6 +60,18 @@ enum _grn_geo_mesh_direction {
   GRN_GEO_MESH_LONGITUDE
 };
 
+typedef struct _grn_geo_cursor_entry grn_geo_cursor_entry;
+struct _grn_geo_cursor_entry {
+  uint8_t base_key[sizeof(grn_geo_point)];
+  grn_bool top_included;
+  grn_bool bottom_included;
+  grn_bool left_included;
+  grn_bool right_included;
+  grn_bool latitude_inner;
+  grn_bool longitude_inner;
+  int target_bit;
+};
+
 typedef struct _grn_geo_cursor_in_rectangle grn_geo_cursor_in_rectangle;
 struct _grn_geo_cursor_in_rectangle {
   grn_db_obj obj;
@@ -72,12 +84,16 @@ struct _grn_geo_cursor_in_rectangle {
   grn_geo_mesh_direction direction;
   grn_geo_point top_left;
   grn_geo_point bottom_right;
+  uint8_t top_left_key[sizeof(grn_geo_point)];
+  uint8_t bottom_right_key[sizeof(grn_geo_point)];
   grn_geo_point base;
   grn_geo_point current;
   grn_table_cursor *pat_cursor;
   grn_ii_cursor *ii_cursor;
   int offset;
   int rest;
+  grn_geo_cursor_entry entries[64];
+  int current_entry;
 };
 
 grn_rc grn_geo_cursor_close(grn_ctx *ctx, grn_obj *geo_cursor);
