@@ -17,17 +17,43 @@
 */
 
 /*
-  groonga: 9df80ce876d391d4531786f862edd70ab9fea042
+  groonga: f56f466a05d756336f26ea5c2e54e9bdf5d3d681
   CFLAGS: -O0 -ggdb3
   CPU: Intel(R) Core(TM) i7 CPU         860  @ 2.80GHz stepping 05
-
-  % (cd test/benchmark; make --quiet run-bench-geo-select)
+  % (cd test/benchmark/ && make --quiet run-bench-geo-select)
   run-bench-geo-select:
                                         (time)
-    1st: select_in_rectangle (partial): (0.77974)
-    2nd: select_in_rectangle (partial): (0.778425)
-    1st: select_in_rectangle     (all): (8.98407)
-    2nd: select_in_rectangle     (all): (9.12714)
+    1st: select_in_rectangle (partial): (0.819828)
+    2nd: select_in_rectangle (partial): (0.832293)
+    1st: select_in_rectangle     (all): (8.82504)
+    2nd: select_in_rectangle     (all): (8.97628)
+
+  % (cd test/benchmark; GRN_GEO_CURSOR_STRICTLY=yes make --quiet run-bench-geo-select)
+  run-bench-geo-select:
+                                        (time)
+    1st: select_in_rectangle (partial): (0.528143)
+    2nd: select_in_rectangle (partial): (0.518647)
+    1st: select_in_rectangle     (all): (8.77378)
+    2nd: select_in_rectangle     (all): (8.76765)
+
+  groonga: f56f466a05d756336f26ea5c2e54e9bdf5d3d681
+  CFLAGS: -O3 -ggdb3
+  CPU: Intel(R) Core(TM) i7 CPU         860  @ 2.80GHz stepping 05
+  % (cd test/benchmark/ && make --quiet run-bench-geo-select)
+  run-bench-geo-select:
+                                        (time)
+    1st: select_in_rectangle (partial): (0.415439)
+    2nd: select_in_rectangle (partial): (0.423479)
+    1st: select_in_rectangle     (all): (4.63983)
+    2nd: select_in_rectangle     (all): (4.53055)
+
+  % (cd test/benchmark; GRN_GEO_CURSOR_STRICTLY=yes make --quiet run-bench-geo-select)
+  run-bench-geo-select:
+                                        (time)
+    1st: select_in_rectangle (partial): (0.26974)
+    2nd: select_in_rectangle (partial): (0.250247)
+    1st: select_in_rectangle     (all): (4.45263)
+    2nd: select_in_rectangle     (all): (4.61558)
 */
 
 #include <string.h>
