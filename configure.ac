@@ -887,7 +887,7 @@ AC_ARG_WITH(package-platform,
 AC_MSG_RESULT($package_platform)
 
 AM_CONDITIONAL([REDHAT_PLATFORM],
-               [test "${package_platform}" = "yes"])
+               [test "${package_platform}" = "redhat"])
 
 # plugins check
 relative_pluginsdir="\$(PACKAGE)/plugins"
