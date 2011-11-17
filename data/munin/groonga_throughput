@@ -39,13 +39,19 @@ end
 def run(command, *args)
   if @protocol == "http"
     require "net/http"
-    response = Net::HTTP.start(@host, @port) do |http|
-      http.get("/d/status.json")
-    end
-    if response.is_a?(Net::HTTPSuccess)
-      parse(true, response.body)
-    else
-      parse(false, "#{response.code}: #{response.body}")
+    begin
+      response = Net::HTTP.start(@host, @port) do |http|
+        http.get("/d/status.json")
+      end
+      if response.is_a?(Net::HTTPSuccess)
+        parse(true, response.body)
+      else
+        parse(false, "#{response.code}: #{response.body}")
+      end
+    rescue Exception
+      message = "#{$!.class}: #{$!.message}\n"
+      message <<  $@.join("\n")
+      parse(false, message)
     end
   else
     groonga = "#{@groonga} -p #{@port} -c #{@host}"
