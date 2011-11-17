@@ -138,7 +138,7 @@ PHP language binding for groonga
 
 
 %build
-%configure --disable-static
+%configure --disable-static --with-package-platform=redhat
 sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool
 sed -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool
 make %{?_smp_mflags}
@@ -317,6 +317,7 @@ fi
 - new upstream release.
 - enable zlib support.
 - enable lzo support.
+- add --with-package-platform=redhat configure option to install init script.
 
 * Sat Oct 29 2011 Kouhei Sutou <kou@clear-code.com> - 1.2.7-0
 - new upstream release.
