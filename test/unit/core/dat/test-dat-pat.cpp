@@ -23,6 +23,8 @@
 #include <cppcutter.h>
 
 #include <grn-assertions.h>
+#include <dat.h>
+#include <pat.h>
 
 #include <algorithm>
 #include <cstdio>
@@ -31,6 +33,8 @@
 #include <set>
 #include <string>
 #include <vector>
+
+#include <iostream>
 
 namespace
 {
@@ -81,11 +85,22 @@ namespace test_dat_pat
     }
   }
 
+  void generate_pat_path(const char *filename, char *path)
+  {
+    std::sprintf(path, "%s/%s.pat", base_dir, filename);
+  }
+
+  void generate_dat_path(const char *filename, char *path)
+  {
+    std::sprintf(path, "%s/%s.dat", base_dir, filename);
+  }
+
   grn_pat *create_pat(const char *filename, const std::vector<std::string> &keys)
   {
     char pat_path[PATH_MAX];
-    std::sprintf(pat_path, "%s/%s.pat", base_dir, filename);
-    grn_pat * const pat = grn_pat_create(&ctx, NULL, 1024, 0, GRN_OBJ_KEY_VAR_SIZE);
+    generate_pat_path(filename, pat_path);
+    grn_pat * const pat = grn_pat_create(&ctx, pat_path,
+                                         1024, 0, GRN_OBJ_KEY_VAR_SIZE);
     cut_assert_not_null(pat);
 
     for (std::size_t i = 0; i < keys.size(); ++i) {
@@ -97,14 +112,82 @@ namespace test_dat_pat
   grn_dat *create_dat(const char *filename, const std::vector<std::string> &keys)
   {
     char dat_path[PATH_MAX];
-    std::sprintf(dat_path, "%s/%s.dat", base_dir, filename);
-    grn_dat * const dat = grn_dat_create(&ctx, NULL, 1024, 0, GRN_OBJ_KEY_VAR_SIZE);
+    generate_dat_path(filename, dat_path);
+    grn_dat * const dat = grn_dat_create(&ctx, dat_path,
+                                         1024, 0, GRN_OBJ_KEY_VAR_SIZE);
     cut_assert_not_null(dat);
 
     for (std::size_t i = 0; i < keys.size(); ++i) {
       grn_dat_add(&ctx, dat, keys[i].c_str(), keys[i].length(), NULL, NULL);
     }
     return dat;
+  }
+
+  void test_open(void)
+  {
+    const char * const filename = "test_open";
+
+    char pat_path[PATH_MAX];
+    char dat_path[PATH_MAX];
+
+    generate_pat_path(filename, pat_path);
+    generate_dat_path(filename, dat_path);
+
+    cut_assert_not_exist_path(pat_path);
+    cut_assert_not_exist_path(dat_path);
+
+    grn_pat *pat = grn_pat_open(&ctx, pat_path);
+    grn_dat *dat = grn_dat_open(&ctx, dat_path);
+
+    cut_assert_null(pat);
+    cut_assert_null(dat);
+
+    std::vector<std::string> keys;
+    create_keys(&keys, 1000, 3, 5);
+    pat = create_pat(filename, keys);
+    dat = create_dat(filename, keys);
+
+    cppcut_assert_equal(GRN_SUCCESS, grn_pat_close(&ctx, pat));
+    cppcut_assert_equal(GRN_SUCCESS, grn_dat_close(&ctx, dat));
+
+    cut_assert_exist_path(pat_path);
+    cut_assert_exist_path(dat_path);
+
+    pat = grn_pat_open(&ctx, pat_path);
+    dat = grn_dat_open(&ctx, dat_path);
+
+    cut_assert_not_null(pat);
+    cut_assert_not_null(dat);
+
+    cppcut_assert_equal(GRN_SUCCESS, grn_pat_close(&ctx, pat));
+    cppcut_assert_equal(GRN_SUCCESS, grn_dat_close(&ctx, dat));
+  }
+
+  void test_remove(void)
+  {
+    const char * const filename = "test_remove";
+
+    std::vector<std::string> keys;
+    grn_pat * const pat = create_pat(filename, keys);
+    grn_dat * const dat = create_dat(filename, keys);
+
+    cppcut_assert_equal(GRN_SUCCESS, grn_pat_close(&ctx, pat));
+    cppcut_assert_equal(GRN_SUCCESS, grn_dat_close(&ctx, dat));
+
+    char pat_path[PATH_MAX];
+    char dat_path[PATH_MAX];
+
+    generate_pat_path(filename, pat_path);
+    generate_dat_path(filename, dat_path);
+
+    cppcut_assert_equal(GRN_SUCCESS, grn_pat_remove(&ctx, pat_path));
+    cppcut_assert_equal(GRN_SUCCESS, grn_dat_remove(&ctx, dat_path));
+
+    cut_assert_not_exist_path(pat_path);
+    cut_assert_not_exist_path(dat_path);
+
+    cppcut_assert_equal(GRN_SUCCESS, grn_pat_remove(&ctx, pat_path));
+    cppcut_assert_equal(GRN_SUCCESS, grn_dat_remove(&ctx, dat_path));
   }
 
   void test_get(void)
@@ -156,6 +239,72 @@ namespace test_dat_pat
                                         key.length(), NULL, &dat_added);
       cppcut_assert_equal(pat_id, dat_id);
       cppcut_assert_equal(pat_added, dat_added);
+
+      cppcut_assert_equal(grn_pat_size(&ctx, pat), grn_dat_size(&ctx, dat));
+      cppcut_assert_equal(grn_pat_curr_id(&ctx, pat), grn_dat_curr_id(&ctx, dat));
+    }
+
+    cppcut_assert_equal(GRN_SUCCESS, grn_pat_close(&ctx, pat));
+    cppcut_assert_equal(GRN_SUCCESS, grn_dat_close(&ctx, dat));
+  }
+
+  void test_delete_by_id(void)
+  {
+    const char * const filename = "test_delete_by_id";
+
+    std::vector<std::string> keys;
+    create_keys(&keys, 1000, 3, 5);
+    grn_pat * const pat = create_pat(filename, keys);
+    grn_dat * const dat = create_dat(filename, keys);
+
+    for (std::size_t i = 0; i < keys.size(); i += 2) {
+      const grn_id key_id = static_cast<grn_id>(i + 1);
+      cppcut_assert_equal(GRN_SUCCESS,
+                          grn_pat_delete_by_id(&ctx, pat, key_id, NULL));
+      cppcut_assert_equal(GRN_SUCCESS,
+                          grn_dat_delete_by_id(&ctx, dat, key_id, NULL));
+    }
+
+    cut_omit("Not fixed yet.");
+
+    for (std::size_t i = 0; i < keys.size(); ++i) {
+      const grn_id key_id = static_cast<grn_id>(i + 1);
+      const grn_rc rc = (key_id & 1) ? GRN_SUCCESS : GRN_INVALID_ARGUMENT;
+      cppcut_assert_equal(rc, grn_pat_delete_by_id(&ctx, pat, key_id, NULL));
+      cppcut_assert_equal(rc, grn_dat_delete_by_id(&ctx, dat, key_id, NULL));
+    }
+
+    cppcut_assert_equal(GRN_SUCCESS, grn_pat_close(&ctx, pat));
+    cppcut_assert_equal(GRN_SUCCESS, grn_dat_close(&ctx, dat));
+  }
+
+  void test_delete(void)
+  {
+    const char * const filename = "test_delete";
+
+    std::vector<std::string> keys;
+    create_keys(&keys, 1000, 3, 5);
+    grn_pat * const pat = create_pat(filename, keys);
+    grn_dat * const dat = create_dat(filename, keys);
+
+    for (std::size_t i = 0; i < keys.size(); i += 2) {
+      const char * const ptr = keys[i].c_str();
+      const uint32_t length = static_cast<uint32_t>(keys[i].length());
+      const grn_id key_id = static_cast<grn_id>(i + 1);
+      cppcut_assert_equal(GRN_SUCCESS,
+                          grn_pat_delete(&ctx, pat, ptr, length, NULL));
+      cppcut_assert_equal(GRN_SUCCESS,
+                          grn_dat_delete(&ctx, dat, ptr, length, NULL));
+    }
+
+    cut_omit("Not fixed yet.");
+
+    for (std::size_t i = 0; i < keys.size(); ++i) {
+      const char * const ptr = keys[i].c_str();
+      const uint32_t length = static_cast<uint32_t>(keys[i].length());
+      const grn_rc rc = (i & 1) ? GRN_INVALID_ARGUMENT : GRN_SUCCESS;
+      cppcut_assert_equal(rc, grn_pat_delete(&ctx, pat, ptr, length, NULL));
+      cppcut_assert_equal(rc, grn_dat_delete(&ctx, dat, ptr, length, NULL));
     }
 
     cppcut_assert_equal(GRN_SUCCESS, grn_pat_close(&ctx, pat));
@@ -382,6 +531,34 @@ namespace test_dat_pat
 
       grn_pat_cursor_close(&ctx, pat_cursor);
       grn_dat_cursor_close(&ctx, dat_cursor);
+    }
+
+    cppcut_assert_equal(GRN_SUCCESS, grn_pat_close(&ctx, pat));
+    cppcut_assert_equal(GRN_SUCCESS, grn_dat_close(&ctx, dat));
+  }
+
+  void test_truncate(void)
+  {
+    const char * const filename = "test_truncate";
+
+    std::vector<std::string> keys;
+    create_keys(&keys, 1000, 3, 5);
+    grn_pat * const pat = create_pat(filename, keys);
+    grn_dat * const dat = create_dat(filename, keys);
+
+    cppcut_assert_equal(GRN_SUCCESS, grn_pat_truncate(&ctx, pat));
+    cppcut_assert_equal(GRN_SUCCESS, grn_dat_truncate(&ctx, dat));
+
+    cppcut_assert_equal(static_cast<unsigned int>(0), grn_pat_size(&ctx, pat));
+    cppcut_assert_equal(static_cast<unsigned int>(0), grn_dat_size(&ctx, dat));
+
+    for (std::size_t i = 0; i < keys.size(); ++i) {
+      const char * const ptr = keys[i].c_str();
+      const uint32_t length = static_cast<uint32_t>(keys[i].length());
+      cppcut_assert_equal(static_cast<grn_id>(GRN_ID_NIL),
+                          grn_pat_get(&ctx, pat, ptr, length, NULL));
+      cppcut_assert_equal(static_cast<grn_id>(GRN_ID_NIL),
+                          grn_dat_get(&ctx, dat, ptr, length, NULL));
     }
 
     cppcut_assert_equal(GRN_SUCCESS, grn_pat_close(&ctx, pat));
