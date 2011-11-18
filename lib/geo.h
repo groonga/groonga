@@ -54,6 +54,8 @@ extern "C" {
   _longitude = GRN_GEO_INT2RAD(_val->longitude);\
 } while (0)
 
+#define GRN_GEO_KEY_MAX_BITS 64
+
 typedef enum _grn_geo_mesh_direction grn_geo_mesh_direction;
 enum _grn_geo_mesh_direction {
   GRN_GEO_MESH_LATITUDE,
@@ -92,7 +94,7 @@ struct _grn_geo_cursor_in_rectangle {
   grn_ii_cursor *ii_cursor;
   int offset;
   int rest;
-  grn_geo_cursor_entry entries[64];
+  grn_geo_cursor_entry entries[GRN_GEO_KEY_MAX_BITS];
   int current_entry;
   int minimum_reduce_bit;
 };

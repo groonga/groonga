@@ -22,8 +22,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-#define GEO_KEY_MAX_BITS 64
-
 typedef struct {
   grn_id id;
   double d;
@@ -1146,7 +1144,7 @@ grn_geo_cursor_entry_next(grn_ctx *ctx,
 {
   uint8_t *top_left_key = cursor->top_left_key;
   uint8_t *bottom_right_key = cursor->bottom_right_key;
-  int max_target_bit = GEO_KEY_MAX_BITS - cursor->minimum_reduce_bit;
+  int max_target_bit = GRN_GEO_KEY_MAX_BITS - cursor->minimum_reduce_bit;
 
   if (cursor->current_entry < 0) {
     return GRN_FALSE;
