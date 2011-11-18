@@ -582,13 +582,14 @@ AC_ARG_ENABLE(benchmark,
 if test "x$enable_benchmark" = "xno"; then
   ac_benchmark_available="no"
 else
-  m4_ifdef([AM_PATH_GLIB_2_0], [
-  GLIB_REQUIRED=2.8.0
-  AC_SUBST(GLIB_REQUIRED)
-  AM_PATH_GLIB_2_0($GLIB_REQUIRED,
-		   [ac_benchmark_available="yes"],
-		   [ac_benchmark_available="no"],
-		   [gobject gthread])
+  m4_ifdef([AM_PATH_GLIB_2_0],
+  [
+    GLIB_REQUIRED=2.8.0
+    AC_SUBST(GLIB_REQUIRED)
+    AM_PATH_GLIB_2_0($GLIB_REQUIRED,
+		     [ac_benchmark_available="yes"],
+		     [ac_benchmark_available="no"],
+		     [gobject gthread])
   ],
   [ac_benchmark_available="no"])
   AC_MSG_CHECKING(for benchmark availablity)
