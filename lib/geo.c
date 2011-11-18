@@ -1145,7 +1145,7 @@ grn_geo_cursor_entry_next(grn_ctx *ctx,
     inspect_cursor_entry(ctx, entry);
 #endif
 
-    if (entry->target_bit >= 55) {
+    if (entry->target_bit >= 63) {
 #ifdef GEO_DEBUG
       printf("only 1 entry is remained\n");
 #endif
