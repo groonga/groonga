@@ -1190,21 +1190,21 @@ grn_geo_cursor_entry_next(grn_ctx *ctx,
         next_entry1.latitude_inner = GRN_TRUE;
       }
 
-      if (next_entry0.latitude_inner ||
-          next_entry0.top_included || next_entry0.bottom_included) {
-        if (grn_geo_cursor_entry_next_push(ctx, cursor, &next_entry0)) {
-          pushed = GRN_TRUE;
-#ifdef GEO_DEBUG
-          printf("%d: latitude: push 0\n", next_entry0.target_bit);
-#endif
-        }
-      }
       if (next_entry1.latitude_inner ||
           next_entry1.top_included || next_entry1.bottom_included) {
         if (grn_geo_cursor_entry_next_push(ctx, cursor, &next_entry1)) {
           pushed = GRN_TRUE;
 #ifdef GEO_DEBUG
           printf("%d: latitude: push 1\n", next_entry1.target_bit);
+#endif
+        }
+      }
+      if (next_entry0.latitude_inner ||
+          next_entry0.top_included || next_entry0.bottom_included) {
+        if (grn_geo_cursor_entry_next_push(ctx, cursor, &next_entry0)) {
+          pushed = GRN_TRUE;
+#ifdef GEO_DEBUG
+          printf("%d: latitude: push 0\n", next_entry0.target_bit);
 #endif
         }
       }
@@ -1228,21 +1228,21 @@ grn_geo_cursor_entry_next(grn_ctx *ctx,
         next_entry0.longitude_inner = GRN_TRUE;
       }
 
-      if (next_entry0.longitude_inner ||
-          next_entry0.left_included || next_entry0.right_included) {
-        if (grn_geo_cursor_entry_next_push(ctx, cursor, &next_entry0)) {
-          pushed = GRN_TRUE;
-#ifdef GEO_DEBUG
-          printf("%d: longitude: push 0\n", next_entry0.target_bit);
-#endif
-        }
-      }
       if (next_entry1.longitude_inner ||
           next_entry1.left_included || next_entry1.right_included) {
         if (grn_geo_cursor_entry_next_push(ctx, cursor, &next_entry1)) {
           pushed = GRN_TRUE;
 #ifdef GEO_DEBUG
           printf("%d: longitude: push 1\n", next_entry1.target_bit);
+#endif
+        }
+      }
+      if (next_entry0.longitude_inner ||
+          next_entry0.left_included || next_entry0.right_included) {
+        if (grn_geo_cursor_entry_next_push(ctx, cursor, &next_entry0)) {
+          pushed = GRN_TRUE;
+#ifdef GEO_DEBUG
+          printf("%d: longitude: push 0\n", next_entry0.target_bit);
 #endif
         }
       }
