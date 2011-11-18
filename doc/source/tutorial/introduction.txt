@@ -62,8 +62,8 @@ The 1 place of json array has reslt of exectuted command.
 Commands
 --------
 
-You can operate database with various commands via execution file of groonga or groonga server
-There are forms of commands in the following. ::
+You can operate database with various commands via execution file of groonga or groonga server.
+There are forms of commands in the following::
 
  Form1: COMMAND ARGUMENT1 ARGUMENT2 ..
 
@@ -71,7 +71,7 @@ There are forms of commands in the following. ::
 
 You can mix these forms in commands running.
 
-In Form2, if you want to specify value including some spaces or symbols("'()/), you should enclose its value with single-quote or double-quote.
+In Form2, if you want to specify a value including some spaces or symbols("'()/), you should enclose its value with single-quote or double-quote.
 
 For detail, you can see paragraph of "command" in :doc:`/executables/groonga`.
 
@@ -120,7 +120,7 @@ Search
 .. include:: ../example/tutorial/introduction-3.log
 .. select --table Site
 
-With name of a table, 'select' command shows 10 contents of its table.[0] shows the number of searched records. ["_id","Uint32"] is column named "_id" and type of this column's value is UInt32. ["_key","ShortText"] is "_key" column, type of this column's value is ShortText.
+With name of a table, 'select' command shows 10 contents of its table. [0] shows the number of searched records. ["_id","Uint32"] is column named "_id" and type of this column's value is UInt32. ["_key","ShortText"] is "_key" column, type of this column's value is ShortText.
 
 'table_create' command creates table including two columns, '_id' and '_key' first. '_id' has ID-number given automatically by groonga. '_key' column is stored master key. You cannot modify this column's name.
 
@@ -129,14 +129,14 @@ Create columns
 
 :doc:`/commands/column_create` command create columns.
 
-We add a column named 'comment' stored value type is ShortText.
+We add a column named 'comment' that lets us store value whose type is ShortText.
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-4.log
 .. column_create --table Site --name title --flags COLUMN_SCALAR --type ShortText
 .. select --table Site
 
-CLLUMN_SCALAR specifies basic-column.
+COLUMN_SCALAR means this is normal column.
 
 Create terminology table with fulltext-searching
 ------------------------------------------------
@@ -161,14 +161,14 @@ The 'default_tokenizer' parametar specifies the way to tokenize target texts. In
 Create index-column with fulltext searching
 -------------------------------------------
 
-We will target 'title' column in 'Site' table for fulltext searching. In this case, we create column whose type index in terminology table.
+We will fulltext search 'title' column in 'Site' table. In this case, we create column whose type index in terminology table.
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-6.log
 .. column_create --table Terms --name blog_title --flags COLUMN_INDEX|WITH_POSITION --type Site --source title
 
 This command creates index column 'blog_title' in 'Term' table. '--type' option specifies target indexed table, and '--source' option does target index column.
-In execution example, 'COLUMN_INDEX|WITH_POSITION' for '--flags' option specifies that this column is index column for storing information of terminology existing position. This option should be specified 'COLUMN_INDEX|WITH_POSITION' in generally fulltext searching. This tutorial does not explain why to store information of terminology existing position.
+In execution example, 'COLUMN_INDEX|WITH_POSITION' for '--flags' option specifies that this column is index column for storing information of terminology existing position. This option should be specified 'COLUMN_INDEX|WITH_POSITION' in generally fulltext searching. This tutorial does not deal with the reason why store information of terminology existing position.
 
 Load data
 ---------
@@ -231,7 +231,7 @@ This command shows result of fulltext searching by string 'this' for 'title' col
 
 "title:@this" specified 'query' parametor means to search records whose 'title' column including 'this' string.
 
-'select' command has parametor 'match_columns'.
+'select' command has parameter 'match_columns'.
 
 If this parametor is specified, it means to search in columns specified 'match_columns' when 'query' parametor doesn't specify column-name condition.[1]_
 
@@ -246,7 +246,7 @@ Specify output column
 
 'output_columns' parametor in 'select' command specifies columns shown in result of search.
 
-If you want to specify some columns, you should use comma(,) between column names.
+If you want to specify some columns, you should separate column names by comma(,).
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-13.log
@@ -257,7 +257,7 @@ If you want to specify some columns, you should use comma(,) between column name
 Ranges to display
 -----------------
 
-'select' command can display result in only specified ranges using 'offset' and 'limit' parametor. This parametors is available when you want to show only a page in much result of searching.
+'select' command can display result in only specified ranges using 'offset' and 'limit' parameter. This parameters is useful when you want to show only a page in much result of searching.
 
 'offset' parametor specifies starting point of result. If you want 'select' command to return from first records, this parametor specifies '0'.
 
@@ -272,7 +272,7 @@ Ranges to display
 Sort
 -----
 
-If you use 'sortby' parametor in 'select' command, this command puts result of searching in order.
+If you use 'sortby' parametor in 'select' command, this command sorts result of searching.
 
 When 'sortby' parametor specifies column name, result is sorted in ascending-order to its column's value. This 'select' command also sort in descending-order when you add hyphen(-) before column name.
 
