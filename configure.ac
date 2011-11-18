@@ -584,7 +584,7 @@ if test "x$enable_benchmark" = "xno"; then
 else
   REQUIRED_GLIB_VERSION=2.8.0
   m4_ifdef([AM_PATH_GLIB_2_0],
-           [AM_PATH_GLIB_2_0($REQURED_GLIB_VERSION,
+           [AM_PATH_GLIB_2_0($REQUIRED_GLIB_VERSION,
                              [benchmark_available="yes"],
                              [benchmark_available="no"],
                              [gobject gthread])],
