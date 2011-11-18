@@ -46,8 +46,9 @@ typedef struct {
   int end;
   int distance;
   int diff_bit;
-  int rectangle_common_bit;
   grn_geo_mesh_direction direction;
+  int rectangle_common_bit;
+  uint8_t rectangle_common_key[sizeof(grn_geo_point)];
 } in_rectangle_data;
 
 static int
@@ -72,35 +73,52 @@ compute_diff_bit(uint8_t *geo_key1, uint8_t *geo_key2)
 }
 
 static void
+compute_min_and_max_key(uint8_t *key_base, int diff_bit,
+                        uint8_t *key_min, uint8_t *key_max)
+{
+  int diff_byte, diff_bit_mask;
+
+  diff_byte = diff_bit / 8;
+  diff_bit_mask = 0xff >> (diff_bit % 8);
+
+  if (diff_byte == sizeof(grn_geo_point)) {
+    if (key_min) { memcpy(key_min, key_base, diff_byte); }
+    if (key_max) { memcpy(key_max, key_base, diff_byte); }
+  } else {
+    if (key_min) {
+      memcpy(key_min, key_base, diff_byte + 1);
+      key_min[diff_byte] &= ~diff_bit_mask;
+      memset(key_min + diff_byte + 1, 0,
+             sizeof(grn_geo_point) - diff_byte - 1);
+    }
+
+    if (key_max) {
+      memcpy(key_max, key_base, diff_byte + 1);
+      key_max[diff_byte] |= diff_bit_mask;
+      memset(key_max + diff_byte + 1, 0xff,
+             sizeof(grn_geo_point) - diff_byte - 1);
+    }
+  }
+}
+
+static void
 compute_min_and_max(grn_geo_point *base_point, int diff_bit,
                     grn_geo_point *geo_min, grn_geo_point *geo_max)
 {
-  int diff_byte, diff_bit_mask;
   uint8_t geo_key_base[sizeof(grn_geo_point)];
   uint8_t geo_key_min[sizeof(grn_geo_point)];
   uint8_t geo_key_max[sizeof(grn_geo_point)];
 
-  diff_byte = diff_bit / 8;
-  diff_bit_mask = 0xff >> (diff_bit % 8);
   grn_gton(geo_key_base, base_point, sizeof(grn_geo_point));
-
-  if (diff_byte == sizeof(grn_geo_point)) {
-    memcpy(geo_key_min, geo_key_base, diff_byte);
-    memcpy(geo_key_max, geo_key_base, diff_byte);
-  } else {
-    memcpy(geo_key_min, geo_key_base, diff_byte + 1);
-    geo_key_min[diff_byte] &= ~diff_bit_mask;
-    memset(geo_key_min + diff_byte + 1, 0,
-           sizeof(grn_geo_point) - diff_byte - 1);
-
-    memcpy(geo_key_max, geo_key_base, diff_byte + 1);
-    geo_key_max[diff_byte] |= diff_bit_mask;
-    memset(geo_key_max + diff_byte + 1, 0xff,
-           sizeof(grn_geo_point) - diff_byte - 1);
+  compute_min_and_max_key(geo_key_base, diff_bit,
+                          geo_min ? geo_key_min : NULL,
+                          geo_max ? geo_key_max : NULL);
+  if (geo_min) {
+    grn_ntog((uint8_t *)geo_min, geo_key_min, sizeof(grn_geo_point));
   }
-
-  grn_ntog((uint8_t *)geo_min, geo_key_min, sizeof(grn_geo_point));
-  grn_ntog((uint8_t *)geo_max, geo_key_max, sizeof(grn_geo_point));
+  if (geo_max) {
+    grn_ntog((uint8_t *)geo_max, geo_key_max, sizeof(grn_geo_point));
+  }
 }
 
 /* #define GEO_DEBUG */
@@ -944,12 +962,16 @@ in_rectangle_data_prepare(grn_ctx *ctx, grn_obj *index,
     grn_gton(geo_key_input, geo_point_input, sizeof(grn_geo_point));
     grn_gton(geo_key_base, &(data->base), sizeof(grn_geo_point));
     data->diff_bit = compute_diff_bit(geo_key_input, geo_key_base);
+    compute_min_and_max(&(data->base), data->diff_bit,
+                        &(data->min), &(data->max));
+
     grn_gton(geo_key_top_left, top_left, sizeof(grn_geo_point));
     grn_gton(geo_key_bottom_right, bottom_right, sizeof(grn_geo_point));
     data->rectangle_common_bit =
       compute_diff_bit(geo_key_top_left, geo_key_bottom_right) - 1;
-    compute_min_and_max(&(data->base), data->diff_bit,
-                        &(data->min), &(data->max));
+    compute_min_and_max_key(geo_key_top_left, data->rectangle_common_bit + 1,
+                            data->rectangle_common_key, NULL);
+
     switch (data->direction) {
     case GRN_GEO_MESH_LATITUDE :
       data->distance = data->max.latitude - data->min.latitude + 1;
@@ -1052,15 +1074,16 @@ grn_geo_cursor_open_in_rectangle(grn_ctx *ctx,
   cursor->current_entry = 0;
   {
     grn_geo_cursor_entry *entry;
+
     entry = &(cursor->entries[cursor->current_entry]);
     entry->target_bit = data.rectangle_common_bit;
+    memcpy(entry->base_key, data.rectangle_common_key, sizeof(grn_geo_point));
     entry->top_included = GRN_TRUE;
     entry->bottom_included = GRN_TRUE;
     entry->left_included = GRN_TRUE;
     entry->right_included = GRN_TRUE;
     entry->latitude_inner = GRN_FALSE;
     entry->longitude_inner = GRN_FALSE;
-    grn_gton(entry->base_key, &(data.base), sizeof(grn_geo_point));
   }
 
 exit :
@@ -1315,9 +1338,7 @@ grn_geo_cursor_each_strictly(grn_ctx *ctx, grn_obj *geo_cursor,
         return;
       }
 #ifdef GEO_DEBUG
-      {
-        inspect_mesh(ctx, &entry_base, entry.target_bit, 0);
-      }
+      inspect_mesh(ctx, &entry_base, entry.target_bit, 0);
 #endif
     }
 
