@@ -660,6 +660,7 @@ grn_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj)
     return buffer;
   case GRN_TABLE_HASH_KEY :
   case GRN_TABLE_PAT_KEY :
+  case GRN_TABLE_DAT_KEY :
   case GRN_TABLE_NO_KEY :
     grn_table_inspect(ctx, buffer, obj);
     return buffer;
