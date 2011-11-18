@@ -736,7 +736,6 @@ grn_geo_select_in_circle(grn_ctx *ctx, grn_obj *index,
     grn_gton(geo_key1, center, sizeof(grn_geo_point));
     grn_gton(geo_key2, &on_circle, sizeof(grn_geo_point));
     diff_bit = compute_diff_bit(geo_key1, geo_key2);
-    diff_bit = compute_diff_bit(geo_key1, geo_key2);
 #ifdef GEO_DEBUG
     printf("center point: ");
     grn_p_geo_point(ctx, center);
@@ -944,7 +943,7 @@ in_rectangle_data_prepare(grn_ctx *ctx, grn_obj *index,
     }
     grn_gton(geo_key_input, geo_point_input, sizeof(grn_geo_point));
     grn_gton(geo_key_base, &(data->base), sizeof(grn_geo_point));
-    data->diff_bit = compute_diff_bit(geo_key_input, geo_key_base) - 1;
+    data->diff_bit = compute_diff_bit(geo_key_input, geo_key_base);
     grn_gton(geo_key_top_left, top_left, sizeof(grn_geo_point));
     grn_gton(geo_key_bottom_right, bottom_right, sizeof(grn_geo_point));
     data->rectangle_common_bit =
