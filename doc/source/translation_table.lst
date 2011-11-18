@@ -1,35 +1,36 @@
-形式：form
 DB（データベース）：database
-以下の：in the forllowing
+以下の：in the forllowing(文の終わりでないのでピリオドは付けない)
 （人・パラメータを）指定する：specify
-xで値を囲む：enclose its value with x
-項：paragraph
-'command'でdoする：'command' does
-groongaでは、：in using groonga
+xで値を囲む：surround value with x
+項：section
+'command'でdo（動詞）する：'command' does
+（要確認）groongaでは、：in using groonga
 主キー：primary key
 前方一致検索：prefix search
 ID番号：ID-number
 格納する：store
-xはyであることを示す：x specifies y
+〜型の値を格納するカラム：column that lets us store value whose type is 〜
+xはyであることを示す：x mean y
 語彙表：lexicon
-全文検索：fulltext-searching
+全文検索：fulltext search
 実行例：execution example
-インデックスカラム：index-column
+インデックスカラム：index column
 doしたいとする：will do
 その（この）場合、：in this case
-〜（文）についてはこのチュートリアルでは触れない：This tutorial does not explain 〜
-語彙の位置情報：information of terminology existing position
+〜（文）についてはこのチュートリアルでは触れない：This tutorial does not deal with 〜
+（要確認）語彙の位置情報：information of terminology existing position
 条件：condition
-xをカンマ区切りで：use comma between x
-xは〜（文）の場合に有効である：x is available 〜
-xを並び替える：puts x in order
-昇順で：in ascending-order
-降順で：in descending-order
-全文検索インデックス：index of fulltext searching
-groonga独自プロトコル：groonga original protocol
-xの接続を受け付ける：accept connection for x
-localhostのサーバ：server running at localhost
-xは対話モードに入る：x run in interactive mode
-ｘはｙが有効になっている必要がある：x must enables y
-x（オプションなど）はy（形式）で渡す：x be passed as y
-xなどのy（yという種類のもので、x意外を省略している場合）：x or any similar y for it
+パラメータ：parameter
+xをカンマ区切りで：separete x by comma
+xは〜（文）の場合に有用である：x is useful 〜
+xをyで並び替える：sort x by y
+昇順で：in ascending order
+降順で：in descending order
+（要確認）全文検索インデックス：index of fulltext search
+（要確認）groonga独自プロトコル：groonga original protocol
+（要確認）xの接続を受け付ける：accept connection for x
+（要確認）localhostのサーバ：server running at localhost
+（要確認）xは対話モードに入る：x run in interactive mode
+（要確認）ｘはｙが有効になっている必要がある：x must enable y
+（要確認）x（オプションなど）はy（形式）で渡す：x be passed as y
+（要確認）xなどのy（yという種類のもので、x意外を省略している場合）：x or any similar y for it
