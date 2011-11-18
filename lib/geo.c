@@ -1082,8 +1082,12 @@ grn_geo_cursor_open_in_rectangle(grn_ctx *ctx,
     entry->bottom_included = GRN_TRUE;
     entry->left_included = GRN_TRUE;
     entry->right_included = GRN_TRUE;
-    entry->latitude_inner = GRN_FALSE;
-    entry->longitude_inner = GRN_FALSE;
+    entry->latitude_inner =
+      (data.min.latitude == data.bottom_right->latitude &&
+       data.max.latitude == data.top_left->latitude);
+    entry->longitude_inner =
+      (data.min.longitude == data.top_left->longitude &&
+       data.max.longitude == data.bottom_right->longitude);
   }
 
 exit :

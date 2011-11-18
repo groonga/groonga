@@ -229,6 +229,30 @@ data_cursor_all(void)
            8, 7,
            7, 8);
 
+#define ALL_LONGITUDES(latitude)                        \
+             "(" latitude ",00)", "(" latitude ",01)",  \
+             "(" latitude ",02)", "(" latitude ",03)",  \
+             "(" latitude ",04)", "(" latitude ",05)",  \
+             "(" latitude ",06)", "(" latitude ",07)",  \
+             "(" latitude ",08)", "(" latitude ",09)",  \
+             "(" latitude ",10)", "(" latitude ",11)",  \
+             "(" latitude ",12)", "(" latitude ",13)",  \
+             "(" latitude ",14)", "(" latitude ",15)"
+
+  ADD_DATA("all - maximum",
+           gcut_list_string_new(
+             ALL_LONGITUDES("00"), ALL_LONGITUDES("01"), ALL_LONGITUDES("02"),
+             ALL_LONGITUDES("03"), ALL_LONGITUDES("04"), ALL_LONGITUDES("05"),
+             ALL_LONGITUDES("06"), ALL_LONGITUDES("07"), ALL_LONGITUDES("08"),
+             ALL_LONGITUDES("09"), ALL_LONGITUDES("10"), ALL_LONGITUDES("11"),
+             ALL_LONGITUDES("12"), ALL_LONGITUDES("13"), ALL_LONGITUDES("14"),
+             ALL_LONGITUDES("15"),
+             NULL),
+           15, 0,
+           0, 15);
+
+#undef ALL_LONGITUDES
+
   data_cursor_all_bottom_left();
   data_cursor_all_top_left();
   data_cursor_all_bottom_right();
