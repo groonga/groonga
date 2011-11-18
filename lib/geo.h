@@ -94,6 +94,7 @@ struct _grn_geo_cursor_in_rectangle {
   int rest;
   grn_geo_cursor_entry entries[64];
   int current_entry;
+  int minimum_reduce_bit;
 };
 
 grn_rc grn_geo_cursor_close(grn_ctx *ctx, grn_obj *geo_cursor);

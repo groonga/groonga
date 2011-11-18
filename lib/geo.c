@@ -22,6 +22,8 @@
 #include <string.h>
 #include <stdlib.h>
 
+#define GEO_KEY_MAX_BITS 64
+
 typedef struct {
   grn_id id;
   double d;
@@ -1089,6 +1091,17 @@ grn_geo_cursor_open_in_rectangle(grn_ctx *ctx,
       (data.min.longitude == data.top_left->longitude &&
        data.max.longitude == data.bottom_right->longitude);
   }
+  {
+    const char *minimum_reduce_bit_env;
+    cursor->minimum_reduce_bit = 0;
+    minimum_reduce_bit_env = getenv("GRN_GEO_IN_RECTANGLE_MINIMUM_REDUCE_BIT");
+    if (minimum_reduce_bit_env) {
+      cursor->minimum_reduce_bit = atoi(minimum_reduce_bit_env);
+    }
+    if (cursor->minimum_reduce_bit < 1) {
+      cursor->minimum_reduce_bit = 1;
+    }
+  }
 
 exit :
   grn_obj_unlink(ctx, &(data.top_left_point_buffer));
@@ -1133,6 +1146,7 @@ grn_geo_cursor_entry_next(grn_ctx *ctx,
 {
   uint8_t *top_left_key = cursor->top_left_key;
   uint8_t *bottom_right_key = cursor->bottom_right_key;
+  int max_target_bit = GEO_KEY_MAX_BITS - cursor->minimum_reduce_bit;
 
   if (cursor->current_entry < 0) {
     return GRN_FALSE;
@@ -1149,9 +1163,9 @@ grn_geo_cursor_entry_next(grn_ctx *ctx,
     inspect_cursor_entry(ctx, entry);
 #endif
 
-    if (entry->target_bit >= 63) {
+    if (entry->target_bit >= max_target_bit) {
 #ifdef GEO_DEBUG
-      printf("only 1 entry is remained\n");
+      printf("%d: force stopping to reduce a mesh\n", entry->target_bit);
 #endif
       break;
     }
