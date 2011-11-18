@@ -67,7 +67,7 @@ typedef struct _grn_proc grn_proc;
 
 struct _grn_db {
   grn_db_obj obj;
-  grn_pat *keys;
+  grn_obj *keys;
   grn_ja *specs;
   grn_tiny_array values;
   grn_critical_section lock;
