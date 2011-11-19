@@ -11,7 +11,7 @@ The successor to the Senna that is an embeddable full text search engine
 Groonga is developed as the successor project to Senna. Senna is an embeddable full text search engine and it is used widely. Groonga takes over from Senna's characteristics that are fast, high precision and high flexibility. We started to develop groonga to improve those Senna' characteristics.
 
 Groonga server supports multi-protocols such as HTTP
----------------------------------------------------
+----------------------------------------------------
 
 Senna is an component for an application that supports full text search. Groonga can be a server that provides search service. The groonga server supports HTTP, memcached binary protocol and gqtp (groonga query transfer protocol). Clients can search by those protocols via TCP/IP connection. It makes easy to use on a rental server that can install a library.
 
