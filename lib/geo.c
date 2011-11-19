@@ -1157,6 +1157,53 @@ grn_geo_cursor_entry_next(grn_ctx *ctx,
     grn_geo_cursor_entry next_entry0, next_entry1;
     grn_bool pushed = GRN_FALSE;
 
+    /*
+      top_left_key: tl
+      bottom_right_key: br
+
+      e.g.: top_left_key is at the top left sub mesh and
+            bottom_right_key is at the bottom right sub mesh.
+            top_left_key is also at the top left - bottom right
+            sub-sub mesh and
+            bottom_right_key is at the bottom right - bottom left
+            sub-sub mesh.
+
+      ^latitude +----+----+----+----+
+      |       1 |1010|1011|1110|1111|
+      |         |    |    |    |    |
+      |    1    +----+----+----+----+
+     \/       0 |1000|1001|1100|1101|
+                |    | tl |    |    |
+                +----+----+----+----+
+              1 |0010|0011|0110|0111|
+                |    |    |    |    |
+           0    +----+----+----+----+
+              0 |0000|0001|0100|0101|
+                |    |    | br |    |
+                +----+----+----+----+
+                  0    1    0    1
+                 |-------| |-------|
+                     0         1
+                <------>
+                longitude
+
+      entry.target_bit + 1      -> next_entry0
+      entry.target_bit + 1 and entry.base_key ^ (entry.target_bit + 1) in bit
+                                -> next_entry1
+
+      entry: represents the biggest mesh.
+             (1010, 1011, 1110, 1111,
+              1000, 1001, 1100, 1101,
+              0010, 0011, 0110, 0111,
+              0000, 0001, 0100, 0101)
+      next_entry0: represents bottom sub-mesh.
+             (0010, 0011, 0110, 0111,
+              0000, 0001, 0100, 0101)
+      next_entry1: represents top sub-mesh.
+             (1010, 1011, 1110, 1111,
+              1000, 1001, 1100, 1101)
+    */
+
 #ifdef GEO_DEBUG
     inspect_cursor_entry(ctx, entry);
 #endif
