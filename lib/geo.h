@@ -56,12 +56,6 @@ extern "C" {
 
 #define GRN_GEO_KEY_MAX_BITS 64
 
-typedef enum _grn_geo_mesh_direction grn_geo_mesh_direction;
-enum _grn_geo_mesh_direction {
-  GRN_GEO_MESH_LATITUDE,
-  GRN_GEO_MESH_LONGITUDE
-};
-
 typedef enum _grn_geo_cursor_entry_status_flag grn_geo_cursor_entry_status_flag;
 enum _grn_geo_cursor_entry_status_flag {
   GRN_GEO_CURSOR_ENTRY_STATUS_NONE            = 0,
@@ -85,16 +79,10 @@ struct _grn_geo_cursor_in_rectangle {
   grn_db_obj obj;
   grn_obj *pat;
   grn_obj *index;
-  int diff_bit;
-  int start_mesh_point;
-  int end_mesh_point;
-  int distance;
-  grn_geo_mesh_direction direction;
   grn_geo_point top_left;
   grn_geo_point bottom_right;
   uint8_t top_left_key[sizeof(grn_geo_point)];
   uint8_t bottom_right_key[sizeof(grn_geo_point)];
-  grn_geo_point base;
   grn_geo_point current;
   grn_table_cursor *pat_cursor;
   grn_ii_cursor *ii_cursor;
