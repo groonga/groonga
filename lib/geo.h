@@ -64,7 +64,7 @@ enum _grn_geo_mesh_direction {
 
 typedef struct _grn_geo_cursor_entry grn_geo_cursor_entry;
 struct _grn_geo_cursor_entry {
-  uint8_t base_key[sizeof(grn_geo_point)];
+  uint8_t key[sizeof(grn_geo_point)];
   grn_bool top_included;
   grn_bool bottom_included;
   grn_bool left_included;

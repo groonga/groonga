@@ -196,9 +196,9 @@ inspect_cursor_entry(grn_ctx *ctx, grn_geo_cursor_entry *entry)
   grn_geo_point point;
 
   printf("entry: ");
-  grn_ntog((uint8_t *)&point, entry->base_key, sizeof(grn_geo_point));
+  grn_ntog((uint8_t *)&point, entry->key, sizeof(grn_geo_point));
   grn_p_geo_point(ctx, &point);
-  inspect_key(ctx, entry->base_key);
+  inspect_key(ctx, entry->key);
   print_key_mark(ctx, entry->target_bit);
   printf("     target bit:    %d\n", entry->target_bit);
   printf("   top included:    %s\n", entry->top_included ? "true" : "false");
@@ -216,15 +216,15 @@ inspect_cursor_entry_targets(grn_ctx *ctx, grn_geo_cursor_entry *entry,
                              grn_geo_cursor_entry *next_entry1)
 {
   printf("entry:        ");
-  inspect_key(ctx, entry->base_key);
+  inspect_key(ctx, entry->key);
   printf("top-left:     ");
   inspect_key(ctx, top_left_key);
   printf("bottom-right: ");
   inspect_key(ctx, bottom_right_key);
   printf("next-entry-0: ");
-  inspect_key(ctx, next_entry0->base_key);
+  inspect_key(ctx, next_entry0->key);
   printf("next-entry-1: ");
-  inspect_key(ctx, next_entry1->base_key);
+  inspect_key(ctx, next_entry1->key);
   printf("              ");
   print_key_mark(ctx, entry->target_bit + 1);
 }
@@ -1018,8 +1018,8 @@ exit :
   ((((uint8_t *)(a))[(n_bit) / 8] & (1 << (7 - ((n_bit) % 8)))) ==\
    (((uint8_t *)(b))[(n_bit) / 8] & (1 << (7 - ((n_bit) % 8)))))
 
-#define ENTRY_CHECK_KEY(entry, key)\
-  SAME_BIT_P((entry)->base_key, (key), (entry)->target_bit)
+#define ENTRY_CHECK_KEY(entry, other_key)\
+  SAME_BIT_P((entry)->key, (other_key), (entry)->target_bit)
 
 #define SET_N_BIT(a, n_bit)\
   ((uint8_t *)(a))[((n_bit) / 8)] ^= (1 << (7 - ((n_bit) % 8)))
@@ -1077,7 +1077,7 @@ grn_geo_cursor_open_in_rectangle(grn_ctx *ctx,
 
     entry = &(cursor->entries[cursor->current_entry]);
     entry->target_bit = data.rectangle_common_bit;
-    memcpy(entry->base_key, data.rectangle_common_key, sizeof(grn_geo_point));
+    memcpy(entry->key, data.rectangle_common_key, sizeof(grn_geo_point));
     entry->top_included = GRN_TRUE;
     entry->bottom_included = GRN_TRUE;
     entry->left_included = GRN_TRUE;
@@ -1117,7 +1117,7 @@ grn_geo_cursor_entry_next_push(grn_ctx *ctx,
   grn_table_cursor *pat_cursor;
   grn_bool pushed = GRN_FALSE;
 
-  grn_ntog((uint8_t*)(&entry_base), entry->base_key, sizeof(grn_geo_point));
+  grn_ntog((uint8_t*)(&entry_base), entry->key, sizeof(grn_geo_point));
   pat_cursor = grn_table_cursor_open(ctx,
                                      cursor->pat,
                                      &entry_base,
@@ -1188,7 +1188,7 @@ grn_geo_cursor_entry_next(grn_ctx *ctx,
                 longitude
 
       entry.target_bit + 1      -> next_entry0
-      entry.target_bit + 1 and entry.base_key ^ (entry.target_bit + 1) in bit
+      entry.target_bit + 1 and entry.key ^ (entry.target_bit + 1) in bit
                                 -> next_entry1
 
       entry: represents the biggest mesh.
@@ -1226,7 +1226,7 @@ grn_geo_cursor_entry_next(grn_ctx *ctx,
     next_entry0.target_bit++;
     memcpy(&next_entry1, entry, sizeof(grn_geo_cursor_entry));
     next_entry1.target_bit++;
-    SET_N_BIT(next_entry1.base_key, next_entry1.target_bit);
+    SET_N_BIT(next_entry1.key, next_entry1.target_bit);
 
 #ifdef GEO_DEBUG
     inspect_cursor_entry_targets(ctx, entry, top_left_key, bottom_right_key,
@@ -1321,7 +1321,7 @@ grn_geo_cursor_entry_next(grn_ctx *ctx,
         grn_geo_cursor_entry *stack_entry;
         stack_entry = &(cursor->entries[i]);
         printf("%2d: ", i);
-        inspect_key(ctx, stack_entry->base_key);
+        inspect_key(ctx, stack_entry->key);
         printf("    ");
         print_key_mark(ctx, stack_entry->target_bit);
       }
@@ -1388,7 +1388,7 @@ grn_geo_cursor_each_strictly(grn_ctx *ctx, grn_obj *geo_cursor,
         cursor->rest = 0;
         return;
       }
-      grn_ntog((uint8_t*)(&entry_base), entry.base_key, sizeof(grn_geo_point));
+      grn_ntog((uint8_t*)(&entry_base), entry.key, sizeof(grn_geo_point));
       if (!(cursor->pat_cursor = pat_cursor =
             grn_table_cursor_open(ctx,
                                   pat,
