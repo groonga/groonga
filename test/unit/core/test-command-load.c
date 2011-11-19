@@ -116,11 +116,11 @@ test_columns(void)
                           "["
                           "[\"_id\",\"UInt32\"],"
                           "[\"_key\",\"ShortText\"],"
-                          "[\"name\",\"ShortText\"],"
-                          "[\"desc\",\"ShortText\"]"
+                          "[\"desc\",\"ShortText\"],"
+                          "[\"name\",\"ShortText\"]"
                           "],"
-                          "[1,\"mori\",\"モリ\",\"タポ\"],"
-                          "[2,\"tapo\",\"タポ\",\"モリモリモリタポ\"]"
+                          "[1,\"mori\",\"タポ\",\"モリ\"],"
+                          "[2,\"tapo\",\"モリモリモリタポ\",\"タポ\"]"
                           "]]",
                           send_command("select Users"));
 }
@@ -239,9 +239,9 @@ data_null(void)
             "[[[1],"
               "[[\"_id\",\"UInt32\"],"
                "[\"_key\",\"ShortText\"],"
-               "[\"scores\",\"Int32\"],"
-               "[\"nick\",\"ShortText\"]],"
-             "[1,\"Daijiro MORI\",[5,5,5],\"\"]]]",
+               "[\"nick\",\"ShortText\"],"
+               "[\"scores\",\"Int32\"]],"
+             "[1,\"Daijiro MORI\",\"\",[5,5,5]]]]",
             "load --table Students --columns '_key, nick'\n"
             "[\n"
             "  [\"Daijiro MORI\", null]\n"
@@ -250,9 +250,9 @@ data_null(void)
             "[[[1],"
               "[[\"_id\",\"UInt32\"],"
                "[\"_key\",\"ShortText\"],"
-               "[\"scores\",\"Int32\"],"
-               "[\"nick\",\"ShortText\"]],"
-             "[1,\"Daijiro MORI\",[5,5,5],\"\"]]]",
+               "[\"nick\",\"ShortText\"],"
+               "[\"scores\",\"Int32\"]],"
+             "[1,\"Daijiro MORI\",\"\",[5,5,5]]]]",
             "load --table Students --columns '_key, nick'\n"
             "[\n"
             "  [\"Daijiro MORI\", \"\"]\n"
@@ -262,9 +262,9 @@ data_null(void)
             "[[[1],"
               "[[\"_id\",\"UInt32\"],"
                "[\"_key\",\"ShortText\"],"
-               "[\"scores\",\"Int32\"],"
-               "[\"nick\",\"ShortText\"]],"
-             "[1,\"Daijiro MORI\",[],\"morita\"]]]",
+               "[\"nick\",\"ShortText\"],"
+               "[\"scores\",\"Int32\"]],"
+             "[1,\"Daijiro MORI\",\"morita\",[]]]]",
             "load --table Students --columns '_key, scores'\n"
             "[\n"
             "  [\"Daijiro MORI\", null]\n"
@@ -273,9 +273,9 @@ data_null(void)
             "[[[1],"
               "[[\"_id\",\"UInt32\"],"
                "[\"_key\",\"ShortText\"],"
-               "[\"scores\",\"Int32\"],"
-               "[\"nick\",\"ShortText\"]],"
-             "[1,\"Daijiro MORI\",[],\"morita\"]]]",
+               "[\"nick\",\"ShortText\"],"
+               "[\"scores\",\"Int32\"]],"
+             "[1,\"Daijiro MORI\",\"morita\",[]]]]",
             "load --table Students --columns '_key, scores'\n"
             "[\n"
             "  [\"Daijiro MORI\", \"\"]\n"
@@ -284,9 +284,9 @@ data_null(void)
             "[[[1],"
               "[[\"_id\",\"UInt32\"],"
                "[\"_key\",\"ShortText\"],"
-               "[\"scores\",\"Int32\"],"
-               "[\"nick\",\"ShortText\"]],"
-             "[1,\"Daijiro MORI\",[],\"morita\"]]]",
+               "[\"nick\",\"ShortText\"],"
+               "[\"scores\",\"Int32\"]],"
+             "[1,\"Daijiro MORI\",\"morita\",[]]]]",
             "load --table Students --columns '_key, scores'\n"
             "[\n"
             "  [\"Daijiro MORI\", []]\n"
@@ -556,10 +556,10 @@ test_each(gconstpointer data)
     "[[[2],"
      "[[\"_id\",\"UInt32\"],"
       "[\"_key\",\"ShortText\"],"
-      "[\"location\",\"WGS84GeoPoint\"],"
-      "[\"distance_from_tokyo_tocho\",\"UInt32\"]],"
-     "[1,\"alice\",\"128429532x503148672\",6674],"
-     "[2,\"bob\",\"128536272x502686360\",5364]]]",
+      "[\"distance_from_tokyo_tocho\",\"UInt32\"],"
+      "[\"location\",\"WGS84GeoPoint\"]],"
+     "[1,\"alice\",6674,\"128429532x503148672\"],"
+     "[2,\"bob\",5364,\"128536272x502686360\"]]]",
     send_command("select Users"));
 }
 
