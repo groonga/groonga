@@ -200,13 +200,20 @@ inspect_cursor_entry(grn_ctx *ctx, grn_geo_cursor_entry *entry)
   grn_p_geo_point(ctx, &point);
   inspect_key(ctx, entry->key);
   print_key_mark(ctx, entry->target_bit);
+
   printf("     target bit:    %d\n", entry->target_bit);
-  printf("   top included:    %s\n", entry->top_included ? "true" : "false");
-  printf("bottom included:    %s\n", entry->bottom_included ? "true" : "false");
-  printf("  left included:    %s\n", entry->left_included ? "true" : "false");
-  printf(" right included:    %s\n", entry->right_included ? "true" : "false");
-  printf(" latitude inner:    %s\n", entry->latitude_inner ? "true" : "false");
-  printf("longitude inner:    %s\n", entry->longitude_inner ? "true" : "false");
+
+#define INSPECT_STATUS_FLAG(name) \
+  (entry->status_flags & GRN_GEO_CURSOR_ENTRY_STATUS_ # name) ? "true" : "false"
+
+  printf("   top included:    %s\n", INSPECT_STATUS_FLAG(TOP_INCLUDED));
+  printf("bottom included:    %s\n", INSPECT_STATUS_FLAG(BOTTOM_INCLUDED));
+  printf("  left included:    %s\n", INSPECT_STATUS_FLAG(LEFT_INCLUDED));
+  printf(" right included:    %s\n", INSPECT_STATUS_FLAG(RIGHT_INCLUDED));
+  printf(" latitude inner:    %s\n", INSPECT_STATUS_FLAG(LATITUDE_INNER));
+  printf("longitude inner:    %s\n", INSPECT_STATUS_FLAG(LONGITUDE_INNER));
+
+#undef INSPECT_STATUS_FLAG
 }
 
 static void
@@ -1018,8 +1025,31 @@ exit :
   ((((uint8_t *)(a))[(n_bit) / 8] & (1 << (7 - ((n_bit) % 8)))) ==\
    (((uint8_t *)(b))[(n_bit) / 8] & (1 << (7 - ((n_bit) % 8)))))
 
-#define ENTRY_CHECK_KEY(entry, other_key)\
-  SAME_BIT_P((entry)->key, (other_key), (entry)->target_bit)
+#define CURSOR_ENTRY_UPDATE_STATUS(entry, name, other_key)\
+  if (SAME_BIT_P((entry)->key, (other_key), (entry)->target_bit)) {\
+    (entry)->status_flags |= GRN_GEO_CURSOR_ENTRY_STATUS_ ## name;\
+  } else {\
+    (entry)->status_flags &= ~GRN_GEO_CURSOR_ENTRY_STATUS_ ## name;\
+  }
+
+#define CURSOR_ENTRY_CHECK_STATUS(entry, name)\
+  ((entry)->status_flags & GRN_GEO_CURSOR_ENTRY_STATUS_ ## name)
+#define CURSOR_ENTRY_IS_INNER(entry)\
+  (((entry)->status_flags &\
+    (GRN_GEO_CURSOR_ENTRY_STATUS_LATITUDE_INNER |\
+     GRN_GEO_CURSOR_ENTRY_STATUS_LONGITUDE_INNER)) ==\
+   (GRN_GEO_CURSOR_ENTRY_STATUS_LATITUDE_INNER |\
+    GRN_GEO_CURSOR_ENTRY_STATUS_LONGITUDE_INNER))
+#define CURSOR_ENTRY_INCLUDED_IN_LATITUDE_DIRECTION(entry)\
+  ((entry)->status_flags &\
+   (GRN_GEO_CURSOR_ENTRY_STATUS_LATITUDE_INNER |\
+    GRN_GEO_CURSOR_ENTRY_STATUS_TOP_INCLUDED |\
+    GRN_GEO_CURSOR_ENTRY_STATUS_BOTTOM_INCLUDED))
+#define CURSOR_ENTRY_INCLUDED_IN_LONGITUDE_DIRECTION(entry)\
+  ((entry)->status_flags &\
+   (GRN_GEO_CURSOR_ENTRY_STATUS_LONGITUDE_INNER |\
+    GRN_GEO_CURSOR_ENTRY_STATUS_LEFT_INCLUDED |\
+    GRN_GEO_CURSOR_ENTRY_STATUS_RIGHT_INCLUDED))
 
 #define SET_N_BIT(a, n_bit)\
   ((uint8_t *)(a))[((n_bit) / 8)] ^= (1 << (7 - ((n_bit) % 8)))
@@ -1078,16 +1108,19 @@ grn_geo_cursor_open_in_rectangle(grn_ctx *ctx,
     entry = &(cursor->entries[cursor->current_entry]);
     entry->target_bit = data.rectangle_common_bit;
     memcpy(entry->key, data.rectangle_common_key, sizeof(grn_geo_point));
-    entry->top_included = GRN_TRUE;
-    entry->bottom_included = GRN_TRUE;
-    entry->left_included = GRN_TRUE;
-    entry->right_included = GRN_TRUE;
-    entry->latitude_inner =
-      (data.min.latitude == data.bottom_right->latitude &&
-       data.max.latitude == data.top_left->latitude);
-    entry->longitude_inner =
-      (data.min.longitude == data.top_left->longitude &&
-       data.max.longitude == data.bottom_right->longitude);
+    entry->status_flags =
+      GRN_GEO_CURSOR_ENTRY_STATUS_TOP_INCLUDED |
+      GRN_GEO_CURSOR_ENTRY_STATUS_BOTTOM_INCLUDED |
+      GRN_GEO_CURSOR_ENTRY_STATUS_LEFT_INCLUDED |
+      GRN_GEO_CURSOR_ENTRY_STATUS_RIGHT_INCLUDED;
+    if (data.min.latitude == data.bottom_right->latitude &&
+        data.max.latitude == data.top_left->latitude) {
+      entry->status_flags |= GRN_GEO_CURSOR_ENTRY_STATUS_LATITUDE_INNER;
+    }
+    if (data.min.longitude == data.top_left->longitude &&
+        data.max.longitude == data.bottom_right->longitude) {
+      entry->status_flags |= GRN_GEO_CURSOR_ENTRY_STATUS_LONGITUDE_INNER;
+    }
   }
   {
     const char *minimum_reduce_bit_env;
@@ -1202,6 +1235,19 @@ grn_geo_cursor_entry_next(grn_ctx *ctx,
       next_entry1: represents top sub-mesh.
              (1010, 1011, 1110, 1111,
               1000, 1001, 1100, 1101)
+
+      entry->status_flags       = TOP_INCLUDED |
+                                  BOTTOM_INCLUDED |
+                                  LEFT_INCLUDED |
+                                  RIGHT_INCLUDED
+      next_entry0->status_flags = BOTTOM_INCLUDED |
+                                  LEFT_INCLUDED |
+                                  RIGHT_INCLUDED
+      next_entry1->status_flags = TOP_INCLUDED |
+                                  LEFT_INCLUDED |
+                                  RIGHT_INCLUDED
+
+      Both next_entry1 and next_entry0 are pushed to the stack in cursor.
     */
 
 #ifdef GEO_DEBUG
@@ -1215,7 +1261,7 @@ grn_geo_cursor_entry_next(grn_ctx *ctx,
       break;
     }
 
-    if (entry->latitude_inner && entry->longitude_inner) {
+    if (CURSOR_ENTRY_IS_INNER(entry)) {
 #ifdef GEO_DEBUG
       printf("%d: inner entries\n", entry->target_bit);
 #endif
@@ -1234,27 +1280,28 @@ grn_geo_cursor_entry_next(grn_ctx *ctx,
 #endif
 
     if ((entry->target_bit + 1) % 2 == 0) {
-      if (entry->top_included) {
-        next_entry0.top_included = ENTRY_CHECK_KEY(&next_entry0, top_left_key);
-        next_entry1.top_included = ENTRY_CHECK_KEY(&next_entry1, top_left_key);
+      if (CURSOR_ENTRY_CHECK_STATUS(entry, TOP_INCLUDED)) {
+        CURSOR_ENTRY_UPDATE_STATUS(&next_entry0, TOP_INCLUDED, top_left_key);
+        CURSOR_ENTRY_UPDATE_STATUS(&next_entry1, TOP_INCLUDED, top_left_key);
       }
-      if (entry->bottom_included) {
-        next_entry0.bottom_included =
-          ENTRY_CHECK_KEY(&next_entry0, bottom_right_key);
-        next_entry1.bottom_included =
-          ENTRY_CHECK_KEY(&next_entry1, bottom_right_key);
-      }
-
-      if (entry->top_included && !entry->bottom_included &&
-          next_entry1.top_included) {
-        next_entry0.latitude_inner = GRN_TRUE;
-      } else if (!entry->top_included && entry->bottom_included &&
-                 next_entry0.bottom_included) {
-        next_entry1.latitude_inner = GRN_TRUE;
+      if (CURSOR_ENTRY_CHECK_STATUS(entry, BOTTOM_INCLUDED)) {
+        CURSOR_ENTRY_UPDATE_STATUS(&next_entry0, BOTTOM_INCLUDED,
+                                   bottom_right_key);
+        CURSOR_ENTRY_UPDATE_STATUS(&next_entry1, BOTTOM_INCLUDED,
+                                   bottom_right_key);
       }
 
-      if (next_entry1.latitude_inner ||
-          next_entry1.top_included || next_entry1.bottom_included) {
+      if (CURSOR_ENTRY_CHECK_STATUS(entry, TOP_INCLUDED) &&
+          !CURSOR_ENTRY_CHECK_STATUS(entry, BOTTOM_INCLUDED) &&
+          CURSOR_ENTRY_CHECK_STATUS(&next_entry1, TOP_INCLUDED)) {
+        next_entry0.status_flags |= GRN_GEO_CURSOR_ENTRY_STATUS_LATITUDE_INNER;
+      } else if (!CURSOR_ENTRY_CHECK_STATUS(entry, TOP_INCLUDED) &&
+                 CURSOR_ENTRY_CHECK_STATUS(entry, BOTTOM_INCLUDED) &&
+                 CURSOR_ENTRY_CHECK_STATUS(&next_entry0, BOTTOM_INCLUDED)) {
+        next_entry1.status_flags |= GRN_GEO_CURSOR_ENTRY_STATUS_LATITUDE_INNER;
+      }
+
+      if (CURSOR_ENTRY_INCLUDED_IN_LATITUDE_DIRECTION(&next_entry1)) {
         if (grn_geo_cursor_entry_next_push(ctx, cursor, &next_entry1)) {
           pushed = GRN_TRUE;
 #ifdef GEO_DEBUG
@@ -1262,8 +1309,7 @@ grn_geo_cursor_entry_next(grn_ctx *ctx,
 #endif
         }
       }
-      if (next_entry0.latitude_inner ||
-          next_entry0.top_included || next_entry0.bottom_included) {
+      if (CURSOR_ENTRY_INCLUDED_IN_LATITUDE_DIRECTION(&next_entry0)) {
         if (grn_geo_cursor_entry_next_push(ctx, cursor, &next_entry0)) {
           pushed = GRN_TRUE;
 #ifdef GEO_DEBUG
@@ -1272,27 +1318,28 @@ grn_geo_cursor_entry_next(grn_ctx *ctx,
         }
       }
     } else {
-      if (entry->right_included) {
-        next_entry0.right_included =
-          ENTRY_CHECK_KEY(&next_entry0, bottom_right_key);
-        next_entry1.right_included =
-          ENTRY_CHECK_KEY(&next_entry1, bottom_right_key);
+      if (CURSOR_ENTRY_CHECK_STATUS(entry, RIGHT_INCLUDED)) {
+        CURSOR_ENTRY_UPDATE_STATUS(&next_entry0, RIGHT_INCLUDED,
+                                   bottom_right_key);
+        CURSOR_ENTRY_UPDATE_STATUS(&next_entry1, RIGHT_INCLUDED,
+                                   bottom_right_key);
       }
-      if (entry->left_included) {
-        next_entry0.left_included = ENTRY_CHECK_KEY(&next_entry0, top_left_key);
-        next_entry1.left_included = ENTRY_CHECK_KEY(&next_entry1, top_left_key);
-      }
-
-      if (entry->left_included && !entry->right_included &&
-          next_entry0.left_included) {
-        next_entry1.longitude_inner = GRN_TRUE;
-      } else if (!entry->left_included && entry->right_included &&
-                 next_entry1.right_included) {
-        next_entry0.longitude_inner = GRN_TRUE;
+      if (CURSOR_ENTRY_CHECK_STATUS(entry, LEFT_INCLUDED)) {
+        CURSOR_ENTRY_UPDATE_STATUS(&next_entry0, LEFT_INCLUDED, top_left_key);
+        CURSOR_ENTRY_UPDATE_STATUS(&next_entry1, LEFT_INCLUDED, top_left_key);
       }
 
-      if (next_entry1.longitude_inner ||
-          next_entry1.left_included || next_entry1.right_included) {
+      if (CURSOR_ENTRY_CHECK_STATUS(entry, LEFT_INCLUDED) &&
+          !CURSOR_ENTRY_CHECK_STATUS(entry, RIGHT_INCLUDED) &&
+          CURSOR_ENTRY_CHECK_STATUS(&next_entry0, LEFT_INCLUDED)) {
+        next_entry1.status_flags |= GRN_GEO_CURSOR_ENTRY_STATUS_LONGITUDE_INNER;
+      } else if (!CURSOR_ENTRY_CHECK_STATUS(entry, LEFT_INCLUDED) &&
+                 CURSOR_ENTRY_CHECK_STATUS(entry, RIGHT_INCLUDED) &&
+                 CURSOR_ENTRY_CHECK_STATUS(&next_entry1, RIGHT_INCLUDED)) {
+        next_entry0.status_flags |= GRN_GEO_CURSOR_ENTRY_STATUS_LONGITUDE_INNER;
+      }
+
+      if (CURSOR_ENTRY_INCLUDED_IN_LONGITUDE_DIRECTION(&next_entry1)) {
         if (grn_geo_cursor_entry_next_push(ctx, cursor, &next_entry1)) {
           pushed = GRN_TRUE;
 #ifdef GEO_DEBUG
@@ -1300,8 +1347,7 @@ grn_geo_cursor_entry_next(grn_ctx *ctx,
 #endif
         }
       }
-      if (next_entry0.longitude_inner ||
-          next_entry0.left_included || next_entry0.right_included) {
+      if (CURSOR_ENTRY_INCLUDED_IN_LONGITUDE_DIRECTION(&next_entry0)) {
         if (grn_geo_cursor_entry_next_push(ctx, cursor, &next_entry0)) {
           pushed = GRN_TRUE;
 #ifdef GEO_DEBUG
