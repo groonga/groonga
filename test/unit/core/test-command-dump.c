@@ -528,8 +528,8 @@ test_load_with_vector_int32_reference_key(void)
     "]\n"
     "load --table comments\n"
     "[\n"
-    "[\"_key\",\"text\",\"author\"],\n"
-    "[\"groonga\",\"it is fast\",[1000,1001]]\n"
+    "[\"_key\",\"author\",\"text\"],\n"
+    "[\"groonga\",[1000,1001],\"it is fast\"]\n"
     "]";
 
   assert_send_commands(commands);

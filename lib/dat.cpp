@@ -198,7 +198,6 @@ bool grn_dat_rebuild_trie(grn_ctx *ctx, grn_dat *dat) {
     grn_dat_generate_trie_path(grn_io_path(dat->io), trie_path, file_id + 1);
     const grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
     new_trie->create(*trie, trie_path, trie->file_size() * 2);
-//    new_trie->create(*trie, trie_path, (grn::dat::UInt64)(trie->file_size() * 1.5));
   } catch (const grn::dat::Exception &ex) {
     ERR(grn_dat_translate_error_code(ex.code()),
         const_cast<char *>("grn::dat::Trie::open failed"));
@@ -480,7 +479,7 @@ grn_dat_delete_by_id(grn_ctx *ctx, grn_dat *dat, grn_id id,
 {
   if (!grn_dat_open_trie_if_needed(ctx, dat)) {
     return ctx->rc;
-  } else if (!dat->trie) {
+  } else if (!dat->trie || (id == GRN_ID_NIL)) {
     return GRN_INVALID_ARGUMENT;
   }
 
@@ -512,7 +511,7 @@ grn_dat_delete(grn_ctx *ctx, grn_dat *dat, const void *key, unsigned int key_siz
 {
   if (!grn_dat_open_trie_if_needed(ctx, dat)) {
     return ctx->rc;
-  } else if (!dat->trie) {
+  } else if (!dat->trie || !key || !key_size) {
     return GRN_INVALID_ARGUMENT;
   }
 

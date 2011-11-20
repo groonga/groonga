@@ -106,15 +106,6 @@ test_columns(void)
                       "[]"
                       "],"
                       "[%d,"
-                      "\"comment\","
-                      "\"%s.0000102\","
-                      "\"var\","
-                      "\"COLUMN_SCALAR|PERSISTENT\","
-                      "\"Users\","
-                      "\"Text\","
-                      "[]"
-                      "],"
-                      "[%d,"
                       "\"age\","
                       "\"%s.0000101\","
                       "\"fix\","
@@ -122,11 +113,20 @@ test_columns(void)
                       "\"Users\","
                       "\"UInt32\","
                       "[]"
+                      "],"
+                      "[%d,"
+                      "\"comment\","
+                      "\"%s.0000102\","
+                      "\"var\","
+                      "\"COLUMN_SCALAR|PERSISTENT\","
+                      "\"Users\","
+                      "\"Text\","
+                      "[]"
                       "]"
                       "]",
                       grn_obj_id(context, get("Users")),
-                      grn_obj_id(context, get("Users.comment")), database_path,
-                      grn_obj_id(context, get("Users.age")), database_path),
+                      grn_obj_id(context, get("Users.age")), database_path,
+                      grn_obj_id(context, get("Users.comment")), database_path),
       send_command("column_list Users"));
 }
 
@@ -218,24 +218,24 @@ test_xml(void)
                       "<SOURCES></SOURCES></COLUMN>\n"
                       "<COLUMN>\n"
                       "<INT>%u</INT>\n"
-                      "<TEXT>comment</TEXT>\n"
-                      "<TEXT>%s.0000102</TEXT>\n"
-                      "<TEXT>var</TEXT>\n"
-                      "<TEXT>COLUMN_SCALAR|PERSISTENT</TEXT>\n"
-                      "<TEXT>Users</TEXT>\n"
-                      "<TEXT>Text</TEXT>\n"
-                      "<SOURCES></SOURCES></COLUMN>\n"
-                      "<COLUMN>\n"
-                      "<INT>%u</INT>\n"
                       "<TEXT>age</TEXT>\n"
                       "<TEXT>%s.0000101</TEXT>\n"
                       "<TEXT>fix</TEXT>\n"
                       "<TEXT>COLUMN_SCALAR|PERSISTENT</TEXT>\n"
                       "<TEXT>Users</TEXT>\n"
                       "<TEXT>UInt32</TEXT>\n"
+                      "<SOURCES></SOURCES></COLUMN>\n"
+                      "<COLUMN>\n"
+                      "<INT>%u</INT>\n"
+                      "<TEXT>comment</TEXT>\n"
+                      "<TEXT>%s.0000102</TEXT>\n"
+                      "<TEXT>var</TEXT>\n"
+                      "<TEXT>COLUMN_SCALAR|PERSISTENT</TEXT>\n"
+                      "<TEXT>Users</TEXT>\n"
+                      "<TEXT>Text</TEXT>\n"
                       "<SOURCES></SOURCES></COLUMN></COLUMN_LIST>",
                       grn_obj_id(context, get("Users")),
-                      grn_obj_id(context, get("Users.comment")), database_path,
-                      grn_obj_id(context, get("Users.age")), database_path),
+                      grn_obj_id(context, get("Users.age")), database_path,
+                      grn_obj_id(context, get("Users.comment")), database_path),
       send_command("column_list Users --output_type xml"));
 }

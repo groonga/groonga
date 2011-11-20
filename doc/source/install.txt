@@ -176,8 +176,6 @@ Mac OS X (MacPorts)
 
 Install::
 
-  % git clone https://github.com/groonga/macports.git ~/groonga-macports
-  % (echo; echo file://$HOME/groonga-macports) | sudo sh -c "cat >> /opt/local/etc/macports/sources.conf"
   % sudo port install groonga
 
 Mac OS X (Homebrew)

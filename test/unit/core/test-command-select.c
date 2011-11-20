@@ -313,9 +313,9 @@ test_vector_reference_id(void)
   cut_assert_equal_string("[[[1],"
                            "[[\"_id\",\"UInt32\"],"
                             "[\"_key\",\"ShortText\"],"
-                            "[\"text\",\"ShortText\"],"
-                            "[\"authors\",\"Users\"]],"
-                           "[1,\"groonga\",\"it is fast\",[1,2]]]]",
+                            "[\"authors\",\"Users\"],"
+                            "[\"text\",\"ShortText\"]],"
+                           "[1,\"groonga\",[1,2],\"it is fast\"]]]",
                           send_command("select Comments"));
 }
 
@@ -347,9 +347,9 @@ test_vector_int32_reference_key(void)
   cut_assert_equal_string("[[[1],"
                            "[[\"_id\",\"UInt32\"],"
                             "[\"_key\",\"ShortText\"],"
-                            "[\"text\",\"ShortText\"],"
-                            "[\"authors\",\"Users\"]],"
-                           "[1,\"groonga\",\"it is fast\",[1000,1001]]]]",
+                            "[\"authors\",\"Users\"],"
+                            "[\"text\",\"ShortText\"]],"
+                           "[1,\"groonga\",[1000,1001],\"it is fast\"]]]",
                           send_command("select Comments"));
 }
 
