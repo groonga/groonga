@@ -3500,7 +3500,7 @@ grn_ii_truncate(grn_ctx *ctx, grn_ii *ii)
   lexicon = ii->lexicon;
   flags = ii->header->flags;
   if ((rc = grn_io_close(ctx, ii->seg))) { goto exit; }
-  if ((rc = grn_io_close(ctx, ii->seg))) { goto exit; }
+  if ((rc = grn_io_close(ctx, ii->chunk))) { goto exit; }
   ii->seg = NULL;
   ii->chunk = NULL;
   if (segpath && (rc = grn_io_remove(ctx, segpath))) { goto exit; }
