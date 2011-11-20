@@ -7042,6 +7042,28 @@ grn_obj_defrag(grn_ctx *ctx, grn_obj *obj, int threshold)
       }
     }
     break;
+  case GRN_TABLE_HASH_KEY :
+  case GRN_TABLE_PAT_KEY :
+  case GRN_TABLE_DAT_KEY :
+  case GRN_TABLE_NO_KEY :
+    {
+      grn_hash *cols;
+      if ((cols = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
+                                  GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY))) {
+        if (grn_table_columns(ctx, obj, "", 0, (grn_obj *)cols)) {
+          grn_id *key;
+          GRN_HASH_EACH(ctx, cols, id, &key, NULL, NULL, {
+            grn_obj *col = grn_ctx_at(ctx, *key);
+            if (col) {
+              r += grn_obj_defrag(ctx, col, threshold);
+              grn_obj_unlink(ctx, col);
+            }
+          });
+        }
+        grn_hash_close(ctx, cols);
+      }
+    }
+    break;
   case GRN_COLUMN_VAR_SIZE:
     r = grn_ja_defrag(ctx, (grn_ja *)obj, threshold);
     break;
