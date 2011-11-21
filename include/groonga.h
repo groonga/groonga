@@ -2219,11 +2219,8 @@ GRN_API grn_rc grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj,
   grn_bulk_write_from((ctx), (obj), (char *)&_val, 0, sizeof(grn_obj *));\
 } while (0)
 
-#define GRN_GEO_DEGREE_ACCURACY 10000000
 #define GRN_GEO_DEGREE2MSEC(degree)\
-  ((int)(((int)(degree) * 60 * 60 * 1000) +\
-         (((long)((degree) * GRN_GEO_DEGREE_ACCURACY) % GRN_GEO_DEGREE_ACCURACY) * 60 / GRN_GEO_DEGREE_ACCURACY * 60 * 1000) +\
-         (((long)((degree) * GRN_GEO_DEGREE_ACCURACY) % GRN_GEO_DEGREE_ACCURACY) * 60 % GRN_GEO_DEGREE_ACCURACY * 60 / 10000)))
+  ((int)((degree) * 3600 * 1000 + ((degree) > 0 ? 0.5 : -0.5)))
 #define GRN_GEO_MSEC2DEGREE(msec)\
   ((((int)(msec)) / 3600.0) * 0.001)
 
