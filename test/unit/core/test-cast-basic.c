@@ -1001,7 +1001,7 @@ test_wgs84_geo_point_to_tokyo_geo_point(void)
   gint takane_latitude_in_wgs84 = 130194581;
   gint takane_longitude_in_wgs84 = 503802073;
   gint takane_latitude_in_tokyo_geodetic_system = 130183140;
-  gint takane_longitude_in_tokyo_geodetic_system = 503813760;
+  gint takane_longitude_in_tokyo_geodetic_system = 503813761;
 
   grn_obj_reinit(&context, &src, GRN_DB_WGS84_GEO_POINT, 0);
   GRN_GEO_POINT_SET(&context, &src,
