@@ -6180,6 +6180,33 @@ grn_obj_rename(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned name_size)
 }
 
 grn_rc
+grn_column_rename(grn_ctx *ctx, grn_obj *column, const char *name, unsigned name_size)
+{
+  grn_rc rc = GRN_INVALID_ARGUMENT;
+  GRN_API_ENTER;
+  if (GRN_DB_OBJP(column)) {
+    char fullname[GRN_PAT_MAX_KEY_SIZE];
+    grn_db *s = (grn_db *)DB_OBJ(column)->db;
+    int len = grn_table_get_key(ctx, s->keys, DB_OBJ(column)->header.domain,
+                                fullname, GRN_PAT_MAX_KEY_SIZE);
+    if (name_size + 1 + len > GRN_PAT_MAX_KEY_SIZE) {
+      ERR(GRN_INVALID_ARGUMENT,
+          "[column][rename]: too long column name: required name_size(%d) < %d"
+          ": <%.*s>.<%.*s>",
+          name_size, GRN_PAT_MAX_KEY_SIZE - 1 - len,
+          len, fullname, name_size, name);
+      goto exit;
+    }
+    fullname[len] = GRN_DB_DELIMITER;
+    memcpy(fullname + len + 1, name, name_size);
+    name_size += len + 1;
+    rc = grn_obj_rename(ctx, column, fullname, name_size);
+  }
+exit :
+  GRN_API_RETURN(rc);
+}
+
+grn_rc
 grn_obj_path_rename(grn_ctx *ctx, const char *old_path, const char *new_path)
 {
   GRN_API_ENTER;
