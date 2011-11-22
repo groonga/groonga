@@ -1521,6 +1521,7 @@ grn_geo_select_in_rectangle(grn_ctx *ctx, grn_obj *index,
                         &data);
     grn_obj_unlink(ctx, cursor);
     grn_ii_resolve_sel_and(ctx, (grn_hash *)res, op);
+    grn_geo_cursor_close(ctx, cursor);
   }
 
   return ctx->rc;
