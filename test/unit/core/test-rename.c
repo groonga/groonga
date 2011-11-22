@@ -87,8 +87,6 @@ test_table(void)
 {
   const gchar *actual;
 
-  cut_omit("grn_table_rename() isn't implemented yet.");
-
   assert_send_commands("table_create Sites TABLE_PAT_KEY ShortText\n"
                        "column_create Sites link COLUMN_SCALAR Sites\n"
                        "load --table Sites\n"
@@ -115,7 +113,7 @@ test_table(void)
   cut_assert_equal_string("[[[3],"
                           "[[\"_id\",\"UInt32\"],"
                            "[\"_key\",\"ShortText\"],"
-                           "[\"link\",\"Sites\"]],"
+                           "[\"link\",\"URLs\"]],"
                           "[1,\"groonga.org\",\"razil.jp\"],"
                           "[3,\"qwik.jp/senna/\",\"\"],"
                           "[2,\"razil.jp\",\"qwik.jp/senna/\"]]]",

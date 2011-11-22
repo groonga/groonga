@@ -6186,11 +6186,11 @@ grn_table_rename(grn_ctx *ctx, grn_obj *table, const char *name, unsigned name_s
   GRN_API_ENTER;
   if (GRN_OBJ_TABLEP(table) && DB_OBJ(table)->id &&
       !(DB_OBJ(table)->id & GRN_OBJ_TMP_OBJECT)) {
-    if (!(rc = grn_obj_rename(ctx, table, name, name_size))) {
-      grn_hash *cols;
-      if ((cols = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
-                                  GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY))) {
-        if (grn_table_columns(ctx, table, "", 0, (grn_obj *)cols)) {
+    grn_hash *cols;
+    if ((cols = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
+                                GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY))) {
+      if (grn_table_columns(ctx, table, "", 0, (grn_obj *)cols)) {
+        if (!(rc = grn_obj_rename(ctx, table, name, name_size))) {
           grn_id *key;
           char fullname[GRN_PAT_MAX_KEY_SIZE];
           memcpy(fullname, name, name_size);
