@@ -6693,6 +6693,7 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
   if (obj &&
       (!GRN_DB_OBJP(obj) ||
        (((grn_db_obj *)obj)->id & GRN_OBJ_TMP_OBJECT) ||
+       (((grn_db_obj *)obj)->id == GRN_ID_NIL) ||
        obj->header.type == GRN_DB)) {
     grn_obj_close(ctx, obj);
   } else if (GRN_DB_OBJP(obj)) {
