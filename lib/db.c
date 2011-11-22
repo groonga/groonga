@@ -2418,6 +2418,12 @@ grn_index_cursor_open(grn_ctx *ctx, grn_table_cursor *tc,
     ic->rid_max = rid_max;
     ic->flags = flags;
     GRN_DB_OBJ_SET_TYPE(ic, GRN_CURSOR_COLUMN_INDEX);
+    {
+      grn_id id = grn_obj_register(ctx, ctx->impl->db, NULL, 0);
+      DB_OBJ(ic)->header.domain = GRN_ID_NIL;
+      DB_OBJ(ic)->range = GRN_ID_NIL;
+      grn_db_obj_init(ctx, ctx->impl->db, id, DB_OBJ(ic));
+    }
   }
   GRN_API_RETURN((grn_obj *)ic);
 }
