@@ -6136,7 +6136,17 @@ grn_table_update_by_id(grn_ctx *ctx, grn_obj *table, grn_id id,
   grn_rc rc = GRN_OPERATION_NOT_SUPPORTED;
   GRN_API_ENTER;
   if (table->header.type == GRN_TABLE_DAT_KEY) {
-    rc = grn_dat_update_by_id(ctx, (grn_dat *)table, id, dest_key, dest_key_size);
+    grn_dat *dat = (grn_dat *)table;
+    if (dat->io && !(dat->io->flags & GRN_IO_TEMPORARY)) {
+      if (grn_io_lock(ctx, dat->io, 10000000)) {
+        rc = ctx->rc;
+      } else {
+        rc = grn_dat_update_by_id(ctx, dat, id, dest_key, dest_key_size);
+        grn_io_unlock(dat->io);
+      }
+    } else {
+      rc = grn_dat_update_by_id(ctx, dat, id, dest_key, dest_key_size);
+    }
   }
   GRN_API_RETURN(rc);
 }
