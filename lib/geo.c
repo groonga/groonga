@@ -1056,7 +1056,6 @@ grn_geo_cursor_open_in_rectangle(grn_ctx *ctx,
     goto exit;
   }
 
-  GRN_DB_OBJ_SET_TYPE(cursor, GRN_CURSOR_COLUMN_GEO_INDEX);
   cursor->pat = data.pat;
   cursor->index = index;
   memcpy(&(cursor->top_left), data.top_left, sizeof(grn_geo_point));
@@ -1099,6 +1098,16 @@ grn_geo_cursor_open_in_rectangle(grn_ctx *ctx,
     if (cursor->minimum_reduce_bit < 1) {
       cursor->minimum_reduce_bit = 1;
     }
+  }
+  GRN_DB_OBJ_SET_TYPE(cursor, GRN_CURSOR_COLUMN_GEO_INDEX);
+  {
+    grn_obj *db;
+    grn_id id;
+    db = grn_ctx_db(ctx);
+    id = grn_obj_register(ctx, db, NULL, 0);
+    DB_OBJ(cursor)->header.domain = GRN_ID_NIL;
+    DB_OBJ(cursor)->range = GRN_ID_NIL;
+    grn_db_obj_init(ctx, db, id, DB_OBJ(cursor));
   }
 
 exit :
