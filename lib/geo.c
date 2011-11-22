@@ -1041,6 +1041,7 @@ grn_geo_cursor_open_in_rectangle(grn_ctx *ctx,
   grn_geo_cursor_in_rectangle *cursor = NULL;
   in_rectangle_data data;
 
+  GRN_API_ENTER;
   GRN_VOID_INIT(&(data.top_left_point_buffer));
   GRN_VOID_INIT(&(data.bottom_right_point_buffer));
   if (in_rectangle_data_prepare(ctx, index, top_left_point, bottom_right_point,
@@ -1103,7 +1104,7 @@ grn_geo_cursor_open_in_rectangle(grn_ctx *ctx,
 exit :
   grn_obj_unlink(ctx, &(data.top_left_point_buffer));
   grn_obj_unlink(ctx, &(data.bottom_right_point_buffer));
-  return (grn_obj *)cursor;
+  GRN_API_RETURN((grn_obj *)cursor);
 }
 
 static inline grn_bool
