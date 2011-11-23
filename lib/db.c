@@ -6125,6 +6125,9 @@ grn_obj_remove(grn_ctx *ctx, grn_obj *obj)
         grn_ja_put(ctx, ((grn_db *)db)->specs, id, NULL, 0, GRN_OBJ_SET, NULL);
         grn_obj_delete_by_id(ctx, db, id, 1);
       }
+      if (path) {
+        grn_io_remove(ctx, path);
+      }
       grn_obj_touch(ctx, db, NULL);
     } else {
       grn_obj_close(ctx, obj);
