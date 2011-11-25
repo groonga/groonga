@@ -865,10 +865,7 @@ msgid ""
 "'select' command can display result in only specified ranges using 'offset' "
 "and 'limit' parametor. This parametors is available when you want to show "
 "only a page in much result of searching."
-msgstr ""
-"selectコマンドにおいて、offset,limitパラメータを用いることで、検索結果から指"
-"定された範囲のみを表示することが出来ます。大量の検索結果をページで分けて、1"
-"ページ分のみを表示したい場合に有効です。"
+msgstr "selectコマンドにおいて、offset,limitパラメータを用いることで、検索結果から指定された範囲のみを表示することが出来ます。大量の検索結果をページで分けて、1ページ分のみを表示したい場合に有用です。"
 
 # 67f72cba34ca403bb8331437e5020e9d
 #: ../../../source/tutorial/introduction.txt:262
