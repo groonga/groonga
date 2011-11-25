@@ -77,7 +77,7 @@ Form::
 Administration tool based on HTML
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-You can access administration tool based on HTML at `http://[HOST_NAME_OR_IP_ADDRESS]:[PORT_NUMBER]/` after the above command is ran. Your browser must enables JavaScript.
+You can access administration tool based on HTML at `http://[HOST_NAME_OR_IP_ADDRESS]:[PORT_NUMBER]/` after the above command is ran. Your browser must enable JavaScript.
 
 Run command with HTTP
 ^^^^^^^^^^^^^^^^^^^^^
