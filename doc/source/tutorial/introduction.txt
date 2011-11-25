@@ -151,15 +151,15 @@ We create 'Terms' table, it has type of master key value is ShortText.
 .. include:: ../example/tutorial/introduction-5.log
 .. table_create --name Terms --flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type ShortText --default_tokenizer TokenBigram
 
-Many parametors is specified in this execution example.
+Many parameters is specified in this execution example.
 You don't hove to understand all parameters.
 There are the simple explaination, but you can skipped.
 
 In this examples, 'TABLE_PAT_KEY|KEY_NORMALIZE' stores master key in patricia-trie and entries each teminology after nomalized.
 The 'default_tokenizer' parametar specifies the way to tokenize target texts. In this examples, we specifies 'TokenBigram' as this parameter, and so we choose 'N-gram' generally called.
 
-Create index-column with fulltext searching
--------------------------------------------
+Create index-column with fulltext search
+----------------------------------------
 
 We will fulltext search 'title' column in 'Site' table. In this case, we create column whose type index in terminology table.
 
@@ -201,13 +201,13 @@ Search data
 
 '_id' and '_key' columns are unique in groonga's table, so let's search data in table using these columns.
 
-You can search data using 'select' command with 'query' parametor.
+You can search data using 'select' command with 'query' parameter.
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-9.log
 .. select --table Site --query _id:1
 
-'_id:1' specified 'query' parametor means to search records whose '_id' column has '1'.
+'_id:1' specified 'query' parameter means to search records whose '_id' column has '1'.
 
 Let's search records with '_key' column.
 
@@ -215,13 +215,13 @@ Let's search records with '_key' column.
 .. include:: ../example/tutorial/introduction-10.log
 .. select --table Site --query "_key:\"http://example.org/\""
 
-'_key:\"http://example.org/\"' specified 'query' parametor means to search records whose '_key' column has '"http://example.org/"'.
+'_key:\"http://example.org/\"' specified 'query' parameter means to search records whose '_key' column has '"http://example.org/"'.
 
 
 Fulltext searching
 ------------------
 
-Using 'query' parametor, you can fulltext search with index.
+Using 'query' parameter, you can fulltext search with index.
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-11.log
@@ -229,11 +229,11 @@ Using 'query' parametor, you can fulltext search with index.
 
 This command shows result of fulltext searching by string 'this' for 'title' column.
 
-"title:@this" specified 'query' parametor means to search records whose 'title' column including 'this' string.
+"title:@this" specified 'query' parameter means to search records whose 'title' column including 'this' string.
 
 'select' command has parameter 'match_columns'.
 
-If this parametor is specified, it means to search in columns specified 'match_columns' when 'query' parametor doesn't specify column-name condition.[1]_
+If this parameter is specified, it means to search in columns specified 'match_columns' when 'query' parameter doesn't specify column-name condition.[1]_
 
 If you specify 'match_columns' is 'title' and 'query' is 'this', you can take same result as above query.
 
@@ -244,7 +244,7 @@ If you specify 'match_columns' is 'title' and 'query' is 'this', you can take sa
 Specify output column
 ---------------------
 
-'output_columns' parametor in 'select' command specifies columns shown in result of search.
+'output_columns' parameter in 'select' command specifies columns shown in result of search.
 
 If you want to specify some columns, you should separate column names by comma(,).
 
@@ -259,9 +259,9 @@ Ranges to display
 
 'select' command can display result in only specified ranges using 'offset' and 'limit' parameter. This parameters is useful when you want to show only a page in much result of searching.
 
-'offset' parametor specifies starting point of result. If you want 'select' command to return from first records, this parametor specifies '0'.
+'offset' parameter specifies starting point of result. If you want 'select' command to return from first records, this parameter specifies '0'.
 
-'limit' parametor specifies how many records of searching result.
+'limit' parameter specifies how many records of searching result.
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-14.log
@@ -272,9 +272,9 @@ Ranges to display
 Sort
 -----
 
-If you use 'sortby' parametor in 'select' command, this command sorts result of searching.
+If you use 'sortby' parameter in 'select' command, this command sorts result of searching.
 
-When 'sortby' parametor specifies column name, result is sorted in ascending-order to its column's value. This 'select' command also sort in descending-order when you add hyphen(-) before column name.
+When 'sortby' parameter specifies column name, result is sorted in ascending-order to its column's value. This 'select' command also sort in descending-order when you add hyphen(-) before column name.
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-15.log
@@ -294,4 +294,4 @@ If you want to specify some column names, you should use comma(,) between these 
 
 .. rubric:: footnote
 
-.. [1] In now groonga's version, you can only use 'match_columns' parametor in the case of existing index of fulltext searching. This parametor cannot be use in searching for ordinary columns.
+.. [1] In now groonga's version, you can only use 'match_columns' parameter in the case of existing index of fulltext searching. This parameter cannot be use in searching for ordinary columns.
