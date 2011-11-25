@@ -1669,8 +1669,8 @@ grn_hash_cursor_open(grn_ctx *ctx, grn_hash *hash,
   } else {
     c->curr_rec += c->dir * offset;
   }
-  c->rest = (limit < 0) ? GRN_ID_MAX : limit;
 exit :
+  c->rest = (limit < 0) ? GRN_ID_MAX : limit;
   return c;
 }
 
