@@ -229,7 +229,6 @@ test_create_with_long_path(void)
   path = g_string_free(long_path, FALSE);
 
   inverted_index = grn_ii_create(context, path, lexicon, 0);
-  ((grn_db_obj *)inverted_index)->header.domain = GRN_DB_VOID;
   cut_assert_null(inverted_index);
 }
 
@@ -237,7 +236,6 @@ void
 test_create_with_null_lexicon(void)
 {
   inverted_index = grn_ii_create(context, path, NULL, 0);
-  ((grn_db_obj *)inverted_index)->header.domain = GRN_DB_VOID;
   cut_assert_null(inverted_index);
 }
 
