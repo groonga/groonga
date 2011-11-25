@@ -23,6 +23,7 @@
 #include "../lib/grn-assertions.h"
 
 void test_table(void);
+void test_table_with_no_column(void);
 void test_column(void);
 
 static gchar *tmp_directory;
@@ -117,6 +118,39 @@ test_table(void)
                           "[1,\"groonga.org\",\"razil.jp\"],"
                           "[3,\"qwik.jp/senna/\",\"\"],"
                           "[2,\"razil.jp\",\"qwik.jp/senna/\"]]]",
+                          actual);
+}
+
+void
+test_table_with_no_column(void)
+{
+  const gchar *actual;
+
+  assert_send_commands("table_create Sites TABLE_PAT_KEY ShortText\n"
+                       "load --table Sites\n"
+                       "[\n"
+                       "[\"_key\"],\n"
+                       "[\"groonga.org\"],\n"
+                       "[\"razil.jp\"]\n"
+                       "]");
+  actual = send_command("select Sites");
+  cut_assert_equal_string("[[[2],"
+                          "[[\"_id\",\"UInt32\"],"
+                           "[\"_key\",\"ShortText\"]],"
+                          "[1,\"groonga.org\"],"
+                          "[2,\"razil.jp\"]]]",
+                          actual);
+
+  table = grn_ctx_get(context, "Sites", strlen("Sites"));
+  grn_test_assert(grn_table_rename(context, table, "URLs", strlen("URLs")));
+  grn_test_assert_context(context);
+
+  actual = send_command("select URLs");
+  cut_assert_equal_string("[[[2],"
+                          "[[\"_id\",\"UInt32\"],"
+                           "[\"_key\",\"ShortText\"]],"
+                          "[1,\"groonga.org\"],"
+                          "[2,\"razil.jp\"]]]",
                           actual);
 }
 
