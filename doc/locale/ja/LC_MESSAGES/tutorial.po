@@ -356,9 +356,10 @@ msgstr "基本的な操作"
 # 7a5094c3e47443369b7daf194fe51c68
 #: ../../../source/tutorial/introduction.txt:13
 msgid ""
-"There are how to use groonga as C-library or via an executable file. This "
-"tutorial explains how to use an executable file of groonga. With its file, "
-"you can create and operate databases, start and connect to server, and so on."
+"You can use groonga as a library of programming language C or an executable "
+"file. This tutorial explains how to use groonga as an executable file. Using "
+"its file, you can create and operate databases, start and connect to server, "
+"and so on."
 msgstr ""
 "groongaは、Cのライブラリとして使用する方法と、groonga実行ファイルを通して使用"
 "する方法があります。本チュートリアルでは、groonga実行ファイルを使用する方法に"
@@ -370,12 +371,9 @@ msgstr ""
 msgid "Create database"
 msgstr "DBの作成"
 
-# 9efc31e145c34bb4a6aab938ae10a6a2
 #: ../../../source/tutorial/introduction.txt:20
-msgid "This command creates a new database."
-msgstr ""
-"以下のようなコマンドを実行すると、データベースを新規に作成することができま"
-"す。"
+msgid "You can create a new database in the following command."
+msgstr "以下のようなコマンドを実行すると、データベースを新規に作成することができます。"
 
 #: ../../../source/tutorial/introduction.txt:22
 #: ../../../source/tutorial/introduction.txt:39
@@ -385,7 +383,7 @@ msgstr "書式::"
 # 98d46d97a1e34f3e8151087450cb3c0d
 #: ../../../source/tutorial/introduction.txt:26
 msgid ""
-"'-n' option specifies to create database. DB_PATH_NAME specifies full-path "
+"'-n' option specifies to create a database. DB_PATH_NAME specifies full-path "
 "of new database."
 msgstr ""
 "-nオプションは、データベースを作ることを示します。データベースパス名には、新"
@@ -393,9 +391,9 @@ msgstr ""
 
 #: ../../../source/tutorial/introduction.txt:28
 msgid ""
-"Groonga runs as interactive mode after create database with this command, "
-"and so groonga accepts command from standard input. This mode is terminated "
-"with Ctrl-d."
+"Groonga starts as interactive mode after you create a database with this "
+"command, and so groonga accepts commands from standard input. This mode is "
+"terminated with Ctrl-d."
 msgstr ""
 "上記コマンドでデータベースを作成すると、そのまま対話モードと呼ばれるコマンド"
 "を受け付けるモードになります。Ctrlキーを押しながらdキーを押すと、対話モードか"
