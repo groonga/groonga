@@ -184,6 +184,7 @@ cut_teardown(void)
 #define cut_assert_create() do                                  \
 {                                                               \
   inverted_index = grn_ii_create(context, path, lexicon, 0);    \
+  ((grn_db_obj *)inverted_index)->header.domain = GRN_DB_VOID;  \
   cut_assert_not_null(inverted_index);                          \
   cut_assert_file_exist(cut_take_printf("%s.c", path));         \
 } while (0)
@@ -198,6 +199,7 @@ void
 test_create_with_null_path(void)
 {
   inverted_index = grn_ii_create(context, NULL, lexicon, 0);
+  ((grn_db_obj *)inverted_index)->header.domain = GRN_DB_VOID;
   cut_assert_not_null(inverted_index);
 }
 
@@ -227,6 +229,7 @@ test_create_with_long_path(void)
   path = g_string_free(long_path, FALSE);
 
   inverted_index = grn_ii_create(context, path, lexicon, 0);
+  ((grn_db_obj *)inverted_index)->header.domain = GRN_DB_VOID;
   cut_assert_null(inverted_index);
 }
 
@@ -234,6 +237,7 @@ void
 test_create_with_null_lexicon(void)
 {
   inverted_index = grn_ii_create(context, path, NULL, 0);
+  ((grn_db_obj *)inverted_index)->header.domain = GRN_DB_VOID;
   cut_assert_null(inverted_index);
 }
 
