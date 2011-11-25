@@ -10,22 +10,22 @@
 Fundamental operation
 =====================
 
-There are how to use groonga as C-library or via an executable file.
-This tutorial explains how to use an executable file of groonga.
-With its file, you can create and operate databases, start and connect to server, and so on.
+You can use groonga as a library of programming language C or an executable file.
+This tutorial explains how to use groonga as an executable file.
+Using its file, you can create and operate databases, start and connect to server, and so on.
 
 Create database
 ---------------
 
-This command creates a new database.
+You can create a new database in the following command.
 
 Form ::
 
   groonga -n DB_PATH_NAME
 
-'-n' option specifies to create database. DB_PATH_NAME specifies full-path of new database.
+'-n' option specifies to create a database. DB_PATH_NAME specifies full-path of new database.
 
-Groonga runs as interactive mode after create database with this command, and so groonga accepts command from standard input. This mode is terminated with Ctrl-d.
+Groonga starts as interactive mode after you create a database with this command, and so groonga accepts commands from standard input. This mode is terminated with Ctrl-d.
 
 Execution example::
 
