@@ -33,4 +33,4 @@ xをyで並び替える：sort x by y
 （要確認）xは対話モードに入る：x run in interactive mode
 （要確認）ｘはｙが有効になっている必要がある：x must enable y
 （要確認）x（オプションなど）はy（形式）で渡す：x be passed as y
-（要確認）xなどのy（yという種類のもので、x意外を省略している場合）：x or any similar y for it
+（要確認）xなどのy（yという種類のもので、x以外を省略している場合）：x or any similar y for it
