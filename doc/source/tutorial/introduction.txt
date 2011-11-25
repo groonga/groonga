@@ -43,11 +43,11 @@ Form ::
 DB_PATH_NAME specifies full-path of existing database.
 If COMMAND is specified, result of COMMAND is returned.
 
-With no COMMAND, this command starts interactive-mode.
-Groonga reads command from standardd evaluates it repeatedly in this mode.
-Interactive-mode is used in this tutorial.
+With no COMMAND, this command starts groonga as interactive-mode.
+Groonga of this mode reads a command from standard input evaluates it repeatedly.
+This tutorial uses interactive-mode mainly.
 
-For example, we explain to run the "status" command.
+For example, we will run the `status` command.
 This command returns status of groonga's execution.
 
 .. groonga-command
@@ -55,9 +55,9 @@ This command returns status of groonga's execution.
 .. .. % groonga -n /tmp/groonga-databases/introduction.db
 .. status
 
-The mentioned above, result of executed command is json-style.
-The 0 place of json array has information of error-code and execution time, and so on.
-The 1 place of json array has reslt of exectuted command.
+The mentioned above, results of executed commands are generally JSON style.
+The first element in a array of JSON has information of error-code, execution time, and so on.
+The second element has a result of exectuted command.
 
 Commands
 --------
