@@ -51,6 +51,10 @@
 #include <sys/types.h>
 #include "ql.h"
 
+#ifdef stat
+#  undef stat
+#endif
+
 #define InitFile "init.scm"
 
 /* global variables */
