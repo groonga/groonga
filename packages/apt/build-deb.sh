@@ -60,6 +60,12 @@ else
     ruby -i'' -ne 'print $_ unless /libevent/' /tmp/${PACKAGE}-debian/control
 fi
 
+if aptitude show liblzo2-dev > /dev/null 2>&1; then
+    DEPENDED_PACKAGES="${DEPENDED_PACKAGES} liblzo2-dev"
+else
+    ruby -i'' -ne 'print $_ unless /liblzo2-dev/' /tmp/${PACKAGE}-debian/control
+fi
+
 run aptitude install -V -D -y devscripts ${DEPENDED_PACKAGES}
 run aptitude clean
 
