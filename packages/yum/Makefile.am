@@ -31,7 +31,7 @@ download: ensure-rsync-path
 	for distribution in $(DISTRIBUTIONS); do		\
 	  (rm -rf $${distribution} &&				\
 	   mkdir -p $${distribution} &&				\
-	   rsync -avz						\
+	   rsync -avz --delete					\
 	     $(SERVER_PATH)/$${distribution}/ $${distribution});\
 	done
 
