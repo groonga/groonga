@@ -76,7 +76,8 @@ EOF
 fi
 
 run yum update ${yum_options} -y
-if [ "$distribution" = "centos" ] && ! rpm -q mecab-devel > /dev/null; then
+if [ "${distribution}-${distribution_version}" = "centos-5" ] && \
+    ! rpm -q mecab-devel > /dev/null; then
     run yum install -y rpm-build wget libtool gcc gcc-c++ make
 
     cat <<EOF > $BUILD_SCRIPT
