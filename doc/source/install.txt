@@ -7,14 +7,11 @@ Install
 
 We will explain of how to install Groonga for each environments.
 
-The packages for 64-bit binary are only distributed. Please attention not to distributing others for 32-bit binaly.
+We distribute packages for both 32-bit and 64-bit but we recommend that you should use 64-bit package for server. You should use 32-bit package just only for test or development. You will get no memory error with 32-bit package even if you just process medium size data.
+
 
 Debian GNU/Linux squeeze
 ------------------------
-
-.. note::
-
-   We only distribute the package for amd64.
 
 /etc/apt/sources.list.d/groonga.list::
 
@@ -30,10 +27,6 @@ Install::
 Debian GNU/Linux wheezy
 -----------------------
 
-.. note::
-
-   We only distribute the package for amd64.
-
 /etc/apt/sources.list.d/groonga.list::
 
   deb http://packages.groonga.org/debian/ wheezy main
@@ -48,10 +41,6 @@ Install::
 Debian GNU/Linux sid
 --------------------
 
-.. note::
-
-   We only distribute the package for amd64.
-
 /etc/apt/sources.list.d/groonga.list::
 
   deb http://packages.groonga.org/debian/ unstable main
@@ -65,10 +54,6 @@ Install::
 
 Ubuntu 10.04 LTS Lucid Lynx
 ---------------------------
-
-.. note::
-
-   We only distribute the package for amd64.
 
 .. note::
 
@@ -91,10 +76,6 @@ Ubuntu 11.04 Natty Narwhal
 
 .. note::
 
-   We only distribute the package for amd64.
-
-.. note::
-
    You should add universe section in the official Ubuntu
    repository. The following describes how to add it.
 
@@ -111,10 +92,6 @@ Install::
 
 Ubuntu 11.10 Oneiric Ocelot
 ---------------------------
-
-.. note::
-
-   We only distribute the package for amd64.
 
 .. note::
 
@@ -135,10 +112,6 @@ Install::
 CentOS 5
 --------
 
-.. note::
-
-   We only distribute the package for amd64.
-
 Install::
 
   % sudo rpm -ivh http://packages.groonga.org/centos/groonga-repository-1.0.0-0.noarch.rpm
@@ -148,10 +121,6 @@ Install::
 CentOS 6
 --------
 
-.. note::
-
-   We only distribute the package for amd64.
-
 Install::
 
   % sudo rpm -ivh http://packages.groonga.org/centos/groonga-repository-1.0.0-0.noarch.rpm
@@ -160,10 +129,6 @@ Install::
 
 Fedora 15
 ---------
-
-.. note::
-
-   We only distribute the package for amd64.
 
 Install::
 
@@ -188,20 +153,12 @@ Install::
 Windows (Installer)
 -------------------
 
-.. note::
-
-   We only distribute the package for x64.
-
 You just download installer (.exe file) from
 `packages.groonga.org/windows/ <http://packages.groonga.org/windows/groonga/>`_
 and execute it.
 
 Windows (zip)
 -------------
-
-.. note::
-
-   We only distribute the package for x64.
 
 You just download zip-file from
 `packages.groonga.org/windows/ <http://packages.groonga.org/windows/groonga/>`_
