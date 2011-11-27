@@ -2,7 +2,8 @@ SUBDIRS =					\
 	patches					\
 	language-files
 EXTRA_DIST = Rakefile
-LICENSE_DIR = dist/share/license
+LICENSE_DIR = dist-x64/share/license
+ARCHITECTURES = x86 x64
 
 all:
 
@@ -26,13 +27,19 @@ build_options =					\
 	DEBUG_BUILD=$(DEBUG_BUILD)
 
 build: source
-	$(RUBY) -S rake build $(build_options)
+	for architecture in $(ARCHITECTURES); do	\
+	  $(RUBY) -S rake build $(build_options)	\
+	     ARCHITECTURE=$${arcitecture};		\
+	done
 
 build-groonga: source
-	$(RUBY) -S rake build:groonga $(build_options)
+	for architecture in $(ARCHITECTURES); do		\
+	  $(RUBY) -S rake build:groonga $(build_options)	\
+	     ARCHITECTURE=$${arcitecture};			\
+	done
 
-installer: setup.nsi
-	(echo "groonga";				\
+LICENSE:
+	@(echo "groonga";				\
 	 echo "=======";				\
 	 echo;						\
 	 echo "AUTHORS";				\
@@ -88,14 +95,28 @@ installer: setup.nsi
 	 echo;						\
 	 cat $(LICENSE_DIR)/naist-jdic/COPYING;		\
 	) > LICENSE
-	makensis setup.nsi
+
+installer: installer-x86 installer-x64
+
+setup-x86.nsi: setup-x64.nsi
+	sed -e 's/64/86/g' setup-x64.nsi > setup-x86.nsi
+
+installer-x86: LICENSE setup-x86.nsi
+	makensis setup-x86.nsi
+
+installer-x64: LICENSE setup-x64.nsi
+	makensis setup-x64.nsi
 
 package:
-	mkdir -p files
-	rm -rf files/$(PACKAGE)-$(VERSION)
-	cp -a dist files/$(PACKAGE)-$(VERSION)
-	(cd files && zip -r $(PACKAGE)-$(VERSION).zip $(PACKAGE)-$(VERSION))
-	rm -rf files/$(PACKAGE)-$(VERSION)
+	for architecture in $(ARCHITECTURES); do			\
+	  mkdir -p files;						\
+	  rm -rf files/$(PACKAGE)-$(VERSION);				\
+	  cp -a dist-$${architecture} files/$(PACKAGE)-$(VERSION);	\
+	  (cd files &&							\
+	    zip -r $(PACKAGE)-$(VERSION)-$${architecture}.zip		\
+	           $(PACKAGE)-$(VERSION)-$${architecture});		\
+	  rm -rf files/$(PACKAGE)-$(VERSION)-$${architecture};		\
+	done
 
 SOURCE=../$(PACKAGE)-$(VERSION).tar.gz
 

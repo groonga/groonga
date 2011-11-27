@@ -92,10 +92,12 @@ version.sh
 /packages/yum/centos/
 /packages/source/files/
 /packages/windows/tmp/
-/packages/windows/dist/
+/packages/windows/dist-x86/
+/packages/windows/dist-x64/
 /packages/windows/files/
 /packages/windows/LICENSE
-/packages/windows/setup.nsi
+/packages/windows/setup-x86.nsi
+/packages/windows/setup-x64.nsi
 /packages/*.tar.gz
 /examples/dictionary/db/
 /examples/dictionary/*.gz

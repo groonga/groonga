@@ -19,18 +19,22 @@ require 'pathname'
 
 base_dir = Pathname.new(__FILE__).dirname
 
-groonga_win32_i386_p = ENV["GROONGA32"] == "yes"
+groonga_win32_x86_p = ENV["ARCHITECTURE"] == "x86"
 groonga_version = ENV["VERSION"]
 groonga_source = Pathname.new(ENV["SOURCE"]).expand_path
 debug_build_p = ENV["DEBUG_BUILD"] == "yes"
 debug_flags = ["CFLAGS=-ggdb3 -O0", "CXXFLAGS=-ggdb3 -O0"]
 
-dist_dir = Pathname.new("dist").expand_path
+if groonga_win32_x86_p
+  dist_dir = Pathname.new("dist-x86").expand_path
+else
+  dist_dir = Pathname.new("dist-x64").expand_path
+end
 license_dir = dist_dir + "share" + "license"
 binary_dir = base_dir + dist_dir
 
 patches_dir = (base_dir + "patches").expand_path
-if groonga_win32_i386_p
+if groonga_win32_x86_p
   host = "i686-w64-mingw32"
   mecab_patches = []
 else

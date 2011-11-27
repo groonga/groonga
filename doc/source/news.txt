@@ -43,7 +43,7 @@ Improvements
 * Removed associated path on remove. [#1180]
 * [deb] Supported i386.
 * [rpm] Supported i386.
-* [windows] Supported i386.
+* [windows] Supported x86.
 
 Fixes
 ^^^^^
