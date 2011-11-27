@@ -29,13 +29,13 @@ build_options =					\
 build: source
 	for architecture in $(ARCHITECTURES); do	\
 	  $(RUBY) -S rake build $(build_options)	\
-	     ARCHITECTURE=$${arcitecture};		\
+	     ARCHITECTURE=$${architecture};		\
 	done
 
 build-groonga: source
 	for architecture in $(ARCHITECTURES); do		\
 	  $(RUBY) -S rake build:groonga $(build_options)	\
-	     ARCHITECTURE=$${arcitecture};			\
+	     ARCHITECTURE=$${architecture};			\
 	done
 
 LICENSE:
