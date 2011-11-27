@@ -108,14 +108,15 @@ installer-x64: LICENSE setup-x64.nsi
 	makensis setup-x64.nsi
 
 package:
-	for architecture in $(ARCHITECTURES); do			\
-	  mkdir -p files;						\
-	  rm -rf files/$(PACKAGE)-$(VERSION);				\
-	  cp -a dist-$${architecture} files/$(PACKAGE)-$(VERSION);	\
-	  (cd files &&							\
-	    zip -r $(PACKAGE)-$(VERSION)-$${architecture}.zip		\
-	           $(PACKAGE)-$(VERSION)-$${architecture});		\
-	  rm -rf files/$(PACKAGE)-$(VERSION)-$${architecture};		\
+	for architecture in $(ARCHITECTURES); do		\
+	  mkdir -p files;					\
+	  rm -rf files/$(PACKAGE)-$(VERSION)-$${architecture};	\
+	  cp -a dist-$${architecture}				\
+	    files/$(PACKAGE)-$(VERSION)-$${architecture};	\
+	  (cd files &&						\
+	    zip -r $(PACKAGE)-$(VERSION)-$${architecture}.zip	\
+	           $(PACKAGE)-$(VERSION)-$${architecture});	\
+	  rm -rf files/$(PACKAGE)-$(VERSION)-$${architecture};	\
 	done
 
 SOURCE=../$(PACKAGE)-$(VERSION).tar.gz
