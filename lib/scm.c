@@ -53,7 +53,7 @@
 
 #ifdef stat
 #  undef stat
-#endif
+#endif /* stat */
 
 #define InitFile "init.scm"
 
