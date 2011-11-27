@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-10-24 15:08\n"
-"PO-Revision-Date: 2011-10-24 15:23+0900\n"
+"POT-Creation-Date: 2011-11-27 22:52\n"
+"PO-Revision-Date: 2011-11-27 22:57+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -25,98 +25,93 @@ msgstr "インストール"
 msgid "We will explain of how to install Groonga for each environments."
 msgstr "それぞれの環境毎にインストール方法を説明します。"
 
+# 7d41debddc034e78b134ebb1d89a18ed
 #: ../../../source/install.txt:10
 msgid ""
-"The packages for 64-bit binary are only distributed. Please attention not to "
-"distributing others for 32-bit binaly."
-msgstr ""
-"パッケージは64bit用バイナリのみ配布しています。32bit用バイナリは配布していな"
-"いので注意してください。"
+"We distribute packages for both 32-bit and 64-bit but we recommend that you "
+"should use 64-bit package for server. You should use 32-bit package just "
+"only for test or development. You will get no memory error with 32-bit "
+"package even if you just process medium size data."
+msgstr "32-bit用と64-bit用のパッケージを配布していますが、サーバ用途には64-bitパッケージを利用することをオススメします。32-bit用パッケージはテスト用か開発用にだけ使って下さい。32-bit用パッケージを使った場合は、中程度のサイズのデータでもメモリ不足エラーになることがあります。"
 
-#: ../../../source/install.txt:13
+#: ../../../source/install.txt:14
 msgid "Debian GNU/Linux squeeze"
 msgstr ""
 
-#: ../../../source/install.txt:31
+#: ../../../source/install.txt:16 ../../../source/install.txt:30
+#: ../../../source/install.txt:44 ../../../source/install.txt:63
+#: ../../../source/install.txt:82 ../../../source/install.txt:101
+msgid "/etc/apt/sources.list.d/groonga.list::"
+msgstr ""
+
+#: ../../../source/install.txt:21 ../../../source/install.txt:35
+#: ../../../source/install.txt:49 ../../../source/install.txt:68
+#: ../../../source/install.txt:87 ../../../source/install.txt:106
+#: ../../../source/install.txt:115 ../../../source/install.txt:124
+#: ../../../source/install.txt:133 ../../../source/install.txt:142
+#: ../../../source/install.txt:149
+msgid "Install::"
+msgstr "インストール::"
+
+#: ../../../source/install.txt:28
 msgid "Debian GNU/Linux wheezy"
 msgstr ""
 
-#: ../../../source/install.txt:49
+#: ../../../source/install.txt:42
 msgid "Debian GNU/Linux sid"
 msgstr ""
 
-#: ../../../source/install.txt:67
+#: ../../../source/install.txt:56
 msgid "Ubuntu 10.04 LTS Lucid Lynx"
-msgstr ""
-
-#: ../../../source/install.txt:90
-msgid "Ubuntu 11.04 Natty Narwhal"
-msgstr ""
-
-# f5a3e80f7f864fcfbca6de7812d9cd9e
-#: ../../../source/install.txt:113
-msgid "Ubuntu 11.10 Oneiric Ocelot"
 msgstr ""
 
 # fd9c45dc17b24d65a8564aa039fa524e
 # 827add09a0324562b5bb4ebeb19392b5
 # cd45acb254c545ee9c2847ab6bcaf158
-#: ../../../source/install.txt:121 ../../../source/install.txt:75,
-#: ../../../source/install.txt:98,
+#: ../../../source/install.txt:60 ../../../source/install.txt:79
+#: ../../../source/install.txt:98
 msgid ""
 "You should add universe section in the official Ubuntu repository. The "
 "following describes how to add it."
-msgstr "Ubuntu本家のuniverseセクションもインストール対象としてください。設定方法は以下で説明しています。"
+msgstr ""
+"Ubuntu本家のuniverseセクションもインストール対象としてください。設定方法は以"
+"下で説明しています。"
 
-#: ../../../source/install.txt:124 ../../../source/install.txt:101,
-#: ../../../source/install.txt:19, ../../../source/install.txt:37,
-#: ../../../source/install.txt:55, ../../../source/install.txt:78,
-msgid "/etc/apt/sources.list.d/groonga.list::"
+#: ../../../source/install.txt:75
+msgid "Ubuntu 11.04 Natty Narwhal"
 msgstr ""
 
-#: ../../../source/install.txt:136
+# f5a3e80f7f864fcfbca6de7812d9cd9e
+#: ../../../source/install.txt:94
+msgid "Ubuntu 11.10 Oneiric Ocelot"
+msgstr ""
+
+#: ../../../source/install.txt:113
 msgid "CentOS 5"
 msgstr ""
 
-#: ../../../source/install.txt:149
+#: ../../../source/install.txt:122
 msgid "CentOS 6"
 msgstr ""
 
-#: ../../../source/install.txt:162
+#: ../../../source/install.txt:131
 msgid "Fedora 15"
 msgstr ""
 
-#: ../../../source/install.txt:166 ../../../source/install.txt:117,
-#: ../../../source/install.txt:140, ../../../source/install.txt:153,
-#: ../../../source/install.txt:17, ../../../source/install.txt:35,
-#: ../../../source/install.txt:53, ../../../source/install.txt:71,
-#: ../../../source/install.txt:94,
-msgid "We only distribute the package for amd64."
-msgstr "amd64版のみ提供でi386版は未提供。"
-
-#: ../../../source/install.txt:175
+#: ../../../source/install.txt:140
 msgid "Mac OS X (MacPorts)"
 msgstr ""
 
-#: ../../../source/install.txt:184
+#: ../../../source/install.txt:147
 msgid "Mac OS X (Homebrew)"
 msgstr ""
 
-#: ../../../source/install.txt:186 ../../../source/install.txt:106,
-#: ../../../source/install.txt:129, ../../../source/install.txt:142,
-#: ../../../source/install.txt:155, ../../../source/install.txt:168,
-#: ../../../source/install.txt:177, ../../../source/install.txt:24,
-#: ../../../source/install.txt:42, ../../../source/install.txt:60,
-#: ../../../source/install.txt:83,
-msgid "Install::"
-msgstr "インストール::"
-
 # b0e120abaa3f4077ad7903b544bbf677
-#: ../../../source/install.txt:191
+#: ../../../source/install.txt:154
 msgid "Windows (Installer)"
 msgstr ""
 
-#: ../../../source/install.txt:197
+#: ../../../source/install.txt:156
 msgid ""
 "You just download installer (.exe file) from `packages.groonga.org/windows/ "
 "<http://packages.groonga.org/windows/groonga/>`_ and execute it."
@@ -125,15 +120,11 @@ msgstr ""
 ">`_ からインストーラ（.exeファイル）をダウンロードして実行してください。"
 
 # e35076ad510d4939afeb4d10cf3d5dca
-#: ../../../source/install.txt:202
+#: ../../../source/install.txt:161
 msgid "Windows (zip)"
 msgstr ""
 
-#: ../../../source/install.txt:206 ../../../source/install.txt:195,
-msgid "We only distribute the package for x64."
-msgstr "x64版のみ提供で32bit版は未提供。"
-
-#: ../../../source/install.txt:208
+#: ../../../source/install.txt:163
 msgid ""
 "You just download zip-file from `packages.groonga.org/windows/ <http://"
 "packages.groonga.org/windows/groonga/>`_ and extract it."
@@ -141,11 +132,11 @@ msgstr ""
 "`packages.groonga.org/windows/ <http://packages.groonga.org/windows/groonga/"
 ">`_ からzipファイルをダウンロードして展開するだけで使えます。"
 
-#: ../../../source/install.txt:213
+#: ../../../source/install.txt:168
 msgid "Others"
 msgstr "その他"
 
-#: ../../../source/install.txt:215
+#: ../../../source/install.txt:170
 msgid ""
 "If you will use indexes of tokenizing of each morpheme for full-text search, "
 "you should install `MeCab <http://mecab.sourceforge.net/>`_ before you "
@@ -155,7 +146,7 @@ msgstr ""
 "トールする前に `MeCab <http://mecab.sourceforge.net/>`_ をインストールしてく"
 "ださい。"
 
-#: ../../../source/install.txt:219
+#: ../../../source/install.txt:174
 msgid ""
 "After, you should download tar.gz-file from `packages.groonga.org/source/ "
 "<http://packages.groonga.org/source/groonga/>`_ for installing groonga. You "
@@ -166,7 +157,7 @@ msgstr ""
 ">`_ よりtar.gzファイルを取得し、インストール先の環境にファイルを展開して、以"
 "下のように実行することでインストールできます。::"
 
-#: ../../../source/install.txt:226
+#: ../../../source/install.txt:181
 msgid ""
 "The \"prefix\" option is the paramater for specified place to install. If "
 "you won't specify the option, \"/usr/local\" is specified. Please specify \"/"
