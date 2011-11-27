@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-15 18:07\n"
-"PO-Revision-Date: 2011-09-15 18:07+0900\n"
+"POT-Creation-Date: 2011-11-27 22:52\n"
+"PO-Revision-Date: 2011-11-27 22:53+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -43,7 +43,7 @@ msgstr ""
 
 # f70b1a82fdea45cba4fc5702622ed291
 #: ../../../source/characteristic.txt:14
-msgid "Groonga sever supports multi-protocols such as HTTP"
+msgid "Groonga server supports multi-protocols such as HTTP"
 msgstr "HTTPなどの複数プロトコルに対応したサーバ"
 
 # 68561476b5bd46f99c6afd130e989472
@@ -124,12 +124,11 @@ msgstr ""
 # be2164b91fdb4c3e9fef8b2843732dea
 #: ../../../source/characteristic.txt:35
 msgid ""
-"`Groonga storage engine <http://mroonga.github.com/>`_ that is the successor "
-"to the Tritonn is implemented as a MySQL pruggable storage engine. Groonga "
-"storage files that are opened by groonga storage engine can also be shared "
-"with groonga server. For example, you can update your data via SQL and "
-"search your data via HTTP."
-msgstr "Tritonnの後継として `groongaストレージエンジン <http://mroonga.github.com/>`_ が開発されています。groongaストレージエンジンはMySQLのプラがブルストレージエンジンとして実装されています。groongaストレージエンジンが開いているgroongaのストレージファイルは他のgroongaサーバも共有することができます。例えば、MySQLプロトコルでデータの更新を行い、HTTPでデータの参照を行うことができます。"
+"`Mroonga <http://mroonga.github.com/>`_ that is the successor to the Tritonn "
+"is implemented as a MySQL pruggable storage engine. Groonga's storage files "
+"that are opened by mroonga can also be shared with groonga server. For "
+"example, you can update your data via SQL and search your data via HTTP."
+msgstr "Tritonnの後継として `mroonga <http://mroonga.github.com/>`_ が開発されています。mroongaはMySQLのプラガブルストレージエンジンとして実装されています。mroongaが開いているgroongaのストレージファイルは他のgroongaサーバも共有することができます。例えば、MySQLプロトコルでデータの更新を行い、HTTPでデータの参照を行うことができます。"
 
 # cf232eee415244e289b54efbbd6ba289
 #: ../../../source/characteristic.txt:38

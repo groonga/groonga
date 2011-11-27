@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-11-25 14:59\n"
-"PO-Revision-Date: 2011-11-25 14:59+0900\n"
+"POT-Creation-Date: 2011-11-27 22:35\n"
+"PO-Revision-Date: 2011-11-27 22:36+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -455,8 +455,8 @@ msgstr "コマンド"
 # 7d741d7734244269b7bed966b12359ed
 #: ../../../source/tutorial/introduction.txt:65
 msgid ""
-"You can operate databases with various commands via a execution file of "
-"groonga or groonga server. There are forms of commands in the following::"
+"You can operate database with various commands via execution file of groonga "
+"or groonga server. There are forms of commands in the following::"
 msgstr ""
 "groonga実行ファイルやgroongaサーバを介して様々なコマンドを実行して、DBを操作"
 "することができます。コマンドは以下の書式のうちいずれかで与えることができま"
@@ -1843,29 +1843,3 @@ msgid ""
 "また、経緯度が指定の矩形領域内であるかどうかを判定する :doc:`../functions/"
 "geo_in_rectangle` 関数も存在します。"
 msgstr ""
-
-# 63eb253953b0479eb064b9e9385ccf48
-#~ msgid "Arrangement"
-#~ msgstr "並び替え"
-
-#~ msgid "groonga [-p PORT_NUMBER] -d DB_PATH_NAME"
-#~ msgstr "groonga [-p ポート番号] -d DBパス名"
-
-#~ msgid "% groonga -d /tmp/groonga-databases/introduction.db 12345 %"
-#~ msgstr "% groonga -d /tmp/groonga-databases/introduction.db 12345 %"
-
-#~ msgid "groonga [-p PORT_NUMBER] -c [HOST_NAME_OR_IP_ADDRESS]"
-#~ msgstr "groonga [-p ポート番号] -c [対象ホスト名またはIPアドレス]"
-
-#~ msgid "groonga [-p PORT_NUMBER] -d --protocol http DB_PATH_NAME"
-#~ msgstr "groonga [-p ポート番号] -d --protocol http DBパス名"
-
-# 9c82b01bc3f44e40857e3391ffd2aff6
-#~ msgid "Display ranges"
-#~ msgstr "表示範囲指定"
-
-# 9efc31e145c34bb4a6aab938ae10a6a2
-#~ msgid "This command creates a new database."
-#~ msgstr ""
-#~ "以下のようなコマンドを実行すると、データベースを新規に作成することができま"
-#~ "す。"
