@@ -29,7 +29,7 @@
   macro must be undefined before the following #includes.
  */
 #ifdef open
-# undef open
+#  undef open
 #endif
 
 #include "dat/trie.hpp"
