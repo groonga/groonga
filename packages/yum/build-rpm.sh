@@ -21,6 +21,10 @@ run()
     fi
 }
 
+if ! id $USER_NAME >/dev/null 2>&1; then
+    run useradd -m $USER_NAME
+fi
+
 yum_options=
 
 distribution=$(cut -d ' ' -f 1 /etc/redhat-release | tr 'A-Z' 'a-z')
@@ -123,10 +127,6 @@ EOF
 fi
 run yum install ${yum_options} -y rpm-build tar ${DEPENDED_PACKAGES}
 run yum clean ${yum_options} packages
-
-if ! id $USER_NAME >/dev/null 2>&1; then
-    run useradd -m $USER_NAME
-fi
 
 cat <<EOF > $BUILD_SCRIPT
 #!/bin/sh
