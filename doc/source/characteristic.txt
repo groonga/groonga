@@ -32,7 +32,7 @@ Storage that can be shared with multi-processes and multi-threads
 
 Groonga's storage file can be shared with multi-processes and multi-threads. It doesn't require explicit lock.
 
-`Groonga storage engine <http://mroonga.github.com/>`_ that is the successor to the Tritonn is implemented as a MySQL pruggable storage engine. Groonga storage files that are opened by groonga storage engine can also be shared with groonga server. For example, you can update your data via SQL and search your data via HTTP.
+`Mroonga <http://mroonga.github.com/>`_ that is the successor to the Tritonn is implemented as a MySQL pruggable storage engine. Groonga's storage files that are opened by mroonga can also be shared with groonga server. For example, you can update your data via SQL and search your data via HTTP.
 
 Fast aggregate query processing such as drilldown
 -------------------------------------------------
