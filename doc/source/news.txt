@@ -14,7 +14,7 @@ Object, table or column, renaming is supported! This
 features requires database recreation. You can recreate your
 database by the following command::
 
-  % groonga dump YOUR_DB > db.dump
+  % groonga YOUR_DB dump > db.dump
   % groonga -n YOUR_NEW_DB < db.dump
 
 .. note::
