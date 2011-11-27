@@ -7,5 +7,6 @@ zeromq-devel
 libevent-devel
 python2-devel
 php-devel
+lzo-devel
 ruby
 tar

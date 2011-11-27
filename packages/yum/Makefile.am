@@ -1,6 +1,6 @@
 SERVER_PATH = $(RSYNC_PATH)
 DISTRIBUTIONS = fedora centos
-ARCHITECTURES = x86_64
+ARCHITECTURES = i386 x86_64
 CHROOT_BASE = /var/lib/chroot
 BASE_URL_PREFIX = http://packages.groonga.org
 HAVE_DEVELOPMENT_BRANCH = no
