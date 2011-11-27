@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-27 22:35\n"
-"PO-Revision-Date: 2011-11-27 22:46+0900\n"
+"PO-Revision-Date: 2011-11-27 22:57+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -186,7 +186,7 @@ msgstr "[libedit] 必要な初期化処理が抜けていたバグを修正。 [
 # de7541cc9b8f4cd69ec4578ebadc284c
 #: ../../../source/news.txt:55
 msgid "[doc] Fixed a typo in documentation. [GitHub#8] [Patch by zunda]"
-msgstr "[doc] ドキュメントの誤字を修正。 [GitHub#8] [zundaさんがパッチを提供]\n"
+msgstr "[doc] ドキュメントの誤字を修正。 [GitHub#8] [zundaさんがパッチを提供]"
 
 #: ../../../source/news.txt:58 ../../../source/news.txt:88
 #: ../../../source/news.txt:121 ../../../source/news.txt:187
