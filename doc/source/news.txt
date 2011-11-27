@@ -13,11 +13,11 @@ Release 1.2.8 - 2011/11/29
 Improvements
 ^^^^^^^^^^^^
 
-* [grntest] Removed max number of lines limitation.
+* [grntest] Removed max number of bytes in a line limitation.
 * [grntest] Added `--pid-path` option.
 * Fixed a crash bug when accessing zlib/lzo compressed
-  column. Compressed column access will leak memories. To
-  resolve this, we need to improve API.
+  column. Note that compressed column access will leak memories. To
+  resolve this, we need to improve API. We will do it in the feature.
   [GtiHub#5][GtiHub#6] [Reported by Takayuki Yamaguchi]
 * Fix a bug that needless column values are cleared by delete.
 * [deb] Enabled experimental zlib and lzo support.
