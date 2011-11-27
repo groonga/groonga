@@ -67,7 +67,7 @@ Section "groonga"
   SetOverwrite ifdiff
 
   SetOutPath $INSTDIR
-  File /r dist\*
+  File /r dist-x64\*
   File /oname=bin\create-setup.bat create-setup.bat
 
   ExecWait '"$INSTDIR\bin\create-setup.bat" "$INSTDIR\bin"'
