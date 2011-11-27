@@ -5,6 +5,64 @@
 News
 ====
 
+.. _release-1-2-8:
+
+Release 1.2.8 - 2011/11/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [grntest] Removed max number of lines limitation.
+* [grntest] Added `--pid-path` option.
+* Fixed a crash bug when accessing zlib/lzo compressed
+  column. Compressed column access will leak memories. To
+  resolve this, we need to improve API.
+  [GtiHub#5][GtiHub#6] [Reported by Takayuki Yamaguchi]
+* Fix a bug that needless column values are cleared by delete.
+* [deb] Enabled experimental zlib and lzo support.
+* [rpm] Enabled experimental zlib and lzo support.
+* Supported truncation. [#892]
+* Enabled grn_dat that is a read lock free double array implementation.
+* [pkg-config] Added groonga_version variable to groonga.pc.
+* Re-supported `--disable-static`. [groonga-dev,00612]
+  [Suggested by Kenichi Aramaki]
+* [munin] Stopped to install Munin plugins by default.
+* Stopped to install RedHat platform related files by default.
+* Supported object renaming. [#1167]
+* [munin] Added a Munin plugin that measures throughput. [#1171]
+* [geo] Improved geo_in_rectangle performance. The new
+  implementation will be 2x faster than the old
+  implementation in many cases. [#1173]
+* [macports] Moved groonga's MacPorts to the official
+  repository. [Imported by Hiroshi Umemoto]
+* [geo] Changed geo literal conversion from in degree to in
+  msec algorithm to round-off from truncation.
+* Supported a table as defrag target. It means that variable
+  size value columns in the table are defrag targets. [#1175]
+* Removed associated path on remove. [#1180]
+* [deb] Supported i386.
+* [rpm] Supported i386.
+* [windows] Supported i386.
+
+Fixes
+^^^^^
+
+* Fixed a bug that wrong index is used in sort. [#766]
+  [Reported by Horikoshi Yuki]
+* [libedit] Fixed a bug that needed initialization is
+  omitted. [GitHub#7] [Patch by SHIDARA Yoji]
+* [doc] Fixed a typo in documentation. [GitHub#8] [Patch by zunda]
+
+Thanks
+^^^^^^
+
+* Takayuki Yamaguchi
+* SHIDARA Yoji
+* Horikoshi Yuki
+* zunda
+* Hiroshi Umemoto
+
 .. _release-1-2-7:
 
 Release 1.2.7 - 2011/10/29
