@@ -10,6 +10,19 @@ News
 Release 1.2.8 - 2011/11/29
 --------------------------
 
+Object, table or column, renaming is supported! This
+features requires database recreation. You can recreate your
+database by the following command::
+
+  % groonga dump YOUR_DB > db.dump
+  % groonga -n YOUR_NEW_DB < db.dump
+
+.. note::
+
+   Groonga 1.2.8 can open databases created by groonga 1.2.7
+   or earlier. But groonga 1.2.7 or earlier can't open
+   databases created by groonga 1.2.8 or later.
+
 Improvements
 ^^^^^^^^^^^^
 
@@ -29,7 +42,7 @@ Improvements
   [Suggested by Kenichi Aramaki]
 * [munin] Stopped to install Munin plugins by default.
 * Stopped to install RedHat platform related files by default.
-* Supported object renaming. [#1167]
+* Supported object renaming. This requires DB recreation. [#1167]
 * [munin] Added a Munin plugin that measures throughput. [#1171]
 * [geo] Improved geo_in_rectangle performance. The new
   implementation will be 2x faster than the old
