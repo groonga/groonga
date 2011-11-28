@@ -10,8 +10,8 @@ News
 Release 1.2.8 - 2011/11/29
 --------------------------
 
-Object, table or column, renaming is supported! This
-features requires database recreation. You can recreate your
+Object, table and column renamings are supported! These
+features require database re-creation. You can re-create your
 database by the following command::
 
   % groonga YOUR_DB dump > db.dump
@@ -26,44 +26,44 @@ database by the following command::
 Improvements
 ^^^^^^^^^^^^
 
-* [grntest] Removed max number of bytes in a line limitation.
+* [grntest] Removed the upper limit to the number of bytes in one line.
 * [grntest] Added `--pid-path` option.
-* Fixed a crash bug when accessing zlib/lzo compressed
-  column. Note that compressed column access will leak memories. To
-  resolve this, we need to improve API. We will do it in the feature.
+* Fixed a bug that groonga crashes when accessing a zlib/lzo compressed
+  column. Note that a compressed column access causes a memory leak. To
+  resolve this, we need to improve API. We will do it in the future.
   [GtiHub#5][GtiHub#6] [Reported by Takayuki Yamaguchi]
-* Fix a bug that needless column values are cleared by delete.
+* Fixed a bug that unrelated column values are cleared in deletion.
 * [deb] Enabled experimental zlib and lzo support.
 * [rpm] Enabled experimental zlib and lzo support.
-* Supported truncation. [#892]
+* Supports truncation. [#892]
 * Enabled grn_dat that is a read lock free double array implementation.
 * [pkg-config] Added groonga_version variable to groonga.pc.
 * Re-supported `--disable-static`. [groonga-dev,00612]
   [Suggested by Kenichi Aramaki]
 * [munin] Stopped to install Munin plugins by default.
 * Stopped to install RedHat platform related files by default.
-* Supported object renaming. This requires DB recreation. [#1167]
+* Supports object renaming. This requires DB re-creation. [#1167]
 * [munin] Added a Munin plugin that measures throughput. [#1171]
 * [geo] Improved geo_in_rectangle performance. The new
   implementation will be 2x faster than the old
   implementation in many cases. [#1173]
 * [macports] Moved groonga's MacPorts to the official
   repository. [Imported by Hiroshi Umemoto]
-* [geo] Changed geo literal conversion from in degree to in
-  msec algorithm to round-off from truncation.
-* Supported a table as defrag target. It means that variable
-  size value columns in the table are defrag targets. [#1175]
+* [geo] Changed the geo literal degree-to-msec conversion algorithm
+  to round-off from truncation.
+* Supports a table defrag. It defrags variable size value columns in
+  the table. [#1175]
 * Removed associated path on remove. [#1180]
-* [deb] Supported i386.
-* [rpm] Supported i386.
-* [windows] Supported x86.
+* [deb] Supports i386.
+* [rpm] Supports i386.
+* [windows] Supports x86.
 
 Fixes
 ^^^^^
 
-* Fixed a bug that wrong index is used in sort. [#766]
+* Fixed a bug that a wrong index is used in sorting. [#766]
   [Reported by Horikoshi Yuki]
-* [libedit] Fixed a bug that needed initialization is
+* [libedit] Fixed a bug that necessary initialization is
   omitted. [GitHub#7] [Patch by SHIDARA Yoji]
 * [doc] Fixed a typo in documentation. [GitHub#8] [Patch by zunda]
 
