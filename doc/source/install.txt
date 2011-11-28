@@ -5,9 +5,9 @@
 Install
 =======
 
-We will explain of how to install Groonga for each environments.
+This section describes how to install groonga on each environment.
 
-We distribute packages for both 32-bit and 64-bit but we recommend that you should use 64-bit package for server. You should use 32-bit package just only for test or development. You will get no memory error with 32-bit package even if you just process medium size data.
+We distribute both 32-bit and 64-bit packages but we strongly recommend a 64-bit package for server. You should use a 32-bit package just only for tests or development. You will encounter an out of memory error with a 32-bit package even if you just process medium size data.
 
 
 Debian GNU/Linux squeeze
@@ -57,8 +57,8 @@ Ubuntu 10.04 LTS Lucid Lynx
 
 .. note::
 
-   You should add universe section in the official Ubuntu
-   repository. The following describes how to add it.
+   You'll need to enable the universe repository of Ubuntu to install groonga.
+   The following describes how to do it.
 
 /etc/apt/sources.list.d/groonga.list::
 
@@ -76,8 +76,8 @@ Ubuntu 11.04 Natty Narwhal
 
 .. note::
 
-   You should add universe section in the official Ubuntu
-   repository. The following describes how to add it.
+   You'll need to enable the universe repository of Ubuntu to install groonga.
+   The following describes how to do it.
 
 /etc/apt/sources.list.d/groonga.list::
 
@@ -95,8 +95,8 @@ Ubuntu 11.10 Oneiric Ocelot
 
 .. note::
 
-   You should add universe section in the official Ubuntu
-   repository. The following describes how to add it.
+   You'll need to enable the universe repository of Ubuntu to install groonga.
+   The following describes how to do it.
 
 /etc/apt/sources.list.d/groonga.list::
 
@@ -153,31 +153,26 @@ Install::
 Windows (Installer)
 -------------------
 
-You just download installer (.exe file) from
+You just download an installer (.exe file) from
 `packages.groonga.org/windows/ <http://packages.groonga.org/windows/groonga/>`_
 and execute it.
 
 Windows (zip)
 -------------
 
-You just download zip-file from
+You just download a zip file from
 `packages.groonga.org/windows/ <http://packages.groonga.org/windows/groonga/>`_
 and extract it.
 
 Others
 ------
 
-If you will use indexes of tokenizing of each morpheme for
-full-text search, you should install `MeCab <http://mecab.sourceforge.net/>`_
-before you install groonga.
+If you want to use a morphological analyzer for tokenization in full-text indexing, please install `MeCab <http://mecab.sourceforge.net/>`_ before installing groonga.
 
-After, you should download tar.gz-file from
-`packages.groonga.org/source/ <http://packages.groonga.org/source/groonga/>`_
-for installing groonga. You should extract this file in
-place to install, and run commands below-mentioned. ::
+Then, download a tar.gz file from `packages.groonga.org/source/ <http://packages.groonga.org/source/groonga/>`_ and extract it. After that, please run the following command to install groonga.
+
+Install::
 
  ./configure --prefix=/usr --localstatedir=/var && make && sudo make install
 
-The "prefix" option is the paramater for specified place to install.
-If you won't specify the option, "/usr/local" is specified.
-Please specify "/usr" for this option if you don't know environment variables(LD_LIBRARY_PATH and so on) well.
+The "prefix" option specifies the path to install groonga. If you don't specify the install path, "/usr/local" is used. Please specify "/usr" if you are not familiar with environment variables such as LD_LIBRARY_PATH.
