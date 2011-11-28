@@ -5,16 +5,18 @@
 How to contribute to groonga
 ============================
 
-We are welcome to you contribute the groonga project. There
-are many ways to contribute such as use, introduction, bug
-report, development and documentation.
+We welcome your contributions to the groonga project. There are many ways
+to contribute, such as using groonga, introduction to others, etc.
+For example, if you find a bug when using groonga, you are welcome to
+report the bug. Coding and documentation are also welcome for groonga and
+its related projects.
 
 Use:
-  Please read this document.
+  If you are interested in groonga, please read this document and try it.
 Introduction:
-  Please talk your friends about groonga.
+  Please introduce groonga to your friends and colleagues.
 Bug report, development and documentation:
-  We describe about them in this section.
+  This section describes the details.
 
 .. toctree::
    :maxdepth: 3
