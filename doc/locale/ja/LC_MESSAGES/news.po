@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-11-28 07:27\n"
+"POT-Creation-Date: 2011-11-28 11:53\n"
 "PO-Revision-Date: 2011-11-28 07:29+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -28,10 +28,17 @@ msgstr "1.2.8リリース - 2011/11/29"
 # fd66c8c1aa524d68be1de2f5948f8046
 #: ../../../source/news.txt:13
 msgid ""
-"Object, table or column, renaming is supported! This features requires "
-"database recreation. You can recreate your database by the following "
+"Object, table and column renamings are supported! These features require "
+"database re-creation. You can re-create your database by the following "
 "command::"
-msgstr "オブジェクト（テーブルまたはカラム）のリネームがサポートされました！この機能を使うためにはデータベースを再構築する必要があります。以下のコマンドでデータベースを再構築することができます。::"
+msgstr ""
+"オブジェクト（テーブルまたはカラム）のリネームがサポートされました！この機能"
+"を使うためにはデータベースを再構築する必要があります。以下のコマンドでデータ"
+"ベースを再構築することができます。::"
+
+#: ../../../source/news.txt:17
+msgid "% groonga YOUR_DB dump > db.dump % groonga -n YOUR_NEW_DB < db.dump"
+msgstr ""
 
 # 1605fcbf442f4c30a7ecce135aea8785
 #: ../../../source/news.txt:22
@@ -39,7 +46,10 @@ msgid ""
 "Groonga 1.2.8 can open databases created by groonga 1.2.7 or earlier. But "
 "groonga 1.2.7 or earlier can't open databases created by groonga 1.2.8 or "
 "later."
-msgstr "groonga 1.2.8はgroonga 1.2.7以前のバージョンで作ったデータベースを開くことができます。しかし、groonga 1.2.7以前のバージョンではgroonga 1.2.8以降で作ったデータベースを開くことはできません。"
+msgstr ""
+"groonga 1.2.8はgroonga 1.2.7以前のバージョンで作ったデータベースを開くことが"
+"できます。しかし、groonga 1.2.7以前のバージョンではgroonga 1.2.8以降で作った"
+"データベースを開くことはできません。"
 
 #: ../../../source/news.txt:27 ../../../source/news.txt:85
 #: ../../../source/news.txt:112 ../../../source/news.txt:144
@@ -55,7 +65,7 @@ msgstr "改良"
 
 # 2fd15b38974044d5a5f977ec22cdcaf1
 #: ../../../source/news.txt:29
-msgid "[grntest] Removed max number of bytes in a line limitation."
+msgid "[grntest] Removed the upper limit to the number of bytes in one line."
 msgstr "[grntest] 1行あたりの最大バイト数の制限を撤去。"
 
 # 6c331fa2a8a24a04b3b0e61d4aaa81ff
@@ -66,10 +76,10 @@ msgstr "[grntest] `--pid-path`オプションを追加。"
 # ec1da3e5201c411daab63de57aa33749
 #: ../../../source/news.txt:31
 msgid ""
-"Fixed a crash bug when accessing zlib/lzo compressed column. Note that "
-"compressed column access will leak memories. To resolve this, we need to "
-"improve API. We will do it in the feature. [GtiHub#5][GtiHub#6] [Reported by "
-"Takayuki Yamaguchi]"
+"Fixed a bug that groonga crashes when accessing a zlib/lzo compressed "
+"column. Note that a compressed column access causes a memory leak. To "
+"resolve this, we need to improve API. We will do it in the future. [GtiHub#5]"
+"[GtiHub#6] [Reported by Takayuki Yamaguchi]"
 msgstr ""
 "zlib/lzo圧縮カラムにアクセスするとクラッシュするバグを修正。圧縮カラムにアク"
 "セスするとメモリリークするので注意。これを修正するためにはAPIを改良する必要が"
@@ -77,7 +87,7 @@ msgstr ""
 
 # 31ffc97a074342dabc4d93c2cdd9e2e0
 #: ../../../source/news.txt:35
-msgid "Fix a bug that needless column values are cleared by delete."
+msgid "Fixed a bug that unrelated column values are cleared in deletion."
 msgstr "レコード削除時に必要のないカラムの値もクリアしてしまうバグを修正。"
 
 # ee3761cf032c48119fa42efe06ddfb12
@@ -92,7 +102,7 @@ msgstr "[rpm] 実験的にzlibとlzoを有効化。"
 
 # 5005089c9a0a47adb903ebc7a3bd86bc
 #: ../../../source/news.txt:38
-msgid "Supported truncation. [#892]"
+msgid "Supports truncation. [#892]"
 msgstr "truncation対応。 [#892]"
 
 # f53cdb45d3964ef5b1baeb2f926fdcb8
@@ -128,7 +138,7 @@ msgstr ""
 
 # 3cb01e13675e462da4848558f10ad3e4
 #: ../../../source/news.txt:45
-msgid "Supported object renaming. This requires DB recreation. [#1167]"
+msgid "Supports object renaming. This requires DB re-creation. [#1167]"
 msgstr "オブジェクトのリネームに対応。DBの再構築が必要です。 [#1167]"
 
 # ace736842b2b4791bd2740c6fd9bb827
@@ -157,8 +167,8 @@ msgstr ""
 # b3431265c4594850aaab1f2073388452
 #: ../../../source/news.txt:52
 msgid ""
-"[geo] Changed geo literal conversion from in degree to in msec algorithm to "
-"round-off from truncation."
+"[geo] Changed the geo literal degree-to-msec conversion algorithm to round-"
+"off from truncation."
 msgstr ""
 "[geo] 位置情報の値のリテラルを度数からミリ秒へ変換するときに切り捨てではなく"
 "四捨五入するようにした。"
@@ -166,8 +176,8 @@ msgstr ""
 # 8e3ea108b6674670a60c78455d50269c
 #: ../../../source/news.txt:54
 msgid ""
-"Supported a table as defrag target. It means that variable size value "
-"columns in the table are defrag targets. [#1175]"
+"Supports a table defrag. It defrags variable size value columns in the "
+"table. [#1175]"
 msgstr ""
 "デフラグ対象としてテーブルをサポート。テーブルを指定した場合はテーブルが持つ"
 "カラムのうち可変長サイズ値用のカラムをデフラグ対象とする。 [#1175]"
@@ -178,16 +188,16 @@ msgid "Removed associated path on remove. [#1180]"
 msgstr "削除時に関連するパスモ削除するようにした。 [#1180]"
 
 #: ../../../source/news.txt:57
-msgid "[deb] Supported i386."
+msgid "[deb] Supports i386."
 msgstr "[deb] i386対応。"
 
 #: ../../../source/news.txt:58
-msgid "[rpm] Supported i386."
+msgid "[rpm] Supports i386."
 msgstr "[rpm] i386対応。"
 
 # 3c84d3098234477ab663273679d98e02
 #: ../../../source/news.txt:59
-msgid "[windows] Supported x86."
+msgid "[windows] Supports x86."
 msgstr "[windows] x86対応。"
 
 #: ../../../source/news.txt:62 ../../../source/news.txt:96
@@ -200,8 +210,8 @@ msgstr "修正"
 # 87b7bbfde9224e25907b9421dd7c0bb9
 #: ../../../source/news.txt:64
 msgid ""
-"Fixed a bug that wrong index is used in sort. [#766] [Reported by Horikoshi "
-"Yuki]"
+"Fixed a bug that a wrong index is used in sorting. [#766] [Reported by "
+"Horikoshi Yuki]"
 msgstr ""
 "ソート時に間違ったインデックスを使うバグを修正。 [#766] [Horikoshi Yukiさんが"
 "報告]"
@@ -209,7 +219,7 @@ msgstr ""
 # ea2221866693480ea4a925da4dbf249a
 #: ../../../source/news.txt:66
 msgid ""
-"[libedit] Fixed a bug that needed initialization is omitted. [GitHub#7] "
+"[libedit] Fixed a bug that necessary initialization is omitted. [GitHub#7] "
 "[Patch by SHIDARA Yoji]"
 msgstr ""
 "[libedit] 必要な初期化処理が抜けていたバグを修正。 [GitHub#7] [SHIDARA Yojiさ"
