@@ -7,59 +7,51 @@
 .. table_remove Site
 .. table_remove Terms
 
-Fundamental operation
-=====================
+Basic operations
+================
 
-You can use groonga as a library of programming language C or an executable file.
-This tutorial explains how to use groonga as an executable file.
-Using its file, you can create and operate databases, start and connect to server, and so on.
+The groonga package provides a C library (libgroonga) and a command line tool (groonga). This tutorial explains how to use the groonga command, with which you can create/operate databases, start a server, establish a connection with a server, etc.
 
 Create database
 ---------------
 
-You can create a new database in the following command.
+You can create a new database with the following command.
 
-Form ::
+Form::
 
   groonga -n DB_PATH_NAME
 
-'-n' option specifies to create a database. DB_PATH_NAME specifies full-path of new database.
+The '-n' option specifies to create a new database. DB_PATH_NAME specifies the path of the new database. Note that this command fails if the specified path already exists.
 
-Groonga starts as interactive mode after you create a database with this command, and so groonga accepts commands from standard input. This mode is terminated with Ctrl-d.
+This command creates a database and then enters into interactive mode in which groonga prompts you to enter commands for operating that database. You can terminate this mode with Ctrl-d.
 
 Execution example::
 
   % groonga -n /tmp/tutorial.db
-  > ctrl-d
+  > Ctrl-d
   %
 
 Operate database
 ----------------
 
-Form ::
+Form::
 
   groonga DB_PATH_NAME [COMMAND]
 
-DB_PATH_NAME specifies full-path of existing database.
-If COMMAND is specified, result of COMMAND is returned.
+DB_PATH_NAME specifies the path of a target database.
 
-With no COMMAND, this command starts groonga as interactive-mode.
-Groonga of this mode reads a command from standard input evaluates it repeatedly.
-This tutorial uses interactive-mode mainly.
+If COMMAND is specified, groonga executes COMMAND and returns the result. Otherwise, groonga starts in interactive mode that reads commands from the standard input and execute them one by one. This tutorial focuses on the interactive mode.
 
-For example, we will run the `status` command.
-This command returns status of groonga's execution.
+Let's try to create a table with some columns. The following example shows a series of commands and its results.
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-1.log
 .. .. % groonga -n /tmp/groonga-databases/introduction.db
 .. status
 
-The mentioned above, results of executed commands are generally JSON style.
-The first element in a array of JSON has information of error-code, execution time, and so on.
-The second element has a result of exectuted command.
+As shown in the above example, each command basically returns a JSON-formatted string. The string consists of a JSON array of which the first element contains an error code, execution time, etc. The second element is the result of each operation.
 
-Commands
+Command formats
 --------
 
 You can operate database with various commands via execution file of groonga or groonga server.
@@ -75,8 +67,8 @@ In Form2, if you want to specify a value including some spaces or symbols("'()/)
 
 For detail, you can see paragraph of "command" in :doc:`/executables/groonga`.
 
-Basicaly commands
------------------
+Basic commands
+--------------
 
  :doc:`/commands/status`
   Show status of groonga process.

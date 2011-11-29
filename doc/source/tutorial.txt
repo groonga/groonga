@@ -2,8 +2,8 @@
 
 .. highlightlang:: none
 
-チュートリアル
-==============
+Tutorial
+========
 
 .. toctree::
    :maxdepth: 2

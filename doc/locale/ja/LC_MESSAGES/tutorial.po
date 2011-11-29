@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-11-27 22:35\n"
+"POT-Creation-Date: 2011-11-29 12:02\n"
 "PO-Revision-Date: 2011-11-27 22:36+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -76,14 +76,14 @@ msgstr ""
 #: ../../../source/example/tutorial/search-5.log:1
 #: ../../../source/example/tutorial/search-6.log:1
 #: ../../../source/example/tutorial/search-7.log:1
-#: ../../../source/tutorial/introduction.txt:30
+#: ../../../source/tutorial/introduction.txt:28
 #: ../../../source/tutorial/network.txt:27
 msgid "Execution example::"
 msgstr "実行例::"
 
 #: ../../../source/tutorial.txt:6
-msgid "チュートリアル"
-msgstr ""
+msgid "Tutorial"
+msgstr "チュートリアル"
 
 #: ../../../source/tutorial/data.txt:8
 msgid "さまざまな種類をもったデータの保存"
@@ -348,112 +348,126 @@ msgid ""
 "同様に、位置情報レコードを用いてソートする場合に、ソート速度が速くなります。"
 msgstr ""
 
-# 92dcf9c8140a4bef8559666b2d64ebfc
+# 3da56138e9904419b4dcc5d036e81a07
 #: ../../../source/tutorial/introduction.txt:11
-msgid "Fundamental operation"
+msgid "Basic operations"
 msgstr "基本的な操作"
 
 # 7a5094c3e47443369b7daf194fe51c68
 #: ../../../source/tutorial/introduction.txt:13
 msgid ""
-"You can use groonga as a library of programming language C or an executable "
-"file. This tutorial explains how to use groonga as an executable file. Using "
-"its file, you can create and operate databases, start and connect to server, "
-"and so on."
+"The groonga package provides a C library (libgroonga) and a command line "
+"tool (groonga). This tutorial explains how to use the groonga command, with "
+"which you can create/operate databases, start a server, establish a "
+"connection with a server, etc."
 msgstr ""
-"groongaは、Cのライブラリとして使用する方法と、groonga実行ファイルを通して使用"
-"する方法があります。本チュートリアルでは、groonga実行ファイルを使用する方法に"
-"ついて説明します。groonga実行ファイルを使って、DBの作成・操作・サーバの起動・"
-"サーバへの接続などの操作が行えます。"
+"groongaには、Cのライブラリとして使用する方法と、groonga実行ファイルを通して使"
+"用する方法があります。本チュートリアルでは、groonga実行ファイルを使用する方法"
+"について説明します。groonga実行ファイルを使って、DBの作成・操作・サーバの起"
+"動・サーバへの接続などの操作が行えます。"
 
 # 2053368aefe74a5d9363bf95cb157d4a
-#: ../../../source/tutorial/introduction.txt:18
+#: ../../../source/tutorial/introduction.txt:16
 msgid "Create database"
 msgstr "DBの作成"
 
-#: ../../../source/tutorial/introduction.txt:20
-msgid "You can create a new database in the following command."
+#: ../../../source/tutorial/introduction.txt:18
+msgid "You can create a new database with the following command."
 msgstr ""
 "以下のようなコマンドを実行すると、データベースを新規に作成することができま"
 "す。"
 
-#: ../../../source/tutorial/introduction.txt:22
-#: ../../../source/tutorial/introduction.txt:39
-msgid "Form ::"
+#: ../../../source/tutorial/introduction.txt:20
+#: ../../../source/tutorial/introduction.txt:37
+#: ../../../source/tutorial/network.txt:18
+#: ../../../source/tutorial/network.txt:38
+#: ../../../source/tutorial/network.txt:71
+msgid "Form::"
 msgstr "書式::"
 
+#: ../../../source/tutorial/introduction.txt:22
+msgid "groonga -n DB_PATH_NAME"
+msgstr ""
+
 # 98d46d97a1e34f3e8151087450cb3c0d
+#: ../../../source/tutorial/introduction.txt:24
+msgid ""
+"The '-n' option specifies to create a new database. DB_PATH_NAME specifies "
+"the path of the new database. Note that this command fails if the specified "
+"path already exists."
+msgstr ""
+"-nオプションは、データベースを作ることを指示します。DB_PATH_NAMEには、新しく"
+"作成するデータベースのパスを指定します。指定されたパスが既に存在するときは"
+"コマンドが失敗するので注意してください。"
+
 #: ../../../source/tutorial/introduction.txt:26
 msgid ""
-"'-n' option specifies to create a database. DB_PATH_NAME specifies full-path "
-"of new database."
+"This command creates a database and then enters into interactive mode in "
+"which groonga prompts you to enter commands for operating that database. You "
+"can terminate this mode with Ctrl-d."
 msgstr ""
-"-nオプションは、データベースを作ることを示します。データベースパス名には、新"
-"しく作成するデータベースのフルパス名を指定します。"
+"上記コマンドは、データベースを作成してから、コマンドの入力を受け付ける対話"
+"モードに入ります。Ctrlキーを押しながらdキーを押すと、対話モードから抜けること"
+"ができます。"
 
-#: ../../../source/tutorial/introduction.txt:28
-msgid ""
-"Groonga starts as interactive mode after you create a database with this "
-"command, and so groonga accepts commands from standard input. This mode is "
-"terminated with Ctrl-d."
+#: ../../../source/tutorial/introduction.txt:30
+msgid "% groonga -n /tmp/tutorial.db > Ctrl-d %"
 msgstr ""
-"上記コマンドでデータベースを作成すると、そのまま対話モードと呼ばれるコマンド"
-"を受け付けるモードになります。Ctrlキーを押しながらdキーを押すと、対話モードか"
-"ら抜けることができます。"
 
 # d658120aeaf84578b997493e5e6c9737
-#: ../../../source/tutorial/introduction.txt:37
+#: ../../../source/tutorial/introduction.txt:35
 msgid "Operate database"
 msgstr "DBの操作"
 
-# d8b5a9f7ca0f41d391ad6fe16ed3cb8d
-#: ../../../source/tutorial/introduction.txt:43
-msgid ""
-"DB_PATH_NAME specifies full-path of existing database. If COMMAND is "
-"specified, result of COMMAND is returned."
+#: ../../../source/tutorial/introduction.txt:39
+msgid "groonga DB_PATH_NAME [COMMAND]"
 msgstr ""
-"既存のデータベースのフルパス名をDBパス名に指定します。コマンドを指定すると、"
-"実行結果を返します。"
+
+# 98d46d97a1e34f3e8151087450cb3c0d
+#: ../../../source/tutorial/introduction.txt:41
+msgid "DB_PATH_NAME specifies the path of a target database."
+msgstr "操作対象のデータベースのパスをDB_PATH_NAMEに指定します。"
 
 # bbd1e3b24ab142a9a23b30d186a1bfb5
-#: ../../../source/tutorial/introduction.txt:46
+#: ../../../source/tutorial/introduction.txt:43
 msgid ""
-"With no COMMAND, this command starts groonga as interactive-mode. Groonga of "
-"this mode reads a command from standard input evaluates it repeatedly. This "
-"tutorial uses interactive-mode mainly."
+"If COMMAND is specified, groonga executes COMMAND and returns the result. "
+"Otherwise, groonga starts in interactive mode that reads commands from the "
+"standard input and execute them one by one. This tutorial focuses on the "
+"interactive mode."
 msgstr ""
-"コマンドを指定しない場合には、対話モードに入ります。対話モードでは、標準入力"
-"からコマンドを読み込み、順次実行します。本チュートリアルでは、対話モードを主"
-"に使用します。"
+"COMMAND が指定された場合、COMMAND を実行した後、実行結果を返します。指定され"
+"なかった場合には、対話モードに入ります。対話モードでは、標準入力からコマンド"
+"を読み込み、順次実行します。本チュートリアルでは、対話モードを主に使用しま"
+"す。"
 
-# 0429f188f11447149c137087a9eaf33b
-#: ../../../source/tutorial/introduction.txt:50
+#: ../../../source/tutorial/introduction.txt:45
 msgid ""
-"For example, we will run the `status` command. This command returns status "
-"of groonga's execution."
+"Let's try to create a table with some columns. The following example shows a "
+"series of commands and its results."
 msgstr ""
-"たとえば、statusというコマンドを実行してみましょう。statusコマンドは、groonga"
-"の実行状態を返すコマンドです。"
+"それでは、いくつかのカラムを持つテーブルを作成してみましょう。以下の例では、"
+"一連のコマンドとそれぞれの実行結果を示しています。"
 
 # f20f73567cf74f89928a062e06b51594
-#: ../../../source/tutorial/introduction.txt:58
+#: ../../../source/tutorial/introduction.txt:52
 msgid ""
-"The mentioned above, results of executed commands are generally JSON style. "
-"The first element in a array of JSON has information of error-code, "
-"execution time, and so on. The second element has a result of exectuted "
-"command."
+"As shown in the above example, each command basically returns a JSON-"
+"formatted string. The string consists of a JSON array of which the first "
+"element contains an error code, execution time, etc. The second element is "
+"the result of each operation."
 msgstr ""
-"以上のように、コマンドの実行結果は基本的にjson形式で返却されます。jsonの配列"
-"の0番目の要素に、エラーコードや実行時間などの情報が入ります。jsonの配列の1番"
-"目の様子に、コマンドの実行結果が入ります。"
+"以上のように、コマンドの実行結果は基本的にjson形式の配列として返却されます。"
+"配列の先頭には、エラーコードや実行時間などの情報が入ります。2番目の要素には、"
+"コマンドによって指定された操作の実行結果が入ります。"
 
 # 039d52210dbb4bbf8923efd307eb8be8
-#: ../../../source/tutorial/introduction.txt:63
-msgid "Commands"
-msgstr "コマンド"
+#: ../../../source/tutorial/introduction.txt:55
+msgid "Command formats"
+msgstr "コマンドの書式"
 
 # 7d741d7734244269b7bed966b12359ed
-#: ../../../source/tutorial/introduction.txt:65
+#: ../../../source/tutorial/introduction.txt:57
 msgid ""
 "You can operate database with various commands via execution file of groonga "
 "or groonga server. There are forms of commands in the following::"
@@ -463,12 +477,12 @@ msgstr ""
 "す。 ::"
 
 # 57cd35a6b91748e6bc0a1b0a5ba28354
-#: ../../../source/tutorial/introduction.txt:72
+#: ../../../source/tutorial/introduction.txt:64
 msgid "You can mix these forms in commands running."
 msgstr "書式1と2は混ぜて使うことができます。"
 
 # 7da00e489d7f4bbd835e4e19057de278
-#: ../../../source/tutorial/introduction.txt:74
+#: ../../../source/tutorial/introduction.txt:66
 msgid ""
 "In Form2, if you want to specify a value including some spaces or symbols"
 "(\"'()/), you should enclose its value with single-quote or double-quote."
@@ -477,7 +491,7 @@ msgstr ""
 "は、シングルクォート(')かダブルクォート(\")で値を囲みます。"
 
 # 8ae549a22ed54274a31717f115927311
-#: ../../../source/tutorial/introduction.txt:76
+#: ../../../source/tutorial/introduction.txt:68
 msgid ""
 "For detail, you can see paragraph of \"command\" in :doc:`/executables/"
 "groonga`."
@@ -485,57 +499,63 @@ msgstr ""
 "詳しくは、 :doc:`/executables/groonga` のコマンドの項を参考にしてください。"
 
 # 3da56138e9904419b4dcc5d036e81a07
-#: ../../../source/tutorial/introduction.txt:79
-msgid "Basicaly commands"
+#: ../../../source/tutorial/introduction.txt:71
+msgid "Basic commands"
 msgstr "主なコマンド"
 
 # 602f9e43757345a1b0bc3a57a5b595ea
-#: ../../../source/tutorial/introduction.txt:82
+#: ../../../source/tutorial/introduction.txt:74
 msgid "Show status of groonga process."
 msgstr "groongaプロセスの状態を表示します。"
 
 # f35fc92dd787414ebd0561453131adb4
-#: ../../../source/tutorial/introduction.txt:84
+#: ../../../source/tutorial/introduction.txt:76
 msgid "Show lists of tables defined in a database."
 msgstr "DBに定義されているテーブルのリストを表示します。"
 
 # e18aeb6cbc8b4c28b0cb38508c6c8b00
-#: ../../../source/tutorial/introduction.txt:86
+#: ../../../source/tutorial/introduction.txt:78
 msgid "Show lists of columns defined in a table."
 msgstr "テーブルに定義されているカラムのリストを表示します。"
 
 # 0d2bb03bc0114bbb8ad3a1b9670c865d
-#: ../../../source/tutorial/introduction.txt:88
+#: ../../../source/tutorial/introduction.txt:80
 msgid "Add table to a database."
 msgstr "DBにテーブルを追加します。"
 
+#: ../../../source/tutorial/introduction.txt:80
+msgid ""
+"Form1: COMMAND ARGUMENT1 ARGUMENT2 ..  Form2: COMMAND --ARAGUMENT1 VALUE1 --"
+"ARGUMENT2 VALUE2 .."
+msgstr ""
+
 # 714cfb440b37481d81291c5386fce6b1
-#: ../../../source/tutorial/introduction.txt:90
+#: ../../../source/tutorial/introduction.txt:82
 msgid "Add column to a table."
 msgstr "テーブルにカラムを追加します。"
 
 # 20a48598ab194d2eac5652a4bef9e47a
-#: ../../../source/tutorial/introduction.txt:92
+#: ../../../source/tutorial/introduction.txt:84
 msgid "Search and show records included a table."
 msgstr "テーブルに含まれるレコードを検索して表示します。"
 
 # 1e5193b6ca864ba3b773170879f49631
-#: ../../../source/tutorial/introduction.txt:94
+#: ../../../source/tutorial/introduction.txt:86
 msgid "Insert record to a table."
 msgstr "テーブルにレコードを挿入します。"
 
 # 92c83c9cbfde4c2b8d67b2897204b7a2
-#: ../../../source/tutorial/introduction.txt:97
+#: ../../../source/tutorial/introduction.txt:89
 msgid "Create table"
 msgstr "テーブルの作成"
 
 # 1e74fb8068674cafb7c2776d998e7ce8
-#: ../../../source/tutorial/introduction.txt:99
+#: ../../../source/tutorial/introduction.txt:91
 msgid ":doc:`/commands/table_create` creates table."
 msgstr ":doc:`/commands/table_create` コマンドを使用してテーブルを作成します。"
 
 # 033d20ee61c64e06bf3fa850605f0fc3
-#: ../../../source/tutorial/introduction.txt:101
+#: ../../../source/tutorial/introduction.txt:93
 msgid ""
 "In using groonga, to creating tables generally needed master key. Master key "
 "should be specified the types and the way to store."
@@ -544,7 +564,7 @@ msgstr ""
 "キーには型と、その格納方法を指定する必要があります。"
 
 # cb639d26e77e41b6bb1803f474394d34
-#: ../../../source/tutorial/introduction.txt:104
+#: ../../../source/tutorial/introduction.txt:96
 msgid ""
 "We're going to explain the types in tutorial after. Please imagine it as "
 "expressing sort of data. How to store master key defines speed of search "
@@ -556,7 +576,7 @@ msgstr ""
 "前方一致検索の可否が決まります。これも、のちのチュートリアルで触れます。"
 
 # d453562a86794510ad66cf951cf62a3e
-#: ../../../source/tutorial/introduction.txt:108
+#: ../../../source/tutorial/introduction.txt:100
 msgid ""
 "For example, we create 'Site' table. This table has master key of ShortText "
 "type, and the way to store its key is HASH."
@@ -565,19 +585,19 @@ msgstr ""
 "いう名前のテーブルを作成します。"
 
 # 887ead8f9f404b36b6f6875f935d2d84
-#: ../../../source/tutorial/introduction.txt:115
+#: ../../../source/tutorial/introduction.txt:107
 msgid "Search"
 msgstr "検索"
 
 # 8cb3ff01469d48e28b6875b2554741e8
-#: ../../../source/tutorial/introduction.txt:117
+#: ../../../source/tutorial/introduction.txt:109
 msgid ":doc:`/commands/select` shows contents of table."
 msgstr ""
 ":doc:`/commands/select` コマンドを用いて、テーブルの中身を表示することができ"
 "ます。"
 
 # bbda0bfc40c04aafb60c94bef91eaa9a
-#: ../../../source/tutorial/introduction.txt:123
+#: ../../../source/tutorial/introduction.txt:115
 msgid ""
 "With name of a table, 'select' command shows 10 contents of its table. [0] "
 "shows the number of searched records. [\"_id\",\"Uint32\"] is column named "
@@ -590,7 +610,7 @@ msgstr ""
 "前のカラムを示しています。"
 
 # 1a57023af4614d00a11b2a36f650aa4b
-#: ../../../source/tutorial/introduction.txt:125
+#: ../../../source/tutorial/introduction.txt:117
 msgid ""
 "'table_create' command creates table including two columns, '_id' and '_key' "
 "first. '_id' has ID-number given automatically by groonga. '_key' column is "
@@ -602,19 +622,19 @@ msgstr ""
 "きません。"
 
 # bb371206793e407ab12db2864ee8d152
-#: ../../../source/tutorial/introduction.txt:128
+#: ../../../source/tutorial/introduction.txt:120
 msgid "Create columns"
 msgstr "カラムの作成"
 
 # 4e5488d852844f238c41dfc94e49fa73
-#: ../../../source/tutorial/introduction.txt:130
+#: ../../../source/tutorial/introduction.txt:122
 msgid ":doc:`/commands/column_create` command create columns."
 msgstr ""
 ":doc:`/commands/column_create` コマンドを用いて、カラムを作成することができま"
 "す。"
 
 # d553eaedc4a7491fa66012348f066b3c
-#: ../../../source/tutorial/introduction.txt:132
+#: ../../../source/tutorial/introduction.txt:124
 msgid ""
 "We add a column named 'comment' that lets us store value whose type is "
 "ShortText."
@@ -623,24 +643,24 @@ msgstr ""
 "しょう。"
 
 # ebaa9fac28bb433096e04d02e20cc877
-#: ../../../source/tutorial/introduction.txt:139
+#: ../../../source/tutorial/introduction.txt:131
 msgid "COLUMN_SCALAR means this is normal column."
 msgstr "COLUMN_SCALARについては、通常のカラムであることを示しています。"
 
 # 32519e65f2df4edaa65f0e60d54cb8d7
-#: ../../../source/tutorial/introduction.txt:142
+#: ../../../source/tutorial/introduction.txt:134
 msgid "Create terminology table with fulltext-searching"
 msgstr "全文検索用の語彙表の作成"
 
 # 6b2ab4b50f024f82b9b7df6091c6c904
-#: ../../../source/tutorial/introduction.txt:144
+#: ../../../source/tutorial/introduction.txt:136
 msgid ""
 "This tutorial explains fulltext searching with entried data in groonga table."
 msgstr ""
 "このチュートリアルでは、groongaに登録したデータを用いた全文検索を行います。"
 
 # 9aa45fd5cc1f4271b2dcc0429819111b
-#: ../../../source/tutorial/introduction.txt:146
+#: ../../../source/tutorial/introduction.txt:138
 msgid ""
 "We need terminology table in fulltext-searching. Terminology table is a "
 "table whose master key's values are words in text. We create 'Terms' table, "
@@ -651,7 +671,7 @@ msgstr ""
 "つ、'Terms'という名前のテーブルを作成しました。"
 
 # e9f3b51b11414cc694d2bd2e0b5eb935
-#: ../../../source/tutorial/introduction.txt:154
+#: ../../../source/tutorial/introduction.txt:146
 msgid ""
 "Many parameters is specified in this execution example. You don't hove to "
 "understand all parameters. There are the simple explaination, but you can "
@@ -662,7 +682,7 @@ msgstr ""
 "してもらってかまいません。"
 
 # 7cded565e72b46869c9d7e759dfcddb6
-#: ../../../source/tutorial/introduction.txt:158
+#: ../../../source/tutorial/introduction.txt:150
 msgid ""
 "In this examples, 'TABLE_PAT_KEY|KEY_NORMALIZE' stores master key in "
 "patricia-trie and entries each teminology after nomalized. The "
@@ -678,12 +698,12 @@ msgstr ""
 "択しています。"
 
 # 86701e6e96324ccba83052699027da21
-#: ../../../source/tutorial/introduction.txt:162
+#: ../../../source/tutorial/introduction.txt:154
 msgid "Create index-column with fulltext search"
 msgstr "全文検索用のインデックスカラムの作成"
 
 # c6c2a7c5888a420988d6277552b48f08
-#: ../../../source/tutorial/introduction.txt:164
+#: ../../../source/tutorial/introduction.txt:156
 msgid ""
 "We will fulltext search 'title' column in 'Site' table. In this case, we "
 "create column whose type index in terminology table."
@@ -692,7 +712,7 @@ msgstr ""
 "語彙表にインデックス型のカラムを作成します。"
 
 # 83e0fea2854347a48a4e1330fbd06a7e
-#: ../../../source/tutorial/introduction.txt:170
+#: ../../../source/tutorial/introduction.txt:162
 msgid ""
 "This command creates index column 'blog_title' in 'Term' table. '--type' "
 "option specifies target indexed table, and '--source' option does target "
@@ -712,12 +732,12 @@ msgstr ""
 "ついては、本チュートリアルでは触れません。"
 
 # 38feede6a058434f83b272cfa520cfc2
-#: ../../../source/tutorial/introduction.txt:174
+#: ../../../source/tutorial/introduction.txt:166
 msgid "Load data"
 msgstr "データのロード"
 
 # f1d6d0b25d4545e9a44f264cfb0f2b81
-#: ../../../source/tutorial/introduction.txt:176
+#: ../../../source/tutorial/introduction.txt:168
 msgid ""
 ":doc:`/commands/load` is used to load data for groonga database. This "
 "command stores json-formatted data in a table."
@@ -726,17 +746,17 @@ msgstr ""
 "たデータをテーブルに格納します。"
 
 # 370b2f236b6f4af78389aafc61011d31
-#: ../../../source/tutorial/introduction.txt:193
+#: ../../../source/tutorial/introduction.txt:185
 msgid "Let's make sure that its table has data with 'select' command."
 msgstr "selectコマンドで、データが入っていることを確認しましょう。"
 
 # d8bf03692e02439bb1c43be9b811e2b9
-#: ../../../source/tutorial/introduction.txt:200
+#: ../../../source/tutorial/introduction.txt:192
 msgid "Search data"
 msgstr "データの検索"
 
 # 13f233bb03bb47ac8ec8943a744ca7bb
-#: ../../../source/tutorial/introduction.txt:202
+#: ../../../source/tutorial/introduction.txt:194
 msgid ""
 "'_id' and '_key' columns are unique in groonga's table, so let's search data "
 "in table using these columns."
@@ -745,14 +765,14 @@ msgstr ""
 "れを用いて検索してみましょう。"
 
 # 1941bed5dec1414cae47cdd2bc92d2cc
-#: ../../../source/tutorial/introduction.txt:204
+#: ../../../source/tutorial/introduction.txt:196
 msgid "You can search data using 'select' command with 'query' parameter."
 msgstr ""
 "selectコマンドにおいて、queryパラメータを用いるとデータの検索を行うことができ"
 "ます。"
 
 # 5e2fb9da8d4148a4b788b09ee4e2f7af
-#: ../../../source/tutorial/introduction.txt:210
+#: ../../../source/tutorial/introduction.txt:202
 msgid ""
 "'_id:1' specified 'query' parameter means to search records whose '_id' "
 "column has '1'."
@@ -761,12 +781,12 @@ msgstr ""
 "う値が入っているレコードを検索する、という意味です。"
 
 # a2906d3d980a48459c5d568ba84b0edd
-#: ../../../source/tutorial/introduction.txt:212
+#: ../../../source/tutorial/introduction.txt:204
 msgid "Let's search records with '_key' column."
 msgstr "_keyでも検索してみましょう。"
 
 # b3ddc475fb9e49099bbf9a8abccae598
-#: ../../../source/tutorial/introduction.txt:218
+#: ../../../source/tutorial/introduction.txt:210
 msgid ""
 "'_key:\\\"http://example.org/\\\"' specified 'query' parameter means to "
 "search records whose '_key' column has '\"http://example.org/\"'."
@@ -776,18 +796,18 @@ msgstr ""
 "コードを検索する、という意味です。"
 
 # 889b663bc7ff431f888baf85574207d5
-#: ../../../source/tutorial/introduction.txt:222
+#: ../../../source/tutorial/introduction.txt:214
 msgid "Fulltext searching"
 msgstr "全文検索"
 
 # 31a6f02b4ef24fb6936866e5c852d736
-#: ../../../source/tutorial/introduction.txt:224
+#: ../../../source/tutorial/introduction.txt:216
 msgid "Using 'query' parameter, you can fulltext search with index."
 msgstr ""
 "queryパラメータでは、インデックスを用いた全文検索を行うこともできます。"
 
 # b89ef719f0f44722bb83c29d6ab9bd93
-#: ../../../source/tutorial/introduction.txt:230
+#: ../../../source/tutorial/introduction.txt:222
 msgid ""
 "This command shows result of fulltext searching by string 'this' for 'title' "
 "column."
@@ -795,7 +815,7 @@ msgstr ""
 "titleカラムに対して、'this'という文字列で全文検索を行った結果を返します。"
 
 # 50cf1378172d415cbd640da7f6b4066a
-#: ../../../source/tutorial/introduction.txt:232
+#: ../../../source/tutorial/introduction.txt:224
 msgid ""
 "\"title:@this\" specified 'query' parameter means to search records whose "
 "'title' column including 'this' string."
@@ -804,12 +824,12 @@ msgstr ""
 "に'this'という文字列が含まれているレコードを検索する、という意味です。"
 
 # ab95e69e121648e2b2dd0bc2e58305d5
-#: ../../../source/tutorial/introduction.txt:234
+#: ../../../source/tutorial/introduction.txt:226
 msgid "'select' command has parameter 'match_columns'."
 msgstr "selectコマンドには、match_columnsというパラメータが存在します。"
 
 # bb557eb7151049cb925f2802d8704d17
-#: ../../../source/tutorial/introduction.txt:236
+#: ../../../source/tutorial/introduction.txt:228
 msgid ""
 "If this parameter is specified, it means to search in columns specified "
 "'match_columns' when 'query' parameter doesn't specify column-name condition."
@@ -819,7 +839,7 @@ msgstr ""
 "match_columnsで指定されたカラムに対しての検索であることを示します。[1]_"
 
 # fe9bfc13759d46b4a0b76f729a7d6c77
-#: ../../../source/tutorial/introduction.txt:238
+#: ../../../source/tutorial/introduction.txt:230
 msgid ""
 "If you specify 'match_columns' is 'title' and 'query' is 'this', you can "
 "take same result as above query."
@@ -828,12 +848,12 @@ msgstr ""
 "ると、上記のクエリと同じ結果を得ることができます。"
 
 # 12e3b87c0ed64703a7ef66eff3bce8af
-#: ../../../source/tutorial/introduction.txt:245
+#: ../../../source/tutorial/introduction.txt:237
 msgid "Specify output column"
 msgstr "出力カラムの指定"
 
 # cada70fbbe534c64a949a3c07a6b0039
-#: ../../../source/tutorial/introduction.txt:247
+#: ../../../source/tutorial/introduction.txt:239
 msgid ""
 "'output_columns' parameter in 'select' command specifies columns shown in "
 "result of search."
@@ -842,14 +862,14 @@ msgstr ""
 "示するカラムを指定することが出来ます。"
 
 # c34254b5afdd4c1887acb9c5901a4d31
-#: ../../../source/tutorial/introduction.txt:249
+#: ../../../source/tutorial/introduction.txt:241
 msgid ""
 "If you want to specify some columns, you should separate column names by "
 "comma(,)."
 msgstr "複数のカラムを指定する場合は、カンマ(,)区切りで指定します。"
 
 # 92329c627f0148ad976bf3220dc87264
-#: ../../../source/tutorial/introduction.txt:255
+#: ../../../source/tutorial/introduction.txt:247
 msgid ""
 "\"_score\" column is added to The groonga's result. This column has the "
 "higher number, the more condition of fulltext seaching matches text."
@@ -858,12 +878,12 @@ msgstr ""
 "ラムは、全文検索の条件が合致する文書ほど高い数値が入ります。"
 
 # 6c9a58714061481fb611ad043f57dc19
-#: ../../../source/tutorial/introduction.txt:258
+#: ../../../source/tutorial/introduction.txt:250
 msgid "Ranges to display"
 msgstr "表示範囲指定"
 
 # 060f75a6fd234bc78d37513ffe8eeca8
-#: ../../../source/tutorial/introduction.txt:260
+#: ../../../source/tutorial/introduction.txt:252
 msgid ""
 "'select' command can display result in only specified ranges using 'offset' "
 "and 'limit' parameter. This parameters is useful when you want to show only "
@@ -874,7 +894,7 @@ msgstr ""
 "ページ分のみを表示したい場合に有用です。"
 
 # 67f72cba34ca403bb8331437e5020e9d
-#: ../../../source/tutorial/introduction.txt:262
+#: ../../../source/tutorial/introduction.txt:254
 msgid ""
 "'offset' parameter specifies starting point of result. If you want 'select' "
 "command to return from first records, this parameter specifies '0'."
@@ -883,17 +903,17 @@ msgstr ""
 "には、0を指定します。"
 
 # b30a312ba55f40e3bc7c63a53a76c2b6
-#: ../../../source/tutorial/introduction.txt:264
+#: ../../../source/tutorial/introduction.txt:256
 msgid "'limit' parameter specifies how many records of searching result."
 msgstr "limitパラメータには、検索結果を何件表示するのかを指定します。"
 
 # 12e5037843f446c6a307a2e5c54237d7
-#: ../../../source/tutorial/introduction.txt:273
+#: ../../../source/tutorial/introduction.txt:265
 msgid "Sort"
 msgstr "並び替え"
 
 # cada70fbbe534c64a949a3c07a6b0039
-#: ../../../source/tutorial/introduction.txt:275
+#: ../../../source/tutorial/introduction.txt:267
 msgid ""
 "If you use 'sortby' parameter in 'select' command, this command sorts result "
 "of searching."
@@ -902,7 +922,7 @@ msgstr ""
 "ことが出来ます。"
 
 # a5a5613c2bf640fabc845b6b549c6c5c
-#: ../../../source/tutorial/introduction.txt:277
+#: ../../../source/tutorial/introduction.txt:269
 msgid ""
 "When 'sortby' parameter specifies column name, result is sorted in ascending-"
 "order to its column's value. This 'select' command also sort in descending-"
@@ -913,7 +933,7 @@ msgstr ""
 "来ます。"
 
 # 2e1a756a61d14f36b47386559a1dae4c
-#: ../../../source/tutorial/introduction.txt:283
+#: ../../../source/tutorial/introduction.txt:275
 msgid ""
 "For condition of sort, you can use '_score' column introduced in the "
 "paragraph of \"Specify output column\"."
@@ -922,7 +942,7 @@ msgstr ""
 "できます。"
 
 # 2e9985b721f34f789ec84264c3dcfb84
-#: ../../../source/tutorial/introduction.txt:289
+#: ../../../source/tutorial/introduction.txt:281
 msgid ""
 "If you want to specify some column names, you should use comma(,) between "
 "these names. In this case, when same value of records is existed in first "
@@ -933,12 +953,12 @@ msgstr ""
 "ラムの値でソートさせることができます。"
 
 # 483e363f1f964ab3a2be02e9c2b67b17
-#: ../../../source/tutorial/introduction.txt:296
+#: ../../../source/tutorial/introduction.txt:288
 msgid "footnote"
 msgstr "脚注"
 
 # 1a003e206ca84bac88868eb1a37144a2
-#: ../../../source/tutorial/introduction.txt:297
+#: ../../../source/tutorial/introduction.txt:289
 msgid ""
 "In now groonga's version, you can only use 'match_columns' parameter in the "
 "case of existing index of fulltext searching. This parameter cannot be use "
@@ -1059,6 +1079,38 @@ msgstr ""
 
 #: ../../../source/tutorial/micro_blog.txt:19
 msgid "まずは、テーブルを作成します。"
+msgstr ""
+
+#: ../../../source/tutorial/micro_blog.txt:23
+msgid ""
+"table_create --name Users --flags TABLE_HASH_KEY --key_type ShortText "
+"table_create --name Comments --flags TABLE_HASH_KEY --key_type ShortText "
+"table_create --name HashTags --flags TABLE_HASH_KEY --key_type ShortText "
+"table_create --name Bigram --flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type "
+"ShortText --default_tokenizer TokenBigram  column_create --table Users --"
+"name name --flags COLUMN_SCALAR --type ShortText column_create --table Users "
+"--name follower --flags COLUMN_VECTOR --type Users column_create --table "
+"Users --name favorites --flags COLUMN_VECTOR --type Comments column_create --"
+"table Users --name location --flags COLUMN_SCALAR --type WGS84GeoPoint "
+"column_create --table Users --name location_str --flags COLUMN_SCALAR --type "
+"ShortText column_create --table Users --name description --flags "
+"COLUMN_SCALAR --type ShortText column_create --table Users --name followee --"
+"flags COLUMN_INDEX --type Users --source follower  column_create --table "
+"Comments --name comment --flags COLUMN_SCALAR --type ShortText column_create "
+"--table Comments --name last_modified --flags COLUMN_SCALAR --type Time "
+"column_create --table Comments --name replied_to --flags COLUMN_SCALAR --"
+"type Comments column_create --table Comments --name replied_users --flags "
+"COLUMN_VECTOR --type Users column_create --table Comments --name hash_tags --"
+"flags COLUMN_VECTOR --type HashTags column_create --table Comments --name "
+"location --flags COLUMN_SCALAR --type WGS84GeoPoint column_create --table "
+"Comments --name posted_by --flags COLUMN_SCALAR --type Users column_create --"
+"table Comments --name favorited_by --flags COLUMN_INDEX --type Users --"
+"source favorites  column_create --table HashTags --name hash_index --flags "
+"COLUMN_INDEX --type Comments --source hash_tags  column_create --table "
+"Bigram --name users_index --flags COLUMN_INDEX|WITH_POSITION|WITH_SECTION --"
+"type Users --source name,location_str,description column_create --table "
+"Bigram --name comment_index --flags COLUMN_INDEX|WITH_POSITION --type "
+"Comments --source comment"
 msgstr ""
 
 #: ../../../source/tutorial/micro_blog.txt:51
@@ -1203,6 +1255,48 @@ msgstr ""
 
 #: ../../../source/tutorial/micro_blog.txt:143
 msgid "つづいて、テスト用データをロードします。"
+msgstr ""
+
+#: ../../../source/tutorial/micro_blog.txt:147
+msgid ""
+"load --table Users [   {     \"_key\": \"daijiro\",     \"name\": "
+"\"hsiomaneki\",     \"follower\": [\"tasukuchan\"],     \"favorites\": "
+"[],     \"location\": \"127678039x502643091\",     \"location_str\": \"神奈川"
+"県\",     \"description\": \"groonga developer\"   },   {     \"_key\": "
+"\"tasukuchan\",     \"name\": \"グニャラくん\",     \"follower\": [\"daijiro"
+"\",\"OffGao\"],     \"favorites\": [\"daijiro:1\",\"OffGao:1\"],     "
+"\"location\": \"128423343x502929252\",     \"location_str\": \"東京都渋谷区"
+"\",     \"description\": \"エロいおっさん\"   },   {     \"_key\": \"OffGao"
+"\",     \"name\": \"OffGao\",     \"follower\": [\"tasukuchan\",\"daijiro"
+"\"],     \"favorites\": [\"tasukuchan:1\",\"daijiro:1\"],     \"location\": "
+"\"128544408x502801502\",     \"location_str\": \"東京都中野区\",     "
+"\"description\": \"がおがお\"   } ]  load --table Comments [   {     \"_key"
+"\": \"daijiro:1\",     \"comment\": \"マイクロブログ作ってみました（甘栗むい"
+"ちゃいました的な感じで）。\",     \"last_modified\": \"2010/03/17 "
+"12:05:00\",     \"posted_by\": \"daijiro\",   },   {     \"_key\": "
+"\"tasukuchan:1\",     \"comment\": \"初の書き込み。テストテスト。\",     "
+"\"last_modified\": \"2010/03/17 12:00:00\",     \"posted_by\": \"tasukuchan"
+"\",   },   {     \"_key\": \"daijiro:2\",     \"comment\": \"@tasukuchan よう"
+"こそ!!!\",     \"last_modified\": \"2010/03/17 12:05:00\",     \"replied_to"
+"\": \"tasukuchan:1\",     \"replied_users\": [\"tasukuchan\"],     "
+"\"posted_by\": \"daijiro\",   },   {     \"_key\": \"tasukuchan:2\",     "
+"\"comment\": \"@daijiro ありがとう！\",     \"last_modified\": \"2010/03/17 "
+"13:00:00\",     \"replied_to\": \"daijiro:2\",     \"replied_users\": "
+"[\"daijiro\"],     \"posted_by\": \"tasukuchan\",   },   {     \"_key\": "
+"\"tasukuchan:3\",     \"comment\": \"groongaなう #groonga\",     "
+"\"last_modified\": \"2010/03/17 14:00:00\",     \"hash_tags\": [\"groonga"
+"\"],     \"location\": \"127972422x503117107\",     \"posted_by\": "
+"\"tasukuchan\",   },   {     \"_key\": \"tasukuchan:4\",     \"comment\": "
+"\"groonga開発合宿のため羽田空港に来ました！ #groonga #travel\",     "
+"\"last_modified\": \"2010/03/17 14:05:00\",     \"hash_tags\": [\"groonga\", "
+"\"travel\"],     \"location\": \"127975798x502919856\",     \"posted_by\": "
+"\"tasukuchan\",   },   {     \"_key\": \"OffGao:1\",     \"comment\": "
+"\"@daijiro @tasukuchan 登録してみましたよー！\",     \"last_modified\": "
+"\"2010/03/17 15:00:00\",     \"replied_users\": [\"daijiro\", \"tasukuchan"
+"\"],     \"location\": \"128551935x502796433\",     \"posted_by\": \"OffGao"
+"\",   }   {     \"_key\": \"OffGao:2\",     \"comment\": \"中野ブロードウェイ"
+"なうなう\",     \"last_modified\": \"2010/03/17 15:05:00\",     \"location"
+"\": \"128551935x502796434\",     \"posted_by\": \"OffGao\",   } ]"
 msgstr ""
 
 #: ../../../source/tutorial/micro_blog.txt:241
@@ -1416,11 +1510,9 @@ msgstr "groonga専用プロトコルによる通信"
 msgid "Run groonga daemon"
 msgstr "groongaデーモンの起動"
 
-#: ../../../source/tutorial/network.txt:18
-#: ../../../source/tutorial/network.txt:38
-#: ../../../source/tutorial/network.txt:71
-msgid "Form::"
-msgstr "書式::"
+#: ../../../source/tutorial/network.txt:20
+msgid "groonga [-p PORT_NUMBER] -d DB_PATH_NAME"
+msgstr ""
 
 #: ../../../source/tutorial/network.txt:22
 msgid ""
@@ -1433,6 +1525,10 @@ msgstr ""
 "で起動し、指定したポート番号でgroongaの専用プロトコルを用いた通信をすることが"
 "できます。(ポート番号を省略した場合は10041が使用されます)"
 
+#: ../../../source/tutorial/network.txt:29
+msgid "% groonga -d /tmp/groonga-databases/introduction.db 12345 %"
+msgstr ""
+
 #: ../../../source/tutorial/network.txt:33
 msgid "Groonga shows its process ID on daemon mode."
 msgstr "デーモンモードで起動後、プロセス番号が表示されます。"
@@ -1440,6 +1536,10 @@ msgstr "デーモンモードで起動後、プロセス番号が表示されま
 #: ../../../source/tutorial/network.txt:36
 msgid "Connect to groonga server"
 msgstr "groongaサーバへの接続"
+
+#: ../../../source/tutorial/network.txt:40
+msgid "groonga [-p PORT_NUMBER] -c [HOST_NAME_OR_IP_ADDRESS]"
+msgstr ""
 
 #: ../../../source/tutorial/network.txt:42
 msgid ""
@@ -1527,6 +1627,10 @@ msgid ""
 msgstr ""
 "コマンドのオプションは、HTTPのGETパラメータで渡します。つまり、「?オプション="
 "値&オプション=値 …」という書式になります。"
+
+#: ../../../source/tutorial/network.txt:91
+msgid "groonga [-p PORT_NUMBER] -d --protocol http DB_PATH_NAME"
+msgstr ""
 
 #: ../../../source/tutorial/network.txt:101
 msgid "Security"
@@ -1843,3 +1947,737 @@ msgid ""
 "また、経緯度が指定の矩形領域内であるかどうかを判定する :doc:`../functions/"
 "geo_in_rectangle` 関数も存在します。"
 msgstr ""
+
+#: ../source/example/tutorial/drilldown-1.log:24
+msgid ""
+"> table_create --name SiteDomain --flags TABLE_HASH_KEY --key_type ShortText "
+"[[0,1317212750.98228,0.098212593],true] > table_create --name SiteCountry --"
+"flags TABLE_HASH_KEY --key_type ShortText > column_create --table Site --"
+"name domain --flags COLUMN_SCALAR --type SiteDomain "
+"[[0,1317212751.28095,0.256200943],true] [[0,1317212751.53719,0.085740621],"
+"true] > column_create --table Site --name country --flags COLUMN_SCALAR --"
+"type SiteCountry [[0,1317212751.82329,0.064026147],true] > load --table Site "
+"> [ > {\"_key\":\"http://example.org/\",\"domain\":\".org\",\"country\":"
+"\"japan\"}, > {\"_key\":\"http://example.net/\",\"domain\":\".net\",\"country"
+"\":\"brazil\"}, > {\"_key\":\"http://example.com/\",\"domain\":\".com\","
+"\"country\":\"japan\"}, > {\"_key\":\"http://example.net/afr\",\"domain\":\"."
+"net\",\"country\":\"usa\"}, > {\"_key\":\"http://example.org/aba\",\"domain"
+"\":\".org\",\"country\":\"korea\"}, > {\"_key\":\"http://example.com/rab\","
+"\"domain\":\".com\",\"country\":\"china\"}, > {\"_key\":\"http://example.net/"
+"atv\",\"domain\":\".net\",\"country\":\"china\"}, > {\"_key\":\"http://"
+"example.org/gat\",\"domain\":\".org\",\"country\":\"usa\"}, > {\"_key\":"
+"\"http://example.com/vdw\",\"domain\":\".com\",\"country\":\"japan\"} > ] "
+"[[0,1317212752.0878,2.202801388],9]"
+msgstr ""
+
+#: ../source/example/tutorial/drilldown-2.log:71
+msgid ""
+"> select --table Site --limit 0 --drilldown domain "
+"[[0,1317212754.4912,0.000250704],[[[9],[[\"_id\",\"UInt32\"],[\"_key\","
+"\"ShortText\"],[\"title\",\"ShortText\"],[\"location\",\"WGS84GeoPoint\"],"
+"[\"links\",\"Site\"],[\"link\",\"Site\"],[\"domain\",\"SiteDomain\"],"
+"[\"country\",\"SiteCountry\"]]],[[3],[[\"_key\",\"ShortText\"],[\"_nsubrecs"
+"\",\"Int32\"]],[\".org\",3],[\".net\",3],[\".com\",3]]]]"
+msgstr ""
+
+#: ../source/example/tutorial/drilldown-3.log:84
+msgid ""
+"> select --table Site --limit 0 --drilldown domain --"
+"drilldown_output_columns _id,_key,_nsubrecs "
+"[[0,1317212754.69307,0.000359614],[[[9],[[\"_id\",\"UInt32\"],[\"_key\","
+"\"ShortText\"],[\"title\",\"ShortText\"],[\"location\",\"WGS84GeoPoint\"],"
+"[\"links\",\"Site\"],[\"link\",\"Site\"],[\"domain\",\"SiteDomain\"],"
+"[\"country\",\"SiteCountry\"]]],[[3],[[\"_id\",\"UInt32\"],[\"_key\","
+"\"ShortText\"],[\"_nsubrecs\",\"Int32\"]],[1,\".org\",3],[2,\".net\",3],[3,"
+"\".com\",3]]]]"
+msgstr ""
+
+#: ../source/example/tutorial/drilldown-4.log:97
+msgid ""
+"> select --table Site --limit 0 --drilldown domain,country "
+"[[0,1317212754.89542,0.000263258],[[[9],[[\"_id\",\"UInt32\"],[\"_key\","
+"\"ShortText\"],[\"title\",\"ShortText\"],[\"location\",\"WGS84GeoPoint\"],"
+"[\"links\",\"Site\"],[\"link\",\"Site\"],[\"domain\",\"SiteDomain\"],"
+"[\"country\",\"SiteCountry\"]]],[[3],[[\"_key\",\"ShortText\"],[\"_nsubrecs"
+"\",\"Int32\"]],[\".org\",3],[\".net\",3],[\".com\",3]],[[5],[[\"_key\","
+"\"ShortText\"],[\"_nsubrecs\",\"Int32\"]],[\"japan\",3],[\"brazil\",1],[\"usa"
+"\",2],[\"korea\",1],[\"china\",2]]]]"
+msgstr ""
+
+#: ../source/example/tutorial/drilldown-5.log:110
+msgid ""
+"> select --table Site --limit 0 --drilldown country --drilldown_sortby "
+"_nsubrecs [[0,1317212755.09777,0.000284575],[[[9],[[\"_id\",\"UInt32\"],"
+"[\"_key\",\"ShortText\"],[\"title\",\"ShortText\"],[\"location\","
+"\"WGS84GeoPoint\"],[\"links\",\"Site\"],[\"link\",\"Site\"],[\"domain\","
+"\"SiteDomain\"],[\"country\",\"SiteCountry\"]]],[[5],[[\"_key\",\"ShortText"
+"\"],[\"_nsubrecs\",\"Int32\"]],[\"brazil\",1],[\"korea\",1],[\"usa\",2],"
+"[\"china\",2],[\"japan\",3]]]]"
+msgstr ""
+
+#: ../source/example/tutorial/drilldown-6.log:123
+msgid ""
+"> select --table Site --limit 0 --drilldown country --drilldown_sortby "
+"_nsubrecs --drilldown_limit 2 --drilldown_offset 2 "
+"[[0,1317212755.29988,0.000237191],[[[9],[[\"_id\",\"UInt32\"],[\"_key\","
+"\"ShortText\"],[\"title\",\"ShortText\"],[\"location\",\"WGS84GeoPoint\"],"
+"[\"links\",\"Site\"],[\"link\",\"Site\"],[\"domain\",\"SiteDomain\"],"
+"[\"country\",\"SiteCountry\"]]],[[5],[[\"_key\",\"ShortText\"],[\"_nsubrecs"
+"\",\"Int32\"]],[\"usa\",2],[\"china\",2]]]]"
+msgstr ""
+
+#: ../source/example/tutorial/index-1.log:31
+msgid ""
+"> table_create --name Video --flags TABLE_HASH_KEY --key_type UInt32 "
+"[[0,1317212832.70606,0.061331715],true] > table_create --name Tag --flags "
+"TABLE_HASH_KEY --key_type ShortText [[0,1317212832.968,0.039868236],true] > "
+"column_create --table Video --name title --flags COLUMN_SCALAR --type "
+"ShortText [[0,1317212833.20833,0.040494862],true] > column_create --table "
+"Video --name tags --flags COLUMN_VECTOR --type Tag "
+"[[0,1317212833.44939,0.051861409],true] > column_create --table Tag --name "
+"index_tags --flags COLUMN_INDEX --type Video --source tags "
+"[[0,1317212833.70185,0.092878953],true] > load --table Video > [ > {\"_key"
+"\":1,\"title\":\"Soccer 2010\",\"tags\":[\"Sports\",\"Soccer\"]}, > {\"_key"
+"\":2,\"title\":\"Zenigata Kinjirou\",\"tags\":[\"Variety\",\"Money\"]}, > "
+"{\"_key\":3,\"title\":\"groonga Demo\",\"tags\":[\"IT\",\"Server\",\"groonga"
+"\"]}, > {\"_key\":4,\"title\":\"Moero!! Ultra Baseball\",\"tags\":[\"Sports"
+"\",\"Baseball\"]}, > {\"_key\":5,\"title\":\"Hex Gone!\",\"tags\":[\"Variety"
+"\",\"Quiz\"]}, > {\"_key\":6,\"title\":\"Pikonyan 1\",\"tags\":[\"Animation"
+"\",\"Pikonyan\"]}, > {\"_key\":7,\"title\":\"Draw 8 Month\",\"tags\":"
+"[\"Animation\",\"Raccoon\"]}, > {\"_key\":8,\"title\":\"K.O.\",\"tags\":"
+"[\"Animation\",\"Music\"]} > ] [[0,1317212833.99531,2.002850011],8]"
+msgstr ""
+
+#: ../source/example/tutorial/index-2.log:81
+msgid ""
+"> select --table Video --query tags:@Variety --output_columns _key,title "
+"[[0,1317212836.19894,0.000330108],[[[2],[[\"_key\",\"UInt32\"],[\"title\","
+"\"ShortText\"]],[2,\"Zenigata Kinjirou\"],[5,\"Hex Gone!\"]]]] > select --"
+"table Video --query tags:@Sports --output_columns _key,title "
+"[[0,1317212836.39998,0.000316897],[[[2],[[\"_key\",\"UInt32\"],[\"title\","
+"\"ShortText\"]],[1,\"Soccer 2010\"],[4,\"Moero!! Ultra Baseball\"]]]] > "
+"select --table Video --query tags:@Animation --output_columns _key,title "
+"[[0,1317212836.60111,0.000349157],[[[3],[[\"_key\",\"UInt32\"],[\"title\","
+"\"ShortText\"]],[6,\"Pikonyan 1\"],[7,\"Draw 8 Month\"],[8,\"K.O.\"]]]]"
+msgstr ""
+
+#: ../source/example/tutorial/index-3.log:109
+msgid ""
+"> table_create --name User --flags TABLE_HASH_KEY --key_type ShortText "
+"[[0,1317212836.80268,0.048923839],true] > column_create --table User --name "
+"username --flags COLUMN_SCALAR --type ShortText "
+"[[0,1317212837.05226,0.040322616],true] > column_create --table User --name "
+"friends --flags COLUMN_VECTOR --type User [[0,1317212837.29306,0.039978793],"
+"true] > column_create --table User --name index_friends --flags COLUMN_INDEX "
+"--type User --source friends [[0,1317212837.53369,0.067271637],true] > load "
+"--table User > [ > {\"_key\":\"ken\",\"username\":\"健作\",\"friends\":"
+"[\"taro\",\"jiro\",\"tomo\",\"moritapo\"]} > {\"_key\":\"moritapo\","
+"\"username\":\"森田\",\"friends\":[\"ken\",\"tomo\"]} > {\"_key\":\"taro\","
+"\"username\":\"ぐるんが太郎\",\"friends\":[\"jiro\",\"tomo\"]} > {\"_key\":"
+"\"jiro\",\"username\":\"ぐるんが次郎\",\"friends\":[\"taro\",\"tomo\"]} > "
+"{\"_key\":\"tomo\",\"username\":\"トモちゃん\",\"friends\":[\"ken\",\"hana"
+"\"]} > {\"_key\":\"hana\",\"username\":\"花子\",\"friends\":[\"ken\",\"taro"
+"\",\"jiro\",\"moritapo\",\"tomo\"]} > ] [[0,1317212837.80152,1.602221355],6]"
+msgstr ""
+
+#: ../source/example/tutorial/index-4.log:150
+msgid ""
+"> select --table User --query friends:@tomo --output_columns _key,username "
+"[[0,1317212839.60442,0.000260617],[[[5],[[\"_key\",\"ShortText\"],[\"username"
+"\",\"ShortText\"]],[\"ken\",\"健作\"],[\"taro\",\"ぐるんが太郎\"],[\"jiro\","
+"\"ぐるんが次郎\"],[\"moritapo\",\"森田\"],[\"hana\",\"花子\"]]]] > select --"
+"table User --query friends:@jiro --output_columns _key,username "
+"[[0,1317212839.80577,0.000253172],[[[3],[[\"_key\",\"ShortText\"],[\"username"
+"\",\"ShortText\"]],[\"ken\",\"健作\"],[\"taro\",\"ぐるんが太郎\"],[\"hana\","
+"\"花子\"]]]]"
+msgstr ""
+
+#: ../source/example/tutorial/index-5.log:166
+msgid ""
+"> select --table User --limit 0 --drilldown friends "
+"[[0,1317212840.00717,0.000223187],[[[6],[[\"_id\",\"UInt32\"],[\"_key\","
+"\"ShortText\"],[\"username\",\"ShortText\"],[\"index_friends\",\"User\"],"
+"[\"friends\",\"User\"]]],[[6],[[\"_key\",\"ShortText\"],[\"_nsubrecs\","
+"\"Int32\"]],[\"taro\",3],[\"jiro\",3],[\"tomo\",5],[\"moritapo\",2],[\"ken"
+"\",3],[\"hana\",1]]]]"
+msgstr ""
+
+#: ../source/example/tutorial/index-6.log:184
+msgid ""
+"> table_create --name GeoIndex --flags TABLE_PAT_KEY --key_type "
+"WGS84GeoPoint [[0,1317212840.20962,0.088534001],true] > column_create --"
+"table GeoIndex --name index_point --type Site --flags COLUMN_INDEX --source "
+"location [[0,1317212840.49869,0.093704431],true] > load --table Site > [ >  "
+"{\"_key\":\"http://example.org/\",\"location\":\"128452975x503157902\"}, >  "
+"{\"_key\":\"http://example.net/\",\"location\":\"128487316x502920929\"} > ] "
+"[[0,1317212840.79332,0.801438285],2] > select --table Site --filter "
+"'geo_in_circle(location, \"128515259x503187188\", 5000)' --output_columns "
+"_key,location [[0,1317212841.79563,0.000626003],[[[1],[[\"_key\",\"ShortText"
+"\"],[\"location\",\"WGS84GeoPoint\"]],[\"http://example.org/\","
+"\"128452975x503157902\"]]]]"
+msgstr ""
+
+#: ../source/example/tutorial/index-7.log:214
+msgid ""
+"> select --table Site --filter 'geo_in_circle(location, "
+"\"128515259x503187188\", 50000)' --output_columns _key,location,_score --"
+"sortby '-geo_distance(location, \"128515259x503187188\")' --scorer '_score = "
+"geo_distance(location, "
+"\"128515259x503187188\")' [[0,1317212841.99878,0.0011657],[[[2],[[\"_key\","
+"\"ShortText\"],[\"location\",\"WGS84GeoPoint\"],[\"_score\",\"Int32\"]],"
+"[\"http://example.org/\",\"128452975x503157902\",2054],[\"http://example.net/"
+"\",\"128487316x502920929\",6720]]]]"
+msgstr ""
+
+#: ../source/example/tutorial/introduction-1.log:27
+#: ../source/example/tutorial/introduction-1.log:52
+msgid ""
+"> table_create --name Type --flags TABLE_HASH_KEY --key_type ShortText "
+"[[0,1317212791.02322,0.03942904],true] > column_create --table Type --name "
+"number --type Int32 [[0,1317212791.26314,0.124383285],true] > column_create "
+"--table Type --name float --type Float [[0,1317212791.58803,0.027924039],"
+"true] > column_create --table Type --name string --type ShortText "
+"[[0,1317212791.81654,0.040399047],true] > column_create --table Type --name "
+"time --type Time [[0,1317212792.05751,0.027354067],true] > load --table Type "
+"> [{\"_key\":\"sample\",\"number\":12345,\"float\":42.195,\"string\":"
+"\"GROONGA\",\"time\":1234567890.12}] [[0,1317212792.28516,0.200775839],1] > "
+"select --table Type [[0,1317212792.68655,0.000199477],[[[1],[[\"_id\","
+"\"UInt32\"],[\"_key\",\"ShortText\"],[\"time\",\"Time\"],[\"string\","
+"\"ShortText\"],[\"number\",\"Int32\"],[\"float\",\"Float\"]],[1,\"sample"
+"\",1234567890.12,\"GROONGA\",12345,42.195]]]]"
+msgstr ""
+
+#: ../source/example/tutorial/introduction-10.log:310
+msgid ""
+"> select --table Site --query \"_key:\\\"http://example.org/\\"
+"\"\" [[0,1317212716.9005,0.000478343],[[[1],[[\"_id\",\"UInt32\"],[\"_key\","
+"\"ShortText\"],[\"title\",\"ShortText\"]],[1,\"http://example.org/\",\"This "
+"is test record 1!\"]]]]"
+msgstr ""
+
+#: ../source/example/tutorial/introduction-11.log:329
+msgid ""
+"> select --table Site --query title:@this [[0,1317212717.10303,0.000581287],"
+"[[[1],[[\"_id\",\"UInt32\"],[\"_key\",\"ShortText\"],[\"title\",\"ShortText"
+"\"]],[1,\"http://example.org/\",\"This is test record 1!\"]]]]"
+msgstr ""
+
+#: ../source/example/tutorial/introduction-12.log:350
+msgid ""
+"> select --table Site --match_columns title --query this "
+"[[0,1317212717.30596,0.000716439],[[[1],[[\"_id\",\"UInt32\"],[\"_key\","
+"\"ShortText\"],[\"title\",\"ShortText\"]],[1,\"http://example.org/\",\"This "
+"is test record 1!\"]]]]"
+msgstr ""
+
+#: ../source/example/tutorial/introduction-13.log:368
+msgid ""
+"> select --table Site --output_columns _key,title,_score --query title:@test "
+"[[0,1317212717.50916,0.00060758],[[[9],[[\"_key\",\"ShortText\"],[\"title\","
+"\"ShortText\"],[\"_score\",\"Int32\"]],[\"http://example.org/\",\"This is "
+"test record 1!\",1],[\"http://example.net/\",\"test record 2.\",1],[\"http://"
+"example.com/\",\"test test record three.\",2],[\"http://example.net/afr\","
+"\"test record four.\",1],[\"http://example.org/aba\",\"test test test record "
+"five.\",3],[\"http://example.com/rab\",\"test test test test record six."
+"\",4],[\"http://example.net/atv\",\"test test test record seven.\",3],"
+"[\"http://example.org/gat\",\"test test record eight.\",2],[\"http://example."
+"com/vdw\",\"test test record nine.\",2]]]]"
+msgstr ""
+
+#: ../source/example/tutorial/introduction-14.log:390
+msgid ""
+"> select --table Site --offset 0 --limit 3 [[0,1317212717.71574,0.000238544],"
+"[[[9],[[\"_id\",\"UInt32\"],[\"_key\",\"ShortText\"],[\"title\",\"ShortText"
+"\"]],[1,\"http://example.org/\",\"This is test record 1!\"],[2,\"http://"
+"example.net/\",\"test record 2.\"],[3,\"http://example.com/\",\"test test "
+"record three.\"]]]] > select --table Site --offset 3 --limit 3 "
+"[[0,1317212717.91925,0.00023617],[[[9],[[\"_id\",\"UInt32\"],[\"_key\","
+"\"ShortText\"],[\"title\",\"ShortText\"]],[4,\"http://example.net/afr\","
+"\"test record four.\"],[5,\"http://example.org/aba\",\"test test test record "
+"five.\"],[6,\"http://example.com/rab\",\"test test test test record six."
+"\"]]]] > select --table Site --offset 7 --limit 3 "
+"[[0,1317212718.12219,0.00019999],[[[9],[[\"_id\",\"UInt32\"],[\"_key\","
+"\"ShortText\"],[\"title\",\"ShortText\"]],[8,\"http://example.org/gat\","
+"\"test test record eight.\"],[9,\"http://example.com/vdw\",\"test test "
+"record nine.\"]]]]"
+msgstr ""
+
+#: ../source/example/tutorial/introduction-15.log:414
+msgid ""
+"> select --table Site --sortby -_id [[0,1317212718.32565,0.000385755],[[[9],"
+"[[\"_id\",\"UInt32\"],[\"_key\",\"ShortText\"],[\"title\",\"ShortText\"]],[9,"
+"\"http://example.com/vdw\",\"test test record nine.\"],[8,\"http://example."
+"org/gat\",\"test test record eight.\"],[7,\"http://example.net/atv\",\"test "
+"test test record seven.\"],[6,\"http://example.com/rab\",\"test test test "
+"test record six.\"],[5,\"http://example.org/aba\",\"test test test record "
+"five.\"],[4,\"http://example.net/afr\",\"test record four.\"],[3,\"http://"
+"example.com/\",\"test test record three.\"],[2,\"http://example.net/\","
+"\"test record 2.\"],[1,\"http://example.org/\",\"This is test record 1!\"]]]]"
+msgstr ""
+
+#: ../source/example/tutorial/introduction-16.log:427
+msgid ""
+"> select --table Site --query title:@test --output_columns _id,_score,title "
+"--sortby _score [[0,1317212718.5331,0.000667311],[[[9],[[\"_id\",\"UInt32\"],"
+"[\"_score\",\"Int32\"],[\"title\",\"ShortText\"]],[1,1,\"This is test record "
+"1!\"],[2,1,\"test record 2.\"],[4,1,\"test record four.\"],[3,2,\"test test "
+"record three.\"],[9,2,\"test test record nine.\"],[8,2,\"test test record "
+"eight.\"],[7,3,\"test test test record seven.\"],[5,3,\"test test test "
+"record five.\"],[6,4,\"test test test test record six.\"]]]]"
+msgstr ""
+
+#: ../source/example/tutorial/introduction-17.log:440
+msgid ""
+"> select --table Site --query title:@test --output_columns _id,_score,title "
+"--sortby _score,_id [[0,1317212718.73819,0.00069225],[[[9],[[\"_id\","
+"\"UInt32\"],[\"_score\",\"Int32\"],[\"title\",\"ShortText\"]],[1,1,\"This is "
+"test record 1!\"],[2,1,\"test record 2.\"],[4,1,\"test record four.\"],[3,2,"
+"\"test test record three.\"],[8,2,\"test test record eight.\"],[9,2,\"test "
+"test record nine.\"],[5,3,\"test test test record five.\"],[7,3,\"test test "
+"test record seven.\"],[6,4,\"test test test test record six.\"]]]]"
+msgstr ""
+
+#: ../source/example/tutorial/introduction-2.log:70
+#: ../source/example/tutorial/introduction-2.log:127
+msgid ""
+"> column_create --table Site --name link --type Site "
+"[[0,1317212792.88872,0.060705006],true] > load --table Site > [{\"_key\":"
+"\"http://example.org/\",\"link\":\"http://example.net/\"}] "
+"[[0,1317212793.14984,0.200481934],1] > select --table Site --output_columns "
+"_key,title,link._key,link.title --query title:@this "
+"[[0,1317212793.55084,0.000485897],[[[1],[[\"_key\",\"ShortText\"],[\"title\","
+"\"ShortText\"],[\"link._key\",\"ShortText\"],[\"link.title\",\"ShortText\"]],"
+"[\"http://example.org/\",\"This is test record 1!\",\"http://example.net/\","
+"\"test record 2.\"]]]]"
+msgstr ""
+
+#: ../source/example/tutorial/introduction-3.log:104
+#: ../source/example/tutorial/introduction-3.log:148
+msgid ""
+"> column_create --table Site --name links --flags COLUMN_VECTOR --type Site "
+"[[0,1317212793.75262,0.049658904],true] > load --table Site > [{\"_key\":"
+"\"http://example.org/\",\"links\":[\"http://example.net/\",\"http://example."
+"org/\",\"http://example.com/\"]}] [[0,1317212794.00274,0.200473621],1] > "
+"select --table Site --output_columns _key,title,links._key,links.title --"
+"query title:@this [[0,1317212794.40349,0.000384272],[[[1],[[\"_key\","
+"\"ShortText\"],[\"title\",\"ShortText\"],[\"links._key\",\"ShortText\"],"
+"[\"links.title\",\"ShortText\"]],[\"http://example.org/\",\"This is test "
+"record 1!\",[\"http://example.net/\",\"http://example.org/\",\"http://"
+"example.com/\"],[\"test record 2.\",\"This is test record 1!\",\"test test "
+"record three.\"]]]]]"
+msgstr ""
+
+#: ../source/example/tutorial/introduction-4.log:175
+msgid ""
+"> column_create --table Site --name title --flags COLUMN_SCALAR --type "
+"ShortText [[0,1317212712.91734,0.077833747],true] > select --table Site "
+"[[0,1317212713.19572,0.000121119],[[[0],[[\"_id\",\"UInt32\"],[\"_key\","
+"\"ShortText\"],[\"title\",\"ShortText\"]]]]]"
+msgstr ""
+
+#: ../source/example/tutorial/introduction-5.log:200
+msgid ""
+"> table_create --name Terms --flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type "
+"ShortText --default_tokenizer TokenBigram [[0,1317212713.39679,0.092312046],"
+"true]"
+msgstr ""
+
+#: ../source/example/tutorial/introduction-6.log:223
+msgid ""
+"> column_create --table Terms --name blog_title --flags COLUMN_INDEX|"
+"WITH_POSITION --type Site --source title [[0,1317212713.68994,0.19739078],"
+"true]"
+msgstr ""
+
+#: ../source/example/tutorial/introduction-7.log:242
+msgid ""
+"> load --table Site > [ > {\"_key\":\"http://example.org/\",\"title\":\"This "
+"is test record 1!\"}, > {\"_key\":\"http://example.net/\",\"title\":\"test "
+"record 2.\"}, > {\"_key\":\"http://example.com/\",\"title\":\"test test "
+"record three.\"}, > {\"_key\":\"http://example.net/afr\",\"title\":\"test "
+"record four.\"}, > {\"_key\":\"http://example.org/aba\",\"title\":\"test "
+"test test record five.\"}, > {\"_key\":\"http://example.com/rab\",\"title\":"
+"\"test test test test record six.\"}, > {\"_key\":\"http://example.net/atv\","
+"\"title\":\"test test test record seven.\"}, > {\"_key\":\"http://example."
+"org/gat\",\"title\":\"test test record eight.\"}, > {\"_key\":\"http://"
+"example.com/vdw\",\"title\":\"test test record nine.\"}, > ] "
+"[[0,1317212714.08816,2.203527402],9]"
+msgstr ""
+
+#: ../source/example/tutorial/introduction-8.log:277
+msgid ""
+"> select --table Site [[0,1317212716.49285,0.000270908],[[[9],[[\"_id\","
+"\"UInt32\"],[\"_key\",\"ShortText\"],[\"title\",\"ShortText\"]],[1,\"http://"
+"example.org/\",\"This is test record 1!\"],[2,\"http://example.net/\",\"test "
+"record 2.\"],[3,\"http://example.com/\",\"test test record three.\"],[4,"
+"\"http://example.net/afr\",\"test record four.\"],[5,\"http://example.org/aba"
+"\",\"test test test record five.\"],[6,\"http://example.com/rab\",\"test "
+"test test test record six.\"],[7,\"http://example.net/atv\",\"test test test "
+"record seven.\"],[8,\"http://example.org/gat\",\"test test record eight.\"],"
+"[9,\"http://example.com/vdw\",\"test test record nine.\"]]]]"
+msgstr ""
+
+#: ../source/example/tutorial/introduction-9.log:295
+msgid ""
+"> select --table Site --query _id:1 [[0,1317212716.69871,0.000308514],[[[1],"
+"[[\"_id\",\"UInt32\"],[\"_key\",\"ShortText\"],[\"title\",\"ShortText\"]],[1,"
+"\"http://example.org/\",\"This is test record 1!\"]]]]"
+msgstr ""
+
+#: ../source/example/tutorial/match_columns-1.log:32
+msgid ""
+"> table_create --name Blog1 --flags TABLE_HASH_KEY --key_type ShortText "
+"[[0,1317212795.41036,0.047939793],true] > column_create --table Blog1 --name "
+"title --flags COLUMN_SCALAR --type ShortText "
+"[[0,1317212795.65884,0.040658195],true] > column_create --table Blog1 --name "
+"message --flags COLUMN_SCALAR --type ShortText "
+"[[0,1317212795.89978,0.029458384],true] > table_create --name IndexBlog1 --"
+"flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type ShortText --default_tokenizer "
+"TokenBigram [[0,1317212796.12974,0.183567683],true] > column_create --table "
+"IndexBlog1 --name index_title --flags COLUMN_INDEX|WITH_POSITION --type "
+"Blog1 --source title [[0,1317212796.51381,0.092148792],true] > column_create "
+"--table IndexBlog1 --name index_message --flags COLUMN_INDEX|WITH_POSITION --"
+"type Blog1 --source message [[0,1317212796.80646,0.088690675],true] > load --"
+"table Blog1 > [ > {\"_key\":\"grn1\",\"title\":\"groonga test\",\"message\":"
+"\"groonga message\"}, > {\"_key\":\"grn2\",\"title\":\"baseball result\","
+"\"message\":\"rakutan eggs 4 - 4 groonga moritars\"}, > {\"_key\":\"grn3\","
+"\"title\":\"groonga message\",\"message\":\"none\"} > ] "
+"[[0,1317212797.09575,1.001254761],3]"
+msgstr ""
+
+#: ../source/example/tutorial/match_columns-2.log:75
+msgid ""
+"> select --table Blog1 --match_columns title||message --query groonga "
+"[[0,1317212798.29761,0.000365318],[[[3],[[\"_id\",\"UInt32\"],[\"_key\","
+"\"ShortText\"],[\"title\",\"ShortText\"],[\"message\",\"ShortText\"]],[1,"
+"\"grn1\",\"groonga test\",\"groonga message\"],[3,\"grn3\",\"groonga message"
+"\",\"none\"],[2,\"grn2\",\"baseball result\",\"rakutan eggs 4 - 4 groonga "
+"moritars\"]]]] > select --table Blog1 --match_columns title||message --query "
+"message [[0,1317212798.49954,0.000310648],[[[2],[[\"_id\",\"UInt32\"],[\"_key"
+"\",\"ShortText\"],[\"title\",\"ShortText\"],[\"message\",\"ShortText\"]],[3,"
+"\"grn3\",\"groonga message\",\"none\"],[1,\"grn1\",\"groonga test\","
+"\"groonga message\"]]]] > select --table Blog1 --match_columns title --query "
+"message [[0,1317212798.70102,0.000314581],[[[1],[[\"_id\",\"UInt32\"],[\"_key"
+"\",\"ShortText\"],[\"title\",\"ShortText\"],[\"message\",\"ShortText\"]],[3,"
+"\"grn3\",\"groonga message\",\"none\"]]]]"
+msgstr ""
+
+#: ../source/example/tutorial/match_columns-3.log:100
+msgid ""
+"> table_create --name Blog2 --flags TABLE_HASH_KEY --key_type ShortText "
+"[[0,1317212798.90253,0.052986511],true] > column_create --table Blog2 --name "
+"title --flags COLUMN_SCALAR --type ShortText [[0,1317212799.156,0.028355347],"
+"true] > column_create --table Blog2 --name message --flags COLUMN_SCALAR --"
+"type ShortText [[0,1317212799.38486,0.040142104],true] > table_create --name "
+"IndexBlog2 --flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type ShortText --"
+"default_tokenizer TokenBigram [[0,1317212799.62539,0.039673533],true] > "
+"column_create --table IndexBlog2 --name index_blog --flags COLUMN_INDEX|"
+"WITH_POSITION|WITH_SECTION --type Blog2 --source title,message "
+"[[0,1317212799.86551,0.079790187],true] > load --table Blog2 > [ > {\"_key\":"
+"\"grn1\",\"title\":\"groonga test\",\"message\":\"groonga message\"}, > "
+"{\"_key\":\"grn2\",\"title\":\"baseball result\",\"message\":\"rakutan eggs "
+"4 - 4 groonga moritars\"}, > {\"_key\":\"grn3\",\"title\":\"groonga message"
+"\",\"message\":\"none\"} > ] [[0,1317212800.14589,1.001367315],3]"
+msgstr ""
+
+#: ../source/example/tutorial/match_columns-4.log:138
+msgid ""
+"> select --table Blog2 --match_columns title||message --query groonga "
+"[[0,1317212801.34801,0.000328232],[[[3],[[\"_id\",\"UInt32\"],[\"_key\","
+"\"ShortText\"],[\"title\",\"ShortText\"],[\"message\",\"ShortText\"]],[1,"
+"\"grn1\",\"groonga test\",\"groonga message\"],[2,\"grn2\",\"baseball result"
+"\",\"rakutan eggs 4 - 4 groonga moritars\"],[3,\"grn3\",\"groonga message\","
+"\"none\"]]]] > select --table Blog2 --match_columns title||message --query "
+"message [[0,1317212801.54962,0.000320935],[[[2],[[\"_id\",\"UInt32\"],[\"_key"
+"\",\"ShortText\"],[\"title\",\"ShortText\"],[\"message\",\"ShortText\"]],[1,"
+"\"grn1\",\"groonga test\",\"groonga message\"],[3,\"grn3\",\"groonga message"
+"\",\"none\"]]]] > select --table Blog2 --match_columns title --query message "
+"[[0,1317212801.75107,0.000323124],[[[1],[[\"_id\",\"UInt32\"],[\"_key\","
+"\"ShortText\"],[\"title\",\"ShortText\"],[\"message\",\"ShortText\"]],[3,"
+"\"grn3\",\"groonga message\",\"none\"]]]]"
+msgstr ""
+
+#: ../source/example/tutorial/micro_blog-1.log:387
+msgid ""
+"> select --table Users --match_columns name,location_str,description --query "
+"東京 --output_columns _key,name [[0,1317212781.80175,0.000302755],[[[2],"
+"[[\"_key\",\"ShortText\"],[\"name\",\"ShortText\"]],[\"tasukuchan\",\"グニャ"
+"ラくん\"],[\"OffGao\",\"OffGao\"]]]]"
+msgstr ""
+
+#: ../source/example/tutorial/micro_blog-10.log:548
+msgid ""
+"> select Comments --filter 'last_modified<=1268802000' --output_columns "
+"posted_by.name,comment,last_modified --drilldown hash_tags,posted_by "
+"[[0,1317212783.61997,0.000426254],[[[5],[[\"posted_by.name\",\"ShortText\"],"
+"[\"comment\",\"ShortText\"],[\"last_modified\",\"Time\"]],[\"hsiomaneki\","
+"\"マイクロブログ作ってみました（甘栗むいちゃいました的な感じ"
+"で）。\",1268795100.0],[\"グニャラくん\",\"初の書き込み。テストテス"
+"ト。\",1268794800.0],[\"hsiomaneki\",\"@tasukuchan ようこそ!!!"
+"\",1268795100.0],[\"グニャラくん\",\"@daijiro ありがとう！\",1268798400.0],"
+"[\"グニャラくん\",\"groongaなう #groonga\",1268802000.0]],[[1],[[\"_key\","
+"\"ShortText\"],[\"_nsubrecs\",\"Int32\"]],[\"groonga\",1]],[[2],[[\"_key\","
+"\"ShortText\"],[\"_nsubrecs\",\"Int32\"]],[\"daijiro\",2],[\"tasukuchan"
+"\",3]]]]"
+msgstr ""
+
+#: ../source/example/tutorial/micro_blog-2.log:406
+msgid ""
+"> select --table Users --filter 'geo_in_circle(location,"
+"\"128484216x502919856\",5000)' --output_columns _key,name "
+"[[0,1317212782.00321,0.000241271],[[[2],[[\"_key\",\"ShortText\"],[\"name\","
+"\"ShortText\"]],[\"tasukuchan\",\"グニャラくん\"],[\"OffGao\",\"OffGao\"]]]]"
+msgstr ""
+
+#: ../source/example/tutorial/micro_blog-3.log:425
+msgid ""
+"> select --table Users --query follower:@tasukuchan --output_columns _key,"
+"name [[0,1317212782.20472,0.000231885],[[[2],[[\"_key\",\"ShortText\"],"
+"[\"name\",\"ShortText\"]],[\"daijiro\",\"hsiomaneki\"],[\"OffGao\",\"OffGao"
+"\"]]]]"
+msgstr ""
+
+#: ../source/example/tutorial/micro_blog-4.log:443
+msgid ""
+"> select --table Comments --filter 'geo_in_circle(location,"
+"\"127975798x502919856\",20000)' --output_columns posted_by.name,comment --"
+"drilldown hash_tags,posted_by [[0,1317212782.40617,0.000451828],[[[4],"
+"[[\"posted_by.name\",\"ShortText\"],[\"comment\",\"ShortText\"]],[\"OffGao\","
+"\"@daijiro @tasukuchan 登録してみましたよー！\"],[\"グニャラくん\",\"groonga"
+"なう #groonga\"],[\"グニャラくん\",\"groonga開発合宿のため羽田空港に来まし"
+"た！ #groonga #travel\"],[\"OffGao\",\"中野ブロードウェイなうなう\"]],[[2],"
+"[[\"_key\",\"ShortText\"],[\"_nsubrecs\",\"Int32\"]],[\"groonga\",2],"
+"[\"travel\",1]],[[2],[[\"_key\",\"ShortText\"],[\"_nsubrecs\",\"Int32\"]],"
+"[\"OffGao\",2],[\"tasukuchan\",2]]]]"
+msgstr ""
+
+#: ../source/example/tutorial/micro_blog-5.log:461
+msgid ""
+"> select --table Comments --query comment:@なう --output_columns comment,"
+"_score [[0,1317212782.60919,0.000239996],[[[2],[[\"comment\",\"ShortText\"],"
+"[\"_score\",\"Int32\"]],[\"groongaなう #groonga\",1],[\"中野ブロードウェイな"
+"うなう\",2]]]]"
+msgstr ""
+
+#: ../source/example/tutorial/micro_blog-6.log:478
+msgid ""
+"> select --table Comments --query comment:@羽田 --filter 'geo_in_circle"
+"(location,\"127975798x502919856\",20000)' --output_columns posted_by.name,"
+"comment --drilldown hash_tags,posted_by [[0,1317212782.81082,0.000427163],"
+"[[[1],[[\"posted_by.name\",\"ShortText\"],[\"comment\",\"ShortText\"]],[\"グ"
+"ニャラくん\",\"groonga開発合宿のため羽田空港に来ました！ #groonga #travel"
+"\"]],[[2],[[\"_key\",\"ShortText\"],[\"_nsubrecs\",\"Int32\"]],[\"groonga"
+"\",1],[\"travel\",1]],[[1],[[\"_key\",\"ShortText\"],[\"_nsubrecs\","
+"\"Int32\"]],[\"tasukuchan\",1]]]]"
+msgstr ""
+
+#: ../source/example/tutorial/micro_blog-7.log:496
+msgid ""
+"> select --table Comments --query hash_tags:@groonga --output_columns "
+"posted_by.name,comment --drilldown posted_by "
+"[[0,1317212783.01379,0.000311974],[[[2],[[\"posted_by.name\",\"ShortText\"],"
+"[\"comment\",\"ShortText\"]],[\"グニャラくん\",\"groongaなう #groonga\"],"
+"[\"グニャラくん\",\"groonga開発合宿のため羽田空港に来ました！ #groonga "
+"#travel\"]],[[1],[[\"_key\",\"ShortText\"],[\"_nsubrecs\",\"Int32\"]],"
+"[\"tasukuchan\",2]]]]"
+msgstr ""
+
+#: ../source/example/tutorial/micro_blog-8.log:513
+msgid ""
+"> select --table Comments --query posted_by:tasukuchan --output_columns "
+"comment --drilldown hash_tags [[0,1317212783.21601,0.000313114],[[[4],"
+"[[\"comment\",\"ShortText\"]],[\"初の書き込み。テストテスト。\"],[\"@daijiro "
+"ありがとう！\"],[\"groongaなう #groonga\"],[\"groonga開発合宿のため羽田空港に"
+"来ました！ #groonga #travel\"]],[[2],[[\"_key\",\"ShortText\"],[\"_nsubrecs"
+"\",\"Int32\"]],[\"groonga\",2],[\"travel\",1]]]]"
+msgstr ""
+
+#: ../source/example/tutorial/micro_blog-9.log:530
+msgid ""
+"> select --table Users --query _key:tasukuchan --output_columns favorites."
+"posted_by,favorites.comment [[0,1317212783.41809,0.000257979],[[[1],"
+"[[\"favorites.posted_by\",\"Users\"],[\"favorites.comment\",\"ShortText\"]],"
+"[[\"daijiro\",\"OffGao\"],[\"マイクロブログ作ってみました（甘栗むいちゃいまし"
+"た的な感じで）。\",\"@daijiro @tasukuchan 登録してみましたよー！\"]]]]]"
+msgstr ""
+
+#: ../source/example/tutorial/network-1.log:53
+msgid ""
+"% groonga -c > status [[0,1317212813.13814,0.000102148],{\"alloc_count\":184,"
+"\"starttime\":1317212806,\"uptime\":7,\"version\":\"1.2.5-84-g5c190df\","
+"\"n_queries\":14,\"cache_hit_rate\":0.0,\"command_version\":1,"
+"\"default_command_version\":1,\"max_command_version\":2}] > ctrl-d %"
+msgstr ""
+
+#: ../source/example/tutorial/network-2.log:75
+msgid "% groonga -c > shutdown %"
+msgstr ""
+
+#: ../source/example/tutorial/network-3.log:112
+msgid ""
+"http://[IPまたはホスト名]:[ポート番号]/d/status 実行される処理： > status "
+"[[0,1317212813.33982,0.000109691],{\"alloc_count\":184,\"starttime"
+"\":1317212806,\"uptime\":7,\"version\":\"1.2.5-84-g5c190df\",\"n_queries"
+"\":14,\"cache_hit_rate\":0.0,\"command_version\":1,\"default_command_version"
+"\":1,\"max_command_version\":2}]  http://[IPまたはホスト名]:[ポート番号]/d/"
+"select?table=Site&query=title:@this 実行される処理： > select --table Site --"
+"query title:@this [[0,1317212813.54112,6.7993e-05],[[[1],[[\"_id\","
+"\"UInt32\"],[\"_key\",\"ShortText\"],[\"title\",\"ShortText\"]],[1,\"http://"
+"example.org/\",\"This is test record 1!\"]]]]"
+msgstr ""
+
+#: ../source/example/tutorial/patricia_trie-1.log:24
+msgid ""
+"> table_create --name PatPrefix --flags TABLE_PAT_KEY --key_type ShortText "
+"[[0,1317212719.34619,0.047490604],true] > load --table PatPrefix > [ > "
+"{\"_key\":\"ひろゆき\"}, > {\"_key\":\"まろゆき\"}, > {\"_key\":\"ひろあき"
+"\"} > ] [[0,1317212719.59456,1.001406593],3] > select --table PatPrefix --"
+"query _key:@ひろ [[0,1317212720.79648,0.00031203],[[[2],[[\"_id\","
+"\"UInt32\"],[\"_key\",\"ShortText\"]],[3,\"ひろあき\"],[1,\"ひろゆき\"]]]]"
+msgstr ""
+
+#: ../source/example/tutorial/patricia_trie-2.log:61
+msgid ""
+"> table_create --name PatSuffix --flags TABLE_PAT_KEY|KEY_WITH_SIS --"
+"key_type ShortText [[0,1317212720.99778,0.0531648179999999],true] > "
+"column_create --table PatSuffix --name original --type Bool "
+"[[0,1317212721.25163,0.099479727],true] > load --table PatSuffix > [ > "
+"{\"_key\":\"ひろゆき\",\"original\":true}, > {\"_key\":\"まろゆき\","
+"\"original\":true}, > {\"_key\":\"ひろあき\",\"original\":true} > ] "
+"[[0,1317212721.55167,1.001449341],3] > select --table PatSuffix --query _key:"
+"@ゆき [[0,1317212722.75369,0.000313623],[[[4],[[\"_id\",\"UInt32\"],[\"_key"
+"\",\"ShortText\"],[\"original\",\"Bool\"]],[1,\"ひろゆき\",true],[5,\"まろゆ"
+"き\",true],[3,\"ゆき\",false],[2,\"ろゆき\",false]]]] > select --table "
+"PatSuffix --query \"_key:@ゆき original:true"
+"\" [[0,1317212722.95502,0.00032577],[[[2],[[\"_id\",\"UInt32\"],[\"_key\","
+"\"ShortText\"],[\"original\",\"Bool\"]],[1,\"ひろゆき\",true],[5,\"まろゆき"
+"\",true]]]]"
+msgstr ""
+
+#: ../source/example/tutorial/query_expansion-1.log:24
+msgid ""
+"> table_create Doc TABLE_PAT_KEY ShortText [[0,1317212801.95257,0.054058921],"
+"true] > column_create Doc body COLUMN_SCALAR ShortText "
+"[[0,1317212802.2071,0.040301713],true] > table_create Term TABLE_PAT_KEY|"
+"KEY_NORMALIZE ShortText --default_tokenizer TokenBigram "
+"[[0,1317212802.44812,0.027340933],true] > column_create Term Doc_body "
+"COLUMN_INDEX|WITH_POSITION Doc body [[0,1317212802.676,0.079743674],true] > "
+"table_create Synonym TABLE_PAT_KEY ShortText "
+"[[0,1317212802.95629,0.03656858],true] > column_create Synonym body "
+"COLUMN_SCALAR ShortText [[0,1317212803.19316,0.040515932],true] > load --"
+"table Doc > [ > {\"_key\": \"001\", \"body\": \"すっぱいブドウと甘いシー"
+"クァーサー\"}, > {\"_key\": \"002\", \"body\": \"シークヮーサージュースとゴー"
+"ヤチャンプル\"}, > ] [[0,1317212803.43422,0.80056314],2] > load --table "
+"Synonym > [ > {\"_key\": \"シークァーサー\", \"body\": \"(シークァーサー OR "
+"シークヮーサー)\"}, > {\"_key\": \"シークヮーサー\", \"body\": \"(シークァー"
+"サー OR シークヮーサー)\"}, > ] [[0,1317212804.43524,0.801037492],2]"
+msgstr ""
+
+#: ../source/example/tutorial/query_expansion-2.log:79
+msgid ""
+"> select Doc --match_columns body --query \"シークァーサー"
+"\" [[0,1317212805.4371,0.000567851],[[[1],[[\"_id\",\"UInt32\"],[\"_key\","
+"\"ShortText\"],[\"body\",\"ShortText\"]],[1,\"001\",\"すっぱいブドウと甘い"
+"シークァーサー\"]]]] > select Doc --match_columns body --query \"シークヮー"
+"サー\" [[0,1317212805.63859,0.000387831],[[[1],[[\"_id\",\"UInt32\"],[\"_key"
+"\",\"ShortText\"],[\"body\",\"ShortText\"]],[2,\"002\",\"シークヮーサージュー"
+"スとゴーヤチャンプル\"]]]]"
+msgstr ""
+
+#: ../source/example/tutorial/query_expansion-3.log:95
+msgid ""
+"> select Doc --match_columns body --query \"シークァーサー\" --"
+"query_expansion Synonym.body [[0,1317212805.84016,0.000441852],[[[2],[[\"_id"
+"\",\"UInt32\"],[\"_key\",\"ShortText\"],[\"body\",\"ShortText\"]],[1,\"001\","
+"\"すっぱいブドウと甘いシークァーサー\"],[2,\"002\",\"シークヮーサージュースと"
+"ゴーヤチャンプル\"]]]] > select Doc --match_columns body --query \"シークヮー"
+"サー\" --query_expansion Synonym.body [[0,1317212806.04176,0.000580261],"
+"[[[2],[[\"_id\",\"UInt32\"],[\"_key\",\"ShortText\"],[\"body\",\"ShortText"
+"\"]],[1,\"001\",\"すっぱいブドウと甘いシークァーサー\"],[2,\"002\",\"シー"
+"クヮーサージュースとゴーヤチャンプル\"]]]]"
+msgstr ""
+
+#: ../source/example/tutorial/search-1.log:22
+msgid ""
+"> select --table Site --filter \"_id <= 1\" --output_columns _id,_key "
+"[[0,1317212733.77852,0.000333188],[[[1],[[\"_id\",\"UInt32\"],[\"_key\","
+"\"ShortText\"]],[1,\"http://example.org/\"]]]]"
+msgstr ""
+
+#: ../source/example/tutorial/search-2.log:41
+msgid ""
+"> select --table Site --filter \"_id >= 4 && _id <= 6\" --output_columns _id,"
+"_key [[0,1317212733.97986,0.000297681],[[[3],[[\"_id\",\"UInt32\"],[\"_key\","
+"\"ShortText\"]],[4,\"http://example.net/afr\"],[5,\"http://example.org/aba"
+"\"],[6,\"http://example.com/rab\"]]]] > select --table Site --filter \"_id "
+"<= 2 || _id >= 7\" --output_columns _id,_key "
+"[[0,1317212734.18118,0.000250524],[[[5],[[\"_id\",\"UInt32\"],[\"_key\","
+"\"ShortText\"]],[1,\"http://example.org/\"],[2,\"http://example.net/\"],[7,"
+"\"http://example.net/atv\"],[8,\"http://example.org/gat\"],[9,\"http://"
+"example.com/vdw\"]]]]"
+msgstr ""
+
+#: ../source/example/tutorial/search-3.log:66
+msgid ""
+"> select --table Site --filter \"1\" --scorer \"_score = rand()\" --"
+"output_columns _id,_key,_score --sortby _score "
+"[[0,1317212734.38283,0.000354558],[[[9],[[\"_id\",\"UInt32\"],[\"_key\","
+"\"ShortText\"],[\"_score\",\"Int32\"]],[6,\"http://example.com/rab"
+"\",424238335],[9,\"http://example.com/vdw\",596516649],[7,\"http://example."
+"net/atv\",719885386],[2,\"http://example.net/\",846930886],[8,\"http://"
+"example.org/gat\",1649760492],[3,\"http://example.com/\",1681692777],[4,"
+"\"http://example.net/afr\",1714636915],[1,\"http://example.org/"
+"\",1804289383],[5,\"http://example.org/aba\",1957747793]]]] > select --table "
+"Site --filter \"1\" --scorer \"_score = rand()\" --output_columns _id,_key,"
+"_score --sortby _score [[0,1317212734.58497,0.000350529],[[[9],[[\"_id\","
+"\"UInt32\"],[\"_key\",\"ShortText\"],[\"_score\",\"Int32\"]],[4,\"http://"
+"example.net/afr\",783368690],[2,\"http://example.net/\",1025202362],[5,"
+"\"http://example.org/aba\",1102520059],[1,\"http://example.org/"
+"\",1189641421],[3,\"http://example.com/\",1350490027],[8,\"http://example."
+"org/gat\",1365180540],[9,\"http://example.com/vdw\",1540383426],[7,\"http://"
+"example.net/atv\",1967513926],[6,\"http://example.com/rab\",2044897763]]]]"
+msgstr ""
+
+#: ../source/example/tutorial/search-4.log:112
+msgid ""
+"> column_create --table Site --name location --type WGS84GeoPoint "
+"[[0,1317212734.78744,0.047997601],true] > load --table Site > [ >  {\"_key\":"
+"\"http://example.org/\",\"location\":\"128452975x503157902\"} >  {\"_key\":"
+"\"http://example.net/\",\"location\":\"128487316x502920929\"}, > ] "
+"[[0,1317212735.0361,0.801149613],2] > select --table Site --query \"_id:1 OR "
+"_id:2\" --output_columns _key,location [[0,1317212736.03775,0.000261897],"
+"[[[2],[[\"_key\",\"ShortText\"],[\"location\",\"WGS84GeoPoint\"]],[\"http://"
+"example.org/\",\"128452975x503157902\"],[\"http://example.net/\","
+"\"128487316x502920929\"]]]]"
+msgstr ""
+
+#: ../source/example/tutorial/search-5.log:141
+msgid ""
+"> select --table Site --query \"_id:1 OR _id:2\" --output_columns _key,"
+"location,_score --scorer '_score = geo_distance(location, "
+"\"128515259x503187188\")' [[0,1317212736.23918,0.000393211],[[[2],[[\"_key\","
+"\"ShortText\"],[\"location\",\"WGS84GeoPoint\"],[\"_score\",\"Int32\"]],"
+"[\"http://example.org/\",\"128452975x503157902\",2054],[\"http://example.net/"
+"\",\"128487316x502920929\",6720]]]]"
+msgstr ""
+
+#: ../source/example/tutorial/search-6.log:156
+msgid ""
+"> select --table Site --query \"_id:1 OR _id:2\" --output_columns _key,"
+"location,_score --scorer '_score = geo_distance(location, "
+"\"128515259x503187188\")' --sortby -_score [[0,1317212736.44102,0.000345608],"
+"[[[2],[[\"_key\",\"ShortText\"],[\"location\",\"WGS84GeoPoint\"],[\"_score\","
+"\"Int32\"]],[\"http://example.net/\",\"128487316x502920929\",6720],[\"http://"
+"example.org/\",\"128452975x503157902\",2054]]]]"
+msgstr ""
+
+#: ../source/example/tutorial/search-7.log:173
+msgid ""
+"> select --table Site --output_columns _key,location --filter 'geo_in_circle"
+"(location, \"128515259x503187188\", 5000)' [[0,1317212736.64335,0.000245378],"
+"[[[1],[[\"_key\",\"ShortText\"],[\"location\",\"WGS84GeoPoint\"]],[\"http://"
+"example.org/\",\"128452975x503157902\"]]]]"
+msgstr ""
+
+#~ msgid "Example::"
+#~ msgstr "実行例::"
