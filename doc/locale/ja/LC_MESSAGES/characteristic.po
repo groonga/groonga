@@ -35,8 +35,8 @@ msgid ""
 "developing groonga to improve these characteristics."
 msgstr ""
 "groongaは、広く使われている全文検索ライブラリSennaの後継として開発されていま"
-"す。Sennaの特徴である、高速・高精度・高柔軟性という特徴を引き継ぎつつ、さらに"
-"それらの特徴を追求するために開発が始められました。"
+"す。Sennaの高速・高精度・高柔軟性という特長を引き継ぎつつ、さらに"
+"それらの特長を追求するために開発が始められました。"
 
 #: ../../../source/characteristic.txt:14
 msgid "Multi-protocol support"
@@ -52,12 +52,12 @@ msgid ""
 "these protocols via TCP/IP connections. This feature makes it easy to use "
 "groonga on a rental server that doesn't allow users to install a library."
 msgstr ""
-"Sennaは、全文検索を行うアプリケーションで用いるための部品でした。groongaで"
-"は、全文検索サービスを行うためのサーバが存在します。groongaサーバは、HTTPや"
+"Sennaは全文検索を行うアプリケーションに組み込んで用いるようになっていました。"
+"groongaでは、Sennaと同じようにライブラリとして組み込んで用いるだけでなく、"
+"サーバとしても利用できるようになっています。groongaサーバは、HTTPや"
 "memcached binaryプロトコル、独自プロトコルであるgqtpを用いてクライアントと"
-"TCP/IP通信を行うことができます。よって、ライブラリをインストールできないレン"
-"タルサーバなどの環境でも利用しやすくなりました。Sennaと同様に、groongaもC言語"
-"のライブラリとして利用できます。"
+"TCP/IP通信を行います。そのため、ライブラリをインストールできないレン"
+"タルサーバなどの環境でも利用しやすくなっています。"
 
 # 7882a1e72ac74631ac7f8c1cf82f91d9
 #: ../../../source/characteristic.txt:19
@@ -74,9 +74,7 @@ msgid ""
 msgstr ""
 "groongaの前身であるSennaは、ストレージを持たない全文検索ライブラリでした。そ"
 "のため、MySQLのMyISAMストレージエンジンと組み合わせて用いるTritonnや、"
-"PostgreSQLと組み合わせて用いるLudiaを通じて利用するのが一般的でした。しかし、"
-"これらの形態では、全文検索インデックス更新における参照lockが不要というSennaの"
-"性能特性を生かすことができませんでした。"
+"PostgreSQLと組み合わせて用いるLudiaを通じて利用するのが一般的でした。"
 
 #: ../../../source/characteristic.txt:23
 msgid ""
@@ -86,17 +84,20 @@ msgid ""
 "clients from reading records even though Senna is read lock-free. This "
 "becomes a bottleneck of the whole system."
 msgstr ""
-"たとえば、MyISAMではレコードが更新される際には、多くの場合テーブルロックが必"
-"要となります。このような場合には、いかに全文検索インデックスの更新が速くと"
-"も、MyISAMでのデータ更新がボトルネックとなってしまいます。"
+"しかしながら，TritonnやLudiaでは、全文検索インデックスの更新において参照lockが"
+"不要というSennaの性能特性を生かすことができませんでした。"
+"たとえば、MyISAMにおけるレコードの更新においては、多くの場合にテーブルロックが必要"
+"となり、Sennaが参照lockなしで更新できるにもかかわらず、クライアントからのアクセスを"
+"ブロックしてしまいます。そのため、いかに全文検索インデックスの更新が速くと"
+"も、MyISAMによるテーブルロックがボトルネックとなっていました。"
 
 #: ../../../source/characteristic.txt:25
 msgid ""
 "To cope with this problem, groonga has its own storage engine that doesn't "
 "require read locks. Groonga is thus suited for real-time applications."
 msgstr ""
-"より即時性の高い検索サービスを実現するために、groongaでは参照lockが不要なスト"
-"レージを実装しました。"
+"以上の問題を解決し、より即時性の高い検索サービスを実現するために、"
+"groongaでは参照lockが不要なストレージを実装しました。"
 
 #: ../../../source/characteristic.txt:28
 msgid "Sharable storage"
@@ -105,7 +106,7 @@ msgstr "複数プロセス・複数スレッドで共有できるストレージ
 # 2763d004a02f450d8330b87931c41de5
 #: ../../../source/characteristic.txt:30
 msgid ""
-"A storage file of groonga can be shared with multiple processes and threads. "
+"Storage files of groonga can be shared with multiple processes and threads. "
 "It doesn't require explicit locks."
 msgstr ""
 "groongaのストレージファイルは、複数プロセスや複数スレッドで共有することができ"
@@ -149,23 +150,23 @@ msgid ""
 "Groonga can efficiently process such a query because its storage engine is "
 "based on a column-oriented model."
 msgstr ""
-"全文検索結果のうち、特定のカラム値ごとにグループ分けをし、それぞれのグループ"
-"のレコード数を数えるような処理をドリルダウンといいます。groongaはカラム指向"
-"データベースを生かして、このような処理を高速に実行します。"
+"検索結果を特定のカラム値ごとのグループに分け、それぞれのグループに含まれる"
+"レコードの数を求める処理をドリルダウンといいます。groongaはカラム指向"
+"データベースの特性を生かして、このような処理を高速に実行します。"
 
 # f5be36a85211460f970c466489baa3c6
 #: ../../../source/characteristic.txt:42
-msgid "Improved inverted index implementation"
-msgstr "Sennaの転置インデックス実装をさらに改良"
+msgid "Improved inverted index"
+msgstr "Sennaの転置インデックスをさらに改良"
 
 # 4f0dac77e16045d2a837cc4e31be7d1d
 #: ../../../source/characteristic.txt:44
 msgid ""
-"The inverted index implementation of groonga is an improved version of "
+"The inverted index of groonga is an improved version of "
 "Senna's. It is faster and more versatile."
 msgstr ""
-"groongaの転置インデックスは、Sennaにおける転置インデックスの実装を改良し、よ"
-"り高速かつ汎用的なものとなりました。"
+"groongaの転置インデックスは、Sennaの転置インデックスを改良したものであり、"
+"より高速かつ汎用的なものとなっています。"
 
 #: ../../../source/characteristic.txt:46
 msgid ""
@@ -173,9 +174,8 @@ msgid ""
 "complex queries, such as tag search and drilldown, which are difficult to "
 "process with traditional SQL and RDBs."
 msgstr ""
-"転置インデックスを生かすことにより、SQLでも実現が難しい複雑なクエリを高速に実"
-"行することができます。いわゆるタグ検索やドリルダウンにおいて、転置インデック"
-"スを利用した高速な処理を行うことができます。"
+"転置インデックスを生かすことにより、SQLでも実現が難しい複雑なクエリ、"
+"いわゆるタグ検索やドリルダウンを高速に実行できます。"
 
 # 7992fcd67dc64bffbb20cfa5d462ab56
 #: ../../../source/characteristic.txt:49
@@ -190,8 +190,8 @@ msgid ""
 "geolocation refinement region types are circle and rectangle. Groonga also "
 "supports distance calculation between two coordinates."
 msgstr ""
-"日本測地系のみならず、世界測地系にも対応した位置情報での絞込が可能です。位置"
-"情報の範囲は、円や矩形を指定することができます。また、任意の２点間の距離も計"
+"groongaでは、日本測地系のみならず、世界測地系にも対応した位置情報での絞込が可能です。"
+"位置情報の範囲指定では、円や矩形を指定することができます。また、任意の２点間の距離も計"
 "算可能です。"
 
 # 3d2ce38abccd4fee9712a64ae84040c3

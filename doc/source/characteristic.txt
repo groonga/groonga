@@ -27,7 +27,7 @@ To cope with this problem, groonga has its own storage engine that doesn't requi
 Sharable storage
 ----------------
 
-A storage file of groonga can be shared with multiple processes and threads. It doesn't require explicit locks.
+Storage files of groonga can be shared with multiple processes and threads. It doesn't require explicit locks.
 
 `Mroonga <http://mroonga.github.com/>`_ is the successor to the Tritonn. It is implemented as a MySQL pluggable storage engine. Groonga storage files that are opened by mroonga can also be shared with groonga servers. For example, you can update via MySQL and search via HTTP.
 
@@ -38,10 +38,10 @@ The storage engine of groonga is based on a column-oriented model, also known as
 
 A drilldown is one of the heavy queries. It first groups search results by their associated value and then counts the number of records in each group. Groonga can efficiently process such a query because its storage engine is based on a column-oriented model.
 
-Improved inverted index implementation
---------------------------------------
+Improved inverted index
+-----------------------
 
-The inverted index implementation of groonga is an improved version of Senna's. It is faster and more versatile.
+The inverted index of groonga is an improved version of Senna's. It is faster and more versatile.
 
 In addition, groonga utilizes the inverted index to efficiently process complex queries, such as tag search and drilldown, which are difficult to process with traditional SQL and RDBs.
 
