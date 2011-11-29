@@ -2,18 +2,18 @@
 
 .. highlightlang:: none
 
-制限事項
-========
+Limitations
+===========
 
-groongaにはいくつか制限事項があります。
+Groonga has some limitations.
 
-インデックス上限値
-------------------
+Limitations of indexing
+-----------------------
 
-1つのインデックスにおける論理上の上限値は以下のとおりです。
+A full-text index has the following limitations.
 
-* 最大レコード数: 268,435,455 (約2億6千万)
-* 最大語彙数: 268,435,455 (約2億6千万)
-* 最大インデックスサイズ: 256GByte
+* The maximum number of records: 268,435,455 (more than 26 million)
+* The maximum number of distinct terms: 268,435,455 (more than 26 million)
+* The maximum index size: 256GBytes
 
-(実際には他の諸条件の制約により上記の値まで到達しない場合もあります)
+Keep in mind that these limitations may vary depending on conditions.

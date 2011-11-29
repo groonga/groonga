@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-12 14:57\n"
+"POT-Creation-Date: 2011-11-29 15:18\n"
 "PO-Revision-Date: 2011-05-09 00:36+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -18,33 +18,34 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #: ../../../source/limitations.txt:6
-msgid "制限事項"
-msgstr ""
+msgid "Limitations"
+msgstr "制限事項"
 
 #: ../../../source/limitations.txt:8
-msgid "groongaにはいくつか制限事項があります。"
-msgstr ""
+msgid "Groonga has some limitations."
+msgstr "groongaにはいくつか制限事項があります。"
 
 #: ../../../source/limitations.txt:11
-msgid "インデックス上限値"
-msgstr ""
+msgid "Limitations of indexing"
+msgstr "インデックス上限値"
 
 #: ../../../source/limitations.txt:13
-msgid "1つのインデックスにおける論理上の上限値は以下のとおりです。"
-msgstr ""
+msgid "A full-text index has the following limitations."
+msgstr "1つのインデックスにおける論理上の上限値は以下のとおりです。"
 
 #: ../../../source/limitations.txt:15
-msgid "最大レコード数: 268,435,455 (約2億6千万)"
-msgstr ""
+msgid "The maximum number of records: 268,435,455 (more than 26 million)"
+msgstr "最大レコード数: 268,435,455 (約2億6千万)"
 
 #: ../../../source/limitations.txt:16
-msgid "最大語彙数: 268,435,455 (約2億6千万)"
-msgstr ""
+msgid ""
+"The maximum number of distinct terms: 268,435,455 (more than 26 million)"
+msgstr "最大語彙数: 268,435,455 (約2億6千万)"
 
 #: ../../../source/limitations.txt:17
-msgid "最大インデックスサイズ: 256GByte"
-msgstr ""
+msgid "The maximum index size: 256GBytes"
+msgstr "最大インデックスサイズ: 256GByte"
 
 #: ../../../source/limitations.txt:19
-msgid "(実際には他の諸条件の制約により上記の値まで到達しない場合もあります)"
-msgstr ""
+msgid "Keep in mind that these limitations may vary depending on conditions."
+msgstr "実際には他の諸条件の制約により上記の値まで到達しない場合もあります。"
