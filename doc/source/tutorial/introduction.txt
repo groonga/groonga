@@ -42,53 +42,54 @@ DB_PATH_NAME specifies the path of a target database.
 
 If COMMAND is specified, groonga executes COMMAND and returns the result. Otherwise, groonga starts in interactive mode that reads commands from the standard input and execute them one by one. This tutorial focuses on the interactive mode.
 
-Let's try to create a table with some columns. The following example shows a series of commands and its results.
+Let's try to see the status of a groonga process by using a command :doc:`/commands/status`.
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-1.log
 .. .. % groonga -n /tmp/groonga-databases/introduction.db
 .. status
 
-As shown in the above example, each command basically returns a JSON-formatted string. The string consists of a JSON array of which the first element contains an error code, execution time, etc. The second element is the result of each operation.
+As shown in the above example, a command basically returns a JSON array. The first element contains an error code, execution time, etc. The second element is the result of an operation.
 
-Command formats
---------
+Command format
+--------------
 
-You can operate database with various commands via execution file of groonga or groonga server.
-There are forms of commands in the following::
+Commands for operating a database accept arguments as follows::
 
- Form1: COMMAND ARGUMENT1 ARGUMENT2 ..
+ Form_1: COMMAND VALUE_1 VALUE_2 ..
 
- Form2: COMMAND --ARAGUMENT1 VALUE1 --ARGUMENT2 VALUE2 ..
+ Form_2: COMMAND --NAME_1 VALUE_1 --NAME_2 VALUE_2 ..
 
-You can mix these forms in commands running.
+In the first form, arguments must be passed in order. This kind of arguments are called positional arguments because the position of each argument determines its meaning.
 
-In Form2, if you want to specify a value including some spaces or symbols("'()/), you should enclose its value with single-quote or double-quote.
+In the second form, you can specify a parameter name with its value. So, the order of arguments is not defined. This kind of arguments are known as named parameters or keyword arguments.
 
-For detail, you can see paragraph of "command" in :doc:`/executables/groonga`.
+If you want to specify a value which contains white-spaces or special characters, such as quotes and parentheses, please enclose the value with single-quotes or double-quotes.
+
+For details, see also the paragraph of "command" in :doc:`/executables/groonga`.
 
 Basic commands
 --------------
 
  :doc:`/commands/status`
-  Show status of groonga process.
+  Show status of a groonga process.
  :doc:`/commands/table_list`
-  Show lists of tables defined in a database.
+  Show a list of tables defined in a database.
  :doc:`/commands/column_list`
-  Show lists of columns defined in a table.
+  Show a list of columns defined in a table.
  :doc:`/commands/table_create`
-  Add table to a database.
+  Add a table to a database.
  :doc:`/commands/column_create`
-  Add column to a table.
+  Add a column to a table.
  :doc:`/commands/select`
-  Search and show records included a table.
+  Search records from a table and show the result.
  :doc:`/commands/load`
-  Insert record to a table.
+  Insert records to a table.
 
 Create table
 ------------
 
-:doc:`/commands/table_create` creates table.
+Let's create a table with a command :doc:`/commands/table_create`.
 
 In using groonga, to creating tables generally needed master key.
 Master key should be specified the types and the way to store.
