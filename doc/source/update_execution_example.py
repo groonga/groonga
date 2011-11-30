@@ -9,6 +9,7 @@ import os.path
 import shutil
 
 DB_DIRECTORY = "/tmp/groonga-databases"
+DEFAULT_DB_NAME = "tutorial.db"
 
 shutil.rmtree(DB_DIRECTORY, ignore_errors=True)
 os.makedirs(DB_DIRECTORY)
@@ -35,6 +36,8 @@ def reconnect(name):
 fout = None
 
 def execmd(cmd, fout):
+  if not groonga_process:
+    reconnect(DEFAULT_DB_NAME)
   a = '> ' + cmd + "\n"
   stdout.write(a)
   stdout.flush()
