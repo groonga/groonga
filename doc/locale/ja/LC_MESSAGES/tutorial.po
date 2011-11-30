@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-11-30 12:51\n"
+"POT-Creation-Date: 2011-11-30 14:38\n"
 "PO-Revision-Date: 2011-11-27 22:36+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -586,8 +586,8 @@ msgstr ""
 # d453562a86794510ad66cf951cf62a3e
 #: ../../../source/tutorial/introduction.txt:98
 msgid ""
-"Let's create a 'Site' table which has a primary key of ShortText. In "
-"this example, the index type is HASH."
+"Let's create a 'Site' table which has a primary key of ShortText. In this "
+"example, the index type is HASH."
 msgstr ""
 "それでは、'Site'という名前のテーブルを作成してみましょう。主キーについては、"
 "型がShortTextで格納方法はHASHとしています。"
@@ -604,13 +604,13 @@ msgstr ""
 ":doc:`/commands/select` コマンドを用いて、テーブルの中身を表示することができ"
 "ます。"
 
-# bbda0bfc40c04aafb60c94bef91eaa9a
 #: ../../../source/tutorial/introduction.txt:113
 msgid ""
-"With name of a table, 'select' command shows 10 contents of its table. [0] "
-"shows the number of searched records. [\"_id\",\"Uint32\"] is column named "
-"\"_id\" and type of this column's value is UInt32. [\"_key\",\"ShortText\"] "
-"is \"_key\" column, type of this column's value is ShortText."
+"When only a table is specified, the 'select' command returns the first (at "
+"most) 10 records of that table. \"[0]\" in the result shows the number of "
+"records in the 'Site' table. The next array is a list of columns. [\"_id\","
+"\"Uint32\"] is a column of UInt32, named \"_id\". [\"_key\",\"ShortText\"] "
+"is a column of ShortText, named \"_key\"."
 msgstr ""
 "selectにテーブル名のみを指定すると、指定したテーブルの中身を10件まで表示しま"
 "す。実行結果の[0]はテーブルに含まれるレコードの数を示しています。今回は何も登"
@@ -622,9 +622,10 @@ msgstr ""
 # 1a57023af4614d00a11b2a36f650aa4b
 #: ../../../source/tutorial/introduction.txt:115
 msgid ""
-"'table_create' command creates table including two columns, '_id' and '_key' "
-"first. '_id' has ID-number given automatically by groonga. '_key' column is "
-"stored master key. You cannot modify this column's name."
+"The above two columns, '_id' and '_key', are the necessary columns. The "
+"'_id' column stores IDs those are automatically allocated by groonga. The "
+"'_key' column is associated with the primary key. You are not allowed to "
+"rename these columns."
 msgstr ""
 "table_createコマンドで作成したテーブルには、最初から'_id', '_key'という２つの"
 "カラムがあります。'_id'はgroongaが自動的に付与するID番号が格納されるカラムで"
@@ -633,28 +634,27 @@ msgstr ""
 
 # bb371206793e407ab12db2864ee8d152
 #: ../../../source/tutorial/introduction.txt:118
-msgid "Create columns"
+msgid "Create column"
 msgstr "カラムの作成"
 
 # 4e5488d852844f238c41dfc94e49fa73
 #: ../../../source/tutorial/introduction.txt:120
-msgid "The :doc:`/commands/column_create` command creates a column."
+msgid "The :doc:`/commands/column_create` command adds a column to a table."
 msgstr ""
 ":doc:`/commands/column_create` コマンドを用いて、カラムを作成することができま"
 "す。"
 
-# d553eaedc4a7491fa66012348f066b3c
 #: ../../../source/tutorial/introduction.txt:122
 msgid ""
-"We add a column named 'comment' that lets us store value whose type is "
-"ShortText."
+"Let's add a column of ShortText to store comments. You may give a "
+"descriptive name 'comment' to the column."
 msgstr ""
-"ここでは、ShortText型の値を持つ'comment'という名前のカラムを'Site'テーブルに"
-"追加してみましょう。"
+"ここでは、ShortText型の値を持つ'comment'という名前のカラムを'Site'テーブル"
+"に追加してみましょう。"
 
 # ebaa9fac28bb433096e04d02e20cc877
 #: ../../../source/tutorial/introduction.txt:129
-msgid "COLUMN_SCALAR means this is normal column."
+msgid "The COLUMN_SCALAR flag specifies to add a regular column."
 msgstr ""
 "COLUMN_SCALAR は'comment'を通常のカラムとして作成することを指示しています。"
 
