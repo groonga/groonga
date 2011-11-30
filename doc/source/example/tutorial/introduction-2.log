@@ -1,10 +1,5 @@
 Execution example::
 
-  > column_create --table Site --name link --type Site
-  [[0,1317212792.88872,0.060705006],true]
-  > load --table Site
-  > [{"_key":"http://example.org/","link":"http://example.net/"}]
-  [[0,1317212793.14984,0.200481934],1]
-  > select --table Site --output_columns _key,title,link._key,link.title --query title:@this
-  [[0,1317212793.55084,0.000485897],[[[1],[["_key","ShortText"],["title","ShortText"],["link._key","ShortText"],["link.title","ShortText"]],["http://example.org/","This is test record 1!","http://example.net/","test record 2."]]]]
+  > table_create --name Site --flags TABLE_HASH_KEY --key_type ShortText
+  [[0,1322616280.60791,0.01234375],true]
   
