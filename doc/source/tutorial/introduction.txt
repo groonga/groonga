@@ -89,16 +89,13 @@ Basic commands
 Create table
 ------------
 
-Let's create a table with a command :doc:`/commands/table_create`.
+The :doc:`/commands/table_create` command creates a table.
 
-In using groonga, to creating tables generally needed master key.
-Master key should be specified the types and the way to store.
+In most cases, a table of groonga has a primary key which must be specified with its data type and index type. 
 
-We're going to explain the types in tutorial after.
-Please imagine it as expressing sort of data.
-How to store master key defines speed of search with master key and advisability of begins-with-match search. This is also explained in this tutorial later.
+There are various data types such as integers, floating-point numbers, etc. The index type determines the search performance and the availability of prefix searches. We will explain the details later.
 
-For example, we create 'Site' table. This table has master key of ShortText type, and the way to store its key is HASH.
+Let's create a 'Site' table which has a primary key of ShortText. In this example, the index type is HASH.
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-2.log
@@ -107,7 +104,7 @@ For example, we create 'Site' table. This table has master key of ShortText type
 Search
 ------
 
-:doc:`/commands/select` shows contents of table.
+The :doc:`/commands/select` command shows contents of table.
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-3.log
@@ -120,7 +117,7 @@ With name of a table, 'select' command shows 10 contents of its table. [0] shows
 Create columns
 --------------
 
-:doc:`/commands/column_create` command create columns.
+The :doc:`/commands/column_create` command creates a column.
 
 We add a column named 'comment' that lets us store value whose type is ShortText.
 
