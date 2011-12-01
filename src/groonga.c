@@ -2356,6 +2356,9 @@ main(int argc, char **argv)
     }
   } else {
     gethostname(hostname, HOST_NAME_MAX);
+    if (!gethostbyname(hostname)) {
+      strcpy(hostname, "localhost");
+    }
   }
   if (cache_limitstr) {
     uint32_t max, *max_nentries;
