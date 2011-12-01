@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-11-30 14:38\n"
+"POT-Creation-Date: 2011-12-01 16:03\n"
 "PO-Revision-Date: 2011-11-27 22:36+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -93,7 +93,7 @@ msgid "さまざまな種類をもったデータの保存"
 msgstr ""
 
 #: ../../../source/tutorial/data.txt:10
-msgid "groongaでは、さまざまなデータを格納させることが出来ます。"
+msgid "groongaでは、さまざまなデータを格納させることができます。"
 msgstr ""
 
 #: ../../../source/tutorial/data.txt:13
@@ -122,7 +122,7 @@ msgid "テーブル型"
 msgstr ""
 
 #: ../../../source/tutorial/data.txt:37
-msgid "table_createで作成したテーブルを、カラムの型として使うことが出来ます。"
+msgid "table_createで作成したテーブルを、カラムの型として使うことができます。"
 msgstr ""
 
 #: ../../../source/tutorial/data.txt:39
@@ -342,7 +342,7 @@ msgstr ""
 
 #: ../../../source/tutorial/index.txt:100
 msgid ""
-"位置情報のカラムに対して、インデックスを付与することが出来ます。大量の位置情"
+"位置情報のカラムに対して、インデックスを付与することができます。大量の位置情"
 "報レコードを検索する場合に、検索速度が速くなります。"
 msgstr ""
 
@@ -371,7 +371,7 @@ msgstr ""
 
 # 2053368aefe74a5d9363bf95cb157d4a
 #: ../../../source/tutorial/introduction.txt:16
-msgid "Create database"
+msgid "Create a database"
 msgstr "データベースの作成"
 
 #: ../../../source/tutorial/introduction.txt:18
@@ -419,7 +419,7 @@ msgstr ""
 
 # d658120aeaf84578b997493e5e6c9737
 #: ../../../source/tutorial/introduction.txt:35
-msgid "Operate database"
+msgid "Operate a database"
 msgstr "データベースの操作"
 
 #: ../../../source/tutorial/introduction.txt:39
@@ -557,12 +557,12 @@ msgstr "テーブルにレコードを挿入します。"
 
 # 92c83c9cbfde4c2b8d67b2897204b7a2
 #: ../../../source/tutorial/introduction.txt:90
-msgid "Create table"
+msgid "Create a table"
 msgstr "テーブルの作成"
 
 # 1e74fb8068674cafb7c2776d998e7ce8
 #: ../../../source/tutorial/introduction.txt:92
-msgid "The :doc:`/commands/table_create` command creates a table."
+msgid "A :doc:`/commands/table_create` command creates a table."
 msgstr ":doc:`/commands/table_create` コマンドを使用してテーブルを作成します。"
 
 #: ../../../source/tutorial/introduction.txt:94
@@ -592,14 +592,14 @@ msgstr ""
 "それでは、'Site'という名前のテーブルを作成してみましょう。主キーについては、"
 "型がShortTextで格納方法はHASHとしています。"
 
-# 887ead8f9f404b36b6f6875f935d2d84
+# 92c83c9cbfde4c2b8d67b2897204b7a2
 #: ../../../source/tutorial/introduction.txt:105
-msgid "Search"
-msgstr "検索"
+msgid "View a table"
+msgstr "テーブルの表示"
 
 # 8cb3ff01469d48e28b6875b2554741e8
 #: ../../../source/tutorial/introduction.txt:107
-msgid "The :doc:`/commands/select` command shows contents of table."
+msgid "A :doc:`/commands/select` command shows contents of table."
 msgstr ""
 ":doc:`/commands/select` コマンドを用いて、テーブルの中身を表示することができ"
 "ます。"
@@ -627,19 +627,19 @@ msgid ""
 "'_key' column is associated with the primary key. You are not allowed to "
 "rename these columns."
 msgstr ""
-"table_createコマンドで作成したテーブルには、最初から'_id', '_key'という２つの"
+"table_createコマンドで作成したテーブルには、最初から'_id', '_key'という2つの"
 "カラムがあります。'_id'はgroongaが自動的に付与するID番号が格納されるカラムで"
 "す。'_key'は主キーが格納されるカラムです。これらのカラム名を変更することはで"
 "きません。"
 
 # bb371206793e407ab12db2864ee8d152
 #: ../../../source/tutorial/introduction.txt:118
-msgid "Create column"
+msgid "Create a column"
 msgstr "カラムの作成"
 
 # 4e5488d852844f238c41dfc94e49fa73
 #: ../../../source/tutorial/introduction.txt:120
-msgid "The :doc:`/commands/column_create` command adds a column to a table."
+msgid "A :doc:`/commands/column_create` command adds a column to a table."
 msgstr ""
 ":doc:`/commands/column_create` コマンドを用いて、カラムを作成することができま"
 "す。"
@@ -649,8 +649,8 @@ msgid ""
 "Let's add a column of ShortText to store comments. You may give a "
 "descriptive name 'comment' to the column."
 msgstr ""
-"ここでは、ShortText型の値を持つ'comment'という名前のカラムを'Site'テーブル"
-"に追加してみましょう。"
+"ここでは、ShortText型の値を持つ'comment'という名前のカラムを'Site'テーブルに"
+"追加してみましょう。"
 
 # ebaa9fac28bb433096e04d02e20cc877
 #: ../../../source/tutorial/introduction.txt:129
@@ -658,107 +658,123 @@ msgid "The COLUMN_SCALAR flag specifies to add a regular column."
 msgstr ""
 "COLUMN_SCALAR は'comment'を通常のカラムとして作成することを指示しています。"
 
-# 32519e65f2df4edaa65f0e60d54cb8d7
+# 86701e6e96324ccba83052699027da21
 #: ../../../source/tutorial/introduction.txt:132
-msgid "Create terminology table with fulltext-searching"
+msgid "Create a lexicon table for full text searches"
 msgstr "全文検索用の語彙表の作成"
 
-# 6b2ab4b50f024f82b9b7df6091c6c904
+# 86701e6e96324ccba83052699027da21
 #: ../../../source/tutorial/introduction.txt:134
-msgid ""
-"This tutorial explains fulltext searching with entried data in groonga table."
-msgstr ""
-"このチュートリアルでは、groongaに登録したデータを用いた全文検索を行います。"
+msgid "Let's go on to how to make a full text search."
+msgstr "そろそろ全文検索の使い方について見ていきましょう。"
 
-# 9aa45fd5cc1f4271b2dcc0429819111b
 #: ../../../source/tutorial/introduction.txt:136
 msgid ""
-"We need terminology table in fulltext-searching. Terminology table is a "
-"table whose master key's values are words in text. We create 'Terms' table, "
-"it has type of master key value is ShortText."
+"Groonga uses an inverted index to provide fast full text searches. So, the "
+"first step is to create a lexicon table which stores an inverted index, also "
+"known as postings lists. The primary key of this table is associated with a "
+"vocabulary made up of index terms and each record stores postings lists for "
+"one index term."
 msgstr ""
-"全文検索を行う場合は、まず語彙表を作成する必要があります。語彙表とは、文書の"
-"中にある単語が主キーとなるテーブルです。ここでは、ShortText型の主キー値を持"
-"つ、'Terms'という名前のテーブルを作成しました。"
+"groongaでは転置インデックスを使って高速な全文検索を実現しています。そのため、"
+"まずは転置インデックスとして用いるテーブルを作成する必要があります。テーブル"
+"の内容は、文書に含まれる単語やN-gramなどの索引語を主キーとして、各カラムに索"
+"引語の位置情報を格納するという構成になります。結果として、主キーのカラムは全"
+"文検索における語彙表の役割を果たします。"
 
-# e9f3b51b11414cc694d2bd2e0b5eb935
+#: ../../../source/tutorial/introduction.txt:138
+msgid ""
+"The following shows a command which creates a lexicon table named 'Terms'. "
+"The data type of its primary key is ShortText."
+msgstr ""
+"以下の例では、'Terms'という名前のテーブルを転置インデックスとして作成していま"
+"す。索引語を格納するため、主キーの型はShortTextです。"
+
 #: ../../../source/tutorial/introduction.txt:144
 msgid ""
-"Many parameters is specified in this execution example. You don't hove to "
-"understand all parameters. There are the simple explaination, but you can "
-"skipped."
+"The table_create command takes many parameters but you don't need to "
+"understand all of them. Please skip the next paragraph if you are not "
+"interested in how it works."
 msgstr ""
 "この実行例には、多くのパラメータが指定されています。本チュートリアルでは、こ"
 "れらをすべて理解する必要はありません。以下に簡単な説明を記しますが、読み飛ば"
 "してもらってかまいません。"
 
 # 7cded565e72b46869c9d7e759dfcddb6
-#: ../../../source/tutorial/introduction.txt:148
+#: ../../../source/tutorial/introduction.txt:146
 msgid ""
-"In this examples, 'TABLE_PAT_KEY|KEY_NORMALIZE' stores master key in "
-"patricia-trie and entries each teminology after nomalized. The "
-"'default_tokenizer' parametar specifies the way to tokenize target texts. In "
-"this examples, we specifies 'TokenBigram' as this parameter, and so we "
-"choose 'N-gram' generally called."
+"The 'TABLE_PAT_KEY' flag specifies to store index terms in a patricia trie. "
+"The 'KEY_NORMALIZE' flag specifies to normalize index terms. In this "
+"example, both flags are validated by using a '|'. The 'default_tokenizer' "
+"parameter specifies the method for tokenizing text. This example specifies "
+"'TokenBigram' that is generally called 'N-gram'."
 msgstr ""
-"実行例にある、TABLE_PAT_KEY|KEY_NORMALIZEという値は、主キー値をパトリシア木に"
-"格納し、各語彙を正規化して登録することを示しています。実行例にある、"
-"TokenBigramという値は、 語彙表として使用するテーブルは、対象の文書をトークナ"
-"イズする方式を、default_tokenizerパラメータで与えます。この例ではTokenBigram"
-"を指定しています。よって、一般的にN-gramと呼ばれるようなインデックス方式を選"
-"択しています。"
+"実行例にあるTABLE_PAT_KEY|KEY_NORMALIZEという値は、主キー値をパトリシア木に格"
+"納することと、各索引語を正規化して登録することを示しています。また、"
+"default_tokenizerというパラメータには、検索の対象となる文書をトークナイズする"
+"方式を与えるようになっています。この例では、一般的にN-gramと呼ばれるインデッ"
+"クス方式に対応するTokenBigramを指定しています。"
 
 # 86701e6e96324ccba83052699027da21
-#: ../../../source/tutorial/introduction.txt:152
-msgid "Create index-column with fulltext search"
+#: ../../../source/tutorial/introduction.txt:149
+msgid "Create an index column for full text search"
 msgstr "全文検索用のインデックスカラムの作成"
 
-# c6c2a7c5888a420988d6277552b48f08
-#: ../../../source/tutorial/introduction.txt:154
+#: ../../../source/tutorial/introduction.txt:151
 msgid ""
-"We will fulltext search 'title' column in 'Site' table. In this case, we "
-"create column whose type index in terminology table."
+"The second step is to create an index column which allows you to search "
+"records from its associated column. That is to say this step specifies which "
+"column needs an index."
 msgstr ""
-"Siteテーブルのtitleカラムを全文検索の対象としたいとしましょう。その場合には、"
-"語彙表にインデックス型のカラムを作成します。"
+"次に必要なのは、インデックス型のカラムを作成することです。このカラムは、関連"
+"付けられたカラムに対する全文検索に利用されます。つまり、全文検索を行いたいカ"
+"ラムに対してインデックスを作成することに相当します。"
+
+#: ../../../source/tutorial/introduction.txt:153
+msgid ""
+"Let's create an index column for the 'title' column in the 'Site' table."
+msgstr ""
+"それでは、Siteテーブルのtitleカラムを全文検索の対象とするべく、インデックス型"
+"のカラムを作成してみましょう。"
 
 # 83e0fea2854347a48a4e1330fbd06a7e
-#: ../../../source/tutorial/introduction.txt:160
+#: ../../../source/tutorial/introduction.txt:159
 msgid ""
-"This command creates index column 'blog_title' in 'Term' table. '--type' "
-"option specifies target indexed table, and '--source' option does target "
-"index column. In execution example, 'COLUMN_INDEX|WITH_POSITION' for '--"
-"flags' option specifies that this column is index column for storing "
-"information of terminology existing position. This option should be "
-"specified 'COLUMN_INDEX|WITH_POSITION' in generally fulltext searching. This "
-"tutorial does not deal with the reason why store information of terminology "
-"existing position."
+"This command creates an index column 'blog_title' in the 'Terms' table. The "
+"'--type' option specifies a target table and the '--source' option specifies "
+"a target column. Then, the 'COLUMN_INDEX' flag specifies to create an index "
+"column and the 'WITH_POSITION' flag specifies to create a full inverted "
+"index, which contains the positions of each index term. This combination "
+"'COLUMN_INDEX|WITH_POSITION' is recommended for the general purpose."
 msgstr ""
 "Siteテーブルのtitleカラムを検索対象とする、'blog_title'という名前のインデック"
 "ス型カラムをTermsテーブルに作成しました。インデックス対象となるテーブルをtype"
 "に、インデックス対象となるカラムをsourceに指定します。実行例のflagsの"
-"COLUMN_INDEX|WITH_POSITIONという値は、語彙の位置情報を格納するインデックス型"
-"のカラムであることを示しています。通常の全文検索インデックスでは、"
-"COLUMN_INDEX|WITH_POSITIONを指定してください。語彙の位置情報を格納する意味に"
-"ついては、本チュートリアルでは触れません。"
+"COLUMN_INDEX|WITH_POSITIONという値は、索引語の位置情報を格納するインデックス"
+"型のカラムであることを示しています。通常の全文検索インデックスでは、"
+"COLUMN_INDEX|WITH_POSITIONを指定してください。索引語の位置情報を格納する意味"
+"については、本チュートリアルでは触れません。"
 
 # 38feede6a058434f83b272cfa520cfc2
-#: ../../../source/tutorial/introduction.txt:164
+#: ../../../source/tutorial/introduction.txt:162
 msgid "Load data"
 msgstr "データのロード"
 
-# f1d6d0b25d4545e9a44f264cfb0f2b81
-#: ../../../source/tutorial/introduction.txt:166
+# 4e5488d852844f238c41dfc94e49fa73
+#: ../../../source/tutorial/introduction.txt:164
 msgid ""
-":doc:`/commands/load` is used to load data for groonga database. This "
-"command stores json-formatted data in a table."
+"A :doc:`/commands/load` command loads JSON-formatted records into a table."
 msgstr ""
-":doc:`/commands/load` コマンドを使用します。loadコマンドでは、jsonで受け取っ"
-"たデータをテーブルに格納します。"
+":doc:`/commands/load` コマンドを使用します。loadコマンドでは、json形式で受け"
+"取ったデータをテーブルに格納します。"
+
+#: ../../../source/tutorial/introduction.txt:166
+msgid "The following adds nine records to the 'Site' table."
+msgstr "以下の例では9つのレコードをSiteテーブルに格納します。"
 
 # 370b2f236b6f4af78389aafc61011d31
 #: ../../../source/tutorial/introduction.txt:183
-msgid "Let's make sure that its table has data with 'select' command."
+msgid "Let's make sure that these records are correctly stored."
 msgstr "selectコマンドで、データが入っていることを確認しましょう。"
 
 # d8bf03692e02439bb1c43be9b811e2b9
@@ -766,218 +782,196 @@ msgstr "selectコマンドで、データが入っていることを確認しま
 msgid "Search data"
 msgstr "データの検索"
 
-# 13f233bb03bb47ac8ec8943a744ca7bb
 #: ../../../source/tutorial/introduction.txt:192
 msgid ""
-"'_id' and '_key' columns are unique in groonga's table, so let's search data "
-"in table using these columns."
+"Before a full text search, let's try to search data by '_id' and '_key'. "
+"These columns work as unique keys."
 msgstr ""
-"groongaでは、'_id'カラムと'_key'カラムの値はテーブル中で一意です。よって、そ"
-"れを用いて検索してみましょう。"
+"データの準備もできたので全文検索を試してみたいところですが、その前に、'_id'カ"
+"ラムと'_key'カラムを用いた検索を行ってみましょう。これらのカラムは値を指定す"
+"ればレコードが一意に決まります。"
 
 # 1941bed5dec1414cae47cdd2bc92d2cc
 #: ../../../source/tutorial/introduction.txt:194
-msgid "You can search data using 'select' command with 'query' parameter."
+msgid ""
+"You can search records by using a 'select' command with a 'query' parameter."
 msgstr ""
 "selectコマンドにおいて、queryパラメータを用いるとデータの検索を行うことができ"
 "ます。"
 
 # 5e2fb9da8d4148a4b788b09ee4e2f7af
 #: ../../../source/tutorial/introduction.txt:200
-msgid ""
-"'_id:1' specified 'query' parameter means to search records whose '_id' "
-"column has '1'."
+msgid "'_id:1' specifies to search a record whose ID is 1."
 msgstr ""
 "queryパラメータに与えた「_id:1」というのは、'_id'という名前のカラムに'1'とい"
 "う値が入っているレコードを検索する、という意味です。"
 
-# a2906d3d980a48459c5d568ba84b0edd
 #: ../../../source/tutorial/introduction.txt:202
-msgid "Let's search records with '_key' column."
+msgid "Next, let's search a record by a primary key."
 msgstr "_keyでも検索してみましょう。"
 
 # b3ddc475fb9e49099bbf9a8abccae598
 #: ../../../source/tutorial/introduction.txt:208
 msgid ""
-"'_key:\\\"http://example.org/\\\"' specified 'query' parameter means to "
-"search records whose '_key' column has '\"http://example.org/\"'."
+"'_key:\\\"http://example.org/\\\"' specifies to search a record whose "
+"primary key is \"http://example.org/\"."
 msgstr ""
 "queryパラメータに与えた「_key:\\\"http://example.org/\\\"」というの"
 "は、'_key'という名前のカラムに'\"http://example.org/\"'という値が入っているレ"
 "コードを検索する、という意味です。"
 
 # 889b663bc7ff431f888baf85574207d5
-#: ../../../source/tutorial/introduction.txt:212
-msgid "Fulltext searching"
+#: ../../../source/tutorial/introduction.txt:211
+msgid "Full text search"
 msgstr "全文検索"
 
-# 31a6f02b4ef24fb6936866e5c852d736
-#: ../../../source/tutorial/introduction.txt:214
-msgid "Using 'query' parameter, you can fulltext search with index."
+#: ../../../source/tutorial/introduction.txt:213
+msgid ""
+"It's time to make a full text search. You can make a full text search query "
+"with the same 'query' parameter."
 msgstr ""
 "queryパラメータでは、インデックスを用いた全文検索を行うこともできます。"
 
-# b89ef719f0f44722bb83c29d6ab9bd93
-#: ../../../source/tutorial/introduction.txt:220
+#: ../../../source/tutorial/introduction.txt:219
 msgid ""
-"This command shows result of fulltext searching by string 'this' for 'title' "
-"column."
+"This command searches records whose 'title' column contains a string 'this'. "
+"In this case, only one record matches this query. Note that the lower case "
+"query 'this' matches a capitalized 'This' in the 1st record because "
+"'KEY_NORMALIZE' was specified in lexicon column creation."
 msgstr ""
-"titleカラムに対して、'this'という文字列で全文検索を行った結果を返します。"
+"queryパラメータに与えた「title:@this」は、'title'という名前のカラムに'this'と"
+"いう文字列が含まれているレコードを検索する、という意味を持ちます。この例では1"
+"つのレコードが検索条件に該当しています。転置インデックスを作成するときに"
+"KEY_NORMALIZEという値を指定したため、大文字と小文字の違いが吸収されていること"
+"に注意してください。"
 
-# 50cf1378172d415cbd640da7f6b4066a
-#: ../../../source/tutorial/introduction.txt:222
+#: ../../../source/tutorial/introduction.txt:221
 msgid ""
-"\"title:@this\" specified 'query' parameter means to search records whose "
-"'title' column including 'this' string."
+"The 'select' command has an optional parameter 'match_columns'. This "
+"parameter specifies default target columns and it is used when target "
+"columns are not specified in a query.[1]_"
 msgstr ""
-"queryパラメータに与えた「title:@this」というのが、'title'という名前のカラム"
-"に'this'という文字列が含まれているレコードを検索する、という意味です。"
-
-# ab95e69e121648e2b2dd0bc2e58305d5
-#: ../../../source/tutorial/introduction.txt:224
-msgid "'select' command has parameter 'match_columns'."
-msgstr "selectコマンドには、match_columnsというパラメータが存在します。"
-
-# bb557eb7151049cb925f2802d8704d17
-#: ../../../source/tutorial/introduction.txt:226
-msgid ""
-"If this parameter is specified, it means to search in columns specified "
-"'match_columns' when 'query' parameter doesn't specify column-name condition."
-"[1]_"
-msgstr ""
-"これを指定すると、query内にカラム名を指定しない条件があった場合、"
-"match_columnsで指定されたカラムに対しての検索であることを示します。[1]_"
+"selectコマンドには、match_columnsというパラメータが存在します。このパラメータ"
+"はデフォルトで検索対象にするカラムを指定するもので、カラム名を指定しない検索"
+"条件にのみ適用されます。[1]_"
 
 # fe9bfc13759d46b4a0b76f729a7d6c77
-#: ../../../source/tutorial/introduction.txt:228
+#: ../../../source/tutorial/introduction.txt:223
 msgid ""
-"If you specify 'match_columns' is 'title' and 'query' is 'this', you can "
-"take same result as above query."
+"A combination of '--match_columns title' and '--query this' brings you the "
+"same result that '--query title:@this' does."
 msgstr ""
 "match_columnsパラメータに'title'、queryパラメータに'this'という文字列を指定す"
 "ると、上記のクエリと同じ結果を得ることができます。"
 
 # 12e3b87c0ed64703a7ef66eff3bce8af
-#: ../../../source/tutorial/introduction.txt:235
-msgid "Specify output column"
+#: ../../../source/tutorial/introduction.txt:230
+msgid "Specify output columns"
 msgstr "出力カラムの指定"
 
 # cada70fbbe534c64a949a3c07a6b0039
-#: ../../../source/tutorial/introduction.txt:237
+#: ../../../source/tutorial/introduction.txt:232
 msgid ""
-"'output_columns' parameter in 'select' command specifies columns shown in "
-"result of search."
+"An 'output_columns' parameter in a 'select' command specifies columns to be "
+"shown in the search result. If you want to specify more than one columns, "
+"please separate column names by commas (,)."
 msgstr ""
-"selectコマンドにおいて、output_columnsパラメータを用いることで、検索結果で表"
-"示するカラムを指定することが出来ます。"
+"selectコマンドにおいて、output_columnsパラメータを用いることで、検索結果に含"
+"めるカラムを指定することができます。複数のカラムを指定する場合は、カンマ(,)区"
+"切りで指定します。"
 
-# c34254b5afdd4c1887acb9c5901a4d31
-#: ../../../source/tutorial/introduction.txt:239
+#: ../../../source/tutorial/introduction.txt:238
 msgid ""
-"If you want to specify some columns, you should separate column names by "
-"comma(,)."
-msgstr "複数のカラムを指定する場合は、カンマ(,)区切りで指定します。"
-
-# 92329c627f0148ad976bf3220dc87264
-#: ../../../source/tutorial/introduction.txt:245
-msgid ""
-"\"_score\" column is added to The groonga's result. This column has the "
-"higher number, the more condition of fulltext seaching matches text."
+"This command specifies three output columns including the '_score' column, "
+"which stores the relevance score of each record."
 msgstr ""
-"groongaの検索結果には、「_score」という名前のカラムが追加されています。このカ"
-"ラムは、全文検索の条件が合致する文書ほど高い数値が入ります。"
+"この例では、「_score」という名前のカラムを含む3つのカラムを指定しています。"
+"「_score」という名前のカラムはgroongaの検索結果に含まれるカラムです。このカラ"
+"ムには、全文検索の条件に合致する文書ほど高い数値が入ります。"
 
-# 6c9a58714061481fb611ad043f57dc19
-#: ../../../source/tutorial/introduction.txt:248
-msgid "Ranges to display"
+# 12e3b87c0ed64703a7ef66eff3bce8af
+#: ../../../source/tutorial/introduction.txt:241
+msgid "Specify output ranges"
 msgstr "表示範囲指定"
 
-# 060f75a6fd234bc78d37513ffe8eeca8
-#: ../../../source/tutorial/introduction.txt:250
+#: ../../../source/tutorial/introduction.txt:243
 msgid ""
-"'select' command can display result in only specified ranges using 'offset' "
-"and 'limit' parameter. This parameters is useful when you want to show only "
-"a page in much result of searching."
+"A 'select' command returns a part of its search result if 'offset' and/or "
+"'limit' parameters are specified. These parameters are useful to paginate a "
+"search result, a widely-used interface which shows a search result on a page "
+"by page basis."
 msgstr ""
 "selectコマンドにおいて、offset,limitパラメータを用いることで、検索結果から指"
-"定された範囲のみを表示することが出来ます。大量の検索結果をページで分けて、1"
+"定された範囲のみを表示することができます。大量の検索結果をページで分けて、1"
 "ページ分のみを表示したい場合に有用です。"
 
-# 67f72cba34ca403bb8331437e5020e9d
-#: ../../../source/tutorial/introduction.txt:252
+#: ../../../source/tutorial/introduction.txt:245
 msgid ""
-"'offset' parameter specifies starting point of result. If you want 'select' "
-"command to return from first records, this parameter specifies '0'."
+"An 'offset' parameter specifies the starting point and a 'limit' parameter "
+"specifies the maximum number of records to be returned. If you need the "
+"first record in a search result, the offset parameter must be 0 or omitted."
 msgstr ""
 "offsetパラメータには、検索結果を返す始点を指定します。1件目から結果を返す場合"
-"には、0を指定します。"
-
-# b30a312ba55f40e3bc7c63a53a76c2b6
-#: ../../../source/tutorial/introduction.txt:254
-msgid "'limit' parameter specifies how many records of searching result."
-msgstr "limitパラメータには、検索結果を何件表示するのかを指定します。"
+"には、0を指定します。limitパラメータには、検索結果の表示件数を指定します。"
 
 # 12e5037843f446c6a307a2e5c54237d7
-#: ../../../source/tutorial/introduction.txt:263
+#: ../../../source/tutorial/introduction.txt:254
 msgid "Sort"
 msgstr "並び替え"
 
 # cada70fbbe534c64a949a3c07a6b0039
-#: ../../../source/tutorial/introduction.txt:265
+#: ../../../source/tutorial/introduction.txt:256
 msgid ""
-"If you use 'sortby' parameter in 'select' command, this command sorts result "
-"of searching."
+"A 'select' command sorts its result when used with a 'sortby' parameter."
 msgstr ""
 "selectコマンドにおいて、sortbyパラメータを用いることで、検索結果を並び替える"
-"ことが出来ます。"
+"ことができます。"
 
 # a5a5613c2bf640fabc845b6b549c6c5c
-#: ../../../source/tutorial/introduction.txt:267
+#: ../../../source/tutorial/introduction.txt:258
 msgid ""
-"When 'sortby' parameter specifies column name, result is sorted in ascending-"
-"order to its column's value. This 'select' command also sort in descending-"
-"order when you add hyphen(-) before column name."
+"A 'sortby' parameter specifies a column as a sorting creteria. A search "
+"result is arranged in ascending order of the column values. If you want to "
+"sort a search result in reverse order, please add a leading hyphen (-) to "
+"the column name of a parameter."
 msgstr ""
 "sortbyパラメータにカラム名を指定することで、そのカラムの値で昇順にソートしま"
-"す。また、カラム名の前にハイフン（-）を付けることで、降順にソートすることも出"
-"来ます。"
+"す。また、カラム名の前にハイフン（-）を付けることで、降順にソートすることもで"
+"きます。"
 
-# 2e1a756a61d14f36b47386559a1dae4c
-#: ../../../source/tutorial/introduction.txt:273
+#: ../../../source/tutorial/introduction.txt:264
 msgid ""
-"For condition of sort, you can use '_score' column introduced in the "
-"paragraph of \"Specify output column\"."
+"You can use the '_score' column as a sorting criteria for ranking a search "
+"result."
 msgstr ""
 "出力カラムの指定で紹介した「_score」カラムは、ソートの条件としても使うことが"
 "できます。"
 
-# 2e9985b721f34f789ec84264c3dcfb84
-#: ../../../source/tutorial/introduction.txt:279
+#: ../../../source/tutorial/introduction.txt:270
 msgid ""
-"If you want to specify some column names, you should use comma(,) between "
-"these names. In this case, when same value of records is existed in first "
-"column, this command sorts result of searching to value of second column."
+"If you want to specify more than one columns, please separate column names "
+"by commas. In such a case, a search result is sorted in order of the column "
+"values in the first column, and then records having the same values in the "
+"first column are sorted in order of the second column values."
 msgstr ""
 "ソートするカラム名を複数指定したい場合は、カンマ(,)区切りで指定します。複数の"
 "カラムを指定した場合、最初のカラムで同一の値のレコードがあった場合に、次のカ"
 "ラムの値でソートさせることができます。"
 
 # 483e363f1f964ab3a2be02e9c2b67b17
-#: ../../../source/tutorial/introduction.txt:286
+#: ../../../source/tutorial/introduction.txt:277
 msgid "footnote"
 msgstr "脚注"
 
-# 1a003e206ca84bac88868eb1a37144a2
-#: ../../../source/tutorial/introduction.txt:287
+#: ../../../source/tutorial/introduction.txt:278
 msgid ""
-"In now groonga's version, you can only use 'match_columns' parameter in the "
-"case of existing index of fulltext searching. This parameter cannot be use "
-"in searching for ordinary columns."
+"Currently, a 'match_columns' parameter is available iff there exists an "
+"inverted index for full text search. A 'match_columns' parameter for a "
+"regular column is not supported."
 msgstr ""
-"現在のバージョンでは、全文検索インデックスが存在する場合にのみ、match_columns"
-"パラメータを利用することができます。通常のカラムでの絞り込みには利用できませ"
-"ん。"
+"現在のバージョンでは、全文検索インデックスが存在する場合にのみ、"
+"match_columnsパラメータを利用することができます。通常のカラムでの絞り込み"
+"には利用できません。"
 
 #: ../../../source/tutorial/lexicon.txt:6
 msgid "全文検索の語彙表に対する追加情報"
@@ -1031,7 +1025,7 @@ msgstr ""
 
 #: ../../../source/tutorial/match_columns.txt:42
 msgid ""
-"match_columnsオプションで、検索対象のカラムを複数指定することが出来ます。検索"
+"match_columnsオプションで、検索対象のカラムを複数指定することができます。検索"
 "する文字列はqueryオプションで指定します。これを使うことで、タイトルと本文を全"
 "文検索することができます。"
 msgstr ""
@@ -1232,7 +1226,7 @@ msgstr ""
 #: ../../../source/tutorial/micro_blog.txt:122
 msgid ""
 "「Comments.hash_tags」のインデックス。 このインデックスを作ることで、指定した"
-"ハッシュタグのついているコメントの一覧を出すことが出来るようになります。"
+"ハッシュタグのついているコメントの一覧を出すことができるようになります。"
 msgstr ""
 
 #: ../../../source/tutorial/micro_blog.txt:126
@@ -1241,7 +1235,7 @@ msgstr ""
 
 #: ../../../source/tutorial/micro_blog.txt:128
 msgid ""
-"ユーザー情報・コメントで全文検索が出来るようにするためのインデックスを格納す"
+"ユーザー情報・コメントで全文検索ができるようにするためのインデックスを格納す"
 "るテーブルです。"
 msgstr ""
 
@@ -1629,7 +1623,7 @@ msgid ""
 "protocol mode."
 msgstr ""
 "groongaがHTTPプロトコルモードで起動されているとき、「/d/コマンド名」というURL"
-"にアクセスすると、コマンドを実行することが出来ます。"
+"にアクセスすると、コマンドを実行することができます。"
 
 #: ../../../source/tutorial/network.txt:87
 msgid ""
@@ -2202,14 +2196,14 @@ msgid ""
 "is test record 1!\"]]]]"
 msgstr ""
 
-#: ../source/example/tutorial/introduction-11.log:305
+#: ../source/example/tutorial/introduction-11.log:304
 msgid ""
 "> select --table Site --query title:@this [[0,1317212717.10303,0.000581287],"
 "[[[1],[[\"_id\",\"UInt32\"],[\"_key\",\"ShortText\"],[\"title\",\"ShortText"
 "\"]],[1,\"http://example.org/\",\"This is test record 1!\"]]]]"
 msgstr ""
 
-#: ../source/example/tutorial/introduction-12.log:326
+#: ../source/example/tutorial/introduction-12.log:321
 msgid ""
 "> select --table Site --match_columns title --query this "
 "[[0,1317212717.30596,0.000716439],[[[1],[[\"_id\",\"UInt32\"],[\"_key\","
@@ -2217,7 +2211,7 @@ msgid ""
 "is test record 1!\"]]]]"
 msgstr ""
 
-#: ../source/example/tutorial/introduction-13.log:344
+#: ../source/example/tutorial/introduction-13.log:337
 msgid ""
 "> select --table Site --output_columns _key,title,_score --query title:@test "
 "[[0,1317212717.50916,0.00060758],[[[9],[[\"_key\",\"ShortText\"],[\"title\","
@@ -2231,7 +2225,7 @@ msgid ""
 "com/vdw\",\"test test record nine.\",2]]]]"
 msgstr ""
 
-#: ../source/example/tutorial/introduction-14.log:366
+#: ../source/example/tutorial/introduction-14.log:357
 msgid ""
 "> select --table Site --offset 0 --limit 3 [[0,1317212717.71574,0.000238544],"
 "[[[9],[[\"_id\",\"UInt32\"],[\"_key\",\"ShortText\"],[\"title\",\"ShortText"
@@ -2249,7 +2243,7 @@ msgid ""
 "record nine.\"]]]]"
 msgstr ""
 
-#: ../source/example/tutorial/introduction-15.log:390
+#: ../source/example/tutorial/introduction-15.log:381
 msgid ""
 "> select --table Site --sortby -_id [[0,1317212718.32565,0.000385755],[[[9],"
 "[[\"_id\",\"UInt32\"],[\"_key\",\"ShortText\"],[\"title\",\"ShortText\"]],[9,"
@@ -2262,7 +2256,7 @@ msgid ""
 "\"test record 2.\"],[1,\"http://example.org/\",\"This is test record 1!\"]]]]"
 msgstr ""
 
-#: ../source/example/tutorial/introduction-16.log:403
+#: ../source/example/tutorial/introduction-16.log:394
 msgid ""
 "> select --table Site --query title:@test --output_columns _id,_score,title "
 "--sortby _score [[0,1317212718.5331,0.000667311],[[[9],[[\"_id\",\"UInt32\"],"
@@ -2273,7 +2267,7 @@ msgid ""
 "record five.\"],[6,4,\"test test test test record six.\"]]]]"
 msgstr ""
 
-#: ../source/example/tutorial/introduction-17.log:416
+#: ../source/example/tutorial/introduction-17.log:407
 msgid ""
 "> select --table Site --query title:@test --output_columns _id,_score,title "
 "--sortby _score,_id [[0,1317212718.73819,0.00069225],[[[9],[[\"_id\","
@@ -2311,7 +2305,7 @@ msgid ""
 "true]"
 msgstr ""
 
-#: ../source/example/tutorial/introduction-6.log:199
+#: ../source/example/tutorial/introduction-6.log:198
 msgid ""
 "> column_create --table Terms --name blog_title --flags COLUMN_INDEX|"
 "WITH_POSITION --type Site --source title [[0,1317212713.68994,0.19739078],"

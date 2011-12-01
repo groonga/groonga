@@ -12,8 +12,8 @@ Basic operations
 
 The groonga package provides a C library (libgroonga) and a command line tool (groonga). This tutorial explains how to use the groonga command, with which you can create/operate databases, start a server, establish a connection with a server, etc.
 
-Create database
----------------
+Create a database
+-----------------
 
 You can create a new database with the following command.
 
@@ -31,8 +31,8 @@ Execution example::
   > Ctrl-d
   %
 
-Operate database
-----------------
+Operate a database
+------------------
 
 Form::
 
@@ -86,10 +86,10 @@ Basic commands
  :doc:`/commands/load`
   Insert records to a table.
 
-Create table
-------------
+Create a table
+--------------
 
-The :doc:`/commands/table_create` command creates a table.
+A :doc:`/commands/table_create` command creates a table.
 
 In most cases, a table of groonga has a primary key which must be specified with its data type and index type. 
 
@@ -101,10 +101,10 @@ Let's create a 'Site' table which has a primary key of ShortText. In this exampl
 .. include:: ../example/tutorial/introduction-2.log
 .. table_create --name Site --flags TABLE_HASH_KEY --key_type ShortText
 
-Search
-------
+View a table
+------------
 
-The :doc:`/commands/select` command shows contents of table.
+A :doc:`/commands/select` command shows contents of table.
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-3.log
@@ -114,10 +114,10 @@ When only a table is specified, the 'select' command returns the first (at most)
 
 The above two columns, '_id' and '_key', are the necessary columns. The '_id' column stores IDs those are automatically allocated by groonga. The '_key' column is associated with the primary key. You are not allowed to rename these columns.
 
-Create column
--------------
+Create a column
+---------------
 
-The :doc:`/commands/column_create` command adds a column to a table.
+A :doc:`/commands/column_create` command adds a column to a table.
 
 Let's add a column of ShortText to store comments. You may give a descriptive name 'comment' to the column.
 
@@ -128,42 +128,42 @@ Let's add a column of ShortText to store comments. You may give a descriptive na
 
 The COLUMN_SCALAR flag specifies to add a regular column.
 
-Create terminology table with fulltext-searching
-------------------------------------------------
+Create a lexicon table for full text searches
+---------------------------------------------
 
-This tutorial explains fulltext searching with entried data in groonga table.
+Let's go on to how to make a full text search.
 
-We need terminology table in fulltext-searching.
-Terminology table is a table whose master key's values are words in text.
-We create 'Terms' table, it has type of master key value is ShortText.
+Groonga uses an inverted index to provide fast full text searches. So, the first step is to create a lexicon table which stores an inverted index, also known as postings lists. The primary key of this table is associated with a vocabulary made up of index terms and each record stores postings lists for one index term.
+
+The following shows a command which creates a lexicon table named 'Terms'. The data type of its primary key is ShortText.
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-5.log
 .. table_create --name Terms --flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type ShortText --default_tokenizer TokenBigram
 
-Many parameters is specified in this execution example.
-You don't hove to understand all parameters.
-There are the simple explaination, but you can skipped.
+The table_create command takes many parameters but you don't need to understand all of them. Please skip the next paragraph if you are not interested in how it works.
 
-In this examples, 'TABLE_PAT_KEY|KEY_NORMALIZE' stores master key in patricia-trie and entries each teminology after nomalized.
-The 'default_tokenizer' parametar specifies the way to tokenize target texts. In this examples, we specifies 'TokenBigram' as this parameter, and so we choose 'N-gram' generally called.
+The 'TABLE_PAT_KEY' flag specifies to store index terms in a patricia trie. The 'KEY_NORMALIZE' flag specifies to normalize index terms. In this example, both flags are validated by using a '|'. The 'default_tokenizer' parameter specifies the method for tokenizing text. This example specifies 'TokenBigram' that is generally called 'N-gram'.
 
-Create index-column with fulltext search
-----------------------------------------
+Create an index column for full text search
+-------------------------------------------
 
-We will fulltext search 'title' column in 'Site' table. In this case, we create column whose type index in terminology table.
+The second step is to create an index column which allows you to search records from its associated column. That is to say this step specifies which column needs an index.
+
+Let's create an index column for the 'title' column in the 'Site' table.
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-6.log
 .. column_create --table Terms --name blog_title --flags COLUMN_INDEX|WITH_POSITION --type Site --source title
 
-This command creates index column 'blog_title' in 'Term' table. '--type' option specifies target indexed table, and '--source' option does target index column.
-In execution example, 'COLUMN_INDEX|WITH_POSITION' for '--flags' option specifies that this column is index column for storing information of terminology existing position. This option should be specified 'COLUMN_INDEX|WITH_POSITION' in generally fulltext searching. This tutorial does not deal with the reason why store information of terminology existing position.
+This command creates an index column 'blog_title' in the 'Terms' table. The '--type' option specifies a target table and the '--source' option specifies a target column. Then, the 'COLUMN_INDEX' flag specifies to create an index column and the 'WITH_POSITION' flag specifies to create a full inverted index, which contains the positions of each index term. This combination 'COLUMN_INDEX|WITH_POSITION' is recommended for the general purpose.
 
 Load data
 ---------
 
-:doc:`/commands/load` is used to load data for groonga database. This command stores json-formatted data in a table.
+A :doc:`/commands/load` command loads JSON-formatted records into a table.
+
+The following adds nine records to the 'Site' table.
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-7.log
@@ -180,7 +180,7 @@ Load data
 .. {"_key":"http://example.com/vdw","title":"test test record nine."},
 .. ]
 
-Let's make sure that its table has data with 'select' command.
+Let's make sure that these records are correctly stored.
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-8.log
@@ -189,69 +189,60 @@ Let's make sure that its table has data with 'select' command.
 Search data
 -----------
 
-'_id' and '_key' columns are unique in groonga's table, so let's search data in table using these columns.
+Before a full text search, let's try to search data by '_id' and '_key'. These columns work as unique keys.
 
-You can search data using 'select' command with 'query' parameter.
+You can search records by using a 'select' command with a 'query' parameter.
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-9.log
 .. select --table Site --query _id:1
 
-'_id:1' specified 'query' parameter means to search records whose '_id' column has '1'.
+'_id:1' specifies to search a record whose ID is 1.
 
-Let's search records with '_key' column.
+Next, let's search a record by a primary key.
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-10.log
 .. select --table Site --query "_key:\"http://example.org/\""
 
-'_key:\"http://example.org/\"' specified 'query' parameter means to search records whose '_key' column has '"http://example.org/"'.
+'_key:\"http://example.org/\"' specifies to search a record whose primary key is "http://example.org/".
 
+Full text search
+----------------
 
-Fulltext searching
-------------------
-
-Using 'query' parameter, you can fulltext search with index.
+It's time to make a full text search. You can make a full text search query with the same 'query' parameter.
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-11.log
 .. select --table Site --query title:@this
 
-This command shows result of fulltext searching by string 'this' for 'title' column.
+This command searches records whose 'title' column contains a string 'this'. In this case, only one record matches this query. Note that the lower case query 'this' matches a capitalized 'This' in the 1st record because 'KEY_NORMALIZE' was specified in lexicon column creation.
 
-"title:@this" specified 'query' parameter means to search records whose 'title' column including 'this' string.
+The 'select' command has an optional parameter 'match_columns'. This parameter specifies default target columns and it is used when target columns are not specified in a query.[1]_
 
-'select' command has parameter 'match_columns'.
-
-If this parameter is specified, it means to search in columns specified 'match_columns' when 'query' parameter doesn't specify column-name condition.[1]_
-
-If you specify 'match_columns' is 'title' and 'query' is 'this', you can take same result as above query.
+A combination of '--match_columns title' and '--query this' brings you the same result that '--query title:@this' does.
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-12.log
 .. select --table Site --match_columns title --query this
 
-Specify output column
----------------------
+Specify output columns
+----------------------
 
-'output_columns' parameter in 'select' command specifies columns shown in result of search.
-
-If you want to specify some columns, you should separate column names by comma(,).
+An 'output_columns' parameter in a 'select' command specifies columns to be shown in the search result. If you want to specify more than one columns, please separate column names by commas (,).
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-13.log
 .. select --table Site --output_columns _key,title,_score --query title:@test
 
-"_score" column is added to The groonga's result. This column has the higher number, the more condition of fulltext seaching matches text.
+This command specifies three output columns including the '_score' column, which stores the relevance score of each record.
 
-Ranges to display
------------------
+Specify output ranges
+---------------------
 
-'select' command can display result in only specified ranges using 'offset' and 'limit' parameter. This parameters is useful when you want to show only a page in much result of searching.
+A 'select' command returns a part of its search result if 'offset' and/or 'limit' parameters are specified. These parameters are useful to paginate a search result, a widely-used interface which shows a search result on a page by page basis.
 
-'offset' parameter specifies starting point of result. If you want 'select' command to return from first records, this parameter specifies '0'.
-
-'limit' parameter specifies how many records of searching result.
+An 'offset' parameter specifies the starting point and a 'limit' parameter specifies the maximum number of records to be returned. If you need the first record in a search result, the offset parameter must be 0 or omitted.
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-14.log
@@ -260,23 +251,23 @@ Ranges to display
 .. select --table Site --offset 7 --limit 3
 
 Sort
------
+----
 
-If you use 'sortby' parameter in 'select' command, this command sorts result of searching.
+A 'select' command sorts its result when used with a 'sortby' parameter.
 
-When 'sortby' parameter specifies column name, result is sorted in ascending-order to its column's value. This 'select' command also sort in descending-order when you add hyphen(-) before column name.
+A 'sortby' parameter specifies a column as a sorting creteria. A search result is arranged in ascending order of the column values. If you want to sort a search result in reverse order, please add a leading hyphen (-) to the column name of a parameter.
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-15.log
 .. select --table Site --sortby -_id
 
-For condition of sort, you can use '_score' column introduced in the paragraph of "Specify output column".
+You can use the '_score' column as a sorting criteria for ranking a search result.
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-16.log
 .. select --table Site --query title:@test --output_columns _id,_score,title --sortby _score
 
-If you want to specify some column names, you should use comma(,) between these names. In this case, when same value of records is existed in first column, this command sorts result of searching to value of second column.
+If you want to specify more than one columns, please separate column names by commas. In such a case, a search result is sorted in order of the column values in the first column, and then records having the same values in the first column are sorted in order of the second column values.
 
 .. groonga-command
 .. include:: ../example/tutorial/introduction-17.log
@@ -284,4 +275,4 @@ If you want to specify some column names, you should use comma(,) between these 
 
 .. rubric:: footnote
 
-.. [1] In now groonga's version, you can only use 'match_columns' parameter in the case of existing index of fulltext searching. This parameter cannot be use in searching for ordinary columns.
+.. [1] Currently, a 'match_columns' parameter is available iff there exists an inverted index for full text search. A 'match_columns' parameter for a regular column is not supported.
