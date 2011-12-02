@@ -1557,11 +1557,8 @@ grn_mmap(grn_ctx *ctx, HANDLE *fmo, fileinfo *fi, off_t offset, size_t length)
   if (!*fmo) { return NULL; }
   res = MapViewOfFile(*fmo, FILE_MAP_WRITE, 0, (DWORD)offset, (SIZE_T)length);
   if (!res) {
-    res = MapViewOfFile(*fmo, FILE_MAP_WRITE, 0, (DWORD)offset, (SIZE_T)length);
-    if (!res) {
-      MERR("MapViewOfFile failed #%d <%zu>", GetLastError(), mmap_size);
-      return NULL;
-    }
+    MERR("MapViewOfFile failed #%d <%zu>", GetLastError(), mmap_size);
+    return NULL;
   }
   /* CRITICAL_SECTION_LEAVE(fi->cs); */
   mmap_size += length;
@@ -1697,11 +1694,8 @@ grn_mmap(grn_ctx *ctx, fileinfo *fi, off_t offset, size_t length)
   */
   res = MapViewOfFile(fi->fmo, FILE_MAP_WRITE, 0, (DWORD)offset, (SIZE_T)length);
   if (!res) {
-    res = MapViewOfFile(fi->fmo, FILE_MAP_WRITE, 0, (DWORD)offset, (SIZE_T)length);
-    if (!res) {
-      MERR("MapViewOfFile failed #%d  <%zu>", GetLastError(), mmap_size);
-      return NULL;
-    }
+    MERR("MapViewOfFile failed #%d  <%zu>", GetLastError(), mmap_size);
+    return NULL;
   }
   mmap_size += length;
   return res;
@@ -1868,10 +1862,7 @@ grn_mmap(grn_ctx *ctx, fileinfo *fi, off_t offset, size_t length)
   }
   res = mmap(NULL, length, PROT_READ|PROT_WRITE, flags, fd, offset);
   if (MAP_FAILED == res) {
-    res = mmap(NULL, length, PROT_READ|PROT_WRITE, flags, fd, offset);
-    if (MAP_FAILED == res) {
-      MERR("mmap(%zu,%d,%d)=%s <%zu>", length, fd, offset, strerror(errno), mmap_size);
-    }
+    MERR("mmap(%zu,%d,%d)=%s <%zu>", length, fd, offset, strerror(errno), mmap_size);
     return NULL;
   }
   mmap_size += length;
