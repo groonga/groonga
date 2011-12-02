@@ -165,7 +165,7 @@ void FileImpl::open_(const char *path) {
   map_ = ::CreateFileMapping(file_, NULL, PAGE_READWRITE, 0, 0, NULL);
   GRN_DAT_THROW_IF(IO_ERROR, map_ == NULL);
 
-  addr_ = ::MapViewOfFile(map_, FILE_MAP_READ, 0, 0, 0);
+  addr_ = ::MapViewOfFile(map_, FILE_MAP_WRITE, 0, 0, 0);
   GRN_DAT_THROW_IF(IO_ERROR, addr_ == NULL);
 
   ptr_ = addr_;
