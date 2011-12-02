@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-11-28 17:43\n"
+"POT-Creation-Date: 2011-12-02 12:59\n"
 "PO-Revision-Date: 2011-11-27 22:57+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -48,12 +48,6 @@ msgstr ""
 msgid "/etc/apt/sources.list.d/groonga.list::"
 msgstr ""
 
-#: ../../../source/install.txt:18
-msgid ""
-"deb http://packages.groonga.org/debian/ squeeze main deb-src http://packages."
-"groonga.org/debian/ squeeze main"
-msgstr ""
-
 #: ../../../source/install.txt:21 ../../../source/install.txt:35
 #: ../../../source/install.txt:49 ../../../source/install.txt:68
 #: ../../../source/install.txt:87 ../../../source/install.txt:106
@@ -63,32 +57,12 @@ msgstr ""
 msgid "Install::"
 msgstr "インストール::"
 
-#: ../../../source/install.txt:23 ../../../source/install.txt:37
-#: ../../../source/install.txt:51 ../../../source/install.txt:70
-#: ../../../source/install.txt:89 ../../../source/install.txt:108
-msgid ""
-"% sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 1C837F31 % "
-"sudo aptitude update % sudo aptitude -V -D -y install groonga"
-msgstr ""
-
 #: ../../../source/install.txt:28
 msgid "Debian GNU/Linux wheezy"
 msgstr ""
 
-#: ../../../source/install.txt:32
-msgid ""
-"deb http://packages.groonga.org/debian/ wheezy main deb-src http://packages."
-"groonga.org/debian/ wheezy main"
-msgstr ""
-
 #: ../../../source/install.txt:42
 msgid "Debian GNU/Linux sid"
-msgstr ""
-
-#: ../../../source/install.txt:46
-msgid ""
-"deb http://packages.groonga.org/debian/ unstable main deb-src http://"
-"packages.groonga.org/debian/ unstable main"
 msgstr ""
 
 #: ../../../source/install.txt:56
@@ -107,20 +81,8 @@ msgstr ""
 "Ubuntu本家のuniverseセクションもインストール対象としてください。設定方法は以"
 "下で説明しています。"
 
-#: ../../../source/install.txt:65
-msgid ""
-"deb http://packages.groonga.org/ubuntu/ lucid universe deb-src http://"
-"packages.groonga.org/ubuntu/ lucid universe"
-msgstr ""
-
 #: ../../../source/install.txt:75
 msgid "Ubuntu 11.04 Natty Narwhal"
-msgstr ""
-
-#: ../../../source/install.txt:84
-msgid ""
-"deb http://packages.groonga.org/ubuntu/ natty universe deb-src http://"
-"packages.groonga.org/ubuntu/ natty universe"
 msgstr ""
 
 # f5a3e80f7f864fcfbca6de7812d9cd9e
@@ -128,20 +90,8 @@ msgstr ""
 msgid "Ubuntu 11.10 Oneiric Ocelot"
 msgstr ""
 
-#: ../../../source/install.txt:103
-msgid ""
-"deb http://packages.groonga.org/ubuntu/ oneiric universe deb-src http://"
-"packages.groonga.org/ubuntu/ oneiric universe"
-msgstr ""
-
 #: ../../../source/install.txt:113
 msgid "CentOS 5"
-msgstr ""
-
-#: ../../../source/install.txt:117 ../../../source/install.txt:126
-msgid ""
-"% sudo rpm -ivh http://packages.groonga.org/centos/groonga-"
-"repository-1.0.0-0.noarch.rpm % sudo yum update % sudo yum install -y groonga"
 msgstr ""
 
 #: ../../../source/install.txt:122
@@ -152,26 +102,12 @@ msgstr ""
 msgid "Fedora 15"
 msgstr ""
 
-#: ../../../source/install.txt:135
-msgid ""
-"% sudo rpm -ivh http://packages.groonga.org/fedora/groonga-"
-"repository-1.0.0-0.noarch.rpm % sudo yum update % sudo yum install -y groonga"
-msgstr ""
-
 #: ../../../source/install.txt:140
 msgid "Mac OS X (MacPorts)"
 msgstr ""
 
-#: ../../../source/install.txt:144
-msgid "% sudo port install groonga"
-msgstr ""
-
 #: ../../../source/install.txt:147
 msgid "Mac OS X (Homebrew)"
-msgstr ""
-
-#: ../../../source/install.txt:151
-msgid "% brew install groonga"
 msgstr ""
 
 # b0e120abaa3f4077ad7903b544bbf677
@@ -223,11 +159,6 @@ msgstr ""
 "`packages.groonga.org/source/ <http://packages.groonga.org/source/groonga/"
 ">`_ よりtar.gzファイルを取得し、インストール先の環境にファイルを展開して、以"
 "下のように実行することでインストールできます。::"
-
-#: ../../../source/install.txt:176
-msgid ""
-"./configure --prefix=/usr --localstatedir=/var && make && sudo make install"
-msgstr ""
 
 #: ../../../source/install.txt:178
 msgid ""

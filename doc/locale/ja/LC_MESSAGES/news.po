@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-11-28 11:53\n"
+"POT-Creation-Date: 2011-12-02 12:59\n"
 "PO-Revision-Date: 2011-11-28 07:29+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -35,10 +35,6 @@ msgstr ""
 "オブジェクト（テーブルまたはカラム）のリネームがサポートされました！この機能"
 "を使うためにはデータベースを再構築する必要があります。以下のコマンドでデータ"
 "ベースを再構築することができます。::"
-
-#: ../../../source/news.txt:17
-msgid "% groonga YOUR_DB dump > db.dump % groonga -n YOUR_NEW_DB < db.dump"
-msgstr ""
 
 # 1605fcbf442f4c30a7ecce135aea8785
 #: ../../../source/news.txt:22

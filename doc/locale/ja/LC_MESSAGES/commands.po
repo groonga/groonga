@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-18 18:09\n"
+"POT-Creation-Date: 2011-12-02 12:59\n"
 "PO-Revision-Date: 2011-08-18 18:15+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -159,7 +159,7 @@ msgstr ""
 #: ../../../source/commands/log_put.txt:47
 #: ../../../source/commands/log_reopen.txt:34
 #: ../../../source/commands/quit.txt:32
-#: ../../../source/commands/select.txt:181
+#: ../../../source/commands/select.txt:187
 #: ../../../source/commands/shutdown.txt:32
 #: ../../../source/commands/status.txt:32
 #: ../../../source/commands/table_create.txt:89
@@ -187,7 +187,7 @@ msgstr ""
 #: ../../../source/commands/log_put.txt:61
 #: ../../../source/commands/log_reopen.txt:48
 #: ../../../source/commands/quit.txt:37
-#: ../../../source/commands/select.txt:247
+#: ../../../source/commands/select.txt:253
 #: ../../../source/commands/shutdown.txt:37
 #: ../../../source/commands/status.txt:54
 #: ../../../source/commands/table_create.txt:103
@@ -311,7 +311,7 @@ msgstr ""
 #: ../../../source/commands/log_level.txt:64
 #: ../../../source/commands/log_put.txt:68
 #: ../../../source/commands/log_reopen.txt:65
-#: ../../../source/commands/select.txt:256
+#: ../../../source/commands/select.txt:262
 msgid "関連項目"
 msgstr ""
 
@@ -761,7 +761,7 @@ msgstr ""
 
 #: ../../../source/commands/define_selector.txt:116
 #: ../../../source/commands/load.txt:100
-#: ../../../source/commands/select.txt:258
+#: ../../../source/commands/select.txt:264
 msgid ":doc:`../expr`"
 msgstr ""
 
@@ -1442,123 +1442,152 @@ msgid ""
 "法で検索方法をエスカレーションしてきます。"
 msgstr ""
 
-#: ../../../source/commands/select.txt:183
-msgid "以下のようなjson形式で値が返却されます。"
+# 2a6a4e70ad95423fb535430d242aa1b8
+#: ../../../source/commands/select.txt:180
+msgid "``query_expansion``"
+msgstr ""
+
+# 33ac90fc1fa74a13b0c2b258e3339ac2
+#: ../../../source/commands/select.txt:182
+msgid ""
+"query_expansionパラメータには、queryパラメータに指定された文字列を置換(拡張)"
+"する条件となるテーブル・カラムを指定します。フォーマットは「${テーブル名}."
+"${カラム名}」となります。指定するテーブルは文字列を主キーとするハッシュ型ある"
+"いはパトリシア木型のテーブルで、一つ以上の文字列型のカラムが定義されている必"
+"要があります。(ここでは置換テーブルと呼びます。)"
+msgstr ""
+
+# a881228a88354eb6b4e732d0fe68d178
+#: ../../../source/commands/select.txt:184
+msgid ""
+"queryパラメータに指定された文字列が、指定されたテーブルの主キーと完全一致する"
+"場合、その文字列を指定されたカラム値の文字列に置換します。queryパラメータが、"
+"空白、括弧、演算子などを含む場合は、その演算子によって区切られた文字列の単位"
+"で置換が実行されます。ダブルクォート(\"\")で括られた範囲は、その内部に空白を"
+"含んでいても一つの置換される単位と見なされます。検索文字列と置換テーブルの主"
+"キー値との比較に際して大文字小文字等を区別したくない場合には、置換テーブルを"
+"定義する際にKEY_NORMALIZEを指定します。置換後の文字列となるカラムの値には、括"
+"弧や*, ORなど、queryパラメータで利用可能な全ての演算子を指定することができま"
+"す。"
 msgstr ""
 
 #: ../../../source/commands/select.txt:189
+msgid "以下のようなjson形式で値が返却されます。"
+msgstr ""
+
+#: ../../../source/commands/select.txt:195
 msgid "``リターンコード``"
 msgstr ""
 
-#: ../../../source/commands/select.txt:191
+#: ../../../source/commands/select.txt:197
 msgid ""
 "grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は、続いてエラー内"
 "容を示す 文字列が返されます。"
 msgstr ""
 
-#: ../../../source/commands/select.txt:194
+#: ../../../source/commands/select.txt:200
 msgid "``処理開始時間``"
 msgstr ""
 
-#: ../../../source/commands/select.txt:196
+#: ../../../source/commands/select.txt:202
 msgid ""
 "処理を開始した時間について、1970年1月1日0時0分0秒を起点とした秒数を小数で返し"
 "ます。"
 msgstr ""
 
-#: ../../../source/commands/select.txt:198
+#: ../../../source/commands/select.txt:204
 msgid "``処理時間``"
 msgstr ""
 
-#: ../../../source/commands/select.txt:200
+#: ../../../source/commands/select.txt:206
 msgid "処理にかかった秒数を返します。"
 msgstr ""
 
-#: ../../../source/commands/select.txt:202
+#: ../../../source/commands/select.txt:208
 msgid "``検索結果``"
 msgstr ""
 
-#: ../../../source/commands/select.txt:204
+#: ../../../source/commands/select.txt:210
 msgid "drilldown条件が実行される前の検索結果が以下のように出力されます。::"
 msgstr ""
 
-#: ../../../source/commands/select.txt:208
+#: ../../../source/commands/select.txt:214
 msgid "``検索件数``"
 msgstr ""
 
-#: ../../../source/commands/select.txt:210
+#: ../../../source/commands/select.txt:216
 msgid "検索件数が出力されます。"
 msgstr ""
 
-#: ../../../source/commands/select.txt:212
-#: ../../../source/commands/select.txt:234
+#: ../../../source/commands/select.txt:218
+#: ../../../source/commands/select.txt:240
 msgid "``カラム名n``"
 msgstr ""
 
-#: ../../../source/commands/select.txt:214
+#: ../../../source/commands/select.txt:220
 msgid ""
 "output_columnsに指定された条件に従って、対象となるカラム名が出力されます。"
 msgstr ""
 
-#: ../../../source/commands/select.txt:216
-#: ../../../source/commands/select.txt:238
+#: ../../../source/commands/select.txt:222
+#: ../../../source/commands/select.txt:244
 msgid "``カラム型n``"
 msgstr ""
 
-#: ../../../source/commands/select.txt:218
+#: ../../../source/commands/select.txt:224
 msgid ""
 "output_columnsに指定された条件に従って、対象となるカラム型が出力されます。"
 msgstr ""
 
-#: ../../../source/commands/select.txt:220
+#: ../../../source/commands/select.txt:226
 msgid "``検索結果n``"
 msgstr ""
 
-#: ../../../source/commands/select.txt:222
+#: ../../../source/commands/select.txt:228
 msgid ""
 "output_columns, offset, limitによって指定された条件に従って各レコードの値が出"
 "力されます。"
 msgstr ""
 
-#: ../../../source/commands/select.txt:224
+#: ../../../source/commands/select.txt:230
 msgid "``drilldown結果``"
 msgstr ""
 
-#: ../../../source/commands/select.txt:226
+#: ../../../source/commands/select.txt:232
 msgid "drilldown処理の結果が以下のように出力されます。::"
 msgstr ""
 
-#: ../../../source/commands/select.txt:230
+#: ../../../source/commands/select.txt:236
 msgid "``件数``"
 msgstr ""
 
-#: ../../../source/commands/select.txt:232
+#: ../../../source/commands/select.txt:238
 msgid "drilldownに指定されたカラムの値の異なり数が出力されます。"
 msgstr ""
 
-#: ../../../source/commands/select.txt:236
+#: ../../../source/commands/select.txt:242
 msgid ""
 "drilldown_output_columnsに指定された条件に従って、対象となるカラム名が出力さ"
 "れます。"
 msgstr ""
 
-#: ../../../source/commands/select.txt:240
+#: ../../../source/commands/select.txt:246
 msgid ""
 "drilldown_output_columnsに指定された条件に従って、対象となるカラム型が出力さ"
 "れます。"
 msgstr ""
 
-#: ../../../source/commands/select.txt:242
+#: ../../../source/commands/select.txt:248
 msgid "``ドリルダウン結果n``"
 msgstr ""
 
-#: ../../../source/commands/select.txt:244
+#: ../../../source/commands/select.txt:250
 msgid ""
 "drilldown_output_columns, drilldown_offset, drilldown_limitによって指定された"
 "条件に従って各レコードの値が出力されます。"
 msgstr ""
 
-#: ../../../source/commands/select.txt:249
+#: ../../../source/commands/select.txt:255
 msgid "テーブルEntryの全レコード・全カラムの値を出力します。::"
 msgstr ""
 
@@ -1789,7 +1818,9 @@ msgstr ""
 msgid ""
 "It specifies threshold for item frequency. Returned records must have "
 "``_score`` that is greater than or equal to ``frequency_threshold``."
-msgstr "出現頻度に対する閾値を指定します。返されるレコードの ``_score`` 値は ``frequency_threshold`` 以上になります。"
+msgstr ""
+"出現頻度に対する閾値を指定します。返されるレコードの ``_score`` 値は "
+"``frequency_threshold`` 以上になります。"
 
 # 9f4f75b3b75a4b4eb864557ed5d1959d
 #: ../../../source/commands/suggest.txt:114
@@ -1808,7 +1839,11 @@ msgid ""
 "is used for learned data. It is probability of query submission when "
 "``query`` is occurred. Returned records must have conditional probability "
 "that is greater than or equal to ``conditional_probability_threshold``."
-msgstr "条件付き確率に対する閾値を指定します。学習データに対して条件付き確率を使います。ここで使う条件付き確率は、入力した ``query`` と同じ入力があったときにクエリが検索された確率です。返されるレコードの条件付き確率は ``conditional_probability_threshold`` 以上になります。"
+msgstr ""
+"条件付き確率に対する閾値を指定します。学習データに対して条件付き確率を使いま"
+"す。ここで使う条件付き確率は、入力した ``query`` と同じ入力があったときにクエ"
+"リが検索された確率です。返されるレコードの条件付き確率は "
+"``conditional_probability_threshold`` 以上になります。"
 
 # dcb1f7f1e0704f7690a85a5588010127
 #: ../../../source/commands/suggest.txt:126
