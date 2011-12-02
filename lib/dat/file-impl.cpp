@@ -201,8 +201,14 @@ void FileImpl::create_(const char *path, UInt64 size) {
 #endif  // MAP_ANONYMOUS
 
   length_ = static_cast< ::size_t>(size);
-  addr_ = ::mmap(NULL, length_, PROT_READ | PROT_WRITE, flags, fd_, 0);
-  GRN_DAT_THROW_IF(IO_ERROR, addr_ == MAP_FAILED);
+#ifdef MAP_HUGETLB
+  addr_ = ::mmap(NULL, length_, PROT_READ | PROT_WRITE,
+                 flags | MAP_HUGETLB, fd_, 0);
+#endif  // MAP_HUGETLB
+  if (addr_ == MAP_FAILED) {
+    addr_ = ::mmap(NULL, length_, PROT_READ | PROT_WRITE, flags, fd_, 0);
+    GRN_DAT_THROW_IF(IO_ERROR, addr_ == MAP_FAILED);
+  }
 
   ptr_ = addr_;
   size_ = length_;
