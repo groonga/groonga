@@ -8087,7 +8087,7 @@ grn_table_sort_key_from_str(grn_ctx *ctx, const char *str, unsigned str_size,
           } else {
             if (r - p == 6 && memcmp(p, "_score", 6) == 0) {
               GRN_LOG(ctx, GRN_WARN,
-                      "ignore invalid score key: <%.*s>(<%.*s>)",
+                      "ignore invalid sort key: <%.*s>(<%.*s>)",
                       r - p, p, str_size, str);
             } else {
               WARN(GRN_INVALID_ARGUMENT,
