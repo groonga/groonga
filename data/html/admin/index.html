@@ -14,6 +14,7 @@
 <script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
 <script type="text/javascript" src="js/jquery-ui-1.8.1.custom.min.js"></script>
 <script type="text/javascript" src="js/jquery.json-2.2.min.js"></script>
+<script type="text/javascript" src="js/jquery.flot-0.7.min.js"></script>
 </head>
 <body>
 <div id="header">
@@ -46,6 +47,8 @@
               <li>クエリ数: <span id="status-n-queries"></span></li>
               <li>キャッシュヒット率: <span id="status-cache-hit-rate"></span></li>
             </ul>
+            <div id="throughput-chart" style="height: 300px;">
+            </div>
           </div>
           <div id="database-tab-tablelist">
             <div id="tab-tablelist-table">
@@ -598,6 +601,42 @@ GroongaAdmin = {
 
     return duration;
   },
+  maxThroughput: 0,
+  lastNQueries: -1,
+  keepLastNData: 100,
+  throughputData: [],
+  throughputChart: null,
+  updateThroughputChart: function(statusData) {
+    var maxThroughputUpdated = false;
+    if (this.lastNQueries > 0) {
+      var throughput = statusData.n_queries - this.lastNQueries;
+      this.throughputData.push(throughput);
+      if (this.maxThroughput < throughput) {
+        this.maxThroughput = throughput;
+        maxThroughputUpdated = true;
+      }
+    }
+    if (this.throughputData.length > this.keepLastNData) {
+       this.throughputData.shift();
+    }
+    if (!this.throughputChart) {
+      this.throughputChart = $.plot($("#throughput-chart"),
+                                    [[]],
+                                    {xaxis: {min: -(this.keepLastNData - 1),
+                                             max: 0},
+                                     yaxis: {min: 0}});
+    }
+    var _this = this;
+    var chartSeries = $.map(this.throughputData, function(n, i) {
+                         return [[-(_this.throughputData.length - i) + 1, n]];
+                      });
+    this.throughputChart.setData([chartSeries]);
+    if (maxThroughputUpdated) {
+      this.throughputChart.setupGrid();
+    }
+    this.throughputChart.draw();
+    this.lastNQueries = statusData.n_queries;
+  },
   status: function() {
     if (GroongaAdmin.current_status > 0) { return; }
     GroongaAdmin.current_status++;
@@ -616,6 +655,7 @@ GroongaAdmin = {
         $('#status-uptime').text(GroongaAdmin.format_duration(d.uptime));
         $('#status-n-queries').text(d.n_queries);
         $('#status-cache-hit-rate').text(d.cache_hit_rate);
+        GroongaAdmin.updateThroughputChart(d);
         GroongaAdmin.change_status_timer(1000);
       },
       error: function() {
