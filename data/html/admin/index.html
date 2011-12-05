@@ -626,9 +626,9 @@ GroongaAdmin = {
                                              max: 0},
                                      yaxis: {min: 0}});
     }
-    var _this = this;
+    var that = this;
     var chartSeries = $.map(this.throughputData, function(n, i) {
-                         return [[-(_this.throughputData.length - i) + 1, n]];
+                         return [[-(that.throughputData.length - i) + 1, n]];
                       });
     this.throughputChart.setData([chartSeries]);
     if (maxThroughputUpdated) {
