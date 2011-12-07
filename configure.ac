@@ -72,7 +72,8 @@ m4_ifdef([PKG_PROG_PKG_CONFIG],
 AC_DEFUN([CHECK_CFLAG], [
   AC_MSG_CHECKING([if gcc supports $1])
   old_CFLAGS=$CFLAGS
-  CFLAGS="$CFLAGS $1 -Werror"
+  flag=`echo '$1' | sed -e 's,^-Wno-,-W,'`
+  CFLAGS="$CFLAGS $flag -Werror"
   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
     [check_cflag=yes],
     [check_cflag=no])
@@ -86,7 +87,8 @@ AC_DEFUN([CHECK_CFLAG], [
 AC_DEFUN([CHECK_CXXFLAG], [
   AC_MSG_CHECKING([if g++ supports $1])
   old_CXXFLAGS=$CXXFLAGS
-  CXXFLAGS="$CXXFLAGS $1 -Werror"
+  flag=`echo '$1' | sed -e 's,^-Wno-,-W,'`
+  CXXFLAGS="$CXXFLAGS $flag -Werror"
   AC_LANG_PUSH([C++])
   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])],
     [check_cxxflag=yes],
