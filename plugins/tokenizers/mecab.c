@@ -116,7 +116,7 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   }
   // certain version of mecab returns trailing lf or spaces.
   for (p = buf + strlen(buf) - 1;
-       buf <= p && (*p == '\n' || isspace(*(unsigned char *)p));
+       buf <= p && isspace(*(unsigned char *)p);
        p--) { *p = '\0'; }
   //grn_log("sparsed='%s'", s);
   token->buf = (unsigned char *)buf;
