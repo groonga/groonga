@@ -555,6 +555,7 @@ gen_pathname(const char *path, char *buffer, int fno)
   if (fno) {
     buffer[len] = '.';
     grn_itoh(fno, buffer + len + 1, 3);
+    buffer[len + 4] = '\0';
   } else {
     buffer[len] = '\0';
   }

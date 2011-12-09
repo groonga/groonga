@@ -78,6 +78,7 @@ gen_pathname(const char *path, char *buffer, int fno)
   if (fno >= 0) {
     buffer[len] = '.';
     grn_itoh(fno, buffer + len + 1, 7);
+    buffer[len + 8] = '\0';
   } else {
     buffer[len] = '\0';
   }

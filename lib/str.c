@@ -1528,7 +1528,6 @@ grn_itoh(unsigned int i, char *p, unsigned int len)
 {
   static const char *hex = "0123456789ABCDEF";
   p += len;
-  *p-- = '\0';
   while (len--) {
     *p-- = hex[i & 0xf];
     i >>= 4;
