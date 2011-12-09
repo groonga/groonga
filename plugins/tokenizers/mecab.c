@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009-2010 Brazil
+/* Copyright(C) 2009-2011 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -32,6 +32,10 @@
 static mecab_t *sole_mecab;
 static grn_critical_section sole_mecab_lock;
 
+/*
+  This macro is called only once.
+  Why don't you put this directly?
+ */
 #define SOLE_MECAB_CONFIRM do {\
   if (!sole_mecab) {\
     static char *argv[] = {"", "-Owakati"};\
@@ -49,6 +53,7 @@ static grn_critical_section sole_mecab_lock;
 typedef struct {
   grn_str *nstr;
   mecab_t *mecab;
+  /* Why these pointers are unsigned? */
   unsigned char *buf;
   unsigned char *next;
   unsigned char *end;
@@ -68,6 +73,12 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_obj_flags table_flags;
   grn_mecab_tokenizer *token;
   unsigned int bufsize, maxtrial = 10, len;
+  /*
+    user_data->ptr should be initialized with NULL?
+    How an error is detected? user_data->ptr == NULL?
+    If mecab_next() and mecab_fin() are always called after mecab_init(),
+    it may cause a critical error.
+   */
   if (!(str = grn_ctx_pop(ctx))) {
     ERR(GRN_INVALID_ARGUMENT, "missing argument");
     return NULL;
@@ -80,9 +91,7 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     return NULL;
   }
   if (!(token = GRN_MALLOC(sizeof(grn_mecab_tokenizer)))) { return NULL; }
-  user_data->ptr = token;
   token->mecab = sole_mecab;
-  // if (!(token->mecab = mecab_new3())) {
   grn_table_get_info(ctx, table, &table_flags, &token->encoding, NULL);
   nflags |= (table_flags & GRN_OBJ_KEY_NORMALIZE);
   if (!(token->nstr = grn_str_open_(ctx, GRN_TEXT_VALUE(str), GRN_TEXT_LEN(str),
@@ -93,8 +102,9 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   }
   len = token->nstr->norm_blen;
   for (bufsize = len * 2 + 1; maxtrial; bufsize *= 2, maxtrial--) {
-    if(!(buf = GRN_MALLOC(bufsize + 1))) {
+    if (!(buf = GRN_MALLOC(bufsize + 1))) {
       GRN_LOG(ctx, GRN_LOG_ALERT, "buffer allocation on mecab_init failed !");
+      grn_str_close(ctx, token->nstr);
       GRN_FREE(token);
       return NULL;
     }
@@ -110,15 +120,17 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   }
   if (!s) {
     ERR(GRN_TOKENIZER_ERROR, "mecab_sparse_tostr failed len=%d bufsize=%d err=%s",
-            len, bufsize, mecab_err);
+        len, bufsize, mecab_err);
+    grn_str_close(ctx, token->nstr);
     GRN_FREE(token);
     return NULL;
   }
-  // certain version of mecab returns trailing lf or spaces.
+  /* A certain version of mecab returns trailing lf or spaces. */
   for (p = buf + strlen(buf) - 1;
        buf <= p && isspace(*(unsigned char *)p);
        p--) { *p = '\0'; }
-  //grn_log("sparsed='%s'", s);
+  /* grn_log("sparsed='%s'", s); */
+  user_data->ptr = token;
   token->buf = (unsigned char *)buf;
   token->next = (unsigned char *)buf;
   token->end = (unsigned char *)buf + strlen(buf);
@@ -131,7 +143,7 @@ static grn_obj *
 mecab_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   size_t cl;
-  //  grn_obj *table = args[0];
+  /* grn_obj *table = args[0]; */
   grn_mecab_tokenizer *token = user_data->ptr;
   const unsigned char *p = token->next, *r;
   const unsigned char *e = token->end;
@@ -157,9 +169,9 @@ mecab_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 static grn_obj *
 mecab_fin(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  //  grn_obj *table = args[0];
+  /* grn_obj *table = args[0]; */
   grn_mecab_tokenizer *token = user_data->ptr;
-  // if (token->mecab) { mecab_destroy(token->mecab); }
+  /* if (token->mecab) { mecab_destroy(token->mecab); } */
   grn_str_close(ctx, token->nstr);
   GRN_FREE(token->buf);
   GRN_FREE(token);
@@ -223,6 +235,10 @@ GRN_PLUGIN_INIT(grn_ctx *ctx)
 
   check_mecab_dictionary_encoding(ctx);
 
+  /*
+    This function returns GRN_SUCCESS even if an encoding error is detected.
+   */
+
   return GRN_SUCCESS;
 }
 
@@ -242,6 +258,11 @@ GRN_PLUGIN_REGISTER(grn_ctx *ctx)
   obj = grn_proc_create(ctx, "TokenMecab", 10, GRN_PROC_TOKENIZER,
                         mecab_init, mecab_next, mecab_fin, 3, vars);
   if (!obj || ((grn_db_obj *)obj)->id != GRN_DB_MECAB) { return GRN_FILE_CORRUPT; }
+
+  /*
+    obj will never be used?
+    grn_proc_create() is called here but grn_proc_destroy() does not appear.
+   */
 
   return GRN_SUCCESS;
 }
