@@ -246,14 +246,13 @@ GRN_PLUGIN_REGISTER(grn_ctx *ctx)
   GRN_TEXT_INIT(&vars[1].value, 0);
   GRN_UINT32_INIT(&vars[2].value, 0);
 
+  /*
+    grn_proc_create() creates a new procedure and associates it with a database
+    which is associated with `ctx'. You don't have to finalize a procedure.
+   */
   obj = grn_proc_create(ctx, "TokenMecab", 10, GRN_PROC_TOKENIZER,
                         mecab_init, mecab_next, mecab_fin, 3, vars);
   if (!obj || ((grn_db_obj *)obj)->id != GRN_DB_MECAB) { return GRN_FILE_CORRUPT; }
-
-  /*
-    obj will never be used?
-    grn_proc_create() is called here but grn_proc_destroy() does not appear.
-   */
 
   return GRN_SUCCESS;
 }
