@@ -129,7 +129,7 @@ def readfile(fname, outflag):
       readfile(a, outflag + 1)
       print '###<<< include end'
 
-entry_point = "./"
+entry_point = "source/"
 if len(argv) == 2:
   entry_point = argv[1]
 if os.path.isfile(entry_point):
