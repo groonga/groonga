@@ -43,6 +43,12 @@ typedef struct {
   grn_obj stat_;
 } grn_mecab_tokenizer;
 
+/*
+  This function is called for a full text search query or a document to be
+  indexed. This means that both short/long strings are given.
+  The return value of this function is ignored. When an error occurs in this
+  function, `ctx->rc' is overwritten with an error code (not GRN_SUCCESS).
+ */
 static grn_obj *
 mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
@@ -54,12 +60,6 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_obj_flags table_flags;
   grn_mecab_tokenizer *token;
   unsigned int bufsize, maxtrial = 10, len;
-  /*
-    user_data->ptr should be initialized with NULL?
-    How an error is detected? user_data->ptr == NULL?
-    If mecab_next() and mecab_fin() are always called after mecab_init(),
-    it may cause a critical error.
-   */
   if (!(str = grn_ctx_pop(ctx))) {
     ERR(GRN_INVALID_ARGUMENT, "missing argument");
     return NULL;
@@ -130,6 +130,9 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   return NULL;
 }
 
+/*
+  This function returns tokens one by one.
+ */
 static grn_obj *
 mecab_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
@@ -157,12 +160,13 @@ mecab_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   return NULL;
 }
 
+/*
+  This function finalizes a tokenization.
+ */
 static grn_obj *
 mecab_fin(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  /* grn_obj *table = args[0]; */
   grn_mecab_tokenizer *token = user_data->ptr;
-  /* if (token->mecab) { mecab_destroy(token->mecab); } */
   grn_str_close(ctx, token->nstr);
   GRN_FREE(token->buf);
   GRN_FREE(token);
@@ -214,10 +218,17 @@ check_mecab_dictionary_encoding(grn_ctx *ctx)
           "MeCab has no dictionary that uses the context encoding: <%s>",
           grn_enctostr(encoding));
     }
+  } else {
+    ERR(GRN_TOKENIZER_ERROR,
+        "mecab_new failed in check_mecab_dictionary_encoding");
   }
 #endif
 }
 
+/*
+  This function initializes a plugin. This function fails if there is no
+  dictionary that uses the context encoding of groonga.
+ */
 grn_rc
 GRN_PLUGIN_INIT(grn_ctx *ctx)
 {
@@ -225,14 +236,12 @@ GRN_PLUGIN_INIT(grn_ctx *ctx)
   CRITICAL_SECTION_INIT(sole_mecab_lock);
 
   check_mecab_dictionary_encoding(ctx);
-
-  /*
-    This function returns GRN_SUCCESS even if an encoding error is detected.
-   */
-
-  return GRN_SUCCESS;
+  return ctx->rc;
 }
 
+/*
+  This function registers a plugin to a database.
+ */
 grn_rc
 GRN_PLUGIN_REGISTER(grn_ctx *ctx)
 {
@@ -247,8 +256,8 @@ GRN_PLUGIN_REGISTER(grn_ctx *ctx)
   GRN_UINT32_INIT(&vars[2].value, 0);
 
   /*
-    grn_proc_create() creates a new procedure and associates it with a database
-    which is associated with `ctx'. You don't have to finalize a procedure.
+    grn_proc_create() registers a plugin to a database which is associated
+    with `ctx'. A returned object must not be finalized here.
    */
   obj = grn_proc_create(ctx, "TokenMecab", 10, GRN_PROC_TOKENIZER,
                         mecab_init, mecab_next, mecab_fin, 3, vars);
@@ -257,6 +266,9 @@ GRN_PLUGIN_REGISTER(grn_ctx *ctx)
   return GRN_SUCCESS;
 }
 
+/*
+  This function finalizes a plugin.
+ */
 grn_rc
 GRN_PLUGIN_FIN(grn_ctx *ctx)
 {
