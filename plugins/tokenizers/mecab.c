@@ -35,10 +35,9 @@ static grn_critical_section sole_mecab_lock;
 typedef struct {
   grn_str *nstr;
   mecab_t *mecab;
-  /* Why these pointers are unsigned? */
-  unsigned char *buf;
-  unsigned char *next;
-  unsigned char *end;
+  char *buf;
+  char *next;
+  char *end;
   grn_encoding encoding;
   grn_obj curr_;
   grn_obj stat_;
@@ -123,9 +122,9 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
        p--) { *p = '\0'; }
   /* grn_log("sparsed='%s'", s); */
   user_data->ptr = token;
-  token->buf = (unsigned char *)buf;
-  token->next = (unsigned char *)buf;
-  token->end = (unsigned char *)buf + strlen(buf);
+  token->buf = buf;
+  token->next = buf;
+  token->end = buf + strlen(buf);
   GRN_TEXT_INIT(&token->curr_, GRN_OBJ_DO_SHALLOW_COPY);
   GRN_UINT32_INIT(&token->stat_, 0);
   return NULL;
@@ -137,17 +136,17 @@ mecab_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   size_t cl;
   /* grn_obj *table = args[0]; */
   grn_mecab_tokenizer *token = user_data->ptr;
-  const unsigned char *p = token->next, *r;
-  const unsigned char *e = token->end;
+  char *p = token->next, *r;
+  char *e = token->end;
   for (r = p; r < e; r += cl) {
-    if (!(cl = grn_charlen_(ctx, (char *)r, (char *)e, token->encoding))) {
-      token->next = (unsigned char *)e;
+    if (!(cl = grn_charlen_(ctx, r, e, token->encoding))) {
+      token->next = e;
       break;
     }
-    if (grn_isspace((const char *)r, token->encoding)) {
-      const unsigned char *q = r;
-      while ((cl = grn_isspace((const char *)q, token->encoding))) { q += cl; }
-      token->next = (unsigned char *)q;
+    if (grn_isspace(r, token->encoding)) {
+      char *q = r;
+      while ((cl = grn_isspace(q, token->encoding))) { q += cl; }
+      token->next = q;
       break;
     }
   }
