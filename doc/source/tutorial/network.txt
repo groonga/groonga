@@ -4,6 +4,9 @@
 
 .. groonga-include : introduction.txt
 
+.. groonga-command
+.. database: tutorial
+
 How to use groonga with network
 ===============================
 

@@ -4,8 +4,6 @@
 
 .. groonga-command
 .. database: tutorial
-.. table_remove Site
-.. table_remove Terms
 
 Basic operations
 ================

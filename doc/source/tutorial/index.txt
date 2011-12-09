@@ -3,8 +3,9 @@
 .. highlightlang:: none
 
 .. groonga-include : drilldown.txt
+
 .. groonga-command
-.. table_remove GeoIndex
+.. database: tutorial
 
 タグ検索・参照関係の逆引き
 ==========================

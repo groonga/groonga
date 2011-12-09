@@ -7,7 +7,7 @@ include $(top_srcdir)/doc/files.am
 
 update-examples:
 	PATH=$(top_builddir)/src:$(top_builddir)/src/suggest:$$PATH	\
-	  $(srcdir)/source/update_execution_example.py			\
+	  $(srcdir)/update_execution_example.py				\
 	  $(srcdir)/source
 
 files.am: update-files.sh

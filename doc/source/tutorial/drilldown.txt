@@ -5,9 +5,7 @@
 .. groonga-include : search.txt
 
 .. groonga-command
-.. table_remove SiteDomain
-.. table_remove SiteCountry
-
+.. database: tutorial
 
 ドリルダウン
 ============

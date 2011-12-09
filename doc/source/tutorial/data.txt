@@ -4,6 +4,9 @@
 
 .. groonga-include : introduction.txt
 
+.. groonga-command
+.. database: tutorial
+
 さまざまな種類をもったデータの保存
 ==================================
 
@@ -19,7 +22,6 @@ groongaでは、数値（整数・小数）や文字列や時刻や経緯度な�
 その他のデータ型の一覧は、 :doc:`/type` を参照してください。
 
 .. groonga-command
-.. table_remove Type
 .. include:: ../example/tutorial/data-1.log
 .. table_create --name Type --flags TABLE_HASH_KEY --key_type ShortText
 .. column_create --table Type --name number --type Int32
