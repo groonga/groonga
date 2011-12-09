@@ -3,10 +3,7 @@
 .. highlightlang:: none
 
 .. groonga-command
-.. table_remove Users
-.. table_remove Comments
-.. table_remove HashTags
-.. table_remove Bigram
+.. database: tutorial-micro-blog
 
 マイクロブログ検索システムの作成
 ================================

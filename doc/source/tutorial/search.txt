@@ -4,6 +4,9 @@
 
 .. groonga-include : data.txt
 
+.. groonga-command
+.. database: tutorial
+
 さまざまな検索条件の指定
 ========================
 

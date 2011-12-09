@@ -3,8 +3,7 @@
 .. highlightlang:: none
 
 .. groonga-command
-.. table_remove PatPrefix
-.. table_remove PatSuffix
+.. database: tutorial-patricia-trie
 
 パトリシア木による前方一致検索
 ==============================

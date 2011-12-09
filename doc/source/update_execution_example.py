@@ -36,8 +36,6 @@ def reconnect(name):
 fout = None
 
 def execmd(cmd, fout):
-  if not groonga_process:
-    reconnect(DEFAULT_DB_NAME)
   a = '> ' + cmd + "\n"
   stdout.write(a)
   stdout.flush()
@@ -60,10 +58,16 @@ def execmd(cmd, fout):
       stdout.flush()
       break
 
+processed_files = []
 def readfile(fname, outflag):
+  if fname in processed_files:
+    print "skipped processed file: %s" % fname
+    return
   if outflag > 32:
     print "!!!! INCLUDE DEPTH OVER !!!!"
     raise
+  processed_files.append(fname)
+
   b = fname.rfind('/')
   if b < 0:
     rootdir = './'

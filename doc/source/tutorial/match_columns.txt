@@ -3,10 +3,7 @@
 .. highlightlang:: none
 
 .. groonga-command
-.. table_remove Blog1
-.. table_remove IndexBlog1
-.. table_remove Blog2
-.. table_remove IndexBlog2
+.. database: tutorial-match-columns
 
 match_columnsパラメータ
 =======================
