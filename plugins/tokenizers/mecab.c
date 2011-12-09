@@ -32,24 +32,6 @@
 static mecab_t *sole_mecab;
 static grn_critical_section sole_mecab_lock;
 
-/*
-  This macro is called only once.
-  Why don't you put this directly?
- */
-#define SOLE_MECAB_CONFIRM do {\
-  if (!sole_mecab) {\
-    static char *argv[] = {"", "-Owakati"};\
-    CRITICAL_SECTION_ENTER(sole_mecab_lock);\
-    if (!sole_mecab) {\
-      sole_mecab = mecab_new(2, argv);\
-      if (!sole_mecab) {\
-        strncpy(mecab_err, mecab_strerror(NULL), sizeof(mecab_err) - 1);\
-      }\
-    }\
-    CRITICAL_SECTION_LEAVE(sole_mecab_lock);\
-  }\
-} while(0)
-
 typedef struct {
   grn_str *nstr;
   mecab_t *mecab;
@@ -84,7 +66,17 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     return NULL;
   }
   mecab_err[sizeof(mecab_err) - 1] = '\0';
-  SOLE_MECAB_CONFIRM;
+  if (!sole_mecab) {
+    static char *argv[] = {"", "-Owakati"};
+    CRITICAL_SECTION_ENTER(sole_mecab_lock);
+    if (!sole_mecab) {
+      sole_mecab = mecab_new(2, argv);
+      if (!sole_mecab) {
+        strncpy(mecab_err, mecab_strerror(NULL), sizeof(mecab_err) - 1);
+      }
+    }
+    CRITICAL_SECTION_LEAVE(sole_mecab_lock);
+  }
   if (!sole_mecab) {
     ERR(GRN_TOKENIZER_ERROR,
         "mecab_new failed on grn_mecab_init: %s", mecab_err);
