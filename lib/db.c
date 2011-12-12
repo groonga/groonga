@@ -242,6 +242,16 @@ grn_db_close(grn_ctx *ctx, grn_obj *db)
   ctx_used_db = ctx->impl && ctx->impl->db == db;
   if (ctx_used_db) {
     grn_ctx_loader_clear(ctx);
+    if (ctx->impl->parser) {
+      grn_expr_parser_close(ctx);
+    }
+    if (ctx->impl->values) {
+      grn_tmp_db_obj *o;
+      GRN_ARRAY_EACH(ctx, ctx->impl->values, 0, 0, id, &o, {
+        grn_obj_close(ctx, (grn_obj *)o->obj);
+      });
+      grn_array_truncate(ctx, ctx->impl->values);
+    }
   }
   GRN_TINY_ARRAY_EACH(&s->values, 1, grn_db_curr_id(ctx, db), id, vp, {
     if (vp->ptr) { grn_obj_close(ctx, vp->ptr); }
