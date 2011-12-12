@@ -3487,7 +3487,7 @@ put_logical_op(grn_ctx *ctx, scan_info **sis, int *ip, grn_operator op, int star
               s_->flags &= ~SCAN_PUSH;
               s_->logical_op = op;
               memcpy(&sis[i], &sis[j], sizeof(scan_info *) * (r - j));
-              memcpy(&sis[j], &sis[r], sizeof(scan_info *) * (i - r));
+              memmove(&sis[j], &sis[r], sizeof(scan_info *) * (i - r));
               memcpy(&sis[i + j - r], &sis[i], sizeof(scan_info *) * (r - j));
             }
             break;
