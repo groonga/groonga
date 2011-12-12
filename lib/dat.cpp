@@ -129,6 +129,7 @@ grn_dat_generate_trie_path(const char *base_path, char *trie_path, uint32_t file
   std::memcpy(trie_path, base_path, len);
   trie_path[len] = '.';
   grn_itoh(file_id % (1U << (4 * FILE_ID_LENGTH)), trie_path + len + 1, FILE_ID_LENGTH);
+  trie_path[len + 1 + FILE_ID_LENGTH] = '\0';
 }
 
 bool

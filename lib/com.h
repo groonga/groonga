@@ -34,7 +34,7 @@
 #include <netdb.h>
 #endif /* HAVE_NETDB_H */
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
 
