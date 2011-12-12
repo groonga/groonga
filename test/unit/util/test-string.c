@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2008-2010  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2008-2011  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -49,6 +49,8 @@ void data_str_len(void);
 void test_str_len(gconstpointer data);
 void data_aton(void);
 void test_aton(gconstpointer data);
+void data_itoh(void);
+void test_itoh(gconstpointer data);
 
 static grn_ctx context;
 static grn_obj buffer;
@@ -881,4 +883,42 @@ test_aton(gconstpointer data)
     cut_error("unknown type: %d", type);
     break;
   }
+}
+
+void
+data_itoh(void)
+{
+#define ADD_DATUM(label, expected, input, length)                       \
+  gcut_add_datum(label " - " #input " [" #length "] (" expected ")",    \
+                 "expected", G_TYPE_STRING, expected,                   \
+                 "input", G_TYPE_UINT, input,                           \
+                 "length", G_TYPE_UINT, length,                         \
+                 NULL)
+
+  ADD_DATUM("no alphabet",
+            "9", 9, 1);
+  ADD_DATUM("alphabet",
+            "A", 10, 1);
+  ADD_DATUM("many number of digits",
+            "0013579BDF", 324508639, 10);
+
+#undef ADD_DATUM
+}
+
+void
+test_itoh(gconstpointer data)
+{
+  const gchar *expected;
+  gchar *actual;
+  guint input;
+  guint length;
+
+  input = gcut_data_get_uint(data, "input");
+  length = gcut_data_get_uint(data, "length");
+  expected = gcut_data_get_string(data, "expected");
+
+  actual = g_new0(gchar, length);
+  cut_take(actual, g_free);
+  grn_itoh(input, actual, length);
+  cut_assert_equal_substring(expected, actual, length);
 }
