@@ -243,7 +243,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/tutorial/query_expansion.txt \
 	$(top_srcdir)/doc/source/tutorial/search.txt \
 	$(top_srcdir)/doc/source/type.txt \
-	$(top_srcdir)/doc/source/update_execution_example.py \
+	$(top_srcdir)/doc/update_execution_example.py \
 	$(NULL)
 
 absolute_theme_files = \
@@ -505,7 +505,7 @@ source_files_relative_from_doc_dir = \
 	source/tutorial/query_expansion.txt \
 	source/tutorial/search.txt \
 	source/type.txt \
-	source/update_execution_example.py \
+	update_execution_example.py \
 	$(NULL)
 
 theme_files_relative_from_doc_dir = \
