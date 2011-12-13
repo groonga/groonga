@@ -30,7 +30,8 @@ init-locale:
 
 EXTRA_DIST =					\
 	$(theme_files_relative_from_doc_dir)	\
-	images.mk
+	images.mk				\
+	update_execution_example.py
 
 $(source_files_relative_from_doc_dir): html
 
