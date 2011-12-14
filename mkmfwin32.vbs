@@ -92,8 +92,8 @@ sub common_header()
 
   ts.write "DEFS =  -D_CRT_SECURE_NO_DEPRECATE \" + vbLf
   ts.write "        -DWIN32 \" + vbLf
-  if use_mecab = 0 then
-    ts.write "        -DNO_MECAB \" + vbLf
+  if use_mecab = 1 then
+    ts.write "        -DWITH_MECAB \" + vbLf
   end if
   ts.write "        -DDLL_EXPORT \" + vbLf
   ts.write "        -DNO_LZO \" + vbLf
