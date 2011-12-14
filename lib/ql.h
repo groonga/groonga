@@ -38,7 +38,7 @@
 
 #include <math.h>
 
-#if HAVE_MESSAGE_PACK
+#ifdef HAVE_MESSAGE_PACK
 #include <msgpack.h>
 #endif
 
@@ -273,7 +273,7 @@ struct _grn_ctx_impl {
     uint64_t u64;
   } data;
 
-#if HAVE_MESSAGE_PACK
+#ifdef HAVE_MESSAGE_PACK
   msgpack_packer msgpacker;
 #endif
 };
