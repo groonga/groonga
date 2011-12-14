@@ -1089,6 +1089,14 @@ get_content_mime_type(grn_ctx *ctx, const char *p, const char *pe)
         ctx->impl->mime_type = "image/jpeg";
       }
       break;
+#if HAVE_MESSAGE_PACK
+    case 'm' :
+      if (p + 7 == pe && !memcmp(p, "msgpack", 7)) {
+        ctx->impl->output_type = GRN_CONTENT_MSGPACK;
+        ctx->impl->mime_type = "application/x-msgpack";
+      }
+      break;
+#endif
     case 'p' :
       if (p + 3 == pe && !memcmp(p, "png", 3)) {
         ctx->impl->output_type = GRN_CONTENT_NONE;
