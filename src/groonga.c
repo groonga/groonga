@@ -149,7 +149,7 @@ show_version(void)
 #ifndef NO_NFKC
   printf(",nfkc");
 #endif
-#ifndef NO_MECAB
+#ifdef WITH_MECAB
   printf(",mecab");
 #endif
 #ifndef NO_ZLIB
