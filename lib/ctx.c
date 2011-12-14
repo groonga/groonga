@@ -392,6 +392,14 @@ grn_ctx_loader_clear(grn_ctx *ctx)
 
 #define IMPL_SIZE ((sizeof(struct _grn_ctx_impl) + (grn_pagesize - 1)) & ~(grn_pagesize - 1))
 
+#if HAVE_MESSAGE_PACK
+static inline int grn_msgpack_buffer_write(void* data, const char* buf, unsigned int len)
+{
+  grn_ctx *ctx = (grn_ctx *)data;
+  return grn_bulk_write(ctx, ctx->impl->outbuf, buf, len);
+}
+#endif
+
 static void
 grn_ctx_impl_init(grn_ctx *ctx)
 {
@@ -477,6 +485,10 @@ grn_ctx_impl_init(grn_ctx *ctx)
   ctx->impl->edge = NULL;
   grn_loader_init(&ctx->impl->loader);
   ctx->impl->plugin_path = NULL;
+
+#if HAVE_MESSAGE_PACK
+  msgpack_packer_init(&ctx->impl->msgpacker, ctx, grn_msgpack_buffer_write);
+#endif
 }
 
 void
