@@ -152,6 +152,9 @@ show_version(void)
 #ifdef WITH_MECAB
   printf(",mecab");
 #endif
+#ifdef HAVE_MESSAGE_PACK
+  printf(",msgpack");
+#endif
 #ifndef NO_ZLIB
   printf(",zlib");
 #endif
