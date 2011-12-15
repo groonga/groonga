@@ -5,10 +5,11 @@ $KCODE = 'utf-8' unless defined?(Encoding)
 require 'rbconfig'
 require 'fileutils'
 require "rubygems"
-gem "test-unit", ">= 2.3.1"
+require "bundler/setup"
 require "test/unit"
 require "test/unit/notify"
 require "json"
+require "msgpack"
 
 build_dir = File.expand_path(ENV["BUILD_DIR"] || File.dirname(__FILE__))
 base_dir = File.expand_path(ENV["BASE_DIR"] || File.dirname(__FILE__))
