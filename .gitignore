@@ -107,3 +107,4 @@ version.sh
 /src/suggest/groonga-suggest-learner
 /src/suggest/groonga-suggest-create-dataset
 /tmp-doc/
+/test/unit/Gemfile.lock
