@@ -520,24 +520,24 @@ print_return_code(grn_ctx *ctx, grn_rc rc, grn_obj *head, grn_obj *body, grn_obj
   msgpack_writer_ctx head_writer_ctx;
   msgpack_packer header_packer;
 #endif
+  double started, finished, elapsed;
+
+  grn_timeval tv_now;
+  grn_timeval_now(ctx, &tv_now);
+  started = ctx->impl->tv.tv_sec;
+  started += ctx->impl->tv.tv_nsec / GRN_TIME_NSEC_PER_SEC_F;
+  finished = tv_now.tv_sec;
+  finished += tv_now.tv_nsec / GRN_TIME_NSEC_PER_SEC_F;
+  elapsed = finished - started;
 
   switch (ctx->impl->output_type) {
   case GRN_CONTENT_JSON:
     GRN_TEXT_PUTS(ctx, head, "[[");
     grn_text_itoa(ctx, head, rc);
-    {
-      double dv;
-      grn_timeval tv;
-      grn_timeval_now(ctx, &tv);
-      dv = ctx->impl->tv.tv_sec;
-      dv += ctx->impl->tv.tv_nsec / GRN_TIME_NSEC_PER_SEC_F;
-      GRN_TEXT_PUTC(ctx, head, ',');
-      grn_text_ftoa(ctx, head, dv);
-      dv = (tv.tv_sec - ctx->impl->tv.tv_sec);
-      dv += (tv.tv_nsec - ctx->impl->tv.tv_nsec) / GRN_TIME_NSEC_PER_SEC_F;
-      GRN_TEXT_PUTC(ctx, head, ',');
-      grn_text_ftoa(ctx, head, dv);
-    }
+    GRN_TEXT_PUTC(ctx, head, ',');
+    grn_text_ftoa(ctx, head, started);
+    GRN_TEXT_PUTC(ctx, head, ',');
+    grn_text_ftoa(ctx, head, elapsed);
     if (rc != GRN_SUCCESS) {
       GRN_TEXT_PUTC(ctx, head, ',');
       grn_text_esc(ctx, head, ctx->errbuf, strlen(ctx->errbuf));
@@ -573,18 +573,9 @@ print_return_code(grn_ctx *ctx, grn_rc rc, grn_obj *head, grn_obj *body, grn_obj
   case GRN_CONTENT_TSV:
     grn_text_itoa(ctx, head, rc);
     GRN_TEXT_PUTC(ctx, head, '\t');
-    {
-      double dv;
-      grn_timeval tv;
-      grn_timeval_now(ctx, &tv);
-      dv = ctx->impl->tv.tv_sec;
-      dv += ctx->impl->tv.tv_nsec / GRN_TIME_NSEC_PER_SEC_F;
-      grn_text_ftoa(ctx, head, dv);
-      dv = (tv.tv_sec - ctx->impl->tv.tv_sec);
-      dv += (tv.tv_nsec - ctx->impl->tv.tv_nsec) / GRN_TIME_NSEC_PER_SEC_F;
-      GRN_TEXT_PUTC(ctx, head, '\t');
-      grn_text_ftoa(ctx, head, dv);
-    }
+    grn_text_ftoa(ctx, head, started);
+    GRN_TEXT_PUTC(ctx, head, '\t');
+    grn_text_ftoa(ctx, head, elapsed);
     if (rc != GRN_SUCCESS) {
       GRN_TEXT_PUTC(ctx, head, '\t');
       grn_text_esc(ctx, head, ctx->errbuf, strlen(ctx->errbuf));
@@ -622,19 +613,10 @@ print_return_code(grn_ctx *ctx, grn_rc rc, grn_obj *head, grn_obj *body, grn_obj
         GRN_TEXT_PUTS(ctx, head, "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<RESULT CODE=\"");
         grn_text_itoa(ctx, head, rc);
         GRN_TEXT_PUTS(ctx, head, "\" UP=\"");
-        {
-          double dv;
-          grn_timeval tv;
-          grn_timeval_now(ctx, &tv);
-          dv = ctx->impl->tv.tv_sec;
-          dv += ctx->impl->tv.tv_nsec / GRN_TIME_NSEC_PER_SEC_F;
-          grn_text_ftoa(ctx, head, dv);
-          dv = (tv.tv_sec - ctx->impl->tv.tv_sec);
-          dv += (tv.tv_nsec - ctx->impl->tv.tv_nsec) / GRN_TIME_NSEC_PER_SEC_F;
-          GRN_TEXT_PUTS(ctx, head, "\" ELAPSED=\"");
-          grn_text_ftoa(ctx, head, dv);
-          GRN_TEXT_PUTS(ctx, head, "\">");
-        }
+        grn_text_ftoa(ctx, head, started);
+        GRN_TEXT_PUTS(ctx, head, "\" ELAPSED=\"");
+        grn_text_ftoa(ctx, head, elapsed);
+        GRN_TEXT_PUTS(ctx, head, "\">");
         if (rc != GRN_SUCCESS) {
           GRN_TEXT_PUTS(ctx, head, "<ERROR>");
           grn_text_escape_xml(ctx, head, ctx->errbuf, strlen(ctx->errbuf));
@@ -662,7 +644,7 @@ print_return_code(grn_ctx *ctx, grn_rc rc, grn_obj *head, grn_obj *body, grn_obj
 
     msgpack_pack_array(&header_packer, (rc == GRN_SUCCESS) ? 2 : 1); /* [HEAD, (BODY)] */
 
-    int header_size = 3; /* HEAD := [rc, uptime, elapsed, (error, (ERROR DETAIL))] */
+    int header_size = 3; /* HEAD := [rc, started, elapsed, (error, (ERROR DETAIL))] */
     if (rc != GRN_SUCCESS) {
       header_size ++;
       if (ctx->errfunc && ctx->errfile) {
@@ -671,16 +653,9 @@ print_return_code(grn_ctx *ctx, grn_rc rc, grn_obj *head, grn_obj *body, grn_obj
     }
     msgpack_pack_array(&header_packer, header_size);
     msgpack_pack_int(&header_packer, rc);
-    double dv;
-    grn_timeval tv;
-    grn_timeval_now(ctx, &tv);
-    dv = ctx->impl->tv.tv_sec;
-    dv += ctx->impl->tv.tv_nsec / GRN_TIME_NSEC_PER_SEC_F;
-    msgpack_pack_double(&header_packer, dv);
 
-    dv = (tv.tv_sec - ctx->impl->tv.tv_sec);
-    dv += (tv.tv_nsec - ctx->impl->tv.tv_nsec) / GRN_TIME_NSEC_PER_SEC_F;
-    msgpack_pack_double(&header_packer, dv);
+    msgpack_pack_double(&header_packer, started);
+    msgpack_pack_double(&header_packer, elapsed);
 
     if (rc != GRN_SUCCESS) {
       msgpack_pack_raw(&header_packer, strlen(ctx->errbuf));
