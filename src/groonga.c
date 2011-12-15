@@ -516,10 +516,6 @@ msgpack_buffer_writer(void* data, const char* buf, unsigned int len)
 static void
 print_return_code(grn_ctx *ctx, grn_rc rc, grn_obj *head, grn_obj *body, grn_obj *foot)
 {
-#ifdef HAVE_MESSAGE_PACK
-  msgpack_writer_ctx head_writer_ctx;
-  msgpack_packer header_packer;
-#endif
   double started, finished, elapsed;
 
   grn_timeval tv_now;
@@ -638,56 +634,61 @@ print_return_code(grn_ctx *ctx, grn_rc rc, grn_obj *head, grn_obj *body, grn_obj
     break;
   case GRN_CONTENT_MSGPACK:
 #ifdef HAVE_MESSAGE_PACK
-    head_writer_ctx.ctx = ctx;
-    head_writer_ctx.buffer = head;
-    msgpack_packer_init(&header_packer, &head_writer_ctx, msgpack_buffer_writer);
+    {
+      msgpack_writer_ctx head_writer_ctx;
+      msgpack_packer header_packer;
 
-    msgpack_pack_array(&header_packer, (rc == GRN_SUCCESS) ? 2 : 1); /* [HEAD, (BODY)] */
+      head_writer_ctx.ctx = ctx;
+      head_writer_ctx.buffer = head;
+      msgpack_packer_init(&header_packer, &head_writer_ctx, msgpack_buffer_writer);
 
-    int header_size = 3; /* HEAD := [rc, started, elapsed, (error, (ERROR DETAIL))] */
-    if (rc != GRN_SUCCESS) {
-      header_size ++;
-      if (ctx->errfunc && ctx->errfile) {
+      msgpack_pack_array(&header_packer, (rc == GRN_SUCCESS) ? 2 : 1); /* [HEAD, (BODY)] */
+
+      int header_size = 3; /* HEAD := [rc, started, elapsed, (error, (ERROR DETAIL))] */
+      if (rc != GRN_SUCCESS) {
         header_size ++;
+        if (ctx->errfunc && ctx->errfile) {
+          header_size ++;
+        }
       }
-    }
-    msgpack_pack_array(&header_packer, header_size);
-    msgpack_pack_int(&header_packer, rc);
+      msgpack_pack_array(&header_packer, header_size);
+      msgpack_pack_int(&header_packer, rc);
 
-    msgpack_pack_double(&header_packer, started);
-    msgpack_pack_double(&header_packer, elapsed);
+      msgpack_pack_double(&header_packer, started);
+      msgpack_pack_double(&header_packer, elapsed);
 
-    if (rc != GRN_SUCCESS) {
-      msgpack_pack_raw(&header_packer, strlen(ctx->errbuf));
-      msgpack_pack_raw_body(&header_packer, ctx->errbuf, strlen(ctx->errbuf));
-      if (ctx->errfunc && ctx->errfile) {
-        grn_obj *command = GRN_CTX_USER_DATA(ctx)->ptr;
+      if (rc != GRN_SUCCESS) {
+        msgpack_pack_raw(&header_packer, strlen(ctx->errbuf));
+        msgpack_pack_raw_body(&header_packer, ctx->errbuf, strlen(ctx->errbuf));
+        if (ctx->errfunc && ctx->errfile) {
+          grn_obj *command = GRN_CTX_USER_DATA(ctx)->ptr;
 
-        /* TODO: output backtrace */
-        msgpack_pack_array(&header_packer, 1);
-        msgpack_pack_array(&header_packer, command ? 6 : 3); /* ERROR DETAIL := [[errfunc, errfile, errline, (input_path, number_of_lines, command)]] */
+          /* TODO: output backtrace */
+          msgpack_pack_array(&header_packer, 1);
+          msgpack_pack_array(&header_packer, command ? 6 : 3); /* ERROR DETAIL := [[errfunc, errfile, errline, (input_path, number_of_lines, command)]] */
 
-        msgpack_pack_raw(&header_packer, strlen(ctx->errfunc));
-        msgpack_pack_raw_body(&header_packer, ctx->errfunc, strlen(ctx->errfunc));
+          msgpack_pack_raw(&header_packer, strlen(ctx->errfunc));
+          msgpack_pack_raw_body(&header_packer, ctx->errfunc, strlen(ctx->errfunc));
 
-        msgpack_pack_raw(&header_packer, strlen(ctx->errfile));
-        msgpack_pack_raw_body(&header_packer, ctx->errfile, strlen(ctx->errfile));
+          msgpack_pack_raw(&header_packer, strlen(ctx->errfile));
+          msgpack_pack_raw_body(&header_packer, ctx->errfile, strlen(ctx->errfile));
 
-        msgpack_pack_int(&header_packer, ctx->errline);
+          msgpack_pack_int(&header_packer, ctx->errline);
 
-        if (command) {
-          if (input_path) {
-            msgpack_pack_raw(&header_packer, strlen(input_path));
-            msgpack_pack_raw_body(&header_packer, input_path, strlen(input_path));
-          } else {
-            msgpack_pack_raw(&header_packer, 7);
-            msgpack_pack_raw_body(&header_packer, "(stdin)", 7);
+          if (command) {
+            if (input_path) {
+              msgpack_pack_raw(&header_packer, strlen(input_path));
+              msgpack_pack_raw_body(&header_packer, input_path, strlen(input_path));
+            } else {
+              msgpack_pack_raw(&header_packer, 7);
+              msgpack_pack_raw_body(&header_packer, "(stdin)", 7);
+            }
+
+            msgpack_pack_int(&header_packer, number_of_lines);
+
+            msgpack_pack_raw(&header_packer, GRN_TEXT_LEN(command));
+            msgpack_pack_raw_body(&header_packer, GRN_TEXT_VALUE(command), GRN_TEXT_LEN(command));
           }
-
-          msgpack_pack_int(&header_packer, number_of_lines);
-
-          msgpack_pack_raw(&header_packer, GRN_TEXT_LEN(command));
-          msgpack_pack_raw_body(&header_packer, GRN_TEXT_VALUE(command), GRN_TEXT_LEN(command));
         }
       }
     }
