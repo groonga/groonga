@@ -646,9 +646,9 @@ print_return_code(grn_ctx *ctx, grn_rc rc, grn_obj *head, grn_obj *body, grn_obj
 
       int header_size = 3; /* HEAD := [rc, started, elapsed, (error, (ERROR DETAIL))] */
       if (rc != GRN_SUCCESS) {
-        header_size ++;
+        header_size++;
         if (ctx->errfunc && ctx->errfile) {
-          header_size ++;
+          header_size++;
         }
       }
       msgpack_pack_array(&header_packer, header_size);
