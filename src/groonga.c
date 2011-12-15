@@ -642,9 +642,11 @@ print_return_code(grn_ctx *ctx, grn_rc rc, grn_obj *head, grn_obj *body, grn_obj
       head_writer_ctx.buffer = head;
       msgpack_packer_init(&header_packer, &head_writer_ctx, msgpack_buffer_writer);
 
-      msgpack_pack_array(&header_packer, (rc == GRN_SUCCESS) ? 2 : 1); /* [HEAD, (BODY)] */
+       /* [HEAD, (BODY)] */
+      msgpack_pack_array(&header_packer, (rc == GRN_SUCCESS) ? 2 : 1);
 
-      int header_size = 3; /* HEAD := [rc, started, elapsed, (error, (ERROR DETAIL))] */
+      /* HEAD := [rc, started, elapsed, (error, (ERROR DETAIL))] */
+      int header_size = 3;
       if (rc != GRN_SUCCESS) {
         header_size++;
         if (ctx->errfunc && ctx->errfile) {
@@ -662,10 +664,16 @@ print_return_code(grn_ctx *ctx, grn_rc rc, grn_obj *head, grn_obj *body, grn_obj
         msgpack_pack_raw_body(&header_packer, ctx->errbuf, strlen(ctx->errbuf));
         if (ctx->errfunc && ctx->errfile) {
           grn_obj *command = GRN_CTX_USER_DATA(ctx)->ptr;
+          /* ERROR DETAIL := [[errfunc, errfile, errline,
+                               (input_path, number_of_lines, command)]] */
+          int error_detail_size = 3;
 
           /* TODO: output backtrace */
           msgpack_pack_array(&header_packer, 1);
-          msgpack_pack_array(&header_packer, command ? 6 : 3); /* ERROR DETAIL := [[errfunc, errfile, errline, (input_path, number_of_lines, command)]] */
+          if (command) {
+            error_detail_size += 3;
+          }
+          msgpack_pack_array(&header_packer, error_detail_size);
 
           msgpack_pack_raw(&header_packer, strlen(ctx->errfunc));
           msgpack_pack_raw_body(&header_packer, ctx->errfunc, strlen(ctx->errfunc));
