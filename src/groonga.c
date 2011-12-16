@@ -890,7 +890,9 @@ h_output(grn_ctx *ctx, int flags, void *arg)
     } else {
       GRN_TEXT_SETS(ctx, body, "HTTP/1.1 500 Internal Server Error\r\n");
     }
-    GRN_TEXT_PUTS(ctx, body, "Content-Type: application/json\r\n\r\n");
+    GRN_TEXT_PUTS(ctx, body, "Content-Type: ");
+    GRN_TEXT_PUTS(ctx, body, mime_type);
+    GRN_TEXT_PUTS(ctx, body, "\r\n\r\n");
   }
   {
     ssize_t ret, len;
