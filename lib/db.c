@@ -6188,7 +6188,7 @@ grn_rc
 grn_obj_remove(grn_ctx *ctx, grn_obj *obj)
 {
   GRN_API_ENTER;
-  if (ctx->impl && ctx->impl->db) {
+  if (ctx->impl && ctx->impl->db && ctx->impl->db != obj) {
     grn_io *io = grn_obj_io(ctx->impl->db);
     if (!grn_io_lock(ctx, io, 10000000)) {
       _grn_obj_remove(ctx, obj);
