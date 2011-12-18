@@ -1014,12 +1014,13 @@ __grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, in
   pat_node *rn, *rn0 = NULL, *rno;
   int c, c0 = -1, ch;
   uint32_t len = key_size * 16;
-  grn_id r, otherside, *p, *p0 = NULL;
+  grn_id r, otherside, *proot, *p, *p0 = NULL;
+
   di = delinfo_new(ctx, pat); /* must be called before find rn */
   di->shared = shared;
   PAT_AT(pat, 0, rn);
   c = -1;
-  p = &rn->lr[1];
+  proot = p = &rn->lr[1];
   for (;;) {
     if (!(r = *p)) { return GRN_INVALID_ARGUMENT; }
     PAT_AT(pat, r, rn);
@@ -1059,6 +1060,7 @@ __grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, in
         }
         PAT_CHK_SET(rno, 0);
       }
+      if (proot == p0 && !rno->check) { rno->lr[0] = rno->lr[1] = otherside; }
     }
     *p0 = otherside;
   } else {
@@ -1121,6 +1123,7 @@ __grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, in
           }
           PAT_CHK_SET(rno, 0);
         }
+        if (proot == p0 && !rno->check) { rno->lr[0] = rno->lr[1] = otherside; }
       }
       *p0 = otherside;
     }
