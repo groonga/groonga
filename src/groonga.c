@@ -152,6 +152,9 @@ show_version(void)
 #ifdef WITH_MECAB
   printf(",mecab");
 #endif
+#ifdef HAVE_MESSAGE_PACK
+  printf(",msgpack");
+#endif
 #ifndef NO_ZLIB
   printf(",zlib");
 #endif
@@ -496,26 +499,41 @@ transform_xml(grn_ctx *ctx, grn_obj *output, grn_obj *transformed)
   GRN_OBJ_FIN(ctx, &columns);
 }
 
+#ifdef HAVE_MESSAGE_PACK
+typedef struct {
+  grn_ctx *ctx;
+  grn_obj *buffer;
+} msgpack_writer_ctx;
+
+static inline int
+msgpack_buffer_writer(void* data, const char* buf, unsigned int len)
+{
+  msgpack_writer_ctx *writer_ctx = (msgpack_writer_ctx *)data;
+  return grn_bulk_write(writer_ctx->ctx, writer_ctx->buffer, buf, len);
+}
+#endif
+
 static void
 print_return_code(grn_ctx *ctx, grn_rc rc, grn_obj *head, grn_obj *body, grn_obj *foot)
 {
+  double started, finished, elapsed;
+
+  grn_timeval tv_now;
+  grn_timeval_now(ctx, &tv_now);
+  started = ctx->impl->tv.tv_sec;
+  started += ctx->impl->tv.tv_nsec / GRN_TIME_NSEC_PER_SEC_F;
+  finished = tv_now.tv_sec;
+  finished += tv_now.tv_nsec / GRN_TIME_NSEC_PER_SEC_F;
+  elapsed = finished - started;
+
   switch (ctx->impl->output_type) {
   case GRN_CONTENT_JSON:
     GRN_TEXT_PUTS(ctx, head, "[[");
     grn_text_itoa(ctx, head, rc);
-    {
-      double dv;
-      grn_timeval tv;
-      grn_timeval_now(ctx, &tv);
-      dv = ctx->impl->tv.tv_sec;
-      dv += ctx->impl->tv.tv_nsec / GRN_TIME_NSEC_PER_SEC_F;
-      GRN_TEXT_PUTC(ctx, head, ',');
-      grn_text_ftoa(ctx, head, dv);
-      dv = (tv.tv_sec - ctx->impl->tv.tv_sec);
-      dv += (tv.tv_nsec - ctx->impl->tv.tv_nsec) / GRN_TIME_NSEC_PER_SEC_F;
-      GRN_TEXT_PUTC(ctx, head, ',');
-      grn_text_ftoa(ctx, head, dv);
-    }
+    GRN_TEXT_PUTC(ctx, head, ',');
+    grn_text_ftoa(ctx, head, started);
+    GRN_TEXT_PUTC(ctx, head, ',');
+    grn_text_ftoa(ctx, head, elapsed);
     if (rc != GRN_SUCCESS) {
       GRN_TEXT_PUTC(ctx, head, ',');
       grn_text_esc(ctx, head, ctx->errbuf, strlen(ctx->errbuf));
@@ -551,18 +569,9 @@ print_return_code(grn_ctx *ctx, grn_rc rc, grn_obj *head, grn_obj *body, grn_obj
   case GRN_CONTENT_TSV:
     grn_text_itoa(ctx, head, rc);
     GRN_TEXT_PUTC(ctx, head, '\t');
-    {
-      double dv;
-      grn_timeval tv;
-      grn_timeval_now(ctx, &tv);
-      dv = ctx->impl->tv.tv_sec;
-      dv += ctx->impl->tv.tv_nsec / GRN_TIME_NSEC_PER_SEC_F;
-      grn_text_ftoa(ctx, head, dv);
-      dv = (tv.tv_sec - ctx->impl->tv.tv_sec);
-      dv += (tv.tv_nsec - ctx->impl->tv.tv_nsec) / GRN_TIME_NSEC_PER_SEC_F;
-      GRN_TEXT_PUTC(ctx, head, '\t');
-      grn_text_ftoa(ctx, head, dv);
-    }
+    grn_text_ftoa(ctx, head, started);
+    GRN_TEXT_PUTC(ctx, head, '\t');
+    grn_text_ftoa(ctx, head, elapsed);
     if (rc != GRN_SUCCESS) {
       GRN_TEXT_PUTC(ctx, head, '\t');
       grn_text_esc(ctx, head, ctx->errbuf, strlen(ctx->errbuf));
@@ -600,19 +609,10 @@ print_return_code(grn_ctx *ctx, grn_rc rc, grn_obj *head, grn_obj *body, grn_obj
         GRN_TEXT_PUTS(ctx, head, "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<RESULT CODE=\"");
         grn_text_itoa(ctx, head, rc);
         GRN_TEXT_PUTS(ctx, head, "\" UP=\"");
-        {
-          double dv;
-          grn_timeval tv;
-          grn_timeval_now(ctx, &tv);
-          dv = ctx->impl->tv.tv_sec;
-          dv += ctx->impl->tv.tv_nsec / GRN_TIME_NSEC_PER_SEC_F;
-          grn_text_ftoa(ctx, head, dv);
-          dv = (tv.tv_sec - ctx->impl->tv.tv_sec);
-          dv += (tv.tv_nsec - ctx->impl->tv.tv_nsec) / GRN_TIME_NSEC_PER_SEC_F;
-          GRN_TEXT_PUTS(ctx, head, "\" ELAPSED=\"");
-          grn_text_ftoa(ctx, head, dv);
-          GRN_TEXT_PUTS(ctx, head, "\">");
-        }
+        grn_text_ftoa(ctx, head, started);
+        GRN_TEXT_PUTS(ctx, head, "\" ELAPSED=\"");
+        grn_text_ftoa(ctx, head, elapsed);
+        GRN_TEXT_PUTS(ctx, head, "\">");
         if (rc != GRN_SUCCESS) {
           GRN_TEXT_PUTS(ctx, head, "<ERROR>");
           grn_text_escape_xml(ctx, head, ctx->errbuf, strlen(ctx->errbuf));
@@ -633,7 +633,76 @@ print_return_code(grn_ctx *ctx, grn_rc rc, grn_obj *head, grn_obj *body, grn_obj
     }
     break;
   case GRN_CONTENT_MSGPACK:
-    // todo
+#ifdef HAVE_MESSAGE_PACK
+    {
+      msgpack_writer_ctx head_writer_ctx;
+      msgpack_packer header_packer;
+      int header_size;
+
+      head_writer_ctx.ctx = ctx;
+      head_writer_ctx.buffer = head;
+      msgpack_packer_init(&header_packer, &head_writer_ctx, msgpack_buffer_writer);
+
+       /* [HEAD, (BODY)] */
+      msgpack_pack_array(&header_packer, (rc == GRN_SUCCESS) ? 2 : 1);
+
+      /* HEAD := [rc, started, elapsed, (error, (ERROR DETAIL))] */
+      header_size = 3;
+      if (rc != GRN_SUCCESS) {
+        header_size++;
+        if (ctx->errfunc && ctx->errfile) {
+          header_size++;
+        }
+      }
+      msgpack_pack_array(&header_packer, header_size);
+      msgpack_pack_int(&header_packer, rc);
+
+      msgpack_pack_double(&header_packer, started);
+      msgpack_pack_double(&header_packer, elapsed);
+
+      if (rc != GRN_SUCCESS) {
+        msgpack_pack_raw(&header_packer, strlen(ctx->errbuf));
+        msgpack_pack_raw_body(&header_packer, ctx->errbuf, strlen(ctx->errbuf));
+        if (ctx->errfunc && ctx->errfile) {
+          grn_obj *command = GRN_CTX_USER_DATA(ctx)->ptr;
+          int error_detail_size;
+
+          /* ERROR DETAIL := [[errfunc, errfile, errline,
+                               (input_path, number_of_lines, command)]] */
+          /* TODO: output backtrace */
+          msgpack_pack_array(&header_packer, 1);
+          error_detail_size = 3;
+          if (command) {
+            error_detail_size += 3;
+          }
+          msgpack_pack_array(&header_packer, error_detail_size);
+
+          msgpack_pack_raw(&header_packer, strlen(ctx->errfunc));
+          msgpack_pack_raw_body(&header_packer, ctx->errfunc, strlen(ctx->errfunc));
+
+          msgpack_pack_raw(&header_packer, strlen(ctx->errfile));
+          msgpack_pack_raw_body(&header_packer, ctx->errfile, strlen(ctx->errfile));
+
+          msgpack_pack_int(&header_packer, ctx->errline);
+
+          if (command) {
+            if (input_path) {
+              msgpack_pack_raw(&header_packer, strlen(input_path));
+              msgpack_pack_raw_body(&header_packer, input_path, strlen(input_path));
+            } else {
+              msgpack_pack_raw(&header_packer, 7);
+              msgpack_pack_raw_body(&header_packer, "(stdin)", 7);
+            }
+
+            msgpack_pack_int(&header_packer, number_of_lines);
+
+            msgpack_pack_raw(&header_packer, GRN_TEXT_LEN(command));
+            msgpack_pack_raw_body(&header_packer, GRN_TEXT_VALUE(command), GRN_TEXT_LEN(command));
+          }
+        }
+      }
+    }
+#endif
     break;
   case GRN_CONTENT_NONE:
     break;
@@ -821,7 +890,9 @@ h_output(grn_ctx *ctx, int flags, void *arg)
     } else {
       GRN_TEXT_SETS(ctx, body, "HTTP/1.1 500 Internal Server Error\r\n");
     }
-    GRN_TEXT_PUTS(ctx, body, "Content-Type: application/json\r\n\r\n");
+    GRN_TEXT_PUTS(ctx, body, "Content-Type: ");
+    GRN_TEXT_PUTS(ctx, body, mime_type);
+    GRN_TEXT_PUTS(ctx, body, "\r\n\r\n");
   }
   {
     ssize_t ret, len;

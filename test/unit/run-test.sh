@@ -80,6 +80,14 @@ ruby_result=0
 if test "$NO_RUBY" != "yes" -a -n "$RUBY"; then
     : ${TEST_UNIT_MAX_DIFF_TARGET_STRING_SIZE:=30000}
     export TEST_UNIT_MAX_DIFF_TARGET_STRING_SIZE
+    BUNDLE_GEMFILE=$BASE_DIR/Gemfile
+    export BUNDLE_GEMFILE
+    if ! type bundle > /dev/null; then
+	$RUBY -S gem install bundler
+    fi
+    if [ "$BUNDLE_GEMFILE" -nt "$BUNDLE_GEMFILE.lock" ]; then
+	$RUBY -S bundle install
+    fi
     $RUBY $BASE_DIR/run-test.rb $RUBY_TEST_ARGS "$@"
     ruby_result=$?
     no_test=0

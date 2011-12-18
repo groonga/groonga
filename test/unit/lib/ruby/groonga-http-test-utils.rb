@@ -227,10 +227,15 @@ module GroongaHTTPTestUtils
         raise "JSON ParserError #{e.message}\nJSON is ...\n" \
               "---\n#{response.body}\n---"
       end
-      if actual[0][0].is_a?(Integer)
-        actual[0][1..2] = [0.0, 0.0]
-        actual[0][4] = nil if actual[0][4]
+      normalize_structured_response(actual)
+    when "application/x-msgpack"
+      begin
+        actual = MessagePack.unpack(response.body)
+      rescue MessagePack::UnpackError => e
+        raise "MessagePack UnpackError #{e.message}\nMessagePack is ...\n" \
+              "---\n#{response.body}\n---"
       end
+      normalize_structured_response(actual)
     when "text/html"
       actual = utf8(response.body)
     when "text/xml"
@@ -283,6 +288,13 @@ module GroongaHTTPTestUtils
                      "UP=\"0.0\" ELAPSED=\"0.0\"")
       xml = block.call(xml) if block
       xml
+    end
+  end
+
+  def normalize_structured_response(response)
+    if response[0][0].is_a?(Integer)
+      response[0][1..2] = [0.0, 0.0]
+      response[0][4] = nil if response[0][4]
     end
   end
 end

@@ -54,7 +54,7 @@ put_delimiter(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type)
       GRN_TEXT_PUTC(ctx, outbuf, '\t');
     }
   case GRN_CONTENT_MSGPACK :
-    // todo
+    // do nothing
     break;
   case GRN_CONTENT_NONE:
     break;
@@ -80,7 +80,9 @@ grn_output_array_open(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_typ
     if (DEPTH > 2) { GRN_TEXT_PUTS(ctx, outbuf, "[\t"); }
     break;
   case GRN_CONTENT_MSGPACK :
-    // todo
+#ifdef HAVE_MESSAGE_PACK
+    msgpack_pack_array(&ctx->impl->msgpacker, nelements);
+#endif
     break;
   case GRN_CONTENT_NONE:
     break;
@@ -111,7 +113,7 @@ grn_output_array_close(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_ty
     }
     break;
   case GRN_CONTENT_MSGPACK :
-    // todo
+    // do nothing
     break;
   case GRN_CONTENT_NONE:
     break;
@@ -139,7 +141,9 @@ grn_output_map_open(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     if (DEPTH > 2) { GRN_TEXT_PUTS(ctx, outbuf, "{\t"); }
     break;
   case GRN_CONTENT_MSGPACK :
-    // todo
+#ifdef HAVE_MESSAGE_PACK
+    msgpack_pack_map(&ctx->impl->msgpacker, nelements / 2);
+#endif
     break;
   case GRN_CONTENT_NONE:
     break;
@@ -170,7 +174,7 @@ grn_output_map_close(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type
     }
     break;
   case GRN_CONTENT_MSGPACK :
-    // todo
+    // do nothing
     break;
   case GRN_CONTENT_NONE:
     break;
@@ -196,7 +200,9 @@ grn_output_int32(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, in
     GRN_TEXT_PUTS(ctx, outbuf, "</INT>");
     break;
   case GRN_CONTENT_MSGPACK :
-    // todo
+#ifdef HAVE_MESSAGE_PACK
+    msgpack_pack_int32(&ctx->impl->msgpacker, value);
+#endif
     break;
   case GRN_CONTENT_NONE:
     break;
@@ -221,7 +227,9 @@ grn_output_int64(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, in
     GRN_TEXT_PUTS(ctx, outbuf, "</INT>");
     break;
   case GRN_CONTENT_MSGPACK :
-    // todo
+#ifdef HAVE_MESSAGE_PACK
+    msgpack_pack_int64(&ctx->impl->msgpacker, value);
+#endif
     break;
   case GRN_CONTENT_NONE:
     break;
@@ -246,7 +254,9 @@ grn_output_uint64(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, i
     GRN_TEXT_PUTS(ctx, outbuf, "</INT>");
     break;
   case GRN_CONTENT_MSGPACK :
-    // todo
+#ifdef HAVE_MESSAGE_PACK
+    msgpack_pack_uint64(&ctx->impl->msgpacker, value);
+#endif
     break;
   case GRN_CONTENT_NONE:
     break;
@@ -271,7 +281,9 @@ grn_output_float(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, do
     GRN_TEXT_PUTS(ctx, outbuf, "</FLOAT>");
     break;
   case GRN_CONTENT_MSGPACK :
-    // todo
+#ifdef HAVE_MESSAGE_PACK
+    msgpack_pack_double(&ctx->impl->msgpacker, value);
+#endif
     break;
   case GRN_CONTENT_NONE:
     break;
@@ -297,7 +309,10 @@ grn_output_str(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     GRN_TEXT_PUTS(ctx, outbuf, "</TEXT>");
     break;
   case GRN_CONTENT_MSGPACK :
-    // todo
+#ifdef HAVE_MESSAGE_PACK
+    msgpack_pack_raw(&ctx->impl->msgpacker, value_len);
+    msgpack_pack_raw_body(&ctx->impl->msgpacker, value, value_len);
+#endif
     break;
   case GRN_CONTENT_NONE:
     break;
@@ -329,7 +344,13 @@ grn_output_bool(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, cha
     GRN_TEXT_PUTS(ctx, outbuf, "</BOOL>");
     break;
   case GRN_CONTENT_MSGPACK :
-    // todo
+#ifdef HAVE_MESSAGE_PACK
+    if (value) {
+      msgpack_pack_true(&ctx->impl->msgpacker);
+    } else {
+      msgpack_pack_false(&ctx->impl->msgpacker);
+    }
+#endif
     break;
   case GRN_CONTENT_NONE:
     break;
@@ -353,7 +374,9 @@ grn_output_void(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
       GRN_TEXT_PUTS(ctx, outbuf, "<NULL/>");
       break;
     case GRN_CONTENT_MSGPACK :
-      // todo
+#ifdef HAVE_MESSAGE_PACK
+      msgpack_pack_nil(&ctx->impl->msgpacker);
+#endif
       break;
     case GRN_CONTENT_NONE:
       break;
@@ -383,7 +406,9 @@ grn_output_time(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, int
     GRN_TEXT_PUTS(ctx, outbuf, "</DATE>");
     break;
   case GRN_CONTENT_MSGPACK :
-    // todo
+#ifdef HAVE_MESSAGE_PACK
+    msgpack_pack_double(&ctx->impl->msgpacker, dv);
+#endif
     break;
   case GRN_CONTENT_NONE:
     break;
@@ -429,7 +454,12 @@ grn_output_geo_point(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type
     GRN_TEXT_PUTS(ctx, outbuf, "</GEO_POINT>");
     break;
   case GRN_CONTENT_MSGPACK :
-    // todo
+#ifdef HAVE_MESSAGE_PACK
+    // TODO %dx%d notation for compatibility
+    msgpack_pack_array(&ctx->impl->msgpacker, 2);
+    msgpack_pack_int(&ctx->impl->msgpacker, value->latitude);
+    msgpack_pack_int(&ctx->impl->msgpacker, value->longitude);
+#endif
     break;
   case GRN_CONTENT_NONE:
     break;

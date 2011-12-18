@@ -38,6 +38,10 @@
 
 #include <math.h>
 
+#ifdef HAVE_MESSAGE_PACK
+#include <msgpack.h>
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -268,6 +272,10 @@ struct _grn_ctx_impl {
     uint32_t u32;
     uint64_t u64;
   } data;
+
+#ifdef HAVE_MESSAGE_PACK
+  msgpack_packer msgpacker;
+#endif
 };
 
 /**** query language ****/

@@ -14,6 +14,10 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+
+/* groonga origin headers */
+#include <str.h>
+
 #include <stdio.h>
 #include <signal.h>
 #include <string.h>
@@ -36,9 +40,6 @@
 #include <msgpack.h>
 #include <groonga.h>
 #include <pthread.h>
-
-/* groonga origin headers */
-#include <str.h>
 
 #include "util.h"
 

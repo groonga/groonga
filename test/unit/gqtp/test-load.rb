@@ -71,7 +71,7 @@ COMMANDS
 [[0,0.0,0.0],true]
 [[0,0.0,0.0],true]
 [[0,0.0,0.0],2]
-[[0,0.0,0.0],[[[2],[["_id","UInt32"],["_key","ShortText"],["location","ShortText"],["body","ShortText"]],[2,"bash","/bin/bash","a shell"],[1,"gcc","/usr/bin/gcc","a compiler"]]]]
+[[0,0.0,0.0],[[[2],[["_id","UInt32"],["_key","ShortText"],["body","ShortText"],["location","ShortText"]],[2,"bash","a shell","/bin/bash"],[1,"gcc","a compiler","/usr/bin/gcc"]]]]
 [[0,0.0,0.0],true]
 EXPECTED
 table_create commands TABLE_PAT_KEY ShortText
@@ -93,7 +93,7 @@ COMMANDS
 [[0,0.0,0.0],true]
 [[0,0.0,0.0],true]
 [[0,0.0,0.0],2]
-[[0,0.0,0.0],[[[2],[["_id","UInt32"],["_key","ShortText"],["location","ShortText"],["body","ShortText"]],[2,"bash","/bin/bash","a shell"],[1,"gcc","/usr/bin/gcc","a compiler"]]]]
+[[0,0.0,0.0],[[[2],[["_id","UInt32"],["_key","ShortText"],["body","ShortText"],["location","ShortText"]],[2,"bash","a shell","/bin/bash"],[1,"gcc","a compiler","/usr/bin/gcc"]]]]
 [[0,0.0,0.0],true]
 EXPECTED
 table_create commands TABLE_PAT_KEY ShortText
@@ -153,7 +153,7 @@ COMMANDS
 [[0,0.0,0.0],true]
 [[0,0.0,0.0],true]
 [[0,0.0,0.0],2]
-[[0,0.0,0.0],[[[2],[["_id","UInt32"],["location","ShortText"],["body","ShortText"]],[1,"/usr/bin/gcc","a compiler"],[2,"/bin/bash","a shell"]]]]
+[[0,0.0,0.0],[[[2],[["_id","UInt32"],["body","ShortText"],["location","ShortText"]],[1,"a compiler","/usr/bin/gcc"],[2,"a shell","/bin/bash"]]]]
 [[0,0.0,0.0],true]
 EXPECTED
 table_create commands TABLE_NO_KEY

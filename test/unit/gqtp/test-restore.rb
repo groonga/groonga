@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2009  Ryo Onodera <onodera@clear-code.com>
-# Copyright (C) 2010  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2010-2011  Kouhei Sutou <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -117,8 +117,8 @@ load --table People
 ]
 load --table Bookmarks
 [
-["_key","title","people"],
-["http://groonga.org/","groonga",["morita"]]
+["_key","people","title"],
+["http://groonga.org/",["morita"],"groonga"]
 ]
 EOC
   end
@@ -156,14 +156,14 @@ EOD
            "文字列を分割するトークナイザを指定します。"
     assert_same_dump(<<-EOC)
 table_create Entry TABLE_HASH_KEY ShortText
-column_create Entry title COLUMN_SCALAR ShortText
 column_create Entry body COLUMN_SCALAR ShortText
+column_create Entry title COLUMN_SCALAR ShortText
 table_create Terms TABLE_PAT_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenBigram
 column_create Terms entry_body COLUMN_INDEX Entry title,body
 load --table Entry
 [
-["_key","title","body"],
-["gcc","#{title}","#{body}"]
+["_key","body","title"],
+["gcc","#{body}","#{title}"]
 ]
 EOC
   end
@@ -332,9 +332,9 @@ load --table users
 ]
 load --table comments
 [
-["_key","text","author"],
-["groonga","it is fast","ryoqun"],
-["ruby","it is fun","hayamiz"]
+["_key","author","text"],
+["groonga","ryoqun","it is fast"],
+["ruby","hayamiz","it is fun"]
 ]
 EOGQTP
   end
@@ -353,8 +353,8 @@ load --table users
 ]
 load --table comments
 [
-["_key","text","author"],
-["groonga","it is fast",["ryoqun","hayamiz"]]
+["_key","author","text"],
+["groonga",["ryoqun","hayamiz"],"it is fast"]
 ]
 EOGQTP
   end
@@ -374,9 +374,9 @@ load --table users
 ]
 load --table comments
 [
-["_key","text","author"],
-["groonga","it is fast",1000],
-["ruby","it is fun",1001]
+["_key","author","text"],
+["groonga",1000,"it is fast"],
+["ruby",1001,"it is fun"]
 ]
 EOGQTP
   end
@@ -396,9 +396,9 @@ load --table users
 ]
 load --table comments
 [
-["_key","text","author"],
-["groonga","it is fast",1],
-["ruby","it is fun",2]
+["_key","author","text"],
+["groonga",1,"it is fast"],
+["ruby",2,"it is fun"]
 ]
 EOGQTP
   end
@@ -418,8 +418,8 @@ load --table users
 ]
 load --table comments
 [
-["_key","text","author"],
-["groonga","it is fast",[1000,1001]]
+["_key","author","text"],
+["groonga",[1000,1001],"it is fast"]
 ]
 EOGQTP
   end
@@ -439,8 +439,8 @@ load --table users
 ]
 load --table comments
 [
-["_key","text","author"],
-["groonga","it is fast",[1,2]]
+["_key","author","text"],
+["groonga",[1,2],"it is fast"]
 ]
 EOGQTP
   end
@@ -539,10 +539,10 @@ delete --table users --id 6
 delete --table users --id 7
 load --table blog_entries
 [
-["_id","body","author"],
-[1,"Today was very chilly.",1],
-[2,"Taiyaki is very yummy.",8],
-[3,"I was programming.",5]
+["_id","author","body"],
+[1,1,"Today was very chilly."],
+[2,8,"Taiyaki is very yummy."],
+[3,5,"I was programming."]
 ]
 COMMANDS
 
