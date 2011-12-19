@@ -668,7 +668,7 @@ grn_table_create(grn_ctx *ctx, const char *name, unsigned name_size,
   grn_obj *db;
   char buffer[PATH_MAX];
   if (!ctx->impl || !(db = ctx->impl->db)) {
-    ERR(GRN_INVALID_ARGUMENT, "db not initialized");
+    ERR(GRN_INVALID_ARGUMENT, "[table][create] db not initialized");
     return NULL;
   }
   GRN_API_ENTER;
@@ -677,7 +677,7 @@ grn_table_create(grn_ctx *ctx, const char *name, unsigned name_size,
     GRN_API_RETURN(NULL);
   }
   if (!GRN_DB_P(db)) {
-    ERR(GRN_INVALID_ARGUMENT, "invalid db assigned");
+    ERR(GRN_INVALID_ARGUMENT, "[table][create] invalid db assigned");
     GRN_API_RETURN(NULL);
   }
   if (grn_table_create_validate(ctx, name, name_size, path, flags,
