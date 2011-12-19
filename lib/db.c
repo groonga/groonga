@@ -721,7 +721,7 @@ grn_table_create(grn_ctx *ctx, const char *name, unsigned name_size,
         key_size = GRN_TYPE_SIZE(t);
         if (key_size > GRN_TABLE_MAX_KEY_SIZE) {
           ERR(GRN_INVALID_ARGUMENT,
-              "[table][create] key size too big: <%.*s> (%d) (max:%d)",
+              "[table][create] key size too big: <%.*s> (%u) (max:%u)",
               name_size, name, key_size, GRN_TABLE_MAX_KEY_SIZE);
           GRN_API_RETURN(NULL);
         }
