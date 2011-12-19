@@ -626,7 +626,16 @@ grn_table_create_validate(grn_ctx *ctx, const char *name, unsigned name_size,
   case GRN_OBJ_TABLE_DAT_KEY :
     break;
   case GRN_OBJ_TABLE_NO_KEY :
-    if (flags & GRN_OBJ_KEY_WITH_SIS) {
+    if (key_type) {
+      int key_name_size;
+      char key_name[GRN_TABLE_MAX_KEY_SIZE];
+      key_name_size = grn_obj_name(ctx, key_type, key_name,
+                                   GRN_TABLE_MAX_KEY_SIZE);
+      ERR(GRN_INVALID_ARGUMENT,
+          "[table][create] "
+          "key isn't available for no key table: <%.*s> (%.*s)",
+          name_size, name, key_name_size, key_name);
+    } else if (flags & GRN_OBJ_KEY_WITH_SIS) {
       ERR(GRN_INVALID_ARGUMENT,
           "[table][create] "
           "key with SIS isn't available for no key table: <%.*s>",
@@ -639,7 +648,16 @@ grn_table_create_validate(grn_ctx *ctx, const char *name, unsigned name_size,
     }
     break;
   case GRN_OBJ_TABLE_VIEW :
-    if (flags & GRN_OBJ_KEY_WITH_SIS) {
+    if (key_type) {
+      int key_name_size;
+      char key_name[GRN_TABLE_MAX_KEY_SIZE];
+      key_name_size = grn_obj_name(ctx, key_type, key_name,
+                                   GRN_TABLE_MAX_KEY_SIZE);
+      ERR(GRN_INVALID_ARGUMENT,
+          "[table][create] "
+          "key isn't available for view table: <%.*s> (%.*s)",
+          name_size, name, key_name_size, key_name);
+    } else if (flags & GRN_OBJ_KEY_WITH_SIS) {
       ERR(GRN_INVALID_ARGUMENT,
           "[table][create] "
           "key with SIS isn't available for view table: <%.*s>",
@@ -685,15 +703,6 @@ grn_table_create(grn_ctx *ctx, const char *name, unsigned name_size,
     GRN_API_RETURN(NULL);
   }
   if (key_type) {
-    if ((flags & GRN_OBJ_TABLE_TYPE_MASK) == GRN_OBJ_TABLE_NO_KEY) {
-      if (name_size > 0) {
-        ERR(GRN_INVALID_ARGUMENT,
-            "key_type assigned for no key table: <%.*s>", name_size, name);
-      } else {
-        ERR(GRN_INVALID_ARGUMENT, "key_type assigned for no key table");
-      }
-      GRN_API_RETURN(NULL);
-    }
     domain = DB_OBJ(key_type)->id;
     switch (key_type->header.type) {
     case GRN_TYPE :

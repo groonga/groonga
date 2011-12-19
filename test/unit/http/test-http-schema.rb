@@ -549,7 +549,9 @@ class HTTPSchemaTest < Test::Unit::TestCase
                                   :flags => Table::NO_KEY,
                                   :key_type => "ShortText"))
       assert_error_response(Result::INVALID_ARGUMENT,
-                            "key_type assigned for no key table: <users>",
+                            "[table][create] " +
+                              "key isn't available for no key table: " +
+                              "<users> (ShortText)",
                             response,
                             :content_type => "application/json")
 
@@ -642,8 +644,10 @@ class HTTPSchemaTest < Test::Unit::TestCase
                                   :name => "users",
                                   :flags => Table::VIEW,
                                   :key_type => "ShortText"))
-      assert_error_response(Result::UNKNOWN_ERROR,
-                            "key isn't supported",
+      assert_error_response(Result::INVALID_ARGUMENT,
+                            "[table][create] " +
+                              "key isn't available for view table: " +
+                              "<users> (ShortText)",
                             response,
                             :content_type => "application/json")
 
