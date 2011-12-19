@@ -336,8 +336,9 @@ class HTTPSchemaTest < Test::Unit::TestCase
                                   :name => "users",
                                   :flags => Key::SIS,
                                   :key_type => "ShortText"))
-      assert_error_response(Result::UNKNOWN_ERROR,
-                            "SIS is invalid flag for hash",
+      assert_error_response(Result::INVALID_ARGUMENT,
+                            "key with SIS isn't available " +
+                              "for hash table: <users>",
                             response,
                             :content_type => "application/json")
 
@@ -557,8 +558,9 @@ class HTTPSchemaTest < Test::Unit::TestCase
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :flags => Table::NO_KEY | Key::SIS))
-      assert_error_response(Result::UNKNOWN_ERROR,
-                            "SIS key isn't available",
+      assert_error_response(Result::INVALID_ARGUMENT,
+                            "key with SIS isn't available " +
+                              "for no key table: <users>",
                             response,
                             :content_type => "application/json")
 
@@ -648,8 +650,9 @@ class HTTPSchemaTest < Test::Unit::TestCase
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :flags => Table::VIEW | Key::SIS))
-      assert_error_response(Result::UNKNOWN_ERROR,
-                            "SIS key isn't available",
+      assert_error_response(Result::INVALID_ARGUMENT,
+                            "key with SIS isn't available " +
+                              "for view table: <users>",
                             response,
                             :content_type => "application/json")
 
