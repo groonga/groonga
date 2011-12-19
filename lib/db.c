@@ -657,6 +657,15 @@ grn_table_create_validate(grn_ctx *ctx, const char *name, unsigned name_size,
           "[table][create] "
           "key isn't available for view table: <%.*s> (%.*s)",
           name_size, name, key_name_size, key_name);
+    } else if (value_type) {
+      int value_name_size;
+      char value_name[GRN_TABLE_MAX_KEY_SIZE];
+      value_name_size = grn_obj_name(ctx, value_type, value_name,
+                                     GRN_TABLE_MAX_KEY_SIZE);
+      ERR(GRN_INVALID_ARGUMENT,
+          "[table][create] "
+          "value isn't available for view table: <%.*s> (%.*s)",
+          name_size, name, value_name_size, value_name);
     } else if (flags & GRN_OBJ_KEY_WITH_SIS) {
       ERR(GRN_INVALID_ARGUMENT,
           "[table][create] "

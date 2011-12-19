@@ -679,8 +679,10 @@ class HTTPSchemaTest < Test::Unit::TestCase
                                   :name => "users",
                                   :flags => Table::VIEW,
                                   :value_type => "Int32"))
-      assert_error_response(Result::UNKNOWN_ERROR,
-                            "value isn't available",
+      assert_error_response(Result::INVALID_ARGUMENT,
+                            "[table][create] " +
+                              "value isn't available for view table: " +
+                              "<users> (Int32)",
                             response,
                             :content_type => "application/json")
 
