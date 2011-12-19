@@ -705,21 +705,23 @@ class HTTPSchemaTest < Test::Unit::TestCase
 
     def test_table_create_combined_symbols
       table_id = table_create("books",
-                              :flags => "TABLE_NO_KEY|KEY_NORMALIZE")
+                              :flags => "TABLE_HASH_KEY|KEY_NORMALIZE",
+                              :key_type => "ShortText")
       assert_table_list([[table_id,
                           "books",
-                          "TABLE_NO_KEY|KEY_NORMALIZE|PERSISTENT",
-                          "null",
+                          "TABLE_HASH_KEY|KEY_NORMALIZE|PERSISTENT",
+                          "ShortText",
                           "null"]])
     end
 
     def test_table_create_combined_symbols_with_whitespaces
       table_id = table_create("books",
-                              :flags => " TABLE_NO_KEY | KEY_NORMALIZE ")
+                              :flags => " TABLE_HASH_KEY | KEY_NORMALIZE ",
+                              :key_type => "ShortText")
       assert_table_list([[table_id,
                           "books",
-                          "TABLE_NO_KEY|KEY_NORMALIZE|PERSISTENT",
-                          "null",
+                          "TABLE_HASH_KEY|KEY_NORMALIZE|PERSISTENT",
+                          "ShortText",
                           "null"]])
     end
 
