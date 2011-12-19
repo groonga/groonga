@@ -737,7 +737,8 @@ test_add_and_delete(gconstpointer data)
     }
   }
 
-  cut_assert_equal_int(0, grn_pat_size(context, trie));
+  actual_keys = grn_test_pat_get_keys(context, (grn_obj *)trie);
+  gcut_assert_equal_list_string(NULL, actual_keys);
 }
 
 #define cut_assert_truncate(key) do                                      \
