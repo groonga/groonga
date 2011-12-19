@@ -616,6 +616,7 @@ grn_table_create_validate(grn_ctx *ctx, const char *name, unsigned name_size,
   case GRN_OBJ_TABLE_HASH_KEY :
     if (flags & GRN_OBJ_KEY_WITH_SIS) {
       ERR(GRN_INVALID_ARGUMENT,
+          "[table][create] "
           "key with SIS isn't available for hash table: <%.*s>",
           name_size, name);
     }
@@ -627,10 +628,12 @@ grn_table_create_validate(grn_ctx *ctx, const char *name, unsigned name_size,
   case GRN_OBJ_TABLE_NO_KEY :
     if (flags & GRN_OBJ_KEY_WITH_SIS) {
       ERR(GRN_INVALID_ARGUMENT,
+          "[table][create] "
           "key with SIS isn't available for no key table: <%.*s>",
           name_size, name);
     } else if (flags & GRN_OBJ_KEY_NORMALIZE) {
       ERR(GRN_INVALID_ARGUMENT,
+          "[table][create] "
           "key normalization isn't available for no key table: <%.*s>",
           name_size, name);
     }
@@ -638,10 +641,12 @@ grn_table_create_validate(grn_ctx *ctx, const char *name, unsigned name_size,
   case GRN_OBJ_TABLE_VIEW :
     if (flags & GRN_OBJ_KEY_WITH_SIS) {
       ERR(GRN_INVALID_ARGUMENT,
+          "[table][create] "
           "key with SIS isn't available for view table: <%.*s>",
           name_size, name);
     } else if (flags & GRN_OBJ_KEY_NORMALIZE) {
       ERR(GRN_INVALID_ARGUMENT,
+          "[table][create] "
           "key normalization isn't available for view table: <%.*s>",
           name_size, name);
     }
