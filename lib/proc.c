@@ -1049,9 +1049,23 @@ proc_column_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
                            GRN_TEXT_LEN(VAR(0))))) {
     grn_hash *cols;
     grn_obj *col;
+    int column_list_size = -1;
+#ifdef HAVE_MESSAGE_PACK
+    column_list_size = 1; /* [header, (key), (COLUMNS)] */
+    if ((col = grn_obj_column(ctx, table, KEY_NAME, sizeof(KEY_NAME)-1))) {
+      column_list_size++;
+      grn_obj_unlink(ctx, col);
+    }
     if ((cols = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
                                 GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY))) {
-      GRN_OUTPUT_ARRAY_OPEN("COLUMN_LIST", -1);
+      column_list_size += grn_table_columns(ctx, table, NULL, 0,
+                                            (grn_obj *)cols);
+      grn_hash_close(ctx, cols);
+    }
+#endif
+    if ((cols = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
+                                GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY))) {
+      GRN_OUTPUT_ARRAY_OPEN("COLUMN_LIST", column_list_size);
       GRN_OUTPUT_ARRAY_OPEN("HEADER", 8);
       GRN_OUTPUT_ARRAY_OPEN("PROPERTY", 2);
       GRN_OUTPUT_CSTR("id");
