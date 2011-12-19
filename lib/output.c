@@ -929,7 +929,7 @@ grn_output_obj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                                                    GRN_CURSOR_ASCENDING);
       if (!tc) { ERRCLR(ctx); }
       grn_output_array_open(ctx, outbuf, output_type, "RESULTSET", -1);
-      grn_output_array_open(ctx, outbuf, output_type, "NHITS", -1);
+      grn_output_array_open(ctx, outbuf, output_type, "NHITS", 1);
       grn_text_itoa(ctx, outbuf, format->nhits);
       grn_output_array_close(ctx, outbuf, output_type);
       if (format->flags & GRN_OBJ_FORMAT_WITH_COLUMN_NAMES) {
