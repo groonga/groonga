@@ -83,9 +83,9 @@ grn_output_array_open(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_typ
 #ifdef HAVE_MESSAGE_PACK
     if (nelements < 0) {
       GRN_LOG(ctx, GRN_LOG_DEBUG,
-          "grn_output_array_open nelements (%d) for <%s>",
-          nelements,
-          name);
+              "grn_output_array_open nelements (%d) for <%s>",
+              nelements,
+              name);
     }
     msgpack_pack_array(&ctx->impl->msgpacker, nelements);
 #endif
@@ -150,9 +150,9 @@ grn_output_map_open(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
 #ifdef HAVE_MESSAGE_PACK
     if (nelements < 0) {
       GRN_LOG(ctx, GRN_LOG_DEBUG,
-          "grn_output_map_open nelements (%d) for <%s>",
-          nelements,
-          name);
+              "grn_output_map_open nelements (%d) for <%s>",
+              nelements,
+              name);
     }
     msgpack_pack_map(&ctx->impl->msgpacker, nelements / 2);
 #endif
