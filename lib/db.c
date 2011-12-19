@@ -102,10 +102,10 @@ grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg)
                           GRN_TINY_ARRAY_THREADSAFE|
                           GRN_TINY_ARRAY_USE_MALLOC);
 #ifdef USE_PAT_AS_DB_KEYS
-      s->keys = (grn_obj *)grn_pat_create(ctx, path, GRN_PAT_MAX_KEY_SIZE,
+      s->keys = (grn_obj *)grn_pat_create(ctx, path, GRN_TABLE_MAX_KEY_SIZE,
                                           0, GRN_OBJ_KEY_VAR_SIZE);
 #else /* USE_PAT_AS_DB_KEYS */
-      s->keys = (grn_obj *)grn_dat_create(ctx, path, GRN_PAT_MAX_KEY_SIZE,
+      s->keys = (grn_obj *)grn_dat_create(ctx, path, GRN_TABLE_MAX_KEY_SIZE,
                                           0, GRN_OBJ_KEY_VAR_SIZE);
 #endif /* USE_PAT_AS_DB_KEYS */
       if (s->keys) {
@@ -1500,11 +1500,11 @@ is_deletable(grn_ctx *ctx, grn_obj *table, grn_id id)
           if (col && col->header.type == GRN_COLUMN_INDEX &&
               (esize = grn_ii_estimate_size(ctx, (grn_ii *)col, id))) {
             int len;
-            char table_name[GRN_PAT_MAX_KEY_SIZE];
-            char column_name[GRN_PAT_MAX_KEY_SIZE];
-            len = grn_obj_name(ctx, table, table_name, GRN_PAT_MAX_KEY_SIZE);
+            char table_name[GRN_TABLE_MAX_KEY_SIZE];
+            char column_name[GRN_TABLE_MAX_KEY_SIZE];
+            len = grn_obj_name(ctx, table, table_name, GRN_TABLE_MAX_KEY_SIZE);
             table_name[len] = '\0';
-            len = grn_column_name(ctx, col, column_name, GRN_PAT_MAX_KEY_SIZE);
+            len = grn_column_name(ctx, col, column_name, GRN_TABLE_MAX_KEY_SIZE);
             column_name[len] = '\0';
             GRN_LOG(ctx, GRN_WARN,
                     "undeletable record (%s:%d) has value (%s:%d)",
@@ -3092,11 +3092,11 @@ static grn_obj *
 grn_obj_column_(grn_ctx *ctx, grn_obj *table, const char *name, unsigned name_size)
 {
   grn_obj *column = NULL;
-  char buf[GRN_PAT_MAX_KEY_SIZE];
-  int len = grn_obj_name(ctx, table, buf, GRN_PAT_MAX_KEY_SIZE);
+  char buf[GRN_TABLE_MAX_KEY_SIZE];
+  int len = grn_obj_name(ctx, table, buf, GRN_TABLE_MAX_KEY_SIZE);
   if (len) {
     buf[len++] = GRN_DB_DELIMITER;
-    if (len + name_size <= GRN_PAT_MAX_KEY_SIZE) {
+    if (len + name_size <= GRN_TABLE_MAX_KEY_SIZE) {
       memcpy(buf + len, name, name_size);
       column = grn_ctx_get(ctx, buf, len + name_size);
     } else {
@@ -3194,7 +3194,7 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
   grn_id id = GRN_ID_NIL;
   grn_id range = GRN_ID_NIL;
   grn_id domain = GRN_ID_NIL;
-  char fullname[GRN_PAT_MAX_KEY_SIZE];
+  char fullname[GRN_TABLE_MAX_KEY_SIZE];
   char buffer[PATH_MAX];
   grn_bool ja_p = GRN_FALSE;
   GRN_API_ENTER;
@@ -3214,8 +3214,8 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
   s = (grn_db *)db;
   if (!GRN_DB_P(s)) {
     int table_name_len;
-    char table_name[GRN_PAT_MAX_KEY_SIZE];
-    table_name_len = grn_obj_name(ctx, table, table_name, GRN_PAT_MAX_KEY_SIZE);
+    char table_name[GRN_TABLE_MAX_KEY_SIZE];
+    table_name_len = grn_obj_name(ctx, table, table_name, GRN_TABLE_MAX_KEY_SIZE);
     ERR(GRN_INVALID_ARGUMENT,
         "[column][create]: invalid db assigned: <%.*s>.<%.*s>",
         table_name_len, table_name, name_size, name);
@@ -3238,12 +3238,12 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
     goto exit;
   }
   if ((domain = DB_OBJ(table)->id)) {
-    int len = grn_table_get_key(ctx, s->keys, domain, fullname, GRN_PAT_MAX_KEY_SIZE);
-    if (name_size + 1 + len > GRN_PAT_MAX_KEY_SIZE) {
+    int len = grn_table_get_key(ctx, s->keys, domain, fullname, GRN_TABLE_MAX_KEY_SIZE);
+    if (name_size + 1 + len > GRN_TABLE_MAX_KEY_SIZE) {
       ERR(GRN_INVALID_ARGUMENT,
           "[column][create]: too long column name: required name_size(%d) < %d"
           ": <%.*s>.<%.*s>",
-          name_size, GRN_PAT_MAX_KEY_SIZE - 1 - len,
+          name_size, GRN_TABLE_MAX_KEY_SIZE - 1 - len,
           len, fullname, name_size, name);
       goto exit;
     }
@@ -3287,9 +3287,9 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
         path = buffer;
       } else {
         int table_name_len;
-        char table_name[GRN_PAT_MAX_KEY_SIZE];
+        char table_name[GRN_TABLE_MAX_KEY_SIZE];
         table_name_len = grn_obj_name(ctx, table, table_name,
-                                      GRN_PAT_MAX_KEY_SIZE);
+                                      GRN_TABLE_MAX_KEY_SIZE);
         ERR(GRN_INVALID_ARGUMENT,
             "[column][create]: path not assigned for persistent column"
             ": <%.*s>.<%.*s>",
@@ -3302,9 +3302,9 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
   } else {
     if (path) {
       int table_name_len;
-      char table_name[GRN_PAT_MAX_KEY_SIZE];
+      char table_name[GRN_TABLE_MAX_KEY_SIZE];
       table_name_len = grn_obj_name(ctx, table, table_name,
-                                    GRN_PAT_MAX_KEY_SIZE);
+                                    GRN_TABLE_MAX_KEY_SIZE);
       ERR(GRN_INVALID_ARGUMENT,
           "[column][create]: path assigned for temporary column"
           ": <%.*s>.<%.*s>",
@@ -3351,9 +3351,9 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
 #endif /* NO_LZO */
       if (zlib_p || lzo_p) {
         int table_name_len;
-        char table_name[GRN_PAT_MAX_KEY_SIZE];
+        char table_name[GRN_TABLE_MAX_KEY_SIZE];
         table_name_len = grn_obj_name(ctx, table, table_name,
-                                      GRN_PAT_MAX_KEY_SIZE);
+                                      GRN_TABLE_MAX_KEY_SIZE);
         GRN_LOG(ctx, GRN_LOG_WARNING,
                 "[column][create]: "
                 "%s compressed column will leaks memories: <%.*s>.<%.*s>",
@@ -3380,7 +3380,7 @@ grn_column_open(grn_ctx *ctx, grn_obj *table,
   grn_id domain;
   grn_obj *res = NULL;
   grn_db *s;
-  char fullname[GRN_PAT_MAX_KEY_SIZE];
+  char fullname[GRN_TABLE_MAX_KEY_SIZE];
   GRN_API_ENTER;
   if (!table || !type || !name || !name_size) {
     ERR(GRN_INVALID_ARGUMENT, "missing type or name");
@@ -3396,8 +3396,8 @@ grn_column_open(grn_ctx *ctx, grn_obj *table,
     goto exit;
   }
   if ((domain = DB_OBJ(table)->id)) {
-    int len = grn_table_get_key(ctx, s->keys, domain, fullname, GRN_PAT_MAX_KEY_SIZE);
-    if (name_size + 1 + len > GRN_PAT_MAX_KEY_SIZE) {
+    int len = grn_table_get_key(ctx, s->keys, domain, fullname, GRN_TABLE_MAX_KEY_SIZE);
+    if (name_size + 1 + len > GRN_TABLE_MAX_KEY_SIZE) {
       ERR(GRN_INVALID_ARGUMENT, "too long column name");
       goto exit;
     }
@@ -6324,14 +6324,14 @@ grn_table_rename(grn_ctx *ctx, grn_obj *table, const char *name, unsigned name_s
       grn_table_columns(ctx, table, "", 0, (grn_obj *)cols);
       if (!(rc = grn_obj_rename(ctx, table, name, name_size))) {
         grn_id *key;
-        char fullname[GRN_PAT_MAX_KEY_SIZE];
+        char fullname[GRN_TABLE_MAX_KEY_SIZE];
         memcpy(fullname, name, name_size);
         fullname[name_size] = GRN_DB_DELIMITER;
         GRN_HASH_EACH(ctx, cols, id, &key, NULL, NULL, {
           grn_obj *col = grn_ctx_at(ctx, *key);
           if (col) {
             int colname_len = grn_column_name(ctx, col, fullname + name_size + 1,
-                                              GRN_PAT_MAX_KEY_SIZE - name_size - 1);
+                                              GRN_TABLE_MAX_KEY_SIZE - name_size - 1);
             if (colname_len) {
               if ((rc = grn_obj_rename(ctx, col, fullname,
                                        name_size + 1 + colname_len))) {
@@ -6353,15 +6353,15 @@ grn_column_rename(grn_ctx *ctx, grn_obj *column, const char *name, unsigned name
   grn_rc rc = GRN_INVALID_ARGUMENT;
   GRN_API_ENTER;
   if (GRN_DB_OBJP(column)) {
-    char fullname[GRN_PAT_MAX_KEY_SIZE];
+    char fullname[GRN_TABLE_MAX_KEY_SIZE];
     grn_db *s = (grn_db *)DB_OBJ(column)->db;
     int len = grn_table_get_key(ctx, s->keys, DB_OBJ(column)->header.domain,
-                                fullname, GRN_PAT_MAX_KEY_SIZE);
-    if (name_size + 1 + len > GRN_PAT_MAX_KEY_SIZE) {
+                                fullname, GRN_TABLE_MAX_KEY_SIZE);
+    if (name_size + 1 + len > GRN_TABLE_MAX_KEY_SIZE) {
       ERR(GRN_INVALID_ARGUMENT,
           "[column][rename]: too long column name: required name_size(%d) < %d"
           ": <%.*s>.<%.*s>",
-          name_size, GRN_PAT_MAX_KEY_SIZE - 1 - len,
+          name_size, GRN_TABLE_MAX_KEY_SIZE - 1 - len,
           len, fullname, name_size, name);
       goto exit;
     }
