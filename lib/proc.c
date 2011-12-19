@@ -1131,22 +1131,28 @@ proc_column_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
   return NULL;
 }
 
+static grn_bool
+is_table(grn_obj *obj)
+{
+  switch (obj->header.type) {
+  case GRN_TABLE_HASH_KEY:
+  case GRN_TABLE_PAT_KEY:
+  case GRN_TABLE_DAT_KEY:
+  case GRN_TABLE_NO_KEY:
+  case GRN_TABLE_VIEW:
+    return GRN_TRUE;
+  default:
+    return GRN_FALSE;
+  }
+}
+
 static int
 print_tableinfo(grn_ctx *ctx, grn_obj *table)
 {
   grn_id id;
   grn_obj o;
   const char *path;
-  switch (table->header.type) {
-  case GRN_TABLE_HASH_KEY:
-  case GRN_TABLE_PAT_KEY:
-  case GRN_TABLE_DAT_KEY:
-  case GRN_TABLE_NO_KEY:
-  case GRN_TABLE_VIEW:
-    break;
-  default:
-    return 0;
-  }
+
   id = grn_obj_id(ctx, table);
   path = grn_obj_path(ctx, table);
   GRN_TEXT_INIT(&o, 0);
@@ -1170,9 +1176,29 @@ static grn_obj *
 proc_table_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_table_cursor *cur;
+  int table_list_length = -1;
+
+#ifdef HAVE_MESSAGE_PACK
+  if (ctx->impl->output_type == GRN_CONTENT_MSGPACK) {
+    table_list_length = 1; /* header */
+    if ((cur = grn_table_cursor_open(ctx, ctx->impl->db, NULL, 0, NULL, 0, 0, -1, 0))) {
+      grn_id id;
+      while ((id = grn_table_cursor_next(ctx, cur)) != GRN_ID_NIL) {
+        grn_obj *o;
+        if ((o = grn_ctx_at(ctx, id))) {
+          if (is_table(o)) {
+            table_list_length++;
+          }
+          grn_obj_unlink(ctx, o);
+        }
+      }
+    }
+  }
+#endif
+
   if ((cur = grn_table_cursor_open(ctx, ctx->impl->db, NULL, 0, NULL, 0, 0, -1, 0))) {
     grn_id id;
-    GRN_OUTPUT_ARRAY_OPEN("TABLE_LIST", -1);
+    GRN_OUTPUT_ARRAY_OPEN("TABLE_LIST", table_list_length);
     GRN_OUTPUT_ARRAY_OPEN("HEADER", 6);
     GRN_OUTPUT_ARRAY_OPEN("PROPERTY", 2);
     GRN_OUTPUT_CSTR("id");
@@ -1202,7 +1228,9 @@ proc_table_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
     while ((id = grn_table_cursor_next(ctx, cur)) != GRN_ID_NIL) {
       grn_obj *o;
       if ((o = grn_ctx_at(ctx, id))) {
-        print_tableinfo(ctx, o);
+        if (is_table(o)) {
+          print_tableinfo(ctx, o);
+        }
         grn_obj_unlink(ctx, o);
       }
     }
