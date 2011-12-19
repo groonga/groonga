@@ -60,7 +60,7 @@ module HTTPTests
                             :content_type => content_type)
     @groonga_pid = nil
 
-    assert_raise(Errno::ECONNREFUSED, EOFError) do
+    assert_raise(Errno::ECONNREFUSED, Errno::ECONNRESET, EOFError) do
       get(command_path(:shutdown, :output_type => output_type))
     end
   end
