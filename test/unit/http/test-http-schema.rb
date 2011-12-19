@@ -359,6 +359,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
     end
 
     def test_invalid_key_type
+      omit("should implement error case")
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :key_type => "table_create"))
@@ -480,6 +481,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
     end
 
     def test_invalid_key_type
+      omit("should implement error case")
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :flags => Table::PAT_KEY,
