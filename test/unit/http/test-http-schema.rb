@@ -319,12 +319,14 @@ class HTTPSchemaTest < Test::Unit::TestCase
                           "null"]])
     end
 
-    def test_long_size_key
+    def test_big_size_key
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :key_type => "Text"))
-      assert_error_response(Result::UNKNOWN_ERROR,
-                            "should implement error case",
+      assert_error_response(Result::INVALID_ARGUMENT,
+                            "[table][create] " +
+                              "key size too big: " +
+                              "<users> (65536) (max:4096)",
                             response,
                             :content_type => "application/json")
 
@@ -443,13 +445,15 @@ class HTTPSchemaTest < Test::Unit::TestCase
                           "null"]])
     end
 
-    def test_long_size_key
+    def test_big_size_key
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :flags => Table::PAT_KEY,
                                   :key_type => "Text"))
-      assert_error_response(Result::UNKNOWN_ERROR,
-                            "should implement error case",
+      assert_error_response(Result::INVALID_ARGUMENT,
+                            "[table][create] " +
+                              "key size too big: " +
+                              "<users> (65536) (max:4096)",
                             response,
                             :content_type => "application/json")
 

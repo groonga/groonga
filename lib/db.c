@@ -710,6 +710,12 @@ grn_table_create(grn_ctx *ctx, const char *name, unsigned name_size,
         grn_db_obj *t = (grn_db_obj *)key_type;
         flags |= t->header.flags;
         key_size = GRN_TYPE_SIZE(t);
+        if (key_size > GRN_TABLE_MAX_KEY_SIZE) {
+          ERR(GRN_INVALID_ARGUMENT,
+              "[table][create] key size too big: <%.*s> (%d) (max:%d)",
+              name_size, name, key_size, GRN_TABLE_MAX_KEY_SIZE);
+          GRN_API_RETURN(NULL);
+        }
       }
       break;
     case GRN_TABLE_HASH_KEY :
