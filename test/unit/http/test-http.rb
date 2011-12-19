@@ -64,6 +64,28 @@ module HTTPTests
       get(command_path(:shutdown, :output_type => output_type))
     end
   end
+
+  def test_nonexistent
+    response = get(command_path(:nonexistent, :output_type => output_type))
+    assert_equal(content_type, response.content_type)
+    error_response = parse(response.body)
+    error_response[0][1] = 0.0
+    error_response[0][2] = 0.0
+    if error_response[0][4]
+      backtrace = error_response[0][4][0]
+      backtrace[0] = "function" if backtrace[0].is_a?(String)
+      backtrace[1] = "file.c" if backtrace[1].is_a?(String)
+      backtrace[2] = 29 if backtrace[2].is_a?(Integer)
+    end
+    path = "#{document_root}/d/nonexistent"
+    path << ".#{output_type}" if output_type
+    assert_equal([[Result::NO_SUCH_FILE_OR_DIRECTORY,
+                   0.0,
+                   0.0,
+                   "no such file: <#{path}>",
+                   [["function", "file.c", 29]]]],
+                 error_response)
+  end
 end
 
 class JSONHTTPTest < Test::Unit::TestCase
