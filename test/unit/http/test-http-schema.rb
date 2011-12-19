@@ -369,7 +369,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
                                   :key_type => "table_create"))
       assert_error_response(Result::INVALID_ARGUMENT,
                             "[table][create] " +
-                              "key must by type or table: " +
+                              "key type must be type or table: " +
                               "<users> (table_create)",
                             response,
                             :content_type => "application/json")
@@ -394,6 +394,34 @@ class HTTPSchemaTest < Test::Unit::TestCase
                             "[table][create] " +
                               "value type doesn't exist: " +
                               "<users> (nonexistent)",
+                            response,
+                            :content_type => "application/json")
+
+      assert_table_list([])
+    end
+
+    def test_invalid_value_type
+      response = get(command_path(:table_create,
+                                  :name => "users",
+                                  :value_type => "table_create"))
+      assert_error_response(Result::INVALID_ARGUMENT,
+                            "[table][create] " +
+                              "value type must be type or table: " +
+                              "<users> (table_create)",
+                            response,
+                            :content_type => "application/json")
+
+      assert_table_list([])
+    end
+
+    def test_variable_size_value_type
+      response = get(command_path(:table_create,
+                                  :name => "users",
+                                  :value_type => "ShortText"))
+      assert_error_response(Result::INVALID_ARGUMENT,
+                            "[table][create] " +
+                              "value type must be fixed size: " +
+                              "<users> (ShortText)",
                             response,
                             :content_type => "application/json")
 
@@ -499,7 +527,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
                                   :key_type => "table_create"))
       assert_error_response(Result::INVALID_ARGUMENT,
                             "[table][create] " +
-                              "key must by type or table: " +
+                              "key type must be type or table: " +
                               "<users> (table_create)",
                             response,
                             :content_type => "application/json")
@@ -527,6 +555,36 @@ class HTTPSchemaTest < Test::Unit::TestCase
                             "[table][create] " +
                               "value type doesn't exist: " +
                               "<users> (nonexistent)",
+                            response,
+                            :content_type => "application/json")
+
+      assert_table_list([])
+    end
+
+    def test_invalid_value_type
+      response = get(command_path(:table_create,
+                                  :name => "users",
+                                  :flags => Table::PAT_KEY,
+                                  :value_type => "table_create"))
+      assert_error_response(Result::INVALID_ARGUMENT,
+                            "[table][create] " +
+                              "value type must be type or table: " +
+                              "<users> (table_create)",
+                            response,
+                            :content_type => "application/json")
+
+      assert_table_list([])
+    end
+
+    def test_variable_size_value_type
+      response = get(command_path(:table_create,
+                                  :name => "users",
+                                  :flags => Table::PAT_KEY,
+                                  :value_type => "ShortText"))
+      assert_error_response(Result::INVALID_ARGUMENT,
+                            "[table][create] " +
+                              "value type must be fixed size: " +
+                              "<users> (ShortText)",
                             response,
                             :content_type => "application/json")
 

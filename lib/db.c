@@ -747,7 +747,7 @@ grn_table_create(grn_ctx *ctx, const char *name, unsigned name_size,
         key_name_size = grn_obj_name(ctx, key_type, key_name,
                                      GRN_TABLE_MAX_KEY_SIZE);
         ERR(GRN_INVALID_ARGUMENT,
-            "[table][create] key must by type or table: <%.*s> (%.*s)",
+            "[table][create] key type must be type or table: <%.*s> (%.*s)",
             name_size, name, key_name_size, key_name);
         GRN_API_RETURN(NULL);
       }
@@ -763,7 +763,13 @@ grn_table_create(grn_ctx *ctx, const char *name, unsigned name_size,
       {
         grn_db_obj *t = (grn_db_obj *)value_type;
         if (t->header.flags & GRN_OBJ_KEY_VAR_SIZE) {
-          ERR(GRN_INVALID_ARGUMENT, "value_type must be fixed size");
+          int type_name_size;
+          char type_name[GRN_TABLE_MAX_KEY_SIZE];
+          type_name_size = grn_obj_name(ctx, value_type, type_name,
+                                        GRN_TABLE_MAX_KEY_SIZE);
+          ERR(GRN_INVALID_ARGUMENT,
+              "[table][create] value type must be fixed size: <%.*s> (%.*s)",
+              name_size, name, type_name_size, type_name);
           GRN_API_RETURN(NULL);
         }
         value_size = GRN_TYPE_SIZE(t);
@@ -773,15 +779,21 @@ grn_table_create(grn_ctx *ctx, const char *name, unsigned name_size,
     case GRN_TABLE_PAT_KEY :
     case GRN_TABLE_DAT_KEY :
     case GRN_TABLE_NO_KEY :
+    case GRN_TABLE_VIEW :
       value_size = sizeof(grn_id);
       break;
     default :
-      /*
-      if (value_type == grn_type_any) {
-        value_size = sizeof(grn_id) + sizeof(grn_id);
+      {
+        int value_name_size;
+        char value_name[GRN_TABLE_MAX_KEY_SIZE];
+        value_name_size = grn_obj_name(ctx, value_type, value_name,
+                                       GRN_TABLE_MAX_KEY_SIZE);
+        ERR(GRN_INVALID_ARGUMENT,
+            "[table][create] value type must be type or table: <%.*s> (%.*s)",
+            name_size, name, value_name_size, value_name);
+        GRN_API_RETURN(NULL);
       }
-      */
-      value_size = sizeof(grn_id);
+      break;
     }
   } else {
     value_size = 0;
