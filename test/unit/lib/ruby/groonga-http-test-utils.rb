@@ -19,9 +19,42 @@ require 'groonga-test-utils'
 require 'net/http'
 require 'cgi'
 require 'json'
+require 'msgpack'
 
 module GroongaHTTPTestUtils
   include GroongaTestUtils
+
+  module Format
+    module JSON
+      private
+      def output_type
+        nil
+      end
+
+      def content_type
+        "application/json"
+      end
+
+      def parse(response)
+        ::JSON.parse(response)
+      end
+    end
+
+    module MessagePack
+      private
+      def output_type
+        "msgpack"
+      end
+
+      def content_type
+        "application/x-msgpack"
+      end
+
+      def parse(response)
+        ::MessagePack.unpack(response)
+      end
+    end
+  end
 
   def setup_server
     super("http")
@@ -204,7 +237,7 @@ module GroongaHTTPTestUtils
   end
 
   def json(object)
-    JSON.generate(object)
+    ::JSON.generate(object)
   end
 
   def success_status_response
@@ -222,16 +255,16 @@ module GroongaHTTPTestUtils
     case response.content_type
     when "application/json"
       begin
-        actual = JSON.parse(response.body)
-      rescue JSON::ParserError => e
+        actual = ::JSON.parse(response.body)
+      rescue ::JSON::ParserError => e
         raise "JSON ParserError #{e.message}\nJSON is ...\n" \
               "---\n#{response.body}\n---"
       end
       normalize_structured_response(actual)
     when "application/x-msgpack"
       begin
-        actual = MessagePack.unpack(response.body)
-      rescue MessagePack::UnpackError => e
+        actual = ::MessagePack.unpack(response.body)
+      rescue ::MessagePack::UnpackError => e
         raise "MessagePack UnpackError #{e.message}\nMessagePack is ...\n" \
               "---\n#{response.body}\n---"
       end

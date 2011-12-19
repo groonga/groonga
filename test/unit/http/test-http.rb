@@ -90,6 +90,7 @@ end
 
 class JSONHTTPTest < Test::Unit::TestCase
   include HTTPTests
+  include Format::JSON
 
   def test_jsonp
     response = get(command_path(:status,
@@ -98,34 +99,9 @@ class JSONHTTPTest < Test::Unit::TestCase
     assert_equal(content_type, response.content_type)
     assert_match(/\Afunc\(.+\);\z/, response.body)
   end
-
-  private
-  def output_type
-    nil
-  end
-
-  def content_type
-    "application/json"
-  end
-
-  def parse(response)
-    JSON.parse(response)
-  end
 end
 
 class MessagePackHTTPTest < Test::Unit::TestCase
   include HTTPTests
-
-  private
-  def output_type
-    "msgpack"
-  end
-
-  def content_type
-    "application/x-msgpack"
-  end
-
-  def parse(response)
-    MessagePack.unpack(response)
-  end
+  include Format::MessagePack
 end
