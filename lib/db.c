@@ -720,9 +720,15 @@ grn_table_create(grn_ctx *ctx, const char *name, unsigned name_size,
         flags |= t->header.flags;
         key_size = GRN_TYPE_SIZE(t);
         if (key_size > GRN_TABLE_MAX_KEY_SIZE) {
+          int type_name_size;
+          char type_name[GRN_TABLE_MAX_KEY_SIZE];
+          type_name_size = grn_obj_name(ctx, key_type, type_name,
+                                        GRN_TABLE_MAX_KEY_SIZE);
           ERR(GRN_INVALID_ARGUMENT,
-              "[table][create] key size too big: <%.*s> (%u) (max:%u)",
-              name_size, name, key_size, GRN_TABLE_MAX_KEY_SIZE);
+              "[table][create] key size too big: <%.*s> <%.*s>(%u) (max:%u)",
+              name_size, name,
+              type_name_size, type_name,
+              key_size, GRN_TABLE_MAX_KEY_SIZE);
           GRN_API_RETURN(NULL);
         }
       }

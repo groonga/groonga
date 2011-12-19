@@ -326,7 +326,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
       assert_error_response(Result::INVALID_ARGUMENT,
                             "[table][create] " +
                               "key size too big: " +
-                              "<users> (65536) (max:4096)",
+                              "<users> <Text>(65536) (max:4096)",
                             response,
                             :content_type => "application/json")
 
@@ -454,7 +454,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
       assert_error_response(Result::INVALID_ARGUMENT,
                             "[table][create] " +
                               "key size too big: " +
-                              "<users> (65536) (max:4096)",
+                              "<users> <Text>(65536) (max:4096)",
                             response,
                             :content_type => "application/json")
 
