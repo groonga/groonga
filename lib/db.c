@@ -734,12 +734,17 @@ grn_table_create(grn_ctx *ctx, const char *name, unsigned name_size,
       key_size = sizeof(grn_id);
       break;
     default :
-      /*
-      if (key_type == grn_type_any) {
-        key_size = sizeof(grn_id) + sizeof(grn_id);
+      {
+        int key_name_size;
+        char key_name[GRN_TABLE_MAX_KEY_SIZE];
+        key_name_size = grn_obj_name(ctx, key_type, key_name,
+                                     GRN_TABLE_MAX_KEY_SIZE);
+        ERR(GRN_INVALID_ARGUMENT,
+            "[table][create] key must by type or table: <%.*s> (%.*s)",
+            name_size, name, key_name_size, key_name);
+        GRN_API_RETURN(NULL);
       }
-      */
-      key_size = sizeof(grn_id);
+      break;
     }
   } else {
     key_size = (flags & GRN_OBJ_KEY_VAR_SIZE) ? GRN_TABLE_MAX_KEY_SIZE : sizeof(grn_id);

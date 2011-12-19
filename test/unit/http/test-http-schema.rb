@@ -361,12 +361,13 @@ class HTTPSchemaTest < Test::Unit::TestCase
     end
 
     def test_invalid_key_type
-      omit("should implement error case")
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :key_type => "table_create"))
-      assert_error_response(Result::UNKNOWN_ERROR,
-                            "should implement error case",
+      assert_error_response(Result::INVALID_ARGUMENT,
+                            "[table][create] " +
+                              "key must by type or table: " +
+                              "<users> (table_create)",
                             response,
                             :content_type => "application/json")
 
@@ -485,13 +486,14 @@ class HTTPSchemaTest < Test::Unit::TestCase
     end
 
     def test_invalid_key_type
-      omit("should implement error case")
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :flags => Table::PAT_KEY,
                                   :key_type => "table_create"))
-      assert_error_response(Result::UNKNOWN_ERROR,
-                            "should implement error case",
+      assert_error_response(Result::INVALID_ARGUMENT,
+                            "[table][create] " +
+                              "key must by type or table: " +
+                              "<users> (table_create)",
                             response,
                             :content_type => "application/json")
 
