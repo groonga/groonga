@@ -799,7 +799,8 @@ proc_table_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
                              GRN_TEXT_LEN(VAR(2)));
       if (!key_type) {
         ERR(GRN_INVALID_ARGUMENT,
-            "key type doesn't exist: <%.*s>",
+            "[table][create] key type doesn't exist: <%.*s> (%.*s)",
+            GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)),
             GRN_TEXT_LEN(VAR(2)), GRN_TEXT_VALUE(VAR(2)));
         return NULL;
       }
@@ -809,7 +810,8 @@ proc_table_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
                                GRN_TEXT_LEN(VAR(3)));
       if (!value_type) {
         ERR(GRN_INVALID_ARGUMENT,
-            "value type doesn't exist: <%.*s>",
+            "[table][create] value type doesn't exist: <%.*s> (%.*s)",
+            GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)),
             GRN_TEXT_LEN(VAR(3)), GRN_TEXT_VALUE(VAR(3)));
         return NULL;
       }
@@ -829,7 +831,8 @@ proc_table_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
       grn_obj_unlink(ctx, table);
     }
   } else {
-    ERR(GRN_INVALID_ARGUMENT, "should not create anonymous table");
+    ERR(GRN_INVALID_ARGUMENT,
+        "[table][create] should not create anonymous table");
   }
 exit:
   GRN_OUTPUT_BOOL(!ctx->rc);

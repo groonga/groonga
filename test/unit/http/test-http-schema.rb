@@ -191,7 +191,8 @@ class HTTPSchemaTest < Test::Unit::TestCase
   def test_table_create_without_name
     response = get(command_path(:table_create))
     assert_error_response(Result::INVALID_ARGUMENT,
-                          "should not create anonymous table",
+                          "[table][create] " +
+                            "should not create anonymous table",
                           response,
                           :content_type => "application/json")
   end
@@ -353,7 +354,9 @@ class HTTPSchemaTest < Test::Unit::TestCase
                                   :name => "users",
                                   :key_type => "nonexistent"))
       assert_error_response(Result::INVALID_ARGUMENT,
-                            "key type doesn't exist: <nonexistent>",
+                            "[table][create] " +
+                              "key type doesn't exist: " +
+                              "<users> (nonexistent)",
                             response,
                             :content_type => "application/json")
 
@@ -388,7 +391,9 @@ class HTTPSchemaTest < Test::Unit::TestCase
                                   :name => "users",
                                   :value_type => "nonexistent"))
       assert_error_response(Result::INVALID_ARGUMENT,
-                            "value type doesn't exist: <nonexistent>",
+                            "[table][create] " +
+                              "value type doesn't exist: " +
+                              "<users> (nonexistent)",
                             response,
                             :content_type => "application/json")
 
@@ -478,7 +483,9 @@ class HTTPSchemaTest < Test::Unit::TestCase
                                   :flags => Table::PAT_KEY,
                                   :key_type => "nonexistent"))
       assert_error_response(Result::INVALID_ARGUMENT,
-                            "key type doesn't exist: <nonexistent>",
+                            "[table][create] " +
+                              "key type doesn't exist: " +
+                              "<users> (nonexistent)",
                             response,
                             :content_type => "application/json")
 
@@ -517,7 +524,9 @@ class HTTPSchemaTest < Test::Unit::TestCase
                                   :flags => Table::PAT_KEY,
                                   :value_type => "nonexistent"))
       assert_error_response(Result::INVALID_ARGUMENT,
-                            "value type doesn't exist: <nonexistent>",
+                            "[table][create] " +
+                              "value type doesn't exist: " +
+                              "<users> (nonexistent)",
                             response,
                             :content_type => "application/json")
 
@@ -614,7 +623,9 @@ class HTTPSchemaTest < Test::Unit::TestCase
                                   :flags => Table::NO_KEY,
                                   :value_type => "nonexistent"))
       assert_error_response(Result::INVALID_ARGUMENT,
-                            "value type doesn't exist: <nonexistent>",
+                            "[table][create] " +
+                              "value type doesn't exist: " +
+                              "<users> (nonexistent)",
                             response,
                             :content_type => "application/json")
 
