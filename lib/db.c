@@ -731,6 +731,7 @@ grn_table_create(grn_ctx *ctx, const char *name, unsigned name_size,
     case GRN_TABLE_PAT_KEY :
     case GRN_TABLE_DAT_KEY :
     case GRN_TABLE_NO_KEY :
+    case GRN_TABLE_VIEW :
       key_size = sizeof(grn_id);
       break;
     default :
