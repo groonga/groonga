@@ -28,7 +28,7 @@ static gchar *path;
 static grn_ctx *context;
 static grn_obj *database;
 static grn_obj *expr;
-static grn_obj textbuf, intbuf;
+static grn_obj textbuf, intbuf, ptrbuf;
 
 void test_accessor(void);
 void test_expr(void);
@@ -63,6 +63,7 @@ cut_setup(void)
 
   GRN_TEXT_INIT(&textbuf, 0);
   GRN_UINT32_INIT(&intbuf, 0);
+  GRN_PTR_INIT(&ptrbuf, 0, GRN_ID_NIL);
 }
 
 void
@@ -70,6 +71,7 @@ cut_teardown(void)
 {
   grn_obj_close(context, &textbuf);
   grn_obj_close(context, &intbuf);
+  grn_obj_close(context, &ptrbuf);
 
   if (expr)
     grn_obj_close(context, expr);
@@ -378,8 +380,8 @@ test_expr_query(void)
   GRN_UINT32_SET(context, &intbuf, GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC);
   grn_expr_append_const(context, expr, &intbuf, GRN_OP_PUSH, 1);
   grn_expr_append_obj(context, expr, t1, GRN_OP_PUSH, 1);
-  GRN_UINT32_SET(context, &intbuf, 0);
-  grn_expr_append_const(context, expr, &intbuf, GRN_OP_PUSH, 1);
+  GRN_PTR_SET(context, &ptrbuf, NULL);
+  grn_expr_append_obj(context, expr, &ptrbuf, GRN_OP_PUSH, 1);
   grn_expr_append_op(context, expr, GRN_OP_TABLE_CREATE, 4);
 
   grn_expr_append_op(context, expr, GRN_OP_ASSIGN, 2);
