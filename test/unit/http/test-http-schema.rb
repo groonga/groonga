@@ -15,7 +15,7 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-class HTTPSchemaTest < Test::Unit::TestCase
+module HTTPSchemaTests
   module Utils
     include GroongaHTTPTestUtils
 
@@ -44,7 +44,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
     end
 
     def assert_table_list(expected)
-      response = get(command_path(:table_list))
+      response = get(command_path(:table_list, :output_type => output_type))
       expected = expected.collect do |values|
         id, name, flags, domain, range = values
         [id, name, nil, flags, domain, range]
@@ -57,7 +57,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
                              ["range", "ShortText"]],
                             *expected],
                            response,
-                           :content_type => "application/json") do |actual|
+                           :content_type => content_type) do |actual|
         status, result = actual
         header, *values = result
         values = values.collect do |value|
@@ -69,6 +69,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
     end
 
     def assert_column_list(expected, options)
+      options = options.merge(:output_type => output_type)
       response = get(command_path(:column_list, options))
       expected = expected.collect do |values|
         id, name, type, flags, domain, range, source = values
@@ -84,7 +85,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
                              ["source", "ShortText"]],
                             *expected],
                            response,
-                           :content_type => "application/json") do |actual|
+                           :content_type => content_type) do |actual|
         status, result = actual
         header, *values = result
         values = values.collect do |value|
@@ -117,7 +118,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
                                 :output_type => "unknown"))
     assert_response([[Result::UNKNOWN_ERROR, "should be implemented"]],
                     response,
-                    :content_type => "application/json")
+                    :content_type => content_type)
   end
 
   def test_column_list_empty
@@ -154,18 +155,19 @@ class HTTPSchemaTest < Test::Unit::TestCase
 
   def test_column_list_nonexistent
     response = get(command_path(:column_list,
-                                :table => "nonexistent"))
+                                :table => "nonexistent",
+                                :output_type => output_type))
     assert_error_response(Result::INVALID_ARGUMENT,
                           "table 'nonexistent' does not exist.",
                           response,
-                          :content_type => "application/json")
+                          :content_type => content_type)
   end
 
   def test_column_list_without_table
-    response = get(command_path(:column_list))
+    response = get(command_path(:column_list, :output_type => output_type))
     assert_error_response(Result::INVALID_ARGUMENT, "table '' does not exist.",
                           response,
-                          :content_type => "application/json")
+                          :content_type => content_type)
   end
 
   def test_column_list_with_invalid_output_type
@@ -176,7 +178,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
                                 :output_type => "unknown"))
     assert_error_response(Result::UNKNOWN_ERROR, "should be implemented",
                           response,
-                          :content_type => "application/json")
+                          :content_type => content_type)
   end
 
   def test_column_list_with_invalid_output_type_without_table
@@ -185,64 +187,77 @@ class HTTPSchemaTest < Test::Unit::TestCase
                                 :output_type => "unknown"))
     assert_error_response(Result::UNKNOWN_ERROR, "should be implemented",
                           response,
-                          :content_type => "application/json")
+                          :content_type => content_type)
   end
 
   def test_table_create_without_name
-    response = get(command_path(:table_create))
+    response = get(command_path(:table_create, :output_type => output_type))
     assert_error_response(Result::INVALID_ARGUMENT,
                           "[table][create] " +
                             "should not create anonymous table",
                           response,
-                          :content_type => "application/json")
+                          :content_type => content_type)
   end
 
   def test_table_create_with_dot_name
-    response = get(command_path(:table_create, :name => "mori.daijiro"))
+    response = get(command_path(:table_create,
+                                :name => "mori.daijiro",
+                                :output_type => output_type))
     assert_error_response(Result::INVALID_ARGUMENT,
                           "[table][create]: " +
                           "name can't start with '_' " +
                           "and contains only 0-9, A-Z, a-z, #, - or _: " +
                           "<mori.daijiro>",
                           response,
-                          :content_type => "application/json")
+                          :content_type => content_type)
   end
 
   def test_table_create_with_under_score_started_name
-    response = get(command_path(:table_create, :name => "_mori"))
+    response = get(command_path(:table_create,
+                                :name => "_mori",
+                                :output_type => output_type))
     assert_error_response(Result::INVALID_ARGUMENT,
                           "[table][create]: " +
                           "name can't start with '_' " +
                           "and contains only 0-9, A-Z, a-z, #, - or _: " +
                           "<_mori>",
                           response,
-                          :content_type => "application/json")
+                          :content_type => content_type)
   end
 
   def test_table_create_with_under_score_name
-    response = get(command_path(:table_create, :name => "mori_daijiro"))
-    assert_success_response(response, :content_type => "application/json")
+    response = get(command_path(:table_create,
+                                :name => "mori_daijiro",
+                                :output_type => output_type))
+    assert_success_response(response, :content_type => content_type)
   end
 
   def test_table_create_with_colon_name
-    response = get(command_path(:table_create, :name => "daijiro:mori"))
+    response = get(command_path(:table_create,
+                                :name => "daijiro:mori",
+                                :output_type => output_type
+                                ))
     assert_error_response(Result::INVALID_ARGUMENT,
                           "[table][create]: " +
                           "name can't start with '_' " +
                           "and contains only 0-9, A-Z, a-z, #, - or _: " +
                           "<daijiro:mori>",
                           response,
-                          :content_type => "application/json")
+                          :content_type => content_type)
   end
 
   def test_table_create_with_duplicated_name
-    response = get(command_path(:table_create, :name => "daijiro"))
-    assert_success_response(response, :content_type => "application/json")
-    response = get(command_path(:table_create, :name => "daijiro"))
+    response = get(command_path(:table_create,
+                                :name => "daijiro",
+                                :output_type => output_type))
+    assert_success_response(response, :content_type => content_type)
+    response = get(command_path(:table_create,
+                                :name => "daijiro",
+                                :output_type => output_type))
     assert_error_response(Result::INVALID_ARGUMENT,
                           "already used name was assigned: <daijiro>",
                           response,
-                          :content_type => "application/json")
+                          :content_type => content_type)
   end
 
   def test_full_text_search
@@ -273,7 +288,7 @@ class HTTPSchemaTest < Test::Unit::TestCase
                   :query => "title:@column")
   end
 
-  class HashCreateTest < Test::Unit::TestCase
+  module HashCreateTests
     include Utils
 
     def test_simple
@@ -323,13 +338,14 @@ class HTTPSchemaTest < Test::Unit::TestCase
     def test_big_size_key
       response = get(command_path(:table_create,
                                   :name => "users",
-                                  :key_type => "Text"))
+                                  :key_type => "Text",
+                                  :output_type => output_type))
       assert_error_response(Result::INVALID_ARGUMENT,
                             "[table][create] " +
                               "key size too big: " +
                               "<users> <Text>(65536) (max:4096)",
                             response,
-                            :content_type => "application/json")
+                            :content_type => content_type)
 
       assert_table_list([])
     end
@@ -338,13 +354,14 @@ class HTTPSchemaTest < Test::Unit::TestCase
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :flags => Key::SIS,
-                                  :key_type => "ShortText"))
+                                  :key_type => "ShortText",
+                                  :output_type => output_type))
       assert_error_response(Result::INVALID_ARGUMENT,
                             "[table][create] " +
                               "key with SIS isn't available " +
                               "for hash table: <users>",
                             response,
-                            :content_type => "application/json")
+                            :content_type => content_type)
 
       assert_table_list([])
     end
@@ -352,13 +369,14 @@ class HTTPSchemaTest < Test::Unit::TestCase
     def test_nonexistent_key_type
       response = get(command_path(:table_create,
                                   :name => "users",
-                                  :key_type => "nonexistent"))
+                                  :key_type => "nonexistent",
+                                  :output_type => output_type))
       assert_error_response(Result::INVALID_ARGUMENT,
                             "[table][create] " +
                               "key type doesn't exist: " +
                               "<users> (nonexistent)",
                             response,
-                            :content_type => "application/json")
+                            :content_type => content_type)
 
       assert_table_list([])
     end
@@ -366,13 +384,14 @@ class HTTPSchemaTest < Test::Unit::TestCase
     def test_invalid_key_type
       response = get(command_path(:table_create,
                                   :name => "users",
-                                  :key_type => "table_create"))
+                                  :key_type => "table_create",
+                                  :output_type => output_type))
       assert_error_response(Result::INVALID_ARGUMENT,
                             "[table][create] " +
                               "key type must be type or table: " +
                               "<users> (table_create)",
                             response,
-                            :content_type => "application/json")
+                            :content_type => content_type)
 
       assert_table_list([])
     end
@@ -389,13 +408,14 @@ class HTTPSchemaTest < Test::Unit::TestCase
     def test_nonexistent_value_type
       response = get(command_path(:table_create,
                                   :name => "users",
-                                  :value_type => "nonexistent"))
+                                  :value_type => "nonexistent",
+                                  :output_type => output_type))
       assert_error_response(Result::INVALID_ARGUMENT,
                             "[table][create] " +
                               "value type doesn't exist: " +
                               "<users> (nonexistent)",
                             response,
-                            :content_type => "application/json")
+                            :content_type => content_type)
 
       assert_table_list([])
     end
@@ -403,13 +423,14 @@ class HTTPSchemaTest < Test::Unit::TestCase
     def test_invalid_value_type
       response = get(command_path(:table_create,
                                   :name => "users",
-                                  :value_type => "table_create"))
+                                  :value_type => "table_create",
+                                  :output_type => output_type))
       assert_error_response(Result::INVALID_ARGUMENT,
                             "[table][create] " +
                               "value type must be type or table: " +
                               "<users> (table_create)",
                             response,
-                            :content_type => "application/json")
+                            :content_type => content_type)
 
       assert_table_list([])
     end
@@ -417,19 +438,20 @@ class HTTPSchemaTest < Test::Unit::TestCase
     def test_variable_size_value_type
       response = get(command_path(:table_create,
                                   :name => "users",
-                                  :value_type => "ShortText"))
+                                  :value_type => "ShortText",
+                                  :output_type => output_type))
       assert_error_response(Result::INVALID_ARGUMENT,
                             "[table][create] " +
                               "value type must be fixed size: " +
                               "<users> (ShortText)",
                             response,
-                            :content_type => "application/json")
+                            :content_type => content_type)
 
       assert_table_list([])
     end
   end
 
-  class PatriciaTrieCreateTest < Test::Unit::TestCase
+  module PatriciaTrieCreateTests
     include Utils
 
     def test_simple
@@ -483,13 +505,14 @@ class HTTPSchemaTest < Test::Unit::TestCase
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :flags => Table::PAT_KEY,
-                                  :key_type => "Text"))
+                                  :key_type => "Text",
+                                  :output_type => output_type))
       assert_error_response(Result::INVALID_ARGUMENT,
                             "[table][create] " +
                               "key size too big: " +
                               "<users> <Text>(65536) (max:4096)",
                             response,
-                            :content_type => "application/json")
+                            :content_type => content_type)
 
       assert_table_list([])
     end
@@ -509,13 +532,14 @@ class HTTPSchemaTest < Test::Unit::TestCase
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :flags => Table::PAT_KEY,
-                                  :key_type => "nonexistent"))
+                                  :key_type => "nonexistent",
+                                  :output_type => output_type))
       assert_error_response(Result::INVALID_ARGUMENT,
                             "[table][create] " +
                               "key type doesn't exist: " +
                               "<users> (nonexistent)",
                             response,
-                            :content_type => "application/json")
+                            :content_type => content_type)
 
       assert_table_list([])
     end
@@ -524,13 +548,14 @@ class HTTPSchemaTest < Test::Unit::TestCase
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :flags => Table::PAT_KEY,
-                                  :key_type => "table_create"))
+                                  :key_type => "table_create",
+                                  :output_type => output_type))
       assert_error_response(Result::INVALID_ARGUMENT,
                             "[table][create] " +
                               "key type must be type or table: " +
                               "<users> (table_create)",
                             response,
-                            :content_type => "application/json")
+                            :content_type => content_type)
 
       assert_table_list([])
     end
@@ -550,13 +575,14 @@ class HTTPSchemaTest < Test::Unit::TestCase
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :flags => Table::PAT_KEY,
-                                  :value_type => "nonexistent"))
+                                  :value_type => "nonexistent",
+                                  :output_type => output_type))
       assert_error_response(Result::INVALID_ARGUMENT,
                             "[table][create] " +
                               "value type doesn't exist: " +
                               "<users> (nonexistent)",
                             response,
-                            :content_type => "application/json")
+                            :content_type => content_type)
 
       assert_table_list([])
     end
@@ -565,13 +591,14 @@ class HTTPSchemaTest < Test::Unit::TestCase
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :flags => Table::PAT_KEY,
-                                  :value_type => "table_create"))
+                                  :value_type => "table_create",
+                                  :output_type => output_type))
       assert_error_response(Result::INVALID_ARGUMENT,
                             "[table][create] " +
                               "value type must be type or table: " +
                               "<users> (table_create)",
                             response,
-                            :content_type => "application/json")
+                            :content_type => content_type)
 
       assert_table_list([])
     end
@@ -580,19 +607,20 @@ class HTTPSchemaTest < Test::Unit::TestCase
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :flags => Table::PAT_KEY,
-                                  :value_type => "ShortText"))
+                                  :value_type => "ShortText",
+                                  :output_type => output_type))
       assert_error_response(Result::INVALID_ARGUMENT,
                             "[table][create] " +
                               "value type must be fixed size: " +
                               "<users> (ShortText)",
                             response,
-                            :content_type => "application/json")
+                            :content_type => content_type)
 
       assert_table_list([])
     end
   end
 
-  class ArrayCreateTest < Test::Unit::TestCase
+  module ArrayCreateTests
     include Utils
 
     def test_simple
@@ -607,13 +635,14 @@ class HTTPSchemaTest < Test::Unit::TestCase
     def test_normalize_key
       response = get(command_path(:table_create,
                                   :name => "users",
-                                  :flags => Table::NO_KEY | Key::NORMALIZE))
+                                  :flags => Table::NO_KEY | Key::NORMALIZE,
+                                  :output_type => output_type))
       assert_error_response(Result::INVALID_ARGUMENT,
                             "[table][create] " +
                               "key normalization isn't available " +
                               "for no key table: <users>",
                             response,
-                            :content_type => "application/json")
+                            :content_type => content_type)
 
       assert_table_list([])
     end
@@ -622,13 +651,14 @@ class HTTPSchemaTest < Test::Unit::TestCase
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :flags => Table::NO_KEY,
-                                  :key_type => "ShortText"))
+                                  :key_type => "ShortText",
+                                  :output_type => output_type))
       assert_error_response(Result::INVALID_ARGUMENT,
                             "[table][create] " +
                               "key isn't available for no key table: " +
                               "<users> (ShortText)",
                             response,
-                            :content_type => "application/json")
+                            :content_type => content_type)
 
       assert_table_list([])
     end
@@ -636,13 +666,14 @@ class HTTPSchemaTest < Test::Unit::TestCase
     def test_sis
       response = get(command_path(:table_create,
                                   :name => "users",
-                                  :flags => Table::NO_KEY | Key::SIS))
+                                  :flags => Table::NO_KEY | Key::SIS,
+                                  :output_type => output_type))
       assert_error_response(Result::INVALID_ARGUMENT,
                             "[table][create] " +
                               "key with SIS isn't available " +
                               "for no key table: <users>",
                             response,
-                            :content_type => "application/json")
+                            :content_type => content_type)
 
       assert_table_list([])
     end
@@ -679,19 +710,20 @@ class HTTPSchemaTest < Test::Unit::TestCase
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :flags => Table::NO_KEY,
-                                  :value_type => "nonexistent"))
+                                  :value_type => "nonexistent",
+                                  :output_type => output_type))
       assert_error_response(Result::INVALID_ARGUMENT,
                             "[table][create] " +
                               "value type doesn't exist: " +
                               "<users> (nonexistent)",
                             response,
-                            :content_type => "application/json")
+                            :content_type => content_type)
 
       assert_table_list([])
     end
   end
 
-  class ViewCreateTest < Test::Unit::TestCase
+  module ViewCreateTests
     include Utils
 
     def test_simple
@@ -705,13 +737,14 @@ class HTTPSchemaTest < Test::Unit::TestCase
     def test_normalize_key
       response = get(command_path(:table_create,
                                   :name => "users",
-                                  :flags => Table::VIEW | Key::NORMALIZE))
+                                  :flags => Table::VIEW | Key::NORMALIZE,
+                                  :output_type => output_type))
       assert_error_response(Result::INVALID_ARGUMENT,
                             "[table][create] " +
                               "key normalization isn't available " +
                               "for view table: <users>",
                             response,
-                            :content_type => "application/json")
+                            :content_type => content_type)
 
       assert_table_list([])
     end
@@ -720,13 +753,14 @@ class HTTPSchemaTest < Test::Unit::TestCase
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :flags => Table::VIEW,
-                                  :key_type => "ShortText"))
+                                  :key_type => "ShortText",
+                                  :output_type => output_type))
       assert_error_response(Result::INVALID_ARGUMENT,
                             "[table][create] " +
                               "key isn't available for view table: " +
                               "<users> (ShortText)",
                             response,
-                            :content_type => "application/json")
+                            :content_type => content_type)
 
       assert_table_list([])
     end
@@ -734,13 +768,14 @@ class HTTPSchemaTest < Test::Unit::TestCase
     def test_sis
       response = get(command_path(:table_create,
                                   :name => "users",
-                                  :flags => Table::VIEW | Key::SIS))
+                                  :flags => Table::VIEW | Key::SIS,
+                                  :output_type => output_type))
       assert_error_response(Result::INVALID_ARGUMENT,
                             "[table][create] " +
                               "key with SIS isn't available " +
                               "for view table: <users>",
                             response,
-                            :content_type => "application/json")
+                            :content_type => content_type)
 
       assert_table_list([])
     end
@@ -749,19 +784,20 @@ class HTTPSchemaTest < Test::Unit::TestCase
       response = get(command_path(:table_create,
                                   :name => "users",
                                   :flags => Table::VIEW,
-                                  :value_type => "Int32"))
+                                  :value_type => "Int32",
+                                  :output_type => output_type))
       assert_error_response(Result::INVALID_ARGUMENT,
                             "[table][create] " +
                               "value isn't available for view table: " +
                               "<users> (Int32)",
                             response,
-                            :content_type => "application/json")
+                            :content_type => content_type)
 
       assert_table_list([])
     end
   end
 
-  class SymbolFlagsTest < Test::Unit::TestCase
+  module SymbolFlagsTests
     include Utils
 
     def test_table_create_single_symbol
@@ -807,11 +843,12 @@ class HTTPSchemaTest < Test::Unit::TestCase
     def test_table_create_invalid_symbol
       response = get(command_path(:table_create,
                                   :name => "books",
-                                  :flags => "INVALID_SYMBOL"))
+                                  :flags => "INVALID_SYMBOL",
+                                  :output_type => output_type))
       assert_error_response(Result::INVALID_ARGUMENT,
                             "invalid flags option: INVALID_SYMBOL",
                             response,
-                            :content_type => "application/json")
+                            :content_type => content_type)
 
       assert_table_list([])
     end
@@ -874,11 +911,12 @@ class HTTPSchemaTest < Test::Unit::TestCase
                                   :table => "books",
                                   :name => "name",
                                   :flags => "INVALID_SYMBOL",
-                                  :type => "ShortText"))
+                                  :type => "ShortText",
+                                  :output_type => output_type))
       assert_error_response(Result::INVALID_ARGUMENT,
                             "invalid flags option: INVALID_SYMBOL",
                             response,
-                            :content_type => "application/json")
+                            :content_type => content_type)
       assert_column_list([], :table => "books")
     end
 
@@ -892,5 +930,65 @@ class HTTPSchemaTest < Test::Unit::TestCase
                           "null",
                           "null"]])
     end
+  end
+end
+
+class JSONHTTPSchemaTests < Test::Unit::TestCase
+  include HTTPSchemaTests
+  include Format::JSON
+
+  class JSONHashCreateTest < Test::Unit::TestCase
+    include HTTPSchemaTests::HashCreateTests
+    include Format::JSON
+  end
+
+  class JSONPatriciaTrieCreateTest < Test::Unit::TestCase
+    include HTTPSchemaTests::PatriciaTrieCreateTests
+    include Format::JSON
+  end
+
+  class JSONArrayCreateTest < Test::Unit::TestCase
+    include HTTPSchemaTests::ArrayCreateTests
+    include Format::JSON
+  end
+
+  class JSONViewCreateTest < Test::Unit::TestCase
+    include HTTPSchemaTests::ViewCreateTests
+    include Format::JSON
+  end
+
+  class JSONSymbolFlagsTest < Test::Unit::TestCase
+    include HTTPSchemaTests::SymbolFlagsTests
+    include Format::JSON
+  end
+end
+
+class MessagePackHTTPSchemaTests < Test::Unit::TestCase
+  include HTTPSchemaTests
+  include Format::MessagePack
+
+  class MessagePackHashCreateTest < Test::Unit::TestCase
+    include HTTPSchemaTests::HashCreateTests
+    include Format::MessagePack
+  end
+
+  class MessagePackPatriciaTrieCreateTest < Test::Unit::TestCase
+    include HTTPSchemaTests::PatriciaTrieCreateTests
+    include Format::MessagePack
+  end
+
+  class MessagePackArrayCreateTest < Test::Unit::TestCase
+    include HTTPSchemaTests::ArrayCreateTests
+    include Format::MessagePack
+  end
+
+  class MessagePackViewCreateTest < Test::Unit::TestCase
+    include HTTPSchemaTests::ViewCreateTests
+    include Format::MessagePack
+  end
+
+  class MessagePackSymbolFlagsTest < Test::Unit::TestCase
+    include HTTPSchemaTests::SymbolFlagsTests
+    include Format::MessagePack
   end
 end
