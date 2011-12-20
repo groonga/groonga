@@ -28,7 +28,7 @@ static gchar *path;
 static grn_ctx *context;
 static grn_obj *database;
 static grn_obj *expr;
-static grn_obj textbuf, intbuf, ptrbuf;
+static grn_obj text_buf, int_buf, ptr_buf;
 
 void test_accessor(void);
 void test_expr(void);
@@ -61,17 +61,17 @@ cut_setup(void)
 
   expr = NULL;
 
-  GRN_TEXT_INIT(&textbuf, 0);
-  GRN_UINT32_INIT(&intbuf, 0);
-  GRN_PTR_INIT(&ptrbuf, 0, GRN_ID_NIL);
+  GRN_TEXT_INIT(&text_buf, 0);
+  GRN_UINT32_INIT(&int_buf, 0);
+  GRN_PTR_INIT(&ptr_buf, 0, GRN_ID_NIL);
 }
 
 void
 cut_teardown(void)
 {
-  grn_obj_close(context, &textbuf);
-  grn_obj_close(context, &intbuf);
-  grn_obj_close(context, &ptrbuf);
+  grn_obj_close(context, &text_buf);
+  grn_obj_close(context, &int_buf);
+  grn_obj_close(context, &ptr_buf);
 
   if (expr)
     grn_obj_close(context, expr);
@@ -341,29 +341,29 @@ test_expr_query(void)
   cut_assert_not_null(ft);
 
   /* link between actual column and fulltext index */
-  GRN_UINT32_SET(context, &intbuf, grn_obj_id(context, c1));
-  grn_obj_set_info(context, ft, GRN_INFO_SOURCE, &intbuf); /* need to use grn_id */
+  GRN_UINT32_SET(context, &int_buf, grn_obj_id(context, c1));
+  grn_obj_set_info(context, ft, GRN_INFO_SOURCE, &int_buf); /* need to use grn_id */
 
   /* insert row */
   r1 = grn_table_add(context, t1, NULL, 0, NULL);
   cut_assert_equal_int(1, r1);
-  GRN_TEXT_SETS(context, &textbuf, "abhij");
-  grn_test_assert(grn_obj_set_value(context, c1, r1, &textbuf, GRN_OBJ_SET));
+  GRN_TEXT_SETS(context, &text_buf, "abhij");
+  grn_test_assert(grn_obj_set_value(context, c1, r1, &text_buf, GRN_OBJ_SET));
 
   r2 = grn_table_add(context, t1, NULL, 0, NULL);
   cut_assert_equal_int(2, r2);
-  GRN_TEXT_SETS(context, &textbuf, "fghij");
-  grn_test_assert(grn_obj_set_value(context, c1, r2, &textbuf, GRN_OBJ_SET));
+  GRN_TEXT_SETS(context, &text_buf, "fghij");
+  grn_test_assert(grn_obj_set_value(context, c1, r2, &text_buf, GRN_OBJ_SET));
 
   r3 = grn_table_add(context, t1, NULL, 0, NULL);
   cut_assert_equal_int(3, r3);
-  GRN_TEXT_SETS(context, &textbuf, "11 22 33");
-  grn_test_assert(grn_obj_set_value(context, c1, r3, &textbuf, GRN_OBJ_SET));
+  GRN_TEXT_SETS(context, &text_buf, "11 22 33");
+  grn_test_assert(grn_obj_set_value(context, c1, r3, &text_buf, GRN_OBJ_SET));
 
   r4 = grn_table_add(context, t1, NULL, 0, NULL);
   cut_assert_equal_int(4, r4);
-  GRN_TEXT_SETS(context, &textbuf, "44 22 55");
-  grn_test_assert(grn_obj_set_value(context, c1, r4, &textbuf, GRN_OBJ_SET));
+  GRN_TEXT_SETS(context, &text_buf, "44 22 55");
+  grn_test_assert(grn_obj_set_value(context, c1, r4, &text_buf, GRN_OBJ_SET));
 
   /* confirm record are inserted in both column and index */
   cut_assert_equal_int(4, grn_table_size(context, t1));
@@ -375,30 +375,30 @@ test_expr_query(void)
 
   grn_expr_append_obj(context, expr, v, GRN_OP_PUSH, 1);
 
-  GRN_BULK_REWIND(&textbuf);
-  grn_expr_append_const(context, expr, &textbuf, GRN_OP_PUSH, 1);
-  GRN_UINT32_SET(context, &intbuf, GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC);
-  grn_expr_append_const(context, expr, &intbuf, GRN_OP_PUSH, 1);
+  GRN_BULK_REWIND(&text_buf);
+  grn_expr_append_const(context, expr, &text_buf, GRN_OP_PUSH, 1);
+  GRN_UINT32_SET(context, &int_buf, GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC);
+  grn_expr_append_const(context, expr, &int_buf, GRN_OP_PUSH, 1);
   grn_expr_append_obj(context, expr, t1, GRN_OP_PUSH, 1);
-  GRN_PTR_SET(context, &ptrbuf, NULL);
-  grn_expr_append_obj(context, expr, &ptrbuf, GRN_OP_PUSH, 1);
+  GRN_PTR_SET(context, &ptr_buf, NULL);
+  grn_expr_append_obj(context, expr, &ptr_buf, GRN_OP_PUSH, 1);
   grn_expr_append_op(context, expr, GRN_OP_TABLE_CREATE, 4);
 
   grn_expr_append_op(context, expr, GRN_OP_ASSIGN, 2);
 
   grn_expr_append_obj(context, expr, ft, GRN_OP_PUSH, 1);
-  GRN_TEXT_SETS(context, &textbuf, "hij");
-  grn_expr_append_const(context, expr, &textbuf, GRN_OP_PUSH, 1);
+  GRN_TEXT_SETS(context, &text_buf, "hij");
+  grn_expr_append_const(context, expr, &text_buf, GRN_OP_PUSH, 1);
   grn_expr_append_obj(context, expr, v, GRN_OP_PUSH, 1);
-  GRN_UINT32_SET(context, &intbuf, GRN_OP_OR);
-  grn_expr_append_const(context, expr, &intbuf, GRN_OP_PUSH, 1);
+  GRN_UINT32_SET(context, &int_buf, GRN_OP_OR);
+  grn_expr_append_const(context, expr, &int_buf, GRN_OP_PUSH, 1);
   grn_expr_append_op(context, expr, GRN_OP_OBJ_SEARCH, 4);
 
   grn_expr_append_obj(context, expr, v, GRN_OP_PUSH, 1);
-  GRN_TEXT_SETS(context, &textbuf, ".c1 ._score");
-  grn_expr_append_const(context, expr, &textbuf, GRN_OP_PUSH, 1);
-  GRN_BULK_REWIND(&textbuf);
-  grn_expr_append_obj(context, expr, &textbuf, GRN_OP_PUSH, 1);
+  GRN_TEXT_SETS(context, &text_buf, ".c1 ._score");
+  grn_expr_append_const(context, expr, &text_buf, GRN_OP_PUSH, 1);
+  GRN_BULK_REWIND(&text_buf);
+  grn_expr_append_obj(context, expr, &text_buf, GRN_OP_PUSH, 1);
   grn_expr_append_op(context, expr, GRN_OP_JSON_PUT, 3);
 
   grn_expr_compile(context, expr);
@@ -406,7 +406,7 @@ test_expr_query(void)
   grn_expr_exec(context, expr, 0);
 
   cut_assert_equal_substring("[[2],[\"abhij\",1],[\"fghij\",1]]",
-                             GRN_TEXT_VALUE(&textbuf), GRN_TEXT_LEN(&textbuf));
+                             GRN_TEXT_VALUE(&text_buf), GRN_TEXT_LEN(&text_buf));
 
   grn_obj_close(context, ft);
   grn_obj_close(context, c1);
