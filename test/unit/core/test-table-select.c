@@ -30,7 +30,7 @@ static gchar *path;
 static grn_ctx context;
 static grn_obj *database;
 static grn_obj *cond, *res, *expr;
-static grn_obj textbuf, intbuf, ptrbuf;
+static grn_obj text_buf, int_buf, ptr_buf;
 
 void test_equal(void);
 void test_equal_indexed(void);
@@ -70,17 +70,17 @@ cut_setup(void)
   expr = NULL;
   res = NULL;
 
-  GRN_TEXT_INIT(&textbuf, 0);
-  GRN_UINT32_INIT(&intbuf, 0);
-  GRN_PTR_INIT(&ptrbuf, 0, GRN_ID_NIL);
+  GRN_TEXT_INIT(&text_buf, 0);
+  GRN_UINT32_INIT(&int_buf, 0);
+  GRN_PTR_INIT(&ptr_buf, 0, GRN_ID_NIL);
 }
 
 void
 cut_teardown(void)
 {
-  grn_obj_close(&context, &textbuf);
-  grn_obj_close(&context, &intbuf);
-  grn_obj_close(&context, &ptrbuf);
+  grn_obj_close(&context, &text_buf);
+  grn_obj_close(&context, &int_buf);
+  grn_obj_close(&context, &ptr_buf);
 
   if (res)
     grn_obj_close(&context, res);
@@ -104,17 +104,17 @@ insert_document(const gchar *author_content, const gchar *body_content)
   grn_id docid = grn_table_add(&context, docs, NULL, 0, NULL);
 
   if (author_content) {
-    GRN_TEXT_SET(&context, &textbuf, author_content, strlen(author_content));
-    grn_test_assert(grn_obj_set_value(&context, author, docid, &textbuf,
+    GRN_TEXT_SET(&context, &text_buf, author_content, strlen(author_content));
+    grn_test_assert(grn_obj_set_value(&context, author, docid, &text_buf,
                                       GRN_OBJ_SET));
   }
 
-  GRN_TEXT_SET(&context, &textbuf, body_content, s);
-  grn_test_assert(grn_obj_set_value(&context, body, docid, &textbuf,
+  GRN_TEXT_SET(&context, &text_buf, body_content, s);
+  grn_test_assert(grn_obj_set_value(&context, body, docid, &text_buf,
                                     GRN_OBJ_SET));
 
-  GRN_UINT32_SET(&context, &intbuf, s);
-  grn_test_assert(grn_obj_set_value(&context, size, docid, &intbuf,
+  GRN_UINT32_SET(&context, &int_buf, s);
+  grn_test_assert(grn_obj_set_value(&context, size, docid, &int_buf,
                                     GRN_OBJ_SET));
 }
 
@@ -169,8 +169,8 @@ create_terms_table(void)
                                  docs);
   cut_assert_not_null(index_body);
 
-  GRN_UINT32_SET(&context, &intbuf, grn_obj_id(&context, body));
-  grn_obj_set_info(&context, index_body, GRN_INFO_SOURCE, &intbuf);
+  GRN_UINT32_SET(&context, &int_buf, grn_obj_id(&context, body));
+  grn_obj_set_info(&context, index_body, GRN_INFO_SOURCE, &int_buf);
 }
 
 static void
@@ -212,11 +212,11 @@ test_equal(void)
   v = grn_expr_add_var(&context, cond, NULL, 0);
   GRN_RECORD_INIT(v, 0, grn_obj_id(&context, docs));
   grn_expr_append_obj(&context, cond, v, GRN_OP_PUSH, 1);
-  GRN_TEXT_SETS(&context, &textbuf, "body");
-  grn_expr_append_const(&context, cond, &textbuf, GRN_OP_PUSH, 1);
+  GRN_TEXT_SETS(&context, &text_buf, "body");
+  grn_expr_append_const(&context, cond, &text_buf, GRN_OP_PUSH, 1);
   grn_expr_append_op(&context, cond, GRN_OP_GET_VALUE, 1);
-  GRN_TEXT_SETS(&context, &textbuf, "poyo moge hoge moge moge moge");
-  grn_expr_append_const(&context, cond, &textbuf, GRN_OP_PUSH, 1);
+  GRN_TEXT_SETS(&context, &text_buf, "poyo moge hoge moge moge moge");
+  grn_expr_append_const(&context, cond, &text_buf, GRN_OP_PUSH, 1);
   grn_expr_append_op(&context, cond, GRN_OP_EQUAL, 2);
   grn_expr_compile(&context, cond);
 
@@ -245,10 +245,10 @@ test_equal_indexed(void)
   v = grn_expr_add_var(&context, cond, NULL, 0);
   GRN_RECORD_INIT(v, 0, grn_obj_id(&context, docs));
   grn_expr_append_obj(&context, cond, v, GRN_OP_PUSH, 1);
-  GRN_TEXT_SETS(&context, &textbuf, "body");
-  grn_expr_append_const(&context, cond, &textbuf, GRN_OP_GET_VALUE, 1);
-  GRN_TEXT_SETS(&context, &textbuf, "hoge");
-  grn_expr_append_const(&context, cond, &textbuf, GRN_OP_PUSH, 1);
+  GRN_TEXT_SETS(&context, &text_buf, "body");
+  grn_expr_append_const(&context, cond, &text_buf, GRN_OP_GET_VALUE, 1);
+  GRN_TEXT_SETS(&context, &text_buf, "hoge");
+  grn_expr_append_const(&context, cond, &text_buf, GRN_OP_PUSH, 1);
   grn_expr_append_op(&context, cond, GRN_OP_EQUAL, 2);
   grn_expr_compile(&context, cond);
 
@@ -319,11 +319,11 @@ test_select(void)
   v = grn_expr_add_var(&context, cond, NULL, 0);
   GRN_RECORD_INIT(v, 0, grn_obj_id(&context, docs));
   grn_expr_append_obj(&context, cond, v, GRN_OP_PUSH, 1);
-  GRN_TEXT_SETS(&context, &textbuf, "size");
-  grn_expr_append_const(&context, cond, &textbuf, GRN_OP_PUSH, 1);
+  GRN_TEXT_SETS(&context, &text_buf, "size");
+  grn_expr_append_const(&context, cond, &text_buf, GRN_OP_PUSH, 1);
   grn_expr_append_op(&context, cond, GRN_OP_GET_VALUE, 2);
-  GRN_UINT32_SET(&context, &intbuf, 14);
-  grn_expr_append_const(&context, cond, &intbuf, GRN_OP_PUSH, 1);
+  GRN_UINT32_SET(&context, &int_buf, 14);
+  grn_expr_append_const(&context, cond, &int_buf, GRN_OP_PUSH, 1);
   grn_expr_append_op(&context, cond, GRN_OP_EQUAL, 2);
   grn_expr_compile(&context, cond);
 
@@ -335,8 +335,8 @@ test_select(void)
   grn_expr_append_obj(&context, expr, docs, GRN_OP_PUSH, 1);
   grn_expr_append_obj(&context, expr, cond, GRN_OP_PUSH, 1);
   grn_expr_append_obj(&context, expr, res, GRN_OP_PUSH, 1);
-  GRN_UINT32_SET(&context, &intbuf, GRN_OP_OR);
-  grn_expr_append_const(&context, expr, &intbuf, GRN_OP_PUSH, 1);
+  GRN_UINT32_SET(&context, &int_buf, GRN_OP_OR);
+  grn_expr_append_const(&context, expr, &int_buf, GRN_OP_PUSH, 1);
   grn_expr_append_op(&context, expr, GRN_OP_TABLE_SELECT, 4);
 
   grn_expr_exec(&context, expr, 0);
@@ -361,11 +361,11 @@ test_search(void)
   v = grn_expr_add_var(&context, cond, NULL, 0);
   GRN_RECORD_INIT(v, 0, grn_obj_id(&context, docs));
   grn_expr_append_obj(&context, cond, v, GRN_OP_PUSH, 1);
-  GRN_TEXT_SETS(&context, &textbuf, "size");
-  grn_expr_append_const(&context, cond, &textbuf, GRN_OP_PUSH, 1);
+  GRN_TEXT_SETS(&context, &text_buf, "size");
+  grn_expr_append_const(&context, cond, &text_buf, GRN_OP_PUSH, 1);
   grn_expr_append_op(&context, cond, GRN_OP_GET_VALUE, 2);
-  GRN_UINT32_SET(&context, &intbuf, 14);
-  grn_expr_append_const(&context, cond, &intbuf, GRN_OP_PUSH, 1);
+  GRN_UINT32_SET(&context, &int_buf, 14);
+  grn_expr_append_const(&context, cond, &int_buf, GRN_OP_PUSH, 1);
   grn_expr_append_op(&context, cond, GRN_OP_EQUAL, 2);
   grn_expr_compile(&context, cond);
 
@@ -375,43 +375,43 @@ test_search(void)
 
   grn_expr_append_obj(&context, expr, v, GRN_OP_PUSH, 1);
 
-  GRN_BULK_REWIND(&textbuf);
-  grn_expr_append_const(&context, expr, &textbuf, GRN_OP_PUSH, 1);
-  GRN_UINT32_SET(&context, &intbuf, GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC);
-  grn_expr_append_const(&context, expr, &intbuf, GRN_OP_PUSH, 1);
+  GRN_BULK_REWIND(&text_buf);
+  grn_expr_append_const(&context, expr, &text_buf, GRN_OP_PUSH, 1);
+  GRN_UINT32_SET(&context, &int_buf, GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC);
+  grn_expr_append_const(&context, expr, &int_buf, GRN_OP_PUSH, 1);
   grn_expr_append_obj(&context, expr, docs, GRN_OP_PUSH, 1);
-  GRN_UINT32_SET(&context, &intbuf, 0);
-  grn_expr_append_const(&context, expr, &intbuf, GRN_OP_PUSH, 1);
+  GRN_UINT32_SET(&context, &int_buf, 0);
+  grn_expr_append_const(&context, expr, &int_buf, GRN_OP_PUSH, 1);
   grn_expr_append_op(&context, expr, GRN_OP_TABLE_CREATE, 4);
 
   grn_expr_append_op(&context, expr, GRN_OP_ASSIGN, 2);
 
   grn_expr_append_obj(&context, expr, index_body, GRN_OP_PUSH, 1);
-  GRN_TEXT_SETS(&context, &textbuf, "moge");
-  grn_expr_append_const(&context, expr, &textbuf, GRN_OP_PUSH, 1);
+  GRN_TEXT_SETS(&context, &text_buf, "moge");
+  grn_expr_append_const(&context, expr, &text_buf, GRN_OP_PUSH, 1);
   grn_expr_append_obj(&context, expr, v, GRN_OP_PUSH, 1);
-  GRN_UINT32_SET(&context, &intbuf, GRN_OP_OR);
-  grn_expr_append_const(&context, expr, &intbuf, GRN_OP_PUSH, 1);
+  GRN_UINT32_SET(&context, &int_buf, GRN_OP_OR);
+  grn_expr_append_const(&context, expr, &int_buf, GRN_OP_PUSH, 1);
   grn_expr_append_op(&context, expr, GRN_OP_OBJ_SEARCH, 4);
 
   grn_expr_append_obj(&context, expr, docs, GRN_OP_PUSH, 1);
   grn_expr_append_obj(&context, expr, cond, GRN_OP_PUSH, 1);
   grn_expr_append_obj(&context, expr, v, GRN_OP_PUSH, 1);
-  GRN_UINT32_SET(&context, &intbuf, GRN_OP_AND);
-  grn_expr_append_const(&context, expr, &intbuf, GRN_OP_PUSH, 1);
+  GRN_UINT32_SET(&context, &int_buf, GRN_OP_AND);
+  grn_expr_append_const(&context, expr, &int_buf, GRN_OP_PUSH, 1);
   grn_expr_append_op(&context, expr, GRN_OP_TABLE_SELECT, 4);
 
   grn_expr_append_obj(&context, expr, v, GRN_OP_PUSH, 1);
-  GRN_TEXT_SETS(&context, &textbuf, ".size ._score .body");
-  grn_expr_append_const(&context, expr, &textbuf, GRN_OP_PUSH, 1);
-  GRN_BULK_REWIND(&textbuf);
-  grn_expr_append_obj(&context, expr, &textbuf, GRN_OP_PUSH, 1);
+  GRN_TEXT_SETS(&context, &text_buf, ".size ._score .body");
+  grn_expr_append_const(&context, expr, &text_buf, GRN_OP_PUSH, 1);
+  GRN_BULK_REWIND(&text_buf);
+  grn_expr_append_obj(&context, expr, &text_buf, GRN_OP_PUSH, 1);
   grn_expr_append_op(&context, expr, GRN_OP_JSON_PUT, 3);
 
   grn_expr_exec(&context, expr, 0);
 
   cut_assert_equal_substring("[[2],[14,4,\"moge moge moge\"],[14,2,\"moge hoge hoge\"]]",
-                             GRN_TEXT_VALUE(&textbuf), GRN_TEXT_LEN(&textbuf));
+                             GRN_TEXT_VALUE(&text_buf), GRN_TEXT_LEN(&text_buf));
 }
 
 void
@@ -425,11 +425,11 @@ test_select_search(void)
   v = grn_expr_add_var(&context, cond, NULL, 0);
   GRN_RECORD_INIT(v, 0, grn_obj_id(&context, docs));
   grn_expr_append_obj(&context, cond, v, GRN_OP_PUSH, 1);
-  GRN_TEXT_SETS(&context, &textbuf, "size");
-  grn_expr_append_const(&context, cond, &textbuf, GRN_OP_PUSH, 1);
+  GRN_TEXT_SETS(&context, &text_buf, "size");
+  grn_expr_append_const(&context, cond, &text_buf, GRN_OP_PUSH, 1);
   grn_expr_append_op(&context, cond, GRN_OP_GET_VALUE, 2);
-  GRN_UINT32_SET(&context, &intbuf, 14);
-  grn_expr_append_const(&context, cond, &intbuf, GRN_OP_PUSH, 1);
+  GRN_UINT32_SET(&context, &int_buf, 14);
+  grn_expr_append_const(&context, cond, &int_buf, GRN_OP_PUSH, 1);
   grn_expr_append_op(&context, cond, GRN_OP_EQUAL, 2);
   grn_expr_compile(&context, cond);
 
@@ -439,13 +439,13 @@ test_select_search(void)
 
   grn_expr_append_obj(&context, expr, v, GRN_OP_PUSH, 1);
 
-  GRN_BULK_REWIND(&textbuf);
-  grn_expr_append_const(&context, expr, &textbuf, GRN_OP_PUSH, 1);
-  GRN_UINT32_SET(&context, &intbuf, GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC);
-  grn_expr_append_const(&context, expr, &intbuf, GRN_OP_PUSH, 1);
+  GRN_BULK_REWIND(&text_buf);
+  grn_expr_append_const(&context, expr, &text_buf, GRN_OP_PUSH, 1);
+  GRN_UINT32_SET(&context, &int_buf, GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC);
+  grn_expr_append_const(&context, expr, &int_buf, GRN_OP_PUSH, 1);
   grn_expr_append_obj(&context, expr, docs, GRN_OP_PUSH, 1);
-  GRN_PTR_SET(&context, &ptrbuf, NULL);
-  grn_expr_append_obj(&context, expr, &ptrbuf, GRN_OP_PUSH, 1);
+  GRN_PTR_SET(&context, &ptr_buf, NULL);
+  grn_expr_append_obj(&context, expr, &ptr_buf, GRN_OP_PUSH, 1);
   grn_expr_append_op(&context, expr, GRN_OP_TABLE_CREATE, 4);
 
   grn_expr_append_op(&context, expr, GRN_OP_ASSIGN, 2);
@@ -453,29 +453,29 @@ test_select_search(void)
   grn_expr_append_obj(&context, expr, docs, GRN_OP_PUSH, 1);
   grn_expr_append_obj(&context, expr, cond, GRN_OP_PUSH, 1);
   grn_expr_append_obj(&context, expr, v, GRN_OP_PUSH, 1);
-  GRN_UINT32_SET(&context, &intbuf, GRN_OP_OR);
-  grn_expr_append_const(&context, expr, &intbuf, GRN_OP_PUSH, 1);
+  GRN_UINT32_SET(&context, &int_buf, GRN_OP_OR);
+  grn_expr_append_const(&context, expr, &int_buf, GRN_OP_PUSH, 1);
   grn_expr_append_op(&context, expr, GRN_OP_TABLE_SELECT, 4);
 
   grn_expr_append_obj(&context, expr, index_body, GRN_OP_PUSH, 1);
-  GRN_TEXT_SETS(&context, &textbuf, "moge");
-  grn_expr_append_const(&context, expr, &textbuf, GRN_OP_PUSH, 1);
+  GRN_TEXT_SETS(&context, &text_buf, "moge");
+  grn_expr_append_const(&context, expr, &text_buf, GRN_OP_PUSH, 1);
   grn_expr_append_obj(&context, expr, v, GRN_OP_PUSH, 1);
-  GRN_UINT32_SET(&context, &intbuf, GRN_OP_AND);
-  grn_expr_append_const(&context, expr, &intbuf, GRN_OP_PUSH, 1);
+  GRN_UINT32_SET(&context, &int_buf, GRN_OP_AND);
+  grn_expr_append_const(&context, expr, &int_buf, GRN_OP_PUSH, 1);
   grn_expr_append_op(&context, expr, GRN_OP_OBJ_SEARCH, 4);
 
   grn_expr_append_obj(&context, expr, v, GRN_OP_PUSH, 1);
-  GRN_TEXT_SETS(&context, &textbuf, ".size ._score .body");
-  grn_expr_append_const(&context, expr, &textbuf, GRN_OP_PUSH, 1);
-  GRN_BULK_REWIND(&textbuf);
-  grn_expr_append_obj(&context, expr, &textbuf, GRN_OP_PUSH, 1);
+  GRN_TEXT_SETS(&context, &text_buf, ".size ._score .body");
+  grn_expr_append_const(&context, expr, &text_buf, GRN_OP_PUSH, 1);
+  GRN_BULK_REWIND(&text_buf);
+  grn_expr_append_obj(&context, expr, &text_buf, GRN_OP_PUSH, 1);
   grn_expr_append_op(&context, expr, GRN_OP_JSON_PUT, 3);
 
   grn_expr_exec(&context, expr, 0);
 
   cut_assert_equal_substring("[[2],[14,4,\"moge moge moge\"],[14,2,\"moge hoge hoge\"]]",
-                             GRN_TEXT_VALUE(&textbuf), GRN_TEXT_LEN(&textbuf));
+                             GRN_TEXT_VALUE(&text_buf), GRN_TEXT_LEN(&text_buf));
 }
 
 void
@@ -489,11 +489,11 @@ test_match(void)
   v = grn_expr_add_var(&context, cond, NULL, 0);
   GRN_RECORD_INIT(v, 0, grn_obj_id(&context, docs));
   grn_expr_append_obj(&context, cond, v, GRN_OP_PUSH, 1);
-  GRN_TEXT_SETS(&context, &textbuf, "body");
-  grn_expr_append_const(&context, cond, &textbuf, GRN_OP_PUSH, 1);
+  GRN_TEXT_SETS(&context, &text_buf, "body");
+  grn_expr_append_const(&context, cond, &text_buf, GRN_OP_PUSH, 1);
   grn_expr_append_op(&context, cond, GRN_OP_GET_VALUE, 2);
-  GRN_TEXT_SETS(&context, &textbuf, "moge");
-  grn_expr_append_const(&context, cond, &textbuf, GRN_OP_PUSH, 1);
+  GRN_TEXT_SETS(&context, &text_buf, "moge");
+  grn_expr_append_const(&context, cond, &text_buf, GRN_OP_PUSH, 1);
   grn_expr_append_op(&context, cond, GRN_OP_MATCH, 2);
   grn_expr_compile(&context, cond);
 
@@ -528,19 +528,19 @@ test_match_equal(void)
   GRN_RECORD_INIT(v, 0, grn_obj_id(&context, docs));
 
   grn_expr_append_obj(&context, cond, v, GRN_OP_PUSH, 1);
-  GRN_TEXT_SETS(&context, &textbuf, "body");
-  grn_expr_append_const(&context, cond, &textbuf, GRN_OP_PUSH, 1);
+  GRN_TEXT_SETS(&context, &text_buf, "body");
+  grn_expr_append_const(&context, cond, &text_buf, GRN_OP_PUSH, 1);
   grn_expr_append_op(&context, cond, GRN_OP_GET_VALUE, 2);
-  GRN_TEXT_SETS(&context, &textbuf, "moge");
-  grn_expr_append_const(&context, cond, &textbuf, GRN_OP_PUSH, 1);
+  GRN_TEXT_SETS(&context, &text_buf, "moge");
+  grn_expr_append_const(&context, cond, &text_buf, GRN_OP_PUSH, 1);
   grn_expr_append_op(&context, cond, GRN_OP_MATCH, 2);
 
   grn_expr_append_obj(&context, cond, v, GRN_OP_PUSH, 1);
-  GRN_TEXT_SETS(&context, &textbuf, "size");
-  grn_expr_append_const(&context, cond, &textbuf, GRN_OP_PUSH, 1);
+  GRN_TEXT_SETS(&context, &text_buf, "size");
+  grn_expr_append_const(&context, cond, &text_buf, GRN_OP_PUSH, 1);
   grn_expr_append_op(&context, cond, GRN_OP_GET_VALUE, 2);
-  GRN_UINT32_SET(&context, &intbuf, 14);
-  grn_expr_append_const(&context, cond, &intbuf, GRN_OP_PUSH, 1);
+  GRN_UINT32_SET(&context, &int_buf, 14);
+  grn_expr_append_const(&context, cond, &int_buf, GRN_OP_PUSH, 1);
   grn_expr_append_op(&context, cond, GRN_OP_EQUAL, 2);
 
   grn_expr_append_op(&context, cond, GRN_OP_AND, 2);
@@ -575,11 +575,11 @@ test_match_without_index(void)
   GRN_RECORD_INIT(v, 0, grn_obj_id(&context, docs));
 
   grn_expr_append_obj(&context, cond, v, GRN_OP_PUSH, 1);
-  GRN_TEXT_SETS(&context, &textbuf, "body");
-  grn_expr_append_const(&context, cond, &textbuf, GRN_OP_PUSH, 1);
+  GRN_TEXT_SETS(&context, &text_buf, "body");
+  grn_expr_append_const(&context, cond, &text_buf, GRN_OP_PUSH, 1);
   grn_expr_append_op(&context, cond, GRN_OP_GET_VALUE, 1);
-  GRN_TEXT_SETS(&context, &textbuf, "moge");
-  grn_expr_append_const(&context, cond, &textbuf, GRN_OP_PUSH, 1);
+  GRN_TEXT_SETS(&context, &text_buf, "moge");
+  grn_expr_append_const(&context, cond, &text_buf, GRN_OP_PUSH, 1);
   grn_expr_append_op(&context, cond, GRN_OP_MATCH, 2);
 
   grn_expr_compile(&context, cond);
