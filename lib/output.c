@@ -850,8 +850,7 @@ grn_output_obj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
       } else {
         grn_id *v = (grn_id *)GRN_BULK_HEAD(obj),
                *ve = (grn_id *)GRN_BULK_CURR(obj);
-        grn_output_array_open(ctx, outbuf, output_type, "VECTOR",
-                              GRN_BULK_VSIZE(obj));
+        grn_output_array_open(ctx, outbuf, output_type, "VECTOR", ve - v);
         if (v < ve) {
           grn_obj key;
           GRN_OBJ_INIT(&key, GRN_BULK, 0, range->header.domain);
