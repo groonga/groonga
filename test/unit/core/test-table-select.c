@@ -380,8 +380,8 @@ test_search(void)
   GRN_UINT32_SET(&context, &int_buf, GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC);
   grn_expr_append_const(&context, expr, &int_buf, GRN_OP_PUSH, 1);
   grn_expr_append_obj(&context, expr, docs, GRN_OP_PUSH, 1);
-  GRN_UINT32_SET(&context, &int_buf, 0);
-  grn_expr_append_const(&context, expr, &int_buf, GRN_OP_PUSH, 1);
+  GRN_PTR_SET(&context, &ptr_buf, NULL);
+  grn_expr_append_obj(&context, expr, &ptr_buf, GRN_OP_PUSH, 1);
   grn_expr_append_op(&context, expr, GRN_OP_TABLE_CREATE, 4);
 
   grn_expr_append_op(&context, expr, GRN_OP_ASSIGN, 2);
