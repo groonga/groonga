@@ -644,7 +644,11 @@ print_return_code(grn_ctx *ctx, grn_rc rc, grn_obj *head, grn_obj *body, grn_obj
       msgpack_packer_init(&header_packer, &head_writer_ctx, msgpack_buffer_writer);
 
        /* [HEAD, (BODY)] */
-      msgpack_pack_array(&header_packer, (rc == GRN_SUCCESS) ? 2 : 1);
+      if (GRN_TEXT_LEN(body) > 0) {
+        msgpack_pack_array(&header_packer, 2);
+      } else {
+        msgpack_pack_array(&header_packer, 1);
+      }
 
       /* HEAD := [rc, started, elapsed, (error, (ERROR DETAIL))] */
       header_size = 3;
