@@ -1431,6 +1431,16 @@ GRN_API grn_obj *grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_ob
  **/
 GRN_API int grn_obj_get_values(grn_ctx *ctx, grn_obj *obj, grn_id offset, void **values);
 
+#define GRN_COLUMN_EACH(ctx,column,id,value,block) do {\
+  int _n;\
+  grn_id id = 1;\
+  while ((_n = grn_obj_get_values(ctx, column, id, (void **)&value)) > 0) {\
+    for (; _n; _n--, id++, value++) {\
+      block\
+    }\
+  }\
+} while (0)
+
 /**
  * grn_obj_set_value:
  * @obj: 対象object
