@@ -282,8 +282,6 @@ grn_db_close(grn_ctx *ctx, grn_obj *db)
   GRN_API_RETURN(GRN_SUCCESS);
 }
 
-static grn_rc grn_obj_delete_by_id(grn_ctx *ctx, grn_obj *db, grn_id id, int removep);
-
 grn_obj *
 grn_ctx_get(grn_ctx *ctx, const char *name, unsigned name_size)
 {
@@ -6476,13 +6474,15 @@ grn_obj_register(grn_ctx *ctx, grn_obj *db, const char *name, unsigned name_size
   return id;
 }
 
-static grn_rc
+grn_rc
 grn_obj_delete_by_id(grn_ctx *ctx, grn_obj *db, grn_id id, int removep)
 {
+  grn_rc rc = GRN_INVALID_ARGUMENT;
+  GRN_API_ENTER;
   if (id) {
     if (id & GRN_OBJ_TMP_OBJECT) {
       if (ctx->impl && ctx->impl->values) {
-        return grn_array_delete_by_id(ctx, ctx->impl->values,
+        rc = grn_array_delete_by_id(ctx, ctx->impl->values,
                                       id & ~GRN_OBJ_TMP_OBJECT, NULL);
       }
     } else {
@@ -6497,16 +6497,18 @@ grn_obj_delete_by_id(grn_ctx *ctx, grn_obj *db, grn_id id, int removep)
       if (removep) {
         switch (s->keys->header.type) {
         case GRN_TABLE_PAT_KEY :
-          return grn_pat_delete_by_id(ctx, (grn_pat *)s->keys, id, NULL);
+          rc = grn_pat_delete_by_id(ctx, (grn_pat *)s->keys, id, NULL);
+          break;
         case GRN_TABLE_DAT_KEY :
-          return grn_dat_delete_by_id(ctx, (grn_dat *)s->keys, id, NULL);
+          rc = grn_dat_delete_by_id(ctx, (grn_dat *)s->keys, id, NULL);
+          break;
         }
       } else {
-        return GRN_SUCCESS;
+        rc = GRN_SUCCESS;
       }
     }
   }
-  return GRN_INVALID_ARGUMENT;
+  GRN_API_RETURN(rc);
 }
 
 /* db must be validated by caller */

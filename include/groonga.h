@@ -1809,6 +1809,14 @@ GRN_API grn_obj *grn_obj_open(grn_ctx *ctx, unsigned char type, grn_obj_flags fl
 GRN_API int grn_column_index(grn_ctx *ctx, grn_obj *column, grn_operator op,
                              grn_obj **indexbuf, int buf_size, int *section);
 
+
+/**
+ * grn_obj_delete_by_id:
+ *
+ * dbからidに対応するテーブルやカラムなどを削除します。mroonga向けに用意した内部APIです。
+ **/
+GRN_API grn_rc grn_obj_delete_by_id(grn_ctx *ctx, grn_obj *db, grn_id id, int removep);
+
 /* geo */
 
 typedef struct {
