@@ -731,6 +731,26 @@ if test "x$with_mecab" = "xyes"; then
 fi
 AM_CONDITIONAL(WITH_MECAB, test "x$with_mecab" = "xyes")
 
+# KyTea
+AC_ARG_WITH(kytea,
+  [AS_HELP_STRING([--with-kytea],
+    [use KyTea for morphological analysis. [default=auto]])],
+  [with_kytea="$withval"],
+  [with_kytea="auto"])
+AC_MSG_CHECKING([whether enable KyTea])
+AC_MSG_RESULT($with_kytea)
+if test "x$with_kytea" != "xno"; then
+  PKG_CHECK_MODULES([KYTEA], [kytea], [kytea_exists=yes], [kytea_exists=no])
+  if test "$kytea_exists" = "no" -a "x$with_kytea" = "xyes"; then
+    AC_MSG_ERROR("No KyTea found.")
+  fi
+  with_kytea="$kytea_exists"
+fi
+if test "x$with_kytea" = "xyes"; then
+  AC_DEFINE(WITH_KYTEA, [1], [use KyTea])
+fi
+AM_CONDITIONAL(WITH_KYTEA, test "x$with_kytea" = "xyes")
+
 # futex check
 AC_ARG_ENABLE(futex,
   [AS_HELP_STRING([--enable-futex],
@@ -987,6 +1007,11 @@ if test "x$with_mecab" = "xyes"; then
   echo "    CPPFLAGS:            $MECAB_CPPFLAGS"
   echo "    LDFLAGS:             $MECAB_LDFLAGS"
   echo "    LIBS:                $MECAB_LIBS"
+fi
+echo "  KyTea:                 $with_kytea"
+if test "x$with_kytea" = "xyes"; then
+  echo "    CFLAGS:              $KYTEA_CFLAGS"
+  echo "    LIBS:                $KYTEA_LIBS"
 fi
 echo
 
