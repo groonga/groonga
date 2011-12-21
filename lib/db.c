@@ -5531,16 +5531,27 @@ grn_obj_get_values(grn_ctx *ctx, grn_obj *obj, grn_id offset, void **values)
   int nrecords = -1;
   GRN_API_ENTER;
   if (obj->header.type == GRN_COLUMN_FIX_SIZE) {
-    grn_ra *ra = (grn_ra *)obj;
     grn_obj *domain = grn_column_table(ctx, obj);
-
-table_size
-
-    void *p = grn_ra_ref(ctx, ra, offset);
-    if (p) {
-      nrecords = ra->element_mask + 1 - (offset & ra->element_mask);
+    if (domain) {
+      int table_size = (int)grn_table_size(ctx, domain);
+      if (0 < offset && offset <= table_size) {
+        grn_ra *ra = (grn_ra *)obj;
+        void *p = grn_ra_ref(ctx, ra, offset);
+        if (p) {
+          if ((offset >> ra->element_width) == (table_size >> ra->element_width)) {
+            nrecords = (table_size & ra->element_mask) + 1 - (offset & ra->element_mask);
+          } else {
+            nrecords = ra->element_mask + 1 - (offset & ra->element_mask);
+          }
+          if (values) { *values = p; }
+        } else {
+          ERR(GRN_NO_MEMORY_AVAILABLE, "ra get failed");
+        }
+      } else {
+        nrecords = 0;
+      }
     } else {
-      ERR(GRN_NO_MEMORY_AVAILABLE, "ra get failed");
+      ERR(GRN_INVALID_ARGUMENT, "no domain found");
     }
   } else {
     ERR(GRN_INVALID_ARGUMENT, "obj is not a fix sized column");
