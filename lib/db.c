@@ -5525,6 +5525,29 @@ grn_obj_set_value_o(grn_ctx *ctx, grn_obj *obj, grn_obj *id,
   return grn_obj_set_value(ctx, obj, *idp, value, flags);
 }
 
+int
+grn_obj_get_values(grn_ctx *ctx, grn_obj *obj, grn_id offset, void **values)
+{
+  int nrecords = -1;
+  GRN_API_ENTER;
+  if (obj->header.type == GRN_COLUMN_FIX_SIZE) {
+    grn_ra *ra = (grn_ra *)obj;
+    grn_obj *domain = grn_column_table(ctx, obj);
+
+table_size
+
+    void *p = grn_ra_ref(ctx, ra, offset);
+    if (p) {
+      nrecords = ra->element_mask + 1 - (offset & ra->element_mask);
+    } else {
+      ERR(GRN_NO_MEMORY_AVAILABLE, "ra get failed");
+    }
+  } else {
+    ERR(GRN_INVALID_ARGUMENT, "obj is not a fix sized column");
+  }
+  GRN_API_RETURN(nrecords);
+}
+
 grn_rc
 grn_column_index_update(grn_ctx *ctx, grn_obj *column,
                         grn_id id, unsigned int section,

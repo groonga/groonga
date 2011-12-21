@@ -1416,6 +1416,22 @@ GRN_API grn_bool grn_obj_is_builtin(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_obj *grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value);
 
 /**
+ * grn_obj_get_values:
+ * @obj: 対象object
+ * @offset: 値を取得する範囲の開始位置となるレコードID
+ * @values: 値の配列がセットされる
+ *
+ * objに指定されたカラムについて、offsetに指定されたレコードIDを開始位置として、IDが連続
+ * するレコードに対応するカラム値が昇順に格納された配列へのポインタをvaluesにセットします。
+ * 取得できた件数が戻り値として返される。エラーが発生した場合は -1 が返されます。
+ * 注意: 値が固定長であるカラムのみがobjに指定できます。
+ *       範囲内のIDに対応するレコードが有効であるとは限りません。
+ *       delete操作を実行したことのあるテーブルに対しては、
+ *       grn_table_at()などによって各レコードの存否を別途確認しなければなりません。
+ **/
+GRN_API int grn_obj_get_values(grn_ctx *ctx, grn_obj *obj, grn_id offset, void **values);
+
+/**
  * grn_obj_set_value:
  * @obj: 対象object
  * @id: 対象レコードのID
