@@ -98,7 +98,30 @@ substitute_query(grn_ctx *ctx, grn_obj *table, grn_obj *column,
   grn_id id;
   grn_rc rc = GRN_END_OF_DATA;
   if ((id = grn_table_get(ctx, table, (const void *)key, (unsigned)key_size))) {
-    grn_obj_get_value(ctx, column, id, dest);
+    if ((column->header.type == GRN_COLUMN_VAR_SIZE) &&
+        ((column->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) == GRN_OBJ_COLUMN_VECTOR)) {
+      unsigned int i, n;
+      grn_obj values;
+      GRN_TEXT_INIT(&values, GRN_OBJ_VECTOR);
+      grn_obj_get_value(ctx, column, id, &values);
+      n = grn_vector_size(ctx, &values);
+      if (n > 1) { GRN_TEXT_PUTC(ctx, dest, '('); }
+      for (i = 0; i < n; i++) {
+        const char *value;
+        unsigned int length;
+        if (i > 0) {
+          GRN_TEXT_PUTS(ctx, dest, " OR ");
+        }
+        if (n > 1) { GRN_TEXT_PUTC(ctx, dest, '('); }
+        length = grn_vector_get_element(ctx, &values, i, &value, NULL, NULL);
+        GRN_TEXT_PUT(ctx, dest, value, length);
+        if (n > 1) { GRN_TEXT_PUTC(ctx, dest, ')'); }
+      }
+      if (n > 1) { GRN_TEXT_PUTC(ctx, dest, ')'); }
+      GRN_OBJ_FIN(ctx, &values);
+    } else {
+      grn_obj_get_value(ctx, column, id, dest);
+    }
     rc = GRN_SUCCESS;
   }
   return rc;

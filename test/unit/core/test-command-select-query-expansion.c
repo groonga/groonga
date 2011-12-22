@@ -23,24 +23,42 @@
 
 #include "../lib/grn-assertions.h"
 
-void test_expand(void);
-void test_expand_word_with_space(void);
-void test_not_expand_recursively(void);
-void test_expand_OR_quoted(void);
-void test_expand_column_value(void);
-void test_expand_column_value_with_space(void);
-void test_expand_equal(void);
-void test_expand_prefix(void);
-void test_not_expand_OR(void);
-void test_not_expand_OR_at_the_end(void);
-void test_not_expand_OR_with_leading_space(void);
-void test_not_expand_and(void);
-void test_not_expand_but(void);
-void test_not_expand_paren(void);
-void test_no_expand(void);
-void test_no_expand_word_with_space(void);
-void test_nonexistent_expansion_column(void);
-void test_key_normalize(void);
+void data_expand(void);
+void test_expand(gconstpointer data);
+void data_expand_word_with_space(void);
+void test_expand_word_with_space(gconstpointer data);
+void data_not_expand_recursively(void);
+void test_not_expand_recursively(gconstpointer data);
+void data_expand_OR_quoted(void);
+void test_expand_OR_quoted(gconstpointer data);
+void data_expand_column_value(void);
+void test_expand_column_value(gconstpointer data);
+void data_expand_column_value_with_space(void);
+void test_expand_column_value_with_space(gconstpointer data);
+void data_expand_equal(void);
+void test_expand_equal(gconstpointer data);
+void data_expand_prefix(void);
+void test_expand_prefix(gconstpointer data);
+void data_not_expand_OR(void);
+void test_not_expand_OR(gconstpointer data);
+void data_not_expand_OR_at_the_end(void);
+void test_not_expand_OR_at_the_end(gconstpointer data);
+void data_not_expand_OR_with_leading_space(void);
+void test_not_expand_OR_with_leading_space(gconstpointer data);
+void data_not_expand_and(void);
+void test_not_expand_and(gconstpointer data);
+void data_not_expand_but(void);
+void test_not_expand_but(gconstpointer data);
+void data_not_expand_paren(void);
+void test_not_expand_paren(gconstpointer data);
+void data_no_expand(void);
+void test_no_expand(gconstpointer data);
+void data_no_expand_word_with_space(void);
+void test_no_expand_word_with_space(gconstpointer data);
+void data_nonexistent_expansion_column(void);
+void test_nonexistent_expansion_column(gconstpointer data);
+void data_key_normalize(void);
+void test_key_normalize(gconstpointer data);
 
 static gchar *tmp_directory;
 
@@ -77,7 +95,10 @@ setup_data(void)
   assert_send_command("column_create Lexicon diary_content "
                       "COLUMN_INDEX|WITH_POSITION Diaries content");
   assert_send_command("table_create Synonyms TABLE_PAT_KEY ShortText");
-  assert_send_command("column_create Synonyms words COLUMN_SCALAR ShortText");
+  assert_send_command("column_create Synonyms words_scalar "
+                      "COLUMN_SCALAR ShortText");
+  assert_send_command("column_create Synonyms words_vector "
+                      "COLUMN_VECTOR ShortText");
   assert_send_command("load --table Diaries\n"
                       "[\n"
                       "[\"_key\", \"content\"],\n"
@@ -101,25 +122,35 @@ setup_data(void)
                       "]");
   assert_send_command("load --table Synonyms\n"
                       "[\n"
-                      "[\"_key\", \"words\"],\n"
-                      "[\"groonga\", \"(groonga OR rroonga OR mroonga)\"],\n"
-                      "[\"rroonga\", \"(rroonga OR (Ruby groonga))\"],\n"
+                      "[\"_key\", \"words_scalar\", \"words_vector\"],\n"
+                      "[\"groonga\", "
+                       "\"(groonga OR rroonga OR mroonga)\", "
+                       "[\"groonga\", \"rroonga\", \"mroonga\"]],\n"
+                      "[\"rroonga\", "
+                       "\"(rroonga OR (Ruby groonga))\", "
+                       "[\"rroonga\", \"Ruby groonga\"]],\n"
                       "[\"mroonga\", "
                        "\"(mroonga OR (groonga MySQL) OR "
-                          "\\\"groonga storage engine\\\")\"],\n"
+                          "\\\"groonga storage engine\\\")\", "
+                       "[\"mroonga\", "
+                        "\"groonga MySQL\", "
+                        "\"\\\"groonga storage engine\\\"\"]],\n"
                       "[\"groonga storage engine\", "
-                       "\"(\\\"groonga storage engine\\\" OR mroonga)\"],\n"
-                      "[\"OR\", \"あるいは\"],\n"
-                      "[\"+\", \"かつ\"],\n"
-                      "[\"-\", \"差集合\"],\n"
-                      "[\">\", \"より重要\"],\n"
-                      "[\"<\", \"重要度を下げる\"],\n"
-                      "[\"~\", \"補集合\"],\n"
-                      "[\"*\", \"前方一致\"],\n"
-                      "[\"(\", \"かっこ\"],\n"
-                      "[\")\", \"こっか\"]\n"
-                      "[\"=start-rroonga\", \"\\\"Start rroonga!\\\"\"],\n"
-                      "[\"Japan\", \"日本\"]\n"
+                       "\"(\\\"groonga storage engine\\\" OR mroonga)\", "
+                       "[\"\\\"groonga storage engine\\\"\", \"mroonga\"]],\n"
+                      "[\"OR\", \"あるいは\", [\"あるいは\"]],\n"
+                      "[\"+\", \"かつ\", [\"かつ\"]],\n"
+                      "[\"-\", \"差集合\", [\"差集合\"]],\n"
+                      "[\">\", \"より重要\", [\"より重要\"]],\n"
+                      "[\"<\", \"重要度を下げる\", [\"重要度を下げる\"]],\n"
+                      "[\"~\", \"補集合\", [\"補集合\"]],\n"
+                      "[\"*\", \"前方一致\", [\"前方一致\"]],\n"
+                      "[\"(\", \"かっこ\", [\"かっこ\"]],\n"
+                      "[\")\", \"こっか\", [\"こっか\"]]\n"
+                      "[\"=start-rroonga\", "
+                       "\"\\\"Start rroonga!\\\"\", "
+                       "[\"\\\"Start rroonga!\\\"\"]],\n"
+                      "[\"Japan\", \"日本\", [\"日本\"]]\n"
                       "]");
 }
 
@@ -152,245 +183,395 @@ cut_teardown(void)
   remove_tmp_directory();
 }
 
-void
-test_expand(void)
+static void
+data_scalar_and_vector(void)
 {
-  cut_assert_equal_string(
-      "[[[2],"
-       "[[\"_id\",\"UInt32\"],"
-        "[\"_key\",\"Time\"],"
-        "[\"content\",\"Text\"]],"
-       "[3,1315839600.0,\"Start rroonga!\"],"
-       "[9,1316358000.0,\"Learning Ruby and groonga...\"]]]",
-    send_command("select Diaries --sortby _id "
-                 "--match_columns content --query rroonga "
-                 "--query_expansion Synonyms.words"));
+#define ADD_DATA(label, column_name)                            \
+  gcut_add_datum(label,                                         \
+                 "column-name", G_TYPE_STRING, column_name,     \
+                 NULL)
+
+  ADD_DATA("scalar", "words_scalar");
+  ADD_DATA("vector", "words_vector");
+
+#undef ADD_DATA
 }
 
 void
-test_expand_word_with_space(void)
+data_expand(void)
 {
-  cut_assert_equal_string(
-      "[[[2],"
-       "[[\"_id\",\"UInt32\"],"
-        "[\"_key\",\"Time\"],"
-        "[\"content\",\"Text\"]],"
-       "[2,1315753200.0,\"Start mroonga!\"],"
-       "[6,1316098800.0,\"Setup groonga storage engine!\"]]]",
-    send_command("select Diaries --sortby _id "
-                 "--match_columns content --query '\"groonga storage engine\"' "
-                 "--query_expansion Synonyms.words"));
+  data_scalar_and_vector();
 }
 
 void
-test_not_expand_recursively(void)
+test_expand(gconstpointer data)
 {
   cut_assert_equal_string(
-      "[[[6],"
-       "[[\"_id\",\"UInt32\"],"
-        "[\"_key\",\"Time\"],"
-        "[\"content\",\"Text\"]],"
-       "[1,1315666800.0,\"Start groonga!\"],"
-       "[2,1315753200.0,\"Start mroonga!\"],"
-       "[3,1315839600.0,\"Start rroonga!\"],"
-       "[6,1316098800.0,\"Setup groonga storage engine!\"],"
-       "[8,1316271600.0,\"Learning MySQL and groonga...\"],"
-       "[9,1316358000.0,\"Learning Ruby and groonga...\"]]]",
-    send_command("select Diaries --sortby _id "
-                 "--match_columns content --query groonga "
-                 "--query_expansion Synonyms.words"));
+    "[[[2],"
+     "[[\"_id\",\"UInt32\"],"
+      "[\"_key\",\"Time\"],"
+      "[\"content\",\"Text\"]],"
+     "[3,1315839600.0,\"Start rroonga!\"],"
+     "[9,1316358000.0,\"Learning Ruby and groonga...\"]]]",
+    send_command(
+      cut_take_printf("select Diaries --sortby _id "
+                      "--match_columns content --query rroonga "
+                      "--query_expansion Synonyms.%s",
+                      gcut_data_get_string(data, "column-name"))));
 }
 
 void
-test_expand_OR_quoted(void)
+data_expand_word_with_space(void)
 {
-  cut_assert_equal_string(
-      "[[[1],"
-       "[[\"_id\",\"UInt32\"],"
-        "[\"_key\",\"Time\"],"
-        "[\"content\",\"Text\"]],"
-       "[10,1316444400.0,\"明日は日本語あるいは中国語を勉強します。\"]]]",
-    send_command("select Diaries --sortby _id "
-                 "--match_columns content --query '\"OR\"' "
-                 "--query_expansion Synonyms.words"));
+  data_scalar_and_vector();
 }
 
 void
-test_expand_column_value(void)
+test_expand_word_with_space(gconstpointer data)
 {
   cut_assert_equal_string(
-      "[[[2],"
-       "[[\"_id\",\"UInt32\"],"
-        "[\"_key\",\"Time\"],"
-        "[\"content\",\"Text\"]],"
-        "[3,1315839600.0,\"Start rroonga!\"],"
-        "[9,1316358000.0,\"Learning Ruby and groonga...\"]]]",
-    send_command("select Diaries --sortby _id "
-                 "--match_columns content --query 'content:@rroonga' "
-                 "--query_expansion Synonyms.words"));
+    "[[[2],"
+     "[[\"_id\",\"UInt32\"],"
+      "[\"_key\",\"Time\"],"
+      "[\"content\",\"Text\"]],"
+     "[2,1315753200.0,\"Start mroonga!\"],"
+     "[6,1316098800.0,\"Setup groonga storage engine!\"]]]",
+    send_command(
+      cut_take_printf(
+        "select Diaries --sortby _id "
+        "--match_columns content --query '\"groonga storage engine\"' "
+        "--query_expansion Synonyms.%s",
+        gcut_data_get_string(data, "column-name"))));
 }
 
 void
-test_expand_column_value_with_space(void)
+data_not_expand_recursively(void)
 {
-  cut_assert_equal_string(
-      "[[[2],"
-       "[[\"_id\",\"UInt32\"],"
-        "[\"_key\",\"Time\"],"
-        "[\"content\",\"Text\"]],"
-       "[2,1315753200.0,\"Start mroonga!\"],"
-       "[6,1316098800.0,\"Setup groonga storage engine!\"]]]",
-    send_command("select Diaries --sortby _id "
-                 "--match_columns content "
-                 "--query 'content:@\"groonga storage engine\"' "
-                 "--query_expansion Synonyms.words"));
+  data_scalar_and_vector();
 }
 
 void
-test_expand_equal(void)
+test_not_expand_recursively(gconstpointer data)
 {
   cut_assert_equal_string(
-      "[[[1],"
-       "[[\"_id\",\"UInt32\"],"
-        "[\"_key\",\"Time\"],"
-        "[\"content\",\"Text\"]],"
-        "[3,1315839600.0,\"Start rroonga!\"]]]",
-    send_command("select Diaries --sortby _id "
-                 "--match_columns content --query 'content:=start-rroonga' "
-                 "--query_expansion Synonyms.words"));
+    "[[[6],"
+     "[[\"_id\",\"UInt32\"],"
+      "[\"_key\",\"Time\"],"
+      "[\"content\",\"Text\"]],"
+     "[1,1315666800.0,\"Start groonga!\"],"
+     "[2,1315753200.0,\"Start mroonga!\"],"
+     "[3,1315839600.0,\"Start rroonga!\"],"
+     "[6,1316098800.0,\"Setup groonga storage engine!\"],"
+     "[8,1316271600.0,\"Learning MySQL and groonga...\"],"
+     "[9,1316358000.0,\"Learning Ruby and groonga...\"]]]",
+    send_command(
+      cut_take_printf("select Diaries --sortby _id "
+                      "--match_columns content --query groonga "
+                      "--query_expansion Synonyms.%s",
+                      gcut_data_get_string(data, "column-name"))));
 }
 
 void
-test_expand_prefix(void)
+data_expand_OR_quoted(void)
 {
-  cut_assert_equal_string(
-      "[[[1],"
-       "[[\"_id\",\"UInt32\"],"
-        "[\"_key\",\"Time\"],"
-        "[\"content\",\"Text\"]],"
-        "[10,1316444400.0,\"明日は日本語あるいは中国語を勉強します。\"]]]",
-    send_command("select Diaries --sortby _id "
-                 "--match_columns content --query 'Japan*' "
-                 "--query_expansion Synonyms.words"));
+  data_scalar_and_vector();
 }
 
 void
-test_not_expand_OR(void)
+test_expand_OR_quoted(gconstpointer data)
 {
   cut_assert_equal_string(
-      "[[[5],"
-       "[[\"_id\",\"UInt32\"],"
-        "[\"_key\",\"Time\"],"
-        "[\"content\",\"Text\"]],"
-       "[4,1315926000.0,\"Start Ruby!\"],"
-       "[5,1316012400.0,\"Start MySQL!\"],"
-       "[7,1316185200.0,\"Learning MySQL...\"],"
-       "[8,1316271600.0,\"Learning MySQL and groonga...\"],"
-       "[9,1316358000.0,\"Learning Ruby and groonga...\"]]]",
-    send_command("select Diaries --sortby _id "
-                 "--match_columns content --query 'Ruby OR MySQL' "
-                 "--query_expansion Synonyms.words"));
+    "[[[1],"
+     "[[\"_id\",\"UInt32\"],"
+      "[\"_key\",\"Time\"],"
+      "[\"content\",\"Text\"]],"
+     "[10,1316444400.0,\"明日は日本語あるいは中国語を勉強します。\"]]]",
+    send_command(
+      cut_take_printf("select Diaries --sortby _id "
+                      "--match_columns content --query '\"OR\"' "
+                      "--query_expansion Synonyms.%s",
+                      gcut_data_get_string(data, "column-name"))));
 }
 
 void
-test_not_expand_OR_at_the_end(void)
+data_expand_column_value(void)
 {
-  cut_assert_equal_string(
-      "[[[0],"
-       "[[\"_id\",\"UInt32\"],"
-        "[\"_key\",\"Time\"],"
-        "[\"content\",\"Text\"]]]]",
-    send_command("select Diaries --sortby _id "
-                 "--match_columns content --query OR "
-                 "--query_expansion Synonyms.words"));
+  data_scalar_and_vector();
 }
 
 void
-test_not_expand_OR_with_leading_space(void)
+test_expand_column_value(gconstpointer data)
 {
   cut_assert_equal_string(
-      "[[[0],"
-       "[[\"_id\",\"UInt32\"],"
-        "[\"_key\",\"Time\"],"
-        "[\"content\",\"Text\"]]]]",
-    send_command("select Diaries --sortby _id "
-                 "--match_columns content --query '\"OR \"' "
-                 "--query_expansion Synonyms.words"));
+    "[[[2],"
+     "[[\"_id\",\"UInt32\"],"
+      "[\"_key\",\"Time\"],"
+      "[\"content\",\"Text\"]],"
+      "[3,1315839600.0,\"Start rroonga!\"],"
+      "[9,1316358000.0,\"Learning Ruby and groonga...\"]]]",
+    send_command(
+      cut_take_printf("select Diaries --sortby _id "
+                      "--match_columns content --query 'content:@rroonga' "
+                      "--query_expansion Synonyms.%s",
+                      gcut_data_get_string(data, "column-name"))));
 }
 
 void
-test_not_expand_and(void)
+data_expand_column_value_with_space(void)
 {
-  cut_assert_equal_string(
-      "[[[1],"
-       "[[\"_id\",\"UInt32\"],"
-        "[\"_key\",\"Time\"],"
-        "[\"content\",\"Text\"]],"
-        "[9,1316358000.0,\"Learning Ruby and groonga...\"]]]",
-    send_command("select Diaries --sortby _id "
-                 "--match_columns content --query 'Ruby + groonga' "
-                 "--query_expansion Synonyms.words"));
+  data_scalar_and_vector();
 }
 
 void
-test_not_expand_but(void)
+test_expand_column_value_with_space(gconstpointer data)
 {
   cut_assert_equal_string(
-      "[[[1],"
-       "[[\"_id\",\"UInt32\"],"
-        "[\"_key\",\"Time\"],"
-        "[\"content\",\"Text\"]],"
-        "[9,1316358000.0,\"Learning Ruby and groonga...\"]]]",
-    send_command("select Diaries --sortby _id "
-                 "--match_columns content --query 'Ruby - Start' "
-                 "--query_expansion Synonyms.words"));
+    "[[[2],"
+     "[[\"_id\",\"UInt32\"],"
+      "[\"_key\",\"Time\"],"
+      "[\"content\",\"Text\"]],"
+     "[2,1315753200.0,\"Start mroonga!\"],"
+     "[6,1316098800.0,\"Setup groonga storage engine!\"]]]",
+    send_command(
+      cut_take_printf("select Diaries --sortby _id "
+                      "--match_columns content "
+                      "--query 'content:@\"groonga storage engine\"' "
+                      "--query_expansion Synonyms.%s",
+                      gcut_data_get_string(data, "column-name"))));
 }
 
 void
-test_not_expand_paren(void)
+data_expand_equal(void)
 {
-  cut_assert_equal_string(
-      "[[[2],"
-       "[[\"_id\",\"UInt32\"],"
-        "[\"_key\",\"Time\"],"
-        "[\"content\",\"Text\"]],"
-        "[4,1315926000.0,\"Start Ruby!\"],"
-        "[9,1316358000.0,\"Learning Ruby and groonga...\"]]]",
-    send_command("select Diaries --sortby _id "
-                 "--match_columns content --query '(Ruby)' "
-                 "--query_expansion Synonyms.words"));
+  data_scalar_and_vector();
 }
 
 void
-test_no_expand(void)
+test_expand_equal(gconstpointer data)
 {
   cut_assert_equal_string(
-      "[[[2],"
-       "[[\"_id\",\"UInt32\"],"
-        "[\"_key\",\"Time\"],"
-        "[\"content\",\"Text\"]],"
-       "[4,1315926000.0,\"Start Ruby!\"],"
-       "[9,1316358000.0,\"Learning Ruby and groonga...\"]]]",
-    send_command("select Diaries --match_columns content --query Ruby "
-                 "--query_expansion Synonyms.words"));
+    "[[[1],"
+     "[[\"_id\",\"UInt32\"],"
+      "[\"_key\",\"Time\"],"
+      "[\"content\",\"Text\"]],"
+      "[3,1315839600.0,\"Start rroonga!\"]]]",
+    send_command(
+      cut_take_printf(
+        "select Diaries --sortby _id "
+        "--match_columns content --query 'content:=start-rroonga' "
+        "--query_expansion Synonyms.%s",
+        gcut_data_get_string(data, "column-name"))));
 }
 
 void
-test_no_expand_word_with_space(void)
+data_expand_prefix(void)
 {
-  cut_assert_equal_string(
-      "[[[1],"
-       "[[\"_id\",\"UInt32\"],"
-        "[\"_key\",\"Time\"],"
-        "[\"content\",\"Text\"]],"
-       "[9,1316358000.0,\"Learning Ruby and groonga...\"]]]",
-    send_command("select Diaries "
-                 "--match_columns content --query '\"Ruby and groonga\"' "
-                 "--query_expansion Synonyms.words"));
+  data_scalar_and_vector();
 }
 
 void
-test_nonexistent_expansion_column(void)
+test_expand_prefix(gconstpointer data)
+{
+  cut_assert_equal_string(
+    "[[[1],"
+     "[[\"_id\",\"UInt32\"],"
+      "[\"_key\",\"Time\"],"
+      "[\"content\",\"Text\"]],"
+      "[10,1316444400.0,\"明日は日本語あるいは中国語を勉強します。\"]]]",
+    send_command(
+      cut_take_printf("select Diaries --sortby _id "
+                      "--match_columns content --query 'Japan*' "
+                      "--query_expansion Synonyms.%s",
+                      gcut_data_get_string(data, "column-name"))));
+}
+
+void
+data_not_expand_OR(void)
+{
+  data_scalar_and_vector();
+}
+
+void
+test_not_expand_OR(gconstpointer data)
+{
+  cut_assert_equal_string(
+    "[[[5],"
+     "[[\"_id\",\"UInt32\"],"
+      "[\"_key\",\"Time\"],"
+      "[\"content\",\"Text\"]],"
+     "[4,1315926000.0,\"Start Ruby!\"],"
+     "[5,1316012400.0,\"Start MySQL!\"],"
+     "[7,1316185200.0,\"Learning MySQL...\"],"
+     "[8,1316271600.0,\"Learning MySQL and groonga...\"],"
+     "[9,1316358000.0,\"Learning Ruby and groonga...\"]]]",
+    send_command(
+      cut_take_printf("select Diaries --sortby _id "
+                      "--match_columns content --query 'Ruby OR MySQL' "
+                      "--query_expansion Synonyms.%s",
+                      gcut_data_get_string(data, "column-name"))));
+}
+
+void
+data_not_expand_OR_at_the_end(void)
+{
+  data_scalar_and_vector();
+}
+
+void
+test_not_expand_OR_at_the_end(gconstpointer data)
+{
+  cut_assert_equal_string(
+    "[[[0],"
+     "[[\"_id\",\"UInt32\"],"
+      "[\"_key\",\"Time\"],"
+      "[\"content\",\"Text\"]]]]",
+    send_command(
+      cut_take_printf("select Diaries --sortby _id "
+                      "--match_columns content --query OR "
+                      "--query_expansion Synonyms.%s",
+                      gcut_data_get_string(data, "column-name"))));
+}
+
+void
+data_not_expand_OR_with_leading_space(void)
+{
+  data_scalar_and_vector();
+}
+
+void
+test_not_expand_OR_with_leading_space(gconstpointer data)
+{
+  cut_assert_equal_string(
+    "[[[0],"
+     "[[\"_id\",\"UInt32\"],"
+      "[\"_key\",\"Time\"],"
+      "[\"content\",\"Text\"]]]]",
+    send_command(
+      cut_take_printf("select Diaries --sortby _id "
+                      "--match_columns content --query '\"OR \"' "
+                      "--query_expansion Synonyms.%s",
+                      gcut_data_get_string(data, "column-name"))));
+}
+
+void
+data_not_expand_and(void)
+{
+  data_scalar_and_vector();
+}
+
+void
+test_not_expand_and(gconstpointer data)
+{
+  cut_assert_equal_string(
+    "[[[1],"
+     "[[\"_id\",\"UInt32\"],"
+      "[\"_key\",\"Time\"],"
+      "[\"content\",\"Text\"]],"
+      "[9,1316358000.0,\"Learning Ruby and groonga...\"]]]",
+    send_command(
+      cut_take_printf("select Diaries --sortby _id "
+                      "--match_columns content --query 'Ruby + groonga' "
+                      "--query_expansion Synonyms.%s",
+                      gcut_data_get_string(data, "column-name"))));
+}
+
+void
+data_not_expand_but(void)
+{
+  data_scalar_and_vector();
+}
+
+void
+test_not_expand_but(gconstpointer data)
+{
+  cut_assert_equal_string(
+    "[[[1],"
+     "[[\"_id\",\"UInt32\"],"
+      "[\"_key\",\"Time\"],"
+      "[\"content\",\"Text\"]],"
+      "[9,1316358000.0,\"Learning Ruby and groonga...\"]]]",
+    send_command(
+      cut_take_printf("select Diaries --sortby _id "
+                      "--match_columns content --query 'Ruby - Start' "
+                      "--query_expansion Synonyms.%s",
+                      gcut_data_get_string(data, "column-name"))));
+}
+
+void
+data_not_expand_paren(void)
+{
+  data_scalar_and_vector();
+}
+
+void
+test_not_expand_paren(gconstpointer data)
+{
+  cut_assert_equal_string(
+    "[[[2],"
+     "[[\"_id\",\"UInt32\"],"
+      "[\"_key\",\"Time\"],"
+      "[\"content\",\"Text\"]],"
+      "[4,1315926000.0,\"Start Ruby!\"],"
+      "[9,1316358000.0,\"Learning Ruby and groonga...\"]]]",
+    send_command(
+      cut_take_printf("select Diaries --sortby _id "
+                      "--match_columns content --query '(Ruby)' "
+                      "--query_expansion Synonyms.%s",
+                      gcut_data_get_string(data, "column-name"))));
+}
+
+void
+data_no_expand(void)
+{
+  data_scalar_and_vector();
+}
+
+void
+test_no_expand(gconstpointer data)
+{
+  cut_assert_equal_string(
+    "[[[2],"
+     "[[\"_id\",\"UInt32\"],"
+      "[\"_key\",\"Time\"],"
+      "[\"content\",\"Text\"]],"
+     "[4,1315926000.0,\"Start Ruby!\"],"
+     "[9,1316358000.0,\"Learning Ruby and groonga...\"]]]",
+    send_command(
+      cut_take_printf("select Diaries --match_columns content --query Ruby "
+                      "--query_expansion Synonyms.%s",
+                      gcut_data_get_string(data, "column-name"))));
+}
+
+void
+data_no_expand_word_with_space(void)
+{
+  data_scalar_and_vector();
+}
+
+void
+test_no_expand_word_with_space(gconstpointer data)
+{
+  cut_assert_equal_string(
+    "[[[1],"
+     "[[\"_id\",\"UInt32\"],"
+      "[\"_key\",\"Time\"],"
+      "[\"content\",\"Text\"]],"
+     "[9,1316358000.0,\"Learning Ruby and groonga...\"]]]",
+    send_command(
+      cut_take_printf("select Diaries "
+                      "--match_columns content --query '\"Ruby and groonga\"' "
+                      "--query_expansion Synonyms.%s",
+                      gcut_data_get_string(data, "column-name"))));
+}
+
+void
+data_nonexistent_expansion_column(void)
+{
+  data_scalar_and_vector();
+}
+
+void
+test_nonexistent_expansion_column(gconstpointer data)
 {
   grn_test_assert_send_command_error(
     context,
@@ -401,28 +582,40 @@ test_nonexistent_expansion_column(void)
 }
 
 void
-test_key_normalize(void)
+data_key_normalize(void)
+{
+  data_scalar_and_vector();
+}
+
+void
+test_key_normalize(gconstpointer data)
 {
   assert_send_command("table_create NormalizedSynonyms "
                       "TABLE_PAT_KEY|KEY_NORMALIZE ShortText");
-  assert_send_command("column_create NormalizedSynonyms words "
+  assert_send_command("column_create NormalizedSynonyms words_scalar "
                       "COLUMN_SCALAR ShortText");
+  assert_send_command("column_create NormalizedSynonyms words_vector "
+                      "COLUMN_VECTOR ShortText");
   assert_send_command("load --table NormalizedSynonyms\n"
                       "[\n"
-                      "[\"_key\", \"words\"],\n"
-                      "[\"Ruby\", \"(Ruby OR rroonga)\"]\n"
+                      "[\"_key\", \"words_scalar\", \"words_vector\"],\n"
+                      "[\"Ruby\", "
+                       "\"(Ruby OR rroonga)\", "
+                       "[\"Ruby\", \"rroonga\"]]\n"
                       "]");
 
   cut_assert_equal_string(
-      "[[[3],"
-       "[[\"_id\",\"UInt32\"],"
-        "[\"_key\",\"Time\"],"
-        "[\"content\",\"Text\"]],"
-       "[3,1315839600.0,\"Start rroonga!\"],"
-       "[4,1315926000.0,\"Start Ruby!\"],"
-       "[9,1316358000.0,\"Learning Ruby and groonga...\"]]]",
-    send_command("select Diaries "
-                 "--sortby _id "
-                 "--match_columns content --query ruby "
-                 "--query_expansion NormalizedSynonyms.words"));
+    "[[[3],"
+     "[[\"_id\",\"UInt32\"],"
+      "[\"_key\",\"Time\"],"
+      "[\"content\",\"Text\"]],"
+     "[3,1315839600.0,\"Start rroonga!\"],"
+     "[4,1315926000.0,\"Start Ruby!\"],"
+     "[9,1316358000.0,\"Learning Ruby and groonga...\"]]]",
+    send_command(
+      cut_take_printf("select Diaries "
+                      "--sortby _id "
+                      "--match_columns content --query ruby "
+                      "--query_expansion NormalizedSynonyms.%s",
+                      gcut_data_get_string(data, "column-name"))));
 }
