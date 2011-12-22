@@ -5542,6 +5542,7 @@ grn_obj_get_values(grn_ctx *ctx, grn_obj *obj, grn_id offset, void **values)
             nrecords = ra->element_mask + 1 - (offset & ra->element_mask);
           }
           if (values) { *values = p; }
+          grn_ra_unref(ctx, ra, offset);
         } else {
           ERR(GRN_NO_MEMORY_AVAILABLE, "ra get failed");
         }
