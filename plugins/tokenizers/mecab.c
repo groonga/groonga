@@ -29,8 +29,9 @@
 #include <string.h>
 #include <ctype.h>
 
-static mecab_t *sole_mecab;
+static mecab_t *sole_mecab = NULL;
 static grn_critical_section sole_mecab_lock;
+static grn_encoding sole_mecab_encoding = GRN_ENC_NONE;
 
 typedef struct {
   grn_str *nstr;
@@ -42,6 +43,35 @@ typedef struct {
   grn_obj curr_;
   grn_obj stat_;
 } grn_mecab_tokenizer;
+
+static grn_encoding
+translate_mecab_charset_to_grn_encoding(const char *charset)
+{
+  if (strcasecmp(charset, "euc-jp") == 0) {
+    return GRN_ENC_EUC_JP;
+  } else if (strcasecmp(charset, "utf-8") == 0 ||
+             strcasecmp(charset, "utf8") == 0) {
+    return GRN_ENC_UTF8;
+  } else if (strcasecmp(charset, "shift_jis") == 0 ||
+             strcasecmp(charset, "shift-jis") == 0 ||
+             strcasecmp(charset, "sjis") == 0) {
+    return GRN_ENC_SJIS;
+  }
+  return GRN_ENC_NONE;
+}
+
+static grn_encoding
+get_mecab_encoding(mecab_t *mecab)
+{
+  grn_encoding encoding = GRN_ENC_NONE;
+  mecab_dictionary_info_t *dictionary_info;
+  dictionary_info = mecab_dictionary_info(mecab);
+  if (dictionary_info) {
+    const char *charset = dictionary_info->charset;
+    encoding = translate_mecab_charset_to_grn_encoding(charset);
+  }
+  return encoding;
+}
 
 /*
   This function is called for a full text search query or a document to be
@@ -58,6 +88,7 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   char mecab_err[256];
   grn_obj *table = args[0];
   grn_obj_flags table_flags;
+  grn_encoding table_encoding;
   grn_mecab_tokenizer *token;
   unsigned int bufsize, maxtrial = 10, len;
   if (!(str = grn_ctx_pop(ctx))) {
@@ -66,24 +97,32 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   }
   mecab_err[sizeof(mecab_err) - 1] = '\0';
   if (!sole_mecab) {
-    static char *argv[] = {"", "-Owakati"};
     CRITICAL_SECTION_ENTER(sole_mecab_lock);
     if (!sole_mecab) {
-      sole_mecab = mecab_new(2, argv);
+      sole_mecab = mecab_new2("-Owakati");
       if (!sole_mecab) {
         strncpy(mecab_err, mecab_strerror(NULL), sizeof(mecab_err) - 1);
+      } else {
+        sole_mecab_encoding = get_mecab_encoding(sole_mecab);
       }
     }
     CRITICAL_SECTION_LEAVE(sole_mecab_lock);
   }
   if (!sole_mecab) {
     ERR(GRN_TOKENIZER_ERROR,
-        "mecab_new failed on grn_mecab_init: %s", mecab_err);
+        "mecab_new2 failed on grn_mecab_init: %s", mecab_err);
+    return NULL;
+  }
+  grn_table_get_info(ctx, table, &table_flags, &table_encoding, NULL);
+  if (table_encoding != sole_mecab_encoding) {
+    ERR(GRN_TOKENIZER_ERROR,
+        "MeCab dictionary charset (%s) does not match the context encoding: <%s>",
+        grn_enctostr(sole_mecab_encoding), grn_enctostr(table_encoding));
     return NULL;
   }
   if (!(token = GRN_MALLOC(sizeof(grn_mecab_tokenizer)))) { return NULL; }
   token->mecab = sole_mecab;
-  grn_table_get_info(ctx, table, &table_flags, &token->encoding, NULL);
+  token->encoding = table_encoding;
   nflags |= (table_flags & GRN_OBJ_KEY_NORMALIZE);
   if (!(token->nstr = grn_str_open_(ctx, GRN_TEXT_VALUE(str), GRN_TEXT_LEN(str),
                                     nflags, token->encoding))) {
@@ -179,38 +218,14 @@ check_mecab_dictionary_encoding(grn_ctx *ctx)
 #ifdef HAVE_MECAB_DICTIONARY_INFO_T
   mecab_t *mecab;
 
-  mecab = mecab_new(0, NULL);
+  mecab = mecab_new2("-Owakati");
   if (mecab) {
     grn_encoding encoding;
     const mecab_dictionary_info_t *dictionary;
     int have_same_encoding_dictionary = 0;
 
     encoding = GRN_CTX_GET_ENCODING(ctx);
-    dictionary = mecab_dictionary_info(mecab);
-    for (; dictionary; dictionary = dictionary->next) {
-      switch (encoding) {
-      case GRN_ENC_EUC_JP:
-        if (strcasecmp(dictionary->charset, "euc-jp") == 0) {
-          have_same_encoding_dictionary = 1;
-        }
-        break;
-      case GRN_ENC_UTF8:
-        if (strcasecmp(dictionary->charset, "utf-8") == 0 ||
-            strcasecmp(dictionary->charset, "utf8") == 0) {
-          have_same_encoding_dictionary = 1;
-        }
-        break;
-      case GRN_ENC_SJIS:
-        if (strcasecmp(dictionary->charset, "shift_jis") == 0 ||
-            strcasecmp(dictionary->charset, "shift-jis") == 0 ||
-            strcasecmp(dictionary->charset, "sjis") == 0) {
-          have_same_encoding_dictionary = 1;
-        }
-        break;
-      default:
-        break;
-      }
-    }
+    have_same_encoding_dictionary = encoding == get_mecab_encoding(mecab);
     mecab_destroy(mecab);
 
     if (!have_same_encoding_dictionary) {
@@ -220,7 +235,7 @@ check_mecab_dictionary_encoding(grn_ctx *ctx)
     }
   } else {
     ERR(GRN_TOKENIZER_ERROR,
-        "mecab_new failed in check_mecab_dictionary_encoding");
+        "mecab_new2 failed in check_mecab_dictionary_encoding");
   }
 #endif
 }
