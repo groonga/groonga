@@ -25,6 +25,7 @@
 
 void test_by_id(void);
 void test_by_filter(void);
+void test_by_invalid_filter(void);
 void test_by_key(void);
 void test_referenced_record(void);
 void test_uint64(void);
@@ -136,6 +137,16 @@ test_by_filter(void)
                             "[\"tasukuchan\"]]]",
                           send_command("select Users "
                                        "--output_columns _key"));
+}
+
+void
+test_by_invalid_filter(void)
+{
+  grn_test_assert_send_command_error(
+    context,
+    GRN_SYNTAX_ERROR,
+    "Syntax error! ($)",
+    "delete Users --filter \"$\"");
 }
 
 void
