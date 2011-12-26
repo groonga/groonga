@@ -27,6 +27,7 @@ void test_by_id(void);
 void test_by_filter(void);
 void test_by_invalid_filter(void);
 void test_by_id_and_filter(void);
+void test_by_all_options(void);
 void test_by_key(void);
 void test_referenced_record(void);
 void test_uint64(void);
@@ -158,6 +159,16 @@ test_by_id_and_filter(void)
     GRN_INVALID_ARGUMENT,
     "filter is used with id and/or key",
     "delete Users --id 1 --filter \"true\"");
+}
+
+void
+test_by_all_options(void)
+{
+  grn_test_assert_send_command_error(
+    context,
+    GRN_INVALID_ARGUMENT,
+    "filter is used with id and/or key",
+    "delete Users --id 1 --key mori --filter \"true\"");
 }
 
 void

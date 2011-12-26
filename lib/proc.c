@@ -1601,7 +1601,7 @@ proc_delete(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                                GRN_TEXT_VALUE(VAR(0)),
                                GRN_TEXT_LEN(VAR(0)));
   if (table) {
-    if (GRN_TEXT_LEN(VAR(1)) && GRN_TEXT_LEN(VAR(2))) {
+    if (GRN_TEXT_LEN(VAR(1)) && GRN_TEXT_LEN(VAR(2)) && !GRN_TEXT_LEN(VAR(3))) {
       ERR(GRN_INVALID_ARGUMENT, "both id and key are specified");
       rc = ctx->rc;
     } else if (GRN_TEXT_LEN(VAR(3)) && (GRN_TEXT_LEN(VAR(1)) || GRN_TEXT_LEN(VAR(2)))) {
