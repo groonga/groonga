@@ -827,4 +827,21 @@ _grn_dat_key(grn_ctx *ctx, grn_dat *dat, grn_id id, uint32_t *key_size)
   return static_cast<const char *>(key.ptr());
 }
 
+grn_id
+grn_dat_at(grn_ctx *ctx, grn_dat *dat, grn_id id)
+{
+  if (!grn_dat_open_trie_if_needed(ctx, dat)) {
+    return GRN_ID_NIL;
+  }
+  const grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
+  if (!trie) {
+    return GRN_ID_NIL;
+  }
+  const grn::dat::Key &key = trie->ith_key(id);
+  if (!key.is_valid()) {
+    return GRN_ID_NIL;
+  }
+  return id;
+}
+
 }  // extern "C"
