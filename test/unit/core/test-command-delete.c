@@ -133,9 +133,10 @@ void
 test_by_filter(void)
 {
   assert_send_command("delete Users --filter "
-                        "\"_key == \\\"mori\\\" || _key == \\\"tapo\\\"\"");
-  cut_assert_equal_string("[[[2],"
+                        "\"_key == \\\"tapo\\\"\"");
+  cut_assert_equal_string("[[[3],"
                             "[[\"_key\",\"ShortText\"]],"
+                            "[\"mori\"],"
                             "[\"yu\"],"
                             "[\"tasukuchan\"]]]",
                           send_command("select Users "
