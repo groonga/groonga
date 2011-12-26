@@ -228,7 +228,6 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/suggest/suggestion.txt \
 	$(top_srcdir)/doc/source/suggest/tutorial.txt \
 	$(top_srcdir)/doc/source/textile.py \
-	$(top_srcdir)/doc/source/translation_table.lst \
 	$(top_srcdir)/doc/source/troubleshooting.txt \
 	$(top_srcdir)/doc/source/troubleshooting/different_results_with_the_same_keyword.txt \
 	$(top_srcdir)/doc/source/tutorial.txt \
@@ -490,7 +489,6 @@ source_files_relative_from_doc_dir = \
 	source/suggest/suggestion.txt \
 	source/suggest/tutorial.txt \
 	source/textile.py \
-	source/translation_table.lst \
 	source/troubleshooting.txt \
 	source/troubleshooting/different_results_with_the_same_keyword.txt \
 	source/tutorial.txt \
