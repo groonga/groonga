@@ -62,7 +62,7 @@ class Trie {
   // INVALID_KEY_ID.
   const Key &ith_key(UInt32 key_id) const {
     if ((key_id >= min_key_id()) && (key_id <= max_key_id()) &&
-        (ith_entry(key_id).is_valid())) {
+        ith_entry(key_id).is_valid()) {
       return get_key(ith_entry(key_id).key_pos());
     }
     return Key::invalid_key();
