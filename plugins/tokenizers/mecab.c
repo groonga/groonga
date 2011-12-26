@@ -64,7 +64,7 @@ static grn_encoding
 get_mecab_encoding(mecab_t *mecab)
 {
   grn_encoding encoding = GRN_ENC_NONE;
-  mecab_dictionary_info_t *dictionary_info;
+  const mecab_dictionary_info_t *dictionary_info;
   dictionary_info = mecab_dictionary_info(mecab);
   if (dictionary_info) {
     const char *charset = dictionary_info->charset;
@@ -221,7 +221,6 @@ check_mecab_dictionary_encoding(grn_ctx *ctx)
   mecab = mecab_new2("-Owakati");
   if (mecab) {
     grn_encoding encoding;
-    const mecab_dictionary_info_t *dictionary;
     int have_same_encoding_dictionary = 0;
 
     encoding = GRN_CTX_GET_ENCODING(ctx);
