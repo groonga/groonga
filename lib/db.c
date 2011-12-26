@@ -1297,7 +1297,7 @@ grn_table_at(grn_ctx *ctx, grn_obj *table, grn_id id)
       id = grn_pat_at(ctx, (grn_pat *)table, id);
       break;
     case GRN_TABLE_DAT_KEY :
-      if (id > grn_dat_curr_id(ctx, (grn_dat *)table)) { id = GRN_ID_NIL; }
+      id = grn_dat_at(ctx, (grn_dat *)table, id);
       break;
     case GRN_TABLE_HASH_KEY :
       id = grn_hash_at(ctx, (grn_hash *)table, id);
