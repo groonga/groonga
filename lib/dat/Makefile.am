@@ -1,5 +1,10 @@
 DEFS += -D_REENTRANT $(GRN_DEFS)
 
+DEFAULT_INCLUDES =				\
+	-I$(top_builddir)			\
+	-I$(top_srcdir)/include			\
+	-I$(top_srcdir)/lib
+
 noinst_LTLIBRARIES = libgrndat.la
 
 libgrndat_la_SOURCES =			\

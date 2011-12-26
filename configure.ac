@@ -314,6 +314,34 @@ AC_TYPE_OFF_T
 AC_TYPE_SIZE_T
 AC_CHECK_SIZEOF(off_t)
 
+# MAP_HUGETLB
+AC_ARG_ENABLE(map-hugetlb,
+  [AS_HELP_STRING([--enable-map-hugetlb],
+                  [use MAP_HUGETLB. [default=no]])],
+  ,
+  [enable_map_hugetlb="no"])
+if test "x$enable_map_hugetlb" != "xno"; then
+  AC_MSG_CHECKING([for MAP_HUGETLB])
+  AC_COMPILE_IFELSE(
+    [AC_LANG_PROGRAM(
+       [
+#ifdef HAVE_SYS_MMAN_H
+#  include <sys/mman.h>
+#endif /* HAVE_SYS_MMAN_H */
+       ],
+       [MAP_HUGETLB;]
+     )],
+    [
+     AC_DEFINE(GROONGA_USE_MAP_HUGETLB, [1], [use MAP_HUGETLB])
+     AC_MSG_RESULT(yes)
+    ],
+    [
+     AC_MSG_RESULT(no)
+     AC_MSG_ERROR("MAP_HUGETLB isn't available.")
+    ]
+  )
+fi
+
 # log path
 AC_ARG_WITH(log_path,
   [AS_HELP_STRING([--with-log-path=PATH],
