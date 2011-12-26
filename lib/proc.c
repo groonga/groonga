@@ -1604,6 +1604,9 @@ proc_delete(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     if (GRN_TEXT_LEN(VAR(1)) && GRN_TEXT_LEN(VAR(2))) {
       ERR(GRN_INVALID_ARGUMENT, "both id and key are specified");
       rc = ctx->rc;
+    } else if (GRN_TEXT_LEN(VAR(3)) && (GRN_TEXT_LEN(VAR(1)) || GRN_TEXT_LEN(VAR(2)))) {
+      ERR(GRN_INVALID_ARGUMENT, "filter is used with id and/or key");
+      rc = ctx->rc;
     } else if (GRN_TEXT_LEN(VAR(1))) {
       grn_obj *p_key = VAR(1);
       grn_obj key;
