@@ -1601,10 +1601,12 @@ proc_delete(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                                GRN_TEXT_VALUE(VAR(0)),
                                GRN_TEXT_LEN(VAR(0)));
   if (table) {
-    if (GRN_TEXT_LEN(VAR(1)) && GRN_TEXT_LEN(VAR(2)) && !GRN_TEXT_LEN(VAR(3))) {
+    if (GRN_TEXT_LEN(VAR(1)) && GRN_TEXT_LEN(VAR(2)) &&
+        !GRN_TEXT_LEN(VAR(3))) {
       ERR(GRN_INVALID_ARGUMENT, "both id and key are specified");
       rc = ctx->rc;
-    } else if (GRN_TEXT_LEN(VAR(3)) && (GRN_TEXT_LEN(VAR(1)) || GRN_TEXT_LEN(VAR(2)))) {
+    } else if (GRN_TEXT_LEN(VAR(3)) &&
+               (GRN_TEXT_LEN(VAR(1)) || GRN_TEXT_LEN(VAR(2)))) {
       ERR(GRN_INVALID_ARGUMENT, "filter is used with id and/or key");
       rc = ctx->rc;
     } else if (GRN_TEXT_LEN(VAR(1))) {
@@ -1645,7 +1647,8 @@ proc_delete(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
         uint32_t res_key_size;
 
         res = grn_table_select(ctx, table, cond, NULL, GRN_OP_OR);
-        GRN_TABLE_EACH(ctx, res, 0, 0, res_id, &res_key, &res_key_size, &res_value, {
+        GRN_TABLE_EACH(ctx, res, 0, 0,
+                       res_id, &res_key, &res_key_size, &res_value, {
           grn_id id = *(grn_id *)res_key;
           grn_table_delete_by_id(ctx, table, id);
         });
