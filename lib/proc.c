@@ -2704,7 +2704,7 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[1], "key");
   DEF_VAR(vars[2], "id");
   DEF_VAR(vars[3], "filter");
-  DEF_COMMAND("delete", proc_delete, 3, vars);
+  DEF_COMMAND("delete", proc_delete, 4, vars);
 
   DEF_VAR(vars[0], "max");
   DEF_COMMAND("cache_limit", proc_cache_limit, 1, vars);
