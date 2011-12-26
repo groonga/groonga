@@ -1627,6 +1627,29 @@ proc_delete(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
         ERR(GRN_INVALID_ARGUMENT, "invalid id");
         rc = ctx->rc;
       }
+    } else if (GRN_TEXT_LEN(VAR(3))) {
+      grn_obj *cond, *v;
+      const char *filter = GRN_TEXT_VALUE(VAR(3));
+      unsigned filter_len = GRN_TEXT_LEN(VAR(3));
+
+      GRN_EXPR_CREATE_FOR_QUERY(ctx, table, cond, v);
+      grn_expr_parse(ctx, cond, filter, filter_len,
+                     NULL, GRN_OP_MATCH, GRN_OP_AND,
+                     GRN_EXPR_SYNTAX_SCRIPT);
+      if (!ctx->rc) {
+        grn_obj *res;
+        void *res_key, *value;
+        uint32_t res_key_size;
+
+        res = grn_table_select(ctx, table, cond, NULL, GRN_OP_OR);
+        GRN_TABLE_EACH(ctx, res, 0, 0, res_id, &res_key, &res_key_size, &value, {
+          grn_id id = *(grn_id *)res_key;
+          grn_table_delete_by_id(ctx, table, id);
+        });
+        grn_obj_unlink(ctx, res);
+      }
+
+      grn_obj_unlink(ctx, cond);
     }
   } else {
     ERR(GRN_INVALID_ARGUMENT, "unknown table name");
@@ -2680,6 +2703,7 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[0], "table");
   DEF_VAR(vars[1], "key");
   DEF_VAR(vars[2], "id");
+  DEF_VAR(vars[3], "filter");
   DEF_COMMAND("delete", proc_delete, 3, vars);
 
   DEF_VAR(vars[0], "max");

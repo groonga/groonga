@@ -126,6 +126,18 @@ test_by_id(void)
 }
 
 void
+test_by_filter(void)
+{
+  assert_send_command("delete Users --filter \"_key == \\\"mori\\\" || _key == \\\"tapo\\\"\"");
+  cut_assert_equal_string("[[[2],"
+                            "[[\"_key\",\"ShortText\"]],"
+                            "[\"yu\"],"
+                            "[\"tasukuchan\"]]]",
+                          send_command("select Users "
+                                       "--output_columns _key"));
+}
+
+void
 test_by_delete(void)
 {
   assert_send_command("delete Users tapo");
