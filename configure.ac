@@ -740,7 +740,10 @@ AC_ARG_WITH(kytea,
 AC_MSG_CHECKING([whether enable KyTea])
 AC_MSG_RESULT($with_kytea)
 if test "x$with_kytea" != "xno"; then
-  PKG_CHECK_MODULES([KYTEA], [kytea], [kytea_exists=yes], [kytea_exists=no])
+  m4_ifdef([PKG_CHECK_MODULES], [
+    PKG_CHECK_MODULES([KYTEA], [kytea], [kytea_exists=yes], [kytea_exists=no])
+    ],
+    [kytea_exists=no])
   if test "$kytea_exists" = "no" -a "x$with_kytea" = "xyes"; then
     AC_MSG_ERROR("No KyTea found.")
   fi
