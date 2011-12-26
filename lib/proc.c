@@ -1642,17 +1642,18 @@ proc_delete(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                      NULL, GRN_OP_MATCH, GRN_OP_AND,
                      GRN_EXPR_SYNTAX_SCRIPT);
       if (!ctx->rc) {
-        grn_obj *res;
-        void *res_key, *res_value;
-        uint32_t res_key_size;
+        grn_obj *records;
 
-        res = grn_table_select(ctx, table, cond, NULL, GRN_OP_OR);
-        GRN_TABLE_EACH(ctx, res, 0, 0,
-                       res_id, &res_key, &res_key_size, &res_value, {
-          grn_id id = *(grn_id *)res_key;
-          grn_table_delete_by_id(ctx, table, id);
-        });
-        grn_obj_unlink(ctx, res);
+        records = grn_table_select(ctx, table, cond, NULL, GRN_OP_OR);
+        if (records) {
+          void *key;
+          GRN_TABLE_EACH(ctx, records, GRN_ID_NIL, GRN_ID_NIL,
+                         result_id, &key, NULL, NULL, {
+            grn_id id = *(grn_id *)key;
+            grn_table_delete_by_id(ctx, table, id);
+          });
+          grn_obj_unlink(ctx, records);
+        }
       }
 
       grn_obj_unlink(ctx, cond);
