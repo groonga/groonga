@@ -24,6 +24,7 @@
 #include <str.h>
 
 void test_by_id(void);
+void test_by_filter(void);
 void test_by_key(void);
 void test_referenced_record(void);
 void test_uint64(void);
