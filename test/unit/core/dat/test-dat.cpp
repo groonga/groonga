@@ -489,4 +489,27 @@ namespace test_dat
     cut_assert_null(_grn_dat_key(&ctx, dat, GRN_ID_NIL, NULL));
     cppcut_assert_equal(GRN_SUCCESS, grn_dat_close(&ctx, dat));
   }
+
+  void test_at(void)
+  {
+    std::vector<std::string> keys;
+    create_keys(&keys, 1000, 6, 15);
+
+    grn_dat * const dat = create_trie(keys, NULL);
+    for (std::size_t i = 0; i < keys.size(); i += 2) {
+      const grn_id key_id = static_cast<grn_id>(i + 1);
+      cppcut_assert_equal(GRN_SUCCESS,
+                          grn_dat_delete_by_id(&ctx, dat, key_id, NULL));
+    }
+    for (std::size_t i = 0; i < keys.size(); ++i) {
+      const grn_id key_id = static_cast<grn_id>(i + 1);
+      if (!(i & 1)) {
+        cppcut_assert_equal(static_cast<grn_id>(GRN_ID_NIL),
+                            grn_dat_at(&ctx, dat, key_id));
+      } else {
+        cppcut_assert_equal(key_id, grn_dat_at(&ctx, dat, key_id));
+      }
+    }
+    cppcut_assert_equal(GRN_SUCCESS, grn_dat_close(&ctx, dat));
+  }
 }
