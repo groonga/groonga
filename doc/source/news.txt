@@ -5,6 +5,46 @@
 News
 ====
 
+.. _release-1-2-9:
+
+Release 1.2.9 - 2011/12/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [groonga] Improved the default server ID address to work
+  on unresolved host name environment. [Reported by @uzulla]
+* Supported MAP_HUGETLB.
+* [admin] Supported throughput chart.
+* Stopped adding nul character in ``grn_itoh()``. [#1194]
+  [Reported by SHIDARA Yoji]
+* Supported MessagePack output. [#1215] [Patch by SHIDARA Yoji]
+* Added ``grn_obj_get_values()``.
+* Added ``grn_obj_delete_by_id()``.
+* Supported string vector column for query expansion. [#1216]
+* Added ``--filter`` option to :doc:`/commands:delete` to delete
+  many record at once. [#1225]
+
+Fixes
+^^^^^
+
+* [windows] Fixed inverted map type.
+* Fixed -Wno- compiler flag detection. [Patch by Arnaud Fontaine]
+* Fixed a problem that ``groonga --version`` reports wrongly
+  about MeCab. [#1209] [Patch by SHIDARA Yoji]
+* Added missing lock into ``grn_obj_remove()``.
+* Fixed Content-Type on error. [#1220] [Patch by SHIDARA Yoji]
+* Fixed a problem that deleting SIS (Semi Infinite String)
+  may keep a garbage.
+
+Thanks
+^^^^^^
+
+* @uzulla
+* Arnaud Fontaine
+* SHIDARA Yoji
+
 .. _release-1-2-8:
 
 Release 1.2.8 - 2011/11/29
