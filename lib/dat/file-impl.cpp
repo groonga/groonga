@@ -29,9 +29,6 @@
 # ifdef max
 #  undef max
 # endif  // max
-# ifdef open
-#  undef open
-# endif  // open
 #else  // WIN32
 #include <fcntl.h>
 #include <sys/mman.h>

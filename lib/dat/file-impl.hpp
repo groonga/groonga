@@ -20,6 +20,9 @@
 
 #ifdef WIN32
 #include <windows.h>
+# ifdef open
+#  undef open
+# endif  // open
 #endif  // WIN32
 
 #include "dat.hpp"
