@@ -1,6 +1,7 @@
 intltool
 libtool
 gcc
+gcc-c++
 make
 mecab-devel
 zeromq-devel
