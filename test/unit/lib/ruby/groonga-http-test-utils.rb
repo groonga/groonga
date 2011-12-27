@@ -244,6 +244,41 @@ module GroongaHTTPTestUtils
     [Result::SUCCESS, 0.0, 0.0]
   end
 
+  def hexdump_hex_part(binary, bytes_per_line)
+    sublines_per_line = 2
+    sublines_delimiter = '  '
+
+    bytes_per_subline = bytes_per_line / sublines_per_line
+    hex_part_length = 2 * bytes_per_line +
+      (bytes_per_line - sublines_per_line) +
+      sublines_delimiter.length * (sublines_per_line - 1)
+
+    hex_sublines = []
+    binary.each_slice(bytes_per_subline) do |binary_subline|
+      hex_sublines << binary_subline.collect{|byte| '%02x' % byte}.join(' ')
+    end
+    hex_sublines.join(sublines_delimiter).ljust(hex_part_length)
+  end
+
+  def hexdump_ascii_part(binary)
+    binary.collect{|byte|
+      (0x20..0x7e).include?(byte) ? byte.chr : '.'
+    }.join
+  end
+
+  def hexdump(str)
+    results = ''
+    bytes_per_line = 16
+    binary_lines = str.bytes.each_slice(bytes_per_line)
+    binary_lines.each do |binary_line|
+      results << hexdump_hex_part(binary_line, bytes_per_line)
+      results << "  "
+      results << hexdump_ascii_part(binary_line)
+      results << "\n"
+    end
+    results
+  end
+
   def assert_response(expected, response, options=nil)
     actual = nil
     options ||= {}
@@ -265,15 +300,8 @@ module GroongaHTTPTestUtils
       begin
         actual = ::MessagePack.unpack(response.body)
       rescue ::MessagePack::UnpackError => e
-        hexdump = response.body.bytes.each_slice(16).map{ |bytes|
-          bytes.each_slice(8).map {|half|
-            half.map{|byte| '%02x' % byte}.join(' ')
-          }.join('  ').ljust(3*16+1) + '  ' + \
-          bytes.map{|byte| (0x20..0x7e).include?(byte) ? byte.chr : '.'}.join
-        }.join("\n")
-
         raise "MessagePack UnpackError #{e.message}\nMessagePack is ...\n" \
-              "---\n#{hexdump}\n---"
+              "---\n#{hexdump(response.body)}---"
       end
       normalize_structured_response(actual)
     when "text/html"
