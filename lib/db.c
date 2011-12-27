@@ -946,12 +946,7 @@ grn_table_lcp_search(grn_ctx *ctx, grn_obj *table, const void *key, unsigned key
     {
       grn_dat *dat = (grn_dat *)table;
       WITH_NORMALIZE(dat, key, key_size, {
-        grn_dat_cursor *c;
-        if ((c = grn_dat_cursor_open(ctx, dat, NULL, 0, key, key_size,
-                                     0, 1, GRN_CURSOR_PREFIX))) {
-          id = grn_dat_cursor_next(ctx, c);
-          grn_dat_cursor_close(ctx, c);
-        }
+        id = grn_dat_lcp_search(ctx, dat, key, key_size);
       });
     }
     break;
@@ -2656,14 +2651,13 @@ grn_table_search(grn_ctx *ctx, grn_obj *table, const void *key, uint32_t key_siz
   case GRN_TABLE_DAT_KEY :
     {
       grn_dat *dat = (grn_dat *)table;
-      grn_id id;
       WITH_NORMALIZE(dat, key, key_size, {
         switch (mode) {
         case GRN_OP_EXACT :
           {
-            id = grn_dat_get(ctx, dat, key, key_size, NULL);
+            grn_id id = grn_dat_get(ctx, dat, key, key_size, NULL);
+            if (id) { grn_table_add(ctx, res, &id, sizeof(grn_id), NULL); }
           }
-          if (id) { grn_table_add(ctx, res, &id, sizeof(grn_id), NULL); }
           break;
         case GRN_OP_PREFIX :
           {
@@ -2680,15 +2674,8 @@ grn_table_search(grn_ctx *ctx, grn_obj *table, const void *key, uint32_t key_siz
           break;
         case GRN_OP_LCP :
           {
-            grn_dat_cursor *dc = grn_dat_cursor_open(ctx, dat, NULL, 0, key, key_size,
-                                                     0, 1, GRN_CURSOR_PREFIX);
-            if (dc) {
-              grn_id id;
-              if ((id = grn_dat_cursor_next(ctx, dc))) {
-                grn_table_add(ctx, res, &id, sizeof(grn_id), NULL);
-              }
-              grn_dat_cursor_close(ctx, dc);
-            }
+            grn_id id = grn_dat_lcp_search(ctx, dat, key, key_size);
+            if (id) { grn_table_add(ctx, res, &id, sizeof(grn_id), NULL); }
           }
           break;
         default :
@@ -2723,7 +2710,7 @@ grn_table_next(grn_ctx *ctx, grn_obj *table, grn_id id)
       r = grn_pat_next(ctx, (grn_pat *)table, id);
       break;
     case GRN_TABLE_DAT_KEY :
-      r = (id >= grn_dat_curr_id(ctx, (grn_dat *)table)) ? GRN_ID_NIL : id + 1;
+      r = grn_dat_next(ctx, (grn_dat *)table, id);
       break;
     case GRN_TABLE_HASH_KEY :
       r = grn_hash_next(ctx, (grn_hash *)table, id);
