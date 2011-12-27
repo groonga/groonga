@@ -612,6 +612,36 @@ grn_dat_update(grn_ctx *ctx, grn_dat *dat,
   return GRN_SUCCESS;
 }
 
+grn_id
+grn_dat_lcp_search(grn_ctx *ctx, grn_dat *dat,
+                   const void *key, unsigned int key_size)
+{
+  if (!grn_dat_open_trie_if_needed(ctx, dat) || !key ||
+      !(dat->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE)) {
+    return GRN_ID_NIL;
+  }
+
+  grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
+  if (!trie) {
+    return GRN_ID_NIL;
+  }
+
+  try {
+    grn::dat::Cursor * const cursor = grn::dat::CursorFactory::open(*trie,
+        NULL, 0, key, key_size, 0, 1,
+        grn::dat::PREFIX_CURSOR | grn::dat::DESCENDING_CURSOR);
+    // grn::dat::PrefixCursor::next() is assumed not to throw an exception.
+    const grn::dat::Key &lcp_key = cursor->next();
+    delete cursor;
+    // The `lcp_key' is still valid even after the cursor deletion.
+    return lcp_key.is_valid() ? lcp_key.id() : GRN_ID_NIL;
+  } catch (const grn::dat::Exception &ex) {
+    ERR(grn_dat_translate_error_code(ex.code()),
+        const_cast<char *>("grn::dat::PrefixCursor::open failed"));
+    return GRN_ID_NIL;
+  }
+}
+
 unsigned int
 grn_dat_size(grn_ctx *ctx, grn_dat *dat)
 {
@@ -825,6 +855,24 @@ _grn_dat_key(grn_ctx *ctx, grn_dat *dat, grn_id id, uint32_t *key_size)
   }
   *key_size = key.length();
   return static_cast<const char *>(key.ptr());
+}
+
+grn_id
+grn_dat_next(grn_ctx *ctx, grn_dat *dat, grn_id id)
+{
+  if (!grn_dat_open_trie_if_needed(ctx, dat)) {
+    return GRN_ID_NIL;
+  }
+  const grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
+  if (!trie) {
+    return GRN_ID_NIL;
+  }
+  while (id < trie->max_key_id()) {
+    if (trie->ith_key(++id).is_valid()) {
+      return id;
+    }
+  }
+  return GRN_ID_NIL;
 }
 
 grn_id

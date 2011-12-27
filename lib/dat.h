@@ -54,11 +54,15 @@ struct _grn_dat_cursor {
   grn_id curr_rec;
 };
 
+grn_id grn_dat_lcp_search(grn_ctx *ctx, grn_dat *dat,
+                          const void *key, unsigned int key_size);
+
 grn_id grn_dat_curr_id(grn_ctx *ctx, grn_dat *dat);
 
 grn_rc grn_dat_truncate(grn_ctx *ctx, grn_dat *dat);
 
 const char *_grn_dat_key(grn_ctx *ctx, grn_dat *dat, grn_id id, uint32_t *key_size);
+grn_id grn_dat_next(grn_ctx *ctx, grn_dat *dat, grn_id id);
 grn_id grn_dat_at(grn_ctx *ctx, grn_dat *dat, grn_id id);
 
 #ifdef __cplusplus
