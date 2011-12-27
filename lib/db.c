@@ -1740,7 +1740,13 @@ grn_table_truncate(grn_ctx *ctx, grn_obj *table)
       rc = grn_pat_truncate(ctx, (grn_pat *)table);
       break;
     case GRN_TABLE_DAT_KEY :
-      rc = GRN_OPERATION_NOT_SUPPORTED;
+      for (hooks = DB_OBJ(table)->hooks[GRN_HOOK_INSERT]; hooks; hooks = hooks->next) {
+        default_set_value_hook_data *data = (void *)NEXT_ADDR(hooks);
+        grn_obj *target = grn_ctx_at(ctx, data->target);
+        if (target->header.type != GRN_COLUMN_INDEX) { continue; }
+        if ((rc = grn_ii_truncate(ctx, (grn_ii *)target))) { goto exit; }
+      }
+      rc = grn_dat_truncate(ctx, (grn_dat *)table);
       break;
     case GRN_TABLE_HASH_KEY :
       for (hooks = DB_OBJ(table)->hooks[GRN_HOOK_INSERT]; hooks; hooks = hooks->next) {
