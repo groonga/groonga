@@ -370,6 +370,66 @@ bool Trie::search_linker(const UInt8 *ptr, UInt32 length,
   return ith_node(next).is_linker();
 }
 
+bool Trie::lcp_search_key(const UInt8 *ptr, UInt32 length,
+                          UInt32 *key_pos) const {
+  GRN_DAT_DEBUG_THROW_IF((ptr == NULL) && (length != 0));
+
+  bool found = false;
+  UInt32 node_id = ROOT_NODE_ID;
+  UInt32 query_pos = 0;
+
+  for ( ; query_pos < length; ++query_pos) {
+    const Base base = ith_node(node_id).base();
+    if (base.is_linker()) {
+      const Key &key = get_key(base.key_pos());
+      if ((key.length() <= length) &&
+          key.equals_to(ptr, key.length(), query_pos)) {
+        if (key_pos != NULL) {
+          *key_pos = base.key_pos();
+        }
+        found = true;
+      }
+      return found;
+    }
+
+    if (ith_node(node_id).child() == TERMINAL_LABEL) {
+      const Base linker_base =
+          ith_node(base.offset() ^ TERMINAL_LABEL).base();
+      if (linker_base.is_linker()) {
+        if (key_pos != NULL) {
+          *key_pos = linker_base.key_pos();
+        }
+        found = true;
+      }
+    }
+
+    node_id = base.offset() ^ ptr[query_pos];
+    if (ith_node(node_id).label() != ptr[query_pos]) {
+      return found;
+    }
+  }
+
+  const Base base = ith_node(node_id).base();
+  if (base.is_linker()) {
+    const Key &key = get_key(base.key_pos());
+    if (key.length() <= length) {
+      if (key_pos != NULL) {
+        *key_pos = base.key_pos();
+      }
+      found = true;
+    }
+  } else if (ith_node(node_id).child() == TERMINAL_LABEL) {
+    const Base linker_base = ith_node(base.offset() ^ TERMINAL_LABEL).base();
+    if (linker_base.is_linker()) {
+      if (key_pos != NULL) {
+        *key_pos = linker_base.key_pos();
+      }
+      found = true;
+    }
+  }
+  return found;
+}
+
 bool Trie::remove_key(const UInt8 *ptr, UInt32 length) {
   GRN_DAT_DEBUG_THROW_IF((ptr == NULL) && (length != 0));
 

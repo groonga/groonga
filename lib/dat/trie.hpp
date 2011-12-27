@@ -71,6 +71,11 @@ class Trie {
   bool search(const void *ptr, UInt32 length, UInt32 *key_pos = NULL) const {
     return search_key(static_cast<const UInt8 *>(ptr), length, key_pos);
   }
+  // Longest prefix match search.
+  bool lcp_search(const void *ptr, UInt32 length,
+                  UInt32 *key_pos = NULL) const {
+    return lcp_search_key(static_cast<const UInt8 *>(ptr), length, key_pos);
+  }
 
   bool remove(UInt32 key_id) {
     const Key &key = ith_key(key_id);
@@ -204,6 +209,8 @@ class Trie {
   bool search_key(const UInt8 *ptr, UInt32 length, UInt32 *key_pos) const;
   bool search_linker(const UInt8 *ptr, UInt32 length,
                      UInt32 &node_id, UInt32 &query_pos) const;
+
+  bool lcp_search_key(const UInt8 *ptr, UInt32 length, UInt32 *key_pos) const;
 
   bool remove_key(const UInt8 *ptr, UInt32 length);
 
