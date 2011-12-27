@@ -138,13 +138,13 @@ module HTTPSelectBasicTests
     populate_users
 
     assert_select([["_key", "ShortText"],
-                   ["real_name", "ShortText"],
-                   ["prefecture", "ShortText"],
-                   ["hp", "Int32"],
+                   ["city", "ShortText"],
                    ["description", "ShortText"],
-                   ["city", "ShortText"]],
-                  [["hayamiz", "Yuto Hayamizu", "富山県", 200, "λかわいいよλ", "富山市"],
-                   ["ryoqun", "Ryo Onodera", "不明", 200, "ryoくんです。", "不明"]],
+                   ["hp", "Int32"],
+                   ["prefecture", "ShortText"],
+                   ["real_name", "ShortText"]],
+                  [["hayamiz", "富山市", "λかわいいよλ", 200, "富山県", "Yuto Hayamizu"],
+                   ["ryoqun", "不明", "ryoくんです。", 200, "不明", "Ryo Onodera"]],
                   :table => "users",
                   :output_columns => "_key *")
   end
@@ -186,9 +186,9 @@ module HTTPSelectBasicTests
     records = load_schedules
 
     assert_select([["_id", "UInt32"],
-                   ["month", "Int32"],
-                   ["day", "Int32"]],
-                  records.sort_by {|id, month, day| [month, day]},
+                   ["day", "Int32"],
+                   ["month", "Int32"]],
+                  records.sort_by {|id, day, month| [month, day]},
                   :table => "calendar",
                   :limit => -1,
                   :sortby => "month day")
@@ -469,9 +469,9 @@ module HTTPSelectBasicTests
     load_comments
 
     assert_select([["_id", "UInt32"],
-                   ["text", "ShortText"],
-                   ["author", "users"]],
-                  [[2, "groonga rocks", "hayamiz"]],
+                   ["author", "users"],
+                   ["text", "ShortText"]],
+                  [[2, "hayamiz", "groonga rocks"]],
                   :table => "comments",
                   :query => "author.real_name:\"Yuto Hayamizu\"")
   end
@@ -483,10 +483,10 @@ module HTTPSelectBasicTests
     load_comments
 
     assert_select([["_id", "UInt32"],
-                   ["text", "ShortText"],
-                   ["author", "users"]],
-                  [[1, "Ruby rocks", "ryoqun"],
-                   [2, "groonga rocks", "hayamiz"]],
+                   ["author", "users"],
+                   ["text", "ShortText"]],
+                  [[1, "ryoqun", "Ruby rocks"],
+                   [2, "hayamiz", "groonga rocks"]],
                   {:table => "comments",
                    :drilldown => "author",
                    :drilldown_output_columns => "real_name",
@@ -504,10 +504,10 @@ module HTTPSelectBasicTests
     load_comments
 
     assert_select([["_id", "UInt32"],
-                   ["text", "ShortText"],
-                   ["author", "users"]],
-                  [[1, "Ruby rocks", "ryoqun"],
-                   [2, "groonga rocks", "hayamiz"]],
+                   ["author", "users"],
+                   ["text", "ShortText"]],
+                  [[1, "ryoqun", "Ruby rocks"],
+                   [2, "hayamiz", "groonga rocks"]],
                   {:table => "comments",
                    :drilldown => "text author",
                    :drilldown_output_columns => "_key",
@@ -972,13 +972,13 @@ EOF
 
   def assert_drilldown(header, expected, parameters, options={})
     assert_select([["_id", "UInt32"],
-                   ["text", "ShortText"],
-                   ["author", "users"]],
-                  [[1, "Ruby最高！", "taporobo"],
-                   [2, "groonga最高！", "hayamiz"],
-                   [3, "Ruby/groonga is useful.", "gunyara-kun"],
-                   [4, "Ruby rocks!", "moritan"],
-                   [5, "groonga rocks!", "ryoqun"]],
+                   ["author", "users"],
+                   ["text", "ShortText"]],
+                  [[1, "taporobo", "Ruby最高！"],
+                   [2, "hayamiz", "groonga最高！"],
+                   [3, "gunyara-kun", "Ruby/groonga is useful."],
+                   [4, "moritan", "Ruby rocks!"],
+                   [5, "ryoqun", "groonga rocks!"]],
                   {:table => "comments",
                    :drilldown => "author",
                    :drilldown_limit => 10}.merge(parameters),

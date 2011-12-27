@@ -216,13 +216,13 @@ module GroongaHTTPTestUtils
   end
 
   def load_schedules
-    header = ["month", "day"]
+    header = ["day", "month"]
 
     records = []
     1.upto(12) do |month|
       days = (1..28).to_a.shuffle
       1.upto(10) do
-        records.push([month, days.pop])
+        records.push([days.pop, month])
       end
     end
     records.shuffle!
