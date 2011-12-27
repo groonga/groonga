@@ -265,8 +265,15 @@ module GroongaHTTPTestUtils
       begin
         actual = ::MessagePack.unpack(response.body)
       rescue ::MessagePack::UnpackError => e
+        hexdump = response.body.bytes.each_slice(16).map{ |bytes|
+          bytes.each_slice(8).map {|half|
+            half.map{|byte| '%02x' % byte}.join(' ')
+          }.join('  ').ljust(3*16+1) + '  ' + \
+          bytes.map{|byte| (0x20..0x7e).include?(byte) ? byte.chr : '.'}.join
+        }.join("\n")
+
         raise "MessagePack UnpackError #{e.message}\nMessagePack is ...\n" \
-              "---\n#{response.body}\n---"
+              "---\n#{hexdump}\n---"
       end
       normalize_structured_response(actual)
     when "text/html"
