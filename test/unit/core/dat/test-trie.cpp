@@ -252,6 +252,56 @@ namespace test_dat_trie
     }
   }
 
+  void test_lcp_search(void)
+  {
+    grn::dat::Trie trie;
+    trie.create();
+
+    cppcut_assert_equal(true, trie.insert("012", 3));
+    cppcut_assert_equal(true, trie.insert("01234", 5));
+    cppcut_assert_equal(true, trie.insert("0123456", 7));
+
+    cppcut_assert_equal(false, trie.lcp_search("01", 2));
+    cppcut_assert_equal(true, trie.lcp_search("012", 3));
+    cppcut_assert_equal(true, trie.lcp_search("0123", 4));
+    cppcut_assert_equal(false, trie.lcp_search("12345", 5));
+
+    grn::dat::UInt32 key_pos = grn::dat::UINT32_MAX;
+
+    cppcut_assert_equal(false, trie.lcp_search("01", 2, &key_pos));
+    cppcut_assert_equal(grn::dat::UINT32_MAX, key_pos);
+
+    cppcut_assert_equal(true, trie.lcp_search("012", 3, &key_pos));
+    cppcut_assert_equal(true, trie.get_key(key_pos).is_valid());
+    cppcut_assert_equal(static_cast<grn::dat::UInt32>(1),
+                        trie.get_key(key_pos).id());
+
+    cppcut_assert_equal(true, trie.lcp_search("012345", 6, &key_pos));
+    cppcut_assert_equal(true, trie.get_key(key_pos).is_valid());
+    cppcut_assert_equal(static_cast<grn::dat::UInt32>(2),
+                        trie.get_key(key_pos).id());
+
+    cppcut_assert_equal(true, trie.lcp_search("0123456789", 10, &key_pos));
+    cppcut_assert_equal(true, trie.get_key(key_pos).is_valid());
+    cppcut_assert_equal(static_cast<grn::dat::UInt32>(3),
+                        trie.get_key(key_pos).id());
+
+    std::vector<std::string> keys;
+    create_keys(&keys, 1000, 1, 16);
+
+    for (std::size_t i = 0; i < keys.size(); ++i) {
+      const char * const ptr = keys[i].c_str();
+      const uint32_t length = static_cast<uint32_t>(keys[i].length());
+      grn::dat::UInt32 key_pos_inserted;
+      trie.insert(ptr, length, &key_pos_inserted);
+
+      grn::dat::UInt32 key_pos_found;
+      cppcut_assert_equal(true,
+                          trie.lcp_search(ptr, length, &key_pos_found));
+      cppcut_assert_equal(key_pos_inserted, key_pos_found);
+    }
+  }
+
   void test_remove(void)
   {
     std::vector<std::string> keys;
