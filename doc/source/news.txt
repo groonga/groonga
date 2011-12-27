@@ -19,7 +19,6 @@ Improvements
 * [admin] Supported throughput chart.
 * Stopped adding nul character in ``grn_itoh()``. [#1194]
   [Reported by SHIDARA Yoji]
-* Supported MessagePack output. [#1215] [Patch by SHIDARA Yoji]
 * Added ``grn_obj_get_values()``.
 * Added ``grn_obj_delete_by_id()``.
 * Supported string vector column for query expansion. [#1216]
