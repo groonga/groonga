@@ -255,15 +255,15 @@ module GroongaHTTPTestUtils
 
     hex_sublines = []
     binary.each_slice(bytes_per_subline) do |binary_subline|
-      hex_sublines << binary_subline.collect{|byte| '%02x' % byte}.join(' ')
+      hex_sublines << binary_subline.collect {|byte| '%02x' % byte}.join(' ')
     end
     hex_sublines.join(sublines_delimiter).ljust(hex_part_length)
   end
 
   def hexdump_ascii_part(binary)
-    binary.collect{|byte|
+    binary.collect do |byte|
       (0x20..0x7e).include?(byte) ? byte.chr : '.'
-    }.join
+    end.join
   end
 
   def hexdump(str)
