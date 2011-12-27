@@ -48,13 +48,16 @@ class SuggestHTTPDTest < Test::Unit::TestCase
       "s" => Time.now.to_i * 1000,
       "i" => "id",
       "t" => "complete",
-      "s" => @dataset_name,
+      "n" => @dataset_name,
       "l" => @dataset_name,
     }
     encoded_options = encode_options(options)
     response = get("/?#{encoded_options}")
     assert_equal("application/json", response.content_type)
-    assert_equal("XXX", JSON.parse(response.body))
+    assert_equal({"complete" => [[0],
+                                 [["_key", "ShortText"],
+                                  ["_score", "Int32"]]]},
+                 JSON.parse(response.body))
   end
 
   private
