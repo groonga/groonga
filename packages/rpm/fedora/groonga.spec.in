@@ -316,6 +316,9 @@ fi
 %{php_extdir}/groonga.so
 
 %changelog
+* Thu Dec 29 2011 Kouhei Sutou <kou@clear-code.com> - 1.2.9-0
+- new upstream release.
+
 * Tue Nov 29 2011 Kouhei Sutou <kou@clear-code.com> - 1.2.8-0
 - new upstream release.
 - enable zlib support.
