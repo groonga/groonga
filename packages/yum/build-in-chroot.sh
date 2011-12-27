@@ -58,13 +58,18 @@ build_chroot()
 	    distribution_architecture=i686
 	fi
     fi
+    if [ "$distribution_name-$distribution_version" = "fedora-16" ]; then
+	rinse_distribution_version="15"
+    else
+	rinse_distribution_version="$distribution_version"
+    fi
 
     run_sudo mkdir -p ${base_dir}/etc/rpm
     rpm_platform=${distribution_architecture}-${distribution}-linux
     run_sudo sh -c "echo ${rpm_platform} > ${base_dir}/etc/rpm/platform"
     run_sudo rinse \
 	--arch $rinse_architecture \
-	--distribution $distribution_name-$distribution_version \
+	--distribution $distribution_name-$rinse_distribution_version \
 	--directory $base_dir
     run_sudo rinse --arch $rinse_architecture --clean-cache
 
@@ -75,6 +80,13 @@ build_chroot()
     run_sudo mount ${base_dir}/dev
     run_sudo mount ${base_dir}/dev/pts
     run_sudo mount ${base_dir}/proc
+
+    if [ "$distribution_name-$distribution_version" = "fedora-16" ]; then
+	yes | run_sudo su -c "chroot ${base_dir} rpm --import https://fedoraproject.org/static/A82BA4B7.txt"
+	run_sudo su -c "chroot ${base_dir} yum -y update yum"
+	run_sudo su -c "chroot ${base_dir} yum -y clean all"
+	run_sudo su -c "chroot ${base_dir} yum -y --releasever=16 --disableplugin=presto distro-sync"
+    fi
 }
 
 build()
@@ -149,7 +161,7 @@ for architecture in $ARCHITECTURES; do
     for distribution in $DISTRIBUTIONS; do
 	case $distribution in
 	    fedora)
-		distribution_versions="15"
+		distribution_versions="16"
 		;;
 	    centos)
 		distribution_versions="5 6"
