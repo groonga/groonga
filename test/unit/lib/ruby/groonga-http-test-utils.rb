@@ -63,7 +63,7 @@ module GroongaHTTPTestUtils
   def teardown_server
     if @groonga_pid
       begin
-        timeout(2) do
+        timeout(5) do
           shutdown_server
           begin
             Process.waitpid(@groonga_pid)
