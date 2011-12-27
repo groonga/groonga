@@ -627,14 +627,11 @@ grn_dat_lcp_search(grn_ctx *ctx, grn_dat *dat,
   }
 
   try {
-    grn::dat::Cursor * const cursor = grn::dat::CursorFactory::open(*trie,
-        NULL, 0, key, key_size, 0, 1,
-        grn::dat::PREFIX_CURSOR | grn::dat::DESCENDING_CURSOR);
-    // grn::dat::PrefixCursor::next() is assumed not to throw an exception.
-    const grn::dat::Key &lcp_key = cursor->next();
-    delete cursor;
-    // The `lcp_key' is still valid even after the cursor deletion.
-    return lcp_key.is_valid() ? lcp_key.id() : GRN_ID_NIL;
+    grn::dat::UInt32 key_pos;
+    if (!trie->lcp_search(key, key_size, &key_pos)) {
+      return GRN_ID_NIL;
+    }
+    return trie->get_key(key_pos).id();
   } catch (const grn::dat::Exception &ex) {
     ERR(grn_dat_translate_error_code(ex.code()),
         const_cast<char *>("grn::dat::PrefixCursor::open failed"));
