@@ -423,6 +423,48 @@ namespace test_dat
     cppcut_assert_equal(GRN_SUCCESS, grn_dat_close(&ctx, dat));
   }
 
+  void test_lcp_search(void)
+  {
+    {
+      std::vector<std::string> keys;
+      keys.push_back("012");
+      keys.push_back("01234");
+      keys.push_back("0123456");
+
+      grn_dat * const dat = create_trie(keys, NULL);
+      cppcut_assert_equal(static_cast<grn_id>(GRN_ID_NIL),
+                          grn_dat_lcp_search(&ctx, dat, "01", 2));
+      cppcut_assert_equal(static_cast<grn_id>(1),
+                          grn_dat_lcp_search(&ctx, dat, "012", 3));
+      cppcut_assert_equal(static_cast<grn_id>(1),
+                          grn_dat_lcp_search(&ctx, dat, "0123", 4));
+      cppcut_assert_equal(static_cast<grn_id>(2),
+                          grn_dat_lcp_search(&ctx, dat, "01234", 5));
+      cppcut_assert_equal(static_cast<grn_id>(2),
+                          grn_dat_lcp_search(&ctx, dat, "012345", 6));
+      cppcut_assert_equal(static_cast<grn_id>(3),
+                          grn_dat_lcp_search(&ctx, dat, "0123456", 7));
+      cppcut_assert_equal(static_cast<grn_id>(3),
+                          grn_dat_lcp_search(&ctx, dat, "0123456789", 10));
+      cppcut_assert_equal(static_cast<grn_id>(GRN_ID_NIL),
+                          grn_dat_lcp_search(&ctx, dat, "013", 3));
+    }
+
+    {
+      std::vector<std::string> keys;
+      create_keys(&keys, 1000, 6, 15);
+
+      grn_dat * const dat = create_trie(keys, NULL);
+      for (std::size_t i = 0; i < keys.size(); ++i) {
+        const grn_id key_id = static_cast<grn_id>(i + 1);
+        const char * const ptr = keys[i].c_str();
+        const uint32_t length = static_cast<uint32_t>(keys[i].length());
+        cppcut_assert_equal(key_id, grn_dat_lcp_search(&ctx, dat, ptr, length));
+      }
+      cppcut_assert_equal(GRN_SUCCESS, grn_dat_close(&ctx, dat));
+    }
+  }
+
   void test_size(void)
   {
     std::vector<std::string> keys;
@@ -487,6 +529,30 @@ namespace test_dat
       cppcut_assert_equal(keys[i], std::string(key_ptr, key_length));
     }
     cut_assert_null(_grn_dat_key(&ctx, dat, GRN_ID_NIL, NULL));
+    cppcut_assert_equal(GRN_SUCCESS, grn_dat_close(&ctx, dat));
+  }
+
+  void test_next(void)
+  {
+    std::vector<std::string> keys;
+    create_keys(&keys, 1000, 6, 15);
+
+    grn_dat * const dat = create_trie(keys, NULL);
+    for (std::size_t i = 0; i < keys.size(); i += 2) {
+      const grn_id key_id = static_cast<grn_id>(i + 1);
+      cppcut_assert_equal(GRN_SUCCESS,
+                          grn_dat_delete_by_id(&ctx, dat, key_id, NULL));
+    }
+    for (std::size_t i = 0; i < (keys.size() - 1); ++i) {
+      const grn_id key_id = static_cast<grn_id>(i + 1);
+      if (!(i & 1)) {
+        cppcut_assert_equal(key_id + 1, grn_dat_next(&ctx, dat, key_id));
+      } else {
+        cppcut_assert_equal(key_id + 2, grn_dat_next(&ctx, dat, key_id));
+      }
+    }
+    cppcut_assert_equal(static_cast<grn_id>(GRN_ID_NIL),
+                        grn_dat_next(&ctx, dat, keys.size()));
     cppcut_assert_equal(GRN_SUCCESS, grn_dat_close(&ctx, dat));
   }
 
