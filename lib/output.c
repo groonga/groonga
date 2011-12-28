@@ -950,15 +950,11 @@ grn_output_obj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
 #endif
       grn_output_array_open(ctx, outbuf, output_type, "RESULTSET", resultset_size);
       grn_output_array_open(ctx, outbuf, output_type, "NHITS", 1);
-#ifdef HAVE_MESSAGE_PACK
-      if (output_type == GRN_CONTENT_MSGPACK) {
-        grn_output_int32(ctx, outbuf, output_type, format->nhits);
-      } else {
+      if (output_type == GRN_CONTENT_XML) {
         grn_text_itoa(ctx, outbuf, format->nhits);
+      } else {
+        grn_output_int32(ctx, outbuf, output_type, format->nhits);
       }
-#else
-      grn_text_itoa(ctx, outbuf, format->nhits);
-#endif
       grn_output_array_close(ctx, outbuf, output_type);
       if (format->flags & GRN_OBJ_FORMAT_WITH_COLUMN_NAMES) {
         grn_output_array_open(ctx, outbuf, output_type, "COLUMNS", ncolumns);
