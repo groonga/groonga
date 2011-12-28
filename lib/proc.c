@@ -405,7 +405,7 @@ grn_select(grn_ctx *ctx, const char *table, unsigned table_len,
     }
     nhits = res ? grn_table_size(ctx, res) : 0;
     LAP(":", "select(%d)", nhits);
-    GRN_OUTPUT_ARRAY_OPEN("RESULT", -1);
+    GRN_OUTPUT_ARRAY_OPEN("RESULT", res ? 1 : 0);
     if (res) {
       if (scorer && scorer_len) {
         grn_obj *v;

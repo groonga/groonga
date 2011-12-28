@@ -939,16 +939,32 @@ grn_output_obj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
       grn_table_cursor *tc = grn_table_cursor_open(ctx, obj, NULL, 0, NULL, 0,
                                                    format->offset, format->limit,
                                                    GRN_CURSOR_ASCENDING);
+      int resultset_size = -1;
       if (!tc) { ERRCLR(ctx); }
-      grn_output_array_open(ctx, outbuf, output_type, "RESULTSET", -1);
+#ifdef HAVE_MESSAGE_PACK
+      resultset_size = 1; /* [NHITS, (COLUMNS), (HITS)] */
+      if (format->flags & GRN_OBJ_FORMAT_WITH_COLUMN_NAMES) {
+        resultset_size++;
+      }
+      resultset_size += format->limit;
+#endif
+      grn_output_array_open(ctx, outbuf, output_type, "RESULTSET", resultset_size);
       grn_output_array_open(ctx, outbuf, output_type, "NHITS", 1);
+#ifdef HAVE_MESSAGE_PACK
+      if (output_type == GRN_CONTENT_MSGPACK) {
+        grn_output_int32(ctx, outbuf, output_type, format->nhits);
+      } else {
+        grn_text_itoa(ctx, outbuf, format->nhits);
+      }
+#else
       grn_text_itoa(ctx, outbuf, format->nhits);
+#endif
       grn_output_array_close(ctx, outbuf, output_type);
       if (format->flags & GRN_OBJ_FORMAT_WITH_COLUMN_NAMES) {
-        grn_output_array_open(ctx, outbuf, output_type, "COLUMNS", -1);
+        grn_output_array_open(ctx, outbuf, output_type, "COLUMNS", ncolumns);
         for (j = 0; j < ncolumns; j++) {
           grn_id range_id;
-          grn_output_array_open(ctx, outbuf, output_type, "COLUMN", -1);
+          grn_output_array_open(ctx, outbuf, output_type, "COLUMN", 2);
           GRN_BULK_REWIND(&buf);
           grn_column_name_(ctx, columns[j], &buf);
           grn_output_obj(ctx, outbuf, output_type, &buf, NULL);
