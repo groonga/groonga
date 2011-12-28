@@ -339,7 +339,7 @@ transform_xml(grn_ctx *ctx, grn_obj *output, grn_obj *transformed)
           result_set_n++;
           if (result_set_n == 0) {
           } else {
-            GRN_TEXT_PUTS(ctx, transformed, "<NAVIGATIONENTRY>");
+            GRN_TEXT_PUTS(ctx, transformed, "<NAVIGATIONENTRY>\n");
           }
         } else if (EQUAL_NAME_P("VECTOR")) {
           char *c = transform_xml_next_column(&columns, column_n++);
@@ -356,7 +356,7 @@ transform_xml(grn_ctx *ctx, grn_obj *output, grn_obj *transformed)
           if (result_set_n == 0) {
             GRN_TEXT_PUTS(ctx, transformed, "</HIT>\n");
           } else {
-            GRN_TEXT_PUTS(ctx, transformed, "/>");
+            GRN_TEXT_PUTS(ctx, transformed, "/>\n");
           }
         } else if (EQUAL_NAME_P("RESULTSET")) {
           place = XML_PLACE_NONE;
@@ -364,8 +364,8 @@ transform_xml(grn_ctx *ctx, grn_obj *output, grn_obj *transformed)
             GRN_TEXT_PUTS(ctx, transformed, "</RESULTSET>\n");
           } else {
             GRN_TEXT_PUTS(ctx, transformed,
-                          "</NAVIGATIONELEMENTS>"
-                          "</NAVIGATIONENTRY>");
+                          "</NAVIGATIONELEMENTS>\n"
+                          "</NAVIGATIONENTRY>\n");
           }
         } else if (EQUAL_NAME_P("RESULT")) {
           GRN_TEXT_PUTS(ctx, transformed,
@@ -452,7 +452,7 @@ transform_xml(grn_ctx *ctx, grn_obj *output, grn_obj *transformed)
                 GRN_TEXT_PUT(ctx, transformed,
                              GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf));
                 GRN_TEXT_PUTS(ctx, transformed,
-                              "\">");
+                              "\">\n");
               }
             } else if (EQUAL_NAME_P("TEXT")) {
               switch (place) {
