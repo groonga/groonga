@@ -13,6 +13,8 @@ Release 1.2.9 - 2011/12/29
 Improvements
 ^^^^^^^^^^^^
 
+* Supported Fedora 16.
+* Dropped Fedora 15 support.
 * [groonga] Improved the default server ID address to work
   on unresolved host name environment. [Reported by @uzulla]
 * Supported MAP_HUGETLB.
@@ -24,6 +26,15 @@ Improvements
 * Supported string vector column for query expansion. [#1216]
 * Added ``--filter`` option to :doc:`/commands:delete` to delete
   many record at once. [#1225]
+* Supported approximate type customization for
+  :doc:`/functions/geo_in_circle` and :doc:`/functions/geo_distance`. [#1226]
+* Made ``geo_distance2()`` and ``geo_distance3()`` are deprecated.
+* Changed to use ``null`` instead of ``""`` for empty geo
+  point value in JSON output.
+* Almost supported MessagePack output. [#1215] [Worked by SHIDARA Yoji]
+* Added missing newlines after drilldown result tags in XML output.
+* Supported truncate for grn_dat.
+* Supported longest common prefix search by grn_dat.
 
 Fixes
 ^^^^^
