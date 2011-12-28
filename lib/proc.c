@@ -405,8 +405,21 @@ grn_select(grn_ctx *ctx, const char *table, unsigned table_len,
     }
     nhits = res ? grn_table_size(ctx, res) : 0;
     LAP(":", "select(%d)", nhits);
-    GRN_OUTPUT_ARRAY_OPEN("RESULT", res ? 1 : 0);
+
     if (res) {
+      uint32_t ngkeys;
+      grn_table_sort_key *gkeys = NULL;
+      int result_size = 1;
+      if (!ctx->rc && drilldown_len) {
+        gkeys = grn_table_sort_key_from_str(ctx,
+                                            drilldown, drilldown_len,
+                                            res, &ngkeys);
+        if (gkeys) {
+          result_size += ngkeys;
+        }
+      }
+      GRN_OUTPUT_ARRAY_OPEN("RESULT", result_size);
+
       if (scorer && scorer_len) {
         grn_obj *v;
         GRN_EXPR_CREATE_FOR_QUERY(ctx, res, scorer_, v);
@@ -458,11 +471,9 @@ grn_select(grn_ctx *ctx, const char *table, unsigned table_len,
       }
       LAP(":", "output(%d)", limit);
       if (!ctx->rc && drilldown_len) {
-        uint32_t i, ngkeys;
-        grn_table_sort_key *gkeys;
+        uint32_t i;
         grn_table_group_result g = {NULL, 0, 0, 1, GRN_TABLE_GROUP_CALC_COUNT, 0};
-        if ((gkeys = grn_table_sort_key_from_str(ctx, drilldown,
-                                                 drilldown_len, res, &ngkeys))) {
+        if (gkeys) {
           for (i = 0; i < ngkeys; i++) {
             if ((g.table = grn_table_create_for_group(ctx, NULL, 0, NULL,
                                                       GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
@@ -517,6 +528,8 @@ grn_select(grn_ctx *ctx, const char *table, unsigned table_len,
         }
       }
       if (res != table_) { grn_obj_unlink(ctx, res); }
+    } else {
+      GRN_OUTPUT_ARRAY_OPEN("RESULT", 0);
     }
     GRN_OUTPUT_ARRAY_CLOSE();
     if (!ctx->rc && cacheable && cache_key_size <= GRN_TABLE_MAX_KEY_SIZE
