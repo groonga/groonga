@@ -442,7 +442,7 @@ grn_output_geo_point(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type
       grn_text_itoa(ctx, outbuf, value->longitude);
       GRN_TEXT_PUTC(ctx, outbuf, '"');
     } else {
-      GRN_TEXT_PUTS(ctx, outbuf, "\"\"");
+      GRN_TEXT_PUTS(ctx, outbuf, "null");
     }
     break;
   case GRN_CONTENT_TSV:
