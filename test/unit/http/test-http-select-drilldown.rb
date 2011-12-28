@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2009-2010  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2009-2011  Kouhei Sutou <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -279,7 +279,27 @@ module HTTPSelectDrilldownTests
 <FIELD NAME="date">20091220.0</FIELD>
 </HIT>
 </RESULTSET>
-<NAVIGATIONENTRY><NAVIGATIONELEMENTS COUNT="3"><NAVIGATIONELEMENT _key="20091218.0" _nsubrecs="3" /><NAVIGATIONELEMENT _key="20091220.0" _nsubrecs="2" /><NAVIGATIONELEMENT _key="20091219.0" _nsubrecs="1" /></NAVIGATIONELEMENTS></NAVIGATIONENTRY><NAVIGATIONENTRY><NAVIGATIONELEMENTS COUNT="3"><NAVIGATIONELEMENT _key="yu" _nsubrecs="3" /><NAVIGATIONELEMENT _key="グニャラくん" _nsubrecs="2" /><NAVIGATIONELEMENT _key="morita" _nsubrecs="1" /></NAVIGATIONELEMENTS></NAVIGATIONENTRY><NAVIGATIONENTRY><NAVIGATIONELEMENTS COUNT="2"><NAVIGATIONELEMENT _key="shinjuku" _nsubrecs="4" name="新宿" /><NAVIGATIONELEMENT _key="razil.jp" _nsubrecs="2" name="ブラジル" /></NAVIGATIONELEMENTS></NAVIGATIONENTRY></RESULTPAGE>
+<NAVIGATIONENTRY>
+<NAVIGATIONELEMENTS COUNT="3">
+<NAVIGATIONELEMENT _key="20091218.0" _nsubrecs="3" />
+<NAVIGATIONELEMENT _key="20091220.0" _nsubrecs="2" />
+<NAVIGATIONELEMENT _key="20091219.0" _nsubrecs="1" />
+</NAVIGATIONELEMENTS>
+</NAVIGATIONENTRY>
+<NAVIGATIONENTRY>
+<NAVIGATIONELEMENTS COUNT="3">
+<NAVIGATIONELEMENT _key="yu" _nsubrecs="3" />
+<NAVIGATIONELEMENT _key="グニャラくん" _nsubrecs="2" />
+<NAVIGATIONELEMENT _key="morita" _nsubrecs="1" />
+</NAVIGATIONELEMENTS>
+</NAVIGATIONENTRY>
+<NAVIGATIONENTRY>
+<NAVIGATIONELEMENTS COUNT="2">
+<NAVIGATIONELEMENT _key="shinjuku" _nsubrecs="4" name="新宿" />
+<NAVIGATIONELEMENT _key="razil.jp" _nsubrecs="2" name="ブラジル" />
+</NAVIGATIONELEMENTS>
+</NAVIGATIONENTRY>
+</RESULTPAGE>
 </SEGMENT>
 </SEGMENTS>
 EOX
