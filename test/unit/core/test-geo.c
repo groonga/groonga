@@ -28,10 +28,10 @@
 
 void test_in_circle(void);
 void test_in_rectangle(void);
-void data_distance(void);
-void test_distance(gconstpointer data);
-void test_distance2(void);
-void test_distance3(void);
+void data_distance_rectangle(void);
+void test_distance_rectangle(gconstpointer data);
+void test_distance_sphere(void);
+void test_distance_ellipsoid(void);
 void test_estimate_in_rectangle(void);
 
 static gchar *tmp_directory;
@@ -234,7 +234,7 @@ assign_shinjuku_and_takane(gconstpointer data)
 }
 
 void
-data_distance(void)
+data_distance_rectangle(void)
 {
 #define ADD_DATUM(label, shinjuku, takane)                      \
   gcut_add_datum(label,                                         \
@@ -271,29 +271,29 @@ data_distance(void)
 }
 
 void
-test_distance(gconstpointer data)
+test_distance_rectangle(gconstpointer data)
 {
   assign_shinjuku_and_takane(data);
   cut_assert_equal_double(12585.4, 10,
-                          grn_geo_distance(context, shinjuku, takane));
+                          grn_geo_distance_rectangle(context, shinjuku, takane));
 }
 
 void
-test_distance2(void)
+test_distance_sphere(void)
 {
   cut_assert_equal_double(12585.4, 10,
-                          grn_geo_distance2(context,
-                                            shinjuku_wgs84,
-                                            takane_wgs84));
+                          grn_geo_distance_sphere(context,
+                                                  shinjuku_wgs84,
+                                                  takane_wgs84));
 }
 
 void
-test_distance3(void)
+test_distance_ellipsoid(void)
 {
   cut_assert_equal_double(12640.8, 10,
-                          grn_geo_distance3(context,
-                                            shinjuku_wgs84,
-                                            takane_wgs84));
+                          grn_geo_distance_ellipsoid(context,
+                                                     shinjuku_wgs84,
+                                                     takane_wgs84));
 }
 
 void
