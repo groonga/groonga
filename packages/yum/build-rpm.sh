@@ -75,6 +75,8 @@ EOF
     yum_options="$yum_options --enablerepo=atrpms"
 fi
 
+rpmbuild_options="${BUILD_OPTIONS}"
+
 run yum update ${yum_options} -y
 if ! rpm -q mecab-devel > /dev/null; then
     run yum install -y rpm-build wget libtool gcc gcc-c++ make
@@ -128,6 +130,9 @@ fi
 run yum install ${yum_options} -y rpm-build tar ${DEPENDED_PACKAGES}
 run yum clean ${yum_options} packages
 
+# for debug
+# rpmbuild_options="$rpmbuild_options --define 'optflags -O0 -ggdb3'"
+
 cat <<EOF > $BUILD_SCRIPT
 #!/bin/sh
 
@@ -137,6 +142,7 @@ if [ ! -f ~/.rpmmacros ]; then
 EOM
 fi
 
+# rm -rf rpm
 mkdir -p rpm/SOURCES
 mkdir -p rpm/SPECS
 mkdir -p rpm/BUILD
@@ -164,7 +170,7 @@ fi
 
 chmod o+rx . rpm rpm/RPMS rpm/SRPMS
 
-rpmbuild -ba rpm/SPECS/${PACKAGE}.spec ${BUILD_OPTIONS}
+rpmbuild -ba ${rpmbuild_options} rpm/SPECS/${PACKAGE}.spec
 EOF
 
 run chmod +x $BUILD_SCRIPT
