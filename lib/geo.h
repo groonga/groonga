@@ -57,6 +57,12 @@ extern "C" {
 #define GRN_GEO_KEY_MAX_BITS 64
 
 typedef enum {
+  GRN_GEO_APPROXIMATE_RECTANGLE,
+  GRN_GEO_APPROXIMATE_SPHERE,
+  GRN_GEO_APPROXIMATE_ELLIPSOID
+} grn_geo_approximate_type;
+
+typedef enum {
   GRN_GEO_CURSOR_ENTRY_STATUS_NONE            = 0,
   GRN_GEO_CURSOR_ENTRY_STATUS_TOP_INCLUDED    = 1 << 0,
   GRN_GEO_CURSOR_ENTRY_STATUS_BOTTOM_INCLUDED = 1 << 1,
@@ -108,13 +114,21 @@ grn_bool grn_geo_in_rectangle(grn_ctx *ctx, grn_obj *point,
 grn_bool grn_geo_in_rectangle_raw(grn_ctx *ctx, grn_geo_point *point,
                                   grn_geo_point *top_left,
                                   grn_geo_point *bottom_right);
-double grn_geo_distance(grn_ctx *ctx, grn_obj *point1, grn_obj *point2);
-double grn_geo_distance2(grn_ctx *ctx, grn_obj *point1, grn_obj *point2);
-double grn_geo_distance3(grn_ctx *ctx, grn_obj *point1, grn_obj *point2);
-double grn_geo_distance_raw(grn_ctx *ctx, grn_geo_point *point1, grn_geo_point *point2);
-double grn_geo_distance2_raw(grn_ctx *ctx, grn_geo_point *point1, grn_geo_point *point2);
-double grn_geo_distance3_raw(grn_ctx *ctx, grn_geo_point *point1, grn_geo_point *point2,
-                             int c1, int c2, double c3);
+double grn_geo_distance(grn_ctx *ctx, grn_obj *point1, grn_obj *point2,
+                        grn_geo_approximate_type type);
+double grn_geo_distance_rectangle(grn_ctx *ctx, grn_obj *point1, grn_obj *point2);
+double grn_geo_distance_sphere(grn_ctx *ctx, grn_obj *point1, grn_obj *point2);
+double grn_geo_distance_ellipsoid(grn_ctx *ctx, grn_obj *point1, grn_obj *point2);
+double grn_geo_distance_rectangle_raw(grn_ctx *ctx,
+                                      grn_geo_point *point1,
+                                      grn_geo_point *point2);
+double grn_geo_distance_sphere_raw(grn_ctx *ctx,
+                                   grn_geo_point *point1,
+                                   grn_geo_point *point2);
+double grn_geo_distance_ellipsoid_raw(grn_ctx *ctx,
+                                      grn_geo_point *point1,
+                                      grn_geo_point *point2,
+                                      int c1, int c2, double c3);
 
 #ifdef __cplusplus
 }

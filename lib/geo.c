@@ -268,7 +268,7 @@ grn_geo_table_sort_detect_far_point(grn_ctx *ctx, grn_obj *table, grn_obj *index
       grn_gton(geo_key_prev, &point, sizeof(grn_geo_point));
       grn_pat_get_key(ctx, pat, tid, &point, sizeof(grn_geo_point));
       grn_gton(geo_key_curr, &point, sizeof(grn_geo_point));
-      d = grn_geo_distance_raw(ctx, base_point, &point);
+      d = grn_geo_distance_rectangle_raw(ctx, base_point, &point);
       inspect_tid(ctx, tid, &point, d);
 
       diff_bit_prev = diff_bit_current;
@@ -480,7 +480,8 @@ grn_geo_get_meshes_for_circle(grn_ctx *ctx, grn_geo_point *base_point,
         }
         meshes[n_meshes].key.latitude = lat;
         meshes[n_meshes].key.longitude = lng;
-        d = grn_geo_distance_raw(ctx, base_point, &(meshes[n_meshes].key));
+        d = grn_geo_distance_rectangle_raw(ctx, base_point,
+                                           &(meshes[n_meshes].key));
         if (d < d_far) {
 #ifdef GEO_DEBUG
           printf("sub-mesh: %d: (%d,%d): (%d,%d;%d,%d)\n",
@@ -537,7 +538,7 @@ grn_geo_table_sort_collect_points(grn_ctx *ctx, grn_obj *table, grn_obj *index,
           grn_geo_point pos;
           grn_ii_posting *posting;
           grn_pat_get_key(ctx, pat, tid, &pos, sizeof(grn_geo_point));
-          d = grn_geo_distance_raw(ctx, base_point, &pos);
+          d = grn_geo_distance_rectangle_raw(ctx, base_point, &pos);
           inspect_tid(ctx, tid, &pos, d);
           while ((posting = grn_ii_cursor_next(ctx, ic))) {
             grn_id rid = accessorp
@@ -751,7 +752,7 @@ grn_geo_select_in_circle(grn_ctx *ctx, grn_obj *index,
     uint8_t geo_key1[sizeof(grn_geo_point)];
     uint8_t geo_key2[sizeof(grn_geo_point)];
 
-    d_far = grn_geo_distance_raw(ctx, center, &on_circle);
+    d_far = grn_geo_distance_rectangle_raw(ctx, center, &on_circle);
     grn_gton(geo_key1, center, sizeof(grn_geo_point));
     grn_gton(geo_key2, &on_circle, sizeof(grn_geo_point));
     diff_bit = compute_diff_bit(geo_key1, geo_key2);
@@ -1735,7 +1736,8 @@ exit :
 }
 
 double
-grn_geo_distance_raw(grn_ctx *ctx, grn_geo_point *point1, grn_geo_point *point2)
+grn_geo_distance_rectangle_raw(grn_ctx *ctx,
+                               grn_geo_point *point1, grn_geo_point *point2)
 {
   double lng1, lat1, lng2, lat2, x, y;
 
@@ -1749,7 +1751,8 @@ grn_geo_distance_raw(grn_ctx *ctx, grn_geo_point *point1, grn_geo_point *point2)
 }
 
 double
-grn_geo_distance2_raw(grn_ctx *ctx, grn_geo_point *point1, grn_geo_point *point2)
+grn_geo_distance_sphere_raw(grn_ctx *ctx,
+                            grn_geo_point *point1, grn_geo_point *point2)
 {
   double lng1, lat1, lng2, lat2, x, y;
 
@@ -1763,8 +1766,9 @@ grn_geo_distance2_raw(grn_ctx *ctx, grn_geo_point *point1, grn_geo_point *point2
 }
 
 double
-grn_geo_distance3_raw(grn_ctx *ctx, grn_geo_point *point1, grn_geo_point *point2,
-                      int c1, int c2, double c3)
+grn_geo_distance_ellipsoid_raw(grn_ctx *ctx,
+                               grn_geo_point *point1, grn_geo_point *point2,
+                               int c1, int c2, double c3)
 {
   double lng1, lat1, lng2, lat2, p, q, r, m, n, x, y;
 
@@ -1783,7 +1787,30 @@ grn_geo_distance3_raw(grn_ctx *ctx, grn_geo_point *point1, grn_geo_point *point2
 }
 
 double
-grn_geo_distance(grn_ctx *ctx, grn_obj *point1, grn_obj *point2)
+grn_geo_distance(grn_ctx *ctx, grn_obj *point1, grn_obj *point2,
+                 grn_geo_approximate_type type)
+{
+  double d = 0.0;
+
+  switch (type) {
+  case GRN_GEO_APPROXIMATE_RECTANGLE :
+    d = grn_geo_distance_rectangle(ctx, point1, point2);
+    break;
+  case GRN_GEO_APPROXIMATE_SPHERE :
+    d = grn_geo_distance_sphere(ctx, point1, point2);
+    break;
+  case GRN_GEO_APPROXIMATE_ELLIPSOID :
+    d = grn_geo_distance_ellipsoid(ctx, point1, point2);
+    break;
+  default :
+    ERR(GRN_INVALID_ARGUMENT, "unknown approximate type: <%d>", type);
+    break;
+  }
+  return d;
+}
+
+double
+grn_geo_distance_rectangle(grn_ctx *ctx, grn_obj *point1, grn_obj *point2)
 {
   double d = 0;
   grn_bool point1_initialized = GRN_FALSE;
@@ -1818,9 +1845,9 @@ grn_geo_distance(grn_ctx *ctx, grn_obj *point1, grn_obj *point2)
   } else {
     goto exit;
   }
-  d = grn_geo_distance_raw(ctx,
-                           GRN_GEO_POINT_VALUE_RAW(point1),
-                           GRN_GEO_POINT_VALUE_RAW(point2));
+  d = grn_geo_distance_rectangle_raw(ctx,
+                                     GRN_GEO_POINT_VALUE_RAW(point1),
+                                     GRN_GEO_POINT_VALUE_RAW(point2));
 exit :
   if (point1_initialized) {
     GRN_OBJ_FIN(ctx, &point1_);
@@ -1832,7 +1859,7 @@ exit :
 }
 
 double
-grn_geo_distance2(grn_ctx *ctx, grn_obj *point1, grn_obj *point2)
+grn_geo_distance_sphere(grn_ctx *ctx, grn_obj *point1, grn_obj *point2)
 {
   double d = 0;
   grn_bool point2_initialized = GRN_FALSE;
@@ -1845,9 +1872,9 @@ grn_geo_distance2(grn_ctx *ctx, grn_obj *point1, grn_obj *point2)
       if (grn_obj_cast(ctx, point2, &point2_, 0)) { goto exit; }
       point2 = &point2_;
     }
-    d = grn_geo_distance2_raw(ctx,
-                              GRN_GEO_POINT_VALUE_RAW(point1),
-                              GRN_GEO_POINT_VALUE_RAW(point2));
+    d = grn_geo_distance_sphere_raw(ctx,
+                                    GRN_GEO_POINT_VALUE_RAW(point1),
+                                    GRN_GEO_POINT_VALUE_RAW(point2));
   } else {
     /* todo */
   }
@@ -1859,7 +1886,7 @@ exit :
 }
 
 double
-grn_geo_distance3(grn_ctx *ctx, grn_obj *point1, grn_obj *point2)
+grn_geo_distance_ellipsoid(grn_ctx *ctx, grn_obj *point1, grn_obj *point2)
 {
   double d = 0;
   grn_bool point2_initialized = GRN_FALSE;
@@ -1873,15 +1900,19 @@ grn_geo_distance3(grn_ctx *ctx, grn_obj *point1, grn_obj *point2)
       point2 = &point2_;
     }
     if (domain == GRN_DB_TOKYO_GEO_POINT) {
-      d = grn_geo_distance3_raw(ctx,
-                                GRN_GEO_POINT_VALUE_RAW(point1),
-                                GRN_GEO_POINT_VALUE_RAW(point2),
-                                GRN_GEO_BES_C1, GRN_GEO_BES_C2, GRN_GEO_BES_C3);
+      d = grn_geo_distance_ellipsoid_raw(ctx,
+                                         GRN_GEO_POINT_VALUE_RAW(point1),
+                                         GRN_GEO_POINT_VALUE_RAW(point2),
+                                         GRN_GEO_BES_C1,
+                                         GRN_GEO_BES_C2,
+                                         GRN_GEO_BES_C3);
     } else {
-      d = grn_geo_distance3_raw(ctx,
-                                GRN_GEO_POINT_VALUE_RAW(point1),
-                                GRN_GEO_POINT_VALUE_RAW(point2),
-                                GRN_GEO_GRS_C1, GRN_GEO_GRS_C2, GRN_GEO_GRS_C3);
+      d = grn_geo_distance_ellipsoid_raw(ctx,
+                                         GRN_GEO_POINT_VALUE_RAW(point1),
+                                         GRN_GEO_POINT_VALUE_RAW(point2),
+                                         GRN_GEO_GRS_C1,
+                                         GRN_GEO_GRS_C2,
+                                         GRN_GEO_GRS_C3);
     }
   } else {
     /* todo */

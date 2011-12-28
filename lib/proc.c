@@ -2530,7 +2530,7 @@ func_geo_distance2(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
   grn_obj *obj;
   double d = 0;
   if (nargs == 2) {
-    d = grn_geo_distance2(ctx, args[0], args[1]);
+    d = grn_geo_distance_sphere(ctx, args[0], args[1]);
   }
   if ((obj = GRN_PROC_ALLOC(GRN_DB_FLOAT, 0))) {
     GRN_FLOAT_SET(ctx, obj, d);
@@ -2544,7 +2544,7 @@ func_geo_distance3(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
   grn_obj *obj;
   double d = 0;
   if (nargs == 2) {
-    d = grn_geo_distance3(ctx, args[0], args[1]);
+    d = grn_geo_distance_ellipsoid(ctx, args[0], args[1]);
   }
   if ((obj = GRN_PROC_ALLOC(GRN_DB_FLOAT, 0))) {
     GRN_FLOAT_SET(ctx, obj, d);
