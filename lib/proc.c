@@ -2495,42 +2495,6 @@ func_now(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   return obj;
 }
 
-static grn_rc
-geo_resolve_approximate_type(grn_ctx *ctx, grn_obj *type_name,
-                             grn_geo_approximate_type *type)
-{
-  grn_rc rc;
-  grn_obj approximate_type;
-
-  GRN_TEXT_INIT(&approximate_type, 0);
-  rc = grn_obj_cast(ctx, type_name, &approximate_type, GRN_FALSE);
-  if (rc == GRN_SUCCESS) {
-    const char *name;
-    unsigned int size;
-    name = GRN_TEXT_VALUE(&approximate_type);
-    size = GRN_TEXT_LEN(&approximate_type);
-    if ((strncmp("rectangle", name, size) == 0) ||
-        (strncmp("rect", name, size) == 0)) {
-      *type = GRN_GEO_APPROXIMATE_RECTANGLE;
-    } else if ((strncmp("sphere", name, size) == 0) ||
-               (strncmp("sphr", name, size) == 0)) {
-      *type = GRN_GEO_APPROXIMATE_SPHERE;
-    } else if ((strncmp("ellipsoid", name, size) == 0) ||
-               (strncmp("ellip", name, size) == 0)) {
-      *type = GRN_GEO_APPROXIMATE_ELLIPSOID;
-    } else {
-      ERR(GRN_INVALID_ARGUMENT,
-          "geo distance approximate type must be one of "
-          "[rectangle, rect, sphere, sphr, ellipsoid, ellip]"
-          ": <%.*s>",
-          size, name);
-    }
-  }
-  GRN_OBJ_FIN(ctx, &approximate_type);
-
-  return rc;
-}
-
 static grn_obj *
 func_geo_in_circle(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
@@ -2567,7 +2531,7 @@ func_geo_distance(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
   grn_geo_approximate_type type = GRN_GEO_APPROXIMATE_RECTANGLE;
   switch (nargs) {
   case 3 :
-    if (geo_resolve_approximate_type(ctx, args[2], &type) != GRN_SUCCESS) {
+    if (grn_geo_resolve_approximate_type(ctx, args[2], &type) != GRN_SUCCESS) {
       break;
     }
     /* fallthru */

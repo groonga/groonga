@@ -632,33 +632,87 @@ grn_geo_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
 }
 
 grn_rc
+grn_geo_resolve_approximate_type(grn_ctx *ctx, grn_obj *type_name,
+                                 grn_geo_approximate_type *type)
+{
+  grn_rc rc;
+  grn_obj approximate_type;
+
+  GRN_TEXT_INIT(&approximate_type, 0);
+  rc = grn_obj_cast(ctx, type_name, &approximate_type, GRN_FALSE);
+  if (rc == GRN_SUCCESS) {
+    const char *name;
+    unsigned int size;
+    name = GRN_TEXT_VALUE(&approximate_type);
+    size = GRN_TEXT_LEN(&approximate_type);
+    if ((strncmp("rectangle", name, size) == 0) ||
+        (strncmp("rect", name, size) == 0)) {
+      *type = GRN_GEO_APPROXIMATE_RECTANGLE;
+    } else if ((strncmp("sphere", name, size) == 0) ||
+               (strncmp("sphr", name, size) == 0)) {
+      *type = GRN_GEO_APPROXIMATE_SPHERE;
+    } else if ((strncmp("ellipsoid", name, size) == 0) ||
+               (strncmp("ellip", name, size) == 0)) {
+      *type = GRN_GEO_APPROXIMATE_ELLIPSOID;
+    } else {
+      ERR(GRN_INVALID_ARGUMENT,
+          "geo distance approximate type must be one of "
+          "[rectangle, rect, sphere, sphr, ellipsoid, ellip]"
+          ": <%.*s>",
+          size, name);
+    }
+  }
+  GRN_OBJ_FIN(ctx, &approximate_type);
+
+  return rc;
+}
+
+typedef double (*grn_geo_distance_raw_func)(grn_ctx *ctx,
+                                            grn_geo_point *point1,
+                                            grn_geo_point *point2);
+
+grn_rc
 grn_selector_geo_in_circle(grn_ctx *ctx, grn_obj *obj, grn_obj **args, int nargs,
                            grn_obj *res, grn_operator op)
 {
-  if (nargs == 4) {
-    grn_obj *center_point, *distance;
-    center_point = args[2];
-    distance = args[3];
-    grn_geo_select_in_circle(ctx, obj, center_point, distance, res, op);
-  } else {
+  grn_geo_approximate_type type = GRN_GEO_APPROXIMATE_RECTANGLE;
+
+  switch (nargs) {
+  case 5 :
+    if (grn_geo_resolve_approximate_type(ctx, args[4], &type) != GRN_SUCCESS) {
+      break;
+    }
+    /* fallthru */
+  case 4 :
+    {
+      grn_obj *center_point, *distance;
+      center_point = args[2];
+      distance = args[3];
+      grn_geo_select_in_circle(ctx, obj, center_point, distance, type, res, op);
+    }
+    break;
+  default :
     ERR(GRN_INVALID_ARGUMENT,
-        "geo_in_circle(): requires 3 arguments but was <%d> arguments",
+        "geo_in_circle(): requires 3 or 4 arguments but was <%d> arguments",
         nargs - 1);
+    break;
   }
+
   return ctx->rc;
 }
 
 grn_rc
 grn_geo_select_in_circle(grn_ctx *ctx, grn_obj *index,
                          grn_obj *center_point, grn_obj *distance,
+                         grn_geo_approximate_type approximate_type,
                          grn_obj *res, grn_operator op)
 {
   grn_id domain;
   double center_longitude, center_latitude;
-  double on_circle_longitude, on_circle_latitude;
-  double x, y, d;
+  double d;
   grn_obj *pat, *point_on_circle = NULL, center_point_, point_on_circle_;
   grn_geo_point *center, on_circle;
+  grn_geo_distance_raw_func distance_raw_func;
   pat = grn_ctx_at(ctx, index->header.domain);
   domain = pat->header.domain;
   if (domain != GRN_DB_TOKYO_GEO_POINT && domain != GRN_DB_WGS84_GEO_POINT) {
@@ -688,36 +742,53 @@ grn_geo_select_in_circle(grn_ctx *ctx, grn_obj *index,
   center = GRN_GEO_POINT_VALUE_RAW(center_point);
   center_longitude = GRN_GEO_INT2RAD(center->longitude);
   center_latitude = GRN_GEO_INT2RAD(center->latitude);
+
+  switch (approximate_type) {
+  case GRN_GEO_APPROXIMATE_RECTANGLE :
+    distance_raw_func = grn_geo_distance_rectangle_raw;
+    break;
+  case GRN_GEO_APPROXIMATE_SPHERE :
+    distance_raw_func = grn_geo_distance_sphere_raw;
+    break;
+  case GRN_GEO_APPROXIMATE_ELLIPSOID :
+    if (domain == GRN_DB_WGS84_GEO_POINT) {
+      distance_raw_func = grn_geo_distance_ellipsoid_raw_wgs84;
+    } else {
+      distance_raw_func = grn_geo_distance_ellipsoid_raw_tokyo;
+    }
+    break;
+  default :
+    ERR(GRN_INVALID_ARGUMENT,
+        "unknown approximate type: <%d>", approximate_type);
+    goto exit;
+    break;
+  }
+
   switch (distance->header.domain) {
   case GRN_DB_INT32 :
-    d = GRN_INT32_VALUE(distance) / (double)GRN_GEO_RADIUS;
-    on_circle.latitude = center->latitude + GRN_GEO_RAD2INT(d);
+    d = GRN_INT32_VALUE(distance);
+    on_circle.latitude = center->latitude + GRN_GEO_RAD2INT(d / (double)GRN_GEO_RADIUS);
     on_circle.longitude = center->longitude;
-    d = d * d;
     break;
   case GRN_DB_UINT32 :
-    d = GRN_UINT32_VALUE(distance) / (double)GRN_GEO_RADIUS;
-    on_circle.latitude = center->latitude + GRN_GEO_RAD2INT(d);
+    d = GRN_UINT32_VALUE(distance);
+    on_circle.latitude = center->latitude + GRN_GEO_RAD2INT(d / (double)GRN_GEO_RADIUS);
     on_circle.longitude = center->longitude;
-    d = d * d;
     break;
   case GRN_DB_INT64 :
-    d = GRN_INT64_VALUE(distance) / (double)GRN_GEO_RADIUS;
-    on_circle.latitude = center->latitude + GRN_GEO_RAD2INT(d);
+    d = GRN_INT64_VALUE(distance);
+    on_circle.latitude = center->latitude + GRN_GEO_RAD2INT(d / (double)GRN_GEO_RADIUS);
     on_circle.longitude = center->longitude;
-    d = d * d;
     break;
   case GRN_DB_UINT64 :
-    d = GRN_UINT64_VALUE(distance) / (double)GRN_GEO_RADIUS;
-    on_circle.latitude = center->latitude + GRN_GEO_RAD2INT(d);
+    d = GRN_UINT64_VALUE(distance);
+    on_circle.latitude = center->latitude + GRN_GEO_RAD2INT(d / (double)GRN_GEO_RADIUS);
     on_circle.longitude = center->longitude;
-    d = d * d;
     break;
   case GRN_DB_FLOAT :
-    d = GRN_FLOAT_VALUE(distance) / (double)GRN_GEO_RADIUS;
-    on_circle.latitude = center->latitude + GRN_GEO_RAD2INT(d);
+    d = GRN_FLOAT_VALUE(distance);
+    on_circle.latitude = center->latitude + GRN_GEO_RAD2INT(d / (double)GRN_GEO_RADIUS);
     on_circle.longitude = center->longitude;
-    d = d * d;
     break;
   case GRN_DB_SHORT_TEXT :
   case GRN_DB_TEXT :
@@ -732,12 +803,7 @@ grn_geo_select_in_circle(grn_ctx *ctx, grn_obj *index,
     if (!point_on_circle) { point_on_circle = distance; }
     GRN_GEO_POINT_VALUE(point_on_circle,
                         on_circle.latitude, on_circle.longitude);
-    on_circle_longitude = GRN_GEO_INT2RAD(on_circle.longitude);
-    on_circle_latitude = GRN_GEO_INT2RAD(on_circle.latitude);
-    x = (on_circle_longitude - center_longitude) *
-      cos((center_latitude + on_circle_latitude) * 0.5);
-    y = (on_circle_latitude - center_latitude);
-    d = ((x * x) + (y * y));
+    d = distance_raw_func(ctx, center, &on_circle);
     if (point_on_circle == &point_on_circle_) {
       grn_obj_unlink(ctx, point_on_circle);
     }
@@ -781,16 +847,12 @@ grn_geo_select_in_circle(grn_ctx *ctx, grn_obj *index,
       if (tc) {
         grn_id tid;
         grn_geo_point point;
-        double longitude, latitude;
         while ((tid = grn_table_cursor_next(ctx, tc))) {
+          double point_distance;
           grn_table_get_key(ctx, pat, tid, &point, sizeof(grn_geo_point));
-          longitude = GRN_GEO_INT2RAD(point.longitude);
-          latitude = GRN_GEO_INT2RAD(point.latitude);
-          x = (center_longitude - longitude) *
-            cos((latitude + center_latitude) * 0.5);
-          y = (center_latitude - latitude);
-          if (((x * x) + (y * y)) <= d) {
-            inspect_tid(ctx, tid, &point, (x * x) + (y * y));
+          point_distance = distance_raw_func(ctx, &point, center);
+          if (point_distance <= d) {
+            inspect_tid(ctx, tid, &point, point_distance);
             grn_ii_at(ctx, (grn_ii *)index, tid, (grn_hash *)res, op);
           }
         }
@@ -1787,6 +1849,28 @@ grn_geo_distance_ellipsoid_raw(grn_ctx *ctx,
 }
 
 double
+grn_geo_distance_ellipsoid_raw_tokyo(grn_ctx *ctx,
+                                     grn_geo_point *point1,
+                                     grn_geo_point *point2)
+{
+  return grn_geo_distance_ellipsoid_raw(ctx, point1, point2,
+                                        GRN_GEO_BES_C1,
+                                        GRN_GEO_BES_C2,
+                                        GRN_GEO_BES_C3);
+}
+
+double
+grn_geo_distance_ellipsoid_raw_wgs84(grn_ctx *ctx,
+                                     grn_geo_point *point1,
+                                     grn_geo_point *point2)
+{
+  return grn_geo_distance_ellipsoid_raw(ctx, point1, point2,
+                                        GRN_GEO_GRS_C1,
+                                        GRN_GEO_GRS_C2,
+                                        GRN_GEO_GRS_C3);
+}
+
+double
 grn_geo_distance(grn_ctx *ctx, grn_obj *point1, grn_obj *point2,
                  grn_geo_approximate_type type)
 {
@@ -1900,19 +1984,13 @@ grn_geo_distance_ellipsoid(grn_ctx *ctx, grn_obj *point1, grn_obj *point2)
       point2 = &point2_;
     }
     if (domain == GRN_DB_TOKYO_GEO_POINT) {
-      d = grn_geo_distance_ellipsoid_raw(ctx,
-                                         GRN_GEO_POINT_VALUE_RAW(point1),
-                                         GRN_GEO_POINT_VALUE_RAW(point2),
-                                         GRN_GEO_BES_C1,
-                                         GRN_GEO_BES_C2,
-                                         GRN_GEO_BES_C3);
+      d = grn_geo_distance_ellipsoid_raw_tokyo(ctx,
+                                               GRN_GEO_POINT_VALUE_RAW(point1),
+                                               GRN_GEO_POINT_VALUE_RAW(point2));
     } else {
-      d = grn_geo_distance_ellipsoid_raw(ctx,
-                                         GRN_GEO_POINT_VALUE_RAW(point1),
-                                         GRN_GEO_POINT_VALUE_RAW(point2),
-                                         GRN_GEO_GRS_C1,
-                                         GRN_GEO_GRS_C2,
-                                         GRN_GEO_GRS_C3);
+      d = grn_geo_distance_ellipsoid_raw_wgs84(ctx,
+                                               GRN_GEO_POINT_VALUE_RAW(point1),
+                                               GRN_GEO_POINT_VALUE_RAW(point2));
     }
   } else {
     /* todo */

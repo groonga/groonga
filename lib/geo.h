@@ -102,6 +102,37 @@ grn_rc grn_geo_cursor_close(grn_ctx *ctx, grn_obj *geo_cursor);
 int grn_geo_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
                        grn_obj *result, grn_table_sort_key *keys, int n_keys);
 
+grn_rc grn_geo_resolve_approximate_type(grn_ctx *ctx, grn_obj *type_name,
+                                        grn_geo_approximate_type *type);
+
+/**
+ * grn_geo_select_in_circle:
+ * @index: the index column for TokyoGeoPoint or WGS84GeoPpoint type.
+ * @center_point: the center point of the target circle. (ShortText, Text,
+ * LongText, TokyoGeoPoint or WGS84GeoPoint)
+ * @distance: the radius of the target circle (Int32,
+ * UInt32, Int64, UInt64 or Float) or the point
+ * on the circumference of the target circle. (ShortText, Text, LongText,
+ * TokyoGeoPoint or WGS84GeoPoint)
+ * @approximate_type: the approximate type to compute
+ * distance.
+ * @res: the table to store found record IDs. It must be
+ * GRN_TABLE_HASH_KEY type table.
+ * @op: the operator for matched records.
+ *
+ * It selects records that are in the circle specified by
+ * @center_point and @distance from @center_point. Records
+ * are searched by @index. Found records are added to @res
+ * table with @op operation.
+ **/
+grn_rc grn_geo_select_in_circle(grn_ctx *ctx,
+                                grn_obj *index,
+                                grn_obj *center_point,
+                                grn_obj *distance,
+                                grn_geo_approximate_type approximate_type,
+                                grn_obj *res,
+                                grn_operator op);
+
 grn_rc grn_selector_geo_in_circle(grn_ctx *ctx, grn_obj *obj, grn_obj **args,
                                   int nargs, grn_obj *res, grn_operator op);
 grn_rc grn_selector_geo_in_rectangle(grn_ctx *ctx, grn_obj *obj, grn_obj **args,
@@ -129,6 +160,12 @@ double grn_geo_distance_ellipsoid_raw(grn_ctx *ctx,
                                       grn_geo_point *point1,
                                       grn_geo_point *point2,
                                       int c1, int c2, double c3);
+double grn_geo_distance_ellipsoid_raw_tokyo(grn_ctx *ctx,
+                                            grn_geo_point *point1,
+                                            grn_geo_point *point2);
+double grn_geo_distance_ellipsoid_raw_wgs84(grn_ctx *ctx,
+                                            grn_geo_point *point1,
+                                            grn_geo_point *point2);
 
 #ifdef __cplusplus
 }

@@ -145,7 +145,9 @@ test_rectangle(gconstpointer data)
   gdouble yurakucho_latitude = 35.67487;
   gdouble yurakucho_longitude = 139.76352;
   gint distance = 3 * 1000;
+  const gchar *approximate_type;
 
+  approximate_type = gcut_data_get_string(data, "approximate-type");
   cut_assert_equal_string(
     "[[[7],"
     "[[\"name\",\"ShortText\"],[\"_score\",\"Int32\"],"
@@ -163,13 +165,14 @@ test_rectangle(gconstpointer data)
         "select Shops "
         "--sortby '+_score, +name' "
         "--output_columns 'name, _score, location' "
-        "--filter 'geo_in_circle(location, \"%s\", %d)' "
+        "--filter 'geo_in_circle(location, \"%s\", %d, \"%s\")' "
         "--scorer "
           "'_score = geo_distance(location, \"%s\", \"%s\") * 1000 * 1000'",
         grn_test_location_string(yurakucho_latitude, yurakucho_longitude),
         distance,
+        approximate_type,
         grn_test_location_string(yurakucho_latitude, yurakucho_longitude),
-        gcut_data_get_string(data, "approximate-type"))));
+        approximate_type)));
 }
 
 void
@@ -192,7 +195,9 @@ test_sphere(gconstpointer data)
   gdouble yurakucho_latitude = 35.67487;
   gdouble yurakucho_longitude = 139.76352;
   gint distance = 3 * 1000;
+  const gchar *approximate_type;
 
+  approximate_type = gcut_data_get_string(data, "approximate-type");
   cut_assert_equal_string(
     "[[[7],"
     "[[\"name\",\"ShortText\"],[\"_score\",\"Int32\"],"
@@ -210,13 +215,14 @@ test_sphere(gconstpointer data)
         "select Shops "
         "--sortby '+_score, +name' "
         "--output_columns 'name, _score, location' "
-        "--filter 'geo_in_circle(location, \"%s\", %d)' "
+        "--filter 'geo_in_circle(location, \"%s\", %d, \"%s\")' "
         "--scorer "
           "'_score = geo_distance(location, \"%s\", \"%s\") * 1000 * 1000'",
         grn_test_location_string(yurakucho_latitude, yurakucho_longitude),
         distance,
+        approximate_type,
         grn_test_location_string(yurakucho_latitude, yurakucho_longitude),
-        gcut_data_get_string(data, "approximate-type"))));
+        approximate_type)));
 }
 
 void
@@ -239,7 +245,9 @@ test_ellipsoid(gconstpointer data)
   gdouble yurakucho_latitude = 35.67487;
   gdouble yurakucho_longitude = 139.76352;
   gint distance = 3 * 1000;
+  const gchar *approximate_type;
 
+  approximate_type = gcut_data_get_string(data, "approximate-type");
   cut_assert_equal_string(
     "[[[7],"
     "[[\"name\",\"ShortText\"],[\"_score\",\"Int32\"],"
@@ -257,11 +265,12 @@ test_ellipsoid(gconstpointer data)
         "select Shops "
         "--sortby '+_score, +name' "
         "--output_columns 'name, _score, location' "
-        "--filter 'geo_in_circle(location, \"%s\", %d)' "
+        "--filter 'geo_in_circle(location, \"%s\", %d, \"%s\")' "
         "--scorer "
           "'_score = geo_distance(location, \"%s\", \"%s\") * 1000 * 1000'",
         grn_test_location_string(yurakucho_latitude, yurakucho_longitude),
         distance,
+        approximate_type,
         grn_test_location_string(yurakucho_latitude, yurakucho_longitude),
-        gcut_data_get_string(data, "approximate-type"))));
+        approximate_type)));
 }
