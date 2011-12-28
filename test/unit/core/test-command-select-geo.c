@@ -22,9 +22,12 @@
 #include "../lib/grn-assertions.h"
 
 void test_default(void);
-void test_rectangle(void);
-void test_sphere(void);
-void test_ellipsoid(void);
+void data_rectangle(void);
+void test_rectangle(gconstpointer data);
+void data_sphere(void);
+void test_sphere(gconstpointer data);
+void data_ellipsoid(void);
+void test_ellipsoid(gconstpointer data);
 
 static gchar *tmp_directory;
 
@@ -123,7 +126,21 @@ test_default(void)
 }
 
 void
-test_rectangle(void)
+data_rectangle(void)
+{
+#define ADD_DATA(label, type)                                   \
+  gcut_add_datum(label,                                         \
+                 "approximate-type", G_TYPE_STRING, type,       \
+                 NULL)
+
+  ADD_DATA("full", "rectangle");
+  ADD_DATA("abbreviation", "rect");
+
+#undef ADD_DATA
+}
+
+void
+test_rectangle(gconstpointer data)
 {
   gdouble yurakucho_latitude = 35.67487;
   gdouble yurakucho_longitude = 139.76352;
@@ -148,14 +165,29 @@ test_rectangle(void)
         "--output_columns 'name, _score, location' "
         "--filter 'geo_in_circle(location, \"%s\", %d)' "
         "--scorer "
-          "'_score = geo_distance(location, \"%s\", \"rectangle\") * 1000 * 1000'",
+          "'_score = geo_distance(location, \"%s\", \"%s\") * 1000 * 1000'",
         grn_test_location_string(yurakucho_latitude, yurakucho_longitude),
         distance,
-        grn_test_location_string(yurakucho_latitude, yurakucho_longitude))));
+        grn_test_location_string(yurakucho_latitude, yurakucho_longitude),
+        gcut_data_get_string(data, "approximate-type"))));
 }
 
 void
-test_sphere(void)
+data_sphere(void)
+{
+#define ADD_DATA(label, type)                                   \
+  gcut_add_datum(label,                                         \
+                 "approximate-type", G_TYPE_STRING, type,       \
+                 NULL)
+
+  ADD_DATA("full", "sphere");
+  ADD_DATA("abbreviation", "sphr");
+
+#undef ADD_DATA
+}
+
+void
+test_sphere(gconstpointer data)
 {
   gdouble yurakucho_latitude = 35.67487;
   gdouble yurakucho_longitude = 139.76352;
@@ -180,14 +212,29 @@ test_sphere(void)
         "--output_columns 'name, _score, location' "
         "--filter 'geo_in_circle(location, \"%s\", %d)' "
         "--scorer "
-          "'_score = geo_distance(location, \"%s\", \"sphere\") * 1000 * 1000'",
+          "'_score = geo_distance(location, \"%s\", \"%s\") * 1000 * 1000'",
         grn_test_location_string(yurakucho_latitude, yurakucho_longitude),
         distance,
-        grn_test_location_string(yurakucho_latitude, yurakucho_longitude))));
+        grn_test_location_string(yurakucho_latitude, yurakucho_longitude),
+        gcut_data_get_string(data, "approximate-type"))));
 }
 
 void
-test_ellipsoid(void)
+data_ellipsoid(void)
+{
+#define ADD_DATA(label, type)                                   \
+  gcut_add_datum(label,                                         \
+                 "approximate-type", G_TYPE_STRING, type,       \
+                 NULL)
+
+  ADD_DATA("full", "ellipsoid");
+  ADD_DATA("abbreviation", "ellip");
+
+#undef ADD_DATA
+}
+
+void
+test_ellipsoid(gconstpointer data)
 {
   gdouble yurakucho_latitude = 35.67487;
   gdouble yurakucho_longitude = 139.76352;
@@ -212,8 +259,9 @@ test_ellipsoid(void)
         "--output_columns 'name, _score, location' "
         "--filter 'geo_in_circle(location, \"%s\", %d)' "
         "--scorer "
-          "'_score = geo_distance(location, \"%s\", \"ellipsoid\") * 1000 * 1000'",
+          "'_score = geo_distance(location, \"%s\", \"%s\") * 1000 * 1000'",
         grn_test_location_string(yurakucho_latitude, yurakucho_longitude),
         distance,
-        grn_test_location_string(yurakucho_latitude, yurakucho_longitude))));
+        grn_test_location_string(yurakucho_latitude, yurakucho_longitude),
+        gcut_data_get_string(data, "approximate-type"))));
 }
