@@ -24,7 +24,7 @@ Improvements
 * Added ``grn_obj_get_values()``.
 * Added ``grn_obj_delete_by_id()``.
 * Supported string vector column for query expansion. [#1216]
-* Added ``--filter`` option to :doc:`/commands:delete` to delete
+* Added ``--filter`` option to :doc:`/commands/delete` to delete
   many record at once. [#1225]
 * Supported approximate type customization for
   :doc:`/functions/geo_in_circle` and :doc:`/functions/geo_distance`. [#1226]

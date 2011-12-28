@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-28 17:18\n"
-"PO-Revision-Date: 2011-12-28 17:29+0900\n"
+"POT-Creation-Date: 2011-12-28 18:13\n"
+"PO-Revision-Date: 2011-12-28 18:13+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -77,18 +77,18 @@ msgstr "クエリ展開で文字列のベクター型のカラムをサポート
 # d3be6cfcd52948bebb170b9cbdc3bf3d
 #: ../../../source/news.txt:27
 msgid ""
-"Added ``--filter`` option to :doc:`/commands:delete` to delete many record "
+"Added ``--filter`` option to :doc:`/commands/delete` to delete many record "
 "at once. [#1225]"
-msgstr ""
-"一度にたくさんのレコードを削除できるように :doc:`/commands:delete` に ``--"
-"filter`` オプションを追加。 [#1225]"
+msgstr "一度にたくさんのレコードを削除できるように :doc:`/commands/delete` に ``--filter`` オプションを追加。 [#1225]"
 
 # 44c83a3db70843b39154d59bb5560c44
 #: ../../../source/news.txt:29
 msgid ""
 "Supported approximate type customization for :doc:`/functions/geo_in_circle` "
 "and :doc:`/functions/geo_distance`. [#1226]"
-msgstr ":doc:`/functions/geo_in_circle` と :doc:`/functions/geo_distance` で近似方法指定をサポート。 [#1226]"
+msgstr ""
+":doc:`/functions/geo_in_circle` と :doc:`/functions/geo_distance` で近似方法"
+"指定をサポート。 [#1226]"
 
 # 48236327c87c42578e5a22f636905ab0
 #: ../../../source/news.txt:31
@@ -100,7 +100,9 @@ msgstr "``geo_distance2()`` と ``geo_distance3()`` を非推奨にした。"
 msgid ""
 "Changed to use ``null`` instead of ``\"\"`` for empty geo point value in "
 "JSON output."
-msgstr "JSON出力内で、値のない位置情報データは ``\"\"`` ではなく ``null`` と出力するようにした。"
+msgstr ""
+"JSON出力内で、値のない位置情報データは ``\"\"`` ではなく ``null`` と出力する"
+"ようにした。"
 
 # c6db05b969814f91bb36000340701520
 #: ../../../source/news.txt:34
@@ -120,7 +122,8 @@ msgstr "grn_datのtruncation対応。 [#892]"
 # 418185a376724109bfb81a6b2b906336
 #: ../../../source/news.txt:37
 msgid "Supported longest common prefix search by grn_dat."
-msgstr "grn_datが最長共通接頭辞検索（longest common prefix search）をサポート。"
+msgstr ""
+"grn_datが最長共通接頭辞検索（longest common prefix search）をサポート。"
 
 # ae21309b91ae4128912ec369cb9c887b
 #: ../../../source/news.txt:42
