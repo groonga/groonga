@@ -14,7 +14,7 @@ geo_distance - 指定した2点の距離を計算する
 ----
 ::
 
- geo_distance(point1, point2)
+ geo_distance(point1, point2[, approximate_type])
 
 説明
 ----
@@ -22,7 +22,10 @@ geo_distance - 指定した2点の距離を計算する
 groonga組込関数の一つであるgeo_distanceについて説明します。組込関数は、script形式のgrn_expr中で呼び出すことができます。
 
 geo_distance() 関数は、point1に指定した座標とpoint2に指定した座標の間の距離(近似値)を求めます。
-geo_distance()の他に、距離計算アルゴリズムの異なる、geo_distance2()、geo_distance3()が使用できます。それぞれ、長方形近似、球面近似、ヒュベニの距離計算式によって距離を算出します。
+
+... note::
+
+    geo_distance()の他に、距離計算アルゴリズムの異なる、geo_distance2()、geo_distance3()がありましたが、1.2.9から非推奨になりました。 ``geo_distance2()`` の代わりに ``geo_distance(point1, point2, "sphere")`` を、 ``geo_distance3()`` の代わりに ``geo_distance(point1, point2, "ellipsoid")`` を使ってください。
 
 引数
 ----
@@ -35,6 +38,30 @@ geo_distance()の他に、距離計算アルゴリズムの異なる、geo_dista
 
   距離を求める2点のうちもう一つを指定します。GeoPoint型の値、あるいは座標を示す文字列を指定できます。
 
+``approximate_type``
+
+  距離を求めるために地形をどのように近似するかを指定します。指定できる値は以下の通りです。
+
+  ``"rectangle"``
+
+    方形近似で近似します。単純な計算式で距離を求めることができるため高速ですが、極付近では誤差が大きくなります。
+
+    ``"rect"`` と省略して指定することもできます。
+
+    この近似方法がデフォルト値です。 ``approximate_type`` を省略した場合は方形近似になります。
+
+  ``"sphere"``
+
+    球面近似で近似します。 ``"rectangle"`` よりも遅くなりますが、誤差は小さいです。
+
+    ``"sphr"`` と省略して指定することもできます。
+
+  ``"ellipsoid"``
+
+    楕円体近似で近似します。距離の計算にはヒュベニの距離計算式を用います。 ``"sphere"`` よりも遅くなりますが、誤差は小さくなります。
+
+    ``"ellip"`` と省略して指定することもできます。
+
 
 返値
 ----
@@ -46,7 +73,19 @@ geo_distance()の他に、距離計算アルゴリズムの異なる、geo_dista
 ::
 
  geo_distance(pos, "150x150")
- 100
+ 100.0
+
+ # 方形近似を利用
+ geo_distance(pos, "150x150", "rectangle")
+ 100.0
+
+ # 球面近似を利用
+ geo_distance(pos, "150x150", "sphere")
+ 100.0
+
+ # 楕円体近似を利用
+ geo_distance(pos, "150x150", "ellipsoid")
+ 100.0
 
 .. rubric:: 脚注
 

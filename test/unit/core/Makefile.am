@@ -54,6 +54,7 @@ noinst_LTLIBRARIES =				\
 	test-command-select-query.la		\
 	test-command-select-filter.la		\
 	test-command-select-query-expansion.la	\
+	test-command-select-geo.la		\
 	test-command-define-selector.la		\
 	test-command-cache-limit.la		\
 	test-command-delete.la			\
@@ -139,6 +140,7 @@ test_command_select_filter_invalid_la_SOURCES	= test-command-select-filter-inval
 test_command_select_query_la_SOURCES	= test-command-select-query.c
 test_command_select_filter_la_SOURCES	= test-command-select-filter.c
 test_command_select_query_expansion_la_SOURCES	= test-command-select-query-expansion.c
+test_command_select_geo_la_SOURCES	= test-command-select-geo.c
 test_command_define_selector_la_SOURCES	= test-command-define-selector.c
 test_command_cache_limit_la_SOURCES	= test-command-cache-limit.c
 test_command_delete_la_SOURCES		= test-command-delete.c
