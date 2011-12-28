@@ -35,10 +35,12 @@ module HTTPSelectBasicTests
                    ["_key", "ShortText"],
                    ["real_name", "ShortText"]],
                   [[2, "hayamiz", "Yuto Hayamizu"]],
-                  :table => "users",
-                  :match_columns => "real_name",
-                  :output_columns => "_id,_key,real_name",
-                  :query => "Yuto Hayamizu")
+                  {:table => "users",
+                   :match_columns => "real_name",
+                   :output_columns => "_id,_key,real_name",
+                   :query => "Yuto Hayamizu",
+                   :output_type => output_type},
+                  :content_type => content_type)
   end
 
   def test_query
@@ -48,9 +50,11 @@ module HTTPSelectBasicTests
                    ["_key", "ShortText"],
                    ["real_name", "ShortText"]],
                   [[2, "hayamiz", "Yuto Hayamizu"]],
-                  :table => "users",
-                  :output_columns => "_id,_key,real_name",
-                  :query => "real_name:\"Yuto Hayamizu\"")
+                  {:table => "users",
+                   :output_columns => "_id,_key,real_name",
+                   :query => "real_name:\"Yuto Hayamizu\"",
+                   :output_type => output_type},
+                  :content_type => content_type)
   end
 
   def test_filter
@@ -60,9 +64,11 @@ module HTTPSelectBasicTests
                    ["_key", "ShortText"],
                    ["real_name", "ShortText"]],
                   [[2, "hayamiz", "Yuto Hayamizu"]],
-                  :table => "users",
-                  :output_columns => "_id,_key,real_name",
-                  :filter => "real_name == \"Yuto Hayamizu\"")
+                  {:table => "users",
+                   :output_columns => "_id,_key,real_name",
+                   :filter => "real_name == \"Yuto Hayamizu\"",
+                   :output_type => output_type},
+                  :content_type => content_type)
   end
 
   def test_query_and_filter
@@ -72,10 +78,12 @@ module HTTPSelectBasicTests
                    ["_key", "ShortText"],
                    ["real_name", "ShortText"]],
                   [[2, "hayamiz", "Yuto Hayamizu"]],
-                  :table => "users",
-                  :output_columns => "_id,_key,real_name",
-                  :query => "real_name:\"Yuto Hayamizu\"",
-                  :filter => "real_name == \"Yuto Hayamizu\"")
+                  {:table => "users",
+                   :output_columns => "_id,_key,real_name",
+                   :query => "real_name:\"Yuto Hayamizu\"",
+                   :filter => "real_name == \"Yuto Hayamizu\"",
+                   :output_type => output_type},
+                  :content_type => content_type)
   end
 
   def test_no_hit
@@ -85,9 +93,11 @@ module HTTPSelectBasicTests
                    ["_key", "ShortText"],
                    ["real_name", "ShortText"]],
                   [],
-                  :table => "users",
-                  :output_columns => "_id,_key,real_name",
-                  :query => "real_name:\"No Name\"")
+                  {:table => "users",
+                   :output_columns => "_id,_key,real_name",
+                   :query => "real_name:\"No Name\"",
+                   :output_type => output_type},
+                  :content_type => content_type)
   end
 
   def test_scorer
@@ -98,9 +108,11 @@ module HTTPSelectBasicTests
                    ["real_name", "ShortText"]],
                   [[2, "hayamiz", "Real Name"],
                    [1, "ryoqun", "Real Name"]],
-                  :table => "users",
-                  :output_columns => "_id,_key,real_name",
-                  :scorer => "real_name = \"Real Name\"")
+                  {:table => "users",
+                   :output_columns => "_id,_key,real_name",
+                   :scorer => "real_name = \"Real Name\"",
+                   :output_type => output_type},
+                  :content_type => content_type)
   end
 
   def test_scorer_side_effect
@@ -110,18 +122,22 @@ module HTTPSelectBasicTests
                    ["_key", "ShortText"],
                    ["real_name", "ShortText"]],
                   [[2, "hayamiz", "Real Name"]],
-                  :table => "users",
-                  :output_columns => "_id,_key,real_name",
-                  :query => "real_name:\"Yuto Hayamizu\"",
-                  :scorer => "real_name = \"Real Name\"")
+                  {:table => "users",
+                   :output_columns => "_id,_key,real_name",
+                   :query => "real_name:\"Yuto Hayamizu\"",
+                   :scorer => "real_name = \"Real Name\"",
+                   :output_type => output_type},
+                  :content_type => content_type)
 
     assert_select([["_id", "UInt32"],
                    ["_key", "ShortText"],
                    ["real_name", "ShortText"]],
                   [],
-                  :table => "users",
-                  :output_columns => "_id,_key,real_name",
-                  :query => "real_name:\"Yuto Hayamizu\"")
+                  {:table => "users",
+                   :output_columns => "_id,_key,real_name",
+                   :query => "real_name:\"Yuto Hayamizu\"",
+                   :output_type => output_type},
+                  :content_type => content_type)
   end
 
   def test_output_columns
@@ -130,8 +146,10 @@ module HTTPSelectBasicTests
     assert_select([["real_name", "ShortText"]],
                   [["Yuto Hayamizu"],
                    ["Ryo Onodera"]],
-                  :table => "users",
-                  :output_columns => "real_name")
+                  {:table => "users",
+                   :output_columns => "real_name",
+                   :output_type => output_type},
+                  :content_type => content_type)
   end
 
   def test_output_columns_wild_card
@@ -145,8 +163,10 @@ module HTTPSelectBasicTests
                    ["real_name", "ShortText"]],
                   [["hayamiz", "富山市", "λかわいいよλ", 200, "富山県", "Yuto Hayamizu"],
                    ["ryoqun", "不明", "ryoくんです。", 200, "不明", "Ryo Onodera"]],
-                  :table => "users",
-                  :output_columns => "_key *")
+                   {:table => "users",
+                    :output_columns => "_key *",
+                    :output_type => output_type},
+                   :content_type => content_type)
   end
 
   def test_output_columns_nonexistent
@@ -155,8 +175,10 @@ module HTTPSelectBasicTests
     assert_select([["real_name", "ShortText"]],
                   [["Yuto Hayamizu"],
                    ["Ryo Onodera"]],
-                  :table => "users",
-                  :output_columns => "nonexistent real_name")
+                  {:table => "users",
+                   :output_columns => "nonexistent real_name",
+                   :output_type => output_type},
+                  :content_type => content_type)
   end
 
   def test_sortby
@@ -166,8 +188,10 @@ module HTTPSelectBasicTests
     assert_select([["_id", "UInt32"],
                    ["_key", "Int32"]],
                   records.sort_by {|id, key| key},
-                  :table => "user_id",
-                  :sortby => "_key")
+                  {:table => "user_id",
+                   :sortby => "_key",
+                   :output_type => output_type},
+                  :content_type => content_type)
   end
 
   def test_sortby_reverse
@@ -177,8 +201,10 @@ module HTTPSelectBasicTests
     assert_select([["_id", "UInt32"],
                    ["_key", "Int32"]],
                   records.sort_by {|id, key| key}.reverse,
-                  :table => "user_id",
-                  :sortby => "-_key")
+                  {:table => "user_id",
+                   :sortby => "-_key",
+                   :output_type => output_type},
+                  :content_type => content_type)
   end
 
   def test_sortby_with_multiple_column
@@ -189,9 +215,11 @@ module HTTPSelectBasicTests
                    ["day", "Int32"],
                    ["month", "Int32"]],
                   records.sort_by {|id, day, month| [month, day]},
-                  :table => "calendar",
-                  :limit => -1,
-                  :sortby => "month day")
+                  {:table => "calendar",
+                   :limit => -1,
+                   :sortby => "month day",
+                   :output_type => output_type},
+                  :content_type => content_type)
   end
 
   def test_sortby_offset
@@ -201,8 +229,12 @@ module HTTPSelectBasicTests
     assert_select([["_id", "UInt32"],
                    ["_key", "Int32"]],
                   records.sort_by {|id, key| key}[3..-1],
-                  {:table => "user_id", :sortby => "_key", :offset => 3},
-                  :n_hits => records.size)
+                  {:table => "user_id",
+                   :sortby => "_key",
+                   :offset => 3,
+                   :output_type => output_type},
+                  {:n_hits => records.size,
+                   :content_type => content_type})
   end
 
   def test_sortby_zero_offset
@@ -212,8 +244,12 @@ module HTTPSelectBasicTests
     assert_select([["_id", "UInt32"],
                    ["_key", "Int32"]],
                   records.sort_by {|id, key| key},
-                  {:table => "user_id", :sortby => "_key", :offset => 0},
-                  :n_hits => records.size)
+                  {:table => "user_id",
+                   :sortby => "_key",
+                   :offset => 0,
+                   :output_type => output_type},
+                  {:n_hits => records.size,
+                   :content_type => content_type})
   end
 
   def test_sortby_negative_offset
@@ -223,8 +259,12 @@ module HTTPSelectBasicTests
     assert_select([["_id", "UInt32"],
                    ["_key", "Int32"]],
                   records.sort_by {|id, key| key}[-3..-1],
-                  {:table => "user_id", :sortby => "_key", :offset => -3},
-                  :n_hits => records.size)
+                  {:table => "user_id",
+                   :sortby => "_key",
+                   :offset => -3,
+                   :output_type => output_type},
+                  {:n_hits => records.size,
+                   :content_type => content_type})
   end
 
   def test_sortby_offset_one_larger_than_hits
@@ -236,8 +276,10 @@ module HTTPSelectBasicTests
                   [],
                   {:table => "user_id",
                    :sortby => "_key",
-                   :offset => records.size + 1},
-                  :n_hits => records.size)
+                   :offset => records.size + 1,
+                   :output_type => output_type},
+                  {:n_hits => records.size,
+                   :content_type => content_type})
   end
 
   def test_sortby_negative_offset_one_larger_than_hits
@@ -249,8 +291,10 @@ module HTTPSelectBasicTests
                   [],
                   {:table => "user_id",
                    :sortby => "_key",
-                   :offset => -(records.size + 1)},
-                  :n_hits => records.size)
+                   :offset => -(records.size + 1),
+                   :output_type => output_type},
+                  {:n_hits => records.size,
+                   :content_type => content_type})
   end
 
   def test_sortby_offset_equal_to_hits
@@ -262,8 +306,10 @@ module HTTPSelectBasicTests
                   [],
                   {:table => "user_id",
                    :sortby => "_key",
-                   :offset => records.size},
-                  :n_hits => records.size)
+                   :offset => records.size,
+                   :output_type => output_type},
+                  {:n_hits => records.size,
+                   :content_type => content_type})
   end
 
   def test_sortby_negative_offset_equal_to_hits
@@ -275,8 +321,10 @@ module HTTPSelectBasicTests
                   records.sort_by {|id, key| key},
                   {:table => "user_id",
                    :sortby => "_key",
-                   :offset => -records.size},
-                  :n_hits => records.size)
+                   :offset => -records.size,
+                   :output_type => output_type},
+                  {:n_hits => records.size,
+                   :content_type => content_type})
   end
 
   def test_sortby_limit
@@ -288,8 +336,10 @@ module HTTPSelectBasicTests
                   records.sort_by {|id, key| key}[0, 4],
                   {:table => "user_id",
                    :sortby => "_key",
-                   :limit => 4},
-                  :n_hits => records.size)
+                   :limit => 4,
+                   :output_type => output_type},
+                  {:n_hits => records.size,
+                   :content_type => content_type})
   end
 
   def test_sortby_zero_limit
@@ -299,8 +349,12 @@ module HTTPSelectBasicTests
     assert_select([["_id", "UInt32"],
                    ["_key", "Int32"]],
                   [],
-                  {:table => "user_id", :sortby => "_key", :limit => 0},
-                  :n_hits => records.size)
+                  {:table => "user_id",
+                   :sortby => "_key",
+                   :limit => 0,
+                   :output_type => output_type},
+                  {:n_hits => records.size,
+                   :content_type => content_type})
   end
 
   def test_sortby_negative_limit
@@ -310,8 +364,12 @@ module HTTPSelectBasicTests
     assert_select([["_id", "UInt32"],
                    ["_key", "Int32"]],
                   records.sort_by {|id, key| key},
-                  {:table => "user_id", :sortby => "_key", :limit => -1},
-                  :n_hits => records.size)
+                  {:table => "user_id",
+                   :sortby => "_key",
+                   :limit => -1,
+                   :output_type => output_type},
+                  {:n_hits => records.size,
+                   :content_type => content_type})
   end
 
   def test_sortby_offset_and_limit
@@ -324,8 +382,10 @@ module HTTPSelectBasicTests
                   {:table => "user_id",
                    :sortby => "_key",
                    :offset => 3,
-                   :limit => 4},
-                  :n_hits => records.size)
+                   :limit => 4,
+                   :output_type => output_type},
+                  {:n_hits => records.size,
+                   :content_type => content_type})
   end
 
   def test_sortby_with_invalid_key
@@ -334,11 +394,12 @@ module HTTPSelectBasicTests
 
     response = get(command_path(:select,
                                 :table => "user_id",
-                                :sortby => "-_id,+_-key"))
+                                :sortby => "-_id,+_-key",
+                                :output_type => output_type))
     assert_error_response(Result::INVALID_ARGUMENT,
                           "invalid sort key: <_-key>(<-_id,+_-key>)",
                           response,
-                          :content_type => "application/json")
+                          :content_type => content_type)
   end
 
   def test_offset
@@ -348,8 +409,11 @@ module HTTPSelectBasicTests
     assert_select([["_id", "UInt32"],
                    ["_key", "Int32"]],
                   records[3..-1],
-                  {:table => "user_id", :offset => 3},
-                  :n_hits => records.size)
+                  {:table => "user_id",
+                   :offset => 3,
+                   :output_type => output_type},
+                  {:n_hits => records.size,
+                   :content_type => content_type})
   end
 
   def test_zero_offset
@@ -359,8 +423,11 @@ module HTTPSelectBasicTests
     assert_select([["_id", "UInt32"],
                    ["_key", "Int32"]],
                   records,
-                  {:table => "user_id", :offset => 0},
-                  :n_hits => records.size)
+                  {:table => "user_id",
+                   :offset => 0,
+                   :output_type => output_type},
+                  {:n_hits => records.size,
+                   :content_type => content_type})
   end
 
   def test_negative_offset
@@ -370,8 +437,11 @@ module HTTPSelectBasicTests
     assert_select([["_id", "UInt32"],
                    ["_key", "Int32"]],
                   records[-3..-1],
-                  {:table => "user_id", :offset => -3},
-                  :n_hits => records.size)
+                  {:table => "user_id",
+                   :offset => -3,
+                   :output_type => output_type},
+                  {:n_hits => records.size,
+                   :content_type => content_type})
   end
 
   def test_offset_one_larger_than_hits
@@ -381,8 +451,11 @@ module HTTPSelectBasicTests
     assert_select([["_id", "UInt32"],
                    ["_key", "Int32"]],
                   [],
-                  {:table => "user_id", :offset => records.size + 1},
-                  :n_hits => records.size)
+                  {:table => "user_id",
+                   :offset => records.size + 1,
+                   :output_type => output_type},
+                  {:n_hits => records.size,
+                   :content_type => content_type})
   end
 
   def test_negative_offset_one_larger_than_hits
@@ -392,8 +465,11 @@ module HTTPSelectBasicTests
     assert_select([["_id", "UInt32"],
                    ["_key", "Int32"]],
                   [],
-                  {:table => "user_id", :offset => -(records.size + 1)},
-                  :n_hits => records.size)
+                  {:table => "user_id",
+                   :offset => -(records.size + 1),
+                   :output_type => output_type},
+                  {:n_hits => records.size,
+                   :content_type => content_type})
   end
 
   def test_offset_equal_to_hits
@@ -403,8 +479,11 @@ module HTTPSelectBasicTests
     assert_select([["_id", "UInt32"],
                    ["_key", "Int32"]],
                   [],
-                  {:table => "user_id", :offset => records.size},
-                  :n_hits => records.size)
+                  {:table => "user_id",
+                   :offset => records.size,
+                   :output_type => output_type},
+                  {:n_hits => records.size,
+                   :content_type => content_type})
   end
 
   def test_negative_offset_equal_to_hits
@@ -414,8 +493,11 @@ module HTTPSelectBasicTests
     assert_select([["_id", "UInt32"],
                    ["_key", "Int32"]],
                   records,
-                  {:table => "user_id", :offset => -records.size},
-                  :n_hits => records.size)
+                  {:table => "user_id",
+                   :offset => -records.size,
+                   :output_type => output_type},
+                  {:n_hits => records.size,
+                   :content_type => content_type})
   end
 
   def test_limit
@@ -425,8 +507,11 @@ module HTTPSelectBasicTests
     assert_select([["_id", "UInt32"],
                    ["_key", "Int32"]],
                   records[0, 4],
-                  {:table => "user_id", :limit => 4},
-                  :n_hits => records.size)
+                  {:table => "user_id",
+                   :limit => 4,
+                   :output_type => output_type},
+                  {:n_hits => records.size,
+                   :content_type => content_type})
   end
 
   def test_zero_limit
@@ -436,8 +521,11 @@ module HTTPSelectBasicTests
     assert_select([["_id", "UInt32"],
                    ["_key", "Int32"]],
                   [],
-                  {:table => "user_id", :limit => 0},
-                  :n_hits => records.size)
+                  {:table => "user_id",
+                   :limit => 0,
+                   :output_type => output_type},
+                  {:n_hits => records.size,
+                   :content_type => content_type})
   end
 
   def test_negative_limit
@@ -447,8 +535,11 @@ module HTTPSelectBasicTests
     assert_select([["_id", "UInt32"],
                    ["_key", "Int32"]],
                   records,
-                  {:table => "user_id", :limit => -1},
-                  :n_hits => records.size)
+                  {:table => "user_id",
+                   :limit => -1,
+                   :output_type => output_type},
+                  {:n_hits => records.size,
+                   :content_type => content_type})
   end
 
   def test_offset_and_limit
@@ -458,8 +549,12 @@ module HTTPSelectBasicTests
     assert_select([["_id", "UInt32"],
                    ["_key", "Int32"]],
                   records[3, 4],
-                  {:table => "user_id", :offset => 3, :limit => 4},
-                  :n_hits => records.size)
+                  {:table => "user_id",
+                   :offset => 3,
+                   :limit => 4,
+                   :output_type => output_type},
+                  {:n_hits => records.size,
+                   :content_type => content_type})
   end
 
   def test_accessor
@@ -472,8 +567,10 @@ module HTTPSelectBasicTests
                    ["author", "users"],
                    ["text", "ShortText"]],
                   [[2, "hayamiz", "groonga rocks"]],
-                  :table => "comments",
-                  :query => "author.real_name:\"Yuto Hayamizu\"")
+                  {:table => "comments",
+                   :query => "author.real_name:\"Yuto Hayamizu\"",
+                   :output_type => output_type},
+                  :content_type => content_type)
   end
 
   def test_drilldown
@@ -490,11 +587,13 @@ module HTTPSelectBasicTests
                   {:table => "comments",
                    :drilldown => "author",
                    :drilldown_output_columns => "real_name",
-                   :drilldown_limit => 10},
-                  :drilldown_results => [[[2],
-                                          [["real_name", "ShortText"]],
-                                          ["Ryo Onodera"],
-                                          ["Yuto Hayamizu"]]])
+                   :drilldown_limit => 10,
+                   :output_type => output_type},
+                  {:drilldown_results => [[[2],
+                                           [["real_name", "ShortText"]],
+                                           ["Ryo Onodera"],
+                                           ["Yuto Hayamizu"]]],
+                   :content_type => content_type})
   end
 
   def test_multiple_drilldown
@@ -511,15 +610,17 @@ module HTTPSelectBasicTests
                   {:table => "comments",
                    :drilldown => "text author",
                    :drilldown_output_columns => "_key",
-                   :drilldown_limit => 10},
-                  :drilldown_results => [[[2],
-                                          [["_key", "ShortText"]],
-                                          ["Ruby rocks"],
-                                          ["groonga rocks"]],
-                                         [[2],
-                                          [["_key", "ShortText"]],
-                                          ["ryoqun"],
-                                          ["hayamiz"]]])
+                   :drilldown_limit => 10,
+                   :output_type => output_type},
+                  {:drilldown_results => [[[2],
+                                           [["_key", "ShortText"]],
+                                           ["Ruby rocks"],
+                                           ["groonga rocks"]],
+                                          [[2],
+                                           [["_key", "ShortText"]],
+                                           ["ryoqun"],
+                                           ["hayamiz"]]],
+                   :content_type => content_type})
   end
 
   def test_drilldown_sortby
@@ -534,8 +635,10 @@ module HTTPSelectBasicTests
                       ["moritan"],
                       ["ryoqun"],
                       ["taporobo"]],
-                     :drilldown_sortby => "_key",
-                     :drilldown_output_columns => "_key")
+                     {:drilldown_sortby => "_key",
+                      :drilldown_output_columns => "_key",
+                      :output_type => output_type},
+                     :content_type => content_type)
   end
 
   def test_drilldown_sortby_with_multiple_column
@@ -551,8 +654,10 @@ module HTTPSelectBasicTests
                       [150, "gunyara-kun"],
                       [200, "hayamiz"],
                       [200, "ryoqun"]],
-                     :drilldown_sortby => "hp _key",
-                     :drilldown_output_columns => "hp _key")
+                     {:drilldown_sortby => "hp _key",
+                      :drilldown_output_columns => "hp _key",
+                      :output_type => output_type},
+                     :content_type => content_type)
   end
 
   def test_drilldown_offset
@@ -566,8 +671,10 @@ module HTTPSelectBasicTests
                       ["moritan"],
                       ["ryoqun"]],
                      {:drilldown_offset => 2,
-                      :drilldown_output_columns => "_key"},
-                     :n_hits => comments.size)
+                      :drilldown_output_columns => "_key",
+                      :output_type => output_type},
+                     {:n_hits => comments.size,
+                      :content_type => content_type})
   end
 
   def test_zero_drilldown_offset
@@ -582,8 +689,10 @@ module HTTPSelectBasicTests
                       ["gunyara-kun"],
                       ["moritan"],
                       ["ryoqun"]],
-                     :drilldown_offset => 0,
-                     :drilldown_output_columns => "_key")
+                     {:drilldown_offset => 0,
+                      :drilldown_output_columns => "_key",
+                      :output_type => output_type},
+                     :content_type => content_type)
   end
 
   def test_negative_drilldown_offset
@@ -596,8 +705,10 @@ module HTTPSelectBasicTests
                      [["moritan"],
                       ["ryoqun"]],
                      {:drilldown_offset => -2,
-                      :drilldown_output_columns => "_key"},
-                     :n_hits => comments.size)
+                      :drilldown_output_columns => "_key",
+                      :output_type => output_type},
+                     {:n_hits => comments.size,
+                      :content_type => content_type})
   end
 
   def test_drilldown_offset_one_larger_than_hits
@@ -611,8 +722,12 @@ module HTTPSelectBasicTests
                      {
                        :drilldown_output_columns => '_key',
                        :drilldown_offset => 6,
+                       :output_type => output_type
                      },
-                     :n_hits => 5)
+                     {
+                       :n_hits => 5,
+                       :content_type => content_type
+                     })
   end
 
   def test_negative_drilldown_offset_one_larger_than_hits
@@ -626,8 +741,12 @@ module HTTPSelectBasicTests
                      {
                        :drilldown_output_columns => '_key',
                        :drilldown_offset => -6,
+                       :output_type => output_type
                      },
-                     :n_hits => 5)
+                     {
+                       :n_hits => 5,
+                       :content_type => content_type
+                     })
   end
 
   def test_drilldown_offset_equal_to_hits
@@ -641,8 +760,12 @@ module HTTPSelectBasicTests
                      {
                        :drilldown_output_columns => '_key',
                        :drilldown_offset => 5,
+                       :output_type => output_type
                      },
-                     :n_hits => 5)
+                     {
+                       :n_hits => 5,
+                       :content_type => content_type
+                     })
   end
 
   def test_negative_drilldown_offset_equal_to_hits
@@ -662,8 +785,12 @@ module HTTPSelectBasicTests
                      {
                        :drilldown_output_columns => '_key',
                        :drilldown_offset => -5,
+                       :output_type => output_type
                      },
-                     :n_hits => 5)
+                     {
+                       :n_hits => 5,
+                       :content_type => content_type
+                     })
   end
 
   def test_drilldown_limit
@@ -676,8 +803,10 @@ module HTTPSelectBasicTests
                      [["taporobo"],
                       ["hayamiz"]],
                      {:drilldown_limit => 2,
-                      :drilldown_output_columns => "_key"},
-                     :n_hits => comments.size)
+                      :drilldown_output_columns => "_key",
+                      :output_type => output_type},
+                     {:n_hits => comments.size,
+                      :content_type => content_type})
   end
 
   def test_zero_drilldown_limit
@@ -689,8 +818,10 @@ module HTTPSelectBasicTests
     assert_drilldown([["_key", "ShortText"],
                       ["_nsubrecs", "Int32"]],
                      [],
-                     {:drilldown_limit => 0},
-                     :n_hits => comments.size)
+                     {:drilldown_limit => 0,
+                      :output_type => output_type},
+                     {:n_hits => comments.size,
+                      :content_type => content_type})
   end
 
   def test_negative_drilldown_limit
@@ -704,8 +835,10 @@ module HTTPSelectBasicTests
                       ["hayamiz"],
                       ["gunyara-kun"]],
                      {:drilldown_limit => -3,
-                      :drilldown_output_columns => "_key"},
-                     :n_hits => comments.size)
+                      :drilldown_output_columns => "_key",
+                      :output_type => output_type},
+                     {:n_hits => comments.size,
+                      :content_type => content_type})
 
   end
 
@@ -719,8 +852,10 @@ module HTTPSelectBasicTests
                      [["gunyara-kun"]],
                      {:drilldown_offset => 2,
                       :drilldown_limit => 1,
-                      :drilldown_output_columns => "_key"},
-                     :n_hits => comments.size)
+                      :drilldown_output_columns => "_key",
+                      :output_type => output_type},
+                     {:n_hits => comments.size,
+                      :content_type => content_type})
   end
 
   def test_drilldown_output_columns_wild_card
@@ -739,7 +874,9 @@ module HTTPSelectBasicTests
                       ["Tasuku SUENAGA", 150, "gunyara-kun"],
                       ["Yuto Hayamizu", 200, "hayamiz"],
                       ["Ryo Onodera", 200, "ryoqun"]],
-                     :drilldown_output_columns => "* _key")
+                     {:drilldown_output_columns => "* _key",
+                      :output_type => output_type},
+                     :content_type => content_type)
   end
 
   def test_xml
@@ -888,9 +1025,11 @@ EOF
                    ["_key", "ShortText"],
                    ["real_name", "ShortText"]],
                   [],
-                  :table => "users",
-                  :output_columns => "_id,_key,real_name",
-                  :query => "_key:ababa")
+                  {:table => "users",
+                   :output_columns => "_id,_key,real_name",
+                   :query => "_key:ababa",
+                   :output_type => output_type},
+                  :content_type => content_type)
   end
 
   def test_no_existent_pat_id
@@ -900,9 +1039,11 @@ EOF
                    ["_key", "ShortText"],
                    ["real_name", "ShortText"]],
                   [],
-                  :table => "users",
-                  :output_columns => "_id,_key,real_name",
-                  :query => "_id:1234")
+                  {:table => "users",
+                   :output_columns => "_id,_key,real_name",
+                   :query => "_id:1234",
+                   :output_type => output_type},
+                  :content_type => content_type)
   end
 
   def test_no_existent_hash_key
@@ -911,9 +1052,11 @@ EOF
     assert_select([["_id", "UInt32"],
                    ["_key", "ShortText"]],
                   [],
-                  :table => "tags",
-                  :output_columns => "_id,_key",
-                  :query => "_key:ababa")
+                  {:table => "tags",
+                   :output_columns => "_id,_key",
+                   :query => "_key:ababa",
+                   :output_type => output_type},
+                  :content_type => content_type)
   end
 
   def test_no_existent_hash_id
@@ -922,9 +1065,11 @@ EOF
     assert_select([["_id", "UInt32"],
                    ["_key", "ShortText"]],
                   [],
-                  :table => "tags",
-                  :output_columns => "_id,_key",
-                  :query => "_id:1234")
+                  {:table => "tags",
+                   :output_columns => "_id,_key",
+                   :query => "_id:1234",
+                   :output_type => output_type},
+                  :content_type => content_type)
   end
 
   private
@@ -982,26 +1127,52 @@ EOF
                   {:table => "comments",
                    :drilldown => "author",
                    :drilldown_limit => 10}.merge(parameters),
-                  :drilldown_results => [[[options[:n_hits] || expected.size],
-                                          header,
-                                          *expected]])
+                  {:drilldown_results => [[[options[:n_hits] || expected.size],
+                                           header,
+                                           *expected]],
+                   :content_type => options[:content_type]})
   end
 end
 
-class HTTPSelectBasicTest < Test::Unit::TestCase
-  include HTTPSelectBasicTests
-end
-
-class HTTPDefineSelectorBasicTest < HTTPSelectBasicTest
-  include HTTPSelectBasicTests
-
+module DefineSelector
   def assert_select(header, expected, parameters, options={}, &block)
     @names ||= []
     name = "custom_select#{@names.size}"
     @names << name
     response = get(command_path("define_selector",
                                 parameters.merge(:name => name)))
-    assert_success_response(response, :content_type => "application/json")
-    super(header, expected, {}, options.merge(:command => name), &block)
+    assert_success_response(response, :content_type => content_type)
+
+    execution_parameters = {}
+    if parameters[:output_type]
+      execution_parameters[:output_type] = output_type
+    end
+    super(header,
+          expected,
+          execution_parameters,
+          options.merge(:command => name),
+          &block)
   end
+end
+
+class JSONHTTPSelectBasicTest < Test::Unit::TestCase
+  include HTTPSelectBasicTests
+  include Format::JSON
+end
+
+class JSONHTTPDefineSelectorBasicTest < Test::Unit::TestCase
+  include HTTPSelectBasicTests
+  include Format::JSON
+  include DefineSelector
+end
+
+class MessagePackHTTPSelectBasicTest < Test::Unit::TestCase
+  include HTTPSelectBasicTests
+  include Format::MessagePack
+end
+
+class MessagePackHTTPDefineSelectorBasicTest < Test::Unit::TestCase
+  include HTTPSelectBasicTests
+  include Format::MessagePack
+  include DefineSelector
 end

@@ -332,6 +332,7 @@ module GroongaHTTPTestUtils
     command_name = options[:command] || :select
     response = get(command_path(command_name, parameters))
     drilldown_results = options[:drilldown_results] || []
+    expected_content_type = options[:content_type] || "application/json"
 
     assert_response([success_status_response,
                      [[[options[:n_hits] || expected.size],
@@ -340,7 +341,7 @@ module GroongaHTTPTestUtils
                       ],
                      *drilldown_results]],
                     response,
-                    :content_type => "application/json",
+                    :content_type => expected_content_type,
                     &block)
   end
 
