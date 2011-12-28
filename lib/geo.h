@@ -56,8 +56,7 @@ extern "C" {
 
 #define GRN_GEO_KEY_MAX_BITS 64
 
-typedef enum _grn_geo_cursor_entry_status_flag grn_geo_cursor_entry_status_flag;
-enum _grn_geo_cursor_entry_status_flag {
+typedef enum {
   GRN_GEO_CURSOR_ENTRY_STATUS_NONE            = 0,
   GRN_GEO_CURSOR_ENTRY_STATUS_TOP_INCLUDED    = 1 << 0,
   GRN_GEO_CURSOR_ENTRY_STATUS_BOTTOM_INCLUDED = 1 << 1,
@@ -65,17 +64,15 @@ enum _grn_geo_cursor_entry_status_flag {
   GRN_GEO_CURSOR_ENTRY_STATUS_RIGHT_INCLUDED  = 1 << 3,
   GRN_GEO_CURSOR_ENTRY_STATUS_LATITUDE_INNER  = 1 << 4,
   GRN_GEO_CURSOR_ENTRY_STATUS_LONGITUDE_INNER = 1 << 5
-};
+} grn_geo_cursor_entry_status_flag;
 
-typedef struct _grn_geo_cursor_entry grn_geo_cursor_entry;
-struct _grn_geo_cursor_entry {
+typedef struct {
   uint8_t key[sizeof(grn_geo_point)];
   int target_bit;
   int status_flags;
-};
+} grn_geo_cursor_entry;
 
-typedef struct _grn_geo_cursor_in_rectangle grn_geo_cursor_in_rectangle;
-struct _grn_geo_cursor_in_rectangle {
+typedef struct {
   grn_db_obj obj;
   grn_obj *pat;
   grn_obj *index;
@@ -91,7 +88,7 @@ struct _grn_geo_cursor_in_rectangle {
   grn_geo_cursor_entry entries[GRN_GEO_KEY_MAX_BITS];
   int current_entry;
   int minimum_reduce_bit;
-};
+} grn_geo_cursor_in_rectangle;
 
 grn_rc grn_geo_cursor_close(grn_ctx *ctx, grn_obj *geo_cursor);
 
