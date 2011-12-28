@@ -2500,8 +2500,18 @@ func_geo_in_circle(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
 {
   grn_obj *obj;
   unsigned char r = GRN_FALSE;
-  if (nargs == 3) {
-    r = grn_geo_in_circle(ctx, args[0], args[1], args[2]);
+  grn_geo_approximate_type type = GRN_GEO_APPROXIMATE_RECTANGLE;
+  switch (nargs) {
+  case 4 :
+    if (grn_geo_resolve_approximate_type(ctx, args[3], &type) != GRN_SUCCESS) {
+      break;
+    }
+    /* fallthru */
+  case 3 :
+    r = grn_geo_in_circle(ctx, args[0], args[1], args[2], type);
+    break;
+  default :
+    break;
   }
   if ((obj = GRN_PROC_ALLOC(GRN_DB_UINT32, 0))) {
     GRN_UINT32_SET(ctx, obj, r);

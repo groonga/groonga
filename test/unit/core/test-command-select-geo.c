@@ -21,7 +21,8 @@
 
 #include "../lib/grn-assertions.h"
 
-void test_default(void);
+void data_default(void);
+void test_default(gconstpointer data);
 void data_rectangle(void);
 void test_rectangle(gconstpointer data);
 void data_sphere(void);
@@ -94,7 +95,21 @@ cut_teardown(void)
 }
 
 void
-test_default(void)
+data_default(void)
+{
+#define ADD_DATA(label, use_index)                              \
+  gcut_add_datum(label,                                         \
+                 "use-index", G_TYPE_BOOLEAN, use_index,        \
+                 NULL)
+
+  ADD_DATA("use index", TRUE);
+  ADD_DATA("no index", FALSE);
+
+#undef ADD_DATA
+}
+
+void
+test_default(gconstpointer data)
 {
   gdouble yurakucho_latitude = 35.67487;
   gdouble yurakucho_longitude = 139.76352;
@@ -117,24 +132,28 @@ test_default(void)
         "select Shops "
         "--sortby '+_score, +name' "
         "--output_columns 'name, _score, location' "
-        "--filter 'geo_in_circle(location, \"%s\", %d)' "
+        "--filter 'geo_in_circle(location, \"%s\", %d)%s' "
         "--scorer "
           "'_score = geo_distance(location, \"%s\") * 1000 * 1000'",
         grn_test_location_string(yurakucho_latitude, yurakucho_longitude),
         distance,
+        gcut_data_get_boolean(data, "use-index") ? "" : " > 0",
         grn_test_location_string(yurakucho_latitude, yurakucho_longitude))));
 }
 
 void
 data_rectangle(void)
 {
-#define ADD_DATA(label, type)                                   \
+#define ADD_DATA(label, type, use_index)                        \
   gcut_add_datum(label,                                         \
                  "approximate-type", G_TYPE_STRING, type,       \
+                 "use-index", G_TYPE_BOOLEAN, use_index,        \
                  NULL)
 
-  ADD_DATA("full", "rectangle");
-  ADD_DATA("abbreviation", "rect");
+  ADD_DATA("full - use index", "rectangle", TRUE);
+  ADD_DATA("full - no index", "rectangle", FALSE);
+  ADD_DATA("abbreviation - use index", "rect", TRUE);
+  ADD_DATA("abbreviation - no index", "rect", FALSE);
 
 #undef ADD_DATA
 }
@@ -165,12 +184,13 @@ test_rectangle(gconstpointer data)
         "select Shops "
         "--sortby '+_score, +name' "
         "--output_columns 'name, _score, location' "
-        "--filter 'geo_in_circle(location, \"%s\", %d, \"%s\")' "
+        "--filter 'geo_in_circle(location, \"%s\", %d, \"%s\")%s' "
         "--scorer "
           "'_score = geo_distance(location, \"%s\", \"%s\") * 1000 * 1000'",
         grn_test_location_string(yurakucho_latitude, yurakucho_longitude),
         distance,
         approximate_type,
+        gcut_data_get_boolean(data, "use-index") ? "" : " > 0",
         grn_test_location_string(yurakucho_latitude, yurakucho_longitude),
         approximate_type)));
 }
@@ -178,13 +198,16 @@ test_rectangle(gconstpointer data)
 void
 data_sphere(void)
 {
-#define ADD_DATA(label, type)                                   \
+#define ADD_DATA(label, type, use_index)                        \
   gcut_add_datum(label,                                         \
                  "approximate-type", G_TYPE_STRING, type,       \
+                 "use-index", G_TYPE_BOOLEAN, use_index,        \
                  NULL)
 
-  ADD_DATA("full", "sphere");
-  ADD_DATA("abbreviation", "sphr");
+  ADD_DATA("full - use index", "sphere", TRUE);
+  ADD_DATA("full - no index", "sphere", FALSE);
+  ADD_DATA("abbreviation - use index", "sphr", TRUE);
+  ADD_DATA("abbreviation - no index", "sphr", FALSE);
 
 #undef ADD_DATA
 }
@@ -215,12 +238,13 @@ test_sphere(gconstpointer data)
         "select Shops "
         "--sortby '+_score, +name' "
         "--output_columns 'name, _score, location' "
-        "--filter 'geo_in_circle(location, \"%s\", %d, \"%s\")' "
+        "--filter 'geo_in_circle(location, \"%s\", %d, \"%s\")%s' "
         "--scorer "
           "'_score = geo_distance(location, \"%s\", \"%s\") * 1000 * 1000'",
         grn_test_location_string(yurakucho_latitude, yurakucho_longitude),
         distance,
         approximate_type,
+        gcut_data_get_boolean(data, "use-index") ? "" : " > 0",
         grn_test_location_string(yurakucho_latitude, yurakucho_longitude),
         approximate_type)));
 }
@@ -228,13 +252,16 @@ test_sphere(gconstpointer data)
 void
 data_ellipsoid(void)
 {
-#define ADD_DATA(label, type)                                   \
+#define ADD_DATA(label, type, use_index)                        \
   gcut_add_datum(label,                                         \
                  "approximate-type", G_TYPE_STRING, type,       \
+                 "use-index", G_TYPE_BOOLEAN, use_index,        \
                  NULL)
 
-  ADD_DATA("full", "ellipsoid");
-  ADD_DATA("abbreviation", "ellip");
+  ADD_DATA("full - use index", "ellipsoid", TRUE);
+  ADD_DATA("full - no index", "ellipsoid", FALSE);
+  ADD_DATA("abbreviation - use index", "ellip", TRUE);
+  ADD_DATA("abbreviation - no index", "ellip", FALSE);
 
 #undef ADD_DATA
 }
@@ -265,12 +292,13 @@ test_ellipsoid(gconstpointer data)
         "select Shops "
         "--sortby '+_score, +name' "
         "--output_columns 'name, _score, location' "
-        "--filter 'geo_in_circle(location, \"%s\", %d, \"%s\")' "
+        "--filter 'geo_in_circle(location, \"%s\", %d, \"%s\")%s' "
         "--scorer "
           "'_score = geo_distance(location, \"%s\", \"%s\") * 1000 * 1000'",
         grn_test_location_string(yurakucho_latitude, yurakucho_longitude),
         distance,
         approximate_type,
+        gcut_data_get_boolean(data, "use-index") ? "" : " > 0",
         grn_test_location_string(yurakucho_latitude, yurakucho_longitude),
         approximate_type)));
 }

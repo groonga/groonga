@@ -185,11 +185,13 @@ test_in_circle(void)
   cut_assert_true(grn_geo_in_circle(context,
                                     hiiragi_wgs84,
                                     shinjuku_wgs84,
-                                    tokyo_wgs84));
+                                    tokyo_wgs84,
+                                    GRN_GEO_APPROXIMATE_RECTANGLE));
   cut_assert_false(grn_geo_in_circle(context,
                                      takane_wgs84,
                                      shinjuku_wgs84,
-                                     tokyo_wgs84));
+                                     tokyo_wgs84,
+                                     GRN_GEO_APPROXIMATE_RECTANGLE));
 }
 
 void
