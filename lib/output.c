@@ -467,10 +467,20 @@ grn_output_geo_point(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type
     break;
   case GRN_CONTENT_MSGPACK :
 #ifdef HAVE_MESSAGE_PACK
-    // TODO %dx%d notation for compatibility
-    msgpack_pack_array(&ctx->impl->msgpacker, 2);
-    msgpack_pack_int(&ctx->impl->msgpacker, value->latitude);
-    msgpack_pack_int(&ctx->impl->msgpacker, value->longitude);
+    if (value) {
+      grn_obj buf;
+      GRN_TEXT_INIT(&buf, 0);
+      grn_text_itoa(ctx, &buf, value->latitude);
+      GRN_TEXT_PUTC(ctx, &buf, 'x');
+      grn_text_itoa(ctx, &buf, value->longitude);
+      msgpack_pack_raw(&ctx->impl->msgpacker, GRN_TEXT_LEN(&buf));
+      msgpack_pack_raw_body(&ctx->impl->msgpacker,
+                            GRN_TEXT_VALUE(&buf),
+                            GRN_TEXT_LEN(&buf));
+      grn_obj_close(ctx, &buf);
+    } else {
+      msgpack_pack_nil(&ctx->impl->msgpacker);
+    }
 #endif
     break;
   case GRN_CONTENT_NONE:
