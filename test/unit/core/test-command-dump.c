@@ -184,6 +184,17 @@ data_patricia_trie_create(void)
 }
 
 static void
+data_double_array_trie_create(void)
+{
+  ADD_DATA("double-array trie",
+           "table_create Blog TABLE_DAT_KEY ShortText",
+           "Blog",
+           GRN_OBJ_TABLE_DAT_KEY,
+           "ShortText",
+           NULL);
+}
+
+static void
 data_array_create(void)
 {
   ADD_DATA("array",
@@ -216,6 +227,7 @@ data_table_create(void)
 {
   data_hash_table_create();
   data_patricia_trie_create();
+  data_double_array_trie_create();
   data_array_create();
   data_view_create();
 }
