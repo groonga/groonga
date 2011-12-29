@@ -97,17 +97,19 @@ grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg)
   GRN_API_ENTER;
   if (!path || strlen(path) <= PATH_MAX - 14) {
     if ((s = GRN_MALLOC(sizeof(grn_db)))) {
+      int use_pat_as_db_keys =  (getenv("GRN_CREATE_DB_USING_PAT") &&
+                                 !strcmp(getenv("GRN_CREATE_DB_USING_PAT"), "yes"));
       grn_tiny_array_init(ctx, &s->values, sizeof(db_value),
                           GRN_TINY_ARRAY_CLEAR|
                           GRN_TINY_ARRAY_THREADSAFE|
                           GRN_TINY_ARRAY_USE_MALLOC);
-#ifdef USE_PAT_AS_DB_KEYS
-      s->keys = (grn_obj *)grn_pat_create(ctx, path, GRN_TABLE_MAX_KEY_SIZE,
-                                          0, GRN_OBJ_KEY_VAR_SIZE);
-#else /* USE_PAT_AS_DB_KEYS */
-      s->keys = (grn_obj *)grn_dat_create(ctx, path, GRN_TABLE_MAX_KEY_SIZE,
-                                          0, GRN_OBJ_KEY_VAR_SIZE);
-#endif /* USE_PAT_AS_DB_KEYS */
+      if (use_pat_as_db_keys) {
+        s->keys = (grn_obj *)grn_pat_create(ctx, path, GRN_TABLE_MAX_KEY_SIZE,
+                                            0, GRN_OBJ_KEY_VAR_SIZE);
+      } else {
+        s->keys = (grn_obj *)grn_dat_create(ctx, path, GRN_TABLE_MAX_KEY_SIZE,
+                                            0, GRN_OBJ_KEY_VAR_SIZE);
+      }
       if (s->keys) {
         CRITICAL_SECTION_INIT(s->lock);
         GRN_DB_OBJ_SET_TYPE(s, GRN_DB);
@@ -131,13 +133,13 @@ grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg)
           grn_db_init_builtin_types(ctx);
           GRN_API_RETURN((grn_obj *)s);
         }
-#ifdef USE_PAT_AS_DB_KEYS
-        grn_pat_close(ctx, (grn_pat *)s->keys);
-        grn_pat_remove(ctx, path);
-#else /* USE_PAT_AS_DB_KEYS */
-        grn_dat_close(ctx, (grn_dat *)s->keys);
-        grn_dat_remove(ctx, path);
-#endif /* USE_PAT_AS_DB_KEYS */
+        if (use_pat_as_db_keys) {
+          grn_pat_close(ctx, (grn_pat *)s->keys);
+          grn_pat_remove(ctx, path);
+        } else {
+          grn_dat_close(ctx, (grn_dat *)s->keys);
+          grn_dat_remove(ctx, path);
+        }
       }
       grn_tiny_array_fin(&s->values);
       GRN_FREE(s);
