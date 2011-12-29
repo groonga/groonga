@@ -23,6 +23,11 @@
 
 #include <str.h>
 
+void test_hash_key(void);
+void test_pat_key(void);
+void test_dat_key(void);
+void test_no_key(void);
+
 void test_invalid_name(void);
 
 static gchar *tmp_directory;
@@ -74,6 +79,42 @@ cut_teardown(void)
   }
 
   remove_tmp_directory();
+}
+
+static void
+grn_test_assert_users_table_type(unsigned char type)
+{
+  static const char *users = "Users";
+  grn_obj *object = grn_ctx_get(context, users, strlen(users));
+  cut_assert_equal_int(type, object->header.type);
+}
+
+void
+test_hash_key(void)
+{
+  assert_send_command("table_create Users TABLE_HASH_KEY ShortText");
+  grn_test_assert_users_table_type(GRN_TABLE_HASH_KEY);
+}
+
+void
+test_pat_key(void)
+{
+  assert_send_command("table_create Users TABLE_PAT_KEY ShortText");
+  grn_test_assert_users_table_type(GRN_TABLE_PAT_KEY);
+}
+
+void
+test_dat_key(void)
+{
+  assert_send_command("table_create Users TABLE_DAT_KEY ShortText");
+  grn_test_assert_users_table_type(GRN_TABLE_DAT_KEY);
+}
+
+void
+test_no_key(void)
+{
+  assert_send_command("table_create Users TABLE_NO_KEY");
+  grn_test_assert_users_table_type(GRN_TABLE_NO_KEY);
 }
 
 void
