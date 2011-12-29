@@ -127,7 +127,7 @@ Install::
   % sudo yum update
   % sudo yum install -y groonga
 
-Fedora 15
+Fedora 16
 ---------
 
 Install::
