@@ -97,8 +97,8 @@ grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg)
   GRN_API_ENTER;
   if (!path || strlen(path) <= PATH_MAX - 14) {
     if ((s = GRN_MALLOC(sizeof(grn_db)))) {
-      int use_pat_as_db_keys =  (getenv("GRN_CREATE_DB_USING_PAT") &&
-                                 !strcmp(getenv("GRN_CREATE_DB_USING_PAT"), "yes"));
+      grn_bool use_pat_as_db_keys = (getenv("GRN_CREATE_DB_USING_PAT") &&
+                                     !strcmp(getenv("GRN_CREATE_DB_USING_PAT"), "yes"));
       grn_tiny_array_init(ctx, &s->values, sizeof(db_value),
                           GRN_TINY_ARRAY_CLEAR|
                           GRN_TINY_ARRAY_THREADSAFE|
