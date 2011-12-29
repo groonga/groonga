@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-12-28 18:13\n"
-"PO-Revision-Date: 2011-12-28 18:13+0900\n"
+"PO-Revision-Date: 2011-12-29 13:10+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -206,7 +206,7 @@ msgstr "[grntest] 1行あたりの最大バイト数の制限を撤去。"
 # 6c331fa2a8a24a04b3b0e61d4aaa81ff
 #: ../../../source/news.txt:80
 msgid "[grntest] Added `--pid-path` option."
-msgstr "[grntest] `--pid-path`オプションを追加。"
+msgstr "[grntest] `--pid-path` オプションを追加。"
 
 # ec1da3e5201c411daab63de57aa33749
 #: ../../../source/news.txt:81
