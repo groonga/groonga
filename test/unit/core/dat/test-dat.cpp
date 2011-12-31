@@ -84,13 +84,14 @@ namespace test_dat
 
   grn_dat *create_trie(const std::vector<std::string> &keys, const char *path) {
     grn_dat * const dat = grn_dat_create(&ctx, path, 0, 0, GRN_OBJ_KEY_VAR_SIZE);
-    cut_assert_not_null(dat);
+    cppcut_assert_not_null(dat);
     for (std::size_t i = 0; i < keys.size(); ++i) {
       const char * const ptr = keys[i].c_str();
       const uint32_t length = static_cast<uint32_t>(keys[i].length());
       int added;
       const grn_id key_id = grn_dat_add(&ctx, dat, ptr, length, NULL, &added);
-      cut_assert(key_id != GRN_ID_NIL);
+      cppcut_assert_not_equal(static_cast<const grn_id>(GRN_ID_NIL),
+                              key_id);
       cut_assert_true(added);
     }
     return dat;
@@ -130,7 +131,7 @@ namespace test_dat
 
     grn_dat * const dat = create_trie(keys, dat_path);
     grn_dat * const dat2 = grn_dat_open(&ctx, dat_path);
-    cut_assert_not_null(dat2);
+    cppcut_assert_not_null(dat2);
     for (std::size_t i = 0; i < keys.size(); ++i) {
       const char * const ptr = keys[i].c_str();
       const uint32_t length = static_cast<uint32_t>(keys[i].length());
@@ -140,8 +141,8 @@ namespace test_dat
     cppcut_assert_equal(GRN_SUCCESS, grn_dat_close(&ctx, dat));
     cppcut_assert_equal(GRN_SUCCESS, grn_dat_close(&ctx, dat2));
 
-    cut_assert_null(grn_dat_open(&ctx, NULL));
-    cut_assert_null(grn_dat_open(&ctx, ""));
+    cppcut_assert_null(grn_dat_open(&ctx, NULL));
+    cppcut_assert_null(grn_dat_open(&ctx, ""));
   }
 
   void test_remove(void)
@@ -225,7 +226,7 @@ namespace test_dat
 
       uint32_t key_length;
       const char * const key_ptr = _grn_dat_key(&ctx, dat, key_id, &key_length);
-      cut_assert_not_null(key_ptr);
+      cppcut_assert_not_null(key_ptr);
       cppcut_assert_equal(length, static_cast<int>(key_length));
 
       cppcut_assert_equal(length, grn_dat_get_key2(&ctx, dat, key_id, &bulk));
@@ -253,7 +254,7 @@ namespace test_dat
 
       uint32_t key_length;
       const char * const key_ptr = _grn_dat_key(&ctx, dat, key_id, &key_length);
-      cut_assert_not_null(key_ptr);
+      cppcut_assert_not_null(key_ptr);
       cppcut_assert_equal(length, static_cast<int>(key_length));
 
       GRN_BULK_REWIND(&bulk);
@@ -337,7 +338,7 @@ namespace test_dat
     create_keys(&keys, 1000, 6, 15);
 
     grn_dat * const dat = grn_dat_create(&ctx, NULL, 0, 0, GRN_OBJ_KEY_VAR_SIZE);
-    cut_assert_not_null(dat);
+    cppcut_assert_not_null(dat);
     for (std::size_t i = 0; i < (keys.size() / 2); ++i) {
       const char * const ptr = keys[i].c_str();
       const uint32_t length = static_cast<uint32_t>(keys[i].length());
@@ -383,7 +384,7 @@ namespace test_dat
     create_keys(&keys, 1000, 6, 15);
 
     grn_dat * const dat = grn_dat_create(&ctx, NULL, 0, 0, GRN_OBJ_KEY_VAR_SIZE);
-    cut_assert_not_null(dat);
+    cppcut_assert_not_null(dat);
     for (std::size_t i = 0; i < (keys.size() / 2); ++i) {
       const char * const ptr = keys[i].c_str();
       const uint32_t length = static_cast<uint32_t>(keys[i].length());
@@ -478,7 +479,7 @@ namespace test_dat
   void test_curr_id(void)
   {
     grn_dat * const dat = grn_dat_create(&ctx, NULL, 0, 0, GRN_OBJ_KEY_VAR_SIZE);
-    cut_assert_not_null(dat);
+    cppcut_assert_not_null(dat);
 
     grn_id max_key_id = 0;
     std::string key;
@@ -524,11 +525,11 @@ namespace test_dat
       const uint32_t length = static_cast<uint32_t>(keys[i].length());
       uint32_t key_length;
       const char * const key_ptr = _grn_dat_key(&ctx, dat, key_id, &key_length);
-      cut_assert_not_null(key_ptr);
+      cppcut_assert_not_null(key_ptr);
       cppcut_assert_equal(length, key_length);
       cppcut_assert_equal(keys[i], std::string(key_ptr, key_length));
     }
-    cut_assert_null(_grn_dat_key(&ctx, dat, GRN_ID_NIL, NULL));
+    cppcut_assert_null(_grn_dat_key(&ctx, dat, GRN_ID_NIL, NULL));
     cppcut_assert_equal(GRN_SUCCESS, grn_dat_close(&ctx, dat));
   }
 

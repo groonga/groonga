@@ -75,7 +75,7 @@ namespace test_dat_cursor
 
   grn_dat *create_trie(const std::vector<std::string> &keys) {
     grn_dat * const dat = grn_dat_create(&ctx, NULL, 0, 0, GRN_OBJ_KEY_VAR_SIZE);
-    cut_assert_not_null(dat);
+    cppcut_assert_not_null(dat);
     for (std::size_t i = 0; i < keys.size(); ++i) {
       const char * const ptr = keys[i].c_str();
       const uint32_t length = static_cast<uint32_t>(keys[i].length());
@@ -88,10 +88,10 @@ namespace test_dat_cursor
   void test_cursor_open(void)
   {
     grn_dat *dat = grn_dat_create(&ctx, NULL, 0, 0, 0);
-    cut_assert_not_null(dat);
+    cppcut_assert_not_null(dat);
     grn_dat_cursor *cursor =
         grn_dat_cursor_open(&ctx, dat, "ABC", 0, "XYZ", 0, 0, -1, GRN_CURSOR_BY_ID);
-    cut_assert_not_null(cursor);
+    cppcut_assert_not_null(cursor);
     grn_dat_cursor_close(&ctx, cursor);
     cppcut_assert_equal(GRN_SUCCESS, grn_dat_close(&ctx, dat));
 
@@ -99,7 +99,7 @@ namespace test_dat_cursor
     create_keys(&keys, 100, 3, 5);
     dat = create_trie(keys);
     cursor = grn_dat_cursor_open(&ctx, dat, "ABC", 0, "XYZ", 0, 0, -1, GRN_CURSOR_BY_KEY);
-    cut_assert_not_null(cursor);
+    cppcut_assert_not_null(cursor);
     grn_dat_cursor_close(&ctx, cursor);
     cppcut_assert_equal(GRN_SUCCESS, grn_dat_close(&ctx, dat));
   }
@@ -112,7 +112,7 @@ namespace test_dat_cursor
 
     grn_dat_cursor * const cursor =
         grn_dat_cursor_open(&ctx, dat, NULL, 0, NULL, 0, 0, -1, GRN_CURSOR_BY_ID);
-    cut_assert_not_null(cursor);
+    cppcut_assert_not_null(cursor);
     for (std::size_t i = 1; i <= keys.size(); ++i) {
       cppcut_assert_equal(static_cast<grn_id>(i), grn_dat_cursor_next(&ctx, cursor));
     }
@@ -130,7 +130,7 @@ namespace test_dat_cursor
 
     grn_dat_cursor * const cursor =
         grn_dat_cursor_open(&ctx, dat, NULL, 0, NULL, 0, 0, -1, GRN_CURSOR_BY_ID);
-    cut_assert_not_null(cursor);
+    cppcut_assert_not_null(cursor);
     for (std::size_t i = 0; i < keys.size(); ++i) {
       const grn_id key_id = static_cast<grn_id>(i + 1);
       const int length = static_cast<int>(keys[i].length());
@@ -155,7 +155,7 @@ namespace test_dat_cursor
 
     grn_dat_cursor *cursor =
         grn_dat_cursor_open(&ctx, dat, NULL, 0, NULL, 0, 0, -1, GRN_CURSOR_BY_ID);
-    cut_assert_not_null(cursor);
+    cppcut_assert_not_null(cursor);
     for (std::size_t i = 1; i <= keys.size(); ++i) {
       cppcut_assert_equal(static_cast<grn_id>(i), grn_dat_cursor_next(&ctx, cursor));
       if (i & 1) {
@@ -166,7 +166,7 @@ namespace test_dat_cursor
     grn_dat_cursor_close(&ctx, cursor);
 
     cursor = grn_dat_cursor_open(&ctx, dat, NULL, 0, NULL, 0, 0, -1, GRN_CURSOR_BY_ID);
-    cut_assert_not_null(cursor);
+    cppcut_assert_not_null(cursor);
     for (std::size_t i = 1; i <= (keys.size() / 2); ++i) {
       cppcut_assert_equal(static_cast<grn_id>(i * 2), grn_dat_cursor_next(&ctx, cursor));
     }
@@ -187,7 +187,7 @@ namespace test_dat_cursor
 
     grn_dat_cursor *cursor = grn_dat_cursor_open(&ctx, dat, NULL, 0, NULL, 0,
                                                  0, -1, GRN_CURSOR_BY_ID);
-    cut_assert_not_null(cursor);
+    cppcut_assert_not_null(cursor);
     cppcut_assert_equal(static_cast<grn_id>(1), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(2), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(3), grn_dat_cursor_next(&ctx, cursor));
@@ -197,7 +197,7 @@ namespace test_dat_cursor
 
     cursor = grn_dat_cursor_open(&ctx, dat, keys[2].c_str(), keys[2].length(),
                                  NULL, 0, 0, -1, GRN_CURSOR_BY_ID);
-    cut_assert_not_null(cursor);
+    cppcut_assert_not_null(cursor);
     cppcut_assert_equal(static_cast<grn_id>(3), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(4), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(GRN_ID_NIL), grn_dat_cursor_next(&ctx, cursor));
@@ -205,7 +205,7 @@ namespace test_dat_cursor
 
     cursor = grn_dat_cursor_open(&ctx, dat, NULL, 0, keys[1].c_str(), keys[1].length(),
                                  0, -1, GRN_CURSOR_BY_ID);
-    cut_assert_not_null(cursor);
+    cppcut_assert_not_null(cursor);
     cppcut_assert_equal(static_cast<grn_id>(1), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(2), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(GRN_ID_NIL), grn_dat_cursor_next(&ctx, cursor));
@@ -213,7 +213,7 @@ namespace test_dat_cursor
 
     cursor = grn_dat_cursor_open(&ctx, dat, NULL, 0, NULL, 0,
                                  1, 2, GRN_CURSOR_BY_ID);
-    cut_assert_not_null(cursor);
+    cppcut_assert_not_null(cursor);
     cppcut_assert_equal(static_cast<grn_id>(2), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(3), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(GRN_ID_NIL), grn_dat_cursor_next(&ctx, cursor));
@@ -221,7 +221,7 @@ namespace test_dat_cursor
 
     cursor = grn_dat_cursor_open(&ctx, dat, NULL, 0, NULL, 0,
                                  1, 2, GRN_CURSOR_BY_ID | GRN_CURSOR_ASCENDING);
-    cut_assert_not_null(cursor);
+    cppcut_assert_not_null(cursor);
     cppcut_assert_equal(static_cast<grn_id>(2), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(3), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(GRN_ID_NIL), grn_dat_cursor_next(&ctx, cursor));
@@ -229,7 +229,7 @@ namespace test_dat_cursor
 
     cursor = grn_dat_cursor_open(&ctx, dat, NULL, 0, NULL, 0,
                                  1, 2, GRN_CURSOR_BY_ID | GRN_CURSOR_DESCENDING);
-    cut_assert_not_null(cursor);
+    cppcut_assert_not_null(cursor);
     cppcut_assert_equal(static_cast<grn_id>(3), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(2), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(GRN_ID_NIL), grn_dat_cursor_next(&ctx, cursor));
@@ -238,7 +238,7 @@ namespace test_dat_cursor
     cursor = grn_dat_cursor_open(&ctx, dat, keys[1].c_str(), keys[1].length(),
                                  keys[2].c_str(), keys[2].length(),
                                  0, -1, GRN_CURSOR_BY_ID | GRN_CURSOR_LT);
-    cut_assert_not_null(cursor);
+    cppcut_assert_not_null(cursor);
     cppcut_assert_equal(static_cast<grn_id>(2), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(GRN_ID_NIL), grn_dat_cursor_next(&ctx, cursor));
     grn_dat_cursor_close(&ctx, cursor);
@@ -246,7 +246,7 @@ namespace test_dat_cursor
     cursor = grn_dat_cursor_open(&ctx, dat, keys[1].c_str(), keys[1].length(),
                                  keys[2].c_str(), keys[2].length(),
                                  0, -1, GRN_CURSOR_BY_ID | GRN_CURSOR_GT);
-    cut_assert_not_null(cursor);
+    cppcut_assert_not_null(cursor);
     cppcut_assert_equal(static_cast<grn_id>(3), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(GRN_ID_NIL), grn_dat_cursor_next(&ctx, cursor));
     grn_dat_cursor_close(&ctx, cursor);
@@ -265,7 +265,7 @@ namespace test_dat_cursor
 
     grn_dat_cursor *cursor = grn_dat_cursor_open(&ctx, dat, NULL, 0, NULL, 0,
                                                  0, -1, GRN_CURSOR_BY_KEY);
-    cut_assert_not_null(cursor);
+    cppcut_assert_not_null(cursor);
     cppcut_assert_equal(static_cast<grn_id>(4), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(2), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(1), grn_dat_cursor_next(&ctx, cursor));
@@ -275,7 +275,7 @@ namespace test_dat_cursor
 
     cursor = grn_dat_cursor_open(&ctx, dat, keys[0].c_str(), keys[0].length(),
                                  NULL, 0, 0, -1, GRN_CURSOR_BY_KEY);
-    cut_assert_not_null(cursor);
+    cppcut_assert_not_null(cursor);
     cppcut_assert_equal(static_cast<grn_id>(1), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(3), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(GRN_ID_NIL), grn_dat_cursor_next(&ctx, cursor));
@@ -283,7 +283,7 @@ namespace test_dat_cursor
 
     cursor = grn_dat_cursor_open(&ctx, dat, NULL, 0, keys[1].c_str(), keys[1].length(),
                                  0, -1, GRN_CURSOR_BY_KEY);
-    cut_assert_not_null(cursor);
+    cppcut_assert_not_null(cursor);
     cppcut_assert_equal(static_cast<grn_id>(4), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(2), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(GRN_ID_NIL), grn_dat_cursor_next(&ctx, cursor));
@@ -291,7 +291,7 @@ namespace test_dat_cursor
 
     cursor = grn_dat_cursor_open(&ctx, dat, NULL, 0, NULL, 0,
                                  1, 2, GRN_CURSOR_BY_KEY);
-    cut_assert_not_null(cursor);
+    cppcut_assert_not_null(cursor);
     cppcut_assert_equal(static_cast<grn_id>(2), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(1), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(GRN_ID_NIL), grn_dat_cursor_next(&ctx, cursor));
@@ -299,7 +299,7 @@ namespace test_dat_cursor
 
     cursor = grn_dat_cursor_open(&ctx, dat, NULL, 0, NULL, 0,
                                  1, 2, GRN_CURSOR_BY_KEY | GRN_CURSOR_ASCENDING);
-    cut_assert_not_null(cursor);
+    cppcut_assert_not_null(cursor);
     cppcut_assert_equal(static_cast<grn_id>(2), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(1), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(GRN_ID_NIL), grn_dat_cursor_next(&ctx, cursor));
@@ -307,7 +307,7 @@ namespace test_dat_cursor
 
     cursor = grn_dat_cursor_open(&ctx, dat, NULL, 0, NULL, 0,
                                  1, 2, GRN_CURSOR_BY_KEY | GRN_CURSOR_DESCENDING);
-    cut_assert_not_null(cursor);
+    cppcut_assert_not_null(cursor);
     cppcut_assert_equal(static_cast<grn_id>(1), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(2), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(GRN_ID_NIL), grn_dat_cursor_next(&ctx, cursor));
@@ -316,7 +316,7 @@ namespace test_dat_cursor
     cursor = grn_dat_cursor_open(&ctx, dat, keys[1].c_str(), keys[1].length(),
                                  keys[0].c_str(), keys[0].length(),
                                  0, -1, GRN_CURSOR_BY_KEY | GRN_CURSOR_LT);
-    cut_assert_not_null(cursor);
+    cppcut_assert_not_null(cursor);
     cppcut_assert_equal(static_cast<grn_id>(2), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(GRN_ID_NIL), grn_dat_cursor_next(&ctx, cursor));
     grn_dat_cursor_close(&ctx, cursor);
@@ -324,7 +324,7 @@ namespace test_dat_cursor
     cursor = grn_dat_cursor_open(&ctx, dat, keys[1].c_str(), keys[1].length(),
                                  keys[0].c_str(), keys[0].length(),
                                  0, -1, GRN_CURSOR_BY_KEY | GRN_CURSOR_GT);
-    cut_assert_not_null(cursor);
+    cppcut_assert_not_null(cursor);
     cppcut_assert_equal(static_cast<grn_id>(1), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(GRN_ID_NIL), grn_dat_cursor_next(&ctx, cursor));
     grn_dat_cursor_close(&ctx, cursor);
@@ -349,7 +349,7 @@ namespace test_dat_cursor
     cut_assert_null(cursor);
 
     cursor = grn_dat_cursor_open(&ctx, dat, "m", 1, NULL, 0, 0, -1, GRN_CURSOR_PREFIX);
-    cut_assert_not_null(cursor);
+    cppcut_assert_not_null(cursor);
     cppcut_assert_equal(static_cast<grn_id>(4), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(2), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(1), grn_dat_cursor_next(&ctx, cursor));
@@ -358,7 +358,7 @@ namespace test_dat_cursor
     grn_dat_cursor_close(&ctx, cursor);
 
     cursor = grn_dat_cursor_open(&ctx, dat, "min", 3, NULL, 0, 0, -1, GRN_CURSOR_PREFIX);
-    cut_assert_not_null(cursor);
+    cppcut_assert_not_null(cursor);
     cppcut_assert_equal(static_cast<grn_id>(2), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(1), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(3), grn_dat_cursor_next(&ctx, cursor));
@@ -366,7 +366,7 @@ namespace test_dat_cursor
     grn_dat_cursor_close(&ctx, cursor);
 
     cursor = grn_dat_cursor_open(&ctx, dat, "m", 1, NULL, 0, 1, 2, GRN_CURSOR_PREFIX);
-    cut_assert_not_null(cursor);
+    cppcut_assert_not_null(cursor);
     cppcut_assert_equal(static_cast<grn_id>(2), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(1), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(GRN_ID_NIL), grn_dat_cursor_next(&ctx, cursor));
@@ -374,7 +374,7 @@ namespace test_dat_cursor
 
     cursor = grn_dat_cursor_open(&ctx, dat, "m", 1, NULL, 0,
                                  1, 2, GRN_CURSOR_PREFIX | GRN_CURSOR_ASCENDING);
-    cut_assert_not_null(cursor);
+    cppcut_assert_not_null(cursor);
     cppcut_assert_equal(static_cast<grn_id>(2), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(1), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(GRN_ID_NIL), grn_dat_cursor_next(&ctx, cursor));
@@ -382,7 +382,7 @@ namespace test_dat_cursor
 
     cursor = grn_dat_cursor_open(&ctx, dat, "m", 1, NULL, 0,
                                  1, 2, GRN_CURSOR_PREFIX | GRN_CURSOR_DESCENDING);
-    cut_assert_not_null(cursor);
+    cppcut_assert_not_null(cursor);
     cppcut_assert_equal(static_cast<grn_id>(1), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(2), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(GRN_ID_NIL), grn_dat_cursor_next(&ctx, cursor));
@@ -390,14 +390,14 @@ namespace test_dat_cursor
 
     cursor = grn_dat_cursor_open(&ctx, dat, "mind", 4, NULL, 0,
                                  0, -1, GRN_CURSOR_PREFIX | GRN_CURSOR_LT);
-    cut_assert_not_null(cursor);
+    cppcut_assert_not_null(cursor);
     cppcut_assert_equal(static_cast<grn_id>(2), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(GRN_ID_NIL), grn_dat_cursor_next(&ctx, cursor));
     grn_dat_cursor_close(&ctx, cursor);
 
     cursor = grn_dat_cursor_open(&ctx, dat, "mind", 4, NULL, 0,
                                  0, -1, GRN_CURSOR_PREFIX | GRN_CURSOR_GT);
-    cut_assert_not_null(cursor);
+    cppcut_assert_not_null(cursor);
     cppcut_assert_equal(static_cast<grn_id>(GRN_ID_NIL), grn_dat_cursor_next(&ctx, cursor));
     grn_dat_cursor_close(&ctx, cursor);
 
@@ -418,10 +418,10 @@ namespace test_dat_cursor
     cut_assert_null(cursor);
 
     cursor = grn_dat_cursor_open(&ctx, dat, NULL, 0, "", 0, 0, -1, GRN_CURSOR_PREFIX);
-    cut_assert_null(cursor);
+
 
     cursor = grn_dat_cursor_open(&ctx, dat, NULL, 0, "note", 4, 0, -1, GRN_CURSOR_PREFIX);
-    cut_assert_not_null(cursor);
+    cppcut_assert_not_null(cursor);
     cppcut_assert_equal(static_cast<grn_id>(3), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(1), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(2), grn_dat_cursor_next(&ctx, cursor));
@@ -429,35 +429,35 @@ namespace test_dat_cursor
     grn_dat_cursor_close(&ctx, cursor);
 
     cursor = grn_dat_cursor_open(&ctx, dat, NULL, 0, "not", 3, 0, -1, GRN_CURSOR_PREFIX);
-    cut_assert_not_null(cursor);
+    cppcut_assert_not_null(cursor);
     cppcut_assert_equal(static_cast<grn_id>(1), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(2), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(GRN_ID_NIL), grn_dat_cursor_next(&ctx, cursor));
     grn_dat_cursor_close(&ctx, cursor);
 
     cursor = grn_dat_cursor_open(&ctx, dat, NULL, 3, "note", 4, 0, -1, GRN_CURSOR_PREFIX);
-    cut_assert_not_null(cursor);
+    cppcut_assert_not_null(cursor);
     cppcut_assert_equal(static_cast<grn_id>(3), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(1), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(GRN_ID_NIL), grn_dat_cursor_next(&ctx, cursor));
     grn_dat_cursor_close(&ctx, cursor);
 
     cursor = grn_dat_cursor_open(&ctx, dat, "XYZ", 3, "note", 4, 0, -1, GRN_CURSOR_PREFIX);
-    cut_assert_not_null(cursor);
+    cppcut_assert_not_null(cursor);
     cppcut_assert_equal(static_cast<grn_id>(3), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(1), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(GRN_ID_NIL), grn_dat_cursor_next(&ctx, cursor));
     grn_dat_cursor_close(&ctx, cursor);
 
     cursor = grn_dat_cursor_open(&ctx, dat, NULL, 0, "note", 4, 1, -1, GRN_CURSOR_PREFIX);
-    cut_assert_not_null(cursor);
+    cppcut_assert_not_null(cursor);
     cppcut_assert_equal(static_cast<grn_id>(1), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(2), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(GRN_ID_NIL), grn_dat_cursor_next(&ctx, cursor));
     grn_dat_cursor_close(&ctx, cursor);
 
     cursor = grn_dat_cursor_open(&ctx, dat, NULL, 0, "note", 4, 0, 2, GRN_CURSOR_PREFIX);
-    cut_assert_not_null(cursor);
+    cppcut_assert_not_null(cursor);
     cppcut_assert_equal(static_cast<grn_id>(3), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(1), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(GRN_ID_NIL), grn_dat_cursor_next(&ctx, cursor));
@@ -465,7 +465,7 @@ namespace test_dat_cursor
 
     cursor = grn_dat_cursor_open(&ctx, dat, NULL, 0, "note", 4,
                                  0, 2, GRN_CURSOR_PREFIX | GRN_CURSOR_ASCENDING);
-    cut_assert_not_null(cursor);
+    cppcut_assert_not_null(cursor);
     cppcut_assert_equal(static_cast<grn_id>(3), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(1), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(GRN_ID_NIL), grn_dat_cursor_next(&ctx, cursor));
@@ -473,7 +473,7 @@ namespace test_dat_cursor
 
     cursor = grn_dat_cursor_open(&ctx, dat, NULL, 0, "note", 4,
                                  0, 2, GRN_CURSOR_PREFIX | GRN_CURSOR_DESCENDING);
-    cut_assert_not_null(cursor);
+    cppcut_assert_not_null(cursor);
     cppcut_assert_equal(static_cast<grn_id>(3), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(1), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(GRN_ID_NIL), grn_dat_cursor_next(&ctx, cursor));
@@ -481,7 +481,7 @@ namespace test_dat_cursor
 
     cursor = grn_dat_cursor_open(&ctx, dat, NULL, 2, "note", 4,
                                  0, -1, GRN_CURSOR_PREFIX | GRN_CURSOR_LT);
-    cut_assert_not_null(cursor);
+    cppcut_assert_not_null(cursor);
     cppcut_assert_equal(static_cast<grn_id>(3), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(1), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(2), grn_dat_cursor_next(&ctx, cursor));
@@ -490,7 +490,7 @@ namespace test_dat_cursor
 
     cursor = grn_dat_cursor_open(&ctx, dat, NULL, 2, "note", 4,
                                  0, -1, GRN_CURSOR_PREFIX | GRN_CURSOR_GT);
-    cut_assert_not_null(cursor);
+    cppcut_assert_not_null(cursor);
     cppcut_assert_equal(static_cast<grn_id>(3), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(1), grn_dat_cursor_next(&ctx, cursor));
     cppcut_assert_equal(static_cast<grn_id>(2), grn_dat_cursor_next(&ctx, cursor));

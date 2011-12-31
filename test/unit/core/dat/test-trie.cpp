@@ -50,7 +50,7 @@ namespace
       GError *glib_error = NULL;
       thread_ = g_thread_create(func, data, TRUE, &glib_error);
       gcut_assert_error(glib_error, cut_message("g_thread_create() failed"));
-      cut_assert_not_null(thread_);
+      cppcut_assert_not_null(thread_);
     }
 
     void join() {
@@ -402,9 +402,9 @@ namespace test_dat_trie
     cppcut_assert_equal(src_trie.num_keys(), dest_trie.num_keys());
     cppcut_assert_equal(src_trie.next_key_pos(), dest_trie.next_key_pos());
 
-    cut_assert_operator(dest_trie.num_nodes(), <, src_trie.num_nodes());
+    cppcut_assert_operator(dest_trie.num_nodes(), <, src_trie.num_nodes());
     cppcut_assert_equal(grn::dat::UInt32(0), dest_trie.num_zombies());
-    cut_assert_operator(dest_trie.num_blocks(), <, src_trie.num_nodes());
+    cppcut_assert_operator(dest_trie.num_blocks(), <, src_trie.num_nodes());
   }
 
   void test_random_queries(void)

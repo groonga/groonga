@@ -99,7 +99,7 @@ namespace test_dat_pat
     generate_pat_path(filename, pat_path);
     grn_pat * const pat = grn_pat_create(&ctx, pat_path,
                                          1024, 0, GRN_OBJ_KEY_VAR_SIZE);
-    cut_assert_not_null(pat);
+    cppcut_assert_not_null(pat);
 
     for (std::size_t i = 0; i < keys.size(); ++i) {
       grn_pat_add(&ctx, pat, keys[i].c_str(), keys[i].length(), NULL, NULL);
@@ -113,7 +113,7 @@ namespace test_dat_pat
     generate_dat_path(filename, dat_path);
     grn_dat * const dat = grn_dat_create(&ctx, dat_path,
                                          1024, 0, GRN_OBJ_KEY_VAR_SIZE);
-    cut_assert_not_null(dat);
+    cppcut_assert_not_null(dat);
 
     for (std::size_t i = 0; i < keys.size(); ++i) {
       grn_dat_add(&ctx, dat, keys[i].c_str(), keys[i].length(), NULL, NULL);
@@ -137,8 +137,8 @@ namespace test_dat_pat
     grn_pat *pat = grn_pat_open(&ctx, pat_path);
     grn_dat *dat = grn_dat_open(&ctx, dat_path);
 
-    cut_assert_null(pat);
-    cut_assert_null(dat);
+    cppcut_assert_null(pat);
+    cppcut_assert_null(dat);
 
     std::vector<std::string> keys;
     create_keys(&keys, 1000, 3, 5);
@@ -154,8 +154,8 @@ namespace test_dat_pat
     pat = grn_pat_open(&ctx, pat_path);
     dat = grn_dat_open(&ctx, dat_path);
 
-    cut_assert_not_null(pat);
-    cut_assert_not_null(dat);
+    cppcut_assert_not_null(pat);
+    cppcut_assert_not_null(dat);
 
     cppcut_assert_equal(GRN_SUCCESS, grn_pat_close(&ctx, pat));
     cppcut_assert_equal(GRN_SUCCESS, grn_dat_close(&ctx, dat));
@@ -378,12 +378,12 @@ namespace test_dat_pat
       grn_pat_cursor * const pat_cursor =
           grn_pat_cursor_open(&ctx, pat, min_key, min_length, max_key, max_length,
                               offset, limit, flags);
-      cut_assert_not_null(pat_cursor);
+      cppcut_assert_not_null(pat_cursor);
 
       grn_dat_cursor * const dat_cursor =
           grn_dat_cursor_open(&ctx, dat, min_key, min_length, max_key, max_length,
                               offset, limit, flags);
-      cut_assert_not_null(dat_cursor);
+      cppcut_assert_not_null(dat_cursor);
 
       grn_id pat_id;
       grn_id dat_id;
@@ -437,7 +437,7 @@ namespace test_dat_pat
                               disables_max ? NULL : max_str.c_str(),
                               disables_max ? 0 : max_str.length(),
                               offset, limit, flags);
-      cut_assert_not_null(pat_cursor);
+      cppcut_assert_not_null(pat_cursor);
 
       grn_dat_cursor * const dat_cursor =
           grn_dat_cursor_open(&ctx, dat, disables_min ? NULL : min_str.c_str(),
@@ -445,7 +445,7 @@ namespace test_dat_pat
                               disables_max ? NULL : max_str.c_str(),
                               disables_max ? 0 : max_str.length(),
                               offset, limit, flags);
-      cut_assert_not_null(dat_cursor);
+      cppcut_assert_not_null(dat_cursor);
 
       grn_id pat_id;
       grn_id dat_id;
@@ -490,12 +490,12 @@ namespace test_dat_pat
       grn_pat_cursor * const pat_cursor =
           grn_pat_cursor_open(&ctx, pat, NULL, min_length, max_str.c_str(),
                               max_str.length(), offset, limit, flags);
-      cut_assert_not_null(pat_cursor);
+      cppcut_assert_not_null(pat_cursor);
 
       grn_dat_cursor * const dat_cursor =
           grn_dat_cursor_open(&ctx, dat, NULL, min_length, max_str.c_str(),
                               max_str.length(), offset, limit, flags);
-      cut_assert_not_null(dat_cursor);
+      cppcut_assert_not_null(dat_cursor);
 
       grn_id pat_id;
       grn_id dat_id;
@@ -538,12 +538,12 @@ namespace test_dat_pat
       grn_pat_cursor * const pat_cursor =
           grn_pat_cursor_open(&ctx, pat, min_str.c_str(), min_str.length(),
                               NULL, 0, offset, limit, flags);
-      cut_assert_not_null(pat_cursor);
+      cppcut_assert_not_null(pat_cursor);
 
       grn_dat_cursor *dat_cursor =
           grn_dat_cursor_open(&ctx, dat, min_str.c_str(), min_str.length(),
                               NULL, 0, offset, limit, flags);
-      cut_assert_not_null(dat_cursor);
+      cppcut_assert_not_null(dat_cursor);
 
       grn_id pat_id;
       grn_id dat_id;

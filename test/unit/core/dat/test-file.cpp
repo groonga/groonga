@@ -46,7 +46,7 @@ namespace test_dat_file
   {
     const grn::dat::File file;
 
-    cut_assert_null(file.ptr());
+    cppcut_assert_null(file.ptr());
     cppcut_assert_equal(grn::dat::UInt64(0), file.size());
   }
 
@@ -61,7 +61,7 @@ namespace test_dat_file
     }
 
     file.create(NULL, 32);
-    cut_assert_not_null(file.ptr());
+    cppcut_assert_not_null(file.ptr());
     cppcut_assert_equal(grn::dat::UInt64(32), file.size());
 
     grn::dat::UInt8 * const buf = static_cast<grn::dat::UInt8 *>(file.ptr());
@@ -86,7 +86,7 @@ namespace test_dat_file
     }
 
     file.create(path, 32);
-    cut_assert_not_null(file.ptr());
+    cppcut_assert_not_null(file.ptr());
     cppcut_assert_equal(grn::dat::UInt64(32), file.size());
 
     grn::dat::UInt8 * const buf = static_cast<grn::dat::UInt8 *>(file.ptr());
@@ -118,7 +118,7 @@ namespace test_dat_file
     cppcut_assert_equal(grn::dat::UInt64(0), file.size());
 
     file.open(path);
-    cut_assert_not_null(file.ptr());
+    cppcut_assert_not_null(file.ptr());
     cppcut_assert_equal(grn::dat::UInt64(32), file.size());
     cppcut_assert_equal(0, std::strcmp(static_cast<char *>(file.ptr()), "This is a pen."));
   }
@@ -128,7 +128,7 @@ namespace test_dat_file
     grn::dat::File file;
 
     file.create(NULL, 100);
-    cut_assert_not_null(file.ptr());
+    cppcut_assert_not_null(file.ptr());
     cppcut_assert_equal(grn::dat::UInt64(100), file.size());
 
     grn::dat::File file_new;
@@ -137,7 +137,7 @@ namespace test_dat_file
     cut_assert_null(file.ptr());
     cppcut_assert_equal(grn::dat::UInt64(0), file.size());
 
-    cut_assert_not_null(file_new.ptr());
+    cppcut_assert_not_null(file_new.ptr());
     cppcut_assert_equal(grn::dat::UInt64(100), file_new.size());
   }
 }

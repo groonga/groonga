@@ -48,7 +48,7 @@ namespace test_dat_cursor_factory
         trie, "apple", 5, "melon", 5, 1, 2,
         grn::dat::KEY_RANGE_CURSOR | grn::dat::EXCEPT_LOWER_BOUND |
         grn::dat::EXCEPT_UPPER_BOUND));
-    cut_assert_not_null(cursor.get());
+    cppcut_assert_not_null(cursor.get());
 
     cppcut_assert_equal(grn::dat::UInt32(1), cursor->offset());
     cppcut_assert_equal(grn::dat::UInt32(2), cursor->limit());
@@ -65,7 +65,7 @@ namespace test_dat_cursor_factory
     std::auto_ptr<grn::dat::Cursor> cursor(grn::dat::CursorFactory::open(
         trie, "apple", 5, "melon", 5, 1, 2,
         grn::dat::ID_RANGE_CURSOR | grn::dat::ASCENDING_CURSOR));
-    cut_assert_not_null(cursor.get());
+    cppcut_assert_not_null(cursor.get());
 
     cppcut_assert_equal(grn::dat::UInt32(1), cursor->offset());
     cppcut_assert_equal(grn::dat::UInt32(2), cursor->limit());
@@ -81,7 +81,7 @@ namespace test_dat_cursor_factory
     std::auto_ptr<grn::dat::Cursor> cursor(grn::dat::CursorFactory::open(
         trie, NULL, 3, "apple", 5, 0, 1,
         grn::dat::PREFIX_CURSOR | grn::dat::DESCENDING_CURSOR));
-    cut_assert_not_null(cursor.get());
+    cppcut_assert_not_null(cursor.get());
 
     cppcut_assert_equal(grn::dat::UInt32(0), cursor->offset());
     cppcut_assert_equal(grn::dat::UInt32(1), cursor->limit());
@@ -97,7 +97,7 @@ namespace test_dat_cursor_factory
     std::auto_ptr<grn::dat::Cursor> cursor(grn::dat::CursorFactory::open(
         trie, "apple", 5, NULL, 0, 1, 2,
         grn::dat::PREDICTIVE_CURSOR | grn::dat::EXCEPT_EXACT_MATCH));
-    cut_assert_not_null(cursor.get());
+    cppcut_assert_not_null(cursor.get());
 
     cppcut_assert_equal(grn::dat::UInt32(1), cursor->offset());
     cppcut_assert_equal(grn::dat::UInt32(2), cursor->limit());

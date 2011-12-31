@@ -100,10 +100,10 @@ namespace test_dat_string
     const grn::dat::String str("apple");
 
     cppcut_assert_equal(0, str.compare(grn::dat::String("apple")));
-    cut_assert_operator(str.compare(grn::dat::String("appl")), >, 0);
-    cut_assert_operator(str.compare(grn::dat::String("appleX")), <, 0);
-    cut_assert_operator(str.compare(grn::dat::String("banana")), <, 0);
-    cut_assert_operator(str.compare(grn::dat::String("and")), >, 0);
+    cppcut_assert_operator(str.compare(grn::dat::String("appl")), >, 0);
+    cppcut_assert_operator(str.compare(grn::dat::String("appleX")), <, 0);
+    cppcut_assert_operator(str.compare(grn::dat::String("banana")), <, 0);
+    cppcut_assert_operator(str.compare(grn::dat::String("and")), >, 0);
   }
 
   void test_starts_with(void)

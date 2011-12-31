@@ -44,7 +44,7 @@ namespace test_dat_key
 
     cppcut_assert_equal(grn::dat::INVALID_KEY_ID, key.id());
     cppcut_assert_equal(grn::dat::UInt32(0), key.length());
-    cut_assert_not_null(key.ptr());
+    cppcut_assert_not_null(key.ptr());
   }
 
   void test_creation(void)
