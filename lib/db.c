@@ -4506,58 +4506,62 @@ grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, int addp)
         double degree;
         const char *cur, *str = GRN_TEXT_VALUE(src);
         const char *str_end = GRN_BULK_CURR(src);
-        char *end;
-        grn_obj buf, *buf_p = NULL;
-        latitude = grn_atoi(str, str_end, &cur);
-        if (cur < str_end && cur[0] == '.') {
-          GRN_TEXT_INIT(&buf, 0);
-          GRN_TEXT_PUT(ctx, &buf, str, GRN_TEXT_LEN(src));
-          GRN_TEXT_PUTC(ctx, &buf, '\0');
-          buf_p = &buf;
-          errno = 0;
-          degree = strtod(GRN_TEXT_VALUE(buf_p), &end);
-          if (errno) {
-            rc = GRN_INVALID_ARGUMENT;
-          } else {
-            latitude = GRN_GEO_DEGREE2MSEC(degree);
-            cur = str + (end - GRN_TEXT_VALUE(buf_p));
-          }
-        }
-        if (!rc && (cur[0] == 'x' || cur[0] == ',') && cur + 1 < str_end) {
-          const char *c = cur + 1;
-          longitude = grn_atoi(c, str_end, &cur);
+        if (str == str_end) {
+          GRN_GEO_POINT_SET(ctx, dest, 0, 0);
+        } else {
+          char *end;
+          grn_obj buf, *buf_p = NULL;
+          latitude = grn_atoi(str, str_end, &cur);
           if (cur < str_end && cur[0] == '.') {
-            if (!buf_p) {
-              GRN_TEXT_INIT(&buf, 0);
-              GRN_TEXT_PUT(ctx, &buf, str, GRN_TEXT_LEN(src));
-              GRN_TEXT_PUTC(ctx, &buf, '\0');
-              buf_p = &buf;
-            }
+            GRN_TEXT_INIT(&buf, 0);
+            GRN_TEXT_PUT(ctx, &buf, str, GRN_TEXT_LEN(src));
+            GRN_TEXT_PUTC(ctx, &buf, '\0');
+            buf_p = &buf;
             errno = 0;
-            degree = strtod(GRN_TEXT_VALUE(buf_p) + (c - str), &end);
+            degree = strtod(GRN_TEXT_VALUE(buf_p), &end);
             if (errno) {
               rc = GRN_INVALID_ARGUMENT;
             } else {
-              longitude = GRN_GEO_DEGREE2MSEC(degree);
+              latitude = GRN_GEO_DEGREE2MSEC(degree);
               cur = str + (end - GRN_TEXT_VALUE(buf_p));
             }
           }
-          if (!rc && cur == str_end) {
-            if ((-GRN_GEO_MAX_LATITUDE <= latitude &&
-                 latitude <= GRN_GEO_MAX_LATITUDE) &&
-                (-GRN_GEO_MAX_LONGITUDE <= longitude &&
-                 longitude <= GRN_GEO_MAX_LONGITUDE)) {
-              GRN_GEO_POINT_SET(ctx, dest, latitude, longitude);
+          if (!rc && (cur[0] == 'x' || cur[0] == ',') && cur + 1 < str_end) {
+            const char *c = cur + 1;
+            longitude = grn_atoi(c, str_end, &cur);
+            if (cur < str_end && cur[0] == '.') {
+              if (!buf_p) {
+                GRN_TEXT_INIT(&buf, 0);
+                GRN_TEXT_PUT(ctx, &buf, str, GRN_TEXT_LEN(src));
+                GRN_TEXT_PUTC(ctx, &buf, '\0');
+                buf_p = &buf;
+              }
+              errno = 0;
+              degree = strtod(GRN_TEXT_VALUE(buf_p) + (c - str), &end);
+              if (errno) {
+                rc = GRN_INVALID_ARGUMENT;
+              } else {
+                longitude = GRN_GEO_DEGREE2MSEC(degree);
+                cur = str + (end - GRN_TEXT_VALUE(buf_p));
+              }
+            }
+            if (!rc && cur == str_end) {
+              if ((-GRN_GEO_MAX_LATITUDE <= latitude &&
+                   latitude <= GRN_GEO_MAX_LATITUDE) &&
+                  (-GRN_GEO_MAX_LONGITUDE <= longitude &&
+                   longitude <= GRN_GEO_MAX_LONGITUDE)) {
+                GRN_GEO_POINT_SET(ctx, dest, latitude, longitude);
+              } else {
+                rc = GRN_INVALID_ARGUMENT;
+              }
             } else {
               rc = GRN_INVALID_ARGUMENT;
             }
           } else {
             rc = GRN_INVALID_ARGUMENT;
           }
-        } else {
-          rc = GRN_INVALID_ARGUMENT;
+          if (buf_p) { GRN_OBJ_FIN(ctx, buf_p); }
         }
-        if (buf_p) { GRN_OBJ_FIN(ctx, buf_p); }
       }
       break;
     default :
