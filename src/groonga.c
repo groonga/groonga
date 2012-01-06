@@ -546,14 +546,9 @@ print_return_code(grn_ctx *ctx, grn_rc rc, grn_obj *head, grn_obj *body, grn_obj
         grn_text_esc(ctx, head, ctx->errfile, strlen(ctx->errfile));
         GRN_TEXT_PUTC(ctx, head, ',');
         grn_text_itoa(ctx, head, ctx->errline);
-        if ((command = GRN_CTX_USER_DATA(ctx)->ptr)) {
+        if (input_path && (command = GRN_CTX_USER_DATA(ctx)->ptr)) {
           GRN_TEXT_PUTC(ctx, head, ',');
-          if (input_path) {
-            grn_text_esc(ctx, head, input_path, strlen(input_path));
-          } else {
-            const char *stdin_name = "(stdin)";
-            grn_text_esc(ctx, head, stdin_name, strlen(stdin_name));
-          }
+          grn_text_esc(ctx, head, input_path, strlen(input_path));
           GRN_TEXT_PUTC(ctx, head, ',');
           grn_text_itoa(ctx, head, number_of_lines);
           GRN_TEXT_PUTC(ctx, head, ',');
