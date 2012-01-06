@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-12-28 18:13\n"
-"PO-Revision-Date: 2011-12-29 13:10+0900\n"
+"PO-Revision-Date: 2012-01-06 14:42+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -320,7 +320,7 @@ msgstr ""
 # a3698e18b1eb4564b30433e9a3a9956b
 #: ../../../source/news.txt:106
 msgid "Removed associated path on remove. [#1180]"
-msgstr "削除時に関連するパスモ削除するようにした。 [#1180]"
+msgstr "削除時に関連するパスも削除するようにした。 [#1180]"
 
 #: ../../../source/news.txt:107
 msgid "[deb] Supports i386."
