@@ -45,15 +45,20 @@
   }\
 }
 
-#define REPORT_CAST_ERROR(range, element) {\
+#define REPORT_CAST_ERROR(column, range, element) {\
   grn_obj inspected;\
+  char column_name[GRN_TABLE_MAX_KEY_SIZE];\
+  int column_name_size;\
   char range_name[GRN_TABLE_MAX_KEY_SIZE];\
   int range_name_size;\
   GRN_TEXT_INIT(&inspected, 0);\
   grn_inspect(ctx, &inspected, element);\
+  column_name_size = grn_obj_name(ctx, column, column_name,\
+                                  GRN_TABLE_MAX_KEY_SIZE);\
   range_name_size = grn_obj_name(ctx, range, range_name,\
                                  GRN_TABLE_MAX_KEY_SIZE);\
-  ERR(GRN_INVALID_ARGUMENT, "failed to cast to <%.*s>: <%.*s>",\
+  ERR(GRN_INVALID_ARGUMENT, "<%.*s>: failed to cast to <%.*s>: <%.*s>",\
+      column_name_size, column_name,\
       range_name_size, range_name,\
       GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));\
   GRN_OBJ_FIN(ctx, &inspected);\
@@ -5212,7 +5217,7 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
           if (rc) {
             grn_obj *range_obj;
             range_obj = grn_ctx_at(ctx, range);
-            REPORT_CAST_ERROR(range_obj, value);
+            REPORT_CAST_ERROR(obj, range_obj, value);
             grn_obj_unlink(ctx, range_obj);
           } else {
             value_ = &buf;
@@ -8407,7 +8412,7 @@ set_vector(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *vector)
         GRN_RECORD_INIT(&record, 0, range_id);
         if (grn_obj_cast(ctx, element, &record, GRN_TRUE)) {
           cast_failed = GRN_TRUE;
-          REPORT_CAST_ERROR(range, element);
+          REPORT_CAST_ERROR(column, range, element);
         }
         element = &record;
       }
@@ -8428,7 +8433,7 @@ set_vector(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *vector)
             GRN_OBJ_INIT(&casted_element, GRN_BULK, 0, range_id);
             if (grn_obj_cast(ctx, element, &casted_element, 1)) {
               cast_failed = GRN_TRUE;
-              REPORT_CAST_ERROR(range, element);
+              REPORT_CAST_ERROR(column, range, element);
             }
             element = &casted_element;
           }
@@ -8453,7 +8458,7 @@ set_vector(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *vector)
           GRN_OBJ_INIT(&casted_element, GRN_BULK, 0, range_id);
           if (grn_obj_cast(ctx, element, &casted_element, GRN_TRUE)) {
             cast_failed = GRN_TRUE;
-            REPORT_CAST_ERROR(range, element);
+            REPORT_CAST_ERROR(column, range, element);
           }
           element = &casted_element;
         }

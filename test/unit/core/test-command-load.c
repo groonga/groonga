@@ -593,7 +593,7 @@ test_invalid_int32_value(void)
   grn_test_assert_send_command_error(
     context,
     GRN_INVALID_ARGUMENT,
-    "failed to cast to <Int32>: <\"invalid number!\">",
+    "<Users.age>: failed to cast to <Int32>: <\"invalid number!\">",
     "load --table Users\n"
     "[\n"
     "{\"age\": \"invalid number!\"}\n"
@@ -670,7 +670,8 @@ test_invalid_geo_point_value(gconstpointer data)
   grn_test_assert_send_command_error(
     context,
     GRN_INVALID_ARGUMENT,
-    cut_take_printf("failed to cast to <WGS84GeoPoint>: <\"%s\">",
+    cut_take_printf("<Shops.location>: "
+                    "failed to cast to <WGS84GeoPoint>: <\"%s\">",
                     gcut_data_get_string(data, "location")),
     cut_take_printf("load --table Shops\n"
                     "[\n"
