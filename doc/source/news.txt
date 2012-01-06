@@ -78,11 +78,6 @@ Improvements
 
 * [grntest] Removed the upper limit to the number of bytes in one line.
 * [grntest] Added `--pid-path` option.
-* Fixed a bug that groonga crashes when accessing a zlib/lzo compressed
-  column. Note that a compressed column access causes a memory leak. To
-  resolve this, we need to improve API. We will do it in the future.
-  [GtiHub#5][GtiHub#6] [Reported by Takayuki Yamaguchi]
-* Fixed a bug that unrelated column values are cleared in deletion.
 * [deb] Enabled experimental zlib and lzo support.
 * [rpm] Enabled experimental zlib and lzo support.
 * Supports truncation. [#892]
@@ -111,6 +106,11 @@ Improvements
 Fixes
 ^^^^^
 
+* Fixed a bug that groonga crashes when accessing a zlib/lzo compressed
+  column. Note that a compressed column access causes a memory leak. To
+  resolve this, we need to improve API. We will do it in the future.
+  [GtiHub#5][GtiHub#6] [Reported by Takayuki Yamaguchi]
+* Fixed a bug that unrelated column values are cleared in deletion.
 * Fixed a bug that a wrong index is used in sorting. [#766]
   [Reported by Horikoshi Yuki]
 * [libedit] Fixed a bug that necessary initialization is
