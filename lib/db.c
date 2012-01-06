@@ -1315,7 +1315,6 @@ grn_table_add_v_inline(grn_ctx *ctx, grn_obj *table, const void *key, int key_si
 {
   grn_id id = GRN_ID_NIL;
   if (!key || !key_size) { return GRN_ID_NIL; }
-  GRN_API_ENTER;
   if (table) {
     switch (table->header.type) {
     case GRN_TABLE_PAT_KEY :
@@ -1339,13 +1338,16 @@ grn_table_add_v_inline(grn_ctx *ctx, grn_obj *table, const void *key, int key_si
       break;
     }
   }
-  GRN_API_RETURN(id);
+  return id;
 }
 
 grn_id
 grn_table_add_v(grn_ctx *ctx, grn_obj *table, const void *key, int key_size,
                 void **value, int *added) {
-  return grn_table_add_v_inline(ctx, table, key, key_size, value, added);
+  grn_id id;
+  GRN_API_ENTER;
+  id = grn_table_add_v_inline(ctx, table, key, key_size, value, added);
+  GRN_API_RETURN(id);
 }
 
 grn_id
@@ -2331,7 +2333,6 @@ inline static grn_id
 grn_table_cursor_next_inline(grn_ctx *ctx, grn_table_cursor *tc)
 {
   grn_id id = GRN_ID_NIL;
-  GRN_API_ENTER;
   if (!tc) {
     ERR(GRN_INVALID_ARGUMENT, "tc is null");
   } else {
@@ -2359,13 +2360,16 @@ grn_table_cursor_next_inline(grn_ctx *ctx, grn_table_cursor *tc)
       break;
     }
   }
-  GRN_API_RETURN(id);
+  return id;
 }
 
 grn_id
 grn_table_cursor_next(grn_ctx *ctx, grn_table_cursor *tc)
 {
-  return grn_table_cursor_next_inline(ctx, tc);
+  grn_id id;
+  GRN_API_ENTER;
+  id = grn_table_cursor_next_inline(ctx, tc);
+  GRN_API_RETURN(id);
 }
 
 static grn_rc
@@ -2421,7 +2425,6 @@ inline static int
 grn_table_cursor_get_value_inline(grn_ctx *ctx, grn_table_cursor *tc, void **value)
 {
   int len = 0;
-  GRN_API_ENTER;
   if (!tc) {
     ERR(GRN_INVALID_ARGUMENT, "tc is null");
   } else {
@@ -2444,13 +2447,16 @@ grn_table_cursor_get_value_inline(grn_ctx *ctx, grn_table_cursor *tc, void **val
       break;
     }
   }
-  GRN_API_RETURN(len);
+  return len;
 }
 
 int
 grn_table_cursor_get_value(grn_ctx *ctx, grn_table_cursor *tc, void **value)
 {
-  return grn_table_cursor_get_value_inline(ctx, tc, value);
+  int len;
+  GRN_API_ENTER;
+  len = grn_table_cursor_get_value_inline(ctx, tc, value);
+  GRN_API_RETURN(len);
 }
 
 grn_rc
