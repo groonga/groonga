@@ -36,6 +36,7 @@ void test_text_to_uint64(void);
 void test_text_to_float(void);
 void test_text_to_time(void);
 void test_text_to_geo_point(void);
+void test_text_to_geo_point_empty(void);
 void test_text_to_geo_point_garbage(void);
 void test_text_to_geo_point_comma(void);
 void test_text_to_geo_point_invalid(void);
@@ -268,6 +269,18 @@ test_text_to_geo_point(void)
   GRN_GEO_POINT_VALUE(&dest, takane_latitude, takane_longitude);
   cut_assert_equal_int(130194581, takane_latitude);
   cut_assert_equal_int(503802073, takane_longitude);
+}
+
+void
+test_text_to_geo_point_empty(void)
+{
+  gint empty_latitude, empty_longitude;
+
+  grn_obj_reinit(&context, &dest, GRN_DB_WGS84_GEO_POINT, 0);
+  cast_text("");
+  GRN_GEO_POINT_VALUE(&dest, empty_latitude, empty_longitude);
+  cut_assert_equal_int(0, empty_latitude);
+  cut_assert_equal_int(0, empty_longitude);
 }
 
 void
