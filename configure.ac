@@ -366,6 +366,15 @@ AC_ARG_WITH(match_escalation_threshold,
   GRN_DEFAULT_MATCH_ESCALATION_THRESHOLD="0")
 AC_DEFINE_UNQUOTED(GRN_DEFAULT_MATCH_ESCALATION_THRESHOLD, $GRN_DEFAULT_MATCH_ESCALATION_THRESHOLD, "specified match escalation threshold")
 
+# default DB key management algorithm
+AC_ARG_WITH(default_db_key,
+  [AS_HELP_STRING([--with-default-db-key=ALGORITHM],
+    [specify groonga default DB key(pat/dat/auto)])],
+  GRN_DEFAULT_DB_KEY="$withval",
+  GRN_DEFAULT_DB_KEY="auto")
+AC_DEFINE_UNQUOTED(GRN_DEFAULT_DB_KEY, "$GRN_DEFAULT_DB_KEY",
+                   "specified default DB key management algorithm")
+
 if test "$os_win32" != "yes"; then
   AC_CHECK_HEADERS(pthread.h)
   AC_CHECK_LIB(pthread, pthread_mutex_init,
