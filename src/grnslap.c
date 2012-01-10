@@ -1,5 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009 Brazil
+/*
+  Copyright(C) 2009-2012 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -33,7 +34,7 @@
 #define MAX_DEST 256
 
 typedef struct {
-  char *host;
+  const char *host;
   uint16_t port;
 } grn_slap_dest;
 

@@ -1,5 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009-2011 Brazil
+/*
+  Copyright(C) 2009-2012 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -810,7 +811,7 @@ g_client(int argc, char **argv)
 {
   int rc = -1;
   grn_ctx ctx_, *ctx = &ctx_;
-  char *hostname = DEFAULT_DEST;
+  const char *hostname = DEFAULT_DEST;
   if (argc > 0 && argv) { hostname = *argv++; argc--; }
   grn_ctx_init(ctx, (batchmode ? GRN_CTX_BATCH_MODE : 0));
   if (!grn_ctx_connect(ctx, hostname, port, 0)) {

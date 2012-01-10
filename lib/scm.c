@@ -1,5 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009 Brazil
+/*
+  Copyright(C) 2009-2012 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -687,7 +688,7 @@ grn_ql_mk_symbol2(grn_ctx *ctx, const char *q, unsigned int len, int kwdp)
 }
 
 static grn_cell *
-str2num(grn_ctx *ctx, char *str, unsigned int len)
+str2num(grn_ctx *ctx, const char *str, unsigned int len)
 {
   const char *cur, *str_end = str + len;
   int64_t i = grn_atoll(str, str_end, &cur);
@@ -1957,7 +1958,7 @@ opexe(grn_ctx *ctx)
           o->header.type = GRN_CELL_STR;
           o->header.impl_flags = 0;
           o->u.b.size = 1;
-          o->u.b.value = "?";
+          o->u.b.value = (char *)"?";
           *ctx->impl->pht = p;
           ctx->impl->pht = &CDR(p);
           s_return(ctx, o);
@@ -3332,7 +3333,7 @@ nf_geo_withinp(grn_ctx *ctx, grn_cell *args, grn_ql_co *co)
 /* ========== Initialization of internal keywords ========== */
 
 inline static void
-mk_syntax(grn_ctx *ctx, uint8_t op, char *name)
+mk_syntax(grn_ctx *ctx, uint8_t op, const char *name)
 {
   grn_cell *x;
   if ((x = INTERN(name)) != F) {
@@ -3342,7 +3343,7 @@ mk_syntax(grn_ctx *ctx, uint8_t op, char *name)
 }
 
 inline static void
-mk_proc(grn_ctx *ctx, uint8_t op, char *name)
+mk_proc(grn_ctx *ctx, uint8_t op, const char *name)
 {
   grn_cell *x;
   if ((x = INTERN(name)) != F) {

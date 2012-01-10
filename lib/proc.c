@@ -1,5 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009-2011 Brazil
+/*
+  Copyright(C) 2009-2012 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -558,9 +559,9 @@ proc_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   int limit = GRN_TEXT_LEN(VAR(8))
     ? grn_atoi(GRN_TEXT_VALUE(VAR(8)), GRN_BULK_CURR(VAR(8)), NULL)
     : DEFAULT_LIMIT;
-  char *output_columns = GRN_TEXT_VALUE(VAR(6));
+  const char *output_columns = GRN_TEXT_VALUE(VAR(6));
   uint32_t output_columns_len = GRN_TEXT_LEN(VAR(6));
-  char *drilldown_output_columns = GRN_TEXT_VALUE(VAR(11));
+  const char *drilldown_output_columns = GRN_TEXT_VALUE(VAR(11));
   uint32_t drilldown_output_columns_len = GRN_TEXT_LEN(VAR(11));
   int drilldown_offset = GRN_TEXT_LEN(VAR(12))
     ? grn_atoi(GRN_TEXT_VALUE(VAR(12)), GRN_BULK_CURR(VAR(12)), NULL)
@@ -1030,7 +1031,7 @@ print_columninfo(grn_ctx *ctx, grn_obj *column)
 {
   grn_obj o;
   grn_id id;
-  char *type;
+  const char *type;
   const char *path;
 
   switch (column->header.type) {

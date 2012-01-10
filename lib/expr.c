@@ -1,5 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2010 Brazil
+/*
+  Copyright(C) 2010-2012 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -142,7 +143,7 @@ grn_proc_alloc(grn_ctx *ctx, grn_user_data *user_data, grn_id domain, grn_obj_fl
 
 /* grn_expr */
 
-static char *opstrs[] = {
+static const char *opstrs[] = {
   "PUSH",
   "POP",
   "NOP",

@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2010-2011 Brazil
+  Copyright(C) 2010-2012 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -102,7 +102,7 @@ static const char *groonga_path = "groonga";
 #endif /* WIN32 */
 
 static const char *groonga_protocol = "gqtp";
-static char *grntest_osinfo;
+static const char *grntest_osinfo;
 static int grntest_sigint = 0;
 
 
@@ -281,7 +281,7 @@ error_exit_in_thread(intptr_t code)
 
 
 static void
-escape_command(grn_ctx *ctx, char *in, int ilen, grn_obj *escaped_command)
+escape_command(grn_ctx *ctx, const char *in, int ilen, grn_obj *escaped_command)
 {
   int i = 0;
 
@@ -323,7 +323,7 @@ escape_command(grn_ctx *ctx, char *in, int ilen, grn_obj *escaped_command)
 }
 
 static int
-report_command(grn_ctx *ctx, char *command, char *ret, int task_id,
+report_command(grn_ctx *ctx, const char *command, const char *ret, int task_id,
                grn_obj *start_time, grn_obj *end_time)
 {
   int i, len, clen;
@@ -458,7 +458,7 @@ same_result_p(char *expect, int expected_length, char *result, int result_length
 }
 
 static socket_t
-open_socket(char *host, int port)
+open_socket(const char *host, int port)
 {
   socket_t sock;
   struct hostent *servhost;
@@ -492,7 +492,7 @@ open_socket(char *host, int port)
 }
 
 static int
-write_to_server(socket_t socket, char *buf)
+write_to_server(socket_t socket, const char *buf)
 {
 #ifdef DEBUG_FTP
   fprintf(stderr, "send:%s", buf);
@@ -505,7 +505,7 @@ write_to_server(socket_t socket, char *buf)
 #define OUTPUT_TYPE_LEN (sizeof(OUTPUT_TYPE) - 1)
 
 static void
-command_line_to_uri_path(grn_ctx *ctx, grn_obj *uri, char *command)
+command_line_to_uri_path(grn_ctx *ctx, grn_obj *uri, const char *command)
 {
   char tok_type;
   int offset = 0, have_key = 0;
@@ -588,7 +588,7 @@ command_line_to_uri_path(grn_ctx *ctx, grn_obj *uri, char *command)
 }
 
 static void
-command_send_http(grn_ctx *ctx, char *command, int type, int task_id)
+command_send_http(grn_ctx *ctx, const char *command, int type, int task_id)
 {
   socket_t http_socket;
   grn_obj buf;
@@ -634,7 +634,7 @@ command_send_http(grn_ctx *ctx, char *command, int type, int task_id)
 }
 
 static void
-command_send_ctx(grn_ctx *ctx, char *command, int type, int task_id)
+command_send_ctx(grn_ctx *ctx, const char *command, int type, int task_id)
 {
   grn_ctx_send(ctx, command, strlen(command), 0);
 /* fix me.
@@ -647,7 +647,7 @@ command_send_ctx(grn_ctx *ctx, char *command, int type, int task_id)
 }
 
 static void
-command_send(grn_ctx *ctx, char *command, int type, int task_id)
+command_send(grn_ctx *ctx, const char *command, int type, int task_id)
 {
   if (http_p(type)) {
     command_send_http(ctx, command, type, task_id);
@@ -2320,8 +2320,9 @@ get_size(char *buf)
 }
 
 int
-ftp_sub(char *user, char *passwd, char *host, const char *filename,
-         int mode, char *cd_dirname, char *retval)
+ftp_sub(const char *user, const char *passwd, const char *host,
+        const char *filename, int mode,
+        const char *cd_dirname, char *retval)
 {
   int size = 0;
   int status = 0;
@@ -2568,7 +2569,7 @@ get_date(char *date, time_t *sec)
 }
 
 static int
-get_scriptname(const char *path, char *name, char *suffix)
+get_scriptname(const char *path, char *name, const char *suffix)
 {
   int slen = strlen(suffix);
   int len = strlen(path);

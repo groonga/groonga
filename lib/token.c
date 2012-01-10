@@ -1,5 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009-2011 Brazil
+/*
+  Copyright(C) 2009-2012 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -79,7 +80,7 @@ uvector_fin(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 
 typedef struct {
   grn_str *nstr;
-  uint8_t *delimiter;
+  const uint8_t *delimiter;
   uint32_t delimiter_len;
   int32_t pos;
   grn_encoding encoding;
@@ -93,7 +94,7 @@ typedef struct {
 
 static grn_obj *
 delimited_init(grn_ctx *ctx, grn_obj *table, grn_user_data *user_data,
-               uint8_t *delimiter, uint32_t delimiter_len)
+               const uint8_t *delimiter, uint32_t delimiter_len)
 {
   grn_obj *str;
   int nflags = 0;
@@ -161,15 +162,17 @@ delimited_fin(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 static grn_obj *
 delimit_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
+  static const uint8_t delimiter[1] = {' '};
   grn_obj *table = args[0];
-  return delimited_init(ctx, table, user_data, " ", 1);
+  return delimited_init(ctx, table, user_data, delimiter, 1);
 }
 
 static grn_obj *
 delimit_null_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
+  static const uint8_t delimiter[1] = {'\0'};
   grn_obj *table = args[0];
-  return delimited_init(ctx, table, user_data, "", 1);
+  return delimited_init(ctx, table, user_data, delimiter, 1);
 }
 
 /* ngram tokenizer */

@@ -138,7 +138,7 @@ if test "$GCC" = "yes"; then
 #  CHECK_CFLAG([-Wswitch-enum])
 #  CHECK_CFLAG([-Wshadow])
 #  CHECK_CFLAG([-Wconversion])
-#  CHECK_CFLAG([-Wwrite-strings])
+  CHECK_CFLAG([-Wwrite-strings])
 #  CHECK_CFLAG([-Winline])
 
   CHECK_CXXFLAG([-fexceptions])

@@ -1,4 +1,5 @@
-/* Copyright(C) 2009-2011 Brazil
+/*
+  Copyright(C) 2009-2012 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -624,7 +625,7 @@ GRN_API const char *grn_plugin_get_suffix(void);
  **/
 
 typedef struct {
-  char *name;
+  const char *name;
   unsigned name_size;
   grn_obj value;
 } grn_expr_var;

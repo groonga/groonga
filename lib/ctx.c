@@ -1,5 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009-2011 Brazil
+/*
+  Copyright(C) 2009-2012 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -2416,7 +2417,7 @@ grn_cell_clear(grn_ctx *ctx, grn_cell *o)
 /* don't handle error inside logger functions */
 
 void
-grn_ctx_log(grn_ctx *ctx, char *fmt, ...)
+grn_ctx_log(grn_ctx *ctx, const char *fmt, ...)
 {
   va_list argp;
   va_start(argp, fmt);
