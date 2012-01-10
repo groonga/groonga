@@ -612,6 +612,112 @@ grn_dat_update(grn_ctx *ctx, grn_dat *dat,
   return GRN_SUCCESS;
 }
 
+int grn_dat_scan(grn_ctx *ctx, grn_dat *dat, const char *str,
+                 unsigned int str_size, grn_dat_scan_hit *scan_hits,
+                 unsigned int max_num_scan_hits, const char **str_rest) {
+  if (!grn_dat_open_trie_if_needed(ctx, dat) || !str ||
+      !(dat->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) || !scan_hits) {
+    return -1;
+  }
+
+  grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
+  if (!trie) {
+    return -1;
+  }
+
+  if (!max_num_scan_hits || !str_size) {
+    if (str_rest) {
+      *str_rest = str;
+    }
+    return 0;
+  }
+
+  int num_scan_hits = 0;
+  try {
+    if (dat->obj.header.flags & GRN_OBJ_KEY_NORMALIZE) {
+      grn_str * const normalized_str = grn_str_open(
+          ctx, str, str_size, GRN_STR_NORMALIZE | GRN_STR_WITH_CHECKS);
+      if (!normalized_str) {
+        fprintf(stderr, "error: grn_str_open() failed!\n");
+        return -1;
+      }
+      str = normalized_str->norm;
+      str_size = normalized_str->norm_blen;
+      const short *checks = normalized_str->checks;
+      unsigned int offset = 0;
+      while (str_size) {
+        if (*checks) {
+          grn::dat::UInt32 key_pos;
+          if (trie->lcp_search(str, str_size, &key_pos)) {
+            const grn::dat::Key &key = trie->get_key(key_pos);
+            const grn::dat::UInt32 key_length = key.length();
+            if ((key_length == str_size) || (checks[key_length])) {
+              unsigned int length = 0;
+              for (grn::dat::UInt32 i = 0; i < key_length; ++i) {
+                if (checks[i] > 0) {
+                  length += checks[i];
+                }
+              }
+              scan_hits[num_scan_hits].id = key.id();
+              scan_hits[num_scan_hits].offset = offset;
+              scan_hits[num_scan_hits].length = length;
+              offset += length;
+              str += key_length;
+              str_size -= key_length;
+              checks += key_length;
+              if (++num_scan_hits >= max_num_scan_hits) {
+                break;
+              }
+              continue;
+            }
+          }
+          offset += *checks;
+        }
+        ++str;
+        --str_size;
+        ++checks;
+      }
+      if (str_rest) {
+        *str_rest = normalized_str->orig + offset;
+      }
+      grn_str_close(ctx, normalized_str);
+    } else {
+      const char * const begin = str;
+      while (str_size) {
+        grn::dat::UInt32 key_pos;
+        if (trie->lcp_search(str, str_size, &key_pos)) {
+          const grn::dat::Key &key = trie->get_key(key_pos);
+          scan_hits[num_scan_hits].id = key.id();
+          scan_hits[num_scan_hits].offset = str - begin;
+          scan_hits[num_scan_hits].length = key.length();
+          str += key.length();
+          str_size -= key.length();
+          if (++num_scan_hits >= max_num_scan_hits) {
+            break;
+          }
+        } else {
+          const int char_length = grn_charlen(ctx, str, str + str_size);
+          if (char_length) {
+            str += char_length;
+            str_size -= char_length;
+          } else {
+            ++str;
+            --str_size;
+          }
+        }
+      }
+      if (str_rest) {
+        *str_rest = str;
+      }
+    }
+  } catch (const grn::dat::Exception &ex) {
+    ERR(grn_dat_translate_error_code(ex.code()),
+        const_cast<char *>("grn::dat::lcp_search failed"));
+    return -1;
+  }
+  return num_scan_hits;
+}
+
 grn_id
 grn_dat_lcp_search(grn_ctx *ctx, grn_dat *dat,
                    const void *key, unsigned int key_size)
