@@ -2139,7 +2139,7 @@ grn_hash_check(grn_ctx *ctx, grn_hash *hash)
   char buf[8];
   struct grn_hash_header *h = hash->header;
   GRN_OUTPUT_ARRAY_OPEN("RESULT", 1);
-  GRN_OUTPUT_MAP_OPEN("SUMMARY", 12);
+  GRN_OUTPUT_MAP_OPEN("SUMMARY", 24);
   GRN_OUTPUT_CSTR("flags");
   grn_itoh(h->flags, buf, 8);
   GRN_OUTPUT_STR(buf, 8);
