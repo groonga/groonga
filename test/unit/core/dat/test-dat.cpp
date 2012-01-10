@@ -82,8 +82,10 @@ namespace test_dat
     }
   }
 
-  grn_dat *create_trie(const std::vector<std::string> &keys, const char *path) {
-    grn_dat * const dat = grn_dat_create(&ctx, path, 0, 0, GRN_OBJ_KEY_VAR_SIZE);
+  grn_dat *create_trie(const std::vector<std::string> &keys, const char *path,
+                       unsigned int flags = 0) {
+    flags |= GRN_OBJ_KEY_VAR_SIZE;
+    grn_dat * const dat = grn_dat_create(&ctx, path, 0, 0, flags);
     cppcut_assert_not_null(dat);
     for (std::size_t i = 0; i < keys.size(); ++i) {
       const char * const ptr = keys[i].c_str();
@@ -422,6 +424,114 @@ namespace test_dat
                           grn_dat_update(&ctx, dat, src_ptr, src_length, dest_ptr, dest_length));
     }
     cppcut_assert_equal(GRN_SUCCESS, grn_dat_close(&ctx, dat));
+  }
+
+  void test_scan(void)
+  {
+    {
+      std::vector<std::string> keys;
+      keys.push_back("12");
+      keys.push_back("234");
+      keys.push_back("45");
+      keys.push_back("789");
+
+      const char text[] = "0123456789X";
+      const unsigned int text_size = sizeof(text) - 1;
+      grn_dat_scan_hit scan_hits[4];
+      const unsigned int max_num_scan_hits = sizeof(scan_hits) / sizeof(scan_hits[0]);
+
+      grn_dat * const dat = create_trie(keys, NULL);
+
+      const char *text_rest;
+      cppcut_assert_equal(3,
+                          grn_dat_scan(&ctx, dat, text, text_size,
+                          scan_hits, max_num_scan_hits, &text_rest));
+      cppcut_assert_equal(text + text_size, text_rest);
+      cppcut_assert_equal(static_cast<grn_id>(1), scan_hits[0].id);
+      cppcut_assert_equal(1U, scan_hits[0].offset);
+      cppcut_assert_equal(2U, scan_hits[0].length);
+      cppcut_assert_equal(static_cast<grn_id>(3), scan_hits[1].id);
+      cppcut_assert_equal(4U, scan_hits[1].offset);
+      cppcut_assert_equal(2U, scan_hits[1].length);
+      cppcut_assert_equal(static_cast<grn_id>(4), scan_hits[2].id);
+      cppcut_assert_equal(7U, scan_hits[2].offset);
+      cppcut_assert_equal(3U, scan_hits[2].length);
+
+      cppcut_assert_equal(1,
+                          grn_dat_scan(&ctx, dat, text, text_size,
+                                       scan_hits, 1, &text_rest));
+      cppcut_assert_equal(static_cast<std::ptrdiff_t>(3), text_rest - text);
+      cppcut_assert_equal(1,
+                          grn_dat_scan(&ctx, dat, text_rest, text_size - (text_rest - text),
+                                       scan_hits, 1, &text_rest));
+      cppcut_assert_equal(static_cast<std::ptrdiff_t>(6), text_rest - text);
+      cppcut_assert_equal(1,
+                          grn_dat_scan(&ctx, dat, text_rest, text_size - (text_rest - text),
+                                       scan_hits, 1, &text_rest));
+      cppcut_assert_equal(static_cast<std::ptrdiff_t>(10), text_rest - text);
+      cppcut_assert_equal(0,
+                          grn_dat_scan(&ctx, dat, text_rest, text_size - (text_rest - text),
+                                       scan_hits, 1, &text_rest));
+
+      cppcut_assert_equal(GRN_SUCCESS, grn_dat_close(&ctx, dat));
+    }
+
+    {
+      std::vector<std::string> keys;
+      keys.push_back("ユニグラム");
+      keys.push_back("グラム");
+
+      const char text[] = "ユニ㌘ハ゛イク゛ラム";
+      const unsigned int text_size = sizeof(text) - 1;
+      grn_dat_scan_hit scan_hits[4];
+      const unsigned int max_num_scan_hits = sizeof(scan_hits) / sizeof(scan_hits[0]);
+
+      grn_dat * const dat = create_trie(keys, NULL, GRN_OBJ_KEY_NORMALIZE);
+
+      const char *text_rest;
+      cppcut_assert_equal(2,
+                          grn_dat_scan(&ctx, dat, text, text_size,
+                          scan_hits, max_num_scan_hits, &text_rest));
+      cppcut_assert_equal(text + text_size, text_rest);
+      cppcut_assert_equal(static_cast<grn_id>(1), scan_hits[0].id);
+      cppcut_assert_equal(0U, scan_hits[0].offset);
+      cppcut_assert_equal(9U, scan_hits[0].length);
+      cppcut_assert_equal(static_cast<grn_id>(2), scan_hits[1].id);
+      cppcut_assert_equal(18U, scan_hits[1].offset);
+      cppcut_assert_equal(12U, scan_hits[1].length);
+
+      cppcut_assert_equal(1,
+                          grn_dat_scan(&ctx, dat, text, text_size,
+                                       scan_hits, 1, &text_rest));
+      cppcut_assert_equal(static_cast<std::ptrdiff_t>(9), text_rest - text);
+      cppcut_assert_equal(1,
+                          grn_dat_scan(&ctx, dat, text_rest, text_size - (text_rest - text),
+                                       scan_hits, 1, &text_rest));
+      cppcut_assert_equal(static_cast<std::ptrdiff_t>(30), text_rest - text);
+      cppcut_assert_equal(0,
+                          grn_dat_scan(&ctx, dat, text_rest, text_size - (text_rest - text),
+                                       scan_hits, 1, &text_rest));
+
+      cppcut_assert_equal(GRN_SUCCESS, grn_dat_close(&ctx, dat));
+    }
+
+    {
+      std::vector<std::string> keys;
+      create_keys(&keys, 1000, 6, 15);
+
+      grn_dat * const dat = create_trie(keys, NULL);
+      for (std::size_t i = 0; i < keys.size(); ++i) {
+        const grn_id key_id = static_cast<grn_id>(i + 1);
+        const char * const ptr = keys[i].c_str();
+        const uint32_t length = static_cast<uint32_t>(keys[i].length());
+        grn_dat_scan_hit scan_hits[2];
+        cppcut_assert_equal(1, grn_dat_scan(&ctx, dat, ptr, length, scan_hits, 2, NULL));
+        cppcut_assert_equal(key_id, scan_hits[0].id);
+        cppcut_assert_equal(0U, scan_hits[0].offset);
+        cppcut_assert_equal(length, scan_hits[0].length);
+      }
+      cppcut_assert_equal(GRN_SUCCESS, grn_dat_close(&ctx, dat));
+    }
   }
 
   void test_lcp_search(void)
