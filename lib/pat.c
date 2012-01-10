@@ -2236,13 +2236,13 @@ grn_pat_check(grn_ctx *ctx, grn_pat *pat)
 static void
 grn_pat_inspect_check(grn_ctx *ctx, grn_obj *buf, int check)
 {
-    GRN_TEXT_PUTS(ctx, buf, "{");
-    grn_text_lltoa(ctx, buf, check >> 4);
-    GRN_TEXT_PUTS(ctx, buf, ",");
-    grn_text_lltoa(ctx, buf, (check >> 1) & 7);
-    GRN_TEXT_PUTS(ctx, buf, ",");
-    grn_text_lltoa(ctx, buf, check & 1);
-    GRN_TEXT_PUTS(ctx, buf, "}");
+  GRN_TEXT_PUTS(ctx, buf, "{");
+  grn_text_lltoa(ctx, buf, check >> 4);
+  GRN_TEXT_PUTS(ctx, buf, ",");
+  grn_text_lltoa(ctx, buf, (check >> 1) & 7);
+  GRN_TEXT_PUTS(ctx, buf, ",");
+  grn_text_lltoa(ctx, buf, check & 1);
+  GRN_TEXT_PUTS(ctx, buf, "}");
 }
 
 static void
