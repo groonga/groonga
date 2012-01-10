@@ -2,7 +2,7 @@
 /*
   Copyright (C) 2010 Brazil
   Copyright (C) 2009  Ryo Onodera <onodera@clear-code.com>
-  Copyright (C) 2009-2010  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2009-2012  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -457,8 +457,8 @@ test_unsequantial_records_in_table_with_keys(void)
 {
   grn_obj *table;
   grn_id id, expected_id = 1;
-  char *keys[] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
-  int i, n_keys = sizeof(keys)/sizeof(keys[0]);
+  const gchar *keys[] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+  int i, n_keys = sizeof(keys) / sizeof(keys[0]);
 
   table = table_create("Weekdays", GRN_OBJ_TABLE_HASH_KEY, "ShortText", NULL);
   grn_test_assert_context(context);

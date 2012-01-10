@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2009-2011  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2009-2012  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -117,7 +117,7 @@ test_array_set_data(void)
   grn_obj *record_value;
   grn_obj *retrieved_record_value;
   const gchar *dupped_retrieved_record_value;
-  gchar *value_type_name = "value_type";
+  const gchar *value_type_name = "value_type";
   grn_obj *value_type;
 
   value_type = grn_type_create(context,

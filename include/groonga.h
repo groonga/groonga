@@ -957,7 +957,7 @@ GRN_API int grn_table_cursor_get_value(grn_ctx *ctx, grn_table_cursor *tc, void 
  * cursorのカレントレコードが存在しない場合はGRN_INVALID_ARGUMENTを返す。
  **/
 GRN_API grn_rc grn_table_cursor_set_value(grn_ctx *ctx, grn_table_cursor *tc,
-                                  void *value, int flags);
+                                          const void *value, int flags);
 
 /**
  * grn_table_cursor_delete:
@@ -2564,8 +2564,8 @@ GRN_API grn_id grn_hash_get(grn_ctx *ctx, grn_hash *hash, const void *key,
 GRN_API int grn_hash_get_key(grn_ctx *ctx, grn_hash *hash, grn_id id, void *keybuf, int bufsize);
 GRN_API int grn_hash_get_key2(grn_ctx *ctx, grn_hash *hash, grn_id id, grn_obj *bulk);
 GRN_API int grn_hash_get_value(grn_ctx *ctx, grn_hash *hash, grn_id id, void *valuebuf);
-GRN_API grn_rc grn_hash_set_value(grn_ctx *ctx, grn_hash *hash, grn_id id, void *value,
-                                  int flags);
+GRN_API grn_rc grn_hash_set_value(grn_ctx *ctx, grn_hash *hash, grn_id id,
+                                  const void *value, int flags);
 
 typedef struct _grn_table_delete_optarg grn_table_delete_optarg;
 
@@ -2591,7 +2591,7 @@ GRN_API void grn_hash_cursor_close(grn_ctx *ctx, grn_hash_cursor *c);
 GRN_API int grn_hash_cursor_get_key(grn_ctx *ctx, grn_hash_cursor *c, void **key);
 GRN_API int grn_hash_cursor_get_value(grn_ctx *ctx, grn_hash_cursor *c, void **value);
 GRN_API grn_rc grn_hash_cursor_set_value(grn_ctx *ctx, grn_hash_cursor *c,
-                                         void *value, int flags);
+                                         const void *value, int flags);
 
 GRN_API int grn_hash_cursor_get_key_value(grn_ctx *ctx, grn_hash_cursor *c,
                                           void **key, unsigned int *key_size, void **value);
@@ -2624,14 +2624,14 @@ GRN_API grn_rc grn_array_close(grn_ctx *ctx, grn_array *array);
 GRN_API grn_id grn_array_add(grn_ctx *ctx, grn_array *array, void **value);
 GRN_API int grn_array_get_value(grn_ctx *ctx, grn_array *array, grn_id id, void *valuebuf);
 GRN_API grn_rc grn_array_set_value(grn_ctx *ctx, grn_array *array, grn_id id,
-                                   void *value, int flags);
+                                   const void *value, int flags);
 GRN_API grn_array_cursor *grn_array_cursor_open(grn_ctx *ctx, grn_array *array,
                                                 grn_id min, grn_id max,
                                                 int offset, int limit, int flags);
 GRN_API grn_id grn_array_cursor_next(grn_ctx *ctx, grn_array_cursor *c);
 GRN_API int grn_array_cursor_get_value(grn_ctx *ctx, grn_array_cursor *c, void **value);
 GRN_API grn_rc grn_array_cursor_set_value(grn_ctx *ctx, grn_array_cursor *c,
-                                          void *value, int flags);
+                                          const void *value, int flags);
 GRN_API grn_rc grn_array_cursor_delete(grn_ctx *ctx, grn_array_cursor *c,
                                        grn_table_delete_optarg *optarg);
 GRN_API void grn_array_cursor_close(grn_ctx *ctx, grn_array_cursor *c);
@@ -2677,7 +2677,7 @@ GRN_API int grn_pat_get_key(grn_ctx *ctx, grn_pat *pat, grn_id id, void *keybuf,
 GRN_API int grn_pat_get_key2(grn_ctx *ctx, grn_pat *pat, grn_id id, grn_obj *bulk);
 GRN_API int grn_pat_get_value(grn_ctx *ctx, grn_pat *pat, grn_id id, void *valuebuf);
 GRN_API grn_rc grn_pat_set_value(grn_ctx *ctx, grn_pat *pat, grn_id id,
-                                 void *value, int flags);
+                                 const void *value, int flags);
 
 GRN_API grn_rc grn_pat_delete_by_id(grn_ctx *ctx, grn_pat *pat, grn_id id,
                                     grn_table_delete_optarg *optarg);
@@ -2719,7 +2719,7 @@ GRN_API int grn_pat_cursor_get_value(grn_ctx *ctx, grn_pat_cursor *c, void **val
 GRN_API int grn_pat_cursor_get_key_value(grn_ctx *ctx, grn_pat_cursor *c,
                                          void **key, unsigned int *key_size, void **value);
 GRN_API grn_rc grn_pat_cursor_set_value(grn_ctx *ctx, grn_pat_cursor *c,
-                                        void *value, int flags);
+                                        const void *value, int flags);
 GRN_API grn_rc grn_pat_cursor_delete(grn_ctx *ctx, grn_pat_cursor *c,
                                      grn_table_delete_optarg *optarg);
 

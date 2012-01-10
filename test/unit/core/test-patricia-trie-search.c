@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2008-2009  Kouhei Sutou <kou@cozmixng.org>
+  Copyright (C) 2008-2012  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -207,11 +207,12 @@ test_lcp_search(gconstpointer data)
 
 static grn_trie_test_data *xfix_test_data_new(grn_rc expected_rc,
                                               GList *expected_keys,
-                                              gchar *search_key,
+                                              const gchar *search_key,
                                               grn_test_set_parameters_func set_parameters,
                                               ...) G_GNUC_NULL_TERMINATED;
 static grn_trie_test_data *
-xfix_test_data_new(grn_rc expected_rc, GList *expected_keys, gchar *search_key,
+xfix_test_data_new(grn_rc expected_rc, GList *expected_keys,
+                   const gchar *search_key,
                    grn_test_set_parameters_func set_parameters, ...)
 {
   grn_trie_test_data *test_data;

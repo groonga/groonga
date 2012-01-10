@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2008-2010  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2008-2012  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -529,7 +529,7 @@ test_set_value(void)
   put_sample_entry();
 
   grn_test_assert(grn_pat_set_value(context, trie,
-                                   sample_id, "XXX", GRN_OBJ_SET));
+                                    sample_id, "XXX", GRN_OBJ_SET));
   cut_assert_equal_int(DEFAULT_VALUE_SIZE,
                        grn_pat_get_value(context, trie, sample_id, got_value));
   cut_assert_equal_string("XXX", got_value);

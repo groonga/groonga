@@ -2477,7 +2477,7 @@ grn_table_cursor_get_value(grn_ctx *ctx, grn_table_cursor *tc, void **value)
 
 grn_rc
 grn_table_cursor_set_value(grn_ctx *ctx, grn_table_cursor *tc,
-                           void *value, int flags)
+                           const void *value, int flags)
 {
   grn_rc rc = GRN_INVALID_ARGUMENT;
   GRN_API_ENTER;

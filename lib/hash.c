@@ -1,5 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009 Brazil
+/*
+  Copyright(C) 2009-2012 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -337,7 +338,8 @@ _grn_array_get_value(grn_ctx *ctx, grn_array *array, grn_id id)
 }
 
 grn_rc
-grn_array_set_value(grn_ctx *ctx, grn_array *array, grn_id id, void *value, int flags)
+grn_array_set_value(grn_ctx *ctx, grn_array *array, grn_id id,
+                    const void *value, int flags)
 {
   if (ctx && array && value) {
     void *ee;
@@ -554,7 +556,8 @@ grn_array_cursor_get_value(grn_ctx *ctx, grn_array_cursor *c, void **value)
 }
 
 grn_rc
-grn_array_cursor_set_value(grn_ctx *ctx, grn_array_cursor *c, void *value, int flags)
+grn_array_cursor_set_value(grn_ctx *ctx, grn_array_cursor *c,
+                           const void *value, int flags)
 {
   return grn_array_set_value(ctx, c->array, c->curr_rec, value, flags);
 }
@@ -1446,7 +1449,8 @@ _grn_hash_get_key_value(grn_ctx *ctx, grn_hash *hash, grn_id id,
 }
 
 grn_rc
-grn_hash_set_value(grn_ctx *ctx, grn_hash *hash, grn_id id, void *value, int flags)
+grn_hash_set_value(grn_ctx *ctx, grn_hash *hash, grn_id id,
+                   const void *value, int flags)
 {
   if (value) {
     void *v;
@@ -1756,7 +1760,8 @@ grn_hash_cursor_get_key_value(grn_ctx *ctx, grn_hash_cursor *c,
 }
 
 grn_rc
-grn_hash_cursor_set_value(grn_ctx *ctx, grn_hash_cursor *c, void *value, int flags)
+grn_hash_cursor_set_value(grn_ctx *ctx, grn_hash_cursor *c,
+                          const void *value, int flags)
 {
   if (!c) { return GRN_INVALID_ARGUMENT; }
   return grn_hash_set_value(ctx, c->hash, c->curr_rec, value, flags);

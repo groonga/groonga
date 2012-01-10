@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2008-2011  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2008-2012  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -261,7 +261,7 @@ test_open_invalid_segment_file(void)
 {
   grn_io *io;
   gchar *id_string;
-  gchar *expected_error_message = "syscall error";
+  const gchar *expected_error_message = "syscall error";
 
   io = grn_io_create(context, path, 10, 10, 10,
                      grn_io_auto, GRN_IO_EXPIRE_SEGMENT);
@@ -462,7 +462,8 @@ insert_and_search(grn_obj *users, grn_obj *items, grn_obj *checks, grn_obj *chec
 void
 test_array_index(void)
 {
-  gchar *db_path, *name;
+  gchar *db_path;
+  const gchar *name;
   grn_obj *users, *items, *checks, *checked;
 
   grn_obj_close(context, db);
@@ -506,7 +507,8 @@ test_array_index(void)
 void
 test_scalar_index(void)
 {
-  gchar *db_path, *name;
+  gchar *db_path;
+  const gchar *name;
   grn_obj *users, *items, *checks, *checked;
 
   grn_obj_close(context, db);
@@ -550,7 +552,8 @@ test_scalar_index(void)
 void
 test_int_index(void)
 {
-  gchar *db_path, *name;
+  gchar *db_path;
+  const gchar *name;
   grn_obj *users, *items, *checks, *checked, *int_type;
 
   grn_obj_close(context, db);

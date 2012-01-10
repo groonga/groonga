@@ -1281,7 +1281,8 @@ grn_pat_get_value_(grn_ctx *ctx, grn_pat *pat, grn_id id, uint32_t *size)
 }
 
 grn_rc
-grn_pat_set_value(grn_ctx *ctx, grn_pat *pat, grn_id id, void *value, int flags)
+grn_pat_set_value(grn_ctx *ctx, grn_pat *pat, grn_id id,
+                  const void *value, int flags)
 {
   if (value) {
     uint32_t value_size = pat->value_size;
@@ -2187,7 +2188,8 @@ grn_pat_cursor_get_key_value(grn_ctx *ctx, grn_pat_cursor *c,
 }
 
 grn_rc
-grn_pat_cursor_set_value(grn_ctx *ctx, grn_pat_cursor *c, void *value, int flags)
+grn_pat_cursor_set_value(grn_ctx *ctx, grn_pat_cursor *c,
+                         const void *value, int flags)
 {
   return grn_pat_set_value(ctx, c->pat, c->curr_rec, value, flags);
 }
