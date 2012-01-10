@@ -1,6 +1,6 @@
 LOCALE = %LOCALE%
 
-include $(top_srcdir)/build/makefiles/locale.am
+include $(srcdir)/locale.am
 
 if ENABLE_DOCUMENT
 %LOCALE%_man1dir = $(mandir)/%LOCALE%/man1

@@ -1,5 +1,5 @@
-include $(top_srcdir)/doc/files.am
-include $(top_srcdir)/build/makefiles/sphinx-build.am
+include $(srcdir)/files.am
+include $(srcdir)/sphinx-build.am
 
 if ENABLE_DOCUMENT
 BUILT_SOURCES +=				\

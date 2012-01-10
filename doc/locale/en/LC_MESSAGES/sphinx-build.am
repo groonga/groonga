@@ -1,0 +1,1 @@
+include $(srcdir)/../../../../build/makefiles/sphinx-build.am

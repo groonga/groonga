@@ -8,9 +8,13 @@ add:
 	   echo "e.g.: make add LOCALE=ja";		\
            false)
 	mkdir -p $(srcdir)/$(LOCALE)/LC_MESSAGES
+	cp $(srcdir)/$(LOCALE)/*.am \
+	  $(srcdir)/$(LOCALE)/
 	sed -e 's,%LOCALE%,$(LOCALE),g'		\
 	  $(srcdir)/template.locale.Makefile.am	\
 	    > $(srcdir)/$(LOCALE)/Makefile.am
+	cp $(srcdir)/$(LOCALE)/LC_MESSAGES/*.am \
+	  $(srcdir)/$(LOCALE)/LC_MESSAGES/
 	sed -e 's,%LOCALE%,$(LOCALE),g'				\
 	  $(srcdir)/template.locale.LC_MESSAGES.Makefile.am	\
 	    > $(srcdir)/$(LOCALE)/LC_MESSAGES/Makefile.am
