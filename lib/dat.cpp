@@ -565,7 +565,6 @@ grn_dat_update_by_id(grn_ctx *ctx, grn_dat *dat, grn_id src_key_id,
         return ctx->rc;
       }
       grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
-      grn::dat::UInt32 key_pos;
       if (!trie->update(src_key_id, dest_key, dest_key_size)) {
         return GRN_INVALID_ARGUMENT;
       }
@@ -599,7 +598,6 @@ grn_dat_update(grn_ctx *ctx, grn_dat *dat,
         return ctx->rc;
       }
       grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
-      grn::dat::UInt32 key_pos;
       if (!trie->update(src_key, src_key_size, dest_key, dest_key_size)) {
         return GRN_INVALID_ARGUMENT;
       }
