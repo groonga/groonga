@@ -847,23 +847,42 @@ fi
 # libevent
 AC_ARG_WITH(libevent,
   [AS_HELP_STRING([--without-libevent],
-    [Disable libevent used for suggestion. [default=/usr]])],
+    [Disable libevent used for suggestion. [default=auto]])],
   [with_libevent="$withval"],
-  [with_libevent="/usr"])
+  [with_libevent="auto"])
+
+# workaround for bundled groonga in MariaDB.
+if test "x$with_libevent" = "xbundle"; then
+  with_libevent=no
+fi
+
 if test "x$with_libevent" != "xno"; then
+  if test "x$with_libevent" = "xyes" -o "x$with_libevent" = "xauto"; then
+    libevent_cflags=""
+    libevent_ldlags=""
+  else
+    libevent_include_dir="$with_libevent/include"
+    libevent_lib_dir="$with_libevent/lib"
+    if ! test -d "$libevent_include_dir" -a -d "$libevent_lib_dir"; then
+      AC_MSG_ERROR("No libevent found in $with_libevent.")
+    fi
+    libevent_cflags="-I$libevent_include_dir"
+    libevent_ldlags="-L$libevent_lib_dir"
+  fi
+
   _SAVE_CFLAGS="$CFLAGS"
   _SAVE_LDFLAGS="$LDFLAGS"
-  CFLAGS="$CFLAGS -I$with_libevent/include"
-  LDFLAGS="$LDFLAGS -L$with_libevent/lib"
+  CFLAGS="$CFLAGS $libevent_cflags"
+  LDFLAGS="$LDFLAGS $libevent_ldflags"
   AC_CHECK_LIB(event, event_init,
                [libevent_available=yes],
                [libevent_available=no])
   CFLAGS="$_SAVE_CFLAGS"
   LDFLAGS="$_SAVE_LDFLAGS"
-  if test "x$libevent_available" = "xyes"; then
+  if test "$libevent_available" = "yes"; then
     AC_DEFINE(HAVE_LIBEVENT, [1], [Define to 1 if libevent is available.])
-    LIBEVENT_CFLAGS="-I$with_libevent/include"
-    LIBEVENT_LIBS="-L$with_libevent/lib -levent"
+    LIBEVENT_CFLAGS="$libevent_cflags"
+    LIBEVENT_LIBS="$libevent_ldflags"
   else
     if test "x$with_libevent" = "xyes"; then
       AC_MSG_ERROR("No libevent found")
