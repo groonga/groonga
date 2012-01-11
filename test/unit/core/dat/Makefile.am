@@ -31,6 +31,7 @@ INCLUDES =					\
 AM_CXXFLAGS =						\
 	$(GCUTTER_CFLAGS)				\
 	$(CPPCUTTER_CFLAGS)				\
+	$(TEST_CXXFLAGS)				\
 	-DGROONGA=\"$(abs_top_builddir)/src/groonga\"
 
 AM_LDFLAGS = -module -rpath $(libdir) -avoid-version

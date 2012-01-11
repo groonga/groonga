@@ -117,6 +117,7 @@ AC_DEFUN([REMOVE_CXXFLAG], [
   AC_MSG_RESULT([$remove_cxxflag])
 ])
 
+TEST_CXXFLAGS=""
 if test "$GCC" = "yes"; then
   CHECK_BUILD_FLAG([-Wall])
   CHECK_BUILD_FLAG([-Wextra])
@@ -148,7 +149,15 @@ if test "$GCC" = "yes"; then
 
   CHECK_CXXFLAG([-fexceptions])
   CHECK_CXXFLAG([-fimplicit-templates])
+
+  CXXFLAGS_for_source="$CXXFLAGS"
+  CHECK_CXXFLAG([-Wno-clobbered])
+  if test "x$check_cxxflag" = "xyes"; then
+    TEST_CXXFLAGS="-Wno-clobbered"
+  fi
+  CXXFLAGS="$CXXFLAGS_for_source"
 fi
+AC_SUBST(TEST_CXXFLAGS)
 
 AC_LIBTOOL_WIN32_DLL
 AM_PROG_LIBTOOL
