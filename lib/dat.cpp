@@ -136,7 +136,7 @@ bool
 grn_dat_open_trie_if_needed(grn_ctx *ctx, grn_dat *dat)
 {
   if (!dat) {
-    ERR(GRN_INVALID_ARGUMENT, const_cast<char *>("dat is null"));
+    ERR(GRN_INVALID_ARGUMENT, "dat is null");
     return false;
   }
 
@@ -159,7 +159,7 @@ grn_dat_open_trie_if_needed(grn_ctx *ctx, grn_dat *dat)
   grn::dat::Trie * const old_trie = static_cast<grn::dat::Trie *>(dat->old_trie);
   grn::dat::Trie * const new_trie = new (std::nothrow) grn::dat::Trie;
   if (!new_trie) {
-    MERR(const_cast<char *>("new grn::dat::Trie failed"));
+    MERR("new grn::dat::Trie failed");
     return false;
   }
 
@@ -167,7 +167,7 @@ grn_dat_open_trie_if_needed(grn_ctx *ctx, grn_dat *dat)
     new_trie->open(trie_path);
   } catch (const grn::dat::Exception &ex) {
     ERR(grn_dat_translate_error_code(ex.code()),
-        const_cast<char *>("grn::dat::Trie::open failed"));
+        "grn::dat::Trie::open failed");
     delete new_trie;
     return false;
   }
@@ -189,7 +189,7 @@ grn_dat_open_trie_if_needed(grn_ctx *ctx, grn_dat *dat)
 bool grn_dat_rebuild_trie(grn_ctx *ctx, grn_dat *dat) {
   grn::dat::Trie * const new_trie = new (std::nothrow) grn::dat::Trie;
   if (!new_trie) {
-    MERR(const_cast<char *>("new grn::dat::Trie failed"));
+    MERR("new grn::dat::Trie failed");
     return false;
   }
 
@@ -201,7 +201,7 @@ bool grn_dat_rebuild_trie(grn_ctx *ctx, grn_dat *dat) {
     new_trie->create(*trie, trie_path, trie->file_size() * 2);
   } catch (const grn::dat::Exception &ex) {
     ERR(grn_dat_translate_error_code(ex.code()),
-        const_cast<char *>("grn::dat::Trie::open failed"));
+        "grn::dat::Trie::open failed");
     delete new_trie;
     return false;
   }
@@ -248,7 +248,7 @@ grn_dat_create(grn_ctx *ctx, const char *path, uint32_t,
     if (path[0] == '\0') {
       path = NULL;
     } else if (std::strlen(path) >= (PATH_MAX - (FILE_ID_LENGTH + 1))) {
-      ERR(GRN_FILENAME_TOO_LONG, const_cast<char *>("too long path"));
+      ERR(GRN_FILENAME_TOO_LONG, "too long path");
       return NULL;
     }
   }
@@ -290,7 +290,7 @@ grn_dat *
 grn_dat_open(grn_ctx *ctx, const char *path)
 {
   if (path && (std::strlen(path) >= (PATH_MAX - (FILE_ID_LENGTH + 1)))) {
-    ERR(GRN_FILENAME_TOO_LONG, const_cast<char *>("too long path"));
+    ERR(GRN_FILENAME_TOO_LONG, "too long path");
     return NULL;
   }
 
@@ -333,7 +333,7 @@ grn_rc
 grn_dat_remove(grn_ctx *ctx, const char *path)
 {
   if (!path) {
-    ERR(GRN_INVALID_ARGUMENT, const_cast<char *>("path is null"));
+    ERR(GRN_INVALID_ARGUMENT, "path is null");
     return GRN_INVALID_ARGUMENT;
   }
 
@@ -372,7 +372,7 @@ grn_dat_get(grn_ctx *ctx, grn_dat *dat, const void *key,
     }
   } catch (const grn::dat::Exception &ex) {
     ERR(grn_dat_translate_error_code(ex.code()),
-        const_cast<char *>("grn::dat::Trie::search failed"));
+        "grn::dat::Trie::search failed");
   }
   return GRN_ID_NIL;
 }
@@ -390,14 +390,14 @@ grn_dat_add(grn_ctx *ctx, grn_dat *dat, const void *key,
     grn_dat_generate_trie_path(grn_io_path(dat->io), trie_path, 1);
     grn::dat::Trie * const new_trie = new (std::nothrow) grn::dat::Trie;
     if (!new_trie) {
-      MERR(const_cast<char *>("new grn::dat::Trie failed"));
+      MERR("new grn::dat::Trie failed");
       return GRN_ID_NIL;
     }
     try {
       new_trie->create(trie_path);
     } catch (const grn::dat::Exception &ex) {
       ERR(grn_dat_translate_error_code(ex.code()),
-          const_cast<char *>("grn::dat::Trie::create failed"));
+          "grn::dat::Trie::create failed");
       delete new_trie;
       return GRN_ID_NIL;
     }
@@ -426,7 +426,7 @@ grn_dat_add(grn_ctx *ctx, grn_dat *dat, const void *key,
     return new_trie->get_key(key_pos).id();
   } catch (const grn::dat::Exception &ex) {
     ERR(grn_dat_translate_error_code(ex.code()),
-        const_cast<char *>("grn::dat::Trie::insert failed"));
+        "grn::dat::Trie::insert failed");
     return GRN_ID_NIL;
   }
 }
@@ -500,7 +500,7 @@ grn_dat_delete_by_id(grn_ctx *ctx, grn_dat *dat, grn_id id,
     }
   } catch (const grn::dat::Exception &ex) {
     ERR(grn_dat_translate_error_code(ex.code()),
-        const_cast<char *>("grn::dat::Trie::remove failed"));
+        "grn::dat::Trie::remove failed");
     return GRN_INVALID_ARGUMENT;
   }
   return GRN_SUCCESS;
@@ -528,7 +528,7 @@ grn_dat_delete(grn_ctx *ctx, grn_dat *dat, const void *key, unsigned int key_siz
       }
     } catch (const grn::dat::Exception &ex) {
       ERR(grn_dat_translate_error_code(ex.code()),
-          const_cast<char *>("grn::dat::Trie::search failed"));
+          "grn::dat::Trie::search failed");
     }
   }
 
@@ -539,7 +539,7 @@ grn_dat_delete(grn_ctx *ctx, grn_dat *dat, const void *key, unsigned int key_siz
     }
   } catch (const grn::dat::Exception &ex) {
     ERR(grn_dat_translate_error_code(ex.code()),
-        const_cast<char *>("grn::dat::Trie::remove failed"));
+        "grn::dat::Trie::remove failed");
     return GRN_INVALID_ARGUMENT;
   }
   return GRN_SUCCESS;
@@ -572,7 +572,7 @@ grn_dat_update_by_id(grn_ctx *ctx, grn_dat *dat, grn_id src_key_id,
     }
   } catch (const grn::dat::Exception &ex) {
     ERR(grn_dat_translate_error_code(ex.code()),
-        const_cast<char *>("grn::dat::Trie::update failed"));
+        "grn::dat::Trie::update failed");
     return GRN_INVALID_ARGUMENT;
   }
   return GRN_SUCCESS;
@@ -606,7 +606,7 @@ grn_dat_update(grn_ctx *ctx, grn_dat *dat,
     }
   } catch (const grn::dat::Exception &ex) {
     ERR(grn_dat_translate_error_code(ex.code()),
-        const_cast<char *>("grn::dat::Trie::update failed"));
+        "grn::dat::Trie::update failed");
     return GRN_INVALID_ARGUMENT;
   }
   return GRN_SUCCESS;
@@ -712,7 +712,7 @@ int grn_dat_scan(grn_ctx *ctx, grn_dat *dat, const char *str,
     }
   } catch (const grn::dat::Exception &ex) {
     ERR(grn_dat_translate_error_code(ex.code()),
-        const_cast<char *>("grn::dat::lcp_search failed"));
+        "grn::dat::lcp_search failed");
     return -1;
   }
   return num_scan_hits;
@@ -740,7 +740,7 @@ grn_dat_lcp_search(grn_ctx *ctx, grn_dat *dat,
     return trie->get_key(key_pos).id();
   } catch (const grn::dat::Exception &ex) {
     ERR(grn_dat_translate_error_code(ex.code()),
-        const_cast<char *>("grn::dat::PrefixCursor::open failed"));
+        "grn::dat::PrefixCursor::open failed");
     return GRN_ID_NIL;
   }
 }
@@ -823,12 +823,12 @@ grn_dat_cursor_open(grn_ctx *ctx, grn_dat *dat,
     }
   } catch (const grn::dat::Exception &ex) {
     ERR(grn_dat_translate_error_code(ex.code()),
-        const_cast<char *>("grn::dat::CursorFactory::open failed"));
+        "grn::dat::CursorFactory::open failed");
     GRN_FREE(dc);
     return NULL;
   }
   if (!dc->cursor) {
-    ERR(GRN_INVALID_ARGUMENT, const_cast<char *>("unsupported query"));
+    ERR(GRN_INVALID_ARGUMENT, "unsupported query");
     GRN_FREE(dc);
     return NULL;
   }
@@ -849,7 +849,7 @@ grn_dat_cursor_next(grn_ctx *ctx, grn_dat_cursor *c)
     c->curr_rec = key.is_valid() ? key.id() : GRN_ID_NIL;
   } catch (const grn::dat::Exception &ex) {
     ERR(grn_dat_translate_error_code(ex.code()),
-        const_cast<char *>("grn::dat::Cursor::next failed"));
+        "grn::dat::Cursor::next failed");
     return GRN_ID_NIL;
   }
   return c->curr_rec;
@@ -896,7 +896,7 @@ grn_dat_cursor_delete(grn_ctx *ctx, grn_dat_cursor *c,
     }
   } catch (const grn::dat::Exception &ex) {
     ERR(grn_dat_translate_error_code(ex.code()),
-        const_cast<char *>("grn::dat::Trie::remove failed"));
+        "grn::dat::Trie::remove failed");
     return GRN_INVALID_ARGUMENT;
   }
   return GRN_INVALID_ARGUMENT;
@@ -932,7 +932,7 @@ grn_dat_truncate(grn_ctx *ctx, grn_dat *dat)
     grn::dat::Trie().create(trie_path);
   } catch (const grn::dat::Exception &ex) {
     const grn_rc error_code = grn_dat_translate_error_code(ex.code());
-    ERR(error_code, const_cast<char *>("grn::dat::Trie::create failed"));
+    ERR(error_code, "grn::dat::Trie::create failed");
     return error_code;
   }
   ++dat->header->file_id;
