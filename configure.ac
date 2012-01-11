@@ -101,6 +101,11 @@ AC_DEFUN([CHECK_CXXFLAG], [
   AC_MSG_RESULT([$check_cxxflag])
 ])
 
+AC_DEFUN([CHECK_BUILD_FLAG], [
+  CHECK_CFLAG([$1])
+  CHECK_CXXFLAG([$1])
+])
+
 AC_DEFUN([REMOVE_CXXFLAG], [
   AC_MSG_CHECKING([whether g++ option $1 is needed to be removed])
   if echo "$CXXFLAGS" | grep -q -- "$1"; then
@@ -113,33 +118,33 @@ AC_DEFUN([REMOVE_CXXFLAG], [
 ])
 
 if test "$GCC" = "yes"; then
-  CHECK_CFLAG([-Wall])
-  CHECK_CFLAG([-Wextra])
+  CHECK_BUILD_FLAG([-Wall])
+  CHECK_BUILD_FLAG([-Wextra])
   if test "x$check_cflag" = "xno"; then
-    CHECK_CFLAG([-W])
+    CHECK_BUILD_FLAG([-W])
   fi
-  CHECK_CFLAG([-Wno-unused-but-set-variable]) # FIXME: enable it.
-  CHECK_CFLAG([-Wno-unused-parameter])
-  CHECK_CFLAG([-Wno-sign-compare])
-  CHECK_CFLAG([-Wno-pointer-sign])
-  CHECK_CFLAG([-Wno-missing-field-initializers])
+  CHECK_BUILD_FLAG([-Wno-unused-but-set-variable]) # FIXME: enable it.
+  CHECK_BUILD_FLAG([-Wno-unused-parameter])
+  CHECK_BUILD_FLAG([-Wno-sign-compare])
+  CHECK_BUILD_FLAG([-Wno-pointer-sign])
+  CHECK_BUILD_FLAG([-Wno-missing-field-initializers])
 
-  CHECK_CFLAG([-Wformat=2])
-  CHECK_CFLAG([-Wstrict-aliasing=2])
-  CHECK_CFLAG([-Wdisabled-optimization])
-  CHECK_CFLAG([-Wfloat-equal])
-  CHECK_CFLAG([-Wpointer-arith])
-  CHECK_CFLAG([-Wdeclaration-after-statement])
-  CHECK_CFLAG([-Wbad-function-cast])
-  CHECK_CFLAG([-Wcast-align])
-  CHECK_CFLAG([-Wredundant-decls])
-#  CHECK_CFLAG([-Wunsafe-loop-optimizations])
-#  CHECK_CFLAG([-Wunreachable-code])
-#  CHECK_CFLAG([-Wswitch-enum])
-#  CHECK_CFLAG([-Wshadow])
-#  CHECK_CFLAG([-Wconversion])
-  CHECK_CFLAG([-Wwrite-strings])
-#  CHECK_CFLAG([-Winline])
+  CHECK_BUILD_FLAG([-Wformat=2])
+  CHECK_BUILD_FLAG([-Wstrict-aliasing=2])
+  CHECK_BUILD_FLAG([-Wdisabled-optimization])
+  CHECK_BUILD_FLAG([-Wfloat-equal])
+  CHECK_BUILD_FLAG([-Wpointer-arith])
+  CHECK_BUILD_FLAG([-Wdeclaration-after-statement])
+  CHECK_BUILD_FLAG([-Wbad-function-cast])
+  CHECK_BUILD_FLAG([-Wcast-align])
+  CHECK_BUILD_FLAG([-Wredundant-decls])
+#  CHECK_BUILD_FLAG([-Wunsafe-loop-optimizations])
+#  CHECK_BUILD_FLAG([-Wunreachable-code])
+#  CHECK_BUILD_FLAG([-Wswitch-enum])
+#  CHECK_BUILD_FLAG([-Wshadow])
+#  CHECK_BUILD_FLAG([-Wconversion])
+  CHECK_BUILD_FLAG([-Wwrite-strings])
+#  CHECK_BUILD_FLAG([-Winline])
 
   CHECK_CXXFLAG([-fexceptions])
   CHECK_CXXFLAG([-fimplicit-templates])
