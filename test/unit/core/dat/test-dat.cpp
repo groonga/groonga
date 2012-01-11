@@ -481,7 +481,7 @@ namespace test_dat
       keys.push_back("ユニグラム");
       keys.push_back("グラム");
 
-      const char text[] = "ユニ㌘ハ゛イク゛ラム";
+      const char text[] = "ユニ㌘…ハ゛イク゛ラム";
       const unsigned int text_size = sizeof(text) - 1;
       grn_dat_scan_hit scan_hits[4];
       const unsigned int max_num_scan_hits = sizeof(scan_hits) / sizeof(scan_hits[0]);
@@ -497,7 +497,7 @@ namespace test_dat
       cppcut_assert_equal(0U, scan_hits[0].offset);
       cppcut_assert_equal(9U, scan_hits[0].length);
       cppcut_assert_equal(static_cast<grn_id>(2), scan_hits[1].id);
-      cppcut_assert_equal(18U, scan_hits[1].offset);
+      cppcut_assert_equal(21U, scan_hits[1].offset);
       cppcut_assert_equal(12U, scan_hits[1].length);
 
       cppcut_assert_equal(1,
@@ -507,7 +507,7 @@ namespace test_dat
       cppcut_assert_equal(1,
                           grn_dat_scan(&ctx, dat, text_rest, text_size - (text_rest - text),
                                        scan_hits, 1, &text_rest));
-      cppcut_assert_equal(static_cast<std::ptrdiff_t>(30), text_rest - text);
+      cppcut_assert_equal(static_cast<std::ptrdiff_t>(33), text_rest - text);
       cppcut_assert_equal(0,
                           grn_dat_scan(&ctx, dat, text_rest, text_size - (text_rest - text),
                                        scan_hits, 1, &text_rest));

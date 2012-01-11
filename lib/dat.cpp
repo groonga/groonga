@@ -671,7 +671,9 @@ int grn_dat_scan(grn_ctx *ctx, grn_dat *dat, const char *str,
               continue;
             }
           }
-          offset += *checks;
+          if (*checks > 0) {
+            offset += *checks;
+          }
         }
         ++str;
         --str_size;
