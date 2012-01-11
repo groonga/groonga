@@ -126,7 +126,7 @@ if test "$GCC" = "yes"; then
   CHECK_BUILD_FLAG([-Wno-unused-but-set-variable]) # FIXME: enable it.
   CHECK_BUILD_FLAG([-Wno-unused-parameter])
   CHECK_BUILD_FLAG([-Wno-sign-compare])
-  CHECK_BUILD_FLAG([-Wno-pointer-sign])
+  CHECK_CFLAG([-Wno-pointer-sign])
   CHECK_BUILD_FLAG([-Wno-missing-field-initializers])
 
   CHECK_BUILD_FLAG([-Wformat=2])
@@ -134,8 +134,8 @@ if test "$GCC" = "yes"; then
   CHECK_BUILD_FLAG([-Wdisabled-optimization])
   CHECK_BUILD_FLAG([-Wfloat-equal])
   CHECK_BUILD_FLAG([-Wpointer-arith])
-  CHECK_BUILD_FLAG([-Wdeclaration-after-statement])
-  CHECK_BUILD_FLAG([-Wbad-function-cast])
+  CHECK_CFLAG([-Wdeclaration-after-statement])
+  CHECK_CFLAG([-Wbad-function-cast])
   CHECK_BUILD_FLAG([-Wcast-align])
   CHECK_BUILD_FLAG([-Wredundant-decls])
 #  CHECK_BUILD_FLAG([-Wunsafe-loop-optimizations])
