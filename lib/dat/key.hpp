@@ -86,8 +86,10 @@ class Key {
 
   // Returns a reference to an invalid key.
   static const Key &invalid_key() {
-    static const UInt32 invalid_key_buf[2] = { INVALID_KEY_ID << 4, 0 };
-    return *reinterpret_cast<const Key *>(invalid_key_buf);
+    static const Key invalid_key;
+    return invalid_key;
+//    static const UInt32 invalid_key_buf[2] = { INVALID_KEY_ID << 4, 0 };
+//    return *reinterpret_cast<const Key *>(invalid_key_buf);
   }
 
  private:
@@ -96,8 +98,8 @@ class Key {
   const UInt8 buf_[3];
 
   // Disallows instantiation.
-  Key();
-  ~Key();
+  Key() : id_and_length_low_(INVALID_KEY_ID << 4), length_high_(0), buf_() {}
+  ~Key() {}
 
   // Disallows copy and assignment.
   Key(const Key &);
