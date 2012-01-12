@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2011  Brazil
+  Copyright (C) 2011-2012  Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -523,7 +523,7 @@ namespace test_dat_trie
     } catch (...) {
       cut_fail("sub_test_multi_threaded_random_queries() failed.");
     }
-    g_thread_exit(NULL);
+    return NULL;
   }
 
   void test_multi_threaded_random_queries(void)
