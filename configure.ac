@@ -859,7 +859,7 @@ fi
 if test "x$with_libevent" != "xno"; then
   if test "x$with_libevent" = "xyes" -o "x$with_libevent" = "xauto"; then
     libevent_cflags=""
-    libevent_ldlags="-levent"
+    libevent_ldflags="-levent"
   else
     libevent_include_dir="$with_libevent/include"
     libevent_lib_dir="$with_libevent/lib"
@@ -867,7 +867,7 @@ if test "x$with_libevent" != "xno"; then
       AC_MSG_ERROR("No libevent found in $with_libevent.")
     fi
     libevent_cflags="-I$libevent_include_dir"
-    libevent_ldlags="-L$libevent_lib_dir -levent"
+    libevent_ldflags="-L$libevent_lib_dir -levent"
   fi
 
   _SAVE_CFLAGS="$CFLAGS"
