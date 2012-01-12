@@ -42,8 +42,6 @@ update-images:
 if ENABLE_DOCUMENT
 dist-hook: html man
 	@touch $(distdir)/build-stamp
-BUILT_SOURCES =					\
-	$(source_files_relative_from_doc_dir)
 nobase_dist_doc_DATA =				\
 	$(source_files_relative_from_doc_dir)
 else
