@@ -1,4 +1,4 @@
 LOCALE = en
 
-include $(srcdir)/LC_MESSAGES.am
+include $(top_srcdir)/build/makefiles/LC_MESSAGES.am
 

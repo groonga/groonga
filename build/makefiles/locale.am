@@ -3,7 +3,7 @@ SUBDIRS = LC_MESSAGES
 BUILT_SOURCES =
 EXTRA_DIST =
 
-include $(srcdir)/sphinx.am
+include $(top_srcdir)/build/makefiles/sphinx.am
 
 init:
 	cd LC_MESSAGES && $(MAKE) $@

@@ -2,7 +2,7 @@ SUBDIRS = dat
 
 lib_LTLIBRARIES = libgroonga.la
 
-include $(srcdir)/../version.sh
+include $(top_srcdir)/version.sh
 AM_CFLAGS = -fno-strict-aliasing $(COVERAGE_CFLAGS) $(GRN_CFLAGS)
 DEFAULT_INCLUDES = -I$(top_builddir) -I$(top_srcdir)/include
 DEFS += -D_REENTRANT -DGROONGA_VERSION=\"$(GROONGA_VERSION)\" $(GRN_DEFS)

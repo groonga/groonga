@@ -1,1 +1,0 @@
-include $(srcdir)/../../../build/makefiles/locale.am

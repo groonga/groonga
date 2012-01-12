@@ -3,7 +3,7 @@ SUBDIRS =					\
 
 all:
 
-include $(srcdir)/files.am
+include $(top_srcdir)/doc/files.am
 
 update-examples:
 	PATH=$(top_builddir)/src:$(top_builddir)/src/suggest:$$PATH	\
