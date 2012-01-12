@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2011  Brazil
+  Copyright (C) 2011-2012  Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -316,7 +316,6 @@ namespace test_dat_pat
     for (std::size_t i = 0; i < keys.size(); i += 2) {
       const char * const ptr = keys[i].c_str();
       const uint32_t length = static_cast<uint32_t>(keys[i].length());
-      const grn_id key_id = static_cast<grn_id>(i + 1);
       cppcut_assert_equal(GRN_SUCCESS,
                           grn_pat_delete(&ctx, pat, ptr, length, NULL));
       cppcut_assert_equal(GRN_SUCCESS,

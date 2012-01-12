@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2011  Brazil
+  Copyright (C) 2011-2012  Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -631,7 +631,6 @@ namespace test_dat
     grn_dat * const dat = create_trie(keys, NULL);
     for (std::size_t i = 0; i < keys.size(); ++i) {
       const grn_id key_id = static_cast<grn_id>(i + 1);
-      const char * const ptr = keys[i].c_str();
       const uint32_t length = static_cast<uint32_t>(keys[i].length());
       uint32_t key_length;
       const char * const key_ptr = _grn_dat_key(&ctx, dat, key_id, &key_length);
