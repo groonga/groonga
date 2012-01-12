@@ -63,9 +63,11 @@ clean-local: $(clean_targets) clean-doctrees
 clean-doctrees:
 	rm -rf $(DOCTREES_BASE)
 
+if WITH_HG
 maintainer-clean: maintainer-clean-local
 maintainer-clean-local:
 	rm -rf -- $(generated_files)
+endif
 
 .PHONY: help
 .PHONY: man clean-man
