@@ -1,6 +1,8 @@
 SUBDIRS =					\
 	locale
 
+BUILT_SOURCES =
+
 all:
 
 include $(top_srcdir)/doc/files.am
@@ -48,4 +50,11 @@ else
 dist-hook:
 	@echo "must specify --enable-document for 'make dist'"
 	@false
+endif
+
+if WITH_HG
+sphinx:
+	$(HG) clone https://bitbucket.org/birkenfeld/sphinx sphinx
+
+BUILT_SOURCES += sphinx
 endif
