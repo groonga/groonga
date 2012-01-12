@@ -1,5 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2010 Brazil
+/*
+  Copyright(C) 2010-2012 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -17,7 +18,7 @@
 #ifndef GRN_PLUGIN_H
 #define GRN_PLUGIN_H
 
-#include "groonga.h"
+#include <groonga.h>
 
 #ifdef __cplusplus
 extern "C" {
