@@ -76,6 +76,8 @@ const char *_grn_dat_key(grn_ctx *ctx, grn_dat *dat, grn_id id, uint32_t *key_si
 grn_id grn_dat_next(grn_ctx *ctx, grn_dat *dat, grn_id id);
 grn_id grn_dat_at(grn_ctx *ctx, grn_dat *dat, grn_id id);
 
+grn_rc grn_dat_clear_status_flags(grn_ctx *ctx, grn_dat *dat);
+
 #ifdef __cplusplus
 }
 #endif

@@ -179,6 +179,13 @@ class Trie {
   UInt32 key_buf_size() const {
     return header_->key_buf_size();
   }
+  UInt32 status_flags() const {
+    return header_->status_flags();
+  }
+
+  void clear_status_flags() {
+    header_->set_status_flags(status_flags() & ~CHANGING_MASK);
+  }
 
  private:
   File file_;

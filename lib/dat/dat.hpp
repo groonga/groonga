@@ -137,13 +137,19 @@ const UInt32 EXCEPT_UPPER_BOUND   = 0x02000;
 const UInt32 EXCEPT_EXACT_MATCH   = 0x04000;
 const UInt32 CURSOR_OPTIONS_MASK  = 0xFF000;
 
+const UInt32 REMOVING_FLAG  = 1U << 0;
+const UInt32 INSERTING_FLAG = 1U << 1;
+const UInt32 UPDATING_FLAG  = 1U << 2;
+const UInt32 CHANGING_MASK  = REMOVING_FLAG | INSERTING_FLAG | UPDATING_FLAG;
+
 enum ErrorCode {
   PARAM_ERROR      = -1,
   IO_ERROR         = -2,
   FORMAT_ERROR     = -3,
   MEMORY_ERROR     = -4,
   SIZE_ERROR       = -5,
-  UNEXPECTED_ERROR = -6
+  UNEXPECTED_ERROR = -6,
+  STATUS_ERROR     = -7
 };
 
 class Exception : public std::exception {
@@ -213,6 +219,7 @@ typedef Error<FORMAT_ERROR> FormatError;
 typedef Error<MEMORY_ERROR> MemoryError;
 typedef Error<SIZE_ERROR> SizeError;
 typedef Error<UNEXPECTED_ERROR> UnexpectedError;
+typedef Error<STATUS_ERROR> StatusError;
 
 #define GRN_DAT_INT_TO_STR(value) \
     #value

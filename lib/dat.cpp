@@ -83,7 +83,12 @@ grn_rc grn_dat_translate_error_code(grn::dat::ErrorCode error_code) {
       return GRN_NO_MEMORY_AVAILABLE;
     }
     case grn::dat::SIZE_ERROR:
-    case grn::dat::UNEXPECTED_ERROR:
+    case grn::dat::UNEXPECTED_ERROR: {
+      return GRN_UNKNOWN_ERROR;
+    }
+    case grn::dat::STATUS_ERROR: {
+      return GRN_FILE_CORRUPT;
+    }
     default: {
       return GRN_UNKNOWN_ERROR;
     }
@@ -501,7 +506,7 @@ grn_dat_delete_by_id(grn_ctx *ctx, grn_dat *dat, grn_id id,
   } catch (const grn::dat::Exception &ex) {
     ERR(grn_dat_translate_error_code(ex.code()),
         "grn::dat::Trie::remove failed");
-    return GRN_INVALID_ARGUMENT;
+    return ctx->rc;
   }
   return GRN_SUCCESS;
 }
@@ -529,6 +534,7 @@ grn_dat_delete(grn_ctx *ctx, grn_dat *dat, const void *key, unsigned int key_siz
     } catch (const grn::dat::Exception &ex) {
       ERR(grn_dat_translate_error_code(ex.code()),
           "grn::dat::Trie::search failed");
+      return ctx->rc;
     }
   }
 
@@ -540,7 +546,7 @@ grn_dat_delete(grn_ctx *ctx, grn_dat *dat, const void *key, unsigned int key_siz
   } catch (const grn::dat::Exception &ex) {
     ERR(grn_dat_translate_error_code(ex.code()),
         "grn::dat::Trie::remove failed");
-    return GRN_INVALID_ARGUMENT;
+    return ctx->rc;
   }
   return GRN_SUCCESS;
 }
@@ -572,7 +578,7 @@ grn_dat_update_by_id(grn_ctx *ctx, grn_dat *dat, grn_id src_key_id,
   } catch (const grn::dat::Exception &ex) {
     ERR(grn_dat_translate_error_code(ex.code()),
         "grn::dat::Trie::update failed");
-    return GRN_INVALID_ARGUMENT;
+    return ctx->rc;
   }
   return GRN_SUCCESS;
 }
@@ -605,7 +611,7 @@ grn_dat_update(grn_ctx *ctx, grn_dat *dat,
   } catch (const grn::dat::Exception &ex) {
     ERR(grn_dat_translate_error_code(ex.code()),
         "grn::dat::Trie::update failed");
-    return GRN_INVALID_ARGUMENT;
+    return ctx->rc;
   }
   return GRN_SUCCESS;
 }
@@ -993,6 +999,20 @@ grn_dat_at(grn_ctx *ctx, grn_dat *dat, grn_id id)
     return GRN_ID_NIL;
   }
   return id;
+}
+
+grn_rc
+grn_dat_clear_status_flags(grn_ctx *ctx, grn_dat *dat)
+{
+  if (!grn_dat_open_trie_if_needed(ctx, dat)) {
+    return ctx->rc;
+  }
+  grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
+  if (!trie) {
+    return GRN_INVALID_ARGUMENT;
+  }
+  trie->clear_status_flags();
+  return GRN_SUCCESS;
 }
 
 }  // extern "C"

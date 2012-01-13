@@ -22,6 +22,28 @@
 
 namespace grn {
 namespace dat {
+namespace {
+
+class StatusFlagManager {
+ public:
+  StatusFlagManager(Header *header, UInt32 status_flag)
+      : header_(header), status_flag_(status_flag) {
+    header_->set_status_flags(header_->status_flags() | status_flag_);
+  }
+  ~StatusFlagManager() {
+    header_->set_status_flags(header_->status_flags() & ~status_flag_);
+  }
+
+ private:
+  Header *header_;
+  UInt32 status_flag_;
+
+  // Disallows copy and assignment.
+  StatusFlagManager(const StatusFlagManager &);
+  StatusFlagManager &operator=(const StatusFlagManager &);
+};
+
+}  // namespace
 
 Trie::Trie()
     : file_(),
@@ -431,6 +453,9 @@ bool Trie::lcp_search_key(const UInt8 *ptr, UInt32 length,
 }
 
 bool Trie::remove_key(const UInt8 *ptr, UInt32 length) {
+  GRN_DAT_THROW_IF(STATUS_ERROR, (status_flags() & CHANGING_MASK) != 0);
+  StatusFlagManager status_flag_manager(header_, REMOVING_FLAG);
+
   GRN_DAT_DEBUG_THROW_IF((ptr == NULL) && (length != 0));
 
   UInt32 node_id = ROOT_NODE_ID;
@@ -455,6 +480,9 @@ bool Trie::remove_key(const UInt8 *ptr, UInt32 length) {
 }
 
 bool Trie::insert_key(const UInt8 *ptr, UInt32 length, UInt32 *key_pos) {
+  GRN_DAT_THROW_IF(STATUS_ERROR, (status_flags() & CHANGING_MASK) != 0);
+  StatusFlagManager status_flag_manager(header_, INSERTING_FLAG);
+
   GRN_DAT_DEBUG_THROW_IF((ptr == NULL) && (length != 0));
 
   UInt32 node_id = ROOT_NODE_ID;
@@ -528,6 +556,9 @@ bool Trie::insert_linker(const UInt8 *ptr, UInt32 length,
 
 bool Trie::update_key(const Key &key, const UInt8 *ptr, UInt32 length,
                       UInt32 *key_pos) {
+  GRN_DAT_THROW_IF(STATUS_ERROR, (status_flags() & CHANGING_MASK) != 0);
+  StatusFlagManager status_flag_manager(header_, UPDATING_FLAG);
+
   GRN_DAT_DEBUG_THROW_IF((ptr == NULL) && (length != 0));
 
   if (!key.is_valid()) {

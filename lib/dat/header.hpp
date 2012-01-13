@@ -39,6 +39,7 @@ class Header {
         next_key_pos_(0),
         key_buf_size_(0),
         leaders_(),
+        status_flags_(0),
         reserved_() {
     for (UInt32 i = 0; i <= MAX_BLOCK_LEVEL; ++i) {
       leaders_[i] = INVALID_LEADER;
@@ -93,6 +94,9 @@ class Header {
   UInt32 key_buf_size() const {
     return key_buf_size_;
   }
+  UInt32 status_flags() const {
+    return status_flags_;
+  }
   UInt32 ith_leader(UInt32 i) const {
     GRN_DAT_DEBUG_THROW_IF(i > MAX_BLOCK_LEVEL);
     return leaders_[i];
@@ -146,6 +150,9 @@ class Header {
     GRN_DAT_DEBUG_THROW_IF(x > MAX_KEY_BUF_SIZE);
     key_buf_size_ = x;
   }
+  void set_status_flags(UInt32 x) {
+    status_flags_ = x;
+  }
   void set_ith_leader(UInt32 i, UInt32 x) {
     GRN_DAT_DEBUG_THROW_IF(i > MAX_BLOCK_LEVEL);
     GRN_DAT_DEBUG_THROW_IF((x != INVALID_LEADER) && (x >= num_blocks()));
@@ -166,7 +173,8 @@ class Header {
   UInt32 next_key_pos_;
   UInt32 key_buf_size_;
   UInt32 leaders_[MAX_BLOCK_LEVEL + 1];
-  UInt32 reserved_[13];
+  UInt32 status_flags_;
+  UInt32 reserved_[12];
 };
 
 }  // namespace dat
