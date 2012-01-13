@@ -512,7 +512,7 @@ command_line_to_uri_path(grn_ctx *ctx, grn_obj *uri, const char *command)
   const char *p, *e, *v;
   grn_obj buf, *expr = NULL;
   grn_expr_var *vars;
-  unsigned nvars;
+  unsigned int nvars;
 
   GRN_TEXT_INIT(&buf, 0);
   p = command;

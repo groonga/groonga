@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009 Brazil
+/* Copyright(C) 2009-2012 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -3309,7 +3309,7 @@ buffer_new(grn_ctx *ctx, grn_ii *ii, int size, uint32_t *pos,
   grn_id tid;
   uint16_t offset;
   char key[GRN_TABLE_MAX_KEY_SIZE];
-  // unsigned key_size;
+  // unsigned int key_size;
   // const char *key = _grn_table_key(ctx, ii->lexicon, id, &key_size);
   int key_size = grn_table_get_key(ctx, ii->lexicon, id, key, GRN_TABLE_MAX_KEY_SIZE);
   uint32_t *a, lseg = NOT_ASSIGNED, pseg = NOT_ASSIGNED;
@@ -4383,11 +4383,11 @@ grn_ii_estimate_size(grn_ctx *ctx, grn_ii *ii, grn_id tid)
 }
 
 int
-grn_ii_entry_info(grn_ctx *ctx, grn_ii *ii, grn_id tid, unsigned *a,
-                   unsigned *chunk, unsigned *chunk_size, unsigned *buffer_free,
-                   unsigned *nterms, unsigned *nterms_void, unsigned *bt_tid,
-                   unsigned *size_in_chunk, unsigned *pos_in_chunk,
-                   unsigned *size_in_buffer, unsigned *pos_in_buffer)
+grn_ii_entry_info(grn_ctx *ctx, grn_ii *ii, grn_id tid, unsigned int *a,
+                   unsigned int *chunk, unsigned int *chunk_size, unsigned int *buffer_free,
+                   unsigned int *nterms, unsigned int *nterms_void, unsigned int *bt_tid,
+                   unsigned int *size_in_chunk, unsigned int *pos_in_chunk,
+                   unsigned int *size_in_buffer, unsigned int *pos_in_buffer)
 {
   buffer *b;
   buffer_term *bt;

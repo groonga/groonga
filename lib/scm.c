@@ -1898,7 +1898,7 @@ opexe(grn_ctx *ctx)
   case OP_RDSEXPR:
     {
       char tok, *str;
-      unsigned len;
+      unsigned int len;
       RTN_NIL_IF_HEAD(ctx);
       switch (ctx->impl->tok) {
       case TOK_COMMENT:
@@ -1981,7 +1981,7 @@ opexe(grn_ctx *ctx)
       grn_cell *v = non_alloc_rev(NIL, ctx->impl->args);
       if (ctx->impl->cur < ctx->impl->str_end && *ctx->impl->cur == '.') {
         char *str = NULL;
-        unsigned len = 0;
+        unsigned int len = 0;
         if (readstr(ctx, &str, &len) != TOK_ATOM) { /* error */ }
         s_return(ctx, mk_atom(ctx, str, len, v));
       } else {
@@ -2007,7 +2007,7 @@ opexe(grn_ctx *ctx)
       grn_cell *v = non_alloc_rev(ctx->impl->value, ctx->impl->args);
       if (ctx->impl->cur < ctx->impl->str_end && *ctx->impl->cur == '.') {
         char *str = NULL;
-        unsigned len = 0;
+        unsigned int len = 0;
         if (readstr(ctx, &str, &len) != TOK_ATOM) { /* error */ }
         s_return(ctx, mk_atom(ctx, str, len, v));
       } else {

@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009 Brazil
+/* Copyright(C) 2009-2012 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -31,7 +31,7 @@ _grn_ra_create(grn_ctx *ctx, grn_ra *ra, const char *path, unsigned int element_
   grn_io *io;
   int max_segments, n_elm, w_elm;
   struct grn_ra_header *header;
-  unsigned actual_size;
+  unsigned int actual_size;
   if (element_size > GRN_RA_SEGMENT_SIZE) {
     GRN_LOG(ctx, GRN_LOG_ERROR, "element_size too large (%d)", element_size);
     return NULL;

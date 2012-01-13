@@ -98,7 +98,7 @@ substitute_query(grn_ctx *ctx, grn_obj *table, grn_obj *column,
 {
   grn_id id;
   grn_rc rc = GRN_END_OF_DATA;
-  if ((id = grn_table_get(ctx, table, (const void *)key, (unsigned)key_size))) {
+  if ((id = grn_table_get(ctx, table, (const void *)key, (unsigned int)key_size))) {
     if ((column->header.type == GRN_COLUMN_VAR_SIZE) &&
         ((column->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) == GRN_OBJ_COLUMN_VECTOR)) {
       unsigned int i, n;
@@ -130,7 +130,7 @@ substitute_query(grn_ctx *ctx, grn_obj *table, grn_obj *column,
 
 static grn_rc
 expand_query(grn_ctx *ctx, grn_obj *table, grn_obj *column, grn_expr_flags flags,
-             const char *str, unsigned str_len, grn_obj *dest)
+             const char *str, unsigned int str_len, grn_obj *dest)
 {
   grn_obj buf;
   unsigned int len;
@@ -248,21 +248,21 @@ exit :
 #define DUMP_COLUMNS            "_id, _key, _value, *"
 
 grn_rc
-grn_select(grn_ctx *ctx, const char *table, unsigned table_len,
-           const char *match_columns, unsigned match_columns_len,
-           const char *query, unsigned query_len,
-           const char *filter, unsigned filter_len,
-           const char *scorer, unsigned scorer_len,
-           const char *sortby, unsigned sortby_len,
-           const char *output_columns, unsigned output_columns_len,
+grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
+           const char *match_columns, unsigned int match_columns_len,
+           const char *query, unsigned int query_len,
+           const char *filter, unsigned int filter_len,
+           const char *scorer, unsigned int scorer_len,
+           const char *sortby, unsigned int sortby_len,
+           const char *output_columns, unsigned int output_columns_len,
            int offset, int limit,
-           const char *drilldown, unsigned drilldown_len,
-           const char *drilldown_sortby, unsigned drilldown_sortby_len,
-           const char *drilldown_output_columns, unsigned drilldown_output_columns_len,
+           const char *drilldown, unsigned int drilldown_len,
+           const char *drilldown_sortby, unsigned int drilldown_sortby_len,
+           const char *drilldown_output_columns, unsigned int drilldown_output_columns_len,
            int drilldown_offset, int drilldown_limit,
-           const char *cache, unsigned cache_len,
-           const char *match_escalation_threshold, unsigned match_escalation_threshold_len,
-           const char *query_expansion, unsigned query_expansion_len)
+           const char *cache, unsigned int cache_len,
+           const char *match_escalation_threshold, unsigned int match_escalation_threshold_len,
+           const char *query_expansion, unsigned int query_expansion_len)
 {
   uint32_t nkeys, nhits;
   uint16_t cacheable = 1, taintable = 0;
@@ -970,7 +970,7 @@ proc_column_remove(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
 {
   grn_obj *table, *col;
   char *colname,fullname[GRN_TABLE_MAX_KEY_SIZE];
-  unsigned colname_len,fullname_len;
+  unsigned int colname_len,fullname_len;
 
   table = grn_ctx_get(ctx, GRN_TEXT_VALUE(VAR(0)),
                            GRN_TEXT_LEN(VAR(0)));
@@ -1649,7 +1649,7 @@ proc_delete(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     } else if (GRN_TEXT_LEN(VAR(3))) {
       grn_obj *cond, *v;
       const char *filter = GRN_TEXT_VALUE(VAR(3));
-      unsigned filter_len = GRN_TEXT_LEN(VAR(3));
+      unsigned int filter_len = GRN_TEXT_LEN(VAR(3));
 
       GRN_EXPR_CREATE_FOR_QUERY(ctx, table, cond, v);
       grn_expr_parse(ctx, cond, filter, filter_len,

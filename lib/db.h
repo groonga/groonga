@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009 Brazil
+/* Copyright(C) 2009-2012 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -187,7 +187,7 @@ struct _grn_proc {
 #define GRN_PROC_ALLOC(domain, flags) (grn_proc_alloc(ctx, user_data, domain, flags))
 
 grn_obj *grn_proc_get_var(grn_ctx *ctx, grn_user_data *user_data,
-                          const char *name, unsigned name_size);
+                          const char *name, unsigned int name_size);
 
 GRN_API grn_obj *grn_proc_get_var_by_offset(grn_ctx *ctx, grn_user_data *user_data,
                                             unsigned int offset);
@@ -196,7 +196,7 @@ GRN_API grn_obj *grn_proc_alloc(grn_ctx *ctx, grn_user_data *user_data,
                                 grn_id domain, grn_obj_flags flags);
 
 grn_obj *grn_expr_get_or_add_var(grn_ctx *ctx, grn_obj *expr,
-                                 const char *name, unsigned name_size);
+                                 const char *name, unsigned int name_size);
 
 typedef struct _grn_accessor_view grn_accessor_view;
 
@@ -323,7 +323,7 @@ GRN_API grn_rc grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, int addp)
  * dbに登録されている名前付きの永続テーブルを開く場合はgrn_ctx_get()を使用するのが望ましい。
  **/
 grn_obj *grn_table_open(grn_ctx *ctx,
-                        const char *name, unsigned name_size, const char *path);
+                        const char *name, unsigned int name_size, const char *path);
 
 /**
  * grn_column_open:
@@ -336,7 +336,7 @@ grn_obj *grn_table_open(grn_ctx *ctx,
  * 永続dbに登録されている永続テーブルのカラムを開く場合はgrn_ctx_get()を使用するのが望ましい。
  **/
 grn_obj *grn_column_open(grn_ctx *ctx, grn_obj *table,
-                         const char *name, unsigned name_size,
+                         const char *name, unsigned int name_size,
                          const char *path, grn_obj *type);
 
 /**
@@ -399,7 +399,7 @@ grn_rc grn_db_obj_init(grn_ctx *ctx, grn_obj *db, grn_id id, grn_db_obj *obj);
   }                                                     \
 }
 
-grn_id grn_obj_register(grn_ctx *ctx, grn_obj *db, const char *name, unsigned name_size);
+grn_id grn_obj_register(grn_ctx *ctx, grn_obj *db, const char *name, unsigned int name_size);
 int grn_obj_is_persistent(grn_ctx *ctx, grn_obj *obj);
 void grn_obj_spec_save(grn_ctx *ctx, grn_db_obj *obj);
 
@@ -416,7 +416,7 @@ void grn_expr_pack(grn_ctx *ctx, grn_obj *buf, grn_obj *expr);
 grn_rc grn_expr_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *expr);
 grn_obj *grn_expr_open(grn_ctx *ctx, grn_obj_spec *spec, const uint8_t *p, const uint8_t *pe);
 
-grn_obj *grn_table_create_for_group(grn_ctx *ctx, const char *name, unsigned name_size,
+grn_obj *grn_table_create_for_group(grn_ctx *ctx, const char *name, unsigned int name_size,
                                     const char *path, grn_obj_flags flags,
                                     grn_obj *group_key, grn_obj *value_type);
 

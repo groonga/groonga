@@ -1414,7 +1414,7 @@ exit :
   GRN_API_RETURN(0);
 }
 
-unsigned
+unsigned int
 grn_ctx_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags)
 {
   if (!ctx) { return GRN_INVALID_ARGUMENT; }

@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2010-2011 Brazil
+/* Copyright(C) 2010-2012 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -168,9 +168,9 @@ output(grn_ctx *ctx, grn_obj *table, grn_obj *res, grn_id tid,
     grn_obj_format format;
     grn_table_sort_key *keys;
     const char *sortby_val = GRN_TEXT_VALUE(sortby);
-    unsigned sortby_len = GRN_TEXT_LEN(sortby);
+    unsigned int sortby_len = GRN_TEXT_LEN(sortby);
     const char *oc_val = GRN_TEXT_VALUE(output_columns);
-    unsigned oc_len = GRN_TEXT_LEN(output_columns);
+    unsigned int oc_len = GRN_TEXT_LEN(output_columns);
     if (!sortby_val || !sortby_len) {
       sortby_val = DEFAULT_SORTBY;
       sortby_len = sizeof(DEFAULT_SORTBY) - 1;

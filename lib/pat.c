@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009 Brazil
+/* Copyright(C) 2009-2012 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1331,8 +1331,8 @@ grn_pat_set_value(grn_ctx *ctx, grn_pat *pat, grn_id id,
 }
 
 grn_rc
-grn_pat_info(grn_ctx *ctx, grn_pat *pat, int *key_size, unsigned *flags,
-             grn_encoding *encoding, unsigned *n_entries, unsigned *file_size)
+grn_pat_info(grn_ctx *ctx, grn_pat *pat, int *key_size, unsigned int *flags,
+             grn_encoding *encoding, unsigned int *n_entries, unsigned int *file_size)
 {
   ERRCLR(NULL);
   if (!pat) { return GRN_INVALID_ARGUMENT; }
@@ -1346,7 +1346,7 @@ grn_pat_info(grn_ctx *ctx, grn_pat *pat, int *key_size, unsigned *flags,
     if ((rc = grn_io_size(ctx, pat->io, &tmp))) {
       return rc;
     }
-    *file_size = (unsigned) tmp; /* FIXME: inappropriate cast */
+    *file_size = (unsigned int) tmp; /* FIXME: inappropriate cast */
   }
   return GRN_SUCCESS;
 }

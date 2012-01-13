@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009 Brazil
+/* Copyright(C) 2009-2012 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -433,7 +433,7 @@ unesc(grn_ctx *ctx, grn_cell *obj)
 }
 
 static grn_cell *
-grn_ql_table_add(grn_ctx *ctx, grn_obj *table, const void *key, unsigned key_size, grn_cell *res)
+grn_ql_table_add(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key_size, grn_cell *res)
 {
   grn_id id = grn_table_add(ctx, table, key, key_size, NULL);
   if (id) {
@@ -446,7 +446,7 @@ grn_ql_table_add(grn_ctx *ctx, grn_obj *table, const void *key, unsigned key_siz
 }
 
 static grn_cell *
-grn_ql_table_get(grn_ctx *ctx, grn_obj *table, const void *key, unsigned key_size, grn_cell *res)
+grn_ql_table_get(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key_size, grn_cell *res)
 {
   grn_id id = grn_table_get(ctx, table, key, key_size);
   if (id) {
@@ -459,7 +459,7 @@ grn_ql_table_get(grn_ctx *ctx, grn_obj *table, const void *key, unsigned key_siz
 }
 
 static grn_obj *
-get_column(grn_ctx *ctx, grn_id tid, char *msg, unsigned msg_size, grn_id *id)
+get_column(grn_ctx *ctx, grn_id tid, char *msg, unsigned int msg_size, grn_id *id)
 {
   grn_obj *table = grn_ctx_at(ctx, tid);
   for (;;) {
@@ -474,7 +474,7 @@ get_column(grn_ctx *ctx, grn_id tid, char *msg, unsigned msg_size, grn_id *id)
 }
 
 static grn_cell *
-table_column(grn_ctx *ctx, grn_id base, char *msg, unsigned msg_size)
+table_column(grn_ctx *ctx, grn_id base, char *msg, unsigned int msg_size)
 {
   grn_obj *column = get_column(ctx, base, msg, msg_size, NULL);
   return column ? get_cell(ctx, column) : F;
@@ -851,7 +851,7 @@ column_value(grn_ctx *ctx, grn_obj *column, grn_id obj,
 }
 
 static grn_cell *
-register_cell(grn_ctx *ctx, grn_obj *db_obj, const char *name, unsigned name_size)
+register_cell(grn_ctx *ctx, grn_obj *db_obj, const char *name, unsigned int name_size)
 {
   if (name && name_size) {
     return INTERN2(name, name_size);
@@ -868,7 +868,7 @@ register_cell(grn_ctx *ctx, grn_obj *db_obj, const char *name, unsigned name_siz
 }
 
 static grn_cell *
-table_create(grn_ctx *ctx, const char *name, unsigned name_size,
+table_create(grn_ctx *ctx, const char *name, unsigned int name_size,
              grn_obj_flags flags, grn_obj *domain,
              grn_obj *value_type, grn_id tokenizer)
 {
@@ -897,9 +897,9 @@ typedef struct {
   int32_t limit;
   int mode;
   char *from;
-  unsigned fromsize;
+  unsigned int fromsize;
   char *to;
-  unsigned tosize;
+  unsigned int tosize;
   column_exp *score_ce;
   grn_cell *score_func;
 } match_spec;

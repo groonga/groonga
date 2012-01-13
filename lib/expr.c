@@ -51,7 +51,7 @@ grn_expr_alloc(grn_ctx *ctx, grn_obj *expr, grn_id domain, grn_obj_flags flags)
 }
 
 static grn_hash *
-grn_expr_get_vars(grn_ctx *ctx, grn_obj *expr, unsigned *nvars)
+grn_expr_get_vars(grn_ctx *ctx, grn_obj *expr, unsigned int *nvars)
 {
   grn_hash *vars = NULL;
   if (expr->header.type == GRN_PROC || expr->header.type == GRN_EXPR) {
@@ -103,7 +103,7 @@ grn_expr_clear_vars(grn_ctx *ctx, grn_obj *expr)
 
 grn_obj *
 grn_proc_get_info(grn_ctx *ctx, grn_user_data *user_data,
-                  grn_expr_var **vars, unsigned *nvars, grn_obj **caller)
+                  grn_expr_var **vars, unsigned int *nvars, grn_obj **caller)
 {
   grn_proc_ctx *pctx = (grn_proc_ctx *)user_data;
   if (caller) { *caller = pctx->caller; }
@@ -121,7 +121,7 @@ grn_proc_get_info(grn_ctx *ctx, grn_user_data *user_data,
 }
 
 grn_obj *
-grn_proc_get_var(grn_ctx *ctx, grn_user_data *user_data, const char *name, unsigned name_size)
+grn_proc_get_var(grn_ctx *ctx, grn_user_data *user_data, const char *name, unsigned int name_size)
 {
   grn_proc_ctx *pctx = (grn_proc_ctx *)user_data;
   return pctx->proc ? grn_expr_get_var(ctx, (grn_obj *)pctx->proc, name, name_size) : NULL;
@@ -533,7 +533,7 @@ dfi_value_at(grn_expr *expr, int offset)
 }
 
 grn_obj *
-grn_expr_create(grn_ctx *ctx, const char *name, unsigned name_size)
+grn_expr_create(grn_ctx *ctx, const char *name, unsigned int name_size)
 {
   grn_id id;
   grn_obj *db;
@@ -652,7 +652,7 @@ grn_expr_close(grn_ctx *ctx, grn_obj *expr)
 }
 
 grn_obj *
-grn_expr_add_var(grn_ctx *ctx, grn_obj *expr, const char *name, unsigned name_size)
+grn_expr_add_var(grn_ctx *ctx, grn_obj *expr, const char *name, unsigned int name_size)
 {
   uint32_t i;
   char *p;
@@ -691,7 +691,7 @@ grn_expr_add_var(grn_ctx *ctx, grn_obj *expr, const char *name, unsigned name_si
 }
 
 grn_obj *
-grn_expr_get_var(grn_ctx *ctx, grn_obj *expr, const char *name, unsigned name_size)
+grn_expr_get_var(grn_ctx *ctx, grn_obj *expr, const char *name, unsigned int name_size)
 {
   uint32_t n;
   grn_obj *res = NULL;
@@ -701,7 +701,7 @@ grn_expr_get_var(grn_ctx *ctx, grn_obj *expr, const char *name, unsigned name_si
 }
 
 grn_obj *
-grn_expr_get_or_add_var(grn_ctx *ctx, grn_obj *expr, const char *name, unsigned name_size)
+grn_expr_get_or_add_var(grn_ctx *ctx, grn_obj *expr, const char *name, unsigned int name_size)
 {
   uint32_t n;
   grn_obj *res = NULL;
@@ -1194,7 +1194,7 @@ exit :
 }
 
 static grn_obj *
-grn_expr_add_str(grn_ctx *ctx, grn_obj *expr, const char *str, unsigned str_size)
+grn_expr_add_str(grn_ctx *ctx, grn_obj *expr, const char *str, unsigned int str_size)
 {
   grn_obj *res = NULL;
   grn_expr *e = (grn_expr *)expr;
@@ -1207,7 +1207,7 @@ grn_expr_add_str(grn_ctx *ctx, grn_obj *expr, const char *str, unsigned str_size
 }
 
 grn_obj *
-grn_expr_append_const_str(grn_ctx *ctx, grn_obj *expr, const char *str, unsigned str_size,
+grn_expr_append_const_str(grn_ctx *ctx, grn_obj *expr, const char *str, unsigned int str_size,
                           grn_operator op, int nargs)
 {
   grn_obj *res;
@@ -5127,7 +5127,7 @@ done :
   {
     grn_obj *obj;
     const char *name = q->cur;
-    unsigned name_size = s - q->cur;
+    unsigned int name_size = s - q->cur;
     if ((obj = grn_expr_get_var(ctx, q->e, name, name_size))) {
       PARSE(GRN_EXPR_TOKEN_IDENTIFIER);
       grn_expr_append_obj(ctx, q->e, obj, GRN_OP_PUSH, 1);
@@ -5587,7 +5587,7 @@ exit :
 
 grn_rc
 grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
-               const char *str, unsigned str_size,
+               const char *str, unsigned int str_size,
                grn_obj *default_column, grn_operator default_mode,
                grn_operator default_op, grn_expr_flags flags)
 {
