@@ -1280,6 +1280,12 @@ grn_table_get(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key_si
   GRN_API_ENTER;
   if (table) {
     switch (table->header.type) {
+    case GRN_DB :
+      {
+        grn_db *db = (grn_db *)table;
+        id = grn_table_get(ctx, db->keys, key, key_size);
+      }
+      break;
     case GRN_TABLE_PAT_KEY :
       WITH_NORMALIZE((grn_pat *)table, key, key_size, {
         id = grn_pat_get(ctx, (grn_pat *)table, key, key_size, NULL);

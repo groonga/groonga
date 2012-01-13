@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2009-2011  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2009-2012  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -31,6 +31,7 @@ void test_recreate_temporary_object_on_opened_database(void);
 void test_size(void);
 void test_expire_cache_on_recreate(void);
 void test_expression_lifetime_over_database(void);
+void test_get(void);
 
 static gchar *tmp_directory;
 
@@ -280,4 +281,17 @@ test_expression_lifetime_over_database(void)
   grn_ctx_fin(context);
   g_free(context);
   context = NULL;
+}
+
+void
+test_get(void)
+{
+  const gchar *short_text_type_name = "ShortText";
+
+  database = grn_db_create(context, NULL, NULL);
+  grn_test_assert_equal_id(context,
+                           GRN_DB_SHORT_TEXT,
+                           grn_table_get(context, database,
+                                         short_text_type_name,
+                                         strlen(short_text_type_name)));
 }

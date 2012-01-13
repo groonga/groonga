@@ -708,10 +708,13 @@ GRN_API grn_id grn_table_add(grn_ctx *ctx, grn_obj *table,
 
 /**
  * grn_table_get:
- * @table: 対象table
- * @key: 検索key
+ * @table: The table or database
+ * @key: The record or object key to be found
  *
- * tableからkeyに対応するrecordを検索し、対応するIDを返す。
+ * It finds a record that has @key and returns ID of the
+ * found record. If @table is a database, it finds an object
+ * (table, column and so on) that has @key and returns ID of
+ * the found object.
  **/
 GRN_API grn_id grn_table_get(grn_ctx *ctx, grn_obj *table,
                              const void *key, unsigned int key_size);
