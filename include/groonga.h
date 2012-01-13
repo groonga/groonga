@@ -1814,10 +1814,14 @@ GRN_API int grn_column_index(grn_ctx *ctx, grn_obj *column, grn_operator op,
 
 /**
  * grn_obj_delete_by_id:
+ * @db: The target database.
+ * @id: The object (table, column and so on) ID to be deleted.
+ * @removep: If GRN_TRUE, clear object cache and remove relation
+ *   between ID and key in database. Otherwise, just clear object cache.
  *
  * dbからidに対応するテーブルやカラムなどを削除します。mroonga向けに用意した内部APIです。
  **/
-GRN_API grn_rc grn_obj_delete_by_id(grn_ctx *ctx, grn_obj *db, grn_id id, int removep);
+GRN_API grn_rc grn_obj_delete_by_id(grn_ctx *ctx, grn_obj *db, grn_id id, grn_bool removep);
 
 /* geo */
 
