@@ -22,7 +22,6 @@ BuildRequires:	ruby
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	%{name}-plugin-suggest = %{version}-%{release}
 Requires:	%{name}-tokenizer-mecab = %{version}-%{release}
-Requires:	%{name}-doc = %{version}-%{release}
 Obsoletes:	%{name} < 1.2.2-0
 
 %description
@@ -317,7 +316,9 @@ fi
 %changelog
 * Sun Jan 29 2012 Kouhei Sutou <kou@clear-code.com> - 1.3.0-0
 - new upstream release.
-- groonga-server does not require groonga-munin-plugins package.
+- groonga-server package does not require groonga-munin-plugins package.
+  suggested by Masaharu IWAI. Thanks!!!
+- groonga package does not require groonga-doc package.
   suggested by Masaharu IWAI. Thanks!!!
 
 * Thu Dec 29 2011 Kouhei Sutou <kou@clear-code.com> - 1.2.9-0
