@@ -24,6 +24,12 @@ Install::
   % sudo aptitude update
   % sudo aptitude -V -D -y install groonga
 
+There is a package that provides `Munin <http://munin-monitoring.org/>`_ plugins. If you want to monitor groonga status by Munin, please install groonga-munin-plugins package.
+
+Install groonga-munin-plugins package::
+
+  % sudo aptitude -V -D -y install groonga-munin-plugins
+
 Debian GNU/Linux wheezy
 -----------------------
 
@@ -38,6 +44,10 @@ Install::
   % sudo aptitude update
   % sudo aptitude -V -D -y install groonga
 
+Install groonga-munin-plugins package::
+
+  % sudo aptitude -V -D -y install groonga-munin-plugins
+
 Debian GNU/Linux sid
 --------------------
 
@@ -51,6 +61,10 @@ Install::
   % sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 1C837F31
   % sudo aptitude update
   % sudo aptitude -V -D -y install groonga
+
+Install groonga-munin-plugins package::
+
+  % sudo aptitude -V -D -y install groonga-munin-plugins
 
 Ubuntu 10.04 LTS Lucid Lynx
 ---------------------------
@@ -68,8 +82,12 @@ Ubuntu 10.04 LTS Lucid Lynx
 Install::
 
   % sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 1C837F31
-  % sudo aptitude update
-  % sudo aptitude -V -D -y install groonga
+  % sudo apt-get update
+  % sudo apt-get -y install groonga
+
+Install groonga-munin-plugins package::
+
+  % sudo apt-get -y install groonga-munin-plugins
 
 Ubuntu 11.04 Natty Narwhal
 --------------------------
@@ -87,8 +105,12 @@ Ubuntu 11.04 Natty Narwhal
 Install::
 
   % sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 1C837F31
-  % sudo aptitude update
-  % sudo aptitude -V -D -y install groonga
+  % sudo apt-get update
+  % sudo apt-get -y install groonga
+
+Install groonga-munin-plugins package::
+
+  % sudo apt-get -y install groonga-munin-plugins
 
 Ubuntu 11.10 Oneiric Ocelot
 ---------------------------
@@ -106,8 +128,12 @@ Ubuntu 11.10 Oneiric Ocelot
 Install::
 
   % sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 1C837F31
-  % sudo aptitude update
-  % sudo aptitude -V -D -y install groonga
+  % sudo apt-get update
+  % sudo apt-get -y install groonga
+
+Install groonga-munin-plugins package::
+
+  % sudo apt-get -y install groonga-munin-plugins
 
 CentOS 5
 --------
@@ -118,6 +144,27 @@ Install::
   % sudo yum update
   % sudo yum install -y groonga
 
+There is a package that provides `Munin <http://munin-monitoring.org/>`_ plugins. If you want to monitor groonga status by Munin, please install groonga-munin-plugins package.
+
+But it requires munin-node package that isn't included in the official CentOS repository. You need to enable `RPMforge <http://repoforge.org/>`_ repository or `EPEL <http://fedoraproject.org/wiki/EPEL>`_ repository to install it by yum.
+
+Register RPMforge repository on i386 environment::
+
+  % sudo rpm -ivh http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.2-2.el5.rf.i386.rpm
+
+Register RPMforge repository on x86_64 environment::
+
+  % sudo rpm -ivh http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.2-2.el5.rf.x86_64.rpm
+
+Register EPEL repository on any environment::
+
+  % sudo rpm -ivh http://download.fedoraproject.org/pub/epel/5/i386/epel-release-5-4.noarch.rpm
+
+Install groonga-munin-plugins package::
+
+  % sudo yum update
+  % sudo yum install -y groonga-munin-plugins
+
 CentOS 6
 --------
 
@@ -127,6 +174,27 @@ Install::
   % sudo yum update
   % sudo yum install -y groonga
 
+There is a package that provides `Munin <http://munin-monitoring.org/>`_ plugins. If you want to monitor groonga status by Munin, please install groonga-munin-plugins package.
+
+But it requires munin-node package that isn't included in the official CentOS repository. You need to enable `RPMforge <http://repoforge.org/>`_ repository or `EPEL <http://fedoraproject.org/wiki/EPEL>`_ repository to install it by yum.
+
+Register RPMforge repository on i686 environment::
+
+  % sudo rpm -ivh http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.2-2.el6.rf.i686.rpm
+
+Register RPMforge repository on x86_64 environment::
+
+  % sudo rpm -ivh http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.2-2.el6.rf.x86_64.rpm
+
+Register EPEL repository on any environment::
+
+  % sudo rpm -ivh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-5.noarch.rpm
+
+Install groonga-munin-plugins package::
+
+  % sudo yum update
+  % sudo yum install -y groonga-munin-plugins
+
 Fedora 16
 ---------
 
@@ -135,6 +203,12 @@ Install::
   % sudo rpm -ivh http://packages.groonga.org/fedora/groonga-repository-1.0.0-0.noarch.rpm
   % sudo yum update
   % sudo yum install -y groonga
+
+There is a package that provides `Munin <http://munin-monitoring.org/>`_ plugins. If you want to monitor groonga status by Munin, please install groonga-munin-plugins package.
+
+Install groonga-munin-plugins package::
+
+  % sudo yum install -y groonga-munin-plugins
 
 Mac OS X (MacPorts)
 -------------------
@@ -176,3 +250,5 @@ Install::
  ./configure --prefix=/usr --localstatedir=/var && make && sudo make install
 
 The "prefix" option specifies the path to install groonga. If you don't specify the install path, "/usr/local" is used. Please specify "/usr" if you are not familiar with environment variables such as LD_LIBRARY_PATH.
+
+There are some `Munin <http://munin-monitoring.org/>`_ plugins in groonga package. You need to pass `--with-munin-plugins` option to install them.
