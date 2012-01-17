@@ -1,6 +1,8 @@
 groonga (1.3.0-1) unstable; urgency=low
 
   * New upstream release.
+  * groonga-server doesn't require groonga-munin-plugins.
+    Suggested by Masaharu IWAI. Thanks!!!
 
  -- Kouhei Sutou <kou@clear-code.com>  Sun, 29 Jan 2012 00:00:00 +0900
 
