@@ -723,13 +723,28 @@ test_mroonga_index(void)
   /* boolean search */
   {
     grn_id id, docid;
+    grn_obj *match_columns, *match_columns_variable;
+    grn_obj *expression, *expression_variable;
     grn_obj *res;
-    grn_query *query;
     grn_table_cursor *tc;
+    const char *match_columns_expression = "c1";
     const char *qstr = "+22 -55";
+
+    GRN_EXPR_CREATE_FOR_QUERY(context, t1,
+                              match_columns, match_columns_variable);
+    grn_expr_parse(context, match_columns,
+                   match_columns_expression,
+                   strlen(match_columns_expression),
+                   NULL, GRN_OP_MATCH, GRN_OP_AND,
+                   GRN_EXPR_SYNTAX_SCRIPT);
+    GRN_EXPR_CREATE_FOR_QUERY(context, t1, expression, expression_variable);
     res = grn_table_create(context, NULL, 0, NULL, GRN_TABLE_HASH_KEY, t1, 0);
-    query = grn_query_open(context, qstr, strlen(qstr), GRN_OP_OR, 32);
-    grn_obj_search(context, ft, (grn_obj*) query, res, GRN_OP_OR, NULL);
+    grn_test_assert(grn_expr_parse(context, expression,
+                                   qstr, strlen(qstr),
+                                   match_columns,
+                                   GRN_OP_MATCH, GRN_OP_OR,
+                                   GRN_EXPR_SYNTAX_QUERY));
+    grn_table_select(context, t1, expression, res, GRN_OP_OR);
     cut_assert_equal_int(1, grn_table_size(context, res));
     tc = grn_table_cursor_open(context, res, NULL, 0, NULL, 0, 0, -1, 0);
     while ((id = grn_table_cursor_next(context, tc))) {
@@ -740,7 +755,8 @@ test_mroonga_index(void)
       cut_assert_equal_int(8 ,GRN_TEXT_LEN(&buff));
       cut_assert_equal_substring("11 22 33", (char*) GRN_BULK_HEAD(&buff),GRN_TEXT_LEN(&buff));
     }
-    grn_query_close(context, query);
+    grn_obj_close(context, expression);
+    grn_obj_close(context, match_columns);
     grn_table_cursor_close(context ,tc);
     grn_obj_close(context, res);
   }
@@ -862,16 +878,31 @@ test_mroonga_index_score(void)
   {
     grn_id id, docid;
     grn_obj *res;
-    grn_query *query;
+    grn_obj *match_columns, *match_columns_variable;
+    grn_obj *expression, *expression_variable;
     grn_table_cursor *tc;
     grn_obj score, *score_column;
+    const char *match_columns_expression = "c1 * 5";
     const char *qstr = "+22 -55";
+
+    GRN_EXPR_CREATE_FOR_QUERY(context, t1,
+                              match_columns, match_columns_variable);
+    grn_expr_parse(context, match_columns,
+                   match_columns_expression,
+                   strlen(match_columns_expression),
+                   NULL, GRN_OP_MATCH, GRN_OP_AND,
+                   GRN_EXPR_SYNTAX_SCRIPT);
+    GRN_EXPR_CREATE_FOR_QUERY(context, t1, expression, expression_variable);
     res = grn_table_create(context, NULL, 0, NULL,
                            GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, t1, 0);
-    GRN_UINT32_INIT(&score, 0);
-    query = grn_query_open(context, qstr, strlen(qstr), GRN_OP_OR, 32);
-    grn_obj_search(context, ft, (grn_obj*) query, res, GRN_OP_OR, NULL);
+    grn_test_assert(grn_expr_parse(context, expression,
+                                   qstr, strlen(qstr),
+                                   match_columns,
+                                   GRN_OP_MATCH, GRN_OP_OR,
+                                   GRN_EXPR_SYNTAX_QUERY));
+    grn_table_select(context, t1, expression, res, GRN_OP_OR);
     cut_assert_equal_int(1, grn_table_size(context, res));
+    GRN_UINT32_INIT(&score, 0);
     score_column = grn_obj_column(context, res, "_score", 6);
     tc = grn_table_cursor_open(context, res, NULL, 0, NULL, 0, 0, -1, 0);
     while ((id = grn_table_cursor_next(context, tc))) {
@@ -879,12 +910,13 @@ test_mroonga_index_score(void)
       grn_table_get_key(context, res, id, &docid, sizeof(grn_id));
       cut_assert_equal_int(3, docid);
       cut_assert_not_null(grn_obj_get_value(context, c1, docid, &buff));
-      cut_assert_equal_int(8 ,GRN_TEXT_LEN(&buff));
+      cut_assert_equal_int(8, GRN_TEXT_LEN(&buff));
       cut_assert_equal_substring("11 22 33", (char*) GRN_BULK_HEAD(&buff),GRN_TEXT_LEN(&buff));
       grn_obj_get_value(context, score_column, id, &score);
       cut_assert_equal_uint(5, GRN_UINT32_VALUE(&score));
     }
-    grn_query_close(context, query);
+    grn_obj_close(context, expression);
+    grn_obj_close(context, match_columns);
     grn_table_cursor_close(context ,tc);
     grn_obj_close(context, score_column);
     grn_obj_close(context, res);

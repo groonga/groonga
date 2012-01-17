@@ -1965,31 +1965,15 @@ GRN_API grn_posting *grn_geo_cursor_next(grn_ctx *ctx, grn_obj *cursor);
 #endif /* GRN_QUERY_COLUMN */
 
 typedef struct _grn_snip grn_snip;
-typedef struct _grn_query grn_query;
 typedef struct _grn_snip_mapping grn_snip_mapping;
 
 struct _grn_snip_mapping {
   void *dummy;
 };
 
-GRN_API grn_query *grn_query_open(grn_ctx *ctx, const char *str, unsigned int str_len,
-                                  grn_operator default_op, int max_exprs);
-GRN_API unsigned int grn_query_rest(grn_ctx *ctx, grn_query *q, const char ** const rest);
-GRN_API grn_rc grn_query_close(grn_ctx *ctx, grn_query *q);
-
-GRN_API grn_rc grn_query_scan(grn_ctx *ctx, grn_query *q, const char **strs, unsigned int *str_lens,
-                              unsigned int nstrs, int flags, int *found, int *score);
-GRN_API grn_snip *grn_query_snip(grn_ctx *ctx, grn_query *query, int flags,
-                                 unsigned int width, unsigned int max_results,
-                                 unsigned int n_tags,
-                                 const char **opentags, unsigned int *opentag_lens,
-                                 const char **closetags, unsigned int *closetag_lens,
-                                 grn_snip_mapping *mapping);
-
 #define GRN_SNIP_NORMALIZE             (0x01<<0)
 #define GRN_SNIP_COPY_TAG              (0x01<<1)
 #define GRN_SNIP_SKIP_LEADING_SPACES   (0x01<<2)
-#define GRN_QUERY_SCAN_NORMALIZE       GRN_SNIP_NORMALIZE
 
 GRN_API grn_snip *grn_snip_open(grn_ctx *ctx, int flags, unsigned int width,
                                 unsigned int max_results,

@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009 Brazil
+/* Copyright(C) 2009-2012 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -30,7 +30,7 @@
 #include "io.h"
 #include "plugin_in.h"
 #include "hash.h"
-#include "ql.h"
+#include "ctx_impl.h"
 
 #define GRN_IO_IDSTR "GROONGA:IO:00001"
 
@@ -147,8 +147,13 @@ static void
 grn_io_register(grn_io *io)
 {
   if (io->fis && (io->flags & (GRN_IO_EXPIRE_GTICK|GRN_IO_EXPIRE_SEGMENT))) {
-    grn_cell *obj = grn_get(io->path);
-    if (obj != F) { obj->u.p.value = (grn_obj *)io; }
+    if (grn_gctx.impl && grn_gctx.impl->ios &&
+        grn_hash_add(&grn_gctx, grn_gctx.impl->ios, io->path, strlen(io->path),
+                     (void **)&io, NULL)) {
+    } else {
+      GRN_LOG(&grn_gctx, GRN_LOG_WARNING,
+              "grn_io_register(%s) failed", io->path);
+    }
   }
 }
 
@@ -156,7 +161,13 @@ static void
 grn_io_unregister(grn_io *io)
 {
   if (io->fis && (io->flags & (GRN_IO_EXPIRE_GTICK|GRN_IO_EXPIRE_SEGMENT))) {
-    grn_del(io->path);
+    if (grn_gctx.impl && grn_gctx.impl->ios) {
+      grn_hash_delete(&grn_gctx, grn_gctx.impl->ios,
+                      io->path, strlen(io->path), NULL);
+    } else {
+      GRN_LOG(&grn_gctx, GRN_LOG_WARNING,
+              "grn_io_unregister(%s) failed", io->path);
+    }
   }
 }
 
@@ -1388,10 +1399,10 @@ static uint32_t
 grn_expire_(grn_ctx *ctx, int count_thresh, uint32_t limit)
 {
   uint32_t n = 0;
-  grn_cell *obj;
-  GRN_HASH_EACH(ctx, grn_gctx.impl->symbols, id, NULL, NULL, (void **) &obj, {
+  grn_io *io;
+  GRN_HASH_EACH(ctx, grn_gctx.impl->ios, id, NULL, NULL, (void **)&io, {
     grn_plugin_close(ctx, id);
-    n += grn_io_expire(ctx, (grn_io *) obj->u.p.value, count_thresh, limit);
+    n += grn_io_expire(ctx, io, count_thresh, limit);
     if (n >= limit) { break; }
   });
   return n;

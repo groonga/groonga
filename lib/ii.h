@@ -180,11 +180,6 @@ GRN_API grn_rc grn_ii_select(grn_ctx *ctx, grn_ii *ii, const char *string, unsig
 grn_rc grn_ii_sel(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_len,
                   grn_hash *s, grn_operator op, grn_search_optarg *optarg);
 
-grn_rc grn_ii_query_select(grn_ctx *ctx, grn_ii *i, grn_query *q, grn_hash *r, grn_operator op);
-
-grn_rc grn_query_search(grn_ctx *ctx, grn_ii *i, grn_query *q,
-                        grn_hash *r, grn_operator op);
-
 void grn_ii_resolve_sel_and(grn_ctx *ctx, grn_hash *s, grn_operator op);
 
 grn_rc grn_ii_at(grn_ctx *ctx, grn_ii *ii, grn_id id, grn_hash *s, grn_operator op);

@@ -18,7 +18,7 @@
 #include "groonga_in.h"
 #include <string.h>
 #include <ctype.h>
-#include "ql.h"
+#include "ctx_impl.h"
 #include "token.h"
 #include "pat.h"
 #include "dat.h"

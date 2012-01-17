@@ -19,7 +19,7 @@
 #include "groonga_in.h"
 #include <string.h>
 #include "token.h"
-#include "ql.h"
+#include "ctx_impl.h"
 #include "pat.h"
 #include "plugin_in.h"
 #include "snip.h"
@@ -420,8 +420,16 @@ grn_ctx_impl_init(grn_ctx *ctx)
   ctx->impl->encoding = ctx->encoding;
   ctx->impl->lifoseg = -1;
   ctx->impl->currseg = -1;
-  if (!(ctx->impl->values = grn_array_create(ctx, NULL, sizeof(grn_tmp_db_obj),
+  if (!(ctx->impl->values = grn_array_create(ctx, NULL, sizeof(grn_db_obj *),
                                              GRN_ARRAY_TINY))) {
+    grn_io_anon_unmap(ctx, &mi, IMPL_SIZE);
+    ctx->impl = NULL;
+    return;
+  }
+  if (!(ctx->impl->ios = grn_hash_create(ctx, NULL, GRN_TABLE_MAX_KEY_SIZE,
+                                         sizeof(grn_io *),
+                                         GRN_OBJ_KEY_VAR_SIZE|GRN_HASH_TINY))) {
+    grn_array_close(ctx, ctx->impl->values);
     grn_io_anon_unmap(ctx, &mi, IMPL_SIZE);
     ctx->impl = NULL;
     return;
@@ -454,29 +462,12 @@ grn_ctx_impl_init(grn_ctx *ctx)
 
   ctx->impl->finalizer = NULL;
 
-  ctx->impl->phs = NIL;
-  ctx->impl->code = NIL;
-  ctx->impl->dump = NIL;
   ctx->impl->op = GRN_OP_T0LVL;
-  ctx->impl->args = NIL;
-  ctx->impl->envir = NIL;
-  ctx->impl->value = NIL;
-  ctx->impl->ncells = 0;
   ctx->impl->n_entries = 0;
-  ctx->impl->seqno = 0;
-  ctx->impl->lseqno = 0;
-  ctx->impl->nbinds = 0;
-  ctx->impl->nunbinds = 0;
-  ctx->impl->feed_mode = grn_ql_atonce;
   ctx->impl->cur = NULL;
   ctx->impl->str_end = NULL;
   ctx->impl->batchmode = 0;
-  ctx->impl->gc_verbose = 0;
   ctx->impl->inbuf = NULL;
-  ctx->impl->co.mode = 0;
-  ctx->impl->co.func = NULL;
-  ctx->impl->objects = NULL;
-  ctx->impl->symbols = NULL;
   ctx->impl->com = NULL;
   ctx->impl->outbuf = grn_obj_open(ctx, GRN_BULK, 0, 0);
   ctx->impl->output = NULL /* grn_ctx_concat_func */;
@@ -508,37 +499,6 @@ grn_ctx_impl_err(grn_ctx *ctx)
   }
 }
 
-static void
-grn_ctx_ql_init(grn_ctx *ctx, int flags)
-{
-  if (!ctx->impl) {
-    grn_ctx_impl_init(ctx);
-    if (ERRP(ctx, GRN_ERROR)) { return; }
-  }
-  if (flags & GRN_CTX_BATCH_MODE) { ctx->impl->batchmode = 1; }
-  if ((ctx->impl->objects = grn_array_create(ctx, NULL, sizeof(grn_cell),
-                                             GRN_ARRAY_TINY))) {
-    if ((ctx->impl->symbols = grn_hash_create(ctx, NULL, GRN_TABLE_MAX_KEY_SIZE,
-                                              sizeof(grn_cell),
-                                              GRN_OBJ_KEY_VAR_SIZE|GRN_HASH_TINY))) {
-      if (!ERRP(ctx, GRN_ERROR)) {
-        grn_ql_init_globals(ctx);
-        if (!ERRP(ctx, GRN_ERROR)) {
-          return;
-        }
-      }
-      grn_hash_close(ctx, ctx->impl->symbols);
-      ctx->impl->symbols = NULL;
-    } else {
-      MERR("ctx->impl->symbols init failed");
-    }
-    grn_array_close(ctx, ctx->impl->objects);
-    ctx->impl->objects = NULL;
-  } else {
-    MERR("ctx->impl->objects init failed");
-  }
-}
-
 grn_rc
 grn_ctx_init(grn_ctx *ctx, int flags)
 {
@@ -549,15 +509,14 @@ grn_ctx_init(grn_ctx *ctx, int flags)
   if (getenv("GRN_CTX_PER_DB") && strcmp(getenv("GRN_CTX_PER_DB"), "yes") == 0) {
     ctx->flags |= GRN_CTX_PER_DB;
   }
-  ctx->stat = GRN_QL_WAIT_EXPR;
+  if (ERRP(ctx, GRN_ERROR)) { return ctx->rc; }
+  ctx->stat = GRN_CTX_INITED;
   ctx->encoding = grn_gctx.encoding;
-  ctx->seqno = 0;
-  ctx->seqno2 = 0;
-  ctx->subno = 0;
   ctx->impl = NULL;
   if (flags & GRN_CTX_USE_QL) {
-    grn_ctx_ql_init(ctx, flags);
+    grn_ctx_impl_init(ctx);
     if (ERRP(ctx, GRN_ERROR)) { return ctx->rc; }
+    if (flags & GRN_CTX_BATCH_MODE) { ctx->impl->batchmode = 1; }
   }
   ctx->user_data.ptr = NULL;
   CRITICAL_SECTION_ENTER(grn_glock);
@@ -606,25 +565,18 @@ grn_ctx_fin(grn_ctx *ctx)
       ctx->impl->finalizer(ctx, 0, NULL, &(ctx->user_data));
     }
     grn_ctx_loader_clear(ctx);
-    if (ctx->impl->objects) {
-      grn_cell *o;
-      GRN_ARRAY_EACH(ctx, ctx->impl->objects, 0, 0, id, &o, {
-        grn_cell_clear(ctx, o);
-      });
-      grn_array_close(ctx, ctx->impl->objects);
-    }
     if (ctx->impl->parser) {
       grn_expr_parser_close(ctx);
     }
     if (ctx->impl->values) {
-      grn_tmp_db_obj *o;
+      grn_db_obj *o;
       GRN_ARRAY_EACH(ctx, ctx->impl->values, 0, 0, id, &o, {
-        grn_obj_close(ctx, (grn_obj *)o->obj);
+        grn_obj_close(ctx, *((grn_obj **)o));
       });
       grn_array_close(ctx, ctx->impl->values);
     }
-    if (ctx->impl->symbols) {
-      grn_hash_close(ctx, ctx->impl->symbols);
+    if (ctx->impl->ios) {
+      grn_hash_close(ctx, ctx->impl->ios);
     }
     if (ctx->impl->com) {
       if (ctx->stat != GRN_CTX_QUIT) {
@@ -795,7 +747,6 @@ grn_init(void)
   CRITICAL_SECTION_INIT(grn_glock);
   CRITICAL_SECTION_INIT(grn_logger_lock);
   grn_gtick = 0;
-  grn_ql_init_const();
   ctx->next = ctx;
   ctx->prev = ctx;
   grn_ctx_init(ctx, 0);
@@ -862,11 +813,7 @@ grn_init(void)
     GRN_LOG(ctx, GRN_LOG_ALERT, "grn_com_init failed (%d)", rc);
     return rc;
   }
-  grn_ctx_ql_init(ctx, 0);
-  if ((rc = ctx->rc)) {
-    GRN_LOG(ctx, GRN_LOG_ALERT, "gctx initialize failed (%d)", rc);
-    return rc;
-  }
+  grn_ctx_impl_init(ctx);
   if ((rc = grn_io_init())) {
     GRN_LOG(ctx, GRN_LOG_ALERT, "io initialize failed (%d)", rc);
     return rc;
@@ -1526,45 +1473,6 @@ grn_ctx_info_get(grn_ctx *ctx, grn_ctx_info *info)
   return GRN_SUCCESS;
 }
 
-
-grn_cell *
-grn_get(const char *key)
-{
-  grn_cell *obj;
-  if (!grn_gctx.impl || !grn_gctx.impl->symbols ||
-      !grn_hash_add(&grn_gctx, grn_gctx.impl->symbols, key, strlen(key),
-                    (void **) &obj, NULL)) {
-    GRN_LOG(&grn_gctx, GRN_LOG_WARNING, "grn_get(%s) failed", key);
-    return F;
-  }
-  if (!obj->header.impl_flags) {
-    obj->header.impl_flags |= GRN_CELL_SYMBOL;
-    obj->header.type = GRN_VOID;
-  }
-  return obj;
-}
-
-grn_cell *
-grn_at(const char *key)
-{
-  grn_cell *obj;
-  if (!grn_gctx.impl || grn_gctx.impl->symbols ||
-      !grn_hash_get(&grn_gctx, grn_gctx.impl->symbols,
-                   key, strlen(key), (void **) &obj)) {
-    return F;
-  }
-  return obj;
-}
-
-grn_rc
-grn_del(const char *key)
-{
-  if (!grn_gctx.impl || !grn_gctx.impl->symbols) {
-    GRN_LOG(&grn_gctx, GRN_LOG_WARNING, "grn_del(%s) failed", key);
-    return GRN_INVALID_ARGUMENT;
-  }
-  return grn_hash_delete(&grn_gctx, grn_gctx.impl->symbols, key, strlen(key), NULL);
-}
 
 typedef struct _grn_cache_entry grn_cache_entry;
 
@@ -2322,97 +2230,6 @@ grn_strdup_fail(grn_ctx *ctx, const char *s, const char* file, int line, const c
   }
 }
 #endif /* USE_FAIL_MALLOC */
-
-grn_cell *
-grn_cell_new(grn_ctx *ctx)
-{
-  grn_cell *o = NULL;
-  if (ctx && ctx->impl) {
-    grn_array_add(ctx, ctx->impl->objects, (void **)&o);
-    if (o) {
-      o->header.impl_flags = 0;
-      ctx->impl->n_entries++;
-    }
-  }
-  return o;
-}
-
-grn_cell *
-grn_cell_cons(grn_ctx *ctx, grn_cell *a, grn_cell *b)
-{
-  if (!ctx) { return NULL; }
-  {
-    grn_cell *o;
-    GRN_CELL_NEW(ctx, o);
-    if (o) {
-      o->header.type = GRN_CELL_LIST;
-      o->header.impl_flags = 0;
-      o->u.l.car = a;
-      o->u.l.cdr = b;
-    }
-    return o;
-  }
-}
-
-grn_cell *
-grn_cell_alloc(grn_ctx *ctx, uint32_t size)
-{
-  if (!ctx) { return NULL; }
-  {
-    void *value = GRN_MALLOC(size + 1);
-    if (value) {
-      grn_cell *o = grn_cell_new(ctx);
-      if (!ERRP(ctx, GRN_ERROR)) {
-        o->header.impl_flags = GRN_OBJ_ALLOCATED;
-        o->header.type = GRN_CELL_STR;
-        o->u.b.size = size;
-        o->u.b.value = value;
-        return o;
-      }
-      GRN_FREE(value);
-    } else {
-      MERR("malloc(%d) failed", size + 1);
-    }
-    return NULL;
-  }
-}
-
-void
-grn_cell_clear(grn_ctx *ctx, grn_cell *o)
-{
-  if (!ctx || !ctx->impl) { return; }
-  if (o->header.impl_flags & GRN_OBJ_ALLOCATED) {
-    switch (o->header.type) {
-    case GRN_SNIP :
-      if (o->u.p.value) { grn_snip_close(ctx, (grn_snip *)o->u.p.value); }
-      break;
-    case GRN_TABLE_HASH_KEY :
-    case GRN_TABLE_PAT_KEY :
-    case GRN_TABLE_NO_KEY :
-      grn_obj_close(ctx, grn_ctx_at(ctx, o->u.o.id));
-      break;
-    case GRN_CELL_STR :
-      if (o->u.b.value) {
-        GRN_FREE(o->u.b.value);
-      }
-      break;
-    case GRN_QUERY :
-      if (o->u.p.value) { grn_query_close(ctx, (grn_query *)o->u.p.value); }
-      break;
-    case GRN_UVECTOR :
-    case GRN_VECTOR :
-      if (o->u.p.value) { grn_obj_close(ctx, o->u.p.value); }
-      break;
-    case GRN_PATSNIP :
-      grn_obj_patsnip_spec_close(ctx, (patsnip_spec *)o->u.p.value);
-      break;
-    default :
-      GRN_LOG(ctx, GRN_LOG_WARNING, "obj_clear: invalid type(%x)", o->header.type);
-      break;
-    }
-    o->header.impl_flags &= ~GRN_OBJ_ALLOCATED;
-  }
-}
 
 /* don't handle error inside logger functions */
 

@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2010 Brazil
+/* Copyright(C) 2010-2012 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -29,9 +29,9 @@
 #include "store.h"
 #endif /* GRN_STORE_H */
 
-#ifndef GRN_QL_H
-#include "ql.h"
-#endif /* GRN_QL_H */
+#ifndef GRN_CTX_IMPL_H
+#include "ctx_impl.h"
+#endif /* GRN_CTX_IMPL_H */
 
 #ifdef __cplusplus
 extern "C" {

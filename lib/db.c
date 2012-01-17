@@ -20,7 +20,7 @@
 #include "pat.h"
 #include "dat.h"
 #include "ii.h"
-#include "ql.h"
+#include "ctx_impl.h"
 #include "token.h"
 #include "proc.h"
 #include "plugin_in.h"
@@ -264,9 +264,9 @@ grn_db_close(grn_ctx *ctx, grn_obj *db)
       grn_expr_parser_close(ctx);
     }
     if (ctx->impl->values) {
-      grn_tmp_db_obj *o;
+      grn_db_obj *o;
       GRN_ARRAY_EACH(ctx, ctx->impl->values, 0, 0, id, &o, {
-        grn_obj_close(ctx, (grn_obj *)o->obj);
+        grn_obj_close(ctx, *((grn_obj **)o));
       });
       grn_array_truncate(ctx, ctx->impl->values);
     }
@@ -2813,7 +2813,7 @@ grn_obj_search(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
           }
           break;
         case GRN_QUERY :
-          rc = grn_query_search(ctx, (grn_ii *)obj, (grn_query *)query, (grn_hash *)res, op);
+          rc = GRN_FUNCTION_NOT_IMPLEMENTED;
           break;
         }
       }
@@ -6594,11 +6594,8 @@ grn_db_obj_init(grn_ctx *ctx, grn_obj *db, grn_id id, grn_db_obj *obj)
   if (id) {
     if (id & GRN_OBJ_TMP_OBJECT) {
       if (ctx->impl && ctx->impl->values) {
-        grn_tmp_db_obj tmp_obj;
-        tmp_obj.obj = obj;
-        memset(&tmp_obj.cell, 0, sizeof(grn_cell));
         rc = grn_array_set_value(ctx, ctx->impl->values,
-                                 id & ~GRN_OBJ_TMP_OBJECT, &tmp_obj, GRN_OBJ_SET);
+                                 id & ~GRN_OBJ_TMP_OBJECT, &obj, GRN_OBJ_SET);
       }
     } else {
       db_value *vp;
@@ -6665,9 +6662,10 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
   GRN_API_ENTER;
   if (id & GRN_OBJ_TMP_OBJECT) {
     if (ctx->impl->values) {
-      grn_tmp_db_obj *tmp_obj;
-      if ((tmp_obj = _grn_array_get_value(ctx, ctx->impl->values, id & ~GRN_OBJ_TMP_OBJECT))) {
-        res = (grn_obj *)tmp_obj->obj;
+      grn_obj **tmp_obj;
+      tmp_obj = _grn_array_get_value(ctx, ctx->impl->values, id & ~GRN_OBJ_TMP_OBJECT);
+      if (tmp_obj) {
+        res = *tmp_obj;
       }
     }
   } else {
@@ -6928,9 +6926,6 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
       break;
     case GRN_TABLE_VIEW :
       rc = grn_view_close(ctx, (grn_view *)obj);
-      break;
-    case GRN_QUERY :
-      rc = grn_query_close(ctx, (grn_query *)obj);
       break;
     case GRN_COLUMN_VAR_SIZE :
       rc = grn_ja_close(ctx, (grn_ja *)obj);

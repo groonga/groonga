@@ -17,7 +17,6 @@
 */
 
 #include "proc.h"
-#include "ql.h"
 #include "ii.h"
 #include "db.h"
 #include "util.h"

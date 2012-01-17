@@ -12,11 +12,8 @@ libgroonga_la_SOURCES =				\
 	str.c					\
 	nfkc.c					\
 	snip.c					\
-	query.c					\
 	store.c					\
 	com.c					\
-	ql.c					\
-	scm.c					\
 	ctx.c					\
 	hash.c					\
 	db.c					\
@@ -39,9 +36,10 @@ libgroonga_la_LDFLAGS =				\
 libgroonga_la_LIBADD =				\
 	dat/libgrndat.la
 
-noinst_HEADERS = 				\
+noinst_HEADERS =				\
 	com.h					\
 	ctx.h					\
+	ctx_impl.h				\
 	dat.h					\
 	db.h					\
 	geo.h					\
@@ -54,7 +52,6 @@ noinst_HEADERS = 				\
 	pat.h					\
 	plugin_in.h				\
 	proc.h					\
-	ql.h					\
 	snip.h					\
 	store.h					\
 	str.h					\

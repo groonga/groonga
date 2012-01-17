@@ -21,7 +21,7 @@
 #include <sys/stat.h>
 
 #include "ii.h"
-#include "ql.h"
+#include "ctx_impl.h"
 #include "token.h"
 #include "pat.h"
 #include "db.h"
@@ -3566,7 +3566,6 @@ grn_ii_close(grn_ctx *ctx, grn_ii *ii)
 {
   grn_rc rc;
   if (!ii) { return GRN_INVALID_ARGUMENT; }
-  grn_del(grn_io_path(ii->seg));
   if ((rc = grn_io_close(ctx, ii->seg))) { return rc; }
   if ((rc = grn_io_close(ctx, ii->chunk))) { return rc; }
   GRN_GFREE(ii);

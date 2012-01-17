@@ -17,7 +17,7 @@
 */
 #include "groonga_in.h"
 #include "db.h"
-#include "ql.h"
+#include "ctx_impl.h"
 #include <string.h>
 #include <float.h>
 #include "ii.h"

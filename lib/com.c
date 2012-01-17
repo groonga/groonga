@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009-2011 Brazil
+/* Copyright(C) 2009-2012 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -19,7 +19,7 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "ql.h"
+#include "ctx_impl.h"
 
 #ifdef WIN32
 #  include <ws2tcpip.h>

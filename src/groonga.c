@@ -22,7 +22,7 @@
 #include "lib/groonga_in.h"
 
 #include "lib/com.h"
-#include "lib/ql.h"
+#include "lib/ctx_impl.h"
 #include "lib/proc.h"
 #include "lib/db.h"
 #include "lib/util.h"
