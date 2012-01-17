@@ -48,7 +48,6 @@ Summary:	Groonga server
 Group:		Applications/Text
 License:	LGPLv2 and (MIT or GPLv2)
 Requires:	%{name} = %{version}-%{release}
-Requires:	%{name}-munin-plugins = %{version}-%{release}
 Requires(pre):	shadow-utils
 Requires(post):	/sbin/chkconfig
 Requires(preun):	/sbin/chkconfig
@@ -318,6 +317,8 @@ fi
 %changelog
 * Sun Jan 29 2012 Kouhei Sutou <kou@clear-code.com> - 1.3.0-0
 - new upstream release.
+- groonga-server does not require groonga-munin-plugins package.
+  suggested by Masaharu IWAI. Thanks!!!
 
 * Thu Dec 29 2011 Kouhei Sutou <kou@clear-code.com> - 1.2.9-0
 - new upstream release.
