@@ -150,15 +150,15 @@ There is a package that provides `Munin <http://munin-monitoring.org/>`_ plugins
 
    Groonga-munin-plugins package requires munin-node package that isn't included in the official CentOS repository. You need to enable `RPMforge <http://repoforge.org/>`_ repository or `EPEL <http://fedoraproject.org/wiki/EPEL>`_ repository to install it by yum.
 
-   Register RPMforge repository on i386 environment::
+   Enable RPMforge repository on i386 environment::
 
      % sudo rpm -ivh http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.2-2.el5.rf.i386.rpm
 
-   Register RPMforge repository on x86_64 environment::
+   Enable RPMforge repository on x86_64 environment::
 
      % sudo rpm -ivh http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.2-2.el5.rf.x86_64.rpm
 
-   Register EPEL repository on any environment::
+   Enable EPEL repository on any environment::
 
      % sudo rpm -ivh http://download.fedoraproject.org/pub/epel/5/i386/epel-release-5-4.noarch.rpm
 
@@ -182,15 +182,15 @@ There is a package that provides `Munin <http://munin-monitoring.org/>`_ plugins
 
    Groonga-munin-plugins package requires munin-node package that isn't included in the official CentOS repository. You need to enable `RPMforge <http://repoforge.org/>`_ repository or `EPEL <http://fedoraproject.org/wiki/EPEL>`_ repository to install it by yum.
 
-   Register RPMforge repository on i686 environment::
+   Enable RPMforge repository on i686 environment::
 
      % sudo rpm -ivh http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.2-2.el6.rf.i686.rpm
 
-   Register RPMforge repository on x86_64 environment::
+   Enable RPMforge repository on x86_64 environment::
 
      % sudo rpm -ivh http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.2-2.el6.rf.x86_64.rpm
 
-   Register EPEL repository on any environment::
+   Enable EPEL repository on any environment::
 
      % sudo rpm -ivh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-5.noarch.rpm
 
