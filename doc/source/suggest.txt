@@ -5,11 +5,6 @@
 Suggest
 =======
 
-.. note::
-
-   The suggest feature specification isn't stable. The
-   specification may be changed.
-
 Groonga has the suggest feature. This section describes how to use it and how it works.
 
 .. toctree::
