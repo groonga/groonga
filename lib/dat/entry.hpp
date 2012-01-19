@@ -43,11 +43,9 @@ class Entry {
   }
 
   void set_key_pos(UInt32 x) {
-    GRN_DAT_DEBUG_THROW_IF((x & IS_VALID_FLAG) != 0);
     value_ = IS_VALID_FLAG | x;
   }
   void set_next(UInt32 x) {
-    GRN_DAT_DEBUG_THROW_IF((x & IS_VALID_FLAG) != 0);
     value_ = x;
   }
 

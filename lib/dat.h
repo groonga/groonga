@@ -70,6 +70,10 @@ grn_id grn_dat_lcp_search(grn_ctx *ctx, grn_dat *dat,
 
 grn_id grn_dat_curr_id(grn_ctx *ctx, grn_dat *dat);
 
+/*
+  Currently, grn_dat_truncate() is available if the grn_dat object is
+  associated with a file.
+ */
 grn_rc grn_dat_truncate(grn_ctx *ctx, grn_dat *dat);
 
 const char *_grn_dat_key(grn_ctx *ctx, grn_dat *dat, grn_id id, uint32_t *key_size);
@@ -77,6 +81,12 @@ grn_id grn_dat_next(grn_ctx *ctx, grn_dat *dat, grn_id id);
 grn_id grn_dat_at(grn_ctx *ctx, grn_dat *dat, grn_id id);
 
 grn_rc grn_dat_clear_status_flags(grn_ctx *ctx, grn_dat *dat);
+
+/*
+  Currently, grn_dat_repair() is available if the grn_dat object is associated
+  with a file.
+ */
+grn_rc grn_dat_repair(grn_ctx *ctx, grn_dat *dat);
 
 #ifdef __cplusplus
 }

@@ -20,6 +20,8 @@
 #include <algorithm>
 #include <cstring>
 
+#include "vector.hpp"
+
 namespace grn {
 namespace dat {
 namespace {
@@ -134,6 +136,14 @@ void Trie::create(const Trie &trie,
   new_trie.create_file(file_name, file_size, max_num_keys,
                        num_nodes_per_key, average_key_length);
   new_trie.build_from_trie(trie);
+  new_trie.swap(this);
+}
+
+void Trie::repair(const Trie &trie, const char *file_name) {
+  Trie new_trie;
+  new_trie.create_file(file_name, trie.file_size(), trie.max_num_keys(),
+                       trie.max_num_blocks(), trie.key_buf_size());
+  new_trie.repair_trie(trie);
   new_trie.swap(this);
 }
 
@@ -337,6 +347,235 @@ void Trie::build_from_trie(const Trie &trie, UInt32 src, UInt32 dest) {
     build_from_trie(trie, src_offset ^ label, dest_offset ^ label);
     label = ith_node(dest_offset ^ label).sibling();
   }
+}
+
+void Trie::repair_trie(const Trie &trie) {
+  Vector<UInt32> valid_ids;
+  header_->set_max_key_id(trie.max_key_id());
+  header_->set_next_key_id(trie.max_key_id());
+  UInt32 prev_invalid_key_id = INVALID_KEY_ID;
+  for (UInt32 i = min_key_id(); i <= max_key_id(); ++i) {
+    const Entry &entry = trie.ith_entry(i);
+    if (entry.is_valid()) {
+      valid_ids.push_back(i);
+      ith_entry(i) = entry;
+      const Key &key = trie.get_key(entry.key_pos());
+      Key::create(key_buf_.ptr() + next_key_pos(),
+          key.id(), key.ptr(), key.length());
+      ith_entry(i).set_key_pos(next_key_pos());
+      header_->set_next_key_pos(
+          next_key_pos() + Key::estimate_size(key.length()));
+      header_->set_total_key_length(
+          total_key_length() + key.length());
+      header_->set_num_keys(num_keys() + 1);
+    } else {
+      if (prev_invalid_key_id == INVALID_KEY_ID) {
+        header_->set_next_key_id(i);
+      } else {
+        ith_entry(prev_invalid_key_id).set_next(i);
+      }
+      prev_invalid_key_id = i;
+    }
+  }
+  if (prev_invalid_key_id != INVALID_KEY_ID) {
+    ith_entry(prev_invalid_key_id).set_next(max_key_id() + 1);
+  }
+  mkq_sort(valid_ids.begin(), valid_ids.end(), 0);
+  build_from_keys(valid_ids.begin(), valid_ids.end(), 0, ROOT_NODE_ID);
+}
+
+void Trie::build_from_keys(const UInt32 *begin, const UInt32 *end,
+                           UInt32 depth, UInt32 node_id) {
+  if ((end - begin) == 1) {
+    ith_node(node_id).set_key_pos(ith_entry(*begin).key_pos());
+    return;
+  }
+
+  UInt32 offset;
+  {
+    UInt16 labels[MAX_LABEL + 1];
+    UInt32 num_labels = 0;
+
+    const UInt32 *it = begin;
+    if (ith_key(*it).length() == depth) {
+      labels[num_labels++] = TERMINAL_LABEL;
+      ++it;
+    }
+
+    labels[num_labels++] = (UInt8)ith_key(*it)[depth];
+    for (++it; it < end; ++it) {
+      const Key &key = ith_key(*it);
+      if ((UInt8)key[depth] != labels[num_labels - 1]) {
+        labels[num_labels++] = (UInt8)key[depth];
+      }
+    }
+
+    offset = find_offset(labels, num_labels);
+    for (UInt32 i = 0; i < num_labels; ++i) {
+      const UInt32 next = offset ^ labels[i];
+      reserve_node(next);
+      ith_node(next).set_label(labels[i]);
+    }
+
+    if (offset >= num_nodes()) {
+      reserve_block(num_blocks());
+    }
+    ith_node(offset).set_is_offset(true);
+    ith_node(node_id).set_offset(offset);
+  }
+
+  if (ith_key(*begin).length() == depth) {
+    build_from_keys(begin, begin + 1, depth + 1, offset ^ TERMINAL_LABEL);
+    ++begin;
+  }
+
+  UInt16 label = ith_key(*begin)[depth];
+  for (const UInt32 *it = begin + 1; it < end; ++it) {
+    const Key &key = ith_key(*it);
+    if ((UInt8)key[depth] != label) {
+      build_from_keys(begin, it, depth + 1, offset ^ label);
+      label = (UInt8)key[depth];
+      begin = it;
+    }
+  }
+  build_from_keys(begin, end, depth + 1, offset ^ label);
+}
+
+void Trie::mkq_sort(UInt32 *l, UInt32 *r, UInt32 depth) {
+  while ((r - l) >= MKQ_SORT_THRESHOLD) {
+    UInt32 *pl = l;
+    UInt32 *pr = r;
+    UInt32 *pivot_l = l;
+    UInt32 *pivot_r = r;
+
+    const int pivot = get_median(*l, *(l + (r - l) / 2), *(r - 1), depth);
+    for ( ; ; ) {
+      while (pl < pr) {
+        const int label = get_label(*pl, depth);
+        if (label > pivot) {
+          break;
+        } else if (label == pivot) {
+          swap_ids(pl, pivot_l);
+          ++pivot_l;
+        }
+        ++pl;
+      }
+      while (pl < pr) {
+        const int label = get_label(*--pr, depth);
+        if (label < pivot) {
+          break;
+        } else if (label == pivot) {
+          swap_ids(pr, --pivot_r);
+        }
+      }
+      if (pl >= pr) {
+        break;
+      }
+      swap_ids(pl, pr);
+      ++pl;
+    }
+    while (pivot_l > l) {
+      swap_ids(--pivot_l, --pl);
+    }
+    while (pivot_r < r) {
+      swap_ids(pivot_r, pr);
+      ++pivot_r;
+      ++pr;
+    }
+
+    if (((pl - l) > (pr - pl)) || ((r - pr) > (pr - pl))) {
+      if ((pr - pl) > 1) {
+        mkq_sort(pl, pr, depth + 1);
+      }
+
+      if ((pl - l) < (r - pr)) {
+        if ((pl - l) > 1) {
+          mkq_sort(l, pl, depth);
+        }
+        l = pr;
+      } else {
+        if ((r - pr) > 1) {
+          mkq_sort(pr, r, depth);
+        }
+        r = pl;
+      }
+    } else {
+      if ((pl - l) > 1) {
+        mkq_sort(l, pl, depth);
+      }
+
+      if ((r - pr) > 1) {
+        mkq_sort(pr, r, depth);
+      }
+
+      l = pl, r = pr;
+      if ((pr - pl) > 1) {
+        ++depth;
+      }
+    }
+  }
+
+  if ((r - l) > 1) {
+    insertion_sort(l, r, depth);
+  }
+}
+
+void Trie::insertion_sort(UInt32 *l, UInt32 *r, UInt32 depth) {
+  for (UInt32 *i = l + 1; i < r; ++i) {
+    for (UInt32 *j = i; j > l; --j) {
+      if (less_than(*(j - 1), *j, depth)) {
+        break;
+      }
+      swap_ids(j - 1, j);
+    }
+  }
+}
+
+int Trie::get_median(UInt32 a, UInt32 b, UInt32 c, UInt32 depth) const {
+  const int x = get_label(a, depth);
+  const int y = get_label(b, depth);
+  const int z = get_label(c, depth);
+  if (x < y) {
+    if (y < z) {
+      return y;
+    } else if (x < z) {
+      return z;
+    }
+    return x;
+  } else if (x < z) {
+    return x;
+  } else if (y < z) {
+    return z;
+  }
+  return y;
+}
+
+int Trie::get_label(UInt32 key_id, UInt32 depth) const {
+  const Key &key = ith_key(key_id);
+  if (depth == key.length()) {
+    return -1;
+  } else {
+    return (UInt8)key[depth];
+  }
+}
+
+bool Trie::less_than(UInt32 lhs, UInt32 rhs, UInt32 depth) const {
+  const Key &lhs_key = ith_key(lhs);
+  const Key &rhs_key = ith_key(rhs);
+  const UInt32 length = (lhs_key.length() < rhs_key.length()) ?
+      lhs_key.length() : rhs_key.length();
+  for (UInt32 i = depth; i < length; ++i) {
+    if (lhs_key[i] != rhs_key[i]) {
+      return (UInt8)lhs_key[i] < (UInt8)rhs_key[i];
+    }
+  }
+  return lhs_key.length() < rhs_key.length();
+}
+
+void Trie::swap_ids(UInt32 *lhs, UInt32 *rhs) {
+  UInt32 temp = *lhs;
+  *lhs = *rhs;
+  *rhs = temp;
 }
 
 bool Trie::search_key(const UInt8 *ptr, UInt32 length, UInt32 *key_pos) const {

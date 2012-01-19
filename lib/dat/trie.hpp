@@ -40,12 +40,14 @@ class Trie {
               double num_nodes_per_key = 0.0,
               double average_key_length = 0.0);
 
-  void create(const Trie &src_trie,
+  void create(const Trie &trie,
               const char *file_name = NULL,
               UInt64 file_size = 0,
               UInt32 max_num_keys = 0,
               double num_nodes_per_key = 0.0,
               double average_key_length = 0.0);
+
+  void repair(const Trie &trie, const char *file_name = NULL);
 
   void open(const char *file_name);
   void close();
@@ -212,6 +214,18 @@ class Trie {
 
   void build_from_trie(const Trie &trie);
   void build_from_trie(const Trie &trie, UInt32 src, UInt32 dest);
+
+  void repair_trie(const Trie &trie);
+  void build_from_keys(const UInt32 *begin, const UInt32 *end,
+                       UInt32 depth, UInt32 node_id);
+
+  void mkq_sort(UInt32 *l, UInt32 *r, UInt32 depth);
+  void insertion_sort(UInt32 *l, UInt32 *r, UInt32 depth);
+
+  inline int get_label(UInt32 key_id, UInt32 depth) const;
+  inline int get_median(UInt32 a, UInt32 b, UInt32 c, UInt32 depth) const;
+  inline bool less_than(UInt32 lhs, UInt32 rhs, UInt32 depth) const;
+  inline static void swap_ids(UInt32 *lhs, UInt32 *rhs);
 
   bool search_key(const UInt8 *ptr, UInt32 length, UInt32 *key_pos) const;
   bool search_linker(const UInt8 *ptr, UInt32 length,

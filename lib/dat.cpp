@@ -1015,4 +1015,31 @@ grn_dat_clear_status_flags(grn_ctx *ctx, grn_dat *dat)
   return GRN_SUCCESS;
 }
 
+grn_rc
+grn_dat_repair(grn_ctx *ctx, grn_dat *dat)
+{
+  if (!grn_dat_open_trie_if_needed(ctx, dat)) {
+    return ctx->rc;
+  }
+  const grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
+  if (!trie) {
+    return GRN_INVALID_ARGUMENT;
+  }
+
+  char trie_path[PATH_MAX];
+  grn_dat_generate_trie_path(grn_io_path(dat->io), trie_path, dat->header->file_id + 1);
+  try {
+    grn::dat::Trie().repair(*trie, trie_path);
+  } catch (const grn::dat::Exception &ex) {
+    const grn_rc error_code = grn_dat_translate_error_code(ex.code());
+    ERR(error_code, "grn::dat::Trie::create failed");
+    return error_code;
+  }
+  ++dat->header->file_id;
+  if (!grn_dat_open_trie_if_needed(ctx, dat)) {
+    return ctx->rc;
+  }
+  return GRN_SUCCESS;
+}
+
 }  // extern "C"

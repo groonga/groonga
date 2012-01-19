@@ -142,6 +142,8 @@ const UInt32 INSERTING_FLAG = 1U << 1;
 const UInt32 UPDATING_FLAG  = 1U << 2;
 const UInt32 CHANGING_MASK  = REMOVING_FLAG | INSERTING_FLAG | UPDATING_FLAG;
 
+const UInt32 MKQ_SORT_THRESHOLD = 10;
+
 enum ErrorCode {
   PARAM_ERROR      = -1,
   IO_ERROR         = -2,
