@@ -276,7 +276,7 @@ complete(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost, grn_obj *col,
       if (((prefix_search_mode == GRN_SUGGEST_PREFIX_SEARCH_YES) ||
            (prefix_search_mode == GRN_SUGGEST_PREFIX_SEARCH_AUTO &&
             !grn_table_size(ctx, res))) &&
-          (cur = grn_table_cursor_open(ctx, items, TEXT_VALUE_LEN(query),
+          (cur = grn_table_cursor_open(ctx, items, norm->norm, norm->norm_blen,
                                        NULL, 0, 0, -1, GRN_CURSOR_PREFIX))) {
         grn_id id;
         while ((id = grn_table_cursor_next(ctx, cur))) {
