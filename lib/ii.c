@@ -6393,7 +6393,7 @@ typedef struct {
   datavec data_vectors[MAX_N_ELEMENTS + 1];
   uint8_t *packed;
   uint32_t packed_len;
-  uint32_t total_chunk_size;
+  uint64_t total_chunk_size;
 } grn_ii_builder;
 
 static void
@@ -6789,7 +6789,7 @@ grn_ii_builder_merge(grn_ctx *ctx, grn_ii_builder *builder)
     grn_table_cursor_close(ctx, tc);
   }
   datavec_fin(ctx, builder->data_vectors);
-  GRN_LOG(ctx, GRN_LOG_NOTICE, "tmpfile_size:%d, total_chunk_size:%d",
+  GRN_LOG(ctx, GRN_LOG_NOTICE, "tmpfile_size:%jd > total_chunk_size:%zu",
           builder->filepos, builder->total_chunk_size);
   close(builder->tmpfd);
   unlink(TMPFILE_PATH);
