@@ -520,8 +520,7 @@ test_url_path_normalize_invalid(gconstpointer data)
 
   grn_str_url_path_normalize(&context, input, strlen(input),
                              buffer, BUFFER_SIZE);
-  /* NOTE: not in GRN_API_ENTER, rc is not set. */
-  grn_test_assert_error(GRN_SUCCESS, error_message, &context);
+  grn_test_assert_error(GRN_INVALID_ARGUMENT, error_message, &context);
 #undef BUFFER_SIZE
 }
 

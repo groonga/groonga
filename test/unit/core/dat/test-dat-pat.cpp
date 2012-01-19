@@ -178,14 +178,17 @@ namespace test_dat_pat
     generate_pat_path(filename, pat_path);
     generate_dat_path(filename, dat_path);
 
-    cppcut_assert_equal(GRN_SUCCESS, grn_pat_remove(&ctx, pat_path));
-    cppcut_assert_equal(GRN_SUCCESS, grn_dat_remove(&ctx, dat_path));
+    grn_test_assert(grn_pat_remove(&ctx, pat_path));
+    grn_test_assert(grn_dat_remove(&ctx, dat_path));
 
     cut_assert_not_exist_path(pat_path);
     cut_assert_not_exist_path(dat_path);
 
-    cppcut_assert_equal(GRN_SUCCESS, grn_pat_remove(&ctx, pat_path));
-    cppcut_assert_equal(GRN_SUCCESS, grn_dat_remove(&ctx, dat_path));
+    grn_test_assert_equal_rc(GRN_NO_SUCH_FILE_OR_DIRECTORY,
+                             grn_pat_remove(&ctx, pat_path));
+    grn_test_assert_equal_rc(GRN_NO_SUCH_FILE_OR_DIRECTORY,
+                             grn_dat_remove(&ctx, dat_path));
+
   }
 
   void test_get(void)

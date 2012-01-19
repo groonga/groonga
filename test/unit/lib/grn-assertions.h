@@ -168,6 +168,8 @@
                                        expected_message,                \
                                        command))
 
+G_BEGIN_DECLS
+
 void     grn_test_assert_helper         (grn_rc       rc,
                                          const gchar *expression);
 void     grn_test_assert_equal_rc_helper(grn_rc       expected,
@@ -246,5 +248,7 @@ void     grn_test_assert_send_command_error_helper
                                          const gchar *expected_rc_expression,
                                          const gchar *expected_message_expression,
                                          const gchar *command_expression);
+
+G_END_DECLS
 
 #endif
