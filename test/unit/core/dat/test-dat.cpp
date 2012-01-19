@@ -35,6 +35,14 @@
 
 namespace
 {
+  void enter_api(grn_ctx *ctx) {
+    GRN_API_ENTER
+  }
+
+  int leave_api(grn_ctx *ctx) {
+    GRN_API_RETURN(0);
+  }
+
   void create_key(std::string *key, std::size_t min_length, std::size_t max_length)
   {
     key->resize(min_length + (std::rand() % (max_length - min_length + 1)));
@@ -57,6 +65,8 @@ namespace
   }
 }
 
+#define ENABLE_API APIScope api_scope(&ctx);
+
 namespace test_dat
 {
   const char *base_dir;
@@ -71,10 +81,12 @@ namespace test_dat
     g_mkdir_with_parents(base_dir, 0755);
 
     grn_ctx_init(&ctx, 0);
+    enter_api(&ctx);
   }
 
   void cut_teardown(void)
   {
+    leave_api(&ctx);
     grn_ctx_fin(&ctx);
 
     if (base_dir) {
@@ -607,10 +619,13 @@ namespace test_dat
 
   void test_truncate(void)
   {
+    char dat_path[PATH_MAX];
+    std::sprintf(dat_path, "%s/%s", base_dir, "test_truncate");
+
     std::vector<std::string> keys;
     create_keys(&keys, 1000, 6, 15);
 
-    grn_dat * const dat = create_trie(keys, NULL);
+    grn_dat * const dat = create_trie(keys, dat_path);
     cppcut_assert_equal(GRN_SUCCESS, grn_dat_truncate(&ctx, dat));
     cppcut_assert_equal(static_cast<unsigned int>(0), grn_dat_size(&ctx, dat));
     cppcut_assert_equal(static_cast<grn_id>(0), grn_dat_curr_id(&ctx, dat));
@@ -685,6 +700,27 @@ namespace test_dat
       } else {
         cppcut_assert_equal(key_id, grn_dat_at(&ctx, dat, key_id));
       }
+    }
+    cppcut_assert_equal(GRN_SUCCESS, grn_dat_close(&ctx, dat));
+  }
+
+  void test_repair(void)
+  {
+    char dat_path[PATH_MAX];
+    std::sprintf(dat_path, "%s/%s", base_dir, "test_repair");
+
+    std::vector<std::string> keys;
+    create_keys(&keys, 1000, 6, 15);
+
+    grn_dat * const dat = create_trie(keys, dat_path);
+    cppcut_assert_equal(GRN_SUCCESS, grn_dat_repair(&ctx, dat));
+    cppcut_assert_equal(static_cast<unsigned int>(keys.size()), grn_dat_size(&ctx, dat));
+    cppcut_assert_equal(static_cast<grn_id>(keys.size()), grn_dat_curr_id(&ctx, dat));
+    for (std::size_t i = 0; i < keys.size(); ++i) {
+      const char * const ptr = keys[i].c_str();
+      const uint32_t length = static_cast<uint32_t>(keys[i].length());
+      cppcut_assert_equal(static_cast<grn_id>(i + 1),
+                          grn_dat_get(&ctx, dat, ptr, length, NULL));
     }
     cppcut_assert_equal(GRN_SUCCESS, grn_dat_close(&ctx, dat));
   }
