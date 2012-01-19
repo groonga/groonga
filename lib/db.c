@@ -1312,6 +1312,12 @@ grn_table_at(grn_ctx *ctx, grn_obj *table, grn_id id)
   GRN_API_ENTER;
   if (table) {
     switch (table->header.type) {
+    case GRN_DB :
+      {
+        grn_db *db = (grn_db *)table;
+        id = grn_table_at(ctx, db->keys, id);
+      }
+      break;
     case GRN_TABLE_PAT_KEY :
       id = grn_pat_at(ctx, (grn_pat *)table, id);
       break;

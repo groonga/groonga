@@ -32,6 +32,7 @@ void test_size(void);
 void test_expire_cache_on_recreate(void);
 void test_expression_lifetime_over_database(void);
 void test_get(void);
+void test_at(void);
 
 static gchar *tmp_directory;
 
@@ -294,4 +295,13 @@ test_get(void)
                            grn_table_get(context, database,
                                          short_text_type_name,
                                          strlen(short_text_type_name)));
+}
+
+void
+test_at(void)
+{
+  database = grn_db_create(context, NULL, NULL);
+  grn_test_assert_equal_id(context,
+                           GRN_DB_SHORT_TEXT,
+                           grn_table_at(context, database, GRN_DB_SHORT_TEXT));
 }
