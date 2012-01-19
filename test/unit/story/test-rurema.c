@@ -30,6 +30,8 @@ void data_complete_prefix_search(void);
 void test_complete_prefix_search(gconstpointer data);
 void test_complete_prefix_search_threshold_found(void);
 void test_complete_prefix_search_threshold_not_found(void);
+void test_complete_prefix_search_upcase(void);
+void test_complete_prefix_search_downcase(void);
 void test_correct_cooccurrence(void);
 void test_correct_similar(void);
 void test_suggest_cooccurrence(void);
@@ -263,6 +265,42 @@ test_complete_prefix_search_threshold_not_fuond(void)
       "--types complete "
       "--frequency_threshold 102 "
       "--query '変'"));
+}
+
+void
+test_complete_prefix_search_upcase(void)
+{
+  cut_assert_equal_string(
+    "{\"complete\":"
+     "[[1],"
+      "[[\"_key\",\"ShortText\"],"
+       "[\"_score\",\"Int32\"]],"
+      "[\"ssh\",101]]}",
+    send_command(
+      "suggest "
+      "--table item_rurema "
+      "--column kana "
+      "--types complete "
+      "--frequency_threshold 1 "
+      "--query 'SSH'"));
+}
+
+void
+test_complete_prefix_search_downcase(void)
+{
+  cut_assert_equal_string(
+    "{\"complete\":"
+     "[[1],"
+      "[[\"_key\",\"ShortText\"],"
+       "[\"_score\",\"Int32\"]],"
+      "[\"ssh\",101]]}",
+    send_command(
+      "suggest "
+      "--table item_rurema "
+      "--column kana "
+      "--types complete "
+      "--frequency_threshold 1 "
+      "--query 'ssh'"));
 }
 
 void
