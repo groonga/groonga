@@ -238,39 +238,37 @@ complete(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost, grn_obj *col,
   if ((res = grn_table_create(ctx, NULL, 0, NULL,
                               GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, items, NULL))) {
     grn_id tid = grn_table_get(ctx, items, TEXT_VALUE_LEN(query));
-    if (GRN_TEXT_LEN(query)) {
-      grn_str *norm;
+    grn_str *norm;
+    if (GRN_TEXT_LEN(query) &&
+        (norm = grn_str_open(ctx, TEXT_VALUE_LEN(query), GRN_STR_NORMALIZE))) {
       grn_table_cursor *cur;
-      if ((norm = grn_str_open(ctx, TEXT_VALUE_LEN(query), GRN_STR_NORMALIZE))) {
-        /* RK search + prefix search */
-        grn_obj *index;
-        /* FIXME: support index selection */
-        if (grn_column_index(ctx, col, GRN_OP_PREFIX, &index, 1, NULL)) {
-          if ((cur = grn_table_cursor_open(ctx, grn_ctx_at(ctx, index->header.domain),
-                                           norm->norm, norm->norm_blen, NULL, 0, 0, -1,
-                                           GRN_CURSOR_PREFIX|GRN_CURSOR_RK))) {
-            grn_id id;
-            while ((id = grn_table_cursor_next(ctx, cur))) {
-              grn_ii_cursor *icur;
-              if ((icur = grn_ii_cursor_open(ctx, (grn_ii *)index, id,
-                                             GRN_ID_NIL, GRN_ID_MAX, 1, 0))) {
-                grn_ii_posting *p;
-                while ((p = grn_ii_cursor_next(ctx, icur))) {
-                  complete_add_item(ctx, p->rid, res, frequency_threshold,
-                                    items_freq, items_boost,
-                                    &item_freq, &item_boost);
-                }
-                grn_ii_cursor_close(ctx, icur);
+      /* RK search + prefix search */
+      grn_obj *index;
+      /* FIXME: support index selection */
+      if (grn_column_index(ctx, col, GRN_OP_PREFIX, &index, 1, NULL)) {
+        if ((cur = grn_table_cursor_open(ctx, grn_ctx_at(ctx, index->header.domain),
+                                         norm->norm, norm->norm_blen, NULL, 0, 0, -1,
+                                         GRN_CURSOR_PREFIX|GRN_CURSOR_RK))) {
+          grn_id id;
+          while ((id = grn_table_cursor_next(ctx, cur))) {
+            grn_ii_cursor *icur;
+            if ((icur = grn_ii_cursor_open(ctx, (grn_ii *)index, id,
+                                           GRN_ID_NIL, GRN_ID_MAX, 1, 0))) {
+              grn_ii_posting *p;
+              while ((p = grn_ii_cursor_next(ctx, icur))) {
+                complete_add_item(ctx, p->rid, res, frequency_threshold,
+                                  items_freq, items_boost,
+                                  &item_freq, &item_boost);
               }
+              grn_ii_cursor_close(ctx, icur);
             }
-            grn_table_cursor_close(ctx, cur);
-          } else {
-            ERR(GRN_UNKNOWN_ERROR, "cannot open cursor for prefix RK search.");
           }
+          grn_table_cursor_close(ctx, cur);
         } else {
-          ERR(GRN_UNKNOWN_ERROR, "cannot find index for prefix RK search.");
+          ERR(GRN_UNKNOWN_ERROR, "cannot open cursor for prefix RK search.");
         }
-        grn_str_close(ctx, norm);
+      } else {
+        ERR(GRN_UNKNOWN_ERROR, "cannot find index for prefix RK search.");
       }
       cooccurrence_search(ctx, items, items_boost, tid, res, COMPLETE,
                           frequency_threshold,
@@ -287,6 +285,7 @@ complete(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost, grn_obj *col,
         }
         grn_table_cursor_close(ctx, cur);
       }
+      grn_str_close(ctx, norm);
     }
     output(ctx, items, res, tid, sortby, output_columns, offset, limit);
     grn_obj_close(ctx, res);
