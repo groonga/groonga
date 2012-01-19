@@ -6828,6 +6828,7 @@ grn_ii_build(grn_ctx *ctx, grn_ii *ii)
     }
   }
   GRN_FREE(builder.blocks);
+  rc = GRN_SUCCESS; /* FIXME */
 exit :
   return rc;
 }
