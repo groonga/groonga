@@ -6345,9 +6345,10 @@ const int BUILD_ORDER = GRN_CURSOR_BY_KEY;
 #endif /* BUILD_ORDER_BY_ID */
 const uint16_t BUILD_NTERMS_PER_BUFFER = 16300;
 const uint32_t BUILD_PACKED_BUFFER_SIZE = 0x4000000;
-const char *TMPFILE_PATH = "/tmp/grn_ii_builder_tmp";
+const char *TMPFILE_PATH = "grn_ii_builder_tmp";
 const uint32_t BUILD_NCOUNTERS_MARGIN = 0x100000;
 const size_t BUILD_BLOCK_SIZE = 0x100000;
+const uint32_t BUILD_BLOCK_READ_UNIT_SIZE = 0x80000;
 
 typedef struct {
   uint32_t nrecs;
@@ -6400,7 +6401,7 @@ static void
 grn_ii_builder_flush(grn_ctx *ctx, grn_ii_builder *builder)
 {
   uint32_t pos = 0, pos_ = 0;
-  uint32_t *outbuf = (uint32_t *)GRN_MALLOC(builder->blockpos * 3 * sizeof(uint32_t));
+  uint32_t *outbuf = (uint32_t *)GRN_MALLOC(builder->blockpos * 7 * sizeof(uint32_t));
   builder_block *block;
   if (!(builder->nblocks & 0x3ff)) {
     builder_block *blocks = GRN_REALLOC(builder->blocks,
@@ -6431,7 +6432,7 @@ grn_ii_builder_flush(grn_ctx *ctx, grn_ii_builder *builder)
         counter->nposts = pos;
         pos += nposts;
       }
-      if (pos_ + 0x80000 < pos) {
+      if (pos_ + BUILD_BLOCK_READ_UNIT_SIZE < pos) {
         *pnext = pos - pos_+ 1;
         pnext = &outbuf[pos++];
         pos_ = pos;
