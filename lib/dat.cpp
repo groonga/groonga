@@ -15,6 +15,9 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 #include "groonga_in.h"
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 #include <cstring>
 #include <new>
 #include "str.h"
@@ -68,7 +71,15 @@ class CriticalSection {
   CriticalSection &operator=(const CriticalSection &);
 };
 
-grn_rc grn_dat_translate_error_code(grn::dat::ErrorCode error_code) {
+bool
+grn_dat_remove_file(grn_ctx *ctx, const char *path)
+{
+  struct stat stat;
+  return !::stat(path, &stat) && !unlink(path);
+}
+
+grn_rc
+grn_dat_translate_error_code(grn::dat::ErrorCode error_code) {
   switch (error_code) {
     case grn::dat::PARAM_ERROR: {
       return GRN_INVALID_ARGUMENT;
@@ -186,7 +197,7 @@ grn_dat_open_trie_if_needed(grn_ctx *ctx, grn_dat *dat)
   delete old_trie;
   if (file_id >= 3) {
     grn_dat_generate_trie_path(grn_io_path(dat->io), trie_path, file_id - 2);
-    grn_io_remove(ctx, trie_path);
+    grn_dat_remove_file(ctx, trie_path);
   }
   return true;
 }
@@ -220,7 +231,7 @@ bool grn_dat_rebuild_trie(grn_ctx *ctx, grn_dat *dat) {
   if (file_id >= 2) {
     char trie_path[PATH_MAX];
     grn_dat_generate_trie_path(grn_io_path(dat->io), trie_path, file_id - 1);
-    grn_io_remove(ctx, trie_path);
+    grn_dat_remove_file(ctx, trie_path);
   }
   return true;
 }
@@ -276,7 +287,7 @@ grn_dat_create(grn_ctx *ctx, const char *path, uint32_t,
   dat->header = static_cast<struct grn_dat_header *>(grn_io_header(dat->io));
   if (!dat->header) {
     grn_io_close(ctx, dat->io);
-    grn_io_remove(ctx, path);
+    grn_dat_remove_file(ctx, path);
     GRN_FREE(dat);
     return NULL;
   }
@@ -352,7 +363,7 @@ grn_dat_remove(grn_ctx *ctx, const char *path)
   for (uint32_t i = file_id; i > 0; --i) {
     char trie_path[PATH_MAX];
     grn_dat_generate_trie_path(path, trie_path, i);
-    if (grn_io_remove(ctx, trie_path) != GRN_SUCCESS) {
+    if (!grn_dat_remove_file(ctx, trie_path)) {
       break;
     }
   }
