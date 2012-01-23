@@ -6419,12 +6419,15 @@ grn_ii_builder_flush(grn_ctx *ctx, grn_ii_builder *builder)
     grn_id tid;
     grn_table_cursor  *tc;
     uint32_t *pnext = &block->nextsize;
-    tc = grn_table_cursor_open(ctx, builder->lexicon, NULL, 0, NULL, 0, 0, -1, BUILD_ORDER);
+    tc = grn_table_cursor_open(ctx, builder->tmp_lexicon, NULL, 0, NULL, 0, 0, -1, BUILD_ORDER);
     while ((tid = grn_table_cursor_next(ctx, tc)) != GRN_ID_NIL) {
+      unsigned int key_size;
+      const char *key = _grn_table_key(ctx, builder->tmp_lexicon, tid, &key_size);
+      grn_id gtid = grn_table_add(ctx, builder->lexicon, key, key_size, NULL);
       builder_counter *counter = &builder->counters[tid - 1];
       if (counter->nrecs) {
         uint32_t nposts = counter->nposts;
-        outbuf[pos++] = tid;
+        outbuf[pos++] = gtid;
         outbuf[pos++] = counter->nrecs;
         outbuf[pos++] = counter->nposts;
         counter->offset = pos;
@@ -6479,7 +6482,7 @@ grn_ii_builder_flush(grn_ctx *ctx, grn_ii_builder *builder)
   GRN_FREE(outbuf);
   {
     builder_counter *counter;
-    grn_id tid, tid_max = grn_table_size(ctx, builder->lexicon);
+    grn_id tid, tid_max = grn_table_size(ctx, builder->tmp_lexicon);
     for (counter = builder->counters, tid = 1; tid <= tid_max; counter++, tid++) {
       counter->nrecs = 0;
       counter->nposts = 0;
@@ -6488,60 +6491,73 @@ grn_ii_builder_flush(grn_ctx *ctx, grn_ii_builder *builder)
     }
   }
   builder->blockpos = 0;
+  grn_obj_close(ctx, builder->tmp_lexicon);
+  builder->tmp_lexicon = NULL;
 }
 
 static void
 grn_ii_builder_tokenize(grn_ctx *ctx, grn_ii_builder *builder, grn_id rid, grn_obj *value)
 {
-  uint32_t pos;
-  grn_token *token;
-  grn_id *buffer = builder->blockbuf;
-  if (BUILD_BLOCK_SIZE <= builder->blockpos + GRN_TEXT_LEN(value) * 2) {
-    grn_ii_builder_flush(ctx, builder);
-  }
-  pos = builder->blockpos;
-  buffer[pos++] = rid + BUILD_RID_FLAG;
-  if (GRN_TEXT_LEN(value) &&
-      (token = grn_token_open(ctx, builder->lexicon,
-                              GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value), grn_token_add))) {
-    uint32_t pos_ = pos;
-    while (!token->status) {
-      grn_id tid;
-      if ((tid = grn_token_next(ctx, token))) {
-        if (tid > builder->ncounters) {
-          uint32_t ncounters = grn_table_size(ctx, builder->lexicon) + BUILD_NCOUNTERS_MARGIN;
-          builder_counter *counters = GRN_REALLOC(builder->counters,
-                                                  ncounters * sizeof(builder_counter));
-          if (!counters) { return; }
-          memset(&counters[builder->ncounters], 0,
-                 (ncounters - builder->ncounters) * sizeof(builder_counter));
-          builder->ncounters = ncounters;
-          builder->counters = counters;
-        }
-        {
-          builder_counter *counter = &builder->counters[tid - 1];
-          buffer[pos++] = tid;
-          if (counter->lastrec != rid) {
-            counter->lastrec = rid;
-            counter->nrecs++;
+  if (GRN_TEXT_LEN(value)) {
+    uint32_t pos;
+    grn_token *token;
+    grn_id *buffer = builder->blockbuf;
+    if (BUILD_BLOCK_SIZE <= builder->blockpos + GRN_TEXT_LEN(value) * 2) {
+      grn_ii_builder_flush(ctx, builder);
+    }
+    if (!builder->tmp_lexicon) {
+      grn_obj *domain = grn_ctx_at(ctx, builder->lexicon->header.domain);
+      grn_obj *range = grn_ctx_at(ctx, DB_OBJ(builder->lexicon)->range);
+      grn_obj *tokenizer;
+      grn_obj_flags flags;
+      grn_table_get_info(ctx, builder->lexicon, &flags, NULL, &tokenizer);
+      flags &= ~GRN_OBJ_PERSISTENT;
+      builder->tmp_lexicon = grn_table_create(ctx, NULL, 0, NULL, flags, domain, range);
+      grn_obj_set_info(ctx, builder->tmp_lexicon, GRN_INFO_DEFAULT_TOKENIZER, tokenizer);
+    }
+    pos = builder->blockpos;
+    buffer[pos++] = rid + BUILD_RID_FLAG;
+    if ((token = grn_token_open(ctx, builder->tmp_lexicon,
+                                GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value), grn_token_add))) {
+      uint32_t pos_ = pos;
+      while (!token->status) {
+        grn_id tid;
+        if ((tid = grn_token_next(ctx, token))) {
+          if (tid > builder->ncounters) {
+            uint32_t ncounters = grn_table_size(ctx, builder->tmp_lexicon) + BUILD_NCOUNTERS_MARGIN;
+            builder_counter *counters = GRN_REALLOC(builder->counters,
+                                                    ncounters * sizeof(builder_counter));
+            if (!counters) { return; }
+            memset(&counters[builder->ncounters], 0,
+                   (ncounters - builder->ncounters) * sizeof(builder_counter));
+            builder->ncounters = ncounters;
+            builder->counters = counters;
           }
-          counter->nposts++;
+          {
+            builder_counter *counter = &builder->counters[tid - 1];
+            buffer[pos++] = tid;
+            if (counter->lastrec != rid) {
+              counter->lastrec = rid;
+              counter->nrecs++;
+            }
+            counter->nposts++;
+          }
         }
       }
+      grn_token_close(ctx, token);
+      if (pos - pos_ > GRN_TEXT_LEN(value)) {
+        GRN_LOG(ctx, GRN_LOG_WARNING, "%d > %d", pos - pos_, GRN_TEXT_LEN(value));
+      }
     }
-    grn_token_close(ctx, token);
-    if (pos - pos_ > GRN_TEXT_LEN(value)) {
-      GRN_LOG(ctx, GRN_LOG_WARNING, "%d > %d", pos - pos_, GRN_TEXT_LEN(value));
-    }
+    builder->blockpos = pos;
   }
-  builder->blockpos = pos;
 }
 
 static void
 grn_ii_builder_parse(grn_ctx *ctx, grn_ii_builder *builder)
 {
   grn_table_cursor  *tc;
-  builder->ncounters = grn_table_size(ctx, builder->lexicon) + BUILD_NCOUNTERS_MARGIN;
+  builder->ncounters = BUILD_NCOUNTERS_MARGIN;
   builder->counters = GRN_CALLOC(builder->ncounters * sizeof(builder_counter));
   builder->blockbuf = (grn_id *)GRN_MALLOC(BUILD_BLOCK_SIZE * sizeof(grn_id));
   builder->blockpos = 0;
@@ -6816,6 +6832,7 @@ grn_ii_build(grn_ctx *ctx, grn_ii *ii)
   builder.source = src;
   builder.target = target;
   builder.lexicon = ii->lexicon;
+  builder.tmp_lexicon = NULL;
 
   builder.nblocks = 0;
   builder.blocks = NULL;
