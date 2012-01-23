@@ -6377,6 +6377,7 @@ typedef struct {
   grn_obj *target;
   grn_obj *lexicon;
   grn_obj *source;
+  grn_obj *tmp_lexicon;
   builder_block *blocks;
   uint32_t nblocks;
   int tmpfd;

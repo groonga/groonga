@@ -1826,6 +1826,16 @@ GRN_API int grn_column_index(grn_ctx *ctx, grn_obj *column, grn_operator op,
  **/
 GRN_API grn_rc grn_obj_delete_by_id(grn_ctx *ctx, grn_obj *db, grn_id id, grn_bool removep);
 
+/**
+ * grn_obj_path_by_id:
+ * @db: The target database.
+ * @id: The object (table, column and so on) ID to be deleted.
+ * @buffer: path string corresponding to the id willl be set in this buffer.
+ *
+ * dbのidに対応するpathを返します。mroonga向けに用意した内部APIです。
+ **/
+GRN_API grn_rc grn_obj_path_by_id(grn_ctx *ctx, grn_obj *db, grn_id id, char *buffer);
+
 /* geo */
 
 typedef struct {

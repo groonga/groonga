@@ -6551,6 +6551,20 @@ grn_obj_delete_by_id(grn_ctx *ctx, grn_obj *db, grn_id id, grn_bool removep)
   GRN_API_RETURN(rc);
 }
 
+
+grn_rc
+grn_obj_path_by_id(grn_ctx *ctx, grn_obj *db, grn_id id, char *buffer)
+{
+  grn_rc rc = GRN_SUCCESS;
+  GRN_API_ENTER;
+  if (!GRN_DB_P(db) || !buffer) {
+    rc = GRN_INVALID_ARGUMENT;
+  } else {
+    gen_pathname(grn_obj_io(db)->path, buffer, id);
+  }
+  GRN_API_RETURN(rc);
+}
+
 /* db must be validated by caller */
 grn_rc
 grn_db_obj_init(grn_ctx *ctx, grn_obj *db, grn_id id, grn_db_obj *obj)
