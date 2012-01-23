@@ -167,7 +167,7 @@ namespace test_dat
     cppcut_assert_equal(GRN_NO_SUCH_FILE_OR_DIRECTORY,
                         grn_dat_remove(&ctx, dat_path));
     cppcut_assert_equal(GRN_NO_SUCH_FILE_OR_DIRECTORY, ctx.rc);
-    ERRCLR(&ctx);
+    ctx.rc = GRN_SUCCESS;
 
     std::vector<std::string> keys;
     create_keys(&keys, 1000, 6, 15);
@@ -723,15 +723,47 @@ namespace test_dat
     create_keys(&keys, 1000, 6, 15);
 
     grn_dat * const dat = create_trie(keys, dat_path);
+
     cppcut_assert_equal(GRN_SUCCESS, grn_dat_repair(&ctx, dat));
-    cppcut_assert_equal(static_cast<unsigned int>(keys.size()), grn_dat_size(&ctx, dat));
-    cppcut_assert_equal(static_cast<grn_id>(keys.size()), grn_dat_curr_id(&ctx, dat));
+    cppcut_assert_equal(static_cast<unsigned int>(keys.size()),
+                        grn_dat_size(&ctx, dat));
+    cppcut_assert_equal(static_cast<grn_id>(keys.size()),
+                        grn_dat_curr_id(&ctx, dat));
+
     for (std::size_t i = 0; i < keys.size(); ++i) {
       const char * const ptr = keys[i].c_str();
       const uint32_t length = static_cast<uint32_t>(keys[i].length());
       cppcut_assert_equal(static_cast<grn_id>(i + 1),
                           grn_dat_get(&ctx, dat, ptr, length, NULL));
     }
+
+    for (std::size_t i = 0; i < keys.size(); i += 2) {
+      cppcut_assert_equal(GRN_SUCCESS,
+                          grn_dat_delete_by_id(&ctx, dat, i + 1, NULL));
+    }
+    cppcut_assert_equal(GRN_SUCCESS, grn_dat_repair(&ctx, dat));
+    cppcut_assert_equal(static_cast<unsigned int>(keys.size() / 2),
+                        grn_dat_size(&ctx, dat));
+
+    for (std::size_t i = 0; i < keys.size(); i += 2) {
+      const char * const ptr = keys[i].c_str();
+      const uint32_t length = static_cast<uint32_t>(keys[i].length());
+      int added;
+      cppcut_assert_equal(static_cast<grn_id>(i + 1),
+                          grn_dat_add(&ctx, dat, ptr, length, NULL, &added));
+      cppcut_assert_equal(1, added);
+    }
+    cppcut_assert_equal(GRN_SUCCESS, grn_dat_repair(&ctx, dat));
+    cppcut_assert_equal(static_cast<unsigned int>(keys.size()),
+                        grn_dat_size(&ctx, dat));
+
+    for (std::size_t i = 0; i < keys.size(); ++i) {
+      const char * const ptr = keys[i].c_str();
+      const uint32_t length = static_cast<uint32_t>(keys[i].length());
+      cppcut_assert_equal(static_cast<grn_id>(i + 1),
+                          grn_dat_get(&ctx, dat, ptr, length, NULL));
+    }
+
     cppcut_assert_equal(GRN_SUCCESS, grn_dat_close(&ctx, dat));
   }
 }
