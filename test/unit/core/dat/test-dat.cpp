@@ -164,11 +164,20 @@ namespace test_dat
     char dat_path[PATH_MAX];
     std::sprintf(dat_path, "%s/%s", base_dir, "test_remove.tmp");
 
+    cppcut_assert_equal(GRN_NO_SUCH_FILE_OR_DIRECTORY,
+                        grn_dat_remove(&ctx, dat_path));
+    cppcut_assert_equal(GRN_NO_SUCH_FILE_OR_DIRECTORY, ctx.rc);
+    ERRCLR(&ctx);
+
     std::vector<std::string> keys;
     create_keys(&keys, 1000, 6, 15);
 
     grn_dat * const dat = create_trie(keys, dat_path);
+    cppcut_assert_equal(GRN_SUCCESS, grn_dat_repair(&ctx, dat));
+    cppcut_assert_equal(GRN_SUCCESS, grn_dat_repair(&ctx, dat));
+    cppcut_assert_equal(GRN_SUCCESS, grn_dat_repair(&ctx, dat));
     const uint32_t last_file_id = dat->file_id;
+    cppcut_assert_equal(static_cast<uint32_t>(4), last_file_id);
     cppcut_assert_equal(GRN_SUCCESS, grn_dat_close(&ctx, dat));
 
     cppcut_assert_equal(GRN_SUCCESS, grn_dat_remove(&ctx, dat_path));
@@ -178,6 +187,7 @@ namespace test_dat
       std::sprintf(trie_path, "%s.%03d", dat_path, i);
       cut_assert_not_exist_path(trie_path);
     }
+    cppcut_assert_equal(GRN_SUCCESS, ctx.rc);
 
     cppcut_assert_equal(GRN_INVALID_ARGUMENT, grn_dat_remove(&ctx, NULL));
   }
