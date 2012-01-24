@@ -68,6 +68,7 @@ function dictionarySource(url) {
 			     column: 'kana',
 			     limit: 25,
 			     output_columns: columns,
+			     frequency_threshold: 1,
 			     prefix_search: "yes"
 			 },
 			 dataType: "jsonp",
