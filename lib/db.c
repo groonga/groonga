@@ -6208,7 +6208,6 @@ _grn_obj_remove(grn_ctx *ctx, grn_obj *obj)
   grn_id id = GRN_ID_NIL;
   grn_obj *db = NULL;
   char *path;
-  GRN_API_ENTER;
   if (ctx->impl && ctx->impl->db) {
     uint32_t s = 0;
     const char *n = _grn_table_key(ctx, ctx->impl->db, DB_OBJ(obj)->id, &s);
