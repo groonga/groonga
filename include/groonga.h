@@ -1830,7 +1830,7 @@ GRN_API grn_rc grn_obj_delete_by_id(grn_ctx *ctx, grn_obj *db, grn_id id, grn_bo
  * grn_obj_path_by_id:
  * @db: The target database.
  * @id: The object (table, column and so on) ID to be deleted.
- * @buffer: path string corresponding to the id willl be set in this buffer.
+ * @buffer: path string corresponding to the id will be set in this buffer.
  *
  * dbのidに対応するpathを返します。mroonga向けに用意した内部APIです。
  **/
