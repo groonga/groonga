@@ -6511,7 +6511,9 @@ grn_ii_builder_tokenize(grn_ctx *ctx, grn_ii_builder *builder, grn_id rid, grn_o
       grn_obj *tokenizer;
       grn_obj_flags flags;
       grn_table_get_info(ctx, builder->lexicon, &flags, NULL, &tokenizer);
-      flags &= ~GRN_OBJ_PERSISTENT;
+      //      flags &= ~GRN_OBJ_PERSISTENT;
+      flags &= GRN_OBJ_KEY_NORMALIZE;
+      flags |= GRN_OBJ_TABLE_DAT_KEY;
       builder->tmp_lexicon = grn_table_create(ctx, NULL, 0, NULL, flags, domain, range);
       grn_obj_set_info(ctx, builder->tmp_lexicon, GRN_INFO_DEFAULT_TOKENIZER, tokenizer);
     }
