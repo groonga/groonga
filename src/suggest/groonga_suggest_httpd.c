@@ -68,6 +68,7 @@ typedef struct {
   grn_obj *db;
   void *zmq_sock;
   grn_obj cmd_buf;
+  grn_obj pass_through_parameters;
   pthread_t thd;
   uint32_t thread_id;
   struct event_base *base;
@@ -96,10 +97,11 @@ static grn_obj *db;
 static uint32_t n_lines_per_log_file = 1000000;
 
 static int
-suggest_result(struct evbuffer *res_buf, const char *types, const char *query,
+suggest_result(grn_ctx *ctx,
+               struct evbuffer *res_buf, const char *types, const char *query,
                const char *target_name, int frequency_threshold,
                double conditional_probability_threshold, int limit,
-               grn_obj *cmd_buf, grn_ctx *ctx)
+               grn_obj *cmd_buf, grn_obj *pass_through_parameters)
 {
   if (target_name && types && query) {
     GRN_BULK_REWIND(cmd_buf);
@@ -115,6 +117,12 @@ suggest_result(struct evbuffer *res_buf, const char *types, const char *query,
     grn_text_ftoa(ctx, cmd_buf, conditional_probability_threshold);
     GRN_TEXT_PUTS(ctx, cmd_buf, "&limit=");
     grn_text_itoa(ctx, cmd_buf, limit);
+    if (GRN_TEXT_LEN(pass_through_parameters) > 0) {
+      GRN_TEXT_PUTS(ctx, cmd_buf, "&");
+      GRN_TEXT_PUT(ctx, cmd_buf,
+                   GRN_TEXT_VALUE(pass_through_parameters),
+                   GRN_TEXT_LEN(pass_through_parameters));
+    }
     {
       char *res;
       int flags;
@@ -142,9 +150,11 @@ log_send(struct evkeyvalq *output_headers, struct evbuffer *res_buf,
   const char *callback, *types, *query, *client_id, *target_name,
              *learn_target_name;
 
-  parse_keyval(get_args, &query, &types, &client_id, &target_name,
+  GRN_BULK_REWIND(&(thd->pass_through_parameters));
+  parse_keyval(thd->ctx, get_args, &query, &types, &client_id, &target_name,
                &learn_target_name, &callback, &millisec, &frequency_threshold,
-               &conditional_probability_threshold, &limit);
+               &conditional_probability_threshold, &limit,
+               &(thd->pass_through_parameters));
 
   /* send data to learn client */
   if (thd->zmq_sock && millisec && client_id && query && learn_target_name) {
@@ -218,18 +228,24 @@ log_send(struct evkeyvalq *output_headers, struct evbuffer *res_buf,
       content_length = strlen(callback);
       evbuffer_add(res_buf, callback, content_length);
       evbuffer_add(res_buf, "(", 1);
-      content_length += suggest_result(res_buf, types, query, target_name,
+      content_length += suggest_result(thd->ctx,
+                                       res_buf, types, query, target_name,
                                        frequency_threshold,
                                        conditional_probability_threshold,
-                                       limit, &(thd->cmd_buf), thd->ctx) + 3;
+                                       limit,
+                                       &(thd->cmd_buf),
+                                       &(thd->pass_through_parameters)) + 3;
       evbuffer_add(res_buf, ");", 2);
     } else {
       evhttp_add_header(output_headers,
                         "Content-Type", "application/json; charset=UTF-8");
-      content_length = suggest_result(res_buf, types, query, target_name,
+      content_length = suggest_result(thd->ctx,
+                                      res_buf, types, query, target_name,
                                       frequency_threshold,
                                       conditional_probability_threshold,
-                                      limit, &(thd->cmd_buf), thd->ctx);
+                                      limit,
+                                      &(thd->cmd_buf),
+                                      &(thd->pass_through_parameters));
     }
     if (content_length >= 0) {
       char num_buf[16];
@@ -251,6 +267,7 @@ cleanup_httpd_thread(thd_data *thd) {
     zmq_close(thd->zmq_sock);
   }
   grn_obj_unlink(thd->ctx, &(thd->cmd_buf));
+  grn_obj_unlink(thd->ctx, &(thd->pass_through_parameters));
   if (thd->ctx) {
     grn_ctx_close(thd->ctx);
   }
@@ -591,6 +608,7 @@ serve_threads(int nthreads, int port, const char *db_path, void *zmq_ctx,
             print_error("error in grn_db_open() on thread %d.", i);
           } else {
             GRN_TEXT_INIT(&(threads[i].cmd_buf), 0);
+            GRN_TEXT_INIT(&(threads[i].pass_through_parameters), 0);
             threads[i].log_base_path = log_base_path;
             threads[i].thread_id = i;
             evhttp_set_gencb(threads[i].httpd, generic_handler, &threads[i]);

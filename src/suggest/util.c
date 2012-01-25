@@ -27,6 +27,7 @@
 #include <fcntl.h>
 
 #include "util.h"
+#include <evhttp.h>
 
 #define DEFAULT_FREQUENCY_THRESHOLD 100
 #define DEFAULT_CONDITIONAL_PROBABILITY_THRESHOLD 0.2
@@ -95,7 +96,8 @@ atouint64_t(const char *s)
 }
 
 void
-parse_keyval(struct evkeyvalq *get_args,
+parse_keyval(grn_ctx *ctx,
+             struct evkeyvalq *get_args,
              const char **query, const char **types,
              const char **client_id, const char **target_name,
              const char **learn_target_name,
@@ -103,7 +105,8 @@ parse_keyval(struct evkeyvalq *get_args,
              uint64_t *millisec,
              int *frequency_threshold,
              double *conditional_probability_threshold,
-             int *limit)
+             int *limit,
+             grn_obj *pass_through_parameters)
 {
   struct evkeyval *get;
 
@@ -123,61 +126,95 @@ parse_keyval(struct evkeyvalq *get_args,
   if (limit) { *limit = -1; }
 
   TAILQ_FOREACH(get, get_args, next) {
-    switch(get->key[0]) {
-    case 'q':
-      if (query) {
-        *query = get->value;
-      }
+    grn_bool is_pass_through_parameter = GRN_FALSE;
+    size_t key_length;
+
+    key_length = strlen(get->key);
+    switch (key_length) {
+    case 0:
       break;
-    case 't':
-      /* TODO: check types */
-      if (types) {
-        *types = get->value;
-      }
-      break;
-    case 'i':
-      if (client_id) {
-        *client_id = get->value;
-      }
-      break;
-    case 'c':
-      if (!strcmp(get->key, "callback") && callback) {
-        *callback = get->value;
-      }
-      break;
-    case 's':
-      if (millisec) {
-        *millisec = atouint64_t(get->value);
-      }
-      break;
-    case 'n':
-      /* TODO: check target_name */
-      if (target_name) {
-        *target_name = get->value;
-      }
-      break;
-    case 'l':
-      if (learn_target_name) {
-        *learn_target_name = get->value;
-      }
-      break;
-    case 'h':
-      if (frequency_threshold) {
-        *frequency_threshold = atoi(get->value);
-      }
-      break;
-    case 'p':
-      if (conditional_probability_threshold) {
-        *conditional_probability_threshold = strtod(get->value, NULL);
-      }
-      break;
-    case 'm':
-      if (limit) {
-        *limit = atoi(get->value);
+    case 1:
+      switch(get->key[0]) {
+      case 'q':
+        if (query) {
+          *query = get->value;
+        }
+        break;
+      case 't':
+        /* TODO: check types */
+        if (types) {
+          *types = get->value;
+        }
+        break;
+      case 'i':
+        if (client_id) {
+          *client_id = get->value;
+        }
+        break;
+      case 's':
+        if (millisec) {
+          *millisec = atouint64_t(get->value);
+        }
+        break;
+      case 'n':
+        /* TODO: check target_name */
+        if (target_name) {
+          *target_name = get->value;
+        }
+        break;
+      case 'l':
+        if (learn_target_name) {
+          *learn_target_name = get->value;
+        }
+        break;
+      case 'h':
+        if (frequency_threshold) {
+          *frequency_threshold = atoi(get->value);
+        }
+        break;
+      case 'p':
+        if (conditional_probability_threshold) {
+          *conditional_probability_threshold = strtod(get->value, NULL);
+        }
+        break;
+      case 'm':
+        if (limit) {
+          *limit = atoi(get->value);
+        }
+        break;
+      default:
+        is_pass_through_parameter = GRN_TRUE;
+        break;
       }
       break;
     default:
-      break;
+      switch (get->key[0]) {
+      case 'c':
+        if (!strcmp(get->key, "callback")) {
+          if (callback) {
+            *callback = get->value;
+          }
+        } else {
+          is_pass_through_parameter = GRN_TRUE;
+        }
+        break;
+      default:
+        is_pass_through_parameter = GRN_TRUE;
+      }
+    }
+
+    if (is_pass_through_parameter && pass_through_parameters) {
+      char *encoded_key = NULL, *encoded_value = NULL;
+      encoded_key = evhttp_uriencode(get->key, -1, 1);
+      encoded_value = evhttp_uriencode(get->value, -1, 1);
+      if (GRN_TEXT_LEN(pass_through_parameters) > 0) {
+        GRN_TEXT_PUTS(ctx, pass_through_parameters, "&");
+      }
+      GRN_TEXT_PUTS(ctx, pass_through_parameters, encoded_key);
+      GRN_TEXT_PUTS(ctx, pass_through_parameters, "=");
+      GRN_TEXT_PUTS(ctx, pass_through_parameters, encoded_value);
+      free(encoded_key);
+      free(encoded_value);
     }
   }
 }
