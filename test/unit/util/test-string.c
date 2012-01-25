@@ -338,6 +338,7 @@ data_urlenc(void)
             " 日本語です。 ",
             -1);
   ADD_DATUM("percent", "%251%252%253", "%1%2%3", -1);
+  ADD_DATUM("plus", "%2B%20%2B", "+ +", -1);
 
 #undef ADD_DATUM
 }
