@@ -63,6 +63,6 @@ groonga_suggest_create_dataset_LDADD =		\
 	$(top_builddir)/lib/libgroonga.la
 
 libutil_la_SOURCES = util.c util.h
-libutil_la_CFLAGS =			\
+libutil_la_CFLAGS =				\
 	$(AM_CFLAGS)				\
 	$(LIBEVENT_CFLAGS)
