@@ -352,7 +352,7 @@ void Trie::build_from_trie(const Trie &trie, UInt32 src, UInt32 dest) {
 void Trie::repair_trie(const Trie &trie) {
   Vector<UInt32> valid_ids;
   header_->set_max_key_id(trie.max_key_id());
-  header_->set_next_key_id(trie.max_key_id());
+  header_->set_next_key_id(trie.max_key_id() + 1);
   UInt32 prev_invalid_key_id = INVALID_KEY_ID;
   for (UInt32 i = min_key_id(); i <= max_key_id(); ++i) {
     const Entry &entry = trie.ith_entry(i);
