@@ -294,12 +294,7 @@ generic_handler(struct evhttp_request *req, void *arg)
   }
   if (!req->uri) { return; }
 
-  {
-    char *uri = evhttp_decode_uri(req->uri);
-    evhttp_parse_query(uri, &args);
-    free(uri);
-  }
-
+  evhttp_parse_query(req->uri, &args);
   {
     struct evbuffer *res_buf;
     if (!(res_buf = evbuffer_new())) {
