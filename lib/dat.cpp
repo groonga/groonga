@@ -71,6 +71,11 @@ class CriticalSection {
   CriticalSection &operator=(const CriticalSection &);
 };
 
+/*
+  grn_dat_remove_file() removes a file specified by `path' and then returns
+  true on success, false on failure. Note that grn_dat_remove_file() does not
+  change `ctx->rc'.
+ */
 bool
 grn_dat_remove_file(grn_ctx *ctx, const char *path)
 {
@@ -134,6 +139,10 @@ grn_dat_fin(grn_ctx *ctx, grn_dat *dat)
   }
 }
 
+/*
+  grn_dat_generate_trie_path() generates the path from `base_path' and
+  `file_id'. The generated path is stored in `trie_path'.
+ */
 void
 grn_dat_generate_trie_path(const char *base_path, char *trie_path, uint32_t file_id)
 {
@@ -144,7 +153,8 @@ grn_dat_generate_trie_path(const char *base_path, char *trie_path, uint32_t file
   const size_t len = std::strlen(base_path);
   std::memcpy(trie_path, base_path, len);
   trie_path[len] = '.';
-  grn_itoh(file_id % (1U << (4 * FILE_ID_LENGTH)), trie_path + len + 1, FILE_ID_LENGTH);
+  grn_itoh(file_id % (1U << (4 * FILE_ID_LENGTH)),
+           trie_path + len + 1, FILE_ID_LENGTH);
   trie_path[len + 1 + FILE_ID_LENGTH] = '\0';
 }
 
@@ -158,14 +168,20 @@ grn_dat_open_trie_if_needed(grn_ctx *ctx, grn_dat *dat)
 
   const uint32_t file_id = dat->header->file_id;
   if (!file_id || (dat->trie && (file_id <= dat->file_id))) {
-    // There is no need to open file.
+    /*
+      There is no need to open file when no trie file is available or the
+      current trie file is the latest one.
+     */
     return true;
   }
 
   CriticalSection critical_section(&dat->lock);
 
   if (dat->trie && (file_id <= dat->file_id)) {
-    // There is no need to open file if the new file has been opened by another thread.
+    /*
+      There is no need to open file if the latest file has been opened by
+      another thread.
+     */
     return true;
   }
 
@@ -360,13 +376,23 @@ grn_dat_remove(grn_ctx *ctx, const char *path)
   const uint32_t file_id = dat->header->file_id;
   grn_dat_close(ctx, dat);
 
+  /*
+    grn_dat_remove() tries to remove (file_id + 1)th trie file because
+    grn::dat::Trie::create() might leave an incomplete file on failure.
+   */
+  char trie_path[PATH_MAX];
+  grn_dat_generate_trie_path(path, trie_path, file_id + 1);
+  grn_dat_remove_file(ctx, trie_path);
   for (uint32_t i = file_id; i > 0; --i) {
-    char trie_path[PATH_MAX];
     grn_dat_generate_trie_path(path, trie_path, i);
     if (!grn_dat_remove_file(ctx, trie_path)) {
       break;
     }
   }
+
+  /*
+    grn_io_remove() reports an error when it fails to remove `path'.
+   */
   return grn_io_remove(ctx, path);
 }
 
