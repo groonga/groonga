@@ -27,7 +27,6 @@
 #include <fcntl.h>
 
 #include "util.h"
-#include <evhttp.h>
 
 #define DEFAULT_FREQUENCY_THRESHOLD 100
 #define DEFAULT_CONDITIONAL_PROBABILITY_THRESHOLD 0.2
@@ -204,17 +203,13 @@ parse_keyval(grn_ctx *ctx,
     }
 
     if (is_pass_through_parameter && pass_through_parameters) {
-      char *encoded_key = NULL, *encoded_value = NULL;
-      encoded_key = evhttp_uriencode(get->key, -1, 1);
-      encoded_value = evhttp_uriencode(get->value, -1, 1);
       if (GRN_TEXT_LEN(pass_through_parameters) > 0) {
         GRN_TEXT_PUTS(ctx, pass_through_parameters, "&");
       }
-      GRN_TEXT_PUTS(ctx, pass_through_parameters, encoded_key);
+      grn_text_urlenc(ctx, pass_through_parameters, get->key, strlen(get->key));
       GRN_TEXT_PUTS(ctx, pass_through_parameters, "=");
-      GRN_TEXT_PUTS(ctx, pass_through_parameters, encoded_value);
-      free(encoded_key);
-      free(encoded_value);
+      grn_text_urlenc(ctx, pass_through_parameters,
+                      get->value, strlen(get->value));
     }
   }
 }
