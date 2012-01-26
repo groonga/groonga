@@ -393,7 +393,7 @@ void Trie::build_from_keys(const UInt32 *begin, const UInt32 *end,
 
   UInt32 offset;
   {
-    UInt16 labels[MAX_LABEL + 1];
+    UInt16 labels[MAX_LABEL + 2];
     UInt32 num_labels = 0;
 
     const UInt32 *it = begin;
@@ -409,12 +409,15 @@ void Trie::build_from_keys(const UInt32 *begin, const UInt32 *end,
         labels[num_labels++] = (UInt8)key[depth];
       }
     }
+    labels[num_labels] = INVALID_LABEL;
 
     offset = find_offset(labels, num_labels);
+    ith_node(node_id).set_child(labels[0]);
     for (UInt32 i = 0; i < num_labels; ++i) {
       const UInt32 next = offset ^ labels[i];
       reserve_node(next);
       ith_node(next).set_label(labels[i]);
+      ith_node(next).set_sibling(labels[i + 1]);
     }
 
     if (offset >= num_nodes()) {
