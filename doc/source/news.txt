@@ -77,13 +77,13 @@ Improvements
 ^^^^^^^^^^^^
 
 * [grntest] Removed the upper limit to the number of bytes in one line.
-* [grntest] Added `--pid-path` option.
+* [grntest] Added ``--pid-path`` option.
 * [deb] Enabled experimental zlib and lzo support.
 * [rpm] Enabled experimental zlib and lzo support.
 * Supports truncation. [#892]
 * Enabled grn_dat that is a read lock free double array implementation.
 * [pkg-config] Added groonga_version variable to groonga.pc.
-* Re-supported `--disable-static`. [groonga-dev,00612]
+* Re-supported ``--disable-static``. [groonga-dev,00612]
   [Suggested by Kenichi Aramaki]
 * [munin] Stopped to install Munin plugins by default.
 * Stopped to install RedHat platform related files by default.
