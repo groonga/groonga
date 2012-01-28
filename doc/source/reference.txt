@@ -9,6 +9,7 @@
    :maxdepth: 2
 
    executables
+   output
    commands
    type
    pseudo_column
