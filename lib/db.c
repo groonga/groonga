@@ -6423,35 +6423,56 @@ grn_rc
 grn_table_rename(grn_ctx *ctx, grn_obj *table, const char *name, unsigned int name_size)
 {
   grn_rc rc = GRN_INVALID_ARGUMENT;
+  grn_hash *cols;
+
   GRN_API_ENTER;
-  if (GRN_OBJ_TABLEP(table) && DB_OBJ(table)->id &&
-      !(DB_OBJ(table)->id & GRN_OBJ_TMP_OBJECT)) {
-    grn_hash *cols;
-    if ((cols = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
-                                GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY))) {
-      grn_table_columns(ctx, table, "", 0, (grn_obj *)cols);
-      if (!(rc = grn_obj_rename(ctx, table, name, name_size))) {
-        grn_id *key;
-        char fullname[GRN_TABLE_MAX_KEY_SIZE];
-        memcpy(fullname, name, name_size);
-        fullname[name_size] = GRN_DB_DELIMITER;
-        GRN_HASH_EACH(ctx, cols, id, &key, NULL, NULL, {
-          grn_obj *col = grn_ctx_at(ctx, *key);
-          if (col) {
-            int colname_len = grn_column_name(ctx, col, fullname + name_size + 1,
-                                              GRN_TABLE_MAX_KEY_SIZE - name_size - 1);
-            if (colname_len) {
-              if ((rc = grn_obj_rename(ctx, col, fullname,
-                                       name_size + 1 + colname_len))) {
-                break;
-              }
+
+  if (!GRN_OBJ_TABLEP(table)) {
+    char table_name[GRN_TABLE_MAX_KEY_SIZE];
+    int table_name_size;
+    table_name_size = grn_obj_name(ctx, table, table_name,
+                                   GRN_TABLE_MAX_KEY_SIZE);
+    rc = GRN_INVALID_ARGUMENT;
+    ERR(rc,
+        "[table][rename] isn't table: <%.*s> -> <%.*s>",
+        table_name_size, table_name,
+        name_size, name);
+    goto exit;
+  }
+  if (IS_TEMP(table)) {
+    rc = GRN_INVALID_ARGUMENT;
+    ERR(rc,
+        "[table][rename] temporary table doesn't have name: "
+        "(anonymous) -> <%.*s>",
+        name_size, name);
+    goto exit;
+  }
+
+  if ((cols = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
+                              GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY))) {
+    grn_table_columns(ctx, table, "", 0, (grn_obj *)cols);
+    if (!(rc = grn_obj_rename(ctx, table, name, name_size))) {
+      grn_id *key;
+      char fullname[GRN_TABLE_MAX_KEY_SIZE];
+      memcpy(fullname, name, name_size);
+      fullname[name_size] = GRN_DB_DELIMITER;
+      GRN_HASH_EACH(ctx, cols, id, &key, NULL, NULL, {
+        grn_obj *col = grn_ctx_at(ctx, *key);
+        if (col) {
+          int colname_len = grn_column_name(ctx, col, fullname + name_size + 1,
+                                            GRN_TABLE_MAX_KEY_SIZE - name_size - 1);
+          if (colname_len) {
+            if ((rc = grn_obj_rename(ctx, col, fullname,
+                                     name_size + 1 + colname_len))) {
+              break;
             }
           }
-        });
-      }
-      grn_hash_close(ctx, cols);
+        }
+      });
     }
+    grn_hash_close(ctx, cols);
   }
+exit:
   GRN_API_RETURN(rc);
 }
 
@@ -6467,7 +6488,7 @@ grn_column_rename(grn_ctx *ctx, grn_obj *column, const char *name, unsigned int 
                                 fullname, GRN_TABLE_MAX_KEY_SIZE);
     if (name_size + 1 + len > GRN_TABLE_MAX_KEY_SIZE) {
       ERR(GRN_INVALID_ARGUMENT,
-          "[column][rename]: too long column name: required name_size(%d) < %d"
+          "[column][rename] too long column name: required name_size(%d) < %d"
           ": <%.*s>.<%.*s>",
           name_size, GRN_TABLE_MAX_KEY_SIZE - 1 - len,
           len, fullname, name_size, name);

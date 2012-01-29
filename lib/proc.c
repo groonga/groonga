@@ -892,6 +892,47 @@ proc_table_remove(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
 }
 
 static grn_obj *
+proc_table_rename(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  grn_rc rc;
+  grn_obj *table = NULL;
+  if (GRN_TEXT_LEN(VAR(0)) == 0) {
+    ERR(GRN_INVALID_ARGUMENT, "[table][rename] table name isn't specified");
+    rc = ctx->rc;
+    goto exit;
+  }
+  table = grn_ctx_get(ctx, GRN_TEXT_VALUE(VAR(0)), GRN_TEXT_LEN(VAR(0)));
+  if (!table) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[table][rename] table isn't found: <%.*s>",
+        GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)));
+    rc = ctx->rc;
+    goto exit;
+  }
+  if (GRN_TEXT_LEN(VAR(1)) == 0) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[table][rename] new table name isn't specified: <%.*s>",
+        GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)));
+    rc = ctx->rc;
+    goto exit;
+  }
+  rc = grn_table_rename(ctx, table,
+                        GRN_TEXT_VALUE(VAR(1)), GRN_TEXT_LEN(VAR(1)));
+  if (rc != GRN_SUCCESS && ctx->rc == GRN_SUCCESS) {
+    ERR(rc,
+        "[table][rename] failed to rename: <%.*s> -> <%.*s>",
+        GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)),
+        GRN_TEXT_LEN(VAR(1)), GRN_TEXT_VALUE(VAR(1)));
+  }
+exit:
+  GRN_OUTPUT_BOOL(!rc);
+  if (table) {
+    grn_obj_unlink(ctx, table);
+  }
+  return NULL;
+}
+
+static grn_obj *
 proc_column_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_obj *column, *table = NULL, *type = NULL;
@@ -2689,6 +2730,10 @@ grn_db_init_builtin_query(grn_ctx *ctx)
 
   DEF_VAR(vars[0], "name");
   DEF_COMMAND("table_remove", proc_table_remove, 1, vars);
+
+  DEF_VAR(vars[0], "name");
+  DEF_VAR(vars[1], "new_name");
+  DEF_COMMAND("table_rename", proc_table_rename, 2, vars);
 
   DEF_VAR(vars[0], "table");
   DEF_VAR(vars[1], "name");
