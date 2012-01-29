@@ -216,6 +216,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/news/1.0.x.txt \
 	$(top_srcdir)/doc/source/news/1.1.x.txt \
 	$(top_srcdir)/doc/source/news/senna.txt \
+	$(top_srcdir)/doc/source/output.txt \
 	$(top_srcdir)/doc/source/pseudo_column.txt \
 	$(top_srcdir)/doc/source/rdoc.py \
 	$(top_srcdir)/doc/source/reference.txt \
@@ -477,6 +478,7 @@ source_files_relative_from_doc_dir = \
 	source/news/1.0.x.txt \
 	source/news/1.1.x.txt \
 	source/news/senna.txt \
+	source/output.txt \
 	source/pseudo_column.txt \
 	source/rdoc.py \
 	source/reference.txt \
@@ -536,6 +538,7 @@ po_files = \
 	limitations.po \
 	log.po \
 	news.po \
+	output.po \
 	pseudo_column.po \
 	reference.po \
 	spec.po \
@@ -561,6 +564,7 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/limitations.po \
 	LC_MESSAGES/log.po \
 	LC_MESSAGES/news.po \
+	LC_MESSAGES/output.po \
 	LC_MESSAGES/pseudo_column.po \
 	LC_MESSAGES/reference.po \
 	LC_MESSAGES/spec.po \
@@ -586,6 +590,7 @@ mo_files = \
 	limitations.mo \
 	log.mo \
 	news.mo \
+	output.mo \
 	pseudo_column.mo \
 	reference.mo \
 	spec.mo \
@@ -611,6 +616,7 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/limitations.mo \
 	LC_MESSAGES/log.mo \
 	LC_MESSAGES/news.mo \
+	LC_MESSAGES/output.mo \
 	LC_MESSAGES/pseudo_column.mo \
 	LC_MESSAGES/reference.mo \
 	LC_MESSAGES/spec.mo \
@@ -684,6 +690,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/news/1.0.x.txt \
 	html/_sources/news/1.1.x.txt \
 	html/_sources/news/senna.txt \
+	html/_sources/output.txt \
 	html/_sources/pseudo_column.txt \
 	html/_sources/reference.txt \
 	html/_sources/spec.txt \
@@ -801,6 +808,7 @@ html_files_relative_from_locale_dir = \
 	html/news/1.1.x.html \
 	html/news/senna.html \
 	html/objects.inv \
+	html/output.html \
 	html/pseudo_column.html \
 	html/reference.html \
 	html/search.html \
