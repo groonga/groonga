@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-29 14:47\n"
-"PO-Revision-Date: 2012-01-06 14:42+0900\n"
+"POT-Creation-Date: 2012-01-29 15:09\n"
+"PO-Revision-Date: 2012-01-29 15:09+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -22,9 +22,8 @@ msgid "News"
 msgstr "お知らせ"
 
 #: ../../../source/news.txt:11
-#, fuzzy
 msgid "Release 1.3.0 - 2012/01/29"
-msgstr "1.2.8リリース - 2011/11/29"
+msgstr "1.3.0リリース - 2012/01/29"
 
 #: ../../../source/news.txt:14 ../../../source/news.txt:60
 #: ../../../source/news.txt:123 ../../../source/news.txt:181
@@ -45,6 +44,8 @@ msgid ""
 "Supported dynamic DB key table change by GRN_DB_KEY=pat or GRN_DB_KEY=dat "
 "environment variable value."
 msgstr ""
+"GRN_DB_KEY=patまたはGRN_DB_KEY=dat環境変数値による動的なDBのキー管理テーブル"
+"の変更をサポート。"
 
 # 651f8dcc6787466da5aecb67e61e04c3
 #: ../../../source/news.txt:18
@@ -52,22 +53,23 @@ msgid ""
 "Added ``--with-default-db-key`` configure option that specifies the default "
 "DB key table."
 msgstr ""
+"デフォルトのDBのキー管理テーブルを指定する ``--with-default-db-key`` "
+"configureオプションを追加。"
 
 # 750bc3e8ddd348899418df8623065a1c
 #: ../../../source/news.txt:20
 msgid ""
 "Supported \"\" value for geo point data types. It's interpreted as \"0x0\"."
-msgstr ""
+msgstr "geo pointデータ型の値として\"\"をサポート。この値は\"0x0\"として扱う。"
 
 #: ../../../source/news.txt:21
-#, fuzzy
 msgid "Added column name to cast error message."
-msgstr "suggest: エラーメッセージに対象オブジェクト名を加えるようにした。"
+msgstr "キャスト時のエラーメッセージにカラム名も含めるようにした。"
 
 # 0fa80a690a9746288f8d2b687d3c6754
 #: ../../../source/news.txt:22
 msgid "Inhibit file information for stdin on load error."
-msgstr ""
+msgstr "loadエラー時に標準入力のファイル情報を表示しないようにした。"
 
 # ef6b8a19f7b9421ab10e57e7a86fece0
 #: ../../../source/news.txt:23
@@ -75,31 +77,33 @@ msgid ""
 "Enabled write-strings warnings and suppress those warnings. [Suggested by "
 "montywi]"
 msgstr ""
+"write-strings関連の警告を有効にし、警告がでないようにした。 [montywiさんが提"
+"案]"
 
 # ea2221866693480ea4a925da4dbf249a
 #: ../../../source/news.txt:25
 msgid "Marked MessagePack output format as supported. [#1215]"
-msgstr ""
+msgstr "MessagePack形式の出力機能をサポート対象の機能とした。 [#1215]"
 
 # 9c7e60bbcc4c41839aee741dece41e53
 #: ../../../source/news.txt:26
 msgid "Added ``const`` to ``void *`` of ``*_set_value()``."
-msgstr ""
+msgstr "``*_set_value()`` 関数の ``void *`` に ``const`` を追加した。"
 
 # d58c0ec3ee204069aa0eb5f1e626673e
 #: ../../../source/news.txt:27
 msgid "Enabled warning flags on C and C++."
-msgstr ""
+msgstr "CとC++でコンパイル時の警告フラグを有効にした。"
 
 # c475bd59e1624f2bb34ed50f0ba0778a
 #: ../../../source/news.txt:28
 msgid "Supported ``--with-libevent`` without value configure option."
-msgstr ""
+msgstr "値なしの ``--with-libevent`` configureオプションをサポート。"
 
 # 5bfd8052c9c0405f9a27662f63425001
 #: ../../../source/news.txt:29
 msgid "``grn_table_get()`` supported grn_db. [#1242]"
-msgstr ""
+msgstr "``grn_table_get()`` がgrn_dbに対応した。 [#1242]"
 
 # 17600ade934c4095847b8702d4737cfc
 #: ../../../source/news.txt:30
@@ -107,6 +111,8 @@ msgid ""
 "[rpm] Removed needless groogna-munin-plugins dependency from groonga-server. "
 "[#1251] [Suggested by Masaharu IWAI]"
 msgstr ""
+"[rpm] groonga-serverから必要のないgroogna-munin-pluginsへの依存関係を削除。 "
+"[#1251] [Masaharu IWAIさんが提案]"
 
 # a8053cd1d3084d6ab69127a024fa1984
 #: ../../../source/news.txt:32
@@ -114,26 +120,29 @@ msgid ""
 "[rpm] Removed needless groogna-doc dependency from groonga. [#1251] "
 "[Suggested by Masaharu IWAI]"
 msgstr ""
+"[rpm] groongaから必要のないgroogna-docへの依存関係を削除。 [#1251] [Masaharu "
+"IWAIさんが提案]"
 
 # 8d695c811ab1452789aae5fbd9421a1a
 #: ../../../source/news.txt:34
 msgid "[dat] Supported repair by ``grn_dat_repair()``."
-msgstr ""
+msgstr "[dat] ``grn_dat_repair()`` によるデータ復旧対応。"
 
 # ef3246d3113c45688124afbf46198c15
 #: ../../../source/news.txt:35
 msgid "``grn_table_at()`` supported grn_db."
-msgstr ""
+msgstr "``grn_table_at()`` がgrn_dbに対応。"
 
 # 9d37773e026447f99f0e5e0a5a468939
 #: ../../../source/news.txt:36
 msgid "[suggest] Removed unstable mark."
-msgstr ""
+msgstr "[suggest] 「安定している」仕様とした。"
 
 # 6739ec0e8e9e4697b55b87ff9271c2e1
 #: ../../../source/news.txt:37
 msgid "[suggest][complete] Supported normalized value search in prefix-search."
 msgstr ""
+"[suggest][complete] 前方一致検索で正規化した値を使って検索するようにした。"
 
 # 0169ec395b7b44da8bc94e5aa8186ab1
 #: ../../../source/news.txt:38
@@ -141,36 +150,39 @@ msgid ""
 "Added experimental offline index build. It's disabled by default for now. "
 "You can enable it by USE_OFFLINE_INDEXER=yes environment variable."
 msgstr ""
+"実験的な機能としてオフラインインデックス作成機能を追加。いまのところデフォル"
+"トでは無効になっているが、USE_OFFLINE_INDEXER=yes環境変数を指定することで有効"
+"にできる。"
 
 # 8d695c811ab1452789aae5fbd9421a1a
 #: ../../../source/news.txt:41
-msgid "Added internal API grn_obj_path_by_id() for mroonga."
-msgstr ""
+msgid "Added internal API ``grn_obj_path_by_id()`` for mroonga."
+msgstr "mroonga用に内部API ``grn_obj_path_by_id()`` を追加した。"
 
 # 9e9790e3a7a54ec09d15d2f555558b47
 #: ../../../source/news.txt:42
 msgid "[suggest][httpd] Passed unknown parameters to groonga."
-msgstr ""
+msgstr "[suggest][httpd] 未知のパラメーターをgroongaに渡すようにした。"
 
 # 9a813cafab5e4fad818b24df2ac3634c
 #: ../../../source/news.txt:43
 msgid "[output][xml] Added a newline before ``</RESULT>`` for readability."
-msgstr ""
+msgstr "[output][xml] 読みやすいように ``</RESULT>`` の前に改行を追加。"
 
 # cb4605d2e8c74a3ba429f19829c516ed
 #: ../../../source/news.txt:44
 msgid "[doc][output] Added documentation about output format type."
-msgstr ""
+msgstr "[doc][output] 出力形式に関するドキュメントを追加。"
 
 # 8c4cf8fbfb1b4cf08eb1afdb05f1800b
 #: ../../../source/news.txt:45
 msgid "Added ``table_rename``. [#1234]"
-msgstr ""
+msgstr "``table_rename`` コマンドを追加。 [#1234]"
 
 # 8c4cf8fbfb1b4cf08eb1afdb05f1800b
 #: ../../../source/news.txt:46
 msgid "Added ``column_rename``. [#1234]"
-msgstr ""
+msgstr "``column_rename`` コマンドを追加。 [#1234]"
 
 #: ../../../source/news.txt:49 ../../../source/news.txt:98
 #: ../../../source/news.txt:167 ../../../source/news.txt:197
@@ -182,12 +194,12 @@ msgstr "感謝"
 # 48b81ffe8a904549ae58bd5d50b1d455
 #: ../../../source/news.txt:51
 msgid "montywi"
-msgstr ""
+msgstr "montywiさん"
 
 # 8541c44776864ea1a1a351cc1916431b
 #: ../../../source/news.txt:52
 msgid "Masaharu IWAI"
-msgstr ""
+msgstr "Masaharu IWAIさん"
 
 #: ../../../source/news.txt:57
 msgid "Release 1.2.9 - 2011/12/29"
@@ -389,9 +401,8 @@ msgstr "[grntest] 1行あたりの最大バイト数の制限を撤去。"
 
 # 6c331fa2a8a24a04b3b0e61d4aaa81ff
 #: ../../../source/news.txt:126
-#, fuzzy
 msgid "[grntest] Added ``--pid-path`` option."
-msgstr "[grntest] `--pid-path` オプションを追加。"
+msgstr "[grntest] ``--pid-path`` オプションを追加。"
 
 # ee3761cf032c48119fa42efe06ddfb12
 #: ../../../source/news.txt:127
@@ -420,13 +431,12 @@ msgstr "[pkg-config] groonga.pcにgroonga_version変数を追加。"
 
 # dd6de7cfe483439fa71a8b437d3df11b
 #: ../../../source/news.txt:132
-#, fuzzy
 msgid ""
 "Re-supported ``--disable-static``. [groonga-dev,00612] [Suggested by Kenichi "
 "Aramaki]"
 msgstr ""
-"`--disable-static` を再サポート。 [groonga-dev,00612] [Kenichi Aramakiさんが"
-"提案]"
+"``--disable-static`` を再サポート。 [groonga-dev,00612] [Kenichi Aramakiさん"
+"が提案]"
 
 # 95ddc83d6aa34510b026e375c0db8a6f
 #: ../../../source/news.txt:134
@@ -795,9 +805,8 @@ msgid "Release 1.2.4 - 2011/07/29"
 msgstr "1.2.4リリース - 2011/07/29"
 
 #: ../../../source/news.txt:274
-#, fuzzy
-msgid "Re-supported `*BSD`. (Reported by OBATA Akio)"
-msgstr "*BSDをサポートを再サポート。（おばたさんが報告）"
+msgid "Re-supported ``*BSD``. (Reported by OBATA Akio)"
+msgstr "``*BSD`` をサポートを再サポート。（おばたさんが報告）"
 
 #: ../../../source/news.txt:275
 msgid "Improved sed related portability. (Suggested by OBATA Akio)"
@@ -836,9 +845,8 @@ msgid "Fixed broken libedit support. (Reported by Daiki Ueno)"
 msgstr "libeditサポートが壊れていた問題を修正。（うえのさんが報告）"
 
 #: ../../../source/news.txt:288
-#, fuzzy
-msgid "Fixed source URL in `*.spec` (Reported by Daiki Ueno)"
-msgstr "*.specのソースURLを修正。（うえのさんが報告）"
+msgid "Fixed source URL in ``*.spec`` (Reported by Daiki Ueno)"
+msgstr "``*.spec`` のソースURLを修正。（うえのさんが報告）"
 
 #: ../../../source/news.txt:289
 msgid "Fixed patricia trie cursor returns wrong records."

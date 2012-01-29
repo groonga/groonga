@@ -38,7 +38,7 @@ Improvements
 * Added experimental offline index build. It's disabled by
   default for now. You can enable it by
   USE_OFFLINE_INDEXER=yes environment variable.
-* Added internal API grn_obj_path_by_id() for mroonga.
+* Added internal API ``grn_obj_path_by_id()`` for mroonga.
 * [suggest][httpd] Passed unknown parameters to groonga.
 * [output][xml] Added a newline before ``</RESULT>`` for readability.
 * [doc][output] Added documentation about output format type.
@@ -271,7 +271,7 @@ Release 1.2.4 - 2011/07/29
 Improvements
 ^^^^^^^^^^^^
 
-* Re-supported `*BSD`. (Reported by OBATA Akio)
+* Re-supported ``*BSD``. (Reported by OBATA Akio)
 * Improved sed related portability. (Suggested by OBATA Akio)
 * Re-supported Visual C++ 2008.
 * Supported :doc:`/commands/check` for hash table.
@@ -285,7 +285,7 @@ Fixes
 ^^^^^
 
 * Fixed broken libedit support. (Reported by Daiki Ueno)
-* Fixed source URL in `*.spec` (Reported by Daiki Ueno)
+* Fixed source URL in ``*.spec`` (Reported by Daiki Ueno)
 * Fixed patricia trie cursor returns wrong records.
 * Added missing database lock clear for grn_obj_clear_lock()
   for database.
