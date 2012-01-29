@@ -91,10 +91,74 @@ get a result in TSV format::
 You need to specify ``msgpack`` as ``output_type`` value to
 get a result in MessagePack format::
 
-  > status --output_type msgpack # MessagePack
+  > status --output_type msgpack
   (... omitted because MessagePack is binary data format. ...)
 
 HTTP
 ^^^^
 
-...
+You can use HTTP query interface by ``groonga --protocol
+http -s DB_PATH``. Groonga HTTP server starts on port 10041
+by default. In this query interface, you can specify
+output format type by extension.
+
+If you don't specify extension, you will get a result in
+JSON format::
+
+  % curl http://localhost:10041/d/status
+  [[0,1327809294.54311,0.00082087516784668],{"alloc_count":155,"starttime":1327809282,"uptime":12,"version":"1.2.9-92-gb87d9f8","n_queries":0,"cache_hit_rate":0.0,"command_version":1,"default_command_version":1,"max_command_version":2}]
+
+You can specify ``json`` as extension to get a result in
+JSON format explicitly::
+
+  % curl http://localhost:10041/d/status.json
+  [[0,1327809319.01929,9.5367431640625e-05],{"alloc_count":157,"starttime":1327809282,"uptime":37,"version":"1.2.9-92-gb87d9f8","n_queries":0,"cache_hit_rate":0.0,"command_version":1,"default_command_version":1,"max_command_version":2}]
+
+You need to specify ``xml`` as extension to get a result in
+XML format::
+
+  % curl http://localhost:10041/d/status.xml
+  <?xml version="1.0" encoding="utf-8"?>
+  <RESULT CODE="0" UP="1327809339.5782" ELAPSED="9.56058502197266e-05">
+  <RESULT>
+  <TEXT>alloc_count</TEXT>
+  <INT>159</INT>
+  <TEXT>starttime</TEXT>
+  <INT>1327809282</INT>
+  <TEXT>uptime</TEXT>
+  <INT>57</INT>
+  <TEXT>version</TEXT>
+  <TEXT>1.2.9-92-gb87d9f8</TEXT>
+  <TEXT>n_queries</TEXT>
+  <INT>0</INT>
+  <TEXT>cache_hit_rate</TEXT>
+  <FLOAT>0.0</FLOAT>
+  <TEXT>command_version</TEXT>
+  <INT>1</INT>
+  <TEXT>default_command_version</TEXT>
+  <INT>1</INT>
+  <TEXT>max_command_version</TEXT>
+  <INT>2</INT></RESULT>
+  </RESULT>
+
+You need to specify ``tsv`` as extension to get a result in
+TSV format::
+
+  % curl http://localhost:10041/d/status.tsv
+  0	1327809366.84187	8.44001770019531e-05
+  "alloc_count"	159
+  "starttime"	1327809282
+  "uptime"	84
+  "version"	"1.2.9-92-gb87d9f8"
+  "n_queries"	0
+  "cache_hit_rate"	0.0
+  "command_version"	1
+  "default_command_version"	1
+  "max_command_version"	2
+  END
+
+You need to specify ``msgpack`` as extension to get a result
+in MessagePack format::
+
+  % curl http://localhost:10041/d/status.msgpack
+  (... omitted because MessagePack is binary data format. ...)
