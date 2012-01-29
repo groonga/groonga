@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-17 15:42\n"
+"POT-Creation-Date: 2012-01-29 13:03\n"
 "PO-Revision-Date: 2011-08-17 16:52+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -30,15 +30,8 @@ msgstr "実行例::"
 msgid "Suggest"
 msgstr "サジェスト"
 
-# 32294a95a61c4eef809c6662a8a336e7
-#: ../../../source/suggest.txt:10
-msgid ""
-"The suggest feature specification isn't stable. The specification may be "
-"changed."
-msgstr "サジェスト機能の仕様はまだ確定していません。仕様は変更される可能性があります。"
-
 # fbf1080ed4a94221aa01e5d7c8d38502
-#: ../../../source/suggest.txt:13
+#: ../../../source/suggest.txt:8
 msgid ""
 "Groonga has the suggest feature. This section describes how to use it and "
 "how it works."
@@ -1115,3 +1108,11 @@ msgstr "チュートリアル"
 #: ../../../source/suggest/tutorial.txt:8
 msgid "TODO..."
 msgstr ""
+
+# 32294a95a61c4eef809c6662a8a336e7
+#~ msgid ""
+#~ "The suggest feature specification isn't stable. The specification may be "
+#~ "changed."
+#~ msgstr ""
+#~ "サジェスト機能の仕様はまだ確定していません。仕様は変更される可能性がありま"
+#~ "す。"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-26 23:25\n"
+"POT-Creation-Date: 2012-01-29 14:46\n"
 "PO-Revision-Date: 2011-08-12 22:01+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -24,29 +24,32 @@ msgstr "How to contribute to groonga"
 
 # b3357c9f11a4420180892c3c9d284074
 #: ../../../source/contribution.txt:8
+#, fuzzy
 msgid ""
-"We are welcome to you contribute the groonga project. There are many ways to "
-"contribute such as use, introduction, bug report, development and "
-"documentation."
+"We welcome your contributions to the groonga project. There are many ways to "
+"contribute, such as using groonga, introduction to others, etc. For example, "
+"if you find a bug when using groonga, you are welcome to report the bug. "
+"Coding and documentation are also welcome for groonga and its related "
+"projects."
 msgstr ""
 "We are welcome to you contribute the groonga project. There are many ways to "
 "contribute such as use, introduction, bug report, development and "
 "documentation."
 
-# 75447cb3ed4d44dc915bfbc3f30756f8
-#: ../../../source/contribution.txt:13
-msgid "Please read this document."
-msgstr "Please read this document."
-
-# f7dc422b7a2f4bca828cdc07ee15e8da
+# a0a565242ac847529e3c7b10e7e9b3d6
 #: ../../../source/contribution.txt:15
-msgid "Please talk your friends about groonga."
-msgstr "Please talk your friends about groonga."
+msgid "If you are interested in groonga, please read this document and try it."
+msgstr ""
 
-# 6f7cbc7a1e9f457fbdc0e95368a32c18
+# 2aab2a0ced534ac89eb8dbc3c2a03371
 #: ../../../source/contribution.txt:17
-msgid "We describe about them in this section."
-msgstr "We describe about them in this section."
+msgid "Please introduce groonga to your friends and colleagues."
+msgstr ""
+
+# 374746e8993c4a0488fd0e6cbbe7573b
+#: ../../../source/contribution.txt:19
+msgid "This section describes the details."
+msgstr ""
 
 # 12e8b6c589fe4c9886326d7276d8207a
 #: ../../../source/contribution/development.txt:6
@@ -1023,8 +1026,15 @@ msgstr ""
 "doc/locale/${LANGUAGE}. (Please substitute `${LANGUAGE}` with your language "
 "code such as 'ja'.)::"
 
+# 843e7c314d77433e82174009fab1db8b
+#: ../../../source/contribution/documentation/i18n.txt:117
+msgid ""
+"You can also generate HTML files for all languages by running `make html` on "
+"doc/locale::"
+msgstr ""
+
 # 1a6f401caff24465ab5df696ffd9d86c
-#: ../../../source/contribution/documentation/i18n.txt:119
+#: ../../../source/contribution/documentation/i18n.txt:125
 msgid ""
 ".mo files are updated automatically by `make html`. So you don't care about ."
 "mo files."
@@ -1033,12 +1043,12 @@ msgstr ""
 "mo files."
 
 # 5820e93c2a9f45abae1e7f4ec84ffaf2
-#: ../../../source/contribution/documentation/i18n.txt:123
+#: ../../../source/contribution/documentation/i18n.txt:129
 msgid "How to confirm HTML output"
 msgstr "How to confirm HTML output"
 
 # c676ed5fddef4bd79055c91524b37468
-#: ../../../source/contribution/documentation/i18n.txt:125
+#: ../../../source/contribution/documentation/i18n.txt:131
 msgid ""
 "HTML files are generated in doc/locale/${LANGUAGE}/html/. (Please substitute "
 "`${LANGUAGE}` with your language code such as 'ja'.) You can confirm HTML "
@@ -1049,12 +1059,12 @@ msgstr ""
 "output by your favorite browser::"
 
 # d4a93a79cda242569c04d77bad81e7ef
-#: ../../../source/contribution/documentation/i18n.txt:133
+#: ../../../source/contribution/documentation/i18n.txt:139
 msgid "How to send your works"
 msgstr "How to send your works"
 
 # ee625bd0b7fc4fe89a70bfdef7852a4e
-#: ../../../source/contribution/documentation/i18n.txt:135
+#: ../../../source/contribution/documentation/i18n.txt:141
 msgid ""
 "We can receive your works via pull request on GitHub or E-mail attachment "
 "patch or .po files themselves."
@@ -1063,17 +1073,17 @@ msgstr ""
 "patch or .po files themselves."
 
 # b7774dead90b476db1a6e813545adf0e
-#: ../../../source/contribution/documentation/i18n.txt:139
+#: ../../../source/contribution/documentation/i18n.txt:145
 msgid "How to send pull request"
 msgstr "How to send pull request"
 
 # 9f6f972839d944808453835dd5c5259a
-#: ../../../source/contribution/documentation/i18n.txt:141
+#: ../../../source/contribution/documentation/i18n.txt:147
 msgid "Here are command lines to send pull request::"
 msgstr "Here are command lines to send pull request::"
 
 # a36cffb6277a465a8528609dddd66dc9
-#: ../../../source/contribution/documentation/i18n.txt:147
+#: ../../../source/contribution/documentation/i18n.txt:153
 msgid ""
 "Now you can send pull request on GitHub. You just access your repository "
 "page on GitHub and press `Pull Request` button."
@@ -1082,17 +1092,17 @@ msgstr ""
 "page on GitHub and press `Pull Request` button."
 
 # 7de3f26ab70f4dec87650777aebaada9
-#: ../../../source/contribution/documentation/i18n.txt:156
+#: ../../../source/contribution/documentation/i18n.txt:162
 msgid "How to send patch"
 msgstr "How to send patch"
 
 # 5d200260e8ba4a5baa2b0be76ed8fa88
-#: ../../../source/contribution/documentation/i18n.txt:158
+#: ../../../source/contribution/documentation/i18n.txt:164
 msgid "Here are command lines to create patch::"
 msgstr "Here are command lines to create patch::"
 
 # 00c2808928ba44c7bea31349c7d91338
-#: ../../../source/contribution/documentation/i18n.txt:164
+#: ../../../source/contribution/documentation/i18n.txt:170
 msgid ""
 "You can find 000X-YYY.patch files in the current directory. Please send "
 "those files to us!"
@@ -1101,12 +1111,12 @@ msgstr ""
 "those files to us!"
 
 # 9dc6eae2b0794631942cb2ea139f1d92
-#: ../../../source/contribution/documentation/i18n.txt:170
+#: ../../../source/contribution/documentation/i18n.txt:176
 msgid "How to send .po files"
 msgstr "How to send .po files"
 
 # d294bf058a694e01a120c02f1307f14c
-#: ../../../source/contribution/documentation/i18n.txt:172
+#: ../../../source/contribution/documentation/i18n.txt:178
 msgid ""
 "Please archive doc/locale/${LANGUAGE}/LC_MESSAGES/ (Please substitute `"
 "${LANGUAGE}` with your language code such as 'ja'.) and send it to us! We "
@@ -1117,17 +1127,17 @@ msgstr ""
 "extract and merge them to the groonga repository."
 
 # b62cd08b47354aa5a644d478f17202eb
-#: ../../../source/contribution/documentation/i18n.txt:180
+#: ../../../source/contribution/documentation/i18n.txt:186
 msgid "How to add new language"
 msgstr "How to add new language"
 
 # df6ef25baac84e75bf04ec2d2859057c
-#: ../../../source/contribution/documentation/i18n.txt:182
+#: ../../../source/contribution/documentation/i18n.txt:188
 msgid "Here are command lines to add new translation language::"
 msgstr "Here are command lines to add new translation language::"
 
 # 12e43490c3eb40d4884ce7e03170d5cd
-#: ../../../source/contribution/documentation/i18n.txt:187
+#: ../../../source/contribution/documentation/i18n.txt:193
 msgid "Please substitute `${LANGUAGE}` with your language code such as 'ja'."
 msgstr "Please substitute `${LANGUAGE}` with your language code such as 'ja'."
 
@@ -1146,3 +1156,15 @@ msgstr ""
 "We have two issue tracking systems, Redmine_ and `GitHub issue tracker`_. "
 "Redmine is for Japanese and GitHub issue tracker is for English. You can use "
 "both of them to report a bug."
+
+# 6f7cbc7a1e9f457fbdc0e95368a32c18
+#~ msgid "We describe about them in this section."
+#~ msgstr "We describe about them in this section."
+
+# f7dc422b7a2f4bca828cdc07ee15e8da
+#~ msgid "Please talk your friends about groonga."
+#~ msgstr "Please talk your friends about groonga."
+
+# 75447cb3ed4d44dc915bfbc3f30756f8
+#~ msgid "Please read this document."
+#~ msgstr "Please read this document."

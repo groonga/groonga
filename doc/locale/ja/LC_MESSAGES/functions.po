@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-28 18:54\n"
+"POT-Creation-Date: 2012-01-29 13:03\n"
 "PO-Revision-Date: 2011-05-09 00:36+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -66,7 +66,7 @@ msgid ""
 msgstr ""
 
 #: ../../../source/functions/edit_distance.txt:27
-#: ../../../source/functions/geo_distance.txt:28
+#: ../../../source/functions/geo_distance.txt:31
 #: ../../../source/functions/geo_in_circle.txt:27
 #: ../../../source/functions/geo_in_rectangle.txt:27
 #: ../../../source/functions/rand.txt:27
@@ -90,8 +90,8 @@ msgid "もうひとつの文字列を指定します"
 msgstr ""
 
 #: ../../../source/functions/edit_distance.txt:39
-#: ../../../source/functions/geo_distance.txt:40
-#: ../../../source/functions/geo_in_circle.txt:43
+#: ../../../source/functions/geo_distance.txt:67
+#: ../../../source/functions/geo_in_circle.txt:68
 #: ../../../source/functions/geo_in_rectangle.txt:42
 #: ../../../source/functions/now.txt:27 ../../../source/functions/rand.txt:34
 msgid "返値"
@@ -102,8 +102,8 @@ msgid "指定した2つ文字列の編集距離をUint32型の値として返し
 msgstr ""
 
 #: ../../../source/functions/edit_distance.txt:44
-#: ../../../source/functions/geo_distance.txt:45
-#: ../../../source/functions/geo_in_circle.txt:48
+#: ../../../source/functions/geo_distance.txt:72
+#: ../../../source/functions/geo_in_circle.txt:73
 #: ../../../source/functions/geo_in_rectangle.txt:47
 #: ../../../source/functions/now.txt:32 ../../../source/functions/rand.txt:39
 msgid "例"
@@ -123,45 +123,141 @@ msgid ""
 "形式のgrn_expr中で呼び出すことができます。"
 msgstr ""
 
+# 11a66d70543b4c14bd0344f7a1499ba8
 #: ../../../source/functions/geo_distance.txt:24
 msgid ""
 "geo_distance() 関数は、point1に指定した座標とpoint2に指定した座標の間の距離"
-"(近似値)を求めます。 geo_distance()の他に、距離計算アルゴリズムの異なる、"
-"geo_distance2()、geo_distance3()が使用できます。それぞれ、長方形近似、球面近"
-"似、ヒュベニの距離計算式によって距離を算出します。"
+"(近似値)を求めます。"
 msgstr ""
 
-#: ../../../source/functions/geo_distance.txt:30
+# 8ce27b1df9074bffa5d8af84c6f5cceb
+#: ../../../source/functions/geo_distance.txt:26
+msgid "... note::"
+msgstr ""
+
+#: ../../../source/functions/geo_distance.txt:33
 msgid "``point1``"
 msgstr ""
 
-#: ../../../source/functions/geo_distance.txt:32
+#: ../../../source/functions/geo_distance.txt:35
 msgid ""
 "距離を求める2点のうち一つを指定します。GeoPoint型の値を指定できます。 [#]_"
 msgstr ""
 
-#: ../../../source/functions/geo_distance.txt:34
+#: ../../../source/functions/geo_distance.txt:37
 msgid "``point2``"
 msgstr ""
 
-#: ../../../source/functions/geo_distance.txt:36
+#: ../../../source/functions/geo_distance.txt:39
 msgid ""
 "距離を求める2点のうちもう一つを指定します。GeoPoint型の値、あるいは座標を示す"
 "文字列を指定できます。"
 msgstr ""
 
-#: ../../../source/functions/geo_distance.txt:42
+# 717449798dfd48c4b1d4197475ca41a4
+# 3681f9b79a3b45ed96ce85e3429fc9c6
+#: ../../../source/functions/geo_distance.txt:41
+#: ../../../source/functions/geo_in_circle.txt:42
+msgid "``approximate_type``"
+msgstr ""
+
+# bff3161492e34ef187cbd719e8ded84d
+#: ../../../source/functions/geo_distance.txt:43
+msgid ""
+"距離を求めるために地形をどのように近似するかを指定します。指定できる値は以下"
+"の通りです。"
+msgstr ""
+
+# 9549bb8575db4b9099e1896053971ed5
+# 36a0181a29ef4a419cbb613a98cf0985
+#: ../../../source/functions/geo_distance.txt:45
+#: ../../../source/functions/geo_in_circle.txt:46
+msgid "``\"rectangle\"``"
+msgstr ""
+
+# f8c3e32336794e62b91bb839f827e4df
+# acc912933ab64ec5a5b333ec6e3fbd5d
+#: ../../../source/functions/geo_distance.txt:47
+#: ../../../source/functions/geo_in_circle.txt:48
+msgid ""
+"方形近似で近似します。単純な計算式で距離を求めることができるため高速ですが、"
+"極付近では誤差が大きくなります。"
+msgstr ""
+
+# de60f87557fa49adb844508738b07ff1
+# c15cd61f25c64294ad72852b8f25e4fa
+#: ../../../source/functions/geo_distance.txt:49
+#: ../../../source/functions/geo_in_circle.txt:50
+msgid "``\"rect\"`` と省略して指定することもできます。"
+msgstr ""
+
+# 073709765bdd40b8ae1c3395cbf30b90
+# 5c5f12aa7a1e47fda9d16a62c85f51f2
+#: ../../../source/functions/geo_distance.txt:51
+#: ../../../source/functions/geo_in_circle.txt:52
+msgid ""
+"この近似方法がデフォルト値です。 ``approximate_type`` を省略した場合は方形近"
+"似になります。"
+msgstr ""
+
+# ec25f5bc76eb45bd8f18d0e7435e5328
+# c2d5ccdec5944e6d87824f577602a6df
+#: ../../../source/functions/geo_distance.txt:53
+#: ../../../source/functions/geo_in_circle.txt:54
+msgid "``\"sphere\"``"
+msgstr ""
+
+# 45d5ed16787842c385f92c25f24ddfa0
+# 3b40341e50ac49cd8961ffcc1e1458f2
+#: ../../../source/functions/geo_distance.txt:55
+#: ../../../source/functions/geo_in_circle.txt:56
+msgid ""
+"球面近似で近似します。 ``\"rectangle\"`` よりも遅くなりますが、誤差は小さいで"
+"す。"
+msgstr ""
+
+# 7df376a694f44354a4acf158a1aff429
+# 91c68a0fec094edfbf99a0824e45f845
+#: ../../../source/functions/geo_distance.txt:57
+#: ../../../source/functions/geo_in_circle.txt:58
+msgid "``\"sphr\"`` と省略して指定することもできます。"
+msgstr ""
+
+# 6bdc042411ab4368ba629bddc099f46c
+# 5510705250b74e708708f1f13fff507f
+#: ../../../source/functions/geo_distance.txt:59
+#: ../../../source/functions/geo_in_circle.txt:60
+msgid "``\"ellipsoid\"``"
+msgstr ""
+
+# 241a8b20870e4987b4f314a69d416b20
+# b4088469dd4845ef9d176515f3e98e2c
+#: ../../../source/functions/geo_distance.txt:61
+#: ../../../source/functions/geo_in_circle.txt:62
+msgid ""
+"楕円体近似で近似します。距離の計算にはヒュベニの距離計算式を用います。 ``"
+"\"sphere\"`` よりも遅くなりますが、誤差は小さくなります。"
+msgstr ""
+
+# 9084eb9f57354e968d110098359724fc
+# 77f6d20cce0747b8abc515390e1f6546
+#: ../../../source/functions/geo_distance.txt:63
+#: ../../../source/functions/geo_in_circle.txt:64
+msgid "``\"ellip\"`` と省略して指定することもできます。"
+msgstr ""
+
+#: ../../../source/functions/geo_distance.txt:69
 msgid "指定した2点の距離をFloat型の値(単位:メートル)として返します。"
 msgstr ""
 
-#: ../../../source/functions/geo_distance.txt:52
-#: ../../../source/functions/geo_in_circle.txt:55
+#: ../../../source/functions/geo_distance.txt:91
+#: ../../../source/functions/geo_in_circle.txt:80
 #: ../../../source/functions/geo_in_rectangle.txt:54
 msgid "脚注"
 msgstr ""
 
-#: ../../../source/functions/geo_distance.txt:53
-#: ../../../source/functions/geo_in_circle.txt:56
+#: ../../../source/functions/geo_distance.txt:92
+#: ../../../source/functions/geo_in_circle.txt:81
 #: ../../../source/functions/geo_in_rectangle.txt:55
 msgid ""
 "TokyoGeoPoint(日本測地系座標)かWGS84GeoPoint(世界測地系座標)のいずれかを指定"
@@ -220,7 +316,14 @@ msgid ""
 "周上の点の一つの座標が指定されたものとみなします。"
 msgstr ""
 
-#: ../../../source/functions/geo_in_circle.txt:45
+# 9c274a5295bf491ab552a64deba92195
+#: ../../../source/functions/geo_in_circle.txt:44
+msgid ""
+"半径からの距離を求めるために地形をどのように近似するかを指定します。指定でき"
+"る値は以下の通りです。"
+msgstr ""
+
+#: ../../../source/functions/geo_in_circle.txt:70
 msgid "pointに指定した座標が円の範囲内にあるかどうかをBool型の値で返します。"
 msgstr ""
 

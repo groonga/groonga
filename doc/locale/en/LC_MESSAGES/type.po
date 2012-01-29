@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-12 22:06\n"
+"POT-Creation-Date: 2012-01-29 14:04\n"
 "PO-Revision-Date: 2011-08-12 22:01+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -293,15 +293,18 @@ msgstr ""
 
 # e941829719764b55b66e974cc6528b80
 #: ../../../source/type.txt:112
-msgid "ベクトルとして格納できない型"
+#, fuzzy
+msgid "ベクターとして格納できない型"
 msgstr "ベクトルとして格納できない型"
 
 # c928d41a440d43a98a88ecd13ff908fd
 #: ../../../source/type.txt:114
+#, fuzzy
 msgid ""
-"groongaのカラムは、ある型のベクトルを保存することができます。しかし、"
-"ShortText, Text, LongTextの３つの型についてはベクトルとして保存することはでき"
-"ません。"
+"groongaのカラムは、ある型のベクターを保存することができます。しかし、"
+"ShortText, Text, LongTextの３つの型についてはベクターとして保存したり出力した"
+"りすることはできますが、検索条件やドリルダウン条件に指定することができませ"
+"ん。"
 msgstr ""
 "groongaのカラムは、ある型のベクトルを保存することができます。しかし、"
 "ShortText, Text, LongTextの３つの型についてはベクトルとして保存することはでき"
@@ -309,10 +312,11 @@ msgstr ""
 
 # f19c37d68cb6468f940df5811e1a5d4d
 #: ../../../source/type.txt:116
+#, fuzzy
 msgid ""
-"テーブル型は、ベクトルとして格納することができます。よって、ShortTextのベクト"
-"ルを保存したい場合には、主キーがShortText型のテーブルを別途作成し、そのテーブ"
-"ルを型として利用します。"
+"テーブル型は、ベクターとして格納することができます。よって、ShortTextのベク"
+"ターを検索条件やドリルダウン条件に使用したい場合には、主キーがShortText型の"
+"テーブルを別途作成し、そのテーブルを型として利用します。"
 msgstr ""
 "テーブル型は、ベクトルとして格納することができます。よって、ShortTextのベクト"
 "ルを保存したい場合には、主キーがShortText型のテーブルを別途作成し、そのテーブ"
