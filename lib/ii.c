@@ -6335,6 +6335,7 @@ grn_ii_inspect_elements(grn_ctx *ctx, grn_ii *ii, grn_obj *buf)
   GRN_TEXT_PUTS(ctx, buf, "]");
 }
 
+#ifndef WIN32
 /********************** offline index builder ***********************/
 
 const grn_id BUILD_RID_FLAG = 0x80000000;
@@ -6853,3 +6854,4 @@ grn_ii_build(grn_ctx *ctx, grn_ii *ii)
 exit :
   return rc;
 }
+#endif /* WIN32 */
