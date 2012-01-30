@@ -1114,6 +1114,7 @@ __grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, in
     }
     if (*p0 == otherside) {
       PAT_CHK_SET(rn0, 0);
+      if (proot == p0 && !rn0->check) { rn0->lr[0] = rn0->lr[1] = otherside; }
     } else {
       if (otherside) {
         PAT_AT(pat, otherside, rno);
