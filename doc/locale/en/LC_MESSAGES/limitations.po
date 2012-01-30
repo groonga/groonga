@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-12 22:06\n"
+"POT-Creation-Date: 2012-01-29 14:46\n"
 "PO-Revision-Date: 2011-08-12 22:01+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -17,42 +17,76 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-# 5c3f3911e1e1434da636445fe52d72dd
+# 5f74aa71c5ad4dc5aa1c04bdcb2a4d5b
 #: ../../../source/limitations.txt:6
-msgid "制限事項"
-msgstr "制限事項"
+msgid "Limitations"
+msgstr ""
 
-# b0d793f693a44e2ebcbab87a2621c3d3
+# 925db743ed3245ca9e17f6b531538f19
 #: ../../../source/limitations.txt:8
-msgid "groongaにはいくつか制限事項があります。"
-msgstr "groongaにはいくつか制限事項があります。"
+msgid "Groonga has some limitations."
+msgstr ""
 
-# 3906a99f895a4a1cb295c7db65131ba4
+# 20fef98294594f01a0aa71fed281a862
 #: ../../../source/limitations.txt:11
-msgid "インデックス上限値"
-msgstr "インデックス上限値"
+msgid "Limitations of indexing"
+msgstr ""
 
-# 29a32185225f48819e21208e84113b00
+# 0c6d8186de3a42ec91287b84c7d1eafd
 #: ../../../source/limitations.txt:13
-msgid "1つのインデックスにおける論理上の上限値は以下のとおりです。"
-msgstr "1つのインデックスにおける論理上の上限値は以下のとおりです。"
+msgid "A full-text index has the following limitations."
+msgstr ""
 
-# 5b1d2e5fdcbb4718aa200faa2f5767b1
+# 5629a497d0844ced85f808e3882ab4f1
 #: ../../../source/limitations.txt:15
-msgid "最大レコード数: 268,435,455 (約2億6千万)"
-msgstr "最大レコード数: 268,435,455 (約2億6千万)"
+msgid "The maximum number of records: 268,435,455 (more than 26 million)"
+msgstr ""
 
-# 859b483e3efd4cef8546b8c606de180b
+# 8c5b7b9ea64243ea8db7623d6f7abe8f
 #: ../../../source/limitations.txt:16
-msgid "最大語彙数: 268,435,455 (約2億6千万)"
-msgstr "最大語彙数: 268,435,455 (約2億6千万)"
+msgid ""
+"The maximum number of distinct terms: 268,435,455 (more than 26 million)"
+msgstr ""
 
-# cb9466056d8a4feba1cae8d1f0c99eed
+# 6e763081e8a0465e9cb530bb25ea7738
 #: ../../../source/limitations.txt:17
-msgid "最大インデックスサイズ: 256GByte"
-msgstr "最大インデックスサイズ: 256GByte"
+msgid "The maximum index size: 256GBytes"
+msgstr ""
+
+# fb770da9e9154a409de2b952c3b61a31
+#: ../../../source/limitations.txt:19
+msgid "Keep in mind that these limitations may vary depending on conditions."
+msgstr ""
 
 # b32b54d1ecc84980abf8a598466a01b7
-#: ../../../source/limitations.txt:19
-msgid "(実際には他の諸条件の制約により上記の値まで到達しない場合もあります)"
-msgstr "(実際には他の諸条件の制約により上記の値まで到達しない場合もあります)"
+#~ msgid "(実際には他の諸条件の制約により上記の値まで到達しない場合もあります)"
+#~ msgstr ""
+#~ "(実際には他の諸条件の制約により上記の値まで到達しない場合もあります)"
+
+# cb9466056d8a4feba1cae8d1f0c99eed
+#~ msgid "最大インデックスサイズ: 256GByte"
+#~ msgstr "最大インデックスサイズ: 256GByte"
+
+# 859b483e3efd4cef8546b8c606de180b
+#~ msgid "最大語彙数: 268,435,455 (約2億6千万)"
+#~ msgstr "最大語彙数: 268,435,455 (約2億6千万)"
+
+# 5b1d2e5fdcbb4718aa200faa2f5767b1
+#~ msgid "最大レコード数: 268,435,455 (約2億6千万)"
+#~ msgstr "最大レコード数: 268,435,455 (約2億6千万)"
+
+# 29a32185225f48819e21208e84113b00
+#~ msgid "1つのインデックスにおける論理上の上限値は以下のとおりです。"
+#~ msgstr "1つのインデックスにおける論理上の上限値は以下のとおりです。"
+
+# 3906a99f895a4a1cb295c7db65131ba4
+#~ msgid "インデックス上限値"
+#~ msgstr "インデックス上限値"
+
+# b0d793f693a44e2ebcbab87a2621c3d3
+#~ msgid "groongaにはいくつか制限事項があります。"
+#~ msgstr "groongaにはいくつか制限事項があります。"
+
+# 5c3f3911e1e1434da636445fe52d72dd
+#~ msgid "制限事項"
+#~ msgstr "制限事項"

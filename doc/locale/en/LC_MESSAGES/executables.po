@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-26 23:25\n"
+"POT-Creation-Date: 2012-01-29 13:49\n"
 "PO-Revision-Date: 2011-08-14 18:53+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -207,10 +207,12 @@ msgstr ""
 
 # 0acf910ee79247d19bd29efc7d8cdd69
 #: ../../../source/executables/grntest.txt:27
+#, fuzzy
 msgid ""
-"grntest を利用するために必要なデータファイルは、ftp.groonga.orgから必要に応じ"
-"ダウンロードしますので、groonga及びgrntestが動作し、インターネットに接続でき"
-"る環境であればgroongaコマンドの知識がなくてもgroongaの動作を確認できます。"
+"grntest用のデータファイルは自分で作成することも既存のものを利用することもでき"
+"ます。既存のデータファイルは、ftp.groonga.orgから必要に応じダウンロードしま"
+"す。そのため、groonga及びgrntestが動作し、インターネットに接続できる環境であ"
+"ればgroongaコマンドの知識がなくてもgroongaの動作を確認できます。"
 msgstr ""
 "grntest を利用するために必要なデータファイルは、ftp.groonga.orgから必要に応じ"
 "ダウンロードしますので、groonga及びgrntestが動作し、インターネットに接続でき"
@@ -218,8 +220,9 @@ msgstr ""
 
 # 6372811fbddf4509a446565230011e20
 #: ../../../source/executables/grntest.txt:29
+#, fuzzy
 msgid ""
-"現在は、linux 及びWindows上で動作します。make installしてもインストールは行わ"
+"現在は、Linux 及びWindows上で動作します。make installしてもインストールは行わ"
 "れません。"
 msgstr ""
 "現在は、linux 及びWindows上で動作します。make installしてもインストールは行わ"
@@ -256,18 +259,13 @@ msgstr ""
 msgid "ftp.groonga.org に用意されているスクリプトファイルを表示します。"
 msgstr "ftp.groonga.org に用意されているスクリプトファイルを表示します。"
 
-# 9c99b2beab5d453ba7fbfc5542dfccd9
+# 174b5b1f3dfa413abfb533ca5b0bcb82
 #: ../../../source/executables/grntest.txt:49
+#, fuzzy
 msgid ""
-"通常grntestはftp.groonga.orgとftp通信を行い、scriptファイルの同期やログファイ"
-"ルの送信を行います。--noftp オプションを指定するとftp 通信を一切行わないよう"
-"になります。存在しないスクリプトファイルを指定した場合、エラーとなることに注"
-"意してください。"
-msgstr ""
-"通常grntestはftp.groonga.orgとftp通信を行い、scriptファイルの同期やログファイ"
-"ルの送信を行います。--noftp オプションを指定するとftp 通信を一切行わないよう"
-"になります。存在しないスクリプトファイルを指定した場合、エラーとなることに注"
-"意してください。"
+"ftp.groonga.orgとFTP通信を行い、scriptファイルの同期やログファイルの送信を行"
+"います。"
+msgstr "ftp.groonga.org に用意されているスクリプトファイルを表示します。"
 
 # 9171d42362a24a468aa979edc6ca13fe
 #: ../../../source/executables/grntest.txt:53
@@ -291,8 +289,9 @@ msgstr ""
 
 # 2afb4e46ecfa410caff7cd26e44fda97
 #: ../../../source/executables/grntest.txt:61
+#, fuzzy
 msgid ""
-"groongaコマンドが使うプロトコルとして``gqtp``または``http``を指定します。"
+"groongaコマンドが使うプロトコルとして `gqtp` または `http` を指定します。"
 msgstr ""
 "groongaコマンドが使うプロトコルとして``gqtp``または``http``を指定します。"
 
@@ -651,8 +650,9 @@ msgstr "もし、grntestが正常に動作しない場合、まず以下を確�
 
 # 342bdb3aaff24b73bf9110fb59edfeeb
 #: ../../../source/executables/grntest.txt:267
+#, fuzzy
 msgid ""
-"インターネットに接続しているか？　--noftp モードを指定しない限り、grntestは動"
+"インターネットに接続しているか？ `--ftp` オプションを指定すると、grntestは動"
 "作のたびにftp.groonga.orgと通信します。ftp.groonga.orgと通信可能でない場合、"
 "grntestは正常に動作しません。"
 msgstr ""
@@ -1283,3 +1283,15 @@ msgstr "httpサーバとして起動します。::"
 #: ../../../source/executables/groonga.txt:235
 msgid "サーバに接続し、テーブル一覧を表示します。::"
 msgstr "サーバに接続し、テーブル一覧を表示します。::"
+
+# 9c99b2beab5d453ba7fbfc5542dfccd9
+#~ msgid ""
+#~ "通常grntestはftp.groonga.orgとftp通信を行い、scriptファイルの同期やログ"
+#~ "ファイルの送信を行います。--noftp オプションを指定するとftp 通信を一切行わ"
+#~ "ないようになります。存在しないスクリプトファイルを指定した場合、エラーとな"
+#~ "ることに注意してください。"
+#~ msgstr ""
+#~ "通常grntestはftp.groonga.orgとftp通信を行い、scriptファイルの同期やログ"
+#~ "ファイルの送信を行います。--noftp オプションを指定するとftp 通信を一切行わ"
+#~ "ないようになります。存在しないスクリプトファイルを指定した場合、エラーとな"
+#~ "ることに注意してください。"

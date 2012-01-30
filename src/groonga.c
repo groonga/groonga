@@ -608,7 +608,7 @@ print_return_code(grn_ctx *ctx, grn_rc rc, grn_obj *head, grn_obj *body, grn_obj
         grn_text_ftoa(ctx, head, started);
         GRN_TEXT_PUTS(ctx, head, "\" ELAPSED=\"");
         grn_text_ftoa(ctx, head, elapsed);
-        GRN_TEXT_PUTS(ctx, head, "\">");
+        GRN_TEXT_PUTS(ctx, head, "\">\n");
         if (rc != GRN_SUCCESS) {
           GRN_TEXT_PUTS(ctx, head, "<ERROR>");
           grn_text_escape_xml(ctx, head, ctx->errbuf, strlen(ctx->errbuf));
@@ -624,7 +624,7 @@ print_return_code(grn_ctx *ctx, grn_rc rc, grn_obj *head, grn_obj *body, grn_obj
           }
           GRN_TEXT_PUTS(ctx, head, "</ERROR>");
         }
-        GRN_TEXT_PUTS(ctx, foot, "</RESULT>");
+        GRN_TEXT_PUTS(ctx, foot, "\n</RESULT>");
       }
     }
     break;

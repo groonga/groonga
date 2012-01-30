@@ -45,8 +45,10 @@ noinst_LTLIBRARIES =				\
 	test-command-load.la			\
 	test-command-table-create.la		\
 	test-command-table-list.la		\
+	test-command-table-rename.la		\
 	test-command-column-create.la		\
 	test-command-column-list.la		\
+	test-command-column-rename.la		\
 	test-command-select.la			\
 	test-command-select-sort.la		\
 	test-command-select-prefix-search.la	\
@@ -131,8 +133,10 @@ test_inspect_la_SOURCES			= test-inspect.c
 test_command_load_la_SOURCES		= test-command-load.c
 test_command_table_create_la_SOURCES	= test-command-table-create.c
 test_command_table_list_la_SOURCES	= test-command-table-list.c
+test_command_table_rename_la_SOURCES	= test-command-table-rename.c
 test_command_column_create_la_SOURCES	= test-command-column-create.c
 test_command_column_list_la_SOURCES	= test-command-column-list.c
+test_command_column_rename_la_SOURCES	= test-command-column-rename.c
 test_command_select_la_SOURCES		= test-command-select.c
 test_command_select_sort_la_SOURCES	= test-command-select-sort.c
 test_command_select_prefix_search_la_SOURCES	= test-command-select-prefix-search.c

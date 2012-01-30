@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-02 12:59\n"
+"POT-Creation-Date: 2012-01-29 13:03\n"
 "PO-Revision-Date: 2011-08-18 18:15+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -162,7 +162,7 @@ msgstr ""
 #: ../../../source/commands/select.txt:187
 #: ../../../source/commands/shutdown.txt:32
 #: ../../../source/commands/status.txt:32
-#: ../../../source/commands/table_create.txt:89
+#: ../../../source/commands/table_create.txt:92
 #: ../../../source/commands/table_list.txt:32
 #: ../../../source/commands/table_remove.txt:33
 #: ../../../source/commands/view_add.txt:38
@@ -181,7 +181,7 @@ msgstr ""
 #: ../../../source/commands/column_remove.txt:51
 #: ../../../source/commands/define_selector.txt:106
 #: ../../../source/commands/defrag.txt:48
-#: ../../../source/commands/delete.txt:56 ../../../source/commands/dump.txt:45
+#: ../../../source/commands/delete.txt:60 ../../../source/commands/dump.txt:45
 #: ../../../source/commands/load.txt:80
 #: ../../../source/commands/log_level.txt:57
 #: ../../../source/commands/log_put.txt:61
@@ -190,7 +190,7 @@ msgstr ""
 #: ../../../source/commands/select.txt:253
 #: ../../../source/commands/shutdown.txt:37
 #: ../../../source/commands/status.txt:54
-#: ../../../source/commands/table_create.txt:103
+#: ../../../source/commands/table_create.txt:106
 #: ../../../source/commands/table_list.txt:80
 #: ../../../source/commands/table_remove.txt:47
 #: ../../../source/commands/view_add.txt:52
@@ -235,12 +235,12 @@ msgstr ""
 #: ../../../source/commands/column_remove.txt:40
 #: ../../../source/commands/define_selector.txt:95
 #: ../../../source/commands/defrag.txt:37
-#: ../../../source/commands/delete.txt:45
+#: ../../../source/commands/delete.txt:49
 #: ../../../source/commands/log_level.txt:46
 #: ../../../source/commands/log_put.txt:50
 #: ../../../source/commands/log_reopen.txt:37
 #: ../../../source/commands/status.txt:35
-#: ../../../source/commands/table_create.txt:92
+#: ../../../source/commands/table_create.txt:95
 #: ../../../source/commands/table_list.txt:35
 #: ../../../source/commands/table_remove.txt:36
 #: ../../../source/commands/view_add.txt:41
@@ -293,7 +293,7 @@ msgid ""
 msgstr ""
 
 #: ../../../source/commands/clearlock.txt:33
-#: ../../../source/commands/delete.txt:41
+#: ../../../source/commands/delete.txt:45
 msgid "返値 ---"
 msgstr ""
 
@@ -307,7 +307,7 @@ msgstr ""
 
 #: ../../../source/commands/clearlock.txt:61
 #: ../../../source/commands/define_selector.txt:114
-#: ../../../source/commands/delete.txt:65 ../../../source/commands/load.txt:98
+#: ../../../source/commands/delete.txt:69 ../../../source/commands/load.txt:98
 #: ../../../source/commands/log_level.txt:64
 #: ../../../source/commands/log_put.txt:68
 #: ../../../source/commands/log_reopen.txt:65
@@ -316,7 +316,7 @@ msgid "関連項目"
 msgstr ""
 
 #: ../../../source/commands/clearlock.txt:63
-#: ../../../source/commands/delete.txt:67
+#: ../../../source/commands/delete.txt:71
 msgid ":doc:`load`"
 msgstr ""
 
@@ -649,6 +649,7 @@ msgid "追加するselectorコマンドのquery引数のデフォルト値を指
 msgstr ""
 
 #: ../../../source/commands/define_selector.txt:47
+#: ../../../source/commands/delete.txt:41
 #: ../../../source/commands/select.txt:106
 msgid "``filter``"
 msgstr ""
@@ -834,7 +835,14 @@ msgid ""
 "メータを指定してはいけません。"
 msgstr ""
 
-#: ../../../source/commands/delete.txt:58
+# 5babd211f9924888951c974f7631df13
+#: ../../../source/commands/delete.txt:43
+msgid ""
+"script形式のgrn_expr文字列によってレコードを指定します。filterパラメータを指"
+"定する場合は、id及びkeyパラメータを指定してはいけません。"
+msgstr ""
+
+#: ../../../source/commands/delete.txt:62
 msgid "テーブルEntryからレコードを削除します。::"
 msgstr ""
 
@@ -2026,60 +2034,74 @@ msgid ""
 "します。(デフォルト値は0(=\"TABLE_HASH_KEY\"))"
 msgstr ""
 
+# 1b1d54d83bf74efeab5a7e794c1a665b
 #: ../../../source/commands/table_create.txt:40
 msgid ""
 "主キー値をハッシュ表で管理するテーブルを作成します。ハッシュ表を使用したテー"
-"ブルでは、主キー値に完全一致するレコードを高速に検索することができます。"
+"ブルでは、主キー値に完全一致するレコードを非常に高速に検索することができま"
+"す。"
 msgstr ""
 
+# 40618460654d445c85018d86c23ce7c5
 #: ../../../source/commands/table_create.txt:43
 msgid ""
 "主キー値をパトリシア木で管理するテーブルを作成します。パトリシア木を使用した"
-"テーブルでは、主キー値に完全一致するレコード、前方一致するレコード、および最"
-"長共通接頭辞となるレコードを高速に検索することができます。また、キー値の昇降"
-"順でレコードを取り出したり、キー値の範囲での検索を行うことができます。また、"
-"flagsの値に64を加えることによって、後方一致検索も可能となります。"
+"テーブルでは、主キー値に完全一致するレコードを検索することができるとともに、"
+"前方一致するレコード、および最長共通接頭辞となるレコードを高速に検索すること"
+"ができます。また、キー値の昇降順でレコードを取り出したり、キー値の範囲での検"
+"索を行うことができます。また、flagsの値に64を加えることによって、後方一致検索"
+"も可能となります。"
 msgstr ""
 
+# 40618460654d445c85018d86c23ce7c5
 #: ../../../source/commands/table_create.txt:46
+msgid ""
+"主キー値をダブル配列で管理するテーブルを作成します。ダブル配列を使用したテー"
+"ブルでは、主キー値に完全一致するレコードを高速に検索することができるととも"
+"に、前方一致するレコード、および最長共通接頭辞となるレコードを検索することが"
+"できます。また、キー値の昇降順でレコードを取り出したり、キー値の範囲での検索"
+"を行うことができます。"
+msgstr ""
+
+#: ../../../source/commands/table_create.txt:49
 msgid ""
 "主キーを持たないテーブルを作成します。各レコードはIDのみによって特定すること"
 "ができます。"
 msgstr ""
 
-#: ../../../source/commands/table_create.txt:49
+#: ../../../source/commands/table_create.txt:52
 msgid ""
 "複数のテーブルをまとめて操作するための仮想的なテーブル(view)を作成します。"
 msgstr ""
 
-#: ../../../source/commands/table_create.txt:52
+#: ../../../source/commands/table_create.txt:55
 msgid ""
 "語彙表となるパトリシア木型のテーブルにおいて、後方一致検索を可能とします。"
 msgstr ""
 
-#: ../../../source/commands/table_create.txt:55
+#: ../../../source/commands/table_create.txt:58
 msgid ""
 "ハッシュ表型か、パトリシア木型のテーブルにおいて、主キー値を正規化した上で登"
 "録します。この値が指定されたテーブルではたとえば、主キー値'abc'と'ABC' は同一"
 "のレコードに対応するものとみなされます。"
 msgstr ""
 
-#: ../../../source/commands/table_create.txt:57
+#: ../../../source/commands/table_create.txt:60
 msgid "``key_type``"
 msgstr ""
 
-#: ../../../source/commands/table_create.txt:59
+#: ../../../source/commands/table_create.txt:62
 msgid ""
 "主キー値の型を指定します。主キー値を持つテーブルに限り有効です。型にはgroonga"
 "の組込型か、同一データベースに定義済みのユーザ定義型、定義済みのテーブルを指"
 "定することができます。"
 msgstr ""
 
-#: ../../../source/commands/table_create.txt:61
+#: ../../../source/commands/table_create.txt:64
 msgid "``value_type``"
 msgstr ""
 
-#: ../../../source/commands/table_create.txt:63
+#: ../../../source/commands/table_create.txt:66
 msgid ""
 "値の型を指定します。tableの値には固定長の型のみが指定できます。(可変長の値が"
 "必要な場合は別途カラムを作成します) 型にはgroongaの組込型か、同一データベース"
@@ -2087,53 +2109,53 @@ msgid ""
 "はvalueなし)"
 msgstr ""
 
-#: ../../../source/commands/table_create.txt:65
+#: ../../../source/commands/table_create.txt:68
 msgid "``default_tokenizer``"
 msgstr ""
 
-#: ../../../source/commands/table_create.txt:67
+#: ../../../source/commands/table_create.txt:70
 msgid ""
 "作成するテーブルを語彙表として使用する場合、文字列を分割するトークナイザを指"
 "定します。"
 msgstr ""
 
-#: ../../../source/commands/table_create.txt:69
+#: ../../../source/commands/table_create.txt:72
 msgid "組込のトークナイザとして、以下が準備されています。"
 msgstr ""
 
-#: ../../../source/commands/table_create.txt:72
+#: ../../../source/commands/table_create.txt:75
 msgid "空白で区切られた文字列をトークンとする"
 msgstr ""
 
-#: ../../../source/commands/table_create.txt:75
+#: ../../../source/commands/table_create.txt:78
 msgid "unigram(1文字を1トークンとする)"
 msgstr ""
 
-#: ../../../source/commands/table_create.txt:78
+#: ../../../source/commands/table_create.txt:81
 msgid "bigram(2文字の文字列要素をトークンとする)"
 msgstr ""
 
-#: ../../../source/commands/table_create.txt:81
+#: ../../../source/commands/table_create.txt:84
 msgid "trigram(3文字の文字列要素をトークンとする)"
 msgstr ""
 
-#: ../../../source/commands/table_create.txt:84
+#: ../../../source/commands/table_create.txt:87
 msgid ""
 "形態素解析器mecabで解析した形態素をトークンとする。(mecabを組み込んだ場合のみ"
 "有効)"
 msgstr ""
 
-#: ../../../source/commands/table_create.txt:86
+#: ../../../source/commands/table_create.txt:89
 msgid ""
 "トークナイザが指定されなかった場合は、対象の文字列を分割せずに語彙表に登録し"
 "ます。"
 msgstr ""
 
-#: ../../../source/commands/table_create.txt:105
+#: ../../../source/commands/table_create.txt:108
 msgid "ShortText型の主キーを持つハッシュ表型のテーブル、Entryを作成します。::"
 msgstr ""
 
-#: ../../../source/commands/table_create.txt:110
+#: ../../../source/commands/table_create.txt:113
 msgid ""
 "ShortText型の主キーを持つパトリシア木型のテーブル、Termを作成します。主キー値"
 "は正規化して管理します。また、このテーブルを語彙表とする転置索引を作成する場"

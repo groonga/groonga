@@ -17,7 +17,6 @@
 #include "groonga_in.h"
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <unistd.h>
 #include <cstring>
 #include <new>
 #include "str.h"
