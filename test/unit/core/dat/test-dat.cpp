@@ -213,6 +213,9 @@ namespace test_dat
     create_keys(&keys, 1000, 6, 15);
 
     grn_dat * const dat = create_trie(keys, NULL);
+    cppcut_assert_equal(static_cast<grn_id>(GRN_ID_NIL),
+                        grn_dat_add(&ctx, dat, "", 0, NULL, NULL));
+
     cppcut_assert_equal(GRN_SUCCESS, grn_dat_close(&ctx, dat));
   }
 
@@ -369,6 +372,8 @@ namespace test_dat
       cppcut_assert_equal(static_cast<grn_id>(i + 1),
                           grn_dat_add(&ctx, dat, ptr, length, NULL, NULL));
     }
+    grn_test_assert_equal_rc(GRN_INVALID_ARGUMENT,
+                             grn_dat_update_by_id(&ctx, dat, 1, "", 0));
     for (std::size_t i = (keys.size() / 2); i < keys.size(); ++i) {
       const grn_id key_id = static_cast<grn_id>(i + 1 - (keys.size() / 2));
       const char * const src_ptr = keys[i - (keys.size() / 2)].c_str();
@@ -415,6 +420,9 @@ namespace test_dat
       cppcut_assert_equal(static_cast<grn_id>(i + 1),
                           grn_dat_add(&ctx, dat, ptr, length, NULL, NULL));
     }
+    grn_test_assert_equal_rc(GRN_INVALID_ARGUMENT,
+                             grn_dat_update(&ctx, dat, keys[1].c_str(),
+                                            keys[1].length(), "", 0));
     for (std::size_t i = (keys.size() / 2); i < keys.size(); ++i) {
       const grn_id key_id = static_cast<grn_id>(i + 1 - (keys.size() / 2));
       const char * const src_ptr = keys[i - (keys.size() / 2)].c_str();
