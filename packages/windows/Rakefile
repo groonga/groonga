@@ -100,7 +100,7 @@ namespace :build do
     naist_jdic_tar_gz = "#{naist_jdic_base}.tar.gz"
     naist_jdic_tar_gz_url = "http://osdn.dl.sourceforge.jp/naist-jdic/48487/#{naist_jdic_tar_gz}"
     Dir.chdir(tmp_dir) do
-      mecab_tar_gz = download_dir + naist_jdic_tar_gz
+      naist_jdic_tar_gz = download_dir + naist_jdic_tar_gz
       unless File.exist?(naist_jdic_tar_gz)
         mkdir_p(download_dir)
         open(naist_jdic_tar_gz_url) do |downloaded_tar_gz|
