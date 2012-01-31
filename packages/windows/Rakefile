@@ -162,7 +162,29 @@ namespace :build do
       cp(files, groonga_license_dir)
     end
   end
+
+  task(:pre)
+  task(:post)
 end
 
+namespace :gcc do
+  namespace :dll do
+    desc "Bundle GCC related DLLs"
+    task(:bundle) do
+      dlls = ["libgcc_s_sjlj-1.dll", "libstdc++-6.dll"]
+      dlls.each do |dll|
+        full_path = `#{host}-g++ -print-file-name=#{dll}`.strip
+        cp(full_path, (binary_dir + "bin").to_s)
+      end
+    end
+  end
+end
+
+task("build:post" => "gcc:dll:bundle")
+
 desc "Build MeCab and groonga and install them into #{dist_dir}/."
-task(:build => ["build:mecab", "build:mecab_dict", "build:groonga"])
+task(:build => ["build:pre",
+                "build:mecab",
+                "build:mecab_dict",
+                "build:groonga",
+                "build:post"])
