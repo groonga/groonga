@@ -163,7 +163,11 @@ namespace :build do
     end
   end
 
-  task(:pre)
+  task(:clean) do
+    rm_rf(dist_dir)
+  end
+
+  task(:pre => :clean)
   task(:post)
 end
 
