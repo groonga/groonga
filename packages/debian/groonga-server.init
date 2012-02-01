@@ -18,10 +18,12 @@ PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC="a full-text search engine and column store"
 NAME=groonga
 DAEMON=/usr/bin/$NAME
+CURL=/usr/bin/curl
 USER=groonga
 GROUP=groonga
 DATABASE=/var/lib/groonga/db/db
 ADDRESS=127.0.0.1
+PORT=10041
 PROTOCOL=
 LOG_PATH=
 QUERY_LOG_PATH=
@@ -42,6 +44,9 @@ ENABLE="no"
 DAEMON_ARGS="-d --pid-path ${PIDFILE}"
 if [ -n "${ADDRESS}" ]; then
     DAEMON_ARGS="${DAEMON_ARGS} -a ${ADDRESS}"
+fi
+if [ -n "${PORT}" ]; then
+    DAEMON_ARGS="${DAEMON_ARGS} --port ${PORT}"
 fi
 if [ -n "${LOG_PATH}" ]; then
     DAEMON_ARGS="${DAEMON_ARGS} --log-path ${LOG_PATH}"
@@ -154,16 +159,14 @@ do_reload() {
 }
 
 do_status() {
-    ARGS=""
-    if [ -n "${PROTOCOL}" ]; then
-	ARGS="${ARGS} --protocol ${PROTOCOL}"
+    if [ -z "${ADDRESS}" ]; then
+	ADDRESS="localhost"
     fi
-    if [ -n "${ADDRESS}" ]; then
-	ARGS="${ARGS} -c ${ADDRESS}"
+    if [ "${PROTOCOL}" = "http" ]; then
+	$CURL "http://${ADDRESS}:${PORT}/d/status"
     else
-	ARGS="${ARGS} -c localhost"
+        $DAEMON --port ${PORT} -c ${ADDRESS} status
     fi
-    $DAEMON $ARGS status
     return $?
 }
 
