@@ -23,6 +23,7 @@
 name="groonga"
 prog="groonga"
 groonga=/usr/bin/$prog
+curl=/usr/bin/curl
 USER=groonga
 GROUP=groonga
 DATABASE=/var/lib/groonga/db/db
@@ -131,7 +132,7 @@ restart() {
 
 status() {
 	if [ "${PROTOCOL}" = "http" ]; then
-		/usr/bin/curl "http://${ADDRESS}:${PORT}/d/status"
+		$curl "http://${ADDRESS}:${PORT}/d/status"
 	else
 		$groonga --port $PORT -c $ADDRESS status
 	fi
