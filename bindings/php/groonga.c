@@ -10,7 +10,7 @@ void grn_ctx_dtor(zend_rsrc_list_entry *rsrc TSRMLS_DC)
   grn_ctx_close(ctx);
 }
 
-function_entry groonga_functions[] = {
+zend_function_entry groonga_functions[] = {
   PHP_FE(grn_ctx_init        , grn_ctx_init_arg_info)
   PHP_FE(grn_ctx_close       , grn_ctx_close_arg_info)
   PHP_FE(grn_ctx_connect      , grn_ctx_connect_arg_info)
