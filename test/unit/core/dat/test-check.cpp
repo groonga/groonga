@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2011  Brazil
+  Copyright (C) 2011-2012  Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -79,8 +79,9 @@ namespace test_dat_check
     cppcut_assert_equal(grn::dat::UInt32('c'), check.sibling());
 
     cppcut_assert_equal(true, check.is_offset());
-    cppcut_assert_equal('a' | grn::dat::UInt32('b' << 9) | grn::dat::UInt32('c' << 18),
-                        check.except_is_offset());
+    const grn::dat::UInt32 expected_except_is_offset =
+        'a' | grn::dat::UInt32('b' << 9) | grn::dat::UInt32('c' << 18);
+    cppcut_assert_equal(expected_except_is_offset, check.except_is_offset());
     cppcut_assert_equal(false, check.is_phantom());
   }
 }

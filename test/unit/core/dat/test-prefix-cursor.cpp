@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2011  Brazil
+  Copyright (C) 2011-2012  Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -30,11 +30,11 @@ namespace
   void create_trie(grn::dat::Trie *trie)
   {
     trie->create();
-    trie->insert("東京", std::strlen("東京"));          // ID: 1, 3rd
-    trie->insert("京都", std::strlen("京都"));          // ID: 2, 1st
-    trie->insert("東京都", std::strlen("東京都"));      // ID: 3, 4th
-    trie->insert("京都府", std::strlen("京都府"));      // ID: 4, 2nd
-    trie->insert("東京都庁", std::strlen("東京都庁"));  // ID: 5, 5th
+    trie->insert("東京", std::strlen("東京"));          // 3rd
+    trie->insert("京都", std::strlen("京都"));          // 1st
+    trie->insert("東京都", std::strlen("東京都"));      // 4th
+    trie->insert("京都府", std::strlen("京都府"));      // 2nd
+    trie->insert("東京都庁", std::strlen("東京都庁"));  // 5th
   }
 }
 
@@ -117,11 +117,13 @@ namespace test_dat_prefix_cursor
     cppcut_assert_equal(grn::dat::UInt32(5), cursor.next().id());
     cppcut_assert_equal(false, cursor.next().is_valid());
 
-    cursor.open(trie, grn::dat::String("東京都庁ビル"), std::strlen("東京都庁"));
+    cursor.open(trie, grn::dat::String("東京都庁ビル"),
+                std::strlen("東京都庁"));
     cppcut_assert_equal(grn::dat::UInt32(5), cursor.next().id());
     cppcut_assert_equal(false, cursor.next().is_valid());
 
-    cursor.open(trie, grn::dat::String("東京都庁ビル"), std::strlen("東京都庁ビル"));
+    cursor.open(trie, grn::dat::String("東京都庁ビル"),
+                std::strlen("東京都庁ビル"));
     cppcut_assert_equal(false, cursor.next().is_valid());
   }
 
@@ -158,7 +160,8 @@ namespace test_dat_prefix_cursor
 
     grn::dat::PrefixCursor cursor;
 
-    cursor.open(trie, grn::dat::String("東京都庁ビル"), 0, 0, grn::dat::UINT32_MAX);
+    cursor.open(trie, grn::dat::String("東京都庁ビル"), 0, 0,
+                grn::dat::UINT32_MAX);
     cppcut_assert_equal(grn::dat::UInt32(1), cursor.next().id());
     cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
     cppcut_assert_equal(grn::dat::UInt32(5), cursor.next().id());

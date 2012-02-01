@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2011  Brazil
+  Copyright (C) 2011-2012  Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -56,7 +56,7 @@ namespace test_dat_key
     cppcut_assert_equal(grn::dat::UInt32(123), key.id());
     cppcut_assert_equal(grn::dat::UInt32(7), key.length());
     cppcut_assert_equal(0, std::memcmp(key.ptr(), "groonga", 7));
-    cppcut_assert_equal(static_cast<const void *>(reinterpret_cast<char *>(buf) + 5),
-                        key.ptr());
+    cppcut_assert_equal(reinterpret_cast<const char *>(buf) + 5,
+                        static_cast<const char *>(key.ptr()));
   }
 }

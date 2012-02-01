@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2011  Brazil
+  Copyright (C) 2011-2012  Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -30,12 +30,12 @@ namespace
   void create_trie(grn::dat::Trie *trie)
   {
     trie->create();
-    trie->insert("北斗", std::strlen("北斗"));                      // ID: 1, 2nd
-    trie->insert("北斗神拳", std::strlen("北斗神拳"));              // ID: 2, 3rd
-    trie->insert("北斗神拳伝承者", std::strlen("北斗神拳伝承者"));  // ID: 3, 4th
-    trie->insert("南斗聖拳", std::strlen("南斗聖拳"));              // ID: 4, 6th
-    trie->insert("南斗孤鷲拳", std::strlen("南斗孤鷲拳"));          // ID: 5, 5th
-    trie->insert("元斗皇拳", std::strlen("元斗皇拳"));              // ID: 6, 1st
+    trie->insert("北斗", std::strlen("北斗"));                      // 2nd
+    trie->insert("北斗神拳", std::strlen("北斗神拳"));              // 3rd
+    trie->insert("北斗神拳伝承者", std::strlen("北斗神拳伝承者"));  // 4th
+    trie->insert("南斗聖拳", std::strlen("南斗聖拳"));              // 6th
+    trie->insert("南斗孤鷲拳", std::strlen("南斗孤鷲拳"));          // 5th
+    trie->insert("元斗皇拳", std::strlen("元斗皇拳"));              // 1st
   }
 }
 
@@ -308,13 +308,13 @@ namespace test_dat_predictive_cursor
     cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
     cppcut_assert_equal(false, cursor.next().is_valid());
 
-    cursor.open(trie, grn::dat::String("北斗神拳伝承"), 0, grn::dat::UINT32_MAX,
-                grn::dat::EXCEPT_EXACT_MATCH);
+    cursor.open(trie, grn::dat::String("北斗神拳伝承"), 0,
+                grn::dat::UINT32_MAX, grn::dat::EXCEPT_EXACT_MATCH);
     cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
     cppcut_assert_equal(false, cursor.next().is_valid());
 
-    cursor.open(trie, grn::dat::String("北斗神拳伝承者"), 0, grn::dat::UINT32_MAX,
-                grn::dat::EXCEPT_EXACT_MATCH);
+    cursor.open(trie, grn::dat::String("北斗神拳伝承者"), 0,
+                grn::dat::UINT32_MAX, grn::dat::EXCEPT_EXACT_MATCH);
     cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("北斗"), 1, grn::dat::UINT32_MAX,

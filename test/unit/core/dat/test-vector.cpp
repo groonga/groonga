@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2011  Brazil
+  Copyright (C) 2011-2012  Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -189,7 +189,8 @@ namespace test_dat_vector
     }
     for (grn::dat::UInt32 i = 0; i < vec.size(); ++i) {
       cppcut_assert_equal(i, vec[i]);
-      cppcut_assert_equal(i, const_cast<const grn::dat::Vector<grn::dat::UInt32> &>(vec)[i]);
+      cppcut_assert_equal(i,
+          const_cast<const grn::dat::Vector<grn::dat::UInt32> &>(vec)[i]);
       cppcut_assert_equal(vec.begin() + i, &vec[i]);
       cppcut_assert_equal(vec.end() - vec.size() + i, &vec[i]);
     }

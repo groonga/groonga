@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2011  Brazil
+  Copyright (C) 2011-2012  Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -120,7 +120,8 @@ namespace test_dat_file
     file.open(path);
     cppcut_assert_not_null(file.ptr());
     cppcut_assert_equal(grn::dat::UInt64(32), file.size());
-    cppcut_assert_equal(0, std::strcmp(static_cast<char *>(file.ptr()), "This is a pen."));
+    cppcut_assert_equal(0, std::strcmp(static_cast<char *>(file.ptr()),
+                                       "This is a pen."));
   }
 
   void test_swap(void)

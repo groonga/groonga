@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2011  Brazil
+  Copyright (C) 2011-2012  Brazil
   Copyright (C) 2011  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
@@ -37,14 +37,15 @@ namespace test_dat_array
 
     for (std::size_t i = 0; i < sizeof(buf); ++i) {
       cppcut_assert_equal(buf[i], array[i]);
-      cppcut_assert_equal(buf[i], static_cast<const grn::dat::Array<char> &>(array)[i]);
+      cppcut_assert_equal(buf[i],
+          static_cast<const grn::dat::Array<char> &>(array)[i]);
     }
     cppcut_assert_equal(buf, array.begin());
     cppcut_assert_equal(buf,
-                        static_cast<const grn::dat::Array<char> &>(array).begin());
+        static_cast<const grn::dat::Array<char> &>(array).begin());
     cppcut_assert_equal((buf + sizeof(buf)), array.end());
     cppcut_assert_equal((buf + sizeof(buf)),
-                        static_cast<const grn::dat::Array<char> &>(array).end());
+        static_cast<const grn::dat::Array<char> &>(array).end());
   }
 
   void test_assign_without_length(void)

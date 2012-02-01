@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2011  Brazil
+  Copyright (C) 2011-2012  Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -30,13 +30,13 @@ namespace
   void create_trie(grn::dat::Trie *trie)
   {
     trie->create();
-    trie->insert("Werdna", std::strlen("Werdna"));  // ID: 1, 7th
-    trie->insert("Trebor", std::strlen("Trebor"));  // ID: 2, 6th
-    trie->insert("Human", std::strlen("Human"));    // ID: 3, 5th
-    trie->insert("Elf", std::strlen("Elf"));        // ID: 4, 2nd
-    trie->insert("Dwarf", std::strlen("Dward"));    // ID: 5, 1st
-    trie->insert("Gnome", std::strlen("Gnome"));    // ID: 6, 3rd
-    trie->insert("Hobbit", std::strlen("Hobbit"));  // ID: 7, 4th
+    trie->insert("Werdna", std::strlen("Werdna"));  // 7th
+    trie->insert("Trebor", std::strlen("Trebor"));  // 6th
+    trie->insert("Human", std::strlen("Human"));    // 5th
+    trie->insert("Elf", std::strlen("Elf"));        // 2nd
+    trie->insert("Dwarf", std::strlen("Dward"));    // 1st
+    trie->insert("Gnome", std::strlen("Gnome"));    // 3rd
+    trie->insert("Hobbit", std::strlen("Hobbit"));  // 4th
   }
 }
 
@@ -124,7 +124,8 @@ namespace test_dat_key_cursor
 
     grn::dat::KeyCursor cursor;
 
-    cursor.open(trie, grn::dat::String("Hobbit"), grn::dat::String("Trebor"), 0);
+    cursor.open(trie, grn::dat::String("Hobbit"),
+                grn::dat::String("Trebor"), 0);
     cppcut_assert_equal(grn::dat::UInt32(7), cursor.next().id());
     cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
     cppcut_assert_equal(grn::dat::UInt32(2), cursor.next().id());
@@ -135,12 +136,14 @@ namespace test_dat_key_cursor
     cppcut_assert_equal(grn::dat::UInt32(1), cursor.next().id());
     cppcut_assert_equal(false, cursor.next().is_valid());
 
-    cursor.open(trie, grn::dat::String("Gnome"), grn::dat::String("Trebor"), 2);
+    cursor.open(trie, grn::dat::String("Gnome"),
+                grn::dat::String("Trebor"), 2);
     cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
     cppcut_assert_equal(grn::dat::UInt32(2), cursor.next().id());
     cppcut_assert_equal(false, cursor.next().is_valid());
 
-    cursor.open(trie, grn::dat::String("Gnome"), grn::dat::String("Trebor"), 100);
+    cursor.open(trie, grn::dat::String("Gnome"),
+                grn::dat::String("Trebor"), 100);
     cppcut_assert_equal(false, cursor.next().is_valid());
   }
 

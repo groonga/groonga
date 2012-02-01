@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2011  Brazil
+  Copyright (C) 2011-2012  Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -64,7 +64,8 @@ namespace test_dat_id_cursor
     create_trie(&trie);
 
     grn::dat::UInt32 key_pos;
-    cppcut_assert_equal(true, trie.search("スダチ", std::strlen("スダチ"), &key_pos));
+    cppcut_assert_equal(true,
+        trie.search("スダチ", std::strlen("スダチ"), &key_pos));
     const grn::dat::UInt32 min_key_id = trie.get_key(key_pos).id();
 
     grn::dat::IdCursor cursor;
@@ -83,7 +84,8 @@ namespace test_dat_id_cursor
     create_trie(&trie);
 
     grn::dat::UInt32 key_pos;
-    cppcut_assert_equal(true, trie.search("オレンジ", std::strlen("オレンジ"), &key_pos));
+    cppcut_assert_equal(true,
+        trie.search("オレンジ", std::strlen("オレンジ"), &key_pos));
     const grn::dat::UInt32 max_key_id = trie.get_key(key_pos).id();
 
     grn::dat::IdCursor cursor;
@@ -102,9 +104,11 @@ namespace test_dat_id_cursor
     create_trie(&trie);
 
     grn::dat::UInt32 key_pos;
-    cppcut_assert_equal(true, trie.search("みかん", std::strlen("みかん"), &key_pos));
+    cppcut_assert_equal(true,
+        trie.search("みかん", std::strlen("みかん"), &key_pos));
     const grn::dat::UInt32 min_key_id = trie.get_key(key_pos).id();
-    cppcut_assert_equal(true, trie.search("八朔", std::strlen("八朔"), &key_pos));
+    cppcut_assert_equal(true,
+        trie.search("八朔", std::strlen("八朔"), &key_pos));
     const grn::dat::UInt32 max_key_id = trie.get_key(key_pos).id();
 
     grn::dat::IdCursor cursor;
@@ -138,7 +142,8 @@ namespace test_dat_id_cursor
     create_trie(&trie);
 
     grn::dat::UInt32 key_pos;
-    cppcut_assert_equal(true, trie.search("伊予柑", std::strlen("伊予柑"), &key_pos));
+    cppcut_assert_equal(true,
+        trie.search("伊予柑", std::strlen("伊予柑"), &key_pos));
     const grn::dat::UInt32 min_key_id = trie.get_key(key_pos).id();
 
     grn::dat::IdCursor cursor;
@@ -157,7 +162,8 @@ namespace test_dat_id_cursor
     create_trie(&trie);
 
     grn::dat::UInt32 key_pos;
-    cppcut_assert_equal(true, trie.search("柚子", std::strlen("柚子"), &key_pos));
+    cppcut_assert_equal(true,
+        trie.search("柚子", std::strlen("柚子"), &key_pos));
     const grn::dat::UInt32 max_key_id = trie.get_key(key_pos).id();
 
     grn::dat::IdCursor cursor;
@@ -176,9 +182,11 @@ namespace test_dat_id_cursor
     create_trie(&trie);
 
     grn::dat::UInt32 key_pos;
-    cppcut_assert_equal(true, trie.search("グレープフルーツ", std::strlen("グレープフルーツ"), &key_pos));
+    cppcut_assert_equal(true,
+        trie.search("グレープフルーツ", std::strlen("グレープフルーツ"), &key_pos));
     const grn::dat::UInt32 min_key_id = trie.get_key(key_pos).id();
-    cppcut_assert_equal(true, trie.search("文旦", std::strlen("文旦"), &key_pos));
+    cppcut_assert_equal(true,
+        trie.search("文旦", std::strlen("文旦"), &key_pos));
     const grn::dat::UInt32 max_key_id = trie.get_key(key_pos).id();
 
     grn::dat::IdCursor cursor;
@@ -207,7 +215,8 @@ namespace test_dat_id_cursor
     cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::INVALID_KEY_ID, grn::dat::INVALID_KEY_ID, 5);
-    for (grn::dat::UInt32 i = trie.min_key_id() + 5; i <= trie.max_key_id(); ++i) {
+    for (grn::dat::UInt32 i = trie.min_key_id() + 5;
+         i <= trie.max_key_id(); ++i) {
       const grn::dat::Key &key = cursor.next();
       cppcut_assert_equal(true, key.is_valid());
       cppcut_assert_equal(i, key.id());
@@ -241,8 +250,10 @@ namespace test_dat_id_cursor
     }
     cppcut_assert_equal(false, cursor.next().is_valid());
 
-    cursor.open(trie, grn::dat::INVALID_KEY_ID, grn::dat::INVALID_KEY_ID, 0, 3);
-    for (grn::dat::UInt32 i = trie.min_key_id(); i < (trie.min_key_id() + 3); ++i) {
+    cursor.open(trie, grn::dat::INVALID_KEY_ID,
+                grn::dat::INVALID_KEY_ID, 0, 3);
+    for (grn::dat::UInt32 i = trie.min_key_id();
+         i < (trie.min_key_id() + 3); ++i) {
       const grn::dat::Key &key = cursor.next();
       cppcut_assert_equal(true, key.is_valid());
       cppcut_assert_equal(i, key.id());
@@ -349,7 +360,8 @@ namespace test_dat_id_cursor
     cursor.open(trie, trie.min_key_id(), trie.max_key_id(),
                 0, grn::dat::UINT32_MAX,
                 grn::dat::EXCEPT_LOWER_BOUND | grn::dat::EXCEPT_UPPER_BOUND);
-    for (grn::dat::UInt32 i = trie.min_key_id() + 1; i <= (trie.max_key_id() - 1); ++i) {
+    for (grn::dat::UInt32 i = trie.min_key_id() + 1;
+         i <= (trie.max_key_id() - 1); ++i) {
       const grn::dat::Key &key = cursor.next();
       cppcut_assert_equal(true, key.is_valid());
       cppcut_assert_equal(i, key.id());

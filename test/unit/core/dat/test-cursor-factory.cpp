@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2011  Brazil
+  Copyright (C) 2011-2012  Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -52,8 +52,10 @@ namespace test_dat_cursor_factory
 
     cppcut_assert_equal(grn::dat::UInt32(1), cursor->offset());
     cppcut_assert_equal(grn::dat::UInt32(2), cursor->limit());
-    cppcut_assert_equal(grn::dat::KEY_RANGE_CURSOR | grn::dat::ASCENDING_CURSOR |
-                        grn::dat::EXCEPT_LOWER_BOUND | grn::dat::EXCEPT_UPPER_BOUND,
+    cppcut_assert_equal(grn::dat::KEY_RANGE_CURSOR |
+                        grn::dat::ASCENDING_CURSOR |
+                        grn::dat::EXCEPT_LOWER_BOUND |
+                        grn::dat::EXCEPT_UPPER_BOUND,
                         cursor->flags());
   }
 
@@ -69,7 +71,8 @@ namespace test_dat_cursor_factory
 
     cppcut_assert_equal(grn::dat::UInt32(1), cursor->offset());
     cppcut_assert_equal(grn::dat::UInt32(2), cursor->limit());
-    cppcut_assert_equal(grn::dat::ID_RANGE_CURSOR | grn::dat::ASCENDING_CURSOR,
+    cppcut_assert_equal(grn::dat::ID_RANGE_CURSOR |
+                        grn::dat::ASCENDING_CURSOR,
                         cursor->flags());
   }
 
@@ -101,7 +104,8 @@ namespace test_dat_cursor_factory
 
     cppcut_assert_equal(grn::dat::UInt32(1), cursor->offset());
     cppcut_assert_equal(grn::dat::UInt32(2), cursor->limit());
-    cppcut_assert_equal(grn::dat::PREDICTIVE_CURSOR | grn::dat::ASCENDING_CURSOR |
+    cppcut_assert_equal(grn::dat::PREDICTIVE_CURSOR |
+                        grn::dat::ASCENDING_CURSOR |
                         grn::dat::EXCEPT_EXACT_MATCH,
                         cursor->flags());
   }
