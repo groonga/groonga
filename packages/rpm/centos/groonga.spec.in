@@ -261,6 +261,7 @@ fi
 - new upstream release.
 - remove other permission from DB directory.
 - install init.d related files directly.
+- use HTTP as the default protocol.
 
 * Sun Jan 29 2012 Kouhei Sutou <kou@clear-code.com> - 1.3.0-0
 - new upstream release.
