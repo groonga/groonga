@@ -27,6 +27,7 @@ USER=groonga
 GROUP=groonga
 DATABASE=/var/lib/groonga/db/db
 ADDRESS=127.0.0.1
+PORT=10041
 PIDFILE=/var/run/groonga/$prog.pid
 PROTOCOL=http
 LOG_PATH=/var/log/groonga/groonga.log
@@ -61,6 +62,9 @@ if [ -n "${PIDFILE}" ]; then
 fi
 if [ -n "${ADDRESS}" ]; then
 	GROONGA_ARGS="${GROONGA_ARGS} --address ${ADDRESS}"
+fi
+if [ -n "${PORT}" ]; then
+	GROONGA_ARGS="${GROONGA_ARGS} --port ${PORT}"
 fi
 if [ -n "${LOG_PATH}" ]; then
 	mkdir -p $(dirname ${LOG_PATH})
@@ -126,11 +130,11 @@ restart() {
 }
 
 status() {
-	ARGS=""
-	if [ -n "${PROTOCOL}" ]; then
-		ARGS="${ARGS} --protocol ${PROTOCOL}"
+	if [ "${PROTOCOL}" = "http" ]; then
+		/usr/bin/curl "http://${ADDRESS}:${PORT}/d/status"
+	else
+		$groonga --port $PORT -c $ADDRESS status
 	fi
-	$groonga $ARGS -c $ADDRESS status
 }
 
 case "$1" in
