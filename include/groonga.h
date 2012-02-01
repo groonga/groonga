@@ -737,8 +737,10 @@ GRN_API grn_id grn_table_at(grn_ctx *ctx, grn_obj *table, grn_id id);
  * @table: 対象table
  * @key: 検索key
  *
- * tableがGRN_TABLE_PAT_KEYを指定して作ったtableなら、
+ * tableがGRN_TABLE_PAT_KEYもしくはGRN_TABLE_DAT_KEYを指定して作ったtableなら、
  * longest common prefix searchを行い、対応するIDを返す。
+ * tableがGRN_TABLE_HASH_KEYを指定して作ったtableなら、
+ * 完全に一致するキーを検索し、対応するIDを返す。
  **/
 GRN_API grn_id grn_table_lcp_search(grn_ctx *ctx, grn_obj *table,
                                     const void *key, unsigned int key_size);
