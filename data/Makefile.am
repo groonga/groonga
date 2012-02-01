@@ -1,7 +1,8 @@
 SUBDIRS =			\
 	html			\
 	munin			\
-	init.d
+	init.d			\
+	systemd
 
 pkgsysconfdir = $(sysconfdir)/$(PACKAGE)
 dist_pkgsysconf_DATA =		\

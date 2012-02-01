@@ -214,6 +214,9 @@ AC_CONFIG_FILES([
   data/init.d/Makefile
   data/init.d/redhat/Makefile
   data/init.d/redhat/sysconfig/Makefile
+  data/systemd/Makefile
+  data/systemd/fedora/Makefile
+  data/systemd/fedora/sysconfig/Makefile
   tools/Makefile
   doc/Makefile
   doc/locale/Makefile
@@ -976,13 +979,15 @@ AC_MSG_CHECKING([whether package platform])
 AC_ARG_WITH(package-platform,
   [AS_HELP_STRING([--with-package-platform=PLATFORM],
     [install package platform related files. [default=no]
-     (supported package platforms: redhat)])],
+     (supported package platforms: redhat, fedora)])],
   [package_platform="$withval"],
   [package_platform="no"])
 AC_MSG_RESULT($package_platform)
 
 AM_CONDITIONAL([REDHAT_PLATFORM],
                [test "${package_platform}" = "redhat"])
+AM_CONDITIONAL([FEDORA_PLATFORM],
+               [test "${package_platform}" = "fedora"])
 
 # plugins check
 relative_pluginsdir="\$(PACKAGE)/plugins"
