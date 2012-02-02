@@ -1,12 +1,12 @@
-Unit]
-escription=Groonga Text Searching Engine
-fter=network.target
+[Unit]
+Description=Groonga Text Searching Engine
+After=network.target
 
-Service]
-ype=forking
-nvironmentFile=-/etc/sysconfig/groonga
-ser=groonga
-roup=groonga
+[Service]
+Type=forking
+EnvironmentFile=-/etc/sysconfig/groonga
+User=groonga
+Group=groonga
 ExecStart=/usr/bin/groonga -d --pid-path /var/run/groonga/groonga.pid --address $ADDRESS --log-path $LOG_PATH --query-log-path $QUERY_LOG_PATH --protocol $PROTOCOL $DATABASE
 
 [Install]
