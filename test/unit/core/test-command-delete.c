@@ -23,9 +23,9 @@
 
 #include <str.h>
 
-void test_by_id(void);
-void test_by_filter(void);
-void test_by_key(void);
+void test_id(void);
+void test_filter(void);
+void test_key(void);
 void test_referenced_record(void);
 void test_uint64(void);
 void test_last_token(void);
@@ -123,7 +123,7 @@ cut_teardown(void)
 }
 
 void
-test_by_id(void)
+test_id(void)
 {
   assert_send_command("delete Users --id 1");
   cut_assert_equal_string("[[[3],"
@@ -136,7 +136,7 @@ test_by_id(void)
 }
 
 void
-test_by_filter(void)
+test_filter(void)
 {
   assert_send_command("delete Users --filter "
                         "\"_key == \\\"tapo\\\"\"");
@@ -150,7 +150,7 @@ test_by_filter(void)
 }
 
 void
-test_by_key(void)
+test_key(void)
 {
   assert_send_command("delete Users tapo");
   cut_assert_equal_string("[[[3],"
