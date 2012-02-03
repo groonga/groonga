@@ -333,7 +333,8 @@ test_no_selector(void)
   grn_test_assert_send_command_error(
     context,
     GRN_INVALID_ARGUMENT,
-    "[table][record][delete] either key, id or filter must be specified",
+    "[table][record][delete] either key, id or filter must be specified: "
+    "table: <Users>",
     "delete Users");
 }
 
@@ -345,7 +346,7 @@ test_all_selector(void)
     GRN_INVALID_ARGUMENT,
     "[table][record][delete] "
     "record selector must be one of key, id and filter: "
-    "key: <mori>, id: <1>, filter: <true>",
+    "table: <Users>, key: <mori>, id: <1>, filter: <true>",
     "delete Users --key mori --id 1 --filter \"true\"");
 }
 
@@ -355,7 +356,8 @@ test_key_and_id(void)
   grn_test_assert_send_command_error(
     context,
     GRN_INVALID_ARGUMENT,
-    "[table][record][delete] can't use both key and id: key: <mori>, id: <1>",
+    "[table][record][delete] can't use both key and id: "
+    "table: <Users>, key: <mori>, id: <1>",
     "delete Users --key mori --id 1");
 }
 
@@ -366,7 +368,7 @@ test_key_and_filter(void)
     context,
     GRN_INVALID_ARGUMENT,
     "[table][record][delete] can't use both key and filter: "
-    "key: <mori>, filter: <true>",
+    "table: <Users>, key: <mori>, filter: <true>",
     "delete Users --key mori --filter true");
 }
 
@@ -377,7 +379,7 @@ test_id_and_filter(void)
     context,
     GRN_INVALID_ARGUMENT,
     "[table][record][delete] can't use both id and filter: "
-    "id: <1>, filter: <true>",
+    "table: <Users>, id: <1>, filter: <true>",
     "delete Users --id 1 --filter true");
 }
 
@@ -387,7 +389,8 @@ test_invalid_id(void)
   grn_test_assert_send_command_error(
     context,
     GRN_INVALID_ARGUMENT,
-    "[table][record][delete] id should be number: id: <1x2>, detail: <1|x|2>",
+    "[table][record][delete] id should be number: "
+    "table: <Users>, id: <1x2>, detail: <1|x|2>",
     "delete Users --id \"1x2\"");
 }
 

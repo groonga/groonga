@@ -1706,6 +1706,82 @@ proc_get(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   return NULL;
 }
 
+static grn_rc
+proc_delete_validate_selector(grn_ctx *ctx, grn_obj *table, grn_obj *table_name,
+                              grn_obj *key, grn_obj *id, grn_obj *filter)
+{
+  grn_rc rc = GRN_SUCCESS;
+
+  if (!table) {
+    rc = GRN_INVALID_ARGUMENT;
+    ERR(rc,
+        "[table][record][delete] table doesn't exist: <%.*s>",
+        GRN_TEXT_LEN(table_name), GRN_TEXT_VALUE(table_name));
+    return rc;
+  }
+
+  if (GRN_TEXT_LEN(key) == 0 &&
+      GRN_TEXT_LEN(id) == 0 &&
+      GRN_TEXT_LEN(filter) == 0) {
+    rc = GRN_INVALID_ARGUMENT;
+    ERR(rc,
+        "[table][record][delete] either key, id or filter must be specified: "
+        "table: <%.*s>",
+        GRN_TEXT_LEN(table_name), GRN_TEXT_VALUE(table_name));
+    return rc;
+  }
+
+  if (GRN_TEXT_LEN(key) && GRN_TEXT_LEN(id) && GRN_TEXT_LEN(filter)) {
+    rc = GRN_INVALID_ARGUMENT;
+    ERR(rc,
+        "[table][record][delete] "
+        "record selector must be one of key, id and filter: "
+        "table: <%.*s>, key: <%.*s>, id: <%.*s>, filter: <%.*s>",
+        GRN_TEXT_LEN(table_name), GRN_TEXT_VALUE(table_name),
+        GRN_TEXT_LEN(key), GRN_TEXT_VALUE(key),
+        GRN_TEXT_LEN(id), GRN_TEXT_VALUE(id),
+        GRN_TEXT_LEN(filter), GRN_TEXT_VALUE(filter));
+    return rc;
+  }
+
+  if (GRN_TEXT_LEN(key) && GRN_TEXT_LEN(id) && GRN_TEXT_LEN(filter) == 0) {
+    rc = GRN_INVALID_ARGUMENT;
+    ERR(rc,
+        "[table][record][delete] "
+        "can't use both key and id: table: <%.*s>, key: <%.*s>, id: <%.*s>",
+        GRN_TEXT_LEN(table_name), GRN_TEXT_VALUE(table_name),
+        GRN_TEXT_LEN(key), GRN_TEXT_VALUE(key),
+        GRN_TEXT_LEN(id), GRN_TEXT_VALUE(id));
+    return rc;
+  }
+
+  if (GRN_TEXT_LEN(key) && GRN_TEXT_LEN(id) == 0 && GRN_TEXT_LEN(filter)) {
+    rc = GRN_INVALID_ARGUMENT;
+    ERR(rc,
+        "[table][record][delete] "
+        "can't use both key and filter: "
+        "table: <%.*s>, key: <%.*s>, filter: <%.*s>",
+        GRN_TEXT_LEN(table_name), GRN_TEXT_VALUE(table_name),
+        GRN_TEXT_LEN(key), GRN_TEXT_VALUE(key),
+        GRN_TEXT_LEN(filter), GRN_TEXT_VALUE(filter));
+    return rc;
+  }
+
+  if (GRN_TEXT_LEN(key) == 0 && GRN_TEXT_LEN(id) && GRN_TEXT_LEN(filter)) {
+    rc = GRN_INVALID_ARGUMENT;
+    ERR(rc,
+        "[table][record][delete] "
+        "can't use both id and filter: "
+        "table: <%.*s>, id: <%.*s>, filter: <%.*s>",
+        GRN_TEXT_LEN(table_name), GRN_TEXT_VALUE(table_name),
+        GRN_TEXT_LEN(id), GRN_TEXT_VALUE(id),
+        GRN_TEXT_LEN(filter), GRN_TEXT_VALUE(filter));
+    return rc;
+  }
+
+  return rc;
+}
+
 static grn_obj *
 proc_delete(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
@@ -1725,64 +1801,8 @@ proc_delete(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   table = grn_ctx_get(ctx,
                       GRN_TEXT_VALUE(table_name),
                       GRN_TEXT_LEN(table_name));
-  if (!table) {
-    rc = GRN_INVALID_ARGUMENT;
-    ERR(rc,
-        "[table][record][delete] table doesn't exist: <%.*s>",
-        GRN_TEXT_LEN(table_name), GRN_TEXT_VALUE(table_name));
-    goto exit;
-  }
-
-  if (GRN_TEXT_LEN(key) == 0 &&
-      GRN_TEXT_LEN(id) == 0 &&
-      GRN_TEXT_LEN(filter) == 0) {
-    rc = GRN_INVALID_ARGUMENT;
-    ERR(rc,
-        "[table][record][delete] either key, id or filter must be specified");
-    goto exit;
-  }
-
-  if (GRN_TEXT_LEN(key) && GRN_TEXT_LEN(id) && GRN_TEXT_LEN(filter)) {
-    rc = GRN_INVALID_ARGUMENT;
-    ERR(rc,
-        "[table][record][delete] "
-        "record selector must be one of key, id and filter: "
-        "key: <%.*s>, id: <%.*s>, filter: <%.*s>",
-        GRN_TEXT_LEN(key), GRN_TEXT_VALUE(key),
-        GRN_TEXT_LEN(id), GRN_TEXT_VALUE(id),
-        GRN_TEXT_LEN(filter), GRN_TEXT_VALUE(filter));
-    goto exit;
-  }
-
-  if (GRN_TEXT_LEN(key) && GRN_TEXT_LEN(id) && GRN_TEXT_LEN(filter) == 0) {
-    rc = GRN_INVALID_ARGUMENT;
-    ERR(rc,
-        "[table][record][delete] "
-        "can't use both key and id: key: <%.*s>, id: <%.*s>",
-        GRN_TEXT_LEN(key), GRN_TEXT_VALUE(key),
-        GRN_TEXT_LEN(id), GRN_TEXT_VALUE(id));
-    goto exit;
-  }
-
-  if (GRN_TEXT_LEN(key) && GRN_TEXT_LEN(id) == 0 && GRN_TEXT_LEN(filter)) {
-    rc = GRN_INVALID_ARGUMENT;
-    ERR(rc,
-        "[table][record][delete] "
-        "can't use both key and filter: key: <%.*s>, filter: <%.*s>",
-        GRN_TEXT_LEN(key), GRN_TEXT_VALUE(key),
-        GRN_TEXT_LEN(filter), GRN_TEXT_VALUE(filter));
-    goto exit;
-  }
-
-  if (GRN_TEXT_LEN(key) == 0 && GRN_TEXT_LEN(id) && GRN_TEXT_LEN(filter)) {
-    rc = GRN_INVALID_ARGUMENT;
-    ERR(rc,
-        "[table][record][delete] "
-        "can't use both id and filter: id: <%.*s>, filter: <%.*s>",
-        GRN_TEXT_LEN(id), GRN_TEXT_VALUE(id),
-        GRN_TEXT_LEN(filter), GRN_TEXT_VALUE(filter));
-    goto exit;
-  }
+  rc = proc_delete_validate_selector(ctx, table, table_name, key, id, filter);
+  if (rc != GRN_SUCCESS) { goto exit; }
 
   if (GRN_TEXT_LEN(key)) {
     grn_obj casted_key;
@@ -1807,8 +1827,9 @@ proc_delete(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     } else {
       rc = GRN_INVALID_ARGUMENT;
       ERR(rc,
-          "[table][record][delete] id should be number: id: <%.*s>, "
-          "detail: <%.*s|%c|%.*s>",
+          "[table][record][delete] id should be number: "
+          "table: <%.*s>, id: <%.*s>, detail: <%.*s|%c|%.*s>",
+          GRN_TEXT_LEN(table_name), GRN_TEXT_VALUE(table_name),
           GRN_TEXT_LEN(id), GRN_TEXT_VALUE(id),
           end - GRN_TEXT_VALUE(id), GRN_TEXT_VALUE(id),
           end[0],
@@ -1823,7 +1844,9 @@ proc_delete(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                    GRN_TEXT_LEN(filter),
                    NULL, GRN_OP_MATCH, GRN_OP_AND,
                    GRN_EXPR_SYNTAX_SCRIPT);
-    if (!ctx->rc) {
+    if (ctx->rc) {
+      rc = ctx->rc;
+    } else {
       grn_obj *records;
 
       records = grn_table_select(ctx, table, cond, NULL, GRN_OP_OR);
