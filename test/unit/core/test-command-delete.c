@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2010-2011  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2010-2012  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -25,9 +25,6 @@
 
 void test_by_id(void);
 void test_by_filter(void);
-void test_by_invalid_filter(void);
-void test_by_id_and_filter(void);
-void test_by_all_options(void);
 void test_by_key(void);
 void test_referenced_record(void);
 void test_uint64(void);
@@ -35,6 +32,15 @@ void test_last_token(void);
 void test_no_key_twice(void);
 void test_no_key_by_id(void);
 void test_corrupt_jagged_array(void);
+void test_no_table_name(void);
+void test_nonexistent_table(void);
+void test_no_selector(void);
+void test_all_selector(void);
+void test_key_and_id(void);
+void test_key_and_filter(void);
+void test_id_and_filter(void);
+void test_invalid_id(void);
+void test_invalid_filter(void);
 
 static gchar *tmp_directory;
 
@@ -144,37 +150,7 @@ test_by_filter(void)
 }
 
 void
-test_by_invalid_filter(void)
-{
-  grn_test_assert_send_command_error(
-    context,
-    GRN_SYNTAX_ERROR,
-    "Syntax error! ($)",
-    "delete Users --filter \"$\"");
-}
-
-void
-test_by_id_and_filter(void)
-{
-  grn_test_assert_send_command_error(
-    context,
-    GRN_INVALID_ARGUMENT,
-    "filter is used with id and/or key",
-    "delete Users --id 1 --filter \"true\"");
-}
-
-void
-test_by_all_options(void)
-{
-  grn_test_assert_send_command_error(
-    context,
-    GRN_INVALID_ARGUMENT,
-    "filter is used with id and/or key",
-    "delete Users --id 1 --key mori --filter \"true\"");
-}
-
-void
-test_by_delete(void)
+test_by_key(void)
 {
   assert_send_command("delete Users tapo");
   cut_assert_equal_string("[[[3],"
@@ -329,4 +305,98 @@ test_corrupt_jagged_array(void)
                     text_65bytes,
                     text_129bytes),
                     send_command("select Sites"));
+}
+
+void
+test_no_table_name(void)
+{
+  grn_test_assert_send_command_error(
+    context,
+    GRN_INVALID_ARGUMENT,
+    "[table][record][delete] table name isn't specified",
+    "delete");
+}
+
+void
+test_nonexistent_table(void)
+{
+  grn_test_assert_send_command_error(
+    context,
+    GRN_INVALID_ARGUMENT,
+    "[table][record][delete] table doesn't exist: <nonexistent>",
+    "delete nonexistent");
+}
+
+void
+test_no_selector(void)
+{
+  grn_test_assert_send_command_error(
+    context,
+    GRN_INVALID_ARGUMENT,
+    "[table][record][delete] either key, id or filter must be specified",
+    "delete Users");
+}
+
+void
+test_all_selector(void)
+{
+  grn_test_assert_send_command_error(
+    context,
+    GRN_INVALID_ARGUMENT,
+    "[table][record][delete] "
+    "record selector must be one of key, id and filter: "
+    "key: <mori>, id: <1>, filter: <true>",
+    "delete Users --key mori --id 1 --filter \"true\"");
+}
+
+void
+test_key_and_id(void)
+{
+  grn_test_assert_send_command_error(
+    context,
+    GRN_INVALID_ARGUMENT,
+    "[table][record][delete] can't use both key and id: key: <mori>, id: <1>",
+    "delete Users --key mori --id 1");
+}
+
+void
+test_key_and_filter(void)
+{
+  grn_test_assert_send_command_error(
+    context,
+    GRN_INVALID_ARGUMENT,
+    "[table][record][delete] can't use both key and filter: "
+    "key: <mori>, filter: <true>",
+    "delete Users --key mori --filter true");
+}
+
+void
+test_id_and_filter(void)
+{
+  grn_test_assert_send_command_error(
+    context,
+    GRN_INVALID_ARGUMENT,
+    "[table][record][delete] can't use both id and filter: "
+    "id: <1>, filter: <true>",
+    "delete Users --id 1 --filter true");
+}
+
+void
+test_invalid_id(void)
+{
+  grn_test_assert_send_command_error(
+    context,
+    GRN_INVALID_ARGUMENT,
+    "[table][record][delete] id should be number: id: <1x2>, detail: <1|x|2>",
+    "delete Users --id \"1x2\"");
+}
+
+void
+test_invalid_filter(void)
+{
+  grn_test_assert_send_command_error(
+    context,
+    GRN_SYNTAX_ERROR,
+    "Syntax error! ($)",
+    "delete Users --filter \"$\"");
 }
