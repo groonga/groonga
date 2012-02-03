@@ -400,6 +400,7 @@ test_invalid_filter(void)
   grn_test_assert_send_command_error(
     context,
     GRN_SYNTAX_ERROR,
-    "Syntax error! ($)",
+    "[table][record][delete] failed to parse filter: "
+    "table: <Users>, filter: <$>, detail: <Syntax error! ($)>",
     "delete Users --filter \"$\"");
 }

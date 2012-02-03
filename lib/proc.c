@@ -1845,7 +1845,15 @@ proc_delete(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                    NULL, GRN_OP_MATCH, GRN_OP_AND,
                    GRN_EXPR_SYNTAX_SCRIPT);
     if (ctx->rc) {
+      char original_error_message[GRN_CTX_MSGSIZE];
+      strcpy(original_error_message, ctx->errbuf);
       rc = ctx->rc;
+      ERR(rc,
+          "[table][record][delete] failed to parse filter: "
+          "table: <%.*s>, filter: <%.*s>, detail: <%s>",
+          GRN_TEXT_LEN(table_name), GRN_TEXT_VALUE(table_name),
+          GRN_TEXT_LEN(filter), GRN_TEXT_VALUE(filter),
+          original_error_message);
     } else {
       grn_obj *records;
 
