@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2009-2011  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2009-2012  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -174,7 +174,7 @@ test_create_on_temporary_table(void)
                              NULL, 0,
                              get_object("Int32"));
   grn_test_assert_error(GRN_INVALID_ARGUMENT,
-                        "[column][create]: "
+                        "[column][create] "
                         "temporary table doesn't support column: <count>",
                         context);
 }

@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2011  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2011-2012  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -123,7 +123,7 @@ test_invalid_name(void)
   grn_test_assert_send_command_error(
     context,
     GRN_INVALID_ARGUMENT,
-    "[table][create]: name can't start with '_' and "
+    "[table][create] name can't start with '_' and "
     "contains only 0-9, A-Z, a-z, #, - or _: <_Users>",
     "table_create _Users");
 }

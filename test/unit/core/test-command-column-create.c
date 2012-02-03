@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2011  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2011-2012  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -87,7 +87,7 @@ test_invalid_name(void)
   grn_test_assert_send_command_error(
     context,
     GRN_INVALID_ARGUMENT,
-    "[column][create]: name can't start with '_' "
+    "[column][create] name can't start with '_' "
     "and contains only 0-9, A-Z, a-z, #, - or _: <_name>",
     "column_create Users _name COLUMN_SCALAR ShortText");
 }
@@ -99,7 +99,7 @@ test_missing_name(void)
   grn_test_assert_send_command_error(
     context,
     GRN_INVALID_ARGUMENT,
-    "[column][create]: name is missing",
+    "[column][create] name is missing",
     "column_create Users --flags COLUMN_SCALAR --type ShortText");
 }
 
@@ -119,9 +119,9 @@ test_too_long_name(void)
   grn_test_assert_send_command_error(
     context,
     GRN_INVALID_ARGUMENT,
-    "[column][create]: too long column name"
+    "[column][create] too long column name"
     ": required name_size(4091) < 4090"
-    ": <Users>.<aaaaaaaaaabbbbbbbbbbccccccccccddddddddddeeeee",
+    ": <Users>.<aaaaaaaaaabbbbbbbbbbccccccccccddddddddddeeeeee",
     command->str);
 }
 
@@ -131,7 +131,7 @@ test_nonexistent_table(void)
   grn_test_assert_send_command_error(
     context,
     GRN_INVALID_ARGUMENT,
-    "[column][create]: table doesn't exist: <Users>",
+    "[column][create] table doesn't exist: <Users>",
     "column_create Users name COLUMN_SCALAR ShortText");
 }
 
@@ -142,6 +142,6 @@ test_nonexistent_type(void)
   grn_test_assert_send_command_error(
     context,
     GRN_INVALID_ARGUMENT,
-    "[column][create]: type doesn't exist: <VeryShortText>",
+    "[column][create] type doesn't exist: <VeryShortText>",
     "column_create Users name COLUMN_SCALAR VeryShortText");
 }

@@ -3263,15 +3263,15 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
   grn_bool ja_p = GRN_FALSE;
   GRN_API_ENTER;
   if (!table) {
-    ERR(GRN_INVALID_ARGUMENT, "[column][create]: table is missing");
+    ERR(GRN_INVALID_ARGUMENT, "[column][create] table is missing");
     goto exit;
   }
   if (!type) {
-    ERR(GRN_INVALID_ARGUMENT, "[column][create]: type is missing");
+    ERR(GRN_INVALID_ARGUMENT, "[column][create] type is missing");
     goto exit;
   }
   if (!name || !name_size) {
-    ERR(GRN_INVALID_ARGUMENT, "[column][create]: name is missing");
+    ERR(GRN_INVALID_ARGUMENT, "[column][create] name is missing");
     goto exit;
   }
   db = DB_OBJ(table)->db;
@@ -3281,13 +3281,13 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
     char table_name[GRN_TABLE_MAX_KEY_SIZE];
     table_name_len = grn_obj_name(ctx, table, table_name, GRN_TABLE_MAX_KEY_SIZE);
     ERR(GRN_INVALID_ARGUMENT,
-        "[column][create]: invalid db assigned: <%.*s>.<%.*s>",
+        "[column][create] invalid db assigned: <%.*s>.<%.*s>",
         table_name_len, table_name, name_size, name);
     goto exit;
   }
   if (DB_OBJ(table)->id & GRN_OBJ_TMP_OBJECT) {
     ERR(GRN_INVALID_ARGUMENT,
-        "[column][create]: temporary table doesn't support column: <%.*s>",
+        "[column][create] temporary table doesn't support column: <%.*s>",
         name_size, name);
     goto exit;
   }
@@ -3305,7 +3305,7 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
     int len = grn_table_get_key(ctx, s->keys, domain, fullname, GRN_TABLE_MAX_KEY_SIZE);
     if (name_size + 1 + len > GRN_TABLE_MAX_KEY_SIZE) {
       ERR(GRN_INVALID_ARGUMENT,
-          "[column][create]: too long column name: required name_size(%d) < %d"
+          "[column][create] too long column name: required name_size(%d) < %d"
           ": <%.*s>.<%.*s>",
           name_size, GRN_TABLE_MAX_KEY_SIZE - 1 - len,
           len, fullname, name_size, name);
@@ -3316,7 +3316,7 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
     name_size += len + 1;
   } else {
     ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
-        "[column][create]: [todo]: table-less column isn't supported yet");
+        "[column][create] [todo] table-less column isn't supported yet");
     goto exit;
   }
   range = DB_OBJ(type)->id;
@@ -3355,7 +3355,7 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
         table_name_len = grn_obj_name(ctx, table, table_name,
                                       GRN_TABLE_MAX_KEY_SIZE);
         ERR(GRN_INVALID_ARGUMENT,
-            "[column][create]: path not assigned for persistent column"
+            "[column][create] path not assigned for persistent column"
             ": <%.*s>.<%.*s>",
             table_name_len, table_name, name_size, name);
         goto exit;
@@ -3370,7 +3370,7 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
       table_name_len = grn_obj_name(ctx, table, table_name,
                                     GRN_TABLE_MAX_KEY_SIZE);
       ERR(GRN_INVALID_ARGUMENT,
-          "[column][create]: path assigned for temporary column"
+          "[column][create] path assigned for temporary column"
           ": <%.*s>.<%.*s>",
           table_name_len, table_name, name_size, name);
       goto exit;
@@ -3419,7 +3419,7 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
         table_name_len = grn_obj_name(ctx, table, table_name,
                                       GRN_TABLE_MAX_KEY_SIZE);
         GRN_LOG(ctx, GRN_LOG_WARNING,
-                "[column][create]: "
+                "[column][create] "
                 "%s compressed column will leaks memories: <%.*s>.<%.*s>",
                 zlib_p ? "zlib" : "lzo",
                 table_name_len, table_name, name_size, name);

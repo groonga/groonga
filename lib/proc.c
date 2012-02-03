@@ -945,22 +945,22 @@ proc_column_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
   table = grn_ctx_get(ctx, GRN_TEXT_VALUE(VAR(0)), GRN_TEXT_LEN(VAR(0)));
   if (!table) {
     ERR(GRN_INVALID_ARGUMENT,
-        "[column][create]: table doesn't exist: <%.*s>",
-        GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0))) ;
+        "[column][create] table doesn't exist: <%.*s>",
+        GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)));
     goto exit;
   }
   type = grn_ctx_get(ctx, GRN_TEXT_VALUE(VAR(3)),
                      GRN_TEXT_LEN(VAR(3)));
   if (!type) {
     ERR(GRN_INVALID_ARGUMENT,
-        "[column][create]: type doesn't exist: <%.*s>",
+        "[column][create] type doesn't exist: <%.*s>",
         GRN_TEXT_LEN(VAR(3)), GRN_TEXT_VALUE(VAR(3))) ;
     goto exit;
   }
   if (GRN_TEXT_LEN(VAR(1))) {
     flags |= GRN_OBJ_PERSISTENT;
   } else {
-    ERR(GRN_INVALID_ARGUMENT, "[column][create]: name is missing");
+    ERR(GRN_INVALID_ARGUMENT, "[column][create] name is missing");
     goto exit;
   }
   column = grn_column_create(ctx, table,

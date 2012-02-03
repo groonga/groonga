@@ -495,7 +495,7 @@ test_invalid_table_name(void)
   grn_test_assert_send_command_error(
     context,
     GRN_INVALID_ARGUMENT,
-    "[table][load]: name can't start with '_' "
+    "[table][load] name can't start with '_' "
     "and contains only 0-9, A-Z, a-z, #, - or _: <_Users>",
     "load --table _Users\n"
     "[\n"
