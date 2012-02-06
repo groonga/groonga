@@ -636,8 +636,7 @@ typedef enum {
   GRN_PROC_TOKENIZER = 1,
   GRN_PROC_COMMAND,
   GRN_PROC_FUNCTION,
-  GRN_PROC_HOOK,
-  GRN_PROC_NORMALIZER
+  GRN_PROC_HOOK
 } grn_proc_type;
 
 GRN_API grn_obj *grn_proc_create(grn_ctx *ctx,
