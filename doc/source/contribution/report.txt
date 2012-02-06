@@ -5,10 +5,9 @@
 How to report a bug
 ===================
 
-We have two issue tracking systems,
-Redmine_ and `GitHub issue tracker`_. Redmine is for
-Japanese and GitHub issue tracker is for English. You can
-use both of them to report a bug.
-
-.. _Redmine: http://redmine.groonga.org/projects/groonga/
-.. _GitHub issue tracker: https://github.com/groonga/groonga/issues
+We have two issue tracking systems, `Redmine
+<http://redmine.groonga.org/projects/groonga/issues>`_ and
+`GitHub issue tracker
+<https://github.com/groonga/groonga/issues>`_.
+Redmine is for Japanese and GitHub issue tracker is for
+English. You can use both of them to report a bug.
