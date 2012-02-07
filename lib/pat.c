@@ -421,12 +421,12 @@ _grn_pat_create(grn_ctx *ctx, grn_pat *pat,
   header->curr_del2 = 0;
   header->curr_del3 = 0;
   header->n_garbages = 0;
-  header->tokenizer = 0;
+  header->tokenizer = GRN_ID_NIL;
   pat->io = io;
   pat->header = header;
   pat->key_size = key_size;
   pat->value_size = value_size;
-  pat->tokenizer = grn_ctx_at(ctx, header->tokenizer);
+  pat->tokenizer = NULL;
   pat->encoding = encoding;
   pat->obj.header.flags = flags;
   if (!(node0 = pat_get(ctx, pat, 0))) {
