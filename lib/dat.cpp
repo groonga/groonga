@@ -310,10 +310,10 @@ grn_dat_create(grn_ctx *ctx, const char *path, uint32_t,
       ctx->encoding : grn_gctx.encoding;
   dat->header->flags = flags;
   dat->header->encoding = encoding;
-  dat->header->tokenizer = 0;
+  dat->header->tokenizer = GRN_ID_NIL;
   dat->header->file_id = 0;
   dat->encoding = encoding;
-  dat->tokenizer = grn_ctx_at(ctx, dat->header->tokenizer);
+  dat->tokenizer = NULL;
   return dat;
 }
 

@@ -3,7 +3,11 @@ SUBDIRS = dat
 lib_LTLIBRARIES = libgroonga.la
 
 include $(top_srcdir)/version.sh
-AM_CFLAGS = -fno-strict-aliasing $(COVERAGE_CFLAGS) $(GRN_CFLAGS)
+AM_CFLAGS =					\
+	-fno-strict-aliasing			\
+	$(COVERAGE_CFLAGS)			\
+	$(GRN_CFLAGS)				\
+	$(MESSAGE_PACK_CFLAGS)
 DEFAULT_INCLUDES = -I$(top_builddir) -I$(top_srcdir)/include
 DEFS += -D_REENTRANT -DGROONGA_VERSION=\"$(GROONGA_VERSION)\" $(GRN_DEFS)
 
@@ -34,7 +38,8 @@ libgroonga_la_LDFLAGS =				\
 	$(WINDOWS_LDFLAGS)
 
 libgroonga_la_LIBADD =				\
-	dat/libgrndat.la
+	dat/libgrndat.la			\
+	$(MESSAGE_PACK_LIBS)
 
 noinst_HEADERS =				\
 	com.h					\

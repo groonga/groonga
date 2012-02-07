@@ -867,7 +867,7 @@ io_hash_init(grn_hash *ih, grn_ctx *ctx, const char *path, uint32_t key_size,
   header->max_offset = m - 1;
   header->n_entries = 0;
   header->n_garbages = 0;
-  header->tokenizer = 0;
+  header->tokenizer = GRN_ID_NIL;
   ih->obj.header.flags = flags;
   ih->ctx = ctx;
   ih->key_size = key_size;
@@ -880,7 +880,7 @@ io_hash_init(grn_hash *ih, grn_ctx *ctx, const char *path, uint32_t key_size,
   ih->io = io;
   ih->header = header;
   ih->lock = &header->lock;
-  ih->tokenizer = grn_ctx_at(ctx, header->tokenizer);
+  ih->tokenizer = NULL;
   return GRN_SUCCESS;
 }
 
