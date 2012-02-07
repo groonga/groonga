@@ -6838,7 +6838,13 @@ grn_ii_build(grn_ctx *ctx, grn_ii *ii)
   builder.target = target;
   builder.lexicon = ii->lexicon;
   builder.tmp_lexicon = NULL;
-
+  {
+    grn_obj_flags flags;
+    grn_table_get_info(ctx, builder.lexicon, &flags, NULL, NULL);
+    if (flags & GRN_OBJ_TABLE_PAT_KEY) {
+      grn_pat_cache_enable(ctx, (grn_pat *)builder.lexicon, PAT_CACHE_SIZE);
+    }
+  }
   builder.nblocks = 0;
   builder.blocks = NULL;
 
