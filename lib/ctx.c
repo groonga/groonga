@@ -512,6 +512,9 @@ grn_ctx_init(grn_ctx *ctx, int flags)
   if (ERRP(ctx, GRN_ERROR)) { return ctx->rc; }
   ctx->stat = GRN_CTX_INITED;
   ctx->encoding = grn_gctx.encoding;
+  ctx->seqno = 0;
+  ctx->seqno2 = 0;
+  ctx->subno = 0;
   ctx->impl = NULL;
   if (flags & GRN_CTX_USE_QL) {
     grn_ctx_impl_init(ctx);
