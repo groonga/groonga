@@ -38,6 +38,8 @@ struct _grn_pat {
   uint32_t key_size;
   uint32_t value_size;
   grn_obj *tokenizer;
+  grn_id *cache;
+  uint32_t cache_size;
 };
 
 #define GRN_PAT_NDELINFOS 0x100
@@ -98,6 +100,9 @@ grn_id grn_pat_at(grn_ctx *ctx, grn_pat *pat, grn_id id);
 void grn_pat_check(grn_ctx *ctx, grn_pat *pat);
 void grn_pat_inspect_nodes(grn_ctx *ctx, grn_pat *pat, grn_obj *buf);
 void grn_pat_cursor_inspect(grn_ctx *ctx, grn_pat_cursor *c, grn_obj *buf);
+
+grn_rc grn_pat_cache_enable(grn_ctx *ctx, grn_pat *pat, uint32_t cache_size);
+grn_rc grn_pat_cache_disable(grn_ctx *ctx, grn_pat *pat);
 
 #ifdef __cplusplus
 }

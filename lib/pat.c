@@ -452,7 +452,42 @@ grn_pat_create(grn_ctx *ctx, const char *path, uint32_t key_size,
     GRN_FREE(pat);
     return NULL;
   }
+  pat->cache = NULL;
+  pat->cache_size = 0;
   return pat;
+}
+
+/*
+ grn_pat_cache_enable() and grn_pat_cache_disable() are not thread-safe.
+ So far, they can be used only from single threaded programs.
+ */
+
+grn_rc
+grn_pat_cache_enable(grn_ctx *ctx, grn_pat *pat, uint32_t cache_size)
+{
+  if (pat->cache || pat->cache_size) {
+    ERR(GRN_INVALID_ARGUMENT, "cache is already enbaled");
+    goto exit;
+  }
+  if (cache_size & (cache_size - 1)) {
+    ERR(GRN_INVALID_ARGUMENT, "cache_size(%u) must be a power of two", cache_size);
+    goto exit;
+  }
+  if ((pat->cache = GRN_CALLOC(cache_size * sizeof(grn_id)))) {
+    pat->cache_size = cache_size;
+  }
+exit :
+  return ctx->rc;
+}
+
+grn_rc
+grn_pat_cache_disable(grn_ctx *ctx, grn_pat *pat)
+{
+  if (pat->cache) {
+    GRN_FREE(pat->cache);
+    pat->cache_size = 0;
+  }
+  return ctx->rc;
 }
 
 grn_pat *
@@ -488,6 +523,8 @@ grn_pat_open(grn_ctx *ctx, const char *path)
     GRN_GFREE(pat);
     return NULL;
   }
+  pat->cache = NULL;
+  pat->cache_size = 0;
   return pat;
 }
 
@@ -498,6 +535,7 @@ grn_pat_close(grn_ctx *ctx, grn_pat *pat)
   if ((rc = grn_io_close(ctx, pat->io))) {
     ERR(rc, "grn_io_close failed");
   } else {
+    if (pat->cache) { grn_pat_cache_disable(ctx, pat); }
     GRN_FREE(pat);
   }
   return rc;
@@ -531,12 +569,14 @@ grn_pat_truncate(grn_ctx *ctx, grn_pat *pat)
   key_size = pat->key_size;
   value_size = pat->value_size;
   flags = pat->obj.header.flags;
-
   if ((rc = grn_io_close(ctx, pat->io))) { goto exit; }
   pat->io = NULL;
   if (path && (rc = grn_io_remove(ctx, path))) { goto exit; }
   if (!_grn_pat_create(ctx, pat, path, key_size, value_size, flags)) {
     rc = GRN_UNKNOWN_ERROR;
+  }
+  if (pat->cache && pat->cache_size) {
+    memset(pat->cache, 0, pat->cache_size * sizeof(grn_id));
   }
 exit:
   if (path) { GRN_FREE(path); }
@@ -549,6 +589,24 @@ _grn_pat_add(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t size, uint
   grn_id r, r0, *p0, *p1 = NULL;
   pat_node *rn, *rn0;
   int c, c0 = -1, c1 = -1, len;
+
+  uint32_t cache_id = 0;
+  if (pat->cache) {
+    const uint8_t *p = key;
+    uint32_t length = size;
+    for (cache_id = 0; length--; p++) { cache_id = (cache_id * 37) + *p; }
+    cache_id &= (pat->cache_size - 1);
+    if (pat->cache[cache_id]) {
+      PAT_AT(pat, pat->cache[cache_id], rn);
+      if (rn) {
+        const uint8_t *k = pat_node_get_key(ctx, pat, rn);
+        if (k && size == PAT_LEN(rn) && !memcmp(k, key, size)) {
+          return pat->cache[cache_id];
+        }
+      }
+    }
+  }
+
   *new = 0;
   len = (int)size * 16;
   PAT_AT(pat, 0, rn0);
@@ -576,7 +634,10 @@ _grn_pat_add(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t size, uint
       } else {
         if (!(s = pat_node_get_key(ctx, pat, rn0))) { return 0; }
         size2 = PAT_LEN(rn0);
-        if (size == size2 && !memcmp(s, key, size)) { return r0; }
+        if (size == size2 && !memcmp(s, key, size)) {
+          if (pat->cache) { pat->cache[cache_id] = r0; }
+          return r0;
+        }
         break;
       }
     }
@@ -663,6 +724,7 @@ _grn_pat_add(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t size, uint
   // smp_wmb();
   *p0 = r;
   *new = 1;
+  if (pat->cache) { pat->cache[cache_id] = r; }
   return r;
 }
 

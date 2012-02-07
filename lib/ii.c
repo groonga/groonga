@@ -6495,6 +6495,8 @@ grn_ii_builder_flush(grn_ctx *ctx, grn_ii_builder *builder)
   builder->tmp_lexicon = NULL;
 }
 
+const uint32_t PAT_CACHE_SIZE = 1<<20;
+
 static void
 grn_ii_builder_tokenize(grn_ctx *ctx, grn_ii_builder *builder, grn_id rid, grn_obj *value)
 {
@@ -6511,11 +6513,12 @@ grn_ii_builder_tokenize(grn_ctx *ctx, grn_ii_builder *builder, grn_id rid, grn_o
       grn_obj *tokenizer;
       grn_obj_flags flags;
       grn_table_get_info(ctx, builder->lexicon, &flags, NULL, &tokenizer);
-      //      flags &= ~GRN_OBJ_PERSISTENT;
-      flags &= GRN_OBJ_KEY_NORMALIZE;
-      flags |= GRN_OBJ_TABLE_DAT_KEY;
+      flags &= ~GRN_OBJ_PERSISTENT;
       builder->tmp_lexicon = grn_table_create(ctx, NULL, 0, NULL, flags, domain, range);
       grn_obj_set_info(ctx, builder->tmp_lexicon, GRN_INFO_DEFAULT_TOKENIZER, tokenizer);
+      if (flags & GRN_OBJ_TABLE_PAT_KEY) {
+        grn_pat_cache_enable(ctx, (grn_pat *)builder->tmp_lexicon, PAT_CACHE_SIZE);
+      }
     }
     pos = builder->blockpos;
     buffer[pos++] = rid + BUILD_RID_FLAG;
