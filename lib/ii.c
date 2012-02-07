@@ -6801,10 +6801,6 @@ grn_ii_builder_merge(grn_ctx *ctx, grn_ii_builder *builder)
       }
       if (nhits) { grn_ii_builder_merge_one(ctx, builder, tid, hits, nhits); }
       if (!nrests) { break; }
-      if (!nhits) {
-        GRN_LOG(ctx, GRN_LOG_WARNING, "merge error! tid=%d, nrests=%d", tid, nrests);
-        break;
-      }
     }
     if (builder->packed_len) {
       grn_ii_builder_chunk_flush(ctx, builder);
