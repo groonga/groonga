@@ -247,7 +247,7 @@ grn_snip_cond_close(grn_ctx *ctx, snip_cond *cond)
 
 grn_rc
 grn_snip_cond_init(grn_ctx *ctx, snip_cond *sc, const char *keyword, unsigned int keyword_len,
-                grn_encoding enc, int flags)
+                   grn_encoding enc, int flags)
 {
   size_t norm_blen;
   int f = GRN_STR_REMOVEBLANK;

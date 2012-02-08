@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2008-2011  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2008-2012  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -53,6 +53,7 @@ void data_itoh(void);
 void test_itoh(gconstpointer data);
 
 static grn_ctx context;
+static grn_obj *db;
 static grn_obj buffer;
 
 static const gchar text_ja_utf8[] =
@@ -75,6 +76,7 @@ void
 setup (void)
 {
   grn_ctx_init(&context, GRN_CTX_USE_QL);
+  db = grn_db_create(&context, NULL, NULL);
   GRN_VOID_INIT(&buffer);
 }
 
@@ -82,6 +84,7 @@ void
 teardown (void)
 {
   GRN_OBJ_FIN(&context, &buffer);
+  grn_obj_unlink(&context, db);
   grn_ctx_fin(&context);
 }
 

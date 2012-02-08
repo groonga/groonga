@@ -22,6 +22,7 @@
 #include <float.h>
 #include "ii.h"
 #include "geo.h"
+#include "normalizer.h"
 #include "util.h"
 
 static inline int
@@ -2241,13 +2242,19 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
 void
 pseudo_query_scan(grn_ctx *ctx, grn_obj *x, grn_obj *y, grn_obj *res)
 {
-  grn_str *a = NULL, *b = NULL;
+  grn_id normalizer_id;
+  grn_obj *normalizer;
+  grn_obj *a = NULL, *b = NULL;
 
+  normalizer_id = grn_normalizer_find(ctx, ctx->encoding);
+  normalizer = grn_ctx_at(ctx, normalizer_id);
   switch (x->header.domain) {
   case GRN_DB_SHORT_TEXT:
   case GRN_DB_TEXT:
   case GRN_DB_LONG_TEXT:
-    a = grn_str_open(ctx, GRN_TEXT_VALUE(x), GRN_TEXT_LEN(x), GRN_STR_NORMALIZE);
+    a = grn_normalized_text_open(ctx, normalizer,
+                                 GRN_TEXT_VALUE(x), GRN_TEXT_LEN(x),
+                                 ctx->encoding, 0);
     break;
   default:
     break;
@@ -2257,23 +2264,33 @@ pseudo_query_scan(grn_ctx *ctx, grn_obj *x, grn_obj *y, grn_obj *res)
   case GRN_DB_SHORT_TEXT:
   case GRN_DB_TEXT:
   case GRN_DB_LONG_TEXT:
-    b = grn_str_open(ctx, GRN_TEXT_VALUE(y), GRN_TEXT_LEN(y), GRN_STR_NORMALIZE);
+    b = grn_normalized_text_open(ctx, normalizer,
+                                 GRN_TEXT_VALUE(y), GRN_TEXT_LEN(y),
+                                 ctx->encoding, 0);
     break;
   default:
     break;
   }
 
   /* normalized str doesn't contain '\0'. */
-  if (a && b && strstr(a->norm, b->norm)) {
-    GRN_INT32_SET(ctx, res, 1);
+  if (a && b) {
+    const char *normalized_a, *normalized_b;
+    grn_normalized_text_get_value(ctx, a, &normalized_a, NULL, NULL);
+    grn_normalized_text_get_value(ctx, b, &normalized_b, NULL, NULL);
+    if (strstr(normalized_a, normalized_b)) {
+      GRN_INT32_SET(ctx, res, 1);
+    } else {
+      GRN_INT32_SET(ctx, res, 0);
+    }
   } else {
     GRN_INT32_SET(ctx, res, 0);
   }
   res->header.type = GRN_BULK;
   res->header.domain = GRN_DB_INT32;
 
-  if (a) { grn_str_close(ctx, a); }
-  if (b) { grn_str_close(ctx, b); }
+  if (a) { grn_obj_close(ctx, a); }
+  if (b) { grn_obj_close(ctx, b); }
+  if (normalizer) { grn_obj_unlink(ctx, normalizer); }
 }
 
 grn_obj *

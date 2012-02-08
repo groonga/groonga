@@ -22,6 +22,7 @@
 #include "ii.h"
 #include "ctx_impl.h"
 #include "token.h"
+#include "normalizer.h"
 #include "proc.h"
 #include "plugin_in.h"
 #include "geo.h"
@@ -32,13 +33,16 @@
 #define NEXT_ADDR(p) (((byte *)(p)) + sizeof *(p))
 
 #define WITH_NORMALIZE(table,key,key_size,block) {\
-  if ((table)->obj.header.flags & GRN_OBJ_KEY_NORMALIZE) {\
-    grn_str *nstr;\
-    if ((nstr = grn_str_open(ctx, key, key_size, GRN_STR_NORMALIZE))) { \
-      char *key = nstr->norm;\
-      unsigned int key_size = nstr->norm_blen;\
+  if ((table)->normalizer) {\
+    grn_obj *nstr;\
+    if ((nstr = grn_normalized_text_open(ctx, (table)->normalizer,\
+                                         key, key_size,\
+                                         (table)->encoding, 0))) {\
+      const char *key;\
+      unsigned int key_size;\
+      grn_normalized_text_get_value(ctx, nstr, &key, NULL, &key_size);\
       block\
-      grn_str_close(ctx, nstr);\
+      grn_obj_close(ctx, nstr);\
     }\
   } else {\
     block\
@@ -139,6 +143,7 @@ grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg)
           if ((s->specs = grn_ja_create(ctx, buffer, 65536, 0))) {
             grn_ctx_use(ctx, (grn_obj *)s);
             grn_db_init_builtin_types(ctx);
+            grn_db_init_builtin_normalizers(ctx);
             GRN_API_RETURN((grn_obj *)s);
           } else {
             ERR(GRN_NO_MEMORY_AVAILABLE, "ja create failed");
@@ -147,6 +152,7 @@ grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg)
           s->specs = NULL;
           grn_ctx_use(ctx, (grn_obj *)s);
           grn_db_init_builtin_types(ctx);
+          grn_db_init_builtin_normalizers(ctx);
           GRN_API_RETURN((grn_obj *)s);
         }
         if (use_pat_as_db_keys) {
@@ -208,6 +214,7 @@ grn_db_open(grn_ctx *ctx, const char *path)
           }
 #endif
           grn_db_init_builtin_tokenizers(ctx);
+          grn_db_init_builtin_normalizers(ctx);
           grn_db_init_builtin_query(ctx);
           GRN_API_RETURN((grn_obj *)s);
         }
@@ -6880,6 +6887,9 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
     case GRN_ACCESSOR_VIEW :
       rc = grn_accessor_view_close(ctx, obj);
       break;
+    case GRN_NORMALIZED_TEXT :
+      rc = grn_normalized_text_close(ctx, obj);
+      break;
     case GRN_CURSOR_TABLE_PAT_KEY :
       grn_pat_cursor_close(ctx, (grn_pat_cursor *)obj);
       break;
@@ -7992,6 +8002,11 @@ grn_db_init_builtin_types(grn_ctx *ctx)
   }
 #endif
   grn_db_init_builtin_tokenizers(ctx);
+  for (id = grn_db_curr_id(ctx, db) + 1; id < GRN_DB_NORMALIZER_ASCII; id++) {
+    grn_itoh(id, buf + 3, 2);
+    grn_obj_register(ctx, db, buf, 5);
+  }
+  grn_db_init_builtin_normalizers(ctx);
   for (id = grn_db_curr_id(ctx, db) + 1; id < 128; id++) {
     grn_itoh(id, buf + 3, 2);
     grn_obj_register(ctx, db, buf, 5);

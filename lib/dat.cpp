@@ -22,6 +22,7 @@
 #include "str.h"
 #include "io.h"
 #include "dat.h"
+#include "normalizer.h"
 #include "util.h"
 
 /*
@@ -312,6 +313,14 @@ grn_dat_create(grn_ctx *ctx, const char *path, uint32_t,
   dat->header->encoding = encoding;
   dat->header->tokenizer = GRN_ID_NIL;
   dat->header->file_id = 0;
+  if (dat->header->flags & GRN_OBJ_KEY_NORMALIZE) {
+    dat->header->flags &= ~GRN_OBJ_KEY_NORMALIZE;
+    dat->header->normalizer = grn_normalizer_find(ctx, ctx->encoding);
+    dat->normalizer = grn_ctx_at(ctx, dat->header->normalizer);
+  } else {
+    dat->header->normalizer = GRN_ID_NIL;
+    dat->normalizer = NULL;
+  }
   dat->encoding = encoding;
   dat->tokenizer = NULL;
   return dat;
@@ -347,6 +356,12 @@ grn_dat_open(grn_ctx *ctx, const char *path)
   dat->encoding = dat->header->encoding;
   dat->obj.header.flags = dat->header->flags;
   dat->tokenizer = grn_ctx_at(ctx, dat->header->tokenizer);
+  if (dat->header->flags & GRN_OBJ_KEY_NORMALIZE) {
+    dat->header->flags &= ~GRN_OBJ_KEY_NORMALIZE;
+    dat->header->normalizer = grn_normalizer_find(ctx, ctx->encoding);
+
+  }
+  dat->normalizer = grn_ctx_at(ctx, dat->header->normalizer);
   return dat;
 }
 

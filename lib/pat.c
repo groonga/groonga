@@ -19,6 +19,7 @@
 #include <limits.h>
 #include "pat.h"
 #include "output.h"
+#include "normalizer.h"
 #include "util.h"
 
 #define GRN_PAT_DELETED (GRN_ID_MAX + 1)
@@ -422,6 +423,14 @@ _grn_pat_create(grn_ctx *ctx, grn_pat *pat,
   header->curr_del3 = 0;
   header->n_garbages = 0;
   header->tokenizer = GRN_ID_NIL;
+  if (header->flags & GRN_OBJ_KEY_NORMALIZE) {
+    header->flags &= ~GRN_OBJ_KEY_NORMALIZE;
+    header->normalizer = grn_normalizer_find(ctx, ctx->encoding);
+    pat->normalizer = grn_ctx_at(ctx, header->normalizer);
+  } else {
+    header->normalizer = GRN_ID_NIL;
+    pat->normalizer = NULL;
+  }
   pat->io = io;
   pat->header = header;
   pat->key_size = key_size;
@@ -518,6 +527,11 @@ grn_pat_open(grn_ctx *ctx, const char *path)
   pat->encoding = header->encoding;
   pat->obj.header.flags = header->flags;
   pat->tokenizer = grn_ctx_at(ctx, header->tokenizer);
+  if (header->flags & GRN_OBJ_KEY_NORMALIZE) {
+    header->flags &= ~GRN_OBJ_KEY_NORMALIZE;
+    header->normalizer = grn_normalizer_find(ctx, ctx->encoding);
+  }
+  pat->normalizer = grn_ctx_at(ctx, header->normalizer);
   PAT_AT(pat, 0, node0);
   if (!node0) {
     grn_io_close(ctx, io);
@@ -2271,7 +2285,7 @@ grn_pat_check(grn_ctx *ctx, grn_pat *pat)
   char buf[8];
   struct grn_pat_header *h = pat->header;
   GRN_OUTPUT_ARRAY_OPEN("RESULT", 1);
-  GRN_OUTPUT_MAP_OPEN("SUMMARY", 22);
+  GRN_OUTPUT_MAP_OPEN("SUMMARY", 23);
   GRN_OUTPUT_CSTR("flags");
   grn_itoh(h->flags, buf, 8);
   GRN_OUTPUT_STR(buf, 8);
@@ -2281,6 +2295,8 @@ grn_pat_check(grn_ctx *ctx, grn_pat *pat)
   GRN_OUTPUT_INT64(h->value_size);
   GRN_OUTPUT_CSTR("tokenizer");
   GRN_OUTPUT_INT64(h->tokenizer);
+  GRN_OUTPUT_CSTR("normalizer");
+  GRN_OUTPUT_INT64(h->normalizer);
   GRN_OUTPUT_CSTR("n_entries");
   GRN_OUTPUT_INT64(h->n_entries);
   GRN_OUTPUT_CSTR("curr_rec");

@@ -18,6 +18,7 @@
 #include "hash.h"
 #include "pat.h"
 #include "output.h"
+#include "normalizer.h"
 #include <string.h>
 #include <limits.h>
 
@@ -868,6 +869,14 @@ io_hash_init(grn_hash *ih, grn_ctx *ctx, const char *path, uint32_t key_size,
   header->n_entries = 0;
   header->n_garbages = 0;
   header->tokenizer = GRN_ID_NIL;
+  if (header->flags & GRN_OBJ_KEY_NORMALIZE) {
+    header->flags &= ~GRN_OBJ_KEY_NORMALIZE;
+    header->normalizer = grn_normalizer_find(ctx, ctx->encoding);
+    ih->normalizer = grn_ctx_at(ctx, header->normalizer);
+  } else {
+    header->normalizer = GRN_ID_NIL;
+    ih->normalizer = NULL;
+  }
   ih->obj.header.flags = flags;
   ih->ctx = ctx;
   ih->key_size = key_size;
@@ -922,6 +931,7 @@ tiny_hash_init(grn_hash *ah, grn_ctx *ctx, const char *path, uint32_t key_size,
   ah->n_entries_ = 0;
   ah->garbages = GRN_ID_NIL;
   ah->tokenizer = NULL;
+  ah->normalizer = NULL;
   grn_tiny_array_init(ctx, &ah->a, entry_size, GRN_TINY_ARRAY_CLEAR);
   grn_tiny_array_init(ctx, &ah->bitmap, 1, GRN_TINY_ARRAY_CLEAR);
   return GRN_SUCCESS;
@@ -981,6 +991,11 @@ grn_hash_open(grn_ctx *ctx, const char *path)
           hash->header = header;
           hash->lock = &header->lock;
           hash->tokenizer = grn_ctx_at(ctx, header->tokenizer);
+          if (header->flags & GRN_OBJ_KEY_NORMALIZE) {
+            header->flags &= ~GRN_OBJ_KEY_NORMALIZE;
+            header->normalizer = grn_normalizer_find(ctx, ctx->encoding);
+          }
+          hash->normalizer = grn_ctx_at(ctx, header->normalizer);
           return (grn_hash *)hash;
         } else {
           GRN_LOG(ctx, GRN_LOG_NOTICE, "invalid hash flag. (%x)", header->flags);
@@ -2144,7 +2159,7 @@ grn_hash_check(grn_ctx *ctx, grn_hash *hash)
   char buf[8];
   struct grn_hash_header *h = hash->header;
   GRN_OUTPUT_ARRAY_OPEN("RESULT", 1);
-  GRN_OUTPUT_MAP_OPEN("SUMMARY", 24);
+  GRN_OUTPUT_MAP_OPEN("SUMMARY", 25);
   GRN_OUTPUT_CSTR("flags");
   grn_itoh(h->flags, buf, 8);
   GRN_OUTPUT_STR(buf, 8);
@@ -2154,6 +2169,8 @@ grn_hash_check(grn_ctx *ctx, grn_hash *hash)
   GRN_OUTPUT_INT64(hash->value_size);
   GRN_OUTPUT_CSTR("tokenizer");
   GRN_OUTPUT_INT64(h->tokenizer);
+  GRN_OUTPUT_CSTR("normalizer");
+  GRN_OUTPUT_INT64(h->normalizer);
   GRN_OUTPUT_CSTR("curr_rec");
   GRN_OUTPUT_INT64(h->curr_rec);
   GRN_OUTPUT_CSTR("curr_key");

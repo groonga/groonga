@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2008-2009  Kouhei Sutou <kou@cozmixng.org>
+  Copyright (C) 2008-2012  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -45,6 +45,7 @@ void test_add_cond_with_too_large_keyword(void);
 void test_add_cond_with_copy_tag_flag(void);
 
 static grn_ctx context;
+static grn_obj *db;
 static grn_snip *snip;
 static gchar *keyword;
 static gchar *result;
@@ -197,6 +198,7 @@ void
 cut_setup(void)
 {
   grn_ctx_init(&context, GRN_CTX_USE_QL);
+  db = grn_db_create(&context, NULL, NULL);
 
   snip = NULL;
   keyword = NULL;
@@ -231,6 +233,10 @@ cut_teardown(void)
   }
   if (default_close_tag) {
     g_free(default_close_tag);
+  }
+
+  if (db) {
+    grn_obj_close(&context, db);
   }
 
   grn_ctx_fin(&context);
