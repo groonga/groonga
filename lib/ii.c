@@ -6360,6 +6360,7 @@ typedef struct {
   uint32_t npostings;
   grn_id last_rid;
   uint32_t last_sid;
+  uint32_t last_tf;
   uint32_t last_pos;
   uint32_t offset_rid;
   uint32_t offset_sid;
@@ -6469,19 +6470,35 @@ grn_ii_builder_flush(grn_ctx *ctx, grn_ii_builder *builder)
       } else {
         builder_counter *counter = &builder->counters[id - 1];
         if (counter->last_rid == rid) {
-          outbuf[counter->offset + counter->nrecs]++;
+          counter->last_tf++;
         } else {
-          if (counter->last_rid) { counter->offset++; }
-          counter->last_sid = 0;
-          counter->last_pos = 0;
+          if (counter->last_rid) {
+            outbuf[counter->offset + counter->nrecs] = counter->last_tf;
+            counter->offset++;
+          }
           outbuf[counter->offset] = rid - counter->last_rid;
           counter->last_rid = rid;
-          outbuf[counter->offset + counter->nrecs] = 1;
+          counter->last_sid = 0;
+          counter->last_tf = 1;
+          counter->last_pos = 0;
         }
         outbuf[counter->nposts++] = pos - counter->last_pos;
         counter->last_pos = pos;
         pos++;
       }
+    }
+  }
+  {
+    builder_counter *counter;
+    grn_id tid, tid_max = grn_table_size(ctx, builder->tmp_lexicon);
+    for (counter = builder->counters, tid = 1; tid <= tid_max; counter++, tid++) {
+      outbuf[counter->offset + counter->nrecs] = counter->last_tf;
+      counter->nrecs = 0;
+      counter->nposts = 0;
+      counter->lastrec = 0;
+      counter->offset = 0;
+
+      counter->last_rid = 0; /* FIXME */
     }
   }
   {
@@ -6491,18 +6508,6 @@ grn_ii_builder_flush(grn_ctx *ctx, grn_ii_builder *builder)
   }
   builder->nblocks++;
   GRN_FREE(outbuf);
-  {
-    builder_counter *counter;
-    grn_id tid, tid_max = grn_table_size(ctx, builder->tmp_lexicon);
-    for (counter = builder->counters, tid = 1; tid <= tid_max; counter++, tid++) {
-      counter->nrecs = 0;
-      counter->nposts = 0;
-      counter->lastrec = 0;
-      counter->offset = 0;
-
-      counter->last_rid = 0; /* FIXME */
-    }
-  }
   builder->blockpos = 0;
   grn_obj_close(ctx, builder->tmp_lexicon);
   builder->tmp_lexicon = NULL;
