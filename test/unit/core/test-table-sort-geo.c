@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2010-2011  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2010-2012  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -44,6 +44,19 @@
   inspect_point(                                                        \
     COORDINATE(latitude_hours, latitude_minutes, latitude_seconds),     \
     COORDINATE(longitude_hours, longitude_minutes, longitude_seconds))
+
+#define TAKEN_INSPECTED_POINT(latitude_hours,           \
+                              latitude_minutes,         \
+                              latitude_seconds,         \
+                              longitude_hours,          \
+                              longitude_minutes,        \
+                              longitude_seconds)        \
+  cut_take_string(INSPECTED_POINT(latitude_hours,       \
+                                  latitude_minutes,     \
+                                  latitude_seconds,     \
+                                  longitude_hours,      \
+                                  longitude_minutes,    \
+                                  longitude_seconds))
 
 void data_near_geo_point(void);
 void test_near_geo_point(gpointer data);
@@ -174,60 +187,60 @@ data_near_geo_point(void)
                  NULL)
 
   ADD_DATA("no limit",
-           gcut_list_string_new(INSPECTED_POINT(-1, -1, -1,
-                                                0, 0, 0),
-                                INSPECTED_POINT(1, 0, 0,
-                                                1, 0, 0),
-                                INSPECTED_POINT(-1, 0, 0,
-                                                1, 1, 1),
-                                INSPECTED_POINT(1, 1, 0,
-                                                1, 1, 0),
-                                INSPECTED_POINT(1, 1, 1,
-                                                1, 1, 1),
-                                INSPECTED_POINT(1, 1, 10,
-                                                -1, -1, -1),
-                                INSPECTED_POINT(-1, -2, -1,
-                                                -1, -1, -1),
-                                INSPECTED_POINT(90, 0, 0,
-                                                0, 0, 0),
-                                INSPECTED_POINT(-90, 0, 0,
-                                                1, 0, 0),
-                                INSPECTED_POINT(-2, -1, -1,
-                                                -179, -59, -59),
-                                INSPECTED_POINT(2, 1, 1,
-                                                180, 0, 0),
-                                INSPECTED_POINT(1, 2, 1,
-                                                -179, -59, -59),
-                                INSPECTED_POINT(-1, -1, -1,
-                                                180, 0, 0),
-                                INSPECTED_POINT(0, 0, 0,
-                                                -179, -59, -59),
-                                INSPECTED_POINT(0, 0, 0,
-                                                180, 0, 0),
+           gcut_list_string_new(TAKEN_INSPECTED_POINT(-1, -1, -1,
+                                                      0, 0, 0),
+                                TAKEN_INSPECTED_POINT(1, 0, 0,
+                                                      1, 0, 0),
+                                TAKEN_INSPECTED_POINT(-1, 0, 0,
+                                                      1, 1, 1),
+                                TAKEN_INSPECTED_POINT(1, 1, 0,
+                                                      1, 1, 0),
+                                TAKEN_INSPECTED_POINT(1, 1, 1,
+                                                      1, 1, 1),
+                                TAKEN_INSPECTED_POINT(1, 1, 10,
+                                                      -1, -1, -1),
+                                TAKEN_INSPECTED_POINT(-1, -2, -1,
+                                                      -1, -1, -1),
+                                TAKEN_INSPECTED_POINT(90, 0, 0,
+                                                      0, 0, 0),
+                                TAKEN_INSPECTED_POINT(-90, 0, 0,
+                                                      1, 0, 0),
+                                TAKEN_INSPECTED_POINT(-2, -1, -1,
+                                                      -179, -59, -59),
+                                TAKEN_INSPECTED_POINT(2, 1, 1,
+                                                      180, 0, 0),
+                                TAKEN_INSPECTED_POINT(1, 2, 1,
+                                                      -179, -59, -59),
+                                TAKEN_INSPECTED_POINT(-1, -1, -1,
+                                                      180, 0, 0),
+                                TAKEN_INSPECTED_POINT(0, 0, 0,
+                                                      -179, -59, -59),
+                                TAKEN_INSPECTED_POINT(0, 0, 0,
+                                                      180, 0, 0),
                                 NULL),
            TAKEN_POINT(0, 0, 0,
                        0, 0, 0),
            0, -1);
 
   ADD_DATA("limit",
-           gcut_list_string_new(INSPECTED_POINT(-1, -1, -1,
-                                                0, 0, 0),
-                                INSPECTED_POINT(1, 0, 0,
-                                                1, 0, 0),
-                                INSPECTED_POINT(-1, 0, 0,
-                                                1, 1, 1),
+           gcut_list_string_new(TAKEN_INSPECTED_POINT(-1, -1, -1,
+                                                      0, 0, 0),
+                                TAKEN_INSPECTED_POINT(1, 0, 0,
+                                                      1, 0, 0),
+                                TAKEN_INSPECTED_POINT(-1, 0, 0,
+                                                      1, 1, 1),
                                 NULL),
            TAKEN_POINT(0, 0, 0,
                        0, 0, 0),
            0, 3);
 
   ADD_DATA("offset - limit",
-           gcut_list_string_new(INSPECTED_POINT(-1, 0, 0,
-                                                1, 1, 1),
-                                INSPECTED_POINT(1, 1, 0,
-                                                1, 1, 0),
-                                INSPECTED_POINT(1, 1, 1,
-                                                1, 1, 1),
+           gcut_list_string_new(TAKEN_INSPECTED_POINT(-1, 0, 0,
+                                                      1, 1, 1),
+                                TAKEN_INSPECTED_POINT(1, 1, 0,
+                                                      1, 1, 0),
+                                TAKEN_INSPECTED_POINT(1, 1, 1,
+                                                      1, 1, 1),
                                 NULL),
            TAKEN_POINT(0, 0, 0,
                        0, 0, 0),

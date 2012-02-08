@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2008-2009  Kouhei Sutou <kou@cozmixng.org>
+  Copyright (C) 2008-2012  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -734,11 +734,11 @@ test_value(gconstpointer data)
   cut_assert_open_cursor();
   while (grn_hash_cursor_next(context, cursor) != GRN_ID_NIL) {
     void *key;
-    gchar *null_terminated_key;
+    const gchar *null_terminated_key;
     int size;
 
     size = grn_hash_cursor_get_key(context, cursor, &key);
-    null_terminated_key = g_string_free(g_string_new_len(key, size), FALSE);
+    null_terminated_key = cut_take_strndup(key, size);
     if (g_str_equal(null_terminated_key, key2)) {
       grn_hash_cursor_set_value(context, cursor, value2, GRN_OBJ_SET);
     } else if (g_str_equal(null_terminated_key, key4)) {
@@ -799,11 +799,11 @@ test_delete(gconstpointer data)
   cut_assert_open_cursor();
   while (grn_hash_cursor_next(context, cursor) != GRN_ID_NIL) {
     void *key;
-    gchar *null_terminated_key;
+    const gchar *null_terminated_key;
     int size;
 
     size = grn_hash_cursor_get_key(context, cursor, &key);
-    null_terminated_key = g_string_free(g_string_new_len(key, size), FALSE);
+    null_terminated_key = cut_take_strndup(key, size);
     if (g_str_equal(null_terminated_key, key1) ||
         g_str_equal(null_terminated_key, key5)) {
       grn_hash_cursor_delete(context, cursor, NULL);

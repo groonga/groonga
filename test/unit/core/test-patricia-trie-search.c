@@ -194,11 +194,11 @@ test_lcp_search(gconstpointer data)
                           strlen(test_data->search_key));
   if (test_data->expected_key) {
     int size;
-    gchar *null_terminated_key;
+    const gchar *null_terminated_key;
 
     grn_test_assert_not_nil(id);
     size = grn_pat_get_key(context, trie, id, key, sizeof(key));
-    null_terminated_key = g_string_free(g_string_new_len(key, size), FALSE);
+    null_terminated_key = cut_take_strndup(key, size);
     cut_assert_equal_string(test_data->expected_key, null_terminated_key);
   } else {
     grn_test_assert_nil(id);
