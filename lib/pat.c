@@ -486,6 +486,7 @@ grn_pat_cache_disable(grn_ctx *ctx, grn_pat *pat)
   if (pat->cache) {
     GRN_FREE(pat->cache);
     pat->cache_size = 0;
+    pat->cache = NULL;
   }
   return ctx->rc;
 }
