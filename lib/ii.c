@@ -6355,6 +6355,17 @@ typedef struct {
   uint32_t nposts;
   grn_id lastrec;
   uint32_t offset;
+
+  uint32_t nrecords;
+  uint32_t npostings;
+  grn_id last_rid;
+  uint32_t last_sid;
+  uint32_t last_pos;
+  uint32_t offset_rid;
+  uint32_t offset_sid;
+  uint32_t offset_weight;
+  uint32_t offset_tf;
+  uint32_t offset_pos;
 } builder_counter;
 
 typedef struct {
@@ -6447,29 +6458,29 @@ grn_ii_builder_flush(grn_ctx *ctx, grn_ii_builder *builder)
   }
   {
     grn_id rid = 0;
-    uint32_t post = 0;
+    uint32_t pos = 0;
     uint32_t rest;
     grn_id *bp;
     for (bp = builder->blockbuf, rest = builder->blockpos; rest; bp++, rest--) {
       grn_id id = *bp;
       if (id & BUILD_RID_FLAG) {
         rid = id - BUILD_RID_FLAG;
-        post = 0;
+        pos = 0;
       } else {
         builder_counter *counter = &builder->counters[id - 1];
-        outbuf[counter->nposts++] = post;
-        if (outbuf[counter->offset]) {
-          if (outbuf[counter->offset] == rid) {
-            outbuf[counter->offset + counter->nrecs]++;
-          } else {
-            outbuf[++counter->offset] = rid;
-            outbuf[counter->offset + counter->nrecs] = 1;
-          }
+        if (counter->last_rid == rid) {
+          outbuf[counter->offset + counter->nrecs]++;
         } else {
-          outbuf[counter->offset] = rid;
+          if (counter->last_rid) { counter->offset++; }
+          counter->last_sid = 0;
+          counter->last_pos = 0;
+          outbuf[counter->offset] = rid - counter->last_rid;
+          counter->last_rid = rid;
           outbuf[counter->offset + counter->nrecs] = 1;
         }
-        post++;
+        outbuf[counter->nposts++] = pos - counter->last_pos;
+        counter->last_pos = pos;
+        pos++;
       }
     }
   }
@@ -6488,6 +6499,8 @@ grn_ii_builder_flush(grn_ctx *ctx, grn_ii_builder *builder)
       counter->nposts = 0;
       counter->lastrec = 0;
       counter->offset = 0;
+
+      counter->last_rid = 0; /* FIXME */
     }
   }
   builder->blockpos = 0;
@@ -6587,7 +6600,7 @@ grn_ii_builder_parse(grn_ctx *ctx, grn_ii_builder *builder)
   close(builder->tmpfd);
   GRN_FREE(builder->blockbuf);
   GRN_FREE(builder->counters);
-  GRN_LOG(ctx, GRN_LOG_WARNING, "nblocks: %d", builder->nblocks);
+  GRN_LOG(ctx, GRN_LOG_NOTICE, "nblocks: %d", builder->nblocks);
 }
 
 static void
@@ -6718,11 +6731,14 @@ grn_ii_builder_merge_one(grn_ctx *ctx, grn_ii_builder *builder,
         uint32_t *pp = block->posts;
         uint32_t n;
         for (n = block->nrecs; n; n--) {
-          uint32_t lp = 0;
           uint32_t np;
-          *ridp++ = *rp - lr; lr = *rp++;
+          if (n == block->nrecs) { /* FIXME */
+            *ridp = *rp++ - lr; lr += *ridp++;
+          } else {
+            *ridp = *rp++; lr += *ridp++;
+          }
           for (np = *tp; np; np--) {
-            *posp = *pp - lp; lp = *pp++;
+            *posp = *pp++;
             spos += *posp++;
           }
           *tfp++ = *tp++ - 1;
