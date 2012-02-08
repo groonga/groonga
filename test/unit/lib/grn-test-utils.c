@@ -651,6 +651,7 @@ grn_test_send_command(grn_ctx *context, const gchar *command)
   unsigned int send_id, receive_id;
   GString *result;
   const gchar **lines;
+  const gchar *taken_result;
 
   result = g_string_new(NULL);
   lines = cut_take_string_array(g_strsplit(command, "\n", 0));
@@ -671,7 +672,9 @@ grn_test_send_command(grn_ctx *context, const gchar *command)
                             cut_message("<%s>:<%s>", command, result->str));
   }
 
-  return cut_take_strdup(g_string_free(result, FALSE));
+  taken_result = cut_take_strdup(result->str);
+  g_string_free(result, TRUE);
+  return taken_result;
 }
 
 void
