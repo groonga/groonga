@@ -466,7 +466,7 @@ grn_rc
 grn_pat_cache_enable(grn_ctx *ctx, grn_pat *pat, uint32_t cache_size)
 {
   if (pat->cache || pat->cache_size) {
-    ERR(GRN_INVALID_ARGUMENT, "cache is already enbaled");
+    ERR(GRN_INVALID_ARGUMENT, "cache is already enabled");
     goto exit;
   }
   if (cache_size & (cache_size - 1)) {
