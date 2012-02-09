@@ -14,8 +14,8 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#ifndef GRN_PLUGIN_H
-#define GRN_PLUGIN_H
+#ifndef GRN_PLUGIN_IN_H
+#define GRN_PLUGIN_IN_H
 
 #ifndef GROONGA_IN_H
 #include "groonga_in.h"
@@ -64,4 +64,4 @@ const char *grn_plugin_path(grn_ctx *ctx, grn_id id);
 }
 #endif
 
-#endif /* GRN_PLUGIN_H */
+#endif /* GRN_PLUGIN_IN_H */

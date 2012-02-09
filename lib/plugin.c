@@ -15,11 +15,16 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+#ifndef GRN_PLUGIN_H
+#include "groonga/plugin.h"
+#endif /* GRN_PLUGIN_H */
+
 #include "db.h"
 #include "plugin_in.h"
 #include "ctx_impl.h"
 #include "util.h"
 
+#include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -412,4 +417,112 @@ grn_plugin_register(grn_ctx *ctx, const char *name)
   strcat(path, name);
 
   return grn_plugin_register_by_path(ctx, path);
+}
+
+void *
+grn_plugin_malloc(grn_ctx *ctx, size_t size, const char *file, int line,
+                  const char *func)
+{
+  return grn_malloc(ctx, size, file, line, func);
+}
+
+void *
+grn_plugin_realloc(grn_ctx *ctx, void *ptr, size_t size,
+                   const char *file, int line, const char *func)
+{
+  return grn_realloc(ctx, ptr, size, file, line, func);
+}
+
+void
+grn_plugin_free(grn_ctx *ctx, void *ptr, const char *file, int line,
+                const char *func)
+{
+  return grn_free(ctx, ptr, file, line, func);
+}
+
+/*
+  grn_plugin_ctx_log() is a clone of grn_ctx_log() in ctx.c. The only
+  difference is that grn_plugin_ctx_log() uses va_list instead of `...'.
+ */
+static void
+grn_plugin_ctx_log(grn_ctx *ctx, const char *format, va_list ap)
+{
+  va_list aq;
+  va_copy(aq, ap);
+  vsnprintf(ctx->errbuf, GRN_CTX_MSGSIZE, format, aq);
+  va_end(aq);
+}
+
+void
+grn_plugin_set_error(grn_ctx *ctx, grn_log_level level, grn_rc error_code,
+                     const char *file, int line, const char *func,
+                     const char *format, ...)
+{
+  ctx->errlvl = level;
+  ctx->rc = error_code;
+  ctx->errfile = file;
+  ctx->errline = line;
+  ctx->errfunc = func;
+  grn_ctx_impl_err(ctx);
+
+  {
+    va_list ap;
+    va_start(ap, format);
+    grn_plugin_ctx_log(ctx, format, ap);
+    va_end(ap);
+  }
+}
+
+void
+grn_plugin_backtrace(grn_ctx *ctx)
+{
+  BACKTRACE(ctx);
+}
+
+void
+grn_plugin_logtrace(grn_ctx *ctx, grn_log_level level)
+{
+  if (level <= GRN_LOG_ERROR) {
+    LOGTRACE(ctx, level);
+  }
+}
+
+struct _grn_plugin_mutex {
+  grn_critical_section critical_section;
+};
+
+grn_plugin_mutex *
+grn_plugin_mutex_create(grn_ctx *ctx)
+{
+  grn_plugin_mutex * const mutex =
+      GRN_PLUGIN_MALLOC(ctx, sizeof(grn_plugin_mutex));
+  if (mutex != NULL) {
+    CRITICAL_SECTION_INIT(mutex->critical_section);
+  }
+  return mutex;
+}
+
+void
+grn_plugin_mutex_destroy(grn_ctx *ctx, grn_plugin_mutex *mutex)
+{
+  if (mutex != NULL) {
+    CRITICAL_SECTION_FIN(mutex->critical_section);
+    GRN_PLUGIN_FREE(ctx, mutex);
+  }
+}
+
+void
+grn_plugin_mutex_lock(grn_ctx *ctx, grn_plugin_mutex *mutex)
+{
+  if (mutex != NULL) {
+    CRITICAL_SECTION_ENTER(mutex->critical_section);
+  }
+}
+
+void
+grn_plugin_mutex_unlock(grn_ctx *ctx, grn_plugin_mutex *mutex)
+{
+  if (mutex != NULL) {
+    CRITICAL_SECTION_LEAVE(mutex->critical_section);
+  }
 }
