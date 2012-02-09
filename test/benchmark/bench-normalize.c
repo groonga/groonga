@@ -17,15 +17,20 @@
 */
 
 /*
-  groonga: 5632ce3e39c0d8bf3c6b758d4cbf5e012cfa00b0
+  groonga: b85246df11a3dbedcae736b4879ba4daa8389116
   CFLAGS: -O3
   CPU: Intel(R) Core(TM) i5 CPU         650  @ 3.20GHz
-  % make -j8 > /dev/null && GROONGA_BENCH_N=10000 test/benchmark/bench-normalize
+  % make -j8 > /dev/null && (cd test/benchmark && GROONGA_BENCH_N=10000 make run-bench-normalize)
+                       (time)
+    1st: NFKC: plugin: (1.91418)
+    2nd: NFKC: plugin: (1.89913)
+    1st: NFKC: bundle: (1.94809)
+    2nd: NFKC: bundle: (2.01457)
 
-  groonga: 5632ce3e39c0d8bf3c6b758d4cbf5e012cfa00b0
-  CFLAGS: -O3 -ggdb3
+  groonga: b85246df11a3dbedcae736b4879ba4daa8389116
+  CFLAGS: -O0 -ggdb3
   CPU: Intel(R) Core(TM) i5 CPU         650  @ 3.20GHz
-  % make -j8 > /dev/null && GROONGA_BENCH_N=10000 test/benchmark/bench-normalize
+  % make -j8 > /dev/null && (cd test/benchmark && GROONGA_BENCH_N=10000 make run-bench-normalize)
                   (time)
     NFKC: plugin: (3.05917)
     NFKC: bundle: (3.13312)
@@ -63,7 +68,7 @@ enum {
 };
 
 inline static grn_obj *
-utf8_nfkc_normalize(grn_ctx *ctx, grn_str *nstr)
+utf8_nfkc_normalize_original(grn_ctx *ctx, grn_str *nstr)
 {
   int16_t *ch;
   const unsigned char *s, *s_, *s__ = NULL, *p, *p2, *pe, *e;
@@ -199,6 +204,419 @@ utf8_nfkc_normalize(grn_ctx *ctx, grn_str *nstr)
   return NULL;
 }
 
+inline static grn_obj *
+utf8_nfkc_normalize_short(grn_ctx *ctx, grn_str *nstr)
+{
+  short *ch;
+  const unsigned char *s, *s_, *s__ = NULL, *p, *p2, *pe, *e;
+  unsigned char *d, *d_, *de;
+  uint_least8_t *cp;
+  size_t length = 0, ls, lp, size = nstr->orig_blen, ds = size * 3;
+  int removeblankp = nstr->flags & GRN_STR_REMOVEBLANK;
+  if (!(nstr->norm = GRN_MALLOC(ds + 1))) {
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "[normalizer][utf8][nfkc] failed to allocate normalized text space");
+    return NULL;
+  }
+  if (nstr->flags & GRN_STR_WITH_CHECKS) {
+    if (!(nstr->checks = GRN_MALLOC(ds * sizeof(short) + 1))) {
+      GRN_FREE(nstr->norm);
+      nstr->norm = NULL;
+      ERR(GRN_NO_MEMORY_AVAILABLE,
+          "[normalizer][utf8][nfkc] failed to allocate checks space");
+      return NULL;
+    }
+  }
+  ch = nstr->checks;
+  if (nstr->flags & GRN_STR_WITH_CTYPES) {
+    if (!(nstr->ctypes = GRN_MALLOC(ds + 1))) {
+      if (nstr->checks) { GRN_FREE(nstr->checks); nstr->checks = NULL; }
+      GRN_FREE(nstr->norm);
+      nstr->norm = NULL;
+      ERR(GRN_NO_MEMORY_AVAILABLE,
+          "[normalizer][utf8][nfkc] failed to allocate character types space");
+      return NULL;
+    }
+  }
+  cp = nstr->ctypes;
+  d = (unsigned char *)nstr->norm;
+  de = d + ds;
+  d_ = NULL;
+  e = (unsigned char *)nstr->orig + size;
+  for (s = s_ = (unsigned char *)nstr->orig; ; s += ls) {
+    if (!(ls = grn_charlen_utf8(ctx, s, e))) {
+      break;
+    }
+    if ((p = (unsigned char *)grn_nfkc_map1(s))) {
+      pe = p + strlen((char *)p);
+    } else {
+      p = s;
+      pe = p + ls;
+    }
+    if (d_ && (p2 = (unsigned char *)grn_nfkc_map2(d_, p))) {
+      p = p2;
+      pe = p + strlen((char *)p);
+      if (cp) { cp--; }
+      if (ch) {
+        ch -= (d - d_);
+        s_ = s__;
+      }
+      d = d_;
+      length--;
+    }
+    for (; ; p += lp) {
+      if (!(lp = grn_charlen_utf8(ctx, p, pe))) {
+        break;
+      }
+      if ((*p == ' ' && removeblankp) || *p < 0x20  /* skip unprintable ascii */ ) {
+        if (cp > nstr->ctypes) { *(cp - 1) |= GRN_STR_BLANK; }
+      } else {
+        if (de <= d + lp) {
+          unsigned char *norm;
+          ds += (ds >> 1) + lp;
+          if (!(norm = GRN_REALLOC(nstr->norm, ds + 1))) {
+            if (nstr->ctypes) { GRN_FREE(nstr->ctypes); nstr->ctypes = NULL; }
+            if (nstr->checks) { GRN_FREE(nstr->checks); nstr->checks = NULL; }
+            GRN_FREE(nstr->norm); nstr->norm = NULL;
+            ERR(GRN_NO_MEMORY_AVAILABLE,
+                "[normalizer][utf8][nfkc] "
+                "failed to reallocate normalized text space");
+            return NULL;
+          }
+          de = norm + ds;
+          d = norm + (d - (unsigned char *)nstr->norm);
+          nstr->norm = norm;
+          if (ch) {
+            short *checks;
+            if (!(checks = GRN_REALLOC(nstr->checks, ds * sizeof(short)+ 1))) {
+              if (nstr->ctypes) { GRN_FREE(nstr->ctypes); nstr->ctypes = NULL; }
+              GRN_FREE(nstr->checks); nstr->checks = NULL;
+              GRN_FREE(nstr->norm); nstr->norm = NULL;
+              ERR(GRN_NO_MEMORY_AVAILABLE,
+                  "[normalizer][utf8][nfkc] "
+                  "failed to reallocate checks space");
+              return NULL;
+            }
+            ch = checks + (ch - nstr->checks);
+            nstr->checks = checks;
+          }
+          if (cp) {
+            uint_least8_t *ctypes;
+            if (!(ctypes = GRN_REALLOC(nstr->ctypes, ds + 1))) {
+              GRN_FREE(nstr->ctypes); nstr->ctypes = NULL;
+              if (nstr->checks) { GRN_FREE(nstr->checks); nstr->checks = NULL; }
+              GRN_FREE(nstr->norm); nstr->norm = NULL;
+              ERR(GRN_NO_MEMORY_AVAILABLE,
+                  "[normalizer][utf8][nfkc] "
+                  "failed to reallocate character types space");
+              return NULL;
+            }
+            cp = ctypes + (cp - nstr->ctypes);
+            nstr->ctypes = ctypes;
+          }
+        }
+        memcpy(d, p, lp);
+        d_ = d;
+        d += lp;
+        length++;
+        if (cp) { *cp++ = grn_nfkc_ctype(p); }
+        if (ch) {
+          size_t i;
+          if (s_ == s + ls) {
+            *ch++ = -1;
+          } else {
+            *ch++ = (short)(s + ls - s_);
+            s__ = s_;
+            s_ = s + ls;
+          }
+          for (i = lp; i > 1; i--) { *ch++ = 0; }
+        }
+      }
+    }
+  }
+  if (cp) { *cp = grn_str_null; }
+  *d = '\0';
+  nstr->length = length;
+  nstr->norm_blen = (size_t)(d - (unsigned char *)nstr->norm);
+  return NULL;
+}
+
+inline static grn_obj *
+utf8_nfkc_normalize_unsigned_char(grn_ctx *ctx, grn_str *nstr)
+{
+  int16_t *ch;
+  const unsigned char *s, *s_, *s__ = NULL, *p, *p2, *pe, *e;
+  unsigned char *d, *d_, *de;
+  unsigned char *cp;
+  size_t length = 0, ls, lp, size = nstr->orig_blen, ds = size * 3;
+  int removeblankp = nstr->flags & GRN_STR_REMOVEBLANK;
+  if (!(nstr->norm = GRN_MALLOC(ds + 1))) {
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "[normalizer][utf8][nfkc] failed to allocate normalized text space");
+    return NULL;
+  }
+  if (nstr->flags & GRN_STR_WITH_CHECKS) {
+    if (!(nstr->checks = GRN_MALLOC(ds * sizeof(int16_t) + 1))) {
+      GRN_FREE(nstr->norm);
+      nstr->norm = NULL;
+      ERR(GRN_NO_MEMORY_AVAILABLE,
+          "[normalizer][utf8][nfkc] failed to allocate checks space");
+      return NULL;
+    }
+  }
+  ch = nstr->checks;
+  if (nstr->flags & GRN_STR_WITH_CTYPES) {
+    if (!(nstr->ctypes = GRN_MALLOC(ds + 1))) {
+      if (nstr->checks) { GRN_FREE(nstr->checks); nstr->checks = NULL; }
+      GRN_FREE(nstr->norm);
+      nstr->norm = NULL;
+      ERR(GRN_NO_MEMORY_AVAILABLE,
+          "[normalizer][utf8][nfkc] failed to allocate character types space");
+      return NULL;
+    }
+  }
+  cp = nstr->ctypes;
+  d = (unsigned char *)nstr->norm;
+  de = d + ds;
+  d_ = NULL;
+  e = (unsigned char *)nstr->orig + size;
+  for (s = s_ = (unsigned char *)nstr->orig; ; s += ls) {
+    if (!(ls = grn_charlen_utf8(ctx, s, e))) {
+      break;
+    }
+    if ((p = (unsigned char *)grn_nfkc_map1(s))) {
+      pe = p + strlen((char *)p);
+    } else {
+      p = s;
+      pe = p + ls;
+    }
+    if (d_ && (p2 = (unsigned char *)grn_nfkc_map2(d_, p))) {
+      p = p2;
+      pe = p + strlen((char *)p);
+      if (cp) { cp--; }
+      if (ch) {
+        ch -= (d - d_);
+        s_ = s__;
+      }
+      d = d_;
+      length--;
+    }
+    for (; ; p += lp) {
+      if (!(lp = grn_charlen_utf8(ctx, p, pe))) {
+        break;
+      }
+      if ((*p == ' ' && removeblankp) || *p < 0x20  /* skip unprintable ascii */ ) {
+        if (cp > nstr->ctypes) { *(cp - 1) |= GRN_STR_BLANK; }
+      } else {
+        if (de <= d + lp) {
+          unsigned char *norm;
+          ds += (ds >> 1) + lp;
+          if (!(norm = GRN_REALLOC(nstr->norm, ds + 1))) {
+            if (nstr->ctypes) { GRN_FREE(nstr->ctypes); nstr->ctypes = NULL; }
+            if (nstr->checks) { GRN_FREE(nstr->checks); nstr->checks = NULL; }
+            GRN_FREE(nstr->norm); nstr->norm = NULL;
+            ERR(GRN_NO_MEMORY_AVAILABLE,
+                "[normalizer][utf8][nfkc] "
+                "failed to reallocate normalized text space");
+            return NULL;
+          }
+          de = norm + ds;
+          d = norm + (d - (unsigned char *)nstr->norm);
+          nstr->norm = norm;
+          if (ch) {
+            int16_t *checks;
+            if (!(checks = GRN_REALLOC(nstr->checks, ds * sizeof(int16_t)+ 1))) {
+              if (nstr->ctypes) { GRN_FREE(nstr->ctypes); nstr->ctypes = NULL; }
+              GRN_FREE(nstr->checks); nstr->checks = NULL;
+              GRN_FREE(nstr->norm); nstr->norm = NULL;
+              ERR(GRN_NO_MEMORY_AVAILABLE,
+                  "[normalizer][utf8][nfkc] "
+                  "failed to reallocate checks space");
+              return NULL;
+            }
+            ch = checks + (ch - nstr->checks);
+            nstr->checks = checks;
+          }
+          if (cp) {
+            unsigned char *ctypes;
+            if (!(ctypes = GRN_REALLOC(nstr->ctypes, ds + 1))) {
+              GRN_FREE(nstr->ctypes); nstr->ctypes = NULL;
+              if (nstr->checks) { GRN_FREE(nstr->checks); nstr->checks = NULL; }
+              GRN_FREE(nstr->norm); nstr->norm = NULL;
+              ERR(GRN_NO_MEMORY_AVAILABLE,
+                  "[normalizer][utf8][nfkc] "
+                  "failed to reallocate character types space");
+              return NULL;
+            }
+            cp = ctypes + (cp - nstr->ctypes);
+            nstr->ctypes = ctypes;
+          }
+        }
+        memcpy(d, p, lp);
+        d_ = d;
+        d += lp;
+        length++;
+        if (cp) { *cp++ = grn_nfkc_ctype(p); }
+        if (ch) {
+          size_t i;
+          if (s_ == s + ls) {
+            *ch++ = -1;
+          } else {
+            *ch++ = (int16_t)(s + ls - s_);
+            s__ = s_;
+            s_ = s + ls;
+          }
+          for (i = lp; i > 1; i--) { *ch++ = 0; }
+        }
+      }
+    }
+  }
+  if (cp) { *cp = grn_str_null; }
+  *d = '\0';
+  nstr->length = length;
+  nstr->norm_blen = (size_t)(d - (unsigned char *)nstr->norm);
+  return NULL;
+}
+
+inline static grn_obj *
+utf8_nfkc_normalize_local(grn_ctx *ctx, grn_str *nstr)
+{
+  int16_t *checks = NULL, *ch;
+  const unsigned char *s, *s_, *s__ = NULL, *p, *p2, *pe, *e;
+  unsigned char *d, *d_, *de;
+  uint_least8_t *ctypes = NULL, *cp;
+  size_t length = 0, ls, lp, size = nstr->orig_blen, ds = size * 3;
+  int removeblankp = nstr->flags & GRN_STR_REMOVEBLANK;
+  if (!(nstr->norm = GRN_MALLOC(ds + 1))) {
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "[normalizer][utf8][nfkc] failed to allocate normalized text space");
+    return NULL;
+  }
+  if (nstr->flags & GRN_STR_WITH_CHECKS) {
+    if (!(checks = GRN_MALLOC(ds * sizeof(int16_t) + 1))) {
+      GRN_FREE(nstr->norm);
+      nstr->norm = NULL;
+      ERR(GRN_NO_MEMORY_AVAILABLE,
+          "[normalizer][utf8][nfkc] failed to allocate checks space");
+      return NULL;
+    }
+  }
+  ch = checks;
+  if (nstr->flags & GRN_STR_WITH_CTYPES) {
+    if (!(ctypes = GRN_MALLOC(ds + 1))) {
+      if (checks) { GRN_FREE(checks); }
+      GRN_FREE(nstr->norm);
+      nstr->norm = NULL;
+      ERR(GRN_NO_MEMORY_AVAILABLE,
+          "[normalizer][utf8][nfkc] failed to allocate character types space");
+      return NULL;
+    }
+  }
+  cp = ctypes;
+  d = (unsigned char *)nstr->norm;
+  de = d + ds;
+  d_ = NULL;
+  e = (unsigned char *)nstr->orig + size;
+  for (s = s_ = (unsigned char *)nstr->orig; ; s += ls) {
+    if (!(ls = grn_charlen_utf8(ctx, s, e))) {
+      break;
+    }
+    if ((p = (unsigned char *)grn_nfkc_map1(s))) {
+      pe = p + strlen((char *)p);
+    } else {
+      p = s;
+      pe = p + ls;
+    }
+    if (d_ && (p2 = (unsigned char *)grn_nfkc_map2(d_, p))) {
+      p = p2;
+      pe = p + strlen((char *)p);
+      if (cp) { cp--; }
+      if (ch) {
+        ch -= (d - d_);
+        s_ = s__;
+      }
+      d = d_;
+      length--;
+    }
+    for (; ; p += lp) {
+      if (!(lp = grn_charlen_utf8(ctx, p, pe))) {
+        break;
+      }
+      if ((*p == ' ' && removeblankp) || *p < 0x20  /* skip unprintable ascii */ ) {
+        if (cp > ctypes) { *(cp - 1) |= GRN_STR_BLANK; }
+      } else {
+        if (de <= d + lp) {
+          unsigned char *norm;
+          ds += (ds >> 1) + lp;
+          if (!(norm = GRN_REALLOC(nstr->norm, ds + 1))) {
+            if (ctypes) { GRN_FREE(ctypes); }
+            if (checks) { GRN_FREE(checks); }
+            GRN_FREE(nstr->norm); nstr->norm = NULL;
+            ERR(GRN_NO_MEMORY_AVAILABLE,
+                "[normalizer][utf8][nfkc] "
+                "failed to reallocate normalized text space");
+            return NULL;
+          }
+          de = norm + ds;
+          d = norm + (d - (unsigned char *)nstr->norm);
+          nstr->norm = norm;
+          if (ch) {
+            int16_t *new_checks;
+            if (!(new_checks = GRN_REALLOC(checks, ds * sizeof(int16_t)+ 1))) {
+              if (ctypes) { GRN_FREE(ctypes); }
+              GRN_FREE(checks);
+              GRN_FREE(nstr->norm); nstr->norm = NULL;
+              ERR(GRN_NO_MEMORY_AVAILABLE,
+                  "[normalizer][utf8][nfkc] "
+                  "failed to reallocate checks space");
+              return NULL;
+            }
+            ch = new_checks + (ch - checks);
+            checks = new_checks;
+          }
+          if (cp) {
+            uint_least8_t *new_ctypes;
+            if (!(new_ctypes = GRN_REALLOC(ctypes, ds + 1))) {
+              GRN_FREE(ctypes);
+              if (checks) { GRN_FREE(checks); }
+              GRN_FREE(nstr->norm); nstr->norm = NULL;
+              ERR(GRN_NO_MEMORY_AVAILABLE,
+                  "[normalizer][utf8][nfkc] "
+                  "failed to reallocate character types space");
+              return NULL;
+            }
+            cp = new_ctypes + (cp - ctypes);
+            ctypes = new_ctypes;
+          }
+        }
+        memcpy(d, p, lp);
+        d_ = d;
+        d += lp;
+        length++;
+        if (cp) { *cp++ = grn_nfkc_ctype(p); }
+        if (ch) {
+          size_t i;
+          if (s_ == s + ls) {
+            *ch++ = -1;
+          } else {
+            *ch++ = (int16_t)(s + ls - s_);
+            s__ = s_;
+            s_ = s + ls;
+          }
+          for (i = lp; i > 1; i--) { *ch++ = 0; }
+        }
+      }
+    }
+  }
+  if (cp) { *cp = grn_str_null; }
+  *d = '\0';
+  nstr->length = length;
+  nstr->norm_blen = (size_t)(d - (unsigned char *)nstr->norm);
+  nstr->checks = checks;
+  nstr->ctypes = ctypes;
+  return NULL;
+}
+
 #include "lib/benchmark.h"
 
 #define GET(context, name) (grn_ctx_get(context, name, strlen(name)))
@@ -286,7 +704,7 @@ bench_plugin(gpointer user_data)
 }
 
 static void
-bench_bundle(gpointer user_data)
+bench_bundle_original(gpointer user_data)
 {
   BenchmarkData *data = user_data;
   grn_ctx *ctx = data->context;
@@ -299,7 +717,58 @@ bench_bundle(gpointer user_data)
     GRN_STR_REMOVEBLANK |
     GRN_STR_WITH_TYPES |
     GRN_STR_WITH_CHECKS;
-  utf8_nfkc_normalize(data->context, data->nstr);
+  utf8_nfkc_normalize_original(data->context, data->nstr);
+}
+
+static void
+bench_bundle_short(gpointer user_data)
+{
+  BenchmarkData *data = user_data;
+  grn_ctx *ctx = data->context;
+  data->nstr = GRN_MALLOC(sizeof(grn_str));
+  data->nstr->orig = text;
+  data->nstr->orig_blen = text_length;
+  data->nstr->checks = NULL;
+  data->nstr->ctypes = NULL;
+  data->nstr->flags =
+    GRN_STR_REMOVEBLANK |
+    GRN_STR_WITH_TYPES |
+    GRN_STR_WITH_CHECKS;
+  utf8_nfkc_normalize_short(data->context, data->nstr);
+}
+
+static void
+bench_bundle_unsigned_char(gpointer user_data)
+{
+  BenchmarkData *data = user_data;
+  grn_ctx *ctx = data->context;
+  data->nstr = GRN_MALLOC(sizeof(grn_str));
+  data->nstr->orig = text;
+  data->nstr->orig_blen = text_length;
+  data->nstr->checks = NULL;
+  data->nstr->ctypes = NULL;
+  data->nstr->flags =
+    GRN_STR_REMOVEBLANK |
+    GRN_STR_WITH_TYPES |
+    GRN_STR_WITH_CHECKS;
+  utf8_nfkc_normalize_unsigned_char(data->context, data->nstr);
+}
+
+static void
+bench_bundle_local(gpointer user_data)
+{
+  BenchmarkData *data = user_data;
+  grn_ctx *ctx = data->context;
+  data->nstr = GRN_MALLOC(sizeof(grn_str));
+  data->nstr->orig = text;
+  data->nstr->orig_blen = text_length;
+  data->nstr->checks = NULL;
+  data->nstr->ctypes = NULL;
+  data->nstr->flags =
+    GRN_STR_REMOVEBLANK |
+    GRN_STR_WITH_TYPES |
+    GRN_STR_WITH_CHECKS;
+  utf8_nfkc_normalize_local(data->context, data->nstr);
 }
 
 static void
@@ -383,8 +852,16 @@ main(int argc, gchar **argv)
                           bench_ ## type,                               \
                           bench_teardown,                               \
                           &data)
-  REGISTER("NFKC: plugin", plugin);
-  REGISTER("NFKC: bundle", bundle);
+  REGISTER("1st: NFKC: plugin                ", plugin);
+  REGISTER("2nd: NFKC: plugin                ", plugin);
+  REGISTER("1st: NFKC: bundle (original)     ", bundle_original);
+  REGISTER("2nd: NFKC: bundle (original)     ", bundle_original);
+  REGISTER("1st: NFKC: bundle (short)        ", bundle_short);
+  REGISTER("2nd: NFKC: bundle (short)        ", bundle_short);
+  REGISTER("1st: NFKC: bundle (unsigned char)", bundle_unsigned_char);
+  REGISTER("2nd: NFKC: bundle (unsigned char)", bundle_unsigned_char);
+  REGISTER("1st: NFKC: bundle (local)        ", bundle_local);
+  REGISTER("2nd: NFKC: bundle (local)        ", bundle_local);
 #undef REGISTER
 
   bench_reporter_run(reporter);
