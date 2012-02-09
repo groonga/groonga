@@ -31,7 +31,8 @@ libgroonga_la_SOURCES =				\
 	util.c					\
 	plugin.c				\
 	output.c				\
-	geo.c
+	geo.c					\
+	tokenizer.c
 
 libgroonga_la_LDFLAGS =				\
 	-version-info $(LT_VERSION_INFO)	\
