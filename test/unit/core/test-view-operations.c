@@ -178,7 +178,6 @@ test_sort(void)
   limit = 2;
   n_records = grn_table_sort(context, entries, 0, limit, result,
                              keys, sizeof(keys[0]) / sizeof(keys));
-  grn_obj_unlink(context, keys[0].key);
   grn_test_assert_equal_view(context,
                              gcut_take_new_list_string("yu",
                                                        "taro",
@@ -209,7 +208,6 @@ test_sort_offset(void)
   limit = 2;
   n_records = grn_table_sort(context, entries, offset, limit, result,
                              keys, sizeof(keys[0]) / sizeof(keys));
-  grn_obj_unlink(context, keys[0].key);
   grn_test_assert_equal_view(context,
                              gcut_take_new_list_string("taro",
                                                        "pochi",
