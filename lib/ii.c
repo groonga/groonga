@@ -6348,16 +6348,11 @@ const uint32_t BUILD_PACKED_BUFFER_SIZE = 0x4000000;
 const char *TMPFILE_PATH = "grn_ii_builder_tmp";
 const uint32_t BUILD_NCOUNTERS_MARGIN = 0x100000;
 const size_t BUILD_BLOCK_SIZE = 0x100000;
-const uint32_t BUILD_BLOCK_READ_UNIT_SIZE = 0x80000;
+const uint32_t BUILD_BLOCK_READ_UNIT_SIZE = 0x200000;
 
 typedef struct {
   uint32_t nrecs;
   uint32_t nposts;
-  grn_id lastrec;
-  uint32_t offset;
-
-  uint32_t nrecords;
-  uint32_t npostings;
   grn_id last_rid;
   uint32_t last_sid;
   uint32_t last_tf;
@@ -6373,9 +6368,9 @@ typedef struct {
   off_t head;
   off_t tail;
   uint32_t nextsize;
-  uint32_t *buffer;
+  uint8_t *buffer;
   uint32_t buffersize;
-  uint32_t *bufcur;
+  uint8_t *bufcur;
   uint32_t rest;
   grn_id tid;
   uint32_t nrecs;
@@ -6413,9 +6408,11 @@ typedef struct {
 static void
 grn_ii_builder_flush(grn_ctx *ctx, grn_ii_builder *builder)
 {
-  uint32_t pos = 0, pos_ = 0;
-  uint32_t *outbuf = (uint32_t *)GRN_MALLOC(builder->blockpos * 7 * sizeof(uint32_t));
+  uint8_t *outbuf, *outbufp, *outbufp_;
   builder_block *block;
+  outbuf = (uint8_t *)GRN_MALLOC(builder->blockpos * 7 * sizeof(uint32_t));
+  /* if (!outbuf) { err } */
+  outbufp_ = outbufp = outbuf;
   if (!(builder->nblocks & 0x3ff)) {
     builder_block *blocks = GRN_REALLOC(builder->blocks,
                                         (builder->nblocks + 0x400) * sizeof(builder_block));
@@ -6428,9 +6425,18 @@ grn_ii_builder_flush(grn_ctx *ctx, grn_ii_builder *builder)
   block->buffer = NULL;
   block->buffersize = 0;
   {
+    builder_counter *counter;
+    grn_id tid, tid_max = grn_table_size(ctx, builder->tmp_lexicon);
+    for (counter = builder->counters, tid = 1; tid <= tid_max; counter++, tid++) {
+      counter->offset_tf += GRN_B_ENC_SIZE(counter->last_tf - 1);
+      counter->last_rid = 0;
+      counter->last_tf = 0;
+    }
+  }
+  {
     grn_id tid;
     grn_table_cursor  *tc;
-    uint32_t *pnext = &block->nextsize;
+    uint8_t *pnext = (uint8_t *)&block->nextsize;
     tc = grn_table_cursor_open(ctx, builder->tmp_lexicon, NULL, 0, NULL, 0, 0, -1, BUILD_ORDER);
     while ((tid = grn_table_cursor_next(ctx, tc)) != GRN_ID_NIL) {
       unsigned int key_size;
@@ -6438,24 +6444,32 @@ grn_ii_builder_flush(grn_ctx *ctx, grn_ii_builder *builder)
       grn_id gtid = grn_table_add(ctx, builder->lexicon, key, key_size, NULL);
       builder_counter *counter = &builder->counters[tid - 1];
       if (counter->nrecs) {
-        uint32_t nposts = counter->nposts;
-        outbuf[pos++] = gtid;
-        outbuf[pos++] = counter->nrecs;
-        outbuf[pos++] = counter->nposts;
-        counter->offset = pos;
-        outbuf[pos] = 0;
-        pos += counter->nrecs * 2;
-        counter->nposts = pos;
-        pos += nposts;
+        uint32_t offset_rid = counter->offset_rid;
+        uint32_t offset_tf = counter->offset_tf;
+        uint32_t offset_pos = counter->offset_pos;
+        GRN_B_ENC(gtid, outbufp);
+        GRN_B_ENC(counter->nrecs, outbufp);
+        GRN_B_ENC(counter->nposts, outbufp);
+        counter->offset_rid = outbufp - outbuf;
+        outbufp += offset_rid;
+        counter->offset_tf = outbufp - outbuf;
+        outbufp += offset_tf;
+        counter->offset_pos = outbufp - outbuf;
+        outbufp += offset_pos;
       }
-      if (pos_ + BUILD_BLOCK_READ_UNIT_SIZE < pos) {
-        *pnext = pos - pos_+ 1;
-        pnext = &outbuf[pos++];
-        pos_ = pos;
+      if (outbufp_ + BUILD_BLOCK_READ_UNIT_SIZE < outbufp) {
+        uint32_t size = outbufp - outbufp_ + sizeof(uint32_t);
+        memcpy(pnext, &size, sizeof(uint32_t));
+        pnext = outbufp;
+        outbufp += sizeof(uint32_t);
+        outbufp_ = outbufp;
       }
     }
     grn_table_cursor_close(ctx, tc);
-    if (pos_ < pos) { *pnext = pos - pos_; }
+    if (outbufp_ < outbufp) {
+      uint32_t size = outbufp - outbufp_;
+      memcpy(pnext, &size, sizeof(uint32_t));
+    }
   }
   {
     grn_id rid = 0;
@@ -6473,16 +6487,25 @@ grn_ii_builder_flush(grn_ctx *ctx, grn_ii_builder *builder)
           counter->last_tf++;
         } else {
           if (counter->last_tf) {
-            outbuf[counter->offset + counter->nrecs] = counter->last_tf;
-            counter->offset++;
+            uint8_t *p = outbuf + counter->offset_tf;
+            GRN_B_ENC(counter->last_tf - 1, p);
+            counter->offset_tf = p - outbuf;
           }
-          outbuf[counter->offset] = rid - counter->last_rid;
+          {
+            uint8_t *p = outbuf + counter->offset_rid;
+            GRN_B_ENC(rid - counter->last_rid, p);
+            counter->offset_rid = p - outbuf;
+          }
           counter->last_rid = rid;
           counter->last_sid = 0;
           counter->last_tf = 1;
           counter->last_pos = 0;
         }
-        outbuf[counter->nposts++] = pos - counter->last_pos;
+        {
+          uint8_t *p = outbuf + counter->offset_pos;
+          GRN_B_ENC(pos - counter->last_pos, p);
+          counter->offset_pos = p - outbuf;
+        }
         counter->last_pos = pos;
         pos++;
       }
@@ -6492,17 +6515,13 @@ grn_ii_builder_flush(grn_ctx *ctx, grn_ii_builder *builder)
     builder_counter *counter;
     grn_id tid, tid_max = grn_table_size(ctx, builder->tmp_lexicon);
     for (counter = builder->counters, tid = 1; tid <= tid_max; counter++, tid++) {
-      outbuf[counter->offset + counter->nrecs] = counter->last_tf;
-      counter->nrecs = 0;
-      counter->nposts = 0;
-      counter->lastrec = 0;
-      counter->offset = 0;
-      counter->last_rid = 0;
-      counter->last_tf = 0;
+      uint8_t *p = outbuf + counter->offset_tf;
+      GRN_B_ENC(counter->last_tf - 1, p);
     }
+    memset(builder->counters, 0, tid_max * sizeof(builder_counter));
   }
   {
-    ssize_t r = write(builder->tmpfd, outbuf, pos * sizeof(uint32_t));
+    ssize_t r = write(builder->tmpfd, outbuf, outbufp - outbuf);
     if (r > 0) { builder->filepos += r; }
     block->tail = builder->filepos;
   }
@@ -6519,7 +6538,7 @@ static void
 grn_ii_builder_tokenize(grn_ctx *ctx, grn_ii_builder *builder, grn_id rid, grn_obj *value)
 {
   if (GRN_TEXT_LEN(value)) {
-    uint32_t pos;
+    uint32_t blockpos;
     grn_token *token;
     grn_id *buffer = builder->blockbuf;
     if (BUILD_BLOCK_SIZE <= builder->blockpos + GRN_TEXT_LEN(value) * 2) {
@@ -6538,12 +6557,12 @@ grn_ii_builder_tokenize(grn_ctx *ctx, grn_ii_builder *builder, grn_id rid, grn_o
         grn_pat_cache_enable(ctx, (grn_pat *)builder->tmp_lexicon, PAT_CACHE_SIZE);
       }
     }
-    pos = builder->blockpos;
-    buffer[pos++] = rid + BUILD_RID_FLAG;
+    blockpos = builder->blockpos;
+    buffer[blockpos++] = rid + BUILD_RID_FLAG;
     if ((token = grn_token_open(ctx, builder->tmp_lexicon,
                                 GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value), grn_token_add))) {
-      uint32_t pos_ = pos;
-      while (!token->status) {
+      uint32_t pos, blockpos_ = blockpos;
+      for (pos = 0; !token->status; pos++) {
         grn_id tid;
         if ((tid = grn_token_next(ctx, token))) {
           if (tid > builder->ncounters) {
@@ -6558,21 +6577,32 @@ grn_ii_builder_tokenize(grn_ctx *ctx, grn_ii_builder *builder, grn_id rid, grn_o
           }
           {
             builder_counter *counter = &builder->counters[tid - 1];
-            buffer[pos++] = tid;
-            if (counter->lastrec != rid) {
-              counter->lastrec = rid;
+            buffer[blockpos++] = tid;
+            if (counter->last_rid != rid) {
+              counter->offset_rid += GRN_B_ENC_SIZE(rid - counter->last_rid);
+              counter->last_rid = rid;
+              if (counter->last_tf) {
+                counter->offset_tf += GRN_B_ENC_SIZE(counter->last_tf - 1);
+                counter->last_tf = 0;
+              }
+              counter->last_pos = 0;
+
               counter->nrecs++;
             }
+            counter->offset_pos += GRN_B_ENC_SIZE(pos - counter->last_pos);
+            counter->last_pos = pos;
+            counter->last_tf++;
+
             counter->nposts++;
           }
         }
       }
       grn_token_close(ctx, token);
-      if (pos - pos_ > GRN_TEXT_LEN(value)) {
-        GRN_LOG(ctx, GRN_LOG_WARNING, "%d > %d", pos - pos_, GRN_TEXT_LEN(value));
+      if (blockpos - blockpos_ > GRN_TEXT_LEN(value)) {
+        GRN_LOG(ctx, GRN_LOG_WARNING, "%d > %d", blockpos - blockpos_, GRN_TEXT_LEN(value));
       }
     }
-    builder->blockpos = pos;
+    builder->blockpos = blockpos;
   }
 }
 
@@ -6613,11 +6643,11 @@ grn_ii_builder_fetch(grn_ctx *ctx, grn_ii_builder *builder, builder_block *block
 {
   if (!block->rest) {
     if (block->head < block->tail) {
-      size_t bytesize = block->nextsize * sizeof(uint32_t);
+      size_t bytesize = block->nextsize;
       if (block->buffersize < block->nextsize) {
         void *r = GRN_REALLOC(block->buffer, bytesize);
         if (r) {
-          block->buffer = (uint32_t *)r;
+          block->buffer = (uint8_t *)r;
           block->buffersize = block->nextsize;
         } else {
           GRN_LOG(ctx, GRN_LOG_WARNING, "realloc: %d", bytesize);
@@ -6634,26 +6664,18 @@ grn_ii_builder_fetch(grn_ctx *ctx, grn_ii_builder *builder, builder_block *block
         block->rest = block->nextsize;
         block->nextsize = 0;
       } else {
-        block->rest = block->nextsize - 1;
-        block->nextsize = block->buffer[block->rest];
+        block->rest = block->nextsize - sizeof(uint32_t);
+        memcpy(&block->nextsize, &block->buffer[block->rest], sizeof(uint32_t));
       }
     }
   }
   if (block->rest) {
-    block->tid = block->bufcur[0];
-    block->nrecs = block->bufcur[1];
-    block->nposts = block->bufcur[2];
-    {
-      uint32_t entrysize = 3 + block->nrecs * 2 + block->nposts;
-      if (entrysize > block->rest) {
-        GRN_LOG(ctx, GRN_LOG_WARNING, "rest: %d, %d", block->rest, entrysize);
-      }
-      block->recs = block->bufcur + 3;
-      block->tfs = block->recs + block->nrecs;
-      block->posts = block->tfs + block->nrecs;
-      block->rest -= entrysize;
-      block->bufcur += entrysize;
-    }
+    uint8_t *p = block->bufcur;
+    GRN_B_DEC(block->tid, p);
+    GRN_B_DEC(block->nrecs, p);
+    GRN_B_DEC(block->nposts, p);
+    block->rest -= (p - block->bufcur);
+    block->bufcur = p;
   } else {
     block->tid = 0;
   }
@@ -6691,8 +6713,19 @@ grn_ii_builder_merge_one(grn_ctx *ctx, grn_ii_builder *builder,
   uint32_t *a = array_get(ctx, builder->ii, tid);
   if (nhits == 1 && hits[0]->nrecs == 1 && hits[0]->nposts == 1) {
     builder_block *block = hits[0];
-    a[0] = (block->recs[0] << 1) + 1;
-    a[1] = block->posts[0];
+    uint8_t *p = block->bufcur;
+    grn_id rid;
+    uint32_t tf, pos;
+    GRN_B_DEC(rid, p);
+    GRN_B_DEC(tf, p);
+    GRN_B_DEC(pos, p);
+    block->rest -= (p - block->bufcur);
+    block->bufcur = p;
+    if (tf != 0) {
+      GRN_LOG(ctx, GRN_LOG_WARNING, "tf=%d", tf);
+    }
+    a[0] = (rid << 1) + 1;
+    a[1] = pos;
     grn_ii_builder_fetch(ctx, builder, block);
   } else {
     uint64_t spos = 0;
@@ -6731,38 +6764,28 @@ grn_ii_builder_merge_one(grn_ctx *ctx, grn_ii_builder *builder,
       int i;
       for (i = 0; i < nhits; i++) {
         builder_block *block = hits[i];
-        uint32_t *rp = block->recs;
-        uint32_t *tp = block->tfs;
-        uint32_t *pp = block->posts;
-        uint32_t np, n = block->nrecs;
-        *ridp = *rp++ - lr; lr += *ridp++;
-        for (np = *tp; np; np--) {
-          *posp = *pp++; spos += *posp++;
-        }
-        *tfp++ = *tp++ - 1;
-        while (--n) {
-          *ridp = *rp++; lr += *ridp++;
-          for (np = *tp; np; np--) {
-            *posp = *pp++; spos += *posp++;
+        uint8_t *p = block->bufcur;
+        uint32_t n = block->nrecs;
+        if (n) {
+          GRN_B_DEC(*ridp, p);
+          *ridp -= lr;
+          lr += *ridp++;
+          while (--n) {
+            GRN_B_DEC(*ridp, p);
+            lr += *ridp++;
           }
-          *tfp++ = *tp++ - 1;
         }
+        for (n = block->nrecs; n; n--) {
+          GRN_B_DEC(*tfp++, p);
+        }
+        for (n = block->nposts; n; n--) {
+          GRN_B_DEC(*posp, p);
+          spos += *posp++;
+        }
+        block->rest -= (p - block->bufcur);
+        block->bufcur = p;
         grn_ii_builder_fetch(ctx, builder, block);
       }
-
-      if (ridp != builder->data_vectors[0].data + nrecs) {
-        GRN_LOG(ctx, GRN_LOG_WARNING, "wrong ridp! %d, %d",
-                ridp - builder->data_vectors[0].data, nrecs);
-      }
-      if (tfp != builder->data_vectors[1].data + nrecs) {
-        GRN_LOG(ctx, GRN_LOG_WARNING, "wrong tfp! %d, %d",
-                tfp - builder->data_vectors[1].data, nrecs);
-      }
-      if (posp != builder->data_vectors[2].data + nposts) {
-        GRN_LOG(ctx, GRN_LOG_WARNING, "wrong posp! %d, %d",
-                posp - builder->data_vectors[2].data, nposts);
-      }
-
       builder->data_vectors[0].data_size = nrecs;
       builder->data_vectors[1].data_size = nrecs;
       builder->data_vectors[2].data_size = nposts;
