@@ -6472,7 +6472,7 @@ grn_ii_builder_flush(grn_ctx *ctx, grn_ii_builder *builder)
         if (counter->last_rid == rid) {
           counter->last_tf++;
         } else {
-          if (counter->last_rid) {
+          if (counter->last_tf) {
             outbuf[counter->offset + counter->nrecs] = counter->last_tf;
             counter->offset++;
           }
@@ -6497,8 +6497,8 @@ grn_ii_builder_flush(grn_ctx *ctx, grn_ii_builder *builder)
       counter->nposts = 0;
       counter->lastrec = 0;
       counter->offset = 0;
-
-      counter->last_rid = 0; /* FIXME */
+      counter->last_rid = 0;
+      counter->last_tf = 0;
     }
   }
   {
@@ -6734,17 +6734,16 @@ grn_ii_builder_merge_one(grn_ctx *ctx, grn_ii_builder *builder,
         uint32_t *rp = block->recs;
         uint32_t *tp = block->tfs;
         uint32_t *pp = block->posts;
-        uint32_t n;
-        for (n = block->nrecs; n; n--) {
-          uint32_t np;
-          if (n == block->nrecs) { /* FIXME */
-            *ridp = *rp++ - lr; lr += *ridp++;
-          } else {
-            *ridp = *rp++; lr += *ridp++;
-          }
+        uint32_t np, n = block->nrecs;
+        *ridp = *rp++ - lr; lr += *ridp++;
+        for (np = *tp; np; np--) {
+          *posp = *pp++; spos += *posp++;
+        }
+        *tfp++ = *tp++ - 1;
+        while (--n) {
+          *ridp = *rp++; lr += *ridp++;
           for (np = *tp; np; np--) {
-            *posp = *pp++;
-            spos += *posp++;
+            *posp = *pp++; spos += *posp++;
           }
           *tfp++ = *tp++ - 1;
         }

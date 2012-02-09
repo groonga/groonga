@@ -392,6 +392,9 @@ uint32_t grn_expire(grn_ctx *ctx, int count_thresh, uint32_t limit);
   p = _p; \
 }
 
+#define GRN_B_ENC_SIZE(v) \
+ ((v) < 0x8f ? 1 : ((v) < 0x408f ? 2 : ((v) < 0x20408f ? 3 : ((v) < 0x1020408f ? 4 : 5))))
+
 #define GRN_B_DEC(v,p) \
 { \
   uint8_t *_p = (uint8_t *)p; \
