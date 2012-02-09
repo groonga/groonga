@@ -51,11 +51,12 @@ void grn_tokenizer_free(grn_ctx *ctx, void *ptr, const char *file,
 
 /*
   GRN_TOKENIZER_LOG() reports a log of `level'. Its error message is generated
-  from `format' and the varying number of arguments. See grn_log_level in
-  "groonga.h" for more details of `level'.
+  from the varying number of arguments, in which the first one is the format
+  string and the rest are its arguments. See grn_log_level in "groonga.h" for
+  more details of `level'.
  */
-#define GRN_TOKENIZER_LOG(ctx, level, format, ...) \
-  GRN_LOG((ctx), (level), (format), ## __VA_ARGS__)
+#define GRN_TOKENIZER_LOG(ctx, level, ...) \
+  GRN_LOG((ctx), (level), __VA_ARGS__)
 
 /*
   Don't call grn_tokenizer_set_error() directly. This function is used in
@@ -77,23 +78,22 @@ void grn_tokenizer_logtrace(grn_ctx *ctx, grn_log_level level);
   Don't use GRN_TOKENIZER_SET_ERROR() directly. This macro is used in
   GRN_TOKENIZER_ERROR().
  */
-#define GRN_TOKENIZER_SET_ERROR(ctx, level, error_code, format, ...) do { \
+#define GRN_TOKENIZER_SET_ERROR(ctx, level, error_code, ...) do { \
   grn_tokenizer_set_error(ctx, level, error_code, \
-                          __FILE__, __LINE__, __FUNCTION__, \
-                          format, ## __VA_ARGS__); \
-  GRN_LOG(ctx, level, format, ## __VA_ARGS__); \
+                          __FILE__, __LINE__, __FUNCTION__, __VA_ARGS__); \
+  GRN_LOG(ctx, level, __VA_ARGS__); \
   grn_tokenizer_backtrace(ctx); \
   grn_tokenizer_logtrace(ctx, level); \
 } while (0)
 
 /*
   GRN_TOKENIZER_ERROR() reports an error of `error_code'. Its error message is
-  generated from `format' and the varying number of arguments. See grn_rc in
-  "groonga.h" for more details of `error_code'.
+  generated from the varying number of arguments, in which the first one is the
+  format string and the rest are its arguments. See grn_rc in "groonga.h" for
+  more details of `error_code'.
  */
-#define GRN_TOKENIZER_ERROR(ctx, error_code, format, ...) \
-  GRN_TOKENIZER_SET_ERROR(ctx, GRN_LOG_ERROR, error_code, \
-                          format, ## __VA_ARGS__)
+#define GRN_TOKENIZER_ERROR(ctx, error_code, ...) \
+  GRN_TOKENIZER_SET_ERROR(ctx, GRN_LOG_ERROR, error_code, __VA_ARGS__)
 
 /*
   grn_tokenizer_mutex is available to make a critical section. See the
