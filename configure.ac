@@ -190,6 +190,7 @@ AC_CONFIG_FILES([
   include/groonga/Makefile
   plugins/Makefile
   plugins/tokenizers/Makefile
+  plugins/normalizers/Makefile
   plugins/suggest/Makefile
   examples/Makefile
   examples/dictionary/Makefile
@@ -407,9 +408,10 @@ AC_ARG_ENABLE(nfkc,
   [AS_HELP_STRING([--enable-nfkc],
     [use nfkc based utf8 normalization. [default=yes]])],,
   [enable_nfkc="yes"])
-if test "x$enable_nfkc" != "xyes"; then
-  AC_DEFINE(NO_NFKC, [1], [compile without nfkc.c])
+if test "x$enable_nfkc" = "xyes"; then
+  AC_DEFINE(WITH_NFKC, [1], [compile with nfkc.c])
 fi
+AM_CONDITIONAL([WITH_NFKC], [test "x$enable_nfkc" = "xyes"])
 
 # coverage
 m4_ifdef([AC_CHECK_COVERAGE], [AC_CHECK_COVERAGE])
@@ -999,6 +1001,9 @@ AC_SUBST(pluginsdir)
 tokenizer_pluginsdir="\${pluginsdir}/tokenizers"
 AC_SUBST(tokenizer_pluginsdir)
 
+normalizer_pluginsdir="\${pluginsdir}/normalizers"
+AC_SUBST(normalizer_pluginsdir)
+
 suggest_pluginsdir="\${pluginsdir}/suggest"
 AC_SUBST(suggest_pluginsdir)
 
@@ -1103,6 +1108,10 @@ if test "x$with_kytea" = "xyes"; then
   echo "    CFLAGS:              $KYTEA_CFLAGS"
   echo "    LIBS:                $KYTEA_LIBS"
 fi
+echo
+
+echo "Nomralizers:"
+echo "  NFKC:                  $enable_nfkc"
 echo
 
 echo "Libraries:"

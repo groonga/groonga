@@ -393,7 +393,7 @@ map1 = create_map1()
 STDERR.puts('creating map2..')
 map2 = create_map2(map1)
 
-outf = open('nfkc.c', 'w')
+outf = open('nfkc-core.c', 'w')
 
 tmps = template.split(/%/)
 

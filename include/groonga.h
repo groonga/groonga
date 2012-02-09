@@ -2459,20 +2459,58 @@ GRN_API grn_rc grn_str_close(grn_ctx *ctx, grn_str *nstr);
 
 /* grn_normalized_text */
 
-#define GRN_NORMALIZED_TEXT_REMOVE_BLANK (0x01<<0)
-#define GRN_NORMALIZED_TEXT_WITH_CTYPES  (0x01<<1)
-#define GRN_NORMALIZED_TEXT_WITH_CHECKS  (0x01<<2)
+#define GRN_NORMALIZE_REMOVE_BLANK (0x01<<0)
+#define GRN_NORMALIZE_WITH_TYPES   (0x01<<1)
+#define GRN_NORMALIZE_WITH_CHECKS  (0x01<<2)
+
+#define GRN_CHAR_BLANK 0x80
+#define GRN_CHAR_IS_BLANK(c) ((c) & (GRN_CHAR_BLANK))
+#define GRN_CHAR_TYPE(c) ((c) & 0x7f)
+
+typedef enum {
+  grn_char_null = 0,
+  grn_char_alpha,
+  grn_char_digit,
+  grn_char_symbol,
+  grn_char_hiragana,
+  grn_char_katakana,
+  grn_char_kanji,
+  grn_char_others
+} grn_char_type;
 
 GRN_API grn_obj *grn_normalized_text_open(grn_ctx *ctx, grn_obj *normalizer,
                                           const char *str, unsigned int str_len,
                                           grn_encoding encoding, int flags);
+GRN_API grn_rc grn_normalized_text_get_original_value(grn_ctx *ctx,
+                                                      grn_obj *normalized_text,
+                                                      const char **value,
+                                                      unsigned int *length_in_bytes);
+GRN_API int grn_normalized_text_get_flags(grn_ctx *ctx,
+                                          grn_obj *normalized_text);
 GRN_API grn_rc grn_normalized_text_get_value(grn_ctx *ctx,
                                              grn_obj *normalized_text,
                                              const char **value,
                                              unsigned int *length,
-                                             unsigned int *binary_length);
+                                             unsigned int *length_in_bytes);
+GRN_API grn_rc grn_normalized_text_set_value(grn_ctx *ctx,
+                                             grn_obj *normalized_text,
+                                             char *value,
+                                             unsigned int length,
+                                             unsigned int length_in_bytes);
+GRN_API short *grn_normalized_text_get_checks(grn_ctx *ctx,
+                                              grn_obj *normalized_text);
+GRN_API grn_rc grn_normalized_text_set_checks(grn_ctx *ctx,
+                                              grn_obj *normalized_text,
+                                              short *checks);
+GRN_API unsigned char *grn_normalized_text_get_types(grn_ctx *ctx,
+                                                     grn_obj *normalized_text);
+GRN_API grn_rc grn_normalized_text_set_types(grn_ctx *ctx,
+                                             grn_obj *normalized_text,
+                                             unsigned char *types);
+
 
 GRN_API int grn_charlen(grn_ctx *ctx, const char *str, const char *end);
+GRN_API int grn_charlen_utf8(grn_ctx *ctx, const unsigned char *str, const unsigned char *end);
 
 /* expr */
 

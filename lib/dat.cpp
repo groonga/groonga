@@ -697,7 +697,7 @@ int grn_dat_scan(grn_ctx *ctx, grn_dat *dat, const char *str,
   try {
     if (dat->obj.header.flags & GRN_OBJ_KEY_NORMALIZE) {
       grn_str * const normalized_str = grn_str_open(
-          ctx, str, str_size, GRN_STR_NORMALIZE | GRN_STR_WITH_CHECKS);
+          ctx, str, str_size, GRN_STR_NORMALIZE | GRN_NORMALIZE_WITH_CHECKS);
       if (!normalized_str) {
         fprintf(stderr, "error: grn_str_open() failed!\n");
         return -1;

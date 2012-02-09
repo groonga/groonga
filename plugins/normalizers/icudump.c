@@ -156,14 +156,14 @@ enum {
 };
 
 static const char *ctypes[] = {
-  "grn_str_null",
-  "grn_str_alpha",
-  "grn_str_digit",
-  "grn_str_symbol",
-  "grn_str_hiragana",
-  "grn_str_katakana",
-  "grn_str_kanji",
-  "grn_str_others"
+  "grn_char_null",
+  "grn_char_alpha",
+  "grn_char_digit",
+  "grn_char_symbol",
+  "grn_char_hiragana",
+  "grn_char_katakana",
+  "grn_char_kanji",
+  "grn_char_others"
 };
 
 void

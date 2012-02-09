@@ -28,7 +28,7 @@
 #include <math.h>
 
 int
-grn_str_charlen_utf8(grn_ctx *ctx, const unsigned char *str, const unsigned char *end)
+grn_charlen_utf8(grn_ctx *ctx, const unsigned char *str, const unsigned char *end)
 {
   /* MEMO: This function allows non-null-terminated string as str. */
   /*       But requires the end of string. */
@@ -39,12 +39,12 @@ grn_str_charlen_utf8(grn_ctx *ctx, const unsigned char *str, const unsigned char
     int size;
     for (b = 0x40, w = 0; b && (*p & b); b >>= 1, w++);
     if (!w) {
-      GRN_LOG(ctx, GRN_LOG_WARNING, "invalid utf8 string(1) on grn_str_charlen_utf8");
+      GRN_LOG(ctx, GRN_LOG_WARNING, "invalid utf8 string(1) on grn_charlen_utf8");
       return 0;
     }
     for (size = 1; w--; size++) {
       if (++p >= end || !*p || (*p & 0xc0) != 0x80) {
-        GRN_LOG(ctx, GRN_LOG_WARNING, "invalid utf8 string(2) on grn_str_charlen_utf8");
+        GRN_LOG(ctx, GRN_LOG_WARNING, "invalid utf8 string(2) on grn_charlen_utf8");
         return 0;
       }
     }
@@ -139,7 +139,7 @@ grn_charlen_(grn_ctx *ctx, const char *str, const char *end, grn_encoding encodi
     return 1;
     break;
   case GRN_ENC_UTF8 :
-    return grn_str_charlen_utf8(ctx, p, (unsigned char *)end);
+    return grn_charlen_utf8(ctx, p, (unsigned char *)end);
     break;
   case GRN_ENC_SJIS :
     if (*p & 0x80) {
@@ -174,7 +174,7 @@ grn_charlen(grn_ctx *ctx, const char *str, const char *end)
 static grn_str *
 grn_fakenstr_open(grn_ctx *ctx, const char *str, size_t str_len, grn_encoding encoding, int flags)
 {
-  /* TODO: support GRN_STR_REMOVEBLANK flag and ctypes */
+  /* TODO: support GRN_NORMALIZE_REMOVE_BLANK flag and ctypes */
   grn_str *nstr;
   if (!(nstr = GRN_MALLOC(sizeof(grn_str)))) {
     GRN_LOG(ctx, GRN_LOG_ALERT, "memory allocation on grn_fakenstr_open failed !");
@@ -193,7 +193,7 @@ grn_fakenstr_open(grn_ctx *ctx, const char *str, size_t str_len, grn_encoding en
   nstr->ctypes = NULL;
   nstr->flags = flags;
 
-  if (flags & GRN_STR_WITH_CHECKS) {
+  if (flags & GRN_NORMALIZE_WITH_CHECKS) {
     int16_t f = 0;
     unsigned char c;
     size_t i;
