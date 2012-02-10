@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2011 Brazil
+/* Copyright(C) 2011-2012 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -290,7 +290,6 @@ grn_dat_create(grn_ctx *ctx, const char *path, uint32_t,
     return NULL;
   }
   grn_dat_init(ctx, dat);
-  dat->obj.header.flags = flags;
 
   dat->io = grn_io_create(ctx, path, sizeof(struct grn_dat_header),
                           4096, 0, grn_io_auto, GRN_IO_EXPIRE_SEGMENT);
@@ -323,6 +322,7 @@ grn_dat_create(grn_ctx *ctx, const char *path, uint32_t,
   }
   dat->encoding = encoding;
   dat->tokenizer = NULL;
+  dat->obj.header.flags = dat->header->flags;
   return dat;
 }
 
