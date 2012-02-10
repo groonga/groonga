@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2008-2010  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2008-2012  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -90,6 +90,44 @@ grn_test_assert_equal_id_helper(grn_ctx *context,
     grn_obj_unlink(context, &inspected_actual_object);
     grn_obj_unlink(context, expected_object);
     grn_obj_unlink(context, actual_object);
+    cut_test_fail(cut_take_printf("<%s> == <%s> (%s)\n"
+                                  " context: <%p>",
+                                  expression_expected,
+                                  expression_actual,
+                                  expression_context,
+                                  context));
+  }
+}
+
+void
+grn_test_assert_equal_type_helper(grn_ctx *context,
+                                  unsigned char expected,
+                                  unsigned char actual,
+                                  const gchar *expression_context,
+                                  const gchar *expression_expected,
+                                  const gchar *expression_actual)
+{
+  if (expected == actual) {
+    cut_test_pass();
+  } else {
+    grn_obj inspected_expected, inspected_actual;
+
+    GRN_TEXT_INIT(&inspected_expected, 0);
+    GRN_TEXT_INIT(&inspected_actual, 0);
+    grn_inspect_type(context, &inspected_expected, expected);
+    grn_inspect_type(context, &inspected_actual, actual);
+    cut_set_expected(
+      cut_take_printf("%x: <%.*s>",
+                      expected,
+                      (int)GRN_TEXT_LEN(&inspected_expected),
+                      GRN_TEXT_VALUE(&inspected_expected)));
+    cut_set_actual(
+      cut_take_printf("%x: <%.*s>",
+                      actual,
+                      (int)GRN_TEXT_LEN(&inspected_actual),
+                      GRN_TEXT_VALUE(&inspected_actual)));
+    grn_obj_unlink(context, &inspected_expected);
+    grn_obj_unlink(context, &inspected_actual);
     cut_test_fail(cut_take_printf("<%s> == <%s> (%s)\n"
                                   " context: <%p>",
                                   expression_expected,

@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2008-2010  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2008-2012  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -46,6 +46,16 @@
                                       #expected, #actual),              \
       __VA_ARGS__),                                                     \
     grn_test_assert_equal_id(context, expected, actual))
+
+#define grn_test_assert_equal_type(context, expected, actual, ...)      \
+  cut_trace_with_info_expression(                                       \
+    cut_test_with_user_message(                                         \
+      grn_test_assert_equal_type_helper((context),                      \
+                                        (expected), (actual),           \
+                                        #context,                       \
+                                        #expected, #actual),            \
+      __VA_ARGS__),                                                     \
+    grn_test_assert_equal_type(context, expected, actual))
 
 #define grn_test_assert_equal_record_id(context, table,                 \
                                         expected, actual, ...)          \
@@ -179,6 +189,13 @@ void     grn_test_assert_equal_rc_helper(grn_rc       expected,
 void     grn_test_assert_equal_id_helper(grn_ctx     *context,
                                          grn_id       expected,
                                          grn_id       actual,
+                                         const gchar *expression_context,
+                                         const gchar *expression_expected,
+                                         const gchar *expression_actual);
+void     grn_test_assert_equal_type_helper
+                                        (grn_ctx     *context,
+                                         unsigned char expected,
+                                         unsigned char actual,
                                          const gchar *expression_context,
                                          const gchar *expression_expected,
                                          const gchar *expression_actual);
