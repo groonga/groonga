@@ -80,6 +80,120 @@ grn_inspect_name(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
   return buf;
 }
 
+grn_obj *
+grn_inspect_type(grn_ctx *ctx, grn_obj *buf, unsigned char type)
+{
+  switch (type) {
+  case GRN_VOID :
+    GRN_TEXT_PUTS(ctx, buf, "GRN_VOID");
+    break;
+  case GRN_BULK :
+    GRN_TEXT_PUTS(ctx, buf, "GRN_BULK");
+    break;
+  case GRN_PTR :
+    GRN_TEXT_PUTS(ctx, buf, "GRN_PTR");
+    break;
+  case GRN_UVECTOR :
+    GRN_TEXT_PUTS(ctx, buf, "GRN_UVECTOR");
+    break;
+  case GRN_PVECTOR :
+    GRN_TEXT_PUTS(ctx, buf, "GRN_PVECTOR");
+    break;
+  case GRN_VECTOR :
+    GRN_TEXT_PUTS(ctx, buf, "GRN_VECTOR");
+    break;
+  case GRN_MSG :
+    GRN_TEXT_PUTS(ctx, buf, "GRN_MSG");
+    break;
+  case GRN_QUERY :
+    GRN_TEXT_PUTS(ctx, buf, "GRN_QUERY");
+    break;
+  case GRN_ACCESSOR :
+    GRN_TEXT_PUTS(ctx, buf, "GRN_ACCESSOR");
+    break;
+  case GRN_ACCESSOR_VIEW :
+    GRN_TEXT_PUTS(ctx, buf, "GRN_ACCESSOR_VIEW");
+    break;
+  case GRN_SNIP :
+    GRN_TEXT_PUTS(ctx, buf, "GRN_SNIP");
+    break;
+  case GRN_PATSNIP :
+    GRN_TEXT_PUTS(ctx, buf, "GRN_PATSNIP");
+    break;
+  case GRN_NORMALIZED_TEXT :
+    GRN_TEXT_PUTS(ctx, buf, "GRN_NORMALIZED_TEXT");
+    break;
+  case GRN_CURSOR_TABLE_HASH_KEY :
+    GRN_TEXT_PUTS(ctx, buf, "GRN_CURSOR_TABLE_HASH_KEY");
+    break;
+  case GRN_CURSOR_TABLE_PAT_KEY :
+    GRN_TEXT_PUTS(ctx, buf, "GRN_CURSOR_TABLE_PAT_KEY");
+    break;
+  case GRN_CURSOR_TABLE_DAT_KEY :
+    GRN_TEXT_PUTS(ctx, buf, "GRN_CURSOR_TABLE_DAT_KEY");
+    break;
+  case GRN_CURSOR_TABLE_NO_KEY :
+    GRN_TEXT_PUTS(ctx, buf, "GRN_CURSOR_TABLE_NO_KEY");
+    break;
+  case GRN_CURSOR_TABLE_VIEW :
+    GRN_TEXT_PUTS(ctx, buf, "GRN_CURSOR_TABLE_VIEW");
+    break;
+  case GRN_CURSOR_COLUMN_INDEX :
+    GRN_TEXT_PUTS(ctx, buf, "GRN_CURSOR_COLUMN_INDEX");
+    break;
+  case GRN_CURSOR_COLUMN_GEO_INDEX :
+    GRN_TEXT_PUTS(ctx, buf, "GRN_CURSOR_COLUMN_GEO_INDEX");
+    break;
+  case GRN_TYPE :
+    GRN_TEXT_PUTS(ctx, buf, "GRN_TYPE");
+    break;
+  case GRN_PROC :
+    GRN_TEXT_PUTS(ctx, buf, "GRN_PROC");
+    break;
+  case GRN_EXPR :
+    GRN_TEXT_PUTS(ctx, buf, "GRN_EXPR");
+    break;
+  case GRN_TABLE_HASH_KEY :
+    GRN_TEXT_PUTS(ctx, buf, "GRN_TABLE_HASH_KEY");
+    break;
+  case GRN_TABLE_PAT_KEY :
+    GRN_TEXT_PUTS(ctx, buf, "GRN_TABLE_PAT_KEY");
+    break;
+  case GRN_TABLE_DAT_KEY :
+    GRN_TEXT_PUTS(ctx, buf, "GRN_TABLE_DAT_KEY");
+    break;
+  case GRN_TABLE_NO_KEY :
+    GRN_TEXT_PUTS(ctx, buf, "GRN_TABLE_NO_KEY");
+    break;
+  case GRN_TABLE_VIEW :
+    GRN_TEXT_PUTS(ctx, buf, "GRN_TABLE_VIEW");
+    break;
+  case GRN_DB :
+    GRN_TEXT_PUTS(ctx, buf, "GRN_DB");
+    break;
+  case GRN_COLUMN_FIX_SIZE :
+    GRN_TEXT_PUTS(ctx, buf, "GRN_COLUMN_FIX_SIZE");
+    break;
+  case GRN_COLUMN_VAR_SIZE :
+    GRN_TEXT_PUTS(ctx, buf, "GRN_COLUMN_VAR_SIZE");
+    break;
+  case GRN_COLUMN_INDEX :
+    GRN_TEXT_PUTS(ctx, buf, "GRN_COLUMN_INDEX");
+    break;
+  default:
+    {
+      char type_in_hex[5]; /* "0xXX" */
+      sprintf(type_in_hex, "%#02x", type);
+      GRN_TEXT_PUTS(ctx, buf, "(unknown: ");
+      GRN_TEXT_PUTS(ctx, buf, type_in_hex);
+      GRN_TEXT_PUTS(ctx, buf, ")");
+    }
+    break;
+  }
+
+  return buf;
+}
+
 static grn_rc
 grn_proc_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 {
