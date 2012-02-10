@@ -28,6 +28,7 @@ void test_pat_key(void);
 void test_dat_key(void);
 void test_no_key(void);
 void test_default_tokenizer(void);
+void test_normalizer(void);
 
 void test_invalid_name(void);
 
@@ -134,6 +135,19 @@ test_default_tokenizer(void)
   grn_test_assert_equal_id(context,
                            GRN_DB_BIGRAM,
                            grn_obj_id(context, tokenizer));
+}
+
+void
+test_normalizer(void)
+{
+  grn_obj *normalizer;
+  assert_send_command("table_create Users TABLE_PAT_KEY ShortText "
+                      "--normalizer NormalizerASCII");
+  grn_test_assert_users_exist();
+  normalizer = grn_obj_get_info(context, users, GRN_INFO_NORMALIZER, NULL);
+  grn_test_assert_equal_id(context,
+                           GRN_DB_NORMALIZER_ASCII,
+                           grn_obj_id(context, normalizer));
 }
 
 void

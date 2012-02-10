@@ -819,7 +819,7 @@ grn_column_create_flags_to_text(grn_ctx *ctx, grn_obj *buf, grn_obj_flags flags)
 static grn_obj *
 proc_table_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  grn_obj *table;
+  grn_obj *table, *table_name;
   const char *rest;
   grn_obj_flags flags = grn_atoi(GRN_TEXT_VALUE(VAR(1)),
                                  GRN_BULK_CURR(VAR(1)), &rest);
@@ -828,7 +828,9 @@ proc_table_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
                                          GRN_BULK_CURR(VAR(1)));
     if (ctx->rc) { goto exit; }
   }
-  if (GRN_TEXT_LEN(VAR(0))) {
+
+  table_name = VAR(0);
+  if (GRN_TEXT_LEN(table_name)) {
     grn_obj *key_type = NULL, *value_type = NULL;
     if (GRN_TEXT_LEN(VAR(2)) > 0) {
       key_type = grn_ctx_get(ctx, GRN_TEXT_VALUE(VAR(2)),
@@ -836,7 +838,7 @@ proc_table_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
       if (!key_type) {
         ERR(GRN_INVALID_ARGUMENT,
             "[table][create] key type doesn't exist: <%.*s> (%.*s)",
-            GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)),
+            GRN_TEXT_LEN(table_name), GRN_TEXT_VALUE(table_name),
             GRN_TEXT_LEN(VAR(2)), GRN_TEXT_VALUE(VAR(2)));
         return NULL;
       }
@@ -847,24 +849,66 @@ proc_table_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
       if (!value_type) {
         ERR(GRN_INVALID_ARGUMENT,
             "[table][create] value type doesn't exist: <%.*s> (%.*s)",
-            GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)),
+            GRN_TEXT_LEN(table_name), GRN_TEXT_VALUE(table_name),
             GRN_TEXT_LEN(VAR(3)), GRN_TEXT_VALUE(VAR(3)));
         return NULL;
       }
     }
     flags |= GRN_OBJ_PERSISTENT;
     table = grn_table_create(ctx,
-                             GRN_TEXT_VALUE(VAR(0)),
-                             GRN_TEXT_LEN(VAR(0)),
+                             GRN_TEXT_VALUE(table_name),
+                             GRN_TEXT_LEN(table_name),
                              NULL, flags,
                              key_type,
                              value_type);
     if (table) {
-      grn_obj_set_info(ctx, table,
-                       GRN_INFO_DEFAULT_TOKENIZER,
-                       grn_ctx_get(ctx, GRN_TEXT_VALUE(VAR(4)),
-                                   GRN_TEXT_LEN(VAR(4))));
-      grn_obj_unlink(ctx, table);
+      grn_obj *tokenizer_name;
+      grn_obj *normalizer_name;
+
+      tokenizer_name = VAR(4);
+      normalizer_name = VAR(5);
+
+      if (GRN_TEXT_LEN(tokenizer_name)) {
+        grn_obj *tokenizer;
+
+        tokenizer = grn_ctx_get(ctx,
+                                GRN_TEXT_VALUE(tokenizer_name),
+                                GRN_TEXT_LEN(tokenizer_name));
+        if (tokenizer) {
+          grn_obj_set_info(ctx, table, GRN_INFO_DEFAULT_TOKENIZER, tokenizer);
+        } else {
+          ERR(GRN_INVALID_ARGUMENT,
+              "[table][create] unknown default tokenizer is specified: "
+              "<%.*s> (%.*s)",
+              GRN_TEXT_LEN(table_name), GRN_TEXT_VALUE(table_name),
+              GRN_TEXT_LEN(tokenizer_name), GRN_TEXT_VALUE(tokenizer_name));
+          grn_obj_remove(ctx, table);
+          table = NULL;
+        }
+      }
+
+      if (GRN_TEXT_LEN(normalizer_name)) {
+        grn_obj *normalizer;
+
+        normalizer = grn_ctx_get(ctx,
+                                 GRN_TEXT_VALUE(normalizer_name),
+                                 GRN_TEXT_LEN(normalizer_name));
+        if (normalizer) {
+          grn_obj_set_info(ctx, table, GRN_INFO_NORMALIZER, normalizer);
+        } else {
+          ERR(GRN_INVALID_ARGUMENT,
+              "[table][create] unknown normalizer is specified: ",
+              "<%.*s> (%.*s)",
+              GRN_TEXT_LEN(table_name), GRN_TEXT_VALUE(table_name),
+              GRN_TEXT_LEN(normalizer_name), GRN_TEXT_VALUE(normalizer_name));
+          grn_obj_remove(ctx, table);
+          table = NULL;
+        }
+      }
+
+      if (table) {
+        grn_obj_unlink(ctx, table);
+      }
     }
   } else {
     ERR(GRN_INVALID_ARGUMENT,
@@ -2883,7 +2927,8 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[2], "key_type");
   DEF_VAR(vars[3], "value_type");
   DEF_VAR(vars[4], "default_tokenizer");
-  DEF_COMMAND("table_create", proc_table_create, 5, vars);
+  DEF_VAR(vars[5], "normalizer");
+  DEF_COMMAND("table_create", proc_table_create, 6, vars);
 
   DEF_VAR(vars[0], "name");
   DEF_COMMAND("table_remove", proc_table_remove, 1, vars);
