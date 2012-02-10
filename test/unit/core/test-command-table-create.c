@@ -27,6 +27,7 @@ void test_hash_key(void);
 void test_pat_key(void);
 void test_dat_key(void);
 void test_no_key(void);
+void test_default_tokenizer(void);
 
 void test_invalid_name(void);
 
@@ -120,6 +121,19 @@ test_no_key(void)
   assert_send_command("table_create Users TABLE_NO_KEY");
   grn_test_assert_users_exist();
   grn_test_assert_equal_type(context, GRN_TABLE_NO_KEY, users->header.type);
+}
+
+void
+test_default_tokenizer(void)
+{
+  grn_obj *tokenizer;
+  assert_send_command("table_create Users TABLE_PAT_KEY ShortText "
+                      "--default_tokenizer TokenBigram");
+  grn_test_assert_users_exist();
+  tokenizer = grn_obj_get_info(context, users, GRN_INFO_DEFAULT_TOKENIZER, NULL);
+  grn_test_assert_equal_id(context,
+                           GRN_DB_BIGRAM,
+                           grn_obj_id(context, tokenizer));
 }
 
 void
