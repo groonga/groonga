@@ -5712,6 +5712,19 @@ grn_obj_get_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *valueb
         break;
       }
       break;
+    case GRN_INFO_NORMALIZER :
+      switch (DB_OBJ(obj)->header.type) {
+      case GRN_TABLE_HASH_KEY :
+        valuebuf = ((grn_hash *)obj)->normalizer;
+        break;
+      case GRN_TABLE_PAT_KEY :
+        valuebuf = ((grn_pat *)obj)->normalizer;
+        break;
+      case GRN_TABLE_DAT_KEY :
+        valuebuf = ((grn_dat *)obj)->normalizer;
+        break;
+      }
+      break;
     default :
       /* todo */
       break;
@@ -6031,6 +6044,28 @@ grn_obj_set_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *value)
         break;
       }
     }
+    break;
+  case GRN_INFO_NORMALIZER :
+    if (!value || DB_OBJ(value)->header.type == GRN_PROC) {
+      switch (DB_OBJ(obj)->header.type) {
+      case GRN_TABLE_HASH_KEY :
+        ((grn_hash *)obj)->normalizer = value;
+        ((grn_hash *)obj)->header->normalizer = grn_obj_id(ctx, value);
+        rc = GRN_SUCCESS;
+        break;
+      case GRN_TABLE_PAT_KEY :
+        ((grn_pat *)obj)->normalizer = value;
+        ((grn_pat *)obj)->header->normalizer = grn_obj_id(ctx, value);
+        rc = GRN_SUCCESS;
+        break;
+      case GRN_TABLE_DAT_KEY :
+        ((grn_dat *)obj)->normalizer = value;
+        ((grn_dat *)obj)->header->normalizer = grn_obj_id(ctx, value);
+        rc = GRN_SUCCESS;
+        break;
+      }
+    }
+    break;
   default :
     /* todo */
     break;
