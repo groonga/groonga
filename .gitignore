@@ -66,6 +66,7 @@ version.sh
 /test/benchmark/fixtures/geo-select/13_2010.CSV
 /test/benchmark/fixtures/geo-select/load.grn
 /test/benchmark/bench-geo-select
+/test/benchmark/bench-normalize
 /packages/apt/debian/pool/*/*/*/*/*.diff.gz
 /packages/apt/debian/pool/*/*/*/*/*.tar.gz
 /packages/apt/debian/pool/*/*/*/*/*.build
