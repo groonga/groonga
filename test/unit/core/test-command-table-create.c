@@ -34,7 +34,7 @@ static gchar *tmp_directory;
 static const gchar *database_path;
 
 static grn_ctx *context;
-static grn_obj *database;
+static grn_obj *database, *users;
 
 void
 cut_startup(void)
@@ -67,12 +67,14 @@ cut_setup(void)
 
   database_path = cut_build_path(tmp_directory, "database.groonga", NULL);
   database = grn_db_create(context, database_path, NULL);
+  users = NULL;
 }
 
 void
 cut_teardown(void)
 {
   if (context) {
+    grn_obj_unlink(context, users);
     grn_obj_close(context, database);
     grn_ctx_fin(context);
     g_free(context);
@@ -82,39 +84,42 @@ cut_teardown(void)
 }
 
 static void
-grn_test_assert_users_table_type(unsigned char type)
+grn_test_assert_users_exist(void)
 {
-  static const char *users = "Users";
-  grn_obj *object = grn_ctx_get(context, users, strlen(users));
-  cut_assert_equal_int(type, object->header.type);
+  const gchar *users_name = "Users";
+  users = grn_ctx_get(context, users_name, strlen(users_name));
 }
 
 void
 test_hash_key(void)
 {
   assert_send_command("table_create Users TABLE_HASH_KEY ShortText");
-  grn_test_assert_users_table_type(GRN_TABLE_HASH_KEY);
+  grn_test_assert_users_exist();
+  grn_test_assert_equal_type(context, GRN_TABLE_HASH_KEY, users->header.type);
 }
 
 void
 test_pat_key(void)
 {
   assert_send_command("table_create Users TABLE_PAT_KEY ShortText");
-  grn_test_assert_users_table_type(GRN_TABLE_PAT_KEY);
+  grn_test_assert_users_exist();
+  grn_test_assert_equal_type(context, GRN_TABLE_PAT_KEY, users->header.type);
 }
 
 void
 test_dat_key(void)
 {
   assert_send_command("table_create Users TABLE_DAT_KEY ShortText");
-  grn_test_assert_users_table_type(GRN_TABLE_DAT_KEY);
+  grn_test_assert_users_exist();
+  grn_test_assert_equal_type(context, GRN_TABLE_DAT_KEY, users->header.type);
 }
 
 void
 test_no_key(void)
 {
   assert_send_command("table_create Users TABLE_NO_KEY");
-  grn_test_assert_users_table_type(GRN_TABLE_NO_KEY);
+  grn_test_assert_users_exist();
+  grn_test_assert_equal_type(context, GRN_TABLE_NO_KEY, users->header.type);
 }
 
 void
