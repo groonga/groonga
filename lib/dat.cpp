@@ -695,16 +695,19 @@ int grn_dat_scan(grn_ctx *ctx, grn_dat *dat, const char *str,
 
   int num_scan_hits = 0;
   try {
-    if (dat->obj.header.flags & GRN_OBJ_KEY_NORMALIZE) {
-      grn_str * const normalized_str = grn_str_open(
-          ctx, str, str_size, GRN_STR_NORMALIZE | GRN_NORMALIZE_WITH_CHECKS);
-      if (!normalized_str) {
-        fprintf(stderr, "error: grn_str_open() failed!\n");
+    if (dat->normalizer) {
+      grn_obj * normalized_text;
+      normalized_text = grn_normalized_text_open(ctx, dat->normalizer,
+                                                 str, str_size,
+                                                 dat->encoding,
+                                                 GRN_NORMALIZE_WITH_CHECKS);
+      if (!normalized_text) {
+        ERR(GRN_NO_MEMORY_AVAILABLE,
+            "[dat][scan] failed to allocate memory for normalization");
         return -1;
       }
-      str = normalized_str->norm;
-      str_size = normalized_str->norm_blen;
-      const short *checks = normalized_str->checks;
+      grn_normalized_text_get_value(ctx, normalized_text, &str, NULL, &str_size);
+      const short *checks = grn_normalized_text_get_checks(ctx, normalized_text);
       unsigned int offset = 0;
       while (str_size) {
         if (*checks) {
@@ -741,9 +744,12 @@ int grn_dat_scan(grn_ctx *ctx, grn_dat *dat, const char *str,
         ++checks;
       }
       if (str_rest) {
-        *str_rest = normalized_str->orig + offset;
+        const char *original;
+        grn_normalized_text_get_original_value(ctx, normalized_text,
+                                               &original, NULL);
+        *str_rest = original + offset;
       }
-      grn_str_close(ctx, normalized_str);
+      grn_obj_unlink(ctx, normalized_text);
     } else {
       const char * const begin = str;
       while (str_size) {
