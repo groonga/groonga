@@ -3405,7 +3405,9 @@ _grn_ii_create(grn_ctx *ctx, grn_ii *ii, const char *path, grn_obj *lexicon, uin
     free_histogram[i] = 0;
   }
   */
-  if (grn_table_get_info(ctx, lexicon, &lflags, &encoding, &tokenizer)) { return NULL; }
+  if (grn_table_get_info(ctx, lexicon, &lflags, &encoding, &tokenizer, NULL)) {
+    return NULL;
+  }
   if (path && strlen(path) + 6 >= PATH_MAX) { return NULL; }
   seg = grn_io_create(ctx, path, sizeof(struct grn_ii_header),
                       S_SEGMENT, GRN_II_MAX_LSEG, grn_io_auto, GRN_IO_EXPIRE_SEGMENT);
@@ -3524,7 +3526,9 @@ grn_ii_open(grn_ctx *ctx, const char *path, grn_obj *lexicon)
   grn_obj_flags lflags;
   grn_encoding encoding;
   grn_obj *tokenizer;
-  if (grn_table_get_info(ctx, lexicon, &lflags, &encoding, &tokenizer)) { return NULL; }
+  if (grn_table_get_info(ctx, lexicon, &lflags, &encoding, &tokenizer, NULL)) {
+    return NULL;
+  }
   if (strlen(path) + 6 >= PATH_MAX) { return NULL; }
   strcpy(path2, path);
   strcat(path2, ".c");
@@ -6549,7 +6553,7 @@ grn_ii_builder_tokenize(grn_ctx *ctx, grn_ii_builder *builder, grn_id rid, grn_o
       grn_obj *range = grn_ctx_at(ctx, DB_OBJ(builder->lexicon)->range);
       grn_obj *tokenizer;
       grn_obj_flags flags;
-      grn_table_get_info(ctx, builder->lexicon, &flags, NULL, &tokenizer);
+      grn_table_get_info(ctx, builder->lexicon, &flags, NULL, &tokenizer, NULL);
       flags &= ~GRN_OBJ_PERSISTENT;
       builder->tmp_lexicon = grn_table_create(ctx, NULL, 0, NULL, flags, domain, range);
       grn_obj_set_info(ctx, builder->tmp_lexicon, GRN_INFO_DEFAULT_TOKENIZER, tokenizer);
@@ -6879,7 +6883,7 @@ grn_ii_build(grn_ctx *ctx, grn_ii *ii)
   builder.tmp_lexicon = NULL;
   {
     grn_obj_flags flags;
-    grn_table_get_info(ctx, builder.lexicon, &flags, NULL, NULL);
+    grn_table_get_info(ctx, builder.lexicon, &flags, NULL, NULL, NULL);
     if (flags & GRN_OBJ_TABLE_PAT_KEY) {
       grn_pat_cache_enable(ctx, (grn_pat *)builder.lexicon, PAT_CACHE_SIZE);
     }

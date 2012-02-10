@@ -34,7 +34,6 @@ static grn_critical_section sole_mecab_lock;
 static grn_encoding sole_mecab_encoding = GRN_ENC_NONE;
 
 typedef struct {
-  grn_str *nstr;
   mecab_t *mecab;
   char *buf;
   char *next;
@@ -84,9 +83,12 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_obj *str;
   int nflags = 0;
+  const char *target_text;
   char *buf, *s, *p;
   char mecab_err[256];
   grn_obj *table = args[0];
+  grn_obj *normalizer;
+  grn_obj *normalized_text;
   grn_obj_flags table_flags;
   grn_encoding table_encoding;
   grn_mecab_tokenizer *token;
@@ -113,7 +115,8 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
         "mecab_new2 failed on grn_mecab_init: %s", mecab_err);
     return NULL;
   }
-  grn_table_get_info(ctx, table, &table_flags, &table_encoding, NULL);
+  grn_table_get_info(ctx, table, &table_flags, &table_encoding,
+                     NULL, &normalizer);
   if (table_encoding != sole_mecab_encoding) {
     ERR(GRN_TOKENIZER_ERROR,
         "MeCab dictionary charset (%s) does not match the context encoding: <%s>",
@@ -123,23 +126,36 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   if (!(token = GRN_MALLOC(sizeof(grn_mecab_tokenizer)))) { return NULL; }
   token->mecab = sole_mecab;
   token->encoding = table_encoding;
-  nflags |= (table_flags & GRN_OBJ_KEY_NORMALIZE);
-  if (!(token->nstr = grn_str_open_(ctx, GRN_TEXT_VALUE(str), GRN_TEXT_LEN(str),
-                                    nflags, token->encoding))) {
-    GRN_FREE(token);
-    ERR(GRN_TOKENIZER_ERROR, "grn_str_open failed at grn_token_open");
-    return NULL;
+  normalized_text = NULL;
+  if (normalizer) {
+    if (!(normalized_text = grn_normalized_text_open(ctx,
+                                                     normalizer,
+                                                     GRN_TEXT_VALUE(str),
+                                                     GRN_TEXT_LEN(str),
+                                                     token->encoding,
+                                                     nflags))) {
+      GRN_FREE(token);
+      ERR(GRN_TOKENIZER_ERROR,
+          "[tokenizer][mecab] failed to open normalized text");
+      return NULL;
+    }
+    grn_normalized_text_get_value(ctx, normalized_text,
+                                  &target_text, NULL, &len);
+  } else {
+    target_text = GRN_TEXT_VALUE(str);
+    len = GRN_TEXT_LEN(str);
   }
-  len = token->nstr->norm_blen;
   for (bufsize = len * 2 + 1; maxtrial; bufsize *= 2, maxtrial--) {
     if (!(buf = GRN_MALLOC(bufsize + 1))) {
       GRN_LOG(ctx, GRN_LOG_ALERT, "buffer allocation on mecab_init failed !");
-      grn_str_close(ctx, token->nstr);
+      if (normalized_text) {
+        grn_obj_unlink(ctx, normalized_text);
+      }
       GRN_FREE(token);
       return NULL;
     }
     CRITICAL_SECTION_ENTER(sole_mecab_lock);
-    s = mecab_sparse_tostr3(token->mecab, token->nstr->norm, len, buf, bufsize);
+    s = mecab_sparse_tostr3(token->mecab, target_text, len, buf, bufsize);
     if (!s) {
       strncpy(mecab_err, mecab_strerror(token->mecab), sizeof(mecab_err) - 1);
     }
@@ -148,10 +164,12 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     GRN_FREE(buf);
     if (strstr(mecab_err, "output buffer overflow") == NULL) { break; }
   }
+  if (normalized_text) {
+    grn_obj_unlink(ctx, normalized_text);
+  }
   if (!s) {
     ERR(GRN_TOKENIZER_ERROR, "mecab_sparse_tostr failed len=%d bufsize=%d err=%s",
         len, bufsize, mecab_err);
-    grn_str_close(ctx, token->nstr);
     GRN_FREE(token);
     return NULL;
   }
@@ -206,7 +224,6 @@ static grn_obj *
 mecab_fin(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_mecab_tokenizer *token = user_data->ptr;
-  grn_str_close(ctx, token->nstr);
   GRN_FREE(token->buf);
   GRN_FREE(token);
   return NULL;

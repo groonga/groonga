@@ -186,7 +186,7 @@ grn_tokenizer_query *grn_tokenizer_query_create(grn_ctx *ctx,
       grn_obj * const table = args[0];
       grn_encoding table_encoding;
       int flags = 0;
-      grn_table_get_info(ctx, table, NULL, &table_encoding, NULL);
+      grn_table_get_info(ctx, table, NULL, &table_encoding, NULL, NULL);
       {
         grn_str * const str = grn_str_open_(ctx, GRN_TEXT_VALUE(query_str),
                                             GRN_TEXT_LEN(query_str),
