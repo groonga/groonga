@@ -980,8 +980,10 @@ do_htreq(grn_ctx *ctx, grn_msg *msg)
     grn_ctx_send(ctx, path, pathe - path, 0);
   }
 exit :
-  // todo : support "Connection: keep-alive"
+  /* TODO: support "Connection: keep-alive" */
   ctx->stat = GRN_CTX_QUIT;
+  /* TODO: support a command in multi requests. e.g.: load command */
+  grn_ctx_set_next_expr(ctx, NULL);
   /* if (ctx->rc != GRN_OPERATION_WOULD_BLOCK) {...} */
   grn_msg_close(ctx, (grn_obj *)msg);
   /* if not keep alive connection */
