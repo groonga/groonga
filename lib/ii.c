@@ -6385,9 +6385,7 @@ typedef struct {
 } ii_buffer_block;
 
 struct _grn_ii_buffer {
-  grn_obj *target;
   grn_obj *lexicon;
-  grn_obj *source;
   grn_obj *tmp_lexicon;
   ii_buffer_block *blocks;
   uint32_t nblocks;
