@@ -82,14 +82,12 @@ static grn_obj *
 mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_obj *str;
-  int nflags = 0;
   const char *target_text;
   char *buf, *s, *p;
   char mecab_err[256];
   grn_obj *table = args[0];
   grn_obj *normalizer;
   grn_obj *normalized_text;
-  grn_obj_flags table_flags;
   grn_encoding table_encoding;
   grn_mecab_tokenizer *token;
   unsigned int bufsize, maxtrial = 10, len;
@@ -115,8 +113,7 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
         "mecab_new2 failed on grn_mecab_init: %s", mecab_err);
     return NULL;
   }
-  grn_table_get_info(ctx, table, &table_flags, &table_encoding,
-                     NULL, &normalizer);
+  grn_table_get_info(ctx, table, NULL, &table_encoding, NULL, &normalizer);
   if (table_encoding != sole_mecab_encoding) {
     ERR(GRN_TOKENIZER_ERROR,
         "MeCab dictionary charset (%s) does not match the context encoding: <%s>",
@@ -133,7 +130,7 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                                                      GRN_TEXT_VALUE(str),
                                                      GRN_TEXT_LEN(str),
                                                      token->encoding,
-                                                     nflags))) {
+                                                     0))) {
       GRN_FREE(token);
       ERR(GRN_TOKENIZER_ERROR,
           "[tokenizer][mecab] failed to open normalized text");
