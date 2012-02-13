@@ -160,14 +160,14 @@ data_hash_table_create(void)
            NULL);
   ADD_DATA("hash - key normalize",
            "table_create Blog TABLE_HASH_KEY ShortText "
-           "--normalizer NormalizerUTF8NFKC",
+           "--normalizer NormalizerNFKC51",
            "Blog",
            GRN_OBJ_TABLE_HASH_KEY | GRN_OBJ_KEY_NORMALIZE,
            "ShortText",
            NULL);
   ADD_DATA("hash - key normalize - value",
            "table_create Blog TABLE_HASH_KEY ShortText Int32 "
-           "--normalizer NormalizerUTF8NFKC",
+           "--normalizer NormalizerNFKC51",
            "Blog",
            GRN_OBJ_TABLE_HASH_KEY | GRN_OBJ_KEY_NORMALIZE,
            "ShortText",
@@ -191,14 +191,14 @@ data_patricia_trie_create(void)
            NULL);
   ADD_DATA("patricia trie - key normalize",
            "table_create Blog TABLE_PAT_KEY ShortText "
-           "--normalizer NormalizerUTF8NFKC",
+           "--normalizer NormalizerNFKC51",
            "Blog",
            GRN_OBJ_TABLE_PAT_KEY | GRN_OBJ_KEY_NORMALIZE,
            "ShortText",
            NULL);
   ADD_DATA("patricia trie - key normalize - value",
            "table_create Blog TABLE_PAT_KEY ShortText Int32 "
-           "--normalizer NormalizerUTF8NFKC",
+           "--normalizer NormalizerNFKC51",
            "Blog",
            GRN_OBJ_TABLE_PAT_KEY | GRN_OBJ_KEY_NORMALIZE,
            "ShortText",
@@ -222,14 +222,14 @@ data_double_array_trie_create(void)
            NULL);
   ADD_DATA("double-array trie - key normalize",
            "table_create Blog TABLE_DAT_KEY ShortText "
-           "--normalizer NormalizerUTF8NFKC",
+           "--normalizer NormalizerNFKC51",
            "Blog",
            GRN_OBJ_TABLE_DAT_KEY | GRN_OBJ_KEY_NORMALIZE,
            "ShortText",
            NULL);
   ADD_DATA("double-array trie - key normalize - value",
            "table_create Blog TABLE_DAT_KEY ShortText Int32 "
-           "--normalizer NormalizerUTF8NFKC",
+           "--normalizer NormalizerNFKC51",
            "Blog",
            GRN_OBJ_TABLE_DAT_KEY | GRN_OBJ_KEY_NORMALIZE,
            "ShortText",

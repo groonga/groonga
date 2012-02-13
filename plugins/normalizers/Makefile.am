@@ -20,5 +20,8 @@ if WITH_NFKC
 normalizer_plugins_LTLIBRARIES += nfkc.la
 endif
 
-nfkc_la_SOURCES = nfkc.c nfkc-core.c
-noinst_HEADERS = nfkc.h
+nfkc_la_SOURCES =				\
+	nfkc.c					\
+	nfkc-unicode-5.1.c
+noinst_HEADERS =				\
+	nfkc-unicode-5.1.h

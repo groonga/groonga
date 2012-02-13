@@ -44,11 +44,11 @@
 #include <groonga.h>
 #include <groonga_in.h>
 
-#define grn_nfkc_ctype bundle_grn_nfkc_ctype
-#define grn_nfkc_map1 bundle_grn_nfkc_map1
-#define grn_nfkc_map2 bundle_grn_nfkc_map2
+#define grn_nfkc_unicode_51_ctype bundle_grn_nfkc_ctype
+#define grn_nfkc_unicode_51_map1 bundle_grn_nfkc_map1
+#define grn_nfkc_unicode_51_map2 bundle_grn_nfkc_map2
 
-#include "plugins/normalizers/nfkc-core.c"
+#include "plugins/normalizers/nfkc-unicode-5.1.c"
 
 #define GRN_STR_REMOVEBLANK  (0x01<<0)
 #define GRN_STR_WITH_TYPES   (0x01<<1)
@@ -110,13 +110,13 @@ utf8_nfkc_normalize_original(grn_ctx *ctx, grn_str *nstr)
     if (!(ls = grn_charlen_utf8(ctx, s, e))) {
       break;
     }
-    if ((p = (unsigned char *)grn_nfkc_map1(s))) {
+    if ((p = (unsigned char *)grn_nfkc_unicode_51_map1(s))) {
       pe = p + strlen((char *)p);
     } else {
       p = s;
       pe = p + ls;
     }
-    if (d_ && (p2 = (unsigned char *)grn_nfkc_map2(d_, p))) {
+    if (d_ && (p2 = (unsigned char *)grn_nfkc_unicode_51_map2(d_, p))) {
       p = p2;
       pe = p + strlen((char *)p);
       if (cp) { cp--; }
@@ -182,7 +182,7 @@ utf8_nfkc_normalize_original(grn_ctx *ctx, grn_str *nstr)
         d_ = d;
         d += lp;
         length++;
-        if (cp) { *cp++ = grn_nfkc_ctype(p); }
+        if (cp) { *cp++ = grn_nfkc_unicode_51_ctype(p); }
         if (ch) {
           size_t i;
           if (s_ == s + ls) {
@@ -247,13 +247,13 @@ utf8_nfkc_normalize_short(grn_ctx *ctx, grn_str *nstr)
     if (!(ls = grn_charlen_utf8(ctx, s, e))) {
       break;
     }
-    if ((p = (unsigned char *)grn_nfkc_map1(s))) {
+    if ((p = (unsigned char *)grn_nfkc_unicode_51_map1(s))) {
       pe = p + strlen((char *)p);
     } else {
       p = s;
       pe = p + ls;
     }
-    if (d_ && (p2 = (unsigned char *)grn_nfkc_map2(d_, p))) {
+    if (d_ && (p2 = (unsigned char *)grn_nfkc_unicode_51_map2(d_, p))) {
       p = p2;
       pe = p + strlen((char *)p);
       if (cp) { cp--; }
@@ -319,7 +319,7 @@ utf8_nfkc_normalize_short(grn_ctx *ctx, grn_str *nstr)
         d_ = d;
         d += lp;
         length++;
-        if (cp) { *cp++ = grn_nfkc_ctype(p); }
+        if (cp) { *cp++ = grn_nfkc_unicode_51_ctype(p); }
         if (ch) {
           size_t i;
           if (s_ == s + ls) {
@@ -384,13 +384,13 @@ utf8_nfkc_normalize_unsigned_char(grn_ctx *ctx, grn_str *nstr)
     if (!(ls = grn_charlen_utf8(ctx, s, e))) {
       break;
     }
-    if ((p = (unsigned char *)grn_nfkc_map1(s))) {
+    if ((p = (unsigned char *)grn_nfkc_unicode_51_map1(s))) {
       pe = p + strlen((char *)p);
     } else {
       p = s;
       pe = p + ls;
     }
-    if (d_ && (p2 = (unsigned char *)grn_nfkc_map2(d_, p))) {
+    if (d_ && (p2 = (unsigned char *)grn_nfkc_unicode_51_map2(d_, p))) {
       p = p2;
       pe = p + strlen((char *)p);
       if (cp) { cp--; }
@@ -456,7 +456,7 @@ utf8_nfkc_normalize_unsigned_char(grn_ctx *ctx, grn_str *nstr)
         d_ = d;
         d += lp;
         length++;
-        if (cp) { *cp++ = grn_nfkc_ctype(p); }
+        if (cp) { *cp++ = grn_nfkc_unicode_51_ctype(p); }
         if (ch) {
           size_t i;
           if (s_ == s + ls) {
@@ -521,13 +521,13 @@ utf8_nfkc_normalize_local(grn_ctx *ctx, grn_str *nstr)
     if (!(ls = grn_charlen_utf8(ctx, s, e))) {
       break;
     }
-    if ((p = (unsigned char *)grn_nfkc_map1(s))) {
+    if ((p = (unsigned char *)grn_nfkc_unicode_51_map1(s))) {
       pe = p + strlen((char *)p);
     } else {
       p = s;
       pe = p + ls;
     }
-    if (d_ && (p2 = (unsigned char *)grn_nfkc_map2(d_, p))) {
+    if (d_ && (p2 = (unsigned char *)grn_nfkc_unicode_51_map2(d_, p))) {
       p = p2;
       pe = p + strlen((char *)p);
       if (cp) { cp--; }
@@ -593,7 +593,7 @@ utf8_nfkc_normalize_local(grn_ctx *ctx, grn_str *nstr)
         d_ = d;
         d += lp;
         length++;
-        if (cp) { *cp++ = grn_nfkc_ctype(p); }
+        if (cp) { *cp++ = grn_nfkc_unicode_51_ctype(p); }
         if (ch) {
           size_t i;
           if (s_ == s + ls) {

@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2010 Brazil
+/* Copyright(C) 2010-2012 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -17,10 +17,10 @@
 don't edit this file by hand. it generated automatically by nfkc.rb
 */
 
-#include "nfkc.h"
+#include "nfkc-unicode-5.1.h"
 
 unsigned char
-grn_nfkc_ctype(const unsigned char *str)
+grn_nfkc_unicode_51_ctype(const unsigned char *str)
 {
 switch (str[0]) {
 case 0x01 :
@@ -9687,7 +9687,7 @@ default :
 }
 
 const char *
-grn_nfkc_map1(const unsigned char *str)
+grn_nfkc_unicode_51_map1(const unsigned char *str)
 {
 switch (str[0]) {
 case 0x41 :
@@ -24472,7 +24472,7 @@ case 0xF0 :
 }
 
 const char *
-grn_nfkc_map2(const unsigned char *prefix, const unsigned char *suffix)
+grn_nfkc_unicode_51_map2(const unsigned char *prefix, const unsigned char *suffix)
 {
 switch (suffix[0]) {
 case 0xCC :
