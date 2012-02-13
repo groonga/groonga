@@ -27,107 +27,6 @@ extern "C" {
 #endif  /* __cplusplus */
 
 /*
-  Don't call these functions directly. Use GRN_TOKENIZER_MALLOC() and
-  GRN_TOKENIZER_FREE() instead.
- */
-void *grn_tokenizer_malloc(grn_ctx *ctx, size_t size, const char *file,
-                           int line, const char *func);
-void grn_tokenizer_free(grn_ctx *ctx, void *ptr, const char *file,
-                        int line, const char *func);
-
-/*
-  GRN_TOKENIZER_MALLOC() allocates `size' bytes and returns a pointer to the
-  allocated memory space. Note that the memory space is associated with `ctx'.
- */
-#define GRN_TOKENIZER_MALLOC(ctx, size) \
-  grn_tokenizer_malloc((ctx), (size), __FILE__, __LINE__, __FUNCTION__)
-/*
-  GRN_TOKENIZER_FREE() frees a memory space allocated by
-  GRN_TOKENIZER_MALLOC(). This means that `ptr' must be a pointer returned by
-  GRN_TOKENIZER_MALLOC().
- */
-#define GRN_TOKENIZER_FREE(ctx, ptr) \
-  grn_tokenizer_free((ctx), (ptr), __FILE__, __LINE__, __FUNCTION__)
-
-/*
-  GRN_TOKENIZER_LOG() reports a log of `level'. Its error message is generated
-  from the varying number of arguments, in which the first one is the format
-  string and the rest are its arguments. See grn_log_level in "groonga.h" for
-  more details of `level'.
- */
-#define GRN_TOKENIZER_LOG(ctx, level, ...) \
-  GRN_LOG((ctx), (level), __VA_ARGS__)
-
-/*
-  Don't call grn_tokenizer_set_error() directly. This function is used in
-  GRN_TOKENIZER_SET_ERROR().
- */
-void grn_tokenizer_set_error(grn_ctx *ctx, grn_log_level level,
-                             grn_rc error_code,
-                             const char *file, int line, const char *func,
-                             const char *format, ...);
-
-/*
-  Don't call these functions directly. grn_tokenizer_backtrace() and
-  grn_tokenizer_logtrace() are used in GRN_TOKENIZER_SET_ERROR().
- */
-void grn_tokenizer_backtrace(grn_ctx *ctx);
-void grn_tokenizer_logtrace(grn_ctx *ctx, grn_log_level level);
-
-/*
-  Don't use GRN_TOKENIZER_SET_ERROR() directly. This macro is used in
-  GRN_TOKENIZER_ERROR().
- */
-#define GRN_TOKENIZER_SET_ERROR(ctx, level, error_code, ...) do { \
-  grn_tokenizer_set_error(ctx, level, error_code, \
-                          __FILE__, __LINE__, __FUNCTION__, __VA_ARGS__); \
-  GRN_LOG(ctx, level, __VA_ARGS__); \
-  grn_tokenizer_backtrace(ctx); \
-  grn_tokenizer_logtrace(ctx, level); \
-} while (0)
-
-/*
-  GRN_TOKENIZER_ERROR() reports an error of `error_code'. Its error message is
-  generated from the varying number of arguments, in which the first one is the
-  format string and the rest are its arguments. See grn_rc in "groonga.h" for
-  more details of `error_code'.
- */
-#define GRN_TOKENIZER_ERROR(ctx, error_code, ...) \
-  GRN_TOKENIZER_SET_ERROR(ctx, GRN_LOG_ERROR, error_code, __VA_ARGS__)
-
-/*
-  grn_tokenizer_mutex is available to make a critical section. See the
-  following functions.
- */
-typedef struct _grn_tokenizer_mutex grn_tokenizer_mutex;
-
-/*
-  grn_tokenizer_mutex_create() returns a pointer to a new object of
-  grn_tokenizer_mutex. Memory for the new object is obtained with
-  GRN_TOKENIZER_MALLOC(). grn_tokenizer_mutex_create() returns NULL if
-  sufficient memory is not available.
- */
-grn_tokenizer_mutex *grn_tokenizer_mutex_create(grn_ctx *ctx);
-
-/*
-  grn_tokenizer_mutex_destroy() finalizes an object of grn_tokenizer_mutex
-  and then frees memory allocated for that object.
- */
-void grn_tokenizer_mutex_destroy(grn_ctx *ctx, grn_tokenizer_mutex *mutex);
-
-/*
-  grn_tokenizer_mutex_lock() locks a mutex object. If the object is already
-  locked, the calling thread waits until the object will be unlocked.
- */
-void grn_tokenizer_mutex_lock(grn_ctx *ctx, grn_tokenizer_mutex *mutex);
-
-/*
-  grn_tokenizer_mutex_unlock() unlocks a mutex object.
-  grn_tokenizer_mutex_unlock() should not be called for an unlocked object.
- */
-void grn_tokenizer_mutex_unlock(grn_ctx *ctx, grn_tokenizer_mutex *mutex);
-
-/*
   grn_tokenizer_charlen() returns the length (#bytes) of the first character
   in the string specified by `str_ptr' and `str_length'. If the starting bytes
   are invalid as a character, grn_tokenizer_charlen() returns 0. See
@@ -151,7 +50,8 @@ int grn_tokenizer_isspace(grn_ctx *ctx, const char *str_ptr,
 typedef struct _grn_tokenizer_query grn_tokenizer_query;
 
 struct _grn_tokenizer_query {
-  grn_str *str;
+  grn_obj *normalized_query;
+  char *query_buf;
   const char *ptr;
   unsigned int length;
   grn_encoding encoding;
