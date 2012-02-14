@@ -6345,7 +6345,7 @@ const int II_BUFFER_ORDER = GRN_CURSOR_BY_KEY;
 #endif /* II_BUFFER_ORDER_BY_ID */
 //const uint16_t II_BUFFER_NTERMS_PER_BUFFER = 16380;
 const uint16_t II_BUFFER_NTERMS_PER_BUFFER = 8190;
-const uint32_t II_BUFFER_PACKED_BUFFER_SIZE = 0x4000000;
+const uint32_t II_BUFFER_PACKED_BUF_SIZE = 0x4000000;
 const char *TMPFILE_PATH = "grn_ii_buffer_tmp";
 const uint32_t II_BUFFER_NCOUNTERS_MARGIN = 0x100000;
 const size_t II_BUFFER_BLOCK_SIZE = 0x1000000;
@@ -6399,7 +6399,7 @@ struct _grn_ii_buffer {
   uint32_t dseg;
   buffer *term_buffer;
   datavec data_vectors[MAX_N_ELEMENTS + 1];
-  uint8_t *packed;
+  uint8_t *packed_buf;
   uint32_t packed_buf_size;
   uint32_t packed_len;
   uint64_t total_chunk_size;
@@ -6663,7 +6663,7 @@ grn_ii_buffer_chunk_flush(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
   chunk_new(ctx, ii_buffer->ii, &chunk_number, ii_buffer->packed_len);
   GRN_LOG(ctx, GRN_LOG_INFO, "chunk:%d, packed_len:%d",
           chunk_number, ii_buffer->packed_len);
-  fake_map2(ctx, ii_buffer->ii->chunk, &io_win, ii_buffer->packed,
+  fake_map2(ctx, ii_buffer->ii->chunk, &io_win, ii_buffer->packed_buf,
             chunk_number, ii_buffer->packed_len);
   grn_io_win_unmap2(&io_win);
   ii_buffer->term_buffer->header.chunk = chunk_number;
@@ -6680,8 +6680,9 @@ grn_ii_buffer_chunk_flush(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
           ii_buffer->term_buffer->header.chunk_size,
           ii_buffer->ii->header->total_chunk_size >> 10);
   ii_buffer->term_buffer = NULL;
-  ii_buffer->packed = NULL;
+  ii_buffer->packed_buf = NULL;
   ii_buffer->packed_len = 0;
+  ii_buffer->packed_buf_size = 0;
 }
 
 static void
@@ -6761,15 +6762,15 @@ grn_ii_buffer_merge(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
     }
     {
       uint32_t max_size = (nrecs * 2 + nposts);
-      if (ii_buffer->packed &&
+      if (ii_buffer->packed_buf &&
           ii_buffer->packed_buf_size <
           ii_buffer->packed_len + max_size) {
         grn_ii_buffer_chunk_flush(ctx, ii_buffer);
       }
-      if (!ii_buffer->packed) {
-        uint32_t buf_size = (max_size > II_BUFFER_PACKED_BUFFER_SIZE)
-          ? max_size : II_BUFFER_PACKED_BUFFER_SIZE;
-        if ((ii_buffer->packed = GRN_MALLOC(buf_size))) {
+      if (!ii_buffer->packed_buf) {
+        uint32_t buf_size = (max_size > II_BUFFER_PACKED_BUF_SIZE)
+          ? max_size : II_BUFFER_PACKED_BUF_SIZE;
+        if ((ii_buffer->packed_buf = GRN_MALLOC(buf_size))) {
           ii_buffer->packed_buf_size = buf_size;
         }
       }
@@ -6795,7 +6796,8 @@ grn_ii_buffer_merge(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
       {
         int packed_len = grn_p_encv(ctx, ii_buffer->data_vectors,
                                     ii_buffer->ii->n_elements,
-                                    ii_buffer->packed + ii_buffer->packed_len);
+                                    ii_buffer->packed_buf +
+                                    ii_buffer->packed_len);
         bt->tid = tid;
         bt->size_in_buffer = 0;
         bt->pos_in_buffer = 0;
@@ -6876,8 +6878,9 @@ grn_ii_buffer_commit(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
 
 
   ii_buffer->term_buffer = NULL;
-  ii_buffer->packed = NULL;
+  ii_buffer->packed_buf = NULL;
   ii_buffer->packed_len = 0;
+  ii_buffer->packed_buf_size = 0;
   ii_buffer->total_chunk_size = 0;
   ii_buffer->tmpfd = open(TMPFILE_PATH, O_RDONLY);
   datavec_init(ctx, ii_buffer->data_vectors, ii_buffer->ii->n_elements, 0, 0);
