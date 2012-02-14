@@ -2498,13 +2498,13 @@ GRN_API grn_rc grn_normalized_text_set_value(grn_ctx *ctx,
                                              char *value,
                                              unsigned int length,
                                              unsigned int length_in_bytes);
-GRN_API const short *grn_normalized_text_get_checks(grn_ctx *ctx,
-                                                    grn_obj *normalized_text);
+GRN_API short *grn_normalized_text_get_checks(grn_ctx *ctx,
+                                              grn_obj *normalized_text);
 GRN_API grn_rc grn_normalized_text_set_checks(grn_ctx *ctx,
                                               grn_obj *normalized_text,
                                               short *checks);
-GRN_API const unsigned char *grn_normalized_text_get_types(grn_ctx *ctx,
-                                                           grn_obj *normalized_text);
+GRN_API unsigned char *grn_normalized_text_get_types(grn_ctx *ctx,
+                                                     grn_obj *normalized_text);
 GRN_API grn_rc grn_normalized_text_set_types(grn_ctx *ctx,
                                              grn_obj *normalized_text,
                                              unsigned char *types);

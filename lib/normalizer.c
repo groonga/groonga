@@ -172,7 +172,7 @@ grn_normalized_text_set_value(grn_ctx *ctx, grn_obj *normalized_text,
   GRN_API_RETURN(rc);
 }
 
-const short *
+short *
 grn_normalized_text_get_checks(grn_ctx *ctx, grn_obj *normalized_text)
 {
   int16_t *checks = NULL;
@@ -203,7 +203,7 @@ grn_normalized_text_set_checks(grn_ctx *ctx, grn_obj *normalized_text,
   GRN_API_RETURN(rc);
 }
 
-const unsigned char *
+unsigned char *
 grn_normalized_text_get_types(grn_ctx *ctx, grn_obj *normalized_text)
 {
   uint_least8_t *types = NULL;
