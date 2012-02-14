@@ -19,6 +19,8 @@ don't edit this file by hand. it generated automatically by nfkc.rb
 
 #include "nfkc.h"
 
+#ifndef NO_NFKC
+
 unsigned char
 grn_nfkc_ctype(const unsigned char *str)
 {
@@ -55,7 +57,7 @@ case 0x1D :
 case 0x1E :
 case 0x1F :
 case 0x20 :
-  return grn_char_others;
+  return grn_str_others;
   break;
 case 0x21 :
 case 0x22 :
@@ -72,7 +74,7 @@ case 0x2C :
 case 0x2D :
 case 0x2E :
 case 0x2F :
-  return grn_char_symbol;
+  return grn_str_symbol;
   break;
 case 0x30 :
 case 0x31 :
@@ -84,7 +86,7 @@ case 0x36 :
 case 0x37 :
 case 0x38 :
 case 0x39 :
-  return grn_char_digit;
+  return grn_str_digit;
   break;
 case 0x3A :
 case 0x3B :
@@ -93,7 +95,7 @@ case 0x3D :
 case 0x3E :
 case 0x3F :
 case 0x40 :
-  return grn_char_symbol;
+  return grn_str_symbol;
   break;
 case 0x41 :
 case 0x42 :
@@ -121,7 +123,7 @@ case 0x57 :
 case 0x58 :
 case 0x59 :
 case 0x5A :
-  return grn_char_alpha;
+  return grn_str_alpha;
   break;
 case 0x5B :
 case 0x5C :
@@ -129,7 +131,7 @@ case 0x5D :
 case 0x5E :
 case 0x5F :
 case 0x60 :
-  return grn_char_symbol;
+  return grn_str_symbol;
   break;
 case 0x61 :
 case 0x62 :
@@ -157,13 +159,13 @@ case 0x77 :
 case 0x78 :
 case 0x79 :
 case 0x7A :
-  return grn_char_alpha;
+  return grn_str_alpha;
   break;
 case 0x7B :
 case 0x7C :
 case 0x7D :
 case 0x7E :
-  return grn_char_symbol;
+  return grn_str_symbol;
   break;
 case 0x7F :
 case 0x80 :
@@ -232,7 +234,7 @@ case 0xBE :
 case 0xBF :
 case 0xC0 :
 case 0xC1 :
-  return grn_char_others;
+  return grn_str_others;
   break;
 case 0xC2 :
   switch (str[1]) {
@@ -269,7 +271,7 @@ case 0xC2 :
   case 0x9E :
   case 0x9F :
   case 0xA0 :
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0xA1 :
   case 0xA2 :
@@ -280,58 +282,58 @@ case 0xC2 :
   case 0xA7 :
   case 0xA8 :
   case 0xA9 :
-    return grn_char_symbol;
+    return grn_str_symbol;
     break;
   case 0xAA :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   case 0xAB :
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0xAC :
-    return grn_char_symbol;
+    return grn_str_symbol;
     break;
   case 0xAD :
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0xAE :
   case 0xAF :
   case 0xB0 :
   case 0xB1 :
-    return grn_char_symbol;
+    return grn_str_symbol;
     break;
   case 0xB2 :
   case 0xB3 :
-    return grn_char_digit;
+    return grn_str_digit;
     break;
   case 0xB4 :
-    return grn_char_symbol;
+    return grn_str_symbol;
     break;
   case 0xB5 :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   case 0xB6 :
   case 0xB7 :
   case 0xB8 :
-    return grn_char_symbol;
+    return grn_str_symbol;
     break;
   case 0xB9 :
-    return grn_char_digit;
+    return grn_str_digit;
     break;
   case 0xBA :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   case 0xBB :
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0xBC :
   case 0xBD :
   case 0xBE :
-    return grn_char_digit;
+    return grn_str_digit;
     break;
   case 0xBF :
   default :
-    return grn_char_symbol;
+    return grn_str_symbol;
     break;
   }
   break;
@@ -360,10 +362,10 @@ case 0xC3 :
   case 0x94 :
   case 0x95 :
   case 0x96 :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   case 0x97 :
-    return grn_char_symbol;
+    return grn_str_symbol;
     break;
   case 0x98 :
   case 0x99 :
@@ -396,14 +398,14 @@ case 0xC3 :
   case 0xB4 :
   case 0xB5 :
   case 0xB6 :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   case 0xB7 :
-    return grn_char_symbol;
+    return grn_str_symbol;
     break;
   case 0xB8 :
   default :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   }
   break;
@@ -414,19 +416,19 @@ case 0xC7 :
 case 0xC8 :
 case 0xC9 :
 case 0xCA :
-  return grn_char_alpha;
+  return grn_str_alpha;
   break;
 case 0xCB :
   switch (str[1]) {
   case 0x80 :
   case 0x81 :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   case 0x82 :
   case 0x83 :
   case 0x84 :
   case 0x85 :
-    return grn_char_symbol;
+    return grn_str_symbol;
     break;
   case 0x86 :
   case 0x87 :
@@ -440,7 +442,7 @@ case 0xCB :
   case 0x8F :
   case 0x90 :
   case 0x91 :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   case 0x92 :
   case 0x93 :
@@ -456,14 +458,14 @@ case 0xCB :
   case 0x9D :
   case 0x9E :
   case 0x9F :
-    return grn_char_symbol;
+    return grn_str_symbol;
     break;
   case 0xA0 :
   case 0xA1 :
   case 0xA2 :
   case 0xA3 :
   case 0xA4 :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   case 0xA5 :
   case 0xA6 :
@@ -474,19 +476,19 @@ case 0xCB :
   case 0xAB :
   case 0xAC :
   case 0xAD :
-    return grn_char_symbol;
+    return grn_str_symbol;
     break;
   case 0xAE :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   case 0xAF :
   default :
-    return grn_char_symbol;
+    return grn_str_symbol;
     break;
   }
   break;
 case 0xCC :
-  return grn_char_others;
+  return grn_str_others;
   break;
 case 0xCD :
   switch (str[1]) {
@@ -542,30 +544,30 @@ case 0xCD :
   case 0xB1 :
   case 0xB2 :
   case 0xB3 :
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0xB4 :
   case 0xB5 :
-    return grn_char_symbol;
+    return grn_str_symbol;
     break;
   case 0xB6 :
   case 0xB7 :
   case 0xB8 :
   case 0xB9 :
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0xBA :
   case 0xBB :
   case 0xBC :
   case 0xBD :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   case 0xBE :
-    return grn_char_symbol;
+    return grn_str_symbol;
     break;
   case 0xBF :
   default :
-    return grn_char_others;
+    return grn_str_others;
     break;
   }
   break;
@@ -575,31 +577,31 @@ case 0xCE :
   case 0x81 :
   case 0x82 :
   case 0x83 :
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0x84 :
   case 0x85 :
-    return grn_char_symbol;
+    return grn_str_symbol;
     break;
   case 0x86 :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   case 0x87 :
-    return grn_char_symbol;
+    return grn_str_symbol;
     break;
   case 0x88 :
   case 0x89 :
   case 0x8A :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   case 0x8B :
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0x8C :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   case 0x8D :
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0x8E :
   case 0x8F :
@@ -621,14 +623,14 @@ case 0xCE :
   case 0x9F :
   case 0xA0 :
   case 0xA1 :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   case 0xA2 :
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0xA3 :
   default :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   }
   break;
@@ -649,10 +651,10 @@ case 0xCF :
   case 0x8C :
   case 0x8D :
   case 0x8E :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   case 0x8F :
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0x90 :
   case 0x91 :
@@ -692,29 +694,29 @@ case 0xCF :
   case 0xB3 :
   case 0xB4 :
   case 0xB5 :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   case 0xB6 :
-    return grn_char_symbol;
+    return grn_str_symbol;
     break;
   case 0xB7 :
   default :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   }
   break;
 case 0xD0 :
 case 0xD1 :
-  return grn_char_alpha;
+  return grn_str_alpha;
   break;
 case 0xD2 :
   switch (str[1]) {
   case 0x80 :
   case 0x81 :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   case 0x82 :
-    return grn_char_symbol;
+    return grn_str_symbol;
     break;
   case 0x83 :
   case 0x84 :
@@ -723,21 +725,21 @@ case 0xD2 :
   case 0x87 :
   case 0x88 :
   case 0x89 :
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0x8A :
   default :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   }
   break;
 case 0xD3 :
-  return grn_char_alpha;
+  return grn_str_alpha;
   break;
 case 0xD4 :
-  if (str[1] < 0x94) { return grn_char_alpha; }
-  if (str[1] < 0xB1) { return grn_char_others; }
-  return grn_char_alpha;
+  if (str[1] < 0x94) { return grn_str_alpha; }
+  if (str[1] < 0xB1) { return grn_str_others; }
+  return grn_str_alpha;
   break;
 case 0xD5 :
   switch (str[1]) {
@@ -764,14 +766,14 @@ case 0xD5 :
   case 0x94 :
   case 0x95 :
   case 0x96 :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   case 0x97 :
   case 0x98 :
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0x99 :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   case 0x9A :
   case 0x9B :
@@ -779,14 +781,14 @@ case 0xD5 :
   case 0x9D :
   case 0x9E :
   case 0x9F :
-    return grn_char_symbol;
+    return grn_str_symbol;
     break;
   case 0xA0 :
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0xA1 :
   default :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   }
   break;
@@ -800,14 +802,14 @@ case 0xD6 :
   case 0x85 :
   case 0x86 :
   case 0x87 :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   case 0x88 :
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0x89 :
   case 0x8A :
-    return grn_char_symbol;
+    return grn_str_symbol;
     break;
   case 0x8B :
   case 0x8C :
@@ -860,35 +862,35 @@ case 0xD6 :
   case 0xBB :
   case 0xBC :
   case 0xBD :
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0xBE :
-    return grn_char_symbol;
+    return grn_str_symbol;
     break;
   case 0xBF :
   default :
-    return grn_char_others;
+    return grn_str_others;
     break;
   }
   break;
 case 0xD7 :
   switch (str[1]) {
   case 0x80 :
-    return grn_char_symbol;
+    return grn_str_symbol;
     break;
   case 0x81 :
   case 0x82 :
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0x83 :
-    return grn_char_symbol;
+    return grn_str_symbol;
     break;
   case 0x84 :
   case 0x85 :
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0x86 :
-    return grn_char_symbol;
+    return grn_str_symbol;
     break;
   case 0x87 :
   case 0x88 :
@@ -899,7 +901,7 @@ case 0xD7 :
   case 0x8D :
   case 0x8E :
   case 0x8F :
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0x90 :
   case 0x91 :
@@ -928,27 +930,27 @@ case 0xD7 :
   case 0xA8 :
   case 0xA9 :
   case 0xAA :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   case 0xAB :
   case 0xAC :
   case 0xAD :
   case 0xAE :
   case 0xAF :
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0xB0 :
   case 0xB1 :
   case 0xB2 :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   case 0xB3 :
   case 0xB4 :
-    return grn_char_symbol;
+    return grn_str_symbol;
     break;
   case 0xB5 :
   default :
-    return grn_char_others;
+    return grn_str_others;
     break;
   }
   break;
@@ -965,14 +967,14 @@ case 0xD8 :
   case 0x88 :
   case 0x89 :
   case 0x8A :
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0x8B :
   case 0x8C :
   case 0x8D :
   case 0x8E :
   case 0x8F :
-    return grn_char_symbol;
+    return grn_str_symbol;
     break;
   case 0x90 :
   case 0x91 :
@@ -985,21 +987,21 @@ case 0xD8 :
   case 0x98 :
   case 0x99 :
   case 0x9A :
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0x9B :
-    return grn_char_symbol;
+    return grn_str_symbol;
     break;
   case 0x9C :
   case 0x9D :
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0x9E :
   case 0x9F :
-    return grn_char_symbol;
+    return grn_str_symbol;
     break;
   case 0xA0 :
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0xA1 :
   case 0xA2 :
@@ -1027,11 +1029,11 @@ case 0xD8 :
   case 0xB8 :
   case 0xB9 :
   case 0xBA :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   case 0xBB :
   default :
-    return grn_char_others;
+    return grn_str_others;
     break;
   }
   break;
@@ -1048,7 +1050,7 @@ case 0xD9 :
   case 0x88 :
   case 0x89 :
   case 0x8A :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   case 0x8B :
   case 0x8C :
@@ -1071,7 +1073,7 @@ case 0xD9 :
   case 0x9D :
   case 0x9E :
   case 0x9F :
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0xA0 :
   case 0xA1 :
@@ -1083,29 +1085,29 @@ case 0xD9 :
   case 0xA7 :
   case 0xA8 :
   case 0xA9 :
-    return grn_char_digit;
+    return grn_str_digit;
     break;
   case 0xAA :
   case 0xAB :
   case 0xAC :
   case 0xAD :
-    return grn_char_symbol;
+    return grn_str_symbol;
     break;
   case 0xAE :
   case 0xAF :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   case 0xB0 :
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0xB1 :
   default :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   }
   break;
 case 0xDA :
-  return grn_char_alpha;
+  return grn_str_alpha;
   break;
 case 0xDB :
   switch (str[1]) {
@@ -1129,13 +1131,13 @@ case 0xDB :
   case 0x91 :
   case 0x92 :
   case 0x93 :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   case 0x94 :
-    return grn_char_symbol;
+    return grn_str_symbol;
     break;
   case 0x95 :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   case 0x96 :
   case 0x97 :
@@ -1152,28 +1154,28 @@ case 0xDB :
   case 0xA2 :
   case 0xA3 :
   case 0xA4 :
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0xA5 :
   case 0xA6 :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   case 0xA7 :
   case 0xA8 :
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0xA9 :
-    return grn_char_symbol;
+    return grn_str_symbol;
     break;
   case 0xAA :
   case 0xAB :
   case 0xAC :
   case 0xAD :
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0xAE :
   case 0xAF :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   case 0xB0 :
   case 0xB1 :
@@ -1185,20 +1187,20 @@ case 0xDB :
   case 0xB7 :
   case 0xB8 :
   case 0xB9 :
-    return grn_char_digit;
+    return grn_str_digit;
     break;
   case 0xBA :
   case 0xBB :
   case 0xBC :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   case 0xBD :
   case 0xBE :
-    return grn_char_symbol;
+    return grn_str_symbol;
     break;
   case 0xBF :
   default :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   }
   break;
@@ -1218,17 +1220,17 @@ case 0xDC :
   case 0x8B :
   case 0x8C :
   case 0x8D :
-    return grn_char_symbol;
+    return grn_str_symbol;
     break;
   case 0x8E :
   case 0x8F :
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0x90 :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   case 0x91 :
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0x92 :
   case 0x93 :
@@ -1260,18 +1262,18 @@ case 0xDC :
   case 0xAD :
   case 0xAE :
   case 0xAF :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   case 0xB0 :
   default :
-    return grn_char_others;
+    return grn_str_others;
     break;
   }
   break;
 case 0xDD :
-  if (str[1] < 0x8D) { return grn_char_others; }
-  if (str[1] < 0xAE) { return grn_char_alpha; }
-  return grn_char_others;
+  if (str[1] < 0x8D) { return grn_str_others; }
+  if (str[1] < 0xAE) { return grn_str_alpha; }
+  return grn_str_others;
   break;
 case 0xDE :
   switch (str[1]) {
@@ -1313,7 +1315,7 @@ case 0xDE :
   case 0xA3 :
   case 0xA4 :
   case 0xA5 :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   case 0xA6 :
   case 0xA7 :
@@ -1326,14 +1328,14 @@ case 0xDE :
   case 0xAE :
   case 0xAF :
   case 0xB0 :
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0xB1 :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   case 0xB2 :
   default :
-    return grn_char_others;
+    return grn_str_others;
     break;
   }
   break;
@@ -1349,7 +1351,7 @@ case 0xDF :
   case 0x87 :
   case 0x88 :
   case 0x89 :
-    return grn_char_digit;
+    return grn_str_digit;
     break;
   case 0x8A :
   case 0x8B :
@@ -1384,7 +1386,7 @@ case 0xDF :
   case 0xA8 :
   case 0xA9 :
   case 0xAA :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   case 0xAB :
   case 0xAC :
@@ -1395,24 +1397,24 @@ case 0xDF :
   case 0xB1 :
   case 0xB2 :
   case 0xB3 :
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0xB4 :
   case 0xB5 :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   case 0xB6 :
   case 0xB7 :
   case 0xB8 :
   case 0xB9 :
-    return grn_char_symbol;
+    return grn_str_symbol;
     break;
   case 0xBA :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   case 0xBB :
   default :
-    return grn_char_others;
+    return grn_str_others;
     break;
   }
   break;
@@ -1454,7 +1456,7 @@ case 0xE0 :
   case 0xA1 :
   case 0xA2 :
   case 0xA3 :
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0xA4 :
     switch (str[2]) {
@@ -1462,7 +1464,7 @@ case 0xE0 :
     case 0x81 :
     case 0x82 :
     case 0x83 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x84 :
     case 0x85 :
@@ -1518,19 +1520,19 @@ case 0xE0 :
     case 0xB7 :
     case 0xB8 :
     case 0xB9 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xBA :
     case 0xBB :
     case 0xBC :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xBD :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xBE :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
@@ -1552,10 +1554,10 @@ case 0xE0 :
     case 0x8D :
     case 0x8E :
     case 0x8F :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x90 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x91 :
     case 0x92 :
@@ -1564,7 +1566,7 @@ case 0xE0 :
     case 0x95 :
     case 0x96 :
     case 0x97 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x98 :
     case 0x99 :
@@ -1576,15 +1578,15 @@ case 0xE0 :
     case 0x9F :
     case 0xA0 :
     case 0xA1 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xA2 :
     case 0xA3 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xA4 :
     case 0xA5 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xA6 :
     case 0xA7 :
@@ -1596,10 +1598,10 @@ case 0xE0 :
     case 0xAD :
     case 0xAE :
     case 0xAF :
-      return grn_char_digit;
+      return grn_str_digit;
       break;
     case 0xB0 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xB1 :
     case 0xB2 :
@@ -1611,11 +1613,11 @@ case 0xE0 :
     case 0xB8 :
     case 0xB9 :
     case 0xBA :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xBB :
     default :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     }
     break;
@@ -1626,7 +1628,7 @@ case 0xE0 :
     case 0x82 :
     case 0x83 :
     case 0x84 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x85 :
     case 0x86 :
@@ -1636,19 +1638,19 @@ case 0xE0 :
     case 0x8A :
     case 0x8B :
     case 0x8C :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x8D :
     case 0x8E :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x8F :
     case 0x90 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x91 :
     case 0x92 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x93 :
     case 0x94 :
@@ -1672,10 +1674,10 @@ case 0xE0 :
     case 0xA6 :
     case 0xA7 :
     case 0xA8 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xA9 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xAA :
     case 0xAB :
@@ -1684,36 +1686,36 @@ case 0xE0 :
     case 0xAE :
     case 0xAF :
     case 0xB0 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xB1 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xB2 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xB3 :
     case 0xB4 :
     case 0xB5 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xB6 :
     case 0xB7 :
     case 0xB8 :
     case 0xB9 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xBA :
     case 0xBB :
     case 0xBC :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xBD :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xBE :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
@@ -1733,10 +1735,10 @@ case 0xE0 :
     case 0x8B :
     case 0x8C :
     case 0x8D :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x8E :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x8F :
     case 0x90 :
@@ -1751,25 +1753,25 @@ case 0xE0 :
     case 0x99 :
     case 0x9A :
     case 0x9B :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x9C :
     case 0x9D :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x9E :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x9F :
     case 0xA0 :
     case 0xA1 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xA2 :
     case 0xA3 :
     case 0xA4 :
     case 0xA5 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xA6 :
     case 0xA7 :
@@ -1781,15 +1783,15 @@ case 0xE0 :
     case 0xAD :
     case 0xAE :
     case 0xAF :
-      return grn_char_digit;
+      return grn_str_digit;
       break;
     case 0xB0 :
     case 0xB1 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xB2 :
     case 0xB3 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xB4 :
     case 0xB5 :
@@ -1797,14 +1799,14 @@ case 0xE0 :
     case 0xB7 :
     case 0xB8 :
     case 0xB9 :
-      return grn_char_digit;
+      return grn_str_digit;
       break;
     case 0xBA :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xBB :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
@@ -1815,7 +1817,7 @@ case 0xE0 :
     case 0x82 :
     case 0x83 :
     case 0x84 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x85 :
     case 0x86 :
@@ -1823,21 +1825,21 @@ case 0xE0 :
     case 0x88 :
     case 0x89 :
     case 0x8A :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x8B :
     case 0x8C :
     case 0x8D :
     case 0x8E :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x8F :
     case 0x90 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x91 :
     case 0x92 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x93 :
     case 0x94 :
@@ -1861,10 +1863,10 @@ case 0xE0 :
     case 0xA6 :
     case 0xA7 :
     case 0xA8 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xA9 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xAA :
     case 0xAB :
@@ -1873,32 +1875,32 @@ case 0xE0 :
     case 0xAE :
     case 0xAF :
     case 0xB0 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xB1 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xB2 :
     case 0xB3 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xB4 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xB5 :
     case 0xB6 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xB7 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xB8 :
     case 0xB9 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xBA :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
@@ -1929,19 +1931,19 @@ case 0xE0 :
     case 0x96 :
     case 0x97 :
     case 0x98 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x99 :
     case 0x9A :
     case 0x9B :
     case 0x9C :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x9D :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x9E :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x9F :
     case 0xA0 :
@@ -1950,7 +1952,7 @@ case 0xE0 :
     case 0xA3 :
     case 0xA4 :
     case 0xA5 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xA6 :
     case 0xA7 :
@@ -1962,20 +1964,20 @@ case 0xE0 :
     case 0xAD :
     case 0xAE :
     case 0xAF :
-      return grn_char_digit;
+      return grn_str_digit;
       break;
     case 0xB0 :
     case 0xB1 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xB2 :
     case 0xB3 :
     case 0xB4 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xB5 :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
@@ -1986,7 +1988,7 @@ case 0xE0 :
     case 0x82 :
     case 0x83 :
     case 0x84 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x85 :
     case 0x86 :
@@ -1997,18 +1999,18 @@ case 0xE0 :
     case 0x8B :
     case 0x8C :
     case 0x8D :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x8E :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x8F :
     case 0x90 :
     case 0x91 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x92 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x93 :
     case 0x94 :
@@ -2032,10 +2034,10 @@ case 0xE0 :
     case 0xA6 :
     case 0xA7 :
     case 0xA8 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xA9 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xAA :
     case 0xAB :
@@ -2044,36 +2046,36 @@ case 0xE0 :
     case 0xAE :
     case 0xAF :
     case 0xB0 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xB1 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xB2 :
     case 0xB3 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xB4 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xB5 :
     case 0xB6 :
     case 0xB7 :
     case 0xB8 :
     case 0xB9 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xBA :
     case 0xBB :
     case 0xBC :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xBD :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xBE :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
@@ -2095,10 +2097,10 @@ case 0xE0 :
     case 0x8D :
     case 0x8E :
     case 0x8F :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x90 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x91 :
     case 0x92 :
@@ -2115,17 +2117,17 @@ case 0xE0 :
     case 0x9D :
     case 0x9E :
     case 0x9F :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xA0 :
     case 0xA1 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xA2 :
     case 0xA3 :
     case 0xA4 :
     case 0xA5 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xA6 :
     case 0xA7 :
@@ -2137,17 +2139,17 @@ case 0xE0 :
     case 0xAD :
     case 0xAE :
     case 0xAF :
-      return grn_char_digit;
+      return grn_str_digit;
       break;
     case 0xB0 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xB1 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xB2 :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
@@ -2158,7 +2160,7 @@ case 0xE0 :
     case 0x82 :
     case 0x83 :
     case 0x84 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x85 :
     case 0x86 :
@@ -2168,19 +2170,19 @@ case 0xE0 :
     case 0x8A :
     case 0x8B :
     case 0x8C :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x8D :
     case 0x8E :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x8F :
     case 0x90 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x91 :
     case 0x92 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x93 :
     case 0x94 :
@@ -2204,10 +2206,10 @@ case 0xE0 :
     case 0xA6 :
     case 0xA7 :
     case 0xA8 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xA9 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xAA :
     case 0xAB :
@@ -2216,36 +2218,36 @@ case 0xE0 :
     case 0xAE :
     case 0xAF :
     case 0xB0 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xB1 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xB2 :
     case 0xB3 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xB4 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xB5 :
     case 0xB6 :
     case 0xB7 :
     case 0xB8 :
     case 0xB9 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xBA :
     case 0xBB :
     case 0xBC :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xBD :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xBE :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
@@ -2279,25 +2281,25 @@ case 0xE0 :
     case 0x99 :
     case 0x9A :
     case 0x9B :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x9C :
     case 0x9D :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x9E :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x9F :
     case 0xA0 :
     case 0xA1 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xA2 :
     case 0xA3 :
     case 0xA4 :
     case 0xA5 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xA6 :
     case 0xA7 :
@@ -2309,17 +2311,17 @@ case 0xE0 :
     case 0xAD :
     case 0xAE :
     case 0xAF :
-      return grn_char_digit;
+      return grn_str_digit;
       break;
     case 0xB0 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xB1 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xB2 :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
@@ -2328,13 +2330,13 @@ case 0xE0 :
     case 0x80 :
     case 0x81 :
     case 0x82 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x83 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x84 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x85 :
     case 0x86 :
@@ -2342,72 +2344,72 @@ case 0xE0 :
     case 0x88 :
     case 0x89 :
     case 0x8A :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x8B :
     case 0x8C :
     case 0x8D :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x8E :
     case 0x8F :
     case 0x90 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x91 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x92 :
     case 0x93 :
     case 0x94 :
     case 0x95 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x96 :
     case 0x97 :
     case 0x98 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x99 :
     case 0x9A :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x9B :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x9C :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x9D :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x9E :
     case 0x9F :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xA0 :
     case 0xA1 :
     case 0xA2 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xA3 :
     case 0xA4 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xA5 :
     case 0xA6 :
     case 0xA7 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xA8 :
     case 0xA9 :
     case 0xAA :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xAB :
     case 0xAC :
     case 0xAD :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xAE :
     case 0xAF :
@@ -2421,11 +2423,11 @@ case 0xE0 :
     case 0xB7 :
     case 0xB8 :
     case 0xB9 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xBA :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
@@ -2469,7 +2471,7 @@ case 0xE0 :
     case 0xA3 :
     case 0xA4 :
     case 0xA5 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xA6 :
     case 0xA7 :
@@ -2484,7 +2486,7 @@ case 0xE0 :
     case 0xB0 :
     case 0xB1 :
     case 0xB2 :
-      return grn_char_digit;
+      return grn_str_digit;
       break;
     case 0xB3 :
     case 0xB4 :
@@ -2494,11 +2496,11 @@ case 0xE0 :
     case 0xB8 :
     case 0xB9 :
     case 0xBA :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xBB :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
@@ -2509,7 +2511,7 @@ case 0xE0 :
     case 0x82 :
     case 0x83 :
     case 0x84 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x85 :
     case 0x86 :
@@ -2519,18 +2521,18 @@ case 0xE0 :
     case 0x8A :
     case 0x8B :
     case 0x8C :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x8D :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x8E :
     case 0x8F :
     case 0x90 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x91 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x92 :
     case 0x93 :
@@ -2555,10 +2557,10 @@ case 0xE0 :
     case 0xA6 :
     case 0xA7 :
     case 0xA8 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xA9 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xAA :
     case 0xAB :
@@ -2570,21 +2572,21 @@ case 0xE0 :
     case 0xB1 :
     case 0xB2 :
     case 0xB3 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xB4 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xB5 :
     case 0xB6 :
     case 0xB7 :
     case 0xB8 :
     case 0xB9 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xBA :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
@@ -2622,17 +2624,17 @@ case 0xE0 :
     case 0x9D :
     case 0x9E :
     case 0x9F :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xA0 :
     case 0xA1 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xA2 :
     case 0xA3 :
     case 0xA4 :
     case 0xA5 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xA6 :
     case 0xA7 :
@@ -2644,11 +2646,11 @@ case 0xE0 :
     case 0xAD :
     case 0xAE :
     case 0xAF :
-      return grn_char_digit;
+      return grn_str_digit;
       break;
     case 0xB0 :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
@@ -2659,7 +2661,7 @@ case 0xE0 :
     case 0x82 :
     case 0x83 :
     case 0x84 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x85 :
     case 0x86 :
@@ -2669,18 +2671,18 @@ case 0xE0 :
     case 0x8A :
     case 0x8B :
     case 0x8C :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x8D :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x8E :
     case 0x8F :
     case 0x90 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x91 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x92 :
     case 0x93 :
@@ -2705,10 +2707,10 @@ case 0xE0 :
     case 0xA6 :
     case 0xA7 :
     case 0xA8 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xA9 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xAA :
     case 0xAB :
@@ -2720,29 +2722,29 @@ case 0xE0 :
     case 0xB1 :
     case 0xB2 :
     case 0xB3 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xB4 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xB5 :
     case 0xB6 :
     case 0xB7 :
     case 0xB8 :
     case 0xB9 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xBA :
     case 0xBB :
     case 0xBC :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xBD :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xBE :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
@@ -2778,23 +2780,23 @@ case 0xE0 :
     case 0x9B :
     case 0x9C :
     case 0x9D :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x9E :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x9F :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xA0 :
     case 0xA1 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xA2 :
     case 0xA3 :
     case 0xA4 :
     case 0xA5 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xA6 :
     case 0xA7 :
@@ -2806,18 +2808,18 @@ case 0xE0 :
     case 0xAD :
     case 0xAE :
     case 0xAF :
-      return grn_char_digit;
+      return grn_str_digit;
       break;
     case 0xB0 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xB1 :
     case 0xB2 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xB3 :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
@@ -2828,7 +2830,7 @@ case 0xE0 :
     case 0x82 :
     case 0x83 :
     case 0x84 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x85 :
     case 0x86 :
@@ -2838,18 +2840,18 @@ case 0xE0 :
     case 0x8A :
     case 0x8B :
     case 0x8C :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x8D :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x8E :
     case 0x8F :
     case 0x90 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x91 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x92 :
     case 0x93 :
@@ -2874,10 +2876,10 @@ case 0xE0 :
     case 0xA6 :
     case 0xA7 :
     case 0xA8 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xA9 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xAA :
     case 0xAB :
@@ -2895,11 +2897,11 @@ case 0xE0 :
     case 0xB7 :
     case 0xB8 :
     case 0xB9 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xBA :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
@@ -2937,17 +2939,17 @@ case 0xE0 :
     case 0x9D :
     case 0x9E :
     case 0x9F :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xA0 :
     case 0xA1 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xA2 :
     case 0xA3 :
     case 0xA4 :
     case 0xA5 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xA6 :
     case 0xA7 :
@@ -2959,11 +2961,11 @@ case 0xE0 :
     case 0xAD :
     case 0xAE :
     case 0xAF :
-      return grn_char_digit;
+      return grn_str_digit;
       break;
     case 0xB0 :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
@@ -2974,7 +2976,7 @@ case 0xE0 :
     case 0x82 :
     case 0x83 :
     case 0x84 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x85 :
     case 0x86 :
@@ -2994,12 +2996,12 @@ case 0xE0 :
     case 0x94 :
     case 0x95 :
     case 0x96 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x97 :
     case 0x98 :
     case 0x99 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x9A :
     case 0x9B :
@@ -3025,10 +3027,10 @@ case 0xE0 :
     case 0xAF :
     case 0xB0 :
     case 0xB1 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xB2 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xB3 :
     case 0xB4 :
@@ -3039,17 +3041,17 @@ case 0xE0 :
     case 0xB9 :
     case 0xBA :
     case 0xBB :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xBC :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xBD :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xBE :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
@@ -3062,7 +3064,7 @@ case 0xE0 :
     case 0x84 :
     case 0x85 :
     case 0x86 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x87 :
     case 0x88 :
@@ -3109,21 +3111,21 @@ case 0xE0 :
     case 0xB1 :
     case 0xB2 :
     case 0xB3 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xB4 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xB5 :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
   case 0xB8 :
     switch (str[2]) {
     case 0x80 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x81 :
     case 0x82 :
@@ -3173,14 +3175,14 @@ case 0xE0 :
     case 0xAE :
     case 0xAF :
     case 0xB0 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xB1 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xB2 :
     case 0xB3 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xB4 :
     case 0xB5 :
@@ -3193,11 +3195,11 @@ case 0xE0 :
     case 0xBC :
     case 0xBD :
     case 0xBE :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xBF :
     default :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     }
     break;
@@ -3210,7 +3212,7 @@ case 0xE0 :
     case 0x84 :
     case 0x85 :
     case 0x86 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x87 :
     case 0x88 :
@@ -3220,10 +3222,10 @@ case 0xE0 :
     case 0x8C :
     case 0x8D :
     case 0x8E :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x8F :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x90 :
     case 0x91 :
@@ -3235,53 +3237,53 @@ case 0xE0 :
     case 0x97 :
     case 0x98 :
     case 0x99 :
-      return grn_char_digit;
+      return grn_str_digit;
       break;
     case 0x9A :
     case 0x9B :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x9C :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
   case 0xBA :
     switch (str[2]) {
     case 0x80 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x81 :
     case 0x82 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x83 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x84 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x85 :
     case 0x86 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x87 :
     case 0x88 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x89 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x8A :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x8B :
     case 0x8C :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x8D :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x8E :
     case 0x8F :
@@ -3289,16 +3291,16 @@ case 0xE0 :
     case 0x91 :
     case 0x92 :
     case 0x93 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x94 :
     case 0x95 :
     case 0x96 :
     case 0x97 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x98 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x99 :
     case 0x9A :
@@ -3307,51 +3309,51 @@ case 0xE0 :
     case 0x9D :
     case 0x9E :
     case 0x9F :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xA0 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xA1 :
     case 0xA2 :
     case 0xA3 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xA4 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xA5 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xA6 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xA7 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xA8 :
     case 0xA9 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xAA :
     case 0xAB :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xAC :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xAD :
     case 0xAE :
     case 0xAF :
     case 0xB0 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xB1 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xB2 :
     case 0xB3 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xB4 :
     case 0xB5 :
@@ -3362,14 +3364,14 @@ case 0xE0 :
     case 0xBA :
     case 0xBB :
     case 0xBC :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xBD :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xBE :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
@@ -3380,13 +3382,13 @@ case 0xE0 :
     case 0x82 :
     case 0x83 :
     case 0x84 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x85 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x86 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x87 :
     case 0x88 :
@@ -3397,7 +3399,7 @@ case 0xE0 :
     case 0x8D :
     case 0x8E :
     case 0x8F :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x90 :
     case 0x91 :
@@ -3409,26 +3411,26 @@ case 0xE0 :
     case 0x97 :
     case 0x98 :
     case 0x99 :
-      return grn_char_digit;
+      return grn_str_digit;
       break;
     case 0x9A :
     case 0x9B :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x9C :
     case 0x9D :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x9E :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
   case 0xBC :
     switch (str[2]) {
     case 0x80 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x81 :
     case 0x82 :
@@ -3453,11 +3455,11 @@ case 0xE0 :
     case 0x95 :
     case 0x96 :
     case 0x97 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x98 :
     case 0x99 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x9A :
     case 0x9B :
@@ -3465,7 +3467,7 @@ case 0xE0 :
     case 0x9D :
     case 0x9E :
     case 0x9F :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xA0 :
     case 0xA1 :
@@ -3487,35 +3489,35 @@ case 0xE0 :
     case 0xB1 :
     case 0xB2 :
     case 0xB3 :
-      return grn_char_digit;
+      return grn_str_digit;
       break;
     case 0xB4 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xB5 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xB6 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xB7 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xB8 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xB9 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xBA :
     case 0xBB :
     case 0xBC :
     case 0xBD :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xBE :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
@@ -3529,10 +3531,10 @@ case 0xE0 :
     case 0x85 :
     case 0x86 :
     case 0x87 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x88 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x89 :
     case 0x8A :
@@ -3568,11 +3570,11 @@ case 0xE0 :
     case 0xA8 :
     case 0xA9 :
     case 0xAA :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xAB :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
@@ -3583,20 +3585,20 @@ case 0xE0 :
     case 0x82 :
     case 0x83 :
     case 0x84 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x85 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x86 :
     case 0x87 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x88 :
     case 0x89 :
     case 0x8A :
     case 0x8B :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x8C :
     case 0x8D :
@@ -3648,11 +3650,11 @@ case 0xE0 :
     case 0xBB :
     case 0xBC :
     case 0xBD :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xBE :
     default :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     }
     break;
@@ -3664,10 +3666,10 @@ case 0xE0 :
     case 0x83 :
     case 0x84 :
     case 0x85 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x86 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x87 :
     case 0x88 :
@@ -3675,25 +3677,25 @@ case 0xE0 :
     case 0x8A :
     case 0x8B :
     case 0x8C :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x8D :
     case 0x8E :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x8F :
     case 0x90 :
     case 0x91 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x92 :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
   default :
-    return grn_char_others;
+    return grn_str_others;
     break;
   }
   break;
@@ -3735,28 +3737,28 @@ case 0xE1 :
     case 0x9F :
     case 0xA0 :
     case 0xA1 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xA2 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xA3 :
     case 0xA4 :
     case 0xA5 :
     case 0xA6 :
     case 0xA7 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xA8 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xA9 :
     case 0xAA :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xAB :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
@@ -3772,7 +3774,7 @@ case 0xE1 :
     case 0x87 :
     case 0x88 :
     case 0x89 :
-      return grn_char_digit;
+      return grn_str_digit;
       break;
     case 0x8A :
     case 0x8B :
@@ -3780,7 +3782,7 @@ case 0xE1 :
     case 0x8D :
     case 0x8E :
     case 0x8F :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x90 :
     case 0x91 :
@@ -3788,17 +3790,17 @@ case 0xE1 :
     case 0x93 :
     case 0x94 :
     case 0x95 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x96 :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
   case 0x82 :
-    if (str[2] < 0xA0) { return grn_char_others; }
-    return grn_char_alpha;
+    if (str[2] < 0xA0) { return grn_str_others; }
+    return grn_str_alpha;
     break;
   case 0x83 :
     switch (str[2]) {
@@ -3808,7 +3810,7 @@ case 0xE1 :
     case 0x83 :
     case 0x84 :
     case 0x85 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x86 :
     case 0x87 :
@@ -3820,7 +3822,7 @@ case 0xE1 :
     case 0x8D :
     case 0x8E :
     case 0x8F :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x90 :
     case 0x91 :
@@ -3865,39 +3867,39 @@ case 0xE1 :
     case 0xB8 :
     case 0xB9 :
     case 0xBA :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xBB :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xBC :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xBD :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
   case 0x84 :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   case 0x85 :
-    if (str[2] < 0x9A) { return grn_char_alpha; }
-    if (str[2] < 0x9F) { return grn_char_others; }
-    return grn_char_alpha;
+    if (str[2] < 0x9A) { return grn_str_alpha; }
+    if (str[2] < 0x9F) { return grn_str_others; }
+    return grn_str_alpha;
     break;
   case 0x86 :
-    if (str[2] < 0xA3) { return grn_char_alpha; }
-    if (str[2] < 0xA8) { return grn_char_others; }
-    return grn_char_alpha;
+    if (str[2] < 0xA3) { return grn_str_alpha; }
+    if (str[2] < 0xA8) { return grn_str_others; }
+    return grn_str_alpha;
     break;
   case 0x87 :
-    if (str[2] < 0xBA) { return grn_char_alpha; }
-    return grn_char_others;
+    if (str[2] < 0xBA) { return grn_str_alpha; }
+    return grn_str_others;
     break;
   case 0x88 :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   case 0x89 :
     switch (str[2]) {
@@ -3910,20 +3912,20 @@ case 0xE1 :
     case 0x86 :
     case 0x87 :
     case 0x88 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x89 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x8A :
     case 0x8B :
     case 0x8C :
     case 0x8D :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x8E :
     case 0x8F :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x90 :
     case 0x91 :
@@ -3932,30 +3934,30 @@ case 0xE1 :
     case 0x94 :
     case 0x95 :
     case 0x96 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x97 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x98 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x99 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x9A :
     case 0x9B :
     case 0x9C :
     case 0x9D :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x9E :
     case 0x9F :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xA0 :
     default :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     }
     break;
@@ -3970,20 +3972,20 @@ case 0xE1 :
     case 0x86 :
     case 0x87 :
     case 0x88 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x89 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x8A :
     case 0x8B :
     case 0x8C :
     case 0x8D :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x8E :
     case 0x8F :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x90 :
     case 0x91 :
@@ -4018,20 +4020,20 @@ case 0xE1 :
     case 0xAE :
     case 0xAF :
     case 0xB0 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xB1 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xB2 :
     case 0xB3 :
     case 0xB4 :
     case 0xB5 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xB6 :
     case 0xB7 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xB8 :
     case 0xB9 :
@@ -4040,31 +4042,31 @@ case 0xE1 :
     case 0xBC :
     case 0xBD :
     case 0xBE :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xBF :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
   case 0x8B :
     switch (str[2]) {
     case 0x80 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x81 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x82 :
     case 0x83 :
     case 0x84 :
     case 0x85 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x86 :
     case 0x87 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x88 :
     case 0x89 :
@@ -4081,14 +4083,14 @@ case 0xE1 :
     case 0x94 :
     case 0x95 :
     case 0x96 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x97 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x98 :
     default :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     }
     break;
@@ -4111,24 +4113,24 @@ case 0xE1 :
     case 0x8E :
     case 0x8F :
     case 0x90 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x91 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x92 :
     case 0x93 :
     case 0x94 :
     case 0x95 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x96 :
     case 0x97 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x98 :
     default :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     }
     break;
@@ -4161,14 +4163,14 @@ case 0xE1 :
     case 0x98 :
     case 0x99 :
     case 0x9A :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x9B :
     case 0x9C :
     case 0x9D :
     case 0x9E :
     case 0x9F :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xA0 :
     case 0xA1 :
@@ -4179,7 +4181,7 @@ case 0xE1 :
     case 0xA6 :
     case 0xA7 :
     case 0xA8 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xA9 :
     case 0xAA :
@@ -4201,11 +4203,11 @@ case 0xE1 :
     case 0xBA :
     case 0xBB :
     case 0xBC :
-      return grn_char_digit;
+      return grn_str_digit;
       break;
     case 0xBD :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
@@ -4227,7 +4229,7 @@ case 0xE1 :
     case 0x8D :
     case 0x8E :
     case 0x8F :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x90 :
     case 0x91 :
@@ -4239,7 +4241,7 @@ case 0xE1 :
     case 0x97 :
     case 0x98 :
     case 0x99 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x9A :
     case 0x9B :
@@ -4247,21 +4249,21 @@ case 0xE1 :
     case 0x9D :
     case 0x9E :
     case 0x9F :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xA0 :
     default :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     }
     break;
   case 0x8F :
-    if (str[2] < 0xB5) { return grn_char_alpha; }
-    return grn_char_others;
+    if (str[2] < 0xB5) { return grn_str_alpha; }
+    return grn_str_others;
     break;
   case 0x90 :
-    if (str[2] < 0x81) { return grn_char_others; }
-    return grn_char_alpha;
+    if (str[2] < 0x81) { return grn_str_others; }
+    return grn_str_alpha;
     break;
   case 0x91 :
   case 0x92 :
@@ -4271,7 +4273,7 @@ case 0xE1 :
   case 0x96 :
   case 0x97 :
   case 0x98 :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   case 0x99 :
     switch (str[2]) {
@@ -4320,11 +4322,11 @@ case 0xE1 :
     case 0xAA :
     case 0xAB :
     case 0xAC :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xAD :
     case 0xAE :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xAF :
     case 0xB0 :
@@ -4334,18 +4336,18 @@ case 0xE1 :
     case 0xB4 :
     case 0xB5 :
     case 0xB6 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xB7 :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
   case 0x9A :
     switch (str[2]) {
     case 0x80 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x81 :
     case 0x82 :
@@ -4373,20 +4375,20 @@ case 0xE1 :
     case 0x98 :
     case 0x99 :
     case 0x9A :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x9B :
     case 0x9C :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x9D :
     case 0x9E :
     case 0x9F :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xA0 :
     default :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     }
     break;
@@ -4435,21 +4437,21 @@ case 0xE1 :
     case 0xA8 :
     case 0xA9 :
     case 0xAA :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xAB :
     case 0xAC :
     case 0xAD :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xAE :
     case 0xAF :
     case 0xB0 :
-      return grn_char_digit;
+      return grn_str_digit;
       break;
     case 0xB1 :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
@@ -4468,16 +4470,16 @@ case 0xE1 :
     case 0x8A :
     case 0x8B :
     case 0x8C :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x8D :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x8E :
     case 0x8F :
     case 0x90 :
     case 0x91 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x92 :
     case 0x93 :
@@ -4493,7 +4495,7 @@ case 0xE1 :
     case 0x9D :
     case 0x9E :
     case 0x9F :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xA0 :
     case 0xA1 :
@@ -4513,20 +4515,20 @@ case 0xE1 :
     case 0xAF :
     case 0xB0 :
     case 0xB1 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xB2 :
     case 0xB3 :
     case 0xB4 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xB5 :
     case 0xB6 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xB7 :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
@@ -4550,7 +4552,7 @@ case 0xE1 :
     case 0x8F :
     case 0x90 :
     case 0x91 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x92 :
     case 0x93 :
@@ -4566,7 +4568,7 @@ case 0xE1 :
     case 0x9D :
     case 0x9E :
     case 0x9F :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xA0 :
     case 0xA1 :
@@ -4581,25 +4583,25 @@ case 0xE1 :
     case 0xAA :
     case 0xAB :
     case 0xAC :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xAD :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xAE :
     case 0xAF :
     case 0xB0 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xB1 :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
   case 0x9E :
-    if (str[2] < 0xB4) { return grn_char_alpha; }
-    return grn_char_others;
+    if (str[2] < 0xB4) { return grn_str_alpha; }
+    return grn_str_others;
     break;
   case 0x9F :
     switch (str[2]) {
@@ -4623,29 +4625,29 @@ case 0xE1 :
     case 0x91 :
     case 0x92 :
     case 0x93 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x94 :
     case 0x95 :
     case 0x96 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x97 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x98 :
     case 0x99 :
     case 0x9A :
     case 0x9B :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x9C :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x9D :
     case 0x9E :
     case 0x9F :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xA0 :
     case 0xA1 :
@@ -4657,7 +4659,7 @@ case 0xE1 :
     case 0xA7 :
     case 0xA8 :
     case 0xA9 :
-      return grn_char_digit;
+      return grn_str_digit;
       break;
     case 0xAA :
     case 0xAB :
@@ -4665,7 +4667,7 @@ case 0xE1 :
     case 0xAD :
     case 0xAE :
     case 0xAF :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xB0 :
     case 0xB1 :
@@ -4677,11 +4679,11 @@ case 0xE1 :
     case 0xB7 :
     case 0xB8 :
     case 0xB9 :
-      return grn_char_digit;
+      return grn_str_digit;
       break;
     case 0xBA :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
@@ -4698,14 +4700,14 @@ case 0xE1 :
     case 0x88 :
     case 0x89 :
     case 0x8A :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x8B :
     case 0x8C :
     case 0x8D :
     case 0x8E :
     case 0x8F :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x90 :
     case 0x91 :
@@ -4717,7 +4719,7 @@ case 0xE1 :
     case 0x97 :
     case 0x98 :
     case 0x99 :
-      return grn_char_digit;
+      return grn_str_digit;
       break;
     case 0x9A :
     case 0x9B :
@@ -4725,42 +4727,42 @@ case 0xE1 :
     case 0x9D :
     case 0x9E :
     case 0x9F :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xA0 :
     default :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     }
     break;
   case 0xA1 :
-    if (str[2] < 0xB8) { return grn_char_alpha; }
-    return grn_char_others;
+    if (str[2] < 0xB8) { return grn_str_alpha; }
+    return grn_str_others;
     break;
   case 0xA2 :
-    if (str[2] < 0xA9) { return grn_char_alpha; }
-    return grn_char_others;
+    if (str[2] < 0xA9) { return grn_str_alpha; }
+    return grn_str_others;
     break;
   case 0xA3 :
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0xA4 :
-    if (str[2] < 0x9D) { return grn_char_alpha; }
-    return grn_char_others;
+    if (str[2] < 0x9D) { return grn_str_alpha; }
+    return grn_str_others;
     break;
   case 0xA5 :
     switch (str[2]) {
     case 0x80 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x81 :
     case 0x82 :
     case 0x83 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x84 :
     case 0x85 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x86 :
     case 0x87 :
@@ -4772,7 +4774,7 @@ case 0xE1 :
     case 0x8D :
     case 0x8E :
     case 0x8F :
-      return grn_char_digit;
+      return grn_str_digit;
       break;
     case 0x90 :
     case 0x91 :
@@ -4804,33 +4806,33 @@ case 0xE1 :
     case 0xAB :
     case 0xAC :
     case 0xAD :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xAE :
     case 0xAF :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xB0 :
     case 0xB1 :
     case 0xB2 :
     case 0xB3 :
     case 0xB4 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xB5 :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
   case 0xA6 :
-    if (str[2] < 0xAA) { return grn_char_alpha; }
-    return grn_char_others;
+    if (str[2] < 0xAA) { return grn_str_alpha; }
+    return grn_str_others;
     break;
   case 0xA7 :
     switch (str[2]) {
     case 0x80 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x81 :
     case 0x82 :
@@ -4839,7 +4841,7 @@ case 0xE1 :
     case 0x85 :
     case 0x86 :
     case 0x87 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x88 :
     case 0x89 :
@@ -4849,7 +4851,7 @@ case 0xE1 :
     case 0x8D :
     case 0x8E :
     case 0x8F :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x90 :
     case 0x91 :
@@ -4861,17 +4863,17 @@ case 0xE1 :
     case 0x97 :
     case 0x98 :
     case 0x99 :
-      return grn_char_digit;
+      return grn_str_digit;
       break;
     case 0x9A :
     case 0x9B :
     case 0x9C :
     case 0x9D :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x9E :
     default :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     }
     break;
@@ -4900,7 +4902,7 @@ case 0xE1 :
     case 0x94 :
     case 0x95 :
     case 0x96 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x97 :
     case 0x98 :
@@ -4909,27 +4911,27 @@ case 0xE1 :
     case 0x9B :
     case 0x9C :
     case 0x9D :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x9E :
     case 0x9F :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xA0 :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
   case 0xA9 :
   case 0xAA :
   case 0xAB :
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0xAC :
-    if (str[2] < 0x85) { return grn_char_others; }
-    if (str[2] < 0xB4) { return grn_char_alpha; }
-    return grn_char_others;
+    if (str[2] < 0x85) { return grn_str_others; }
+    if (str[2] < 0xB4) { return grn_str_alpha; }
+    return grn_str_others;
     break;
   case 0xAD :
     switch (str[2]) {
@@ -4938,7 +4940,7 @@ case 0xE1 :
     case 0x82 :
     case 0x83 :
     case 0x84 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x85 :
     case 0x86 :
@@ -4947,13 +4949,13 @@ case 0xE1 :
     case 0x89 :
     case 0x8A :
     case 0x8B :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x8C :
     case 0x8D :
     case 0x8E :
     case 0x8F :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x90 :
     case 0x91 :
@@ -4965,7 +4967,7 @@ case 0xE1 :
     case 0x97 :
     case 0x98 :
     case 0x99 :
-      return grn_char_digit;
+      return grn_str_digit;
       break;
     case 0x9A :
     case 0x9B :
@@ -4984,7 +4986,7 @@ case 0xE1 :
     case 0xA8 :
     case 0xA9 :
     case 0xAA :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xAB :
     case 0xAC :
@@ -4995,7 +4997,7 @@ case 0xE1 :
     case 0xB1 :
     case 0xB2 :
     case 0xB3 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xB4 :
     case 0xB5 :
@@ -5006,11 +5008,11 @@ case 0xE1 :
     case 0xBA :
     case 0xBB :
     case 0xBC :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xBD :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
@@ -5020,28 +5022,28 @@ case 0xE1 :
   case 0xB1 :
   case 0xB2 :
   case 0xB3 :
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0xB4 :
   case 0xB5 :
   case 0xB6 :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   case 0xB7 :
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0xB8 :
   case 0xB9 :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   case 0xBA :
-    if (str[2] < 0x9C) { return grn_char_alpha; }
-    if (str[2] < 0xA0) { return grn_char_others; }
-    return grn_char_alpha;
+    if (str[2] < 0x9C) { return grn_str_alpha; }
+    if (str[2] < 0xA0) { return grn_str_others; }
+    return grn_str_alpha;
     break;
   case 0xBB :
-    if (str[2] < 0xBA) { return grn_char_alpha; }
-    return grn_char_others;
+    if (str[2] < 0xBA) { return grn_str_alpha; }
+    return grn_str_others;
     break;
   case 0xBC :
     switch (str[2]) {
@@ -5067,11 +5069,11 @@ case 0xE1 :
     case 0x93 :
     case 0x94 :
     case 0x95 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x96 :
     case 0x97 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x98 :
     case 0x99 :
@@ -5079,15 +5081,15 @@ case 0xE1 :
     case 0x9B :
     case 0x9C :
     case 0x9D :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x9E :
     case 0x9F :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xA0 :
     default :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     }
     break;
@@ -5099,11 +5101,11 @@ case 0xE1 :
     case 0x83 :
     case 0x84 :
     case 0x85 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x86 :
     case 0x87 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x88 :
     case 0x89 :
@@ -5111,11 +5113,11 @@ case 0xE1 :
     case 0x8B :
     case 0x8C :
     case 0x8D :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x8E :
     case 0x8F :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x90 :
     case 0x91 :
@@ -5125,28 +5127,28 @@ case 0xE1 :
     case 0x95 :
     case 0x96 :
     case 0x97 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x98 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x99 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x9A :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x9B :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x9C :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x9D :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x9E :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x9F :
     case 0xA0 :
@@ -5179,11 +5181,11 @@ case 0xE1 :
     case 0xBB :
     case 0xBC :
     case 0xBD :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xBE :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
@@ -5242,10 +5244,10 @@ case 0xE1 :
     case 0xB2 :
     case 0xB3 :
     case 0xB4 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xB5 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xB6 :
     case 0xB7 :
@@ -5254,17 +5256,17 @@ case 0xE1 :
     case 0xBA :
     case 0xBB :
     case 0xBC :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xBD :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xBE :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xBF :
     default :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     }
     break;
@@ -5272,15 +5274,15 @@ case 0xE1 :
     switch (str[2]) {
     case 0x80 :
     case 0x81 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x82 :
     case 0x83 :
     case 0x84 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x85 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x86 :
     case 0x87 :
@@ -5289,22 +5291,22 @@ case 0xE1 :
     case 0x8A :
     case 0x8B :
     case 0x8C :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x8D :
     case 0x8E :
     case 0x8F :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x90 :
     case 0x91 :
     case 0x92 :
     case 0x93 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x94 :
     case 0x95 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x96 :
     case 0x97 :
@@ -5312,15 +5314,15 @@ case 0xE1 :
     case 0x99 :
     case 0x9A :
     case 0x9B :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x9C :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x9D :
     case 0x9E :
     case 0x9F :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xA0 :
     case 0xA1 :
@@ -5335,24 +5337,24 @@ case 0xE1 :
     case 0xAA :
     case 0xAB :
     case 0xAC :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xAD :
     case 0xAE :
     case 0xAF :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xB0 :
     case 0xB1 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xB2 :
     case 0xB3 :
     case 0xB4 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xB5 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xB6 :
     case 0xB7 :
@@ -5361,20 +5363,20 @@ case 0xE1 :
     case 0xBA :
     case 0xBB :
     case 0xBC :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xBD :
     case 0xBE :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xBF :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
   default :
-    return grn_char_others;
+    return grn_str_others;
     break;
   }
   break;
@@ -5398,7 +5400,7 @@ case 0xE2 :
     case 0x8D :
     case 0x8E :
     case 0x8F :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x90 :
     case 0x91 :
@@ -5408,25 +5410,25 @@ case 0xE2 :
     case 0x95 :
     case 0x96 :
     case 0x97 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x98 :
     case 0x99 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x9A :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x9B :
     case 0x9C :
     case 0x9D :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x9E :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x9F :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xA0 :
     case 0xA1 :
@@ -5436,7 +5438,7 @@ case 0xE2 :
     case 0xA5 :
     case 0xA6 :
     case 0xA7 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xA8 :
     case 0xA9 :
@@ -5446,7 +5448,7 @@ case 0xE2 :
     case 0xAD :
     case 0xAE :
     case 0xAF :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xB0 :
     case 0xB1 :
@@ -5457,15 +5459,15 @@ case 0xE2 :
     case 0xB6 :
     case 0xB7 :
     case 0xB8 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xB9 :
     case 0xBA :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xBB :
     default :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     }
     break;
@@ -5502,7 +5504,7 @@ case 0xE2 :
     case 0x9C :
     case 0x9D :
     case 0x9E :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x9F :
     case 0xA0 :
@@ -5521,17 +5523,17 @@ case 0xE2 :
     case 0xAD :
     case 0xAE :
     case 0xAF :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xB0 :
-      return grn_char_digit;
+      return grn_str_digit;
       break;
     case 0xB1 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xB2 :
     case 0xB3 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xB4 :
     case 0xB5 :
@@ -5539,18 +5541,18 @@ case 0xE2 :
     case 0xB7 :
     case 0xB8 :
     case 0xB9 :
-      return grn_char_digit;
+      return grn_str_digit;
       break;
     case 0xBA :
     case 0xBB :
     case 0xBC :
     case 0xBD :
     case 0xBE :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xBF :
     default :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     }
     break;
@@ -5566,24 +5568,24 @@ case 0xE2 :
     case 0x87 :
     case 0x88 :
     case 0x89 :
-      return grn_char_digit;
+      return grn_str_digit;
       break;
     case 0x8A :
     case 0x8B :
     case 0x8C :
     case 0x8D :
     case 0x8E :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x8F :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x90 :
     case 0x91 :
     case 0x92 :
     case 0x93 :
     case 0x94 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x95 :
     case 0x96 :
@@ -5596,7 +5598,7 @@ case 0xE2 :
     case 0x9D :
     case 0x9E :
     case 0x9F :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xA0 :
     case 0xA1 :
@@ -5620,38 +5622,38 @@ case 0xE2 :
     case 0xB3 :
     case 0xB4 :
     case 0xB5 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xB6 :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
   case 0x83 :
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0x84 :
     switch (str[2]) {
     case 0x80 :
     case 0x81 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x82 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x83 :
     case 0x84 :
     case 0x85 :
     case 0x86 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x87 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x88 :
     case 0x89 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x8A :
     case 0x8B :
@@ -5663,25 +5665,25 @@ case 0xE2 :
     case 0x91 :
     case 0x92 :
     case 0x93 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x94 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x95 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x96 :
     case 0x97 :
     case 0x98 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x99 :
     case 0x9A :
     case 0x9B :
     case 0x9C :
     case 0x9D :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x9E :
     case 0x9F :
@@ -5689,34 +5691,34 @@ case 0xE2 :
     case 0xA1 :
     case 0xA2 :
     case 0xA3 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xA4 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xA5 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xA6 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xA7 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xA8 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xA9 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xAA :
     case 0xAB :
     case 0xAC :
     case 0xAD :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xAE :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xAF :
     case 0xB0 :
@@ -5729,15 +5731,15 @@ case 0xE2 :
     case 0xB7 :
     case 0xB8 :
     case 0xB9 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xBA :
     case 0xBB :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xBC :
     default :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     }
     break;
@@ -5748,33 +5750,33 @@ case 0xE2 :
     case 0x82 :
     case 0x83 :
     case 0x84 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x85 :
     case 0x86 :
     case 0x87 :
     case 0x88 :
     case 0x89 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x8A :
     case 0x8B :
     case 0x8C :
     case 0x8D :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x8E :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x8F :
     case 0x90 :
     case 0x91 :
     case 0x92 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x93 :
     default :
-      return grn_char_digit;
+      return grn_str_digit;
       break;
     }
     break;
@@ -5783,11 +5785,11 @@ case 0xE2 :
     case 0x80 :
     case 0x81 :
     case 0x82 :
-      return grn_char_digit;
+      return grn_str_digit;
       break;
     case 0x83 :
     case 0x84 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x85 :
     case 0x86 :
@@ -5800,11 +5802,11 @@ case 0xE2 :
     case 0x8D :
     case 0x8E :
     case 0x8F :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x90 :
     default :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     }
     break;
@@ -5816,15 +5818,15 @@ case 0xE2 :
   case 0x8C :
   case 0x8D :
   case 0x8E :
-    return grn_char_symbol;
+    return grn_str_symbol;
     break;
   case 0x8F :
-    if (str[2] < 0xA8) { return grn_char_symbol; }
-    return grn_char_others;
+    if (str[2] < 0xA8) { return grn_str_symbol; }
+    return grn_str_others;
     break;
   case 0x90 :
-    if (str[2] < 0xA7) { return grn_char_symbol; }
-    return grn_char_others;
+    if (str[2] < 0xA7) { return grn_str_symbol; }
+    return grn_str_others;
     break;
   case 0x91 :
     switch (str[2]) {
@@ -5839,7 +5841,7 @@ case 0xE2 :
     case 0x88 :
     case 0x89 :
     case 0x8A :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x8B :
     case 0x8C :
@@ -5862,21 +5864,21 @@ case 0xE2 :
     case 0x9D :
     case 0x9E :
     case 0x9F :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xA0 :
     default :
-      return grn_char_digit;
+      return grn_str_digit;
       break;
     }
     break;
   case 0x92 :
-    if (str[2] < 0x9C) { return grn_char_digit; }
-    return grn_char_symbol;
+    if (str[2] < 0x9C) { return grn_str_digit; }
+    return grn_str_symbol;
     break;
   case 0x93 :
-    if (str[2] < 0xAA) { return grn_char_symbol; }
-    return grn_char_digit;
+    if (str[2] < 0xAA) { return grn_str_symbol; }
+    return grn_str_digit;
     break;
   case 0x94 :
   case 0x95 :
@@ -5884,7 +5886,7 @@ case 0xE2 :
   case 0x97 :
   case 0x98 :
   case 0x99 :
-    return grn_char_symbol;
+    return grn_str_symbol;
     break;
   case 0x9A :
     switch (str[2]) {
@@ -5917,12 +5919,12 @@ case 0xE2 :
     case 0x9A :
     case 0x9B :
     case 0x9C :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x9D :
     case 0x9E :
     case 0x9F :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xA0 :
     case 0xA1 :
@@ -5943,40 +5945,40 @@ case 0xE2 :
     case 0xB0 :
     case 0xB1 :
     case 0xB2 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xB3 :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
   case 0x9B :
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0x9C :
     switch (str[2]) {
     case 0x80 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x81 :
     case 0x82 :
     case 0x83 :
     case 0x84 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x85 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x86 :
     case 0x87 :
     case 0x88 :
     case 0x89 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x8A :
     case 0x8B :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x8C :
     case 0x8D :
@@ -6006,14 +6008,14 @@ case 0xE2 :
     case 0xA5 :
     case 0xA6 :
     case 0xA7 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xA8 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xA9 :
     default :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     }
     break;
@@ -6031,33 +6033,33 @@ case 0xE2 :
     case 0x89 :
     case 0x8A :
     case 0x8B :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x8C :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x8D :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x8E :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x8F :
     case 0x90 :
     case 0x91 :
     case 0x92 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x93 :
     case 0x94 :
     case 0x95 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x96 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x97 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x98 :
     case 0x99 :
@@ -6066,11 +6068,11 @@ case 0xE2 :
     case 0x9C :
     case 0x9D :
     case 0x9E :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x9F :
     case 0xA0 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xA1 :
     case 0xA2 :
@@ -6093,11 +6095,11 @@ case 0xE2 :
     case 0xB3 :
     case 0xB4 :
     case 0xB5 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xB6 :
     default :
-      return grn_char_digit;
+      return grn_str_digit;
       break;
     }
     break;
@@ -6123,15 +6125,15 @@ case 0xE2 :
     case 0x91 :
     case 0x92 :
     case 0x93 :
-      return grn_char_digit;
+      return grn_str_digit;
       break;
     case 0x94 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x95 :
     case 0x96 :
     case 0x97 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x98 :
     case 0x99 :
@@ -6157,10 +6159,10 @@ case 0xE2 :
     case 0xAD :
     case 0xAE :
     case 0xAF :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xB0 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xB1 :
     case 0xB2 :
@@ -6176,11 +6178,11 @@ case 0xE2 :
     case 0xBC :
     case 0xBD :
     case 0xBE :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xBF :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
@@ -6197,14 +6199,14 @@ case 0xE2 :
     case 0x88 :
     case 0x89 :
     case 0x8A :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x8B :
     case 0x8C :
     case 0x8D :
     case 0x8E :
     case 0x8F :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x90 :
     case 0x91 :
@@ -6234,17 +6236,17 @@ case 0xE2 :
     case 0xA9 :
     case 0xAA :
     case 0xAB :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xAC :
     case 0xAD :
     case 0xAE :
     case 0xAF :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xB0 :
     default :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     }
     break;
@@ -6260,7 +6262,7 @@ case 0xE2 :
   case 0xA9 :
   case 0xAA :
   case 0xAB :
-    return grn_char_symbol;
+    return grn_str_symbol;
     break;
   case 0xAC :
     switch (str[2]) {
@@ -6291,31 +6293,31 @@ case 0xE2 :
     case 0x98 :
     case 0x99 :
     case 0x9A :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x9B :
     case 0x9C :
     case 0x9D :
     case 0x9E :
     case 0x9F :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xA0 :
     case 0xA1 :
     case 0xA2 :
     case 0xA3 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xA4 :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
   case 0xAD :
   case 0xAE :
   case 0xAF :
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0xB0 :
     switch (str[2]) {
@@ -6366,14 +6368,14 @@ case 0xE2 :
     case 0xAC :
     case 0xAD :
     case 0xAE :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xAF :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xB0 :
     default :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     }
     break;
@@ -6410,10 +6412,10 @@ case 0xE2 :
     case 0x9C :
     case 0x9D :
     case 0x9E :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x9F :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xA0 :
     case 0xA1 :
@@ -6428,7 +6430,7 @@ case 0xE2 :
     case 0xAA :
     case 0xAB :
     case 0xAC :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xAD :
     case 0xAE :
@@ -6437,22 +6439,22 @@ case 0xE2 :
     case 0xB1 :
     case 0xB2 :
     case 0xB3 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xB4 :
     case 0xB5 :
     case 0xB6 :
     case 0xB7 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xB8 :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
   case 0xB2 :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   case 0xB3 :
     switch (str[2]) {
@@ -6493,7 +6495,7 @@ case 0xE2 :
     case 0xA2 :
     case 0xA3 :
     case 0xA4 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xA5 :
     case 0xA6 :
@@ -6501,7 +6503,7 @@ case 0xE2 :
     case 0xA8 :
     case 0xA9 :
     case 0xAA :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xAB :
     case 0xAC :
@@ -6517,20 +6519,20 @@ case 0xE2 :
     case 0xB6 :
     case 0xB7 :
     case 0xB8 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xB9 :
     case 0xBA :
     case 0xBB :
     case 0xBC :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xBD :
-      return grn_char_digit;
+      return grn_str_digit;
       break;
     case 0xBE :
     default :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     }
     break;
@@ -6574,7 +6576,7 @@ case 0xE2 :
     case 0xA3 :
     case 0xA4 :
     case 0xA5 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xA6 :
     case 0xA7 :
@@ -6586,11 +6588,11 @@ case 0xE2 :
     case 0xAD :
     case 0xAE :
     case 0xAF :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xB0 :
     default :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     }
     break;
@@ -6634,7 +6636,7 @@ case 0xE2 :
     case 0xA3 :
     case 0xA4 :
     case 0xA5 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xA6 :
     case 0xA7 :
@@ -6645,14 +6647,14 @@ case 0xE2 :
     case 0xAC :
     case 0xAD :
     case 0xAE :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xAF :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xB0 :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
@@ -6681,7 +6683,7 @@ case 0xE2 :
     case 0x94 :
     case 0x95 :
     case 0x96 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x97 :
     case 0x98 :
@@ -6692,7 +6694,7 @@ case 0xE2 :
     case 0x9D :
     case 0x9E :
     case 0x9F :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xA0 :
     case 0xA1 :
@@ -6701,10 +6703,10 @@ case 0xE2 :
     case 0xA4 :
     case 0xA5 :
     case 0xA6 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xA7 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xA8 :
     case 0xA9 :
@@ -6713,10 +6715,10 @@ case 0xE2 :
     case 0xAC :
     case 0xAD :
     case 0xAE :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xAF :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xB0 :
     case 0xB1 :
@@ -6725,10 +6727,10 @@ case 0xE2 :
     case 0xB4 :
     case 0xB5 :
     case 0xB6 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xB7 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xB8 :
     case 0xB9 :
@@ -6737,11 +6739,11 @@ case 0xE2 :
     case 0xBC :
     case 0xBD :
     case 0xBE :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xBF :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
@@ -6754,10 +6756,10 @@ case 0xE2 :
     case 0x84 :
     case 0x85 :
     case 0x86 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x87 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x88 :
     case 0x89 :
@@ -6766,10 +6768,10 @@ case 0xE2 :
     case 0x8C :
     case 0x8D :
     case 0x8E :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x8F :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x90 :
     case 0x91 :
@@ -6778,10 +6780,10 @@ case 0xE2 :
     case 0x94 :
     case 0x95 :
     case 0x96 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x97 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x98 :
     case 0x99 :
@@ -6790,11 +6792,11 @@ case 0xE2 :
     case 0x9C :
     case 0x9D :
     case 0x9E :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x9F :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
@@ -6802,29 +6804,29 @@ case 0xE2 :
     switch (str[2]) {
     case 0x80 :
     case 0x81 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x82 :
     case 0x83 :
     case 0x84 :
     case 0x85 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x86 :
     case 0x87 :
     case 0x88 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x89 :
     case 0x8A :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x8B :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x8C :
     case 0x8D :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x8E :
     case 0x8F :
@@ -6836,23 +6838,23 @@ case 0xE2 :
     case 0x95 :
     case 0x96 :
     case 0x97 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x98 :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
   case 0xB9 :
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0xBA :
   case 0xBB :
   case 0xBC :
   case 0xBD :
   case 0xBE :
-    return grn_char_kanji;
+    return grn_str_kanji;
     break;
   case 0xBF :
     switch (str[2]) {
@@ -6888,7 +6890,7 @@ case 0xE2 :
     case 0x9D :
     case 0x9E :
     case 0x9F :
-      return grn_char_kanji;
+      return grn_str_kanji;
       break;
     case 0xA0 :
     case 0xA1 :
@@ -6906,7 +6908,7 @@ case 0xE2 :
     case 0xAD :
     case 0xAE :
     case 0xAF :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xB0 :
     case 0xB1 :
@@ -6920,42 +6922,42 @@ case 0xE2 :
     case 0xB9 :
     case 0xBA :
     case 0xBB :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xBC :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
   default :
-    return grn_char_others;
+    return grn_str_others;
     break;
   }
   break;
 case 0xE3 :
   switch (str[1]) {
   case 0x80 :
-    return grn_char_symbol;
+    return grn_str_symbol;
     break;
   case 0x81 :
-    return grn_char_hiragana;
+    return grn_str_hiragana;
     break;
   case 0x82 :
-    if (str[2] < 0xA0) { return grn_char_hiragana; }
-    return grn_char_katakana;
+    if (str[2] < 0xA0) { return grn_str_hiragana; }
+    return grn_str_katakana;
     break;
   case 0x83 :
-    return grn_char_katakana;
+    return grn_str_katakana;
     break;
   case 0x84 :
   case 0x85 :
   case 0x86 :
-    return grn_char_kanji;
+    return grn_str_kanji;
     break;
   case 0x87 :
-    if (str[2] < 0xB0) { return grn_char_kanji; }
-    return grn_char_katakana;
+    if (str[2] < 0xB0) { return grn_str_kanji; }
+    return grn_str_katakana;
     break;
   case 0x88 :
   case 0x89 :
@@ -6965,25 +6967,25 @@ case 0xE3 :
   case 0x8D :
   case 0x8E :
   case 0x8F :
-    return grn_char_symbol;
+    return grn_str_symbol;
     break;
   case 0x90 :
   default :
-    return grn_char_kanji;
+    return grn_str_kanji;
     break;
   }
   break;
 case 0xE4 :
-  if (str[1] < 0xB7) { return grn_char_kanji; }
-  if (str[1] < 0xB8) { return grn_char_symbol; }
-  return grn_char_kanji;
+  if (str[1] < 0xB7) { return grn_str_kanji; }
+  if (str[1] < 0xB8) { return grn_str_symbol; }
+  return grn_str_kanji;
   break;
 case 0xE5 :
 case 0xE6 :
 case 0xE7 :
 case 0xE8 :
 case 0xE9 :
-  return grn_char_kanji;
+  return grn_str_kanji;
   break;
 case 0xEA :
   switch (str[1]) {
@@ -7006,11 +7008,11 @@ case 0xEA :
   case 0x90 :
   case 0x91 :
   case 0x92 :
-    return grn_char_kanji;
+    return grn_str_kanji;
     break;
   case 0x93 :
-    if (str[2] < 0x90) { return grn_char_kanji; }
-    return grn_char_others;
+    if (str[2] < 0x90) { return grn_str_kanji; }
+    return grn_str_others;
     break;
   case 0x94 :
   case 0x95 :
@@ -7020,7 +7022,7 @@ case 0xEA :
   case 0x99 :
   case 0x9A :
   case 0x9B :
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0x9C :
     switch (str[2]) {
@@ -7047,61 +7049,61 @@ case 0xEA :
     case 0x94 :
     case 0x95 :
     case 0x96 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x97 :
     case 0x98 :
     case 0x99 :
     case 0x9A :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x9B :
     case 0x9C :
     case 0x9D :
     case 0x9E :
     case 0x9F :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xA0 :
     case 0xA1 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xA2 :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
   case 0x9D :
   case 0x9E :
   case 0x9F :
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0xA0 :
     switch (str[2]) {
     case 0x80 :
     case 0x81 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x82 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x83 :
     case 0x84 :
     case 0x85 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x86 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x87 :
     case 0x88 :
     case 0x89 :
     case 0x8A :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x8B :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x8C :
     case 0x8D :
@@ -7126,24 +7128,24 @@ case 0xEA :
     case 0xA0 :
     case 0xA1 :
     case 0xA2 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xA3 :
     case 0xA4 :
     case 0xA5 :
     case 0xA6 :
     case 0xA7 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xA8 :
     case 0xA9 :
     case 0xAA :
     case 0xAB :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xAC :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
@@ -7201,17 +7203,17 @@ case 0xEA :
     case 0xB1 :
     case 0xB2 :
     case 0xB3 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xB4 :
     case 0xB5 :
     case 0xB6 :
     case 0xB7 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xB8 :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
@@ -7229,28 +7231,28 @@ case 0xEA :
   case 0xAD :
   case 0xAE :
   case 0xAF :
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0xB0 :
   default :
-    return grn_char_kanji;
+    return grn_str_kanji;
     break;
   }
   break;
 case 0xEB :
 case 0xEC :
-  return grn_char_kanji;
+  return grn_str_kanji;
   break;
 case 0xED :
-  if (str[1] < 0x9E) { return grn_char_kanji; }
+  if (str[1] < 0x9E) { return grn_str_kanji; }
   if (str[1] == 0x9E) {
-    if (str[2] < 0xB0) { return grn_char_kanji; }
-    return grn_char_others;
+    if (str[2] < 0xB0) { return grn_str_kanji; }
+    return grn_str_others;
   }
-  return grn_char_others;
+  return grn_str_others;
   break;
 case 0xEE :
-  return grn_char_others;
+  return grn_str_others;
   break;
 case 0xEF :
   switch (str[1]) {
@@ -7290,7 +7292,7 @@ case 0xEF :
   case 0xA1 :
   case 0xA2 :
   case 0xA3 :
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0xA4 :
   case 0xA5 :
@@ -7300,7 +7302,7 @@ case 0xEF :
   case 0xA9 :
   case 0xAA :
   case 0xAB :
-    return grn_char_kanji;
+    return grn_str_kanji;
     break;
   case 0xAC :
     switch (str[2]) {
@@ -7311,7 +7313,7 @@ case 0xEF :
     case 0x84 :
     case 0x85 :
     case 0x86 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x87 :
     case 0x88 :
@@ -7325,27 +7327,27 @@ case 0xEF :
     case 0x90 :
     case 0x91 :
     case 0x92 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x93 :
     case 0x94 :
     case 0x95 :
     case 0x96 :
     case 0x97 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x98 :
     case 0x99 :
     case 0x9A :
     case 0x9B :
     case 0x9C :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x9D :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x9E :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x9F :
     case 0xA0 :
@@ -7357,10 +7359,10 @@ case 0xEF :
     case 0xA6 :
     case 0xA7 :
     case 0xA8 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xA9 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xAA :
     case 0xAB :
@@ -7375,27 +7377,27 @@ case 0xEF :
     case 0xB4 :
     case 0xB5 :
     case 0xB6 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xB7 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xB8 :
     case 0xB9 :
     case 0xBA :
     case 0xBB :
     case 0xBC :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xBD :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xBE :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xBF :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
@@ -7403,50 +7405,50 @@ case 0xEF :
     switch (str[2]) {
     case 0x80 :
     case 0x81 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x82 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x83 :
     case 0x84 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x85 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x86 :
     default :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     }
     break;
   case 0xAE :
-    if (str[2] < 0xB2) { return grn_char_alpha; }
-    return grn_char_others;
+    if (str[2] < 0xB2) { return grn_str_alpha; }
+    return grn_str_others;
     break;
   case 0xAF :
-    if (str[2] < 0x93) { return grn_char_others; }
-    return grn_char_alpha;
+    if (str[2] < 0x93) { return grn_str_others; }
+    return grn_str_alpha;
     break;
   case 0xB0 :
   case 0xB1 :
   case 0xB2 :
   case 0xB3 :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   case 0xB4 :
-    if (str[2] < 0xBE) { return grn_char_alpha; }
-    return grn_char_symbol;
+    if (str[2] < 0xBE) { return grn_str_alpha; }
+    return grn_str_symbol;
     break;
   case 0xB5 :
-    if (str[2] < 0x90) { return grn_char_others; }
-    return grn_char_alpha;
+    if (str[2] < 0x90) { return grn_str_others; }
+    return grn_str_alpha;
     break;
   case 0xB6 :
-    if (str[2] < 0x90) { return grn_char_alpha; }
-    if (str[2] < 0x92) { return grn_char_others; }
-    return grn_char_alpha;
+    if (str[2] < 0x90) { return grn_str_alpha; }
+    if (str[2] < 0x92) { return grn_str_others; }
+    return grn_str_alpha;
     break;
   case 0xB7 :
     switch (str[2]) {
@@ -7458,7 +7460,7 @@ case 0xEF :
     case 0x85 :
     case 0x86 :
     case 0x87 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x88 :
     case 0x89 :
@@ -7500,7 +7502,7 @@ case 0xEF :
     case 0xAD :
     case 0xAE :
     case 0xAF :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xB0 :
     case 0xB1 :
@@ -7514,15 +7516,15 @@ case 0xEF :
     case 0xB9 :
     case 0xBA :
     case 0xBB :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xBC :
     case 0xBD :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xBE :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
@@ -7544,7 +7546,7 @@ case 0xEF :
     case 0x8D :
     case 0x8E :
     case 0x8F :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x90 :
     case 0x91 :
@@ -7556,7 +7558,7 @@ case 0xEF :
     case 0x97 :
     case 0x98 :
     case 0x99 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x9A :
     case 0x9B :
@@ -7580,11 +7582,11 @@ case 0xEF :
     case 0xAD :
     case 0xAE :
     case 0xAF :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xB0 :
     default :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     }
     break;
@@ -7609,10 +7611,10 @@ case 0xEF :
     case 0x90 :
     case 0x91 :
     case 0x92 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x93 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x94 :
     case 0x95 :
@@ -7633,50 +7635,50 @@ case 0xEF :
     case 0xA4 :
     case 0xA5 :
     case 0xA6 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xA7 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xA8 :
     case 0xA9 :
     case 0xAA :
     case 0xAB :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xAC :
     case 0xAD :
     case 0xAE :
     case 0xAF :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xB0 :
     case 0xB1 :
     case 0xB2 :
     case 0xB3 :
     case 0xB4 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xB5 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xB6 :
     default :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     }
     break;
   case 0xBA :
-    return grn_char_alpha;
+    return grn_str_alpha;
     break;
   case 0xBB :
-    if (str[2] < 0xBD) { return grn_char_alpha; }
-    return grn_char_others;
+    if (str[2] < 0xBD) { return grn_str_alpha; }
+    return grn_str_others;
     break;
   case 0xBC :
     switch (str[2]) {
     case 0x80 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x81 :
     case 0x82 :
@@ -7693,7 +7695,7 @@ case 0xEF :
     case 0x8D :
     case 0x8E :
     case 0x8F :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x90 :
     case 0x91 :
@@ -7705,7 +7707,7 @@ case 0xEF :
     case 0x97 :
     case 0x98 :
     case 0x99 :
-      return grn_char_digit;
+      return grn_str_digit;
       break;
     case 0x9A :
     case 0x9B :
@@ -7714,7 +7716,7 @@ case 0xEF :
     case 0x9E :
     case 0x9F :
     case 0xA0 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xA1 :
     case 0xA2 :
@@ -7742,18 +7744,18 @@ case 0xEF :
     case 0xB8 :
     case 0xB9 :
     case 0xBA :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0xBB :
     default :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     }
     break;
   case 0xBD :
     switch (str[2]) {
     case 0x80 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x81 :
     case 0x82 :
@@ -7781,7 +7783,7 @@ case 0xEF :
     case 0x98 :
     case 0x99 :
     case 0x9A :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x9B :
     case 0x9C :
@@ -7794,23 +7796,23 @@ case 0xEF :
     case 0xA3 :
     case 0xA4 :
     case 0xA5 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xA6 :
     default :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     }
     break;
   case 0xBE :
-    if (str[2] < 0xBF) { return grn_char_alpha; }
-    return grn_char_others;
+    if (str[2] < 0xBF) { return grn_str_alpha; }
+    return grn_str_others;
     break;
   case 0xBF :
     switch (str[2]) {
     case 0x80 :
     case 0x81 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x82 :
     case 0x83 :
@@ -7818,11 +7820,11 @@ case 0xEF :
     case 0x85 :
     case 0x86 :
     case 0x87 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x88 :
     case 0x89 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x8A :
     case 0x8B :
@@ -7830,11 +7832,11 @@ case 0xEF :
     case 0x8D :
     case 0x8E :
     case 0x8F :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x90 :
     case 0x91 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x92 :
     case 0x93 :
@@ -7842,21 +7844,21 @@ case 0xEF :
     case 0x95 :
     case 0x96 :
     case 0x97 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x98 :
     case 0x99 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x9A :
     case 0x9B :
     case 0x9C :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x9D :
     case 0x9E :
     case 0x9F :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xA0 :
     case 0xA1 :
@@ -7865,10 +7867,10 @@ case 0xEF :
     case 0xA4 :
     case 0xA5 :
     case 0xA6 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xA7 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xA8 :
     case 0xA9 :
@@ -7877,7 +7879,7 @@ case 0xEF :
     case 0xAC :
     case 0xAD :
     case 0xAE :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0xAF :
     case 0xB0 :
@@ -7892,16 +7894,16 @@ case 0xEF :
     case 0xB9 :
     case 0xBA :
     case 0xBB :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xBC :
     default :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     }
     break;
   default :
-    return grn_char_symbol;
+    return grn_str_symbol;
     break;
   }
   break;
@@ -7923,7 +7925,7 @@ case 0xF0 :
   case 0x8D :
   case 0x8E :
   case 0x8F :
-    return grn_char_symbol;
+    return grn_str_symbol;
     break;
   case 0x90 :
     switch (str[2]) {
@@ -7941,10 +7943,10 @@ case 0xF0 :
       case 0x89 :
       case 0x8A :
       case 0x8B :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       case 0x8C :
-        return grn_char_others;
+        return grn_str_others;
         break;
       case 0x8D :
       case 0x8E :
@@ -7972,10 +7974,10 @@ case 0xF0 :
       case 0xA4 :
       case 0xA5 :
       case 0xA6 :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       case 0xA7 :
-        return grn_char_others;
+        return grn_str_others;
         break;
       case 0xA8 :
       case 0xA9 :
@@ -7996,21 +7998,21 @@ case 0xF0 :
       case 0xB8 :
       case 0xB9 :
       case 0xBA :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       case 0xBB :
-        return grn_char_others;
+        return grn_str_others;
         break;
       case 0xBC :
       case 0xBD :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       case 0xBE :
-        return grn_char_others;
+        return grn_str_others;
         break;
       case 0xBF :
       default :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       }
       break;
@@ -8030,11 +8032,11 @@ case 0xF0 :
       case 0x8B :
       case 0x8C :
       case 0x8D :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       case 0x8E :
       case 0x8F :
-        return grn_char_others;
+        return grn_str_others;
         break;
       case 0x90 :
       case 0x91 :
@@ -8050,33 +8052,33 @@ case 0xF0 :
       case 0x9B :
       case 0x9C :
       case 0x9D :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       case 0x9E :
       default :
-        return grn_char_others;
+        return grn_str_others;
         break;
       }
       break;
     case 0x82 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x83 :
-      if (str[3] < 0xBB) { return grn_char_alpha; }
-      return grn_char_others;
+      if (str[3] < 0xBB) { return grn_str_alpha; }
+      return grn_str_others;
       break;
     case 0x84 :
       switch (str[3]) {
       case 0x80 :
       case 0x81 :
       case 0x82 :
-        return grn_char_symbol;
+        return grn_str_symbol;
         break;
       case 0x83 :
       case 0x84 :
       case 0x85 :
       case 0x86 :
-        return grn_char_others;
+        return grn_str_others;
         break;
       case 0x87 :
       case 0x88 :
@@ -8123,34 +8125,34 @@ case 0xF0 :
       case 0xB1 :
       case 0xB2 :
       case 0xB3 :
-        return grn_char_digit;
+        return grn_str_digit;
         break;
       case 0xB4 :
       case 0xB5 :
       case 0xB6 :
-        return grn_char_others;
+        return grn_str_others;
         break;
       case 0xB7 :
       default :
-        return grn_char_symbol;
+        return grn_str_symbol;
         break;
       }
       break;
     case 0x85 :
-      if (str[3] < 0xB9) { return grn_char_digit; }
-      return grn_char_symbol;
+      if (str[3] < 0xB9) { return grn_str_digit; }
+      return grn_str_symbol;
       break;
     case 0x86 :
-      if (str[3] < 0x8A) { return grn_char_symbol; }
-      if (str[3] < 0x8B) { return grn_char_digit; }
-      return grn_char_others;
+      if (str[3] < 0x8A) { return grn_str_symbol; }
+      if (str[3] < 0x8B) { return grn_str_digit; }
+      return grn_str_others;
       break;
     case 0x87 :
     case 0x88 :
     case 0x89 :
     case 0x8A :
     case 0x8B :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x8C :
       switch (str[3]) {
@@ -8185,16 +8187,16 @@ case 0xF0 :
       case 0x9C :
       case 0x9D :
       case 0x9E :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       case 0x9F :
-        return grn_char_others;
+        return grn_str_others;
         break;
       case 0xA0 :
       case 0xA1 :
       case 0xA2 :
       case 0xA3 :
-        return grn_char_digit;
+        return grn_str_digit;
         break;
       case 0xA4 :
       case 0xA5 :
@@ -8208,21 +8210,21 @@ case 0xF0 :
       case 0xAD :
       case 0xAE :
       case 0xAF :
-        return grn_char_others;
+        return grn_str_others;
         break;
       case 0xB0 :
       default :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       }
       break;
     case 0x8D :
       switch (str[3]) {
       case 0x80 :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       case 0x81 :
-        return grn_char_digit;
+        return grn_str_digit;
         break;
       case 0x82 :
       case 0x83 :
@@ -8232,14 +8234,14 @@ case 0xF0 :
       case 0x87 :
       case 0x88 :
       case 0x89 :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       case 0x8A :
-        return grn_char_digit;
+        return grn_str_digit;
         break;
       case 0x8B :
       default :
-        return grn_char_others;
+        return grn_str_others;
         break;
       }
       break;
@@ -8275,17 +8277,17 @@ case 0xF0 :
       case 0x9B :
       case 0x9C :
       case 0x9D :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       case 0x9E :
-        return grn_char_others;
+        return grn_str_others;
         break;
       case 0x9F :
-        return grn_char_symbol;
+        return grn_str_symbol;
         break;
       case 0xA0 :
       default :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       }
       break;
@@ -8295,13 +8297,13 @@ case 0xF0 :
       case 0x81 :
       case 0x82 :
       case 0x83 :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       case 0x84 :
       case 0x85 :
       case 0x86 :
       case 0x87 :
-        return grn_char_others;
+        return grn_str_others;
         break;
       case 0x88 :
       case 0x89 :
@@ -8311,27 +8313,27 @@ case 0xF0 :
       case 0x8D :
       case 0x8E :
       case 0x8F :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       case 0x90 :
-        return grn_char_symbol;
+        return grn_str_symbol;
         break;
       case 0x91 :
       case 0x92 :
       case 0x93 :
       case 0x94 :
       case 0x95 :
-        return grn_char_digit;
+        return grn_str_digit;
         break;
       case 0x96 :
       default :
-        return grn_char_others;
+        return grn_str_others;
         break;
       }
       break;
     case 0x90 :
     case 0x91 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x92 :
       switch (str[3]) {
@@ -8365,11 +8367,11 @@ case 0xF0 :
       case 0x9B :
       case 0x9C :
       case 0x9D :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       case 0x9E :
       case 0x9F :
-        return grn_char_others;
+        return grn_str_others;
         break;
       case 0xA0 :
       case 0xA1 :
@@ -8381,11 +8383,11 @@ case 0xF0 :
       case 0xA7 :
       case 0xA8 :
       case 0xA9 :
-        return grn_char_digit;
+        return grn_str_digit;
         break;
       case 0xAA :
       default :
-        return grn_char_others;
+        return grn_str_others;
         break;
       }
       break;
@@ -8402,7 +8404,7 @@ case 0xF0 :
     case 0x9D :
     case 0x9E :
     case 0x9F :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xA0 :
       switch (str[3]) {
@@ -8412,17 +8414,17 @@ case 0xF0 :
       case 0x83 :
       case 0x84 :
       case 0x85 :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       case 0x86 :
       case 0x87 :
-        return grn_char_others;
+        return grn_str_others;
         break;
       case 0x88 :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       case 0x89 :
-        return grn_char_others;
+        return grn_str_others;
         break;
       case 0x8A :
       case 0x8B :
@@ -8468,37 +8470,37 @@ case 0xF0 :
       case 0xB3 :
       case 0xB4 :
       case 0xB5 :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       case 0xB6 :
-        return grn_char_others;
+        return grn_str_others;
         break;
       case 0xB7 :
       case 0xB8 :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       case 0xB9 :
       case 0xBA :
       case 0xBB :
-        return grn_char_others;
+        return grn_str_others;
         break;
       case 0xBC :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       case 0xBD :
       case 0xBE :
-        return grn_char_others;
+        return grn_str_others;
         break;
       case 0xBF :
       default :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       }
       break;
     case 0xA1 :
     case 0xA2 :
     case 0xA3 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xA4 :
       switch (str[3]) {
@@ -8524,39 +8526,39 @@ case 0xF0 :
       case 0x93 :
       case 0x94 :
       case 0x95 :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       case 0x96 :
       case 0x97 :
       case 0x98 :
       case 0x99 :
-        return grn_char_digit;
+        return grn_str_digit;
         break;
       case 0x9A :
       case 0x9B :
       case 0x9C :
       case 0x9D :
       case 0x9E :
-        return grn_char_others;
+        return grn_str_others;
         break;
       case 0x9F :
-        return grn_char_symbol;
+        return grn_str_symbol;
         break;
       case 0xA0 :
       default :
-        return grn_char_others;
+        return grn_str_others;
         break;
       }
       break;
     case 0xA5 :
     case 0xA6 :
     case 0xA7 :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0xA8 :
       switch (str[3]) {
       case 0x80 :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       case 0x81 :
       case 0x82 :
@@ -8573,24 +8575,24 @@ case 0xF0 :
       case 0x8D :
       case 0x8E :
       case 0x8F :
-        return grn_char_others;
+        return grn_str_others;
         break;
       case 0x90 :
       case 0x91 :
       case 0x92 :
       case 0x93 :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       case 0x94 :
-        return grn_char_others;
+        return grn_str_others;
         break;
       case 0x95 :
       case 0x96 :
       case 0x97 :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       case 0x98 :
-        return grn_char_others;
+        return grn_str_others;
         break;
       case 0x99 :
       case 0x9A :
@@ -8619,11 +8621,11 @@ case 0xF0 :
       case 0xB1 :
       case 0xB2 :
       case 0xB3 :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       case 0xB4 :
       default :
-        return grn_char_others;
+        return grn_str_others;
         break;
       }
       break;
@@ -8637,7 +8639,7 @@ case 0xF0 :
       case 0x85 :
       case 0x86 :
       case 0x87 :
-        return grn_char_digit;
+        return grn_str_digit;
         break;
       case 0x88 :
       case 0x89 :
@@ -8647,7 +8649,7 @@ case 0xF0 :
       case 0x8D :
       case 0x8E :
       case 0x8F :
-        return grn_char_others;
+        return grn_str_others;
         break;
       case 0x90 :
       case 0x91 :
@@ -8658,21 +8660,21 @@ case 0xF0 :
       case 0x96 :
       case 0x97 :
       case 0x98 :
-        return grn_char_symbol;
+        return grn_str_symbol;
         break;
       case 0x99 :
       default :
-        return grn_char_others;
+        return grn_str_others;
         break;
       }
       break;
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
   case 0x91 :
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0x92 :
     switch (str[2]) {
@@ -8689,18 +8691,18 @@ case 0xF0 :
     case 0x8A :
     case 0x8B :
     case 0x8C :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x8D :
-      if (str[3] < 0xAF) { return grn_char_alpha; }
-      return grn_char_others;
+      if (str[3] < 0xAF) { return grn_str_alpha; }
+      return grn_str_others;
       break;
     case 0x8E :
     case 0x8F :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x90 :
-      return grn_char_digit;
+      return grn_str_digit;
       break;
     case 0x91 :
       switch (str[3]) {
@@ -8739,7 +8741,7 @@ case 0xF0 :
       case 0xA0 :
       case 0xA1 :
       case 0xA2 :
-        return grn_char_digit;
+        return grn_str_digit;
         break;
       case 0xA3 :
       case 0xA4 :
@@ -8754,22 +8756,22 @@ case 0xF0 :
       case 0xAD :
       case 0xAE :
       case 0xAF :
-        return grn_char_others;
+        return grn_str_others;
         break;
       case 0xB0 :
       case 0xB1 :
       case 0xB2 :
       case 0xB3 :
-        return grn_char_symbol;
+        return grn_str_symbol;
         break;
       case 0xB4 :
       default :
-        return grn_char_others;
+        return grn_str_others;
         break;
       }
       break;
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
@@ -8783,18 +8785,18 @@ case 0xF0 :
   case 0x9A :
   case 0x9B :
   case 0x9C :
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0x9D :
     switch (str[2]) {
     case 0x80 :
     case 0x81 :
     case 0x82 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x83 :
-      if (str[3] < 0xB6) { return grn_char_symbol; }
-      return grn_char_others;
+      if (str[3] < 0xB6) { return grn_str_symbol; }
+      return grn_str_others;
       break;
     case 0x84 :
       switch (str[3]) {
@@ -8837,16 +8839,16 @@ case 0xF0 :
       case 0xA4 :
       case 0xA5 :
       case 0xA6 :
-        return grn_char_symbol;
+        return grn_str_symbol;
         break;
       case 0xA7 :
       case 0xA8 :
       case 0xA9 :
-        return grn_char_others;
+        return grn_str_others;
         break;
       case 0xAA :
       default :
-        return grn_char_symbol;
+        return grn_str_symbol;
         break;
       }
       break;
@@ -8889,23 +8891,23 @@ case 0xF0 :
       case 0xA2 :
       case 0xA3 :
       case 0xA4 :
-        return grn_char_symbol;
+        return grn_str_symbol;
         break;
       case 0xA5 :
       case 0xA6 :
       case 0xA7 :
       case 0xA8 :
       case 0xA9 :
-        return grn_char_others;
+        return grn_str_others;
         break;
       case 0xAA :
       case 0xAB :
       case 0xAC :
-        return grn_char_symbol;
+        return grn_str_symbol;
         break;
       case 0xAD :
       default :
-        return grn_char_others;
+        return grn_str_others;
         break;
       }
       break;
@@ -8914,11 +8916,11 @@ case 0xF0 :
       case 0x80 :
       case 0x81 :
       case 0x82 :
-        return grn_char_others;
+        return grn_str_others;
         break;
       case 0x83 :
       case 0x84 :
-        return grn_char_symbol;
+        return grn_str_symbol;
         break;
       case 0x85 :
       case 0x86 :
@@ -8927,7 +8929,7 @@ case 0xF0 :
       case 0x89 :
       case 0x8A :
       case 0x8B :
-        return grn_char_others;
+        return grn_str_others;
         break;
       case 0x8C :
       case 0x8D :
@@ -8959,53 +8961,53 @@ case 0xF0 :
       case 0xA7 :
       case 0xA8 :
       case 0xA9 :
-        return grn_char_symbol;
+        return grn_str_symbol;
         break;
       case 0xAA :
       case 0xAB :
       case 0xAC :
       case 0xAD :
-        return grn_char_others;
+        return grn_str_others;
         break;
       case 0xAE :
       default :
-        return grn_char_symbol;
+        return grn_str_symbol;
         break;
       }
       break;
     case 0x87 :
-      if (str[3] < 0x9E) { return grn_char_symbol; }
-      return grn_char_others;
+      if (str[3] < 0x9E) { return grn_str_symbol; }
+      return grn_str_others;
       break;
     case 0x88 :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x89 :
       switch (str[3]) {
       case 0x80 :
       case 0x81 :
-        return grn_char_symbol;
+        return grn_str_symbol;
         break;
       case 0x82 :
       case 0x83 :
       case 0x84 :
-        return grn_char_others;
+        return grn_str_others;
         break;
       case 0x85 :
-        return grn_char_symbol;
+        return grn_str_symbol;
         break;
       case 0x86 :
       default :
-        return grn_char_others;
+        return grn_str_others;
         break;
       }
       break;
     case 0x8A :
     case 0x8B :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x8C :
-      return grn_char_symbol;
+      return grn_str_symbol;
       break;
     case 0x8D :
       switch (str[3]) {
@@ -9032,7 +9034,7 @@ case 0xF0 :
       case 0x94 :
       case 0x95 :
       case 0x96 :
-        return grn_char_symbol;
+        return grn_str_symbol;
         break;
       case 0x97 :
       case 0x98 :
@@ -9043,7 +9045,7 @@ case 0xF0 :
       case 0x9D :
       case 0x9E :
       case 0x9F :
-        return grn_char_others;
+        return grn_str_others;
         break;
       case 0xA0 :
       case 0xA1 :
@@ -9063,25 +9065,25 @@ case 0xF0 :
       case 0xAF :
       case 0xB0 :
       case 0xB1 :
-        return grn_char_digit;
+        return grn_str_digit;
         break;
       case 0xB2 :
       default :
-        return grn_char_others;
+        return grn_str_others;
         break;
       }
       break;
     case 0x8E :
     case 0x8F :
-      return grn_char_others;
+      return grn_str_others;
       break;
     case 0x90 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x91 :
-      if (str[3] < 0x95) { return grn_char_alpha; }
-      if (str[3] < 0x96) { return grn_char_others; }
-      return grn_char_alpha;
+      if (str[3] < 0x95) { return grn_str_alpha; }
+      if (str[3] < 0x96) { return grn_str_others; }
+      return grn_str_alpha;
       break;
     case 0x92 :
       switch (str[3]) {
@@ -9114,42 +9116,42 @@ case 0xF0 :
       case 0x9A :
       case 0x9B :
       case 0x9C :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       case 0x9D :
-        return grn_char_others;
+        return grn_str_others;
         break;
       case 0x9E :
       case 0x9F :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       case 0xA0 :
       case 0xA1 :
-        return grn_char_others;
+        return grn_str_others;
         break;
       case 0xA2 :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       case 0xA3 :
       case 0xA4 :
-        return grn_char_others;
+        return grn_str_others;
         break;
       case 0xA5 :
       case 0xA6 :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       case 0xA7 :
       case 0xA8 :
-        return grn_char_others;
+        return grn_str_others;
         break;
       case 0xA9 :
       case 0xAA :
       case 0xAB :
       case 0xAC :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       case 0xAD :
-        return grn_char_others;
+        return grn_str_others;
         break;
       case 0xAE :
       case 0xAF :
@@ -9163,27 +9165,27 @@ case 0xF0 :
       case 0xB7 :
       case 0xB8 :
       case 0xB9 :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       case 0xBA :
-        return grn_char_others;
+        return grn_str_others;
         break;
       case 0xBB :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       case 0xBC :
-        return grn_char_others;
+        return grn_str_others;
         break;
       case 0xBD :
       default :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       }
       break;
     case 0x93 :
-      if (str[3] < 0x84) { return grn_char_alpha; }
-      if (str[3] < 0x85) { return grn_char_others; }
-      return grn_char_alpha;
+      if (str[3] < 0x84) { return grn_str_alpha; }
+      if (str[3] < 0x85) { return grn_str_others; }
+      return grn_str_alpha;
       break;
     case 0x94 :
       switch (str[3]) {
@@ -9193,20 +9195,20 @@ case 0xF0 :
       case 0x83 :
       case 0x84 :
       case 0x85 :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       case 0x86 :
-        return grn_char_others;
+        return grn_str_others;
         break;
       case 0x87 :
       case 0x88 :
       case 0x89 :
       case 0x8A :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       case 0x8B :
       case 0x8C :
-        return grn_char_others;
+        return grn_str_others;
         break;
       case 0x8D :
       case 0x8E :
@@ -9216,10 +9218,10 @@ case 0xF0 :
       case 0x92 :
       case 0x93 :
       case 0x94 :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       case 0x95 :
-        return grn_char_others;
+        return grn_str_others;
         break;
       case 0x96 :
       case 0x97 :
@@ -9228,10 +9230,10 @@ case 0xF0 :
       case 0x9A :
       case 0x9B :
       case 0x9C :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       case 0x9D :
-        return grn_char_others;
+        return grn_str_others;
         break;
       case 0x9E :
       case 0x9F :
@@ -9261,20 +9263,20 @@ case 0xF0 :
       case 0xB7 :
       case 0xB8 :
       case 0xB9 :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       case 0xBA :
-        return grn_char_others;
+        return grn_str_others;
         break;
       case 0xBB :
       case 0xBC :
       case 0xBD :
       case 0xBE :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       case 0xBF :
       default :
-        return grn_char_others;
+        return grn_str_others;
         break;
       }
       break;
@@ -9285,18 +9287,18 @@ case 0xF0 :
       case 0x82 :
       case 0x83 :
       case 0x84 :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       case 0x85 :
-        return grn_char_others;
+        return grn_str_others;
         break;
       case 0x86 :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       case 0x87 :
       case 0x88 :
       case 0x89 :
-        return grn_char_others;
+        return grn_str_others;
         break;
       case 0x8A :
       case 0x8B :
@@ -9305,14 +9307,14 @@ case 0xF0 :
       case 0x8E :
       case 0x8F :
       case 0x90 :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       case 0x91 :
-        return grn_char_others;
+        return grn_str_others;
         break;
       case 0x92 :
       default :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       }
       break;
@@ -9320,20 +9322,20 @@ case 0xF0 :
     case 0x97 :
     case 0x98 :
     case 0x99 :
-      return grn_char_alpha;
+      return grn_str_alpha;
       break;
     case 0x9A :
-      if (str[3] < 0xA6) { return grn_char_alpha; }
-      if (str[3] < 0xA8) { return grn_char_others; }
-      return grn_char_alpha;
+      if (str[3] < 0xA6) { return grn_str_alpha; }
+      if (str[3] < 0xA8) { return grn_str_others; }
+      return grn_str_alpha;
       break;
     case 0x9B :
       switch (str[3]) {
       case 0x80 :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       case 0x81 :
-        return grn_char_symbol;
+        return grn_str_symbol;
         break;
       case 0x82 :
       case 0x83 :
@@ -9360,10 +9362,10 @@ case 0xF0 :
       case 0x98 :
       case 0x99 :
       case 0x9A :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       case 0x9B :
-        return grn_char_symbol;
+        return grn_str_symbol;
         break;
       case 0x9C :
       case 0x9D :
@@ -9396,14 +9398,14 @@ case 0xF0 :
       case 0xB8 :
       case 0xB9 :
       case 0xBA :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       case 0xBB :
-        return grn_char_symbol;
+        return grn_str_symbol;
         break;
       case 0xBC :
       default :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       }
       break;
@@ -9430,10 +9432,10 @@ case 0xF0 :
       case 0x92 :
       case 0x93 :
       case 0x94 :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       case 0x95 :
-        return grn_char_symbol;
+        return grn_str_symbol;
         break;
       case 0x96 :
       case 0x97 :
@@ -9466,14 +9468,14 @@ case 0xF0 :
       case 0xB2 :
       case 0xB3 :
       case 0xB4 :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       case 0xB5 :
-        return grn_char_symbol;
+        return grn_str_symbol;
         break;
       case 0xB6 :
       default :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       }
       break;
@@ -9494,10 +9496,10 @@ case 0xF0 :
       case 0x8C :
       case 0x8D :
       case 0x8E :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       case 0x8F :
-        return grn_char_symbol;
+        return grn_str_symbol;
         break;
       case 0x90 :
       case 0x91 :
@@ -9530,14 +9532,14 @@ case 0xF0 :
       case 0xAC :
       case 0xAD :
       case 0xAE :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       case 0xAF :
-        return grn_char_symbol;
+        return grn_str_symbol;
         break;
       case 0xB0 :
       default :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       }
       break;
@@ -9552,10 +9554,10 @@ case 0xF0 :
       case 0x86 :
       case 0x87 :
       case 0x88 :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       case 0x89 :
-        return grn_char_symbol;
+        return grn_str_symbol;
         break;
       case 0x8A :
       case 0x8B :
@@ -9588,14 +9590,14 @@ case 0xF0 :
       case 0xA6 :
       case 0xA7 :
       case 0xA8 :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       case 0xA9 :
-        return grn_char_symbol;
+        return grn_str_symbol;
         break;
       case 0xAA :
       default :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       }
       break;
@@ -9604,10 +9606,10 @@ case 0xF0 :
       case 0x80 :
       case 0x81 :
       case 0x82 :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       case 0x83 :
-        return grn_char_symbol;
+        return grn_str_symbol;
         break;
       case 0x84 :
       case 0x85 :
@@ -9617,27 +9619,27 @@ case 0xF0 :
       case 0x89 :
       case 0x8A :
       case 0x8B :
-        return grn_char_alpha;
+        return grn_str_alpha;
         break;
       case 0x8C :
       case 0x8D :
-        return grn_char_others;
+        return grn_str_others;
         break;
       case 0x8E :
       default :
-        return grn_char_digit;
+        return grn_str_digit;
         break;
       }
       break;
     case 0xA0 :
     default :
-      return grn_char_others;
+      return grn_str_others;
       break;
     }
     break;
   case 0x9E :
   case 0x9F :
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0xA0 :
   case 0xA1 :
@@ -9649,38 +9651,38 @@ case 0xF0 :
   case 0xA7 :
   case 0xA8 :
   case 0xA9 :
-    return grn_char_kanji;
+    return grn_str_kanji;
     break;
   case 0xAA :
-    if (str[2] < 0x9B) { return grn_char_kanji; }
+    if (str[2] < 0x9B) { return grn_str_kanji; }
     if (str[2] == 0x9B) {
-      if (str[3] < 0xA0) { return grn_char_kanji; }
-      return grn_char_others;
+      if (str[3] < 0xA0) { return grn_str_kanji; }
+      return grn_str_others;
     }
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0xAB :
   case 0xAC :
   case 0xAD :
   case 0xAE :
-    return grn_char_others;
+    return grn_str_others;
     break;
   case 0xAF :
-    if (str[2] < 0xA0) { return grn_char_others; }
-    if (str[2] < 0xA8) { return grn_char_kanji; }
+    if (str[2] < 0xA0) { return grn_str_others; }
+    if (str[2] < 0xA8) { return grn_str_kanji; }
     if (str[2] == 0xA8) {
-      if (str[3] < 0xA0) { return grn_char_kanji; }
-      return grn_char_others;
+      if (str[3] < 0xA0) { return grn_str_kanji; }
+      return grn_str_others;
     }
-    return grn_char_others;
+    return grn_str_others;
     break;
   default :
-    return grn_char_others;
+    return grn_str_others;
     break;
   }
   break;
 default :
-  return grn_char_others;
+  return grn_str_others;
   break;
 }
   return -1;
@@ -80238,4 +80240,6 @@ case 0xE3 :
 }
   return 0;
 }
+
+#endif /* NO_NFKC */
 

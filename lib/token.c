@@ -202,7 +202,7 @@ ngram_init(grn_ctx *ctx, grn_obj *table, grn_user_data *user_data, uint8_t ngram
            uint8_t uni_alpha, uint8_t uni_digit, uint8_t uni_symbol, uint8_t ignore_blank)
 {
   grn_obj *str;
-  int nflags = GRN_NORMALIZE_REMOVE_BLANK|GRN_NORMALIZE_WITH_TYPES;
+  int nflags = GRN_STR_REMOVEBLANK|GRN_STR_WITH_CTYPES;
   grn_ngram_tokenizer *token;
   grn_obj_flags table_flags;
   if (!(str = grn_ctx_pop(ctx))) {
@@ -284,30 +284,30 @@ ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   const unsigned char *p = token->next, *r = p, *e = token->end;
   int32_t len = 0, pos = token->pos + token->skip, status = 0;
   uint_least8_t *cp = token->ctypes ? token->ctypes + pos : NULL;
-  if (cp && token->uni_alpha && GRN_CHAR_TYPE(*cp) == grn_char_alpha) {
+  if (cp && token->uni_alpha && GRN_STR_CTYPE(*cp) == grn_str_alpha) {
     while ((cl = grn_charlen_(ctx, (char *)r, (char *)e, token->encoding))) {
       len++;
       r += cl;
-      if (/* !token->ignore_blank && */ GRN_CHAR_IS_BLANK(*cp)) { break; }
-      if (GRN_CHAR_TYPE(*++cp) != grn_char_alpha) { break; }
+      if (/* !token->ignore_blank && */ GRN_STR_ISBLANK(*cp)) { break; }
+      if (GRN_STR_CTYPE(*++cp) != grn_str_alpha) { break; }
     }
     token->next = r;
     token->overlap = 0;
-  } else if (cp && token->uni_digit && GRN_CHAR_TYPE(*cp) == grn_char_digit) {
+  } else if (cp && token->uni_digit && GRN_STR_CTYPE(*cp) == grn_str_digit) {
     while ((cl = grn_charlen_(ctx, (char *)r, (char *)e, token->encoding))) {
       len++;
       r += cl;
-      if (/* !token->ignore_blank && */ GRN_CHAR_IS_BLANK(*cp)) { break; }
-      if (GRN_CHAR_TYPE(*++cp) != grn_char_digit) { break; }
+      if (/* !token->ignore_blank && */ GRN_STR_ISBLANK(*cp)) { break; }
+      if (GRN_STR_CTYPE(*++cp) != grn_str_digit) { break; }
     }
     token->next = r;
     token->overlap = 0;
-  } else if (cp && token->uni_symbol && GRN_CHAR_TYPE(*cp) == grn_char_symbol) {
+  } else if (cp && token->uni_symbol && GRN_STR_CTYPE(*cp) == grn_str_symbol) {
     while ((cl = grn_charlen_(ctx, (char *)r, (char *)e, token->encoding))) {
       len++;
       r += cl;
-      if (!token->ignore_blank && GRN_CHAR_IS_BLANK(*cp)) { break; }
-      if (GRN_CHAR_TYPE(*++cp) != grn_char_symbol) { break; }
+      if (!token->ignore_blank && GRN_STR_ISBLANK(*cp)) { break; }
+      if (GRN_STR_CTYPE(*++cp) != grn_str_symbol) { break; }
     }
     token->next = r;
     token->overlap = 0;
@@ -336,11 +336,11 @@ ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       while (len < token->ngram_unit &&
              (cl = grn_charlen_(ctx, (char *)r, (char *)e, token->encoding))) {
         if (cp) {
-          if (!token->ignore_blank && GRN_CHAR_IS_BLANK(*cp)) { break; }
+          if (!token->ignore_blank && GRN_STR_ISBLANK(*cp)) { break; }
           cp++;
-          if ((token->uni_alpha && GRN_CHAR_TYPE(*cp) == grn_char_alpha) ||
-              (token->uni_digit && GRN_CHAR_TYPE(*cp) == grn_char_digit) ||
-              (token->uni_symbol && GRN_CHAR_TYPE(*cp) == grn_char_symbol)) { break; }
+          if ((token->uni_alpha && GRN_STR_CTYPE(*cp) == grn_str_alpha) ||
+              (token->uni_digit && GRN_STR_CTYPE(*cp) == grn_str_digit) ||
+              (token->uni_symbol && GRN_STR_CTYPE(*cp) == grn_str_symbol)) { break; }
         }
         len++;
         r += cl;

@@ -17,15 +17,20 @@
 #ifndef GRN_NFKC_H
 #define GRN_NFKC_H
 
-#include <groonga.h>
-
 #ifdef	__cplusplus
 extern "C" {
 #endif
 
-unsigned char grn_nfkc_ctype(const unsigned char *str);
-const char *grn_nfkc_map1(const unsigned char *str);
-const char *grn_nfkc_map2(const unsigned char *prefix, const unsigned char *suffix);
+enum {
+  grn_str_null = 0,
+  grn_str_alpha,
+  grn_str_digit,
+  grn_str_symbol,
+  grn_str_hiragana,
+  grn_str_katakana,
+  grn_str_kanji,
+  grn_str_others
+};
 
 #ifdef __cplusplus
 }

@@ -21,6 +21,10 @@
 #include "groonga_in.h"
 #endif /* GROONGA_IN_H */
 
+#ifndef GRN_NFKC_H
+#include "nfkc.h"
+#endif /* GRN_NFKC_H */
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -41,6 +45,10 @@ typedef struct {
 } grn_str_getopt_opt;
 
 GRN_API size_t grn_str_len(grn_ctx *ctx, const char *str, grn_encoding encoding, const char **last);
+
+#define GRN_STR_BLANK 0x80
+#define GRN_STR_ISBLANK(c) (c & 0x80)
+#define GRN_STR_CTYPE(c) (c & 0x7f)
 
 GRN_API int grn_isspace(const char *s, grn_encoding encoding);
 int8_t grn_atoi8(const char *nptr, const char *end, const char **rest);
@@ -72,6 +80,7 @@ grn_rc grn_substring(grn_ctx *ctx, char **str, char **str_end, int start, int en
 void grn_logger_fin(void);
 
 GRN_API int grn_charlen_(grn_ctx *ctx, const char *str, const char *end, grn_encoding encoding);
+GRN_API int grn_str_charlen_utf8(grn_ctx *ctx, const unsigned char *str, const unsigned char *end);
 GRN_API grn_str *grn_str_open_(grn_ctx *ctx, const char *str, unsigned int str_len, int flags, grn_encoding encoding);
 
 #define GRN_BULK_INCR_LEN(buf,len) {\

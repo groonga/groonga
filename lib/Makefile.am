@@ -14,6 +14,7 @@ DEFS += -D_REENTRANT -DGROONGA_VERSION=\"$(GROONGA_VERSION)\" $(GRN_DEFS)
 libgroonga_la_SOURCES =				\
 	io.c					\
 	str.c					\
+	nfkc.c					\
 	normalizer.c				\
 	snip.c					\
 	store.c					\
@@ -53,6 +54,7 @@ noinst_HEADERS =				\
 	hash.h					\
 	ii.h					\
 	io.h					\
+	nfkc.h					\
 	normalizer.c				\
 	output.h				\
 	pat.h					\

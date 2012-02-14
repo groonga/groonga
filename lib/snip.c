@@ -250,7 +250,7 @@ grn_snip_cond_init(grn_ctx *ctx, snip_cond *sc, const char *keyword, unsigned in
                    grn_encoding enc, int flags)
 {
   size_t norm_blen;
-  int f = GRN_NORMALIZE_REMOVE_BLANK;
+  int f = GRN_STR_REMOVEBLANK;
   memset(sc, 0, sizeof(snip_cond));
   if (flags & GRN_SNIP_NORMALIZE) { f |= GRN_STR_NORMALIZE; }
   if (!(sc->keyword = grn_str_open(ctx, keyword, keyword_len, f))) {
@@ -524,7 +524,7 @@ grn_snip_exec(grn_ctx *ctx, grn_snip *snip, const char *string, unsigned int str
               unsigned int *nresults, unsigned int *max_tagged_len)
 {
   size_t i;
-  int f = GRN_NORMALIZE_WITH_CHECKS|GRN_NORMALIZE_REMOVE_BLANK;
+  int f = GRN_STR_WITH_CHECKS|GRN_STR_REMOVEBLANK;
   if (!snip || !string || !nresults || !max_tagged_len) {
     return GRN_INVALID_ARGUMENT;
   }

@@ -1541,7 +1541,7 @@ grn_pat_scan(grn_ctx *ctx, grn_pat *pat, const char *str, unsigned int str_len,
   int n = 0;
   grn_id tid;
   if (pat->obj.header.flags & GRN_OBJ_KEY_NORMALIZE) {
-    grn_str *nstr = grn_str_open(ctx, str, str_len, GRN_STR_NORMALIZE|GRN_NORMALIZE_WITH_CHECKS);
+    grn_str *nstr = grn_str_open(ctx, str, str_len, GRN_STR_NORMALIZE|GRN_STR_WITH_CHECKS);
     if (nstr) {
       int16_t *cp = nstr->checks;
       unsigned int offset = 0, offset0 = 0;

@@ -8,8 +8,7 @@ if WITH_BENCHMARK
 noinst_PROGRAMS =		\
 	bench-table-factory	\
 	bench-geo-distance	\
-	bench-geo-select	\
-	bench-normalize
+	bench-geo-select
 endif
 
 INCLUDES =			\
