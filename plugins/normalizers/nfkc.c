@@ -20,7 +20,7 @@
 #include <string.h>
 
 #include <groonga/normalizer.h>
-#include "nfkc-unicode-5.1.h"
+#include "nfkc.h"
 
 static grn_obj *
 utf8_nfkc_normalize(grn_ctx *ctx, int nargs, grn_obj **args,
@@ -45,7 +45,7 @@ utf8_nfkc_normalize(grn_ctx *ctx, int nargs, grn_obj **args,
   if (!(norm = GRN_PLUGIN_MALLOC(ctx, ds + 1))) {
     GRN_PLUGIN_ERROR(ctx,
                      GRN_NO_MEMORY_AVAILABLE,
-                     "[normalizer][nfkc][unicode5.1] "
+                     "[normalizer][utf8][nfkc] "
                      "failed to allocate normalized text space");
     return NULL;
   }
@@ -54,7 +54,7 @@ utf8_nfkc_normalize(grn_ctx *ctx, int nargs, grn_obj **args,
       GRN_PLUGIN_FREE(ctx, norm);
       GRN_PLUGIN_ERROR(ctx,
                        GRN_NO_MEMORY_AVAILABLE,
-                       "[normalizer][nfkc][unicode5.1] "
+                       "[normalizer][utf8][nfkc] "
                        "failed to allocate checks space");
       return NULL;
     }
@@ -66,7 +66,7 @@ utf8_nfkc_normalize(grn_ctx *ctx, int nargs, grn_obj **args,
       GRN_PLUGIN_FREE(ctx, norm);
       GRN_PLUGIN_ERROR(ctx,
                        GRN_NO_MEMORY_AVAILABLE,
-                       "[normalizer][nfkc][unicode5.1] "
+                       "[normalizer][utf8][nfkc] "
                        "failed to allocate character types space");
       return NULL;
     }
@@ -80,13 +80,13 @@ utf8_nfkc_normalize(grn_ctx *ctx, int nargs, grn_obj **args,
     if (!(ls = grn_charlen_utf8(ctx, s, e))) {
       break;
     }
-    if ((p = (unsigned char *)grn_nfkc_unicode_51_map1(s))) {
+    if ((p = (unsigned char *)grn_nfkc_map1(s))) {
       pe = p + strlen((char *)p);
     } else {
       p = s;
       pe = p + ls;
     }
-    if (d_ && (p2 = (unsigned char *)grn_nfkc_unicode_51_map2(d_, p))) {
+    if (d_ && (p2 = (unsigned char *)grn_nfkc_map2(d_, p))) {
       p = p2;
       pe = p + strlen((char *)p);
       if (cp) { cp--; }
@@ -113,7 +113,7 @@ utf8_nfkc_normalize(grn_ctx *ctx, int nargs, grn_obj **args,
             GRN_PLUGIN_FREE(ctx, norm);
             GRN_PLUGIN_ERROR(ctx,
                              GRN_NO_MEMORY_AVAILABLE,
-                             "[normalizer][nfkc][unicode5.1] "
+                             "[normalizer][utf8][nfkc] "
                              "failed to reallocate normalized text space");
             return NULL;
           }
@@ -129,7 +129,7 @@ utf8_nfkc_normalize(grn_ctx *ctx, int nargs, grn_obj **args,
               GRN_PLUGIN_FREE(ctx, norm);
               GRN_PLUGIN_ERROR(ctx,
                                GRN_NO_MEMORY_AVAILABLE,
-                               "[normalizer][nfkc][unicode5.1] "
+                               "[normalizer][utf8][nfkc] "
                                "failed to reallocate checks space");
               return NULL;
             }
@@ -144,7 +144,7 @@ utf8_nfkc_normalize(grn_ctx *ctx, int nargs, grn_obj **args,
               GRN_PLUGIN_FREE(ctx, norm);
               GRN_PLUGIN_ERROR(ctx,
                                GRN_NO_MEMORY_AVAILABLE,
-                               "[normalizer][nfkc][unicode5.1] "
+                               "[normalizer][utf8][nfkc] "
                                "failed to reallocate character types space");
               return NULL;
             }
@@ -156,7 +156,7 @@ utf8_nfkc_normalize(grn_ctx *ctx, int nargs, grn_obj **args,
         d_ = d;
         d += lp;
         length++;
-        if (cp) { *cp++ = grn_nfkc_unicode_51_ctype(p); }
+        if (cp) { *cp++ = grn_nfkc_ctype(p); }
         if (ch) {
           size_t i;
           if (s_ == s + ls) {
@@ -192,7 +192,7 @@ GRN_PLUGIN_REGISTER(grn_ctx *ctx)
 {
   grn_obj *normalizer;
 
-  normalizer = GRN_NORMALIZER_REGISTER(ctx, "NormalizerNFKC51",
+  normalizer = GRN_NORMALIZER_REGISTER(ctx, "NormalizerUTF8NFKC",
                                        NULL, utf8_nfkc_normalize, NULL);
   if (normalizer) {
     return GRN_SUCCESS;

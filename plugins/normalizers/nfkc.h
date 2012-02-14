@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009-2012 Brazil
+/* Copyright(C) 2009 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -23,10 +23,9 @@
 extern "C" {
 #endif
 
-unsigned char grn_nfkc_unicode_51_ctype(const unsigned char *str);
-const char *grn_nfkc_unicode_51_map1(const unsigned char *str);
-const char *grn_nfkc_unicode_51_map2(const unsigned char *prefix,
-                                     const unsigned char *suffix);
+unsigned char grn_nfkc_ctype(const unsigned char *str);
+const char *grn_nfkc_map1(const unsigned char *str);
+const char *grn_nfkc_map2(const unsigned char *prefix, const unsigned char *suffix);
 
 #ifdef __cplusplus
 }

@@ -32,7 +32,7 @@ grn_normalizer_find(grn_ctx *ctx, grn_encoding encoding)
     break;
   case GRN_ENC_UTF8 :
 #ifdef WITH_NFKC
-    normalizer_id = GRN_DB_NORMALIZER_NFKC51;
+    normalizer_id = GRN_DB_NORMALIZER_UTF8_NFKC;
 #else /* WITH_NFKC */
     normalizer_id = GRN_DB_NORMALIZER_ASCII;
 #endif /* WITH_NFKC */
@@ -1123,6 +1123,14 @@ grn_db_init_builtin_normalizers(grn_ctx *ctx)
   if (!obj || ((grn_db_obj *)obj)->id != GRN_DB_NORMALIZER_ASCII) {
     return GRN_FILE_CORRUPT;
   }
+#ifdef WITH_NFKC
+  if (grn_plugin_register(ctx, "normalizers/nfkc")) {
+    ERRCLR(ctx);
+#endif
+    grn_obj_register(ctx, grn_ctx_db(ctx), "NormalizerUTF8NFKC", 18);
+#ifdef WITH_NFKC
+  }
+#endif
   obj = DEF_NORMALIZERIZER("NormalizerEUCJP", eucjp_normalize);
   if (!obj || ((grn_db_obj *)obj)->id != GRN_DB_NORMALIZER_EUC_JP) {
     return GRN_FILE_CORRUPT;
@@ -1139,14 +1147,6 @@ grn_db_init_builtin_normalizers(grn_ctx *ctx)
   if (!obj || ((grn_db_obj *)obj)->id != GRN_DB_NORMALIZER_KOI8R) {
     return GRN_FILE_CORRUPT;
   }
-#ifdef WITH_NFKC
-  if (grn_plugin_register(ctx, "normalizers/nfkc")) {
-    ERRCLR(ctx);
-#endif
-    grn_obj_register(ctx, grn_ctx_db(ctx), "NormalizerNFKC51", 16);
-#ifdef WITH_NFKC
-  }
-#endif
   /* obj = DEF_NORMALIZERIZER("NormalizerUTF8UCA", utf8_uca_normalize); */
   /* if (!obj || ((grn_db_obj *)obj)->id != GRN_DB_NORMALIZER_UTF8_UCA) { */
   /*   return GRN_FILE_CORRUPT; */

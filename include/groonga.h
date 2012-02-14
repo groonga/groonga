@@ -593,11 +593,11 @@ typedef enum {
 
 typedef enum {
   GRN_DB_NORMALIZER_ASCII = 96,
+  GRN_DB_NORMALIZER_UTF8_NFKC,       /* Normalization Form KC */
   GRN_DB_NORMALIZER_EUC_JP,
   GRN_DB_NORMALIZER_SJIS,
   GRN_DB_NORMALIZER_LATIN1,
   GRN_DB_NORMALIZER_KOI8R,
-  GRN_DB_NORMALIZER_NFKC51,          /* Normalization Form KC for Unicode 5.1 */
   GRN_DB_NORMALIZER_UTF8_UCA         /* Unicode Collation Algorithm */
 } grn_builtin_normalizer;
 
