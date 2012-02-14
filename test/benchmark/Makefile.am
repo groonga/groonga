@@ -57,10 +57,4 @@ run-bench-geo-select: bench-geo-select
 	  srcdir="$(srcdir)"			\
 	  $(srcdir)/bench-geo-select.sh
 
-run-bench-normalize: bench-normalize
-	@echo $@:
-	env						\
-	  GRN_PLUGINS_DIR="$(top_builddir)/plugins"	\
-	  ./bench-normalize
-
 benchmark: $(benchmarks)
