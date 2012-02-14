@@ -159,15 +159,13 @@ data_hash_table_create(void)
            NULL,
            NULL);
   ADD_DATA("hash - key normalize",
-           "table_create Blog TABLE_HASH_KEY ShortText "
-           "--normalizer NormalizerUTF8NFKC",
+           "table_create Blog TABLE_HASH_KEY|KEY_NORMALIZE ShortText",
            "Blog",
            GRN_OBJ_TABLE_HASH_KEY | GRN_OBJ_KEY_NORMALIZE,
            "ShortText",
            NULL);
   ADD_DATA("hash - key normalize - value",
-           "table_create Blog TABLE_HASH_KEY ShortText Int32 "
-           "--normalizer NormalizerUTF8NFKC",
+           "table_create Blog TABLE_HASH_KEY|KEY_NORMALIZE ShortText Int32",
            "Blog",
            GRN_OBJ_TABLE_HASH_KEY | GRN_OBJ_KEY_NORMALIZE,
            "ShortText",
@@ -183,26 +181,6 @@ data_patricia_trie_create(void)
            GRN_OBJ_TABLE_PAT_KEY,
            "ShortText",
            NULL);
-  ADD_DATA("patricia trie - without key",
-           "table_create Blog TABLE_PAT_KEY",
-           "Blog",
-           GRN_OBJ_TABLE_PAT_KEY,
-           NULL,
-           NULL);
-  ADD_DATA("patricia trie - key normalize",
-           "table_create Blog TABLE_PAT_KEY ShortText "
-           "--normalizer NormalizerUTF8NFKC",
-           "Blog",
-           GRN_OBJ_TABLE_PAT_KEY | GRN_OBJ_KEY_NORMALIZE,
-           "ShortText",
-           NULL);
-  ADD_DATA("patricia trie - key normalize - value",
-           "table_create Blog TABLE_PAT_KEY ShortText Int32 "
-           "--normalizer NormalizerUTF8NFKC",
-           "Blog",
-           GRN_OBJ_TABLE_PAT_KEY | GRN_OBJ_KEY_NORMALIZE,
-           "ShortText",
-           "Int32");
 }
 
 static void
@@ -214,26 +192,6 @@ data_double_array_trie_create(void)
            GRN_OBJ_TABLE_DAT_KEY,
            "ShortText",
            NULL);
-  ADD_DATA("double-array trie - without key",
-           "table_create Blog TABLE_DAT_KEY",
-           "Blog",
-           GRN_OBJ_TABLE_DAT_KEY,
-           NULL,
-           NULL);
-  ADD_DATA("double-array trie - key normalize",
-           "table_create Blog TABLE_DAT_KEY ShortText "
-           "--normalizer NormalizerUTF8NFKC",
-           "Blog",
-           GRN_OBJ_TABLE_DAT_KEY | GRN_OBJ_KEY_NORMALIZE,
-           "ShortText",
-           NULL);
-  ADD_DATA("double-array trie - key normalize - value",
-           "table_create Blog TABLE_DAT_KEY ShortText Int32 "
-           "--normalizer NormalizerUTF8NFKC",
-           "Blog",
-           GRN_OBJ_TABLE_DAT_KEY | GRN_OBJ_KEY_NORMALIZE,
-           "ShortText",
-           "Int32");
 }
 
 static void

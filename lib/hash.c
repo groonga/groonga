@@ -877,7 +877,7 @@ io_hash_init(grn_hash *ih, grn_ctx *ctx, const char *path, uint32_t key_size,
     header->normalizer = GRN_ID_NIL;
     ih->normalizer = NULL;
   }
-  ih->obj.header.flags = header->flags;
+  ih->obj.header.flags = flags;
   ih->ctx = ctx;
   ih->key_size = key_size;
   ih->encoding = encoding;
@@ -978,6 +978,7 @@ grn_hash_open(grn_ctx *ctx, const char *path)
       if (hash) {
         if (!(header->flags & GRN_HASH_TINY)) {
           GRN_DB_OBJ_SET_TYPE(hash, GRN_TABLE_HASH_KEY);
+          hash->obj.header.flags = header->flags;
           hash->ctx = ctx;
           hash->key_size = header->key_size;
           hash->encoding = header->encoding;
@@ -995,7 +996,6 @@ grn_hash_open(grn_ctx *ctx, const char *path)
             header->normalizer = grn_normalizer_find(ctx, ctx->encoding);
           }
           hash->normalizer = grn_ctx_at(ctx, header->normalizer);
-          hash->obj.header.flags = header->flags;
           return (grn_hash *)hash;
         } else {
           GRN_LOG(ctx, GRN_LOG_NOTICE, "invalid hash flag. (%x)", header->flags);
