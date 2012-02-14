@@ -6343,11 +6343,12 @@ const int II_BUFFER_ORDER = GRN_CURSOR_BY_ID;
 #else /* II_BUFFER_ORDER_BY_ID */
 const int II_BUFFER_ORDER = GRN_CURSOR_BY_KEY;
 #endif /* II_BUFFER_ORDER_BY_ID */
-const uint16_t II_BUFFER_NTERMS_PER_BUFFER = 16300;
+//const uint16_t II_BUFFER_NTERMS_PER_BUFFER = 16380;
+const uint16_t II_BUFFER_NTERMS_PER_BUFFER = 8190;
 const uint32_t II_BUFFER_PACKED_BUFFER_SIZE = 0x4000000;
 const char *TMPFILE_PATH = "grn_ii_buffer_tmp";
 const uint32_t II_BUFFER_NCOUNTERS_MARGIN = 0x100000;
-const size_t II_BUFFER_BLOCK_SIZE = 0x100000;
+const size_t II_BUFFER_BLOCK_SIZE = 0x1000000;
 const uint32_t II_BUFFER_BLOCK_READ_UNIT_SIZE = 0x200000;
 
 typedef struct {
@@ -6399,6 +6400,7 @@ struct _grn_ii_buffer {
   buffer *term_buffer;
   datavec data_vectors[MAX_N_ELEMENTS + 1];
   uint8_t *packed;
+  uint32_t packed_buf_size;
   uint32_t packed_len;
   uint64_t total_chunk_size;
 };
@@ -6408,6 +6410,8 @@ grn_ii_buffer_flush(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
 {
   uint8_t *outbuf, *outbufp, *outbufp_;
   ii_buffer_block *block;
+  GRN_LOG(ctx, GRN_LOG_NOTICE, "flushing:%d npostings:%u",
+          ii_buffer->nblocks, ii_buffer->blockpos);
   outbuf = (uint8_t *)GRN_MALLOC(ii_buffer->blockpos * 7 * sizeof(uint32_t));
   /* if (!outbuf) { err } */
   outbufp_ = outbufp = outbuf;
@@ -6522,6 +6526,8 @@ grn_ii_buffer_flush(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
     ssize_t r = write(ii_buffer->tmpfd, outbuf, outbufp - outbuf);
     if (r > 0) { ii_buffer->filepos += r; }
     block->tail = ii_buffer->filepos;
+    GRN_LOG(ctx, GRN_LOG_NOTICE, "flushed: %d encoded_size:%jdKB",
+            ii_buffer->nblocks, r >> 10);
   }
   ii_buffer->nblocks++;
   GRN_FREE(outbuf);
@@ -6668,8 +6674,12 @@ grn_ii_buffer_chunk_flush(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
   ii_buffer->term_buffer->header.nterms_void = 0;
   buffer_segment_update(ii_buffer->ii, ii_buffer->lseg, ii_buffer->dseg);
   ii_buffer->ii->header->total_chunk_size += ii_buffer->packed_len;
-  ii_buffer->term_buffer = NULL;
   ii_buffer->total_chunk_size += ii_buffer->packed_len;
+  GRN_LOG(ctx, GRN_LOG_NOTICE, "nterms=%d chunk=%d total=%zuKB",
+          ii_buffer->term_buffer->header.nterms,
+          ii_buffer->term_buffer->header.chunk_size,
+          ii_buffer->ii->header->total_chunk_size >> 10);
+  ii_buffer->term_buffer = NULL;
   ii_buffer->packed = NULL;
   ii_buffer->packed_len = 0;
 }
@@ -6699,22 +6709,6 @@ grn_ii_buffer_merge(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
     uint64_t spos = 0;
     uint32_t nrecs = 0;
     uint32_t nposts = 0;
-    uint16_t nterm;
-    buffer_term *bt;
-    if (!ii_buffer->term_buffer) {
-      uint32_t lseg;
-      void *term_buffer;
-      for (lseg = 0; lseg < GRN_II_MAX_LSEG; lseg++) {
-        if (ii_buffer->ii->header->binfo[lseg] == NOT_ASSIGNED) { break; }
-      }
-      ii_buffer->lseg = lseg;
-      ii_buffer->dseg = segment_get(ctx, ii_buffer->ii);
-      GRN_IO_SEG_REF(ii_buffer->ii->seg, ii_buffer->dseg, term_buffer);
-      ii_buffer->term_buffer = (buffer *)term_buffer;
-    }
-    nterm = ii_buffer->term_buffer->header.nterms++;
-    bt = &ii_buffer->term_buffer->terms[nterm];
-    a[0] = SEG2POS(ii_buffer->lseg, (sizeof(buffer_header) + sizeof(buffer_term) * nterm));
     {
       int i;
       for (i = 0; i < nhits; i++) {
@@ -6758,24 +6752,60 @@ grn_ii_buffer_merge(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
       ii_buffer->data_vectors[1].data_size = nrecs;
       ii_buffer->data_vectors[2].data_size = nposts;
 
-      ii_buffer->data_vectors[0].flags = ((nrecs < 16) || (nrecs <= (lr >> 8))) ? 0 : USE_P_ENC;
-      ii_buffer->data_vectors[1].flags = (nrecs < 3) ? 0 : USE_P_ENC;
+      ii_buffer->data_vectors[0].flags =
+        ((nrecs < 16) || (nrecs <= (lr >> 8))) ? 0 : USE_P_ENC;
+      ii_buffer->data_vectors[1].flags =
+        (nrecs < 3) ? 0 : USE_P_ENC;
       ii_buffer->data_vectors[2].flags =
         (((nposts < 32) || (nposts <= (spos >> 13))) ? 0 : USE_P_ENC)|ODD;
     }
-    if (!ii_buffer->packed) { ii_buffer->packed = GRN_MALLOC(II_BUFFER_PACKED_BUFFER_SIZE * 2); }
     {
-      int packed_len = grn_p_encv(ctx, ii_buffer->data_vectors, ii_buffer->ii->n_elements,
-                                  ii_buffer->packed + ii_buffer->packed_len);
-      bt->tid = tid;
-      bt->size_in_buffer = 0;
-      bt->pos_in_buffer = 0;
-      bt->size_in_chunk = packed_len;
-      bt->pos_in_chunk = ii_buffer->packed_len;
-      ii_buffer->packed_len += packed_len;
+      uint32_t max_size = (nrecs * 2 + nposts);
+      if (ii_buffer->packed &&
+          ii_buffer->packed_buf_size <
+          ii_buffer->packed_len + max_size) {
+        grn_ii_buffer_chunk_flush(ctx, ii_buffer);
+      }
+      if (!ii_buffer->packed) {
+        uint32_t buf_size = (max_size > II_BUFFER_PACKED_BUFFER_SIZE)
+          ? max_size : II_BUFFER_PACKED_BUFFER_SIZE;
+        if ((ii_buffer->packed = GRN_MALLOC(buf_size))) {
+          ii_buffer->packed_buf_size = buf_size;
+        }
+      }
     }
-    if (nterm == II_BUFFER_NTERMS_PER_BUFFER || ii_buffer->packed_len > II_BUFFER_PACKED_BUFFER_SIZE) {
-      grn_ii_buffer_chunk_flush(ctx, ii_buffer);
+    {
+      uint16_t nterm;
+      buffer_term *bt;
+      if (!ii_buffer->term_buffer) {
+        uint32_t lseg;
+        void *term_buffer;
+        for (lseg = 0; lseg < GRN_II_MAX_LSEG; lseg++) {
+          if (ii_buffer->ii->header->binfo[lseg] == NOT_ASSIGNED) { break; }
+        }
+        ii_buffer->lseg = lseg;
+        ii_buffer->dseg = segment_get(ctx, ii_buffer->ii);
+        GRN_IO_SEG_REF(ii_buffer->ii->seg, ii_buffer->dseg, term_buffer);
+        ii_buffer->term_buffer = (buffer *)term_buffer;
+      }
+      nterm = ii_buffer->term_buffer->header.nterms++;
+      bt = &ii_buffer->term_buffer->terms[nterm];
+      a[0] = SEG2POS(ii_buffer->lseg,
+                     (sizeof(buffer_header) + sizeof(buffer_term) * nterm));
+      {
+        int packed_len = grn_p_encv(ctx, ii_buffer->data_vectors,
+                                    ii_buffer->ii->n_elements,
+                                    ii_buffer->packed + ii_buffer->packed_len);
+        bt->tid = tid;
+        bt->size_in_buffer = 0;
+        bt->pos_in_buffer = 0;
+        bt->size_in_chunk = packed_len;
+        bt->pos_in_chunk = ii_buffer->packed_len;
+        ii_buffer->packed_len += packed_len;
+      }
+      if (ii_buffer->term_buffer->header.nterms == II_BUFFER_NTERMS_PER_BUFFER) {
+        grn_ii_buffer_chunk_flush(ctx, ii_buffer);
+      }
     }
   }
 }
