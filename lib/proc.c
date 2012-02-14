@@ -863,8 +863,11 @@ proc_table_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
                              value_type);
     if (table) {
       grn_obj *tokenizer_name;
+      grn_obj *normalizer_name;
 
       tokenizer_name = VAR(4);
+      normalizer_name = VAR(5);
+
       if (GRN_TEXT_LEN(tokenizer_name)) {
         grn_obj *tokenizer;
 
@@ -883,12 +886,7 @@ proc_table_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
           table = NULL;
         }
       }
-    }
 
-    if (table) {
-      grn_obj *normalizer_name;
-
-      normalizer_name = VAR(5);
       if (GRN_TEXT_LEN(normalizer_name)) {
         grn_obj *normalizer;
 
@@ -899,7 +897,7 @@ proc_table_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
           grn_obj_set_info(ctx, table, GRN_INFO_NORMALIZER, normalizer);
         } else {
           ERR(GRN_INVALID_ARGUMENT,
-              "[table][create] unknown normalizer is specified: "
+              "[table][create] unknown normalizer is specified: ",
               "<%.*s> (%.*s)",
               GRN_TEXT_LEN(table_name), GRN_TEXT_VALUE(table_name),
               GRN_TEXT_LEN(normalizer_name), GRN_TEXT_VALUE(normalizer_name));
@@ -907,10 +905,10 @@ proc_table_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
           table = NULL;
         }
       }
-    }
 
-    if (table) {
-      grn_obj_unlink(ctx, table);
+      if (table) {
+        grn_obj_unlink(ctx, table);
+      }
     }
   } else {
     ERR(GRN_INVALID_ARGUMENT,

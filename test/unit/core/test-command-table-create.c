@@ -31,13 +31,12 @@ void test_default_tokenizer(void);
 void test_normalizer(void);
 
 void test_invalid_name(void);
-void test_default_tokenizer_nonexistent(void);
 
 static gchar *tmp_directory;
 static const gchar *database_path;
 
 static grn_ctx *context;
-static grn_obj *database, *table;
+static grn_obj *database, *users;
 
 void
 cut_startup(void)
@@ -70,14 +69,14 @@ cut_setup(void)
 
   database_path = cut_build_path(tmp_directory, "database.groonga", NULL);
   database = grn_db_create(context, database_path, NULL);
-  table = NULL;
+  users = NULL;
 }
 
 void
 cut_teardown(void)
 {
   if (context) {
-    grn_obj_unlink(context, table);
+    grn_obj_unlink(context, users);
     grn_obj_close(context, database);
     grn_ctx_fin(context);
     g_free(context);
@@ -87,49 +86,42 @@ cut_teardown(void)
 }
 
 static void
-grn_test_assert_exist(const gchar *table_name)
+grn_test_assert_users_exist(void)
 {
-  table = grn_ctx_get(context, table_name, strlen(table_name));
-  grn_test_assert_not_null(context, table);
-}
-
-static void
-grn_test_assert_not_exist(const gchar *table_name)
-{
-  table = grn_ctx_get(context, table_name, strlen(table_name));
-  grn_test_assert_null(context, table);
+  const gchar *users_name = "Users";
+  users = grn_ctx_get(context, users_name, strlen(users_name));
 }
 
 void
 test_hash_key(void)
 {
   assert_send_command("table_create Users TABLE_HASH_KEY ShortText");
-  grn_test_assert_exist("Users");
-  grn_test_assert_equal_type(context, GRN_TABLE_HASH_KEY, table->header.type);
+  grn_test_assert_users_exist();
+  grn_test_assert_equal_type(context, GRN_TABLE_HASH_KEY, users->header.type);
 }
 
 void
 test_pat_key(void)
 {
   assert_send_command("table_create Users TABLE_PAT_KEY ShortText");
-  grn_test_assert_exist("Users");
-  grn_test_assert_equal_type(context, GRN_TABLE_PAT_KEY, table->header.type);
+  grn_test_assert_users_exist();
+  grn_test_assert_equal_type(context, GRN_TABLE_PAT_KEY, users->header.type);
 }
 
 void
 test_dat_key(void)
 {
   assert_send_command("table_create Users TABLE_DAT_KEY ShortText");
-  grn_test_assert_exist("Users");
-  grn_test_assert_equal_type(context, GRN_TABLE_DAT_KEY, table->header.type);
+  grn_test_assert_users_exist();
+  grn_test_assert_equal_type(context, GRN_TABLE_DAT_KEY, users->header.type);
 }
 
 void
 test_no_key(void)
 {
   assert_send_command("table_create Users TABLE_NO_KEY");
-  grn_test_assert_exist("Users");
-  grn_test_assert_equal_type(context, GRN_TABLE_NO_KEY, table->header.type);
+  grn_test_assert_users_exist();
+  grn_test_assert_equal_type(context, GRN_TABLE_NO_KEY, users->header.type);
 }
 
 void
@@ -138,8 +130,8 @@ test_default_tokenizer(void)
   grn_obj *tokenizer;
   assert_send_command("table_create Users TABLE_PAT_KEY ShortText "
                       "--default_tokenizer TokenBigram");
-  grn_test_assert_exist("Users");
-  tokenizer = grn_obj_get_info(context, table, GRN_INFO_DEFAULT_TOKENIZER, NULL);
+  grn_test_assert_users_exist();
+  tokenizer = grn_obj_get_info(context, users, GRN_INFO_DEFAULT_TOKENIZER, NULL);
   grn_test_assert_equal_id(context,
                            GRN_DB_BIGRAM,
                            grn_obj_id(context, tokenizer));
@@ -151,8 +143,8 @@ test_normalizer(void)
   grn_obj *normalizer;
   assert_send_command("table_create Users TABLE_PAT_KEY ShortText "
                       "--normalizer NormalizerASCII");
-  grn_test_assert_exist("Users");
-  normalizer = grn_obj_get_info(context, table, GRN_INFO_NORMALIZER, NULL);
+  grn_test_assert_users_exist();
+  normalizer = grn_obj_get_info(context, users, GRN_INFO_NORMALIZER, NULL);
   grn_test_assert_equal_id(context,
                            GRN_DB_NORMALIZER_ASCII,
                            grn_obj_id(context, normalizer));
@@ -167,29 +159,4 @@ test_invalid_name(void)
     "[table][create] name can't start with '_' and "
     "contains only 0-9, A-Z, a-z, #, - or _: <_Users>",
     "table_create _Users");
-}
-
-void
-test_default_tokenizer_nonexistent(void)
-{
-  grn_test_assert_send_command_error(
-    context,
-    GRN_INVALID_ARGUMENT,
-    "[table][create] unknown default tokenizer is specified: "
-    "<Users> (nonexistent)",
-    "table_create Users TABLE_PAT_KEY ShortText "
-    "--default_tokenizer nonexistent");
-  grn_test_assert_not_exist("Users");
-}
-
-void
-test_normalizer_nonexistent(void)
-{
-  grn_test_assert_send_command_error(
-    context,
-    GRN_INVALID_ARGUMENT,
-    "[table][create] unknown normalizer is specified: <Users> (nonexistent)",
-    "table_create Users TABLE_PAT_KEY ShortText "
-    "--normalizer nonexistent");
-  grn_test_assert_not_exist("Users");
 }
