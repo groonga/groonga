@@ -36,7 +36,6 @@ struct _grn_dat {
   void *trie;
   void *old_trie;
   grn_obj *tokenizer;
-  grn_obj *normalizer;
   grn_critical_section lock;
 };
 
@@ -45,8 +44,6 @@ struct grn_dat_header {
   grn_encoding encoding;
   grn_id tokenizer;
   uint32_t file_id;
-  grn_id normalizer;
-  uint32_t reserved[235];
 };
 
 struct _grn_dat_cursor {

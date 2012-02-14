@@ -15,7 +15,6 @@ libgroonga_la_SOURCES =				\
 	io.c					\
 	str.c					\
 	nfkc.c					\
-	normalizer.c				\
 	snip.c					\
 	store.c					\
 	com.c					\
@@ -55,7 +54,6 @@ noinst_HEADERS =				\
 	ii.h					\
 	io.h					\
 	nfkc.h					\
-	normalizer.c				\
 	output.h				\
 	pat.h					\
 	plugin_in.h				\

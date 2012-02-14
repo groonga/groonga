@@ -72,7 +72,6 @@ namespace test_dat
 {
   const char *base_dir;
   grn_ctx ctx;
-  grn_obj *db;
 
   void cut_setup(void)
   {
@@ -83,16 +82,12 @@ namespace test_dat
     g_mkdir_with_parents(base_dir, 0755);
 
     grn_ctx_init(&ctx, 0);
-    db = grn_db_create(&ctx, NULL, NULL);
     enter_api(&ctx);
   }
 
   void cut_teardown(void)
   {
     leave_api(&ctx);
-    if (db) {
-      grn_obj_unlink(&ctx, db);
-    }
     grn_ctx_fin(&ctx);
 
     if (base_dir) {

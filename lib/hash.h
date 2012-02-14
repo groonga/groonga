@@ -185,7 +185,6 @@ struct _grn_hash {
   uint32_t *n_entries;
   uint32_t *max_offset;
   grn_obj *tokenizer;
-  grn_obj *normalizer;
   /* portions for io_hash */
   grn_io *io;
   struct grn_hash_header *header;
@@ -226,8 +225,7 @@ struct grn_hash_header {
   uint32_t n_entries;
   uint32_t n_garbages;
   uint32_t lock;
-  grn_id normalizer;
-  uint32_t reserved[15];
+  uint32_t reserved[16];
   grn_id garbages[GRN_HASH_MAX_KEY_SIZE];
 };
 

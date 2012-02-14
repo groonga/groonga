@@ -414,7 +414,6 @@ typedef unsigned short int grn_obj_flags;
 #define GRN_ACCESSOR_VIEW              (0x0a)
 #define GRN_SNIP                       (0x0b)
 #define GRN_PATSNIP                    (0x0c)
-#define GRN_NORMALIZED_TEXT            (0x0d)
 #define GRN_CURSOR_TABLE_HASH_KEY      (0x10)
 #define GRN_CURSOR_TABLE_PAT_KEY       (0x11)
 #define GRN_CURSOR_TABLE_DAT_KEY       (0x12)
@@ -591,16 +590,6 @@ typedef enum {
   GRN_DB_TRIGRAM,
 } grn_builtin_tokenizer;
 
-typedef enum {
-  GRN_DB_NORMALIZER_ASCII = 96,
-  GRN_DB_NORMALIZER_UTF8_NFKC,       /* Normalization Form KC */
-  GRN_DB_NORMALIZER_EUC_JP,
-  GRN_DB_NORMALIZER_SJIS,
-  GRN_DB_NORMALIZER_LATIN1,
-  GRN_DB_NORMALIZER_KOI8R,
-  GRN_DB_NORMALIZER_UTF8_UCA         /* Unicode Collation Algorithm */
-} grn_builtin_normalizer;
-
 GRN_API grn_obj *grn_ctx_at(grn_ctx *ctx, grn_id id);
 
 /**
@@ -647,8 +636,7 @@ typedef enum {
   GRN_PROC_TOKENIZER = 1,
   GRN_PROC_COMMAND,
   GRN_PROC_FUNCTION,
-  GRN_PROC_HOOK,
-  GRN_PROC_NORMALIZER
+  GRN_PROC_HOOK
 } grn_proc_type;
 
 GRN_API grn_obj *grn_proc_create(grn_ctx *ctx,
@@ -2434,7 +2422,7 @@ GRN_API void grn_time_now(grn_ctx *ctx, grn_obj *obj);
   grn_bulk_write((ctx), (obj), (char *)&_val, sizeof(grn_obj *));\
 } while (0)
 
-/* grn_str: deprecated */
+/* grn_str */
 
 typedef struct {
   const char *orig;
@@ -2456,21 +2444,6 @@ typedef struct {
 GRN_API grn_str *grn_str_open(grn_ctx *ctx, const char *str, unsigned int str_len,
                               int flags);
 GRN_API grn_rc grn_str_close(grn_ctx *ctx, grn_str *nstr);
-
-/* grn_normalized_text */
-
-#define GRN_NORMALIZED_TEXT_REMOVE_BLANK (0x01<<0)
-#define GRN_NORMALIZED_TEXT_WITH_CTYPES  (0x01<<1)
-#define GRN_NORMALIZED_TEXT_WITH_CHECKS  (0x01<<2)
-
-GRN_API grn_obj *grn_normalized_text_open(grn_ctx *ctx, grn_obj *normalizer,
-                                          const char *str, unsigned int str_len,
-                                          grn_encoding encoding, int flags);
-GRN_API grn_rc grn_normalized_text_get_value(grn_ctx *ctx,
-                                             grn_obj *normalized_text,
-                                             const char **value,
-                                             unsigned int *length,
-                                             unsigned int *binary_length);
 
 GRN_API int grn_charlen(grn_ctx *ctx, const char *str, const char *end);
 

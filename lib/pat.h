@@ -38,7 +38,6 @@ struct _grn_pat {
   uint32_t key_size;
   uint32_t value_size;
   grn_obj *tokenizer;
-  grn_obj *normalizer;
   grn_id *cache;
   uint32_t cache_size;
 };
@@ -65,8 +64,7 @@ struct grn_pat_header {
   int32_t curr_del2;
   int32_t curr_del3;
   uint32_t n_garbages;
-  grn_id normalizer;
-  uint32_t reserved[1004];
+  uint32_t reserved[1005];
   grn_pat_delinfo delinfos[GRN_PAT_NDELINFOS];
   grn_id garbages[GRN_PAT_MAX_KEY_SIZE + 1];
 };
