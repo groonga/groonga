@@ -41,8 +41,6 @@ void data_truncate_anonymous(void);
 void test_truncate_anonymous(gconstpointer data);
 void data_truncate_named(void);
 void test_truncate_named(gconstpointer data);
-void data_normalizer(void);
-void test_normalizer(gpointer data);
 
 static gchar *tmp_directory;
 
@@ -611,49 +609,3 @@ test_truncate_named(gconstpointer data)
   cut_assert_equal_string("", GRN_TEXT_VALUE(&buffer));
   cut_assert_equal_uint(0, grn_table_size(context, table));
 }
-
-void
-data_normalizer(void)
-{
-#define ADD_DATA(label, flags)                                          \
-  cut_add_data(label, GINT_TO_POINTER(flags), NULL, NULL)
-
-  ADD_DATA("temporary: hash", GRN_OBJ_TABLE_HASH_KEY);
-  ADD_DATA("temporary: patricia trie", GRN_OBJ_TABLE_PAT_KEY);
-  ADD_DATA("temporary: double array trie", GRN_OBJ_TABLE_DAT_KEY);
-  ADD_DATA("hash", GRN_OBJ_TABLE_HASH_KEY | GRN_OBJ_PERSISTENT);
-  ADD_DATA("patricia trie", GRN_OBJ_TABLE_PAT_KEY | GRN_OBJ_PERSISTENT);
-  ADD_DATA("double array trie", GRN_OBJ_TABLE_DAT_KEY | GRN_OBJ_PERSISTENT);
-
-#undef ADD_DATA
-}
-
-void
-test_normalizer(gpointer data)
-{
-  grn_obj *table;
-  grn_obj_flags flags = GPOINTER_TO_INT(data);
-  grn_obj *normalizer = NULL;
-  const gchar *table_name = NULL;
-  unsigned int table_name_size = 0;
-  grn_obj *key_type;
-  char name[1024];
-  int name_size;
-
-  if (flags & GRN_OBJ_PERSISTENT) {
-    table_name = "Users";
-    table_name_size = strlen(table_name);
-  }
-  key_type = get_object("ShortText");
-  table = grn_table_create(context,
-                           table_name, table_name_size, NULL,
-                           flags,
-                           key_type, NULL);
-  grn_obj_set_info(context, table, GRN_INFO_NORMALIZER,
-                   get_object("NormalizerASCII"));
-  normalizer = grn_obj_get_info(context, table, GRN_INFO_NORMALIZER, NULL);
-  name_size = grn_obj_name(context, normalizer, name, sizeof(name));
-  name[name_size] = '\0';
-  cut_assert_equal_string("NormalizerASCII", name);
-}
-
