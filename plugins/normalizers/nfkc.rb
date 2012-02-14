@@ -381,7 +381,7 @@ ARGV.each{|arg|
 }
 
 STDERR.puts('compiling icudump')
-system('cc -Wall -O3 -o icudump icudump.c -licui18n -licuuc')
+system('cc -Wall -O3 -o icudump icudump.c -licui18n')
 
 STDERR.puts('creating map1..')
 map1 = create_map1()
