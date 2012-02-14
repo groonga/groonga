@@ -120,9 +120,6 @@ grn_inspect_type(grn_ctx *ctx, grn_obj *buf, unsigned char type)
   case GRN_PATSNIP :
     GRN_TEXT_PUTS(ctx, buf, "GRN_PATSNIP");
     break;
-  case GRN_NORMALIZED_TEXT :
-    GRN_TEXT_PUTS(ctx, buf, "GRN_NORMALIZED_TEXT");
-    break;
   case GRN_CURSOR_TABLE_HASH_KEY :
     GRN_TEXT_PUTS(ctx, buf, "GRN_CURSOR_TABLE_HASH_KEY");
     break;

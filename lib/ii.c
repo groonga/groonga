@@ -6548,7 +6548,7 @@ grn_ii_buffer_tokenize(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
       grn_obj *range = grn_ctx_at(ctx, DB_OBJ(ii_buffer->lexicon)->range);
       grn_obj *tokenizer;
       grn_obj_flags flags;
-      grn_table_get_info(ctx, builder->lexicon, &flags, NULL, &tokenizer);
+      grn_table_get_info(ctx, ii_buffer->lexicon, &flags, NULL, &tokenizer);
       flags &= ~GRN_OBJ_PERSISTENT;
       ii_buffer->tmp_lexicon = grn_table_create(ctx, NULL, 0, NULL, flags, domain, range);
       grn_obj_set_info(ctx, ii_buffer->tmp_lexicon, GRN_INFO_DEFAULT_TOKENIZER, tokenizer);
@@ -6804,11 +6804,9 @@ grn_ii_buffer_open(grn_ctx *ctx, grn_ii *ii)
                               O_WRONLY|O_CREAT|O_TRUNC|O_NONBLOCK, 0666);
           if (ii_buffer->tmpfd) {
             grn_obj_flags flags;
-            grn_table_get_info(ctx, ii->lexicon,
-                               &flags, NULL, NULL, NULL);
+            grn_table_get_info(ctx, ii->lexicon, &flags, NULL, NULL);
             if (flags & GRN_OBJ_TABLE_PAT_KEY) {
-              grn_pat_cache_enable(ctx, (grn_pat *)ii->lexicon,
-                                   PAT_CACHE_SIZE);
+              grn_pat_cache_enable(ctx, (grn_pat *)ii->lexicon, PAT_CACHE_SIZE);
             }
             return ii_buffer;
           } else {
