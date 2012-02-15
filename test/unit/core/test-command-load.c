@@ -496,7 +496,7 @@ test_invalid_table_name(void)
     context,
     GRN_INVALID_ARGUMENT,
     "[table][load] name can't start with '_' "
-    "and contains only 0-9, A-Z, a-z, #, - or _: <_Users>",
+    "and contains only 0-9, A-Z, a-z, #, @, - or _: <_Users>",
     "load --table _Users\n"
     "[\n"
     "{\"_key\": \"alice\"}\n"

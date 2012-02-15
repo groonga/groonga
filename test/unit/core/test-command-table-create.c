@@ -129,6 +129,6 @@ test_invalid_name(void)
     context,
     GRN_INVALID_ARGUMENT,
     "[table][create] name can't start with '_' and "
-    "contains only 0-9, A-Z, a-z, #, - or _: <_Users>",
+    "contains only 0-9, A-Z, a-z, #, @, - or _: <_Users>",
     "table_create _Users");
 }

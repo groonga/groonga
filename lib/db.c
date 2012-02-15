@@ -426,7 +426,8 @@ grn_db_check_name(grn_ctx *ctx, const char *name, unsigned int name_size)
         (unsigned int)(c - '0') >= 10u &&
         c != '_' &&
         c != '-' &&
-        c != '#') {
+        c != '#' &&
+        c != '@') {
       return GRN_INVALID_ARGUMENT;
     }
     if (!(len = grn_charlen(ctx, name, name_end))) { break; }

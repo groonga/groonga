@@ -88,7 +88,7 @@ test_invalid_name(void)
     context,
     GRN_INVALID_ARGUMENT,
     "[column][create] name can't start with '_' "
-    "and contains only 0-9, A-Z, a-z, #, - or _: <_name>",
+    "and contains only 0-9, A-Z, a-z, #, @, - or _: <_name>",
     "column_create Users _name COLUMN_SCALAR ShortText");
 }
 
