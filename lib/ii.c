@@ -7026,6 +7026,11 @@ grn_rc
 grn_ii_buffer_close(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
 {
   uint32_t i;
+  grn_obj_flags flags;
+  grn_table_get_info(ctx, ii_buffer->ii->lexicon, &flags, NULL, NULL);
+  if (flags & GRN_OBJ_TABLE_PAT_KEY) {
+    grn_pat_cache_disable(ctx, (grn_pat *)ii_buffer->ii->lexicon);
+  }
   for (i = 0; i < ii_buffer->nblocks; i++) {
     if (ii_buffer->blocks[i].buffer) {
       GRN_FREE(ii_buffer->blocks[i].buffer);
