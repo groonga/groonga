@@ -6681,10 +6681,6 @@ grn_ii_buffer_tokenize(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
           }
         }
         grn_token_close(ctx, token);
-        if (ii_buffer->block_pos + value_len < block_pos) {
-          GRN_LOG(ctx, GRN_LOG_WARNING, "%d < %d",
-                  value_len, block_pos - ii_buffer->block_pos);
-        }
       }
       ii_buffer->block_pos = block_pos;
     }
