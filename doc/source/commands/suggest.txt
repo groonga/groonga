@@ -68,7 +68,7 @@ OPTIONS
       complete|correct|suggest
 
 ``table``
-  It specifies table name that has ``item_${DATA_SET_NAME}` format.
+  It specifies table name that has ``item_${DATA_SET_NAME}`` format.
   For example, ``item_query`` is a table name if you created
   dataset by the following command::
 
