@@ -105,12 +105,10 @@ void grn_tokenizer_token_fin(grn_ctx *ctx, grn_tokenizer_token *token);
   or query contains no tokens, please push an empty string with
   GRN_TOKENIZER_LAST as a token.
  */
-typedef enum _grn_tokenizer_status grn_tokenizer_status;
-
-enum _grn_tokenizer_status {
+typedef enum {
   GRN_TOKENIZER_CONTINUE = 0,
   GRN_TOKENIZER_LAST     = 1
-};
+} grn_tokenizer_status;
 
 /*
   grn_tokenizer_token_push() pushes the next token in `*token'. Note that
