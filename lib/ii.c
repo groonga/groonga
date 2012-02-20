@@ -6338,6 +6338,7 @@ grn_ii_inspect_elements(grn_ctx *ctx, grn_ii *ii, grn_obj *buf)
 /********************** buffered index builder ***********************/
 
 const grn_id II_BUFFER_RID_FLAG = 0x80000000;
+const grn_id II_BUFFER_WEIGHT_FLAG = 0x40000000;
 #ifdef II_BUFFER_ORDER_BY_ID
 const int II_BUFFER_ORDER = GRN_CURSOR_BY_ID;
 #else /* II_BUFFER_ORDER_BY_ID */
@@ -6356,11 +6357,12 @@ typedef struct {
   grn_id last_rid;
   uint32_t last_sid;
   uint32_t last_tf;
+  uint32_t last_weight;
   uint32_t last_pos;
   uint32_t offset_rid;
   uint32_t offset_sid;
-  uint32_t offset_weight;
   uint32_t offset_tf;
+  uint32_t offset_weight;
   uint32_t offset_pos;
 } ii_buffer_counter;
 
@@ -6412,7 +6414,7 @@ block_new(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
   if (!(ii_buffer->nblocks & 0x3ff)) {
     ii_buffer_block *blocks;
     if (!(blocks = GRN_REALLOC(ii_buffer->blocks,
-                         (ii_buffer->nblocks + 0x400) *
+                               (ii_buffer->nblocks + 0x400) *
                                sizeof(ii_buffer_block)))) {
       return NULL;
     }
@@ -6430,6 +6432,7 @@ static uint8_t *
 allocate_outbuf(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
 {
   size_t bufsize = 0, bufsize_ = 0;
+  uint32_t flags = ii_buffer->ii->header->flags;
   ii_buffer_counter *counter = ii_buffer->counters;
   grn_id tid, tid_max = grn_table_size(ctx, ii_buffer->tmp_lexicon);
   for (tid = 1; tid <= tid_max; counter++, tid++) {
@@ -6440,8 +6443,16 @@ allocate_outbuf(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
     bufsize += GRN_B_ENC_SIZE(counter->nrecs);
     bufsize += GRN_B_ENC_SIZE(counter->nposts);
     bufsize += counter->offset_rid;
+    if ((flags & GRN_OBJ_WITH_SECTION)) {
+      bufsize += counter->offset_sid;
+    }
     bufsize += counter->offset_tf;
-    bufsize += counter->offset_pos;
+    if ((flags & GRN_OBJ_WITH_WEIGHT)) {
+      bufsize += counter->offset_weight;
+    }
+    if ((flags & GRN_OBJ_WITH_POSITION)) {
+      bufsize += counter->offset_pos;
+    }
     if (bufsize_ + II_BUFFER_BLOCK_READ_UNIT_SIZE < bufsize) {
       bufsize += sizeof(uint32_t);
       bufsize_ = bufsize;
@@ -6461,6 +6472,7 @@ encode_terms(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
   uint8_t *outbufp_ = outbuf;
   grn_table_cursor  *tc;
   uint8_t *pnext = (uint8_t *)&block->nextsize;
+  uint32_t flags = ii_buffer->ii->header->flags;
   tc = grn_table_cursor_open(ctx, ii_buffer->tmp_lexicon,
                              NULL, 0, NULL, 0, 0, -1, II_BUFFER_ORDER);
   while ((tid = grn_table_cursor_next(ctx, tc)) != GRN_ID_NIL) {
@@ -6471,17 +6483,29 @@ encode_terms(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
     ii_buffer_counter *counter = &ii_buffer->counters[tid - 1];
     if (counter->nrecs) {
       uint32_t offset_rid = counter->offset_rid;
+      uint32_t offset_sid = counter->offset_sid;
       uint32_t offset_tf = counter->offset_tf;
+      uint32_t offset_weight = counter->offset_weight;
       uint32_t offset_pos = counter->offset_pos;
       GRN_B_ENC(gtid, outbufp);
       GRN_B_ENC(counter->nrecs, outbufp);
       GRN_B_ENC(counter->nposts, outbufp);
       counter->offset_rid = outbufp - outbuf;
       outbufp += offset_rid;
+      if ((flags & GRN_OBJ_WITH_SECTION)) {
+        counter->offset_sid = outbufp - outbuf;
+        outbufp += offset_sid;
+      }
       counter->offset_tf = outbufp - outbuf;
       outbufp += offset_tf;
-      counter->offset_pos = outbufp - outbuf;
-      outbufp += offset_pos;
+      if ((flags & GRN_OBJ_WITH_WEIGHT)) {
+        counter->offset_weight = outbufp - outbuf;
+        outbufp += offset_weight;
+      }
+      if ((flags & GRN_OBJ_WITH_POSITION)) {
+        counter->offset_pos = outbufp - outbuf;
+        outbufp += offset_pos;
+      }
     }
     if (outbufp_ + II_BUFFER_BLOCK_READ_UNIT_SIZE < outbufp) {
       uint32_t size = outbufp - outbufp_ + sizeof(uint32_t);
@@ -6503,40 +6527,64 @@ static void
 encode_postings(grn_ctx *ctx, grn_ii_buffer *ii_buffer, uint8_t *outbuf)
 {
   grn_id rid = 0;
+  unsigned int sid = 1;
+  unsigned int weight = 0;
   uint32_t pos = 0;
   uint32_t rest;
   grn_id *bp = ii_buffer->block_buf;
+  uint32_t flags = ii_buffer->ii->header->flags;
   for (rest = ii_buffer->block_pos; rest; bp++, rest--) {
     grn_id id = *bp;
     if (id & II_BUFFER_RID_FLAG) {
       rid = id - II_BUFFER_RID_FLAG;
+      if ((flags & GRN_OBJ_WITH_SECTION)) {
+        sid = *++bp;
+      }
+      weight = 0;
       pos = 0;
+    } else if (id & II_BUFFER_WEIGHT_FLAG) {
+      weight = id - II_BUFFER_WEIGHT_FLAG;
     } else {
       ii_buffer_counter *counter = &ii_buffer->counters[id - 1];
-      if (counter->last_rid == rid) {
+      if (counter->last_rid == rid && counter->last_sid == sid) {
         counter->last_tf++;
+        counter->last_weight += weight;
       } else {
         if (counter->last_tf) {
           uint8_t *p = outbuf + counter->offset_tf;
           GRN_B_ENC(counter->last_tf - 1, p);
           counter->offset_tf = p - outbuf;
+          if (flags & GRN_OBJ_WITH_WEIGHT) {
+            p = outbuf + counter->offset_weight;
+            GRN_B_ENC(counter->last_weight, p);
+            counter->offset_weight = p - outbuf;
+          }
         }
         {
           uint8_t *p = outbuf + counter->offset_rid;
           GRN_B_ENC(rid - counter->last_rid, p);
           counter->offset_rid = p - outbuf;
         }
+        if (flags & GRN_OBJ_WITH_SECTION) {
+          uint8_t *p = outbuf + counter->offset_sid;
+          if (counter->last_rid != rid) {
+            GRN_B_ENC(sid - 1, p);
+          } else {
+            GRN_B_ENC(sid - counter->last_sid - 1, p);
+          }
+          counter->offset_sid = p - outbuf;
+        }
         counter->last_rid = rid;
-        counter->last_sid = 0;
+        counter->last_sid = sid;
         counter->last_tf = 1;
         counter->last_pos = 0;
       }
-      {
+      if (flags & GRN_OBJ_WITH_POSITION) {
         uint8_t *p = outbuf + counter->offset_pos;
         GRN_B_ENC(pos - counter->last_pos, p);
         counter->offset_pos = p - outbuf;
+        counter->last_pos = pos;
       }
-      counter->last_pos = pos;
       pos++;
     }
   }
@@ -6550,6 +6598,12 @@ encode_last_tf(grn_ctx *ctx, grn_ii_buffer *ii_buffer, uint8_t *outbuf)
   for (tid = 1; tid <= tid_max; counter++, tid++) {
     uint8_t *p = outbuf + counter->offset_tf;
     GRN_B_ENC(counter->last_tf - 1, p);
+  }
+  if ((ii_buffer->ii->header->flags & GRN_OBJ_WITH_WEIGHT)) {
+    for (tid = 1; tid <= tid_max; counter++, tid++) {
+      uint8_t *p = outbuf + counter->offset_weight;
+      GRN_B_ENC(counter->last_weight, p);
+    }
   }
 }
 
@@ -6633,27 +6687,34 @@ get_buffer_counter(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
 }
 
 static void
-grn_ii_buffer_tokenize(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
-                       grn_id rid, unsigned int section, grn_obj *value)
+grn_ii_buffer_tokenize(grn_ctx *ctx, grn_ii_buffer *ii_buffer, grn_id rid,
+                       unsigned int sid, unsigned int weight, grn_obj *value)
 {
   uint32_t value_len = GRN_TEXT_LEN(value);
   if (value_len) {
     grn_obj *tmp_lexicon;
-    if (ii_buffer->block_buf_size < ii_buffer->block_pos + value_len) {
+    uint32_t est_len = value_len + 2;
+    if (ii_buffer->block_buf_size < ii_buffer->block_pos + est_len) {
       grn_ii_buffer_flush(ctx, ii_buffer);
     }
-    if (ii_buffer->block_buf_size < value_len) {
+    if (ii_buffer->block_buf_size < est_len) {
       grn_id *block_buf = (grn_id *)GRN_REALLOC(ii_buffer->block_buf,
-                                                value_len * sizeof(grn_id));
+                                                est_len * sizeof(grn_id));
       if (!block_buf) { return; }
       ii_buffer->block_buf = block_buf;
-      ii_buffer->block_buf_size = value_len;
+      ii_buffer->block_buf_size = est_len;
     }
     if ((tmp_lexicon = get_tmp_lexicon(ctx, ii_buffer))) {
       grn_token *token;
       grn_id *buffer = ii_buffer->block_buf;
       uint32_t block_pos = ii_buffer->block_pos;
       buffer[block_pos++] = rid + II_BUFFER_RID_FLAG;
+      if ((ii_buffer->ii->header->flags & GRN_OBJ_WITH_SECTION)) {
+        buffer[block_pos++] = sid;
+      }
+      if (weight) {
+        buffer[block_pos++] = weight + II_BUFFER_WEIGHT_FLAG;
+      }
       if ((token = grn_token_open(ctx, tmp_lexicon, GRN_TEXT_VALUE(value),
                                   value_len, grn_token_add))) {
         uint32_t pos;
@@ -6667,9 +6728,26 @@ grn_ii_buffer_tokenize(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
             if (counter->last_rid != rid) {
               counter->offset_rid += GRN_B_ENC_SIZE(rid - counter->last_rid);
               counter->last_rid = rid;
+              counter->offset_sid += GRN_B_ENC_SIZE(sid - 1);
+              counter->last_sid = sid;
               if (counter->last_tf) {
                 counter->offset_tf += GRN_B_ENC_SIZE(counter->last_tf - 1);
                 counter->last_tf = 0;
+                counter->offset_weight += GRN_B_ENC_SIZE(counter->last_weight);
+                counter->last_weight = 0;
+              }
+              counter->last_pos = 0;
+              counter->nrecs++;
+            } else if (counter->last_sid != sid) {
+              counter->offset_rid += GRN_B_ENC_SIZE(0);
+              counter->offset_sid +=
+                GRN_B_ENC_SIZE(sid - counter->last_sid - 1);
+              counter->last_sid = sid;
+              if (counter->last_tf) {
+                counter->offset_tf += GRN_B_ENC_SIZE(counter->last_tf - 1);
+                counter->last_tf = 0;
+                counter->offset_weight += GRN_B_ENC_SIZE(counter->last_weight);
+                counter->last_weight = 0;
               }
               counter->last_pos = 0;
               counter->nrecs++;
@@ -6677,6 +6755,7 @@ grn_ii_buffer_tokenize(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
             counter->offset_pos += GRN_B_ENC_SIZE(pos - counter->last_pos);
             counter->last_pos = pos;
             counter->last_tf++;
+            counter->last_weight += weight;
             counter->nposts++;
           }
         }
@@ -6776,16 +6855,29 @@ merge_hit_blocks(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
     nrecs += block->nrecs;
     nposts += block->nposts;
   }
-  max_size = nrecs * 2 + nposts;
+  max_size = nrecs * (ii_buffer->ii->n_elements - 1) + nposts;
   datavec_reset(ctx, ii_buffer->data_vectors,
                 ii_buffer->ii->n_elements, nrecs, max_size);
   {
-    uint32_t *ridp = ii_buffer->data_vectors[0].data;
-    uint32_t *tfp = ii_buffer->data_vectors[1].data;
-    uint32_t *posp = ii_buffer->data_vectors[2].data;
+    int i;
     uint32_t lr = 0;
     uint64_t spos = 0;
-    int i;
+    uint32_t flags = ii_buffer->ii->header->flags;
+    uint32_t *ridp, *sidp = NULL, *tfp, *weightp = NULL, *posp = NULL;
+    {
+      int j = 0;
+      ridp = ii_buffer->data_vectors[j++].data;
+      if (flags & GRN_OBJ_WITH_SECTION) {
+        sidp = ii_buffer->data_vectors[j++].data;
+      }
+      tfp = ii_buffer->data_vectors[j++].data;
+      if (flags & GRN_OBJ_WITH_WEIGHT) {
+        weightp = ii_buffer->data_vectors[j++].data;
+      }
+      if (flags & GRN_OBJ_WITH_POSITION) {
+        posp = ii_buffer->data_vectors[j++].data;
+      }
+    }
     for (i = 0; i < nhits; i++) {
       ii_buffer_block *block = hits[i];
       uint8_t *p = block->bufcur;
@@ -6799,27 +6891,52 @@ merge_hit_blocks(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
           lr += *ridp++;
         }
       }
+      if ((flags & GRN_OBJ_WITH_SECTION)) {
+        for (n = block->nrecs; n; n--) {
+          GRN_B_DEC(*sidp++, p);
+        }
+      }
       for (n = block->nrecs; n; n--) {
         GRN_B_DEC(*tfp++, p);
       }
-      for (n = block->nposts; n; n--) {
-        GRN_B_DEC(*posp, p);
-        spos += *posp++;
+      if ((flags & GRN_OBJ_WITH_WEIGHT)) {
+        for (n = block->nrecs; n; n--) {
+          GRN_B_DEC(*weightp++, p);
+        }
+      }
+      if ((flags & GRN_OBJ_WITH_POSITION)) {
+        for (n = block->nposts; n; n--) {
+          GRN_B_DEC(*posp, p);
+          spos += *posp++;
+        }
       }
       block->rest -= (p - block->bufcur);
       block->bufcur = p;
       grn_ii_buffer_fetch(ctx, ii_buffer, block);
     }
-    ii_buffer->data_vectors[0].data_size = nrecs;
-    ii_buffer->data_vectors[1].data_size = nrecs;
-    ii_buffer->data_vectors[2].data_size = nposts;
-
-    ii_buffer->data_vectors[0].flags =
-      ((nrecs < 16) || (nrecs <= (lr >> 8))) ? 0 : USE_P_ENC;
-    ii_buffer->data_vectors[1].flags =
-      (nrecs < 3) ? 0 : USE_P_ENC;
-    ii_buffer->data_vectors[2].flags =
-      (((nposts < 32) || (nposts <= (spos >> 13))) ? 0 : USE_P_ENC)|ODD;
+    {
+      int j = 0;
+      uint32_t f_s = (nrecs < 3) ? 0 : USE_P_ENC;
+      uint32_t f_d = ((nrecs < 16) || (nrecs <= (lr >> 8))) ? 0 : USE_P_ENC;
+      ii_buffer->data_vectors[j].data_size = nrecs;
+      ii_buffer->data_vectors[j++].flags = f_d;
+      if ((flags & GRN_OBJ_WITH_SECTION)) {
+        ii_buffer->data_vectors[j].data_size = nrecs;
+        ii_buffer->data_vectors[j++].flags = f_s;
+      }
+      ii_buffer->data_vectors[j].data_size = nrecs;
+      ii_buffer->data_vectors[j++].flags = f_s;
+      if ((flags & GRN_OBJ_WITH_WEIGHT)) {
+        ii_buffer->data_vectors[j].data_size = nrecs;
+        ii_buffer->data_vectors[j++].flags = f_s;
+      }
+      if ((flags & GRN_OBJ_WITH_POSITION)) {
+        uint32_t f_p = (((nposts < 32) ||
+                         (nposts <= (spos >> 13))) ? 0 : USE_P_ENC);
+        ii_buffer->data_vectors[j].data_size = nposts;
+        ii_buffer->data_vectors[j++].flags = f_p|ODD;
+      }
+    }
   }
   return max_size;
 }
@@ -6851,22 +6968,38 @@ grn_ii_buffer_merge(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
 {
   uint32_t *a = array_get(ctx, ii_buffer->ii, tid);
   if (nhits == 1 && hits[0]->nrecs == 1 && hits[0]->nposts == 1) {
+    grn_id rid;
+    uint32_t sid = 1, tf, pos, weight = 0;
     ii_buffer_block *block = hits[0];
     uint8_t *p = block->bufcur;
-    grn_id rid;
-    uint32_t tf, pos;
+    uint32_t flags = ii_buffer->ii->header->flags;
     GRN_B_DEC(rid, p);
+    if (flags & GRN_OBJ_WITH_SECTION) { GRN_B_DEC(sid, p); }
     GRN_B_DEC(tf, p);
+    if (tf != 0) { GRN_LOG(ctx, GRN_LOG_WARNING, "tf=%d", tf); }
+    if (flags & GRN_OBJ_WITH_WEIGHT) { GRN_B_DEC(weight, p); }
     GRN_B_DEC(pos, p);
-    block->rest -= (p - block->bufcur);
-    block->bufcur = p;
-    if (tf != 0) {
-      GRN_LOG(ctx, GRN_LOG_WARNING, "tf=%d", tf);
+    if (!weight) {
+      if (flags & GRN_OBJ_WITH_SECTION) {
+        if (rid < 0x100000 && sid < 0x800) {
+          a[0] = (rid << 12) + (sid << 1) + 1;
+          a[1] = (flags & GRN_OBJ_WITH_POSITION) ? pos : 0;
+          block->rest -= (p - block->bufcur);
+          block->bufcur = p;
+          grn_ii_buffer_fetch(ctx, ii_buffer, block);
+          return;
+        }
+      } else {
+        a[0] = (rid << 1) + 1;
+        a[1] = (flags & GRN_OBJ_WITH_POSITION) ? pos : 0;
+        block->rest -= (p - block->bufcur);
+        block->bufcur = p;
+        grn_ii_buffer_fetch(ctx, ii_buffer, block);
+        return;
+      }
     }
-    a[0] = (rid << 1) + 1;
-    a[1] = pos;
-    grn_ii_buffer_fetch(ctx, ii_buffer, block);
-  } else {
+  }
+  {
     uint32_t max_size = merge_hit_blocks(ctx, ii_buffer, hits, nhits);
     if (ii_buffer->packed_buf &&
         ii_buffer->packed_buf_size <
@@ -6954,9 +7087,9 @@ grn_ii_buffer_open(grn_ctx *ctx, grn_ii *ii)
 
 grn_rc
 grn_ii_buffer_append(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
-                     grn_id rid, unsigned int section, grn_obj *value)
+                     grn_id rid, unsigned int sid, grn_obj *value)
 {
-  grn_ii_buffer_tokenize(ctx, ii_buffer, rid, section, value);
+  grn_ii_buffer_tokenize(ctx, ii_buffer, rid, sid, 0, value);
   return ctx->rc;
 }
 
@@ -7047,15 +7180,20 @@ grn_ii_buffer_parse(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
   if ((tc = grn_table_cursor_open(ctx, target,
                                   NULL, 0, NULL, 0, 0, -1,
                                   GRN_CURSOR_BY_ID))) {
-    grn_id id;
+    grn_id rid;
     grn_obj rv;
     GRN_TEXT_INIT(&rv, 0);
-    while ((id = grn_table_cursor_next(ctx, tc)) != GRN_ID_NIL) {
-      int i;
-      for (i = 0; i < ncols; i++) {
+    while ((rid = grn_table_cursor_next(ctx, tc)) != GRN_ID_NIL) {
+      int sid;
+      grn_obj **col;
+      for (sid = 1, col = cols; sid <= ncols; sid++, col++) {
         GRN_BULK_REWIND(&rv);
-        grn_obj_get_value(ctx, cols[i], id, &rv);
-        grn_ii_buffer_tokenize(ctx, ii_buffer, id, i + 1, &rv);
+        if (GRN_OBJ_TABLEP(*col)) {
+          grn_table_get_key2(ctx, *col, rid, &rv);
+        } else {
+          grn_obj_get_value(ctx, *col, rid, &rv);
+        }
+        grn_ii_buffer_tokenize(ctx, ii_buffer, rid, sid, 0, &rv);
       }
     }
     GRN_OBJ_FIN(ctx, &rv);
