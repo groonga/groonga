@@ -5726,8 +5726,7 @@ build_index(grn_ctx *ctx, grn_obj *obj)
     if ((target = GRN_OBJ_TABLEP(src) ? src : grn_ctx_at(ctx, src->header.domain))) {
       int i, ncol = DB_OBJ(obj)->source_size / sizeof(grn_id);
 #ifndef WIN32
-      if (ncol == 1 && !GRN_OBJ_TABLEP(src) &&
-          getenv("USE_OFFLINE_INDEXER") &&
+      if (getenv("USE_OFFLINE_INDEXER") &&
           (!strcmp(getenv("USE_OFFLINE_INDEXER"), "yes"))) {
         grn_ii_build(ctx, (grn_ii *)obj);
       } else
