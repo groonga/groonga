@@ -5718,14 +5718,16 @@ exit :
 static void
 build_index(grn_ctx *ctx, grn_obj *obj)
 {
-  grn_table_cursor  *tc;
-  grn_obj *src, **cp, **col, *target, rv;
-  grn_id id, *s = DB_OBJ(obj)->source;
+  grn_obj *src, *target;
+  grn_id *s = DB_OBJ(obj)->source;
   if (!(DB_OBJ(obj)->source_size) || !s) { return; }
   if ((src = grn_ctx_at(ctx, *s))) {
     if ((target = GRN_OBJ_TABLEP(src) ? src : grn_ctx_at(ctx, src->header.domain))) {
-      int i, ncol = DB_OBJ(obj)->source_size / sizeof(grn_id);
 #ifdef WIN32
+      grn_obj **cp, **col, rv;
+      grn_table_cursor  *tc;
+      grn_id id;
+      int i, ncol = DB_OBJ(obj)->source_size / sizeof(grn_id);
       if ((col = GRN_MALLOC(ncol * sizeof(grn_obj *)))) {
         for (cp = col, i = ncol; i; s++, cp++, i--) {
           if (!(*cp = grn_ctx_at(ctx, *s))) {
@@ -8107,9 +8109,8 @@ grn_column_index(grn_ctx *ctx, grn_obj *obj, grn_operator op,
           for (hooks = DB_OBJ(obj)->hooks[GRN_HOOK_INSERT]; hooks; hooks = hooks->next) {
             default_set_value_hook_data *data = (void *)NEXT_ADDR(hooks);
             grn_obj *target = grn_ctx_at(ctx, data->target);
-            /* todo : data->section */
-            if (section) { *section = 0; }
             if (target->header.type != GRN_COLUMN_INDEX) { continue; }
+            if (section) { *section = (MULTI_COLUMN_INDEXP(target)) ? data->section : 0; }
             if (n < buf_size) {
               *ip++ = target;
             }
