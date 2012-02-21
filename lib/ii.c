@@ -6577,6 +6577,7 @@ encode_postings(grn_ctx *ctx, grn_ii_buffer *ii_buffer, uint8_t *outbuf)
         counter->last_rid = rid;
         counter->last_sid = sid;
         counter->last_tf = 1;
+        counter->last_weight = weight;
         counter->last_pos = 0;
       }
       if (flags & GRN_OBJ_WITH_POSITION) {
