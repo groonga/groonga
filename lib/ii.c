@@ -6963,11 +6963,10 @@ get_term_buffer(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
   return ii_buffer->term_buffer;
 }
 
-static void
-grn_ii_buffer_merge(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
-                    grn_id tid, ii_buffer_block *hits[], int nhits)
+static grn_bool
+try_in_place_packing(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
+                     grn_id tid, ii_buffer_block *hits[], int nhits)
 {
-  uint32_t *a = array_get(ctx, ii_buffer->ii, tid);
   if (nhits == 1 && hits[0]->nrecs == 1 && hits[0]->nposts == 1) {
     grn_id rid;
     uint32_t sid = 1, tf, pos, weight = 0;
@@ -6983,28 +6982,34 @@ grn_ii_buffer_merge(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
     if (!weight) {
       if (flags & GRN_OBJ_WITH_SECTION) {
         if (rid < 0x100000 && sid < 0x800) {
+          uint32_t *a = array_get(ctx, ii_buffer->ii, tid);
           a[0] = (rid << 12) + (sid << 1) + 1;
           a[1] = (flags & GRN_OBJ_WITH_POSITION) ? pos : 0;
-          block->rest -= (p - block->bufcur);
-          block->bufcur = p;
-          grn_ii_buffer_fetch(ctx, ii_buffer, block);
-          return;
+        } else {
+          return GRN_FALSE;
         }
       } else {
+        uint32_t *a = array_get(ctx, ii_buffer->ii, tid);
         a[0] = (rid << 1) + 1;
         a[1] = (flags & GRN_OBJ_WITH_POSITION) ? pos : 0;
-        block->rest -= (p - block->bufcur);
-        block->bufcur = p;
-        grn_ii_buffer_fetch(ctx, ii_buffer, block);
-        return;
       }
+      block->rest -= (p - block->bufcur);
+      block->bufcur = p;
+      grn_ii_buffer_fetch(ctx, ii_buffer, block);
+      return GRN_TRUE;
     }
   }
-  {
+  return GRN_FALSE;
+}
+
+static void
+grn_ii_buffer_merge(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
+                    grn_id tid, ii_buffer_block *hits[], int nhits)
+{
+  if (!try_in_place_packing(ctx, ii_buffer, tid, hits, nhits)) {
     uint32_t max_size = merge_hit_blocks(ctx, ii_buffer, hits, nhits);
     if (ii_buffer->packed_buf &&
-        ii_buffer->packed_buf_size <
-        ii_buffer->packed_len + max_size) {
+        ii_buffer->packed_buf_size < ii_buffer->packed_len + max_size) {
       grn_ii_buffer_chunk_flush(ctx, ii_buffer);
     }
     if (!ii_buffer->packed_buf) {
@@ -7018,6 +7023,7 @@ grn_ii_buffer_merge(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
       uint16_t nterm;
       int packed_len;
       buffer_term *bt;
+      uint32_t *a = array_get(ctx, ii_buffer->ii, tid);
       buffer *term_buffer = get_term_buffer(ctx, ii_buffer);
       if (!term_buffer) { return; }
       nterm = term_buffer->header.nterms++;
