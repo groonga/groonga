@@ -6850,20 +6850,21 @@ merge_hit_blocks(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
   uint32_t nrecs = 0;
   uint32_t nposts = 0;
   uint32_t max_size;
+  uint32_t flags = ii_buffer->ii->header->flags;
   int i;
   for (i = 0; i < nhits; i++) {
     ii_buffer_block *block = hits[i];
     nrecs += block->nrecs;
     nposts += block->nposts;
   }
-  max_size = nrecs * (ii_buffer->ii->n_elements - 1) + nposts;
+  max_size = nrecs * (ii_buffer->ii->n_elements);
+  if (flags & GRN_OBJ_WITH_POSITION) { max_size += nposts - nrecs; }
   datavec_reset(ctx, ii_buffer->data_vectors,
                 ii_buffer->ii->n_elements, nrecs, max_size);
   {
     int i;
     uint32_t lr = 0;
     uint64_t spos = 0;
-    uint32_t flags = ii_buffer->ii->header->flags;
     uint32_t *ridp, *sidp = NULL, *tfp, *weightp = NULL, *posp = NULL;
     {
       int j = 0;
@@ -6969,7 +6970,7 @@ try_in_place_packing(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
 {
   if (nhits == 1 && hits[0]->nrecs == 1 && hits[0]->nposts == 1) {
     grn_id rid;
-    uint32_t sid = 1, tf, pos, weight = 0;
+    uint32_t sid = 1, tf, pos = 0, weight = 0;
     ii_buffer_block *block = hits[0];
     uint8_t *p = block->bufcur;
     uint32_t flags = ii_buffer->ii->header->flags;
@@ -6978,20 +6979,20 @@ try_in_place_packing(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
     GRN_B_DEC(tf, p);
     if (tf != 0) { GRN_LOG(ctx, GRN_LOG_WARNING, "tf=%d", tf); }
     if (flags & GRN_OBJ_WITH_WEIGHT) { GRN_B_DEC(weight, p); }
-    GRN_B_DEC(pos, p);
+    if (flags & GRN_OBJ_WITH_POSITION) { GRN_B_DEC(pos, p); }
     if (!weight) {
       if (flags & GRN_OBJ_WITH_SECTION) {
         if (rid < 0x100000 && sid < 0x800) {
           uint32_t *a = array_get(ctx, ii_buffer->ii, tid);
           a[0] = (rid << 12) + (sid << 1) + 1;
-          a[1] = (flags & GRN_OBJ_WITH_POSITION) ? pos : 0;
+          a[1] = pos;
         } else {
           return GRN_FALSE;
         }
       } else {
         uint32_t *a = array_get(ctx, ii_buffer->ii, tid);
         a[0] = (rid << 1) + 1;
-        a[1] = (flags & GRN_OBJ_WITH_POSITION) ? pos : 0;
+        a[1] = pos;
       }
       block->rest -= (p - block->bufcur);
       block->bufcur = p;
