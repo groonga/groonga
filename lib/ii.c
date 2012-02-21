@@ -6976,7 +6976,10 @@ try_in_place_packing(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
     uint8_t *p = block->bufcur;
     uint32_t flags = ii_buffer->ii->header->flags;
     GRN_B_DEC(rid, p);
-    if (flags & GRN_OBJ_WITH_SECTION) { GRN_B_DEC(sid, p); }
+    if (flags & GRN_OBJ_WITH_SECTION) {
+      GRN_B_DEC(sid, p);
+      sid++;
+    }
     GRN_B_DEC(tf, p);
     if (tf != 0) { GRN_LOG(ctx, GRN_LOG_WARNING, "tf=%d", tf); }
     if (flags & GRN_OBJ_WITH_WEIGHT) { GRN_B_DEC(weight, p); }
