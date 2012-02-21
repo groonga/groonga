@@ -6537,8 +6537,9 @@ encode_postings(grn_ctx *ctx, grn_ii_buffer *ii_buffer, uint8_t *outbuf)
     grn_id id = *bp;
     if (id & II_BUFFER_RID_FLAG) {
       rid = id - II_BUFFER_RID_FLAG;
-      if ((flags & GRN_OBJ_WITH_SECTION)) {
+      if ((flags & GRN_OBJ_WITH_SECTION) && rest) {
         sid = *++bp;
+        rest--;
       }
       weight = 0;
       pos = 0;
