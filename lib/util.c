@@ -705,6 +705,9 @@ grn_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj)
   }
 
   switch (obj->header.type) {
+  case GRN_VOID :
+    /* TODO */
+    break;
   case GRN_BULK :
     switch (obj->header.domain) {
     case GRN_DB_TOKYO_GEO_POINT :
@@ -728,6 +731,9 @@ grn_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj)
       }
     }
     break;
+  case GRN_PTR :
+    /* TODO */
+    break;
   case GRN_UVECTOR :
     domain = grn_ctx_at(ctx, obj->header.domain);
     if (domain) {
@@ -744,19 +750,55 @@ grn_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj)
       }
     }
     break;
-  case GRN_EXPR :
-    grn_expr_inspect(ctx, buffer, obj);
-    return buffer;
-  case GRN_PROC :
-    grn_proc_inspect(ctx, buffer, obj);
-    return buffer;
+  case GRN_PVECTOR :
+    /* TODO */
+    break;
+  case GRN_VECTOR :
+    /* TODO */
+    break;
+  case GRN_MSG :
+    /* TODO */
+    break;
   case GRN_ACCESSOR :
   case GRN_ACCESSOR_VIEW :
     grn_accessor_inspect(ctx, buffer, obj);
     return buffer;
+  case GRN_SNIP :
+  case GRN_PATSNIP :
+    /* TODO */
+    break;
+  case GRN_CURSOR_TABLE_HASH_KEY :
+    /* TODO */
+    break;
+  case GRN_CURSOR_TABLE_PAT_KEY :
+    grn_pat_cursor_inspect(ctx, (grn_pat_cursor *)obj, buffer);
+    return buffer;
+  case GRN_CURSOR_TABLE_DAT_KEY :
+  case GRN_CURSOR_TABLE_NO_KEY :
+  case GRN_CURSOR_TABLE_VIEW :
+  case GRN_CURSOR_COLUMN_INDEX :
+  case GRN_CURSOR_COLUMN_GEO_INDEX :
+    /* TODO */
+    break;
   case GRN_TYPE :
     grn_type_inspect(ctx, buffer, obj);
     return buffer;
+  case GRN_PROC :
+    grn_proc_inspect(ctx, buffer, obj);
+    return buffer;
+  case GRN_EXPR :
+    grn_expr_inspect(ctx, buffer, obj);
+    return buffer;
+  case GRN_TABLE_HASH_KEY :
+  case GRN_TABLE_PAT_KEY :
+  case GRN_TABLE_DAT_KEY :
+  case GRN_TABLE_NO_KEY :
+    grn_table_inspect(ctx, buffer, obj);
+    return buffer;
+  case GRN_TABLE_VIEW :
+  case GRN_DB :
+    /* TODO */
+    break;
   case GRN_COLUMN_FIX_SIZE :
     grn_ra_inspect(ctx, buffer, obj);
     return buffer;
@@ -765,15 +807,6 @@ grn_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj)
     return buffer;
   case GRN_COLUMN_INDEX :
     grn_ii_inspect(ctx, buffer, obj);
-    return buffer;
-  case GRN_CURSOR_TABLE_PAT_KEY :
-    grn_pat_cursor_inspect(ctx, (grn_pat_cursor *)obj, buffer);
-    return buffer;
-  case GRN_TABLE_HASH_KEY :
-  case GRN_TABLE_PAT_KEY :
-  case GRN_TABLE_DAT_KEY :
-  case GRN_TABLE_NO_KEY :
-    grn_table_inspect(ctx, buffer, obj);
     return buffer;
   default :
     break;
