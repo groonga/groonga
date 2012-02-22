@@ -855,7 +855,7 @@ AC_ARG_WITH(libevent,
   [with_libevent="auto"])
 
 # workaround for bundled groonga in MariaDB.
-if test "x$with_libevent" = "xbundle"; then
+if test "x$with_libevent" = "xbundled"; then
   with_libevent=no
 fi
 
