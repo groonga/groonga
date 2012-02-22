@@ -887,7 +887,7 @@ if test "x$with_libevent" != "xno"; then
     LIBEVENT_CFLAGS="$libevent_cflags"
     LIBEVENT_LIBS="$libevent_ldflags"
   else
-    if test "x$with_libevent" = "xyes"; then
+    if test "$enable_option_checking" != "no" -a "x$with_libevent" = "xyes"; then
       AC_MSG_ERROR("No libevent found")
     fi
   fi
