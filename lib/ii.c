@@ -6785,7 +6785,14 @@ grn_ii_buffer_fetch(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
           return;
         }
       }
-      pread(ii_buffer->tmpfd, block->buffer, bytesize, block->head);
+      if (lseek(ii_buffer->tmpfd, block->head, SEEK_SET) != block->head) {
+        SERR("lseek");
+        return;
+      }
+      if (read(ii_buffer->tmpfd, block->buffer, bytesize) != bytesize) {
+        SERR("read");
+        return;
+      }
       block->head += bytesize;
       block->bufcur = block->buffer;
       if (block->head >= block->tail) {
