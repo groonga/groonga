@@ -6334,7 +6334,6 @@ grn_ii_inspect_elements(grn_ctx *ctx, grn_ii *ii, grn_obj *buf)
   GRN_TEXT_PUTS(ctx, buf, "]");
 }
 
-#ifndef WIN32
 /********************** buffered index builder ***********************/
 
 const grn_id II_BUFFER_RID_FLAG = 0x80000000;
@@ -7075,8 +7074,14 @@ grn_ii_buffer_open(grn_ctx *ctx, grn_ii *ii)
           snprintf(ii_buffer->tmpfpath, PATH_MAX,
                    "%sXXXXXX", grn_io_path(ii->seg));
           ii_buffer->block_buf_size = II_BUFFER_BLOCK_SIZE;
+#ifdef WIN32
+          mktemp(ii_buffer->tmpfpath);
+          ii_buffer->tmpfd = open(ii_buffer->tmpfpath,
+                                  O_WRONLY|O_CREAT|O_TRUNC|O_BINARY);
+#else /* WIN32 */
           ii_buffer->tmpfd = mkostemp(ii_buffer->tmpfpath,
                                       O_WRONLY|O_CREAT|O_TRUNC);
+#endif /* WIN32 */
           if (ii_buffer->tmpfd) {
             grn_obj_flags flags;
             grn_table_get_info(ctx, ii->lexicon, &flags, NULL, NULL);
@@ -7125,7 +7130,11 @@ grn_ii_buffer_commit(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
   ii_buffer->packed_len = 0;
   ii_buffer->packed_buf_size = 0;
   ii_buffer->total_chunk_size = 0;
+#ifdef WIN32
+  ii_buffer->tmpfd = open(ii_buffer->tmpfpath, O_RDONLY|O_BINARY);
+#else /* WIN32 */
   ii_buffer->tmpfd = open(ii_buffer->tmpfpath, O_RDONLY);
+#endif /* WIN32 */
   datavec_init(ctx, ii_buffer->data_vectors, ii_buffer->ii->n_elements, 0, 0);
   {
     uint32_t i;
@@ -7252,4 +7261,3 @@ grn_ii_build(grn_ctx *ctx, grn_ii *ii)
   }
   return ctx->rc;
 }
-#endif /* WIN32 */

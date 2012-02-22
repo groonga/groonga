@@ -5722,42 +5722,9 @@ build_index(grn_ctx *ctx, grn_obj *obj)
   grn_id *s = DB_OBJ(obj)->source;
   if (!(DB_OBJ(obj)->source_size) || !s) { return; }
   if ((src = grn_ctx_at(ctx, *s))) {
-    if ((target = GRN_OBJ_TABLEP(src) ? src : grn_ctx_at(ctx, src->header.domain))) {
-#ifdef WIN32
-      grn_obj **cp, **col, rv;
-      grn_table_cursor  *tc;
-      grn_id id;
-      int i, ncol = DB_OBJ(obj)->source_size / sizeof(grn_id);
-      if ((col = GRN_MALLOC(ncol * sizeof(grn_obj *)))) {
-        for (cp = col, i = ncol; i; s++, cp++, i--) {
-          if (!(*cp = grn_ctx_at(ctx, *s))) {
-            ERR(GRN_INVALID_ARGUMENT, "source invalid, n=%d",i);
-            GRN_FREE(col);
-            return;
-          }
-        }
-        if ((tc = grn_table_cursor_open(ctx, target, NULL, 0, NULL, 0,
-                                        0, -1, GRN_CURSOR_BY_ID))) {
-          GRN_TEXT_INIT(&rv, 0);
-          while ((id = grn_table_cursor_next_inline(ctx, tc)) != GRN_ID_NIL) {
-            for (cp = col, i = ncol; i; i--, cp++) {
-              GRN_BULK_REWIND(&rv);
-              if (GRN_OBJ_TABLEP(*cp)) {
-                grn_table_get_key2(ctx, *cp, id, &rv);
-              } else {
-                grn_obj_get_value(ctx, *cp, id, &rv);
-              }
-              call_hook_for_build(ctx, *cp, id, &rv, 0);
-            }
-          }
-          GRN_OBJ_FIN(ctx, &rv);
-          grn_table_cursor_close(ctx, tc);
-        }
-        GRN_FREE(col);
-      }
-#else /* WIN32 */
+    target = GRN_OBJ_TABLEP(src) ? src : grn_ctx_at(ctx, src->header.domain);
+    if (target) {
       grn_ii_build(ctx, (grn_ii *)obj);
-#endif /* WIN32 */
     } else {
       ERR(GRN_INVALID_ARGUMENT, "invalid target");
     }
