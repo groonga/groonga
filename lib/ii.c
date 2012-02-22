@@ -6388,6 +6388,7 @@ struct _grn_ii_buffer {
   ii_buffer_block *blocks;
   uint32_t nblocks;
   int tmpfd;
+  char tmpfpath[PATH_MAX];
   // stuff for parsing
   off_t filepos;
   grn_id *block_buf;
@@ -7071,9 +7072,11 @@ grn_ii_buffer_open(grn_ctx *ctx, grn_ii *ii)
       if (ii_buffer->counters) {
         ii_buffer->block_buf = GRN_MALLOCN(grn_id, II_BUFFER_BLOCK_SIZE);
         if (ii_buffer->block_buf) {
+          snprintf(ii_buffer->tmpfpath, PATH_MAX,
+                   "%sXXXXXX", grn_io_path(ii->seg));
           ii_buffer->block_buf_size = II_BUFFER_BLOCK_SIZE;
-          ii_buffer->tmpfd = open(TMPFILE_PATH,
-                              O_WRONLY|O_CREAT|O_TRUNC|O_NONBLOCK, 0666);
+          ii_buffer->tmpfd = mkostemp(ii_buffer->tmpfpath,
+                                      O_WRONLY|O_CREAT|O_TRUNC);
           if (ii_buffer->tmpfd) {
             grn_obj_flags flags;
             grn_table_get_info(ctx, ii->lexicon, &flags, NULL, NULL);
@@ -7117,13 +7120,12 @@ grn_ii_buffer_commit(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
   GRN_FREE(ii_buffer->counters);
   GRN_LOG(ctx, GRN_LOG_NOTICE, "nblocks: %d", ii_buffer->nblocks);
 
-
   ii_buffer->term_buffer = NULL;
   ii_buffer->packed_buf = NULL;
   ii_buffer->packed_len = 0;
   ii_buffer->packed_buf_size = 0;
   ii_buffer->total_chunk_size = 0;
-  ii_buffer->tmpfd = open(TMPFILE_PATH, O_RDONLY);
+  ii_buffer->tmpfd = open(ii_buffer->tmpfpath, O_RDONLY);
   datavec_init(ctx, ii_buffer->data_vectors, ii_buffer->ii->n_elements, 0, 0);
   {
     uint32_t i;
@@ -7159,7 +7161,7 @@ grn_ii_buffer_commit(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
   GRN_LOG(ctx, GRN_LOG_NOTICE, "tmpfile_size:%jd > total_chunk_size:%zu",
           ii_buffer->filepos, ii_buffer->total_chunk_size);
   close(ii_buffer->tmpfd);
-  unlink(TMPFILE_PATH);
+  unlink(ii_buffer->tmpfpath);
   return ctx->rc;
 }
 
