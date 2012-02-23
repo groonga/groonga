@@ -6395,6 +6395,8 @@ struct _grn_ii_buffer {
   uint32_t block_pos;
   ii_buffer_counter *counters;
   uint32_t ncounters;
+  uint64_t total_nrecs;
+  uint64_t total_nposts;
   // stuff for merging
   grn_ii *ii;
   uint32_t lseg;
@@ -6490,6 +6492,8 @@ encode_terms(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
       GRN_B_ENC(gtid, outbufp);
       GRN_B_ENC(counter->nrecs, outbufp);
       GRN_B_ENC(counter->nposts, outbufp);
+      ii_buffer->total_nrecs += counter->nrecs;
+      ii_buffer->total_nposts += counter->nposts;
       counter->offset_rid = outbufp - outbuf;
       outbufp += offset_rid;
       if ((flags & GRN_OBJ_WITH_SECTION)) {
@@ -7073,6 +7077,8 @@ grn_ii_buffer_open(grn_ctx *ctx, grn_ii *ii)
       ii_buffer->ncounters = II_BUFFER_NCOUNTERS_MARGIN;
       ii_buffer->block_pos = 0;
       ii_buffer->filepos = 0;
+      ii_buffer->total_nrecs = 0;
+      ii_buffer->total_nposts = 0;
       ii_buffer->counters = GRN_CALLOC(ii_buffer->ncounters *
                                        sizeof(ii_buffer_counter));
       if (ii_buffer->counters) {
