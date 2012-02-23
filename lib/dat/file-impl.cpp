@@ -153,8 +153,13 @@ void FileImpl::create_(const char *path, UInt64 size) {
 }
 
 void FileImpl::open_(const char *path) {
+#ifdef _MSC_VER
   struct __stat64 st;
   GRN_DAT_THROW_IF(IO_ERROR, ::_stat64(path, &st) == -1);
+#else  // _MSC_VER
+  struct _stat st;
+  GRN_DAT_THROW_IF(IO_ERROR, ::_stat(path, &st) == -1);
+#endif  // _MSC_VER
   GRN_DAT_THROW_IF(IO_ERROR, st.st_size == 0);
   GRN_DAT_THROW_IF(IO_ERROR,
       static_cast<UInt64>(st.st_size) > std::numeric_limits< ::size_t>::max());
