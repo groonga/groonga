@@ -7085,6 +7085,11 @@ grn_ii_buffer_open(grn_ctx *ctx, grn_ii *ii, uint64_t update_buffer_size)
       ii_buffer->update_buffer_size = update_buffer_size;
       ii_buffer->counters = GRN_CALLOC(ii_buffer->ncounters *
                                        sizeof(ii_buffer_counter));
+      ii_buffer->term_buffer = NULL;
+      ii_buffer->packed_buf = NULL;
+      ii_buffer->packed_len = 0;
+      ii_buffer->packed_buf_size = 0;
+      ii_buffer->total_chunk_size = 0;
       if (ii_buffer->counters) {
         ii_buffer->block_buf = GRN_MALLOCN(grn_id, II_BUFFER_BLOCK_SIZE);
         if (ii_buffer->block_buf) {
@@ -7099,7 +7104,7 @@ grn_ii_buffer_open(grn_ctx *ctx, grn_ii *ii, uint64_t update_buffer_size)
           ii_buffer->tmpfd = mkostemp(ii_buffer->tmpfpath,
                                       O_WRONLY|O_CREAT|O_TRUNC);
 #endif /* WIN32 */
-          if (ii_buffer->tmpfd) {
+          if (ii_buffer->tmpfd != -1) {
             grn_obj_flags flags;
             grn_table_get_info(ctx, ii->lexicon, &flags, NULL, NULL);
             if (flags & GRN_OBJ_TABLE_PAT_KEY) {
@@ -7108,7 +7113,7 @@ grn_ii_buffer_open(grn_ctx *ctx, grn_ii *ii, uint64_t update_buffer_size)
             }
             return ii_buffer;
           } else {
-            ERR(GRN_INVALID_ARGUMENT, "temporary file open failed");
+            SERR("mkostemp");
           }
           GRN_FREE(ii_buffer->block_buf);
         }
@@ -7136,10 +7141,17 @@ grn_ii_buffer_commit(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
   if (ii_buffer->block_pos) {
     grn_ii_buffer_flush(ctx, ii_buffer);
   }
-
-  close(ii_buffer->tmpfd);
-  GRN_FREE(ii_buffer->block_buf);
-  GRN_FREE(ii_buffer->counters);
+  if (ii_buffer->tmpfd != -1) {
+    close(ii_buffer->tmpfd);
+  }
+  if (ii_buffer->block_buf) {
+    GRN_FREE(ii_buffer->block_buf);
+    ii_buffer->block_buf = NULL;
+  }
+  if (ii_buffer->counters) {
+    GRN_FREE(ii_buffer->counters);
+    ii_buffer->counters = NULL;
+  }
 
   if (ii_buffer->update_buffer_size &&
       ii_buffer->update_buffer_size < 20) {
@@ -7155,17 +7167,16 @@ grn_ii_buffer_commit(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
   GRN_LOG(ctx, GRN_LOG_NOTICE, "nblocks=%d, update_buffer_size=%zu",
           ii_buffer->nblocks, ii_buffer->update_buffer_size);
 
-  ii_buffer->term_buffer = NULL;
-  ii_buffer->packed_buf = NULL;
-  ii_buffer->packed_len = 0;
-  ii_buffer->packed_buf_size = 0;
-  ii_buffer->total_chunk_size = 0;
+  datavec_init(ctx, ii_buffer->data_vectors, ii_buffer->ii->n_elements, 0, 0);
 #ifdef WIN32
   ii_buffer->tmpfd = open(ii_buffer->tmpfpath, O_RDONLY|O_BINARY);
 #else /* WIN32 */
   ii_buffer->tmpfd = open(ii_buffer->tmpfpath, O_RDONLY);
 #endif /* WIN32 */
-  datavec_init(ctx, ii_buffer->data_vectors, ii_buffer->ii->n_elements, 0, 0);
+  if (ii_buffer->tmpfd == -1) {
+    SERR("oepn");
+    return ctx->rc;
+  }
   {
     uint32_t i;
     for (i = 0; i < ii_buffer->nblocks; i++) {
@@ -7204,6 +7215,7 @@ grn_ii_buffer_commit(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
           ii_buffer->filepos, ii_buffer->total_chunk_size);
   close(ii_buffer->tmpfd);
   unlink(ii_buffer->tmpfpath);
+  ii_buffer->tmpfd = -1;
   return ctx->rc;
 }
 
@@ -7215,6 +7227,19 @@ grn_ii_buffer_close(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
   grn_table_get_info(ctx, ii_buffer->ii->lexicon, &flags, NULL, NULL);
   if (flags & GRN_OBJ_TABLE_PAT_KEY) {
     grn_pat_cache_disable(ctx, (grn_pat *)ii_buffer->ii->lexicon);
+  }
+  if (ii_buffer->tmp_lexicon) {
+    grn_obj_close(ctx, ii_buffer->tmp_lexicon);
+  }
+  if (ii_buffer->tmpfd != -1) {
+    close(ii_buffer->tmpfd);
+    unlink(ii_buffer->tmpfpath);
+  }
+  if (ii_buffer->block_buf) {
+    GRN_FREE(ii_buffer->block_buf);
+  }
+  if (ii_buffer->counters) {
+    GRN_FREE(ii_buffer->counters);
   }
   if (ii_buffer->blocks) {
     for (i = 0; i < ii_buffer->nblocks; i++) {
