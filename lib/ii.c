@@ -6478,9 +6478,9 @@ encode_terms(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
   tc = grn_table_cursor_open(ctx, ii_buffer->tmp_lexicon,
                              NULL, 0, NULL, 0, 0, -1, II_BUFFER_ORDER);
   while ((tid = grn_table_cursor_next(ctx, tc)) != GRN_ID_NIL) {
-    unsigned int key_size;
-    const char *key = _grn_table_key(ctx, ii_buffer->tmp_lexicon,
-                                     tid, &key_size);
+    char key[GRN_TABLE_MAX_KEY_SIZE];
+    int key_size = grn_table_get_key(ctx, ii_buffer->tmp_lexicon, tid,
+                                     key, GRN_TABLE_MAX_KEY_SIZE);
     grn_id gtid = grn_table_add(ctx, ii_buffer->lexicon, key, key_size, NULL);
     ii_buffer_counter *counter = &ii_buffer->counters[tid - 1];
     if (counter->nrecs) {
