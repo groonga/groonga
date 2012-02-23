@@ -5724,7 +5724,7 @@ build_index(grn_ctx *ctx, grn_obj *obj)
   if ((src = grn_ctx_at(ctx, *s))) {
     target = GRN_OBJ_TABLEP(src) ? src : grn_ctx_at(ctx, src->header.domain);
     if (target) {
-      grn_ii_build(ctx, (grn_ii *)obj);
+      grn_ii_build(ctx, (grn_ii *)obj, 10);
     } else {
       ERR(GRN_INVALID_ARGUMENT, "invalid target");
     }

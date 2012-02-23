@@ -6388,6 +6388,7 @@ struct _grn_ii_buffer {
   uint32_t nblocks;
   int tmpfd;
   char tmpfpath[PATH_MAX];
+  uint64_t update_buffer_size;
   // stuff for parsing
   off_t filepos;
   grn_id *block_buf;
@@ -6395,8 +6396,8 @@ struct _grn_ii_buffer {
   uint32_t block_pos;
   ii_buffer_counter *counters;
   uint32_t ncounters;
-  uint64_t total_nrecs;
-  uint64_t total_nposts;
+  uint64_t total_size;
+  uint64_t curr_size;
   // stuff for merging
   grn_ii *ii;
   uint32_t lseg;
@@ -6492,8 +6493,7 @@ encode_terms(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
       GRN_B_ENC(gtid, outbufp);
       GRN_B_ENC(counter->nrecs, outbufp);
       GRN_B_ENC(counter->nposts, outbufp);
-      ii_buffer->total_nrecs += counter->nrecs;
-      ii_buffer->total_nposts += counter->nposts;
+      ii_buffer->total_size += counter->nrecs + counter->nposts;
       counter->offset_rid = outbufp - outbuf;
       outbufp += offset_rid;
       if ((flags & GRN_OBJ_WITH_SECTION)) {
@@ -6853,6 +6853,7 @@ grn_ii_buffer_chunk_flush(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
   ii_buffer->packed_buf = NULL;
   ii_buffer->packed_len = 0;
   ii_buffer->packed_buf_size = 0;
+  ii_buffer->curr_size = 0;
 }
 
 static uint32_t
@@ -6869,6 +6870,7 @@ merge_hit_blocks(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
     nrecs += block->nrecs;
     nposts += block->nposts;
   }
+  ii_buffer->curr_size += nrecs + nposts;
   max_size = nrecs * (ii_buffer->ii->n_elements);
   if (flags & GRN_OBJ_WITH_POSITION) { max_size += nposts - nrecs; }
   datavec_reset(ctx, ii_buffer->data_vectors,
@@ -7056,7 +7058,9 @@ grn_ii_buffer_merge(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
       bt->size_in_chunk = packed_len;
       bt->pos_in_chunk = ii_buffer->packed_len;
       ii_buffer->packed_len += packed_len;
-      if (term_buffer->header.nterms == II_BUFFER_NTERMS_PER_BUFFER) {
+      if (((ii_buffer->curr_size * ii_buffer->update_buffer_size) +
+           (ii_buffer->total_size * term_buffer->header.nterms * 16)) >=
+          (ii_buffer->total_size * II_BUFFER_NTERMS_PER_BUFFER * 16)) {
         grn_ii_buffer_chunk_flush(ctx, ii_buffer);
       }
     }
@@ -7064,7 +7068,7 @@ grn_ii_buffer_merge(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
 }
 
 grn_ii_buffer *
-grn_ii_buffer_open(grn_ctx *ctx, grn_ii *ii)
+grn_ii_buffer_open(grn_ctx *ctx, grn_ii *ii, uint64_t update_buffer_size)
 {
   if (ii && ii->lexicon) {
     grn_ii_buffer *ii_buffer = GRN_MALLOCN(grn_ii_buffer, 1);
@@ -7077,8 +7081,8 @@ grn_ii_buffer_open(grn_ctx *ctx, grn_ii *ii)
       ii_buffer->ncounters = II_BUFFER_NCOUNTERS_MARGIN;
       ii_buffer->block_pos = 0;
       ii_buffer->filepos = 0;
-      ii_buffer->total_nrecs = 0;
-      ii_buffer->total_nposts = 0;
+      ii_buffer->total_size = 0;
+      ii_buffer->update_buffer_size = update_buffer_size;
       ii_buffer->counters = GRN_CALLOC(ii_buffer->ncounters *
                                        sizeof(ii_buffer_counter));
       if (ii_buffer->counters) {
@@ -7136,7 +7140,20 @@ grn_ii_buffer_commit(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
   close(ii_buffer->tmpfd);
   GRN_FREE(ii_buffer->block_buf);
   GRN_FREE(ii_buffer->counters);
-  GRN_LOG(ctx, GRN_LOG_NOTICE, "nblocks: %d", ii_buffer->nblocks);
+
+  if (ii_buffer->update_buffer_size &&
+      ii_buffer->update_buffer_size < 20) {
+    if (ii_buffer->update_buffer_size < 10) {
+      ii_buffer->update_buffer_size =
+        ii_buffer->total_size >> (10 - ii_buffer->update_buffer_size);
+    } else {
+      ii_buffer->update_buffer_size =
+        ii_buffer->total_size << (ii_buffer->update_buffer_size - 10);
+    }
+  }
+
+  GRN_LOG(ctx, GRN_LOG_NOTICE, "nblocks=%d, update_buffer_size=%zu",
+          ii_buffer->nblocks, ii_buffer->update_buffer_size);
 
   ii_buffer->term_buffer = NULL;
   ii_buffer->packed_buf = NULL;
@@ -7241,9 +7258,9 @@ grn_ii_buffer_parse(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
 }
 
 grn_rc
-grn_ii_build(grn_ctx *ctx, grn_ii *ii)
+grn_ii_build(grn_ctx *ctx, grn_ii *ii, unsigned int sparsity)
 {
-  grn_ii_buffer *ii_buffer = grn_ii_buffer_open(ctx, ii);
+  grn_ii_buffer *ii_buffer = grn_ii_buffer_open(ctx, ii, sparsity);
   if (ii_buffer) {
     grn_id *s = ii->obj.source;
     if ((ii->obj.source_size) && s) {
