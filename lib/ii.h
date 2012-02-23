@@ -189,12 +189,6 @@ void grn_ii_inspect_elements(grn_ctx *ctx, grn_ii *ii, grn_obj *buf);
 void grn_ii_cursor_inspect(grn_ctx *ctx, grn_ii_cursor *c, grn_obj *buf);
 
 grn_rc grn_ii_build(grn_ctx *ctx, grn_ii *ii, unsigned int sparsity);
-grn_ii_buffer *grn_ii_buffer_open(grn_ctx *ctx, grn_ii *ii,
-                                  uint64_t update_buffer_size);
-grn_rc grn_ii_buffer_append(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
-                            grn_id rid, unsigned int section, grn_obj *value);
-grn_rc grn_ii_buffer_commit(grn_ctx *ctx, grn_ii_buffer *ii_buffer);
-grn_rc grn_ii_buffer_close(grn_ctx *ctx, grn_ii_buffer *ii_buffer);
 
 #ifdef __cplusplus
 }
