@@ -7097,14 +7097,8 @@ grn_ii_buffer_open(grn_ctx *ctx, grn_ii *ii,
           snprintf(ii_buffer->tmpfpath, PATH_MAX,
                    "%sXXXXXX", grn_io_path(ii->seg));
           ii_buffer->block_buf_size = II_BUFFER_BLOCK_SIZE;
-#ifdef WIN32
-          mktemp(ii_buffer->tmpfpath);
-          ii_buffer->tmpfd = open(ii_buffer->tmpfpath,
-                                  O_WRONLY|O_CREAT|O_TRUNC|O_BINARY);
-#else /* WIN32 */
-          ii_buffer->tmpfd = mkostemp(ii_buffer->tmpfpath,
-                                      O_WRONLY|O_CREAT|O_TRUNC);
-#endif /* WIN32 */
+          ii_buffer->tmpfd = GRN_MKOSTEMP(ii_buffer->tmpfpath,
+                                          O_WRONLY|O_CREAT|O_TRUNC);
           if (ii_buffer->tmpfd != -1) {
             grn_obj_flags flags;
             grn_table_get_info(ctx, ii->lexicon, &flags, NULL, NULL);
