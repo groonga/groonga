@@ -39,9 +39,6 @@
 extern "C" {
 #endif
 
-typedef struct _grn_ii grn_ii;
-typedef struct _grn_ii_buffer grn_ii_buffer;
-
 struct _grn_ii {
   grn_db_obj obj;
   grn_io *seg;
