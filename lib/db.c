@@ -5724,7 +5724,12 @@ build_index(grn_ctx *ctx, grn_obj *obj)
   if ((src = grn_ctx_at(ctx, *s))) {
     target = GRN_OBJ_TABLEP(src) ? src : grn_ctx_at(ctx, src->header.domain);
     if (target) {
-      grn_ii_build(ctx, (grn_ii *)obj, 10);
+      uint32_t sparsity = 10;
+      if (getenv("GRN_INDEX_SPARSITY")) {
+        uint32_t v = strtoul(getenv("GRN_INDEX_SPARSITY"), NULL, 0);
+        if (v != ULONG_MAX) { sparsity = v; }
+      }
+      grn_ii_build(ctx, (grn_ii *)obj, sparsity);
     } else {
       ERR(GRN_INVALID_ARGUMENT, "invalid target");
     }
