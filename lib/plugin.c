@@ -1,5 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009-2012 Brazil
+/*
+  Copyright(C) 2012 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -14,19 +15,17 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-
-#ifndef GRN_PLUGIN_H
+#include "groonga_in.h"
 #include "groonga/plugin.h"
-#endif /* GRN_PLUGIN_H */
+
+#include <stdarg.h>
+#include <stdio.h>
+#include <string.h>
 
 #include "db.h"
 #include "plugin_in.h"
 #include "ctx_impl.h"
 #include "util.h"
-
-#include <stdarg.h>
-#include <stdio.h>
-#include <string.h>
 
 static grn_hash *grn_plugins = NULL;
 
