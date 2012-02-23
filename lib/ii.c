@@ -7068,7 +7068,8 @@ grn_ii_buffer_merge(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
 }
 
 grn_ii_buffer *
-grn_ii_buffer_open(grn_ctx *ctx, grn_ii *ii, uint64_t update_buffer_size)
+grn_ii_buffer_open(grn_ctx *ctx, grn_ii *ii,
+                   long long unsigned int update_buffer_size)
 {
   if (ii && ii->lexicon) {
     grn_ii_buffer *ii_buffer = GRN_MALLOCN(grn_ii_buffer, 1);
