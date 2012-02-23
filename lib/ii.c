@@ -7283,7 +7283,7 @@ grn_ii_buffer_parse(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
 }
 
 grn_rc
-grn_ii_build(grn_ctx *ctx, grn_ii *ii, unsigned int sparsity)
+grn_ii_build(grn_ctx *ctx, grn_ii *ii, uint64_t sparsity)
 {
   grn_ii_buffer *ii_buffer = grn_ii_buffer_open(ctx, ii, sparsity);
   if (ii_buffer) {
