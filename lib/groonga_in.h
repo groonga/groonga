@@ -375,7 +375,6 @@ typedef int grn_cond;
 #endif /* WIN32 */
 
 #ifdef __GNUC__
-# include <features.h>
 # if (defined(__i386__) || defined(__x86_64__)) /* ATOMIC ADD */
 #  define GRN_ATOMIC_ADD_EX(p,i,r) \
   __asm__ __volatile__ ("lock; xaddl %0,%1" : "=r"(r), "=m"(*p) : "0"(i), "m" (*p))
@@ -414,12 +413,12 @@ typedef int grn_cond;
   (void)atomic_swap_64(p, v)
 # endif /* ATOMIC 64BIT SET */
 
-# if __GNUC_PREREQ(2, 7)
+# ifdef HAVE_MKOSTEMP
 #  define GRN_MKOSTEMP mkostemp
-# else /* __GNUC_PREREQ(2, 7) */
+# else /* HAVE_MKOSTEMP */
 #  define GRN_MKOSTEMP(template,flags) \
   (mktemp(template), open((template),flags))
-# endif /* __GNUC_PREREQ(2, 7) */
+# endif /* HAVE_MKOSTEMP */
 
 #elif (defined(WIN32) || defined (_WIN64)) /* __GNUC__ */
 

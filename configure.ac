@@ -310,7 +310,7 @@ AC_CHECK_HEADERS(sys/mman.h sys/time.h sys/timeb.h sys/param.h sys/types.h sys/r
 AC_CHECK_HEADERS(netdb.h sys/wait.h sys/socket.h netinet/in.h netinet/tcp.h)
 AC_CHECK_HEADERS(ucontext.h signal.h errno.h execinfo.h sys/sysctl.h)
 AC_CHECK_HEADERS(time.h)
-AC_CHECK_FUNCS(localtime_r gmtime_r)
+AC_CHECK_FUNCS(localtime_r gmtime_r mkostemp)
 BACKTRACE_LIBS=
 AC_CHECK_FUNCS(backtrace,
  [],
