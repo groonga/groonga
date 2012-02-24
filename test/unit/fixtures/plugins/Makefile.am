@@ -1,4 +1,4 @@
-INCLUDES = 			\
+INCLUDES =			\
 	-I$(top_builddir)	\
 	-I$(top_srcdir)/include	\
 	-I$(top_srcdir)/lib
@@ -12,6 +12,8 @@ AM_LDFLAGS =					\
 LIBS =						\
 	$(top_builddir)/lib/libgroonga.la
 
+if WITH_CUTTER
 noinst_LTLIBRARIES = string.la
+endif
 
 string_la_SOURCES = string.c
