@@ -84,24 +84,24 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_obj *str;
   int nflags = 0;
-  char *buf, *s, *p;
-  char mecab_err[256];
+  char *buf, *p;
+  const char *s;
   grn_obj *table = args[0];
   grn_obj_flags table_flags;
   grn_encoding table_encoding;
   grn_mecab_tokenizer *token;
-  unsigned int bufsize, maxtrial = 10, len;
+  unsigned int bufsize, len;
   if (!(str = grn_ctx_pop(ctx))) {
     ERR(GRN_INVALID_ARGUMENT, "missing argument");
     return NULL;
   }
-  mecab_err[sizeof(mecab_err) - 1] = '\0';
   if (!sole_mecab) {
     CRITICAL_SECTION_ENTER(sole_mecab_lock);
     if (!sole_mecab) {
       sole_mecab = mecab_new2("-Owakati");
       if (!sole_mecab) {
-        strncpy(mecab_err, mecab_strerror(NULL), sizeof(mecab_err) - 1);
+        ERR(GRN_TOKENIZER_ERROR, "mecab_new2 failed on grn_mecab_init: %s",
+            mecab_strerror(NULL));
       } else {
         sole_mecab_encoding = get_mecab_encoding(sole_mecab);
       }
@@ -109,8 +109,6 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     CRITICAL_SECTION_LEAVE(sole_mecab_lock);
   }
   if (!sole_mecab) {
-    ERR(GRN_TOKENIZER_ERROR,
-        "mecab_new2 failed on grn_mecab_init: %s", mecab_err);
     return NULL;
   }
   grn_table_get_info(ctx, table, &table_flags, &table_encoding, NULL);
@@ -131,39 +129,33 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     return NULL;
   }
   len = token->nstr->norm_blen;
-  for (bufsize = len * 2 + 1; maxtrial; bufsize *= 2, maxtrial--) {
-    if (!(buf = GRN_MALLOC(bufsize + 1))) {
-      GRN_LOG(ctx, GRN_LOG_ALERT, "buffer allocation on mecab_init failed !");
-      grn_str_close(ctx, token->nstr);
-      GRN_FREE(token);
-      return NULL;
-    }
-    CRITICAL_SECTION_ENTER(sole_mecab_lock);
-    s = mecab_sparse_tostr3(token->mecab, token->nstr->norm, len, buf, bufsize);
-    if (!s) {
-      strncpy(mecab_err, mecab_strerror(token->mecab), sizeof(mecab_err) - 1);
-    }
-    CRITICAL_SECTION_LEAVE(sole_mecab_lock);
-    if (s) { break; }
-    GRN_FREE(buf);
-    if (strstr(mecab_err, "output buffer overflow") == NULL) { break; }
-  }
+  CRITICAL_SECTION_ENTER(sole_mecab_lock);
+  s = mecab_sparse_tostr2(token->mecab, token->nstr->norm, len);
   if (!s) {
-    ERR(GRN_TOKENIZER_ERROR, "mecab_sparse_tostr failed len=%d bufsize=%d err=%s",
-        len, bufsize, mecab_err);
+    ERR(GRN_TOKENIZER_ERROR, "mecab_sparse_tostr failed len=%d err=%s",
+        len, mecab_strerror(token->mecab));
+  } else {
+    bufsize = strlen(s) + 1;
+    if (!(buf = GRN_MALLOC(bufsize))) {
+      GRN_LOG(ctx, GRN_LOG_ALERT, "buffer allocation on mecab_init failed !");
+    } else {
+      memcpy(buf, s, bufsize);
+    }
+  }
+  CRITICAL_SECTION_LEAVE(sole_mecab_lock);
+  if (!s || !buf) {
     grn_str_close(ctx, token->nstr);
     GRN_FREE(token);
     return NULL;
   }
   /* A certain version of mecab returns trailing lf or spaces. */
-  for (p = buf + strlen(buf) - 1;
+  for (p = buf + bufsize - 2;
        buf <= p && isspace(*(unsigned char *)p);
        p--) { *p = '\0'; }
-  /* grn_log("sparsed='%s'", s); */
   user_data->ptr = token;
   token->buf = buf;
   token->next = buf;
-  token->end = buf + strlen(buf);
+  token->end = p + 1;
   GRN_TEXT_INIT(&token->curr_, GRN_OBJ_DO_SHALLOW_COPY);
   GRN_UINT32_INIT(&token->stat_, 0);
   return NULL;
