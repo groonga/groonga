@@ -91,6 +91,7 @@ namespace :build do
     end
   end
 
+  desc "Build MeCab dictionary and install it into #{dist_dir}."
   task(:mecab_dict) do
     tmp_dir = Pathname.new("tmp/mecab_dict")
     rm_rf(tmp_dir)
