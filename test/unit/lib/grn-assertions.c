@@ -21,10 +21,10 @@
 #include "grn-assertions.h"
 
 #include <groonga_in.h>
+#include <db.h>
 #include <util.h>
 #include <str.h>
 
-grn_rc grn_expr_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *expr);
 
 void
 grn_test_assert_helper(grn_rc rc, const gchar *expression)

@@ -116,7 +116,7 @@ grn_id grn_view_add(grn_ctx *ctx, grn_obj *view, grn_obj *table);
 grn_rc grn_column_name_(grn_ctx *ctx, grn_obj *obj, grn_obj *buf);
 
 GRN_API grn_rc grn_table_cursor_next_o(grn_ctx *ctx, grn_table_cursor *tc, grn_obj *id);
-grn_obj *grn_obj_get_value_o(grn_ctx *ctx, grn_obj *obj, grn_obj *id, grn_obj *value);
+GRN_API grn_obj *grn_obj_get_value_o(grn_ctx *ctx, grn_obj *obj, grn_obj *id, grn_obj *value);
 grn_rc grn_obj_set_value_o(grn_ctx *ctx, grn_obj *obj, grn_obj *id, grn_obj *value, int flags);
 
 typedef enum {
@@ -413,7 +413,7 @@ void grn_obj_spec_save(grn_ctx *ctx, grn_db_obj *obj);
 }
 
 void grn_expr_pack(grn_ctx *ctx, grn_obj *buf, grn_obj *expr);
-grn_rc grn_expr_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *expr);
+GRN_API grn_rc grn_expr_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *expr);
 grn_obj *grn_expr_open(grn_ctx *ctx, grn_obj_spec *spec, const uint8_t *p, const uint8_t *pe);
 
 grn_obj *grn_table_create_for_group(grn_ctx *ctx, const char *name, unsigned int name_size,
