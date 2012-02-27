@@ -15,4 +15,5 @@
    pseudo_column
    expr
    functions
+   indexing
    log
