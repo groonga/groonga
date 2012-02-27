@@ -1523,7 +1523,7 @@ exit :
   return v;
 }
 
-GRN_API void
+void
 grn_itoh(unsigned int i, char *p, unsigned int len)
 {
   static const char *hex = "0123456789ABCDEF";
@@ -3203,7 +3203,7 @@ grn_text_cgidec(grn_ctx *ctx, grn_obj *buf, const char *p, const char *e, char d
   return p;
 }
 
-GRN_API void
+void
 grn_str_url_path_normalize(grn_ctx *ctx, const char *path, size_t path_len,
                            char *buf, size_t buf_len)
 {

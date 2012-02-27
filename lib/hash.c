@@ -1044,7 +1044,7 @@ grn_hash_remove(grn_ctx *ctx, const char *path)
   return grn_io_remove(ctx, path);
 }
 
-GRN_API grn_rc
+grn_rc
 grn_hash_truncate(grn_ctx *ctx, grn_hash *hash)
 {
   grn_rc rc;
@@ -2073,7 +2073,7 @@ entry2id(grn_ctx *ctx, grn_hash *hash, entry *e)
   return id;
 }
 
-GRN_API int
+int
 grn_hash_sort(grn_ctx *ctx, grn_hash *hash,
               int limit, grn_array *result, grn_table_sort_optarg *optarg)
 {

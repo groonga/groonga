@@ -271,7 +271,7 @@ void grn_dat_cursor_fin(grn_ctx *, grn_dat_cursor *cursor) {
 
 extern "C" {
 
-GRN_API grn_dat *
+grn_dat *
 grn_dat_create(grn_ctx *ctx, const char *path, uint32_t,
                uint32_t, uint32_t flags)
 {
@@ -317,7 +317,7 @@ grn_dat_create(grn_ctx *ctx, const char *path, uint32_t,
   return dat;
 }
 
-GRN_API grn_dat *
+grn_dat *
 grn_dat_open(grn_ctx *ctx, const char *path)
 {
   if (path && (std::strlen(path) >= (PATH_MAX - (FILE_ID_LENGTH + 1)))) {
@@ -350,7 +350,7 @@ grn_dat_open(grn_ctx *ctx, const char *path)
   return dat;
 }
 
-GRN_API grn_rc
+grn_rc
 grn_dat_close(grn_ctx *ctx, grn_dat *dat)
 {
   if (dat) {
@@ -360,7 +360,7 @@ grn_dat_close(grn_ctx *ctx, grn_dat *dat)
   return GRN_SUCCESS;
 }
 
-GRN_API grn_rc
+grn_rc
 grn_dat_remove(grn_ctx *ctx, const char *path)
 {
   if (!path) {
@@ -395,7 +395,7 @@ grn_dat_remove(grn_ctx *ctx, const char *path)
   return grn_io_remove(ctx, path);
 }
 
-GRN_API grn_id
+grn_id
 grn_dat_get(grn_ctx *ctx, grn_dat *dat, const void *key,
             unsigned int key_size, void **)
 {
@@ -418,7 +418,7 @@ grn_dat_get(grn_ctx *ctx, grn_dat *dat, const void *key,
   return GRN_ID_NIL;
 }
 
-GRN_API grn_id
+grn_id
 grn_dat_add(grn_ctx *ctx, grn_dat *dat, const void *key,
             unsigned int key_size, void **, int *added)
 {
@@ -474,7 +474,7 @@ grn_dat_add(grn_ctx *ctx, grn_dat *dat, const void *key,
   }
 }
 
-GRN_API int
+int
 grn_dat_get_key(grn_ctx *ctx, grn_dat *dat, grn_id id, void *keybuf, int bufsize)
 {
   if (!grn_dat_open_trie_if_needed(ctx, dat)) {
@@ -494,7 +494,7 @@ grn_dat_get_key(grn_ctx *ctx, grn_dat *dat, grn_id id, void *keybuf, int bufsize
   return (int)key.length();
 }
 
-GRN_API int
+int
 grn_dat_get_key2(grn_ctx *ctx, grn_dat *dat, grn_id id, grn_obj *bulk)
 {
   if (!grn_dat_open_trie_if_needed(ctx, dat)) {
@@ -517,7 +517,7 @@ grn_dat_get_key2(grn_ctx *ctx, grn_dat *dat, grn_id id, grn_obj *bulk)
   return (int)key.length();
 }
 
-GRN_API grn_rc
+grn_rc
 grn_dat_delete_by_id(grn_ctx *ctx, grn_dat *dat, grn_id id,
                      grn_table_delete_optarg *optarg)
 {
@@ -549,7 +549,7 @@ grn_dat_delete_by_id(grn_ctx *ctx, grn_dat *dat, grn_id id,
   return GRN_SUCCESS;
 }
 
-GRN_API grn_rc
+grn_rc
 grn_dat_delete(grn_ctx *ctx, grn_dat *dat, const void *key, unsigned int key_size,
                grn_table_delete_optarg *optarg)
 {
@@ -589,7 +589,7 @@ grn_dat_delete(grn_ctx *ctx, grn_dat *dat, const void *key, unsigned int key_siz
   return GRN_SUCCESS;
 }
 
-GRN_API grn_rc
+grn_rc
 grn_dat_update_by_id(grn_ctx *ctx, grn_dat *dat, grn_id src_key_id,
                      const void *dest_key, unsigned int dest_key_size)
 {
@@ -623,7 +623,7 @@ grn_dat_update_by_id(grn_ctx *ctx, grn_dat *dat, grn_id src_key_id,
   return GRN_SUCCESS;
 }
 
-GRN_API grn_rc
+grn_rc
 grn_dat_update(grn_ctx *ctx, grn_dat *dat,
                const void *src_key, unsigned int src_key_size,
                const void *dest_key, unsigned int dest_key_size)
@@ -658,7 +658,7 @@ grn_dat_update(grn_ctx *ctx, grn_dat *dat,
   return GRN_SUCCESS;
 }
 
-GRN_API int grn_dat_scan(grn_ctx *ctx, grn_dat *dat, const char *str,
+int grn_dat_scan(grn_ctx *ctx, grn_dat *dat, const char *str,
                          unsigned int str_size, grn_dat_scan_hit *scan_hits,
                          unsigned int max_num_scan_hits, const char **str_rest) {
   if (!grn_dat_open_trie_if_needed(ctx, dat) || !str ||
@@ -766,7 +766,7 @@ GRN_API int grn_dat_scan(grn_ctx *ctx, grn_dat *dat, const char *str,
   return num_scan_hits;
 }
 
-GRN_API grn_id
+grn_id
 grn_dat_lcp_search(grn_ctx *ctx, grn_dat *dat,
                    const void *key, unsigned int key_size)
 {
@@ -793,7 +793,7 @@ grn_dat_lcp_search(grn_ctx *ctx, grn_dat *dat,
   }
 }
 
-GRN_API unsigned int
+unsigned int
 grn_dat_size(grn_ctx *ctx, grn_dat *dat)
 {
   if (!grn_dat_open_trie_if_needed(ctx, dat)) {
@@ -806,7 +806,7 @@ grn_dat_size(grn_ctx *ctx, grn_dat *dat)
   return 0;
 }
 
-GRN_API grn_dat_cursor *
+grn_dat_cursor *
 grn_dat_cursor_open(grn_ctx *ctx, grn_dat *dat,
                     const void *min, unsigned int min_size,
                     const void *max, unsigned int max_size,
@@ -884,7 +884,7 @@ grn_dat_cursor_open(grn_ctx *ctx, grn_dat *dat,
   return dc;
 }
 
-GRN_API grn_id
+grn_id
 grn_dat_cursor_next(grn_ctx *ctx, grn_dat_cursor *c)
 {
   if (!c || !c->cursor) {
@@ -903,7 +903,7 @@ grn_dat_cursor_next(grn_ctx *ctx, grn_dat_cursor *c)
   return c->curr_rec;
 }
 
-GRN_API void
+void
 grn_dat_cursor_close(grn_ctx *ctx, grn_dat_cursor *c)
 {
   if (c) {
@@ -912,7 +912,7 @@ grn_dat_cursor_close(grn_ctx *ctx, grn_dat_cursor *c)
   }
 }
 
-GRN_API int
+int
 grn_dat_cursor_get_key(grn_ctx *ctx, grn_dat_cursor *c, const void **key)
 {
   if (c) {
@@ -925,7 +925,7 @@ grn_dat_cursor_get_key(grn_ctx *ctx, grn_dat_cursor *c, const void **key)
   return 0;
 }
 
-GRN_API grn_rc
+grn_rc
 grn_dat_cursor_delete(grn_ctx *ctx, grn_dat_cursor *c,
                       grn_table_delete_optarg *optarg)
 {
@@ -950,7 +950,7 @@ grn_dat_cursor_delete(grn_ctx *ctx, grn_dat_cursor *c,
   return GRN_INVALID_ARGUMENT;
 }
 
-GRN_API grn_id
+grn_id
 grn_dat_curr_id(grn_ctx *ctx, grn_dat *dat)
 {
   if (!grn_dat_open_trie_if_needed(ctx, dat)) {
@@ -963,7 +963,7 @@ grn_dat_curr_id(grn_ctx *ctx, grn_dat *dat)
   return GRN_ID_NIL;
 }
 
-GRN_API grn_rc
+grn_rc
 grn_dat_truncate(grn_ctx *ctx, grn_dat *dat)
 {
   if (!grn_dat_open_trie_if_needed(ctx, dat)) {
@@ -990,7 +990,7 @@ grn_dat_truncate(grn_ctx *ctx, grn_dat *dat)
   return GRN_SUCCESS;
 }
 
-GRN_API const char *
+const char *
 _grn_dat_key(grn_ctx *ctx, grn_dat *dat, grn_id id, uint32_t *key_size)
 {
   if (!grn_dat_open_trie_if_needed(ctx, dat)) {
@@ -1008,7 +1008,7 @@ _grn_dat_key(grn_ctx *ctx, grn_dat *dat, grn_id id, uint32_t *key_size)
   return static_cast<const char *>(key.ptr());
 }
 
-GRN_API grn_id
+grn_id
 grn_dat_next(grn_ctx *ctx, grn_dat *dat, grn_id id)
 {
   if (!grn_dat_open_trie_if_needed(ctx, dat)) {
@@ -1026,7 +1026,7 @@ grn_dat_next(grn_ctx *ctx, grn_dat *dat, grn_id id)
   return GRN_ID_NIL;
 }
 
-GRN_API grn_id
+grn_id
 grn_dat_at(grn_ctx *ctx, grn_dat *dat, grn_id id)
 {
   if (!grn_dat_open_trie_if_needed(ctx, dat)) {
@@ -1043,7 +1043,7 @@ grn_dat_at(grn_ctx *ctx, grn_dat *dat, grn_id id)
   return id;
 }
 
-GRN_API grn_rc
+grn_rc
 grn_dat_clear_status_flags(grn_ctx *ctx, grn_dat *dat)
 {
   if (!grn_dat_open_trie_if_needed(ctx, dat)) {
@@ -1057,7 +1057,7 @@ grn_dat_clear_status_flags(grn_ctx *ctx, grn_dat *dat)
   return GRN_SUCCESS;
 }
 
-GRN_API grn_rc
+grn_rc
 grn_dat_repair(grn_ctx *ctx, grn_dat *dat)
 {
   if (!grn_dat_open_trie_if_needed(ctx, dat)) {

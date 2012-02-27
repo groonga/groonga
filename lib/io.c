@@ -171,7 +171,7 @@ grn_io_unregister(grn_io *io)
   }
 }
 
-GRN_API grn_io *
+grn_io *
 grn_io_create(grn_ctx *ctx, const char *path, uint32_t header_size, uint32_t segment_size,
               uint32_t max_segment, grn_io_mode mode, uint32_t flags)
 {
@@ -480,7 +480,7 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
   return NULL;
 }
 
-GRN_API grn_rc
+grn_rc
 grn_io_close(grn_ctx *ctx, grn_io *io)
 {
   int i;
@@ -535,7 +535,7 @@ grn_io_path(grn_io *io)
   return io->path;
 }
 
-GRN_API void *
+void *
 grn_io_header(grn_io *io)
 {
   return io->user_header;
@@ -1447,7 +1447,7 @@ grn_io_anon_unmap(grn_ctx *ctx, grn_io_mapinfo *mi, size_t length)
   GRN_MUNMAP(ctx, &mi->fmo, mi->map, length);
 }
 
-GRN_API grn_rc
+grn_rc
 grn_io_lock(grn_ctx *ctx, grn_io *io, int timeout)
 {
   static int _ncalls = 0, _ncolls = 0;
@@ -1487,7 +1487,7 @@ grn_io_lock(grn_ctx *ctx, grn_io *io, int timeout)
   return ctx->rc;
 }
 
-GRN_API void
+void
 grn_io_unlock(grn_io *io)
 {
   if (io) {

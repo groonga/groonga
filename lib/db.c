@@ -248,7 +248,7 @@ grn_db_curr_id(grn_ctx *ctx, grn_obj *db)
 }
 
 /* s must be validated by caller */
-GRN_API grn_rc
+grn_rc
 grn_db_close(grn_ctx *ctx, grn_obj *db)
 {
   grn_id id;
@@ -896,7 +896,7 @@ grn_table_create(grn_ctx *ctx, const char *name, unsigned int name_size,
   GRN_API_RETURN(res);
 }
 
-GRN_API grn_obj *
+grn_obj *
 grn_table_open(grn_ctx *ctx, const char *name, unsigned int name_size, const char *path)
 {
   grn_obj *db;
@@ -1245,7 +1245,7 @@ grn_view_transcript(grn_ctx *ctx, const char *path,
   return res;
 }
 
-GRN_API grn_id
+grn_id
 grn_view_add(grn_ctx *ctx, grn_obj *view, grn_obj *table)
 {
   if (!view || view->header.type != GRN_TABLE_VIEW) {

@@ -1714,7 +1714,7 @@ exit :
   return n;
 }
 
-GRN_API grn_bool
+grn_bool
 grn_geo_in_circle(grn_ctx *ctx, grn_obj *point, grn_obj *center,
                   grn_obj *radius_or_point,
                   grn_geo_approximate_type approximate_type)
@@ -1792,7 +1792,7 @@ grn_geo_in_rectangle_raw(grn_ctx *ctx, grn_geo_point *point,
             (point->latitude <= top_left->latitude));
 }
 
-GRN_API grn_bool
+grn_bool
 grn_geo_in_rectangle(grn_ctx *ctx, grn_obj *point,
                      grn_obj *top_left, grn_obj *bottom_right)
 {
@@ -1917,7 +1917,7 @@ grn_geo_distance(grn_ctx *ctx, grn_obj *point1, grn_obj *point2,
   return d;
 }
 
-GRN_API double
+double
 grn_geo_distance_rectangle(grn_ctx *ctx, grn_obj *point1, grn_obj *point2)
 {
   double d = 0;
@@ -1966,7 +1966,7 @@ exit :
   return d;
 }
 
-GRN_API double
+double
 grn_geo_distance_sphere(grn_ctx *ctx, grn_obj *point1, grn_obj *point2)
 {
   double d = 0;
@@ -1993,7 +1993,7 @@ exit :
   return d;
 }
 
-GRN_API double
+double
 grn_geo_distance_ellipsoid(grn_ctx *ctx, grn_obj *point1, grn_obj *point2)
 {
   double d = 0;

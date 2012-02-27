@@ -552,7 +552,7 @@ grn_pat_remove(grn_ctx *ctx, const char *path)
   return grn_io_remove(ctx, path);
 }
 
-GRN_API grn_rc
+grn_rc
 grn_pat_truncate(grn_ctx *ctx, grn_pat *pat)
 {
   grn_rc rc;
@@ -1505,7 +1505,7 @@ grn_pat_next(grn_ctx *ctx, grn_pat *pat, grn_id id)
   return GRN_ID_NIL;
 }
 
-GRN_API grn_id
+grn_id
 grn_pat_at(grn_ctx *ctx, grn_pat *pat, grn_id id)
 {
   uint32_t key_size;
@@ -1514,7 +1514,7 @@ grn_pat_at(grn_ctx *ctx, grn_pat *pat, grn_id id)
   return GRN_ID_NIL;
 }
 
-GRN_API grn_id
+grn_id
 grn_pat_curr_id(grn_ctx *ctx, grn_pat *pat)
 {
   return pat->header->curr_rec;
