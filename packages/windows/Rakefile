@@ -1,6 +1,6 @@
 # -*- coding: utf-8; mode: ruby -*-
 #
-# Copyright (C) 2011  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2011-2012  Kouhei Sutou <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -60,7 +60,7 @@ namespace :build do
     mecab_tar_gz_url = "http://mecab.googlecode.com/files/#{mecab_tar_gz}"
     Dir.chdir(tmp_dir) do
       mecab_tar_gz = download_dir + mecab_tar_gz
-      unless File.exist?(mecab_tar_gz)
+      unless mecab_tar_gz.exist?
         mkdir_p(download_dir)
         open(mecab_tar_gz_url) do |downloaded_tar_gz|
           File.open(mecab_tar_gz, "wb") do |tar_gz|
@@ -101,7 +101,7 @@ namespace :build do
     naist_jdic_tar_gz_url = "http://osdn.dl.sourceforge.jp/naist-jdic/48487/#{naist_jdic_tar_gz}"
     Dir.chdir(tmp_dir) do
       naist_jdic_tar_gz = download_dir + naist_jdic_tar_gz
-      unless File.exist?(naist_jdic_tar_gz)
+      unless naist_jdic_tar_gz.exist?
         mkdir_p(download_dir)
         open(naist_jdic_tar_gz_url) do |downloaded_tar_gz|
           File.open(naist_jdic_tar_gz, "wb") do |tar_gz|
