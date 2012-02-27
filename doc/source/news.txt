@@ -34,10 +34,10 @@ Improvements
   [Reported by Masaharu YOSHIOKA]
 * [windows] Supported MessagePack.
 
-Bugs
-^^^^
+Fixes
+^^^^^
 
-* Fixed a bug that the last node can't be found. [#1258]
+* [pat] Fixed a bug that the last node can't be found. [#1258]
 * [doc] Fixed links in Japanese page. [Reported by @naoina]
 * [doc] Fixed wrong the default value. [Reported by @naoina]
 * Fixed a typo. [Reported by Kazuhiko]
