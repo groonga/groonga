@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-02-27 15:42\n"
+"POT-Creation-Date: 2012-02-27 16:05\n"
 "PO-Revision-Date: 2011-08-14 18:52+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -135,14 +135,20 @@ msgstr ""
 msgid "[windows] Supported MessagePack."
 msgstr ""
 
-# 34c3aef2d6cf426caafcf36291a1f958
-#: ../../../source/news.txt:38
-msgid "Bugs"
-msgstr ""
+# 39a1ab6e849f4933aa30293846fbbad7
+# ce4eda1385794dab92d3918efd5a8838
+# 1c42c0311f564db29833f6894a7c403a
+#: ../../../source/news.txt:38 ../../../source/news/1.2.x.txt:37
+#: ../../../source/news/1.2.x.txt:104 ../../../source/news/1.2.x.txt:143
+#: ../../../source/news/1.2.x.txt:176 ../../../source/news/1.2.x.txt:211
+#: ../../../source/news/1.2.x.txt:236 ../../../source/news/1.2.x.txt:268
+#: ../../../source/news/1.2.x.txt:311 ../../../source/news/senna.txt:32
+msgid "Fixes"
+msgstr "Fixes"
 
 # 776cce3f59bb401f911bfacac200e2ac
 #: ../../../source/news.txt:40
-msgid "Fixed a bug that the last node can't be found. [#1258]"
+msgid "[pat] Fixed a bug that the last node can't be found. [#1258]"
 msgstr ""
 
 # d4036dc9166c4c528fddd621f7950361
@@ -1600,17 +1606,6 @@ msgstr ""
 #: ../../../source/news/1.2.x.txt:34
 msgid "Supported longest common prefix search by grn_dat."
 msgstr ""
-
-# 39a1ab6e849f4933aa30293846fbbad7
-# ce4eda1385794dab92d3918efd5a8838
-# 1c42c0311f564db29833f6894a7c403a
-#: ../../../source/news/1.2.x.txt:37 ../../../source/news/1.2.x.txt:104
-#: ../../../source/news/1.2.x.txt:143 ../../../source/news/1.2.x.txt:176
-#: ../../../source/news/1.2.x.txt:211 ../../../source/news/1.2.x.txt:236
-#: ../../../source/news/1.2.x.txt:268 ../../../source/news/1.2.x.txt:311
-#: ../../../source/news/senna.txt:32
-msgid "Fixes"
-msgstr "Fixes"
 
 # 18045f05ddf94441941435814a1cc164
 #: ../../../source/news/1.2.x.txt:39

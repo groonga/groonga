@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-02-27 15:42\n"
+"POT-Creation-Date: 2012-02-27 16:05\n"
 "PO-Revision-Date: 2011-10-24 15:23+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -272,13 +272,18 @@ msgid ""
 "package. You need to pass `--with-munin-plugins` option to install them."
 msgstr ""
 
-# 99dfd361399246a5a17cac1f32007d73
+# 5e21956d346843e6abb886d4a180827b
+# d539c3a58a164842b69324e085fe812b
 #~ msgid ""
-#~ "The packages for 64-bit binary are only distributed. Please attention not "
-#~ "to distributing others for 32-bit binaly."
+#~ "You should specify universe section of Ubuntu for installing by add file"
+#~ "(ex. below-mentioned)."
 #~ msgstr ""
-#~ "The packages for 64-bit binary are only distributed. Please attention not "
-#~ "to distributing others for 32-bit binaly."
+#~ "You should specify universe section of Ubuntu for installing by add file"
+#~ "(ex. below-mentioned)."
+
+# 326d5e4062c4421997a40a87a9858b02
+#~ msgid "We only distribute the package for x64."
+#~ msgstr "We only distribute the package for x64."
 
 # 9c38d593bbc04d41b83f8bf863128b21
 # c96d0a4345fc41819ef8147099b26ab8
@@ -290,15 +295,10 @@ msgstr ""
 #~ msgid "We only distribute the package for amd64."
 #~ msgstr "We only distribute the package for amd64."
 
-# 326d5e4062c4421997a40a87a9858b02
-#~ msgid "We only distribute the package for x64."
-#~ msgstr "We only distribute the package for x64."
-
-# 5e21956d346843e6abb886d4a180827b
-# d539c3a58a164842b69324e085fe812b
+# 99dfd361399246a5a17cac1f32007d73
 #~ msgid ""
-#~ "You should specify universe section of Ubuntu for installing by add file"
-#~ "(ex. below-mentioned)."
+#~ "The packages for 64-bit binary are only distributed. Please attention not "
+#~ "to distributing others for 32-bit binaly."
 #~ msgstr ""
-#~ "You should specify universe section of Ubuntu for installing by add file"
-#~ "(ex. below-mentioned)."
+#~ "The packages for 64-bit binary are only distributed. Please attention not "
+#~ "to distributing others for 32-bit binaly."

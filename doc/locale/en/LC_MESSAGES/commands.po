@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-02-27 15:42\n"
+"POT-Creation-Date: 2012-02-27 16:05\n"
 "PO-Revision-Date: 2011-08-12 22:01+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -3131,57 +3131,23 @@ msgstr "view型のテーブルに追加されるテーブルの名前を指定�
 msgid "view_add Ventry Entry [true]"
 msgstr "view_add Ventry Entry [true]"
 
-# 8cecf7e17f0842e3b71c278f360f2c09
-#~ msgid "補完・修正・提案の対象となるクエリを指定します。"
-#~ msgstr "補完・修正・提案の対象となるクエリを指定します。"
-
-# 1b16dbf915334218847dec76f1e40655
+# 58738da3ccdd4b8c9c21c4b2b61a1211
 #~ msgid ""
-#~ "基礎となるデータが格納されているテーブルにおいて、「ヨミガナ」が格納されて"
-#~ "いるカラム名を指定します。"
+#~ "** 未だ仕様は確定しておりません。利用のためには特定のデータを持つテーブル"
+#~ "が必要となります。 **"
 #~ msgstr ""
-#~ "基礎となるデータが格納されているテーブルにおいて、「ヨミガナ」が格納されて"
-#~ "いるカラム名を指定します。"
+#~ "** 未だ仕様は確定しておりません。利用のためには特定のデータを持つテーブル"
+#~ "が必要となります。 **"
 
-# ed377ed637424a8b96f2c425a6408d66
-#~ msgid "``column``"
-#~ msgstr "``column``"
+# e327482145f744e787aee4d6d3d7a02f
+#~ msgid "suggest - 指定したクエリに対する補完・修正・提案を行う。"
+#~ msgstr "suggest - 指定したクエリに対する補完・修正・提案を行う。"
 
-# da552bb835aa45408b2f1363510927ae
-#~ msgid "基礎となるデータが格納されているテーブル名を指定します。"
-#~ msgstr "基礎となるデータが格納されているテーブル名を指定します。"
-
-# e2894f7f3e2a4faea18c8d9551c18d89
-#~ msgid "提案を行います。"
-#~ msgstr "提案を行います。"
-
-# fa917ea5711e4dd89e8b66c7404830a3
-#~ msgid "修正を行います。"
-#~ msgstr "修正を行います。"
-
-# ccfd1f926f5141e29e4230e06a6d8740
-#~ msgid "``correct``"
-#~ msgstr "``correct``"
-
-# 4b055f2ccd52456aa3a6dc26600b9ee6
-#~ msgid "補完を行います。"
-#~ msgstr "補完を行います。"
-
-# bfa4263e2cca46d5afc55b25166fd2eb
-#~ msgid "``complete``"
-#~ msgstr "``complete``"
-
-# 4bbdc5b0e39749c4b65b0bd813819e32
+# 9cb50192e38b465e883c0ecdc98e1ce3
 #~ msgid ""
-#~ "補完・修正・提案のいずれを行うかを、パイプ('|')で組み合わせたシンボル名で"
-#~ "指定します(例: correct|suggest)"
+#~ "suggestコマンドは、指定したクエリに対して補完・修正・提案を行います。"
 #~ msgstr ""
-#~ "補完・修正・提案のいずれを行うかを、パイプ('|')で組み合わせたシンボル名で"
-#~ "指定します(例: correct|suggest)"
-
-# 98a5a9b4258a4efe967934cd876b1096
-#~ msgid "``types``"
-#~ msgstr "``types``"
+#~ "suggestコマンドは、指定したクエリに対して補完・修正・提案を行います。"
 
 # 62338c55e33340c88150aab5477afb82
 #~ msgid ""
@@ -3193,20 +3159,54 @@ msgstr "view_add Ventry Entry [true]"
 #~ "スタイプや誤変換を修正することです。提案とは、さらなる絞込みを行うための候"
 #~ "補となるクエリを提案することです。"
 
-# 9cb50192e38b465e883c0ecdc98e1ce3
-#~ msgid ""
-#~ "suggestコマンドは、指定したクエリに対して補完・修正・提案を行います。"
-#~ msgstr ""
-#~ "suggestコマンドは、指定したクエリに対して補完・修正・提案を行います。"
+# 98a5a9b4258a4efe967934cd876b1096
+#~ msgid "``types``"
+#~ msgstr "``types``"
 
-# e327482145f744e787aee4d6d3d7a02f
-#~ msgid "suggest - 指定したクエリに対する補完・修正・提案を行う。"
-#~ msgstr "suggest - 指定したクエリに対する補完・修正・提案を行う。"
-
-# 58738da3ccdd4b8c9c21c4b2b61a1211
+# 4bbdc5b0e39749c4b65b0bd813819e32
 #~ msgid ""
-#~ "** 未だ仕様は確定しておりません。利用のためには特定のデータを持つテーブル"
-#~ "が必要となります。 **"
+#~ "補完・修正・提案のいずれを行うかを、パイプ('|')で組み合わせたシンボル名で"
+#~ "指定します(例: correct|suggest)"
 #~ msgstr ""
-#~ "** 未だ仕様は確定しておりません。利用のためには特定のデータを持つテーブル"
-#~ "が必要となります。 **"
+#~ "補完・修正・提案のいずれを行うかを、パイプ('|')で組み合わせたシンボル名で"
+#~ "指定します(例: correct|suggest)"
+
+# bfa4263e2cca46d5afc55b25166fd2eb
+#~ msgid "``complete``"
+#~ msgstr "``complete``"
+
+# 4b055f2ccd52456aa3a6dc26600b9ee6
+#~ msgid "補完を行います。"
+#~ msgstr "補完を行います。"
+
+# ccfd1f926f5141e29e4230e06a6d8740
+#~ msgid "``correct``"
+#~ msgstr "``correct``"
+
+# fa917ea5711e4dd89e8b66c7404830a3
+#~ msgid "修正を行います。"
+#~ msgstr "修正を行います。"
+
+# e2894f7f3e2a4faea18c8d9551c18d89
+#~ msgid "提案を行います。"
+#~ msgstr "提案を行います。"
+
+# da552bb835aa45408b2f1363510927ae
+#~ msgid "基礎となるデータが格納されているテーブル名を指定します。"
+#~ msgstr "基礎となるデータが格納されているテーブル名を指定します。"
+
+# ed377ed637424a8b96f2c425a6408d66
+#~ msgid "``column``"
+#~ msgstr "``column``"
+
+# 1b16dbf915334218847dec76f1e40655
+#~ msgid ""
+#~ "基礎となるデータが格納されているテーブルにおいて、「ヨミガナ」が格納されて"
+#~ "いるカラム名を指定します。"
+#~ msgstr ""
+#~ "基礎となるデータが格納されているテーブルにおいて、「ヨミガナ」が格納されて"
+#~ "いるカラム名を指定します。"
+
+# 8cecf7e17f0842e3b71c278f360f2c09
+#~ msgid "補完・修正・提案の対象となるクエリを指定します。"
+#~ msgstr "補完・修正・提案の対象となるクエリを指定します。"
