@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-02-27 16:05\n"
+"POT-Creation-Date: 2012-02-27 22:30\n"
 "PO-Revision-Date: 2011-08-14 18:52+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -118,9 +118,9 @@ msgid ""
 ">`_."
 msgstr ""
 
-# 34b00f3af83e4c9e87bb33869351a01c
+# c01310b2268a4debace6e4ce13c5289f
 #: ../../../source/news.txt:32
-msgid "Supported offline indexing."
+msgid "Supported :doc:`offline indexing construction </indexing>`."
 msgstr ""
 
 # cb91d137ad09477a8e5dd195ae4f710f
