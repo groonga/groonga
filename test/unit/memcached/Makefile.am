@@ -14,7 +14,12 @@ AM_CFLAGS =						\
 	$(GCUTTER_CFLAGS)				\
 	-DGROONGA=\"$(abs_top_builddir)/src/groonga\"
 
-AM_LDFLAGS = -module -rpath $(libdir) -avoid-version -lmemcached
+AM_LDFLAGS =					\
+	-module					\
+	-rpath $(libdir)			\
+	-avoid-version				\
+	-no-undefined				\
+	-lmemcached
 
 LIBS =									\
 	$(top_builddir)/lib/libgroonga.la				\

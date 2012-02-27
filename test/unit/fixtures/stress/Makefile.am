@@ -13,7 +13,11 @@ INCLUDES =				\
 
 AM_CFLAGS = $(GCUTTER_CFLAGS)
 
-AM_LDFLAGS = -module -rpath $(libdir) -avoid-version
+AM_LDFLAGS =					\
+	-module					\
+	-rpath $(libdir)			\
+	-avoid-version				\
+	-no-undefined
 
 LIBS =								\
 	$(top_builddir)/lib/libgroonga.la			\

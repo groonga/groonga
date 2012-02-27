@@ -28,12 +28,13 @@ AM_CFLAGS =						\
 # $(libdir) here but we can use other absolute path like
 # $(abs_builddir).  $(abs_builddir) is more reasonable
 # absolute path but it's not supported by automake < 1.10. :<
-AM_LDFLAGS =                   \
-       -rpath $(libdir)        \
-       -avoid-version
+AM_LDFLAGS =					\
+	-rpath $(libdir)			\
+	-avoid-version				\
+	-no-undefined
 
 LIBS =						\
-	$(top_builddir)/lib/libgroonga.la		\
+	$(top_builddir)/lib/libgroonga.la	\
 	$(GCUTTER_LIBS)
 
 noinst_HEADERS =				\
