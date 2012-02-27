@@ -29,10 +29,8 @@ upload: ensure-rsync-path
 
 download: ensure-rsync-path
 	for distribution in $(DISTRIBUTIONS); do		\
-	  (rm -rf $${distribution} &&				\
-	   mkdir -p $${distribution} &&				\
 	   rsync -avz --delete					\
-	     $(SERVER_PATH)/$${distribution}/ $${distribution});\
+	     $(SERVER_PATH)/$${distribution}/ $${distribution};	\
 	done
 
 build: build-in-chroot build-repository-rpm
