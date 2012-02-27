@@ -189,7 +189,8 @@ namespace :build do
       options = ["--prefix=#{binary_dir}",
                  "--host=#{host}",
                  "--without-cutter",
-                 "--disable-benchmark"]
+                 "--disable-benchmark",
+                 "--with-message-pack=#{binary_dir}"]
       if mecab_config.exist?
         options << "--with-mecab-config=#{mecab_config}"
       else
