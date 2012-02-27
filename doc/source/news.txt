@@ -5,6 +5,52 @@
 News
 ====
 
+.. _release-1-3-1:
+
+Release 1.3.1 - 2012/02/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [dat] Added 0 length key check.
+* [windows] Added missing GCC related DLLs. [groonga-dev,00686]
+  [Reported by Suzuki]
+* [php] Supported PHP 5.4. [Patch by Daiki Ueno]
+* Updated FSF address. [Suggested by Daiki Ueno]
+* [fedora] Supported systemd. [Patch by Daiki Ueno]
+* [rpm][debian] Changed the default protocol to HTTP from gqtp.
+* [rpm][centos] Supported status command.
+* Removed needless ``:`` from log message.
+* Removed deprecated grn_query. [#1247]
+* Reduced needless grn_ctx_at() calls on creating table.
+* [pat] Supported cache.
+* [tokenizer] Improved tokenizer API.
+* Accepted ``@`` as a valid name character.
+* [tokenizer] Added a tokenizer based on
+  `KyTea <http://www.phontron.com/kytea/>`_.
+* Supported offline indexing.
+* [tokenizer] Supported MeCab 0.993. [groonga-dev,00703]
+  [Reported by Masaharu YOSHIOKA]
+* [windows] Supported MessagePack.
+
+Bugs
+^^^^
+
+* Fixed a bug that the last node can't be found. [#1258]
+* [doc] Fixed links in Japanese page. [Reported by @naoina]
+* [doc] Fixed wrong the default value. [Reported by @naoina]
+* Fixed a typo. [Reported by Kazuhiko]
+
+Thanks
+^^^^^^
+
+* Suzuki
+* Daiki Ueno
+* @naoina
+* Kazuhiko
+* Masaharu YOSHIOKA
+
 .. _release-1-3-0:
 
 Release 1.3.0 - 2012/01/29
