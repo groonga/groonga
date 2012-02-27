@@ -44,9 +44,52 @@ else
     "mecab-0.98-not-use-locale-on-mingw.diff",
   ]
 end
+msgpack_patches = [
+  "msgpack-0.5.7-mingw-w64.diff",
+]
 
 namespace :build do
   download_dir = Pathname.new("tmp/download").expand_path
+
+  desc "Build MessagePack and install it into #{dist_dir}."
+  task(:msgpack) do
+    tmp_dir = Pathname.new("tmp/msgpack")
+    rm_rf(tmp_dir)
+    mkdir_p(tmp_dir)
+    require 'open-uri'
+    msgpack_version = "0.5.7"
+    msgpack_base = "msgpack-#{msgpack_version}"
+    msgpack_tar_gz = "#{msgpack_base}.tar.gz"
+    msgpack_tar_gz_url = "http://msgpack.org/releases/cpp/#{msgpack_tar_gz}"
+    Dir.chdir(tmp_dir) do
+      msgpack_tar_gz = download_dir + msgpack_tar_gz
+      unless msgpack_tar_gz.exist?
+        mkdir_p(download_dir)
+        open(msgpack_tar_gz_url) do |downloaded_tar_gz|
+          File.open(msgpack_tar_gz, "wb") do |tar_gz|
+            tar_gz.print(downloaded_tar_gz.read)
+          end
+        end
+      end
+      sh("tar", "xzf", msgpack_tar_gz.to_s) or exit(false)
+    end
+    Dir.chdir(tmp_dir + msgpack_base) do
+      msgpack_patches.each do |patch|
+        sh("patch -p1 < #{patches_dir + patch}")
+      end
+      sh("autoreconf", "--install", "--force")
+      sh("./configure",
+         "--prefix=#{binary_dir}",
+         "--host=#{host}") or exit(false)
+      sh("env", "GREP_OPTIONS=--text", "nice", "make", "-j8") or exit(false)
+      sh("env", "GREP_OPTIONS=--text", "make", "install") or exit(false)
+
+      msgpack_license_dir = license_dir + "msgpack"
+      mkdir_p(msgpack_license_dir)
+      files = ["AUTHORS", "COPYING", "LICENSE"]
+      cp(files, msgpack_license_dir)
+    end
+  end
 
   desc "Build MeCab and install it into #{dist_dir}."
   task(:mecab) do
@@ -189,6 +232,7 @@ task("build:post" => "gcc:dll:bundle")
 
 desc "Build MeCab and groonga and install them into #{dist_dir}/."
 task(:build => ["build:pre",
+                "build:msgpack",
                 "build:mecab",
                 "build:mecab_dict",
                 "build:groonga",
