@@ -36,11 +36,11 @@ cannot be searchable until all registered documents are
 indexed.
 
 Offline index construction is suitable for a search system
-that values less resources. If a search system doesn't value
-freshness, offline index construction will be suitable. For
-example, a reference manual search system doesn't value
-freshness because a reference manual will be updated only at
-a release.
+that values less required resources. If a search system
+doesn't value freshness, offline index construction will be
+suitable. For example, a reference manual search system
+doesn't value freshness because a reference manual will be
+updated only at a release.
 
 How to use
 ----------
@@ -51,7 +51,7 @@ register a document, we can search it quickly.
 Groonga uses offline index construction by adding an index
 to a column that already has data.
 
-We create a schema:
+We define a schema:
 
 .. groonga-command
 .. include:: ../example/indexing-schema.log
@@ -101,7 +101,7 @@ construction:
 .. {"content":"Let's go shopping."}
 .. ]
 
-We can get newly registered records by searching:
+We can also get newly registered records by searching:
 
 .. groonga-command
 .. include:: ../example/indexing-search-after-online-index-construction.log
