@@ -57,7 +57,7 @@ namespace :build do
     mecab_version = "0.98"
     mecab_base = "mecab-#{mecab_version}"
     mecab_tar_gz = "#{mecab_base}.tar.gz"
-    mecab_tar_gz_url = "http://sourceforge.net/projects/mecab/files/mecab/#{mecab_version}/#{mecab_tar_gz}/download"
+    mecab_tar_gz_url = "http://mecab.googlecode.com/files/#{mecab_tar_gz}"
     Dir.chdir(tmp_dir) do
       mecab_tar_gz = download_dir + mecab_tar_gz
       unless File.exist?(mecab_tar_gz)
