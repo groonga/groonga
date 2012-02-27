@@ -3446,7 +3446,7 @@ _grn_ii_create(grn_ctx *ctx, grn_ii *ii, const char *path, grn_obj *lexicon, uin
   return ii;
 }
 
-grn_ii *
+GRN_API grn_ii *
 grn_ii_create(grn_ctx *ctx, const char *path, grn_obj *lexicon, uint32_t flags)
 {
   grn_ii *ii = NULL;
@@ -3461,7 +3461,7 @@ grn_ii_create(grn_ctx *ctx, const char *path, grn_obj *lexicon, uint32_t flags)
   return ii;
 }
 
-grn_rc
+GRN_API grn_rc
 grn_ii_remove(grn_ctx *ctx, const char *path)
 {
   grn_rc rc;
@@ -3514,7 +3514,7 @@ exit:
   return rc;
 }
 
-grn_ii *
+GRN_API grn_ii *
 grn_ii_open(grn_ctx *ctx, const char *path, grn_obj *lexicon)
 {
   grn_io *seg, *chunk;
@@ -3561,7 +3561,7 @@ grn_ii_open(grn_ctx *ctx, const char *path, grn_obj *lexicon)
   return ii;
 }
 
-grn_rc
+GRN_API grn_rc
 grn_ii_close(grn_ctx *ctx, grn_ii *ii)
 {
   grn_rc rc;
@@ -4951,7 +4951,7 @@ grn_uvector2updspecs(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
   return GRN_SUCCESS;
 }
 
-grn_rc
+GRN_API grn_rc
 grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
                      grn_obj *oldvalue, grn_obj *newvalue, grn_obj *posting)
 {

@@ -552,7 +552,7 @@ grn_pat_remove(grn_ctx *ctx, const char *path)
   return grn_io_remove(ctx, path);
 }
 
-grn_rc
+GRN_API grn_rc
 grn_pat_truncate(grn_ctx *ctx, grn_pat *pat)
 {
   grn_rc rc;
@@ -1505,7 +1505,7 @@ grn_pat_next(grn_ctx *ctx, grn_pat *pat, grn_id id)
   return GRN_ID_NIL;
 }
 
-grn_id
+GRN_API grn_id
 grn_pat_at(grn_ctx *ctx, grn_pat *pat, grn_id id)
 {
   uint32_t key_size;

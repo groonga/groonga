@@ -331,7 +331,7 @@ _grn_ja_create(grn_ctx *ctx, grn_ja *ja, const char *path,
   return ja;
 }
 
-grn_ja *
+GRN_API grn_ja *
 grn_ja_create(grn_ctx *ctx, const char *path, unsigned int max_element_size, uint32_t flags)
 {
   grn_ja *ja = NULL;
@@ -378,7 +378,7 @@ grn_ja_info(grn_ctx *ctx, grn_ja *ja, unsigned int *max_element_size)
   return GRN_SUCCESS;
 }
 
-grn_rc
+GRN_API grn_rc
 grn_ja_close(grn_ctx *ctx, grn_ja *ja)
 {
   grn_rc rc;
@@ -459,7 +459,7 @@ grn_ja_ref_raw(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *va
   return iw->addr;
 }
 
-grn_rc
+GRN_API grn_rc
 grn_ja_unref(grn_ctx *ctx, grn_io_win *iw)
 {
   if (!iw->addr) { return GRN_INVALID_ARGUMENT; }
@@ -937,7 +937,7 @@ grn_ja_put_raw(grn_ctx *ctx, grn_ja *ja, grn_id id,
   return ctx->rc;
 }
 
-grn_rc
+GRN_API grn_rc
 grn_ja_putv(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_obj *vector, int flags)
 {
   grn_obj header, footer;
@@ -977,7 +977,7 @@ exit :
   return rc;
 }
 
-uint32_t
+GRN_API uint32_t
 grn_ja_size(grn_ctx *ctx, grn_ja *ja, grn_id id)
 {
   grn_ja_einfo *einfo = NULL, *ei;
@@ -1126,7 +1126,7 @@ grn_ja_ref_lzo(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *va
 }
 #endif /* NO_LZO */
 
-void *
+GRN_API void *
 grn_ja_ref(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *value_len)
 {
 #ifndef NO_ZLIB

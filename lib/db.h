@@ -78,7 +78,7 @@ typedef struct {
   grn_id range;
 } grn_obj_spec;
 
-grn_rc grn_db_close(grn_ctx *ctx, grn_obj *db);
+GRN_API grn_rc grn_db_close(grn_ctx *ctx, grn_obj *db);
 
 grn_obj *grn_db_keys(grn_obj *s);
 
@@ -111,7 +111,7 @@ void grn_table_add_subrec(grn_obj *table, grn_rset_recinfo *ri, int score,
 
 grn_obj *grn_obj_graft(grn_ctx *ctx, grn_obj *obj);
 
-grn_id grn_view_add(grn_ctx *ctx, grn_obj *view, grn_obj *table);
+GRN_API grn_id grn_view_add(grn_ctx *ctx, grn_obj *view, grn_obj *table);
 
 grn_rc grn_column_name_(grn_ctx *ctx, grn_obj *obj, grn_obj *buf);
 
@@ -322,8 +322,9 @@ GRN_API grn_rc grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, int addp)
  * ctxが使用するdbの中でnameに対応付けて既存のtableを開く。
  * dbに登録されている名前付きの永続テーブルを開く場合はgrn_ctx_get()を使用するのが望ましい。
  **/
-grn_obj *grn_table_open(grn_ctx *ctx,
-                        const char *name, unsigned int name_size, const char *path);
+GRN_API grn_obj *grn_table_open(grn_ctx *ctx,
+                                const char *name, unsigned int name_size,
+                                const char *path);
 
 /**
  * grn_column_open:

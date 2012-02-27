@@ -92,11 +92,11 @@ struct _grn_pat_cursor {
 grn_id grn_pat_curr_id(grn_ctx *ctx, grn_pat *pat);
 
 /* private */
-grn_rc grn_pat_truncate(grn_ctx *ctx, grn_pat *pat);
+GRN_API grn_rc grn_pat_truncate(grn_ctx *ctx, grn_pat *pat);
 const char *_grn_pat_key(grn_ctx *ctx, grn_pat *pat, grn_id id, uint32_t *key_size);
 grn_id grn_pat_next(grn_ctx *ctx, grn_pat *pat, grn_id id);
 const char *grn_pat_get_value_(grn_ctx *ctx, grn_pat *pat, grn_id id, uint32_t *size);
-grn_id grn_pat_at(grn_ctx *ctx, grn_pat *pat, grn_id id);
+GRN_API grn_id grn_pat_at(grn_ctx *ctx, grn_pat *pat, grn_id id);
 void grn_pat_check(grn_ctx *ctx, grn_pat *pat);
 void grn_pat_inspect_nodes(grn_ctx *ctx, grn_pat *pat, grn_obj *buf);
 void grn_pat_cursor_inspect(grn_ctx *ctx, grn_pat_cursor *c, grn_obj *buf);

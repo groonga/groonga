@@ -165,7 +165,7 @@ struct _grn_array_cursor {
 
 #define GRN_ARRAY_SIZE(array) (*((array)->n_entries))
 
-grn_rc grn_array_truncate(grn_ctx *ctx, grn_array *array);
+GRN_API grn_rc grn_array_truncate(grn_ctx *ctx, grn_array *array);
 grn_rc grn_array_copy_sort_key(grn_ctx *ctx, grn_array *array,
                                grn_table_sort_key *keys, int n_keys);
 
@@ -268,8 +268,8 @@ struct _grn_table_sort_optarg {
   int offset;
 };
 
-int grn_hash_sort(grn_ctx *ctx, grn_hash *hash, int limit,
-                  grn_array *result, grn_table_sort_optarg *optarg);
+GRN_API int grn_hash_sort(grn_ctx *ctx, grn_hash *hash, int limit,
+                          grn_array *result, grn_table_sort_optarg *optarg);
 
 grn_rc grn_hash_lock(grn_ctx *ctx, grn_hash *hash, int timeout);
 grn_rc grn_hash_unlock(grn_ctx *ctx, grn_hash *hash);

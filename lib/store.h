@@ -88,23 +88,26 @@ struct _grn_ja {
   struct grn_ja_header *header;
 };
 
-grn_ja *grn_ja_create(grn_ctx *ctx, const char *path,
+GRN_API grn_ja *grn_ja_create(grn_ctx *ctx, const char *path,
                       uint32_t max_element_size, uint32_t flags);
 grn_ja *grn_ja_open(grn_ctx *ctx, const char *path);
 grn_rc grn_ja_info(grn_ctx *ctx, grn_ja *ja, unsigned int *max_element_size);
-grn_rc grn_ja_close(grn_ctx *ctx, grn_ja *ja);
+GRN_API grn_rc grn_ja_close(grn_ctx *ctx, grn_ja *ja);
 grn_rc grn_ja_remove(grn_ctx *ctx, const char *path);
 grn_rc grn_ja_put(grn_ctx *ctx, grn_ja *ja, grn_id id,
                   void *value, uint32_t value_len, int flags, uint64_t *cas);
 int grn_ja_at(grn_ctx *ctx, grn_ja *ja, grn_id id, void *valbuf, int buf_size);
 
-void *grn_ja_ref(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *value_len);
+GRN_API void *grn_ja_ref(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw,
+                         uint32_t *value_len);
 grn_obj *grn_ja_get_value(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_obj *value);
 
-grn_rc grn_ja_unref(grn_ctx *ctx, grn_io_win *iw);
+GRN_API grn_rc grn_ja_unref(grn_ctx *ctx, grn_io_win *iw);
 int grn_ja_defrag(grn_ctx *ctx, grn_ja *ja, int threshold);
 
-grn_rc grn_ja_putv(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_obj *vector, int flags);
+GRN_API grn_rc grn_ja_putv(grn_ctx *ctx, grn_ja *ja, grn_id id,
+                           grn_obj *vector, int flags);
+GRN_API uint32_t grn_ja_size(grn_ctx *ctx, grn_ja *ja, grn_id id);
 
 void grn_ja_check(grn_ctx *ctx, grn_ja *ja);
 

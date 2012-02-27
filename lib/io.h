@@ -117,14 +117,16 @@ struct _grn_io {
   uint32_t *lock;
 };
 
-grn_io *grn_io_create(grn_ctx *ctx, const char *path, uint32_t header_size, uint32_t segment_size,
-                      uint32_t max_segment, grn_io_mode mode, unsigned int flags);
+GRN_API grn_io *grn_io_create(grn_ctx *ctx, const char *path,
+                              uint32_t header_size, uint32_t segment_size,
+                              uint32_t max_segment, grn_io_mode mode,
+                              unsigned int flags);
 grn_io *grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode);
-grn_rc grn_io_close(grn_ctx *ctx, grn_io *io);
+GRN_API grn_rc grn_io_close(grn_ctx *ctx, grn_io *io);
 grn_rc grn_io_remove(grn_ctx *ctx, const char *path);
 grn_rc grn_io_size(grn_ctx *ctx, grn_io *io, uint64_t *size);
 grn_rc grn_io_rename(grn_ctx *ctx, const char *old_name, const char *new_name);
-void *grn_io_header(grn_io *io);
+GRN_API void *grn_io_header(grn_io *io);
 
 void *grn_io_win_map(grn_io *io, grn_ctx *ctx, grn_io_win *iw, uint32_t segment,
                      uint32_t offset, uint32_t size, grn_io_rw_mode mode);
@@ -304,8 +306,8 @@ void *grn_io_array_at(grn_ctx *ctx, grn_io *io, uint32_t array, off_t offset, in
 void grn_io_segment_alloc(grn_ctx *ctx, grn_io *io, grn_io_array_info *ai,
                           uint32_t lseg, int *flags, void **p);
 
-grn_rc grn_io_lock(grn_ctx *ctx, grn_io *io, int timeout);
-void grn_io_unlock(grn_io *io);
+GRN_API grn_rc grn_io_lock(grn_ctx *ctx, grn_io *io, int timeout);
+GRN_API void grn_io_unlock(grn_io *io);
 void grn_io_clear_lock(grn_io *io);
 uint32_t grn_io_is_locked(grn_io *io);
 

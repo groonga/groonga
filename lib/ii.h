@@ -98,10 +98,11 @@ struct _grn_ii_updspec {
 
 typedef struct _grn_ii_updspec grn_ii_updspec;
 
-grn_ii *grn_ii_create(grn_ctx *ctx, const char *path, grn_obj *lexicon, uint32_t flags);
-grn_ii *grn_ii_open(grn_ctx *ctx, const char *path, grn_obj *lexicon);
-grn_rc grn_ii_close(grn_ctx *ctx, grn_ii *ii);
-grn_rc grn_ii_remove(grn_ctx *ctx, const char *path);
+GRN_API grn_ii *grn_ii_create(grn_ctx *ctx, const char *path, grn_obj *lexicon,
+                              uint32_t flags);
+GRN_API grn_ii *grn_ii_open(grn_ctx *ctx, const char *path, grn_obj *lexicon);
+GRN_API grn_rc grn_ii_close(grn_ctx *ctx, grn_ii *ii);
+GRN_API grn_rc grn_ii_remove(grn_ctx *ctx, const char *path);
 grn_rc grn_ii_info(grn_ctx *ctx, grn_ii *ii, uint64_t *seg_size, uint64_t *chunk_size);
 grn_rc grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, uint32_t key, grn_ii_updspec *u,
                          grn_hash *h);
@@ -166,8 +167,9 @@ struct _grn_select_optarg {
   int max_size;
 };
 
-grn_rc grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id id, unsigned int section,
-                            grn_obj *oldvalue, grn_obj *newvalue, grn_obj *posting);
+GRN_API grn_rc grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id id,
+                                    unsigned int section, grn_obj *oldvalue,
+                                    grn_obj *newvalue, grn_obj *posting);
 grn_rc grn_ii_term_extract(grn_ctx *ctx, grn_ii *ii, const char *string,
                             unsigned int string_len, grn_hash *s,
                             grn_operator op, grn_select_optarg *optarg);
