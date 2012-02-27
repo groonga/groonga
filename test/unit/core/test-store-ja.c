@@ -24,8 +24,6 @@
 
 #include <str.h>
 
-uint32_t grn_ja_size(grn_ctx *ctx, grn_ja *ja, grn_id id);
-
 void test_vector_empty_load(void);
 
 static gchar *tmp_directory;
