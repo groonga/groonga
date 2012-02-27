@@ -16,9 +16,10 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "grn-assertions.h"
 #include <str.h>
 #include <db.h>
+
+#include "grn-assertions.h"
 
 const gchar *
 grn_rc_to_string(grn_rc rc)

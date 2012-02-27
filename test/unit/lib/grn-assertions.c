@@ -18,13 +18,13 @@
 
 #include <cutter/cut-helper.h>
 #include <gcutter.h>
-#include "grn-assertions.h"
 
 #include <groonga_in.h>
 #include <db.h>
 #include <util.h>
 #include <str.h>
 
+#include "grn-assertions.h"
 
 void
 grn_test_assert_helper(grn_rc rc, const gchar *expression)

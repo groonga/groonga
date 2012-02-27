@@ -16,9 +16,9 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+#include <groonga_in.h>
 #include <groonga.h>
 
-#include <groonga_in.h>
 #include <stdlib.h>
 #include <str.h>
 
