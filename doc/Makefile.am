@@ -2,6 +2,7 @@ SUBDIRS =					\
 	locale
 
 BUILT_SOURCES =
+CLEANFILES =
 
 all:
 
@@ -46,7 +47,7 @@ dist-hook: html man
 	@touch $(distdir)/build-stamp
 nobase_dist_doc_DATA =				\
 	$(source_files_relative_from_doc_dir)
-CLEANFILES = build-stamp
+CLEANFILES += build-stamp
 else
 dist-hook:
 	@echo "must specify --enable-document for 'make dist'"
