@@ -52,11 +52,17 @@ libgrn_test_utils_la_SOURCES =	\
 libgrn_test_hash_utils_la_SOURCES =	\
 	grn-test-hash-factory.c		\
 	grn-test-hash-assertions.c
+libgrn_test_hash_utils_la_LIBADD =	\
+	libgrn-test-utils.la
 
 libgrn_test_server_la_SOURCES =		\
 	grn-test-server.c		\
 	grn-test-server.h
+libgrn_test_server_la_LIBADD =	\
+	libgrn-test-utils.la
 
 libgrn_test_memcached_utils_la_SOURCES =	\
 	grn-test-memcached-assertions.c		\
 	grn-test-memcached-assertions.h
+libgrn_test_memcached_utils_la_LIBADD =		\
+	libgrn-test-utils.la
