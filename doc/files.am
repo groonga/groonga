@@ -208,6 +208,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/images/geo-search-in-rectangle.png \
 	$(top_srcdir)/doc/source/images/geo-search-in-rectangle.svg \
 	$(top_srcdir)/doc/source/index.txt \
+	$(top_srcdir)/doc/source/indexing.txt \
 	$(top_srcdir)/doc/source/install.txt \
 	$(top_srcdir)/doc/source/limitations.txt \
 	$(top_srcdir)/doc/source/log.txt \
@@ -215,6 +216,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/news/0.x.txt \
 	$(top_srcdir)/doc/source/news/1.0.x.txt \
 	$(top_srcdir)/doc/source/news/1.1.x.txt \
+	$(top_srcdir)/doc/source/news/1.2.x.txt \
 	$(top_srcdir)/doc/source/news/senna.txt \
 	$(top_srcdir)/doc/source/output.txt \
 	$(top_srcdir)/doc/source/pseudo_column.txt \
@@ -470,6 +472,7 @@ source_files_relative_from_doc_dir = \
 	source/images/geo-search-in-rectangle.png \
 	source/images/geo-search-in-rectangle.svg \
 	source/index.txt \
+	source/indexing.txt \
 	source/install.txt \
 	source/limitations.txt \
 	source/log.txt \
@@ -477,6 +480,7 @@ source_files_relative_from_doc_dir = \
 	source/news/0.x.txt \
 	source/news/1.0.x.txt \
 	source/news/1.1.x.txt \
+	source/news/1.2.x.txt \
 	source/news/senna.txt \
 	source/output.txt \
 	source/pseudo_column.txt \
@@ -534,6 +538,7 @@ po_files = \
 	functions.po \
 	geolocation_search.po \
 	index.po \
+	indexing.po \
 	install.po \
 	limitations.po \
 	log.po \
@@ -560,6 +565,7 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/functions.po \
 	LC_MESSAGES/geolocation_search.po \
 	LC_MESSAGES/index.po \
+	LC_MESSAGES/indexing.po \
 	LC_MESSAGES/install.po \
 	LC_MESSAGES/limitations.po \
 	LC_MESSAGES/log.po \
@@ -586,6 +592,7 @@ mo_files = \
 	functions.mo \
 	geolocation_search.mo \
 	index.mo \
+	indexing.mo \
 	install.mo \
 	limitations.mo \
 	log.mo \
@@ -612,6 +619,7 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/functions.mo \
 	LC_MESSAGES/geolocation_search.mo \
 	LC_MESSAGES/index.mo \
+	LC_MESSAGES/indexing.mo \
 	LC_MESSAGES/install.mo \
 	LC_MESSAGES/limitations.mo \
 	LC_MESSAGES/log.mo \
@@ -682,6 +690,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/functions/rand.txt \
 	html/_sources/geolocation_search.txt \
 	html/_sources/index.txt \
+	html/_sources/indexing.txt \
 	html/_sources/install.txt \
 	html/_sources/limitations.txt \
 	html/_sources/log.txt \
@@ -689,6 +698,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/news/0.x.txt \
 	html/_sources/news/1.0.x.txt \
 	html/_sources/news/1.1.x.txt \
+	html/_sources/news/1.2.x.txt \
 	html/_sources/news/senna.txt \
 	html/_sources/output.txt \
 	html/_sources/pseudo_column.txt \
@@ -799,6 +809,7 @@ html_files_relative_from_locale_dir = \
 	html/genindex.html \
 	html/geolocation_search.html \
 	html/index.html \
+	html/indexing.html \
 	html/install.html \
 	html/limitations.html \
 	html/log.html \
@@ -806,6 +817,7 @@ html_files_relative_from_locale_dir = \
 	html/news/0.x.html \
 	html/news/1.0.x.html \
 	html/news/1.1.x.html \
+	html/news/1.2.x.html \
 	html/news/senna.html \
 	html/objects.inv \
 	html/output.html \
