@@ -1,0 +1,386 @@
+.. -*- rst -*-
+
+.. highlightlang:: none
+
+.. _release-1-2-9:
+
+Release 1.2.9 - 2011/12/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* Supported Fedora 16.
+* Dropped Fedora 15 support.
+* [groonga] Improved the default server ID address to work
+  on unresolved host name environment. [Reported by @uzulla]
+* Supported MAP_HUGETLB.
+* [admin] Supported throughput chart.
+* Stopped adding nul character in ``grn_itoh()``. [#1194]
+  [Reported by SHIDARA Yoji]
+* Added ``grn_obj_get_values()``.
+* Added ``grn_obj_delete_by_id()``.
+* Supported string vector column for query expansion. [#1216]
+* Added ``--filter`` option to :doc:`/commands/delete` to delete
+  many record at once. [#1225]
+* Supported approximate type customization for
+  :doc:`/functions/geo_in_circle` and :doc:`/functions/geo_distance`. [#1226]
+* Made ``geo_distance2()`` and ``geo_distance3()`` are deprecated.
+* Changed to use ``null`` instead of ``""`` for empty geo
+  point value in JSON output.
+* Almost supported MessagePack output. [#1215] [Worked by SHIDARA Yoji]
+* Added missing newlines after drilldown result tags in XML output.
+* Supported truncate for grn_dat.
+* Supported longest common prefix search by grn_dat.
+
+Fixes
+^^^^^
+
+* [windows] Fixed inverted map type.
+* Fixed -Wno- compiler flag detection. [Patch by Arnaud Fontaine]
+* Fixed a problem that ``groonga --version`` reports wrongly
+  about MeCab. [#1209] [Patch by SHIDARA Yoji]
+* Added missing lock into ``grn_obj_remove()``.
+* Fixed Content-Type on error. [#1220] [Patch by SHIDARA Yoji]
+* Fixed a problem that deleting SIS (Semi Infinite String)
+  may keep a garbage.
+
+Thanks
+^^^^^^
+
+* @uzulla
+* Arnaud Fontaine
+* SHIDARA Yoji
+
+.. _release-1-2-8:
+
+Release 1.2.8 - 2011/11/29
+--------------------------
+
+Object, table and column renamings are supported! These
+features require database re-creation. You can re-create your
+database by the following command::
+
+  % groonga YOUR_DB dump > db.dump
+  % groonga -n YOUR_NEW_DB < db.dump
+
+.. note::
+
+   Groonga 1.2.8 can open databases created by groonga 1.2.7
+   or earlier. But groonga 1.2.7 or earlier can't open
+   databases created by groonga 1.2.8 or later.
+
+Improvements
+^^^^^^^^^^^^
+
+* [grntest] Removed the upper limit to the number of bytes in one line.
+* [grntest] Added ``--pid-path`` option.
+* [deb] Enabled experimental zlib and lzo support.
+* [rpm] Enabled experimental zlib and lzo support.
+* Supports truncation. [#892]
+* Enabled grn_dat that is a read lock free double array implementation.
+* [pkg-config] Added groonga_version variable to groonga.pc.
+* Re-supported ``--disable-static``. [groonga-dev,00612]
+  [Suggested by Kenichi Aramaki]
+* [munin] Stopped to install Munin plugins by default.
+* Stopped to install RedHat platform related files by default.
+* Supports object renaming. This requires DB re-creation. [#1167]
+* [munin] Added a Munin plugin that measures throughput. [#1171]
+* [geo] Improved geo_in_rectangle performance. The new
+  implementation will be 2x faster than the old
+  implementation in many cases. [#1173]
+* [macports] Moved groonga's MacPorts to the official
+  repository. [Imported by Hiroshi Umemoto]
+* [geo] Changed the geo literal degree-to-msec conversion algorithm
+  to round-off from truncation.
+* Supports a table defrag. It defrags variable size value columns in
+  the table. [#1175]
+* Removed associated path on remove. [#1180]
+* [deb] Supports i386.
+* [rpm] Supports i386.
+* [windows] Supports x86.
+
+Fixes
+^^^^^
+
+* Fixed a bug that groonga crashes when accessing a zlib/lzo compressed
+  column. Note that a compressed column access causes a memory leak. To
+  resolve this, we need to improve API. We will do it in the future.
+  [GtiHub#5][GtiHub#6] [Reported by Takayuki Yamaguchi]
+* Fixed a bug that unrelated column values are cleared in deletion.
+* Fixed a bug that a wrong index is used in sorting. [#766]
+  [Reported by Horikoshi Yuki]
+* [libedit] Fixed a bug that necessary initialization is
+  omitted. [GitHub#7] [Patch by SHIDARA Yoji]
+* [doc] Fixed a typo in documentation. [GitHub#8] [Patch by zunda]
+
+Thanks
+^^^^^^
+
+* Takayuki Yamaguchi
+* SHIDARA Yoji
+* Horikoshi Yuki
+* zunda
+* Hiroshi Umemoto
+
+.. _release-1-2-7:
+
+Release 1.2.7 - 2011/10/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [libedit] Added error check for wide character to
+  multibyte sequence conversion. [Reported by SHIDARA Yoji]
+* Added grn_geo_estimate_in_rectangle().
+* Added cursor API to geo search in rectangle.
+* Improved geo search in rectangle speed.
+* Added packages for Ubuntu 11.10 Oneiric Ocelot
+* [experimental] Supported Oracle Solaris 10 8/11. (just buildable with system gcc.)
+
+Fixes
+^^^^^
+
+* Fixed a typo in document. [Reported by @soundkitchen]
+
+Thanks
+^^^^^^
+
+* SHIDARA Yoji
+* @soundkitchen
+
+.. _release-1-2-6:
+
+Release 1.2.6 - 2011/09/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* Improved error message on type cast.
+* Added geo point value validation on type cast.
+* Supported :doc:`/tutorial/query_expansion`.
+* Added `--query_expansion` option to
+  :doc:`/commands/select` for query expansion.
+* Added geometry conversion macro between degree and msec.
+* Supported type cast in :doc:`/functions/geo_distance` ().
+* Don't split tokens with full width space in command line. #986
+* Supported conversion between TokyoGeoPoint and WGS84GeoPoint.
+* Exported grn_geo_select_in_circle() and grn_geo_select_in_rectangle().
+* Supported CentOS 6.
+* Supported the current Debian GNU/Linux sid.
+  Patch by SATOH Fumiyasu. GitHub#3
+
+Fixes
+^^^^^
+
+* Fixed a bug that geo point is loaded as broken value.
+
+Thanks
+^^^^^^
+
+* SATOH Fumiyasu
+
+.. _release-1-2-5:
+
+Release 1.2.5 - 2011/08/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* Added experimental Windows installer support.
+* Accepted "#" and "-" as a valid name characters. #1043
+* Accepted all valid characters except "_" as the first character. #1043
+* Supported `--each` for `[...]` form :doc:`/commands/load`. #1044
+* Added documentation for :doc:`/suggest`.
+* Supported threshold as `--frequency_threshold` and
+  `--conditional_probability_threshold` options in all
+  :doc:`/commands/suggest` types. #1042
+* [groonga-suggest-httpd] Supported log reopen by SIGUSR1. #1048
+* Supported string input for reference vector column value. #1051
+* [groonga-suggest-httpd] Added `--n-lines-per-log-file`
+  option that changes log line limitation for a file.
+* [groonga-suggest-httpd] Added `p` parameter for
+  `--conditional_probability_threshold`.
+* Added GRN_CTX_PER_DB flag for grn_ctx_init() and grn_ctx_open(). #1053
+* Exported grn_ctx_close(). #1035
+
+Fixes
+^^^^^
+
+* Fixed a crash bug that invalid value is passed as match expression
+  argument in :doc:`/commands/select`. #1047
+* Fixed a bug that hash table cursor returns garbage records.
+
+.. _release-1-2-4:
+
+Release 1.2.4 - 2011/07/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* Re-supported ``*BSD``. (Reported by OBATA Akio)
+* Improved sed related portability. (Suggested by OBATA Akio)
+* Re-supported Visual C++ 2008.
+* Supported :doc:`/commands/check` for hash table.
+* Ignored invalid _score in --sortby of :doc:`/commands/select`
+  for convenience. #1030
+* Added document about :doc:`log`.
+* Supported ~/.editrc.
+* Supported ~/.groonga-history.
+
+Fixes
+^^^^^
+
+* Fixed broken libedit support. (Reported by Daiki Ueno)
+* Fixed source URL in ``*.spec`` (Reported by Daiki Ueno)
+* Fixed patricia trie cursor returns wrong records.
+* Added missing database lock clear for grn_obj_clear_lock()
+  for database.
+* Fixed wrong record's column values deletion possible on
+  record deletion.
+
+Thanks
+^^^^^^
+
+* OBATA Akio
+* Daiki Ueno
+
+.. _release-1-2-3:
+
+Release 1.2.3 - 2011/06/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* Added invalid table name check. #912
+* Added groonga-query-log-analyzer that analyze query log.
+* groonga command shows failed command on error.
+* groonga command shows file name and line no on error.
+* Improved error message of :doc:`/commands/column_create`. #952
+* Added GRN_OBJ_TABLE_DAT_KEY, double array trie, table. (experimental)
+
+Fixes
+^^^^^
+
+* fix get command crash. (Reported by OBATA Akio)
+* fix elapsed time overflow in query log. #944
+
+Thanks
+^^^^^^
+
+* OBATA Akio
+
+.. _release-1-2-2:
+
+Release 1.2.2 - 2011/05/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* Added packages for Ubuntu 11.04 Natty Narwhal.
+* Removed packages for Ubuntu 10.10 Maverick Meerkat.
+* RPM: Split server related packages to groonga-server package.
+* suggest: Added target object name into error messages.
+* document: Started English support. (not completed yet.)
+* groonga-suggest-httpd: Added --disable-max-fd-check option.
+* groonga: Renamed :option:`--address <-a>` option to :option:`--bind-address`.
+* groonga-suggest-httpd: Renamed --address option to --bind-address.
+* Changed admin HTML install directory to
+  $PREFIX/share/groonga/html/admin/ from
+  $PREFIX/share/groonga/admin_html/.
+* groonga-suggest-httpd: Used "application/json" for JSON response
+  instead of "text/javascript".
+* Windows: Used DLL relative path instead of executable file
+  relative path.
+* MeCab: Added error message from MeCab on MeCab initialize error.
+* suggest: Added prefix_search parameter to suggest
+  command. #909
+* plugin: Added grn_plugin_get_system_plugins_dir() and
+  grn_plugin_get_suffix() API.
+* Added grn_obj_is_builtin() API.
+* :doc:`/commands/load`: Added table name check. #934
+* Showed invalid name context in error message. #935
+
+Fixes
+^^^^^
+
+* Fixed a data breaking bug on multi process update. #890
+
+1.2.1リリース - 2011/04/29
+--------------------------
+
+改良
+^^^^
+
+* suggestコマンドにthresholdパラメーターを追加。#895
+* suggestのHTTPサーバにlimitパラメーターを追加。#899
+* grntest: SIGINTでの中断に対応。
+
+修正
+^^^^
+
+* 同時に複数のデータベースを開いているとき、1つでもデータベー
+  スを閉じると関連するプラグインも閉じられてしまう問題を修正。 #894
+* configureの--helpで出力される--with-deafult-encodingの値が
+  間違っていた問題を修正。（ICHII Takashiさんが報告）
+* チュートリアル中のtypoを修正。（moozさんが修正）
+
+感謝
+^^^^
+
+* ICHII Takashiさん
+* moozさん
+
+1.2.0リリース - 2011/03/29
+--------------------------
+
+改良
+^^^^
+
+* MacPortsでのインストールドキュメントを追加。
+* Homebrewでのインストールドキュメントを追加。
+* WindowsではMinGWでもpthreadを使わないようにした。
+* オーバーフローチェックを強化。
+* 位置情報の入力値チェックを強化。
+* インデックスを用いたジオサーチの例をチュートリアルに追加。 #438
+* Debian GNU/Linux wheezyのパッケージを追加。
+* Debian GNU/Linux lennyのパッケージを削除。
+* Debianパッケージをcdbsベースからdebhelperベースへ移行。
+  パッケージ名の変更あり。 #887
+* MeCabトークナイザーの読み込みエラーを無視するようにした。た
+  だし、ログには残る。 #893
+
+修正
+^^^^
+
+* autoconf 2.59環境において、ファイルシステムのルート直下に
+  groongaディレクトリを作成しようとする問題を修正。 #833
+* JSONPが動作しなくなっていた問題を修正。
+* MeCabトークナイザーの読み込みに失敗したときにクラッシュする問題を修正。
+  （@tomotaka_itoさんが報告）
+* [非互換] 位置情報の小数表記からミリ秒への変換誤差が大きい問題を修正。
+* :doc:`/functions/geo_in_rectangle` の ``top_left`` と
+  ``bottom_right`` に同じ位置を指定するとクラッシュする問題を修正。
+* メモリリークを修正。
+* 小数形式のTimeリテラルをロードするとミリ秒情報が落ちる問題を修正。 #880
+* :doc:`/commands/column_list` のドキュメントを修正。 #758
+* :doc:`/commands/table_list` のドキュメントを修正。
+* :doc:`/commands/load` で_valueを指定するとメモリリークする問題を修正。 #878
+* :doc:`/commands/load` でクラッシュする問題を修正。 #661
+
+実験的
+^^^^^^
+
+* grn_table_truncate()を追加。（実験的。問題あり）
+* truncateコマンドを追加。（実験的。問題あり） #888
+
+感謝
+^^^^
+
+* @tomotaka_itoさん
