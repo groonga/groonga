@@ -1514,7 +1514,7 @@ grn_pat_at(grn_ctx *ctx, grn_pat *pat, grn_id id)
   return GRN_ID_NIL;
 }
 
-grn_id
+GRN_API grn_id
 grn_pat_curr_id(grn_ctx *ctx, grn_pat *pat)
 {
   return pat->header->curr_rec;

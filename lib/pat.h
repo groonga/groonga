@@ -89,7 +89,7 @@ struct _grn_pat_cursor {
   uint8_t curr_key[GRN_TABLE_MAX_KEY_SIZE];
 };
 
-grn_id grn_pat_curr_id(grn_ctx *ctx, grn_pat *pat);
+GRN_API grn_id grn_pat_curr_id(grn_ctx *ctx, grn_pat *pat);
 
 /* private */
 GRN_API grn_rc grn_pat_truncate(grn_ctx *ctx, grn_pat *pat);

@@ -62,31 +62,32 @@ struct _grn_dat_scan_hit {
   unsigned int length;
 };
 
-int grn_dat_scan(grn_ctx *ctx, grn_dat *dat, const char *str,
-                 unsigned int str_size, grn_dat_scan_hit *scan_hits,
-                 unsigned int max_num_scan_hits, const char **str_rest);
-grn_id grn_dat_lcp_search(grn_ctx *ctx, grn_dat *dat,
+GRN_API int grn_dat_scan(grn_ctx *ctx, grn_dat *dat, const char *str,
+                         unsigned int str_size, grn_dat_scan_hit *scan_hits,
+                         unsigned int max_num_scan_hits, const char **str_rest);
+GRN_API grn_id grn_dat_lcp_search(grn_ctx *ctx, grn_dat *dat,
                           const void *key, unsigned int key_size);
 
-grn_id grn_dat_curr_id(grn_ctx *ctx, grn_dat *dat);
+GRN_API grn_id grn_dat_curr_id(grn_ctx *ctx, grn_dat *dat);
 
 /*
   Currently, grn_dat_truncate() is available if the grn_dat object is
   associated with a file.
  */
-grn_rc grn_dat_truncate(grn_ctx *ctx, grn_dat *dat);
+GRN_API grn_rc grn_dat_truncate(grn_ctx *ctx, grn_dat *dat);
 
-const char *_grn_dat_key(grn_ctx *ctx, grn_dat *dat, grn_id id, uint32_t *key_size);
-grn_id grn_dat_next(grn_ctx *ctx, grn_dat *dat, grn_id id);
-grn_id grn_dat_at(grn_ctx *ctx, grn_dat *dat, grn_id id);
+GRN_API const char *_grn_dat_key(grn_ctx *ctx, grn_dat *dat, grn_id id,
+                                 uint32_t *key_size);
+GRN_API grn_id grn_dat_next(grn_ctx *ctx, grn_dat *dat, grn_id id);
+GRN_API grn_id grn_dat_at(grn_ctx *ctx, grn_dat *dat, grn_id id);
 
-grn_rc grn_dat_clear_status_flags(grn_ctx *ctx, grn_dat *dat);
+GRN_API grn_rc grn_dat_clear_status_flags(grn_ctx *ctx, grn_dat *dat);
 
 /*
   Currently, grn_dat_repair() is available if the grn_dat object is associated
   with a file.
  */
-grn_rc grn_dat_repair(grn_ctx *ctx, grn_dat *dat);
+GRN_API grn_rc grn_dat_repair(grn_ctx *ctx, grn_dat *dat);
 
 #ifdef __cplusplus
 }
