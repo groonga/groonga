@@ -68,7 +68,7 @@ namespace :build do
           end
         end
       end
-      sh("tar", "xzf", mecab_tar_gz) or exit(false)
+      sh("tar", "xzf", mecab_tar_gz.to_s) or exit(false)
     end
     Dir.chdir(tmp_dir + mecab_base) do
       mecab_patches.each do |patch|
@@ -109,7 +109,7 @@ namespace :build do
           end
         end
       end
-      sh("tar", "xzf", naist_jdic_tar_gz) or exit(false)
+      sh("tar", "xzf", naist_jdic_tar_gz.to_s) or exit(false)
     end
     Dir.chdir(tmp_dir + naist_jdic_base) do
       sh("./configure",
