@@ -420,8 +420,10 @@ grn_ctx_impl_init(grn_ctx *ctx)
   ctx->impl->encoding = ctx->encoding;
   ctx->impl->lifoseg = -1;
   ctx->impl->currseg = -1;
+  CRITICAL_SECTION_INIT(ctx->impl->lock);
   if (!(ctx->impl->values = grn_array_create(ctx, NULL, sizeof(grn_db_obj *),
                                              GRN_ARRAY_TINY))) {
+    CRITICAL_SECTION_FIN(ctx->impl->lock);
     grn_io_anon_unmap(ctx, &mi, IMPL_SIZE);
     ctx->impl = NULL;
     return;
@@ -430,11 +432,11 @@ grn_ctx_impl_init(grn_ctx *ctx)
                                          sizeof(grn_io *),
                                          GRN_OBJ_KEY_VAR_SIZE|GRN_HASH_TINY))) {
     grn_array_close(ctx, ctx->impl->values);
+    CRITICAL_SECTION_FIN(ctx->impl->lock);
     grn_io_anon_unmap(ctx, &mi, IMPL_SIZE);
     ctx->impl = NULL;
     return;
   }
-  CRITICAL_SECTION_INIT(ctx->impl->lock);
   ctx->impl->db = NULL;
 
   ctx->impl->expr_vars = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(grn_obj *), 0);
