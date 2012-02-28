@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-02-27 22:31\n"
-"PO-Revision-Date: 2012-02-27 22:34+0900\n"
+"POT-Creation-Date: 2012-02-28 16:06\n"
+"PO-Revision-Date: 2012-02-28 16:06+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -22,10 +22,10 @@ msgid "News"
 msgstr "お知らせ"
 
 #: ../../../source/news.txt:11
-msgid "Release 1.3.1 - 2012/02/29"
-msgstr "1.3.1リリース - 2012/02/29"
+msgid "Release 2.0.0 - 2012/02/29"
+msgstr "2.0.0リリース - 2012/02/29"
 
-#: ../../../source/news.txt:14 ../../../source/news.txt:60
+#: ../../../source/news.txt:14 ../../../source/news.txt:63
 #: ../../../source/news/1.2.x.txt:11 ../../../source/news/1.2.x.txt:74
 #: ../../../source/news/1.2.x.txt:132 ../../../source/news/1.2.x.txt:159
 #: ../../../source/news/1.2.x.txt:191 ../../../source/news/1.2.x.txt:223
@@ -162,7 +162,14 @@ msgstr "[doc] 間違ったデフォルト値を修正した。 [@naoinaさんが
 msgid "Fixed a typo. [Reported by Kazuhiko]"
 msgstr "誤字を修正した。[かずひこさんが報告]"
 
-#: ../../../source/news.txt:46 ../../../source/news.txt:95
+# 07087bddb1154f42b45c2f829fd95503
+#: ../../../source/news.txt:44
+msgid ""
+"[http] Fixed a bug that ``load`` command error isn't cleared. [Reported by "
+"@wareohji]"
+msgstr ""
+
+#: ../../../source/news.txt:48 ../../../source/news.txt:98
 #: ../../../source/news/1.2.x.txt:49 ../../../source/news/1.2.x.txt:118
 #: ../../../source/news/1.2.x.txt:148 ../../../source/news/1.2.x.txt:181
 #: ../../../source/news/1.2.x.txt:247 ../../../source/news/1.2.x.txt:274
@@ -170,35 +177,40 @@ msgid "Thanks"
 msgstr "感謝"
 
 # a01ea8a8bb5f462988c6589189609ead
-#: ../../../source/news.txt:48
+#: ../../../source/news.txt:50
 msgid "Suzuki"
 msgstr "鈴木さん"
 
-#: ../../../source/news.txt:49 ../../../source/news/1.2.x.txt:250
+#: ../../../source/news.txt:51 ../../../source/news/1.2.x.txt:250
 msgid "Daiki Ueno"
 msgstr "うえのさん"
 
 # 6945e6f2ba774ef3b53bb570e34dd6cf
-#: ../../../source/news.txt:50
+#: ../../../source/news.txt:52
 msgid "@naoina"
 msgstr "@naoinaさん"
 
 # 1c18400a9da84d118ecd5cbd06e537c9
-#: ../../../source/news.txt:51
+#: ../../../source/news.txt:53
 msgid "Kazuhiko"
 msgstr "かずひこさん"
 
 # 8541c44776864ea1a1a351cc1916431b
-#: ../../../source/news.txt:52
+#: ../../../source/news.txt:54
 msgid "Masaharu YOSHIOKA"
 msgstr "Masaharu YOSHIOKAさん"
 
-#: ../../../source/news.txt:57
+# e2f6b294621740e58b9c7133e3a6351c
+#: ../../../source/news.txt:55
+msgid "@wareohji"
+msgstr ""
+
+#: ../../../source/news.txt:60
 msgid "Release 1.3.0 - 2012/01/29"
 msgstr "1.3.0リリース - 2012/01/29"
 
 # 3c6531d23f244b978c8b2d8fe02de222
-#: ../../../source/news.txt:62
+#: ../../../source/news.txt:65
 msgid ""
 "Supported dynamic DB key table change by GRN_DB_KEY=pat or GRN_DB_KEY=dat "
 "environment variable value."
@@ -207,7 +219,7 @@ msgstr ""
 "の変更をサポート。"
 
 # 651f8dcc6787466da5aecb67e61e04c3
-#: ../../../source/news.txt:64
+#: ../../../source/news.txt:67
 msgid ""
 "Added ``--with-default-db-key`` configure option that specifies the default "
 "DB key table."
@@ -216,22 +228,22 @@ msgstr ""
 "configureオプションを追加。"
 
 # 750bc3e8ddd348899418df8623065a1c
-#: ../../../source/news.txt:66
+#: ../../../source/news.txt:69
 msgid ""
 "Supported \"\" value for geo point data types. It's interpreted as \"0x0\"."
 msgstr "geo pointデータ型の値として\"\"をサポート。この値は\"0x0\"として扱う。"
 
-#: ../../../source/news.txt:67
+#: ../../../source/news.txt:70
 msgid "Added column name to cast error message."
 msgstr "キャスト時のエラーメッセージにカラム名も含めるようにした。"
 
 # 0fa80a690a9746288f8d2b687d3c6754
-#: ../../../source/news.txt:68
+#: ../../../source/news.txt:71
 msgid "Inhibit file information for stdin on load error."
 msgstr "loadエラー時に標準入力のファイル情報を表示しないようにした。"
 
 # ef6b8a19f7b9421ab10e57e7a86fece0
-#: ../../../source/news.txt:69
+#: ../../../source/news.txt:72
 msgid ""
 "Enabled write-strings warnings and suppress those warnings. [Suggested by "
 "montywi]"
@@ -240,32 +252,32 @@ msgstr ""
 "案]"
 
 # ea2221866693480ea4a925da4dbf249a
-#: ../../../source/news.txt:71
+#: ../../../source/news.txt:74
 msgid "Marked MessagePack output format as supported. [#1215]"
 msgstr "MessagePack形式の出力機能をサポート対象の機能とした。 [#1215]"
 
 # 9c7e60bbcc4c41839aee741dece41e53
-#: ../../../source/news.txt:72
+#: ../../../source/news.txt:75
 msgid "Added ``const`` to ``void *`` of ``*_set_value()``."
 msgstr "``*_set_value()`` 関数の ``void *`` に ``const`` を追加した。"
 
 # d58c0ec3ee204069aa0eb5f1e626673e
-#: ../../../source/news.txt:73
+#: ../../../source/news.txt:76
 msgid "Enabled warning flags on C and C++."
 msgstr "CとC++でコンパイル時の警告フラグを有効にした。"
 
 # c475bd59e1624f2bb34ed50f0ba0778a
-#: ../../../source/news.txt:74
+#: ../../../source/news.txt:77
 msgid "Supported ``--with-libevent`` without value configure option."
 msgstr "値なしの ``--with-libevent`` configureオプションをサポート。"
 
 # 5bfd8052c9c0405f9a27662f63425001
-#: ../../../source/news.txt:75
+#: ../../../source/news.txt:78
 msgid "``grn_table_get()`` supported grn_db. [#1242]"
 msgstr "``grn_table_get()`` がgrn_dbに対応した。 [#1242]"
 
 # 17600ade934c4095847b8702d4737cfc
-#: ../../../source/news.txt:76
+#: ../../../source/news.txt:79
 msgid ""
 "[rpm] Removed needless groogna-munin-plugins dependency from groonga-server. "
 "[#1251] [Suggested by Masaharu IWAI]"
@@ -274,7 +286,7 @@ msgstr ""
 "[#1251] [Masaharu IWAIさんが提案]"
 
 # a8053cd1d3084d6ab69127a024fa1984
-#: ../../../source/news.txt:78
+#: ../../../source/news.txt:81
 msgid ""
 "[rpm] Removed needless groogna-doc dependency from groonga. [#1251] "
 "[Suggested by Masaharu IWAI]"
@@ -283,28 +295,28 @@ msgstr ""
 "IWAIさんが提案]"
 
 # 8d695c811ab1452789aae5fbd9421a1a
-#: ../../../source/news.txt:80
+#: ../../../source/news.txt:83
 msgid "[dat] Supported repair by ``grn_dat_repair()``."
 msgstr "[dat] ``grn_dat_repair()`` によるデータ復旧対応。"
 
 # ef3246d3113c45688124afbf46198c15
-#: ../../../source/news.txt:81
+#: ../../../source/news.txt:84
 msgid "``grn_table_at()`` supported grn_db."
 msgstr "``grn_table_at()`` がgrn_dbに対応。"
 
 # 9d37773e026447f99f0e5e0a5a468939
-#: ../../../source/news.txt:82
+#: ../../../source/news.txt:85
 msgid "[suggest] Removed unstable mark."
 msgstr "[suggest] 「安定している」仕様とした。"
 
 # 6739ec0e8e9e4697b55b87ff9271c2e1
-#: ../../../source/news.txt:83
+#: ../../../source/news.txt:86
 msgid "[suggest][complete] Supported normalized value search in prefix-search."
 msgstr ""
 "[suggest][complete] 前方一致検索で正規化した値を使って検索するようにした。"
 
 # 0169ec395b7b44da8bc94e5aa8186ab1
-#: ../../../source/news.txt:84
+#: ../../../source/news.txt:87
 msgid ""
 "Added experimental offline index build. It's disabled by default for now. "
 "You can enable it by USE_OFFLINE_INDEXER=yes environment variable."
@@ -314,47 +326,47 @@ msgstr ""
 "にできる。"
 
 # 8d695c811ab1452789aae5fbd9421a1a
-#: ../../../source/news.txt:87
+#: ../../../source/news.txt:90
 msgid "Added internal API ``grn_obj_path_by_id()`` for mroonga."
 msgstr "mroonga用に内部API ``grn_obj_path_by_id()`` を追加した。"
 
 # 9e9790e3a7a54ec09d15d2f555558b47
-#: ../../../source/news.txt:88
+#: ../../../source/news.txt:91
 msgid "[suggest][httpd] Passed unknown parameters to groonga."
 msgstr "[suggest][httpd] 未知のパラメーターをgroongaに渡すようにした。"
 
 # 9a813cafab5e4fad818b24df2ac3634c
-#: ../../../source/news.txt:89
+#: ../../../source/news.txt:92
 msgid "[output][xml] Added a newline before ``</RESULT>`` for readability."
 msgstr "[output][xml] 読みやすいように ``</RESULT>`` の前に改行を追加。"
 
 # cb4605d2e8c74a3ba429f19829c516ed
-#: ../../../source/news.txt:90
+#: ../../../source/news.txt:93
 msgid "[doc][output] Added documentation about output format type."
 msgstr "[doc][output] 出力形式に関するドキュメントを追加。"
 
 # 8c4cf8fbfb1b4cf08eb1afdb05f1800b
-#: ../../../source/news.txt:91
+#: ../../../source/news.txt:94
 msgid "Added ``table_rename``. [#1234]"
 msgstr "``table_rename`` コマンドを追加。 [#1234]"
 
 # 8c4cf8fbfb1b4cf08eb1afdb05f1800b
-#: ../../../source/news.txt:92
+#: ../../../source/news.txt:95
 msgid "Added ``column_rename``. [#1234]"
 msgstr "``column_rename`` コマンドを追加。 [#1234]"
 
 # 48b81ffe8a904549ae58bd5d50b1d455
-#: ../../../source/news.txt:97
+#: ../../../source/news.txt:100
 msgid "montywi"
 msgstr "montywiさん"
 
 # 8541c44776864ea1a1a351cc1916431b
-#: ../../../source/news.txt:98
+#: ../../../source/news.txt:101
 msgid "Masaharu IWAI"
 msgstr "Masaharu IWAIさん"
 
 # 90586f19325e4f7c9dc287b8b48bf713
-#: ../../../source/news.txt:101
+#: ../../../source/news.txt:104
 msgid "The old releases"
 msgstr ""
 
