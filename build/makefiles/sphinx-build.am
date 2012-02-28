@@ -17,7 +17,10 @@ SPHINX_BUILD_COMMAND = LOCALE="$(LOCALE)" PYTHONPATH="$(SPHINX_DIR):$$PYTHONPATH
 .PHONY: sphinx-ensure-updated
 
 if WITH_HG
-sphinx-ensure-updated:
+$(SPHINX_DIR):
+	$(HG) clone https://bitbucket.org/birkenfeld/sphinx $(SPHINX_DIR)
+
+sphinx-ensure-updated: $(SPHINX_DIR)
 	if ! $(SPHINX_BUILD_COMMAND) 2>&1 | head -1 | grep 'v1.[2]' -q > /dev/null; then \
 	  (cd $(SPHINX_DIR) && $(HG) pull --update);					 \
 	fi
