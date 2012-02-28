@@ -26,7 +26,7 @@ namespace dat {
 
 class Trie;
 
-class PredictiveCursor : public Cursor {
+class GRN_DAT_API PredictiveCursor : public Cursor {
  public:
   PredictiveCursor();
   ~PredictiveCursor();

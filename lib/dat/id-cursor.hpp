@@ -25,7 +25,7 @@ namespace dat {
 
 class Trie;
 
-class IdCursor : public Cursor {
+class GRN_DAT_API IdCursor : public Cursor {
  public:
   IdCursor();
   ~IdCursor();

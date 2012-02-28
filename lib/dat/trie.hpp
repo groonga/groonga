@@ -29,7 +29,7 @@
 namespace grn {
 namespace dat {
 
-class Trie {
+class GRN_DAT_API Trie {
  public:
   Trie();
   ~Trie();

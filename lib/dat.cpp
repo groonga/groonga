@@ -24,6 +24,7 @@
 #include "dat.h"
 #include "util.h"
 
+#define GRN_DAT_EXPORT
 #include "dat/trie.hpp"
 #include "dat/cursor-factory.hpp"
 

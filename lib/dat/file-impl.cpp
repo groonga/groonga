@@ -15,8 +15,6 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include <groonga_in.h>
-
 #include "file-impl.hpp"
 
 #include <sys/types.h>

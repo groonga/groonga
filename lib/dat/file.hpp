@@ -27,7 +27,7 @@ namespace dat {
 // memory-mapped I/O.
 class FileImpl;
 
-class File {
+class GRN_DAT_API File {
  public:
   File();
   ~File();

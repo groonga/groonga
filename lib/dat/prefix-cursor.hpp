@@ -26,7 +26,7 @@ namespace dat {
 
 class Trie;
 
-class PrefixCursor : public Cursor {
+class GRN_DAT_API PrefixCursor : public Cursor {
  public:
   PrefixCursor();
   ~PrefixCursor();

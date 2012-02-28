@@ -26,7 +26,7 @@ namespace dat {
 
 class Trie;
 
-class KeyCursor : public Cursor {
+class GRN_DAT_API KeyCursor : public Cursor {
  public:
   KeyCursor();
   ~KeyCursor();

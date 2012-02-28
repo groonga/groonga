@@ -25,7 +25,7 @@ namespace dat {
 
 class Trie;
 
-class CursorFactory {
+class GRN_DAT_API CursorFactory {
  public:
   static Cursor *open(const Trie &trie,
                       const void *min_ptr, UInt32 min_length,

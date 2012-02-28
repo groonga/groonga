@@ -20,6 +20,10 @@
 #include <glib/gstdio.h>
 #include <cppcutter.h>
 
+#ifdef UINT32_MAX
+ #undef UINT32_MAX
+#endif  // UINT32_MAX
+
 #include <grn-assertions.h>
 #include <dat/trie.hpp>
 
