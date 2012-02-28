@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2011 Brazil
+/* Copyright(C) 2011-2012 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -20,9 +20,6 @@
 
 #ifdef WIN32
 #include <windows.h>
-# ifdef open
-#  undef open
-# endif  // open
 #endif  // WIN32
 
 #include "dat.hpp"

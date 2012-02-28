@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009-2011 Brazil
+/* Copyright(C) 2009-2012 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -70,6 +70,30 @@
 #  define GRN_VAR extern
 #endif
 
+#ifdef HAVE_OPEN
+# define GRN_OPEN(pathname, ...) open(pathname, __VA_ARGS__)
+#else
+# define GRN_OPEN(pathname, ...) _open(pathname, __VA_ARGS__)
+#endif /* HAVE_OPEN */
+
+#ifdef HAVE_CLOSE
+# define GRN_CLOSE(fd) close(fd)
+#else
+# define GRN_CLOSE(fd) _close(fd)
+#endif /* HAVE_CLOSE */
+
+#ifdef HAVE_READ
+# define GRN_READ(fd, buf, count) read(fd, buf, count)
+#else
+# define GRN_READ(fd, buf, count) _read(fd, buf, count)
+#endif /* HAVE_READ */
+
+#ifdef HAVE_WRITE
+# define GRN_WRITE(fd, buf, count) write(fd, buf, count)
+#else
+# define GRN_WRITE(fd, buf, count) _write(fd, buf, count)
+#endif /* HAVE_WRITE */
+
 #ifdef WIN32
 
 #if defined(__GNUC__) && !defined(WINVER)
@@ -98,21 +122,16 @@
   #define vsnprintf _vsnprintf
 #endif /* _MSC_VER < 1500 */
 #define unlink _unlink
-#define open _open
 #define lseek _lseek
-#define read _read
 #define getpid _getpid
 #if !defined(__GNUC__) && _MSC_VER < 1400
 # define fstat _fstat
 #endif /* !defined(__GNUC__) && _MSC_VER < 1400 */
-#define write _write
-#define close _close
 #define usleep(x) Sleep((x) / 1000)
 #define sleep(x) Sleep((x) * 1000)
 #if !defined(strcasecmp)
 #  define strcasecmp stricmp
 #endif /* !defined(strcasecmp) */
-
 
 #ifdef __GNUC__
 #include <stdint.h>
@@ -417,7 +436,7 @@ typedef int grn_cond;
 #  define GRN_MKOSTEMP mkostemp
 # else /* HAVE_MKOSTEMP */
 #  define GRN_MKOSTEMP(template,flags) \
-  (mktemp(template), open((template),flags))
+  (mktemp(template), GRN_OPEN((template),flags))
 # endif /* HAVE_MKOSTEMP */
 
 #elif (defined(WIN32) || defined (_WIN64)) /* __GNUC__ */
@@ -451,7 +470,7 @@ typedef int grn_cond;
 # define GRN_BIT_SCAN_REV0 GRN_BIT_SCAN_REV
 
 # define GRN_MKOSTEMP(template,flags) \
-  (mktemp(template), open((template),((flags)|O_BINARY)))
+  (mktemp(template), GRN_OPEN((template),((flags)|O_BINARY)))
 
 #else /* __GNUC__ */
 
@@ -472,7 +491,7 @@ typedef int grn_cond;
 # define GRN_BIT_SCAN_REV0 GRN_BIT_SCAN_REV
 
 # define GRN_MKOSTEMP(template,flags) \
-  (mktemp(template), open((template),flags))
+  (mktemp(template), GRN_OPEN((template),flags))
 
 #endif /* __GNUC__ */
 

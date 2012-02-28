@@ -1999,12 +1999,12 @@ do_daemon(char *path)
     _exit(0);
   }
   {
-    int null_fd = open("/dev/null", O_RDWR, 0);
+    int null_fd = GRN_OPEN("/dev/null", O_RDWR, 0);
     if (null_fd != -1) {
       dup2(null_fd, 0);
       dup2(null_fd, 1);
       dup2(null_fd, 2);
-      if (null_fd > 2) { close(null_fd); }
+      if (null_fd > 2) { GRN_CLOSE(null_fd); }
     }
   }
 #endif /* WIN32 */

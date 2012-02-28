@@ -45,7 +45,7 @@ grn_bulk_put_from_file(grn_ctx *ctx, grn_obj *bulk, const char *path)
   /* FIXME: implement more smartly with grn_bulk */
   int fd, ret = 0;
   struct stat stat;
-  if ((fd = open(path, O_RDONLY|O_NOFOLLOW)) == -1) {
+  if ((fd = GRN_OPEN(path, O_RDONLY|O_NOFOLLOW)) == -1) {
     switch (errno) {
     case EACCES :
       ERR(GRN_OPERATION_NOT_PERMITTED, "request is not allowed: <%s>", path);
@@ -60,7 +60,7 @@ grn_bulk_put_from_file(grn_ctx *ctx, grn_obj *bulk, const char *path)
       break;
 #endif /* WIN32 */
     default :
-      ERR(GRN_UNKNOWN_ERROR, "open() failed(errno: %d): <%s>", errno, path);
+      ERR(GRN_UNKNOWN_ERROR, "GRN_OPEN() failed(errno: %d): <%s>", errno, path);
       break;
     }
     return 0;
@@ -71,7 +71,7 @@ grn_bulk_put_from_file(grn_ctx *ctx, grn_obj *bulk, const char *path)
     if ((buf = GRN_MALLOC(rest))) {
       ssize_t ss;
       for (bp = buf; rest; rest -= ss, bp += ss) {
-        if ((ss = read(fd, bp, rest)) == -1) { goto exit; }
+        if ((ss = GRN_READ(fd, bp, rest)) == -1) { goto exit; }
       }
       GRN_TEXT_PUT(ctx, bulk, buf, stat.st_size);
       ret = 1;
@@ -81,7 +81,7 @@ grn_bulk_put_from_file(grn_ctx *ctx, grn_obj *bulk, const char *path)
     ERR(GRN_INVALID_ARGUMENT, "cannot stat file: <%s>", path);
   }
 exit :
-  close(fd);
+  GRN_CLOSE(fd);
   return ret;
 }
 

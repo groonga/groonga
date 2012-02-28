@@ -6627,7 +6627,7 @@ grn_ii_buffer_flush(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
   encode_postings(ctx, ii_buffer, outbuf);
   encode_last_tf(ctx, ii_buffer, outbuf);
   {
-    ssize_t r = write(ii_buffer->tmpfd, outbuf, encsize);
+    ssize_t r = GRN_WRITE(ii_buffer->tmpfd, outbuf, encsize);
     if (r != encsize) {
       ERR(GRN_INPUT_OUTPUT_ERROR, "write returned %d != %d", r, encsize);
       return;
@@ -7137,7 +7137,7 @@ grn_ii_buffer_commit(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
     grn_ii_buffer_flush(ctx, ii_buffer);
   }
   if (ii_buffer->tmpfd != -1) {
-    close(ii_buffer->tmpfd);
+    GRN_CLOSE(ii_buffer->tmpfd);
   }
   if (ii_buffer->block_buf) {
     GRN_FREE(ii_buffer->block_buf);
@@ -7164,9 +7164,9 @@ grn_ii_buffer_commit(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
 
   datavec_init(ctx, ii_buffer->data_vectors, ii_buffer->ii->n_elements, 0, 0);
 #ifdef WIN32
-  ii_buffer->tmpfd = open(ii_buffer->tmpfpath, O_RDONLY|O_BINARY);
+  ii_buffer->tmpfd = GRN_OPEN(ii_buffer->tmpfpath, O_RDONLY|O_BINARY);
 #else /* WIN32 */
-  ii_buffer->tmpfd = open(ii_buffer->tmpfpath, O_RDONLY);
+  ii_buffer->tmpfd = GRN_OPEN(ii_buffer->tmpfpath, O_RDONLY);
 #endif /* WIN32 */
   if (ii_buffer->tmpfd == -1) {
     SERR("oepn");
@@ -7208,7 +7208,7 @@ grn_ii_buffer_commit(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
   datavec_fin(ctx, ii_buffer->data_vectors);
   GRN_LOG(ctx, GRN_LOG_NOTICE, "tmpfile_size:%jd > total_chunk_size:%zu",
           ii_buffer->filepos, ii_buffer->total_chunk_size);
-  close(ii_buffer->tmpfd);
+  GRN_CLOSE(ii_buffer->tmpfd);
   unlink(ii_buffer->tmpfpath);
   ii_buffer->tmpfd = -1;
   return ctx->rc;
@@ -7227,7 +7227,7 @@ grn_ii_buffer_close(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
     grn_obj_close(ctx, ii_buffer->tmp_lexicon);
   }
   if (ii_buffer->tmpfd != -1) {
-    close(ii_buffer->tmpfd);
+    GRN_CLOSE(ii_buffer->tmpfd);
     unlink(ii_buffer->tmpfpath);
   }
   if (ii_buffer->block_buf) {

@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2011 Brazil
+/* Copyright(C) 2011-2012 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -23,16 +23,6 @@
 #include "io.h"
 #include "dat.h"
 #include "util.h"
-
-/*
-  When this code is compiled with MinGW, a macro "open" is defined to replace
-  "open()" by "_open()". This causes a critical problem because grn::dat::Trie
-  and grn::dat::CursorFactory have member functions named "open()". So, the
-  macro must be undefined before the following #includes.
- */
-#ifdef open
-#  undef open
-#endif
 
 #include "dat/trie.hpp"
 #include "dat/cursor-factory.hpp"

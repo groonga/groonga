@@ -381,7 +381,7 @@ grn_io_detect_type(grn_ctx *ctx, const char *path)
 {
   struct _grn_io_header h;
   uint32_t res = 0;
-  int fd = open(path, O_RDWR);
+  int fd = GRN_OPEN(path, O_RDWR);
   if (fd != -1) {
     struct stat s;
     if (fstat(fd, &s) != -1 && s.st_size >= sizeof(struct _grn_io_header)) {
@@ -397,7 +397,7 @@ grn_io_detect_type(grn_ctx *ctx, const char *path)
     } else {
       ERR(GRN_INVALID_FORMAT, "grn_io_detect_type failed");
     }
-    close(fd);
+    GRN_CLOSE(fd);
   } else {
     SERR(path);
   }
@@ -417,7 +417,7 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
   if (!path || !*path || (strlen(path) > PATH_MAX - 4)) { return NULL; }
   {
     struct _grn_io_header h;
-    int fd = open(path, O_RDWR);
+    int fd = GRN_OPEN(path, O_RDWR);
     if (fd == -1) { SERR(path); return NULL; }
     if (fstat(fd, &s) != -1 && s.st_size >= sizeof(struct _grn_io_header)) {
       if (read(fd, &h, sizeof(struct _grn_io_header)) == sizeof(struct _grn_io_header)) {
@@ -431,7 +431,7 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
         }
       }
     }
-    close(fd);
+    GRN_CLOSE(fd);
     if (!segment_size) { return NULL; }
   }
   total_header_size = IO_HEADER_SIZE + header_size;
@@ -1810,7 +1810,7 @@ inline static grn_rc
 grn_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags, size_t maxsize)
 {
   struct stat st;
-  if ((fi->fd = open(path, flags, 0666)) == -1) {
+  if ((fi->fd = GRN_OPEN(path, flags, 0666)) == -1) {
     SERR(path);
     return ctx->rc;
   }
@@ -1839,7 +1839,7 @@ inline static grn_rc
 grn_close(grn_ctx *ctx, fileinfo *fi)
 {
   if (fi->fd != -1) {
-    if (close(fi->fd) == -1) {
+    if (GRN_CLOSE(fi->fd) == -1) {
       SERR("close");
       return ctx->rc;
     }
