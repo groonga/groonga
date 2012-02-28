@@ -315,7 +315,7 @@ fi
 %{php_extdir}/groonga.so
 
 %changelog
-* Wed Feb 29 2012 Kouhei Sutou <kou@clear-code.com> - 1.3.1-0
+* Wed Feb 29 2012 Kouhei Sutou <kou@clear-code.com> - 2.0.0-0
 - new upstream release.
 - remove other permission from DB directory.
 - use HTTP as the default protocol.
