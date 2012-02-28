@@ -5,31 +5,9 @@
 News
 ====
 
-.. _release-1-3-2:
+.. _release-2-0-0:
 
-Release 1.3.2 - 2012/03/29
---------------------------
-
-Improvements
-^^^^^^^^^^^^
-
-* ...
-
-Fixes
-^^^^^
-
-* [http] Fixed a bug that ``load`` command error isn't cleared.
-  [Reported by @wareohji]
-
-Thanks
-^^^^^^
-
-* @wareohji
-* ...
-
-.. _release-1-3-1:
-
-Release 1.3.1 - 2012/02/29
+Release 2.0.0 - 2012/02/29
 --------------------------
 
 Improvements
@@ -63,6 +41,8 @@ Fixes
 * [doc] Fixed links in Japanese page. [Reported by @naoina]
 * [doc] Fixed wrong the default value. [Reported by @naoina]
 * Fixed a typo. [Reported by Kazuhiko]
+* [http] Fixed a bug that ``load`` command error isn't cleared.
+  [Reported by @wareohji]
 
 Thanks
 ^^^^^^
@@ -72,6 +52,7 @@ Thanks
 * @naoina
 * Kazuhiko
 * Masaharu YOSHIOKA
+* @wareohji
 
 .. _release-1-3-0:
 
