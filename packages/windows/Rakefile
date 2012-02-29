@@ -35,7 +35,7 @@ binary_dir = base_dir + dist_dir
 
 patches_dir = (base_dir + "patches").expand_path
 mecab_patches = [
-  "mecab-0.98-mingw-w64.diff",
+  "mecab-0.98-not-use-locale-on-mingw.diff",
 ]
 msgpack_patches = [
   "msgpack-0.5.7-mingw-w64.diff",
@@ -44,7 +44,7 @@ if groonga_win32_x86_p
   host = "i686-w64-mingw32"
 else
   host = "x86_64-w64-mingw32"
-  mecab_patches << "mecab-0.98-not-use-locale-on-mingw.diff"
+  mecab_patches << "mecab-0.98-mingw-w64.diff"
 end
 
 namespace :build do
