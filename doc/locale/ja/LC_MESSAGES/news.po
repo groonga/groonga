@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-02-28 16:06\n"
-"PO-Revision-Date: 2012-02-28 16:06+0900\n"
+"PO-Revision-Date: 2012-02-29 15:27+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -117,7 +117,7 @@ msgstr ""
 
 # 89aa3fc8d4f2407d9795bb3c28806fc6
 #: ../../../source/news.txt:32
-msgid "Supported :doc:`offline indexing construction </indexing>`."
+msgid "Supported :doc:`offline index construction </indexing>`."
 msgstr ":doc:`静的なインデックス構築方法 </indexing>` をサポートした。"
 
 # 40ced4918f3748c19ad0bb4d48089260
