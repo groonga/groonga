@@ -7082,6 +7082,7 @@ grn_ii_buffer_open(grn_ctx *ctx, grn_ii *ii,
       ii_buffer->ncounters = II_BUFFER_NCOUNTERS_MARGIN;
       ii_buffer->block_pos = 0;
       ii_buffer->filepos = 0;
+      ii_buffer->curr_size = 0;
       ii_buffer->total_size = 0;
       ii_buffer->update_buffer_size = update_buffer_size;
       ii_buffer->counters = GRN_CALLOC(ii_buffer->ncounters *
