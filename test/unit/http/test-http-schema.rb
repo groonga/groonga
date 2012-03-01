@@ -204,9 +204,9 @@ module HTTPSchemaTests
                                 :name => "mori.daijiro",
                                 :output_type => output_type))
     assert_error_response(Result::INVALID_ARGUMENT,
-                          "[table][create]: " +
+                          "[table][create] " +
                           "name can't start with '_' " +
-                          "and contains only 0-9, A-Z, a-z, #, - or _: " +
+                          "and contains only 0-9, A-Z, a-z, #, @, - or _: " +
                           "<mori.daijiro>",
                           response,
                           :content_type => content_type)
@@ -217,9 +217,9 @@ module HTTPSchemaTests
                                 :name => "_mori",
                                 :output_type => output_type))
     assert_error_response(Result::INVALID_ARGUMENT,
-                          "[table][create]: " +
+                          "[table][create] " +
                           "name can't start with '_' " +
-                          "and contains only 0-9, A-Z, a-z, #, - or _: " +
+                          "and contains only 0-9, A-Z, a-z, #, @, - or _: " +
                           "<_mori>",
                           response,
                           :content_type => content_type)
@@ -238,9 +238,9 @@ module HTTPSchemaTests
                                 :output_type => output_type
                                 ))
     assert_error_response(Result::INVALID_ARGUMENT,
-                          "[table][create]: " +
+                          "[table][create] " +
                           "name can't start with '_' " +
-                          "and contains only 0-9, A-Z, a-z, #, - or _: " +
+                          "and contains only 0-9, A-Z, a-z, #, @, - or _: " +
                           "<daijiro:mori>",
                           response,
                           :content_type => content_type)
