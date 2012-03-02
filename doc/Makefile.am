@@ -43,16 +43,22 @@ update-images:
 	  make -f $(abs_srcdir)/images.mk update-images
 
 if ENABLE_DOCUMENT
-dist-hook: html man
-	@touch $(distdir)/build-stamp
 nobase_dist_doc_DATA =				\
 	$(source_files_relative_from_doc_dir)
-CLEANFILES += build-stamp
 endif
 
 if WITH_HG
+dist-hook: html man
+	@touch $(distdir)/build-stamp
+
+CLEANFILES += build-stamp
+
 sphinx:
 	$(HG) clone https://bitbucket.org/birkenfeld/sphinx sphinx
 
 BUILT_SOURCES += sphinx
+else
+if ENABLE_DOCUMENT
+EXTRA_DIST += build-stamp
+endif
 endif
