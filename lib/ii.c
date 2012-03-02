@@ -6954,7 +6954,7 @@ merge_hit_blocks(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
       }
     }
   }
-  return max_size;
+  return (max_size + ii_buffer->ii->n_elements) * 4;
 }
 
 static buffer *
