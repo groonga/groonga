@@ -76,7 +76,7 @@ update-latest-release:
 
 update-po:
 	@for lang in $(LOCALES); do						\
-	  (cd $(top_srcdir)/doc/locale/$$lang/LC_MESSAGES && make update)	\
+	  (cd $(top_srcdir)/doc/locale/$$lang/LC_MESSAGES && $(MAKE) update)	\
 	done
 
 update-document:

@@ -65,4 +65,4 @@ source: ../$(PACKAGE)-$(VERSION).tar.gz
 	ln -s $(abs_top_builddir)/$(PACKAGE)-$(VERSION).tar.gz ../
 
 $(abs_top_builddir)/$(PACKAGE)-$(VERSION).tar.gz:
-	cd $(abs_top_builddir) && make dist
+	cd $(abs_top_builddir) && $(MAKE) dist
