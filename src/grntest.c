@@ -2545,7 +2545,11 @@ get_username(char *name, int maxlen)
 static int
 get_date(char *date, time_t *sec)
 {
-#ifdef __GNUC__
+#ifdef WIN32
+  struct tm tmbuf;
+  struct tm *tm = &tmbuf;
+  localtime_s(tm, sec);
+#else /* WIN32 */
 #  ifdef HAVE_LOCALTIME_R
   struct tm result;
   struct tm *tm = &result;
@@ -2553,11 +2557,7 @@ get_date(char *date, time_t *sec)
 #  else /* HAVE_LOCALTIME_R */
   struct tm *tm = localtime(sec);
 #  endif /* HAVE_LOCALTIME_R */
-#else /* __GNUC__ */
-  struct tm tmbuf;
-  struct tm *tm = &tmbuf;
-  localtime_s(tm, sec);
-#endif /* __GNUC__ */
+#endif /* WIN32 */
 
 #ifdef WIN32
   strftime(date, 128, "%Y-%m-%d %H:%M:%S", tm);
