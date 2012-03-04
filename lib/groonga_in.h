@@ -192,7 +192,8 @@ typedef int grn_sock;
 # define grn_sock_close close
 # define CALLBACK
 
-# if (defined(__sun) && defined(__SVR4)) /* SUN */
+# if (defined(__sun) && defined(__SVR4) && !HAVE_FPCLASSIFY) /* SUN */
+#  define HAVE_FPCLASSIFY 1
 #  include <ieeefp.h>
 #  define fpclassify fpclass
 #  define CASE_FP_NAN case FP_SNAN: case FP_QNAN:
