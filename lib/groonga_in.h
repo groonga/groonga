@@ -157,9 +157,6 @@
 #define CASE_FP_INFINITE case _FPCLASS_NINF: case _FPCLASS_PINF:
 #define SHUT_RDWR SD_BOTH
 
-#define islessgreater(x,y)  (!_isnan(x) && !_isnan(y) && ((x) < (y) || (x) > (y)))
-#define isless(x,y)         (!_isnan(x) && !_isnan(y) && ((x) < (y)))
-#define isgreater(x,y)      (!_isnan(x) && !_isnan(y) && ((x) > (y)))
 typedef SOCKET grn_sock;
 #define grn_sock_close closesocket
 
@@ -200,11 +197,6 @@ typedef int grn_sock;
 #  define fpclassify fpclass
 #  define CASE_FP_NAN case FP_SNAN: case FP_QNAN:
 #  define CASE_FP_INFINITE case FP_NINF: case FP_PINF:
-#  ifdef __GNUC__
-#   define isgreater(x,y) ((x) > (y))
-#   define isless(x,y) ((x) < (y))
-#   define islessgreater(x,y) ((x) != (y))
-#  endif /* __GNUC__ */
 # else  /* SUN */
 #  define CASE_FP_NAN case FP_NAN:
 #  define CASE_FP_INFINITE case FP_INFINITE:
