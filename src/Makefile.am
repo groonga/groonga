@@ -14,7 +14,12 @@ DEFS += $(GRN_DEFS)
 
 AM_LDFLAGS = -no-undefined
 
-DEFAULT_INCLUDES = -I$(top_builddir) -I$(srcdir) -I$(top_srcdir)/include $(GROONGA_INCLUDEDIR)
+DEFAULT_INCLUDES =				\
+	-I$(top_builddir)			\
+	-I$(srcdir)				\
+	-I$(top_srcdir)				\
+	-I$(top_srcdir)/include			\
+	$(GROONGA_INCLUDEDIR)
 
 groonga_SOURCES = groonga.c
 nodist_EXTRA_groonga_SOURCES = $(NONEXISTENT_CXX_SOURCE)
