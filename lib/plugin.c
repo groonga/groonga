@@ -436,7 +436,7 @@ void
 grn_plugin_free(grn_ctx *ctx, void *ptr, const char *file, int line,
                 const char *func)
 {
-  return grn_free(ctx, ptr, file, line, func);
+  grn_free(ctx, ptr, file, line, func);
 }
 
 /*
