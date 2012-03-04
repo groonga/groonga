@@ -154,7 +154,10 @@
 #define MSG_WAITALL 0 /* before Vista, not supported... */
 #define SHUT_RDWR SD_BOTH
 
-#ifndef HAVE_FPCLASSIFY
+#ifdef HAVE_FPCLASSIFY
+# define CASE_FP_NAN case FP_NAN:
+# define CASE_FP_INFINITE case FP_INFINITE:
+#else
 # define HAVE_FPCLASSIFY 1
 # define fpclassify _fpclass
 # define CASE_FP_NAN case _FPCLASS_SNAN: case _FPCLASS_QNAN:
