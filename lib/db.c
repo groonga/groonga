@@ -5726,8 +5726,10 @@ build_index(grn_ctx *ctx, grn_obj *obj)
     if (target) {
       uint64_t sparsity = 10;
       if (getenv("GRN_INDEX_SPARSITY")) {
-        uint64_t v = strtoull(getenv("GRN_INDEX_SPARSITY"), NULL, 0);
-        if (v != ULONG_MAX) { sparsity = v; }
+        uint64_t v;
+        errno = 0;
+        v = strtoull(getenv("GRN_INDEX_SPARSITY"), NULL, 0);
+        if (!errno) { sparsity = v; }
       }
       grn_ii_build(ctx, (grn_ii *)obj, sparsity);
     } else {
