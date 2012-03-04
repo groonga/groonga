@@ -703,7 +703,8 @@ default_logger_func(int level, const char *time, const char *title,
 static grn_logger_info default_logger = {
   GRN_LOG_DEFAULT_LEVEL,
   GRN_LOG_TIME|GRN_LOG_MESSAGE,
-  default_logger_func
+  default_logger_func,
+  NULL
 };
 
 static const grn_logger_info *grn_logger = &default_logger;
