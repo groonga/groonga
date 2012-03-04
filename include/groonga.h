@@ -587,7 +587,7 @@ typedef enum {
   GRN_DB_DELIMIT,
   GRN_DB_UNIGRAM,
   GRN_DB_BIGRAM,
-  GRN_DB_TRIGRAM,
+  GRN_DB_TRIGRAM
 } grn_builtin_tokenizer;
 
 GRN_API grn_obj *grn_ctx_at(grn_ctx *ctx, grn_id id);
