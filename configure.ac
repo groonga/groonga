@@ -118,6 +118,7 @@ AC_DEFUN([REMOVE_CXXFLAG], [
 ])
 
 TEST_CXXFLAGS=""
+NO_STRICT_ALIASING_CFLAGS=""
 if test "$GCC" = "yes"; then
   CHECK_BUILD_FLAG([-Wall])
   CHECK_BUILD_FLAG([-Wextra])
@@ -132,6 +133,9 @@ if test "$GCC" = "yes"; then
 
   CHECK_BUILD_FLAG([-Wformat=2])
   CHECK_BUILD_FLAG([-Wstrict-aliasing=2])
+  if test "x$check_cflag" = "xyes"; then
+    NO_STRICT_ALIASING_CFLAGS="-fno-strict-aliasing"
+  fi
   CHECK_BUILD_FLAG([-Wdisabled-optimization])
   CHECK_BUILD_FLAG([-Wfloat-equal])
   CHECK_BUILD_FLAG([-Wpointer-arith])
@@ -158,6 +162,7 @@ if test "$GCC" = "yes"; then
   CXXFLAGS="$CXXFLAGS_for_source"
 fi
 AC_SUBST(TEST_CXXFLAGS)
+AC_SUBST(NO_STRICT_ALIASING_CFLAGS)
 
 AC_LIBTOOL_WIN32_DLL
 AM_PROG_LIBTOOL
