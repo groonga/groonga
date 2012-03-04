@@ -1161,8 +1161,8 @@ grn_ja_get_value(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_obj *value)
       uint32_t el = len - sizeof(uint32_t);
       uint32_t pos = *((uint32_t *)(b + el));
       GRN_ASSERT(pos < el);
-      grn_bulk_write(ctx, value, b + pos, el - pos);
-      grn_bulk_write(ctx, value, b, pos);
+      grn_bulk_write(ctx, value, (char *)(b + pos), el - pos);
+      grn_bulk_write(ctx, value, (char *)(b), pos);
     } else {
       grn_bulk_write(ctx, value, v, len);
     }
