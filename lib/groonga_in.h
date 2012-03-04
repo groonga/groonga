@@ -486,7 +486,7 @@ typedef int grn_cond;
 #  define GRN_BIT_SCAN_REV0 GRN_BIT_SCAN_REV
 /* todo */
 #  define GRN_SET_64BIT(p,v) \
-  (void)atomic_swap_64(p, v)
+  (void)atomic_swap_64((uint64_t *)(p), (uint64_t)(v))
 # endif /* ATOMIC ADD */
 /* todo */
 # define GRN_BIT_SCAN_REV(v,r)   for (r = 31; r && !((1 << r) & v); r--)
