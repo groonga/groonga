@@ -2122,7 +2122,7 @@ grn_hash_sort(grn_ctx *ctx, grn_hash *hash,
       sort(ctx, hash, res, limit, optarg, dir);
     }
   } else {
-    grn_table_sort_optarg opt = {0, NULL, NULL, 0};
+    grn_table_sort_optarg opt = {0, NULL, NULL, NULL, 0};
     sort(ctx, hash, res, limit, &opt, 0);
   }
   {
