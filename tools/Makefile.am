@@ -1,7 +1,7 @@
 install_ruby_scripts =				\
 	groonga-query-log-analyzer
 
-noinstall_ruby_scripts = 			\
+noinstall_ruby_scripts =			\
 	groonga-memory-leak-checker.rb		\
 	prepare-sphinx-html.rb
 
