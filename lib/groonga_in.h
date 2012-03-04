@@ -431,7 +431,7 @@ typedef int grn_cond;
 # elif (defined(__sun) && defined(__SVR4)) /* ATOMIC 64BIT SET */
 /* todo */
 #  define GRN_SET_64BIT(p,v) \
-  (void)atomic_swap_64(p, v)
+  (void)atomic_swap_64((uint64_t *)(p), (uint64_t)(v))
 # endif /* ATOMIC 64BIT SET */
 
 # ifdef HAVE_MKOSTEMP
