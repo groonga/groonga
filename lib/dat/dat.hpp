@@ -19,6 +19,7 @@
 #define GRN_DAT_COMMON_HPP_
 
 #ifndef _MSC_VER
+ #include <stddef.h>
  #include <stdint.h>
 #endif  // _MSC_VER
 
