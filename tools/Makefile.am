@@ -16,4 +16,9 @@ install-exec-hook:
 	    $${script} > $(DESTDIR)$(bindir)/$${script};	\
 	  chmod +x $(DESTDIR)$(bindir)/$${script};		\
 	done
+
+uninstall-hook:
+	for script in $(install_ruby_scripts); do		\
+	  rm -f $(DESTDIR)$(bindir)/$${script};			\
+	done
 endif
