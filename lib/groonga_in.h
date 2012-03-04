@@ -152,10 +152,14 @@
 
 #undef MSG_WAITALL
 #define MSG_WAITALL 0 /* before Vista, not supported... */
-#define fpclassify _fpclass
-#define CASE_FP_NAN case _FPCLASS_SNAN: case _FPCLASS_QNAN:
-#define CASE_FP_INFINITE case _FPCLASS_NINF: case _FPCLASS_PINF:
 #define SHUT_RDWR SD_BOTH
+
+#ifndef HAVE_FPCLASSIFY
+# define HAVE_FPCLASSIFY 1
+# define fpclassify _fpclass
+# define CASE_FP_NAN case _FPCLASS_SNAN: case _FPCLASS_QNAN:
+# define CASE_FP_INFINITE case _FPCLASS_NINF: case _FPCLASS_PINF:
+#endif /* HAVE_FPCLASSIFY */
 
 typedef SOCKET grn_sock;
 #define grn_sock_close closesocket
