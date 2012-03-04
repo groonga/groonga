@@ -15,7 +15,10 @@ endif
 
 endif
 
-AM_CFLAGS = -fno-strict-aliasing $(COVERAGE_CFLAGS) $(GRN_CFLAGS)
+AM_CFLAGS =					\
+	$(NO_STRICT_ALIASING_CFLAGS)		\
+	$(COVERAGE_CFLAGS)			\
+	$(GRN_CFLAGS)
 DEFS += $(GRN_DEFS)
 
 AM_LDFLAGS = -no-undefined

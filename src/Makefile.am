@@ -6,7 +6,7 @@ bin_PROGRAMS = groonga grntest
 noinst_PROGRAMS = grnslap
 
 AM_CFLAGS =					\
-	-fno-strict-aliasing			\
+	$(NO_STRICT_ALIASING_CFLAGS)		\
 	$(COVERAGE_CFLAGS)			\
 	$(GRN_CFLAGS)				\
 	$(MESSAGE_PACK_CFLAGS)
