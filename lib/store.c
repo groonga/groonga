@@ -585,7 +585,11 @@ grn_ja_replace(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_ja_einfo *ei, uint64_t *
     goto exit;
   }
   // smb_wmb();
-  GRN_SET_64BIT(&einfo[pos], *ei);
+  {
+    uint64_t *location = (uint64_t *)(einfo + pos);
+    uint64_t value = *((uint64_t *)ei);
+    GRN_SET_64BIT(location, value);
+  }
   GRN_IO_SEG_UNREF(ja->io, *pseg);
   grn_ja_free(ctx, ja, &eback);
 exit :
