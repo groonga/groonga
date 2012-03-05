@@ -19,7 +19,8 @@ document_source_files =				\
 
 required_build_stamps =				\
 	html-build-stamp			\
-	man-build-stamp
+	man-build-stamp				\
+	mo-build-stamp
 
 EXTRA_DIST += $(required_build_stamps)
 
