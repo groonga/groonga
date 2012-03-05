@@ -13,11 +13,6 @@ if test x"$NO_MAKE" != x"yes"; then
     make -C $top_dir > /dev/null || exit 1
 fi
 
-if test -z "$CUTTER"; then
-    CUTTER="`make -s -C $top_dir echo-cutter`"
-fi
-export CUTTER
-
 if test -z "$RUBY"; then
     RUBY="`make -s -C $top_dir echo-ruby`"
 fi
