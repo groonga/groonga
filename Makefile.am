@@ -99,3 +99,17 @@ update-document:
 	  rm -rf $${dest_dir};					\
 	  mv tmp-doc/dist/$${locale} $${dest_dir};		\
 	done
+
+
+echo-cutter:
+	@echo $(CUTTER)
+
+if WITH_RUBY
+echo-ruby:
+	@echo $(RUBY)
+else
+echo-ruby:
+endif
+
+echo-groonga:
+	@echo $(GROONGA)

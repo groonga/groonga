@@ -41,16 +41,3 @@ LIBS =						\
 	$(top_builddir)/lib/libgroonga.la
 
 suite_groonga_test_la_SOURCES = suite-groonga-test.c
-
-echo-cutter:
-	@echo $(CUTTER)
-
-if WITH_RUBY
-echo-ruby:
-	@echo $(RUBY)
-else
-echo-ruby:
-endif
-
-echo-groonga:
-	@echo $(GROONGA)

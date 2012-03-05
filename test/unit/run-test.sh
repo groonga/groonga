@@ -14,17 +14,17 @@ if test x"$NO_MAKE" != x"yes"; then
 fi
 
 if test -z "$CUTTER"; then
-    CUTTER="`make -s -C $BUILD_DIR echo-cutter`"
+    CUTTER="`make -s -C $top_dir echo-cutter`"
 fi
 export CUTTER
 
 if test -z "$RUBY"; then
-    RUBY="`make -s -C $BUILD_DIR echo-ruby`"
+    RUBY="`make -s -C $top_dir echo-ruby`"
 fi
 export RUBY
 
 if test -z "$GROONGA"; then
-    GROONGA="`make -s -C $BUILD_DIR echo-groonga`"
+    GROONGA="`make -s -C $top_dir echo-groonga`"
 fi
 export GROONGA
 
