@@ -59,10 +59,10 @@ sphinx:
 BUILT_SOURCES += sphinx
 
 maintainer-clean-local:
-	-rm -rf shipnx
+	-rm -rf sphinx
 
 distclean-local:
-	-rm -rf shipnx
+	-rm -rf sphinx
 else
 if ENABLE_DOCUMENT
 EXTRA_DIST += build-stamp
