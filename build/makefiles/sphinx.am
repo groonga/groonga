@@ -65,7 +65,6 @@ clean-local: $(clean_targets) clean-doctrees
 clean-doctrees:
 	rm -rf $(DOCTREES_BASE)
 
-maintainer-clean: maintainer-clean-local
 maintainer-clean-local:
 	rm -rf -- $(generated_files)
 endif
