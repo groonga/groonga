@@ -23,6 +23,12 @@ TESTS_ENVIRONMENT =				\
 
 if WITH_CUTTER
 noinst_LTLIBRARIES = suite-groonga-test.la
+else
+TESTS_ENVIRONMENT += NO_CUTTER=yes
+endif
+
+if !WITH_RUBY
+TESTS_ENVIRONMENT += NO_RUBY=yes
 endif
 
 EXTRA_DIST =					\
