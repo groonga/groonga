@@ -57,6 +57,12 @@ sphinx:
 	$(HG) clone https://bitbucket.org/birkenfeld/sphinx sphinx
 
 BUILT_SOURCES += sphinx
+
+maintainer-clean-local:
+	-rm -rf shipnx
+
+distclean-local:
+	-rm -rf shipnx
 else
 if ENABLE_DOCUMENT
 EXTRA_DIST += build-stamp
