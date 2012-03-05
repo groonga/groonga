@@ -80,8 +80,11 @@ ruby_result=0
 if test "$NO_RUBY" != "yes" -a -n "$RUBY"; then
     : ${TEST_UNIT_MAX_DIFF_TARGET_STRING_SIZE:=30000}
     export TEST_UNIT_MAX_DIFF_TARGET_STRING_SIZE
-    BUNDLE_GEMFILE=$BASE_DIR/Gemfile
+    BUNDLE_GEMFILE="$BUILD_DIR/Gemfile"
     export BUNDLE_GEMFILE
+    if [ ! -e "$BUNDLE_GEMFILE" ]; then
+	ln -s "$BASE_DIR/Gemfile" "$BUNDLE_GEMFILE"
+    fi
     if ! type bundle > /dev/null; then
 	$RUBY -S gem install bundler
     fi
