@@ -677,7 +677,9 @@ AC_ARG_WITH([ruby19],
             [RUBY="$withval"],
             [RUBY="no"])
 
-if test "x$RUBY" != "xno"; then
+if test "x$RUBY" = "xno"; then
+  RUBY=
+else
   if test "x$RUBY" = "xyes"; then
     AC_PATH_PROGS(RUBY, [ruby1.9 ruby19 ruby1.9.1], none)
     if test "$RUBY" != "none"; then
