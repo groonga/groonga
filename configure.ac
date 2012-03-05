@@ -671,22 +671,23 @@ AM_CONDITIONAL([WITH_BENCHMARK], [test "$benchmark_available" = "yes"])
 
 # check Ruby for HTTP test
 ac_cv_ruby_available="no"
-AC_ARG_WITH([ruby],
-            AS_HELP_STRING([--with-ruby=PATH],
-                           [Ruby interpreter path (default: auto-detect)]),
-            [RUBY="$withval"])
+AC_ARG_WITH([ruby19],
+            AS_HELP_STRING([--with-ruby19=PATH],
+                           [Ruby 1.9 interpreter path (default: no)]),
+            [RUBY="$withval"],
+            [RUBY="no"])
 
-if test "$RUBY" = "no"; then
-  : # ignore
-elif test "$RUBY" = ""; then
-  AC_PATH_PROG(RUBY, ruby, none)
-  if test "$RUBY" != "none"; then
-    ac_cv_ruby_available="yes"
+if test "x$RUBY" != "xno"; then
+  if test "x$RUBY" = "xyes"; then
+    AC_PATH_PROGS(RUBY, [ruby1.9 ruby19 ruby1.9.1], none)
+    if test "$RUBY" != "none"; then
+      ac_cv_ruby_available="yes"
+    fi
+  else
+    AC_CHECK_FILE([$RUBY],
+		  [ac_cv_ruby_available="yes"],
+		  [AC_MSG_WARN([$RUBY is not found. Disable HTTP test.])])
   fi
-else
-  AC_CHECK_FILE([$RUBY],
-                [ac_cv_ruby_available="yes"],
-                [AC_MSG_WARN([$RUBY is not found. Disable HTTP test.])])
 fi
 AC_SUBST(RUBY)
 AM_CONDITIONAL([WITH_RUBY], [test "$ac_cv_ruby_available" = "yes"])
