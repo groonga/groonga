@@ -27,7 +27,8 @@ endif
 
 EXTRA_DIST =					\
 	run-test.sh				\
-	run-test.rb
+	run-test.rb				\
+	Gemfile
 
 INCLUDES =			\
 	-I$(srcdir)		\
