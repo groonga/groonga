@@ -564,17 +564,15 @@ grn_ja_replace(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_ja_einfo *ei, uint64_t *
   pseg = &ja->header->esegs[lseg];
   if (grn_io_lock(ctx, ja->io, 10000000)) { return ctx->rc; }
   if (*pseg == JA_ESEG_VOID) {
-    if (*pseg == JA_ESEG_VOID) {
-      int i = 0;
-      while (SEGMENTS_AT(ja, i)) {
-        if (++i >= JA_N_DSEGMENTS) {
-          ERR(GRN_NOT_ENOUGH_SPACE, "grn_ja file (%s) is full", ja->io->path);
-          goto exit;
-        }
+    int i = 0;
+    while (SEGMENTS_AT(ja, i)) {
+      if (++i >= JA_N_DSEGMENTS) {
+        ERR(GRN_NOT_ENOUGH_SPACE, "grn_ja file (%s) is full", ja->io->path);
+        goto exit;
       }
-      SEGMENTS_EINFO_ON(ja, i, lseg);
-      *pseg = i;
     }
+    SEGMENTS_EINFO_ON(ja, i, lseg);
+    *pseg = i;
   }
   GRN_IO_SEG_REF(ja->io, *pseg, einfo);
   if (!einfo) { goto exit; }
