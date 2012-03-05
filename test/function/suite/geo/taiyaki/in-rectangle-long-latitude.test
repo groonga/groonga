@@ -1,0 +1,7 @@
+# include include/geo/taiyaki/init.grn
+
+select Shops \
+  --sortby '+_score, +name' \
+  --output_columns 'name, _score, location' \
+  --filter 'geo_in_rectangle(location, "35.73360,139.7394", "35.62614,139.7714")' \
+  --scorer '_score=geo_distance(location, "35.69328,139.74968")'

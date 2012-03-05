@@ -250,6 +250,16 @@ AC_CONFIG_FILES([
   test/unit/gqtp/Makefile
   test/unit/story/Makefile
   test/unit/grntest/Makefile
+  test/function/Makefile
+  test/function/fixture/Makefile
+  test/function/fixture/geo/Makefile
+  test/function/fixture/geo/taiyaki/Makefile
+  test/function/include/Makefile
+  test/function/include/geo/Makefile
+  test/function/include/geo/taiyaki/Makefile
+  test/function/suite/Makefile
+  test/function/suite/geo/Makefile
+  test/function/suite/geo/taiyaki/Makefile
   test/benchmark/Makefile
   test/benchmark/fixtures/Makefile
   test/benchmark/fixtures/geo-select/Makefile
@@ -684,6 +694,9 @@ AM_CONDITIONAL([WITH_RUBY], [test "$ac_cv_ruby_available" = "yes"])
 AM_CONDITIONAL([WITH_UNIT_TEST],
                [test "$cutter_use_cutter" = "yes" -o \
                      "$ac_cv_ruby_available" = "yes"])
+
+AM_CONDITIONAL([WITH_FUNCTION_TEST],
+               [test "$ac_cv_ruby_available" = "yes"])
 
 # libedit
 AC_ARG_ENABLE(libedit,

@@ -1,1 +1,4 @@
-SUBDIRS = unit benchmark
+SUBDIRS =					\
+	unit					\
+	function				\
+	benchmark
