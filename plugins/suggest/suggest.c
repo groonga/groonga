@@ -299,7 +299,8 @@ static void
 correct(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost,
         grn_obj *query, grn_obj *sortby,
         grn_obj *output_columns, int offset, int limit,
-        int frequency_threshold, double conditional_probability_threshold)
+        int frequency_threshold, double conditional_probability_threshold,
+        grn_suggest_search_mode similar_search_mode)
 {
   grn_obj *res;
   grn_obj *items_freq2 = grn_obj_column(ctx, items, CONST_STR_LEN("freq2"));
@@ -314,7 +315,10 @@ correct(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost,
                                     frequency_threshold,
                                     conditional_probability_threshold);
     LAP(":", "cooccur(%d)", max_score);
-    if (GRN_TEXT_LEN(query) && max_score < frequency_threshold) {
+    if (GRN_TEXT_LEN(query) &&
+        ((similar_search_mode == GRN_SUGGEST_SEARCH_YES) ||
+         (similar_search_mode == GRN_SUGGEST_SEARCH_AUTO &&
+          max_score < frequency_threshold))) {
       grn_obj *key, *index;
       if ((key = grn_obj_column(ctx, items, CONST_STR_LEN("_key")))) {
         if (grn_column_index(ctx, key, GRN_OP_MATCH, &index, 1, NULL)) {
@@ -467,6 +471,7 @@ command_suggest(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
   double conditional_probability_threshold =
     DEFAULT_CONDITIONAL_PROBABILITY_THRESHOLD;
   grn_suggest_search_mode prefix_search_mode;
+  grn_suggest_search_mode similar_search_mode;
 
   types = grn_parse_suggest_types(GRN_TEXT_VALUE(VAR(0)), GRN_BULK_CURR(VAR(0)));
   if (GRN_TEXT_LEN(VAR(6)) > 0) {
@@ -484,6 +489,7 @@ command_suggest(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
   }
 
   prefix_search_mode = parse_search_mode(ctx, VAR(10));
+  similar_search_mode = parse_search_mode(ctx, VAR(11));
 
   if ((items = grn_ctx_get(ctx, TEXT_VALUE_LEN(VAR(1))))) {
     if ((items_boost = grn_obj_column(ctx, items, CONST_STR_LEN("boost")))) {
@@ -503,7 +509,8 @@ command_suggest(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
         GRN_OUTPUT_CSTR("correct");
         correct(ctx, items, items_boost, VAR(3), VAR(4),
                 VAR(5), offset, limit,
-                frequency_threshold, conditional_probability_threshold);
+                frequency_threshold, conditional_probability_threshold,
+                similar_search_mode);
       }
       if (types & SUGGEST) {
         GRN_OUTPUT_CSTR("suggest");
@@ -648,7 +655,8 @@ GRN_PLUGIN_REGISTER(grn_ctx *ctx)
     {CONST_STR_LEN("limit")},
     {CONST_STR_LEN("frequency_threshold")},
     {CONST_STR_LEN("conditional_probability_threshold")},
-    {CONST_STR_LEN("prefix_search")}
+    {CONST_STR_LEN("prefix_search")},
+    {CONST_STR_LEN("similar_search")}
   };
   GRN_TEXT_INIT(&vars[0].value, 0);
   GRN_TEXT_INIT(&vars[1].value, 0);
@@ -661,8 +669,9 @@ GRN_PLUGIN_REGISTER(grn_ctx *ctx)
   GRN_TEXT_INIT(&vars[8].value, 0);
   GRN_TEXT_INIT(&vars[9].value, 0);
   GRN_TEXT_INIT(&vars[10].value, 0);
+  GRN_TEXT_INIT(&vars[11].value, 0);
   grn_proc_create(ctx, CONST_STR_LEN("suggest"), GRN_PROC_COMMAND,
-                  command_suggest, NULL, NULL, 11, vars);
+                  command_suggest, NULL, NULL, 12, vars);
 
   grn_proc_create(ctx, CONST_STR_LEN("suggest_preparer"), GRN_PROC_FUNCTION,
                   func_suggest_preparer, NULL, NULL, 0, NULL);
