@@ -32,11 +32,10 @@
 #define SUGGEST  4
 
 typedef enum {
-  GRN_SUGGEST_PREFIX_SEARCH_YES,
-  GRN_SUGGEST_PREFIX_SEARCH_NO,
-  GRN_SUGGEST_PREFIX_SEARCH_AUTO
-} grn_suggest_prefix_search_mode;
-
+  GRN_SUGGEST_SEARCH_YES,
+  GRN_SUGGEST_SEARCH_NO,
+  GRN_SUGGEST_SEARCH_AUTO
+} grn_suggest_search_mode;
 
 static int
 grn_parse_suggest_types(const char *nptr, const char *end)
@@ -228,7 +227,7 @@ complete(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost, grn_obj *col,
          grn_obj *query, grn_obj *sortby,
          grn_obj *output_columns, int offset, int limit,
          int frequency_threshold, double conditional_probability_threshold,
-         grn_suggest_prefix_search_mode prefix_search_mode)
+         grn_suggest_search_mode prefix_search_mode)
 {
   grn_obj *res;
   grn_obj *items_freq = grn_obj_column(ctx, items, CONST_STR_LEN("freq"));
@@ -273,8 +272,8 @@ complete(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost, grn_obj *col,
       cooccurrence_search(ctx, items, items_boost, tid, res, COMPLETE,
                           frequency_threshold,
                           conditional_probability_threshold);
-      if (((prefix_search_mode == GRN_SUGGEST_PREFIX_SEARCH_YES) ||
-           (prefix_search_mode == GRN_SUGGEST_PREFIX_SEARCH_AUTO &&
+      if (((prefix_search_mode == GRN_SUGGEST_SEARCH_YES) ||
+           (prefix_search_mode == GRN_SUGGEST_SEARCH_AUTO &&
             !grn_table_size(ctx, res))) &&
           (cur = grn_table_cursor_open(ctx, items, norm->norm, norm->norm_blen,
                                        NULL, 0, 0, -1, GRN_CURSOR_PREFIX))) {
@@ -437,6 +436,26 @@ suggest(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost,
   }
 }
 
+static grn_suggest_search_mode
+parse_search_mode(grn_ctx *ctx, grn_obj *mode_text)
+{
+  grn_suggest_search_mode mode;
+  int mode_length;
+
+  mode_length = GRN_TEXT_LEN(mode_text);
+  if (mode_length == 3 &&
+      strncasecmp("yes", GRN_TEXT_VALUE(mode_text), 3) == 0) {
+    mode = GRN_SUGGEST_SEARCH_YES;
+  } else if (mode_length == 2 &&
+             strncasecmp("no", GRN_TEXT_VALUE(mode_text), 2) == 0) {
+    mode = GRN_SUGGEST_SEARCH_NO;
+  } else {
+    mode = GRN_SUGGEST_SEARCH_AUTO;
+  }
+
+  return mode;
+}
+
 static grn_obj *
 command_suggest(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
@@ -445,10 +464,9 @@ command_suggest(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
   int offset = 0;
   int limit = DEFAULT_LIMIT;
   int frequency_threshold = DEFAULT_FREQUENCY_THRESHOLD;
-  int prefix_search_len;
   double conditional_probability_threshold =
     DEFAULT_CONDITIONAL_PROBABILITY_THRESHOLD;
-  grn_suggest_prefix_search_mode prefix_search_mode;
+  grn_suggest_search_mode prefix_search_mode;
 
   types = grn_parse_suggest_types(GRN_TEXT_VALUE(VAR(0)), GRN_BULK_CURR(VAR(0)));
   if (GRN_TEXT_LEN(VAR(6)) > 0) {
@@ -465,16 +483,7 @@ command_suggest(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
     conditional_probability_threshold = strtod(GRN_TEXT_VALUE(VAR(9)), NULL);
   }
 
-  prefix_search_len = GRN_TEXT_LEN(VAR(10));
-  if (prefix_search_len == 3 &&
-      strncasecmp("yes", GRN_TEXT_VALUE(VAR(10)), 3) == 0) {
-    prefix_search_mode = GRN_SUGGEST_PREFIX_SEARCH_YES;
-  } else if (prefix_search_len == 2 &&
-             strncasecmp("no", GRN_TEXT_VALUE(VAR(10)), 2) == 0) {
-    prefix_search_mode = GRN_SUGGEST_PREFIX_SEARCH_NO;
-  } else {
-    prefix_search_mode = GRN_SUGGEST_PREFIX_SEARCH_AUTO;
-  }
+  prefix_search_mode = parse_search_mode(ctx, VAR(10));
 
   if ((items = grn_ctx_get(ctx, TEXT_VALUE_LEN(VAR(1))))) {
     if ((items_boost = grn_obj_column(ctx, items, CONST_STR_LEN("boost")))) {
