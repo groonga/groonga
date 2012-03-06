@@ -45,7 +45,8 @@ if ! test -d "$groonga_test_dir"; then
     git clone git://github.com/groonga/groonga-test.git "$groonga_test_dir"
 fi
 
-$RUBY "$groonga_test_dir/bin/groonga-test" \
+$RUBY -I "$groonga_test_dir/lib" \
+    "$groonga_test_dir/bin/groonga-test" \
     --groonga "$GROONGA" \
     --base-directory "$BASE_DIR" \
     "$BASE_DIR/suite" "$@"
