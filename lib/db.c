@@ -2618,13 +2618,14 @@ grn_index_cursor_next(grn_ctx *ctx, grn_obj *c, grn_id *tid)
   GRN_API_ENTER;
   if (ic->iic) { ip = grn_ii_cursor_next(ctx, ic->iic); }
   if (!ip) {
-    if ((ic->tid = grn_table_cursor_next_inline(ctx, ic->tc))) {
+    while ((ic->tid = grn_table_cursor_next_inline(ctx, ic->tc))) {
       grn_ii *ii = (grn_ii *)ic->index;
       if (ic->iic) { grn_ii_cursor_close(ctx, ic->iic); }
       if ((ic->iic = grn_ii_cursor_open(ctx, ii, ic->tid,
                                         ic->rid_min, ic->rid_max,
                                         ii->n_elements, ic->flags))) {
         ip = grn_ii_cursor_next(ctx, ic->iic);
+        break;
       }
     }
   }
