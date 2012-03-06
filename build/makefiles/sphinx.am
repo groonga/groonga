@@ -5,10 +5,13 @@ $(html_files): html-build-stamp
 $(html_files_relative_from_locale_dir): html-build-stamp
 $(man_files): man-build-stamp
 
-if ENABLE_DOCUMENT
+am__nobase_dist_doc_locale_DATA_DIST =
+if DOCUMENT_AVAILABLE
 doc_localedir = $(docdir)/$(LOCALE)
 nobase_dist_doc_locale_DATA =			\
 	$(html_files_relative_from_locale_dir)
+am__nobase_dist_doc_locale_DATA_DIST +=	\
+	$(nobase_dist_doc_locale_DATA)
 endif
 
 document_source_files =				\
@@ -22,7 +25,9 @@ required_build_stamps =				\
 	man-build-stamp				\
 	mo-build-stamp
 
+if DOCUMENT_BUILDABLE
 EXTRA_DIST += $(required_build_stamps)
+endif
 
 man_files =					\
 	man/groonga.1
@@ -59,7 +64,7 @@ mo-build-stamp: $(po_files_relative_from_locale_dir)
 	cd LC_MESSAGES && $(MAKE) build
 	@touch $@
 
-if WITH_HG
+if DOCUMENT_BUILDABLE
 clean-local: $(clean_targets) clean-doctrees
 
 clean-doctrees:
@@ -83,6 +88,7 @@ endif
 .PHONY: linkcheck
 .PHONY: doctest
 
+if DOCUMENT_BUILDABLE
 help:
 	@echo "Please use \`make <target>' where <target> is one of"
 	@echo "  man       to make man files"
@@ -171,3 +177,4 @@ latex-message: latex-build-stamp
 	@echo "Build finished; the LaTeX files are in latex/*."
 	@echo "Run \`make all-pdf' or \`make all-ps' in that directory to" \
 	      "run these through (pdf)latex."
+endif

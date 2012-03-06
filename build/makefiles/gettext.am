@@ -1,14 +1,18 @@
 include $(top_srcdir)/doc/files.am
 include $(top_srcdir)/build/makefiles/sphinx-build.am
 
-if WITH_HG
-BUILT_SOURCES +=				\
+EXTRA_DIST +=					\
+	$(po_files)
+
+if DOCUMENT_AVAILABLE
+EXTRA_DIST +=					\
 	$(mo_files)
 endif
 
-EXTRA_DIST +=					\
-	$(po_files)				\
+if DOCUMENT_BUILDABLE
+BUILT_SOURCES +=				\
 	$(mo_files)
+endif
 
 SUFFIXES += .pot .po .mo
 
@@ -22,7 +26,12 @@ all:
 	msgfmt -o $@ $<
 
 update: pot-build-stamp $(po_files)
+
+if DOCUMENT_BUILDABLE
 build: $(mo_files)
+else
+build:
+endif
 
 html: build
 man: build

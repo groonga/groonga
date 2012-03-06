@@ -42,12 +42,10 @@ update-images:
 	cd $(srcdir)/source/_static/images && \
 	  $(MAKE) -f $(abs_srcdir)/images.mk update-images
 
-if ENABLE_DOCUMENT
 nobase_dist_doc_DATA =				\
 	$(source_files_relative_from_doc_dir)
-endif
 
-if WITH_HG
+if DOCUMENT_BUILDABLE
 dist-hook: html man
 	@touch $(distdir)/build-stamp
 
@@ -64,7 +62,7 @@ maintainer-clean-local:
 distclean-local:
 	-rm -rf sphinx
 else
-if ENABLE_DOCUMENT
+if HAVE_BUILT_DOCUMENT
 EXTRA_DIST += build-stamp
 endif
 endif

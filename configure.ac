@@ -965,13 +965,17 @@ AC_ARG_ENABLE(document,
 AC_MSG_RESULT($enable_document)
 
 document_available=no
+document_buildable=no
+have_built_document=no
 if test x"$enable_document" != x"no"; then
   AC_PATH_PROG(HG, hg, [])
   if test -n "$HG"; then
     document_available=yes
+    document_buildable=yes
   else
     if test -f "$srcdir/doc/build-stamp"; then
       document_available=yes
+      have_built_document=yes
     else
       if test x"$enable_document" = x"yes"; then
 	AC_MSG_ERROR("No hg found")
@@ -983,10 +987,20 @@ fi
 
 AM_CONDITIONAL([WITH_HG], [test -n "${HG}"])
 
-AM_CONDITIONAL([ENABLE_DOCUMENT],
+AM_CONDITIONAL([DOCUMENT_AVAILABLE],
                [test "${document_available}" = "yes"])
 AC_MSG_CHECKING([whether document available])
 AC_MSG_RESULT($document_available)
+
+AM_CONDITIONAL([DOCUMENT_BUILDABLE],
+               [test "${document_buildable}" = "yes"])
+AC_MSG_CHECKING([whether document buildable])
+AC_MSG_RESULT($document_buildable)
+
+AM_CONDITIONAL([HAVE_BUILT_DOCUMENT],
+               [test "${have_built_document}" = "yes"])
+AC_MSG_CHECKING([whether having built document])
+AC_MSG_RESULT($have_built_document)
 
 # Munin plugins
 AC_MSG_CHECKING([whether install munin plugins])
@@ -1109,7 +1123,9 @@ echo "  Compiler:              ${CC}"
 echo "  CFLAGS:                ${CFLAGS}"
 echo "  CXXFLAGS:              ${CXXFLAGS}"
 echo "  Libraries:             ${LIBS}"
-echo "  Documentation:         ${document_available}"
+echo "  Document:              ${document_available}"
+echo "    buildable:           ${document_buildable}"
+echo "    built:               ${have_built_document}"
 echo "  Munin plugins:         ${install_munin_plugins}"
 echo "  Package platform:      ${package_platform}"
 echo
