@@ -618,6 +618,10 @@ AC_SUBST(GROONGA)
 GRNTEST="\$(abs_top_builddir)/src/grntest"
 AC_SUBST(GRNTEST)
 
+# groonga-suggest-create-dataset binary path
+GROONGA_SUGGEST_CREATE_DATASET="\$(abs_top_builddir)/src/suggest/groonga-suggest-create-dataset"
+AC_SUBST(GROONGA_SUGGEST_CREATE_DATASET)
+
 # check Cutter with GLib support if available
 REQUIRED_MINIMUM_CUTTER_VERSION=1.1.6
 REQUIRED_MINIMUM_CPPCUTTER_VERSION=1.2.0

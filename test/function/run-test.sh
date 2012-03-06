@@ -23,6 +23,11 @@ if test -z "$GROONGA"; then
 fi
 export GROONGA
 
+if test -z "$GROONGA_SUGGEST_CREATE_DATASET"; then
+    GROONGA_SUGGEST_CREATE_DATASET="`make -s -C $top_dir echo-groonga-suggest-create-dataset`"
+fi
+export GROONGA_SUGGEST_CREATE_DATASET
+
 GRN_PLUGINS_DIR="$top_dir/plugins"
 export GRN_PLUGINS_DIR
 
@@ -48,5 +53,6 @@ fi
 $RUBY -I "$groonga_test_dir/lib" \
     "$groonga_test_dir/bin/groonga-test" \
     --groonga "$GROONGA" \
+    --groonga-suggest-create-dataset "$GROONGA_SUGGEST_CREATE_DATASET" \
     --base-directory "$BASE_DIR" \
     "$BASE_DIR/suite" "$@"

@@ -113,3 +113,6 @@ endif
 
 echo-groonga:
 	@echo $(GROONGA)
+
+echo-groonga-suggest-create-dataset:
+	@echo $(GROONGA_SUGGEST_CREATE_DATASET)
