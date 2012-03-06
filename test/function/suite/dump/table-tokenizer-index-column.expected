@@ -1,0 +1,58 @@
+table_create  Queries           TABLE_HASH_KEY  UInt32
+[[0,0.0,0.0],true]
+table_create  Words             TABLE_HASH_KEY  ShortText     --default_tokenizer TokenDelimit
+[[0,0.0,0.0],true]
+column_create Queries   content COLUMN_SCALAR   ShortText
+[[0,0.0,0.0],true]
+column_create Words     index   COLUMN_INDEX    Queries  content
+[[0,0.0,0.0],true]
+column_create Words     boost   COLUMN_SCALAR   UInt32
+[[0,0.0,0.0],true]
+load --table Queries
+[
+{"_key":1, "content":"Sports Soccer"},
+{"_key":2, "content":"Variety Money"},
+{"_key":3, "content":"IT Server groonga"},
+{"_key":4, "content":"Sports Baseball"},
+{"_key":5, "content":"Variety Quiz"},
+{"_key":6, "content":"Animation Pikonyan"},
+{"_key":7, "content":"Animation Raccoon"},
+{"_key":8, "content":"Animation Music"}
+]
+[[0,0.0,0.0],8]
+dump
+table_create Queries TABLE_HASH_KEY UInt32
+column_create Queries content COLUMN_SCALAR ShortText
+table_create Words TABLE_HASH_KEY ShortText --default_tokenizer TokenDelimit
+column_create Words boost COLUMN_SCALAR UInt32
+column_create Words index COLUMN_INDEX Queries content
+load --table Queries
+[
+["_key","content"],
+[1,"Sports Soccer"],
+[2,"Variety Money"],
+[3,"IT Server groonga"],
+[4,"Sports Baseball"],
+[5,"Variety Quiz"],
+[6,"Animation Pikonyan"],
+[7,"Animation Raccoon"],
+[8,"Animation Music"]
+]
+load --table Words
+[
+["_key","boost"],
+["Sports",0],
+["Soccer",0],
+["Variety",0],
+["Money",0],
+["IT",0],
+["Server",0],
+["groonga",0],
+["Baseball",0],
+["Quiz",0],
+["Animation",0],
+["Pikonyan",0],
+["Raccoon",0],
+["Music",0]
+]
+

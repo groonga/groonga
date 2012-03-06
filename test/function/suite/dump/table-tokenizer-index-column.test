@@ -1,0 +1,21 @@
+table_create  Queries           TABLE_HASH_KEY  UInt32
+table_create  Words             TABLE_HASH_KEY  ShortText     --default_tokenizer TokenDelimit
+
+column_create Queries   content COLUMN_SCALAR   ShortText
+
+column_create Words     index   COLUMN_INDEX    Queries  content
+column_create Words     boost   COLUMN_SCALAR   UInt32
+
+load --table Queries
+[
+{"_key":1, "content":"Sports Soccer"},
+{"_key":2, "content":"Variety Money"},
+{"_key":3, "content":"IT Server groonga"},
+{"_key":4, "content":"Sports Baseball"},
+{"_key":5, "content":"Variety Quiz"},
+{"_key":6, "content":"Animation Pikonyan"},
+{"_key":7, "content":"Animation Raccoon"},
+{"_key":8, "content":"Animation Music"}
+]
+
+dump

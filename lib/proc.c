@@ -1985,35 +1985,6 @@ dump_column(grn_ctx *ctx, grn_obj *outbuf , grn_obj *table, grn_obj *column)
 }
 
 static int
-have_index_column(grn_ctx *ctx, grn_obj *table)
-{
-  int n_index_columns = 0;
-  grn_hash *columns;
-  columns = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
-                            GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY);
-  if (!columns) {
-    ERR(GRN_ERROR, "couldn't create a hash to hold columns");
-    return 0;
-  }
-
-  if (grn_table_columns(ctx, table, NULL, 0, (grn_obj *)columns) >= 0) {
-    grn_id *key;
-
-    GRN_HASH_EACH(ctx, columns, id, &key, NULL, NULL, {
-      grn_obj *column;
-      if ((column = grn_ctx_at(ctx, *key))) {
-        if (column->header.flags & GRN_OBJ_COLUMN_INDEX) {
-          n_index_columns++;
-        }
-        grn_obj_unlink(ctx, column);
-      }
-    });
-  }
-  grn_hash_close(ctx, columns);
-  return n_index_columns;
-}
-
-static int
 reference_column_p(grn_ctx *ctx, grn_obj *column)
 {
   grn_obj *range;
@@ -2110,9 +2081,7 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
     return;
   }
 
-  if (grn_table_size(ctx, table) == 0 ||
-      (grn_obj_get_info(ctx, table, GRN_INFO_DEFAULT_TOKENIZER, NULL) &&
-       have_index_column(ctx, table))) {
+  if (grn_table_size(ctx, table) == 0) {
     return;
   }
 
