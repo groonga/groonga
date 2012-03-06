@@ -1,5 +1,5 @@
 EXTRA_DIST =					\
 	in-circle.test				\
-	in-circle.result			\
+	in-circle.expected			\
 	in-rectangle-long-latitude.test		\
-	in-rectangle-long-latitude.result
+	in-rectangle-long-latitude.expected
