@@ -1,0 +1,29 @@
+suggest   --table item_rurema   --column kana   --types complete   --frequency_threshold 1   --query 'サク'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "complete": [
+      [
+        1
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "_score",
+          "Int32"
+        ]
+      ],
+      [
+        "削除",
+        1
+      ]
+    ]
+  }
+]
