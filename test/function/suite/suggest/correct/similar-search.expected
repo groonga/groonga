@@ -1,0 +1,29 @@
+suggest   --table item_rurema   --column kana   --types correct   --frequency_threshold 1   --query 'kernel'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "correct": [
+      [
+        1
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "_score",
+          "Int32"
+        ]
+      ],
+      [
+        "kernel.",
+        1
+      ]
+    ]
+  }
+]
