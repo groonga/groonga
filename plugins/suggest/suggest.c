@@ -531,105 +531,113 @@ command_suggest(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
   return NULL;
 }
 
+static int
+learn(grn_ctx *ctx, grn_obj **args)
+{
+  int r = 0;
+  grn_obj v1, pre_events;
+  grn_id post_event = GRN_RECORD_VALUE(args[0]);
+  grn_id post_type = GRN_RECORD_VALUE(args[1]);
+  grn_id post_item = GRN_RECORD_VALUE(args[2]);
+  grn_id seq = GRN_RECORD_VALUE(args[3]);
+  int64_t post_time = GRN_TIME_VALUE(args[4]);
+  grn_obj *pairs = args[5];
+  if (post_event && post_item && seq) {
+    grn_obj *items = grn_ctx_at(ctx, GRN_OBJ_GET_DOMAIN(args[2]));
+    grn_obj *items_freq = grn_obj_column(ctx, items, CONST_STR_LEN("freq"));
+    grn_obj *items_freq2 = grn_obj_column(ctx, items, CONST_STR_LEN("freq2"));
+    grn_obj *items_last = grn_obj_column(ctx, items, CONST_STR_LEN("last"));
+    grn_obj *seqs = grn_ctx_at(ctx, GRN_OBJ_GET_DOMAIN(args[3]));
+    grn_obj *seqs_events = grn_obj_column(ctx, seqs, CONST_STR_LEN("events"));
+    grn_obj *events = grn_ctx_at(ctx, grn_obj_get_range(ctx, seqs_events));
+    grn_obj *events_type = grn_obj_column(ctx, events, CONST_STR_LEN("type"));
+    grn_obj *events_time = grn_obj_column(ctx, events, CONST_STR_LEN("time"));
+    grn_obj *events_item = grn_obj_column(ctx, events, CONST_STR_LEN("item"));
+    grn_obj *pairs_pre = grn_obj_column(ctx, pairs, CONST_STR_LEN("pre"));
+    grn_obj *pairs_post = grn_obj_column(ctx, pairs, CONST_STR_LEN("post"));
+    grn_obj *pairs_freq0 = grn_obj_column(ctx, pairs, CONST_STR_LEN("freq0"));
+    grn_obj *pairs_freq1 = grn_obj_column(ctx, pairs, CONST_STR_LEN("freq1"));
+    grn_obj *pairs_freq2 = grn_obj_column(ctx, pairs, CONST_STR_LEN("freq2"));
+    GRN_UINT32_INIT(&v1, 0);
+    GRN_UINT32_SET(ctx, &v1, 1);
+    GRN_RECORD_INIT(&pre_events, 0, grn_obj_id(ctx, events));
+    grn_obj_set_value(ctx, items_freq, post_item, &v1, GRN_OBJ_INCR);
+    grn_obj_set_value(ctx, items_last, post_item, args[4], GRN_OBJ_SET);
+    if (post_type) {
+      int added;
+      grn_id pid, tid, *ep, *es;
+      grn_obj pre_type, pre_time, pre_item;
+      uint64_t key, key_ = ((uint64_t)post_item) << 32;
+      grn_obj_set_value(ctx, items_freq2, post_item, &v1, GRN_OBJ_INCR);
+      grn_obj_get_value(ctx, seqs_events, seq, &pre_events);
+      ep = (grn_id *)GRN_BULK_CURR(&pre_events);
+      es = (grn_id *)GRN_BULK_HEAD(&pre_events);
+      GRN_RECORD_INIT(&pre_type, 0, grn_obj_get_range(ctx, events_type));
+      GRN_TIME_INIT(&pre_time, 0);
+      GRN_RECORD_INIT(&pre_item, 0, grn_obj_get_range(ctx, events_item));
+      while (es < ep--) {
+        GRN_BULK_REWIND(&pre_type);
+        GRN_BULK_REWIND(&pre_time);
+        GRN_BULK_REWIND(&pre_item);
+        grn_obj_get_value(ctx, events_type, *ep, &pre_type);
+        grn_obj_get_value(ctx, events_time, *ep, &pre_time);
+        grn_obj_get_value(ctx, events_item, *ep, &pre_item);
+        if (GRN_TIME_VALUE(&pre_time) + 60 * GRN_TIME_USEC_PER_SEC < post_time) {
+          r = (int)((post_time - GRN_TIME_VALUE(&pre_time))/GRN_TIME_USEC_PER_SEC);
+          break;
+        }
+        key = key_ + GRN_RECORD_VALUE(&pre_item);
+        pid = grn_table_add(ctx, pairs, &key, sizeof(uint64_t), &added);
+        if (added) {
+          grn_obj_set_value(ctx, pairs_pre, pid, &pre_item, GRN_OBJ_SET);
+          grn_obj_set_value(ctx, pairs_post, pid, args[2], GRN_OBJ_SET);
+        }
+        if (GRN_RECORD_VALUE(&pre_type)) {
+          grn_obj_set_value(ctx, pairs_freq1, pid, &v1, GRN_OBJ_INCR);
+          break;
+        } else {
+          grn_obj_set_value(ctx, pairs_freq0, pid, &v1, GRN_OBJ_INCR);
+        }
+      }
+      {
+        char keybuf[GRN_TABLE_MAX_KEY_SIZE];
+        int keylen = grn_table_get_key(ctx, items, post_item,
+                                       keybuf, GRN_TABLE_MAX_KEY_SIZE);
+        grn_token *token = grn_token_open(ctx, items, keybuf, keylen, 1);
+        if (token) {
+          while ((tid = grn_token_next(ctx, token)) && tid != post_item) {
+            key = key_ + tid;
+            pid = grn_table_add(ctx, pairs, &key, sizeof(uint64_t), &added);
+            if (added) {
+              GRN_RECORD_SET(ctx, &pre_item, tid);
+              grn_obj_set_value(ctx, pairs_pre, pid, &pre_item, GRN_OBJ_SET);
+              grn_obj_set_value(ctx, pairs_post, pid, args[2], GRN_OBJ_SET);
+            }
+            grn_obj_set_value(ctx, pairs_freq2, pid, &v1, GRN_OBJ_INCR);
+          }
+          grn_token_close(ctx, token);
+        }
+      }
+      GRN_OBJ_FIN(ctx, &pre_type);
+      GRN_OBJ_FIN(ctx, &pre_time);
+      GRN_OBJ_FIN(ctx, &pre_item);
+      GRN_BULK_REWIND(&pre_events);
+    }
+    GRN_RECORD_SET(ctx, &pre_events, post_event);
+    grn_obj_set_value(ctx, seqs_events, seq, &pre_events, GRN_OBJ_APPEND);
+    GRN_OBJ_FIN(ctx, &pre_events);
+    GRN_OBJ_FIN(ctx, &v1);
+  }
+  return r;
+}
+
 static grn_obj *
 func_suggest_preparer(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   int r = 0;
   grn_obj *obj;
   if (nargs == 6) {
-    grn_obj v1, pre_events;
-    grn_id post_event = GRN_RECORD_VALUE(args[0]);
-    grn_id post_type = GRN_RECORD_VALUE(args[1]);
-    grn_id post_item = GRN_RECORD_VALUE(args[2]);
-    grn_id seq = GRN_RECORD_VALUE(args[3]);
-    int64_t post_time = GRN_TIME_VALUE(args[4]);
-    grn_obj *pairs = args[5];
-    if (post_event && post_item && seq) {
-      grn_obj *items = grn_ctx_at(ctx, GRN_OBJ_GET_DOMAIN(args[2]));
-      grn_obj *items_freq = grn_obj_column(ctx, items, CONST_STR_LEN("freq"));
-      grn_obj *items_freq2 = grn_obj_column(ctx, items, CONST_STR_LEN("freq2"));
-      grn_obj *items_last = grn_obj_column(ctx, items, CONST_STR_LEN("last"));
-      grn_obj *seqs = grn_ctx_at(ctx, GRN_OBJ_GET_DOMAIN(args[3]));
-      grn_obj *seqs_events = grn_obj_column(ctx, seqs, CONST_STR_LEN("events"));
-      grn_obj *events = grn_ctx_at(ctx, grn_obj_get_range(ctx, seqs_events));
-      grn_obj *events_type = grn_obj_column(ctx, events, CONST_STR_LEN("type"));
-      grn_obj *events_time = grn_obj_column(ctx, events, CONST_STR_LEN("time"));
-      grn_obj *events_item = grn_obj_column(ctx, events, CONST_STR_LEN("item"));
-      grn_obj *pairs_pre = grn_obj_column(ctx, pairs, CONST_STR_LEN("pre"));
-      grn_obj *pairs_post = grn_obj_column(ctx, pairs, CONST_STR_LEN("post"));
-      grn_obj *pairs_freq0 = grn_obj_column(ctx, pairs, CONST_STR_LEN("freq0"));
-      grn_obj *pairs_freq1 = grn_obj_column(ctx, pairs, CONST_STR_LEN("freq1"));
-      grn_obj *pairs_freq2 = grn_obj_column(ctx, pairs, CONST_STR_LEN("freq2"));
-      GRN_UINT32_INIT(&v1, 0);
-      GRN_UINT32_SET(ctx, &v1, 1);
-      GRN_RECORD_INIT(&pre_events, 0, grn_obj_id(ctx, events));
-      grn_obj_set_value(ctx, items_freq, post_item, &v1, GRN_OBJ_INCR);
-      grn_obj_set_value(ctx, items_last, post_item, args[4], GRN_OBJ_SET);
-      if (post_type) {
-        int added;
-        grn_id pid, tid, *ep, *es;
-        grn_obj pre_type, pre_time, pre_item;
-        uint64_t key, key_ = ((uint64_t)post_item) << 32;
-        grn_obj_set_value(ctx, items_freq2, post_item, &v1, GRN_OBJ_INCR);
-        grn_obj_get_value(ctx, seqs_events, seq, &pre_events);
-        ep = (grn_id *)GRN_BULK_CURR(&pre_events);
-        es = (grn_id *)GRN_BULK_HEAD(&pre_events);
-        GRN_RECORD_INIT(&pre_type, 0, grn_obj_get_range(ctx, events_type));
-        GRN_TIME_INIT(&pre_time, 0);
-        GRN_RECORD_INIT(&pre_item, 0, grn_obj_get_range(ctx, events_item));
-        while (es < ep--) {
-          GRN_BULK_REWIND(&pre_type);
-          GRN_BULK_REWIND(&pre_time);
-          GRN_BULK_REWIND(&pre_item);
-          grn_obj_get_value(ctx, events_type, *ep, &pre_type);
-          grn_obj_get_value(ctx, events_time, *ep, &pre_time);
-          grn_obj_get_value(ctx, events_item, *ep, &pre_item);
-          if (GRN_TIME_VALUE(&pre_time) + 60 * GRN_TIME_USEC_PER_SEC < post_time) {
-            r = (int)((post_time - GRN_TIME_VALUE(&pre_time))/GRN_TIME_USEC_PER_SEC);
-            break;
-          }
-          key = key_ + GRN_RECORD_VALUE(&pre_item);
-          pid = grn_table_add(ctx, pairs, &key, sizeof(uint64_t), &added);
-          if (added) {
-            grn_obj_set_value(ctx, pairs_pre, pid, &pre_item, GRN_OBJ_SET);
-            grn_obj_set_value(ctx, pairs_post, pid, args[2], GRN_OBJ_SET);
-          }
-          if (GRN_RECORD_VALUE(&pre_type)) {
-            grn_obj_set_value(ctx, pairs_freq1, pid, &v1, GRN_OBJ_INCR);
-            break;
-          } else {
-            grn_obj_set_value(ctx, pairs_freq0, pid, &v1, GRN_OBJ_INCR);
-          }
-        }
-        {
-          char keybuf[GRN_TABLE_MAX_KEY_SIZE];
-          int keylen = grn_table_get_key(ctx, items, post_item,
-                                         keybuf, GRN_TABLE_MAX_KEY_SIZE);
-          grn_token *token = grn_token_open(ctx, items, keybuf, keylen, 1);
-          if (token) {
-            while ((tid = grn_token_next(ctx, token)) && tid != post_item) {
-              key = key_ + tid;
-              pid = grn_table_add(ctx, pairs, &key, sizeof(uint64_t), &added);
-              if (added) {
-                GRN_RECORD_SET(ctx, &pre_item, tid);
-                grn_obj_set_value(ctx, pairs_pre, pid, &pre_item, GRN_OBJ_SET);
-                grn_obj_set_value(ctx, pairs_post, pid, args[2], GRN_OBJ_SET);
-              }
-              grn_obj_set_value(ctx, pairs_freq2, pid, &v1, GRN_OBJ_INCR);
-            }
-            grn_token_close(ctx, token);
-          }
-        }
-        GRN_OBJ_FIN(ctx, &pre_type);
-        GRN_OBJ_FIN(ctx, &pre_time);
-        GRN_OBJ_FIN(ctx, &pre_item);
-        GRN_BULK_REWIND(&pre_events);
-      }
-      GRN_RECORD_SET(ctx, &pre_events, post_event);
-      grn_obj_set_value(ctx, seqs_events, seq, &pre_events, GRN_OBJ_APPEND);
-      GRN_OBJ_FIN(ctx, &pre_events);
-      GRN_OBJ_FIN(ctx, &v1);
-    }
+    r = learn(ctx, args);
   }
   if ((obj = GRN_PROC_ALLOC(GRN_DB_UINT32, 0))) { GRN_UINT32_SET(ctx, obj, r); }
   return obj;
