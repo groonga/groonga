@@ -1,0 +1,8 @@
+# include fixture/suggest/rurema/init.grn
+
+suggest \
+  --table item_rurema \
+  --column kana \
+  --types correct \
+  --frequency_threshold 1 \
+  --query 'avg'
