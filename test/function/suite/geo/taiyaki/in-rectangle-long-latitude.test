@@ -1,4 +1,4 @@
-# include include/geo/taiyaki/init.grn
+# include fixture/geo/taiyaki/init.grn
 
 select Shops \
   --sortby '+_score, +name' \

@@ -1,6 +1,5 @@
 SUBDIRS =					\
 	fixture					\
-	include					\
 	suite
 
 if WITH_FUNCTION_TEST

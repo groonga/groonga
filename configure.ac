@@ -254,9 +254,6 @@ AC_CONFIG_FILES([
   test/function/fixture/Makefile
   test/function/fixture/geo/Makefile
   test/function/fixture/geo/taiyaki/Makefile
-  test/function/include/Makefile
-  test/function/include/geo/Makefile
-  test/function/include/geo/taiyaki/Makefile
   test/function/suite/Makefile
   test/function/suite/geo/Makefile
   test/function/suite/geo/taiyaki/Makefile
