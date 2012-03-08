@@ -50,9 +50,15 @@ if ! test -d "$groonga_test_dir"; then
     git clone git://github.com/groonga/groonga-test.git "$groonga_test_dir"
 fi
 
+if test x"$@" = x""; then
+    targets="$BASE_DIR/suite"
+else
+    targets=
+fi
+
 $RUBY -I "$groonga_test_dir/lib" \
     "$groonga_test_dir/bin/groonga-test" \
     --groonga "$GROONGA" \
     --groonga-suggest-create-dataset "$GROONGA_SUGGEST_CREATE_DATASET" \
     --base-directory "$BASE_DIR" \
-    "$BASE_DIR/suite" "$@"
+    "$targets" "$@"
