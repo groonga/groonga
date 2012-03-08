@@ -1,2 +1,3 @@
 SUBDIRS =					\
-	geo
+	geo					\
+	suggest

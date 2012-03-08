@@ -1,0 +1,5 @@
+# disable-logging
+# include fixture/suggest/rurema/ddl.grn
+# include fixture/suggest/rurema/items.grn
+# include fixture/suggest/rurema/learn.grn
+# enable-logging
