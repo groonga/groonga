@@ -1,0 +1,8 @@
+# include fixture/suggest/rurema/init.grn
+
+suggest \
+  --table item_rurema \
+  --column kana \
+  --types complete \
+  --frequency_threshold 102 \
+  --query 'hen'
