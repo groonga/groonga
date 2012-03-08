@@ -1,0 +1,9 @@
+# include fixture/suggest/rurema/init.grn
+
+suggest \
+  --table item_rurema \
+  --column kana \
+  --types complete \
+  --prefix_search no \
+  --frequency_threshold 1 \
+  --query '置'
