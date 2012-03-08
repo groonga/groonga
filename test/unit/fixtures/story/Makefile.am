@@ -1,3 +1,2 @@
 SUBDIRS =					\
-	taiyaki					\
-	rurema
+	taiyaki

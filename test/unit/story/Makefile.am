@@ -1,7 +1,6 @@
 if WITH_CUTTER
 noinst_LTLIBRARIES =				\
-	test-taiyaki.la				\
-	test-rurema.la
+	test-taiyaki.la
 endif
 
 INCLUDES =			\
@@ -26,4 +25,3 @@ LIBS =								\
 	$(top_builddir)/test/unit/lib/libgrn-test-hash-utils.la
 
 test_taiyaki_la_SOURCES			= test-taiyaki.c
-test_rurema_la_SOURCES			= test-rurema.c
