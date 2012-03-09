@@ -536,10 +536,14 @@ learn(grn_ctx *ctx, grn_obj **args)
 {
   int r = 0;
   grn_obj v1, pre_events;
-  grn_id post_event_id = GRN_RECORD_VALUE(args[0]);
-  grn_id post_type_id = GRN_RECORD_VALUE(args[1]);
-  grn_id post_item_id = GRN_RECORD_VALUE(args[2]);
-  grn_id seq_id = GRN_RECORD_VALUE(args[3]);
+  grn_obj *post_event = args[0];
+  grn_id post_event_id = GRN_RECORD_VALUE(post_event);
+  grn_obj *post_type = args[1];
+  grn_id post_type_id = GRN_RECORD_VALUE(post_type);
+  grn_obj *post_item = args[2];
+  grn_id post_item_id = GRN_RECORD_VALUE(post_item);
+  grn_obj *seq = args[3];
+  grn_id seq_id = GRN_RECORD_VALUE(seq);
   int64_t post_time = GRN_TIME_VALUE(args[4]);
   grn_obj *pairs = args[5];
   if (post_event_id && post_item_id && seq_id) {
