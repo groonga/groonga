@@ -161,6 +161,16 @@ grn_rc_to_string(grn_rc rc)
     return "GRN_INCOMPATIBLE_FILE_FORMAT";
   case GRN_UPDATE_NOT_ALLOWED:
     return "GRN_UPDATE_NOT_ALLOWED";
+  case GRN_TOO_SMALL_OFFSET:
+    return "GRN_TOO_SMALL_OFFSET";
+  case GRN_TOO_LARGE_OFFSET:
+    return "GRN_TOO_LARGE_OFFSET";
+  case GRN_TOO_SMALL_LIMIT:
+    return "GRN_TOO_SMALL_LIMIT";
+  case GRN_CAS_ERROR:
+    return "GRN_CAS_ERROR";
+  case GRN_UNSUPPORTED_COMMAND_VERSION:
+    return "GRN_UNSUPPORTED_COMMAND_VERSION";
   default:
     return cut_take_printf("GRN_UNKNOWN_STATUS (%d)", rc);
   }
