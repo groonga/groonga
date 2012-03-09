@@ -533,7 +533,7 @@ command_suggest(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
 
 static void
 learn_for_suggest(grn_ctx *ctx, grn_obj *items, grn_id post_item_id,
-                  uint64_t key, uint64_t key_, grn_id pair_id, grn_obj *pairs,
+                  uint64_t key_, grn_obj *pairs,
                   grn_obj *pairs_pre, grn_obj *pairs_post, grn_obj *pre_item,
                   grn_obj *post_item, grn_obj *pairs_freq2, grn_obj *v1)
 {
@@ -544,7 +544,9 @@ learn_for_suggest(grn_ctx *ctx, grn_obj *items, grn_id post_item_id,
   if (token) {
     grn_id tid;
     while ((tid = grn_token_next(ctx, token)) && tid != post_item_id) {
+      uint64_t key;
       int added;
+      grn_id pair_id;
       key = key_ + tid;
       pair_id = grn_table_add(ctx, pairs, &key, sizeof(uint64_t), &added);
       if (added) {
@@ -626,7 +628,7 @@ learn(grn_ctx *ctx, grn_obj *post_event, grn_obj *post_type, grn_obj *post_item,
           grn_obj_set_value(ctx, pairs_freq0, pair_id, &v1, GRN_OBJ_INCR);
         }
       }
-      learn_for_suggest(ctx, items, post_item_id, key, key_, pair_id, pairs,
+      learn_for_suggest(ctx, items, post_item_id, key_, pairs,
 			pairs_pre, pairs_post, &pre_item, post_item,
 			pairs_freq2, &v1);
       GRN_OBJ_FIN(ctx, &pre_type);
