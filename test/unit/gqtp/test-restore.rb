@@ -176,6 +176,17 @@ table_create Terms TABLE_PAT_KEY|KEY_NORMALIZE ShortText --default_tokenizer Tok
 table_create Entry TABLE_HASH_KEY ShortText
 column_create Entry body COLUMN_SCALAR ShortText
 column_create Terms entry_body COLUMN_INDEX Entry body
+load --table Entry
+[
+{"_key":"gcc","body":"#{body}"}
+]
+EOC
+
+    assert_dump(<<-EOD, commands)
+table_create Terms TABLE_PAT_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenBigram
+table_create Entry TABLE_HASH_KEY ShortText
+column_create Entry body COLUMN_SCALAR ShortText
+column_create Terms entry_body COLUMN_INDEX Entry body
 load --table Terms
 [
 ["_key"],
@@ -221,17 +232,6 @@ load --table Terms
 ["表と"],
 ["語彙"]
 ]
-load --table Entry
-[
-{"_key":"gcc","body":"#{body}"}
-]
-EOC
-
-    assert_dump(<<-EOD, commands)
-table_create Terms TABLE_PAT_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenBigram
-table_create Entry TABLE_HASH_KEY ShortText
-column_create Entry body COLUMN_SCALAR ShortText
-column_create Terms entry_body COLUMN_INDEX Entry body
 load --table Entry
 [
 ["_key","body"],
