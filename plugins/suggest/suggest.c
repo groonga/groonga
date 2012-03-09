@@ -544,7 +544,8 @@ learn(grn_ctx *ctx, grn_obj **args)
   grn_id post_item_id = GRN_RECORD_VALUE(post_item);
   grn_obj *seq = args[3];
   grn_id seq_id = GRN_RECORD_VALUE(seq);
-  int64_t post_time_value = GRN_TIME_VALUE(args[4]);
+  grn_obj *post_time = args[4];
+  int64_t post_time_value = GRN_TIME_VALUE(post_time);
   grn_obj *pairs = args[5];
   if (post_event_id && post_item_id && seq_id) {
     grn_obj *items = grn_ctx_at(ctx, GRN_OBJ_GET_DOMAIN(args[2]));
@@ -566,7 +567,7 @@ learn(grn_ctx *ctx, grn_obj **args)
     GRN_UINT32_SET(ctx, &v1, 1);
     GRN_RECORD_INIT(&pre_events, 0, grn_obj_id(ctx, events));
     grn_obj_set_value(ctx, items_freq, post_item_id, &v1, GRN_OBJ_INCR);
-    grn_obj_set_value(ctx, items_last, post_item_id, args[4], GRN_OBJ_SET);
+    grn_obj_set_value(ctx, items_last, post_item_id, post_time, GRN_OBJ_SET);
     if (post_type_id) {
       int added;
       grn_id pid, tid, *ep, *es;
