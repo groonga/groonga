@@ -533,7 +533,7 @@ command_suggest(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
 
 static void
 learn_for_suggest(grn_ctx *ctx, grn_obj *items, grn_id post_item_id,
-                  uint64_t key, uint64_t key_, grn_id pid, grn_obj *pairs,
+                  uint64_t key, uint64_t key_, grn_id pair_id, grn_obj *pairs,
                   grn_obj *pairs_pre, grn_obj *pairs_post, grn_obj *pre_item,
                   grn_obj *post_item, grn_obj *pairs_freq2, grn_obj *v1)
 {
@@ -546,13 +546,13 @@ learn_for_suggest(grn_ctx *ctx, grn_obj *items, grn_id post_item_id,
     while ((tid = grn_token_next(ctx, token)) && tid != post_item_id) {
       int added;
       key = key_ + tid;
-      pid = grn_table_add(ctx, pairs, &key, sizeof(uint64_t), &added);
+      pair_id = grn_table_add(ctx, pairs, &key, sizeof(uint64_t), &added);
       if (added) {
 	GRN_RECORD_SET(ctx, pre_item, tid);
-	grn_obj_set_value(ctx, pairs_pre, pid, pre_item, GRN_OBJ_SET);
-	grn_obj_set_value(ctx, pairs_post, pid, post_item, GRN_OBJ_SET);
+	grn_obj_set_value(ctx, pairs_pre, pair_id, pre_item, GRN_OBJ_SET);
+	grn_obj_set_value(ctx, pairs_post, pair_id, post_item, GRN_OBJ_SET);
       }
-      grn_obj_set_value(ctx, pairs_freq2, pid, v1, GRN_OBJ_INCR);
+      grn_obj_set_value(ctx, pairs_freq2, pair_id, v1, GRN_OBJ_INCR);
     }
     grn_token_close(ctx, token);
   }
@@ -592,7 +592,7 @@ learn(grn_ctx *ctx, grn_obj *post_event, grn_obj *post_type, grn_obj *post_item,
     grn_obj_set_value(ctx, items_last, post_item_id, post_time, GRN_OBJ_SET);
     if (post_type_id) {
       int added;
-      grn_id pid, *ep, *es;
+      grn_id pair_id, *ep, *es;
       grn_obj pre_type, pre_time, pre_item;
       uint64_t key, key_ = ((uint64_t)post_item_id) << 32;
       grn_obj_set_value(ctx, items_freq2, post_item_id, &v1, GRN_OBJ_INCR);
@@ -614,19 +614,19 @@ learn(grn_ctx *ctx, grn_obj *post_event, grn_obj *post_type, grn_obj *post_item,
           break;
         }
         key = key_ + GRN_RECORD_VALUE(&pre_item);
-        pid = grn_table_add(ctx, pairs, &key, sizeof(uint64_t), &added);
+        pair_id = grn_table_add(ctx, pairs, &key, sizeof(uint64_t), &added);
         if (added) {
-          grn_obj_set_value(ctx, pairs_pre, pid, &pre_item, GRN_OBJ_SET);
-          grn_obj_set_value(ctx, pairs_post, pid, post_item, GRN_OBJ_SET);
+          grn_obj_set_value(ctx, pairs_pre, pair_id, &pre_item, GRN_OBJ_SET);
+          grn_obj_set_value(ctx, pairs_post, pair_id, post_item, GRN_OBJ_SET);
         }
         if (GRN_RECORD_VALUE(&pre_type)) {
-          grn_obj_set_value(ctx, pairs_freq1, pid, &v1, GRN_OBJ_INCR);
+          grn_obj_set_value(ctx, pairs_freq1, pair_id, &v1, GRN_OBJ_INCR);
           break;
         } else {
-          grn_obj_set_value(ctx, pairs_freq0, pid, &v1, GRN_OBJ_INCR);
+          grn_obj_set_value(ctx, pairs_freq0, pair_id, &v1, GRN_OBJ_INCR);
         }
       }
-      learn_for_suggest(ctx, items, post_item_id, key, key_, pid, pairs,
+      learn_for_suggest(ctx, items, post_item_id, key, key_, pair_id, pairs,
 			pairs_pre, pairs_post, &pre_item, post_item,
 			pairs_freq2, &v1);
       GRN_OBJ_FIN(ctx, &pre_type);
