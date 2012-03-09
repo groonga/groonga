@@ -47,8 +47,8 @@ load --table Site
 COMMANDS
 
     expected= <<EXPECTED
-[[-63,0.0,0.0,"Syntax error! (<)",[["yy_syntax_error","ecmascript.y",19,"(stdin)",1,"select --table Site --filter \\"<\\""]]],[]]
-[[-63,0.0,0.0,"Syntax error! (<)",[["yy_syntax_error","ecmascript.y",19,"(stdin)",2,"select --table Site --filter \\"<\\""]]],[]]
+[[-63,0.0,0.0,"Syntax error! (<)",[["yy_syntax_error","ecmascript.y",19]]],[]]
+[[-63,0.0,0.0,"Syntax error! (<)",[["yy_syntax_error","ecmascript.y",19]]],[]]
 [[0,0.0,0.0],true]
 EXPECTED
 
