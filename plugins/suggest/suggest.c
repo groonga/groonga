@@ -538,11 +538,11 @@ learn(grn_ctx *ctx, grn_obj **args)
   grn_obj v1, pre_events;
   grn_id post_event_id = GRN_RECORD_VALUE(args[0]);
   grn_id post_type_id = GRN_RECORD_VALUE(args[1]);
-  grn_id post_item = GRN_RECORD_VALUE(args[2]);
+  grn_id post_item_id = GRN_RECORD_VALUE(args[2]);
   grn_id seq = GRN_RECORD_VALUE(args[3]);
   int64_t post_time = GRN_TIME_VALUE(args[4]);
   grn_obj *pairs = args[5];
-  if (post_event_id && post_item && seq) {
+  if (post_event_id && post_item_id && seq) {
     grn_obj *items = grn_ctx_at(ctx, GRN_OBJ_GET_DOMAIN(args[2]));
     grn_obj *items_freq = grn_obj_column(ctx, items, CONST_STR_LEN("freq"));
     grn_obj *items_freq2 = grn_obj_column(ctx, items, CONST_STR_LEN("freq2"));
@@ -561,14 +561,14 @@ learn(grn_ctx *ctx, grn_obj **args)
     GRN_UINT32_INIT(&v1, 0);
     GRN_UINT32_SET(ctx, &v1, 1);
     GRN_RECORD_INIT(&pre_events, 0, grn_obj_id(ctx, events));
-    grn_obj_set_value(ctx, items_freq, post_item, &v1, GRN_OBJ_INCR);
-    grn_obj_set_value(ctx, items_last, post_item, args[4], GRN_OBJ_SET);
+    grn_obj_set_value(ctx, items_freq, post_item_id, &v1, GRN_OBJ_INCR);
+    grn_obj_set_value(ctx, items_last, post_item_id, args[4], GRN_OBJ_SET);
     if (post_type_id) {
       int added;
       grn_id pid, tid, *ep, *es;
       grn_obj pre_type, pre_time, pre_item;
-      uint64_t key, key_ = ((uint64_t)post_item) << 32;
-      grn_obj_set_value(ctx, items_freq2, post_item, &v1, GRN_OBJ_INCR);
+      uint64_t key, key_ = ((uint64_t)post_item_id) << 32;
+      grn_obj_set_value(ctx, items_freq2, post_item_id, &v1, GRN_OBJ_INCR);
       grn_obj_get_value(ctx, seqs_events, seq, &pre_events);
       ep = (grn_id *)GRN_BULK_CURR(&pre_events);
       es = (grn_id *)GRN_BULK_HEAD(&pre_events);
@@ -601,11 +601,11 @@ learn(grn_ctx *ctx, grn_obj **args)
       }
       {
         char keybuf[GRN_TABLE_MAX_KEY_SIZE];
-        int keylen = grn_table_get_key(ctx, items, post_item,
+        int keylen = grn_table_get_key(ctx, items, post_item_id,
                                        keybuf, GRN_TABLE_MAX_KEY_SIZE);
         grn_token *token = grn_token_open(ctx, items, keybuf, keylen, 1);
         if (token) {
-          while ((tid = grn_token_next(ctx, token)) && tid != post_item) {
+          while ((tid = grn_token_next(ctx, token)) && tid != post_item_id) {
             key = key_ + tid;
             pid = grn_table_add(ctx, pairs, &key, sizeof(uint64_t), &added);
             if (added) {
