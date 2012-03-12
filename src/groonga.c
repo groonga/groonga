@@ -191,6 +191,7 @@ show_usage(FILE *output)
           "                                    specify default command version\n"
           "  --default-match-escalation-threshold <threshold>:\n"
           "                                    specify default match escalation threshold\n"
+          "      --show-config:                show config\n"
           "  -h, --help:                       show usage\n"
           "  --version:                        show groonga version\n"
           "\n"
