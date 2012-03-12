@@ -2183,9 +2183,7 @@ show_config(FILE *out, const grn_str_getopt_opt *opts, int flags)
     case getopt_op_none:
       if (o->arg && *o->arg) {
         if (o->longopt &&
-            strcmp(o->longopt, "config-path") != 0 &&
-            strcmp(o->longopt, "address") != 0 &&
-            strcmp(o->longopt, "admin-html-path") != 0) {
+            strcmp(o->longopt, "config-path") != 0) {
           fprintf(out, "%s=%s\n", o->longopt, *o->arg);
         }
       }
