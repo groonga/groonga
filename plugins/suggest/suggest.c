@@ -665,6 +665,13 @@ learner_fin_buffers(grn_ctx *ctx, grn_suggest_learner *learner)
 }
 
 static void
+learner_increment(grn_ctx *ctx, grn_suggest_learner *learner,
+                  grn_obj *column, grn_id record_id)
+{
+  grn_obj_set_value(ctx, column, record_id, &(learner->v1), GRN_OBJ_INCR);
+}
+
+static void
 learn_for_complete_and_correcnt(grn_ctx *ctx, grn_suggest_learner *learner,
                                 grn_obj *post_item,
                                 grn_obj *pre_events, grn_obj *pre_item,
@@ -706,12 +713,10 @@ learn_for_complete_and_correcnt(grn_ctx *ctx, grn_suggest_learner *learner,
                         GRN_OBJ_SET);
     }
     if (GRN_RECORD_VALUE(&pre_type)) {
-      grn_obj_set_value(ctx, learner->pairs_freq1, pair_id,
-                        &(learner->v1), GRN_OBJ_INCR);
+      learner_increment(ctx, learner, learner->pairs_freq1, pair_id);
       break;
     } else {
-      grn_obj_set_value(ctx, learner->pairs_freq0, pair_id,
-                        &(learner->v1), GRN_OBJ_INCR);
+      learner_increment(ctx, learner, learner->pairs_freq0, pair_id);
     }
   }
   GRN_OBJ_FIN(ctx, &pre_type);
@@ -744,8 +749,7 @@ learn_for_suggest(grn_ctx *ctx, grn_suggest_learner *learner,
 	grn_obj_set_value(ctx, learner->pairs_post, pair_id,
                           post_item, GRN_OBJ_SET);
       }
-      grn_obj_set_value(ctx, learner->pairs_freq2, pair_id,
-                        &(learner->v1), GRN_OBJ_INCR);
+      learner_increment(ctx, learner, learner->pairs_freq2, pair_id);
     }
     grn_token_close(ctx, token);
   }
