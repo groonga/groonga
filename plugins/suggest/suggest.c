@@ -71,6 +71,7 @@ typedef struct {
   grn_obj *pairs_freq2;
 
   grn_obj v1;
+  grn_obj pre_events;
 } grn_suggest_learner;
 
 static int
@@ -656,12 +657,15 @@ learner_init_buffers(grn_ctx *ctx, grn_suggest_learner *learner)
 {
   GRN_UINT32_INIT(&(learner->v1), 0);
   GRN_UINT32_SET(ctx, &(learner->v1), 1);
+
+  GRN_RECORD_INIT(&(learner->pre_events), 0, grn_obj_id(ctx, learner->events));
 }
 
 static void
 learner_fin_buffers(grn_ctx *ctx, grn_suggest_learner *learner)
 {
   grn_obj_unlink(ctx, &(learner->v1));
+  grn_obj_unlink(ctx, &(learner->pre_events));
 }
 
 static grn_bool
@@ -764,7 +768,6 @@ learn_for_suggest(grn_ctx *ctx, grn_suggest_learner *learner,
 static void
 learner_learn(grn_ctx *ctx, grn_suggest_learner *learner)
 {
-  grn_obj pre_events;
   grn_obj *post_item = learner->post_item;
   grn_obj *post_time = learner->post_time;
   grn_id post_event_id = learner->post_event_id;
@@ -775,7 +778,6 @@ learner_learn(grn_ctx *ctx, grn_suggest_learner *learner)
   if (learner_is_valid_input(ctx, learner)) {
     learner_init_columns(ctx, learner);
     learner_init_buffers(ctx, learner);
-    GRN_RECORD_INIT(&pre_events, 0, grn_obj_id(ctx, learner->events));
     learner_increment(ctx, learner, learner->items_freq, post_item_id);
     grn_obj_set_value(ctx, learner->items_last, post_item_id,
                       post_time, GRN_OBJ_SET);
@@ -785,21 +787,22 @@ learner_learn(grn_ctx *ctx, grn_suggest_learner *learner)
       grn_obj pre_item;
       grn_obj_set_value(ctx, learner->items_freq2, post_item_id,
                         &(learner->v1), GRN_OBJ_INCR);
-      grn_obj_get_value(ctx, learner->seqs_events, seq_id, &pre_events);
+      grn_obj_get_value(ctx, learner->seqs_events, seq_id,
+                        &(learner->pre_events));
       items_id = grn_obj_get_range(ctx, learner->events_item);
       GRN_RECORD_INIT(&pre_item, 0, items_id);
       learn_for_complete_and_correcnt(ctx, learner,
-                                      post_item, &pre_events, &pre_item,
+                                      post_item, &(learner->pre_events),
+                                      &pre_item,
                                       key_, post_time_value);
       learn_for_suggest(ctx, learner,
                         post_item_id, key_, &pre_item, post_item);
       GRN_OBJ_FIN(ctx, &pre_item);
-      GRN_BULK_REWIND(&pre_events);
+      GRN_BULK_REWIND(&(learner->pre_events));
     }
-    GRN_RECORD_SET(ctx, &pre_events, post_event_id);
+    GRN_RECORD_SET(ctx, &(learner->pre_events), post_event_id);
     grn_obj_set_value(ctx, learner->seqs_events, seq_id,
-                      &pre_events, GRN_OBJ_APPEND);
-    GRN_OBJ_FIN(ctx, &pre_events);
+                      &(learner->pre_events), GRN_OBJ_APPEND);
     learner_fin_buffers(ctx, learner);
     learner_fin_columns(ctx, learner);
   }
