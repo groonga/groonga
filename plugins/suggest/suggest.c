@@ -773,18 +773,17 @@ learn_for_complete_and_correcnt(grn_ctx *ctx, grn_suggest_learner *learner,
 }
 
 static void
-learn_for_suggest(grn_ctx *ctx, grn_suggest_learner *learner,
-                  grn_id post_item_id)
+learn_for_suggest(grn_ctx *ctx, grn_suggest_learner *learner)
 {
   char keybuf[GRN_TABLE_MAX_KEY_SIZE];
-  int keylen = grn_table_get_key(ctx, learner->items, post_item_id,
+  int keylen = grn_table_get_key(ctx, learner->items, learner->post_item_id,
                                  keybuf, GRN_TABLE_MAX_KEY_SIZE);
   grn_token *token = grn_token_open(ctx, learner->items, keybuf, keylen, 1);
   if (token) {
     grn_id tid;
     grn_obj *pre_item = &(learner->pre_item);
     grn_obj *post_item = learner->post_item;
-    while ((tid = grn_token_next(ctx, token)) && tid != post_item_id) {
+    while ((tid = grn_token_next(ctx, token)) && tid != learner->post_item_id) {
       uint64_t key;
       int added;
       grn_id pair_id;
@@ -816,7 +815,6 @@ static void
 learner_learn(grn_ctx *ctx, grn_suggest_learner *learner)
 {
   grn_id post_type_id = learner->post_type_id;
-  grn_id post_item_id = learner->post_item_id;
   int64_t post_time_value = learner->post_time_value;
   if (learner_is_valid_input(ctx, learner)) {
     learner_init_columns(ctx, learner);
@@ -830,8 +828,7 @@ learner_learn(grn_ctx *ctx, grn_suggest_learner *learner)
       learn_for_complete_and_correcnt(ctx, learner,
                                       &(learner->pre_events),
                                       post_time_value);
-      learn_for_suggest(ctx, learner,
-                        post_item_id);
+      learn_for_suggest(ctx, learner);
 
       learner_fin_submit_learn(ctx, learner);
     }
