@@ -766,11 +766,18 @@ learn_for_suggest(grn_ctx *ctx, grn_suggest_learner *learner,
 }
 
 static void
+learner_append_post_event(grn_ctx *ctx, grn_suggest_learner *learner)
+{
+  GRN_RECORD_SET(ctx, &(learner->pre_events), learner->post_event_id);
+  grn_obj_set_value(ctx, learner->seqs_events, learner->seq_id,
+                    &(learner->pre_events), GRN_OBJ_APPEND);
+}
+
+static void
 learner_learn(grn_ctx *ctx, grn_suggest_learner *learner)
 {
   grn_obj *post_item = learner->post_item;
   grn_obj *post_time = learner->post_time;
-  grn_id post_event_id = learner->post_event_id;
   grn_id post_type_id = learner->post_type_id;
   grn_id post_item_id = learner->post_item_id;
   grn_id seq_id = learner->seq_id;
@@ -800,9 +807,7 @@ learner_learn(grn_ctx *ctx, grn_suggest_learner *learner)
       GRN_OBJ_FIN(ctx, &pre_item);
       GRN_BULK_REWIND(&(learner->pre_events));
     }
-    GRN_RECORD_SET(ctx, &(learner->pre_events), post_event_id);
-    grn_obj_set_value(ctx, learner->seqs_events, seq_id,
-                      &(learner->pre_events), GRN_OBJ_APPEND);
+    learner_append_post_event(ctx, learner);
     learner_fin_buffers(ctx, learner);
     learner_fin_columns(ctx, learner);
   }
