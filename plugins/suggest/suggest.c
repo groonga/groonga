@@ -45,6 +45,8 @@ typedef struct {
   grn_obj *post_time;
   grn_obj *pairs;
 
+  int learn_distance_in_seconds;
+
   grn_obj *seqs;
   grn_obj *seqs_events;
   grn_obj *events;
@@ -627,7 +629,7 @@ learner_fin_columns(grn_ctx *ctx, grn_suggest_learner *learner)
   grn_obj_unlink(ctx, learner->pairs_freq2);
 }
 
-static int
+static void
 learn_for_complete_and_correcnt(grn_ctx *ctx, grn_suggest_learner *learner,
                                 grn_obj *post_item,
                                 grn_obj *pre_events, grn_obj *pre_item,
@@ -638,7 +640,6 @@ learn_for_complete_and_correcnt(grn_ctx *ctx, grn_suggest_learner *learner,
   grn_obj pre_type, pre_time;
   grn_id *ep, *es;
   uint64_t key;
-  int r = 0;
 
   GRN_RECORD_INIT(&pre_type, 0, grn_obj_get_range(ctx, learner->events_type));
   GRN_TIME_INIT(&pre_time, 0);
@@ -655,7 +656,10 @@ learn_for_complete_and_correcnt(grn_ctx *ctx, grn_suggest_learner *learner,
     grn_obj_get_value(ctx, learner->events_time, *ep, &pre_time);
     grn_obj_get_value(ctx, learner->events_item, *ep, pre_item);
     if (GRN_TIME_VALUE(&pre_time) + 60 * GRN_TIME_USEC_PER_SEC < post_time_value) {
-      r = (int)((post_time_value - GRN_TIME_VALUE(&pre_time))/GRN_TIME_USEC_PER_SEC);
+      int64_t learn_distance_in_msec =
+        post_time_value - GRN_TIME_VALUE(&pre_time);
+      learner->learn_distance_in_seconds =
+        (int)(learn_distance_in_msec / GRN_TIME_USEC_PER_SEC);
       break;
     }
     key = key_ + GRN_RECORD_VALUE(pre_item);
@@ -676,8 +680,6 @@ learn_for_complete_and_correcnt(grn_ctx *ctx, grn_suggest_learner *learner,
   }
   GRN_OBJ_FIN(ctx, &pre_type);
   GRN_OBJ_FIN(ctx, &pre_time);
-
-  return r;
 }
 
 static void
@@ -712,10 +714,9 @@ learn_for_suggest(grn_ctx *ctx, grn_suggest_learner *learner,
   }
 }
 
-static int
+static void
 learner_learn(grn_ctx *ctx, grn_suggest_learner *learner)
 {
-  int r = 0;
   grn_obj v1, pre_events;
   grn_obj *post_event = learner->post_event;
   grn_obj *post_type = learner->post_type;
@@ -745,9 +746,9 @@ learner_learn(grn_ctx *ctx, grn_suggest_learner *learner)
       grn_obj_get_value(ctx, learner->seqs_events, seq_id, &pre_events);
       items_id = grn_obj_get_range(ctx, learner->events_item);
       GRN_RECORD_INIT(&pre_item, 0, items_id);
-      r = learn_for_complete_and_correcnt(ctx, learner,
-                                          post_item, &pre_events, &pre_item,
-                                          key_, post_time_value, &v1);
+      learn_for_complete_and_correcnt(ctx, learner,
+                                      post_item, &pre_events, &pre_item,
+                                      key_, post_time_value, &v1);
       learn_for_suggest(ctx, learner,
                         post_item_id, key_, &pre_item, post_item, &v1);
       GRN_OBJ_FIN(ctx, &pre_item);
@@ -760,13 +761,12 @@ learner_learn(grn_ctx *ctx, grn_suggest_learner *learner)
     GRN_OBJ_FIN(ctx, &v1);
     learner_fin_columns(ctx, learner);
   }
-  return r;
 }
 
 static grn_obj *
 func_suggest_preparer(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  int r = 0;
+  int learn_distance_in_seconds = 0;
   grn_obj *obj;
   if (nargs == 6) {
     grn_obj *post_event = args[0];
@@ -778,9 +778,12 @@ func_suggest_preparer(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *us
     grn_suggest_learner learner;
     learner_init(ctx, &learner,
                  post_event, post_type, post_item, seq, post_time, pairs);
-    r = learner_learn(ctx, &learner);
+    learner_learn(ctx, &learner);
+    learn_distance_in_seconds = learner.learn_distance_in_seconds;
   }
-  if ((obj = GRN_PROC_ALLOC(GRN_DB_UINT32, 0))) { GRN_UINT32_SET(ctx, obj, r); }
+  if ((obj = GRN_PROC_ALLOC(GRN_DB_UINT32, 0))) {
+    GRN_UINT32_SET(ctx, obj, learn_distance_in_seconds);
+  }
   return obj;
 }
 
