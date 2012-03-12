@@ -669,8 +669,7 @@ learn_for_complete_and_correcnt(grn_ctx *ctx, grn_suggest_learner *learner,
                                 grn_obj *post_item,
                                 grn_obj *pre_events, grn_obj *pre_item,
                                 uint64_t key_,
-                                int64_t post_time_value,
-                                grn_obj *v1)
+                                int64_t post_time_value)
 {
   grn_obj pre_type, pre_time;
   grn_id *ep, *es;
@@ -707,10 +706,12 @@ learn_for_complete_and_correcnt(grn_ctx *ctx, grn_suggest_learner *learner,
                         GRN_OBJ_SET);
     }
     if (GRN_RECORD_VALUE(&pre_type)) {
-      grn_obj_set_value(ctx, learner->pairs_freq1, pair_id, v1, GRN_OBJ_INCR);
+      grn_obj_set_value(ctx, learner->pairs_freq1, pair_id,
+                        &(learner->v1), GRN_OBJ_INCR);
       break;
     } else {
-      grn_obj_set_value(ctx, learner->pairs_freq0, pair_id, v1, GRN_OBJ_INCR);
+      grn_obj_set_value(ctx, learner->pairs_freq0, pair_id,
+                        &(learner->v1), GRN_OBJ_INCR);
     }
   }
   GRN_OBJ_FIN(ctx, &pre_type);
@@ -721,7 +722,7 @@ static void
 learn_for_suggest(grn_ctx *ctx, grn_suggest_learner *learner,
                   grn_id post_item_id,
                   uint64_t key_, grn_obj *pre_item,
-                  grn_obj *post_item, grn_obj *v1)
+                  grn_obj *post_item)
 {
   char keybuf[GRN_TABLE_MAX_KEY_SIZE];
   int keylen = grn_table_get_key(ctx, learner->items, post_item_id,
@@ -743,7 +744,8 @@ learn_for_suggest(grn_ctx *ctx, grn_suggest_learner *learner,
 	grn_obj_set_value(ctx, learner->pairs_post, pair_id,
                           post_item, GRN_OBJ_SET);
       }
-      grn_obj_set_value(ctx, learner->pairs_freq2, pair_id, v1, GRN_OBJ_INCR);
+      grn_obj_set_value(ctx, learner->pairs_freq2, pair_id,
+                        &(learner->v1), GRN_OBJ_INCR);
     }
     grn_token_close(ctx, token);
   }
@@ -779,9 +781,9 @@ learner_learn(grn_ctx *ctx, grn_suggest_learner *learner)
       GRN_RECORD_INIT(&pre_item, 0, items_id);
       learn_for_complete_and_correcnt(ctx, learner,
                                       post_item, &pre_events, &pre_item,
-                                      key_, post_time_value, &(learner->v1));
+                                      key_, post_time_value);
       learn_for_suggest(ctx, learner,
-                        post_item_id, key_, &pre_item, post_item, &(learner->v1));
+                        post_item_id, key_, &pre_item, post_item);
       GRN_OBJ_FIN(ctx, &pre_item);
       GRN_BULK_REWIND(&pre_events);
     }
