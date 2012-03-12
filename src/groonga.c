@@ -2191,8 +2191,6 @@ main(int argc, char **argv)
     {'e', "encoding", NULL, 0, getopt_op_none},
     {'t', "max-threads", NULL, 0, getopt_op_none},
     {'h', "help", NULL, mode_usage, getopt_op_update},
-    /* Deprecated. Use --bind-address instead of -a, --address. */
-    {'a', "address", NULL, 0, getopt_op_none},
     {'c', NULL, NULL, mode_client, getopt_op_update},
     {'d', NULL, NULL, mode_daemon, getopt_op_update},
     {'s', NULL, NULL, mode_server, getopt_op_update},
@@ -2200,8 +2198,6 @@ main(int argc, char **argv)
     {'i', "server", NULL, 0, getopt_op_none},
     {'q', NULL, NULL, MODE_USE_QL, getopt_op_on},
     {'n', NULL, NULL, MODE_NEW_DB, getopt_op_on},
-    /* Deprecated. Use --document-root instead of --admin-html-path. */
-    {'\0', "admin-html-path", NULL, 0, getopt_op_none},
     {'\0', "protocol", NULL, 0, getopt_op_none},
     {'\0', "version", NULL, mode_version, getopt_op_update},
     {'\0', "log-path", NULL, 0, getopt_op_none},
@@ -2220,21 +2216,19 @@ main(int argc, char **argv)
   opts[0].arg = &portstr;
   opts[1].arg = &encstr;
   opts[2].arg = &max_nfthreadsstr;
-  opts[4].arg = &bind_addressstr; /* deprecated */
-  opts[8].arg = &loglevel;
-  opts[9].arg = &hostnamestr;
-  opts[12].arg = &admin_html_path; /* deprecated */
-  opts[13].arg = &protocol;
-  opts[15].arg = &grn_log_path;
-  opts[16].arg = &grn_qlog_path;
-  opts[17].arg = &pidfile_path;
-  opts[18].arg = &config_path;
-  opts[20].arg = &cache_limitstr;
-  opts[21].arg = &input_path;
-  opts[22].arg = &grn_document_root;
-  opts[23].arg = &command_versionstr;
-  opts[24].arg = &match_escalation_thresholdstr;
-  opts[25].arg = &bind_addressstr;
+  opts[7].arg = &loglevel;
+  opts[8].arg = &hostnamestr;
+  opts[11].arg = &protocol;
+  opts[13].arg = &grn_log_path;
+  opts[14].arg = &grn_qlog_path;
+  opts[15].arg = &pidfile_path;
+  opts[16].arg = &config_path;
+  opts[18].arg = &cache_limitstr;
+  opts[19].arg = &input_path;
+  opts[20].arg = &grn_document_root;
+  opts[21].arg = &command_versionstr;
+  opts[22].arg = &match_escalation_thresholdstr;
+  opts[23].arg = &bind_addressstr;
   if (!(default_max_nfthreads = get_core_number())) {
     default_max_nfthreads = DEFAULT_MAX_NFTHREADS;
   }
