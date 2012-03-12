@@ -823,11 +823,9 @@ learner_learn(grn_ctx *ctx, grn_suggest_learner *learner)
     learner_set_last_post_time(ctx, learner);
     if (post_type_id) {
       learner_init_submit_learn(ctx, learner);
-
       learner_increment_item_freq(ctx, learner, learner->items_freq2);
       learn_for_complete_and_correcnt(ctx, learner);
       learn_for_suggest(ctx, learner);
-
       learner_fin_submit_learn(ctx, learner);
     }
     learner_append_post_event(ctx, learner);
