@@ -797,8 +797,7 @@ learner_learn(grn_ctx *ctx, grn_suggest_learner *learner)
       uint64_t key_ = ((uint64_t)post_item_id) << 32;
       grn_id items_id;
       grn_obj pre_item;
-      grn_obj_set_value(ctx, learner->items_freq2, post_item_id,
-                        &(learner->v1), GRN_OBJ_INCR);
+      learner_increment(ctx, learner, learner->items_freq2, post_item_id);
       grn_obj_get_value(ctx, learner->seqs_events, seq_id,
                         &(learner->pre_events));
       items_id = grn_obj_get_range(ctx, learner->events_item);
