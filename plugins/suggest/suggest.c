@@ -38,6 +38,12 @@ typedef enum {
 } grn_suggest_search_mode;
 
 typedef struct {
+  grn_obj *post_event;
+  grn_obj *post_type;
+  grn_obj *post_item;
+  grn_obj *seq;
+  grn_obj *post_time;
+
   grn_obj *seqs;
   grn_obj *seqs_events;
   grn_obj *events;
@@ -552,6 +558,19 @@ command_suggest(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
 }
 
 static void
+learner_init(grn_ctx *ctx, grn_suggest_learner *learner,
+             grn_obj *post_event, grn_obj *post_type, grn_obj *post_item,
+             grn_obj *seq, grn_obj *post_time, grn_obj *pairs)
+{
+  learner->post_event = post_event;
+  learner->post_type = post_type;
+  learner->post_item = post_item;
+  learner->seq = seq;
+  learner->post_time = post_time;
+  learner->pairs = pairs;
+}
+
+static void
 learner_init_columns(grn_ctx *ctx, grn_suggest_learner *learner,
                      grn_obj *seq, grn_obj *post_item, grn_obj *pairs)
 {
@@ -694,12 +713,16 @@ learn_for_suggest(grn_ctx *ctx, grn_suggest_learner *learner,
 }
 
 static int
-learn(grn_ctx *ctx, grn_suggest_learner *learner,
-      grn_obj *post_event, grn_obj *post_type, grn_obj *post_item,
-      grn_obj *seq, grn_obj *post_time, grn_obj *pairs)
+learn(grn_ctx *ctx, grn_suggest_learner *learner)
 {
   int r = 0;
   grn_obj v1, pre_events;
+  grn_obj *post_event = learner->post_event;
+  grn_obj *post_type = learner->post_type;
+  grn_obj *post_item = learner->post_item;
+  grn_obj *seq = learner->seq;
+  grn_obj *post_time = learner->post_time;
+  grn_obj *pairs = learner->pairs;
   grn_id post_event_id = GRN_RECORD_VALUE(post_event);
   grn_id post_type_id = GRN_RECORD_VALUE(post_type);
   grn_id post_item_id = GRN_RECORD_VALUE(post_item);
@@ -754,8 +777,9 @@ func_suggest_preparer(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *us
     grn_obj *post_time = args[4];
     grn_obj *pairs = args[5];
     grn_suggest_learner learner;
-    r = learn(ctx, &learner,
-              post_event, post_type, post_item, seq, post_time, pairs);
+    learner_init(ctx, &learner,
+                 post_event, post_type, post_item, seq, post_time, pairs);
+    r = learn(ctx, &learner);
   }
   if ((obj = GRN_PROC_ALLOC(GRN_DB_UINT32, 0))) { GRN_UINT32_SET(ctx, obj, r); }
   return obj;
