@@ -43,6 +43,7 @@ typedef struct {
   grn_obj *post_item;
   grn_obj *seq;
   grn_obj *post_time;
+  grn_obj *pairs;
 
   grn_obj *seqs;
   grn_obj *seqs_events;
@@ -55,7 +56,6 @@ typedef struct {
   grn_obj *items_freq;
   grn_obj *items_freq2;
   grn_obj *items_last;
-  grn_obj *pairs;
   grn_obj *pairs_pre;
   grn_obj *pairs_post;
   grn_obj *pairs_freq0;
@@ -571,13 +571,12 @@ learner_init(grn_ctx *ctx, grn_suggest_learner *learner,
 }
 
 static void
-learner_init_columns(grn_ctx *ctx, grn_suggest_learner *learner,
-                     grn_obj *seq, grn_obj *post_item, grn_obj *pairs)
+learner_init_columns(grn_ctx *ctx, grn_suggest_learner *learner)
 {
   grn_id events_id, event_types_id;
-  grn_obj *seqs, *events, *items;
+  grn_obj *seqs, *events, *post_item, *items, *pairs;
 
-  learner->seqs = seqs = grn_ctx_at(ctx, GRN_OBJ_GET_DOMAIN(seq));
+  learner->seqs = seqs = grn_ctx_at(ctx, GRN_OBJ_GET_DOMAIN(learner->seq));
   learner->seqs_events = grn_obj_column(ctx, seqs, CONST_STR_LEN("events"));
 
   events_id = grn_obj_get_range(ctx, learner->seqs_events);
@@ -589,12 +588,13 @@ learner_init_columns(grn_ctx *ctx, grn_suggest_learner *learner,
   event_types_id = grn_obj_get_range(ctx, learner->events_type);
   learner->event_types = grn_obj_column(ctx, events, CONST_STR_LEN("time"));
 
+  post_item = learner->post_item;
   learner->items = items = grn_ctx_at(ctx, GRN_OBJ_GET_DOMAIN(post_item));
   learner->items_freq = grn_obj_column(ctx, items, CONST_STR_LEN("freq"));
   learner->items_freq2 = grn_obj_column(ctx, items, CONST_STR_LEN("freq2"));
   learner->items_last = grn_obj_column(ctx, items, CONST_STR_LEN("last"));
 
-  learner->pairs = pairs;
+  pairs = learner->pairs;
   learner->pairs_pre = grn_obj_column(ctx, pairs, CONST_STR_LEN("pre"));
   learner->pairs_post = grn_obj_column(ctx, pairs, CONST_STR_LEN("post"));
   learner->pairs_freq0 = grn_obj_column(ctx, pairs, CONST_STR_LEN("freq0"));
@@ -722,14 +722,13 @@ learn(grn_ctx *ctx, grn_suggest_learner *learner)
   grn_obj *post_item = learner->post_item;
   grn_obj *seq = learner->seq;
   grn_obj *post_time = learner->post_time;
-  grn_obj *pairs = learner->pairs;
   grn_id post_event_id = GRN_RECORD_VALUE(post_event);
   grn_id post_type_id = GRN_RECORD_VALUE(post_type);
   grn_id post_item_id = GRN_RECORD_VALUE(post_item);
   grn_id seq_id = GRN_RECORD_VALUE(seq);
   int64_t post_time_value = GRN_TIME_VALUE(post_time);
   if (post_event_id && post_item_id && seq_id) {
-    learner_init_columns(ctx, learner, seq, post_item, pairs);
+    learner_init_columns(ctx, learner);
     GRN_UINT32_INIT(&v1, 0);
     GRN_UINT32_SET(ctx, &v1, 1);
     GRN_RECORD_INIT(&pre_events, 0, grn_obj_id(ctx, learner->events));
