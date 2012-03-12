@@ -876,7 +876,7 @@ normalize_latin1(grn_ctx *ctx, grn_str *nstr)
   const unsigned char *s, *s_, *e;
   unsigned char *d, *d0, *d_;
   uint_least8_t *cp, *ctypes, ctype;
-  size_t size = strlen(nstr->orig), length = 0;
+  size_t size = nstr->orig_blen, length = 0;
   int removeblankp = nstr->flags & GRN_STR_REMOVEBLANK;
   if (!(nstr->norm = GRN_MALLOC(size + 1))) {
     return GRN_NO_MEMORY_AVAILABLE;
