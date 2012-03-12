@@ -713,7 +713,7 @@ learn_for_suggest(grn_ctx *ctx, grn_suggest_learner *learner,
 }
 
 static int
-learn(grn_ctx *ctx, grn_suggest_learner *learner)
+learner_learn(grn_ctx *ctx, grn_suggest_learner *learner)
 {
   int r = 0;
   grn_obj v1, pre_events;
@@ -778,7 +778,7 @@ func_suggest_preparer(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *us
     grn_suggest_learner learner;
     learner_init(ctx, &learner,
                  post_event, post_type, post_item, seq, post_time, pairs);
-    r = learn(ctx, &learner);
+    r = learner_learn(ctx, &learner);
   }
   if ((obj = GRN_PROC_ALLOC(GRN_DB_UINT32, 0))) { GRN_UINT32_SET(ctx, obj, r); }
   return obj;
