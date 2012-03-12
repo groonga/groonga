@@ -664,6 +664,12 @@ learner_fin_buffers(grn_ctx *ctx, grn_suggest_learner *learner)
   grn_obj_unlink(ctx, &(learner->v1));
 }
 
+static grn_bool
+learner_is_valid_input(grn_ctx *ctx, grn_suggest_learner *learner)
+{
+  return learner->post_event_id && learner->post_item_id && learner->seq_id;
+}
+
 static void
 learner_increment(grn_ctx *ctx, grn_suggest_learner *learner,
                   grn_obj *column, grn_id record_id)
@@ -766,7 +772,7 @@ learner_learn(grn_ctx *ctx, grn_suggest_learner *learner)
   grn_id post_item_id = learner->post_item_id;
   grn_id seq_id = learner->seq_id;
   int64_t post_time_value = learner->post_time_value;
-  if (post_event_id && post_item_id && seq_id) {
+  if (learner_is_valid_input(ctx, learner)) {
     learner_init_columns(ctx, learner);
     learner_init_buffers(ctx, learner);
     GRN_RECORD_INIT(&pre_events, 0, grn_obj_id(ctx, learner->events));
