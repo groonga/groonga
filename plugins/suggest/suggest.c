@@ -770,8 +770,7 @@ learner_learn(grn_ctx *ctx, grn_suggest_learner *learner)
     learner_init_columns(ctx, learner);
     learner_init_buffers(ctx, learner);
     GRN_RECORD_INIT(&pre_events, 0, grn_obj_id(ctx, learner->events));
-    grn_obj_set_value(ctx, learner->items_freq, post_item_id,
-                      &(learner->v1), GRN_OBJ_INCR);
+    learner_increment(ctx, learner, learner->items_freq, post_item_id);
     grn_obj_set_value(ctx, learner->items_last, post_item_id,
                       post_time, GRN_OBJ_SET);
     if (post_type_id) {
