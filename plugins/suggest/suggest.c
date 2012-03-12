@@ -720,7 +720,8 @@ learner_set_last_post_time(grn_ctx *ctx, grn_suggest_learner *learner)
 }
 
 static void
-learn_for_complete_and_correcnt(grn_ctx *ctx, grn_suggest_learner *learner)
+learner_learn_for_complete_and_correcnt(grn_ctx *ctx,
+                                        grn_suggest_learner *learner)
 {
   grn_obj *pre_item, *post_item, *pre_events;
   grn_obj pre_type, pre_time;
@@ -774,7 +775,7 @@ learn_for_complete_and_correcnt(grn_ctx *ctx, grn_suggest_learner *learner)
 }
 
 static void
-learn_for_suggest(grn_ctx *ctx, grn_suggest_learner *learner)
+learner_learn_for_suggest(grn_ctx *ctx, grn_suggest_learner *learner)
 {
   char keybuf[GRN_TABLE_MAX_KEY_SIZE];
   int keylen = grn_table_get_key(ctx, learner->items, learner->post_item_id,
@@ -823,8 +824,8 @@ learner_learn(grn_ctx *ctx, grn_suggest_learner *learner)
     if (learner->post_type_id) {
       learner_init_submit_learn(ctx, learner);
       learner_increment_item_freq(ctx, learner, learner->items_freq2);
-      learn_for_complete_and_correcnt(ctx, learner);
-      learn_for_suggest(ctx, learner);
+      learner_learn_for_complete_and_correcnt(ctx, learner);
+      learner_learn_for_suggest(ctx, learner);
       learner_fin_submit_learn(ctx, learner);
     }
     learner_append_post_event(ctx, learner);
