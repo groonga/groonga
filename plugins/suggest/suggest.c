@@ -552,8 +552,8 @@ command_suggest(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
 }
 
 static void
-learner_init(grn_ctx *ctx, grn_suggest_learner *learner,
-             grn_obj *seq, grn_obj *post_item, grn_obj *pairs)
+learner_init_columns(grn_ctx *ctx, grn_suggest_learner *learner,
+                     grn_obj *seq, grn_obj *post_item, grn_obj *pairs)
 {
   grn_id events_id, event_types_id;
   grn_obj *seqs, *events, *items;
@@ -681,7 +681,7 @@ learn(grn_ctx *ctx, grn_obj *post_event, grn_obj *post_type, grn_obj *post_item,
   int64_t post_time_value = GRN_TIME_VALUE(post_time);
   if (post_event_id && post_item_id && seq_id) {
     grn_suggest_learner learner;
-    learner_init(ctx, &learner, seq, post_item, pairs);
+    learner_init_columns(ctx, &learner, seq, post_item, pairs);
     GRN_UINT32_INIT(&v1, 0);
     GRN_UINT32_SET(ctx, &v1, 1);
     GRN_RECORD_INIT(&pre_events, 0, grn_obj_id(ctx, learner.events));
