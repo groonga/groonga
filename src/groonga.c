@@ -183,7 +183,7 @@ inline static grn_rc
 prompt(grn_ctx *ctx, grn_obj *buf)
 {
   static int the_first_read = GRN_TRUE;
-  grn_rc rc;
+  grn_rc rc = GRN_SUCCESS;
   GRN_BULK_REWIND(buf);
   if (!batchmode) {
 #ifdef HAVE_LIBEDIT
@@ -208,7 +208,6 @@ prompt(grn_ctx *ctx, grn_obj *buf)
           GRN_TEXT_PUT(ctx, buf, multibyte_buf, multibyte_len);
         }
       }
-      rc = GRN_SUCCESS;
     } else {
       rc = GRN_END_OF_DATA;
     }
