@@ -2245,7 +2245,7 @@ main(int argc, char **argv)
     {'d', NULL, NULL, mode_daemon, getopt_op_update},
     {'s', NULL, NULL, mode_server, getopt_op_update},
     {'l', "log-level", NULL, 0, getopt_op_none},
-    {'i', "server", NULL, 0, getopt_op_none},
+    {'i', "server-id", NULL, 0, getopt_op_none},
     {'q', NULL, NULL, MODE_USE_QL, getopt_op_on},
     {'n', NULL, NULL, MODE_NEW_DB, getopt_op_on},
     {'\0', "protocol", NULL, 0, getopt_op_none},
