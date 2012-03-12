@@ -583,6 +583,31 @@ learner_init_columns(grn_ctx *ctx, grn_suggest_learner *learner,
   learner->pairs_freq2 = grn_obj_column(ctx, pairs, CONST_STR_LEN("freq2"));
 }
 
+static void
+learner_fin_columns(grn_ctx *ctx, grn_suggest_learner *learner)
+{
+  grn_obj_unlink(ctx, learner->seqs);
+  grn_obj_unlink(ctx, learner->seqs_events);
+
+  grn_obj_unlink(ctx, learner->events);
+  grn_obj_unlink(ctx, learner->events_item);
+  grn_obj_unlink(ctx, learner->events_type);
+  grn_obj_unlink(ctx, learner->events_time);
+
+  grn_obj_unlink(ctx, learner->event_types);
+
+  grn_obj_unlink(ctx, learner->items);
+  grn_obj_unlink(ctx, learner->items_freq);
+  grn_obj_unlink(ctx, learner->items_freq2);
+  grn_obj_unlink(ctx, learner->items_last);
+
+  grn_obj_unlink(ctx, learner->pairs_pre);
+  grn_obj_unlink(ctx, learner->pairs_post);
+  grn_obj_unlink(ctx, learner->pairs_freq0);
+  grn_obj_unlink(ctx, learner->pairs_freq1);
+  grn_obj_unlink(ctx, learner->pairs_freq2);
+}
+
 static int
 learn_for_complete_and_correcnt(grn_ctx *ctx, grn_suggest_learner *learner,
                                 grn_obj *post_item,
@@ -711,6 +736,7 @@ learn(grn_ctx *ctx, grn_obj *post_event, grn_obj *post_type, grn_obj *post_item,
                       &pre_events, GRN_OBJ_APPEND);
     GRN_OBJ_FIN(ctx, &pre_events);
     GRN_OBJ_FIN(ctx, &v1);
+    learner_fin_columns(ctx, &learner);
   }
   return r;
 }
