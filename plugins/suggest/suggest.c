@@ -47,6 +47,12 @@ typedef struct {
 
   int learn_distance_in_seconds;
 
+  grn_id post_event_id;
+  grn_id post_type_id;
+  grn_id post_item_id;
+  grn_id seq_id;
+  int64_t post_time_value;
+
   grn_obj *seqs;
   grn_obj *seqs_events;
   grn_obj *events;
@@ -560,6 +566,16 @@ command_suggest(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
 }
 
 static void
+learner_init_values(grn_ctx *ctx, grn_suggest_learner *learner)
+{
+  learner->post_event_id = GRN_RECORD_VALUE(learner->post_event);
+  learner->post_type_id = GRN_RECORD_VALUE(learner->post_type);
+  learner->post_item_id = GRN_RECORD_VALUE(learner->post_item);
+  learner->seq_id = GRN_RECORD_VALUE(learner->seq);
+  learner->post_time_value = GRN_TIME_VALUE(learner->post_time);
+}
+
+static void
 learner_init(grn_ctx *ctx, grn_suggest_learner *learner,
              grn_obj *post_event, grn_obj *post_type, grn_obj *post_item,
              grn_obj *seq, grn_obj *post_time, grn_obj *pairs)
@@ -572,6 +588,8 @@ learner_init(grn_ctx *ctx, grn_suggest_learner *learner,
   learner->pairs = pairs;
 
   learner->learn_distance_in_seconds = 0;
+
+  learner_init_values(ctx, learner);
 }
 
 static void
@@ -720,16 +738,13 @@ static void
 learner_learn(grn_ctx *ctx, grn_suggest_learner *learner)
 {
   grn_obj v1, pre_events;
-  grn_obj *post_event = learner->post_event;
-  grn_obj *post_type = learner->post_type;
   grn_obj *post_item = learner->post_item;
-  grn_obj *seq = learner->seq;
   grn_obj *post_time = learner->post_time;
-  grn_id post_event_id = GRN_RECORD_VALUE(post_event);
-  grn_id post_type_id = GRN_RECORD_VALUE(post_type);
-  grn_id post_item_id = GRN_RECORD_VALUE(post_item);
-  grn_id seq_id = GRN_RECORD_VALUE(seq);
-  int64_t post_time_value = GRN_TIME_VALUE(post_time);
+  grn_id post_event_id = learner->post_event_id;
+  grn_id post_type_id = learner->post_type_id;
+  grn_id post_item_id = learner->post_item_id;
+  grn_id seq_id = learner->seq_id;
+  int64_t post_time_value = learner->post_time_value;
   if (post_event_id && post_item_id && seq_id) {
     learner_init_columns(ctx, learner);
     GRN_UINT32_INIT(&v1, 0);
