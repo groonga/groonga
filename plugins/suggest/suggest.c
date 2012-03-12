@@ -713,7 +713,7 @@ static void
 learn_for_complete_and_correcnt(grn_ctx *ctx, grn_suggest_learner *learner,
                                 grn_obj *post_item,
                                 grn_obj *pre_events, grn_obj *pre_item,
-                                uint64_t key_,
+                                uint64_t key_prefix,
                                 int64_t post_time_value)
 {
   grn_obj pre_type, pre_time;
@@ -741,7 +741,7 @@ learn_for_complete_and_correcnt(grn_ctx *ctx, grn_suggest_learner *learner,
         (int)(learn_distance_in_msec / GRN_TIME_USEC_PER_SEC);
       break;
     }
-    key = key_ + GRN_RECORD_VALUE(pre_item);
+    key = key_prefix + GRN_RECORD_VALUE(pre_item);
     pair_id = grn_table_add(ctx, learner->pairs, &key, sizeof(uint64_t),
                             &added);
     if (added) {
@@ -764,7 +764,7 @@ learn_for_complete_and_correcnt(grn_ctx *ctx, grn_suggest_learner *learner,
 static void
 learn_for_suggest(grn_ctx *ctx, grn_suggest_learner *learner,
                   grn_id post_item_id,
-                  uint64_t key_, grn_obj *pre_item,
+                  uint64_t key_prefix, grn_obj *pre_item,
                   grn_obj *post_item)
 {
   char keybuf[GRN_TABLE_MAX_KEY_SIZE];
@@ -777,7 +777,7 @@ learn_for_suggest(grn_ctx *ctx, grn_suggest_learner *learner,
       uint64_t key;
       int added;
       grn_id pair_id;
-      key = key_ + tid;
+      key = key_prefix + tid;
       pair_id = grn_table_add(ctx, learner->pairs, &key, sizeof(uint64_t),
                               &added);
       if (added) {
@@ -814,7 +814,7 @@ learner_learn(grn_ctx *ctx, grn_suggest_learner *learner)
     learner_increment(ctx, learner, learner->items_freq, post_item_id);
     learner_set_last_post_time(ctx, learner);
     if (post_type_id) {
-      uint64_t key_ = ((uint64_t)post_item_id) << 32;
+      uint64_t key_prefix = ((uint64_t)post_item_id) << 32;
       grn_obj *pre_item;
 
       learner_init_submit_learn(ctx, learner);
@@ -824,9 +824,9 @@ learner_learn(grn_ctx *ctx, grn_suggest_learner *learner)
       learn_for_complete_and_correcnt(ctx, learner,
                                       post_item, &(learner->pre_events),
                                       pre_item,
-                                      key_, post_time_value);
+                                      key_prefix, post_time_value);
       learn_for_suggest(ctx, learner,
-                        post_item_id, key_, pre_item, post_item);
+                        post_item_id, key_prefix, pre_item, post_item);
 
       learner_fin_submit_learn(ctx, learner);
     }
