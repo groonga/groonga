@@ -2182,7 +2182,7 @@ main(int argc, char **argv)
   const char *portstr = NULL, *encstr = NULL,
     *max_nfthreadsstr = NULL, *loglevel = NULL,
     *bind_addressstr = NULL, *hostnamestr = NULL, *protocol = NULL,
-    *cache_limitstr = NULL, *admin_html_path = NULL, *command_versionstr = NULL,
+    *cache_limitstr = NULL, *command_versionstr = NULL,
     *match_escalation_thresholdstr = NULL;
   const char *config_path = NULL;
   int r, i, mode = mode_alone;
@@ -2305,11 +2305,7 @@ main(int argc, char **argv)
     }
   }
   if (!grn_document_root) {
-    if (admin_html_path) {
-      grn_document_root = admin_html_path;
-    } else {
-      grn_document_root = default_document_root();
-    }
+    grn_document_root = default_document_root();
   }
   if (protocol) {
     switch (*protocol) {
