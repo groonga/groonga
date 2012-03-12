@@ -76,18 +76,91 @@ static const char *input_path = NULL;
 #ifdef HAVE_LIBEDIT
 #include <locale.h>
 #include <histedit.h>
-static EditLine   *edit_line;
-static HistoryW   *command_history;
-static HistEventW command_history_event;
-static char       command_history_path[PATH_MAX];
+static EditLine   *line_editor = NULL;
+static HistoryW   *line_editor_history = NULL;
+static HistEventW line_editor_history_event;
+static char       line_editor_history_path[PATH_MAX] = "";
 
-inline static const wchar_t *
-disp_prompt(EditLine *e __attribute__((unused)))
+static const wchar_t *
+line_editor_prompt(EditLine *e __attribute__((unused)))
 {
   return L"> ";
 }
+static const wchar_t * const line_editor_editor = L"emacs";
 
-#endif
+void line_editor_init(int argc __attribute__((unused)), char *argv[])
+{
+  const char * const HOME_PATH = getenv("HOME");
+  const char * const HISTORY_PATH = "/.groonga-history";
+
+  setlocale(LC_ALL, "");
+
+  if (strlen(HOME_PATH) + strlen(HISTORY_PATH) < PATH_MAX) {
+    strcpy(line_editor_history_path, HOME_PATH);
+    strcat(line_editor_history_path, HISTORY_PATH);
+  } else {
+    line_editor_history_path[0] = '\0';
+  }
+
+  line_editor_history = history_winit();
+  history_w(line_editor_history, &line_editor_history_event, H_SETSIZE, 200);
+  if (line_editor_history_path[0]) {
+    history_w(line_editor_history, &line_editor_history_event,
+              H_LOAD, line_editor_history_path);
+  }
+
+  line_editor = el_init(argv[0], stdin, stdout, stderr);
+  el_wset(line_editor, EL_PROMPT, &line_editor_prompt);
+  el_wset(line_editor, EL_EDITOR, line_editor_editor);
+  el_wset(line_editor, EL_HIST, history_w, line_editor_history);
+  el_source(line_editor, NULL);
+}
+
+void line_editor_fin(void)
+{
+  if (line_editor) {
+    el_end(line_editor);
+    if (line_editor_history) {
+      if (line_editor_history_path[0]) {
+        history_w(line_editor_history, &line_editor_history_event,
+                  H_SAVE, line_editor_history_path);
+      }
+      history_wend(line_editor_history);
+    }
+  }
+}
+
+grn_rc
+line_editor_fgets(grn_ctx *ctx, grn_obj *buf)
+{
+  grn_rc rc = GRN_SUCCESS;
+  const wchar_t *line;
+  int nchar;
+  line = el_wgets(line_editor, &nchar);
+  if (nchar > 0) {
+    int i;
+    char multibyte_buf[MB_CUR_MAX];
+    size_t multibyte_len;
+    mbstate_t ps;
+    history_w(line_editor_history, &line_editor_history_event, H_ENTER, line);
+    memset(&ps, 0, sizeof(ps));
+    wcrtomb(NULL, L'\0', &ps);
+    for (i = 0; i < nchar; i++) {
+      multibyte_len = wcrtomb(multibyte_buf, line[i], &ps);
+      if (multibyte_len == (size_t)-1) {
+        GRN_LOG(ctx, GRN_LOG_WARNING,
+                "[prompt][libedit] failed to read input: %s", strerror(errno));
+        rc = GRN_INVALID_ARGUMENT;
+      } else {
+        GRN_TEXT_PUT(ctx, buf, multibyte_buf, multibyte_len);
+      }
+    }
+  } else {
+    rc = GRN_END_OF_DATA;
+  }
+  return rc;
+}
+#endif /* HAVE_LIBEDIT */
 
 static void
 show_usage(FILE *output)
@@ -187,30 +260,7 @@ prompt(grn_ctx *ctx, grn_obj *buf)
   GRN_BULK_REWIND(buf);
   if (!batchmode) {
 #ifdef HAVE_LIBEDIT
-    const wchar_t *line;
-    int nchar;
-    line = el_wgets(edit_line, &nchar);
-    if (nchar > 0) {
-      int i;
-      char multibyte_buf[MB_CUR_MAX];
-      size_t multibyte_len;
-      mbstate_t ps;
-      history_w(command_history, &command_history_event, H_ENTER, line);
-      memset(&ps, 0, sizeof(ps));
-      wcrtomb(NULL, L'\0', &ps);
-      for (i = 0; i < nchar; i++) {
-        multibyte_len = wcrtomb(multibyte_buf, line[i], &ps);
-        if (multibyte_len == (size_t)-1) {
-          GRN_LOG(ctx, GRN_LOG_WARNING,
-                  "[prompt][libedit] failed to read input: %s", strerror(errno));
-          rc = GRN_INVALID_ARGUMENT;
-        } else {
-          GRN_TEXT_PUT(ctx, buf, multibyte_buf, multibyte_len);
-        }
-      }
-    } else {
-      rc = GRN_END_OF_DATA;
-    }
+    rc = line_editor_fgets(ctx, buf);
 #else
     fprintf(stderr, "> ");
     rc = grn_text_fgets(ctx, buf, stdin);
@@ -2350,29 +2400,7 @@ main(int argc, char **argv)
   }
 #ifdef HAVE_LIBEDIT
   if (!batchmode) {
-    static const char groonga_history_path[] = "/.groonga-history";
-
-    setlocale(LC_ALL, "");
-
-    command_history_path[0] = '\0';
-    if (getenv("HOME") &&
-        (strlen(getenv("HOME")) + strlen(groonga_history_path) < PATH_MAX)) {
-      strcat(command_history_path, getenv("HOME"));
-      strcat(command_history_path, "/.groonga-history");
-    }
-
-    command_history = history_winit();
-    history_w(command_history, &command_history_event, H_SETSIZE, 200);
-    if (command_history_path[0]) {
-      history_w(command_history, &command_history_event,
-                H_LOAD, command_history_path);
-    }
-
-    edit_line = el_init(argv[0], stdin, stdout, stderr);
-    el_wset(edit_line, EL_PROMPT, &disp_prompt);
-    el_wset(edit_line, EL_EDITOR, L"emacs");
-    el_wset(edit_line, EL_HIST, history_w, command_history);
-    el_source(edit_line, NULL);
+    line_editor_init(argc, argv);
   }
 #endif
   if (grn_init()) { return -1; }
@@ -2452,12 +2480,7 @@ main(int argc, char **argv)
   }
 #ifdef HAVE_LIBEDIT
   if (!batchmode) {
-    el_end(edit_line);
-    if (command_history_path[0]) {
-      history_w(command_history, &command_history_event,
-                H_SAVE, command_history_path);
-    }
-    history_wend(command_history);
+    line_editor_fin();
   }
 #endif
   grn_fin();
