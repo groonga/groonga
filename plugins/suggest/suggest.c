@@ -570,6 +570,8 @@ learner_init(grn_ctx *ctx, grn_suggest_learner *learner,
   learner->seq = seq;
   learner->post_time = post_time;
   learner->pairs = pairs;
+
+  learner->learn_distance_in_seconds = 0;
 }
 
 static void
