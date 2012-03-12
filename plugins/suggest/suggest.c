@@ -682,6 +682,13 @@ learner_increment(grn_ctx *ctx, grn_suggest_learner *learner,
 }
 
 static void
+learner_set_last_post_time(grn_ctx *ctx, grn_suggest_learner *learner)
+{
+  grn_obj_set_value(ctx, learner->items_last, learner->post_item_id,
+                    learner->post_time, GRN_OBJ_SET);
+}
+
+static void
 learn_for_complete_and_correcnt(grn_ctx *ctx, grn_suggest_learner *learner,
                                 grn_obj *post_item,
                                 grn_obj *pre_events, grn_obj *pre_item,
@@ -777,7 +784,6 @@ static void
 learner_learn(grn_ctx *ctx, grn_suggest_learner *learner)
 {
   grn_obj *post_item = learner->post_item;
-  grn_obj *post_time = learner->post_time;
   grn_id post_type_id = learner->post_type_id;
   grn_id post_item_id = learner->post_item_id;
   grn_id seq_id = learner->seq_id;
@@ -786,8 +792,7 @@ learner_learn(grn_ctx *ctx, grn_suggest_learner *learner)
     learner_init_columns(ctx, learner);
     learner_init_buffers(ctx, learner);
     learner_increment(ctx, learner, learner->items_freq, post_item_id);
-    grn_obj_set_value(ctx, learner->items_last, post_item_id,
-                      post_time, GRN_OBJ_SET);
+    learner_set_last_post_time(ctx, learner);
     if (post_type_id) {
       uint64_t key_ = ((uint64_t)post_item_id) << 32;
       grn_id items_id;
