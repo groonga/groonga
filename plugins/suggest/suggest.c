@@ -706,6 +706,13 @@ learner_increment(grn_ctx *ctx, grn_suggest_learner *learner,
 }
 
 static void
+learner_increment_item_freq(grn_ctx *ctx, grn_suggest_learner *learner,
+                            grn_obj *column)
+{
+  learner_increment(ctx, learner, column, learner->post_item_id);
+}
+
+static void
 learner_set_last_post_time(grn_ctx *ctx, grn_suggest_learner *learner)
 {
   grn_obj_set_value(ctx, learner->items_last, learner->post_item_id,
@@ -814,12 +821,12 @@ learner_learn(grn_ctx *ctx, grn_suggest_learner *learner)
   if (learner_is_valid_input(ctx, learner)) {
     learner_init_columns(ctx, learner);
     learner_init_buffers(ctx, learner);
-    learner_increment(ctx, learner, learner->items_freq, post_item_id);
+    learner_increment_item_freq(ctx, learner, learner->items_freq);
     learner_set_last_post_time(ctx, learner);
     if (post_type_id) {
       learner_init_submit_learn(ctx, learner);
 
-      learner_increment(ctx, learner, learner->items_freq2, post_item_id);
+      learner_increment_item_freq(ctx, learner, learner->items_freq2);
       learn_for_complete_and_correcnt(ctx, learner,
                                       &(learner->pre_events),
                                       post_time_value);
