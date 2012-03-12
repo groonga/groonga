@@ -1,0 +1,25 @@
+# disable-logging
+# suggest-create-dataset query
+# enable-logging
+
+load --table event_query --each 'suggest_preparer(_id, type, item, sequence, time, pair_query)'
+[
+{"sequence": "1", "time": 1312950803.86057, "item": "engine engine engine", "type": "submit"},
+{"sequence": "2", "time": 1312950803.96857, "item": "engine engine engine", "type": "submit"}
+]
+
+suggest \
+  --table item_query \
+  --column kana \
+  --types suggest \
+  --query engine \
+  --frequency_threshold 0 \
+  --conditional_probability_threshold 3
+
+suggest \
+  --table item_query \
+  --column kana \
+  --types suggest \
+  --query engine \
+  --frequency_threshold 0 \
+  --conditional_probability_threshold 1

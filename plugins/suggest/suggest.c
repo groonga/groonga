@@ -787,6 +787,7 @@ learner_learn_for_suggest(grn_ctx *ctx, grn_suggest_learner *learner)
     grn_id tid;
     grn_obj *pre_item = &(learner->pre_item);
     grn_obj *post_item = learner->post_item;
+    grn_hash *token_ids = NULL;
     while ((tid = grn_token_next(ctx, token)) && tid != learner->post_item_id) {
       uint64_t key;
       int added;
@@ -801,7 +802,20 @@ learner_learn_for_suggest(grn_ctx *ctx, grn_suggest_learner *learner)
 	grn_obj_set_value(ctx, learner->pairs_post, pair_id,
                           post_item, GRN_OBJ_SET);
       }
-      learner_increment(ctx, learner, learner->pairs_freq2, pair_id);
+      if (!token_ids) {
+        token_ids = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
+                                    GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY);
+      }
+      if (token_ids) {
+        int token_added;
+        grn_hash_add(ctx, token_ids, &tid, sizeof(grn_id), NULL, &token_added);
+        if (token_added) {
+          learner_increment(ctx, learner, learner->pairs_freq2, pair_id);
+        }
+      }
+    }
+    if (token_ids) {
+      grn_hash_close(ctx, token_ids);
     }
     grn_token_close(ctx, token);
   }
