@@ -27,6 +27,8 @@
 #define CONST_STR_LEN(x) x, x ? sizeof(x) - 1 : 0
 #define TEXT_VALUE_LEN(x) GRN_TEXT_VALUE(x), GRN_TEXT_LEN(x)
 
+#define MIN_LEARN_DISTANCE_IN_USEC (60 * GRN_TIME_USEC_PER_SEC)
+
 #define COMPLETE 1
 #define CORRECT  2
 #define SUGGEST  4
@@ -740,6 +742,7 @@ learner_learn_for_complete_and_correcnt(grn_ctx *ctx,
   while (es < ep--) {
     grn_id pair_id;
     int added;
+    int64_t learn_distance_in_msec;
 
     GRN_BULK_REWIND(&pre_type);
     GRN_BULK_REWIND(&pre_time);
@@ -747,9 +750,8 @@ learner_learn_for_complete_and_correcnt(grn_ctx *ctx,
     grn_obj_get_value(ctx, learner->events_type, *ep, &pre_type);
     grn_obj_get_value(ctx, learner->events_time, *ep, &pre_time);
     grn_obj_get_value(ctx, learner->events_item, *ep, pre_item);
-    if (GRN_TIME_VALUE(&pre_time) + 60 * GRN_TIME_USEC_PER_SEC < post_time_value) {
-      int64_t learn_distance_in_msec =
-        post_time_value - GRN_TIME_VALUE(&pre_time);
+    learn_distance_in_msec = post_time_value - GRN_TIME_VALUE(&pre_time);
+    if (learn_distance_in_msec >= MIN_LEARN_DISTANCE_IN_USEC) {
       learner->learn_distance_in_seconds =
         (int)(learn_distance_in_msec / GRN_TIME_USEC_PER_SEC);
       break;
