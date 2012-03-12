@@ -894,37 +894,78 @@ grn_com_copen(grn_ctx *ctx, grn_com_event *ev, const char *dest, int port)
 {
   grn_sock fd = -1;
   grn_com *cs = NULL;
-  struct hostent *he;
-  struct sockaddr_in addr;
-  if (!(he = gethostbyname(dest))) {
-    SERR("gethostbyname");
-    goto exit;
-  }
-  addr.sin_family = AF_INET;
-  memcpy(&addr.sin_addr, he->h_addr, he->h_length);
-  addr.sin_port = htons(port);
-  if ((fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
-    SERR("socket");
+
+  struct addrinfo hints, *addrinfo_list, *addrinfo_ptr;
+  char port_string[16];
+  int getaddrinfo_result;
+
+  memset(&hints, 0, sizeof(hints));
+  hints.ai_family = AF_UNSPEC;
+  hints.ai_socktype = SOCK_STREAM;
+#ifdef AI_NUMERICSERV
+  hints.ai_flags = AI_NUMERICSERV;
+#endif
+  snprintf(port_string, sizeof(port_string), "%d", port);
+
+  getaddrinfo_result = getaddrinfo(dest, port_string, &hints, &addrinfo_list);
+  if (getaddrinfo_result != 0) {
+    switch (getaddrinfo_result) {
+#ifdef EAI_MEMORY
+    case EAI_MEMORY:
+      ERR(GRN_NO_MEMORY_AVAILABLE, "getaddrinfo: <%s:%s>: %s",
+          dest, port_string, gai_strerror(getaddrinfo_result));
+      break;
+#endif
+#ifdef EAI_SYSTEM
+    case EAI_SYSTEM:
+      SERR("getaddrinfo");
+      break;
+#endif
+    default:
+      ERR(GRN_INVALID_ARGUMENT, "getaddrinfo: <%s:%s>: %s",
+          dest, port_string, gai_strerror(getaddrinfo_result));
+      break;
+    }
     return NULL;
   }
-  {
-    int v = 1;
-    if (setsockopt(fd, 6, TCP_NODELAY, (void *) &v, sizeof(int)) == -1) {
+
+  for (addrinfo_ptr = addrinfo_list; addrinfo_ptr;
+       addrinfo_ptr = addrinfo_ptr->ai_next) {
+    static const int value = 1;
+    fd = socket(addrinfo_ptr->ai_family, addrinfo_ptr->ai_socktype,
+                addrinfo_ptr->ai_protocol);
+    if (fd == -1) {
+      SERR("socket");
+    } else if (setsockopt(fd, 6, TCP_NODELAY, &value, sizeof(value))) {
       SERR("setsockopt");
+      grn_sock_close(fd);
+    } else if (connect(fd, addrinfo_ptr->ai_addr, addrinfo_ptr->ai_addrlen)) {
+      SERR("connect");
+      grn_sock_close(fd);
+    } else {
+      break;
     }
   }
-  while ((connect(fd, (struct sockaddr *)&addr, sizeof addr) == -1)) {
-    SERR("connect");
-    goto exit;
+
+  freeaddrinfo(addrinfo_list);
+
+  if (!addrinfo_ptr) {
+    return NULL;
   }
+  ctx->errlvl = GRN_OK;
+  ctx->rc = GRN_SUCCESS;
+
   if (ev) {
-    if (grn_com_event_add(ctx, ev, fd, GRN_COM_POLLIN, (grn_com **)&cs)) { goto exit; }
+    grn_com_event_add(ctx, ev, fd, GRN_COM_POLLIN, &cs);
   } else {
-    if (!(cs = GRN_CALLOC(sizeof(grn_com)))) { goto exit; }
-    cs->fd = fd;
+    cs = GRN_CALLOC(sizeof(grn_com));
+    if (cs) {
+      cs->fd = fd;
+    }
   }
-exit :
-  if (!cs) { grn_sock_close(fd); }
+  if (!cs) {
+    grn_sock_close(fd);
+  }
   return cs;
 }
 
