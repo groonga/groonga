@@ -815,13 +815,12 @@ learner_append_post_event(grn_ctx *ctx, grn_suggest_learner *learner)
 static void
 learner_learn(grn_ctx *ctx, grn_suggest_learner *learner)
 {
-  grn_id post_type_id = learner->post_type_id;
   if (learner_is_valid_input(ctx, learner)) {
     learner_init_columns(ctx, learner);
     learner_init_buffers(ctx, learner);
     learner_increment_item_freq(ctx, learner, learner->items_freq);
     learner_set_last_post_time(ctx, learner);
-    if (post_type_id) {
+    if (learner->post_type_id) {
       learner_init_submit_learn(ctx, learner);
       learner_increment_item_freq(ctx, learner, learner->items_freq2);
       learn_for_complete_and_correcnt(ctx, learner);
