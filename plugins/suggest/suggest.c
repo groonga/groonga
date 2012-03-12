@@ -715,13 +715,15 @@ learner_set_last_post_time(grn_ctx *ctx, grn_suggest_learner *learner)
 static void
 learn_for_complete_and_correcnt(grn_ctx *ctx, grn_suggest_learner *learner,
                                 grn_obj *post_item,
-                                grn_obj *pre_events, grn_obj *pre_item,
+                                grn_obj *pre_events,
                                 int64_t post_time_value)
 {
+  grn_obj *pre_item;
   grn_obj pre_type, pre_time;
   grn_id *ep, *es;
   uint64_t key;
 
+  pre_item = &(learner->pre_item);
   GRN_RECORD_INIT(&pre_type, 0, grn_obj_get_range(ctx, learner->events_type));
   GRN_TIME_INIT(&pre_time, 0);
   ep = (grn_id *)GRN_BULK_CURR(pre_events);
@@ -766,7 +768,6 @@ learn_for_complete_and_correcnt(grn_ctx *ctx, grn_suggest_learner *learner,
 static void
 learn_for_suggest(grn_ctx *ctx, grn_suggest_learner *learner,
                   grn_id post_item_id,
-                  grn_obj *pre_item,
                   grn_obj *post_item)
 {
   char keybuf[GRN_TABLE_MAX_KEY_SIZE];
@@ -775,6 +776,7 @@ learn_for_suggest(grn_ctx *ctx, grn_suggest_learner *learner,
   grn_token *token = grn_token_open(ctx, learner->items, keybuf, keylen, 1);
   if (token) {
     grn_id tid;
+    grn_obj *pre_item = &(learner->pre_item);
     while ((tid = grn_token_next(ctx, token)) && tid != post_item_id) {
       uint64_t key;
       int added;
@@ -816,18 +818,14 @@ learner_learn(grn_ctx *ctx, grn_suggest_learner *learner)
     learner_increment(ctx, learner, learner->items_freq, post_item_id);
     learner_set_last_post_time(ctx, learner);
     if (post_type_id) {
-      grn_obj *pre_item;
-
       learner_init_submit_learn(ctx, learner);
-      pre_item = &(learner->pre_item);
 
       learner_increment(ctx, learner, learner->items_freq2, post_item_id);
       learn_for_complete_and_correcnt(ctx, learner,
                                       post_item, &(learner->pre_events),
-                                      pre_item,
                                       post_time_value);
       learn_for_suggest(ctx, learner,
-                        post_item_id, pre_item, post_item);
+                        post_item_id, post_item);
 
       learner_fin_submit_learn(ctx, learner);
     }
