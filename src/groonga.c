@@ -90,7 +90,7 @@ disp_prompt(EditLine *e __attribute__((unused)))
 #endif
 
 static void
-usage(FILE *output)
+show_usage(FILE *output)
 {
   gethostname(hostname, HOST_NAME_MAX);
   fprintf(output,
@@ -2192,9 +2192,8 @@ main(int argc, char **argv)
     {'e', "encoding", NULL, 0, getopt_op_none},
     {'t', "max-threads", NULL, 0, getopt_op_none},
     {'h', "help", NULL, mode_usage, getopt_op_update},
-    {'a', "address", NULL, 0, getopt_op_none}, /* deprecated.
-                                                * Use --bind-address instead.
-                                                */
+    /* Deprecated. Use --bind-address instead of -a, --address. */
+    {'a', "address", NULL, 0, getopt_op_none},
     {'c', NULL, NULL, mode_client, getopt_op_update},
     {'d', NULL, NULL, mode_daemon, getopt_op_update},
     {'s', NULL, NULL, mode_server, getopt_op_update},
@@ -2202,10 +2201,8 @@ main(int argc, char **argv)
     {'i', "server", NULL, 0, getopt_op_none},
     {'q', NULL, NULL, MODE_USE_QL, getopt_op_on},
     {'n', NULL, NULL, MODE_NEW_DB, getopt_op_on},
-    {'\0', "admin-html-path", NULL, 0, getopt_op_none}, /* deprecated.
-                                                         * Use --document-root
-                                                         * instead.
-                                                         */
+    /* Deprecated. Use --document-root instead of --admin-html-path. */
+    {'\0', "admin-html-path", NULL, 0, getopt_op_none},
     {'\0', "protocol", NULL, 0, getopt_op_none},
     {'\0', "version", NULL, mode_version, getopt_op_update},
     {'\0', "log-path", NULL, 0, getopt_op_none},
@@ -2245,7 +2242,7 @@ main(int argc, char **argv)
   strcpy(bind_address, "0.0.0.0");
   i = grn_str_getopt(argc, argv, opts, &mode);
   if (i < 0) {
-    usage(stderr);
+    show_usage(stderr);
     return EXIT_FAILURE;
   }
   if (config_path) {
@@ -2273,13 +2270,13 @@ main(int argc, char **argv)
     show_version();
     return EXIT_SUCCESS;
   case mode_usage :
-    usage(stdout);
+    show_usage(stdout);
     return EXIT_SUCCESS;
   case mode_config :
     show_config(stdout, opts, mode & ~MODE_MASK);
     return EXIT_SUCCESS;
   case mode_error :
-    usage(stderr);
+    show_usage(stderr);
     return EXIT_FAILURE;
   }
   if (portstr) { port = atoi(portstr); }
