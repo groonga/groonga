@@ -2174,12 +2174,11 @@ show_config(FILE *out, const grn_str_getopt_opt *opts, int flags)
 {
   const grn_str_getopt_opt *o;
 
-  for (o = opts; o->opt != '\0' || o->longopt != NULL; o++) {
+  for (o = opts; o->opt || o->longopt; o++) {
     switch (o->op) {
     case getopt_op_none:
       if (o->arg && *o->arg) {
-        if (o->longopt &&
-            strcmp(o->longopt, "config-path") != 0) {
+        if (o->longopt && strcmp(o->longopt, "config-path")) {
           fprintf(out, "%s=%s\n", o->longopt, *o->arg);
         }
       }
@@ -2260,7 +2259,6 @@ show_version(void)
 static void
 show_usage(FILE *output)
 {
-  gethostname(hostname, HOST_NAME_MAX);
   fprintf(output,
           "Usage: groonga [options...] [dest]\n"
           "options:\n"
@@ -2293,8 +2291,8 @@ show_usage(FILE *output)
           "dest: <db pathname> [<command>] or <dest hostname>\n"
           "  <db pathname> [<command>]: when standalone/server mode\n"
           "  <dest hostname>: when client mode (default: \"%s\")\n",
-          bind_address, DEFAULT_PORT, hostname,
-          default_max_nfthreads, DEFAULT_DEST);
+          default_bind_address, default_port, default_hostname,
+          default_max_num_threads, default_dest);
 }
 
 int
@@ -2357,30 +2355,26 @@ main(int argc, char **argv)
   if (!(default_max_nfthreads = get_core_number())) {
     default_max_nfthreads = DEFAULT_MAX_NFTHREADS;
   }
-  strcpy(bind_address, "0.0.0.0");
+
   i = grn_str_getopt(argc, argv, opts, &mode);
   if (i < 0) {
     show_usage(stderr);
     return EXIT_FAILURE;
   }
+
   if (config_path) {
     if (!load_config_file(config_path, opts, &mode)) {
       fprintf(stderr, "%s: can't open config file: %s (%s)\n",
               argv[0], config_path, strerror(errno));
       return EXIT_FAILURE;
     }
-  } else {
-    config_path = getenv("GRN_CONFIG_PATH");
-    if (!config_path) {
-      config_path = GRN_CONFIG_PATH;
-    }
-    if (*config_path) {
-      load_config_file(config_path, opts, &mode);
-    }
+  } else if (*default_config_path) {
+    load_config_file(default_config_path, opts, &mode);
   }
   /* ignore mode option in config file */
-  mode = (mode == mode_error) ? mode_alone :
-    ((mode & ~MODE_MASK) | mode_alone);
+  mode = (mode == mode_error) ? default_mode :
+    ((mode & ~MODE_MASK) | default_mode);
+
   i = grn_str_getopt(argc, argv, opts, &mode);
   if (i < 0) { mode = mode_error; }
   switch (mode & MODE_MASK) {
@@ -2397,7 +2391,9 @@ main(int argc, char **argv)
     show_usage(stderr);
     return EXIT_FAILURE;
   }
+
   if (portstr) { port = atoi(portstr); }
+
   if (encstr) {
     switch (*encstr) {
     case 'n' :
@@ -2429,9 +2425,11 @@ main(int argc, char **argv)
       break;
     }
   }
+
   if (!grn_document_root) {
     grn_document_root = default_document_root;
   }
+
   if (protocol) {
     switch (*protocol) {
     case 'g' :
@@ -2458,11 +2456,13 @@ main(int argc, char **argv)
     do_client = g_client;
     do_server = g_server;
   }
+
   if (max_nfthreadsstr) {
     max_nfthreads = atoi(max_nfthreadsstr);
   } else {
     max_nfthreads = default_max_nfthreads;
   }
+
   if (input_path) {
     if (!freopen(input_path, "r", stdin)) {
       fprintf(stderr, "can't open input file: %s (%s)\n",
@@ -2473,16 +2473,20 @@ main(int argc, char **argv)
   } else {
     batchmode = !isatty(0);
   }
+
 #ifdef HAVE_LIBEDIT
   if (!batchmode) {
     line_editor_init(argc, argv);
   }
 #endif
   if (grn_init()) { return -1; }
+
   grn_set_default_encoding(enc);
+
   if (command_versionstr) {
     grn_set_default_command_version(atoi(command_versionstr));
   }
+
   if (match_escalation_thresholdstr) {
     int64_t threshold;
     const char *end, *rest;
@@ -2495,10 +2499,12 @@ main(int argc, char **argv)
     }
     grn_set_default_match_escalation_threshold(threshold);
   }
+
   if (loglevel) { SET_LOGLEVEL(atoi(loglevel)); }
   grn_set_segv_handler();
   grn_set_int_handler();
   grn_set_term_handler();
+
   if (bind_addressstr) {
     size_t bind_addresslen = strlen(bind_addressstr);
     if (bind_addresslen > HOST_NAME_MAX - 1) {
@@ -2507,7 +2513,10 @@ main(int argc, char **argv)
     } else {
       strcpy(bind_address, bind_addressstr);
     }
+  } else {
+    strcpy(bind_address, default_bind_address);
   }
+
   if (hostnamestr) {
     size_t hostnamelen = strlen(hostnamestr);
     if (hostnamelen > HOST_NAME_MAX - 1) {
@@ -2517,11 +2526,9 @@ main(int argc, char **argv)
       strcpy(hostname, hostnamestr);
     }
   } else {
-    gethostname(hostname, HOST_NAME_MAX);
-    if (!gethostbyname(hostname)) {
-      strcpy(hostname, "localhost");
-    }
+    strcpy(hostname, default_hostname);
   }
+
   if (cache_limitstr) {
     uint32_t max, *max_nentries;
     const char *end, *rest;
@@ -2534,6 +2541,7 @@ main(int argc, char **argv)
       fprintf(stderr, "invalid --cache-limit value: <%s>\n", cache_limitstr);
     }
   }
+
   newdb = (mode & MODE_NEW_DB);
   useql = (mode & MODE_USE_QL);
   switch (mode & MODE_MASK) {
@@ -2553,6 +2561,7 @@ main(int argc, char **argv)
     r = -1;
     break;
   }
+
 #ifdef HAVE_LIBEDIT
   if (!batchmode) {
     line_editor_fin();
