@@ -2527,7 +2527,7 @@ main(int argc, char **argv)
     grn_set_default_command_version(atoi(command_versionstr));
   }
 
-  /* TODO: argument checks should be done before gnr_init(). */
+  /* TODO: argument checks should be done before grn_init(). */
   if (match_escalation_threshold_arg) {
     const char * const end = match_escalation_threshold_arg
         + strlen(match_escalation_threshold_arg);
