@@ -60,8 +60,8 @@
 #define DEFAULT_MAX_NFTHREADS 8
 #define MAX_CON 0x10000
 
-static char bind_address[HOST_NAME_MAX];
-static char hostname[HOST_NAME_MAX];
+static char bind_address[HOST_NAME_MAX + 1];
+static char hostname[HOST_NAME_MAX + 1];
 static int port = DEFAULT_PORT;
 static int batchmode;
 static int number_of_lines = 0;
@@ -2113,7 +2113,8 @@ init_default_settings(void)
 
   {
     static char hostname[HOST_NAME_MAX + 1];
-    if (gethostname(hostname, sizeof(hostname))) {
+    hostname[HOST_NAME_MAX] = '\0';
+    if (gethostname(hostname, HOST_NAME_MAX)) {
       fprintf(stderr, "gethostname failed: %s\n", strerror(errno));
     } else {
       int error_code;
@@ -2301,7 +2302,7 @@ main(int argc, char **argv)
   grn_encoding enc = GRN_ENC_DEFAULT;
   const char *portstr = NULL, *encstr = NULL,
     *max_nfthreadsstr = NULL, *loglevel = NULL,
-    *bind_addressstr = NULL, *hostnamestr = NULL, *protocol = NULL,
+    *bind_address_arg = NULL, *hostname_arg = NULL, *protocol = NULL,
     *cache_limitstr = NULL, *command_versionstr = NULL,
     *match_escalation_thresholdstr = NULL;
   const char *config_path = NULL;
@@ -2337,7 +2338,7 @@ main(int argc, char **argv)
   opts[1].arg = &encstr;
   opts[2].arg = &max_nfthreadsstr;
   opts[7].arg = &loglevel;
-  opts[8].arg = &hostnamestr;
+  opts[8].arg = &hostname_arg;
   opts[11].arg = &protocol;
   opts[13].arg = &grn_log_path;
   opts[14].arg = &grn_qlog_path;
@@ -2348,7 +2349,7 @@ main(int argc, char **argv)
   opts[20].arg = &grn_document_root;
   opts[21].arg = &command_versionstr;
   opts[22].arg = &match_escalation_thresholdstr;
-  opts[23].arg = &bind_addressstr;
+  opts[23].arg = &bind_address_arg;
 
   init_default_settings();
 
@@ -2474,6 +2475,34 @@ main(int argc, char **argv)
     batchmode = !isatty(0);
   }
 
+  if (bind_address_arg) {
+    const size_t bind_address_length = strlen(bind_address_arg);
+    if (bind_address_length > HOST_NAME_MAX) {
+      fprintf(stderr, "too long bind address: %s (%u bytes):"
+                      " must not be longer than %u bytes\n",
+              bind_address_arg, (unsigned int)bind_address_length, HOST_NAME_MAX);
+      return EXIT_FAILURE;
+    } else {
+      strcpy(bind_address, bind_address_arg);
+    }
+  } else {
+    strcpy(bind_address, default_bind_address);
+  }
+
+  if (hostname_arg) {
+    const size_t hostname_length = strlen(hostname_arg);
+    if (hostname_length > HOST_NAME_MAX) {
+      fprintf(stderr, "too long hostname: %s (%u bytes):"
+                      " must not be longer than %u bytes\n",
+              hostname_arg, (unsigned int)hostname_length, HOST_NAME_MAX);
+      return EXIT_FAILURE;
+    } else {
+      strcpy(hostname, hostname_arg);
+    }
+  } else {
+    strcpy(hostname, default_hostname);
+  }
+
 #ifdef HAVE_LIBEDIT
   if (!batchmode) {
     line_editor_init(argc, argv);
@@ -2504,30 +2533,6 @@ main(int argc, char **argv)
   grn_set_segv_handler();
   grn_set_int_handler();
   grn_set_term_handler();
-
-  if (bind_addressstr) {
-    size_t bind_addresslen = strlen(bind_addressstr);
-    if (bind_addresslen > HOST_NAME_MAX - 1) {
-      memcpy(bind_address, bind_addressstr, HOST_NAME_MAX - 1);
-      bind_address[HOST_NAME_MAX - 1] = '\0';
-    } else {
-      strcpy(bind_address, bind_addressstr);
-    }
-  } else {
-    strcpy(bind_address, default_bind_address);
-  }
-
-  if (hostnamestr) {
-    size_t hostnamelen = strlen(hostnamestr);
-    if (hostnamelen > HOST_NAME_MAX - 1) {
-      memcpy(hostname, hostnamestr, HOST_NAME_MAX - 1);
-      hostname[HOST_NAME_MAX - 1] = '\0';
-    } else {
-      strcpy(hostname, hostnamestr);
-    }
-  } else {
-    strcpy(hostname, default_hostname);
-  }
 
   if (cache_limitstr) {
     uint32_t max, *max_nentries;
