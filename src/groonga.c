@@ -2471,6 +2471,7 @@ main(int argc, char **argv)
     if (end != rest || value < 1 || value > 100) {
       fprintf(stderr, "invalid max number of threads: <%s>\n",
               max_num_threads_arg);
+      return EXIT_FAILURE;
     }
     max_nfthreads = value;
   } else {
