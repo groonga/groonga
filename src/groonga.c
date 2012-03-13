@@ -1997,15 +1997,6 @@ enum {
 #define MODE_USE_QL 0x0080
 #define MODE_NEW_DB 0x0100
 
-#define SET_LOGLEVEL(x) do {\
-  static grn_logger_info info;\
-  info.max_level = (x);\
-  info.flags = GRN_LOG_TIME|GRN_LOG_MESSAGE;\
-  info.func = NULL;\
-  info.func_arg = NULL;\
-  grn_logger_info_set(&grn_gctx, &info);\
-} while(0)
-
 static uint32_t
 get_core_number(void)
 {
@@ -2600,7 +2591,12 @@ main(int argc, char **argv)
   }
 
   if (log_level_arg) {
-    SET_LOGLEVEL(log_level);
+    static grn_logger_info logger_info;
+    logger_info.max_level = log_level;
+    logger_info.flags = GRN_LOG_TIME | GRN_LOG_MESSAGE;
+    logger_info.func = NULL;
+    logger_info.func_arg = NULL;
+    grn_logger_info_set(&grn_gctx, &logger_info);
   }
 
   grn_set_segv_handler();
