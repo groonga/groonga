@@ -72,6 +72,7 @@ static int (*do_server)(char *path);
 static const char *pidfile_path = NULL;
 static const char *input_path = NULL;
 
+static grn_encoding encoding;
 static grn_command_version default_command_version;
 static int64_t default_match_escalation_threshold;
 static int log_level;
@@ -2296,10 +2297,9 @@ show_usage(FILE *output)
 int
 main(int argc, char **argv)
 {
-  grn_encoding enc = GRN_ENC_DEFAULT;
-  const char *port_arg = NULL, *encstr = NULL,
+  const char *port_arg = NULL, *encoding_arg = NULL,
     *max_num_threads_arg = NULL, *log_level_arg = NULL,
-    *bind_address_arg = NULL, *hostname_arg = NULL, *protocol = NULL,
+    *bind_address_arg = NULL, *hostname_arg = NULL, *protocol_arg = NULL,
     *cache_limit_arg = NULL, *default_command_version_arg = NULL,
     *default_match_escalation_threshold_arg = NULL;
   const char *config_path = NULL;
@@ -2332,11 +2332,11 @@ main(int argc, char **argv)
     {'\0', NULL, NULL, 0, 0}
   };
   opts[0].arg = &port_arg;
-  opts[1].arg = &encstr;
+  opts[1].arg = &encoding_arg;
   opts[2].arg = &max_num_threads_arg;
   opts[7].arg = &log_level_arg;
   opts[8].arg = &hostname_arg;
-  opts[11].arg = &protocol;
+  opts[11].arg = &protocol_arg;
   opts[13].arg = &grn_log_path;
   opts[14].arg = &grn_qlog_path;
   opts[15].arg = &pidfile_path;
@@ -2399,34 +2399,34 @@ main(int argc, char **argv)
     port = default_port;
   }
 
-  if (encstr) {
-    switch (*encstr) {
+  if (encoding_arg) {
+    switch (*encoding_arg) {
     case 'n' :
     case 'N' :
-      enc = GRN_ENC_NONE;
+      encoding = GRN_ENC_NONE;
       break;
     case 'e' :
     case 'E' :
-      enc = GRN_ENC_EUC_JP;
+      encoding = GRN_ENC_EUC_JP;
       break;
     case 'u' :
     case 'U' :
-      enc = GRN_ENC_UTF8;
+      encoding = GRN_ENC_UTF8;
       break;
     case 's' :
     case 'S' :
-      enc = GRN_ENC_SJIS;
+      encoding = GRN_ENC_SJIS;
       break;
     case 'l' :
     case 'L' :
-      enc = GRN_ENC_LATIN1;
+      encoding = GRN_ENC_LATIN1;
       break;
     case 'k' :
     case 'K' :
-      enc = GRN_ENC_KOI8R;
+      encoding = GRN_ENC_KOI8R;
       break;
     default:
-      enc = GRN_ENC_DEFAULT;
+      encoding = GRN_ENC_DEFAULT;
       break;
     }
   }
@@ -2435,8 +2435,8 @@ main(int argc, char **argv)
     grn_document_root = default_document_root;
   }
 
-  if (protocol) {
-    switch (*protocol) {
+  if (protocol_arg) {
+    switch (*protocol_arg) {
     case 'g' :
     case 'G' :
       do_client = g_client;
@@ -2580,7 +2580,7 @@ main(int argc, char **argv)
 #endif
   if (grn_init()) { return EXIT_FAILURE; }
 
-  grn_set_default_encoding(enc);
+  grn_set_default_encoding(encoding);
 
   if (default_command_version_arg) {
     grn_set_default_command_version(default_command_version);
