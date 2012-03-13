@@ -72,6 +72,11 @@ static int (*do_server)(char *path);
 static const char *pidfile_path = NULL;
 static const char *input_path = NULL;
 
+static grn_command_version default_command_version;
+static int64_t default_match_escalation_threshold;
+static int log_level;
+static uint32_t cache_limit;
+
 #ifdef HAVE_LIBEDIT
 #include <locale.h>
 #include <histedit.h>
@@ -2517,16 +2522,6 @@ main(int argc, char **argv)
     strcpy(hostname, default_hostname);
   }
 
-#ifdef HAVE_LIBEDIT
-  if (!batchmode) {
-    line_editor_init(argc, argv);
-  }
-#endif
-  if (grn_init()) { return -1; }
-
-  grn_set_default_encoding(enc);
-
-  /* TODO: argument checks should be done before grn_init(). */
   if (default_command_version_arg) {
     const char * const end = default_command_version_arg
         + strlen(default_command_version_arg);
@@ -2540,10 +2535,10 @@ main(int argc, char **argv)
     }
     switch (value) {
     case 1 :
-      grn_set_default_command_version(GRN_COMMAND_VERSION_1);
+      default_command_version = GRN_COMMAND_VERSION_1;
       break;
     case 2 :
-      grn_set_default_command_version(GRN_COMMAND_VERSION_2);
+      default_command_version = GRN_COMMAND_VERSION_2;
       break;
     default :
       fprintf(stderr, "invalid command version: <%s>\n",
@@ -2562,7 +2557,7 @@ main(int argc, char **argv)
               default_match_escalation_threshold_arg);
       return EXIT_FAILURE;
     }
-    grn_set_default_match_escalation_threshold(value);
+    default_match_escalation_threshold = value;
   }
 
   if (log_level_arg) {
@@ -2573,11 +2568,8 @@ main(int argc, char **argv)
       fprintf(stderr, "invalid log level: <%s>\n", log_level_arg);
       return EXIT_FAILURE;
     }
-    SET_LOGLEVEL(value);
+    log_level = value;
   }
-  grn_set_segv_handler();
-  grn_set_int_handler();
-  grn_set_term_handler();
 
   if (cache_limit_arg) {
     const char * const end = cache_limit_arg + strlen(cache_limit_arg);
@@ -2587,7 +2579,36 @@ main(int argc, char **argv)
       fprintf(stderr, "invalid --cache-limit value: <%s>\n", cache_limit_arg);
       return EXIT_FAILURE;
     }
-    *grn_cache_max_nentries() = value;
+    cache_limit = value;
+  }
+
+#ifdef HAVE_LIBEDIT
+  if (!batchmode) {
+    line_editor_init(argc, argv);
+  }
+#endif
+  if (grn_init()) { return -1; }
+
+  grn_set_default_encoding(enc);
+
+  if (default_command_version_arg) {
+    grn_set_default_command_version(default_command_version);
+  }
+
+  if (default_match_escalation_threshold_arg) {
+    grn_set_default_match_escalation_threshold(default_match_escalation_threshold);
+  }
+
+  if (log_level_arg) {
+    SET_LOGLEVEL(log_level);
+  }
+
+  grn_set_segv_handler();
+  grn_set_int_handler();
+  grn_set_term_handler();
+
+  if (cache_limit_arg) {
+    *grn_cache_max_nentries() = cache_limit;
   }
 
   newdb = (mode & MODE_NEW_DB);
