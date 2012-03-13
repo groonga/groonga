@@ -1938,10 +1938,10 @@ do_daemon(char *path)
     break;
   case -1:
     perror("fork");
-    return -1;
+    return EXIT_FAILURE;
   default:
     wait(NULL);
-    return 0;
+    return EXIT_SUCCESS;
   }
   if (pidfile_path) {
     pidfile = fopen(pidfile_path, "w");
@@ -1951,7 +1951,7 @@ do_daemon(char *path)
     break;
   case -1:
     perror("fork");
-    return -1;
+    return EXIT_FAILURE;
   default:
     if (!pidfile) {
       fprintf(stderr, "%d\n", pid);
@@ -1959,7 +1959,7 @@ do_daemon(char *path)
       fprintf(pidfile, "%d\n", pid);
       fclose(pidfile);
     }
-    _exit(0);
+    _exit(EXIT_SUCCESS);
   }
   {
     int null_fd = GRN_OPEN("/dev/null", O_RDWR, 0);
@@ -2587,7 +2587,7 @@ main(int argc, char **argv)
     line_editor_init(argc, argv);
   }
 #endif
-  if (grn_init()) { return -1; }
+  if (grn_init()) { return EXIT_FAILURE; }
 
   grn_set_default_encoding(enc);
 
