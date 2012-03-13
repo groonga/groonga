@@ -162,97 +162,6 @@ line_editor_fgets(grn_ctx *ctx, grn_obj *buf)
 }
 #endif /* HAVE_LIBEDIT */
 
-static void
-show_usage(FILE *output)
-{
-  gethostname(hostname, HOST_NAME_MAX);
-  fprintf(output,
-          "Usage: groonga [options...] [dest]\n"
-          "options:\n"
-          "  -n:                               create new database\n"
-          "  -e, --encoding <encoding>:        encoding for new database [none|euc|utf8|sjis|latin1|koi8r]\n"
-          "  -c:                               run in client mode\n"
-          "  -s:                               run in server mode\n"
-          "  -d:                               run in daemon mode\n"
-          "  --bind-address <ip/hostname>:     server address to bind (default: %s)\n"
-          "  -p, --port <port number>:         server port number (default: %d)\n"
-          "  -i, --server-id <ip/hostname>:    server ID address (default: %s)\n"
-          "  --protocol <protocol>:            server protocol to listen (default: gqtp)\n"
-          "  --document-root <path>:           document root path\n"
-          "  --cache-limit <limit>:            specify the max number of cache data\n"
-          "  -t, --max-threads <max threads>:  max number of free threads (default: %d)\n"
-          "  --file <path>:                    read commands from specified file\n"
-          "  -l, --log-level <log level>:      log level\n"
-          "  --log-path <path>:                specify log path\n"
-          "  --query-log-path <path>:          specify query log path\n"
-          "  --pid-path <path>:                specify pid file path (daemon mode only)\n"
-          "  --config-path <path>:             specify config file path\n"
-          "  --default-command-version <version>:\n"
-          "                                    specify default command version\n"
-          "  --default-match-escalation-threshold <threshold>:\n"
-          "                                    specify default match escalation threshold\n"
-          "      --show-config:                show config\n"
-          "  -h, --help:                       show usage\n"
-          "  --version:                        show groonga version\n"
-          "\n"
-          "dest: <db pathname> [<command>] or <dest hostname>\n"
-          "  <db pathname> [<command>]: when standalone/server mode\n"
-          "  <dest hostname>: when client mode (default: \"%s\")\n",
-          bind_address, DEFAULT_PORT, hostname,
-          default_max_nfthreads, DEFAULT_DEST);
-}
-
-static void
-show_version(void)
-{
-  printf("%s %s [",
-         grn_get_package(),
-         grn_get_version());
-
-  /* FIXME: Should we detect host information dynamically on Windows? */
-#ifdef HOST_OS
-  printf("%s,", HOST_OS);
-#endif
-#ifdef HOST_CPU
-  printf("%s,", HOST_CPU);
-#endif
-  printf("%s", GRN_DEFAULT_ENCODING);
-
-  printf(",match-escalation-threshold=%" GRN_FMT_LLD,
-         grn_get_default_match_escalation_threshold());
-
-#ifndef NO_NFKC
-  printf(",nfkc");
-#endif
-#ifdef WITH_MECAB
-  printf(",mecab");
-#endif
-#ifdef HAVE_MESSAGE_PACK
-  printf(",msgpack");
-#endif
-#ifndef NO_ZLIB
-  printf(",zlib");
-#endif
-#ifndef NO_LZO
-  printf(",lzo");
-#endif
-#ifdef USE_KQUEUE
-  printf(",kqueue");
-#endif
-#ifdef USE_EPOLL
-  printf(",epoll");
-#endif
-#ifdef USE_POLL
-  printf(",poll");
-#endif
-  printf("]\n");
-
-#ifdef CONFIGURE_OPTIONS
-  printf("\n");
-  printf("configure options: <%s>\n", CONFIGURE_OPTIONS);
-#endif
-}
-
 inline static grn_rc
 prompt(grn_ctx *ctx, grn_obj *buf)
 {
@@ -2173,43 +2082,6 @@ load_config_file(const char *path,
   return 1;
 }
 
-static void
-show_config(FILE *out, const grn_str_getopt_opt *opts, int flags)
-{
-  const grn_str_getopt_opt *o;
-
-  for (o = opts; o->opt != '\0' || o->longopt != NULL; o++) {
-    switch (o->op) {
-    case getopt_op_none:
-      if (o->arg && *o->arg) {
-        if (o->longopt &&
-            strcmp(o->longopt, "config-path") != 0) {
-          fprintf(out, "%s=%s\n", o->longopt, *o->arg);
-        }
-      }
-      break;
-    case getopt_op_on:
-      if (flags & o->flag) {
-        goto no_arg;
-      }
-      break;
-    case getopt_op_off:
-      if (!(flags & o->flag)) {
-        goto no_arg;
-      }
-      break;
-    case getopt_op_update:
-      if (flags == o->flag) {
-      no_arg:
-        if (o->longopt) {
-          fprintf(out, "%s\n", o->longopt);
-        }
-      }
-      break;
-    }
-  }
-}
-
 static const int default_port = 10041;
 static grn_encoding default_encoding = GRN_ENC_DEFAULT;
 static uint32_t default_max_num_threads = DEFAULT_MAX_NFTHREADS;
@@ -2295,6 +2167,134 @@ init_default_settings(void)
 
   default_command_version = grn_get_default_command_version();
   default_match_escalation_threshold = grn_get_default_match_escalation_threshold();
+}
+
+static void
+show_config(FILE *out, const grn_str_getopt_opt *opts, int flags)
+{
+  const grn_str_getopt_opt *o;
+
+  for (o = opts; o->opt != '\0' || o->longopt != NULL; o++) {
+    switch (o->op) {
+    case getopt_op_none:
+      if (o->arg && *o->arg) {
+        if (o->longopt &&
+            strcmp(o->longopt, "config-path") != 0) {
+          fprintf(out, "%s=%s\n", o->longopt, *o->arg);
+        }
+      }
+      break;
+    case getopt_op_on:
+      if (flags & o->flag) {
+        goto no_arg;
+      }
+      break;
+    case getopt_op_off:
+      if (!(flags & o->flag)) {
+        goto no_arg;
+      }
+      break;
+    case getopt_op_update:
+      if (flags == o->flag) {
+      no_arg:
+        if (o->longopt) {
+          fprintf(out, "%s\n", o->longopt);
+        }
+      }
+      break;
+    }
+  }
+}
+
+static void
+show_version(void)
+{
+  printf("%s %s [",
+         grn_get_package(),
+         grn_get_version());
+
+  /* FIXME: Should we detect host information dynamically on Windows? */
+#ifdef HOST_OS
+  printf("%s,", HOST_OS);
+#endif
+#ifdef HOST_CPU
+  printf("%s,", HOST_CPU);
+#endif
+  printf("%s", GRN_DEFAULT_ENCODING);
+
+  printf(",match-escalation-threshold=%" GRN_FMT_LLD,
+         grn_get_default_match_escalation_threshold());
+
+#ifndef NO_NFKC
+  printf(",nfkc");
+#endif
+#ifdef WITH_MECAB
+  printf(",mecab");
+#endif
+#ifdef HAVE_MESSAGE_PACK
+  printf(",msgpack");
+#endif
+#ifndef NO_ZLIB
+  printf(",zlib");
+#endif
+#ifndef NO_LZO
+  printf(",lzo");
+#endif
+#ifdef USE_KQUEUE
+  printf(",kqueue");
+#endif
+#ifdef USE_EPOLL
+  printf(",epoll");
+#endif
+#ifdef USE_POLL
+  printf(",poll");
+#endif
+  printf("]\n");
+
+#ifdef CONFIGURE_OPTIONS
+  printf("\n");
+  printf("configure options: <%s>\n", CONFIGURE_OPTIONS);
+#endif
+}
+
+static void
+show_usage(FILE *output)
+{
+  gethostname(hostname, HOST_NAME_MAX);
+  fprintf(output,
+          "Usage: groonga [options...] [dest]\n"
+          "options:\n"
+          "  -n:                               create new database\n"
+          "  -e, --encoding <encoding>:        encoding for new database [none|euc|utf8|sjis|latin1|koi8r]\n"
+          "  -c:                               run in client mode\n"
+          "  -s:                               run in server mode\n"
+          "  -d:                               run in daemon mode\n"
+          "  --bind-address <ip/hostname>:     server address to bind (default: %s)\n"
+          "  -p, --port <port number>:         server port number (default: %d)\n"
+          "  -i, --server-id <ip/hostname>:    server ID address (default: %s)\n"
+          "  --protocol <protocol>:            server protocol to listen (default: gqtp)\n"
+          "  --document-root <path>:           document root path\n"
+          "  --cache-limit <limit>:            specify the max number of cache data\n"
+          "  -t, --max-threads <max threads>:  max number of free threads (default: %d)\n"
+          "  --file <path>:                    read commands from specified file\n"
+          "  -l, --log-level <log level>:      log level\n"
+          "  --log-path <path>:                specify log path\n"
+          "  --query-log-path <path>:          specify query log path\n"
+          "  --pid-path <path>:                specify pid file path (daemon mode only)\n"
+          "  --config-path <path>:             specify config file path\n"
+          "  --default-command-version <version>:\n"
+          "                                    specify default command version\n"
+          "  --default-match-escalation-threshold <threshold>:\n"
+          "                                    specify default match escalation threshold\n"
+          "      --show-config:                show config\n"
+          "  -h, --help:                       show usage\n"
+          "  --version:                        show groonga version\n"
+          "\n"
+          "dest: <db pathname> [<command>] or <dest hostname>\n"
+          "  <db pathname> [<command>]: when standalone/server mode\n"
+          "  <dest hostname>: when client mode (default: \"%s\")\n",
+          bind_address, DEFAULT_PORT, hostname,
+          default_max_nfthreads, DEFAULT_DEST);
 }
 
 int
