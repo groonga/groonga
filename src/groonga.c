@@ -2429,6 +2429,8 @@ main(int argc, char **argv)
       encoding = GRN_ENC_DEFAULT;
       break;
     }
+  } else {
+    encoding = GRN_ENC_DEFAULT;
   }
 
   if (!grn_document_root) {
