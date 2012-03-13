@@ -2210,19 +2210,92 @@ show_config(FILE *out, const grn_str_getopt_opt *opts, int flags)
   }
 }
 
-#ifdef WIN32
-static char win32_default_document_root[PATH_MAX];
-static char *
-default_document_root(void)
+static const int default_port = 10041;
+static grn_encoding default_encoding = GRN_ENC_DEFAULT;
+static uint32_t default_max_num_threads = DEFAULT_MAX_NFTHREADS;
+static const int default_mode = mode_alone;
+static const int default_log_level = GRN_LOG_DEFAULT_LEVEL;
+static const char * const default_protocol = "gqtp";
+static const char *default_hostname = "localhost";
+static const char * const default_dest = "localhost";
+static const char *default_log_path = "";
+static const char *default_query_log_path = "";
+static const char *default_config_path = "";
+static uint32_t default_cache_limit = 0;
+static const char *default_document_root = "";
+static grn_command_version default_command_version = 0;
+static int64_t default_match_escalation_threshold = 0;
+static const char * const default_bind_address = "0.0.0.0";
+
+static void
+init_default_settings(void)
 {
-  strcpy(win32_default_document_root, grn_win32_base_dir());
-  strcat(win32_default_document_root, "/");
-  strcat(win32_default_document_root, GRN_DEFAULT_RELATIVE_DOCUMENT_ROOT);
-  return win32_default_document_root;
-}
+  default_encoding = grn_strtoenc(GRN_DEFAULT_ENCODING);
+
+  {
+    const uint32_t num_cores = get_core_number();
+    if (num_cores != 0) {
+      default_max_num_threads = num_cores;
+    }
+  }
+
+  {
+    static char hostname[HOST_NAME_MAX + 1];
+    if (gethostname(hostname, sizeof(hostname))) {
+      fprintf(stderr, "gethostname failed: %s\n", strerror(errno));
+    } else {
+      int error_code;
+      struct addrinfo hints, *result;
+      memset(&hints, 0, sizeof(hints));
+      hints.ai_family = AF_UNSPEC;
+      hints.ai_socktype = SOCK_STREAM;
+      hints.ai_addr = NULL;
+      hints.ai_canonname = NULL;
+      hints.ai_next = NULL;
+      error_code = getaddrinfo(hostname, NULL, &hints, &result);
+      if (error_code) {
+        fprintf(stderr, "getaddrinfo failed: %s\n", gai_strerror(error_code));
+      } else {
+        freeaddrinfo(result);
+        default_hostname = hostname;
+      }
+    }
+  }
+
+  default_log_path = grn_log_path;
+  default_query_log_path = grn_qlog_path;
+
+  default_config_path = getenv("GRN_CONFIG_PATH");
+  if (!default_config_path) {
+    default_config_path = GRN_CONFIG_PATH;
+    if (!default_config_path) {
+      default_config_path = "";
+    }
+  }
+
+  default_cache_limit = *grn_cache_max_nentries();
+
+#ifdef WIN32
+  {
+    static char win32_default_document_root[PATH_MAX];
+    size_t document_root_length = strlen(grn_win32_base_dir()) + 1 +
+        strlen(GRN_DEFAULT_RELATIVE_DOCUMENT_ROOT) + 1;
+    if (document_root_length >= PATH_MAX) {
+      fprintf(stderr, "can't use default root: too long path\n");
+    } else {
+      strcpy(win32_default_document_root, grn_win32_base_dir());
+      strcat(win32_default_document_root, "/");
+      strcat(win32_default_document_root, GRN_DEFAULT_RELATIVE_DOCUMENT_ROOT);
+      default_document_root = win32_default_document_root;
+    }
+  }
 #else
-#  define default_document_root() GRN_DEFAULT_DOCUMENT_ROOT
+  default_document_root = GRN_DEFAULT_DOCUMENT_ROOT;
 #endif
+
+  default_command_version = grn_get_default_command_version();
+  default_match_escalation_threshold = grn_get_default_match_escalation_threshold();
+}
 
 int
 main(int argc, char **argv)
@@ -2278,6 +2351,9 @@ main(int argc, char **argv)
   opts[21].arg = &command_versionstr;
   opts[22].arg = &match_escalation_thresholdstr;
   opts[23].arg = &bind_addressstr;
+
+  init_default_settings();
+
   if (!(default_max_nfthreads = get_core_number())) {
     default_max_nfthreads = DEFAULT_MAX_NFTHREADS;
   }
@@ -2354,7 +2430,7 @@ main(int argc, char **argv)
     }
   }
   if (!grn_document_root) {
-    grn_document_root = default_document_root();
+    grn_document_root = default_document_root;
   }
   if (protocol) {
     switch (*protocol) {
