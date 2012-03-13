@@ -2094,8 +2094,9 @@ static const char *default_query_log_path = "";
 static const char *default_config_path = "";
 static uint32_t default_cache_limit = 0;
 static const char *default_document_root = "";
-static grn_command_version default_command_version = 0;
-static int64_t default_match_escalation_threshold = 0;
+static grn_command_version default_default_command_version =
+    GRN_COMMAND_VERSION_DEFAULT;
+static int64_t default_default_match_escalation_threshold = 0;
 static const char * const default_bind_address = "0.0.0.0";
 
 static void
@@ -2165,8 +2166,9 @@ init_default_settings(void)
   default_document_root = GRN_DEFAULT_DOCUMENT_ROOT;
 #endif
 
-  default_command_version = grn_get_default_command_version();
-  default_match_escalation_threshold = grn_get_default_match_escalation_threshold();
+  default_default_command_version = grn_get_default_command_version();
+  default_default_match_escalation_threshold =
+      grn_get_default_match_escalation_threshold();
 }
 
 static void
@@ -2302,8 +2304,8 @@ main(int argc, char **argv)
   const char *port_arg = NULL, *encstr = NULL,
     *max_num_threads_arg = NULL, *log_level_arg = NULL,
     *bind_address_arg = NULL, *hostname_arg = NULL, *protocol = NULL,
-    *cache_limit_arg = NULL, *command_versionstr = NULL,
-    *match_escalation_threshold_arg = NULL;
+    *cache_limit_arg = NULL, *default_command_version_arg = NULL,
+    *default_match_escalation_threshold_arg = NULL;
   const char *config_path = NULL;
   int r, i, mode = mode_alone;
   static grn_str_getopt_opt opts[] = {
@@ -2346,8 +2348,8 @@ main(int argc, char **argv)
   opts[18].arg = &cache_limit_arg;
   opts[19].arg = &input_path;
   opts[20].arg = &grn_document_root;
-  opts[21].arg = &command_versionstr;
-  opts[22].arg = &match_escalation_threshold_arg;
+  opts[21].arg = &default_command_version_arg;
+  opts[22].arg = &default_match_escalation_threshold_arg;
   opts[23].arg = &bind_address_arg;
 
   init_default_settings();
@@ -2524,19 +2526,40 @@ main(int argc, char **argv)
 
   grn_set_default_encoding(enc);
 
-  if (command_versionstr) {
-    grn_set_default_command_version(atoi(command_versionstr));
+  /* TODO: argument checks should be done before grn_init(). */
+  if (default_command_version_arg) {
+    const char * const end = default_command_version_arg
+        + strlen(default_command_version_arg);
+    const char *rest = NULL;
+    const int value = grn_atoi(default_command_version_arg, end, &rest);
+    if (end != rest || value < GRN_COMMAND_VERSION_MIN ||
+        value > GRN_COMMAND_VERSION_MAX) {
+      fprintf(stderr, "invalid command version: <%s>\n",
+              default_command_version_arg);
+      return EXIT_FAILURE;
+    }
+    switch (value) {
+    case 1 :
+      grn_set_default_command_version(GRN_COMMAND_VERSION_1);
+      break;
+    case 2 :
+      grn_set_default_command_version(GRN_COMMAND_VERSION_2);
+      break;
+    default :
+      fprintf(stderr, "invalid command version: <%s>\n",
+              default_command_version_arg);
+      return EXIT_FAILURE;
+    }
   }
 
-  /* TODO: argument checks should be done before grn_init(). */
-  if (match_escalation_threshold_arg) {
-    const char * const end = match_escalation_threshold_arg
-        + strlen(match_escalation_threshold_arg);
+  if (default_match_escalation_threshold_arg) {
+    const char * const end = default_match_escalation_threshold_arg
+        + strlen(default_match_escalation_threshold_arg);
     const char *rest = NULL;
-    const int64_t value = grn_atoll(match_escalation_threshold_arg, end, &rest);
+    const int64_t value = grn_atoll(default_match_escalation_threshold_arg, end, &rest);
     if (end != rest || value < 0) {
-      fprintf(stderr, "invalid default match escalation threshold: <%s>\n",
-              match_escalation_threshold_arg);
+      fprintf(stderr, "invalid match escalation threshold: <%s>\n",
+              default_match_escalation_threshold_arg);
       return EXIT_FAILURE;
     }
     grn_set_default_match_escalation_threshold(value);
