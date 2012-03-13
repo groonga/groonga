@@ -69,7 +69,6 @@ static int newdb;
 static int useql;
 static int (*do_client)(int argc, char **argv);
 static int (*do_server)(char *path);
-static uint32_t default_max_nfthreads = DEFAULT_MAX_NFTHREADS;
 static const char *pidfile_path = NULL;
 static const char *input_path = NULL;
 
@@ -2082,7 +2081,7 @@ load_config_file(const char *path,
   return 1;
 }
 
-static const int default_port = 10041;
+static const int default_port = DEFAULT_PORT;
 static grn_encoding default_encoding = GRN_ENC_DEFAULT;
 static uint32_t default_max_num_threads = DEFAULT_MAX_NFTHREADS;
 static const int default_mode = mode_alone;
@@ -2300,11 +2299,11 @@ int
 main(int argc, char **argv)
 {
   grn_encoding enc = GRN_ENC_DEFAULT;
-  const char *portstr = NULL, *encstr = NULL,
-    *max_nfthreadsstr = NULL, *loglevel = NULL,
+  const char *port_arg = NULL, *encstr = NULL,
+    *max_num_threads_arg = NULL, *log_level_arg = NULL,
     *bind_address_arg = NULL, *hostname_arg = NULL, *protocol = NULL,
-    *cache_limitstr = NULL, *command_versionstr = NULL,
-    *match_escalation_thresholdstr = NULL;
+    *cache_limit_arg = NULL, *command_versionstr = NULL,
+    *match_escalation_threshold_arg = NULL;
   const char *config_path = NULL;
   int r, i, mode = mode_alone;
   static grn_str_getopt_opt opts[] = {
@@ -2334,28 +2333,24 @@ main(int argc, char **argv)
     {'\0', "bind-address", NULL, 0, getopt_op_none},
     {'\0', NULL, NULL, 0, 0}
   };
-  opts[0].arg = &portstr;
+  opts[0].arg = &port_arg;
   opts[1].arg = &encstr;
-  opts[2].arg = &max_nfthreadsstr;
-  opts[7].arg = &loglevel;
+  opts[2].arg = &max_num_threads_arg;
+  opts[7].arg = &log_level_arg;
   opts[8].arg = &hostname_arg;
   opts[11].arg = &protocol;
   opts[13].arg = &grn_log_path;
   opts[14].arg = &grn_qlog_path;
   opts[15].arg = &pidfile_path;
   opts[16].arg = &config_path;
-  opts[18].arg = &cache_limitstr;
+  opts[18].arg = &cache_limit_arg;
   opts[19].arg = &input_path;
   opts[20].arg = &grn_document_root;
   opts[21].arg = &command_versionstr;
-  opts[22].arg = &match_escalation_thresholdstr;
+  opts[22].arg = &match_escalation_threshold_arg;
   opts[23].arg = &bind_address_arg;
 
   init_default_settings();
-
-  if (!(default_max_nfthreads = get_core_number())) {
-    default_max_nfthreads = DEFAULT_MAX_NFTHREADS;
-  }
 
   i = grn_str_getopt(argc, argv, opts, &mode);
   if (i < 0) {
@@ -2393,7 +2388,18 @@ main(int argc, char **argv)
     return EXIT_FAILURE;
   }
 
-  if (portstr) { port = atoi(portstr); }
+  if (port_arg) {
+    const char * const end = port_arg + strlen(port_arg);
+    const char *rest = NULL;
+    const int value = grn_atoi(port_arg, end, &rest);
+    if (rest != end || value <= 0 || value > 65535) {
+      fprintf(stderr, "invalid port number: <%s>\n", port_arg);
+      return EXIT_FAILURE;
+    }
+    port = value;
+  } else {
+    port = default_port;
+  }
 
   if (encstr) {
     switch (*encstr) {
@@ -2458,10 +2464,17 @@ main(int argc, char **argv)
     do_server = g_server;
   }
 
-  if (max_nfthreadsstr) {
-    max_nfthreads = atoi(max_nfthreadsstr);
+  if (max_num_threads_arg) {
+    const char * const end = max_num_threads_arg + strlen(max_num_threads_arg);
+    const char *rest = NULL;
+    const uint32_t value = grn_atoui(max_num_threads_arg, end, &rest);
+    if (end != rest || value < 1 || value > 100) {
+      fprintf(stderr, "invalid max number of threads: <%s>\n",
+              max_num_threads_arg);
+    }
+    max_nfthreads = value;
   } else {
-    max_nfthreads = default_max_nfthreads;
+    max_nfthreads = default_max_num_threads;
   }
 
   if (input_path) {
@@ -2482,9 +2495,8 @@ main(int argc, char **argv)
                       " must not be longer than %u bytes\n",
               bind_address_arg, (unsigned int)bind_address_length, HOST_NAME_MAX);
       return EXIT_FAILURE;
-    } else {
-      strcpy(bind_address, bind_address_arg);
     }
+    strcpy(bind_address, bind_address_arg);
   } else {
     strcpy(bind_address, default_bind_address);
   }
@@ -2496,9 +2508,8 @@ main(int argc, char **argv)
                       " must not be longer than %u bytes\n",
               hostname_arg, (unsigned int)hostname_length, HOST_NAME_MAX);
       return EXIT_FAILURE;
-    } else {
-      strcpy(hostname, hostname_arg);
     }
+    strcpy(hostname, hostname_arg);
   } else {
     strcpy(hostname, default_hostname);
   }
@@ -2516,35 +2527,43 @@ main(int argc, char **argv)
     grn_set_default_command_version(atoi(command_versionstr));
   }
 
-  if (match_escalation_thresholdstr) {
-    int64_t threshold;
-    const char *end, *rest;
-    end = match_escalation_thresholdstr + strlen(match_escalation_thresholdstr);
-    threshold = grn_atoll(match_escalation_thresholdstr, end, &rest);
-    if (end != rest) {
+  /* TODO: argument checks should be done before gnr_init(). */
+  if (match_escalation_threshold_arg) {
+    const char * const end = match_escalation_threshold_arg
+        + strlen(match_escalation_threshold_arg);
+    const char *rest = NULL;
+    const int64_t value = grn_atoll(match_escalation_threshold_arg, end, &rest);
+    if (end != rest || value < 0) {
       fprintf(stderr, "invalid default match escalation threshold: <%s>\n",
-              match_escalation_thresholdstr);
+              match_escalation_threshold_arg);
       return EXIT_FAILURE;
     }
-    grn_set_default_match_escalation_threshold(threshold);
+    grn_set_default_match_escalation_threshold(value);
   }
 
-  if (loglevel) { SET_LOGLEVEL(atoi(loglevel)); }
+  if (log_level_arg) {
+    const char * const end = log_level_arg + strlen(log_level_arg);
+    const char *rest = NULL;
+    const int value = grn_atoi(log_level_arg, end, &rest);
+    if (end != rest || value < 0 || value > 9) {
+      fprintf(stderr, "invalid log level: <%s>\n", log_level_arg);
+      return EXIT_FAILURE;
+    }
+    SET_LOGLEVEL(value);
+  }
   grn_set_segv_handler();
   grn_set_int_handler();
   grn_set_term_handler();
 
-  if (cache_limitstr) {
-    uint32_t max, *max_nentries;
-    const char *end, *rest;
-    end = cache_limitstr + strlen(cache_limitstr);
-    max_nentries = grn_cache_max_nentries();
-    max = grn_atoui(cache_limitstr, end, &rest);
-    if (end == rest) {
-      *max_nentries = max;
-    } else {
-      fprintf(stderr, "invalid --cache-limit value: <%s>\n", cache_limitstr);
+  if (cache_limit_arg) {
+    const char * const end = cache_limit_arg + strlen(cache_limit_arg);
+    const char *rest = NULL;
+    const uint32_t value = grn_atoui(cache_limit_arg, end, &rest);
+    if (end != rest) {
+      fprintf(stderr, "invalid --cache-limit value: <%s>\n", cache_limit_arg);
+      return EXIT_FAILURE;
     }
+    *grn_cache_max_nentries() = value;
   }
 
   newdb = (mode & MODE_NEW_DB);
