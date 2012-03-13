@@ -2536,6 +2536,8 @@ main(int argc, char **argv)
               default_command_version_arg);
       return EXIT_FAILURE;
     }
+  } else {
+    default_command_version = default_default_command_version;
   }
 
   if (default_match_escalation_threshold_arg) {
@@ -2549,6 +2551,8 @@ main(int argc, char **argv)
       return EXIT_FAILURE;
     }
     default_match_escalation_threshold = value;
+  } else {
+    default_match_escalation_threshold = default_default_match_escalation_threshold;
   }
 
   if (log_level_arg) {
@@ -2560,6 +2564,8 @@ main(int argc, char **argv)
       return EXIT_FAILURE;
     }
     log_level = value;
+  } else {
+    log_level = default_log_level;
   }
 
   if (cache_limit_arg) {
@@ -2571,6 +2577,8 @@ main(int argc, char **argv)
       return EXIT_FAILURE;
     }
     cache_limit = value;
+  } else {
+    cache_limit = default_cache_limit;
   }
 
 #ifdef HAVE_LIBEDIT
