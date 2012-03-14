@@ -14,3 +14,6 @@ TESTS_ENVIRONMENT =								\
 
 EXTRA_DIST =					\
 	run-test.sh
+
+update-files:
+	cd $(srcdir) && ./update-files.sh > files.am

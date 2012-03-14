@@ -1,0 +1,60 @@
+test_files = \
+	suite/dump/table-tokenizer-index-column.test \
+	suite/geo/taiyaki/in-circle.test \
+	suite/geo/taiyaki/in-rectangle-long-latitude.test \
+	suite/suggest/complete/coocurrence.test \
+	suite/suggest/complete/prefix-rk-search-hiragana-and-romaji.test \
+	suite/suggest/complete/prefix-rk-search-hiragana.test \
+	suite/suggest/complete/prefix-rk-search-katakana.test \
+	suite/suggest/complete/prefix-rk-search-romaji.test \
+	suite/suggest/complete/prefix-rk-search-thrshold-found.test \
+	suite/suggest/complete/prefix-rk-search-thrshold-not-found.test \
+	suite/suggest/complete/prefix-search-downcase.test \
+	suite/suggest/complete/prefix-search-no.test \
+	suite/suggest/complete/prefix-search-threshold-found.test \
+	suite/suggest/complete/prefix-search-threshold-not-found.test \
+	suite/suggest/complete/prefix-search-upcase.test \
+	suite/suggest/complete/prefix-search-yes.test \
+	suite/suggest/correct/coocurrence.test \
+	suite/suggest/correct/similar-search-no.test \
+	suite/suggest/correct/similar-search.test \
+	suite/suggest/suggest/coocurrence.test \
+	suite/suggest/suggest/learn-duplicated.test \
+	$(NULL)
+
+expected_files = \
+	suite/dump/table-tokenizer-index-column.expected \
+	suite/geo/taiyaki/in-circle.expected \
+	suite/geo/taiyaki/in-rectangle-long-latitude.expected \
+	suite/suggest/complete/coocurrence.expected \
+	suite/suggest/complete/prefix-rk-search-hiragana-and-romaji.expected \
+	suite/suggest/complete/prefix-rk-search-hiragana.expected \
+	suite/suggest/complete/prefix-rk-search-katakana.expected \
+	suite/suggest/complete/prefix-rk-search-romaji.expected \
+	suite/suggest/complete/prefix-rk-search-thrshold-found.expected \
+	suite/suggest/complete/prefix-rk-search-thrshold-not-found.expected \
+	suite/suggest/complete/prefix-search-downcase.expected \
+	suite/suggest/complete/prefix-search-no.expected \
+	suite/suggest/complete/prefix-search-threshold-found.expected \
+	suite/suggest/complete/prefix-search-threshold-not-found.expected \
+	suite/suggest/complete/prefix-search-upcase.expected \
+	suite/suggest/complete/prefix-search-yes.expected \
+	suite/suggest/correct/coocurrence.expected \
+	suite/suggest/correct/similar-search-no.expected \
+	suite/suggest/correct/similar-search.expected \
+	suite/suggest/suggest/coocurrence.expected \
+	suite/suggest/suggest/learn-duplicated.expected \
+	$(NULL)
+
+fixture_files = \
+	fixture/geo/taiyaki/areas.grn \
+	fixture/geo/taiyaki/categories.grn \
+	fixture/geo/taiyaki/ddl.grn \
+	fixture/geo/taiyaki/init.grn \
+	fixture/geo/taiyaki/shops.grn \
+	fixture/geo/taiyaki/synonyms.grn \
+	fixture/suggest/rurema/init.grn \
+	fixture/suggest/rurema/items.grn \
+	fixture/suggest/rurema/learn.grn \
+	$(NULL)
+
