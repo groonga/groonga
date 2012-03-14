@@ -2024,58 +2024,152 @@ get_core_number(void)
 #endif /* WIN32 */
 }
 
-static inline char *
-skipspace(char *str)
-{
-  while (*str == ' ' || *str == '\t') { ++str; }
-  return str;
+/*
+ * The length of each line, including an end-of-line, in config file should be
+ * shorter than (CONFIG_FILE_BUF_SIZE - 1) bytes. Too long lines are ignored.
+ * Note that both '\r' and '\n' are handled as end-of-lines.
+ *
+ * '#' and ';' are special symbols to start comments. A comment ends with an
+ * end-of-line.
+ *
+ * Format: name[=value]
+ * - Preceding/trailing white-spaces of each line are removed.
+ * - White-spaces aroung '=' are removed.
+ * - name does not allow white-spaces.
+ */
+#define CONFIG_FILE_BUF_SIZE 4096
+#define CONFIG_FILE_MAX_NAME_LENGTH 128
+#define CONFIG_FILE_MAX_VALUE_LENGTH 2048
+
+/*
+ * The node type of a linked list for storing values. Note that a value is
+ * stored in the extra space of an object.
+ */
+typedef struct _config_file_entry {
+  struct _config_file_entry *next;
+} config_file_entry;
+
+static config_file_entry *config_file_entry_head = NULL;
+
+static void
+config_file_clear(void) {
+  while (config_file_entry_head) {
+    config_file_entry *next = config_file_entry_head->next;
+    free(config_file_entry_head);
+    config_file_entry_head = next;
+  }
+}
+
+/* TODO: Error messages should be printed. */
+static int
+config_file_parse(const char *path, const grn_str_getopt_opt *opts,
+                  int *flags, char *buf) {
+  char *ptr, *name, *value;
+  size_t name_length, value_length;
+
+  while (isspace(*buf)) { buf++; }
+
+  ptr = buf;
+  while (*ptr && *ptr != '#' && *ptr != ';') { ptr++; }
+  do { *ptr-- = '\0'; } while (ptr >= buf && isspace(*ptr));
+  if (!*buf) { return 0; }
+
+  name = ptr = buf;
+  while (*ptr && !isspace(*ptr) && *ptr != '=') { ptr++; }
+  while (isspace(*ptr)) { *ptr++ = '\0'; }
+
+  name_length = strlen(name);
+  if (name_length == 0) { return 0; }
+  else if (name_length > CONFIG_FILE_MAX_NAME_LENGTH) { return 0; }
+
+  if (*ptr == '=') {
+    *ptr++ = '\0';
+    while (isspace(*ptr)) { ptr++; }
+    value = ptr;
+  } else if (*ptr) {
+    /* Invalid format! */
+    return 0;
+  } else {
+    value = NULL;
+  }
+
+  value_length = value ? strlen(value) : 0;
+  if (value_length > CONFIG_FILE_MAX_VALUE_LENGTH) { return 0; }
+
+  {
+    char name_buf[CONFIG_FILE_MAX_NAME_LENGTH + 3];
+    config_file_entry *entry = NULL;
+    char *args[4];
+
+    name_buf[0] = name_buf[1] = '-';
+    strcpy(name_buf + 2, name);
+
+    if (value) {
+      const size_t entry_size = sizeof(config_file_entry) + value_length + 1;
+      entry = (config_file_entry *)malloc(entry_size);
+      if (!entry) {
+        fprintf(stderr, "memory allocation failed: %u bytes\n",
+                (unsigned int)entry_size);
+        return -1;
+      }
+      strcpy((char *)(entry + 1), value);
+      entry->next = config_file_entry_head;
+      if (!config_file_entry_head) {
+        atexit(config_file_clear);
+      }
+      config_file_entry_head = entry;
+    }
+
+    args[0] = (char *)path;
+    args[1] = name_buf;
+    args[2] = entry ? (char *)(entry + 1) : NULL;
+    args[3] = NULL;
+    grn_str_getopt(entry ? 3 : 2, args, opts, flags);
+  }
+
+  return 0;
 }
 
 static int
-load_config_file(const char *path,
-                 const grn_str_getopt_opt *opts, int *flags)
+config_file_load(const char *path, const grn_str_getopt_opt *opts, int *flags)
 {
-  int name_len, value_len;
-  char buf[1024+2], *str, *name, *args[4];
-  FILE *file;
-
-  if (!(file = fopen(path, "r"))) return 0;
-
-  args[0] = (char *)path;
-  args[3] = NULL;
-  while ((str = fgets(buf + 2, sizeof(buf) - 2, file))) {
-    char *value = NULL;
-    str = skipspace(str);
-    switch (*str) {
-    case '#': case ';': case '\0':
-      continue;
-    }
-    name = str;
-    while (*str && !isspace(*str) && *str != '=') { str++; }
-    if ((name_len = (int)(str - name)) == 0) {
-      continue;
-    }
-    value_len = 0;
-    if (*str && (*str == '=' || *(str = skipspace(str)) == '=')) {
-      str++;
-      value = str = skipspace(str);
-      while (*str && *str != '#' && *str != ';') {
-        if (!isspace(*str)) {
-          value_len = (int)(str - value) + 1;
-        }
-        str++;
-      }
-      value[value_len] = '\0';
-    }
-    name[name_len] = '\0';
-    memset(name -= 2, '-', 2);
-    args[1] = name;
-    args[2] = value ? strdup(value) : NULL;
-    grn_str_getopt((value_len > 0) + 2, args, opts, flags);
+  int return_code = 0;
+  char buf[CONFIG_FILE_BUF_SIZE];
+  size_t length = 0;
+  FILE * const file = fopen(path, "rb");
+  if (!file) {
+    return -1;
   }
-  fclose(file);
 
-  return 1;
+  for ( ; ; ) {
+    int c = fgetc(file);
+    if (c == '\r' || c == '\n' || c == EOF) {
+      if (length < sizeof(buf) - 1) {
+        buf[length] = '\0';
+        if (config_file_parse(path, opts, flags, buf)) {
+          return_code = -1;
+          break;
+        }
+      }
+      length = 0;
+    } else if (c == '\0') {
+      fprintf(stderr, "config file contains '\\0': %s", path);
+      return_code = -1;
+      break;
+    } else {
+      if (length < sizeof(buf) - 1) {
+        buf[length] = (char)c;
+      }
+      length++;
+    }
+
+    if (c == EOF) {
+      break;
+    }
+  }
+
+  fclose(file);
+  return return_code;
 }
 
 static const int default_port = DEFAULT_PORT;
@@ -2300,6 +2394,7 @@ main(int argc, char **argv)
   const char *port_arg = NULL, *encoding_arg = NULL,
     *max_num_threads_arg = NULL, *log_level_arg = NULL,
     *bind_address_arg = NULL, *hostname_arg = NULL, *protocol_arg = NULL,
+    *log_path_arg = NULL, *query_log_path_arg = NULL,
     *cache_limit_arg = NULL, *default_command_version_arg = NULL,
     *default_match_escalation_threshold_arg = NULL;
   const char *config_path = NULL;
@@ -2337,8 +2432,8 @@ main(int argc, char **argv)
   opts[7].arg = &log_level_arg;
   opts[8].arg = &hostname_arg;
   opts[11].arg = &protocol_arg;
-  opts[13].arg = &grn_log_path;
-  opts[14].arg = &grn_qlog_path;
+  opts[13].arg = &log_path_arg;
+  opts[14].arg = &query_log_path_arg;
   opts[15].arg = &pidfile_path;
   opts[16].arg = &config_path;
   opts[18].arg = &cache_limit_arg;
@@ -2350,6 +2445,7 @@ main(int argc, char **argv)
 
   init_default_settings();
 
+  /* only for parsing --config-path. */
   i = grn_str_getopt(argc, argv, opts, &mode);
   if (i < 0) {
     show_usage(stderr);
@@ -2357,13 +2453,13 @@ main(int argc, char **argv)
   }
 
   if (config_path) {
-    if (!load_config_file(config_path, opts, &mode)) {
+    if (config_file_load(config_path, opts, &mode)) {
       fprintf(stderr, "%s: can't open config file: %s (%s)\n",
               argv[0], config_path, strerror(errno));
       return EXIT_FAILURE;
     }
   } else if (*default_config_path) {
-    load_config_file(default_config_path, opts, &mode);
+    config_file_load(default_config_path, opts, &mode);
   }
   /* ignore mode option in config file */
   mode = (mode == mode_error) ? default_mode :
@@ -2462,6 +2558,14 @@ main(int argc, char **argv)
   } else {
     do_client = g_client;
     do_server = g_server;
+  }
+
+  if (log_path_arg) {
+    grn_log_path = log_path_arg;
+  }
+
+  if (query_log_path_arg) {
+    grn_qlog_path = query_log_path_arg;
   }
 
   if (max_num_threads_arg) {
