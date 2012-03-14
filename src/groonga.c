@@ -2395,7 +2395,8 @@ main(int argc, char **argv)
     *max_num_threads_arg = NULL, *log_level_arg = NULL,
     *bind_address_arg = NULL, *hostname_arg = NULL, *protocol_arg = NULL,
     *log_path_arg = NULL, *query_log_path_arg = NULL,
-    *cache_limit_arg = NULL, *default_command_version_arg = NULL,
+    *cache_limit_arg = NULL, *document_root_arg = NULL,
+    *default_command_version_arg = NULL,
     *default_match_escalation_threshold_arg = NULL;
   const char *config_path = NULL;
   int r, i, mode = mode_alone;
@@ -2438,7 +2439,7 @@ main(int argc, char **argv)
   opts[16].arg = &config_path;
   opts[18].arg = &cache_limit_arg;
   opts[19].arg = &input_path;
-  opts[20].arg = &grn_document_root;
+  opts[20].arg = &document_root_arg;
   opts[21].arg = &default_command_version_arg;
   opts[22].arg = &default_match_escalation_threshold_arg;
   opts[23].arg = &bind_address_arg;
@@ -2617,6 +2618,10 @@ main(int argc, char **argv)
     strcpy(hostname, hostname_arg);
   } else {
     strcpy(hostname, default_hostname);
+  }
+
+  if (document_root_arg) {
+    grn_document_root = document_root_arg;
   }
 
   if (default_command_version_arg) {
