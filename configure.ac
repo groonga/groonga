@@ -250,14 +250,6 @@ AC_CONFIG_FILES([
   test/unit/story/Makefile
   test/unit/grntest/Makefile
   test/function/Makefile
-  test/function/fixture/Makefile
-  test/function/fixture/geo/Makefile
-  test/function/fixture/geo/taiyaki/Makefile
-  test/function/fixture/suggest/Makefile
-  test/function/fixture/suggest/rurema/Makefile
-  test/function/suite/Makefile
-  test/function/suite/geo/Makefile
-  test/function/suite/geo/taiyaki/Makefile
   test/benchmark/Makefile
   test/benchmark/fixtures/Makefile
   test/benchmark/fixtures/geo-select/Makefile
