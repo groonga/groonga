@@ -2041,6 +2041,13 @@ get_core_number(void)
 #define CONFIG_FILE_MAX_NAME_LENGTH 128
 #define CONFIG_FILE_MAX_VALUE_LENGTH 2048
 
+typedef enum {
+  CONFIG_FILE_SUCCESS,
+  CONFIG_FILE_FORMAT_ERROR,
+  CONFIG_FILE_IO_ERROR,
+  CONFIG_FILE_MEMORY_ERROR
+} config_file_status;
+
 /*
  * The node type of a linked list for storing values. Note that a value is
  * stored in the extra space of an object.
@@ -2060,85 +2067,115 @@ config_file_clear(void) {
   }
 }
 
-/* TODO: Error messages should be printed. */
-static int
+static config_file_status
+config_file_register(const char *path, const grn_str_getopt_opt *opts,
+                     int *flags, const char *name, size_t name_length,
+                     const char *value, size_t value_length)
+{
+  char name_buf[CONFIG_FILE_MAX_NAME_LENGTH + 3];
+  config_file_entry *entry = NULL;
+  char *args[4];
+
+  name_buf[0] = name_buf[1] = '-';
+  strcpy(name_buf + 2, name);
+
+  if (value) {
+    const size_t entry_size = sizeof(config_file_entry) + value_length + 1;
+    entry = (config_file_entry *)malloc(entry_size);
+    if (!entry) {
+      fprintf(stderr, "memory allocation failed: %u bytes\n",
+              (unsigned int)entry_size);
+      return CONFIG_FILE_MEMORY_ERROR;
+    }
+    strcpy((char *)(entry + 1), value);
+    entry->next = config_file_entry_head;
+    if (!config_file_entry_head) {
+      atexit(config_file_clear);
+    }
+    config_file_entry_head = entry;
+  }
+
+  args[0] = (char *)path;
+  args[1] = name_buf;
+  args[2] = entry ? (char *)(entry + 1) : NULL;
+  args[3] = NULL;
+  grn_str_getopt(entry ? 3 : 2, args, opts, flags);
+  return CONFIG_FILE_SUCCESS;
+}
+
+static config_file_status
 config_file_parse(const char *path, const grn_str_getopt_opt *opts,
                   int *flags, char *buf) {
   char *ptr, *name, *value;
   size_t name_length, value_length;
 
-  while (isspace(*buf)) { buf++; }
+  while (isspace(*buf)) {
+    buf++;
+  }
 
   ptr = buf;
-  while (*ptr && *ptr != '#' && *ptr != ';') { ptr++; }
-  do { *ptr-- = '\0'; } while (ptr >= buf && isspace(*ptr));
-  if (!*buf) { return 0; }
+  while (*ptr && *ptr != '#' && *ptr != ';') {
+    ptr++;
+  }
+
+  do {
+    *ptr-- = '\0';
+  } while (ptr >= buf && isspace(*ptr));
+
+  if (!*buf) {
+    return CONFIG_FILE_SUCCESS;
+  }
 
   name = ptr = buf;
-  while (*ptr && !isspace(*ptr) && *ptr != '=') { ptr++; }
-  while (isspace(*ptr)) { *ptr++ = '\0'; }
+  while (*ptr && !isspace(*ptr) && *ptr != '=') {
+    ptr++;
+  }
+  while (isspace(*ptr)) {
+    *ptr++ = '\0';
+  }
 
   name_length = strlen(name);
-  if (name_length == 0) { return 0; }
-  else if (name_length > CONFIG_FILE_MAX_NAME_LENGTH) { return 0; }
+  if (name_length == 0) {
+    return CONFIG_FILE_SUCCESS;
+  } else if (name_length > CONFIG_FILE_MAX_NAME_LENGTH) {
+    fprintf(stderr, "too long name in config file: %u bytes\n",
+            (unsigned int)name_length);
+    return CONFIG_FILE_FORMAT_ERROR;
+  }
 
   if (*ptr == '=') {
     *ptr++ = '\0';
-    while (isspace(*ptr)) { ptr++; }
+    while (isspace(*ptr)) {
+      ptr++;
+    }
     value = ptr;
   } else if (*ptr) {
-    /* Invalid format! */
-    return 0;
+    fprintf(stderr, "invalid name in config file\n");
+    return CONFIG_FILE_FORMAT_ERROR;
   } else {
     value = NULL;
   }
 
   value_length = value ? strlen(value) : 0;
-  if (value_length > CONFIG_FILE_MAX_VALUE_LENGTH) { return 0; }
-
-  {
-    char name_buf[CONFIG_FILE_MAX_NAME_LENGTH + 3];
-    config_file_entry *entry = NULL;
-    char *args[4];
-
-    name_buf[0] = name_buf[1] = '-';
-    strcpy(name_buf + 2, name);
-
-    if (value) {
-      const size_t entry_size = sizeof(config_file_entry) + value_length + 1;
-      entry = (config_file_entry *)malloc(entry_size);
-      if (!entry) {
-        fprintf(stderr, "memory allocation failed: %u bytes\n",
-                (unsigned int)entry_size);
-        return -1;
-      }
-      strcpy((char *)(entry + 1), value);
-      entry->next = config_file_entry_head;
-      if (!config_file_entry_head) {
-        atexit(config_file_clear);
-      }
-      config_file_entry_head = entry;
-    }
-
-    args[0] = (char *)path;
-    args[1] = name_buf;
-    args[2] = entry ? (char *)(entry + 1) : NULL;
-    args[3] = NULL;
-    grn_str_getopt(entry ? 3 : 2, args, opts, flags);
+  if (value_length > CONFIG_FILE_MAX_VALUE_LENGTH) {
+    fprintf(stderr, "too long value in config file: %u bytes\n",
+            (unsigned int)value_length);
+    return CONFIG_FILE_FORMAT_ERROR;
   }
 
-  return 0;
+  return config_file_register(path, opts, flags,
+                              name, name_length, value, value_length);
 }
 
-static int
+static config_file_status
 config_file_load(const char *path, const grn_str_getopt_opt *opts, int *flags)
 {
-  int return_code = 0;
+  config_file_status status = CONFIG_FILE_SUCCESS;
   char buf[CONFIG_FILE_BUF_SIZE];
   size_t length = 0;
   FILE * const file = fopen(path, "rb");
   if (!file) {
-    return -1;
+    return CONFIG_FILE_IO_ERROR;
   }
 
   for ( ; ; ) {
@@ -2146,15 +2183,15 @@ config_file_load(const char *path, const grn_str_getopt_opt *opts, int *flags)
     if (c == '\r' || c == '\n' || c == EOF) {
       if (length < sizeof(buf) - 1) {
         buf[length] = '\0';
-        if (config_file_parse(path, opts, flags, buf)) {
-          return_code = -1;
+        status = config_file_parse(path, opts, flags, buf);
+        if (status != CONFIG_FILE_SUCCESS) {
           break;
         }
       }
       length = 0;
     } else if (c == '\0') {
-      fprintf(stderr, "config file contains '\\0': %s", path);
-      return_code = -1;
+      fprintf(stderr, "prohibited '\\0' in config file: %s\n", path);
+      status = CONFIG_FILE_FORMAT_ERROR;
       break;
     } else {
       if (length < sizeof(buf) - 1) {
@@ -2169,7 +2206,7 @@ config_file_load(const char *path, const grn_str_getopt_opt *opts, int *flags)
   }
 
   fclose(file);
-  return return_code;
+  return status;
 }
 
 static const int default_port = DEFAULT_PORT;
@@ -2495,13 +2532,26 @@ main(int argc, char **argv)
   }
 
   if (config_path) {
-    if (config_file_load(config_path, opts, &mode)) {
+    const config_file_status status = config_file_load(config_path, opts, &mode);
+    if (status == CONFIG_FILE_IO_ERROR) {
       fprintf(stderr, "%s: can't open config file: %s (%s)\n",
               argv[0], config_path, strerror(errno));
       return EXIT_FAILURE;
+    } else if (status != CONFIG_FILE_SUCCESS) {
+      fprintf(stderr, "%s: failed to parse config file: %s (%s)\n",
+              argv[0], config_path,
+              (status == CONFIG_FILE_MEMORY_ERROR) ? strerror(errno) : "Invalid format");
+      return EXIT_FAILURE;
     }
   } else if (*default_config_path) {
-    config_file_load(default_config_path, opts, &mode);
+    const config_file_status status =
+        config_file_load(default_config_path, opts, &mode);
+    if (status != CONFIG_FILE_IO_ERROR) {
+      fprintf(stderr, "%s: failed to parse config file: %s (%s)\n",
+              argv[0], default_config_path,
+              (status == CONFIG_FILE_MEMORY_ERROR) ? strerror(errno) : "Invalid format");
+      return EXIT_FAILURE;
+    }
   }
   /* ignore mode option in config file */
   mode = (mode == mode_error) ? default_mode :
