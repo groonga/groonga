@@ -2226,8 +2226,12 @@ init_default_settings(void)
     }
   }
 
-  default_log_path = grn_log_path;
-  default_query_log_path = grn_qlog_path;
+  if (grn_log_path) {
+    default_log_path = grn_log_path;
+  }
+  if (grn_qlog_path) {
+    default_query_log_path = grn_qlog_path;
+  }
 
   default_config_path = getenv("GRN_CONFIG_PATH");
   if (!default_config_path) {
@@ -2354,38 +2358,75 @@ show_usage(FILE *output)
 {
   fprintf(output,
           "Usage: groonga [options...] [dest]\n"
-          "options:\n"
-          "  -n:                               create new database\n"
-          "  -e, --encoding <encoding>:        encoding for new database [none|euc|utf8|sjis|latin1|koi8r]\n"
-          "  -c:                               run in client mode\n"
-          "  -s:                               run in server mode\n"
-          "  -d:                               run in daemon mode\n"
-          "  --bind-address <ip/hostname>:     server address to bind (default: %s)\n"
-          "  -p, --port <port number>:         server port number (default: %d)\n"
-          "  -i, --server-id <ip/hostname>:    server ID address (default: %s)\n"
-          "  --protocol <protocol>:            server protocol to listen (default: gqtp)\n"
-          "  --document-root <path>:           document root path\n"
-          "  --cache-limit <limit>:            specify the max number of cache data\n"
-          "  -t, --max-threads <max threads>:  max number of free threads (default: %d)\n"
-          "  --file <path>:                    read commands from specified file\n"
-          "  -l, --log-level <log level>:      log level\n"
-          "  --log-path <path>:                specify log path\n"
-          "  --query-log-path <path>:          specify query log path\n"
-          "  --pid-path <path>:                specify pid file path (daemon mode only)\n"
-          "  --config-path <path>:             specify config file path\n"
-          "  --default-command-version <version>:\n"
-          "                                    specify default command version\n"
-          "  --default-match-escalation-threshold <threshold>:\n"
-          "                                    specify default match escalation threshold\n"
-          "      --show-config:                show config\n"
-          "  -h, --help:                       show usage\n"
-          "  --version:                        show groonga version\n"
           "\n"
-          "dest: <db pathname> [<command>] or <dest hostname>\n"
-          "  <db pathname> [<command>]: when standalone/server mode\n"
-          "  <dest hostname>: when client mode (default: \"%s\")\n",
-          default_bind_address, default_port, default_hostname,
-          default_max_num_threads, default_dest);
+          "Mode options: (default: standalone)\n"
+          " By default, groonga runs in standalone mode.\n"
+          "  -c:   run in client mode\n"
+          "  -s:   run in server mode\n"
+          "  -d:   run in daemon mode\n"
+          "\n"
+          "Database creation options:\n"
+          "  -n:                  create new database (except client mode)\n"
+          "  -e, --encoding <encoding>:\n"
+          "                       specify encoding for new database\n"
+          "                       [none|euc|utf8|sjis|latin1|koi8r] (default: %s)\n"
+          "\n"
+          "Standalone/client options:\n"
+          "      --file <path>:          read commands from specified file\n"
+          "  -p, --port <port number>:   specify server port number (client mode only)\n"
+          "                              (default: %d)\n"
+          "\n"
+          "Server/daemon options:\n"
+          "      --bind-address <ip/hostname>:\n"
+          "                                specify server address to bind\n"
+          "                                (default: %s)\n"
+          "  -p, --port <port number>:     specify server port number (default: %d)\n"
+          "  -i, --server-id <ip/hostname>:\n"
+          "                                specify server ID address (default: %s)\n"
+          "      --protocol <protocol>:    specify server protocol to listen\n"
+          "                                [gqtp|http|memcached] (default: %s)\n"
+          "      --document-root <path>:   specify document root path (http only)\n"
+          "                                (default: %s)\n"
+          "      --cache-limit <limit>:    specify max number of cache data (default: %u)\n"
+          "  -t, --max-threads <max threads>:\n"
+          "                                specify max number of threads (default: %u)\n"
+          "      --pid-path <path>:        specify file to write process ID to\n"
+          "                                (daemon mode only)\n"
+          "\n"
+          "Logging options:\n"
+          "  -l, --log-level <log level>:\n"
+          "                           specify log level (default: %d)\n"
+          "      --log-path <path>:   specify log path\n"
+          "                           (default: %s)\n"
+          "      --query-log-path <path>:\n"
+          "                           specify query log path\n"
+          "                           (default: %s)\n"
+          "\n"
+          "Common options:\n"
+          "      --config-path <path>:\n"
+          "                       specify config file path\n"
+          "                       (default: %s)\n"
+          "      --default-command-version <version>:\n"
+          "                       specify default command version (default: %d)\n"
+          "      --default-match-escalation-threshold <threshold>:\n"
+          "                       specify default match escalation threshold"
+          " (default: %" GRN_FMT_LLD ")\n"
+          "\n"
+          "      --show-config:   show config\n"
+          "  -h, --help:          show usage\n"
+          "      --version:       show groonga version\n"
+          "\n"
+          "dest:\n"
+          "  <db pathname> [<commands>]: in standalone mode\n"
+          "  <db pathname>: in server/daemon mode\n"
+          "  <dest hostname> [<commands>]: in client mode (default: %s)\n",
+          grn_enctostr(default_encoding), default_port, default_bind_address,
+          default_port, default_hostname, default_protocol,
+          default_document_root, default_cache_limit, default_max_num_threads,
+          default_log_level, default_log_path, default_query_log_path,
+          default_config_path, default_default_command_version,
+          (long long int)default_default_match_escalation_threshold,
+          default_dest);
 }
 
 int
