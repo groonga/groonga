@@ -144,6 +144,25 @@ OPTIONS
   Default:
     ``auto``
 
+``similar_search``
+  It specifies whether optional similar search is used or not
+  in suggest.
+
+  Here are available values:
+
+    ``yes``
+      Similar search is always used.
+
+    ``no``
+      Similar search is never used.
+
+    ``auto``
+      Similar search is used only when other search can't
+      find any records.
+
+  Default:
+    ``auto``
+
 RETURN VALUE
 ------------
 
