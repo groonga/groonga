@@ -731,10 +731,6 @@ main(int argc, char **argv)
 
     grn_init();
 
-    signal(SIGTERM, signal_handler);
-    signal(SIGINT, signal_handler);
-    signal(SIGQUIT, signal_handler);
-
     ctx = grn_ctx_open(0);
     if (!(grn_db_open(ctx, argv[0]))) {
       print_error("cannot open database.");
@@ -757,6 +753,11 @@ main(int argc, char **argv)
               print_error("cannot bind zmq_socket.");
             } else {
               send_thd_data thd;
+
+              signal(SIGTERM, signal_handler);
+              signal(SIGINT, signal_handler);
+              signal(SIGQUIT, signal_handler);
+
               zmq_setsockopt(zmq_recv_sock, ZMQ_SUBSCRIBE, "", 0);
               thd.db_path = argv[0];
               thd.send_endpoint = send_endpoint;
