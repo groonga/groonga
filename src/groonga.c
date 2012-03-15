@@ -2546,7 +2546,7 @@ main(int argc, char **argv)
   } else if (*default_config_path) {
     const config_file_status status =
         config_file_load(default_config_path, opts, &mode);
-    if (status != CONFIG_FILE_IO_ERROR) {
+    if (status != CONFIG_FILE_SUCCESS && status != CONFIG_FILE_IO_ERROR) {
       fprintf(stderr, "%s: failed to parse config file: %s (%s)\n",
               argv[0], default_config_path,
               (status == CONFIG_FILE_MEMORY_ERROR) ? strerror(errno) : "Invalid format");
