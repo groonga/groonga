@@ -480,7 +480,7 @@ grn_pat_cache_enable(grn_ctx *ctx, grn_pat *pat, uint32_t cache_size)
   return GRN_SUCCESS;
 }
 
-grn_rc
+void
 grn_pat_cache_disable(grn_ctx *ctx, grn_pat *pat)
 {
   if (pat->cache) {
@@ -488,7 +488,6 @@ grn_pat_cache_disable(grn_ctx *ctx, grn_pat *pat)
     pat->cache_size = 0;
     pat->cache = NULL;
   }
-  return ctx->rc;
 }
 
 grn_pat *
