@@ -467,17 +467,17 @@ grn_pat_cache_enable(grn_ctx *ctx, grn_pat *pat, uint32_t cache_size)
 {
   if (pat->cache || pat->cache_size) {
     ERR(GRN_INVALID_ARGUMENT, "cache is already enabled");
-    goto exit;
+    return ctx->rc;
   }
   if (cache_size & (cache_size - 1)) {
     ERR(GRN_INVALID_ARGUMENT, "cache_size(%u) must be a power of two", cache_size);
-    goto exit;
+    return ctx->rc;
   }
-  if ((pat->cache = GRN_CALLOC(cache_size * sizeof(grn_id)))) {
-    pat->cache_size = cache_size;
+  if (!(pat->cache = GRN_CALLOC(cache_size * sizeof(grn_id)))) {
+    return ctx->rc;
   }
-exit :
-  return ctx->rc;
+  pat->cache_size = cache_size;
+  return GRN_SUCCESS;
 }
 
 grn_rc
