@@ -2044,8 +2044,9 @@ get_core_number(void)
 typedef enum {
   CONFIG_FILE_SUCCESS,
   CONFIG_FILE_FORMAT_ERROR,
-  CONFIG_FILE_IO_ERROR,
-  CONFIG_FILE_MEMORY_ERROR
+  CONFIG_FILE_FOPEN_ERROR,
+  CONFIG_FILE_MALLOC_ERROR,
+  CONFIG_FILE_ATEXIT_ERROR
 } config_file_status;
 
 /*
@@ -2085,12 +2086,15 @@ config_file_register(const char *path, const grn_str_getopt_opt *opts,
     if (!entry) {
       fprintf(stderr, "memory allocation failed: %u bytes\n",
               (unsigned int)entry_size);
-      return CONFIG_FILE_MEMORY_ERROR;
+      return CONFIG_FILE_MALLOC_ERROR;
     }
     strcpy((char *)(entry + 1), value);
     entry->next = config_file_entry_head;
     if (!config_file_entry_head) {
-      atexit(config_file_clear);
+      if (atexit(config_file_clear)) {
+        free(entry);
+        return CONFIG_FILE_ATEXIT_ERROR;
+      }
     }
     config_file_entry_head = entry;
   }
@@ -2175,7 +2179,7 @@ config_file_load(const char *path, const grn_str_getopt_opt *opts, int *flags)
   size_t length = 0;
   FILE * const file = fopen(path, "rb");
   if (!file) {
-    return CONFIG_FILE_IO_ERROR;
+    return CONFIG_FILE_FOPEN_ERROR;
   }
 
   for ( ; ; ) {
@@ -2533,23 +2537,23 @@ main(int argc, char **argv)
 
   if (config_path) {
     const config_file_status status = config_file_load(config_path, opts, &mode);
-    if (status == CONFIG_FILE_IO_ERROR) {
+    if (status == CONFIG_FILE_FOPEN_ERROR) {
       fprintf(stderr, "%s: can't open config file: %s (%s)\n",
               argv[0], config_path, strerror(errno));
       return EXIT_FAILURE;
     } else if (status != CONFIG_FILE_SUCCESS) {
       fprintf(stderr, "%s: failed to parse config file: %s (%s)\n",
               argv[0], config_path,
-              (status == CONFIG_FILE_MEMORY_ERROR) ? strerror(errno) : "Invalid format");
+              (status == CONFIG_FILE_MALLOC_ERROR) ? strerror(errno) : "Invalid format");
       return EXIT_FAILURE;
     }
   } else if (*default_config_path) {
     const config_file_status status =
         config_file_load(default_config_path, opts, &mode);
-    if (status != CONFIG_FILE_SUCCESS && status != CONFIG_FILE_IO_ERROR) {
+    if (status != CONFIG_FILE_SUCCESS && status != CONFIG_FILE_FOPEN_ERROR) {
       fprintf(stderr, "%s: failed to parse config file: %s (%s)\n",
               argv[0], default_config_path,
-              (status == CONFIG_FILE_MEMORY_ERROR) ? strerror(errno) : "Invalid format");
+              (status == CONFIG_FILE_MALLOC_ERROR) ? strerror(errno) : "Invalid format");
       return EXIT_FAILURE;
     }
   }
