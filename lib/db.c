@@ -2720,6 +2720,22 @@ grn_table_search(grn_ctx *ctx, grn_obj *table, const void *key, uint32_t key_siz
             if (id) { grn_table_add(ctx, res, &id, sizeof(grn_id), NULL); }
           }
           break;
+        case GRN_OP_TERM_EXTRACT :
+          {
+            int len;
+            grn_id tid;
+            const char *sp = key;
+            const char *se = sp + key_size;
+            for (; sp < se; sp += len) {
+              if ((tid = grn_dat_lcp_search(ctx, dat, sp, se - sp))) {
+                grn_table_add(ctx, res, &tid, sizeof(grn_id), NULL);
+                /* todo : nsubrec++ if GRN_OBJ_TABLE_SUBSET assigned */
+              }
+              if (!(len = grn_charlen(ctx, sp, se))) { break; }
+            }
+          }
+          // todo : support op;
+          break;
         default :
           rc = GRN_INVALID_ARGUMENT;
           ERR(rc, "invalid mode %d", mode);
