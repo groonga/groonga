@@ -2544,7 +2544,7 @@ main(int argc, char **argv)
     } else if (status != CONFIG_FILE_SUCCESS) {
       fprintf(stderr, "%s: failed to parse config file: %s (%s)\n",
               argv[0], config_path,
-              (status == CONFIG_FILE_MALLOC_ERROR) ? strerror(errno) : "Invalid format");
+              (status == CONFIG_FILE_FORMAT_ERROR) ? "Invalid format" : strerror(errno));
       return EXIT_FAILURE;
     }
   } else if (*default_config_path) {
@@ -2553,7 +2553,7 @@ main(int argc, char **argv)
     if (status != CONFIG_FILE_SUCCESS && status != CONFIG_FILE_FOPEN_ERROR) {
       fprintf(stderr, "%s: failed to parse config file: %s (%s)\n",
               argv[0], default_config_path,
-              (status == CONFIG_FILE_MALLOC_ERROR) ? strerror(errno) : "Invalid format");
+              (status == CONFIG_FILE_FORMAT_ERROR) ? "Invalid format" : strerror(errno));
       return EXIT_FAILURE;
     }
   }
