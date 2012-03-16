@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-16 17:23\n"
+"POT-Creation-Date: 2012-03-16 18:54\n"
 "PO-Revision-Date: 2011-11-27 22:36+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -788,8 +788,8 @@ msgstr ""
 #: ../../../source/tutorial/introduction.txt:198
 msgid "'_id:1' specifies to search a record whose ID is 1."
 msgstr ""
-"queryパラメータに与えた「_id:1」は、'_id'という名前のカラムに'1'とい"
-"う値が入っているレコードを検索する、という意味です。"
+"queryパラメータに与えた「_id:1」は、'_id'という名前のカラムに'1'という値が"
+"入っているレコードを検索する、という意味です。"
 
 #: ../../../source/tutorial/introduction.txt:200
 msgid "Next, let's search a record by a primary key."
@@ -801,9 +801,9 @@ msgid ""
 "'_key:\\\"http://example.org/\\\"' specifies to search a record whose "
 "primary key is \"http://example.org/\"."
 msgstr ""
-"queryパラメータに与えた「_key:\\\"http://example.org/\\\"」"
-"は、'_key'という名前のカラムに'\"http://example.org/\"'という値が入っているレ"
-"コードを検索する、という意味です。"
+"queryパラメータに与えた「_key:\\\"http://example.org/\\\"」は、'_key'という名"
+"前のカラムに'\"http://example.org/\"'という値が入っているレコードを検索する、"
+"という意味です。"
 
 # 889b663bc7ff431f888baf85574207d5
 #: ../../../source/tutorial/introduction.txt:209
@@ -899,9 +899,9 @@ msgstr ""
 "offsetパラメータには、検索結果を返す始点を指定します。1件目から結果を返す場合"
 "には、0を指定します。limitパラメータには、検索結果の表示件数を指定します。"
 
-# 12e5037843f446c6a307a2e5c54237d7
+# d8bf03692e02439bb1c43be9b811e2b9
 #: ../../../source/tutorial/introduction.txt:252
-msgid "Sort"
+msgid "Sort data"
 msgstr "並び替え"
 
 # cada70fbbe534c64a949a3c07a6b0039
