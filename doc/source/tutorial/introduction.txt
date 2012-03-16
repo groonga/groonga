@@ -216,7 +216,7 @@ It's time to make a full text search. You can make a full text search query with
 
 This command searches records whose 'title' column contains a string 'this'. In this case, only one record matches this query. Note that the lower case query 'this' matches a capitalized 'This' in the 1st record because 'KEY_NORMALIZE' was specified in lexicon column creation.
 
-The 'select' command has an optional parameter 'match_columns'. This parameter specifies default target columns and it is used when target columns are not specified in a query.[1]_
+The 'select' command has an optional parameter 'match_columns'. This parameter specifies default target columns and it is used when target columns are not specified in a query. [1]_
 
 A combination of '--match_columns title' and '--query this' brings you the same result that '--query title:@this' does.
 
