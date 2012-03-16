@@ -21,3 +21,6 @@ images_DATA =							\
 	rroonga-icon.svg					\
 	rroonga-logo-foreground-white.svg			\
 	rroonga-logo.svg
+
+EXTRA_DIST =					\
+	$(images_DATA)
