@@ -248,8 +248,8 @@ An 'offset' parameter specifies the starting point and a 'limit' parameter speci
 .. select --table Site --offset 3 --limit 3
 .. select --table Site --offset 7 --limit 3
 
-Sort
-----
+Sort data
+---------
 
 A 'select' command sorts its result when used with a 'sortby' parameter.
 
