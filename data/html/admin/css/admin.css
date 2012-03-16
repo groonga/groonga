@@ -30,7 +30,7 @@ input {
 
 #header {
   height: 80px;
-  background: url(/images/groonga.png) no-repeat left bottom;
+  background: url(/images/groonga.png) no-repeat left center;
 }
 
 #side-menu {
