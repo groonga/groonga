@@ -10,6 +10,12 @@ if test -z "${datarootdir}"; then
    AC_SUBST(datarootdir)
 fi
 
+# for Autoconf 2.59 or earlier.
+if test -z "${docdir}"; then
+   docdir="\${datarootdir}/doc/\${PACKAGE_TARNAME}"
+   AC_SUBST(docdir)
+fi
+
 AC_CANONICAL_HOST
 AC_DEFINE_UNQUOTED(HOST_CPU, ["$host_cpu"], [host CPU])
 AC_DEFINE_UNQUOTED(HOST_OS, ["$host_os"], [host OS])
