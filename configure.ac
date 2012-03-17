@@ -4,7 +4,7 @@ AM_CONFIG_HEADER(config.h)
 
 AM_INIT_AUTOMAKE(tar-pax)
 
-# for Autoconf 2.60 earlier.
+# for Autoconf 2.60 or earlier.
 if test -z "${datarootdir}"; then
    datarootdir="\${prefix}/share"
    AC_SUBST(datarootdir)
