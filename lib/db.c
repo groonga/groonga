@@ -5735,20 +5735,69 @@ exit :
 static void
 build_index(grn_ctx *ctx, grn_obj *obj)
 {
-  grn_obj *src, *target;
+  grn_obj *src, **cp, **col, *target;
   grn_id *s = DB_OBJ(obj)->source;
   if (!(DB_OBJ(obj)->source_size) || !s) { return; }
   if ((src = grn_ctx_at(ctx, *s))) {
     target = GRN_OBJ_TABLEP(src) ? src : grn_ctx_at(ctx, src->header.domain);
     if (target) {
-      uint64_t sparsity = 10;
-      if (getenv("GRN_INDEX_SPARSITY")) {
-        uint64_t v;
-        errno = 0;
-        v = strtoull(getenv("GRN_INDEX_SPARSITY"), NULL, 0);
-        if (!errno) { sparsity = v; }
+      int i, ncol = DB_OBJ(obj)->source_size / sizeof(grn_id);
+      grn_obj_flags flags;
+      grn_ii *ii = (grn_ii *)obj;
+      grn_bool use_grn_ii_build;
+      grn_table_get_info(ctx, ii->lexicon, &flags, NULL, NULL);
+      switch (flags & GRN_OBJ_TABLE_TYPE_MASK) {
+      case GRN_OBJ_TABLE_PAT_KEY :
+      case GRN_OBJ_TABLE_DAT_KEY :
+        use_grn_ii_build = GRN_TRUE;
+        break;
+      default :
+        use_grn_ii_build = GRN_FALSE;
       }
-      grn_ii_build(ctx, (grn_ii *)obj, sparsity);
+      if ((col = GRN_MALLOC(ncol * sizeof(grn_obj *)))) {
+        for (cp = col, i = ncol; i; s++, cp++, i--) {
+          if (!(*cp = grn_ctx_at(ctx, *s))) {
+            ERR(GRN_INVALID_ARGUMENT, "source invalid, n=%d",i);
+            GRN_FREE(col);
+            return;
+          }
+          if (GRN_OBJ_TABLEP(grn_ctx_at(ctx, DB_OBJ(*cp)->range))) {
+            use_grn_ii_build = GRN_FALSE;
+          }
+        }
+        if (use_grn_ii_build) {
+          uint64_t sparsity = 10;
+          if (getenv("GRN_INDEX_SPARSITY")) {
+            uint64_t v;
+            errno = 0;
+            v = strtoull(getenv("GRN_INDEX_SPARSITY"), NULL, 0);
+            if (!errno) { sparsity = v; }
+          }
+          grn_ii_build(ctx, ii, sparsity);
+        } else {
+          grn_table_cursor  *tc;
+          if ((tc = grn_table_cursor_open(ctx, target, NULL, 0, NULL, 0,
+                                          0, -1, GRN_CURSOR_BY_ID))) {
+            grn_id id;
+            grn_obj rv;
+            GRN_TEXT_INIT(&rv, 0);
+            while ((id = grn_table_cursor_next_inline(ctx, tc)) != GRN_ID_NIL) {
+              for (cp = col, i = ncol; i; i--, cp++) {
+                GRN_BULK_REWIND(&rv);
+                if (GRN_OBJ_TABLEP(*cp)) {
+                  grn_table_get_key2(ctx, *cp, id, &rv);
+                } else {
+                  grn_obj_get_value(ctx, *cp, id, &rv);
+                }
+                call_hook_for_build(ctx, *cp, id, &rv, 0);
+              }
+            }
+            GRN_OBJ_FIN(ctx, &rv);
+            grn_table_cursor_close(ctx, tc);
+          }
+        }
+        GRN_FREE(col);
+      }
     } else {
       ERR(GRN_INVALID_ARGUMENT, "invalid target");
     }
