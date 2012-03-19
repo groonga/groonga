@@ -1,12 +1,12 @@
 Execution example::
 
-  http://[IPまたはホスト名]:[ポート番号]/d/status
-  実行される処理：
+  http://[HOST_NAME_OR_IP_ADDRESS]:[PORT_NUMBER]/d/status
+  Executed command:
   > status
   [[0,1317212813.33982,0.000109691],{"alloc_count":184,"starttime":1317212806,"uptime":7,"version":"1.2.5-84-g5c190df","n_queries":14,"cache_hit_rate":0.0,"command_version":1,"default_command_version":1,"max_command_version":2}]
-  
-  http://[IPまたはホスト名]:[ポート番号]/d/select?table=Site&query=title:@this
-  実行される処理：
+
+  http://[HOST_NAME_OR_IP_ADDRESS]:[PORT_NUMBER]/d/select?table=Site&query=title:@this
+  Executed command:
   > select --table Site --query title:@this
   [[0,1317212813.54112,6.7993e-05],[[[1],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"]],[1,"http://example.org/","This is test record 1!"]]]]
   
