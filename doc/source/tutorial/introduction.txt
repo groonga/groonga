@@ -38,7 +38,7 @@ Form::
 
 DB_PATH_NAME specifies the path of a target database.
 
-If COMMAND is specified, groonga executes COMMAND and returns the result. Otherwise, groonga starts in interactive mode that reads commands from the standard input and execute them one by one. This tutorial focuses on the interactive mode.
+If COMMAND is specified, groonga executes COMMAND and returns the result. Otherwise, groonga starts in interactive mode that reads commands from the standard input and executes them one by one. This tutorial focuses on the interactive mode.
 
 Let's try to see the status of a groonga process by using a :doc:`/commands/status` command.
 
