@@ -7,25 +7,43 @@
 .. groonga-command
 .. database: tutorial
 
-How to use groonga with network
-===============================
+Remote access
+=============
 
-You can use groonga with network. When you run groonga by using the groonga original protocol or HTTP, groonga accepts connection for network.
+You can use groonga as a server which allows remote access. Groonga supports the original protocol (gqtp), the memcached binary protocol and HTTP.
 
-Connect with groonga's original protocol
-----------------------------------------
+Groonga query transfer protocol (gqtp)
+--------------------------------------
 
-Run groonga daemon
-^^^^^^^^^^^^^^^^^^
+How to run a gqtp server
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+Groonga has a special protocol, named groonga query transfer ptorotocl (gqtp), for remote access to a database. The following form shows how to run groonga as a gqtp server.
+
+Form::
+
+  groonga [-p PORT_NUMBER] -s DB_PATH_NAME
+
+The '-s' option specifies to run groonga as a server. DB_PATH_NAME specifies the path of the existing database to be hosted. The '-p' option and its argument, PORT_NUMBER, specify the port number of the server. The default port number is 10041, which is used when you don't specify PORT_NUMBER.
+
+The following command runs a server that listens on the default port number. The server accepts operations to the specified database, "/tmp/groonga-databases/introduction.db".
+
+Execution example::
+
+  % groonga -s /tmp/groonga-databases/introduction.db
+  Ctrl-c
+  %
+
+How to run a gqtp daemon
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+You can also run a gqtp server as a daemon by using the '-d' option, instead of the '-s' option.
 
 Form::
 
   groonga [-p PORT_NUMBER] -d DB_PATH_NAME
 
-The DB_PATH_NAME is set the full-path of existing database.
-With this form, you can run groonga as a daemon and connect by
-with groonga original protocol on PORT_NUMBER.
-(The port number is 10041 when you don't specify PORT_NUMBER.)
+A groonga daemon prints its process ID as follows. In this example, the process ID is 12345. Then, the daemon opens a specified database and accepts operations to that database.
 
 Execution example::
 
@@ -33,20 +51,16 @@ Execution example::
   12345
   %
 
-Groonga shows its process ID on daemon mode.
+How to run a gqtp client
+^^^^^^^^^^^^^^^^^^^^^^^^
 
-Connect to groonga server
-^^^^^^^^^^^^^^^^^^^^^^^^^
+You can run groonga as a gqtp client as follows:
 
 Form::
 
   groonga [-p PORT_NUMBER] -c [HOST_NAME_OR_IP_ADDRESS]
 
-This command connects to groonga server running at specified HOST_NAME_OR_IP_ADDRESS.
-
-When you don't specify HOST_NAME_OR_IP_ADDRESS, this command connects to groonga server running at localhost. When you don't specify PORT_NUMBER, 10041 is used.
-
-Groonga runs in interactive mode after connect to groonga server successfully. Groonga reads command from standard input and evaluates it repeatedly.
+This command establishes a connection with a gqtp server and then enters into interactive mode. HOST_NAME_OR_IP_ADDRESS specifies the hostname or the IP address of the server. If not specifed, groonga uses the default hostname "localhost". The '-p' option and its argument, PORT_NUMBER, specify the port number of the server. If not specified, groonga uses the default port number 10041.
 
 .. groonga-command
 .. include:: ../example/tutorial/network-1.log
@@ -55,10 +69,12 @@ Groonga runs in interactive mode after connect to groonga server successfully. G
 .. .. > ctrl-d
 .. .. %
 
-Terminate groonga daemon
-^^^^^^^^^^^^^^^^^^^^^^^^
+In interactive mode, groonga reads commands from the standard input and executes them one by one.
 
-You can terminate groonga daemon with shutdown command.
+How to terminate a gqtp server
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+You can terminate a gqtp server with a :doc:`/commands/shutdown` command.
 
 .. groonga-command
 .. include:: ../example/tutorial/network-2.log
@@ -66,28 +82,44 @@ You can terminate groonga daemon with shutdown command.
 .. .. > shutdown
 .. .. %
 
-Connect with HTTP
------------------
+Memcached binary protocol
+-------------------------
 
-You need to run groonga in HTTP protocol mode when you want to use groonga via HTTP.
+Groonga supports the memcached binary protocol. The following form shows how to run groonga as a memcached binary protocol server daemon.
+
+Form::
+
+  groonga [-p PORT_NUMBER] -d --protocol memcached DB_PATH_NAME
+
+The '--protocol' option and its argument specify the protocol of the server. "memcached" specifies to use the memcached binary protocol.
+
+Hypertext transfer protocol (HTTP)
+-----------------------------------
+
+How to run an HTTP server
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Groonga supports the hypertext transfer protocol (HTTP). The following form shows how to run groonga as an HTTP server daemon.
 
 Form::
 
   groonga [-p PORT_NUMBER] -d --protocol http DB_PATH_NAME
 
-`--protocol` option specifies a protocol of groonga server. `http` means that groonga accepts connections via HTTP.
+The '--protocol' option and its argument specify the protocol of the server. "http" specifies to use HTTP.
 
-Administration tool based on HTML
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The following command runs an HTTP server that listens on the port number 80.
 
-You can access administration tool based on HTML at `http://[HOST_NAME_OR_IP_ADDRESS]:[PORT_NUMBER]/` after the above command is ran. Your browser must enable JavaScript.
+Execution example::
 
-Run command with HTTP
-^^^^^^^^^^^^^^^^^^^^^
+  % groonga -p 80 -d --protocol http /tmp/groonga-databases/introduction.db
+  %
 
-You can run command at `/d/COMMAND_NAME` when groonga is ran in HTTP protocol mode.
+How to send a command to an HTTP server
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Command options are passed as HTTP's GET parameters. They are in `?OPTION=VALUE&OPTION=VALUE&...` form.
+You can send a command to an HTTP server by sending a GET request to `/d/COMMAND_NAME`. Command options can be passed as parameters of the GET request. The format is `?OPTION=VALUE&OPTION=VALUE&...`.
+
+The following example shows how to send commands to an HTTP server.
 
 .. groonga-command
 .. include:: ../example/tutorial/network-3.log
@@ -99,8 +131,12 @@ Command options are passed as HTTP's GET parameters. They are in `?OPTION=VALUE&
 .. .. Executed command:
 .. select --table Site --query title:@this
 
+Administration tool (HTTP)
+--------------------------
 
-Security
---------
+An HTTP server of groonga provides a browser based administration tool that makes database management easy. After starting an HTTP server, you can use the administration tool by accessing `http://[HOST_NAME_OR_IP_ADDRESS]:[PORT_NUMBER]/`. Note that Javascript must be enabled for the tool to work properly.
 
-Network service of groonga doesn't support authentication. Everyone can view and modify the database. We recommend that you restrict client accesses by IP address. You can use iptables or any similar tool for it.
+Security issues
+---------------
+
+Groonga servers don't support user authentication. Everyone can view and modify databases hosted by groonga servers. You are recommended to restrict IP addresses that can access groonga servers. You can use iptables or similar for this purpose.
