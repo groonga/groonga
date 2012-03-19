@@ -744,6 +744,31 @@ grn_log_reopen(grn_ctx *ctx)
 static grn_obj grn_true_, grn_false_, grn_null_;
 grn_obj *grn_true, *grn_false, *grn_null;
 
+static void
+check_overcommit_memory(grn_ctx *ctx)
+{
+  FILE *file;
+  int value;
+  file = fopen("/proc/sys/vm/overcommit_memory", "r");
+  if (!file) { return; }
+  value = fgetc(file);
+  if (value != '1') {
+    GRN_LOG(ctx, GRN_LOG_NOTICE,
+            "vm.overcommit_memory kernel parameter should be 1: <%c>", value);
+    GRN_LOG(ctx, GRN_LOG_NOTICE,
+            "Some processings with vm.overcommit_memory != 1 "
+            "may break DB under low memory condition.");
+    GRN_LOG(ctx, GRN_LOG_NOTICE,
+            "To set vm.overcommit_memory to 1");
+    GRN_LOG(ctx, GRN_LOG_NOTICE,
+            "add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and "
+            "restart your system or");
+    GRN_LOG(ctx, GRN_LOG_NOTICE,
+            "run 'sudo /sbin/sysctl vm.overcommit_memory=1' command.");
+  }
+  fclose(file);
+}
+
 grn_rc
 grn_init(void)
 {
@@ -840,6 +865,7 @@ grn_init(void)
   */
   grn_cache_init();
   GRN_LOG(ctx, GRN_LOG_NOTICE, "grn_init");
+  check_overcommit_memory(ctx);
   return rc;
 }
 
