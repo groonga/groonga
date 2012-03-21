@@ -437,8 +437,8 @@ typedef int grn_cond;
 # ifdef HAVE_MKOSTEMP
 #  define GRN_MKOSTEMP mkostemp
 # else /* HAVE_MKOSTEMP */
-#  define GRN_MKOSTEMP(template,flags) \
-  (mktemp(template), GRN_OPEN((template),flags))
+#  define GRN_MKOSTEMP(template,flags,mode) \
+  (mktemp(template), GRN_OPEN((template),flags,mode))
 # endif /* HAVE_MKOSTEMP */
 
 #elif (defined(WIN32) || defined (_WIN64)) /* __GNUC__ */
