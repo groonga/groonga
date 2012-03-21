@@ -170,15 +170,18 @@ enum ErrorCode {
 class Exception : public std::exception {
  public:
   Exception() throw()
-      : file_(""),
+      : std::exception(),
+        file_(""),
         line_(-1),
         what_("") {}
   Exception(const char *file, int line, const char *what) throw()
-      : file_(file),
+      : std::exception(),
+        file_(file),
         line_(line),
         what_((what != NULL) ? what : "") {}
   Exception(const Exception &ex) throw()
-      : file_(ex.file_),
+      : std::exception(ex),
+        file_(ex.file_),
         line_(ex.line_),
         what_(ex.what_) {}
   virtual ~Exception() throw() {}
