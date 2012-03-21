@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-16 18:54\n"
+"POT-Creation-Date: 2012-03-21 16:55\n"
 "PO-Revision-Date: 2011-11-27 22:36+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -80,7 +80,9 @@ msgstr ""
 #: ../../../source/example/tutorial/search-6.log:1
 #: ../../../source/example/tutorial/search-7.log:1
 #: ../../../source/tutorial/introduction.txt:26
-#: ../../../source/tutorial/network.txt:30
+#: ../../../source/tutorial/network.txt:31
+#: ../../../source/tutorial/network.txt:48
+#: ../../../source/tutorial/network.txt:112
 msgid "Execution example::"
 msgstr "実行例::"
 
@@ -385,9 +387,11 @@ msgstr ""
 
 #: ../../../source/tutorial/introduction.txt:18
 #: ../../../source/tutorial/introduction.txt:35
-#: ../../../source/tutorial/network.txt:21
-#: ../../../source/tutorial/network.txt:41
-#: ../../../source/tutorial/network.txt:74
+#: ../../../source/tutorial/network.txt:23
+#: ../../../source/tutorial/network.txt:42
+#: ../../../source/tutorial/network.txt:59
+#: ../../../source/tutorial/network.txt:90
+#: ../../../source/tutorial/network.txt:104
 msgid "Form::"
 msgstr "書式::"
 
@@ -427,7 +431,7 @@ msgstr "操作対象のデータベースのパスをDB_PATH_NAMEに指定しま
 msgid ""
 "If COMMAND is specified, groonga executes COMMAND and returns the result. "
 "Otherwise, groonga starts in interactive mode that reads commands from the "
-"standard input and execute them one by one. This tutorial focuses on the "
+"standard input and executes them one by one. This tutorial focuses on the "
 "interactive mode."
 msgstr ""
 "COMMAND が指定された場合、COMMAND を実行した後、実行結果を返します。指定され"
@@ -1408,146 +1412,249 @@ msgid ""
 "していることがわかります。"
 msgstr ""
 
+# e667839575dd4575a23036acbd75f3fd
 #: ../../../source/tutorial/network.txt:11
-msgid "How to use groonga with network"
-msgstr "ネットワークを通じた利用"
+msgid "Remote access"
+msgstr "リモートアクセス"
 
+# aba6954242c14501bd3a285d08a7f9b8
 #: ../../../source/tutorial/network.txt:13
 msgid ""
-"You can use groonga with network. When you run groonga by using the groonga "
-"original protocol or HTTP, groonga accepts connection for network."
+"You can use groonga as a server which allows remote access. Groonga supports "
+"the original protocol (gqtp), the memcached binary protocol and HTTP."
 msgstr ""
-"groongaはネットワークを通じて利用することができます。groonga独自プロトコルも"
-"しくはHTTPのどちらかを選択してgroongaを起動することにより、groongaはネット"
-"ワーク接続を待ち受けます。"
+"groongaをサーバとして起動することにより、ネットワークを介してデータベースにア"
+"クセスできるようになります。groongaがサポートしているプロトコルは、groongaの"
+"専用プロトコルであるgqtp、memcachedバイナリプロトコル、HTTPの三種類です。"
 
+# 25314998f8a44c8ca314c0ce7808341f
 #: ../../../source/tutorial/network.txt:16
-msgid "Connect with groonga's original protocol"
-msgstr "groonga専用プロトコルによる通信"
+msgid "Groonga query transfer protocol (gqtp)"
+msgstr "groonga専用プロトコル（gqtp）"
 
 #: ../../../source/tutorial/network.txt:19
-msgid "Run groonga daemon"
-msgstr "groongaデーモンの起動"
+msgid "How to run a gqtp server"
+msgstr "gqtpサーバの起動"
 
-#: ../../../source/tutorial/network.txt:25
+# d6b116c322594360b727ea6cbc5da918
+#: ../../../source/tutorial/network.txt:21
 msgid ""
-"The DB_PATH_NAME is set the full-path of existing database. With this form, "
-"you can run groonga as a daemon and connect by with groonga original "
-"protocol on PORT_NUMBER. (The port number is 10041 when you don't specify "
-"PORT_NUMBER.)"
+"Groonga has a special protocol, named groonga query transfer ptorotocl "
+"(gqtp), for remote access to a database. The following form shows how to run "
+"groonga as a gqtp server."
 msgstr ""
-"既存のデータベースのフルパス名をDBパス名に指定します。groongaがデーモンモード"
-"で起動し、指定したポート番号でgroongaの専用プロトコルを用いた通信をすることが"
-"できます。(ポート番号を省略した場合は10041が使用されます)"
+"groongaには、専用のプロトコルであるgqtpが存在します。gqtpを用いることにより、"
+"データベースへとリモートアクセスすることができます。以下の書式はgqtpサーバの"
+"起動方法を示しています。"
 
-#: ../../../source/tutorial/network.txt:36
-msgid "Groonga shows its process ID on daemon mode."
-msgstr "デーモンモードで起動後、プロセス番号が表示されます。"
-
-#: ../../../source/tutorial/network.txt:39
-msgid "Connect to groonga server"
-msgstr "groongaサーバへの接続"
-
-#: ../../../source/tutorial/network.txt:45
+# ec85c284500e4549b3ad9b977c5ca2aa
+#: ../../../source/tutorial/network.txt:27
 msgid ""
-"This command connects to groonga server running at specified "
-"HOST_NAME_OR_IP_ADDRESS."
-msgstr "対象ホストで動作しているgroongaサーバに接続します。"
+"The '-s' option specifies to run groonga as a server. DB_PATH_NAME specifies "
+"the path of the existing database to be hosted. The '-p' option and its "
+"argument, PORT_NUMBER, specify the port number of the server. The default "
+"port number is 10041, which is used when you don't specify PORT_NUMBER."
+msgstr ""
+"'-s'オプションはgroongaをサーバとして起動するためのオプションです。"
+"DB_PATH_NAMEには既存のデータベースのパスを指定します。'-p'オプションとその引"
+"数により、サーバのポート番号を指定することができます。ポート番号を省略した場"
+"合は10041が使用されます。"
 
-#: ../../../source/tutorial/network.txt:47
+# 0bbeedf7a0ce4fb98f0b9af07d086a93
+#: ../../../source/tutorial/network.txt:29
 msgid ""
-"When you don't specify HOST_NAME_OR_IP_ADDRESS, this command connects to "
-"groonga server running at localhost. When you don't specify PORT_NUMBER, "
-"10041 is used."
+"The following command runs a server that listens on the default port number. "
+"The server accepts operations to the specified database, \"/tmp/groonga-"
+"databases/introduction.db\"."
 msgstr ""
-"対象ホスト名を省略した場合はlocalhostに対して接続し、対象ポート番号を省略した"
-"場合は10041ポートに対して接続します。"
+"以下のコマンドにより、デフォルトのポート番号で待ち受けるサーバを起動すること"
+"ができます。この例では、\"/tmp/groonga-databases/introduction.db\"に対する操"
+"作を受け付けます。"
 
-#: ../../../source/tutorial/network.txt:49
+# 5c086abd44eb4e40be44306cf06e1f13
+#: ../../../source/tutorial/network.txt:38
+msgid "How to run a gqtp daemon"
+msgstr "gqtpデーモンの起動"
+
+# aba6954242c14501bd3a285d08a7f9b8
+#: ../../../source/tutorial/network.txt:40
 msgid ""
-"Groonga runs in interactive mode after connect to groonga server "
-"successfully. Groonga reads command from standard input and evaluates it "
-"repeatedly."
+"You can also run a gqtp server as a daemon by using the '-d' option, instead "
+"of the '-s' option."
 msgstr ""
-"接続に成功すると対話モードに入り、標準入力からコマンドを読み込んで順次実行し"
-"ます。"
+"gqtpサーバはデーモンとして起動することができます。オプションとして、'-s'の代"
+"わりに'-d'を与えてください。"
 
-#: ../../../source/tutorial/network.txt:59
-msgid "Terminate groonga daemon"
-msgstr "groongaデーモンの終了"
-
-#: ../../../source/tutorial/network.txt:61
-msgid "You can terminate groonga daemon with shutdown command."
+# 3c5469f173484ec8ba39c2245ed9455a
+#: ../../../source/tutorial/network.txt:46
+msgid ""
+"A groonga daemon prints its process ID as follows. In this example, the "
+"process ID is 12345. Then, the daemon opens a specified database and accepts "
+"operations to that database."
 msgstr ""
-"groongaデーモンにshutdownコマンドを発行することにより、終了させることができま"
-"す。"
+"groongaをデーモンとして起動したときは、デーモンのプロセスIDが表示されます。以"
+"下の例では、12345というプロセスIDが表示されています。サーバとして起動した場合"
+"と同様に、指定されたデータベースへの操作を受け付けます。"
 
-#: ../../../source/tutorial/network.txt:70
-msgid "Connect with HTTP"
-msgstr "HTTPによる通信"
+# 5c086abd44eb4e40be44306cf06e1f13
+#: ../../../source/tutorial/network.txt:55
+msgid "How to run a gqtp client"
+msgstr "gqtpサーバへの接続"
+
+# f5ec19849c3d416b9704b474f9716929
+#: ../../../source/tutorial/network.txt:57
+msgid "You can run groonga as a gqtp client as follows:"
+msgstr "gtqpサーバに接続するクライアントは、以下のように起動します。"
+
+# abf4e97bb050457ba3d7c2543db16c19
+#: ../../../source/tutorial/network.txt:63
+msgid ""
+"This command establishes a connection with a gqtp server and then enters "
+"into interactive mode. HOST_NAME_OR_IP_ADDRESS specifies the hostname or the "
+"IP address of the server. If not specifed, groonga uses the default hostname "
+"\"localhost\". The '-p' option and its argument, PORT_NUMBER, specify the "
+"port number of the server. If not specified, groonga uses the default port "
+"number 10041."
+msgstr ""
+"上記のコマンドによって起動されたクライアントは、サーバとの接続に成功すると対"
+"話モードに入ります。HOST_NAME_OR_IP_ADDRESSにはサーバのホスト名もしくはIPアド"
+"レスを指定します。HOST_NAME_OR_IP_ADDRESSが省略されたときは\"localhost\"を"
+"サーバのホスト名として採用します。また、'-p'オプションとその引数により、サー"
+"バのポート番号を指定することができます。ポート番号を省略した場合は10041が使用"
+"されます。"
 
 #: ../../../source/tutorial/network.txt:72
 msgid ""
-"You need to run groonga in HTTP protocol mode when you want to use groonga "
-"via HTTP."
-msgstr ""
-"groongaをHTTP経由で利用したい場合には、HTTPプロトコルモードで起動します。"
+"In interactive mode, groonga reads commands from the standard input and "
+"executes them one by one."
+msgstr "対話モードでは、標準入力からコマンドを読み込んで順次実行します。"
 
-#: ../../../source/tutorial/network.txt:78
+# 5c086abd44eb4e40be44306cf06e1f13
+#: ../../../source/tutorial/network.txt:75
+msgid "How to terminate a gqtp server"
+msgstr "gqtpサーバの終了"
+
+#: ../../../source/tutorial/network.txt:77
 msgid ""
-"`--protocol` option specifies a protocol of groonga server. `http` means "
-"that groonga accepts connections via HTTP."
+"You can terminate a gqtp server with a :doc:`/commands/shutdown` command."
 msgstr ""
-"protocolオプションで、groongaが受け付けるプロトコルを指定できます。httpを指定"
-"すると、groongaはHTTPプロトコルでの通信を受け付けます。"
+"gqtpサーバを終了する安全は方法は、クライアントを起動して :doc:`/commands/"
+"shutdown` を発行することです。"
 
-#: ../../../source/tutorial/network.txt:81
-msgid "Administration tool based on HTML"
-msgstr "HTML管理ツール"
-
-#: ../../../source/tutorial/network.txt:83
-msgid ""
-"You can access administration tool based on HTML at `http://"
-"[HOST_NAME_OR_IP_ADDRESS]:[PORT_NUMBER]/` after the above command is ran. "
-"Your browser must enable JavaScript."
-msgstr ""
-"コマンド実行後、http://[IPアドレスまたはホスト名]:[ポート番号]/ というURLにブ"
-"ラウザからアクセスすると、HTML管理ツールが表示されます。ブラウザは、"
-"JavaScriptの実行が有効になっている必要があります。"
-
+# ca13b09553e6473d9628d6ad2eed0ce7
 #: ../../../source/tutorial/network.txt:86
-msgid "Run command with HTTP"
-msgstr "HTTPでのコマンド実行"
+msgid "Memcached binary protocol"
+msgstr "memcachedバイナリプロトコル"
 
+# e4c86c73a6e142828d30f8e04e098155
 #: ../../../source/tutorial/network.txt:88
 msgid ""
-"You can run command at `/d/COMMAND_NAME` when groonga is ran in HTTP "
-"protocol mode."
+"Groonga supports the memcached binary protocol. The following form shows how "
+"to run groonga as a memcached binary protocol server daemon."
 msgstr ""
-"groongaがHTTPプロトコルモードで起動されているとき、「/d/コマンド名」というURL"
-"にアクセスすると、コマンドを実行することができます。"
+"groongaはmemcachedバイナリプロトコルをサポートしています。以下の書式は"
+"memcachedバイナリプロトコルのサーバをデーモンとして起動する方法を示していま"
+"す。"
 
-#: ../../../source/tutorial/network.txt:90
+# f75869210a16483384edb6f91c8d3cf2
+#: ../../../source/tutorial/network.txt:94
 msgid ""
-"Command options are passed as HTTP's GET parameters. They are in `?"
-"OPTION=VALUE&OPTION=VALUE&...` form."
+"The '--protocol' option and its argument specify the protocol of the server. "
+"\"memcached\" specifies to use the memcached binary protocol."
 msgstr ""
-"コマンドのオプションは、HTTPのGETパラメータで渡します。つまり、「?オプション="
-"値&オプション=値 …」という書式になります。"
+"'--protocol'オプションとその引数により、サーバのプロトコルを指定することがで"
+"きます。\"memcached\"はmemcachedバイナリプロトコルを示しています。"
 
-#: ../../../source/tutorial/network.txt:104
-msgid "Security"
+# de369068ea8c40d49adf03644d6b6f50
+#: ../../../source/tutorial/network.txt:97
+msgid "Hypertext transfer protocol (HTTP)"
+msgstr "HTTP"
+
+#: ../../../source/tutorial/network.txt:100
+msgid "How to run an HTTP server"
+msgstr "HTTPサーバの起動"
+
+# 1bd1fe33fb71404ebb390cd5a645e871
+#: ../../../source/tutorial/network.txt:102
+msgid ""
+"Groonga supports the hypertext transfer protocol (HTTP). The following form "
+"shows how to run groonga as an HTTP server daemon."
+msgstr ""
+"groongaはHTTPをサポートしています。以下の書式はHTTPサーバをデーモンとして起動"
+"する方法を示しています。"
+
+# 3806418d724e4a11b0042ed5a51046c3
+#: ../../../source/tutorial/network.txt:108
+msgid ""
+"The '--protocol' option and its argument specify the protocol of the server. "
+"\"http\" specifies to use HTTP."
+msgstr ""
+"'--protocol'オプションとその引数により、サーバのプロトコルを指定することがで"
+"きます。\"http\"はHTTPサーバの起動を指示しています。"
+
+# 0bbeedf7a0ce4fb98f0b9af07d086a93
+#: ../../../source/tutorial/network.txt:110
+msgid ""
+"The following command runs an HTTP server that listens on the port number 80."
+msgstr ""
+"以下のコマンドは、ポート番号80で待ち受けるHTTPサーバをデーモンとして起動しま"
+"す。"
+
+# 9060642c9ac34a1383aed3289fba31a7
+#: ../../../source/tutorial/network.txt:118
+msgid "How to send a command to an HTTP server"
+msgstr "HTTPサーバへのコマンド送信"
+
+# df79fcf54432414da92f5c02ff7c9e2b
+#: ../../../source/tutorial/network.txt:120
+msgid ""
+"You can send a command to an HTTP server by sending a GET request to `/d/"
+"COMMAND_NAME`. Command options can be passed as parameters of the GET "
+"request. The format is `?OPTION=VALUE&OPTION=VALUE&...`."
+msgstr ""
+"groongaがHTTPサーバとして起動されているときは、「/d/コマンド名」というURLにア"
+"クセスすることにより、コマンドを実行することができます。コマンドのオプション"
+"は、HTTPのGETパラメータとして渡します。オプションの書式は「?オプション=値&オ"
+"プション=値 …」となります。"
+
+# f8c8c0a35b004171b80f3188d5ba7ee1
+#: ../../../source/tutorial/network.txt:122
+msgid "The following example shows how to send commands to an HTTP server."
+msgstr "以下の例は、HTTPサーバに対するコマンドの送り方を示しています。"
+
+#: ../../../source/tutorial/network.txt:135
+msgid "Administration tool (HTTP)"
+msgstr "ブラウザベースの管理ツール"
+
+# f27356d1aceb4888a30743f0dd1c0b44
+#: ../../../source/tutorial/network.txt:137
+msgid ""
+"An HTTP server of groonga provides a browser based administration tool that "
+"makes database management easy. After starting an HTTP server, you can use "
+"the administration tool by accessing `http://[HOST_NAME_OR_IP_ADDRESS]:"
+"[PORT_NUMBER]/`. Note that Javascript must be enabled for the tool to work "
+"properly."
+msgstr ""
+"groongaをHTTPサーバとして起動しているときは、ブラウザベースの管理ツールを使う"
+"ことにより、データベースを簡単に管理することができます。管理ツールを使いたい"
+"ときは、ブラウザを使って `http://[HOST_NAME_OR_IP_ADDRESS]:[PORT_NUMBER]/` へ"
+"とアクセスしてください。管理ツールの使用には、JavaScriptの実行が有効になって"
+"いる必要があります。"
+
+#: ../../../source/tutorial/network.txt:140
+msgid "Security issues"
 msgstr "セキュリティ"
 
-#: ../../../source/tutorial/network.txt:106
+#: ../../../source/tutorial/network.txt:142
 msgid ""
-"Network service of groonga doesn't support authentication. Everyone can view "
-"and modify the database. We recommend that you restrict client accesses by "
-"IP address. You can use iptables or any similar tool for it."
+"Groonga servers don't support user authentication. Everyone can view and "
+"modify databases hosted by groonga servers. You are recommended to restrict "
+"IP addresses that can access groonga servers. You can use iptables or "
+"similar for this purpose."
 msgstr ""
-"groongaのネットワークサービスには認証機能がありません。誰でもデータベースの内"
-"容を閲覧・修正することができます。iptablesなどを用いて、アクセス元IPアドレス"
-"を制限することを薦めます。"
+"groongaのサーバには認証機能がありません。誰でもデータベースの内容を閲覧・修正"
+"することができます。iptablesなどを用いてアクセス元IPアドレスを制限することを"
+"推奨します。"
 
 #: ../../../source/tutorial/patricia_trie.txt:9
 msgid "パトリシア木による前方一致検索"
