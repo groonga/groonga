@@ -254,7 +254,7 @@ typedef int grn_sock;
 #include <pthread.h>
 typedef pthread_t grn_thread;
 #define THREAD_CREATE(thread,func,arg) (pthread_create(&(thread), NULL, (func), (arg)))
-#define THREAD_JOIN(thread) pthread_join(thread, NULL);
+#define THREAD_JOIN(thread) (pthread_join(thread, NULL))
 typedef pthread_mutex_t grn_mutex;
 #define MUTEX_INIT(m) pthread_mutex_init(&m, NULL)
 #define MUTEX_LOCK(m) pthread_mutex_lock(&m)
@@ -323,7 +323,7 @@ typedef int grn_thread_key;
 #ifdef WIN32
 typedef uintptr_t grn_thread;
 #define THREAD_CREATE(thread,func,arg) (((thread)=_beginthreadex(NULL, 0, (func), (arg), 0, NULL)) == NULL)
-#define THREAD_JOIN(thread) WaitForSingleObject((thread), INFINITE);
+#define THREAD_JOIN(thread) (WaitForSingleObject((thread), INFINITE) == WAIT_FAILED)
 typedef HANDLE grn_mutex;
 #define MUTEX_INIT(m) ((m) = CreateMutex(0, FALSE, NULL))
 #define MUTEX_LOCK(m) WaitForSingleObject((m), INFINITE)
