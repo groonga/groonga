@@ -16,7 +16,7 @@ SUBDIRS =					\
 	tools					\
 	doc
 #dist_data_DATA =
-EXTRA_DIST = bindings version-gen.sh
+EXTRA_DIST = bindings version-gen.sh base_version
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = groonga.pc
