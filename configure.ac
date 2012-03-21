@@ -1,6 +1,6 @@
 AC_PREREQ(2.59)
 m4_define([groonga_version], [m4_include(version)])
-AC_INIT([groonga],groonga_version,[groonga@razil.jp])
+AC_INIT([groonga], groonga_version, [groonga@razil.jp])
 AM_CONFIG_HEADER(config.h)
 
 AM_INIT_AUTOMAKE(tar-pax)
