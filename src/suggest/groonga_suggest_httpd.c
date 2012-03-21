@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2010-2011 Brazil
+/* Copyright(C) 2010-2012 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -632,7 +632,9 @@ serve_threads(int nthreads, int port, const char *db_path, void *zmq_ctx,
     if (pthread_create(&(rthd.thd), NULL, recv_from_learner, &rthd)) {
       print_error("error in pthread_create() on thread %d.", i);
     }
-    pthread_join(rthd.thd, NULL);
+    if (pthread_join(rthd.thd, NULL)) {
+      print_error("error in pthread_join() on thread %d.", i);
+    }
   } else {
     while (loop) { sleep(1000); }
   }
@@ -640,7 +642,9 @@ serve_threads(int nthreads, int port, const char *db_path, void *zmq_ctx,
   /* join all httpd thread */
   for (i = 0; i < nthreads; i++) {
     if (threads[i].thd) {
-      pthread_join(threads[i].thd, NULL);
+      if (pthread_join(threads[i].thd, NULL)) {
+        print_error("error in pthread_join() on thread %d.", i);
+      }
     }
     cleanup_httpd_thread(&(threads[i]));
   }

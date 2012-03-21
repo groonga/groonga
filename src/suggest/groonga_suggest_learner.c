@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2010- Brazil
+/* Copyright(C) 2010-2012 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -767,7 +767,9 @@ main(int argc, char **argv)
                 print_error("error in pthread_create() for sending datas.");
               }
               recv_event_loop(mempool, zmq_recv_sock, ctx);
-              pthread_join(thd.thd, NULL);
+              if (pthread_join(thd.thd, NULL)) {
+                print_error("error in pthread_join() for waiting completion of sending data.");
+              }
             }
             zmq_term(zmq_ctx);
           }
