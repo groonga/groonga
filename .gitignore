@@ -32,6 +32,7 @@
 /groonga.spec
 /stamp-h1
 /src/groonga
+/src/groonga-benchmark
 /src/grnslap
 Makefile
 Makefile.in
