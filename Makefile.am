@@ -116,3 +116,10 @@ echo-groonga:
 
 echo-groonga-suggest-create-dataset:
 	@echo $(GROONGA_SUGGEST_CREATE_DATASET)
+
+update-version:
+	@if test -z "$(NEW_VERSION)"; then	\
+	  echo "\$$(NEW_VERSION) is missing";	\
+	  exit 1;				\
+	fi
+	@echo -n $(NEW_VERSION) > $(srcdir)/version
