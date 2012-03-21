@@ -31,18 +31,7 @@ libgroonga_la_SOURCES =				\
 	plugin.c				\
 	output.c				\
 	geo.c					\
-	tokenizer.c
-
-libgroonga_la_LDFLAGS =				\
-	-version-info $(LT_VERSION_INFO)	\
-	-no-undefined				\
-	$(WINDOWS_LDFLAGS)
-
-libgroonga_la_LIBADD =				\
-	dat/libgrndat.la			\
-	$(MESSAGE_PACK_LIBS)
-
-noinst_HEADERS =				\
+	tokenizer.c				\
 	com.h					\
 	ctx.h					\
 	ctx_impl.h				\
@@ -63,6 +52,15 @@ noinst_HEADERS =				\
 	str.h					\
 	token.h					\
 	util.h
+
+libgroonga_la_LDFLAGS =				\
+	-version-info $(LT_VERSION_INFO)	\
+	-no-undefined				\
+	$(WINDOWS_LDFLAGS)
+
+libgroonga_la_LIBADD =				\
+	dat/libgrndat.la			\
+	$(MESSAGE_PACK_LIBS)
 
 EXTRA_DIST = ecmascript.c ecmascript.h ecmascript.y
 
