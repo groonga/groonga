@@ -492,8 +492,8 @@ typedef int grn_cond;
 # define GRN_BIT_SCAN_REV(v,r)   for (r = 31; r && !((1 << r) & v); r--)
 # define GRN_BIT_SCAN_REV0 GRN_BIT_SCAN_REV
 
-# define GRN_MKOSTEMP(template,flags) \
-  (mktemp(template), GRN_OPEN((template),flags))
+# define GRN_MKOSTEMP(template,flags,mode) \
+  (mktemp(template), GRN_OPEN((template),flags,mode))
 
 #endif /* __GNUC__ */
 
