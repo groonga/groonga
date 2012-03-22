@@ -24,6 +24,12 @@ Install::
   % sudo aptitude update
   % sudo aptitude -V -D -y install groonga
 
+If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a tokenizer. please install groonga-tokenizer-mecab package.
+
+Install groonga-tokenizer-mecab package::
+
+  % sudo aptitude -V -D -y install groonga-tokenizer-mecab
+
 There is a package that provides `Munin <http://munin-monitoring.org/>`_ plugins. If you want to monitor groonga status by Munin, please install groonga-munin-plugins package.
 
 Install groonga-munin-plugins package::
@@ -44,6 +50,12 @@ Install::
   % sudo aptitude update
   % sudo aptitude -V -D -y install groonga
 
+If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a tokenizer. please install groonga-tokenizer-mecab package.
+
+Install groonga-tokenizer-mecab package::
+
+  % sudo aptitude -V -D -y install groonga-tokenizer-mecab
+
 There is a package that provides `Munin <http://munin-monitoring.org/>`_ plugins. If you want to monitor groonga status by Munin, please install groonga-munin-plugins package.
 
 Install groonga-munin-plugins package::
@@ -63,6 +75,12 @@ Install::
   % sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 1C837F31
   % sudo aptitude update
   % sudo aptitude -V -D -y install groonga
+
+If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a tokenizer. please install groonga-tokenizer-mecab package.
+
+Install groonga-tokenizer-mecab package::
+
+  % sudo aptitude -V -D -y install groonga-tokenizer-mecab
 
 There is a package that provides `Munin <http://munin-monitoring.org/>`_ plugins. If you want to monitor groonga status by Munin, please install groonga-munin-plugins package.
 
@@ -89,6 +107,12 @@ Install::
   % sudo apt-get update
   % sudo apt-get -y install groonga
 
+If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a tokenizer. please install groonga-tokenizer-mecab package.
+
+Install groonga-tokenizer-mecab package::
+
+  % sudo apt-get -y install groonga-tokenizer-mecab
+
 There is a package that provides `Munin <http://munin-monitoring.org/>`_ plugins. If you want to monitor groonga status by Munin, please install groonga-munin-plugins package.
 
 Install groonga-munin-plugins package::
@@ -113,6 +137,12 @@ Install::
   % sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 1C837F31
   % sudo apt-get update
   % sudo apt-get -y install groonga
+
+If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a tokenizer. please install groonga-tokenizer-mecab package.
+
+Install groonga-tokenizer-mecab package::
+
+  % sudo apt-get -y install groonga-tokenizer-mecab
 
 There is a package that provides `Munin <http://munin-monitoring.org/>`_ plugins. If you want to monitor groonga status by Munin, please install groonga-munin-plugins package.
 
@@ -139,6 +169,12 @@ Install::
   % sudo apt-get update
   % sudo apt-get -y install groonga
 
+If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a tokenizer. please install groonga-tokenizer-mecab package.
+
+Install groonga-tokenizer-mecab package::
+
+  % sudo apt-get -y install groonga-tokenizer-mecab
+
 There is a package that provides `Munin <http://munin-monitoring.org/>`_ plugins. If you want to monitor groonga status by Munin, please install groonga-munin-plugins package.
 
 Install groonga-munin-plugins package::
@@ -153,6 +189,12 @@ Install::
   % sudo rpm -ivh http://packages.groonga.org/centos/groonga-repository-1.0.0-0.noarch.rpm
   % sudo yum update
   % sudo yum install -y groonga
+
+If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a tokenizer. please install groonga-tokenizer-mecab package.
+
+Install groonga-tokenizer-mecab package::
+
+  % sudo yum install -y groonga-tokenizer-mecab
 
 There is a package that provides `Munin <http://munin-monitoring.org/>`_ plugins. If you want to monitor groonga status by Munin, please install groonga-munin-plugins package.
 
@@ -186,6 +228,12 @@ Install::
   % sudo yum update
   % sudo yum install -y groonga
 
+If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a tokenizer. please install groonga-tokenizer-mecab package.
+
+Install groonga-tokenizer-mecab package::
+
+  % sudo yum install -y groonga-tokenizer-mecab
+
 There is a package that provides `Munin <http://munin-monitoring.org/>`_ plugins. If you want to monitor groonga status by Munin, please install groonga-munin-plugins package.
 
 .. note::
@@ -217,6 +265,12 @@ Install::
   % sudo rpm -ivh http://packages.groonga.org/fedora/groonga-repository-1.0.0-0.noarch.rpm
   % sudo yum update
   % sudo yum install -y groonga
+
+If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a tokenizer. please install groonga-tokenizer-mecab package.
+
+Install groonga-tokenizer-mecab package::
+
+  % sudo yum install -y groonga-tokenizer-mecab
 
 There is a package that provides `Munin <http://munin-monitoring.org/>`_ plugins. If you want to monitor groonga status by Munin, please install groonga-munin-plugins package.
 
