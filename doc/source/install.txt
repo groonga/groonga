@@ -44,6 +44,8 @@ Install::
   % sudo aptitude update
   % sudo aptitude -V -D -y install groonga
 
+There is a package that provides `Munin <http://munin-monitoring.org/>`_ plugins. If you want to monitor groonga status by Munin, please install groonga-munin-plugins package.
+
 Install groonga-munin-plugins package::
 
   % sudo aptitude -V -D -y install groonga-munin-plugins
@@ -61,6 +63,8 @@ Install::
   % sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 1C837F31
   % sudo aptitude update
   % sudo aptitude -V -D -y install groonga
+
+There is a package that provides `Munin <http://munin-monitoring.org/>`_ plugins. If you want to monitor groonga status by Munin, please install groonga-munin-plugins package.
 
 Install groonga-munin-plugins package::
 
@@ -85,6 +89,8 @@ Install::
   % sudo apt-get update
   % sudo apt-get -y install groonga
 
+There is a package that provides `Munin <http://munin-monitoring.org/>`_ plugins. If you want to monitor groonga status by Munin, please install groonga-munin-plugins package.
+
 Install groonga-munin-plugins package::
 
   % sudo apt-get -y install groonga-munin-plugins
@@ -108,6 +114,8 @@ Install::
   % sudo apt-get update
   % sudo apt-get -y install groonga
 
+There is a package that provides `Munin <http://munin-monitoring.org/>`_ plugins. If you want to monitor groonga status by Munin, please install groonga-munin-plugins package.
+
 Install groonga-munin-plugins package::
 
   % sudo apt-get -y install groonga-munin-plugins
@@ -130,6 +138,8 @@ Install::
   % sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 1C837F31
   % sudo apt-get update
   % sudo apt-get -y install groonga
+
+There is a package that provides `Munin <http://munin-monitoring.org/>`_ plugins. If you want to monitor groonga status by Munin, please install groonga-munin-plugins package.
 
 Install groonga-munin-plugins package::
 
