@@ -435,7 +435,7 @@ typedef int grn_cond;
 # endif /* ATOMIC 64BIT SET */
 
 # ifdef HAVE_MKOSTEMP
-#  define GRN_MKOSTEMP mkostemp
+#  define GRN_MKOSTEMP(template,flags,mode) mkostemp(template,flags)
 # else /* HAVE_MKOSTEMP */
 #  define GRN_MKOSTEMP(template,flags,mode) \
   (mktemp(template), GRN_OPEN((template),flags,mode))
