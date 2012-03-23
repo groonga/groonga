@@ -2,7 +2,7 @@ Execution example::
 
   % groonga -c
   > status
-  [[0,1317212813.13814,0.000102148],{"alloc_count":184,"starttime":1317212806,"uptime":7,"version":"1.2.5-84-g5c190df","n_queries":14,"cache_hit_rate":0.0,"command_version":1,"default_command_version":1,"max_command_version":2}]
+  [[0,1332486613.4953,9.918212890625e-05],{"alloc_count":130,"starttime":1332486613,"uptime":0,"version":"2.0.0-250-g5a3cf19","n_queries":0,"cache_hit_rate":0.0,"command_version":1,"default_command_version":1,"max_command_version":2}]
   > ctrl-d
   %
   

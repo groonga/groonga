@@ -1,12 +1,12 @@
 Execution example::
 
-  http://[HOST_NAME_OR_IP_ADDRESS]:[PORT_NUMBER]/d/status
+  http://HOST_NAME_OR_IP_ADDRESS[:PORT_NUMBER]/d/status
   Executed command:
   > status
-  [[0,1317212813.33982,0.000109691],{"alloc_count":184,"starttime":1317212806,"uptime":7,"version":"1.2.5-84-g5c190df","n_queries":14,"cache_hit_rate":0.0,"command_version":1,"default_command_version":1,"max_command_version":2}]
-
-  http://[HOST_NAME_OR_IP_ADDRESS]:[PORT_NUMBER]/d/select?table=Site&query=title:@this
+  [[0,1332486613.69917,0.000123739242553711],{"alloc_count":131,"starttime":1332486613,"uptime":0,"version":"2.0.0-250-g5a3cf19","n_queries":0,"cache_hit_rate":0.0,"command_version":1,"default_command_version":1,"max_command_version":2}]
+  
+  http://HOST_NAME_OR_IP_ADDRESS[:PORT_NUMBER]/d/select?table=Site&query=title:@this
   Executed command:
   > select --table Site --query title:@this
-  [[0,1317212813.54112,6.7993e-05],[[[1],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"]],[1,"http://example.org/","This is test record 1!"]]]]
+  [[0,1332486613.90319,0.00245404243469238],[[[1],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"]],[1,"http://example.org/","This is test record 1!"]]]]
   

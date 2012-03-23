@@ -22,11 +22,11 @@ Groonga has a special protocol, named groonga query transfer ptorotocl (gqtp), f
 
 Form::
 
-  groonga [-p PORT_NUMBER] -s DB_PATH_NAME
+  groonga [-p PORT_NUMBER] -s DB_PATH
 
-The '-s' option specifies to run groonga as a server. DB_PATH_NAME specifies the path of the existing database to be hosted. The '-p' option and its argument, PORT_NUMBER, specify the port number of the server. The default port number is 10041, which is used when you don't specify PORT_NUMBER.
+The `-s` option specifies to run groonga as a server. DB_PATH specifies the path of the existing database to be hosted. The `-p` option and its argument, PORT_NUMBER, specify the port number of the server. The default port number is 10041, which is used when you don't specify PORT_NUMBER.
 
-The following command runs a server that listens on the default port number. The server accepts operations to the specified database, "/tmp/groonga-databases/introduction.db".
+The following command runs a server that listens on the default port number. The server accepts operations to the specified database.
 
 Execution example::
 
@@ -37,11 +37,11 @@ Execution example::
 How to run a gqtp daemon
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-You can also run a gqtp server as a daemon by using the '-d' option, instead of the '-s' option.
+You can also run a gqtp server as a daemon by using the `-d` option, instead of the `-s` option.
 
 Form::
 
-  groonga [-p PORT_NUMBER] -d DB_PATH_NAME
+  groonga [-p PORT_NUMBER] -d DB_PATH
 
 A groonga daemon prints its process ID as follows. In this example, the process ID is 12345. Then, the daemon opens a specified database and accepts operations to that database.
 
@@ -60,7 +60,7 @@ Form::
 
   groonga [-p PORT_NUMBER] -c [HOST_NAME_OR_IP_ADDRESS]
 
-This command establishes a connection with a gqtp server and then enters into interactive mode. HOST_NAME_OR_IP_ADDRESS specifies the hostname or the IP address of the server. If not specifed, groonga uses the default hostname "localhost". The '-p' option and its argument, PORT_NUMBER, specify the port number of the server. If not specified, groonga uses the default port number 10041.
+This command establishes a connection with a gqtp server and then enters into interactive mode. HOST_NAME_OR_IP_ADDRESS specifies the hostname or the IP address of the server. If not specifed, groonga uses the default hostname "localhost". The `-p` option and its argument, PORT_NUMBER, specify the port number of the server. If not specified, groonga uses the default port number 10041.
 
 .. groonga-command
 .. include:: ../example/tutorial/network-1.log
@@ -89,9 +89,9 @@ Groonga supports the memcached binary protocol. The following form shows how to 
 
 Form::
 
-  groonga [-p PORT_NUMBER] -d --protocol memcached DB_PATH_NAME
+  groonga [-p PORT_NUMBER] -d --protocol memcached DB_PATH
 
-The '--protocol' option and its argument specify the protocol of the server. "memcached" specifies to use the memcached binary protocol.
+The `--protocol` option and its argument specify the protocol of the server. "memcached" specifies to use the memcached binary protocol.
 
 Hypertext transfer protocol (HTTP)
 -----------------------------------
@@ -103,9 +103,9 @@ Groonga supports the hypertext transfer protocol (HTTP). The following form show
 
 Form::
 
-  groonga [-p PORT_NUMBER] -d --protocol http DB_PATH_NAME
+  groonga [-p PORT_NUMBER] -d --protocol http DB_PATH
 
-The '--protocol' option and its argument specify the protocol of the server. "http" specifies to use HTTP.
+The `--protocol` option and its argument specify the protocol of the server. "http" specifies to use HTTP.
 
 The following command runs an HTTP server that listens on the port number 80.
 
@@ -117,24 +117,24 @@ Execution example::
 How to send a command to an HTTP server
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-You can send a command to an HTTP server by sending a GET request to `/d/COMMAND_NAME`. Command options can be passed as parameters of the GET request. The format is `?OPTION=VALUE&OPTION=VALUE&...`.
+You can send a command to an HTTP server by sending a GET request to /d/COMMAND_NAME. Command parameters can be passed as parameters of the GET request. The format is "?NAME_1=VALUE_1&NAME_2=VALUE_2&...".
 
 The following example shows how to send commands to an HTTP server.
 
 .. groonga-command
 .. include:: ../example/tutorial/network-3.log
-.. .. http://[HOST_NAME_OR_IP_ADDRESS]:[PORT_NUMBER]/d/status
+.. .. http://HOST_NAME_OR_IP_ADDRESS[:PORT_NUMBER]/d/status
 .. .. Executed command:
 .. status
 .. .. 
-.. .. http://[HOST_NAME_OR_IP_ADDRESS]:[PORT_NUMBER]/d/select?table=Site&query=title:@this
+.. .. http://HOST_NAME_OR_IP_ADDRESS[:PORT_NUMBER]/d/select?table=Site&query=title:@this
 .. .. Executed command:
 .. select --table Site --query title:@this
 
 Administration tool (HTTP)
 --------------------------
 
-An HTTP server of groonga provides a browser based administration tool that makes database management easy. After starting an HTTP server, you can use the administration tool by accessing `http://[HOST_NAME_OR_IP_ADDRESS]:[PORT_NUMBER]/`. Note that Javascript must be enabled for the tool to work properly.
+An HTTP server of groonga provides a browser based administration tool that makes database management easy. After starting an HTTP server, you can use the administration tool by accessing http://HOST_NAME_OR_IP_ADDRESS[:PORT_NUMBER]/. Note that Javascript must be enabled for the tool to work properly.
 
 Security issues
 ---------------
