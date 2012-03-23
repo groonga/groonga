@@ -1,5 +1,5 @@
 Execution example::
 
-  > select --table Site --query "_key:\"http://example.org/\""
-  [[0,1317212716.9005,0.000478343],[[[1],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"]],[1,"http://example.org/","This is test record 1!"]]]]
+  > table_create --name Terms --flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type ShortText --default_tokenizer TokenBigram
+  [[0,1332484902.52532,0.00777173042297363],true]
   

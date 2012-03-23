@@ -1,5 +1,7 @@
 Execution example::
 
-  > table_create --name Terms --flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type ShortText --default_tokenizer TokenBigram
-  [[0,1317212713.39679,0.092312046],true]
+  > column_create --table Site --name title --type ShortText
+  [[0,1332484899.08879,0.00948214530944824],true]
+  > select --table Site
+  [[0,1332484899.29974,0.000299215316772461],[[[0],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"]]]]]
   

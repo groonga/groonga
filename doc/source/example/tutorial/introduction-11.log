@@ -1,5 +1,5 @@
 Execution example::
 
-  > select --table Site --query title:@this
-  [[0,1317212717.10303,0.000581287],[[[1],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"]],[1,"http://example.org/","This is test record 1!"]]]]
+  > column_create --table Terms --name blog_title --flags COLUMN_INDEX|WITH_POSITION --type Site --source title
+  [[0,1332484902.73511,0.0202178955078125],true]
   

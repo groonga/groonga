@@ -1,5 +1,16 @@
 Execution example::
 
-  > column_create --table Terms --name blog_title --flags COLUMN_INDEX|WITH_POSITION --type Site --source title
-  [[0,1317212713.68994,0.19739078],true]
+  > load --table Site
+  > [
+  > {"_key":"http://example.org/","title":"This is test record 1!"},
+  > {"_key":"http://example.net/","title":"test record 2."},
+  > {"_key":"http://example.com/","title":"test test record three."},
+  > {"_key":"http://example.net/afr","title":"test record four."},
+  > {"_key":"http://example.org/aba","title":"test test test record five."},
+  > {"_key":"http://example.com/rab","title":"test test test test record six."},
+  > {"_key":"http://example.net/atv","title":"test test test record seven."},
+  > {"_key":"http://example.org/gat","title":"test test record eight."},
+  > {"_key":"http://example.com/vdw","title":"test test record nine."},
+  > ]
+  [[0,1332484899.50234,2.20460820198059],9]
   

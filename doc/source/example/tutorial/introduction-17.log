@@ -1,5 +1,5 @@
 Execution example::
 
-  > select --table Site --query title:@test --output_columns _id,_score,title --sortby _score,_id
-  [[0,1317212718.73819,0.00069225],[[[9],[["_id","UInt32"],["_score","Int32"],["title","ShortText"]],[1,1,"This is test record 1!"],[2,1,"test record 2."],[4,1,"test record four."],[3,2,"test test record three."],[8,2,"test test record eight."],[9,2,"test test record nine."],[5,3,"test test test record five."],[7,3,"test test test record seven."],[6,4,"test test test test record six."]]]]
+  > select --table Site --query title:@test --output_columns _id,_score,title --sortby -_score
+  [[0,1332484904.39402,0.000802755355834961],[[[9],[["_id","UInt32"],["_score","Int32"],["title","ShortText"]],[6,4,"test test test test record six."],[5,3,"test test test record five."],[7,3,"test test test record seven."],[8,2,"test test record eight."],[3,2,"test test record three."],[9,2,"test test record nine."],[1,1,"This is test record 1!"],[4,1,"test record four."],[2,1,"test record 2."]]]]
   

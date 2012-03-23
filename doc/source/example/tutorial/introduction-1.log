@@ -1,6 +1,4 @@
 Execution example::
 
   % groonga -n /tmp/groonga-databases/introduction.db
-  > status
-  [[0,1322616280.40348,0.000158121],{"alloc_count":127,"starttime":1322616279,"uptime":1,"version":"1.2.8-9-gbf05b82","n_queries":0,"cache_hit_rate":0.0,"command_version":1,"default_command_version":1,"max_command_version":2}]
   

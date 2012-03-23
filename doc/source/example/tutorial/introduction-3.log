@@ -1,5 +1,5 @@
 Execution example::
 
-  > select --table Site
-  [[0,1322616280.82196,0.000451873],[[[0],[["_id","UInt32"],["_key","ShortText"]]]]]
+  > table_create --name Site --flags TABLE_HASH_KEY --key_type ShortText
+  [[0,1332484898.674,0.0103404521942139],true]
   

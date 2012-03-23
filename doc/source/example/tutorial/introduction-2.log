@@ -1,5 +1,6 @@
 Execution example::
 
-  > table_create --name Site --flags TABLE_HASH_KEY --key_type ShortText
-  [[0,1322616280.60791,0.01234375],true]
+  % groonga /tmp/groonga-databases/introduction.db
+  > status
+  [[0,1332484898.47079,0.000113010406494141],{"alloc_count":151,"starttime":1332484898,"uptime":0,"version":"2.0.0-250-g5a3cf19","n_queries":0,"cache_hit_rate":0.0,"command_version":1,"default_command_version":1,"max_command_version":2}]
   
