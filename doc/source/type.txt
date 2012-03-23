@@ -74,7 +74,7 @@ groongaのデータベースでは、テーブルの主キーや、カラムの�
 
   IEEE 754形式の倍精度浮動小数点数であり、実数を表します。（デフォルト値: 0.0）
 
-  IEEE 754形式の詳細については、 http://ja.wikipedia.org/wiki/IEEE_754 や http://grouper.ieee.org/groups/754/ を参照してください。
+  IEEE 754形式の詳細については、 `IEEE 754 - Wikipedia <http://ja.wikipedia.org/wiki/IEEE_754>`_ や `IEEE 754: Standard for Binary Floating-Point <http://grouper.ieee.org/groups/754/>`_ を参照してください。
 
 ``Time``
 
@@ -101,7 +101,7 @@ groongaのデータベースでは、テーブルの主キーや、カラムの�
   度分秒形式でx度y分z秒となる経度・緯度は、(((x * 60) + y) * 60 + z) * 1000という計算式でミリ秒単位へと変換されます。
   :doc:`/commands/load` コマンドで値を格納するときは、"ミリ秒単位の経度xミリ秒単位の緯度" もしくは "経度の小数表記x緯度の小数表記" という文字列表現を使って指定します。経度と緯度の区切りとしては、'x' のほかに ',' を使うことができます。
 
-  測地系の詳細については、 http://ja.wikipedia.org/wiki/%E6%B8%AC%E5%9C%B0%E7%B3%BB を参照してください。
+  測地系の詳細については、 `測地系 - Wikipedia <http://ja.wikipedia.org/wiki/%E6%B8%AC%E5%9C%B0%E7%B3%BB>`_ を参照してください。
 
 ``WGS84GeoPoint``
 
