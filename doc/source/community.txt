@@ -13,8 +13,8 @@ Mailing List
 
 There are mailing lists for discussion about groonga.
 
-For English speaker
+For English speakers
   `groonga-talk@lists.sourceforge.net <http://lists.sourceforge.net/mailman/listinfo/groonga-talk>`_
 
-For Japanese speaker
+For Japanese speakers
   `groonga-dev@lists.sourceforge.jp <http://lists.sourceforge.jp/mailman/listinfo/groonga-dev>`_
