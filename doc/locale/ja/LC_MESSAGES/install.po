@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-17 10:45\n"
+"POT-Creation-Date: 2012-03-23 10:09\n"
 "PO-Revision-Date: 2012-01-17 10:46+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -42,34 +42,75 @@ msgstr ""
 msgid "Debian GNU/Linux squeeze"
 msgstr ""
 
-#: ../../../source/install.txt:16 ../../../source/install.txt:36
-#: ../../../source/install.txt:54 ../../../source/install.txt:77
-#: ../../../source/install.txt:100 ../../../source/install.txt:123
+#: ../../../source/install.txt:16 ../../../source/install.txt:42
+#: ../../../source/install.txt:68 ../../../source/install.txt:99
+#: ../../../source/install.txt:130 ../../../source/install.txt:161
 msgid "/etc/apt/sources.list.d/groonga.list::"
 msgstr ""
 
-#: ../../../source/install.txt:21 ../../../source/install.txt:41
-#: ../../../source/install.txt:59 ../../../source/install.txt:82
-#: ../../../source/install.txt:105 ../../../source/install.txt:128
-#: ../../../source/install.txt:141 ../../../source/install.txt:173
-#: ../../../source/install.txt:205 ../../../source/install.txt:220
-#: ../../../source/install.txt:227 ../../../source/install.txt:252
+#: ../../../source/install.txt:21 ../../../source/install.txt:47
+#: ../../../source/install.txt:73 ../../../source/install.txt:104
+#: ../../../source/install.txt:135 ../../../source/install.txt:166
+#: ../../../source/install.txt:187 ../../../source/install.txt:225
+#: ../../../source/install.txt:263 ../../../source/install.txt:284
+#: ../../../source/install.txt:291 ../../../source/install.txt:316
 msgid "Install::"
 msgstr "インストール::"
+
+# e58f4d4412e7446bba974cc243636034
+# 59fba3b92a54447eb4e15a8f19a867b8
+# 6e1d7ed1c08441cbae598c858f9316ef
+# 6e1d7ed1c08441cbae598c858f9316ef
+# 6e1d7ed1c08441cbae598c858f9316ef
+# e58f4d4412e7446bba974cc243636034
+# 6e1d7ed1c08441cbae598c858f9316ef
+# 59fba3b92a54447eb4e15a8f19a867b8
+# 59fba3b92a54447eb4e15a8f19a867b8
+#: ../../../source/install.txt:27 ../../../source/install.txt:53
+#: ../../../source/install.txt:79 ../../../source/install.txt:110
+#: ../../../source/install.txt:141 ../../../source/install.txt:172
+#: ../../../source/install.txt:193 ../../../source/install.txt:231
+#: ../../../source/install.txt:269
+msgid ""
+"If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a tokenizer. "
+"please install groonga-tokenizer-mecab package."
+msgstr ""
+"`MeCab <http://mecab.sourceforge.net/>`_ をトークナイザとして使いたいときは、"
+"groonga-tokenizer-mecabパッケージをインストールしてください。"
+
+# 7c4d67fadd3e4385875a9d89e19de183
+# fcf0a17b5f034b6ca51fb482e7952347
+# 356fa49d6e9441e6a669f6d2991d7d7d
+# 34a4a97ad7bc46a08403e790e1a74e5a
+# f7ff1d15e18b44fd92432430b6bef793
+# 0e6327d4b6354cf8b579b495c7503918
+# 5084fb2612f742a1a641034d8107f94a
+# bf151c5f2cb64eba9c98fcc1b4c95944
+# b38318895c87438caab31bc9a83225fb
+#: ../../../source/install.txt:29 ../../../source/install.txt:55
+#: ../../../source/install.txt:81 ../../../source/install.txt:112
+#: ../../../source/install.txt:143 ../../../source/install.txt:174
+#: ../../../source/install.txt:195 ../../../source/install.txt:233
+#: ../../../source/install.txt:271
+msgid "Install groonga-tokenizer-mecab package::"
+msgstr "groonga-tokenizer-mecabパッケージのインストール::"
 
 # 10346c91fc6942b992466dee4401c3dd
 # 9dbb644c0f304e798c8e769c455bf241
 # 1e86d7554f0348b0a5c65b70c7f987bd
 # 68faa6af5dcb440a93b1d0836303f4d9
-#: ../../../source/install.txt:27 ../../../source/install.txt:147
-#: ../../../source/install.txt:179 ../../../source/install.txt:211
+#: ../../../source/install.txt:33 ../../../source/install.txt:59
+#: ../../../source/install.txt:85 ../../../source/install.txt:116
+#: ../../../source/install.txt:147 ../../../source/install.txt:178
+#: ../../../source/install.txt:199 ../../../source/install.txt:237
+#: ../../../source/install.txt:275
 msgid ""
 "There is a package that provides `Munin <http://munin-monitoring.org/>`_ "
 "plugins. If you want to monitor groonga status by Munin, please install "
 "groonga-munin-plugins package."
 msgstr ""
 "`Munin <http://munin-monitoring.org/>`_ プラグインを提供するパッケージもあり"
-"ます。もし、muninでgroongaの状態をモニターしたい場合は、groonga-munin-plugins"
+"ます。Muninでgroongaの状態をモニターしたい場合は、groonga-munin-plugins"
 "パッケージをインストールしてください。"
 
 # 7c4d67fadd3e4385875a9d89e19de183
@@ -81,31 +122,31 @@ msgstr ""
 # 5084fb2612f742a1a641034d8107f94a
 # bf151c5f2cb64eba9c98fcc1b4c95944
 # b38318895c87438caab31bc9a83225fb
-#: ../../../source/install.txt:29 ../../../source/install.txt:47
-#: ../../../source/install.txt:65 ../../../source/install.txt:88
-#: ../../../source/install.txt:111 ../../../source/install.txt:134
-#: ../../../source/install.txt:165 ../../../source/install.txt:197
-#: ../../../source/install.txt:213
+#: ../../../source/install.txt:35 ../../../source/install.txt:61
+#: ../../../source/install.txt:87 ../../../source/install.txt:118
+#: ../../../source/install.txt:149 ../../../source/install.txt:180
+#: ../../../source/install.txt:217 ../../../source/install.txt:255
+#: ../../../source/install.txt:277
 msgid "Install groonga-munin-plugins package::"
-msgstr "groonga-munin-pluginsパッケージをインストール::"
+msgstr "groonga-munin-pluginsパッケージのインストール::"
 
-#: ../../../source/install.txt:34
+#: ../../../source/install.txt:40
 msgid "Debian GNU/Linux wheezy"
 msgstr ""
 
-#: ../../../source/install.txt:52
+#: ../../../source/install.txt:66
 msgid "Debian GNU/Linux sid"
 msgstr ""
 
-#: ../../../source/install.txt:70
+#: ../../../source/install.txt:92
 msgid "Ubuntu 10.04 LTS Lucid Lynx"
 msgstr ""
 
 # fd9c45dc17b24d65a8564aa039fa524e
 # 827add09a0324562b5bb4ebeb19392b5
 # cd45acb254c545ee9c2847ab6bcaf158
-#: ../../../source/install.txt:74 ../../../source/install.txt:97
-#: ../../../source/install.txt:120
+#: ../../../source/install.txt:96 ../../../source/install.txt:127
+#: ../../../source/install.txt:158
 msgid ""
 "You'll need to enable the universe repository of Ubuntu to install groonga. "
 "The following describes how to do it."
@@ -113,77 +154,77 @@ msgstr ""
 "Ubuntu本家のuniverseセクションもインストール対象としてください。設定方法は以"
 "下で説明しています。"
 
-#: ../../../source/install.txt:93
+#: ../../../source/install.txt:123
 msgid "Ubuntu 11.04 Natty Narwhal"
 msgstr ""
 
 # f5a3e80f7f864fcfbca6de7812d9cd9e
-#: ../../../source/install.txt:116
+#: ../../../source/install.txt:154
 msgid "Ubuntu 11.10 Oneiric Ocelot"
 msgstr ""
 
-#: ../../../source/install.txt:139
+#: ../../../source/install.txt:185
 msgid "CentOS 5"
 msgstr ""
 
 # 7b4911420849402a9fced72df9b2422f
 # 7b4911420849402a9fced72df9b2422f
-#: ../../../source/install.txt:151 ../../../source/install.txt:183
+#: ../../../source/install.txt:203 ../../../source/install.txt:241
 msgid ""
 "Groonga-munin-plugins package requires munin-node package that isn't "
-"included in the official CentOS repository. You need to enable `RPMforge "
-"<http://repoforge.org/>`_ repository or `EPEL <http://fedoraproject.org/wiki/"
-"EPEL>`_ repository to install it by yum."
+"included in the official CentOS repository. You need to enable `Repoforge "
+"(RPMforge) <http://repoforge.org/>`_ repository or `EPEL <http://"
+"fedoraproject.org/wiki/EPEL>`_ repository to install it by yum."
 msgstr ""
 "groonga-munin-pluginsパッケージはmunin-nodeパッケージを必要としますが、munin-"
 "nodeパッケージはCentOSの公式リポジトリには含まれていません。munin-nodeパッ"
-"ケージをyumでインストールするために `RPMforge <http://repoforge.org/>`_ リポ"
+"ケージをyumでインストールするために `Repoforge (RPMforge) <http://repoforge.org/>`_ リポ"
 "ジトリか `EPEL <http://fedoraproject.org/wiki/EPEL>`_ リポジトリを有効にする"
 "必要があります。"
 
 # 38147f50a66d420a86a1ba5ba55456c2
-#: ../../../source/install.txt:153
-msgid "Enable RPMforge repository on i386 environment::"
-msgstr "i386環境でRPMforgeリポジトリを有効にする::"
+#: ../../../source/install.txt:205
+msgid "Enable Repoforge (RPMforge) repository on i386 environment::"
+msgstr "i386環境でRepoforge (RPMforge)リポジトリを有効にする::"
 
 # 38147f50a66d420a86a1ba5ba55456c2
-#: ../../../source/install.txt:157 ../../../source/install.txt:189
-msgid "Enable RPMforge repository on x86_64 environment::"
-msgstr "x86_64環境でRPMforgeリポジトリを有効にする::"
+#: ../../../source/install.txt:209 ../../../source/install.txt:247
+msgid "Enable Repoforge (RPMforge) repository on x86_64 environment::"
+msgstr "x86_64環境でRepoforge (RPMforge)リポジトリを有効にする::"
 
 # 38147f50a66d420a86a1ba5ba55456c2
-#: ../../../source/install.txt:161 ../../../source/install.txt:193
+#: ../../../source/install.txt:213 ../../../source/install.txt:251
 msgid "Enable EPEL repository on any environment::"
 msgstr "EPELリポジトリを有効にする（環境非依存）::"
 
-#: ../../../source/install.txt:171
+#: ../../../source/install.txt:223
 msgid "CentOS 6"
 msgstr ""
 
 # 38147f50a66d420a86a1ba5ba55456c2
-#: ../../../source/install.txt:185
-msgid "Enable RPMforge repository on i686 environment::"
-msgstr "i686環境でRPMforgeリポジトリを有効にする::"
+#: ../../../source/install.txt:243
+msgid "Enable Repoforge (RPMforge) repository on i686 environment::"
+msgstr "i686環境でRepoforge (RPMforge)リポジトリを有効にする::"
 
 # caa153b71c7b4760b343041e99012e0a
-#: ../../../source/install.txt:203
+#: ../../../source/install.txt:261
 msgid "Fedora 16"
 msgstr ""
 
-#: ../../../source/install.txt:218
+#: ../../../source/install.txt:282
 msgid "Mac OS X (MacPorts)"
 msgstr ""
 
-#: ../../../source/install.txt:225
+#: ../../../source/install.txt:289
 msgid "Mac OS X (Homebrew)"
 msgstr ""
 
 # b0e120abaa3f4077ad7903b544bbf677
-#: ../../../source/install.txt:232
+#: ../../../source/install.txt:296
 msgid "Windows (Installer)"
 msgstr ""
 
-#: ../../../source/install.txt:234
+#: ../../../source/install.txt:298
 msgid ""
 "You just download an installer (.exe file) from `packages.groonga.org/"
 "windows/ <http://packages.groonga.org/windows/groonga/>`_ and execute it."
@@ -192,11 +233,11 @@ msgstr ""
 ">`_ からインストーラ（.exeファイル）をダウンロードして実行してください。"
 
 # e35076ad510d4939afeb4d10cf3d5dca
-#: ../../../source/install.txt:239
+#: ../../../source/install.txt:303
 msgid "Windows (zip)"
 msgstr ""
 
-#: ../../../source/install.txt:241
+#: ../../../source/install.txt:305
 msgid ""
 "You just download a zip file from `packages.groonga.org/windows/ <http://"
 "packages.groonga.org/windows/groonga/>`_ and extract it."
@@ -204,11 +245,11 @@ msgstr ""
 "`packages.groonga.org/windows/ <http://packages.groonga.org/windows/groonga/"
 ">`_ からzipファイルをダウンロードして展開するだけで使えます。"
 
-#: ../../../source/install.txt:246
+#: ../../../source/install.txt:310
 msgid "Others"
 msgstr "その他"
 
-#: ../../../source/install.txt:248
+#: ../../../source/install.txt:312
 msgid ""
 "If you want to use a morphological analyzer for tokenization in full-text "
 "indexing, please install `MeCab <http://mecab.sourceforge.net/>`_ before "
@@ -218,7 +259,7 @@ msgstr ""
 "トールする前に `MeCab <http://mecab.sourceforge.net/>`_ をインストールしてく"
 "ださい。"
 
-#: ../../../source/install.txt:250
+#: ../../../source/install.txt:314
 msgid ""
 "Then, download a tar.gz file from `packages.groonga.org/source/ <http://"
 "packages.groonga.org/source/groonga/>`_ and extract it. After that, please "
@@ -228,19 +269,23 @@ msgstr ""
 ">`_ よりtar.gzファイルを取得し、インストール先の環境にファイルを展開して、以"
 "下のように実行することでインストールできます。::"
 
-#: ../../../source/install.txt:256
+#: ../../../source/install.txt:320
 msgid ""
-"The \"prefix\" option specifies the path to install groonga. If you don't "
+"The `--prefix` option specifies the path to install groonga. If you don't "
 "specify the install path, \"/usr/local\" is used. Please specify \"/usr\" if "
 "you are not familiar with environment variables such as LD_LIBRARY_PATH."
 msgstr ""
-"prefixは、インストール先を指定するパラメータです。prefixを指定しない場合に"
-"は、/usr/localが指定されたものとみなします。LD_LIBRARY_PATHなどに詳しくない人"
-"は、上記のように/usrを指定することをお勧めします。"
+"`--prefix` オプションは、インストール先を指定するオプションです。明示的に指定しなければ、"
+"/usr/localが指定されたものとみなします。LD_LIBRARY_PATHなどに詳しくない人は、"
+"上記のように/usrを指定することをお勧めします。"
 
 # 36fa88bfeec44258acca550e9427c224
-#: ../../../source/install.txt:258
+#: ../../../source/install.txt:322
 msgid ""
 "There are some `Munin <http://munin-monitoring.org/>`_ plugins in groonga "
-"package. You need to pass `--with-munin-plugins` option to install them."
-msgstr "groongaパッケージには `Munin <http://munin-monitoring.org/>`_ プラグインが含まれています。これらをインストールするためには `--with-munin-plugins` オプションを指定する必要があります。"
+"package. You need to specify `--with-munin-plugins` option if you want to "
+"install them."
+msgstr ""
+"groongaパッケージに含まれている `Munin <http://munin-monitoring.org/>`_ プラグインの"
+"インストールを有効にするには、 `--with-munin-plugins` オプ"
+"ションを指定する必要があります。"

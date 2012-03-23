@@ -200,13 +200,13 @@ There is a package that provides `Munin <http://munin-monitoring.org/>`_ plugins
 
 .. note::
 
-   Groonga-munin-plugins package requires munin-node package that isn't included in the official CentOS repository. You need to enable `RPMforge <http://repoforge.org/>`_ repository or `EPEL <http://fedoraproject.org/wiki/EPEL>`_ repository to install it by yum.
+   Groonga-munin-plugins package requires munin-node package that isn't included in the official CentOS repository. You need to enable `Repoforge (RPMforge) <http://repoforge.org/>`_ repository or `EPEL <http://fedoraproject.org/wiki/EPEL>`_ repository to install it by yum.
 
-   Enable RPMforge repository on i386 environment::
+   Enable Repoforge (RPMforge) repository on i386 environment::
 
      % sudo rpm -ivh http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.2-2.el5.rf.i386.rpm
 
-   Enable RPMforge repository on x86_64 environment::
+   Enable Repoforge (RPMforge) repository on x86_64 environment::
 
      % sudo rpm -ivh http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.2-2.el5.rf.x86_64.rpm
 
@@ -238,13 +238,13 @@ There is a package that provides `Munin <http://munin-monitoring.org/>`_ plugins
 
 .. note::
 
-   Groonga-munin-plugins package requires munin-node package that isn't included in the official CentOS repository. You need to enable `RPMforge <http://repoforge.org/>`_ repository or `EPEL <http://fedoraproject.org/wiki/EPEL>`_ repository to install it by yum.
+   Groonga-munin-plugins package requires munin-node package that isn't included in the official CentOS repository. You need to enable `Repoforge (RPMforge) <http://repoforge.org/>`_ repository or `EPEL <http://fedoraproject.org/wiki/EPEL>`_ repository to install it by yum.
 
-   Enable RPMforge repository on i686 environment::
+   Enable Repoforge (RPMforge) repository on i686 environment::
 
      % sudo rpm -ivh http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.2-2.el6.rf.i686.rpm
 
-   Enable RPMforge repository on x86_64 environment::
+   Enable Repoforge (RPMforge) repository on x86_64 environment::
 
      % sudo rpm -ivh http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.2-2.el6.rf.x86_64.rpm
 
@@ -317,6 +317,6 @@ Install::
 
  ./configure --prefix=/usr --localstatedir=/var && make && sudo make install
 
-The "prefix" option specifies the path to install groonga. If you don't specify the install path, "/usr/local" is used. Please specify "/usr" if you are not familiar with environment variables such as LD_LIBRARY_PATH.
+The `--prefix` option specifies the path to install groonga. If you don't specify the install path, "/usr/local" is used. Please specify "/usr" if you are not familiar with environment variables such as LD_LIBRARY_PATH.
 
-There are some `Munin <http://munin-monitoring.org/>`_ plugins in groonga package. You need to pass `--with-munin-plugins` option to install them.
+There are some `Munin <http://munin-monitoring.org/>`_ plugins in groonga package. You need to specify `--with-munin-plugins` option if you want to install them.
