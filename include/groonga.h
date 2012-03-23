@@ -1964,6 +1964,8 @@ GRN_API grn_posting *grn_geo_cursor_next(grn_ctx *ctx, grn_obj *cursor);
 #define GRN_QUERY_COLUMN ':'
 #endif /* GRN_QUERY_COLUMN */
 
+/* grn_snip should be removed.
+ * TODO: 3.0 */
 typedef struct _grn_snip grn_snip;
 typedef struct _grn_snip_mapping grn_snip_mapping;
 
@@ -1975,11 +1977,15 @@ struct _grn_snip_mapping {
 #define GRN_SNIP_COPY_TAG              (0x01<<1)
 #define GRN_SNIP_SKIP_LEADING_SPACES   (0x01<<2)
 
+/* grn_snip_open() should return grn_obj * instead.
+ * TODO: 3.0 */
 GRN_API grn_snip *grn_snip_open(grn_ctx *ctx, int flags, unsigned int width,
                                 unsigned int max_results,
                                 const char *defaultopentag, unsigned int defaultopentag_len,
                                 const char *defaultclosetag, unsigned int defaultclosetag_len,
                                 grn_snip_mapping *mapping);
+/* grn_snip_close() should be removed. Use grn_obj_close() instead.
+ * TODO: 3.0 */
 GRN_API grn_rc grn_snip_close(grn_ctx *ctx, grn_snip *snip);
 GRN_API grn_rc grn_snip_add_cond(grn_ctx *ctx, grn_snip *snip,
                                  const char *keyword, unsigned int keyword_len,

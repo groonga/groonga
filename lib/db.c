@@ -25,6 +25,7 @@
 #include "proc.h"
 #include "plugin_in.h"
 #include "geo.h"
+#include "snip.h"
 #include "util.h"
 #include <string.h>
 #include <float.h>
@@ -6917,6 +6918,9 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
       break;
     case GRN_ACCESSOR_VIEW :
       rc = grn_accessor_view_close(ctx, obj);
+      break;
+    case GRN_SNIP :
+      rc = grn_snip_close_real(ctx, (grn_snip *)obj);
       break;
     case GRN_CURSOR_TABLE_PAT_KEY :
       grn_pat_cursor_close(ctx, (grn_pat_cursor *)obj);

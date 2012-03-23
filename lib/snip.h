@@ -25,6 +25,8 @@
 #include "str.h"
 #endif /* GRN_STR_H */
 
+#include "db.h"
+
 #define ASIZE                   256U
 #define MAX_SNIP_TAG_COUNT      512U
 #define MAX_SNIP_COND_COUNT     32U
@@ -87,6 +89,7 @@ typedef struct
 
 struct _grn_snip
 {
+  grn_db_obj obj;
   grn_encoding encoding;
   int flags;
   size_t width;
@@ -113,6 +116,7 @@ struct _grn_snip
   size_t max_tagged_len;
 };
 
+grn_rc grn_snip_close_real(grn_ctx *ctx, grn_snip *snip);
 grn_rc grn_snip_cond_init(grn_ctx *ctx, snip_cond *sc, const char *keyword, unsigned int keyword_len,
                           grn_encoding enc, int flags);
 void grn_snip_cond_reinit(snip_cond *cond);

@@ -471,6 +471,17 @@ grn_snip_open(grn_ctx *ctx, int flags, unsigned int width,
   ret->tag_count = 0;
   ret->snip_count = 0;
 
+  GRN_DB_OBJ_SET_TYPE(ret, GRN_SNIP);
+  {
+    grn_obj *db;
+    grn_id id;
+    db = grn_ctx_db(ctx);
+    id = grn_obj_register(ctx, db, NULL, 0);
+    DB_OBJ(ret)->header.domain = GRN_ID_NIL;
+    DB_OBJ(ret)->range = GRN_ID_NIL;
+    grn_db_obj_init(ctx, db, id, DB_OBJ(ret));
+  }
+
   GRN_API_RETURN(ret);
 }
 
@@ -491,8 +502,10 @@ exec_clean(grn_ctx *ctx, grn_snip *snip)
   return GRN_SUCCESS;
 }
 
+/* It should be renamed to grn_snip_close() and marked as internal.
+ * TODO: 3.0 */
 grn_rc
-grn_snip_close(grn_ctx *ctx, grn_snip *snip)
+grn_snip_close_real(grn_ctx *ctx, grn_snip *snip)
 {
   snip_cond *cond, *cond_end;
   if (!snip) { return GRN_INVALID_ARGUMENT; }
@@ -518,6 +531,16 @@ grn_snip_close(grn_ctx *ctx, grn_snip *snip)
   GRN_FREE(snip);
   GRN_API_RETURN(GRN_SUCCESS);
 }
+
+/* Just for backward compatibility. It should be replaced with
+ * grn_snip_close_real() when groonga 3.0.
+ * TODO: 3.0 */
+grn_rc
+grn_snip_close(grn_ctx *ctx, grn_snip *snip)
+{
+  return grn_obj_close(ctx, (grn_obj *)snip);
+}
+
 
 grn_rc
 grn_snip_exec(grn_ctx *ctx, grn_snip *snip, const char *string, unsigned int string_len,

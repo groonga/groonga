@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2008-2009  Kouhei Sutou <kou@cozmixng.org>
+  Copyright (C) 2008-2012  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -217,7 +217,7 @@ void
 cut_teardown(void)
 {
   if (snip) {
-    grn_snip_close(&context, snip);
+    grn_obj_close(&context, (grn_obj *)snip);
   }
   if (keyword) {
     g_free(keyword);
@@ -240,7 +240,7 @@ static grn_snip *
 open_snip(void)
 {
   if (snip) {
-    grn_snip_close(&context, snip);
+    grn_obj_close(&context, (grn_obj *)snip);
   }
   GRN_CTX_SET_ENCODING(&context, default_encoding);
   snip = grn_snip_open(&context, default_flags,
@@ -460,7 +460,7 @@ test_exec_with_normalize(void)
                                 &n_results, &max_tagged_len));
   cut_assert_equal_uint(0, n_results);
 
-  grn_snip_close(&context, snip);
+  grn_obj_close(&context, (grn_obj *)snip);
   snip = NULL;
 
 
@@ -747,7 +747,7 @@ test_html_mapping_escape(void)
 void
 test_close_with_null(void)
 {
-  grn_test_assert_equal_rc(GRN_INVALID_ARGUMENT, grn_snip_close(&context, NULL));
+  grn_test_assert_equal_rc(GRN_INVALID_ARGUMENT, grn_obj_close(&context, NULL));
 }
 
 void
