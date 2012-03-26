@@ -7,9 +7,12 @@ EXTRA_DIST =					\
 	$(images_DATA)				\
 	update-files.sh
 
-SUFFIXES = .svg .png
+SUFFIXES =
+if WITH_INKSCAPE
+SUFFIXES += .svg .png
 .svg.png:
 	$(INKSCAPE) --export-dpi 90 --export-png $@ $<
+endif
 
 $(srcdir)/files.am: $(srcdir)/update-files.sh
 	$(srcdir)/update-files.sh > $(srcdir)/files.am
