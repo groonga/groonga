@@ -710,7 +710,7 @@ AC_ARG_WITH([inkscape],
             AS_HELP_STRING([--with-inkscape=PATH],
                            [Inkscape path (default: auto)]),
             [INKSCAPE="$withval"],
-            [INKSCAPE="auto"])
+            [INKSCAPE="yes"])
 
 if test "x$INKSCAPE" = "xno"; then
   INKSCAPE=
