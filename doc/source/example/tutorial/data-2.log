@@ -1,10 +1,14 @@
 Execution example::
 
-  > column_create --table Site --name link --type Site
-  [[0,1322616295.37864,0.005674045],true]
-  > load --table Site
-  > [{"_key":"http://example.org/","link":"http://example.net/"}]
-  [[0,1322616295.5854,0.200879317],1]
-  > select --table Site --output_columns _key,title,link._key,link.title --query title:@this
-  [[0,1322616295.98732,0.000872177],[[[1],[["_key","ShortText"],["title","ShortText"],["link._key","ShortText"],["link.title","ShortText"]],["http://example.org/","This is test record 1!","http://example.net/","test record 2."]]]]
+  > column_create --table ToyBox --name is_animal --type Bool
+  [[0,1332498286.2427,0.00578594207763672],true]
+  > load --table ToyBox
+  > [
+  > {"_key":"Monkey","is_animal":true}
+  > {"_key":"Flower","is_animal":false}
+  > {"_key":"Block"}
+  > ]
+  [[0,1332498286.44978,1.00197458267212],3]
+  > select --table ToyBox --output_columns _key,is_animal
+  [[0,1332498287.65257,0.000472545623779297],[[[3],[["_key","ShortText"],["is_animal","Bool"]],["Monkey",true],["Flower",false],["Block",false]]]]
   

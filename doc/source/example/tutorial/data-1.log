@@ -1,18 +1,5 @@
 Execution example::
 
-  > table_create --name Type --flags TABLE_HASH_KEY --key_type ShortText
-  [[0,1322616293.7274,0.012551106],true]
-  > column_create --table Type --name number --type Int32
-  [[0,1322616293.94115,0.008619605],true]
-  > column_create --table Type --name float --type Float
-  [[0,1322616294.15095,0.004959989],true]
-  > column_create --table Type --name string --type ShortText
-  [[0,1322616294.35693,0.005551818],true]
-  > column_create --table Type --name time --type Time
-  [[0,1322616294.56333,0.006356953],true]
-  > load --table Type
-  > [{"_key":"sample","number":12345,"float":42.195,"string":"GROONGA","time":1234567890.12}]
-  [[0,1322616294.77086,0.202357708],1]
-  > select --table Type
-  [[0,1322616295.1744,0.000340057],[[[1],[["_id","UInt32"],["_key","ShortText"],["float","Float"],["number","Int32"],["string","ShortText"],["time","Time"]],[1,"sample",42.195,12345,"GROONGA",1234567890.12]]]]
+  > table_create --name ToyBox --flags TABLE_HASH_KEY --key_type ShortText
+  [[0,1332498286.03578,0.00542259216308594],true]
   
