@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-26 13:19\n"
+"POT-Creation-Date: 2012-03-26 16:14\n"
 "PO-Revision-Date: 2011-11-27 22:36+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -164,9 +164,9 @@ msgid ""
 "column, specify Bool to the `type` parameter of :doc:`/commands/"
 "column_create` command. The default value of the boolean type is false."
 msgstr ""
-"ブール型は真偽値（true/false）を表現するための型です。"
-"ブール型のカラムを作成するには、 :doc:`/commands/column_create` コマンドの `type` 引数に Bool を指定します。"
-"ブール型のデフォルト値はfalseです。"
+"ブール型は真偽値（true/false）を表現するための型です。ブール型のカラムを作成"
+"するには、 :doc:`/commands/column_create` コマンドの `type` 引数に Bool を指"
+"定します。ブール型のデフォルト値はfalseです。"
 
 # b0efb64bd2724bcc88a28ff9460b8fa0
 #: ../../../source/tutorial/data.txt:33
@@ -233,7 +233,7 @@ msgstr ""
 # b0efb64bd2724bcc88a28ff9460b8fa0
 #: ../../../source/tutorial/data.txt:70
 msgid ""
-"The following example creates an ShortText column and updates existing "
+"The following example creates a ShortText column and updates existing "
 "records. The third record has the default value because not updated."
 msgstr ""
 "以下の例では、ShortText型のカラムを作成し、IDが1と2のレコードを更新します。更"
@@ -307,7 +307,7 @@ msgid ""
 "value is \"0x0\"."
 msgstr ""
 "小数点を含んでいなければミリ秒表記、小数点を含んでいれば度数表記として扱われ"
-"ます。ミリ秒表記と度数表記を混ぜるたときの動作は未定義なので注意してくださ"
+"ます。ミリ秒表記と度数表記を混ぜたときの動作は未定義なので注意してくださ"
 "い。経度と緯度の区切りとしては、'x' のほかに ',' を使うことができます。経緯度"
 "のデフォルト値は \"0x0\" です。"
 
@@ -326,35 +326,59 @@ msgstr ""
 msgid "Reference types"
 msgstr "テーブル参照"
 
-# 90397f1e19db4ea98ea05026ba0a5e2a
+# 7f6c518d20094892b435340a53ddee21
 #: ../../../source/tutorial/data.txt:124
 msgid ""
-"groongaでは、テーブル参照のカラム、すなわち別テーブルを参照するカラムを作成で"
-"きます。より正確には、別テーブルのレコードIDを格納しておくことにより、別テー"
-"ブルのレコードを参照できるようにします。"
+"Groonga supports a reference column, which stores references to records in "
+"its associated table. In practice, a reference column stores the IDs of the "
+"referred records in the associated table and enables access to those records."
 msgstr ""
+"groongaでは、テーブル参照のカラム、すなわち関連付けたテーブルを参照するカラム"
+"を作成できます。より正確には、カラム作成時に参照先となるテーブルとの関連付け"
+"をおこない、参照先テーブルにおけるレコードIDを格納しておくことにより、参照先"
+"のレコードにアクセスできるようにします。"
 
-# 8d1a529de14948efa4b7ec87c5f3617a
+# 5f41c9f3d5bc416590fd143e82eccd53
 #: ../../../source/tutorial/data.txt:126
 msgid ""
+"You can specify a column in the associated table to the `output_columns` "
+"parameter of a :doc:`/commands/select` command. The format is \"Src.Dest\" "
+"where Src is the name of the reference column and Dest is the name of the "
+"target column. If only the reference column is specified, it is handled as "
+"\"Src._key\". Note that if a reference does not point to a valid record, a :"
+"doc:`/commands/select` command outputs the default value of the target "
+"column."
+msgstr ""
 "テーブル参照のカラムがあるときは、 `output_columns` 引数に \"参照元カラム.参"
 "照先カラム\" と指定することにより、参照先カラムの値を取り出すことができます。"
 "参照元カラムのみを指定したときは、 \"参照元カラム名._key\" と同様の扱いとな"
 "り、参照先レコードの主キーが取り出されます。テーブル参照が有効なレコードを指"
 "していないときは、参照先カラムのデフォルト値が取り出されるようになっていま"
 "す。"
-msgstr ""
 
 # c3a7a7cea377485d81cd4ec552c15694
 #: ../../../source/tutorial/data.txt:128
 msgid ""
+"The following example adds a reference column to the Site table that was "
+"created in the previous tutorial. The new column, named link, is designed "
+"for storing links among records in the Site table."
+msgstr ""
 "ここでは、先のチュートリアルで作成したSiteテーブルにlinkという新たなカラムを"
 "作成し、サイト間のリンク関係を保存できるようにしてみましょう。"
-msgstr ""
 
-# b7536412e9e5480f853a888f3e1cbf99
+# fcab1957c86f4f028958b472cf6dda56
 #: ../../../source/tutorial/data.txt:137
 msgid ""
+"The `type` parameter of the :doc:`/commands/column_create` command specifies "
+"the table to be associated with the reference column. In this example, the "
+"reference column is associated with the own table. Then, the :doc:`/commands/"
+"load` command registers a link from \"http://example.org\" to \"http://"
+"example.net\". Note that a reference column requires the primary key, not "
+"the ID, of the record to be referred to. After that, the link is confirmed "
+"by the :doc:`/commands/select` command. In this case, the primary key and "
+"the title of the referred record are output because link._key and link.title "
+"are specified to the `output_columns` parameter."
+msgstr ""
 "テーブル参照のカラムを作成するときは、 `type` 引数に参照先テーブルを指定しま"
 "す。この例では、同じテーブルに含まれる別のレコードを参照させたいので、Siteを"
 "指定することになります。次に、 \"http://example.org/\" から \"http://example."
@@ -362,7 +386,6 @@ msgid ""
 "キーを指定することに注意してください。最後に、リンクの内容を確認しています。"
 "この例では、  `output_columns` 引数に link._key と link.title を指定している"
 "ので、参照先の主キーとタイトルが表示されています。"
-msgstr ""
 
 #: ../../../source/tutorial/data.txt:140
 msgid "Vector types"
@@ -371,25 +394,43 @@ msgstr "ベクターカラム"
 # 2a92c171b54e4efca37e0e72e454c7bb
 #: ../../../source/tutorial/data.txt:142
 msgid ""
+"Groonga supports a vector column, in which each element can store a variable "
+"number of values. To create a vector column, specify the COLUMN_VECTOR flag "
+"to the `flags` parameter of a :doc:`/commands/column_create` command. A "
+"vector column is useful to represent a many-to-many relationship."
+msgstr ""
 ":doc:`/commands/column_create` コマンドでカラムを作成するとき、 `flags` 引数"
 "にCOLUMN_VECTORフラグを指定すると、 `type` 引数に指定した型の配列を格納するカ"
 "ラムになります。このようなカラムのことは、ベクターカラムと呼びます。ベクター"
 "カラムは、各レコードに複数の値を格納できるため、一対多の参照関係を表すのに便"
 "利です。"
-msgstr ""
 
 # 11d030f09d2f467baa42c4a27ff06b7e
 #: ../../../source/tutorial/data.txt:144
 msgid ""
+"The previous example used a regular column, so each record could have at "
+"most one link. Obviously, the specification is insufficient because a site "
+"usually has more than one links. To solve this problem, the following "
+"example uses a vector column."
+msgstr ""
 "さきほどテーブル参照の例として作成したカラムでは、各サイトに一つのリンクしか"
 "保存できませんでした。通常は一つのサイトから多くのサイトにリンクが張られてい"
 "るので、これでは残念な仕様になってしまいます。そこで、ベクターカラムを使っ"
 "て、複数のリンクを保存できるようにしてみましょう。"
-msgstr ""
 
-# 106bb3631f6b4aa7930e0491a6d4d2fd
+# fcab1957c86f4f028958b472cf6dda56
 #: ../../../source/tutorial/data.txt:155
 msgid ""
+"The only difference at the first step is the `flags` parameter that "
+"specifies to create a vector column. The `type` parameter of the :doc:`/"
+"commands/column_create` command is the same as in the previous example. "
+"Then, the :doc:`/commands/load` command registers three links from \"http://"
+"example.org/\" to \"http://example.net/\", \"http://example.org/\" and "
+"\"http://example.com/\". After that, the links are confirmed by the :doc:`/"
+"commands/select` command. In this case, the primary keys and the titles are "
+"output as arrays because links._key and links.title are specified to the "
+"`output_columns` parameter."
+msgstr ""
 "新たなカラムにはSiteテーブルに対する参照の配列を格納するので、 `type` 引数に"
 "Siteを指定するとともに、 `flags` 引数にCOLUMN_VECTORフラグを指定しています。"
 "次に、 :doc:`/commands/load` による更新では、 \"http://example.org/\" から "
@@ -398,7 +439,6 @@ msgid ""
 "容を確認しています。この例では、 `output_columns` 引数に links._key と links."
 "title を指定しているので、参照先の主キーとタイトルをそれぞれ配列にしたものが"
 "表示されています。"
-msgstr ""
 
 #: ../../../source/tutorial/drilldown.txt:11
 msgid "ドリルダウン"

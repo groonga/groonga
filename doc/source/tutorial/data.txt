@@ -67,7 +67,7 @@ String types
 
 The string types are divided according to the maximum length. For more details, see :doc:`/type`. The default value is the zero-length string.
 
-The following example creates an ShortText column and updates existing records. The third record has the default value because not updated.
+The following example creates a ShortText column and updates existing records. The third record has the default value because not updated.
 
 .. groonga-command
 .. include:: ../example/tutorial/data-4.log
@@ -121,11 +121,11 @@ The following example creates a WGS84GeoPoint column and updates existing record
 Reference types
 ---------------
 
-groongaでは、テーブル参照のカラム、すなわち別テーブルを参照するカラムを作成できます。より正確には、別テーブルのレコードIDを格納しておくことにより、別テーブルのレコードを参照できるようにします。
+Groonga supports a reference column, which stores references to records in its associated table. In practice, a reference column stores the IDs of the referred records in the associated table and enables access to those records.
 
-テーブル参照のカラムがあるときは、 `output_columns` 引数に "参照元カラム.参照先カラム" と指定することにより、参照先カラムの値を取り出すことができます。参照元カラムのみを指定したときは、 "参照元カラム名._key" と同様の扱いとなり、参照先レコードの主キーが取り出されます。テーブル参照が有効なレコードを指していないときは、参照先カラムのデフォルト値が取り出されるようになっています。
+You can specify a column in the associated table to the `output_columns` parameter of a :doc:`/commands/select` command. The format is "Src.Dest" where Src is the name of the reference column and Dest is the name of the target column. If only the reference column is specified, it is handled as "Src._key". Note that if a reference does not point to a valid record, a :doc:`/commands/select` command outputs the default value of the target column.
 
-ここでは、先のチュートリアルで作成したSiteテーブルにlinkという新たなカラムを作成し、サイト間のリンク関係を保存できるようにしてみましょう。
+The following example adds a reference column to the Site table that was created in the previous tutorial. The new column, named link, is designed for storing links among records in the Site table.
 
 .. groonga-command
 .. include:: ../example/tutorial/data-7.log
@@ -134,14 +134,14 @@ groongaでは、テーブル参照のカラム、すなわち別テーブルを�
 .. [{"_key":"http://example.org/","link":"http://example.net/"}]
 .. select --table Site --output_columns _key,title,link._key,link.title --query title:@this
 
-テーブル参照のカラムを作成するときは、 `type` 引数に参照先テーブルを指定します。この例では、同じテーブルに含まれる別のレコードを参照させたいので、Siteを指定することになります。次に、 "http://example.org/" から "http://example.net/" へのリンクを登録しています。テーブル参照を作成するときは、IDではなく主キーを指定することに注意してください。最後に、リンクの内容を確認しています。この例では、  `output_columns` 引数に link._key と link.title を指定しているので、参照先の主キーとタイトルが表示されています。
+The `type` parameter of the :doc:`/commands/column_create` command specifies the table to be associated with the reference column. In this example, the reference column is associated with the own table. Then, the :doc:`/commands/load` command registers a link from "http://example.org" to "http://example.net". Note that a reference column requires the primary key, not the ID, of the record to be referred to. After that, the link is confirmed by the :doc:`/commands/select` command. In this case, the primary key and the title of the referred record are output because link._key and link.title are specified to the `output_columns` parameter.
 
 Vector types
 ------------
 
-:doc:`/commands/column_create` コマンドでカラムを作成するとき、 `flags` 引数にCOLUMN_VECTORフラグを指定すると、 `type` 引数に指定した型の配列を格納するカラムになります。このようなカラムのことは、ベクターカラムと呼びます。ベクターカラムは、各レコードに複数の値を格納できるため、一対多の参照関係を表すのに便利です。
+Groonga supports a vector column, in which each element can store a variable number of values. To create a vector column, specify the COLUMN_VECTOR flag to the `flags` parameter of a :doc:`/commands/column_create` command. A vector column is useful to represent a many-to-many relationship.
 
-さきほどテーブル参照の例として作成したカラムでは、各サイトに一つのリンクしか保存できませんでした。通常は一つのサイトから多くのサイトにリンクが張られているので、これでは残念な仕様になってしまいます。そこで、ベクターカラムを使って、複数のリンクを保存できるようにしてみましょう。
+The previous example used a regular column, so each record could have at most one link. Obviously, the specification is insufficient because a site usually has more than one links. To solve this problem, the following example uses a vector column.
 
 .. FIXME: _idの配列ではダメなのかどうか。検証する。
 
@@ -152,4 +152,4 @@ Vector types
 .. [{"_key":"http://example.org/","links":["http://example.net/","http://example.org/","http://example.com/"]}]
 .. select --table Site --output_columns _key,title,links._key,links.title --query title:@this
 
-新たなカラムにはSiteテーブルに対する参照の配列を格納するので、 `type` 引数にSiteを指定するとともに、 `flags` 引数にCOLUMN_VECTORフラグを指定しています。次に、 :doc:`/commands/load` による更新では、 "http://example.org/" から "http://example.net/" へのリンクに加えて、 "http://example.org/" と "http://example.com/" へのリンクも登録しています。そして、最後にリンクの内容を確認しています。この例では、 `output_columns` 引数に links._key と links.title を指定しているので、参照先の主キーとタイトルをそれぞれ配列にしたものが表示されています。
+The only difference at the first step is the `flags` parameter that specifies to create a vector column. The `type` parameter of the :doc:`/commands/column_create` command is the same as in the previous example. Then, the :doc:`/commands/load` command registers three links from "http://example.org/" to "http://example.net/", "http://example.org/" and "http://example.com/". After that, the links are confirmed by the :doc:`/commands/select` command. In this case, the primary keys and the titles are output as arrays because links._key and links.title are specified to the `output_columns` parameter.
