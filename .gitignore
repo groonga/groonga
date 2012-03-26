@@ -111,3 +111,4 @@ version.sh
 /tmp-doc/
 /test/unit/Gemfile.lock
 /test/function/groonga-test/
+/*.tar.gz
