@@ -703,6 +703,32 @@ AM_CONDITIONAL([WITH_UNIT_TEST],
 AM_CONDITIONAL([WITH_FUNCTION_TEST],
                [test "$ac_cv_ruby_available" = "yes"])
 
+# check Inkscape for generating PNG images
+inkscape_available="no"
+AC_ARG_WITH([inkscape],
+            AS_HELP_STRING([--with-inkscape=PATH],
+                           [Inkscape path (default: auto)]),
+            [INKSCAPE="$withval"],
+            [INKSCAPE="auto"])
+
+if test "x$INKSCAPE" = "xno"; then
+  INKSCAPE=
+else
+  if test "x$INKSCAPE" = "xyes"; then
+    AC_PATH_PROGS(INKSCAPE, [inkscape], none)
+    if test "$INKSCAPE" != "none"; then
+      inkscape_available="yes"
+    fi
+  else
+    AC_CHECK_FILE([$INKSCAPE],
+		  [inkscape_available="yes"],
+		  [AC_MSG_WARN([$INKSCAPE is not found.
+                                Disable PNG image generation.])])
+  fi
+fi
+AC_SUBST(INKSCAPE)
+AM_CONDITIONAL([WITH_INKSCAPE], [test "$inkscape_available" = "yes"])
+
 # libedit
 AC_ARG_ENABLE(libedit,
   [AS_HELP_STRING([--disable-libedit],
