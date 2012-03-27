@@ -36,7 +36,7 @@
 namespace
 {
   void enter_api(grn_ctx *ctx) {
-    GRN_API_ENTER
+    GRN_API_ENTER;
   }
 
   int leave_api(grn_ctx *ctx) {
