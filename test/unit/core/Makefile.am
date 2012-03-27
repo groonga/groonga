@@ -4,6 +4,7 @@ SUBDIRS =					\
 if WITH_CUTTER
 noinst_LTLIBRARIES =				\
 	test-context.la				\
+	test-tiny-array.la			\
 	test-hash.la				\
 	test-hash-sort.la			\
 	test-hash-cursor.la			\
