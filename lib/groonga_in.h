@@ -174,6 +174,7 @@ typedef SOCKET grn_sock;
 #include <sys/timeb.h>
 #include <errno.h>
 #endif
+
 #else /* WIN32 */
 
 #define GROONGA_API
@@ -253,21 +254,22 @@ typedef int grn_sock;
 #ifdef HAVE_PTHREAD_H
 #include <pthread.h>
 typedef pthread_t grn_thread;
-#define THREAD_CREATE(thread,func,arg) (pthread_create(&(thread), NULL, (func), (arg)))
+#define THREAD_CREATE(thread,func,arg) \
+  (pthread_create(&(thread), NULL, (func), (arg)))
 #define THREAD_JOIN(thread) (pthread_join(thread, NULL))
 typedef pthread_mutex_t grn_mutex;
-#define MUTEX_INIT(m) pthread_mutex_init(&m, NULL)
-#define MUTEX_LOCK(m) pthread_mutex_lock(&m)
+#define MUTEX_INIT(m)   pthread_mutex_init(&m, NULL)
+#define MUTEX_LOCK(m)   pthread_mutex_lock(&m)
 #define MUTEX_UNLOCK(m) pthread_mutex_unlock(&m)
 #define MUTEX_FIN(m)
 typedef pthread_mutex_t grn_critical_section;
-#define CRITICAL_SECTION_INIT(cs) pthread_mutex_init(&(cs), NULL)
+#define CRITICAL_SECTION_INIT(cs)  pthread_mutex_init(&(cs), NULL)
 #define CRITICAL_SECTION_ENTER(cs) pthread_mutex_lock(&(cs))
 #define CRITICAL_SECTION_LEAVE(cs) pthread_mutex_unlock(&(cs))
 #define CRITICAL_SECTION_FIN(cs)
 
 typedef pthread_cond_t grn_cond;
-#define COND_INIT(c) pthread_cond_init(&c, NULL)
+#define COND_INIT(c)   pthread_cond_init(&c, NULL)
 #define COND_SIGNAL(c) pthread_cond_signal(&c)
 #define COND_WAIT(c,m) pthread_cond_wait(&c, &m)
 
@@ -279,24 +281,24 @@ typedef pthread_key_t grn_thread_key;
 
 #if USE_UYIELD
   extern int grn_uyield_count;
-  #define GRN_TEST_YIELD() \
-    do {\
-      if (((++grn_uyield_count) & (0x20 - 1)) == 0) {\
-        sched_yield();\
-        if(grn_uyield_count > 0x1000) {\
-          grn_uyield_count = (uint32_t)time(NULL) % 0x1000;\
-        }\
+  #define GRN_TEST_YIELD() do {\
+    if (((++grn_uyield_count) & (0x20 - 1)) == 0) {\
+      sched_yield();\
+      if(grn_uyield_count > 0x1000) {\
+        grn_uyield_count = (uint32_t)time(NULL) % 0x1000;\
       }\
-    } while (0)
+    }\
+  } while (0)
+
   #undef assert
-  #define assert(assert_expr) \
-    do {\
-      if (!(assert_expr)){\
-        fprintf(stderr, "assertion failed: %s\n", #assert_expr);\
-        abort();\
-      }\
-      GRN_TEST_YIELD();\
-    } while (0)
+  #define assert(assert_expr) do {\
+    if (!(assert_expr)){\
+      fprintf(stderr, "assertion failed: %s\n", #assert_expr);\
+      abort();\
+    }\
+    GRN_TEST_YIELD();\
+  } while (0)
+
   #define if(if_cond) \
     if ((((++grn_uyield_count) & (0x100 - 1)) != 0 || (sched_yield() * 0) == 0) && (if_cond))
   #define while(while_cond) \
@@ -306,9 +308,7 @@ typedef pthread_key_t grn_thread_key;
   #define sched_yield() usleep(1000 * 20)
   #endif
 #else /* USE_UYIELD */
-  #define GRN_TEST_YIELD() \
-    do { \
-    } while (0)
+  #define GRN_TEST_YIELD() do {} while (0)
 #endif /* USE_UYIELD */
 
 #else /* HAVE_PTHREAD_H */
@@ -322,18 +322,20 @@ typedef int grn_thread_key;
 
 #ifdef WIN32
 typedef uintptr_t grn_thread;
-#define THREAD_CREATE(thread,func,arg) (((thread)=_beginthreadex(NULL, 0, (func), (arg), 0, NULL)) == NULL)
-#define THREAD_JOIN(thread) (WaitForSingleObject((thread), INFINITE) == WAIT_FAILED)
+#define THREAD_CREATE(thread,func,arg) \
+  (((thread)=_beginthreadex(NULL, 0, (func), (arg), 0, NULL)) == NULL)
+#define THREAD_JOIN(thread) \
+  (WaitForSingleObject((thread), INFINITE) == WAIT_FAILED)
 typedef HANDLE grn_mutex;
-#define MUTEX_INIT(m) ((m) = CreateMutex(0, FALSE, NULL))
-#define MUTEX_LOCK(m) WaitForSingleObject((m), INFINITE)
+#define MUTEX_INIT(m)   ((m) = CreateMutex(0, FALSE, NULL))
+#define MUTEX_LOCK(m)   WaitForSingleObject((m), INFINITE)
 #define MUTEX_UNLOCK(m) ReleaseMutex(m)
-#define MUTEX_FIN(m) CloseHandle(m)
+#define MUTEX_FIN(m)    CloseHandle(m)
 typedef CRITICAL_SECTION grn_critical_section;
-#define CRITICAL_SECTION_INIT(cs) InitializeCriticalSection(&(cs))
+#define CRITICAL_SECTION_INIT(cs)  InitializeCriticalSection(&(cs))
 #define CRITICAL_SECTION_ENTER(cs) EnterCriticalSection(&(cs))
 #define CRITICAL_SECTION_LEAVE(cs) LeaveCriticalSection(&(cs))
-#define CRITICAL_SECTION_FIN(cs) DeleteCriticalSection(&(cs))
+#define CRITICAL_SECTION_FIN(cs)   DeleteCriticalSection(&(cs))
 
 typedef struct
 {
@@ -343,13 +345,13 @@ typedef struct
   HANDLE waiters_done_;
 } grn_cond;
 
-#define COND_INIT(c) { \
+#define COND_INIT(c) do { \
   (c).waiters_count_ = 0; \
   (c).sema_ = CreateSemaphore(NULL, 0, 0x7fffffff, NULL); \
   MUTEX_INIT((c).waiters_count_lock_); \
-}
+} while (0)
 
-#define COND_SIGNAL(c) { \
+#define COND_SIGNAL(c) do { \
   MUTEX_LOCK((c).waiters_count_lock_); \
   { \
     int have_waiters = (c).waiters_count_ > 0; \
@@ -358,8 +360,9 @@ typedef struct
       ReleaseSemaphore((c).sema_, 1, 0); \
     } \
   } \
-}
-#define COND_WAIT(c,m) { \
+} while (0)
+
+#define COND_WAIT(c,m) do { \
   MUTEX_LOCK((c).waiters_count_lock_); \
   (c).waiters_count_++; \
   MUTEX_UNLOCK((c).waiters_count_lock_); \
@@ -368,21 +371,23 @@ typedef struct
   (c).waiters_count_--; \
   MUTEX_UNLOCK((c).waiters_count_lock_); \
   WaitForSingleObject((m), INFINITE); \
-}
+} while (0)
 
 #else /* WIN32 */
 /* todo */
 typedef int grn_cond;
-#define COND_INIT(c) ((c) = 0)
+#define COND_INIT(c)   ((c) = 0)
 #define COND_SIGNAL(c)
-#define COND_WAIT(c,m) do { MUTEX_UNLOCK(m); usleep(1000); MUTEX_LOCK(m); } while (0)
+#define COND_WAIT(c,m) do { \
+  MUTEX_UNLOCK(m); \
+  usleep(1000); \
+  MUTEX_LOCK(m); \
+} while (0)
 /* todo : must be enhanced! */
 
 #endif /* WIN32 */
 
-#define GRN_TEST_YIELD() \
-  do { \
-  } while (0)
+#define GRN_TEST_YIELD() do {} while (0)
 
 #endif /* HAVE_PTHREAD_H */
 
@@ -405,29 +410,29 @@ typedef int grn_cond;
   __asm__ __volatile__ ("\tmovl %1,%%eax\n\tbsr %%eax,%0\n\tcmovz %%eax,%0\n" : "=r"(r) : "r"(v) : "%eax")
 # elif (defined(__PPC__) || defined(__ppc__)) /* ATOMIC ADD */
 #  define GRN_ATOMIC_ADD_EX(p,i,r) \
-  __asm__ __volatile__ ("\n1:\n\tlwarx %0, 0, %1\n\tadd %0, %0, %2\n\tstwcx. %0, 0, %1\n\tbne- 1b\n\tsub %0, %0, %2" : "=&r" (r) : "r" (p), "r" (i) : "cc", "memory");
+  __asm__ __volatile__ ("\n1:\n\tlwarx %0, 0, %1\n\tadd %0, %0, %2\n\tstwcx. %0, 0, %1\n\tbne- 1b\n\tsub %0, %0, %2" : "=&r" (r) : "r" (p), "r" (i) : "cc", "memory")
 /* todo */
-#  define GRN_BIT_SCAN_REV(v,r)   for (r = 31; r && !((1 << r) & v); r--)
+#  define GRN_BIT_SCAN_REV(v,r)  for (r = 31; r && !((1 << r) & v); r--)
 #  define GRN_BIT_SCAN_REV0(v,r) GRN_BIT_SCAN_REV(v,r)
 # elif (defined(__sun) && defined(__SVR4)) /* ATOMIC ADD */
 #  include <atomic.h>
 #  define GRN_ATOMIC_ADD_EX(p,i,r) \
-  r = atomic_add_32_nv(p, i) - i
+  (r = atomic_add_32_nv(p, i) - i)
 /* todo */
-#  define GRN_BIT_SCAN_REV(v,r)   for (r = 31; r && !((1 << r) & v); r--)
+#  define GRN_BIT_SCAN_REV(v,r)  for (r = 31; r && !((1 << r) & v); r--)
 #  define GRN_BIT_SCAN_REV0(v,r) GRN_BIT_SCAN_REV(v,r)
 # else /* ATOMIC ADD */
 /* todo */
-#  define GRN_BIT_SCAN_REV(v,r)   for (r = 31; r && !((1 << r) & v); r--)
+#  define GRN_BIT_SCAN_REV(v,r)  for (r = 31; r && !((1 << r) & v); r--)
 #  define GRN_BIT_SCAN_REV0(v,r) GRN_BIT_SCAN_REV(v,r)
 # endif /* ATOMIC ADD */
 
 # ifdef __i386__ /* ATOMIC 64BIT SET */
 #  define GRN_SET_64BIT(p,v) \
-  __asm__ __volatile__ ("\txchgl %%esi, %%ebx\n1:\n\tmovl (%0), %%eax\n\tmovl 4(%0), %%edx\n\tlock; cmpxchg8b (%0)\n\tjnz 1b\n\txchgl %%ebx, %%esi" : : "D"(p), "S"(*(((uint32_t *)&(v))+0)), "c"(*(((uint32_t *)&(v))+1)) : "ax", "dx", "memory");
+  __asm__ __volatile__ ("\txchgl %%esi, %%ebx\n1:\n\tmovl (%0), %%eax\n\tmovl 4(%0), %%edx\n\tlock; cmpxchg8b (%0)\n\tjnz 1b\n\txchgl %%ebx, %%esi" : : "D"(p), "S"(*(((uint32_t *)&(v))+0)), "c"(*(((uint32_t *)&(v))+1)) : "ax", "dx", "memory")
 # elif defined(__x86_64__) /* ATOMIC 64BIT SET */
 #  define GRN_SET_64BIT(p,v) \
-  *(p) = (v);
+  (*(p) = (v))
 # elif (defined(__sun) && defined(__SVR4)) /* ATOMIC 64BIT SET */
 /* todo */
 #  define GRN_SET_64BIT(p,v) \
@@ -444,13 +449,12 @@ typedef int grn_cond;
 #elif (defined(WIN32) || defined (_WIN64)) /* __GNUC__ */
 
 # define GRN_ATOMIC_ADD_EX(p,i,r) \
-  (r) = (uint32_t)InterlockedExchangeAdd((int32_t *)(p), (int32_t)(i));
+  ((r) = (uint32_t)InterlockedExchangeAdd((int32_t *)(p), (int32_t)(i)))
 # if defined(_WIN64) /* ATOMIC 64BIT SET */
 #  define GRN_SET_64BIT(p,v) \
-  *(p) = (v);
+  (*(p) = (v))
 # else /* ATOMIC 64BIT SET */
-#  define GRN_SET_64BIT(p,v) \
-{\
+#  define GRN_SET_64BIT(p,v) do {\
   uint32_t v1, v2; \
   uint64_t *p2= (p); \
   v1 = *(((uint32_t *)&(v))+0);\
@@ -463,12 +467,12 @@ typedef int grn_cond;
   __asm  mov edx, dword ptr [esi + 4] \
   __asm  lock cmpxchg8b qword ptr [esi] \
   __asm  jnz  _set_loop \
-}\
+} while (0)
 /* TODO: use _InterlockedCompareExchange64 or inline asm */
 # endif /* ATOMIC 64BIT SET */
 
 /* todo */
-# define GRN_BIT_SCAN_REV(v,r)   for (r = 31; r && !((1 << r) & v); r--)
+# define GRN_BIT_SCAN_REV(v,r)  for (r = 31; r && !((1 << r) & v); r--)
 # define GRN_BIT_SCAN_REV0(v,r) GRN_BIT_SCAN_REV(v,r)
 
 # define GRN_MKOSTEMP(template,flags,mode) \
@@ -480,16 +484,16 @@ typedef int grn_cond;
 #  define __FUNCTION__ ""
 #  include <atomic.h>
 #  define GRN_ATOMIC_ADD_EX(p,i,r) \
-  r = atomic_add_32_nv(p, i) - i
+  (r = atomic_add_32_nv(p, i) - i)
 /* todo */
-#  define GRN_BIT_SCAN_REV(v,r)   for (r = 31; r && !((1 << r) & v); r--)
+#  define GRN_BIT_SCAN_REV(v,r)  for (r = 31; r && !((1 << r) & v); r--)
 #  define GRN_BIT_SCAN_REV0(v,r) GRN_BIT_SCAN_REV(v,r)
 /* todo */
 #  define GRN_SET_64BIT(p,v) \
   (void)atomic_swap_64(p, v)
 # endif /* ATOMIC ADD */
 /* todo */
-# define GRN_BIT_SCAN_REV(v,r)   for (r = 31; r && !((1 << r) & v); r--)
+# define GRN_BIT_SCAN_REV(v,r)  for (r = 31; r && !((1 << r) & v); r--)
 # define GRN_BIT_SCAN_REV0(v,r) GRN_BIT_SCAN_REV(v,r)
 
 # define GRN_MKOSTEMP(template,flags,mode) \
@@ -518,42 +522,37 @@ grn_str_greater(const uint8_t *ap, uint32_t as, const uint8_t *bp, uint32_t bs)
 #endif /* __GNUC__ */
 
 #ifdef WORDS_BIGENDIAN
-#define grn_hton(buf,key,size) \
-{\
+#define grn_hton(buf,key,size) do {\
   uint32_t size_ = (uint32_t)size;\
   uint8_t *buf_ = (uint8_t *)buf;\
   uint8_t *key_ = (uint8_t *)key;\
   while (size_--) { *buf_++ = *key_++; }\
-}
-#define grn_ntohi(buf,key,size) \
-{\
+} while (0)
+#define grn_ntohi(buf,key,size) do {\
   uint32_t size_ = (uint32_t)size;\
   uint8_t *buf_ = (uint8_t *)buf;\
   uint8_t *key_ = (uint8_t *)key;\
   if (size_) { *buf_++ = 0x80 ^ *key_++; size_--; }\
   while (size_) { *buf_++ = *key_++; size_--; }\
-}
+} while (0)
 #else /* WORDS_BIGENDIAN */
-#define grn_hton(buf,key,size) \
-{\
+#define grn_hton(buf,key,size) do {\
   uint32_t size_ = (uint32_t)size;\
   uint8_t *buf_ = (uint8_t *)buf;\
   uint8_t *key_ = (uint8_t *)key + size;\
   while (size_--) { *buf_++ = *(--key_); }\
-}
-#define grn_ntohi(buf,key,size) \
-{\
+} while (0)
+#define grn_ntohi(buf,key,size) do {\
   uint32_t size_ = (uint32_t)size;\
   uint8_t *buf_ = (uint8_t *)buf;\
   uint8_t *key_ = (uint8_t *)key + size;\
   while (size_ > 1) { *buf_++ = *(--key_); size_--; }\
   if (size_) { *buf_ = 0x80 ^ *(--key_); } \
-}
+} while (0)
 #endif /* WORDS_BIGENDIAN */
 #define grn_ntoh(buf,key,size) grn_hton(buf,key,size)
 
-#define grn_gton(keybuf,key,size)\
-{\
+#define grn_gton(keybuf,key,size) do {\
   uint8_t *keybuf_ = keybuf;\
   const void *key_ = key;\
   int la = ((grn_geo_point *)key_)->latitude;\
@@ -567,10 +566,9 @@ grn_str_greater(const uint8_t *ap, uint32_t as, const uint8_t *bp, uint32_t bs)
             (((la >> i) & 2) << 2) + (((lo >> i) & 2) << 1) +\
             (((la >> i) & 1) << 1) + (((lo >> i) & 1) << 0));\
   }\
-}
+} while (0)
 
-#define grn_ntog(keybuf,key,size)\
-{\
+#define grn_ntog(keybuf,key,size) do {\
   uint8_t *keybuf_ = keybuf;\
   uint8_t *key_ = key;\
   uint32_t size_ = size;\
@@ -587,7 +585,7 @@ grn_str_greater(const uint8_t *ap, uint32_t as, const uint8_t *bp, uint32_t bs)
   }\
   ((grn_geo_point *)keybuf_)->latitude = la;\
   ((grn_geo_point *)keybuf_)->longitude = lo;\
-}
+} while (0)
 
 #ifdef USE_FUTEX
 #include <linux/futex.h>
@@ -610,8 +608,7 @@ grn_str_greater(const uint8_t *ap, uint32_t as, const uint8_t *bp, uint32_t bs)
   }\
 } while(0)
 
-#define GRN_FUTEX_WAKE(p) \
-  syscall(SYS_futex, p, FUTEX_WAKE, 1)
+#define GRN_FUTEX_WAKE(p) syscall(SYS_futex, p, FUTEX_WAKE, 1)
 #else /* USE_FUTEX */
 #define GRN_FUTEX_WAIT(p) usleep(1000)
 #define GRN_FUTEX_WAKE(p)
