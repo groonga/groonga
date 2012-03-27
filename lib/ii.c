@@ -2174,7 +2174,7 @@ array_get(grn_ctx *ctx, grn_ii *ii, uint32_t id)
     ii->header->ainfo[seg] = pseg;
     if (seg >= ii->header->amax) { ii->header->amax = seg + 1; }
   }
-  GRN_IO_SEG_REF(ii->seg, pseg, p)
+  GRN_IO_SEG_REF(ii->seg, pseg, p);
   if (!p) { return NULL; }
   return (uint32_t *)(p + (id & ARRAY_MASK_IN_A_SEGMENT) * S_ARRAY_ELEMENT);
 }
