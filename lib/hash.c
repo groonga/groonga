@@ -16,7 +16,6 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include "hash.h"
-#include "pat.h"
 #include "output.h"
 #include <string.h>
 #include <limits.h>
@@ -25,26 +24,122 @@
 
 /* grn_tiny_array */
 
-void
-grn_tiny_array_init(grn_ctx *ctx, grn_tiny_array *a, uint16_t element_size, uint16_t flags)
+inline static int
+grn_tiny_array_get_block_id(grn_tiny_array *array, grn_id id)
 {
-  a->ctx = ctx;
-  a->element_size = element_size;
-  a->flags = flags;
-  a->max = 0;
-  if (flags & GRN_TINY_ARRAY_THREADSAFE) { CRITICAL_SECTION_INIT(a->lock); }
-  memset(a->elements, 0, sizeof(a->elements));
+  int most_significant_one_bit_offset;
+  GRN_BIT_SCAN_REV(id, most_significant_one_bit_offset);
+  return most_significant_one_bit_offset >> GRN_TINY_ARRAY_W;
+}
+
+inline static void *
+grn_tiny_array_at_inline(grn_tiny_array *array, grn_id id)
+{
+  int block_id;
+  void **block;
+  size_t offset;
+  if (!id) {
+    return NULL;
+  }
+  block_id = grn_tiny_array_get_block_id(array, id);
+  block = &array->elements[block_id];
+  offset = GRN_TINY_ARRAY_R(block_id);
+  if (!*block) {
+    grn_ctx * const ctx = array->ctx;
+    if (array->flags & GRN_TINY_ARRAY_THREADSAFE) {
+      CRITICAL_SECTION_ENTER(array->lock);
+    }
+    if (!*block) {
+      const size_t block_size =
+          GRN_TINY_ARRAY_S * offset * array->element_size;
+      if (array->flags & GRN_TINY_ARRAY_USE_MALLOC) {
+        if (array->flags & GRN_TINY_ARRAY_CLEAR) {
+          *block = GRN_CALLOC(block_size);
+        } else {
+          *block = GRN_MALLOC(block_size);
+        }
+      } else {
+        *block = GRN_CTX_ALLOC(ctx, block_size);
+      }
+    }
+    if (array->flags & GRN_TINY_ARRAY_THREADSAFE) {
+      CRITICAL_SECTION_LEAVE(array->lock);
+    }
+    if (!*block) {
+      return NULL;
+    }
+  }
+  if (id > array->max) {
+    array->max = id;
+  }
+  return (byte *)*block + (id - offset) * array->element_size;
+}
+
+inline static void *
+grn_tiny_array_next(grn_tiny_array *array)
+{
+  return grn_tiny_array_at_inline(array, array->max + 1);
+}
+
+inline static grn_bool
+grn_tiny_array_bit_at(grn_tiny_array *array, grn_id offset)
+{
+  uint8_t * const ptr =
+      (uint8_t *)grn_tiny_array_at_inline(array, (offset >> 3) + 1);
+  return ptr ? ((*ptr >> (offset & 7)) & 1) : 0;
+}
+
+inline static void
+grn_tiny_array_bit_on(grn_tiny_array *array, grn_id offset)
+{
+  uint8_t * const ptr =
+      (uint8_t *)grn_tiny_array_at_inline(array, (offset >> 3) + 1);
+  if (ptr) {
+    *ptr |= 1 << (offset & 7);
+  }
+}
+
+inline static void
+grn_tiny_array_bit_off(grn_tiny_array *array, grn_id offset)
+{
+  uint8_t * const ptr =
+      (uint8_t *)grn_tiny_array_at_inline(array, (offset >> 3) + 1);
+  if (ptr) {
+    *ptr &= ~(1 << (offset & 7));
+  }
+}
+
+inline static void
+grn_tiny_array_bit_flip(grn_tiny_array *array, grn_id offset)
+{
+  uint8_t * const ptr =
+      (uint8_t *)grn_tiny_array_at_inline(array, (offset >> 3) + 1);
+  if (ptr) {
+    *ptr ^= 1 << (offset & 7);
+  }
 }
 
 void
-grn_tiny_array_fin(grn_tiny_array *a)
+grn_tiny_array_init(grn_ctx *ctx, grn_tiny_array *array,
+                    uint16_t element_size, uint16_t flags)
+{
+  array->ctx = ctx;
+  array->element_size = element_size;
+  array->flags = flags;
+  array->max = 0;
+  if (flags & GRN_TINY_ARRAY_THREADSAFE) { CRITICAL_SECTION_INIT(array->lock); }
+  memset(array->elements, 0, sizeof(array->elements));
+}
+
+void
+grn_tiny_array_fin(grn_tiny_array *array)
 {
   int i;
-  grn_ctx *ctx = a->ctx;
+  grn_ctx *ctx = array->ctx;
   for (i = 0; i < GRN_TINY_ARRAY_N; i++) {
-    void **e = &a->elements[i];
+    void **e = &array->elements[i];
     if (*e) {
-      if (a->flags & GRN_TINY_ARRAY_USE_MALLOC) {
+      if (array->flags & GRN_TINY_ARRAY_USE_MALLOC) {
         GRN_FREE(*e);
       } else {
         GRN_CTX_FREE(ctx, *e);
@@ -55,23 +150,21 @@ grn_tiny_array_fin(grn_tiny_array *a)
 }
 
 void *
-grn_tiny_array_at(grn_tiny_array *a, grn_id id)
+grn_tiny_array_at(grn_tiny_array *array, grn_id id)
 {
-  void *e;
-  GRN_TINY_ARRAY_AT(a, id, e);
-  return e;
+  return grn_tiny_array_at_inline(array, id);
 }
 
 grn_id
-grn_tiny_array_id(grn_tiny_array *a, void *p)
+grn_tiny_array_id(grn_tiny_array *array, void *p)
 {
   uint32_t i, s, n;
   uintptr_t o, p_ = (uintptr_t) p;
   for (i = 0, s = 0; i < GRN_TINY_ARRAY_N; i++, s += n) {
     n = GRN_TINY_ARRAY_S * GRN_TINY_ARRAY_R(i);
-    o = (uintptr_t) a->elements[i];
-    if (o <= p_ && p_ < o + n * a->element_size) {
-      return s + ((p_ - o) / a->element_size);
+    o = (uintptr_t) array->elements[i];
+    if (o <= p_ && p_ < o + n * array->element_size) {
+      return s + ((p_ - o) / array->element_size);
     }
   }
   return GRN_ID_NIL;
@@ -109,7 +202,7 @@ enum {
   if (IO_ARRAYP(array)) {\
     ARRAY_ENTRY_AT_(array, id, value, addp);\
   } else {\
-    GRN_TINY_ARRAY_AT(&array->a, id, value);\
+    (value) = grn_tiny_array_at_inline(&array->a, id);\
   }\
 } while (0)
 
@@ -117,7 +210,7 @@ enum {
   if (IO_ARRAYP(array)) {\
     GRN_IO_ARRAY_BIT_AT((array)->io, array_seg_bitmap, (id), (value));\
   } else {\
-    GRN_TINY_ARRAY_BIT_AT(&(array)->bitmap, (id), (value));\
+    (value) = grn_tiny_array_bit_at(&(array)->bitmap, (id));\
   }\
 } while (0)
 
@@ -411,15 +504,14 @@ grn_array_delete_by_id(grn_ctx *ctx, grn_array *array, grn_id id,
     GRN_IO_ARRAY_BIT_OFF(array->io, array_seg_bitmap, id);
   } else {
     if (array->value_size >= sizeof(grn_id)) {
-      void *ee;
-      GRN_TINY_ARRAY_AT(&array->a, id, ee);
+      void *ee = grn_tiny_array_at_inline(&array->a, id);
       if (!ee) { rc = GRN_INVALID_ARGUMENT; goto exit; }
       *((grn_id *)ee) = array->garbages;
       array->garbages = id;
     }
     (*array->n_entries)--;
     (*array->n_garbages)++;
-    GRN_TINY_ARRAY_BIT_OFF(&array->bitmap, id);
+    grn_tiny_array_bit_off(&array->bitmap, id);
   }
 exit :
   /* unlock */
@@ -588,15 +680,14 @@ array_entry_new(grn_ctx *ctx, grn_array *array)
     GRN_IO_ARRAY_BIT_ON(array->io, array_seg_bitmap, e);
   } else {
     if ((e = array->garbages)) {
-      void *ee;
-      GRN_TINY_ARRAY_AT(&array->a, e, ee);
+      void *ee = grn_tiny_array_at_inline(&array->a, e);
       array->garbages = *((grn_id *)ee);
       memset(ee, 0, array->value_size);
       (*array->n_garbages)--;
     } else {
       e = ++array->a.max;
     }
-    GRN_TINY_ARRAY_BIT_ON(&array->bitmap, e);
+    grn_tiny_array_bit_on(&array->bitmap, e);
   }
   return e;
 }
@@ -663,7 +754,7 @@ enum {
   if (IO_HASHP(hash)) {\
     ENTRY_AT_(hash, id, ee, addp);\
   } else {\
-    GRN_TINY_ARRAY_AT(&hash->a, id, ee);\
+    (ee) = grn_tiny_array_at_inline(&hash->a, id);\
   }\
 } while (0)
 
@@ -671,7 +762,7 @@ enum {
   if (IO_HASHP(hash)) {\
     GRN_IO_ARRAY_BIT_AT((hash)->io, segment_bitmap, (id), (value));\
   } else {\
-    GRN_TINY_ARRAY_BIT_AT(&(hash)->bitmap, (id), (value));\
+    (value) = grn_tiny_array_bit_at(&(hash)->bitmap, (id));\
   }\
 } while (0)
 
@@ -1004,7 +1095,7 @@ tiny_hash_fin(grn_ctx *ctx, grn_hash *hash)
         entry_astr *n;
         e = *sp;
         if (!e || (e == GARBAGE)) { continue; }
-        GRN_TINY_ARRAY_AT(&hash->a, e, n);
+        n = grn_tiny_array_at_inline(&hash->a, e);
         GRN_ASSERT(n);
         i--;
         if (!n || (n->flag & HASH_IMMEDIATE)) { continue; }
@@ -1172,13 +1263,13 @@ entry_new(grn_ctx *ctx, grn_hash *hash, uint32_t size)
     if (hash->garbages) {
       entry *ee;
       e = hash->garbages;
-      GRN_TINY_ARRAY_AT(&hash->a, e, ee);
+      ee = grn_tiny_array_at_inline(&hash->a, e);
       hash->garbages = ee->key;
       memset(ee, 0, hash->entry_size);
     } else {
       e = hash->a.max + 1;
     }
-    GRN_TINY_ARRAY_BIT_ON(&hash->bitmap, e);
+    grn_tiny_array_bit_on(&hash->bitmap, e);
   }
   return e;
 }
@@ -1512,7 +1603,7 @@ grn_hash_set_value(grn_ctx *ctx, grn_hash *hash, grn_id id,
       grn_ctx *ctx = hash->ctx;\
       GRN_CTX_FREE(ctx, ((entry_astr *)ee)->str);\
     }\
-    GRN_TINY_ARRAY_BIT_OFF(&hash->bitmap, e);\
+    grn_tiny_array_bit_off(&hash->bitmap, e);\
   }\
   (*hash->n_entries)--;\
   (*hash->n_garbages)++;\

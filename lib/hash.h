@@ -65,69 +65,11 @@ struct _grn_tiny_array {
   }\
 } while (0)
 
-#define GRN_TINY_ARRAY_AT(a,id,e) do {\
-  grn_id id_ = (id);\
-  byte **e_;\
-  size_t o_;\
-  {\
-    int l_, i_;\
-    if (!id_) { e = NULL; break; }\
-    GRN_BIT_SCAN_REV(id_, l_);\
-    i_ = l_ >> GRN_TINY_ARRAY_W;\
-    o_ = GRN_TINY_ARRAY_R(i_);\
-    e_ = (byte **)&(a)->elements[i_];\
-  }\
-  if (!*e_) {\
-    grn_ctx *ctx = (a)->ctx;\
-    if ((a)->flags & GRN_TINY_ARRAY_THREADSAFE) { CRITICAL_SECTION_ENTER((a)->lock); }\
-    if (!*e_) {\
-      if ((a)->flags & GRN_TINY_ARRAY_USE_MALLOC) {\
-        if ((a)->flags & GRN_TINY_ARRAY_CLEAR) {\
-          *e_ = GRN_CALLOC(GRN_TINY_ARRAY_S * o_ * (a)->element_size);\
-        } else {\
-          *e_ = GRN_MALLOC(GRN_TINY_ARRAY_S * o_ * (a)->element_size);\
-        }\
-      } else {\
-        *e_ = GRN_CTX_ALLOC(ctx, GRN_TINY_ARRAY_S * o_ * (a)->element_size);\
-      }\
-    }\
-    if ((a)->flags & GRN_TINY_ARRAY_THREADSAFE) { CRITICAL_SECTION_LEAVE((a)->lock); }\
-    if (!*e_) { e = NULL; break; }\
-  }\
-  if (id_ > (a)->max) { (a)->max = id_; }\
-  (e) = (void *)(*e_ + (id_ - o_) * (a)->element_size);\
-} while (0)
-
-#define GRN_TINY_ARRAY_NEXT(a,e) GRN_TINY_ARRAY_AT((a), (a)->max + 1, e)
-
-#define GRN_TINY_ARRAY_BIT_AT(array,offset,res) do {\
-  uint8_t *ptr_;\
-  GRN_TINY_ARRAY_AT((array), ((offset) >> 3) + 1, ptr_);\
-  res = ptr_ ? ((*ptr_ >> ((offset) & 7)) & 1) : 0;\
-} while (0)
-
-#define GRN_TINY_ARRAY_BIT_ON(array,offset) do {\
-  uint8_t *ptr_;\
-  GRN_TINY_ARRAY_AT((array), ((offset) >> 3) + 1, ptr_);\
-  if (ptr_) { *ptr_ |= (1 << ((offset) & 7)); }\
-} while (0)
-
-#define GRN_TINY_ARRAY_BIT_OFF(array,offset) do {\
-  uint8_t *ptr_;\
-  GRN_TINY_ARRAY_AT((array), ((offset) >> 3) + 1, ptr_);\
-  if (ptr_) { *ptr_ &= ~(1 << ((offset) & 7)); }\
-} while (0)
-
-#define GRN_TINY_ARRAY_BIT_FLIP(array,offset) do {\
-  uint8_t *ptr_;\
-  GRN_TINY_ARRAY_AT((array), ((offset) >> 3) + 1, ptr_);\
-  if (ptr_) { *ptr_ ^= (1 << ((offset) & 7)); }\
-} while (0)
-
-void grn_tiny_array_init(grn_ctx *ctx, grn_tiny_array *a, uint16_t element_size, uint16_t flags);
-void grn_tiny_array_fin(grn_tiny_array *a);
-void *grn_tiny_array_at(grn_tiny_array *a, grn_id id);
-grn_id grn_tiny_array_id(grn_tiny_array *a, void *p);
+void grn_tiny_array_init(grn_ctx *ctx, grn_tiny_array *array,
+                         uint16_t element_size, uint16_t flags);
+void grn_tiny_array_fin(grn_tiny_array *array);
+void *grn_tiny_array_at(grn_tiny_array *array, grn_id id);
+grn_id grn_tiny_array_id(grn_tiny_array *array, void *p);
 
 /**** grn_array ****/
 
