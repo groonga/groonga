@@ -117,20 +117,20 @@
 #define inline _inline
 #endif
 
-#define snprintf _snprintf
+#define snprintf(str, size, ...) _snprintf(str, size, __VA_ARGS__)
 #if _MSC_VER < 1500
-  #define vsnprintf _vsnprintf
+# define vsnprintf(str, size, format, ap) _vsnprintf(str, size, format, ap)
 #endif /* _MSC_VER < 1500 */
-#define unlink _unlink
-#define lseek _lseek
-#define getpid _getpid
+#define unlink(pathname) _unlink(pathname)
+#define lseek(fd, offset, whence) _lseek(fd, offset, whence)
+#define getpid() _getpid()
 #if !defined(__GNUC__) && _MSC_VER < 1400
-# define fstat _fstat
+# define fstat(fd, buf) _fstat(fd, buf)
 #endif /* !defined(__GNUC__) && _MSC_VER < 1400 */
 #define usleep(x) Sleep((x) / 1000)
-#define sleep(x) Sleep((x) * 1000)
+#define sleep(x)  Sleep((x) * 1000)
 #if !defined(strcasecmp)
-#  define strcasecmp stricmp
+#  define strcasecmp(s1, s2) stricmp(s1, s2)
 #endif /* !defined(strcasecmp) */
 
 #ifdef __GNUC__
@@ -165,7 +165,7 @@
 #endif /* HAVE_FPCLASSIFY */
 
 typedef SOCKET grn_sock;
-#define grn_sock_close closesocket
+#define grn_sock_close(sock) closesocket(sock)
 
 #define CALLBACK __stdcall
 
@@ -196,7 +196,7 @@ typedef char int_least8_t;
 typedef unsigned char uint_least8_t;
 # endif /* UINT_LEAST8_MAX */
 typedef int grn_sock;
-# define grn_sock_close close
+# define grn_sock_close(sock) close(sock)
 # define CALLBACK
 
 # ifdef HAVE_FPCLASSIFY
@@ -272,10 +272,10 @@ typedef pthread_cond_t grn_cond;
 #define COND_WAIT(c,m) pthread_cond_wait(&c, &m)
 
 typedef pthread_key_t grn_thread_key;
-#define THREAD_KEY_CREATE pthread_key_create
-#define THREAD_KEY_DELETE pthread_key_delete
-#define THREAD_SETSPECIFIC pthread_setspecific
-#define THREAD_GETSPECIFIC pthread_getspecific
+#define THREAD_KEY_CREATE(key, destr)  pthread_key_create(key, destr)
+#define THREAD_KEY_DELETE(key)         pthread_key_delete(key)
+#define THREAD_SETSPECIFIC(key, value) pthread_setspecific(key, value)
+#define THREAD_GETSPECIFIC(key)        pthread_getspecific(key)
 
 #if USE_UYIELD
   extern int grn_uyield_count;
@@ -408,18 +408,18 @@ typedef int grn_cond;
   __asm__ __volatile__ ("\n1:\n\tlwarx %0, 0, %1\n\tadd %0, %0, %2\n\tstwcx. %0, 0, %1\n\tbne- 1b\n\tsub %0, %0, %2" : "=&r" (r) : "r" (p), "r" (i) : "cc", "memory");
 /* todo */
 #  define GRN_BIT_SCAN_REV(v,r)   for (r = 31; r && !((1 << r) & v); r--)
-#  define GRN_BIT_SCAN_REV0 GRN_BIT_SCAN_REV
+#  define GRN_BIT_SCAN_REV0(v,r) GRN_BIT_SCAN_REV(v,r)
 # elif (defined(__sun) && defined(__SVR4)) /* ATOMIC ADD */
 #  include <atomic.h>
 #  define GRN_ATOMIC_ADD_EX(p,i,r) \
   r = atomic_add_32_nv(p, i) - i
 /* todo */
 #  define GRN_BIT_SCAN_REV(v,r)   for (r = 31; r && !((1 << r) & v); r--)
-#  define GRN_BIT_SCAN_REV0 GRN_BIT_SCAN_REV
+#  define GRN_BIT_SCAN_REV0(v,r) GRN_BIT_SCAN_REV(v,r)
 # else /* ATOMIC ADD */
 /* todo */
 #  define GRN_BIT_SCAN_REV(v,r)   for (r = 31; r && !((1 << r) & v); r--)
-#  define GRN_BIT_SCAN_REV0 GRN_BIT_SCAN_REV
+#  define GRN_BIT_SCAN_REV0(v,r) GRN_BIT_SCAN_REV(v,r)
 # endif /* ATOMIC ADD */
 
 # ifdef __i386__ /* ATOMIC 64BIT SET */
@@ -469,7 +469,7 @@ typedef int grn_cond;
 
 /* todo */
 # define GRN_BIT_SCAN_REV(v,r)   for (r = 31; r && !((1 << r) & v); r--)
-# define GRN_BIT_SCAN_REV0 GRN_BIT_SCAN_REV
+# define GRN_BIT_SCAN_REV0(v,r) GRN_BIT_SCAN_REV(v,r)
 
 # define GRN_MKOSTEMP(template,flags,mode) \
   (mktemp(template), GRN_OPEN((template),((flags)|O_BINARY),mode))
@@ -483,14 +483,14 @@ typedef int grn_cond;
   r = atomic_add_32_nv(p, i) - i
 /* todo */
 #  define GRN_BIT_SCAN_REV(v,r)   for (r = 31; r && !((1 << r) & v); r--)
-#  define GRN_BIT_SCAN_REV0 GRN_BIT_SCAN_REV
+#  define GRN_BIT_SCAN_REV0(v,r) GRN_BIT_SCAN_REV(v,r)
 /* todo */
 #  define GRN_SET_64BIT(p,v) \
   (void)atomic_swap_64(p, v)
 # endif /* ATOMIC ADD */
 /* todo */
 # define GRN_BIT_SCAN_REV(v,r)   for (r = 31; r && !((1 << r) & v); r--)
-# define GRN_BIT_SCAN_REV0 GRN_BIT_SCAN_REV
+# define GRN_BIT_SCAN_REV0(v,r) GRN_BIT_SCAN_REV(v,r)
 
 # define GRN_MKOSTEMP(template,flags,mode) \
   (mktemp(template), GRN_OPEN((template),flags,mode))
@@ -550,7 +550,7 @@ grn_str_greater(const uint8_t *ap, uint32_t as, const uint8_t *bp, uint32_t bs)
   if (size_) { *buf_ = 0x80 ^ *(--key_); } \
 }
 #endif /* WORDS_BIGENDIAN */
-#define grn_ntoh grn_hton
+#define grn_ntoh(buf,key,size) grn_hton(buf,key,size)
 
 #define grn_gton(keybuf,key,size)\
 {\
