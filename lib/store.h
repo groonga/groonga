@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009 Brazil
+/* Copyright(C) 2009-2012 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -70,11 +70,13 @@ struct _grn_ra_cache {
   int32_t seg;
 };
 
-#define GRN_RA_CACHE_INIT(ra,c) \
-{ (c)->p = NULL; (c)->seg = -1; }
+#define GRN_RA_CACHE_INIT(ra,c) do {\
+  (c)->p = NULL; (c)->seg = -1;\
+} while (0)
 
-#define GRN_RA_CACHE_FIN(ra,c) \
-{ if ((c)->seg != -1) { GRN_IO_SEG_UNREF((ra)->io, (c)->seg); }}
+#define GRN_RA_CACHE_FIN(ra,c) do {\
+  if ((c)->seg != -1) { GRN_IO_SEG_UNREF((ra)->io, (c)->seg); }\
+} while (0);
 
 void *grn_ra_ref_cache(grn_ctx *ctx, grn_ra *ra, grn_id id, grn_ra_cache *cache);
 

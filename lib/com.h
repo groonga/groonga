@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009-2011 Brazil
+/* Copyright(C) 2009-2012 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -59,13 +59,13 @@ struct _grn_com_queue {
   grn_critical_section cs;
 };
 
-#define GRN_COM_QUEUE_INIT(q) {\
+#define GRN_COM_QUEUE_INIT(q) do {\
   (q)->next = NULL;\
   (q)->tail = &(q)->next;\
   (q)->first = 0;\
   (q)->last = 0;\
   CRITICAL_SECTION_INIT((q)->cs);\
-}
+} while (0)
 
 #define GRN_COM_QUEUE_EMPTYP(q) (((q)->first == (q)->last) && !(q)->next)
 

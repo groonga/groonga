@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009 Brazil
+/* Copyright(C) 2009-2012 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -46,9 +46,9 @@ typedef struct {
 
 GRN_API size_t grn_str_len(grn_ctx *ctx, const char *str, grn_encoding encoding, const char **last);
 
-#define GRN_STR_BLANK 0x80
+#define GRN_STR_BLANK      0x80
 #define GRN_STR_ISBLANK(c) (c & 0x80)
-#define GRN_STR_CTYPE(c) (c & 0x7f)
+#define GRN_STR_CTYPE(c)   (c & 0x7f)
 
 GRN_API int grn_isspace(const char *s, grn_encoding encoding);
 int8_t grn_atoi8(const char *nptr, const char *end, const char **rest);
@@ -82,21 +82,21 @@ void grn_logger_fin(void);
 GRN_API int grn_charlen_(grn_ctx *ctx, const char *str, const char *end, grn_encoding encoding);
 GRN_API grn_str *grn_str_open_(grn_ctx *ctx, const char *str, unsigned int str_len, int flags, grn_encoding encoding);
 
-#define GRN_BULK_INCR_LEN(buf,len) {\
+#define GRN_BULK_INCR_LEN(buf,len) do {\
   if (GRN_BULK_OUTP(buf)) {\
     (buf)->u.b.curr += (len);\
   } else {\
     (buf)->header.flags += (len);\
   }\
-}
+} while (0)
 
-#define GRN_BULK_SET_CURR(buf,p) {\
+#define GRN_BULK_SET_CURR(buf,p) do {\
   if (GRN_BULK_OUTP(buf)) {\
     (buf)->u.b.curr = (char *)(p);\
   } else {\
     (buf)->header.flags = (char *)(p) - GRN_BULK_HEAD(buf);\
   }\
-}
+} while (0)
 
 grn_rc grn_text_ulltoa(grn_ctx *ctx, grn_obj *buf, unsigned long long int i);
 

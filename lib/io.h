@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009 Brazil
+/* Copyright(C) 2009-2012 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -27,16 +27,16 @@ extern "C" {
 
 #ifdef WIN32
 #ifdef WIN32_FMO_EACH
-#define GRN_IO_FILE_SIZE               1073741824UL
+#define GRN_IO_FILE_SIZE  1073741824UL
 #else /* FMO_EACH */
-#define GRN_IO_FILE_SIZE               134217728L
+#define GRN_IO_FILE_SIZE  134217728L
 #endif /* FMO_EACH */
-#define GRN_IO_COPY grn_io_rdonly
-#define GRN_IO_UPDATE grn_io_wronly
+#define GRN_IO_COPY       grn_io_rdonly
+#define GRN_IO_UPDATE     grn_io_wronly
 #else /* WIN32 */
-#define GRN_IO_FILE_SIZE               1073741824UL
-#define GRN_IO_COPY grn_io_rdwr
-#define GRN_IO_UPDATE grn_io_rdwr
+#define GRN_IO_FILE_SIZE  1073741824UL
+#define GRN_IO_COPY       grn_io_rdwr
+#define GRN_IO_UPDATE     grn_io_rdwr
 #endif /* WIN32 */
 
 typedef enum {
@@ -177,7 +177,7 @@ void grn_io_seg_map_(grn_ctx *ctx, grn_io *io, uint32_t segno, grn_io_mapinfo *i
  * segno must be in valid range;
  * addr must be set NULL;
  */
-#define GRN_IO_SEG_REF(io,segno,addr) {\
+#define GRN_IO_SEG_REF(io,segno,addr) do {\
   grn_io_mapinfo *info = &(io)->maps[segno];\
   uint32_t nref, retry, *pnref = &info->nref;\
   if (io->flags & GRN_IO_EXPIRE_SEGMENT) {\
@@ -268,15 +268,15 @@ void grn_io_seg_map_(grn_ctx *ctx, grn_io *io, uint32_t segno, grn_io_mapinfo *i
     info->count = grn_gtick;\
   }\
   addr = info->map;\
-}
+} while (0)
 
-#define GRN_IO_SEG_UNREF(io,segno) {\
+#define GRN_IO_SEG_UNREF(io,segno) do {\
   if (GRN_IO_EXPIRE_SEGMENT ==\
       (io->flags & (GRN_IO_EXPIRE_GTICK|GRN_IO_EXPIRE_SEGMENT))) {\
     uint32_t nref, *pnref = &(io)->maps[segno].nref;\
     GRN_ATOMIC_ADD_EX(pnref, -1, nref);\
   }\
-}
+} while (0)
 
 uint32_t grn_io_base_seg(grn_io *io);
 const char *grn_io_path(grn_io *io);
@@ -323,33 +323,33 @@ uint32_t grn_io_is_locked(grn_io *io);
           (((offset) & ainfo->elm_mask_in_a_segment) * ainfo->element_size));\
 } while (0)
 
-#define GRN_IO_ARRAY_BIT_AT(io,array,offset,res) {\
+#define GRN_IO_ARRAY_BIT_AT(io,array,offset,res) do {\
   uint8_t *ptr_;\
   int flags_ = 0;\
   GRN_IO_ARRAY_AT((io), (array), ((offset) >> 3) + 1, &flags_, ptr_);\
   res = ptr_ ? ((*ptr_ >> ((offset) & 7)) & 1) : 0;\
-}
+} while (0)
 
-#define GRN_IO_ARRAY_BIT_ON(io,array,offset) {\
+#define GRN_IO_ARRAY_BIT_ON(io,array,offset) do {\
   uint8_t *ptr_;\
   int flags_ = GRN_TABLE_ADD;\
   GRN_IO_ARRAY_AT((io), (array), ((offset) >> 3) + 1, &flags_, ptr_);\
   if (ptr_) { *ptr_ |= (1 << ((offset) & 7)); }\
-}
+} while (0)
 
-#define GRN_IO_ARRAY_BIT_OFF(io,array,offset) {\
+#define GRN_IO_ARRAY_BIT_OFF(io,array,offset) do {\
   uint8_t *ptr_;\
   int flags_ = GRN_TABLE_ADD;\
   GRN_IO_ARRAY_AT((io), (array), ((offset) >> 3) + 1, &flags_, ptr_);\
   if (ptr_) { *ptr_ &= ~(1 << ((offset) & 7)); }\
-}
+} while (0)
 
-#define GRN_IO_ARRAY_BIT_FLIP(io,array,offset) {\
+#define GRN_IO_ARRAY_BIT_FLIP(io,array,offset) do {\
   uint8_t *ptr_;\
   int flags_ = GRN_TABLE_ADD;\
   GRN_IO_ARRAY_AT((io), (array), ((offset) >> 3) + 1, &flags_, ptr_);\
   if (ptr_) { *ptr_ ^= (1 << ((offset) & 7)); }\
-}
+} while (0)
 
 void *grn_io_anon_map(grn_ctx *ctx, grn_io_mapinfo *mi, size_t length);
 void grn_io_anon_unmap(grn_ctx *ctx, grn_io_mapinfo *mi, size_t length);
@@ -365,8 +365,7 @@ uint32_t grn_expire(grn_ctx *ctx, int count_thresh, uint32_t limit);
 
 /* encode/decode */
 
-#define GRN_B_ENC(v,p) \
-{ \
+#define GRN_B_ENC(v,p) do {\
   uint8_t *_p = (uint8_t *)p; \
   uint32_t _v = v; \
   if (_v < 0x8f) { \
@@ -392,13 +391,12 @@ uint32_t grn_expire(grn_ctx *ctx, int count_thresh, uint32_t limit);
     _p += sizeof(uint32_t); \
   } \
   p = _p; \
-}
+} while (0)
 
 #define GRN_B_ENC_SIZE(v) \
  ((v) < 0x8f ? 1 : ((v) < 0x408f ? 2 : ((v) < 0x20408f ? 3 : ((v) < 0x1020408f ? 4 : 5))))
 
-#define GRN_B_DEC(v,p) \
-{ \
+#define GRN_B_DEC(v,p) do { \
   uint8_t *_p = (uint8_t *)p; \
   uint32_t _v = *_p++; \
   switch (_v >> 4) { \
@@ -427,10 +425,9 @@ uint32_t grn_expire(grn_ctx *ctx, int count_thresh, uint32_t limit);
   } \
   v = _v; \
   p = _p; \
-}
+} while (0)
 
-#define GRN_B_SKIP(p) \
-{ \
+#define GRN_B_SKIP(p) do { \
   uint8_t *_p = (uint8_t *)p; \
   uint32_t _v = *_p++; \
   switch (_v >> 4) { \
@@ -454,10 +451,9 @@ uint32_t grn_expire(grn_ctx *ctx, int count_thresh, uint32_t limit);
     break; \
   } \
   p = _p; \
-}
+} while (0)
 
-#define GRN_B_COPY(p2,p1) \
-{ \
+#define GRN_B_COPY(p2,p1) do { \
   uint32_t size = 0, _v = *p1++; \
   *p2++ = _v; \
   switch (_v >> 4) { \
@@ -479,7 +475,7 @@ uint32_t grn_expire(grn_ctx *ctx, int count_thresh, uint32_t limit);
     break; \
   } \
   while (size--) { *p2++ = *p1++; } \
-}
+} while (0)
 
 #ifdef __cplusplus
 }

@@ -351,7 +351,10 @@ grn_obj *grn_column_open(grn_ctx *ctx, grn_obj *table,
 grn_rc grn_obj_path_rename(grn_ctx *ctx, const char *old_path, const char *new_path);
 
 grn_rc grn_db_check_name(grn_ctx *ctx, const char *name, unsigned int name_size);
-#define GRN_DB_CHECK_NAME_ERR(error_context, name, name_size) ERR(GRN_INVALID_ARGUMENT, "%s name can't start with '%c' and contains only 0-9, A-Z, a-z, #, @, - or _: <%.*s>", error_context, GRN_DB_PSEUDO_COLUMN_PREFIX, name_size, name)
+#define GRN_DB_CHECK_NAME_ERR(error_context, name, name_size) \
+  ERR(GRN_INVALID_ARGUMENT,\
+       "%s name can't start with '%c' and contains only 0-9, A-Z, a-z, #, @, - or _: <%.*s>",\
+      error_context, GRN_DB_PSEUDO_COLUMN_PREFIX, name_size, name)
 
 #define GRN_DB_P(s) ((s) && ((grn_db *)s)->obj.header.type == GRN_DB)
 #define GRN_DB_PERSISTENT_P(s) (((grn_db *)s)->specs)
@@ -364,7 +367,7 @@ grn_rc grn_db_obj_init(grn_ctx *ctx, grn_obj *db, grn_id id, grn_db_obj *obj);
   ((obj) && (((grn_obj *)(obj))->header.type == GRN_ACCESSOR ||\
              ((grn_obj *)(obj))->header.type == GRN_ACCESSOR_VIEW))
 
-#define GRN_TRUEP(ctx, v, result) {\
+#define GRN_TRUEP(ctx, v, result) do {\
   switch (v->header.type) {                             \
   case GRN_BULK :                                       \
     switch (v->header.domain) {                         \
@@ -399,20 +402,20 @@ grn_rc grn_db_obj_init(grn_ctx *ctx, grn_obj *db, grn_id id, grn_db_obj *obj);
     result = GRN_FALSE;                                 \
     break;                                              \
   }                                                     \
-}
+} while (0)
 
 grn_id grn_obj_register(grn_ctx *ctx, grn_obj *db, const char *name, unsigned int name_size);
 int grn_obj_is_persistent(grn_ctx *ctx, grn_obj *obj);
 void grn_obj_spec_save(grn_ctx *ctx, grn_db_obj *obj);
 
-#define GRN_UINT32_POP(obj,value) {\
+#define GRN_UINT32_POP(obj,value) do {\
   if (GRN_BULK_VSIZE(obj) >= sizeof(uint32_t)) {\
     GRN_BULK_INCR_LEN((obj), -(sizeof(uint32_t)));\
     value = *(uint32_t *)(GRN_BULK_CURR(obj));\
   } else {\
     value = 0;\
   }\
-}
+} while (0)
 
 void grn_expr_pack(grn_ctx *ctx, grn_obj *buf, grn_obj *expr);
 GRN_API grn_rc grn_expr_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *expr);

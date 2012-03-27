@@ -45,8 +45,7 @@ extern "C" {
 
 /**** api in/out ****/
 
-#define GRN_API_ENTER \
-{\
+#define GRN_API_ENTER do {\
   if ((ctx)->seqno & 1) {\
     (ctx)->subno++;\
   } else {\
@@ -55,11 +54,10 @@ extern "C" {
     (ctx)->seqno++;\
   }\
   GRN_TEST_YIELD();\
-}
+} while (0)
 
 /* CAUTION!! : pass only variables or constants as r */
-#define GRN_API_RETURN(r) \
-{\
+#define GRN_API_RETURN(r) do {\
   if (ctx->subno) {\
     ctx->subno--;\
   } else {\
@@ -67,7 +65,7 @@ extern "C" {
   }\
   GRN_TEST_YIELD();\
   return r;\
-}
+} while (0)
 
 /**** error handling ****/
 
@@ -100,7 +98,7 @@ extern "C" {
 GRN_API void grn_ctx_impl_err(grn_ctx *ctx);
 
 #ifdef HAVE_BACKTRACE
-#define LOGTRACE(ctx,lvl) {\
+#define LOGTRACE(ctx,lvl) do {\
   int i;\
   char **p;\
   BACKTRACE(ctx);\
@@ -109,7 +107,7 @@ GRN_API void grn_ctx_impl_err(grn_ctx *ctx);
     GRN_LOG((ctx), lvl, "%s", p[i]);\
   }\
   free(p);\
-}
+} while (0)
 #else  /* HAVE_BACKTRACE */
 #define LOGTRACE(ctx,msg)
 #endif /* HAVE_BACKTRACE */
@@ -128,7 +126,8 @@ GRN_API void grn_ctx_impl_err(grn_ctx *ctx);
   if (lvl <= GRN_LOG_ERROR) { LOGTRACE(ctx, lvl); }\
 } while (0)
 
-#define ERRP(ctx,lvl) (((ctx) && ((grn_ctx *)(ctx))->errlvl <= (lvl)) || (grn_gctx.errlvl <= (lvl)))
+#define ERRP(ctx,lvl) \
+  (((ctx) && ((grn_ctx *)(ctx))->errlvl <= (lvl)) || (grn_gctx.errlvl <= (lvl)))
 
 #define QLERR(...) do {\
   ERRSET(ctx, GRN_WARN, GRN_INVALID_ARGUMENT, __VA_ARGS__);\
@@ -148,7 +147,7 @@ GRN_API void grn_ctx_impl_err(grn_ctx *ctx);
 #define ALERT(...) ERRSET(ctx, GRN_ALERT, GRN_SUCCESS,  __VA_ARGS__)
 
 #ifdef WIN32
-#define SERR(str) {\
+#define SERR(str) do {\
   grn_rc rc;\
   const char *m;\
   int e = WSAGetLastError();\
@@ -227,9 +226,9 @@ GRN_API void grn_ctx_impl_err(grn_ctx *ctx);
     break;\
   }\
   ERR(rc, "syscall error '%s' (%s)", str, m);\
-}
+} while (0)
 #else /* WIN32 */
-#define SERR(str) {\
+#define SERR(str) do {\
   grn_rc rc;\
   switch (errno) {\
   case ELOOP : rc = GRN_TOO_MANY_SYMBOLIC_LINKS; break;\
@@ -280,23 +279,23 @@ GRN_API void grn_ctx_impl_err(grn_ctx *ctx);
   default : rc = GRN_UNKNOWN_ERROR; break;\
   }\
   ERR(rc, "syscall error '%s' (%s)", str, strerror(errno));\
-}
+} while (0)
 #endif /* WIN32 */
 
 #define GERR(rc,...) ERRSET(&grn_gctx, GRN_ERROR, (rc),  __VA_ARGS__)
-#define GMERR(...) ERRSET(&grn_gctx, GRN_ALERT, GRN_NO_MEMORY_AVAILABLE,  __VA_ARGS__)
+#define GMERR(...)   ERRSET(&grn_gctx, GRN_ALERT, GRN_NO_MEMORY_AVAILABLE,  __VA_ARGS__)
 
-#define GRN_MALLOC(s) grn_malloc(ctx,s,__FILE__,__LINE__,__FUNCTION__)
-#define GRN_CALLOC(s) grn_calloc(ctx,s,__FILE__,__LINE__,__FUNCTION__)
-#define GRN_REALLOC(p,s) grn_realloc(ctx,p,s,__FILE__,__LINE__,__FUNCTION__)
-#define GRN_STRDUP(s) grn_strdup(ctx,s,__FILE__,__LINE__,__FUNCTION__)
-#define GRN_GMALLOC(s) grn_malloc(&grn_gctx,s,__FILE__,__LINE__,__FUNCTION__)
-#define GRN_GCALLOC(s) grn_calloc(&grn_gctx,s,__FILE__,__LINE__,__FUNCTION__)
+#define GRN_MALLOC(s)     grn_malloc(ctx,s,__FILE__,__LINE__,__FUNCTION__)
+#define GRN_CALLOC(s)     grn_calloc(ctx,s,__FILE__,__LINE__,__FUNCTION__)
+#define GRN_REALLOC(p,s)  grn_realloc(ctx,p,s,__FILE__,__LINE__,__FUNCTION__)
+#define GRN_STRDUP(s)     grn_strdup(ctx,s,__FILE__,__LINE__,__FUNCTION__)
+#define GRN_GMALLOC(s)    grn_malloc(&grn_gctx,s,__FILE__,__LINE__,__FUNCTION__)
+#define GRN_GCALLOC(s)    grn_calloc(&grn_gctx,s,__FILE__,__LINE__,__FUNCTION__)
 #define GRN_GREALLOC(p,s) grn_realloc(&grn_gctx,p,s,__FILE__,__LINE__,__FUNCTION__)
-#define GRN_GSTRDUP(s) grn_strdup(&grn_gctx,s,__FILE__,__LINE__,__FUNCTION__)
-#define GRN_FREE(p) grn_free(ctx,p,__FILE__,__LINE__,__FUNCTION__)
-#define GRN_MALLOCN(t,n) ((t *)(GRN_MALLOC(sizeof(t) * (n))))
-#define GRN_GFREE(p) grn_free(&grn_gctx,p,__FILE__,__LINE__,__FUNCTION__)
+#define GRN_GSTRDUP(s)    grn_strdup(&grn_gctx,s,__FILE__,__LINE__,__FUNCTION__)
+#define GRN_FREE(p)       grn_free(ctx,p,__FILE__,__LINE__,__FUNCTION__)
+#define GRN_MALLOCN(t,n)  ((t *)(GRN_MALLOC(sizeof(t) * (n))))
+#define GRN_GFREE(p)      grn_free(&grn_gctx,p,__FILE__,__LINE__,__FUNCTION__)
 #define GRN_GMALLOCN(t,n) ((t *)(GRN_GMALLOC(sizeof(t) * (n))))
 
 #ifdef DEBUG
@@ -305,10 +304,10 @@ GRN_API void grn_ctx_impl_err(grn_ctx *ctx);
 #define GRN_ASSERT(s)
 #endif
 
-#define GRN_CTX_ALLOC(ctx,s) grn_ctx_calloc(ctx,s,__FILE__,__LINE__,__FUNCTION__)
-#define GRN_CTX_FREE(ctx,p) grn_ctx_free(ctx,p,__FILE__,__LINE__,__FUNCTION__)
+#define GRN_CTX_ALLOC(ctx,s)   grn_ctx_calloc(ctx,s,__FILE__,__LINE__,__FUNCTION__)
+#define GRN_CTX_FREE(ctx,p)    grn_ctx_free(ctx,p,__FILE__,__LINE__,__FUNCTION__)
 #define GRN_CTX_ALLOC_L(ctx,s) grn_ctx_alloc_lifo(ctx,s,f,__FILE__,__LINE__,__FUNCTION__)
-#define GRN_CTX_FREE_L(ctx,p) grn_ctx_free_lifo(ctx,p,__FILE__,__LINE__,__FUNCTION__)
+#define GRN_CTX_FREE_L(ctx,p)  grn_ctx_free_lifo(ctx,p,__FILE__,__LINE__,__FUNCTION__)
 
 void *grn_ctx_alloc(grn_ctx *ctx, size_t size, int flags,
                     const char* file, int line, const char *func);
@@ -350,11 +349,11 @@ void *grn_calloc(grn_ctx *ctx, size_t size, const char* file, int line, const ch
 void *grn_realloc(grn_ctx *ctx, void *ptr, size_t size, const char* file, int line, const char *func);
 char *grn_strdup(grn_ctx *ctx, const char *s, const char* file, int line, const char *func);
 #else
-#  define grn_malloc grn_malloc_default
-#  define grn_calloc grn_calloc_default
+#  define grn_malloc  grn_malloc_default
+#  define grn_calloc  grn_calloc_default
 #  define grn_realloc grn_realloc_default
-#  define grn_strdup grn_strdup_default
-#  define grn_free grn_free_default
+#  define grn_strdup  grn_strdup_default
+#  define grn_free    grn_free_default
 #endif
 
 GRN_API void *grn_malloc_default(grn_ctx *ctx, size_t size, const char* file, int line, const char *func);
@@ -405,14 +404,14 @@ extern grn_timeval grn_starttime;
 #define GRN_TIME_NSEC_TO_USEC(nsec) ((nsec) / GRN_TIME_NSEC_PER_USEC)
 #define GRN_TIME_USEC_TO_NSEC(usec) ((usec) * GRN_TIME_NSEC_PER_USEC)
 
-#define LAP(prefix,format,...) {\
+#define LAP(prefix,format,...) do {\
   uint64_t et;\
   grn_timeval tv;\
   grn_timeval_now(ctx, &tv);\
   et = (uint64_t)(tv.tv_sec - ctx->impl->tv.tv_sec) * GRN_TIME_NSEC_PER_SEC\
     + (tv.tv_nsec - ctx->impl->tv.tv_nsec);\
   GRN_LOG(ctx, GRN_LOG_NONE, "%08x|" prefix "%015llu " format, (intptr_t)ctx, et, __VA_ARGS__);\
-}
+} while (0)
 
 GRN_API grn_rc grn_timeval_now(grn_ctx *ctx, grn_timeval *tv);
 GRN_API grn_rc grn_timeval2str(grn_ctx *ctx, grn_timeval *tv, char *buf);
@@ -459,7 +458,7 @@ typedef struct {
   //  grn_obj_flags flags;
 } grn_db_obj;
 
-#define GRN_DB_OBJ_SET_TYPE(db_obj,obj_type) {\
+#define GRN_DB_OBJ_SET_TYPE(db_obj,obj_type) do {\
   (db_obj)->obj.header.type = (obj_type);\
   (db_obj)->obj.header.impl_flags = 0;\
   (db_obj)->obj.header.flags = 0;\
@@ -473,7 +472,7 @@ typedef struct {
   (db_obj)->obj.hooks[4] = NULL;\
   (db_obj)->obj.source = NULL;\
   (db_obj)->obj.source_size = 0;\
-}
+} while (0)
 
 /**** cache ****/
 

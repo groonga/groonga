@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009 Brazil
+/* Copyright(C) 2009-2012 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -51,12 +51,12 @@ struct _grn_ii {
 };
 
 #define GRN_II_BGQSIZE 16
-#define GRN_II_MAX_LSEG                 0x10000
-#define GRN_II_W_TOTAL_CHUNK            40
-#define GRN_II_W_CHUNK                  22
-#define GRN_II_W_LEAST_CHUNK            (GRN_II_W_TOTAL_CHUNK - 32)
-#define GRN_II_MAX_CHUNK                (1 << (GRN_II_W_TOTAL_CHUNK - GRN_II_W_CHUNK))
-#define GRN_II_N_CHUNK_VARIATION        (GRN_II_W_CHUNK - GRN_II_W_LEAST_CHUNK)
+#define GRN_II_MAX_LSEG           0x10000
+#define GRN_II_W_TOTAL_CHUNK      40
+#define GRN_II_W_CHUNK            22
+#define GRN_II_W_LEAST_CHUNK      (GRN_II_W_TOTAL_CHUNK - 32)
+#define GRN_II_MAX_CHUNK          (1 << (GRN_II_W_TOTAL_CHUNK - GRN_II_W_CHUNK))
+#define GRN_II_N_CHUNK_VARIATION  (GRN_II_W_CHUNK - GRN_II_W_LEAST_CHUNK)
 
 struct grn_ii_header {
   uint64_t total_chunk_size;

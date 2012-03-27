@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009 Brazil
+/* Copyright(C) 2009-2012 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -35,10 +35,10 @@ extern "C" {
 #define GRN_TINY_ARRAY_THREADSAFE (1L<<1)
 #define GRN_TINY_ARRAY_USE_MALLOC (1L<<2)
 
-#define GRN_TINY_ARRAY_W 0
+#define GRN_TINY_ARRAY_W    0
 #define GRN_TINY_ARRAY_R(i) (1<<((i)<<GRN_TINY_ARRAY_W))
-#define GRN_TINY_ARRAY_S (GRN_TINY_ARRAY_R(1)-1)
-#define GRN_TINY_ARRAY_N (32>>GRN_TINY_ARRAY_W)
+#define GRN_TINY_ARRAY_S    (GRN_TINY_ARRAY_R(1)-1)
+#define GRN_TINY_ARRAY_N    (32>>GRN_TINY_ARRAY_W)
 
 typedef struct _grn_tiny_array grn_tiny_array;
 
@@ -100,29 +100,29 @@ struct _grn_tiny_array {
 
 #define GRN_TINY_ARRAY_NEXT(a,e) GRN_TINY_ARRAY_AT((a), (a)->max + 1, e)
 
-#define GRN_TINY_ARRAY_BIT_AT(array,offset,res) {\
+#define GRN_TINY_ARRAY_BIT_AT(array,offset,res) do {\
   uint8_t *ptr_;\
   GRN_TINY_ARRAY_AT((array), ((offset) >> 3) + 1, ptr_);\
   res = ptr_ ? ((*ptr_ >> ((offset) & 7)) & 1) : 0;\
-}
+} while (0)
 
-#define GRN_TINY_ARRAY_BIT_ON(array,offset) {\
+#define GRN_TINY_ARRAY_BIT_ON(array,offset) do {\
   uint8_t *ptr_;\
   GRN_TINY_ARRAY_AT((array), ((offset) >> 3) + 1, ptr_);\
   if (ptr_) { *ptr_ |= (1 << ((offset) & 7)); }\
-}
+} while (0)
 
-#define GRN_TINY_ARRAY_BIT_OFF(array,offset) {\
+#define GRN_TINY_ARRAY_BIT_OFF(array,offset) do {\
   uint8_t *ptr_;\
   GRN_TINY_ARRAY_AT((array), ((offset) >> 3) + 1, ptr_);\
   if (ptr_) { *ptr_ &= ~(1 << ((offset) & 7)); }\
-}
+} while (0)
 
-#define GRN_TINY_ARRAY_BIT_FLIP(array,offset) {\
+#define GRN_TINY_ARRAY_BIT_FLIP(array,offset) do {\
   uint8_t *ptr_;\
   GRN_TINY_ARRAY_AT((array), ((offset) >> 3) + 1, ptr_);\
   if (ptr_) { *ptr_ ^= (1 << ((offset) & 7)); }\
-}
+} while (0)
 
 void grn_tiny_array_init(grn_ctx *ctx, grn_tiny_array *a, uint16_t element_size, uint16_t flags);
 void grn_tiny_array_fin(grn_tiny_array *a);
@@ -131,7 +131,7 @@ grn_id grn_tiny_array_id(grn_tiny_array *a, void *p);
 
 /**** grn_array ****/
 
-#define GRN_ARRAY_TINY                 (0x01<<6)
+#define GRN_ARRAY_TINY        (0x01<<6)
 
 struct _grn_array {
   grn_db_obj obj;
@@ -171,7 +171,7 @@ grn_rc grn_array_copy_sort_key(grn_ctx *ctx, grn_array *array,
 
 /**** grn_hash ****/
 
-#define GRN_HASH_TINY                  (0x01<<6)
+#define GRN_HASH_TINY         (0x01<<6)
 #define GRN_HASH_MAX_KEY_SIZE GRN_TABLE_MAX_KEY_SIZE
 
 struct _grn_hash {
