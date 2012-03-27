@@ -245,28 +245,28 @@ struct _grn_ja_einfo {
 #define ETINY_ENC(e,_size) ((e)->u.c[7] = (_size) + ETINY)
 #define ETINY_DEC(e,_size) ((_size) = (e)->u.c[7] & ~(ETINY|EHUGE))
 #define EHUGE_P(e) ((e)->u.c[7] & EHUGE)
-#define EHUGE_ENC(e,_seg,_size) {\
+#define EHUGE_ENC(e,_seg,_size) do {\
   (e)->u.h.c1 = 0;\
   (e)->u.h.c2 = EHUGE;\
   (e)->u.h.seg = (_seg);\
   (e)->u.h.size = (_size);\
-}
-#define EHUGE_DEC(e,_seg,_size) {\
+} while (0)
+#define EHUGE_DEC(e,_seg,_size) do {\
   (_seg) = (e)->u.h.seg;\
   (_size) = (e)->u.h.size;\
-}
-#define EINFO_ENC(e,_seg,_pos,_size) {\
+} while (0)
+#define EINFO_ENC(e,_seg,_pos,_size) do {\
   (e)->u.n.c1 = (_pos) >> 16;\
   (e)->u.n.c2 = ((_size) >> 16);\
   (e)->u.n.seg = (_seg);\
   (e)->u.n.pos = (_pos);\
   (e)->u.n.size = (_size);\
-}
-#define EINFO_DEC(e,_seg,_pos,_size) {\
+} while (0)
+#define EINFO_DEC(e,_seg,_pos,_size) do {\
   (_seg) = (e)->u.n.seg;\
   (_pos) = ((e)->u.n.c1 << 16) + (e)->u.n.pos;\
   (_size) = ((e)->u.n.c2 << 16) + (e)->u.n.size;\
-}
+} while (0)
 
 typedef struct {
   uint32_t seg;

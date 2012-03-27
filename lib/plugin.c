@@ -32,22 +32,22 @@ static grn_hash *grn_plugins = NULL;
 #define PATHLEN(filename) (strlen(filename) + 1)
 
 #ifdef WIN32
-#  define grn_dl_open(filename)    LoadLibrary(filename)
-#  define grn_dl_open_error_label  "LoadLibrary"
-#  define grn_dl_close(dl)         (FreeLibrary(dl) != 0)
-#  define grn_dl_close_error_label "FreeLibrary"
-#  define grn_dl_sym(dl, symbol)   ((void *)GetProcAddress(dl, symbol))
-#  define grn_dl_sym_error_label   "GetProcAddress"
-#  define grn_dl_clear_error
+#  define grn_dl_open(filename)      LoadLibrary(filename)
+#  define grn_dl_open_error_label()  "LoadLibrary"
+#  define grn_dl_close(dl)           (FreeLibrary(dl) != 0)
+#  define grn_dl_close_error_label() "FreeLibrary"
+#  define grn_dl_sym(dl, symbol)     ((void *)GetProcAddress(dl, symbol))
+#  define grn_dl_sym_error_label()   "GetProcAddress"
+#  define grn_dl_clear_error()
 #else
 #  include <dlfcn.h>
-#  define grn_dl_open(filename)    dlopen(filename, RTLD_LAZY | RTLD_LOCAL)
-#  define grn_dl_open_error_label  dlerror()
-#  define grn_dl_close(dl)         (dlclose(dl) == 0)
-#  define grn_dl_close_error_label dlerror()
-#  define grn_dl_sym(dl, symbol)   dlsym(dl, symbol)
-#  define grn_dl_sym_error_label   dlerror()
-#  define grn_dl_clear_error       dlerror()
+#  define grn_dl_open(filename)      dlopen(filename, RTLD_LAZY | RTLD_LOCAL)
+#  define grn_dl_open_error_label()  dlerror()
+#  define grn_dl_close(dl)           (dlclose(dl) == 0)
+#  define grn_dl_close_error_label() dlerror()
+#  define grn_dl_sym(dl, symbol)     dlsym(dl, symbol)
+#  define grn_dl_sym_error_label()   dlerror()
+#  define grn_dl_clear_error()       dlerror()
 #endif
 
 grn_id
@@ -110,14 +110,15 @@ grn_plugin_initialize(grn_ctx *ctx, grn_plugin *plugin,
 {
   plugin->dl = dl;
 
-#define GET_SYMBOL(type)                                                \
-  grn_dl_clear_error;                                                   \
+#define GET_SYMBOL(type) do {                                           \
+  grn_dl_clear_error();                                                 \
   plugin->type ## _func = grn_dl_sym(dl, GRN_PLUGIN_FUNC_PREFIX #type); \
   if (!plugin->type ## _func) {                                         \
     const char *label;                                                  \
-    label = grn_dl_sym_error_label;                                     \
+    label = grn_dl_sym_error_label();                                   \
     SERR(label);                                                        \
-  }
+  }                                                                     \
+} while (0)
 
   GET_SYMBOL(init);
   GET_SYMBOL(register);
@@ -176,7 +177,7 @@ grn_plugin_open(grn_ctx *ctx, const char *filename)
           ctx->errfile = NULL;
         } else {
           const char *label;
-          label = grn_dl_close_error_label;
+          label = grn_dl_close_error_label();
           SERR(label);
         }
         id = GRN_ID_NIL;
@@ -186,13 +187,13 @@ grn_plugin_open(grn_ctx *ctx, const char *filename)
     } else {
       if (!grn_dl_close(dl)) {
         const char *label;
-        label = grn_dl_close_error_label;
+        label = grn_dl_close_error_label();
         SERR(label);
       }
     }
   } else {
     const char *label;
-    label = grn_dl_open_error_label;
+    label = grn_dl_open_error_label();
     SERR(label);
   }
   return id;
@@ -210,7 +211,7 @@ grn_plugin_close(grn_ctx *ctx, grn_id id)
   grn_plugin_call_fin(ctx, id);
   if (!grn_dl_close(plugin->dl)) {
     const char *label;
-    label = grn_dl_close_error_label;
+    label = grn_dl_close_error_label();
     SERR(label);
   }
   GRN_GFREE(plugin);
@@ -226,10 +227,10 @@ grn_plugin_sym(grn_ctx *ctx, grn_id id, const char *symbol)
   if (!grn_hash_get_value(ctx, grn_plugins, id, &plugin)) {
     return NULL;
   }
-  grn_dl_clear_error;
+  grn_dl_clear_error();
   if (!(func = grn_dl_sym(plugin->dl, symbol))) {
     const char *label;
-    label = grn_dl_sym_error_label;
+    label = grn_dl_sym_error_label();
     SERR(label);
   }
   return func;

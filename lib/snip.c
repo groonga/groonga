@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009 Brazil
+/* Copyright(C) 2009-2012 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -82,7 +82,7 @@ grn_bm_preBmBc(const unsigned char *x, size_t m, size_t *bmBc)
   }
 }
 
-#define GRN_BM_COMPARE \
+#define GRN_BM_COMPARE do { \
   if (object->checks[found]) { \
     size_t offset = cond->last_offset, found_alpha_head = cond->found_alpha_head; \
     /* calc real offset */\
@@ -115,10 +115,10 @@ grn_bm_preBmBc(const unsigned char *x, size_t m, size_t *bmBc)
     cond->found_alpha_head = found_alpha_head; \
     /* printf("bm: cond:%p found:%zd last_found:%zd st_off:%zd ed_off:%zd\n", cond, cond->found,cond->last_found,cond->start_offset,cond->end_offset); */ \
     return; \
-  }
+  } \
+} while (0)
 
-#define GRN_BM_BM_COMPARE \
-{ \
+#define GRN_BM_BM_COMPARE do { \
   if (p[-2] == ck) { \
     for (i = 3; i <= m && p[-(intptr_t)i] == cp[-(intptr_t)i]; ++i) { \
     } \
@@ -127,7 +127,7 @@ grn_bm_preBmBc(const unsigned char *x, size_t m, size_t *bmBc)
       GRN_BM_COMPARE; \
     } \
   } \
-}
+} while (0)
 
 void
 grn_bm_tunedbm(snip_cond *cond, grn_str *object, int flags)

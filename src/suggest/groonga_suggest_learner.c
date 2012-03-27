@@ -125,17 +125,15 @@ load_to_multi_targets(grn_ctx *ctx,
   }
 }
 
-#define PACK_KEY_FROM_ID(id) \
-{ \
+#define PACK_KEY_FROM_ID(id) do { \
   int _k_len; \
   char _k_buf[GRN_TABLE_MAX_KEY_SIZE]; \
   _k_len = grn_table_get_key(ctx, ref_table, (id), _k_buf, GRN_TABLE_MAX_KEY_SIZE); \
   msgpack_pack_raw(&pk, _k_len); \
   msgpack_pack_raw_body(&pk, _k_buf, _k_len); \
-}
+} while (0)
 
-#define PACK_MAP_ITEM(col_name) \
-{ \
+#define PACK_MAP_ITEM(col_name) do { \
   grn_obj _v; \
   msgpack_pack_raw(&pk, sizeof(#col_name) - 1); \
   msgpack_pack_raw_body(&pk, CONST_STR_LEN(#col_name)); \
@@ -188,7 +186,7 @@ load_to_multi_targets(grn_ctx *ctx,
     break; \
   } \
   grn_obj_close(ctx, &_v); \
-}
+} while (0)
 
 static int
 zmq_send_to_httpd(void *zmq_send_sock, void *data, size_t size)

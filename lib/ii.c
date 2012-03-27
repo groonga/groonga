@@ -175,13 +175,13 @@ buffer_segment_reserve(grn_ctx *ctx, grn_ii *ii,
   return GRN_SUCCESS;
 }
 
-#define BGQENQUE(lseg) {\
+#define BGQENQUE(lseg) do {\
   if (ii->header->binfo[lseg] != NOT_ASSIGNED) {\
     ii->header->bgqbody[ii->header->bgqhead] = ii->header->binfo[lseg];\
     ii->header->bgqhead = (ii->header->bgqhead + 1) & (GRN_II_BGQSIZE - 1);\
     GRN_ASSERT(ii->header->bgqhead != ii->header->bgqtail);\
   }\
-}
+} while (0)
 
 inline static void
 buffer_segment_update(grn_ii *ii, uint32_t lseg, uint32_t pseg)
@@ -1570,29 +1570,28 @@ grn_p_encv(grn_ctx *ctx, datavec *dv, uint32_t dvlen, uint8_t *res)
   return rp - res;
 }
 
-#define GRN_B_DEC_CHECK(v,p,pe) \
-{ \
+#define GRN_B_DEC_CHECK(v,p,pe) do { \
   uint8_t *_p = (uint8_t *)p; \
-  uint32_t _v;\
-  if (_p >= pe) { return 0; }\
-  _v = *_p++;\
+  uint32_t _v; \
+  if (_p >= pe) { return 0; } \
+  _v = *_p++; \
   switch (_v >> 4) { \
   case 0x08 : \
     if (_v == 0x8f) { \
-      if (_p + sizeof(uint32_t) > pe) { return 0; }\
-      memcpy(&_v, _p, sizeof(uint32_t));\
+      if (_p + sizeof(uint32_t) > pe) { return 0; } \
+      memcpy(&_v, _p, sizeof(uint32_t)); \
       _p += sizeof(uint32_t); \
     } \
     break; \
   case 0x09 : \
-    if (_p + 3 > pe) { return 0; }\
+    if (_p + 3 > pe) { return 0; } \
     _v = (_v - 0x90) * 0x100 + *_p++; \
     _v = _v * 0x100 + *_p++; \
     _v = _v * 0x100 + *_p++ + 0x20408f; \
     break; \
   case 0x0a : \
   case 0x0b : \
-    if (_p + 2 > pe) { return 0; }\
+    if (_p + 2 > pe) { return 0; } \
     _v = (_v - 0xa0) * 0x100 + *_p++; \
     _v = _v * 0x100 + *_p++ + 0x408f; \
     break; \
@@ -1600,13 +1599,13 @@ grn_p_encv(grn_ctx *ctx, datavec *dv, uint32_t dvlen, uint8_t *res)
   case 0x0d : \
   case 0x0e : \
   case 0x0f : \
-    if (_p + 1 > pe) { return 0; }\
+    if (_p + 1 > pe) { return 0; } \
     _v = (_v - 0xc0) * 0x100 + *_p++ + 0x8f; \
     break; \
   } \
   v = _v; \
   p = _p; \
-}
+} while (0)
 
 static uint8_t *
 unpack(uint8_t *dp, uint8_t *dpe, int i, uint32_t *rp)
@@ -1915,10 +1914,10 @@ typedef struct {
   uint32_t sid;
 } docid;
 
-#define BUFFER_REC_DEL(r)  ((r)->jump = 1)
+#define BUFFER_REC_DEL(r)     ((r)->jump = 1)
 #define BUFFER_REC_DELETED(r) ((r)->jump == 1)
 
-#define BUFFER_REC_AT(b,pos) ((buffer_rec *)(b) + (pos))
+#define BUFFER_REC_AT(b,pos)  ((buffer_rec *)(b) + (pos))
 #define BUFFER_REC_POS(b,rec) ((uint16_t)((rec) - (buffer_rec *)(b)))
 
 inline static void
@@ -2004,14 +2003,14 @@ set_jump_r(grn_ctx *ctx, grn_ii *ii, buffer *b, buffer_rec *from, int to)
   return GRN_SUCCESS;
 }
 
-#define GET_NUM_BITS(x,n) {\
+#define GET_NUM_BITS(x,n) do {\
   n = x;\
   n = (n & 0x55555555) + ((n >> 1) & 0x55555555);\
   n = (n & 0x33333333) + ((n >> 2) & 0x33333333);\
   n = (n & 0x0F0F0F0F) + ((n >> 4) & 0x0F0F0F0F);\
   n = (n & 0x00FF00FF) + ((n >> 8) & 0x00FF00FF);\
   n = (n & 0x0000FFFF) + ((n >>16) & 0x0000FFFF);\
-}
+} while (0)
 
 inline static grn_rc
 buffer_put(grn_ctx *ctx, grn_ii *ii, buffer *b, buffer_term *bt,
@@ -2340,7 +2339,7 @@ typedef struct {
   uint32_t flags;
 } docinfo;
 
-#define GETNEXTC() {\
+#define GETNEXTC() do {\
   if (sdf) {\
     uint32_t dgap = *srp++;\
     cid.rid += dgap;\
@@ -2357,8 +2356,9 @@ typedef struct {
   } else {\
     cid.rid = 0;\
   }\
-}
-#define PUTNEXT_(id) {\
+} while (0)
+
+#define PUTNEXT_(id) do {\
   uint32_t dgap = id.rid - lid.rid;\
   uint32_t sgap = (dgap ? id.sid : id.sid - lid.sid) - 1;\
   *ridp++ = dgap;\
@@ -2369,8 +2369,9 @@ typedef struct {
   if ((ii->header->flags & GRN_OBJ_WITH_WEIGHT)) { *weightp++ = id.weight; }\
   lid.rid = id.rid;\
   lid.sid = id.sid;\
-}
-#define PUTNEXTC() {\
+} while (0)
+
+#define PUTNEXTC() do {\
   if (cid.rid) {\
     if (cid.tf) {\
       if (lid.rid > cid.rid || (lid.rid == cid.rid && lid.sid >= cid.sid)) {\
@@ -2393,8 +2394,9 @@ typedef struct {
     }\
   }\
   GETNEXTC();\
-}
-#define GETNEXTB() {\
+} while (0)
+
+#define GETNEXTB() do {\
   if (nextb) {\
     uint32_t lrid = bid.rid, lsid = bid.sid;\
     buffer_rec *br = BUFFER_REC_AT(sb, nextb);\
@@ -2414,8 +2416,9 @@ typedef struct {
   } else {\
     bid.rid = 0;\
   }\
-}
-#define PUTNEXTB() {\
+} while (0)
+
+#define PUTNEXTB() do {\
   if (bid.rid && bid.sid) {\
     GRN_B_DEC(bid.tf, sbp);\
     if (bid.tf > 0) {\
@@ -2432,7 +2435,7 @@ typedef struct {
     }\
   }\
   GETNEXTB();\
-}
+} while (0)
 
 #define MERGE_BC(cond) do {\
   if (bid.rid) {\
@@ -5971,6 +5974,7 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_
           }
         }
         if (noccur && !rep) { res_add(ctx, s, &pi, (noccur + tscore) * weight, op); }
+#undef SKIP_OR_BREAK
       }
     }
     if (token_info_skip(ctx, *tis, nrid, nsid)) { goto exit; }

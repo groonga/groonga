@@ -79,7 +79,7 @@ grn_tiny_array_id(grn_tiny_array *a, void *p)
 
 /* grn_array */
 
-#define GRN_ARRAY_HEADER_SIZE 0x9000
+#define GRN_ARRAY_HEADER_SIZE  0x9000
 #define GRN_ARRAY_SEGMENT_SIZE 0x400000
 
 struct grn_array_header {
@@ -100,26 +100,26 @@ enum {
 
 #define IO_ARRAYP(array) ((array)->io)
 
-#define ARRAY_ENTRY_AT_(array,id,value,addp) {\
+#define ARRAY_ENTRY_AT_(array,id,value,addp) do {\
   int flags = addp;\
   GRN_IO_ARRAY_AT(array->io, array_seg_value, id, &flags, value);\
-}
+} while (0)
 
-#define ARRAY_ENTRY_AT(array,id,value,addp) {\
+#define ARRAY_ENTRY_AT(array,id,value,addp) do {\
   if (IO_ARRAYP(array)) {\
     ARRAY_ENTRY_AT_(array, id, value, addp);\
   } else {\
     GRN_TINY_ARRAY_AT(&array->a, id, value);\
   }\
-}
+} while (0)
 
-#define ARRAY_BITMAP_AT(array,id,value) {\
+#define ARRAY_BITMAP_AT(array,id,value) do {\
   if (IO_ARRAYP(array)) {\
     GRN_IO_ARRAY_BIT_AT((array)->io, array_seg_bitmap, (id), (value));\
   } else {\
     GRN_TINY_ARRAY_BIT_AT(&(array)->bitmap, (id), (value));\
   }\
-}
+} while (0)
 
 static grn_rc
 tiny_array_init(grn_ctx *ctx, grn_array *array, const char *path,
@@ -615,8 +615,8 @@ grn_array_add(grn_ctx *ctx, grn_array *array, void **value)
 
 /* grn_hash : hash table */
 
-#define GRN_HASH_MAX_SEGMENT 0x400
-#define GRN_HASH_HEADER_SIZE 0x9000
+#define GRN_HASH_MAX_SEGMENT  0x400
+#define GRN_HASH_HEADER_SIZE  0x9000
 #define GRN_HASH_SEGMENT_SIZE 0x400000
 #define W_OF_KEY_IN_A_SEGMENT 22
 #define IDX_MASK_IN_A_SEGMENT 0xfffff
@@ -653,27 +653,27 @@ enum {
   segment_bitmap = 3
 };
 
-#define ENTRY_AT_(hash,id,ee,addp) {\
+#define ENTRY_AT_(hash,id,ee,addp) do {\
   int flags = addp;\
   GRN_IO_ARRAY_AT(hash->io, segment_entry, id, &flags, ee);\
-}
+} while (0)
 
 // todo : error handling
-#define ENTRY_AT(hash,id,ee,addp) {\
+#define ENTRY_AT(hash,id,ee,addp) do {\
   if (IO_HASHP(hash)) {\
     ENTRY_AT_(hash, id, ee, addp);\
   } else {\
     GRN_TINY_ARRAY_AT(&hash->a, id, ee);\
   }\
-}
+} while (0)
 
-#define BITMAP_AT(hash,id,value) {\
+#define BITMAP_AT(hash,id,value) do {\
   if (IO_HASHP(hash)) {\
     GRN_IO_ARRAY_BIT_AT((hash)->io, segment_bitmap, (id), (value));\
   } else {\
     GRN_TINY_ARRAY_BIT_AT(&(hash)->bitmap, (id), (value));\
   }\
-}
+} while (0)
 
 inline static grn_id *
 idx_at_(grn_ctx *ctx, grn_hash *hash, grn_id id)
@@ -684,17 +684,15 @@ idx_at_(grn_ctx *ctx, grn_hash *hash, grn_id id)
   return pp;
 }
 
-#define IDX_AT(h,i) (\
-  IO_HASHP(h) ?\
-  idx_at_(ctx, h, ((i) & *(h)->max_offset) + h->header->idx_offset) :\
-  h->index + ((i) & *(h)->max_offset)\
-)
+#define IDX_AT(h,i) \
+  (IO_HASHP(h) ?\
+   idx_at_(ctx, h, ((i) & *(h)->max_offset) + h->header->idx_offset) :\
+   h->index + ((i) & *(h)->max_offset))
 
-#define KEY_AT(hash,pos,ptr) \
-{\
+#define KEY_AT(hash,pos,ptr) do {\
   int flags = GRN_TABLE_ADD;\
   GRN_IO_ARRAY_AT(hash->io, segment_key, pos, &flags, ptr);\
-}
+} while (0)
 
 #define HASH_IMMEDIATE 1
 
@@ -1499,7 +1497,7 @@ grn_hash_set_value(grn_ctx *ctx, grn_hash *hash, grn_id id,
   return GRN_INVALID_ARGUMENT;
 }
 
-#define DELETE_IT {\
+#define DELETE_IT do {\
   *ep = GARBAGE;\
   if (IO_HASHP(hash)) {\
     uint32_t size = key_size - 1;\
@@ -1519,7 +1517,7 @@ grn_hash_set_value(grn_ctx *ctx, grn_hash *hash, grn_id id,
   (*hash->n_entries)--;\
   (*hash->n_garbages)++;\
   rc = GRN_SUCCESS;\
-}
+} while (0)
 
 grn_rc
 grn_hash_delete_by_id(grn_ctx *ctx, grn_hash *hash, grn_id id,
@@ -1777,7 +1775,7 @@ grn_hash_cursor_delete(grn_ctx *ctx, grn_hash_cursor *c,
 
 /* sort */
 
-#define PREPARE_VAL(e,ep,es) {\
+#define PREPARE_VAL(e,ep,es) do {\
   if ((arg->flags & GRN_TABLE_SORT_BY_VALUE)) {\
     ep = ((const uint8_t *)(get_value(hash, (entry_str *)(e))));\
     es = hash->value_size;\
@@ -1788,7 +1786,7 @@ grn_hash_cursor_delete(grn_ctx *ctx, grn_hash_cursor *c,
   }\
   ep += arg->offset;\
   es -= arg->offset;\
-}
+} while (0)
 
 #define COMPARE_VAL_(ap,as,bp,bs)\
   (arg->compar\
@@ -1853,13 +1851,13 @@ swap(entry **a, entry **b)
   *b = c_;
 }
 
-#define SWAP(a,ap,as,b,bp,bs) {\
+#define SWAP(a,ap,as,b,bp,bs) do {\
   const uint8_t *cp_ = ap;\
   uint32_t cs_ = as;\
   ap = bp; bp = cp_;\
   as = bs; bs = cs_;\
   swap(a,b);\
-}
+} while (0)
 
 inline static entry **
 part(grn_ctx *ctx, entry **b, entry **e, grn_table_sort_optarg *arg, grn_hash *hash, int dir)
@@ -1935,14 +1933,14 @@ typedef struct {
   int32_t v;
 } val32;
 
-#define PREPARE_VAL32(id,e,ep) {\
+#define PREPARE_VAL32(id,e,ep) do {\
   (ep)->id = id;\
   (ep)->v = (arg->flags & GRN_TABLE_SORT_BY_ID)\
     ? (int32_t) id\
     : (*((int32_t *)((byte *)((arg->flags & GRN_TABLE_SORT_BY_VALUE)\
                               ? get_value(hash, (e))\
                               : get_key(ctx, hash, (e))) + arg->offset)));\
-}
+} while (0)
 
 #define COMPARE_VAL32_(ap,bp) \
   (arg->compar\
@@ -1995,11 +1993,11 @@ pack_val32(grn_ctx *ctx, grn_hash *hash, val32 *res, grn_table_sort_optarg *arg,
   return *hash->n_entries > 2 ? head : NULL;
 }
 
-#define SWAP_VAL32(ap,bp) {\
+#define SWAP_VAL32(ap,bp) do {\
   val32 cr_ = *ap;\
   *ap = *bp;\
   *bp = cr_;\
-}
+} while (0)
 
 inline static val32 *
 part_val32(grn_ctx *ctx,

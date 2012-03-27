@@ -1042,13 +1042,12 @@ cache_init(grn_ctx *ctx)
 
 #define RELATIVE_TIME_THRESH 1000000000
 
-#define MBRES(ctx,re,status,key_len,extra_len,flags) {\
+#define MBRES(ctx,re,status,key_len,extra_len,flags) do {\
   grn_msg_set_property((ctx), (re), (status), (key_len), (extra_len));\
   grn_msg_send((ctx), (re), (flags));\
-}
+} while (0)
 
-#define GRN_MSG_MBRES(block) \
-do {\
+#define GRN_MSG_MBRES(block) do {\
   if (!quiet) {\
     grn_obj *re = grn_msg_open_for_reply(ctx, (grn_obj *)msg, &edge->send_old);\
     ((grn_msg *)re)->header.qtype = header->qtype;\

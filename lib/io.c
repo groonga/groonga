@@ -36,7 +36,7 @@
 
 /* VA hack */
 /* max aio request (/proc/sys/fs/aio-max-nr) */
-#define MAX_REQUEST     (64*1024)
+#define MAX_REQUEST  (64*1024)
 
 #define MEM_ALIGN    grn_cache_block
 
@@ -1247,8 +1247,7 @@ grn_io_win_unmap2(grn_io_win *iw)
   }
 }
 
-#define DO_MAP(io,fmo,fi,pos,size,segno,res)\
-{\
+#define DO_MAP(io,fmo,fi,pos,size,segno,res) do {\
   if (((res) = GRN_MMAP(&grn_gctx, (fmo), (fi), (pos), (size)))) {\
     uint32_t nmaps;\
     if (io->max_map_seg < segno) { io->max_map_seg = segno; }\
@@ -1258,10 +1257,9 @@ grn_io_win_unmap2(grn_io_win *iw)
       if (tail > io->header->curr_size) { io->header->curr_size = tail; }\
     }\
   }\
-}
+} while (0)
 
-#define SEG_MAP(io,segno,info)\
-{\
+#define SEG_MAP(io,segno,info) do {\
   uint32_t segment_size = io->header->segment_size;\
   if ((io->flags & GRN_IO_TEMPORARY)) {\
     DO_MAP(io, &info->fmo, NULL, 0, segment_size, segno, info->map);\
@@ -1282,7 +1280,7 @@ grn_io_win_unmap2(grn_io_win *iw)
       DO_MAP(io, &info->fmo, fi, pos, segment_size, segno, info->map);\
     }\
   }\
-}
+} while (0)
 
 void
 grn_io_seg_map_(grn_ctx *ctx, grn_io *io, uint32_t segno, grn_io_mapinfo *info)

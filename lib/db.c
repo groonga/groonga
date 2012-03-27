@@ -32,7 +32,7 @@
 
 #define NEXT_ADDR(p) (((byte *)(p)) + sizeof *(p))
 
-#define WITH_NORMALIZE(table,key,key_size,block) {\
+#define WITH_NORMALIZE(table,key,key_size,block) do {\
   if ((table)->obj.header.flags & GRN_OBJ_KEY_NORMALIZE) {\
     grn_str *nstr;\
     if ((nstr = grn_str_open(ctx, key, key_size, GRN_STR_NORMALIZE))) { \
@@ -44,9 +44,9 @@
   } else {\
     block\
   }\
-}
+} while (0)
 
-#define REPORT_CAST_ERROR(column, range, element) {\
+#define REPORT_CAST_ERROR(column, range, element) do {\
   grn_obj inspected;\
   char column_name[GRN_TABLE_MAX_KEY_SIZE];\
   int column_name_size;\
@@ -63,7 +63,7 @@
       range_name_size, range_name,\
       GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));\
   GRN_OBJ_FIN(ctx, &inspected);\
-}
+} while (0)
 
 inline static grn_id
 grn_table_add_v_inline(grn_ctx *ctx, grn_obj *table, const void *key, int key_size,
@@ -4322,7 +4322,7 @@ grn_obj_is_persistent(grn_ctx *ctx, grn_obj *obj)
   return res;
 }
 
-#define SRC2RECORD() {\
+#define SRC2RECORD() do {\
   grn_obj *table = grn_ctx_at(ctx, dest->header.domain);\
   if (GRN_OBJ_TABLEP(table)) {\
     grn_obj *p_key = src;\
@@ -4352,7 +4352,7 @@ grn_obj_is_persistent(grn_ctx *ctx, grn_obj *obj)
   } else {\
     rc = GRN_FUNCTION_NOT_IMPLEMENTED;\
   }\
-}
+} while (0)
 
 #define NUM2DEST(getvalue,totext,tobool,totime)\
   switch (dest->header.domain) {\
@@ -4402,7 +4402,7 @@ grn_obj_is_persistent(grn_ctx *ctx, grn_obj *obj)
     SRC2RECORD();\
   }
 
-#define TEXT2DEST(type,tonum,setvalue) {\
+#define TEXT2DEST(type,tonum,setvalue) do {\
   const char *cur, *str = GRN_TEXT_VALUE(src);\
   const char *str_end = GRN_BULK_CURR(src);\
   type i = tonum(str, str_end, &cur);\
@@ -4420,14 +4420,13 @@ grn_obj_is_persistent(grn_ctx *ctx, grn_obj *obj)
   } else {\
     rc = GRN_INVALID_ARGUMENT;\
   }\
-}
+} while (0)
 
 #define NUM2BOOL(ctx, dest, value) GRN_BOOL_SET(ctx, dest, value != 0)
-#define FLOAT2BOOL(ctx, dest, value)\
-  {\
-    double value_ = value;\
-    GRN_BOOL_SET(ctx, dest, value_ < -DBL_EPSILON || DBL_EPSILON < value_);\
-  }
+#define FLOAT2BOOL(ctx, dest, value) do {\
+  double value_ = value;\
+  GRN_BOOL_SET(ctx, dest, value_ < -DBL_EPSILON || DBL_EPSILON < value_);\
+} while (0)
 
 #define NUM2TIME(ctx, dest, value)\
   GRN_TIME_SET(ctx, dest, (long long int)(value) * GRN_TIME_USEC_PER_SEC);
@@ -6662,7 +6661,7 @@ grn_db_obj_init(grn_ctx *ctx, grn_obj *db, grn_id id, grn_db_obj *obj)
   return rc;
 }
 
-#define GET_PATH(spec,buffer,s,id) {\
+#define GET_PATH(spec,buffer,s,id) do {\
   if (spec->header.flags & GRN_OBJ_CUSTOM_NAME) {\
     const char *path;\
     unsigned int size = grn_vector_get_element(ctx, &v, 1, &path, NULL, NULL); \
@@ -6672,9 +6671,9 @@ grn_db_obj_init(grn_ctx *ctx, grn_obj *db, grn_id id, grn_db_obj *obj)
   } else {\
     gen_pathname(grn_obj_io(s->keys)->path, buffer, id);  \
   }\
-}
+} while (0)
 
-#define UNPACK_INFO() {\
+#define UNPACK_INFO() do {\
   if (vp->ptr) {\
     grn_db_obj *r = DB_OBJ(vp->ptr);\
     r->header = spec->header;\
@@ -6691,7 +6690,7 @@ grn_db_obj_init(grn_ctx *ctx, grn_obj *db, grn_id id, grn_db_obj *obj)
     size = grn_vector_get_element(ctx, &v, 3, &p, NULL, NULL);\
     grn_hook_unpack(ctx, r, p, size);\
   }\
-}
+} while (0)
 
 grn_obj *
 grn_ctx_at(grn_ctx *ctx, grn_id id)
@@ -7047,7 +7046,7 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
   }
 }
 
-#define VECTOR_CLEAR(ctx,obj) {\
+#define VECTOR_CLEAR(ctx,obj) do {\
   if ((obj)->u.v.body && !((obj)->header.impl_flags & GRN_OBJ_REFER)) {\
     grn_obj_close((ctx), (obj)->u.v.body);\
   }\
@@ -7056,7 +7055,7 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
   (obj)->u.b.head = NULL;\
   (obj)->u.b.curr = NULL;\
   (obj)->u.b.tail = NULL;\
-}
+} while (0)
 
 grn_rc
 grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, unsigned char flags)
@@ -7487,7 +7486,7 @@ enum {
   KEY_FLOAT64,
 };
 
-#define CMPNUM(type) {\
+#define CMPNUM(type) do {\
   if (as) {\
     if (bs) {\
       type va = *((type *)(ap));\
@@ -7499,7 +7498,7 @@ enum {
   } else {\
     if (bs) { return 0; }\
   }\
-}
+} while (0)
 
 inline static int
 compare_value(grn_ctx *ctx, sort_entry *a, sort_entry *b,
@@ -8808,21 +8807,21 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
   }
 }
 
-#define JSON_READ_OPEN_BRACKET() {\
+#define JSON_READ_OPEN_BRACKET() do {\
   GRN_UINT32_PUT(ctx, &loader->level, loader->values_size);\
   values_add(ctx, loader);\
   loader->last->header.domain = OPEN_BRACKET;\
   loader->stat = GRN_LOADER_TOKEN;\
   str++;\
-}\
+} while (0)
 
-#define JSON_READ_OPEN_BRACE() {\
+#define JSON_READ_OPEN_BRACE() do {\
   GRN_UINT32_PUT(ctx, &loader->level, loader->values_size);\
   values_add(ctx, loader);\
   loader->last->header.domain = OPEN_BRACE;\
   loader->stat = GRN_LOADER_TOKEN;\
   str++;\
-}\
+} while (0)
 
 static void
 json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned int str_len)

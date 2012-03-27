@@ -500,7 +500,7 @@ typedef struct {
   unsigned char type;
 } grn_expr_dfi;
 
-#define DFI_POP(e,d) {\
+#define DFI_POP(e,d) do {\
   if (GRN_BULK_VSIZE(&(e)->dfi) >= sizeof(grn_expr_dfi)) {\
     GRN_BULK_INCR_LEN((&(e)->dfi), -(sizeof(grn_expr_dfi)));\
     (d) = (grn_expr_dfi *)(GRN_BULK_CURR(&(e)->dfi));\
@@ -509,9 +509,9 @@ typedef struct {
     (d) = NULL;\
     (e)->code0 = NULL;\
   }\
-}
+} while (0)
 
-#define DFI_PUT(e,t,d,c) {\
+#define DFI_PUT(e,t,d,c) do {\
   grn_expr_dfi dfi;\
   dfi.type = (t);\
   dfi.domain = (d);\
@@ -519,7 +519,7 @@ typedef struct {
   if ((e)->code0) { (e)->code0->modify = (c) ? ((c) - (e)->code0) : 0; }\
   grn_bulk_write(ctx, &(e)->dfi, (char *)&dfi, sizeof(grn_expr_dfi));\
   (e)->code0 = NULL;\
-}
+} while (0)
 
 grn_expr_dfi *
 dfi_value_at(grn_expr *expr, int offset)
@@ -595,14 +595,14 @@ exit :
   GRN_API_RETURN((grn_obj *)expr);
 }
 
-#define GRN_PTR_POP(obj,value) {\
+#define GRN_PTR_POP(obj,value) do {\
   if (GRN_BULK_VSIZE(obj) >= sizeof(grn_obj *)) {\
     GRN_BULK_INCR_LEN((obj), -(sizeof(grn_obj *)));\
     value = *(grn_obj **)(GRN_BULK_CURR(obj));\
   } else {\
     value = NULL;\
   }\
-}
+} while (0)
 
 grn_rc
 grn_expr_close(grn_ctx *ctx, grn_obj *expr)
@@ -736,16 +736,16 @@ grn_expr_get_var_by_offset(grn_ctx *ctx, grn_obj *expr, unsigned int offset)
 
 #define CONSTP(obj) ((obj) && ((obj)->header.impl_flags & GRN_OBJ_EXPRCONST))
 
-#define PUSH_CODE(e,o,v,n,c) {\
+#define PUSH_CODE(e,o,v,n,c) do {\
   (c) = &(e)->codes[e->codes_curr++];\
   (c)->value = (v);\
   (c)->nargs = (n);\
   (c)->op = (o);\
   (c)->flags = 0;\
   (c)->modify = 0;\
-}
+} while (0)
 
-#define APPEND_UNARY_MINUS_OP(e) {                              \
+#define APPEND_UNARY_MINUS_OP(e) do {                           \
   grn_expr_code *code_;                                         \
   grn_id domain;                                                \
   unsigned char type;                                           \
@@ -786,9 +786,9 @@ grn_expr_get_var_by_offset(grn_ctx *ctx, grn_obj *expr, unsigned int offset)
     PUSH_CODE(e, op, obj, nargs, code);                         \
   }                                                             \
   DFI_PUT(e, type, domain, code_);                              \
-}
+} while (0)
 
-#define PUSH_N_ARGS_ARITHMETIC_OP(e, op, obj, nargs, code) {    \
+#define PUSH_N_ARGS_ARITHMETIC_OP(e, op, obj, nargs, code) do { \
   PUSH_CODE(e, op, obj, nargs, code);                           \
   {                                                             \
     int i = nargs;                                              \
@@ -797,7 +797,7 @@ grn_expr_get_var_by_offset(grn_ctx *ctx, grn_obj *expr, unsigned int offset)
     }                                                           \
   }                                                             \
   DFI_PUT(e, type, domain, code);                               \
-}
+} while (0)
 
 grn_obj *
 grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, int nargs)
@@ -1247,7 +1247,7 @@ grn_expr_compile(grn_ctx *ctx, grn_obj *expr)
   return ctx->rc;
 }
 
-#define WITH_SPSAVE(block) {\
+#define WITH_SPSAVE(block) do {\
   ctx->impl->stack_curr = sp - ctx->impl->stack;\
   e->values_curr = vp - e->values;\
   block\
@@ -1255,9 +1255,9 @@ grn_expr_compile(grn_ctx *ctx, grn_obj *expr)
   sp = ctx->impl->stack + ctx->impl->stack_curr;\
   s0 = sp[-1];\
   s1 = sp[-2];\
-}
+} while (0)
 
-#define DO_COMPARE_SUB_NUMERIC(y,op) {\
+#define DO_COMPARE_SUB_NUMERIC(y,op) do {\
   switch ((y)->header.domain) {\
   case GRN_DB_INT8 :\
     r = (x_ op GRN_INT8_VALUE(y));\
@@ -1293,9 +1293,9 @@ grn_expr_compile(grn_ctx *ctx, grn_obj *expr)
     r = 0;\
     break;\
   }\
-}
+} while (0)
 
-#define DO_COMPARE_SUB(op) {\
+#define DO_COMPARE_SUB(op) do {\
   switch (y->header.domain) {\
   case GRN_DB_SHORT_TEXT :\
   case GRN_DB_TEXT :\
@@ -1315,9 +1315,9 @@ grn_expr_compile(grn_ctx *ctx, grn_obj *expr)
     DO_COMPARE_SUB_NUMERIC(y,op);\
     break;\
   }\
-}
+} while (0)
 
-#define DO_COMPARE_BUILTIN(x,y,r,op) {\
+#define DO_COMPARE_BUILTIN(x,y,r,op) do {\
   switch (x->header.domain) {\
   case GRN_DB_INT8 :\
     {\
@@ -1434,9 +1434,9 @@ grn_expr_compile(grn_ctx *ctx, grn_obj *expr)
     r = 0;\
     break;\
   }\
-}
+} while (0)
 
-#define DO_COMPARE(x, y, r, op) {\
+#define DO_COMPARE(x, y, r, op) do {\
   if (x->header.domain >= GRN_N_RESERVED_TYPES) {\
     grn_obj *table;\
     table = grn_ctx_at(ctx, x->header.domain);\
@@ -1467,9 +1467,9 @@ grn_expr_compile(grn_ctx *ctx, grn_obj *expr)
   } else {\
     DO_COMPARE_BUILTIN(x, y, r, op);\
   }\
-}
+} while (0)
 
-#define DO_EQ_SUB {\
+#define DO_EQ_SUB do {\
   switch (y->header.domain) {\
   case GRN_DB_INT8 :\
     r = (x_ == GRN_INT8_VALUE(y));\
@@ -1514,9 +1514,9 @@ grn_expr_compile(grn_ctx *ctx, grn_obj *expr)
     r = 0;\
     break;\
   }\
-}\
+} while (0)
 
-#define DO_EQ(x,y,r) {\
+#define DO_EQ(x,y,r) do {\
   switch (x->header.domain) {\
   case GRN_DB_VOID :\
     r = 0;\
@@ -1674,7 +1674,7 @@ grn_expr_compile(grn_ctx *ctx, grn_obj *expr)
     }\
     break;\
   }\
-}
+} while (0)
 
 #define GEO_RESOLUTION   3600000
 #define GEO_RADIOUS      6357303
@@ -1686,7 +1686,7 @@ grn_expr_compile(grn_ctx *ctx, grn_obj *expr)
 #define GEO_GRS_C3       0.006694
 #define GEO_INT2RAD(x)   ((M_PI * x) / (GEO_RESOLUTION * 180))
 
-#define VAR_SET_VALUE(ctx,var,value) {\
+#define VAR_SET_VALUE(ctx,var,value) do {\
   if (GRN_DB_OBJP(value)) {\
     (var)->header.type = GRN_PTR;\
     (var)->header.domain = DB_OBJ(value)->id;\
@@ -1696,7 +1696,7 @@ grn_expr_compile(grn_ctx *ctx, grn_obj *expr)
     (var)->header.domain = (value)->header.domain;\
     GRN_TEXT_SET(ctx, (var), GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value));\
   }\
-}
+} while (0)
 
 grn_rc
 grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
@@ -1726,28 +1726,28 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
   GRN_API_RETURN(ctx->rc);
 }
 
-#define PUSH1(v) {\
+#define PUSH1(v) do {\
   if (EXPRVP(v)) { vp++; }\
   s1 = s0;\
   *sp++ = s0 = v;\
-}
+} while (0)
 
-#define POP1(v) {\
+#define POP1(v) do {\
   if (EXPRVP(s0)) { vp--; }\
   v = s0;\
   s0 = s1;\
   sp--;\
   if (sp < s_) { ERR(GRN_INVALID_ARGUMENT, "stack underflow"); goto exit; }\
   s1 = sp[-2];\
-}
+} while (0)
 
-#define ALLOC1(value) {\
+#define ALLOC1(value) do {\
   s1 = s0;\
   *sp++ = s0 = value = vp++;\
   if (vp - e->values > e->values_tail) { e->values_tail = vp - e->values; }\
-}
+} while (0)
 
-#define POP1ALLOC1(arg,value) {\
+#define POP1ALLOC1(arg,value) do {\
   arg = s0;\
   if (EXPRVP(s0)) {\
     value = s0;\
@@ -1756,9 +1756,9 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
     sp[-1] = s0 = value = vp++;\
     s0->header.impl_flags |= GRN_OBJ_EXPRVALUE;\
   }\
-}
+} while (0)
 
-#define POP2ALLOC1(arg1,arg2,value) {\
+#define POP2ALLOC1(arg1,arg2,value) do {\
   if (EXPRVP(s0)) { vp--; }\
   if (EXPRVP(s1)) { vp--; }\
   arg2 = s0;\
@@ -1768,7 +1768,7 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
   s1 = sp[-2];\
   sp[-1] = s0 = value = vp++;\
   s0->header.impl_flags |= GRN_OBJ_EXPRVALUE;\
-}
+} while (0)
 
 #define INTEGER_ARITHMETIC_OPERATION_PLUS(x, y) ((x) + (y))
 #define FLOAT_ARITHMETIC_OPERATION_PLUS(x, y) ((double)(x) + (double)(y))
@@ -1809,8 +1809,7 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
 #define FLOAT_UNARY_ARITHMETIC_OPERATION_BITWISE_NOT(x) \
   (~((long long int)(x)))
 
-#define TEXT_ARITHMETIC_OPERATION(operator)                             \
-{                                                                       \
+#define TEXT_ARITHMETIC_OPERATION(operator) do {                        \
   long long int x_;                                                     \
   long long int y_;                                                     \
                                                                         \
@@ -1825,20 +1824,19 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
   y_ = GRN_INT64_VALUE(res);                                            \
                                                                         \
   GRN_INT64_SET(ctx, res, x_ operator y_);                              \
-}
+} while (0)
 
-#define TEXT_UNARY_ARITHMETIC_OPERATION(unary_operator) \
-{                                                       \
-  long long int x_;                                     \
-                                                        \
-  res->header.domain = GRN_DB_INT64;                    \
-                                                        \
-  GRN_INT64_SET(ctx, res, 0);                           \
-  grn_obj_cast(ctx, x, res, GRN_FALSE);                 \
-  x_ = GRN_INT64_VALUE(res);                            \
-                                                        \
-  GRN_INT64_SET(ctx, res, unary_operator x_);           \
-}
+#define TEXT_UNARY_ARITHMETIC_OPERATION(unary_operator) do { \
+  long long int x_;                                          \
+                                                             \
+  res->header.domain = GRN_DB_INT64;                         \
+                                                             \
+  GRN_INT64_SET(ctx, res, 0);                                \
+  grn_obj_cast(ctx, x, res, GRN_FALSE);                      \
+  x_ = GRN_INT64_VALUE(res);                                 \
+                                                             \
+  GRN_INT64_SET(ctx, res, unary_operator x_);                \
+} while (0)
 
 #define ARITHMETIC_OPERATION_NO_CHECK(y) do {} while (0)
 #define ARITHMETIC_OPERATION_ZERO_DIVISION_CHECK(y) do {        \
@@ -1853,7 +1851,7 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
                                               integer_operation,        \
                                               float_operation,          \
                                               right_expression_check,   \
-                                              invalid_type_error) {     \
+                                              invalid_type_error) do {  \
   switch (y->header.domain) {                                           \
   case GRN_DB_INT32 :                                                   \
     {                                                                   \
@@ -1920,7 +1918,7 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
     invalid_type_error;                                                 \
     break;                                                              \
   }                                                                     \
-}
+} while (0)
 
 
 #define ARITHMETIC_OPERATION_DISPATCH(x, y, res,                        \
@@ -1930,7 +1928,7 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
                                       left_expression_check,            \
                                       right_expression_check,           \
                                       text_operation,                   \
-                                      invalid_type_error) {             \
+                                      invalid_type_error) do {          \
   switch (x->header.domain) {                                           \
   case GRN_DB_INT32 :                                                   \
     {                                                                   \
@@ -2026,7 +2024,7 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
     break;                                                              \
   }                                                                     \
   code++;                                                               \
-}
+} while (0)
 
 #define ARITHMETIC_BINARY_OPERATION_DISPATCH(integer32_operation,       \
                                              integer64_operation,       \
@@ -2034,7 +2032,7 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
                                              left_expression_check,     \
                                              right_expression_check,    \
                                              text_operation,            \
-                                             invalid_type_error) {      \
+                                             invalid_type_error) do {   \
   grn_obj *x, *y;                                                       \
                                                                         \
   POP2ALLOC1(x, y, res);                                                \
@@ -2047,14 +2045,14 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
                                 right_expression_check,                 \
                                 text_operation,                         \
                                 invalid_type_error);                    \
-}
+} while (0)
 
 #define ARITHMETIC_UNARY_OPERATION_DISPATCH(integer_operation,          \
                                             float_operation,            \
                                             left_expression_check,      \
                                             right_expression_check,     \
                                             text_operation,             \
-                                            invalid_type_error) {       \
+                                            invalid_type_error) do {    \
   grn_obj *x;                                                           \
   POP1ALLOC1(x, res);                                                   \
   res->header.domain = x->header.domain;                                \
@@ -2117,7 +2115,7 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
     break;                                                              \
   }                                                                     \
   code++;                                                               \
-}
+} while (0)
 
 #define EXEC_OPERATE(operate_sentence, assign_sentence)   \
   operate_sentence                                        \
@@ -2128,7 +2126,7 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
   operate_sentence
 
 #define UNARY_OPERATE_AND_ASSIGN_DISPATCH(exec_operate, delta,          \
-                                          set_flags) {                  \
+                                          set_flags) do {               \
   grn_obj *var, *col, value;                                            \
   grn_id rid;                                                           \
                                                                         \
@@ -2183,15 +2181,14 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
   exec_operate(grn_obj_set_value(ctx, col, rid, &value, set_flags);,    \
                grn_obj_get_value(ctx, col, rid, res););                 \
   code++;                                                               \
-}
+} while (0)
 
 #define ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(integer32_operation,   \
                                                  integer64_operation,   \
                                                  float_operation,       \
                                                  left_expression_check, \
                                                  right_expression_check,\
-                                                 text_operation)        \
-{                                                                       \
+                                                 text_operation) do {   \
   grn_obj *value, *var, *res;                                           \
   if (code->value) {                                                    \
     value = code->value;                                                \
@@ -2236,7 +2233,7 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
     ERR(GRN_INVALID_ARGUMENT, "left hand expression isn't column.");    \
     POP1(res);                                                          \
   }                                                                     \
-}
+} while (0)
 
 void
 pseudo_query_scan(grn_ctx *ctx, grn_obj *x, grn_obj *y, grn_obj *res)
@@ -3424,13 +3421,13 @@ typedef enum {
   SCAN_CONST
 } scan_stat;
 
-#define SI_FREE(si) {\
+#define SI_FREE(si) do {\
   GRN_OBJ_FIN(ctx, &(si)->wv);\
   GRN_OBJ_FIN(ctx, &(si)->index);\
   GRN_FREE(si);\
-}
+} while (0)
 
-#define SI_ALLOC(si, i, st) {\
+#define SI_ALLOC(si, i, st) do {\
   if (!((si) = GRN_MALLOCN(scan_info, 1))) {\
     int j;\
     for (j = 0; j < i; j++) { SI_FREE(sis[j]); }\
@@ -3443,7 +3440,7 @@ typedef enum {
   (si)->flags = SCAN_PUSH;\
   (si)->nargs = 0;\
   (si)->start = (st);\
-}
+} while (0)
 
 static scan_info **
 put_logical_op(grn_ctx *ctx, scan_info **sis, int *ip, grn_operator op, int start)
@@ -3511,14 +3508,14 @@ put_logical_op(grn_ctx *ctx, scan_info **sis, int *ip, grn_operator op, int star
 }
 
 
-#define EXPRLOG(name,expr) {\
+#define EXPRLOG(name,expr) do {\
   grn_obj strbuf;\
   GRN_TEXT_INIT(&strbuf, 0);\
   grn_expr_inspect(ctx, &strbuf, (expr));\
   GRN_TEXT_PUTC(ctx, &strbuf, '\0');\
   GRN_LOG(ctx, GRN_LOG_NOTICE, "%s=(%s)", (name), GRN_TEXT_VALUE(&strbuf));\
   GRN_OBJ_FIN(ctx, &strbuf);\
-}
+} while (0)
 
 static void
 scan_info_put_index(grn_ctx *ctx, scan_info *si, grn_obj *index, uint32_t sid, int32_t weight)

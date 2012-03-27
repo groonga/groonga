@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009-2011 Brazil
+/* Copyright(C) 2009-2012 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -198,7 +198,7 @@ inspect_cursor_entry(grn_ctx *ctx, grn_geo_cursor_entry *entry)
   printf("     target bit:    %d\n", entry->target_bit);
 
 #define INSPECT_STATUS_FLAG(name) \
-  (entry->status_flags & GRN_GEO_CURSOR_ENTRY_STATUS_ ## name) ? "true" : "false"
+  ((entry->status_flags & GRN_GEO_CURSOR_ENTRY_STATUS_ ## name) ? "true" : "false")
 
   printf("   top included:    %s\n", INSPECT_STATUS_FLAG(TOP_INCLUDED));
   printf("bottom included:    %s\n", INSPECT_STATUS_FLAG(BOTTOM_INCLUDED));
@@ -404,11 +404,12 @@ grn_geo_get_meshes_for_circle(grn_ctx *ctx, grn_geo_point *base_point,
 
   n_meshes = 0;
 
-#define add_mesh(lat_diff_,lng_diff_,key_size_)\
+#define add_mesh(lat_diff_,lng_diff_,key_size_) do {\
   meshes[n_meshes].key.latitude = geo_base.latitude + (lat_diff_);\
   meshes[n_meshes].key.longitude = geo_base.longitude + (lng_diff_);\
   meshes[n_meshes].key_size = key_size_;\
-  n_meshes++;
+  n_meshes++;\
+} while (0)
 
   if (include_base_point_mesh || position != MESH_LEFT_TOP) {
     add_mesh(0, -lng_diff, diff_bit);
@@ -1076,12 +1077,13 @@ exit :
   ((((uint8_t *)(a))[(n_bit) / 8] & (1 << (7 - ((n_bit) % 8)))) ==\
    (((uint8_t *)(b))[(n_bit) / 8] & (1 << (7 - ((n_bit) % 8)))))
 
-#define CURSOR_ENTRY_UPDATE_STATUS(entry, name, other_key)\
+#define CURSOR_ENTRY_UPDATE_STATUS(entry, name, other_key) do {\
   if (SAME_BIT_P((entry)->key, (other_key), (entry)->target_bit)) {\
     (entry)->status_flags |= GRN_GEO_CURSOR_ENTRY_STATUS_ ## name;\
   } else {\
     (entry)->status_flags &= ~GRN_GEO_CURSOR_ENTRY_STATUS_ ## name;\
-  }
+  }\
+} while (0)
 
 #define CURSOR_ENTRY_CHECK_STATUS(entry, name)\
   ((entry)->status_flags & GRN_GEO_CURSOR_ENTRY_STATUS_ ## name)
@@ -1103,7 +1105,7 @@ exit :
     GRN_GEO_CURSOR_ENTRY_STATUS_RIGHT_INCLUDED))
 
 #define SET_N_BIT(a, n_bit)\
-  ((uint8_t *)(a))[((n_bit) / 8)] ^= (1 << (7 - ((n_bit) % 8)))
+  (((uint8_t *)(a))[((n_bit) / 8)] ^= (1 << (7 - ((n_bit) % 8))))
 
 #define N_BIT(a, n_bit)\
   ((((uint8_t *)(a))[((n_bit) / 8)] &\

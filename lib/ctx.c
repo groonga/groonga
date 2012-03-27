@@ -32,21 +32,19 @@
 
 #define GRN_CTX_INITIALIZER(enc) \
   { GRN_SUCCESS, 0, enc, 0, GRN_LOG_NOTICE,\
-      GRN_CTX_FIN, 0, 0, 0, 0, {0}, NULL, NULL, NULL, NULL, NULL }
+    GRN_CTX_FIN, 0, 0, 0, 0, {0}, NULL, NULL, NULL, NULL, NULL }
 
 #define GRN_CTX_CLOSED(ctx) ((ctx)->stat == GRN_CTX_FIN)
 
 #ifdef USE_EXACT_ALLOC_COUNT
-#define GRN_ADD_ALLOC_COUNT(count) \
-{ \
+#define GRN_ADD_ALLOC_COUNT(count) do { \
   uint32_t alloced; \
   GRN_ATOMIC_ADD_EX(&alloc_count, count, alloced); \
-}
+} while (0)
 #else /* USE_EXACT_ALLOC_COUNT */
-#define GRN_ADD_ALLOC_COUNT(count) \
-{ \
+#define GRN_ADD_ALLOC_COUNT(count) do { \
   alloc_count += count; \
-}
+} while (0)
 #endif
 
 grn_ctx grn_gctx = GRN_CTX_INITIALIZER(GRN_ENC_DEFAULT);
@@ -1154,11 +1152,11 @@ get_command_version(grn_ctx *ctx, const char *p, const char *pe)
   }
 }
 
-#define INDEX_HTML "index.html"
-#define OUTPUT_TYPE "output_type"
-#define COMMAND_VERSION "command_version"
-#define EXPR_MISSING "expr_missing"
-#define OUTPUT_TYPE_LEN (sizeof(OUTPUT_TYPE) - 1)
+#define INDEX_HTML          "index.html"
+#define OUTPUT_TYPE         "output_type"
+#define COMMAND_VERSION     "command_version"
+#define EXPR_MISSING        "expr_missing"
+#define OUTPUT_TYPE_LEN     (sizeof(OUTPUT_TYPE) - 1)
 #define COMMAND_VERSION_LEN (sizeof(COMMAND_VERSION) - 1)
 
 static inline int

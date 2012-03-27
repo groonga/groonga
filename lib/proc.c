@@ -2300,14 +2300,14 @@ dump_table(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table,
 }
 
 /* can we move this to groonga.h? */
-#define GRN_PTR_POP(obj,value) {\
+#define GRN_PTR_POP(obj,value) do {\
   if (GRN_BULK_VSIZE(obj) >= sizeof(grn_obj *)) {\
     GRN_BULK_INCR_LEN((obj), -(sizeof(grn_obj *)));\
     value = *(grn_obj **)(GRN_BULK_CURR(obj));\
   } else {\
     value = NULL;\
   }\
-}
+} while (0)
 
 static void
 dump_scheme(grn_ctx *ctx, grn_obj *outbuf)
@@ -2796,11 +2796,11 @@ func_edit_distance(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
   return obj;
 }
 
-#define DEF_VAR(v,name_str) {\
+#define DEF_VAR(v,name_str) do {\
   (v).name = (name_str);\
   (v).name_size = GRN_STRLEN(name_str);\
   GRN_TEXT_INIT(&(v).value, 0);\
-}
+} while (0)
 
 #define DEF_COMMAND(name, func, nvars, vars)\
   (grn_proc_create(ctx, (name), (sizeof(name) - 1),\

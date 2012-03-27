@@ -107,10 +107,10 @@ enum {
 
 /* patricia array operation */
 
-#define PAT_AT(pat,id,n) {\
+#define PAT_AT(pat,id,n) do {\
   int flags = 0;\
   GRN_IO_ARRAY_AT(pat->io, segment_pat, id, &flags, n);\
-}
+} while (0)
 
 inline static pat_node *
 pat_get(grn_ctx *ctx, grn_pat *pat, grn_id id)
@@ -182,11 +182,10 @@ sis_collect(grn_ctx *ctx, grn_pat *pat, grn_hash *h, grn_id id, uint32_t level)
 
 /* key operation */
 
-#define KEY_AT(pat,pos,ptr,addp)\
-{\
+#define KEY_AT(pat,pos,ptr,addp) do {\
   int flags = addp;\
   GRN_IO_ARRAY_AT(pat->io, segment_key, pos, &flags, ptr);\
-}
+} while (0)
 
 inline static uint32_t
 key_put(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, int len)
@@ -746,7 +745,7 @@ chop(grn_ctx *ctx, grn_pat *pat, const char **key, const char *end, uint32_t *lk
 #define KEY_NEEDS_CONVERT(pat,size) \
   (!((pat)->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) && (size) <= MAX_FIXED_KEY_SIZE)
 
-#define KEY_ENC(pat,keybuf,key,size) {\
+#define KEY_ENC(pat,keybuf,key,size) do {\
   switch ((pat)->obj.header.flags & GRN_OBJ_KEY_MASK) {\
   case GRN_OBJ_KEY_UINT :\
     if (((pat)->obj.header.domain != GRN_DB_TOKYO_GEO_POINT) &&\
@@ -769,9 +768,9 @@ chop(grn_ctx *ctx, grn_pat *pat, const char **key, const char *end, uint32_t *lk
     }\
     break;\
   }\
-}
+} while (0)
 
-#define KEY_DEC(pat,keybuf,key,size) {\
+#define KEY_DEC(pat,keybuf,key,size) do {\
   switch ((pat)->obj.header.flags & GRN_OBJ_KEY_MASK) {\
   case GRN_OBJ_KEY_UINT :\
     if (((pat)->obj.header.domain != GRN_DB_TOKYO_GEO_POINT) &&\
@@ -793,13 +792,14 @@ chop(grn_ctx *ctx, grn_pat *pat, const char **key, const char *end, uint32_t *lk
     }\
     break;\
   }\
-}
+} while (0)
 
-#define KEY_ENCODE(pat,keybuf,key,size) \
-if (KEY_NEEDS_CONVERT(pat,size)) {\
-  KEY_ENC((pat), (keybuf), (key), (size));\
-  (key) = (keybuf);\
-}
+#define KEY_ENCODE(pat,keybuf,key,size) do {\
+  if (KEY_NEEDS_CONVERT(pat,size)) {\
+    KEY_ENC((pat), (keybuf), (key), (size));\
+    (key) = (keybuf);\
+  }\
+} while (0)
 
 grn_id
 grn_pat_add(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_size,
@@ -2738,14 +2738,14 @@ rk_emit(rk_tree_node *rn, char **str)
   }
 }
 
-#define RK_OUTPUT(e,l) {\
+#define RK_OUTPUT(e,l) do {\
   if (oc < oe) {\
     uint32_t l_ = (oc + (l) < oe) ? (l) : (oe - oc);\
     memcpy(oc, (e), l_);\
     oc += l_;\
     ic_ = ic;\
   }\
-}
+} while (0)
 
 static uint32_t
 rk_conv(const char *str, uint32_t str_len, char *buf, uint32_t buf_size, uint8_t *statep)
