@@ -51,25 +51,30 @@ struct _grn_tiny_array {
   void *elements[GRN_TINY_ARRAY_N];
 };
 
-#define GRN_TINY_ARRAY_EACH(a,head,tail,key,val,block) do {\
-  int _ei;\
-  const grn_id h = (head);\
-  const grn_id t = (tail);\
-  for (_ei = 0, (key) = (h); _ei < GRN_TINY_ARRAY_N && (key) <= (t); _ei++) {\
-    int _ej = GRN_TINY_ARRAY_S * GRN_TINY_ARRAY_R(_ei);\
-    if (((val) = (a)->elements[_ei])) {\
-      for (; _ej-- && (key) <= (t); (key)++, (val) = (void *)((byte *)(val) + (a)->element_size)) block\
+#define GRN_TINY_ARRAY_EACH(array, head, tail, key, value, block) do {\
+  int _block_id;\
+  const grn_id _head = (head);\
+  const grn_id _tail = (tail);\
+  for (_block_id = 0, (key) = (_head);\
+       _block_id < GRN_TINY_ARRAY_N && (key) <= (_tail); _block_id++) {\
+    int _id = GRN_TINY_ARRAY_S * GRN_TINY_ARRAY_R(_block_id);\
+    if (((value) = (array)->elements[_block_id])) {\
+      for (; _id-- && (key) <= (_tail);\
+           (key)++, (value) = (void *)((byte *)(value) + (array)->element_size)) {\
+        block\
+      }\
     } else {\
-      (key) += _ej;\
+      (key) += _id;\
     }\
   }\
 } while (0)
 
-void grn_tiny_array_init(grn_ctx *ctx, grn_tiny_array *array,
-                         uint16_t element_size, uint16_t flags);
-void grn_tiny_array_fin(grn_tiny_array *array);
-void *grn_tiny_array_at(grn_tiny_array *array, grn_id id);
-grn_id grn_tiny_array_id(grn_tiny_array *array, void *p);
+GRN_API void grn_tiny_array_init(grn_ctx *ctx, grn_tiny_array *array,
+                                 uint16_t element_size, uint16_t flags);
+GRN_API void grn_tiny_array_fin(grn_tiny_array *array);
+GRN_API void *grn_tiny_array_at(grn_tiny_array *array, grn_id id);
+GRN_API grn_id grn_tiny_array_id(grn_tiny_array *array,
+                                 const void *element_address);
 
 /**** grn_array ****/
 
