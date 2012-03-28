@@ -64,7 +64,7 @@ grn_rc grn_lltoa(int64_t i, char *p, char *end, char **rest);
 grn_rc grn_ulltoa(uint64_t i, char *p, char *end, char **rest);
 GRN_API grn_rc grn_aton(grn_ctx *ctx, const char *p, const char *end, const char **rest, grn_obj *res);
 GRN_API const char *grn_enctostr(grn_encoding enc);
-grn_encoding grn_strtoenc(const char *str);
+GRN_API grn_encoding grn_strtoenc(const char *str);
 
 GRN_API void grn_itoh(unsigned int i, char *p, unsigned int len);
 int grn_str_tok(const char *str, size_t str_len, char delim, const char **tokbuf, int buf_size, const char **rest);
