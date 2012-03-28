@@ -31,9 +31,9 @@ extern "C" {
 
 /**** grn_tiny_array ****/
 
-#define GRN_TINY_ARRAY_CLEAR      (1L<<0)
-#define GRN_TINY_ARRAY_THREADSAFE (1L<<1)
-#define GRN_TINY_ARRAY_USE_MALLOC (1L<<2)
+#define GRN_TINY_ARRAY_CLEAR      (1<<0)
+#define GRN_TINY_ARRAY_THREADSAFE (1<<1)
+#define GRN_TINY_ARRAY_USE_MALLOC (1<<2)
 
 #define GRN_TINY_ARRAY_W    0
 #define GRN_TINY_ARRAY_R(i) (1<<((i)<<GRN_TINY_ARRAY_W))
