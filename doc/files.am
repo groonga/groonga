@@ -54,6 +54,11 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/tutorial/data-1.log \
 	$(top_srcdir)/doc/source/example/tutorial/data-2.log \
 	$(top_srcdir)/doc/source/example/tutorial/data-3.log \
+	$(top_srcdir)/doc/source/example/tutorial/data-4.log \
+	$(top_srcdir)/doc/source/example/tutorial/data-5.log \
+	$(top_srcdir)/doc/source/example/tutorial/data-6.log \
+	$(top_srcdir)/doc/source/example/tutorial/data-7.log \
+	$(top_srcdir)/doc/source/example/tutorial/data-8.log \
 	$(top_srcdir)/doc/source/example/tutorial/drilldown-1.log \
 	$(top_srcdir)/doc/source/example/tutorial/drilldown-2.log \
 	$(top_srcdir)/doc/source/example/tutorial/drilldown-3.log \
@@ -76,6 +81,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/tutorial/introduction-15.log \
 	$(top_srcdir)/doc/source/example/tutorial/introduction-16.log \
 	$(top_srcdir)/doc/source/example/tutorial/introduction-17.log \
+	$(top_srcdir)/doc/source/example/tutorial/introduction-18.log \
 	$(top_srcdir)/doc/source/example/tutorial/introduction-2.log \
 	$(top_srcdir)/doc/source/example/tutorial/introduction-3.log \
 	$(top_srcdir)/doc/source/example/tutorial/introduction-4.log \
@@ -251,12 +257,10 @@ absolute_source_files = \
 absolute_theme_files = \
 	$(top_srcdir)/doc/themes/groonga/layout.html \
 	$(top_srcdir)/doc/themes/groonga/static/favicon.ico \
-	$(top_srcdir)/doc/themes/groonga/static/footer-bar.png \
 	$(top_srcdir)/doc/themes/groonga/static/groonga.css_t \
 	$(top_srcdir)/doc/themes/groonga/static/header-background.png \
 	$(top_srcdir)/doc/themes/groonga/static/jp.png \
 	$(top_srcdir)/doc/themes/groonga/static/logo.png \
-	$(top_srcdir)/doc/themes/groonga/static/menu-header.png \
 	$(top_srcdir)/doc/themes/groonga/static/navigation-bar.png \
 	$(top_srcdir)/doc/themes/groonga/static/us.png \
 	$(top_srcdir)/doc/themes/groonga/theme.conf \
@@ -318,6 +322,11 @@ source_files_relative_from_doc_dir = \
 	source/example/tutorial/data-1.log \
 	source/example/tutorial/data-2.log \
 	source/example/tutorial/data-3.log \
+	source/example/tutorial/data-4.log \
+	source/example/tutorial/data-5.log \
+	source/example/tutorial/data-6.log \
+	source/example/tutorial/data-7.log \
+	source/example/tutorial/data-8.log \
 	source/example/tutorial/drilldown-1.log \
 	source/example/tutorial/drilldown-2.log \
 	source/example/tutorial/drilldown-3.log \
@@ -340,6 +349,7 @@ source_files_relative_from_doc_dir = \
 	source/example/tutorial/introduction-15.log \
 	source/example/tutorial/introduction-16.log \
 	source/example/tutorial/introduction-17.log \
+	source/example/tutorial/introduction-18.log \
 	source/example/tutorial/introduction-2.log \
 	source/example/tutorial/introduction-3.log \
 	source/example/tutorial/introduction-4.log \
@@ -515,12 +525,10 @@ source_files_relative_from_doc_dir = \
 theme_files_relative_from_doc_dir = \
 	themes/groonga/layout.html \
 	themes/groonga/static/favicon.ico \
-	themes/groonga/static/footer-bar.png \
 	themes/groonga/static/groonga.css_t \
 	themes/groonga/static/header-background.png \
 	themes/groonga/static/jp.png \
 	themes/groonga/static/logo.png \
-	themes/groonga/static/menu-header.png \
 	themes/groonga/static/navigation-bar.png \
 	themes/groonga/static/us.png \
 	themes/groonga/theme.conf \
@@ -731,25 +739,21 @@ html_files_relative_from_locale_dir = \
 	html/_static/comment-bright.png \
 	html/_static/comment-close.png \
 	html/_static/comment.png \
-	html/_static/default.css \
 	html/_static/doctools.js \
 	html/_static/down-pressed.png \
 	html/_static/down.png \
 	html/_static/favicon.ico \
 	html/_static/file.png \
-	html/_static/footer-bar.png \
 	html/_static/groonga.css \
 	html/_static/header-background.png \
 	html/_static/jp.png \
 	html/_static/jquery.js \
 	html/_static/logo.png \
-	html/_static/menu-header.png \
 	html/_static/minus.png \
 	html/_static/navigation-bar.png \
 	html/_static/plus.png \
 	html/_static/pygments.css \
 	html/_static/searchtools.js \
-	html/_static/sidebar.js \
 	html/_static/underscore.js \
 	html/_static/up-pressed.png \
 	html/_static/up.png \
