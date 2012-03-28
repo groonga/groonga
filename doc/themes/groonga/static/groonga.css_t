@@ -103,6 +103,7 @@ div.header div.other-language-links
     position: absolute;
     top: 5px;
     right: 0;
+    font-size: small;
 }
 
 div.header div.other-language-links ul,
