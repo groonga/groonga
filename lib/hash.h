@@ -31,6 +31,16 @@ extern "C" {
 
 /**** grn_tiny_array ****/
 
+/*
+ * grn_tiny_array_init() accepts a logical OR of these flags.
+ *
+ * GRN_TINY_ARRAY_CLEAR: 
+ *   specifies to initialize a new block with zeros.
+ * GRN_TINY_ARRAY_THREADSAFE:
+ *   specifies to create a critical section when allocating memory.
+ * GRN_TINY_ARRAY_USE_MALLOC:
+ *   specifies to use GRN_MALLOC/CALLOC/FREE instead of GRN_CTX_ALLOC/FREE.
+ */
 #define GRN_TINY_ARRAY_CLEAR      (1<<0)
 #define GRN_TINY_ARRAY_THREADSAFE (1<<1)
 #define GRN_TINY_ARRAY_USE_MALLOC (1<<2)
