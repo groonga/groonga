@@ -1,7 +1,7 @@
 include files.am
 
-imagesdir = $(pkgdatadir)/images
-images_DATA = $(image_files)
+logodir = $(pkgdatadir)/images/logo
+logo_DATA = $(image_files)
 
 EXTRA_DIST =					\
 	$(images_DATA)				\
