@@ -5,6 +5,50 @@
 News
 ====
 
+.. _release-2-0-1:
+
+Release 2.0.1 - 2012/03/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* Supported build in other directory.
+  [#1298] [Reported by Kazuhiko]
+* [solaris] Supported build on Solaris 11. [Reported by Kazuhiko]
+* [test] Supported functional test.
+* [test] Required ``--with-ruby19`` configure option for testing by Ruby.
+* [dump] Supported records dump for a table that has default tokenizer.
+* [suggest] Added ``similar_search`` option.
+* [groonga] Removed deprecated options, ``-a``, ``--address`` and
+  ``--admin-html-path``.
+* Added more return value checks. [GitHub#9] [Reported by Markus Elfring]
+* [dat] Supported term extract operation.
+* Added `logos <http://groonga.org/logo/>`_ .
+* Updated HTML design.
+* Renamed ``grntest`` to ``groonga-benchmark``.
+* Supported ``autogen.sh`` on CentOS 5.
+* [linux] Added ``vm.overcommit_memory`` kernel parameter value
+  check. [#1289]
+* ``grn_snip`` uses ``grn_obj`` mechanism. [#1054]
+
+Fixes
+^^^^^
+
+* Fixed a bug that uninstall task doesn't uninstall installed Ruby
+  scripts. [#1299] [Reported by Kazuhiko]
+* Added a missing Gemfile. [#1302] [Reported by Kazuhiko]
+* Fixed a bug that some indexed records aren't found. The feature is
+  only used by mroonga. [#1303]
+* [groonga] Appended missing ``-id`` to ``--server-id`` option name.
+* Fixed a bug that latin1 normalization may access unexpected memory.
+
+Thanks
+^^^^^^
+
+* Kazuhiko
+* Markus Elfring
+
 .. _release-2-0-0:
 
 Release 2.0.0 - 2012/02/29
