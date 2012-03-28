@@ -56,6 +56,10 @@ extern "C" {
 #define GRN_TINY_ARRAY_S           (GRN_TINY_ARRAY_R(1)-1)
 #define GRN_TINY_ARRAY_N           (32>>GRN_TINY_ARRAY_W)
 
+/*
+ * grn_tiny_array uses several blocks to represent an array.
+ * The k-th block (elements[k]) consists of 2^k elements.
+ */
 typedef struct _grn_tiny_array grn_tiny_array;
 
 struct _grn_tiny_array {
