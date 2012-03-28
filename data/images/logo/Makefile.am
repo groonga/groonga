@@ -4,7 +4,7 @@ logodir = $(pkgdatadir)/images/logo
 logo_DATA = $(image_files)
 
 EXTRA_DIST =					\
-	$(images_DATA)				\
+	$(logo_DATA)				\
 	update-files.sh
 
 SUFFIXES =
