@@ -12,7 +12,7 @@ def fix_link(text, extension, language)
 end
 
 def fix_link_path(text)
-  text.gsub(/\b_(sources|static)\b/, '\1')
+  text.gsub(/\b_(sources|static|images)\b/, '\1')
 end
 
 def fix_language_link(url, language)
