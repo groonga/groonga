@@ -35,10 +35,16 @@ extern "C" {
 #define GRN_TINY_ARRAY_THREADSAFE (1<<1)
 #define GRN_TINY_ARRAY_USE_MALLOC (1<<2)
 
-#define GRN_TINY_ARRAY_W    0
-#define GRN_TINY_ARRAY_R(i) (1<<((i)<<GRN_TINY_ARRAY_W))
-#define GRN_TINY_ARRAY_S    (GRN_TINY_ARRAY_R(1)-1)
-#define GRN_TINY_ARRAY_N    (32>>GRN_TINY_ARRAY_W)
+/*
+ * GRN_TINY_ARRAY_W: a parameter of grn_tiny_array.
+ * GRN_TINY_ARRAY_R: the offset to a block.
+ * GRN_TINY_ARRAY_S: the number of elements in the first block.
+ * GRN_TINY_ARRAY_N: the maximum number of blocks.
+ */
+#define GRN_TINY_ARRAY_W           0
+#define GRN_TINY_ARRAY_R(block_id) (1<<((block_id)<<GRN_TINY_ARRAY_W))
+#define GRN_TINY_ARRAY_S           (GRN_TINY_ARRAY_R(1)-1)
+#define GRN_TINY_ARRAY_N           (32>>GRN_TINY_ARRAY_W)
 
 typedef struct _grn_tiny_array grn_tiny_array;
 
