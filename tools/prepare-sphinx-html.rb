@@ -61,7 +61,7 @@ def insert_facebook_html_header(html)
     <meta property="fb:page_id" content="201193596592346" /><!-- groonga -->
     <meta property="fb:admins" content="664204556" /><!-- kouhei.sutou -->
     <meta property="og:type" content="product" />
-    <meta property="og:image" content="http://groonga.org/images/groonga.png" />
+    <meta property="og:image" content="http://groonga.org/images/logos/groonga-icon-full-size.png" />
     <meta property="og:site_name" content="groonga" />
 
     <link rel="stylesheet" href="/css/sphinx.css" type="text/css" />
