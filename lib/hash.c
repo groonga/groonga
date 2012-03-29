@@ -435,12 +435,14 @@ int
 grn_array_get_value(grn_ctx *ctx, grn_array *array, grn_id id, void *valuebuf)
 {
   if (ctx && array) {
-    void *ee;
-    if (!grn_array_bitmap_at(ctx, array, id)) { return 0; }
-    ee = grn_array_entry_at(ctx, array, id, 0);
-    if (ee) {
-      if (valuebuf) { memcpy(valuebuf, ee, array->value_size); }
-      return array->value_size;
+    if (grn_array_bitmap_at(ctx, array, id)) {
+      void * const entry = grn_array_entry_at(ctx, array, id, 0);
+      if (entry) {
+        if (valuebuf) {
+          memcpy(valuebuf, entry, array->value_size);
+        }
+        return array->value_size;
+      }
     }
   }
   return 0;
@@ -460,48 +462,52 @@ grn_rc
 grn_array_set_value(grn_ctx *ctx, grn_array *array, grn_id id,
                     const void *value, int flags)
 {
-  if (ctx && array && value) {
-    void *ee;
-    if (!grn_array_bitmap_at(ctx, array, id)) { return GRN_INVALID_ARGUMENT; }
-    ee = grn_array_entry_at(ctx, array, id, 0);
-    if (ee) {
-      switch ((flags & GRN_OBJ_SET_MASK)) {
-      case GRN_OBJ_SET :
-        memcpy(ee, value, array->value_size);
-        return GRN_SUCCESS;
-      case GRN_OBJ_INCR :
-        switch (array->value_size) {
-        case sizeof(int32_t) :
-          *((int32_t *)ee) += *((int32_t *)value);
-          return GRN_SUCCESS;
-        case sizeof(int64_t) :
-          *((int64_t *)ee) += *((int64_t *)value);
-          return GRN_SUCCESS;
-        default :
-          return GRN_INVALID_ARGUMENT;
-        }
-        break;
-      case GRN_OBJ_DECR :
-        switch (array->value_size) {
-        case sizeof(int32_t) :
-          *((int32_t *)ee) -= *((int32_t *)value);
-          return GRN_SUCCESS;
-        case sizeof(int64_t) :
-          *((int64_t *)ee) -= *((int64_t *)value);
-          return GRN_SUCCESS;
-        default :
-          return GRN_INVALID_ARGUMENT;
-        }
-        break;
-      default :
-        // todo : support other types.
-        return GRN_INVALID_ARGUMENT;
-      }
-    } else {
+  if (!ctx || !array || !value) {
+    return GRN_INVALID_ARGUMENT;
+  }
+  if (!grn_array_bitmap_at(ctx, array, id)) {
+    return GRN_INVALID_ARGUMENT;
+  }
+
+  {
+    void * const entry = grn_array_entry_at(ctx, array, id, 0);
+    if (!entry) {
       return GRN_NO_MEMORY_AVAILABLE;
     }
+
+    switch ((flags & GRN_OBJ_SET_MASK)) {
+    case GRN_OBJ_SET :
+      memcpy(entry, value, array->value_size);
+      return GRN_SUCCESS;
+    case GRN_OBJ_INCR :
+      switch (array->value_size) {
+      case sizeof(int32_t) :
+        *((int32_t *)entry) += *((int32_t *)value);
+        return GRN_SUCCESS;
+      case sizeof(int64_t) :
+        *((int64_t *)entry) += *((int64_t *)value);
+        return GRN_SUCCESS;
+      default :
+        return GRN_INVALID_ARGUMENT;
+      }
+      break;
+    case GRN_OBJ_DECR :
+      switch (array->value_size) {
+      case sizeof(int32_t) :
+        *((int32_t *)entry) -= *((int32_t *)value);
+        return GRN_SUCCESS;
+      case sizeof(int64_t) :
+        *((int64_t *)entry) -= *((int64_t *)value);
+        return GRN_SUCCESS;
+      default :
+        return GRN_INVALID_ARGUMENT;
+      }
+      break;
+    default :
+      // todo : support other types.
+      return GRN_INVALID_ARGUMENT;
+    }
   }
-  return GRN_INVALID_ARGUMENT;
 }
 
 grn_rc
