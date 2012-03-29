@@ -568,9 +568,11 @@ grn_array_at(grn_ctx *ctx, grn_array *array, grn_id id)
 }
 
 grn_rc
-grn_array_copy_sort_key(grn_ctx *ctx, grn_array *array, grn_table_sort_key *keys, int n_keys)
+grn_array_copy_sort_key(grn_ctx *ctx, grn_array *array,
+                        grn_table_sort_key *keys, int n_keys)
 {
-  if ((array->keys = GRN_MALLOCN(grn_table_sort_key, n_keys))) {
+  array->keys = GRN_MALLOCN(grn_table_sort_key, n_keys);
+  if (array->keys) {
     memcpy(array->keys, keys, sizeof(grn_table_sort_key) * n_keys);
     array->n_keys = n_keys;
   }
