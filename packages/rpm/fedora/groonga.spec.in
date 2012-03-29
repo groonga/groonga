@@ -170,6 +170,7 @@ make %{?_smp_mflags}
 
 
 %install
+rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT INSTALL="install -p"
 rm $RPM_BUILD_ROOT%{_libdir}/groonga/plugins/*/*.la
 rm $RPM_BUILD_ROOT%{_libdir}/*.la
@@ -317,6 +318,7 @@ fi
 %changelog
 * Thu Mar 29 2012 Kouhei Sutou <kou@clear-code.com> - 2.0.1-0
 - new upstream release.
+- ensure removing build directory before installing.
 
 * Wed Feb 29 2012 Kouhei Sutou <kou@clear-code.com> - 2.0.0-0
 - new upstream release.
