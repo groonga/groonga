@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-02-27 16:05\n"
+"POT-Creation-Date: 2012-03-28 17:06\n"
 "PO-Revision-Date: 2011-08-12 22:01+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -678,7 +678,7 @@ msgstr "位置情報を格納するインデックス(完全転置インデッ�
 # 6b9eaf1ef4364ef7a2c863603ae21c47
 #: ../../../source/commands/column_create.txt:62
 #: ../../../source/commands/column_list.txt:59
-#: ../../../source/commands/suggest.txt:163
+#: ../../../source/commands/suggest.txt:182
 msgid "``type``"
 msgstr "``type``"
 
@@ -2581,6 +2581,7 @@ msgstr ""
 
 # abbe166a05fc4a0c9df8b79d46967673
 #: ../../../source/commands/suggest.txt:132
+#: ../../../source/commands/suggest.txt:151
 msgid "Here are available values:"
 msgstr ""
 
@@ -2601,47 +2602,68 @@ msgstr ""
 
 # bbd897c0b88e431088eb8cc05c43ac95
 #: ../../../source/commands/suggest.txt:145
+#: ../../../source/commands/suggest.txt:164
 msgid "``auto``"
 msgstr ""
 
-# 84db867d1e7241799ab798ce57086bf1
+# 4a4386751ac2416bbd6f7a782bccaa8b
 #: ../../../source/commands/suggest.txt:148
+msgid "It specifies whether optional similar search is used or not in suggest."
+msgstr ""
+
+# ec23e4abe6bd425bb4202c02ba665f87
+#: ../../../source/commands/suggest.txt:154
+msgid "Similar search is always used."
+msgstr ""
+
+# 26dbce0b15b84c3fa686a80dc6398203
+#: ../../../source/commands/suggest.txt:157
+msgid "Similar search is never used."
+msgstr ""
+
+# 01cf7aa7015c498c94c6c649c6a10823
+#: ../../../source/commands/suggest.txt:160
+msgid "Similar search is used only when other search can't find any records."
+msgstr ""
+
+# 84db867d1e7241799ab798ce57086bf1
+#: ../../../source/commands/suggest.txt:167
 msgid "RETURN VALUE"
 msgstr ""
 
 # 779dfc21a7b7400a8fd0a768c83fecd7
-#: ../../../source/commands/suggest.txt:151
+#: ../../../source/commands/suggest.txt:170
 msgid "JSON format"
 msgstr ""
 
 # 235e5e1d857949609f24f6ebec7896ed
-#: ../../../source/commands/suggest.txt:153
+#: ../../../source/commands/suggest.txt:172
 msgid "Here is a returned JSON format::"
 msgstr ""
 
 # 8fb5a9c34fd04bebb977c8e53b466429
-#: ../../../source/commands/suggest.txt:165
+#: ../../../source/commands/suggest.txt:184
 msgid "A type specified by ``types``."
 msgstr ""
 
 # 0c5888ec718643a696f99ddefe7462a3
-#: ../../../source/commands/suggest.txt:167
+#: ../../../source/commands/suggest.txt:186
 #, fuzzy
 msgid "``candidate``"
 msgstr "``cache``"
 
 # a65ff125a4a9426a856a8242d5201615
-#: ../../../source/commands/suggest.txt:169
+#: ../../../source/commands/suggest.txt:188
 msgid "A candidate for completion, correction or suggestion."
 msgstr ""
 
 # e7f573dcd22e49ab8646cbd0c04843b4
-#: ../../../source/commands/suggest.txt:171
+#: ../../../source/commands/suggest.txt:190
 msgid "``score of candidate``"
 msgstr ""
 
 # 13d4ba9ecb404a88a9fac64d0799fd79
-#: ../../../source/commands/suggest.txt:173
+#: ../../../source/commands/suggest.txt:192
 msgid ""
 "A score of corresponding ``candidate``. It means that higher score candidate "
 "is more likely candidate for completion, correction or suggestion. Returned "
@@ -2649,58 +2671,58 @@ msgid ""
 msgstr ""
 
 # e1b820659c4c44238f8d6ad9601dd096
-#: ../../../source/commands/suggest.txt:180
+#: ../../../source/commands/suggest.txt:199
 msgid "EXAMPLE"
 msgstr ""
 
 # 3bc5aa56c8c94ede9752d60ca7132d32
-#: ../../../source/commands/suggest.txt:182
+#: ../../../source/commands/suggest.txt:201
 msgid "Here are learned data for completion."
 msgstr ""
 
 # fe498189de5a4c8ba2bc3466f6466546
-#: ../../../source/commands/suggest.txt:196
+#: ../../../source/commands/suggest.txt:215
 msgid "Here are learned data for correction."
 msgstr ""
 
 # de05f397934341469701a04ac77c61b9
-#: ../../../source/commands/suggest.txt:212
+#: ../../../source/commands/suggest.txt:231
 msgid "Here are learned data for suggestion."
 msgstr ""
 
 # 5bc7770294c7407c9c5200a5424c97a2
-#: ../../../source/commands/suggest.txt:222
+#: ../../../source/commands/suggest.txt:241
 msgid "Here is a completion example."
 msgstr ""
 
 # 4b9788cf8f3d42388627d17d5234a81c
-#: ../../../source/commands/suggest.txt:228
+#: ../../../source/commands/suggest.txt:247
 msgid "Here is a correction example."
 msgstr ""
 
 # f481261b9b204db0a627594cfef2856a
-#: ../../../source/commands/suggest.txt:234
+#: ../../../source/commands/suggest.txt:253
 msgid "Here is a suggestion example."
 msgstr ""
 
 # 0071f37de5d04b45955a67ef1dec9e84
-#: ../../../source/commands/suggest.txt:240
+#: ../../../source/commands/suggest.txt:259
 msgid "Here is a mixed example."
 msgstr ""
 
 # 82554879cf9c442ca065ff52ad81e8a5
-#: ../../../source/commands/suggest.txt:248
+#: ../../../source/commands/suggest.txt:267
 msgid "SEE ALSO"
 msgstr ""
 
 # bdaa98e12aa346c1be5f00be9287e66b
-#: ../../../source/commands/suggest.txt:250
+#: ../../../source/commands/suggest.txt:269
 #, fuzzy
 msgid ":doc:`/suggest`"
 msgstr "``suggest``"
 
 # 90f324b6827145fc9912843ff6c1882f
-#: ../../../source/commands/suggest.txt:251
+#: ../../../source/commands/suggest.txt:270
 msgid ":doc:`/executables/groonga-suggest-create-dataset`"
 msgstr ""
 
@@ -3131,23 +3153,57 @@ msgstr "view型のテーブルに追加されるテーブルの名前を指定�
 msgid "view_add Ventry Entry [true]"
 msgstr "view_add Ventry Entry [true]"
 
-# 58738da3ccdd4b8c9c21c4b2b61a1211
-#~ msgid ""
-#~ "** 未だ仕様は確定しておりません。利用のためには特定のデータを持つテーブル"
-#~ "が必要となります。 **"
-#~ msgstr ""
-#~ "** 未だ仕様は確定しておりません。利用のためには特定のデータを持つテーブル"
-#~ "が必要となります。 **"
+# 8cecf7e17f0842e3b71c278f360f2c09
+#~ msgid "補完・修正・提案の対象となるクエリを指定します。"
+#~ msgstr "補完・修正・提案の対象となるクエリを指定します。"
 
-# e327482145f744e787aee4d6d3d7a02f
-#~ msgid "suggest - 指定したクエリに対する補完・修正・提案を行う。"
-#~ msgstr "suggest - 指定したクエリに対する補完・修正・提案を行う。"
-
-# 9cb50192e38b465e883c0ecdc98e1ce3
+# 1b16dbf915334218847dec76f1e40655
 #~ msgid ""
-#~ "suggestコマンドは、指定したクエリに対して補完・修正・提案を行います。"
+#~ "基礎となるデータが格納されているテーブルにおいて、「ヨミガナ」が格納されて"
+#~ "いるカラム名を指定します。"
 #~ msgstr ""
-#~ "suggestコマンドは、指定したクエリに対して補完・修正・提案を行います。"
+#~ "基礎となるデータが格納されているテーブルにおいて、「ヨミガナ」が格納されて"
+#~ "いるカラム名を指定します。"
+
+# ed377ed637424a8b96f2c425a6408d66
+#~ msgid "``column``"
+#~ msgstr "``column``"
+
+# da552bb835aa45408b2f1363510927ae
+#~ msgid "基礎となるデータが格納されているテーブル名を指定します。"
+#~ msgstr "基礎となるデータが格納されているテーブル名を指定します。"
+
+# e2894f7f3e2a4faea18c8d9551c18d89
+#~ msgid "提案を行います。"
+#~ msgstr "提案を行います。"
+
+# fa917ea5711e4dd89e8b66c7404830a3
+#~ msgid "修正を行います。"
+#~ msgstr "修正を行います。"
+
+# ccfd1f926f5141e29e4230e06a6d8740
+#~ msgid "``correct``"
+#~ msgstr "``correct``"
+
+# 4b055f2ccd52456aa3a6dc26600b9ee6
+#~ msgid "補完を行います。"
+#~ msgstr "補完を行います。"
+
+# bfa4263e2cca46d5afc55b25166fd2eb
+#~ msgid "``complete``"
+#~ msgstr "``complete``"
+
+# 4bbdc5b0e39749c4b65b0bd813819e32
+#~ msgid ""
+#~ "補完・修正・提案のいずれを行うかを、パイプ('|')で組み合わせたシンボル名で"
+#~ "指定します(例: correct|suggest)"
+#~ msgstr ""
+#~ "補完・修正・提案のいずれを行うかを、パイプ('|')で組み合わせたシンボル名で"
+#~ "指定します(例: correct|suggest)"
+
+# 98a5a9b4258a4efe967934cd876b1096
+#~ msgid "``types``"
+#~ msgstr "``types``"
 
 # 62338c55e33340c88150aab5477afb82
 #~ msgid ""
@@ -3159,54 +3215,20 @@ msgstr "view_add Ventry Entry [true]"
 #~ "スタイプや誤変換を修正することです。提案とは、さらなる絞込みを行うための候"
 #~ "補となるクエリを提案することです。"
 
-# 98a5a9b4258a4efe967934cd876b1096
-#~ msgid "``types``"
-#~ msgstr "``types``"
-
-# 4bbdc5b0e39749c4b65b0bd813819e32
+# 9cb50192e38b465e883c0ecdc98e1ce3
 #~ msgid ""
-#~ "補完・修正・提案のいずれを行うかを、パイプ('|')で組み合わせたシンボル名で"
-#~ "指定します(例: correct|suggest)"
+#~ "suggestコマンドは、指定したクエリに対して補完・修正・提案を行います。"
 #~ msgstr ""
-#~ "補完・修正・提案のいずれを行うかを、パイプ('|')で組み合わせたシンボル名で"
-#~ "指定します(例: correct|suggest)"
+#~ "suggestコマンドは、指定したクエリに対して補完・修正・提案を行います。"
 
-# bfa4263e2cca46d5afc55b25166fd2eb
-#~ msgid "``complete``"
-#~ msgstr "``complete``"
+# e327482145f744e787aee4d6d3d7a02f
+#~ msgid "suggest - 指定したクエリに対する補完・修正・提案を行う。"
+#~ msgstr "suggest - 指定したクエリに対する補完・修正・提案を行う。"
 
-# 4b055f2ccd52456aa3a6dc26600b9ee6
-#~ msgid "補完を行います。"
-#~ msgstr "補完を行います。"
-
-# ccfd1f926f5141e29e4230e06a6d8740
-#~ msgid "``correct``"
-#~ msgstr "``correct``"
-
-# fa917ea5711e4dd89e8b66c7404830a3
-#~ msgid "修正を行います。"
-#~ msgstr "修正を行います。"
-
-# e2894f7f3e2a4faea18c8d9551c18d89
-#~ msgid "提案を行います。"
-#~ msgstr "提案を行います。"
-
-# da552bb835aa45408b2f1363510927ae
-#~ msgid "基礎となるデータが格納されているテーブル名を指定します。"
-#~ msgstr "基礎となるデータが格納されているテーブル名を指定します。"
-
-# ed377ed637424a8b96f2c425a6408d66
-#~ msgid "``column``"
-#~ msgstr "``column``"
-
-# 1b16dbf915334218847dec76f1e40655
+# 58738da3ccdd4b8c9c21c4b2b61a1211
 #~ msgid ""
-#~ "基礎となるデータが格納されているテーブルにおいて、「ヨミガナ」が格納されて"
-#~ "いるカラム名を指定します。"
+#~ "** 未だ仕様は確定しておりません。利用のためには特定のデータを持つテーブル"
+#~ "が必要となります。 **"
 #~ msgstr ""
-#~ "基礎となるデータが格納されているテーブルにおいて、「ヨミガナ」が格納されて"
-#~ "いるカラム名を指定します。"
-
-# 8cecf7e17f0842e3b71c278f360f2c09
-#~ msgid "補完・修正・提案の対象となるクエリを指定します。"
-#~ msgstr "補完・修正・提案の対象となるクエリを指定します。"
+#~ "** 未だ仕様は確定しておりません。利用のためには特定のデータを持つテーブル"
+#~ "が必要となります。 **"

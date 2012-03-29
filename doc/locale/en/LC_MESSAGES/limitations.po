@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-02-27 16:05\n"
+"POT-Creation-Date: 2012-03-28 17:06\n"
 "PO-Revision-Date: 2011-08-12 22:01+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -58,35 +58,35 @@ msgstr ""
 msgid "Keep in mind that these limitations may vary depending on conditions."
 msgstr ""
 
-# b32b54d1ecc84980abf8a598466a01b7
-#~ msgid "(実際には他の諸条件の制約により上記の値まで到達しない場合もあります)"
-#~ msgstr ""
-#~ "(実際には他の諸条件の制約により上記の値まで到達しない場合もあります)"
-
-# cb9466056d8a4feba1cae8d1f0c99eed
-#~ msgid "最大インデックスサイズ: 256GByte"
-#~ msgstr "最大インデックスサイズ: 256GByte"
-
-# 859b483e3efd4cef8546b8c606de180b
-#~ msgid "最大語彙数: 268,435,455 (約2億6千万)"
-#~ msgstr "最大語彙数: 268,435,455 (約2億6千万)"
-
-# 5b1d2e5fdcbb4718aa200faa2f5767b1
-#~ msgid "最大レコード数: 268,435,455 (約2億6千万)"
-#~ msgstr "最大レコード数: 268,435,455 (約2億6千万)"
-
-# 29a32185225f48819e21208e84113b00
-#~ msgid "1つのインデックスにおける論理上の上限値は以下のとおりです。"
-#~ msgstr "1つのインデックスにおける論理上の上限値は以下のとおりです。"
-
-# 3906a99f895a4a1cb295c7db65131ba4
-#~ msgid "インデックス上限値"
-#~ msgstr "インデックス上限値"
+# 5c3f3911e1e1434da636445fe52d72dd
+#~ msgid "制限事項"
+#~ msgstr "制限事項"
 
 # b0d793f693a44e2ebcbab87a2621c3d3
 #~ msgid "groongaにはいくつか制限事項があります。"
 #~ msgstr "groongaにはいくつか制限事項があります。"
 
-# 5c3f3911e1e1434da636445fe52d72dd
-#~ msgid "制限事項"
-#~ msgstr "制限事項"
+# 3906a99f895a4a1cb295c7db65131ba4
+#~ msgid "インデックス上限値"
+#~ msgstr "インデックス上限値"
+
+# 29a32185225f48819e21208e84113b00
+#~ msgid "1つのインデックスにおける論理上の上限値は以下のとおりです。"
+#~ msgstr "1つのインデックスにおける論理上の上限値は以下のとおりです。"
+
+# 5b1d2e5fdcbb4718aa200faa2f5767b1
+#~ msgid "最大レコード数: 268,435,455 (約2億6千万)"
+#~ msgstr "最大レコード数: 268,435,455 (約2億6千万)"
+
+# 859b483e3efd4cef8546b8c606de180b
+#~ msgid "最大語彙数: 268,435,455 (約2億6千万)"
+#~ msgstr "最大語彙数: 268,435,455 (約2億6千万)"
+
+# cb9466056d8a4feba1cae8d1f0c99eed
+#~ msgid "最大インデックスサイズ: 256GByte"
+#~ msgstr "最大インデックスサイズ: 256GByte"
+
+# b32b54d1ecc84980abf8a598466a01b7
+#~ msgid "(実際には他の諸条件の制約により上記の値まで到達しない場合もあります)"
+#~ msgstr ""
+#~ "(実際には他の諸条件の制約により上記の値まで到達しない場合もあります)"

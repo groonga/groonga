@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-29 14:04\n"
+"POT-Creation-Date: 2012-03-28 17:06\n"
 "PO-Revision-Date: 2011-08-12 22:01+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -97,7 +97,8 @@ msgstr "``Object``"
 
 # a558b029261442dcaa3ce833f73b58f7
 #: ../../../source/type.txt:33
-msgid "任意のテーブルに属する全てのレコード [#]_"
+#, fuzzy
+msgid "任意のテーブルに属する全てのレコードです。 [#]_"
 msgstr "任意のテーブルに属する全てのレコード [#]_"
 
 # 1ef94ecd62574089bdfaadd6e8569c89
@@ -105,200 +106,256 @@ msgstr "任意のテーブルに属する全てのレコード [#]_"
 msgid "``Bool``"
 msgstr "``Bool``"
 
-# 06b766be959c41d587a3848bc4219af2
+# 77f7cdd62e0d466e82598f7bceb440a3
 #: ../../../source/type.txt:37
-msgid "bool型。trueとfalse。"
-msgstr "bool型。trueとfalse。"
+msgid ""
+"ブーリアン型やブール型などと呼ばれる型であり、真偽値を表します。取り得る値は"
+"trueとfalseです。（デフォルト値: false）"
+msgstr ""
+
+# 72093f1fcc7b453f9716c31b03a7b428
+#: ../../../source/type.txt:39
+msgid ""
+":doc:`/commands/load` コマンドで値を格納するときは、false、0、空文字列のいず"
+"れかを指定するとfalseになり、それ以外を指定するとtrueになります。"
+msgstr ""
 
 # 93dd8338c8ac4589bfeac7f19b399b27
-#: ../../../source/type.txt:39
+#: ../../../source/type.txt:41
 msgid "``Int8``"
 msgstr "``Int8``"
 
-# fbf7e0c1c7864a5ba9dc87118f79e0fe
-#: ../../../source/type.txt:41
-msgid "8bit符号付き整数。"
-msgstr "8bit符号付き整数。"
+# 91750a28a9cf4605a99a6712eb243984
+#: ../../../source/type.txt:43
+msgid ""
+"8bit符号付き整数であり、-128以上127以下の整数を表します。（デフォルト値: 0）"
+msgstr ""
 
 # 80ed876111e1443486e296629264b19a
-#: ../../../source/type.txt:43
+#: ../../../source/type.txt:45
 msgid "``UInt8``"
 msgstr "``UInt8``"
 
-# 0151416fedc545e7a5352d7184891c39
-#: ../../../source/type.txt:45
-msgid "8bit符号なし整数。"
-msgstr "8bit符号なし整数。"
+# 408bafeaaa9e4e9691c940959d3e775f
+#: ../../../source/type.txt:47
+msgid ""
+"8bit符号なし整数であり、0以上255以下の整数を表します。（デフォルト値: 0）"
+msgstr ""
 
 # ee6ccbaa643e453084a05a9c1cb0ae76
-#: ../../../source/type.txt:47
+#: ../../../source/type.txt:49
 msgid "``Int16``"
 msgstr "``Int16``"
 
-# 871861d32c204656bc57054fb7b4979e
-#: ../../../source/type.txt:49
-msgid "16bit符号付き整数。"
-msgstr "16bit符号付き整数。"
+# d09f9c45864c41058cf86d70a9138ac3
+#: ../../../source/type.txt:51
+msgid ""
+"16bit符号付き整数であり、-32,768以上32,767以下の整数を表します。（デフォルト"
+"値: 0）"
+msgstr ""
 
 # 30a666b058314d2787d0b4e85ad2224f
-#: ../../../source/type.txt:51
+#: ../../../source/type.txt:53
 msgid "``UInt16``"
 msgstr "``UInt16``"
 
-# 363c8bda3f4547c9b3d4a9871bba3975
-#: ../../../source/type.txt:53
-msgid "16bit符号なし整数。"
-msgstr "16bit符号なし整数。"
+# b609838f139e41dc852404d98506b658
+#: ../../../source/type.txt:55
+msgid ""
+"16bit符号なし整数であり、0以上65,535以下の整数を表します。（デフォルト値: 0）"
+msgstr ""
 
 # 15763f637178454aafdd501740d2d898
-#: ../../../source/type.txt:55
+#: ../../../source/type.txt:57
 msgid "``Int32``"
 msgstr "``Int32``"
 
-# 9f63577fc3564b3aa3453f584fe60ec0
-#: ../../../source/type.txt:57
-msgid "32bit符号付き整数。"
-msgstr "32bit符号付き整数。"
+# fd76b414c77d47d3a9f5a744abdd08b9
+#: ../../../source/type.txt:59
+msgid ""
+"32bit符号付き整数であり、-2,147,483,648以上2,147,483,647以下の整数を表しま"
+"す。（デフォルト値: 0）"
+msgstr ""
 
 # 534bdd6f211641919c220ebf03cdf36d
-#: ../../../source/type.txt:59
+#: ../../../source/type.txt:61
 msgid "``UInt32``"
 msgstr "``UInt32``"
 
-# b4dd91c7886f4679bd6455ba6634c4be
-#: ../../../source/type.txt:61
-msgid "32bit符号なし整数。"
-msgstr "32bit符号なし整数。"
+# b9b7abb69a374f2da8909751047e721c
+#: ../../../source/type.txt:63
+msgid ""
+"32bit符号なし整数であり、0以上4,294,967,295以下の整数を表します。（デフォルト"
+"値: 0）"
+msgstr ""
 
 # 52ffc263a7d24762baec5ddc014affaf
-#: ../../../source/type.txt:63
+#: ../../../source/type.txt:65
 msgid "``Int64``"
 msgstr "``Int64``"
 
-# e6fc08979cc948df958f1b44dd60e382
-#: ../../../source/type.txt:65
-msgid "64bit符号付き整数。"
-msgstr "64bit符号付き整数。"
+# 0a182b3061674cb0a59e5b760f4d2be9
+#: ../../../source/type.txt:67
+msgid ""
+"64bit符号付き整数であり、-9,223,372,036,854,775,808以上"
+"9,223,372,036,854,775,807以下の整数を表します。（デフォルト値: 0）"
+msgstr ""
 
 # 85d83fbe61c043a0a0e3216e72636a14
-#: ../../../source/type.txt:67
+#: ../../../source/type.txt:69
 msgid "``UInt64``"
 msgstr "``UInt64``"
 
-# 7fae4dfe0b3e4c26b2cb12a10278f5c8
-#: ../../../source/type.txt:69
-msgid "64bit符号なし整数。"
-msgstr "64bit符号なし整数。"
+# 6d243b64bc4147128e4d68b26dea99c4
+#: ../../../source/type.txt:71
+msgid ""
+"64bit符号なし整数であり、0以上18,446,744,073,709,551,615以下の整数を表しま"
+"す。（デフォルト値: 0）"
+msgstr ""
 
 # 15dc7f12506a459d937f6955773ec3ff
-#: ../../../source/type.txt:71
+#: ../../../source/type.txt:73
 msgid "``Float``"
 msgstr "``Float``"
 
-# 73aaf11274c14948a8d34d33b21202c9
-#: ../../../source/type.txt:73
-msgid "ieee754形式の64bit浮動小数点数。"
-msgstr "ieee754形式の64bit浮動小数点数。"
+# 77adb939c4634e1bb81af45c5c950f12
+#: ../../../source/type.txt:75
+msgid ""
+"IEEE 754形式の倍精度浮動小数点数であり、実数を表します。（デフォルト値: 0.0）"
+msgstr ""
+
+# 77029485c9dc4be3bd73817212a3b185
+#: ../../../source/type.txt:77
+msgid ""
+"IEEE 754形式の詳細については、 `IEEE 754 - Wikipedia <http://ja.wikipedia."
+"org/wiki/IEEE_754>`_ や `IEEE 754: Standard for Binary Floating-Point "
+"<http://grouper.ieee.org/groups/754/>`_ を参照してください。"
+msgstr ""
 
 # 335af65aa9344d5da9b78d643aa089cd
-#: ../../../source/type.txt:75
+#: ../../../source/type.txt:79
 msgid "``Time``"
 msgstr "``Time``"
 
 # 42851257024c4b76af13ed1ace20c7bd
-#: ../../../source/type.txt:77
+#: ../../../source/type.txt:81
+#, fuzzy
 msgid ""
-"1970年1月1日0時0分0秒からの経過マイクロ秒数を64bit符号付き整数で表現した値。"
+"日時を表す型であり、1970年1月1日0時0分0秒からの経過時間を、マイクロ秒単位で"
+"64bit符号付き整数により表現します。（デフォルト値: 0）"
 msgstr ""
 "1970年1月1日0時0分0秒からの経過マイクロ秒数を64bit符号付き整数で表現した値。"
 
+# 7db01b1562a14fc2b28cde5d66dbbfdb
+#: ../../../source/type.txt:83
+msgid ""
+":doc:`/commands/load` コマンドで値を格納するときは、1970年1月1日0時0分0秒から"
+"の経過秒数を指定します。秒単位より詳細な日時を指定するには、小数を使います。"
+msgstr ""
+
 # 8a0d37e5a07045f58398f21d2cc2e9f3
-#: ../../../source/type.txt:79
+#: ../../../source/type.txt:85
 msgid "``ShortText``"
 msgstr "``ShortText``"
 
-# c4e0af65c3814f62a917d157d1850478
-#: ../../../source/type.txt:81
-msgid "4Kbyte以下の文字列。"
-msgstr "4Kbyte以下の文字列。"
+# 34d3acf405024f70b15edb32986a1957
+#: ../../../source/type.txt:87
+msgid "4,095バイト以下の文字列を表します。（デフォルト値: \"\"）"
+msgstr ""
 
 # 70bb06bb913648e0831cab3924f129b0
-#: ../../../source/type.txt:83
+#: ../../../source/type.txt:89
 msgid "``Text``"
 msgstr "``Text``"
 
-# 35cb289f91294070a52a269449c47aad
-#: ../../../source/type.txt:85
-msgid "64Kbyte以下の文字列。"
-msgstr "64Kbyte以下の文字列。"
+# 7269d1ea93654ccebd02cced6ffc7076
+#: ../../../source/type.txt:91
+msgid "65,535バイト以下の文字列を表します。（デフォルト値: \"\"）"
+msgstr ""
 
 # 33f50d291f9e4861a5cd58b92a492da4
-#: ../../../source/type.txt:87
+#: ../../../source/type.txt:93
 msgid "``LongText``"
 msgstr "``LongText``"
 
-# 0f76b1bbd87a44afae7b7cd79d38f297
-#: ../../../source/type.txt:89
-msgid "2Gbyte以下の文字列。"
-msgstr "2Gbyte以下の文字列。"
+# e0ab217c3e7c47ab8db1e8e0a570bb58
+#: ../../../source/type.txt:95
+msgid "2,147,483,647バイト以下の文字列を表します。（デフォルト値: \"\"）"
+msgstr ""
 
 # a415a8781b524d419730c46967edf013
-#: ../../../source/type.txt:91
+#: ../../../source/type.txt:97
 msgid "``TokyoGeoPoint``"
 msgstr "``TokyoGeoPoint``"
 
-# cc757fe5faa743909f1dd1ff051b8c28
-#: ../../../source/type.txt:93
+# 00a7111accf84dd09f705b32e2874d84
+#: ../../../source/type.txt:99
 msgid ""
-"日本測地系緯度経度座標。緯度と経度はミリ秒単位での整数。 \"経度のミリ秒x緯度"
-"のミリ秒\"という文字列表現を持つ。 度分秒形式であれば、x度y分z秒は(((x * 60) "
-"+ y) * 60 + z) * 1000という計算式で変換した値を代入します。"
+"旧日本測地系による経緯度であり、経度と緯度をミリ秒単位で表現した整数の組によ"
+"り表現します。（デフォルト値: 0x0）"
 msgstr ""
-"日本測地系緯度経度座標。緯度と経度はミリ秒単位での整数。 \"経度のミリ秒x緯度"
-"のミリ秒\"という文字列表現を持つ。 度分秒形式であれば、x度y分z秒は(((x * 60) "
-"+ y) * 60 + z) * 1000という計算式で変換した値を代入します。"
+
+# 9c01654cc3834137a7eeb8d3594d98a4
+#: ../../../source/type.txt:101
+msgid ""
+"度分秒形式でx度y分z秒となる経度・緯度は、(((x * 60) + y) * 60 + z) * 1000とい"
+"う計算式でミリ秒単位へと変換されます。 :doc:`/commands/load` コマンドで値を格"
+"納するときは、\"ミリ秒単位の経度xミリ秒単位の緯度\" もしくは \"経度の小数表記"
+"x緯度の小数表記\" という文字列表現を使って指定します。経度と緯度の区切りとし"
+"ては、'x' のほかに ',' を使うことができます。"
+msgstr ""
+
+# c7b5b716976b40eaa7ade6e8787dc16c
+#: ../../../source/type.txt:104
+msgid ""
+"測地系の詳細については、 `測地系 - Wikipedia <http://ja.wikipedia.org/wiki/"
+"%E6%B8%AC%E5%9C%B0%E7%B3%BB>`_ を参照してください。"
+msgstr ""
 
 # ee5230da91304412809063b128ce1bc0
-#: ../../../source/type.txt:97
+#: ../../../source/type.txt:106
 msgid "``WGS84GeoPoint``"
 msgstr "``WGS84GeoPoint``"
 
-# 34b37ce1314e49bd95b5de66aaff9ad0
-#: ../../../source/type.txt:99
+# 1ee3b5d6975f472b929d676fb314c26e
+#: ../../../source/type.txt:108
 msgid ""
-"世界測地系緯度経度座標。緯度と経度はミリ秒単位での整数。 \"経度のミリ秒x緯度"
-"のミリ秒\"という文字列表現を持つ。 度分秒形式であれば、x度y分z秒は(((x * 60) "
-"+ y) * 60 + z) * 1000という計算式で変換した値を代入します。"
+"世界測地系（World Geodetic System, WGS 84）による経緯度であり、経度と緯度をミ"
+"リ秒単位で表現した整数の組により表現します。（デフォルト値: 0x0）"
 msgstr ""
-"世界測地系緯度経度座標。緯度と経度はミリ秒単位での整数。 \"経度のミリ秒x緯度"
-"のミリ秒\"という文字列表現を持つ。 度分秒形式であれば、x度y分z秒は(((x * 60) "
-"+ y) * 60 + z) * 1000という計算式で変換した値を代入します。"
+
+# 9133cf3684874645accefd48720595e6
+#: ../../../source/type.txt:110
+msgid ""
+"度分秒形式からミリ秒形式への変換方法や :doc:`/commands/load` コマンドにおける"
+"指定方法はTokyoGeoPointと同じです。"
+msgstr ""
 
 # 18037c9f064d48b6a531836299b837c0
-#: ../../../source/type.txt:104
+#: ../../../source/type.txt:113
 msgid "型に関する制限事項"
 msgstr "型に関する制限事項"
 
 # 5f2d85e7d1ff4a73bd824adb8494fffe
-#: ../../../source/type.txt:107
+#: ../../../source/type.txt:116
 msgid "テーブルの主キーに指定できない型"
 msgstr "テーブルの主キーに指定できない型"
 
 # 7f94e16203bd4025bdbfdaca1fd2e7d7
-#: ../../../source/type.txt:109
+#: ../../../source/type.txt:118
 msgid ""
 "Text型とLongText型については、テーブルの主キーに指定することはできません。"
 msgstr ""
 "Text型とLongText型については、テーブルの主キーに指定することはできません。"
 
 # e941829719764b55b66e974cc6528b80
-#: ../../../source/type.txt:112
+#: ../../../source/type.txt:121
 #, fuzzy
 msgid "ベクターとして格納できない型"
 msgstr "ベクトルとして格納できない型"
 
 # c928d41a440d43a98a88ecd13ff908fd
-#: ../../../source/type.txt:114
+#: ../../../source/type.txt:123
 #, fuzzy
 msgid ""
 "groongaのカラムは、ある型のベクターを保存することができます。しかし、"
@@ -311,7 +368,7 @@ msgstr ""
 "ません。"
 
 # f19c37d68cb6468f940df5811e1a5d4d
-#: ../../../source/type.txt:116
+#: ../../../source/type.txt:125
 #, fuzzy
 msgid ""
 "テーブル型は、ベクターとして格納することができます。よって、ShortTextのベク"
@@ -323,11 +380,83 @@ msgstr ""
 "ルを型として利用します。"
 
 # 0357982c0c6542a0a26c57accd1e556f
-#: ../../../source/type.txt:119
+#: ../../../source/type.txt:128
 msgid "脚注"
 msgstr "脚注"
 
 # a30b33bfaf3b43d7b3e6fe2ed176caab
-#: ../../../source/type.txt:120
+#: ../../../source/type.txt:129
 msgid "Object型はv1.2でサポートされます。"
 msgstr "Object型はv1.2でサポートされます。"
+
+# 34b37ce1314e49bd95b5de66aaff9ad0
+#~ msgid ""
+#~ "世界測地系緯度経度座標。緯度と経度はミリ秒単位での整数。 \"経度のミリ秒x緯"
+#~ "度のミリ秒\"という文字列表現を持つ。 度分秒形式であれば、x度y分z秒は(((x "
+#~ "* 60) + y) * 60 + z) * 1000という計算式で変換した値を代入します。"
+#~ msgstr ""
+#~ "世界測地系緯度経度座標。緯度と経度はミリ秒単位での整数。 \"経度のミリ秒x緯"
+#~ "度のミリ秒\"という文字列表現を持つ。 度分秒形式であれば、x度y分z秒は(((x "
+#~ "* 60) + y) * 60 + z) * 1000という計算式で変換した値を代入します。"
+
+# cc757fe5faa743909f1dd1ff051b8c28
+#~ msgid ""
+#~ "日本測地系緯度経度座標。緯度と経度はミリ秒単位での整数。 \"経度のミリ秒x緯"
+#~ "度のミリ秒\"という文字列表現を持つ。 度分秒形式であれば、x度y分z秒は(((x "
+#~ "* 60) + y) * 60 + z) * 1000という計算式で変換した値を代入します。"
+#~ msgstr ""
+#~ "日本測地系緯度経度座標。緯度と経度はミリ秒単位での整数。 \"経度のミリ秒x緯"
+#~ "度のミリ秒\"という文字列表現を持つ。 度分秒形式であれば、x度y分z秒は(((x "
+#~ "* 60) + y) * 60 + z) * 1000という計算式で変換した値を代入します。"
+
+# 0f76b1bbd87a44afae7b7cd79d38f297
+#~ msgid "2Gbyte以下の文字列。"
+#~ msgstr "2Gbyte以下の文字列。"
+
+# 35cb289f91294070a52a269449c47aad
+#~ msgid "64Kbyte以下の文字列。"
+#~ msgstr "64Kbyte以下の文字列。"
+
+# c4e0af65c3814f62a917d157d1850478
+#~ msgid "4Kbyte以下の文字列。"
+#~ msgstr "4Kbyte以下の文字列。"
+
+# 73aaf11274c14948a8d34d33b21202c9
+#~ msgid "ieee754形式の64bit浮動小数点数。"
+#~ msgstr "ieee754形式の64bit浮動小数点数。"
+
+# 7fae4dfe0b3e4c26b2cb12a10278f5c8
+#~ msgid "64bit符号なし整数。"
+#~ msgstr "64bit符号なし整数。"
+
+# e6fc08979cc948df958f1b44dd60e382
+#~ msgid "64bit符号付き整数。"
+#~ msgstr "64bit符号付き整数。"
+
+# b4dd91c7886f4679bd6455ba6634c4be
+#~ msgid "32bit符号なし整数。"
+#~ msgstr "32bit符号なし整数。"
+
+# 9f63577fc3564b3aa3453f584fe60ec0
+#~ msgid "32bit符号付き整数。"
+#~ msgstr "32bit符号付き整数。"
+
+# 363c8bda3f4547c9b3d4a9871bba3975
+#~ msgid "16bit符号なし整数。"
+#~ msgstr "16bit符号なし整数。"
+
+# 871861d32c204656bc57054fb7b4979e
+#~ msgid "16bit符号付き整数。"
+#~ msgstr "16bit符号付き整数。"
+
+# 0151416fedc545e7a5352d7184891c39
+#~ msgid "8bit符号なし整数。"
+#~ msgstr "8bit符号なし整数。"
+
+# fbf7e0c1c7864a5ba9dc87118f79e0fe
+#~ msgid "8bit符号付き整数。"
+#~ msgstr "8bit符号付き整数。"
+
+# 06b766be959c41d587a3848bc4219af2
+#~ msgid "bool型。trueとfalse。"
+#~ msgstr "bool型。trueとfalse。"
