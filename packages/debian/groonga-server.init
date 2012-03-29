@@ -43,7 +43,7 @@ ENABLE="no"
 
 DAEMON_ARGS="-d --pid-path ${PIDFILE}"
 if [ -n "${ADDRESS}" ]; then
-    DAEMON_ARGS="${DAEMON_ARGS} -a ${ADDRESS}"
+    DAEMON_ARGS="${DAEMON_ARGS} --bind-address ${ADDRESS}"
 fi
 if [ -n "${PORT}" ]; then
     DAEMON_ARGS="${DAEMON_ARGS} --port ${PORT}"

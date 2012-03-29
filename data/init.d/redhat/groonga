@@ -62,7 +62,7 @@ if [ -n "${PIDFILE}" ]; then
 	GROONGA_ARGS="${GROONGA_ARGS} --pid-path ${PIDFILE}"
 fi
 if [ -n "${ADDRESS}" ]; then
-	GROONGA_ARGS="${GROONGA_ARGS} --address ${ADDRESS}"
+	GROONGA_ARGS="${GROONGA_ARGS} --bind-address ${ADDRESS}"
 fi
 if [ -n "${PORT}" ]; then
 	GROONGA_ARGS="${GROONGA_ARGS} --port ${PORT}"
