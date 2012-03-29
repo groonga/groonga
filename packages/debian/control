@@ -10,8 +10,7 @@ Build-Depends:
   libmsgpack-dev,
   libzmq-dev,
   libevent-dev,
-  libmecab-dev,
-  ruby
+  libmecab-dev
 Standards-Version: 3.9.1
 Homepage: http://groonga.org/
 
@@ -132,19 +131,6 @@ Description: Documentation of groonga.
  It lets you write high-performance applications that requires fulltext search.
  .
  This package provides documentation of groonga.
-
-Package: groonga-tools
-Section: database
-Architecture: any
-Depends:
-  ${misc:Depends},
-  ${shlibs:Depends},
-  ruby
-Description: Tools for groonga.
- Groonga is an open-source fulltext search engine and column store.
- It lets you write high-performance applications that requires fulltext search.
- .
- This package provides tools for groonga.
 
 Package: groonga-examples
 Section: database
