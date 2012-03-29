@@ -232,7 +232,7 @@ grn_array_init_tiny_array(grn_ctx *ctx, grn_array *array, const char *path,
                           uint32_t value_size, uint32_t flags)
 {
   if (path) {
-    ERR(GRN_INVALID_ARGUMENT, "failed to create array");
+    ERR(GRN_INVALID_ARGUMENT, "failed to create tiny array");
     return ctx->rc;
   }
   array->obj.header.flags = flags;
