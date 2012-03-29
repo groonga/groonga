@@ -514,36 +514,51 @@ grn_rc
 grn_array_delete_by_id(grn_ctx *ctx, grn_array *array, grn_id id,
                        grn_table_delete_optarg *optarg)
 {
-  grn_rc rc = GRN_SUCCESS;
-  if (!ctx || !array) { return GRN_INVALID_ARGUMENT; }
-  if (!grn_array_bitmap_at(ctx, array, id)) { rc = GRN_INVALID_ARGUMENT; goto exit; }
-  /* lock */
-  if (IO_ARRAYP(array)) {
-    if (array->value_size >= sizeof(grn_id)) {
-      void *ee;
-      struct grn_array_header *hh = array->header;
-      ee = grn_array_io_entry_at(ctx, array, id, 0);
-      if (!ee) { rc = GRN_INVALID_ARGUMENT; goto exit; }
-      *((grn_id *)ee) = hh->garbages;
-      hh->garbages = id;
-    }
-    (*array->n_entries)--;
-    (*array->n_garbages)++;
-    GRN_IO_ARRAY_BIT_OFF(array->io, array_seg_bitmap, id);
-  } else {
-    if (array->value_size >= sizeof(grn_id)) {
-      void *ee = grn_tiny_array_at_inline(&array->a, id);
-      if (!ee) { rc = GRN_INVALID_ARGUMENT; goto exit; }
-      *((grn_id *)ee) = array->garbages;
-      array->garbages = id;
-    }
-    (*array->n_entries)--;
-    (*array->n_garbages)++;
-    grn_tiny_array_bit_off(&array->bitmap, id);
+  if (!ctx || !array) {
+    return GRN_INVALID_ARGUMENT;
   }
-exit :
-  /* unlock */
-  return rc;
+  if (!grn_array_bitmap_at(ctx, array, id)) {
+    return GRN_INVALID_ARGUMENT;
+  }
+
+  {
+    grn_rc rc = GRN_SUCCESS;
+    /* lock */
+    if (IO_ARRAYP(array)) {
+      if (array->value_size >= sizeof(grn_id)) {
+        struct grn_array_header * const header = array->header;
+        void * const entry = grn_array_io_entry_at(ctx, array, id, 0);
+        if (!entry) {
+          rc = GRN_INVALID_ARGUMENT;
+        } else {
+          *((grn_id *)entry) = header->garbages;
+          header->garbages = id;
+        }
+      }
+      if (!rc) {
+        (*array->n_entries)--;
+        (*array->n_garbages)++;
+        GRN_IO_ARRAY_BIT_OFF(array->io, array_seg_bitmap, id);
+      }
+    } else {
+      if (array->value_size >= sizeof(grn_id)) {
+        void * const entry = grn_tiny_array_at_inline(&array->a, id);
+        if (!entry) {
+          rc = GRN_INVALID_ARGUMENT;
+        } else {
+          *((grn_id *)entry) = array->garbages;
+          array->garbages = id;
+        }
+      }
+      if (!rc) {
+        (*array->n_entries)--;
+        (*array->n_garbages)++;
+        grn_tiny_array_bit_off(&array->bitmap, id);
+      }
+    }
+    /* unlock */
+    return rc;
+  }
 }
 
 grn_id
