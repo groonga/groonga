@@ -18,7 +18,6 @@ BuildRequires:	lzo-devel
 #BuildRequires:	libevent-devel
 BuildRequires:	python2-devel
 BuildRequires:	php-devel
-BuildRequires:	ruby
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	%{name}-plugin-suggest = %{version}-%{release}
 Requires:	%{name}-tokenizer-mecab = %{version}-%{release}
@@ -74,14 +73,6 @@ Requires:	%{name}-libs = %{version}-%{release}
 
 %description devel
 Libraries and header files for groonga
-
-%package tools
-Summary:	Tools for groonga
-Group:		Development/Tools
-Requires:	ruby
-
-%description tools
-Tools for groonga
 
 %package tokenizer-mecab
 Summary:	MeCab tokenizer for groonga
@@ -288,10 +279,6 @@ fi
 %{_libdir}/*.so
 %{_libdir}/pkgconfig/groonga*.pc
 
-%files tools
-%defattr(-,root,root,-)
-%{_bindir}/groonga-query-log-analyzer
-
 %files tokenizer-mecab
 %defattr(-,root,root,-)
 %{_libdir}/groonga/plugins/tokenizers/mecab.so
@@ -320,6 +307,7 @@ fi
 - new upstream release.
 - ensure removing build directory before installing.
 - grntest -> groonga-benchmark.
+- remove groonga-tools package.
 
 * Wed Feb 29 2012 Kouhei Sutou <kou@clear-code.com> - 2.0.0-0
 - new upstream release.
