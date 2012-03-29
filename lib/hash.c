@@ -197,18 +197,19 @@ enum {
 
 #define IO_ARRAYP(array) ((array)->io)
 
-#define ARRAY_ENTRY_AT_(array,id,value,addp) do {\
-  int flags = addp;\
-  GRN_IO_ARRAY_AT(array->io, array_seg_value, id, &flags, value);\
-} while (0)
+inline static void *
+grn_array_io_entry_at(grn_ctx *ctx, grn_array *array, grn_id id, int flags)
+{
+  void *value;
+  GRN_IO_ARRAY_AT(array->io, array_seg_value, id, &flags, value);
+  return value;
+}
 
 inline static void *
 grn_array_entry_at(grn_ctx *ctx, grn_array *array, grn_id id, int flags)
 {
   if (IO_ARRAYP(array)) {
-    void *value;
-    ARRAY_ENTRY_AT_(array, id, value, flags);
-    return value;
+    return grn_array_io_entry_at(ctx, array, id, flags);
   } else {
     return grn_tiny_array_at_inline(&array->a, id);
   }
@@ -500,7 +501,7 @@ grn_array_delete_by_id(grn_ctx *ctx, grn_array *array, grn_id id,
     if (array->value_size >= sizeof(grn_id)) {
       void *ee;
       struct grn_array_header *hh = array->header;
-      ARRAY_ENTRY_AT_(array, id, ee, 0);
+      ee = grn_array_io_entry_at(ctx, array, id, 0);
       if (!ee) { rc = GRN_INVALID_ARGUMENT; goto exit; }
       *((grn_id *)ee) = hh->garbages;
       hh->garbages = id;
@@ -666,8 +667,7 @@ array_entry_new(grn_ctx *ctx, grn_array *array)
   if (IO_ARRAYP(array)) {
     struct grn_array_header *hh = array->header;
     if ((e = hh->garbages)) {
-      void *ee;
-      ARRAY_ENTRY_AT_(array, e, ee, GRN_TABLE_ADD);
+      void *ee = grn_array_io_entry_at(ctx, array, e, GRN_TABLE_ADD);
       if (!ee) { return GRN_ID_NIL; }
       hh->garbages = *((grn_id *)ee);
       memset(ee, 0, hh->value_size);
