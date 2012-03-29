@@ -54,8 +54,7 @@ Breaks: libgroonga (<< 1.2.0-1)
 Depends:
   ${misc:Depends},
   ${shlibs:Depends},
-  libgroonga0 (= ${binary:Version}),
-  libmsgpack-dev
+  libgroonga0 (= ${binary:Version})
 Description: Development files to use groonga as a library
  Groonga is an open-source fulltext search engine and column store.
  It lets you write high-performance applications that requires fulltext search.
