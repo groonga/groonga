@@ -450,10 +450,8 @@ void *
 _grn_array_get_value(grn_ctx *ctx, grn_array *array, grn_id id)
 {
   if (ctx && array) {
-    void *ee;
     if (!grn_array_bitmap_at(ctx, array, id)) { return NULL; }
-    ee = grn_array_entry_at(ctx, array, id, 0);
-    return ee;
+    return grn_array_entry_at(ctx, array, id, 0);
   }
   return NULL;
 }
