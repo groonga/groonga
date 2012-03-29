@@ -100,6 +100,13 @@ GRN_API grn_id grn_tiny_array_id(grn_tiny_array *array,
 
 #define GRN_ARRAY_TINY        (0x01<<6)
 
+/*
+ * grn_array uses grn_io or grn_tiny_array to represent an array.
+ *
+ * To create a grn_tiny_array-based grn_array, specify the GRN_ARRAY_TINY flag
+ * to grn_array_create(). Note that a grn_tiny_array-based grn_array is not
+ * backed by a file.
+ */
 struct _grn_array {
   grn_db_obj obj;
   grn_ctx *ctx;
@@ -108,11 +115,13 @@ struct _grn_array {
   grn_table_sort_key *keys;
   uint32_t *n_garbages;
   uint32_t *n_entries;
-  /* portions for io_array */
+
+  /* For io_array. */
   grn_io *io;
   struct grn_array_header *header;
   uint32_t *lock;
-  /* portions for tiny_array */
+
+  /* For tiny_array. */
   uint32_t n_garbages_;
   uint32_t n_entries_;
   grn_id garbages;
