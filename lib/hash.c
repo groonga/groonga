@@ -889,10 +889,14 @@ grn_hash_idx_at(grn_ctx *ctx, grn_hash *hash, grn_id id)
   }
 }
 
-#define KEY_AT(hash,pos,ptr) do {\
-  int flags = GRN_TABLE_ADD;\
-  GRN_IO_ARRAY_AT(hash->io, segment_key, pos, &flags, ptr);\
-} while (0)
+inline static void *
+grn_hash_key_at(grn_ctx *ctx, grn_hash *hash, uint32_t pos)
+{
+  int flags = GRN_TABLE_ADD;
+  void *key;
+  GRN_IO_ARRAY_AT(hash->io, segment_key, pos, &flags, key);
+  return key;
+}
 
 #define HASH_IMMEDIATE 1
 
@@ -906,9 +910,7 @@ get_key(grn_ctx *ctx, grn_hash *hash, entry_str *n)
       return (char *)&n->str;
     } else {
       if (IO_HASHP(hash)) {
-        char *res;
-        KEY_AT(hash, n->str, res);
-        return res;
+        return (char *)grn_hash_key_at(ctx, hash, n->str);
       } else {
         return ((entry_astr *)n)->str;
       }
@@ -957,8 +959,7 @@ put_key_(grn_ctx *ctx, grn_hash *hash, entry_str *n, const char *key, int len)
     n->str = res;
   }
   {
-    uint8_t *dest;
-    KEY_AT(hash, res, dest);
+    void * const dest = grn_hash_key_at(ctx, hash, res);
     if (!dest) { return; }
     memcpy(dest, key, len);
   }
