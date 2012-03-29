@@ -846,14 +846,16 @@ grn_hash_io_entry_at(grn_ctx *ctx, grn_hash *hash, grn_id id, int flags)
   return e;
 }
 
-// todo : error handling
-#define ENTRY_AT(hash,id,ee,addp) do {\
-  if (IO_HASHP(hash)) {\
-    ee = grn_hash_io_entry_at(ctx, hash, id, addp);\
-  } else {\
-    (ee) = grn_tiny_array_at_inline(&hash->a, id);\
-  }\
-} while (0)
+/* todo : error handling */
+inline static void *
+grn_hash_entry_at(grn_ctx *ctx, grn_hash *hash, grn_id id, int flags)
+{
+  if (IO_HASHP(hash)) {
+    return grn_hash_io_entry_at(ctx, hash, id, flags);
+  } else {
+    return grn_tiny_array_at_inline(&hash->a, id);
+  }
+}
 
 #define BITMAP_AT(hash,id,value) do {\
   if (IO_HASHP(hash)) {\
@@ -1304,7 +1306,7 @@ grn_hash_reset(grn_ctx *ctx, grn_hash *hash, uint32_t ne)
       }
       e = *sp;
       if (!e || (e == GARBAGE)) { continue; }
-      ENTRY_AT(hash, e, ee, GRN_TABLE_ADD);
+      ee = grn_hash_entry_at(ctx, hash, e, GRN_TABLE_ADD);
       if (!ee) { return GRN_NO_MEMORY_AVAILABLE; }
       for (i = ee->key, s = STEP(i); ; i += s) {
         if (IO_HASHP(hash)) {
@@ -1456,7 +1458,7 @@ grn_hash_add(grn_ctx *ctx, grn_hash *hash, const void *key,
       if (!np) { np = ep; }
       continue;
     }
-    ENTRY_AT(hash, e, ee, GRN_TABLE_ADD);
+    ee = grn_hash_entry_at(ctx, hash, e, GRN_TABLE_ADD);
     if (!ee) { return GRN_ID_NIL; }
     if (match_key(ctx, hash, ee, h, key, key_size)) {
       if (added) { *added = 0; }
@@ -1464,7 +1466,7 @@ grn_hash_add(grn_ctx *ctx, grn_hash *hash, const void *key,
     }
   }
   if (!(e = entry_new(ctx, hash, key_size))) { /* unlock */ return GRN_ID_NIL; }
-  ENTRY_AT(hash, e, ee, GRN_TABLE_ADD);
+  ee = grn_hash_entry_at(ctx, hash, e, GRN_TABLE_ADD);
   if (!ee) { return GRN_ID_NIL; }
   put_key(ctx, hash, ee, h, key, key_size);
   if (np) {
@@ -1504,10 +1506,9 @@ grn_hash_get(grn_ctx *ctx, grn_hash *hash, const void *key,
     if (!(e = *ep)) { break; }
     if (e == GARBAGE) { continue; }
     {
-      entry_str *ee;
-      ENTRY_AT(hash,e,ee, 0);
+      entry_str * const ee = grn_hash_entry_at(ctx, hash, e, 0);
       if (ee && match_key(ctx, hash, ee, h, key, key_size)) {
-        if (value) { *value = get_value(hash,ee); }
+        if (value) { *value = get_value(hash, ee); }
         return e;
       }
     }
@@ -1525,7 +1526,7 @@ _grn_hash_key(grn_ctx *ctx, grn_hash *hash, grn_id id, uint32_t *key_size)
     *key_size = 0;
     return NULL;
   }
-  ENTRY_AT(hash, id, ee, 0);
+  ee = grn_hash_entry_at(ctx, hash, id, 0);
   if (!ee) {
     *key_size = 0;
     return NULL;
@@ -1542,7 +1543,7 @@ grn_hash_get_key(grn_ctx *ctx, grn_hash *hash, grn_id id, void *keybuf, int bufs
   entry_str *ee;
   BITMAP_AT(hash, id, res);
   if (!res) { return 0; }
-  ENTRY_AT(hash, id, ee, 0);
+  ee = grn_hash_entry_at(ctx, hash, id, 0);
   if (!ee) { return 0; }
   key_size = (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) ? ee->size : hash->key_size;
   if (bufsize >= key_size) { memcpy(keybuf, get_key(ctx, hash, ee), key_size); }
@@ -1558,7 +1559,7 @@ grn_hash_get_key2(grn_ctx *ctx, grn_hash *hash, grn_id id, grn_obj *bulk)
   entry_str *ee;
   BITMAP_AT(hash, id, res);
   if (!res) { return 0; }
-  ENTRY_AT(hash, id, ee, 0);
+  ee = grn_hash_entry_at(ctx, hash, id, 0);
   if (!ee) { return 0; }
   key_size = (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) ? ee->size : hash->key_size;
   key = get_key(ctx, hash, ee);
@@ -1579,7 +1580,7 @@ grn_hash_get_value(grn_ctx *ctx, grn_hash *hash, grn_id id, void *valuebuf)
   entry_str *ee;
   BITMAP_AT(hash, id, res);
   if (!res) { return 0; }
-  ENTRY_AT(hash, id, ee, 0);
+  ee = grn_hash_entry_at(ctx, hash, id, 0);
   if (ee && (v = get_value(hash, ee))) {
     if (valuebuf) { memcpy(valuebuf, v, hash->value_size); }
     return hash->value_size;
@@ -1595,7 +1596,7 @@ grn_hash_get_value_(grn_ctx *ctx, grn_hash *hash, grn_id id, uint32_t *size)
   const char *value = NULL;
   BITMAP_AT(hash, id, res);
   if (!res) { return NULL; }
-  ENTRY_AT(hash, id, ee, 0);
+  ee = grn_hash_entry_at(ctx, hash, id, 0);
   if (ee && (value = get_value(hash, ee))) {
     *size = hash->value_size;
   }
@@ -1612,7 +1613,7 @@ grn_hash_get_key_value(grn_ctx *ctx, grn_hash *hash, grn_id id,
   entry_str *ee;
   BITMAP_AT(hash, id, res);
   if (!res) { return 0; }
-  ENTRY_AT(hash, id, ee, 0);
+  ee = grn_hash_entry_at(ctx, hash, id, 0);
   if (!ee) { return 0; }
   key_size = (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) ? ee->size : hash->key_size;
   if (bufsize >= key_size) { memcpy(keybuf, get_key(ctx, hash, ee), key_size); }
@@ -1631,7 +1632,7 @@ _grn_hash_get_key_value(grn_ctx *ctx, grn_hash *hash, grn_id id,
   entry_str *ee;
   BITMAP_AT(hash, id, res);
   if (!res) { return 0; }
-  ENTRY_AT(hash, id, ee, 0);
+  ee = grn_hash_entry_at(ctx, hash, id, 0);
   if (!ee) { return 0; }
   key_size = (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) ? ee->size : hash->key_size;
   *key = get_key(ctx, hash, ee);
@@ -1648,7 +1649,7 @@ grn_hash_set_value(grn_ctx *ctx, grn_hash *hash, grn_id id,
     entry_str *ee;
     BITMAP_AT(hash, id, res);
     if (!res) { return GRN_INVALID_ARGUMENT; }
-    ENTRY_AT(hash, id, ee, 0);
+    ee = grn_hash_entry_at(ctx, hash, id, 0);
     if (ee && (v = get_value(hash, ee))) {
       switch ((flags & GRN_OBJ_SET_MASK)) {
       case GRN_OBJ_SET :
@@ -1719,7 +1720,7 @@ grn_hash_delete_by_id(grn_ctx *ctx, grn_hash *hash, grn_id id,
   grn_rc rc = GRN_INVALID_ARGUMENT;
   if (!hash || !id) { return rc; }
   /* lock */
-  ENTRY_AT(hash, id, ee, 0);
+  ee = grn_hash_entry_at(ctx, hash, id, 0);
   if (ee) {
     grn_id e, *ep;
     uint32_t i, key_size, h = ee->key, s = STEP(h);
@@ -1764,8 +1765,7 @@ grn_hash_delete(grn_ctx *ctx, grn_hash *hash, const void *key, uint32_t key_size
       if (!(e = *ep)) { break; }
       if (e == GARBAGE) { continue; }
       {
-        entry_str *ee;
-        ENTRY_AT(hash, e, ee, 0);
+        entry_str * const ee = grn_hash_entry_at(ctx, hash, e, 0);
         if (ee && match_key(ctx, hash, ee, h, key, key_size)) {
           DELETE_IT;
           break;
@@ -1912,7 +1912,7 @@ grn_hash_cursor_get_key(grn_ctx *ctx, grn_hash_cursor *c, void **key)
   int key_size;
   entry_str *ee;
   if (!c) { return 0; }
-  ENTRY_AT(c->hash, c->curr_rec, ee, 0);
+  ee = grn_hash_entry_at(ctx, c->hash, c->curr_rec, 0);
   if (!ee) { return 0; }
   key_size = (c->hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) ? ee->size : c->hash->key_size;
   *key = get_key(ctx, c->hash, ee);
@@ -1925,7 +1925,7 @@ grn_hash_cursor_get_value(grn_ctx *ctx, grn_hash_cursor *c, void **value)
   void *v;
   entry_str *ee;
   if (!c) { return 0; }
-  ENTRY_AT(c->hash, c->curr_rec, ee, 0);
+  ee = grn_hash_entry_at(ctx, c->hash, c->curr_rec, 0);
   if (ee && (v = get_value(c->hash, ee))) {
     *value = v;
     return c->hash->value_size;
@@ -1939,7 +1939,7 @@ grn_hash_cursor_get_key_value(grn_ctx *ctx, grn_hash_cursor *c,
 {
   entry_str *ee;
   if (!c) { return GRN_INVALID_ARGUMENT; }
-  ENTRY_AT(c->hash, c->curr_rec, ee, 0);
+  ee = grn_hash_entry_at(ctx, c->hash, c->curr_rec, 0);
   if (!ee) { return GRN_INVALID_ARGUMENT; }
   if (key_size) {
     *key_size = (c->hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) ? ee->size : c->hash->key_size;
@@ -2011,7 +2011,7 @@ pack(grn_ctx *ctx, grn_hash *hash, entry **res, grn_table_sort_optarg *arg, int 
     BITMAP_AT(hash, id, exist);
     if (exist) { break; }
   }
-  ENTRY_AT(hash, id, c, 0);
+  c = grn_hash_entry_at(ctx, hash, id, 0);
   if (!c) { return NULL; }
   PREPARE_VAL(c, cp, cs);
   head = res;
@@ -2022,7 +2022,7 @@ pack(grn_ctx *ctx, grn_hash *hash, entry **res, grn_table_sort_optarg *arg, int 
       id = (id == m) ? 1 : id + 1;
       BITMAP_AT(hash, id, exist);
     } while (!exist);
-    ENTRY_AT(hash, id, e, 0);
+    e = grn_hash_entry_at(ctx, hash, id, 0);
     if (!e) { return NULL; }
     PREPARE_VAL(e, ep, es);
     if (COMPARE_VAL(cp, cs, ep, es)) {
@@ -2161,7 +2161,7 @@ pack_val32(grn_ctx *ctx, grn_hash *hash, val32 *res, grn_table_sort_optarg *arg,
     BITMAP_AT(hash, id, exist);
     if (exist) { break; }
   }
-  ENTRY_AT(hash, id, c, 0);
+  c = grn_hash_entry_at(ctx, hash, id, 0);
   if (!c) { return NULL; }
   PREPARE_VAL32(id, c, &cr);
   head = res;
@@ -2172,7 +2172,7 @@ pack_val32(grn_ctx *ctx, grn_hash *hash, val32 *res, grn_table_sort_optarg *arg,
       id = (id == m) ? 1 : id + 1;
       BITMAP_AT(hash, id, exist);
     } while (!exist);
-    ENTRY_AT(hash, id, e, 0);
+    e = grn_hash_entry_at(ctx, hash, id, 0);
     if (!e) { return NULL; }
     PREPARE_VAL32(id, e, &er);
     if (COMPARE_VAL32(&cr, &er)) {
@@ -2255,7 +2255,7 @@ entry2id(grn_ctx *ctx, grn_hash *hash, entry *e)
     if (!(ep = IDX_AT(hash, i))) { return GRN_ID_NIL; }
     if (!(id = *ep)) { break; }
     if (id != GARBAGE) {
-      ENTRY_AT(hash, id, e2, 0);
+      e2 = grn_hash_entry_at(ctx, hash, id, 0);
       if (!e2) { return GRN_ID_NIL; }
       if (e2 == e) { break; }
     }
@@ -2567,7 +2567,7 @@ grn_rhash_subrec_info(grn_hash *s, grn_id rh, int index,
     entry_str *ee;
     BITMAP_AT(s, rh, res);
     if (!res) { return GRN_INVALID_ARGUMENT; }
-    ENTRY_AT(s, rh, ee, 0);
+    ee = grn_hash_entry_at(ctx, s, rh, 0);
     if (!ee) { return GRN_INVALID_ARGUMENT; }
     pi = (grn_rset_posinfo *)get_key(ctx, s, ee);
     ri = get_value(s, ee);
