@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-03-29 01:11\n"
-"PO-Revision-Date: 2012-02-27 15:43+0900\n"
+"PO-Revision-Date: 2012-03-29 09:42+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -1893,27 +1893,23 @@ msgstr ""
 
 # 5f30603cc625409db0e45398974db88f
 #: ../../../source/commands/suggest.txt:148
-#, fuzzy
-msgid "It specifies whether optional similar search is used or not in suggest."
-msgstr "補完時に前方一致検索を実行するかどうかを指定します。"
+msgid "It specifies whether optional similar search is used or not in correction."
+msgstr "補正時に類似検索を実行するかどうかを指定します。"
 
 # 5db279e0f9214776bb9ca618f1fd5dff
 #: ../../../source/commands/suggest.txt:154
-#, fuzzy
 msgid "Similar search is always used."
-msgstr "常に前方一致検索を実行します。"
+msgstr "常に類似検索を実行します。"
 
 # 438823df94bb4fa0a191f62272fdf842
 #: ../../../source/commands/suggest.txt:157
-#, fuzzy
 msgid "Similar search is never used."
-msgstr "前方一致検索を実行しません。"
+msgstr "類似検索を実行しません。"
 
 # dde877dd95914333a45cc814785510b7
 #: ../../../source/commands/suggest.txt:160
-#, fuzzy
 msgid "Similar search is used only when other search can't find any records."
-msgstr "他の検索でレコードが見つからない場合のみ前方一致検索を実行します。"
+msgstr "他の検索でレコードが見つからない場合のみ類似検索を実行します。"
 
 # d0742adf4f42420b9247bde497ec24cc
 #: ../../../source/commands/suggest.txt:167
