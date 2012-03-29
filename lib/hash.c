@@ -545,6 +545,10 @@ grn_array_delete_by_id(grn_ctx *ctx, grn_array *array, grn_id id,
       if (!rc) {
         (*array->n_entries)--;
         (*array->n_garbages)++;
+        /*
+         * The following GRN_IO_ARRAY_BIT_OFF() never fails because the above
+         * grn_array_bitmap_at() returned 1 for the same ID.
+         */
         GRN_IO_ARRAY_BIT_OFF(array->io, array_seg_bitmap, id);
       }
     } else {
@@ -560,6 +564,10 @@ grn_array_delete_by_id(grn_ctx *ctx, grn_array *array, grn_id id,
       if (!rc) {
         (*array->n_entries)--;
         (*array->n_garbages)++;
+        /*
+         * The following grn_tiny_array_bit_off() never fails because the above
+         * grn_array_bitmap_at() returned 1 for the same ID.
+         */
         grn_tiny_array_bit_off(&array->bitmap, id);
       }
     }
@@ -713,39 +721,63 @@ grn_array_cursor_delete(grn_ctx *ctx, grn_array_cursor *cursor,
   return grn_array_delete_by_id(ctx, cursor->array, cursor->curr_rec, optarg);
 }
 
-/*
- * FIXME: Error handling of grn_array_add() is insufficient.
- */
+inline static grn_id
+grn_array_add_to_tiny_array(grn_ctx *ctx, grn_array *array, void **value)
+{
+  grn_id id = array->garbages;
+  void *entry;
+  if (id) {
+    entry = grn_tiny_array_at_inline(&array->a, id);
+    array->garbages = *(grn_id *)entry;
+    memset(entry, 0, array->value_size);
+    (*array->n_garbages)--;
+    grn_tiny_array_bit_on(&array->bitmap, id);
+  } else {
+    id = array->a.max + 1;
+    if (!grn_tiny_array_bit_on(&array->bitmap, id)) {
+      return GRN_ID_NIL;
+    }
+    entry = grn_tiny_array_at_inline(&array->a, id);
+    if (!entry) {
+      grn_tiny_array_bit_off(&array->bitmap, id);
+      return GRN_ID_NIL;
+    }
+    array->a.max = id;
+  }
+  (*array->n_entries)++;
+  if (value) { *value = entry; }
+  return id;
+}
 
 inline static grn_id
-grn_array_entry_new(grn_ctx *ctx, grn_array *array)
+grn_array_add_to_io_array(grn_ctx *ctx, grn_array *array, void **value)
 {
-  grn_id id;
-  if (IO_ARRAYP(array)) {
-    struct grn_array_header * const header = array->header;
-    id = header->garbages;
-    if (id) {
-      void * const entry = grn_array_io_entry_at(ctx, array, id, GRN_TABLE_ADD);
-      if (!entry) { return GRN_ID_NIL; }
-      header->garbages = *(grn_id *)entry;
-      memset(entry, 0, header->value_size);
-      (*array->n_garbages)--;
-    } else {
-      id = ++header->curr_rec;
+  struct grn_array_header * const header = array->header;
+  grn_id id = header->garbages;
+  void *entry;
+  if (id) {
+    entry = grn_array_io_entry_at(ctx, array, id, GRN_TABLE_ADD);
+    if (!entry) {
+      return GRN_ID_NIL;
     }
+    header->garbages = *(grn_id *)entry;
+    memset(entry, 0, header->value_size);
+    (*array->n_garbages)--;
+    /* FIXME: GRN_IO_ARRAY_BIT_ON() may fail and cause a critical problem. */
     GRN_IO_ARRAY_BIT_ON(array->io, array_seg_bitmap, id);
   } else {
-    id = array->garbages;
-    if (id) {
-      void * const entry = grn_tiny_array_at_inline(&array->a, id);
-      array->garbages = *(grn_id *)entry;
-      memset(entry, 0, array->value_size);
-      (*array->n_garbages)--;
-    } else {
-      id = ++array->a.max;
+    id = header->curr_rec + 1;
+    /* FIXME: GRN_IO_ARRAY_BIT_ON() may fail and cause a critical problem. */
+    GRN_IO_ARRAY_BIT_ON(array->io, array_seg_bitmap, id);
+    entry = grn_array_io_entry_at(ctx, array, id, GRN_TABLE_ADD);
+    if (!entry) {
+      GRN_IO_ARRAY_BIT_OFF(array->io, array_seg_bitmap, id);
+      return GRN_ID_NIL;
     }
-    grn_tiny_array_bit_on(&array->bitmap, id);
+    header->curr_rec = id;
   }
+  (*array->n_entries)++;
+  if (value) { *value = entry; }
   return id;
 }
 
@@ -753,17 +785,10 @@ grn_id
 grn_array_add(grn_ctx *ctx, grn_array *array, void **value)
 {
   if (ctx && array) {
-    const grn_id id = grn_array_entry_new(ctx, array);
-    if (id) {
-      void *entry;
-      (*array->n_entries)++;
-      /*
-       * FIXME: The following causes segmentation fault when
-       * grn_array_entry_at() returns NULL.
-       */
-      entry = grn_array_entry_at(ctx, array, id, GRN_TABLE_ADD);
-      if (value) { *value = entry; }
-      return id;
+    if (IO_ARRAYP(array)) {
+      return grn_array_add_to_io_array(ctx, array, value);
+    } else {
+      return grn_array_add_to_tiny_array(ctx, array, value);
     }
   }
   return GRN_ID_NIL;
