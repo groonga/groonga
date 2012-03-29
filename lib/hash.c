@@ -82,10 +82,9 @@ grn_tiny_array_next(grn_tiny_array *array)
 }
 
 /*
- * FIXME: The following grn_tiny_array_bit_*() may fail if memory allocation
- * fails in grn_tiny_array_at_inline().
+ * grn_tiny_array_bit_at() returns the default value (0) when
+ * grn_tiny_array_at_inline() returns NULL. So, it seems to work well.
  */
-
 inline static grn_bool
 grn_tiny_array_bit_at(grn_tiny_array *array, grn_id offset)
 {
@@ -94,7 +93,7 @@ grn_tiny_array_bit_at(grn_tiny_array *array, grn_id offset)
   return ptr ? ((*ptr >> (offset & 7)) & 1) : 0;
 }
 
-inline static void
+inline static void *
 grn_tiny_array_bit_on(grn_tiny_array *array, grn_id offset)
 {
   uint8_t * const ptr =
@@ -102,9 +101,10 @@ grn_tiny_array_bit_on(grn_tiny_array *array, grn_id offset)
   if (ptr) {
     *ptr |= 1 << (offset & 7);
   }
+  return ptr;
 }
 
-inline static void
+inline static void *
 grn_tiny_array_bit_off(grn_tiny_array *array, grn_id offset)
 {
   uint8_t * const ptr =
@@ -112,9 +112,10 @@ grn_tiny_array_bit_off(grn_tiny_array *array, grn_id offset)
   if (ptr) {
     *ptr &= ~(1 << (offset & 7));
   }
+  return ptr;
 }
 
-inline static void
+inline static void *
 grn_tiny_array_bit_flip(grn_tiny_array *array, grn_id offset)
 {
   uint8_t * const ptr =
@@ -122,6 +123,7 @@ grn_tiny_array_bit_flip(grn_tiny_array *array, grn_id offset)
   if (ptr) {
     *ptr ^= 1 << (offset & 7);
   }
+  return ptr;
 }
 
 void
