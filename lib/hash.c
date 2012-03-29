@@ -81,6 +81,11 @@ grn_tiny_array_next(grn_tiny_array *array)
   return grn_tiny_array_at_inline(array, array->max + 1);
 }
 
+/*
+ * FIXME: The following grn_tiny_array_bit_*() may fail if memory allocation
+ * fails in grn_tiny_array_at_inline().
+ */
+
 inline static grn_bool
 grn_tiny_array_bit_at(grn_tiny_array *array, grn_id offset)
 {
@@ -599,12 +604,16 @@ grn_array_cursor_open(grn_ctx *ctx, grn_array *array, grn_id min, grn_id max,
 {
   grn_array_cursor *cursor;
   if (!array || !ctx) { return NULL; }
-  if (!(cursor = GRN_MALLOCN(grn_array_cursor, 1))) { return NULL; }
+
+  cursor = GRN_MALLOCN(grn_array_cursor, 1);
+  if (!cursor) { return NULL; }
+
   GRN_DB_OBJ_SET_TYPE(cursor, GRN_CURSOR_TABLE_NO_KEY);
   cursor->array = array;
   cursor->ctx = ctx;
   cursor->obj.header.flags = flags;
   cursor->obj.header.domain = GRN_ID_NIL;
+
   if (flags & GRN_CURSOR_DESCENDING) {
     cursor->dir = -1;
     if (max) {
@@ -636,6 +645,7 @@ grn_array_cursor_open(grn_ctx *ctx, grn_array *array, grn_id min, grn_id max,
     }
     if (cursor->tail < cursor->curr_rec) { cursor->tail = cursor->curr_rec; }
   }
+
   if (*array->n_garbages) {
     while (offset && cursor->curr_rec != cursor->tail) {
       cursor->curr_rec += cursor->dir;
@@ -677,11 +687,10 @@ grn_array_next(grn_ctx *ctx, grn_array *array, grn_id id)
 int
 grn_array_cursor_get_value(grn_ctx *ctx, grn_array_cursor *cursor, void **value)
 {
-  void *ee;
   if (cursor && value) {
-    ee = grn_array_entry_at(ctx, cursor->array, cursor->curr_rec, 0);
-    if (ee) {
-      *value = ee;
+    void * const entry = grn_array_entry_at(ctx, cursor->array, cursor->curr_rec, 0);
+    if (entry) {
+      *value = entry;
       return cursor->array->value_size;
     }
   }
@@ -702,46 +711,60 @@ grn_array_cursor_delete(grn_ctx *ctx, grn_array_cursor *cursor,
   return grn_array_delete_by_id(ctx, cursor->array, cursor->curr_rec, optarg);
 }
 
+/*
+ * FIXME: Error handling of grn_array_add() is insufficient.
+ */
+
 inline static grn_id
-array_entry_new(grn_ctx *ctx, grn_array *array)
+grn_array_entry_new(grn_ctx *ctx, grn_array *array)
 {
-  grn_id e;
+  grn_id id;
   if (IO_ARRAYP(array)) {
-    struct grn_array_header *hh = array->header;
-    if ((e = hh->garbages)) {
-      void *ee = grn_array_io_entry_at(ctx, array, e, GRN_TABLE_ADD);
-      if (!ee) { return GRN_ID_NIL; }
-      hh->garbages = *((grn_id *)ee);
-      memset(ee, 0, hh->value_size);
+    struct grn_array_header * const header = array->header;
+    id = header->garbages;
+    if (id) {
+      void * const entry = grn_array_io_entry_at(ctx, array, id, GRN_TABLE_ADD);
+      if (!entry) { return GRN_ID_NIL; }
+      header->garbages = *(grn_id *)entry;
+      memset(entry, 0, header->value_size);
       (*array->n_garbages)--;
     } else {
-      e = ++hh->curr_rec;
+      id = ++header->curr_rec;
     }
-    GRN_IO_ARRAY_BIT_ON(array->io, array_seg_bitmap, e);
+    GRN_IO_ARRAY_BIT_ON(array->io, array_seg_bitmap, id);
   } else {
-    if ((e = array->garbages)) {
-      void *ee = grn_tiny_array_at_inline(&array->a, e);
-      array->garbages = *((grn_id *)ee);
-      memset(ee, 0, array->value_size);
+    id = array->garbages;
+    if (id) {
+      void * const entry = grn_tiny_array_at_inline(&array->a, id);
+      array->garbages = *(grn_id *)entry;
+      memset(entry, 0, array->value_size);
       (*array->n_garbages)--;
     } else {
-      e = ++array->a.max;
+      id = ++array->a.max;
     }
-    grn_tiny_array_bit_on(&array->bitmap, e);
+    grn_tiny_array_bit_on(&array->bitmap, id);
   }
-  return e;
+  return id;
 }
 
 grn_id
 grn_array_add(grn_ctx *ctx, grn_array *array, void **value)
 {
-  grn_id e;
-  void *ee;
-  if (!ctx || !array || !(e = array_entry_new(ctx, array))) { return GRN_ID_NIL; }
-  (*array->n_entries)++;
-  ee = grn_array_entry_at(ctx, array, e, GRN_TABLE_ADD);
-  if (value) { *value = ee; }
-  return e;
+  if (ctx && array) {
+    const grn_id id = grn_array_entry_new(ctx, array);
+    if (id) {
+      void *entry;
+      (*array->n_entries)++;
+      /*
+       * FIXME: The following causes segmentation fault when
+       * grn_array_entry_at() returns NULL.
+       */
+      entry = grn_array_entry_at(ctx, array, id, GRN_TABLE_ADD);
+      if (value) { *value = entry; }
+      return id;
+    }
+  }
+  return GRN_ID_NIL;
 }
 
 /* grn_hash : hash table */
