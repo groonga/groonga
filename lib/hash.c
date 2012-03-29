@@ -870,7 +870,7 @@ grn_hash_bitmap_at(grn_ctx *ctx, grn_hash *hash, grn_id id)
 }
 
 inline static grn_id *
-idx_at_(grn_ctx *ctx, grn_hash *hash, grn_id id)
+grn_hash_io_idx_at(grn_ctx *ctx, grn_hash *hash, grn_id id)
 {
   int flags = GRN_TABLE_ADD;
   void *pp;
@@ -880,7 +880,7 @@ idx_at_(grn_ctx *ctx, grn_hash *hash, grn_id id)
 
 #define IDX_AT(h,i) \
   (IO_HASHP(h) ?\
-   idx_at_(ctx, h, ((i) & *(h)->max_offset) + h->header->idx_offset) :\
+   grn_hash_io_idx_at(ctx, h, ((i) & *(h)->max_offset) + h->header->idx_offset) :\
    h->index + ((i) & *(h)->max_offset))
 
 #define KEY_AT(hash,pos,ptr) do {\
@@ -1290,7 +1290,7 @@ grn_hash_reset(grn_ctx *ctx, grn_hash *hash, uint32_t ne)
     offs = hash->header->idx_offset;
     offd = MAX_INDEX_SIZE - offs;
     for (i = 0; i < n; i += (IDX_MASK_IN_A_SEGMENT + 1)) {
-      dp = idx_at_(ctx, hash, i + offd); // todo : use idx_at
+      dp = grn_hash_io_idx_at(ctx, hash, i + offd); // todo : use idx_at
       if (!dp) { return GRN_NO_MEMORY_AVAILABLE; }
       memset(dp, 0, GRN_HASH_SEGMENT_SIZE);
     }
@@ -1305,7 +1305,7 @@ grn_hash_reset(grn_ctx *ctx, grn_hash *hash, uint32_t ne)
     uint32_t i, j, k, m0 = *hash->max_offset, m = n - 1, s;
     for (k = 0, j = 0; k < n0 && j <= m0; j++, sp++) {
       if (IO_HASHP(hash) && !(j & IDX_MASK_IN_A_SEGMENT)) {
-        sp = idx_at_(ctx, hash, j + offs);
+        sp = grn_hash_io_idx_at(ctx, hash, j + offs);
         if (!sp) { return GRN_NO_MEMORY_AVAILABLE; }
       }
       e = *sp;
@@ -1314,7 +1314,7 @@ grn_hash_reset(grn_ctx *ctx, grn_hash *hash, uint32_t ne)
       if (!ee) { return GRN_NO_MEMORY_AVAILABLE; }
       for (i = ee->key, s = STEP(i); ; i += s) {
         if (IO_HASHP(hash)) {
-          dp = idx_at_(ctx, hash, (i & m) + offd);
+          dp = grn_hash_io_idx_at(ctx, hash, (i & m) + offd);
           if (!dp) { return GRN_NO_MEMORY_AVAILABLE; }
         } else {
           dp = index + (i & m);
