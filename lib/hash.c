@@ -202,7 +202,11 @@ enum {
   array_seg_bitmap = 1
 };
 
-#define IO_ARRAYP(array) ((array)->io)
+inline static grn_bool
+grn_array_is_io_array(grn_array *array)
+{
+  return array->io != NULL;
+}
 
 inline static void *
 grn_array_io_entry_at(grn_ctx *ctx, grn_array *array, grn_id id, int flags)
@@ -215,7 +219,7 @@ grn_array_io_entry_at(grn_ctx *ctx, grn_array *array, grn_id id, int flags)
 inline static void *
 grn_array_entry_at(grn_ctx *ctx, grn_array *array, grn_id id, int flags)
 {
-  if (IO_ARRAYP(array)) {
+  if (grn_array_is_io_array(array)) {
     return grn_array_io_entry_at(ctx, array, id, flags);
   } else {
     return grn_tiny_array_at_inline(&array->a, id);
@@ -225,7 +229,7 @@ grn_array_entry_at(grn_ctx *ctx, grn_array *array, grn_id id, int flags)
 inline static grn_bool
 grn_array_bitmap_at(grn_ctx *ctx, grn_array *array, grn_id id)
 {
-  if (IO_ARRAYP(array)) {
+  if (grn_array_is_io_array(array)) {
     grn_bool value;
     GRN_IO_ARRAY_BIT_AT(array->io, array_seg_bitmap, id, value);
     return value;
@@ -383,7 +387,7 @@ grn_array_close(grn_ctx *ctx, grn_array *array)
   grn_rc rc = GRN_SUCCESS;
   if (!ctx || !array) { return GRN_INVALID_ARGUMENT; }
   if (array->keys) { GRN_FREE(array->keys); }
-  if (IO_ARRAYP(array)) {
+  if (grn_array_is_io_array(array)) {
     rc = grn_io_close(ctx, array->io);
   } else {
     GRN_ASSERT(ctx == array->ctx);
@@ -409,7 +413,7 @@ grn_array_truncate(grn_ctx *ctx, grn_array *array)
   uint32_t value_size, flags;
 
   if (!ctx || !array) { return GRN_INVALID_ARGUMENT; }
-  if (IO_ARRAYP(array)) {
+  if (grn_array_is_io_array(array)) {
     const char * const io_path = grn_io_path(array->io);
     if (io_path && *io_path) {
       path = GRN_STRDUP(io_path);
@@ -422,7 +426,7 @@ grn_array_truncate(grn_ctx *ctx, grn_array *array)
   value_size = array->value_size;
   flags = array->obj.header.flags;
 
-  if (IO_ARRAYP(array)) {
+  if (grn_array_is_io_array(array)) {
     rc = grn_io_close(ctx, array->io);
     if (!rc) {
       array->io = NULL;
@@ -531,7 +535,7 @@ grn_array_delete_by_id(grn_ctx *ctx, grn_array *array, grn_id id,
   {
     grn_rc rc = GRN_SUCCESS;
     /* lock */
-    if (IO_ARRAYP(array)) {
+    if (grn_array_is_io_array(array)) {
       if (array->value_size >= sizeof(grn_id)) {
         struct grn_array_header * const header = array->header;
         void * const entry = grn_array_io_entry_at(ctx, array, id, 0);
@@ -605,7 +609,7 @@ grn_array_cursor_close(grn_ctx *ctx, grn_array_cursor *cursor)
 inline static grn_id
 grn_array_get_max_id(grn_array *array)
 {
-  return IO_ARRAYP(array) ? array->header->curr_rec : array->a.max;
+  return grn_array_is_io_array(array) ? array->header->curr_rec : array->a.max;
 }
 
 grn_array_cursor *
@@ -785,7 +789,7 @@ grn_id
 grn_array_add(grn_ctx *ctx, grn_array *array, void **value)
 {
   if (ctx && array) {
-    if (IO_ARRAYP(array)) {
+    if (grn_array_is_io_array(array)) {
       return grn_array_add_to_io_array(ctx, array, value);
     } else {
       return grn_array_add_to_tiny_array(ctx, array, value);
