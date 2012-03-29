@@ -210,13 +210,17 @@ enum {
   }\
 } while (0)
 
-#define ARRAY_BITMAP_AT(array,id,value) do {\
-  if (IO_ARRAYP(array)) {\
-    GRN_IO_ARRAY_BIT_AT((array)->io, array_seg_bitmap, (id), (value));\
-  } else {\
-    (value) = grn_tiny_array_bit_at(&(array)->bitmap, (id));\
-  }\
-} while (0)
+inline static grn_bool
+grn_array_bitmap_at(grn_ctx *ctx, grn_array *array, grn_id id)
+{
+  if (IO_ARRAYP(array)) {
+    grn_bool value;
+    GRN_IO_ARRAY_BIT_AT(array->io, array_seg_bitmap, id, value);
+    return value;
+  } else {
+    return grn_tiny_array_bit_at(&array->bitmap, id);
+  }
+}
 
 static grn_rc
 tiny_array_init(grn_ctx *ctx, grn_array *array, const char *path,
@@ -410,9 +414,7 @@ grn_array_get_value(grn_ctx *ctx, grn_array *array, grn_id id, void *valuebuf)
 {
   if (ctx && array) {
     void *ee;
-    uint8_t res;
-    ARRAY_BITMAP_AT(array, id, res);
-    if (!res) { return 0; }
+    if (!grn_array_bitmap_at(ctx, array, id)) { return 0; }
     ARRAY_ENTRY_AT(array, id, ee, 0);
     if (ee) {
       if (valuebuf) { memcpy(valuebuf, ee, array->value_size); }
@@ -427,9 +429,7 @@ _grn_array_get_value(grn_ctx *ctx, grn_array *array, grn_id id)
 {
   if (ctx && array) {
     void *ee;
-    uint8_t res;
-    ARRAY_BITMAP_AT(array, id, res);
-    if (!res) { return NULL; }
+    if (!grn_array_bitmap_at(ctx, array, id)) { return NULL; }
     ARRAY_ENTRY_AT(array, id, ee, 0);
     return ee;
   }
@@ -442,9 +442,7 @@ grn_array_set_value(grn_ctx *ctx, grn_array *array, grn_id id,
 {
   if (ctx && array && value) {
     void *ee;
-    uint8_t res;
-    ARRAY_BITMAP_AT(array, id, res);
-    if (!res) { return GRN_INVALID_ARGUMENT; }
+    if (!grn_array_bitmap_at(ctx, array, id)) { return GRN_INVALID_ARGUMENT; }
     ARRAY_ENTRY_AT(array, id, ee, 0);
     if (ee) {
       switch ((flags & GRN_OBJ_SET_MASK)) {
@@ -490,11 +488,9 @@ grn_rc
 grn_array_delete_by_id(grn_ctx *ctx, grn_array *array, grn_id id,
                        grn_table_delete_optarg *optarg)
 {
-  uint8_t res;
   grn_rc rc = GRN_SUCCESS;
   if (!ctx || !array) { return GRN_INVALID_ARGUMENT; }
-  ARRAY_BITMAP_AT(array, id, res);
-  if (!res) { rc = GRN_INVALID_ARGUMENT; goto exit; }
+  if (!grn_array_bitmap_at(ctx, array, id)) { rc = GRN_INVALID_ARGUMENT; goto exit; }
   /* lock */
   if (IO_ARRAYP(array)) {
     if (array->value_size >= sizeof(grn_id)) {
@@ -527,9 +523,7 @@ exit :
 grn_id
 grn_array_at(grn_ctx *ctx, grn_array *array, grn_id id)
 {
-  uint8_t res;
-  ARRAY_BITMAP_AT(array, id, res);
-  return res ? id : GRN_ID_NIL;
+  return grn_array_bitmap_at(ctx, array, id) ? id : GRN_ID_NIL;
 }
 
 grn_rc
@@ -597,10 +591,8 @@ grn_array_cursor_open(grn_ctx *ctx, grn_array *array, grn_id min, grn_id max,
   }
   if (*array->n_garbages) {
     while (offset && c->curr_rec != c->tail) {
-      uint8_t res;
       c->curr_rec += c->dir;
-      ARRAY_BITMAP_AT(c->array, c->curr_rec, res);
-      if (res) { offset--; }
+      if (grn_array_bitmap_at(ctx, c->array, c->curr_rec)) { offset--; }
     }
   } else {
     c->curr_rec += c->dir * offset;
@@ -616,9 +608,7 @@ grn_array_cursor_next(grn_ctx *ctx, grn_array_cursor *c)
     while (c->curr_rec != c->tail) {
       c->curr_rec += c->dir;
       if (*c->array->n_garbages) {
-        uint8_t res;
-        ARRAY_BITMAP_AT(c->array, c->curr_rec, res);
-        if (!res) { continue; }
+        if (!grn_array_bitmap_at(ctx, c->array, c->curr_rec)) { continue; }
       }
       c->rest--;
       return c->curr_rec;
@@ -632,9 +622,7 @@ grn_array_next(grn_ctx *ctx, grn_array *array, grn_id id)
 {
   grn_id max = ARRAY_CURR_MAX(array);
   while (++id <= max) {
-    uint8_t res;
-    ARRAY_BITMAP_AT(array, id, res);
-    if (res) { return id; }
+    if (grn_array_bitmap_at(ctx, array, id)) { return id; }
   }
   return GRN_ID_NIL;
 }
