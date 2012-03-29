@@ -548,8 +548,11 @@ grn_array_cursor_close(grn_ctx *ctx, grn_array_cursor *c)
   GRN_FREE(c);
 }
 
-#define ARRAY_CURR_MAX(array) \
-  ((IO_ARRAYP(array)) ? (array)->header->curr_rec : (array)->a.max)
+inline static grn_id
+grn_array_get_max_id(grn_array *array)
+{
+  return IO_ARRAYP(array) ? array->header->curr_rec : array->a.max;
+}
 
 grn_array_cursor *
 grn_array_cursor_open(grn_ctx *ctx, grn_array *array, grn_id min, grn_id max,
@@ -569,7 +572,7 @@ grn_array_cursor_open(grn_ctx *ctx, grn_array *array, grn_id min, grn_id max,
       c->curr_rec = max;
       if (!(flags & GRN_CURSOR_LT)) { c->curr_rec++; }
     } else {
-      c->curr_rec = ARRAY_CURR_MAX(array) + 1;
+      c->curr_rec = grn_array_get_max_id(array) + 1;
     }
     if (min) {
       c->tail = min;
@@ -590,7 +593,7 @@ grn_array_cursor_open(grn_ctx *ctx, grn_array *array, grn_id min, grn_id max,
       c->tail = max;
       if ((flags & GRN_CURSOR_LT)) { c->tail--; }
     } else {
-      c->tail = ARRAY_CURR_MAX(array);
+      c->tail = grn_array_get_max_id(array);
     }
     if (c->tail < c->curr_rec) { c->tail = c->curr_rec; }
   }
@@ -625,7 +628,7 @@ grn_array_cursor_next(grn_ctx *ctx, grn_array_cursor *c)
 grn_id
 grn_array_next(grn_ctx *ctx, grn_array *array, grn_id id)
 {
-  grn_id max = ARRAY_CURR_MAX(array);
+  grn_id max = grn_array_get_max_id(array);
   while (++id <= max) {
     if (grn_array_bitmap_at(ctx, array, id)) { return id; }
   }
