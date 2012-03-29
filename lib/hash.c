@@ -257,8 +257,10 @@ grn_array_init_io_array(grn_ctx *ctx, grn_array *array, const char *path,
 {
   grn_io *io;
   struct grn_array_header *header;
-  uint32_t w_of_element;
-  for (w_of_element = 0; (1U << w_of_element) < value_size; w_of_element++);
+  uint32_t w_of_element = 0;
+  while ((1U << w_of_element) < value_size) {
+    w_of_element++;
+  }
   {
     grn_io_array_spec array_spec[2];
     array_spec[array_seg_value].w_of_element = w_of_element;
@@ -924,7 +926,10 @@ io_hash_init(grn_hash *ih, grn_ctx *ctx, const char *path, uint32_t key_size,
       entry_size = (intptr_t)(&((entry *)0)->dummy) + key_size + value_size;
     }
   }
-  for (w_of_element = 0; (1U << w_of_element) < entry_size; w_of_element++);
+  w_of_element = 0;
+  while ((1U << w_of_element) < entry_size) {
+    w_of_element++;
+  }
   {
     grn_io_array_spec array_spec[4];
     array_spec[segment_key].w_of_element = 0;
