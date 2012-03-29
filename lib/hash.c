@@ -228,8 +228,8 @@ grn_array_bitmap_at(grn_ctx *ctx, grn_array *array, grn_id id)
 }
 
 static grn_rc
-tiny_array_init(grn_ctx *ctx, grn_array *array, const char *path,
-                uint32_t value_size, uint32_t flags)
+grn_array_init_tiny_array(grn_ctx *ctx, grn_array *array, const char *path,
+                          uint32_t value_size, uint32_t flags)
 {
   if (path) {
     ERR(GRN_INVALID_ARGUMENT, "failed to create array");
@@ -252,8 +252,8 @@ tiny_array_init(grn_ctx *ctx, grn_array *array, const char *path,
 }
 
 static grn_rc
-io_array_init(grn_ctx *ctx, grn_array *array, const char *path,
-              uint32_t value_size, uint32_t flags)
+grn_array_init_io_array(grn_ctx *ctx, grn_array *array, const char *path,
+                        uint32_t value_size, uint32_t flags)
 {
   grn_io *io;
   struct grn_array_header *header;
@@ -296,10 +296,10 @@ _grn_array_create(grn_ctx *ctx, grn_array *array,
                   const char *path, uint32_t value_size, uint32_t flags)
 {
   if (flags & GRN_ARRAY_TINY) {
-    if (!tiny_array_init(ctx, array, path, value_size, flags)) {
+    if (!grn_array_init_tiny_array(ctx, array, path, value_size, flags)) {
       return array;
     }
-  } else if (!io_array_init(ctx, array, path, value_size, flags)) {
+  } else if (!grn_array_init_io_array(ctx, array, path, value_size, flags)) {
     return array;
   }
   return NULL;
