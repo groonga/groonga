@@ -146,7 +146,7 @@ OPTIONS
 
 ``similar_search``
   It specifies whether optional similar search is used or not
-  in suggest.
+  in correction.
 
   Here are available values:
 
