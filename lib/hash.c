@@ -838,15 +838,18 @@ enum {
   segment_bitmap = 3
 };
 
-#define ENTRY_AT_(hash,id,ee,addp) do {\
-  int flags = addp;\
-  GRN_IO_ARRAY_AT(hash->io, segment_entry, id, &flags, ee);\
-} while (0)
+inline static void *
+grn_hash_io_entry_at(grn_ctx *ctx, grn_hash *hash, grn_id id, int flags)
+{
+  void *e;
+  GRN_IO_ARRAY_AT(hash->io, segment_entry, id, &flags, e);
+  return e;
+}
 
 // todo : error handling
 #define ENTRY_AT(hash,id,ee,addp) do {\
   if (IO_HASHP(hash)) {\
-    ENTRY_AT_(hash, id, ee, addp);\
+    ee = grn_hash_io_entry_at(ctx, hash, id, addp);\
   } else {\
     (ee) = grn_tiny_array_at_inline(&hash->a, id);\
   }\
@@ -1344,8 +1347,7 @@ entry_new(grn_ctx *ctx, grn_hash *hash, uint32_t size)
     struct grn_hash_header *hh = hash->header;
     size -= 1;
     if ((e = hh->garbages[size])) {
-      entry *ee;
-      ENTRY_AT_(hash, e, ee, GRN_TABLE_ADD);
+      entry * const ee = grn_hash_io_entry_at(ctx, hash, e, GRN_TABLE_ADD);
       if (!ee) { return GRN_ID_NIL; }
       hh->garbages[size] = ee->key;
       if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
