@@ -878,10 +878,16 @@ grn_hash_io_idx_at(grn_ctx *ctx, grn_hash *hash, grn_id id)
   return pp;
 }
 
-#define IDX_AT(h,i) \
-  (IO_HASHP(h) ?\
-   grn_hash_io_idx_at(ctx, h, ((i) & *(h)->max_offset) + h->header->idx_offset) :\
-   h->index + ((i) & *(h)->max_offset))
+inline static grn_id *
+grn_hash_idx_at(grn_ctx *ctx, grn_hash *hash, grn_id id)
+{
+  if (IO_HASHP(hash)) {
+    id = (id & *hash->max_offset) + hash->header->idx_offset;
+    return grn_hash_io_idx_at(ctx, hash, id);
+  } else {
+    return hash->index + (id & *hash->max_offset);
+  }
+}
 
 #define KEY_AT(hash,pos,ptr) do {\
   int flags = GRN_TABLE_ADD;\
@@ -1456,7 +1462,7 @@ grn_hash_add(grn_ctx *ctx, grn_hash *hash, const void *key,
   }
   m = *hash->max_offset;
   for (i = h; ; i += s) {
-    if (!(ep = IDX_AT(hash, i))) { return GRN_ID_NIL; }
+    if (!(ep = grn_hash_idx_at(ctx, hash, i))) { return GRN_ID_NIL; }
     if (!(e = *ep)) { break; }
     if (e == GARBAGE) {
       if (!np) { np = ep; }
@@ -1506,7 +1512,7 @@ grn_hash_get(grn_ctx *ctx, grn_hash *hash, const void *key,
   s = STEP(h);
   m = *hash->max_offset;
   for (i = h; ; i += s) {
-    if (!(ep = IDX_AT(hash, i))) { return GRN_ID_NIL; }
+    if (!(ep = grn_hash_idx_at(ctx, hash, i))) { return GRN_ID_NIL; }
     if (!(e = *ep)) { break; }
     if (e == GARBAGE) { continue; }
     {
@@ -1714,7 +1720,7 @@ grn_hash_delete_by_id(grn_ctx *ctx, grn_hash *hash, grn_id id,
     uint32_t i, key_size, h = ee->key, s = STEP(h);
     key_size = (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) ? ee->size : hash->key_size;
     for (i = h; ; i += s) {
-      if (!(ep = IDX_AT(hash, i))) { return GRN_NO_MEMORY_AVAILABLE; }
+      if (!(ep = grn_hash_idx_at(ctx, hash, i))) { return GRN_NO_MEMORY_AVAILABLE; }
       if (!(e = *ep)) { break; }
       if (e == id) {
         DELETE_IT;
@@ -1749,7 +1755,7 @@ grn_hash_delete(grn_ctx *ctx, grn_hash *hash, const void *key, uint32_t key_size
     /* lock */
     m = *hash->max_offset;
     for (i = h; ; i += s) {
-      if (!(ep = IDX_AT(hash, i))) { return GRN_NO_MEMORY_AVAILABLE; }
+      if (!(ep = grn_hash_idx_at(ctx, hash, i))) { return GRN_NO_MEMORY_AVAILABLE; }
       if (!(e = *ep)) { break; }
       if (e == GARBAGE) { continue; }
       {
@@ -2226,7 +2232,7 @@ entry2id(grn_ctx *ctx, grn_hash *hash, entry *e)
   grn_id id, *ep;
   uint32_t i, h = e->key, s = STEP(h);
   for (i = h; ; i += s) {
-    if (!(ep = IDX_AT(hash, i))) { return GRN_ID_NIL; }
+    if (!(ep = grn_hash_idx_at(ctx, hash, i))) { return GRN_ID_NIL; }
     if (!(id = *ep)) { break; }
     if (id != GARBAGE) {
       e2 = grn_hash_entry_at(ctx, hash, id, 0);
