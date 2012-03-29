@@ -572,18 +572,19 @@ grn_array_copy_sort_key(grn_ctx *ctx, grn_array *array,
                         grn_table_sort_key *keys, int n_keys)
 {
   array->keys = GRN_MALLOCN(grn_table_sort_key, n_keys);
-  if (array->keys) {
-    memcpy(array->keys, keys, sizeof(grn_table_sort_key) * n_keys);
-    array->n_keys = n_keys;
+  if (!array->keys) {
+    return ctx->rc;
   }
-  return ctx->rc;
+  memcpy(array->keys, keys, sizeof(grn_table_sort_key) * n_keys);
+  array->n_keys = n_keys;
+  return GRN_SUCCESS;
 }
 
 void
-grn_array_cursor_close(grn_ctx *ctx, grn_array_cursor *c)
+grn_array_cursor_close(grn_ctx *ctx, grn_array_cursor *cursor)
 {
-  GRN_ASSERT(c->ctx == ctx);
-  GRN_FREE(c);
+  GRN_ASSERT(cursor->ctx == ctx);
+  GRN_FREE(cursor);
 }
 
 inline static grn_id
@@ -596,68 +597,68 @@ grn_array_cursor *
 grn_array_cursor_open(grn_ctx *ctx, grn_array *array, grn_id min, grn_id max,
                       int offset, int limit, int flags)
 {
-  grn_array_cursor *c;
+  grn_array_cursor *cursor;
   if (!array || !ctx) { return NULL; }
-  if (!(c = GRN_MALLOCN(grn_array_cursor, 1))) { return NULL; }
-  GRN_DB_OBJ_SET_TYPE(c, GRN_CURSOR_TABLE_NO_KEY);
-  c->array = array;
-  c->ctx = ctx;
-  c->obj.header.flags = flags;
-  c->obj.header.domain = GRN_ID_NIL;
+  if (!(cursor = GRN_MALLOCN(grn_array_cursor, 1))) { return NULL; }
+  GRN_DB_OBJ_SET_TYPE(cursor, GRN_CURSOR_TABLE_NO_KEY);
+  cursor->array = array;
+  cursor->ctx = ctx;
+  cursor->obj.header.flags = flags;
+  cursor->obj.header.domain = GRN_ID_NIL;
   if (flags & GRN_CURSOR_DESCENDING) {
-    c->dir = -1;
+    cursor->dir = -1;
     if (max) {
-      c->curr_rec = max;
-      if (!(flags & GRN_CURSOR_LT)) { c->curr_rec++; }
+      cursor->curr_rec = max;
+      if (!(flags & GRN_CURSOR_LT)) { cursor->curr_rec++; }
     } else {
-      c->curr_rec = grn_array_get_max_id(array) + 1;
+      cursor->curr_rec = grn_array_get_max_id(array) + 1;
     }
     if (min) {
-      c->tail = min;
-      if ((flags & GRN_CURSOR_GT)) { c->tail++; }
+      cursor->tail = min;
+      if ((flags & GRN_CURSOR_GT)) { cursor->tail++; }
     } else {
-      c->tail = GRN_ID_NIL + 1;
+      cursor->tail = GRN_ID_NIL + 1;
     }
-    if (c->curr_rec < c->tail) { c->tail = c->curr_rec; }
+    if (cursor->curr_rec < cursor->tail) { cursor->tail = cursor->curr_rec; }
   } else {
-    c->dir = 1;
+    cursor->dir = 1;
     if (min) {
-      c->curr_rec = min;
-      if (!(flags & GRN_CURSOR_GT)) { c->curr_rec--; }
+      cursor->curr_rec = min;
+      if (!(flags & GRN_CURSOR_GT)) { cursor->curr_rec--; }
     } else {
-      c->curr_rec = GRN_ID_NIL;
+      cursor->curr_rec = GRN_ID_NIL;
     }
     if (max) {
-      c->tail = max;
-      if ((flags & GRN_CURSOR_LT)) { c->tail--; }
+      cursor->tail = max;
+      if ((flags & GRN_CURSOR_LT)) { cursor->tail--; }
     } else {
-      c->tail = grn_array_get_max_id(array);
+      cursor->tail = grn_array_get_max_id(array);
     }
-    if (c->tail < c->curr_rec) { c->tail = c->curr_rec; }
+    if (cursor->tail < cursor->curr_rec) { cursor->tail = cursor->curr_rec; }
   }
   if (*array->n_garbages) {
-    while (offset && c->curr_rec != c->tail) {
-      c->curr_rec += c->dir;
-      if (grn_array_bitmap_at(ctx, c->array, c->curr_rec)) { offset--; }
+    while (offset && cursor->curr_rec != cursor->tail) {
+      cursor->curr_rec += cursor->dir;
+      if (grn_array_bitmap_at(ctx, cursor->array, cursor->curr_rec)) { offset--; }
     }
   } else {
-    c->curr_rec += c->dir * offset;
+    cursor->curr_rec += cursor->dir * offset;
   }
-  c->rest = (limit < 0) ? GRN_ID_MAX : limit;
-  return c;
+  cursor->rest = (limit < 0) ? GRN_ID_MAX : limit;
+  return cursor;
 }
 
 grn_id
-grn_array_cursor_next(grn_ctx *ctx, grn_array_cursor *c)
+grn_array_cursor_next(grn_ctx *ctx, grn_array_cursor *cursor)
 {
-  if (c && c->rest) {
-    while (c->curr_rec != c->tail) {
-      c->curr_rec += c->dir;
-      if (*c->array->n_garbages) {
-        if (!grn_array_bitmap_at(ctx, c->array, c->curr_rec)) { continue; }
+  if (cursor && cursor->rest) {
+    while (cursor->curr_rec != cursor->tail) {
+      cursor->curr_rec += cursor->dir;
+      if (*cursor->array->n_garbages) {
+        if (!grn_array_bitmap_at(ctx, cursor->array, cursor->curr_rec)) { continue; }
       }
-      c->rest--;
-      return c->curr_rec;
+      cursor->rest--;
+      return cursor->curr_rec;
     }
   }
   return GRN_ID_NIL;
@@ -674,31 +675,31 @@ grn_array_next(grn_ctx *ctx, grn_array *array, grn_id id)
 }
 
 int
-grn_array_cursor_get_value(grn_ctx *ctx, grn_array_cursor *c, void **value)
+grn_array_cursor_get_value(grn_ctx *ctx, grn_array_cursor *cursor, void **value)
 {
   void *ee;
-  if (c && value) {
-    ee = grn_array_entry_at(ctx, c->array, c->curr_rec, 0);
+  if (cursor && value) {
+    ee = grn_array_entry_at(ctx, cursor->array, cursor->curr_rec, 0);
     if (ee) {
       *value = ee;
-      return c->array->value_size;
+      return cursor->array->value_size;
     }
   }
   return 0;
 }
 
 grn_rc
-grn_array_cursor_set_value(grn_ctx *ctx, grn_array_cursor *c,
+grn_array_cursor_set_value(grn_ctx *ctx, grn_array_cursor *cursor,
                            const void *value, int flags)
 {
-  return grn_array_set_value(ctx, c->array, c->curr_rec, value, flags);
+  return grn_array_set_value(ctx, cursor->array, cursor->curr_rec, value, flags);
 }
 
 grn_rc
-grn_array_cursor_delete(grn_ctx *ctx, grn_array_cursor *c,
+grn_array_cursor_delete(grn_ctx *ctx, grn_array_cursor *cursor,
                         grn_table_delete_optarg *optarg)
 {
-  return grn_array_delete_by_id(ctx, c->array, c->curr_rec, optarg);
+  return grn_array_delete_by_id(ctx, cursor->array, cursor->curr_rec, optarg);
 }
 
 inline static grn_id

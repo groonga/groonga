@@ -2639,13 +2639,13 @@ GRN_API grn_rc grn_array_set_value(grn_ctx *ctx, grn_array *array, grn_id id,
 GRN_API grn_array_cursor *grn_array_cursor_open(grn_ctx *ctx, grn_array *array,
                                                 grn_id min, grn_id max,
                                                 int offset, int limit, int flags);
-GRN_API grn_id grn_array_cursor_next(grn_ctx *ctx, grn_array_cursor *c);
-GRN_API int grn_array_cursor_get_value(grn_ctx *ctx, grn_array_cursor *c, void **value);
-GRN_API grn_rc grn_array_cursor_set_value(grn_ctx *ctx, grn_array_cursor *c,
+GRN_API grn_id grn_array_cursor_next(grn_ctx *ctx, grn_array_cursor *cursor);
+GRN_API int grn_array_cursor_get_value(grn_ctx *ctx, grn_array_cursor *cursor, void **value);
+GRN_API grn_rc grn_array_cursor_set_value(grn_ctx *ctx, grn_array_cursor *cursor,
                                           const void *value, int flags);
-GRN_API grn_rc grn_array_cursor_delete(grn_ctx *ctx, grn_array_cursor *c,
+GRN_API grn_rc grn_array_cursor_delete(grn_ctx *ctx, grn_array_cursor *cursor,
                                        grn_table_delete_optarg *optarg);
-GRN_API void grn_array_cursor_close(grn_ctx *ctx, grn_array_cursor *c);
+GRN_API void grn_array_cursor_close(grn_ctx *ctx, grn_array_cursor *cursor);
 GRN_API grn_rc grn_array_delete_by_id(grn_ctx *ctx, grn_array *array, grn_id id,
                                       grn_table_delete_optarg *optarg);
 
