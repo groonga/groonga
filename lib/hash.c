@@ -857,13 +857,17 @@ grn_hash_entry_at(grn_ctx *ctx, grn_hash *hash, grn_id id, int flags)
   }
 }
 
-#define BITMAP_AT(hash,id,value) do {\
-  if (IO_HASHP(hash)) {\
-    GRN_IO_ARRAY_BIT_AT((hash)->io, segment_bitmap, (id), (value));\
-  } else {\
-    (value) = grn_tiny_array_bit_at(&(hash)->bitmap, (id));\
-  }\
-} while (0)
+inline static grn_bool
+grn_hash_bitmap_at(grn_ctx *ctx, grn_hash *hash, grn_id id)
+{
+  if (IO_HASHP(hash)) {
+    grn_bool value;
+    GRN_IO_ARRAY_BIT_AT(hash->io, segment_bitmap, id, value);
+    return value;
+  } else {
+    return grn_tiny_array_bit_at(&hash->bitmap, id);
+  }
+}
 
 inline static grn_id *
 idx_at_(grn_ctx *ctx, grn_hash *hash, grn_id id)
@@ -1519,10 +1523,8 @@ grn_hash_get(grn_ctx *ctx, grn_hash *hash, const void *key,
 const char *
 _grn_hash_key(grn_ctx *ctx, grn_hash *hash, grn_id id, uint32_t *key_size)
 {
-  uint8_t res;
   entry_str *ee;
-  BITMAP_AT(hash, id, res);
-  if (!res) {
+  if (!grn_hash_bitmap_at(ctx, hash, id)) {
     *key_size = 0;
     return NULL;
   }
@@ -1538,11 +1540,9 @@ _grn_hash_key(grn_ctx *ctx, grn_hash *hash, grn_id id, uint32_t *key_size)
 int
 grn_hash_get_key(grn_ctx *ctx, grn_hash *hash, grn_id id, void *keybuf, int bufsize)
 {
-  uint8_t res;
   int key_size;
   entry_str *ee;
-  BITMAP_AT(hash, id, res);
-  if (!res) { return 0; }
+  if (!grn_hash_bitmap_at(ctx, hash, id)) { return 0; }
   ee = grn_hash_entry_at(ctx, hash, id, 0);
   if (!ee) { return 0; }
   key_size = (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) ? ee->size : hash->key_size;
@@ -1553,12 +1553,10 @@ grn_hash_get_key(grn_ctx *ctx, grn_hash *hash, grn_id id, void *keybuf, int bufs
 int
 grn_hash_get_key2(grn_ctx *ctx, grn_hash *hash, grn_id id, grn_obj *bulk)
 {
-  uint8_t res;
   int key_size;
   char *key;
   entry_str *ee;
-  BITMAP_AT(hash, id, res);
-  if (!res) { return 0; }
+  if (!grn_hash_bitmap_at(ctx, hash, id)) { return 0; }
   ee = grn_hash_entry_at(ctx, hash, id, 0);
   if (!ee) { return 0; }
   key_size = (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) ? ee->size : hash->key_size;
@@ -1576,10 +1574,8 @@ int
 grn_hash_get_value(grn_ctx *ctx, grn_hash *hash, grn_id id, void *valuebuf)
 {
   void *v;
-  uint8_t res;
   entry_str *ee;
-  BITMAP_AT(hash, id, res);
-  if (!res) { return 0; }
+  if (!grn_hash_bitmap_at(ctx, hash, id)) { return 0; }
   ee = grn_hash_entry_at(ctx, hash, id, 0);
   if (ee && (v = get_value(hash, ee))) {
     if (valuebuf) { memcpy(valuebuf, v, hash->value_size); }
@@ -1591,11 +1587,9 @@ grn_hash_get_value(grn_ctx *ctx, grn_hash *hash, grn_id id, void *valuebuf)
 const char *
 grn_hash_get_value_(grn_ctx *ctx, grn_hash *hash, grn_id id, uint32_t *size)
 {
-  uint8_t res;
   entry_str *ee;
   const char *value = NULL;
-  BITMAP_AT(hash, id, res);
-  if (!res) { return NULL; }
+  if (!grn_hash_bitmap_at(ctx, hash, id)) { return NULL; }
   ee = grn_hash_entry_at(ctx, hash, id, 0);
   if (ee && (value = get_value(hash, ee))) {
     *size = hash->value_size;
@@ -1608,11 +1602,9 @@ grn_hash_get_key_value(grn_ctx *ctx, grn_hash *hash, grn_id id,
                        void *keybuf, int bufsize, void *valuebuf)
 {
   void *v;
-  uint8_t res;
   int key_size;
   entry_str *ee;
-  BITMAP_AT(hash, id, res);
-  if (!res) { return 0; }
+  if (!grn_hash_bitmap_at(ctx, hash, id)) { return 0; }
   ee = grn_hash_entry_at(ctx, hash, id, 0);
   if (!ee) { return 0; }
   key_size = (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) ? ee->size : hash->key_size;
@@ -1627,11 +1619,9 @@ int
 _grn_hash_get_key_value(grn_ctx *ctx, grn_hash *hash, grn_id id,
                         void **key, void **value)
 {
-  uint8_t res;
   int key_size;
   entry_str *ee;
-  BITMAP_AT(hash, id, res);
-  if (!res) { return 0; }
+  if (!grn_hash_bitmap_at(ctx, hash, id)) { return 0; }
   ee = grn_hash_entry_at(ctx, hash, id, 0);
   if (!ee) { return 0; }
   key_size = (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) ? ee->size : hash->key_size;
@@ -1645,10 +1635,8 @@ grn_hash_set_value(grn_ctx *ctx, grn_hash *hash, grn_id id,
 {
   if (value) {
     void *v;
-    uint8_t res;
     entry_str *ee;
-    BITMAP_AT(hash, id, res);
-    if (!res) { return GRN_INVALID_ARGUMENT; }
+    if (!grn_hash_bitmap_at(ctx, hash, id)) { return GRN_INVALID_ARGUMENT; }
     ee = grn_hash_entry_at(ctx, hash, id, 0);
     if (ee && (v = get_value(hash, ee))) {
       switch ((flags & GRN_OBJ_SET_MASK)) {
@@ -1855,10 +1843,8 @@ grn_hash_cursor_open(grn_ctx *ctx, grn_hash *hash,
   }
   if (*hash->n_entries != HASH_CURR_MAX(hash)) {
     while (offset && c->curr_rec != c->tail) {
-      uint8_t res;
       c->curr_rec += c->dir;
-      BITMAP_AT(c->hash, c->curr_rec, res);
-      if (res) { offset--; }
+      if (grn_hash_bitmap_at(ctx, c->hash, c->curr_rec)) { offset--; }
     }
   } else {
     c->curr_rec += c->dir * offset;
@@ -1875,9 +1861,7 @@ grn_hash_cursor_next(grn_ctx *ctx, grn_hash_cursor *c)
     while (c->curr_rec != c->tail) {
       c->curr_rec += c->dir;
       if (*c->hash->n_entries != HASH_CURR_MAX(c->hash)) {
-        uint8_t res;
-        BITMAP_AT(c->hash, c->curr_rec, res);
-        if (!res) { continue; }
+        if (!grn_hash_bitmap_at(ctx, c->hash, c->curr_rec)) { continue; }
       }
       c->rest--;
       return c->curr_rec;
@@ -1891,9 +1875,7 @@ grn_hash_next(grn_ctx *ctx, grn_hash *hash, grn_id id)
 {
   grn_id max = HASH_CURR_MAX(hash);
   while (++id <= max) {
-    uint8_t res;
-    BITMAP_AT(hash, id, res);
-    if (res) { return id; }
+    if (grn_hash_bitmap_at(ctx, hash, id)) { return id; }
   }
   return GRN_ID_NIL;
 }
@@ -1901,9 +1883,7 @@ grn_hash_next(grn_ctx *ctx, grn_hash *hash, grn_id id)
 grn_id
 grn_hash_at(grn_ctx *ctx, grn_hash *hash, grn_id id)
 {
-  uint8_t res;
-  BITMAP_AT(hash, id, res);
-  return res ? id : GRN_ID_NIL;
+  return grn_hash_bitmap_at(ctx, hash, id) ? id : GRN_ID_NIL;
 }
 
 int
@@ -2002,14 +1982,12 @@ inline static entry **
 pack(grn_ctx *ctx, grn_hash *hash, entry **res, grn_table_sort_optarg *arg, int dir)
 {
   uint32_t n;
-  uint8_t exist;
   uint32_t cs, es;
   const uint8_t *cp, *ep;
   entry **head, **tail, *e, *c;
   grn_id id, m = HASH_CURR_MAX(hash);
   for (id = m >> 1;;id = (id == m) ? 1 : id + 1) {
-    BITMAP_AT(hash, id, exist);
-    if (exist) { break; }
+    if (grn_hash_bitmap_at(ctx, hash, id)) { break; }
   }
   c = grn_hash_entry_at(ctx, hash, id, 0);
   if (!c) { return NULL; }
@@ -2020,8 +1998,7 @@ pack(grn_ctx *ctx, grn_hash *hash, entry **res, grn_table_sort_optarg *arg, int 
   while (n--) {
     do {
       id = (id == m) ? 1 : id + 1;
-      BITMAP_AT(hash, id, exist);
-    } while (!exist);
+    } while (!grn_hash_bitmap_at(ctx, hash, id));
     e = grn_hash_entry_at(ctx, hash, id, 0);
     if (!e) { return NULL; }
     PREPARE_VAL(e, ep, es);
@@ -2153,13 +2130,11 @@ inline static val32 *
 pack_val32(grn_ctx *ctx, grn_hash *hash, val32 *res, grn_table_sort_optarg *arg, int dir)
 {
   uint32_t n;
-  uint8_t exist;
   entry_str *e, *c;
   val32 *head, *tail, cr, er;
   grn_id id, m = HASH_CURR_MAX(hash);
   for (id = m >> 1;;id = (id == m) ? 1 : id + 1) {
-    BITMAP_AT(hash, id, exist);
-    if (exist) { break; }
+    if (grn_hash_bitmap_at(ctx, hash, id)) { break; }
   }
   c = grn_hash_entry_at(ctx, hash, id, 0);
   if (!c) { return NULL; }
@@ -2170,8 +2145,7 @@ pack_val32(grn_ctx *ctx, grn_hash *hash, val32 *res, grn_table_sort_optarg *arg,
   while (n--) {
     do {
       id = (id == m) ? 1 : id + 1;
-      BITMAP_AT(hash, id, exist);
-    } while (!exist);
+    } while (!grn_hash_bitmap_at(ctx, hash, id));
     e = grn_hash_entry_at(ctx, hash, id, 0);
     if (!e) { return NULL; }
     PREPARE_VAL32(id, e, &er);
@@ -2563,10 +2537,8 @@ grn_rhash_subrec_info(grn_hash *s, grn_id rh, int index,
   if (!s || !rh || index < 0) { return GRN_INVALID_ARGUMENT; }
   if ((unsigned int)index >= s->max_n_subrecs) { return GRN_INVALID_ARGUMENT; }
   {
-    uint8_t res;
     entry_str *ee;
-    BITMAP_AT(s, rh, res);
-    if (!res) { return GRN_INVALID_ARGUMENT; }
+    if (!grn_hash_bitmap_at(ctx, s, rh)) { return GRN_INVALID_ARGUMENT; }
     ee = grn_hash_entry_at(ctx, s, rh, 0);
     if (!ee) { return GRN_INVALID_ARGUMENT; }
     pi = (grn_rset_posinfo *)get_key(ctx, s, ee);
