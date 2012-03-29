@@ -249,13 +249,13 @@ io_array_init(grn_ctx *ctx, grn_array *array, const char *path,
   grn_io *io;
   struct grn_array_header *header;
   uint32_t w_of_element;
-  for (w_of_element = 0; (1 << w_of_element) < value_size; w_of_element++);
+  for (w_of_element = 0; (1U << w_of_element) < value_size; w_of_element++);
   {
     grn_io_array_spec array_spec[2];
     array_spec[array_seg_value].w_of_element = w_of_element;
-    array_spec[array_seg_value].max_n_segments = 1 << (30 - (22 - w_of_element));
+    array_spec[array_seg_value].max_n_segments = 1U << (30 - (22 - w_of_element));
     array_spec[array_seg_bitmap].w_of_element = 0;
-    array_spec[array_seg_bitmap].max_n_segments = 1 << (30 - (22 + 3));
+    array_spec[array_seg_bitmap].max_n_segments = 1U << (30 - (22 + 3));
     io = grn_io_create_with_array(ctx, path, sizeof(struct grn_array_header),
                                   GRN_ARRAY_SEGMENT_SIZE, grn_io_auto, 2, array_spec);
   }
@@ -932,17 +932,17 @@ io_hash_init(grn_hash *ih, grn_ctx *ctx, const char *path, uint32_t key_size,
       entry_size = (intptr_t)(&((entry *)0)->dummy) + key_size + value_size;
     }
   }
-  for (w_of_element = 0; (1 << w_of_element) < entry_size; w_of_element++);
+  for (w_of_element = 0; (1U << w_of_element) < entry_size; w_of_element++);
   {
     grn_io_array_spec array_spec[4];
     array_spec[segment_key].w_of_element = 0;
     array_spec[segment_key].max_n_segments = 0x400;
     array_spec[segment_entry].w_of_element = w_of_element;
-    array_spec[segment_entry].max_n_segments = 1 << (30 - (22 - w_of_element));
+    array_spec[segment_entry].max_n_segments = 1U << (30 - (22 - w_of_element));
     array_spec[segment_index].w_of_element = 2;
-    array_spec[segment_index].max_n_segments = 1 << (30 - (22 - 2));
+    array_spec[segment_index].max_n_segments = 1U << (30 - (22 - 2));
     array_spec[segment_bitmap].w_of_element = 0;
-    array_spec[segment_bitmap].max_n_segments = 1 << (30 - (22 + 3));
+    array_spec[segment_bitmap].max_n_segments = 1U << (30 - (22 + 3));
     io = grn_io_create_with_array(ctx, path, GRN_HASH_HEADER_SIZE, GRN_HASH_SEGMENT_SIZE,
                                   grn_io_auto, 4, array_spec);
   }
