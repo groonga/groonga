@@ -291,18 +291,15 @@ grn_array_init_io_array(grn_ctx *ctx, grn_array *array, const char *path,
   return GRN_SUCCESS;
 }
 
-inline static grn_array *
-_grn_array_create(grn_ctx *ctx, grn_array *array,
-                  const char *path, uint32_t value_size, uint32_t flags)
+static grn_rc
+grn_array_init(grn_ctx *ctx, grn_array *array,
+               const char *path, uint32_t value_size, uint32_t flags)
 {
   if (flags & GRN_ARRAY_TINY) {
-    if (!grn_array_init_tiny_array(ctx, array, path, value_size, flags)) {
-      return array;
-    }
-  } else if (!grn_array_init_io_array(ctx, array, path, value_size, flags)) {
-    return array;
+    return grn_array_init_tiny_array(ctx, array, path, value_size, flags);
+  } else {
+    return grn_array_init_io_array(ctx, array, path, value_size, flags);
   }
-  return NULL;
 }
 
 grn_array *
@@ -311,7 +308,7 @@ grn_array_create(grn_ctx *ctx, const char *path, uint32_t value_size, uint32_t f
   grn_array *array;
   if (ctx && (array = GRN_MALLOC(sizeof(grn_array)))) {
     GRN_DB_OBJ_SET_TYPE(array, GRN_TABLE_NO_KEY);
-    if (_grn_array_create(ctx, array, path, value_size, flags)) {
+    if (!grn_array_init(ctx, array, path, value_size, flags)) {
       return array;
     }
     GRN_FREE(array);
@@ -406,9 +403,7 @@ grn_array_truncate(grn_ctx *ctx, grn_array *array)
   } else {
     rc = GRN_SUCCESS;
   }
-  if (!_grn_array_create(ctx, array, path, value_size, flags)) {
-    rc = GRN_UNKNOWN_ERROR;
-  }
+  if ((rc = grn_array_init(ctx, array, path, value_size, flags))) { goto exit; }
 exit:
   if (path) { GRN_FREE(path); }
   return rc;
