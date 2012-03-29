@@ -320,13 +320,15 @@ grn_array_init(grn_ctx *ctx, grn_array *array,
 grn_array *
 grn_array_create(grn_ctx *ctx, const char *path, uint32_t value_size, uint32_t flags)
 {
-  grn_array *array;
-  if (ctx && (array = GRN_MALLOC(sizeof(grn_array)))) {
-    GRN_DB_OBJ_SET_TYPE(array, GRN_TABLE_NO_KEY);
-    if (!grn_array_init(ctx, array, path, value_size, flags)) {
-      return array;
+  if (ctx) {
+    grn_array * const array = (grn_array *)GRN_MALLOC(sizeof(grn_array));
+    if (array) {
+      GRN_DB_OBJ_SET_TYPE(array, GRN_TABLE_NO_KEY);
+      if (!grn_array_init(ctx, array, path, value_size, flags)) {
+        return array;
+      }
+      GRN_FREE(array);
     }
-    GRN_FREE(array);
   }
   return NULL;
 }
@@ -335,11 +337,11 @@ grn_array *
 grn_array_open(grn_ctx *ctx, const char *path)
 {
   if (ctx) {
-    grn_io *io = grn_io_open(ctx, path, grn_io_auto);
+    grn_io * const io = grn_io_open(ctx, path, grn_io_auto);
     if (io) {
-      struct grn_array_header *header = grn_io_header(io);
+      struct grn_array_header * const header = grn_io_header(io);
       if (grn_io_get_type(io) == GRN_TABLE_NO_KEY) {
-        grn_array *array = GRN_MALLOC(sizeof(grn_array));
+        grn_array * const array = (grn_array *)GRN_MALLOC(sizeof(grn_array));
         if (array) {
           if (!(header->flags & GRN_ARRAY_TINY)) {
             GRN_DB_OBJ_SET_TYPE(array, GRN_TABLE_NO_KEY);
@@ -353,9 +355,9 @@ grn_array_open(grn_ctx *ctx, const char *path)
             array->io = io;
             array->header = header;
             array->lock = &header->lock;
-            return (grn_array *)array;
+            return array;
           } else {
-            GRN_LOG(ctx, GRN_LOG_NOTICE, "invalid array flag. (%x)", header->flags);
+            GRN_LOG(ctx, GRN_LOG_NOTICE, "invalid array flags. (%x)", header->flags);
           }
           GRN_FREE(array);
         }
