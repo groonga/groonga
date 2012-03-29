@@ -13,5 +13,5 @@ groonga_version=@GROONGA_VERSION@
 Name: Groonga
 Description: An Embeddable Fulltext Search Engine
 Version: @VERSION@
-Libs: -L${libdir} -lgroonga @MESSAGE_PACK_LIBS@
-Cflags: -I${includedir}/groonga @MESSAGE_PACK_CFLAGS@
+Libs: -L${libdir} -lgroonga
+Cflags: -I${includedir}/groonga
