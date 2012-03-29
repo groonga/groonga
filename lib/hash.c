@@ -397,31 +397,36 @@ grn_array_remove(grn_ctx *ctx, const char *path)
 grn_rc
 grn_array_truncate(grn_ctx *ctx, grn_array *array)
 {
-  grn_rc rc;
-  char *path;
+  grn_rc rc = GRN_SUCCESS;
+  char *path = NULL;
   uint32_t value_size, flags;
 
-  if (IO_ARRAYP(array) &&
-      (path = (char *)grn_io_path(array->io)) && *path != '\0') {
-    if (!(path = GRN_STRDUP(path))) {
-      ERR(GRN_NO_MEMORY_AVAILABLE, "cannot duplicate path.");
-      return GRN_NO_MEMORY_AVAILABLE;
+  if (!ctx || !array) { return GRN_INVALID_ARGUMENT; }
+  if (IO_ARRAYP(array)) {
+    const char * const io_path = grn_io_path(array->io);
+    if (io_path && *io_path) {
+      path = GRN_STRDUP(io_path);
+      if (!path) {
+        ERR(GRN_NO_MEMORY_AVAILABLE, "cannot duplicate path.");
+        return GRN_NO_MEMORY_AVAILABLE;
+      }
     }
-  } else {
-    path = NULL;
   }
   value_size = array->value_size;
   flags = array->obj.header.flags;
 
   if (IO_ARRAYP(array)) {
-    if ((rc = grn_io_close(ctx, array->io))) { goto exit; }
-    array->io = NULL;
-    if (path && (rc = grn_io_remove(ctx, path))) { goto exit; }
-  } else {
-    rc = GRN_SUCCESS;
+    rc = grn_io_close(ctx, array->io);
+    if (!rc) {
+      array->io = NULL;
+      if (path) {
+        rc = grn_io_remove(ctx, path);
+      }
+    }
   }
-  if ((rc = grn_array_init(ctx, array, path, value_size, flags))) { goto exit; }
-exit:
+  if (!rc) {
+    rc = grn_array_init(ctx, array, path, value_size, flags);
+  }
   if (path) { GRN_FREE(path); }
   return rc;
 }
