@@ -251,28 +251,40 @@ grn_array_init_tiny_array(grn_ctx *ctx, grn_array *array, const char *path,
   return GRN_SUCCESS;
 }
 
+static grn_io *
+grn_array_create_io_array(grn_ctx *ctx, grn_array *array, const char *path,
+                          uint32_t value_size)
+{
+  uint32_t w_of_element = 0;
+  grn_io_array_spec array_spec[2];
+
+  while ((1U << w_of_element) < value_size) {
+    w_of_element++;
+  }
+
+  array_spec[array_seg_value].w_of_element = w_of_element;
+  array_spec[array_seg_value].max_n_segments = 1U << (30 - (22 - w_of_element));
+  array_spec[array_seg_bitmap].w_of_element = 0;
+  array_spec[array_seg_bitmap].max_n_segments = 1U << (30 - (22 + 3));
+  return grn_io_create_with_array(ctx, path, sizeof(struct grn_array_header),
+                                  GRN_ARRAY_SEGMENT_SIZE, grn_io_auto,
+                                  2, array_spec);
+}
+
 static grn_rc
 grn_array_init_io_array(grn_ctx *ctx, grn_array *array, const char *path,
                         uint32_t value_size, uint32_t flags)
 {
   grn_io *io;
   struct grn_array_header *header;
-  uint32_t w_of_element = 0;
-  while ((1U << w_of_element) < value_size) {
-    w_of_element++;
+
+  io = grn_array_create_io_array(ctx, array, path, value_size);
+  if (!io) {
+    return ctx->rc;
   }
-  {
-    grn_io_array_spec array_spec[2];
-    array_spec[array_seg_value].w_of_element = w_of_element;
-    array_spec[array_seg_value].max_n_segments = 1U << (30 - (22 - w_of_element));
-    array_spec[array_seg_bitmap].w_of_element = 0;
-    array_spec[array_seg_bitmap].max_n_segments = 1U << (30 - (22 + 3));
-    io = grn_io_create_with_array(ctx, path, sizeof(struct grn_array_header),
-                                  GRN_ARRAY_SEGMENT_SIZE, grn_io_auto, 2, array_spec);
-  }
-  if (!io) { return ctx->rc; }
-  header = grn_io_header(io);
   grn_io_set_type(io, GRN_TABLE_NO_KEY);
+
+  header = grn_io_header(io);
   header->flags = flags;
   header->curr_rec = 0;
   header->lock = 0;
@@ -280,6 +292,7 @@ grn_array_init_io_array(grn_ctx *ctx, grn_array *array, const char *path,
   header->n_entries = 0;
   header->n_garbages = 0;
   header->garbages = GRN_ID_NIL;
+
   array->obj.header.flags = flags;
   array->ctx = ctx;
   array->value_size = value_size;
