@@ -286,9 +286,11 @@ inline static grn_array *
 _grn_array_create(grn_ctx *ctx, grn_array *array,
                   const char *path, uint32_t value_size, uint32_t flags)
 {
-  if (!((flags & GRN_ARRAY_TINY) ?
-        tiny_array_init(ctx, array, path, value_size, flags) :
-        io_array_init(ctx, array, path, value_size, flags))) {
+  if (flags & GRN_ARRAY_TINY) {
+    if (!tiny_array_init(ctx, array, path, value_size, flags)) {
+      return array;
+    }
+  } else if (!io_array_init(ctx, array, path, value_size, flags)) {
     return array;
   }
   return NULL;
