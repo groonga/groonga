@@ -220,7 +220,7 @@ enum {
 
 static grn_rc
 tiny_array_init(grn_ctx *ctx, grn_array *array, const char *path,
-               uint32_t value_size, uint32_t flags)
+                uint32_t value_size, uint32_t flags)
 {
   if (path) {
     ERR(GRN_INVALID_ARGUMENT, "failed to create array");
@@ -244,7 +244,7 @@ tiny_array_init(grn_ctx *ctx, grn_array *array, const char *path,
 
 static grn_rc
 io_array_init(grn_ctx *ctx, grn_array *array, const char *path,
-               uint32_t value_size, uint32_t flags)
+              uint32_t value_size, uint32_t flags)
 {
   grn_io *io;
   struct grn_array_header *header;
@@ -860,7 +860,8 @@ put_key_(grn_ctx *ctx, grn_hash *hash, entry_str *n, const char *key, int len)
 }
 
 inline static grn_rc
-put_key(grn_ctx *ctx, grn_hash *hash, entry_str *n, uint32_t h, const char *key, unsigned int len)
+put_key(grn_ctx *ctx, grn_hash *hash, entry_str *n, uint32_t h,
+        const char *key, unsigned int len)
 {
   n->key = h;
   if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
@@ -895,7 +896,8 @@ put_key(grn_ctx *ctx, grn_hash *hash, entry_str *n, uint32_t h, const char *key,
 }
 
 inline static int
-match_key(grn_ctx *ctx, grn_hash *hash, entry_str *ee, uint32_t h, const char *key, unsigned int len)
+match_key(grn_ctx *ctx, grn_hash *hash, entry_str *ee, uint32_t h,
+          const char *key, unsigned int len)
 {
   if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
     return (ee->key == h &&
@@ -914,8 +916,8 @@ match_key(grn_ctx *ctx, grn_hash *hash, entry_str *ee, uint32_t h, const char *k
 
 inline static grn_rc
 io_hash_init(grn_hash *ih, grn_ctx *ctx, const char *path, uint32_t key_size,
-               uint32_t value_size, uint32_t flags, grn_encoding encoding,
-               uint32_t init_size)
+             uint32_t value_size, uint32_t flags, grn_encoding encoding,
+             uint32_t init_size)
 {
   grn_io *io;
   struct grn_hash_header *header;
@@ -2275,7 +2277,7 @@ static uint32_t default_flags = GRN_HASH_TINY;
 
 grn_rc
 grn_rhash_init(grn_ctx *ctx, grn_hash *hash, grn_rec_unit record_unit, int record_size,
-              grn_rec_unit subrec_unit, int subrec_size, unsigned int max_n_subrecs)
+               grn_rec_unit subrec_unit, int subrec_size, unsigned int max_n_subrecs)
 {
   grn_rc rc;
   record_size = grn_rec_unit_size(record_unit, record_size);
@@ -2458,7 +2460,7 @@ grn_rhash_group(grn_hash *s, int limit, grn_group_optarg *optarg)
 
 grn_rc
 grn_rhash_subrec_info(grn_hash *s, grn_id rh, int index,
-                     grn_id *rid, int *section, int *pos, int *score, void **subrec)
+                      grn_id *rid, int *section, int *pos, int *score, void **subrec)
 {
   grn_rset_posinfo *pi;
   grn_rset_recinfo *ri;
