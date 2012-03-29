@@ -1,6 +1,7 @@
 groonga (2.0.1-1) unstable; urgency=low
 
   * New upstream release.
+  * grntest -> groonga-benchmark.
 
  -- Kouhei Sutou <kou@clear-code.com>  Thu, 29 Mar 2012 00:00:00 +0900
 
