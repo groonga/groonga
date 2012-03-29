@@ -202,13 +202,17 @@ enum {
   GRN_IO_ARRAY_AT(array->io, array_seg_value, id, &flags, value);\
 } while (0)
 
-#define ARRAY_ENTRY_AT(array,id,value,addp) do {\
-  if (IO_ARRAYP(array)) {\
-    ARRAY_ENTRY_AT_(array, id, value, addp);\
-  } else {\
-    (value) = grn_tiny_array_at_inline(&array->a, id);\
-  }\
-} while (0)
+inline static void *
+grn_array_entry_at(grn_ctx *ctx, grn_array *array, grn_id id, int flags)
+{
+  if (IO_ARRAYP(array)) {
+    void *value;
+    ARRAY_ENTRY_AT_(array, id, value, flags);
+    return value;
+  } else {
+    return grn_tiny_array_at_inline(&array->a, id);
+  }
+}
 
 inline static grn_bool
 grn_array_bitmap_at(grn_ctx *ctx, grn_array *array, grn_id id)
@@ -415,7 +419,7 @@ grn_array_get_value(grn_ctx *ctx, grn_array *array, grn_id id, void *valuebuf)
   if (ctx && array) {
     void *ee;
     if (!grn_array_bitmap_at(ctx, array, id)) { return 0; }
-    ARRAY_ENTRY_AT(array, id, ee, 0);
+    ee = grn_array_entry_at(ctx, array, id, 0);
     if (ee) {
       if (valuebuf) { memcpy(valuebuf, ee, array->value_size); }
       return array->value_size;
@@ -430,7 +434,7 @@ _grn_array_get_value(grn_ctx *ctx, grn_array *array, grn_id id)
   if (ctx && array) {
     void *ee;
     if (!grn_array_bitmap_at(ctx, array, id)) { return NULL; }
-    ARRAY_ENTRY_AT(array, id, ee, 0);
+    ee = grn_array_entry_at(ctx, array, id, 0);
     return ee;
   }
   return NULL;
@@ -443,7 +447,7 @@ grn_array_set_value(grn_ctx *ctx, grn_array *array, grn_id id,
   if (ctx && array && value) {
     void *ee;
     if (!grn_array_bitmap_at(ctx, array, id)) { return GRN_INVALID_ARGUMENT; }
-    ARRAY_ENTRY_AT(array, id, ee, 0);
+    ee = grn_array_entry_at(ctx, array, id, 0);
     if (ee) {
       switch ((flags & GRN_OBJ_SET_MASK)) {
       case GRN_OBJ_SET :
@@ -632,7 +636,7 @@ grn_array_cursor_get_value(grn_ctx *ctx, grn_array_cursor *c, void **value)
 {
   void *ee;
   if (c && value) {
-    ARRAY_ENTRY_AT(c->array, c->curr_rec, ee, 0);
+    ee = grn_array_entry_at(ctx, c->array, c->curr_rec, 0);
     if (ee) {
       *value = ee;
       return c->array->value_size;
@@ -693,7 +697,7 @@ grn_array_add(grn_ctx *ctx, grn_array *array, void **value)
   void *ee;
   if (!ctx || !array || !(e = array_entry_new(ctx, array))) { return GRN_ID_NIL; }
   (*array->n_entries)++;
-  ARRAY_ENTRY_AT(array, e, ee, GRN_TABLE_ADD);
+  ee = grn_array_entry_at(ctx, array, e, GRN_TABLE_ADD);
   if (value) { *value = ee; }
   return e;
 }
