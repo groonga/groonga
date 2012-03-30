@@ -1131,17 +1131,17 @@ tiny_hash_init(grn_hash *ah, grn_ctx *ctx, const char *path, uint32_t key_size,
   return GRN_SUCCESS;
 }
 
-inline static grn_hash *
-_grn_hash_create(grn_ctx *ctx, grn_hash *hash, const char *path,
-                 uint32_t key_size, uint32_t value_size, uint32_t flags)
+static grn_rc
+grn_hash_init(grn_ctx *ctx, grn_hash *hash, const char *path,
+              uint32_t key_size, uint32_t value_size, uint32_t flags)
 {
-  grn_encoding encoding = ctx->encoding;
-  if (!((flags & GRN_HASH_TINY) ?
-        tiny_hash_init(hash, ctx, path, key_size, value_size, flags, encoding) :
-        io_hash_init(hash, ctx, path, key_size, value_size, flags, encoding, 0))) {
-    return hash;
+  if (flags & GRN_HASH_TINY) {
+    return tiny_hash_init(hash, ctx, path, key_size, value_size,
+                          flags, ctx->encoding);
+  } else {
+    return io_hash_init(hash, ctx, path, key_size, value_size,
+                        flags, ctx->encoding, 0);
   }
-  return NULL;
 }
 
 grn_hash *
@@ -1154,7 +1154,7 @@ grn_hash_create(grn_ctx *ctx, const char *path, uint32_t key_size, uint32_t valu
     return NULL;
   }
   GRN_DB_OBJ_SET_TYPE(hash, GRN_TABLE_HASH_KEY);
-  if (!_grn_hash_create(ctx, hash, path, key_size, value_size, flags)) {
+  if (grn_hash_init(ctx, hash, path, key_size, value_size, flags)) {
     GRN_FREE(hash);
     return NULL;
   }
@@ -1272,12 +1272,8 @@ grn_hash_truncate(grn_ctx *ctx, grn_hash *hash)
     if ((rc = grn_io_close(ctx, hash->io))) { goto exit; }
     hash->io = NULL;
     if (path && (rc = grn_io_remove(ctx, path))) { goto exit; }
-  } else {
-    rc = GRN_SUCCESS;
   }
-  if (!_grn_hash_create(ctx, hash, path, key_size, value_size, flags)) {
-    rc = GRN_UNKNOWN_ERROR;
-  }
+  rc = grn_hash_init(ctx, hash, path, key_size, value_size, flags);
 exit:
   if (path) { GRN_FREE(path); }
   return rc;
