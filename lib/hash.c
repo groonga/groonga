@@ -222,7 +222,7 @@ grn_array_entry_at(grn_ctx *ctx, grn_array *array, grn_id id, int flags)
   if (grn_array_is_io_array(array)) {
     return grn_array_io_entry_at(ctx, array, id, flags);
   } else {
-    return grn_tiny_array_at_inline(&array->a, id);
+    return grn_tiny_array_at_inline(&array->array, id);
   }
 }
 
@@ -257,7 +257,7 @@ grn_array_init_tiny_array(grn_ctx *ctx, grn_array *array, const char *path,
   array->n_entries_buf = 0;
   array->io = NULL;
   array->garbages = GRN_ID_NIL;
-  grn_tiny_array_init(ctx, &array->a, value_size, GRN_TINY_ARRAY_CLEAR);
+  grn_tiny_array_init(ctx, &array->array, value_size, GRN_TINY_ARRAY_CLEAR);
   grn_tiny_array_init(ctx, &array->bitmap, 1, GRN_TINY_ARRAY_CLEAR);
   return GRN_SUCCESS;
 }
@@ -391,7 +391,7 @@ grn_array_close(grn_ctx *ctx, grn_array *array)
     rc = grn_io_close(ctx, array->io);
   } else {
     GRN_ASSERT(ctx == array->ctx);
-    grn_tiny_array_fin(&array->a);
+    grn_tiny_array_fin(&array->array);
     grn_tiny_array_fin(&array->bitmap);
   }
   GRN_FREE(array);
@@ -557,7 +557,7 @@ grn_array_delete_by_id(grn_ctx *ctx, grn_array *array, grn_id id,
       }
     } else {
       if (array->value_size >= sizeof(grn_id)) {
-        void * const entry = grn_tiny_array_at_inline(&array->a, id);
+        void * const entry = grn_tiny_array_at_inline(&array->array, id);
         if (!entry) {
           rc = GRN_INVALID_ARGUMENT;
         } else {
@@ -609,7 +609,7 @@ grn_array_cursor_close(grn_ctx *ctx, grn_array_cursor *cursor)
 inline static grn_id
 grn_array_get_max_id(grn_array *array)
 {
-  return grn_array_is_io_array(array) ? array->header->curr_rec : array->a.max;
+  return grn_array_is_io_array(array) ? array->header->curr_rec : array->array.max;
 }
 
 grn_array_cursor *
@@ -731,22 +731,22 @@ grn_array_add_to_tiny_array(grn_ctx *ctx, grn_array *array, void **value)
   grn_id id = array->garbages;
   void *entry;
   if (id) {
-    entry = grn_tiny_array_at_inline(&array->a, id);
+    entry = grn_tiny_array_at_inline(&array->array, id);
     array->garbages = *(grn_id *)entry;
     memset(entry, 0, array->value_size);
     (*array->n_garbages)--;
     grn_tiny_array_bit_on(&array->bitmap, id);
   } else {
-    id = array->a.max + 1;
+    id = array->array.max + 1;
     if (!grn_tiny_array_bit_on(&array->bitmap, id)) {
       return GRN_ID_NIL;
     }
-    entry = grn_tiny_array_at_inline(&array->a, id);
+    entry = grn_tiny_array_at_inline(&array->array, id);
     if (!entry) {
       grn_tiny_array_bit_off(&array->bitmap, id);
       return GRN_ID_NIL;
     }
-    array->a.max = id;
+    array->array.max = id;
   }
   (*array->n_entries)++;
   if (value) { *value = entry; }
