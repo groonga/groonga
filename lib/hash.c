@@ -889,7 +889,7 @@ grn_hash_idx_at(grn_ctx *ctx, grn_hash *hash, grn_id id)
 }
 
 inline static void *
-grn_hash_key_at(grn_ctx *ctx, grn_hash *hash, uint32_t pos)
+grn_io_hash_key_at(grn_ctx *ctx, grn_hash *hash, uint32_t pos)
 {
   int flags = GRN_TABLE_ADD;
   void *key;
@@ -909,7 +909,7 @@ get_key(grn_ctx *ctx, grn_hash *hash, entry_str *n)
       return (char *)&n->str;
     } else {
       if (IO_HASHP(hash)) {
-        return (char *)grn_hash_key_at(ctx, hash, n->str);
+        return (char *)grn_io_hash_key_at(ctx, hash, n->str);
       } else {
         return ((entry_astr *)n)->str;
       }
@@ -958,7 +958,7 @@ put_key_(grn_ctx *ctx, grn_hash *hash, entry_str *n, const char *key, int len)
     n->str = res;
   }
   {
-    void * const dest = grn_hash_key_at(ctx, hash, res);
+    void * const dest = grn_io_hash_key_at(ctx, hash, res);
     if (!dest) { return; }
     memcpy(dest, key, len);
   }
