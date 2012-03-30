@@ -4,7 +4,7 @@
 
 Name:		groonga
 Version:	@VERSION@
-Release:	0%{?dist}
+Release:	2%{?dist}
 Summary:	An Embeddable Fulltext Search Engine
 
 Group:		Applications/Text
@@ -244,6 +244,14 @@ fi
 %config(noreplace) %{_sysconfdir}/munin/plugin-conf.d/*
 
 %changelog
+* Fri Mar 30 2012 Kouhei Sutou <kou@clear-code.com> - 2.0.1-2
+- Fix default file path: /etc/default/groonga -> /etc/default/groonga-server
+- Use shutdown command for stop.
+
+* Fri Mar 30 2012 Kouhei Sutou <kou@clear-code.com> - 2.0.1-1
+- Fix bind address argument parameter.
+  Patch by Masaharu IWAI. Thanks!!!
+
 * Thu Mar 29 2012 Kouhei Sutou <kou@clear-code.com> - 2.0.1-0
 - new upstream release.
 - grntest -> groonga-benchmark.

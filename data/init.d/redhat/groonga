@@ -106,6 +106,14 @@ fi
 
 RETVAL=0
 
+send_command() {
+	command=$1
+	if [ "${PROTOCOL}" = "http" ]; then
+		$curl "http://${ADDRESS}:${PORT}/d/${command}"
+	else
+		$groonga --port $PORT -c $ADDRESS ${command}
+	fi
+}
 
 start() {
 	echo -n "Starting $name: "
@@ -118,6 +126,7 @@ start() {
 
 stop() {
 	echo -n "Shutting down $name: "
+	send_command shutdown
 	killproc $prog
 	RETVAL=$?
 	echo
@@ -131,11 +140,7 @@ restart() {
 }
 
 status() {
-	if [ "${PROTOCOL}" = "http" ]; then
-		$curl "http://${ADDRESS}:${PORT}/d/status"
-	else
-		$groonga --port $PORT -c $ADDRESS status
-	fi
+	send_command status
 }
 
 case "$1" in
@@ -146,7 +151,7 @@ case "$1" in
 	stop
 	;;
     restart)
-    	restart
+	restart
 	;;
     reload)
 	killproc $groonga -HUP
