@@ -1020,7 +1020,7 @@ match_key(grn_ctx *ctx, grn_hash *hash, entry_str *ee, uint32_t h,
 #define STEP(x) (((x) >> 2) | 0x1010101)
 
 inline static grn_rc
-io_hash_init(grn_hash *ih, grn_ctx *ctx, const char *path, uint32_t key_size,
+io_hash_init(grn_ctx *ctx, grn_hash *ih, const char *path, uint32_t key_size,
              uint32_t value_size, uint32_t flags, grn_encoding encoding,
              uint32_t init_size)
 {
@@ -1090,7 +1090,7 @@ io_hash_init(grn_hash *ih, grn_ctx *ctx, const char *path, uint32_t key_size,
 #define INITIAL_INDEX_SIZE 256U
 
 static grn_rc
-grn_tiny_hash_init(grn_hash *hash, grn_ctx *ctx, const char *path,
+grn_tiny_hash_init(grn_ctx *ctx, grn_hash *hash, const char *path,
                    uint32_t key_size, uint32_t value_size, uint32_t flags,
                    grn_encoding encoding)
 {
@@ -1143,10 +1143,10 @@ grn_hash_init(grn_ctx *ctx, grn_hash *hash, const char *path,
               uint32_t key_size, uint32_t value_size, uint32_t flags)
 {
   if (flags & GRN_HASH_TINY) {
-    return grn_tiny_hash_init(hash, ctx, path, key_size, value_size,
+    return grn_tiny_hash_init(ctx, hash, path, key_size, value_size,
                               flags, ctx->encoding);
   } else {
-    return io_hash_init(hash, ctx, path, key_size, value_size,
+    return io_hash_init(ctx, hash, path, key_size, value_size,
                         flags, ctx->encoding, 0);
   }
 }
@@ -2367,11 +2367,11 @@ grn_rhash_init(grn_ctx *ctx, grn_hash *hash, grn_rec_unit record_unit, int recor
   if (!hash) { return GRN_INVALID_ARGUMENT; }
   if (record_size < 0) { return GRN_INVALID_ARGUMENT; }
   if ((default_flags & GRN_HASH_TINY)) {
-    rc = grn_tiny_hash_init(hash, ctx, NULL, record_size,
+    rc = grn_tiny_hash_init(ctx, hash, NULL, record_size,
                             max_n_subrecs * (GRN_RSET_SCORE_SIZE + subrec_size),
                             default_flags, GRN_ENC_NONE);
   } else {
-    rc = io_hash_init(hash, ctx, NULL, record_size,
+    rc = io_hash_init(ctx, hash, NULL, record_size,
                       max_n_subrecs * (GRN_RSET_SCORE_SIZE + subrec_size),
                       default_flags, GRN_ENC_NONE, 0);
   }
