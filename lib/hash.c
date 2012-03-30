@@ -199,7 +199,7 @@ struct grn_array_header {
 
 enum {
   GRN_ARRAY_VALUE_SEGMENT = 0,
-  array_seg_bitmap = 1
+  GRN_ARRAY_BITMAP_SEGMENT = 1
 };
 
 inline static grn_bool
@@ -231,7 +231,7 @@ grn_array_bitmap_at(grn_ctx *ctx, grn_array *array, grn_id id)
 {
   if (grn_array_is_io_array(array)) {
     grn_bool value;
-    GRN_IO_ARRAY_BIT_AT(array->io, array_seg_bitmap, id, value);
+    GRN_IO_ARRAY_BIT_AT(array->io, GRN_ARRAY_BITMAP_SEGMENT, id, value);
     return value;
   } else {
     return grn_tiny_array_bit_at(&array->bitmap, id);
@@ -275,8 +275,8 @@ grn_array_create_io_array(grn_ctx *ctx, const char *path, uint32_t value_size)
   array_spec[GRN_ARRAY_VALUE_SEGMENT].w_of_element = w_of_element;
   array_spec[GRN_ARRAY_VALUE_SEGMENT].max_n_segments =
       1U << (30 - (22 - w_of_element));
-  array_spec[array_seg_bitmap].w_of_element = 0;
-  array_spec[array_seg_bitmap].max_n_segments = 1U << (30 - (22 + 3));
+  array_spec[GRN_ARRAY_BITMAP_SEGMENT].w_of_element = 0;
+  array_spec[GRN_ARRAY_BITMAP_SEGMENT].max_n_segments = 1U << (30 - (22 + 3));
   return grn_io_create_with_array(ctx, path, sizeof(struct grn_array_header),
                                   GRN_ARRAY_SEGMENT_SIZE, grn_io_auto,
                                   2, array_spec);
@@ -553,7 +553,7 @@ grn_array_delete_by_id(grn_ctx *ctx, grn_array *array, grn_id id,
          * The following GRN_IO_ARRAY_BIT_OFF() never fails because the above
          * grn_array_bitmap_at() returned 1 for the same ID.
          */
-        GRN_IO_ARRAY_BIT_OFF(array->io, array_seg_bitmap, id);
+        GRN_IO_ARRAY_BIT_OFF(array->io, GRN_ARRAY_BITMAP_SEGMENT, id);
       }
     } else {
       if (array->value_size >= sizeof(grn_id)) {
@@ -768,14 +768,14 @@ grn_array_add_to_io_array(grn_ctx *ctx, grn_array *array, void **value)
     memset(entry, 0, header->value_size);
     (*array->n_garbages)--;
     /* FIXME: GRN_IO_ARRAY_BIT_ON() may fail and cause a critical problem. */
-    GRN_IO_ARRAY_BIT_ON(array->io, array_seg_bitmap, id);
+    GRN_IO_ARRAY_BIT_ON(array->io, GRN_ARRAY_BITMAP_SEGMENT, id);
   } else {
     id = header->curr_rec + 1;
     /* FIXME: GRN_IO_ARRAY_BIT_ON() may fail and cause a critical problem. */
-    GRN_IO_ARRAY_BIT_ON(array->io, array_seg_bitmap, id);
+    GRN_IO_ARRAY_BIT_ON(array->io, GRN_ARRAY_BITMAP_SEGMENT, id);
     entry = grn_array_io_entry_at(ctx, array, id, GRN_TABLE_ADD);
     if (!entry) {
-      GRN_IO_ARRAY_BIT_OFF(array->io, array_seg_bitmap, id);
+      GRN_IO_ARRAY_BIT_OFF(array->io, GRN_ARRAY_BITMAP_SEGMENT, id);
       return GRN_ID_NIL;
     }
     header->curr_rec = id;
