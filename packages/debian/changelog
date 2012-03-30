@@ -1,6 +1,7 @@
 groonga (2.0.1-3) unstable; urgency=low
 
   * Fix default file path: /etc/default/groonga -> /etc/default/groonga-server
+  * Use shutdown command for stop.
 
  -- Kouhei Sutou <kou@clear-code.com>  Fri, 30 Mar 2012 00:00:00 +0900
 
