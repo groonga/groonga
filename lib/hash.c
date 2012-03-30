@@ -589,7 +589,7 @@ grn_rc
 grn_array_copy_sort_key(grn_ctx *ctx, grn_array *array,
                         grn_table_sort_key *keys, int n_keys)
 {
-  array->keys = GRN_MALLOCN(grn_table_sort_key, n_keys);
+  array->keys = (grn_table_sort_key *)GRN_MALLOCN(grn_table_sort_key, n_keys);
   if (!array->keys) {
     return ctx->rc;
   }
@@ -618,7 +618,7 @@ grn_array_cursor_open(grn_ctx *ctx, grn_array *array, grn_id min, grn_id max,
   grn_array_cursor *cursor;
   if (!array || !ctx) { return NULL; }
 
-  cursor = GRN_MALLOCN(grn_array_cursor, 1);
+  cursor = (grn_array_cursor *)GRN_MALLOCN(grn_array_cursor, 1);
   if (!cursor) { return NULL; }
 
   GRN_DB_OBJ_SET_TYPE(cursor, GRN_CURSOR_TABLE_NO_KEY);
