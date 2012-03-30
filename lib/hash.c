@@ -1090,44 +1090,52 @@ io_hash_init(grn_hash *ih, grn_ctx *ctx, const char *path, uint32_t key_size,
 
 #define INITIAL_INDEX_SIZE 256U
 
-inline static grn_rc
-tiny_hash_init(grn_hash *ah, grn_ctx *ctx, const char *path, uint32_t key_size,
-               uint32_t value_size, uint32_t flags, grn_encoding encoding)
+static grn_rc
+grn_tiny_hash_init(grn_hash *hash, grn_ctx *ctx, const char *path,
+                   uint32_t key_size, uint32_t value_size, uint32_t flags,
+                   grn_encoding encoding)
 {
   uint32_t entry_size;
-  if (path) { return GRN_INVALID_ARGUMENT; }
-  if (!(ah->index = GRN_CTX_ALLOC(ctx, INITIAL_INDEX_SIZE * sizeof(grn_id)))) {
+
+  if (path) {
+    return GRN_INVALID_ARGUMENT;
+  }
+  hash->index = GRN_CTX_ALLOC(ctx, INITIAL_INDEX_SIZE * sizeof(grn_id));
+  if (!hash->index) {
     return GRN_NO_MEMORY_AVAILABLE;
   }
+
   if (flags & GRN_OBJ_KEY_VAR_SIZE) {
-    entry_size = (intptr_t)(&((entry_astr *)0)->dummy) + value_size;
+    entry_size = (uintptr_t)(&((entry_astr *)0)->dummy) + value_size;
   } else {
     if (key_size == sizeof(uint32_t)) {
-      entry_size = (intptr_t)(&((entry *)0)->dummy) + value_size;
+      entry_size = (uintptr_t)(&((entry *)0)->dummy) + value_size;
     } else {
-      entry_size = (intptr_t)(&((entry *)0)->dummy) + key_size + value_size;
+      entry_size = (uintptr_t)(&((entry *)0)->dummy) + key_size + value_size;
     }
   }
   if (entry_size != sizeof(uint32_t)) {
-    entry_size = ((entry_size + (sizeof(intptr_t)) - 1) & ~((sizeof(intptr_t)) - 1));
+    entry_size += sizeof(uintptr_t) - 1;
+    entry_size &= ~(sizeof(uintptr_t) - 1);
   }
-  ah->obj.header.flags = flags;
-  ah->ctx = ctx;
-  ah->key_size = key_size;
-  ah->encoding = encoding;
-  ah->value_size = value_size;
-  ah->entry_size = entry_size;
-  ah->n_garbages = &ah->n_garbages_;
-  ah->n_entries = &ah->n_entries_;
-  ah->max_offset = &ah->max_offset_;
-  ah->max_offset_ = INITIAL_INDEX_SIZE - 1;
-  ah->io = NULL;
-  ah->n_garbages_ = 0;
-  ah->n_entries_ = 0;
-  ah->garbages = GRN_ID_NIL;
-  ah->tokenizer = NULL;
-  grn_tiny_array_init(ctx, &ah->a, entry_size, GRN_TINY_ARRAY_CLEAR);
-  grn_tiny_array_init(ctx, &ah->bitmap, 1, GRN_TINY_ARRAY_CLEAR);
+
+  hash->obj.header.flags = flags;
+  hash->ctx = ctx;
+  hash->key_size = key_size;
+  hash->encoding = encoding;
+  hash->value_size = value_size;
+  hash->entry_size = entry_size;
+  hash->n_garbages = &hash->n_garbages_;
+  hash->n_entries = &hash->n_entries_;
+  hash->max_offset = &hash->max_offset_;
+  hash->max_offset_ = INITIAL_INDEX_SIZE - 1;
+  hash->io = NULL;
+  hash->n_garbages_ = 0;
+  hash->n_entries_ = 0;
+  hash->garbages = GRN_ID_NIL;
+  hash->tokenizer = NULL;
+  grn_tiny_array_init(ctx, &hash->a, entry_size, GRN_TINY_ARRAY_CLEAR);
+  grn_tiny_array_init(ctx, &hash->bitmap, 1, GRN_TINY_ARRAY_CLEAR);
   return GRN_SUCCESS;
 }
 
@@ -1136,8 +1144,8 @@ grn_hash_init(grn_ctx *ctx, grn_hash *hash, const char *path,
               uint32_t key_size, uint32_t value_size, uint32_t flags)
 {
   if (flags & GRN_HASH_TINY) {
-    return tiny_hash_init(hash, ctx, path, key_size, value_size,
-                          flags, ctx->encoding);
+    return grn_tiny_hash_init(hash, ctx, path, key_size, value_size,
+                              flags, ctx->encoding);
   } else {
     return io_hash_init(hash, ctx, path, key_size, value_size,
                         flags, ctx->encoding, 0);
@@ -2360,9 +2368,9 @@ grn_rhash_init(grn_ctx *ctx, grn_hash *hash, grn_rec_unit record_unit, int recor
   if (!hash) { return GRN_INVALID_ARGUMENT; }
   if (record_size < 0) { return GRN_INVALID_ARGUMENT; }
   if ((default_flags & GRN_HASH_TINY)) {
-    rc = tiny_hash_init(hash, ctx, NULL, record_size,
-                        max_n_subrecs * (GRN_RSET_SCORE_SIZE + subrec_size),
-                        default_flags, GRN_ENC_NONE);
+    rc = grn_tiny_hash_init(hash, ctx, NULL, record_size,
+                            max_n_subrecs * (GRN_RSET_SCORE_SIZE + subrec_size),
+                            default_flags, GRN_ENC_NONE);
   } else {
     rc = io_hash_init(hash, ctx, NULL, record_size,
                       max_n_subrecs * (GRN_RSET_SCORE_SIZE + subrec_size),
