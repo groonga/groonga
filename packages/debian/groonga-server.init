@@ -33,11 +33,13 @@ OPTION_ARGS=""
 START_STOP_DAEMON_ARGS=""
 ENABLE="no"
 
+DEFAULT_FILE=/etc/default/groonga-server
+
 # Exit if the package is not installed
 [ -x "$DAEMON" ] || exit 0
 
 # Read configuration variable file if it is present
-[ -r /etc/default/$NAME ] && . /etc/default/$NAME
+[ -r $DEFAEULT_FILE ] && . $DEFAULT_FILE
 
 [ "$ENABLE" = "yes" ] || exit 0
 
