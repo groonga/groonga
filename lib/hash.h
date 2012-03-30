@@ -122,8 +122,8 @@ struct _grn_array {
   uint32_t *lock;
 
   /* For tiny_array. */
-  uint32_t n_garbages_;
-  uint32_t n_entries_;
+  uint32_t n_garbages_buf;
+  uint32_t n_entries_buf;
   grn_id garbages;
   grn_tiny_array a;
   grn_tiny_array bitmap;

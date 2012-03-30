@@ -251,10 +251,10 @@ grn_array_init_tiny_array(grn_ctx *ctx, grn_array *array, const char *path,
   array->value_size = value_size;
   array->n_keys = 0;
   array->keys = NULL;
-  array->n_garbages = &array->n_garbages_;
-  array->n_entries = &array->n_entries_;
-  array->n_garbages_ = 0;
-  array->n_entries_ = 0;
+  array->n_garbages = &array->n_garbages_buf;
+  array->n_entries = &array->n_entries_buf;
+  array->n_garbages_buf = 0;
+  array->n_entries_buf = 0;
   array->io = NULL;
   array->garbages = GRN_ID_NIL;
   grn_tiny_array_init(ctx, &array->a, value_size, GRN_TINY_ARRAY_CLEAR);
