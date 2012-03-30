@@ -303,7 +303,7 @@ fi
 %{php_extdir}/groonga.so
 
 %changelog
-* Fri Mar 29 2012 Kouhei Sutou <kou@clear-code.com> - 2.0.1-1
+* Fri Mar 30 2012 Kouhei Sutou <kou@clear-code.com> - 2.0.1-1
 - Fix bind address argument parameter.
   Patch by Masaharu IWAI. Thanks!!!
 
