@@ -1036,37 +1036,57 @@ grn_io_hash_calculate_entry_size(uint32_t key_size, uint32_t value_size,
   return entry_size;
 }
 
-inline static grn_rc
-io_hash_init(grn_ctx *ctx, grn_hash *ih, const char *path, uint32_t key_size,
-             uint32_t value_size, uint32_t flags, grn_encoding encoding,
-             uint32_t init_size)
+static grn_io *
+grn_io_hash_create_io(grn_ctx *ctx, const char *path, uint32_t entry_size)
 {
-  grn_io *io;
-  struct grn_hash_header *header;
-  uint32_t entry_size, w_of_element, m;
-  for (m = IDX_MASK_IN_A_SEGMENT + 1; m < init_size * 2; m *= 2);
-  entry_size = grn_io_hash_calculate_entry_size(key_size, value_size, flags);
-  w_of_element = 0;
+  uint32_t w_of_element = 0;
+  grn_io_array_spec array_spec[4];
+
   while ((1U << w_of_element) < entry_size) {
     w_of_element++;
   }
-  {
-    grn_io_array_spec array_spec[4];
-    array_spec[segment_key].w_of_element = 0;
-    array_spec[segment_key].max_n_segments = 0x400;
-    array_spec[segment_entry].w_of_element = w_of_element;
-    array_spec[segment_entry].max_n_segments = 1U << (30 - (22 - w_of_element));
-    array_spec[segment_index].w_of_element = 2;
-    array_spec[segment_index].max_n_segments = 1U << (30 - (22 - 2));
-    array_spec[segment_bitmap].w_of_element = 0;
-    array_spec[segment_bitmap].max_n_segments = 1U << (30 - (22 + 3));
-    io = grn_io_create_with_array(ctx, path, GRN_HASH_HEADER_SIZE, GRN_HASH_SEGMENT_SIZE,
+
+  array_spec[segment_key].w_of_element = 0;
+  array_spec[segment_key].max_n_segments = 0x400;
+  array_spec[segment_entry].w_of_element = w_of_element;
+  array_spec[segment_entry].max_n_segments = 1U << (30 - (22 - w_of_element));
+  array_spec[segment_index].w_of_element = 2;
+  array_spec[segment_index].max_n_segments = 1U << (30 - (22 - 2));
+  array_spec[segment_bitmap].w_of_element = 0;
+  array_spec[segment_bitmap].max_n_segments = 1U << (30 - (22 + 3));
+  return grn_io_create_with_array(ctx, path, GRN_HASH_HEADER_SIZE,
+                                  GRN_HASH_SEGMENT_SIZE,
                                   grn_io_auto, 4, array_spec);
+}
+
+static grn_rc
+grn_io_hash_init(grn_ctx *ctx, grn_hash *hash, const char *path,
+                 uint32_t key_size, uint32_t value_size, uint32_t flags,
+                 grn_encoding encoding, uint32_t init_size)
+{
+  grn_io *io;
+  struct grn_hash_header *header;
+  uint32_t entry_size, max_offset;
+
+  entry_size = grn_io_hash_calculate_entry_size(key_size, value_size, flags);
+
+  io = grn_io_hash_create_io(ctx, path, entry_size);
+  if (!io) {
+    return GRN_NO_MEMORY_AVAILABLE;
   }
-  if (!io) { return GRN_NO_MEMORY_AVAILABLE; }
-  if (encoding == GRN_ENC_DEFAULT) { encoding = ctx->encoding; }
-  header = grn_io_header(io);
   grn_io_set_type(io, GRN_TABLE_HASH_KEY);
+
+  max_offset = IDX_MASK_IN_A_SEGMENT + 1;
+  while (max_offset < init_size * 2) {
+    max_offset *= 2;
+  }
+  max_offset--;
+
+  if (encoding == GRN_ENC_DEFAULT) {
+    encoding = ctx->encoding;
+  }
+
+  header = grn_io_header(io);
   header->flags = flags;
   header->encoding = encoding;
   header->key_size = key_size;
@@ -1076,23 +1096,24 @@ io_hash_init(grn_ctx *ctx, grn_hash *ih, const char *path, uint32_t key_size,
   header->idx_offset = 0;
   header->value_size = value_size;
   header->entry_size = entry_size;
-  header->max_offset = m - 1;
+  header->max_offset = max_offset;
   header->n_entries = 0;
   header->n_garbages = 0;
   header->tokenizer = GRN_ID_NIL;
-  ih->obj.header.flags = flags;
-  ih->ctx = ctx;
-  ih->key_size = key_size;
-  ih->encoding = encoding;
-  ih->value_size = value_size;
-  ih->entry_size = entry_size;
-  ih->n_garbages = &header->n_garbages;
-  ih->n_entries = &header->n_entries;
-  ih->max_offset = &header->max_offset;
-  ih->io = io;
-  ih->header = header;
-  ih->lock = &header->lock;
-  ih->tokenizer = NULL;
+
+  hash->obj.header.flags = flags;
+  hash->ctx = ctx;
+  hash->key_size = key_size;
+  hash->encoding = encoding;
+  hash->value_size = value_size;
+  hash->entry_size = entry_size;
+  hash->n_garbages = &header->n_garbages;
+  hash->n_entries = &header->n_entries;
+  hash->max_offset = &header->max_offset;
+  hash->io = io;
+  hash->header = header;
+  hash->lock = &header->lock;
+  hash->tokenizer = NULL;
   return GRN_SUCCESS;
 }
 
@@ -1163,8 +1184,8 @@ grn_hash_init(grn_ctx *ctx, grn_hash *hash, const char *path,
     return grn_tiny_hash_init(ctx, hash, path, key_size, value_size,
                               flags, ctx->encoding);
   } else {
-    return io_hash_init(ctx, hash, path, key_size, value_size,
-                        flags, ctx->encoding, 0);
+    return grn_io_hash_init(ctx, hash, path, key_size, value_size,
+                            flags, ctx->encoding, 0);
   }
 }
 
@@ -2388,9 +2409,9 @@ grn_rhash_init(grn_ctx *ctx, grn_hash *hash, grn_rec_unit record_unit, int recor
                             max_n_subrecs * (GRN_RSET_SCORE_SIZE + subrec_size),
                             default_flags, GRN_ENC_NONE);
   } else {
-    rc = io_hash_init(ctx, hash, NULL, record_size,
-                      max_n_subrecs * (GRN_RSET_SCORE_SIZE + subrec_size),
-                      default_flags, GRN_ENC_NONE, 0);
+    rc = grn_io_hash_init(ctx, hash, NULL, record_size,
+                          max_n_subrecs * (GRN_RSET_SCORE_SIZE + subrec_size),
+                          default_flags, GRN_ENC_NONE, 0);
   }
   if (rc) { return rc; }
   hash->record_unit = record_unit;
