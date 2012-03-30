@@ -1209,11 +1209,11 @@ grn_hash_create(grn_ctx *ctx, const char *path, uint32_t key_size, uint32_t valu
 grn_hash *
 grn_hash_open(grn_ctx *ctx, const char *path)
 {
-  grn_io *io = grn_io_open(ctx, path, grn_io_auto);
+  grn_io * const io = grn_io_open(ctx, path, grn_io_auto);
   if (io) {
-    struct grn_hash_header *header = grn_io_header(io);
+    struct grn_hash_header * const header = grn_io_header(io);
     if (grn_io_get_type(io) == GRN_TABLE_HASH_KEY) {
-      grn_hash *hash = GRN_MALLOC(sizeof(grn_hash));
+      grn_hash * const hash = (grn_hash *)GRN_MALLOC(sizeof(grn_hash));
       if (hash) {
         if (!(header->flags & GRN_HASH_TINY)) {
           GRN_DB_OBJ_SET_TYPE(hash, GRN_TABLE_HASH_KEY);
@@ -1230,7 +1230,7 @@ grn_hash_open(grn_ctx *ctx, const char *path)
           hash->header = header;
           hash->lock = &header->lock;
           hash->tokenizer = grn_ctx_at(ctx, header->tokenizer);
-          return (grn_hash *)hash;
+          return hash;
         } else {
           GRN_LOG(ctx, GRN_LOG_NOTICE, "invalid hash flag. (%x)", header->flags);
         }
