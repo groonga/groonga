@@ -263,8 +263,7 @@ grn_array_init_tiny_array(grn_ctx *ctx, grn_array *array, const char *path,
 }
 
 static grn_io *
-grn_array_create_io_array(grn_ctx *ctx, grn_array *array, const char *path,
-                          uint32_t value_size)
+grn_array_create_io_array(grn_ctx *ctx, const char *path, uint32_t value_size)
 {
   uint32_t w_of_element = 0;
   grn_io_array_spec array_spec[2];
@@ -289,7 +288,7 @@ grn_array_init_io_array(grn_ctx *ctx, grn_array *array, const char *path,
   grn_io *io;
   struct grn_array_header *header;
 
-  io = grn_array_create_io_array(ctx, array, path, value_size);
+  io = grn_array_create_io_array(ctx, path, value_size);
   if (!io) {
     return ctx->rc;
   }
