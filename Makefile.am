@@ -122,4 +122,4 @@ update-version:
 	  echo "\$$(NEW_VERSION) is missing";	\
 	  exit 1;				\
 	fi
-	@echo -n $(NEW_VERSION) > $(srcdir)/base-version
+	@echo -n $(NEW_VERSION) > $(srcdir)/base_version
