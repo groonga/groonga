@@ -146,7 +146,7 @@ case "$1" in
 	stop
 	;;
     restart)
-    	restart
+	restart
 	;;
     reload)
 	killproc $groonga -HUP
