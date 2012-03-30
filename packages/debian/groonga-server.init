@@ -102,6 +102,16 @@ fi
 # Depend on lsb-base (>= 3.0-6) to ensure that this file is present.
 . /lib/lsb/init-functions
 
+send_command()
+{
+    command=$1
+    if [ "${PROTOCOL}" = "http" ]; then
+	$CURL "http://${ADDRESS}:${PORT}/d/${command}"
+    else
+        $DAEMON --port ${PORT} -c ${ADDRESS} ${command}
+    fi
+}
+
 #
 # Function that starts the daemon/service
 #
@@ -164,11 +174,7 @@ do_status() {
     if [ -z "${ADDRESS}" ]; then
 	ADDRESS="localhost"
     fi
-    if [ "${PROTOCOL}" = "http" ]; then
-	$CURL "http://${ADDRESS}:${PORT}/d/status"
-    else
-        $DAEMON --port ${PORT} -c ${ADDRESS} status
-    fi
+    send_command status
     return $?
 }
 
