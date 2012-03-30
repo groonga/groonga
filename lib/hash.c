@@ -1194,8 +1194,11 @@ grn_hash_create(grn_ctx *ctx, const char *path, uint32_t key_size, uint32_t valu
                 uint32_t flags)
 {
   grn_hash *hash;
-  if (key_size > GRN_HASH_MAX_KEY_SIZE) { return NULL; }
-  if (!(hash = GRN_MALLOC(sizeof(grn_hash)))) {
+  if (key_size > GRN_HASH_MAX_KEY_SIZE) {
+    return NULL;
+  }
+  hash = (grn_hash *)GRN_MALLOC(sizeof(grn_hash));
+  if (!hash) {
     return NULL;
   }
   GRN_DB_OBJ_SET_TYPE(hash, GRN_TABLE_HASH_KEY);
@@ -1244,31 +1247,32 @@ grn_hash_open(grn_ctx *ctx, const char *path)
   return NULL;
 }
 
-inline static grn_rc
-tiny_hash_fin(grn_ctx *ctx, grn_hash *hash)
+static grn_rc
+grn_tiny_hash_fin(grn_ctx *ctx, grn_hash *hash)
 {
-  if (hash->index) {
-    if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
-      uint32_t i;
-      grn_id e, *sp;
-      for (i = *hash->n_entries, sp = hash->index; i; sp++) {
-        entry_astr *n;
-        e = *sp;
-        if (!e || (e == GARBAGE)) { continue; }
-        n = grn_tiny_array_at_inline(&hash->a, e);
-        GRN_ASSERT(n);
-        i--;
-        if (!n || (n->flag & HASH_IMMEDIATE)) { continue; }
-        GRN_CTX_FREE(ctx, n->str);
-      }
-    }
-    grn_tiny_array_fin(&hash->a);
-    grn_tiny_array_fin(&hash->bitmap);
-    GRN_CTX_FREE(ctx, hash->index);
-    return GRN_SUCCESS;
-  } else {
+  if (!hash->index) {
     return GRN_INVALID_ARGUMENT;
   }
+
+  if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
+    uint32_t num_remaining_entries = *hash->n_entries;
+    grn_id *hash_ptr;
+    for (hash_ptr = hash->index; num_remaining_entries; hash_ptr++) {
+      const grn_id id = *hash_ptr;
+      if (id && id != GARBAGE) {
+        entry_astr * const e = grn_tiny_array_at_inline(&hash->a, id);
+        GRN_ASSERT(e);
+        num_remaining_entries--;
+        if (e && !(e->flag & HASH_IMMEDIATE)) {
+          GRN_CTX_FREE(ctx, e->str);
+        }
+      }
+    }
+  }
+  grn_tiny_array_fin(&hash->a);
+  grn_tiny_array_fin(&hash->bitmap);
+  GRN_CTX_FREE(ctx, hash->index);
+  return GRN_SUCCESS;
 }
 
 grn_rc
@@ -1280,7 +1284,7 @@ grn_hash_close(grn_ctx *ctx, grn_hash *hash)
     rc = grn_io_close(ctx, hash->io);
   } else {
     GRN_ASSERT(ctx == hash->ctx);
-    rc = tiny_hash_fin(ctx, hash);
+    rc = grn_tiny_hash_fin(ctx, hash);
   }
   GRN_FREE(hash);
   return rc;
@@ -2429,7 +2433,7 @@ grn_rhash_fin(grn_ctx *ctx, grn_hash *hash)
     rc = grn_io_close(ctx, hash->io);
   } else {
     GRN_ASSERT(ctx == hash->ctx);
-    rc = tiny_hash_fin(ctx, hash);
+    rc = grn_tiny_hash_fin(ctx, hash);
   }
   return rc;
 }
