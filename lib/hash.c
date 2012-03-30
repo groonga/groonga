@@ -198,7 +198,7 @@ struct grn_array_header {
 };
 
 enum {
-  array_seg_value = 0,
+  GRN_ARRAY_VALUE_SEGMENT = 0,
   array_seg_bitmap = 1
 };
 
@@ -212,7 +212,7 @@ inline static void *
 grn_array_io_entry_at(grn_ctx *ctx, grn_array *array, grn_id id, int flags)
 {
   void *value;
-  GRN_IO_ARRAY_AT(array->io, array_seg_value, id, &flags, value);
+  GRN_IO_ARRAY_AT(array->io, GRN_ARRAY_VALUE_SEGMENT, id, &flags, value);
   return value;
 }
 
@@ -272,8 +272,9 @@ grn_array_create_io_array(grn_ctx *ctx, const char *path, uint32_t value_size)
     w_of_element++;
   }
 
-  array_spec[array_seg_value].w_of_element = w_of_element;
-  array_spec[array_seg_value].max_n_segments = 1U << (30 - (22 - w_of_element));
+  array_spec[GRN_ARRAY_VALUE_SEGMENT].w_of_element = w_of_element;
+  array_spec[GRN_ARRAY_VALUE_SEGMENT].max_n_segments =
+      1U << (30 - (22 - w_of_element));
   array_spec[array_seg_bitmap].w_of_element = 0;
   array_spec[array_seg_bitmap].max_n_segments = 1U << (30 - (22 + 3));
   return grn_io_create_with_array(ctx, path, sizeof(struct grn_array_header),
