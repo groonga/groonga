@@ -126,6 +126,7 @@ start() {
 
 stop() {
 	echo -n "Shutting down $name: "
+	send_command shutdown
 	killproc $prog
 	RETVAL=$?
 	echo
