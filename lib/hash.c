@@ -1019,15 +1019,11 @@ match_key(grn_ctx *ctx, grn_hash *hash, entry_str *ee, uint32_t h,
 
 #define STEP(x) (((x) >> 2) | 0x1010101)
 
-inline static grn_rc
-io_hash_init(grn_ctx *ctx, grn_hash *ih, const char *path, uint32_t key_size,
-             uint32_t value_size, uint32_t flags, grn_encoding encoding,
-             uint32_t init_size)
+static uint32_t
+grn_io_hash_calculate_entry_size(uint32_t key_size, uint32_t value_size,
+                                 uint32_t flags)
 {
-  grn_io *io;
-  struct grn_hash_header *header;
-  uint32_t entry_size, w_of_element, m;
-  for (m = IDX_MASK_IN_A_SEGMENT + 1; m < init_size * 2; m *= 2);
+  uint32_t entry_size;
   if (flags & GRN_OBJ_KEY_VAR_SIZE) {
     entry_size = (intptr_t)(&((entry_str *)0)->dummy) + value_size;
   } else {
@@ -1037,6 +1033,19 @@ io_hash_init(grn_ctx *ctx, grn_hash *ih, const char *path, uint32_t key_size,
       entry_size = (intptr_t)(&((entry *)0)->dummy) + key_size + value_size;
     }
   }
+  return entry_size;
+}
+
+inline static grn_rc
+io_hash_init(grn_ctx *ctx, grn_hash *ih, const char *path, uint32_t key_size,
+             uint32_t value_size, uint32_t flags, grn_encoding encoding,
+             uint32_t init_size)
+{
+  grn_io *io;
+  struct grn_hash_header *header;
+  uint32_t entry_size, w_of_element, m;
+  for (m = IDX_MASK_IN_A_SEGMENT + 1; m < init_size * 2; m *= 2);
+  entry_size = grn_io_hash_calculate_entry_size(key_size, value_size, flags);
   w_of_element = 0;
   while ((1U << w_of_element) < entry_size) {
     w_of_element++;
@@ -1089,6 +1098,27 @@ io_hash_init(grn_ctx *ctx, grn_hash *ih, const char *path, uint32_t key_size,
 
 #define INITIAL_INDEX_SIZE 256U
 
+static uint32_t
+grn_tiny_hash_calculate_entry_size(uint32_t key_size, uint32_t value_size,
+                                   uint32_t flags)
+{
+  uint32_t entry_size;
+  if (flags & GRN_OBJ_KEY_VAR_SIZE) {
+    entry_size = (uintptr_t)&((entry_astr *)0)->dummy + value_size;
+  } else {
+    if (key_size == sizeof(uint32_t)) {
+      entry_size = (uintptr_t)(&((entry *)0)->dummy) + value_size;
+    } else {
+      entry_size = (uintptr_t)(&((entry *)0)->dummy) + key_size + value_size;
+    }
+  }
+  if (entry_size != sizeof(uint32_t)) {
+    entry_size += sizeof(uintptr_t) - 1;
+    entry_size &= ~(sizeof(uintptr_t) - 1);
+  }
+  return entry_size;
+}
+
 static grn_rc
 grn_tiny_hash_init(grn_ctx *ctx, grn_hash *hash, const char *path,
                    uint32_t key_size, uint32_t value_size, uint32_t flags,
@@ -1104,20 +1134,7 @@ grn_tiny_hash_init(grn_ctx *ctx, grn_hash *hash, const char *path,
     return GRN_NO_MEMORY_AVAILABLE;
   }
 
-  if (flags & GRN_OBJ_KEY_VAR_SIZE) {
-    entry_size = (uintptr_t)(&((entry_astr *)0)->dummy) + value_size;
-  } else {
-    if (key_size == sizeof(uint32_t)) {
-      entry_size = (uintptr_t)(&((entry *)0)->dummy) + value_size;
-    } else {
-      entry_size = (uintptr_t)(&((entry *)0)->dummy) + key_size + value_size;
-    }
-  }
-  if (entry_size != sizeof(uint32_t)) {
-    entry_size += sizeof(uintptr_t) - 1;
-    entry_size &= ~(sizeof(uintptr_t) - 1);
-  }
-
+  entry_size = grn_tiny_hash_calculate_entry_size(key_size, value_size, flags);
   hash->obj.header.flags = flags;
   hash->ctx = ctx;
   hash->key_size = key_size;
