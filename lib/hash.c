@@ -42,7 +42,7 @@ grn_tiny_array_at_inline(grn_tiny_array *array, grn_id id)
     return NULL;
   }
   block_id = grn_tiny_array_get_block_id(array, id);
-  block = &array->elements[block_id];
+  block = &array->blocks[block_id];
   offset = GRN_TINY_ARRAY_R(block_id);
   if (!*block) {
     grn_ctx * const ctx = array->ctx;
@@ -137,7 +137,7 @@ grn_tiny_array_init(grn_ctx *ctx, grn_tiny_array *array,
   if (flags & GRN_TINY_ARRAY_THREADSAFE) {
     CRITICAL_SECTION_INIT(array->lock);
   }
-  memset(array->elements, 0, sizeof(array->elements));
+  memset(array->blocks, 0, sizeof(array->blocks));
 }
 
 void
@@ -146,7 +146,7 @@ grn_tiny_array_fin(grn_tiny_array *array)
   int block_id;
   grn_ctx * const ctx = array->ctx;
   for (block_id = 0; block_id < GRN_TINY_ARRAY_N; block_id++) {
-    void ** const block = &array->elements[block_id];
+    void ** const block = &array->blocks[block_id];
     if (*block) {
       if (array->flags & GRN_TINY_ARRAY_USE_MALLOC) {
         GRN_FREE(*block);
@@ -171,7 +171,7 @@ grn_tiny_array_id(grn_tiny_array *array, const void *element_address)
   uint32_t block_id, offset = 1;
   for (block_id = 0; block_id < GRN_TINY_ARRAY_N; block_id++) {
     const uint32_t block_size = GRN_TINY_ARRAY_S * GRN_TINY_ARRAY_R(block_id);
-    const byte * const block = (const byte *)array->elements[block_id];
+    const byte * const block = (const byte *)array->blocks[block_id];
     if (block && block <= ptr &&
         ptr < (block + block_size * array->element_size)) {
       return offset + ((ptr - block) / array->element_size);

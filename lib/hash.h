@@ -58,7 +58,7 @@ extern "C" {
 
 /*
  * grn_tiny_array uses several blocks to represent an array.
- * The k-th block (elements[k]) consists of 2^k elements.
+ * The k-th block (block[k]) consists of 2^k elements.
  */
 typedef struct _grn_tiny_array grn_tiny_array;
 
@@ -68,7 +68,7 @@ struct _grn_tiny_array {
   uint16_t element_size;
   uint16_t flags;
   grn_critical_section lock;
-  void *elements[GRN_TINY_ARRAY_N];
+  void *blocks[GRN_TINY_ARRAY_N];
 };
 
 #define GRN_TINY_ARRAY_EACH(array, head, tail, key, value, block) do {\
@@ -78,7 +78,7 @@ struct _grn_tiny_array {
   for (_block_id = 0, (key) = (_head);\
        _block_id < GRN_TINY_ARRAY_N && (key) <= (_tail); _block_id++) {\
     int _id = GRN_TINY_ARRAY_S * GRN_TINY_ARRAY_R(_block_id);\
-    if (((value) = (array)->elements[_block_id])) {\
+    if (((value) = (array)->blocks[_block_id])) {\
       for (; _id-- && (key) <= (_tail);\
            (key)++, (value) = (void *)((byte *)(value) + (array)->element_size)) {\
         block\
