@@ -277,9 +277,7 @@ grn_array_is_io_array(grn_array *array)
 inline static void *
 grn_array_io_entry_at(grn_ctx *ctx, grn_array *array, grn_id id, int flags)
 {
-  void *value;
-  GRN_IO_ARRAY_AT(array->io, GRN_ARRAY_VALUE_SEGMENT, id, &flags, value);
-  return value;
+  return grn_io_array_at_inline(ctx, array->io, GRN_ARRAY_VALUE_SEGMENT, id, flags);
 }
 
 inline static void *
@@ -944,9 +942,7 @@ enum {
 inline static void *
 grn_hash_io_entry_at(grn_ctx *ctx, grn_hash *hash, grn_id id, int flags)
 {
-  void *e;
-  GRN_IO_ARRAY_AT(hash->io, segment_entry, id, &flags, e);
-  return e;
+  return grn_io_array_at_inline(ctx, hash->io, segment_entry, id, flags);
 }
 
 /* todo : error handling */
@@ -973,10 +969,7 @@ grn_hash_bitmap_at(grn_ctx *ctx, grn_hash *hash, grn_id id)
 inline static grn_id *
 grn_hash_io_idx_at(grn_ctx *ctx, grn_hash *hash, grn_id id)
 {
-  int flags = GRN_TABLE_ADD;
-  void *pp;
-  GRN_IO_ARRAY_AT(hash->io, segment_index, id, &flags, pp);
-  return pp;
+  return grn_io_array_at_inline(ctx, hash->io, segment_index, id, GRN_TABLE_ADD);
 }
 
 inline static grn_id *
@@ -993,10 +986,7 @@ grn_hash_idx_at(grn_ctx *ctx, grn_hash *hash, grn_id id)
 inline static void *
 grn_io_hash_key_at(grn_ctx *ctx, grn_hash *hash, uint32_t pos)
 {
-  int flags = GRN_TABLE_ADD;
-  void *key;
-  GRN_IO_ARRAY_AT(hash->io, segment_key, pos, &flags, key);
-  return key;
+  return grn_io_array_at_inline(ctx, hash->io, segment_key, pos, GRN_TABLE_ADD);
 }
 
 #define HASH_IMMEDIATE 1
