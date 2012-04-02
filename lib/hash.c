@@ -807,6 +807,45 @@ grn_array_add(grn_ctx *ctx, grn_array *array, void **value)
 #define IDX_MASK_IN_A_SEGMENT 0xfffff
 
 typedef struct {
+  uint8_t key[4];
+  uint8_t value[1];
+} grn_hash_plain_entry;
+
+typedef struct {
+  uint32_t hash_value;
+  uint8_t key_and_value[1];
+} grn_hash_rich_entry;
+
+typedef struct {
+  uint32_t hash_value;
+  uint16_t flag;
+  uint16_t key_size;
+  union {
+    uint8_t buf[sizeof(uint32_t)];
+    uint32_t offset;
+  } key;
+  uint8_t value[1];
+} grn_io_hash_entry;
+
+typedef struct {
+  uint32_t hash_value;
+  uint16_t flag;
+  uint16_t key_size;
+  union {
+    uint8_t buf[sizeof(void *)];
+    void *ptr;
+  } key;
+  uint8_t value[1];
+} grn_tiny_hash_entry;
+
+typedef union {
+  grn_hash_plain_entry plain_entry;
+  grn_hash_rich_entry rich_entry;
+  grn_io_hash_entry io_entry;
+  grn_tiny_hash_entry tiny_entry;
+} grn_hash_entry;
+
+typedef struct {
   uint32_t key;
   uint8_t dummy[1];
 } entry;
@@ -903,43 +942,89 @@ grn_io_hash_key_at(grn_ctx *ctx, grn_hash *hash, uint32_t pos)
 #define MAX_INDEX_SIZE ((GRN_HASH_MAX_SEGMENT * (IDX_MASK_IN_A_SEGMENT + 1)) >> 1)
 
 inline static char *
-get_key(grn_ctx *ctx, grn_hash *hash, entry_str *n)
+grn_hash_entry_get_key(grn_ctx *ctx, grn_hash *hash, grn_hash_entry *entry)
 {
   if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
-    if (n->flag & HASH_IMMEDIATE) {
-      return (char *)&n->str;
-    } else {
-      if (IO_HASHP(hash)) {
-        return (char *)grn_io_hash_key_at(ctx, hash, n->str);
+    if (IO_HASHP(hash)) {
+      if (entry->io_entry.flag & HASH_IMMEDIATE) {
+        return entry->io_entry.key.buf;
       } else {
-        return ((entry_astr *)n)->str;
+        return (char *)grn_io_hash_key_at(ctx, hash, entry->io_entry.key.offset);
+      }
+    } else {
+      if (entry->tiny_entry.flag & HASH_IMMEDIATE) {
+        return entry->tiny_entry.key.buf;
+      } else {
+        return entry->tiny_entry.key.ptr;
       }
     }
   } else {
     if (hash->key_size == sizeof(uint32_t)) {
-      return (char *)(&((entry *)n)->key);
+      return entry->plain_entry.key;
     } else {
-      return (char *)(((entry *)n)->dummy);
+      return entry->rich_entry.key_and_value;
     }
   }
 }
 
 inline static void *
-get_value(grn_hash *hash, entry_str *n)
+grn_hash_entry_get_value(grn_hash *hash, grn_hash_entry *entry)
 {
   if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
     if (IO_HASHP(hash)) {
-      return ((entry_str *)n)->dummy;
+      return entry->io_entry.value;
     } else {
-      return ((entry_astr *)n)->dummy;
+      return entry->tiny_entry.value;
     }
   } else {
     if (hash->key_size == sizeof(uint32_t)) {
-      return ((entry *)n)->dummy;
+      return entry->plain_entry.value;
     } else {
-      return &((entry *)n)->dummy[hash->key_size];
+      return entry->rich_entry.key_and_value + hash->key_size;
     }
   }
+}
+
+inline static char *
+get_key(grn_ctx *ctx, grn_hash *hash, entry_str *n)
+{
+  return grn_hash_entry_get_key(ctx, hash, (grn_hash_entry *)n);
+/*  if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {*/
+/*    if (n->flag & HASH_IMMEDIATE) {*/
+/*      return (char *)&n->str;*/
+/*    } else {*/
+/*      if (IO_HASHP(hash)) {*/
+/*        return (char *)grn_io_hash_key_at(ctx, hash, n->str);*/
+/*      } else {*/
+/*        return ((entry_astr *)n)->str;*/
+/*      }*/
+/*    }*/
+/*  } else {*/
+/*    if (hash->key_size == sizeof(uint32_t)) {*/
+/*      return ((grn_hash_plain_entry *)n)->key;*/
+/*    } else {*/
+/*      return ((grn_hash_rich_entry *)n)->key_and_value;*/
+/*    }*/
+/*  }*/
+}
+
+inline static void *
+get_value(grn_hash *hash, entry_str *n)
+{
+  return grn_hash_entry_get_value(hash, (grn_hash_entry *)n);
+/*  if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {*/
+/*    if (IO_HASHP(hash)) {*/
+/*      return ((entry_str *)n)->dummy;*/
+/*    } else {*/
+/*      return ((entry_astr *)n)->dummy;*/
+/*    }*/
+/*  } else {*/
+/*    if (hash->key_size == sizeof(uint32_t)) {*/
+/*      return ((entry *)n)->dummy;*/
+/*    } else {*/
+/*      return &((entry *)n)->dummy[hash->key_size];*/
+/*    }*/
+/*  }*/
 }
 
 inline static void
