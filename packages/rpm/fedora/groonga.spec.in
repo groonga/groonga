@@ -204,7 +204,7 @@ getent passwd groonga >/dev/null || \
 exit 0
 
 %post server
-if [ $1 = 0 ] ; then
+if [ $1 = 1 ] ; then
 	/bin/systemctl daemon-reload >/dev/null 2>&1 || :
 fi
 
