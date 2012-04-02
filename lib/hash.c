@@ -290,13 +290,14 @@ grn_array_entry_at(grn_ctx *ctx, grn_array *array, grn_id id, int flags)
   }
 }
 
-inline static grn_bool
+/* grn_array_bitmap_at() returns 1/0 on success, -1 on failure. */
+inline static int
 grn_array_bitmap_at(grn_ctx *ctx, grn_array *array, grn_id id)
 {
   if (grn_array_is_io_array(array)) {
-    return grn_io_array_bit_at(ctx, array->io, GRN_ARRAY_BITMAP_SEGMENT, id) == 1;
+    return grn_io_array_bit_at(ctx, array->io, GRN_ARRAY_BITMAP_SEGMENT, id);
   } else {
-    return grn_tiny_array_bit_at(&array->bitmap, id) == 1;
+    return grn_tiny_array_bit_at(&array->bitmap, id);
   }
 }
 
@@ -508,7 +509,7 @@ int
 grn_array_get_value(grn_ctx *ctx, grn_array *array, grn_id id, void *valuebuf)
 {
   if (ctx && array) {
-    if (grn_array_bitmap_at(ctx, array, id)) {
+    if (grn_array_bitmap_at(ctx, array, id) == 1) {
       void * const entry = grn_array_entry_at(ctx, array, id, 0);
       if (entry) {
         if (valuebuf) {
@@ -521,12 +522,19 @@ grn_array_get_value(grn_ctx *ctx, grn_array *array, grn_id id, void *valuebuf)
   return 0;
 }
 
+inline static grn_id
+grn_array_get_max_id(grn_array *array)
+{
+  return grn_array_is_io_array(array) ? array->header->curr_rec : array->array.max;
+}
+
 void *
 _grn_array_get_value(grn_ctx *ctx, grn_array *array, grn_id id)
 {
   if (ctx && array) {
-    if (!grn_array_bitmap_at(ctx, array, id)) { return NULL; }
-    return grn_array_entry_at(ctx, array, id, 0);
+    if (grn_array_bitmap_at(ctx, array, id) == 1) {
+      return grn_array_entry_at(ctx, array, id, 0);
+    }
   }
   return NULL;
 }
@@ -538,7 +546,7 @@ grn_array_set_value(grn_ctx *ctx, grn_array *array, grn_id id,
   if (!ctx || !array || !value) {
     return GRN_INVALID_ARGUMENT;
   }
-  if (!grn_array_bitmap_at(ctx, array, id)) {
+  if (grn_array_bitmap_at(ctx, array, id) != 1) {
     return GRN_INVALID_ARGUMENT;
   }
 
@@ -590,7 +598,7 @@ grn_array_delete_by_id(grn_ctx *ctx, grn_array *array, grn_id id,
   if (!ctx || !array) {
     return GRN_INVALID_ARGUMENT;
   }
-  if (!grn_array_bitmap_at(ctx, array, id)) {
+  if (grn_array_bitmap_at(ctx, array, id) != 1) {
     return GRN_INVALID_ARGUMENT;
   }
 
@@ -612,8 +620,9 @@ grn_array_delete_by_id(grn_ctx *ctx, grn_array *array, grn_id id,
         (*array->n_entries)--;
         (*array->n_garbages)++;
         /*
-         * The following grn_io_array_bit_off() never fails because the above
-         * grn_array_bitmap_at() returned 1 for the same ID.
+         * The following grn_io_array_bit_off() fails iff a problem has
+         * occurred after the above grn_array_bitmap_at(). That is to say,
+         * an unexpected case.
          */
         grn_io_array_bit_off(ctx, array->io, GRN_ARRAY_BITMAP_SEGMENT, id);
       }
@@ -631,8 +640,9 @@ grn_array_delete_by_id(grn_ctx *ctx, grn_array *array, grn_id id,
         (*array->n_entries)--;
         (*array->n_garbages)++;
         /*
-         * The following grn_tiny_array_bit_off() never fails because the above
-         * grn_array_bitmap_at() returned 1 for the same ID.
+         * The following grn_io_array_bit_off() fails iff a problem has
+         * occurred after the above grn_array_bitmap_at(). That is to say,
+         * an unexpected case.
          */
         grn_tiny_array_bit_off(&array->bitmap, id);
       }
@@ -645,7 +655,7 @@ grn_array_delete_by_id(grn_ctx *ctx, grn_array *array, grn_id id,
 grn_id
 grn_array_at(grn_ctx *ctx, grn_array *array, grn_id id)
 {
-  return grn_array_bitmap_at(ctx, array, id) ? id : GRN_ID_NIL;
+  return (grn_array_bitmap_at(ctx, array, id) == 1) ? id : GRN_ID_NIL;
 }
 
 grn_rc
@@ -666,12 +676,6 @@ grn_array_cursor_close(grn_ctx *ctx, grn_array_cursor *cursor)
 {
   GRN_ASSERT(cursor->ctx == ctx);
   GRN_FREE(cursor);
-}
-
-inline static grn_id
-grn_array_get_max_id(grn_array *array)
-{
-  return grn_array_is_io_array(array) ? array->header->curr_rec : array->array.max;
 }
 
 grn_array_cursor *
@@ -725,7 +729,9 @@ grn_array_cursor_open(grn_ctx *ctx, grn_array *array, grn_id min, grn_id max,
   if (*array->n_garbages) {
     while (offset && cursor->curr_rec != cursor->tail) {
       cursor->curr_rec += cursor->dir;
-      if (grn_array_bitmap_at(ctx, cursor->array, cursor->curr_rec)) { offset--; }
+      if (grn_array_bitmap_at(ctx, cursor->array, cursor->curr_rec) == 1) {
+        offset--;
+      }
     }
   } else {
     cursor->curr_rec += cursor->dir * offset;
@@ -741,7 +747,9 @@ grn_array_cursor_next(grn_ctx *ctx, grn_array_cursor *cursor)
     while (cursor->curr_rec != cursor->tail) {
       cursor->curr_rec += cursor->dir;
       if (*cursor->array->n_garbages) {
-        if (!grn_array_bitmap_at(ctx, cursor->array, cursor->curr_rec)) { continue; }
+        if (grn_array_bitmap_at(ctx, cursor->array, cursor->curr_rec) != 1) {
+          continue;
+        }
       }
       cursor->rest--;
       return cursor->curr_rec;
@@ -755,7 +763,7 @@ grn_array_next(grn_ctx *ctx, grn_array *array, grn_id id)
 {
   grn_id max = grn_array_get_max_id(array);
   while (++id <= max) {
-    if (grn_array_bitmap_at(ctx, array, id)) { return id; }
+    if (grn_array_bitmap_at(ctx, array, id) == 1) { return id; }
   }
   return GRN_ID_NIL;
 }
@@ -793,11 +801,21 @@ grn_array_add_to_tiny_array(grn_ctx *ctx, grn_array *array, void **value)
   grn_id id = array->garbages;
   void *entry;
   if (id) {
+    /* These operations fail iff the array is broken. */
     entry = grn_tiny_array_at_inline(&array->array, id);
+    if (!entry) {
+      return GRN_ID_NIL;
+    }
     array->garbages = *(grn_id *)entry;
     memset(entry, 0, array->value_size);
     (*array->n_garbages)--;
-    grn_tiny_array_bit_on(&array->bitmap, id);
+    if (!grn_tiny_array_bit_on(&array->bitmap, id)) {
+      /* Actually, it is difficult to recover from this error. */
+      *(grn_id *)entry = array->garbages;
+      array->garbages = id;
+      (*array->n_garbages)++;
+      return GRN_ID_NIL;
+    }
   } else {
     id = array->array.max + 1;
     if (!grn_tiny_array_bit_on(&array->bitmap, id)) {
@@ -822,6 +840,7 @@ grn_array_add_to_io_array(grn_ctx *ctx, grn_array *array, void **value)
   grn_id id = header->garbages;
   void *entry;
   if (id) {
+    /* These operations fail iff the array is broken. */
     entry = grn_array_io_entry_at(ctx, array, id, GRN_TABLE_ADD);
     if (!entry) {
       return GRN_ID_NIL;
@@ -829,12 +848,18 @@ grn_array_add_to_io_array(grn_ctx *ctx, grn_array *array, void **value)
     header->garbages = *(grn_id *)entry;
     memset(entry, 0, header->value_size);
     (*array->n_garbages)--;
-    /* FIXME: grn_io_array_bit_on() may fail and cause a critical problem. */
-    grn_io_array_bit_on(ctx, array->io, GRN_ARRAY_BITMAP_SEGMENT, id);
+    if (!grn_io_array_bit_on(ctx, array->io, GRN_ARRAY_BITMAP_SEGMENT, id)) {
+      /* Actually, it is difficult to recover from this error. */
+      *(grn_id *)entry = array->garbages;
+      array->garbages = id;
+      (*array->n_garbages)++;
+      return GRN_ID_NIL;
+    }
   } else {
     id = header->curr_rec + 1;
-    /* FIXME: grn_io_array_bit_on() may fail and cause a critical problem. */
-    grn_io_array_bit_on(ctx, array->io, GRN_ARRAY_BITMAP_SEGMENT, id);
+    if (!grn_io_array_bit_on(ctx, array->io, GRN_ARRAY_BITMAP_SEGMENT, id)) {
+      return GRN_ID_NIL;
+    }
     entry = grn_array_io_entry_at(ctx, array, id, GRN_TABLE_ADD);
     if (!entry) {
       grn_io_array_bit_off(ctx, array->io, GRN_ARRAY_BITMAP_SEGMENT, id);
