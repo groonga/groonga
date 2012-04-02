@@ -82,17 +82,20 @@ grn_tiny_array_next(grn_tiny_array *array)
 }
 
 /*
- * grn_tiny_array_bit_at() returns the default value (0) when
- * grn_tiny_array_at_inline() returns NULL. So, it seems to work well.
+ * grn_tiny_array_bit_at() returns 1/0 on success, -1 on failure.
  */
-inline static grn_bool
+inline static int
 grn_tiny_array_bit_at(grn_tiny_array *array, grn_id offset)
 {
   uint8_t * const ptr =
       (uint8_t *)grn_tiny_array_at_inline(array, (offset >> 3) + 1);
-  return ptr ? ((*ptr >> (offset & 7)) & 1) : 0;
+  return ptr ? ((*ptr >> (offset & 7)) & 1) : -1;
 }
 
+/*
+ * The following functions, grn_tiny_array_bit_*(), return a non-NULL pointer
+ * on success, a NULL pointer on failure.
+ */
 inline static void *
 grn_tiny_array_bit_on(grn_tiny_array *array, grn_id offset)
 {
@@ -181,6 +184,69 @@ grn_tiny_array_id(grn_tiny_array *array, const void *element_address)
   return GRN_ID_NIL;
 }
 
+/* grn_io_array */
+
+inline void *
+grn_io_array_at_inline(grn_ctx *ctx, grn_io *io, uint32_t segment_id,
+                       uint32_t offset, int flags)
+{
+  void *ptr;
+  GRN_IO_ARRAY_AT(io, segment_id, offset, &flags, ptr);
+  return ptr;
+}
+
+/*
+ * grn_io_array_bit_at() returns 1/0 on success, -1 on failure.
+ */
+inline static int
+grn_io_array_bit_at(grn_ctx *ctx, grn_io *io,
+                    uint32_t segment_id, uint32_t offset)
+{
+  uint8_t * const ptr = (uint8_t *)grn_io_array_at_inline(
+      ctx, io, segment_id, (offset >> 3) + 1, 0);
+  return ptr ? ((*ptr >> (offset & 7)) & 1) : -1;
+}
+
+/*
+ * The following functions, grn_io_array_bit_*(), return a non-NULL pointer on
+ * success, a NULL pointer on failure.
+ */
+inline static void *
+grn_io_array_bit_on(grn_ctx *ctx, grn_io *io,
+                    uint32_t segment_id, uint32_t offset)
+{
+  uint8_t * const ptr = (uint8_t *)grn_io_array_at_inline(
+      ctx, io, segment_id, (offset >> 3) + 1, GRN_TABLE_ADD);
+  if (ptr) {
+    *ptr |= 1 << (offset & 7);
+  }
+  return ptr;
+}
+
+inline static void *
+grn_io_array_bit_off(grn_ctx *ctx, grn_io *io,
+                     uint32_t segment_id, uint32_t offset)
+{
+  uint8_t * const ptr = (uint8_t *)grn_io_array_at_inline(
+      ctx, io, segment_id, (offset >> 3) + 1, GRN_TABLE_ADD);
+  if (ptr) {
+    *ptr &= ~(1 << (offset & 7));
+  }
+  return ptr;
+}
+
+inline static void *
+grn_io_array_bit_flip(grn_ctx *ctx, grn_io *io,
+                      uint32_t segment_id, uint32_t offset)
+{
+  uint8_t * const ptr = (uint8_t *)grn_io_array_at_inline(
+      ctx, io, segment_id, (offset >> 3) + 1, GRN_TABLE_ADD);
+  if (ptr) {
+    *ptr ^= 1 << (offset & 7);
+  }
+  return ptr;
+}
+
 /* grn_array */
 
 #define GRN_ARRAY_HEADER_SIZE  0x9000
@@ -230,11 +296,9 @@ inline static grn_bool
 grn_array_bitmap_at(grn_ctx *ctx, grn_array *array, grn_id id)
 {
   if (grn_array_is_io_array(array)) {
-    grn_bool value;
-    GRN_IO_ARRAY_BIT_AT(array->io, GRN_ARRAY_BITMAP_SEGMENT, id, value);
-    return value;
+    return grn_io_array_bit_at(ctx, array->io, GRN_ARRAY_BITMAP_SEGMENT, id) == 1;
   } else {
-    return grn_tiny_array_bit_at(&array->bitmap, id);
+    return grn_tiny_array_bit_at(&array->bitmap, id) == 1;
   }
 }
 
@@ -550,10 +614,10 @@ grn_array_delete_by_id(grn_ctx *ctx, grn_array *array, grn_id id,
         (*array->n_entries)--;
         (*array->n_garbages)++;
         /*
-         * The following GRN_IO_ARRAY_BIT_OFF() never fails because the above
+         * The following grn_io_array_bit_off() never fails because the above
          * grn_array_bitmap_at() returned 1 for the same ID.
          */
-        GRN_IO_ARRAY_BIT_OFF(array->io, GRN_ARRAY_BITMAP_SEGMENT, id);
+        grn_io_array_bit_off(ctx, array->io, GRN_ARRAY_BITMAP_SEGMENT, id);
       }
     } else {
       if (array->value_size >= sizeof(grn_id)) {
@@ -767,15 +831,15 @@ grn_array_add_to_io_array(grn_ctx *ctx, grn_array *array, void **value)
     header->garbages = *(grn_id *)entry;
     memset(entry, 0, header->value_size);
     (*array->n_garbages)--;
-    /* FIXME: GRN_IO_ARRAY_BIT_ON() may fail and cause a critical problem. */
-    GRN_IO_ARRAY_BIT_ON(array->io, GRN_ARRAY_BITMAP_SEGMENT, id);
+    /* FIXME: grn_io_array_bit_on() may fail and cause a critical problem. */
+    grn_io_array_bit_on(ctx, array->io, GRN_ARRAY_BITMAP_SEGMENT, id);
   } else {
     id = header->curr_rec + 1;
-    /* FIXME: GRN_IO_ARRAY_BIT_ON() may fail and cause a critical problem. */
-    GRN_IO_ARRAY_BIT_ON(array->io, GRN_ARRAY_BITMAP_SEGMENT, id);
+    /* FIXME: grn_io_array_bit_on() may fail and cause a critical problem. */
+    grn_io_array_bit_on(ctx, array->io, GRN_ARRAY_BITMAP_SEGMENT, id);
     entry = grn_array_io_entry_at(ctx, array, id, GRN_TABLE_ADD);
     if (!entry) {
-      GRN_IO_ARRAY_BIT_OFF(array->io, GRN_ARRAY_BITMAP_SEGMENT, id);
+      grn_io_array_bit_off(ctx, array->io, GRN_ARRAY_BITMAP_SEGMENT, id);
       return GRN_ID_NIL;
     }
     header->curr_rec = id;
@@ -900,11 +964,9 @@ inline static grn_bool
 grn_hash_bitmap_at(grn_ctx *ctx, grn_hash *hash, grn_id id)
 {
   if (IO_HASHP(hash)) {
-    grn_bool value;
-    GRN_IO_ARRAY_BIT_AT(hash->io, segment_bitmap, id, value);
-    return value;
+    return grn_io_array_bit_at(ctx, hash->io, segment_bitmap, id) == 1;
   } else {
-    return grn_tiny_array_bit_at(&hash->bitmap, id);
+    return grn_tiny_array_bit_at(&hash->bitmap, id) == 1;
   }
 }
 
@@ -1501,7 +1563,7 @@ entry_new(grn_ctx *ctx, grn_hash *hash, uint32_t size)
     } else {
       e = ++hh->curr_rec;
     }
-    GRN_IO_ARRAY_BIT_ON(hash->io, segment_bitmap, e);
+    grn_io_array_bit_on(ctx, hash->io, segment_bitmap, e);
   } else {
     if (hash->garbages) {
       entry *ee;
@@ -1821,7 +1883,7 @@ grn_hash_set_value(grn_ctx *ctx, grn_hash *hash, grn_id id,
     struct grn_hash_header *hh = hash->header;\
     ee->key = hh->garbages[size];\
     hh->garbages[size] = e;\
-    GRN_IO_ARRAY_BIT_OFF(hash->io, segment_bitmap, e);\
+    grn_io_array_bit_off(ctx, hash->io, segment_bitmap, e);\
   } else {\
     ee->key = hash->garbages;\
     hash->garbages = e;\
