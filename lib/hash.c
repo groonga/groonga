@@ -985,105 +985,103 @@ grn_hash_entry_get_value(grn_hash *hash, grn_hash_entry *entry)
   }
 }
 
+inline static grn_rc
+grn_io_hash_entry_put_key(grn_ctx *ctx, grn_hash *hash,
+                          grn_io_hash_entry *entry,
+                          const void *key, unsigned int key_size)
+{
+  uint32_t key_offset;
+  if (entry->key_size) {
+    key_offset = entry->key.offset;
+  } else {
+    uint32_t segment_id;
+    if (key_size >= GRN_HASH_SEGMENT_SIZE) {
+      return GRN_INVALID_ARGUMENT;
+    }
+    key_offset = hash->header->curr_key;
+    segment_id = (key_offset + key_size) >> W_OF_KEY_IN_A_SEGMENT;
+    if ((key_offset >> W_OF_KEY_IN_A_SEGMENT) != segment_id) {
+      key_offset = hash->header->curr_key = segment_id << W_OF_KEY_IN_A_SEGMENT;
+    }
+    hash->header->curr_key += key_size;
+    entry->key.offset = key_offset;
+  }
+
+  {
+    void * const key_ptr = grn_io_hash_key_at(ctx, hash, key_offset);
+    if (!key_ptr) {
+      return GRN_NO_MEMORY_AVAILABLE;
+    }
+    memcpy(key_ptr, key, key_size);
+  }
+  return GRN_SUCCESS;
+}
+
+inline static grn_rc
+grn_hash_entry_put_key(grn_ctx *ctx, grn_hash *hash,
+                       grn_hash_entry *entry, uint32_t hash_value,
+                       const void *key, unsigned int key_size)
+{
+  if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
+    if (IO_HASHP(hash)) {
+      if (key_size <= sizeof(entry->io_entry.key.buf)) {
+        memcpy(entry->io_entry.key.buf, key, key_size);
+        entry->io_entry.flag = HASH_IMMEDIATE;
+      } else {
+        const grn_rc rc =
+            grn_io_hash_entry_put_key(ctx, hash, (grn_io_hash_entry *)entry,
+                                      key, key_size);
+        if (rc) {
+          return rc;
+        }
+        entry->io_entry.flag = 0;
+      }
+      entry->io_entry.hash_value = hash_value;
+      entry->io_entry.key_size = key_size;
+    } else {
+      if (key_size <= sizeof(entry->tiny_entry.key.buf)) {
+        memcpy(entry->tiny_entry.key.buf, key, key_size);
+        entry->tiny_entry.flag = HASH_IMMEDIATE;
+      } else {
+        grn_ctx * const ctx = hash->ctx;
+        entry->tiny_entry.key.ptr = GRN_CTX_ALLOC(ctx, key_size);
+        if (!entry->tiny_entry.key.ptr) {
+          return GRN_NO_MEMORY_AVAILABLE;
+        }
+        memcpy(entry->tiny_entry.key.ptr, key, key_size);
+        entry->tiny_entry.flag = 0;
+      }
+      entry->io_entry.hash_value = hash_value;
+      entry->tiny_entry.key_size = key_size;
+    }
+  } else {
+    if (hash->key_size == sizeof(uint32_t)) {
+      *(uint32_t *)entry->plain_entry.key = hash_value;
+    } else {
+      entry->rich_entry.hash_value = hash_value;
+      memcpy(entry->rich_entry.key_and_value, key, key_size);
+    }
+  }
+  return GRN_SUCCESS;
+}
+
 inline static char *
 get_key(grn_ctx *ctx, grn_hash *hash, entry_str *n)
 {
   return grn_hash_entry_get_key(ctx, hash, (grn_hash_entry *)n);
-/*  if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {*/
-/*    if (n->flag & HASH_IMMEDIATE) {*/
-/*      return (char *)&n->str;*/
-/*    } else {*/
-/*      if (IO_HASHP(hash)) {*/
-/*        return (char *)grn_io_hash_key_at(ctx, hash, n->str);*/
-/*      } else {*/
-/*        return ((entry_astr *)n)->str;*/
-/*      }*/
-/*    }*/
-/*  } else {*/
-/*    if (hash->key_size == sizeof(uint32_t)) {*/
-/*      return ((grn_hash_plain_entry *)n)->key;*/
-/*    } else {*/
-/*      return ((grn_hash_rich_entry *)n)->key_and_value;*/
-/*    }*/
-/*  }*/
 }
 
 inline static void *
 get_value(grn_hash *hash, entry_str *n)
 {
   return grn_hash_entry_get_value(hash, (grn_hash_entry *)n);
-/*  if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {*/
-/*    if (IO_HASHP(hash)) {*/
-/*      return ((entry_str *)n)->dummy;*/
-/*    } else {*/
-/*      return ((entry_astr *)n)->dummy;*/
-/*    }*/
-/*  } else {*/
-/*    if (hash->key_size == sizeof(uint32_t)) {*/
-/*      return ((entry *)n)->dummy;*/
-/*    } else {*/
-/*      return &((entry *)n)->dummy[hash->key_size];*/
-/*    }*/
-/*  }*/
-}
-
-inline static void
-put_key_(grn_ctx *ctx, grn_hash *hash, entry_str *n, const char *key, int len)
-{
-  uint32_t res, ts;
-  if (n->size) {
-    res = n->str;
-  } else {
-    if (len >= GRN_HASH_SEGMENT_SIZE) { return; /* error */ }
-    res = hash->header->curr_key;
-    ts = (res + len) >> W_OF_KEY_IN_A_SEGMENT;
-    if (res >> W_OF_KEY_IN_A_SEGMENT != ts) {
-      res = hash->header->curr_key = ts << W_OF_KEY_IN_A_SEGMENT;
-    }
-    hash->header->curr_key += len;
-    n->str = res;
-  }
-  {
-    void * const dest = grn_io_hash_key_at(ctx, hash, res);
-    if (!dest) { return; }
-    memcpy(dest, key, len);
-  }
 }
 
 inline static grn_rc
 put_key(grn_ctx *ctx, grn_hash *hash, entry_str *n, uint32_t h,
         const char *key, unsigned int len)
 {
-  n->key = h;
-  if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
-    if (IO_HASHP(hash)) {
-      if (len <= sizeof(uint32_t)) {
-        n->flag = HASH_IMMEDIATE;
-        memcpy(&n->str, key, len);
-      } else {
-        n->flag = 0;
-        put_key_(ctx, hash, n, key, len);
-      }
-    } else {
-      if (len <= sizeof(char *)) {
-        n->flag = HASH_IMMEDIATE;
-        memcpy(&((entry_astr *)n)->str, key, len);
-      } else {
-        grn_ctx *ctx = hash->ctx;
-        if (!(((entry_astr *)n)->str = GRN_CTX_ALLOC(ctx, len))) {
-          return GRN_NO_MEMORY_AVAILABLE;
-        }
-        memcpy(((entry_astr *)n)->str, key, len);
-        n->flag = 0;
-      }
-    }
-    n->size = len;
-  } else {
-    if (hash->key_size != sizeof(uint32_t)) {
-      memcpy(((entry *)n)->dummy, key, len);
-    }
-  }
-  return GRN_SUCCESS;
+  return grn_hash_entry_put_key(ctx, hash, (grn_hash_entry *)n, h, key, len);
 }
 
 inline static int
