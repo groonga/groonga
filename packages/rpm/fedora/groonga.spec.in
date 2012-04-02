@@ -310,7 +310,6 @@ fi
 - use libedit.
 
 * Fri Mar 30 2012 Kouhei Sutou <kou@clear-code.com> - 2.0.1-2
-- Fix default file path: /etc/default/groonga -> /etc/default/groonga-server
 - Use shutdown command for stop.
 
 * Fri Mar 30 2012 Kouhei Sutou <kou@clear-code.com> - 2.0.1-1
