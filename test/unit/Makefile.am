@@ -7,7 +7,7 @@ SUBDIRS =		\
 	http		\
 	gqtp		\
 	story		\
-	grntest
+	groonga-benchmark
 
 if WITH_UNIT_TEST
 TESTS = run-test.sh

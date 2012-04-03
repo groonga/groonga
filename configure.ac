@@ -257,7 +257,7 @@ AC_CONFIG_FILES([
   test/unit/http/Makefile
   test/unit/gqtp/Makefile
   test/unit/story/Makefile
-  test/unit/grntest/Makefile
+  test/unit/groonga-benchmark/Makefile
   test/function/Makefile
   test/benchmark/Makefile
   test/benchmark/fixtures/Makefile
