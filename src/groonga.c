@@ -1749,7 +1749,7 @@ exit :
 }
 
 static void
-dispatcher(grn_ctx *ctx, grn_edge *edge)
+g_dispatcher(grn_ctx *ctx, grn_edge *edge)
 {
   MUTEX_LOCK(q_mutex);
   if (edge->stat == EDGE_IDLE) {
@@ -1820,7 +1820,7 @@ g_handler(grn_ctx *ctx, grn_obj *msg)
       grn_msg_close(ctx, msg);
     } else {
       grn_com_queue_enque(ctx, &edge->recv_new, (grn_com_queue_entry *)msg);
-      dispatcher(ctx, edge);
+      g_dispatcher(ctx, edge);
     }
   }
 }
@@ -1859,7 +1859,7 @@ g_server(char *path)
         SERR("gethostbyname");
       } else {
         ev.opaque = db;
-        grn_edges_init(ctx, dispatcher);
+        grn_edges_init(ctx, g_dispatcher);
         if (!grn_com_sopen(ctx, &ev, bind_address, port, g_handler, he)) {
           while (!grn_com_event_poll(ctx, &ev, 1000) && grn_gctx.stat != GRN_CTX_QUIT) {
             grn_edge *edge;
