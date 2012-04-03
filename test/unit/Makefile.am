@@ -19,7 +19,7 @@ TESTS_ENVIRONMENT =				\
 	CUTTER_VERBOSE=yes			\
 	RUBY="$(RUBY)"				\
 	GROONGA="$(GROONGA)"			\
-	GRNTEST="$(GRNTEST)"
+	GRNTEST="$(GROONGA_BENCHMARK)"
 
 if WITH_CUTTER
 noinst_LTLIBRARIES = suite-groonga-test.la

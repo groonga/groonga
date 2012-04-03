@@ -613,9 +613,9 @@ AC_SUBST(WINDOWS_LIBS)
 GROONGA="\$(abs_top_builddir)/src/groonga"
 AC_SUBST(GROONGA)
 
-# grntest binary path
-GRNTEST="\$(abs_top_builddir)/src/grntest"
-AC_SUBST(GRNTEST)
+# groonga-benchmark binary path
+GROONGA_BENCHMARK="\$(abs_top_builddir)/src/groonga-benchmark"
+AC_SUBST(GROONGA_BENCHMARK)
 
 # groonga-suggest-create-dataset binary path
 GROONGA_SUGGEST_CREATE_DATASET="\$(abs_top_builddir)/src/suggest/groonga-suggest-create-dataset"

@@ -117,6 +117,9 @@ echo-groonga:
 echo-groonga-suggest-create-dataset:
 	@echo $(GROONGA_SUGGEST_CREATE_DATASET)
 
+echo-groonga-benchmark:
+	@echo $(GROONGA_BENCHMARK)
+
 update-version:
 	@if test -z "$(NEW_VERSION)"; then	\
 	  echo "\$$(NEW_VERSION) is missing";	\
