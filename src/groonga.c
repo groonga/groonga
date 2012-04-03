@@ -702,7 +702,7 @@ s_output(grn_ctx *ctx, int flags, void *arg)
 static int
 do_alone(int argc, char **argv)
 {
-  int rc = -1;
+  int exit_code = -1;
   char *path = NULL;
   grn_obj *db;
   grn_ctx ctx_, *ctx = &ctx_;
@@ -722,10 +722,10 @@ do_alone(int argc, char **argv)
         grn_ctx_send(ctx, GRN_TEXT_VALUE(&text), GRN_TEXT_LEN(&text), 0);
         if (ctx->stat == GRN_CTX_QUIT) { break; }
       }
-      rc = ctx->rc;
+      exit_code = ctx->rc;
       grn_obj_unlink(ctx, &text);
     } else {
-      rc = grn_ctx_sendv(ctx, argc, argv, 0);
+      exit_code = grn_ctx_sendv(ctx, argc, argv, 0);
     }
     grn_obj_unlink(ctx, &command);
     grn_obj_close(ctx, db);
@@ -733,7 +733,7 @@ do_alone(int argc, char **argv)
     fprintf(stderr, "db open failed (%s): %s\n", path, ctx->errbuf);
   }
   grn_ctx_fin(ctx);
-  return rc;
+  return exit_code;
 }
 
 static int
@@ -773,7 +773,7 @@ c_output(grn_ctx *ctx)
 static int
 g_client(int argc, char **argv)
 {
-  int rc = -1;
+  int exit_code = -1;
   grn_ctx ctx_, *ctx = &ctx_;
   const char *hostname = DEFAULT_DEST;
   if (argc > 0 && argv) { hostname = *argv++; argc--; }
@@ -784,14 +784,14 @@ g_client(int argc, char **argv)
       GRN_TEXT_INIT(&text, 0);
       while (prompt(ctx, &text) != GRN_END_OF_DATA) {
         grn_ctx_send(ctx, GRN_TEXT_VALUE(&text), GRN_TEXT_LEN(&text), 0);
-        rc = ctx->rc;
-        if (rc) { break; }
+        exit_code = ctx->rc;
+        if (exit_code) { break; }
         if (c_output(ctx)) { goto exit; }
         if (ctx->stat == GRN_CTX_QUIT) { break; }
       }
       grn_obj_unlink(ctx, &text);
     } else {
-      rc = grn_ctx_sendv(ctx, argc, argv, 0);
+      exit_code = grn_ctx_sendv(ctx, argc, argv, 0);
       if (c_output(ctx)) { goto exit; }
     }
   } else {
@@ -799,7 +799,7 @@ g_client(int argc, char **argv)
   }
 exit :
   grn_ctx_fin(ctx);
-  return rc;
+  return exit_code;
 }
 
 /* server */
@@ -867,7 +867,7 @@ static int
 run_server(grn_ctx *ctx, grn_obj *db, grn_com_event *ev,
            grn_edge_dispatcher_func dispatcher, grn_handler_func handler)
 {
-  int rc = EXIT_SUCCESS;
+  int exit_code = EXIT_SUCCESS;
   struct hostent *he;
   if (!(he = gethostbyname(hostname))) {
     SERR("gethostbyname");
@@ -876,14 +876,14 @@ run_server(grn_ctx *ctx, grn_obj *db, grn_com_event *ev,
     grn_edges_init(ctx, dispatcher);
     if (!grn_com_sopen(ctx, ev, bind_address, port, handler, he)) {
       run_server_loop(ctx, ev);
-      rc = EXIT_SUCCESS;
+      exit_code = EXIT_SUCCESS;
     } else {
       fprintf(stderr, "grn_com_sopen failed (%s:%d): %s\n",
               bind_address, port, ctx->errbuf);
     }
     grn_edges_fin(ctx);
   }
-  return rc;
+  return exit_code;
 }
 
 #define JSON_CALLBACK_PARAM "callback"
@@ -1663,7 +1663,7 @@ h_handler(grn_ctx *ctx, grn_obj *msg)
 static int
 h_server(char *path)
 {
-  int rc = -1;
+  int exit_code = -1;
   grn_com_event ev;
   grn_ctx ctx_, *ctx = &ctx_;
   grn_ctx_init(ctx, 0);
@@ -1689,7 +1689,7 @@ h_server(char *path)
     grn_obj *db;
     db = (newdb || !path) ? grn_db_create(ctx, path, NULL) : grn_db_open(ctx, path);
     if (db) {
-      rc = run_server(ctx, db, &ev, NULL, h_handler);
+      exit_code = run_server(ctx, db, &ev, NULL, h_handler);
       grn_obj_close(ctx, db);
     } else {
       fprintf(stderr, "db open failed (%s)\n", path);
@@ -1699,7 +1699,7 @@ h_server(char *path)
     fprintf(stderr, "grn_com_event_init failed\n");
   }
   grn_ctx_fin(ctx);
-  return rc;
+  return exit_code;
 }
 
 static void * CALLBACK
@@ -1846,7 +1846,7 @@ g_handler(grn_ctx *ctx, grn_obj *msg)
 static int
 g_server(char *path)
 {
-  int rc = -1;
+  int exit_code = -1;
   grn_com_event ev;
   grn_ctx ctx_, *ctx = &ctx_;
   grn_ctx_init(ctx, 0);
@@ -1872,7 +1872,7 @@ g_server(char *path)
     grn_obj *db;
     db = (newdb || !path) ? grn_db_create(ctx, path, NULL) : grn_db_open(ctx, path);
     if (db) {
-      rc = run_server(ctx, db, &ev, g_dispatcher, g_handler);
+      exit_code = run_server(ctx, db, &ev, g_dispatcher, g_handler);
       grn_obj_close(ctx, db);
     } else {
       fprintf(stderr, "db open failed (%s)\n", path);
@@ -1882,13 +1882,13 @@ g_server(char *path)
     fprintf(stderr, "grn_com_event_init failed\n");
   }
   grn_ctx_fin(ctx);
-  return rc;
+  return exit_code;
 }
 
 static int
 do_daemon(char *path)
 {
-  int rc;
+  int exit_code;
 #ifndef WIN32
   pid_t pid;
   FILE *pid_file = NULL;
@@ -1931,7 +1931,7 @@ do_daemon(char *path)
     }
   }
 #endif /* WIN32 */
-  rc = do_server(path);
+  exit_code = do_server(path);
 #ifndef WIN32
   if (pid_file) {
     fclose(pid_file);
@@ -1939,7 +1939,7 @@ do_daemon(char *path)
   }
 #endif
 
-  return rc;
+  return exit_code;
 }
 
 enum {
@@ -2440,7 +2440,8 @@ main(int argc, char **argv)
     *default_command_version_arg = NULL,
     *default_match_escalation_threshold_arg = NULL;
   const char *config_path = NULL;
-  int r, i, mode = mode_alone;
+  int exit_code = EXIT_SUCCESS;
+  int i, mode = mode_alone;
   static grn_str_getopt_opt opts[] = {
     {'p', "port", NULL, 0, getopt_op_none},
     {'e', "encoding", NULL, 0, getopt_op_none},
@@ -2784,19 +2785,19 @@ main(int argc, char **argv)
   useql = (mode & MODE_USE_QL);
   switch (mode & MODE_MASK) {
   case mode_alone :
-    r = do_alone(argc - i, argv + i);
+    exit_code = do_alone(argc - i, argv + i);
     break;
   case mode_client :
-    r = do_client(argc - i, argv + i);
+    exit_code = do_client(argc - i, argv + i);
     break;
   case mode_daemon :
-    r = do_daemon(argc > i ? argv[i] : NULL);
+    exit_code = do_daemon(argc > i ? argv[i] : NULL);
     break;
   case mode_server :
-    r = do_server(argc > i ? argv[i] : NULL);
+    exit_code = do_server(argc > i ? argv[i] : NULL);
     break;
   default:
-    r = -1;
+    exit_code = -1;
     break;
   }
 
@@ -2806,5 +2807,5 @@ main(int argc, char **argv)
   }
 #endif
   grn_fin();
-  return r;
+  return exit_code;
 }
