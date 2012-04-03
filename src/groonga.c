@@ -702,7 +702,7 @@ s_output(grn_ctx *ctx, int flags, void *arg)
 static int
 do_alone(int argc, char **argv)
 {
-  int exit_code = -1;
+  int exit_code = EXIT_FAILURE;
   char *path = NULL;
   grn_obj *db;
   grn_ctx ctx_, *ctx = &ctx_;
@@ -773,7 +773,7 @@ c_output(grn_ctx *ctx)
 static int
 g_client(int argc, char **argv)
 {
-  int exit_code = -1;
+  int exit_code = EXIT_FAILURE;
   grn_ctx ctx_, *ctx = &ctx_;
   const char *hostname = DEFAULT_DEST;
   if (argc > 0 && argv) { hostname = *argv++; argc--; }
@@ -1663,7 +1663,7 @@ h_handler(grn_ctx *ctx, grn_obj *msg)
 static int
 h_server(char *path)
 {
-  int exit_code = -1;
+  int exit_code = EXIT_FAILURE;
   grn_com_event ev;
   grn_ctx ctx_, *ctx = &ctx_;
   grn_ctx_init(ctx, 0);
@@ -1846,7 +1846,7 @@ g_handler(grn_ctx *ctx, grn_obj *msg)
 static int
 g_server(char *path)
 {
-  int exit_code = -1;
+  int exit_code = EXIT_FAILURE;
   grn_com_event ev;
   grn_ctx ctx_, *ctx = &ctx_;
   grn_ctx_init(ctx, 0);
@@ -2797,7 +2797,7 @@ main(int argc, char **argv)
     exit_code = do_server(argc > i ? argv[i] : NULL);
     break;
   default:
-    exit_code = -1;
+    exit_code = EXIT_FAILURE;
     break;
   }
 
