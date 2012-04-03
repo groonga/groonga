@@ -1179,7 +1179,7 @@ grn_hash_entry_put_key(grn_ctx *ctx, grn_hash *hash,
         memcpy(entry->tiny_entry.key.ptr, key, key_size);
         entry->tiny_entry.flag = 0;
       }
-      entry->io_entry.hash_value = hash_value; /* FIXME: typo */
+      entry->tiny_entry.hash_value = hash_value;
       entry->tiny_entry.key_size = key_size;
     }
   } else {
