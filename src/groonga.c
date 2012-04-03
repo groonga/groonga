@@ -78,6 +78,16 @@ static int64_t default_match_escalation_threshold;
 static int log_level;
 static uint32_t cache_limit;
 
+static int
+grn_rc_to_exit_code(grn_rc rc)
+{
+  if (rc == GRN_SUCCESS) {
+    return EXIT_SUCCESS;
+  } else {
+    return EXIT_FAILURE;
+  }
+}
+
 #ifdef HAVE_LIBEDIT
 #include <locale.h>
 #include <histedit.h>
@@ -724,10 +734,12 @@ do_alone(int argc, char **argv)
         grn_ctx_send(ctx, GRN_TEXT_VALUE(&text), GRN_TEXT_LEN(&text), 0);
         if (ctx->stat == GRN_CTX_QUIT) { break; }
       }
-      exit_code = ctx->rc;
+      exit_code = grn_rc_to_exit_code(ctx->rc);
       grn_obj_unlink(ctx, &text);
     } else {
-      exit_code = grn_ctx_sendv(ctx, argc, argv, 0);
+      grn_rc rc;
+      rc = grn_ctx_sendv(ctx, argc, argv, 0);
+      exit_code = grn_rc_to_exit_code(rc);
     }
     grn_obj_unlink(ctx, &command);
     grn_obj_close(ctx, db);
@@ -786,14 +798,16 @@ g_client(int argc, char **argv)
       GRN_TEXT_INIT(&text, 0);
       while (prompt(ctx, &text) != GRN_END_OF_DATA) {
         grn_ctx_send(ctx, GRN_TEXT_VALUE(&text), GRN_TEXT_LEN(&text), 0);
-        exit_code = ctx->rc;
-        if (exit_code) { break; }
+        exit_code = grn_rc_to_exit_code(ctx->rc);
+        if (ctx->rc != GRN_SUCCESS) { break; }
         if (c_output(ctx)) { goto exit; }
         if (ctx->stat == GRN_CTX_QUIT) { break; }
       }
       grn_obj_unlink(ctx, &text);
     } else {
-      exit_code = grn_ctx_sendv(ctx, argc, argv, 0);
+      grn_rc rc;
+      rc = grn_ctx_sendv(ctx, argc, argv, 0);
+      exit_code = grn_rc_to_exit_code(rc);
       if (c_output(ctx)) { goto exit; }
     }
   } else {
