@@ -69,7 +69,7 @@ static int newdb;
 static int useql;
 static int (*do_client)(int argc, char **argv);
 static int (*do_server)(char *path);
-static const char *pidfile_path = NULL;
+static const char *pid_file_path = NULL;
 static const char *input_path = NULL;
 
 static grn_encoding encoding;
@@ -1891,7 +1891,7 @@ do_daemon(char *path)
   int rc;
 #ifndef WIN32
   pid_t pid;
-  FILE *pidfile = NULL;
+  FILE *pid_file = NULL;
 
   switch (fork()) {
   case 0:
@@ -1903,8 +1903,8 @@ do_daemon(char *path)
     wait(NULL);
     return EXIT_SUCCESS;
   }
-  if (pidfile_path) {
-    pidfile = fopen(pidfile_path, "w");
+  if (pid_file_path) {
+    pid_file = fopen(pid_file_path, "w");
   }
   switch ((pid = fork())) {
   case 0:
@@ -1913,11 +1913,11 @@ do_daemon(char *path)
     perror("fork");
     return EXIT_FAILURE;
   default:
-    if (!pidfile) {
+    if (!pid_file) {
       fprintf(stderr, "%d\n", pid);
     } else {
-      fprintf(pidfile, "%d\n", pid);
-      fclose(pidfile);
+      fprintf(pid_file, "%d\n", pid);
+      fclose(pid_file);
     }
     _exit(EXIT_SUCCESS);
   }
@@ -1933,9 +1933,9 @@ do_daemon(char *path)
 #endif /* WIN32 */
   rc = do_server(path);
 #ifndef WIN32
-  if (pidfile) {
-    fclose(pidfile);
-    unlink(pidfile_path);
+  if (pid_file) {
+    fclose(pid_file);
+    unlink(pid_file_path);
   }
 #endif
 
@@ -2476,7 +2476,7 @@ main(int argc, char **argv)
   opts[11].arg = &protocol_arg;
   opts[13].arg = &log_path_arg;
   opts[14].arg = &query_log_path_arg;
-  opts[15].arg = &pidfile_path;
+  opts[15].arg = &pid_file_path;
   opts[16].arg = &config_path;
   opts[18].arg = &cache_limit_arg;
   opts[19].arg = &input_path;
