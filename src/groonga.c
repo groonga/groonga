@@ -863,11 +863,11 @@ run_server_loop(grn_ctx *ctx, grn_com_event *ev)
   }
 }
 
-static grn_rc
+static int
 run_server(grn_ctx *ctx, grn_obj *db, grn_com_event *ev,
            grn_edge_dispatcher_func dispatcher, grn_handler_func handler)
 {
-  grn_rc rc = 0;
+  int rc = EXIT_SUCCESS;
   struct hostent *he;
   if (!(he = gethostbyname(hostname))) {
     SERR("gethostbyname");
@@ -876,7 +876,7 @@ run_server(grn_ctx *ctx, grn_obj *db, grn_com_event *ev,
     grn_edges_init(ctx, dispatcher);
     if (!grn_com_sopen(ctx, ev, bind_address, port, handler, he)) {
       run_server_loop(ctx, ev);
-      rc = 0;
+      rc = EXIT_SUCCESS;
     } else {
       fprintf(stderr, "grn_com_sopen failed (%s:%d): %s\n",
               bind_address, port, ctx->errbuf);
