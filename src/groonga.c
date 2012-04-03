@@ -93,7 +93,8 @@ line_editor_prompt(EditLine *e __attribute__((unused)))
 }
 static const wchar_t * const line_editor_editor = L"emacs";
 
-static void line_editor_init(int argc __attribute__((unused)), char *argv[])
+static void
+line_editor_init(int argc __attribute__((unused)), char *argv[])
 {
   const char * const HOME_PATH = getenv("HOME");
   const char * const HISTORY_PATH = "/.groonga-history";
@@ -121,7 +122,8 @@ static void line_editor_init(int argc __attribute__((unused)), char *argv[])
   el_source(line_editor, NULL);
 }
 
-static void line_editor_fin(void)
+static void
+line_editor_fin(void)
 {
   if (line_editor) {
     el_end(line_editor);
