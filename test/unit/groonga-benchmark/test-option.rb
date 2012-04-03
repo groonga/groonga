@@ -35,11 +35,11 @@ class GrntestOptionTest < Test::Unit::TestCase
       file.puts("do_gqtp #{command_file.path}")
     end
     log = tempfile("log")
-    output, error, status = invoke_grntest("--groonga", groonga,
-                                           "--protocol", "gqtp",
-                                           "--log-path", log.path,
-                                           script_file.path,
-                                           @database_path)
+    output, error, status = invoke_groonga_benchmark("--groonga", groonga,
+                                                     "--protocol", "gqtp",
+                                                     "--log-path", log.path,
+                                                     script_file.path,
+                                                     @database_path)
     assert_predicate(status, :success?, [output, error])
     result = JSON.parse(log.read)
     assert_equal(1, result.last["queries"])

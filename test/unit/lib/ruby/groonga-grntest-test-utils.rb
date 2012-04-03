@@ -36,18 +36,19 @@ module GroongaGrntestTestUtils
   end
 
   private
-  def guess_grntest_path
-    grntest = ENV["GROONGA_BENCHMARK"]
-    grntest ||= File.join(guess_top_source_dir, "src", "groonga-benchmark")
-    File.expand_path(grntest)
+  def guess_groonga_benchmark_path
+    groonga_benchmark = ENV["GROONGA_BENCHMARK"]
+    groonga_benchmark ||= File.join(guess_top_source_dir,
+                                    "src", "groonga-benchmark")
+    File.expand_path(groonga_benchmark)
   end
 
-  def grntest
-    @grntest ||= guess_grntest_path
+  def groonga_benchmark
+    @groonga_benchmark ||= guess_groonga_benchmark_path
   end
 
-  def invoke_grntest(*args)
-    args.unshift(grntest)
+  def invoke_groonga_benchmark(*args)
+    args.unshift(groonga_benchmark)
     invoke_command(*args)
   end
 

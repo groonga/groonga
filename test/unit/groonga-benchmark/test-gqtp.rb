@@ -37,12 +37,12 @@ class GrntestGQTPTest < Test::Unit::TestCase
       file.puts("do_gqtp #{command_file.path} 10 5")
       file.puts("do_gqtp #{command_file.path} 4 2")
     end
-    output, error, status = invoke_grntest("--groonga", groonga,
-                                           "--protocol", "gqtp",
-                                           "--port", "20041",
-                                           "--log-output-dir", @tmp_dir,
-                                           script_file.path,
-                                           @database_path)
+    output, error, status = invoke_groonga_benchmark("--groonga", groonga,
+                                                     "--protocol", "gqtp",
+                                                     "--port", "20041",
+                                                     "--log-output-dir", @tmp_dir,
+                                                     script_file.path,
+                                                     @database_path)
     assert_predicate(status, :success?, [output, error])
     log_file = nil
     Dir.glob("#{@tmp_dir}/*.log") do |file|

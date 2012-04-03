@@ -36,7 +36,7 @@ class GrntestHTTPTest < Test::Unit::TestCase
     script = tempfile("script") do |file|
       file.puts("out_http #{command.path} #{expected.path}")
     end
-    output, error, status = invoke_grntest("--groonga", groonga,
+    output, error, status = invoke_groonga_benchmark("--groonga", groonga,
                                            "--protocol", "http",
                                            "--port", "20041",
                                            "--log-output-dir", @tmp_dir,
@@ -58,21 +58,21 @@ class GrntestHTTPTest < Test::Unit::TestCase
     command = tempfile("command") do |file|
       file.puts('select Shops --sortby _id --limit 5 --output_columns "name"')
     end
-    grntest_command = "rep_http #{command.path}"
+    groonga_benchmark_command = "rep_http #{command.path}"
     script = tempfile("script") do |file|
-      file.puts(grntest_command)
+      file.puts(groonga_benchmark_command)
     end
     log = tempfile("log")
-    output, error, status = invoke_grntest("--groonga", groonga,
-                                           "--protocol", "http",
-                                           "--port", "20041",
-                                           "--log-path", log.path,
-                                           script.path, @database_path)
+    output, error, status = invoke_groonga_benchmark("--groonga", groonga,
+                                                     "--protocol", "http",
+                                                     "--port", "20041",
+                                                     "--log-path", log.path,
+                                                     script.path, @database_path)
     assert_predicate(status, :success?, [output, error])
     jobs_list = JSON.parse(log.read).find_all do |element|
       element.has_key?("jobs")
     end
-    assert_equal([grntest_command],
+    assert_equal([groonga_benchmark_command],
                  jobs_list.collect {|jobs| jobs["jobs"]})
   end
 
@@ -81,21 +81,21 @@ class GrntestHTTPTest < Test::Unit::TestCase
       file.puts('select Shops --sortby _id --limit 5 --output_columns "name" ' +
                 '--output_type xml')
     end
-    grntest_command = "rep_http #{command.path}"
+    groonga_benchmark_command = "rep_http #{command.path}"
     script = tempfile("script") do |file|
-      file.puts(grntest_command)
+      file.puts(groonga_benchmark_command)
     end
     log = tempfile("log")
-    output, error, status = invoke_grntest("--groonga", groonga,
-                                           "--protocol", "http",
-                                           "--port", "20041",
-                                           "--log-path", log.path,
-                                           script.path, @database_path)
+    output, error, status = invoke_groonga_benchmark("--groonga", groonga,
+                                                     "--protocol", "http",
+                                                     "--port", "20041",
+                                                     "--log-path", log.path,
+                                                     script.path, @database_path)
     assert_predicate(status, :success?, [output, error])
     jobs_list = JSON.parse(log.read).find_all do |element|
       element.has_key?("jobs")
     end
-    assert_equal([grntest_command],
+    assert_equal([groonga_benchmark_command],
                  jobs_list.collect {|jobs| jobs["jobs"]})
   end
 
@@ -119,12 +119,12 @@ class GrntestHTTPTest < Test::Unit::TestCase
     script_file = tempfile("script") do |file|
       file.puts("test_http #{command_file.path} #{expected_file.path}")
     end
-    output, error, status = invoke_grntest("--groonga", groonga,
-                                           "--protocol", "http",
-                                           "--port", "20041",
-                                           "--log-output-dir", @tmp_dir,
-                                           script_file.path,
-                                           @database_path)
+    output, error, status = invoke_groonga_benchmark("--groonga", groonga,
+                                                     "--protocol", "http",
+                                                     "--port", "20041",
+                                                     "--log-output-dir", @tmp_dir,
+                                                     script_file.path,
+                                                     @database_path)
     assert_predicate(status, :success?, [output, error])
     assert_equal("", File.read("#{expected_file.path}.diff"))
   end
@@ -158,12 +158,12 @@ class GrntestHTTPTest < Test::Unit::TestCase
     script_file = tempfile("script") do |file|
       file.puts("test_http #{command_file.path} #{expected_file.path}")
     end
-    output, error, status = invoke_grntest("--groonga", groonga,
-                                           "--protocol", "http",
-                                           "--port", "20041",
-                                           "--log-output-dir", @tmp_dir,
-                                           script_file.path,
-                                           @database_path)
+    output, error, status = invoke_groonga_benchmark("--groonga", groonga,
+                                                     "--protocol", "http",
+                                                     "--port", "20041",
+                                                     "--log-output-dir", @tmp_dir,
+                                                     script_file.path,
+                                                     @database_path)
     assert_predicate(status, :success?, [output, error])
     assert_equal("DIFF:command:#{command}\n" +
                  "DIFF:result:#{normalize_result(actual)}\n" +
