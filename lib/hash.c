@@ -588,7 +588,7 @@ grn_array_set_value_inline(grn_ctx *ctx, grn_array *array, grn_id id,
     }
     break;
   default :
-    // todo : support other types.
+    /* todo : support other types. */
     return GRN_INVALID_ARGUMENT;
   }
 }
@@ -1531,7 +1531,7 @@ grn_hash_reset(grn_ctx *ctx, grn_hash *hash, uint32_t ne)
     offs = hash->header->idx_offset;
     offd = MAX_INDEX_SIZE - offs;
     for (i = 0; i < n; i += (IDX_MASK_IN_A_SEGMENT + 1)) {
-      dp = grn_hash_io_idx_at(ctx, hash, i + offd); // todo : use idx_at
+      dp = grn_hash_io_idx_at(ctx, hash, i + offd); /* todo : use idx_at */
       if (!dp) { return GRN_NO_MEMORY_AVAILABLE; }
       memset(dp, 0, GRN_HASH_SEGMENT_SIZE);
     }
@@ -2496,7 +2496,7 @@ grn_hash_sort(grn_ctx *ctx, grn_hash *hash,
     }
   }
   if (limit > *hash->n_entries) { limit = *hash->n_entries; }
-  //  hash->limit = limit;
+  /*  hash->limit = limit; */
   if (optarg) {
     int dir = (optarg->flags & GRN_TABLE_SORT_DESC);
     if ((optarg->flags & GRN_TABLE_SORT_BY_ID) ||
