@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2010  Nobuyoshi Nakada <nakada@clear-code.com>
-# Copyright (C) 2011  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2011-2012  Kouhei Sutou <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -69,7 +69,7 @@ class OptionTest < Test::Unit::TestCase
     test_options = %W[
       port=1.1.1.1 encoding=none encoding=euc-jp
       max-threads=12345 bind-address=localhost
-      log-level=1 server=localhost
+      log-level=1 server-id=localhost
     ]
     config_file = File.join(@tmp_dir, "test-option.config")
     assert_path_not_exist(config_file)
