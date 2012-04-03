@@ -505,38 +505,50 @@ grn_array_truncate(grn_ctx *ctx, grn_array *array)
   return rc;
 }
 
-int
-grn_array_get_value(grn_ctx *ctx, grn_array *array, grn_id id, void *valuebuf)
-{
-  if (ctx && array) {
-    if (grn_array_bitmap_at(ctx, array, id) == 1) {
-      void * const entry = grn_array_entry_at(ctx, array, id, 0);
-      if (entry) {
-        if (valuebuf) {
-          memcpy(valuebuf, entry, array->value_size);
-        }
-        return array->value_size;
-      }
-    }
-  }
-  return 0;
-}
-
 inline static grn_id
 grn_array_get_max_id(grn_array *array)
 {
   return grn_array_is_io_array(array) ? array->header->curr_rec : array->array.max;
 }
 
+inline static void *
+grn_array_get_value_inline(grn_ctx *ctx, grn_array *array, grn_id id)
+{
+  if (!ctx || !array) {
+    return NULL;
+  }
+  if (id == 0 || id > grn_array_get_max_id(array)) {
+    return NULL;
+  }
+  if (*array->n_garbages) {
+    /*
+     * grn_array_bitmap_at() is a time-consuming function, so it is called only
+     * when there are garbages in the array.
+     */
+    if (grn_array_bitmap_at(ctx, array, id) != 1) {
+      return NULL;
+    }
+  }
+  return grn_array_entry_at(ctx, array, id, 0);
+}
+
+int
+grn_array_get_value(grn_ctx *ctx, grn_array *array, grn_id id, void *valuebuf)
+{
+  void * const value = grn_array_get_value_inline(ctx, array, id);
+  if (value) {
+    if (valuebuf) {
+      memcpy(valuebuf, value, array->value_size);
+    }
+    return array->value_size;
+  }
+  return 0;
+}
+
 void *
 _grn_array_get_value(grn_ctx *ctx, grn_array *array, grn_id id)
 {
-  if (ctx && array) {
-    if (grn_array_bitmap_at(ctx, array, id) == 1) {
-      return grn_array_entry_at(ctx, array, id, 0);
-    }
-  }
-  return NULL;
+  return grn_array_get_value_inline(ctx, array, id);
 }
 
 grn_rc
@@ -546,6 +558,7 @@ grn_array_set_value(grn_ctx *ctx, grn_array *array, grn_id id,
   if (!ctx || !array || !value) {
     return GRN_INVALID_ARGUMENT;
   }
+  /* TODO: Use *n_garbages to skip grn_array_bitmap_at(). */
   if (grn_array_bitmap_at(ctx, array, id) != 1) {
     return GRN_INVALID_ARGUMENT;
   }
@@ -655,6 +668,7 @@ grn_array_delete_by_id(grn_ctx *ctx, grn_array *array, grn_id id,
 grn_id
 grn_array_at(grn_ctx *ctx, grn_array *array, grn_id id)
 {
+  /* TODO: Use *n_garbages to skip grn_array_bitmap_at(). */
   return (grn_array_bitmap_at(ctx, array, id) == 1) ? id : GRN_ID_NIL;
 }
 
