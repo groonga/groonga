@@ -517,9 +517,6 @@ grn_array_get_value_inline(grn_ctx *ctx, grn_array *array, grn_id id)
   if (!ctx || !array) {
     return NULL;
   }
-  if (id == 0 || id > grn_array_get_max_id(array)) {
-    return NULL;
-  }
   if (*array->n_garbages) {
     /*
      * grn_array_bitmap_at() is a time-consuming function, so it is called only
@@ -528,6 +525,8 @@ grn_array_get_value_inline(grn_ctx *ctx, grn_array *array, grn_id id)
     if (grn_array_bitmap_at(ctx, array, id) != 1) {
       return NULL;
     }
+  } else if (id == 0 || id > grn_array_get_max_id(array)) {
+    return NULL;
   }
   return grn_array_entry_at(ctx, array, id, 0);
 }
@@ -551,6 +550,49 @@ _grn_array_get_value(grn_ctx *ctx, grn_array *array, grn_id id)
   return grn_array_get_value_inline(ctx, array, id);
 }
 
+inline static grn_rc
+grn_array_set_value_inline(grn_ctx *ctx, grn_array *array, grn_id id,
+                           const void *value, int flags)
+{
+  void * const entry = grn_array_entry_at(ctx, array, id, 0);
+  if (!entry) {
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
+
+  switch ((flags & GRN_OBJ_SET_MASK)) {
+  case GRN_OBJ_SET :
+    memcpy(entry, value, array->value_size);
+    return GRN_SUCCESS;
+  case GRN_OBJ_INCR :
+    switch (array->value_size) {
+  case sizeof(int32_t) :
+      *((int32_t *)entry) += *((int32_t *)value);
+      return GRN_SUCCESS;
+    case sizeof(int64_t) :
+      *((int64_t *)entry) += *((int64_t *)value);
+      return GRN_SUCCESS;
+    default :
+      return GRN_INVALID_ARGUMENT;
+    }
+    break;
+  case GRN_OBJ_DECR :
+    switch (array->value_size) {
+    case sizeof(int32_t) :
+      *((int32_t *)entry) -= *((int32_t *)value);
+      return GRN_SUCCESS;
+    case sizeof(int64_t) :
+      *((int64_t *)entry) -= *((int64_t *)value);
+      return GRN_SUCCESS;
+    default :
+      return GRN_INVALID_ARGUMENT;
+    }
+    break;
+  default :
+    // todo : support other types.
+    return GRN_INVALID_ARGUMENT;
+  }
+}
+
 grn_rc
 grn_array_set_value(grn_ctx *ctx, grn_array *array, grn_id id,
                     const void *value, int flags)
@@ -558,50 +600,18 @@ grn_array_set_value(grn_ctx *ctx, grn_array *array, grn_id id,
   if (!ctx || !array || !value) {
     return GRN_INVALID_ARGUMENT;
   }
-  /* TODO: Use *n_garbages to skip grn_array_bitmap_at(). */
-  if (grn_array_bitmap_at(ctx, array, id) != 1) {
-    return GRN_INVALID_ARGUMENT;
-  }
-
-  {
-    void * const entry = grn_array_entry_at(ctx, array, id, 0);
-    if (!entry) {
-      return GRN_NO_MEMORY_AVAILABLE;
-    }
-
-    switch ((flags & GRN_OBJ_SET_MASK)) {
-    case GRN_OBJ_SET :
-      memcpy(entry, value, array->value_size);
-      return GRN_SUCCESS;
-    case GRN_OBJ_INCR :
-      switch (array->value_size) {
-      case sizeof(int32_t) :
-        *((int32_t *)entry) += *((int32_t *)value);
-        return GRN_SUCCESS;
-      case sizeof(int64_t) :
-        *((int64_t *)entry) += *((int64_t *)value);
-        return GRN_SUCCESS;
-      default :
-        return GRN_INVALID_ARGUMENT;
-      }
-      break;
-    case GRN_OBJ_DECR :
-      switch (array->value_size) {
-      case sizeof(int32_t) :
-        *((int32_t *)entry) -= *((int32_t *)value);
-        return GRN_SUCCESS;
-      case sizeof(int64_t) :
-        *((int64_t *)entry) -= *((int64_t *)value);
-        return GRN_SUCCESS;
-      default :
-        return GRN_INVALID_ARGUMENT;
-      }
-      break;
-    default :
-      // todo : support other types.
+  if (*array->n_garbages) {
+    /*
+     * grn_array_bitmap_at() is a time-consuming function, so it is called only
+     * when there are garbages in the array.
+     */
+    if (grn_array_bitmap_at(ctx, array, id) != 1) {
       return GRN_INVALID_ARGUMENT;
     }
+  } else if (id == 0 || id > grn_array_get_max_id(array)) {
+    return GRN_INVALID_ARGUMENT;
   }
+  return grn_array_set_value_inline(ctx, array, id, value, flags);
 }
 
 grn_rc
@@ -802,7 +812,8 @@ grn_rc
 grn_array_cursor_set_value(grn_ctx *ctx, grn_array_cursor *cursor,
                            const void *value, int flags)
 {
-  return grn_array_set_value(ctx, cursor->array, cursor->curr_rec, value, flags);
+  return grn_array_set_value_inline(ctx, cursor->array, cursor->curr_rec,
+                                    value, flags);
 }
 
 grn_rc
