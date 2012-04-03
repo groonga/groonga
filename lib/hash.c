@@ -678,8 +678,18 @@ grn_array_delete_by_id(grn_ctx *ctx, grn_array *array, grn_id id,
 grn_id
 grn_array_at(grn_ctx *ctx, grn_array *array, grn_id id)
 {
-  /* TODO: Use *n_garbages to skip grn_array_bitmap_at(). */
-  return (grn_array_bitmap_at(ctx, array, id) == 1) ? id : GRN_ID_NIL;
+  if (*array->n_garbages) {
+    /*
+     * grn_array_bitmap_at() is a time-consuming function, so it is called only
+     * when there are garbages in the array.
+     */
+    if (grn_array_bitmap_at(ctx, array, id) != 1) {
+      return GRN_ID_NIL;
+    }
+  } else if (id > grn_array_get_max_id(array)) {
+    return GRN_ID_NIL;
+  }
+  return id;
 }
 
 grn_rc
