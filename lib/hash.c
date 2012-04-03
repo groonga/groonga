@@ -761,9 +761,12 @@ grn_array_cursor_next(grn_ctx *ctx, grn_array_cursor *cursor)
 grn_id
 grn_array_next(grn_ctx *ctx, grn_array *array, grn_id id)
 {
-  grn_id max = grn_array_get_max_id(array);
-  while (++id <= max) {
-    if (grn_array_bitmap_at(ctx, array, id) == 1) { return id; }
+  const grn_id max_id = grn_array_get_max_id(array);
+  while (++id <= max_id) {
+    if (!*array->n_garbages ||
+        grn_array_bitmap_at(ctx, array, id) == 1) {
+      return id;
+    }
   }
   return GRN_ID_NIL;
 }
