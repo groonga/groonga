@@ -54,8 +54,8 @@ class OptionTest < Test::Unit::TestCase
 
   def test_mandatory_argument_missing
     usage = 'Usage: groonga \[options\.\.\.\] \[dest\]$'
-    %w[-e -l -a -p -i -t
-       --admin-html-path --protocol --log-path
+    %w[-e -l -p -i -t
+       --document-root --protocol --log-path
        --query-log-path --pid-path --config-path].each do |option|
       status = assert_run_groonga("",
                                   /: option '#{option}' needs argument\.$/,
