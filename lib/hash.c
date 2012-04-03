@@ -1594,7 +1594,7 @@ grn_hash_truncate(grn_ctx *ctx, grn_hash *hash)
   return rc;
 }
 
-grn_rc
+static grn_rc
 grn_hash_reset(grn_ctx *ctx, grn_hash *hash, uint32_t ne)
 {
   entry *ee;
