@@ -963,7 +963,20 @@ typedef struct {
   uint8_t value[1];
 } grn_tiny_hash_entry;
 
+/*
+ * hash_value is valid even if the entry is grn_plain_hash_entry. In this case,
+ * its hash_value equals its key.
+ * flag, key_size and key.buf are valid if the entry has a variable length key.
+ */
+typedef struct {
+  uint32_t hash_value;
+  uint16_t flag;
+  uint16_t key_size;
+} grn_hash_entry_header;
+
 typedef union {
+  uint32_t hash_value;
+  grn_hash_entry_header header;
   grn_plain_hash_entry plain_entry;
   grn_rich_hash_entry rich_entry;
   grn_io_hash_entry io_entry;
@@ -1166,7 +1179,7 @@ grn_hash_entry_put_key(grn_ctx *ctx, grn_hash *hash,
         memcpy(entry->tiny_entry.key.ptr, key, key_size);
         entry->tiny_entry.flag = 0;
       }
-      entry->io_entry.hash_value = hash_value;
+      entry->io_entry.hash_value = hash_value; /* FIXME: typo */
       entry->tiny_entry.key_size = key_size;
     }
   } else {
@@ -1178,6 +1191,47 @@ grn_hash_entry_put_key(grn_ctx *ctx, grn_hash *hash,
     }
   }
   return GRN_SUCCESS;
+}
+
+/*
+ * grn_hash_entry_compare_key() returns GRN_TRUE if the entry key equals the
+ * specified key, or GRN_FALSE otherwise.
+ */
+inline static grn_bool
+grn_hash_entry_compare_key(grn_ctx *ctx, grn_hash *hash,
+                           grn_hash_entry *entry, uint32_t hash_value,
+                           const void *key, unsigned int key_size)
+{
+  if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
+    if (entry->hash_value != hash_value ||
+        entry->header.key_size != key_size) {
+      return GRN_FALSE;
+    }
+    if (IO_HASHP(hash)) {
+      if (entry->io_entry.flag & HASH_IMMEDIATE) {
+        return !memcmp(key, entry->io_entry.key.buf, key_size);
+      } else {
+        const void * const entry_key_ptr =
+            grn_io_hash_key_at(ctx, hash, entry->io_entry.key.offset);
+        return !memcmp(key, entry_key_ptr, key_size);
+      }
+    } else {
+      if (entry->tiny_entry.flag & HASH_IMMEDIATE) {
+        return !memcmp(key, entry->tiny_entry.key.buf, key_size);
+      } else {
+        return !memcmp(key, entry->tiny_entry.key.ptr, key_size);
+      }
+    }
+  } else {
+    if (entry->hash_value != hash_value) {
+      return GRN_FALSE;
+    }
+    if (key_size == sizeof(uint32_t)) {
+      return GRN_TRUE;
+    } else {
+      return !memcmp(key, entry->rich_entry.key_and_value, key_size);
+    }
+  }
 }
 
 inline static char *
@@ -1203,15 +1257,8 @@ inline static int
 match_key(grn_ctx *ctx, grn_hash *hash, entry_str *ee, uint32_t h,
           const char *key, unsigned int len)
 {
-  if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
-    return (ee->key == h &&
-            ee->size == len &&
-            !memcmp(key, get_key(ctx, hash, ee), len));
-  } else {
-    return (ee->key == h &&
-            ((len == sizeof(uint32_t)) ||
-             !memcmp(key, get_key(ctx, hash, ee), len)));
-  }
+  return grn_hash_entry_compare_key(ctx, hash, (grn_hash_entry *)ee,
+                                    h, key, len);
 }
 
 #define GARBAGE (0xffffffff)
