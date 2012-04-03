@@ -67,6 +67,7 @@ static int batchmode;
 static int number_of_lines = 0;
 static int newdb;
 static int useql;
+static grn_bool is_daemon_mode = GRN_FALSE;
 static int (*do_client)(int argc, char **argv);
 static int (*do_server)(char *path);
 static FILE *pid_file = NULL;
@@ -951,7 +952,15 @@ run_server(grn_ctx *ctx, grn_obj *db, grn_com_event *ev,
     ev->opaque = db;
     grn_edges_init(ctx, dispatcher);
     if (!grn_com_sopen(ctx, ev, bind_address, port, handler, he)) {
-      run_server_loop(ctx, ev);
+      if (is_daemon_mode) {
+        exit_code = daemonize();
+      }
+      if (exit_code == EXIT_SUCCESS) {
+        run_server_loop(ctx, ev);
+      }
+      if (is_daemon_mode) {
+        clean_pid_file();
+      }
       exit_code = EXIT_SUCCESS;
     } else {
       fprintf(stderr, "grn_com_sopen failed (%s:%d): %s\n",
@@ -1961,20 +1970,6 @@ g_server(char *path)
   return exit_code;
 }
 
-static int
-do_daemon(char *path)
-{
-  int exit_code;
-
-  exit_code = daemonize();
-  if (exit_code == EXIT_SUCCESS) {
-    exit_code = do_server(path);
-  }
-  clean_pid_file();
-
-  return exit_code;
-}
-
 enum {
   mode_alone = 0,
   mode_client,
@@ -2824,8 +2819,8 @@ main(int argc, char **argv)
     exit_code = do_client(argc - i, argv + i);
     break;
   case mode_daemon :
-    exit_code = do_daemon(argc > i ? argv[i] : NULL);
-    break;
+    is_daemon_mode = GRN_TRUE;
+    /* fallthru */
   case mode_server :
     exit_code = do_server(argc > i ? argv[i] : NULL);
     break;
