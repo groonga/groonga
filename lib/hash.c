@@ -1507,11 +1507,12 @@ grn_tiny_hash_fin(grn_ctx *ctx, grn_hash *hash)
     for (hash_ptr = hash->index; num_remaining_entries; hash_ptr++) {
       const grn_id id = *hash_ptr;
       if (id && id != GARBAGE) {
-        entry_astr * const e = grn_tiny_array_at_inline(&hash->a, id);
-        GRN_ASSERT(e);
+        grn_tiny_hash_entry * const entry =
+            (grn_tiny_hash_entry *)grn_tiny_array_at_inline(&hash->a, id);
+        GRN_ASSERT(entry);
         num_remaining_entries--;
-        if (e && !(e->flag & HASH_IMMEDIATE)) {
-          GRN_CTX_FREE(ctx, e->str);
+        if (entry && !(entry->flag & HASH_IMMEDIATE)) {
+          GRN_CTX_FREE(ctx, entry->key.ptr);
         }
       }
     }
