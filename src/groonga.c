@@ -830,6 +830,65 @@ static grn_mutex q_mutex;
 static grn_cond q_cond;
 static uint32_t nthreads = 0, nfthreads = 0, max_nfthreads;
 
+static int
+daemonize(void)
+{
+  int exit_code = EXIT_SUCCESS;
+#ifndef WIN32
+  pid_t pid;
+
+  switch (fork()) {
+  case 0:
+    break;
+  case -1:
+    perror("fork");
+    return EXIT_FAILURE;
+  default:
+    wait(NULL);
+    _exit(EXIT_SUCCESS);
+  }
+  if (pid_file_path) {
+    pid_file = fopen(pid_file_path, "w");
+  }
+  switch ((pid = fork())) {
+  case 0:
+    break;
+  case -1:
+    perror("fork");
+    return EXIT_FAILURE;
+  default:
+    if (!pid_file) {
+      fprintf(stderr, "%d\n", pid);
+    } else {
+      fprintf(pid_file, "%d\n", pid);
+      fclose(pid_file);
+    }
+    _exit(EXIT_SUCCESS);
+  }
+  {
+    int null_fd = GRN_OPEN("/dev/null", O_RDWR, 0);
+    if (null_fd != -1) {
+      dup2(null_fd, 0);
+      dup2(null_fd, 1);
+      dup2(null_fd, 2);
+      if (null_fd > 2) { GRN_CLOSE(null_fd); }
+    }
+  }
+#endif /* WIN32 */
+  return exit_code;
+}
+
+static void
+clean_pid_file(void)
+{
+#ifndef WIN32
+  if (pid_file) {
+    fclose(pid_file);
+    unlink(pid_file_path);
+  }
+#endif
+}
+
 static void
 run_server_loop(grn_ctx *ctx, grn_com_event *ev)
 {
@@ -1906,54 +1965,12 @@ static int
 do_daemon(char *path)
 {
   int exit_code;
-#ifndef WIN32
-  pid_t pid;
 
-  switch (fork()) {
-  case 0:
-    break;
-  case -1:
-    perror("fork");
-    return EXIT_FAILURE;
-  default:
-    wait(NULL);
-    return EXIT_SUCCESS;
+  exit_code = daemonize();
+  if (exit_code == EXIT_SUCCESS) {
+    exit_code = do_server(path);
   }
-  if (pid_file_path) {
-    pid_file = fopen(pid_file_path, "w");
-  }
-  switch ((pid = fork())) {
-  case 0:
-    break;
-  case -1:
-    perror("fork");
-    return EXIT_FAILURE;
-  default:
-    if (!pid_file) {
-      fprintf(stderr, "%d\n", pid);
-    } else {
-      fprintf(pid_file, "%d\n", pid);
-      fclose(pid_file);
-    }
-    _exit(EXIT_SUCCESS);
-  }
-  {
-    int null_fd = GRN_OPEN("/dev/null", O_RDWR, 0);
-    if (null_fd != -1) {
-      dup2(null_fd, 0);
-      dup2(null_fd, 1);
-      dup2(null_fd, 2);
-      if (null_fd > 2) { GRN_CLOSE(null_fd); }
-    }
-  }
-#endif /* WIN32 */
-  exit_code = do_server(path);
-#ifndef WIN32
-  if (pid_file) {
-    fclose(pid_file);
-    unlink(pid_file_path);
-  }
-#endif
+  clean_pid_file();
 
   return exit_code;
 }
