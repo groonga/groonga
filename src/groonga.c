@@ -69,6 +69,7 @@ static int newdb;
 static int useql;
 static int (*do_client)(int argc, char **argv);
 static int (*do_server)(char *path);
+static FILE *pid_file = NULL;
 static const char *pid_file_path = NULL;
 static const char *input_path = NULL;
 
@@ -1907,7 +1908,6 @@ do_daemon(char *path)
   int exit_code;
 #ifndef WIN32
   pid_t pid;
-  FILE *pid_file = NULL;
 
   switch (fork()) {
   case 0:
