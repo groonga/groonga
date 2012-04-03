@@ -37,8 +37,8 @@ module GroongaGrntestTestUtils
 
   private
   def guess_grntest_path
-    grntest = ENV["GRNTEST"]
-    grntest ||= File.join(guess_top_source_dir, "src", "grntest")
+    grntest = ENV["GROONGA_BENCHMARK"]
+    grntest ||= File.join(guess_top_source_dir, "src", "groonga-benchmark")
     File.expand_path(grntest)
   end
 

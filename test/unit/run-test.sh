@@ -28,10 +28,10 @@ if test -z "$GROONGA"; then
 fi
 export GROONGA
 
-if test -z "$GRNTEST"; then
-    GRNTEST="`make -s -C $top_dir echo-groonga-benchmark`"
+if test -z "$GROONGA_BENCHMARK"; then
+    GROONGA_BENCHMARK="`make -s -C $top_dir echo-groonga-benchmark`"
 fi
-export GRNTEST
+export GROONGA_BENCHMARK
 
 CUTTER_ARGS=
 CUTTER_WRAPPER=
