@@ -1441,6 +1441,9 @@ grn_hash_create(grn_ctx *ctx, const char *path, uint32_t key_size, uint32_t valu
                 uint32_t flags)
 {
   grn_hash *hash;
+  if (!ctx) {
+    return NULL;
+  }
   if (key_size > GRN_HASH_MAX_KEY_SIZE) {
     return NULL;
   }
@@ -1459,37 +1462,40 @@ grn_hash_create(grn_ctx *ctx, const char *path, uint32_t key_size, uint32_t valu
 grn_hash *
 grn_hash_open(grn_ctx *ctx, const char *path)
 {
-  grn_io * const io = grn_io_open(ctx, path, grn_io_auto);
-  if (io) {
-    struct grn_hash_header * const header = grn_io_header(io);
-    if (grn_io_get_type(io) == GRN_TABLE_HASH_KEY) {
-      grn_hash * const hash = (grn_hash *)GRN_MALLOC(sizeof(grn_hash));
-      if (hash) {
-        if (!(header->flags & GRN_HASH_TINY)) {
-          GRN_DB_OBJ_SET_TYPE(hash, GRN_TABLE_HASH_KEY);
-          hash->obj.header.flags = header->flags;
-          hash->ctx = ctx;
-          hash->key_size = header->key_size;
-          hash->encoding = header->encoding;
-          hash->value_size = header->value_size;
-          hash->entry_size = header->entry_size;
-          hash->n_garbages = &header->n_garbages;
-          hash->n_entries = &header->n_entries;
-          hash->max_offset = &header->max_offset;
-          hash->io = io;
-          hash->header = header;
-          hash->lock = &header->lock;
-          hash->tokenizer = grn_ctx_at(ctx, header->tokenizer);
-          return hash;
-        } else {
-          GRN_LOG(ctx, GRN_LOG_NOTICE, "invalid hash flag. (%x)", header->flags);
+  if (ctx) {
+    grn_io * const io = grn_io_open(ctx, path, grn_io_auto);
+    if (io) {
+      struct grn_hash_header * const header = grn_io_header(io);
+      if (grn_io_get_type(io) == GRN_TABLE_HASH_KEY) {
+        grn_hash * const hash = (grn_hash *)GRN_MALLOC(sizeof(grn_hash));
+        if (hash) {
+          if (!(header->flags & GRN_HASH_TINY)) {
+            GRN_DB_OBJ_SET_TYPE(hash, GRN_TABLE_HASH_KEY);
+            hash->obj.header.flags = header->flags;
+            hash->ctx = ctx;
+            hash->key_size = header->key_size;
+            hash->encoding = header->encoding;
+            hash->value_size = header->value_size;
+            hash->entry_size = header->entry_size;
+            hash->n_garbages = &header->n_garbages;
+            hash->n_entries = &header->n_entries;
+            hash->max_offset = &header->max_offset;
+            hash->io = io;
+            hash->header = header;
+            hash->lock = &header->lock;
+            hash->tokenizer = grn_ctx_at(ctx, header->tokenizer);
+            return hash;
+          } else {
+            GRN_LOG(ctx, GRN_LOG_NOTICE,
+                    "invalid hash flag. (%x)", header->flags);
+          }
+          GRN_FREE(hash);
         }
-        GRN_FREE(hash);
+      } else {
+        ERR(GRN_INVALID_FORMAT, "file type unmatch");
       }
-    } else {
-      ERR(GRN_INVALID_FORMAT, "file type unmatch");
+      grn_io_close(ctx, io);
     }
-    grn_io_close(ctx, io);
   }
   return NULL;
 }
@@ -1527,7 +1533,7 @@ grn_rc
 grn_hash_close(grn_ctx *ctx, grn_hash *hash)
 {
   grn_rc rc;
-  if (!hash) { return GRN_INVALID_ARGUMENT; }
+  if (!ctx || !hash) { return GRN_INVALID_ARGUMENT; }
   if (IO_HASHP(hash)) {
     rc = grn_io_close(ctx, hash->io);
   } else {
@@ -1541,7 +1547,7 @@ grn_hash_close(grn_ctx *ctx, grn_hash *hash)
 grn_rc
 grn_hash_remove(grn_ctx *ctx, const char *path)
 {
-  if (!path) { return GRN_INVALID_ARGUMENT; }
+  if (!ctx || !path) { return GRN_INVALID_ARGUMENT; }
   return grn_io_remove(ctx, path);
 }
 
@@ -1551,6 +1557,10 @@ grn_hash_truncate(grn_ctx *ctx, grn_hash *hash)
   grn_rc rc;
   char *path;
   uint32_t key_size, value_size, flags;
+
+  if (!ctx || !hash) {
+    return GRN_INVALID_ARGUMENT;
+  }
 
   if (IO_HASHP(hash) &&
       (path = (char *)grn_io_path(hash->io)) && *path != '\0') {
