@@ -1371,12 +1371,13 @@ grn_tiny_hash_calculate_entry_size(uint32_t key_size, uint32_t value_size,
 {
   uint32_t entry_size;
   if (flags & GRN_OBJ_KEY_VAR_SIZE) {
-    entry_size = (uintptr_t)&((entry_astr *)0)->dummy + value_size;
+    entry_size = (uintptr_t)((grn_tiny_hash_entry *)0)->value + value_size;
   } else {
     if (key_size == sizeof(uint32_t)) {
-      entry_size = (uintptr_t)(&((entry *)0)->dummy) + value_size;
+      entry_size = (uintptr_t)((grn_plain_hash_entry *)0)->value + value_size;
     } else {
-      entry_size = (uintptr_t)(&((entry *)0)->dummy) + key_size + value_size;
+      entry_size = (uintptr_t)((grn_rich_hash_entry *)0)->key_and_value
+          + key_size + value_size;
     }
   }
   if (entry_size != sizeof(uint32_t)) {
