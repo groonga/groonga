@@ -832,7 +832,7 @@ run_server_loop(grn_ctx *ctx, grn_com_event *ev)
       }
       grn_edges_delete(ctx, edge);
     }
-    // todo : log stat
+    /* todo : log stat */
   }
   for (;;) {
     MUTEX_LOCK(q_mutex);
@@ -1349,7 +1349,7 @@ do_mbreq(grn_ctx *ctx, grn_edge *edge)
       cache_init(ctx);
       rid = grn_table_get(ctx, cache_table, key, keylen);
       if (!rid) {
-        // GRN_LOG(ctx, GRN_LOG_NOTICE, "GET k=%d not found", keylen);
+        /* GRN_LOG(ctx, GRN_LOG_NOTICE, "GET k=%d not found", keylen); */
         GRN_MSG_MBRES({
           MBRES(ctx, re, MBRES_KEY_ENOENT, 0, 0, 0);
         });
@@ -1677,7 +1677,7 @@ h_server(char *path)
     struct rlimit lim;
     lim.rlim_cur = 4096;
     lim.rlim_max = 4096;
-    // RLIMIT_OFILE
+    /* RLIMIT_OFILE */
     setrlimit(RLIMIT_NOFILE, &lim);
     lim.rlim_cur = 0;
     lim.rlim_max = 0;
@@ -1860,7 +1860,7 @@ g_server(char *path)
     struct rlimit lim;
     lim.rlim_cur = 4096;
     lim.rlim_max = 4096;
-    // RLIMIT_OFILE
+    /* RLIMIT_OFILE */
     setrlimit(RLIMIT_NOFILE, &lim);
     lim.rlim_cur = 0;
     lim.rlim_max = 0;
