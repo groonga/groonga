@@ -934,12 +934,12 @@ grn_array_add(grn_ctx *ctx, grn_array *array, void **value)
 typedef struct {
   uint8_t key[4];
   uint8_t value[1];
-} grn_hash_plain_entry;
+} grn_plain_hash_entry;
 
 typedef struct {
   uint32_t hash_value;
   uint8_t key_and_value[1];
-} grn_hash_rich_entry;
+} grn_rich_hash_entry;
 
 typedef struct {
   uint32_t hash_value;
@@ -964,8 +964,8 @@ typedef struct {
 } grn_tiny_hash_entry;
 
 typedef union {
-  grn_hash_plain_entry plain_entry;
-  grn_hash_rich_entry rich_entry;
+  grn_plain_hash_entry plain_entry;
+  grn_rich_hash_entry rich_entry;
   grn_io_hash_entry io_entry;
   grn_tiny_hash_entry tiny_entry;
 } grn_hash_entry;
@@ -1003,7 +1003,7 @@ enum {
 };
 
 inline static void *
-grn_hash_io_entry_at(grn_ctx *ctx, grn_hash *hash, grn_id id, int flags)
+grn_io_hash_entry_at(grn_ctx *ctx, grn_hash *hash, grn_id id, int flags)
 {
   return grn_io_array_at_inline(ctx, hash->io, segment_entry, id, flags);
 }
@@ -1013,7 +1013,7 @@ inline static void *
 grn_hash_entry_at(grn_ctx *ctx, grn_hash *hash, grn_id id, int flags)
 {
   if (IO_HASHP(hash)) {
-    return grn_hash_io_entry_at(ctx, hash, id, flags);
+    return grn_io_hash_entry_at(ctx, hash, id, flags);
   } else {
     return grn_tiny_array_at_inline(&hash->a, id);
   }
@@ -1030,7 +1030,7 @@ grn_hash_bitmap_at(grn_ctx *ctx, grn_hash *hash, grn_id id)
 }
 
 inline static grn_id *
-grn_hash_io_idx_at(grn_ctx *ctx, grn_hash *hash, grn_id id)
+grn_io_hash_idx_at(grn_ctx *ctx, grn_hash *hash, grn_id id)
 {
   return grn_io_array_at_inline(ctx, hash->io, segment_index, id, GRN_TABLE_ADD);
 }
@@ -1040,7 +1040,7 @@ grn_hash_idx_at(grn_ctx *ctx, grn_hash *hash, grn_id id)
 {
   if (IO_HASHP(hash)) {
     id = (id & *hash->max_offset) + hash->header->idx_offset;
-    return grn_hash_io_idx_at(ctx, hash, id);
+    return grn_io_hash_idx_at(ctx, hash, id);
   } else {
     return hash->index + (id & *hash->max_offset);
   }
@@ -1541,7 +1541,7 @@ grn_hash_reset(grn_ctx *ctx, grn_hash *hash, uint32_t ne)
     offs = hash->header->idx_offset;
     offd = MAX_INDEX_SIZE - offs;
     for (i = 0; i < n; i += (IDX_MASK_IN_A_SEGMENT + 1)) {
-      dp = grn_hash_io_idx_at(ctx, hash, i + offd); /* todo : use idx_at */
+      dp = grn_io_hash_idx_at(ctx, hash, i + offd); /* todo : use idx_at */
       if (!dp) { return GRN_NO_MEMORY_AVAILABLE; }
       memset(dp, 0, GRN_HASH_SEGMENT_SIZE);
     }
@@ -1556,7 +1556,7 @@ grn_hash_reset(grn_ctx *ctx, grn_hash *hash, uint32_t ne)
     uint32_t i, j, k, m0 = *hash->max_offset, m = n - 1, s;
     for (k = 0, j = 0; k < n0 && j <= m0; j++, sp++) {
       if (IO_HASHP(hash) && !(j & IDX_MASK_IN_A_SEGMENT)) {
-        sp = grn_hash_io_idx_at(ctx, hash, j + offs);
+        sp = grn_io_hash_idx_at(ctx, hash, j + offs);
         if (!sp) { return GRN_NO_MEMORY_AVAILABLE; }
       }
       e = *sp;
@@ -1565,7 +1565,7 @@ grn_hash_reset(grn_ctx *ctx, grn_hash *hash, uint32_t ne)
       if (!ee) { return GRN_NO_MEMORY_AVAILABLE; }
       for (i = ee->key, s = STEP(i); ; i += s) {
         if (IO_HASHP(hash)) {
-          dp = grn_hash_io_idx_at(ctx, hash, (i & m) + offd);
+          dp = grn_io_hash_idx_at(ctx, hash, (i & m) + offd);
           if (!dp) { return GRN_NO_MEMORY_AVAILABLE; }
         } else {
           dp = index + (i & m);
@@ -1604,7 +1604,7 @@ entry_new(grn_ctx *ctx, grn_hash *hash, uint32_t size)
     struct grn_hash_header *hh = hash->header;
     size -= 1;
     if ((e = hh->garbages[size])) {
-      entry * const ee = grn_hash_io_entry_at(ctx, hash, e, GRN_TABLE_ADD);
+      entry * const ee = grn_io_hash_entry_at(ctx, hash, e, GRN_TABLE_ADD);
       if (!ee) { return GRN_ID_NIL; }
       hh->garbages[size] = ee->key;
       if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
