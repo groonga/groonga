@@ -848,22 +848,24 @@ daemonize(void)
     wait(NULL);
     _exit(EXIT_SUCCESS);
   }
-  if (pid_file_path) {
-    pid_file = fopen(pid_file_path, "w");
-  }
-  switch ((pid = fork())) {
+  switch (fork()) {
   case 0:
-    break;
-  case -1:
-    perror("fork");
-    return EXIT_FAILURE;
-  default:
+    if (pid_file_path) {
+      pid_file = fopen(pid_file_path, "w");
+    }
+    pid = getpid();
     if (!pid_file) {
       fprintf(stderr, "%d\n", pid);
     } else {
       fprintf(pid_file, "%d\n", pid);
       fclose(pid_file);
+      pid_file = NULL;
     }
+    break;
+  case -1:
+    perror("fork");
+    return EXIT_FAILURE;
+  default:
     _exit(EXIT_SUCCESS);
   }
   {
@@ -883,8 +885,7 @@ static void
 clean_pid_file(void)
 {
 #ifndef WIN32
-  if (pid_file) {
-    fclose(pid_file);
+  if (pid_file_path) {
     unlink(pid_file_path);
   }
 #endif
