@@ -1955,14 +1955,21 @@ grn_hash_get_value(grn_ctx *ctx, grn_hash *hash, grn_id id, void *valuebuf)
 const char *
 grn_hash_get_value_(grn_ctx *ctx, grn_hash *hash, grn_id id, uint32_t *size)
 {
-  entry_str *ee;
-  const char *value = NULL;
-  if (!grn_hash_bitmap_at(ctx, hash, id)) { return NULL; }
-  ee = grn_hash_entry_at(ctx, hash, id, 0);
-  if (ee && (value = get_value(hash, ee))) {
-    *size = hash->value_size;
+  const void *value;
+  grn_hash_entry *entry;
+  if (!grn_hash_bitmap_at(ctx, hash, id)) {
+    return NULL;
   }
-  return value;
+  entry = grn_hash_entry_at(ctx, hash, id, 0);
+  if (!entry) {
+    return NULL;
+  }
+  value = grn_hash_entry_get_value(hash, entry);
+  if (!value) {
+    return NULL;
+  }
+  *size = hash->value_size;
+  return (const char *)value;
 }
 
 int
