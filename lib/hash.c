@@ -1013,10 +1013,10 @@ typedef struct {
 #define LOGICAL_MAX_SEGMENT ((GRN_HASH_MAX_SEGMENT) * 4)
 
 enum {
-  segment_key = 0,
-  segment_entry = 1,
-  segment_index = 2,
-  segment_bitmap = 3
+  GRN_HASH_KEY_SEGMENT    = 0,
+  GRN_HASH_ENTRY_SEGMENT  = 1,
+  GRN_HASH_INDEX_SEGMENT  = 2,
+  GRN_HASH_BITMAP_SEGMENT = 3
 };
 
 inline static grn_bool
@@ -1028,7 +1028,7 @@ grn_hash_is_io_hash(grn_hash *hash)
 inline static void *
 grn_io_hash_entry_at(grn_ctx *ctx, grn_hash *hash, grn_id id, int flags)
 {
-  return grn_io_array_at_inline(ctx, hash->io, segment_entry, id, flags);
+  return grn_io_array_at_inline(ctx, hash->io, GRN_HASH_ENTRY_SEGMENT, id, flags);
 }
 
 /* todo : error handling */
@@ -1046,7 +1046,7 @@ inline static grn_bool
 grn_hash_bitmap_at(grn_ctx *ctx, grn_hash *hash, grn_id id)
 {
   if (grn_hash_is_io_hash(hash)) {
-    return grn_io_array_bit_at(ctx, hash->io, segment_bitmap, id) == 1;
+    return grn_io_array_bit_at(ctx, hash->io, GRN_HASH_BITMAP_SEGMENT, id) == 1;
   } else {
     return grn_tiny_array_bit_at(&hash->bitmap, id) == 1;
   }
@@ -1055,7 +1055,8 @@ grn_hash_bitmap_at(grn_ctx *ctx, grn_hash *hash, grn_id id)
 inline static grn_id *
 grn_io_hash_idx_at(grn_ctx *ctx, grn_hash *hash, grn_id id)
 {
-  return grn_io_array_at_inline(ctx, hash->io, segment_index, id, GRN_TABLE_ADD);
+  return grn_io_array_at_inline(ctx, hash->io, GRN_HASH_INDEX_SEGMENT,
+                                id, GRN_TABLE_ADD);
 }
 
 inline static grn_id *
@@ -1072,7 +1073,8 @@ grn_hash_idx_at(grn_ctx *ctx, grn_hash *hash, grn_id id)
 inline static void *
 grn_io_hash_key_at(grn_ctx *ctx, grn_hash *hash, uint32_t pos)
 {
-  return grn_io_array_at_inline(ctx, hash->io, segment_key, pos, GRN_TABLE_ADD);
+  return grn_io_array_at_inline(ctx, hash->io, GRN_HASH_KEY_SEGMENT,
+                                pos, GRN_TABLE_ADD);
 }
 
 #define HASH_IMMEDIATE 1
@@ -1301,14 +1303,15 @@ grn_io_hash_create_io(grn_ctx *ctx, const char *path, uint32_t entry_size)
     w_of_element++;
   }
 
-  array_spec[segment_key].w_of_element = 0;
-  array_spec[segment_key].max_n_segments = 0x400;
-  array_spec[segment_entry].w_of_element = w_of_element;
-  array_spec[segment_entry].max_n_segments = 1U << (30 - (22 - w_of_element));
-  array_spec[segment_index].w_of_element = 2;
-  array_spec[segment_index].max_n_segments = 1U << (30 - (22 - 2));
-  array_spec[segment_bitmap].w_of_element = 0;
-  array_spec[segment_bitmap].max_n_segments = 1U << (30 - (22 + 3));
+  array_spec[GRN_HASH_KEY_SEGMENT].w_of_element = 0;
+  array_spec[GRN_HASH_KEY_SEGMENT].max_n_segments = 0x400;
+  array_spec[GRN_HASH_ENTRY_SEGMENT].w_of_element = w_of_element;
+  array_spec[GRN_HASH_ENTRY_SEGMENT].max_n_segments =
+      1U << (30 - (22 - w_of_element));
+  array_spec[GRN_HASH_INDEX_SEGMENT].w_of_element = 2;
+  array_spec[GRN_HASH_INDEX_SEGMENT].max_n_segments = 1U << (30 - (22 - 2));
+  array_spec[GRN_HASH_BITMAP_SEGMENT].w_of_element = 0;
+  array_spec[GRN_HASH_BITMAP_SEGMENT].max_n_segments = 1U << (30 - (22 + 3));
   return grn_io_create_with_array(ctx, path, GRN_HASH_HEADER_SIZE,
                                   GRN_HASH_SEGMENT_SIZE,
                                   grn_io_auto, 4, array_spec);
@@ -1692,7 +1695,7 @@ entry_new(grn_ctx *ctx, grn_hash *hash, uint32_t size)
     } else {
       e = ++hh->curr_rec;
     }
-    grn_io_array_bit_on(ctx, hash->io, segment_bitmap, e);
+    grn_io_array_bit_on(ctx, hash->io, GRN_HASH_BITMAP_SEGMENT, e);
   } else {
     if (hash->garbages) {
       entry *ee;
@@ -2012,7 +2015,7 @@ grn_hash_set_value(grn_ctx *ctx, grn_hash *hash, grn_id id,
     struct grn_hash_header *hh = hash->header;\
     ee->key = hh->garbages[size];\
     hh->garbages[size] = e;\
-    grn_io_array_bit_off(ctx, hash->io, segment_bitmap, e);\
+    grn_io_array_bit_off(ctx, hash->io, GRN_HASH_BITMAP_SEGMENT, e);\
   } else {\
     ee->key = hash->garbages;\
     hash->garbages = e;\
