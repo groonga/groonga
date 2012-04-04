@@ -67,9 +67,7 @@ Groonga = {
   GRN_OBJ_WITH_WEIGHT:            (0x01<<8),
   GRN_OBJ_WITH_POSITION:          (0x01<<9)
 };
-GroongaAdmin = {
-  SELECT_PARAMS_LIST: ['match_columns', 'query', 'filter', 'scorer', 'sortby', 'output_columns', 'offset', 'limit', 'drilldown', 'drilldown_sortby', 'drilldown_output_columns', 'drilldown_offset', 'drilldown_limit'],
-  initialize: function() {
+function GroongaAdmin() {
     GroongaAdmin.current_table = null;
     GroongaAdmin.statusTimer = null;
     GroongaAdmin.semaphore = new Array();
@@ -242,7 +240,10 @@ GroongaAdmin = {
     });
 
     GroongaAdmin.recordlist_count = 30;
-  },
+};
+
+jQuery.extend(GroongaAdmin, {
+  SELECT_PARAMS_LIST: ['match_columns', 'query', 'filter', 'scorer', 'sortby', 'output_columns', 'offset', 'limit', 'drilldown', 'drilldown_sortby', 'drilldown_output_columns', 'drilldown_offset', 'drilldown_limit'],
   start_status_timer: function() {
     GroongaAdmin.stop_status_timer();
     GroongaAdmin.status();
@@ -1129,4 +1130,4 @@ GroongaAdmin = {
     }
     return 0;
   }
-};
+});

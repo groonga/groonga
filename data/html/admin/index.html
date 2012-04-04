@@ -252,7 +252,7 @@ Powered by <a href="http://jquery.com/">jQuery</a> and <a href="http://jqueryui.
 </div>
 <script type="text/javascript">
 $(function() {
-  GroongaAdmin.initialize();
+  var admin = new GroongaAdmin();
   GroongaAdmin.tablelist();
   $.ajaxSetup({
     timeout: 10000,
