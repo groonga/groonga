@@ -1858,15 +1858,19 @@ grn_hash_get(grn_ctx *ctx, grn_hash *hash, const void *key,
   return GRN_ID_NIL;
 }
 
+inline static grn_hash_entry *
+grn_hash_get_entry(grn_ctx *ctx, grn_hash *hash, grn_id id)
+{
+  if (!grn_hash_bitmap_at(ctx, hash, id)) {
+    return NULL;
+  }
+  return grn_hash_entry_at(ctx, hash, id, 0);
+}
+
 const char *
 _grn_hash_key(grn_ctx *ctx, grn_hash *hash, grn_id id, uint32_t *key_size)
 {
-  grn_hash_entry *entry;
-  if (!grn_hash_bitmap_at(ctx, hash, id)) {
-    *key_size = 0;
-    return NULL;
-  }
-  entry = grn_hash_entry_at(ctx, hash, id, 0);
+  grn_hash_entry * const entry = grn_hash_get_entry(ctx, hash, id);
   if (!entry) {
     *key_size = 0;
     return NULL;
@@ -1883,11 +1887,7 @@ int
 grn_hash_get_key(grn_ctx *ctx, grn_hash *hash, grn_id id, void *keybuf, int bufsize)
 {
   int key_size;
-  grn_hash_entry *entry;
-  if (!grn_hash_bitmap_at(ctx, hash, id)) {
-    return 0;
-  }
-  entry = grn_hash_entry_at(ctx, hash, id, 0);
+  grn_hash_entry * const entry = grn_hash_get_entry(ctx, hash, id);
   if (!entry) {
     return 0;
   }
@@ -1907,11 +1907,7 @@ grn_hash_get_key2(grn_ctx *ctx, grn_hash *hash, grn_id id, grn_obj *bulk)
 {
   int key_size;
   char *key;
-  grn_hash_entry *entry;
-  if (!grn_hash_bitmap_at(ctx, hash, id)) {
-    return 0;
-  }
-  entry = grn_hash_entry_at(ctx, hash, id, 0);
+  grn_hash_entry * const entry = grn_hash_get_entry(ctx, hash, id);
   if (!entry) {
     return 0;
   }
@@ -1934,11 +1930,7 @@ int
 grn_hash_get_value(grn_ctx *ctx, grn_hash *hash, grn_id id, void *valuebuf)
 {
   void *value;
-  grn_hash_entry *entry;
-  if (!grn_hash_bitmap_at(ctx, hash, id)) {
-    return 0;
-  }
-  entry = grn_hash_entry_at(ctx, hash, id, 0);
+  grn_hash_entry * const entry = grn_hash_get_entry(ctx, hash, id);
   if (!entry) {
     return 0;
   }
@@ -1956,11 +1948,7 @@ const char *
 grn_hash_get_value_(grn_ctx *ctx, grn_hash *hash, grn_id id, uint32_t *size)
 {
   const void *value;
-  grn_hash_entry *entry;
-  if (!grn_hash_bitmap_at(ctx, hash, id)) {
-    return NULL;
-  }
-  entry = grn_hash_entry_at(ctx, hash, id, 0);
+  grn_hash_entry * const entry = grn_hash_get_entry(ctx, hash, id);
   if (!entry) {
     return NULL;
   }
@@ -1978,11 +1966,7 @@ grn_hash_get_key_value(grn_ctx *ctx, grn_hash *hash, grn_id id,
 {
   void *value;
   int key_size;
-  grn_hash_entry *entry;
-  if (!grn_hash_bitmap_at(ctx, hash, id)) {
-    return 0;
-  }
-  entry = grn_hash_entry_at(ctx, hash, id, 0);
+  grn_hash_entry * const entry = grn_hash_get_entry(ctx, hash, id);
   if (!entry) {
     return 0;
   }
@@ -2009,11 +1993,7 @@ _grn_hash_get_key_value(grn_ctx *ctx, grn_hash *hash, grn_id id,
                         void **key, void **value)
 {
   int key_size;
-  grn_hash_entry *entry;
-  if (!grn_hash_bitmap_at(ctx, hash, id)) {
-    return 0;
-  }
-  entry = grn_hash_entry_at(ctx, hash, id, 0);
+  grn_hash_entry * const entry = grn_hash_get_entry(ctx, hash, id);
   if (!entry) {
     return 0;
   }
@@ -2036,10 +2016,7 @@ grn_hash_set_value(grn_ctx *ctx, grn_hash *hash, grn_id id,
   if (!value) {
     return GRN_INVALID_ARGUMENT;
   }
-  if (!grn_hash_bitmap_at(ctx, hash, id)) {
-    return GRN_INVALID_ARGUMENT;
-  }
-  entry = grn_hash_entry_at(ctx, hash, id, 0);
+  entry = grn_hash_get_entry(ctx, hash, id);
   if (!entry) {
     return GRN_NO_MEMORY_AVAILABLE;
   }
