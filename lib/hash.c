@@ -1883,12 +1883,22 @@ int
 grn_hash_get_key(grn_ctx *ctx, grn_hash *hash, grn_id id, void *keybuf, int bufsize)
 {
   int key_size;
-  entry_str *ee;
-  if (!grn_hash_bitmap_at(ctx, hash, id)) { return 0; }
-  ee = grn_hash_entry_at(ctx, hash, id, 0);
-  if (!ee) { return 0; }
-  key_size = (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) ? ee->size : hash->key_size;
-  if (bufsize >= key_size) { memcpy(keybuf, get_key(ctx, hash, ee), key_size); }
+  grn_hash_entry *entry;
+  if (!grn_hash_bitmap_at(ctx, hash, id)) {
+    return 0;
+  }
+  entry = grn_hash_entry_at(ctx, hash, id, 0);
+  if (!entry) {
+    return 0;
+  }
+  if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
+    key_size = entry->header.key_size;
+  } else {
+    key_size = hash->key_size;
+  }
+  if (bufsize >= key_size) {
+    memcpy(keybuf, grn_hash_entry_get_key(ctx, hash, entry), key_size);
+  }
   return key_size;
 }
 
