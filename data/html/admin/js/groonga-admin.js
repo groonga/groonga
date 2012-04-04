@@ -140,6 +140,12 @@ GroongaAdmin = {
           1);
       }
     });
+    $('#side-menu-summary').click(function() {
+      GroongaAdmin.current_table = null;
+      $('#table-tabs').hide();
+      $('#database-tabs').show();
+      GroongaAdmin.start_status_timer();
+    });
     GroongaAdmin.update_tablelist();
 
     var e1 = $('#createtable-key-type-builtin');
@@ -429,18 +435,6 @@ GroongaAdmin = {
           var tt = $('#createtable-key-type-table').empty();
           var vt = $('#createtable-value-type-table').empty();
           var ct = $('#createcolumn-type-table').empty();
-          tl.append(
-            $('<li />').append(
-              $('<a />').attr('href', '#side-menu-database')
-                        .text('サマリー')
-                        .click(function() {
-                          GroongaAdmin.current_table = null;
-                          $('#table-tabs').hide();
-                          $('#database-tabs').show();
-                          GroongaAdmin.start_status_timer();
-                        })
-            )
-          )
           var b = d.shift();
           b.shift();
           $.each(b, function(i, val) {
