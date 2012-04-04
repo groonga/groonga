@@ -1081,6 +1081,16 @@ grn_io_hash_key_at(grn_ctx *ctx, grn_hash *hash, uint32_t pos)
 
 #define MAX_INDEX_SIZE ((GRN_HASH_MAX_SEGMENT * (IDX_MASK_IN_A_SEGMENT + 1)) >> 1)
 
+inline static uint16_t
+grn_hash_entry_get_key_size(grn_hash *hash, grn_hash_entry *entry)
+{
+  if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
+    return entry->header.key_size;
+  } else {
+    return hash->key_size;
+  }
+}
+
 inline static char *
 grn_hash_entry_get_key(grn_ctx *ctx, grn_hash *hash, grn_hash_entry *entry)
 {
@@ -1875,11 +1885,7 @@ _grn_hash_key(grn_ctx *ctx, grn_hash *hash, grn_id id, uint32_t *key_size)
     *key_size = 0;
     return NULL;
   }
-  if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
-    *key_size = entry->header.key_size;
-  } else {
-    *key_size = hash->key_size;
-  }
+  *key_size = grn_hash_entry_get_key_size(hash, entry);
   return grn_hash_entry_get_key(ctx, hash, entry);
 }
 
@@ -1891,11 +1897,7 @@ grn_hash_get_key(grn_ctx *ctx, grn_hash *hash, grn_id id, void *keybuf, int bufs
   if (!entry) {
     return 0;
   }
-  if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
-    key_size = entry->header.key_size;
-  } else {
-    key_size = hash->key_size;
-  }
+  key_size = grn_hash_entry_get_key_size(hash, entry);
   if (bufsize >= key_size) {
     memcpy(keybuf, grn_hash_entry_get_key(ctx, hash, entry), key_size);
   }
@@ -1911,11 +1913,7 @@ grn_hash_get_key2(grn_ctx *ctx, grn_hash *hash, grn_id id, grn_obj *bulk)
   if (!entry) {
     return 0;
   }
-  if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
-    key_size = entry->header.key_size;
-  } else {
-    key_size = hash->key_size;
-  }
+  key_size = grn_hash_entry_get_key_size(hash, entry);
   key = grn_hash_entry_get_key(ctx, hash, entry);
   if (bulk->header.impl_flags & GRN_OBJ_REFER) {
     bulk->u.b.head = key;
@@ -1970,11 +1968,7 @@ grn_hash_get_key_value(grn_ctx *ctx, grn_hash *hash, grn_id id,
   if (!entry) {
     return 0;
   }
-  if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
-    key_size = entry->header.key_size;
-  } else {
-    key_size = hash->key_size;
-  }
+  key_size = grn_hash_entry_get_key_size(hash, entry);
   if (bufsize >= key_size) {
     memcpy(keybuf, grn_hash_entry_get_key(ctx, hash, entry), key_size);
   }
@@ -1997,11 +1991,7 @@ _grn_hash_get_key_value(grn_ctx *ctx, grn_hash *hash, grn_id id,
   if (!entry) {
     return 0;
   }
-  if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
-    key_size = entry->header.key_size;
-  } else {
-    key_size = hash->key_size;
-  }
+  key_size = grn_hash_entry_get_key_size(hash, entry);
   *key = grn_hash_entry_get_key(ctx, hash, entry);
   *value = grn_hash_entry_get_value(hash, entry);
   return *value ? key_size : 0;
