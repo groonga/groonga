@@ -68,83 +68,85 @@ Groonga = {
   GRN_OBJ_WITH_POSITION:          (0x01<<9)
 };
 function GroongaAdmin() {
-  GroongaAdmin.current_table = null;
-  GroongaAdmin.statusTimer = null;
-  GroongaAdmin.semaphore = new Array();
-  GroongaAdmin.current_status = 0;
-  GroongaAdmin.reload_record_func = function(){};
+  this.current_table = null;
+  this.statusTimer = null;
+  this.semaphore = new Array();
+  this.current_status = 0;
+  this.reload_record_func = function(){};
 
-  GroongaAdmin.database_tabs = $('#database-tabs').tabs({
+  var that = this;
+  this.database_tabs = $('#database-tabs').tabs({
     show: function(e, ui) {
-      GroongaAdmin.stop_status_timer();
+      that.stop_status_timer();
       if (ui.panel.id == 'database-tab-summary') {
-        GroongaAdmin.start_status_timer();
+        that.start_status_timer();
       }
     }
   });
-  GroongaAdmin.table_tabs = $('#table-tabs').tabs({
+
+  this.table_tabs = $('#table-tabs').tabs({
     show: function(e, ui) {
     }
   });
   $('#tab-tablelist-link').click(function() {
-    GroongaAdmin.tablelist();
+    that.tablelist();
   });
   $('#tab-columnlist-link').click(function() {
-    GroongaAdmin.columnlist(GroongaAdmin.current_table);
+    that.columnlist(that.current_table);
   });
   $('#tab-createrecord-link').click(function() {
-    GroongaAdmin.update_createrecord(GroongaAdmin.current_table);
+    that.update_createrecord(that.current_table);
   });
   $('#tab-recordlist-link').click(function() {
-    GroongaAdmin.reload_record_func();
+    that.reload_record_func();
   });
   $('#createtable-add-table').click(function() {
-    GroongaAdmin.createtable();
+    that.createtable();
   });
   $('#createrecord-add-record').click(function() {
-    GroongaAdmin.createrecord();
+    that.createrecord();
   });
   $('#createcolumn-add-column').click(function() {
-    GroongaAdmin.createcolumn();
+    that.createcolumn();
   });
   $('#recordlist-remove-record').click(function() {
-    GroongaAdmin.removerecord();
+    that.removerecord();
   });
   $('#columnlist-remove-column').click(function() {
-    GroongaAdmin.removecolumn();
+    that.removecolumn();
   });
   $('#tablelist-remove-table').click(function() {
-    GroongaAdmin.removetable();
+    that.removetable();
   });
   $('#tab-recordlist-submit').click(function() {
     if ($('#table-tab-recordlist-full-checkbox').attr('checked')) {
       // full
       var d = {
-        'table': GroongaAdmin.current_table
+        'table': that.current_table
       }
-      $.each(GroongaAdmin.SELECT_PARAMS_LIST, function(i, val) {
+      $.each(that.SELECT_PARAMS_LIST, function(i, val) {
         var e = $('#tab-recordlist-' + val);
         if (e.val()) {
           d[val] = e.val();
         }
       });
-      GroongaAdmin.recordlist(d, true);
+      that.recordlist(d, true);
     } else {
       // simple
-      GroongaAdmin.recordlist_simple(
-        GroongaAdmin.current_table,
+      that.recordlist_simple(
+        that.current_table,
         $('#tab-recordlist-simplequery').val(),
         $('#tab-recordlist-simplequerytype').val(),
         1);
     }
   });
   $('#side-menu-summary').click(function() {
-    GroongaAdmin.current_table = null;
+    that.current_table = null;
     $('#table-tabs').hide();
     $('#database-tabs').show();
-    GroongaAdmin.start_status_timer();
+    that.start_status_timer();
   });
-  GroongaAdmin.update_tablelist();
+  this.update_tablelist();
 
   var e1 = $('#createtable-key-type-builtin');
   $.each(Groonga.key_type_list, function(i, val) {
@@ -194,8 +196,8 @@ function GroongaAdmin() {
     if ($(this).attr('checked') &&
         $('#tab-recordlist-simplequerytype').val() != 'scorer') {
       $('#tab-recordlist-simplequery').keyup(function(e) {
-        GroongaAdmin.recordlist_simple(
-          GroongaAdmin.current_table,
+        that.recordlist_simple(
+          that.current_table,
           $('#tab-recordlist-simplequery').val(),
           $('#tab-recordlist-simplequerytype').val(),
           1,
@@ -209,13 +211,13 @@ function GroongaAdmin() {
     var cs = $('#createcolumn-source');
     if (s.length > 0) {
       cs.empty().removeAttr('disabled');
-      GroongaAdmin.showloading(
+      that.showloading(
         $.ajax({
           url: '/d/column_list',
           data: {'table': s.val()},
           dataType: 'json',
           success: function(d) {
-            if(GroongaAdmin.validateajax(d) < 0) { return; }
+            if(that.validateajax(d) < 0) { return; }
             var idx;
             var b = d[1];
             $.each(b[0], function(i, val) {
@@ -227,10 +229,10 @@ function GroongaAdmin() {
                 cs.append($('<option />').val(val[idx]).text(val[idx]));
               });
             }
-            GroongaAdmin.hideloading();
+            that.hideloading();
           },
           error: function(XMLHttpRequest, textStatus, errorThrown) {
-            GroongaAdmin.errorloading(XMLHttpRequest);
+            that.errorloading(XMLHttpRequest);
           }
         })
       );
@@ -239,24 +241,24 @@ function GroongaAdmin() {
     }
   });
 
-  GroongaAdmin.recordlist_count = 30;
+  this.recordlist_count = 30;
 };
 
-jQuery.extend(GroongaAdmin, {
+jQuery.extend(GroongaAdmin.prototype, {
   SELECT_PARAMS_LIST: ['match_columns', 'query', 'filter', 'scorer', 'sortby', 'output_columns', 'offset', 'limit', 'drilldown', 'drilldown_sortby', 'drilldown_output_columns', 'drilldown_offset', 'drilldown_limit'],
   start_status_timer: function() {
-    GroongaAdmin.stop_status_timer();
-    GroongaAdmin.status();
-    GroongaAdmin.statusTimer = setInterval(GroongaAdmin.status, 1000);
+    this.stop_status_timer();
+    this.status();
+    this.statusTimer = setInterval(this.status, 1000);
   },
   change_status_timer: function(time) {
-    GroongaAdmin.stop_status_timer();
-    GroongaAdmin.statusTimer = setInterval(GroongaAdmin.status, time);
+    this.stop_status_timer();
+    this.statusTimer = setInterval(this.status, time);
   },
   stop_status_timer: function() {
-    if (GroongaAdmin.statusTimer) {
-      clearInterval(GroongaAdmin.statusTimer);
-      GroongaAdmin.statusTimer = null;
+    if (this.statusTimer) {
+      clearInterval(this.statusTimer);
+      this.statusTimer = null;
     }
   },
   create_table_element: function (d, check, button) {
@@ -328,7 +330,7 @@ jQuery.extend(GroongaAdmin, {
   },
   show_edit_record: function(id) {
     $('#table-tabs').tabs('select', 2);
-    GroongaAdmin.update_createrecord(GroongaAdmin.current_table, id);
+    this.update_createrecord(this.current_table, id);
   },
   format_unix_time: function(unix_time) {
     var date = new Date();
@@ -397,40 +399,42 @@ jQuery.extend(GroongaAdmin, {
     this.lastNQueries = statusData.n_queries;
   },
   status: function() {
-    if (GroongaAdmin.current_status > 0) { return; }
-    GroongaAdmin.current_status++;
+    if (this.current_status > 0) { return; }
+    this.current_status++;
+    var that = this;
     $.ajax({
       url: '/d/status',
       data: {},
       dataType: 'json',
       success: function(b) {
-        GroongaAdmin.current_status--;
+        that.current_status--;
         if (!b) {
-          GroongaAdmin.change_status_timer(10000);
+          that.change_status_timer(10000);
           return;
         }
         var d = b[1];
-        $('#status-starttime').text(GroongaAdmin.format_unix_time(d.starttime));
-        $('#status-uptime').text(GroongaAdmin.format_duration(d.uptime));
+        $('#status-starttime').text(that.format_unix_time(d.starttime));
+        $('#status-uptime').text(that.format_duration(d.uptime));
         $('#status-n-queries').text(d.n_queries);
         $('#status-cache-hit-rate').text(d.cache_hit_rate);
-        GroongaAdmin.updateThroughputChart(d);
-        GroongaAdmin.change_status_timer(1000);
+        that.updateThroughputChart(d);
+        that.change_status_timer(1000);
       },
       error: function() {
-        GroongaAdmin.current_status--;
-        GroongaAdmin.change_status_timer(10000);
+        that.current_status--;
+        that.change_status_timer(10000);
       }
     });
   },
   update_tablelist: function() {
-    GroongaAdmin.showloading(
+    var that = this;
+    this.showloading(
       $.ajax({
         url: '/d/table_list',
         data: {},
         dataType: 'json',
         success: function(d) {
-          if (GroongaAdmin.validateajax(d) < 0) { return; }
+          if (that.validateajax(d) < 0) { return; }
           d.shift();
           var tl = $('#side-menu-tablelist').empty();
           var tt = $('#createtable-key-type-table').empty();
@@ -447,14 +451,14 @@ jQuery.extend(GroongaAdmin, {
                   .attr('href', '#side-menu-tablelist-' + table_name)
                   .text(table_name)
                   .click(function() {
-                    GroongaAdmin.current_table = table_name;
+                    that.current_table = table_name;
                     $('#database-tabs').hide();
-                    GroongaAdmin.stop_status_timer();
+                    that.stop_status_timer();
                     $('#table-tabs').show();
-                    GroongaAdmin.columnlist(table_name);
+                    that.columnlist(table_name);
                     $('#tab-recordlist-simplequery').val('');
-                    GroongaAdmin.recordlist_simple(table_name, null, null, 1);
-                    GroongaAdmin.update_createrecord(GroongaAdmin.current_table);
+                    that.recordlist_simple(table_name, null, null, 1);
+                    that.update_createrecord(that.current_table);
                   })
               )
             );
@@ -462,30 +466,31 @@ jQuery.extend(GroongaAdmin, {
             vt.append($('<option />').val(val[1]).text(val[1]));
             ct.append($('<option />').val(val[1]).text(val[1]));
           });
-          GroongaAdmin.hideloading();
+          that.hideloading();
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
-          GroongaAdmin.errorloading(XMLHttpRequest);
+          that.errorloading(XMLHttpRequest);
         }
       })
     );
   },
   tablelist: function() {
     $('#tab-tablelist-table').empty();
-    GroongaAdmin.showloading(
+    var that = this;
+    this.showloading(
       $.ajax({
         url: '/d/table_list',
         data: {},
         dataType: 'json',
         success: function(d) {
-          if (GroongaAdmin.validateajax(d) < 0) { return; }
+          if (that.validateajax(d) < 0) { return; }
           var b = d[1];
-          var table = $(GroongaAdmin.create_table_element(b, 2, 2));
+          var table = $(that.create_table_element(b, 2, 2));
           $('#tab-tablelist-table').append($('<h1 />').text('テーブル一覧')).append(table);
-          GroongaAdmin.hideloading();
+          that.hideloading();
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
-          GroongaAdmin.errorloading(XMLHttpRequest);
+          that.errorloading(XMLHttpRequest);
         }
       })
     );
@@ -532,8 +537,8 @@ jQuery.extend(GroongaAdmin, {
   recordlist_simple: function(table_name, simplequery, simplequery_type, page, hide_dialog) {
     var d = {
       'table': table_name,
-      'offset': (page - 1) * GroongaAdmin.recordlist_count,
-      'limit': GroongaAdmin.recordlist_count
+      'offset': (page - 1) * this.recordlist_count,
+      'limit': this.recordlist_count
     }
     switch (simplequery_type) {
     case 'query':
@@ -542,21 +547,22 @@ jQuery.extend(GroongaAdmin, {
       if (simplequery) {
         d[simplequery_type] = simplequery;
       }
-      GroongaAdmin.recordlist(d, true, hide_dialog);
+      this.recordlist(d, true, hide_dialog);
       break;
     }
   },
   recordlist: function(params, show_pager, hide_dialog) {
-    GroongaAdmin.reload_record_func = function(){
-      GroongaAdmin.recordlist(params, show_pager, hide_dialog);
+    var that = this;
+    this.reload_record_func = function(){
+      that.recordlist(params, show_pager, hide_dialog);
     };
-    GroongaAdmin.showloading(
+    this.showloading(
       $.ajax({
         url: '/d/select',
         data: params,
         dataType: 'json',
         success: function(d) {
-          if (GroongaAdmin.validateajax(d, hide_dialog) < 0) { return; }
+          if (that.validateajax(d, hide_dialog) < 0) { return; }
           var rc = d.shift();
           if (rc[0] != 0) {
             alert('error');
@@ -576,13 +582,13 @@ jQuery.extend(GroongaAdmin, {
               pager = $('<span />');
             } else {
               pager =
-                GroongaAdmin.pager_element_factory(
+                that.pager_element_factory(
                   rows,
                   Math.floor(offset/rows)+1,
                   13,
                   function() {
                     params['offset'] = (Number($(this).text()) - 1) * rows;
-                    GroongaAdmin.recordlist(params, true, false);
+                    that.recordlist(params, true, false);
                     return false;
                   }
                 )(all_count);
@@ -595,34 +601,35 @@ jQuery.extend(GroongaAdmin, {
             .append($('<h1 />').text('レコード一覧: ' + params['table']))
             .append($('<p />').text('総件数: ' + all_count))
             .append(pager.clone(true))
-            .append($('<div />').html(GroongaAdmin.create_table_element(recs, 1, 1)))
+            .append($('<div />').html(that.create_table_element(recs, 1, 1)))
             .append(pager);
-          GroongaAdmin.hideloading();
+          that.hideloading();
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
-          GroongaAdmin.errorloading(XMLHttpRequest, hide_dialog);
+          that.errorloading(XMLHttpRequest, hide_dialog);
         }
       })
     ,hide_dialog);
   },
   columnlist: function(table_name) {
+    var that = this;
     $('#tab-columnlist-table').empty();
-    GroongaAdmin.showloading(
+    this.showloading(
       $.ajax({
         url: '/d/column_list',
         data: {'table': table_name},
         dataType: 'json',
         success: function(d) {
-          if (GroongaAdmin.validateajax(d) < 0) { return; }
+          if (that.validateajax(d) < 0) { return; }
           var b = d[1];
-          var table = $(GroongaAdmin.create_table_element(b, 2));
+          var table = $(that.create_table_element(b, 2));
           $('#tab-columnlist-table')
             .append($('<h1 />').text('カラム一覧: ' + table_name))
             .append(table);
-          GroongaAdmin.hideloading();
+          that.hideloading();
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
-          GroongaAdmin.errorloading(XMLHttpRequest);
+          that.errorloading(XMLHttpRequest);
         }
       })
     );
@@ -723,8 +730,8 @@ jQuery.extend(GroongaAdmin, {
           if (value != null) {
             for (var j = 0; j < value.length; j++) {
               inputtd
-                .append(GroongaAdmin.add_record_inputbox(line[1], value[j]))
-                .append(GroongaAdmin.add_record_deletebutton())
+                .append(this.add_record_inputbox(line[1], value[j]))
+                .append(this.add_record_deletebutton())
                 .append('<br />');
             }
           }
@@ -735,14 +742,14 @@ jQuery.extend(GroongaAdmin, {
               .click(function() {
                 var target = $(this).parent();
                 target
-                  .append(GroongaAdmin.add_record_inputbox($(this).parent().prev().children().text()))
-                  .append(GroongaAdmin.add_record_deletebutton())
+                  .append(this.add_record_inputbox($(this).parent().prev().children().text()))
+                  .append(this.add_record_deletebutton())
                   .append("<br />");
                 $(this).appendTo(target);
               })
             );
         } else {
-          inputtd.append(GroongaAdmin.add_record_inputbox(line[1], value));
+          inputtd.append(this.add_record_inputbox(line[1], value));
           if (line[0] == "_key" && value != null) {
             inputtd.children().attr("disabled", "disabled");
           }
@@ -752,13 +759,14 @@ jQuery.extend(GroongaAdmin, {
       }
     }
     $("#table-createrecord").append(columns);
-    GroongaAdmin.hideloading();
+    this.hideloading();
   },
   update_createrecord: function(table_name, id) {
+    var that = this;
     var d_sel = null;
     var d_col = null;
     $('#table-createrecord').empty();
-    GroongaAdmin.showloading(
+    this.showloading(
       $.ajax({
         url: '/d/select',
         data: {
@@ -768,18 +776,18 @@ jQuery.extend(GroongaAdmin, {
         },
         dataType: 'json',
         success: function(d) {
-          if (GroongaAdmin.validateajax(d) < 0) { return; }
+          if (that.validateajax(d) < 0) { return; }
           d_sel = d;
           if (d_col) {
-            GroongaAdmin.update_createrecord_loadcomplete(d_sel, d_col);
+            that.update_createrecord_loadcomplete(d_sel, d_col);
           }
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
-          GroongaAdmin.errorloading(XMLHttpRequest);
+          that.errorloading(XMLHttpRequest);
         }
       })
     );
-    GroongaAdmin.showloading(
+    this.showloading(
       $.ajax({
         url: '/d/column_list',
         data: {
@@ -787,25 +795,26 @@ jQuery.extend(GroongaAdmin, {
         },
         dataType: 'json',
         success: function(d) {
-          if (GroongaAdmin.validateajax(d) < 0) { return; }
+          if (that.validateajax(d) < 0) { return; }
           d_col = d;
           if (d_sel) {
-            GroongaAdmin.update_createrecord_loadcomplete(d_sel, d_col);
+            that.update_createrecord_loadcomplete(d_sel, d_col);
           }
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
-          GroongaAdmin.errorloading(XMLHttpRequest);
+          that.errorloading(XMLHttpRequest);
         }
       })
     );
   },
   createtable: function() {
+    var that = this;
     var flags = 0;
     $('#createtable-flags>input:checked').each(function() {
       flags |= Groonga[$(this).val()];
     });
     flags |= Groonga[$('#createtable-key-index').val()];
-    GroongaAdmin.showloading(
+    this.showloading(
       $.ajax({
         url: '/d/table_create',
         data: {
@@ -817,18 +826,19 @@ jQuery.extend(GroongaAdmin, {
         },
         dataType: 'json',
         success: function(d) {
-          if (GroongaAdmin.validateajax(d) < 0) { return; }
-          GroongaAdmin.hideloading();
+          if (that.validateajax(d) < 0) { return; }
+          that.hideloading();
           alert('テーブルを作成しました。');
-          GroongaAdmin.update_tablelist();
+          that.update_tablelist();
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
-          GroongaAdmin.errorloading(XMLHttpRequest);
+          that.errorloading(XMLHttpRequest);
         }
       })
     );
   },
   createcolumn: function() {
+    var that = this;
     var flags = 0;
     $('#createcolumn-flags>input:checked').each(function() {
       flags |= Groonga[$(this).val()];
@@ -839,7 +849,7 @@ jQuery.extend(GroongaAdmin, {
     flags |= Groonga[$('#createcolumn-column-type').val()];
     flags |= Groonga[$('#createcolumn-column-compress').val()];
     d = {
-      table: GroongaAdmin.current_table,
+      table: this.current_table,
       name: $('#createcolumn-name').val(),
       'flags': flags,
       type: $('#createcolumn-type').val()
@@ -847,18 +857,18 @@ jQuery.extend(GroongaAdmin, {
     if ($('#createcolumn-source').val()) {
       d['source'] = $('#createcolumn-source').val();
     }
-    GroongaAdmin.showloading(
+    this.showloading(
       $.ajax({
         url: '/d/column_create',
         data: d,
         dataType: 'json',
         success: function(d) {
-          if (GroongaAdmin.validateajax(d) < 0) { return; }
-          GroongaAdmin.hideloading();
+          if (that.validateajax(d) < 0) { return; }
+          that.hideloading();
           alert('カラムを作成しました。');
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
-          GroongaAdmin.errorloading(XMLHttpRequest);
+          that.errorloading(XMLHttpRequest);
         }
       })
     );
@@ -876,6 +886,7 @@ jQuery.extend(GroongaAdmin, {
     }
   },
   createrecord: function() {
+    var that = this;
     var d = {};
     $('.create-record-columns').each(function() {
       if (!$(this).children('.columnval').children().attr('disabled')
@@ -884,37 +895,38 @@ jQuery.extend(GroongaAdmin, {
         if ($(this).children('.columnval').children('span').length) {
           var arr = [];
           $(this).children('.columnval').children('.column_values').each(function() {
-            arr.push(GroongaAdmin.createrecord_getvalue(type, $(this)));
+            arr.push(that.createrecord_getvalue(type, $(this)));
           });
           d[$(this).children('.columnname').text()] = arr;
         } else {
           d[$(this).children('.columnname').text()] =
-            GroongaAdmin.createrecord_getvalue(type, $(this).children('.columnval').children());
+            that.createrecord_getvalue(type, $(this).children('.columnval').children());
         }
       }
     });
-    GroongaAdmin.showloading(
+    this.showloading(
       $.ajax({
         url: '/d/load',
         data: {
-          "table" : GroongaAdmin.current_table,
+          "table" : this.current_table,
           "input_type" : "json",
           "output_type" : "json",
           "values" : $.toJSON([d])
         },
         dataType: 'json',
         success: function(d) {
-          if (GroongaAdmin.validateajax(d) < 0) { return; }
-          GroongaAdmin.hideloading();
+          if (that.validateajax(d) < 0) { return; }
+          that.hideloading();
           alert('レコードを作成しました。');
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
-          GroongaAdmin.errorloading(XMLHttpRequest);
+          that.errorloading(XMLHttpRequest);
         }
       })
     );
   },
   removerecord: function() {
+    var that = this;
     var checklist = $("#tab-recordlist-table").find("input:checked");
     var completecount = checklist.length;
     if (completecount > 0) {
@@ -929,11 +941,11 @@ jQuery.extend(GroongaAdmin, {
             'はい': function() {
               $(this).dialog('close');
               checklist.each(function(i, val) {
-                GroongaAdmin.showloading(
+                that.showloading(
                   $.ajax({
                     url: '/d/delete',
                     data: {
-                      "table" : GroongaAdmin.current_table,
+                      "table" : that.current_table,
                       "id" : val.value
                     },
                     dataType: 'json',
@@ -942,12 +954,12 @@ jQuery.extend(GroongaAdmin, {
                         $('#tab-recordlist-submit').click();
                         alert('レコードを削除しました。');
                       } else if (completecount < 0){
-                        GroongaAdmin.hideloading();
+                        that.hideloading();
                       }
                     },
                     error: function(XMLHttpRequest, textStatus, errorThrown) {
                       completecount = 0;
-                      GroongaAdmin.errorloading(XMLHttpRequest);
+                      that.errorloading(XMLHttpRequest);
                     }
                   })
                 );
@@ -958,6 +970,7 @@ jQuery.extend(GroongaAdmin, {
     }
   },
   removecolumn: function() {
+    var that = this;
     var checklist = $("#tab-columnlist-table").find("input:checked");
     var completecount = checklist.length;
     if (completecount) {
@@ -972,25 +985,25 @@ jQuery.extend(GroongaAdmin, {
             'はい': function() {
               $(this).dialog('close');
               checklist.each(function(i, val) {
-                GroongaAdmin.showloading(
+                that.showloading(
                   $.ajax({
                     url: '/d/column_remove',
                     data: {
-                      "table" : GroongaAdmin.current_table,
+                      "table" : that.current_table,
                       "name" : val.value
                     },
                     dataType: 'json',
                     success: function() {
                       if (!(--completecount)) {
-                        GroongaAdmin.columnlist(GroongaAdmin.current_table);
+                        that.columnlist(that.current_table);
                         alert('カラムを削除しました。');
                       } else if (completecount < 0){
-                        GroongaAdmin.hideloading();
+                        that.hideloading();
                       }
                     },
                     error: function(XMLHttpRequest, textStatus, errorThrown) {
                       completecount = 0;
-                      GroongaAdmin.errorloading(XMLHttpRequest);
+                      that.errorloading(XMLHttpRequest);
                     }
                   })
                 );
@@ -1001,6 +1014,7 @@ jQuery.extend(GroongaAdmin, {
     }
   },
   removetable: function() {
+    var that = this;
     var checklist = $("#tab-tablelist-table").find("input:checked");
     var completecount = checklist.length;
     if (completecount > 0) {
@@ -1015,7 +1029,7 @@ jQuery.extend(GroongaAdmin, {
             'はい': function() {
               $(this).dialog('close');
               checklist.each(function(i, val) {
-                GroongaAdmin.showloading(
+                that.showloading(
                   $.ajax({
                     url: '/d/table_remove',
                     data: {
@@ -1024,16 +1038,16 @@ jQuery.extend(GroongaAdmin, {
                     dataType: 'json',
                     success: function() {
                       if (--completecount == 0) {
-                        GroongaAdmin.tablelist();
-                        GroongaAdmin.update_tablelist();
+                        that.tablelist();
+                        that.update_tablelist();
                         alert('テーブルを削除しました。');
                       } else if (completecount < 0){
-                        GroongaAdmin.hideloading();
+                        that.hideloading();
                       }
                     },
                     error: function(XMLHttpRequest, textStatus, errorThrown) {
                       completecount = 0;
-                      GroongaAdmin.errorloading(XMLHttpRequest);
+                      that.errorloading(XMLHttpRequest);
                     }
                   })
                 );
@@ -1044,8 +1058,9 @@ jQuery.extend(GroongaAdmin, {
     }
   },
   showloading: function(obj, hide_dialog) {
+    var that = this;
     if (obj == null) { return; }
-    GroongaAdmin.semaphore[GroongaAdmin.semaphore.length] = obj;
+    this.semaphore[this.semaphore.length] = obj;
     if ( $("#loadingdialog").size() > 0 || hide_dialog) { return; }
     $("<div />")
       .attr("id", "loadingdialog")
@@ -1065,7 +1080,7 @@ jQuery.extend(GroongaAdmin, {
         buttons: {
           '中止': function() {
             if (obj) { obj.abort(); }
-            GroongaAdmin.hideloading();
+            that.hideloading();
           }
         }
       });
@@ -1074,26 +1089,27 @@ jQuery.extend(GroongaAdmin, {
     $(".ui-widget-overlay").css("opacity", "0.0");
   },
   hideloading: function() {
-    for ( i = 0; i < GroongaAdmin.semaphore.length; i++) {
-      if ( GroongaAdmin.semaphore[i].readyState == 4) {
-        GroongaAdmin.semaphore.splice(i, 1);
+    for ( i = 0; i < this.semaphore.length; i++) {
+      if ( this.semaphore[i].readyState == 4) {
+        this.semaphore.splice(i, 1);
         i--;
       }
     }
-    if ( GroongaAdmin.semaphore.length == 0) {
+    if ( this.semaphore.length == 0) {
       $("#loadingdialog").dialog("close");
       $("#loadingdialog").remove();
     }
   },
   errorloading: function(ajax, hide_dialog) {
+    var that = this;
     var json = null;
     if (ajax) {
       json = jQuery.parseJSON(ajax.responseText);
     }
-    GroongaAdmin.hideloading();
-    for ( i = 0; i < GroongaAdmin.semaphore.length; i++) {
-      GroongaAdmin.semaphore[i].abort();
-      GroongaAdmin.semaphore.splice(i, 1);
+    this.hideloading();
+    for ( i = 0; i < this.semaphore.length; i++) {
+      this.semaphore[i].abort();
+      this.semaphore.splice(i, 1);
       i--;
     }
     if ( $("#loadingdialog").size() == 0 && !hide_dialog) {
@@ -1119,13 +1135,13 @@ jQuery.extend(GroongaAdmin, {
           open: function() {
             $(this).parents(".ui-dialog").children(".ui-dialog-titlebar").remove();
           },
-          buttons: { OK: function() { GroongaAdmin.hideloading(); } }
+          buttons: { OK: function() { that.hideloading(); } }
         });
     }
   },
   validateajax: function(d, hide_dialog) {
     if (!d) {
-      GroongaAdmin.errorloading(null, hide_dialog);
+      this.errorloading(null, hide_dialog);
       return -1;
     }
     return 0;
