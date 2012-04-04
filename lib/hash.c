@@ -1731,42 +1731,6 @@ grn_hash_reset(grn_ctx *ctx, grn_hash *hash, uint32_t expected_n_entries)
   return GRN_SUCCESS;
 }
 
-inline static grn_id
-entry_new(grn_ctx *ctx, grn_hash *hash, uint32_t size)
-{
-  grn_id e;
-  if (grn_hash_is_io_hash(hash)) {
-    struct grn_hash_header *hh = hash->header;
-    size -= 1;
-    if ((e = hh->garbages[size])) {
-      entry * const ee = grn_io_hash_entry_at(ctx, hash, e, GRN_TABLE_ADD);
-      if (!ee) { return GRN_ID_NIL; }
-      hh->garbages[size] = ee->key;
-      if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
-        /* keep ee->size && ee->str */
-        memset(((entry_str *)ee)->dummy, 0, hh->value_size);
-      } else {
-        memset(ee, 0, hh->entry_size);
-      }
-    } else {
-      e = ++hh->curr_rec;
-    }
-    grn_io_array_bit_on(ctx, hash->io, GRN_HASH_BITMAP_SEGMENT, e);
-  } else {
-    if (hash->garbages) {
-      entry *ee;
-      e = hash->garbages;
-      ee = grn_tiny_array_at_inline(&hash->a, e);
-      hash->garbages = ee->key;
-      memset(ee, 0, hash->entry_size);
-    } else {
-      e = hash->a.max + 1;
-    }
-    grn_tiny_array_bit_on(&hash->bitmap, e);
-  }
-  return e;
-}
-
 grn_rc
 grn_hash_lock(grn_ctx *ctx, grn_hash *hash, int timeout)
 {
@@ -1810,6 +1774,47 @@ grn_hash_clear_lock(grn_ctx *ctx, grn_hash *hash)
   return GRN_SUCCESS;
 }
 
+inline static grn_id
+grn_hash_add_entry(grn_ctx *ctx, grn_hash *hash, uint32_t key_size)
+{
+  grn_id entry_id;
+  if (grn_hash_is_io_hash(hash)) {
+    struct grn_hash_header * const header = hash->header;
+    key_size -= 1;
+    entry_id = header->garbages[key_size];
+    if (entry_id) {
+      grn_hash_entry * const entry =
+          grn_io_hash_entry_at(ctx, hash, entry_id, GRN_TABLE_ADD);
+      if (!entry) {
+        return GRN_ID_NIL;
+      }
+      header->garbages[key_size] = *(grn_id *)entry;
+      if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
+        /* keep entry->io_entry's hash_value, flag, key_size and key. */
+        memset(entry->io_entry.value, 0, header->value_size);
+      } else {
+        memset(entry, 0, header->entry_size);
+      }
+    } else {
+      entry_id = ++header->curr_rec;
+    }
+    /* TODO: error handling. */
+    grn_io_array_bit_on(ctx, hash->io, GRN_HASH_BITMAP_SEGMENT, entry_id);
+  } else {
+    if (hash->garbages) {
+      grn_hash_entry *entry;
+      entry_id = hash->garbages;
+      entry = (grn_hash_entry *)grn_tiny_array_at_inline(&hash->a, entry_id);
+      hash->garbages = *(grn_id *)entry;
+      memset(entry, 0, hash->entry_size);
+    } else {
+      entry_id = hash->a.max + 1;
+    }
+    /* TODO: error handling. */
+    grn_tiny_array_bit_on(&hash->bitmap, entry_id);
+  }
+  return entry_id;
+}
 
 grn_id
 grn_hash_add(grn_ctx *ctx, grn_hash *hash, const void *key,
@@ -1880,10 +1885,11 @@ grn_hash_add(grn_ctx *ctx, grn_hash *hash, const void *key,
       }
     }
 
-    id = entry_new(ctx, hash, key_size);
+    id = grn_hash_add_entry(ctx, hash, key_size);
     if (!id) {
       return GRN_ID_NIL;
     }
+    /* TODO: error handling. */
     entry = grn_hash_entry_at(ctx, hash, id, GRN_TABLE_ADD);
     if (!entry) {
       return GRN_ID_NIL;
