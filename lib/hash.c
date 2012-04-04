@@ -1279,17 +1279,16 @@ static uint32_t
 grn_io_hash_calculate_entry_size(uint32_t key_size, uint32_t value_size,
                                  uint32_t flags)
 {
-  uint32_t entry_size;
   if (flags & GRN_OBJ_KEY_VAR_SIZE) {
-    entry_size = (intptr_t)(&((entry_str *)0)->dummy) + value_size;
+    return (uintptr_t)((grn_io_hash_entry *)0)->value + value_size;
   } else {
     if (key_size == sizeof(uint32_t)) {
-      entry_size = (intptr_t)(&((entry *)0)->dummy) + value_size;
+      return (uintptr_t)((grn_plain_hash_entry *)0)->value + value_size;
     } else {
-      entry_size = (intptr_t)(&((entry *)0)->dummy) + key_size + value_size;
+      return (uintptr_t)((grn_rich_hash_entry *)0)->key_and_value
+          + key_size + value_size;
     }
   }
-  return entry_size;
 }
 
 static grn_io *
