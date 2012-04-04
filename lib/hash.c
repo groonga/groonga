@@ -1933,15 +1933,23 @@ grn_hash_get_key2(grn_ctx *ctx, grn_hash *hash, grn_id id, grn_obj *bulk)
 int
 grn_hash_get_value(grn_ctx *ctx, grn_hash *hash, grn_id id, void *valuebuf)
 {
-  void *v;
-  entry_str *ee;
-  if (!grn_hash_bitmap_at(ctx, hash, id)) { return 0; }
-  ee = grn_hash_entry_at(ctx, hash, id, 0);
-  if (ee && (v = get_value(hash, ee))) {
-    if (valuebuf) { memcpy(valuebuf, v, hash->value_size); }
-    return hash->value_size;
+  void *value;
+  grn_hash_entry *entry;
+  if (!grn_hash_bitmap_at(ctx, hash, id)) {
+    return 0;
   }
-  return 0;
+  entry = grn_hash_entry_at(ctx, hash, id, 0);
+  if (!entry) {
+    return 0;
+  }
+  value = grn_hash_entry_get_value(hash, entry);
+  if (!value) {
+    return 0;
+  }
+  if (valuebuf) {
+    memcpy(valuebuf, value, hash->value_size);
+  }
+  return hash->value_size;
 }
 
 const char *
