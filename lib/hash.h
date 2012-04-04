@@ -116,12 +116,12 @@ struct _grn_array {
   uint32_t *n_garbages;
   uint32_t *n_entries;
 
-  /* For io_array. */
+  /* For grn_io_array. */
   grn_io *io;
   struct grn_array_header *header;
   uint32_t *lock;
 
-  /* For tiny_array. */
+  /* For grn_tiny_array. */
   uint32_t n_garbages_buf;
   uint32_t n_entries_buf;
   grn_id garbages;
@@ -161,7 +161,8 @@ struct _grn_hash {
   uint32_t *n_entries;
   uint32_t *max_offset;
   grn_obj *tokenizer;
-  /* portions for io_hash */
+
+  /* For grn_io_hash. */
   grn_io *io;
   struct grn_hash_header *header;
   uint32_t *lock;
@@ -177,7 +178,8 @@ struct _grn_hash {
   // int limit;
   // void *userdata;
   // grn_id subrec_id;
-  /* portions for tiny_hash */
+
+  /* For grn_tiny_hash. */
   uint32_t max_offset_;
   uint32_t n_garbages_;
   uint32_t n_entries_;
@@ -187,6 +189,7 @@ struct _grn_hash {
   grn_tiny_array bitmap;
 };
 
+/* Header of grn_io_hash. */
 struct grn_hash_header {
   uint32_t flags;
   grn_encoding encoding;

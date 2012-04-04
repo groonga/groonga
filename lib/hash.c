@@ -252,6 +252,7 @@ grn_io_array_bit_flip(grn_ctx *ctx, grn_io *io,
 #define GRN_ARRAY_HEADER_SIZE  0x9000
 #define GRN_ARRAY_SEGMENT_SIZE 0x400000
 
+/* Header of grn_io-based grn_array. */
 struct grn_array_header {
   uint32_t flags;
   uint32_t curr_rec;
@@ -263,6 +264,11 @@ struct grn_array_header {
   uint32_t reserved[5];
 };
 
+/*
+ * A grn_io-based grn_array consists of the following 2 segments.
+ * GRN_ARRAY_VALUE_SEGMENT: stores values.
+ * GRN_ARRAY_BITMAP_SEGMENT: stores whether entries are valid or not.
+ */
 enum {
   GRN_ARRAY_VALUE_SEGMENT = 0,
   GRN_ARRAY_BITMAP_SEGMENT = 1
