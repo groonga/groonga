@@ -1994,11 +1994,12 @@ grn_hash_get_key_value(grn_ctx *ctx, grn_hash *hash, grn_id id,
   if (bufsize >= key_size) {
     memcpy(keybuf, grn_hash_entry_get_key(ctx, hash, entry), key_size);
   }
+  value = grn_hash_entry_get_value(hash, entry);
+  if (!value) {
+    return 0;
+  }
   if (valuebuf) {
-    value = grn_hash_entry_get_value(hash, entry);
-    if (value) {
-      memcpy(valuebuf, value, hash->value_size);
-    }
+    memcpy(valuebuf, value, hash->value_size);
   }
   return key_size;
 }
