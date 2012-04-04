@@ -1861,18 +1861,22 @@ grn_hash_get(grn_ctx *ctx, grn_hash *hash, const void *key,
 const char *
 _grn_hash_key(grn_ctx *ctx, grn_hash *hash, grn_id id, uint32_t *key_size)
 {
-  entry_str *ee;
+  grn_hash_entry *entry;
   if (!grn_hash_bitmap_at(ctx, hash, id)) {
     *key_size = 0;
     return NULL;
   }
-  ee = grn_hash_entry_at(ctx, hash, id, 0);
-  if (!ee) {
+  entry = grn_hash_entry_at(ctx, hash, id, 0);
+  if (!entry) {
     *key_size = 0;
     return NULL;
   }
-  *key_size = (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) ? ee->size : hash->key_size;
-  return get_key(ctx, hash, ee);
+  if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
+    *key_size = entry->header.key_size;
+  } else {
+    *key_size = hash->key_size;
+  }
+  return grn_hash_entry_get_key(ctx, hash, entry);
 }
 
 int
