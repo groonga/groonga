@@ -2,7 +2,7 @@ htmldir = $(pkgdatadir)/html
 
 # find admin -type f | sort | sed -e 's,^,\t,g'
 nobase_dist_html_DATA =								\
-	admin/css/admin.css							\
+	admin/css/groonga-admin.css						\
 	admin/css/ui-lightness/images/ui-bg_diagonals-thick_18_b81900_40x40.png	\
 	admin/css/ui-lightness/images/ui-bg_diagonals-thick_20_666666_40x40.png	\
 	admin/css/ui-lightness/images/ui-bg_flat_10_000000_40x100.png		\
@@ -22,8 +22,10 @@ nobase_dist_html_DATA =								\
 	admin/favicon.png							\
 	admin/favicon.svg							\
 	admin/images/groonga.png						\
+	admin/images/groonga.svg						\
 	admin/images/loading.gif						\
 	admin/index.html							\
+	admin/js/groonga-admin.js						\
 	admin/js/jquery-1.4.2.min.js						\
 	admin/js/jquery-ui-1.8.1.custom.min.js					\
 	admin/js/jquery.flot-0.7.min.js						\
