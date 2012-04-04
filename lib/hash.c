@@ -1772,66 +1772,101 @@ grn_hash_clear_lock(grn_ctx *ctx, grn_hash *hash)
   return GRN_SUCCESS;
 }
 
+
 grn_id
 grn_hash_add(grn_ctx *ctx, grn_hash *hash, const void *key,
              unsigned int key_size, void **value, int *added)
 {
-  entry_str *ee;
-  uint32_t h, i, m, s;
-  grn_id e, *ep, *np = NULL;
-  if (!key || !key_size) { return GRN_ID_NIL; }
+  uint32_t hash_value;
+  if (!key || !key_size) {
+    return GRN_ID_NIL;
+  }
   if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
     if (key_size > hash->key_size) {
       ERR(GRN_INVALID_ARGUMENT, "too long key");
       return GRN_ID_NIL;
     }
-    h = grn_hash_calculate_hash_value(key, key_size);
+    hash_value = grn_hash_calculate_hash_value(key, key_size);
   } else {
     if (key_size != hash->key_size) {
       ERR(GRN_INVALID_ARGUMENT, "key size unmatch");
       return GRN_ID_NIL;
     }
     if (key_size == sizeof(uint32_t)) {
-      h = *((uint32_t *)key);
+      hash_value = *((uint32_t *)key);
     } else {
-      h = grn_hash_calculate_hash_value(key, key_size);
+      hash_value = grn_hash_calculate_hash_value(key, key_size);
     }
   }
-  s = grn_hash_calculate_step(h);
-  /* lock */
-  if ((*hash->n_entries + *hash->n_garbages) * 2 > *hash->max_offset) {
-    grn_hash_reset(ctx, hash, 0);
-  }
-  m = *hash->max_offset;
-  for (i = h; ; i += s) {
-    if (!(ep = grn_hash_idx_at(ctx, hash, i))) { return GRN_ID_NIL; }
-    if (!(e = *ep)) { break; }
-    if (e == GARBAGE) {
-      if (!np) { np = ep; }
-      continue;
+
+  {
+    uint32_t i;
+    const uint32_t step = grn_hash_calculate_step(hash_value);
+    grn_id id, *index, *garbage_index = NULL;
+    grn_hash_entry *entry;
+
+    /* lock */
+    if ((*hash->n_entries + *hash->n_garbages) * 2 > *hash->max_offset) {
+      grn_hash_reset(ctx, hash, 0);
     }
-    ee = grn_hash_entry_at(ctx, hash, e, GRN_TABLE_ADD);
-    if (!ee) { return GRN_ID_NIL; }
-    if (match_key(ctx, hash, ee, h, key, key_size)) {
-      if (added) { *added = 0; }
-      goto exit;
+
+    for (i = hash_value; ; i += step) {
+      index = grn_hash_idx_at(ctx, hash, i);
+      if (!index) {
+        return GRN_ID_NIL;
+      }
+      id = *index;
+      if (!id) {
+        break;
+      }
+      if (id == GARBAGE) {
+        if (!garbage_index) {
+          garbage_index = index;
+        }
+        continue;
+      }
+
+      entry = grn_hash_entry_at(ctx, hash, id, GRN_TABLE_ADD);
+      if (!entry) {
+        return GRN_ID_NIL;
+      }
+      if (grn_hash_entry_compare_key(ctx, hash, entry, hash_value,
+                                     key, key_size)) {
+        if (value) {
+          *value = grn_hash_entry_get_value(hash, entry);
+        }
+        if (added) {
+          *added = 0;
+        }
+        return id;
+      }
     }
+
+    id = entry_new(ctx, hash, key_size);
+    if (!id) {
+      return GRN_ID_NIL;
+    }
+    entry = grn_hash_entry_at(ctx, hash, id, GRN_TABLE_ADD);
+    if (!entry) {
+      return GRN_ID_NIL;
+    }
+    grn_hash_entry_put_key(ctx, hash, entry, hash_value, key, key_size);
+    if (garbage_index) {
+      (*hash->n_garbages)--;
+      index = garbage_index;
+    }
+    *index = id;
+    (*hash->n_entries)++;
+    /* unlock */
+
+    if (value) {
+      *value = grn_hash_entry_get_value(hash, entry);
+    }
+    if (added) {
+      *added = 1;
+    }
+    return id;
   }
-  if (!(e = entry_new(ctx, hash, key_size))) { /* unlock */ return GRN_ID_NIL; }
-  ee = grn_hash_entry_at(ctx, hash, e, GRN_TABLE_ADD);
-  if (!ee) { return GRN_ID_NIL; }
-  put_key(ctx, hash, ee, h, key, key_size);
-  if (np) {
-    (*hash->n_garbages)--;
-    ep = np;
-  }
-  *ep = e;
-  (*hash->n_entries)++;
-  if (added) { *added = 1; }
-exit :
-  /* unlock */
-  if (value) { *value = get_value(hash,ee); }
-  return e;
 }
 
 grn_id
