@@ -2008,13 +2008,22 @@ _grn_hash_get_key_value(grn_ctx *ctx, grn_hash *hash, grn_id id,
                         void **key, void **value)
 {
   int key_size;
-  entry_str *ee;
-  if (!grn_hash_bitmap_at(ctx, hash, id)) { return 0; }
-  ee = grn_hash_entry_at(ctx, hash, id, 0);
-  if (!ee) { return 0; }
-  key_size = (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) ? ee->size : hash->key_size;
-  *key = get_key(ctx, hash, ee);
-  return (*value = get_value(hash, ee)) ? key_size : 0;
+  grn_hash_entry *entry;
+  if (!grn_hash_bitmap_at(ctx, hash, id)) {
+    return 0;
+  }
+  entry = grn_hash_entry_at(ctx, hash, id, 0);
+  if (!entry) {
+    return 0;
+  }
+  if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
+    key_size = entry->header.key_size;
+  } else {
+    key_size = hash->key_size;
+  }
+  *key = grn_hash_entry_get_key(ctx, hash, entry);
+  *value = grn_hash_entry_get_value(hash, entry);
+  return *value ? key_size : 0;
 }
 
 grn_rc
