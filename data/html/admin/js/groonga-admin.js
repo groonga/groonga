@@ -309,6 +309,8 @@ jQuery.extend(GroongaAdmin.prototype, {
             }
             switch(button) {
             case 1: // Edit record
+              // TODO: This doesn't work becuase GroongaAdmin instance has
+              // show_edit_record function not GroongaAdmin object.
               elms.push('<td><input type="button" onClick="GroongaAdmin.show_edit_record(');
               elms.push(line[0]);
               elms.push(');" value="編集" /></td>');
