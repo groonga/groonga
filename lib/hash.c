@@ -1275,9 +1275,7 @@ match_key(grn_ctx *ctx, grn_hash *hash, entry_str *ee, uint32_t h,
 
 #define GARBAGE (0xffffffff)
 
-#define STEP(x) (((x) >> 2) | 0x1010101)
-
-static uint32_t
+inline static uint32_t
 grn_io_hash_calculate_entry_size(uint32_t key_size, uint32_t value_size,
                                  uint32_t flags)
 {
@@ -1606,6 +1604,24 @@ grn_hash_truncate(grn_ctx *ctx, grn_hash *hash)
   return rc;
 }
 
+inline static uint32_t
+grn_hash_calculate_hash_value(const void *ptr, uint32_t size)
+{
+  uint32_t i;
+  uint32_t hash_value = 0;
+  for (i = 0; i < size; i++) {
+    hash_value = (hash_value * 1021) + ((const uint8_t *)ptr)[i];
+  }
+  return hash_value;
+}
+
+inline static uint32_t
+grn_hash_calculate_step(uint32_t hash_value)
+{
+  return (hash_value >> 2) | 0x1010101;
+}
+
+/* TODO: to be fixed later. */
 static grn_rc
 grn_hash_reset(grn_ctx *ctx, grn_hash *hash, uint32_t ne)
 {
@@ -1642,7 +1658,7 @@ grn_hash_reset(grn_ctx *ctx, grn_hash *hash, uint32_t ne)
       if (!e || (e == GARBAGE)) { continue; }
       ee = grn_hash_entry_at(ctx, hash, e, GRN_TABLE_ADD);
       if (!ee) { return GRN_NO_MEMORY_AVAILABLE; }
-      for (i = ee->key, s = STEP(i); ; i += s) {
+      for (i = ee->key, s = grn_hash_calculate_step(i); ; i += s) {
         if (grn_hash_is_io_hash(hash)) {
           dp = grn_io_hash_idx_at(ctx, hash, (i & m) + offd);
           if (!dp) { return GRN_NO_MEMORY_AVAILABLE; }
@@ -1665,17 +1681,6 @@ grn_hash_reset(grn_ctx *ctx, grn_hash *hash, uint32_t ne)
     GRN_CTX_FREE(ctx, i0);
   }
   return GRN_SUCCESS;
-}
-
-inline static uint32_t
-grn_hash_calculate_hash_value(const void *ptr, uint32_t size)
-{
-  uint32_t i;
-  uint32_t hash_value = 0;
-  for (i = 0; i < size; i++) {
-    hash_value = (hash_value * 1021) + ((const uint8_t *)ptr)[i];
-  }
-  return hash_value;
 }
 
 inline static grn_id
@@ -1782,7 +1787,7 @@ grn_hash_add(grn_ctx *ctx, grn_hash *hash, const void *key,
       h = grn_hash_calculate_hash_value(key, key_size);
     }
   }
-  s = STEP(h);
+  s = grn_hash_calculate_step(h);
   /* lock */
   if ((*hash->n_entries + *hash->n_garbages) * 2 > *hash->max_offset) {
     grn_hash_reset(ctx, hash, 0);
@@ -1836,7 +1841,7 @@ grn_hash_get(grn_ctx *ctx, grn_hash *hash, const void *key,
       h = grn_hash_calculate_hash_value(key, key_size);
     }
   }
-  s = STEP(h);
+  s = grn_hash_calculate_step(h);
   m = *hash->max_offset;
   for (i = h; ; i += s) {
     if (!(ep = grn_hash_idx_at(ctx, hash, i))) { return GRN_ID_NIL; }
@@ -2044,7 +2049,7 @@ grn_hash_delete_by_id(grn_ctx *ctx, grn_hash *hash, grn_id id,
   ee = grn_hash_entry_at(ctx, hash, id, 0);
   if (ee) {
     grn_id e, *ep;
-    uint32_t i, key_size, h = ee->key, s = STEP(h);
+    uint32_t i, key_size, h = ee->key, s = grn_hash_calculate_step(h);
     key_size = (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) ? ee->size : hash->key_size;
     for (i = h; ; i += s) {
       if (!(ep = grn_hash_idx_at(ctx, hash, i))) { return GRN_NO_MEMORY_AVAILABLE; }
@@ -2076,7 +2081,7 @@ grn_hash_delete(grn_ctx *ctx, grn_hash *hash, const void *key, uint32_t key_size
       h = grn_hash_calculate_hash_value(key, key_size);
     }
   }
-  s = STEP(h);
+  s = grn_hash_calculate_step(h);
   {
     grn_id e, *ep;
     /* lock */
@@ -2558,7 +2563,7 @@ entry2id(grn_ctx *ctx, grn_hash *hash, entry *e)
 {
   entry *e2;
   grn_id id, *ep;
-  uint32_t i, h = e->key, s = STEP(h);
+  uint32_t i, h = e->key, s = grn_hash_calculate_step(h);
   for (i = h; ; i += s) {
     if (!(ep = grn_hash_idx_at(ctx, hash, i))) { return GRN_ID_NIL; }
     if (!(id = *ep)) { break; }
