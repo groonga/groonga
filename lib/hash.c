@@ -1668,11 +1668,14 @@ grn_hash_reset(grn_ctx *ctx, grn_hash *hash, uint32_t ne)
 }
 
 inline static uint32_t
-bin_hash(const uint8_t *p, uint32_t length)
+grn_hash_calculate_hash_value(const void *ptr, uint32_t size)
 {
-  uint32_t r;
-  for (r = 0; length--; p++) { r = (r * 1021) + *p; }
-  return r;
+  uint32_t i;
+  uint32_t hash_value = 0;
+  for (i = 0; i < size; i++) {
+    hash_value = (hash_value * 1021) + ((const uint8_t *)ptr)[i];
+  }
+  return hash_value;
 }
 
 inline static grn_id
@@ -1767,7 +1770,7 @@ grn_hash_add(grn_ctx *ctx, grn_hash *hash, const void *key,
       ERR(GRN_INVALID_ARGUMENT, "too long key");
       return GRN_ID_NIL;
     }
-    h = bin_hash((unsigned char *)key, key_size);
+    h = grn_hash_calculate_hash_value(key, key_size);
   } else {
     if (key_size != hash->key_size) {
       ERR(GRN_INVALID_ARGUMENT, "key size unmatch");
@@ -1776,7 +1779,7 @@ grn_hash_add(grn_ctx *ctx, grn_hash *hash, const void *key,
     if (key_size == sizeof(uint32_t)) {
       h = *((uint32_t *)key);
     } else {
-      h = bin_hash((unsigned char *)key, key_size);
+      h = grn_hash_calculate_hash_value(key, key_size);
     }
   }
   s = STEP(h);
@@ -1824,13 +1827,13 @@ grn_hash_get(grn_ctx *ctx, grn_hash *hash, const void *key,
   uint32_t h, i, m, s;
   if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
     if (key_size > hash->key_size) { return GRN_ID_NIL; }
-    h = bin_hash((unsigned char *)key, key_size);
+    h = grn_hash_calculate_hash_value(key, key_size);
   } else {
     if (key_size != hash->key_size) { return GRN_ID_NIL; }
     if (key_size == sizeof(uint32_t)) {
       h = *((uint32_t *)key);
     } else {
-      h = bin_hash((unsigned char *)key, key_size);
+      h = grn_hash_calculate_hash_value(key, key_size);
     }
   }
   s = STEP(h);
@@ -2064,13 +2067,13 @@ grn_hash_delete(grn_ctx *ctx, grn_hash *hash, const void *key, uint32_t key_size
   grn_rc rc = GRN_INVALID_ARGUMENT;
   if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
     if (key_size > hash->key_size) { return GRN_INVALID_ARGUMENT; }
-    h = bin_hash((unsigned char *)key, key_size);
+    h = grn_hash_calculate_hash_value(key, key_size);
   } else {
     if (key_size != hash->key_size) { return GRN_INVALID_ARGUMENT; }
     if (key_size == sizeof(uint32_t)) {
       h = *((uint32_t *)key);
     } else {
-      h = bin_hash((unsigned char *)key, key_size);
+      h = grn_hash_calculate_hash_value(key, key_size);
     }
   }
   s = STEP(h);
