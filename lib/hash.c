@@ -1006,14 +1006,18 @@ typedef struct {
 
 #define LOGICAL_MAX_SEGMENT ((GRN_HASH_MAX_SEGMENT) * 4)
 
-#define IO_HASHP(hash) ((hash)->io)
-
 enum {
   segment_key = 0,
   segment_entry = 1,
   segment_index = 2,
   segment_bitmap = 3
 };
+
+inline static grn_bool
+grn_hash_is_io_hash(grn_hash *hash)
+{
+  return hash->io != NULL;
+}
 
 inline static void *
 grn_io_hash_entry_at(grn_ctx *ctx, grn_hash *hash, grn_id id, int flags)
@@ -1025,7 +1029,7 @@ grn_io_hash_entry_at(grn_ctx *ctx, grn_hash *hash, grn_id id, int flags)
 inline static void *
 grn_hash_entry_at(grn_ctx *ctx, grn_hash *hash, grn_id id, int flags)
 {
-  if (IO_HASHP(hash)) {
+  if (grn_hash_is_io_hash(hash)) {
     return grn_io_hash_entry_at(ctx, hash, id, flags);
   } else {
     return grn_tiny_array_at_inline(&hash->a, id);
@@ -1035,7 +1039,7 @@ grn_hash_entry_at(grn_ctx *ctx, grn_hash *hash, grn_id id, int flags)
 inline static grn_bool
 grn_hash_bitmap_at(grn_ctx *ctx, grn_hash *hash, grn_id id)
 {
-  if (IO_HASHP(hash)) {
+  if (grn_hash_is_io_hash(hash)) {
     return grn_io_array_bit_at(ctx, hash->io, segment_bitmap, id) == 1;
   } else {
     return grn_tiny_array_bit_at(&hash->bitmap, id) == 1;
@@ -1051,7 +1055,7 @@ grn_io_hash_idx_at(grn_ctx *ctx, grn_hash *hash, grn_id id)
 inline static grn_id *
 grn_hash_idx_at(grn_ctx *ctx, grn_hash *hash, grn_id id)
 {
-  if (IO_HASHP(hash)) {
+  if (grn_hash_is_io_hash(hash)) {
     id = (id & *hash->max_offset) + hash->header->idx_offset;
     return grn_io_hash_idx_at(ctx, hash, id);
   } else {
@@ -1073,7 +1077,7 @@ inline static char *
 grn_hash_entry_get_key(grn_ctx *ctx, grn_hash *hash, grn_hash_entry *entry)
 {
   if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
-    if (IO_HASHP(hash)) {
+    if (grn_hash_is_io_hash(hash)) {
       if (entry->io_entry.flag & HASH_IMMEDIATE) {
         return entry->io_entry.key.buf;
       } else {
@@ -1099,7 +1103,7 @@ inline static void *
 grn_hash_entry_get_value(grn_hash *hash, grn_hash_entry *entry)
 {
   if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
-    if (IO_HASHP(hash)) {
+    if (grn_hash_is_io_hash(hash)) {
       return entry->io_entry.value;
     } else {
       return entry->tiny_entry.value;
@@ -1151,7 +1155,7 @@ grn_hash_entry_put_key(grn_ctx *ctx, grn_hash *hash,
                        const void *key, unsigned int key_size)
 {
   if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
-    if (IO_HASHP(hash)) {
+    if (grn_hash_is_io_hash(hash)) {
       if (key_size <= sizeof(entry->io_entry.key.buf)) {
         memcpy(entry->io_entry.key.buf, key, key_size);
         entry->io_entry.flag = HASH_IMMEDIATE;
@@ -1207,7 +1211,7 @@ grn_hash_entry_compare_key(grn_ctx *ctx, grn_hash *hash,
         entry->header.key_size != key_size) {
       return GRN_FALSE;
     }
-    if (IO_HASHP(hash)) {
+    if (grn_hash_is_io_hash(hash)) {
       if (entry->io_entry.flag & HASH_IMMEDIATE) {
         return !memcmp(key, entry->io_entry.key.buf, key_size);
       } else {
@@ -1534,7 +1538,7 @@ grn_hash_close(grn_ctx *ctx, grn_hash *hash)
 {
   grn_rc rc;
   if (!ctx || !hash) { return GRN_INVALID_ARGUMENT; }
-  if (IO_HASHP(hash)) {
+  if (grn_hash_is_io_hash(hash)) {
     rc = grn_io_close(ctx, hash->io);
   } else {
     GRN_ASSERT(ctx == hash->ctx);
@@ -1562,7 +1566,7 @@ grn_hash_truncate(grn_ctx *ctx, grn_hash *hash)
     return GRN_INVALID_ARGUMENT;
   }
 
-  if (IO_HASHP(hash)) {
+  if (grn_hash_is_io_hash(hash)) {
     const char * const io_path = grn_io_path(hash->io);
     if (io_path && *io_path) {
       path = GRN_STRDUP(io_path);
@@ -1576,7 +1580,7 @@ grn_hash_truncate(grn_ctx *ctx, grn_hash *hash)
   value_size = hash->value_size;
   flags = hash->obj.header.flags;
 
-  if (IO_HASHP(hash)) {
+  if (grn_hash_is_io_hash(hash)) {
     rc = grn_io_close(ctx, hash->io);
     if (!rc) {
       hash->io = NULL;
@@ -1603,7 +1607,7 @@ grn_hash_reset(grn_ctx *ctx, grn_hash *hash, uint32_t ne)
   if (!ne) { ne = n0 * 2; }
   if (ne > INT_MAX) { return GRN_NO_MEMORY_AVAILABLE; }
   for (n = INITIAL_INDEX_SIZE; n <= ne; n *= 2);
-  if (IO_HASHP(hash)) {
+  if (grn_hash_is_io_hash(hash)) {
     uint32_t i;
     offs = hash->header->idx_offset;
     offd = MAX_INDEX_SIZE - offs;
@@ -1622,7 +1626,7 @@ grn_hash_reset(grn_ctx *ctx, grn_hash *hash, uint32_t ne)
   {
     uint32_t i, j, k, m0 = *hash->max_offset, m = n - 1, s;
     for (k = 0, j = 0; k < n0 && j <= m0; j++, sp++) {
-      if (IO_HASHP(hash) && !(j & IDX_MASK_IN_A_SEGMENT)) {
+      if (grn_hash_is_io_hash(hash) && !(j & IDX_MASK_IN_A_SEGMENT)) {
         sp = grn_io_hash_idx_at(ctx, hash, j + offs);
         if (!sp) { return GRN_NO_MEMORY_AVAILABLE; }
       }
@@ -1631,7 +1635,7 @@ grn_hash_reset(grn_ctx *ctx, grn_hash *hash, uint32_t ne)
       ee = grn_hash_entry_at(ctx, hash, e, GRN_TABLE_ADD);
       if (!ee) { return GRN_NO_MEMORY_AVAILABLE; }
       for (i = ee->key, s = STEP(i); ; i += s) {
-        if (IO_HASHP(hash)) {
+        if (grn_hash_is_io_hash(hash)) {
           dp = grn_io_hash_idx_at(ctx, hash, (i & m) + offd);
           if (!dp) { return GRN_NO_MEMORY_AVAILABLE; }
         } else {
@@ -1645,7 +1649,7 @@ grn_hash_reset(grn_ctx *ctx, grn_hash *hash, uint32_t ne)
     *hash->max_offset = m;
     *hash->n_garbages = 0;
   }
-  if (IO_HASHP(hash)) {
+  if (grn_hash_is_io_hash(hash)) {
     hash->header->idx_offset = offd;
   } else {
     grn_id *i0 = hash->index;
@@ -1667,7 +1671,7 @@ inline static grn_id
 entry_new(grn_ctx *ctx, grn_hash *hash, uint32_t size)
 {
   grn_id e;
-  if (IO_HASHP(hash)) {
+  if (grn_hash_is_io_hash(hash)) {
     struct grn_hash_header *hh = hash->header;
     size -= 1;
     if ((e = hh->garbages[size])) {
@@ -1998,7 +2002,7 @@ grn_hash_set_value(grn_ctx *ctx, grn_hash *hash, grn_id id,
 
 #define DELETE_IT do {\
   *ep = GARBAGE;\
-  if (IO_HASHP(hash)) {\
+  if (grn_hash_is_io_hash(hash)) {\
     uint32_t size = key_size - 1;\
     struct grn_hash_header *hh = hash->header;\
     ee->key = hh->garbages[size];\
@@ -2100,7 +2104,8 @@ grn_hash_cursor_close(grn_ctx *ctx, grn_hash_cursor *c)
   GRN_FREE(c);
 }
 
-#define HASH_CURR_MAX(hash) ((IO_HASHP(hash)) ? (hash)->header->curr_rec : (hash)->a.max)
+#define HASH_CURR_MAX(hash) \
+  ((grn_hash_is_io_hash(hash)) ? (hash)->header->curr_rec : (hash)->a.max)
 
 grn_hash_cursor *
 grn_hash_cursor_open(grn_ctx *ctx, grn_hash *hash,
@@ -2695,7 +2700,7 @@ grn_rc
 grn_rhash_fin(grn_ctx *ctx, grn_hash *hash)
 {
   grn_rc rc;
-  if (IO_HASHP(hash)) {
+  if (grn_hash_is_io_hash(hash)) {
     rc = grn_io_close(ctx, hash->io);
   } else {
     GRN_ASSERT(ctx == hash->ctx);
