@@ -68,178 +68,178 @@ Groonga = {
   GRN_OBJ_WITH_POSITION:          (0x01<<9)
 };
 function GroongaAdmin() {
-    GroongaAdmin.current_table = null;
-    GroongaAdmin.statusTimer = null;
-    GroongaAdmin.semaphore = new Array();
-    GroongaAdmin.current_status = 0;
-    GroongaAdmin.reload_record_func = function(){};
+  GroongaAdmin.current_table = null;
+  GroongaAdmin.statusTimer = null;
+  GroongaAdmin.semaphore = new Array();
+  GroongaAdmin.current_status = 0;
+  GroongaAdmin.reload_record_func = function(){};
 
-    GroongaAdmin.database_tabs = $('#database-tabs').tabs({
-      show: function(e, ui) {
-        GroongaAdmin.stop_status_timer();
-        if (ui.panel.id == 'database-tab-summary') {
-          GroongaAdmin.start_status_timer();
-        }
+  GroongaAdmin.database_tabs = $('#database-tabs').tabs({
+    show: function(e, ui) {
+      GroongaAdmin.stop_status_timer();
+      if (ui.panel.id == 'database-tab-summary') {
+        GroongaAdmin.start_status_timer();
       }
-    });
-    GroongaAdmin.table_tabs = $('#table-tabs').tabs({
-      show: function(e, ui) {
+    }
+  });
+  GroongaAdmin.table_tabs = $('#table-tabs').tabs({
+    show: function(e, ui) {
+    }
+  });
+  $('#tab-tablelist-link').click(function() {
+    GroongaAdmin.tablelist();
+  });
+  $('#tab-columnlist-link').click(function() {
+    GroongaAdmin.columnlist(GroongaAdmin.current_table);
+  });
+  $('#tab-createrecord-link').click(function() {
+    GroongaAdmin.update_createrecord(GroongaAdmin.current_table);
+  });
+  $('#tab-recordlist-link').click(function() {
+    GroongaAdmin.reload_record_func();
+  });
+  $('#createtable-add-table').click(function() {
+    GroongaAdmin.createtable();
+  });
+  $('#createrecord-add-record').click(function() {
+    GroongaAdmin.createrecord();
+  });
+  $('#createcolumn-add-column').click(function() {
+    GroongaAdmin.createcolumn();
+  });
+  $('#recordlist-remove-record').click(function() {
+    GroongaAdmin.removerecord();
+  });
+  $('#columnlist-remove-column').click(function() {
+    GroongaAdmin.removecolumn();
+  });
+  $('#tablelist-remove-table').click(function() {
+    GroongaAdmin.removetable();
+  });
+  $('#tab-recordlist-submit').click(function() {
+    if ($('#table-tab-recordlist-full-checkbox').attr('checked')) {
+      // full
+      var d = {
+        'table': GroongaAdmin.current_table
       }
-    });
-    $('#tab-tablelist-link').click(function() {
-      GroongaAdmin.tablelist();
-    });
-    $('#tab-columnlist-link').click(function() {
-      GroongaAdmin.columnlist(GroongaAdmin.current_table);
-    });
-    $('#tab-createrecord-link').click(function() {
-      GroongaAdmin.update_createrecord(GroongaAdmin.current_table);
-    });
-    $('#tab-recordlist-link').click(function() {
-      GroongaAdmin.reload_record_func();
-    });
-    $('#createtable-add-table').click(function() {
-      GroongaAdmin.createtable();
-    });
-    $('#createrecord-add-record').click(function() {
-      GroongaAdmin.createrecord();
-    });
-    $('#createcolumn-add-column').click(function() {
-      GroongaAdmin.createcolumn();
-    });
-    $('#recordlist-remove-record').click(function() {
-      GroongaAdmin.removerecord();
-    });
-    $('#columnlist-remove-column').click(function() {
-      GroongaAdmin.removecolumn();
-    });
-    $('#tablelist-remove-table').click(function() {
-      GroongaAdmin.removetable();
-    });
-    $('#tab-recordlist-submit').click(function() {
-      if ($('#table-tab-recordlist-full-checkbox').attr('checked')) {
-        // full
-        var d = {
-          'table': GroongaAdmin.current_table
+      $.each(GroongaAdmin.SELECT_PARAMS_LIST, function(i, val) {
+        var e = $('#tab-recordlist-' + val);
+        if (e.val()) {
+          d[val] = e.val();
         }
-        $.each(GroongaAdmin.SELECT_PARAMS_LIST, function(i, val) {
-          var e = $('#tab-recordlist-' + val);
-          if (e.val()) {
-            d[val] = e.val();
-          }
-        });
-        GroongaAdmin.recordlist(d, true);
-      } else {
-        // simple
+      });
+      GroongaAdmin.recordlist(d, true);
+    } else {
+      // simple
+      GroongaAdmin.recordlist_simple(
+        GroongaAdmin.current_table,
+        $('#tab-recordlist-simplequery').val(),
+        $('#tab-recordlist-simplequerytype').val(),
+        1);
+    }
+  });
+  $('#side-menu-summary').click(function() {
+    GroongaAdmin.current_table = null;
+    $('#table-tabs').hide();
+    $('#database-tabs').show();
+    GroongaAdmin.start_status_timer();
+  });
+  GroongaAdmin.update_tablelist();
+
+  var e1 = $('#createtable-key-type-builtin');
+  $.each(Groonga.key_type_list, function(i, val) {
+    e1.append($('<option />').val(val).text(val));
+  });
+
+  e1 = $('#createtable-value-type-builtin');
+  e1.append($('<option />').val('').text('なし'));
+  $.each(Groonga.value_type_list, function(i, val) {
+    e1.append($('<option />').val(val).text(val));
+  });
+
+  e1 = $('#createtable-default-tokenizer-builtin');
+  e1.append($('<option />').val('').text('なし'));
+  $.each(Groonga.tokenizer_list, function(i, val) {
+    e1.append($('<option />').val(val).text(val));
+  });
+
+  e1 = $('#createcolumn-type-builtin');
+  $.each(Groonga.column_type_list, function(i, val) {
+    e1.append($('<option />').val(val).text(val));
+  });
+
+  $('#tab-recordlist-simplequerytype').change(function() {
+    if ($(this).val() == 'scorer') {
+      $('#tab-recordlist-incremental').hide();
+      $('#tab-recordlist-incremental-label').hide();
+    } else {
+      $('#tab-recordlist-incremental').show();
+      $('#tab-recordlist-incremental-label').show();
+    }
+    $('#tab-recordlist-incremental').change();
+  }).change();
+
+  $('#table-tab-recordlist-full-checkbox').change(function() {
+    if ($(this).attr('checked')) {
+      $('#table-tab-recordlist-form-simple').hide();
+      $('#table-tab-recordlist-form-full').show();
+    } else {
+      $('#table-tab-recordlist-form-simple').show();
+      $('#table-tab-recordlist-form-full').hide();
+    }
+  }).change();
+
+  $('#tab-recordlist-incremental').change(function() {
+    $('#tab-recordlist-simplequery').unbind('keyup');
+    if ($(this).attr('checked') &&
+        $('#tab-recordlist-simplequerytype').val() != 'scorer') {
+      $('#tab-recordlist-simplequery').keyup(function(e) {
         GroongaAdmin.recordlist_simple(
           GroongaAdmin.current_table,
           $('#tab-recordlist-simplequery').val(),
           $('#tab-recordlist-simplequerytype').val(),
-          1);
-      }
-    });
-    $('#side-menu-summary').click(function() {
-      GroongaAdmin.current_table = null;
-      $('#table-tabs').hide();
-      $('#database-tabs').show();
-      GroongaAdmin.start_status_timer();
-    });
-    GroongaAdmin.update_tablelist();
+          1,
+          true);
+      });
+    }
+  }).change();
 
-    var e1 = $('#createtable-key-type-builtin');
-    $.each(Groonga.key_type_list, function(i, val) {
-      e1.append($('<option />').val(val).text(val));
-    });
-
-    e1 = $('#createtable-value-type-builtin');
-    e1.append($('<option />').val('').text('なし'));
-    $.each(Groonga.value_type_list, function(i, val) {
-      e1.append($('<option />').val(val).text(val));
-    });
-
-    e1 = $('#createtable-default-tokenizer-builtin');
-    e1.append($('<option />').val('').text('なし'));
-    $.each(Groonga.tokenizer_list, function(i, val) {
-      e1.append($('<option />').val(val).text(val));
-    });
-
-    e1 = $('#createcolumn-type-builtin');
-    $.each(Groonga.column_type_list, function(i, val) {
-      e1.append($('<option />').val(val).text(val));
-    });
-
-    $('#tab-recordlist-simplequerytype').change(function() {
-      if ($(this).val() == 'scorer') {
-        $('#tab-recordlist-incremental').hide();
-        $('#tab-recordlist-incremental-label').hide();
-      } else {
-        $('#tab-recordlist-incremental').show();
-        $('#tab-recordlist-incremental-label').show();
-      }
-      $('#tab-recordlist-incremental').change();
-    }).change();
-
-    $('#table-tab-recordlist-full-checkbox').change(function() {
-      if ($(this).attr('checked')) {
-        $('#table-tab-recordlist-form-simple').hide();
-        $('#table-tab-recordlist-form-full').show();
-      } else {
-        $('#table-tab-recordlist-form-simple').show();
-        $('#table-tab-recordlist-form-full').hide();
-      }
-    }).change();
-
-    $('#tab-recordlist-incremental').change(function() {
-      $('#tab-recordlist-simplequery').unbind('keyup');
-      if ($(this).attr('checked') &&
-          $('#tab-recordlist-simplequerytype').val() != 'scorer') {
-        $('#tab-recordlist-simplequery').keyup(function(e) {
-          GroongaAdmin.recordlist_simple(
-            GroongaAdmin.current_table,
-            $('#tab-recordlist-simplequery').val(),
-            $('#tab-recordlist-simplequerytype').val(),
-            1,
-            true);
-        });
-      }
-    }).change();
-
-    $('#createcolumn-type').change(function(e) {
-      var s = $('#createcolumn-type-table option:selected');
-      var cs = $('#createcolumn-source');
-      if (s.length > 0) {
-        cs.empty().removeAttr('disabled');
-        GroongaAdmin.showloading(
-          $.ajax({
-            url: '/d/column_list',
-            data: {'table': s.val()},
-            dataType: 'json',
-            success: function(d) {
-              if(GroongaAdmin.validateajax(d) < 0) { return; }
-              var idx;
-              var b = d[1];
-              $.each(b[0], function(i, val) {
-                if (val[0] == 'name') { idx = i; }
+  $('#createcolumn-type').change(function(e) {
+    var s = $('#createcolumn-type-table option:selected');
+    var cs = $('#createcolumn-source');
+    if (s.length > 0) {
+      cs.empty().removeAttr('disabled');
+      GroongaAdmin.showloading(
+        $.ajax({
+          url: '/d/column_list',
+          data: {'table': s.val()},
+          dataType: 'json',
+          success: function(d) {
+            if(GroongaAdmin.validateajax(d) < 0) { return; }
+            var idx;
+            var b = d[1];
+            $.each(b[0], function(i, val) {
+              if (val[0] == 'name') { idx = i; }
+            });
+            if (idx) {
+              b.shift();
+              $.each(b, function(i, val) {
+                cs.append($('<option />').val(val[idx]).text(val[idx]));
               });
-              if (idx) {
-                b.shift();
-                $.each(b, function(i, val) {
-                  cs.append($('<option />').val(val[idx]).text(val[idx]));
-                });
-              }
-              GroongaAdmin.hideloading();
-            },
-            error: function(XMLHttpRequest, textStatus, errorThrown) {
-              GroongaAdmin.errorloading(XMLHttpRequest);
             }
-          })
-        );
-      } else {
-        cs.empty().attr('disabled', 'disabled');
-      }
-    });
+            GroongaAdmin.hideloading();
+          },
+          error: function(XMLHttpRequest, textStatus, errorThrown) {
+            GroongaAdmin.errorloading(XMLHttpRequest);
+          }
+        })
+      );
+    } else {
+      cs.empty().attr('disabled', 'disabled');
+    }
+  });
 
-    GroongaAdmin.recordlist_count = 30;
+  GroongaAdmin.recordlist_count = 30;
 };
 
 jQuery.extend(GroongaAdmin, {
