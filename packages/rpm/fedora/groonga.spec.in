@@ -50,6 +50,7 @@ Summary:	Groonga server
 Group:		Applications/Text
 License:	LGPLv2 and (MIT or GPLv2)
 Requires:	%{name} = %{version}-%{release}
+Requires:	curl
 Requires(pre):	shadow-utils
 Requires(post):	/sbin/chkconfig
 Requires(preun):	/sbin/chkconfig
