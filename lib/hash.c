@@ -2031,49 +2031,55 @@ grn_rc
 grn_hash_set_value(grn_ctx *ctx, grn_hash *hash, grn_id id,
                    const void *value, int flags)
 {
-  if (value) {
-    void *v;
-    entry_str *ee;
-    if (!grn_hash_bitmap_at(ctx, hash, id)) { return GRN_INVALID_ARGUMENT; }
-    ee = grn_hash_entry_at(ctx, hash, id, 0);
-    if (ee && (v = get_value(hash, ee))) {
-      switch ((flags & GRN_OBJ_SET_MASK)) {
-      case GRN_OBJ_SET :
-        memcpy(v, value, hash->value_size);
-        return GRN_SUCCESS;
-      case GRN_OBJ_INCR :
-        switch (hash->value_size) {
-        case sizeof(int32_t) :
-          *((int32_t *)v) += *((int32_t *)value);
-          return GRN_SUCCESS;
-        case sizeof(int64_t) :
-          *((int64_t *)v) += *((int64_t *)value);
-          return GRN_SUCCESS;
-        default :
-          return GRN_INVALID_ARGUMENT;
-        }
-        break;
-      case GRN_OBJ_DECR :
-        switch (hash->value_size) {
-        case sizeof(int32_t) :
-          *((int32_t *)v) -= *((int32_t *)value);
-          return GRN_SUCCESS;
-        case sizeof(int64_t) :
-          *((int64_t *)v) -= *((int64_t *)value);
-          return GRN_SUCCESS;
-        default :
-          return GRN_INVALID_ARGUMENT;
-        }
-        break;
-      default :
-        ERR(GRN_INVALID_ARGUMENT, "flags = %d", flags);
-        return ctx->rc;
-      }
-    } else {
-      return GRN_NO_MEMORY_AVAILABLE;
-    }
+  void *entry_value;
+  grn_hash_entry *entry;
+  if (!value) {
+    return GRN_INVALID_ARGUMENT;
   }
-  return GRN_INVALID_ARGUMENT;
+  if (!grn_hash_bitmap_at(ctx, hash, id)) {
+    return GRN_INVALID_ARGUMENT;
+  }
+  entry = grn_hash_entry_at(ctx, hash, id, 0);
+  if (!entry) {
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
+  entry_value = grn_hash_entry_get_value(hash, entry);
+  if (!entry_value) {
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
+
+  switch (flags & GRN_OBJ_SET_MASK) {
+  case GRN_OBJ_SET :
+    memcpy(entry_value, value, hash->value_size);
+    return GRN_SUCCESS;
+  case GRN_OBJ_INCR :
+    switch (hash->value_size) {
+    case sizeof(int32_t) :
+      *((int32_t *)entry_value) += *((int32_t *)value);
+      return GRN_SUCCESS;
+    case sizeof(int64_t) :
+      *((int64_t *)entry_value) += *((int64_t *)value);
+      return GRN_SUCCESS;
+    default :
+      return GRN_INVALID_ARGUMENT;
+    }
+    break;
+  case GRN_OBJ_DECR :
+    switch (hash->value_size) {
+    case sizeof(int32_t) :
+      *((int32_t *)entry_value) -= *((int32_t *)value);
+      return GRN_SUCCESS;
+    case sizeof(int64_t) :
+      *((int64_t *)entry_value) -= *((int64_t *)value);
+      return GRN_SUCCESS;
+    default :
+      return GRN_INVALID_ARGUMENT;
+    }
+    break;
+  default :
+    ERR(GRN_INVALID_ARGUMENT, "flags = %d", flags);
+    return ctx->rc;
+  }
 }
 
 #define DELETE_IT do {\
