@@ -1838,34 +1838,50 @@ grn_id
 grn_hash_get(grn_ctx *ctx, grn_hash *hash, const void *key,
              unsigned int key_size, void **value)
 {
-  grn_id e, *ep;
-  uint32_t h, i, m, s;
+  uint32_t hash_value;
   if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
-    if (key_size > hash->key_size) { return GRN_ID_NIL; }
-    h = grn_hash_calculate_hash_value(key, key_size);
+    if (key_size > hash->key_size) {
+      return GRN_ID_NIL;
+    }
+    hash_value = grn_hash_calculate_hash_value(key, key_size);
   } else {
-    if (key_size != hash->key_size) { return GRN_ID_NIL; }
+    if (key_size != hash->key_size) {
+      return GRN_ID_NIL;
+    }
     if (key_size == sizeof(uint32_t)) {
-      h = *((uint32_t *)key);
+      hash_value = *((uint32_t *)key);
     } else {
-      h = grn_hash_calculate_hash_value(key, key_size);
+      hash_value = grn_hash_calculate_hash_value(key, key_size);
     }
   }
-  s = grn_hash_calculate_step(h);
-  m = *hash->max_offset;
-  for (i = h; ; i += s) {
-    if (!(ep = grn_hash_idx_at(ctx, hash, i))) { return GRN_ID_NIL; }
-    if (!(e = *ep)) { break; }
-    if (e == GARBAGE) { continue; }
-    {
-      entry_str * const ee = grn_hash_entry_at(ctx, hash, e, 0);
-      if (ee && match_key(ctx, hash, ee, h, key, key_size)) {
-        if (value) { *value = get_value(hash, ee); }
-        return e;
+
+  {
+    uint32_t i;
+    const uint32_t step = grn_hash_calculate_step(hash_value);
+    for (i = hash_value; ; i += step) {
+      grn_id id;
+      grn_id * const index = grn_hash_idx_at(ctx, hash, i);
+      if (!index) {
+        return GRN_ID_NIL;
+      }
+      id = *index;
+      if (!id) {
+        return GRN_ID_NIL;
+      }
+      if (id != GARBAGE) {
+        grn_hash_entry * const entry = grn_hash_entry_at(ctx, hash, id, 0);
+        if (entry) {
+          if (grn_hash_entry_compare_key(ctx, hash, entry, hash_value,
+                                         key, key_size)) {
+            if (value) {
+              *value = grn_hash_entry_get_value(hash, entry);
+            }
+            return id;
+          }
+        }
       }
     }
   }
-  return GRN_ID_NIL;
 }
 
 inline static grn_hash_entry *
