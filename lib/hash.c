@@ -1631,65 +1631,103 @@ grn_hash_calculate_step(uint32_t hash_value)
   return (hash_value >> 2) | 0x1010101;
 }
 
-/* TODO: to be fixed later. */
 static grn_rc
-grn_hash_reset(grn_ctx *ctx, grn_hash *hash, uint32_t ne)
+grn_hash_reset(grn_ctx *ctx, grn_hash *hash, uint32_t expected_n_entries)
 {
-  entry *ee;
-  grn_id e, *index = NULL, *sp = NULL, *dp;
-  uint32_t n, n0 = *hash->n_entries, offs = 0, offd = 0;
-  if (!ne) { ne = n0 * 2; }
-  if (ne > INT_MAX) { return GRN_NO_MEMORY_AVAILABLE; }
-  for (n = INITIAL_INDEX_SIZE; n <= ne; n *= 2);
+  grn_id *new_index = NULL;
+  uint32_t new_index_size = INITIAL_INDEX_SIZE;
+  grn_id *src_ptr = NULL, *dest_ptr = NULL;
+  uint32_t src_offset = 0, dest_offset = 0;
+  const uint32_t n_entries = *hash->n_entries;
+  const uint32_t max_offset = *hash->max_offset;
+
+  if (!expected_n_entries) {
+    expected_n_entries = n_entries * 2;
+  }
+  if (expected_n_entries > INT_MAX) {
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
+  while (new_index_size <= expected_n_entries) {
+    new_index_size *= 2;
+  }
+
   if (grn_hash_is_io_hash(hash)) {
     uint32_t i;
-    offs = hash->header->idx_offset;
-    offd = MAX_INDEX_SIZE - offs;
-    for (i = 0; i < n; i += (IDX_MASK_IN_A_SEGMENT + 1)) {
-      dp = grn_io_hash_idx_at(ctx, hash, i + offd); /* todo : use idx_at */
-      if (!dp) { return GRN_NO_MEMORY_AVAILABLE; }
-      memset(dp, 0, GRN_HASH_SEGMENT_SIZE);
+    src_offset = hash->header->idx_offset;
+    dest_offset = MAX_INDEX_SIZE - src_offset;
+    for (i = 0; i < new_index_size; i += (IDX_MASK_IN_A_SEGMENT + 1)) {
+      /*
+       * The following grn_io_hash_idx_at() allocates memory for a new segment
+       * and returns a pointer to the new segment. It's actually bad manners
+       * but faster than calling grn_io_hash_idx_at() for each element.
+       */
+      dest_ptr = grn_io_hash_idx_at(ctx, hash, i + dest_offset);
+      if (!dest_ptr) {
+        return GRN_NO_MEMORY_AVAILABLE;
+      }
+      memset(dest_ptr, 0, GRN_HASH_SEGMENT_SIZE);
     }
   } else {
     GRN_ASSERT(ctx == hash->ctx);
-    if (!(index = GRN_CTX_ALLOC(ctx, n * sizeof(grn_id)))) {
+    new_index = GRN_CTX_ALLOC(ctx, new_index_size * sizeof(grn_id));
+    if (!new_index) {
       return GRN_NO_MEMORY_AVAILABLE;
     }
-    sp = hash->index;
+    src_ptr = hash->index;
   }
+
   {
-    uint32_t i, j, k, m0 = *hash->max_offset, m = n - 1, s;
-    for (k = 0, j = 0; k < n0 && j <= m0; j++, sp++) {
-      if (grn_hash_is_io_hash(hash) && !(j & IDX_MASK_IN_A_SEGMENT)) {
-        sp = grn_io_hash_idx_at(ctx, hash, j + offs);
-        if (!sp) { return GRN_NO_MEMORY_AVAILABLE; }
-      }
-      e = *sp;
-      if (!e || (e == GARBAGE)) { continue; }
-      ee = grn_hash_entry_at(ctx, hash, e, GRN_TABLE_ADD);
-      if (!ee) { return GRN_NO_MEMORY_AVAILABLE; }
-      for (i = ee->key, s = grn_hash_calculate_step(i); ; i += s) {
-        if (grn_hash_is_io_hash(hash)) {
-          dp = grn_io_hash_idx_at(ctx, hash, (i & m) + offd);
-          if (!dp) { return GRN_NO_MEMORY_AVAILABLE; }
-        } else {
-          dp = index + (i & m);
+    uint32_t src_pos, count;
+    const uint32_t new_max_offset = new_index_size - 1;
+    for (count = 0, src_pos = 0; count < n_entries && src_pos <= max_offset;
+         src_pos++, src_ptr++) {
+      uint32_t i, step;
+      grn_id entry_id;
+      grn_hash_entry *entry;
+      if (grn_hash_is_io_hash(hash) && !(src_pos & IDX_MASK_IN_A_SEGMENT)) {
+        src_ptr = grn_io_hash_idx_at(ctx, hash, src_pos + src_offset);
+        if (!src_ptr) {
+          return GRN_NO_MEMORY_AVAILABLE;
         }
-        if (!*dp) { break; }
       }
-      *dp = e;
-      k++;
+      entry_id = *src_ptr;
+      if (!entry_id || (entry_id == GARBAGE)) {
+        continue;
+      }
+      entry = grn_hash_entry_at(ctx, hash, entry_id, GRN_TABLE_ADD);
+      if (!entry) {
+        return GRN_NO_MEMORY_AVAILABLE;
+      }
+      step = grn_hash_calculate_step(entry->hash_value);
+      for (i = entry->hash_value; ; i += step) {
+        i &= new_max_offset;
+        if (grn_hash_is_io_hash(hash)) {
+          dest_ptr = grn_io_hash_idx_at(ctx, hash, i + dest_offset);
+          if (!dest_ptr) {
+            return GRN_NO_MEMORY_AVAILABLE;
+          }
+        } else {
+          dest_ptr = new_index + i;
+        }
+        if (!*dest_ptr) {
+          break;
+        }
+      }
+      *dest_ptr = entry_id;
+      count++;
     }
-    *hash->max_offset = m;
+    *hash->max_offset = new_max_offset;
     *hash->n_garbages = 0;
   }
+
   if (grn_hash_is_io_hash(hash)) {
-    hash->header->idx_offset = offd;
+    hash->header->idx_offset = dest_offset;
   } else {
-    grn_id *i0 = hash->index;
-    hash->index = index;
-    GRN_CTX_FREE(ctx, i0);
+    grn_id * const old_index = hash->index;
+    hash->index = new_index;
+    GRN_CTX_FREE(ctx, old_index);
   }
+
   return GRN_SUCCESS;
 }
 
