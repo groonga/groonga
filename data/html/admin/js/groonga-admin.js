@@ -236,7 +236,7 @@ jQuery.extend(GroongaAdmin.prototype, {
   _initializeTabs: function() {
     var that = this;
 
-    this.$database_tabs = $('#database-tabs').tabs({
+    this._$databaseTabs = $('#database-tabs').tabs({
       show: function(e, ui) {
 	that.stop_status_timer();
 	if (ui.panel.id == 'database-tab-summary') {
@@ -245,12 +245,12 @@ jQuery.extend(GroongaAdmin.prototype, {
       }
     });
 
-    this.$table_tabs = $('#table-tabs').tabs({
+    this._$tableTabs = $('#table-tabs').tabs({
       show: function(e, ui) {
       }
     });
 
-    this.$suggest_tabs = $('#suggest-tabs').tabs({
+    this._$suggestTabs = $('#suggest-tabs').tabs({
       show: function(e, ui) {
       }
     });
@@ -258,19 +258,19 @@ jQuery.extend(GroongaAdmin.prototype, {
     this._selectTab("database");
   },
   _selectTab: function(name) {
-    this.$database_tabs.hide();
-    this.$table_tabs.hide();
-    this.$suggest_tabs.hide();
+    this._$databaseTabs.hide();
+    this._$tableTabs.hide();
+    this._$suggestTabs.hide();
     switch (name) {
     case "table":
-      this.$table_tabs.show();
+      this._$tableTabs.show();
       break;
     case "suggest":
-      this.$suggest_tabs.show();
+      this._$suggestTabs.show();
       break;
     case "database":
     default:
-      this.$database_tabs.show();
+      this._$databaseTabs.show();
       break;
     }
   },
@@ -279,7 +279,7 @@ jQuery.extend(GroongaAdmin.prototype, {
     $('#side-menu-summary').click(function() {
       that.current_table = null;
       that._selectTab("database");
-      that.$database_tabs.tabs("select", "#database-tab-summary");
+      that._$databaseTabs.tabs("select", "#database-tab-summary");
     });
     $('#side-menu-suggest').click(function() {
       that.current_table = null;
