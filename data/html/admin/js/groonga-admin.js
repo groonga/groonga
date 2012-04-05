@@ -132,15 +132,7 @@ function GroongaAdmin() {
         1);
     }
   });
-  $('#side-menu-summary').click(function() {
-    that.current_table = null;
-    that._selectTab("database");
-    that.$database_tabs.tabs("select", "#database-tab-summary");
-  });
-  $('#side-menu-suggest').click(function() {
-    that.current_table = null;
-    that._selectTab("suggest");
-  });
+  this._initializeSideMenu();
   this.update_tablelist();
 
   var e1 = $('#createtable-key-type-builtin');
@@ -281,6 +273,18 @@ jQuery.extend(GroongaAdmin.prototype, {
       this.$database_tabs.show();
       break;
     }
+  },
+  _initializeSideMenu: function () {
+    var that = this;
+    $('#side-menu-summary').click(function() {
+      that.current_table = null;
+      that._selectTab("database");
+      that.$database_tabs.tabs("select", "#database-tab-summary");
+    });
+    $('#side-menu-suggest').click(function() {
+      that.current_table = null;
+      that._selectTab("suggest");
+    });
   },
   start_status_timer: function() {
     var that = this;
