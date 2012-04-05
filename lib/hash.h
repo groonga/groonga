@@ -109,6 +109,14 @@ GRN_API void *grn_tiny_array_at(grn_tiny_array *array, grn_id id);
 GRN_API grn_id grn_tiny_array_id(grn_tiny_array *array,
                                  const void *element_address);
 
+/**** grn_tiny_bitmap ****/
+
+typedef struct _grn_tiny_bitmap grn_tiny_bitmap;
+
+struct _grn_tiny_bitmap {
+  grn_tiny_array array;
+};
+
 /**** grn_array ****/
 
 #define GRN_ARRAY_TINY        (0x01<<6)
@@ -139,7 +147,7 @@ struct _grn_array {
   uint32_t n_entries_buf;
   grn_id garbages;
   grn_tiny_array array;
-  grn_tiny_array bitmap;
+  grn_tiny_bitmap bitmap;
 };
 
 struct _grn_array_cursor {
@@ -199,7 +207,7 @@ struct _grn_hash {
   grn_id *index;
   grn_id garbages;
   grn_tiny_array a;
-  grn_tiny_array bitmap;
+  grn_tiny_bitmap bitmap;
 };
 
 /* Header of grn_io_hash. */
