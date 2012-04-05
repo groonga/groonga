@@ -69,6 +69,7 @@ Groonga = {
   GRN_OBJ_WITH_WEIGHT:            (0x01<<8),
   GRN_OBJ_WITH_POSITION:          (0x01<<9)
 };
+
 function GroongaAdmin() {
   this.current_table = null;
   this.statusTimer = null;
