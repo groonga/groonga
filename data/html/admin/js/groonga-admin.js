@@ -232,7 +232,15 @@ function GroongaAdmin() {
 };
 
 jQuery.extend(GroongaAdmin.prototype, {
-  SELECT_PARAMS_LIST: ['match_columns', 'query', 'filter', 'scorer', 'sortby', 'output_columns', 'offset', 'limit', 'drilldown', 'drilldown_sortby', 'drilldown_output_columns', 'drilldown_offset', 'drilldown_limit'],
+  SELECT_PARAMS_LIST: [
+    'match_columns', 'query', 'filter',
+    'scorer',
+    'output_columns',
+    'sortby', 'offset', 'limit',
+    'drilldown',
+    'drilldown_output_columns',
+    'drilldown_sortby', 'drilldown_offset', 'drilldown_limit'
+  ],
   _initializeTabs: function() {
     var that = this;
 
