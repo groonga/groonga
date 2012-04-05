@@ -32,33 +32,41 @@ extern "C" {
 /**** grn_tiny_array ****/
 
 /*
- * grn_tiny_array_init() accepts a logical OR of these flags.
+ * grn_tiny_array_init() accepts a logical OR of the following flags.
+ * Note that other flags, such as (1 << 30), will be ignored.
  *
- * GRN_TINY_ARRAY_CLEAR: 
- *   specifies to initialize a new block with zeros.
- * GRN_TINY_ARRAY_THREADSAFE:
- *   specifies to create a critical section when allocating memory.
- * GRN_TINY_ARRAY_USE_MALLOC:
- *   specifies to use GRN_MALLOC/CALLOC/FREE instead of GRN_CTX_ALLOC/FREE.
+ * - GRN_TINY_ARRAY_CLEAR specifies to initialize a new block with zeros.
+ *   It is valid only iff specified with GRN_TINY_ARRAY_USE_MALLOC.
+ * - GRN_TINY_ARRAY_THREADSAFE specifies to create a critical section when
+ *   allocating memory.
+ * - GRN_TINY_ARRAY_USE_MALLOC specifies to use GRN_MALLOC/CALLOC/FREE instead
+ *   of GRN_CTX_ALLOC/FREE.
  */
-#define GRN_TINY_ARRAY_CLEAR      (1<<0)
-#define GRN_TINY_ARRAY_THREADSAFE (1<<1)
-#define GRN_TINY_ARRAY_USE_MALLOC (1<<2)
+#define GRN_TINY_ARRAY_CLEAR      (1 << 0)
+#define GRN_TINY_ARRAY_THREADSAFE (1 << 1)
+#define GRN_TINY_ARRAY_USE_MALLOC (1 << 2)
 
 /*
- * GRN_TINY_ARRAY_W: a parameter of grn_tiny_array.
- * GRN_TINY_ARRAY_R: the offset to a block.
- * GRN_TINY_ARRAY_S: the number of elements in the first block.
- * GRN_TINY_ARRAY_N: the maximum number of blocks.
+ * - GRN_TINY_ARRAY_FACTOR is the global parameter of grn_tiny_array.
+ * - GRN_TINY_ARRAY_GET_OFFSET() returns the offset of a specified block.
+ * - GRN_TINY_ARRAY_BASE_BLOCK_SIZE is the number of elements in the first
+ *   block.
+ * - GRN_TINY_ARRAY_GET_BLOCK_SIZE() returns the number of elements in a
+ *   specified block.
+ * - GRN_TINY_ARRAY_NUM_BLOCKS is the maximum number of blocks.
  */
-#define GRN_TINY_ARRAY_W           0
-#define GRN_TINY_ARRAY_R(block_id) (1<<((block_id)<<GRN_TINY_ARRAY_W))
-#define GRN_TINY_ARRAY_S           (GRN_TINY_ARRAY_R(1)-1)
-#define GRN_TINY_ARRAY_N           (32>>GRN_TINY_ARRAY_W)
+#define GRN_TINY_ARRAY_FACTOR     0
+#define GRN_TINY_ARRAY_GET_OFFSET(block_id) \
+  (1 << ((block_id) << GRN_TINY_ARRAY_FACTOR))
+#define GRN_TINY_ARRAY_BASE_BLOCK_SIZE \
+  (GRN_TINY_ARRAY_GET_OFFSET(1) - GRN_TINY_ARRAY_GET_OFFSET(0))
+#define GRN_TINY_ARRAY_GET_BLOCK_SIZE(block_id) \
+  (GRN_TINY_ARRAY_BASE_BLOCK_SIZE * GRN_TINY_ARRAY_GET_OFFSET(block_id))
+#define GRN_TINY_ARRAY_NUM_BLOCKS (32 >> GRN_TINY_ARRAY_FACTOR)
 
 /*
- * grn_tiny_array uses several blocks to represent an array.
- * The k-th block (block[k]) consists of 2^k elements.
+ * grn_tiny_array uses several blocks to emulate an array.
+ * The k-th block, blocks[k - 1], consists of 2^(k-1) elements.
  */
 typedef struct _grn_tiny_array grn_tiny_array;
 
@@ -67,26 +75,31 @@ struct _grn_tiny_array {
   grn_id max;
   uint16_t element_size;
   uint16_t flags;
+  void *blocks[GRN_TINY_ARRAY_NUM_BLOCKS];
   grn_critical_section lock;
-  void *blocks[GRN_TINY_ARRAY_N];
 };
 
-#define GRN_TINY_ARRAY_EACH(array, head, tail, key, value, block) do {\
-  int _block_id;\
-  const grn_id _head = (head);\
-  const grn_id _tail = (tail);\
-  for (_block_id = 0, (key) = (_head);\
-       _block_id < GRN_TINY_ARRAY_N && (key) <= (_tail); _block_id++) {\
-    int _id = GRN_TINY_ARRAY_S * GRN_TINY_ARRAY_R(_block_id);\
-    if (((value) = (array)->blocks[_block_id])) {\
-      for (; _id-- && (key) <= (_tail);\
-           (key)++, (value) = (void *)((byte *)(value) + (array)->element_size)) {\
-        block\
-      }\
-    } else {\
-      (key) += _id;\
-    }\
-  }\
+#define GRN_TINY_ARRAY_EACH(array, head, tail, key, value, block) do { \
+  int _block_id; \
+  const grn_id _head = (head); \
+  const grn_id _tail = (tail); \
+  for (_block_id = 0, (key) = (_head); \
+       _block_id < GRN_TINY_ARRAY_NUM_BLOCKS && (key) <= (_tail); \
+       _block_id++) { \
+    int _id = GRN_TINY_ARRAY_GET_BLOCK_SIZE(_block_id); \
+    (value) = (array)->blocks[_block_id]; \
+    if (value) { \
+      while (_id-- && (key) <= (_tail)) { \
+        { \
+          block \
+        } \
+        (key)++; \
+        (value) = (void *)((byte *)(value) + (array)->element_size); \
+      } \
+    } else { \
+      (key) += _id; \
+    } \
+  } \
 } while (0)
 
 GRN_API void grn_tiny_array_init(grn_ctx *ctx, grn_tiny_array *array,

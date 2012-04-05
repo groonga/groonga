@@ -24,26 +24,33 @@
 
 /* grn_tiny_array */
 
+/* Requirements: id != GRN_ID_NIL. */
 inline static int
 grn_tiny_array_get_block_id(grn_tiny_array *array, grn_id id)
 {
   int most_significant_one_bit_offset;
   GRN_BIT_SCAN_REV(id, most_significant_one_bit_offset);
-  return most_significant_one_bit_offset >> GRN_TINY_ARRAY_W;
+  return most_significant_one_bit_offset >> GRN_TINY_ARRAY_FACTOR;
 }
 
+/* Requirements: id != GRN_ID_NIL. */
 inline static void *
-grn_tiny_array_at_inline(grn_tiny_array *array, grn_id id)
-{
-  int block_id;
-  void **block;
-  size_t offset;
-  if (!id) {
-    return NULL;
+grn_tiny_array_get(grn_tiny_array *array, grn_id id) {
+  const int block_id = grn_tiny_array_get_block_id(array, id);
+  uint8_t * const block = (uint8_t *)array->blocks[block_id];
+  if (block) {
+    const size_t offset = GRN_TINY_ARRAY_GET_OFFSET(block_id);
+    return block + (id - offset) * array->element_size;
   }
-  block_id = grn_tiny_array_get_block_id(array, id);
-  block = &array->blocks[block_id];
-  offset = GRN_TINY_ARRAY_R(block_id);
+  return NULL;
+}
+
+/* Requirements: id != GRN_ID_NIL. */
+inline static void *
+grn_tiny_array_put(grn_tiny_array *array, grn_id id) {
+  const int block_id = grn_tiny_array_get_block_id(array, id);
+  void ** const block = &array->blocks[block_id];
+  const size_t offset = GRN_TINY_ARRAY_GET_OFFSET(block_id);
   if (!*block) {
     grn_ctx * const ctx = array->ctx;
     if (array->flags & GRN_TINY_ARRAY_THREADSAFE) {
@@ -51,7 +58,7 @@ grn_tiny_array_at_inline(grn_tiny_array *array, grn_id id)
     }
     if (!*block) {
       const size_t block_size =
-          GRN_TINY_ARRAY_S * offset * array->element_size;
+          GRN_TINY_ARRAY_GET_BLOCK_SIZE(block_id) * array->element_size;
       if (array->flags & GRN_TINY_ARRAY_USE_MALLOC) {
         if (array->flags & GRN_TINY_ARRAY_CLEAR) {
           *block = GRN_CALLOC(block_size);
@@ -72,13 +79,19 @@ grn_tiny_array_at_inline(grn_tiny_array *array, grn_id id)
   if (id > array->max) {
     array->max = id;
   }
-  return (byte *)*block + (id - offset) * array->element_size;
+  return (uint8_t *)*block + (id - offset) * array->element_size;
+}
+
+inline static void *
+grn_tiny_array_at_inline(grn_tiny_array *array, grn_id id)
+{
+  return id ? grn_tiny_array_put(array, id) : NULL;
 }
 
 inline static void *
 grn_tiny_array_next(grn_tiny_array *array)
 {
-  return grn_tiny_array_at_inline(array, array->max + 1);
+  return grn_tiny_array_put(array, array->max + 1);
 }
 
 /*
@@ -87,8 +100,7 @@ grn_tiny_array_next(grn_tiny_array *array)
 inline static int
 grn_tiny_array_bit_at(grn_tiny_array *array, grn_id offset)
 {
-  uint8_t * const ptr =
-      (uint8_t *)grn_tiny_array_at_inline(array, (offset >> 3) + 1);
+  uint8_t * const ptr = (uint8_t *)grn_tiny_array_get(array, (offset >> 3) + 1);
   return ptr ? ((*ptr >> (offset & 7)) & 1) : -1;
 }
 
@@ -134,13 +146,13 @@ grn_tiny_array_init(grn_ctx *ctx, grn_tiny_array *array,
                     uint16_t element_size, uint16_t flags)
 {
   array->ctx = ctx;
+  array->max = 0;
   array->element_size = element_size;
   array->flags = flags;
-  array->max = 0;
+  memset(array->blocks, 0, sizeof(array->blocks));
   if (flags & GRN_TINY_ARRAY_THREADSAFE) {
     CRITICAL_SECTION_INIT(array->lock);
   }
-  memset(array->blocks, 0, sizeof(array->blocks));
 }
 
 void
@@ -148,15 +160,14 @@ grn_tiny_array_fin(grn_tiny_array *array)
 {
   int block_id;
   grn_ctx * const ctx = array->ctx;
-  for (block_id = 0; block_id < GRN_TINY_ARRAY_N; block_id++) {
-    void ** const block = &array->blocks[block_id];
-    if (*block) {
+  for (block_id = 0; block_id < GRN_TINY_ARRAY_NUM_BLOCKS; block_id++) {
+    if (array->blocks[block_id]) {
       if (array->flags & GRN_TINY_ARRAY_USE_MALLOC) {
-        GRN_FREE(*block);
+        GRN_FREE(array->blocks[block_id]);
       } else {
-        GRN_CTX_FREE(ctx, *block);
+        GRN_CTX_FREE(ctx, array->blocks[block_id]);
       }
-      *block = NULL;
+      array->blocks[block_id] = NULL;
     }
   }
 }
@@ -170,14 +181,15 @@ grn_tiny_array_at(grn_tiny_array *array, grn_id id)
 grn_id
 grn_tiny_array_id(grn_tiny_array *array, const void *element_address)
 {
-  const byte * const ptr = (const byte *)element_address;
+  const uint8_t * const ptr = (const uint8_t *)element_address;
   uint32_t block_id, offset = 1;
-  for (block_id = 0; block_id < GRN_TINY_ARRAY_N; block_id++) {
-    const uint32_t block_size = GRN_TINY_ARRAY_S * GRN_TINY_ARRAY_R(block_id);
-    const byte * const block = (const byte *)array->blocks[block_id];
-    if (block && block <= ptr &&
-        ptr < (block + block_size * array->element_size)) {
-      return offset + ((ptr - block) / array->element_size);
+  for (block_id = 0; block_id < GRN_TINY_ARRAY_NUM_BLOCKS; block_id++) {
+    const uint32_t block_size = GRN_TINY_ARRAY_GET_BLOCK_SIZE(block_id);
+    const uint8_t * const block = (const uint8_t *)array->blocks[block_id];
+    if (block) {
+      if (block <= ptr && ptr < (block + block_size * array->element_size)) {
+        return offset + ((ptr - block) / array->element_size);
+      }
     }
     offset += block_size;
   }
@@ -657,7 +669,7 @@ grn_array_delete_by_id(grn_ctx *ctx, grn_array *array, grn_id id,
       }
     } else {
       if (array->value_size >= sizeof(grn_id)) {
-        void * const entry = grn_tiny_array_at_inline(&array->array, id);
+        void * const entry = grn_tiny_array_get(&array->array, id);
         if (!entry) {
           rc = GRN_INVALID_ARGUMENT;
         } else {
@@ -846,7 +858,7 @@ grn_array_add_to_tiny_array(grn_ctx *ctx, grn_array *array, void **value)
   void *entry;
   if (id) {
     /* These operations fail iff the array is broken. */
-    entry = grn_tiny_array_at_inline(&array->array, id);
+    entry = grn_tiny_array_get(&array->array, id);
     if (!entry) {
       return GRN_ID_NIL;
     }
@@ -865,7 +877,7 @@ grn_array_add_to_tiny_array(grn_ctx *ctx, grn_array *array, void **value)
     if (!grn_tiny_array_bit_on(&array->bitmap, id)) {
       return GRN_ID_NIL;
     }
-    entry = grn_tiny_array_at_inline(&array->array, id);
+    entry = grn_tiny_array_put(&array->array, id);
     if (!entry) {
       grn_tiny_array_bit_off(&array->bitmap, id);
       return GRN_ID_NIL;
@@ -1534,7 +1546,7 @@ grn_tiny_hash_fin(grn_ctx *ctx, grn_hash *hash)
       const grn_id id = *hash_ptr;
       if (id && id != GARBAGE) {
         grn_tiny_hash_entry * const entry =
-            (grn_tiny_hash_entry *)grn_tiny_array_at_inline(&hash->a, id);
+            (grn_tiny_hash_entry *)grn_tiny_array_get(&hash->a, id);
         GRN_ASSERT(entry);
         num_remaining_entries--;
         if (entry && !(entry->flag & HASH_IMMEDIATE)) {
@@ -1826,12 +1838,12 @@ grn_tiny_hash_add(grn_ctx *ctx, grn_hash *hash, uint32_t hash_value,
   grn_hash_entry *entry;
   if (hash->garbages) {
     entry_id = hash->garbages;
-    entry = (grn_hash_entry *)grn_tiny_array_at_inline(&hash->a, entry_id);
+    entry = (grn_hash_entry *)grn_tiny_array_get(&hash->a, entry_id);
     hash->garbages = *(grn_id *)entry;
     memset(entry, 0, hash->entry_size);
   } else {
     entry_id = hash->a.max + 1;
-    entry = (grn_hash_entry *)grn_tiny_array_at_inline(&hash->a, entry_id);
+    entry = (grn_hash_entry *)grn_tiny_array_put(&hash->a, entry_id);
     if (!entry) {
       return GRN_ID_NIL;
     }
