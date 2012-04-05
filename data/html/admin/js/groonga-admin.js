@@ -116,7 +116,7 @@ function GroongaAdmin() {
       var d = {
         'table': that.current_table
       }
-      $.each(that.SELECT_PARAMS_LIST, function(i, val) {
+      $.each(that.SELECT_PARAMS, function(i, val) {
         var e = $('#tab-recordlist-' + val);
         if (e.val()) {
           d[val] = e.val();
@@ -232,7 +232,7 @@ function GroongaAdmin() {
 };
 
 jQuery.extend(GroongaAdmin.prototype, {
-  SELECT_PARAMS_LIST: [
+  SELECT_PARAMS: [
     'match_columns', 'query', 'filter',
     'scorer',
     'output_columns',
