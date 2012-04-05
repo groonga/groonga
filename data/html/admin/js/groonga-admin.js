@@ -247,13 +247,15 @@ function GroongaAdmin() {
 jQuery.extend(GroongaAdmin.prototype, {
   SELECT_PARAMS_LIST: ['match_columns', 'query', 'filter', 'scorer', 'sortby', 'output_columns', 'offset', 'limit', 'drilldown', 'drilldown_sortby', 'drilldown_output_columns', 'drilldown_offset', 'drilldown_limit'],
   start_status_timer: function() {
+    var that = this;
     this.stop_status_timer();
     this.status();
-    this.statusTimer = setInterval(this.status, 1000);
+    this.statusTimer = setInterval(function() {that.status()}, 1000);
   },
   change_status_timer: function(time) {
+    var that = this;
     this.stop_status_timer();
-    this.statusTimer = setInterval(this.status, time);
+    this.statusTimer = setInterval(function() {that.status()}, time);
   },
   stop_status_timer: function() {
     if (this.statusTimer) {
