@@ -144,7 +144,7 @@ function GroongaAdmin() {
     that.current_table = null;
     $('#table-tabs').hide();
     $('#database-tabs').show();
-    that.start_status_timer();
+    that.database_tabs.tabs("select", "#database-tab-summary");
   });
   this.update_tablelist();
 
