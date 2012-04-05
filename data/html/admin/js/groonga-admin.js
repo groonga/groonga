@@ -77,19 +77,8 @@ function GroongaAdmin() {
   this.reload_record_func = function(){};
 
   var that = this;
-  this.$database_tabs = $('#database-tabs').tabs({
-    show: function(e, ui) {
-      that.stop_status_timer();
-      if (ui.panel.id == 'database-tab-summary') {
-        that.start_status_timer();
-      }
-    }
-  });
+  this._initializeTabs();
 
-  this.$table_tabs = $('#table-tabs').tabs({
-    show: function(e, ui) {
-    }
-  });
   $('#tab-tablelist-link').click(function() {
     that.tablelist();
   });
@@ -144,9 +133,12 @@ function GroongaAdmin() {
   });
   $('#side-menu-summary').click(function() {
     that.current_table = null;
-    $('#table-tabs').hide();
-    $('#database-tabs').show();
+    that._selectTab("database");
     that.$database_tabs.tabs("select", "#database-tab-summary");
+  });
+  $('#side-menu-suggest').click(function() {
+    that.current_table = null;
+    that._selectTab("suggest");
   });
   this.update_tablelist();
 
@@ -248,6 +240,47 @@ function GroongaAdmin() {
 
 jQuery.extend(GroongaAdmin.prototype, {
   SELECT_PARAMS_LIST: ['match_columns', 'query', 'filter', 'scorer', 'sortby', 'output_columns', 'offset', 'limit', 'drilldown', 'drilldown_sortby', 'drilldown_output_columns', 'drilldown_offset', 'drilldown_limit'],
+  _initializeTabs: function() {
+    var that = this;
+
+    this.$database_tabs = $('#database-tabs').tabs({
+      show: function(e, ui) {
+	that.stop_status_timer();
+	if (ui.panel.id == 'database-tab-summary') {
+          that.start_status_timer();
+	}
+      }
+    });
+
+    this.$table_tabs = $('#table-tabs').tabs({
+      show: function(e, ui) {
+      }
+    });
+
+    this.$suggest_tabs = $('#suggest-tabs').tabs({
+      show: function(e, ui) {
+      }
+    });
+
+    this._selectTab("database");
+  },
+  _selectTab: function(name) {
+    this.$database_tabs.hide();
+    this.$table_tabs.hide();
+    this.$suggest_tabs.hide();
+    switch (name) {
+    case "table":
+      this.$table_tabs.show();
+      break;
+    case "suggest":
+      this.$suggest_tabs.show();
+      break;
+    case "database":
+    default:
+      this.$database_tabs.show();
+      break;
+    }
+  },
   start_status_timer: function() {
     var that = this;
     this.stop_status_timer();
@@ -459,6 +492,7 @@ jQuery.extend(GroongaAdmin.prototype, {
                   .click(function() {
                     that.current_table = table_name;
                     $('#database-tabs').hide();
+                    $('#suggest-tabs').hide();
                     that.stop_status_timer();
                     $('#table-tabs').show();
                     that.columnlist(table_name);

@@ -28,6 +28,7 @@
           <h2>画面一覧</h2>
           <ul id="side-menu-view-list">
             <li><a href="#side-menu-summary" id="side-menu-summary">サマリー</a></li>
+            <li><a href="#side-menu-suggest" id="side-menu-suggest">サジェスト</a></li>
           </ul>
           <h2>テーブル一覧</h2>
           <ul id="side-menu-tablelist" />
@@ -241,6 +242,31 @@
               </tr>
             </table>
             <input type="button" id="createcolumn-add-column" value="カラム追加">
+          </div>
+        </div>
+
+        <!-- suggest view -->
+        <div id="suggest-tabs">
+          <ul>
+            <li><a href="#suggest-tab-search">検索</a></li>
+          </ul>
+          <div id="suggest-tab-search">
+            <form id="suggest-tab-search-form">
+              <p>
+                <label for="suggest-dataset">データセット: </label>
+                <input type="text" id="suggest-dataset">
+              </p>
+              <label for="suggest-query">検索クエリ: </label>
+              <input type="text" id="suggest-query">
+              <input type="checkbox" id="suggest-incremental" />
+              <label for="suggest-incremental"
+                     id="suggest-incremental-label">インクリメンタル検索</label>
+              <p>
+                <input type="button" id="suggest-submit" value="検索" />
+              </p>
+            </form>
+            <div id="suggest-result">
+            </div>
           </div>
         </div>
       </td>
