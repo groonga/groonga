@@ -26,7 +26,7 @@
 
 /* Requirements: id != GRN_ID_NIL. */
 inline static int
-grn_tiny_array_get_block_id(grn_tiny_array *array, grn_id id)
+grn_tiny_array_get_block_id(grn_id id)
 {
   int most_significant_one_bit_offset;
   GRN_BIT_SCAN_REV(id, most_significant_one_bit_offset);
@@ -36,7 +36,7 @@ grn_tiny_array_get_block_id(grn_tiny_array *array, grn_id id)
 /* Requirements: id != GRN_ID_NIL. */
 inline static void *
 grn_tiny_array_get(grn_tiny_array *array, grn_id id) {
-  const int block_id = grn_tiny_array_get_block_id(array, id);
+  const int block_id = grn_tiny_array_get_block_id(id);
   uint8_t * const block = (uint8_t *)array->blocks[block_id];
   if (block) {
     const size_t offset = GRN_TINY_ARRAY_GET_OFFSET(block_id);
@@ -48,7 +48,7 @@ grn_tiny_array_get(grn_tiny_array *array, grn_id id) {
 /* Requirements: id != GRN_ID_NIL. */
 inline static void *
 grn_tiny_array_put(grn_tiny_array *array, grn_id id) {
-  const int block_id = grn_tiny_array_get_block_id(array, id);
+  const int block_id = grn_tiny_array_get_block_id(id);
   void ** const block = &array->blocks[block_id];
   const size_t offset = GRN_TINY_ARRAY_GET_OFFSET(block_id);
   if (!*block) {
@@ -154,27 +154,51 @@ grn_tiny_array_id(grn_tiny_array *array, const void *element_address)
 static void
 grn_tiny_bitmap_init(grn_ctx *ctx, grn_tiny_bitmap *bitmap)
 {
-  grn_tiny_array_init(ctx, &bitmap->array, 1, GRN_TINY_ARRAY_CLEAR);
+  bitmap->ctx = ctx;
+  memset(bitmap->blocks, 0, sizeof(bitmap->blocks));
 }
 
 static void
 grn_tiny_bitmap_fin(grn_tiny_bitmap *bitmap)
 {
-  grn_tiny_array_fin(&bitmap->array);
+  int block_id;
+  grn_ctx * const ctx = bitmap->ctx;
+  for (block_id = 0; block_id < GRN_TINY_ARRAY_NUM_BLOCKS; block_id++) {
+    if (bitmap->blocks[block_id]) {
+      GRN_CTX_FREE(ctx, bitmap->blocks[block_id]);
+      bitmap->blocks[block_id] = NULL;
+    }
+  }
 }
 
 /* Requirements: bit_id != GRN_ID_NIL. */
 inline static uint8_t *
-grn_tiny_bitmap_get_byte(grn_tiny_bitmap *bitmap, grn_id bit_id)
-{
-  return (uint8_t *)grn_tiny_array_get(&bitmap->array, (bit_id >> 3) + 1);
+grn_tiny_bitmap_get_byte(grn_tiny_bitmap *bitmap, grn_id bit_id) {
+  const uint32_t byte_id = (bit_id >> 3) + 1;
+  const int block_id = grn_tiny_array_get_block_id(byte_id);
+  uint8_t * const block = (uint8_t *)bitmap->blocks[block_id];
+  if (block) {
+    const size_t offset = GRN_TINY_ARRAY_GET_OFFSET(block_id);
+    return block + byte_id - offset;
+  }
+  return NULL;
 }
 
 /* Requirements: bit_id != GRN_ID_NIL. */
 inline static uint8_t *
-grn_tiny_bitmap_put_byte(grn_tiny_bitmap *bitmap, grn_id bit_id)
-{
-  return (uint8_t *)grn_tiny_array_put(&bitmap->array, (bit_id >> 3) + 1);
+grn_tiny_bitmap_put_byte(grn_tiny_bitmap *bitmap, grn_id bit_id) {
+  const uint32_t byte_id = (bit_id >> 3) + 1;
+  const int block_id = grn_tiny_array_get_block_id(byte_id);
+  void ** const block = &bitmap->blocks[block_id];
+  const size_t offset = GRN_TINY_ARRAY_GET_OFFSET(block_id);
+  if (!*block) {
+    grn_ctx * const ctx = bitmap->ctx;
+    *block = GRN_CTX_ALLOC(ctx, GRN_TINY_ARRAY_GET_BLOCK_SIZE(block_id));
+    if (!*block) {
+      return NULL;
+    }
+  }
+  return (uint8_t *)*block + byte_id - offset;
 }
 
 /* Requirements: bit_id != GRN_ID_NIL. */
@@ -188,7 +212,7 @@ grn_tiny_bitmap_get(grn_tiny_bitmap *bitmap, grn_id bit_id)
 
 /* Requirements: bit_id != GRN_ID_NIL. */
 /* Return value: 1/0 on success, -1 on failure. */
-/* Note: An array is extended if needed. */
+/* Note: A bitmap is extended if needed. */
 inline static int
 grn_tiny_bitmap_put(grn_tiny_bitmap *bitmap, grn_id bit_id)
 {
@@ -203,6 +227,7 @@ grn_tiny_bitmap_get_and_set(grn_tiny_bitmap *bitmap, grn_id bit_id,
 {
   uint8_t * const ptr = grn_tiny_bitmap_get_byte(bitmap, bit_id);
   if (ptr) {
+    /* This branch will be removed because the given `bit' is constant. */
     if (bit) {
       *ptr |= 1 << (bit_id & 7);
     } else {
@@ -213,13 +238,14 @@ grn_tiny_bitmap_get_and_set(grn_tiny_bitmap *bitmap, grn_id bit_id,
 }
 
 /* Requirements: bit_id != GRN_ID_NIL. */
-/* Note: An array is extended if needed. */
+/* Note: A bitmap is extended if needed. */
 inline static uint8_t *
 grn_tiny_bitmap_put_and_set(grn_tiny_bitmap *bitmap, grn_id bit_id,
                             grn_bool bit)
 {
   uint8_t * const ptr = grn_tiny_bitmap_put_byte(bitmap, bit_id);
   if (ptr) {
+    /* This branch will be removed because the given `bit' is constant. */
     if (bit) {
       *ptr |= 1 << (bit_id & 7);
     } else {

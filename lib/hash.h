@@ -114,7 +114,8 @@ GRN_API grn_id grn_tiny_array_id(grn_tiny_array *array,
 typedef struct _grn_tiny_bitmap grn_tiny_bitmap;
 
 struct _grn_tiny_bitmap {
-  grn_tiny_array array;
+  grn_ctx *ctx;
+  void *blocks[GRN_TINY_ARRAY_NUM_BLOCKS];
 };
 
 /**** grn_array ****/
