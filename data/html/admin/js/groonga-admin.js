@@ -75,7 +75,7 @@ function GroongaAdmin() {
   this.reload_record_func = function(){};
 
   var that = this;
-  this.database_tabs = $('#database-tabs').tabs({
+  this.$database_tabs = $('#database-tabs').tabs({
     show: function(e, ui) {
       that.stop_status_timer();
       if (ui.panel.id == 'database-tab-summary') {
@@ -84,7 +84,7 @@ function GroongaAdmin() {
     }
   });
 
-  this.table_tabs = $('#table-tabs').tabs({
+  this.$table_tabs = $('#table-tabs').tabs({
     show: function(e, ui) {
     }
   });
@@ -144,7 +144,7 @@ function GroongaAdmin() {
     that.current_table = null;
     $('#table-tabs').hide();
     $('#database-tabs').show();
-    that.database_tabs.tabs("select", "#database-tab-summary");
+    that.$database_tabs.tabs("select", "#database-tab-summary");
   });
   this.update_tablelist();
 
