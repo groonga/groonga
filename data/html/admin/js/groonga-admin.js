@@ -1,3 +1,5 @@
+// -*- js2-basic-offset: 2 -*-
+
 function prim2html(prim, limit) {
   switch(typeof prim) {
   case 'undefined':
