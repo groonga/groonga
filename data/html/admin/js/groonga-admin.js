@@ -270,6 +270,42 @@ jQuery.extend(GroongaAdmin.prototype, {
       show: function(e, ui) {
       }
     });
+    this._$suggestQuery = $("#suggest-query").autocomplete({
+      source: function (request, response) {
+	var dataset = $("#suggest-dataset").val();
+	$.ajax({
+	  url: "/d/suggest",
+	  data: {
+	    query: request.term,
+	    types: "complete",
+	    table: "item_" + dataset,
+	    column: "kana",
+	    limit: 25,
+	  },
+	  dataType: "jsonp",
+	  success: function (data, status) {
+	    var completions = data[1]["complete"];
+	    var items = [];
+	    console.dir(data[1]);
+	    if (completions && completions.length > 2) {
+	      completions.shift();
+	      completions.shift();
+	      $.each(completions, function(i, item) {
+		var key = item[0];
+		items.push(key);
+		if (items.length >= 3) {
+		  return false;
+		}
+		return true;
+	      });
+	    }
+	    response(items);
+	  },
+	  error: function(XMLHttpRequest, textStatus, errorThrown) {
+	  }
+	})
+      }
+    });
   },
   _selectTab: function(name) {
     this.stop_status_timer();
