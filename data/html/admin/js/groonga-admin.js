@@ -242,6 +242,12 @@ jQuery.extend(GroongaAdmin.prototype, {
     'drilldown_sortby', 'drilldown_offset', 'drilldown_limit'
   ],
   _initializeTabs: function() {
+    this._initializeDatabaseTab();
+    this._initializeTableTab();
+    this._initializeSuggestTab();
+    this._selectTab("database");
+  },
+  _initializeDatabaseTab: function() {
     var that = this;
 
     this._$databaseTabs = $('#database-tabs').tabs({
@@ -252,18 +258,18 @@ jQuery.extend(GroongaAdmin.prototype, {
 	}
       }
     });
-
+  },
+  _initializeTableTab: function() {
     this._$tableTabs = $('#table-tabs').tabs({
       show: function(e, ui) {
       }
     });
-
+  },
+  _initializeSuggestTab: function() {
     this._$suggestTabs = $('#suggest-tabs').tabs({
       show: function(e, ui) {
       }
     });
-
-    this._selectTab("database");
   },
   _selectTab: function(name) {
     this._$databaseTabs.hide();
