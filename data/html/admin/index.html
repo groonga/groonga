@@ -265,14 +265,18 @@
                 <input type="button" id="suggest-submit" value="検索" />
               </p>
             </form>
-            <h2>提案一覧</h2>
-            <div id="suggest-result-suggest">
-            </div>
-            <h2>補完一覧</h2>
-            <div id="suggest-result-complete">
-            </div>
-            <h2>補正一覧</h2>
-            <div id="suggest-result-correct">
+            <div id="suggest-result-tabs">
+              <ul>
+                <li><a href="#suggest-result-tab-suggest">提案</a></li>
+                <li><a href="#suggest-result-tab-complete">補完</a></li>
+                <li><a href="#suggest-result-tab-correct">補正</a></li>
+              </ul>
+              <div id="suggest-result-tab-suggest">
+              </div>
+              <div id="suggest-result-tab-complete">
+              </div>
+              <div id="suggest-result-tab-correct">
+              </div>
             </div>
           </div>
         </div>

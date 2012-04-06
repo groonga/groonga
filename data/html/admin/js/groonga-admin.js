@@ -276,6 +276,7 @@ jQuery.extend(GroongaAdmin.prototype, {
     this._initializeSuggestDatasetComplete();
     this._initializeSuggestQueryComplete();
     this._initializeSuggestSubmit();
+    this._initializeSuggestResult();
   },
   _initializeSuggestDatasetComplete: function() {
     var that = this;
@@ -344,30 +345,37 @@ jQuery.extend(GroongaAdmin.prototype, {
     $("#suggest-submit").click(function (event) {
       var dataset = $("#suggest-dataset").val();
       var query = $("#suggest-query").val();
-      var types = ["complete", "suggest", "correct"];
+      var type = that._suggestResultType;
       $.ajax({
         url: "/d/suggest",
         data: {
           query: query,
-          types: types.join("|"),
+          types: type,
           table: "item_" + dataset,
           column: "kana",
           limit: 25,
         },
         dataType: "jsonp",
         success: function (data, textStatus, jqXHR) {
-          $.each(types, function(index, type) {
-            var response = data[1][type];
-            response.shift();
-            var $result = $("#suggest-result-" + type);
-            $result
-              .empty()
-              .append($("<div/>").html(that._createResultTable(response, 1, 1)));
-          });
+          var response = data[1][type];
+          response.shift();
+          var $result = $("#suggest-result-tab-" + type);
+          $result
+            .empty()
+            .append($("<div/>").html(that._createResultTable(response, 1, 1)));
         },
         error: function(jqXHR, textStatus, errorThrown) {
         }
       });
+    });
+  },
+  _initializeSuggestResult: function() {
+    var that = this;
+    $("#suggest-result-tabs").tabs({
+      show: function (event, ui) {
+        that._suggestResultType = ui.panel.id.replace(/^suggest-result-tab-/, "");
+        $("#suggest-submit").click();
+      }
     });
   },
   _selectTab: function(name) {
