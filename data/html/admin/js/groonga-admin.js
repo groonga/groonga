@@ -362,7 +362,7 @@ jQuery.extend(GroongaAdmin.prototype, {
             var $result = $("#suggest-result-" + type);
             $result
               .empty()
-              .append($("<div/>").html(that.create_table_element(response, 1, 1)));
+              .append($("<div/>").html(that._createResultTable(response, 1, 1)));
           });
         },
         error: function(jqXHR, textStatus, errorThrown) {
@@ -417,7 +417,7 @@ jQuery.extend(GroongaAdmin.prototype, {
       this.statusTimer = null;
     }
   },
-  create_table_element: function (d, check, button) {
+  _createResultTable: function (d, check, button) {
     var elms = ['<table class="records">'];
     if ($.isArray(d)) {
       elms.push('<thead>');
@@ -646,7 +646,7 @@ jQuery.extend(GroongaAdmin.prototype, {
         success: function(d) {
           if (that.validateajax(d) < 0) { return; }
           var b = d[1];
-          var table = $(that.create_table_element(b, 2, 2));
+          var table = $(that._createResultTable(b, 2, 2));
           $('#tab-tablelist-table').append($('<h1 />').text('テーブル一覧')).append(table);
           that.hideloading();
         },
@@ -762,7 +762,7 @@ jQuery.extend(GroongaAdmin.prototype, {
             .append($('<h1 />').text('レコード一覧: ' + params['table']))
             .append($('<p />').text('総件数: ' + all_count))
             .append(pager.clone(true))
-            .append($('<div />').html(that.create_table_element(recs, 1, 1)))
+            .append($('<div />').html(that._createResultTable(recs, 1, 1)))
             .append(pager);
           that.hideloading();
         },
@@ -783,7 +783,7 @@ jQuery.extend(GroongaAdmin.prototype, {
         success: function(d) {
           if (that.validateajax(d) < 0) { return; }
           var b = d[1];
-          var table = $(that.create_table_element(b, 2));
+          var table = $(that._createResultTable(b, 2));
           $('#tab-columnlist-table')
             .append($('<h1 />').text('カラム一覧: ' + table_name))
             .append(table);
