@@ -266,13 +266,30 @@ jQuery.extend(GroongaAdmin.prototype, {
     });
   },
   _initializeSuggestTab: function() {
+    var that = this;
+
     this._$suggestTabs = $('#suggest-tabs').tabs({
       show: function(e, ui) {
       }
     });
+
+    this._$suggestDataset = $("#suggest-dataset");
+    this._$suggestDataset.autocomplete({
+      source: function (request, response) {
+	var datasets = [];
+	$.each(that._tables, function(i, table_name) {
+	  var suggestTableMatch = /^item_(.+)$/.exec(table_name);
+	  if (suggestTableMatch) {
+	    var dataset = suggestTableMatch[1];
+	    datasets.push(dataset);
+	  }
+	});
+	response(datasets);
+      }
+    });
     this._$suggestQuery = $("#suggest-query").autocomplete({
       source: function (request, response) {
-	var dataset = $("#suggest-dataset").val();
+	var dataset = that._$suggestDataset.val();
 	$.ajax({
 	  url: "/d/suggest",
 	  data: {
@@ -522,6 +539,7 @@ jQuery.extend(GroongaAdmin.prototype, {
   },
   update_tablelist: function() {
     var that = this;
+    this._tables = [];
     this.showloading(
       $.ajax({
         url: '/d/table_list',
@@ -538,6 +556,7 @@ jQuery.extend(GroongaAdmin.prototype, {
           b.shift();
           $.each(b, function(i, val) {
             var table_name = val[1];
+	    that._tables.push(table_name);
             tl.append(
               $('<li />').append(
                 $('<a />')
