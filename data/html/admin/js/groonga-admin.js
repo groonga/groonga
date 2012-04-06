@@ -278,47 +278,47 @@ jQuery.extend(GroongaAdmin.prototype, {
       source: function (request, response) {
 	var datasets = [];
 	$.each(that._tables, function(i, table_name) {
-	  var suggestTableMatch = /^item_(.+)$/.exec(table_name);
-	  if (suggestTableMatch) {
-	    var dataset = suggestTableMatch[1];
-	    datasets.push(dataset);
-	  }
-	});
-	response(datasets);
+          var suggestTableMatch = /^item_(.+)$/.exec(table_name);
+          if (suggestTableMatch) {
+            var dataset = suggestTableMatch[1];
+            datasets.push(dataset);
+          }
+        });
+        response(datasets);
       }
     });
     this._$suggestQuery = $("#suggest-query").autocomplete({
       source: function (request, response) {
-	var dataset = that._$suggestDataset.val();
-	$.ajax({
-	  url: "/d/suggest",
-	  data: {
-	    query: request.term,
-	    types: "complete",
-	    table: "item_" + dataset,
-	    column: "kana",
-	    limit: 25,
-	  },
-	  dataType: "jsonp",
-	  success: function (data, textStatus, jqXHR) {
-	    var completions = data[1]["complete"];
-	    var items = [];
-	    if (completions && completions.length > 2) {
-	      completions.shift();
-	      completions.shift();
-	      $.each(completions, function(i, item) {
-		var key = item[0];
-		items.push(key);
-		if (items.length >= 3) {
-		  return false;
-		}
-		return true;
-	      });
-	    }
-	    response(items);
-	  },
-	  error: function(jqXHR, textStatus, errorThrown) {
-	  }
+        var dataset = that._$suggestDataset.val();
+        $.ajax({
+          url: "/d/suggest",
+          data: {
+            query: request.term,
+            types: "complete",
+            table: "item_" + dataset,
+            column: "kana",
+            limit: 25,
+          },
+          dataType: "jsonp",
+          success: function (data, textStatus, jqXHR) {
+            var completions = data[1]["complete"];
+            var items = [];
+            if (completions && completions.length > 2) {
+              completions.shift();
+              completions.shift();
+              $.each(completions, function(i, item) {
+                var key = item[0];
+                items.push(key);
+                if (items.length >= 3) {
+                  return false;
+                }
+                return true;
+              });
+            }
+            response(items);
+          },
+          error: function(jqXHR, textStatus, errorThrown) {
+          }
 	})
       }
     });
