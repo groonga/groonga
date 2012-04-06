@@ -334,7 +334,7 @@ jQuery.extend(GroongaAdmin.prototype, {
           },
           error: function(jqXHR, textStatus, errorThrown) {
           }
-	})
+	});
       }
     });
   },
