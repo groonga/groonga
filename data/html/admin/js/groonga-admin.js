@@ -275,6 +275,7 @@ jQuery.extend(GroongaAdmin.prototype, {
 
     this._$suggestDataset = $("#suggest-dataset");
     this._$suggestDataset.autocomplete({
+      minLength: 0,
       source: function (request, response) {
 	var datasets = [];
 	$.each(that._tables, function(i, table_name) {
