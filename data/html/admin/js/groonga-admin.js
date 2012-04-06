@@ -429,8 +429,8 @@ jQuery.extend(GroongaAdmin.prototype, {
     var elms = ['<table class="records">'];
     if ($.isArray(result)) {
       elms.push('<thead>');
-      var l = result.length;
-      if (l >= 1) {
+      var nEntries = result.length;
+      if (nEntries >= 1) {
         var line = result[0];
         elms.push('<thead>');
         if ($.isArray(line)) {
@@ -453,7 +453,7 @@ jQuery.extend(GroongaAdmin.prototype, {
         }
         elms.push('</thead>');
         elms.push('<tbody>');
-        for (var i = 1; i < l; i++) {
+        for (var i = 1; i < nEntries; i++) {
           line = result[i];
           if ($.isArray(line)) {
             elms.push('<tr>');
