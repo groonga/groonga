@@ -283,7 +283,7 @@ jQuery.extend(GroongaAdmin.prototype, {
 	    limit: 25,
 	  },
 	  dataType: "jsonp",
-	  success: function (data, status) {
+	  success: function (data, textStatus, jqXHR) {
 	    var completions = data[1]["complete"];
 	    var items = [];
 	    console.dir(data[1]);
@@ -301,7 +301,7 @@ jQuery.extend(GroongaAdmin.prototype, {
 	    }
 	    response(items);
 	  },
-	  error: function(XMLHttpRequest, textStatus, errorThrown) {
+	  error: function(jqXHR, textStatus, errorThrown) {
 	  }
 	})
       }
