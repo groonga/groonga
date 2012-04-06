@@ -285,6 +285,8 @@ jQuery.extend(GroongaAdmin.prototype, {
             datasets.push(dataset);
           }
         });
+
+        datasets = $.ui.autocomplete.filter(datasets, request.term);
         response(datasets);
       }
     });
