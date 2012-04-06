@@ -273,8 +273,9 @@ jQuery.extend(GroongaAdmin.prototype, {
       }
     });
 
-    this._$suggestDataset = $("#suggest-dataset");
-    this._$suggestDataset.autocomplete({
+    var $dataset = $("#suggest-dataset");
+    this._$suggestDataset = $dataset;
+    $dataset.autocomplete({
       minLength: 0,
       source: function (request, response) {
 	var datasets = [];
@@ -290,9 +291,12 @@ jQuery.extend(GroongaAdmin.prototype, {
         response(datasets);
       }
     });
+    $dataset.focus(function (event) {
+      $dataset.autocomplete("search", $dataset.val());
+    });
     this._$suggestQuery = $("#suggest-query").autocomplete({
       source: function (request, response) {
-        var dataset = that._$suggestDataset.val();
+        var dataset = $dataset.val();
         $.ajax({
           url: "/d/suggest",
           data: {
