@@ -272,6 +272,7 @@ jQuery.extend(GroongaAdmin.prototype, {
     });
   },
   _selectTab: function(name) {
+    this.stop_status_timer();
     this._$databaseTabs.hide();
     this._$tableTabs.hide();
     this._$suggestTabs.hide();
