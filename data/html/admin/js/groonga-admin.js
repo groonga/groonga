@@ -362,7 +362,7 @@ jQuery.extend(GroongaAdmin.prototype, {
           var $result = $("#suggest-result-tab-" + type);
           $result
             .empty()
-            .append($("<div/>").html(that._createResultTable(response, 1, 1)));
+            .append($("<div/>").html(that._createResultTable(response)));
         },
         error: function(jqXHR, textStatus, errorThrown) {
         }
@@ -425,7 +425,10 @@ jQuery.extend(GroongaAdmin.prototype, {
       this.statusTimer = null;
     }
   },
-  _createResultTable: function (result, check, button) {
+  _createResultTable: function (result, options) {
+    if (!options) {
+      options = {};
+    }
     var elms = ['<table class="records">'];
     if ($.isArray(result)) {
       elms.push('<thead>');
@@ -436,7 +439,7 @@ jQuery.extend(GroongaAdmin.prototype, {
         if ($.isArray(line)) {
           elms.push('<tr>');
           var m = line.length;
-          if (check) {
+          if (options.check) {
             elms.push('<th/>');
           }
           for (var j = 0; j < m; j++) {
@@ -446,7 +449,7 @@ jQuery.extend(GroongaAdmin.prototype, {
             elms.push(prim2html(line[j][1], 128));
             elms.push('</th>');
           }
-          if (button) {
+          if (options.button) {
             elms.push('<th/>');
           }
           elms.push('</tr>');
@@ -458,11 +461,11 @@ jQuery.extend(GroongaAdmin.prototype, {
           if ($.isArray(line)) {
             elms.push('<tr>');
             var m = line.length;
-            switch(check) {// チェックボックスの値を何にするか
+            switch(options.check) {// チェックボックスの値を何にするか
             case 1: // 1番目の要素(レコード一覧の_id等)
             case 2: // 2番目の要素(テーブル・カラム一覧のname等)
               elms.push('<td><input type="checkbox" value="');
-              elms.push(line[check-1]);
+              elms.push(line[options.check-1]);
               elms.push('" /></td>');
               break;
             }
@@ -471,7 +474,7 @@ jQuery.extend(GroongaAdmin.prototype, {
               elms.push(prim2html(line[j], 128));
               elms.push('</td>');
             }
-            switch(button) {
+            switch(options.button) {
             case 1: // Edit record
               // TODO: This doesn't work becuase GroongaAdmin instance has
               // show_edit_record function not GroongaAdmin object.
@@ -654,7 +657,7 @@ jQuery.extend(GroongaAdmin.prototype, {
         success: function(d) {
           if (that.validateajax(d) < 0) { return; }
           var b = d[1];
-          var table = $(that._createResultTable(b, 2, 2));
+          var table = $(that._createResultTable(b, {check: 2, button: 2}));
           $('#tab-tablelist-table').append($('<h1 />').text('テーブル一覧')).append(table);
           that.hideloading();
         },
@@ -770,7 +773,7 @@ jQuery.extend(GroongaAdmin.prototype, {
             .append($('<h1 />').text('レコード一覧: ' + params['table']))
             .append($('<p />').text('総件数: ' + all_count))
             .append(pager.clone(true))
-            .append($('<div />').html(that._createResultTable(recs, 1, 1)))
+            .append($('<div />').html(that._createResultTable(recs, {check: 1, button: 1})))
             .append(pager);
           that.hideloading();
         },
@@ -791,7 +794,7 @@ jQuery.extend(GroongaAdmin.prototype, {
         success: function(d) {
           if (that.validateajax(d) < 0) { return; }
           var b = d[1];
-          var table = $(that._createResultTable(b, 2));
+          var table = $(that._createResultTable(b, {check: 2}));
           $('#tab-columnlist-table')
             .append($('<h1 />').text('カラム一覧: ' + table_name))
             .append(table);
