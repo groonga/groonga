@@ -1,4 +1,4 @@
-// -*- js2-basic-offset: 2 -*-
+// -*- js2-basic-offset: 2; indent-tabs-mode: nil -*-
 
 function prim2html(prim, limit) {
   switch(typeof prim) {
