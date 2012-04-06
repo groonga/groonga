@@ -275,6 +275,7 @@ jQuery.extend(GroongaAdmin.prototype, {
 
     this._initializeSuggestDatasetComplete();
     this._initializeSuggestQueryComplete();
+    this._initializeSuggestSubmit();
   },
   _initializeSuggestDatasetComplete: function() {
     var that = this;
@@ -336,6 +337,37 @@ jQuery.extend(GroongaAdmin.prototype, {
           }
 	});
       }
+    });
+  },
+  _initializeSuggestSubmit: function() {
+    var that = this;
+    $("#suggest-submit").click(function (event) {
+      var dataset = $("#suggest-dataset").val();
+      var query = $("#suggest-query").val();
+      var types = ["complete", "suggest", "correct"];
+      $.ajax({
+        url: "/d/suggest",
+        data: {
+          query: query,
+          types: types.join("|"),
+          table: "item_" + dataset,
+          column: "kana",
+          limit: 25,
+        },
+        dataType: "jsonp",
+        success: function (data, textStatus, jqXHR) {
+          $.each(types, function(index, type) {
+            var response = data[1][type];
+            response.shift();
+            var $result = $("#suggest-result-" + type);
+            $result
+              .empty()
+              .append($("<div/>").html(that.create_table_element(response, 1, 1)));
+          });
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+        }
+      });
     });
   },
   _selectTab: function(name) {
