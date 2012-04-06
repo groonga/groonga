@@ -425,13 +425,13 @@ jQuery.extend(GroongaAdmin.prototype, {
       this.statusTimer = null;
     }
   },
-  _createResultTable: function (d, check, button) {
+  _createResultTable: function (result, check, button) {
     var elms = ['<table class="records">'];
-    if ($.isArray(d)) {
+    if ($.isArray(result)) {
       elms.push('<thead>');
-      var l = d.length;
+      var l = result.length;
       if (l >= 1) {
-        var line = d[0];
+        var line = result[0];
         elms.push('<thead>');
         if ($.isArray(line)) {
           elms.push('<tr>');
@@ -454,7 +454,7 @@ jQuery.extend(GroongaAdmin.prototype, {
         elms.push('</thead>');
         elms.push('<tbody>');
         for (var i = 1; i < l; i++) {
-          line = d[i];
+          line = result[i];
           if ($.isArray(line)) {
             elms.push('<tr>');
             var m = line.length;
