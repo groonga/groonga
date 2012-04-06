@@ -274,6 +274,33 @@ jQuery.extend(GroongaAdmin.prototype, {
     });
 
     this._initializeSuggestDatasetComplete();
+    this._initializeSuggestQueryComplete();
+  },
+  _initializeSuggestDatasetComplete: function() {
+    var that = this;
+    var $dataset = $("#suggest-dataset");
+    this._$suggestDataset = $dataset;
+    $dataset.autocomplete({
+      minLength: 0,
+      source: function (request, response) {
+	var datasets = [];
+	$.each(that._tables, function(i, table_name) {
+          var suggestTableMatch = /^item_(.+)$/.exec(table_name);
+          if (suggestTableMatch) {
+            var dataset = suggestTableMatch[1];
+            datasets.push(dataset);
+          }
+        });
+
+        datasets = $.ui.autocomplete.filter(datasets, request.term);
+        response(datasets);
+      }
+    });
+    $dataset.focus(function (event) {
+      $dataset.autocomplete("search", $dataset.val());
+    });
+  },
+  _initializeSuggestQueryComplete: function() {
     this._$suggestQuery = $("#suggest-query").autocomplete({
       source: function (request, response) {
         var $dataset = $("#suggest-dataset");
@@ -309,30 +336,6 @@ jQuery.extend(GroongaAdmin.prototype, {
           }
 	})
       }
-    });
-  },
-  _initializeSuggestDatasetComplete: function() {
-    var that = this;
-    var $dataset = $("#suggest-dataset");
-    this._$suggestDataset = $dataset;
-    $dataset.autocomplete({
-      minLength: 0,
-      source: function (request, response) {
-	var datasets = [];
-	$.each(that._tables, function(i, table_name) {
-          var suggestTableMatch = /^item_(.+)$/.exec(table_name);
-          if (suggestTableMatch) {
-            var dataset = suggestTableMatch[1];
-            datasets.push(dataset);
-          }
-        });
-
-        datasets = $.ui.autocomplete.filter(datasets, request.term);
-        response(datasets);
-      }
-    });
-    $dataset.focus(function (event) {
-      $dataset.autocomplete("search", $dataset.val());
     });
   },
   _selectTab: function(name) {
