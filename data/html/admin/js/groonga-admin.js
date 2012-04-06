@@ -286,7 +286,6 @@ jQuery.extend(GroongaAdmin.prototype, {
 	  success: function (data, textStatus, jqXHR) {
 	    var completions = data[1]["complete"];
 	    var items = [];
-	    console.dir(data[1]);
 	    if (completions && completions.length > 2) {
 	      completions.shift();
 	      completions.shift();
