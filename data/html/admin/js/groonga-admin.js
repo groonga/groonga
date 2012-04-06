@@ -362,7 +362,7 @@ jQuery.extend(GroongaAdmin.prototype, {
           var $result = $("#suggest-result-tab-" + type);
           $result
             .empty()
-            .append($("<div/>").html(that._createResultTable(response)));
+            .append($("<div/>").append(that._createResultTable(response)));
         },
         error: function(jqXHR, textStatus, errorThrown) {
         }
@@ -426,76 +426,85 @@ jQuery.extend(GroongaAdmin.prototype, {
     }
   },
   _createResultTable: function (result, options) {
+    var that = this;
     if (!options) {
       options = {};
     }
-    var elms = ['<table class="records">'];
+    var table = $('<table class="records"/>');
     if ($.isArray(result)) {
-      elms.push('<thead>');
       var nEntries = result.length;
       if (nEntries >= 1) {
+        var thead = $('<thead/>');
+        table.append(thead);
         var line = result[0];
-        elms.push('<thead>');
         if ($.isArray(line)) {
-          elms.push('<tr>');
+          var tr = $('<tr/>');
+          thead.append(tr);
           var m = line.length;
           if (options.check) {
-            elms.push('<th/>');
+            tr.append($('<th/>'));
           }
           for (var j = 0; j < m; j++) {
-            elms.push('<th>');
-            elms.push(prim2html(line[j][0], 128));
-            elms.push('<br />');
-            elms.push(prim2html(line[j][1], 128));
-            elms.push('</th>');
+            var th = $('<th/>');
+            tr.append(th);
+            th.append(prim2html(line[j][0], 128));
+            th.append($('<br />'));
+            th.append(prim2html(line[j][1], 128));
           }
           if (options.button) {
-            elms.push('<th/>');
+            tr.append($('<th/>'));
           }
-          elms.push('</tr>');
         }
-        elms.push('</thead>');
-        elms.push('<tbody>');
+        var tbody = $('<tbody>');
+        table.append(tbody);
         for (var i = 1; i < nEntries; i++) {
           line = result[i];
           if ($.isArray(line)) {
-            elms.push('<tr>');
+            var tr = $('<tr>');
+            table.append(tr);
             var m = line.length;
             switch(options.check) {// チェックボックスの値を何にするか
             case 1: // 1番目の要素(レコード一覧の_id等)
             case 2: // 2番目の要素(テーブル・カラム一覧のname等)
-              elms.push('<td><input type="checkbox" value="');
-              elms.push(line[options.check-1]);
-              elms.push('" /></td>');
+              var td = $('<td/>');
+              tr.append(td);
+              td.append($('<input/>')
+                        .attr("type", "checkbox")
+                        .attr("value", line[options.check-1]));
               break;
             }
             for (var j = 0; j < m; j++) {
-              elms.push('<td>');
-              elms.push(prim2html(line[j], 128));
-              elms.push('</td>');
+              var td = $('<td/>');
+              tr.append(td);
+              td.append(prim2html(line[j], 128));
             }
             switch(options.button) {
             case 1: // Edit record
-              // TODO: This doesn't work becuase GroongaAdmin instance has
-              // show_edit_record function not GroongaAdmin object.
-              elms.push('<td><input type="button" onClick="GroongaAdmin.show_edit_record(');
-              elms.push(line[0]);
-              elms.push(');" value="編集" /></td>');
+              var td = $('<td/>');
+              tr.append(td);
+              td.append($('<input/>')
+                        .attr("type", "button")
+                        .attr("value", "編集")
+                        .click(function () {
+                          that.show_edit_record(line[0]);
+                        }));
               break;
             case 2: // Table
-              elms.push('<td><input type="button" onClick="$(\'#side-menu-tablelist-link-');
-              elms.push(line[1]);
-              elms.push('\').click();" value="詳細" /></td>');
+              var td = $('<td/>');
+              tr.append(td);
+              td.append($('<input/>')
+                        .attr("type", "button")
+                        .attr("value", "詳細")
+                        .click(function () {
+                          $("#side-menu-tablelist-link-" + line[1]).click();
+                        }));
               break;
             }
-            elms.push('</tr>');
           }
         }
-        elms.push('</tbody>');
       }
     }
-    elms.push('</table>');
-    return elms.join('');
+    return table;
   },
   show_edit_record: function(id) {
     $('#table-tabs').tabs('select', 2);
@@ -657,7 +666,7 @@ jQuery.extend(GroongaAdmin.prototype, {
         success: function(d) {
           if (that.validateajax(d) < 0) { return; }
           var b = d[1];
-          var table = $(that._createResultTable(b, {check: 2, button: 2}));
+          var table = that._createResultTable(b, {check: 2, button: 2});
           $('#tab-tablelist-table').append($('<h1 />').text('テーブル一覧')).append(table);
           that.hideloading();
         },
@@ -773,7 +782,7 @@ jQuery.extend(GroongaAdmin.prototype, {
             .append($('<h1 />').text('レコード一覧: ' + params['table']))
             .append($('<p />').text('総件数: ' + all_count))
             .append(pager.clone(true))
-            .append($('<div />').html(that._createResultTable(recs, {check: 1, button: 1})))
+            .append($('<div />').append(that._createResultTable(recs, {check: 1, button: 1})))
             .append(pager);
           that.hideloading();
         },
@@ -794,7 +803,7 @@ jQuery.extend(GroongaAdmin.prototype, {
         success: function(d) {
           if (that.validateajax(d) < 0) { return; }
           var b = d[1];
-          var table = $(that._createResultTable(b, {check: 2}));
+          var table = that._createResultTable(b, {check: 2});
           $('#tab-columnlist-table')
             .append($('<h1 />').text('カラム一覧: ' + table_name))
             .append(table);
