@@ -3481,17 +3481,18 @@ grn_rc
 grn_ii_truncate(grn_ctx *ctx, grn_ii *ii)
 {
   grn_rc rc;
+  const char *io_segpath, *io_chunkpath;
   char *segpath, *chunkpath = NULL;
   grn_obj *lexicon;
   uint32_t flags;
-  if ((segpath = (char *)grn_io_path(ii->seg)) && *segpath != '\0') {
-    if (!(segpath = GRN_STRDUP(segpath))) {
-      ERR(GRN_NO_MEMORY_AVAILABLE, "cannot duplicate path.");
+  if ((io_segpath = grn_io_path(ii->seg)) && *io_segpath != '\0') {
+    if (!(segpath = GRN_STRDUP(io_segpath))) {
+      ERR(GRN_NO_MEMORY_AVAILABLE, "cannot duplicate path: <%s>", io_segpath);
       return GRN_NO_MEMORY_AVAILABLE;
     }
-    if ((chunkpath = (char *)grn_io_path(ii->chunk)) && *chunkpath != '\0') {
-      if (!(chunkpath = GRN_STRDUP(chunkpath))) {
-        ERR(GRN_NO_MEMORY_AVAILABLE, "cannot duplicate path.");
+    if ((io_chunkpath = grn_io_path(ii->chunk)) && *io_chunkpath != '\0') {
+      if (!(chunkpath = GRN_STRDUP(io_chunkpath))) {
+        ERR(GRN_NO_MEMORY_AVAILABLE, "cannot duplicate path: <%s>", io_chunkpath);
         return GRN_NO_MEMORY_AVAILABLE;
       }
     } else {

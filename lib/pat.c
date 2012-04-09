@@ -554,12 +554,13 @@ grn_rc
 grn_pat_truncate(grn_ctx *ctx, grn_pat *pat)
 {
   grn_rc rc;
+  const char *io_path;
   char *path;
   uint32_t key_size, value_size, flags;
 
-  if ((path = (char *)grn_io_path(pat->io)) && *path != '\0') {
-    if (!(path = GRN_STRDUP(path))) {
-      ERR(GRN_NO_MEMORY_AVAILABLE, "cannot duplicate path.");
+  if ((io_path = grn_io_path(pat->io)) && *io_path != '\0') {
+    if (!(path = GRN_STRDUP(io_path))) {
+      ERR(GRN_NO_MEMORY_AVAILABLE, "cannot duplicate path: <%s>", io_path);
       return GRN_NO_MEMORY_AVAILABLE;
     }
   } else {

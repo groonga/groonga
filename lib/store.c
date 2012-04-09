@@ -127,11 +127,12 @@ grn_rc
 grn_ra_truncate(grn_ctx *ctx, grn_ra *ra)
 {
   grn_rc rc;
+  const char *io_path;
   char *path;
   unsigned int element_size;
-  if ((path = (char *)grn_io_path(ra->io)) && *path != '\0') {
-    if (!(path = GRN_STRDUP(path))) {
-      ERR(GRN_NO_MEMORY_AVAILABLE, "cannot duplicate path.");
+  if ((io_path = grn_io_path(ra->io)) && *io_path != '\0') {
+    if (!(path = GRN_STRDUP(io_path))) {
+      ERR(GRN_NO_MEMORY_AVAILABLE, "cannot duplicate path: <%s>", io_path);
       return GRN_NO_MEMORY_AVAILABLE;
     }
   } else {
@@ -399,12 +400,13 @@ grn_rc
 grn_ja_truncate(grn_ctx *ctx, grn_ja *ja)
 {
   grn_rc rc;
+  const char *io_path;
   char *path;
   unsigned int max_element_size;
   uint32_t flags;
-  if ((path = (char *)grn_io_path(ja->io)) && *path != '\0') {
-    if (!(path = GRN_STRDUP(path))) {
-      ERR(GRN_NO_MEMORY_AVAILABLE, "cannot duplicate path.");
+  if ((io_path = grn_io_path(ja->io)) && *io_path != '\0') {
+    if (!(path = GRN_STRDUP(io_path))) {
+      ERR(GRN_NO_MEMORY_AVAILABLE, "cannot duplicate path: <%s>", io_path);
       return GRN_NO_MEMORY_AVAILABLE;
     }
   } else {

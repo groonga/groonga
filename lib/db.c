@@ -6246,15 +6246,16 @@ _grn_obj_remove(grn_ctx *ctx, grn_obj *obj)
 {
   grn_id id = GRN_ID_NIL;
   grn_obj *db = NULL;
+  const char *io_path;
   char *path;
   if (ctx->impl && ctx->impl->db) {
     uint32_t s = 0;
     const char *n = _grn_table_key(ctx, ctx->impl->db, DB_OBJ(obj)->id, &s);
     GRN_LOG(ctx, GRN_LOG_NOTICE, "DDL:obj_remove %.*s", s, n);
   }
-  if ((path = (char *)grn_obj_path(ctx, obj)) && *path != '\0') {
-    if (!(path = GRN_STRDUP(path))) {
-      ERR(GRN_NO_MEMORY_AVAILABLE, "cannot duplicate path.");
+  if ((io_path = grn_obj_path(ctx, obj)) && *io_path != '\0') {
+    if (!(path = GRN_STRDUP(io_path))) {
+      ERR(GRN_NO_MEMORY_AVAILABLE, "cannot duplicate path: <%s>", io_path);
       return;
     }
   } else {
@@ -6267,13 +6268,14 @@ _grn_obj_remove(grn_ctx *ctx, grn_obj *obj)
   switch (obj->header.type) {
   case GRN_DB :
     {
+      const char *io_spath;
       char *spath;
       grn_table_cursor *cur;
       grn_db *s = (grn_db *)db;
       if (s->specs &&
-          (spath = (char *)grn_obj_path(ctx, (grn_obj *)s->specs)) && *spath != '\0') {
-        if (!(spath = GRN_STRDUP(spath))) {
-          ERR(GRN_NO_MEMORY_AVAILABLE, "cannot duplicate path.");
+          (io_spath = grn_obj_path(ctx, (grn_obj *)s->specs)) && *io_spath != '\0') {
+        if (!(spath = GRN_STRDUP(io_spath))) {
+          ERR(GRN_NO_MEMORY_AVAILABLE, "cannot duplicate path: <%s>", io_spath);
           if (path) { GRN_FREE(path); }
           return;
         }

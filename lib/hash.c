@@ -558,7 +558,7 @@ grn_array_truncate(grn_ctx *ctx, grn_array *array)
     if (io_path && *io_path) {
       path = GRN_STRDUP(io_path);
       if (!path) {
-        ERR(GRN_NO_MEMORY_AVAILABLE, "cannot duplicate path.");
+        ERR(GRN_NO_MEMORY_AVAILABLE, "cannot duplicate path: <%s>", io_path);
         return GRN_NO_MEMORY_AVAILABLE;
       }
     }
@@ -1658,7 +1658,7 @@ grn_hash_truncate(grn_ctx *ctx, grn_hash *hash)
     if (io_path && *io_path) {
       path = GRN_STRDUP(io_path);
       if (!path) {
-        ERR(GRN_NO_MEMORY_AVAILABLE, "cannot duplicate path.");
+        ERR(GRN_NO_MEMORY_AVAILABLE, "cannot duplicate path: <%s>", io_path);
         return GRN_NO_MEMORY_AVAILABLE;
       }
     }
