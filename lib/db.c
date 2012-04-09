@@ -1750,6 +1750,7 @@ grn_table_truncate(grn_ctx *ctx, grn_obj *table)
   if (table) {
     grn_hook *hooks;
     grn_hash *cols;
+    grn_obj *tokenizer;
     if ((cols = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
                                 GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY))) {
       if (grn_table_columns(ctx, table, "", 0, (grn_obj *)cols)) {
@@ -1761,6 +1762,7 @@ grn_table_truncate(grn_ctx *ctx, grn_obj *table)
       }
       grn_hash_close(ctx, cols);
     }
+    grn_table_get_info(ctx, table, NULL, NULL, &tokenizer);
     switch (table->header.type) {
     case GRN_TABLE_PAT_KEY :
       for (hooks = DB_OBJ(table)->hooks[GRN_HOOK_INSERT]; hooks; hooks = hooks->next) {
@@ -1793,6 +1795,7 @@ grn_table_truncate(grn_ctx *ctx, grn_obj *table)
       rc = grn_array_truncate(ctx, (grn_array *)table);
       break;
     }
+    grn_obj_set_info(ctx, table, GRN_INFO_DEFAULT_TOKENIZER, tokenizer);
     grn_obj_touch(ctx, table, NULL);
   }
 exit :

@@ -1,0 +1,5 @@
+table_create Tags TABLE_DAT_KEY ShortText --default_tokenizer TokenDelimit
+dump
+
+truncate Tags
+dump
