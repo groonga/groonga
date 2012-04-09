@@ -1,0 +1,26 @@
+table_create Diaries TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Diaries title COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Diaries content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram
+[[0,0.0,0.0],true]
+column_create Terms diaries_index COLUMN_INDEX|WITH_POSITION|WITH_SECTION Diaries title,content
+[[0,0.0,0.0],true]
+dump
+table_create Diaries TABLE_HASH_KEY ShortText
+column_create Diaries content COLUMN_SCALAR Text
+column_create Diaries title COLUMN_SCALAR ShortText
+table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram
+column_create Terms diaries_index COLUMN_INDEX|WITH_SECTION|WITH_POSITION Diaries title,content
+
+truncate Diaries
+[[0,0.0,0.0],true]
+dump
+table_create Diaries TABLE_HASH_KEY ShortText
+column_create Diaries content COLUMN_SCALAR Text
+column_create Diaries title COLUMN_SCALAR ShortText
+table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram
+column_create Terms diaries_index COLUMN_INDEX|WITH_SECTION|WITH_POSITION Diaries title,content
+

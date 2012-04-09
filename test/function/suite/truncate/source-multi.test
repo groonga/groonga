@@ -1,0 +1,12 @@
+table_create Diaries TABLE_HASH_KEY ShortText
+column_create Diaries title COLUMN_SCALAR ShortText
+column_create Diaries content COLUMN_SCALAR Text
+
+table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram
+column_create Terms diaries_index COLUMN_INDEX|WITH_POSITION|WITH_SECTION Diaries title,content
+
+dump
+
+truncate Diaries
+
+dump
