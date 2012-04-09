@@ -2310,7 +2310,7 @@ dump_table(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table,
 } while (0)
 
 static void
-dump_scheme(grn_ctx *ctx, grn_obj *outbuf)
+dump_schema(grn_ctx *ctx, grn_obj *outbuf)
 {
   grn_obj *db = ctx->impl->db;
   grn_table_cursor *cur;
@@ -2436,8 +2436,8 @@ proc_dump(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_obj *outbuf = ctx->impl->outbuf;
   ctx->impl->output_type = GRN_CONTENT_NONE;
-  dump_scheme(ctx, outbuf);
-  /* To update index columns correctly, we first create the whole scheme, then
+  dump_schema(ctx, outbuf);
+  /* To update index columns correctly, we first create the whole schema, then
      load non-derivative records, while skipping records of index columns. That
      way, groonga will silently do the job of updating index columns for us. */
   if (GRN_TEXT_LEN(VAR(0)) > 0) {
