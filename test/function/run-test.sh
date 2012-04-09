@@ -45,9 +45,9 @@ if test -z "$RUBY"; then
     exit 1
 fi
 
-groonga_test_dir="$BASE_DIR/groonga-test"
-if ! test -d "$groonga_test_dir"; then
-    git clone git://github.com/groonga/groonga-test.git "$groonga_test_dir"
+grntest_dir="$BASE_DIR/grntest"
+if ! test -d "$grntest_dir"; then
+    git clone git://github.com/groonga/grntest.git "$grntest_dir"
 fi
 
 if test x"$@" = x""; then
@@ -57,7 +57,7 @@ else
 fi
 
 $RUBY -I "$groonga_test_dir/lib" \
-    "$groonga_test_dir/bin/groonga-test" \
+    "$grntest_dir/bin/grntest" \
     --groonga "$GROONGA" \
     --groonga-suggest-create-dataset "$GROONGA_SUGGEST_CREATE_DATASET" \
     --base-directory "$BASE_DIR" \
