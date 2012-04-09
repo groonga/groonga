@@ -547,7 +547,7 @@ jQuery.extend(GroongaAdmin.prototype, {
   throughputChart: null,
   updateThroughputChart: function(statusData) {
     var maxThroughputUpdated = false;
-    if (this.lastNQueries > 0) {
+    if (this.lastNQueries >= 0) {
       var throughput = statusData.n_queries - this.lastNQueries;
       this.throughputData.push(throughput);
       if (this.maxThroughput < throughput) {
