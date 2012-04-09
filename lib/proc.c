@@ -2336,6 +2336,12 @@ dump_schema(grn_ctx *ctx, grn_obj *outbuf)
           break;
         }
         grn_obj_unlink(ctx, object);
+      } else {
+        /* XXX: this clause is executed when MeCab tokenizer is enabled in
+           database but the groonga isn't supported MeCab.
+           We should return error mesage about it and error exit status
+           but it's too difficult for this architecture. :< */
+        ERRCLR(ctx);
       }
     }
     grn_table_cursor_close(ctx, cur);
@@ -2425,6 +2431,12 @@ dump_all_records(grn_ctx *ctx, grn_obj *outbuf)
       if ((table = grn_ctx_at(ctx, id))) {
         dump_records(ctx, outbuf, table);
         grn_obj_unlink(ctx, table);
+      } else {
+        /* XXX: this clause is executed when MeCab tokenizer is enabled in
+           database but the groonga isn't supported MeCab.
+           We should return error mesage about it and error exit status
+           but it's too difficult for this architecture. :< */
+        ERRCLR(ctx);
       }
     }
     grn_table_cursor_close(ctx, cur);
