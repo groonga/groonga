@@ -50,7 +50,7 @@ if ! test -d "$grntest_dir"; then
     git clone git://github.com/groonga/grntest.git "$grntest_dir"
 fi
 
-if test x"$@" = x""; then
+if test $# -eq 0; then
     targets="$BASE_DIR/suite"
 else
     targets=
