@@ -110,5 +110,5 @@ version.sh
 /src/suggest/groonga-suggest-create-dataset
 /tmp-doc/
 /test/unit/Gemfile.lock
-/test/function/grntest/
+/test/function/grntest
 /*.tar.gz
