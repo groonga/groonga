@@ -56,7 +56,7 @@ else
     targets=
 fi
 
-$RUBY -I "$groonga_test_dir/lib" \
+$RUBY -I "$grntest_dir/lib" \
     "$grntest_dir/bin/grntest" \
     --groonga "$GROONGA" \
     --groonga-suggest-create-dataset "$GROONGA_SUGGEST_CREATE_DATASET" \
