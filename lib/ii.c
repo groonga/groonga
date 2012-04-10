@@ -4161,6 +4161,14 @@ grn_ii_cursor_next(grn_ctx *ctx, grn_ii_cursor *c)
                                            size, grn_io_rdonly))) {
                   grn_p_decv(ctx, cp, size, c->rdv, c->ii->n_elements);
                   grn_io_win_unmap2(&iw);
+                  if (chunk_is_reused(ctx, c->ii, c,
+                                      c->cinfo[c->curr_chunk].segno, size)) {
+                    GRN_LOG(ctx, GRN_LOG_WARNING,
+                            "chunk(%d) is reused by another thread",
+                            c->cinfo[c->curr_chunk].segno);
+                    c->pc.rid = 0;
+                    break;
+                  }
                 } else {
                   c->pc.rid = 0;
                   break;
