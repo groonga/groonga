@@ -70,6 +70,67 @@ Groonga = {
   GRN_OBJ_WITH_POSITION:          (0x01<<9)
 };
 
+$.widget("ui.paginate", {
+  version: "1.0",
+  options: {
+    total: 0,
+    nItemsPerPage: 10,
+    currentPage: 0,
+    nShowLinks: 10,
+    callback: null
+  },
+  _create: function() {
+    var that = this;
+    var element = this.element;
+    element.addClass("pager");
+
+    var total = this.options.total;
+    var nItemsPerPage = this.options.nItemsPerPage;
+    var currentPage = this.options.currentPage;
+    var nShowLinks = this.options.nShowLinks;
+    var lastPage = Math.floor((total - 1) / nItemsPerPage) + 1;
+    var start = currentPage - Math.floor(nShowLinks / 2);
+    start = (start < 1) ? 1 : start;
+    var end = start + nShowLinks - 1;
+    end = (end > lastPage) ? lastPage : end;
+
+    var callback = this.options.callback;
+    if (start > 1) {
+      element.append($('<span />')
+                     .addClass('pager')
+                     .append($('<a />')
+                             .attr('href', '#')
+                             .text('1')
+                             .click(function () {callback(0)})));
+      element.append($('<span />').text('....'));
+    }
+    for (var i = start; i <= end; i++) {
+      var page = $('<span />').append($('<a />')
+                                      .attr('href', '#')
+                                      .text(String(i))
+                                      .click(function () {
+                                        callback(Number($(this).text()) - 1);
+                                      }));
+      if (i == currentPage) {
+        page.addClass('pager-current');
+      } else {
+        page.addClass('pager');
+      }
+      element.append(page);
+    }
+    if (end < lastPage) {
+      element.append($('<span />')
+                     .text('....'));
+      element.append($('<span />')
+                     .addClass('pager')
+                     .append($('<a />')
+                             .attr('href', '#')
+                             .text(String(lastPage))
+                             .click(function () {callback(lastPage - 1);})));
+    }
+  }
+});
+
 function GroongaAdmin() {
   this.current_table = null;
   this.statusTimer = null;
@@ -677,45 +738,6 @@ jQuery.extend(GroongaAdmin.prototype, {
       })
     );
   },
-  pager_element_factory: function(per_page, current_page, show_num, func) {
-    return function (total) {
-      var ret = $('<div />').addClass('pager');
-      if (total) {
-        var last_page = Math.floor((total - 1) / per_page) + 1;
-        var st = current_page - Math.floor(show_num / 2);
-        st = (st < 1) ? 1 : st;
-        var ed = st + show_num - 1;
-        ed = (ed > last_page) ? last_page : ed;
-
-        if (st > 1) {
-          ret.append(
-            $('<span />').addClass('pager').append(
-              $('<a />').attr('href', '#').text('1').click(func)
-            )
-          ).append($('<span />').text('....'));
-        }
-        for (var i = st; i <= ed; i++) {
-          var s = $('<span />').append(
-            $('<a />').attr('href', '#').text(String(i)).click(func)
-          );
-          if (i == current_page) {
-            s.addClass('pager-current');
-          } else {
-            s.addClass('pager');
-          }
-          ret.append(s);
-        }
-        if (ed < last_page) {
-          ret.append($('<span />').text('....')).append(
-            $('<span />').addClass('pager').append(
-              $('<a />').attr('href', '#').text(String(last_page)).click(func)
-            )
-          )
-        }
-      }
-      return ret;
-    }
-  },
   recordlist_simple: function(table_name, simplequery, simplequery_type, page, hide_dialog) {
     var d = {
       'table': table_name,
@@ -763,17 +785,17 @@ jQuery.extend(GroongaAdmin.prototype, {
             if (rows != '' && !parseInt(rows)) {
               pager = $('<span />');
             } else {
-              pager =
-                that.pager_element_factory(
-                  rows,
-                  Math.floor(offset/rows)+1,
-                  13,
-                  function() {
-                    params['offset'] = (Number($(this).text()) - 1) * rows;
-                    that.recordlist(params, true, false);
-                    return false;
-                  }
-                )(all_count);
+              pager = $("<div/>");
+              pager.paginate({
+                total: all_count,
+                nItemsPerPage: rows,
+                currentPage: Math.floor(offset/rows)+1,
+                callback: function(page) {
+                  params['offset'] = page * rows;
+                  that.recordlist(params, true, false);
+                  return false;
+                }
+              });
             }
           } else {
             pager = $('<span />');
