@@ -363,7 +363,19 @@ jQuery.extend(GroongaAdmin.prototype, {
       $dataset.autocomplete("search", $dataset.val());
     });
   },
+  _suggestParameters: function(query, dataset, type) {
+    var nItemsPerPage = 30;
+    return {
+      query: query,
+      types: type,
+      table: "item_" + dataset,
+      column: "kana",
+      offset: 0,
+      limit: nItemsPerPage,
+    };
+  },
   _initializeSuggestQueryComplete: function() {
+    var that = this;
     this._$suggestQuery = $("#suggest-query").autocomplete({
       source: function (request, response) {
         var $dataset = $("#suggest-dataset");
@@ -371,13 +383,7 @@ jQuery.extend(GroongaAdmin.prototype, {
         $("#suggest-submit").click();
         $.ajax({
           url: "/d/suggest",
-          data: {
-            query: request.term,
-            types: "complete",
-            table: "item_" + dataset,
-            column: "kana",
-            limit: 25,
-          },
+          data: that._suggestParameters(request.term, dataset, "complete"),
           dataType: "jsonp",
           success: function (data, textStatus, jqXHR) {
             var completions = data[1]["complete"];
@@ -408,15 +414,10 @@ jQuery.extend(GroongaAdmin.prototype, {
       var dataset = $("#suggest-dataset").val();
       var query = $("#suggest-query").val();
       var type = that._suggestResultType;
+      var parameters = that._suggestParameters(query, dataset, type);
       $.ajax({
         url: "/d/suggest",
-        data: {
-          query: query,
-          types: type,
-          table: "item_" + dataset,
-          column: "kana",
-          limit: 25,
-        },
+        data: parameters,
         dataType: "jsonp",
         success: function (data, textStatus, jqXHR) {
           var response = data[1][type];
