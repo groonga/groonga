@@ -4788,6 +4788,27 @@ grn_expr_parser_open(grn_ctx *ctx)
 
 #define PARSE(token) grn_expr_parser(ctx->impl->parser, (token), 0, q)
 
+static void
+accept_query_string(grn_ctx *ctx, efs_info *efsi,
+                    const char *str, unsigned int str_size)
+{
+  grn_obj *column, *token;
+
+  GRN_PTR_PUT(ctx, &efsi->token_stack,
+              grn_expr_add_str(ctx, efsi->e, str, str_size));
+  {
+    efs_info *q = efsi;
+    PARSE(GRN_EXPR_TOKEN_QSTRING);
+  }
+
+  GRN_PTR_POP(&efsi->token_stack, token);
+  column = grn_ptr_value_at(&efsi->column_stack, -1);
+  grn_expr_append_const(efsi->ctx, efsi->e, column, GRN_OP_GET_VALUE, 1);
+  grn_expr_append_obj(efsi->ctx, efsi->e, token, GRN_OP_PUSH, 1);
+  grn_expr_append_op(efsi->ctx, efsi->e,
+                     grn_int32_value_at(&efsi->mode_stack, -1), 2);
+}
+
 static grn_rc
 get_word_(grn_ctx *ctx, efs_info *q)
 {
@@ -4878,18 +4899,8 @@ get_word_(grn_ctx *ctx, efs_info *q)
     }
     end += len;
   }
-  GRN_PTR_PUT(ctx, &q->token_stack, grn_expr_add_str(ctx, q->e, start, end - start));
+  accept_query_string(ctx, q, start, end - start);
 
-  PARSE(GRN_EXPR_TOKEN_QSTRING);
-{
-  grn_obj *column, *token;
-  efs_info *efsi = q;
-  GRN_PTR_POP(&efsi->token_stack, token);
-  column = grn_ptr_value_at(&efsi->column_stack, -1);
-  grn_expr_append_const(efsi->ctx, efsi->e, column, GRN_OP_GET_VALUE, 1);
-  grn_expr_append_obj(efsi->ctx, efsi->e, token, GRN_OP_PUSH, 1);
-  grn_expr_append_op(efsi->ctx, efsi->e, grn_int32_value_at(&efsi->mode_stack, -1), 2);
-}
   return GRN_SUCCESS;
 }
 
@@ -4945,20 +4956,8 @@ parse_query(grn_ctx *ctx, efs_info *q)
           s += len;
 
         }
-        GRN_PTR_PUT(ctx, &q->token_stack, grn_expr_add_str(ctx, q->e,
-                                                           GRN_TEXT_VALUE(&q->buf),
-                                                           GRN_TEXT_LEN(&q->buf)));
-          PARSE(GRN_EXPR_TOKEN_QSTRING);
-{
-  grn_obj *column, *token;
-  efs_info *efsi = q;
-  GRN_PTR_POP(&efsi->token_stack, token);
-  column = grn_ptr_value_at(&efsi->column_stack, -1);
-  grn_expr_append_const(efsi->ctx, efsi->e, column, GRN_OP_GET_VALUE, 1);
-  grn_expr_append_obj(efsi->ctx, efsi->e, token, GRN_OP_PUSH, 1);
-  grn_expr_append_op(efsi->ctx, efsi->e, grn_int32_value_at(&efsi->mode_stack, -1), 2);
-}
-
+        accept_query_string(ctx, q,
+                            GRN_TEXT_VALUE(&q->buf), GRN_TEXT_LEN(&q->buf));
       }
 
       break;
