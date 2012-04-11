@@ -307,6 +307,7 @@ jQuery.extend(GroongaAdmin.prototype, {
       source: function (request, response) {
         var $dataset = $("#suggest-dataset");
         var dataset = $dataset.val();
+        $("#suggest-submit").click();
         $.ajax({
           url: "/d/suggest",
           data: {
