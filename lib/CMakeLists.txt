@@ -17,47 +17,15 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/dat
   )
 
-set(LIBGROONGA_SOURCES
-  com.c
-  com.h
-  ctx.c
-  ctx.h
-  ctx_impl.h
-  dat.cpp
-  dat.h
-  db.c
-  db.h
-  expr.c
-  geo.c
-  geo.h
-  groonga_in.h
-  hash.c
-  hash.h
-  ii.c
-  ii.h
-  io.c
-  io.h
-  nfkc.c
-  nfkc.h
-  output.c
-  output.h
-  pat.c
-  pat.h
-  plugin.c
-  plugin_in.h
-  proc.c
-  proc.h
-  snip.c
-  snip.h
-  store.c
-  store.h
-  str.c
-  str.h
-  token.c
-  token.h
-  tokenizer.c
-  util.c
-  util.h
-  )
+file(READ ${CMAKE_CURRENT_SOURCE_DIR}/sources.am LIBGROONGA_SOURCES)
+# Remove variable declaration at the first line:
+#   "libgroonga_la_SOURCES =	\" -> ""
+string(REGEX REPLACE "^.*=[ \t]*\\\\" ""
+  LIBGROONGA_SOURCES "${LIBGROONGA_SOURCES}")
+# Remove white spaces: "	com.c	\\\n	com.h	\\\n" -> "com.c\\com.h"
+string(REGEX REPLACE "[ \t\n]" "" LIBGROONGA_SOURCES "${LIBGROONGA_SOURCES}")
+# Convert string to list: "com.c\\com.h" -> "com.c;com.h"
+# NOTE: List in CMake is ";" separated string.
+string(REGEX REPLACE "\\\\" ";" LIBGROONGA_SOURCES "${LIBGROONGA_SOURCES}")
 
 add_library(groonga SHARED ${LIBGROONGA_SOURCES})
