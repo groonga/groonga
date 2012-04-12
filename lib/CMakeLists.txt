@@ -20,5 +20,6 @@ include_directories(
 include(${CMAKE_SOURCE_DIR}/build/cmake_modules/ReadFileList.cmake)
 
 read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/sources.am LIBGROONGA_SOURCES)
+read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/dat/sources.am LIBGRN_DAT_SOURCES)
 
-add_library(groonga SHARED ${LIBGROONGA_SOURCES})
+add_library(groonga SHARED ${LIBGROONGA_SOURCES} ${LIBGRNDAT_SOURCES})
