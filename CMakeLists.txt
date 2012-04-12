@@ -41,4 +41,8 @@ endmacro()
 
 include(build/ac-macros/check-headers.m4)
 
+if(NOT WIN32)
+  ac_check_headers(pthread.h)
+endif()
+
 configure_file(config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
