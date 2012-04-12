@@ -48,7 +48,7 @@ macro(ac_check_headers header)
   check_include_file(${header} ${output_variable_name})
 endmacro()
 
-include(build/ac-macros/check-headers.m4)
+include(build/ac_macros/check_headers.m4)
 
 if(UNIX)
   ac_check_headers(pthread.h)

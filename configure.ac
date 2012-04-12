@@ -321,7 +321,7 @@ AC_LINK_IFELSE(
       ])
   ])
 
-m4_include(build/ac_macros/check-headers.m4)
+m4_include(build/ac_macros/check_headers.m4)
 AC_CHECK_FUNCS(open close read write)
 AC_CHECK_FUNCS(localtime_r gmtime_r mkostemp)
 BACKTRACE_LIBS=
