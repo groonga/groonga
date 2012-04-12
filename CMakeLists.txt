@@ -20,6 +20,10 @@ file(READ base_version GRN_VERSION)
 
 include(CheckIncludeFile)
 
+set(GRN_LOG_PATH
+  "${CMAKE_INSTALL_PREFIX}/var/log/${CMAKE_PACKAGE_NAME}/${CMAKE_PACKAGE_NAME}.log"
+  CACHE PATH "log file path")
+
 add_definitions(
   -DHAVE_CONFIG_H
   -DGROONGA_VERSION=\"${GROONGA_VERSION}\"
