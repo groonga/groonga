@@ -31,12 +31,15 @@
 /groonga.pc
 /groonga.spec
 /stamp-h1
+/CMakeCache.txt
 /src/groonga
 /src/groonga-benchmark
 /src/grnslap
 Makefile
 Makefile.in
 version.sh
+CMakeFiles
+cmake_install.cmake
 /examples/kv
 /examples/index
 /doc/*-stamp
