@@ -26,7 +26,6 @@ set(GRN_LOG_PATH
 
 add_definitions(
   -DHAVE_CONFIG_H
-  -DGROONGA_VERSION=\"${GROONGA_VERSION}\"
   )
 
 include_directories(
