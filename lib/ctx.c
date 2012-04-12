@@ -2352,7 +2352,7 @@ grn_assert(grn_ctx *ctx, int cond, const char* file, int line, const char* func)
 const char *
 grn_get_version(void)
 {
-  return GROONGA_VERSION;
+  return GRN_VERSION;
 }
 
 const char *

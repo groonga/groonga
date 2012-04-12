@@ -71,13 +71,13 @@ copyright = u'2009-' + unicode(datetime.today().year) + ', Brazil, Inc'
 #
 
 # read version from env/file.
-if os.environ.has_key('GROONGA_VERSION'):
-  version_sh = 'GROONGA_VERSION=' + os.environ['GROONGA_VERSION']
+if os.environ.has_key('GRN_VERSION'):
+  version_sh = 'GRN_VERSION=' + os.environ['GRN_VERSION']
 else:
   os.system('../../version-gen.sh')
   version_sh = open(os.path.join(os.path.dirname(__file__), '../../version.sh')).read()
 
-release_regex = re.compile(r'^GROONGA_VERSION=(?P<release>.*)$')
+release_regex = re.compile(r'^GRN_VERSION=(?P<release>.*)$')
 # The full version, including alpha/beta/rc tags.
 release = release_regex.search(version_sh).group('release')
 

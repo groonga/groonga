@@ -20,12 +20,12 @@ GRN_VN=`expr "$GRN_VN" : v*'\(.*\)'`
 
 if test -r $GRN_VERSION_SH
 then
-    GRN_VN_OLD=`sed -e 's/^GROONGA_VERSION=//' <$GRN_VERSION_SH`
+    GRN_VN_OLD=`sed -e 's/^GRN_VERSION=//' <$GRN_VERSION_SH`
 else
     GRN_VN_OLD=unset
 fi
 
 if test "$GRN_VN_OLD" != "$GRN_VN"
 then
-    echo "GROONGA_VERSION=$GRN_VN" >$GRN_VERSION_SH
+    echo "GRN_VERSION=$GRN_VN" >$GRN_VERSION_SH
 fi

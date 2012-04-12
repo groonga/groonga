@@ -31,7 +31,7 @@ $(srcdir)/version.sh: FORCE
 include $(srcdir)/version.sh
 
 dist-hook:
-	echo "$(GROONGA_VERSION)" > $(distdir)/version
+	echo "$(GRN_VERSION)" > $(distdir)/version
 	@if test -d $(top_srcdir)/.git; then			\
 	  cd $(top_srcdir) && release/gitlog2changelog.py >	\
 	    $(distdir)/ChangeLog;				\

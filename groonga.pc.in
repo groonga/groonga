@@ -8,7 +8,7 @@ datadir=@datadir@
 document_root=@GRN_EXPANDED_DEFAULT_DOCUMENT_ROOT@
 groonga=${bindir}/groonga@EXEEXT@
 groonga_suggest_create_dataset=${bindir}/groonga-suggest-create-dataset@EXEEXT@
-groonga_version=@GROONGA_VERSION@
+groonga_version=@GRN_VERSION@
 
 Name: Groonga
 Description: An Embeddable Fulltext Search Engine

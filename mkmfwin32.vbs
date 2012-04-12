@@ -133,7 +133,7 @@ sub common_header()
   ts.write "\"""" \" + vbLf
 
   if make_lib = 1 then
-  ts.write "        -DGROONGA_VERSION=""\"""
+  ts.write "        -DGRN_VERSION=""\"""
   ts.write revision
   ts.write "\"""" \" + vbLf
   end if
