@@ -23,6 +23,9 @@ include(CheckIncludeFile)
 set(GRN_LOG_PATH
   "${CMAKE_INSTALL_PREFIX}/var/log/${CMAKE_PACKAGE_NAME}/${CMAKE_PACKAGE_NAME}.log"
   CACHE PATH "log file path")
+set(GRN_DEFAULT_MATCH_ESCALATION_THRESHOLD
+  0
+  CACHE STRING "groonga default match escalation threshold")
 
 add_definitions(
   -DHAVE_CONFIG_H
