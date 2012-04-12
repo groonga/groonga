@@ -45,7 +45,7 @@ endmacro()
 
 include(build/ac-macros/check-headers.m4)
 
-if(NOT WIN32)
+if(UNIX)
   ac_check_headers(pthread.h)
 endif()
 
