@@ -26,6 +26,9 @@ set(GRN_LOG_PATH
 set(GRN_DEFAULT_MATCH_ESCALATION_THRESHOLD
   0
   CACHE STRING "groonga default match escalation threshold")
+set(GRN_PLUGINS_DIR
+  "${CMAKE_INSTALL_PREFIX}/lib/${CMAKE_PROJECT_NAME}/plugins"
+  CACHE PATH "groonga plugins' directory")
 
 add_definitions(
   -DHAVE_CONFIG_H
