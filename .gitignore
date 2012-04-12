@@ -63,6 +63,7 @@ cmake_install.cmake
 /doc/commands_not_implemented/
 /doc/sphinx/
 /lib/icudump
+/lib/libgroonga.so
 /coverage
 /coverage.info
 /test/unit/lib/*-*.*.*/
