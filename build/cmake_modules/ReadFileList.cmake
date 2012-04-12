@@ -13,12 +13,15 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-include_directories(
-  ${CMAKE_CURRENT_SOURCE_DIR}/dat
-  )
-
-include(${CMAKE_SOURCE_DIR}/build/cmake_modules/ReadFileList.cmake)
-
-read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/sources.am LIBGROONGA_SOURCES)
-
-add_library(groonga SHARED ${LIBGROONGA_SOURCES})
+macro(read_file_list file_name output_variable)
+  file(READ ${file_name} ${output_variable})
+  # Remove variable declaration at the first line:
+  #   "libgroonga_la_SOURCES =	\" -> ""
+  string(REGEX REPLACE "^.*=[ \t]*\\\\" ""
+    ${output_variable} "${${output_variable}}")
+  # Remove white spaces: "	com.c	\\\n	com.h	\\\n" -> "com.c\\com.h"
+  string(REGEX REPLACE "[ \t\n]" "" ${output_variable} "${${output_variable}}")
+  # Convert string to list: "com.c\\com.h" -> "com.c;com.h"
+  # NOTE: List in CMake is ";" separated string.
+  string(REGEX REPLACE "\\\\" ";" ${output_variable} "${${output_variable}}")
+endmacro()
