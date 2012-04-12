@@ -20,13 +20,17 @@ file(READ base_version GRN_VERSION)
 
 include(CheckIncludeFile)
 
-add_subdirectory(lib)
-
 add_definitions(
   -DHAVE_CONFIG_H
   -DGROONGA_VERSION=\"${GROONGA_VERSION}\"
   )
-add_definitions(-DGROONGA_VERSION=\"${GROONGA_VERSION}\")
+
+include_directories(
+  ${CMAKE_BINARY_DIR}
+  ${CMAKE_SOURCE_DIR}/include
+  )
+
+add_subdirectory(lib)
 
 macro(ac_check_headers header)
   string(REGEX REPLACE "[/.]" "_" output_variable_name ${header})
