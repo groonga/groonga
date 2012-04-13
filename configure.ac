@@ -503,7 +503,7 @@ AC_ARG_ENABLE(memory-debug,
 AC_MSG_RESULT([$enable_memory_debug])
 
 if test "x$enable_memory_debug" = "xyes"; then
-  AC_DEFINE(ENABLE_MEMORY_DEBUG, [1],
+  AC_DEFINE(USE_MEMORY_DEBUG, [1],
             [Define to 1 if you enable debuging memory management])
 fi
 

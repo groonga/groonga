@@ -626,7 +626,7 @@ grn_expr_close(grn_ctx *ctx, grn_obj *expr)
     grn_obj *obj;
     GRN_PTR_POP(&e->objs, obj);
     if (obj) {
-#ifdef ENABLE_MEMORY_DEBUG
+#ifdef USE_MEMORY_DEBUG
       grn_obj_unlink(ctx, obj);
 #else
       if (obj->header.type) {

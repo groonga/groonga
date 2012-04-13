@@ -173,7 +173,7 @@ grn_str2timeval(const char *str, uint32_t str_len, grn_timeval *tv)
   return GRN_SUCCESS;
 }
 
-#ifdef ENABLE_MEMORY_DEBUG
+#ifdef USE_MEMORY_DEBUG
 inline static void
 grn_alloc_info_set_backtrace(char *buffer, size_t size)
 {
@@ -314,13 +314,13 @@ grn_alloc_info_free(grn_ctx *ctx)
   ctx->impl->alloc_info = NULL;
 }
 
-#else /* ENABLE_MEMORY_DEBUG */
+#else /* USE_MEMORY_DEBUG */
 #  define grn_alloc_info_add(address)
 #  define grn_alloc_info_change(old_address, new_address)
 #  define grn_alloc_info_check(address)
 #  define grn_alloc_info_dump(ctx)
 #  define grn_alloc_info_free(ctx)
-#endif /* ENABLE_MEMORY_DEBUG */
+#endif /* USE_MEMORY_DEBUG */
 
 #ifdef USE_FAIL_MALLOC
 int grn_fmalloc_prob = 0;
@@ -412,7 +412,7 @@ grn_ctx_impl_init(grn_ctx *ctx)
 #ifdef USE_DYNAMIC_MALLOC_CHANGE
   grn_ctx_impl_init_malloc(ctx);
 #endif
-#ifdef ENABLE_MEMORY_DEBUG
+#ifdef USE_MEMORY_DEBUG
   ctx->impl->alloc_info = NULL;
 #endif
   ctx->impl->encoding = ctx->encoding;
