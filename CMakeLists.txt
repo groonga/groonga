@@ -105,6 +105,8 @@ if(WITH_LZO)
   endif()
 endif()
 
+set(LIBGROONGA ${CMAKE_BINARY_DIR}/lib/libgroonga.so)
+
 add_subdirectory(lib)
 add_subdirectory(src)
 
