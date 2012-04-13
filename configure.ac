@@ -766,10 +766,10 @@ if test "x$with_zlib" = "xyes"; then
   AC_CHECK_LIB(z, compress, [ZLIB_LIBS="-lz"], [AC_MSG_ERROR("No libz found")])
 fi
 
-# lzo
+# LZO
 AC_ARG_WITH(lzo,
   [AS_HELP_STRING([--with-lzo],
-    [use lzo for data compression. [default=no]])],
+    [use LZO for data compression. [default=no]])],
   [with_lzo="$withval"],
   [with_lzo="no"])
 if test "x$with_lzo" = "xyes"; then
@@ -777,11 +777,11 @@ if test "x$with_lzo" = "xyes"; then
   AC_CHECK_LIB(lzo2, lzo1_compress, [LZO_LIBS="-llzo2"], [AC_MSG_ERROR("No liblzo2 found")])
 fi
 
-# mecab
+# MeCab
 # NOTE: MUST be checked last
 AC_ARG_WITH(mecab,
   [AS_HELP_STRING([--with-mecab],
-    [use mecab for morphological analysis. [default=yes]])],
+    [use MeCab for morphological analysis. [default=yes]])],
   [with_mecab="$withval"],
   [with_mecab="yes"])
 AC_MSG_CHECKING([whether enable MeCab])
