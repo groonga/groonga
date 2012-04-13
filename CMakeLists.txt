@@ -109,5 +109,6 @@ set(LIBGROONGA ${CMAKE_BINARY_DIR}/lib/libgroonga.so)
 
 add_subdirectory(lib)
 add_subdirectory(src)
+add_subdirectory(plugins)
 
 configure_file(config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)

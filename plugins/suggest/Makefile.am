@@ -15,4 +15,4 @@ LIBS =						\
 
 suggest_plugins_LTLIBRARIES = suggest.la
 
-suggest_la_SOURCES = suggest.c
+include sources.am
