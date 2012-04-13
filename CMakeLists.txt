@@ -26,6 +26,12 @@ set(GRN_LOG_PATH
 set(GRN_DEFAULT_MATCH_ESCALATION_THRESHOLD
   0
   CACHE STRING "groonga default match escalation threshold")
+set(GRN_DEFAULT_RELATIVE_DOCUMENT_ROOT
+  "html/admin"
+  CACHE PATH "groonga default relative document root")
+set(GRN_DEFAULT_DOCUMENT_ROOT
+  "${CMAKE_INSTALL_PREFIX}/share/${CMAKE_PROJECT_NAME}/${GRN_DEFAULT_RELATIVE_DOCUMENT_ROOT}"
+  CACHE PATH "groonga default document root")
 set(GRN_PLUGINS_DIR
   "${CMAKE_INSTALL_PREFIX}/lib/${CMAKE_PROJECT_NAME}/plugins"
   CACHE PATH "groonga plugins' directory")
