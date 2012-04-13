@@ -70,9 +70,9 @@
 #define HOST_CPU "${CMAKE_HOST_SYSTEM_PROCESSOR}"
 #define HOST_OS "${CMAKE_HOST_SYSTEM_NAME}"
 
-#cmakedefine NO_LZO
-#cmakedefine NO_NFKC
-#cmakedefine NO_ZLIB
+#cmakedefine WITH_LZO
+#cmakedefine WITH_NFKC
+#cmakedefine WITH_ZLIB
 
 #define PACKAGE "${PROJECT_NAME}"
 #define PACKAGE_NAME "${PROJECT_NAME}"
