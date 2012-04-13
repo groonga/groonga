@@ -322,8 +322,8 @@ AC_LINK_IFELSE(
   ])
 
 m4_include(build/ac_macros/check_headers.m4)
-AC_CHECK_FUNCS(open close read write)
-AC_CHECK_FUNCS(localtime_r gmtime_r mkostemp)
+m4_include(build/ac_macros/check_functions.m4)
+
 AC_CHECK_FUNCS(backtrace,
  [],
  [AC_SEARCH_LIBS(backtrace, execinfo,
