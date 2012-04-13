@@ -72,6 +72,15 @@ if(UNIX)
   endif()
 endif()
 
+option(WITH_LZO "use LZO for data compression." OFF)
+if(WITH_LZO)
+  AC_CHECK_LIB(lzo2 lzo1_compress)
+  if (NOT HAVE_LZO2)
+    message(FATAL_ERROR "No liblzo2 found")
+  endif()
+  set(LZO_LIBS, "lzo2")
+endif()
+
 add_subdirectory(lib)
 add_subdirectory(src)
 
