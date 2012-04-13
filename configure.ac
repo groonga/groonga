@@ -289,11 +289,11 @@ AC_ARG_ENABLE(aio,
   [enable_aio="no"])
 if test "x$enable_aio" != "xno"; then
   AC_DEFINE(_XOPEN_SOURCE, [600], [Define to 600 for use AIO.])
-  AC_CHECK_LIB(rt, nanosleep, [], [AC_MSG_ERROR("No librt found")])
+  AC_SEARCH_LIBS(nanosleep, rt, [], [AC_MSG_ERROR("No librt found")])
   AC_DEFINE(USE_AIO, [1], [use AIO/DIO])
 fi
 
-AC_CHECK_LIB(m, log, [], [AC_MSG_ERROR("No libm found")])
+AC_SEARCH_LIBS(log, m, [], [AC_MSG_ERROR("No libm found")])
 AC_MSG_CHECKING([for fpclassify])
 AC_LINK_IFELSE(
   [AC_LANG_PROGRAM(
@@ -327,18 +327,14 @@ AC_CHECK_FUNCS(localtime_r gmtime_r mkostemp)
 BACKTRACE_LIBS=
 AC_CHECK_FUNCS(backtrace,
  [],
- [AC_CHECK_LIB([execinfo], [backtrace],
-   [BACKTRACE_LIBS="-lexecinfo"
-    AC_DEFINE(HAVE_BACKTRACE,
+ [AC_SEARCH_LIBS(backtrace, execinfo,
+   [AC_DEFINE(HAVE_BACKTRACE,
       [1],
       [Define to 1 if you have the `backtrace' function.])
    ])
  ])
-AC_SUBST(BACKTRACE_LIBS)
-AC_CHECK_LIB(rt, clock_gettime, [
-  RT_LIBS="-lrt"
-  AC_DEFINE(HAVE_CLOCK_GETTIME, [1], [use clock_gettime])
-], [])
+AC_SEARCH_LIBS(clock_gettime, rt,
+               [AC_DEFINE(HAVE_CLOCK_GETTIME, [1], [use clock_gettime])])
 AC_SYS_LARGEFILE
 AC_TYPE_OFF_T
 AC_TYPE_SIZE_T
@@ -407,13 +403,13 @@ AC_DEFINE_UNQUOTED(GRN_DEFAULT_DB_KEY, "$GRN_DEFAULT_DB_KEY",
 
 if test "$os_win32" != "yes"; then
   AC_CHECK_HEADERS(pthread.h)
-  AC_CHECK_LIB(pthread, pthread_mutex_init,
-               [PTHREAD_LIBS="-lpthread"],
-               [AC_MSG_ERROR("No libpthread found")])
+  AC_SEARCH_LIBS(pthread_mutex_init, pthread,
+                 [],
+                 [AC_MSG_ERROR("No libpthread found")])
 fi
-AC_CHECK_LIB(nsl, gethostbyname, [NSL_LIBS="-lnsl"])
-AC_CHECK_LIB(socket, socket, [SOCKET_LIBS="-lsocket"])
-AC_CHECK_LIB(dl, dlopen, [DL_LIBS="-ldl"])
+AC_SEARCH_LIBS(gethostbyname, nsl)
+AC_SEARCH_LIBS(socket, socket)
+AC_SEARCH_LIBS(dlopen, dl)
 
 # nfkc
 AC_ARG_ENABLE(nfkc,
@@ -636,8 +632,8 @@ if test "$cutter_use_cutter" = "yes"; then
 
   ac_cv_have_libmemcached=no
   AC_CHECK_HEADER(libmemcached/memcached.h,
-                  [AC_CHECK_LIB(memcached, memcached_increment_with_initial,
-                                [ac_cv_have_libmemcached=yes])])
+                  [AC_SEARCH_LIBS(memcached_increment_with_initial, memcached,
+                                  [ac_cv_have_libmemcached=yes])])
   AM_CONDITIONAL([WITH_LIBMEMCACHED],
                  [test "$ac_cv_have_libmemcached" = "yes"])
   if test "$ac_cv_have_libmemcached" = "yes"; then
@@ -737,11 +733,13 @@ AC_ARG_ENABLE(libedit,
 if test "x$enable_libedit" != "xno"; then
   m4_ifdef([PKG_CHECK_MODULES], [
     PKG_CHECK_MODULES([LIBEDIT], [libedit >= 3.0],
-      [LDFLAGS_SAVE="$LDFLAGS"
+      [LIBS_SAVE="$LIBS"
+       LDFLAGS_SAVE="$LDFLAGS"
        LDFLAGS="$LIBEDIT_LIBS $LDFLAGS"
-       AC_CHECK_LIB(edit, el_wline,
-         [libedit_available=yes],
-         [libedit_available=no])
+       AC_SEARCH_LIBS(el_wline, edit,
+                      [libedit_available=yes],
+                      [libedit_available=no])
+       LIBS="$LIBS_SAVE"
        LDFLAGS="$LDFLAGS_SAVE"],
       [libedit_available=no])
     ],
@@ -763,7 +761,7 @@ AC_ARG_WITH(zlib,
   [with_zlib="no"])
 if test "x$with_zlib" = "xyes"; then
   AC_DEFINE(WITH_ZLIB, [1], [with zlib])
-  AC_CHECK_LIB(z, compress, [ZLIB_LIBS="-lz"], [AC_MSG_ERROR("No libz found")])
+  AC_SEARCH_LIBS(compress, z, [], [AC_MSG_ERROR("No libz found")])
 fi
 
 # LZO
@@ -774,7 +772,7 @@ AC_ARG_WITH(lzo,
   [with_lzo="no"])
 if test "x$with_lzo" = "xyes"; then
   AC_DEFINE(WITH_LZO, [1], [with lzo])
-  AC_CHECK_LIB(lzo2, lzo1_compress, [LZO_LIBS="-llzo2"], [AC_MSG_ERROR("No liblzo2 found")])
+  AC_SEARCH_LIBS(lzo1_compress, lzo2, [], [AC_MSG_ERROR("No liblzo2 found")])
 fi
 
 # MeCab
@@ -922,13 +920,15 @@ if test "x$with_libevent" != "xno"; then
 
   _SAVE_CFLAGS="$CFLAGS"
   _SAVE_LDFLAGS="$LDFLAGS"
+  _SAVE_LIBS="$LIBS"
   CFLAGS="$CFLAGS $libevent_cflags"
   LDFLAGS="$LDFLAGS $libevent_ldflags"
-  AC_CHECK_LIB(event, event_init,
-               [libevent_available=yes],
-               [libevent_available=no])
+  AC_SEARCH_LIBS(event_init, event,
+                 [libevent_available=yes],
+                 [libevent_available=no])
   CFLAGS="$_SAVE_CFLAGS"
   LDFLAGS="$_SAVE_LDFLAGS"
+  LIBS="$_SAVE_LIBS"
   if test "$libevent_available" = "yes"; then
     AC_DEFINE(HAVE_LIBEVENT, [1], [Define to 1 if libevent is available.])
     LIBEVENT_CFLAGS="$libevent_cflags"
@@ -951,13 +951,15 @@ AC_ARG_WITH(message-pack,
 if test "x$with_message_pack" != "xno"; then
   _SAVE_CFLAGS="$CFLAGS"
   _SAVE_LDFLAGS="$LDFLAGS"
+  _SAVE_LIBS="$LIBS"
   CFLAGS="$CFLAGS -I$with_message_pack/include"
   LDFLAGS="$LDFLAGS -L$with_message_pack/lib"
-  AC_CHECK_LIB(msgpack, msgpack_version,
-               [message_pack_available=yes],
-               [message_pack_available=no])
+  AC_SEARCH_LIBS(msgpack_version, msgpack,
+                 [message_pack_available=yes],
+                 [message_pack_available=no])
   CFLAGS="$_SAVE_CFLAGS"
   LDFLAGS="$_SAVE_LDFLAGS"
+  LIBS="$_SAVE_LIBS"
   if test "x$message_pack_available" = "xyes"; then
     AC_DEFINE(HAVE_MESSAGE_PACK, [1], [Define to 1 if MessagePack is available.])
     MESSAGE_PACK_CFLAGS="-I$with_message_pack/include"
@@ -1102,8 +1104,7 @@ GRN_DEFS="$GRN_DEFS -DGRN_DEFAULT_DOCUMENT_ROOT=\\\"\"\$(GRN_DEFAULT_DOCUMENT_RO
 GRN_DEFS="$GRN_DEFS -DGRN_DEFAULT_RELATIVE_DOCUMENT_ROOT=\\\"\"\$(GRN_DEFAULT_RELATIVE_DOCUMENT_ROOT)\"\\\""
 AC_SUBST(GRN_DEFS)
 CFLAGS="$CFLAGS $OPT_CFLAGS "
-LIBS="$LIBS $ZLIB_LIBS $LZO_LIBS $BACKTRACE_LIBS $RT_LIBS $PTHREAD_LIBS"
-LIBS="$LIBS $NSL_LIBS $SOCKET_LIBS $DL_LIBS $WINDOWS_LIBS"
+LIBS="$LIBS $WINDOWS_LIBS"
 AC_DEFINE_UNQUOTED(CONFIGURE_OPTIONS, "$ac_configure_args", "specified configure options")
 
 # For groonga.org
