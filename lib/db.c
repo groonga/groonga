@@ -3425,11 +3425,11 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
     if (ja_p) {
       grn_bool zlib_p = GRN_FALSE;
       grn_bool lzo_p = GRN_FALSE;
-#ifndef NO_ZLIB
+#ifdef WITH_ZLIB
       if (flags & GRN_OBJ_COMPRESS_ZLIB) {
         zlib_p = GRN_TRUE;
       }
-#endif /* NO_ZLIB */
+#endif /* WITH_ZLIB */
 #ifdef WITH_LZO
       if (flags & GRN_OBJ_COMPRESS_LZO) {
         lzo_p = GRN_TRUE;
@@ -5648,7 +5648,7 @@ grn_obj_get_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *valueb
           "failed to open value buffer for GRN_INFO_ZLIB_SUPPORT");
       goto exit;
     }
-#ifndef NO_ZLIB
+#ifdef WITH_ZLIB
     GRN_BOOL_PUT(ctx, valuebuf, GRN_TRUE);
 #else
     GRN_BOOL_PUT(ctx, valuebuf, GRN_FALSE);

@@ -761,9 +761,8 @@ AC_ARG_WITH(zlib,
     [use zlib for data compression. [default=no]])],
   [with_zlib="$withval"],
   [with_zlib="no"])
-if test "x$with_zlib" = "xno"; then
-  AC_DEFINE(NO_ZLIB, [1], [without zlib])
-else
+if test "x$with_zlib" = "xyes"; then
+  AC_DEFINE(WITH_ZLIB, [1], [with zlib])
   AC_CHECK_LIB(z, compress, [ZLIB_LIBS="-lz"], [AC_MSG_ERROR("No libz found")])
 fi
 
