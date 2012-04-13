@@ -29,7 +29,7 @@ groonga_LDADD =					\
 	$(LIBEDIT_LIBS)				\
 	$(MESSAGE_PACK_LIBS)
 
-grnslap_SOURCES = grnslap.c
+include grnslap_sources.am
 nodist_EXTRA_grnslap_SOURCES = $(NONEXISTENT_CXX_SOURCE)
 grnslap_LDADD =					\
 	$(top_builddir)/lib/libgroonga.la	\

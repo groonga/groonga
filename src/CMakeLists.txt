@@ -16,6 +16,9 @@
 include(${CMAKE_SOURCE_DIR}/build/cmake_modules/ReadFileList.cmake)
 
 read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/groonga_sources.am GROONGA_SOURCES)
-
 add_executable(groonga ${GROONGA_SOURCES})
 target_link_libraries(groonga ${CMAKE_BINARY_DIR}/lib/libgroonga.so)
+
+read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/grnslap_sources.am GRNSLAP_SOURCES)
+add_executable(grnslap ${GRNSLAP_SOURCES})
+target_link_libraries(grnslap ${CMAKE_BINARY_DIR}/lib/libgroonga.so)
