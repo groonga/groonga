@@ -417,7 +417,7 @@ normalize_euc(grn_ctx *ctx, grn_str *nstr)
   return GRN_SUCCESS;
 }
 
-#ifndef NO_NFKC
+#ifdef WITH_NFKC
 uint_least8_t grn_nfkc_ctype(const unsigned char *str);
 const char *grn_nfkc_map1(const unsigned char *str);
 const char *grn_nfkc_map2(const unsigned char *prefix, const unsigned char *suffix);
@@ -541,7 +541,7 @@ normalize_utf8(grn_ctx *ctx, grn_str *nstr)
   nstr->norm_blen = (size_t)(d - (unsigned char *)nstr->norm);
   return GRN_SUCCESS;
 }
-#endif /* NO_NFKC */
+#endif /* WITH_NFKC */
 
 inline static grn_rc
 normalize_sjis(grn_ctx *ctx, grn_str *nstr)
@@ -1227,11 +1227,11 @@ grn_str_open_(grn_ctx *ctx, const char *str, unsigned int str_len, int flags, gr
     rc = normalize_euc(ctx, nstr);
     break;
   case GRN_ENC_UTF8 :
-#ifdef NO_NFKC
-    rc = normalize_none(ctx, nstr);
-#else /* NO_NFKC */
+#ifdef WITH_NFKC
     rc = normalize_utf8(ctx, nstr);
-#endif /* NO_NFKC */
+#else /* WITH_NFKC */
+    rc = normalize_none(ctx, nstr);
+#endif /* WITH_NFKC */
     break;
   case GRN_ENC_SJIS :
     rc = normalize_sjis(ctx, nstr);

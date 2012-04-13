@@ -420,8 +420,8 @@ AC_ARG_ENABLE(nfkc,
   [AS_HELP_STRING([--enable-nfkc],
     [use nfkc based utf8 normalization. [default=yes]])],,
   [enable_nfkc="yes"])
-if test "x$enable_nfkc" != "xyes"; then
-  AC_DEFINE(NO_NFKC, [1], [compile without nfkc.c])
+if test "x$enable_nfkc" = "xyes"; then
+  AC_DEFINE(WITH_NFKC, [1], [compile with nfkc.c])
 fi
 
 # coverage
