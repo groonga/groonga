@@ -31,15 +31,7 @@ static grn_hash *grn_plugins = NULL;
 
 #define PATHLEN(filename) (strlen(filename) + 1)
 
-#ifdef WIN32
-#  define grn_dl_open(filename)      LoadLibrary(filename)
-#  define grn_dl_open_error_label()  "LoadLibrary"
-#  define grn_dl_close(dl)           (FreeLibrary(dl) != 0)
-#  define grn_dl_close_error_label() "FreeLibrary"
-#  define grn_dl_sym(dl, symbol)     ((void *)GetProcAddress(dl, symbol))
-#  define grn_dl_sym_error_label()   "GetProcAddress"
-#  define grn_dl_clear_error()
-#else
+#ifdef HAVE_DLFCN_H
 #  include <dlfcn.h>
 #  define grn_dl_open(filename)      dlopen(filename, RTLD_LAZY | RTLD_LOCAL)
 #  define grn_dl_open_error_label()  dlerror()
@@ -48,6 +40,14 @@ static grn_hash *grn_plugins = NULL;
 #  define grn_dl_sym(dl, symbol)     dlsym(dl, symbol)
 #  define grn_dl_sym_error_label()   dlerror()
 #  define grn_dl_clear_error()       dlerror()
+#else
+#  define grn_dl_open(filename)      LoadLibrary(filename)
+#  define grn_dl_open_error_label()  "LoadLibrary"
+#  define grn_dl_close(dl)           (FreeLibrary(dl) != 0)
+#  define grn_dl_close_error_label() "FreeLibrary"
+#  define grn_dl_sym(dl, symbol)     ((void *)GetProcAddress(dl, symbol))
+#  define grn_dl_sym_error_label()   "GetProcAddress"
+#  define grn_dl_clear_error()
 #endif
 
 grn_id
