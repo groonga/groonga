@@ -358,7 +358,7 @@ if test "x$enable_map_hugetlb" != "xno"; then
        [MAP_HUGETLB;]
      )],
     [
-     AC_DEFINE(GROONGA_USE_MAP_HUGETLB, [1], [use MAP_HUGETLB])
+     AC_DEFINE(USE_MAP_HUGETLB, [1], [use MAP_HUGETLB])
      AC_MSG_RESULT(yes)
     ],
     [
