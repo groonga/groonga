@@ -40,6 +40,7 @@ include_directories(
   )
 
 add_subdirectory(lib)
+add_subdirectory(src)
 
 macro(ac_check_headers header)
   string(REGEX REPLACE "[/.]" "_" output_variable_name ${header})

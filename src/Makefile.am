@@ -21,7 +21,7 @@ DEFAULT_INCLUDES =				\
 	-I$(top_srcdir)/include			\
 	$(GROONGA_INCLUDEDIR)
 
-groonga_SOURCES = groonga.c
+include groonga_sources.am
 nodist_EXTRA_groonga_SOURCES = $(NONEXISTENT_CXX_SOURCE)
 groonga_CFLAGS = $(AM_CFLAGS) $(LIBEDIT_CFLAGS)
 groonga_LDADD =					\
