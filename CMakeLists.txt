@@ -65,6 +65,8 @@ endmacro()
 
 include(build/ac_macros/check_headers.m4)
 
+ac_check_lib(dl dlopen)
+
 if(UNIX)
   ac_check_headers(pthread.h)
   ac_check_lib(pthread pthread_mutex_init "" "")
