@@ -20,7 +20,9 @@ include_directories(
 include(${CMAKE_SOURCE_DIR}/build/cmake_modules/ReadFileList.cmake)
 
 read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/sources.am LIBGROONGA_SOURCES)
-read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/dat/sources.am LIBGRN_DAT_SOURCES)
+read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/dat/sources.am LIBGRNDAT_SOURCES)
+string(REGEX REPLACE "([^;]+)" "dat/\\1"
+  LIBGRNDAT_SOURCES "${LIBGRNDAT_SOURCES}")
 
 add_library(libgroonga SHARED ${LIBGROONGA_SOURCES} ${LIBGRNDAT_SOURCES})
 set_target_properties(libgroonga PROPERTIES OUTPUT_NAME "groonga")
