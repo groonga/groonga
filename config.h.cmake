@@ -117,6 +117,7 @@
 #cmakedefine HAVE_BACKTRACE
 #cmakedefine HAVE_CLOCK
 #cmakedefine HAVE_CLOCK_GETTIME
+#cmakedefine HAVE_CLOSE
 #cmakedefine HAVE_FPCLASSIFY
 #cmakedefine HAVE_GMTIME_R
 #cmakedefine HAVE_LOCALTIME_R
