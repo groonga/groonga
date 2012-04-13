@@ -402,12 +402,23 @@ typedef int grn_cond;
 
 #ifdef __GNUC__
 # if (defined(__i386__) || defined(__x86_64__)) /* ATOMIC ADD */
-#  define GRN_ATOMIC_ADD_EX(p,i,r) \
-  __asm__ __volatile__ ("lock; xaddl %0,%1" : "=r"(r), "=m"(*p) : "0"(i), "m" (*p))
-#  define GRN_BIT_SCAN_REV(v,r) \
-  __asm__ __volatile__ ("\tmovl %1,%%eax\n\tbsr %%eax,%0\n" : "=r"(r) : "r"(v) : "%eax")
-#  define GRN_BIT_SCAN_REV0(v,r) \
-  __asm__ __volatile__ ("\tmovl %1,%%eax\n\tbsr %%eax,%0\n\tcmovz %%eax,%0\n" : "=r"(r) : "r"(v) : "%eax")
+/*
+ * GRN_ATOMIC_ADD_EX() performs { r = *p; *p += i; } atomically.
+ */
+#  define GRN_ATOMIC_ADD_EX(p, i, r) \
+  __asm__ __volatile__ ("lock xaddl %0, %1" : "=r"(r), "+m"(*p) : "0"(i))
+/*
+ * GRN_BIT_SCAN_REV() finds the most significant 1 bit of `v'. Then, `r' is set
+ * to the index of the found bit. Note that `v' must not be 0.
+ */
+#  define GRN_BIT_SCAN_REV(v, r) \
+  __asm__ __volatile__ ("bsrl %1, %%eax; movl %%eax, %0" : "=r"(r) : "r"(v) : "%eax")
+/*
+ * GRN_BIT_SCAN_REV0() is similar to GRN_BIT_SCAN_REV() but if `v' is 0, `r' is
+ * set to 0.
+ */
+#define GRN_BIT_SCAN_REV0(v, r) \
+  __asm__ __volatile__ ("bsrl %1, %%eax; cmovzl %1, %%eax; movl %%eax, %0" : "=r"(r) : "r"(v) : "%eax", "cc")
 # elif (defined(__PPC__) || defined(__ppc__)) /* ATOMIC ADD */
 #  define GRN_ATOMIC_ADD_EX(p,i,r) \
   __asm__ __volatile__ ("\n1:\n\tlwarx %0, 0, %1\n\tadd %0, %0, %2\n\tstwcx. %0, 0, %1\n\tbne- 1b\n\tsub %0, %0, %2" : "=&r" (r) : "r" (p), "r" (i) : "cc", "memory")
