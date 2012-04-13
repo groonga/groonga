@@ -3430,11 +3430,11 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
         zlib_p = GRN_TRUE;
       }
 #endif /* NO_ZLIB */
-#ifndef NO_LZO
+#ifdef WITH_LZO
       if (flags & GRN_OBJ_COMPRESS_LZO) {
         lzo_p = GRN_TRUE;
       }
-#endif /* NO_LZO */
+#endif /* WITH_LZO */
       if (zlib_p || lzo_p) {
         int table_name_len;
         char table_name[GRN_TABLE_MAX_KEY_SIZE];
@@ -5660,11 +5660,11 @@ grn_obj_get_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *valueb
           "failed to open value buffer for GRN_INFO_LZO_SUPPORT");
       goto exit;
     }
-#ifndef NO_LZO
+#ifdef WITH_LZO
     GRN_BOOL_PUT(ctx, valuebuf, GRN_TRUE);
-#else
+#else /* WITH_LZO */
     GRN_BOOL_PUT(ctx, valuebuf, GRN_FALSE);
-#endif
+#endif /* WITH_LZO */
     break;
   default :
     if (!obj) {

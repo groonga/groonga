@@ -773,9 +773,8 @@ AC_ARG_WITH(lzo,
     [use lzo for data compression. [default=no]])],
   [with_lzo="$withval"],
   [with_lzo="no"])
-if test "x$with_lzo" = "xno"; then
-  AC_DEFINE(NO_LZO, [1], [without lzo])
-else
+if test "x$with_lzo" = "xyes"; then
+  AC_DEFINE(WITH_LZO, [1], [with lzo])
   AC_CHECK_LIB(lzo2, lzo1_compress, [LZO_LIBS="-llzo2"], [AC_MSG_ERROR("No liblzo2 found")])
 fi
 

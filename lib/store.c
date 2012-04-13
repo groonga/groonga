@@ -1092,7 +1092,7 @@ grn_ja_ref_zlib(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *v
 }
 #endif /* NO_ZLIB */
 
-#ifndef NO_LZO
+#ifdef WITH_LZO
 #include <lzo/lzo1x.h>
 
 static void *
@@ -1128,7 +1128,7 @@ grn_ja_ref_lzo(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *va
   *value_len = lout_len;
   return value;
 }
-#endif /* NO_LZO */
+#endif /* WITH_LZO */
 
 void *
 grn_ja_ref(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *value_len)
@@ -1138,11 +1138,11 @@ grn_ja_ref(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *value_
     return grn_ja_ref_zlib(ctx, ja, id, iw, value_len);
   }
 #endif /* NO_ZLIB */
-#ifndef NO_LZO
+#ifdef WITH_LZO
   if (ja->header->flags & GRN_OBJ_COMPRESS_LZO) {
     return grn_ja_ref_lzo(ctx, ja, id, iw, value_len);
   }
-#endif /* NO_LZO */
+#endif /* WITH_LZO */
   return grn_ja_ref_raw(ctx, ja, id, iw, value_len);
 }
 
@@ -1224,7 +1224,7 @@ grn_ja_put_zlib(grn_ctx *ctx, grn_ja *ja, grn_id id,
 }
 #endif /* NO_ZLIB */
 
-#ifndef NO_LZO
+#ifdef WITH_LZO
 inline static grn_rc
 grn_ja_put_lzo(grn_ctx *ctx, grn_ja *ja, grn_id id,
                void *value, uint32_t value_len, int flags, uint64_t *cas)
@@ -1251,7 +1251,7 @@ grn_ja_put_lzo(grn_ctx *ctx, grn_ja *ja, grn_id id,
   GRN_FREE(lvalue);
   return rc;
 }
-#endif /* NO_LZO */
+#endif /* WITH_LZO */
 
 grn_rc
 grn_ja_put(grn_ctx *ctx, grn_ja *ja, grn_id id, void *value, uint32_t value_len,
@@ -1262,11 +1262,11 @@ grn_ja_put(grn_ctx *ctx, grn_ja *ja, grn_id id, void *value, uint32_t value_len,
     return grn_ja_put_zlib(ctx, ja, id, value, value_len, flags, cas);
   }
 #endif /* NO_ZLIB */
-#ifndef NO_LZO
+#ifdef WITH_LZO
   if (ja->header->flags & GRN_OBJ_COMPRESS_LZO) {
     return grn_ja_put_lzo(ctx, ja, id, value, value_len, flags, cas);
   }
-#endif /* NO_LZO */
+#endif /* WITH_LZO */
   return grn_ja_put_raw(ctx, ja, id, value, value_len, flags, cas);
 }
 
