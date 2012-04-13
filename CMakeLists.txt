@@ -19,6 +19,7 @@ project(groonga)
 file(READ base_version GRN_VERSION)
 
 include(CheckIncludeFile)
+include(CheckLibraryExists)
 
 set(GRN_LOG_PATH
   "${CMAKE_INSTALL_PREFIX}/var/log/${CMAKE_PROJECT_NAME}/${CMAKE_PROJECT_NAME}.log"
@@ -55,10 +56,23 @@ macro(ac_check_headers header)
   check_include_file(${header} ${output_variable_name})
 endmacro()
 
+macro(ac_check_lib library function)
+  string(REGEX REPLACE "[/.]" "_" output_variable_name ${library})
+  string(TOUPPER "${output_variable_name}" output_variable_name)
+  set(output_variable_name "HAVE_${output_variable_name}")
+  check_library_exists(${library} ${function} "" ${output_variable_name})
+endmacro()
+
 include(build/ac_macros/check_headers.m4)
 
 if(UNIX)
   ac_check_headers(pthread.h)
+  ac_check_lib(pthread pthread_mutex_init "" "")
+  if(${HAVE_PTHREAD} EQUAL 1)
+    set(PTHREAD_LIBS "pthread")
+  else()
+    message(FATAL_ERROR "No libpthread found")
+  endif()
 endif()
 
 configure_file(config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
