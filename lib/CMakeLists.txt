@@ -26,4 +26,4 @@ string(REGEX REPLACE "([^;]+)" "dat/\\1"
 
 add_library(libgroonga SHARED ${LIBGROONGA_SOURCES} ${LIBGRNDAT_SOURCES})
 set_target_properties(libgroonga PROPERTIES OUTPUT_NAME "groonga")
-target_link_libraries(libgroonga ${PTHREAD_LIBS} ${ZLIB_LIBS} ${LZO_LIBS})
+target_link_libraries(libgroonga ${PTHREAD_LIBS} ${Z_LIBS} ${LZO_LIBS})
