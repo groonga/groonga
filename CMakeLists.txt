@@ -46,9 +46,6 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/include
   )
 
-add_subdirectory(lib)
-add_subdirectory(src)
-
 macro(ac_check_headers header)
   string(REGEX REPLACE "[/.]" "_" output_variable_name ${header})
   string(TOUPPER "${output_variable_name}" output_variable_name)
@@ -74,5 +71,8 @@ if(UNIX)
     message(FATAL_ERROR "No libpthread found")
   endif()
 endif()
+
+add_subdirectory(lib)
+add_subdirectory(src)
 
 configure_file(config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
