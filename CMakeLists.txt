@@ -74,6 +74,12 @@ include(build/ac_macros/check_headers.m4)
 include(build/ac_macros/check_functions.m4)
 
 ac_check_lib(dl dlopen)
+ac_check_lib(execinfo backtrace)
+if(HAVE_LIBEXECINFO)
+  set(HAVE_BACKTRACE TRUE)
+else()
+  ac_check_funcs(backtrace)
+endif()
 
 if(UNIX)
   ac_check_headers(pthread.h)
