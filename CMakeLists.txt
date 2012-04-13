@@ -19,6 +19,7 @@ project(groonga)
 file(READ base_version GRN_VERSION)
 
 include(CheckIncludeFile)
+include(CheckFunctionExists)
 include(CheckLibraryExists)
 
 set(GRN_LOG_PATH
@@ -53,6 +54,12 @@ macro(ac_check_headers header)
   check_include_file(${header} ${output_variable_name})
 endmacro()
 
+macro(ac_check_funcs function)
+  string(TOUPPER "${function}" output_variable_name)
+  set(output_variable_name "HAVE_${output_variable_name}")
+  check_function_exists(${function} ${output_variable_name})
+endmacro()
+
 macro(ac_check_lib library function)
   string(REGEX REPLACE "[/.]" "_" output_variable_base_name ${library})
   string(TOUPPER "${output_variable_base_name}" output_variable_base_name)
@@ -64,6 +71,7 @@ macro(ac_check_lib library function)
 endmacro()
 
 include(build/ac_macros/check_headers.m4)
+include(build/ac_macros/check_functions.m4)
 
 ac_check_lib(dl dlopen)
 
