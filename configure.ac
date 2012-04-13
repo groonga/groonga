@@ -324,14 +324,9 @@ AC_LINK_IFELSE(
 m4_include(build/ac_macros/check_headers.m4)
 m4_include(build/ac_macros/check_functions.m4)
 
-AC_CHECK_FUNCS(backtrace,
- [],
- [AC_SEARCH_LIBS(backtrace, execinfo,
-   [AC_DEFINE(HAVE_BACKTRACE,
-      [1],
-      [Define to 1 if you have the `backtrace' function.])
-   ])
- ])
+AC_SEARCH_LIBS(backtrace, execinfo,
+               [AC_DEFINE(HAVE_BACKTRACE, [1],
+                          [Define to 1 if you have the `backtrace' function.])])
 AC_SEARCH_LIBS(clock_gettime, rt,
                [AC_DEFINE(HAVE_CLOCK_GETTIME, [1], [use clock_gettime])])
 AC_SYS_LARGEFILE
