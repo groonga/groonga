@@ -22,3 +22,8 @@ target_link_libraries(groonga ${CMAKE_BINARY_DIR}/lib/libgroonga.so)
 read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/grnslap_sources.am GRNSLAP_SOURCES)
 add_executable(grnslap ${GRNSLAP_SOURCES})
 target_link_libraries(grnslap ${CMAKE_BINARY_DIR}/lib/libgroonga.so)
+
+read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/groonga_benchmark_sources.am
+  GROONGA_BENCHMARK_SOURCES)
+add_executable(groonga-benchmark ${GROONGA_BENCHMARK_SOURCES})
+target_link_libraries(groonga-benchmark ${CMAKE_BINARY_DIR}/lib/libgroonga.so)
