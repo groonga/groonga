@@ -1188,7 +1188,7 @@ proc_column_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
     grn_hash *cols;
     grn_obj *col;
     int column_list_size = -1;
-#ifdef HAVE_MESSAGE_PACK
+#ifdef WITH_MESSAGE_PACK
     column_list_size = 1; /* [header, (key), (COLUMNS)] */
     if ((col = grn_obj_column(ctx, table, KEY_NAME, sizeof(KEY_NAME)-1))) {
       column_list_size++;
@@ -1330,7 +1330,7 @@ proc_table_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
   grn_table_cursor *cur;
   int table_list_length = -1;
 
-#ifdef HAVE_MESSAGE_PACK
+#ifdef WITH_MESSAGE_PACK
   if (ctx->impl->output_type == GRN_CONTENT_MSGPACK) {
     table_list_length = 1; /* header */
     if ((cur = grn_table_cursor_open(ctx, ctx->impl->db, NULL, 0, NULL, 0, 0, -1, 0))) {

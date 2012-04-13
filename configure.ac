@@ -745,7 +745,7 @@ if test "x$enable_libedit" != "xno"; then
     ],
     [libedit_available=no])
   if test "x$libedit_available" = "xyes"; then
-    AC_DEFINE(HAVE_LIBEDIT, [1], [Use libedit with multibyte support.])
+    AC_DEFINE(WITH_LIBEDIT, [1], [Use libedit with multibyte support.])
   else
     if test "x$enable_editline" = "xyes"; then
       AC_MSG_ERROR("No libedit found")
@@ -884,7 +884,7 @@ if test "x$enable_zeromq" != "xno"; then
     ],
     [zeromq_available=no])
   if test "x$zeromq_available" = "xyes"; then
-    AC_DEFINE(HAVE_ZEROMQ, [1], [Define to 1 if ZeroMQ is available.])
+    AC_DEFINE(WITH_ZEROMQ, [1], [Define to 1 if ZeroMQ is available.])
   else
     if test "x$enable_zeromq" = "xyes"; then
       AC_MSG_ERROR("No ZeroMQ found")
@@ -930,7 +930,7 @@ if test "x$with_libevent" != "xno"; then
   LDFLAGS="$_SAVE_LDFLAGS"
   LIBS="$_SAVE_LIBS"
   if test "$libevent_available" = "yes"; then
-    AC_DEFINE(HAVE_LIBEVENT, [1], [Define to 1 if libevent is available.])
+    AC_DEFINE(WITH_LIBEVENT, [1], [Define to 1 if libevent is available.])
     LIBEVENT_CFLAGS="$libevent_cflags"
     LIBEVENT_LIBS="$libevent_ldflags"
   else
@@ -961,7 +961,7 @@ if test "x$with_message_pack" != "xno"; then
   LDFLAGS="$_SAVE_LDFLAGS"
   LIBS="$_SAVE_LIBS"
   if test "x$message_pack_available" = "xyes"; then
-    AC_DEFINE(HAVE_MESSAGE_PACK, [1], [Define to 1 if MessagePack is available.])
+    AC_DEFINE(WITH_MESSAGE_PACK, [1], [Define to 1 if MessagePack is available.])
     MESSAGE_PACK_CFLAGS="-I$with_message_pack/include"
     MESSAGE_PACK_LIBS="-L$with_message_pack/lib -lmsgpack"
   else

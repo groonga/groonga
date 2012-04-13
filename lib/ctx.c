@@ -391,7 +391,7 @@ grn_ctx_loader_clear(grn_ctx *ctx)
 
 #define IMPL_SIZE ((sizeof(struct _grn_ctx_impl) + (grn_pagesize - 1)) & ~(grn_pagesize - 1))
 
-#ifdef HAVE_MESSAGE_PACK
+#ifdef WITH_MESSAGE_PACK
 static inline int
 grn_msgpack_buffer_write(void *data, const char *buf, unsigned int len)
 {
@@ -479,7 +479,7 @@ grn_ctx_impl_init(grn_ctx *ctx)
   grn_loader_init(&ctx->impl->loader);
   ctx->impl->plugin_path = NULL;
 
-#ifdef HAVE_MESSAGE_PACK
+#ifdef WITH_MESSAGE_PACK
   msgpack_packer_init(&ctx->impl->msgpacker, ctx, grn_msgpack_buffer_write);
 #endif
 }
@@ -1080,7 +1080,7 @@ get_content_mime_type(grn_ctx *ctx, const char *p, const char *pe)
         ctx->impl->mime_type = "image/jpeg";
       }
       break;
-#ifdef HAVE_MESSAGE_PACK
+#ifdef WITH_MESSAGE_PACK
     case 'm' :
       if (p + 7 == pe && !memcmp(p, "msgpack", 7)) {
         ctx->impl->output_type = GRN_CONTENT_MSGPACK;

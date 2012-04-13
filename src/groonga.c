@@ -90,7 +90,7 @@ grn_rc_to_exit_code(grn_rc rc)
   }
 }
 
-#ifdef HAVE_LIBEDIT
+#ifdef WITH_LIBEDIT
 #include <locale.h>
 #include <histedit.h>
 static EditLine   *line_editor = NULL;
@@ -179,7 +179,7 @@ line_editor_fgets(grn_ctx *ctx, grn_obj *buf)
   }
   return rc;
 }
-#endif /* HAVE_LIBEDIT */
+#endif /* WITH_LIBEDIT */
 
 inline static grn_rc
 prompt(grn_ctx *ctx, grn_obj *buf)
@@ -188,7 +188,7 @@ prompt(grn_ctx *ctx, grn_obj *buf)
   grn_rc rc = GRN_SUCCESS;
   GRN_BULK_REWIND(buf);
   if (!batchmode) {
-#ifdef HAVE_LIBEDIT
+#ifdef WITH_LIBEDIT
     rc = line_editor_fgets(ctx, buf);
 #else
     fprintf(stderr, "> ");
@@ -478,7 +478,7 @@ transform_xml(grn_ctx *ctx, grn_obj *output, grn_obj *transformed)
   GRN_OBJ_FIN(ctx, &columns);
 }
 
-#ifdef HAVE_MESSAGE_PACK
+#ifdef WITH_MESSAGE_PACK
 typedef struct {
   grn_ctx *ctx;
   grn_obj *buffer;
@@ -607,7 +607,7 @@ print_return_code(grn_ctx *ctx, grn_rc rc, grn_obj *head, grn_obj *body, grn_obj
     }
     break;
   case GRN_CONTENT_MSGPACK:
-#ifdef HAVE_MESSAGE_PACK
+#ifdef WITH_MESSAGE_PACK
     {
       msgpack_writer_ctx head_writer_ctx;
       msgpack_packer header_packer;
@@ -2356,7 +2356,7 @@ show_version(void)
 #ifdef WITH_MECAB
   printf(",mecab");
 #endif
-#ifdef HAVE_MESSAGE_PACK
+#ifdef WITH_MESSAGE_PACK
   printf(",msgpack");
 #endif
 #ifndef NO_ZLIB
@@ -2776,7 +2776,7 @@ main(int argc, char **argv)
     cache_limit = default_cache_limit;
   }
 
-#ifdef HAVE_LIBEDIT
+#ifdef WITH_LIBEDIT
   if (!batchmode) {
     line_editor_init(argc, argv);
   }
@@ -2830,7 +2830,7 @@ main(int argc, char **argv)
     break;
   }
 
-#ifdef HAVE_LIBEDIT
+#ifdef WITH_LIBEDIT
   if (!batchmode) {
     line_editor_fin();
   }

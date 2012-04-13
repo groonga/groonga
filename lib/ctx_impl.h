@@ -26,7 +26,7 @@
 #include "com.h"
 #endif /* GRN_COM_H */
 
-#ifdef HAVE_MESSAGE_PACK
+#ifdef WITH_MESSAGE_PACK
 #include <msgpack.h>
 #endif
 
@@ -165,7 +165,7 @@ struct _grn_ctx_impl {
     uint64_t u64;
   } data;
 
-#ifdef HAVE_MESSAGE_PACK
+#ifdef WITH_MESSAGE_PACK
   msgpack_packer msgpacker;
 #endif
 };
