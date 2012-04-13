@@ -21,6 +21,7 @@ file(READ base_version GRN_VERSION)
 include(CheckIncludeFile)
 include(CheckFunctionExists)
 include(CheckLibraryExists)
+include(FindPkgConfig)
 
 set(GRN_LOG_PATH
   "${CMAKE_INSTALL_PREFIX}/var/log/${CMAKE_PROJECT_NAME}/${CMAKE_PROJECT_NAME}.log"
@@ -91,7 +92,7 @@ endif()
 
 option(WITH_ZLIB "use zlib for data compression." OFF)
 if(WITH_ZLIB)
-  AC_CHECK_LIB(z compress)
+  ac_check_lib(z compress)
   if (NOT HAVE_LIBZ)
     message(FATAL_ERROR "No libz found")
   endif()
@@ -99,10 +100,45 @@ endif()
 
 option(WITH_LZO "use LZO for data compression." OFF)
 if(WITH_LZO)
-  AC_CHECK_LIB(lzo2 lzo1_compress)
+  ac_check_lib(lzo2 lzo1_compress)
   if (NOT HAVE_LIBLZO2)
     message(FATAL_ERROR "No liblzo2 found")
   endif()
+endif()
+
+set(WITH_MECAB "auto"
+  CACHE STRING "use MeCab for morphological analysis")
+if(NOT ${WITH_MECAB} STREQUAL "no")
+  set(MECAB_CONFIG "mecab-config" CACHE FILEPATH "mecab-config path")
+  if(NOT CMAKE_CROSSCOMPILING)
+    find_program(MECAB_CONFIG "${MECAB_CONFIG}")
+  endif()
+  if(EXISTS "${MECAB_CONFIG}")
+    execute_process(COMMAND "${MECAB_CONFIG}" --inc-dir
+      OUTPUT_VARIABLE MECAB_CPPFLAGS)
+    execute_process(COMMAND "${MECAB_CONFIG}" --libs-only-L
+      OUTPUT_VARIABLE MECAB_LDFLAGS)
+    ac_check_lib(mecab mecab_new)
+  else()
+    set(WITH_MECAB FALSE)
+    if(${WITH_MECAB} STREQUAL "yes")
+      message(FATAL_ERROR "No MeCab found")
+    endif()
+  endif()
+else()
+  set(WITH_MECAB FALSE)
+endif()
+
+set(WITH_KYTEA "auto"
+  CACHE STRING "use KyTea for morphological analysis")
+if(NOT ${WITH_KYTEA} STREQUAL "no")
+  pkg_check_modules(KYTEA kytea)
+  set(WITH_KEYTEA KYTEA_FUOND)
+  if(NOT WITH_KEYTEA AND ${WITH_KYTEA} STREQUAL "yes")
+    message(FATAL_ERROR "No KyTea found")
+  endif()
+else()
+  set(WITH_KEYTEA FALSE)
 endif()
 
 set(LIBGROONGA ${CMAKE_BINARY_DIR}/lib/libgroonga.so)

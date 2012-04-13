@@ -13,5 +13,22 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-add_subdirectory(suggest)
-add_subdirectory(tokenizers)
+include(${CMAKE_SOURCE_DIR}/build/cmake_modules/ReadFileList.cmake)
+
+include_directories(
+  ${CMAKE_SOURCE_DIR}/lib
+  )
+
+if(WITH_MECAB)
+  read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/mecab_sources.am MECAB_SOURCES)
+  add_library(mecab MODULE ${MECAB_SOURCES})
+  set_target_properties(mecab PROPERTIES PREFIX "")
+  target_link_libraries(mecab ${LIBGROONGA})
+endif()
+
+if(WITH_KYTEA)
+  read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/kytea_sources.am KYTEA_SOURCES)
+  add_library(kytea MODULE ${KYTEA_SOURCES})
+  set_target_properties(kytea PROPERTIES PREFIX "")
+  target_link_libraries(kytea ${LIBGROONGA})
+endif()
