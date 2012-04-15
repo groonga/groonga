@@ -93,6 +93,8 @@ if(UNIX)
   endif()
 endif()
 
+option(WITH_NFKC "use NFKC based UTF8 normalization." ON)
+
 option(WITH_ZLIB "use zlib for data compression." OFF)
 if(WITH_ZLIB)
   ac_check_lib(z compress)
