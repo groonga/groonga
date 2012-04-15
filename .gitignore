@@ -33,6 +33,7 @@
 /groonga.spec
 /stamp-h1
 /CMakeCache.txt
+/install_manifest.txt
 /src/groonga
 /src/groonga-benchmark
 /src/grnslap

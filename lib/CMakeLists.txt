@@ -31,3 +31,5 @@ target_link_libraries(libgroonga
   ${Z_LIBS}
   ${LZO2_LIBS}
   ${DL_LIBS})
+
+install(TARGETS libgroonga DESTINATION "${CMAKE_INSTALL_PREFIX}/lib")

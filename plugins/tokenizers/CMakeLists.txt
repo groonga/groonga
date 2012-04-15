@@ -19,13 +19,17 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/lib
   )
 
+set(TOKENIZERS_DIR "${PLUGINS_DIR}/tokenizers")
 if(WITH_MECAB)
   read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/mecab_sources.am MECAB_SOURCES)
   include_directories(${MECAB_INCLUDE_DIRS})
   link_directories(${MECAB_LIBRARY_DIRS})
   add_library(mecab_tokenizer MODULE ${MECAB_SOURCES})
-  set_target_properties(mecab_tokenizer PROPERTIES PREFIX "")
+  set_target_properties(mecab_tokenizer PROPERTIES
+    PREFIX ""
+    OUTPUT_NAME "mecab")
   target_link_libraries(mecab_tokenizer ${LIBGROONGA} ${MECAB_LIBRARIES})
+  install(TARGETS mecab_tokenizer DESTINATION "${TOKENIZERS_DIR}")
 endif()
 
 if(WITH_KYTEA)
@@ -33,6 +37,9 @@ if(WITH_KYTEA)
   include_directories(${KYTEA_INCLUDE_DIRS})
   link_directories(${KYTEA_LIBRARY_DIRS})
   add_library(kytea_tokenizer MODULE ${KYTEA_SOURCES})
-  set_target_properties(kytea_tokenizer PROPERTIES PREFIX "")
+  set_target_properties(kytea_tokenizer PROPERTIES
+    PREFIX ""
+    OUTPUT_NAME "kytea")
   target_link_libraries(kytea_tokenizer ${LIBGROONGA} ${KYTEA_LIBRARIES})
+  install(TARGETS kytea_tokenizer DESTINATION "${TOKENIZERS_DIR}")
 endif()

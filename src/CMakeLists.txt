@@ -27,3 +27,6 @@ read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/groonga_benchmark_sources.am
   GROONGA_BENCHMARK_SOURCES)
 add_executable(groonga-benchmark ${GROONGA_BENCHMARK_SOURCES})
 target_link_libraries(groonga-benchmark ${LIBGROONGA})
+
+install(TARGETS groonga grnslap groonga-benchmark
+  DESTINATION "${CMAKE_INSTALL_PREFIX}/bin")
