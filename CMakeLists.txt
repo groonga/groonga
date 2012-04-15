@@ -38,6 +38,7 @@ set(GRN_DEFAULT_DOCUMENT_ROOT
 set(GRN_PLUGINS_DIR
   "${CMAKE_INSTALL_PREFIX}/lib/${CMAKE_PROJECT_NAME}/plugins"
   CACHE PATH "groonga plugins' directory")
+set(GRN_PLUGIN_SUFFIX "${CMAKE_SHARED_MODULE_SUFFIX}")
 
 add_definitions(
   -DHAVE_CONFIG_H
