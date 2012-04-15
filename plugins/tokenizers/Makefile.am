@@ -1,4 +1,4 @@
-INCLUDES = 			\
+INCLUDES =			\
 	-I$(top_builddir)	\
 	-I$(top_srcdir)/include	\
 	-I$(top_srcdir)/lib
