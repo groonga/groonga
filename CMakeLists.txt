@@ -111,19 +111,33 @@ set(WITH_MECAB "auto"
 if(NOT ${WITH_MECAB} STREQUAL "no")
   set(MECAB_CONFIG "mecab-config" CACHE FILEPATH "mecab-config path")
   if(NOT CMAKE_CROSSCOMPILING)
-    find_program(MECAB_CONFIG "${MECAB_CONFIG}")
+    find_program(MECAB_CONFIG_ABSOLUTE_PATH "${MECAB_CONFIG}")
   endif()
-  if(EXISTS "${MECAB_CONFIG}")
-    execute_process(COMMAND "${MECAB_CONFIG}" --inc-dir
-      OUTPUT_VARIABLE MECAB_CPPFLAGS)
-    execute_process(COMMAND "${MECAB_CONFIG}" --libs-only-L
-      OUTPUT_VARIABLE MECAB_LDFLAGS)
-    ac_check_lib(mecab mecab_new)
-  else()
-    set(WITH_MECAB FALSE)
-    if(${WITH_MECAB} STREQUAL "yes")
-      message(FATAL_ERROR "No MeCab found")
+  if(EXISTS "${MECAB_CONFIG_ABSOLUTE_PATH}")
+    execute_process(COMMAND "${MECAB_CONFIG_ABSOLUTE_PATH}" --inc-dir
+      OUTPUT_VARIABLE MECAB_INCLUDE_DIRS
+      OUTPUT_STRIP_TRAILING_WHITESPACE)
+    execute_process(COMMAND "${MECAB_CONFIG_ABSOLUTE_PATH}" --libs-only-L
+      OUTPUT_VARIABLE MECAB_LIBRARY_DIRS
+      OUTPUT_STRIP_TRAILING_WHITESPACE)
+    set(MECAB_LIBRARIES "mecab")
+    ac_check_lib(${MECAB_LIBRARIES} mecab_new)
+    if(HAVE_LIBMECAB)
+      set(WITH_MECAB TRUE)
+    else()
+      if(${WITH_MECAB} STREQUAL "yes")
+	message(FATAL_ERROR
+	  "No MeCab library found: "
+	  "include directories: <${MECAB_INCLUDE_DIRS}>, "
+	  "library directories: <${MECAB_LIBRARY_DIRS}>")
+      endif()
+      set(WITH_MECAB FALSE)
     endif()
+  else()
+    if(${WITH_MECAB} STREQUAL "yes")
+      message(FATAL_ERROR "No mecab-config found: <${MECAB_CONFIG}>")
+    endif()
+    set(WITH_MECAB FALSE)
   endif()
 else()
   set(WITH_MECAB FALSE)

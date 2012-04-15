@@ -21,9 +21,11 @@ include_directories(
 
 if(WITH_MECAB)
   read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/mecab_sources.am MECAB_SOURCES)
-  add_library(mecab MODULE ${MECAB_SOURCES})
-  set_target_properties(mecab PROPERTIES PREFIX "")
-  target_link_libraries(mecab ${LIBGROONGA})
+  include_directories(${MECAB_INCLUDE_DIRS})
+  link_directories(${MECAB_LIBRARY_DIRS})
+  add_library(mecab_tokenizer MODULE ${MECAB_SOURCES})
+  set_target_properties(mecab_tokenizer PROPERTIES PREFIX "")
+  target_link_libraries(mecab_tokenizer ${LIBGROONGA} ${MECAB_LIBRARIES})
 endif()
 
 if(WITH_KYTEA)
