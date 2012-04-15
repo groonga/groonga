@@ -2,6 +2,7 @@
 *.lo
 *.o
 *.so
+*.a
 *.exe
 *.pyc
 *.gcno

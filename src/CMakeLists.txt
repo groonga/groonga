@@ -15,6 +15,10 @@
 
 include(${CMAKE_SOURCE_DIR}/build/cmake_modules/ReadFileList.cmake)
 
+set(BIN_DIR "${CMAKE_INSTALL_PREFIX}/bin")
+
+add_subdirectory(suggest)
+
 read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/groonga_sources.am GROONGA_SOURCES)
 add_executable(groonga ${GROONGA_SOURCES})
 target_link_libraries(groonga ${LIBGROONGA})
@@ -29,4 +33,4 @@ add_executable(groonga-benchmark ${GROONGA_BENCHMARK_SOURCES})
 target_link_libraries(groonga-benchmark ${LIBGROONGA})
 
 install(TARGETS groonga grnslap groonga-benchmark
-  DESTINATION "${CMAKE_INSTALL_PREFIX}/bin")
+  DESTINATION ${BIN_DIR})

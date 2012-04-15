@@ -1,0 +1,2 @@
+groonga_suggest_learner_SOURCES =		\
+	groonga_suggest_learner.c

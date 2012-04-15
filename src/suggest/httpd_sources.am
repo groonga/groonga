@@ -1,0 +1,2 @@
+groonga_suggest_httpd_SOURCES =			\
+	groonga_suggest_httpd.c
