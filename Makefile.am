@@ -126,3 +126,7 @@ update-version:
 	  exit 1;				\
 	fi
 	@echo -n $(NEW_VERSION) > $(srcdir)/base_version
+
+update-files:
+	cd doc && $(MAKE) update-files
+	cd data/html && $(MAKE) update-files
