@@ -35,6 +35,8 @@ include(FindPkgConfig)
 set(BIN_DIR "${CMAKE_INSTALL_PREFIX}/bin")
 set(LIB_DIR "${CMAKE_INSTALL_PREFIX}/lib")
 set(INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include")
+set(CONFIG_DIR "${CMAKE_INSTALL_PREFIX}/etc")
+set(GRN_CONFIG_DIR "${CONFIG_DIR}/${CMAKE_PROJECT_NAME}")
 
 set(GRN_LOG_PATH
   "${CMAKE_INSTALL_PREFIX}/var/log/${CMAKE_PROJECT_NAME}/${CMAKE_PROJECT_NAME}.log"
@@ -251,6 +253,7 @@ set(LIBGROONGA ${CMAKE_BINARY_DIR}/lib/libgroonga.so)
 add_subdirectory(lib)
 add_subdirectory(src)
 add_subdirectory(plugins)
+add_subdirectory(data)
 
 configure_file(config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
