@@ -13,8 +13,6 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-include(${CMAKE_SOURCE_DIR}/build/cmake_modules/ReadFileList.cmake)
-
 read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/create_dataset_sources.am
   GROONGA_SUGGEST_CREATE_DATASET_SOURCES)
 add_executable(groonga-suggest-create-dataset

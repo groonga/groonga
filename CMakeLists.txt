@@ -31,6 +31,7 @@ include(CheckIncludeFile)
 include(CheckFunctionExists)
 include(CheckLibraryExists)
 include(FindPkgConfig)
+include(${CMAKE_SOURCE_DIR}/build/cmake_modules/ReadFileList.cmake)
 
 set(BIN_DIR "${CMAKE_INSTALL_PREFIX}/bin")
 set(LIB_DIR "${CMAKE_INSTALL_PREFIX}/lib")
