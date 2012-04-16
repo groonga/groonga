@@ -32,6 +32,10 @@ include(CheckFunctionExists)
 include(CheckLibraryExists)
 include(FindPkgConfig)
 
+set(BIN_DIR "${CMAKE_INSTALL_PREFIX}/bin")
+set(LIB_DIR "${CMAKE_INSTALL_PREFIX}/lib")
+set(INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include")
+
 set(GRN_LOG_PATH
   "${CMAKE_INSTALL_PREFIX}/var/log/${CMAKE_PROJECT_NAME}/${CMAKE_PROJECT_NAME}.log"
   CACHE FILEPATH "log file path")
@@ -45,7 +49,7 @@ set(GRN_DEFAULT_DOCUMENT_ROOT
   "${CMAKE_INSTALL_PREFIX}/share/${CMAKE_PROJECT_NAME}/${GRN_DEFAULT_RELATIVE_DOCUMENT_ROOT}"
   CACHE PATH "groonga default document root")
 set(GRN_PLUGINS_DIR
-  "${CMAKE_INSTALL_PREFIX}/lib/${CMAKE_PROJECT_NAME}/plugins"
+  "${LIB_DIR}/${CMAKE_PROJECT_NAME}/plugins"
   CACHE PATH "groonga plugins' directory")
 set(GRN_PLUGIN_SUFFIX "${CMAKE_SHARED_MODULE_SUFFIX}")
 
@@ -249,3 +253,16 @@ add_subdirectory(src)
 add_subdirectory(plugins)
 
 configure_file(config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
+
+set(prefix "${CMAKE_INSTALL_PREFIX}")
+set(exec_prefix "${prefix}")
+set(bindir "${BIN_DIR}")
+set(libdir "${LIB_DIR}")
+set(includedir "${INCLUDE_DIR}")
+set(datarootdir "${prefix}/share")
+set(datadir "${datarootdir}")
+set(GRN_EXPANDED_DEFAULT_DOCUMENT_ROOT "${GRN_DEFAULT_DOCUMENT_ROOT}")
+set(EXEEXT "${CMAKE_EXECUTABLE_SUFFIX}")
+configure_file(groonga.pc.in ${CMAKE_CURRENT_BINARY_DIR}/groonga.pc @ONLY)
+
+install(FILES groonga.pc DESTINATION "${LIB_DIR}/pkgconfig")
