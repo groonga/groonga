@@ -36,6 +36,8 @@ include(${CMAKE_SOURCE_DIR}/build/cmake_modules/ReadFileList.cmake)
 set(BIN_DIR "${CMAKE_INSTALL_PREFIX}/bin")
 set(LIB_DIR "${CMAKE_INSTALL_PREFIX}/lib")
 set(INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include")
+set(DATA_DIR "${CMAKE_INSTALL_PREFIX}/share")
+set(GRN_DATA_DIR "${DATA_DIR}/${CMAKE_PROJECT_NAME}")
 set(CONFIG_DIR "${CMAKE_INSTALL_PREFIX}/etc")
 set(GRN_CONFIG_DIR "${CONFIG_DIR}/${CMAKE_PROJECT_NAME}")
 
@@ -49,7 +51,7 @@ set(GRN_DEFAULT_RELATIVE_DOCUMENT_ROOT
   "html/admin"
   CACHE PATH "groonga default relative document root")
 set(GRN_DEFAULT_DOCUMENT_ROOT
-  "${CMAKE_INSTALL_PREFIX}/share/${CMAKE_PROJECT_NAME}/${GRN_DEFAULT_RELATIVE_DOCUMENT_ROOT}"
+  "${GRN_DATA_DIR}/${GRN_DEFAULT_RELATIVE_DOCUMENT_ROOT}"
   CACHE PATH "groonga default document root")
 set(GRN_PLUGINS_DIR
   "${LIB_DIR}/${CMAKE_PROJECT_NAME}/plugins"
@@ -263,7 +265,7 @@ set(exec_prefix "${prefix}")
 set(bindir "${BIN_DIR}")
 set(libdir "${LIB_DIR}")
 set(includedir "${INCLUDE_DIR}")
-set(datarootdir "${prefix}/share")
+set(datarootdir "${DATA_DIR}")
 set(datadir "${datarootdir}")
 set(GRN_EXPANDED_DEFAULT_DOCUMENT_ROOT "${GRN_DEFAULT_DOCUMENT_ROOT}")
 set(EXEEXT "${CMAKE_EXECUTABLE_SUFFIX}")

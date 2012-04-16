@@ -13,6 +13,4 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-add_subdirectory(html)
-
-install(FILES groonga.conf DESTINATION "${GRN_CONFIG_DIR}/")
+install(DIRECTORY admin DESTINATION "${GRN_DATA_DIR}/html")
