@@ -24,7 +24,6 @@
 
 #include "../lib/grn-assertions.h"
 
-void test_nil_column_reference_value(void);
 void test_output_columns_with_space(void);
 void test_vector_geo_point(void);
 void test_vector_geo_point_with_query(void);
@@ -100,28 +99,6 @@ cut_teardown(void)
   }
 
   remove_tmp_directory();
-}
-
-void
-test_nil_column_reference_value(void)
-{
-  const gchar *actual;
-
-  assert_send_commands("table_create Sites TABLE_PAT_KEY ShortText Int32\n"
-                       "column_create Sites link COLUMN_SCALAR Sites\n"
-                       "load --table Sites\n"
-                       "[\n"
-                       "[\"_key\",\"_value\"],\n"
-                       "[\"groonga.org\",0],\n"
-                       "[\"razil.jp\",0]\n"
-                       "]");
-  actual = send_command("select Sites");
-  cut_assert_equal_string("[[[2],"
-                          "[[\"_id\",\"UInt32\"],"
-                           "[\"_key\",\"ShortText\"],"
-                           "[\"link\",\"Sites\"]],"
-                          "[1,\"groonga.org\",\"\"],"
-                          "[2,\"razil.jp\",\"\"]]]", actual);
 }
 
 void

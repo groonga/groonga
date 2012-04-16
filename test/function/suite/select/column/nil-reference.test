@@ -1,0 +1,11 @@
+table_create Sites TABLE_PAT_KEY ShortText
+column_create Sites link COLUMN_SCALAR Sites
+
+load --table Sites
+[
+["_key"],
+["groonga.org"],
+["razil.jp"]
+]
+
+select Sites
