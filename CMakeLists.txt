@@ -16,7 +16,16 @@
 cmake_minimum_required(VERSION 2.6)
 project(groonga)
 
-file(READ base_version GRN_VERSION)
+file(READ "${CMAKE_SOURCE_DIR}/base_version" VERSION)
+if(EXISTS "${CMAKE_SOURCE_DIR}/version.sh")
+  file(READ "${CMAKE_SOURCE_DIR}/version.sh" GRN_VERSION)
+else()
+  if(NOT EXISTS "${CMAKE_BINARY_DIR}/version.sh")
+    execute_process(COMMAND "${CMAKE_SOURCE_DIR}/version-gen.sh")
+  endif()
+  file(READ "${CMAKE_BINARY_DIR}/version.sh" GRN_VERSION)
+endif()
+string(REGEX REPLACE "(^.*=|\n)" "" GRN_VERSION "${GRN_VERSION}")
 
 include(CheckIncludeFile)
 include(CheckFunctionExists)

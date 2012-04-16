@@ -6,13 +6,13 @@
 #define HOST_CPU             "${CMAKE_HOST_SYSTEM_PROCESSOR}"
 #define HOST_OS              "${CMAKE_HOST_SYSTEM_NAME}"
 
-#define VERSION              "${GRN_VERSION}"
+#define VERSION              "${VERSION}"
 #define PACKAGE              "${PROJECT_NAME}"
 #define PACKAGE_NAME         "${PROJECT_NAME}"
-#define PACKAGE_STRING       "${PROJECT_NAME} ${GRN_VERSION}"
-#define PACKAGE_TARNAME      "${PACKAGE_TARNAME}"
+#define PACKAGE_STRING       "${PROJECT_NAME} ${VERSION}"
+#define PACKAGE_TARNAME      "${PROJECT_NAME}"
 #define PACKAGE_URL          "${PACKAGE_URL}"
-#define PACKAGE_VERSION      "${GRN_VERSION}"
+#define PACKAGE_VERSION      "${VERSION}"
 
 /* groonga related constants */
 #define GRN_CONFIG_PATH      "${GRN_CONFIG_PATH}"
