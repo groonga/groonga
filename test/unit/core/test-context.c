@@ -134,7 +134,7 @@ test_support_zlib(void)
   support_p = GRN_BOOL_VALUE(&grn_support_p);
   GRN_OBJ_FIN(context, &grn_support_p);
 
-#ifndef NO_ZLIB
+#ifdef WITH_ZLIB
   cut_assert_true(support_p);
 #else
   cut_assert_false(support_p);
@@ -153,7 +153,7 @@ test_support_lzo(void)
   support_p = GRN_BOOL_VALUE(&grn_support_p);
   GRN_OBJ_FIN(context, &grn_support_p);
 
-#ifndef NO_LZO
+#ifdef WITH_LZO
   cut_assert_true(support_p);
 #else
   cut_assert_false(support_p);
