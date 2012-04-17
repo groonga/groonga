@@ -22,6 +22,9 @@ libgroonga_la_LIBADD =				\
 	dat/libgrndat.la			\
 	$(MESSAGE_PACK_LIBS)
 
-EXTRA_DIST = ecmascript.c ecmascript.h ecmascript.y
+EXTRA_DIST =					\
+	ecmascript.c				\
+	ecmascript.h				\
+	ecmascript.y
 
 CLEANFILES = *.gcno *.gcda
