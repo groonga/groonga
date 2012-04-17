@@ -1,5 +1,5 @@
 AC_PREREQ(2.59)
-m4_define([groonga_version], [m4_include(base_version)])
+m4_define([groonga_version], m4_include(base_version))
 AC_INIT([groonga], groonga_version, [groonga@razil.jp])
 AM_CONFIG_HEADER(config.h)
 
