@@ -8,3 +8,6 @@ SUBDIRS =			\
 pkgsysconfdir = $(sysconfdir)/$(PACKAGE)
 dist_pkgsysconf_DATA =		\
 	groonga.conf
+
+EXTRA_DIST =					\
+	CMakeLists.txt
