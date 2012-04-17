@@ -195,6 +195,8 @@ fi
 
 AC_CONFIG_FILES([
   Makefile
+  build/Makefile
+  build/cmake_modules/Makefile
   src/Makefile
   src/suggest/Makefile
   lib/Makefile

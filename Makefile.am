@@ -5,6 +5,7 @@ LOCALES = ja
 ACLOCAL_AMFLAGS = $$ACLOCAL_ARGS -I .
 AUTOMAKE_OPTIONS = 1.9.6
 SUBDIRS =					\
+	build					\
 	include					\
 	lib					\
 	plugins					\
