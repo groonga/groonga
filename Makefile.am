@@ -21,7 +21,8 @@ EXTRA_DIST =					\
 	bindings				\
 	version-gen.sh				\
 	base_version				\
-	CMakeLists.txt
+	CMakeLists.txt				\
+	config.h.cmake
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = groonga.pc
