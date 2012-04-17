@@ -5,6 +5,9 @@ NONEXISTENT_CXX_SOURCE = nonexistent.cpp
 bin_PROGRAMS = groonga groonga-benchmark
 noinst_PROGRAMS = grnslap
 
+EXTRA_DIST =					\
+	CMakeLists.txt
+
 AM_CFLAGS =					\
 	$(NO_STRICT_ALIASING_CFLAGS)		\
 	$(COVERAGE_CFLAGS)			\

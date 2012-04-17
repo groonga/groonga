@@ -15,6 +15,9 @@ endif
 
 endif
 
+EXTRA_DIST =					\
+	CMakeLists.txt
+
 AM_CFLAGS =					\
 	$(NO_STRICT_ALIASING_CFLAGS)		\
 	$(COVERAGE_CFLAGS)			\

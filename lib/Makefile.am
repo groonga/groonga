@@ -25,6 +25,7 @@ libgroonga_la_LIBADD =				\
 EXTRA_DIST =					\
 	ecmascript.c				\
 	ecmascript.h				\
-	ecmascript.y
+	ecmascript.y				\
+	CMakeLists.txt
 
 CLEANFILES = *.gcno *.gcda
