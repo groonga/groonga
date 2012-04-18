@@ -987,21 +987,21 @@ document_available=no
 document_buildable=no
 have_built_document=no
 if test x"$enable_document" != x"no"; then
-  AC_PATH_PROG(HG, hg, [])
-  if test -n "$HG"; then
+  if test -f "$srcdir/doc/build-stamp"; then
     document_available=yes
-    document_buildable=yes
-  else
-    if test -f "$srcdir/doc/build-stamp"; then
+    have_built_document=yes
+  if
+
+  if test x"$enable_document" = x"yes"; then
+    AC_PATH_PROG(HG, hg, [])
+    if test -n "$HG"; then
       document_available=yes
-      have_built_document=yes
+      document_buildable=yes
     else
-      if test x"$enable_document" = x"yes"; then
-	AC_MSG_ERROR("No hg found")
-      fi
+      AC_MSG_ERROR("No hg found")
     fi
+    AC_SUBST(HG)
   fi
-  AC_SUBST(HG)
 fi
 
 AM_CONDITIONAL([WITH_HG], [test -n "${HG}"])
