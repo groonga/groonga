@@ -1,0 +1,120 @@
+table_create Shops TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Shops location COLUMN_SCALAR WGS84GeoPoint
+[[0,0.0,0.0],true]
+table_create Locations TABLE_PAT_KEY WGS84GeoPoint
+[[0,0.0,0.0],true]
+column_create Locations shop COLUMN_INDEX Shops location
+[[0,0.0,0.0],true]
+load --table Shops
+[
+{"_key": "たかね", "location": "128514964x502419287"}
+]
+[[0,0.0,0.0],1]
+select Shops --filter 'geo_in_circle(location, "128514964x502419287", 1)'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "location",
+          "WGS84GeoPoint"
+        ]
+      ],
+      [
+        1,
+        "たかね",
+        "128514964x502419287"
+      ]
+    ]
+  ]
+]
+load --table Shops
+[
+{"_key": "たかね", "location": null}
+]
+[[0,0.0,0.0],1]
+select Shops --filter 'geo_in_circle(location, "128514964x502419287", 1)'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        0
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "location",
+          "WGS84GeoPoint"
+        ]
+      ]
+    ]
+  ]
+]
+load --table Shops
+[
+{"_key": "たかね", "location": "128514964x502419287"}
+]
+[[0,0.0,0.0],1]
+select Shops --filter 'geo_in_circle(location, "128514964x502419287", 1)'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "location",
+          "WGS84GeoPoint"
+        ]
+      ],
+      [
+        1,
+        "たかね",
+        "128514964x502419287"
+      ]
+    ]
+  ]
+]

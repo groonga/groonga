@@ -1,0 +1,26 @@
+table_create Shops TABLE_HASH_KEY ShortText
+column_create Shops location COLUMN_SCALAR WGS84GeoPoint
+
+table_create Locations TABLE_PAT_KEY WGS84GeoPoint
+column_create Locations shop COLUMN_INDEX Shops location
+
+load --table Shops
+[
+{"_key": "たかね", "location": "128514964x502419287"}
+]
+
+select Shops --filter 'geo_in_circle(location, "128514964x502419287", 1)'
+
+load --table Shops
+[
+{"_key": "たかね", "location": null}
+]
+
+select Shops --filter 'geo_in_circle(location, "128514964x502419287", 1)'
+
+load --table Shops
+[
+{"_key": "たかね", "location": "128514964x502419287"}
+]
+
+select Shops --filter 'geo_in_circle(location, "128514964x502419287", 1)'

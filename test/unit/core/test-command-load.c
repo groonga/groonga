@@ -313,50 +313,6 @@ test_null(gconstpointer data)
                           send_command("select Students"));
 }
 
-void
-test_index_geo_point(void)
-{
-  const gchar *query =
-    "select Shops "
-    "--filter 'geo_in_circle(location, \"128514964x502419287\", 1)'";
-  const gchar *hit_result =
-    "[[[1],"
-    "[[\"_id\",\"UInt32\"],"
-    "[\"_key\",\"ShortText\"],"
-    "[\"location\",\"WGS84GeoPoint\"]],"
-    "[1,\"たかね\",\"128514964x502419287\"]]]";
-  const gchar *no_hit_result =
-    "[[[0],"
-    "[[\"_id\",\"UInt32\"],"
-    "[\"_key\",\"ShortText\"],"
-    "[\"location\",\"WGS84GeoPoint\"]]]]";
-  const gchar *load_takane =
-    "load --table Shops\n"
-    "[{\"_key\": \"たかね\", \"location\": \"128514964x502419287\"}]";
-  const gchar *load_takane_with_empty_location =
-    "load --table Shops\n"
-    "[{\"_key\": \"たかね\", \"location\": null}]";
-
-  assert_send_command("table_create Shops TABLE_HASH_KEY ShortText");
-  assert_send_command("column_create Shops location COLUMN_SCALAR WGS84GeoPoint");
-  assert_send_command("table_create Locations TABLE_PAT_KEY WGS84GeoPoint");
-  assert_send_command("column_create Locations shop COLUMN_INDEX Shops location");
-
-  cut_assert_equal_string("1",
-                          send_command(load_takane));
-  cut_assert_equal_string(hit_result,
-                          send_command(query));
-
-  cut_assert_equal_string("1",
-                          send_command(load_takane_with_empty_location));
-  cut_assert_equal_string(no_hit_result,
-                          send_command(query));
-
-  cut_assert_equal_string("1",
-                          send_command(load_takane));
-  cut_assert_equal_string(hit_result,
-                          send_command(query));
-}
 
 void
 test_nonexistent_columns(void)
