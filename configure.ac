@@ -990,7 +990,7 @@ if test x"$enable_document" != x"no"; then
   if test -f "$srcdir/doc/build-stamp"; then
     document_available=yes
     have_built_document=yes
-  if
+  fi
 
   if test x"$enable_document" = x"yes"; then
     AC_PATH_PROG(HG, hg, [])
