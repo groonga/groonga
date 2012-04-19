@@ -24,7 +24,6 @@
 
 #include "../lib/grn-assertions.h"
 
-void test_vector_geo_point_with_query(void);
 void test_unmatched_output_columns(void);
 void test_vector_int32(void);
 void test_vector_text(void);
@@ -99,30 +98,6 @@ cut_teardown(void)
   remove_tmp_directory();
 }
 
-void
-test_vector_geo_point_with_query(void)
-{
-  assert_send_command("table_create Shops TABLE_HASH_KEY ShortText");
-  assert_send_command("column_create Shops places COLUMN_VECTOR WGS84GeoPoint");
-  assert_send_command("load "
-                      "'["
-                      "[\"_key\",\"places\"],"
-                      "[\"daruma\","
-                      "[\"130094061x505025099\",\"130185500x505009000\"]]"
-                      "]' "
-                      "Shops");
-  cut_assert_equal_string("[["
-                          "[1],"
-                          "["
-                          "[\"_id\",\"UInt32\"],"
-                          "[\"_key\",\"ShortText\"],"
-                          "[\"places\",\"WGS84GeoPoint\"]"
-                          "],"
-                          "[1,\"daruma\","
-                          "[\"130094061x505025099\",\"130185500x505009000\"]]"
-                          "]]",
-                          send_command("select Shops --query _key:daruma"));
-}
 
 void
 test_unmatched_output_columns(void)
