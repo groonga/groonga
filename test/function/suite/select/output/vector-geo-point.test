@@ -1,0 +1,10 @@
+table_create Shops TABLE_HASH_KEY ShortText
+column_create Shops places COLUMN_VECTOR WGS84GeoPoint
+
+load --table Shops
+[
+["_key","places"],
+["daruma",["130094061x505025099","130185500x505009000"]]
+]
+
+select Shops
