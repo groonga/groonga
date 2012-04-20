@@ -43,8 +43,6 @@ void data_each(void);
 void test_each(gconstpointer data);
 void test_vector_reference_column(void);
 void test_invalid_int32_value(void);
-void data_valid_geo_point_valid(void);
-void test_valid_geo_point_value(gconstpointer data);
 void data_invalid_geo_point_valid(void);
 void test_invalid_geo_point_value(gconstpointer data);
 
@@ -563,44 +561,6 @@ test_invalid_int32_value(void)
     send_command("select Users"));
 }
 
-void
-data_valid_geo_point_value(void)
-{
-#define ADD_DATUM(label, location)                                      \
-  gcut_add_datum(label " (" location ")",                               \
-                 "location", G_TYPE_STRING, location,                   \
-                 NULL)
-
-  ADD_DATUM("too large latitude", "324000000x502419287");
-  ADD_DATUM("too small latitude", "-324000000x502419287");
-  ADD_DATUM("too large longitude", "128514964x648000000");
-  ADD_DATUM("too small longitude", "128514964x-648000000");
-
-#undef ADD_DATUM
-}
-
-void
-test_valid_geo_point_value(gconstpointer data)
-{
-  assert_send_command("table_create Shops TABLE_HASH_KEY ShortText");
-  assert_send_command("column_create Shops location COLUMN_SCALAR WGS84GeoPoint");
-  cut_assert_equal_string(
-    "1",
-    send_command(
-      cut_take_printf("load --table Shops\n"
-                      "[\n"
-                      "{\"_key\": \"たかね\", \"location\": \"%s\"}\n"
-                      "]\n",
-                      gcut_data_get_string(data, "location"))));
-  cut_assert_equal_string(
-    cut_take_printf("[[[1],"
-                    "[[\"_id\",\"UInt32\"],"
-                    "[\"_key\",\"ShortText\"],"
-                    "[\"location\",\"WGS84GeoPoint\"]],"
-                    "[1,\"たかね\",\"%s\"]]]",
-                    gcut_data_get_string(data, "location")),
-    send_command("select Shops"));
-}
 
 void
 data_invalid_geo_point_value(void)
