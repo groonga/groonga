@@ -21,8 +21,6 @@
 
 #include "../lib/grn-assertions.h"
 
-void data_default(void);
-void test_default(gconstpointer data);
 void data_rectangle(void);
 void test_rectangle(gconstpointer data);
 void data_sphere(void);
