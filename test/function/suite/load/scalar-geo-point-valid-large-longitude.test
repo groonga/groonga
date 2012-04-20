@@ -1,0 +1,9 @@
+table_create Shops TABLE_HASH_KEY ShortText
+column_create Shops location COLUMN_SCALAR WGS84GeoPoint
+
+load --table Shops
+[
+{"_key": "たかね", "location": "128514964x648000000"}
+]
+
+select Shops
