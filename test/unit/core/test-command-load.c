@@ -457,65 +457,6 @@ test_invalid_table_name(void)
     "]");
 }
 
-void
-data_each(void)
-{
-#define ADD_DATUM(label, load_values_format)                            \
-  gcut_add_datum(label,                                                 \
-                 "load-values-format", G_TYPE_STRING, load_values_format, \
-                 NULL)
-
-  ADD_DATUM("brace",
-            "{\"_key\": \"alice\", \"location\": \"%s\"},"
-            "{\"_key\": \"bob\", \"location\": \"%s\"}");
-
-  ADD_DATUM("bracket",
-            "[\"_key\", \"location\"],"
-            "[\"alice\", \"%s\"],"
-            "[\"bob\", \"%s\"]");
-
-#undef ADD_DATUM
-}
-
-void
-test_each(gconstpointer data)
-{
-  gdouble tokyo_tocho_latitude = 35.689444;
-  gdouble tokyo_tocho_longitude = 139.691667;
-  gdouble yurakucho_latitude = 35.67487;
-  gdouble yurakucho_longitude = 139.76352;
-  gdouble asagaya_latitude = 35.70452;
-  gdouble asagaya_longitude = 139.6351;
-
-  assert_send_command("table_create Users TABLE_HASH_KEY ShortText");
-  assert_send_command("column_create Users location "
-                      "COLUMN_SCALAR WGS84GeoPoint");
-  assert_send_command("column_create Users distance_from_tokyo_tocho "
-                      "COLUMN_SCALAR UInt32");
-  cut_assert_equal_string(
-    "2",
-    send_command(
-      cut_take_printf(
-        "load "
-        "--table Users "
-        "--each 'distance_from_tokyo_tocho = geo_distance(location, \"%s\")' "
-        "--values '[%s]'",
-        grn_test_location_string(tokyo_tocho_latitude, tokyo_tocho_longitude),
-        cut_take_printf(gcut_data_get_string(data, "load-values-format"),
-                        grn_test_location_string(yurakucho_latitude,
-                                                 yurakucho_longitude),
-                        grn_test_location_string(asagaya_latitude,
-                                                 asagaya_longitude)))));
-  cut_assert_equal_string(
-    "[[[2],"
-     "[[\"_id\",\"UInt32\"],"
-      "[\"_key\",\"ShortText\"],"
-      "[\"distance_from_tokyo_tocho\",\"UInt32\"],"
-      "[\"location\",\"WGS84GeoPoint\"]],"
-     "[1,\"alice\",6674,\"128429532x503148672\"],"
-     "[2,\"bob\",5364,\"128536272x502686360\"]]]",
-    send_command("select Users"));
-}
 
 void
 test_vector_reference_column(void)
