@@ -94,52 +94,6 @@ cut_teardown(void)
   remove_tmp_directory();
 }
 
-void
-data_default(void)
-{
-#define ADD_DATA(label, use_index)                              \
-  gcut_add_datum(label,                                         \
-                 "use-index", G_TYPE_BOOLEAN, use_index,        \
-                 NULL)
-
-  ADD_DATA("use index", TRUE);
-  ADD_DATA("no index", FALSE);
-
-#undef ADD_DATA
-}
-
-void
-test_default(gconstpointer data)
-{
-  gdouble yurakucho_latitude = 35.67487;
-  gdouble yurakucho_longitude = 139.76352;
-  gint distance = 3 * 1000;
-
-  cut_assert_equal_string(
-    "[[[7],"
-    "[[\"name\",\"ShortText\"],[\"_score\",\"Int32\"],"
-    "[\"location\",\"WGS84GeoPoint\"]],"
-    "[\"柳屋 たい焼き\",-2147483648,\"128467228x503222332\"],"
-    "[\"銀座 かずや\",280743810,\"128424629x503139222\"],"
-    "[\"たい焼き鉄次 大丸東京店\",810303031,\"128451283x503166852\"],"
-    "[\"たいやき神田達磨 八重洲店\",970517026,\"128453260x503174156\"],"
-    "[\"にしみや 甘味処\",1056698886,\"128418570x503188661\"],"
-    "[\"築地 さのきや\",1186376492,\"128397312x503174596\"],"
-    "[\"しげ田\",1530425643,\"128421454x503208983\"]"
-    "]]",
-    send_command(
-      cut_take_printf(
-        "select Shops "
-        "--sortby '+_score, +name' "
-        "--output_columns 'name, _score, location' "
-        "--filter 'geo_in_circle(location, \"%s\", %d)%s' "
-        "--scorer "
-          "'_score = geo_distance(location, \"%s\") * 1000 * 1000'",
-        grn_test_location_string(yurakucho_latitude, yurakucho_longitude),
-        distance,
-        gcut_data_get_boolean(data, "use-index") ? "" : " > 0",
-        grn_test_location_string(yurakucho_latitude, yurakucho_longitude))));
-}
 
 void
 data_rectangle(void)
