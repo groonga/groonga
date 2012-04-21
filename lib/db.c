@@ -8732,7 +8732,7 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
       case GRN_TABLE_PAT_KEY :
       case GRN_TABLE_DAT_KEY :
         {
-          grn_obj *v, *key_value = 0;
+          grn_obj *v, *key_value = NULL;
           for (v = value; v + 1 < ve; v = values_next(ctx, v)) {
             char *column_name = GRN_TEXT_VALUE(v);
             unsigned int column_name_size = GRN_TEXT_LEN(v);
