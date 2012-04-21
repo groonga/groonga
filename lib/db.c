@@ -8732,20 +8732,21 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
       case GRN_TABLE_PAT_KEY :
       case GRN_TABLE_DAT_KEY :
         {
-          grn_obj *v, *key_value = NULL;
+          grn_obj *v, *key_column_name = NULL;
           for (v = value; v + 1 < ve; v = values_next(ctx, v)) {
             char *column_name = GRN_TEXT_VALUE(v);
             unsigned int column_name_size = GRN_TEXT_LEN(v);
             if (v->header.domain == GRN_DB_TEXT &&
                 (name_equal(column_name, column_name_size, KEY_NAME) ||
                  name_equal(column_name, column_name_size, ID_NAME))) {
-              if (key_value) {
+              if (key_column_name) {
                 GRN_LOG(ctx, GRN_LOG_ERROR, "duplicated key columns: %.*s and %.*s",
-                        GRN_TEXT_LEN(key_value), GRN_TEXT_VALUE(key_value),
+                        GRN_TEXT_LEN(key_column_name),
+                        GRN_TEXT_VALUE(key_column_name),
                         column_name_size, column_name);
                 return;
               }
-              key_value = value;
+              key_column_name = value;
               v++;
               id = loader_add(ctx, v);
             } else {
