@@ -8714,9 +8714,46 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
 }
 
 static void
+report_set_column_value_failure(grn_ctx *ctx,
+                                grn_obj *key,
+                                const char *column_name,
+                                unsigned int column_name_size,
+                                grn_obj *column_value)
+{
+  grn_obj key_inspected, column_value_inspected;
+  unsigned int value_size;
+  unsigned int max_value_size = GRN_CTX_MSGSIZE / 2;
+
+  GRN_TEXT_INIT(&key_inspected, 0);
+  GRN_TEXT_INIT(&column_value_inspected, 0);
+  grn_inspect(ctx, &key_inspected, key);
+  grn_inspect(ctx, &column_value_inspected, column_value);
+  value_size = GRN_TEXT_LEN(&column_value_inspected);
+  if (value_size > max_value_size) {
+    grn_bulk_truncate(ctx, &column_value_inspected, max_value_size);
+    GRN_TEXT_PUTS(ctx, &column_value_inspected, "...(");
+    grn_text_lltoa(ctx, &column_value_inspected, value_size);
+    GRN_TEXT_PUTS(ctx, &column_value_inspected, ")");
+  }
+  GRN_LOG(ctx, GRN_LOG_ERROR,
+          "[table][load] failed to set column value: %s: "
+          "key: <%.*s>, column: <%.*s>, value: <%.*s>",
+          ctx->errbuf,
+          GRN_TEXT_LEN(&key_inspected),
+          GRN_TEXT_VALUE(&key_inspected),
+          column_name_size,
+          column_name,
+          GRN_TEXT_LEN(&column_value_inspected),
+          GRN_TEXT_VALUE(&column_value_inspected));
+  GRN_OBJ_FIN(ctx, &key_inspected);
+  GRN_OBJ_FIN(ctx, &column_value_inspected);
+}
+
+static void
 brace_close(grn_ctx *ctx, grn_loader *loader)
 {
   uint32_t begin;
+  grn_obj *key_value = NULL;
   grn_obj *value, *ve;
   grn_id id = GRN_ID_NIL;
   GRN_UINT32_POP(&loader->level, begin);
@@ -8748,7 +8785,9 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
               }
               key_column_name = value;
               v++;
-              id = loader_add(ctx, v);
+              key_value = v;
+              grn_p(ctx, key_value);
+              id = loader_add(ctx, key_value);
             } else {
               v = values_next(ctx, v);
             }
@@ -8791,7 +8830,12 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
             } else if (value->header.domain == OPEN_BRACE) {
               /* todo */
             } else {
-              grn_obj_set_value(ctx, col, id, value, GRN_OBJ_SET);
+              grn_rc rc;
+              rc = grn_obj_set_value(ctx, col, id, value, GRN_OBJ_SET);
+              if (rc != GRN_SUCCESS) {
+                report_set_column_value_failure(ctx, key_value,
+                                                name, name_size, value);
+              }
             }
             grn_obj_unlink(ctx, col);
           } else {
