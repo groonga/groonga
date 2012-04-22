@@ -8786,7 +8786,6 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
               key_column_name = value;
               v++;
               key_value = v;
-              grn_p(ctx, key_value);
               id = loader_add(ctx, key_value);
             } else {
               v = values_next(ctx, v);
