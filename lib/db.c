@@ -7512,7 +7512,7 @@ compare_value(grn_ctx *ctx, sort_entry *a, sort_entry *b,
   int i;
   uint8_t type;
   uint32_t as, bs;
-  const char *ap, *bp;
+  const unsigned char *ap, *bp;
   for (i = 0; i < n_keys; i++, keys++) {
     if (i) {
       if (keys->flags & GRN_TABLE_SORT_DESC) {
@@ -7686,7 +7686,7 @@ compare_cursor(grn_ctx *ctx, grn_table_cursor *a, grn_table_cursor *b, int n_key
   int i;
   uint8_t type;
   uint32_t as, bs, cs;
-  const char *ap, *bp, *cp;
+  const unsigned char *ap, *bp, *cp;
   grn_table_sort_key *ak, *bk;
   for (i = 0; i < n_keys; i++) {
     ap = grn_table_cursor_get_sort_key_value_(ctx, a, i, &as, &ak);

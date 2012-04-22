@@ -1,0 +1,55 @@
+table_create Users TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Users name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"_key": "alice", "name": "Alice"},
+{"_key": "kou", "name": "kou"},
+{"_key": "mori", "name": "森"}
+]
+[[0,0.0,0.0],3]
+select Users --sortby name
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "name",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "alice",
+        "Alice"
+      ],
+      [
+        2,
+        "kou",
+        "kou"
+      ],
+      [
+        3,
+        "mori",
+        "森"
+      ]
+    ]
+  ]
+]
