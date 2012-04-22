@@ -8713,6 +8713,47 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
   }
 }
 
+static grn_bool
+is_text_object(grn_obj *object)
+{
+  if (!object) {
+    return GRN_FALSE;
+  }
+
+  if (object->header.type != GRN_BULK) {
+    return GRN_FALSE;
+  }
+
+  switch (object->header.domain) {
+  case GRN_DB_SHORT_TEXT:
+  case GRN_DB_TEXT:
+  case GRN_DB_LONG_TEXT:
+    return GRN_TRUE;
+  default:
+    return GRN_FALSE;
+  }
+}
+
+static void
+limited_size_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *object)
+{
+  unsigned int original_size = 0;
+  unsigned int max_size = GRN_CTX_MSGSIZE / 2;
+
+  if (object) {
+    original_size = GRN_BULK_VSIZE(object);
+  }
+
+  if (original_size > max_size && is_text_object(object)) {
+    grn_text_esc(ctx, buffer, GRN_TEXT_VALUE(object), max_size);
+    GRN_TEXT_PUTS(ctx, buffer, "...(");
+    grn_text_lltoa(ctx, buffer, original_size);
+    GRN_TEXT_PUTS(ctx, buffer, ")");
+  } else {
+    grn_inspect(ctx, buffer, object);
+  }
+}
+
 static void
 report_set_column_value_failure(grn_ctx *ctx,
                                 grn_obj *key,
@@ -8721,20 +8762,11 @@ report_set_column_value_failure(grn_ctx *ctx,
                                 grn_obj *column_value)
 {
   grn_obj key_inspected, column_value_inspected;
-  unsigned int value_size;
-  unsigned int max_value_size = GRN_CTX_MSGSIZE / 2;
 
   GRN_TEXT_INIT(&key_inspected, 0);
   GRN_TEXT_INIT(&column_value_inspected, 0);
-  grn_inspect(ctx, &key_inspected, key);
-  grn_inspect(ctx, &column_value_inspected, column_value);
-  value_size = GRN_TEXT_LEN(&column_value_inspected);
-  if (value_size > max_value_size) {
-    grn_bulk_truncate(ctx, &column_value_inspected, max_value_size);
-    GRN_TEXT_PUTS(ctx, &column_value_inspected, "...(");
-    grn_text_lltoa(ctx, &column_value_inspected, value_size);
-    GRN_TEXT_PUTS(ctx, &column_value_inspected, ")");
-  }
+  limited_size_inspect(ctx, &key_inspected, key);
+  limited_size_inspect(ctx, &column_value_inspected, column_value);
   GRN_LOG(ctx, GRN_LOG_ERROR,
           "[table][load] failed to set column value: %s: "
           "key: <%.*s>, column: <%.*s>, value: <%.*s>",
