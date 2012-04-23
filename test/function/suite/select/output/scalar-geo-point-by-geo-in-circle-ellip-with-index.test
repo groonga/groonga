@@ -1,61 +1,40 @@
 table_create Bigram TABLE_PAT_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenBigram
-[[0,0.0,0.0],true]
+
 table_create Locations TABLE_PAT_KEY WGS84GeoPoint
-[[0,0.0,0.0],true]
+
 table_create Tags TABLE_PAT_KEY ShortText
-[[0,0.0,0.0],true]
 column_create Tags name COLUMN_SCALAR ShortText
-[[0,0.0,0.0],true]
+
 table_create Categories TABLE_HASH_KEY ShortText
-[[0,0.0,0.0],true]
 column_create Categories name COLUMN_SCALAR ShortText
-[[0,0.0,0.0],true]
+
 table_create Areas TABLE_HASH_KEY ShortText
-[[0,0.0,0.0],true]
 column_create Areas name COLUMN_SCALAR ShortText
-[[0,0.0,0.0],true]
+
 table_create Shops TABLE_HASH_KEY ShortText
-[[0,0.0,0.0],true]
 column_create Shops name COLUMN_SCALAR ShortText
-[[0,0.0,0.0],true]
 column_create Shops tags COLUMN_VECTOR Tags
-[[0,0.0,0.0],true]
 column_create Shops location COLUMN_SCALAR WGS84GeoPoint
-[[0,0.0,0.0],true]
 column_create Shops location1 COLUMN_SCALAR WGS84GeoPoint
-[[0,0.0,0.0],true]
 column_create Shops location2 COLUMN_SCALAR WGS84GeoPoint
-[[0,0.0,0.0],true]
 column_create Shops location3 COLUMN_SCALAR WGS84GeoPoint
-[[0,0.0,0.0],true]
 column_create Shops latitude COLUMN_SCALAR Int32
-[[0,0.0,0.0],true]
 column_create Shops longitude COLUMN_SCALAR Int32
-[[0,0.0,0.0],true]
 column_create Shops latitude_in_degree COLUMN_SCALAR Float
-[[0,0.0,0.0],true]
 column_create Shops longitude_in_degree COLUMN_SCALAR Float
-[[0,0.0,0.0],true]
 column_create Shops categories COLUMN_VECTOR Categories
-[[0,0.0,0.0],true]
 column_create Shops area COLUMN_SCALAR Areas
-[[0,0.0,0.0],true]
+
 table_create Synonyms TABLE_HASH_KEY ShortText
-[[0,0.0,0.0],true]
 column_create Synonyms words COLUMN_SCALAR ShortText
-[[0,0.0,0.0],true]
+
 column_create Tags index COLUMN_INDEX Shops tags
-[[0,0.0,0.0],true]
 column_create Locations shop COLUMN_INDEX Shops location
-[[0,0.0,0.0],true]
 column_create Locations shop1 COLUMN_INDEX Shops location1
-[[0,0.0,0.0],true]
 column_create Locations shop2 COLUMN_INDEX Shops location2
-[[0,0.0,0.0],true]
 column_create Locations shop3 COLUMN_INDEX Shops location3
-[[0,0.0,0.0],true]
 column_create Bigram name COLUMN_INDEX|WITH_POSITION|WITH_SECTION Shops name
-[[0,0.0,0.0],true]
+
 load --table Areas
 [
 {"_key":"area0001",name:"東京都千代田区"},
@@ -82,14 +61,14 @@ load --table Areas
 {"_key":"area0022",name:"東京都足立区"},
 {"_key":"area0023",name:"東京都江戸川区"},
 ]
-[[0,0.0,0.0],23]
+
 load --table Categories
 [
 {"_key":"category0001",name:"和食"},
 {"_key":"category0002",name:"中華"},
 {"_key":"category0003",name:"おやつ"}
 ]
-[[0,0.0,0.0],3]
+
 load --table Shops
 [
 {"_key":"nezu-no-taiyaki",
@@ -398,74 +377,14 @@ load --table Shops
  "tags":["たいやき"],
  "area":"area0013"}
 ]
-[[0,0.0,0.0],36]
+
 load --table Synonyms
 [
 {"_key":"たいやき",
  "words":"(たいやき OR たい焼 OR 鯛焼き)"}
 ]
-[[0,0.0,0.0],1]
-select Shops --sortby '+_score, +name' --output_columns 'name, _score, location' --filter 'geo_in_circle(location, "128429532x503148672", 3000, "ellips")' --scorer '_score = geo_distance(location, "128429532x503148672", "ellips") * 1000 * 1000'
-[
-  [
-    0,
-    0.0,
-    0.0
-  ],
-  [
-    [
-      [
-        7
-      ],
-      [
-        [
-          "name",
-          "ShortText"
-        ],
-        [
-          "_score",
-          "Int32"
-        ],
-        [
-          "location",
-          "WGS84GeoPoint"
-        ]
-      ],
-      [
-        "柳屋 たい焼き",
-        -2147483648,
-        "128467228x503222332"
-      ],
-      [
-        "銀座 かずや",
-        281623827,
-        "128424629x503139222"
-      ],
-      [
-        "たい焼き鉄次 大丸東京店",
-        811420890,
-        "128451283x503166852"
-      ],
-      [
-        "たいやき神田達磨 八重洲店",
-        972359708,
-        "128453260x503174156"
-      ],
-      [
-        "にしみや 甘味処",
-        1060891168,
-        "128418570x503188661"
-      ],
-      [
-        "築地 さのきや",
-        1187926579,
-        "128397312x503174596"
-      ],
-      [
-        "しげ田",
-        1537012099,
-        "128421454x503208983"
-      ]
-    ]
-  ]
-]
+
+select Shops --sortby '+_score, +name' \
+--output_columns 'name, _score, location' \
+--filter 'geo_in_circle(location, "128429532x503148672", 3000, "ellip")' \
+--scorer '_score = geo_distance(location, "128429532x503148672", "ellip") * 1000 * 1000'
