@@ -21,8 +21,6 @@
 
 #include "../lib/grn-assertions.h"
 
-void data_ellipsoid(void);
-void test_ellipsoid(gconstpointer data);
 
 static gchar *tmp_directory;
 
@@ -89,58 +87,3 @@ cut_teardown(void)
 }
 
 
-
-
-void
-data_ellipsoid(void)
-{
-#define ADD_DATA(label, type, use_index)                        \
-  gcut_add_datum(label,                                         \
-                 "approximate-type", G_TYPE_STRING, type,       \
-                 "use-index", G_TYPE_BOOLEAN, use_index,        \
-                 NULL)
-
-  ADD_DATA("full - use index", "ellipsoid", TRUE);
-  ADD_DATA("full - no index", "ellipsoid", FALSE);
-  ADD_DATA("abbreviation - use index", "ellip", TRUE);
-  ADD_DATA("abbreviation - no index", "ellip", FALSE);
-
-#undef ADD_DATA
-}
-
-void
-test_ellipsoid(gconstpointer data)
-{
-  gdouble yurakucho_latitude = 35.67487;
-  gdouble yurakucho_longitude = 139.76352;
-  gint distance = 3 * 1000;
-  const gchar *approximate_type;
-
-  approximate_type = gcut_data_get_string(data, "approximate-type");
-  cut_assert_equal_string(
-    "[[[7],"
-    "[[\"name\",\"ShortText\"],[\"_score\",\"Int32\"],"
-    "[\"location\",\"WGS84GeoPoint\"]],"
-    "[\"柳屋 たい焼き\",-2147483648,\"128467228x503222332\"],"
-    "[\"銀座 かずや\",281623827,\"128424629x503139222\"],"
-    "[\"たい焼き鉄次 大丸東京店\",811420890,\"128451283x503166852\"],"
-    "[\"たいやき神田達磨 八重洲店\",972359708,\"128453260x503174156\"],"
-    "[\"にしみや 甘味処\",1060891168,\"128418570x503188661\"],"
-    "[\"築地 さのきや\",1187926579,\"128397312x503174596\"],"
-    "[\"しげ田\",1537012099,\"128421454x503208983\"]"
-    "]]",
-    send_command(
-      cut_take_printf(
-        "select Shops "
-        "--sortby '+_score, +name' "
-        "--output_columns 'name, _score, location' "
-        "--filter 'geo_in_circle(location, \"%s\", %d, \"%s\")%s' "
-        "--scorer "
-          "'_score = geo_distance(location, \"%s\", \"%s\") * 1000 * 1000'",
-        grn_test_location_string(yurakucho_latitude, yurakucho_longitude),
-        distance,
-        approximate_type,
-        gcut_data_get_boolean(data, "use-index") ? "" : " > 0",
-        grn_test_location_string(yurakucho_latitude, yurakucho_longitude),
-        approximate_type)));
-}
