@@ -942,6 +942,7 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
     case GRN_OP_TABLE_CREATE :
     case GRN_OP_EXPR_GET_VAR :
     case GRN_OP_MATCH :
+    case GRN_OP_SIMILAR :
     case GRN_OP_PREFIX :
     case GRN_OP_SUFFIX :
     case GRN_OP_NOT_EQUAL :
@@ -3579,6 +3580,7 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
   for (stat = SCAN_START, c = e->codes, ce = &e->codes[e->codes_curr]; c < ce; c++) {
     switch (c->op) {
     case GRN_OP_MATCH :
+    case GRN_OP_SIMILAR :
     case GRN_OP_PREFIX :
     case GRN_OP_SUFFIX :
     case GRN_OP_EQUAL :
@@ -3641,6 +3643,7 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
   for (i = 0, stat = SCAN_START, c = e->codes, ce = &e->codes[e->codes_curr]; c < ce; c++) {
     switch (c->op) {
     case GRN_OP_MATCH :
+    case GRN_OP_SIMILAR :
     case GRN_OP_PREFIX :
     case GRN_OP_SUFFIX :
     case GRN_OP_EQUAL :
@@ -4111,13 +4114,18 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
               }
               break;
             case GRN_OP_MATCH :
+            case GRN_OP_SIMILAR :
               {
                 grn_obj wv, **ip = &GRN_PTR_VALUE(&si->index);
                 int j = GRN_BULK_VSIZE(&si->index)/sizeof(grn_obj *);
                 int32_t *wp = &GRN_INT32_VALUE(&si->wv);
                 grn_search_optarg optarg;
                 GRN_INT32_INIT(&wv, GRN_OBJ_VECTOR);
-                optarg.mode = GRN_OP_EXACT;
+                if (si->op == GRN_OP_MATCH) {
+                  optarg.mode = GRN_OP_EXACT;
+                } else {
+                  optarg.mode = si->op;
+                }
                 optarg.similarity_threshold = 0;
                 optarg.max_interval = 0;
                 optarg.weight_vector = (int *)GRN_BULK_HEAD(&wv);

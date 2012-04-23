@@ -8083,6 +8083,7 @@ grn_column_index(grn_ctx *ctx, grn_obj *obj, grn_operator op,
     case GRN_OP_PREFIX :
     case GRN_OP_SUFFIX :
     case GRN_OP_MATCH :
+    case GRN_OP_SIMILAR :
       for (hooks = DB_OBJ(obj)->hooks[GRN_HOOK_SET]; hooks; hooks = hooks->next) {
         default_set_value_hook_data *data = (void *)NEXT_ADDR(hooks);
         grn_obj *target = grn_ctx_at(ctx, data->target);
@@ -8150,6 +8151,7 @@ grn_column_index(grn_ctx *ctx, grn_obj *obj, grn_operator op,
       }
       break;
     case GRN_OP_MATCH :
+    case GRN_OP_SIMILAR :
       {
         grn_accessor *a = (grn_accessor *)obj;
         if (a->action == GRN_ACCESSOR_GET_KEY) {
