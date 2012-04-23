@@ -1,0 +1,471 @@
+table_create Bigram TABLE_PAT_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenBigram
+[[0,0.0,0.0],true]
+table_create Locations TABLE_PAT_KEY WGS84GeoPoint
+[[0,0.0,0.0],true]
+table_create Tags TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Tags name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Categories TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Categories name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Areas TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Areas name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Shops TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Shops name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Shops tags COLUMN_VECTOR Tags
+[[0,0.0,0.0],true]
+column_create Shops location COLUMN_SCALAR WGS84GeoPoint
+[[0,0.0,0.0],true]
+column_create Shops location1 COLUMN_SCALAR WGS84GeoPoint
+[[0,0.0,0.0],true]
+column_create Shops location2 COLUMN_SCALAR WGS84GeoPoint
+[[0,0.0,0.0],true]
+column_create Shops location3 COLUMN_SCALAR WGS84GeoPoint
+[[0,0.0,0.0],true]
+column_create Shops latitude COLUMN_SCALAR Int32
+[[0,0.0,0.0],true]
+column_create Shops longitude COLUMN_SCALAR Int32
+[[0,0.0,0.0],true]
+column_create Shops latitude_in_degree COLUMN_SCALAR Float
+[[0,0.0,0.0],true]
+column_create Shops longitude_in_degree COLUMN_SCALAR Float
+[[0,0.0,0.0],true]
+column_create Shops categories COLUMN_VECTOR Categories
+[[0,0.0,0.0],true]
+column_create Shops area COLUMN_SCALAR Areas
+[[0,0.0,0.0],true]
+table_create Synonyms TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Synonyms words COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Tags index COLUMN_INDEX Shops tags
+[[0,0.0,0.0],true]
+column_create Locations shop COLUMN_INDEX Shops location
+[[0,0.0,0.0],true]
+column_create Locations shop1 COLUMN_INDEX Shops location1
+[[0,0.0,0.0],true]
+column_create Locations shop2 COLUMN_INDEX Shops location2
+[[0,0.0,0.0],true]
+column_create Locations shop3 COLUMN_INDEX Shops location3
+[[0,0.0,0.0],true]
+column_create Bigram name COLUMN_INDEX|WITH_POSITION|WITH_SECTION Shops name
+[[0,0.0,0.0],true]
+load --table Areas
+[
+{"_key":"area0001",name:"東京都千代田区"},
+{"_key":"area0002",name:"東京都中央区"},
+{"_key":"area0003",name:"東京都港区"},
+{"_key":"area0004",name:"東京都新宿区"},
+{"_key":"area0005",name:"東京都文京区"},
+{"_key":"area0006",name:"東京都台東区"},
+{"_key":"area0007",name:"東京都墨田区"},
+{"_key":"area0008",name:"東京都江東区"},
+{"_key":"area0009",name:"東京都品川区"},
+{"_key":"area0010",name:"東京都目黒区"},
+{"_key":"area0011",name:"東京都大田区"},
+{"_key":"area0012",name:"東京都世田谷区"},
+{"_key":"area0013",name:"東京都渋谷区"},
+{"_key":"area0014",name:"東京都中野区"},
+{"_key":"area0015",name:"東京都杉並区"},
+{"_key":"area0016",name:"東京都豊島区"},
+{"_key":"area0017",name:"東京都北区"},
+{"_key":"area0018",name:"東京都千代田区"},
+{"_key":"area0019",name:"東京都荒川区"},
+{"_key":"area0020",name:"東京都板橋区"},
+{"_key":"area0021",name:"東京都練馬区"},
+{"_key":"area0022",name:"東京都足立区"},
+{"_key":"area0023",name:"東京都江戸川区"},
+]
+[[0,0.0,0.0],23]
+load --table Categories
+[
+{"_key":"category0001",name:"和食"},
+{"_key":"category0002",name:"中華"},
+{"_key":"category0003",name:"おやつ"}
+]
+[[0,0.0,0.0],3]
+load --table Shops
+[
+{"_key":"nezu-no-taiyaki",
+ "name":"根津のたいやき",
+ "latitude":128592911,
+ "longitude":503145263,
+ "location":"128592911x503145263",
+ "latitude_in_degree":35.720253,
+ "longitude_in_degree":139.762573,
+ "tags":["たいやき","天然"],
+ "area":"area0005"},
+{"_key":"taiyaki-kataoka",
+ "name":"たい焼 カタオカ",
+ "latitude":128565076,
+ "longitude":502976128,
+ "location":"128565076x502976128",
+ "latitude_in_degree":35.712521,
+ "longitude_in_degree":139.715591,
+ "tags":["たいやき"]},
+{"_key":"soba-taiyaki-ku",
+ "name":"そばたいやき空",
+ "latitude":128461363,
+ "longitude":502772717,
+ "location":"128461363x502772717",
+ "latitude_in_degree":35.683712,
+ "longitude_in_degree":139.659088,
+ "tags":["たいやき"]},
+{"_key":"kuruma",
+ "name":"車",
+ "latitude":128597458,
+ "longitude":502942345,
+ "location":"128597458x502942345",
+ "latitude_in_degree":35.721516,
+ "longitude_in_degree":139.706207,
+ "tags":["たいやき"]},
+{"_key":"hirose-ya",
+ "name":"広瀬屋",
+ "latitude":128573438,
+ "longitude":502868189,
+ "location":"128573438x502868189",
+ "latitude_in_degree":35.714844,
+ "longitude_in_degree":139.685608,
+ "tags":["たいやき"]},
+{"_key":"sazare",
+ "name":"さざれ",
+ "latitude":128572751,
+ "longitude":502866155,
+ "location":"128572751x502866155",
+ "latitude_in_degree":35.714653,
+ "longitude_in_degree":139.685043,
+ "tags":["たいやき"]},
+{"_key":"omede-taiyaki",
+ "name":"おめで鯛焼き本舗錦糸町東急店",
+ "latitude":128521858,
+ "longitude":503341754,
+ "location":"128521858x503341754",
+ "latitude_in_degree":35.700516,
+ "longitude_in_degree":139.817154,
+ "tags":["たいやき"]},
+{"_key":"onaga-ya",
+ "name":"尾長屋 錦糸町店",
+ "latitude":128513714,
+ "longitude":503319780,
+ "location":"128513714x503319780",
+ "latitude_in_degree":35.698254,
+ "longitude_in_degree":139.811050,
+ "tags":["たいやき","白"]},
+{"_key":"shiro-ya",
+ "name":"たいやき工房白家 阿佐ヶ谷店",
+ "latitude":128539861,
+ "longitude":502699000,
+ "location":"128539861x502699000",
+ "latitude_in_degree":35.705517,
+ "longitude_in_degree":139.638611,
+ "tags":["たいやき","白"]},
+{"_key":"fuji-ya",
+ "name":"たいやき本舗 藤家 阿佐ヶ谷店",
+ "latitude":128534177,
+ "longitude":502693614,
+ "location":"128534177x502693614",
+ "latitude_in_degree":35.703938,
+ "longitude_in_degree":139.637115,
+ "tags":["たいやき","白"]},
+{"_key":"miyoshi",
+ "name":"みよし",
+ "latitude":128320340,
+ "longitude":502334363,
+ "location":"128320340x502334363",
+ "latitude_in_degree":35.644539,
+ "longitude_in_degree":139.537323,
+ "tags":["たいやき"]},
+{"_key":"juju-ya",
+ "name":"寿々屋 菓子",
+ "latitude":128264119,
+ "longitude":502904718,
+ "location":"128264119x502904718",
+ "latitude_in_degree":35.628922,
+ "longitude_in_degree":139.695755,
+ "tags":["たいやき"]},
+{"_key":"tatsumi-ya",
+ "name":"たい焼き \/ たつみや",
+ "latitude":128395804,
+ "longitude":502699165,
+ "location":"128395804x502699165",
+ "latitude_in_degree":35.665501,
+ "longitude_in_degree":139.638657,
+ "tags":["たいやき"]},
+{"_key":"tetsuji",
+ "name":"たい焼き鉄次 大丸東京店",
+ "latitude":128451283,
+ "longitude":503166852,
+ "location":"128451283x503166852",
+ "latitude_in_degree":35.680912,
+ "longitude_in_degree":139.768570,
+ "tags":["たいやき"],
+ "categories":["category0003",
+ "category0001"]},
+{"_key":"gazuma-ya",
+ "name":"吾妻屋",
+ "latitude":128522941,
+ "longitude":502731353,
+ "location":"128522941x502731353",
+ "latitude_in_degree":35.700817,
+ "longitude_in_degree":139.647598,
+ "tags":["たいやき"]},
+{"_key":"honma-mon",
+ "name":"ほんま門",
+ "latitude":128601850,
+ "longitude":502749263,
+ "location":"128601850x502749263",
+ "latitude_in_degree":35.722736,
+ "longitude_in_degree":139.652573,
+ "tags":["たこやき"],
+ "area":"area0014"},
+{"_key":"naniwa-ya",
+ "name":"浪花家",
+ "latitude":128628220,
+ "longitude":503266442,
+ "location":"128628220x503266442",
+ "latitude_in_degree":35.730061,
+ "longitude_in_degree":139.796234,
+ "tags":["たいやき","天然"]},
+{"_key":"kuro-dai",
+ "name":"代官山たい焼き黒鯛",
+ "latitude":128341242,
+ "longitude":502937402,
+ "location":"128341242x502937402",
+ "latitude_in_degree":35.650345,
+ "longitude_in_degree":139.704834,
+ "tags":["たいやき"]},
+{"_key":"daruma",
+ "name":"たいやき神田達磨 八重洲店",
+ "latitude":128453260,
+ "longitude":503174156,
+ "location":"128453260x503174156",
+ "location1":"35.68157x139.76587",
+ "location2":"35.68481x139.76681",
+ "location3":"35.68276x139.77411",
+ "latitude_in_degree":35.681461,
+ "longitude_in_degree":139.770599,
+ "tags":["たいやき"]},
+{"_key":"yanagi-ya",
+ "name":"柳屋 たい焼き",
+ "latitude":128467228,
+ "longitude":503222332,
+ "location":"128467228x503222332",
+ "latitude_in_degree":35.685341,
+ "longitude_in_degree":139.783981,
+ "tags":["たいやき","天然"],
+ "area":"area0002"},
+{"_key":"sharaku",
+ "name":"たい焼き写楽",
+ "latitude":128581088,
+ "longitude":503261446,
+ "location":"128581088x503261446",
+ "latitude_in_degree":35.716969,
+ "longitude_in_degree":139.794846,
+ "tags":["たいやき","天然"]},
+{"_key":"takane",
+ "name":"たかね 和菓子",
+ "latitude":128514964,
+ "longitude":502419287,
+ "location":"128514964x502419287",
+ "latitude_in_degree":35.698601,
+ "longitude_in_degree":139.560913,
+ "tags":["たいやき","天然","和菓子"]},
+{"_key":"chiyoda",
+ "name":"たい焼き ちよだ",
+ "latitude":128313364,
+ "longitude":502750141,
+ "location":"128313364x502750141",
+ "latitude_in_degree":35.642601,
+ "longitude_in_degree":139.652817,
+ "tags":["たいやき"]},
+{"_key":"da-ka-po",
+ "name":"ダ・カーポ",
+ "latitude":128258446,
+ "longitude":503018482,
+ "location":"128258446x503018482",
+ "latitude_in_degree":35.627346,
+ "longitude_in_degree":139.727356,
+ "tags":["たいやき","カレー"]},
+{"_key":"matsushima-ya",
+ "name":"松島屋",
+ "latitude":128306002,
+ "longitude":503054572,
+ "location":"128306002x503054572",
+ "latitude_in_degree":35.640556,
+ "longitude_in_degree":139.737381,
+ "tags":["和菓子"],
+ "categories":["和食"]},
+{"_key":"kazuya",
+ "name":"銀座 かずや",
+ "latitude":128424629,
+ "longitude":503139222,
+ "location":"128424629x503139222",
+ "latitude_in_degree":35.673508,
+ "longitude_in_degree":139.760895,
+ "tags":["和菓子"],
+ "categories":["和食"]},
+{"_key":"furuya-kogane-an",
+ "name":"ふるや古賀音庵 和菓子",
+ "latitude":128450171,
+ "longitude":502833856,
+ "location":"128450171x502833856",
+ "latitude_in_degree":35.680603,
+ "longitude_in_degree":139.676071,
+ "tags":["和菓子"],
+ "categories":["和食"]},
+{"_key":"hachi-no-ie",
+ "name":"蜂の家 自由が丘本店",
+ "latitude":128188876,
+ "longitude":502805182,
+ "location":"128188876x502805182",
+ "latitude_in_degree":35.608021,
+ "longitude_in_degree":139.668106,
+ "tags":["和菓子"],
+ "categories":["和食"]},
+{"_key":"azuki-chan",
+ "name":"薄皮たい焼き あづきちゃん",
+ "latitude":128309436,
+ "longitude":502823531,
+ "location":"128309436x502823531",
+ "latitude_in_degree":35.641510,
+ "longitude_in_degree":139.673203,
+ "tags":["たいやき"]},
+{"_key":"kuriko-an",
+ "name":"横浜 くりこ庵 浅草店",
+ "latitude":128563247,
+ "longitude":503268584,
+ "location":"128563247x503268584",
+ "location1":"35.71916x139.79849",
+ "latitude_in_degree":35.712013,
+ "longitude_in_degree":139.796829,
+ "tags":["たいやき"]},
+{"_key":"yume-no-aru-machi-no-taiyaki-ya-san",
+ "name":"夢ある街のたいやき屋さん戸越銀座店",
+ "latitude":128218316,
+ "longitude":502965086,
+ "location":"128218316x502965086",
+ "latitude_in_degree":35.616199,
+ "longitude_in_degree":139.712524,
+ "tags":["たいやき"]},
+{"_key":"naze-ya",
+ "name":"何故屋",
+ "latitude":128192540,
+ "longitude":502796999,
+ "location":"128192540x502796999",
+ "latitude_in_degree":35.609039,
+ "longitude_in_degree":139.665833,
+ "tags":["たいやき"]},
+{"_key":"sanoki-ya",
+ "name":"築地 さのきや",
+ "latitude":128397312,
+ "longitude":503174596,
+ "location":"128397312x503174596",
+ "latitude_in_degree":35.665920,
+ "longitude_in_degree":139.770721,
+ "tags":["たいやき","マグロ"],
+ "categories":"",
+ "area":"area0002"},
+{"_key":"shigeta",
+ "name":"しげ田",
+ "latitude":128421454,
+ "longitude":503208983,
+ "location":"128421454x503208983",
+ "latitude_in_degree":35.672626,
+ "longitude_in_degree":139.780273,
+ "tags":["たいやき","和菓子"],
+ "area":"area0002"},
+{"_key":"nishimi-ya",
+ "name":"にしみや 甘味処",
+ "latitude":128418570,
+ "longitude":503188661,
+ "location":"128418570x503188661",
+ "latitude_in_degree":35.671825,
+ "longitude_in_degree":139.774628,
+ "tags":["たいやき","おでん"]},
+{"_key":"hiiragi",
+ "name":"たいやきひいらぎ",
+ "latitude":128331724,
+ "longitude":502961461,
+ "location":"128331724x502961461",
+ "latitude_in_degree":35.647701,
+ "longitude_in_degree":139.711517,
+ "tags":["たいやき"],
+ "area":"area0013"}
+]
+[[0,0.0,0.0],36]
+load --table Synonyms
+[
+{"_key":"たいやき",
+ "words":"(たいやき OR たい焼 OR 鯛焼き)"}
+]
+[[0,0.0,0.0],1]
+select Shops --sortby '+_score, +name' --output_columns 'name, _score, location' --filter 'geo_in_circle(location, "128429532x503148672", 3000, "rectangle") > 0' --scorer '_score = geo_distance(location, "128429532x503148672", "rectangle") * 1000 * 1000'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        7
+      ],
+      [
+        [
+          "name",
+          "ShortText"
+        ],
+        [
+          "_score",
+          "Int32"
+        ],
+        [
+          "location",
+          "WGS84GeoPoint"
+        ]
+      ],
+      [
+        "柳屋 たい焼き",
+        -2147483648,
+        "128467228x503222332"
+      ],
+      [
+        "銀座 かずや",
+        280743810,
+        "128424629x503139222"
+      ],
+      [
+        "たい焼き鉄次 大丸東京店",
+        810303031,
+        "128451283x503166852"
+      ],
+      [
+        "たいやき神田達磨 八重洲店",
+        970517026,
+        "128453260x503174156"
+      ],
+      [
+        "にしみや 甘味処",
+        1056698886,
+        "128418570x503188661"
+      ],
+      [
+        "築地 さのきや",
+        1186376492,
+        "128397312x503174596"
+      ],
+      [
+        "しげ田",
+        1530425643,
+        "128421454x503208983"
+      ]
+    ]
+  ]
+]
