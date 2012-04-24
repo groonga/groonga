@@ -14,4 +14,4 @@ list_paths()
 
 find "admin" -type f | \
     sort | \
-    list_paths "nobase_html_files.am"
+    list_paths "nobase_dist_html_DATA"
