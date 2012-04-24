@@ -36,8 +36,8 @@ if [ ! -d "${security_list}" ]; then
 deb http://security.debian.org/ ${code_name}/updates main
 deb-src http://security.debian.org/ ${code_name}/updates main
 EOF
-		;;
 	    fi
+	    ;;
 	Ubuntu)
 	    cat <<EOF > "${security_list}"
 deb http://security.ubuntu.com/ubuntu ${code_name}-security main restricted
