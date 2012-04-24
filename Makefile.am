@@ -136,3 +136,4 @@ update-version:
 update-files:
 	cd doc && $(MAKE) update-files
 	cd data/html && $(MAKE) update-files
+	cd test/function && $(MAKE) update-files
