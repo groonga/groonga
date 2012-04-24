@@ -5,6 +5,55 @@
 News
 ====
 
+.. _release-2-0-2:
+
+Release 2.0.2 - 2012/04/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [pkg-config] Removed needless MessagePack dependency.
+* [rpm][fedora] Supported libedit. [#1325] [Suggested by IWAI, Masaharu]
+* [rpm] Supported zlib and LZO. [#1324] [Patch by IWAI, Masaharu]
+* [groonga] Improved daemoinzed timing. Groonga server daemonizes
+  after socket is listened. It means that groonga server is ready when
+  groonga server is daemonized. [#1326]
+* [admin] Supported suggest in groonga administration page.
+* [dump] Ignored MeCab tokenizer load error.
+* Supported CMake.
+* [load] Supported error report when a column value can't be set.
+* Supported similar search. ``select --filter "column *S 'TEXT'"``
+  is the similar search syntax. [#1342]
+
+Fixes
+^^^^^
+
+* [deb][rpm] Used --bind-address option instead of deprecated --address option.
+  [#1320] [Patch by IWAI, Masaharu]
+* [deb] Renamed groonga-server package's configuration file to
+  /etc/default/groonga-server from /etc/default/groonga.
+* [rpm][fedora] Fixed upgrade condition in %post server.
+  [GitHub#11] [Patch by Daiki Ueno]
+* [rpm] Removed needless change logs. [#1328] [Patch by IWAI, Masaharu]
+* [deb][rpm] Added missing curl dependency.
+  [GitHub#12] [Patch by IWAI, Masaharu]
+* [rpm] Removed needleess ruby package dependency.
+  [#1330] [Patch by IWAI, Masaharu]
+* [deb] Added missing default values to groonga-server's
+  configuration file.
+* Fixed a crash bug that is caused when searching with updaging very large
+  inverted index. [#1329]
+* Fixed a bug that strings are compared as characters instead of byte string.
+  [#1340] [Reported by Shinya Kawaji]
+
+Thanks
+^^^^^^
+
+* IWAI, Masaharu
+* Daiki Ueno
+* Shinya Kawaji
+
 .. _release-2-0-1:
 
 Release 2.0.1 - 2012/03/29
