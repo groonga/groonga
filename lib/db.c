@@ -8588,6 +8588,74 @@ name_equal(const char *p, unsigned int size, const char *name)
   return !memcmp(p + 1, name + 1, size - 1);
 }
 
+static grn_bool
+is_text_object(grn_obj *object)
+{
+  if (!object) {
+    return GRN_FALSE;
+  }
+
+  if (object->header.type != GRN_BULK) {
+    return GRN_FALSE;
+  }
+
+  switch (object->header.domain) {
+  case GRN_DB_SHORT_TEXT:
+  case GRN_DB_TEXT:
+  case GRN_DB_LONG_TEXT:
+    return GRN_TRUE;
+  default:
+    return GRN_FALSE;
+  }
+}
+
+static void
+limited_size_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *object)
+{
+  unsigned int original_size = 0;
+  unsigned int max_size = GRN_CTX_MSGSIZE / 2;
+
+  if (object) {
+    original_size = GRN_BULK_VSIZE(object);
+  }
+
+  if (original_size > max_size && is_text_object(object)) {
+    grn_text_esc(ctx, buffer, GRN_TEXT_VALUE(object), max_size);
+    GRN_TEXT_PUTS(ctx, buffer, "...(");
+    grn_text_lltoa(ctx, buffer, original_size);
+    GRN_TEXT_PUTS(ctx, buffer, ")");
+  } else {
+    grn_inspect(ctx, buffer, object);
+  }
+}
+
+static void
+report_set_column_value_failure(grn_ctx *ctx,
+                                grn_obj *key,
+                                const char *column_name,
+                                unsigned int column_name_size,
+                                grn_obj *column_value)
+{
+  grn_obj key_inspected, column_value_inspected;
+
+  GRN_TEXT_INIT(&key_inspected, 0);
+  GRN_TEXT_INIT(&column_value_inspected, 0);
+  limited_size_inspect(ctx, &key_inspected, key);
+  limited_size_inspect(ctx, &column_value_inspected, column_value);
+  GRN_LOG(ctx, GRN_LOG_ERROR,
+          "[table][load] failed to set column value: %s: "
+          "key: <%.*s>, column: <%.*s>, value: <%.*s>",
+          ctx->errbuf,
+          GRN_TEXT_LEN(&key_inspected),
+          GRN_TEXT_VALUE(&key_inspected),
+          column_name_size,
+          column_name,
+          GRN_TEXT_LEN(&column_value_inspected),
+          GRN_TEXT_VALUE(&column_value_inspected));
+  GRN_OBJ_FIN(ctx, &key_inspected);
+  GRN_OBJ_FIN(ctx, &column_value_inspected);
+}
+
 static void
 bracket_close(grn_ctx *ctx, grn_loader *loader)
 {
@@ -8713,74 +8781,6 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
     }
     loader->values_size = begin;
   }
-}
-
-static grn_bool
-is_text_object(grn_obj *object)
-{
-  if (!object) {
-    return GRN_FALSE;
-  }
-
-  if (object->header.type != GRN_BULK) {
-    return GRN_FALSE;
-  }
-
-  switch (object->header.domain) {
-  case GRN_DB_SHORT_TEXT:
-  case GRN_DB_TEXT:
-  case GRN_DB_LONG_TEXT:
-    return GRN_TRUE;
-  default:
-    return GRN_FALSE;
-  }
-}
-
-static void
-limited_size_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *object)
-{
-  unsigned int original_size = 0;
-  unsigned int max_size = GRN_CTX_MSGSIZE / 2;
-
-  if (object) {
-    original_size = GRN_BULK_VSIZE(object);
-  }
-
-  if (original_size > max_size && is_text_object(object)) {
-    grn_text_esc(ctx, buffer, GRN_TEXT_VALUE(object), max_size);
-    GRN_TEXT_PUTS(ctx, buffer, "...(");
-    grn_text_lltoa(ctx, buffer, original_size);
-    GRN_TEXT_PUTS(ctx, buffer, ")");
-  } else {
-    grn_inspect(ctx, buffer, object);
-  }
-}
-
-static void
-report_set_column_value_failure(grn_ctx *ctx,
-                                grn_obj *key,
-                                const char *column_name,
-                                unsigned int column_name_size,
-                                grn_obj *column_value)
-{
-  grn_obj key_inspected, column_value_inspected;
-
-  GRN_TEXT_INIT(&key_inspected, 0);
-  GRN_TEXT_INIT(&column_value_inspected, 0);
-  limited_size_inspect(ctx, &key_inspected, key);
-  limited_size_inspect(ctx, &column_value_inspected, column_value);
-  GRN_LOG(ctx, GRN_LOG_ERROR,
-          "[table][load] failed to set column value: %s: "
-          "key: <%.*s>, column: <%.*s>, value: <%.*s>",
-          ctx->errbuf,
-          GRN_TEXT_LEN(&key_inspected),
-          GRN_TEXT_VALUE(&key_inspected),
-          column_name_size,
-          column_name,
-          GRN_TEXT_LEN(&column_value_inspected),
-          GRN_TEXT_VALUE(&column_value_inspected));
-  GRN_OBJ_FIN(ctx, &key_inspected);
-  GRN_OBJ_FIN(ctx, &column_value_inspected);
 }
 
 static void
