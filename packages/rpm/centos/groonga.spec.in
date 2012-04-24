@@ -249,6 +249,9 @@ fi
 %config(noreplace) %{_sysconfdir}/munin/plugin-conf.d/*
 
 %changelog
+* Sun Apr 29 2012 Kouhei Sutou <kou@clear-code.com> - 2.0.2-0
+- new upstream release.
+
 * Fri Mar 30 2012 Kouhei Sutou <kou@clear-code.com> - 2.0.1-2
 - Use shutdown command for stop.
 
