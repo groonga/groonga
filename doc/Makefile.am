@@ -16,7 +16,7 @@ update-examples:
 files.am: update-files.sh
 	update-files
 
-update-files:
+update-files: $(BUILT_SOURCES)
 	cd locale/en/LC_MESSAGES && $(MAKE) gettext
 	cd locale/en && $(MAKE) clean html
 	cd $(srcdir); ./update-files.sh > files.am
