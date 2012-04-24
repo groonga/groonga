@@ -17,18 +17,38 @@ run()
     fi
 }
 
-distribution=debian
-lsb_release=/etc/lsb-release
-if [ -f $lsb_release ]; then
-    case $(grep "DISTRIB_ID=" $lsb_release) in
-	*Ubuntu*)
-	    distribution=ubuntu
+if [ ! -x /usr/bin/lsb_release ]; then
+    run apt-get update
+    run apt-get install -y lsb-release
+fi
+
+distribution=$(lsb_release --id --short)
+code_name=$(lsb_release --codename --short)
+
+security_list=/etc/apt/sources.list.d/security.list
+if [ ! -d "${security_list}" ]; then
+    case ${distribution} in
+	Debian)
+	    if [ "${code_name}" = "sid" ]; then
+		touch "${security_list}"
+	    else
+		cat <<EOF > "${security_list}"
+deb http://security.debian.org/ ${code_name}/updates main
+deb-src http://security.debian.org/ ${code_name}/updates main
+EOF
+		;;
+	    fi
+	Ubuntu)
+	    cat <<EOF > "${security_list}"
+deb http://security.ubuntu.com/ubuntu ${code_name}-security main restricted
+deb-src http://security.ubuntu.com/ubuntu ${code_name}-security main restricted
+EOF
 	    ;;
     esac
 fi
 
 sources_list=/etc/apt/sources.list
-if [ "$distribution" = "ubuntu" ] && \
+if [ "$distribution" = "Ubuntu" ] && \
     ! (grep '^deb' $sources_list | grep -q universe); then
     run sed -i'' -e 's/main$/main universe/g' $sources_list
 fi
