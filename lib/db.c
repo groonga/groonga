@@ -8661,6 +8661,7 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
 {
   grn_obj *value, *col, *ve;
   grn_id id = GRN_ID_NIL;
+  grn_obj *key_value = NULL;
   grn_obj **cols = (grn_obj **)GRN_BULK_HEAD(&loader->columns);
   uint32_t begin, ndata, ncols = GRN_BULK_VSIZE(&loader->columns) / sizeof(grn_obj *);
   GRN_UINT32_POP(&loader->level, begin);
@@ -8677,7 +8678,8 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
       case GRN_TABLE_PAT_KEY :
       case GRN_TABLE_DAT_KEY :
         if (loader->key_offset != -1 && ndata == ncols + 1) {
-          id = loader_add(ctx, value + loader->key_offset);
+          key_value = value + loader->key_offset;
+          id = loader_add(ctx, key_value);
         } else if (loader->key_offset == -1) {
           int i = 0;
           grn_obj *key_column_name = NULL;
@@ -8766,7 +8768,18 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
           } else if (value->header.domain == OPEN_BRACE) {
             /* todo */
           } else {
-            grn_obj_set_value(ctx, *cols, id, value, GRN_OBJ_SET);
+            grn_rc rc;
+            grn_obj *column = *cols;
+            rc = grn_obj_set_value(ctx, column, id, value, GRN_OBJ_SET);
+            if (rc != GRN_SUCCESS) {
+              char column_name[GRN_TABLE_MAX_KEY_SIZE];
+              unsigned int column_name_size;
+              column_name_size = grn_obj_name(ctx, column, column_name,
+                                              GRN_TABLE_MAX_KEY_SIZE);
+              report_set_column_value_failure(ctx, key_value,
+                                              column_name, column_name_size,
+                                              value);
+            }
           }
           value = values_next(ctx, value);
           cols++;
