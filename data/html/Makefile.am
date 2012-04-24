@@ -1,9 +1,9 @@
 htmldir = $(pkgdatadir)/html
 
-include html_files.am
+include files.am
 
 EXTRA_DIST =					\
 	CMakeLists.txt
 
 update-files:
-	cd $(srcdir); ./update-files.sh > html_files.am
+	cd $(srcdir); ./update-files.sh > files.am
