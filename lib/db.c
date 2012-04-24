@@ -8680,7 +8680,7 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
           id = loader_add(ctx, value + loader->key_offset);
         } else if (loader->key_offset == -1) {
           int i = 0;
-          grn_obj *key_value = NULL;
+          grn_obj *key_column_name = NULL;
           while (ndata--) {
             char *column_name = GRN_TEXT_VALUE(value);
             unsigned int column_name_size = GRN_TEXT_LEN(value);
@@ -8690,12 +8690,13 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
               if (loader->key_offset != -1) {
                 GRN_LOG(ctx, GRN_LOG_ERROR,
                         "duplicated key columns: <%.*s> at %d and <%.*s> at %i",
-                        GRN_TEXT_LEN(key_value), GRN_TEXT_VALUE(key_value),
+                        GRN_TEXT_LEN(key_column_name),
+                        GRN_TEXT_VALUE(key_column_name),
                         loader->key_offset,
                         column_name_size, column_name, i);
                 return;
               }
-              key_value = value;
+              key_column_name = value;
               loader->key_offset = i;
             } else {
               col = grn_obj_column(ctx, loader->table,
