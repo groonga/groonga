@@ -10,7 +10,7 @@ Homepage: http://groonga.org/
 
 Package: groonga-repository
 Section: misc
-Architecture: any
+Architecture: all
 Depends:
   ${misc:Depends}
 Description: apt-line for the groonga repository
@@ -18,7 +18,7 @@ Description: apt-line for the groonga repository
 
 Package: groonga-keyring
 Section: misc
-Architecture: any
+Architecture: all
 Depends:
   ${misc:Depends},
   gnupg
