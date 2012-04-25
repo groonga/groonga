@@ -20,7 +20,7 @@ Debian GNU/Linux squeeze
 
 Install::
 
-  % sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 1C837F31
+  % sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com F10399C0
   % sudo aptitude update
   % sudo aptitude -V -D -y install groonga
 
@@ -46,7 +46,7 @@ Debian GNU/Linux wheezy
 
 Install::
 
-  % sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 1C837F31
+  % sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com F10399C0
   % sudo aptitude update
   % sudo aptitude -V -D -y install groonga
 
@@ -72,7 +72,7 @@ Debian GNU/Linux sid
 
 Install::
 
-  % sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 1C837F31
+  % sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com F10399C0
   % sudo aptitude update
   % sudo aptitude -V -D -y install groonga
 
@@ -103,7 +103,7 @@ Ubuntu 10.04 LTS Lucid Lynx
 
 Install::
 
-  % sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 1C837F31
+  % sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com F10399C0
   % sudo apt-get update
   % sudo apt-get -y install groonga
 
@@ -134,7 +134,7 @@ Ubuntu 11.04 Natty Narwhal
 
 Install::
 
-  % sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 1C837F31
+  % sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com F10399C0
   % sudo apt-get update
   % sudo apt-get -y install groonga
 
@@ -165,7 +165,7 @@ Ubuntu 11.10 Oneiric Ocelot
 
 Install::
 
-  % sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 1C837F31
+  % sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com F10399C0
   % sudo apt-get update
   % sudo apt-get -y install groonga
 
