@@ -1,6 +1,6 @@
 Summary: groonga RPM repository configuration
 Name: groonga-repository
-Version: 1.0.0
+Version: 1.0.1
 Release: 0
 License: LGPLv2
 URL: http://packages.groonga.org/
@@ -37,6 +37,9 @@ groonga RPM repository configuration.
 %{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-groonga
 
 %changelog
+* Sun Apr 29 2012 Kouhei Sutou <kou@clear-code.com>
+- Update GPG key.
+
 * Thu Sep 02 2010 Kouhei Sutou <kou@clear-code.com>
 - (1.0.0-0)
 - Initial package.
