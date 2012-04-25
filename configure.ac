@@ -1152,6 +1152,7 @@ echo "  Package platform:      ${package_platform}"
 echo
 echo "Paths:"
 echo "  Install path prefix:   ${prefix}"
+echo "  Configuration file:    ${GRN_CONFIG_PATH}"
 echo
 
 echo "Tokenizers:"
