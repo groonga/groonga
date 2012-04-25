@@ -10,5 +10,6 @@ python2-devel
 php-devel
 zlib-devel
 lzo-devel
+libedit-devel
 ruby
 tar
