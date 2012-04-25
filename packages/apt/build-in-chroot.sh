@@ -1,16 +1,17 @@
 #!/bin/sh
 
-if [ $# != 5 ]; then
-    echo "Usage: $0 PACKAGE VERSION CHROOT_BASE ARCHITECTURES CODES"
-    echo " e.g.: $0 groonga 0.1.9 /var/lib/chroot 'i386 amd64' 'lenny unstable hardy karmic'"
+if [ $# != 6 ]; then
+    echo "Usage: $0 PACKAGE VERSION SOURCE_DIR CHROOT_BASE ARCHITECTURES CODES"
+    echo " e.g.: $0 groonga 0.1.9 SOURCE_DIR /var/lib/chroot 'i386 amd64' 'lenny unstable hardy karmic'"
     exit 1
 fi
 
 PACKAGE=$1
 VERSION=$2
-CHROOT_BASE=$3
-ARCHITECTURES=$4
-CODES=$5
+SOURCE_DIR=$3
+CHROOT_BASE=$4
+ARCHITECTURES=$5
+CODES=$6
 
 PATH=/usr/local/sbin:/usr/sbin:$PATH
 
@@ -89,7 +90,7 @@ build()
 	    ;;
     esac
 
-    source_dir=${script_base_dir}/..
+    source_dir=${SOURCE_DIR}
     build_user=${PACKAGE}-build
     build_user_dir=${base_dir}/home/$build_user
     build_dir=${build_user_dir}/build
