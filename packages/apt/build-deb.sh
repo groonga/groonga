@@ -26,7 +26,7 @@ distribution=$(lsb_release --id --short)
 code_name=$(lsb_release --codename --short)
 
 security_list=/etc/apt/sources.list.d/security.list
-if [ ! -d "${security_list}" ]; then
+if [ ! -f "${security_list}" ]; then
     case ${distribution} in
 	Debian)
 	    if [ "${code_name}" = "sid" ]; then
