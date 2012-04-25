@@ -22,16 +22,16 @@ msgid "News"
 msgstr "お知らせ"
 
 #: ../../../source/news.txt:11
-#, fuzzy
 msgid "Release 2.0.2 - 2012/04/29"
-msgstr "2.0.1リリース - 2012/03/29"
+msgstr "2.0.2リリース - 2012/04/29"
 
 # add9e4d6162847d49f99aa17d27db015
 #: ../../../source/news.txt:15
 msgid ""
 "The package sign key is changed since this release. Import the new package "
 "sign key before updating groogna packages."
-msgstr ""
+msgstr "パッケージへ署名する際の鍵が今回のリリースより変更されました。"
+"groongaパッケージを更新する前に新規パッケージ用の鍵をインポートして下さい。"
 
 # ddc5794a9fab448cb85072fbdf39fbe4
 #: ../../../source/news.txt:18
@@ -60,17 +60,17 @@ msgstr "改良"
 # aa923789143d422fb0734b4776946b84
 #: ../../../source/news.txt:32
 msgid "[pkg-config] Removed needless MessagePack dependency."
-msgstr ""
+msgstr "[pkg-config] MessagePackへの依存関係が不要なため削除。"
 
 # fc81908c7e9045459f8debf021eeb258
 #: ../../../source/news.txt:33
 msgid "[rpm][fedora] Supported libedit. [#1325] [Suggested by IWAI, Masaharu]"
-msgstr ""
+msgstr "[rpm][fedora] libeditをサポート。[#1325] [IWAI, Masaharuさんが提案]"
 
 # 2cb9f435c95a408ca3ca2fdc73980631
 #: ../../../source/news.txt:34
 msgid "[rpm] Supported zlib and LZO. [#1324] [Patch by IWAI, Masaharu]"
-msgstr ""
+msgstr "[rpm] zlibおよびLZOをサポート。[#1324] [IWAI, Masaharuさんがパッチ提供]"
 
 # 4b56162090cb40dca85c9330c5aefc93
 #: ../../../source/news.txt:35
@@ -78,39 +78,42 @@ msgid ""
 "[groonga] Improved daemoinzed timing. Groonga server daemonizes after socket "
 "is listened. It means that groonga server is ready when groonga server is "
 "daemonized. [#1326]"
-msgstr ""
+msgstr "[groonga] デーモン化のタイミングを改善。"
+"roongaサーバはソケットがリッスン状態になった後にデーモン化するようになります。"
+"これはgroongaサーバがデーモン化した時点でgroongaサーバの接続受付が完了したことを"
+"意味します。[#1326]"
 
 # 6e6d97492d194a4980fb4af16022151e
 #: ../../../source/news.txt:38
 msgid "[admin] Supported suggest in groonga administration page."
-msgstr ""
+msgstr "[admin] groongaの管理ページでサジェスト機能をサポート。"
 
 # 175a7d26871b453c831f670c87717462
 #: ../../../source/news.txt:39
 msgid "[dump] Ignored MeCab tokenizer load error."
-msgstr ""
+msgstr "[dump] Mecabのトークナイザのロードエラーを無視します。"
 
 #: ../../../source/news.txt:40
-#, fuzzy
 msgid "Supported CMake."
-msgstr "CentOS 6をサポート。"
+msgstr "CMakeをサポート。"
 
 # 7aea24b8b1014e8ba7567a17473d83ed
 #: ../../../source/news.txt:41
 msgid "[load] Supported error report when a column value can't be set."
-msgstr ""
+msgstr "[load] カラムの値が設定できなかった時のエラーレポートをサポート。"
 
 # 8408e5bab94c445da6e92528364d6177
 #: ../../../source/news.txt:42
 msgid ""
 "Supported similar search. ``select --filter \"column *S 'TEXT'\"`` is the "
 "similar search syntax. [#1342]"
-msgstr ""
+msgstr "類似検索をサポート。 ``select --filter \"column *S 'TEXT'\"`` "
+"というのが類似検索の構文です。[#1342]"
 
 # 8e5f000913844b21a740f8f675ab2e02
 #: ../../../source/news.txt:44
 msgid "[apt][yum] Changed package sign key."
-msgstr ""
+msgstr "[apt][yum] パッケージ署名用の鍵を変更。"
 
 #: ../../../source/news.txt:47 ../../../source/news.txt:102
 #: ../../../source/news.txt:148 ../../../source/news/1.2.x.txt:37
@@ -126,69 +129,71 @@ msgstr "修正"
 msgid ""
 "[deb][rpm] Used --bind-address option instead of deprecated --address "
 "option. [#1320] [Patch by IWAI, Masaharu]"
-msgstr ""
+msgstr "[deb][rpm] 非推奨の ``--address`` オプションではなく"
+" ``--bind--address`` オプションを使用するようにした。"
+"[#1320] [IWAI, Masaharuさんがパッチ提供]"
 
 # 703d6b8b7fba4c4cbfbaa656ba89aaf7
 #: ../../../source/news.txt:51
 msgid ""
 "[deb] Renamed groonga-server package's configuration file to /etc/default/"
 "groonga-server from /etc/default/groonga."
-msgstr ""
+msgstr "[deb] groonga-serverのパッケージ設定ファイルを"
+" ``/etc/default/groonga`` から ``/etc/default/groonga-server`` へと改名。"
 
 # 618fb70cbdb64ee5a48c6eee4298482f
 #: ../../../source/news.txt:53
 msgid ""
 "[rpm][fedora] Fixed upgrade condition in %post server. [GitHub#11] [Patch by "
 "Daiki Ueno]"
-msgstr ""
+msgstr "[rpm][fedora] %post serverの更新条件を修正。[GitHub#11] "
+"[Daiki Uenoさんがパッチ提供]"
 
 # a8053cd1d3084d6ab69127a024fa1984
 #: ../../../source/news.txt:55
-#, fuzzy
 msgid "[rpm] Removed needless change logs. [#1328] [Patch by IWAI, Masaharu]"
 msgstr ""
-"[rpm] groongaから必要のないgroogna-docへの依存関係を削除。 [#1251] [Masaharu "
-"IWAIさんが提案]"
+"[rpm] 必要のなかったログを削除。[#1328] [IWAI, Masaharuさんがパッチ提供]"
 
 # b1dc6f9f05f04edf988aec20c3b7ba69
 #: ../../../source/news.txt:56
 msgid ""
 "[deb][rpm] Added missing curl dependency. [GitHub#12] [Patch by IWAI, "
 "Masaharu]"
-msgstr ""
+msgstr "[deb][rpm] curlへの依存関係を追加。[GitHub#12] "
+"[IWAI, Masaharuさんがパッチ提供]"
 
 # a8053cd1d3084d6ab69127a024fa1984
 #: ../../../source/news.txt:58
-#, fuzzy
 msgid ""
 "[rpm] Removed needleess ruby package dependency. [#1330] [Patch by IWAI, "
 "Masaharu]"
 msgstr ""
-"[rpm] groongaから必要のないgroogna-docへの依存関係を削除。 [#1251] [Masaharu "
-"IWAIさんが提案]"
+"[rpm] groongaから必要のないrubyへの依存関係を削除。 [#1330] "
+"[IWAI, Masaharuさんがパッチ提供]"
 
 # 186de6e60bb446e7af6ddb2e06085e72
 #: ../../../source/news.txt:60
 msgid ""
 "[deb] Added missing default values to groonga-server's configuration file."
-msgstr ""
+msgstr "[deb] groonga-serverの設定ファイルのデフォルト値を追加。"
 
 # fe36b477e3ca4b31b5061ea60953dfeb
 #: ../../../source/news.txt:62
 msgid ""
 "Fixed a crash bug that is caused when searching with updaging very large "
 "inverted index. [#1329]"
-msgstr ""
+msgstr "非常に大きな転置インデックスを更新しながら検索すると"
+"クラッシュする不具合を修正。[#1329]"
 
 # 87b7bbfde9224e25907b9421dd7c0bb9
 #: ../../../source/news.txt:64
-#, fuzzy
 msgid ""
 "Fixed a bug that strings are compared as characters instead of byte string. "
 "[#1340] [Reported by Shinya Kawaji]"
 msgstr ""
-"インストールしたRubyスクリプトをuninstallでアンインストールできない問題を修正"
-"した。 [#1299] [かずひこさんが報告]"
+"文字列がバイト文字列でなく文字として比較される不具合を修正。"
+"[#1340] [Kawaji Shinyaさんが報告]"
 
 #: ../../../source/news.txt:68 ../../../source/news.txt:113
 #: ../../../source/news.txt:158 ../../../source/news.txt:208
@@ -201,7 +206,7 @@ msgstr "感謝"
 # 96dd9cfb2ff048c3a38a1d05e8efa773
 #: ../../../source/news.txt:70
 msgid "IWAI, Masaharu"
-msgstr ""
+msgstr "IWAI, Masaharuさん"
 
 #: ../../../source/news.txt:71 ../../../source/news.txt:161
 #: ../../../source/news/1.2.x.txt:250
@@ -211,7 +216,7 @@ msgstr "うえのさん"
 # a4019dad95444d4cb6fca539ec51ce64
 #: ../../../source/news.txt:72
 msgid "Shinya Kawaji"
-msgstr ""
+msgstr "Shinya Kawajiさん"
 
 #: ../../../source/news.txt:77
 msgid "Release 2.0.1 - 2012/03/29"
