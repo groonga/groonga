@@ -8,8 +8,8 @@ all:
 release: build update sign upload
 
 remove-existing-packages:
-	for distribution in $(DISTRIBUTIONS); do	\
-	  find $${distribution}/pool -type f -delete;	\
+	for distribution in $(DISTRIBUTIONS); do		\
+	  find packages/$${distribution}/pool -type f -delete;	\
 	done
 
 ensure-rsync-path:
@@ -19,9 +19,9 @@ ensure-rsync-path:
 	fi
 
 download: ensure-rsync-path
-	for distribution in $(DISTRIBUTIONS); do		\
-	  rsync -avz --delete					\
-	    $(RSYNC_PATH)/$${distribution}/ $${distribution};	\
+	for distribution in $(DISTRIBUTIONS); do	\
+	  rsync -avz --delete				\
+	    $(RSYNC_PATH)/$${distribution} packages/;	\
 	done
 
 update:
@@ -32,7 +32,7 @@ sign:
 
 upload: ensure-rsync-path
 	for distribution in $(DISTRIBUTIONS); do		\
-	  (cd $${distribution};					\
+	  (cd packages/$${distribution};			\
 	   rsync -avz --delete					\
 	     dists pool $(RSYNC_PATH)/$${distribution});	\
 	done

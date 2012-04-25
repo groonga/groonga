@@ -93,7 +93,7 @@ build()
     build_user=${PACKAGE}-build
     build_user_dir=${base_dir}/home/$build_user
     build_dir=${build_user_dir}/build
-    pool_base_dir=${script_base_dir}/${distribution}/pool/${code_name}/${component}
+    pool_base_dir=${script_base_dir}/packages/${distribution}/pool/${code_name}/${component}
     package_initial=$(echo ${PACKAGE} | sed -e 's/\(.\).*/\1/')
     pool_dir=${pool_base_dir}/${package_initial}/${PACKAGE}
     run cp $source_dir/${PACKAGE}-${VERSION}.tar.gz \

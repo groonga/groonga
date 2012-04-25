@@ -30,7 +30,7 @@ for code_name in ${CODES}; do
 	    ;;
     esac
 
-    release=${distribution}/dists/${code_name}/Release
+    release=packages/${distribution}/dists/${code_name}/Release
     rm -f ${release}.gpg
     gpg2 --sign --detach-sign --armor \
 	--local-user ${GPG_UID} \
