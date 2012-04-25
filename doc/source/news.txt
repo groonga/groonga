@@ -10,6 +10,22 @@ News
 Release 2.0.2 - 2012/04/29
 --------------------------
 
+.. caution::
+
+   The package sign key is changed since this release. Import the new
+   package sign key before updating groogna packages.
+
+   Debian/Ubuntu::
+
+     % sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com F10399C0
+     % sudo apt-get update
+     % sudo apt-get -V -y install groonga-keyring
+
+   CentOS/Fedora::
+
+     % sudo yum update
+     % sudo yum install -y groonga-repository
+
 Improvements
 ^^^^^^^^^^^^
 
@@ -25,6 +41,7 @@ Improvements
 * [load] Supported error report when a column value can't be set.
 * Supported similar search. ``select --filter "column *S 'TEXT'"``
   is the similar search syntax. [#1342]
+* [apt][yum] Changed package sign key.
 
 Fixes
 ^^^^^
