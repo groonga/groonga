@@ -1111,13 +1111,16 @@ AC_ARG_WITH(groonga-github-com-path,
             [GROONGA_GITHUB_COM_PATH=""])
 AC_SUBST(GROONGA_GITHUB_COM_PATH)
 
-# For Debian package release
+# For package
 AC_ARG_WITH(rsync-path,
             [AS_HELP_STRING([--with-rsync-path=PATH],
             [specify rsync path to upload groonga packages.])],
             [RSYNC_PATH="$withval"],
             [RSYNC_PATH=""])
 AC_SUBST(RSYNC_PATH)
+
+GPG_UID=m4_include(gpg_uid)
+AC_SUBST(GPG_UID)
 
 pkgsysconfdir="\$(sysconfdir)/$PACKAGE_NAME"
 AC_SUBST(pkgsysconfdir)
@@ -1188,6 +1191,11 @@ echo "Tools:"
 echo "  hg:                    ${HG}"
 echo "  Ruby:                  ${RUBY}"
 echo "  Cutter:                ${CUTTER}"
+echo
+
+echo "For packages:"
+echo "  rsync path:            ${RSYNC_PATH}"
+echo "  GPG UID:               ${GPG_UID}"
 echo
 
 echo "Now type 'make' to build $PACKAGE_NAME $PACKAGE_VERSION!"

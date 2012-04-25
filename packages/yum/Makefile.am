@@ -16,7 +16,7 @@ ensure-rsync-path:
 	fi
 
 sign:
-	./sign-rpm.sh '$(DISTRIBUTIONS)'
+	./sign-rpm.sh '$(GPG_UID)' '$(DISTRIBUTIONS)'
 
 update:
 	./update-repository.sh $(PACKAGE) '$(DISTRIBUTIONS)'
@@ -56,8 +56,8 @@ build-repository-rpm: RPM-GPG-KEY-$(PACKAGE)
 	  '$(DISTRIBUTIONS)'			\
 	  $(HAVE_DEVELOPMENT_BRANCH)
 
-RPM-GPG-KEY-$(PACKAGE):
-	./gpg-public-key.sh > $@
+RPM-GPG-KEY-$(PACKAGE): $(top_srcdir)/gpg_uid
+	./gpg-public-key.sh '$(GPG_UID)' > $@
 
 source: ../$(PACKAGE)-$(VERSION).tar.gz
 

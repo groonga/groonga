@@ -2,13 +2,14 @@
 
 script_base_dir=`dirname $0`
 
-if [ $# != 1 ]; then
-    echo "Usage: $0 DISTRIBUTIONS"
-    echo " e.g.: $0 'fedora centos'"
+if [ $# != 2 ]; then
+    echo "Usage: $0 GPG_UID DISTRIBUTIONS"
+    echo " e.g.: $0 'F10399C0' 'fedora centos'"
     exit 1
 fi
 
-DISTRIBUTIONS=$1
+GPG_UID=$1
+DISTRIBUTIONS=$2
 
 run()
 {
@@ -20,6 +21,6 @@ run()
 }
 
 for distribution in ${DISTRIBUTIONS}; do
-    run rpm -D "_gpg_name `$script_base_dir/gpg-uid.sh`" \
+    run rpm -D "_gpg_name ${GPG_UID}" \
 	--resign $script_base_dir/${distribution}/*/*/*/*.rpm
 done
