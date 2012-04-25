@@ -41,9 +41,11 @@ for distribution in ${DISTRIBUTIONS}; do
     case $distribution in
 	fedora)
 	    distribution_label=Fedora
+	    distribution_versions="16"
 	    ;;
 	centos)
 	    distribution_label=CentOS
+	    distribution_versions="5 6"
 	    ;;
     esac
     repo=${PACKAGE}.repo
@@ -82,8 +84,15 @@ EOR
     top_dir=$script_base_dir/$distribution
 
     run mkdir -p $top_dir
-    run cp -p $rpm_base_dir/RPMS/noarch/${PACKAGE}-repository-* $top_dir
-    run cp -p $rpm_base_dir/SRPMS/${PACKAGE}-repository-* $top_dir
+    run cp -p \
+	$rpm_base_dir/RPMS/noarch/${PACKAGE}-repository-* \
+	$rpm_base_dir/SRPMS/${PACKAGE}-repository-* \
+	${script_base_dir}/RPM-GPG-KEY-${PACKAGE} \
+	$top_dir
 
-    run cp -p ${script_base_dir}/RPM-GPG-KEY-${PACKAGE} $top_dir
+    for distribution_version in $distribution_versions; do
+	cp $top_dir/*.src.rpm $top_dir/$distribution_version/source/SRPMS/
+	cp $top_dir/*.noarch.rpm $top_dir/$distribution_version/i386/Packages/
+	cp $top_dir/*.noarch.rpm $top_dir/$distribution_version/x86_64/Packages/
+    done
 done
