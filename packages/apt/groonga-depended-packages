@@ -3,3 +3,4 @@ autotools-dev
 pkg-config
 libmecab-dev
 ruby
+zlib1g-dev
