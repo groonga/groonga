@@ -399,7 +399,7 @@ AC_DEFINE_UNQUOTED(GRN_DEFAULT_DB_KEY, "$GRN_DEFAULT_DB_KEY",
 
 if test "$os_win32" != "yes"; then
   AC_CHECK_HEADERS(pthread.h)
-  AC_SEARCH_LIBS(pthread_mutex_init, pthread,
+  AC_SEARCH_LIBS(pthread_create, pthread,
                  [],
                  [AC_MSG_ERROR("No libpthread found")])
 fi
