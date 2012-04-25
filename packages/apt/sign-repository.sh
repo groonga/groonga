@@ -2,13 +2,14 @@
 
 script_base_dir=`dirname $0`
 
-if [ $# != 1 ]; then
-    echo "Usage: $0 CODES"
-    echo " e.g.: $0 'lenny unstable hardy karmic'"
+if [ $# != 2 ]; then
+    echo "Usage: $0 GPG_UID CODES"
+    echo " e.g.: $0 'F10399C0' 'lenny unstable hardy karmic'"
     exit 1
 fi
 
-CODES=$1
+GPG_UID=$1
+CODES=$2
 
 run()
 {
@@ -31,5 +32,5 @@ for code_name in ${CODES}; do
 
     release=${distribution}/dists/${code_name}/Release
     rm -f ${release}.gpg
-    gpg --sign -ba -o ${release}.gpg ${release}
+    gpg --sign -ba --local-user ${GPG_UID} -o ${release}.gpg ${release}
 done

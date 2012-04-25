@@ -28,7 +28,7 @@ update:
 	./update-repository.sh '$(PACKAGE_NAME)' '$(ARCHITECTURES)' '$(CODES)'
 
 sign:
-	./sign-repository.sh '$(CODES)'
+	./sign-repository.sh '$(GPG_UID)' '$(CODES)'
 
 upload: ensure-rsync-path
 	for distribution in $(DISTRIBUTIONS); do		\
