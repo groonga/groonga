@@ -13,15 +13,12 @@ We distribute both 32-bit and 64-bit packages but we strongly recommend a 64-bit
 Debian GNU/Linux squeeze
 ------------------------
 
-/etc/apt/sources.list.d/groonga.list::
-
-  deb http://packages.groonga.org/debian/ squeeze main
-  deb-src http://packages.groonga.org/debian/ squeeze main
-
 Install::
 
-  % sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com F10399C0
+  % wget http://packages.groonga.org/debian/pool/squeeze/main/g/groonga-repository/groonga-repository_1.0.0-1_all.deb
+  % sudo dpkg -i groonga-repository_1.0.0-1_all.deb
   % sudo aptitude update
+  % sudo aptitude -V -D -y install groonga-keyring
   % sudo aptitude -V -D -y install groonga
 
 If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a tokenizer. please install groonga-tokenizer-mecab package.
@@ -39,15 +36,12 @@ Install groonga-munin-plugins package::
 Debian GNU/Linux wheezy
 -----------------------
 
-/etc/apt/sources.list.d/groonga.list::
-
-  deb http://packages.groonga.org/debian/ wheezy main
-  deb-src http://packages.groonga.org/debian/ wheezy main
-
 Install::
 
-  % sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com F10399C0
+  % wget http://packages.groonga.org/debian/pool/wheezy/main/g/groonga-repository/groonga-repository_1.0.0-1_all.deb
+  % sudo dpkg -i groonga-repository_1.0.0-1_all.deb
   % sudo aptitude update
+  % sudo aptitude -V -D -y install groonga-keyring
   % sudo aptitude -V -D -y install groonga
 
 If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a tokenizer. please install groonga-tokenizer-mecab package.
@@ -65,15 +59,12 @@ Install groonga-munin-plugins package::
 Debian GNU/Linux sid
 --------------------
 
-/etc/apt/sources.list.d/groonga.list::
-
-  deb http://packages.groonga.org/debian/ unstable main
-  deb-src http://packages.groonga.org/debian/ unstable main
-
 Install::
 
-  % sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com F10399C0
+  % wget http://packages.groonga.org/debian/pool/unstable/main/g/groonga-repository/groonga-repository_1.0.0-1_all.deb
+  % sudo dpkg -i groonga-repository_1.0.0-1_all.deb
   % sudo aptitude update
+  % sudo aptitude -V -D -y install groonga-keyring
   % sudo aptitude -V -D -y install groonga
 
 If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a tokenizer. please install groonga-tokenizer-mecab package.
@@ -103,8 +94,10 @@ Ubuntu 10.04 LTS Lucid Lynx
 
 Install::
 
-  % sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com F10399C0
+  % wget http://packages.groonga.org/ubuntu/pool/lucid/main/g/groonga-repository/groonga-repository_1.0.0-1_all.deb
+  % sudo dpkg -i groonga-repository_1.0.0-1_all.deb
   % sudo apt-get update
+  % sudo apt-get -y install groonga-keyring
   % sudo apt-get -y install groonga
 
 If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a tokenizer. please install groonga-tokenizer-mecab package.
@@ -134,8 +127,10 @@ Ubuntu 11.04 Natty Narwhal
 
 Install::
 
-  % sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com F10399C0
+  % wget http://packages.groonga.org/ubuntu/pool/natty/main/g/groonga-repository/groonga-repository_1.0.0-1_all.deb
+  % sudo dpkg -i groonga-repository_1.0.0-1_all.deb
   % sudo apt-get update
+  % sudo apt-get -y install groonga-keyring
   % sudo apt-get -y install groonga
 
 If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a tokenizer. please install groonga-tokenizer-mecab package.
@@ -165,8 +160,10 @@ Ubuntu 11.10 Oneiric Ocelot
 
 Install::
 
-  % sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com F10399C0
+  % wget http://packages.groonga.org/ubuntu/pool/oneiric/main/g/groonga-repository/groonga-repository_1.0.0-1_all.deb
+  % sudo dpkg -i groonga-repository_1.0.0-1_all.deb
   % sudo apt-get update
+  % sudo apt-get -y install groonga-keyring
   % sudo apt-get -y install groonga
 
 If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a tokenizer. please install groonga-tokenizer-mecab package.
@@ -186,7 +183,7 @@ CentOS 5
 
 Install::
 
-  % sudo rpm -ivh http://packages.groonga.org/centos/groonga-repository-1.0.0-0.noarch.rpm
+  % sudo rpm -ivh http://packages.groonga.org/centos/groonga-repository-1.0.1-0.noarch.rpm
   % sudo yum update
   % sudo yum install -y groonga
 
@@ -224,7 +221,7 @@ CentOS 6
 
 Install::
 
-  % sudo rpm -ivh http://packages.groonga.org/centos/groonga-repository-1.0.0-0.noarch.rpm
+  % sudo rpm -ivh http://packages.groonga.org/centos/groonga-repository-1.0.1-0.noarch.rpm
   % sudo yum update
   % sudo yum install -y groonga
 
@@ -262,7 +259,7 @@ Fedora 16
 
 Install::
 
-  % sudo rpm -ivh http://packages.groonga.org/fedora/groonga-repository-1.0.0-0.noarch.rpm
+  % sudo rpm -ivh http://packages.groonga.org/fedora/groonga-repository-1.0.1-0.noarch.rpm
   % sudo yum update
   % sudo yum install -y groonga
 
