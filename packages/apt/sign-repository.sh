@@ -32,5 +32,5 @@ for code_name in ${CODES}; do
 
     release=${distribution}/dists/${code_name}/Release
     rm -f ${release}.gpg
-    gpg --sign -ba --local-user ${GPG_UID} -o ${release}.gpg ${release}
+    gpg2 --sign -ba --local-user ${GPG_UID} -o ${release}.gpg ${release}
 done
