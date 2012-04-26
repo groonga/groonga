@@ -3,6 +3,7 @@ libtool
 gcc
 gcc-c++
 make
+mecab
 mecab-devel
 zeromq-devel
 libevent-devel
