@@ -79,7 +79,7 @@ rpmbuild_options="${BUILD_OPTIONS}"
 
 run yum update ${yum_options} -y
 if ! rpm -q mecab-devel > /dev/null; then
-    run yum install -y rpm-build wget libtool gcc gcc-c++ make
+    run yum install -y rpm-build wget libtool gcc gcc-c++ make tar
 
     cat <<EOF > $BUILD_SCRIPT
 #!/bin/sh
