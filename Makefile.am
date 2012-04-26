@@ -21,6 +21,7 @@ EXTRA_DIST =					\
 	bindings				\
 	version-gen.sh				\
 	base_version				\
+	gpg_uid					\
 	CMakeLists.txt				\
 	config.h.cmake
 
