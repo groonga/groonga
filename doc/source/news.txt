@@ -42,6 +42,9 @@ Improvements
 * Supported similar search. ``select --filter "column *S 'TEXT'"``
   is the similar search syntax. [#1342]
 * [apt][yum] Changed package sign key.
+* Supported Ubuntu Precise Pangolin.
+* [apt] Added a new groonga-keyring deb package for the groonga's
+  package sign key.
 
 Fixes
 ^^^^^
