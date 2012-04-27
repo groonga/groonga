@@ -45,6 +45,9 @@ def execmd(command, fout):
   groonga_process.stdin.flush()
   if fout:
     fout.write(formatted_command_line + "  ")
+  is_command = re.match("[a-z]", command)
+  if not is_command:
+    return
   output_buffer = ""
   while True:
     out = select([groonga_process.stdout], [], [], 0.2)
