@@ -136,7 +136,7 @@ Here is a simple ``filter`` usage example.
 
 .. groonga-command
 .. include:: ../example/commands/select/simple_filter.log
-.. select Entries --filter 'cotent @ "fast" && _key == "Groonga"'
+.. select Entries --filter 'content @ "fast" && _key == "Groonga"'
 
 The ``select`` command searches records that contain a word ``fast``
 in ``content`` column value and has ``Groonga`` as ``_key`` from

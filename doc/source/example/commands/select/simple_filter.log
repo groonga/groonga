@@ -1,20 +1,37 @@
 Execution example::
 
-  > select Entries --filter 'cotent @ "fast" && _key == "Groonga"'
+  > select Entries --filter 'content @ "fast" && _key == "Groonga"'
   [
     [
-      -63, 
-      1335519593.07742, 
-      0.00108194351196289, 
-      "Syntax error! (cotent @ \"fast\" && _key == \"Groonga\")", 
+      0, 
+      1335520300.98383, 
+      0.000544071197509766
+    ], 
+    [
       [
         [
-          "yy_syntax_error", 
-          "ecmascript.y", 
-          19
+          1
+        ], 
+        [
+          [
+            "_id", 
+            "UInt32"
+          ], 
+          [
+            "_key", 
+            "ShortText"
+          ], 
+          [
+            "content", 
+            "Text"
+          ]
+        ], 
+        [
+          2, 
+          "Groonga", 
+          "I started to use groonga. It's very fast!"
         ]
       ]
-    ], 
-    []
+    ]
   ]
   
