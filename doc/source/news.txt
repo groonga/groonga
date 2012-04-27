@@ -46,7 +46,8 @@ Improvements
 Fixes
 ^^^^^
 
-* [deb][rpm] Used --bind-address option instead of deprecated --address option.
+* [deb][rpm] Used ``--bind-address`` option instead of deprecated
+  ``--address`` option.
   [#1320] [Patch by IWAI, Masaharu]
 * [deb] Renamed groonga-server package's configuration file to
   /etc/default/groonga-server from /etc/default/groonga.
@@ -55,8 +56,8 @@ Fixes
 * [rpm] Removed needless change logs. [#1328] [Patch by IWAI, Masaharu]
 * [deb][rpm] Added missing curl dependency.
   [GitHub#12] [Patch by IWAI, Masaharu]
-* [rpm] Removed needleess ruby package dependency.
-  [#1330] [Patch by IWAI, Masaharu]
+* [rpm] Removed needleess ruby package dependency from groonga package.
+  [#1330] [Suggested by IWAI, Masaharu]
 * [deb] Added missing default values to groonga-server's
   configuration file.
 * Fixed a crash bug that is caused when searching with updaging very large

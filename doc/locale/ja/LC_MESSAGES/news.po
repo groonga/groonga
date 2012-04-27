@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-04-25 16:47\n"
-"PO-Revision-Date: 2012-03-29 09:36+0900\n"
+"PO-Revision-Date: 2012-04-27 22:13+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -30,8 +30,7 @@ msgstr "2.0.2リリース - 2012/04/29"
 msgid ""
 "The package sign key is changed since this release. Import the new package "
 "sign key before updating groogna packages."
-msgstr "パッケージへ署名する際の鍵が今回のリリースより変更されました。"
-"groongaパッケージを更新する前に新規パッケージ用の鍵をインポートして下さい。"
+msgstr "今回のリリースよりパッケージへ署名する鍵を変更しました。groongaパッケージを更新する前にパッケージ署名用の新しい鍵をインポートして下さい。"
 
 # ddc5794a9fab448cb85072fbdf39fbe4
 #: ../../../source/news.txt:18
@@ -60,7 +59,7 @@ msgstr "改良"
 # aa923789143d422fb0734b4776946b84
 #: ../../../source/news.txt:32
 msgid "[pkg-config] Removed needless MessagePack dependency."
-msgstr "[pkg-config] MessagePackへの依存関係が不要なため削除。"
+msgstr "[pkg-config] 必要のないMessagePackへの依存関係を削除。"
 
 # fc81908c7e9045459f8debf021eeb258
 #: ../../../source/news.txt:33
@@ -78,10 +77,7 @@ msgid ""
 "[groonga] Improved daemoinzed timing. Groonga server daemonizes after socket "
 "is listened. It means that groonga server is ready when groonga server is "
 "daemonized. [#1326]"
-msgstr "[groonga] デーモン化のタイミングを改善。"
-"roongaサーバはソケットがリッスン状態になった後にデーモン化するようになります。"
-"これはgroongaサーバがデーモン化した時点でgroongaサーバの接続受付が完了したことを"
-"意味します。[#1326]"
+msgstr "[groonga] デーモン化のタイミングを改善。groongaサーバーはソケットがlisten状態になった後にデーモン化するようになった。これによりgroongaサーバーがデーモン化した時点で接続を受け付けられる状態になっている。 [#1326]"
 
 # 6e6d97492d194a4980fb4af16022151e
 #: ../../../source/news.txt:38
@@ -91,7 +87,7 @@ msgstr "[admin] groongaの管理ページでサジェスト機能をサポート
 # 175a7d26871b453c831f670c87717462
 #: ../../../source/news.txt:39
 msgid "[dump] Ignored MeCab tokenizer load error."
-msgstr "[dump] Mecabのトークナイザのロードエラーを無視します。"
+msgstr "[dump] Mecabのトークナイザのロードエラーを無視するようにした。"
 
 #: ../../../source/news.txt:40
 msgid "Supported CMake."
@@ -107,8 +103,7 @@ msgstr "[load] カラムの値が設定できなかった時のエラーレポ�
 msgid ""
 "Supported similar search. ``select --filter \"column *S 'TEXT'\"`` is the "
 "similar search syntax. [#1342]"
-msgstr "類似検索をサポート。 ``select --filter \"column *S 'TEXT'\"`` "
-"というのが類似検索の構文です。[#1342]"
+msgstr "類似検索をサポート。類似検索の構文は ``select --filter \"column *S 'TEXT'\"`` 。 [#1342]"
 
 # 8e5f000913844b21a740f8f675ab2e02
 #: ../../../source/news.txt:44
@@ -127,7 +122,7 @@ msgstr "修正"
 # 833f848182e04c579889dfa26fa299ef
 #: ../../../source/news.txt:49
 msgid ""
-"[deb][rpm] Used --bind-address option instead of deprecated --address "
+"[deb][rpm] Used ``--bind-address`` option instead of deprecated ``--address`` "
 "option. [#1320] [Patch by IWAI, Masaharu]"
 msgstr "[deb][rpm] 非推奨の ``--address`` オプションではなく"
 " ``--bind--address`` オプションを使用するようにした。"
@@ -138,62 +133,53 @@ msgstr "[deb][rpm] 非推奨の ``--address`` オプションではなく"
 msgid ""
 "[deb] Renamed groonga-server package's configuration file to /etc/default/"
 "groonga-server from /etc/default/groonga."
-msgstr "[deb] groonga-serverのパッケージ設定ファイルを"
-" ``/etc/default/groonga`` から ``/etc/default/groonga-server`` へと改名。"
+msgstr "[deb] groonga-serverパッケージの設定ファイルを ``/etc/default/groonga`` から ``/etc/default/groonga-server`` へ改名。"
 
 # 618fb70cbdb64ee5a48c6eee4298482f
 #: ../../../source/news.txt:53
 msgid ""
 "[rpm][fedora] Fixed upgrade condition in %post server. [GitHub#11] [Patch by "
 "Daiki Ueno]"
-msgstr "[rpm][fedora] %post serverの更新条件を修正。[GitHub#11] "
-"[Daiki Uenoさんがパッチ提供]"
+msgstr "[rpm][fedora] groonga-serverの%postで更新処理を行うかどうかの条件を修正。 [GitHub#11] [Daiki Uenoさんがパッチ提供]"
 
 # a8053cd1d3084d6ab69127a024fa1984
 #: ../../../source/news.txt:55
 msgid "[rpm] Removed needless change logs. [#1328] [Patch by IWAI, Masaharu]"
-msgstr ""
-"[rpm] 必要のなかったログを削除。[#1328] [IWAI, Masaharuさんがパッチ提供]"
+msgstr "[rpm] 必要のないログを削除。 [#1328] [IWAI, Masaharuさんがパッチ提供]"
 
 # b1dc6f9f05f04edf988aec20c3b7ba69
 #: ../../../source/news.txt:56
 msgid ""
 "[deb][rpm] Added missing curl dependency. [GitHub#12] [Patch by IWAI, "
 "Masaharu]"
-msgstr "[deb][rpm] curlへの依存関係を追加。[GitHub#12] "
-"[IWAI, Masaharuさんがパッチ提供]"
+msgstr "[deb][rpm] curlへの依存関係を追加。 [GitHub#12] [IWAI, Masaharuさんがパッチ提供]"
 
 # a8053cd1d3084d6ab69127a024fa1984
 #: ../../../source/news.txt:58
 msgid ""
-"[rpm] Removed needleess ruby package dependency. [#1330] [Patch by IWAI, "
+"[rpm] Removed needleess ruby package dependency from groonga package. [#1330] [Suggested by IWAI, "
 "Masaharu]"
-msgstr ""
-"[rpm] groongaから必要のないrubyへの依存関係を削除。 [#1330] "
-"[IWAI, Masaharuさんがパッチ提供]"
+msgstr "[rpm] groongaパッケージから必要のないrubyパッケージへの依存関係を削除。 [#1330] [IWAI, Masaharuさんが提案]"
 
 # 186de6e60bb446e7af6ddb2e06085e72
 #: ../../../source/news.txt:60
 msgid ""
 "[deb] Added missing default values to groonga-server's configuration file."
-msgstr "[deb] groonga-serverの設定ファイルのデフォルト値を追加。"
+msgstr "[deb] groonga-serverの設定ファイルに未設定だったデフォルト値を追加。"
 
 # fe36b477e3ca4b31b5061ea60953dfeb
 #: ../../../source/news.txt:62
 msgid ""
 "Fixed a crash bug that is caused when searching with updaging very large "
 "inverted index. [#1329]"
-msgstr "非常に大きな転置インデックスを更新しながら検索すると"
-"クラッシュする不具合を修正。[#1329]"
+msgstr "非常に大きな転置インデックスを更新しながら検索するとクラッシュする不具合を修正。 [#1329]"
 
 # 87b7bbfde9224e25907b9421dd7c0bb9
 #: ../../../source/news.txt:64
 msgid ""
 "Fixed a bug that strings are compared as characters instead of byte string. "
 "[#1340] [Reported by Shinya Kawaji]"
-msgstr ""
-"文字列がバイト文字列でなく文字として比較される不具合を修正。"
-"[#1340] [Kawaji Shinyaさんが報告]"
+msgstr "文字列をバイト文字列でなく文字として比較している不具合を修正。 [#1340] [Kawaji Shinyaさんが報告]"
 
 #: ../../../source/news.txt:68 ../../../source/news.txt:113
 #: ../../../source/news.txt:158 ../../../source/news.txt:208
