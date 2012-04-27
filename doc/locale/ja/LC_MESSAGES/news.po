@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-04-27 23:53\n"
-"PO-Revision-Date: 2012-04-27 22:13+0900\n"
+"PO-Revision-Date: 2012-04-27 23:57+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -121,14 +121,14 @@ msgstr "[apt][yum] パッケージ署名用の鍵を変更。"
 # c475bd59e1624f2bb34ed50f0ba0778a
 #: ../../../source/news.txt:45
 msgid "Supported Ubuntu Precise Pangolin."
-msgstr ""
+msgstr "Ubuntu Precise Pangolinをサポート。"
 
 # eb7fdbacf66344abba23a04b4d6aa221
 #: ../../../source/news.txt:46
 msgid ""
 "[apt] Added a new groonga-keyring deb package for the groonga's package sign "
 "key."
-msgstr ""
+msgstr "[apt] groongaのパッケージ署名用の鍵を提供するgroonga-keyring debパッケージを追加。"
 
 #: ../../../source/news.txt:50 ../../../source/news.txt:106
 #: ../../../source/news.txt:152 ../../../source/news/1.2.x.txt:37
