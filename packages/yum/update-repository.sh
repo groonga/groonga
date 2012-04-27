@@ -25,6 +25,6 @@ for distribution in ${DISTRIBUTIONS}; do
 	test -d $dir &&	run createrepo $dir
     done;
 
-    run $script_base_dir/gpg-public-key.sh > \
+    run cp $script_base_dir/RPM-GPG-KEY-${GPG_KEY_NAME} \
 	$script_base_dir/${distribution}/RPM-GPG-KEY-${GPG_KEY_NAME};
 done
