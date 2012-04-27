@@ -35,25 +35,25 @@ def reconnect(name):
 
 fout = None
 
-def execmd(cmd, fout):
-  a = '> ' + cmd + "\n"
-  stdout.write(a)
+def execmd(command, fout):
+  formatted_command_line = '> ' + command + "\n"
+  stdout.write(formatted_command_line)
   stdout.flush()
-  groonga_process.stdin.write(cmd + "\n")
+  groonga_process.stdin.write(command + "\n")
   groonga_process.stdin.flush()
   if fout:
-    fout.write(a + "  ")
+    fout.write(formatted_command_line + "  ")
   while True:
     out = select([groonga_process.stdout], [], [], 0.2)
     if len(out[0]):
-      a = groonga_process.stdout.read(1)
-      if a != None:
-        stdout.write(a)
+      char = groonga_process.stdout.read(1)
+      if char != None:
+        stdout.write(char)
         if fout:
-          if a == '\n':
-            fout.write(a + "  ")
+          if char == '\n':
+            fout.write(char + "  ")
           else:
-            fout.write(a)
+            fout.write(char)
     else:
       stdout.flush()
       break
