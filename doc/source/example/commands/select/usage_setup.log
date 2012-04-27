@@ -1,0 +1,20 @@
+Execution example::
+
+  > table_create Entries TABLE_HASH_KEY ShortText
+  [[0,1335517898.93429,0.000363588333129883],true]
+  > column_create Entries content COLUMN_SCALAR Text
+  [[0,1335517899.13557,0.000916481018066406],true]
+  > table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram
+  [[0,1335517899.33727,0.000235080718994141],true]
+  > column_create Terms entries_key_index COLUMN_INDEX|WITH_POSITION Entries _key
+  [[0,1335517899.53841,0.00336003303527832],true]
+  > column_create Terms entries_content_index COLUMN_INDEX|WITH_POSITION Entries content
+  [[0,1335517899.74272,0.00641012191772461],true]
+  > load --table Entries
+  > [
+  > {"_key": "The first post!", "content": "Welcome! This is my first post!"},
+  > {"_key": "Groonga", "content": "I started to use groonga. It's very fast!"}
+  > {"_key": "Mroonga", "content": "I also started to use mroonga. It's also very fast! Really fast!"}
+  > ]
+  [[0,1335517899.95004,1.00170755386353],3]
+  

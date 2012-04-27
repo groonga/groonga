@@ -2,186 +2,395 @@
 
 .. highlightlang:: none
 
+.. groonga-command
+.. database: commands_select
+
 select
 ======
 
-名前
-----
+Summary
+-------
 
-select - テーブルの中から条件にマッチするレコードを検索して出力する
+``select`` searches records that are matched to specified conditions
+from a table and then outputs them.
 
-書式
-----
-::
+``select`` is the most important command in groonga. You need to
+understand ``select`` to use the full power of groonga.
 
- select table [match_columns [query [filter [scorer [sortby [output_columns
-              [offset [limit [drilldown [drilldown_sortby [drilldown_output_columns
-              [drilldown_offset [drilldown_limit [cache
-              [match_escalation_threshold [query_expansion]]]]]]]]]]]]]]]]
+Syntax
+------
 
-説明
-----
+``select`` has many parameters. The required parameter is only
+``table`` and others are optional::
 
-groonga組込コマンドの一つであるselectについて説明します。組込コマンドは、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。
+  select table
+         [match_columns=null]
+         [query=null]
+         [filter=null]
+         [scorer=null]
+         [sortby=null]
+         [output_columns="_id, _key, *"]
+         [offset=0]
+         [limit=10]
+         [drilldown=null]
+         [drilldown_sortby=null]
+         [drilldown_output_columns=null]
+         [drilldown_offset=0]
+         [drilldown_limit=10]
+         [cache=yes]
+         [match_escalation_threshold=0]
+         [query_expansion=null]
 
-selectは、使用しているデータベースのテーブルの中から条件にマッチするレコードを検索して出力します。
+Usage
+-----
 
-引数
-----
+Let's learn about ``select`` usage with examples. This section shows
+many popular usages.
 
-``table``
+Here are a schema definition and sample data to show usage.
 
-  検索対象のテーブルを指定します。存在しないテーブルを指定した場合はエラーになります。
+.. groonga-command
+.. include:: ../example/commands/select/usage_setup.log
+.. table_create Entries TABLE_HASH_KEY ShortText
+.. column_create Entries content COLUMN_SCALAR Text
+.. table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram
+.. column_create Terms entries_key_index COLUMN_INDEX|WITH_POSITION Entries _key
+.. column_create Terms entries_content_index COLUMN_INDEX|WITH_POSITION Entries content
+.. load --table Entries
+.. [
+.. {"_key": "The first post!", "content": "Welcome! This is my first post!"},
+.. {"_key": "Groonga", "content": "I started to use groonga. It's very fast!"}
+.. {"_key": "Mroonga", "content": "I also started to use mroonga. It's also very fast! Really fast!"}
+.. ]
 
-``match_columns``
+There is a table, ``Entries``, for blog entries. An entry has title
+and content. Title is key of ``Entries``. Content is value of
+``Entries.content`` column.
 
-  query引数に指定する検索条件文字列でデフォルトの検索対象となるカラムを指定します。
+``Entries._key`` column and ``Entries.content`` column are indexed
+using ``TokenBigram`` tokenizer. So both ``Entries._key`` and
+``Entries.content`` are fulltext search ready.
 
-    カラム名
+OK. The schema and data for examples are ready.
 
-  カラム名の後ろに'* 数値'を指定することによって、そのカラムにヒットした際のスコアに積算される重みを指定することができます。
+Simple usage
+^^^^^^^^^^^^
 
-    カラム名 * 重み
+Here is the most simple usage with the above shema and data. It shows
+all records in ``Entries`` table.
 
-  複数のカラムを'||'で結合して指定することもできます。
+.. groonga-command
+.. include:: ../example/commands/select/simple_usage.log
+.. select Entries
 
-    カラム名1 * 重み1 || カラム名2 * 重み2
+Why doest the command output all records? There are two reasons. The
+first reason is that the command doesn't specify any search
+conditions. No search condition means all records are matched. The
+second reason is that the number of all records is 2. ``select``
+command outputs 10 records at a maximum by default. There are only 3
+records. It is less than 10. So the command outputs all records.
 
-  また、カラム名ではなく、検索に使用するインデックス名を指定することもできます。
+Search conditions
+^^^^^^^^^^^^^^^^^
 
-``query``
+Search conditions are specified by ``query`` or ``filter``. You can
+also specify both ``query`` and ``filter``. It means that selected
+records must be matched against both ``query`` and ``filter``.
 
-  以下の形式の文字列によって検索条件を指定します。
+Search condition: ``query``
+"""""""""""""""""""""""""""
 
-条件式
+``query`` is designed for search box in Web page. Imagine a search box
+in google.com. You specify search conditions for ``query`` as space
+separated keywords. For example, ``search engine`` means a matched
+record should contain two words, ``search`` and ``engine``.
+
+Normally, ``query`` parameter is used for specifying fulltext search
+conditions. It can be used for non fulltext search conditions but
+``filter`` is used for the propose.
+
+``query`` parameter is used with ``match_columns`` parameter when
+``query`` parameter is used for specifying fulltext search
+conditions. ``match_columns`` specifies which columnes and indexes are
+matched against ``query``.
+
+Here is a simple ``query`` usage example.
+
+.. groonga-command
+.. include:: ../example/commands/select/simple_query.log
+.. select Entries --match_columns content --query fast
+
+The ``select`` command searches records that contain a word ``fast``
+in ``content`` column value from ``Entries`` table.
+
+``query`` has query syntax but its deatils aren't described here. See
+:doc:`/spec/query_syntax` for datails.
+
+Search condition: ``filter``
+""""""""""""""""""""""""""""
+
+``filter`` is designed for complex search conditions. You specify
+search conditions for ``filter`` as ECMAScript like syntax.
+
+Here is a simple ``filter`` usage example.
+
+.. groonga-command
+.. include:: ../example/commands/select/simple_filter.log
+.. select Entries --filter 'cotent @ "fast" && _key == "Groonga"'
+
+The ``select`` command searches records that contain a word ``fast``
+in ``content`` column value and has ``Groonga`` as ``_key`` from
+``Entries`` table. There are three operators in the command, ``@``,
+``&&`` and ``==``. ``@`` is fulltext search operator. ``&&`` and
+``==`` are the same as ECMAScript. ``&&`` is logical AND operator and
+``==`` is equal operator.
+
+``filter`` has more operators and syntax like grouping by ``(...)``
+its deatils aren't described here. See :doc:`/spec/script_syntax` for
+datails.
+
+Paging
 ^^^^^^
 
-以下の条件式が使用できます。
+You can specify range of returned records by ``offset`` and ``limit``.
+Here is an example to output only the 2nd record.
 
-文字列
-  全文検索条件(デフォルト検索対象カラムの値が指定された文字列を含んでいる)
+.. groonga-command
+.. include:: ../example/commands/select/paging.log
+.. select Entries --offset 1 --limit 1
 
-\"文字列\"
-  フレーズ検索条件(デフォルト検索対象カラムの値が指定されたフレーズを含んでいる)
+``offset`` is zero-origin. ``--offset 1`` means output range is
+started from the 2nd record.
 
-カラム名:値
-  一致条件(カラム値 == 値)
+``limit`` specifies the max number of output records. ``--limit 1``
+means the number of output records is 1 at a maximium. If no records
+are matched, ``select`` command outputs no records.
 
-カラム名:!値
-  不一致条件(カラム値 != 値)
+The total number of records
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-カラム名:<値
-  比較条件(カラム値 < 値)
+You can use ``--limit 0`` to retrieve the total number of recrods
+without any contents of matched records.
 
-カラム名:>値
-  比較条件(カラム値 > 値)
+.. groonga-command
+.. include:: ../example/commands/select/no_limit.log
+.. select Entries --limit 0
 
-カラム名:<=値
-  比較条件(カラム値 <= 値)
+``--limit 0`` is useful for retrieving only the number of matched
+records.
 
-カラム名:>=値
-  比較条件(カラム値 >= 値)
+Parameters
+----------
 
-カラム名:@文字列
-  全文検索条件(カラム値が指定された文字列を含んでいる)
+This section describes all parameters. Parameters are categorized.
 
-結合演算子
-^^^^^^^^^^
+Required parameter
+^^^^^^^^^^^^^^^^^^
 
-複数の条件式を結合するために以下の演算子が使用できます。
+There is a required parameter, ``table``.
 
-a OR b
-  論理和(aとbといずれかの条件がマッチする)
+``table``
+"""""""""
 
-a + b
-  論理積(aとbの両方がマッチする)
+It specifies a table to be searched. ``table`` must be specified.
 
-a - b
-  aにマッチし、bにはマッチしない
+If nonexistent table is specified, an error is returned.
 
-( )
-  複数の条件をまとめる
+.. groonga-command
+.. include:: ../example/commands/select/table_nonexistent.log
+.. select Nonexistent
 
+Search related parameters
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+There are search related parameters. Typically, ``match_columns`` and
+``query`` parameters are used for implementing a search
+box. ``filter`` parameters is used for implementing complex search
+feature.
+
+If both ``query`` and ``filter`` are specified, selected records must
+be matched against both ``query`` and ``filter``. If both ``query``
+and ``filter`` aren't specified, all records are selected.
+
+``match_columns``
+"""""""""""""""""
+
+It specifies the default target column for fulltext search by
+``query`` parameter value. A target column for fulltext search can be
+specified in ``query`` parameter. The difference between
+``match_columns`` and ``query`` is whether weight is supported or
+not. ``match_columns`` supports weight but ``query`` doesn't.
+
+Weight is relative importance of target column. A higher weight target
+column gets more hit score rather than a lower weight target column
+when a record is matched by fulltext search. The default weight is 1.
+
+Here is a simple ``match_columns`` usage example.
+
+.. groonga-command
+.. include:: ../example/commands/select/match_columns_simple.log
+.. select Entries --match_columns content --query fast --output_columns '_key, _score'
+
+``--match_columns content`` means the default target column for
+fulltext search is ``content`` column and its weight
+is 1. ``--output_columns '_key, _score'`` means that the ``select``
+command outputs ``_key`` value and ``_score`` value for matched
+records.
+
+Pay attention to ``_score`` value. ``_score`` value is the number of
+matched counts against ``query`` parameter value. In the example,
+``query`` parameter value is ``fast``. The fact that ``_score`` value
+is 1 means that ``fast`` appers in ``content`` column only once.  The
+fact that ``_score`` value is 2 means that ``fast`` appears in
+``content`` column twice.
+
+To specify weight, ``column * weight`` syntax is used. Here is a
+weight usage example.
+
+.. groonga-command
+.. include:: ../example/commands/select/match_columns_weight.log
+.. select Entries --match_columns 'content * 2' --query fast --output_columns '_key, _score'
+
+``--match_columns 'content * 2'`` means the default target column for
+fulltext search is ``content`` column and its weight is 2.
+
+Pay attention to ``_score`` value. ``_score`` value is doubled because
+weight is 2.
+
+You can specify one or more columns as the default target columns for
+fulltext search. If one or more columns are specified, fulltext search
+is done for all columns and scores are accumulated. If one of the
+columns is matched against ``query`` parameter value, the record is
+treated as matched.
+
+To specify one or more columns, ``column1 * weight1 || column2 *
+weight2 || ...`` syntax is used. ``* weight`` can be omitted. If it is
+omitted, 1 is used for weight. Here is a one or more columns usage
+example.
+
+.. groonga-command
+.. include:: ../example/commands/select/match_columns_some_columns.log
+.. select Entries --match_columns '_key * 10 || content' --query groonga --output_columns '_key, _score'
+
+``--match_columns '_key * 10 || content'`` means the default target
+columns for fulltext search are ``_key`` and ``content`` columns and
+``_key`` column's weight is 10 and ``content`` column's weight
+is 1. This weight allocation means ``_key`` column value is more
+important rather than ``content`` column value. In this example, title
+of blog entry is more important rather thatn content of blog entry.
+
+``query``
+"""""""""
+
+TODO: write short description.
+
+See :doc:`/doc/query_syntax`.
 
 ``filter``
+""""""""""
 
-  絞り込み条件をscript形式のgrn_expr文字列によって指定します。
+TODO: write short description.
 
-  query引数とfilter引数をどちらも指定した場合は、両方の条件を満足するレコードのみがヒットします。どちらも指定しない場合は全件がヒットします。
+See :doc:`/doc/script_syntax``.
 
-``scorer``
-
-  検索条件にマッチする全てのレコードに対して適用するgrn_exprをscript形式で指定します。
-
-  scorerは、検索処理が完了し、ソート処理が実行される前に呼び出されます。従って、各レコードのスコアを操作する式を指定しておけば、検索結果のソート順序をカスタマイズできるようになります。
-
-``sortby``
-
-  ソートキーとなるカラム名のリストをカンマ(',')区切りで指定します。::
-
-    [-]カラム名1, [-]カラム名2, [-]カラム名3, ...
-
-  カラム名1の値でソートし、値が同一である場合はカラム名2でソート、と順次比較を行いソートします。カラム名の前に - を付加した場合は降順にソートします。付加しない場合には昇順にソートします。
-
-  query引数またはfilter引数を指定した場合はカラム名に'_score'を使えます。'_score'を指定することでスコアでソートすることができます。query引数もfilter引数も指定していない状態で'_score'を指定するとエラーになります。
-
-``output_columns``
-
-  出力するカラム名のリストをカンマ(',')区切りで指定します。
-
-  アスタリスク('*')を指定すると、全てのカラムが指定されたものとみなされます。または、script形式のgrn_expr文字列を指定します。 (デフォルトは、'_id, _key, \*')
-
-``offset``
-
-  検索条件にマッチしたレコードのうち、出力対象となる最初のレコードの番号を0ベースで指定します。デフォルト値は0です。offsetに負の値を指定した場合は、ヒットした件数 + offset によって算出される値が指定されたものとみなされます。
-
-``limit``
-
-  検索条件にマッチしたレコードのうち、出力を行うレコードの件数を指定します。デフォルト値は10です。実際には、offset + limit がヒットした件数を超えない範囲でレコードが出力されます。limitに負の値を指定した場合は、ヒットした件数 + limit + 1 によって算出される値が指定されたものとみなされます。
-
-``drilldown``
-
-  グループ化のキーとなるカラム名のリストをカンマ(',')区切りで指定します。検索条件にマッチした各レコードを出力したのちに、drilldownに指定されたカラムの値が同一であるレコードをとりまとめて、それぞれについて結果レコードを出力します。
-
-``drilldown_sortby``
-
-  drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、ソートキーとなるカラム名のリストをカンマ(',')区切りで指定します。sortbyパラメータと同様に昇降順を指定できます。
-
-``drilldown_output_columns``
-
-  drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、出力するカラム名のリストをカンマ(',')区切りで指定します。
-
-``drilldown_offset``
-
-  drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、出力対象となる最初のレコードの番号を0ベースで指定します。デフォルト値は0です。drilldown_offsetに負の値を指定した場合は、ヒットした件数 + drilldown_offsetによって算出される値が指定されたものとみなされます。
-
-``drilldown_limit``
-
-  drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、出力を行うレコードの件数を指定します。デフォルト値は10です。実際には、drilldown_offset + drilldown_limit がヒットした件数を超えない範囲でレコードが出力されます。drilldown_limitに負の値を指定した場合は、ヒットした件数 + drilldown_limit + 1 によって算出される値が指定されたものとみなされます。
-
-``cache``
-
-  クエリキャッシュに関する動作を設定します。
-
-    ``no``
-
-      検索結果をクエリキャッシュに残しません。キャッシュして再利用される可能性が低いクエリに対して用います。キャッシュ容量は有限です。有効なキャッシュが多くヒットするために、このパラメータは有効です。
+Advanced search parameters
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 ``match_escalation_threshold``
+""""""""""""""""""""""""""""""
 
-  検索の挙動をエスカレーションするかどうかの閾値を設定します。デフォルト値は0です。デフォルト値は以下のいずれかの方法で設定できます。
+検索の挙動をエスカレーションするかどうかの閾値を設定します。デフォルト値は0です。デフォルト値は以下のいずれかの方法で設定できます。
 
-    * configureの--with-match-escalation-thresholdオプション
-    * groongaコマンド起動時の--match-escalation-thresholdオプション
-    * 設定ファイル中のmatch-escalation-threshold設定項目
+  * configureの--with-match-escalation-thresholdオプション
+  * groongaコマンド起動時の--match-escalation-thresholdオプション
+  * 設定ファイル中のmatch-escalation-threshold設定項目
 
-  クエリのヒット件数が閾値を越えない場合は :doc:`/spec/search` で説明している方法で検索方法をエスカレーションしてきます。
+クエリのヒット件数が閾値を越えない場合は :doc:`/spec/search` で説明している方法で検索方法をエスカレーションしてきます。
 
 ``query_expansion``
+"""""""""""""""""""
 
-  query_expansionパラメータには、queryパラメータに指定された文字列を置換(拡張)する条件となるテーブル・カラムを指定します。フォーマットは「${テーブル名}.${カラム名}」となります。指定するテーブルは文字列を主キーとするハッシュ型あるいはパトリシア木型のテーブルで、一つ以上の文字列型のカラムが定義されている必要があります。(ここでは置換テーブルと呼びます。)
+query_expansionパラメータには、queryパラメータに指定された文字列を置換(拡張)する条件となるテーブル・カラムを指定します。フォーマットは「${テーブル名}.${カラム名}」となります。指定するテーブルは文字列を主キーとするハッシュ型あるいはパトリシア木型のテーブルで、一つ以上の文字列型のカラムが定義されている必要があります。(ここでは置換テーブルと呼びます。)
 
-  queryパラメータに指定された文字列が、指定されたテーブルの主キーと完全一致する場合、その文字列を指定されたカラム値の文字列に置換します。queryパラメータが、空白、括弧、演算子などを含む場合は、その演算子によって区切られた文字列の単位で置換が実行されます。ダブルクォート("")で括られた範囲は、その内部に空白を含んでいても一つの置換される単位と見なされます。検索文字列と置換テーブルの主キー値との比較に際して大文字小文字等を区別したくない場合には、置換テーブルを定義する際にKEY_NORMALIZEを指定します。置換後の文字列となるカラムの値には、括弧や*, ORなど、queryパラメータで利用可能な全ての演算子を指定することができます。
+queryパラメータに指定された文字列が、指定されたテーブルの主キーと完全一致する場合、その文字列を指定されたカラム値の文字列に置換します。queryパラメータが、空白、括弧、演算子などを含む場合は、その演算子によって区切られた文字列の単位で置換が実行されます。ダブルクォート("")で括られた範囲は、その内部に空白を含んでいても一つの置換される単位と見なされます。検索文字列と置換テーブルの主キー値との比較に際して大文字小文字等を区別したくない場合には、置換テーブルを定義する際にKEY_NORMALIZEを指定します。置換後の文字列となるカラムの値には、括弧や*, ORなど、queryパラメータで利用可能な全ての演算子を指定することができます。
+
+Output related parameters
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+``output_columns``
+""""""""""""""""""
+
+出力するカラム名のリストをカンマ(',')区切りで指定します。
+
+アスタリスク('*')を指定すると、全てのカラムが指定されたものとみなされます。または、script形式のgrn_expr文字列を指定します。 (デフォルトは、'_id, _key, \*')
+
+``sortby``
+""""""""""
+
+ソートキーとなるカラム名のリストをカンマ(',')区切りで指定します。::
+
+  [-]カラム名1, [-]カラム名2, [-]カラム名3, ...
+
+カラム名1の値でソートし、値が同一である場合はカラム名2でソート、と順次比較を行いソートします。カラム名の前に - を付加した場合は降順にソートします。付加しない場合には昇順にソートします。
+
+query引数またはfilter引数を指定した場合はカラム名に'_score'を使えます。'_score'を指定することでスコアでソートすることができます。query引数もfilter引数も指定していない状態で'_score'を指定するとエラーになります。
+
+``offset``
+""""""""""
+
+検索条件にマッチしたレコードのうち、出力対象となる最初のレコードの番号を0ベースで指定します。デフォルト値は0です。offsetに負の値を指定した場合は、ヒットした件数 + offset によって算出される値が指定されたものとみなされます。
+
+``limit``
+"""""""""
+
+検索条件にマッチしたレコードのうち、出力を行うレコードの件数を指定します。デフォルト値は10です。実際には、offset + limit がヒットした件数を超えない範囲でレコードが出力されます。limitに負の値を指定した場合は、ヒットした件数 + limit + 1 によって算出される値が指定されたものとみなされます。
+
+``scorer``
+""""""""""
+
+検索条件にマッチする全てのレコードに対して適用するgrn_exprをscript形式で指定します。
+
+scorerは、検索処理が完了し、ソート処理が実行される前に呼び出されます。従って、各レコードのスコアを操作する式を指定しておけば、検索結果のソート順序をカスタマイズできるようになります。
+
+Facet related parameters
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+``drilldown``
+"""""""""""""
+
+グループ化のキーとなるカラム名のリストをカンマ(',')区切りで指定します。検索条件にマッチした各レコードを出力したのちに、drilldownに指定されたカラムの値が同一であるレコードをとりまとめて、それぞれについて結果レコードを出力します。
+
+``drilldown_sortby``
+""""""""""""""""""""
+
+drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、ソートキーとなるカラム名のリストをカンマ(',')区切りで指定します。sortbyパラメータと同様に昇降順を指定できます。
+
+``drilldown_output_columns``
+""""""""""""""""""""""""""""
+
+drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、出力するカラム名のリストをカンマ(',')区切りで指定します。
+
+``drilldown_offset``
+""""""""""""""""""""
+
+drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、出力対象となる最初のレコードの番号を0ベースで指定します。デフォルト値は0です。drilldown_offsetに負の値を指定した場合は、ヒットした件数 + drilldown_offsetによって算出される値が指定されたものとみなされます。
+
+``drilldown_limit``
+"""""""""""""""""""
+
+drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、出力を行うレコードの件数を指定します。デフォルト値は10です。実際には、drilldown_offset + drilldown_limit がヒットした件数を超えない範囲でレコードが出力されます。drilldown_limitに負の値を指定した場合は、ヒットした件数 + drilldown_limit + 1 によって算出される値が指定されたものとみなされます。
+
+Cache related parameter
+^^^^^^^^^^^^^^^^^^^^^^^
+
+``cache``
+"""""""""
+
+クエリキャッシュに関する動作を設定します。
+
+``no``
+
+  検索結果をクエリキャッシュに残しません。キャッシュして再利用される可能性が低いクエリに対して用います。キャッシュ容量は有限です。有効なキャッシュが多くヒットするために、このパラメータは有効です。
 
 返値
 ----
@@ -258,7 +467,8 @@ a - b
 
  [[[2],[["_id", "UInt32"],["_key","ShortText"],["body","ShortText"]],[1,"abandon","放棄する"],[2,"abbreviate","短縮する"]]]
 
-関連項目
+See also
 --------
 
-:doc:`../expr`
+  * :doc:`/spec/query_syntax`
+  * :doc:`/spec/script_syntax`

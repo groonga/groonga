@@ -1,0 +1,5 @@
+Execution example::
+
+  > select Entries --limit 0
+  [[0,1335517901.96388,0.000146389007568359],[[[3],[["_id","UInt32"],["_key","ShortText"],["content","Text"]]]]]
+  

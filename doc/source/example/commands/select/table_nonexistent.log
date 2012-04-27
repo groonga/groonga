@@ -1,0 +1,5 @@
+Execution example::
+
+  > select Nonexistent
+  [[-22,1335517902.16486,0.000264406204223633,"invalid table name: <Nonexistent>",[["grn_select","proc.c",542]]]]
+  

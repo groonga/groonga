@@ -1,0 +1,11 @@
+.. -*- rst -*-
+
+.. highlightlang:: none
+
+.. groonga-command
+.. database: spec_script_syntax
+
+Script Syntax
+=============
+
+TODO...
