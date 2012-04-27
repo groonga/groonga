@@ -1,20 +1,11 @@
-Source: groonga-repository
+Source: groonga-keyring
 Section: misc
-Priority: optional
+Priority: important
 Maintainer: groonga project <packages@groonga.org>
 Build-Depends:
-  debhelper (>= 7.0.50),
-  lsb-release
+  debhelper (>= 7.0.50)
 Standards-Version: 3.9.1
 Homepage: http://groonga.org/
-
-Package: groonga-repository
-Section: misc
-Architecture: all
-Depends:
-  ${misc:Depends}
-Description: apt-line for the groonga repository
- This package contains apt-line for the groonga repository.
 
 Package: groonga-keyring
 Section: misc

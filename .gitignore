@@ -92,8 +92,8 @@ cmake_install.cmake
 /packages/apt/packages/ubuntu/dists/
 /packages/apt/packages/ubuntu/*.db
 /packages/apt/packages/ubuntu/*.conf
-/packages/apt/groonga-repository-*/
-/packages/apt/groonga-repository-*.tar.gz
+/packages/apt/groonga-keyring-*/
+/packages/apt/groonga-keyring-*.tar.gz
 /configure.lineno
 /packages/rpm/*/*.spec
 /packages/yum/groonga.repo

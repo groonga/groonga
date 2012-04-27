@@ -14,11 +14,4 @@ override_dh_install:
 	install -m 0644 groonga-keyring.gpg \
 	  debian/tmp/usr/share/keyrings/
 
-	install -d debian/tmp/etc/apt/sources.list.d/
-	sed \
-	  -e "s/@distribution@/$$(lsb_release --id --short | tr 'A-Z' 'a-z')/g" \
-	  -e "s/@code_name@/$$(lsb_release --codename --short | sed -e 's/sid/unstable/g')/g" \
-	  groonga.list.in > \
-	  debian/tmp/etc/apt/sources.list.d/groonga.list
-
 	dh_install

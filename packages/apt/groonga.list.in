@@ -1,2 +1,0 @@
-deb http://packages.groonga.org/@distribution@/ @code_name@ main
-deb-src http://packages.groonga.org/@distribution@/ @code_name@ main
