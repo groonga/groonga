@@ -220,6 +220,7 @@ The old releases
 .. toctree::
    :maxdepth: 2
 
+   news/1.2.x
    news/1.1.x
    news/1.0.x
    news/0.x

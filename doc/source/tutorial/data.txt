@@ -82,7 +82,7 @@ The following example creates a ShortText column and updates existing records. T
 Date and time type
 ------------------
 
-The date and time type of groonga is Time. Actually, a Time column stores a date and time as the number of microseconds since the Epoch, 1970-01-01 00:00:00. A Time value can represent a date and time before the Epoch because the actual data type is a signed integer. Note that :doc:`/commands/load` and :doc:`/commands/select commands use a decimal number to represent a data and time in seconds. The default value is 0.0, which means the Epoch.
+The date and time type of groonga is Time. Actually, a Time column stores a date and time as the number of microseconds since the Epoch, 1970-01-01 00:00:00. A Time value can represent a date and time before the Epoch because the actual data type is a signed integer. Note that :doc:`/commands/load` and :doc:`/commands/select` commands use a decimal number to represent a data and time in seconds. The default value is 0.0, which means the Epoch.
 
 The following example creates a Time column and updates existing records. The first record has the default value because not updated.
 
