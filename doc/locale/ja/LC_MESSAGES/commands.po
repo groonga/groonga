@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-29 01:11\n"
+"POT-Creation-Date: 2012-04-27 23:53\n"
 "PO-Revision-Date: 2012-03-29 09:42+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -43,8 +43,7 @@ msgstr ""
 #: ../../../source/commands/log_level.txt:9
 #: ../../../source/commands/log_put.txt:9
 #: ../../../source/commands/log_reopen.txt:9
-#: ../../../source/commands/quit.txt:9 ../../../source/commands/select.txt:9
-#: ../../../source/commands/shutdown.txt:9
+#: ../../../source/commands/quit.txt:9 ../../../source/commands/shutdown.txt:9
 #: ../../../source/commands/status.txt:9
 #: ../../../source/commands/table_create.txt:9
 #: ../../../source/commands/table_list.txt:9
@@ -70,7 +69,7 @@ msgstr ""
 #: ../../../source/commands/log_level.txt:14
 #: ../../../source/commands/log_put.txt:14
 #: ../../../source/commands/log_reopen.txt:14
-#: ../../../source/commands/quit.txt:14 ../../../source/commands/select.txt:14
+#: ../../../source/commands/quit.txt:14
 #: ../../../source/commands/shutdown.txt:14
 #: ../../../source/commands/status.txt:14
 #: ../../../source/commands/table_create.txt:14
@@ -93,7 +92,7 @@ msgstr ""
 #: ../../../source/commands/log_level.txt:20
 #: ../../../source/commands/log_put.txt:20
 #: ../../../source/commands/log_reopen.txt:20
-#: ../../../source/commands/quit.txt:20 ../../../source/commands/select.txt:23
+#: ../../../source/commands/quit.txt:20
 #: ../../../source/commands/shutdown.txt:20
 #: ../../../source/commands/status.txt:20
 #: ../../../source/commands/table_create.txt:20
@@ -127,7 +126,7 @@ msgstr ""
 #: ../../../source/commands/log_level.txt:27
 #: ../../../source/commands/log_put.txt:27
 #: ../../../source/commands/log_reopen.txt:29
-#: ../../../source/commands/quit.txt:27 ../../../source/commands/select.txt:30
+#: ../../../source/commands/quit.txt:27
 #: ../../../source/commands/shutdown.txt:27
 #: ../../../source/commands/status.txt:27
 #: ../../../source/commands/table_create.txt:29
@@ -159,7 +158,7 @@ msgstr ""
 #: ../../../source/commands/log_put.txt:47
 #: ../../../source/commands/log_reopen.txt:34
 #: ../../../source/commands/quit.txt:32
-#: ../../../source/commands/select.txt:187
+#: ../../../source/commands/select.txt:433
 #: ../../../source/commands/shutdown.txt:32
 #: ../../../source/commands/status.txt:32
 #: ../../../source/commands/table_create.txt:92
@@ -187,7 +186,6 @@ msgstr ""
 #: ../../../source/commands/log_put.txt:61
 #: ../../../source/commands/log_reopen.txt:48
 #: ../../../source/commands/quit.txt:37
-#: ../../../source/commands/select.txt:253
 #: ../../../source/commands/shutdown.txt:37
 #: ../../../source/commands/status.txt:54
 #: ../../../source/commands/table_create.txt:106
@@ -311,7 +309,6 @@ msgstr ""
 #: ../../../source/commands/log_level.txt:64
 #: ../../../source/commands/log_put.txt:68
 #: ../../../source/commands/log_reopen.txt:65
-#: ../../../source/commands/select.txt:262
 msgid "関連項目"
 msgstr ""
 
@@ -344,7 +341,7 @@ msgstr ""
 #: ../../../source/commands/column_create.txt:29
 #: ../../../source/commands/define_selector.txt:35
 #: ../../../source/commands/delete.txt:29 ../../../source/commands/load.txt:49
-#: ../../../source/commands/select.txt:32
+#: ../../../source/commands/select.txt:193
 #: ../../../source/commands/view_add.txt:33
 msgid "``table``"
 msgstr ""
@@ -497,7 +494,6 @@ msgid "カラムオブジェクトに割り当てられたID"
 msgstr ""
 
 #: ../../../source/commands/column_list.txt:53
-#: ../../../source/commands/select.txt:40
 msgid "カラム名"
 msgstr ""
 
@@ -631,7 +627,7 @@ msgid "検索対象のテーブルを指定します。"
 msgstr ""
 
 #: ../../../source/commands/define_selector.txt:39
-#: ../../../source/commands/select.txt:36
+#: ../../../source/commands/select.txt:216
 msgid "``match_columns``"
 msgstr ""
 
@@ -640,7 +636,7 @@ msgid "追加するselectorコマンドのmatch_columns引数のデフォルト�
 msgstr ""
 
 #: ../../../source/commands/define_selector.txt:43
-#: ../../../source/commands/select.txt:52
+#: ../../../source/commands/select.txt:283
 msgid "``query``"
 msgstr ""
 
@@ -650,7 +646,7 @@ msgstr ""
 
 #: ../../../source/commands/define_selector.txt:47
 #: ../../../source/commands/delete.txt:41
-#: ../../../source/commands/select.txt:106
+#: ../../../source/commands/select.txt:290
 msgid "``filter``"
 msgstr ""
 
@@ -659,7 +655,7 @@ msgid "追加するselectorコマンドのfilter引数のデフォルト値を�
 msgstr ""
 
 #: ../../../source/commands/define_selector.txt:51
-#: ../../../source/commands/select.txt:112
+#: ../../../source/commands/select.txt:372
 msgid "``scorer``"
 msgstr ""
 
@@ -668,7 +664,7 @@ msgid "追加するselectorコマンドのscorer引数のデフォルト値を�
 msgstr ""
 
 #: ../../../source/commands/define_selector.txt:55
-#: ../../../source/commands/select.txt:118
+#: ../../../source/commands/select.txt:345
 msgid "``sortby``"
 msgstr ""
 
@@ -677,7 +673,7 @@ msgid "追加するselectorコマンドのsortby引数のデフォルト値を�
 msgstr ""
 
 #: ../../../source/commands/define_selector.txt:59
-#: ../../../source/commands/select.txt:128
+#: ../../../source/commands/select.txt:336
 msgid "``output_columns``"
 msgstr ""
 
@@ -687,7 +683,7 @@ msgid ""
 msgstr ""
 
 #: ../../../source/commands/define_selector.txt:63
-#: ../../../source/commands/select.txt:134
+#: ../../../source/commands/select.txt:358
 msgid "``offset``"
 msgstr ""
 
@@ -696,7 +692,7 @@ msgid "追加するselectorコマンドのoffset引数のデフォルト値を�
 msgstr ""
 
 #: ../../../source/commands/define_selector.txt:67
-#: ../../../source/commands/select.txt:138
+#: ../../../source/commands/select.txt:365
 msgid "``limit``"
 msgstr ""
 
@@ -705,7 +701,7 @@ msgid "追加するselectorコマンドのlimit引数のデフォルト値を指
 msgstr ""
 
 #: ../../../source/commands/define_selector.txt:71
-#: ../../../source/commands/select.txt:142
+#: ../../../source/commands/select.txt:384
 msgid "``drilldown``"
 msgstr ""
 
@@ -714,7 +710,7 @@ msgid "追加するselectorコマンドのdrilldown引数のデフォルト値�
 msgstr ""
 
 #: ../../../source/commands/define_selector.txt:75
-#: ../../../source/commands/select.txt:146
+#: ../../../source/commands/select.txt:391
 msgid "``drilldown_sortby``"
 msgstr ""
 
@@ -724,7 +720,7 @@ msgid ""
 msgstr ""
 
 #: ../../../source/commands/define_selector.txt:79
-#: ../../../source/commands/select.txt:150
+#: ../../../source/commands/select.txt:398
 msgid "``drilldown_output_columns``"
 msgstr ""
 
@@ -735,7 +731,7 @@ msgid ""
 msgstr ""
 
 #: ../../../source/commands/define_selector.txt:83
-#: ../../../source/commands/select.txt:154
+#: ../../../source/commands/select.txt:405
 msgid "``drilldown_offset``"
 msgstr ""
 
@@ -745,7 +741,7 @@ msgid ""
 msgstr ""
 
 #: ../../../source/commands/define_selector.txt:87
-#: ../../../source/commands/select.txt:158
+#: ../../../source/commands/select.txt:412
 msgid "``drilldown_limit``"
 msgstr ""
 
@@ -762,7 +758,6 @@ msgstr ""
 
 #: ../../../source/commands/define_selector.txt:116
 #: ../../../source/commands/load.txt:100
-#: ../../../source/commands/select.txt:264
 msgid ":doc:`../expr`"
 msgstr ""
 
@@ -1167,296 +1162,503 @@ msgid ""
 "groongaプロセスとの接続を切ります。"
 msgstr ""
 
-#: ../../../source/commands/select.txt:6
+#: ../../../source/commands/select.txt:9
 msgid "select"
 msgstr ""
 
-#: ../../../source/commands/select.txt:11
-msgid "select - テーブルの中から条件にマッチするレコードを検索して出力する"
+# 74adee8c09fc46bd8d72994ab949faca
+#: ../../../source/commands/select.txt:12
+msgid "Summary"
 msgstr ""
 
-#: ../../../source/commands/select.txt:25
+# cf9d28d3c27f415caba5c7028da523b1
+#: ../../../source/commands/select.txt:14
 msgid ""
-"groonga組込コマンドの一つであるselectについて説明します。組込コマンドは、"
-"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
-"エストを送信することによって実行します。"
+"``select`` searches records that are matched to specified conditions from a "
+"table and then outputs them."
 msgstr ""
 
-#: ../../../source/commands/select.txt:27
+# 9d92e3a7d6b543c5b026457badab4df9
+#: ../../../source/commands/select.txt:17
 msgid ""
-"selectは、使用しているデータベースのテーブルの中から条件にマッチするレコード"
-"を検索して出力します。"
+"``select`` is the most important command in groonga. You need to understand "
+"``select`` to use the full power of groonga."
 msgstr ""
 
-#: ../../../source/commands/select.txt:34
+# eaadf83a10cc4718bfa95e2aca8b7206
+#: ../../../source/commands/select.txt:21
+msgid "Syntax"
+msgstr ""
+
+# 11735dbadce24d1a8e2288562b95c236
+#: ../../../source/commands/select.txt:23
 msgid ""
-"検索対象のテーブルを指定します。存在しないテーブルを指定した場合はエラーにな"
-"ります。"
+"``select`` has many parameters. The required parameter is only ``table`` and "
+"others are optional::"
 msgstr ""
 
-#: ../../../source/commands/select.txt:38
+# 2874da1d881b448992bb7c4fd1cf7e34
+#: ../../../source/commands/select.txt:45
+msgid "Usage"
+msgstr ""
+
+# 9782f8873234427088a9aa28c4981a34
+#: ../../../source/commands/select.txt:47
 msgid ""
-"query引数に指定する検索条件文字列でデフォルトの検索対象となるカラムを指定しま"
-"す。"
+"Let's learn about ``select`` usage with examples. This section shows many "
+"popular usages."
 msgstr ""
 
-#: ../../../source/commands/select.txt:42
-msgid ""
-"カラム名の後ろに'* 数値'を指定することによって、そのカラムにヒットした際のス"
-"コアに積算される重みを指定することができます。"
-msgstr ""
-
-#: ../../../source/commands/select.txt:44
-msgid "カラム名 * 重み"
-msgstr ""
-
-#: ../../../source/commands/select.txt:46
-msgid "複数のカラムを'||'で結合して指定することもできます。"
-msgstr ""
-
-#: ../../../source/commands/select.txt:48
-msgid "カラム名1 * 重み1 || カラム名2 * 重み2"
-msgstr ""
-
+# a9f9574e54ea478b870c3a2372048a11
 #: ../../../source/commands/select.txt:50
+msgid "Here are a schema definition and sample data to show usage."
+msgstr ""
+
+# 6cf6adc0a2064db59d4c80c6d7854f78
+#: ../../../source/commands/select.txt:66
 msgid ""
-"また、カラム名ではなく、検索に使用するインデックス名を指定することもできま"
-"す。"
+"There is a table, ``Entries``, for blog entries. An entry has title and "
+"content. Title is key of ``Entries``. Content is value of ``Entries."
+"content`` column."
 msgstr ""
 
-#: ../../../source/commands/select.txt:54
-msgid "以下の形式の文字列によって検索条件を指定します。"
-msgstr ""
-
-#: ../../../source/commands/select.txt:57
-msgid "条件式"
-msgstr ""
-
-#: ../../../source/commands/select.txt:59
-msgid "以下の条件式が使用できます。"
-msgstr ""
-
-#: ../../../source/commands/select.txt:62
+# e675f12376d04a93b6a956b444d1c92a
+#: ../../../source/commands/select.txt:70
 msgid ""
-"全文検索条件(デフォルト検索対象カラムの値が指定された文字列を含んでいる)"
+"``Entries._key`` column and ``Entries.content`` column are indexed using "
+"``TokenBigram`` tokenizer. So both ``Entries._key`` and ``Entries.content`` "
+"are fulltext search ready."
 msgstr ""
 
-#: ../../../source/commands/select.txt:65
-msgid ""
-"フレーズ検索条件(デフォルト検索対象カラムの値が指定されたフレーズを含んでい"
-"る)"
-msgstr ""
-
-#: ../../../source/commands/select.txt:68
-msgid "一致条件(カラム値 == 値)"
-msgstr ""
-
-#: ../../../source/commands/select.txt:71
-msgid "不一致条件(カラム値 != 値)"
-msgstr ""
-
+# b4c08ca492a64cb0a08bbd496ab74531
 #: ../../../source/commands/select.txt:74
-msgid "比較条件(カラム値 < 値)"
+msgid "OK. The schema and data for examples are ready."
 msgstr ""
 
+# 3bcb01944c0b4325a3b97d85c33aec80
 #: ../../../source/commands/select.txt:77
-msgid "比較条件(カラム値 > 値)"
+msgid "Simple usage"
 msgstr ""
 
-#: ../../../source/commands/select.txt:80
-msgid "比較条件(カラム値 <= 値)"
+# 7e5b0ddf0d81452badd3a06d064c121a
+#: ../../../source/commands/select.txt:79
+msgid ""
+"Here is the most simple usage with the above shema and data. It shows all "
+"records in ``Entries`` table."
 msgstr ""
 
-#: ../../../source/commands/select.txt:83
-msgid "比較条件(カラム値 >= 値)"
-msgstr ""
-
+# 8ab1430e32644c2e9b276ecf6548ed31
 #: ../../../source/commands/select.txt:86
-msgid "全文検索条件(カラム値が指定された文字列を含んでいる)"
+msgid ""
+"Why doest the command output all records? There are two reasons. The first "
+"reason is that the command doesn't specify any search conditions. No search "
+"condition means all records are matched. The second reason is that the "
+"number of all records is 2. ``select`` command outputs 10 records at a "
+"maximum by default. There are only 3 records. It is less than 10. So the "
+"command outputs all records."
 msgstr ""
 
-#: ../../../source/commands/select.txt:89
-msgid "結合演算子"
-msgstr ""
-
-#: ../../../source/commands/select.txt:91
-msgid "複数の条件式を結合するために以下の演算子が使用できます。"
-msgstr ""
-
+# 11c7128772da489fa224cede43ccfb8e
 #: ../../../source/commands/select.txt:94
-msgid "論理和(aとbといずれかの条件がマッチする)"
+msgid "Search conditions"
 msgstr ""
 
-#: ../../../source/commands/select.txt:97
-msgid "論理積(aとbの両方がマッチする)"
+# 04f1a06e812943cf9418e4bfcd8d40d0
+#: ../../../source/commands/select.txt:96
+msgid ""
+"Search conditions are specified by ``query`` or ``filter``. You can also "
+"specify both ``query`` and ``filter``. It means that selected records must "
+"be matched against both ``query`` and ``filter``."
 msgstr ""
 
-#: ../../../source/commands/select.txt:100
-msgid "aにマッチし、bにはマッチしない"
+# 68e89afbcfed400884d18afd217646c9
+#: ../../../source/commands/select.txt:101
+msgid "Search condition: ``query``"
 msgstr ""
 
+# 4594145e924d4eeaba889e47a74004d7
 #: ../../../source/commands/select.txt:103
-msgid "複数の条件をまとめる"
+msgid ""
+"``query`` is designed for search box in Web page. Imagine a search box in "
+"google.com. You specify search conditions for ``query`` as space separated "
+"keywords. For example, ``search engine`` means a matched record should "
+"contain two words, ``search`` and ``engine``."
 msgstr ""
 
+# 4a9e672e94ff44dd890b89306e2ca7b3
 #: ../../../source/commands/select.txt:108
-msgid "絞り込み条件をscript形式のgrn_expr文字列によって指定します。"
-msgstr ""
-
-#: ../../../source/commands/select.txt:110
 msgid ""
-"query引数とfilter引数をどちらも指定した場合は、両方の条件を満足するレコードの"
-"みがヒットします。どちらも指定しない場合は全件がヒットします。"
+"Normally, ``query`` parameter is used for specifying fulltext search "
+"conditions. It can be used for non fulltext search conditions but ``filter`` "
+"is used for the propose."
 msgstr ""
 
-#: ../../../source/commands/select.txt:114
+# 51855cd50b08498f92669d7e9ead6c7d
+#: ../../../source/commands/select.txt:112
 msgid ""
-"検索条件にマッチする全てのレコードに対して適用するgrn_exprをscript形式で指定"
-"します。"
+"``query`` parameter is used with ``match_columns`` parameter when ``query`` "
+"parameter is used for specifying fulltext search conditions. "
+"``match_columns`` specifies which columnes and indexes are matched against "
+"``query``."
 msgstr ""
 
-#: ../../../source/commands/select.txt:116
+# 1ccd84b3f15a4567b23bb0e7d8c66fcd
+#: ../../../source/commands/select.txt:117
+#, fuzzy
+msgid "Here is a simple ``query`` usage example."
+msgstr "以下は提案例です。"
+
+# dc8002538e794368b895d463ce15d092
+#: ../../../source/commands/select.txt:123
 msgid ""
-"scorerは、検索処理が完了し、ソート処理が実行される前に呼び出されます。従っ"
-"て、各レコードのスコアを操作する式を指定しておけば、検索結果のソート順序をカ"
-"スタマイズできるようになります。"
+"The ``select`` command searches records that contain a word ``fast`` in "
+"``content`` column value from ``Entries`` table."
 msgstr ""
 
-#: ../../../source/commands/select.txt:120
-msgid "ソートキーとなるカラム名のリストをカンマ(',')区切りで指定します。::"
-msgstr ""
-
-#: ../../../source/commands/select.txt:124
-msgid ""
-"カラム名1の値でソートし、値が同一である場合はカラム名2でソート、と順次比較を"
-"行いソートします。カラム名の前に - を付加した場合は降順にソートします。付加し"
-"ない場合には昇順にソートします。"
-msgstr ""
-
+# d492956858a94b749114d1f77b264395
 #: ../../../source/commands/select.txt:126
 msgid ""
-"query引数またはfilter引数を指定した場合はカラム名に'_score'を使えま"
-"す。'_score'を指定することでスコアでソートすることができます。query引数も"
-"filter引数も指定していない状態で'_score'を指定するとエラーになります。"
+"``query`` has query syntax but its deatils aren't described here. See :doc:`/"
+"spec/query_syntax` for datails."
 msgstr ""
 
+# 3fdd2f2c44104d3c9b77b445bca2477a
 #: ../../../source/commands/select.txt:130
-msgid "出力するカラム名のリストをカンマ(',')区切りで指定します。"
+msgid "Search condition: ``filter``"
 msgstr ""
 
+# 22b11fc0254542a49ee9375e29b682b3
 #: ../../../source/commands/select.txt:132
 msgid ""
-"アスタリスク('*')を指定すると、全てのカラムが指定されたものとみなされます。ま"
-"たは、script形式のgrn_expr文字列を指定します。 (デフォルトは、'_id, _key, "
-"\\*')"
+"``filter`` is designed for complex search conditions. You specify search "
+"conditions for ``filter`` as ECMAScript like syntax."
 msgstr ""
 
-#: ../../../source/commands/select.txt:136
+# 19c0a971f31d469f940d93c9f303237e
+#: ../../../source/commands/select.txt:135
+#, fuzzy
+msgid "Here is a simple ``filter`` usage example."
+msgstr "以下は補完例です。"
+
+# a66d4191fe364dddb8366f4b0277104c
+#: ../../../source/commands/select.txt:141
 msgid ""
-"検索条件にマッチしたレコードのうち、出力対象となる最初のレコードの番号を0ベー"
-"スで指定します。デフォルト値は0です。offsetに負の値を指定した場合は、ヒットし"
-"た件数 + offset によって算出される値が指定されたものとみなされます。"
+"The ``select`` command searches records that contain a word ``fast`` in "
+"``content`` column value and has ``Groonga`` as ``_key`` from ``Entries`` "
+"table. There are three operators in the command, ``@``, ``&&`` and ``==``. "
+"``@`` is fulltext search operator. ``&&`` and ``==`` are the same as "
+"ECMAScript. ``&&`` is logical AND operator and ``==`` is equal operator."
 msgstr ""
 
-#: ../../../source/commands/select.txt:140
-msgid ""
-"検索条件にマッチしたレコードのうち、出力を行うレコードの件数を指定します。デ"
-"フォルト値は10です。実際には、offset + limit がヒットした件数を超えない範囲で"
-"レコードが出力されます。limitに負の値を指定した場合は、ヒットした件数 + "
-"limit + 1 によって算出される値が指定されたものとみなされます。"
-msgstr ""
-
-#: ../../../source/commands/select.txt:144
-msgid ""
-"グループ化のキーとなるカラム名のリストをカンマ(',')区切りで指定します。検索条"
-"件にマッチした各レコードを出力したのちに、drilldownに指定されたカラムの値が同"
-"一であるレコードをとりまとめて、それぞれについて結果レコードを出力します。"
-msgstr ""
-
+# c9f4049227474068baf439c6ec31e09b
 #: ../../../source/commands/select.txt:148
 msgid ""
-"drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、ソー"
-"トキーとなるカラム名のリストをカンマ(',')区切りで指定します。sortbyパラメータ"
-"と同様に昇降順を指定できます。"
+"``filter`` has more operators and syntax like grouping by ``(...)`` its "
+"deatils aren't described here. See :doc:`/spec/script_syntax` for datails."
 msgstr ""
 
-#: ../../../source/commands/select.txt:152
+# 75d9a9918b454209bd41a305d28c9107
+#: ../../../source/commands/select.txt:153
+msgid "Paging"
+msgstr ""
+
+# 2dd3592b80a64deea52b8c7a6e28bfb9
+#: ../../../source/commands/select.txt:155
 msgid ""
-"drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、出力"
-"するカラム名のリストをカンマ(',')区切りで指定します。"
+"You can specify range of returned records by ``offset`` and ``limit``. Here "
+"is an example to output only the 2nd record."
 msgstr ""
 
-#: ../../../source/commands/select.txt:156
-msgid ""
-"drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、出力"
-"対象となる最初のレコードの番号を0ベースで指定します。デフォルト値は0です。"
-"drilldown_offsetに負の値を指定した場合は、ヒットした件数 + drilldown_offsetに"
-"よって算出される値が指定されたものとみなされます。"
-msgstr ""
-
-#: ../../../source/commands/select.txt:160
-msgid ""
-"drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、出力"
-"を行うレコードの件数を指定します。デフォルト値は10です。実際には、"
-"drilldown_offset + drilldown_limit がヒットした件数を超えない範囲でレコードが"
-"出力されます。drilldown_limitに負の値を指定した場合は、ヒットした件数 + "
-"drilldown_limit + 1 によって算出される値が指定されたものとみなされます。"
-msgstr ""
-
+# b2b34fa4db01477b8b23e3dc58dc88d1
 #: ../../../source/commands/select.txt:162
-msgid "``cache``"
-msgstr ""
-
-#: ../../../source/commands/select.txt:164
-msgid "クエリキャッシュに関する動作を設定します。"
-msgstr ""
-
-#: ../../../source/commands/select.txt:166
-msgid "``no``"
-msgstr ""
-
-#: ../../../source/commands/select.txt:168
 msgid ""
-"検索結果をクエリキャッシュに残しません。キャッシュして再利用される可能性が低"
-"いクエリに対して用います。キャッシュ容量は有限です。有効なキャッシュが多く"
-"ヒットするために、このパラメータは有効です。"
+"``offset`` is zero-origin. ``--offset 1`` means output range is started from "
+"the 2nd record."
 msgstr ""
 
+# 24418f72e84544449baae5be89db83c4
+#: ../../../source/commands/select.txt:165
+msgid ""
+"``limit`` specifies the max number of output records. ``--limit 1`` means "
+"the number of output records is 1 at a maximium. If no records are matched, "
+"``select`` command outputs no records."
+msgstr ""
+
+# 6ce88aa450b3482698872d90de001481
 #: ../../../source/commands/select.txt:170
+msgid "The total number of records"
+msgstr ""
+
+# 7b8113abb1d14e13a47799683af7c624
+#: ../../../source/commands/select.txt:172
+msgid ""
+"You can use ``--limit 0`` to retrieve the total number of recrods without "
+"any contents of matched records."
+msgstr ""
+
+# 05e9f344caec4fe888c12c65b42d9908
+#: ../../../source/commands/select.txt:179
+msgid ""
+"``--limit 0`` is useful for retrieving only the number of matched records."
+msgstr ""
+
+# 3ed1ed0a3bb349fa8db4eccf86029d9f
+#: ../../../source/commands/select.txt:183
+msgid "Parameters"
+msgstr ""
+
+# e92758beef824130ab42669342c10d50
+#: ../../../source/commands/select.txt:185
+msgid "This section describes all parameters. Parameters are categorized."
+msgstr ""
+
+# 41a5ec8bf94e4a5a87e2cbcb48e5a10e
+#: ../../../source/commands/select.txt:188
+msgid "Required parameter"
+msgstr ""
+
+# 75c38df430b54c44844526068cb9d03b
+#: ../../../source/commands/select.txt:190
+msgid "There is a required parameter, ``table``."
+msgstr ""
+
+# a9e98af40d8343b2a5aa71a3dc5391fa
+#: ../../../source/commands/select.txt:195
+msgid "It specifies a table to be searched. ``table`` must be specified."
+msgstr ""
+
+# 722cc31c611c45b2bc7a8cdb24114a60
+#: ../../../source/commands/select.txt:197
+msgid "If nonexistent table is specified, an error is returned."
+msgstr ""
+
+# 231e4125b9bb4c3b94a8c6e002898955
+#: ../../../source/commands/select.txt:204
+msgid "Search related parameters"
+msgstr ""
+
+# 599e62b292e648e585444a7db8f34a3f
+#: ../../../source/commands/select.txt:206
+msgid ""
+"There are search related parameters. Typically, ``match_columns`` and "
+"``query`` parameters are used for implementing a search box. ``filter`` "
+"parameters is used for implementing complex search feature."
+msgstr ""
+
+# de32e9e0f01d415cabdcadd2f89a27bb
+#: ../../../source/commands/select.txt:211
+msgid ""
+"If both ``query`` and ``filter`` are specified, selected records must be "
+"matched against both ``query`` and ``filter``. If both ``query`` and "
+"``filter`` aren't specified, all records are selected."
+msgstr ""
+
+# 0f29a55419ea49c1addc6ccadd7d1a02
+#: ../../../source/commands/select.txt:218
+msgid ""
+"It specifies the default target column for fulltext search by ``query`` "
+"parameter value. A target column for fulltext search can be specified in "
+"``query`` parameter. The difference between ``match_columns`` and ``query`` "
+"is whether weight is supported or not. ``match_columns`` supports weight but "
+"``query`` doesn't."
+msgstr ""
+
+# d1618021a6084536aaafcac7ee185cf1
+#: ../../../source/commands/select.txt:224
+msgid ""
+"Weight is relative importance of target column. A higher weight target "
+"column gets more hit score rather than a lower weight target column when a "
+"record is matched by fulltext search. The default weight is 1."
+msgstr ""
+
+# 19c0a971f31d469f940d93c9f303237e
+#: ../../../source/commands/select.txt:228
+#, fuzzy
+msgid "Here is a simple ``match_columns`` usage example."
+msgstr "以下は補完例です。"
+
+# fa998f4980b940e5836fe8f55af975aa
+#: ../../../source/commands/select.txt:234
+msgid ""
+"``--match_columns content`` means the default target column for fulltext "
+"search is ``content`` column and its weight is 1. ``--output_columns '_key, "
+"_score'`` means that the ``select`` command outputs ``_key`` value and "
+"``_score`` value for matched records."
+msgstr ""
+
+# 478fa7cd0cb24e5c981dea8836b3a8eb
+#: ../../../source/commands/select.txt:240
+msgid ""
+"Pay attention to ``_score`` value. ``_score`` value is the number of matched "
+"counts against ``query`` parameter value. In the example, ``query`` "
+"parameter value is ``fast``. The fact that ``_score`` value is 1 means that "
+"``fast`` appers in ``content`` column only once.  The fact that ``_score`` "
+"value is 2 means that ``fast`` appears in ``content`` column twice."
+msgstr ""
+
+# fc20f8f22b524c4fb08c4571a01740a3
+#: ../../../source/commands/select.txt:247
+msgid ""
+"To specify weight, ``column * weight`` syntax is used. Here is a weight "
+"usage example."
+msgstr ""
+
+# f7ec1fcf391c4b779d7b904bb369b19c
+#: ../../../source/commands/select.txt:254
+msgid ""
+"``--match_columns 'content * 2'`` means the default target column for "
+"fulltext search is ``content`` column and its weight is 2."
+msgstr ""
+
+# ae5b40522e0f4af5af5b9920eb722272
+#: ../../../source/commands/select.txt:257
+msgid ""
+"Pay attention to ``_score`` value. ``_score`` value is doubled because "
+"weight is 2."
+msgstr ""
+
+# 87a89dfff9814a4db1aaff032854a741
+#: ../../../source/commands/select.txt:260
+msgid ""
+"You can specify one or more columns as the default target columns for "
+"fulltext search. If one or more columns are specified, fulltext search is "
+"done for all columns and scores are accumulated. If one of the columns is "
+"matched against ``query`` parameter value, the record is treated as matched."
+msgstr ""
+
+# 4d11ac6471a0443ebcaa44bd31f406ec
+#: ../../../source/commands/select.txt:266
+msgid ""
+"To specify one or more columns, ``column1 * weight1 || column2 * weight2 "
+"|| ...`` syntax is used. ``* weight`` can be omitted. If it is omitted, 1 is "
+"used for weight. Here is a one or more columns usage example."
+msgstr ""
+
+# 011c20edcce444fc82f8066a234e85b1
+#: ../../../source/commands/select.txt:275
+msgid ""
+"``--match_columns '_key * 10 || content'`` means the default target columns "
+"for fulltext search are ``_key`` and ``content`` columns and ``_key`` "
+"column's weight is 10 and ``content`` column's weight is 1. This weight "
+"allocation means ``_key`` column value is more important rather than "
+"``content`` column value. In this example, title of blog entry is more "
+"important rather thatn content of blog entry."
+msgstr ""
+
+# 4b84d7b0062e4e04be15b7bef56c6d7c
+# 4b84d7b0062e4e04be15b7bef56c6d7c
+#: ../../../source/commands/select.txt:285
+#: ../../../source/commands/select.txt:292
+msgid "TODO: write short description and add example."
+msgstr ""
+
+# 83e77c84e42145d6b459238678f259d9
+#: ../../../source/commands/select.txt:287
+msgid "See :doc:`/spec/query_syntax`."
+msgstr ""
+
+# f5fc8877da7b4638a79feea52c308d37
+#: ../../../source/commands/select.txt:294
+msgid "See :doc:`/spec/script_syntax`."
+msgstr ""
+
+# c5f24b504a224cf684d4e28c65d06f03
+#: ../../../source/commands/select.txt:297
+msgid "Advanced search parameters"
+msgstr ""
+
+#: ../../../source/commands/select.txt:300
 msgid "``match_escalation_threshold``"
 msgstr ""
 
-#: ../../../source/commands/select.txt:172
+# 12b717d9068f47b78be01c65ae46e19e
+#: ../../../source/commands/select.txt:302
+msgid "TODO: add example."
+msgstr ""
+
+# c56587595f4e47df927d37c0ab1de24d
+#: ../../../source/commands/select.txt:304
 msgid ""
-"検索の挙動をエスカレーションするかどうかの閾値を設定します。デフォルト値は0で"
-"す。デフォルト値は以下のいずれかの方法で設定できます。"
+"It specifies threshold to determine whether search storategy escalation is "
+"used or not. The threshold is compared against the number of matched "
+"records. If the number of matched records is less than the threshold, search "
+"storategy escalation is used. See :doc:`/spec/search` about search storategy "
+"escalation."
 msgstr ""
 
-#: ../../../source/commands/select.txt:174
-msgid "configureの--with-match-escalation-thresholdオプション"
-msgstr ""
-
-#: ../../../source/commands/select.txt:175
-msgid "groongaコマンド起動時の--match-escalation-thresholdオプション"
-msgstr ""
-
-#: ../../../source/commands/select.txt:176
-msgid "設定ファイル中のmatch-escalation-threshold設定項目"
-msgstr ""
-
-#: ../../../source/commands/select.txt:178
+# 94fcc85c0643425b81cf310f8dcb0baf
+#: ../../../source/commands/select.txt:310
 msgid ""
-"クエリのヒット件数が閾値を越えない場合は :doc:`/spec/search` で説明している方"
-"法で検索方法をエスカレーションしてきます。"
+"The default threshold is 0. It means that search storategy escalation is "
+"used only when no records are matched."
+msgstr ""
+
+# 7138f65c5f684072ad8ec9b276b6667d
+#: ../../../source/commands/select.txt:313
+msgid "The default threshold can be customized by one of the followings."
+msgstr ""
+
+# 2c2ba162241c4df6b7ab6251248e9b18
+#: ../../../source/commands/select.txt:315
+msgid "``--with-match-escalation-threshold`` option of configure"
+msgstr ""
+
+# 016be2770bff43218f2090357e3540e1
+#: ../../../source/commands/select.txt:316
+msgid "``--match-escalation-threshold`` option of groogna command"
+msgstr ""
+
+# 5a636f4b765645cfbb10e220f6b97c77
+#: ../../../source/commands/select.txt:317
+msgid "``match-escalation-threshold`` configuration item in configuration file"
 msgstr ""
 
 # 2a6a4e70ad95423fb535430d242aa1b8
-#: ../../../source/commands/select.txt:180
+#: ../../../source/commands/select.txt:321
 msgid "``query_expansion``"
 msgstr ""
 
+# a299ae40f44f4e01923982805289b6da
+# 907b70a9602e42d28d52bd14a9a6aa34
+# 6026cfe9862a471bad1ac8bb3921e826
+# 12284abd395f4dcc89955a0d9f4eac0e
+# 652f286377d546c4a4016f1029712479
+# 6fbe0f0d750e43b2804d90d827c615d5
+# f1e75ba0cbe0405ab13abe8bd501bcc6
+# 65a5a66c686d4a1591b6159c713eb5a4
+# 24c4d2215c7f40ae82d8f3d188aa88cb
+# cd38dc52c5be468bb97e8e4a2f6e2db3
+# dad2788325c0452fa7706a8a2271f832
+# 9c5db5fa25494bda80437e98cee0bca6
+# 70ff1b1ca08e47118bf50277944e00b2
+#: ../../../source/commands/select.txt:323
+#: ../../../source/commands/select.txt:338
+#: ../../../source/commands/select.txt:347
+#: ../../../source/commands/select.txt:360
+#: ../../../source/commands/select.txt:367
+#: ../../../source/commands/select.txt:374
+#: ../../../source/commands/select.txt:386
+#: ../../../source/commands/select.txt:393
+#: ../../../source/commands/select.txt:400
+#: ../../../source/commands/select.txt:407
+#: ../../../source/commands/select.txt:414
+#: ../../../source/commands/select.txt:424
+#: ../../../source/commands/select.txt:435
+msgid "TODO: write in English and add example."
+msgstr ""
+
+# 9c86b1a0b1024d89b6c9e4e8f2d4b5ad
+#: ../../../source/commands/select.txt:325
+#, fuzzy
+msgid ""
+"It specifies a column that is used to expand (substitute) ``query`` "
+"parameter value."
+msgstr ""
+"``table`` で指定したテーブルにあるふりがな情報を含むカラムを指定します。ふり"
+"がなはカタカナで指定します。"
+
 # 33ac90fc1fa74a13b0c2b258e3339ac2
-#: ../../../source/commands/select.txt:182
+#: ../../../source/commands/select.txt:328
 msgid ""
 "query_expansionパラメータには、queryパラメータに指定された文字列を置換(拡張)"
 "する条件となるテーブル・カラムを指定します。フォーマットは「${テーブル名}."
@@ -1466,7 +1668,7 @@ msgid ""
 msgstr ""
 
 # a881228a88354eb6b4e732d0fe68d178
-#: ../../../source/commands/select.txt:184
+#: ../../../source/commands/select.txt:330
 msgid ""
 "queryパラメータに指定された文字列が、指定されたテーブルの主キーと完全一致する"
 "場合、その文字列を指定されたカラム値の文字列に置換します。queryパラメータが、"
@@ -1479,124 +1681,263 @@ msgid ""
 "す。"
 msgstr ""
 
-#: ../../../source/commands/select.txt:189
+# a92aefff626342b8b2318131b132f569
+#: ../../../source/commands/select.txt:333
+msgid "Output related parameters"
+msgstr ""
+
+#: ../../../source/commands/select.txt:340
+msgid "出力するカラム名のリストをカンマ(',')区切りで指定します。"
+msgstr ""
+
+#: ../../../source/commands/select.txt:342
+msgid ""
+"アスタリスク('*')を指定すると、全てのカラムが指定されたものとみなされます。ま"
+"たは、script形式のgrn_expr文字列を指定します。 (デフォルトは、'_id, _key, "
+"\\*')"
+msgstr ""
+
+#: ../../../source/commands/select.txt:349
+msgid "ソートキーとなるカラム名のリストをカンマ(',')区切りで指定します。::"
+msgstr ""
+
+#: ../../../source/commands/select.txt:353
+msgid ""
+"カラム名1の値でソートし、値が同一である場合はカラム名2でソート、と順次比較を"
+"行いソートします。カラム名の前に - を付加した場合は降順にソートします。付加し"
+"ない場合には昇順にソートします。"
+msgstr ""
+
+#: ../../../source/commands/select.txt:355
+msgid ""
+"query引数またはfilter引数を指定した場合はカラム名に'_score'を使えま"
+"す。'_score'を指定することでスコアでソートすることができます。query引数も"
+"filter引数も指定していない状態で'_score'を指定するとエラーになります。"
+msgstr ""
+
+#: ../../../source/commands/select.txt:362
+msgid ""
+"検索条件にマッチしたレコードのうち、出力対象となる最初のレコードの番号を0ベー"
+"スで指定します。デフォルト値は0です。offsetに負の値を指定した場合は、ヒットし"
+"た件数 + offset によって算出される値が指定されたものとみなされます。"
+msgstr ""
+
+#: ../../../source/commands/select.txt:369
+msgid ""
+"検索条件にマッチしたレコードのうち、出力を行うレコードの件数を指定します。デ"
+"フォルト値は10です。実際には、offset + limit がヒットした件数を超えない範囲で"
+"レコードが出力されます。limitに負の値を指定した場合は、ヒットした件数 + "
+"limit + 1 によって算出される値が指定されたものとみなされます。"
+msgstr ""
+
+#: ../../../source/commands/select.txt:376
+msgid ""
+"検索条件にマッチする全てのレコードに対して適用するgrn_exprをscript形式で指定"
+"します。"
+msgstr ""
+
+#: ../../../source/commands/select.txt:378
+msgid ""
+"scorerは、検索処理が完了し、ソート処理が実行される前に呼び出されます。従っ"
+"て、各レコードのスコアを操作する式を指定しておけば、検索結果のソート順序をカ"
+"スタマイズできるようになります。"
+msgstr ""
+
+# a0331841d3074b269115e266c26d6cf2
+#: ../../../source/commands/select.txt:381
+msgid "Facet related parameters"
+msgstr ""
+
+#: ../../../source/commands/select.txt:388
+msgid ""
+"グループ化のキーとなるカラム名のリストをカンマ(',')区切りで指定します。検索条"
+"件にマッチした各レコードを出力したのちに、drilldownに指定されたカラムの値が同"
+"一であるレコードをとりまとめて、それぞれについて結果レコードを出力します。"
+msgstr ""
+
+#: ../../../source/commands/select.txt:395
+msgid ""
+"drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、ソー"
+"トキーとなるカラム名のリストをカンマ(',')区切りで指定します。sortbyパラメータ"
+"と同様に昇降順を指定できます。"
+msgstr ""
+
+#: ../../../source/commands/select.txt:402
+msgid ""
+"drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、出力"
+"するカラム名のリストをカンマ(',')区切りで指定します。"
+msgstr ""
+
+#: ../../../source/commands/select.txt:409
+msgid ""
+"drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、出力"
+"対象となる最初のレコードの番号を0ベースで指定します。デフォルト値は0です。"
+"drilldown_offsetに負の値を指定した場合は、ヒットした件数 + drilldown_offsetに"
+"よって算出される値が指定されたものとみなされます。"
+msgstr ""
+
+#: ../../../source/commands/select.txt:416
+msgid ""
+"drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、出力"
+"を行うレコードの件数を指定します。デフォルト値は10です。実際には、"
+"drilldown_offset + drilldown_limit がヒットした件数を超えない範囲でレコードが"
+"出力されます。drilldown_limitに負の値を指定した場合は、ヒットした件数 + "
+"drilldown_limit + 1 によって算出される値が指定されたものとみなされます。"
+msgstr ""
+
+# fa784568ed9745b8ab02cf4d5ebaa4df
+#: ../../../source/commands/select.txt:419
+msgid "Cache related parameter"
+msgstr ""
+
+#: ../../../source/commands/select.txt:422
+msgid "``cache``"
+msgstr ""
+
+#: ../../../source/commands/select.txt:426
+msgid "クエリキャッシュに関する動作を設定します。"
+msgstr ""
+
+#: ../../../source/commands/select.txt:428
+msgid "``no``"
+msgstr ""
+
+#: ../../../source/commands/select.txt:430
+msgid ""
+"検索結果をクエリキャッシュに残しません。キャッシュして再利用される可能性が低"
+"いクエリに対して用います。キャッシュ容量は有限です。有効なキャッシュが多く"
+"ヒットするために、このパラメータは有効です。"
+msgstr ""
+
+#: ../../../source/commands/select.txt:437
 msgid "以下のようなjson形式で値が返却されます。"
 msgstr ""
 
-#: ../../../source/commands/select.txt:195
+#: ../../../source/commands/select.txt:443
 msgid "``リターンコード``"
 msgstr ""
 
-#: ../../../source/commands/select.txt:197
+#: ../../../source/commands/select.txt:445
 msgid ""
 "grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は、続いてエラー内"
 "容を示す 文字列が返されます。"
 msgstr ""
 
-#: ../../../source/commands/select.txt:200
+#: ../../../source/commands/select.txt:448
 msgid "``処理開始時間``"
 msgstr ""
 
-#: ../../../source/commands/select.txt:202
+#: ../../../source/commands/select.txt:450
 msgid ""
 "処理を開始した時間について、1970年1月1日0時0分0秒を起点とした秒数を小数で返し"
 "ます。"
 msgstr ""
 
-#: ../../../source/commands/select.txt:204
+#: ../../../source/commands/select.txt:452
 msgid "``処理時間``"
 msgstr ""
 
-#: ../../../source/commands/select.txt:206
+#: ../../../source/commands/select.txt:454
 msgid "処理にかかった秒数を返します。"
 msgstr ""
 
-#: ../../../source/commands/select.txt:208
+#: ../../../source/commands/select.txt:456
 msgid "``検索結果``"
 msgstr ""
 
-#: ../../../source/commands/select.txt:210
+#: ../../../source/commands/select.txt:458
 msgid "drilldown条件が実行される前の検索結果が以下のように出力されます。::"
 msgstr ""
 
-#: ../../../source/commands/select.txt:214
+#: ../../../source/commands/select.txt:462
 msgid "``検索件数``"
 msgstr ""
 
-#: ../../../source/commands/select.txt:216
+#: ../../../source/commands/select.txt:464
 msgid "検索件数が出力されます。"
 msgstr ""
 
-#: ../../../source/commands/select.txt:218
-#: ../../../source/commands/select.txt:240
+#: ../../../source/commands/select.txt:466
+#: ../../../source/commands/select.txt:488
 msgid "``カラム名n``"
 msgstr ""
 
-#: ../../../source/commands/select.txt:220
+#: ../../../source/commands/select.txt:468
 msgid ""
 "output_columnsに指定された条件に従って、対象となるカラム名が出力されます。"
 msgstr ""
 
-#: ../../../source/commands/select.txt:222
-#: ../../../source/commands/select.txt:244
+#: ../../../source/commands/select.txt:470
+#: ../../../source/commands/select.txt:492
 msgid "``カラム型n``"
 msgstr ""
 
-#: ../../../source/commands/select.txt:224
+#: ../../../source/commands/select.txt:472
 msgid ""
 "output_columnsに指定された条件に従って、対象となるカラム型が出力されます。"
 msgstr ""
 
-#: ../../../source/commands/select.txt:226
+#: ../../../source/commands/select.txt:474
 msgid "``検索結果n``"
 msgstr ""
 
-#: ../../../source/commands/select.txt:228
+#: ../../../source/commands/select.txt:476
 msgid ""
 "output_columns, offset, limitによって指定された条件に従って各レコードの値が出"
 "力されます。"
 msgstr ""
 
-#: ../../../source/commands/select.txt:230
+#: ../../../source/commands/select.txt:478
 msgid "``drilldown結果``"
 msgstr ""
 
-#: ../../../source/commands/select.txt:232
+#: ../../../source/commands/select.txt:480
 msgid "drilldown処理の結果が以下のように出力されます。::"
 msgstr ""
 
-#: ../../../source/commands/select.txt:236
+#: ../../../source/commands/select.txt:484
 msgid "``件数``"
 msgstr ""
 
-#: ../../../source/commands/select.txt:238
+#: ../../../source/commands/select.txt:486
 msgid "drilldownに指定されたカラムの値の異なり数が出力されます。"
 msgstr ""
 
-#: ../../../source/commands/select.txt:242
+#: ../../../source/commands/select.txt:490
 msgid ""
 "drilldown_output_columnsに指定された条件に従って、対象となるカラム名が出力さ"
 "れます。"
 msgstr ""
 
-#: ../../../source/commands/select.txt:246
+#: ../../../source/commands/select.txt:494
 msgid ""
 "drilldown_output_columnsに指定された条件に従って、対象となるカラム型が出力さ"
 "れます。"
 msgstr ""
 
-#: ../../../source/commands/select.txt:248
+#: ../../../source/commands/select.txt:496
 msgid "``ドリルダウン結果n``"
 msgstr ""
 
-#: ../../../source/commands/select.txt:250
+#: ../../../source/commands/select.txt:498
 msgid ""
 "drilldown_output_columns, drilldown_offset, drilldown_limitによって指定された"
 "条件に従って各レコードの値が出力されます。"
 msgstr ""
 
-#: ../../../source/commands/select.txt:255
-msgid "テーブルEntryの全レコード・全カラムの値を出力します。::"
+# 06123d911ca84262ae1775271000e2f4
+#: ../../../source/commands/select.txt:501
+msgid "See also"
+msgstr ""
+
+# f822703733064ef0b6b63625297ec2e5
+#: ../../../source/commands/select.txt:503
+msgid ":doc:`/spec/query_syntax`"
+msgstr ""
+
+# f822703733064ef0b6b63625297ec2e5
+#: ../../../source/commands/select.txt:504
+msgid ":doc:`/spec/script_syntax`"
 msgstr ""
 
 #: ../../../source/commands/shutdown.txt:6
@@ -1653,6 +1994,16 @@ msgstr ""
 #: ../../../source/commands/suggest-learn-suggestion.log:1
 #: ../../../source/commands/suggest-mixed.log:1
 #: ../../../source/commands/suggest-suggestion.log:1
+#: ../../../source/example/commands/select/match_columns_simple.log:1
+#: ../../../source/example/commands/select/match_columns_some_columns.log:1
+#: ../../../source/example/commands/select/match_columns_weight.log:1
+#: ../../../source/example/commands/select/no_limit.log:1
+#: ../../../source/example/commands/select/paging.log:1
+#: ../../../source/example/commands/select/simple_filter.log:1
+#: ../../../source/example/commands/select/simple_query.log:1
+#: ../../../source/example/commands/select/simple_usage.log:1
+#: ../../../source/example/commands/select/table_nonexistent.log:1
+#: ../../../source/example/commands/select/usage_setup.log:1
 msgid "Execution example::"
 msgstr ""
 
@@ -1893,7 +2244,8 @@ msgstr ""
 
 # 5f30603cc625409db0e45398974db88f
 #: ../../../source/commands/suggest.txt:148
-msgid "It specifies whether optional similar search is used or not in correction."
+msgid ""
+"It specifies whether optional similar search is used or not in correction."
 msgstr "補正時に類似検索を実行するかどうかを指定します。"
 
 # 5db279e0f9214776bb9ca618f1fd5dff

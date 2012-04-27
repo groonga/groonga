@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-02-27 15:42\n"
+"POT-Creation-Date: 2012-04-27 23:53\n"
 "PO-Revision-Date: 2011-05-09 00:37+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -19,6 +19,191 @@ msgstr ""
 
 #: ../../../source/spec.txt:6
 msgid "仕様"
+msgstr ""
+
+# f22814ecf4034afc9219c94acde3344c
+#: ../../../source/spec/query_syntax.txt:9
+msgid "Query syntax"
+msgstr ""
+
+# fce4a207dd274d16a8b2afc7cae872e3
+#: ../../../source/spec/query_syntax.txt:11
+msgid "TODO: revised."
+msgstr ""
+
+# d8984965600447b98b53108c8d7288f6
+#: ../../../source/spec/query_syntax.txt:13
+msgid ""
+"一般的なWebページの検索フォームで使われるような書式を使って検索条件を指定する"
+"ことができます。これをクエリ構文と呼びます。"
+msgstr ""
+
+# 8b908dae3a29426ab6aca450314ac731
+#: ../../../source/spec/query_syntax.txt:15
+msgid "クエリ構文は「条件式」と条件式を組み合わせる「結合式」からなります。"
+msgstr ""
+
+# 5a40d0eae09349a4ab89c40c6fae03f8
+#: ../../../source/spec/query_syntax.txt:18
+msgid "条件式"
+msgstr ""
+
+# 51fb7a3950a14809bee5373ad438a1ec
+#: ../../../source/spec/query_syntax.txt:20
+msgid "以下の条件式が使用できます。"
+msgstr ""
+
+# 027e7df3def14565aa1a974d18390b43
+#: ../../../source/spec/query_syntax.txt:23
+msgid "``文字列``"
+msgstr ""
+
+# ba5ab2d7ae0f4931a7f26b964a1ef8a5
+#: ../../../source/spec/query_syntax.txt:25
+msgid ""
+"全文検索条件(デフォルト検索対象カラムの値が指定された文字列を含んでいる)"
+msgstr ""
+
+# 96e54ce0ee634ff8b86897acc629b6e1
+#: ../../../source/spec/query_syntax.txt:28
+msgid "``\"文字列\"``"
+msgstr ""
+
+# c4708d61b52245ea96f57164196d493d
+#: ../../../source/spec/query_syntax.txt:30
+msgid ""
+"フレーズ検索条件(デフォルト検索対象カラムの値が指定されたフレーズを含んでい"
+"る)"
+msgstr ""
+
+# 6217ff813649445aacd9d56468520fdb
+#: ../../../source/spec/query_syntax.txt:33
+msgid "``カラム名:値``"
+msgstr ""
+
+# d53d947810b649a7a7c265b1d2dbafa0
+#: ../../../source/spec/query_syntax.txt:35
+msgid "一致条件( ``カラム値 == 値`` )"
+msgstr ""
+
+# 44316e1487f348f0827bd6fb50204d50
+#: ../../../source/spec/query_syntax.txt:38
+msgid "``カラム名:!値``"
+msgstr ""
+
+# b039648276c442ac80d739c223df013c
+#: ../../../source/spec/query_syntax.txt:40
+msgid "不一致条件( ``カラム値 != 値`` )"
+msgstr ""
+
+# 15483f6433064c29b9198039af6806eb
+#: ../../../source/spec/query_syntax.txt:43
+msgid "``カラム名:<値``"
+msgstr ""
+
+# f742206e60694350ba21da48867347c2
+#: ../../../source/spec/query_syntax.txt:45
+msgid "比較条件( ``カラム値 < 値`` )"
+msgstr ""
+
+# 2af698502f0045bfbf66c9e4b87e7057
+#: ../../../source/spec/query_syntax.txt:48
+msgid "``カラム名:>値``"
+msgstr ""
+
+# 6a444ec968214761937efe4981010308
+#: ../../../source/spec/query_syntax.txt:50
+msgid "比較条件( ``カラム値 > 値`` )"
+msgstr ""
+
+# 3390dd350d3c456ea883e62157ad9631
+#: ../../../source/spec/query_syntax.txt:53
+msgid "``カラム名:<=値``"
+msgstr ""
+
+# ff17dde0531249d6aa417c5ad390125c
+#: ../../../source/spec/query_syntax.txt:55
+msgid "比較条件( ``カラム値 <= 値`` )"
+msgstr ""
+
+# 2048e438f1de45a5b4d60f8fdeab7246
+#: ../../../source/spec/query_syntax.txt:58
+msgid "``カラム名:>=値``"
+msgstr ""
+
+# ee68fb3e32aa48c3b48ab90375b12bc9
+#: ../../../source/spec/query_syntax.txt:60
+msgid "比較条件( ``カラム値 >= 値`` )"
+msgstr ""
+
+# cd05ea93353a4d20bcdbc410dd858bb9
+#: ../../../source/spec/query_syntax.txt:63
+msgid "``カラム名:@文字列``"
+msgstr ""
+
+# 92d5ab0ee5724e0097e72cf1633c032c
+#: ../../../source/spec/query_syntax.txt:65
+msgid "全文検索条件(カラム値が指定された文字列を含んでいる)"
+msgstr ""
+
+# ffb13e06010846caba98f29f91dc95f4
+#: ../../../source/spec/query_syntax.txt:68
+msgid "結合演算子"
+msgstr ""
+
+# 9ca6d1aaf0ed4f03988543af9b3ff7fb
+#: ../../../source/spec/query_syntax.txt:70
+msgid "複数の条件式を結合するために以下の演算子が使用できます。"
+msgstr ""
+
+# d13dfb01f94c4993897756c5d107f562
+#: ../../../source/spec/query_syntax.txt:73
+msgid "``a OR b``"
+msgstr ""
+
+# 4614194e0e304f88aa26d1d0848b2a07
+#: ../../../source/spec/query_syntax.txt:75
+msgid "論理和( ``a`` と ``b`` といずれかの条件がマッチする)"
+msgstr ""
+
+# bb849f7965d24b8896c5ec715b93e45b
+#: ../../../source/spec/query_syntax.txt:78
+msgid "``a + b``"
+msgstr ""
+
+# d574a68f0c4b4585abb5f04fcf28a64f
+#: ../../../source/spec/query_syntax.txt:80
+msgid "論理積( ``a`` と ``b`` の両方がマッチする)"
+msgstr ""
+
+# 2bf9b3626d394031bc5ccc8fa8badfa3
+#: ../../../source/spec/query_syntax.txt:83
+msgid "``a - b``"
+msgstr ""
+
+# b28f7ef713ee47eeb4b177a4bdaf6e7f
+#: ../../../source/spec/query_syntax.txt:85
+msgid "``a`` にマッチし、 ``b`` にはマッチしない"
+msgstr ""
+
+# 04c030028e0d45d0875b8f13e5576d5e
+#: ../../../source/spec/query_syntax.txt:88
+msgid "``(...)``"
+msgstr ""
+
+# 982eeec671634ee488b0bf995e02703f
+#: ../../../source/spec/query_syntax.txt:90
+msgid "複数の条件をまとめる"
+msgstr ""
+
+# 47dc2b34beb1410495604199c7f24873
+#: ../../../source/spec/script_syntax.txt:9
+msgid "Script Syntax"
+msgstr ""
+
+# fe884bf6e29c4463b588f80a985ddf99
+#: ../../../source/spec/script_syntax.txt:11
+msgid "TODO..."
 msgstr ""
 
 #: ../../../source/spec/search.txt:6
