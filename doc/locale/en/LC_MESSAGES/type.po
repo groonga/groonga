@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-28 17:06\n"
+"POT-Creation-Date: 2012-04-27 23:45\n"
 "PO-Revision-Date: 2011-08-12 22:01+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -389,15 +389,57 @@ msgstr "脚注"
 msgid "Object型はv1.2でサポートされます。"
 msgstr "Object型はv1.2でサポートされます。"
 
-# 34b37ce1314e49bd95b5de66aaff9ad0
-#~ msgid ""
-#~ "世界測地系緯度経度座標。緯度と経度はミリ秒単位での整数。 \"経度のミリ秒x緯"
-#~ "度のミリ秒\"という文字列表現を持つ。 度分秒形式であれば、x度y分z秒は(((x "
-#~ "* 60) + y) * 60 + z) * 1000という計算式で変換した値を代入します。"
-#~ msgstr ""
-#~ "世界測地系緯度経度座標。緯度と経度はミリ秒単位での整数。 \"経度のミリ秒x緯"
-#~ "度のミリ秒\"という文字列表現を持つ。 度分秒形式であれば、x度y分z秒は(((x "
-#~ "* 60) + y) * 60 + z) * 1000という計算式で変換した値を代入します。"
+# 06b766be959c41d587a3848bc4219af2
+#~ msgid "bool型。trueとfalse。"
+#~ msgstr "bool型。trueとfalse。"
+
+# fbf7e0c1c7864a5ba9dc87118f79e0fe
+#~ msgid "8bit符号付き整数。"
+#~ msgstr "8bit符号付き整数。"
+
+# 0151416fedc545e7a5352d7184891c39
+#~ msgid "8bit符号なし整数。"
+#~ msgstr "8bit符号なし整数。"
+
+# 871861d32c204656bc57054fb7b4979e
+#~ msgid "16bit符号付き整数。"
+#~ msgstr "16bit符号付き整数。"
+
+# 363c8bda3f4547c9b3d4a9871bba3975
+#~ msgid "16bit符号なし整数。"
+#~ msgstr "16bit符号なし整数。"
+
+# 9f63577fc3564b3aa3453f584fe60ec0
+#~ msgid "32bit符号付き整数。"
+#~ msgstr "32bit符号付き整数。"
+
+# b4dd91c7886f4679bd6455ba6634c4be
+#~ msgid "32bit符号なし整数。"
+#~ msgstr "32bit符号なし整数。"
+
+# e6fc08979cc948df958f1b44dd60e382
+#~ msgid "64bit符号付き整数。"
+#~ msgstr "64bit符号付き整数。"
+
+# 7fae4dfe0b3e4c26b2cb12a10278f5c8
+#~ msgid "64bit符号なし整数。"
+#~ msgstr "64bit符号なし整数。"
+
+# 73aaf11274c14948a8d34d33b21202c9
+#~ msgid "ieee754形式の64bit浮動小数点数。"
+#~ msgstr "ieee754形式の64bit浮動小数点数。"
+
+# c4e0af65c3814f62a917d157d1850478
+#~ msgid "4Kbyte以下の文字列。"
+#~ msgstr "4Kbyte以下の文字列。"
+
+# 35cb289f91294070a52a269449c47aad
+#~ msgid "64Kbyte以下の文字列。"
+#~ msgstr "64Kbyte以下の文字列。"
+
+# 0f76b1bbd87a44afae7b7cd79d38f297
+#~ msgid "2Gbyte以下の文字列。"
+#~ msgstr "2Gbyte以下の文字列。"
 
 # cc757fe5faa743909f1dd1ff051b8c28
 #~ msgid ""
@@ -409,54 +451,12 @@ msgstr "Object型はv1.2でサポートされます。"
 #~ "度のミリ秒\"という文字列表現を持つ。 度分秒形式であれば、x度y分z秒は(((x "
 #~ "* 60) + y) * 60 + z) * 1000という計算式で変換した値を代入します。"
 
-# 0f76b1bbd87a44afae7b7cd79d38f297
-#~ msgid "2Gbyte以下の文字列。"
-#~ msgstr "2Gbyte以下の文字列。"
-
-# 35cb289f91294070a52a269449c47aad
-#~ msgid "64Kbyte以下の文字列。"
-#~ msgstr "64Kbyte以下の文字列。"
-
-# c4e0af65c3814f62a917d157d1850478
-#~ msgid "4Kbyte以下の文字列。"
-#~ msgstr "4Kbyte以下の文字列。"
-
-# 73aaf11274c14948a8d34d33b21202c9
-#~ msgid "ieee754形式の64bit浮動小数点数。"
-#~ msgstr "ieee754形式の64bit浮動小数点数。"
-
-# 7fae4dfe0b3e4c26b2cb12a10278f5c8
-#~ msgid "64bit符号なし整数。"
-#~ msgstr "64bit符号なし整数。"
-
-# e6fc08979cc948df958f1b44dd60e382
-#~ msgid "64bit符号付き整数。"
-#~ msgstr "64bit符号付き整数。"
-
-# b4dd91c7886f4679bd6455ba6634c4be
-#~ msgid "32bit符号なし整数。"
-#~ msgstr "32bit符号なし整数。"
-
-# 9f63577fc3564b3aa3453f584fe60ec0
-#~ msgid "32bit符号付き整数。"
-#~ msgstr "32bit符号付き整数。"
-
-# 363c8bda3f4547c9b3d4a9871bba3975
-#~ msgid "16bit符号なし整数。"
-#~ msgstr "16bit符号なし整数。"
-
-# 871861d32c204656bc57054fb7b4979e
-#~ msgid "16bit符号付き整数。"
-#~ msgstr "16bit符号付き整数。"
-
-# 0151416fedc545e7a5352d7184891c39
-#~ msgid "8bit符号なし整数。"
-#~ msgstr "8bit符号なし整数。"
-
-# fbf7e0c1c7864a5ba9dc87118f79e0fe
-#~ msgid "8bit符号付き整数。"
-#~ msgstr "8bit符号付き整数。"
-
-# 06b766be959c41d587a3848bc4219af2
-#~ msgid "bool型。trueとfalse。"
-#~ msgstr "bool型。trueとfalse。"
+# 34b37ce1314e49bd95b5de66aaff9ad0
+#~ msgid ""
+#~ "世界測地系緯度経度座標。緯度と経度はミリ秒単位での整数。 \"経度のミリ秒x緯"
+#~ "度のミリ秒\"という文字列表現を持つ。 度分秒形式であれば、x度y分z秒は(((x "
+#~ "* 60) + y) * 60 + z) * 1000という計算式で変換した値を代入します。"
+#~ msgstr ""
+#~ "世界測地系緯度経度座標。緯度と経度はミリ秒単位での整数。 \"経度のミリ秒x緯"
+#~ "度のミリ秒\"という文字列表現を持つ。 度分秒形式であれば、x度y分z秒は(((x "
+#~ "* 60) + y) * 60 + z) * 1000という計算式で変換した値を代入します。"

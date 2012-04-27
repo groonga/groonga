@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-28 17:06\n"
+"POT-Creation-Date: 2012-04-27 23:45\n"
 "PO-Revision-Date: 2011-08-12 22:01+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -1159,14 +1159,14 @@ msgstr ""
 "Redmine is for Japanese and GitHub issue tracker is for English. You can use "
 "both of them to report a bug."
 
-# 75447cb3ed4d44dc915bfbc3f30756f8
-#~ msgid "Please read this document."
-#~ msgstr "Please read this document."
+# 6f7cbc7a1e9f457fbdc0e95368a32c18
+#~ msgid "We describe about them in this section."
+#~ msgstr "We describe about them in this section."
 
 # f7dc422b7a2f4bca828cdc07ee15e8da
 #~ msgid "Please talk your friends about groonga."
 #~ msgstr "Please talk your friends about groonga."
 
-# 6f7cbc7a1e9f457fbdc0e95368a32c18
-#~ msgid "We describe about them in this section."
-#~ msgstr "We describe about them in this section."
+# 75447cb3ed4d44dc915bfbc3f30756f8
+#~ msgid "Please read this document."
+#~ msgstr "Please read this document."
