@@ -1,5 +1,55 @@
 Execution example::
 
   > select --table Comments --query hash_tags:@groonga --output_columns posted_by.name,comment --drilldown posted_by
-  [[0,1317212783.01379,0.000311974],[[[2],[["posted_by.name","ShortText"],["comment","ShortText"]],["グニャラくん","groongaなう #groonga"],["グニャラくん","groonga開発合宿のため羽田空港に来ました！ #groonga #travel"]],[[1],[["_key","ShortText"],["_nsubrecs","Int32"]],["tasukuchan",2]]]]
+  [
+    [
+      0, 
+      1335519661.2089, 
+      0.000585079193115234
+    ], 
+    [
+      [
+        [
+          2
+        ], 
+        [
+          [
+            "posted_by.name", 
+            "ShortText"
+          ], 
+          [
+            "comment", 
+            "ShortText"
+          ]
+        ], 
+        [
+          "グニャラくん", 
+          "groongaなう #groonga"
+        ], 
+        [
+          "グニャラくん", 
+          "groonga開発合宿のため羽田空港に来ました！ #groonga #travel"
+        ]
+      ], 
+      [
+        [
+          1
+        ], 
+        [
+          [
+            "_key", 
+            "ShortText"
+          ], 
+          [
+            "_nsubrecs", 
+            "Int32"
+          ]
+        ], 
+        [
+          "tasukuchan", 
+          2
+        ]
+      ]
+    ]
+  ]
   

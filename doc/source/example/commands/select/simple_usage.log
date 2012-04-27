@@ -1,5 +1,47 @@
 Execution example::
 
   > select Entries
-  [[0,1335517901.15261,0.000388622283935547],[[[3],[["_id","UInt32"],["_key","ShortText"],["content","Text"]],[1,"The first post!","Welcome! This is my first post!"],[2,"Groonga","I started to use groonga. It's very fast!"],[3,"Mroonga","I also started to use mroonga. It's also very fast! Really fast!"]]]]
+  [
+    [
+      0, 
+      1335519592.67133, 
+      0.000493049621582031
+    ], 
+    [
+      [
+        [
+          3
+        ], 
+        [
+          [
+            "_id", 
+            "UInt32"
+          ], 
+          [
+            "_key", 
+            "ShortText"
+          ], 
+          [
+            "content", 
+            "Text"
+          ]
+        ], 
+        [
+          1, 
+          "The first post!", 
+          "Welcome! This is my first post!"
+        ], 
+        [
+          2, 
+          "Groonga", 
+          "I started to use groonga. It's very fast!"
+        ], 
+        [
+          3, 
+          "Mroonga", 
+          "I also started to use mroonga. It's also very fast! Really fast!"
+        ]
+      ]
+    ]
+  ]
   

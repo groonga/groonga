@@ -2,7 +2,24 @@ Execution example::
 
   % groonga -c
   > status
-  [[0,1332486613.4953,9.918212890625e-05],{"alloc_count":130,"starttime":1332486613,"uptime":0,"version":"2.0.0-250-g5a3cf19","n_queries":0,"cache_hit_rate":0.0,"command_version":1,"default_command_version":1,"max_command_version":2}]
+  [
+    [
+      0, 
+      1335519662.04579, 
+      5.79357147216797e-05
+    ], 
+    {
+      "uptime": 0, 
+      "max_command_version": 2, 
+      "n_queries": 0, 
+      "cache_hit_rate": 0.0, 
+      "version": "2.0.1-283-g3f815e2", 
+      "alloc_count": 130, 
+      "command_version": 1, 
+      "starttime": 1335519662, 
+      "default_command_version": 1
+    }
+  ]
   > ctrl-d
   %
   

@@ -1,5 +1,36 @@
 Execution example::
 
   > select --table Users --match_columns name,location_str,description --query 東京 --output_columns _key,name
-  [[0,1317212781.80175,0.000302755],[[[2],[["_key","ShortText"],["name","ShortText"]],["tasukuchan","グニャラくん"],["OffGao","OffGao"]]]]
+  [
+    [
+      0, 
+      1335519659.99711, 
+      0.000482797622680664
+    ], 
+    [
+      [
+        [
+          2
+        ], 
+        [
+          [
+            "_key", 
+            "ShortText"
+          ], 
+          [
+            "name", 
+            "ShortText"
+          ]
+        ], 
+        [
+          "tasukuchan", 
+          "グニャラくん"
+        ], 
+        [
+          "OffGao", 
+          "OffGao"
+        ]
+      ]
+    ]
+  ]
   

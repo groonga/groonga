@@ -1,5 +1,36 @@
 Execution example::
 
   > suggest --table item_query --column kana --types suggest --frequency_threshold 1 --query search
-  [[0,1317212711.42188,0.000553344],{"suggest":[[2],[["_key","ShortText"],["_score","Int32"]],["search engine",1],["web search realtime",1]]}]
+  [
+    [
+      0, 
+      1335519581.87931, 
+      0.000770807266235352
+    ], 
+    {
+      "suggest": [
+        [
+          2
+        ], 
+        [
+          [
+            "_key", 
+            "ShortText"
+          ], 
+          [
+            "_score", 
+            "Int32"
+          ]
+        ], 
+        [
+          "search engine", 
+          1
+        ], 
+        [
+          "web search realtime", 
+          1
+        ]
+      ]
+    }
+  ]
   

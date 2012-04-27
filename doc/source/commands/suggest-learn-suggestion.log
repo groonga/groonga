@@ -5,5 +5,5 @@ Execution example::
   > {"sequence": "3", "time": 1312950803.86057, "item": "search engine", "type": "submit"},
   > {"sequence": "3", "time": 1312950808.86057, "item": "web search realtime", "type": "submit"}
   > ]
-  [[0,1317212847.69365,0.801326259],2]
+  [[0,1335519588.61046,0.801591634750366],2]
   

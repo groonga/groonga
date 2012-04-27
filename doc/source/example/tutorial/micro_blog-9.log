@@ -1,5 +1,38 @@
 Execution example::
 
   > select --table Users --query _key:tasukuchan --output_columns favorites.posted_by,favorites.comment
-  [[0,1317212783.41809,0.000257979],[[[1],[["favorites.posted_by","Users"],["favorites.comment","ShortText"]],[["daijiro","OffGao"],["マイクロブログ作ってみました（甘栗むいちゃいました的な感じで）。","@daijiro @tasukuchan 登録してみましたよー！"]]]]]
+  [
+    [
+      0, 
+      1335519661.61696, 
+      0.000443696975708008
+    ], 
+    [
+      [
+        [
+          1
+        ], 
+        [
+          [
+            "favorites.posted_by", 
+            "Users"
+          ], 
+          [
+            "favorites.comment", 
+            "ShortText"
+          ]
+        ], 
+        [
+          [
+            "daijiro", 
+            "OffGao"
+          ], 
+          [
+            "マイクロブログ作ってみました（甘栗むいちゃいました的な感じで）。", 
+            "@daijiro @tasukuchan 登録してみましたよー！"
+          ]
+        ]
+      ]
+    ]
+  ]
   

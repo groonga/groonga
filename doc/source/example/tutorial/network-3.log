@@ -3,10 +3,88 @@ Execution example::
   http://HOST_NAME_OR_IP_ADDRESS[:PORT_NUMBER]/d/status
   Executed command:
   > status
-  [[0,1332486613.69917,0.000123739242553711],{"alloc_count":131,"starttime":1332486613,"uptime":0,"version":"2.0.0-250-g5a3cf19","n_queries":0,"cache_hit_rate":0.0,"command_version":1,"default_command_version":1,"max_command_version":2}]
+  [
+    [
+      0, 
+      1335519662.24808, 
+      9.918212890625e-05
+    ], 
+    {
+      "uptime": 0, 
+      "max_command_version": 2, 
+      "n_queries": 0, 
+      "cache_hit_rate": 0.0, 
+      "version": "2.0.1-283-g3f815e2", 
+      "alloc_count": 131, 
+      "command_version": 1, 
+      "starttime": 1335519662, 
+      "default_command_version": 1
+    }
+  ]
   
   http://HOST_NAME_OR_IP_ADDRESS[:PORT_NUMBER]/d/select?table=Site&query=title:@this
   Executed command:
   > select --table Site --query title:@this
-  [[0,1332486613.90319,0.00245404243469238],[[[1],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"]],[1,"http://example.org/","This is test record 1!"]]]]
+  [
+    [
+      0, 
+      1335519662.45038, 
+      0.00197672843933105
+    ], 
+    [
+      [
+        [
+          1
+        ], 
+        [
+          [
+            "_id", 
+            "UInt32"
+          ], 
+          [
+            "_key", 
+            "ShortText"
+          ], 
+          [
+            "country", 
+            "SiteCountry"
+          ], 
+          [
+            "domain", 
+            "SiteDomain"
+          ], 
+          [
+            "link", 
+            "Site"
+          ], 
+          [
+            "links", 
+            "Site"
+          ], 
+          [
+            "location", 
+            "WGS84GeoPoint"
+          ], 
+          [
+            "title", 
+            "ShortText"
+          ]
+        ], 
+        [
+          1, 
+          "http://example.org/", 
+          "japan", 
+          ".org", 
+          "http://example.net/", 
+          [
+            "http://example.net/", 
+            "http://example.org/", 
+            "http://example.com/"
+          ], 
+          "128452975x503157902", 
+          "This is test record 1!"
+        ]
+      ]
+    ]
+  ]
   

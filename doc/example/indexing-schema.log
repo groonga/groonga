@@ -1,9 +1,9 @@
 Execution example::
 
   > table_create Tweets TABLE_NO_KEY
-  [[0,1330339027.61804,0.000236272811889648],true]
+  [[0,1335519575.12183,0.000383138656616211],true]
   > column_create Tweets content COLUMN_SCALAR ShortText
-  [[0,1330339027.81905,0.000560760498046875],true]
+  [[0,1335519575.32371,0.000842571258544922],true]
   > table_create Lexicon TABLE_HASH_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenBigram
-  [[0,1330339028.02028,0.000248432159423828],true]
+  [[0,1335519575.52538,0.000417470932006836],true]
   

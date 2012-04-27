@@ -1,5 +1,36 @@
 Execution example::
 
   > select --table Users --query follower:@tasukuchan --output_columns _key,name
-  [[0,1317212782.20472,0.000231885],[[[2],[["_key","ShortText"],["name","ShortText"]],["daijiro","hsiomaneki"],["OffGao","OffGao"]]]]
+  [
+    [
+      0, 
+      1335519660.40055, 
+      0.000302791595458984
+    ], 
+    [
+      [
+        [
+          2
+        ], 
+        [
+          [
+            "_key", 
+            "ShortText"
+          ], 
+          [
+            "name", 
+            "ShortText"
+          ]
+        ], 
+        [
+          "daijiro", 
+          "hsiomaneki"
+        ], 
+        [
+          "OffGao", 
+          "OffGao"
+        ]
+      ]
+    ]
+  ]
   

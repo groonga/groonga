@@ -1,5 +1,20 @@
 Execution example::
 
   > select Entries --filter 'cotent @ "fast" && _key == "Groonga"'
-  [[-63,1335517901.55923,0.000976085662841797,"Syntax error! (cotent @ \"fast\" && _key == \"Groonga\")",[["yy_syntax_error","ecmascript.y",19]]],[]]
+  [
+    [
+      -63, 
+      1335519593.07742, 
+      0.00108194351196289, 
+      "Syntax error! (cotent @ \"fast\" && _key == \"Groonga\")", 
+      [
+        [
+          "yy_syntax_error", 
+          "ecmascript.y", 
+          19
+        ]
+      ]
+    ], 
+    []
+  ]
   

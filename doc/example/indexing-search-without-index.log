@@ -1,5 +1,28 @@
 Execution example::
 
   > select Tweets --match_columns content --query 'good nice'
-  [[0,1330339029.42452,0.000802278518676758],[[[0],[["_id","UInt32"],["content","ShortText"]]]]]
+  [
+    [
+      0, 
+      1335519576.93011, 
+      0.000945568084716797
+    ], 
+    [
+      [
+        [
+          0
+        ], 
+        [
+          [
+            "_id", 
+            "UInt32"
+          ], 
+          [
+            "content", 
+            "ShortText"
+          ]
+        ]
+      ]
+    ]
+  ]
   

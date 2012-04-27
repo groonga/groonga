@@ -1,5 +1,37 @@
 Execution example::
 
   > select Entries --offset 1 --limit 1
-  [[0,1335517901.76199,0.000247716903686523],[[[3],[["_id","UInt32"],["_key","ShortText"],["content","Text"]],[2,"Groonga","I started to use groonga. It's very fast!"]]]]
+  [
+    [
+      0, 
+      1335519593.28077, 
+      0.000288248062133789
+    ], 
+    [
+      [
+        [
+          3
+        ], 
+        [
+          [
+            "_id", 
+            "UInt32"
+          ], 
+          [
+            "_key", 
+            "ShortText"
+          ], 
+          [
+            "content", 
+            "Text"
+          ]
+        ], 
+        [
+          2, 
+          "Groonga", 
+          "I started to use groonga. It's very fast!"
+        ]
+      ]
+    ]
+  ]
   

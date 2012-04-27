@@ -1,5 +1,42 @@
 Execution example::
 
   > select Entries --match_columns content --query fast
-  [[0,1335517901.35577,0.000925779342651367],[[[2],[["_id","UInt32"],["_key","ShortText"],["content","Text"]],[2,"Groonga","I started to use groonga. It's very fast!"],[3,"Mroonga","I also started to use mroonga. It's also very fast! Really fast!"]]]]
+  [
+    [
+      0, 
+      1335519592.87374, 
+      0.000868797302246094
+    ], 
+    [
+      [
+        [
+          2
+        ], 
+        [
+          [
+            "_id", 
+            "UInt32"
+          ], 
+          [
+            "_key", 
+            "ShortText"
+          ], 
+          [
+            "content", 
+            "Text"
+          ]
+        ], 
+        [
+          2, 
+          "Groonga", 
+          "I started to use groonga. It's very fast!"
+        ], 
+        [
+          3, 
+          "Mroonga", 
+          "I also started to use mroonga. It's also very fast! Really fast!"
+        ]
+      ]
+    ]
+  ]
   

@@ -1,5 +1,36 @@
 Execution example::
 
   > select --table Comments --query comment:@なう --output_columns comment,_score
-  [[0,1317212782.60919,0.000239996],[[[2],[["comment","ShortText"],["_score","Int32"]],["groongaなう #groonga",1],["中野ブロードウェイなうなう",2]]]]
+  [
+    [
+      0, 
+      1335519660.80493, 
+      0.000359296798706055
+    ], 
+    [
+      [
+        [
+          2
+        ], 
+        [
+          [
+            "comment", 
+            "ShortText"
+          ], 
+          [
+            "_score", 
+            "Int32"
+          ]
+        ], 
+        [
+          "groongaなう #groonga", 
+          1
+        ], 
+        [
+          "中野ブロードウェイなうなう", 
+          2
+        ]
+      ]
+    ]
+  ]
   

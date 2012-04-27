@@ -1,5 +1,36 @@
 Execution example::
 
   > select Entries --match_columns 'content * 2' --query fast --output_columns '_key, _score'
-  [[0,1335517902.56734,0.000602245330810547],[[[2],[["_key","ShortText"],["_score","Int32"]],["Groonga",2],["Mroonga",4]]]]
+  [
+    [
+      0, 
+      1335519594.08917, 
+      0.0003814697265625
+    ], 
+    [
+      [
+        [
+          2
+        ], 
+        [
+          [
+            "_key", 
+            "ShortText"
+          ], 
+          [
+            "_score", 
+            "Int32"
+          ]
+        ], 
+        [
+          "Groonga", 
+          2
+        ], 
+        [
+          "Mroonga", 
+          4
+        ]
+      ]
+    ]
+  ]
   

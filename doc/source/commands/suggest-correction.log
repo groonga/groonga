@@ -1,5 +1,32 @@
 Execution example::
 
   > suggest --table item_query --column kana --types correct --frequency_threshold 1 --query saerch
-  [[0,1317212848.8995,0.00037794],{"correct":[[1],[["_key","ShortText"],["_score","Int32"]],["search",1]]}]
+  [
+    [
+      0, 
+      1335519589.81612, 
+      0.000555992126464844
+    ], 
+    {
+      "correct": [
+        [
+          1
+        ], 
+        [
+          [
+            "_key", 
+            "ShortText"
+          ], 
+          [
+            "_score", 
+            "Int32"
+          ]
+        ], 
+        [
+          "search", 
+          1
+        ]
+      ]
+    }
+  ]
   
