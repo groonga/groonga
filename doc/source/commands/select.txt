@@ -282,14 +282,14 @@ of blog entry is more important rather thatn content of blog entry.
 ``query``
 """""""""
 
-TODO: write short description.
+TODO: write short description and add example.
 
 See :doc:`/spec/query_syntax`.
 
 ``filter``
 """"""""""
 
-TODO: write short description.
+TODO: write short description and add example.
 
 See :doc:`/spec/script_syntax`.
 
@@ -299,16 +299,31 @@ Advanced search parameters
 ``match_escalation_threshold``
 """"""""""""""""""""""""""""""
 
-検索の挙動をエスカレーションするかどうかの閾値を設定します。デフォルト値は0です。デフォルト値は以下のいずれかの方法で設定できます。
+TODO: add example.
 
-  * configureの--with-match-escalation-thresholdオプション
-  * groongaコマンド起動時の--match-escalation-thresholdオプション
-  * 設定ファイル中のmatch-escalation-threshold設定項目
+It specifies threshold to determine whether search storategy
+escalation is used or not. The threshold is compared against the
+number of matched records. If the number of matched records is less
+than the threshold, search storategy escalation is used. See
+:doc:`/spec/search` about search storategy escalation.
 
-クエリのヒット件数が閾値を越えない場合は :doc:`/spec/search` で説明している方法で検索方法をエスカレーションしてきます。
+The default threshold is 0. It means that search storategy escalation
+is used only when no records are matched.
+
+The default threshold can be customized by one of the followings.
+
+  * ``--with-match-escalation-threshold`` option of configure
+  * ``--match-escalation-threshold`` option of groogna command
+  * ``match-escalation-threshold`` configuration item in configuration
+    file
 
 ``query_expansion``
 """""""""""""""""""
+
+TODO: write in English and add example.
+
+It specifies a column that is used to expand (substitute) ``query``
+parameter value.
 
 query_expansionパラメータには、queryパラメータに指定された文字列を置換(拡張)する条件となるテーブル・カラムを指定します。フォーマットは「${テーブル名}.${カラム名}」となります。指定するテーブルは文字列を主キーとするハッシュ型あるいはパトリシア木型のテーブルで、一つ以上の文字列型のカラムが定義されている必要があります。(ここでは置換テーブルと呼びます。)
 
@@ -320,12 +335,16 @@ Output related parameters
 ``output_columns``
 """"""""""""""""""
 
+TODO: write in English and add example.
+
 出力するカラム名のリストをカンマ(',')区切りで指定します。
 
 アスタリスク('*')を指定すると、全てのカラムが指定されたものとみなされます。または、script形式のgrn_expr文字列を指定します。 (デフォルトは、'_id, _key, \*')
 
 ``sortby``
 """"""""""
+
+TODO: write in English and add example.
 
 ソートキーとなるカラム名のリストをカンマ(',')区切りで指定します。::
 
@@ -338,15 +357,21 @@ query引数またはfilter引数を指定した場合はカラム名に'_score'�
 ``offset``
 """"""""""
 
+TODO: write in English and add example.
+
 検索条件にマッチしたレコードのうち、出力対象となる最初のレコードの番号を0ベースで指定します。デフォルト値は0です。offsetに負の値を指定した場合は、ヒットした件数 + offset によって算出される値が指定されたものとみなされます。
 
 ``limit``
 """""""""
 
+TODO: write in English and add example.
+
 検索条件にマッチしたレコードのうち、出力を行うレコードの件数を指定します。デフォルト値は10です。実際には、offset + limit がヒットした件数を超えない範囲でレコードが出力されます。limitに負の値を指定した場合は、ヒットした件数 + limit + 1 によって算出される値が指定されたものとみなされます。
 
 ``scorer``
 """"""""""
+
+TODO: write in English and add example.
 
 検索条件にマッチする全てのレコードに対して適用するgrn_exprをscript形式で指定します。
 
@@ -358,25 +383,35 @@ Facet related parameters
 ``drilldown``
 """""""""""""
 
+TODO: write in English and add example.
+
 グループ化のキーとなるカラム名のリストをカンマ(',')区切りで指定します。検索条件にマッチした各レコードを出力したのちに、drilldownに指定されたカラムの値が同一であるレコードをとりまとめて、それぞれについて結果レコードを出力します。
 
 ``drilldown_sortby``
 """"""""""""""""""""
+
+TODO: write in English and add example.
 
 drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、ソートキーとなるカラム名のリストをカンマ(',')区切りで指定します。sortbyパラメータと同様に昇降順を指定できます。
 
 ``drilldown_output_columns``
 """"""""""""""""""""""""""""
 
+TODO: write in English and add example.
+
 drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、出力するカラム名のリストをカンマ(',')区切りで指定します。
 
 ``drilldown_offset``
 """"""""""""""""""""
 
+TODO: write in English and add example.
+
 drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、出力対象となる最初のレコードの番号を0ベースで指定します。デフォルト値は0です。drilldown_offsetに負の値を指定した場合は、ヒットした件数 + drilldown_offsetによって算出される値が指定されたものとみなされます。
 
 ``drilldown_limit``
 """""""""""""""""""
+
+TODO: write in English and add example.
 
 drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、出力を行うレコードの件数を指定します。デフォルト値は10です。実際には、drilldown_offset + drilldown_limit がヒットした件数を超えない範囲でレコードが出力されます。drilldown_limitに負の値を指定した場合は、ヒットした件数 + drilldown_limit + 1 によって算出される値が指定されたものとみなされます。
 
@@ -386,6 +421,8 @@ Cache related parameter
 ``cache``
 """""""""
 
+TODO: write in English and add example.
+
 クエリキャッシュに関する動作を設定します。
 
 ``no``
@@ -394,6 +431,8 @@ Cache related parameter
 
 返値
 ----
+
+TODO: write in English and add example.
 
 以下のようなjson形式で値が返却されます。
 
@@ -457,15 +496,6 @@ Cache related parameter
   ``ドリルダウン結果n``
 
     drilldown_output_columns, drilldown_offset, drilldown_limitによって指定された条件に従って各レコードの値が出力されます。
-
-例
---
-
-テーブルEntryの全レコード・全カラムの値を出力します。::
-
- select Entry
-
- [[[2],[["_id", "UInt32"],["_key","ShortText"],["body","ShortText"]],[1,"abandon","放棄する"],[2,"abbreviate","短縮する"]]]
 
 See also
 --------
