@@ -7,6 +7,8 @@ from sys import argv,stdout
 import os
 import os.path
 import shutil
+import re
+import json
 
 DB_DIRECTORY = "/tmp/groonga-databases"
 DEFAULT_DB_NAME = "tutorial.db"
@@ -43,17 +45,31 @@ def execmd(command, fout):
   groonga_process.stdin.flush()
   if fout:
     fout.write(formatted_command_line + "  ")
+  output_buffer = ""
   while True:
     out = select([groonga_process.stdout], [], [], 0.2)
     if len(out[0]):
       char = groonga_process.stdout.read(1)
-      if char != None:
-        stdout.write(char)
+      if char is None:
+        stdout.write(output_buffer)
         if fout:
-          if char == '\n':
-            fout.write(char + "  ")
+          fout.write(output_buffer)
+      else:
+        output_buffer += char
+        if char == '\n':
+          if len(output_buffer) < 80:
+            formatted_output = output_buffer
           else:
-            fout.write(char)
+            parsed_output = json.loads(output_buffer)
+            formatted_output = json.dumps(parsed_output,
+                                          indent=2,
+                                          ensure_ascii=False)
+            formatted_output += "\n"
+            formatted_output = formatted_output.encode("utf-8")
+          stdout.write(formatted_output)
+          if fout:
+            fout.write(re.sub("\n", "\n  ", formatted_output))
+          output_buffer = ""
     else:
       stdout.flush()
       break
