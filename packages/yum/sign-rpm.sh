@@ -25,6 +25,8 @@ for distribution in ${DISTRIBUTIONS}; do
     rpms="${rpms} $(echo $script_base_dir/${distribution}/*/*/*/*.rpm)"
 done
 
+echo "NOTE: YOU JUST ENTER! YOU DON'T NEED TO INPUT PASSWORD!"
+echo "      IT'S JUST FOR rpm COMMAND RESTRICTION!"
 run rpm \
     -D "_gpg_name ${GPG_UID}" \
     -D "__gpg /usr/bin/gpg2" \
