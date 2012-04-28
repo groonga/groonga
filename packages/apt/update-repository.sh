@@ -118,7 +118,7 @@ for code_name in ${CODES}; do
 	    ;;
     esac
 
-    mkdir -p ${distribution}
-    (cd ${distribution}
+    mkdir -p packages/${distribution}
+    (cd packages/${distribution}
 	update_repository $distribution $code_name $component)
 done
