@@ -1,23 +1,23 @@
-# English translations for 1.2.4 package.
-# Copyright (C) 2009-2011, Brazil, Inc
+# English translations for 2.0.1 package.
+# Copyright (C) 2009-2012, Brazil, Inc
 # This file is distributed under the same license as the groonga package.
-# Kouhei Sutou <kou@clear-code.com>, 2011.
+# Kouhei Sutou <kou@clear-code.com>, 2012.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: 1.2.4\n"
+"Project-Id-Version: 2.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-27 23:45\n"
-"PO-Revision-Date: 2011-08-12 22:01+0900\n"
+"POT-Creation-Date: 2012-04-28 11:36\n"
+"PO-Revision-Date: 2012-04-28 11:38+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
-"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-# 517b3ae90bb7488d93fb9bd729b8c29a
+# 7a7e295ea9fc42c396f7f5c792cd32ff
 #: ../../../source/spec.txt:6
 msgid "仕様"
 msgstr "仕様"
@@ -25,12 +25,12 @@ msgstr "仕様"
 # 8668950290e44936a5a15512cd19afd6
 #: ../../../source/spec/query_syntax.txt:9
 msgid "Query syntax"
-msgstr ""
+msgstr "Query syntax"
 
 # 32c9eb3503a5405ba9b605d4f1375c69
 #: ../../../source/spec/query_syntax.txt:11
 msgid "TODO: revised."
-msgstr ""
+msgstr "TODO: revised."
 
 # 5af3428bfe9c44c49f5240b4881776a0
 #: ../../../source/spec/query_syntax.txt:13
@@ -38,37 +38,40 @@ msgid ""
 "一般的なWebページの検索フォームで使われるような書式を使って検索条件を指定する"
 "ことができます。これをクエリ構文と呼びます。"
 msgstr ""
+"一般的なWebページの検索フォームで使われるような書式を使って検索条件を指定する"
+"ことができます。これをクエリ構文と呼びます。"
 
 # 37ef4b3ef2a7408e91e2a066210bd02e
 #: ../../../source/spec/query_syntax.txt:15
 msgid "クエリ構文は「条件式」と条件式を組み合わせる「結合式」からなります。"
-msgstr ""
+msgstr "クエリ構文は「条件式」と条件式を組み合わせる「結合式」からなります。"
 
 # 1fb0da06101e48aa858cf3311d733dca
 #: ../../../source/spec/query_syntax.txt:18
 msgid "条件式"
-msgstr ""
+msgstr "条件式"
 
 # 04d2c1fd0757431f80b81466426b17d2
 #: ../../../source/spec/query_syntax.txt:20
 msgid "以下の条件式が使用できます。"
-msgstr ""
+msgstr "以下の条件式が使用できます。"
 
 # 66117a22555c4b1ca79b193a39a41000
 #: ../../../source/spec/query_syntax.txt:23
 msgid "``文字列``"
-msgstr ""
+msgstr "``文字列``"
 
 # ab6e7e4c588140289f815c042b6f9dd9
 #: ../../../source/spec/query_syntax.txt:25
 msgid ""
 "全文検索条件(デフォルト検索対象カラムの値が指定された文字列を含んでいる)"
 msgstr ""
+"全文検索条件(デフォルト検索対象カラムの値が指定された文字列を含んでいる)"
 
 # 6f2d04df8bbb45dea914c61679c35cb1
 #: ../../../source/spec/query_syntax.txt:28
 msgid "``\"文字列\"``"
-msgstr ""
+msgstr "``\"文字列\"``"
 
 # e690dd2fd2034e7d962c49b9f485d4e1
 #: ../../../source/spec/query_syntax.txt:30
@@ -76,143 +79,145 @@ msgid ""
 "フレーズ検索条件(デフォルト検索対象カラムの値が指定されたフレーズを含んでい"
 "る)"
 msgstr ""
+"フレーズ検索条件(デフォルト検索対象カラムの値が指定されたフレーズを含んでい"
+"る)"
 
 # 2a9f1346ced74083a6ecb91005b9fa2e
 #: ../../../source/spec/query_syntax.txt:33
 msgid "``カラム名:値``"
-msgstr ""
+msgstr "``カラム名:値``"
 
 # d8c3a2546104485f9d77311d700a7ef5
 #: ../../../source/spec/query_syntax.txt:35
 msgid "一致条件( ``カラム値 == 値`` )"
-msgstr ""
+msgstr "一致条件( ``カラム値 == 値`` )"
 
 # 187b1217a62d4f5aaf32a1c1b2b3368a
 #: ../../../source/spec/query_syntax.txt:38
 msgid "``カラム名:!値``"
-msgstr ""
+msgstr "``カラム名:!値``"
 
 # 6952a37161ba477a81db6de10a899333
 #: ../../../source/spec/query_syntax.txt:40
 msgid "不一致条件( ``カラム値 != 値`` )"
-msgstr ""
+msgstr "不一致条件( ``カラム値 != 値`` )"
 
 # cf74ccd5efa44cca8363eb260b7cd6b9
 #: ../../../source/spec/query_syntax.txt:43
 msgid "``カラム名:<値``"
-msgstr ""
+msgstr "``カラム名:<値``"
 
 # be03fd732051466886f428672e8359ad
 #: ../../../source/spec/query_syntax.txt:45
 msgid "比較条件( ``カラム値 < 値`` )"
-msgstr ""
+msgstr "比較条件( ``カラム値 < 値`` )"
 
 # fce32ef6ef3b435cbb8c144e7758d85b
 #: ../../../source/spec/query_syntax.txt:48
 msgid "``カラム名:>値``"
-msgstr ""
+msgstr "``カラム名:>値``"
 
 # 179cb4fe2c5a473e915101e5b48a29ea
 #: ../../../source/spec/query_syntax.txt:50
 msgid "比較条件( ``カラム値 > 値`` )"
-msgstr ""
+msgstr "比較条件( ``カラム値 > 値`` )"
 
 # 5d66ef32e200457c944654a896e6e352
 #: ../../../source/spec/query_syntax.txt:53
 msgid "``カラム名:<=値``"
-msgstr ""
+msgstr "``カラム名:<=値``"
 
 # 3f954be92453460badfb36b322cb27d3
 #: ../../../source/spec/query_syntax.txt:55
 msgid "比較条件( ``カラム値 <= 値`` )"
-msgstr ""
+msgstr "比較条件( ``カラム値 <= 値`` )"
 
 # 172337c4178c4c608a5274790bfc4e14
 #: ../../../source/spec/query_syntax.txt:58
 msgid "``カラム名:>=値``"
-msgstr ""
+msgstr "``カラム名:>=値``"
 
 # e9f10d23442a402cb84b4ed8df493848
 #: ../../../source/spec/query_syntax.txt:60
 msgid "比較条件( ``カラム値 >= 値`` )"
-msgstr ""
+msgstr "比較条件( ``カラム値 >= 値`` )"
 
 # d5adfc2b482a4f0da4a48cb5bae7fc28
 #: ../../../source/spec/query_syntax.txt:63
 msgid "``カラム名:@文字列``"
-msgstr ""
+msgstr "``カラム名:@文字列``"
 
 # f31d56816e14415b9ffd98f4d860c5c0
 #: ../../../source/spec/query_syntax.txt:65
 msgid "全文検索条件(カラム値が指定された文字列を含んでいる)"
-msgstr ""
+msgstr "全文検索条件(カラム値が指定された文字列を含んでいる)"
 
 # f9737bab5981425a9089f3be104affc9
 #: ../../../source/spec/query_syntax.txt:68
 msgid "結合演算子"
-msgstr ""
+msgstr "結合演算子"
 
 # 59f0ee7a49dc4de182026c8326349b3d
 #: ../../../source/spec/query_syntax.txt:70
 msgid "複数の条件式を結合するために以下の演算子が使用できます。"
-msgstr ""
+msgstr "複数の条件式を結合するために以下の演算子が使用できます。"
 
 # 5b14ec2a09ed43a18de41d3b5bbb5b81
 #: ../../../source/spec/query_syntax.txt:73
 msgid "``a OR b``"
-msgstr ""
+msgstr "``a OR b``"
 
 # 34f09a3a2a534a3aa92291d4fef54d6c
 #: ../../../source/spec/query_syntax.txt:75
 msgid "論理和( ``a`` と ``b`` といずれかの条件がマッチする)"
-msgstr ""
+msgstr "論理和( ``a`` と ``b`` といずれかの条件がマッチする)"
 
 # 49114881c0f54b4bb6e0bebb4e222dbe
 #: ../../../source/spec/query_syntax.txt:78
 msgid "``a + b``"
-msgstr ""
+msgstr "``a + b``"
 
 # 983dba17786e4f0bbe229339e552f9d2
 #: ../../../source/spec/query_syntax.txt:80
 msgid "論理積( ``a`` と ``b`` の両方がマッチする)"
-msgstr ""
+msgstr "論理積( ``a`` と ``b`` の両方がマッチする)"
 
 # bcb8edde766742cebe4b7eebc26630b7
 #: ../../../source/spec/query_syntax.txt:83
 msgid "``a - b``"
-msgstr ""
+msgstr "``a - b``"
 
 # 55efb0916dd0463a85dc3eed88ce7dec
 #: ../../../source/spec/query_syntax.txt:85
 msgid "``a`` にマッチし、 ``b`` にはマッチしない"
-msgstr ""
+msgstr "``a`` にマッチし、 ``b`` にはマッチしない"
 
 # cf3fefb115e745f2b3b6b66d3e9eafcc
 #: ../../../source/spec/query_syntax.txt:88
 msgid "``(...)``"
-msgstr ""
+msgstr "``(...)``"
 
 # 48ba7a13fd414227b432ea78a8e4dbaa
 #: ../../../source/spec/query_syntax.txt:90
 msgid "複数の条件をまとめる"
-msgstr ""
+msgstr "複数の条件をまとめる"
 
 # 86e6ccda839d48c5b052c07d7a6af3a4
 #: ../../../source/spec/script_syntax.txt:9
 msgid "Script Syntax"
-msgstr ""
+msgstr "Script Syntax"
 
 # 4aa86828eb6f4b1b8cf980500ae88c29
 #: ../../../source/spec/script_syntax.txt:11
 msgid "TODO..."
-msgstr ""
+msgstr "TODO..."
 
-# f67fb4e743514900b876bb0d34c15c98
+# a911c68a5e4d44318f9d842073a60281
 #: ../../../source/spec/search.txt:6
 msgid "検索"
 msgstr "検索"
 
-# 746f9e2b17e4409190fa2526cf955799
+# bb940dfc306b4e989b9d4dac7a093b37
 #: ../../../source/spec/search.txt:8
 msgid ""
 ":doc:`/commands/select` コマンドがqueryパラメータを使ってどのように検索するの"
@@ -221,36 +226,36 @@ msgstr ""
 ":doc:`/commands/select` コマンドがqueryパラメータを使ってどのように検索するの"
 "かを説明します。"
 
-# 9f70608627374e4a87678eb846cc7acb
+# 6aa274d3f2b1481786bc2dca25ed163b
 #: ../../../source/spec/search.txt:11
 msgid "検索の挙動"
 msgstr "検索の挙動"
 
-# d6c21f03d1724fbab195977efc981a68
+# 9ada569394b24df3ad5f83ad70655d00
 #: ../../../source/spec/search.txt:13
 msgid "検索の挙動には以下の3種類あり、検索結果によって動的に使い分けています。"
 msgstr ""
 "検索の挙動には以下の3種類あり、検索結果によって動的に使い分けています。"
 
-# 5944673086f846c783cf29ea46d74a20
-# 9f62f95fae664e4f845d0a79bf8340d5
+# 964c5c3f4136445f84d60dd65755fc04
+# 1aef0a9814514e02a52587922f9b9b8b
 #: ../../../source/spec/search.txt:15 ../../../source/spec/search.txt:22
 msgid "完全一致検索"
 msgstr "完全一致検索"
 
-# cc14ee3c8ea14b3c961ede1de20a1890
-# 5d03ab5617894006b4b6aecbb9867744
+# 51fe2705df9542e4b9ca7866bbb73225
+# 4b95b5e74e344c19b0efc1d8b6420d69
 #: ../../../source/spec/search.txt:16 ../../../source/spec/search.txt:70
 msgid "非わかち書き検索"
 msgstr "非わかち書き検索"
 
-# 3d317d2784834db98f0693d211144b34
-# e3a3429861f045baa271d517fa538332
+# 29a91ded75664a02b67cdd42586453c0
+# cb00dfc5f68343819a13becd83676cae
 #: ../../../source/spec/search.txt:17 ../../../source/spec/search.txt:85
 msgid "部分一致検索"
 msgstr "部分一致検索"
 
-# 854a5d215b2d4588b36d40b354327e24
+# 69b02b0f2ce343479bcf9680b5988e74
 #: ../../../source/spec/search.txt:19
 msgid ""
 "どのように検索の挙動を使い分けているかを説明する前に、まず、それぞれの検索の"
@@ -259,7 +264,7 @@ msgstr ""
 "どのように検索の挙動を使い分けているかを説明する前に、まず、それぞれの検索の"
 "挙動を説明します。"
 
-# 57beff946afb47b282b451e15652ef7f
+# eb497d7ec55f4229832f3e579d0ff808
 #: ../../../source/spec/search.txt:24
 msgid ""
 "検索対象文書は複数の語彙にトークナイズ(分割)され、それぞれを単位とした語彙表"
@@ -268,7 +273,7 @@ msgstr ""
 "検索対象文書は複数の語彙にトークナイズ(分割)され、それぞれを単位とした語彙表"
 "に索引を管理します。 検索キーワードも同一の方法でトークナイズされます。"
 
-# a3b8bcd5e2ea438ca1f96c543d7461f6
+# da83633dc0ab43f6a9f31cdab8baeedb
 #: ../../../source/spec/search.txt:27
 msgid ""
 "このとき、検索キーワードをトークナイズした結果得られる語彙の配列と同一の配列"
@@ -277,19 +282,19 @@ msgstr ""
 "このとき、検索キーワードをトークナイズした結果得られる語彙の配列と同一の配列"
 "を含む文書を検索する処理を完全一致検索と呼んでいます。"
 
-# 05d5da2d38504dcba79e358a006ce5e7
+# 74a0d63c7ad7456e8aebbaf41927397f
 #: ../../../source/spec/search.txt:29
 msgid ""
 "たとえば、TokenMecabトークナイザを使用した索引では「東京都民」という文字列は"
 msgstr ""
 "たとえば、TokenMecabトークナイザを使用した索引では「東京都民」という文字列は"
 
-# 85b491d8ed19485e8b36c10f093c7fca
+# 50971970dd794890a1655988a0329446
 #: ../../../source/spec/search.txt:31
 msgid "東京 / 都民"
 msgstr "東京 / 都民"
 
-# 58eadc74e8c742c38c48bec0398e4059
+# b33231a8c5974c4787393c7de181636c
 #: ../../../source/spec/search.txt:33
 msgid ""
 "という二つの語彙の配列として格納されます。この索引に対して「東京都」という"
@@ -298,12 +303,12 @@ msgstr ""
 "という二つの語彙の配列として格納されます。この索引に対して「東京都」という"
 "キーワードで検索した時、このキーワードは、"
 
-# 7c2b2076686444c89fa18aa9fd401e5c
+# d17bcc81f2f74615a007694cea910612
 #: ../../../source/spec/search.txt:35
 msgid "東京 / 都"
 msgstr "東京 / 都"
 
-# 083c0823be17457881e0b02d1e4ac073
+# e8670b1f3fef437cb293befe566fa1c7
 #: ../../../source/spec/search.txt:37
 msgid ""
 "という二つの語彙の配列として処理されます。この語彙の並びは、「東京 / 都民」と"
@@ -312,7 +317,7 @@ msgstr ""
 "という二つの語彙の配列として処理されます。この語彙の並びは、「東京 / 都民」と"
 "いう語彙の並びには一致しませんので、完全一致検索ではヒットしません。"
 
-# 9561744a97b54ec5bc66806cbc0dd4bb
+# 1993651e67454f73a1bf2f4b06f55343
 #: ../../../source/spec/search.txt:39
 msgid ""
 "これに対して、TokenBigramトークナイザを使用した索引では「東京都民」という文字"
@@ -321,12 +326,12 @@ msgstr ""
 "これに対して、TokenBigramトークナイザを使用した索引では「東京都民」という文字"
 "列は"
 
-# 0876733efed44cda97078f7300f9cd08
+# 5333a88459de46d9bdb6b46ad9cd7220
 #: ../../../source/spec/search.txt:41
 msgid "東京 / 京都 / 都民 / 民"
 msgstr "東京 / 京都 / 都民 / 民"
 
-# 3ffe69ed5095401b8c8bf96c6f1d10f8
+# 433698df473c417ab842d675b0a3c4a3
 #: ../../../source/spec/search.txt:43
 msgid ""
 "という四つの語彙の配列として格納されます。この索引に対して「東京都」という"
@@ -335,12 +340,12 @@ msgstr ""
 "という四つの語彙の配列として格納されます。この索引に対して「東京都」という"
 "キーワードで検索した時、このキーワードは、"
 
-# 66170b6c987147148b72a597821a65b7
+# 7bee686f66734054a97642396d0a7a1a
 #: ../../../source/spec/search.txt:45
 msgid "東京 / 京都"
 msgstr "東京 / 京都"
 
-# b5a6d3580bf74965ba971d2f6bb19663
+# e0bd088cdad34870af95523c42d24ba9
 #: ../../../source/spec/search.txt:47
 msgid ""
 "という二つの語彙の配列として処理されます。この語彙の並びは、「東京 / 京都 / "
@@ -349,7 +354,7 @@ msgstr ""
 "という二つの語彙の配列として処理されます。この語彙の並びは、「東京 / 京都 / "
 "都民」という語彙の並びに含まれますので、完全一致検索でヒットします。"
 
-# 41dac432f09348bdb2bd1b8c085b57a6
+# 604957c03cbb4377bb6e1a15b042c0c6
 #: ../../../source/spec/search.txt:49
 msgid ""
 "なお、TokenBigramトークナイザでは、アルファベット・数値・記号文字列については"
@@ -360,12 +365,12 @@ msgstr ""
 "bigramを生成せず、一つの連続したトークンとして扱います。たとえば、「楽しい"
 "billiard」という文字列は、"
 
-# 8abf8340cc324a7bb92aefce7e9ccd27
+# fab44b8d84c3455aabaa430ecf882624
 #: ../../../source/spec/search.txt:51
 msgid "楽し / しい / billiard"
 msgstr "楽し / しい / billiard"
 
-# 2f724aabe82e40349691b5a5956062bc
+# 7f9fba3f3b43487da0901d1d589b29c9
 #: ../../../source/spec/search.txt:53
 msgid ""
 "という三つの語彙の配列として格納されます。これに対して「bill」というキーワー"
@@ -374,12 +379,12 @@ msgstr ""
 "という三つの語彙の配列として格納されます。これに対して「bill」というキーワー"
 "ドで検索した時、このキーワードは、"
 
-# b322d147330b441ca2ebe0b9843d59dc
+# 30cc1003cdc04b7794b3570b54d8fbc4
 #: ../../../source/spec/search.txt:55
 msgid "bill"
 msgstr "bill"
 
-# 3a452c17d142458fb3b99debb1f8684a
+# ee8743f4fdbb4d61809031328242c359
 #: ../../../source/spec/search.txt:57
 msgid ""
 "という一つの語彙として処理されます。この語彙の並びは「楽し / しい / "
@@ -388,7 +393,7 @@ msgstr ""
 "という一つの語彙として処理されます。この語彙の並びは「楽し / しい / "
 "billiard」という語彙の並びには含まれないので、完全一致でヒットしません。"
 
-# 8adf8c6a47f343b8bb3ba757c4473a50
+# f300f01b1bcb439986ac7a882dd6dd3a
 #: ../../../source/spec/search.txt:59
 msgid ""
 "これに対して、TokenBigramSplitSymbolAlphaトークナイザではアルファベット文字列"
@@ -397,12 +402,12 @@ msgstr ""
 "これに対して、TokenBigramSplitSymbolAlphaトークナイザではアルファベット文字列"
 "についてもbigramを生成し、「楽しいbilliard」という文字列は、"
 
-# 11564b71cb6949c8a75d39e6702a5c39
+# 0c533d641ad140b7b5d0e8e7a9b1263d
 #: ../../../source/spec/search.txt:61
 msgid "楽し / しい / いb / bi / il / ll / li / ia / ar / rd / d"
 msgstr "楽し / しい / いb / bi / il / ll / li / ia / ar / rd / d"
 
-# e9e45046cea34f578fa02624ed243986
+# 10640d77cf004951ba2fd057f1aa906a
 #: ../../../source/spec/search.txt:63
 msgid ""
 "という十一の語彙の配列として格納されます。これに対して「bill」というキーワー"
@@ -411,12 +416,12 @@ msgstr ""
 "という十一の語彙の配列として格納されます。これに対して「bill」というキーワー"
 "ドで検索した時、このキーワードは、"
 
-# 42cfc5619474476e9a5824902db73c48
+# d9826174dc4949b5b93f03d8ad27f898
 #: ../../../source/spec/search.txt:65
 msgid "bi / il / ll"
 msgstr "bi / il / ll"
 
-# 586d4986f46e4234971c6c931c7e49c2
+# 610c066dab37496c908da8e4c2b14951
 #: ../../../source/spec/search.txt:67
 msgid ""
 "という三つの語彙として処理されます。この語彙の並びは「楽し / しい / いb / "
@@ -427,14 +432,14 @@ msgstr ""
 "bi / il / ll / li / ia / ar / rd / d」という語彙の並びに含まれるので、完全一"
 "致でヒットします。"
 
-# 2c3d05c0a7984b4ea8aa85957ab12f81
+# 176da012b45c4d82a36d427f1b81b1ea
 #: ../../../source/spec/search.txt:72
 msgid ""
 "非わかち書き検索はパトリシア木で語彙表を構築している場合のみ利用可能です。"
 msgstr ""
 "非わかち書き検索はパトリシア木で語彙表を構築している場合のみ利用可能です。"
 
-# 700b3ad0e3634475a262ca8242b35a2a
+# 7a48e446e2494d16af9cf77ffdc7ef20
 #: ../../../source/spec/search.txt:74
 msgid ""
 "非わかち書き検索の挙動はTokenBigramなどN-gram系のトークナイザーを利用している"
@@ -443,7 +448,7 @@ msgstr ""
 "非わかち書き検索の挙動はTokenBigramなどN-gram系のトークナイザーを利用している"
 "場合とTokenMecabトークナイザーを利用している場合で挙動が変わります。"
 
-# 5939468aad224660b2634278cbe7fdfb
+# 700b95cfff9f436193e8c380f8a697e6
 #: ../../../source/spec/search.txt:76
 msgid ""
 "N-gram系のトークナイザーを利用している場合はキーワードで前方一致検索をしま"
@@ -452,7 +457,7 @@ msgstr ""
 "N-gram系のトークナイザーを利用している場合はキーワードで前方一致検索をしま"
 "す。"
 
-# bceb4b565e874a9ba03969beac417800
+# 21b3086d8c6d48daa8d0ee99b59cf644
 #: ../../../source/spec/search.txt:78
 msgid ""
 "例えば、「bill」というキーワードで検索した場合、「bill」も「billiard」もヒッ"
@@ -461,7 +466,7 @@ msgstr ""
 "例えば、「bill」というキーワードで検索した場合、「bill」も「billiard」もヒッ"
 "トします。"
 
-# 7338efce813d41aa957ed00434f2fe4a
+# 18b489a59d944ee8a5b07e76c6d376f0
 #: ../../../source/spec/search.txt:80
 msgid ""
 "TokenMeCabトークナイザーの場合はわかち書き前のキーワードで前方一致検索をしま"
@@ -470,7 +475,7 @@ msgstr ""
 "TokenMeCabトークナイザーの場合はわかち書き前のキーワードで前方一致検索をしま"
 "す。"
 
-# e6421c2fcb864af1a757edf3c4ad687f
+# 1b55532a589b42929522750007fc486b
 #: ../../../source/spec/search.txt:82
 msgid ""
 "例えば、「スープカレー」というキーワードで検索した場合、「スープカレーバー」"
@@ -483,7 +488,7 @@ msgstr ""
 "語扱い）や「スープカレーライス」（\"スープ\"と\"カレーライス\"の2単語扱い）に"
 "はヒットしません。"
 
-# c26ed17dffd14f7d98168b641ebd14c3
+# 0e0e741d6eee40aea5ef809d87dbb953
 #: ../../../source/spec/search.txt:87
 msgid ""
 "部分一致検索はパトリシア木で語彙表を構築していて、かつ、KEY_WITH_SISオプショ"
@@ -494,7 +499,7 @@ msgstr ""
 "ンを指定している場合のみ利用可能です。KEY_WITH_SISオプションが指定されていな"
 "い場合は非わかち書き検索と同等です。"
 
-# e607add050124826a9344a7975700291
+# d92e8dc9d5894cb4ae64f4391290a643
 #: ../../../source/spec/search.txt:89
 msgid ""
 "部分一致検索の挙動はTokenBigramなどN-gram系のトークナイザーを利用している場合"
@@ -503,12 +508,12 @@ msgstr ""
 "部分一致検索の挙動はTokenBigramなどN-gram系のトークナイザーを利用している場合"
 "とTokenMecabトークナイザーを利用している場合で挙動が変わります。"
 
-# ddb2ad014ba84069af1468e19c400219
+# 534dd2bb3431473a91d78e660280641e
 #: ../../../source/spec/search.txt:91
 msgid "Bigramの場合は前方一致検索と中間一致検索と後方一致検索を行います。"
 msgstr "Bigramの場合は前方一致検索と中間一致検索と後方一致検索を行います。"
 
-# dab4d2fda832486c95dc41b812f8d671
+# 32ecfffae904455f8cfedbb273734502
 #: ../../../source/spec/search.txt:93
 msgid ""
 "例えば、「ill」というキーワードで検索した場合、「bill」も「billiard」もヒット"
@@ -517,7 +522,7 @@ msgstr ""
 "例えば、「ill」というキーワードで検索した場合、「bill」も「billiard」もヒット"
 "します。"
 
-# c3ee49aaf161478d9b3c02b3aa99eda9
+# c29cfd8a4d744fb3913cefe027dfa273
 #: ../../../source/spec/search.txt:95
 msgid ""
 "TokenMeCabトークナイザーの場合はわかち書き後のキーワードで前方一致検索と中間"
@@ -526,7 +531,7 @@ msgstr ""
 "TokenMeCabトークナイザーの場合はわかち書き後のキーワードで前方一致検索と中間"
 "一致検索と後方一致検索をします。"
 
-# 9f04a5e0fff9482a81589d39acafd6a9
+# 2d75aa2018ef4d17859bf775cd9b34cd
 #: ../../../source/spec/search.txt:97
 msgid ""
 "例えば、「スープカレー」というキーワードで検索した場合、「スープカレー」"
@@ -539,54 +544,50 @@ msgstr ""
 "\"カレーライス\"の2単語扱い）、「スープカレーバー」（1単語扱い）にもヒットし"
 "ます。"
 
-# fcf14f40280a472a85bbf52303c99b35
+# b9ba2e39f9d544b897c147ab589a1d66
 #: ../../../source/spec/search.txt:101
 msgid "検索の使い分け"
 msgstr "検索の使い分け"
 
-# 90e2100ccbf74b5f8c8367a0b52ebee8
+# 334ba6820f044578a0494e1bef0aeef2
 #: ../../../source/spec/search.txt:103
-#, fuzzy
 msgid ""
 "groongaは基本的に完全一致検索のみを行います。完全一致検索でのヒット件数が所定"
 "の閾値以下の場合に限り、非わかち書き検索を行い、それでもヒット件数が閾値以下"
 "の場合は部分一致検索を行います。（閾値のデフォルト値は0です。）"
 msgstr ""
 "groongaは基本的に完全一致検索のみを行います。完全一致検索でのヒット件数が所定"
-"の閾値を超えない場合に限り、非わかち書き検索を行い、それでもヒット件数が閾値"
-"を超えない場合は部分一致検索を行います。(閾値は1がデフォルト値となっています)"
+"の閾値以下の場合に限り、非わかち書き検索を行い、それでもヒット件数が閾値以下"
+"の場合は部分一致検索を行います。（閾値のデフォルト値は0です。）"
 
-# c10e19b25ee241eeaddbfc9bcf1b1708
+# d126ee1772a9408d856a1eda10b35533
 #: ../../../source/spec/search.txt:105
-#, fuzzy
 msgid ""
 "ただし、すでに検索結果セットが存在する場合はたとえヒット件数が閾値以下でも完"
 "全一致検索のみを行います。"
 msgstr ""
-"ただし、すでに検索結果セットが存在する場合はたとえヒット件数が閾値に満たなく"
-"ても完全一致検索のみを行います。"
+"ただし、すでに検索結果セットが存在する場合はたとえヒット件数が閾値以下でも完"
+"全一致検索のみを行います。"
 
-# b35503903aba47ffa4703cc6264e1f08
+# 9591cb2bca284162ad2b07309c13eb88
 #: ../../../source/spec/search.txt:107
-#, fuzzy
 msgid ""
 "例えば、以下のようなクエリの場合は、それぞれの検索でヒット件数が閾値以下の場"
 "合は完全一致検索、非わかち書き検索、部分一致検索を順に行います。::"
 msgstr ""
-"例えば、以下のようなクエリの場合は、それぞれの検索でヒット件数が閾値に満たな"
-"い場合は完全一致検索、非わかち書き検索、部分一致検索を順に行います。::"
+"例えば、以下のようなクエリの場合は、それぞれの検索でヒット件数が閾値以下の場"
+"合は完全一致検索、非わかち書き検索、部分一致検索を順に行います。::"
 
-# 2c57d9b0e22b4bfd99997f11bb112bf4
+# 8f93b465f16e4416bc2f2f355540d666
 #: ../../../source/spec/search.txt:111
-#, fuzzy
 msgid ""
 "しかし、以下のように全文検索を行う前に検索結果セットが存在する場合は完全一致"
 "検索のみを行います。（point > 3で閾値の件数よりヒットしている場合）::"
 msgstr ""
 "しかし、以下のように全文検索を行う前に検索結果セットが存在する場合は完全一致"
-"検索のみを行います。（point > 3で閾値の件数以上ヒットしている場合）::"
+"検索のみを行います。（point > 3で閾値の件数よりヒットしている場合）::"
 
-# 8b425d26bf3f42c3aca9a40d24a26997
+# 56f121852a384e45ad1b4e6067dc957e
 #: ../../../source/spec/search.txt:115
 msgid ""
 "そのため、descriptionに「スープカレーライス」が含まれていても、「スープカレー"

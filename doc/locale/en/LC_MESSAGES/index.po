@@ -1,47 +1,43 @@
-# English translations for 1.2.4 package.
-# Copyright (C) 2009-2011, Brazil, Inc
+# English translations for 2.0.1 package.
+# Copyright (C) 2009-2012, Brazil, Inc
 # This file is distributed under the same license as the groonga package.
-# Kouhei Sutou <kou@clear-code.com>, 2011.
+# Kouhei Sutou <kou@clear-code.com>, 2012.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: 1.2.4\n"
+"Project-Id-Version: 2.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-29 13:49\n"
-"PO-Revision-Date: 2011-08-12 22:01+0900\n"
+"POT-Creation-Date: 2012-04-28 11:36\n"
+"PO-Revision-Date: 2012-04-28 11:37+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
-"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 # 6a81a0ce3c204918a77ceb5a18d73ce3
 #: ../../../source/index.txt:9
 msgid "groonga documentation"
-msgstr ""
+msgstr "groonga documentation"
 
-# 8df00e22ed0c498885b6d1d2afd526b4
+# 4f7c805461df48f1ab9249915046021c
 #: ../../../source/index.txt:11
 msgid ":doc:`news`"
 msgstr ":doc:`news`"
 
-# 484689a243c540a4a32eb261d7385e94
+# f6c73d1d861d4925b5b72572ab3added
 #: ../../../source/index.txt:29
 msgid ":ref:`genindex`"
 msgstr ":ref:`genindex`"
 
-# 6d001425eeb540199f655e718cd333de
+# 436635d2bb154ae6acadc4ac51b5ffbf
 #: ../../../source/index.txt:30
 msgid ":ref:`modindex`"
 msgstr ":ref:`modindex`"
 
-# c26ab5f9709448c995901da3c5d53edd
+# 038ca29b608c44768fa153ae509af8f5
 #: ../../../source/index.txt:31
 msgid ":ref:`search`"
 msgstr ":ref:`search`"
-
-# 8ef7f33ff03247d399f458279db135ea
-#~ msgid "groonga ドキュメント"
-#~ msgstr "groonga ドキュメント"

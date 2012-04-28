@@ -1,38 +1,21 @@
-# English translations for 1.3.0 package.
+# English translations for 2.0.1 package.
 # Copyright (C) 2009-2012, Brazil, Inc
 # This file is distributed under the same license as the groonga package.
 # Kouhei Sutou <kou@clear-code.com>, 2012.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: 1.3.0\n"
+"Project-Id-Version: 2.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-02-27 21:54\n"
-"PO-Revision-Date: 2012-02-27 21:55+0900\n"
+"POT-Creation-Date: 2012-04-28 11:36\n"
+"PO-Revision-Date: 2012-04-28 11:38+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
-"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-
-# a066d272e6144a87a613f245db07bf87
-# bb41cc15386649fcbc7a0c33986d8579
-# a9f42396e04846f99dba7b1f956b7e7d
-# 777da65395ec47479a797cba36fa9c57
-# ce0030a3739f41c8bfcc6ea3bc609093
-# f2941f76736848d7b099ff984546742d
-# e9e34d17476947b9883f60201e53791b
-#: ../../../example/indexing-data.log:1
-#: ../../../example/indexing-offline-index-construction.log:1
-#: ../../../example/indexing-online-index-construction.log:1
-#: ../../../example/indexing-schema.log:1
-#: ../../../example/indexing-search-after-offline-index-construction.log:1
-#: ../../../example/indexing-search-after-online-index-construction.log:1
-#: ../../../example/indexing-search-without-index.log:1
-msgid "Execution example::"
-msgstr "Execution example::"
 
 # bd971d607844461eb747647d8bee2759
 #: ../../../source/indexing.txt:9
@@ -104,6 +87,11 @@ msgid ""
 "system doesn't value freshness because a reference manual will be updated "
 "only at a release."
 msgstr ""
+"Offline index construction is suitable for a search system that values less "
+"required resources. If a search system doesn't value freshness, offline "
+"index construction will be suitable. For example, a reference manual search "
+"system doesn't value freshness because a reference manual will be updated "
+"only at a release."
 
 # d1f962e61d184f258ed1ab881573f67a
 #: ../../../source/indexing.txt:46
@@ -131,7 +119,23 @@ msgstr ""
 # 7566350aebf94d49a527ad080611d49d
 #: ../../../source/indexing.txt:54
 msgid "We define a schema:"
-msgstr ""
+msgstr "We define a schema:"
+
+# a066d272e6144a87a613f245db07bf87
+# bb41cc15386649fcbc7a0c33986d8579
+# a9f42396e04846f99dba7b1f956b7e7d
+# 777da65395ec47479a797cba36fa9c57
+# ce0030a3739f41c8bfcc6ea3bc609093
+# f2941f76736848d7b099ff984546742d
+# e9e34d17476947b9883f60201e53791b
+#: ../../../example/indexing-schema.log:1 ../../../example/indexing-data.log:1
+#: ../../../example/indexing-search-without-index.log:1
+#: ../../../example/indexing-offline-index-construction.log:1
+#: ../../../example/indexing-search-after-offline-index-construction.log:1
+#: ../../../example/indexing-online-index-construction.log:1
+#: ../../../example/indexing-search-after-online-index-construction.log:1
+msgid "Execution example::"
+msgstr "Execution example::"
 
 # 64b062eeac7d49a4baae9da96690bb26
 #: ../../../source/indexing.txt:62
@@ -165,4 +169,4 @@ msgstr "We register data again. They are indexed by online index construction:"
 # 3b7676c687a84fadab1a1be9e35ad370
 #: ../../../source/indexing.txt:104
 msgid "We can also get newly registered records by searching:"
-msgstr ""
+msgstr "We can also get newly registered records by searching:"

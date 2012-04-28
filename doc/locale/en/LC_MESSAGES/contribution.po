@@ -1,30 +1,29 @@
-# English translations for 1.2.4 package.
-# Copyright (C) 2009-2011, Brazil, Inc
+# English translations for 2.0.1 package.
+# Copyright (C) 2009-2012, Brazil, Inc
 # This file is distributed under the same license as the groonga package.
-# Kouhei Sutou <kou@clear-code.com>, 2011.
+# Kouhei Sutou <kou@clear-code.com>, 2012.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: 1.2.4\n"
+"Project-Id-Version: 2.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-27 23:45\n"
-"PO-Revision-Date: 2011-08-12 22:01+0900\n"
+"POT-Creation-Date: 2012-04-28 11:36\n"
+"PO-Revision-Date: 2012-04-28 11:37+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
-"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-# 9d277b0739ed4db0a9fd8163410ca288
+# 388cac78384047ec8d93aca0877d509a
 #: ../../../source/contribution.txt:6
 msgid "How to contribute to groonga"
 msgstr "How to contribute to groonga"
 
-# b3357c9f11a4420180892c3c9d284074
+# c26dc17baece4d5789adea7dcc265436
 #: ../../../source/contribution.txt:8
-#, fuzzy
 msgid ""
 "We welcome your contributions to the groonga project. There are many ways to "
 "contribute, such as using groonga, introduction to others, etc. For example, "
@@ -32,86 +31,89 @@ msgid ""
 "Coding and documentation are also welcome for groonga and its related "
 "projects."
 msgstr ""
-"We are welcome to you contribute the groonga project. There are many ways to "
-"contribute such as use, introduction, bug report, development and "
-"documentation."
+"We welcome your contributions to the groonga project. There are many ways to "
+"contribute, such as using groonga, introduction to others, etc. For example, "
+"if you find a bug when using groonga, you are welcome to report the bug. "
+"Coding and documentation are also welcome for groonga and its related "
+"projects."
 
 # a0a565242ac847529e3c7b10e7e9b3d6
 #: ../../../source/contribution.txt:15
 msgid "If you are interested in groonga, please read this document and try it."
 msgstr ""
+"If you are interested in groonga, please read this document and try it."
 
 # 2aab2a0ced534ac89eb8dbc3c2a03371
 #: ../../../source/contribution.txt:17
 msgid "Please introduce groonga to your friends and colleagues."
-msgstr ""
+msgstr "Please introduce groonga to your friends and colleagues."
 
 # 374746e8993c4a0488fd0e6cbbe7573b
 #: ../../../source/contribution.txt:19
 msgid "This section describes the details."
-msgstr ""
+msgstr "This section describes the details."
 
-# 12e8b6c589fe4c9886326d7276d8207a
+# a0bfaf3c598c4018a87ab4ac682065a1
 #: ../../../source/contribution/development.txt:6
 msgid "groonga開発者向け情報"
 msgstr "groonga開発者向け情報"
 
-# 66ef6db3c8e1446e83ae114d5f38463a
+# b32d74e40cad40ac8128dde51a74517c
 #: ../../../source/contribution/development/com.txt:4
 msgid "groonga 通信アーキテクチャ"
 msgstr "groonga 通信アーキテクチャ"
 
-# acbc8ddec50546ea98a2819f6f9797d2
+# 5fb49ca3e3f14c3680ccc25a4b04d870
 #: ../../../source/contribution/development/com.txt:7
 msgid "gqtpでのアーキテクチャ"
 msgstr "gqtpでのアーキテクチャ"
 
-# 7386f817d50140adad964af4e41eb50e
+# 48967d41b475417fb61b86a6121d32cb
 #: ../../../source/contribution/development/com.txt:9
 msgid "comが外部からの接続を受け付ける。"
 msgstr "comが外部からの接続を受け付ける。"
 
-# b03bb6d8a5a246fbacafce9526e6a931
+# 82391fb2cc754b3d9bd9dfa872031ea0
 #: ../../../source/contribution/development/com.txt:10
 msgid "comは1スレッド。"
 msgstr "comは1スレッド。"
 
-# d824420657494f808d43dcae4808657a
+# 8e36997495664ce7acf6060f0940ccc7
 #: ../../../source/contribution/development/com.txt:11
 msgid "comがedgeを作る。"
 msgstr "comがedgeを作る。"
 
-# ed69893fc405449db5bfca923bf4855c
+# dfb78e6cf6a14a6f9932a1bb1c8cdc74
 #: ../../../source/contribution/development/com.txt:12
 msgid "edgeは接続と１対１対応。"
 msgstr "edgeは接続と１対１対応。"
 
-# f4c542655f8a406cbee4f8d75ccdf174
+# 507cb09e5b2048b991ad488ca055e561
 #: ../../../source/contribution/development/com.txt:13
 msgid "edgeはctxを含む。"
 msgstr "edgeはctxを含む。"
 
-# 42b02a473551409d99474b4087f0d772
+# 40c076606faa4889be050ccf0c4beb02
 #: ../../../source/contribution/development/com.txt:14
 msgid "workerはthreadと１対１対応。"
 msgstr "workerはthreadと１対１対応。"
 
-# fdf49ed39e1d4d0fb2fe236773210417
+# 36bbb33eb45346a38744cccb143314c3
 #: ../../../source/contribution/development/com.txt:15
 msgid "workerは上限が個定数。"
 msgstr "workerは上限が個定数。"
 
-# 48575f7023934c919dcf001137002031
+# eb4701e905654140908aa2b6ee357c1d
 #: ../../../source/contribution/development/com.txt:16
 msgid "workerは、１つのedgeと結びつくことができる。"
 msgstr "workerは、１つのedgeと結びつくことができる。"
 
-# 10c3e6f75f32421e80101e2f3c1f4124
+# f8572a0030fb4b9b9aeaec8359528c63
 #: ../../../source/contribution/development/com.txt:18
 msgid "edgeごとにqueueを持つ。"
 msgstr "edgeごとにqueueを持つ。"
 
-# a3f2634ab1b04d2584de56db77d66369
+# 33c287f75ba24178a11a54103f8e8420
 #: ../../../source/contribution/development/com.txt:19
 msgid ""
 "msgはcomによって、edgeのqueueにenqueueされる。 edgeがworkerに結びついていない"
@@ -122,17 +124,17 @@ msgstr ""
 "ときは、同時に、ctx_newというqueueに、msgをenqueueした対象のedgeをenqueueす"
 "る。"
 
-# eb9692e56ae94477b475b808c582c3d2
+# 5ebb589758ec4a57a48d8dffb0c93c2e
 #: ../../../source/contribution/development/document.txt:6
 msgid "ドキュメント作成"
 msgstr "ドキュメント作成"
 
-# 47e5d6d9b1b8462c8a13a663690b2c7a
+# 9cb8db61604a45a781dbb1a12bb00ec3
 #: ../../../source/contribution/development/document.txt:9
 msgid "Sphinxのインストール"
 msgstr "Sphinxのインストール"
 
-# bab0e5725d114a799cf5fb729d77f2d0
+# e2083d6ad2674d7fb213ba9e88a3c9d9
 #: ../../../source/contribution/development/document.txt:11
 msgid ""
 "groongaのドキュメントは、Sphinxというツールを用いて作成されています。Sphinxは"
@@ -141,24 +143,24 @@ msgstr ""
 "groongaのドキュメントは、Sphinxというツールを用いて作成されています。Sphinxは"
 "以下のように導入します。::"
 
-# 24646970413b4b72b651799a42dadffe
+# 0275fac29f704ae69dc6a46d0d6a2c39
 #: ../../../source/contribution/development/document.txt:17
 msgid "htmlの作成"
 msgstr "htmlの作成"
 
-# 8cd155c26212405fb02515f1a11f917a
+# ef912b24ba344969ac926e62b5597a9f
 #: ../../../source/contribution/development/document.txt:19
 msgid "以下のコマンドでhtmlが作成されます。::"
 msgstr "以下のコマンドでhtmlが作成されます。::"
 
-# 554f4357153b4da3af054ea729d74d32
-# 1582267a5346401f81379d7cd8bb9a65
+# aae602ea1471403b8d44b48ef71a802b
+# df78a22a8e754498beae000a09cb4117
 #: ../../../source/contribution/development/document.txt:24
 #: ../../../source/contribution/development/document.txt:36
 msgid "pdfの作成"
 msgstr "pdfの作成"
 
-# 354e9c55e4824d9eb203acb610b469f3
+# 5025fb34549248c08490b40aff3cfcc0
 #: ../../../source/contribution/development/document.txt:26
 msgid ""
 "groongaのドキュメントは、pdf出力することもできます。rst2pdfと、IPAフォント"
@@ -167,27 +169,27 @@ msgstr ""
 "groongaのドキュメントは、pdf出力することもできます。rst2pdfと、IPAフォント"
 "(IPA Gothic/IPAexGothic)が必要となります。"
 
-# d9072255ce754a67aca299db11b00c13
+# 3e98cc9262c747b8b2d4fa48a74cd90b
 #: ../../../source/contribution/development/document.txt:29
 msgid "rst2pdfのインストール"
 msgstr "rst2pdfのインストール"
 
-# a2552c1f27f84d49842965758f90c32a
+# b2fc8a42d22747cfb4cb29d42ffa4f37
 #: ../../../source/contribution/development/document.txt:31
 msgid "以下のようにしてインストールできます。::"
 msgstr "以下のようにしてインストールできます。::"
 
-# b5d40efed0584044b792c7434373f128
+# 5b8840373e5e4025a2a76a47f6b37c11
 #: ../../../source/contribution/development/document.txt:38
 msgid "以下のコマンドでpdfが作成されます。::"
 msgstr "以下のコマンドでpdfが作成されます。::"
 
-# 893c493414bc4d3c8b43696bf5303268
+# 1f2104a659164b31944492740530f422
 #: ../../../source/contribution/development/query.txt:6
 msgid "クエリの実現"
 msgstr "クエリの実現"
 
-# 954c8b8d9b5d4bab84ac00a6fdda3591
+# c64310ac98da42dc978587d9758108e4
 #: ../../../source/contribution/development/query.txt:8
 msgid ""
 "groongaのデータベースには大量のデータを格納し、その中から必要な部分を高速に取"
@@ -198,12 +200,12 @@ msgstr ""
 "り出すことができます。必要な部分をgroongaのデータベースに問い合わせるためのク"
 "エリの表現と実行に関して、groongaは複数の手段を用意しています。"
 
-# 5fe69d1e91664026b251b439b9f42bfa
+# ccba91be08644edcbd26ac06a547e058
 #: ../../../source/contribution/development/query.txt:11
 msgid "クエリ実行のためのインタフェース"
 msgstr "クエリ実行のためのインタフェース"
 
-# 33e64f1d73fc4dd98ed4bfc23e01efb6
+# 77baf534c93242b49c3f8d93e4396da4
 #: ../../../source/contribution/development/query.txt:13
 msgid ""
 "groongaは低機能で単純なライブラリインタフェースから、高機能で複雑なコマンドイ"
@@ -214,7 +216,7 @@ msgstr ""
 "ンタフェースまでいくつかの階層的なインタフェースをユーザプログラムに提供して"
 "います。"
 
-# 034bee00023448d8b55b9077ff533483
+# 00c18d42d5a7455b934cfa004c5bf210
 #: ../../../source/contribution/development/query.txt:15
 msgid ""
 "クエリ実行のためのインタフェースも階層的なインタフェースのそれぞれに対応する"
@@ -223,12 +225,12 @@ msgstr ""
 "クエリ実行のためのインタフェースも階層的なインタフェースのそれぞれに対応する"
 "形で用意されています。以下に低レイヤなインタフェースから順に説明します。"
 
-# b0a340d588984060bfaa810546d67869
+# f52b68916d6848d9b049fa7fff277f51
 #: ../../../source/contribution/development/query.txt:18
 msgid "DB_API"
 msgstr "DB_API"
 
-# d99e13ce06e04fe3bbfd45b5e46a14a3
+# c45b00c612da449883b7e923a39be235
 #: ../../../source/contribution/development/query.txt:20
 msgid ""
 "DB_APIは、groongaデータベースを操作するための一群のC言語向けAPI関数を提供しま"
@@ -243,12 +245,12 @@ msgstr ""
 "す。後述のすべてのクエリインタフェースはDB_APIの機能を組み合わせることによっ"
 "て実現されています。"
 
-# cd38158d706549ea84483f6aac6c1739
+# f2c0156bcaee44c7accd1b06367f247d
 #: ../../../source/contribution/development/query.txt:23
 msgid "grn_expr"
 msgstr "grn_expr"
 
-# a99676cc3f1e440a86a70c2eb0c165a5
+# 2acff754843d44ea8f82835b172fcb6c
 #: ../../../source/contribution/development/query.txt:25
 msgid ""
 "grn_exprは、groongaデータベースに対する検索処理や更新処理のための条件を表現す"
@@ -261,12 +263,12 @@ msgstr ""
 "ることができます。grn_exprによって表現されたクエリを実行するためには、"
 "grn_table_select()関数を使用します。"
 
-# 0a9082f05c154c8c995bd5c1b0eac43f
+# e95c1a74b31244d6996bce0b20cce251
 #: ../../../source/contribution/development/query.txt:28
 msgid "groonga実行ファイル"
 msgstr "groonga実行ファイル"
 
-# b6265e7b58b549e880afb8204ddae9a9
+# b709617dc69b4cafa9a27f7de2622057
 #: ../../../source/contribution/development/query.txt:30
 msgid ""
 "groongaデータベースを操作するためのコマンドインタープリタです。渡されたコマン"
@@ -285,12 +287,12 @@ msgstr ""
 "DB_APIを使ってデータベースを操作するかはコマンド毎に自由に決めることができま"
 "す。"
 
-# 5c322d9cdbdf487c8080d823d436a3f4
+# 5ae2a3fd1dd94d5391ae6ec7a9158ca7
 #: ../../../source/contribution/development/query.txt:33
 msgid "grn_exprで表現できるクエリ"
 msgstr "grn_exprで表現できるクエリ"
 
-# a398584855a24aafb75639d8896c66d1
+# a59cd7820dff4d0a88fba2dfa623ef90
 #: ../../../source/contribution/development/query.txt:35
 msgid ""
 "grn_exprは代入や関数呼び出しのような様々な操作を表現できますが、この中で検索"
@@ -303,12 +305,12 @@ msgstr ""
 "要素を関係式と呼びます。条件式は一個以上の関係式か、あるいは条件式を論理演算"
 "子で結合したものです。"
 
-# 16af222b3d8a4c69994355d9421d4b8e
+# b25f72f068d74b4b806da7e589bfe3c3
 #: ../../../source/contribution/development/query.txt:37
 msgid "論理演算子は、以下の3種類があります。 ::"
 msgstr "論理演算子は、以下の3種類があります。 ::"
 
-# 7f8f2dd2221944708b6d55f1a2dc1082
+# d56c193a42754792bca2d8b3123742a4
 #: ../../../source/contribution/development/query.txt:44
 msgid ""
 "関係式は、下記の11種類が用意されています。また、ユーザが定義した関数を新たな"
@@ -317,12 +319,12 @@ msgstr ""
 "関係式は、下記の11種類が用意されています。また、ユーザが定義した関数を新たな"
 "関係式として使うこともできます。 ::"
 
-# 345294d07b8b4576ad6c65d81b7d0d69
+# 3ca62bcc778e468a948e76fc1f8d3697
 #: ../../../source/contribution/development/query.txt:60
 msgid "grn_table_select()"
 msgstr "grn_table_select()"
 
-# 90cdc81fc1ee4ed7a62d7b57b3738234
+# 615a8879745448098d48a4fe459f14ca
 #: ../../../source/contribution/development/query.txt:62
 msgid ""
 "grn_table_select()関数は、grn_exprで表現された検索クエリを実行するときに使い"
@@ -335,7 +337,7 @@ msgstr ""
 "納するテーブル、それに検索にマッチしたレコードを検索結果にどのように反映する"
 "かを指定する演算子を渡します。演算子と指定できるのは下記の4種類です。 ::"
 
-# 41e69e8c8bb440f3a47e7a1cf2989920
+# 15beb3b3bf0544a0b7a52365c7311906
 #: ../../../source/contribution/development/query.txt:70
 msgid ""
 "GRN_OP_ORは、検索対象テーブルの中からクエリにマッチするレコードを検索結果テー"
@@ -352,7 +354,7 @@ msgstr ""
 "るレコードを取り除きます。GRN_OP_ADJUSTは、検索結果テーブルの中でクエリにマッ"
 "チするレコードに対してスコア値の更新のみを行います。"
 
-# 1e6d709f6f8a45e9a1e227aa03b5af70
+# 292aa9b89a76483a9a7b1072d1c92c9a
 #: ../../../source/contribution/development/query.txt:72
 msgid ""
 "grn_table_select()は、データベース上に定義されたテーブルや索引などを組み合わ"
@@ -361,12 +363,12 @@ msgstr ""
 "grn_table_select()は、データベース上に定義されたテーブルや索引などを組み合わ"
 "せて可能な限り高速に指定されたクエリを実行しようとします。"
 
-# 7bfae4cb06194770ad633369a1f7a892
+# 3cd684d4c36f4d598b6aa5c055548bac
 #: ../../../source/contribution/development/query.txt:75
 msgid "関係式"
 msgstr "関係式"
 
-# fc463530a52f43909b2b774d78d28e48
+# 01ecb15be8ee4dacbf3cfd0252031c92
 #: ../../../source/contribution/development/query.txt:77
 msgid ""
 "関係式は、検索しようとしているデータが満たすべき条件を、指定した値の間の関係"
@@ -381,72 +383,72 @@ msgstr ""
 "callbackが与えられず、argのみが数値で与えられた場合はスコア値の係数とみなされ"
 "ます。主な関係式について説明します。"
 
-# 1b61b56426e646178cda8e529d785bcf
+# 66d267f9e04740c4af0b825084ac6687
 #: ../../../source/contribution/development/query.txt:80
 msgid "equal(v1, v2, arg, callback)"
 msgstr "equal(v1, v2, arg, callback)"
 
-# 07b4a35eff31477d8ffaab648a835a63
+# c0ce610e033244169caf7071f0ade77c
 #: ../../../source/contribution/development/query.txt:81
 msgid "v1の値とv2の値が等しいことを表します。"
 msgstr "v1の値とv2の値が等しいことを表します。"
 
-# c62f2b590c2b4e72bcf3b6b27510166b
+# ce6d4025263b467ba2c08fcde0838b80
 #: ../../../source/contribution/development/query.txt:84
 msgid "not_equal(v1, v2, arg, callback)"
 msgstr "not_equal(v1, v2, arg, callback)"
 
-# 96fd03510c714ef0a29f73dc051fa26e
+# ca4a8392373c435c9aa81ec9f815fb70
 #: ../../../source/contribution/development/query.txt:85
 msgid "v1の値とv2の値が等しくないことを表します。"
 msgstr "v1の値とv2の値が等しくないことを表します。"
 
-# 7ad4e21e16524f66af1f894830e6204f
+# 0d814a2fa0d1482e914e7419865fad8a
 #: ../../../source/contribution/development/query.txt:88
 msgid "less(v1, v2, arg, callback)"
 msgstr "less(v1, v2, arg, callback)"
 
-# 715ba8bc70bb45d78d5131f80f28b86b
+# 3fd6c0f4b4874713a17f7f6224cd5a27
 #: ../../../source/contribution/development/query.txt:89
 msgid "v1の値がv2の値よりも小さいことを表します。"
 msgstr "v1の値がv2の値よりも小さいことを表します。"
 
-# 8c16f0b7a848481ab726d3ecb75b07d5
+# c2c354bbbc5e4b1b8f3fff621b95ed85
 #: ../../../source/contribution/development/query.txt:92
 msgid "greater(v1, v2, arg, callback)"
 msgstr "greater(v1, v2, arg, callback)"
 
-# 3c9d21b27c1745d7b6ff2ac3977b184b
+# 26c7c46c448f41119d5fa39e9d8e6e14
 #: ../../../source/contribution/development/query.txt:93
 msgid "v1の値がv2の値よりも大きいことを表します。"
 msgstr "v1の値がv2の値よりも大きいことを表します。"
 
-# 23a5a07a0e3f4affb7957a3dfa4e16fb
+# b4c7feac14184e8b9520889b7650a0cf
 #: ../../../source/contribution/development/query.txt:96
 msgid "less_equal(v1, v2, arg, callback)"
 msgstr "less_equal(v1, v2, arg, callback)"
 
-# a31cf35851f44a0aadbba097ba3c2c2b
+# 93b0cf7fd76a4ee5baa83ad05ac05a7c
 #: ../../../source/contribution/development/query.txt:97
 msgid "v1の値がv2の値と等しいか小さいことを表します。"
 msgstr "v1の値がv2の値と等しいか小さいことを表します。"
 
-# 94fd004841e944d48cf32a53e192fb8e
+# e880d0cc9f5047418d3cc1e22540911b
 #: ../../../source/contribution/development/query.txt:100
 msgid "greater_equal(v1, v2, arg, callback)"
 msgstr "greater_equal(v1, v2, arg, callback)"
 
-# 6cb32ff9587d4c2295273e0db2d041e0
+# f2a5b92e1d5f4c5d953f748f46da0533
 #: ../../../source/contribution/development/query.txt:101
 msgid "v1の値がv2の値と等しいか大きいことを表します。"
 msgstr "v1の値がv2の値と等しいか大きいことを表します。"
 
-# 841749c27d9f4d1c875acedac8fbe13d
+# 394d143a444242619a1184245c8403e1
 #: ../../../source/contribution/development/query.txt:104
 msgid "contain(v1, v2, mode, arg, callback)"
 msgstr "contain(v1, v2, mode, arg, callback)"
 
-# fc0d5af3388f49868b9514d38d8631bc
+# 0a18922e2f61499194be691934765120
 #: ../../../source/contribution/development/query.txt:105
 msgid ""
 "v1の値がv2の値を含んでいることを表します。また、v1の値が要素に分解されると"
@@ -457,12 +459,12 @@ msgstr ""
 "き、それぞれの要素に対して二つ目の要素が一致するためのmodeとして下記のいずれ"
 "かを指定することができます。"
 
-# f648bbb4594443cb8efd53d1ac19e4ad
+# afb0e1c886974d859ba77d9d8ee3ba85
 #: ../../../source/contribution/development/query.txt:116
 msgid "near(v1, v2, arg, callback)"
 msgstr "near(v1, v2, arg, callback)"
 
-# 4ca7553b955a4a38a501791da476e47f
+# f1834e0532824a0889450e0560cb3bcd
 #: ../../../source/contribution/development/query.txt:117
 msgid ""
 "v1の値の中に、v2の値の要素が接近して含まれていることを表します。(v2には値の配"
@@ -471,52 +473,52 @@ msgstr ""
 "v1の値の中に、v2の値の要素が接近して含まれていることを表します。(v2には値の配"
 "列を渡します)"
 
-# ee8cd0466ee245abbf121675893312b7
+# 2cecf648ca604c9ebead7e6e2862d493
 #: ../../../source/contribution/development/query.txt:120
 msgid "similar(v1, v2, arg, callback)"
 msgstr "similar(v1, v2, arg, callback)"
 
-# a2f0120bc99942fd8d521270572fc712
+# 826542271a754466b6f83ca11b5d3afd
 #: ../../../source/contribution/development/query.txt:121
 msgid "v1の値とv2の値が類似していることを表します。"
 msgstr "v1の値とv2の値が類似していることを表します。"
 
-# a758d426726c45a09f7e319c7ba66567
+# 478438087c9541cf8639f63f2c007da8
 #: ../../../source/contribution/development/query.txt:124
 msgid "prefix(v1, v2, arg, callback)"
 msgstr "prefix(v1, v2, arg, callback)"
 
-# bba0b22a633f431f9fc4cb78b2c9b98f
+# feccef32a04c4b18ab79a61171687c0a
 #: ../../../source/contribution/development/query.txt:125
 msgid "v1の値がv2の値に対して前方一致することを表します。"
 msgstr "v1の値がv2の値に対して前方一致することを表します。"
 
-# 4c5ff2cc42a54451b2bdc39624738dbe
+# fadecec47e014277a4438fd11bc3290c
 #: ../../../source/contribution/development/query.txt:128
 msgid "suffix(v1, v2, arg, callback)"
 msgstr "suffix(v1, v2, arg, callback)"
 
-# ac35223792114652a774a9bbeb530934
+# 603902cd88a04844b938993464d4b9b6
 #: ../../../source/contribution/development/query.txt:129
 msgid "v1の値がv2の値に対して後方一致することを表します。"
 msgstr "v1の値がv2の値に対して後方一致することを表します。"
 
-# 6055965771e24b5e80fec331e0567543
+# bb9ac706ab7146b2a38503f35b10c8d5
 #: ../../../source/contribution/development/query.txt:132
 msgid "クエリの実例"
 msgstr "クエリの実例"
 
-# b9ce7f5cfb0349b7af19b9341677c3a5
+# 32a6d9fab5e743338f94d7bd6fe1a7bf
 #: ../../../source/contribution/development/query.txt:134
 msgid "grn_exprを使って様々な検索クエリを表現することができます。"
 msgstr "grn_exprを使って様々な検索クエリを表現することができます。"
 
-# 1262e3915336436ba73ced48b9dd6de9
+# dba840090e574af7aede747c2c845645
 #: ../../../source/contribution/development/query.txt:137
 msgid "検索例1"
 msgstr "検索例1"
 
-# 1c5c21e54d7e4e6ead0a82f3d86bdb0c
+# febe3b0fc75b4b8eb4ddd9334766affc
 #: ../../../source/contribution/development/query.txt:147
 msgid ""
 "tableのcolumnの値がstringを含むレコードをresultに返します。columnの値"
@@ -529,12 +531,12 @@ msgstr ""
 "ドr2がtableに登録されていたとき、stringに'needle'を指定したなら、レコードr1の"
 "みがヒットします。"
 
-# f565dcf600744e7f9bf541a76b3ebc86
+# 8c99637c46bc46f09ac27503e7281a90
 #: ../../../source/contribution/development/query.txt:151
 msgid "検索例2"
 msgstr "検索例2"
 
-# 5454113586a64afdae74764dd4436ac6
+# f621cb472445459895767e7763e19794
 #: ../../../source/contribution/development/query.txt:173
 msgid ""
 "tableのcolumn1の値がstringにexactモードでヒットするレコードについて得られるス"
@@ -547,12 +549,12 @@ msgstr ""
 "コードのうち、column2の値がstringにexactモードでヒットするレコードについて"
 "は、得られたスコア値にscore2を積算したものを、元のスコア値に加えます。"
 
-# 81de20dc1bc741a8afaff1475beefe3c
+# ee9d634fe5b94305bc91f26b9469a49d
 #: ../../../source/contribution/development/query.txt:176
 msgid "検索例3"
 msgstr "検索例3"
 
-# 9d138d7f2ff641c4bb16410d44c612e5
+# d1c517590ddf49db8279473536a20303
 #: ../../../source/contribution/development/query.txt:200
 msgid ""
 "tableのcolumn1の値がstringにexactモードでヒットするレコードについて得られるス"
@@ -565,12 +567,12 @@ msgstr ""
 "さい場合は、partialモードで再度検索し、ヒットしたレコードについて得られるスコ"
 "ア値にscore2を積算してresultに追加します。"
 
-# b9f283962a62462c8f686a75a5a11e9d
+# 65deffff9185400abf97b3e3ff9ac0a6
 #: ../../../source/contribution/development/query.txt:203
 msgid "検索例4"
 msgstr "検索例4"
 
-# 3bf7a635c8074cc8ac8c4f47cab23a9c
+# b47846d795a543289cb777a135a9b8ca
 #: ../../../source/contribution/development/query.txt:213
 msgid ""
 "tableのcolumnの値がstringに含まれるレコードをresultに返します。 columnの値"
@@ -583,27 +585,27 @@ msgstr ""
 "登録されていたとき、stringに'hay in haystack'を指定したなら、レコードr2のみが"
 "ヒットします。"
 
-# 6bdce362dfd74ac097133017e1538e49
+# b1aa8408892b4d3ab3cf3f31ef5e307b
 #: ../../../source/contribution/development/test.txt:6
 msgid "テスト方法"
 msgstr "テスト方法"
 
-# 492ef94ca2794c2a8d6b148127a7bc40
+# 335dbb1cecb24129932bb249331e6a0f
 #: ../../../source/contribution/development/test.txt:9
 msgid "テスト環境の構築"
 msgstr "テスト環境の構築"
 
-# 5205582d725b42c985777c02f32fb8cd
+# 8951351256fd4e3893928af39578592a
 #: ../../../source/contribution/development/test.txt:12
 msgid "Cutterのインストール"
 msgstr "Cutterのインストール"
 
-# 2aa251f0db604ce486384689d3cd46c5
+# 9cfde1798e674b7aa35af9948ddb5ef3
 #: ../../../source/contribution/development/test.txt:14
 msgid "groongaは、テストのフレームワークとして Cutter_ を用いています。"
 msgstr "groongaは、テストのフレームワークとして Cutter_ を用いています。"
 
-# 368ad7fc13964cda8e98e82a0436c4c5
+# 136e684c9d814fda9730fd7c2de8910e
 #: ../../../source/contribution/development/test.txt:16
 msgid ""
 "Cutterのインストール方法は プラットフォーム毎のCutterのインストール方法_ をご"
@@ -612,12 +614,12 @@ msgstr ""
 "Cutterのインストール方法は プラットフォーム毎のCutterのインストール方法_ をご"
 "覧下さい。"
 
-# ec53c9b486bd4c06b730d3171e31d473
+# 555bd5ca9de541b4a32a34e1eedadb63
 #: ../../../source/contribution/development/test.txt:22
 msgid "lcovのインストール"
 msgstr "lcovのインストール"
 
-# 9e6bc951b8974077a1885807a3cf9eeb
+# 213f611dace9466dbe0019a96d5d9550
 #: ../../../source/contribution/development/test.txt:24
 msgid ""
 "カバレッジ情報を計測するためには、lcov 1.6以上が必要です。DebianやUbuntuでは"
@@ -626,12 +628,12 @@ msgstr ""
 "カバレッジ情報を計測するためには、lcov 1.6以上が必要です。DebianやUbuntuでは"
 "以下のようにしてインストールできます。::"
 
-# 2dc4b95517f249c08335b02ec186c8d7
+# 8ec08efa238f462bbf5e97051b77e950
 #: ../../../source/contribution/development/test.txt:29
 msgid "clangのインストール"
 msgstr "clangのインストール"
 
-# ac995c645f2a47e7ab20f73a9b3d4d83
+# 8c52fa657a4c41ccb29f26a38e7fdef4
 #: ../../../source/contribution/development/test.txt:31
 msgid ""
 "ソースコードの静的解析を行うためには、clang(scan-build)をインストールする必要"
@@ -640,12 +642,12 @@ msgstr ""
 "ソースコードの静的解析を行うためには、clang(scan-build)をインストールする必要"
 "があります。DebianやUbuntuでは以下のようにしてインストールできます。::"
 
-# 4bc0cef9e0694353b6beb9db9d3f9af0
+# 0cd1a50acb614fd1a6ba41d63fa843b4
 #: ../../../source/contribution/development/test.txt:36
 msgid "libmemcachedのインストール"
 msgstr "libmemcachedのインストール"
 
-# 85e38f0862154572abcefa8acfbdfd72
+# b9fb93e8f4dd447385a8997a9a51b752
 #: ../../../source/contribution/development/test.txt:38
 msgid ""
 "memcachedのバイナリプロトコルのテストを動作させるためには、libmemcachedの導入"
@@ -656,24 +658,24 @@ msgstr ""
 "が必要です。squeeze以降のDebianやKarmic以降のUubntuでは以下の用にしてインス"
 "トールできます。::"
 
-# 88eddd01c72a49e3a7f84458d194272b
+# 5d0a673cff234b7682966b312dd43f4e
 #: ../../../source/contribution/development/test.txt:43
 msgid "テストの動作"
 msgstr "テストの動作"
 
-# c022ced7535c4d93a060695228e49e21
-# 32fcc7e2b91b4f2a915a056479ccb953
+# bd7c3109aad24828b4ba0b8d8d8c2892
+# 0e1818e0a8c4443a8e2c0482427e7ec5
 #: ../../../source/contribution/development/test.txt:45
 #: ../../../source/contribution/development/test.txt:52
 msgid "groongaのトップディレクトリで、以下のコマンドを実行します。::"
 msgstr "groongaのトップディレクトリで、以下のコマンドを実行します。::"
 
-# 7461209329e345479813441eb15f6e94
+# 2815bb441b634ab5a64f806d211f76c6
 #: ../../../source/contribution/development/test.txt:50
 msgid "カバレッジ情報"
 msgstr "カバレッジ情報"
 
-# d8a0d94c619b476f83e8ccab9fb5418e
+# 338756de655948d4bded7c98fa6d3014
 #: ../../../source/contribution/development/test.txt:56
 msgid ""
 "すると、coverageディレクトリ以下に、カバレッジ情報が入ったhtmlが出力されま"
@@ -682,7 +684,7 @@ msgstr ""
 "すると、coverageディレクトリ以下に、カバレッジ情報が入ったhtmlが出力されま"
 "す。"
 
-# e36c81939f5448edb2a3f733d1ac0e6e
+# 540d46baec284f1cbe6b29971cc0c2ff
 #: ../../../source/contribution/development/test.txt:58
 msgid ""
 "カバレッジには、Lines/Functions/Branchesの3つの対象があります。それぞれ、行／"
@@ -693,7 +695,7 @@ msgstr ""
 "関数／分岐に対応します。Functionsがもっとも重要な対象です。すべての関数がテス"
 "トされるようになっていることを心がけてください。"
 
-# 949adb6bcefe4e17a5a2a0a39542b2ee
+# 62deac6551e14ba2a6218978e371f448
 #: ../../../source/contribution/development/test.txt:60
 msgid ""
 "テストがカバーしていない部分の編集は慎重に行ってください。また、テストがカ"
@@ -702,12 +704,12 @@ msgstr ""
 "テストがカバーしていない部分の編集は慎重に行ってください。また、テストがカ"
 "バーしている部分を増やすことも重要です。"
 
-# 3abf7ec652904dbb89628874aa82e89d
+# 069208530c22418eaa4849991ed42735
 #: ../../../source/contribution/development/test.txt:63
 msgid "様々なテスト"
 msgstr "様々なテスト"
 
-# 11473c10fdf64d4a82566d920b6e65b6
+# 782b27bed9c7468fbb853376cec5117a
 #: ../../../source/contribution/development/test.txt:65
 msgid ""
 "テストは、test/unitディレクトリにおいて、./run-test.shを実行することによって"
@@ -718,22 +720,22 @@ msgstr ""
 "も行えます。run-test.shはいくつかのオプションをとります。詳細は、./run-test."
 "sh --helpを実行しヘルプをご覧ください。"
 
-# 386338404af14e75a6dda836cf37b5a9
+# 1e1972d9599a47f2af8129bacf13500e
 #: ../../../source/contribution/development/test.txt:68
 msgid "特定のテスト関数のみテストする"
 msgstr "特定のテスト関数のみテストする"
 
-# 752e5954e9da460a848b7dcf93be5540
+# d5b93d353104493b9cf9457758522148
 #: ../../../source/contribution/development/test.txt:70
 msgid ""
 "特定のテスト関数(Cutterではテストと呼ぶ)のみをテストすることができます。"
 msgstr ""
 "特定のテスト関数(Cutterではテストと呼ぶ)のみをテストすることができます。"
 
-# 5f744d84fec543aa9e3ccedc3f7c3cd3
-# b70cdcc4a0ce4cd59998e76ea1649d9b
-# cb456f095215476bb8d903c907ff53bc
-# a1c720d3f497422880816a90d3cc4807
+# 85475a6d51e945f2840f4a17c9853a29
+# 81ea8f47e5184bd690434b7c0294afee
+# 32db273cc88149f4a6703e39cfc16c83
+# 4273ea94704445d1805399172aba1e69
 #: ../../../source/contribution/development/test.txt:72
 #: ../../../source/contribution/development/test.txt:81
 #: ../../../source/contribution/development/test.txt:92
@@ -741,12 +743,12 @@ msgstr ""
 msgid "実行例::"
 msgstr "実行例::"
 
-# 935fea45584f4260afbe2bf0ec21fb0b
+# f441c37388b341ea974867aacdadf633
 #: ../../../source/contribution/development/test.txt:77
 msgid "特定のテストファイルのみテストする"
 msgstr "特定のテストファイルのみテストする"
 
-# bb49c348305d4ef99876e1b05b44ba15
+# 4ed14af8c6364e099536f78d08d2be2d
 #: ../../../source/contribution/development/test.txt:79
 msgid ""
 "特定のテストファイル(Cutterではテストケースと呼ぶ)のみテストすることができま"
@@ -755,12 +757,12 @@ msgstr ""
 "特定のテストファイル(Cutterではテストケースと呼ぶ)のみテストすることができま"
 "す。"
 
-# 892b11562b6443a3901ae86e43355844
+# ef0e016104f44861bb5f6f95cde081a5
 #: ../../../source/contribution/development/test.txt:86
 msgid "不正メモリアクセス・メモリリーク検出"
 msgstr "不正メモリアクセス・メモリリーク検出"
 
-# 3d5df5c82c694af4b4d0649d311e7aa6
+# 0f25ac37a06d457e85b1fc705fbda7cd
 #: ../../../source/contribution/development/test.txt:88
 msgid ""
 "環境変数CUTTER_CHECK_LEAKをyesと設定すると、valgrindを用いて不正メモリアクセ"
@@ -769,19 +771,19 @@ msgstr ""
 "環境変数CUTTER_CHECK_LEAKをyesと設定すると、valgrindを用いて不正メモリアクセ"
 "スやメモリリークを検出しつつ、テストを動作させることができます。"
 
-# 9aeb81918cea40d3acc6a1b490156a41
-# 938539a275044fbcbfbb7d5a91671527
+# eb46175b45674ca198772206f8fd701b
+# 5a1fca287212417a8ce08fc1beefdc3b
 #: ../../../source/contribution/development/test.txt:90
 #: ../../../source/contribution/development/test.txt:101
 msgid "run-test.shのみならず、make checkでも利用可能です。"
 msgstr "run-test.shのみならず、make checkでも利用可能です。"
 
-# 0f8f3136ef5d451da6cdfe14d05d94bb
+# bee2f54db0c9446c974bcfe5c9b13f0d
 #: ../../../source/contribution/development/test.txt:97
 msgid "デバッガ上でのテスト実行"
 msgstr "デバッガ上でのテスト実行"
 
-# 320e2d4ee81045659b46d1f7924ef416
+# 7d804c903f0f4d7ea8031731207b20f0
 #: ../../../source/contribution/development/test.txt:99
 msgid ""
 "環境変数CUTTER_DEBUGをyesと設定すると、テストが実行できる環境が整ったgdbが実"
@@ -790,12 +792,12 @@ msgstr ""
 "環境変数CUTTER_DEBUGをyesと設定すると、テストが実行できる環境が整ったgdbが実"
 "行されます。gdb上でrunを行うと、テストの実行が開始されます。"
 
-# 50682805b4d24452953737f4e7aa661d
+# 8d157b19b0f1489a8bda4805315fac43
 #: ../../../source/contribution/development/test.txt:108
 msgid "静的解析"
 msgstr "静的解析"
 
-# 5c257dadd1014933a2e0ddf00dc8703e
+# 31c4e104144840e985b486d2866047ea
 #: ../../../source/contribution/development/test.txt:110
 msgid ""
 "scan-buildを用いて、ソースコードの静的解析を行うことができます。scan_buildと"
@@ -804,27 +806,27 @@ msgstr ""
 "scan-buildを用いて、ソースコードの静的解析を行うことができます。scan_buildと"
 "いうディレクトリに解析結果のhtmlが出力されます。::"
 
-# fdc2eeb5b66d469ca17e6438699e58f0
+# 3c558ff9d9384e60a449f10713a65fa7
 #: ../../../source/contribution/development/test.txt:116
 msgid "configureは１度のみ実行する必要があります。"
 msgstr "configureは１度のみ実行する必要があります。"
 
-# 3e31bdef51884798af1d97c810c94bbf
+# d38fd91dfe404c9f9e0c4f3b36b046b7
 #: ../../../source/contribution/documentation.txt:6
 msgid "How to contribute in documentation topics"
 msgstr "How to contribute in documentation topics"
 
-# e62ad32f042e403ca18667537a28bc28
+# 0619484f643f4ea7af942594ba6081b5
 #: ../../../source/contribution/documentation.txt:8
 msgid "We use Sphinx_ for documentation tool."
 msgstr "We use Sphinx_ for documentation tool."
 
-# db6342b7c04d45d7a18ae12f26a4a58d
+# a3077099c51441f5918929c7ee83de7f
 #: ../../../source/contribution/documentation/c-api.txt:6
 msgid "C API"
 msgstr "C API"
 
-# 4bf8223b87b84cb58e01b1470c3c8ea1
+# 55a1c1d8ae27405ea36c2f6a70823866
 #: ../../../source/contribution/documentation/c-api.txt:8
 msgid ""
 "We still have C API documentation in include/groonga.h. But we want to move "
@@ -835,17 +837,17 @@ msgstr ""
 "them into doc/source/c-api/\\*.txt. We welcome to you help us by moving C "
 "API documentation."
 
-# c048129c7a014e07bf744939d21a6c6f
+# 23dc341d4a4d412ca2456383ae560763
 #: ../../../source/contribution/documentation/c-api.txt:12
 msgid "We will use `the C domain markup`_ of Sphinx."
 msgstr "We will use `the C domain markup`_ of Sphinx."
 
-# 8d6e2ca58da049e380e1d4efe4259332
+# cd15eee5ef644ea8879fadeaf3a7bb5e
 #: ../../../source/contribution/documentation/i18n.txt:6
 msgid "I18N"
 msgstr "I18N"
 
-# b735395ce80f4c7f8c3217e888bd2139
+# 6c31c8e8c5c34b149e628ff1fd534b28
 #: ../../../source/contribution/documentation/i18n.txt:8
 msgid ""
 "We only had documentation in Japanese.  We start to support I18N "
@@ -858,7 +860,7 @@ msgstr ""
 "base language and translate English into other languages such as Japanese. "
 "We'll put all documentations into doc/source/ and process them by Sphinx."
 
-# 42482855c1864863bed55ac8a4dc8591
+# 666d19a9474c4a29834021fc0650a1a6
 #: ../../../source/contribution/documentation/i18n.txt:17
 msgid ""
 "But we still use Japanese in doc/source/ for now. We need to translate "
@@ -869,57 +871,57 @@ msgstr ""
 "Japanese documentation in doc/source/ into English. We welcome to you help "
 "us by translating documentation."
 
-# 1d5fe861ac6742b684f90bf8652ef6e6
+# 0dea19580fa04d6bb3151f7cbba99e38
 #: ../../../source/contribution/documentation/i18n.txt:23
 msgid "Translation flow"
 msgstr "Translation flow"
 
-# f72a6b82dc6b434cb52ddeaa57474039
+# dd464c5fcaeb417f9ea790e60802b636
 #: ../../../source/contribution/documentation/i18n.txt:25
 msgid "After doc/source/\\*.txt are updated, we can start translation."
 msgstr "After doc/source/\\*.txt are updated, we can start translation."
 
-# 28239e81167c4c1b83d374b8f4566384
+# 0234812e4d5b43f2b150a82fc63fd27c
 #: ../../../source/contribution/documentation/i18n.txt:27
 msgid "Here is a translation flow:"
 msgstr "Here is a translation flow:"
 
-# 99e9e55a9e7d4c7b82bfb4b772930396
+# 011ce7de9857485a9430d909d7c9cddb
 #: ../../../source/contribution/documentation/i18n.txt:29
 msgid "Clone groonga repository."
 msgstr "Clone groonga repository."
 
-# fdc0e833458d4e8aa91d380704213490
+# aa7d746ba2054f3ea4acc60af8e98018
 #: ../../../source/contribution/documentation/i18n.txt:30
 msgid "Update .po files."
 msgstr "Update .po files."
 
-# 769447ae578d47ceae9940eade962749
+# 294d6e6eddcd4cd7af453e62c6eac823
 #: ../../../source/contribution/documentation/i18n.txt:31
 msgid "Edit .po files."
 msgstr "Edit .po files."
 
-# 2781f8ae70004cc993e3de46a13c49ac
+# ede70d16f234464e93f69062f2828dd5
 #: ../../../source/contribution/documentation/i18n.txt:32
 msgid "Generate HTML files."
 msgstr "Generate HTML files."
 
-# 40d559b1d97c470aad692a617b8e2b3a
+# cb8e8243568d4d7eb58c129fd87f3e76
 #: ../../../source/contribution/documentation/i18n.txt:33
 msgid "Confirm HTML output."
 msgstr "Confirm HTML output."
 
-# c3f90013bc2743f3b75b4745d686f7a8
+# ccc4eb1530c144dfbb62b32ae2384c7a
 #: ../../../source/contribution/documentation/i18n.txt:34
 msgid "Repeat 2.-4. until you get good result."
 msgstr "Repeat 2.-4. until you get good result."
 
-# 3b507682fe7840009b3a0bf4602bef32
+# 18d315cfb2e2425498e14a04ca287dc5
 #: ../../../source/contribution/documentation/i18n.txt:35
 msgid "Send your works to us!"
 msgstr "Send your works to us!"
 
-# 9b7faa0e6295446a9a36c69cd892f73c
+# e228ea97392d4fb88b22d7dc772bbd5f
 #: ../../../source/contribution/documentation/i18n.txt:37
 msgid ""
 "Here are command lines to do the above flow. Following sections describes "
@@ -928,12 +930,12 @@ msgstr ""
 "Here are command lines to do the above flow. Following sections describes "
 "details."
 
-# 98af77850e0d436f838aa49454dc59dc
+# 9df8225afc9c475b9ea4329c9c2204f7
 #: ../../../source/contribution/documentation/i18n.txt:57
 msgid "How to clone groonga repository"
 msgstr "How to clone groonga repository"
 
-# d3f19ac532b7456588b9094daf322fe5
+# f5bb54e70c63424abaf9aaf3b96f372c
 #: ../../../source/contribution/documentation/i18n.txt:59
 msgid ""
 "First, please fork groonga repository on GitHub. You just access https://"
@@ -944,17 +946,17 @@ msgstr ""
 "github.com/groonga/groonga and press `Fork` button. Now you can clone your "
 "groonga repository::"
 
-# dd56a79610084ade809adfc8ee9778d3
+# 677c87f69ca743709d79564c211c1b7b
 #: ../../../source/contribution/documentation/i18n.txt:65
 msgid "Then you need to configure your cloned repository::"
 msgstr "Then you need to configure your cloned repository::"
 
-# 36fd3bf7276f4329aa2874a03e3ea84d
+# 3872a37c83dc49338d7050ec27e2f951
 #: ../../../source/contribution/documentation/i18n.txt:71
 msgid "The above steps are just needed at the first setup."
 msgstr "The above steps are just needed at the first setup."
 
-# ed0144f8dda642b09611d63f7ec4adae
+# ad5a9f13901d47a79cb79fec79eb9c91
 #: ../../../source/contribution/documentation/i18n.txt:73
 msgid ""
 "If you have troubles on the above steps, you can use source files available "
@@ -963,12 +965,12 @@ msgstr ""
 "If you have troubles on the above steps, you can use source files available "
 "on http://packages.groonga.org/source/groonga/ ."
 
-# fba4a9b089ec4ccd9098a8173927fc83
+# 944263d2a6674bc9aab855fb7238ec53
 #: ../../../source/contribution/documentation/i18n.txt:77
 msgid "How to update .po files"
 msgstr "How to update .po files"
 
-# 266dbec010a44e688e6fa0f31ab65a0c
+# 2b9c6d156f5f4d969642f0da0039176a
 #: ../../../source/contribution/documentation/i18n.txt:79
 msgid ""
 "You can update .po files by running `make update` on doc/locale/${LANGUAGE}/"
@@ -979,12 +981,12 @@ msgstr ""
 "LC_MESSAGES. (Please substitute `${LANGUAGE}` with your language code such "
 "as 'ja'.)::"
 
-# b416d8de39d74117ad187b020ba3fe21
+# 751bccf421eb4d78bd3f9c1720736cc9
 #: ../../../source/contribution/documentation/i18n.txt:87
 msgid "How to edit .po"
 msgstr "How to edit .po"
 
-# 3ec8bcb3497b4551ba97770fbdabbd15
+# e063bfbce4724c56ac9602c71e05eb8b
 #: ../../../source/contribution/documentation/i18n.txt:89
 msgid ""
 "There are some tools to edit .po files. .po files are just text. So you can "
@@ -995,27 +997,27 @@ msgstr ""
 "use your favorite editor. Here is a specialized editor for .po file edit "
 "list."
 
-# 58ad934586f54999b3c330ae02b8dd27
+# 8ff548c1bed849fead836b33a86423ce
 #: ../../../source/contribution/documentation/i18n.txt:94
 msgid "It is bundled in gettext."
 msgstr "It is bundled in gettext."
 
-# 2e6f3e7a6d254db8833268b1f120d477
+# abb61d1805314d2b93ef6702966d1ebf
 #: ../../../source/contribution/documentation/i18n.txt:97
 msgid "It is a .po editor and works on many platform."
 msgstr "It is a .po editor and works on many platform."
 
-# 46ca2a6dc3234b81b766896babf98c82
+# fae02ee514214fedaea481e91416c526
 #: ../../../source/contribution/documentation/i18n.txt:100
 msgid "It is also a .po editor and is implemented as Eclipse plugin."
 msgstr "It is also a .po editor and is implemented as Eclipse plugin."
 
-# 52bbdcc7144642eeb0810a406dce60be
+# 2e32c065f8924f308ed02c8517fdb178
 #: ../../../source/contribution/documentation/i18n.txt:107
 msgid "How to generate HTML files"
 msgstr "How to generate HTML files"
 
-# 43c70a231ef84df09a8650f458fe58f8
+# c252ff5747f541ef9212901259cf9da9
 #: ../../../source/contribution/documentation/i18n.txt:109
 msgid ""
 "You can generate HTML files with updated .po files by running `make html` on "
@@ -1032,8 +1034,10 @@ msgid ""
 "You can also generate HTML files for all languages by running `make html` on "
 "doc/locale::"
 msgstr ""
+"You can also generate HTML files for all languages by running `make html` on "
+"doc/locale::"
 
-# 1a6f401caff24465ab5df696ffd9d86c
+# 0307e1047290413db9324ac59939524f
 #: ../../../source/contribution/documentation/i18n.txt:125
 msgid ""
 ".mo files are updated automatically by `make html`. So you don't care about ."
@@ -1042,12 +1046,12 @@ msgstr ""
 ".mo files are updated automatically by `make html`. So you don't care about ."
 "mo files."
 
-# 5820e93c2a9f45abae1e7f4ec84ffaf2
+# e607021d8723469a8af7d3cfce484848
 #: ../../../source/contribution/documentation/i18n.txt:129
 msgid "How to confirm HTML output"
 msgstr "How to confirm HTML output"
 
-# c676ed5fddef4bd79055c91524b37468
+# cdaeb9c49b0a409a835beaa67b573d63
 #: ../../../source/contribution/documentation/i18n.txt:131
 msgid ""
 "HTML files are generated in doc/locale/${LANGUAGE}/html/. (Please substitute "
@@ -1058,12 +1062,12 @@ msgstr ""
 "`${LANGUAGE}` with your language code such as 'ja'.) You can confirm HTML "
 "output by your favorite browser::"
 
-# d4a93a79cda242569c04d77bad81e7ef
+# f30d2c4f718a42af853b0d36463808e7
 #: ../../../source/contribution/documentation/i18n.txt:139
 msgid "How to send your works"
 msgstr "How to send your works"
 
-# ee625bd0b7fc4fe89a70bfdef7852a4e
+# 07d94c1259ba4cffa562d3c30f1bb6fa
 #: ../../../source/contribution/documentation/i18n.txt:141
 msgid ""
 "We can receive your works via pull request on GitHub or E-mail attachment "
@@ -1072,17 +1076,17 @@ msgstr ""
 "We can receive your works via pull request on GitHub or E-mail attachment "
 "patch or .po files themselves."
 
-# b7774dead90b476db1a6e813545adf0e
+# 83c636a63c864862bbe0e187ffdcfb77
 #: ../../../source/contribution/documentation/i18n.txt:145
 msgid "How to send pull request"
 msgstr "How to send pull request"
 
-# 9f6f972839d944808453835dd5c5259a
+# 7724ec891aec48148b528e8d63a79949
 #: ../../../source/contribution/documentation/i18n.txt:147
 msgid "Here are command lines to send pull request::"
 msgstr "Here are command lines to send pull request::"
 
-# a36cffb6277a465a8528609dddd66dc9
+# fb9aaf7a8f2d49ba98e1e870370523d3
 #: ../../../source/contribution/documentation/i18n.txt:153
 msgid ""
 "Now you can send pull request on GitHub. You just access your repository "
@@ -1091,17 +1095,17 @@ msgstr ""
 "Now you can send pull request on GitHub. You just access your repository "
 "page on GitHub and press `Pull Request` button."
 
-# 7de3f26ab70f4dec87650777aebaada9
+# dd890441b607478ba9c5b4c772728b00
 #: ../../../source/contribution/documentation/i18n.txt:162
 msgid "How to send patch"
 msgstr "How to send patch"
 
-# 5d200260e8ba4a5baa2b0be76ed8fa88
+# 5305b2f4f0c949639f47d2a4ea6f29f3
 #: ../../../source/contribution/documentation/i18n.txt:164
 msgid "Here are command lines to create patch::"
 msgstr "Here are command lines to create patch::"
 
-# 00c2808928ba44c7bea31349c7d91338
+# 71ec5c91452f4fc5b243bdfb7a09bc6b
 #: ../../../source/contribution/documentation/i18n.txt:170
 msgid ""
 "You can find 000X-YYY.patch files in the current directory. Please send "
@@ -1110,12 +1114,12 @@ msgstr ""
 "You can find 000X-YYY.patch files in the current directory. Please send "
 "those files to us!"
 
-# 9dc6eae2b0794631942cb2ea139f1d92
+# ca3ea9ce4fe34a2798d25a3ed4cbe864
 #: ../../../source/contribution/documentation/i18n.txt:176
 msgid "How to send .po files"
 msgstr "How to send .po files"
 
-# d294bf058a694e01a120c02f1307f14c
+# 725011e06504427db490b26ad2ac6d9e
 #: ../../../source/contribution/documentation/i18n.txt:178
 msgid ""
 "Please archive doc/locale/${LANGUAGE}/LC_MESSAGES/ (Please substitute `"
@@ -1126,47 +1130,35 @@ msgstr ""
 "${LANGUAGE}` with your language code such as 'ja'.) and send it to us! We "
 "extract and merge them to the groonga repository."
 
-# b62cd08b47354aa5a644d478f17202eb
+# 25df3740f4534cd8a7e6c63b27119452
 #: ../../../source/contribution/documentation/i18n.txt:186
 msgid "How to add new language"
 msgstr "How to add new language"
 
-# df6ef25baac84e75bf04ec2d2859057c
+# 3d4f635846784ad792cbac48e22ab512
 #: ../../../source/contribution/documentation/i18n.txt:188
 msgid "Here are command lines to add new translation language::"
 msgstr "Here are command lines to add new translation language::"
 
-# 12e43490c3eb40d4884ce7e03170d5cd
+# 6c73005527e74e39bdd2ebdaab97f755
 #: ../../../source/contribution/documentation/i18n.txt:193
 msgid "Please substitute `${LANGUAGE}` with your language code such as 'ja'."
 msgstr "Please substitute `${LANGUAGE}` with your language code such as 'ja'."
 
-# c487425d09d74bd78de4e261590f61c7
+# 87d285fdce6a4ce28058097e6c35953c
 #: ../../../source/contribution/report.txt:6
 msgid "How to report a bug"
 msgstr "How to report a bug"
 
-# 9b1e9e93107d425d879cee7ed9f98e29
+# 60c510facf4e41d2af432075008650f8
 #: ../../../source/contribution/report.txt:8
-#, fuzzy
 msgid ""
 "We have two issue tracking systems, `Redmine <http://redmine.groonga.org/"
 "projects/groonga/issues>`_ and `GitHub issue tracker <https://github.com/"
 "groonga/groonga/issues>`_. Redmine is for Japanese and GitHub issue tracker "
 "is for English. You can use both of them to report a bug."
 msgstr ""
-"We have two issue tracking systems, Redmine_ and `GitHub issue tracker`_. "
-"Redmine is for Japanese and GitHub issue tracker is for English. You can use "
-"both of them to report a bug."
-
-# 6f7cbc7a1e9f457fbdc0e95368a32c18
-#~ msgid "We describe about them in this section."
-#~ msgstr "We describe about them in this section."
-
-# f7dc422b7a2f4bca828cdc07ee15e8da
-#~ msgid "Please talk your friends about groonga."
-#~ msgstr "Please talk your friends about groonga."
-
-# 75447cb3ed4d44dc915bfbc3f30756f8
-#~ msgid "Please read this document."
-#~ msgstr "Please read this document."
+"We have two issue tracking systems, `Redmine <http://redmine.groonga.org/"
+"projects/groonga/issues>`_ and `GitHub issue tracker <https://github.com/"
+"groonga/groonga/issues>`_. Redmine is for Japanese and GitHub issue tracker "
+"is for English. You can use both of them to report a bug."

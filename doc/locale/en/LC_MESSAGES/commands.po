@@ -1,28 +1,28 @@
-# English translations for 1.2.4 package.
-# Copyright (C) 2009-2011, Brazil, Inc
+# English translations for 2.0.1 package.
+# Copyright (C) 2009-2012, Brazil, Inc
 # This file is distributed under the same license as the groonga package.
-# Kouhei Sutou <kou@clear-code.com>, 2011.
+# Kouhei Sutou <kou@clear-code.com>, 2012.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: 1.2.4\n"
+"Project-Id-Version: 2.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-27 23:45\n"
-"PO-Revision-Date: 2011-08-12 22:01+0900\n"
+"POT-Creation-Date: 2012-04-28 11:36\n"
+"PO-Revision-Date: 2012-04-28 11:36+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
-"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-# d5d1df43ba5049009e38a40ad6e05c59
+# 8ee62dcf44784795b83ce9d025e55565
 #: ../../../source/commands.txt:6
 msgid "コマンド"
 msgstr "コマンド"
 
-# 0c0ad6f5020d4d699eec16740b5a972a
+# 729fb26c048e4e14af79f1aa06469260
 #: ../../../source/commands.txt:8
 msgid ""
 "まず、すべてのコマンドに関係するコマンドバージョンについて説明します。その"
@@ -31,34 +31,32 @@ msgstr ""
 "まず、すべてのコマンドに関係するコマンドバージョンについて説明します。その"
 "後、組み込みのコマンドを順に説明します。"
 
-# 0f26cc2c85694af7850237f82150eb27
+# c71e47bbb15a4d8791390c3cf406ccc0
 #: ../../../source/commands/cache_limit.txt:6
 msgid "cache_limit"
 msgstr "cache_limit"
 
-# 43b4a512ec29409fab038a4db274953d
-# b6dd699cd95d4698be73525771e5ce16
-# e71326b872194fbaa02afaa7e0a88863
-# dee834b23a2b40158d8fa07990bc6c5f
-# 8bfc6b8f013a459cbee7de45a157d419
-# 0b3913a6a1444861bbfa91d2b358f1f4
-# 92c392b0b7ca49918c0c3ff177cacfaf
-# 4a9a535231034633b3ed5ef0b27a25c8
-# 8985adaf867c4c0198dcb02c62faa9f4
-# 8cb4181eb25249ff86f217ecc465fd5c
-# 50259a88765f41559e7779000a6a4a01
-# ea510af4f8b4451993a639a0eeac4419
-# 8616cbec7e574a9caca2065104fde77e
-# c607b1078fbd4469b9c57407c86aadd0
-# f0afda905f80442f824d629998b51102
-# b8b54a278e744ec78f6464353fad7f82
-# 220e21bf468c44fc83371f3c8c8fbd6d
-# 4a7e43cdf81341c79f867e24af87f7ad
-# 6739a037e3bb41688a689e00b39b47e7
-# d970808ea25f4c8aa72b01d217c66111
-# e08022e6593440219ff133bd7a2543c5
-# 9819c879ebaf45088db9681e1a792fdb
-# ad7be28b6ce6421f8487708a6b6610d8
+# 6dfcee497e3f48d394357eb1ae4d9001
+# 252d3fb69af141f18687090cd10fb2f8
+# 8654b662de824cc5bea950350ae0df14
+# dec59e41ac24478a9f53443b2e9b26ea
+# 9a79a4f8bf404a10bc99915263f95b80
+# 662d6b37fef341ccb28fbee770e6898d
+# 8a489a2461e64443930265691b5159a7
+# ea270cc88d4a417ab680d80fd21dba86
+# ff7e45ba90a746bc8424bdc5f31abe46
+# 645593c5a124462887f3cc69e6b63328
+# 7746c1d18fae4c5192110f63e9d784eb
+# d173aee786184ca0afbf1c9467e5b72e
+# ea799621d66248ea8809cd7c34afd986
+# a11afce0da504b379a6453abfe858e4e
+# 4ac61825d8bf40a59d7ac6056b86ddef
+# 87f7bfee595b425e9aab8eccb0c2aea2
+# 1aae1b34bb784accab5e1d65398f6d42
+# c6272cd16b584506a8c9b7bca116d920
+# 6970c638f9314349b7c7d39e5056463c
+# 685aab887bff434c892c3dd096c69dc4
+# ed5e3d650ea44de39a498d05937db42e
 #: ../../../source/commands/cache_limit.txt:9
 #: ../../../source/commands/check.txt:9
 #: ../../../source/commands/clearlock.txt:9
@@ -80,34 +78,32 @@ msgstr "cache_limit"
 msgid "名前"
 msgstr "名前"
 
-# 10660aedb77f4fd8a523941b59c4103f
+# 74535d9ce11141d1af5fe45eb9f9b376
 #: ../../../source/commands/cache_limit.txt:11
 msgid "cache_limit - cacheサイズの設定・取得"
 msgstr "cache_limit - cacheサイズの設定・取得"
 
-# 40a43f722e36435ca47f7593151d44ac
-# dfdf4a811f834cdab7c2aded8639c535
-# 4696ae87fabe4cca8432b240567d7b95
-# 2d548175ed03461ba6ac6481b85648c3
-# 85203a92b61f49d793961dc50a18b535
-# 6cb449319b8843acbf5690ad7a838c6c
-# 73a1ba62d46d4776bd96f2cd9288caf7
-# a381435388e9457686ab93c8876ba012
-# 3273f25e10894c31a7023046413ba114
-# 0cd0cff267744e149c0e0457fead72b6
-# ac2714f0e09648459f73b4c541f6f40b
-# 8750466ca1654c6fb2bb429ae8373138
-# 11fd57621060473398a66a6ecf894ba6
-# 046a3fe781584270b8caeafcac5df195
-# fbb951dfad1f41b6af9f74fb1850fe7d
-# ec1630eb2e7449058f00a87ae589b5cb
-# 6a5be7b19d394f13b8db70938126d58d
-# 0ca54537d73644ef87278c629b5582fe
-# f69d99c82b2b463d8c1d6e9e6659766b
-# 62ec47693cba4407913f0a952f63e005
-# 6e50348251ec420bb27aa97ee26ecb69
-# dd29fbbe499442d9ae1707edd172a14e
-# d65938796c1a4a3c92e995c07d4c8786
+# f7a6e68a1d65462e8fe12a535ebd7931
+# e3531c15104248979f538e10ce848f1c
+# 27f5e70f6d9c45999263c42ae0fc157c
+# 1f2d686a53584ff9b09b358afa0eeb79
+# e600551202f947dab13e19d0e3c8441d
+# ec26282e8b1648a2baf4281fd0a8fb2a
+# a02679c8488648ce822b22a3befb1080
+# b211a6b159e543458d385639ee1cd585
+# 7e66cead8fe64f48979f588a2d4717b1
+# 8f0302f68a8e4a0582f20a491781c6b6
+# 9b48746cd24145b6a3d6bebba5f01397
+# 7d67db6338c4436192bbe421c88d9a3a
+# f0c71ab0dd3d4ddbba8dd6fd5258eaff
+# d115c31c376040d2b8d299e93af06dea
+# 3b721c77f7634efab088670355de8d01
+# 3098fefb3e41496195e859080a11c8d6
+# 899ffbf6ad4741adac2b612240b7baf4
+# 8dc98d876d614cf5bf67cf830a0b218b
+# 02f068eadae44337af18b3d4b0e97d6b
+# 039370e392af4bc3a807a202910a71cc
+# 1b262e55ae7c428ba16bc7397fdf2b85
 #: ../../../source/commands/cache_limit.txt:14
 #: ../../../source/commands/check.txt:14
 #: ../../../source/commands/clearlock.txt:14
@@ -131,29 +127,27 @@ msgstr "cache_limit - cacheサイズの設定・取得"
 msgid "書式"
 msgstr "書式"
 
-# 8f9b960f26dc44d797beb50eb0128eeb
-# f23cb16e45394735972e8578d94aca8d
-# ec407346683046dc886f0d8dcf1e4602
-# 4befaa9612ff404fbe552b787d40ea3c
-# 3a657d406ef04cc3811a798a599c179b
-# df8b77c7cbdb44fe8d543abe3a043b55
-# d57977d78c4642148e5acd2a91d045a3
-# 5d5f90d77bf44a769790e3015dfd2609
-# 8f75f7783d68404483e9c966194bbedc
-# 789974c61cda4118acdaccb26febbf0d
-# 28fbabeaa9c2494a81a1692bf1db61a9
-# 8253b6f8ccaa490482ab7e92006211c8
-# 72aa65dbf167457e845688ae79032acd
-# b3ada8d966414bb5a649c40e1748f4ee
-# 631ceab114614b5f94f8eba51a266155
-# 4477ba41110b4f3bbfd88d55bfa9fe15
-# 59377f0cf8564c3389b2d758d3f01578
-# c615ff7004d44b7fbfbf65e5b38097f9
-# 801371015eb44d5c8fd92d7283858aac
-# 49bc379c71c449dd9f491b41227da107
-# 76736afb3e8f4eed951da28da34fe875
-# 73f3bd45ecac4c0599f8388ac2fd2ddf
-# d6ecec2650d84ee88ca597b985a98c4b
+# 32e39730207d440189c1c0cb5b33465d
+# 5db792c9a64748f8ae6a282291d7033b
+# 0f1f27441d7743b390875c2c4fe59df3
+# 9af7c0d6cb2a48bcadb6544b818e1b1d
+# df836c2534d14935b20c3eca7e06c83c
+# d5bc727791634683bcf67ec136d6c8c0
+# b744c9bf939b4f879145cd2434202d71
+# d0889f97776a4d509e1eb9e32eea2e18
+# 0cd03277d1f8438a8f4987ff3726d332
+# b923db2209b14d9286a6ce64c6e30196
+# dad864f5adfd468a9094f9b0649422c2
+# 55127a8292144ee499dd32d0b751a10f
+# 207adfea838d4aed88bb0f62292a3b96
+# df38c9f5552a4b40bb66b67fb7c3584f
+# 64f5523659964a5da0e864e2a2dfd8b4
+# 99e66e8047f34d78b87d2d0688048e78
+# 26046688a9bd4689956bbcbd2248158b
+# c4b7cad366a747ac85664431e93aabd0
+# 860f43b861764edcb99410e0cfb73a63
+# 6d571fe3dc864c93806a7343e4ee1dc3
+# 05a2c6b32c7c46bda599eead31c2999b
 #: ../../../source/commands/cache_limit.txt:20
 #: ../../../source/commands/check.txt:20
 #: ../../../source/commands/clearlock.txt:20
@@ -177,7 +171,7 @@ msgstr "書式"
 msgid "説明"
 msgstr "説明"
 
-# 711206698d6e44a3a66304a39514a73a
+# fa7f93f8acce48ecbf3bb673cb26fa6f
 #: ../../../source/commands/cache_limit.txt:22
 msgid ""
 "groonga組込コマンドの一つであるcache_limitについて説明します。組込コマンド"
@@ -188,35 +182,33 @@ msgstr ""
 "は、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバに"
 "リクエストを送信することによって実行します。"
 
-# 3f592fbf91ae402182f1e22d7544fe10
+# 3b9285813fd64bcca3e8481ec621c437
 #: ../../../source/commands/cache_limit.txt:24
 msgid "cache_limitは、クエリキャッシュの最大件数を取得したり設定したりします。"
 msgstr ""
 "cache_limitは、クエリキャッシュの最大件数を取得したり設定したりします。"
 
-# b9d3b7e72f3748f59419a80bb05fb8e2
-# 0420a64dfa334d6286043323be1a59e5
-# 86f4ef9885304efdbfd34b54efbb2bc0
-# 70a0395911d14b32bcb84859f14c9579
-# 4bed50138e024846846ffd2ce369a6dc
-# 9afbb1d2bc1b4bbba717317e247be229
-# 676b7aee10f74527b19c0912c2f760a2
-# fc4578eb91af4ca1b8f18915bc14a2cc
-# 03098db0eaf14ac6a9e50cfa45b7cef6
-# efbbb2b367384ac489e6eb2518c34dca
-# fa85626e39d14b27ab40030bcf30633a
-# 51745c82415c4081ac4142db56d8c27b
-# 7447810dec2f40a3bbe601b6b23c11b0
-# e3566904596c43e0a7bd4bf747ecb142
-# 9a0096c4be2a4e9fb96b702b9115070c
-# 18188da857b14e87b151bd343bc23089
-# e2f680e36da142faba0454dc4521ec5d
-# f795693bd80849b688214b511b7656f9
-# c4625bf7b6d7452fb9ad7d454daaa6c2
-# 6cc68e24c0504f5fb89acd6375732f26
-# 609f405d95ca404292ecd9c610bc6f1e
-# 2a2b960ed53543cdb0b35479932fca33
-# bc7268a889754e0fbc0e26d240690ed6
+# 5ee489cf09d3463c9df5f743e5a8f50a
+# 9d87f0543cb643e48fc176a5e4ec9573
+# 8fbfc4eebe0c4e4baf2c4f982d4ffc72
+# 9003c51a5c174372a17fc7f20c39f6dc
+# 7dec8002b1d04f2c8436b4bdeb613e2d
+# d3358892bb944345a37a4a82a1801042
+# 47a7aab0096e4624a4d75e127d0ea7db
+# 45bd28ecce744bc4ac9fe046b44a1b3c
+# 7bc8a2f23bd248a1adc4c2d5bc93b86e
+# 0c07ba2c85fc45c683bebb3002c0d9c7
+# ebad487e4f3d45d18f29904fe7e6a6ed
+# c2170185bc124b019543906ad2e7db6b
+# b22317134f82428b99f5157a31c7fd51
+# c7709b19258c4936bc627a32f4fbc4ed
+# faf6764f82d04053a7236053084f0fe5
+# 49cfaf21491e4d44aa751d31308a321a
+# ff30978fa831411c931ffa9c2fa43b0a
+# 574214904af64e7787ab10059faf7022
+# 55ec4cf957bf433785eec68ce1e70b36
+# ee736d95bec6404ab9e0dfedd13a9837
+# aecb2462ad474c578ab7b7add0905837
 #: ../../../source/commands/cache_limit.txt:27
 #: ../../../source/commands/check.txt:27
 #: ../../../source/commands/clearlock.txt:27
@@ -240,12 +232,12 @@ msgstr ""
 msgid "引数"
 msgstr "引数"
 
-# a60720a526544951b4d22cdfde73a9ea
+# bb1729da49874ed186d30eb2c243790d
 #: ../../../source/commands/cache_limit.txt:29
 msgid "``max``"
 msgstr "``max``"
 
-# 6a97685a1f1a4084aa2bad9656cf6bf6
+# d1936111e7d74b55be86c1c7cdfe9e72
 #: ../../../source/commands/cache_limit.txt:31
 msgid ""
 "クエリキャッシュの最大件数を整数で指定します。 maxが指定されなかった場合に"
@@ -254,27 +246,26 @@ msgstr ""
 "クエリキャッシュの最大件数を整数で指定します。 maxが指定されなかった場合に"
 "は、クエリキャッシュの最大件数は変更せず、 現在の設定値のみが返されます。"
 
-# ad392564aaf24b98ad04829bc5ccd0b1
-# 1027a8e029734e19947d32d41ea5ff16
-# 5b6e32ef84de42f4a12007792000b1df
-# 55ee61d6e1374390ac719e009b737f81
-# 9b59c7978c884909ac9721bb2c46072a
-# b09576521e0e4cc9b6997dd38765119d
-# ed7e2da5e9ba4cbd9be6b9146b8140b4
-# 724e8fcf4e36497d935a8a16dc9aec5f
-# ee13a72f97a1432498911db55b5bf467
-# 8f1b299b94474a048137dd6246c1cba8
-# 3daa02cb58e04c5f96a12ddacd4dcfce
-# 1cc9377b5cd24a9cbd9f54a1e26591fc
-# 0545257424d748dca58251e3fa38f0fe
-# fc66672350c244c5bdb797db62a25301
-# fe60cb5c7a8f4063a745b7155d496b78
-# 6101842e421c46f3a016cc34a45f9878
-# 3f966a20184d430791d6e9fc30bc3dbc
-# 65aba129109941bf8ceaa4bdfcd18918
-# 5f0b1fb0761b4f7f98d881f60fecd6e6
-# 832073396fd445e1a1754d42be9cdb24
-# 54d15a3dc62c44609263e9fbe4437756
+# 5924bf817a114a66984dfb6e9a9b625e
+# 2a7bd2f1dc0c4bd58d9e08d1777bd98a
+# e10d061ec7a14f9bb63a4ee9df5fc5fa
+# 6f718751aaf14bad8a8b330978555ea5
+# fe53456d1b914b348d2778493cefe561
+# 4e1fb50c035c4d678ca19f53fc0aec33
+# 6b6bfe371d644e5aa117dc961ed53a1a
+# 993ffe236fa5457f8878857887b26595
+# 3a0dd237f6314f76b297f23b76ae4c02
+# 8b099d785a084323b7423dd8b4069f38
+# e0a11a6d28d647e1adc24552c91bab59
+# e7dce731f7bc4f67ba52414e566ff0e3
+# f2df6f22178e470099ac3ee84485edeb
+# 0635fd95b60e4100aee9eda90570e995
+# cf348e08a8124c24b49d8aab55efb298
+# edcea824e0bf4ccdbfb3de101fa0033b
+# 44c95be0f71a44eb8913479e22ff0220
+# 238fd7ce16d44d64b9d6fdd6549bc18d
+# 25ccc75c19bb4dde9fc91bd64549e50a
+# 00384e99065c47438375fb4582014bae
 #: ../../../source/commands/cache_limit.txt:36
 #: ../../../source/commands/check.txt:34
 #: ../../../source/commands/column_create.txt:71
@@ -287,7 +278,7 @@ msgstr ""
 #: ../../../source/commands/log_put.txt:47
 #: ../../../source/commands/log_reopen.txt:34
 #: ../../../source/commands/quit.txt:32
-#: ../../../source/commands/select.txt:396
+#: ../../../source/commands/select.txt:433
 #: ../../../source/commands/shutdown.txt:32
 #: ../../../source/commands/status.txt:32
 #: ../../../source/commands/table_create.txt:92
@@ -297,33 +288,32 @@ msgstr ""
 msgid "返値"
 msgstr "返値"
 
-# fabb2d788dac4fa9974c758f65a5395a
+# b696ffeb6f9e4c80bb1af031b8c4ce3a
 #: ../../../source/commands/cache_limit.txt:39
 msgid "json"
 msgstr "json"
 
-# 06da1f28a0f34a30ba65e0255050976a
-# 6641ab69e5354981a0f3d0dba427f302
-# b0a2e2ad117e4dfd9af18f88b17f1dc0
-# 7dc905d36406431d9e4d26bded5c6f74
-# 763ae414a41d48ec88938a8f164ec74a
-# 0ce823d712a64de6b3a9eb7da829c6d2
-# b24e4eb057fe44bc90db05bde472e54e
-# ab7ab0fc8dcf4a30b838aa50dc715c42
-# 093701a890204e2a85305ff12b5190e7
-# 8d9d92aca78949989f36aeb038d190ca
-# fb29ba007b254f98a4d1395c2d71fe9c
-# 67c366056ebf42f483baf1c325e4a42b
-# b7fb2baa785143d79889663ae67c7e42
-# 9b6b21f26ff24078ac9aa6b672de17cf
-# 3305a1088a25483a823087518a4b0fd0
-# 063ef45714594230931ad27757c85a77
-# 0c2c5911ef7043938d7ec6832e0d1338
-# 146c69d90671437a8864d27cccd00867
-# ba9e952a3eb54d628933146bad161209
-# 3970b181d48e4d6796407d99bf7a6aef
-# a9ba6d1216d54afc9f097ec3d6ccc9e1
-# b56da122caf44cf694ebb80ed70d33dc
+# b310676ed3994bdcb0ae69e5718a142f
+# a4abdc0b6680485f828bdbbfc80f4970
+# b392106a8df742b1ba6e8459fd8cddd5
+# 31b00ef4d67648eba35fcbc2f0fecab1
+# 865e0f2c877c4291ad89806e18abb984
+# d8f3c2b318594da9ab9ca4468bf073bf
+# aa91d8b4154f4d6888a5547a1a1a344b
+# fab6be3192c2460ebf579089f416ba40
+# d4a3cf9db5d640c591eebf7f7c540315
+# dfb06db9a6e0416bbae28ad0344b96c6
+# fb865d55421442d6ae6cca8ef057804b
+# 12e2aaad1d204d0aa7a20213a458ba04
+# 4160304d138c469592200683123c6294
+# 234e7bc5586845519a965315f0e0ade2
+# 47e7c74765bc479da30ce0e913f67939
+# 8fad939a50f14e1ba34a2c625c4aaefd
+# 9aa31aa2e641482fa56f930f9f31ade8
+# 9ee9da987e184f128bfc8996198b772d
+# 95d028b74be74d24b99108634d7afefa
+# 7305e5c5b30d4bd0a115117a6c488659
+# 0cec30ce11484e66b46daccdcb2e53c4
 #: ../../../source/commands/cache_limit.txt:50
 #: ../../../source/commands/check.txt:130
 #: ../../../source/commands/clearlock.txt:48
@@ -338,7 +328,6 @@ msgstr "json"
 #: ../../../source/commands/log_put.txt:61
 #: ../../../source/commands/log_reopen.txt:48
 #: ../../../source/commands/quit.txt:37
-#: ../../../source/commands/select.txt:462
 #: ../../../source/commands/shutdown.txt:37
 #: ../../../source/commands/status.txt:54
 #: ../../../source/commands/table_create.txt:106
@@ -348,17 +337,17 @@ msgstr "json"
 msgid "例"
 msgstr "例"
 
-# 8e2a8c7527a247c0864716c458cf7408
+# efd40ebf5f694bd2b9c0e03ed97c636b
 #: ../../../source/commands/check.txt:6
 msgid "check"
 msgstr "check"
 
-# a723b385be984fb0a92119cb014e6ed5
+# f0b2329f07d64de789df80b24f048590
 #: ../../../source/commands/check.txt:11
 msgid "check - オブジェクトの状態表示"
 msgstr "check - オブジェクトの状態表示"
 
-# 7d92d28c4e584557a6e7062eda807ef1
+# 33b4ad21d37e40c2b9a5d15365d13a97
 #: ../../../source/commands/check.txt:22
 msgid ""
 "groonga組込コマンドの一つであるcheckについて説明します。組込コマンドは、"
@@ -369,7 +358,7 @@ msgstr ""
 "groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
 "エストを送信することによって実行します。"
 
-# 839bc2e9f00d425fb918368081ae7940
+# df1b5dced77b48da8fc7968d39a1ec9c
 #: ../../../source/commands/check.txt:24
 msgid ""
 "checkコマンドは、groongaプロセス内の指定したオブジェクトの状態を表示します。"
@@ -382,33 +371,32 @@ msgstr ""
 "ています。デバッグ用のため、返値のフォーマットが安定しているということは保証"
 "されません。（フォーマットが変更される可能性が高い）"
 
-# 08ef6ad67d4d46598c7e9d9cd0b90f75
+# 268408fbcfe34968be057763d88fa3b4
 #: ../../../source/commands/check.txt:29
 msgid "``obj``"
 msgstr "``obj``"
 
-# 1e6f461e0cd34d3f9caf8bd7e6104b3f
+# 502861a07cc84c34802e52d4e8c433fc
 #: ../../../source/commands/check.txt:31
 msgid "状態を表示するオブジェクトの名前を指定します。"
 msgstr "状態を表示するオブジェクトの名前を指定します。"
 
-# 47bc1886631c49ebaf6c12fbbba42dc0
-# a9c6bcdf502e4c41a52c067985cc2a5f
-# 904b52d43722433d8d7c76d7404f2e24
-# b6853db90e6a43acb8fbdb93c700074a
-# 27c42b6c5dad4a4ea082c1472bb7921e
-# a30e117a4f0847f3ba033e6ab26e7fbc
-# 23f36213f04f4483925b9209f516872d
-# dfa0f64d160b4bf6a3cf7f17f1b7f517
-# ec955e1703da4500b9f699dd55044dc2
-# e5810832c74b401fa1fe2a9c8a8b0704
-# b4a4b743ff174a0fa2f811fdf34860cd
-# 90148723ffda4948aee2d7907c2ce16f
-# cc0d04412cae4979822755eb96fbffc0
-# dfd47589790b4056962fa84663b9f7fe
-# 36be936d569848b1a9dffe3e1c76a1ef
-# d255c87b759e40b19e15ea6a78fd03db
-# 0d13f03357cf4864a846871d7c085de1
+# d9ab5a98a5e245baa4aa8e60eac4d692
+# 88f478f628ef4b29b81822c4b9efd4d5
+# 9729c91edb8041898038d26b72f2bdb0
+# e9357c2b6d4c480aae1cb3e6d55c728e
+# 610bcaeef49b4e9488d060852f09e23b
+# 20d5606773f2446a8b0c44cdfd6c8e6a
+# 1a59fe5f45ad44dba0c59430427ae911
+# 9796ad608f324bd0bbb50f6742e2382d
+# f63414ca89644151b20c12122d8bdc1c
+# 352d44984bd14979b29a72607f91f78e
+# 74972df07ef04e148223e8d343cc7d97
+# 45af13ca395b4a7d8cb48c100eaff190
+# 6c7aeb5f08bc41ad85cef6a1fb3b185d
+# 47b96e7a799f441b8da454de6d835238
+# fe60e00af2374460a583867e1703f55d
+# fad3ce424d264dcc879a3bb32724fecd
 #: ../../../source/commands/check.txt:37
 #: ../../../source/commands/clearlock.txt:37
 #: ../../../source/commands/column_create.txt:74
@@ -428,32 +416,32 @@ msgstr "状態を表示するオブジェクトの名前を指定します。"
 msgid "json形式"
 msgstr "json形式"
 
-# 167f855a198a41da9eaf70a199194ccd
+# 5337c5ba403d45bc9f1e4cb155840762
 #: ../../../source/commands/check.txt:39
 msgid "チェックするオブジェクトにより返される値が変わります。"
 msgstr "チェックするオブジェクトにより返される値が変わります。"
 
-# a0923e5686d246bca74505137a81141c
+# c4362f250cfe47d3a9eb53206fbce641
 #: ../../../source/commands/check.txt:41
 msgid "インデックスカラムの場合::"
 msgstr "インデックスカラムの場合::"
 
-# 111cc49505614aca948fccc202942569
+# 0bce541d11314b80a35785ae12f6ec3e
 #: ../../../source/commands/check.txt:132
 msgid "テーブルTermsのインデックスカラムnameの状態を表示します。::"
 msgstr "テーブルTermsのインデックスカラムnameの状態を表示します。::"
 
-# def18680f2144cdaa0d16573f839ffd8
+# f2d2affb2f9e4047b587161fe9912066
 #: ../../../source/commands/clearlock.txt:6
 msgid "clearlock"
 msgstr "clearlock"
 
-# f1502aed1c7c498eb2b952c734837154
+# 397ab4479824478aac7d1ea9dbbe8bca
 #: ../../../source/commands/clearlock.txt:11
 msgid "clearlock - オブジェクトにセットされたロックを解除する"
 msgstr "clearlock - オブジェクトにセットされたロックを解除する"
 
-# 54386f4956de419aa601a128bf43837b
+# 7674851a9ccd494ea955a5f2caa73d6b
 #: ../../../source/commands/clearlock.txt:22
 msgid ""
 "groonga組込コマンドの一つであるclearlockについて説明します。組込コマンドは、"
@@ -464,7 +452,7 @@ msgstr ""
 "groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
 "エストを送信することによって実行します。"
 
-# 7e09ab20d7a24706a09e7d1cdaae8618
+# 370ba38dd4bd4d219f7146dae608a50d
 #: ../../../source/commands/clearlock.txt:24
 msgid ""
 "clearlockは、対象となるオブジェクト(データベース,テーブル,インデックス等)を指"
@@ -473,15 +461,15 @@ msgstr ""
 "clearlockは、対象となるオブジェクト(データベース,テーブル,インデックス等)を指"
 "定し、オブジェクトにかけられたロックを再帰的に解除します。"
 
-# d4903ba2cfd54cb58a3565d54764be02
-# 385fd1aab17648d4aa405712db952672
+# 1d3bbb210e69486781d93dc1e4260e78
+# 23e5deda104744aeb7aae93760e90744
 #: ../../../source/commands/clearlock.txt:29
 #: ../../../source/commands/defrag.txt:29
 msgid "``objname``"
 msgstr "``objname``"
 
-# cff1299d321244508592756db88dd9d7
-# 17f2c8a381d449cea97a00c10a7c6490
+# 04781557aafc434f9d02c6116ef8b48c
+# 61beedbdbe6e420f93f7a9a276f0b47e
 #: ../../../source/commands/clearlock.txt:31
 #: ../../../source/commands/defrag.txt:31
 msgid ""
@@ -491,31 +479,30 @@ msgstr ""
 "対象となるオブジェクト名を指定します。空の場合、開いているdbオブジェクトが対"
 "象となります。"
 
-# 87b5927570e545768d72458c2c3b4cdf
-# 1d968a4f9f554fa9819f44dc20ef3eb1
+# e3212e1ca1524327872c7d80e717f45b
+# 4620c0ef25ea4443a569764b8d5142c2
 #: ../../../source/commands/clearlock.txt:33
 #: ../../../source/commands/delete.txt:45
 msgid "返値 ---"
 msgstr "返値 ---"
 
-# f27b9160aeab4502a8279951cbc97167
+# 077093ce631c4032a0285a5cc75ac940
 #: ../../../source/commands/clearlock.txt:50
 msgid "開いているデータベースのロックをすべて解除する::"
 msgstr "開いているデータベースのロックをすべて解除する::"
 
-# 73ceecbd7a9f4af7bea656e9b9d8e33e
+# 33e9f072e3b54db99ae76fd5f8b5358c
 #: ../../../source/commands/clearlock.txt:55
 msgid "テーブル名 Entry のカラム body のロックを解除する::"
 msgstr "テーブル名 Entry のカラム body のロックを解除する::"
 
-# 13d254bd2b30409d941bfb99be6b6ffe
-# ec2bafe9185743ae98f8dacb31392b94
-# 261d0ab150d542179e44681c7bb23862
-# 25909ffda4be482c8b9915cc1062143e
-# 1808e15c729147389429e5333d1ed68f
-# 7215be5fa7d34f88af4742c542e315f7
-# 6b56dc1f533f4329a281615a693f8ce7
-# f29c48fc60f84b3ba2b390e59801cbdc
+# 03d743ae6e044b74bf6090fabd1afc17
+# 07d85d0429644b0582165dfb1a12497f
+# 1b79e6f21e8e4cfdaa2a9008ac2c5714
+# 68bf20aa9f0c436b83ca5f5d462e38aa
+# 4547dd14aa1446228fc0f45184508995
+# ffebc8cceefe4b729a0f8c0dc0f48077
+# 69303f6c88844d8bbbd6c5e7ce2d58ac
 #: ../../../source/commands/clearlock.txt:61
 #: ../../../source/commands/define_selector.txt:114
 #: ../../../source/commands/delete.txt:69 ../../../source/commands/load.txt:98
@@ -525,24 +512,24 @@ msgstr "テーブル名 Entry のカラム body のロックを解除する::"
 msgid "関連項目"
 msgstr "関連項目"
 
-# 4f63b11bb4b34539a1758eb6337adf38
-# dc08c37e1c1542388791c4125abaf272
+# a78c59a9dfec45eda466f9d11ab46198
+# f1c0e5f51be94914908c3c4ca19d7212
 #: ../../../source/commands/clearlock.txt:63
 #: ../../../source/commands/delete.txt:71
 msgid ":doc:`load`"
 msgstr ":doc:`load`"
 
-# ca3a13323b6e48aebeb19dc0ef396a2e
+# f5289482d6b64c5791373bb0231b4eba
 #: ../../../source/commands/column_create.txt:6
 msgid "column_create"
 msgstr "column_create"
 
-# 5cfa081662894e70a86573377d3f17b8
+# 14fd787b5a0e4180bdfcf70f9222ba77
 #: ../../../source/commands/column_create.txt:11
 msgid "column_create - カラムの追加"
 msgstr "column_create - カラムの追加"
 
-# 0a91e5b53dc646ffbc1b97b489e08204
+# 22b315d2d9d54554ac671bed22d797dd
 #: ../../../source/commands/column_create.txt:22
 msgid ""
 "groonga組込コマンドの一つであるcolumn_createについて説明します。組込コマンド"
@@ -553,7 +540,7 @@ msgstr ""
 "は、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバに"
 "リクエストを送信することによって実行します。"
 
-# 58daab52004f48debfd652ae364cd9e7
+# 9d7747e1243e4566ad9c4a418a9de0b2
 #: ../../../source/commands/column_create.txt:24
 msgid ""
 "column_createは、使用しているデータベースのテーブルに対してカラムを追加しま"
@@ -562,13 +549,12 @@ msgstr ""
 "column_createは、使用しているデータベースのテーブルに対してカラムを追加しま"
 "す。"
 
-# 7f4562ff26584bd0b3a2b7b13d9d0667
-# 6cac5acbbbe74de690c904698d807c34
-# a44b532f2216433583f1f001e46d0b7e
-# 3a0d7347a49d4260b6662c1c3a76f5a5
-# 4e714396c9eb4897bebc96a37aa870fa
-# 0f9c6b2e0eea4eb08319c452f9068ff1
-# 6298f8f6f9b845d780e6e998b22a6249
+# ab80150fbb53471387e954c367b214fc
+# 6241e2f3b8be49de8456b11e6e9f9d85
+# ea531a72c8964e319893bb84dc799728
+# 4bc6ad03e8db4635a63142aca3776f69
+# b37d50eb80014773849ee37cdd56c429
+# 58d01609513242949b393fbbf397a796
 #: ../../../source/commands/column_create.txt:29
 #: ../../../source/commands/define_selector.txt:35
 #: ../../../source/commands/delete.txt:29 ../../../source/commands/load.txt:49
@@ -577,16 +563,16 @@ msgstr ""
 msgid "``table``"
 msgstr "``table``"
 
-# 330a07ed51d34e8fb3c63a7898a4e28d
+# 57d232ca630a4425857f833ea41d283f
 #: ../../../source/commands/column_create.txt:31
 msgid "カラムを追加するテーブルの名前を指定します。"
 msgstr "カラムを追加するテーブルの名前を指定します。"
 
-# 577ab7f19edf473e9905205082c6d8a0
-# 9ffc6b7a01be43f0bfc0b1f4bf9c3da3
-# b23957f466a04b8893cb9716ea7fdd96
-# 56b28e2599fd4afa9236c8c5a04b76c9
-# b8f290a4acf84b1b8cea594bd5e4a9d8
+# c7d8fe01715f4fc4bfb57a2639d03b88
+# 83ec07aa1640452da53ca1fd9fdd7705
+# 605d3d1085cf4ba2a96a8c5fe76afeb0
+# f137d5e001d94c979e94b4990fdf49bf
+# 71b3408469f1438594de0da3aefe2a4a
 #: ../../../source/commands/column_create.txt:33
 #: ../../../source/commands/column_list.txt:51
 #: ../../../source/commands/define_selector.txt:31
@@ -595,7 +581,7 @@ msgstr "カラムを追加するテーブルの名前を指定します。"
 msgid "``name``"
 msgstr "``name``"
 
-# 200ab166a604431cb8baa71e304e7603
+# 7960e8f278ea44ae8a7fb778e5c09f13
 #: ../../../source/commands/column_create.txt:35
 msgid ""
 "作成するカラムの名前を指定します。カラム名は、テーブルの中で一意でなければな"
@@ -604,7 +590,7 @@ msgstr ""
 "作成するカラムの名前を指定します。カラム名は、テーブルの中で一意でなければな"
 "りません。"
 
-# d4eea8acd05c4df18435d3d9167be57b
+# 25020641ca12413e91e16dd5a02769fe
 #: ../../../source/commands/column_create.txt:37
 msgid ""
 "ピリオド('.'), コロン(':')を含む名前のカラムは作成できません。また、アンダー"
@@ -613,10 +599,10 @@ msgstr ""
 "ピリオド('.'), コロン(':')を含む名前のカラムは作成できません。また、アンダー"
 "スコア('_')で始まる名前は予約済みであり、使用できません。"
 
-# b607d0388a3545c8922046a75619ffb1
-# 128ccd526cc84d60a255e77736859a5d
-# 7e6087f7421e473989fe16b823d2072b
-# 3f7725dba0a244f7b707413ef15c40c3
+# e21596c85c6749ce82d614443c2368fb
+# 7c0e230108734eea802f0b7ae4bbf9bf
+# d1c7b221d39a46ae98058e1039207cbd
+# 034d4496b04b4c798b24d579b217451b
 #: ../../../source/commands/column_create.txt:39
 #: ../../../source/commands/column_list.txt:63
 #: ../../../source/commands/table_create.txt:35
@@ -624,7 +610,7 @@ msgstr ""
 msgid "``flags``"
 msgstr "``flags``"
 
-# d0a1a3c1bbce4835b33fc036c2be3e20
+# 8c0ab925dc2e430981d92e0ff6e96270
 #: ../../../source/commands/column_create.txt:41
 msgid ""
 "カラムの属性を表す以下の数値か、パイプ('|')で組み合わせたシンボル名を指定しま"
@@ -633,22 +619,22 @@ msgstr ""
 "カラムの属性を表す以下の数値か、パイプ('|')で組み合わせたシンボル名を指定しま"
 "す。"
 
-# 54708ba24b9e47d6880426363e30da5d
+# 9025bdd7049f4d50b2057a7bf9ca9857
 #: ../../../source/commands/column_create.txt:44
 msgid "単一の値が格納できるカラムを作成します。"
 msgstr "単一の値が格納できるカラムを作成します。"
 
-# e10a031d8e174c0fab77dfc1917a2065
+# 74dcdb3ab5a74c259ff55800ce4324b3
 #: ../../../source/commands/column_create.txt:46
 msgid "複数の値の配列を格納できるカラムを作成します。"
 msgstr "複数の値の配列を格納できるカラムを作成します。"
 
-# 0c92be8b32bc44bf8172bbf93dc2868d
+# cedecaf9ac3848b1ade2e70078e7e742
 #: ../../../source/commands/column_create.txt:48
 msgid "インデックス型のカラムを作成します。"
 msgstr "インデックス型のカラムを作成します。"
 
-# 9ad14895ffa8401eac8971a71976deac
+# 71df4fe227594263b0700f2e67f6186a
 #: ../../../source/commands/column_create.txt:50
 msgid ""
 "インデックス型のカラムについては、flagsの値に以下の値を加えることによって、追"
@@ -657,30 +643,31 @@ msgstr ""
 "インデックス型のカラムについては、flagsの値に以下の値を加えることによって、追"
 "加の属 性を指定することができます。"
 
-# 4c97f069d42641d69748090fbb072ab5
+# 89f5afa8619b45dbaaa81a318003adfd
 #: ../../../source/commands/column_create.txt:54
 msgid "段落情報を格納するインデックスを作成します。"
 msgstr "段落情報を格納するインデックスを作成します。"
 
-# 425ab3caeacd4e6988ce6645c11f25f9
+# 04f7500eac9f4fb3b44d8c81f3b05b02
 #: ../../../source/commands/column_create.txt:57
 msgid "ウェイト情報を格納するインデックスを作成します。"
 msgstr "ウェイト情報を格納するインデックスを作成します。"
 
-# ce32230452614fe6ae3c391d9d2f44cb
+# 77a9b0f3ed604ddd9a9bb2dd664e8fcd
 #: ../../../source/commands/column_create.txt:60
 msgid "位置情報を格納するインデックス(完全転置インデックス)を作成します。"
 msgstr "位置情報を格納するインデックス(完全転置インデックス)を作成します。"
 
-# de385a3fe4e44129845e89e3486d2839
-# 6b9eaf1ef4364ef7a2c863603ae21c47
+# 3154dd96767242358df3520de1cb50bb
+# d38161d319cb45b281c4353b6baee071
+# 7686d3782cbd4eb8aefd0009c15ec820
 #: ../../../source/commands/column_create.txt:62
 #: ../../../source/commands/column_list.txt:59
 #: ../../../source/commands/suggest.txt:182
 msgid "``type``"
 msgstr "``type``"
 
-# 98d806edd0ef4b47b4995992bd61156a
+# 088151a7c97a448292d11fd5b36597d7
 #: ../../../source/commands/column_create.txt:64
 msgid ""
 "値の型を指定します。groongaの組込型か、同一データベースに定義済みのユーザ定義"
@@ -689,14 +676,14 @@ msgstr ""
 "値の型を指定します。groongaの組込型か、同一データベースに定義済みのユーザ定義"
 "型、定義済みのテーブルを指定することができます。"
 
-# 0644ea137f9f4b89aa25180ab38c4b95
-# a8e73726ae4e426ea0d9c9617dacf5ee
+# f7ecff9d856f4eef88cd0f8ea7ad0fe2
+# 6c6cf28cde8f42b0a99c85b8a19efb5a
 #: ../../../source/commands/column_create.txt:66
 #: ../../../source/commands/column_list.txt:75
 msgid "``source``"
 msgstr "``source``"
 
-# 46a3a40e38c84002a6c0dd47dd613fa2
+# 1f177da199a048e2a4530a834433ebb8
 #: ../../../source/commands/column_create.txt:68
 msgid ""
 "インデックス型のカラムを作成した場合は、インデックス対象となるカラムをsource"
@@ -705,12 +692,12 @@ msgstr ""
 "インデックス型のカラムを作成した場合は、インデックス対象となるカラムをsource"
 "引数に指定します。"
 
-# e25bdee2a5d6480b9008d63e5a4db2ab
+# dee84147c5a04db5bd296cc64ddf34f0
 #: ../../../source/commands/column_create.txt:87
 msgid "テーブルEntryに、ShortText型の値を格納するカラム、bodyを作成します。::"
 msgstr "テーブルEntryに、ShortText型の値を格納するカラム、bodyを作成します。::"
 
-# b9eeb9c880e743b19faba1ecfd7fc7ec
+# addced631a824dbb88d189d49c2d7b35
 #: ../../../source/commands/column_create.txt:92
 msgid ""
 "テーブルTermに、Entryテーブルのbodyカラムの値を対象とする完全転置インデックス"
@@ -719,17 +706,17 @@ msgstr ""
 "テーブルTermに、Entryテーブルのbodyカラムの値を対象とする完全転置インデックス"
 "型カラム、entry_bodyを作成します。::"
 
-# 21d36f28a9e547a48869b42b7445f273
+# bf8f97d4062e45ddaaa0602a671306ff
 #: ../../../source/commands/column_list.txt:6
 msgid "column_list"
 msgstr "column_list"
 
-# f51b5e1afd094999aed3395d26de9771
+# ba59afe2c20845039fb2a1576121fe21
 #: ../../../source/commands/column_list.txt:11
 msgid "column_list - テーブルに定義されているカラムのリスト表示"
 msgstr "column_list - テーブルに定義されているカラムのリスト表示"
 
-# e154b7c8219647d5a7f3c65b612f4311
+# e666380f9ee944aaba46e5342a09391d
 #: ../../../source/commands/column_list.txt:22
 msgid ""
 "groonga組込コマンドの一つであるcolumn_listについて説明します。組込コマンド"
@@ -740,27 +727,27 @@ msgstr ""
 "は、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバに"
 "リクエストを送信することによって実行します。"
 
-# c7759dbe79a6448b9320f04fae8aacad
+# 6ac7aafcd8814dd4b6bdc428a2a4ca92
 #: ../../../source/commands/column_list.txt:24
 msgid "column_listはテーブルに定義されているカラムをリスト表示します。"
 msgstr "column_listはテーブルに定義されているカラムをリスト表示します。"
 
-# 78c3e3983b3143a48db161800f77735f
+# 22cc9e62ae534a64942d57bdc33d9663
 #: ../../../source/commands/column_list.txt:30
 msgid "カラム情報を出力するテーブルの名前を指定します。"
 msgstr "カラム情報を出力するテーブルの名前を指定します。"
 
-# c3ab364a5166474eadbaceee2039b234
+# 3a054933fd334efcabd73302b05d9b07
 #: ../../../source/commands/column_list.txt:38
 msgid "カラム名一覧を以下の形式で返却します。::"
 msgstr "カラム名一覧を以下の形式で返却します。::"
 
-# 2fdf2708efb44d9f913fe0e37d4b7c61
+# 36213918e08f46c49e9142e7549b425f
 #: ../../../source/commands/column_list.txt:42
 msgid "``カラム情報名n``"
 msgstr "``カラム情報名n``"
 
-# c336d1a40ef84965a62e9e594a89b40f
+# 7a5cd90f7e654e109ffc916e9d7675a5
 #: ../../../source/commands/column_list.txt:44
 msgid ""
 "``カラム情報n`` には複数の情報が含まれますが、そこに入る情報がどんな内容かを"
@@ -769,93 +756,92 @@ msgstr ""
 "``カラム情報n`` には複数の情報が含まれますが、そこに入る情報がどんな内容かを"
 "示す名前を出力します。 情報名は以下の通りです。"
 
-# 748bbea165f94f6ab4430aaa40b06ee7
-# b3c82b336a974e35a9662ee5909a1c0f
-# a6f375ca33134c0ea7e0503487ee9285
+# 0752f7ab1bab429cadb2228174ceda27
+# db61f799b3a042f18b0ee087f1145200
+# 0446ab5588184df3bb9bcf5e8b9323eb
 #: ../../../source/commands/column_list.txt:47
 #: ../../../source/commands/delete.txt:37
 #: ../../../source/commands/table_list.txt:46
 msgid "``id``"
 msgstr "``id``"
 
-# a6ce35dae6be41b69b94c73385d71f40
+# c5d566fd7ecc4967b19722c00de2ac01
 #: ../../../source/commands/column_list.txt:49
 msgid "カラムオブジェクトに割り当てられたID"
 msgstr "カラムオブジェクトに割り当てられたID"
 
-# fe07cdf0780046bb92d34ef96727be3e
-# a260c50ff85c4770b79bab4ff020b003
+# 4db2b78d8456457eb732d018d456e02e
 #: ../../../source/commands/column_list.txt:53
 msgid "カラム名"
 msgstr "カラム名"
 
-# 31f7d6118b36420bbd0bfed79c656aca
-# e180ff79bff74b068cb93ca4fb32be53
+# 3fbd576d858b45a3a8cd5f6943e749a6
+# 806a177ff6e24fbc811e23816a1bccfe
 #: ../../../source/commands/column_list.txt:55
 #: ../../../source/commands/table_list.txt:54
 msgid "``path``"
 msgstr "``path``"
 
-# 3008a08c5acd42d182b64890545f6322
+# f1fc425157154d30adf6cc703e64c51e
 #: ../../../source/commands/column_list.txt:57
 msgid "カラム値を格納するファイル名"
 msgstr "カラム値を格納するファイル名"
 
-# 4edd93927ae0491f8a7f80b6d5e53104
+# 3fd1c1e84f804689a92c065a9b426932
 #: ../../../source/commands/column_list.txt:61
 msgid "スカラ型、ベクタ型、インデックス型の種別"
 msgstr "スカラ型、ベクタ型、インデックス型の種別"
 
-# 405a59b7ebce44bdb34ae85ee403fc33
+# d95845d4a3dd4f92abe28958da7a5fa0
 #: ../../../source/commands/column_list.txt:65
 msgid "カラムのflags属性"
 msgstr "カラムのflags属性"
 
-# 51f3fb5a1a1e4be6969a96eeff39f6b7
-# 5bb4b557a40d47a9972d16c313a344a3
+# 4ac23ca4a35a478ba81fd8d58a4e993f
+# 6cc67dfaf5f7450da7851b6f77a24963
 #: ../../../source/commands/column_list.txt:67
 #: ../../../source/commands/table_list.txt:62
 msgid "``domain``"
 msgstr "``domain``"
 
-# 0c7bf9f1fc9a464eaeeb741a9e9419dd
+# 1440fd1a84df487585780be73923986b
 #: ../../../source/commands/column_list.txt:69
 msgid "カラムの値の属する型"
 msgstr "カラムの値の属する型"
 
-# f362e97ac269490ba71c2dc1f509de2e
-# dda6f8f9c84c40afb44702d319c90abb
+# 7646c73895de477f9dc059c3927bb479
+# f4ac5b51351546ddb1a01aae6d6dd226
 #: ../../../source/commands/column_list.txt:71
 #: ../../../source/commands/table_list.txt:66
 msgid "``range``"
 msgstr "``range``"
 
-# a3523d9e68d94a37ad4dae862d094d3d
+# 62970ebdf3784271a641c96a4d07852d
 #: ../../../source/commands/column_list.txt:73
 msgid "テーブルのkeyの型"
 msgstr "テーブルのkeyの型"
 
-# 1ba36ceb2dda4ddd9667aa8a9a9e0897
+# c85ee65f912c472589b85bad27c5fa50
 #: ../../../source/commands/column_list.txt:77
 msgid "インデックスカラムのとき、インデックス対象カラム名の配列"
 msgstr "インデックスカラムのとき、インデックス対象カラム名の配列"
 
-# 202e87ee4a2043649f3ee3754a3e795c
+# 8ee160f72d774fe6a5d0512057a5d4a1
 #: ../../../source/commands/column_list.txt:79
 msgid "``カラム情報型n``"
 msgstr "``カラム情報型n``"
 
-# 67e4d691716c47efa47e6ee2e5fe386c
+# 576caaea03054c25acdbbd37b41db2b3
 #: ../../../source/commands/column_list.txt:81
 msgid "カラム情報の型を出力します。"
 msgstr "カラム情報の型を出力します。"
 
-# fbe5a5e0bea14c1b9f9686f465c2e7b9
+# 604973b2e5194ab7af922f7fd2a19c21
 #: ../../../source/commands/column_list.txt:83
 msgid "``カラム情報n``"
 msgstr "``カラム情報n``"
 
-# 8987dfffec934ec3b6911b3c988ebb80
+# 5693f7d75ce54c9c98ded69b090c02ef
 #: ../../../source/commands/column_list.txt:85
 msgid ""
 "``カラム情報名n`` で示された情報の配列を出力します。 情報の順序は ``カラム情"
@@ -864,24 +850,24 @@ msgstr ""
 "``カラム情報名n`` で示された情報の配列を出力します。 情報の順序は ``カラム情"
 "報名n`` の順序と同じです。"
 
-# 9bcf1b5e670e4bfe8ab1da34311f4c67
-# af564e7997254596ae54aed055125452
+# 33783e74f70143dc98f3351c4565d1f3
+# 649b8244b0944a0fa8bf129046e5245b
 #: ../../../source/commands/column_list.txt:111
 #: ../../../source/commands/table_list.txt:104
 msgid "注: 実際は改行が入りません。"
 msgstr "注: 実際は改行が入りません。"
 
-# a83e51e8401140ba8c25d94fd9713575
+# c1883f8ad01e462b9d75aab279e90bcc
 #: ../../../source/commands/column_remove.txt:6
 msgid "column_remove"
 msgstr "column_remove"
 
-# 67d2e9840d5a4827b3f8727b260f9a68
+# 43a579606bf54e05a4aa3b98db547262
 #: ../../../source/commands/column_remove.txt:11
 msgid "column_remove - テーブルに定義されているカラムの削除"
 msgstr "column_remove - テーブルに定義されているカラムの削除"
 
-# 5038aa13032044e4ac1b070f19d77e4f
+# 0b64457bdc8f49b381bf589d4b3c0de8
 #: ../../../source/commands/column_remove.txt:22
 msgid ""
 "groonga組込コマンドの一つであるcolumn_removeについて説明します。組込コマンド"
@@ -892,7 +878,7 @@ msgstr ""
 "は、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバに"
 "リクエストを送信することによって実行します。"
 
-# 8a4a8c1438254489a64af24221c7251c
+# b89d2fd0e9e942e6b5ca13c88bb3ac9b
 #: ../../../source/commands/column_remove.txt:24
 msgid ""
 "column_removeはテーブルに定義されているカラムを削除します。 また、付随するイ"
@@ -901,41 +887,41 @@ msgstr ""
 "column_removeはテーブルに定義されているカラムを削除します。 また、付随するイ"
 "ンデックスも削除されます。[#]_"
 
-# cc650a83e58343c0a3b69bf0c12e3411
-# 2e80474f81dc47b5ae8f9ccc56354ddf
+# 77d4de894cdd47d4824a2f785cdecbb0
+# 0c139d9cc76f48cda4c47eade08ee9be
 #: ../../../source/commands/column_remove.txt:31
 #: ../../../source/commands/table_remove.txt:30
 msgid "削除対象のカラムが定義されているテーブルの名前を指定します。"
 msgstr "削除対象のカラムが定義されているテーブルの名前を指定します。"
 
-# b5d4295c02af494c92bccf6ce59ff86e
+# 654815ddcee84570a7db7af9c30c2f5a
 #: ../../../source/commands/column_remove.txt:34
 msgid "削除対象のカラム名を指定します。"
 msgstr "削除対象のカラム名を指定します。"
 
-# 2a945c161deb4bb5a44b87157885e604
+# 3db89f735df54c489fec560b1b6b9d44
 #: ../../../source/commands/column_remove.txt:59
 msgid "脚注"
 msgstr "脚注"
 
-# 6a2c2644e5454a96acb41bf4d346024f
+# 9beb60099a76457baf7a90902ac82eaf
 #: ../../../source/commands/column_remove.txt:60
 msgid ""
 "マルチセクションインデックスの一部である場合も、インデックスが削除されます。"
 msgstr ""
 "マルチセクションインデックスの一部である場合も、インデックスが削除されます。"
 
-# a45645ae7f9b4c1e98befc7d84963c51
+# 321eda0b99e1439dbffef17bc57b7241
 #: ../../../source/commands/define_selector.txt:6
 msgid "define_selector"
 msgstr "define_selector"
 
-# 9d82675945a6490bbea1f756614937dc
+# d3fa6312daaa49e7a79029d4fca76bef
 #: ../../../source/commands/define_selector.txt:11
 msgid "define_selector - 検索コマンドを定義"
 msgstr "define_selector - 検索コマンドを定義"
 
-# 3d26501218af481b8cb6d154280b7aac
+# 2408e2e177364a759901bdf662fa1f5d
 #: ../../../source/commands/define_selector.txt:24
 msgid ""
 "groonga組込コマンドの一つであるdefine_selectorについて説明します。組込コマン"
@@ -946,158 +932,158 @@ msgstr ""
 "ドは、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバ"
 "にリクエストを送信することによって実行します。"
 
-# fc41d2c1d84d48c6aa7a2b8c330e9a13
+# 778172ee757d4aa993259bcd9cacc88a
 #: ../../../source/commands/define_selector.txt:26
 msgid ""
 "define_selectorは、検索条件をカスタマイズした新たな検索コマンドを定義します。"
 msgstr ""
 "define_selectorは、検索条件をカスタマイズした新たな検索コマンドを定義します。"
 
-# 8c1ad3cff4dd47389e94e5f29616edab
+# 3edf6d0dc2734e02a0cab7873bf71013
 #: ../../../source/commands/define_selector.txt:33
 msgid "定義するselectorコマンドの名前を指定します。"
 msgstr "定義するselectorコマンドの名前を指定します。"
 
-# b0f62abf691f4a41be0964ad4e185446
+# 1f32241f5e2743a6aa779d4a51441223
 #: ../../../source/commands/define_selector.txt:37
 msgid "検索対象のテーブルを指定します。"
 msgstr "検索対象のテーブルを指定します。"
 
-# f39a234d76bd4255a8fdfb81a0ce327e
-# 016664b4115e40a6a02c64782581168c
+# aff58be4727049a29b5dc57ad856c582
+# 5c3e6604570648b081cd3a5cc297379a
 #: ../../../source/commands/define_selector.txt:39
 #: ../../../source/commands/select.txt:216
 msgid "``match_columns``"
 msgstr "``match_columns``"
 
-# bf46951226b540dfb6ec8e1137cb21e9
+# f58e61157762411a89bee13228e2dd48
 #: ../../../source/commands/define_selector.txt:41
 msgid "追加するselectorコマンドのmatch_columns引数のデフォルト値を指定します。"
 msgstr ""
 "追加するselectorコマンドのmatch_columns引数のデフォルト値を指定します。"
 
-# 264f61913984424da41323d38514bb06
-# d362292028414e1093849ec812a13811
-# 257123a14dee456a9a932b4dff85a726
+# cb89910079534589af044dab61ebab9f
+# 81351e378ced4df8ad5c720aaa1fb29b
 #: ../../../source/commands/define_selector.txt:43
 #: ../../../source/commands/select.txt:283
 msgid "``query``"
 msgstr "``query``"
 
-# 6fde1e88cfcb43efbbeb6ab7a1733e96
+# 394879435336493cb0dc1bfb204ccdea
 #: ../../../source/commands/define_selector.txt:45
 msgid "追加するselectorコマンドのquery引数のデフォルト値を指定します。"
 msgstr "追加するselectorコマンドのquery引数のデフォルト値を指定します。"
 
-# d3167365dc0348c8a3ae682ec3efa80f
-# 02408eddbbdc4d2894559cc1485d4e47
+# 816929f8a63749e394ebc9696f32c419
+# bd377d982c93482e81f34698fbfff7be
+# 62d70bd561544cb4862b3850500b76a5
 #: ../../../source/commands/define_selector.txt:47
 #: ../../../source/commands/delete.txt:41
 #: ../../../source/commands/select.txt:290
 msgid "``filter``"
 msgstr "``filter``"
 
-# 8827920bd435410ca36769bf5aa5b36a
+# 39ea0b03541f412b9028a75955659a83
 #: ../../../source/commands/define_selector.txt:49
 msgid "追加するselectorコマンドのfilter引数のデフォルト値を指定します。"
 msgstr "追加するselectorコマンドのfilter引数のデフォルト値を指定します。"
 
-# dc4c93fffd0e4024a1d6541aef1103a0
-# d4aa1bf862d540e1ae3a910679f4f59c
+# 08aa060fd44e48fa8b82392e912db1df
+# a787e5b6024a416993db304f3030e976
 #: ../../../source/commands/define_selector.txt:51
-#: ../../../source/commands/select.txt:349
+#: ../../../source/commands/select.txt:372
 msgid "``scorer``"
 msgstr "``scorer``"
 
-# 0ed1a43d6bd24c41a97f158bf66f39a7
+# 516879bc2864421cac8d0df1fe504dce
 #: ../../../source/commands/define_selector.txt:53
 msgid "追加するselectorコマンドのscorer引数のデフォルト値を指定します。"
 msgstr "追加するselectorコマンドのscorer引数のデフォルト値を指定します。"
 
-# 7cd64eaf5159467baca7a0397081ff8c
-# 058441477bf4426aa7f223669db671e7
+# 7ec3cd8b51a9424795bb30110577f32a
+# 0c1396ea678f4982aaa3de0a0592fc74
 #: ../../../source/commands/define_selector.txt:55
-#: ../../../source/commands/select.txt:328
+#: ../../../source/commands/select.txt:345
 msgid "``sortby``"
 msgstr "``sortby``"
 
-# dd1650da8de34c64a5a7584467ea9b62
+# 34440203b4994f628438459670aa27b6
 #: ../../../source/commands/define_selector.txt:57
 msgid "追加するselectorコマンドのsortby引数のデフォルト値を指定します。"
 msgstr "追加するselectorコマンドのsortby引数のデフォルト値を指定します。"
 
-# 17e050dc70b146eda6cfdd6805929ca9
-# add85396c08e4b33a6dfc4dd7c6a6eb5
+# 6ebe7dacdc0940e5a699db0472f94274
+# 66b0c133e79e400cb3feaa577f10d116
 #: ../../../source/commands/define_selector.txt:59
-#: ../../../source/commands/select.txt:321
+#: ../../../source/commands/select.txt:336
 msgid "``output_columns``"
 msgstr "``output_columns``"
 
-# 7111c20c723541d3bf4b77edc0fcbc39
+# da232f3a40184150966e4c84807ecb30
 #: ../../../source/commands/define_selector.txt:61
 msgid ""
 "追加するselectorコマンドのoutput_columns引数のデフォルト値を指定します。"
 msgstr ""
 "追加するselectorコマンドのoutput_columns引数のデフォルト値を指定します。"
 
-# c6dfd650bf5d4014ace79c85ff6bb88a
-# 7e12241ab26f4867ad8abfb309fb4c90
+# dc91f8a9db6442728ddc88a4fb981a12
+# 5fd8343011b94e42b42b9e9643dd9db8
 #: ../../../source/commands/define_selector.txt:63
-#: ../../../source/commands/select.txt:339
+#: ../../../source/commands/select.txt:358
 msgid "``offset``"
 msgstr "``offset``"
 
-# fcdda58d50cb4121829a54760f0d9c20
+# 128274ad6caa48a1a7eaadfddedf699b
 #: ../../../source/commands/define_selector.txt:65
 msgid "追加するselectorコマンドのoffset引数のデフォルト値を指定します。"
 msgstr "追加するselectorコマンドのoffset引数のデフォルト値を指定します。"
 
-# ee2097162c74469c969973e120a87660
-# 722db54a01e2494fb456e3891e13cb06
+# a894c8e6c6a648aa9c29d0395f158e6a
+# 92b9b52c5d134e5e82fbe721fb0a7d13
 #: ../../../source/commands/define_selector.txt:67
-#: ../../../source/commands/select.txt:344
+#: ../../../source/commands/select.txt:365
 msgid "``limit``"
 msgstr "``limit``"
 
-# ca11868f1fef4c028924c7454c32b5c5
+# 0a8f374fda484dc4be8b8e43c10f4a10
 #: ../../../source/commands/define_selector.txt:69
 msgid "追加するselectorコマンドのlimit引数のデフォルト値を指定します。"
 msgstr "追加するselectorコマンドのlimit引数のデフォルト値を指定します。"
 
-# ff866dd548c34c9bad90f928a622752b
-# edfba8b421e846c2b5bbb07fb217e4f6
+# 5249284be9594fec8bf63a09c80c419f
+# 013b0e53c3dc4bc3b247034e9bf0f277
 #: ../../../source/commands/define_selector.txt:71
-#: ../../../source/commands/select.txt:359
+#: ../../../source/commands/select.txt:384
 msgid "``drilldown``"
 msgstr "``drilldown``"
 
-# 6e1e277aa7564a7babaf043eb1cd8a8d
+# d232964d6dd945a19556680a28588ce2
 #: ../../../source/commands/define_selector.txt:73
 msgid "追加するselectorコマンドのdrilldown引数のデフォルト値を指定します。"
 msgstr "追加するselectorコマンドのdrilldown引数のデフォルト値を指定します。"
 
-# ed1dbdc0f5ec4b76b519cdb9d6d7a91c
-# 5e857b90d3c2406286848254ceb09ca8
+# f4398b0de1b244b1a52f2b73afff4572
+# 40cb5176d8114ac09f6a4827626e3235
 #: ../../../source/commands/define_selector.txt:75
-#: ../../../source/commands/select.txt:364
+#: ../../../source/commands/select.txt:391
 msgid "``drilldown_sortby``"
 msgstr "``drilldown_sortby``"
 
-# 4f99ed72f9da4b97a68c2a6587d965b3
+# fd48daf017d34f619ed8589269bb4030
 #: ../../../source/commands/define_selector.txt:77
 msgid ""
 "追加するselectorコマンドのdrilldown_sortby引数のデフォルト値を指定します。"
 msgstr ""
 "追加するselectorコマンドのdrilldown_sortby引数のデフォルト値を指定します。"
 
-# 4d594a8355264e249ee655a0590fd7af
-# 6b27498f2f434f2e99733dc76e34d193
+# 6f44463b381e4fb19dab8811dc81662f
+# 951a05140e244a6f9b9e0987a7e71b71
 #: ../../../source/commands/define_selector.txt:79
-#: ../../../source/commands/select.txt:369
+#: ../../../source/commands/select.txt:398
 msgid "``drilldown_output_columns``"
 msgstr "``drilldown_output_columns``"
 
-# 727cf96c59fb4f28a4bcfbe3a573ab38
+# 7f6b5bca445b4fd39a8dad36269c5b47
 #: ../../../source/commands/define_selector.txt:81
 msgid ""
 "追加するselectorコマンドのdrilldown_output_columns引数のデフォルト値を指定し"
@@ -1106,35 +1092,35 @@ msgstr ""
 "追加するselectorコマンドのdrilldown_output_columns引数のデフォルト値を指定し"
 "ます。"
 
-# 996cecc92b9240d290537f70a517a613
-# fe68818e448a4db4ad08b828fba2f0d4
+# c3ca9853850042ebaa3cb2cab053177b
+# 636e2a40431944c2a7aec36c45feff8f
 #: ../../../source/commands/define_selector.txt:83
-#: ../../../source/commands/select.txt:374
+#: ../../../source/commands/select.txt:405
 msgid "``drilldown_offset``"
 msgstr "``drilldown_offset``"
 
-# 5ca6aa79c73847bd892145906b9440b9
+# db229776991b4375b6c7a90cd6f79e06
 #: ../../../source/commands/define_selector.txt:85
 msgid ""
 "追加するselectorコマンドのdrilldown_offset引数のデフォルト値を指定します。"
 msgstr ""
 "追加するselectorコマンドのdrilldown_offset引数のデフォルト値を指定します。"
 
-# 8da3f2fb7d6f4e9bb0e55bfa3abb02f2
-# 48d64861f1994bb887db3ba25b0673f7
+# f5ab400d952947229f605c4c4615e71c
+# 7100573801aa42a49c11174083317a6b
 #: ../../../source/commands/define_selector.txt:87
-#: ../../../source/commands/select.txt:379
+#: ../../../source/commands/select.txt:412
 msgid "``drilldown_limit``"
 msgstr "``drilldown_limit``"
 
-# 600cf9b116ad4e2489ee1184bda8b450
+# 1f8a78861ecf4e618ecefaeeb5a6f1cc
 #: ../../../source/commands/define_selector.txt:89
 msgid ""
 "追加するselectorコマンドのdrilldown_limit引数のデフォルト値を指定します。"
 msgstr ""
 "追加するselectorコマンドのdrilldown_limit引数のデフォルト値を指定します。"
 
-# 3e37bbc4f8c0472b980354de002f3708
+# 451acff372844d76a6e8f0bfb843d556
 #: ../../../source/commands/define_selector.txt:108
 msgid ""
 "テーブルEntryの全レコード・全カラムの値を出力するselectorコマンドを定義しま"
@@ -1143,25 +1129,24 @@ msgstr ""
 "テーブルEntryの全レコード・全カラムの値を出力するselectorコマンドを定義しま"
 "す。::"
 
-# c8d932d859ee46538f29d02a2330a453
-# 57ec5d94c8ae45209fef66cfc5bb6aeb
-# 43a15f3571604f1a92d504fb97621671
+# 12a774a720d5423aaaa7956667eb6238
+# 99a61b1808a3442d8c57792eb4168849
 #: ../../../source/commands/define_selector.txt:116
 #: ../../../source/commands/load.txt:100
 msgid ":doc:`../expr`"
 msgstr ":doc:`../expr`"
 
-# ff58113339f84be182d2f700edc28f05
+# 953d8baf546840c7915b996b6da3d3f8
 #: ../../../source/commands/defrag.txt:6
 msgid "defrag"
 msgstr "defrag"
 
-# 30be19030c984d49a10b30b8638e4fed
+# 843383be96c2488abf73453a166254f2
 #: ../../../source/commands/defrag.txt:11
 msgid "defrag - オブジェクトにセットされたロックを解除する"
 msgstr "defrag - オブジェクトにセットされたロックを解除する"
 
-# 5f940c3cff0a46ab9f2933650f201070
+# fe58c8e99d5c4282a3e40092a22ea82e
 #: ../../../source/commands/defrag.txt:22
 msgid ""
 "groonga組込コマンドの一つであるdefragについて説明します。組込コマンドは、"
@@ -1172,7 +1157,7 @@ msgstr ""
 "groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
 "エストを送信することによって実行します。"
 
-# 8209dbe00760443d9e35d12943b87fe7
+# 2b063a9a939a4b2abc44fae2e7a5473d
 #: ../../../source/commands/defrag.txt:24
 msgid ""
 "defragは、対象となるオブジェクト(データベースか可変長サイズカラム)を指定し、"
@@ -1181,27 +1166,27 @@ msgstr ""
 "defragは、対象となるオブジェクト(データベースか可変長サイズカラム)を指定し、"
 "オブジェクトのフラグメンテーションを解消します。"
 
-# 848d75772cd04350befc0235dd46d20d
+# 9db289810582420b9ba3b9b0e7d60db9
 #: ../../../source/commands/defrag.txt:50
 msgid "開いているデータベースのフラグメンテーションを解消する::"
 msgstr "開いているデータベースのフラグメンテーションを解消する::"
 
-# 2aedb8f514ea4da880949493293f3f3c
+# 8e159d2dbd13435bbfc289dbbbba2bda
 #: ../../../source/commands/defrag.txt:55
 msgid "テーブル名 Entry のカラム body のフラグメンテーションを解消する::"
 msgstr "テーブル名 Entry のカラム body のフラグメンテーションを解消する::"
 
-# 4310df2aee08472e97758f13c847b6c3
+# 99e8b4db9ff24f67aec121404d19f654
 #: ../../../source/commands/delete.txt:6
 msgid "delete"
 msgstr "delete"
 
-# 0da818389bb54a98a3cefa4b86b260e4
+# bdd5e7a3eca349e3a5e22f638c05feb6
 #: ../../../source/commands/delete.txt:11
 msgid "delete - 一件のレコードの削除"
 msgstr "delete - 一件のレコードの削除"
 
-# 0b8c5aa3ac574810a0b4893ed87c8898
+# db6774ee92f242e8bfa856a7d9044ce7
 #: ../../../source/commands/delete.txt:22
 msgid ""
 "groonga組込コマンドの一つであるdeleteについて説明します。組込コマンドは、"
@@ -1212,24 +1197,24 @@ msgstr ""
 "groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
 "エストを送信することによって実行します。"
 
-# 8bda0de538b84f2da6b744ae10feb404
+# 430aa7398aa04dca91c72ab00b5474d4
 #: ../../../source/commands/delete.txt:24
 msgid ""
 "deleteは、使用しているデータベースのテーブルに1件のレコードを削除します。"
 msgstr ""
 "deleteは、使用しているデータベースのテーブルに1件のレコードを削除します。"
 
-# 2d0b946259e3459489a4b1fc22bb0cd7
+# 17407726243e49f18ddd6db97d754531
 #: ../../../source/commands/delete.txt:31
 msgid "レコードを削除しようとするテーブルの名前を指定します。"
 msgstr "レコードを削除しようとするテーブルの名前を指定します。"
 
-# d23f9d265ad849cca33605d0ac191213
+# e606084659ee4d97bdb5af0c6c5d9d75
 #: ../../../source/commands/delete.txt:33
 msgid "``key``"
 msgstr "``key``"
 
-# 6824570764e64fd8a0b420592ad2dd34
+# 480f793975b74e1b9c83ad794fc659a7
 #: ../../../source/commands/delete.txt:35
 msgid ""
 "削除するレコードの主キー値を指定します。主キーなしのテーブルの場合はこのパラ"
@@ -1238,7 +1223,7 @@ msgstr ""
 "削除するレコードの主キー値を指定します。主キーなしのテーブルの場合はこのパラ"
 "メータを指定しても無視されます(idパラメータを代わりに指定します)。"
 
-# c7883302ccd94ca4be363721f82525e9
+# c89bc6218cef4273a181901a0bc2de07
 #: ../../../source/commands/delete.txt:39
 msgid ""
 "レコードIDによってレコードを指定します。idパラメータを指定する場合は、keyパラ"
@@ -1247,32 +1232,31 @@ msgstr ""
 "レコードIDによってレコードを指定します。idパラメータを指定する場合は、keyパラ"
 "メータを指定してはいけません。"
 
-# c7883302ccd94ca4be363721f82525e9
+# 258120f03c514d4f9f525bb223c77616
 #: ../../../source/commands/delete.txt:43
-#, fuzzy
 msgid ""
 "script形式のgrn_expr文字列によってレコードを指定します。filterパラメータを指"
 "定する場合は、id及びkeyパラメータを指定してはいけません。"
 msgstr ""
-"レコードIDによってレコードを指定します。idパラメータを指定する場合は、keyパラ"
-"メータを指定してはいけません。"
+"script形式のgrn_expr文字列によってレコードを指定します。filterパラメータを指"
+"定する場合は、id及びkeyパラメータを指定してはいけません。"
 
-# 86dba6cd3c824784852a72156bcadef4
+# 2f5976a47c8f433c8d8086dbf687fcc9
 #: ../../../source/commands/delete.txt:62
 msgid "テーブルEntryからレコードを削除します。::"
 msgstr "テーブルEntryからレコードを削除します。::"
 
-# 783d29c10acb41e2bc7bdcee21228e73
+# f7fdf89821fd47f28bb052507ed902fb
 #: ../../../source/commands/dump.txt:6
 msgid "dump"
 msgstr "dump"
 
-# 19afd74d5f104a2eb75cc246d1eb6a3c
+# 4d57818a375c4450994809f71a81b66b
 #: ../../../source/commands/dump.txt:11
 msgid "dump - データベースのスキーマとデータを出力する"
 msgstr "dump - データベースのスキーマとデータを出力する"
 
-# 2310020a124743788e7f54278fc6793f
+# 8dbd3bc37f514f9bbe66bf82fd39e32a
 #: ../../../source/commands/dump.txt:22
 msgid ""
 "groonga組込コマンドの一つであるdumpについて説明します。組込コマンドは、"
@@ -1283,7 +1267,7 @@ msgstr ""
 "groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
 "エストを送信することによって実行します。"
 
-# 02bd4d77d40c46e0818973f82f8ffa07
+# 187d082a952f46f5ae909c1094425dba
 #: ../../../source/commands/dump.txt:24
 msgid ""
 "dumpはデータベースのスキーマとデータを後から読み込めるフォーマットで出力しま"
@@ -1294,7 +1278,7 @@ msgstr ""
 "す。dumpの結果は大きくなるため、主にコマンドラインから使うことを想定していま"
 "す。データベースのバックアップが主な利用方法です。"
 
-# be35ec451db84402bd936219718d194c
+# c40f189d14db4b9db8f3598acc3c1520
 #: ../../../source/commands/dump.txt:26
 msgid ""
 "dumpが出力するフォーマットは直接groongaが解釈できるフォーマットです。そのた"
@@ -1303,12 +1287,12 @@ msgstr ""
 "dumpが出力するフォーマットは直接groongaが解釈できるフォーマットです。そのた"
 "め、以下のようにしてデータベースをコピーすることができます。::"
 
-# 23d8ac9109464149b3b8b000ef5dc422
+# b5507e8678344b32a744a13f76c347a3
 #: ../../../source/commands/dump.txt:35
 msgid "``tables``"
 msgstr "``tables``"
 
-# f82633f30d114714a1ab9a67435f820e
+# a32ced2da53f442cbce6b4e95e1f6e9a
 #: ../../../source/commands/dump.txt:37
 msgid ""
 "出力対象のテーブルを「,」（カンマ）区切りで指定します。存在しないテーブルを指"
@@ -1317,7 +1301,7 @@ msgstr ""
 "出力対象のテーブルを「,」（カンマ）区切りで指定します。存在しないテーブルを指"
 "定した場合は無視されます。"
 
-# cfb173e5a7914dc19a7fd5d0de3dd7af
+# 95896a8e8fb7423a8aade8f409e36368
 #: ../../../source/commands/dump.txt:42
 msgid ""
 "データベースのスキーマとデータをgroongaの組み込みコマンド呼び出し形式で出力し"
@@ -1326,27 +1310,27 @@ msgstr ""
 "データベースのスキーマとデータをgroongaの組み込みコマンド呼び出し形式で出力し"
 "ます。output_type指定は無視されます。"
 
-# d55fdedef5a843be9a12b3cf6d3619bf
+# a11373821bfd467c9124eece32e12c5c
 #: ../../../source/commands/dump.txt:47
 msgid "データベース内のすべてのデータを出力::"
 msgstr "データベース内のすべてのデータを出力::"
 
-# 575ff5fb210045c2b495ee483871c24b
+# 0afbc7e74dc846338a4bc4c572f4158d
 #: ../../../source/commands/dump.txt:64
 msgid "データベース内のスキーマと特定のテーブルのデータのみ出力::"
 msgstr "データベース内のスキーマと特定のテーブルのデータのみ出力::"
 
-# 50f59bc941fa44c5989280ff2824fdc1
+# 043c294cf6394b1aa36f410a97f474bc
 #: ../../../source/commands/load.txt:6
 msgid "load"
 msgstr "load"
 
-# 2a2663169ac6428996cf6e08864bddaf
+# 257388cd13994cd1bb77d3ef90068d76
 #: ../../../source/commands/load.txt:11
 msgid "load - データのロード"
 msgstr "load - データのロード"
 
-# c5eb241a32184d459c5f01d7872c8a46
+# 19a19e30545c4fd58d0055618c024789
 #: ../../../source/commands/load.txt:22
 msgid ""
 "groonga組込コマンドの一つであるloadについて説明します。組込コマンドは、"
@@ -1357,7 +1341,7 @@ msgstr ""
 "groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
 "エストを送信することによって実行します。"
 
-# c8c44cf6a58e47ad9a6e6e1a2e85570b
+# c5573e942cf54d328a94b9556d448c7b
 #: ../../../source/commands/load.txt:24
 msgid ""
 "loadは、使用しているデータベースのテーブルにレコードを登録し、カラムの値を更"
@@ -1366,24 +1350,24 @@ msgstr ""
 "loadは、使用しているデータベースのテーブルにレコードを登録し、カラムの値を更"
 "新します。"
 
-# 5fcd5800dfb14f8ab55e27f92ed3f555
+# cd0314ad6f194011b477f5f72c5b1e89
 #: ../../../source/commands/load.txt:29
 msgid "``values``"
 msgstr "``values``"
 
-# 91c8bee2e2c54e1787567ab8e8ed490c
+# a66a23efb1594304af0acc7f2b7d35eb
 #: ../../../source/commands/load.txt:31
 msgid ""
 "input_typeに指定する形式で登録するレコードの値を表現した文字列を渡します。"
 msgstr ""
 "input_typeに指定する形式で登録するレコードの値を表現した文字列を渡します。"
 
-# 930da1545874487dade1e4f6c8c79ce0
+# aef5fa04c2db48f88b61a8917bf6f00a
 #: ../../../source/commands/load.txt:33
 msgid "input_typeがjsonである場合には、以下のいずれかの形式が使用できます。"
 msgstr "input_typeがjsonである場合には、以下のいずれかの形式が使用できます。"
 
-# 88315194f1a7455a9afb43d8d884ae2f
+# 2b8f5dface504ffead7bba563a797ff1
 #: ../../../source/commands/load.txt:36
 msgid ""
 "[[カラム名1, カラム名2,..], [カラム値1, カラム値2,..], [カラム値1, カラム値"
@@ -1392,7 +1376,7 @@ msgstr ""
 "[[カラム名1, カラム名2,..], [カラム値1, カラム値2,..], [カラム値1, カラム値"
 "2,..],..]"
 
-# 98615e81b50245aeba04d745f7d2dcd7
+# 06370f50c20d44b7a418ed3ddd37f4c1
 #: ../../../source/commands/load.txt:39
 msgid ""
 "[{カラム名1: カラム値1, カラム名2: カラム値2}, {カラム名1: カラム値1, カラム"
@@ -1401,7 +1385,7 @@ msgstr ""
 "[{カラム名1: カラム値1, カラム名2: カラム値2}, {カラム名1: カラム値1, カラム"
 "名2: カラム値2},..]"
 
-# ab61841f9fd7401ca5899dce743f154a
+# d18738fd1fc54fedae3ce115684a976c
 #: ../../../source/commands/load.txt:41
 msgid ""
 "形式1の[カラム名1, カラム名2,..]の要素はcolumns引数が省略された場合のみ有効で"
@@ -1410,7 +1394,7 @@ msgstr ""
 "形式1の[カラム名1, カラム名2,..]の要素はcolumns引数が省略された場合のみ有効で"
 "す。"
 
-# 6abe84a88c694d19a313e144bc11dc8b
+# d047593638824628aedc35bd73d39376
 #: ../../../source/commands/load.txt:43
 msgid ""
 "対象のテーブルが主キーを持つテーブルであった場合は、カラム名の中に'_key'(主"
@@ -1419,7 +1403,7 @@ msgstr ""
 "対象のテーブルが主キーを持つテーブルであった場合は、カラム名の中に'_key'(主"
 "キーを示す疑似カラム名)が含まれていなければなりません。"
 
-# 0bc91fd86eaf4970ae62ef63ee79fb24
+# 1455e513b52b49a88452bdac0149bbdd
 #: ../../../source/commands/load.txt:45
 msgid ""
 "values引数が省略された場合には、括弧の対応が取れるまで標準入力からvaluesの値"
@@ -1430,23 +1414,23 @@ msgstr ""
 "を読み取ります。引数として値を指定する場合は、文字列のエスケープが必要です"
 "が、標準入力から与える文字列はエスケープする必要がありません。"
 
-# 8b697cf4f9d44b1aa4ed92e720d54e50
+# a877cbcd31c54244a29e79f132de865f
 #: ../../../source/commands/load.txt:47
 msgid "続きの文字列については、空白文字(' ')をエスケープする必要はありません。"
 msgstr ""
 "続きの文字列については、空白文字(' ')をエスケープする必要はありません。"
 
-# a487193e7c3042f98b19a388b43e1629
+# eaea5b034edd4894b8029c5e94bf9435
 #: ../../../source/commands/load.txt:51
 msgid "レコードを追加しようとするテーブルの名前を指定します。"
 msgstr "レコードを追加しようとするテーブルの名前を指定します。"
 
-# 71940baea25c4832913b90d9a995c936
+# 2fb163c966394dc98cc823985f917f25
 #: ../../../source/commands/load.txt:53
 msgid "``columns``"
 msgstr "``columns``"
 
-# 50f6808255e14b2084f1807d42162540
+# 66586c4f6cad4cef9ebf1078f84d34c4
 #: ../../../source/commands/load.txt:55
 msgid ""
 "テーブルに登録するレコードに値を設定するカラム名のリストを、カンマ区切りで指"
@@ -1455,12 +1439,12 @@ msgstr ""
 "テーブルに登録するレコードに値を設定するカラム名のリストを、カンマ区切りで指"
 "定します。"
 
-# 92c4c7be3507475a8b7defafec547333
+# 1391c949cfa042769caad653ee2053cf
 #: ../../../source/commands/load.txt:57
 msgid "``ifexists``"
 msgstr "``ifexists``"
 
-# b2709f7495dc417b89aefca39e4eddf2
+# dc7725f4d6cf445ba93750ff41d20a06
 #: ../../../source/commands/load.txt:59
 msgid ""
 "指定した主キーに対応するレコードが既にテーブルに登録済みであった場合に実行す"
@@ -1473,52 +1457,52 @@ msgstr ""
 "は、式の値が真である場合に限り、その他のカラムの値が更新されます。(デフォルト"
 "はtrue)"
 
-# ac54bc1c2c02484d9e0ff6baf35ccd61
+# c1d211b070a34489b874d0f5f1cdd988
 #: ../../../source/commands/load.txt:61
 msgid "``input_type``"
 msgstr "``input_type``"
 
-# 1227c2138ac54d10b210a779f9529b5f
+# 30a4622ee2734fb6bacbac0c281303dc
 #: ../../../source/commands/load.txt:63
 msgid "入力形式を指定します。JSONのみに対応しています。"
 msgstr "入力形式を指定します。JSONのみに対応しています。"
 
-# 99e785aa6ff24a528e07b8845fe7823e
+# 297f5f5179134bf7adf974c15e948645
 #: ../../../source/commands/load.txt:69
 msgid "JSON形式"
 msgstr "JSON形式"
 
-# d57419a009c24bbfac7862bc07c49045
+# 8b896c4d646843549c26d58ac814fdbc
 #: ../../../source/commands/load.txt:75
 msgid "``登録件数``"
 msgstr "``登録件数``"
 
-# 3beea1c686dc4219aa7f2a0132b608a5
+# b111a9392df04fbb95eafb99cc02ff0e
 #: ../../../source/commands/load.txt:77
 msgid "テーブルに登録されたレコードの件数が返されます。"
 msgstr "テーブルに登録されたレコードの件数が返されます。"
 
-# 36972d858c55467b8f381304d5d5b384
+# 981ec084fc7d4fe389d9767d52d0af65
 #: ../../../source/commands/load.txt:82
 msgid "テーブルEntryにレコードを登録します。::"
 msgstr "テーブルEntryにレコードを登録します。::"
 
-# a3f0ccdb90d644acb6ad8aaf92d9f7a6
+# 25bdfbb2e3b34198a21a64b03beee026
 #: ../../../source/commands/load.txt:88
 msgid "標準入力からvaluesの値を与えます。::"
 msgstr "標準入力からvaluesの値を与えます。::"
 
-# aa5d140945a348abb539082892a8a7a0
+# 544c769089a44570a335b18b6cc8bb90
 #: ../../../source/commands/log_level.txt:6
 msgid "log_level"
 msgstr "log_level"
 
-# 2a1337f1be2f4f9e975318f5555cc05d
+# 9185ed9eb1304a5ba0c2c54f50dd80e5
 #: ../../../source/commands/log_level.txt:11
 msgid "log_level - ログ出力レベルの設定"
 msgstr "log_level - ログ出力レベルの設定"
 
-# c06f233e59804d3c81a0448e0299ec5b
+# 448785be4ab84479b1806011922d9121
 #: ../../../source/commands/log_level.txt:22
 msgid ""
 "groonga組込コマンドの一つであるlog_levelについて説明します。組込コマンドは、"
@@ -1529,48 +1513,48 @@ msgstr ""
 "groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
 "エストを送信することによって実行します。"
 
-# 3e3adaac38dc4c00a0f187d848ac580f
+# 81f923d8a1ba48d883073a2262aace09
 #: ../../../source/commands/log_level.txt:24
 msgid "log_levelは、ログ出力レベルを設定します。"
 msgstr "log_levelは、ログ出力レベルを設定します。"
 
-# 221dea5e93ad4f22a2406f98efa5499b
-# aad9528e2fd04ae1ba5df71edf8211ad
+# c2e35065a1c445a996efe1e7c2847d08
+# 7544d56102e44041ad5edca66c89cdb0
 #: ../../../source/commands/log_level.txt:29
 #: ../../../source/commands/log_put.txt:29
 msgid "``level``"
 msgstr "``level``"
 
-# 96e5ddcdbea840819aaa394f0110b7dd
-# 679eca9e84734badb1381f8529644719
+# 12f460677cc142dbb1efa5f2dfc4e9c6
+# bc48dc2d81654ceb8401194053a2c530
 #: ../../../source/commands/log_level.txt:31
 #: ../../../source/commands/log_put.txt:31
 msgid "設定するログ出力レベルの値を以下のいずれかで指定します。"
 msgstr "設定するログ出力レベルの値を以下のいずれかで指定します。"
 
-# f92f6c39589941cba6da994c3ce7e2b2
-# 950e9553815e41a49adb28dc2b7bf3b3
+# dafb0a28adfb41cab7e9c3e189a61795
+# 7d48bd1921cc408dac1c4d00c8bb5269
 #: ../../../source/commands/log_level.txt:33
 #: ../../../source/commands/log_put.txt:33
 msgid "EMERG ALERT CRIT error warning notice info debug"
 msgstr "EMERG ALERT CRIT error warning notice info debug"
 
-# b1f05fece6934963904dba0ddf89f15e
+# 4d9223c05f0b4f989460e801dcbf2089
 #: ../../../source/commands/log_level.txt:66
 msgid ":doc:`log_put` :doc:`log_reopen`"
 msgstr ":doc:`log_put` :doc:`log_reopen`"
 
-# 20950bc7d8a842509b8108ff40a99662
+# bb6ee7ffee724f3b8f8703e8be501785
 #: ../../../source/commands/log_put.txt:6
 msgid "log_put"
 msgstr "log_put"
 
-# 4728f7032b9b4828b9109652c837ac3e
+# 5ce0728164484af7b99a5cec02fa89bd
 #: ../../../source/commands/log_put.txt:11
 msgid "log_put - ログ出力"
 msgstr "log_put - ログ出力"
 
-# 5c57f35498224a72b1f4b9ba3e762ad9
+# 770c5d20e2fe4203a60ae4d3d5007e0a
 #: ../../../source/commands/log_put.txt:22
 msgid ""
 "groonga組込コマンドの一つであるlog_putについて説明します。組込コマンドは、"
@@ -1581,37 +1565,37 @@ msgstr ""
 "groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
 "エストを送信することによって実行します。"
 
-# 5089810e76a44cfbb172d63fb39aee65
+# 11abfef6d7ed4d5999c015ba6e675197
 #: ../../../source/commands/log_put.txt:24
 msgid "log_putは、ログにmessageを出力します。"
 msgstr "log_putは、ログにmessageを出力します。"
 
-# 2598f85cb9d24309974b3575808df282
+# 8ac01f6fca134a969bee931165453382
 #: ../../../source/commands/log_put.txt:42
 msgid "``message``"
 msgstr "``message``"
 
-# 7e699171569a46b29ac71c37c08025e5
+# e9e24461520b4df3ae8c7a84c1ac79ee
 #: ../../../source/commands/log_put.txt:44
 msgid "出力する文字列を指定します。"
 msgstr "出力する文字列を指定します。"
 
-# 1d8e9cce14cd488fae8deea0aca0924e
+# 10392ab19385477585756f251f25d590
 #: ../../../source/commands/log_put.txt:70
 msgid ":doc:`log_level` :doc:`log_reopen`"
 msgstr ":doc:`log_level` :doc:`log_reopen`"
 
-# c9543813f7334c6f9aeaffaf7bce61f9
+# 7d31c1574ec3447684e39486168c0d30
 #: ../../../source/commands/log_reopen.txt:6
 msgid "log_reopen"
 msgstr "log_reopen"
 
-# 25636f8c7b194c3a974c8e9d23f2f841
+# 5ef9fc65aa2948f39d083819e75f0730
 #: ../../../source/commands/log_reopen.txt:11
 msgid "log_reopen - ログファイルの再読み込み"
 msgstr "log_reopen - ログファイルの再読み込み"
 
-# 8004ecad577c4796967d271ba5c298a4
+# 3e305778ccd94426a45429c188315f5a
 #: ../../../source/commands/log_reopen.txt:22
 msgid ""
 "groonga組込コマンドの一つであるlog_reopenについて説明します。組込コマンドは、"
@@ -1622,23 +1606,23 @@ msgstr ""
 "groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
 "エストを送信することによって実行します。"
 
-# 52c98bac97bd47b1855eabd33222c6ca
+# 37adb0e1100643838463e213c00a5e2b
 #: ../../../source/commands/log_reopen.txt:24
 msgid "log_reopenは、ログファイルを再読み込みします。"
 msgstr "log_reopenは、ログファイルを再読み込みします。"
 
-# 6151e46f259447919fbfea65bb961155
+# bfec272e5dd940fd8ddc386b4530999c
 #: ../../../source/commands/log_reopen.txt:26
 msgid "現在、デフォルトのログ関数を用いている場合のみに対応しています。"
 msgstr "現在、デフォルトのログ関数を用いている場合のみに対応しています。"
 
-# 020e3a61553c4f94bb64c7a2e8ae65b2
-# ffe107336a8d4b3d817f33cf87f70894
-# 8707c5d874da4ed886dbd119ab284b9e
-# 75ea930ac5a44d179445938f729d9e0f
-# b020c0e8c7914d66b3cfd56564d4cd79
-# 6fa45db35c084e85b8de9eb0c9e018f3
-# 49940bab515340a2a7b31efbaf46f9a1
+# 17bbdb6bca1d40648d20181cd10a64d1
+# 3cc35395148a46d78976205e669157eb
+# d15ecf0a5324484f8fdc9d70d25d4753
+# b048abb97a2845a7809595bee46210ce
+# 9012726baa8644c1801014dc87087c6c
+# fbcc8174e0c540d686179b03dfe73acd
+# 87fb211716e04a669a23781feaef8842
 #: ../../../source/commands/log_reopen.txt:31
 #: ../../../source/commands/quit.txt:29 ../../../source/commands/quit.txt:34
 #: ../../../source/commands/shutdown.txt:29
@@ -1648,12 +1632,12 @@ msgstr "現在、デフォルトのログ関数を用いている場合のみに
 msgid "ありません。"
 msgstr "ありません。"
 
-# 9c7f83bdf9014a58b1980a6e26a33f06
+# 652de6e4ab8346b4a5bd7172c1952a6d
 #: ../../../source/commands/log_reopen.txt:56
 msgid "log_reopenを用いたログのローテーション"
 msgstr "log_reopenを用いたログのローテーション"
 
-# 17ca11bf4d2245dc878b1a80f716fc43
+# 0232f9e1037748429fbfda2589f17b9a
 #: ../../../source/commands/log_reopen.txt:58
 msgid ""
 "ログファイルをmvなどで移動する。 ログはmvで移動された先のファイルに書き込まれ"
@@ -1662,12 +1646,12 @@ msgstr ""
 "ログファイルをmvなどで移動する。 ログはmvで移動された先のファイルに書き込まれ"
 "る。"
 
-# 7eea42e926924be487d6e3fe8aa229fd
+# dba4edfb1ffb4402a83a6a018fc4f64a
 #: ../../../source/commands/log_reopen.txt:60
 msgid "log_reopenコマンドを実行する。"
 msgstr "log_reopenコマンドを実行する。"
 
-# eb6ca71761824dc18745b7941685d8da
+# ecaeea415f79435b9c0201e4c70c749e
 #: ../../../source/commands/log_reopen.txt:61
 msgid ""
 "既存のログファイル名と同じファイル名で、新たなログファイルが作成される。 今後"
@@ -1676,22 +1660,22 @@ msgstr ""
 "既存のログファイル名と同じファイル名で、新たなログファイルが作成される。 今後"
 "のログは新たなログファイルに書き込まれる。"
 
-# 0a836aa6b2c340e5a6f0092c9339dc9b
+# 3f05fd877cb2463bbd6fdfaeaf0703c1
 #: ../../../source/commands/log_reopen.txt:67
 msgid ":doc:`log_level` :doc:`log_put`"
 msgstr ":doc:`log_level` :doc:`log_put`"
 
-# ea959e170f0145479e16602ccd79bd9a
+# ec4d5b3b49884df7aa313814e4d24d11
 #: ../../../source/commands/quit.txt:6
 msgid "quit"
 msgstr "quit"
 
-# 69d5ab64fcdd4753a8fbb3a2a2a72ac5
+# b67b0b423d4545bc98c007e78616724d
 #: ../../../source/commands/quit.txt:11
 msgid "quit - セッション終了"
 msgstr "quit - セッション終了"
 
-# b78f934100db4e2b9d745ce0e74315ea
+# c0f48b69537249828d60d84716fde5fa
 #: ../../../source/commands/quit.txt:22
 msgid ""
 "groonga組込コマンドの一つであるquitについて説明します。組込コマンドは、"
@@ -1702,7 +1686,7 @@ msgstr ""
 "groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
 "エストを送信することによって実行します。"
 
-# 84111bd853ee4a75846bcd8b0a7db0aa
+# de81c982522545c39c7c55054fbb9d15
 #: ../../../source/commands/quit.txt:24
 msgid ""
 "quitは、groongaプロセスとのセッションを終了します。クライアントプロセスならば"
@@ -1711,7 +1695,7 @@ msgstr ""
 "quitは、groongaプロセスとのセッションを終了します。クライアントプロセスならば"
 "groongaプロセスとの接続を切ります。"
 
-# a6e3ee0c224b4287a854d5f9893d01e4
+# e31a70a719814ba7b70b2d3ac959c94f
 #: ../../../source/commands/select.txt:9
 msgid "select"
 msgstr "select"
@@ -1719,7 +1703,7 @@ msgstr "select"
 # d6cc8be19ad442d5b5332a87eb4fc645
 #: ../../../source/commands/select.txt:12
 msgid "Summary"
-msgstr ""
+msgstr "Summary"
 
 # 7255e5f7b6774d7abb50661968b0a863
 #: ../../../source/commands/select.txt:14
@@ -1727,6 +1711,8 @@ msgid ""
 "``select`` searches records that are matched to specified conditions from a "
 "table and then outputs them."
 msgstr ""
+"``select`` searches records that are matched to specified conditions from a "
+"table and then outputs them."
 
 # 6e34f8c40a28493d9f2cf41080884b31
 #: ../../../source/commands/select.txt:17
@@ -1734,11 +1720,13 @@ msgid ""
 "``select`` is the most important command in groonga. You need to understand "
 "``select`` to use the full power of groonga."
 msgstr ""
+"``select`` is the most important command in groonga. You need to understand "
+"``select`` to use the full power of groonga."
 
 # e2f1155c8eab495bbb86089606b5410d
 #: ../../../source/commands/select.txt:21
 msgid "Syntax"
-msgstr ""
+msgstr "Syntax"
 
 # 025d19b25b714680837fad6d86397682
 #: ../../../source/commands/select.txt:23
@@ -1746,11 +1734,13 @@ msgid ""
 "``select`` has many parameters. The required parameter is only ``table`` and "
 "others are optional::"
 msgstr ""
+"``select`` has many parameters. The required parameter is only ``table`` and "
+"others are optional::"
 
 # 30022a2dceb240bdacf8bb1d23e21cab
 #: ../../../source/commands/select.txt:45
 msgid "Usage"
-msgstr ""
+msgstr "Usage"
 
 # 7a4248361b65437e814a84cf60b61a40
 #: ../../../source/commands/select.txt:47
@@ -1758,11 +1748,50 @@ msgid ""
 "Let's learn about ``select`` usage with examples. This section shows many "
 "popular usages."
 msgstr ""
+"Let's learn about ``select`` usage with examples. This section shows many "
+"popular usages."
 
 # edbc1d152dfc4e519c080fb8b48fafb4
 #: ../../../source/commands/select.txt:50
 msgid "Here are a schema definition and sample data to show usage."
-msgstr ""
+msgstr "Here are a schema definition and sample data to show usage."
+
+# 9f983a1a28dd4891a51b1ca6a26dc4fa
+# 2d277475f1894a8f8da54e3722d85cdc
+# 22e2cbe76a19432496b3ccd31a6bd2db
+# 1d7106a2ed224fa8bcd4f75e39e0cf01
+# 7fa65717388444b2a690cb955dc70149
+# a00f98bfa32e4e998f434294c86afb86
+# d25085abbc2449f9bd15d7bc0550a585
+# d1ccc6169e40409f89e0fa15c285203b
+# 7fcbb99aa5f64a8c8c4e5855f5e5100b
+# 6611b3203beb444d9d758f97878f597c
+# 9c1bf3c05980468693f04990759bdfff
+# 9c1bf3c05980468693f04990759bdfff
+# 9c1bf3c05980468693f04990759bdfff
+# 9c1bf3c05980468693f04990759bdfff
+# 9c1bf3c05980468693f04990759bdfff
+# 9c1bf3c05980468693f04990759bdfff
+# 9c1bf3c05980468693f04990759bdfff
+#: ../../../source/example/commands/select/usage_setup.log:1
+#: ../../../source/example/commands/select/simple_usage.log:1
+#: ../../../source/example/commands/select/simple_query.log:1
+#: ../../../source/example/commands/select/simple_filter.log:1
+#: ../../../source/example/commands/select/paging.log:1
+#: ../../../source/example/commands/select/no_limit.log:1
+#: ../../../source/example/commands/select/table_nonexistent.log:1
+#: ../../../source/example/commands/select/match_columns_simple.log:1
+#: ../../../source/example/commands/select/match_columns_weight.log:1
+#: ../../../source/example/commands/select/match_columns_some_columns.log:1
+#: ../../../source/commands/suggest-learn-completion.log:1
+#: ../../../source/commands/suggest-learn-correction.log:1
+#: ../../../source/commands/suggest-learn-suggestion.log:1
+#: ../../../source/commands/suggest-completion.log:1
+#: ../../../source/commands/suggest-correction.log:1
+#: ../../../source/commands/suggest-suggestion.log:1
+#: ../../../source/commands/suggest-mixed.log:1
+msgid "Execution example::"
+msgstr "Execution example::"
 
 # fb5493be21114444a39dea445ad03289
 #: ../../../source/commands/select.txt:66
@@ -1771,6 +1800,9 @@ msgid ""
 "content. Title is key of ``Entries``. Content is value of ``Entries."
 "content`` column."
 msgstr ""
+"There is a table, ``Entries``, for blog entries. An entry has title and "
+"content. Title is key of ``Entries``. Content is value of ``Entries."
+"content`` column."
 
 # ed2e139056f84208a88b95cd5458beae
 #: ../../../source/commands/select.txt:70
@@ -1779,39 +1811,50 @@ msgid ""
 "``TokenBigram`` tokenizer. So both ``Entries._key`` and ``Entries.content`` "
 "are fulltext search ready."
 msgstr ""
+"``Entries._key`` column and ``Entries.content`` column are indexed using "
+"``TokenBigram`` tokenizer. So both ``Entries._key`` and ``Entries.content`` "
+"are fulltext search ready."
 
 # 8b595509551e478bb2d9fae10d7f0c11
 #: ../../../source/commands/select.txt:74
 msgid "OK. The schema and data for examples are ready."
-msgstr ""
+msgstr "OK. The schema and data for examples are ready."
 
 # 029777c354a447e6b42b45730b828ec9
 #: ../../../source/commands/select.txt:77
 msgid "Simple usage"
-msgstr ""
+msgstr "Simple usage"
 
 # 6f18ca7f59b44010b1d319a0fc31682e
 #: ../../../source/commands/select.txt:79
 msgid ""
-"Here is the most simple usage with the above shema and data. It shows all "
+"Here is the most simple usage with the above shema and data. It outputs all "
 "records in ``Entries`` table."
 msgstr ""
+"Here is the most simple usage with the above shema and data. It outputs all "
+"records in ``Entries`` table."
 
 # 5e7672a3e95b4e8fa057b81ab8f83510
 #: ../../../source/commands/select.txt:86
 msgid ""
-"Why doest the command output all records? There are two reasons. The first "
+"Why does the command output all records? There are two reasons. The first "
 "reason is that the command doesn't specify any search conditions. No search "
 "condition means all records are matched. The second reason is that the "
-"number of all records is 2. ``select`` command outputs 10 records at a "
+"number of all records is 3. ``select`` command outputs 10 records at a "
 "maximum by default. There are only 3 records. It is less than 10. So the "
 "command outputs all records."
 msgstr ""
+"Why does the command output all records? There are two reasons. The first "
+"reason is that the command doesn't specify any search conditions. No search "
+"condition means all records are matched. The second reason is that the "
+"number of all records is 3. ``select`` command outputs 10 records at a "
+"maximum by default. There are only 3 records. It is less than 10. So the "
+"command outputs all records."
 
 # 7a842533f2f84099a2bc6135d6df6d84
 #: ../../../source/commands/select.txt:94
 msgid "Search conditions"
-msgstr ""
+msgstr "Search conditions"
 
 # 3d91cc0eb4d14ca7a2b740d63c20bf78
 #: ../../../source/commands/select.txt:96
@@ -1820,11 +1863,14 @@ msgid ""
 "specify both ``query`` and ``filter``. It means that selected records must "
 "be matched against both ``query`` and ``filter``."
 msgstr ""
+"Search conditions are specified by ``query`` or ``filter``. You can also "
+"specify both ``query`` and ``filter``. It means that selected records must "
+"be matched against both ``query`` and ``filter``."
 
 # 4ed532941b314f9eae6d43af64076566
 #: ../../../source/commands/select.txt:101
 msgid "Search condition: ``query``"
-msgstr ""
+msgstr "Search condition: ``query``"
 
 # 78a0e65e66c24f4bb238ae9302b2992a
 #: ../../../source/commands/select.txt:103
@@ -1834,6 +1880,10 @@ msgid ""
 "keywords. For example, ``search engine`` means a matched record should "
 "contain two words, ``search`` and ``engine``."
 msgstr ""
+"``query`` is designed for search box in Web page. Imagine a search box in "
+"google.com. You specify search conditions for ``query`` as space separated "
+"keywords. For example, ``search engine`` means a matched record should "
+"contain two words, ``search`` and ``engine``."
 
 # 7bb8244daf0546dd850156ca9bd538d5
 #: ../../../source/commands/select.txt:108
@@ -1842,6 +1892,9 @@ msgid ""
 "conditions. It can be used for non fulltext search conditions but ``filter`` "
 "is used for the propose."
 msgstr ""
+"Normally, ``query`` parameter is used for specifying fulltext search "
+"conditions. It can be used for non fulltext search conditions but ``filter`` "
+"is used for the propose."
 
 # 1e61d57b1bdd46e989f57067caf8497d
 #: ../../../source/commands/select.txt:112
@@ -1851,11 +1904,15 @@ msgid ""
 "``match_columns`` specifies which columnes and indexes are matched against "
 "``query``."
 msgstr ""
+"``query`` parameter is used with ``match_columns`` parameter when ``query`` "
+"parameter is used for specifying fulltext search conditions. "
+"``match_columns`` specifies which columnes and indexes are matched against "
+"``query``."
 
 # ff098fc3d342459d89be3763da12bbaf
 #: ../../../source/commands/select.txt:117
 msgid "Here is a simple ``query`` usage example."
-msgstr ""
+msgstr "Here is a simple ``query`` usage example."
 
 # 9209a57756954bb6af07f05a36d8e053
 #: ../../../source/commands/select.txt:123
@@ -1863,6 +1920,8 @@ msgid ""
 "The ``select`` command searches records that contain a word ``fast`` in "
 "``content`` column value from ``Entries`` table."
 msgstr ""
+"The ``select`` command searches records that contain a word ``fast`` in "
+"``content`` column value from ``Entries`` table."
 
 # 7a50795ad8714cf28485e88ae5c09a91
 #: ../../../source/commands/select.txt:126
@@ -1870,11 +1929,13 @@ msgid ""
 "``query`` has query syntax but its deatils aren't described here. See :doc:`/"
 "spec/query_syntax` for datails."
 msgstr ""
+"``query`` has query syntax but its deatils aren't described here. See :doc:`/"
+"spec/query_syntax` for datails."
 
 # 00714bb1fe95428d8a678342cbbe6670
 #: ../../../source/commands/select.txt:130
 msgid "Search condition: ``filter``"
-msgstr ""
+msgstr "Search condition: ``filter``"
 
 # 89044b69aead44bab518cf87c5be68ce
 #: ../../../source/commands/select.txt:132
@@ -1882,11 +1943,13 @@ msgid ""
 "``filter`` is designed for complex search conditions. You specify search "
 "conditions for ``filter`` as ECMAScript like syntax."
 msgstr ""
+"``filter`` is designed for complex search conditions. You specify search "
+"conditions for ``filter`` as ECMAScript like syntax."
 
 # 4e8f13cf1bbc4e22924614a285657160
 #: ../../../source/commands/select.txt:135
 msgid "Here is a simple ``filter`` usage example."
-msgstr ""
+msgstr "Here is a simple ``filter`` usage example."
 
 # 243e6b7215cc4ebdb130d4b0b61ac511
 #: ../../../source/commands/select.txt:141
@@ -1895,8 +1958,13 @@ msgid ""
 "``content`` column value and has ``Groonga`` as ``_key`` from ``Entries`` "
 "table. There are three operators in the command, ``@``, ``&&`` and ``==``. "
 "``@`` is fulltext search operator. ``&&`` and ``==`` are the same as "
-"ECMAScript. ``&&`` is logical AND operator and ``==`` is equal operator."
+"ECMAScript. ``&&`` is logical AND operator and ``==`` is equality operator."
 msgstr ""
+"The ``select`` command searches records that contain a word ``fast`` in "
+"``content`` column value and has ``Groonga`` as ``_key`` from ``Entries`` "
+"table. There are three operators in the command, ``@``, ``&&`` and ``==``. "
+"``@`` is fulltext search operator. ``&&`` and ``==`` are the same as "
+"ECMAScript. ``&&`` is logical AND operator and ``==`` is equality operator."
 
 # bfc523a92af6411d8f4aab4987b80478
 #: ../../../source/commands/select.txt:148
@@ -1904,18 +1972,22 @@ msgid ""
 "``filter`` has more operators and syntax like grouping by ``(...)`` its "
 "deatils aren't described here. See :doc:`/spec/script_syntax` for datails."
 msgstr ""
+"``filter`` has more operators and syntax like grouping by ``(...)`` its "
+"deatils aren't described here. See :doc:`/spec/script_syntax` for datails."
 
 # a5427ed92a51488c9634432e65ace520
 #: ../../../source/commands/select.txt:153
 msgid "Paging"
-msgstr ""
+msgstr "Paging"
 
 # 3b4cd4893a0b4e90ae065145b2248ce0
 #: ../../../source/commands/select.txt:155
 msgid ""
-"You can specify range of returned records by ``offset`` and ``limit``. Here "
+"You can specify range of outputted records by ``offset`` and ``limit``. Here "
 "is an example to output only the 2nd record."
 msgstr ""
+"You can specify range of outputted records by ``offset`` and ``limit``. Here "
+"is an example to output only the 2nd record."
 
 # 6f27b82242034036ad9a2bb76eadabbd
 #: ../../../source/commands/select.txt:162
@@ -1923,6 +1995,8 @@ msgid ""
 "``offset`` is zero-origin. ``--offset 1`` means output range is started from "
 "the 2nd record."
 msgstr ""
+"``offset`` is zero-origin. ``--offset 1`` means output range is started from "
+"the 2nd record."
 
 # fe72405398874539b6c08a5fd1933968
 #: ../../../source/commands/select.txt:165
@@ -1931,59 +2005,67 @@ msgid ""
 "the number of output records is 1 at a maximium. If no records are matched, "
 "``select`` command outputs no records."
 msgstr ""
+"``limit`` specifies the max number of output records. ``--limit 1`` means "
+"the number of output records is 1 at a maximium. If no records are matched, "
+"``select`` command outputs no records."
 
 # 662a7ba0c8764b60a0c4fea19b539c3c
 #: ../../../source/commands/select.txt:170
 msgid "The total number of records"
-msgstr ""
+msgstr "The total number of records"
 
 # c9fa3b80edbc4abf8e9aac0955f0b4b5
 #: ../../../source/commands/select.txt:172
 msgid ""
 "You can use ``--limit 0`` to retrieve the total number of recrods without "
-"any contents of matched records."
+"any contents of records."
 msgstr ""
+"You can use ``--limit 0`` to retrieve the total number of recrods without "
+"any contents of records."
 
 # 6855110f5a8a4a89971822fb2276f542
 #: ../../../source/commands/select.txt:179
 msgid ""
-"``--limit 0`` is useful for retrieving only the number of matched records."
+"``--limit 0`` is also useful for retrieving only the number of matched "
+"records."
 msgstr ""
+"``--limit 0`` is also useful for retrieving only the number of matched "
+"records."
 
 # 3aa7eaaae00c4dfa926cdee4f368a8bf
 #: ../../../source/commands/select.txt:183
 msgid "Parameters"
-msgstr ""
+msgstr "Parameters"
 
 # e9f4ef771cae46878b271f3db3ff9b7d
 #: ../../../source/commands/select.txt:185
 msgid "This section describes all parameters. Parameters are categorized."
-msgstr ""
+msgstr "This section describes all parameters. Parameters are categorized."
 
 # 05ddf83388054e148063b98c93d7d1b3
 #: ../../../source/commands/select.txt:188
 msgid "Required parameter"
-msgstr ""
+msgstr "Required parameter"
 
 # cf65d45fc8104bdeb3e62078d2579469
 #: ../../../source/commands/select.txt:190
 msgid "There is a required parameter, ``table``."
-msgstr ""
+msgstr "There is a required parameter, ``table``."
 
 # 1125da8065c340fd8c9dc8e36d6609fd
 #: ../../../source/commands/select.txt:195
 msgid "It specifies a table to be searched. ``table`` must be specified."
-msgstr ""
+msgstr "It specifies a table to be searched. ``table`` must be specified."
 
 # 127036cf3b7b4f21a8edbafd43cc385f
 #: ../../../source/commands/select.txt:197
 msgid "If nonexistent table is specified, an error is returned."
-msgstr ""
+msgstr "If nonexistent table is specified, an error is returned."
 
 # 71b5a473d9054b5598c4534cb1e69a36
 #: ../../../source/commands/select.txt:204
 msgid "Search related parameters"
-msgstr ""
+msgstr "Search related parameters"
 
 # 46a3923c14f14c1a8d277154eefba838
 #: ../../../source/commands/select.txt:206
@@ -1992,6 +2074,9 @@ msgid ""
 "``query`` parameters are used for implementing a search box. ``filter`` "
 "parameters is used for implementing complex search feature."
 msgstr ""
+"There are search related parameters. Typically, ``match_columns`` and "
+"``query`` parameters are used for implementing a search box. ``filter`` "
+"parameters is used for implementing complex search feature."
 
 # dcc0cb13bdf7472a80b8007aa80cb1b0
 #: ../../../source/commands/select.txt:211
@@ -2000,6 +2085,9 @@ msgid ""
 "matched against both ``query`` and ``filter``. If both ``query`` and "
 "``filter`` aren't specified, all records are selected."
 msgstr ""
+"If both ``query`` and ``filter`` are specified, selected records must be "
+"matched against both ``query`` and ``filter``. If both ``query`` and "
+"``filter`` aren't specified, all records are selected."
 
 # a362d90e16a84d3fa9a99cb840875fa2
 #: ../../../source/commands/select.txt:218
@@ -2010,6 +2098,11 @@ msgid ""
 "is whether weight is supported or not. ``match_columns`` supports weight but "
 "``query`` doesn't."
 msgstr ""
+"It specifies the default target column for fulltext search by ``query`` "
+"parameter value. A target column for fulltext search can be specified in "
+"``query`` parameter. The difference between ``match_columns`` and ``query`` "
+"is whether weight is supported or not. ``match_columns`` supports weight but "
+"``query`` doesn't."
 
 # 012595daa92d4c7e97d8d56b98d6461d
 #: ../../../source/commands/select.txt:224
@@ -2018,11 +2111,14 @@ msgid ""
 "column gets more hit score rather than a lower weight target column when a "
 "record is matched by fulltext search. The default weight is 1."
 msgstr ""
+"Weight is relative importance of target column. A higher weight target "
+"column gets more hit score rather than a lower weight target column when a "
+"record is matched by fulltext search. The default weight is 1."
 
 # af9b331b53834f57a21eb58e8eaffec8
 #: ../../../source/commands/select.txt:228
 msgid "Here is a simple ``match_columns`` usage example."
-msgstr ""
+msgstr "Here is a simple ``match_columns`` usage example."
 
 # 4eae5fbc82d94a85abbc53c160533c07
 #: ../../../source/commands/select.txt:234
@@ -2032,6 +2128,10 @@ msgid ""
 "_score'`` means that the ``select`` command outputs ``_key`` value and "
 "``_score`` value for matched records."
 msgstr ""
+"``--match_columns content`` means the default target column for fulltext "
+"search is ``content`` column and its weight is 1. ``--output_columns '_key, "
+"_score'`` means that the ``select`` command outputs ``_key`` value and "
+"``_score`` value for matched records."
 
 # 3e720ffef04245afaaa788e631ae9a6e
 #: ../../../source/commands/select.txt:240
@@ -2042,6 +2142,11 @@ msgid ""
 "``fast`` appers in ``content`` column only once.  The fact that ``_score`` "
 "value is 2 means that ``fast`` appears in ``content`` column twice."
 msgstr ""
+"Pay attention to ``_score`` value. ``_score`` value is the number of matched "
+"counts against ``query`` parameter value. In the example, ``query`` "
+"parameter value is ``fast``. The fact that ``_score`` value is 1 means that "
+"``fast`` appers in ``content`` column only once.  The fact that ``_score`` "
+"value is 2 means that ``fast`` appears in ``content`` column twice."
 
 # 37e11c582fcd43f8899b2fafbb22ad9c
 #: ../../../source/commands/select.txt:247
@@ -2049,6 +2154,8 @@ msgid ""
 "To specify weight, ``column * weight`` syntax is used. Here is a weight "
 "usage example."
 msgstr ""
+"To specify weight, ``column * weight`` syntax is used. Here is a weight "
+"usage example."
 
 # 9cc2023f79bf4008b07febd3a40493d3
 #: ../../../source/commands/select.txt:254
@@ -2056,6 +2163,8 @@ msgid ""
 "``--match_columns 'content * 2'`` means the default target column for "
 "fulltext search is ``content`` column and its weight is 2."
 msgstr ""
+"``--match_columns 'content * 2'`` means the default target column for "
+"fulltext search is ``content`` column and its weight is 2."
 
 # 10c8da2f63b949d7a1df67e03f8efa6e
 #: ../../../source/commands/select.txt:257
@@ -2063,6 +2172,8 @@ msgid ""
 "Pay attention to ``_score`` value. ``_score`` value is doubled because "
 "weight is 2."
 msgstr ""
+"Pay attention to ``_score`` value. ``_score`` value is doubled because "
+"weight is 2."
 
 # 0594e5f62aad4799a49da72cf34d2e7d
 #: ../../../source/commands/select.txt:260
@@ -2072,6 +2183,10 @@ msgid ""
 "done for all columns and scores are accumulated. If one of the columns is "
 "matched against ``query`` parameter value, the record is treated as matched."
 msgstr ""
+"You can specify one or more columns as the default target columns for "
+"fulltext search. If one or more columns are specified, fulltext search is "
+"done for all columns and scores are accumulated. If one of the columns is "
+"matched against ``query`` parameter value, the record is treated as matched."
 
 # 1bece3ccb18a40df9fcd0acda6e3d884
 #: ../../../source/commands/select.txt:266
@@ -2080,6 +2195,9 @@ msgid ""
 "|| ...`` syntax is used. ``* weight`` can be omitted. If it is omitted, 1 is "
 "used for weight. Here is a one or more columns usage example."
 msgstr ""
+"To specify one or more columns, ``column1 * weight1 || column2 * weight2 "
+"|| ...`` syntax is used. ``* weight`` can be omitted. If it is omitted, 1 is "
+"used for weight. Here is a one or more columns usage example."
 
 # 916e8ceba5cf4147b3dbc27ff24b57e1
 #: ../../../source/commands/select.txt:275
@@ -2091,77 +2209,135 @@ msgid ""
 "``content`` column value. In this example, title of blog entry is more "
 "important rather thatn content of blog entry."
 msgstr ""
+"``--match_columns '_key * 10 || content'`` means the default target columns "
+"for fulltext search are ``_key`` and ``content`` columns and ``_key`` "
+"column's weight is 10 and ``content`` column's weight is 1. This weight "
+"allocation means ``_key`` column value is more important rather than "
+"``content`` column value. In this example, title of blog entry is more "
+"important rather thatn content of blog entry."
 
 # 18d80b86a5214a3c8e4ab858c7e5c458
-# 6d65d4aef2b34182be4e07e0462bd728
+# 18d80b86a5214a3c8e4ab858c7e5c458
 #: ../../../source/commands/select.txt:285
 #: ../../../source/commands/select.txt:292
-msgid "TODO: write short description."
-msgstr ""
+msgid "TODO: write short description and add example."
+msgstr "TODO: write short description and add example."
 
 # f6a40af5f20c467b8bd54eacc136b6a2
 #: ../../../source/commands/select.txt:287
 msgid "See :doc:`/spec/query_syntax`."
-msgstr ""
+msgstr "See :doc:`/spec/query_syntax`."
 
 # 37338890b3ae4faba2348cb02934ac0a
 #: ../../../source/commands/select.txt:294
 msgid "See :doc:`/spec/script_syntax`."
-msgstr ""
+msgstr "See :doc:`/spec/script_syntax`."
 
 # b4476e9ca79f4b03826f7c40c0dc4c18
 #: ../../../source/commands/select.txt:297
 msgid "Advanced search parameters"
-msgstr ""
+msgstr "Advanced search parameters"
 
-# 9c1f74f4006243cfa6b58373500a8689
+# 71b83318007742929d25a1e21f3f653b
 #: ../../../source/commands/select.txt:300
 msgid "``match_escalation_threshold``"
 msgstr "``match_escalation_threshold``"
 
-# 70d500abd4a8441d9131e7c94c01d5eb
+# 54008bb20ab341bb9e6dc9b0a38529d8
 #: ../../../source/commands/select.txt:302
-msgid ""
-"検索の挙動をエスカレーションするかどうかの閾値を設定します。デフォルト値は0で"
-"す。デフォルト値は以下のいずれかの方法で設定できます。"
-msgstr ""
-"検索の挙動をエスカレーションするかどうかの閾値を設定します。デフォルト値は0で"
-"す。デフォルト値は以下のいずれかの方法で設定できます。"
+msgid "TODO: add example."
+msgstr "TODO: add example."
 
-# 665a516cdf144fcf972bbba16f9ce8e6
+# 860173bd4e0c41feb93032083dbf3366
 #: ../../../source/commands/select.txt:304
-msgid "configureの--with-match-escalation-thresholdオプション"
-msgstr "configureの--with-match-escalation-thresholdオプション"
-
-# d3ea971c36d54baba4ddbb2581060727
-#: ../../../source/commands/select.txt:305
-msgid "groongaコマンド起動時の--match-escalation-thresholdオプション"
-msgstr "groongaコマンド起動時の--match-escalation-thresholdオプション"
-
-# 3e35ff4584e0406b8b72e61326006cbc
-#: ../../../source/commands/select.txt:306
-msgid "設定ファイル中のmatch-escalation-threshold設定項目"
-msgstr "設定ファイル中のmatch-escalation-threshold設定項目"
-
-# 196e17a5464a4a0db2b9d89d39d17e74
-#: ../../../source/commands/select.txt:308
 msgid ""
-"クエリのヒット件数が閾値を越えない場合は :doc:`/spec/search` で説明している方"
-"法で検索方法をエスカレーションしてきます。"
+"It specifies threshold to determine whether search storategy escalation is "
+"used or not. The threshold is compared against the number of matched "
+"records. If the number of matched records is equal to or less than the "
+"threshold, search storategy escalation is used. See :doc:`/spec/search` "
+"about search storategy escalation."
 msgstr ""
-"クエリのヒット件数が閾値を越えない場合は :doc:`/spec/search` で説明している方"
-"法で検索方法をエスカレーションしてきます。"
+"It specifies threshold to determine whether search storategy escalation is "
+"used or not. The threshold is compared against the number of matched "
+"records. If the number of matched records is equal to or less than the "
+"threshold, search storategy escalation is used. See :doc:`/spec/search` "
+"about search storategy escalation."
 
-# 264f61913984424da41323d38514bb06
-# d362292028414e1093849ec812a13811
-# 257123a14dee456a9a932b4dff85a726
-#: ../../../source/commands/select.txt:311
-#, fuzzy
-msgid "``query_expansion``"
-msgstr "``query``"
+# cb029779f0e6432c87b04e6ca0c81943
+#: ../../../source/commands/select.txt:310
+msgid ""
+"The default threshold is 0. It means that search storategy escalation is "
+"used only when no records are matched."
+msgstr ""
+"The default threshold is 0. It means that search storategy escalation is "
+"used only when no records are matched."
 
-# 91f01c048191421a87215ac6f10a8e1f
+# e9f1a28fedc6401cb524fee4168cf489
 #: ../../../source/commands/select.txt:313
+msgid "The default threshold can be customized by one of the followings."
+msgstr "The default threshold can be customized by one of the followings."
+
+# 3fea50f9152f4c20beaa2f49f980aff1
+#: ../../../source/commands/select.txt:315
+msgid "``--with-match-escalation-threshold`` option of configure"
+msgstr "``--with-match-escalation-threshold`` option of configure"
+
+# 5e3cd077d1134520a9f512eaaaab18d4
+#: ../../../source/commands/select.txt:316
+msgid "``--match-escalation-threshold`` option of groogna command"
+msgstr "``--match-escalation-threshold`` option of groogna command"
+
+# 932c005c55664385b5c6e32c26f18968
+#: ../../../source/commands/select.txt:317
+msgid "``match-escalation-threshold`` configuration item in configuration file"
+msgstr ""
+"``match-escalation-threshold`` configuration item in configuration file"
+
+# 2eda92aef9b046688c1db7d6b55ca3fe
+#: ../../../source/commands/select.txt:321
+msgid "``query_expansion``"
+msgstr "``query_expansion``"
+
+# 7245130e36344311a7deeb5140c3838d
+# a91c6d0463094f978889bc0c5ff5bb7f
+# 3903805ac6754fefb268713b4f69e5be
+# 806f53548d9540a49cd3d571e3e501bb
+# 954856660497428bb3f4d7aef938cf3e
+# 4a7e48d6756f45eeabe870a407d7c9a4
+# cfcca9ee2b244ad2a3acfe480491b260
+# 4a4020a85eb7479b8acd4c13df8a2d83
+# 0f6e615ba5a948c6bc093933a9b99df4
+# 66e8ea452c6b4ad8b5ff859e3b8e3776
+# f1d02465a17f4532b49032415add0007
+# b215cb67cf744aa39a3b73c8dba5c447
+# 1c715fe9df0d4d0cb3a3ff9eab435d36
+#: ../../../source/commands/select.txt:323
+#: ../../../source/commands/select.txt:338
+#: ../../../source/commands/select.txt:347
+#: ../../../source/commands/select.txt:360
+#: ../../../source/commands/select.txt:367
+#: ../../../source/commands/select.txt:374
+#: ../../../source/commands/select.txt:386
+#: ../../../source/commands/select.txt:393
+#: ../../../source/commands/select.txt:400
+#: ../../../source/commands/select.txt:407
+#: ../../../source/commands/select.txt:414
+#: ../../../source/commands/select.txt:424
+#: ../../../source/commands/select.txt:435
+msgid "TODO: write in English and add example."
+msgstr "TODO: write in English and add example."
+
+# 77edd8442dd140358ec113f8bf2e338d
+#: ../../../source/commands/select.txt:325
+msgid ""
+"It specifies a column that is used to expand (substitute) ``query`` "
+"parameter value."
+msgstr ""
+"It specifies a column that is used to expand (substitute) ``query`` "
+"parameter value."
+
+# 4621394a7f2b499b95697dbac131b9cf
+#: ../../../source/commands/select.txt:328
 msgid ""
 "query_expansionパラメータには、queryパラメータに指定された文字列を置換(拡張)"
 "する条件となるテーブル・カラムを指定します。フォーマットは「${テーブル名}."
@@ -2169,9 +2345,14 @@ msgid ""
 "いはパトリシア木型のテーブルで、一つ以上の文字列型のカラムが定義されている必"
 "要があります。(ここでは置換テーブルと呼びます。)"
 msgstr ""
+"query_expansionパラメータには、queryパラメータに指定された文字列を置換(拡張)"
+"する条件となるテーブル・カラムを指定します。フォーマットは「${テーブル名}."
+"${カラム名}」となります。指定するテーブルは文字列を主キーとするハッシュ型ある"
+"いはパトリシア木型のテーブルで、一つ以上の文字列型のカラムが定義されている必"
+"要があります。(ここでは置換テーブルと呼びます。)"
 
-# 53c2ad99df4d4af5a9dd513a39ed1228
-#: ../../../source/commands/select.txt:315
+# 3230169ac5b743eb888a78a7b000ff43
+#: ../../../source/commands/select.txt:330
 msgid ""
 "queryパラメータに指定された文字列が、指定されたテーブルの主キーと完全一致する"
 "場合、その文字列を指定されたカラム値の文字列に置換します。queryパラメータが、"
@@ -2183,19 +2364,28 @@ msgid ""
 "弧や*, ORなど、queryパラメータで利用可能な全ての演算子を指定することができま"
 "す。"
 msgstr ""
+"queryパラメータに指定された文字列が、指定されたテーブルの主キーと完全一致する"
+"場合、その文字列を指定されたカラム値の文字列に置換します。queryパラメータが、"
+"空白、括弧、演算子などを含む場合は、その演算子によって区切られた文字列の単位"
+"で置換が実行されます。ダブルクォート(\"\")で括られた範囲は、その内部に空白を"
+"含んでいても一つの置換される単位と見なされます。検索文字列と置換テーブルの主"
+"キー値との比較に際して大文字小文字等を区別したくない場合には、置換テーブルを"
+"定義する際にKEY_NORMALIZEを指定します。置換後の文字列となるカラムの値には、括"
+"弧や*, ORなど、queryパラメータで利用可能な全ての演算子を指定することができま"
+"す。"
 
 # 5bebd7b0e916410a9068e659babf23c6
-#: ../../../source/commands/select.txt:318
+#: ../../../source/commands/select.txt:333
 msgid "Output related parameters"
-msgstr ""
+msgstr "Output related parameters"
 
-# 6587c359ea9c43ffb6a344c641b1a83c
-#: ../../../source/commands/select.txt:323
+# 1c51d64563f34499866d0cdddfc47d1b
+#: ../../../source/commands/select.txt:340
 msgid "出力するカラム名のリストをカンマ(',')区切りで指定します。"
 msgstr "出力するカラム名のリストをカンマ(',')区切りで指定します。"
 
-# d67cf90a953c4d6f90947faa0f7ff31a
-#: ../../../source/commands/select.txt:325
+# e8a847361929497c916038cce5031068
+#: ../../../source/commands/select.txt:342
 msgid ""
 "アスタリスク('*')を指定すると、全てのカラムが指定されたものとみなされます。ま"
 "たは、script形式のgrn_expr文字列を指定します。 (デフォルトは、'_id, _key, "
@@ -2205,68 +2395,68 @@ msgstr ""
 "たは、script形式のgrn_expr文字列を指定します。 (デフォルトは、'_id, _key, "
 "\\*')"
 
-# 7d1e0aacd07042cd9898f5be272f83a2
-#: ../../../source/commands/select.txt:330
+# 69dad63741a1451ea83336e95121c4ae
+#: ../../../source/commands/select.txt:349
 msgid "ソートキーとなるカラム名のリストをカンマ(',')区切りで指定します。::"
 msgstr "ソートキーとなるカラム名のリストをカンマ(',')区切りで指定します。::"
 
-# e7d77fc482b7407da86b2c50136b9459
-#: ../../../source/commands/select.txt:334
-msgid ""
-"カラム名1の値でソートし、値が同一である場合はカラム名2でソート、と順次比較を"
-"行いソートします。カラム名の前に - を付加した場合は降順にソートします。付加し"
-"ない場合には昇順にソートします。"
-msgstr ""
-"カラム名1の値でソートし、値が同一である場合はカラム名2でソート、と順次比較を"
-"行いソートします。カラム名の前に - を付加した場合は降順にソートします。付加し"
-"ない場合には昇順にソートします。"
-
-# 815440ef28b746adb1a3e161c2d05ce9
-#: ../../../source/commands/select.txt:336
-msgid ""
-"query引数またはfilter引数を指定した場合はカラム名に'_score'を使えま"
-"す。'_score'を指定することでスコアでソートすることができます。query引数も"
-"filter引数も指定していない状態で'_score'を指定するとエラーになります。"
-msgstr ""
-"query引数またはfilter引数を指定した場合はカラム名に'_score'を使えま"
-"す。'_score'を指定することでスコアでソートすることができます。query引数も"
-"filter引数も指定していない状態で'_score'を指定するとエラーになります。"
-
-# 6437f092772146debab0af88c4502725
-#: ../../../source/commands/select.txt:341
-msgid ""
-"検索条件にマッチしたレコードのうち、出力対象となる最初のレコードの番号を0ベー"
-"スで指定します。デフォルト値は0です。offsetに負の値を指定した場合は、ヒットし"
-"た件数 + offset によって算出される値が指定されたものとみなされます。"
-msgstr ""
-"検索条件にマッチしたレコードのうち、出力対象となる最初のレコードの番号を0ベー"
-"スで指定します。デフォルト値は0です。offsetに負の値を指定した場合は、ヒットし"
-"た件数 + offset によって算出される値が指定されたものとみなされます。"
-
-# c40dbef9ea254875ad89c12bb3cb7349
-#: ../../../source/commands/select.txt:346
-msgid ""
-"検索条件にマッチしたレコードのうち、出力を行うレコードの件数を指定します。デ"
-"フォルト値は10です。実際には、offset + limit がヒットした件数を超えない範囲で"
-"レコードが出力されます。limitに負の値を指定した場合は、ヒットした件数 + "
-"limit + 1 によって算出される値が指定されたものとみなされます。"
-msgstr ""
-"検索条件にマッチしたレコードのうち、出力を行うレコードの件数を指定します。デ"
-"フォルト値は10です。実際には、offset + limit がヒットした件数を超えない範囲で"
-"レコードが出力されます。limitに負の値を指定した場合は、ヒットした件数 + "
-"limit + 1 によって算出される値が指定されたものとみなされます。"
-
-# e048556635a64c3dbaea577c62b22366
-#: ../../../source/commands/select.txt:351
-msgid ""
-"検索条件にマッチする全てのレコードに対して適用するgrn_exprをscript形式で指定"
-"します。"
-msgstr ""
-"検索条件にマッチする全てのレコードに対して適用するgrn_exprをscript形式で指定"
-"します。"
-
-# 4a48588773a747c7b3f6a4a6f551199f
+# 7b981fad01854653afeb0de778073d19
 #: ../../../source/commands/select.txt:353
+msgid ""
+"カラム名1の値でソートし、値が同一である場合はカラム名2でソート、と順次比較を"
+"行いソートします。カラム名の前に - を付加した場合は降順にソートします。付加し"
+"ない場合には昇順にソートします。"
+msgstr ""
+"カラム名1の値でソートし、値が同一である場合はカラム名2でソート、と順次比較を"
+"行いソートします。カラム名の前に - を付加した場合は降順にソートします。付加し"
+"ない場合には昇順にソートします。"
+
+# abe7421f4582410888d65840d86cdfd2
+#: ../../../source/commands/select.txt:355
+msgid ""
+"query引数またはfilter引数を指定した場合はカラム名に'_score'を使えま"
+"す。'_score'を指定することでスコアでソートすることができます。query引数も"
+"filter引数も指定していない状態で'_score'を指定するとエラーになります。"
+msgstr ""
+"query引数またはfilter引数を指定した場合はカラム名に'_score'を使えま"
+"す。'_score'を指定することでスコアでソートすることができます。query引数も"
+"filter引数も指定していない状態で'_score'を指定するとエラーになります。"
+
+# 547b09b9971645f18f9f24bfac79f838
+#: ../../../source/commands/select.txt:362
+msgid ""
+"検索条件にマッチしたレコードのうち、出力対象となる最初のレコードの番号を0ベー"
+"スで指定します。デフォルト値は0です。offsetに負の値を指定した場合は、ヒットし"
+"た件数 + offset によって算出される値が指定されたものとみなされます。"
+msgstr ""
+"検索条件にマッチしたレコードのうち、出力対象となる最初のレコードの番号を0ベー"
+"スで指定します。デフォルト値は0です。offsetに負の値を指定した場合は、ヒットし"
+"た件数 + offset によって算出される値が指定されたものとみなされます。"
+
+# 9c61b813ea6644459b5d734d49c2df70
+#: ../../../source/commands/select.txt:369
+msgid ""
+"検索条件にマッチしたレコードのうち、出力を行うレコードの件数を指定します。デ"
+"フォルト値は10です。実際には、offset + limit がヒットした件数を超えない範囲で"
+"レコードが出力されます。limitに負の値を指定した場合は、ヒットした件数 + "
+"limit + 1 によって算出される値が指定されたものとみなされます。"
+msgstr ""
+"検索条件にマッチしたレコードのうち、出力を行うレコードの件数を指定します。デ"
+"フォルト値は10です。実際には、offset + limit がヒットした件数を超えない範囲で"
+"レコードが出力されます。limitに負の値を指定した場合は、ヒットした件数 + "
+"limit + 1 によって算出される値が指定されたものとみなされます。"
+
+# a48f7a7c0ae041deb7149e042b429e1b
+#: ../../../source/commands/select.txt:376
+msgid ""
+"検索条件にマッチする全てのレコードに対して適用するgrn_exprをscript形式で指定"
+"します。"
+msgstr ""
+"検索条件にマッチする全てのレコードに対して適用するgrn_exprをscript形式で指定"
+"します。"
+
+# 14e05912bdca44499cd85541f0deb7b0
+#: ../../../source/commands/select.txt:378
 msgid ""
 "scorerは、検索処理が完了し、ソート処理が実行される前に呼び出されます。従っ"
 "て、各レコードのスコアを操作する式を指定しておけば、検索結果のソート順序をカ"
@@ -2277,56 +2467,56 @@ msgstr ""
 "スタマイズできるようになります。"
 
 # f86ed8e0e7234121889b1f3f2d3a2ad6
-#: ../../../source/commands/select.txt:356
-msgid "Facet related parameters"
-msgstr ""
-
-# af75018a5a414a64a9f8dc2c9894ff12
-#: ../../../source/commands/select.txt:361
-msgid ""
-"グループ化のキーとなるカラム名のリストをカンマ(',')区切りで指定します。検索条"
-"件にマッチした各レコードを出力したのちに、drilldownに指定されたカラムの値が同"
-"一であるレコードをとりまとめて、それぞれについて結果レコードを出力します。"
-msgstr ""
-"グループ化のキーとなるカラム名のリストをカンマ(',')区切りで指定します。検索条"
-"件にマッチした各レコードを出力したのちに、drilldownに指定されたカラムの値が同"
-"一であるレコードをとりまとめて、それぞれについて結果レコードを出力します。"
-
-# c6701f2913e94d3bb35ec25d99acdc82
-#: ../../../source/commands/select.txt:366
-msgid ""
-"drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、ソー"
-"トキーとなるカラム名のリストをカンマ(',')区切りで指定します。sortbyパラメータ"
-"と同様に昇降順を指定できます。"
-msgstr ""
-"drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、ソー"
-"トキーとなるカラム名のリストをカンマ(',')区切りで指定します。sortbyパラメータ"
-"と同様に昇降順を指定できます。"
-
-# a630cde1f0e04e588e53bcbd393d1556
-#: ../../../source/commands/select.txt:371
-msgid ""
-"drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、出力"
-"するカラム名のリストをカンマ(',')区切りで指定します。"
-msgstr ""
-"drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、出力"
-"するカラム名のリストをカンマ(',')区切りで指定します。"
-
-# 14b3f901d27a4b3ea8375d161c17356e
-#: ../../../source/commands/select.txt:376
-msgid ""
-"drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、出力"
-"対象となる最初のレコードの番号を0ベースで指定します。デフォルト値は0です。"
-"drilldown_offsetに負の値を指定した場合は、ヒットした件数 + drilldown_offsetに"
-"よって算出される値が指定されたものとみなされます。"
-msgstr ""
-"drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、出力"
-"対象となる最初のレコードの番号を0ベースで指定します。デフォルト値は0です。"
-"drilldown_offsetに負の値を指定した場合は、ヒットした件数 + drilldown_offsetに"
-"よって算出される値が指定されたものとみなされます。"
-
-# ab82b88af488459ba646da8c246f34b2
 #: ../../../source/commands/select.txt:381
+msgid "Facet related parameters"
+msgstr "Facet related parameters"
+
+# 4406aec3a4ca4835b07ed7b54a3bc93c
+#: ../../../source/commands/select.txt:388
+msgid ""
+"グループ化のキーとなるカラム名のリストをカンマ(',')区切りで指定します。検索条"
+"件にマッチした各レコードを出力したのちに、drilldownに指定されたカラムの値が同"
+"一であるレコードをとりまとめて、それぞれについて結果レコードを出力します。"
+msgstr ""
+"グループ化のキーとなるカラム名のリストをカンマ(',')区切りで指定します。検索条"
+"件にマッチした各レコードを出力したのちに、drilldownに指定されたカラムの値が同"
+"一であるレコードをとりまとめて、それぞれについて結果レコードを出力します。"
+
+# 8c1290eb7c8a46f09c56b8db9c217a23
+#: ../../../source/commands/select.txt:395
+msgid ""
+"drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、ソー"
+"トキーとなるカラム名のリストをカンマ(',')区切りで指定します。sortbyパラメータ"
+"と同様に昇降順を指定できます。"
+msgstr ""
+"drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、ソー"
+"トキーとなるカラム名のリストをカンマ(',')区切りで指定します。sortbyパラメータ"
+"と同様に昇降順を指定できます。"
+
+# c0dc9f241ed3452ba045d8da39bfbb46
+#: ../../../source/commands/select.txt:402
+msgid ""
+"drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、出力"
+"するカラム名のリストをカンマ(',')区切りで指定します。"
+msgstr ""
+"drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、出力"
+"するカラム名のリストをカンマ(',')区切りで指定します。"
+
+# 112b75c45ebc4fbc9900ab060ec3e073
+#: ../../../source/commands/select.txt:409
+msgid ""
+"drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、出力"
+"対象となる最初のレコードの番号を0ベースで指定します。デフォルト値は0です。"
+"drilldown_offsetに負の値を指定した場合は、ヒットした件数 + drilldown_offsetに"
+"よって算出される値が指定されたものとみなされます。"
+msgstr ""
+"drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、出力"
+"対象となる最初のレコードの番号を0ベースで指定します。デフォルト値は0です。"
+"drilldown_offsetに負の値を指定した場合は、ヒットした件数 + drilldown_offsetに"
+"よって算出される値が指定されたものとみなされます。"
+
+# f404963c336b4e938dd6c0eb767a1b8d
+#: ../../../source/commands/select.txt:416
 msgid ""
 "drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、出力"
 "を行うレコードの件数を指定します。デフォルト値は10です。実際には、"
@@ -2341,27 +2531,27 @@ msgstr ""
 "drilldown_limit + 1 によって算出される値が指定されたものとみなされます。"
 
 # 05ac54215a8c489690e15cc2da91114f
-#: ../../../source/commands/select.txt:384
+#: ../../../source/commands/select.txt:419
 msgid "Cache related parameter"
-msgstr ""
+msgstr "Cache related parameter"
 
-# 0c5888ec718643a696f99ddefe7462a3
-#: ../../../source/commands/select.txt:387
+# 2f6d3063c3694681b5b48fee0850fff6
+#: ../../../source/commands/select.txt:422
 msgid "``cache``"
 msgstr "``cache``"
 
-# ab01dc1e341f415797cd3933411d9efe
-#: ../../../source/commands/select.txt:389
+# 6c5ab2d148424ba1956b95a6630c84b4
+#: ../../../source/commands/select.txt:426
 msgid "クエリキャッシュに関する動作を設定します。"
 msgstr "クエリキャッシュに関する動作を設定します。"
 
-# ad73e8f08e214143afdb48e42b10433d
-#: ../../../source/commands/select.txt:391
+# 2acb104c9a9743d8ad826cb46ba4cd8d
+#: ../../../source/commands/select.txt:428
 msgid "``no``"
 msgstr "``no``"
 
-# 51d2a71dbc4c4ff18d59f4df0cc4a1f1
-#: ../../../source/commands/select.txt:393
+# 37b1832c0ebd4022bffaa42510350d9e
+#: ../../../source/commands/select.txt:430
 msgid ""
 "検索結果をクエリキャッシュに残しません。キャッシュして再利用される可能性が低"
 "いクエリに対して用います。キャッシュ容量は有限です。有効なキャッシュが多く"
@@ -2371,18 +2561,18 @@ msgstr ""
 "いクエリに対して用います。キャッシュ容量は有限です。有効なキャッシュが多く"
 "ヒットするために、このパラメータは有効です。"
 
-# d0d2ae2dc15644daba84d553e15afec3
-#: ../../../source/commands/select.txt:398
+# 5a2c898b836346c4a44da5180756a58e
+#: ../../../source/commands/select.txt:437
 msgid "以下のようなjson形式で値が返却されます。"
 msgstr "以下のようなjson形式で値が返却されます。"
 
-# 3e8624ce3bdf459b95df79b2f702452a
-#: ../../../source/commands/select.txt:404
+# 3606923041f74b61b84f639315070a95
+#: ../../../source/commands/select.txt:443
 msgid "``リターンコード``"
 msgstr "``リターンコード``"
 
-# c1e048126732436d8779d249a2da0c81
-#: ../../../source/commands/select.txt:406
+# 437d9781abc9426aa4179cbd63e2c988
+#: ../../../source/commands/select.txt:445
 msgid ""
 "grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は、続いてエラー内"
 "容を示す 文字列が返されます。"
@@ -2390,13 +2580,13 @@ msgstr ""
 "grn_rcに対応する数値が返されます。0(GRN_SUCCESS)以外の場合は、続いてエラー内"
 "容を示す 文字列が返されます。"
 
-# 0a44765b035a4b3e9c1a850e9048f91e
-#: ../../../source/commands/select.txt:409
+# 9fdfd59eca8244d58d8fde96b0e0ce68
+#: ../../../source/commands/select.txt:448
 msgid "``処理開始時間``"
 msgstr "``処理開始時間``"
 
-# 1f325454b3034a06b657907ced1e2127
-#: ../../../source/commands/select.txt:411
+# ad0afbe0678a4278b945315d9be70522
+#: ../../../source/commands/select.txt:450
 msgid ""
 "処理を開始した時間について、1970年1月1日0時0分0秒を起点とした秒数を小数で返し"
 "ます。"
@@ -2404,71 +2594,71 @@ msgstr ""
 "処理を開始した時間について、1970年1月1日0時0分0秒を起点とした秒数を小数で返し"
 "ます。"
 
-# 82b0f452773544649843ec645333137f
-#: ../../../source/commands/select.txt:413
+# 664d27a3a1944eff91e0f86204832bd9
+#: ../../../source/commands/select.txt:452
 msgid "``処理時間``"
 msgstr "``処理時間``"
 
-# 109b1153348a45c080369a12ed12d4e2
-#: ../../../source/commands/select.txt:415
+# 794b2a25bd754300af83dc90870953fb
+#: ../../../source/commands/select.txt:454
 msgid "処理にかかった秒数を返します。"
 msgstr "処理にかかった秒数を返します。"
 
-# 2c823df116a54e6281f009cc4e2359da
-#: ../../../source/commands/select.txt:417
+# 9d3366bf8eaf4781bcd76fda12f53067
+#: ../../../source/commands/select.txt:456
 msgid "``検索結果``"
 msgstr "``検索結果``"
 
-# 01c79f618ab04b42ab4dac8e591d9722
-#: ../../../source/commands/select.txt:419
+# 622e3f3785cd41c38c56b1641cd252d1
+#: ../../../source/commands/select.txt:458
 msgid "drilldown条件が実行される前の検索結果が以下のように出力されます。::"
 msgstr "drilldown条件が実行される前の検索結果が以下のように出力されます。::"
 
-# 0da7c1352c6c47f2b5d4b3839f4bd8ff
-#: ../../../source/commands/select.txt:423
+# 23163da708fa42cfbc1d3f7b18b3c9f3
+#: ../../../source/commands/select.txt:462
 msgid "``検索件数``"
 msgstr "``検索件数``"
 
-# d844de31f8bc49959b1a6052737db524
-#: ../../../source/commands/select.txt:425
+# 3b6c545aafb14b49a40b007f4bca8559
+#: ../../../source/commands/select.txt:464
 msgid "検索件数が出力されます。"
 msgstr "検索件数が出力されます。"
 
-# 9cb5a3e349854548b790094971d3ed4e
-# 3e69f57b77e7405b9d71a193aee3a8d4
-#: ../../../source/commands/select.txt:427
-#: ../../../source/commands/select.txt:449
+# 14613c16dd054675a11f6f23613a9fdf
+# 14613c16dd054675a11f6f23613a9fdf
+#: ../../../source/commands/select.txt:466
+#: ../../../source/commands/select.txt:488
 msgid "``カラム名n``"
 msgstr "``カラム名n``"
 
-# cbefa66420ef4a3690f4652ec2eaabfe
-#: ../../../source/commands/select.txt:429
+# 64c7d8779c0743a1b101974cf33d92c0
+#: ../../../source/commands/select.txt:468
 msgid ""
 "output_columnsに指定された条件に従って、対象となるカラム名が出力されます。"
 msgstr ""
 "output_columnsに指定された条件に従って、対象となるカラム名が出力されます。"
 
-# 1aad3b3492c54b5b862aec84fb819ac2
-# be50b28090f6488d9bd65c692cfe4856
-#: ../../../source/commands/select.txt:431
-#: ../../../source/commands/select.txt:453
+# 5fa79943225b4f1b85aeb74f1e50cb21
+# 5fa79943225b4f1b85aeb74f1e50cb21
+#: ../../../source/commands/select.txt:470
+#: ../../../source/commands/select.txt:492
 msgid "``カラム型n``"
 msgstr "``カラム型n``"
 
-# d4ba089f4f3c4df4baea74e291138c26
-#: ../../../source/commands/select.txt:433
+# d507adb5553741279a002e988db6b2c4
+#: ../../../source/commands/select.txt:472
 msgid ""
 "output_columnsに指定された条件に従って、対象となるカラム型が出力されます。"
 msgstr ""
 "output_columnsに指定された条件に従って、対象となるカラム型が出力されます。"
 
-# 5a8dcb7fcf744f75867d40e96a6f6ddf
-#: ../../../source/commands/select.txt:435
+# 9564929b00654af0a370c9bac4cf2bf4
+#: ../../../source/commands/select.txt:474
 msgid "``検索結果n``"
 msgstr "``検索結果n``"
 
-# 0c10db6785b74606a94ef402ac4b29b3
-#: ../../../source/commands/select.txt:437
+# 30eb9a7e765747c18eb77b0bae53b444
+#: ../../../source/commands/select.txt:476
 msgid ""
 "output_columns, offset, limitによって指定された条件に従って各レコードの値が出"
 "力されます。"
@@ -2476,28 +2666,28 @@ msgstr ""
 "output_columns, offset, limitによって指定された条件に従って各レコードの値が出"
 "力されます。"
 
-# 3f6754fc7e1f4891ac280fc15d791201
-#: ../../../source/commands/select.txt:439
+# 2aa90014033c45a2801fa86e0db2831a
+#: ../../../source/commands/select.txt:478
 msgid "``drilldown結果``"
 msgstr "``drilldown結果``"
 
-# fed0cb465691431e8a6325b656337700
-#: ../../../source/commands/select.txt:441
+# bf90a643a4514448a13cd14bf31d81da
+#: ../../../source/commands/select.txt:480
 msgid "drilldown処理の結果が以下のように出力されます。::"
 msgstr "drilldown処理の結果が以下のように出力されます。::"
 
-# beca6c6d8aaf48a78a5620abf179bf60
-#: ../../../source/commands/select.txt:445
+# 4180d254026f4de4bdb07e04cf373060
+#: ../../../source/commands/select.txt:484
 msgid "``件数``"
 msgstr "``件数``"
 
-# f84d19f17e70431d9888a1c71b0b092e
-#: ../../../source/commands/select.txt:447
+# c13f6ff00a6e4da3a7c24642faf939f9
+#: ../../../source/commands/select.txt:486
 msgid "drilldownに指定されたカラムの値の異なり数が出力されます。"
 msgstr "drilldownに指定されたカラムの値の異なり数が出力されます。"
 
-# 43888861dd924aa0a51c96952c865641
-#: ../../../source/commands/select.txt:451
+# 2a5e92661f76462b9d202616922e8e78
+#: ../../../source/commands/select.txt:490
 msgid ""
 "drilldown_output_columnsに指定された条件に従って、対象となるカラム名が出力さ"
 "れます。"
@@ -2505,8 +2695,8 @@ msgstr ""
 "drilldown_output_columnsに指定された条件に従って、対象となるカラム名が出力さ"
 "れます。"
 
-# fd30f885b9b842928ced37eaac1a94cf
-#: ../../../source/commands/select.txt:455
+# 180016c23db947808c89f625f6107475
+#: ../../../source/commands/select.txt:494
 msgid ""
 "drilldown_output_columnsに指定された条件に従って、対象となるカラム型が出力さ"
 "れます。"
@@ -2514,13 +2704,13 @@ msgstr ""
 "drilldown_output_columnsに指定された条件に従って、対象となるカラム型が出力さ"
 "れます。"
 
-# a4494da4108947ae8649406689973359
-#: ../../../source/commands/select.txt:457
+# 58bb5b9af4c0443ca63ff4f3290bec7b
+#: ../../../source/commands/select.txt:496
 msgid "``ドリルダウン結果n``"
 msgstr "``ドリルダウン結果n``"
 
-# b68eb3ac2f9d494eb1002382fe752c73
-#: ../../../source/commands/select.txt:459
+# fc73aeaa76784b56b300cd913d904acf
+#: ../../../source/commands/select.txt:498
 msgid ""
 "drilldown_output_columns, drilldown_offset, drilldown_limitによって指定された"
 "条件に従って各レコードの値が出力されます。"
@@ -2528,38 +2718,32 @@ msgstr ""
 "drilldown_output_columns, drilldown_offset, drilldown_limitによって指定された"
 "条件に従って各レコードの値が出力されます。"
 
-# 9275c51e418e48a8b7b149247197d160
-#: ../../../source/commands/select.txt:464
-msgid "テーブルEntryの全レコード・全カラムの値を出力します。::"
-msgstr "テーブルEntryの全レコード・全カラムの値を出力します。::"
-
 # 47ca6cabe5774cd2b63af7d215176172
-#: ../../../source/commands/select.txt:471
+#: ../../../source/commands/select.txt:501
 msgid "See also"
-msgstr ""
-
-# bdaa98e12aa346c1be5f00be9287e66b
-#: ../../../source/commands/select.txt:473
-#, fuzzy
-msgid ":doc:`/spec/query_syntax`"
-msgstr "``suggest``"
+msgstr "See also"
 
 # 360cc5154bf244f49024ed2d8183f5c6
-#: ../../../source/commands/select.txt:474
-msgid ":doc:`/spec/script_syntax`"
-msgstr ""
+#: ../../../source/commands/select.txt:503
+msgid ":doc:`/spec/query_syntax`"
+msgstr ":doc:`/spec/query_syntax`"
 
-# 3a6bd5eff29f457c9af3e5ebdbf652a6
+# 360cc5154bf244f49024ed2d8183f5c6
+#: ../../../source/commands/select.txt:504
+msgid ":doc:`/spec/script_syntax`"
+msgstr ":doc:`/spec/script_syntax`"
+
+# 513ba7acf83344eeacf8866c67e6dbf4
 #: ../../../source/commands/shutdown.txt:6
 msgid "shutdown"
 msgstr "shutdown"
 
-# 8d80dfd3758b49b4b7df5c10dd4518ba
+# f9b2dc591f684c89b9731ed72377f710
 #: ../../../source/commands/shutdown.txt:11
 msgid "shutdown - サーバプロセスの停止"
 msgstr "shutdown - サーバプロセスの停止"
 
-# 14de962f8f974c94aa59e910b3b0ae09
+# cc7040921913442d8001472fddba05fa
 #: ../../../source/commands/shutdown.txt:22
 msgid ""
 "groonga組込コマンドの一つであるshutdownについて説明します。組込コマンドは、"
@@ -2570,22 +2754,22 @@ msgstr ""
 "groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
 "エストを送信することによって実行します。"
 
-# a471497e9ef44d778278578001cf5d7a
+# 32f5806fd61548fcb8b56b9ec08cc5d7
 #: ../../../source/commands/shutdown.txt:24
 msgid "shutdownは、接続しているgroongaサーバプロセスを停止します。"
 msgstr "shutdownは、接続しているgroongaサーバプロセスを停止します。"
 
-# c0bcdd05634341989374e7f9d30718d0
+# 97b0288aef734c82b5fd040963125552
 #: ../../../source/commands/status.txt:6
 msgid "status"
 msgstr "status"
 
-# 9dac6aa2d2244a9ba5bc2217c08e475e
+# 1defe3e2e16f452cab0ba222ce3d5481
 #: ../../../source/commands/status.txt:11
 msgid "status - groongaプロセスの状態表示"
 msgstr "status - groongaプロセスの状態表示"
 
-# a710aebae8e44d7b894e802a1ccadcda
+# 66b72147c636423a8a298e989ae8fba7
 #: ../../../source/commands/status.txt:22
 msgid ""
 "groonga組込コマンドの一つであるstatusについて説明します。組込コマンドは、"
@@ -2596,7 +2780,7 @@ msgstr ""
 "groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
 "エストを送信することによって実行します。"
 
-# 63a2979fd7b64607beadd05664922119
+# 1c35e7a414cc41ba9a78d43783002814
 #: ../../../source/commands/status.txt:24
 msgid ""
 "statusコマンドは、groongaプロセスの状態を表示します。主にgroongaサーバプロセ"
@@ -2605,210 +2789,192 @@ msgstr ""
 "statusコマンドは、groongaプロセスの状態を表示します。主にgroongaサーバプロセ"
 "スに対して使用することを想定しています。"
 
-# 59534da9d9ca4d0380e030214023ea2d
-# 58b06aead9d44090b52243f397c559e5
-# f50d32ccc75c478da2018c50eed0ef5e
-# 94874f15ed9c4fc98420249f6ca0a0dc
-# 99fa2682ab5a4a5080b84925ebf789e3
-# a4bbc8aa350f4b72881234761b931828
-# 1a7bfed2aac244298ae00e6d180a2b5d
-#: ../../../source/commands/suggest-completion.log:1
-#: ../../../source/commands/suggest-correction.log:1
-#: ../../../source/commands/suggest-learn-completion.log:1
-#: ../../../source/commands/suggest-learn-correction.log:1
-#: ../../../source/commands/suggest-learn-suggestion.log:1
-#: ../../../source/commands/suggest-mixed.log:1
-#: ../../../source/commands/suggest-suggestion.log:1
-#: ../../../source/example/commands/select/match_columns_simple.log:1
-#: ../../../source/example/commands/select/match_columns_some_columns.log:1
-#: ../../../source/example/commands/select/match_columns_weight.log:1
-#: ../../../source/example/commands/select/no_limit.log:1
-#: ../../../source/example/commands/select/paging.log:1
-#: ../../../source/example/commands/select/simple_filter.log:1
-#: ../../../source/example/commands/select/simple_query.log:1
-#: ../../../source/example/commands/select/simple_usage.log:1
-#: ../../../source/example/commands/select/table_nonexistent.log:1
-#: ../../../source/example/commands/select/usage_setup.log:1
-msgid "Execution example::"
-msgstr ""
-
-# 8239549741844da186e149e601c7eca0
+# b822ab41ce7c4f13a1523d1433435e89
 #: ../../../source/commands/suggest.txt:10
 msgid "suggest"
 msgstr "suggest"
 
-# 55daefe724404e7cb0df93f9db904c29
+# d6c5dc8448b144d9ad141723759ccb70
 #: ../../../source/commands/suggest.txt:14
 msgid ""
 "The suggest feature specification isn't stable. The specification may be "
 "changed."
 msgstr ""
+"The suggest feature specification isn't stable. The specification may be "
+"changed."
 
-# da9e2d18753941ae9375755d49055ca8
+# 9bc4c5e6ff594a3da4c6aa3e7d142fea
 #: ../../../source/commands/suggest.txt:18
 msgid "NAME"
-msgstr ""
+msgstr "NAME"
 
-# fb3c39c611c64fdcb70e7e8edc4cca44
+# b0dce9cd9bcf47f09b841bba355373a9
 #: ../../../source/commands/suggest.txt:20
 msgid "suggest - returns completion, correction and/or suggestion for a query."
 msgstr ""
+"suggest - returns completion, correction and/or suggestion for a query."
 
-# 09dfde53031c4ac78f37208eb8c19bc2
+# 8745e1f60a454551a6d24edff9d86b0d
 #: ../../../source/commands/suggest.txt:23
 msgid "SYNOPSIS"
-msgstr ""
+msgstr "SYNOPSIS"
 
-# 73c418b40218416199bc8279e0dbf479
+# 05068d44c3be4a7499a693e128504175
 #: ../../../source/commands/suggest.txt:29
 msgid "DESCRIPTION"
-msgstr ""
+msgstr "DESCRIPTION"
 
-# 4205c1535be143208c1c0c5d2d528ceb
+# c8a14bbc1eee427f8e09dedcc5aed268
 #: ../../../source/commands/suggest.txt:31
 msgid ""
 "The suggest command returns completion, correction and/or suggestion for a "
 "specified query."
 msgstr ""
+"The suggest command returns completion, correction and/or suggestion for a "
+"specified query."
 
-# 21fa68ae65e4473789e10bcde04d2d47
+# 10027615148b42c5ab0a4b9579ed7d65
 #: ../../../source/commands/suggest.txt:34
 msgid ""
 "See :doc:`/suggest/introduction` about completion, correction and suggestion."
 msgstr ""
+"See :doc:`/suggest/introduction` about completion, correction and suggestion."
 
-# 9dee840b8a6543c2a7fdfc7b6684437a
+# 5e1b42988f74460d95ab376313454099
 #: ../../../source/commands/suggest.txt:38
 msgid "OPTIONS"
-msgstr ""
+msgstr "OPTIONS"
 
-# fd60bf18fe5f4b1580f5fd968ef87c32
+# 0445ebc1e20246f0ac8f6c9e8a5333af
 #: ../../../source/commands/suggest.txt:41
 msgid "It specifies what types are returned by the suggest command."
-msgstr ""
+msgstr "It specifies what types are returned by the suggest command."
 
-# a1a4a081237c47bf92c06723eee575dc
+# 155c69737df34428a77c9f3d819cfbc0
 #: ../../../source/commands/suggest.txt:44
 msgid "Here are available types:"
-msgstr ""
+msgstr "Here are available types:"
 
-# ad6f2caaf31344fb89f4f45715a1c18c
+# 38310fc523324fa484d8fa7d79f669c4
 #: ../../../source/commands/suggest.txt:47
 msgid "The suggest command does completion."
-msgstr ""
+msgstr "The suggest command does completion."
 
-# 72c37ef5423a437384427371d61f04d3
+# fc5a78e7fab9414a88867109216a702c
 #: ../../../source/commands/suggest.txt:50
 msgid "The suggest command does correction."
-msgstr ""
+msgstr "The suggest command does correction."
 
-# ccc837a426d441c3aca1ecb5b163e042
+# 4ae94beda01a45a3890adffe412cd6c9
 #: ../../../source/commands/suggest.txt:53
 msgid "The suggest command does suggestion."
-msgstr ""
+msgstr "The suggest command does suggestion."
 
-# 830ad2626f084d07b5cd6674146e4cb5
+# 9fceaf84ccff477ba37d968eda588fa7
 #: ../../../source/commands/suggest.txt:55
 msgid ""
 "You can specify one or more types separated by ``|``. Here are examples:"
 msgstr ""
+"You can specify one or more types separated by ``|``. Here are examples:"
 
-# aa87e3731a134e31bdef6cf9aae0ebf8
+# 2e922d74ebb140d8bb6dbe3f35c8b336
 #: ../../../source/commands/suggest.txt:58
 msgid "It returns correction::"
-msgstr ""
+msgstr "It returns correction::"
 
-# 93f915dddbda451f9fb368710aeb8571
+# 03c6754b21fd4713b26bf2f6ff521f10
 #: ../../../source/commands/suggest.txt:62
 msgid "It returns correction and suggestion::"
-msgstr ""
+msgstr "It returns correction and suggestion::"
 
-# 899fbf87aa1f4361af48dba90742aae8
+# d46dda3b5a9141d0a025aa4284a2b263
 #: ../../../source/commands/suggest.txt:66
 msgid "It returns complete, correction and suggestion::"
-msgstr ""
+msgstr "It returns complete, correction and suggestion::"
 
-# 849ce8139f1a422994278f69e193de65
+# cb482c488e10456eadab07ca3d66e5cf
 #: ../../../source/commands/suggest.txt:71
 msgid ""
 "It specifies table name that has ``item_${DATA_SET_NAME}`` format. For "
 "example, ``item_query`` is a table name if you created dataset by the "
 "following command::"
 msgstr ""
+"It specifies table name that has ``item_${DATA_SET_NAME}`` format. For "
+"example, ``item_query`` is a table name if you created dataset by the "
+"following command::"
 
-# f33a8d5e30d24ff08717dd665f1e5d2c
+# 5090a5fc53dd484aa9ca2875882f6925
 #: ../../../source/commands/suggest.txt:78
 msgid ""
 "It specifies a column name that has furigana in Katakana in ``table`` table."
 msgstr ""
+"It specifies a column name that has furigana in Katakana in ``table`` table."
 
-# 4a2fad427bd5465e865429a8379e9688
+# b93fc33888854592af5d7e1becec9c62
 #: ../../../source/commands/suggest.txt:82
 msgid "It specifies query for completion, correction and/or suggestion."
-msgstr ""
+msgstr "It specifies query for completion, correction and/or suggestion."
 
-# 6fd352578daa4adcb990edb8388f351b
+# d35e7d301291436499a013bea42a1565
 #: ../../../source/commands/suggest.txt:86
 msgid "It specifies sort key."
-msgstr ""
+msgstr "It specifies sort key."
 
-# dc4c93fffd0e4024a1d6541aef1103a0
-# d4aa1bf862d540e1ae3a910679f4f59c
+# 60e672a24e9f4b249d94a67b7787fdeb
 #: ../../../source/commands/suggest.txt:89
-#, fuzzy
 msgid "``-_score``"
-msgstr "``scorer``"
+msgstr "``-_score``"
 
-# 01f2a053ed58442d845ad9b1c3eccace
+# f54375f0c3fc4ab6a3698d9607b45cf0
 #: ../../../source/commands/suggest.txt:92
 msgid "It specifies output columns."
-msgstr ""
+msgstr "It specifies output columns."
 
-# dc4c93fffd0e4024a1d6541aef1103a0
-# d4aa1bf862d540e1ae3a910679f4f59c
+# 4cc782aedbd149a59b757d951a9360d3
 #: ../../../source/commands/suggest.txt:95
-#, fuzzy
 msgid "``_key,_score``"
-msgstr "``scorer``"
+msgstr "``_key,_score``"
 
-# f8497ba8f6964a60b7f18276730dde1a
+# 515951ef020b4dab810ec6c1ca70214b
 #: ../../../source/commands/suggest.txt:98
 msgid "It specifies returned records offset."
-msgstr ""
+msgstr "It specifies returned records offset."
 
-# f74c638f81a644adb244f29198009d85
+# 28e1333d566d4186bd80d0436563f8ad
 #: ../../../source/commands/suggest.txt:101
 msgid "``0``"
-msgstr ""
+msgstr "``0``"
 
-# ad811656ac5f4245a0201a46f1f26a09
+# 60898a7811104cd4915fc7126154022c
 #: ../../../source/commands/suggest.txt:104
 msgid "It specifies number of returned records."
-msgstr ""
+msgstr "It specifies number of returned records."
 
-# 9ac51ab64e354d2ab79f1d6a6cbbd316
+# 67b92a1c16fc414a916c399dc7b2b2e7
 #: ../../../source/commands/suggest.txt:107
 msgid "``10``"
-msgstr ""
+msgstr "``10``"
 
-# 3e56b20a77f142e4a8bfe44ef6fdc35a
+# 229a6a97ec994ee596226d8f4c7a767c
 #: ../../../source/commands/suggest.txt:110
 msgid ""
 "It specifies threshold for item frequency. Returned records must have "
 "``_score`` that is greater than or equal to ``frequency_threshold``."
 msgstr ""
+"It specifies threshold for item frequency. Returned records must have "
+"``_score`` that is greater than or equal to ``frequency_threshold``."
 
-# 9ac51ab64e354d2ab79f1d6a6cbbd316
+# 5cc9ec12e82b486bbc9543e2949b5f7a
 #: ../../../source/commands/suggest.txt:114
 msgid "``100``"
-msgstr ""
+msgstr "``100``"
 
-# fccb061cff5a4c639c2d87a63a59b0a3
+# ef758eec657d4cb29298b04b424c4399
 #: ../../../source/commands/suggest.txt:116
 msgid "``conditional_probability_threshold``"
-msgstr ""
+msgstr "``conditional_probability_threshold``"
 
-# e3f3d355725d4d4092f3a07f8af35ee6
+# 675ce7f8afef4980a5c958354d398d9b
 #: ../../../source/commands/suggest.txt:118
 msgid ""
 "It specifies threshold for conditional probability. Conditional probability "
@@ -2816,177 +2982,186 @@ msgid ""
 "``query`` is occurred. Returned records must have conditional probability "
 "that is greater than or equal to ``conditional_probability_threshold``."
 msgstr ""
+"It specifies threshold for conditional probability. Conditional probability "
+"is used for learned data. It is probability of query submission when "
+"``query`` is occurred. Returned records must have conditional probability "
+"that is greater than or equal to ``conditional_probability_threshold``."
 
-# bbd897c0b88e431088eb8cc05c43ac95
+# dc8aaf65442645ecae881a2ddbb2df13
 #: ../../../source/commands/suggest.txt:126
 msgid "``0.2``"
-msgstr ""
+msgstr "``0.2``"
 
-# 0e8b52dd7eef4e8dbcc629833514bb23
+# f5307540c362404bbcb3c121155794ce
 #: ../../../source/commands/suggest.txt:129
 msgid ""
 "It specifies whether optional prefix search is used or not in completion."
 msgstr ""
+"It specifies whether optional prefix search is used or not in completion."
 
-# abbe166a05fc4a0c9df8b79d46967673
+# 68c67b0a5acb4de9945a34751e59be47
+# bef851c7383d4acd9b4d0289170ce0c0
 #: ../../../source/commands/suggest.txt:132
 #: ../../../source/commands/suggest.txt:151
 msgid "Here are available values:"
-msgstr ""
+msgstr "Here are available values:"
 
-# 47f8fa9a3c5b46068f82e903445afe29
+# eabfd4a50a984aa79ba387aabf3d2e57
 #: ../../../source/commands/suggest.txt:135
 msgid "Prefix search is always used."
-msgstr ""
+msgstr "Prefix search is always used."
 
-# 1837d2e8ad71471c806cd2103669b2a5
+# 2223f004a3584b87ae3c9e7c4e1289cc
 #: ../../../source/commands/suggest.txt:138
 msgid "Prefix search is never used."
-msgstr ""
+msgstr "Prefix search is never used."
 
-# 424504b6357742bc90c91d77338bccb0
+# e4e469d048c94e5eaed972b8b019ee95
 #: ../../../source/commands/suggest.txt:141
 msgid "Prefix search is used only when other search can't find any records."
-msgstr ""
+msgstr "Prefix search is used only when other search can't find any records."
 
-# bbd897c0b88e431088eb8cc05c43ac95
+# 78e41c38f86e42648dd7c63c7b8ff37b
+# 7686d3782cbd4eb8aefd0009c15ec820
 #: ../../../source/commands/suggest.txt:145
 #: ../../../source/commands/suggest.txt:164
 msgid "``auto``"
-msgstr ""
+msgstr "``auto``"
 
 # f243647f6157496886e8b5f3e2651dcb
 #: ../../../source/commands/suggest.txt:148
 msgid ""
 "It specifies whether optional similar search is used or not in correction."
 msgstr ""
+"It specifies whether optional similar search is used or not in correction."
 
-# ec23e4abe6bd425bb4202c02ba665f87
+# ec5f748a769646da84d25b8217f4add0
 #: ../../../source/commands/suggest.txt:154
 msgid "Similar search is always used."
-msgstr ""
+msgstr "Similar search is always used."
 
-# 26dbce0b15b84c3fa686a80dc6398203
+# f0ed167bf9b44d109a1d0eb97a1cff60
 #: ../../../source/commands/suggest.txt:157
 msgid "Similar search is never used."
-msgstr ""
+msgstr "Similar search is never used."
 
-# 01cf7aa7015c498c94c6c649c6a10823
+# 90bfd2a7cf3d45b79998a4afa2cbcea6
 #: ../../../source/commands/suggest.txt:160
 msgid "Similar search is used only when other search can't find any records."
-msgstr ""
+msgstr "Similar search is used only when other search can't find any records."
 
-# 84db867d1e7241799ab798ce57086bf1
+# 547282118c164f658e463059bd138389
 #: ../../../source/commands/suggest.txt:167
 msgid "RETURN VALUE"
-msgstr ""
+msgstr "RETURN VALUE"
 
-# 779dfc21a7b7400a8fd0a768c83fecd7
+# 9bfe0726951d4355ba2be78dc59f9bf6
 #: ../../../source/commands/suggest.txt:170
 msgid "JSON format"
-msgstr ""
+msgstr "JSON format"
 
-# 235e5e1d857949609f24f6ebec7896ed
+# b9c8d5fd0d534c13be9f9adf3f41f851
 #: ../../../source/commands/suggest.txt:172
 msgid "Here is a returned JSON format::"
-msgstr ""
+msgstr "Here is a returned JSON format::"
 
-# 8fb5a9c34fd04bebb977c8e53b466429
+# 3dfa57eea29d449b8a7b69fab53c62fd
 #: ../../../source/commands/suggest.txt:184
 msgid "A type specified by ``types``."
-msgstr ""
+msgstr "A type specified by ``types``."
 
-# 0c5888ec718643a696f99ddefe7462a3
+# 307f21ca478e4b34ac0b0f4d813e938e
 #: ../../../source/commands/suggest.txt:186
-#, fuzzy
 msgid "``candidate``"
-msgstr "``cache``"
+msgstr "``candidate``"
 
-# a65ff125a4a9426a856a8242d5201615
+# 920a39a25bed493f8a44d8fcfbb26640
 #: ../../../source/commands/suggest.txt:188
 msgid "A candidate for completion, correction or suggestion."
-msgstr ""
+msgstr "A candidate for completion, correction or suggestion."
 
-# e7f573dcd22e49ab8646cbd0c04843b4
+# 3f7c49ea8ee348f9b13c4e434e4a51b7
 #: ../../../source/commands/suggest.txt:190
 msgid "``score of candidate``"
-msgstr ""
+msgstr "``score of candidate``"
 
-# 13d4ba9ecb404a88a9fac64d0799fd79
+# dc9997a25be14b478c9ae569d2166aa3
 #: ../../../source/commands/suggest.txt:192
 msgid ""
 "A score of corresponding ``candidate``. It means that higher score candidate "
 "is more likely candidate for completion, correction or suggestion. Returned "
 "candidates are sorted by ``score of candidate`` descending by default."
 msgstr ""
+"A score of corresponding ``candidate``. It means that higher score candidate "
+"is more likely candidate for completion, correction or suggestion. Returned "
+"candidates are sorted by ``score of candidate`` descending by default."
 
-# e1b820659c4c44238f8d6ad9601dd096
+# 27a9ed2ab73f4cb8900bf9875e1d3ceb
 #: ../../../source/commands/suggest.txt:199
 msgid "EXAMPLE"
-msgstr ""
+msgstr "EXAMPLE"
 
-# 3bc5aa56c8c94ede9752d60ca7132d32
+# 8267a57e7ef54b09bd948b1a14981dd5
 #: ../../../source/commands/suggest.txt:201
 msgid "Here are learned data for completion."
-msgstr ""
+msgstr "Here are learned data for completion."
 
-# fe498189de5a4c8ba2bc3466f6466546
+# 63ea0d5cfeb44b91a5959bb4900d957a
 #: ../../../source/commands/suggest.txt:215
 msgid "Here are learned data for correction."
-msgstr ""
+msgstr "Here are learned data for correction."
 
-# de05f397934341469701a04ac77c61b9
+# bef851c7383d4acd9b4d0289170ce0c0
 #: ../../../source/commands/suggest.txt:231
 msgid "Here are learned data for suggestion."
-msgstr ""
+msgstr "Here are learned data for suggestion."
 
-# 5bc7770294c7407c9c5200a5424c97a2
+# d5838416f3dd4ee59991608b8d2df497
 #: ../../../source/commands/suggest.txt:241
 msgid "Here is a completion example."
-msgstr ""
+msgstr "Here is a completion example."
 
-# 4b9788cf8f3d42388627d17d5234a81c
+# 778690b8a06f4c4eb35557b7d822af8b
 #: ../../../source/commands/suggest.txt:247
 msgid "Here is a correction example."
-msgstr ""
+msgstr "Here is a correction example."
 
-# f481261b9b204db0a627594cfef2856a
+# 2834f69e18a04634922beeeaa34a0b77
 #: ../../../source/commands/suggest.txt:253
 msgid "Here is a suggestion example."
-msgstr ""
+msgstr "Here is a suggestion example."
 
-# 0071f37de5d04b45955a67ef1dec9e84
+# 935fe718691c4b8b988604d8c4e008d2
 #: ../../../source/commands/suggest.txt:259
 msgid "Here is a mixed example."
-msgstr ""
+msgstr "Here is a mixed example."
 
-# 82554879cf9c442ca065ff52ad81e8a5
+# e797e001a0934fe2ba0d938f05af368a
 #: ../../../source/commands/suggest.txt:267
 msgid "SEE ALSO"
-msgstr ""
+msgstr "SEE ALSO"
 
-# bdaa98e12aa346c1be5f00be9287e66b
+# 0de5de35e65e4a2181802d474f0532b6
 #: ../../../source/commands/suggest.txt:269
-#, fuzzy
 msgid ":doc:`/suggest`"
-msgstr "``suggest``"
+msgstr ":doc:`/suggest`"
 
-# 90f324b6827145fc9912843ff6c1882f
+# 3af433bb60924c3595f32e2da8f8c9f0
 #: ../../../source/commands/suggest.txt:270
 msgid ":doc:`/executables/groonga-suggest-create-dataset`"
-msgstr ""
+msgstr ":doc:`/executables/groonga-suggest-create-dataset`"
 
-# 6deec3b88c254385a1dbb0358c027577
+# 9974b1d3373543f9b2db2da671f1d787
 #: ../../../source/commands/table_create.txt:6
 msgid "table_create"
 msgstr "table_create"
 
-# f761281accce4cca8d4e274ac9eda264
+# 04b5ca3eac384b6c96fc70c1618a63c7
 #: ../../../source/commands/table_create.txt:11
 msgid "table_create - テーブルの追加"
 msgstr "table_create - テーブルの追加"
 
-# 0cfc8c7031974d948df036c0d3102f6b
+# 0ae641b106bc420cb3c7a6ef1d682e91
 #: ../../../source/commands/table_create.txt:22
 msgid ""
 "groonga組込コマンドの一つであるtable_createについて説明します。組込コマンド"
@@ -2997,7 +3172,7 @@ msgstr ""
 "は、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバに"
 "リクエストを送信することによって実行します。"
 
-# 09bb3b63293b40db98db8b0b011c10b6
+# 0621716144f04a36bcd50cba2d364dc2
 #: ../../../source/commands/table_create.txt:24
 msgid ""
 "table_createコマンドは、使用しているデータベースに対してテーブルを追加しま"
@@ -3012,7 +3187,7 @@ msgstr ""
 "ます。テーブルはレコードの集合であり、全てのレコードは一意なIDを持ちます。ID"
 "はレコードを追加した順序に従って自動的に付与されます。"
 
-# dc13ec352efc4345b9340cd535910014
+# 42a2dd744bca4a1faf63f5fdde27d871
 #: ../../../source/commands/table_create.txt:26
 msgid ""
 "テーブルにカラムを追加する時にはcolumn_createコマンドを使用します。また、テー"
@@ -3021,7 +3196,7 @@ msgstr ""
 "テーブルにカラムを追加する時にはcolumn_createコマンドを使用します。また、テー"
 "ブルを作成した時点でいくつかの疑似カラムが使用可能になっています。"
 
-# ed62a576f1a04d36ae09ce6c64eef71b
+# f3a3c4c89a3147df8cc140956e8a076f
 #: ../../../source/commands/table_create.txt:33
 msgid ""
 "作成するテーブルの名前を指定します。nameはデータベース内で一意な、未定義の名"
@@ -3034,7 +3209,7 @@ msgstr ""
 "り、テーブル名には 使用できません。また、ピリオド('.'), コロン(':')を含む名前"
 "のテーブルは作成できません。"
 
-# 4e65673bc26140479aa5726c16e35219
+# 181f527466b44b3c8138cc21e1d833eb
 #: ../../../source/commands/table_create.txt:37
 msgid ""
 "作成するテーブルの属性を示す数値か、パイプ('|')で組み合わせたシンボル名を指定"
@@ -3043,20 +3218,19 @@ msgstr ""
 "作成するテーブルの属性を示す数値か、パイプ('|')で組み合わせたシンボル名を指定"
 "します。(デフォルト値は0(=\"TABLE_HASH_KEY\"))"
 
-# 4a2cda7f42ab464d80734212c070fb51
+# 20878497d6044ddb9e055fa472fa41c2
 #: ../../../source/commands/table_create.txt:40
-#, fuzzy
 msgid ""
 "主キー値をハッシュ表で管理するテーブルを作成します。ハッシュ表を使用したテー"
 "ブルでは、主キー値に完全一致するレコードを非常に高速に検索することができま"
 "す。"
 msgstr ""
 "主キー値をハッシュ表で管理するテーブルを作成します。ハッシュ表を使用したテー"
-"ブルでは、主キー値に完全一致するレコードを高速に検索することができます。"
+"ブルでは、主キー値に完全一致するレコードを非常に高速に検索することができま"
+"す。"
 
-# 6c48c60a0165465ab4ec16c82f6999c4
+# 6b8d81b008e3402caa65b314dd1c5d29
 #: ../../../source/commands/table_create.txt:43
-#, fuzzy
 msgid ""
 "主キー値をパトリシア木で管理するテーブルを作成します。パトリシア木を使用した"
 "テーブルでは、主キー値に完全一致するレコードを検索することができるとともに、"
@@ -3066,14 +3240,14 @@ msgid ""
 "も可能となります。"
 msgstr ""
 "主キー値をパトリシア木で管理するテーブルを作成します。パトリシア木を使用した"
-"テーブルでは、主キー値に完全一致するレコード、前方一致するレコード、および最"
-"長共通接頭辞となるレコードを高速に検索することができます。また、キー値の昇降"
-"順でレコードを取り出したり、キー値の範囲での検索を行うことができます。また、"
-"flagsの値に64を加えることによって、後方一致検索も可能となります。"
+"テーブルでは、主キー値に完全一致するレコードを検索することができるとともに、"
+"前方一致するレコード、および最長共通接頭辞となるレコードを高速に検索すること"
+"ができます。また、キー値の昇降順でレコードを取り出したり、キー値の範囲での検"
+"索を行うことができます。また、flagsの値に64を加えることによって、後方一致検索"
+"も可能となります。"
 
-# 6c48c60a0165465ab4ec16c82f6999c4
+# 6b8d81b008e3402caa65b314dd1c5d29
 #: ../../../source/commands/table_create.txt:46
-#, fuzzy
 msgid ""
 "主キー値をダブル配列で管理するテーブルを作成します。ダブル配列を使用したテー"
 "ブルでは、主キー値に完全一致するレコードを高速に検索することができるととも"
@@ -3081,13 +3255,13 @@ msgid ""
 "できます。また、キー値の昇降順でレコードを取り出したり、キー値の範囲での検索"
 "を行うことができます。"
 msgstr ""
-"主キー値をパトリシア木で管理するテーブルを作成します。パトリシア木を使用した"
-"テーブルでは、主キー値に完全一致するレコード、前方一致するレコード、および最"
-"長共通接頭辞となるレコードを高速に検索することができます。また、キー値の昇降"
-"順でレコードを取り出したり、キー値の範囲での検索を行うことができます。また、"
-"flagsの値に64を加えることによって、後方一致検索も可能となります。"
+"主キー値をダブル配列で管理するテーブルを作成します。ダブル配列を使用したテー"
+"ブルでは、主キー値に完全一致するレコードを高速に検索することができるととも"
+"に、前方一致するレコード、および最長共通接頭辞となるレコードを検索することが"
+"できます。また、キー値の昇降順でレコードを取り出したり、キー値の範囲での検索"
+"を行うことができます。"
 
-# a89bab58376444e7900f7ceae5fa45e5
+# 8152e894692448bca10ef53df2d14b6d
 #: ../../../source/commands/table_create.txt:49
 msgid ""
 "主キーを持たないテーブルを作成します。各レコードはIDのみによって特定すること"
@@ -3096,21 +3270,21 @@ msgstr ""
 "主キーを持たないテーブルを作成します。各レコードはIDのみによって特定すること"
 "ができます。"
 
-# e8398b16ba294208a53497a05b0f94fa
+# 4eae0aa630654958915b07728620de9d
 #: ../../../source/commands/table_create.txt:52
 msgid ""
 "複数のテーブルをまとめて操作するための仮想的なテーブル(view)を作成します。"
 msgstr ""
 "複数のテーブルをまとめて操作するための仮想的なテーブル(view)を作成します。"
 
-# fe9f2dabb65f41a49861f8f6fe989207
+# c604d5491b45492c82304e6614905b03
 #: ../../../source/commands/table_create.txt:55
 msgid ""
 "語彙表となるパトリシア木型のテーブルにおいて、後方一致検索を可能とします。"
 msgstr ""
 "語彙表となるパトリシア木型のテーブルにおいて、後方一致検索を可能とします。"
 
-# 63efb01152ad499eb6c074b3110a3b26
+# da686d4827904ef3951906b6d92f32de
 #: ../../../source/commands/table_create.txt:58
 msgid ""
 "ハッシュ表型か、パトリシア木型のテーブルにおいて、主キー値を正規化した上で登"
@@ -3121,12 +3295,12 @@ msgstr ""
 "録します。この値が指定されたテーブルではたとえば、主キー値'abc'と'ABC' は同一"
 "のレコードに対応するものとみなされます。"
 
-# 32c9e532c5784c32b4e6dfd63cb28eb6
+# 7b7e4341c9844101a1cd4de096b18ba6
 #: ../../../source/commands/table_create.txt:60
 msgid "``key_type``"
 msgstr "``key_type``"
 
-# 327f0cf35a3a4028a443cd7445be03c0
+# 907af782ce894ee7a2d3675f6d2b48a9
 #: ../../../source/commands/table_create.txt:62
 msgid ""
 "主キー値の型を指定します。主キー値を持つテーブルに限り有効です。型にはgroonga"
@@ -3137,12 +3311,12 @@ msgstr ""
 "の組込型か、同一データベースに定義済みのユーザ定義型、定義済みのテーブルを指"
 "定することができます。"
 
-# 6a4ca1251c4e447a9259a264b9d8c7c2
+# a73adb07e8d94e059b396d38077857f4
 #: ../../../source/commands/table_create.txt:64
 msgid "``value_type``"
 msgstr "``value_type``"
 
-# 3460175978db4586a71445e7ac7758a1
+# 62395b7f65c1426c8e72ad6562fd0564
 #: ../../../source/commands/table_create.txt:66
 msgid ""
 "値の型を指定します。tableの値には固定長の型のみが指定できます。(可変長の値が"
@@ -3155,12 +3329,12 @@ msgstr ""
 "に定義済みのユーザ定義型、またはテーブルを指定することができます。(デフォルト"
 "はvalueなし)"
 
-# 047173a3edf94e329f384a2758fd91ba
+# 48c01221b864488a8b2e45dab707329f
 #: ../../../source/commands/table_create.txt:68
 msgid "``default_tokenizer``"
 msgstr "``default_tokenizer``"
 
-# 496a99f4865749e9b13c0f86831edf90
+# a849076906164a879dd3f4c6288a033a
 #: ../../../source/commands/table_create.txt:70
 msgid ""
 "作成するテーブルを語彙表として使用する場合、文字列を分割するトークナイザを指"
@@ -3169,32 +3343,32 @@ msgstr ""
 "作成するテーブルを語彙表として使用する場合、文字列を分割するトークナイザを指"
 "定します。"
 
-# 0e860d0514e7489586a3811a508ae999
+# 0b951119182246bba1d7ab79f8f4f14a
 #: ../../../source/commands/table_create.txt:72
 msgid "組込のトークナイザとして、以下が準備されています。"
 msgstr "組込のトークナイザとして、以下が準備されています。"
 
-# f7c6cd68f48647ef9053fdb76ef810ef
+# 33d4edfac88049608369db63fa6751d3
 #: ../../../source/commands/table_create.txt:75
 msgid "空白で区切られた文字列をトークンとする"
 msgstr "空白で区切られた文字列をトークンとする"
 
-# 8dd7d12fe130444cbac47821685da0f4
+# bc3158ee1fbe4784a01adfddf5c605dc
 #: ../../../source/commands/table_create.txt:78
 msgid "unigram(1文字を1トークンとする)"
 msgstr "unigram(1文字を1トークンとする)"
 
-# b6afb576703549a0994ac31b3b7053bc
+# a240f8692bde46eababd13652c2f143d
 #: ../../../source/commands/table_create.txt:81
 msgid "bigram(2文字の文字列要素をトークンとする)"
 msgstr "bigram(2文字の文字列要素をトークンとする)"
 
-# d1c944f29bea49079b3fb09bd77a8a11
+# f367ee4a2db944d0ad9d1a97c1f050b7
 #: ../../../source/commands/table_create.txt:84
 msgid "trigram(3文字の文字列要素をトークンとする)"
 msgstr "trigram(3文字の文字列要素をトークンとする)"
 
-# ee49e5da977642f08ae12cee571273a5
+# ed857e61189042adafd2056094abf120
 #: ../../../source/commands/table_create.txt:87
 msgid ""
 "形態素解析器mecabで解析した形態素をトークンとする。(mecabを組み込んだ場合のみ"
@@ -3203,7 +3377,7 @@ msgstr ""
 "形態素解析器mecabで解析した形態素をトークンとする。(mecabを組み込んだ場合のみ"
 "有効)"
 
-# 63f504b9a8564c898a84fc210d428628
+# 942373eb3158450dbed6e37a20e486bf
 #: ../../../source/commands/table_create.txt:89
 msgid ""
 "トークナイザが指定されなかった場合は、対象の文字列を分割せずに語彙表に登録し"
@@ -3212,12 +3386,12 @@ msgstr ""
 "トークナイザが指定されなかった場合は、対象の文字列を分割せずに語彙表に登録し"
 "ます。"
 
-# 58d735f0f34b405fadeb59aac9e9d5bd
+# 2d0629ede99a4c508d4a7e9b9c29a851
 #: ../../../source/commands/table_create.txt:108
 msgid "ShortText型の主キーを持つハッシュ表型のテーブル、Entryを作成します。::"
 msgstr "ShortText型の主キーを持つハッシュ表型のテーブル、Entryを作成します。::"
 
-# b21784faf5a74dc9bf4dfbed35008cd4
+# db601505e7ae4fff8c7d8d313b7a4187
 #: ../../../source/commands/table_create.txt:113
 msgid ""
 "ShortText型の主キーを持つパトリシア木型のテーブル、Termを作成します。主キー値"
@@ -3228,17 +3402,17 @@ msgstr ""
 "は正規化して管理します。また、このテーブルを語彙表とする転置索引を作成する場"
 "合には、バイグラムの索引を作成します。::"
 
-# f13ad635819c453bba288955b255afa7
+# cd04099737a544d38fdd1529ddcd68de
 #: ../../../source/commands/table_list.txt:6
 msgid "table_list"
 msgstr "table_list"
 
-# f402e8f3448444a494190b917933e7ce
+# f9d0e99f80584c5d855043b69e5f6597
 #: ../../../source/commands/table_list.txt:11
 msgid "table_list - DBに定義されているテーブルをリスト表示"
 msgstr "table_list - DBに定義されているテーブルをリスト表示"
 
-# e91cb3713ef94e42b9a671c2c5630bf9
+# 04c857521539459488336a1869b11bdb
 #: ../../../source/commands/table_list.txt:22
 msgid ""
 "groonga組込コマンドの一つであるtable_listについて説明します。組込コマンドは、"
@@ -3249,22 +3423,22 @@ msgstr ""
 "groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
 "エストを送信することによって実行します。"
 
-# d4921db7ded845b6b9c2b53f3d456b78
+# f612f12efbc647b887a9b2c7a919cf4f
 #: ../../../source/commands/table_list.txt:24
 msgid "table_listは、DBに定義されているテーブルのリストを表示します。"
 msgstr "table_listは、DBに定義されているテーブルのリストを表示します。"
 
-# 40769bccc4b64cb9b58603fd5b255827
+# 9786f65539b54d0686b8be5788449dec
 #: ../../../source/commands/table_list.txt:37
 msgid "テーブル名一覧が以下の形式で返却されます。::"
 msgstr "テーブル名一覧が以下の形式で返却されます。::"
 
-# 3e38a48bac3447f884df312a69f227ad
+# b113c40a684546c9b6c7396f902c4595
 #: ../../../source/commands/table_list.txt:41
 msgid "``テーブル情報名n``"
 msgstr "``テーブル情報名n``"
 
-# 8fcb029703d94793badda5decf5e9c09
+# d4ab3b9007404b8eae1f6d13725758da
 #: ../../../source/commands/table_list.txt:43
 msgid ""
 "``テーブル情報n`` には複数の情報が含まれますが、そこに入る情報がどんな内容か"
@@ -3273,52 +3447,52 @@ msgstr ""
 "``テーブル情報n`` には複数の情報が含まれますが、そこに入る情報がどんな内容か"
 "を示す名前を出力します。 情報名は以下の通りです。"
 
-# d7cf7ba4141a4bc2b0d11f53c7d91d30
+# de4c47f0f53a420fb3f2c0c126e5e1a4
 #: ../../../source/commands/table_list.txt:48
 msgid "テーブルオブジェクトに割り当てられたID"
 msgstr "テーブルオブジェクトに割り当てられたID"
 
-# 8d4d720c2d4e418c809f48a2a0f304a6
+# 7e3d7a2a9e964f5b92249d77d216452b
 #: ../../../source/commands/table_list.txt:52
 msgid "テーブル名"
 msgstr "テーブル名"
 
-# 26f25981b82840569969c966fdd4edb4
+# 5fc85a5c45a24afc98e3d5ed3f7e78e4
 #: ../../../source/commands/table_list.txt:56
 msgid "テーブルのレコードを格納するファイル名"
 msgstr "テーブルのレコードを格納するファイル名"
 
-# 620774f1558b4bb8a572538ab9a97618
+# 62c9c8585c2c444b94d13e3ca9187351
 #: ../../../source/commands/table_list.txt:60
 msgid "テーブルのflags属性"
 msgstr "テーブルのflags属性"
 
-# 0bfe8a11bb204c95902590a235089105
+# 7ff7443e15de455bb8d19f7a4ab5a256
 #: ../../../source/commands/table_list.txt:64
 msgid "主キー値の属する型"
 msgstr "主キー値の属する型"
 
-# 372405c977d949e6aa86b91cdda2494c
+# 8df60e9ddf4e44e18486cf1354a067cf
 #: ../../../source/commands/table_list.txt:68
 msgid "valueが属する型"
 msgstr "valueが属する型"
 
-# 1d4e40d995b148f7aa48d7943dcbd335
+# ddeca043d4f94fedbd273ab5c586cc8b
 #: ../../../source/commands/table_list.txt:70
 msgid "``テーブル情報型n``"
 msgstr "``テーブル情報型n``"
 
-# 0272113be6944f8fba54d646d9ab417d
+# b48ec6e2400c453585eb86eeff88b754
 #: ../../../source/commands/table_list.txt:72
 msgid "テーブル情報の型を出力します。"
 msgstr "テーブル情報の型を出力します。"
 
-# 9690cfb1187c4ae09e4d66ffa5458b79
+# b25a31ccbcb9439da0d69941469dba55
 #: ../../../source/commands/table_list.txt:74
 msgid "``テーブル情報n``"
 msgstr "``テーブル情報n``"
 
-# 6ef9147488f24841b67e990eb94c027d
+# fe10266bbbe84fc499745d6d5a68050c
 #: ../../../source/commands/table_list.txt:76
 msgid ""
 "``テーブル情報名n`` で示された情報の配列を出力します。 情報の順序は ``テーブ"
@@ -3327,17 +3501,17 @@ msgstr ""
 "``テーブル情報名n`` で示された情報の配列を出力します。 情報の順序は ``テーブ"
 "ル情報名n`` の順序と同じです。"
 
-# 90ef03cdd7a24296a948d50754f7270b
+# 2873c4a849e949c4b0c55e39ba2178de
 #: ../../../source/commands/table_remove.txt:6
 msgid "table_remove"
 msgstr "table_remove"
 
-# 76bdfa491a974ba3b2b47ed537f730ec
+# b79085260578415d85ce0ac6a0c457bd
 #: ../../../source/commands/table_remove.txt:11
 msgid "table_remove - テーブルの削除"
 msgstr "table_remove - テーブルの削除"
 
-# bc721dbbdeeb4cdf9ae371bc120487d6
+# 262614b68efb4b5faca502243e2b881a
 #: ../../../source/commands/table_remove.txt:22
 msgid ""
 "groonga組込コマンドの一つであるtable_removeについて説明します。組込コマンド"
@@ -3348,7 +3522,7 @@ msgstr ""
 "は、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバに"
 "リクエストを送信することによって実行します。"
 
-# baf71eb8bb8b4674a08991a83545ae27
+# cb2b5a6ff1734e098bbb2efad83f0cf5
 #: ../../../source/commands/table_remove.txt:24
 msgid ""
 "table_removeはテーブルと定義されているカラムを削除します。カラムに付随するイ"
@@ -3357,17 +3531,17 @@ msgstr ""
 "table_removeはテーブルと定義されているカラムを削除します。カラムに付随するイ"
 "ンデックスも再帰的に削除されます。"
 
-# cf5df90ebcd2492e8a5a276897aabe2b
+# afc248cec5574919871d1ad020fa858e
 #: ../../../source/commands/view_add.txt:6
 msgid "view_add"
 msgstr "view_add"
 
-# 3bacf4d548d94083b9e422d08d2640b5
+# e7950978052c4593bfa6c31a3f3e4e97
 #: ../../../source/commands/view_add.txt:11
 msgid "view_add - view型のテーブルに要素となるテーブルを追加"
 msgstr "view_add - view型のテーブルに要素となるテーブルを追加"
 
-# 6a7da323d3db476d8a9005aed6cc91e2
+# 8f73347d11694bd3aa9b7826f4cdf2bf
 #: ../../../source/commands/view_add.txt:22
 msgid ""
 "groonga組込コマンドの一つであるview_addについて説明します。組込コマンドは、"
@@ -3378,263 +3552,27 @@ msgstr ""
 "groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
 "エストを送信することによって実行します。"
 
-# 089d0bf86136466ead702e96dc035812
+# e03e1a03345c4a9cb247eaf3529534c4
 #: ../../../source/commands/view_add.txt:24
 msgid "view_addは、view型のテーブルに要素となるテーブルを定義します。"
 msgstr "view_addは、view型のテーブルに要素となるテーブルを定義します。"
 
-# c960e748780a4dc598651b8c38c44716
+# 37e0e751194b49049038422c89ad95e7
 #: ../../../source/commands/view_add.txt:29
 msgid "``view``"
 msgstr "``view``"
 
-# 604c3dbbbe7d4106b589d98e04b1fcb2
+# 29d2d48c17e14947a17bc405fec10b2a
 #: ../../../source/commands/view_add.txt:31
 msgid "テーブルを追加するview型のテーブルの名前を指定します。"
 msgstr "テーブルを追加するview型のテーブルの名前を指定します。"
 
-# 255906897b464f82ae27e76ac7c9103b
+# 3a8e6cc03bb04a009c3155c7154ee04a
 #: ../../../source/commands/view_add.txt:35
 msgid "view型のテーブルに追加されるテーブルの名前を指定します。"
 msgstr "view型のテーブルに追加されるテーブルの名前を指定します。"
 
-# 4c576755fa1e484886b5f42b0ebdfdba
+# 627eefa232bc48bc89a6f6becf02208d
 #: ../../../source/commands/view_add.txt:54
 msgid "view_add Ventry Entry [true]"
 msgstr "view_add Ventry Entry [true]"
-
-# 58738da3ccdd4b8c9c21c4b2b61a1211
-#~ msgid ""
-#~ "** 未だ仕様は確定しておりません。利用のためには特定のデータを持つテーブル"
-#~ "が必要となります。 **"
-#~ msgstr ""
-#~ "** 未だ仕様は確定しておりません。利用のためには特定のデータを持つテーブル"
-#~ "が必要となります。 **"
-
-# e327482145f744e787aee4d6d3d7a02f
-#~ msgid "suggest - 指定したクエリに対する補完・修正・提案を行う。"
-#~ msgstr "suggest - 指定したクエリに対する補完・修正・提案を行う。"
-
-# 9cb50192e38b465e883c0ecdc98e1ce3
-#~ msgid ""
-#~ "suggestコマンドは、指定したクエリに対して補完・修正・提案を行います。"
-#~ msgstr ""
-#~ "suggestコマンドは、指定したクエリに対して補完・修正・提案を行います。"
-
-# 62338c55e33340c88150aab5477afb82
-#~ msgid ""
-#~ "補完とは、クエリの未入力・未変換部分を補うことです。修正とは、クエリ内のミ"
-#~ "スタイプや誤変換を修正することです。提案とは、さらなる絞込みを行うための候"
-#~ "補となるクエリを提案することです。"
-#~ msgstr ""
-#~ "補完とは、クエリの未入力・未変換部分を補うことです。修正とは、クエリ内のミ"
-#~ "スタイプや誤変換を修正することです。提案とは、さらなる絞込みを行うための候"
-#~ "補となるクエリを提案することです。"
-
-# 98a5a9b4258a4efe967934cd876b1096
-#~ msgid "``types``"
-#~ msgstr "``types``"
-
-# 4bbdc5b0e39749c4b65b0bd813819e32
-#~ msgid ""
-#~ "補完・修正・提案のいずれを行うかを、パイプ('|')で組み合わせたシンボル名で"
-#~ "指定します(例: correct|suggest)"
-#~ msgstr ""
-#~ "補完・修正・提案のいずれを行うかを、パイプ('|')で組み合わせたシンボル名で"
-#~ "指定します(例: correct|suggest)"
-
-# bfa4263e2cca46d5afc55b25166fd2eb
-#~ msgid "``complete``"
-#~ msgstr "``complete``"
-
-# 4b055f2ccd52456aa3a6dc26600b9ee6
-#~ msgid "補完を行います。"
-#~ msgstr "補完を行います。"
-
-# ccfd1f926f5141e29e4230e06a6d8740
-#~ msgid "``correct``"
-#~ msgstr "``correct``"
-
-# fa917ea5711e4dd89e8b66c7404830a3
-#~ msgid "修正を行います。"
-#~ msgstr "修正を行います。"
-
-# e2894f7f3e2a4faea18c8d9551c18d89
-#~ msgid "提案を行います。"
-#~ msgstr "提案を行います。"
-
-# da552bb835aa45408b2f1363510927ae
-#~ msgid "基礎となるデータが格納されているテーブル名を指定します。"
-#~ msgstr "基礎となるデータが格納されているテーブル名を指定します。"
-
-# ed377ed637424a8b96f2c425a6408d66
-#~ msgid "``column``"
-#~ msgstr "``column``"
-
-# 1b16dbf915334218847dec76f1e40655
-#~ msgid ""
-#~ "基礎となるデータが格納されているテーブルにおいて、「ヨミガナ」が格納されて"
-#~ "いるカラム名を指定します。"
-#~ msgstr ""
-#~ "基礎となるデータが格納されているテーブルにおいて、「ヨミガナ」が格納されて"
-#~ "いるカラム名を指定します。"
-
-# 8cecf7e17f0842e3b71c278f360f2c09
-#~ msgid "補完・修正・提案の対象となるクエリを指定します。"
-#~ msgstr "補完・修正・提案の対象となるクエリを指定します。"
-
-# a4dca02631b74a2c95cc28f42ff34ad6
-#~ msgid ""
-#~ "query引数とfilter引数をどちらも指定した場合は、両方の条件を満足するレコー"
-#~ "ドのみがヒットします。どちらも指定しない場合は全件がヒットします。"
-#~ msgstr ""
-#~ "query引数とfilter引数をどちらも指定した場合は、両方の条件を満足するレコー"
-#~ "ドのみがヒットします。どちらも指定しない場合は全件がヒットします。"
-
-# 7eac691c91dd45f5a85d1ba57339af3b
-#~ msgid "絞り込み条件をscript形式のgrn_expr文字列によって指定します。"
-#~ msgstr "絞り込み条件をscript形式のgrn_expr文字列によって指定します。"
-
-# 77ec8effb6e945d187dade10b0b363e1
-#~ msgid "複数の条件をまとめる"
-#~ msgstr "複数の条件をまとめる"
-
-# 8ce9fff76df64418a113cd86c6db82cf
-#~ msgid "aにマッチし、bにはマッチしない"
-#~ msgstr "aにマッチし、bにはマッチしない"
-
-# 64c48f89856b4173aa3c7d77d490d8ad
-#~ msgid "論理積(aとbの両方がマッチする)"
-#~ msgstr "論理積(aとbの両方がマッチする)"
-
-# b929dc676dd14aee8a187b73d4105256
-#~ msgid "論理和(aとbといずれかの条件がマッチする)"
-#~ msgstr "論理和(aとbといずれかの条件がマッチする)"
-
-# d6dca84189fc4d04a9e9d55158122479
-#~ msgid "複数の条件式を結合するために以下の演算子が使用できます。"
-#~ msgstr "複数の条件式を結合するために以下の演算子が使用できます。"
-
-# 29b9dd42be654835b44e1b5ad466d288
-#~ msgid "結合演算子"
-#~ msgstr "結合演算子"
-
-# c67a80c06d624bbeb6c7293c603cd1a6
-#~ msgid "全文検索条件(カラム値が指定された文字列を含んでいる)"
-#~ msgstr "全文検索条件(カラム値が指定された文字列を含んでいる)"
-
-# f22762d02f424340a10586e4d9f89cbb
-#~ msgid "比較条件(カラム値 >= 値)"
-#~ msgstr "比較条件(カラム値 >= 値)"
-
-# 956851c3594f4aab9c6201e0c66d6b51
-#~ msgid "比較条件(カラム値 <= 値)"
-#~ msgstr "比較条件(カラム値 <= 値)"
-
-# ef3b9e19b5094e1c9f7461e74bbb5e57
-#~ msgid "比較条件(カラム値 > 値)"
-#~ msgstr "比較条件(カラム値 > 値)"
-
-# 20bf230df7754f83aedf9a112cd63494
-#~ msgid "比較条件(カラム値 < 値)"
-#~ msgstr "比較条件(カラム値 < 値)"
-
-# 193cfbcb49ea409f83b9bc659ab16d82
-#~ msgid "不一致条件(カラム値 != 値)"
-#~ msgstr "不一致条件(カラム値 != 値)"
-
-# 0931a784e1f749d4a2e1e5958d2fecce
-#~ msgid "一致条件(カラム値 == 値)"
-#~ msgstr "一致条件(カラム値 == 値)"
-
-# 7a195b024d1640f48bd4187fb8afb9d0
-#~ msgid ""
-#~ "フレーズ検索条件(デフォルト検索対象カラムの値が指定されたフレーズを含んで"
-#~ "いる)"
-#~ msgstr ""
-#~ "フレーズ検索条件(デフォルト検索対象カラムの値が指定されたフレーズを含んで"
-#~ "いる)"
-
-# fb243ba819db429391dfe5abb2c28c4a
-#~ msgid ""
-#~ "全文検索条件(デフォルト検索対象カラムの値が指定された文字列を含んでいる)"
-#~ msgstr ""
-#~ "全文検索条件(デフォルト検索対象カラムの値が指定された文字列を含んでいる)"
-
-# bca8b8773211447995b87ddf629d297d
-#~ msgid "以下の条件式が使用できます。"
-#~ msgstr "以下の条件式が使用できます。"
-
-# 9caa9ae5f4d9490d8bcec6af3e508743
-#~ msgid "条件式"
-#~ msgstr "条件式"
-
-# 00a090f6963a4950acb65aa5c01d1b0e
-#~ msgid "以下の形式の文字列によって検索条件を指定します。"
-#~ msgstr "以下の形式の文字列によって検索条件を指定します。"
-
-# 1573d222105e4e58be2165675f79fcb9
-#~ msgid ""
-#~ "また、カラム名ではなく、検索に使用するインデックス名を指定することもできま"
-#~ "す。"
-#~ msgstr ""
-#~ "また、カラム名ではなく、検索に使用するインデックス名を指定することもできま"
-#~ "す。"
-
-# 841d36b2fc79448a8c40a3bfa1d0b013
-#~ msgid "カラム名1 * 重み1 || カラム名2 * 重み2"
-#~ msgstr "カラム名1 * 重み1 || カラム名2 * 重み2"
-
-# 2279f4bc1ab248699c689af3ff94960a
-#~ msgid "複数のカラムを'||'で結合して指定することもできます。"
-#~ msgstr "複数のカラムを'||'で結合して指定することもできます。"
-
-# 742cc8ebf2564f45921e9ffb5a66f3e0
-#~ msgid "カラム名 * 重み"
-#~ msgstr "カラム名 * 重み"
-
-# d8f6661a824643b7807c25b4546d8820
-#~ msgid ""
-#~ "カラム名の後ろに'* 数値'を指定することによって、そのカラムにヒットした際の"
-#~ "スコアに積算される重みを指定することができます。"
-#~ msgstr ""
-#~ "カラム名の後ろに'* 数値'を指定することによって、そのカラムにヒットした際の"
-#~ "スコアに積算される重みを指定することができます。"
-
-# 76a487b36b104ae2aa59fc5aefc20c9b
-#~ msgid ""
-#~ "query引数に指定する検索条件文字列でデフォルトの検索対象となるカラムを指定"
-#~ "します。"
-#~ msgstr ""
-#~ "query引数に指定する検索条件文字列でデフォルトの検索対象となるカラムを指定"
-#~ "します。"
-
-# 77923174eaa443bb9803c324032be82e
-#~ msgid ""
-#~ "検索対象のテーブルを指定します。存在しないテーブルを指定した場合はエラーに"
-#~ "なります。"
-#~ msgstr ""
-#~ "検索対象のテーブルを指定します。存在しないテーブルを指定した場合はエラーに"
-#~ "なります。"
-
-# 8ebc6f8466cb43c19b03f053098692be
-#~ msgid ""
-#~ "selectは、使用しているデータベースのテーブルの中から条件にマッチするレコー"
-#~ "ドを検索して出力します。"
-#~ msgstr ""
-#~ "selectは、使用しているデータベースのテーブルの中から条件にマッチするレコー"
-#~ "ドを検索して出力します。"
-
-# fc6db8fd1ad94a92bbaa2025fde32b1b
-#~ msgid ""
-#~ "groonga組込コマンドの一つであるselectについて説明します。組込コマンドは、"
-#~ "groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリ"
-#~ "クエストを送信することによって実行します。"
-#~ msgstr ""
-#~ "groonga組込コマンドの一つであるselectについて説明します。組込コマンドは、"
-#~ "groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリ"
-#~ "クエストを送信することによって実行します。"
-
-# 518a1a67f1c8471595c39a3e6ee9bf29
-#~ msgid "select - テーブルの中から条件にマッチするレコードを検索して出力する"
-#~ msgstr "select - テーブルの中から条件にマッチするレコードを検索して出力する"

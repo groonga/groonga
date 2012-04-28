@@ -1,43 +1,43 @@
-# English translations for 1.2.4 package.
-# Copyright (C) 2009-2011, Brazil, Inc
+# English translations for 2.0.1 package.
+# Copyright (C) 2009-2012, Brazil, Inc
 # This file is distributed under the same license as the groonga package.
-# Kouhei Sutou <kou@clear-code.com>, 2011.
+# Kouhei Sutou <kou@clear-code.com>, 2012.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: 1.2.4\n"
+"Project-Id-Version: 2.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-12 22:06\n"
-"PO-Revision-Date: 2011-08-12 22:01+0900\n"
+"POT-Creation-Date: 2012-04-28 11:36\n"
+"PO-Revision-Date: 2012-04-28 11:38+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
-"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-# e0c00a59182845a98ba1ad30a1c4d93c
+# 36878f55a3134e7a94b63c43735065bc
 #: ../../../source/pseudo_column.txt:6
 msgid "疑似カラム (pseudo_column)"
 msgstr "疑似カラム (pseudo_column)"
 
-# b6d93ee7bdb34327b318e64f412378e6
+# 134cdaa6dcd543b4a7ad79dc1b4ed5b4
 #: ../../../source/pseudo_column.txt:9
 msgid "名前"
 msgstr "名前"
 
-# 41c72a10e7d84c75ab45424ed6ba4c03
+# b157ebefb26c4fabbae46ac70f174024
 #: ../../../source/pseudo_column.txt:11
 msgid "疑似カラム"
 msgstr "疑似カラム"
 
-# c5331890e90a4e23a8b065e446cc53b1
+# 5911096f0e704382aed02c7eaf9bc421
 #: ../../../source/pseudo_column.txt:14
 msgid "説明"
 msgstr "説明"
 
-# dbe0e353e7384fcc8d8270002cdc8add
+# ce877ec73f3045aaac48b43f9c073982
 #: ../../../source/pseudo_column.txt:16
 msgid ""
 "groongaのデータベースで作成したテーブルには、いくつかのカラムが自動的に定義さ"
@@ -46,7 +46,7 @@ msgstr ""
 "groongaのデータベースで作成したテーブルには、いくつかのカラムが自動的に定義さ"
 "れます。"
 
-# 6101113e80c847a78ee2880566914b96
+# 8b29d431362f4a8b95638e8e7b1eb377
 #: ../../../source/pseudo_column.txt:18
 msgid ""
 "これらのカラムはいずれもアンダースコア('_')で始まる名前が付与されます。定義さ"
@@ -55,12 +55,12 @@ msgstr ""
 "これらのカラムはいずれもアンダースコア('_')で始まる名前が付与されます。定義さ"
 "れる疑似カラムは、テーブルの種類によって異なります。"
 
-# 2fc9acdfef3f4ac08e5f9d6f72b7e91b
+# e9aec889f3504801b347f4946d3d67ba
 #: ../../../source/pseudo_column.txt:20
 msgid "``_id``"
 msgstr "``_id``"
 
-# d2080b111d1c40a59e997ec3a9464a56
+# 867d844643a2479eab7291df6a977da9
 #: ../../../source/pseudo_column.txt:22
 msgid ""
 "レコードに付与される一意な番号です。全てのテーブルに定義されます。値の範囲は"
@@ -73,12 +73,12 @@ msgstr ""
 "は不変で、レコードが存在する限り変更することはできません。ただし、削除された"
 "レコードの_idの値は再利用されます。"
 
-# 726f79d4a9614320ab7ea062ed127807
+# a83082328c41462495641bb58e8fe97c
 #: ../../../source/pseudo_column.txt:24
 msgid "``_key``"
 msgstr "``_key``"
 
-# de3d1898a9154c38b2b42d59bac3a30c
+# 4fd3b53471ef48a1b72f24ef9cc12ce8
 #: ../../../source/pseudo_column.txt:26
 msgid ""
 "レコードの主キー値を表します。主キーを持つテーブルのみに定義されます。主キー"
@@ -87,12 +87,12 @@ msgstr ""
 "レコードの主キー値を表します。主キーを持つテーブルのみに定義されます。主キー"
 "値はテーブルの中で一意であり、変更することはできません。"
 
-# db8f75bd6855412e82ea23ec67208f19
+# 5837ef42ed0448498b33033b4c91c34f
 #: ../../../source/pseudo_column.txt:28
 msgid "``_value``"
 msgstr "``_value``"
 
-# 95628e7b047c4b2d9876039c1c2856df
+# f704f014dae54e8799564046882891bb
 #: ../../../source/pseudo_column.txt:30
 msgid ""
 "レコードの値を表します。value_typeを指定したテーブルのみに定義されます。自由"
@@ -101,12 +101,12 @@ msgstr ""
 "レコードの値を表します。value_typeを指定したテーブルのみに定義されます。自由"
 "に変更可能です。"
 
-# f8027f0afd86422d9d133fc0425b6bb8
+# c2ccf67fadd24cca9d0e9ab23c74e12b
 #: ../../../source/pseudo_column.txt:32
 msgid "``_score``"
 msgstr "``_score``"
 
-# f5667e40e315411394b92acd8dd1db1b
+# a229d797ef374b70b3ce0603cb51768c
 #: ../../../source/pseudo_column.txt:34
 msgid ""
 "各レコードのスコア値を表します。検索結果として生成されたテーブルのみに定義さ"
@@ -115,17 +115,17 @@ msgstr ""
 "各レコードのスコア値を表します。検索結果として生成されたテーブルのみに定義さ"
 "れます。"
 
-# 85f1a7ae08734f719d52729d420d263f
+# 697f9ae02baa4dfeb572bbfe4dc7200e
 #: ../../../source/pseudo_column.txt:36
 msgid "検索処理を実行する過程で値が設定されますが、自由に変更可能です。"
 msgstr "検索処理を実行する過程で値が設定されますが、自由に変更可能です。"
 
-# 0a86adabe5d54167a4d13eb0b923f3b5
+# f9bddf8af5a44d3d9c202f71ccfe3ecc
 #: ../../../source/pseudo_column.txt:38
 msgid "``_nsubrecs``"
 msgstr "``_nsubrecs``"
 
-# 1ba180d66ae8420e9aafd156a88583bd
+# edf0678d507d4d1b93f182848b26ac63
 #: ../../../source/pseudo_column.txt:40
 msgid ""
 "主キーの値が同一であったレコードの件数を表します。検索結果として生成された"
