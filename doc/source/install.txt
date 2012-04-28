@@ -348,6 +348,6 @@ Install::
 
  ./configure --prefix=/usr --localstatedir=/var && make && sudo make install
 
-The `--prefix` option specifies the path to install groonga. If you don't specify the install path, "/usr/local" is used. Please specify "/usr" if you are not familiar with environment variables such as LD_LIBRARY_PATH.
+The ``--prefix`` option specifies the path to install groonga. If you don't specify the install path, "/usr/local" is used. Please specify "/usr" if you are not familiar with environment variables such as LD_LIBRARY_PATH.
 
 There are some `Munin <http://munin-monitoring.org/>`_ plugins in groonga package. You need to specify `--with-munin-plugins` option if you want to install them.
