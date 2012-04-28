@@ -181,6 +181,37 @@ Install groonga-munin-plugins package::
 
   % sudo apt-get -y install groonga-munin-plugins
 
+Ubuntu 12.04 Precise Pangolin
+-----------------------------
+
+.. note::
+
+   You'll need to enable the universe repository of Ubuntu to install groonga.
+   The following describes how to do it.
+
+/etc/apt/sources.list.d/groonga.list::
+
+  deb http://packages.groonga.org/ubuntu/ precise universe
+  deb-src http://packages.groonga.org/ubuntu/ precise universe
+
+Install::
+
+  % sudo apt-get update
+  % sudo apt-get -y --allow-unauthenticated install groonga-keyring
+  % sudo apt-get -y install groonga
+
+If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a tokenizer. please install groonga-tokenizer-mecab package.
+
+Install groonga-tokenizer-mecab package::
+
+  % sudo apt-get -y install groonga-tokenizer-mecab
+
+There is a package that provides `Munin <http://munin-monitoring.org/>`_ plugins. If you want to monitor groonga status by Munin, please install groonga-munin-plugins package.
+
+Install groonga-munin-plugins package::
+
+  % sudo apt-get -y install groonga-munin-plugins
+
 CentOS 5
 --------
 
