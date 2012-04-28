@@ -43,9 +43,9 @@ upload: ensure-rsync-path
 	     dists pool $(RSYNC_PATH)/$${distribution});	\
 	done
 
-build: build-in-chroot build-repository-deb
+build: build-package-deb build-repository-deb
 
-build-in-chroot: source
+build-package-deb: source
 	./build-in-chroot.sh \
 	  $(PACKAGE) $(VERSION) $(srcdir)/.. $(CHROOT_BASE) \
 	  '$(ARCHITECTURES)' '$(CODES)'
