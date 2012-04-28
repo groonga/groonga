@@ -59,7 +59,11 @@ source: ../$(PACKAGE)-$(VERSION).tar.gz
 
 repository-source: $(REPOSITORY_BASE_NAME).tar.gz
 
-$(REPOSITORY_BASE_NAME).tar.gz: $(top_srcdir)/gpg_uid
+ensure-public-key:
+	gpg --list-keys '$(GPG_UID)' > /dev/null ||			\
+	  gpg --keyserver keyserver.ubuntu.com --recv-key '$(GPG_UID)'
+
+$(REPOSITORY_BASE_NAME).tar.gz: ensure-public-key
 	rm -rf $(REPOSITORY_BASE_NAME)
 	mkdir -p $(REPOSITORY_BASE_NAME)
 	gpg --armor --export '$(GPG_UID)' > \
