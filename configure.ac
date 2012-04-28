@@ -1116,7 +1116,7 @@ AC_ARG_WITH(rsync-path,
             [AS_HELP_STRING([--with-rsync-path=PATH],
             [specify rsync path to upload groonga packages.])],
             [RSYNC_PATH="$withval"],
-            [RSYNC_PATH=""])
+            [RSYNC_PATH="packages@packages.groonga.org:public"])
 AC_SUBST(RSYNC_PATH)
 
 GPG_UID=m4_include(gpg_uid)
