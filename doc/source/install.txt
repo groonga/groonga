@@ -21,7 +21,7 @@ Debian GNU/Linux squeeze
 Install::
 
   % sudo aptitude update
-  % sudo aptitude -V -D -y install groonga-keyring
+  % sudo aptitude -V -D -y --allow-untrusted install groonga-keyring
   % sudo aptitude -V -D -y install groonga
 
 If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a tokenizer. please install groonga-tokenizer-mecab package.
@@ -47,7 +47,7 @@ Debian GNU/Linux wheezy
 Install::
 
   % sudo aptitude update
-  % sudo aptitude -V -D -y install groonga-keyring
+  % sudo aptitude -V -D -y --allow-untrusted install groonga-keyring
   % sudo aptitude -V -D -y install groonga
 
 If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a tokenizer. please install groonga-tokenizer-mecab package.
@@ -73,7 +73,7 @@ Debian GNU/Linux sid
 Install::
 
   % sudo aptitude update
-  % sudo aptitude -V -D -y install groonga-keyring
+  % sudo aptitude -V -D -y --allow-untrusted install groonga-keyring
   % sudo aptitude -V -D -y install groonga
 
 If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a tokenizer. please install groonga-tokenizer-mecab package.
@@ -104,7 +104,7 @@ Ubuntu 10.04 LTS Lucid Lynx
 Install::
 
   % sudo apt-get update
-  % sudo apt-get -y install groonga-keyring
+  % sudo apt-get -y --allow-unauthenticated install groonga-keyring
   % sudo apt-get -y install groonga
 
 If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a tokenizer. please install groonga-tokenizer-mecab package.
@@ -135,7 +135,7 @@ Ubuntu 11.04 Natty Narwhal
 Install::
 
   % sudo apt-get update
-  % sudo apt-get -y install groonga-keyring
+  % sudo apt-get -y --allow-unauthenticated install groonga-keyring
   % sudo apt-get -y install groonga
 
 If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a tokenizer. please install groonga-tokenizer-mecab package.
@@ -166,7 +166,7 @@ Ubuntu 11.10 Oneiric Ocelot
 Install::
 
   % sudo apt-get update
-  % sudo apt-get -y install groonga-keyring
+  % sudo apt-get -y --allow-unauthenticated install groonga-keyring
   % sudo apt-get -y install groonga
 
 If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a tokenizer. please install groonga-tokenizer-mecab package.
