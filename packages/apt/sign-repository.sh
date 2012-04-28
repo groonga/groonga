@@ -36,5 +36,11 @@ for code_name in ${CODES}; do
 	--local-user ${GPG_UID} \
 	--local-user 1C837F31 \
 	--output ${release}.gpg \
-	${release}
+	${release} &
+
+    if [ "${PARALLEL}" != "yes" ]; then
+	wait
+    fi
 done
+
+wait

@@ -120,5 +120,10 @@ for code_name in ${CODES}; do
 
     mkdir -p packages/${distribution}
     (cd packages/${distribution}
-	update_repository $distribution $code_name $component)
+	update_repository $distribution $code_name $component) &
+    if [ "${PARALLEL}" != "yes" ]; then
+	wait
+    fi
 done
+
+wait
