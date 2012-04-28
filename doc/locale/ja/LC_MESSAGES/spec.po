@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-04-27 23:53\n"
-"PO-Revision-Date: 2011-05-09 00:37+0900\n"
+"PO-Revision-Date: 2012-04-28 11:40+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -24,7 +24,7 @@ msgstr ""
 # f22814ecf4034afc9219c94acde3344c
 #: ../../../source/spec/query_syntax.txt:9
 msgid "Query syntax"
-msgstr ""
+msgstr "クエリ構文"
 
 # fce4a207dd274d16a8b2afc7cae872e3
 #: ../../../source/spec/query_syntax.txt:11
@@ -199,7 +199,7 @@ msgstr ""
 # 47dc2b34beb1410495604199c7f24873
 #: ../../../source/spec/script_syntax.txt:9
 msgid "Script Syntax"
-msgstr ""
+msgstr "スクリプト構文"
 
 # fe884bf6e29c4463b588f80a985ddf99
 #: ../../../source/spec/script_syntax.txt:11
