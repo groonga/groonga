@@ -58,18 +58,13 @@ build_chroot()
 	    distribution_architecture=i686
 	fi
     fi
-    if [ "$distribution_name-$distribution_version" = "fedora-16" ]; then
-	rinse_distribution_version="15"
-    else
-	rinse_distribution_version="$distribution_version"
-    fi
 
     run_sudo mkdir -p ${base_dir}/etc/rpm
     rpm_platform=${distribution_architecture}-${distribution}-linux
     run_sudo sh -c "echo ${rpm_platform} > ${base_dir}/etc/rpm/platform"
     run_sudo rinse \
 	--arch $rinse_architecture \
-	--distribution $distribution_name-$rinse_distribution_version \
+	--distribution $distribution_name-$distribution_version \
 	--directory $base_dir
     run_sudo rinse --arch $rinse_architecture --clean-cache
 
