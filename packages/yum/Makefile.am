@@ -23,13 +23,13 @@ update:
 
 upload: ensure-rsync-path
 	for distribution in $(DISTRIBUTIONS); do		\
-	  rsync -avz --delete --exclude .gitignore		\
+	  rsync -avz --progress --delete --exclude .gitignore	\
 	    $${distribution}/ $(SERVER_PATH)/$${distribution};	\
 	done
 
 download: ensure-rsync-path
 	for distribution in $(DISTRIBUTIONS); do		\
-	   rsync -avz --delete					\
+	   rsync -avz --progress --delete			\
 	     $(SERVER_PATH)/$${distribution}/ $${distribution};	\
 	done
 

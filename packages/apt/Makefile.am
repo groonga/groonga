@@ -23,7 +23,7 @@ ensure-rsync-path:
 
 download: ensure-rsync-path
 	for distribution in $(DISTRIBUTIONS); do	\
-	  rsync -avz --delete				\
+	  rsync -avz --progress --delete		\
 	    $(RSYNC_PATH)/$${distribution} packages/;	\
 	done
 
@@ -39,7 +39,7 @@ sign-repository:
 upload: ensure-rsync-path
 	for distribution in $(DISTRIBUTIONS); do		\
 	  (cd packages/$${distribution};			\
-	   rsync -avz --delete					\
+	   rsync -avz --progress --delete			\
 	     dists pool $(RSYNC_PATH)/$${distribution});	\
 	done
 

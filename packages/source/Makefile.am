@@ -9,10 +9,10 @@ ensure-rsync-path:
 	fi
 
 download: ensure-rsync-path
-	rsync -avz $(RSYNC_PATH)/source/groonga/ files
+	rsync -avz --progress $(RSYNC_PATH)/source/groonga/ files
 
 upload: ensure-rsync-path files/$(PACKAGE)-$(VERSION).tar.gz
-	rsync -avz --delete files/ $(RSYNC_PATH)/source/groonga
+	rsync -avz --progress --delete files/ $(RSYNC_PATH)/source/groonga
 
 files/$(PACKAGE)-$(VERSION).tar.gz: $(top_builddir)/$(PACKAGE)-$(VERSION).tar.gz
 	mkdir -p files
