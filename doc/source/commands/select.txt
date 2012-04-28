@@ -53,7 +53,7 @@ Here are a schema definition and sample data to show usage.
 .. include:: ../example/commands/select/usage_setup.log
 .. table_create Entries TABLE_HASH_KEY ShortText
 .. column_create Entries content COLUMN_SCALAR Text
-.. table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram
+.. table_create Terms TABLE_PAT_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenBigram
 .. column_create Terms entries_key_index COLUMN_INDEX|WITH_POSITION Entries _key
 .. column_create Terms entries_content_index COLUMN_INDEX|WITH_POSITION Entries content
 .. load --table Entries
@@ -76,17 +76,17 @@ OK. The schema and data for examples are ready.
 Simple usage
 ^^^^^^^^^^^^
 
-Here is the most simple usage with the above shema and data. It shows
+Here is the most simple usage with the above shema and data. It outputs
 all records in ``Entries`` table.
 
 .. groonga-command
 .. include:: ../example/commands/select/simple_usage.log
 .. select Entries
 
-Why doest the command output all records? There are two reasons. The
+Why does the command output all records? There are two reasons. The
 first reason is that the command doesn't specify any search
 conditions. No search condition means all records are matched. The
-second reason is that the number of all records is 2. ``select``
+second reason is that the number of all records is 3. ``select``
 command outputs 10 records at a maximum by default. There are only 3
 records. It is less than 10. So the command outputs all records.
 
@@ -143,7 +143,7 @@ in ``content`` column value and has ``Groonga`` as ``_key`` from
 ``Entries`` table. There are three operators in the command, ``@``,
 ``&&`` and ``==``. ``@`` is fulltext search operator. ``&&`` and
 ``==`` are the same as ECMAScript. ``&&`` is logical AND operator and
-``==`` is equal operator.
+``==`` is equality operator.
 
 ``filter`` has more operators and syntax like grouping by ``(...)``
 its deatils aren't described here. See :doc:`/spec/script_syntax` for
@@ -152,7 +152,7 @@ datails.
 Paging
 ^^^^^^
 
-You can specify range of returned records by ``offset`` and ``limit``.
+You can specify range of outputted records by ``offset`` and ``limit``.
 Here is an example to output only the 2nd record.
 
 .. groonga-command
@@ -170,13 +170,13 @@ The total number of records
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 You can use ``--limit 0`` to retrieve the total number of recrods
-without any contents of matched records.
+without any contents of records.
 
 .. groonga-command
 .. include:: ../example/commands/select/no_limit.log
 .. select Entries --limit 0
 
-``--limit 0`` is useful for retrieving only the number of matched
+``--limit 0`` is also useful for retrieving only the number of matched
 records.
 
 Parameters
@@ -303,9 +303,9 @@ TODO: add example.
 
 It specifies threshold to determine whether search storategy
 escalation is used or not. The threshold is compared against the
-number of matched records. If the number of matched records is less
-than the threshold, search storategy escalation is used. See
-:doc:`/spec/search` about search storategy escalation.
+number of matched records. If the number of matched records is equal
+to or less than the threshold, search storategy escalation is
+used. See :doc:`/spec/search` about search storategy escalation.
 
 The default threshold is 0. It means that search storategy escalation
 is used only when no records are matched.
