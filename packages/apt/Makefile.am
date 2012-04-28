@@ -8,7 +8,7 @@ REPOSITORY_BASE_NAME = $(REPOSITORY_PACKAGE)-$(REPOSITORY_VERSION)
 
 all:
 
-release: build update sign upload
+release: build sign-packages update sign upload
 
 remove-existing-packages:
 	for distribution in $(DISTRIBUTIONS); do		\
@@ -26,6 +26,9 @@ download: ensure-rsync-path
 	  rsync -avz --delete				\
 	    $(RSYNC_PATH)/$${distribution} packages/;	\
 	done
+
+sign-packages:
+	./sign-packages.sh '$(GPG_UID)' '$(CODES)'
 
 update:
 	./update-repository.sh '$(PACKAGE_NAME)' '$(ARCHITECTURES)' '$(CODES)'
