@@ -31,5 +31,5 @@ run rpm \
     -D "_gpg_name ${GPG_UID}" \
     -D "__gpg /usr/bin/gpg2" \
     -D "__gpg_check_password_cmd /bin/true true" \
-    -D "__gpg_sign_cmd %{__gpg} gpg --batch --no-verbose --no-armor %{?_gpg_digest_algo:--digest-algo %{_gpg_digest_algo}} --no-secmem-warning -u \"%{_gpg_name}\" -u \"1C837F31\" -sbo %{__signature_filename} %{__plaintext_filename}" \
+    -D "__gpg_sign_cmd %{__gpg} gpg --batch --no-verbose --no-armor %{?_gpg_digest_algo:--digest-algo %{_gpg_digest_algo}} --no-secmem-warning -u \"%{_gpg_name}\" -sbo %{__signature_filename} %{__plaintext_filename}" \
     --resign $rpms
