@@ -1605,8 +1605,8 @@ static void yy_reduce(
   DFI_PUT(e, dfi_->type, dfi_->domain, dfi_->code);
   if (const_p) {
     ERR(GRN_SYNTAX_ERROR,
-        "constant can't be incremented (%*s)",
-        efsi->str_end - efsi->str, efsi->str);
+        "constant can't be incremented (%.*s)",
+        (int)(efsi->str_end - efsi->str), efsi->str);
   } else {
     grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_INCR, 1);
   }
@@ -1626,8 +1626,8 @@ static void yy_reduce(
   DFI_PUT(e, dfi_->type, dfi_->domain, dfi_->code);
   if (const_p) {
     ERR(GRN_SYNTAX_ERROR,
-        "constant can't be decremented (%*s)",
-        efsi->str_end - efsi->str, efsi->str);
+        "constant can't be decremented (%.*s)",
+        (int)(efsi->str_end - efsi->str), efsi->str);
   } else {
     grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_DECR, 1);
   }
@@ -1703,8 +1703,8 @@ static void yy_reduce(
   DFI_PUT(e, dfi_->type, dfi_->domain, dfi_->code);
   if (const_p) {
     ERR(GRN_SYNTAX_ERROR,
-        "constant can't be incremented (%*s)",
-        efsi->str_end - efsi->str, efsi->str);
+        "constant can't be incremented (%.*s)",
+        (int)(efsi->str_end - efsi->str), efsi->str);
   } else {
     grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_INCR_POST, 1);
   }
@@ -1724,8 +1724,8 @@ static void yy_reduce(
   DFI_PUT(e, dfi_->type, dfi_->domain, dfi_->code);
   if (const_p) {
     ERR(GRN_SYNTAX_ERROR,
-        "constant can't be decremented (%*s)",
-        efsi->str_end - efsi->str, efsi->str);
+        "constant can't be decremented (%.*s)",
+        (int)(efsi->str_end - efsi->str), efsi->str);
   } else {
     grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_DECR_POST, 1);
   }

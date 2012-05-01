@@ -1387,7 +1387,7 @@ grn_io_expire(grn_ctx *ctx, grn_io *io, int count_thresh, uint32_t limit)
     break;
   }
   if (n) {
-    GRN_LOG(ctx, GRN_LOG_INFO, "<%x:%x> expired i=%p max=%d (%d/%d)",
+    GRN_LOG(ctx, GRN_LOG_INFO, "<%p:%x> expired i=%p max=%d (%d/%d)",
             ctx, grn_gtick, io, io->max_map_seg, n, ln);
   }
   return n;
@@ -1872,7 +1872,9 @@ grn_mmap(grn_ctx *ctx, fileinfo *fi, off_t offset, size_t length)
   }
   res = mmap(NULL, length, PROT_READ|PROT_WRITE, flags, fd, offset);
   if (MAP_FAILED == res) {
-    MERR("mmap(%zu,%d,%d)=%s <%zu>", length, fd, offset, strerror(errno), mmap_size);
+    MERR("mmap(%" GRN_FMT_LLU ",%d,%" GRN_FMT_LLD ")=%s <%" GRN_FMT_LLU ">",
+         (unsigned long long int)length, fd, (long long int)offset, strerror(errno),
+         (unsigned long long int)mmap_size);
     return NULL;
   }
   mmap_size += length;
@@ -1909,7 +1911,8 @@ grn_munmap(grn_ctx *ctx, void *start, size_t length)
   res = munmap(start, length);
   if (res) {
     SERR("munmap");
-    GRN_LOG(ctx, GRN_LOG_ERROR, "munmap(%p,%d) failed <%zu>", start, length, mmap_size);
+    GRN_LOG(ctx, GRN_LOG_ERROR, "munmap(%p,%" GRN_FMT_LLU ") failed <%" GRN_FMT_LLU ">",
+            start, (unsigned long long int)length, (unsigned long long int)mmap_size);
   } else {
     mmap_size -= length;
   }
@@ -1925,7 +1928,8 @@ grn_pread(grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset)
       SERR("pread");
     } else {
       /* todo : should retry ? */
-      ERR(GRN_INPUT_OUTPUT_ERROR, "pread returned %d != %d", r, count);
+      ERR(GRN_INPUT_OUTPUT_ERROR, "pread returned %" GRN_FMT_LLD " != %" GRN_FMT_LLU,
+          (long long int)r, (unsigned long long int)count);
     }
     return ctx->rc;
   }
@@ -1941,7 +1945,8 @@ grn_pwrite(grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset)
       SERR("pwrite");
     } else {
       /* todo : should retry ? */
-      ERR(GRN_INPUT_OUTPUT_ERROR, "pwrite returned %d != %d", r, count);
+      ERR(GRN_INPUT_OUTPUT_ERROR, "pwrite returned %" GRN_FMT_LLD " != %" GRN_FMT_LLU,
+          (long long int)r, (unsigned long long int)count);
     }
     return ctx->rc;
   }

@@ -61,7 +61,7 @@
   ERR(GRN_INVALID_ARGUMENT, "<%.*s>: failed to cast to <%.*s>: <%.*s>",\
       column_name_size, column_name,\
       range_name_size, range_name,\
-      GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));\
+      (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));\
   GRN_OBJ_FIN(ctx, &inspected);\
 } while (0)
 
@@ -6015,7 +6015,7 @@ grn_obj_set_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *value)
         if (vs) { GRN_TEXT_PUTC(ctx, &buf, ','); }
       }
       GRN_LOG(ctx, GRN_LOG_NOTICE, "DDL:set_source %.*s",
-              GRN_BULK_VSIZE(&buf), GRN_BULK_HEAD(&buf));
+              (int)GRN_BULK_VSIZE(&buf), GRN_BULK_HEAD(&buf));
       GRN_OBJ_FIN(ctx, &buf);
     }
     {
@@ -8341,7 +8341,7 @@ grn_table_sort_key_from_str_geo(grn_ctx *ctx, const char *str, unsigned int str_
           if (k == keys) {
             if (!(k->key = grn_obj_column(ctx, table, p, r - p))) {
               WARN(GRN_INVALID_ARGUMENT, "invalid sort key: <%.*s>(<%.*s>)",
-                   tokbuf[i] - p, p, str_size, str);
+                   (int)(tokbuf[i] - p), p, str_size, str);
               break;
             }
             domain = grn_obj_get_range(ctx, k->key);
@@ -8403,11 +8403,11 @@ grn_table_sort_key_from_str(grn_ctx *ctx, const char *str, unsigned int str_size
             if (r - p == 6 && memcmp(p, "_score", 6) == 0) {
               GRN_LOG(ctx, GRN_WARN,
                       "ignore invalid sort key: <%.*s>(<%.*s>)",
-                      r - p, p, str_size, str);
+                      (int)(r - p), p, str_size, str);
             } else {
               WARN(GRN_INVALID_ARGUMENT,
                    "invalid sort key: <%.*s>(<%.*s>)",
-                   r - p, p, str_size, str);
+                   (int)(r - p), p, str_size, str);
               break;
             }
           }
@@ -8646,11 +8646,11 @@ report_set_column_value_failure(grn_ctx *ctx,
           "[table][load] failed to set column value: %s: "
           "key: <%.*s>, column: <%.*s>, value: <%.*s>",
           ctx->errbuf,
-          GRN_TEXT_LEN(&key_inspected),
+          (int)GRN_TEXT_LEN(&key_inspected),
           GRN_TEXT_VALUE(&key_inspected),
           column_name_size,
           column_name,
-          GRN_TEXT_LEN(&column_value_inspected),
+          (int)GRN_TEXT_LEN(&column_value_inspected),
           GRN_TEXT_VALUE(&column_value_inspected));
   GRN_OBJ_FIN(ctx, &key_inspected);
   GRN_OBJ_FIN(ctx, &column_value_inspected);
@@ -8692,7 +8692,7 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
               if (loader->key_offset != -1) {
                 GRN_LOG(ctx, GRN_LOG_ERROR,
                         "duplicated key columns: <%.*s> at %d and <%.*s> at %i",
-                        GRN_TEXT_LEN(key_column_name),
+                        (int)GRN_TEXT_LEN(key_column_name),
                         GRN_TEXT_VALUE(key_column_name),
                         loader->key_offset,
                         column_name_size, column_name, i);
@@ -8741,7 +8741,7 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
               grn_inspect(ctx, &buffer, value);
               ERR(GRN_INVALID_ARGUMENT,
                   "column name must be string: <%.*s>",
-                  GRN_TEXT_LEN(&buffer), GRN_TEXT_VALUE(&buffer));
+                  (int)GRN_TEXT_LEN(&buffer), GRN_TEXT_VALUE(&buffer));
               GRN_OBJ_FIN(ctx, &buffer);
               return;
             }
@@ -8826,7 +8826,7 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
                  name_equal(column_name, column_name_size, ID_NAME))) {
               if (key_column_name) {
                 GRN_LOG(ctx, GRN_LOG_ERROR, "duplicated key columns: %.*s and %.*s",
-                        GRN_TEXT_LEN(key_column_name),
+                        (int)GRN_TEXT_LEN(key_column_name),
                         GRN_TEXT_VALUE(key_column_name),
                         column_name_size, column_name);
                 return;
@@ -9243,7 +9243,7 @@ parse_load_columns(grn_ctx *ctx, grn_obj *table,
       while (p < r && (' ' == *p || ',' == *p)) { p++; }
       col = grn_obj_column(ctx, table, p, r - p);
       if (!col) {
-        ERR(GRN_INVALID_ARGUMENT, "nonexistent column: <%.*s>", r - p, p);
+        ERR(GRN_INVALID_ARGUMENT, "nonexistent column: <%.*s>", (int)(r - p), p);
         goto exit;
       }
       GRN_PTR_PUT(ctx, res, col);

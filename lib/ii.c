@@ -1804,7 +1804,8 @@ grn_p_decv(grn_ctx *ctx, uint8_t *data, uint32_t data_size, datavec *dv, uint32_
     }
     GRN_ASSERT(dp == dpe);
     if (dp != dpe) {
-      GRN_LOG(ctx, GRN_LOG_NOTICE, "data_size=%d, %d", data_size, dpe - dp);
+      GRN_LOG(ctx, GRN_LOG_NOTICE, "data_size=%d, %" GRN_FMT_LLD,
+              data_size, (long long int)(dpe - dp));
     }
   }
   return rp - dv[0].data;
@@ -2785,9 +2786,10 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
           if (sb->header.chunk_size + S_SEGMENT <= (dcp - dc) + encsize) {
             int i;
             char buf[255], *bufp;
-            GRN_LOG(ctx, GRN_LOG_NOTICE, "cs(%d)+(%d)=(%d)<=(%d)+(%d)=(%d)",
+            GRN_LOG(ctx, GRN_LOG_NOTICE,
+                    "cs(%d)+(%d)=(%d)<=(%" GRN_FMT_LLD ")+(%d)=(%" GRN_FMT_LLD ")",
                     sb->header.chunk_size, S_SEGMENT, sb->header.chunk_size + S_SEGMENT,
-                    (dcp - dc), encsize, (dcp - dc) + encsize);
+                    (long long int)(dcp - dc), encsize, (long long int)((dcp - dc) + encsize));
             for (j = 0; j < ii->n_elements; j++) {
               GRN_LOG(ctx, GRN_LOG_NOTICE, "rdv[%d] data_size=%d, flags=%d",
                       j, rdv[j].data_size, rdv[j].flags);
@@ -6647,7 +6649,8 @@ grn_ii_buffer_flush(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
   {
     ssize_t r = GRN_WRITE(ii_buffer->tmpfd, outbuf, encsize);
     if (r != encsize) {
-      ERR(GRN_INPUT_OUTPUT_ERROR, "write returned %d != %d", r, encsize);
+      ERR(GRN_INPUT_OUTPUT_ERROR, "write returned %" GRN_FMT_LLD " != %" GRN_FMT_LLU,
+          (long long int)r, (unsigned long long int)encsize);
       return;
     }
     ii_buffer->filepos += r;
@@ -6803,7 +6806,8 @@ grn_ii_buffer_fetch(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
           block->buffer = (uint8_t *)r;
           block->buffersize = block->nextsize;
         } else {
-          GRN_LOG(ctx, GRN_LOG_WARNING, "realloc: %d", bytesize);
+          GRN_LOG(ctx, GRN_LOG_WARNING, "realloc: %" GRN_FMT_LLU,
+                  (unsigned long long int)bytesize);
           return;
         }
       }
