@@ -312,7 +312,7 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
     if ((cache = grn_cache_fetch(ctx, cache_key, cache_key_size))) {
       GRN_TEXT_PUT(ctx, outbuf, GRN_TEXT_VALUE(cache), GRN_TEXT_LEN(cache));
       grn_cache_unref(cache_key, cache_key_size);
-      LAP(":", "cache(%d)", GRN_TEXT_LEN(cache));
+      LAP(":", "cache(%" GRN_FMT_LLD ")", (long long int)GRN_TEXT_LEN(cache));
       return ctx->rc;
     }
   }
@@ -700,7 +700,8 @@ grn_parse_table_create_flags(grn_ctx *ctx, const char *nptr, const char *end)
       flags |= GRN_OBJ_KEY_WITH_SIS;
       nptr += 12;
     } else {
-      ERR(GRN_INVALID_ARGUMENT, "invalid flags option: %.*s", end - nptr, nptr);
+      ERR(GRN_INVALID_ARGUMENT, "invalid flags option: %.*s",
+          (int)(end - nptr), nptr);
       return 0;
     }
   }
@@ -738,7 +739,8 @@ grn_parse_column_create_flags(grn_ctx *ctx, const char *nptr, const char *end)
       flags |= GRN_OBJ_RING_BUFFER;
       nptr += 11;
     } else {
-      ERR(GRN_INVALID_ARGUMENT, "invalid flags option: %.*s", end - nptr, nptr);
+      ERR(GRN_INVALID_ARGUMENT, "invalid flags option: %.*s",
+          (int)(end - nptr), nptr);
       return 0;
     }
   }
@@ -836,8 +838,8 @@ proc_table_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
       if (!key_type) {
         ERR(GRN_INVALID_ARGUMENT,
             "[table][create] key type doesn't exist: <%.*s> (%.*s)",
-            GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)),
-            GRN_TEXT_LEN(VAR(2)), GRN_TEXT_VALUE(VAR(2)));
+            (int)GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)),
+            (int)GRN_TEXT_LEN(VAR(2)), GRN_TEXT_VALUE(VAR(2)));
         return NULL;
       }
     }
@@ -847,8 +849,8 @@ proc_table_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
       if (!value_type) {
         ERR(GRN_INVALID_ARGUMENT,
             "[table][create] value type doesn't exist: <%.*s> (%.*s)",
-            GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)),
-            GRN_TEXT_LEN(VAR(3)), GRN_TEXT_VALUE(VAR(3)));
+            (int)GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)),
+            (int)GRN_TEXT_LEN(VAR(3)), GRN_TEXT_VALUE(VAR(3)));
         return NULL;
       }
     }
@@ -905,14 +907,14 @@ proc_table_rename(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
     rc = GRN_INVALID_ARGUMENT;
     ERR(rc,
         "[table][rename] table isn't found: <%.*s>",
-        GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)));
+        (int)GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)));
     goto exit;
   }
   if (GRN_TEXT_LEN(VAR(1)) == 0) {
     rc = GRN_INVALID_ARGUMENT;
     ERR(rc,
         "[table][rename] new table name isn't specified: <%.*s>",
-        GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)));
+        (int)GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)));
     goto exit;
   }
   rc = grn_table_rename(ctx, table,
@@ -920,8 +922,8 @@ proc_table_rename(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
   if (rc != GRN_SUCCESS && ctx->rc == GRN_SUCCESS) {
     ERR(rc,
         "[table][rename] failed to rename: <%.*s> -> <%.*s>",
-        GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)),
-        GRN_TEXT_LEN(VAR(1)), GRN_TEXT_VALUE(VAR(1)));
+        (int)GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)),
+        (int)GRN_TEXT_LEN(VAR(1)), GRN_TEXT_VALUE(VAR(1)));
   }
 exit:
   GRN_OUTPUT_BOOL(!rc);
@@ -945,7 +947,7 @@ proc_column_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
   if (!table) {
     ERR(GRN_INVALID_ARGUMENT,
         "[column][create] table doesn't exist: <%.*s>",
-        GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)));
+        (int)GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)));
     goto exit;
   }
   type = grn_ctx_get(ctx, GRN_TEXT_VALUE(VAR(3)),
@@ -953,7 +955,7 @@ proc_column_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
   if (!type) {
     ERR(GRN_INVALID_ARGUMENT,
         "[column][create] type doesn't exist: <%.*s>",
-        GRN_TEXT_LEN(VAR(3)), GRN_TEXT_VALUE(VAR(3))) ;
+        (int)GRN_TEXT_LEN(VAR(3)), GRN_TEXT_VALUE(VAR(3))) ;
     goto exit;
   }
   if (GRN_TEXT_LEN(VAR(1))) {
@@ -1050,14 +1052,14 @@ proc_column_rename(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
     rc = GRN_INVALID_ARGUMENT;
     ERR(rc,
         "[column][rename] table isn't found: <%.*s>",
-        GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)));
+        (int)GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)));
     goto exit;
   }
   if (GRN_TEXT_LEN(VAR(1)) == 0) {
     rc = GRN_INVALID_ARGUMENT;
     ERR(rc,
         "[column][rename] column name isn't specified: <%.*s>",
-        GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)));
+        (int)GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)));
     goto exit;
   }
   column = grn_obj_column(ctx, table,
@@ -1066,16 +1068,16 @@ proc_column_rename(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
     rc = GRN_INVALID_ARGUMENT;
     ERR(rc,
         "[column][rename] column isn't found: <%.*s.%.*s>",
-        GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)),
-        GRN_TEXT_LEN(VAR(1)), GRN_TEXT_VALUE(VAR(1)));
+        (int)GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)),
+        (int)GRN_TEXT_LEN(VAR(1)), GRN_TEXT_VALUE(VAR(1)));
     goto exit;
   }
   if (GRN_TEXT_LEN(VAR(2)) == 0) {
     rc = GRN_INVALID_ARGUMENT;
     ERR(rc,
         "[column][rename] new column name isn't specified: <%.*s.%.*s>",
-        GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)),
-        GRN_TEXT_LEN(VAR(1)), GRN_TEXT_VALUE(VAR(1)));
+        (int)GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)),
+        (int)GRN_TEXT_LEN(VAR(1)), GRN_TEXT_VALUE(VAR(1)));
     goto exit;
   }
   rc = grn_column_rename(ctx, column,
@@ -1083,10 +1085,10 @@ proc_column_rename(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
   if (rc != GRN_SUCCESS && ctx->rc == GRN_SUCCESS) {
     ERR(rc,
         "[column][rename] failed to rename: <%.*s.%.*s> -> <%.*s.%.*s>",
-        GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)),
-        GRN_TEXT_LEN(VAR(1)), GRN_TEXT_VALUE(VAR(1)),
-        GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)),
-        GRN_TEXT_LEN(VAR(2)), GRN_TEXT_VALUE(VAR(2)));
+        (int)GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)),
+        (int)GRN_TEXT_LEN(VAR(1)), GRN_TEXT_VALUE(VAR(1)),
+        (int)GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)),
+        (int)GRN_TEXT_LEN(VAR(2)), GRN_TEXT_VALUE(VAR(2)));
   }
 exit:
   GRN_OUTPUT_BOOL(!rc);
@@ -1277,7 +1279,7 @@ proc_column_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
     grn_obj_unlink(ctx, table);
   } else {
     ERR(GRN_INVALID_ARGUMENT, "table '%.*s' does not exist.",
-        GRN_TEXT_LEN(VAR(0)),
+        (int)GRN_TEXT_LEN(VAR(0)),
         GRN_TEXT_VALUE(VAR(0)));
   }
   return NULL;
@@ -1715,7 +1717,7 @@ proc_delete_validate_selector(grn_ctx *ctx, grn_obj *table, grn_obj *table_name,
     rc = GRN_INVALID_ARGUMENT;
     ERR(rc,
         "[table][record][delete] table doesn't exist: <%.*s>",
-        GRN_TEXT_LEN(table_name), GRN_TEXT_VALUE(table_name));
+        (int)GRN_TEXT_LEN(table_name), GRN_TEXT_VALUE(table_name));
     return rc;
   }
 
@@ -1726,7 +1728,7 @@ proc_delete_validate_selector(grn_ctx *ctx, grn_obj *table, grn_obj *table_name,
     ERR(rc,
         "[table][record][delete] either key, id or filter must be specified: "
         "table: <%.*s>",
-        GRN_TEXT_LEN(table_name), GRN_TEXT_VALUE(table_name));
+        (int)GRN_TEXT_LEN(table_name), GRN_TEXT_VALUE(table_name));
     return rc;
   }
 
@@ -1736,10 +1738,10 @@ proc_delete_validate_selector(grn_ctx *ctx, grn_obj *table, grn_obj *table_name,
         "[table][record][delete] "
         "record selector must be one of key, id and filter: "
         "table: <%.*s>, key: <%.*s>, id: <%.*s>, filter: <%.*s>",
-        GRN_TEXT_LEN(table_name), GRN_TEXT_VALUE(table_name),
-        GRN_TEXT_LEN(key), GRN_TEXT_VALUE(key),
-        GRN_TEXT_LEN(id), GRN_TEXT_VALUE(id),
-        GRN_TEXT_LEN(filter), GRN_TEXT_VALUE(filter));
+        (int)GRN_TEXT_LEN(table_name), GRN_TEXT_VALUE(table_name),
+        (int)GRN_TEXT_LEN(key), GRN_TEXT_VALUE(key),
+        (int)GRN_TEXT_LEN(id), GRN_TEXT_VALUE(id),
+        (int)GRN_TEXT_LEN(filter), GRN_TEXT_VALUE(filter));
     return rc;
   }
 
@@ -1748,9 +1750,9 @@ proc_delete_validate_selector(grn_ctx *ctx, grn_obj *table, grn_obj *table_name,
     ERR(rc,
         "[table][record][delete] "
         "can't use both key and id: table: <%.*s>, key: <%.*s>, id: <%.*s>",
-        GRN_TEXT_LEN(table_name), GRN_TEXT_VALUE(table_name),
-        GRN_TEXT_LEN(key), GRN_TEXT_VALUE(key),
-        GRN_TEXT_LEN(id), GRN_TEXT_VALUE(id));
+        (int)GRN_TEXT_LEN(table_name), GRN_TEXT_VALUE(table_name),
+        (int)GRN_TEXT_LEN(key), GRN_TEXT_VALUE(key),
+        (int)GRN_TEXT_LEN(id), GRN_TEXT_VALUE(id));
     return rc;
   }
 
@@ -1760,9 +1762,9 @@ proc_delete_validate_selector(grn_ctx *ctx, grn_obj *table, grn_obj *table_name,
         "[table][record][delete] "
         "can't use both key and filter: "
         "table: <%.*s>, key: <%.*s>, filter: <%.*s>",
-        GRN_TEXT_LEN(table_name), GRN_TEXT_VALUE(table_name),
-        GRN_TEXT_LEN(key), GRN_TEXT_VALUE(key),
-        GRN_TEXT_LEN(filter), GRN_TEXT_VALUE(filter));
+        (int)GRN_TEXT_LEN(table_name), GRN_TEXT_VALUE(table_name),
+        (int)GRN_TEXT_LEN(key), GRN_TEXT_VALUE(key),
+        (int)GRN_TEXT_LEN(filter), GRN_TEXT_VALUE(filter));
     return rc;
   }
 
@@ -1772,9 +1774,9 @@ proc_delete_validate_selector(grn_ctx *ctx, grn_obj *table, grn_obj *table_name,
         "[table][record][delete] "
         "can't use both id and filter: "
         "table: <%.*s>, id: <%.*s>, filter: <%.*s>",
-        GRN_TEXT_LEN(table_name), GRN_TEXT_VALUE(table_name),
-        GRN_TEXT_LEN(id), GRN_TEXT_VALUE(id),
-        GRN_TEXT_LEN(filter), GRN_TEXT_VALUE(filter));
+        (int)GRN_TEXT_LEN(table_name), GRN_TEXT_VALUE(table_name),
+        (int)GRN_TEXT_LEN(id), GRN_TEXT_VALUE(id),
+        (int)GRN_TEXT_LEN(filter), GRN_TEXT_VALUE(filter));
     return rc;
   }
 
@@ -1828,11 +1830,11 @@ proc_delete(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       ERR(rc,
           "[table][record][delete] id should be number: "
           "table: <%.*s>, id: <%.*s>, detail: <%.*s|%c|%.*s>",
-          GRN_TEXT_LEN(table_name), GRN_TEXT_VALUE(table_name),
-          GRN_TEXT_LEN(id), GRN_TEXT_VALUE(id),
-          end - GRN_TEXT_VALUE(id), GRN_TEXT_VALUE(id),
+          (int)GRN_TEXT_LEN(table_name), GRN_TEXT_VALUE(table_name),
+          (int)GRN_TEXT_LEN(id), GRN_TEXT_VALUE(id),
+          (int)(end - GRN_TEXT_VALUE(id)), GRN_TEXT_VALUE(id),
           end[0],
-          GRN_TEXT_VALUE(id) - end - 1, end + 1);
+          (int)(GRN_TEXT_VALUE(id) - end - 1), end + 1);
     }
   } else if (GRN_TEXT_LEN(filter)) {
     grn_obj *cond, *v;
@@ -1850,8 +1852,8 @@ proc_delete(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       ERR(rc,
           "[table][record][delete] failed to parse filter: "
           "table: <%.*s>, filter: <%.*s>, detail: <%s>",
-          GRN_TEXT_LEN(table_name), GRN_TEXT_VALUE(table_name),
-          GRN_TEXT_LEN(filter), GRN_TEXT_VALUE(filter),
+          (int)GRN_TEXT_LEN(table_name), GRN_TEXT_VALUE(table_name),
+          (int)GRN_TEXT_LEN(filter), GRN_TEXT_VALUE(filter),
           original_error_message);
     } else {
       grn_obj *records;
@@ -2386,7 +2388,7 @@ dump_selected_tables_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *tables)
         p++;
       }
       GRN_LOG(ctx, GRN_LOG_WARNING, "invalid table name is ignored: <%.*s>\n",
-              p - token, token);
+              (int)(p - token), token);
       continue;
     }
     while (p < e &&
@@ -2411,7 +2413,7 @@ dump_selected_tables_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *tables)
     } else {
       GRN_LOG(ctx, GRN_LOG_WARNING,
               "nonexistent table name is ignored: <%.*s>\n",
-              token_e - token, token);
+              (int)(token_e - token), token);
     }
   }
 }
@@ -2481,7 +2483,7 @@ proc_cache_limit(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
     } else {
       ERR(GRN_INVALID_ARGUMENT,
           "max value is invalid unsigned integer format: <%.*s>",
-          GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)));
+          (int)GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)));
     }
   }
   return NULL;
@@ -2510,7 +2512,7 @@ proc_check(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_obj *obj = grn_ctx_get(ctx, GRN_TEXT_VALUE(VAR(0)), GRN_TEXT_LEN(VAR(0)));
   if (!obj) {
     ERR(GRN_INVALID_ARGUMENT,
-        "no such object: <%.*s>", GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)));
+        "no such object: <%.*s>", (int)GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)));
     GRN_OUTPUT_BOOL(!ctx->rc);
   } else {
     switch (obj->header.type) {
@@ -2621,7 +2623,7 @@ proc_truncate(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     grn_obj *table = grn_ctx_get(ctx, table_name, table_name_len);
     if (!table) {
       ERR(GRN_INVALID_ARGUMENT,
-          "no such table: <%.*s>", table_name, table_name_len);
+          "no such table: <%.*s>", table_name_len, table_name);
     } else {
       switch (table->header.type) {
       case GRN_TABLE_HASH_KEY :
@@ -2637,7 +2639,7 @@ proc_truncate(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
           grn_inspect(ctx, &buffer, table);
           ERR(GRN_INVALID_ARGUMENT,
               "not a table object: %.*s",
-              GRN_TEXT_LEN(&buffer), GRN_TEXT_VALUE(&buffer));
+              (int)GRN_TEXT_LEN(&buffer), GRN_TEXT_VALUE(&buffer));
           GRN_OBJ_FIN(ctx, &buffer);
         }
         break;

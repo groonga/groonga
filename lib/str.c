@@ -3163,7 +3163,7 @@ grn_text_urldec(grn_ctx *ctx, grn_obj *buf, const char *p, const char *e, char d
         GRN_TEXT_PUTC(ctx, buf, c);
         p += 3;
       } else {
-        GRN_LOG(ctx, GRN_LOG_NOTICE, "invalid %% sequence (%c%c)", p + 1, p + 2);
+        GRN_LOG(ctx, GRN_LOG_NOTICE, "invalid %% sequence (%c%c)", p[1], p[2]);
         GRN_TEXT_PUTC(ctx, buf, '%');
         p += 1;
       }
@@ -3191,7 +3191,7 @@ grn_text_cgidec(grn_ctx *ctx, grn_obj *buf, const char *p, const char *e, char d
         GRN_TEXT_PUTC(ctx, buf, c);
         p += 3;
       } else {
-        GRN_LOG(ctx, GRN_LOG_NOTICE, "invalid %% sequence (%c%c)", p + 1, p + 2);
+        GRN_LOG(ctx, GRN_LOG_NOTICE, "invalid %% sequence (%c%c)", p[1], p[2]);
         GRN_TEXT_PUTC(ctx, buf, '%');
         p += 1;
       }

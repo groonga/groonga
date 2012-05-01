@@ -1290,8 +1290,8 @@ grn_ja_defrag_seg(grn_ctx *ctx, grn_ja *ja, uint32_t seg)
       if (grn_ja_element_info(ctx, ja, id, &cas, &pos, &element_size)) { break; }
       if (v + sizeof(uint32_t) != ve - JA_SEGMENT_SIZE + pos) {
         GRN_LOG(ctx, GRN_LOG_WARNING,
-                "dseges[%d] = pos unmatch (%d != %d)",
-                seg, pos, v + sizeof(uint32_t) + JA_SEGMENT_SIZE - ve);
+                "dseges[%d] = pos unmatch (%d != %" GRN_FMT_LLD ")",
+                seg, pos, (long long int)(v + sizeof(uint32_t) + JA_SEGMENT_SIZE - ve));
         break;
       }
       if (grn_ja_put(ctx, ja, id, v + sizeof(uint32_t), element_size, GRN_OBJ_SET, &cas)) {

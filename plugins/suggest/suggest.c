@@ -563,12 +563,12 @@ command_suggest(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
       GRN_OUTPUT_MAP_CLOSE();
     } else {
       ERR(GRN_INVALID_ARGUMENT, "nonexistent column: <%.*s.boost>",
-          GRN_TEXT_LEN(VAR(1)), GRN_TEXT_VALUE(VAR(1)));
+          (int)GRN_TEXT_LEN(VAR(1)), GRN_TEXT_VALUE(VAR(1)));
     }
     grn_obj_unlink(ctx, items);
   } else {
     ERR(GRN_INVALID_ARGUMENT, "nonexistent table: <%.*s>",
-        GRN_TEXT_LEN(VAR(1)), GRN_TEXT_VALUE(VAR(1)));
+        (int)GRN_TEXT_LEN(VAR(1)), GRN_TEXT_VALUE(VAR(1)));
   }
   return NULL;
 }

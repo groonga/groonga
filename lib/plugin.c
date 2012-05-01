@@ -310,7 +310,7 @@ grn_plugin_register_by_path(grn_ctx *ctx, const char *path)
           if ((path_len += strlen(grn_plugin_get_suffix())) >= PATH_MAX) {
             ERR(GRN_FILENAME_TOO_LONG,
                 "too long plugin path: <%.*s/.libs%s%s>",
-                base_name - path, path, base_name, grn_plugin_get_suffix());
+                (int)(base_name - path), path, base_name, grn_plugin_get_suffix());
             goto exit;
           }
           complemented_libs_path[0] = '\0';

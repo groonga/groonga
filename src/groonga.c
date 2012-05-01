@@ -1066,8 +1066,9 @@ h_output(grn_ctx *ctx, int flags, void *arg)
     len = GRN_TEXT_LEN(body) + GRN_TEXT_LEN(&head) +
       GRN_TEXT_LEN(outbuf) + GRN_TEXT_LEN(&foot);
     if (ret != len) {
-      GRN_LOG(&grn_gctx, GRN_LOG_NOTICE, "couldn't send all data (%d/%d)",
-              ret, len);
+      GRN_LOG(&grn_gctx, GRN_LOG_NOTICE,
+              "couldn't send all data (%" GRN_FMT_LLD "/%" GRN_FMT_LLD ")",
+              (long long int)ret, (long long int)len);
     }
   }
   GRN_BULK_REWIND(body);
@@ -1768,7 +1769,8 @@ h_server(char *path)
     lim.rlim_cur = 0;
     lim.rlim_max = 0;
     getrlimit(RLIMIT_NOFILE, &lim);
-    GRN_LOG(ctx, GRN_LOG_NOTICE, "RLIMIT_NOFILE(%d,%d)", lim.rlim_cur, lim.rlim_max);
+    GRN_LOG(ctx, GRN_LOG_NOTICE, "RLIMIT_NOFILE(%" GRN_FMT_LLD ",%" GRN_FMT_LLD ")",
+            (long long int)lim.rlim_cur, (long long int)lim.rlim_max);
   }
 #endif /* WIN32 */
   if (!grn_com_event_init(ctx, &ev, MAX_CON, sizeof(grn_com))) {
@@ -1951,7 +1953,8 @@ g_server(char *path)
     lim.rlim_cur = 0;
     lim.rlim_max = 0;
     getrlimit(RLIMIT_NOFILE, &lim);
-    GRN_LOG(ctx, GRN_LOG_NOTICE, "RLIMIT_NOFILE(%d,%d)", lim.rlim_cur, lim.rlim_max);
+    GRN_LOG(ctx, GRN_LOG_NOTICE, "RLIMIT_NOFILE(%" GRN_FMT_LLD ",%" GRN_FMT_LLD ")",
+            (long long int)lim.rlim_cur, (long long int)lim.rlim_max);
   }
 #endif /* WIN32 */
   if (!grn_com_event_init(ctx, &ev, MAX_CON, sizeof(grn_com))) {
