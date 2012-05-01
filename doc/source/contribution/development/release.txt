@@ -1,0 +1,545 @@
+.. -*- rst -*-
+
+.. highlightlang:: none
+
+リリース手順
+============================================================
+
+ビルド環境の準備
+------------------------------------------------------------
+
+以下にgroongaのリリース作業を行うために事前にインストール
+しておくべきパッケージを示します。
+
+なお、ビルド環境としては Ubuntu 12.04 LTS(Precise Pangolin)を前提とし
+て説明しています。その他の環境では適宜読み替えて下さい。::
+
+    % sudo apt-get install -V debootstrap rinse createrepo rpm　
+    mercurial　python-sphinx　ruby1.9.1-full mingw-w64 g++-mingw-w64 mecab libmecab-dev nsis gnupg2
+
+rinseのバージョンが古いとCentOS 5/6パッケージのビルドを行うことができ
+ません。
+別途debパッケージを以下のコマンドを実行して最新版をインストールしま
+す。::
+
+    % sudo dpkg -i rinse_1.9.2-1_all.deb
+
+また、rubyのrakeパッケージを以下のコマンドによりインストールします。::
+
+    % sudo gem1.9.1 install rake
+
+
+
+なお、特に明記していない限り本リリース手順でのコマンドラインの
+操作はzshを前提としています。
+
+リリース作業用ディレクトリの作成
+------------------------------------------------------------
+
+groongaのリリース作業ではリリース専用の環境下(コンパイルフラグ)でビルド
+する必要があります。
+
+リリース時と開発時でディレクトリを分けずに作業することもできますが、
+誤ったコンパイルフラグでリリースしてしまう危険があります。
+
+そのため、以降の説明では$(HOME)/work/groonga以下のディレクトリに
+リリース用の作業ディレクトリ(groonga.clean)にソースコードを
+cloneしたものとして説明します。
+
+リリース用のクリーンな状態でソースコードをgroonga.cleanディレ
+クトリに取得するために以下のコマンドを実行します。::
+
+    % git clone git@github.com:groonga/groonga.git groonga.clean
+
+この作業は初回のリリース作業のときに必要です。
+
+パッケージ署名用秘密鍵のインポート
+------------------------------------------------------------
+
+リリース作業ではRPMパッケージに対する署名を行います。
+その際、パッケージ署名用の鍵が必要です。
+
+groongaプロジェクトでは署名用の鍵をリリース担当者の公開鍵で
+暗号化してリポジトリのpackages/ディレクトリ以下へと登録しています。
+
+リリース担当者はリポジトリに登録された秘密鍵を復号した後に
+鍵のインポートを以下のコマンドにて行います。::
+
+    % cd packages
+    % gpg --decrypt release-key-secret.asc.gpg.(担当者) > (復号した鍵
+    ファイル)
+    % gpg --import  (復号した鍵ファイル)
+
+鍵のインポートが正常終了すると gpg --list-keys でgroongaの署名用の
+鍵を確認することができます。::
+
+    pub   1024R/F10399C0 2012-04-24
+    uid                  groonga Key (groonga Official Signing Key)
+    <packages@groonga.org>
+    sub   1024R/BC009774 2012-04-24
+    
+鍵をインポートしただけでは使用することができないため、インポートした鍵
+に対してtrust,signを行う必要があります。
+
+以下のコマンドを実行して署名を行います。::
+
+    % gpg --edit-key packages@groonga.org
+    gpg (GnuPG) 1.4.11; Copyright (C) 2010 Free Software Foundation, Inc.
+    This is free software: you are free to change and redistribute it.
+    There is NO WARRANTY, to the extent permitted by law.
+    
+    秘密鍵が使用できます。
+    
+    pub  1024R/F10399C0  作成: 2012-04-24  満了: 無期限       利用法: SC  
+                         信用: 未知の     有効性: 未知の
+    sub  1024R/BC009774  作成: 2012-04-24  満了: 無期限       利用法: E   
+    [ unknown] (1). groonga Key (groonga Official Signing Key)
+    <packages@groonga.org>
+    
+    gpg> trust
+    pub  1024R/F10399C0  作成: 2012-04-24  満了: 無期限       利用法: SC  
+                         信用: 未知の     有効性: 未知の
+    sub  1024R/BC009774  作成: 2012-04-24  満了: 無期限       利用法: E   
+    [ unknown] (1). groonga Key (groonga Official Signing Key)
+    <packages@groonga.org>
+    
+    他のユーザーの鍵を正しく検証するために、このユーザーの信用度を決めてく
+    ださい
+    (パスポートを見せてもらったり、他から得た指紋を検査したり、などなど)
+    
+      1 = 知らない、または何とも言えない
+      2 = 信用し ない
+      3 = ある程度信用する
+      4 = 完全に信用する
+      5 = 絶対的に信用する
+      m = メーン・メニューに戻る
+    
+    あなたの決定は? 5
+    本当にこの鍵を絶対的に信用しますか? (y/N) y
+    
+    pub  1024R/F10399C0  作成: 2012-04-24  満了: 無期限       利用法: SC  
+                         信用: 絶対的     有効性: 未知の
+    sub  1024R/BC009774  作成: 2012-04-24  満了: 無期限       利用法: E   
+    [ unknown] (1). groonga Key (groonga Official Signing Key)
+    <packages@groonga.org>
+    プログラムを再起動するまで、表示された鍵の有効性は正しくないかもしれな
+    い、
+    ということを念頭においてください。
+    
+    gpg> sign
+    
+    pub  1024R/F10399C0  作成: 2012-04-24  満了: 無期限       利用法: SC  
+                         信用: 絶対的     有効性: 未知の
+     主鍵の指紋: 31DC 7694 47A9 0527 6A67  58DB E9B7 1366 F103 99C0
+    
+         groonga Key (groonga Official Signing Key) <packages@groonga.org>
+    
+    本当に署名しますか? (y/N) y
+    
+    gpg> quit
+    変更を保存しますか? (y/N) y
+    
+変更点のまとめ
+--------------------------
+
+前回リリース時からの変更点をdoc/source/news.txtにまとめます。
+ここでまとめた内容についてはリリースアナウンスにも使用します。
+
+前回リリースからの変更履歴を参照するには以下のコマンドを実行します。::
+
+   % git log -p --reverse $(git tag | tail -1)..
+
+ログを^commitで検索しながら、以下の基準を目安として変更点を追記してい
+きます。
+
+含めるもの
+
+* ユーザへ影響するような変更
+* 互換性がなくなるような変更
+
+含めないもの
+
+* 内部的な変更(変数名の変更やらリファクタリング)
+
+
+groongaのウェブサイトの取得
+------------------------------------------------------------
+
+groongaのウェブサイトのソースはgroonga同様にgithubにリポジトリを置いて
+います。
+
+リリース作業では後述するコマンド(make update-latest-release)にてトップページのバージョンを
+置き換えることができるようになっています。
+
+groongaのウェブサイトのソースコードは以下コマンドにてのように取得します。::
+
+    % git clone git@github.com:groonga/groonga.github.com.git
+
+これで、~/work/groonga/groonga.github.comにソースを取得できます。
+
+configureスクリプトの生成
+------------------------------------------------------------
+
+ソースコードをcloneした時点ではconfigureスクリプトが含まれておらず
+そのままmakeコマンドにてビルドすることができません。
+
+groongaのリリース作業ディレクトリでautogen.shを以下のように実行します。::
+
+    % sh autogen.sh
+
+このコマンドの実行により、configureスクリプトが生成されます。
+
+configureスクリプトの実行
+------------------------------------------------------------
+
+Makefileを生成するためにconfigureスクリプトを実行します。
+
+リリース用にビルドするためには以下のオプションを指定してconfigureを実行し
+ます。::
+
+    % ./configure CFLAGS="-O0 -ggdb3" CXXFLAGS="-O0 -ggdb3" --prefix=/tmp/local --with-rsync-path="packages@packages.groonga.org:public" --with-groonga-github-com-path=$HOME/work/groonga/groonga.github.com --enable-document --with-ruby19
+
+configureオプションである--with-groonga-github-com-pathにはgroongaのウェ
+ブサイトのリポジトリをcloneした場所を指定します。
+
+以下のようにgroongaのソースコードをcloneした先からの相対パスを指定することもできます。::
+
+    % ./configure CFLAGS="-O0 -ggdb3" CXXFLAGS="-O0 -ggdb3" --prefix=/tmp/local --with-rsync-path="packages@packages.groonga.org:public" --with-groonga-github-com-path=../groonga.github.com --enable-document --with-ruby19
+
+あらかじめpackagesユーザでpackages.groonga.orgにsshログインできることを
+確認しておいてください。
+
+ログイン可能であるかの確認は以下のようにコマンドを実行して行います。::
+
+    % ssh packages@packages.groonga.org
+
+make update-latest-releaseの実行
+------------------------------------------------------------
+
+make update-latest-releaseコマンドでは、
+OLD_RELEASE_DATEに前回のリリースの日付を、NEW_RELEASE_DATEに次回リリー
+スの日付を指定します。
+
+2.0.2のリリースを行った際は以下のコマンドを実行しました。::
+::
+
+   % make update-latest-release OLD_RELEASE=2.0.1 OLD_RELEASE_DATE=2012-03-29 NEW_RELEASE_DATE=2012-04-29
+
+これにより、clone済みのgroongaのWebサイトのトップページのソース
+(index.html,ja/index.html)やRPMパッケージのspecファイルのバージョン表記などが更新されます。
+
+.. note::
+    このとき更新されるspecファイルは現在リリースする人の名前が固定となっているのでリリース作業後にカスタマイズ指定可能なように修正を入れる
+
+make update-filesの実行
+------------------------------------------------------------
+
+ロケールメッセージの更新や変更されたファイルのリスト等を更新するために
+以下のコマンドを実行します。(このコマンドを実行するにはあらかじめ
+sphinxのインストールが必要です。)::
+
+    % make update-files
+
+make update-filesを実行すると新規に追加されたファイルなどが
+各種.amファイルへとリストアップされます。
+
+リリースに必要なファイルですので漏れなくコミットします。
+
+make update-poの実行
+------------------------------------------------------------
+
+ドキュメントの最新版と各国語版の内容を同期するために、
+poファイルの更新を以下のコマンドにて実行します。::
+
+    % make update-po
+
+make update-poを実行すると、doc/locale/ja/LC_MESSAGES以下の各種.poファ
+イルが更新されます。
+
+poファイルの翻訳
+------------------------------------------------------------
+
+make update-poコマンドの実行により更新した各種.poファイルを翻訳します。
+
+翻訳結果をHTMLで確認するために、以下のコマンドを実行します。::
+
+    % make -C doc/locale/ja html
+    % make -C doc/locale/en html
+
+確認が完了したら、翻訳済みpoファイルをコミットします。
+
+リリースアナウンスドラフトを書く
+------------------------------------------------------------
+
+過去のアナウンスを参考にアナウンス用の原稿を用意します。
+
+リリースアナウンスに記載すべき内容は以下の通りです。
+
+
+
+以下、参考までに過去のアナウンスを
+
+
+
+
+
+リリース用アーカイブファイルの作成
+------------------------------------------------------------
+
+リリース用のソースアーカイブファイルを作成するために
+以下のコマンドをgroonga.clean直下で実行します。::
+
+    % make dist
+
+これによりgroonga.clean/groonga-(バージョン).tar.gzが作成されます。
+
+パッケージのビルド
+------------------------------------------------------------
+
+リリース用のアーカイブファイルができたので、
+パッケージ化する作業を行います。
+
+パッケージ化作業は以下の3種類を対象に行います。
+
+* Debian系(.deb)
+* Red Hat系(.rpm)
+* Windows系(.exe,.zip)
+
+パッケージのビルドではいくつかのサブタスクから構成されています。
+
+ビルド用パッケージのダウンロード
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+debパッケージのビルドに必要なパッケージをダウンロードするには
+以下のコマンドを実行します。::
+
+    % cd packages/apt
+    % make download
+
+これにより、lucid以降の関連する.debパッケージやソースアーカイブなどがカ
+レントディレクトリ以下へとダウンロードされます。
+
+rpmパッケージのビルドに必要なパッケージをダウンロードするには
+以下のコマンドを実行します。::
+
+    % cd packages/yum
+    % make download
+
+これにより、groongaやMySQLのRPM/SRPMパッケージなどがカレントディレクト
+リ以下へとダウンロードされます。
+
+windowsパッケージのビルドに必要なパッケージをダウンロードするには
+以下のコマンドを実行します。::
+
+    % cd packages/windows
+    % make download
+
+これにより、groongaのインストーラやzipアーカイブがカレントディレクトリ
+以下へとダウンロードされます。
+
+sourceパッケージに必要なものをダウンロードするには以下のコマンドを
+実行します。::
+
+    % cd packages/source
+    % make download
+
+これにより過去にリリースしたソースアーカイブ(.tar.gz)が
+packages/source/filesディレクトリ以下へとダウンロードされます。
+
+
+Debian系パッケージのビルド
+------------------------------------------------------------
+
+groongaのpackages/aptサブディレクトリに移動して、以下のコマンドを実行します。::
+
+    % cd packages/apt
+    % make build PALALLEL=yes
+
+make build PALALLEL=yesコマンドを実行すると、ディストリビューションの
+リリースとアーキテクチャの組み合わせでビルドを平行して行うことができま
+す。
+
+現在サポートされているのは以下の通りです。
+
+* squeeze i386/amd64
+* wheezy i386/amd64
+* unstable i386/amd64
+* lucid i386/amd64
+* natty i386/amd64
+* oneiric i386/amd64
+* precise i386/amd64
+
+.. note::
+   unstable i386/amd64はpreciseに構築したchroot環境ではパッケージのビ
+   ルドが行えることを確認できていないことに注意。
+
+正常にビルドが終了すると以下のディレクトリへと.debパッケージが生成され
+ます。
+
+* packages/apt/packages/debian/pool/squeeze/main/g/groonga  
+
+ake build ですんなりビルドできないこともあります。
+その場合にはbuildのサブタスクであるbuild-package-debと
+build-repository-debを個別に実行して問題が発生している箇所を切り分ける
+必要があります。
+
+
+
+生成したパッケージへの署名を行うには以下のコマンドを実行します。::
+
+    % make sign-packages
+
+リリース用のリポジトリデータの更新を行うには以下のコマンドを実行します。::
+
+    % make update-repository
+
+T.B.D.::
+
+    % make sign-repository
+
+T.B.D.::
+
+    % make upload
+
+
+Red Hat系パッケージのビルド
+------------------------------------------------------------
+
+groongaのpackages/yumサブディレクトリに移動して、以下のコマンドを実行します。::
+
+    % cd packages/yum
+    % make build PALALLES=yes
+
+make build PALALLEL=yesコマンドを実行すると、ディストリビューションの
+リリースとアーキテクチャの組み合わせでビルドを平行して行うことができま
+す。
+
+現在サポートされているのは以下の通りです。
+
+* centos-5 i386/x86_64
+* centos-6 i386/x86_64
+* fedora-16 i386/x86_64
+
+ビルドが正常終了すると以下のディレクトリにRPMが生成されます。
+
+* packages/yum/centos/5/i386/Packages
+* packages/yum/centos/5/x86_64/Packages
+* packages/yum/centos/6/i386/Packages
+* packages/yum/centos/6/x86_64/Packages
+* packages/yum/fedora/16/i386/Packages
+* packages/yum/fedora/16/x86_64/Packages
+
+
+T.B.D.::
+
+    % make build-repository-rpm
+
+
+
+Windows用パッケージのビルド
+------------------------------------------------------------
+
+packages/windowsサブディレクトリに移動して、以下のコマンドを実行します。::
+
+    % cd packages/windows
+    % make build
+    % make package
+    % make installer
+
+make releaseを実行することでbuildからuploadまで一気に実行することがで
+きますが、途中で失敗することもあるので順に実行することをおすすめします。
+
+make buildが正常に終了するとクロスコンパイルし
+dist-x64/dist-x86ディレクトリ以下にx64/x86バイナリを作成します。
+
+make packageが正常に終了するとzipアーカイブをfilesディレクトリ以下に作成します。
+
+make installerが正常に終了するとWindowsインストーラをfilesディレクトリ以
+下に作成します。
+
+パッケージの動作確認
+------------------------------------------------------------
+
+ビルドしたパッケージの動作確認を行います。
+
+T.B.D.
+
+
+リリースアナウンスの作成
+------------------------------------------------------------
+
+リリースの際にはリリースアナウンスを流して、
+groongaを広く通知します。
+
+news.txtに変更点をまとめましたが、それを元にリリースアナウンスを
+作成します。
+
+リリースアナウンスには以下を含めます。
+
+* インストール方法へのリンク
+* リリースのトピック紹介
+* リリース変更点へのリンク
+* リリース変更点(news.txtの内容)
+
+リリースのトピック紹介では、これからgroongaを使う人へアピールする点や
+既存のバージョンを利用している人がアップグレードする際に必要な
+情報を提供します。
+
+パッケージのアップロード
+------------------------------------------------------------
+
+T.B.D.
+
+リリースアナウンス
+------------------------------------------------------------
+
+作成したリリースアナウンスをメーリングリストへと流します。
+
+* groonga-dev
+* Groonga-talk
+
+T.B.D.
+
+
+ビルド時のTIPS
+------------------------------------------------------------
+
+ビルドを並列化したい
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+make build PALALLES=yesを指定するとchroot環境で並列にビルドを
+実行できます。
+
+
+特定の環境向けのみビルドしたい
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Debian系の場合、CODES,ARCHITECTURESオプションを明示的に指定することで、
+特定のリリース、アーキテクチャのみビルドすることができます。
+
+squeezeのi386のみビルドしたい場合には以下のコマンドを実行します。::
+
+    % make build ARCHITECTURES=i386 CODES=squeeze
+
+buildコマンド以外でも build-package-deb build-repository-debなどの
+サブタスクでもARCHITECTURES,CODES指定は有効です。
+
+Red Hat系の場合、ARCHITECTURES,DISTRIBUTIONSオプションを明示的に指定す
+ることで、特定のリリース、アーキテクチャのみビルドすることができます。
+
+fedoraのi386のみビルドしたい場合には以下のコマンドを実行します。::
+
+    % make build ARCHITECTURES=i386 DISTRIBUTIONS=fedora
+
+buildコマンド以外でも build-in-chroot build-repository-rpmなどの
+サブタスクでもARCHITECTURES,DISTRIBUTIONSの指定は有効です。
+
+ただし、centosの場合 バージョンまで明示して5のみビルドや6のみビルド
+することはできません。まとめてcentosとしてビルドされます。
+
+パッケージの署名用のパスフレーズを知りたい
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+パッケージの署名に必要な秘密鍵のパスフレーズについては
+リリース担当者向けの秘密鍵を復号したテキストの1行目に記載してあります。
+

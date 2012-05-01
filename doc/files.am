@@ -43,11 +43,22 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/contribution/development/com.txt \
 	$(top_srcdir)/doc/source/contribution/development/document.txt \
 	$(top_srcdir)/doc/source/contribution/development/query.txt \
+	$(top_srcdir)/doc/source/contribution/development/release.txt \
 	$(top_srcdir)/doc/source/contribution/development/test.txt \
 	$(top_srcdir)/doc/source/contribution/documentation.txt \
 	$(top_srcdir)/doc/source/contribution/documentation/c-api.txt \
 	$(top_srcdir)/doc/source/contribution/documentation/i18n.txt \
 	$(top_srcdir)/doc/source/contribution/report.txt \
+	$(top_srcdir)/doc/source/example/commands/select/match_columns_simple.log \
+	$(top_srcdir)/doc/source/example/commands/select/match_columns_some_columns.log \
+	$(top_srcdir)/doc/source/example/commands/select/match_columns_weight.log \
+	$(top_srcdir)/doc/source/example/commands/select/no_limit.log \
+	$(top_srcdir)/doc/source/example/commands/select/paging.log \
+	$(top_srcdir)/doc/source/example/commands/select/simple_filter.log \
+	$(top_srcdir)/doc/source/example/commands/select/simple_query.log \
+	$(top_srcdir)/doc/source/example/commands/select/simple_usage.log \
+	$(top_srcdir)/doc/source/example/commands/select/table_nonexistent.log \
+	$(top_srcdir)/doc/source/example/commands/select/usage_setup.log \
 	$(top_srcdir)/doc/source/example/completion-1.log \
 	$(top_srcdir)/doc/source/example/correction-1.log \
 	$(top_srcdir)/doc/source/example/suggestion-1.log \
@@ -229,6 +240,8 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/rdoc.py \
 	$(top_srcdir)/doc/source/reference.txt \
 	$(top_srcdir)/doc/source/spec.txt \
+	$(top_srcdir)/doc/source/spec/query_syntax.txt \
+	$(top_srcdir)/doc/source/spec/script_syntax.txt \
 	$(top_srcdir)/doc/source/spec/search.txt \
 	$(top_srcdir)/doc/source/suggest.txt \
 	$(top_srcdir)/doc/source/suggest/completion.txt \
@@ -311,11 +324,22 @@ source_files_relative_from_doc_dir = \
 	source/contribution/development/com.txt \
 	source/contribution/development/document.txt \
 	source/contribution/development/query.txt \
+	source/contribution/development/release.txt \
 	source/contribution/development/test.txt \
 	source/contribution/documentation.txt \
 	source/contribution/documentation/c-api.txt \
 	source/contribution/documentation/i18n.txt \
 	source/contribution/report.txt \
+	source/example/commands/select/match_columns_simple.log \
+	source/example/commands/select/match_columns_some_columns.log \
+	source/example/commands/select/match_columns_weight.log \
+	source/example/commands/select/no_limit.log \
+	source/example/commands/select/paging.log \
+	source/example/commands/select/simple_filter.log \
+	source/example/commands/select/simple_query.log \
+	source/example/commands/select/simple_usage.log \
+	source/example/commands/select/table_nonexistent.log \
+	source/example/commands/select/usage_setup.log \
 	source/example/completion-1.log \
 	source/example/correction-1.log \
 	source/example/suggestion-1.log \
@@ -497,6 +521,8 @@ source_files_relative_from_doc_dir = \
 	source/rdoc.py \
 	source/reference.txt \
 	source/spec.txt \
+	source/spec/query_syntax.txt \
+	source/spec/script_syntax.txt \
 	source/spec/search.txt \
 	source/suggest.txt \
 	source/suggest/completion.txt \
@@ -677,6 +703,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/contribution/development/com.txt \
 	html/_sources/contribution/development/document.txt \
 	html/_sources/contribution/development/query.txt \
+	html/_sources/contribution/development/release.txt \
 	html/_sources/contribution/development/test.txt \
 	html/_sources/contribution/documentation.txt \
 	html/_sources/contribution/documentation/c-api.txt \
@@ -712,6 +739,8 @@ html_files_relative_from_locale_dir = \
 	html/_sources/pseudo_column.txt \
 	html/_sources/reference.txt \
 	html/_sources/spec.txt \
+	html/_sources/spec/query_syntax.txt \
+	html/_sources/spec/script_syntax.txt \
 	html/_sources/spec/search.txt \
 	html/_sources/suggest.txt \
 	html/_sources/suggest/completion.txt \
@@ -791,6 +820,7 @@ html_files_relative_from_locale_dir = \
 	html/contribution/development/com.html \
 	html/contribution/development/document.html \
 	html/contribution/development/query.html \
+	html/contribution/development/release.html \
 	html/contribution/development/test.html \
 	html/contribution/documentation.html \
 	html/contribution/documentation/c-api.html \
@@ -830,6 +860,8 @@ html_files_relative_from_locale_dir = \
 	html/search.html \
 	html/searchindex.js \
 	html/spec.html \
+	html/spec/query_syntax.html \
+	html/spec/script_syntax.html \
 	html/spec/search.html \
 	html/suggest.html \
 	html/suggest/completion.html \
