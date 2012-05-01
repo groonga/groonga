@@ -688,7 +688,8 @@ grn_rc
 grn_com_send(grn_ctx *ctx, grn_com *cs,
              grn_com_header *header, const char *body, uint32_t size, int flags)
 {
-  ssize_t ret, whole_size = sizeof(grn_com_header) + size;
+  size_t whole_size = sizeof(grn_com_header) + size;
+  ssize_t ret;
   header->size = htonl(size);
   GRN_LOG(ctx, GRN_LOG_INFO, "send (%d,%x,%d,%02x,%02x,%04x)", size, header->flags, header->proto, header->qtype, header->level, header->status);
 
