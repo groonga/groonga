@@ -1281,7 +1281,7 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_len)
     grn_text_unesc_tok(ctx, &buf, str, str + str_len, &tok_type);
     if (GRN_TEXT_LEN(&buf)) {
       ERR(GRN_INVALID_ARGUMENT, "invalid command name: %.*s",
-          GRN_TEXT_LEN(&buf), GRN_TEXT_VALUE(&buf));
+          (int)GRN_TEXT_LEN(&buf), GRN_TEXT_VALUE(&buf));
     }
   }
 exit :
@@ -1365,7 +1365,7 @@ grn_ctx_send(grn_ctx *ctx, const char *str, unsigned int str_len, int flags)
         ctx->impl->mime_type = "application/json";
         ctx->impl->output_type = GRN_CONTENT_JSON;
         grn_timeval_now(ctx, &ctx->impl->tv);
-        GRN_LOG(ctx, GRN_LOG_NONE, "%08x|>%.*s", (intptr_t)ctx, str_len, str);
+        GRN_LOG(ctx, GRN_LOG_NONE, "%p|>%.*s", ctx, str_len, str);
         if (str_len && *str == '/') {
           expr = grn_ctx_qe_exec_uri(ctx, str + 1, str_len - 1);
         } else {
@@ -1819,7 +1819,7 @@ grn_ctx_free(grn_ctx *ctx, void *ptr,
     int32_t *header = &((int32_t *)ptr)[-2];
 
     if (header[0] >= GRN_CTX_N_SEGMENTS) {
-      ERR(GRN_INVALID_ARGUMENT,"invalid ptr passed. ptr=%p seg=%zu", ptr, *header);
+      ERR(GRN_INVALID_ARGUMENT,"invalid ptr passed. ptr=%p seg=%d", ptr, *header);
       goto exit;
     }
     /*
@@ -2116,7 +2116,9 @@ grn_calloc_default(grn_ctx *ctx, size_t size, const char* file, int line, const 
       grn_alloc_info_add(res);
     } else {
       if (!(res = calloc(size, 1))) {
-        MERR("calloc fail (%d)=%p (%s:%d) <%d>", size, res, file, line, alloc_count);
+        MERR("calloc fail (%" GRN_FMT_LLU ")=%p (%s:%d) <%" GRN_FMT_LLU ">",
+             (unsigned long long int)size, res, file, line,
+             (unsigned long long int)alloc_count);
       } else {
         GRN_ADD_ALLOC_COUNT(1);
         grn_alloc_info_add(res);
