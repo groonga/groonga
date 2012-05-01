@@ -2015,8 +2015,15 @@ struct _grn_logger_info {
 
 GRN_API grn_rc grn_logger_info_set(grn_ctx *ctx, const grn_logger_info *info);
 
+#ifdef __GNUC__
+#define GRN_ATTRIBUTE_PRINTF(fmt_pos) \
+  __attribute__ ((format(printf, fmt_pos, fmt_pos + 1)))
+#else
+#define GRN_ATTRIBUTE_PRINTF(fmt_pos)
+#endif /* __GNUC__ */
+
 GRN_API void grn_logger_put(grn_ctx *ctx, grn_log_level level,
-                            const char *file, int line, const char *func, const char *fmt, ...);
+                            const char *file, int line, const char *func, const char *fmt, ...) GRN_ATTRIBUTE_PRINTF(6);
 
 GRN_API int grn_logger_pass(grn_ctx *ctx, grn_log_level level);
 

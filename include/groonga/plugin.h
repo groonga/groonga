@@ -89,7 +89,7 @@ void grn_plugin_free(grn_ctx *ctx, void *ptr, const char *file,
 void grn_plugin_set_error(grn_ctx *ctx, grn_log_level level,
                           grn_rc error_code,
                           const char *file, int line, const char *func,
-                          const char *format, ...);
+                          const char *format, ...) GRN_ATTRIBUTE_PRINTF(7);
 
 /*
   Don't call these functions directly. grn_plugin_backtrace() and
