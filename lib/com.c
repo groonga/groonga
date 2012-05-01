@@ -729,7 +729,8 @@ grn_com_send(grn_ctx *ctx, grn_com *cs,
     }
   }
   if (ret != whole_size) {
-    GRN_LOG(ctx, GRN_LOG_ERROR, "sendmsg(%d): %d < %d", cs->fd, ret, whole_size);
+    GRN_LOG(ctx, GRN_LOG_ERROR, "sendmsg(%d): %d < %u",
+            cs->fd, (int)ret, (unsigned int)whole_size);
   }
   return ctx->rc;
 }
