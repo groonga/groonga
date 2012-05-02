@@ -607,8 +607,8 @@ doc/source以下のドキュメントを更新、翻訳まで完了している�
 
 作成したリリースアナウンスをメーリングリストへと流します。
 
-* groonga-dev
-* Groonga-talk
+* groonga-dev groonga-dev@lists.sourceforge.jp
+* Groonga-talk groonga-talk@lists.sourceforge.net
 
 以上でリリース作業は終了です。
 
