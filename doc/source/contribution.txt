@@ -20,7 +20,6 @@ Bug report, development and documentation:
 
 .. toctree::
    :maxdepth: 3
-   :numbered:
 
    contribution/report
    contribution/development
