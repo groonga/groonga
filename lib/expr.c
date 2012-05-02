@@ -543,7 +543,8 @@ grn_expr_create(grn_ctx *ctx, const char *name, unsigned int name_size)
     return NULL;
   }
   if (name_size) {
-    ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "");
+    ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+        "[expr][create] anonymous expression isn't implemented yet");
     return NULL;
   }
   GRN_API_ENTER;
