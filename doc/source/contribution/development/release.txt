@@ -374,7 +374,7 @@ build-repository-debを個別に実行して問題が発生している箇所を
 
     % make sign-packages
 
-リリース用のリポジトリデータの更新を行うには以下のコマンドを実行します。::
+リリース対象のファイルをリポジトリに反映するには以下のコマンドを実行します。::
 
     % make update-repository
 
@@ -411,10 +411,17 @@ make build PALALLEL=yesコマンドを実行すると、ディストリビュー
 * packages/yum/fedora/16/x86_64/Packages
 
 
-リポジトリデータの更新を行うには以下のコマンドを実行します。::
+リポジトリを作成するには以下のコマンドを実行します。::
 
     % make build-repository-rpm
 
+リリース対象のRPMに署名を行うには以下のコマンドを実行します。::
+
+    % make sign
+
+リリース対象のファイルをリポジトリに反映するには以下のコマンドを実行します。::
+
+    % make update
 
 
 Windows用パッケージのビルド
