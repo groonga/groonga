@@ -1,6 +1,7 @@
 SUBDIRS =		\
 	tokenizers	\
-	suggest
+	suggest \
+	table
 
 EXTRA_DIST =					\
 	CMakeLists.txt

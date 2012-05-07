@@ -13,6 +13,12 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-add_subdirectory(suggest)
-add_subdirectory(tokenizers)
-add_subdirectory(table)
+include_directories(
+  ${CMAKE_SOURCE_DIR}/lib
+  )
+
+read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/sources.am TABLE_SOURCES)
+add_library(table MODULE ${TABLE_SOURCES})
+set_target_properties(table PROPERTIES PREFIX "")
+target_link_libraries(table ${LIBGROONGA})
+install(TARGETS table DESTINATION "${GRN_PLUGINS_DIR}/table")
