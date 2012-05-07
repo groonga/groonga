@@ -60,6 +60,8 @@
 #define DEFAULT_MAX_NFTHREADS 8
 #define MAX_CON 0x10000
 
+#define RLIMIT_NOFILE_MINIMUM 4096
+
 static char bind_address[HOST_NAME_MAX + 1];
 static char hostname[HOST_NAME_MAX + 1];
 static int port = DEFAULT_PORT;
@@ -1945,16 +1947,21 @@ g_server(char *path)
   GRN_COM_QUEUE_INIT(&ctx_old);
 #ifndef WIN32
   {
-    struct rlimit lim;
-    lim.rlim_cur = 4096;
-    lim.rlim_max = 4096;
-    /* RLIMIT_OFILE */
-    setrlimit(RLIMIT_NOFILE, &lim);
-    lim.rlim_cur = 0;
-    lim.rlim_max = 0;
-    getrlimit(RLIMIT_NOFILE, &lim);
-    GRN_LOG(ctx, GRN_LOG_NOTICE, "RLIMIT_NOFILE(%" GRN_FMT_LLD ",%" GRN_FMT_LLD ")",
-            (long long int)lim.rlim_cur, (long long int)lim.rlim_max);
+    struct rlimit limit;
+    limit.rlim_cur = 0;
+    limit.rlim_max = 0;
+    getrlimit(RLIMIT_NOFILE, &limit);
+    if (limit.rlim_cur < RLIMIT_NOFILE_MINIMUM) {
+      limit.rlim_cur = RLIMIT_NOFILE_MINIMUM;
+      limit.rlim_max = RLIMIT_NOFILE_MINIMUM;
+      setrlimit(RLIMIT_NOFILE, &limit);
+      limit.rlim_cur = 0;
+      limit.rlim_max = 0;
+      getrlimit(RLIMIT_NOFILE, &limit);
+    }
+    GRN_LOG(ctx, GRN_LOG_NOTICE,
+            "RLIMIT_NOFILE(%" GRN_FMT_LLD ",%" GRN_FMT_LLD ")",
+            (long long int)limit.rlim_cur, (long long int)limit.rlim_max);
   }
 #endif /* WIN32 */
   if (!grn_com_event_init(ctx, &ev, MAX_CON, sizeof(grn_com))) {
