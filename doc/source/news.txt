@@ -22,7 +22,7 @@ Release 2.0.2 - 2012/04/29
 
    CentOS/Fedora::
 
-     % sudo yum update
+     % sudo yum makecache
      % sudo yum install --nogpgcheck -y groonga-repository
 
 Improvements
