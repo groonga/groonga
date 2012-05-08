@@ -403,7 +403,10 @@ The default threshold can be customized by one of the followings.
   * ``match-escalation-threshold`` configuration item in configuration
     file
 
-Here is a simple ``match_escalation_threshold`` usage example.
+Here is a simple ``match_escalation_threshold`` usage example. The
+first ``select`` doesn't have ``match_escalation_threshold``
+parameter. The second ``select`` has ``match_escalation_threshold``
+parameter.
 
 .. groonga-command
 .. include:: ../example/commands/select/match_escalation_threshold.log
