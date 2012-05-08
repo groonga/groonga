@@ -918,7 +918,7 @@ run_server_loop(grn_ctx *ctx, grn_com_event *ev)
     MUTEX_LOCK(q_mutex);
     if (nthreads == nfthreads) { break; }
     MUTEX_UNLOCK(q_mutex);
-    usleep(1000);
+    grn_nanosleep(1000000);
   }
   {
     grn_edge *edge;

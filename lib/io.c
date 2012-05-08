@@ -1067,7 +1067,7 @@ retry:
           nent = cl;    /* number of iw */
           cl = 0;
           count = 0;
-          usleep(1);
+          grn_nanosleep(1000);
           goto retry;
       } else
           dp("-- No Reading state CacheData. --\n");
@@ -1476,7 +1476,7 @@ grn_io_lock(grn_ctx *ctx, grn_io *io, int timeout)
                   "io(%s) collisions(%d/%d)", io->path, _ncolls, _ncalls);
         }
       }
-      usleep(1000);
+      grn_nanosleep(1000000);
       continue;
     }
     return GRN_SUCCESS;

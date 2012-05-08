@@ -308,7 +308,7 @@ typedef pthread_key_t grn_thread_key;
     while ((((++grn_uyield_count) & (0x100 - 1)) != 0 || (sched_yield() * 0) == 0) && (while_cond))
 
   #if !defined(_POSIX_PRIORITY_SCHEDULING)
-  #define sched_yield() usleep(1000 * 20)
+  #define sched_yield() grn_nanosleep(1000000 * 20)
   #endif
 #else /* USE_UYIELD */
   #define GRN_TEST_YIELD() do {} while (0)
@@ -383,7 +383,7 @@ typedef int grn_cond;
 #define COND_SIGNAL(c)
 #define COND_WAIT(c,m) do { \
   MUTEX_UNLOCK(m); \
-  usleep(1000); \
+  grn_nanosleep(1000000); \
   MUTEX_LOCK(m); \
 } while (0)
 /* todo : must be enhanced! */
@@ -645,7 +645,7 @@ grn_str_greater(const uint8_t *ap, uint32_t as, const uint8_t *bp, uint32_t bs)
 
 #define GRN_FUTEX_WAKE(p) syscall(SYS_futex, p, FUTEX_WAKE, 1)
 #else /* USE_FUTEX */
-#define GRN_FUTEX_WAIT(p) usleep(1000)
+#define GRN_FUTEX_WAIT(p) grn_nanosleep(1000000)
 #define GRN_FUTEX_WAKE(p)
 #endif /* USE_FUTEX */
 

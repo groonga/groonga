@@ -2141,7 +2141,7 @@ check_server(grn_ctx *ctx)
   while (1) {
     ret = grn_ctx_connect(ctx, grntest_serverhost, grntest_serverport, 0);
     if (ret == GRN_CONNECTION_REFUSED) {
-      sleep(1);
+      grn_sleep(1);
       retry++;
       if (retry > 5) {
         fprintf(stderr, "Cannot connect groonga server:host=%s:port=%d:ret=%d\n",

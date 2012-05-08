@@ -280,7 +280,7 @@ do_client()
             if ((nrecv < max_tp * (tve.tv_sec - tvb.tv_sec)) &&
                 (nsent - nrecv) < max_con) { break; }
             /* lprint(ctx, "s:%d r:%d", nsent, nrecv); */
-            usleep(1000);
+            grn_nanosleep(1000000);
           }
           if (!(nsent % 1000)) { lprint(ctx, "     : %d", nsent); }
         }
