@@ -127,8 +127,6 @@
 #if !defined(__GNUC__) && _MSC_VER < 1400
 # define fstat(fd, buf) _fstat(fd, buf)
 #endif /* !defined(__GNUC__) && _MSC_VER < 1400 */
-#define usleep(x) Sleep((x) / 1000)
-#define sleep(x)  Sleep((x) * 1000)
 #if !defined(strcasecmp)
 #  define strcasecmp(s1, s2) stricmp(s1, s2)
 #endif /* !defined(strcasecmp) */
