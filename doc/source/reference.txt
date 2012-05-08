@@ -12,6 +12,7 @@
    output
    commands
    type
+   tokenizers
    pseudo_column
    expr
    functions
