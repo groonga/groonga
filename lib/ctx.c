@@ -56,7 +56,9 @@ uint32_t grn_gtick;
 int grn_uyield_count = 0;
 #endif
 
-void grn_sleep(uint32_t seconds) {
+void
+grn_sleep(uint32_t seconds)
+{
 #ifdef WIN32
   Sleep(seconds * 1000);
 #else  // WIN32
@@ -64,7 +66,9 @@ void grn_sleep(uint32_t seconds) {
 #endif  // WIN32
 }
 
-void grn_nanosleep(uint64_t nanoseconds) {
+void
+grn_nanosleep(uint64_t nanoseconds)
+{
 #ifdef WIN32
   Sleep((DWORD)(nanoseconds / 1000000));
 #else  // WIN32
