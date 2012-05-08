@@ -349,9 +349,37 @@ See :doc:`/spec/query_syntax` for other operations.
 ``filter``
 """"""""""
 
-TODO: write short description and add example.
+It specifies the filter text. Normally, it is used for complex search
+conditions. ``filter`` can be used with ``query`` parameter. If both
+``filter`` and ``query`` are specified, there are conbined with
+logical and. It means that matched records shuold be matched against
+both ``filter`` and ``query``.
 
-See :doc:`/spec/script_syntax`.
+``filter`` parameter is desgined for complex conditions. A filter text
+should be formated in :doc:`/spec/script_syntax`. The syntax is
+similar to ECMAScript. For example, ``column == "value"`` means that
+the ``column`` column equals to ``"value"``. ``column < value`` means
+that the value of ``column`` column is less than ``value``.
+
+Here is a simple equality operator search example.
+
+.. groonga-command
+.. include:: ../example/commands/select/filter_equal.log
+.. select Entries --filter '_key == "Groonga"'
+
+The ``select`` command searches records that ``_key`` column value is
+``Groonga`` from ``Entries`` table.
+
+Here is a simple less than operator search example.
+
+.. groonga-command
+.. include:: ../example/commands/select/filter_less_than.log
+.. select Entries --filter 'n_likes < 11'
+
+The ``select`` command searches records that ``n_likes`` column value
+is less than ``11`` from ``Entries`` table.
+
+See :doc:`/spec/script_syntax` for other operations.
 
 Advanced search parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^

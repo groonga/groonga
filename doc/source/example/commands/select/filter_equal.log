@@ -1,0 +1,42 @@
+Execution example::
+
+  > select Entries --filter '_key == "Groonga"'
+  [
+    [
+      0, 
+      1336462400.98305, 
+      0.000327587127685547
+    ], 
+    [
+      [
+        [
+          1
+        ], 
+        [
+          [
+            "_id", 
+            "UInt32"
+          ], 
+          [
+            "_key", 
+            "ShortText"
+          ], 
+          [
+            "content", 
+            "Text"
+          ], 
+          [
+            "n_likes", 
+            "UInt32"
+          ]
+        ], 
+        [
+          2, 
+          "Groonga", 
+          "I started to use groonga. It's very fast!", 
+          10
+        ]
+      ]
+    ]
+  ]
+  
