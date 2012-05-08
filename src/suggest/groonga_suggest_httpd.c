@@ -23,6 +23,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/time.h>
+#include <time.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <err.h>
@@ -636,7 +637,7 @@ serve_threads(int nthreads, int port, const char *db_path, void *zmq_ctx,
       print_error("error in pthread_join() on thread %d.", i);
     }
   } else {
-    while (loop) { sleep(1000); }
+    while (loop) { sleep(1); }
   }
 
   /* join all httpd thread */
