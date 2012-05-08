@@ -38,15 +38,16 @@ def reconnect(name):
 fout = None
 
 def execmd(command, fout):
-  formatted_command_line = '> ' + command + "\n"
-  stdout.write(formatted_command_line)
+  formatted_command_line = "  " + command + "\n"
+  stdout.write(command + "\n")
   stdout.flush()
   groonga_process.stdin.write(command + "\n")
   groonga_process.stdin.flush()
   if fout:
-    fout.write(formatted_command_line + "  ")
+    fout.write(formatted_command_line)
   is_command = re.match("[a-z]", command)
-  if not is_command:
+  is_load_data_end = re.match("^\]", command)
+  if not is_command and not is_load_data_end:
     return
   output_buffer = ""
   while True:
@@ -71,7 +72,9 @@ def execmd(command, fout):
             formatted_output = formatted_output.encode("utf-8")
           stdout.write(formatted_output)
           if fout:
-            fout.write(re.sub("\n", "\n  ", formatted_output))
+            first_lines_re = re.compile("^", re.M)
+            fout.write(first_lines_re.sub("  # ", formatted_output.strip()))
+            fout.write("\n")
           output_buffer = ""
     else:
       stdout.flush()
@@ -116,7 +119,7 @@ def readfile(fname, outflag):
               os.makedirs(dir_name)
             fout = open(a, 'w')
             print '### write start : ' + a
-            fout.write("Execution example::\n\n  ")
+            fout.write("Execution example::\n\n")
         elif cmd.startswith('.. % '):
           a = cmd[5:]
           if fout:
@@ -129,7 +132,7 @@ def readfile(fname, outflag):
             fout.write(a + "\n  ")
           print a
         elif cmd.startswith('..'):
-          if cmd.replace(' ','').replace("\t",'') == '..':
+          if cmd.replace(' ', '').replace("\t", '') == '..':
             while len(dat):
               if dat[0] == '' or (dat[0][0] != ' ' and dat[0][0] != '	'):
                 break
