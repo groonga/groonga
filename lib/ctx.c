@@ -56,6 +56,25 @@ uint32_t grn_gtick;
 int grn_uyield_count = 0;
 #endif
 
+void grn_sleep(uint32_t seconds) {
+#ifdef WIN32
+  Sleep(seconds * 1000);
+#else  // WIN32
+  sleep(seconds);
+#endif  // WIN32
+}
+
+void grn_nanosleep(uint64_t nanoseconds) {
+#ifdef WIN32
+  Sleep((DWORD)(nanoseconds / 1000000));
+#else  // WIN32
+  struct timespec interval;
+  interval.tv_sec = (time_t)(nanoseconds / 1000000000);
+  interval.tv_nsec = (long)(nanoseconds % 1000000000);
+  nanosleep(&interval, NULL);
+#endif  // WIN32
+}
+
 /* fixme by 2038 */
 
 grn_rc
