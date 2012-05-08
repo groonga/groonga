@@ -1,58 +1,57 @@
 Execution example::
 
-  > column_create --table ToyBox --name price --type Int8
-  [[0,1335519606.2531,0.000290155410766602],true]
-  > column_create --table ToyBox --name weight --type Float
-  [[0,1335519606.45421,0.000332832336425781],true]
-  > load --table ToyBox
-  > [
-  > {"_key":"Monkey","price":15.9}
-  > {"_key":"Flower","price":200,"weight":0.13}
-  > {"_key":"Block","weight":25.7}
-  > ]
-  [[0,1335519606.65545,1.00174689292908],3]
-  > select --table ToyBox --output_columns _key,price,weight
+  column_create --table ToyBox --name price --type Int8
+  # [[0,1336468395.05099,0.000190258026123047],true]
+  column_create --table ToyBox --name weight --type Float
+  # [[0,1336468395.25174,0.00020289421081543],true]
+  load --table ToyBox
   [
-    [
-      0, 
-      1335519607.85801, 
-      0.000263452529907227
-    ], 
-    [
-      [
-        [
-          3
-        ], 
-        [
-          [
-            "_key", 
-            "ShortText"
-          ], 
-          [
-            "price", 
-            "Int8"
-          ], 
-          [
-            "weight", 
-            "Float"
-          ]
-        ], 
-        [
-          "Monkey", 
-          15, 
-          0.0
-        ], 
-        [
-          "Flower", 
-          -56, 
-          0.13
-        ], 
-        [
-          "Block", 
-          0, 
-          25.7
-        ]
-      ]
-    ]
+  {"_key":"Monkey","price":15.9}
+  {"_key":"Flower","price":200,"weight":0.13}
+  {"_key":"Block","weight":25.7}
   ]
-  
+  # [[0,1336468395.45248,0.200597286224365],3]
+  select --table ToyBox --output_columns _key,price,weight
+  # [
+  #   [
+  #     0, 
+  #     1336468395.8535, 
+  #     0.000161170959472656
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         3
+  #       ], 
+  #       [
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "price", 
+  #           "Int8"
+  #         ], 
+  #         [
+  #           "weight", 
+  #           "Float"
+  #         ]
+  #       ], 
+  #       [
+  #         "Monkey", 
+  #         15, 
+  #         0.0
+  #       ], 
+  #       [
+  #         "Flower", 
+  #         -56, 
+  #         0.13
+  #       ], 
+  #       [
+  #         "Block", 
+  #         0, 
+  #         25.7
+  #       ]
+  #     ]
+  #   ]
+  # ]

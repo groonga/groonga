@@ -1,90 +1,89 @@
 Execution example::
 
-  http://HOST_NAME_OR_IP_ADDRESS[:PORT_NUMBER]/d/status
+http://HOST_NAME_OR_IP_ADDRESS[:PORT_NUMBER]/d/status
   Executed command:
-  > status
-  [
-    [
-      0, 
-      1335519662.24808, 
-      9.918212890625e-05
-    ], 
-    {
-      "uptime": 0, 
-      "max_command_version": 2, 
-      "n_queries": 0, 
-      "cache_hit_rate": 0.0, 
-      "version": "2.0.1-283-g3f815e2", 
-      "alloc_count": 131, 
-      "command_version": 1, 
-      "starttime": 1335519662, 
-      "default_command_version": 1
-    }
-  ]
-  
+    status
+  # [
+  #   [
+  #     0, 
+  #     1336468415.92706, 
+  #     6.43730163574219e-05
+  #   ], 
+  #   {
+  #     "uptime": 0, 
+  #     "max_command_version": 2, 
+  #     "n_queries": 0, 
+  #     "cache_hit_rate": 0.0, 
+  #     "version": "2.0.2-28-g74fc93a", 
+  #     "alloc_count": 131, 
+  #     "command_version": 1, 
+  #     "starttime": 1336468415, 
+  #     "default_command_version": 1
+  #   }
+  # ]
+
   http://HOST_NAME_OR_IP_ADDRESS[:PORT_NUMBER]/d/select?table=Site&query=title:@this
   Executed command:
-  > select --table Site --query title:@this
-  [
-    [
-      0, 
-      1335519662.45038, 
-      0.00197672843933105
-    ], 
-    [
-      [
-        [
-          1
-        ], 
-        [
-          [
-            "_id", 
-            "UInt32"
-          ], 
-          [
-            "_key", 
-            "ShortText"
-          ], 
-          [
-            "country", 
-            "SiteCountry"
-          ], 
-          [
-            "domain", 
-            "SiteDomain"
-          ], 
-          [
-            "link", 
-            "Site"
-          ], 
-          [
-            "links", 
-            "Site"
-          ], 
-          [
-            "location", 
-            "WGS84GeoPoint"
-          ], 
-          [
-            "title", 
-            "ShortText"
-          ]
-        ], 
-        [
-          1, 
-          "http://example.org/", 
-          "japan", 
-          ".org", 
-          "http://example.net/", 
-          [
-            "http://example.net/", 
-            "http://example.org/", 
-            "http://example.com/"
-          ], 
-          "128452975x503157902", 
-          "This is test record 1!"
-        ]
-      ]
-    ]
-  ]
-  
+    select --table Site --query title:@this
+  # [
+  #   [
+  #     0, 
+  #     1336468416.12826, 
+  #     0.00135111808776855
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         1
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "country", 
+  #           "SiteCountry"
+  #         ], 
+  #         [
+  #           "domain", 
+  #           "SiteDomain"
+  #         ], 
+  #         [
+  #           "link", 
+  #           "Site"
+  #         ], 
+  #         [
+  #           "links", 
+  #           "Site"
+  #         ], 
+  #         [
+  #           "location", 
+  #           "WGS84GeoPoint"
+  #         ], 
+  #         [
+  #           "title", 
+  #           "ShortText"
+  #         ]
+  #       ], 
+  #       [
+  #         1, 
+  #         "http://example.org/", 
+  #         "japan", 
+  #         ".org", 
+  #         "http://example.net/", 
+  #         [
+  #           "http://example.net/", 
+  #           "http://example.org/", 
+  #           "http://example.com/"
+  #         ], 
+  #         "128452975x503157902", 
+  #         "This is test record 1!"
+  #       ]
+  #     ]
+  #   ]
+  # ]

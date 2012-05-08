@@ -1,47 +1,53 @@
 Execution example::
 
-  > select Entries
-  [
-    [
-      0, 
-      1335519592.67133, 
-      0.000493049621582031
-    ], 
-    [
-      [
-        [
-          3
-        ], 
-        [
-          [
-            "_id", 
-            "UInt32"
-          ], 
-          [
-            "_key", 
-            "ShortText"
-          ], 
-          [
-            "content", 
-            "Text"
-          ]
-        ], 
-        [
-          1, 
-          "The first post!", 
-          "Welcome! This is my first post!"
-        ], 
-        [
-          2, 
-          "Groonga", 
-          "I started to use groonga. It's very fast!"
-        ], 
-        [
-          3, 
-          "Mroonga", 
-          "I also started to use mroonga. It's also very fast! Really fast!"
-        ]
-      ]
-    ]
-  ]
-  
+  select Entries
+  # [
+  #   [
+  #     0, 
+  #     1336468384.32453, 
+  #     0.000257015228271484
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         3
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "content", 
+  #           "Text"
+  #         ], 
+  #         [
+  #           "n_likes", 
+  #           "UInt32"
+  #         ]
+  #       ], 
+  #       [
+  #         1, 
+  #         "The first post!", 
+  #         "Welcome! This is my first post!", 
+  #         5
+  #       ], 
+  #       [
+  #         2, 
+  #         "Groonga", 
+  #         "I started to use groonga. It's very fast!", 
+  #         10
+  #       ], 
+  #       [
+  #         3, 
+  #         "Mroonga", 
+  #         "I also started to use mroonga. It's also very fast! Really fast!", 
+  #         15
+  #       ]
+  #     ]
+  #   ]
+  # ]

@@ -1,47 +1,46 @@
 Execution example::
 
-  > column_create --table Site --name link --type Site
-  [[0,1335519612.27812,0.000259876251220703],true]
-  > load --table Site
-  > [{"_key":"http://example.org/","link":"http://example.net/"}]
-  [[0,1335519612.47892,0.200559377670288],1]
-  > select --table Site --output_columns _key,title,link._key,link.title --query title:@this
-  [
-    [
-      0, 
-      1335519612.88015, 
-      0.000769853591918945
-    ], 
-    [
-      [
-        [
-          1
-        ], 
-        [
-          [
-            "_key", 
-            "ShortText"
-          ], 
-          [
-            "title", 
-            "ShortText"
-          ], 
-          [
-            "link._key", 
-            "ShortText"
-          ], 
-          [
-            "link.title", 
-            "ShortText"
-          ]
-        ], 
-        [
-          "http://example.org/", 
-          "This is test record 1!", 
-          "http://example.net/", 
-          "test record 2."
-        ]
-      ]
-    ]
-  ]
-  
+  column_create --table Site --name link --type Site
+  # [[0,1336468398.46454,0.00023341178894043],true]
+  load --table Site
+  [{"_key":"http://example.org/","link":"http://example.net/"}]
+  select --table Site --output_columns _key,title,link._key,link.title --query title:@this
+  # [[0,1336468398.66529,0.200507402420044],1]
+  # [
+  #   [
+  #     0, 
+  #     1336468398.86583, 
+  #     0.00056004524230957
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         1
+  #       ], 
+  #       [
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "title", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "link._key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "link.title", 
+  #           "ShortText"
+  #         ]
+  #       ], 
+  #       [
+  #         "http://example.org/", 
+  #         "This is test record 1!", 
+  #         "http://example.net/", 
+  #         "test record 2."
+  #       ]
+  #     ]
+  #   ]
+  # ]

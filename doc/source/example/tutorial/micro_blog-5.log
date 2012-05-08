@@ -1,36 +1,35 @@
 Execution example::
 
-  > select --table Comments --query comment:@なう --output_columns comment,_score
-  [
-    [
-      0, 
-      1335519660.80493, 
-      0.000359296798706055
-    ], 
-    [
-      [
-        [
-          2
-        ], 
-        [
-          [
-            "comment", 
-            "ShortText"
-          ], 
-          [
-            "_score", 
-            "Int32"
-          ]
-        ], 
-        [
-          "groongaなう #groonga", 
-          1
-        ], 
-        [
-          "中野ブロードウェイなうなう", 
-          2
-        ]
-      ]
-    ]
-  ]
-  
+  select --table Comments --query comment:@なう --output_columns comment,_score
+  # [
+  #   [
+  #     0, 
+  #     1336468414.49473, 
+  #     0.000291824340820312
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         2
+  #       ], 
+  #       [
+  #         [
+  #           "comment", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "_score", 
+  #           "Int32"
+  #         ]
+  #       ], 
+  #       [
+  #         "groongaなう #groonga", 
+  #         1
+  #       ], 
+  #       [
+  #         "中野ブロードウェイなうなう", 
+  #         2
+  #       ]
+  #     ]
+  #   ]
+  # ]

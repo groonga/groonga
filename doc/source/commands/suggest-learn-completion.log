@@ -1,13 +1,12 @@
 Execution example::
 
-  > load --table event_query --each 'suggest_preparer(_id, type, item, sequence, time, pair_query)'
-  > [
-  > {"sequence": "1", "time": 1312950803.86057, "item": "e"},
-  > {"sequence": "1", "time": 1312950803.96857, "item": "en"},
-  > {"sequence": "1", "time": 1312950804.26057, "item": "eng"},
-  > {"sequence": "1", "time": 1312950804.56057, "item": "engi"},
-  > {"sequence": "1", "time": 1312950804.76057, "item": "engin"},
-  > {"sequence": "1", "time": 1312950805.86057, "item": "engine", "type": "submit"}
-  > ]
-  [[0,1335519584.62528,1.57926440238953],6]
-  
+  load --table event_query --each 'suggest_preparer(_id, type, item, sequence, time, pair_query)'
+  [
+  {"sequence": "1", "time": 1312950803.86057, "item": "e"},
+  {"sequence": "1", "time": 1312950803.96857, "item": "en"},
+  {"sequence": "1", "time": 1312950804.26057, "item": "eng"},
+  {"sequence": "1", "time": 1312950804.56057, "item": "engi"},
+  {"sequence": "1", "time": 1312950804.76057, "item": "engin"},
+  {"sequence": "1", "time": 1312950805.86057, "item": "engine", "type": "submit"}
+  ]
+  # [[0,1336468380.68818,0.192910671234131],6]

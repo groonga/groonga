@@ -1,9 +1,8 @@
 Execution example::
 
-  > load --table event_query --each 'suggest_preparer(_id, type, item, sequence, time, pair_query)'
-  > [
-  > {"sequence": "3", "time": 1312950803.86057, "item": "search engine", "type": "submit"},
-  > {"sequence": "3", "time": 1312950808.86057, "item": "web search realtime", "type": "submit"}
-  > ]
-  [[0,1335519588.61046,0.801591634750366],2]
-  
+  load --table event_query --each 'suggest_preparer(_id, type, item, sequence, time, pair_query)'
+  [
+  {"sequence": "3", "time": 1312950803.86057, "item": "search engine", "type": "submit"},
+  {"sequence": "3", "time": 1312950808.86057, "item": "web search realtime", "type": "submit"}
+  ]
+  # [[0,1336468381.48425,0.200975894927979],2]

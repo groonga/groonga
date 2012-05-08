@@ -1,42 +1,47 @@
 Execution example::
 
-  > select Entries --match_columns content --query fast
-  [
-    [
-      0, 
-      1335519592.87374, 
-      0.000868797302246094
-    ], 
-    [
-      [
-        [
-          2
-        ], 
-        [
-          [
-            "_id", 
-            "UInt32"
-          ], 
-          [
-            "_key", 
-            "ShortText"
-          ], 
-          [
-            "content", 
-            "Text"
-          ]
-        ], 
-        [
-          2, 
-          "Groonga", 
-          "I started to use groonga. It's very fast!"
-        ], 
-        [
-          3, 
-          "Mroonga", 
-          "I also started to use mroonga. It's also very fast! Really fast!"
-        ]
-      ]
-    ]
-  ]
-  
+  select Entries --match_columns content --query fast
+  # [
+  #   [
+  #     0, 
+  #     1336468384.52646, 
+  #     0.000507831573486328
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         2
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "content", 
+  #           "Text"
+  #         ], 
+  #         [
+  #           "n_likes", 
+  #           "UInt32"
+  #         ]
+  #       ], 
+  #       [
+  #         2, 
+  #         "Groonga", 
+  #         "I started to use groonga. It's very fast!", 
+  #         10
+  #       ], 
+  #       [
+  #         3, 
+  #         "Mroonga", 
+  #         "I also started to use mroonga. It's also very fast! Really fast!", 
+  #         15
+  #       ]
+  #     ]
+  #   ]
+  # ]

@@ -1,36 +1,35 @@
 Execution example::
 
-  > select --table Users --filter 'geo_in_circle(location,"128484216x502919856",5000)' --output_columns _key,name
-  [
-    [
-      0, 
-      1335519660.19891, 
-      0.000342607498168945
-    ], 
-    [
-      [
-        [
-          2
-        ], 
-        [
-          [
-            "_key", 
-            "ShortText"
-          ], 
-          [
-            "name", 
-            "ShortText"
-          ]
-        ], 
-        [
-          "tasukuchan", 
-          "グニャラくん"
-        ], 
-        [
-          "OffGao", 
-          "OffGao"
-        ]
-      ]
-    ]
-  ]
-  
+  select --table Users --filter 'geo_in_circle(location,"128484216x502919856",5000)' --output_columns _key,name
+  # [
+  #   [
+  #     0, 
+  #     1336468413.88813, 
+  #     0.000306844711303711
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         2
+  #       ], 
+  #       [
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "name", 
+  #           "ShortText"
+  #         ]
+  #       ], 
+  #       [
+  #         "tasukuchan", 
+  #         "グニャラくん"
+  #       ], 
+  #       [
+  #         "OffGao", 
+  #         "OffGao"
+  #       ]
+  #     ]
+  #   ]
+  # ]

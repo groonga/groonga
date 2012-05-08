@@ -1,19 +1,27 @@
 Execution example::
 
-  > table_create Entries TABLE_HASH_KEY ShortText
-  [[0,1335594537.43378,0.000381708145141602],true]
-  > column_create Entries content COLUMN_SCALAR Text
-  [[0,1335594537.63582,0.000931501388549805],true]
-  > table_create Terms TABLE_PAT_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenBigram
-  [[0,1335594537.83776,0.000288009643554688],true]
-  > column_create Terms entries_key_index COLUMN_INDEX|WITH_POSITION Entries _key
-  [[0,1335594538.03901,0.0059964656829834],true]
-  > column_create Terms entries_content_index COLUMN_INDEX|WITH_POSITION Entries content
-  [[0,1335594538.24584,0.00617790222167969],true]
-  > load --table Entries
-  > [
-  > {"_key": "The first post!", "content": "Welcome! This is my first post!"},
-  > {"_key": "Groonga", "content": "I started to use groonga. It's very fast!"}
-  > {"_key": "Mroonga", "content": "I also started to use mroonga. It's also very fast! Really fast!"}
-  > ]
-  
+  table_create Entries TABLE_HASH_KEY ShortText
+  # [[0,1336468382.70925,0.000218391418457031],true]
+  column_create Entries content COLUMN_SCALAR Text
+  # [[0,1336468382.91008,0.000534534454345703],true]
+  column_create Entries n_likes COLUMN_SCALAR UInt32
+  # [[0,1336468383.11114,0.00021815299987793],true]
+  table_create Terms TABLE_PAT_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenBigram
+  # [[0,1336468383.31188,0.000239849090576172],true]
+  column_create Terms entries_key_index COLUMN_INDEX|WITH_POSITION Entries _key
+  # [[0,1336468383.51263,0.00399947166442871],true]
+  column_create Terms entries_content_index COLUMN_INDEX|WITH_POSITION Entries content
+  # [[0,1336468383.71716,0.00355195999145508],true]
+  load --table Entries
+  [
+  {"_key":    "The first post!",
+   "content": "Welcome! This is my first post!",
+   "n_likes": 5},
+  {"_key":    "Groonga",
+   "content": "I started to use groonga. It's very fast!",
+   "n_likes": 10},
+  {"_key":    "Mroonga",
+   "content": "I also started to use mroonga. It's also very fast! Really fast!",
+   "n_likes": 15}
+  ]
+  # [[0,1336468383.92122,0.202519655227661],3]

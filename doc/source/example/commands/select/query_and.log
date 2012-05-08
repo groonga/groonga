@@ -1,42 +1,41 @@
 Execution example::
 
-  > select Entries --match_columns content --query "fast groonga"
-  [
-    [
-      0, 
-      1336461519.8022, 
-      0.000402688980102539
-    ], 
-    [
-      [
-        [
-          1
-        ], 
-        [
-          [
-            "_id", 
-            "UInt32"
-          ], 
-          [
-            "_key", 
-            "ShortText"
-          ], 
-          [
-            "content", 
-            "Text"
-          ], 
-          [
-            "n_likes", 
-            "UInt32"
-          ]
-        ], 
-        [
-          2, 
-          "Groonga", 
-          "I started to use groonga. It's very fast!", 
-          10
-        ]
-      ]
-    ]
-  ]
-  
+  select Entries --match_columns content --query "fast groonga"
+  # [
+  #   [
+  #     0, 
+  #     1336468386.13964, 
+  #     0.000435829162597656
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         1
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "content", 
+  #           "Text"
+  #         ], 
+  #         [
+  #           "n_likes", 
+  #           "UInt32"
+  #         ]
+  #       ], 
+  #       [
+  #         2, 
+  #         "Groonga", 
+  #         "I started to use groonga. It's very fast!", 
+  #         10
+  #       ]
+  #     ]
+  #   ]
+  # ]

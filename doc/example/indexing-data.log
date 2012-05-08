@@ -1,10 +1,9 @@
 Execution example::
 
-  > load --table Tweets
-  > [
-  > {"content":"Hello!"},
-  > {"content":"I just start it!"},
-  > {"content":"I'm sleepy... Have a nice day... Good night..."}
-  > ]
-  [[0,1335519575.72702,1.00192642211914],3]
-  
+  load --table Tweets
+  [
+  {"content":"Hello!"},
+  {"content":"I just start it!"},
+  {"content":"I'm sleepy... Have a nice day... Good night..."}
+  ]
+  # [[0,1336468377.09131,0.200614929199219],3]

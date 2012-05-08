@@ -1,32 +1,31 @@
 Execution example::
 
-  > select Tweets --match_columns content --query 'good nice'
-  [
-    [
-      0, 
-      1335519577.34259, 
-      0.000716209411621094
-    ], 
-    [
-      [
-        [
-          1
-        ], 
-        [
-          [
-            "_id", 
-            "UInt32"
-          ], 
-          [
-            "content", 
-            "ShortText"
-          ]
-        ], 
-        [
-          3, 
-          "I'm sleepy... Have a nice day... Good night..."
-        ]
-      ]
-    ]
-  ]
-  
+  select Tweets --match_columns content --query 'good nice'
+  # [
+  #   [
+  #     0, 
+  #     1336468377.89941, 
+  #     0.000522375106811523
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         1
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "content", 
+  #           "ShortText"
+  #         ]
+  #       ], 
+  #       [
+  #         3, 
+  #         "I'm sleepy... Have a nice day... Good night..."
+  #       ]
+  #     ]
+  #   ]
+  # ]

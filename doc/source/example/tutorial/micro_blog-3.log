@@ -1,36 +1,35 @@
 Execution example::
 
-  > select --table Users --query follower:@tasukuchan --output_columns _key,name
-  [
-    [
-      0, 
-      1335519660.40055, 
-      0.000302791595458984
-    ], 
-    [
-      [
-        [
-          2
-        ], 
-        [
-          [
-            "_key", 
-            "ShortText"
-          ], 
-          [
-            "name", 
-            "ShortText"
-          ]
-        ], 
-        [
-          "daijiro", 
-          "hsiomaneki"
-        ], 
-        [
-          "OffGao", 
-          "OffGao"
-        ]
-      ]
-    ]
-  ]
-  
+  select --table Users --query follower:@tasukuchan --output_columns _key,name
+  # [
+  #   [
+  #     0, 
+  #     1336468414.08964, 
+  #     0.000273466110229492
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         2
+  #       ], 
+  #       [
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "name", 
+  #           "ShortText"
+  #         ]
+  #       ], 
+  #       [
+  #         "daijiro", 
+  #         "hsiomaneki"
+  #       ], 
+  #       [
+  #         "OffGao", 
+  #         "OffGao"
+  #       ]
+  #     ]
+  #   ]
+  # ]

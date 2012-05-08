@@ -1,36 +1,35 @@
 Execution example::
 
-  > select Entries --match_columns content --query fast --output_columns '_key, _score'
-  [
-    [
-      0, 
-      1335519593.88754, 
-      0.000384092330932617
-    ], 
-    [
-      [
-        [
-          2
-        ], 
-        [
-          [
-            "_key", 
-            "ShortText"
-          ], 
-          [
-            "_score", 
-            "Int32"
-          ]
-        ], 
-        [
-          "Groonga", 
-          1
-        ], 
-        [
-          "Mroonga", 
-          2
-        ]
-      ]
-    ]
-  ]
-  
+  select Entries --match_columns content --query fast --output_columns '_key, _score'
+  # [
+  #   [
+  #     0, 
+  #     1336468385.53409, 
+  #     0.000331878662109375
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         2
+  #       ], 
+  #       [
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "_score", 
+  #           "Int32"
+  #         ]
+  #       ], 
+  #       [
+  #         "Groonga", 
+  #         1
+  #       ], 
+  #       [
+  #         "Mroonga", 
+  #         2
+  #       ]
+  #     ]
+  #   ]
+  # ]

@@ -1,32 +1,31 @@
 Execution example::
 
-  > suggest --table item_query --column kana --types complete --frequency_threshold 1 --query en
-  [
-    [
-      0, 
-      1335519580.61411, 
-      0.00101041793823242
-    ], 
-    {
-      "complete": [
-        [
-          1
-        ], 
-        [
-          [
-            "_key", 
-            "ShortText"
-          ], 
-          [
-            "_score", 
-            "Int32"
-          ]
-        ], 
-        [
-          "engine", 
-          1
-        ]
-      ]
-    }
-  ]
-  
+  suggest --table item_query --column kana --types complete --frequency_threshold 1 --query en
+  # [
+  #   [
+  #     0, 
+  #     1336468379.14295, 
+  #     0.000610589981079102
+  #   ], 
+  #   {
+  #     "complete": [
+  #       [
+  #         1
+  #       ], 
+  #       [
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "_score", 
+  #           "Int32"
+  #         ]
+  #       ], 
+  #       [
+  #         "engine", 
+  #         1
+  #       ]
+  #     ]
+  #   }
+  # ]

@@ -1,85 +1,84 @@
 Execution example::
 
-  > select --table User --query friends:@tomo --output_columns _key,username
-  [
-    [
-      0, 
-      1335519633.46704, 
-      0.000623941421508789
-    ], 
-    [
-      [
-        [
-          5
-        ], 
-        [
-          [
-            "_key", 
-            "ShortText"
-          ], 
-          [
-            "username", 
-            "ShortText"
-          ]
-        ], 
-        [
-          "ken", 
-          "健作"
-        ], 
-        [
-          "taro", 
-          "ぐるんが太郎"
-        ], 
-        [
-          "jiro", 
-          "ぐるんが次郎"
-        ], 
-        [
-          "moritapo", 
-          "森田"
-        ], 
-        [
-          "hana", 
-          "花子"
-        ]
-      ]
-    ]
-  ]
-  > select --table User --query friends:@jiro --output_columns _key,username
-  [
-    [
-      0, 
-      1335519633.67028, 
-      0.000344514846801758
-    ], 
-    [
-      [
-        [
-          3
-        ], 
-        [
-          [
-            "_key", 
-            "ShortText"
-          ], 
-          [
-            "username", 
-            "ShortText"
-          ]
-        ], 
-        [
-          "ken", 
-          "健作"
-        ], 
-        [
-          "taro", 
-          "ぐるんが太郎"
-        ], 
-        [
-          "hana", 
-          "花子"
-        ]
-      ]
-    ]
-  ]
-  
+  select --table User --query friends:@tomo --output_columns _key,username
+  # [
+  #   [
+  #     0, 
+  #     1336468411.81889, 
+  #     0.000313997268676758
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         5
+  #       ], 
+  #       [
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "username", 
+  #           "ShortText"
+  #         ]
+  #       ], 
+  #       [
+  #         "ken", 
+  #         "健作"
+  #       ], 
+  #       [
+  #         "taro", 
+  #         "ぐるんが太郎"
+  #       ], 
+  #       [
+  #         "jiro", 
+  #         "ぐるんが次郎"
+  #       ], 
+  #       [
+  #         "moritapo", 
+  #         "森田"
+  #       ], 
+  #       [
+  #         "hana", 
+  #         "花子"
+  #       ]
+  #     ]
+  #   ]
+  # ]
+  select --table User --query friends:@jiro --output_columns _key,username
+  # [
+  #   [
+  #     0, 
+  #     1336468412.0203, 
+  #     0.000349998474121094
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         3
+  #       ], 
+  #       [
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "username", 
+  #           "ShortText"
+  #         ]
+  #       ], 
+  #       [
+  #         "ken", 
+  #         "健作"
+  #       ], 
+  #       [
+  #         "taro", 
+  #         "ぐるんが太郎"
+  #       ], 
+  #       [
+  #         "hana", 
+  #         "花子"
+  #       ]
+  #     ]
+  #   ]
+  # ]

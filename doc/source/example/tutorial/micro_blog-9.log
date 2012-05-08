@@ -1,38 +1,37 @@
 Execution example::
 
-  > select --table Users --query _key:tasukuchan --output_columns favorites.posted_by,favorites.comment
-  [
-    [
-      0, 
-      1335519661.61696, 
-      0.000443696975708008
-    ], 
-    [
-      [
-        [
-          1
-        ], 
-        [
-          [
-            "favorites.posted_by", 
-            "Users"
-          ], 
-          [
-            "favorites.comment", 
-            "ShortText"
-          ]
-        ], 
-        [
-          [
-            "daijiro", 
-            "OffGao"
-          ], 
-          [
-            "マイクロブログ作ってみました（甘栗むいちゃいました的な感じで）。", 
-            "@daijiro @tasukuchan 登録してみましたよー！"
-          ]
-        ]
-      ]
-    ]
-  ]
-  
+  select --table Users --query _key:tasukuchan --output_columns favorites.posted_by,favorites.comment
+  # [
+  #   [
+  #     0, 
+  #     1336468415.3025, 
+  #     0.000294923782348633
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         1
+  #       ], 
+  #       [
+  #         [
+  #           "favorites.posted_by", 
+  #           "Users"
+  #         ], 
+  #         [
+  #           "favorites.comment", 
+  #           "ShortText"
+  #         ]
+  #       ], 
+  #       [
+  #         [
+  #           "daijiro", 
+  #           "OffGao"
+  #         ], 
+  #         [
+  #           "マイクロブログ作ってみました（甘栗むいちゃいました的な感じで）。", 
+  #           "@daijiro @tasukuchan 登録してみましたよー！"
+  #         ]
+  #       ]
+  #     ]
+  #   ]
+  # ]

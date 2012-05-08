@@ -1,45 +1,44 @@
 Execution example::
 
-  > table_create --name PatPrefix --flags TABLE_PAT_KEY --key_type ShortText
-  [[0,1335519594.52747,0.000475168228149414],true]
-  > load --table PatPrefix
-  > [
-  > {"_key":"ひろゆき"},
-  > {"_key":"まろゆき"},
-  > {"_key":"ひろあき"}
-  > ]
-  [[0,1335519594.72892,1.00176382064819],3]
-  > select --table PatPrefix --query _key:@ひろ
+  table_create --name PatPrefix --flags TABLE_PAT_KEY --key_type ShortText
+  # [[0,1336468387.77833,0.000189781188964844],true]
+  load --table PatPrefix
   [
-    [
-      0, 
-      1335519595.93126, 
-      0.00059962272644043
-    ], 
-    [
-      [
-        [
-          2
-        ], 
-        [
-          [
-            "_id", 
-            "UInt32"
-          ], 
-          [
-            "_key", 
-            "ShortText"
-          ]
-        ], 
-        [
-          3, 
-          "ひろあき"
-        ], 
-        [
-          1, 
-          "ひろゆき"
-        ]
-      ]
-    ]
+  {"_key":"ひろゆき"},
+  {"_key":"まろゆき"},
+  {"_key":"ひろあき"}
   ]
-  
+  # [[0,1336468387.97908,0.200587749481201],3]
+  select --table PatPrefix --query _key:@ひろ
+  # [
+  #   [
+  #     0, 
+  #     1336468388.38016, 
+  #     0.000479698181152344
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         2
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ]
+  #       ], 
+  #       [
+  #         3, 
+  #         "ひろあき"
+  #       ], 
+  #       [
+  #         1, 
+  #         "ひろゆき"
+  #       ]
+  #     ]
+  #   ]
+  # ]

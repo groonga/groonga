@@ -1,49 +1,48 @@
 Execution example::
 
-  > column_create --table ToyBox --name is_animal --type Bool
-  [[0,1335519604.64795,0.000276803970336914],true]
-  > load --table ToyBox
-  > [
-  > {"_key":"Monkey","is_animal":true}
-  > {"_key":"Flower","is_animal":false}
-  > {"_key":"Block"}
-  > ]
-  [[0,1335519604.84886,1.00171399116516],3]
-  > select --table ToyBox --output_columns _key,is_animal
+  column_create --table ToyBox --name is_animal --type Bool
+  # [[0,1336468394.24776,0.000195503234863281],true]
+  load --table ToyBox
   [
-    [
-      0, 
-      1335519606.05127, 
-      0.000250577926635742
-    ], 
-    [
-      [
-        [
-          3
-        ], 
-        [
-          [
-            "_key", 
-            "ShortText"
-          ], 
-          [
-            "is_animal", 
-            "Bool"
-          ]
-        ], 
-        [
-          "Monkey", 
-          true
-        ], 
-        [
-          "Flower", 
-          false
-        ], 
-        [
-          "Block", 
-          false
-        ]
-      ]
-    ]
+  {"_key":"Monkey","is_animal":true}
+  {"_key":"Flower","is_animal":false}
+  {"_key":"Block"}
   ]
-  
+  # [[0,1336468394.44844,0.20062780380249],3]
+  select --table ToyBox --output_columns _key,is_animal
+  # [
+  #   [
+  #     0, 
+  #     1336468394.84955, 
+  #     0.000217676162719727
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         3
+  #       ], 
+  #       [
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "is_animal", 
+  #           "Bool"
+  #         ]
+  #       ], 
+  #       [
+  #         "Monkey", 
+  #         true
+  #       ], 
+  #       [
+  #         "Flower", 
+  #         false
+  #       ], 
+  #       [
+  #         "Block", 
+  #         false
+  #       ]
+  #     ]
+  #   ]
+  # ]

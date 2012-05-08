@@ -1,138 +1,137 @@
 Execution example::
 
-  > select --table Blog1 --match_columns title||message --query groonga
-  [
-    [
-      0, 
-      1335519616.32664, 
-      0.00108003616333008
-    ], 
-    [
-      [
-        [
-          3
-        ], 
-        [
-          [
-            "_id", 
-            "UInt32"
-          ], 
-          [
-            "_key", 
-            "ShortText"
-          ], 
-          [
-            "message", 
-            "ShortText"
-          ], 
-          [
-            "title", 
-            "ShortText"
-          ]
-        ], 
-        [
-          1, 
-          "grn1", 
-          "groonga message", 
-          "groonga test"
-        ], 
-        [
-          3, 
-          "grn3", 
-          "none", 
-          "groonga message"
-        ], 
-        [
-          2, 
-          "grn2", 
-          "rakutan eggs 4 - 4 groonga moritars", 
-          "baseball result"
-        ]
-      ]
-    ]
-  ]
-  > select --table Blog1 --match_columns title||message --query message
-  [
-    [
-      0, 
-      1335519616.5306, 
-      0.000397920608520508
-    ], 
-    [
-      [
-        [
-          2
-        ], 
-        [
-          [
-            "_id", 
-            "UInt32"
-          ], 
-          [
-            "_key", 
-            "ShortText"
-          ], 
-          [
-            "message", 
-            "ShortText"
-          ], 
-          [
-            "title", 
-            "ShortText"
-          ]
-        ], 
-        [
-          3, 
-          "grn3", 
-          "none", 
-          "groonga message"
-        ], 
-        [
-          1, 
-          "grn1", 
-          "groonga message", 
-          "groonga test"
-        ]
-      ]
-    ]
-  ]
-  > select --table Blog1 --match_columns title --query message
-  [
-    [
-      0, 
-      1335519616.73219, 
-      0.000369548797607422
-    ], 
-    [
-      [
-        [
-          1
-        ], 
-        [
-          [
-            "_id", 
-            "UInt32"
-          ], 
-          [
-            "_key", 
-            "ShortText"
-          ], 
-          [
-            "message", 
-            "ShortText"
-          ], 
-          [
-            "title", 
-            "ShortText"
-          ]
-        ], 
-        [
-          3, 
-          "grn3", 
-          "none", 
-          "groonga message"
-        ]
-      ]
-    ]
-  ]
-  
+  select --table Blog1 --match_columns title||message --query groonga
+  # [
+  #   [
+  #     0, 
+  #     1336468401.3015, 
+  #     0.000590324401855469
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         3
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "message", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "title", 
+  #           "ShortText"
+  #         ]
+  #       ], 
+  #       [
+  #         1, 
+  #         "grn1", 
+  #         "groonga message", 
+  #         "groonga test"
+  #       ], 
+  #       [
+  #         3, 
+  #         "grn3", 
+  #         "none", 
+  #         "groonga message"
+  #       ], 
+  #       [
+  #         2, 
+  #         "grn2", 
+  #         "rakutan eggs 4 - 4 groonga moritars", 
+  #         "baseball result"
+  #       ]
+  #     ]
+  #   ]
+  # ]
+  select --table Blog1 --match_columns title||message --query message
+  # [
+  #   [
+  #     0, 
+  #     1336468401.5036, 
+  #     0.000405550003051758
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         2
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "message", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "title", 
+  #           "ShortText"
+  #         ]
+  #       ], 
+  #       [
+  #         3, 
+  #         "grn3", 
+  #         "none", 
+  #         "groonga message"
+  #       ], 
+  #       [
+  #         1, 
+  #         "grn1", 
+  #         "groonga message", 
+  #         "groonga test"
+  #       ]
+  #     ]
+  #   ]
+  # ]
+  select --table Blog1 --match_columns title --query message
+  # [
+  #   [
+  #     0, 
+  #     1336468401.70521, 
+  #     0.000378131866455078
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         1
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "message", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "title", 
+  #           "ShortText"
+  #         ]
+  #       ], 
+  #       [
+  #         3, 
+  #         "grn3", 
+  #         "none", 
+  #         "groonga message"
+  #       ]
+  #     ]
+  #   ]
+  # ]

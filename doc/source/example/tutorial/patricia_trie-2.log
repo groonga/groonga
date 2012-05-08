@@ -1,102 +1,101 @@
 Execution example::
 
-  > table_create --name PatSuffix --flags TABLE_PAT_KEY|KEY_WITH_SIS --key_type ShortText
-  [[0,1335519596.13342,0.000287294387817383],true]
-  > column_create --table PatSuffix --name original --type Bool
-  [[0,1335519596.33446,0.000329494476318359],true]
-  > load --table PatSuffix
-  > [
-  > {"_key":"ひろゆき","original":true},
-  > {"_key":"まろゆき","original":true},
-  > {"_key":"ひろあき","original":true}
-  > ]
-  [[0,1335519596.53576,1.00176548957825],3]
-  > select --table PatSuffix --query _key:@ゆき
+  table_create --name PatSuffix --flags TABLE_PAT_KEY|KEY_WITH_SIS --key_type ShortText
+  # [[0,1336468388.5819,0.000212192535400391],true]
+  column_create --table PatSuffix --name original --type Bool
+  # [[0,1336468388.78261,0.000191450119018555],true]
+  load --table PatSuffix
   [
-    [
-      0, 
-      1335519597.73837, 
-      0.000630855560302734
-    ], 
-    [
-      [
-        [
-          4
-        ], 
-        [
-          [
-            "_id", 
-            "UInt32"
-          ], 
-          [
-            "_key", 
-            "ShortText"
-          ], 
-          [
-            "original", 
-            "Bool"
-          ]
-        ], 
-        [
-          1, 
-          "ひろゆき", 
-          true
-        ], 
-        [
-          5, 
-          "まろゆき", 
-          true
-        ], 
-        [
-          3, 
-          "ゆき", 
-          false
-        ], 
-        [
-          2, 
-          "ろゆき", 
-          false
-        ]
-      ]
-    ]
+  {"_key":"ひろゆき","original":true},
+  {"_key":"まろゆき","original":true},
+  {"_key":"ひろあき","original":true}
   ]
-  > select --table PatSuffix --query "_key:@ゆき original:true"
-  [
-    [
-      0, 
-      1335519597.94114, 
-      0.000690460205078125
-    ], 
-    [
-      [
-        [
-          2
-        ], 
-        [
-          [
-            "_id", 
-            "UInt32"
-          ], 
-          [
-            "_key", 
-            "ShortText"
-          ], 
-          [
-            "original", 
-            "Bool"
-          ]
-        ], 
-        [
-          1, 
-          "ひろゆき", 
-          true
-        ], 
-        [
-          5, 
-          "まろゆき", 
-          true
-        ]
-      ]
-    ]
-  ]
-  
+  # [[0,1336468388.9833,0.200592756271362],3]
+  select --table PatSuffix --query _key:@ゆき
+  # [
+  #   [
+  #     0, 
+  #     1336468389.38437, 
+  #     0.000394582748413086
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         4
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "original", 
+  #           "Bool"
+  #         ]
+  #       ], 
+  #       [
+  #         1, 
+  #         "ひろゆき", 
+  #         true
+  #       ], 
+  #       [
+  #         5, 
+  #         "まろゆき", 
+  #         true
+  #       ], 
+  #       [
+  #         3, 
+  #         "ゆき", 
+  #         false
+  #       ], 
+  #       [
+  #         2, 
+  #         "ろゆき", 
+  #         false
+  #       ]
+  #     ]
+  #   ]
+  # ]
+  select --table PatSuffix --query "_key:@ゆき original:true"
+  # [
+  #   [
+  #     0, 
+  #     1336468389.58586, 
+  #     0.000368118286132812
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         2
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "original", 
+  #           "Bool"
+  #         ]
+  #       ], 
+  #       [
+  #         1, 
+  #         "ひろゆき", 
+  #         true
+  #       ], 
+  #       [
+  #         5, 
+  #         "まろゆき", 
+  #         true
+  #       ]
+  #     ]
+  #   ]
+  # ]

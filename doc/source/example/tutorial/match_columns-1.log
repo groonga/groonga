@@ -1,22 +1,21 @@
 Execution example::
 
-  > table_create --name Blog1 --flags TABLE_HASH_KEY --key_type ShortText
-  [[0,1335519613.90326,0.00016021728515625],true]
-  > column_create --table Blog1 --name title --flags COLUMN_SCALAR --type ShortText
-  [[0,1335519614.10411,0.00106573104858398],true]
-  > column_create --table Blog1 --name message --flags COLUMN_SCALAR --type ShortText
-  [[0,1335519614.30595,0.00101113319396973],true]
-  > table_create --name IndexBlog1 --flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type ShortText --default_tokenizer TokenBigram
-  [[0,1335519614.50779,0.000327587127685547],true]
-  > column_create --table IndexBlog1 --name index_title --flags COLUMN_INDEX|WITH_POSITION --type Blog1 --source title
-  [[0,1335519614.70891,0.00641822814941406],true]
-  > column_create --table IndexBlog1 --name index_message --flags COLUMN_INDEX|WITH_POSITION --type Blog1 --source message
-  [[0,1335519614.91621,0.00670051574707031],true]
-  > load --table Blog1
-  > [
-  > {"_key":"grn1","title":"groonga test","message":"groonga message"},
-  > {"_key":"grn2","title":"baseball result","message":"rakutan eggs 4 - 4 groonga moritars"},
-  > {"_key":"grn3","title":"groonga message","message":"none"}
-  > ]
-  [[0,1335519615.1238,1.00167393684387],3]
-  
+  table_create --name Blog1 --flags TABLE_HASH_KEY --key_type ShortText
+  # [[0,1336468399.6861,0.000176429748535156],true]
+  column_create --table Blog1 --name title --flags COLUMN_SCALAR --type ShortText
+  # [[0,1336468399.88692,0.000572443008422852],true]
+  column_create --table Blog1 --name message --flags COLUMN_SCALAR --type ShortText
+  # [[0,1336468400.08803,0.000512361526489258],true]
+  table_create --name IndexBlog1 --flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type ShortText --default_tokenizer TokenBigram
+  # [[0,1336468400.28907,0.000239133834838867],true]
+  column_create --table IndexBlog1 --name index_title --flags COLUMN_INDEX|WITH_POSITION --type Blog1 --source title
+  # [[0,1336468400.48983,0.00376629829406738],true]
+  column_create --table IndexBlog1 --name index_message --flags COLUMN_INDEX|WITH_POSITION --type Blog1 --source message
+  # [[0,1336468400.69408,0.00344538688659668],true]
+  load --table Blog1
+  [
+  {"_key":"grn1","title":"groonga test","message":"groonga message"},
+  {"_key":"grn2","title":"baseball result","message":"rakutan eggs 4 - 4 groonga moritars"},
+  {"_key":"grn3","title":"groonga message","message":"none"}
+  ]
+  # [[0,1336468400.89804,0.202517986297607],3]

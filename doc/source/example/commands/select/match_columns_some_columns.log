@@ -1,32 +1,31 @@
 Execution example::
 
-  > select Entries --match_columns '_key * 10 || content' --query groonga --output_columns '_key, _score'
-  [
-    [
-      0, 
-      1335594540.29792, 
-      0.000547885894775391
-    ], 
-    [
-      [
-        [
-          1
-        ], 
-        [
-          [
-            "_key", 
-            "ShortText"
-          ], 
-          [
-            "_score", 
-            "Int32"
-          ]
-        ], 
-        [
-          "Groonga", 
-          11
-        ]
-      ]
-    ]
-  ]
-  
+  select Entries --match_columns '_key * 10 || content' --query groonga --output_columns '_key, _score'
+  # [
+  #   [
+  #     0, 
+  #     1336468385.93695, 
+  #     0.000330209732055664
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         1
+  #       ], 
+  #       [
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "_score", 
+  #           "Int32"
+  #         ]
+  #       ], 
+  #       [
+  #         "Groonga", 
+  #         11
+  #       ]
+  #     ]
+  #   ]
+  # ]

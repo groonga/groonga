@@ -1,90 +1,89 @@
 Execution example::
 
-  > select --table Comments --filter 'geo_in_circle(location,"127975798x502919856",20000)' --output_columns posted_by.name,comment --drilldown hash_tags,posted_by
-  [
-    [
-      0, 
-      1335519660.60211, 
-      0.00048828125
-    ], 
-    [
-      [
-        [
-          4
-        ], 
-        [
-          [
-            "posted_by.name", 
-            "ShortText"
-          ], 
-          [
-            "comment", 
-            "ShortText"
-          ]
-        ], 
-        [
-          "OffGao", 
-          "@daijiro @tasukuchan 登録してみましたよー！"
-        ], 
-        [
-          "グニャラくん", 
-          "groongaなう #groonga"
-        ], 
-        [
-          "グニャラくん", 
-          "groonga開発合宿のため羽田空港に来ました！ #groonga #travel"
-        ], 
-        [
-          "OffGao", 
-          "中野ブロードウェイなうなう"
-        ]
-      ], 
-      [
-        [
-          2
-        ], 
-        [
-          [
-            "_key", 
-            "ShortText"
-          ], 
-          [
-            "_nsubrecs", 
-            "Int32"
-          ]
-        ], 
-        [
-          "groonga", 
-          2
-        ], 
-        [
-          "travel", 
-          1
-        ]
-      ], 
-      [
-        [
-          2
-        ], 
-        [
-          [
-            "_key", 
-            "ShortText"
-          ], 
-          [
-            "_nsubrecs", 
-            "Int32"
-          ]
-        ], 
-        [
-          "OffGao", 
-          2
-        ], 
-        [
-          "tasukuchan", 
-          2
-        ]
-      ]
-    ]
-  ]
-  
+  select --table Comments --filter 'geo_in_circle(location,"127975798x502919856",20000)' --output_columns posted_by.name,comment --drilldown hash_tags,posted_by
+  # [
+  #   [
+  #     0, 
+  #     1336468414.29108, 
+  #     0.000583171844482422
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         4
+  #       ], 
+  #       [
+  #         [
+  #           "posted_by.name", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "comment", 
+  #           "ShortText"
+  #         ]
+  #       ], 
+  #       [
+  #         "OffGao", 
+  #         "@daijiro @tasukuchan 登録してみましたよー！"
+  #       ], 
+  #       [
+  #         "グニャラくん", 
+  #         "groongaなう #groonga"
+  #       ], 
+  #       [
+  #         "グニャラくん", 
+  #         "groonga開発合宿のため羽田空港に来ました！ #groonga #travel"
+  #       ], 
+  #       [
+  #         "OffGao", 
+  #         "中野ブロードウェイなうなう"
+  #       ]
+  #     ], 
+  #     [
+  #       [
+  #         2
+  #       ], 
+  #       [
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "_nsubrecs", 
+  #           "Int32"
+  #         ]
+  #       ], 
+  #       [
+  #         "groonga", 
+  #         2
+  #       ], 
+  #       [
+  #         "travel", 
+  #         1
+  #       ]
+  #     ], 
+  #     [
+  #       [
+  #         2
+  #       ], 
+  #       [
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "_nsubrecs", 
+  #           "Int32"
+  #         ]
+  #       ], 
+  #       [
+  #         "OffGao", 
+  #         2
+  #       ], 
+  #       [
+  #         "tasukuchan", 
+  #         2
+  #       ]
+  #     ]
+  #   ]
+  # ]

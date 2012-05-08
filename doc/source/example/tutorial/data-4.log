@@ -1,48 +1,47 @@
 Execution example::
 
-  > column_create --table ToyBox --name name --type ShortText
-  [[0,1335519608.06052,0.000979185104370117],true]
-  > load --table ToyBox
-  > [
-  > {"_key":"Monkey","name":"Grease"}
-  > {"_key":"Flower","name":"Rose"}
-  > ]
-  [[0,1335519608.26235,0.8014075756073],2]
-  > select --table ToyBox --output_columns _key,name
+  column_create --table ToyBox --name name --type ShortText
+  # [[0,1336468396.05497,0.000494003295898438],true]
+  load --table ToyBox
   [
-    [
-      0, 
-      1335519609.26462, 
-      0.000252008438110352
-    ], 
-    [
-      [
-        [
-          3
-        ], 
-        [
-          [
-            "_key", 
-            "ShortText"
-          ], 
-          [
-            "name", 
-            "ShortText"
-          ]
-        ], 
-        [
-          "Monkey", 
-          "Grease"
-        ], 
-        [
-          "Flower", 
-          "Rose"
-        ], 
-        [
-          "Block", 
-          ""
-        ]
-      ]
-    ]
+  {"_key":"Monkey","name":"Grease"}
+  {"_key":"Flower","name":"Rose"}
   ]
-  
+  # [[0,1336468396.25599,0.200543642044067],2]
+  select --table ToyBox --output_columns _key,name
+  # [
+  #   [
+  #     0, 
+  #     1336468396.65701, 
+  #     0.000139951705932617
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         3
+  #       ], 
+  #       [
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "name", 
+  #           "ShortText"
+  #         ]
+  #       ], 
+  #       [
+  #         "Monkey", 
+  #         "Grease"
+  #       ], 
+  #       [
+  #         "Flower", 
+  #         "Rose"
+  #       ], 
+  #       [
+  #         "Block", 
+  #         ""
+  #       ]
+  #     ]
+  #   ]
+  # ]

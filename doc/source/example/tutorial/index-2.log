@@ -1,106 +1,105 @@
 Execution example::
 
-  > select --table Video --query tags:@Variety --output_columns _key,title
-  [
-    [
-      0, 
-      1335519630.24437, 
-      0.000667810440063477
-    ], 
-    [
-      [
-        [
-          2
-        ], 
-        [
-          [
-            "_key", 
-            "UInt32"
-          ], 
-          [
-            "title", 
-            "ShortText"
-          ]
-        ], 
-        [
-          2, 
-          "Zenigata Kinjirou"
-        ], 
-        [
-          5, 
-          "Hex Gone!"
-        ]
-      ]
-    ]
-  ]
-  > select --table Video --query tags:@Sports --output_columns _key,title
-  [
-    [
-      0, 
-      1335519630.44675, 
-      0.000470399856567383
-    ], 
-    [
-      [
-        [
-          2
-        ], 
-        [
-          [
-            "_key", 
-            "UInt32"
-          ], 
-          [
-            "title", 
-            "ShortText"
-          ]
-        ], 
-        [
-          1, 
-          "Soccer 2010"
-        ], 
-        [
-          4, 
-          "Moero!! Ultra Baseball"
-        ]
-      ]
-    ]
-  ]
-  > select --table Video --query tags:@Animation --output_columns _key,title
-  [
-    [
-      0, 
-      1335519630.64889, 
-      0.000455856323242188
-    ], 
-    [
-      [
-        [
-          3
-        ], 
-        [
-          [
-            "_key", 
-            "UInt32"
-          ], 
-          [
-            "title", 
-            "ShortText"
-          ]
-        ], 
-        [
-          6, 
-          "Pikonyan 1"
-        ], 
-        [
-          7, 
-          "Draw 8 Month"
-        ], 
-        [
-          8, 
-          "K.O."
-        ]
-      ]
-    ]
-  ]
-  
+  select --table Video --query tags:@Variety --output_columns _key,title
+  # [
+  #   [
+  #     0, 
+  #     1336468410.00491, 
+  #     0.000417709350585938
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         2
+  #       ], 
+  #       [
+  #         [
+  #           "_key", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "title", 
+  #           "ShortText"
+  #         ]
+  #       ], 
+  #       [
+  #         2, 
+  #         "Zenigata Kinjirou"
+  #       ], 
+  #       [
+  #         5, 
+  #         "Hex Gone!"
+  #       ]
+  #     ]
+  #   ]
+  # ]
+  select --table Video --query tags:@Sports --output_columns _key,title
+  # [
+  #   [
+  #     0, 
+  #     1336468410.20624, 
+  #     0.000339508056640625
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         2
+  #       ], 
+  #       [
+  #         [
+  #           "_key", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "title", 
+  #           "ShortText"
+  #         ]
+  #       ], 
+  #       [
+  #         1, 
+  #         "Soccer 2010"
+  #       ], 
+  #       [
+  #         4, 
+  #         "Moero!! Ultra Baseball"
+  #       ]
+  #     ]
+  #   ]
+  # ]
+  select --table Video --query tags:@Animation --output_columns _key,title
+  # [
+  #   [
+  #     0, 
+  #     1336468410.40778, 
+  #     0.00030517578125
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         3
+  #       ], 
+  #       [
+  #         [
+  #           "_key", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "title", 
+  #           "ShortText"
+  #         ]
+  #       ], 
+  #       [
+  #         6, 
+  #         "Pikonyan 1"
+  #       ], 
+  #       [
+  #         7, 
+  #         "Draw 8 Month"
+  #       ], 
+  #       [
+  #         8, 
+  #         "K.O."
+  #       ]
+  #     ]
+  #   ]
+  # ]

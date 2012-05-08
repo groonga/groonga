@@ -1,59 +1,58 @@
 Execution example::
 
-  > select --table Comments --query posted_by:tasukuchan --output_columns comment --drilldown hash_tags
-  [
-    [
-      0, 
-      1335519661.41271, 
-      0.000678777694702148
-    ], 
-    [
-      [
-        [
-          4
-        ], 
-        [
-          [
-            "comment", 
-            "ShortText"
-          ]
-        ], 
-        [
-          "初の書き込み。テストテスト。"
-        ], 
-        [
-          "@daijiro ありがとう！"
-        ], 
-        [
-          "groongaなう #groonga"
-        ], 
-        [
-          "groonga開発合宿のため羽田空港に来ました！ #groonga #travel"
-        ]
-      ], 
-      [
-        [
-          2
-        ], 
-        [
-          [
-            "_key", 
-            "ShortText"
-          ], 
-          [
-            "_nsubrecs", 
-            "Int32"
-          ]
-        ], 
-        [
-          "groonga", 
-          2
-        ], 
-        [
-          "travel", 
-          1
-        ]
-      ]
-    ]
-  ]
-  
+  select --table Comments --query posted_by:tasukuchan --output_columns comment --drilldown hash_tags
+  # [
+  #   [
+  #     0, 
+  #     1336468415.10035, 
+  #     0.000369787216186523
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         4
+  #       ], 
+  #       [
+  #         [
+  #           "comment", 
+  #           "ShortText"
+  #         ]
+  #       ], 
+  #       [
+  #         "初の書き込み。テストテスト。"
+  #       ], 
+  #       [
+  #         "@daijiro ありがとう！"
+  #       ], 
+  #       [
+  #         "groongaなう #groonga"
+  #       ], 
+  #       [
+  #         "groonga開発合宿のため羽田空港に来ました！ #groonga #travel"
+  #       ]
+  #     ], 
+  #     [
+  #       [
+  #         2
+  #       ], 
+  #       [
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "_nsubrecs", 
+  #           "Int32"
+  #         ]
+  #       ], 
+  #       [
+  #         "groonga", 
+  #         2
+  #       ], 
+  #       [
+  #         "travel", 
+  #         1
+  #       ]
+  #     ]
+  #   ]
+  # ]

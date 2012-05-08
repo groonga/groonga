@@ -1,27 +1,26 @@
 Execution example::
 
-  > table_create Doc TABLE_PAT_KEY ShortText
-  [[0,1335519662.68773,0.000400543212890625],true]
-  > column_create Doc body COLUMN_SCALAR ShortText
-  [[0,1335519662.88919,0.000899314880371094],true]
-  > table_create Term TABLE_PAT_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenBigram
-  [[0,1335519663.09089,0.000370979309082031],true]
-  > column_create Term Doc_body COLUMN_INDEX|WITH_POSITION Doc body
-  [[0,1335519663.29217,0.00676441192626953],true]
-  > table_create Synonym TABLE_PAT_KEY ShortText
-  [[0,1335519663.4998,0.000351667404174805],true]
-  > column_create Synonym body COLUMN_SCALAR ShortText
-  [[0,1335519663.70094,0.000846624374389648],true]
-  > load --table Doc
-  > [
-  > {"_key": "001", "body": "すっぱいブドウと甘いシークァーサー"},
-  > {"_key": "002", "body": "シークヮーサージュースとゴーヤチャンプル"},
-  > ]
-  [[0,1335519663.90262,0.801640033721924],2]
-  > load --table Synonym
-  > [
-  > {"_key": "シークァーサー", "body": "(シークァーサー OR シークヮーサー)"},
-  > {"_key": "シークヮーサー", "body": "(シークァーサー OR シークヮーサー)"},
-  > ]
-  [[0,1335519664.905,0.801484823226929],2]
-  
+  table_create Doc TABLE_PAT_KEY ShortText
+  # [[0,1336468416.35389,0.000249862670898438],true]
+  column_create Doc body COLUMN_SCALAR ShortText
+  # [[0,1336468416.5548,0.000641345977783203],true]
+  table_create Term TABLE_PAT_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenBigram
+  # [[0,1336468416.75607,0.000226736068725586],true]
+  column_create Term Doc_body COLUMN_INDEX|WITH_POSITION Doc body
+  # [[0,1336468416.95674,0.00353670120239258],true]
+  table_create Synonym TABLE_PAT_KEY ShortText
+  # [[0,1336468417.16076,0.000248432159423828],true]
+  column_create Synonym body COLUMN_SCALAR ShortText
+  # [[0,1336468417.36158,0.000540494918823242],true]
+  load --table Doc
+  [
+  {"_key": "001", "body": "すっぱいブドウと甘いシークァーサー"},
+  {"_key": "002", "body": "シークヮーサージュースとゴーヤチャンプル"},
+  ]
+  # [[0,1336468417.56262,0.201695919036865],2]
+  load --table Synonym
+  [
+  {"_key": "シークァーサー", "body": "(シークァーサー OR シークヮーサー)"},
+  {"_key": "シークヮーサー", "body": "(シークァーサー OR シークヮーサー)"},
+  ]
+  # [[0,1336468417.96483,0.200520038604736],2]

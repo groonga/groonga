@@ -1,48 +1,47 @@
 Execution example::
 
-  > select Entries --query n_likes:<11
-  [
-    [
-      0, 
-      1336461520.40798, 
-      0.000315427780151367
-    ], 
-    [
-      [
-        [
-          2
-        ], 
-        [
-          [
-            "_id", 
-            "UInt32"
-          ], 
-          [
-            "_key", 
-            "ShortText"
-          ], 
-          [
-            "content", 
-            "Text"
-          ], 
-          [
-            "n_likes", 
-            "UInt32"
-          ]
-        ], 
-        [
-          1, 
-          "The first post!", 
-          "Welcome! This is my first post!", 
-          5
-        ], 
-        [
-          2, 
-          "Groonga", 
-          "I started to use groonga. It's very fast!", 
-          10
-        ]
-      ]
-    ]
-  ]
-  
+  select Entries --query n_likes:<11
+  # [
+  #   [
+  #     0, 
+  #     1336468386.74599, 
+  #     0.000313997268676758
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         2
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "content", 
+  #           "Text"
+  #         ], 
+  #         [
+  #           "n_likes", 
+  #           "UInt32"
+  #         ]
+  #       ], 
+  #       [
+  #         1, 
+  #         "The first post!", 
+  #         "Welcome! This is my first post!", 
+  #         5
+  #       ], 
+  #       [
+  #         2, 
+  #         "Groonga", 
+  #         "I started to use groonga. It's very fast!", 
+  #         10
+  #       ]
+  #     ]
+  #   ]
+  # ]

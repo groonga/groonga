@@ -1,25 +1,24 @@
 Execution example::
 
-  > table_create --name Video --flags TABLE_HASH_KEY --key_type UInt32
-  [[0,1335519627.03224,0.000266790390014648],true]
-  > table_create --name Tag --flags TABLE_HASH_KEY --key_type ShortText
-  [[0,1335519627.23315,0.000222206115722656],true]
-  > column_create --table Video --name title --flags COLUMN_SCALAR --type ShortText
-  [[0,1335519627.43389,0.000550031661987305],true]
-  > column_create --table Video --name tags --flags COLUMN_VECTOR --type Tag
-  [[0,1335519627.63497,0.000490188598632812],true]
-  > column_create --table Tag --name index_tags --flags COLUMN_INDEX --type Video --source tags
-  [[0,1335519627.83602,0.0032198429107666],true]
-  > load --table Video
-  > [
-  > {"_key":1,"title":"Soccer 2010","tags":["Sports","Soccer"]},
-  > {"_key":2,"title":"Zenigata Kinjirou","tags":["Variety","Money"]},
-  > {"_key":3,"title":"groonga Demo","tags":["IT","Server","groonga"]},
-  > {"_key":4,"title":"Moero!! Ultra Baseball","tags":["Sports","Baseball"]},
-  > {"_key":5,"title":"Hex Gone!","tags":["Variety","Quiz"]},
-  > {"_key":6,"title":"Pikonyan 1","tags":["Animation","Pikonyan"]},
-  > {"_key":7,"title":"Draw 8 Month","tags":["Animation","Raccoon"]},
-  > {"_key":8,"title":"K.O.","tags":["Animation","Music"]}
-  > ]
-  [[0,1335519628.03974,2.00352549552917],8]
-  
+  table_create --name Video --flags TABLE_HASH_KEY --key_type UInt32
+  # [[0,1336468408.59485,0.000248908996582031],true]
+  table_create --name Tag --flags TABLE_HASH_KEY --key_type ShortText
+  # [[0,1336468408.79565,0.000237226486206055],true]
+  column_create --table Video --name title --flags COLUMN_SCALAR --type ShortText
+  # [[0,1336468408.9964,0.000552892684936523],true]
+  column_create --table Video --name tags --flags COLUMN_VECTOR --type Tag
+  # [[0,1336468409.19748,0.000529050827026367],true]
+  column_create --table Tag --name index_tags --flags COLUMN_INDEX --type Video --source tags
+  # [[0,1336468409.39853,0.00356459617614746],true]
+  load --table Video
+  [
+  {"_key":1,"title":"Soccer 2010","tags":["Sports","Soccer"]},
+  {"_key":2,"title":"Zenigata Kinjirou","tags":["Variety","Money"]},
+  {"_key":3,"title":"groonga Demo","tags":["IT","Server","groonga"]},
+  {"_key":4,"title":"Moero!! Ultra Baseball","tags":["Sports","Baseball"]},
+  {"_key":5,"title":"Hex Gone!","tags":["Variety","Quiz"]},
+  {"_key":6,"title":"Pikonyan 1","tags":["Animation","Pikonyan"]},
+  {"_key":7,"title":"Draw 8 Month","tags":["Animation","Raccoon"]},
+  {"_key":8,"title":"K.O.","tags":["Animation","Music"]}
+  ]
+  # [[0,1336468409.60264,0.201507091522217],8]

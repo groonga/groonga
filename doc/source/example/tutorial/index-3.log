@@ -1,21 +1,20 @@
 Execution example::
 
-  > table_create --name User --flags TABLE_HASH_KEY --key_type ShortText
-  [[0,1335519630.85121,0.00020289421081543],true]
-  > column_create --table User --name username --flags COLUMN_SCALAR --type ShortText
-  [[0,1335519631.05176,0.00130391120910645],true]
-  > column_create --table User --name friends --flags COLUMN_VECTOR --type User
-  [[0,1335519631.25402,0.000970840454101562],true]
-  > column_create --table User --name index_friends --flags COLUMN_INDEX --type User --source friends
-  [[0,1335519631.45581,0.00640487670898438],true]
-  > load --table User
-  > [
-  > {"_key":"ken","username":"健作","friends":["taro","jiro","tomo","moritapo"]}
-  > {"_key":"moritapo","username":"森田","friends":["ken","tomo"]}
-  > {"_key":"taro","username":"ぐるんが太郎","friends":["jiro","tomo"]}
-  > {"_key":"jiro","username":"ぐるんが次郎","friends":["taro","tomo"]}
-  > {"_key":"tomo","username":"トモちゃん","friends":["ken","hana"]}
-  > {"_key":"hana","username":"花子","friends":["ken","taro","jiro","moritapo","tomo"]}
-  > ]
-  [[0,1335519631.6631,1.60283184051514],6]
-  
+  table_create --name User --flags TABLE_HASH_KEY --key_type ShortText
+  # [[0,1336468410.61002,0.000179052352905273],true]
+  column_create --table User --name username --flags COLUMN_SCALAR --type ShortText
+  # [[0,1336468410.81085,0.000480890274047852],true]
+  column_create --table User --name friends --flags COLUMN_VECTOR --type User
+  # [[0,1336468411.01181,0.000520944595336914],true]
+  column_create --table User --name index_friends --flags COLUMN_INDEX --type User --source friends
+  # [[0,1336468411.21288,0.00342512130737305],true]
+  load --table User
+  [
+  {"_key":"ken","username":"健作","friends":["taro","jiro","tomo","moritapo"]}
+  {"_key":"moritapo","username":"森田","friends":["ken","tomo"]}
+  {"_key":"taro","username":"ぐるんが太郎","friends":["jiro","tomo"]}
+  {"_key":"jiro","username":"ぐるんが次郎","friends":["taro","tomo"]}
+  {"_key":"tomo","username":"トモちゃん","friends":["ken","hana"]}
+  {"_key":"hana","username":"花子","friends":["ken","taro","jiro","moritapo","tomo"]}
+  ]
+  # [[0,1336468411.41682,0.201314687728882],6]

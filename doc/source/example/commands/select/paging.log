@@ -1,37 +1,41 @@
 Execution example::
 
-  > select Entries --offset 1 --limit 1
-  [
-    [
-      0, 
-      1335519593.28077, 
-      0.000288248062133789
-    ], 
-    [
-      [
-        [
-          3
-        ], 
-        [
-          [
-            "_id", 
-            "UInt32"
-          ], 
-          [
-            "_key", 
-            "ShortText"
-          ], 
-          [
-            "content", 
-            "Text"
-          ]
-        ], 
-        [
-          2, 
-          "Groonga", 
-          "I started to use groonga. It's very fast!"
-        ]
-      ]
-    ]
-  ]
-  
+  select Entries --offset 1 --limit 1
+  # [
+  #   [
+  #     0, 
+  #     1336468384.93004, 
+  #     0.000171661376953125
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         3
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "content", 
+  #           "Text"
+  #         ], 
+  #         [
+  #           "n_likes", 
+  #           "UInt32"
+  #         ]
+  #       ], 
+  #       [
+  #         2, 
+  #         "Groonga", 
+  #         "I started to use groonga. It's very fast!", 
+  #         10
+  #       ]
+  #     ]
+  #   ]
+  # ]

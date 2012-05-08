@@ -1,37 +1,41 @@
 Execution example::
 
-  > select Entries --filter 'content @ "fast" && _key == "Groonga"'
-  [
-    [
-      0, 
-      1335520300.98383, 
-      0.000544071197509766
-    ], 
-    [
-      [
-        [
-          1
-        ], 
-        [
-          [
-            "_id", 
-            "UInt32"
-          ], 
-          [
-            "_key", 
-            "ShortText"
-          ], 
-          [
-            "content", 
-            "Text"
-          ]
-        ], 
-        [
-          2, 
-          "Groonga", 
-          "I started to use groonga. It's very fast!"
-        ]
-      ]
-    ]
-  ]
-  
+  select Entries --filter 'content @ "fast" && _key == "Groonga"'
+  # [
+  #   [
+  #     0, 
+  #     1336468384.7285, 
+  #     0.00033116340637207
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         1
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "content", 
+  #           "Text"
+  #         ], 
+  #         [
+  #           "n_likes", 
+  #           "UInt32"
+  #         ]
+  #       ], 
+  #       [
+  #         2, 
+  #         "Groonga", 
+  #         "I started to use groonga. It's very fast!", 
+  #         10
+  #       ]
+  #     ]
+  #   ]
+  # ]

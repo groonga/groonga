@@ -1,79 +1,78 @@
 Execution example::
 
-  > select --table User --limit 0 --drilldown friends
-  [
-    [
-      0, 
-      1335519633.87264, 
-      0.000327825546264648
-    ], 
-    [
-      [
-        [
-          6
-        ], 
-        [
-          [
-            "_id", 
-            "UInt32"
-          ], 
-          [
-            "_key", 
-            "ShortText"
-          ], 
-          [
-            "friends", 
-            "User"
-          ], 
-          [
-            "index_friends", 
-            "User"
-          ], 
-          [
-            "username", 
-            "ShortText"
-          ]
-        ]
-      ], 
-      [
-        [
-          6
-        ], 
-        [
-          [
-            "_key", 
-            "ShortText"
-          ], 
-          [
-            "_nsubrecs", 
-            "Int32"
-          ]
-        ], 
-        [
-          "taro", 
-          3
-        ], 
-        [
-          "jiro", 
-          3
-        ], 
-        [
-          "tomo", 
-          5
-        ], 
-        [
-          "moritapo", 
-          2
-        ], 
-        [
-          "ken", 
-          3
-        ], 
-        [
-          "hana", 
-          1
-        ]
-      ]
-    ]
-  ]
-  
+  select --table User --limit 0 --drilldown friends
+  # [
+  #   [
+  #     0, 
+  #     1336468412.22189, 
+  #     0.000318527221679688
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         6
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "friends", 
+  #           "User"
+  #         ], 
+  #         [
+  #           "index_friends", 
+  #           "User"
+  #         ], 
+  #         [
+  #           "username", 
+  #           "ShortText"
+  #         ]
+  #       ]
+  #     ], 
+  #     [
+  #       [
+  #         6
+  #       ], 
+  #       [
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "_nsubrecs", 
+  #           "Int32"
+  #         ]
+  #       ], 
+  #       [
+  #         "taro", 
+  #         3
+  #       ], 
+  #       [
+  #         "jiro", 
+  #         3
+  #       ], 
+  #       [
+  #         "tomo", 
+  #         5
+  #       ], 
+  #       [
+  #         "moritapo", 
+  #         2
+  #       ], 
+  #       [
+  #         "ken", 
+  #         3
+  #       ], 
+  #       [
+  #         "hana", 
+  #         1
+  #       ]
+  #     ]
+  #   ]
+  # ]
