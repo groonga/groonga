@@ -1,0 +1,48 @@
+Execution example::
+
+  > select Entries --match_columns content --query "groonga OR mroonga"
+  [
+    [
+      0, 
+      1336461520.00432, 
+      0.000370264053344727
+    ], 
+    [
+      [
+        [
+          2
+        ], 
+        [
+          [
+            "_id", 
+            "UInt32"
+          ], 
+          [
+            "_key", 
+            "ShortText"
+          ], 
+          [
+            "content", 
+            "Text"
+          ], 
+          [
+            "n_likes", 
+            "UInt32"
+          ]
+        ], 
+        [
+          2, 
+          "Groonga", 
+          "I started to use groonga. It's very fast!", 
+          10
+        ], 
+        [
+          3, 
+          "Mroonga", 
+          "I also started to use mroonga. It's also very fast! Really fast!", 
+          15
+        ]
+      ]
+    ]
+  ]
+  

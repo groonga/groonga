@@ -1,0 +1,42 @@
+Execution example::
+
+  > select Entries --query _key:Groonga
+  [
+    [
+      0, 
+      1336461520.20626, 
+      0.000345230102539062
+    ], 
+    [
+      [
+        [
+          1
+        ], 
+        [
+          [
+            "_id", 
+            "UInt32"
+          ], 
+          [
+            "_key", 
+            "ShortText"
+          ], 
+          [
+            "content", 
+            "Text"
+          ], 
+          [
+            "n_likes", 
+            "UInt32"
+          ]
+        ], 
+        [
+          2, 
+          "Groonga", 
+          "I started to use groonga. It's very fast!", 
+          10
+        ]
+      ]
+    ]
+  ]
+  

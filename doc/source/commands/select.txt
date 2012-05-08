@@ -53,19 +53,27 @@ Here are a schema definition and sample data to show usage.
 .. include:: ../example/commands/select/usage_setup.log
 .. table_create Entries TABLE_HASH_KEY ShortText
 .. column_create Entries content COLUMN_SCALAR Text
+.. column_create Entries n_likes COLUMN_SCALAR UInt32
 .. table_create Terms TABLE_PAT_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenBigram
 .. column_create Terms entries_key_index COLUMN_INDEX|WITH_POSITION Entries _key
 .. column_create Terms entries_content_index COLUMN_INDEX|WITH_POSITION Entries content
 .. load --table Entries
 .. [
-.. {"_key": "The first post!", "content": "Welcome! This is my first post!"},
-.. {"_key": "Groonga", "content": "I started to use groonga. It's very fast!"}
-.. {"_key": "Mroonga", "content": "I also started to use mroonga. It's also very fast! Really fast!"}
+.. {"_key":    "The first post!",
+..  "content": "Welcome! This is my first post!",
+..  "n_likes": 5},
+.. {"_key":    "Groonga",
+..  "content": "I started to use groonga. It's very fast!",
+..  "n_likes": 10},
+.. {"_key":    "Mroonga",
+..  "content": "I also started to use mroonga. It's also very fast! Really fast!",
+..  "n_likes": 15}
 .. ]
 
-There is a table, ``Entries``, for blog entries. An entry has title
-and content. Title is key of ``Entries``. Content is value of
-``Entries.content`` column.
+There is a table, ``Entries``, for blog entries. An entry has title,
+content and the number of likes for the entry. Title is key of
+``Entries``. Content is value of ``Entries.content`` column. The
+number of likes is value of ``Entries.n_likes`` column.
 
 ``Entries._key`` column and ``Entries.content`` column are indexed
 using ``TokenBigram`` tokenizer. So both ``Entries._key`` and
@@ -282,9 +290,61 @@ of blog entry is more important rather thatn content of blog entry.
 ``query``
 """""""""
 
-TODO: write short description and add example.
+It specifies the query text. Normally, it is used for fulltext search
+with ``match_columns`` parameter. ``query`` parameter is desgined for
+a fulltext search form in a Web page. A query text should be formated
+in :doc:`/spec/query_syntax`. The syntax is similar to common search
+form like Google's search form. For example, ``query1 query2`` means
+that matched records must contain both ``query1`` and
+``query2``. ``query1 OR query2`` means that matched records must
+contain either ``query1`` or ``query2``.
 
-See :doc:`/spec/query_syntax`.
+Here is a simple logical and search example.
+
+.. groonga-command
+.. include:: ../example/commands/select/query_and.log
+.. select Entries --match_columns content --query "fast groonga"
+
+The ``select`` command searches records that contain two words
+``fast`` and ``groonga`` in ``content`` column value from ``Entries``
+table.
+
+Here is a simple logical or search example.
+
+.. groonga-command
+.. include:: ../example/commands/select/query_or.log
+.. select Entries --match_columns content --query "groonga OR mroonga"
+
+The ``select`` command searches records that contain one of two words
+``groonga`` or ``mroonga`` in ``content`` column value from
+``Entries`` table.
+
+See :doc:`/spec/query_syntax` for other syntax.
+
+It can be used for not only fulltext search but also other
+conditions. For example, ``column:value`` means the value of
+``column`` column equals to ``value``. ``column:<value`` means the
+value of ``column`` column is less than ``value``.
+
+Here is a simple equality operator search example.
+
+.. groonga-command
+.. include:: ../example/commands/select/query_equal.log
+.. select Entries --query _key:Groonga
+
+The ``select`` command searches records that ``_key`` column value is
+``Groonga`` from ``Entries`` table.
+
+Here is a simple less than operator search example.
+
+.. groonga-command
+.. include:: ../example/commands/select/query_less_than.log
+.. select Entries --query n_likes:<11
+
+The ``select`` command searches records that ``n_likes`` column value
+is less than ``11`` from ``Entries`` table.
+
+See :doc:`/spec/query_syntax` for other operations.
 
 ``filter``
 """"""""""
