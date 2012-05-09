@@ -3,7 +3,7 @@ column_create Users location COLUMN_SCALAR WGS84GeoPoint
 column_create Users distance_from_tokyo_tocho COLUMN_SCALAR UInt32
 
 load --table Users \
---each 'distance_from_tokyo_tocho = geo_distance(location, "128481998x502890001")'
+  --each 'distance_from_tokyo_tocho = geo_distance(location, "128481998x502890001")'
 [
 ["_key", "location"],
 ["yurakucho", "128429532x503148672"],
