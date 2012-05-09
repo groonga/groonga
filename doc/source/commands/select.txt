@@ -291,7 +291,7 @@ of blog entry is more important rather thatn content of blog entry.
 """""""""
 
 It specifies the query text. Normally, it is used for fulltext search
-with ``match_columns`` parameter. ``query`` parameter is desgined for
+with ``match_columns`` parameter. ``query`` parameter is designed for
 a fulltext search form in a Web page. A query text should be formated
 in :doc:`/spec/query_syntax`. The syntax is similar to common search
 form like Google's search form. For example, ``query1 query2`` means
@@ -355,7 +355,7 @@ conditions. ``filter`` can be used with ``query`` parameter. If both
 logical and. It means that matched records shuold be matched against
 both ``filter`` and ``query``.
 
-``filter`` parameter is desgined for complex conditions. A filter text
+``filter`` parameter is designed for complex conditions. A filter text
 should be formated in :doc:`/spec/script_syntax`. The syntax is
 similar to ECMAScript. For example, ``column == "value"`` means that
 the ``column`` column is equal to ``"value"``. ``column < value`` means
