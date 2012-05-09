@@ -405,7 +405,7 @@ load --table Synonyms
  "words":"(たいやき OR たい焼 OR 鯛焼き)"}
 ]
 [[0,0.0,0.0],1]
-select Shops --sortby '+_score, +name' --output_columns 'name, _score, location' --filter 'geo_in_circle(location, "128429532x503148672", 3000, "ellip") > 0' --scorer '_score = geo_distance(location, "128429532x503148672", "ellip") * 1000 * 1000'
+select Shops --sortby '+_score, +name'   --output_columns 'name, _score, location'   --filter 'geo_in_circle(location, "128429532x503148672", 3000, "ellip") > 0'   --scorer '_score = geo_distance(location, "128429532x503148672", "ellip") * 1000 * 1000'
 [
   [
     0,
