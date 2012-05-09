@@ -94,6 +94,9 @@
 # define GRN_WRITE(fd, buf, count) _write(fd, buf, count)
 #endif /* HAVE_WRITE */
 
+GRN_API void grn_sleep(uint32_t seconds);
+GRN_API void grn_nanosleep(uint64_t nanoseconds);
+
 #ifdef WIN32
 
 #if defined(__GNUC__) && !defined(WINVER)
@@ -147,9 +150,6 @@
 #define ssize_t SSIZE_T
 #define pid_t int
 #endif
-
-GRN_API void grn_sleep(uint32_t seconds);
-GRN_API void grn_nanosleep(uint64_t nanoseconds);
 
 #undef MSG_WAITALL
 #define MSG_WAITALL 0 /* before Vista, not supported... */
