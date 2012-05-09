@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-04-27 23:53\n"
-"PO-Revision-Date: 2012-04-28 11:31+0900\n"
+"PO-Revision-Date: 2012-05-09 11:32+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -1529,7 +1529,7 @@ msgid ""
 "To specify one or more columns, ``column1 * weight1 || column2 * weight2 "
 "|| ...`` syntax is used. ``* weight`` can be omitted. If it is omitted, 1 is "
 "used for weight. Here is a one or more columns usage example."
-msgstr "複数のカラムを指定するには ``column1 * weight1 || column2 * weight2 || ...`` という構文を追加います。 ``* weight`` は省略することができます。省略した場合は重みが1になります。以下は複数カラムの使用例です。"
+msgstr "複数のカラムを指定するには ``column1 * weight1 || column2 * weight2 || ...`` という構文を使います。 ``* weight`` は省略することができます。省略した場合は重みが1になります。以下は複数カラムの使用例です。"
 
 # 011c20edcce444fc82f8066a234e85b1
 #: ../../../source/commands/select.txt:275
