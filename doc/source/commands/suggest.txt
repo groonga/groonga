@@ -201,7 +201,7 @@ EXAMPLE
 Here are learned data for completion.
 
 .. groonga-command
-.. include:: ../commands/suggest-learn-completion.log
+.. include:: ../example/commands/suggest-learn-completion.log
 .. load --table event_query --each 'suggest_preparer(_id, type, item, sequence, time, pair_query)'
 .. [
 .. {"sequence": "1", "time": 1312950803.86057, "item": "e"},
@@ -215,7 +215,7 @@ Here are learned data for completion.
 Here are learned data for correction.
 
 .. groonga-command
-.. include:: ../commands/suggest-learn-correction.log
+.. include:: ../example/commands/suggest-learn-correction.log
 .. load --table event_query --each 'suggest_preparer(_id, type, item, sequence, time, pair_query)'
 .. [
 .. {"sequence": "2", "time": 1312950803.86057, "item": "s"},
@@ -231,7 +231,7 @@ Here are learned data for correction.
 Here are learned data for suggestion.
 
 .. groonga-command
-.. include:: ../commands/suggest-learn-suggestion.log
+.. include:: ../example/commands/suggest-learn-suggestion.log
 .. load --table event_query --each 'suggest_preparer(_id, type, item, sequence, time, pair_query)'
 .. [
 .. {"sequence": "3", "time": 1312950803.86057, "item": "search engine", "type": "submit"},
@@ -241,25 +241,25 @@ Here are learned data for suggestion.
 Here is a completion example.
 
 .. groonga-command
-.. include:: ../commands/suggest-completion.log
+.. include:: ../example/commands/suggest-completion.log
 .. suggest --table item_query --column kana --types complete --frequency_threshold 1 --query en
 
 Here is a correction example.
 
 .. groonga-command
-.. include:: ../commands/suggest-correction.log
+.. include:: ../example/commands/suggest-correction.log
 .. suggest --table item_query --column kana --types correct --frequency_threshold 1 --query saerch
 
 Here is a suggestion example.
 
 .. groonga-command
-.. include:: ../commands/suggest-suggestion.log
+.. include:: ../example/commands/suggest-suggestion.log
 .. suggest --table item_query --column kana --types suggest --frequency_threshold 1 --query search
 
 Here is a mixed example.
 
 .. groonga-command
-.. include:: ../commands/suggest-mixed.log
+.. include:: ../example/commands/suggest-mixed.log
 .. suggest --table item_query --column kana --types complete|correct|suggest --frequency_threshold 1 --query search
 
 
