@@ -1,0 +1,18 @@
+Execution example::
+
+  suggest --table item_query --column kana --types suggest --frequency_threshold 1 --query search
+  # [
+  #   [
+  #     -22, 
+  #     1336612570.00513, 
+  #     0.000181913375854492, 
+  #     "invalid command name: suggest", 
+  #     [
+  #       [
+  #         "grn_ctx_qe_exec", 
+  #         "ctx.c", 
+  #         1307
+  #       ]
+  #     ]
+  #   ]
+  # ]

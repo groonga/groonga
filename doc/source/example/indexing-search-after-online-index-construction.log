@@ -4,13 +4,13 @@ Execution example::
   # [
   #   [
   #     0, 
-  #     1336468377.49266, 
-  #     0.000493049621582031
+  #     1336612566.05694, 
+  #     0.000699281692504883
   #   ], 
   #   [
   #     [
   #       [
-  #         0
+  #         2
   #       ], 
   #       [
   #         [
@@ -21,6 +21,14 @@ Execution example::
   #           "content", 
   #           "ShortText"
   #         ]
+  #       ], 
+  #       [
+  #         3, 
+  #         "I'm sleepy... Have a nice day... Good night..."
+  #       ], 
+  #       [
+  #         4, 
+  #         "Good morning! Nice day."
   #       ]
   #     ]
   #   ]

@@ -1,4 +1,4 @@
 Execution example::
 
   column_create Lexicon tweet COLUMN_INDEX|WITH_POSITION Tweets content
-  # [[0,1336468377.69422,0.00441122055053711],true]
+  # [[0,1336612565.24354,0.00803828239440918],true]
