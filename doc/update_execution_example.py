@@ -82,7 +82,7 @@ def execmd(command, fout):
 
 processed_files = []
 def readfile(fname, outflag):
-  if fname in processed_files:
+  if outflag > 0 and fname in processed_files:
     print "skipped processed file: %s" % fname
     return
   if outflag > 32:
