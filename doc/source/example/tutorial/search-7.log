@@ -1,5 +1,31 @@
 Execution example::
 
-  > select --table Site --output_columns _key,location --filter 'geo_in_circle(location, "128515259x503187188", 5000)'
-  [[0,1317212736.64335,0.000245378],[[[1],[["_key","ShortText"],["location","WGS84GeoPoint"]],["http://example.org/","128452975x503157902"]]]]
-  
+  select --table Site --output_columns _key,location --filter 'geo_in_circle(location, "128515259x503187188", 5000)'
+  # [
+  #   [
+  #     0, 
+  #     1336611848.28917, 
+  #     0.000642061233520508
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         1
+  #       ], 
+  #       [
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "location", 
+  #           "WGS84GeoPoint"
+  #         ]
+  #       ], 
+  #       [
+  #         "http://example.org/", 
+  #         "128452975x503157902"
+  #       ]
+  #     ]
+  #   ]
+  # ]

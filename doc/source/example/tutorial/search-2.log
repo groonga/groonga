@@ -1,7 +1,84 @@
 Execution example::
 
-  > select --table Site --filter "_id >= 4 && _id <= 6" --output_columns _id,_key
-  [[0,1317212733.97986,0.000297681],[[[3],[["_id","UInt32"],["_key","ShortText"]],[4,"http://example.net/afr"],[5,"http://example.org/aba"],[6,"http://example.com/rab"]]]]
-  > select --table Site --filter "_id <= 2 || _id >= 7" --output_columns _id,_key
-  [[0,1317212734.18118,0.000250524],[[[5],[["_id","UInt32"],["_key","ShortText"]],[1,"http://example.org/"],[2,"http://example.net/"],[7,"http://example.net/atv"],[8,"http://example.org/gat"],[9,"http://example.com/vdw"]]]]
-  
+  select --table Site --filter "_id >= 4 && _id <= 6" --output_columns _id,_key
+  # [
+  #   [
+  #     0, 
+  #     1336611846.2635, 
+  #     0.000507116317749023
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         3
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ]
+  #       ], 
+  #       [
+  #         4, 
+  #         "http://example.net/afr"
+  #       ], 
+  #       [
+  #         5, 
+  #         "http://example.org/aba"
+  #       ], 
+  #       [
+  #         6, 
+  #         "http://example.com/rab"
+  #       ]
+  #     ]
+  #   ]
+  # ]
+  select --table Site --filter "_id <= 2 || _id >= 7" --output_columns _id,_key
+  # [
+  #   [
+  #     0, 
+  #     1336611846.46611, 
+  #     0.000424385070800781
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         5
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ]
+  #       ], 
+  #       [
+  #         1, 
+  #         "http://example.org/"
+  #       ], 
+  #       [
+  #         2, 
+  #         "http://example.net/"
+  #       ], 
+  #       [
+  #         7, 
+  #         "http://example.net/atv"
+  #       ], 
+  #       [
+  #         8, 
+  #         "http://example.org/gat"
+  #       ], 
+  #       [
+  #         9, 
+  #         "http://example.com/vdw"
+  #       ]
+  #     ]
+  #   ]
+  # ]

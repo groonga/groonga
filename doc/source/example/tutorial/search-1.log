@@ -1,5 +1,31 @@
 Execution example::
 
-  > select --table Site --filter "_id <= 1" --output_columns _id,_key
-  [[0,1317212733.77852,0.000333188],[[[1],[["_id","UInt32"],["_key","ShortText"]],[1,"http://example.org/"]]]]
-  
+  select --table Site --filter "_id <= 1" --output_columns _id,_key
+  # [
+  #   [
+  #     0, 
+  #     1336611846.06145, 
+  #     0.000503778457641602
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         1
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ]
+  #       ], 
+  #       [
+  #         1, 
+  #         "http://example.org/"
+  #       ]
+  #     ]
+  #   ]
+  # ]

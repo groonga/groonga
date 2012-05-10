@@ -1,5 +1,19 @@
 Execution example::
 
-  > table_create --name Terms --flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type ShortText --default_tokenizer TokenBigram
-  [[0,1332484902.52532,0.00777173042297363],true]
-  
+  table_create --name Terms --flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type ShortText --default_tokenizer TokenBigram
+  # [
+  #   [
+  #     -22, 
+  #     1336611843.18913, 
+  #     0.000519990921020508, 
+  #     "already used name was assigned: <Terms>", 
+  #     [
+  #       [
+  #         "grn_obj_register", 
+  #         "db.c", 
+  #         6572
+  #       ]
+  #     ]
+  #   ], 
+  #   false
+  # ]

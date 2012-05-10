@@ -1,5 +1,19 @@
 Execution example::
 
-  > column_create --table Terms --name blog_title --flags COLUMN_INDEX|WITH_POSITION --type Site --source title
-  [[0,1332484902.73511,0.0202178955078125],true]
-  
+  column_create --table Terms --name blog_title --flags COLUMN_INDEX|WITH_POSITION --type Site --source title
+  # [
+  #   [
+  #     -22, 
+  #     1336611843.39162, 
+  #     0.000575065612792969, 
+  #     "already used name was assigned: <Terms.blog_title>", 
+  #     [
+  #       [
+  #         "grn_obj_register", 
+  #         "db.c", 
+  #         6572
+  #       ]
+  #     ]
+  #   ], 
+  #   false
+  # ]

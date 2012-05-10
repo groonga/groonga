@@ -1,5 +1,41 @@
 Execution example::
 
-  > select --table Site --query "_id:1 OR _id:2" --output_columns _key,location,_score --scorer '_score = geo_distance(location, "128515259x503187188")' --sortby -_score
-  [[0,1317212736.44102,0.000345608],[[[2],[["_key","ShortText"],["location","WGS84GeoPoint"],["_score","Int32"]],["http://example.net/","128487316x502920929",6720],["http://example.org/","128452975x503157902",2054]]]]
-  
+  select --table Site --query "_id:1 OR _id:2" --output_columns _key,location,_score --scorer '_score = geo_distance(location, "128515259x503187188")' --sortby -_score
+  # [
+  #   [
+  #     0, 
+  #     1336611848.08587, 
+  #     0.000615596771240234
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         2
+  #       ], 
+  #       [
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "location", 
+  #           "WGS84GeoPoint"
+  #         ], 
+  #         [
+  #           "_score", 
+  #           "Int32"
+  #         ]
+  #       ], 
+  #       [
+  #         "http://example.net/", 
+  #         "128487316x502920929", 
+  #         6720
+  #       ], 
+  #       [
+  #         "http://example.org/", 
+  #         "128452975x503157902", 
+  #         2054
+  #       ]
+  #     ]
+  #   ]
+  # ]

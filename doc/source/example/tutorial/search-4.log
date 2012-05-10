@@ -1,13 +1,58 @@
 Execution example::
 
-  > column_create --table Site --name location --type WGS84GeoPoint
-  [[0,1317212734.78744,0.047997601],true]
-  > load --table Site
-  > [
-  >  {"_key":"http://example.org/","location":"128452975x503157902"}
-  >  {"_key":"http://example.net/","location":"128487316x502920929"},
-  > ]
-  [[0,1317212735.0361,0.801149613],2]
-  > select --table Site --query "_id:1 OR _id:2" --output_columns _key,location
-  [[0,1317212736.03775,0.000261897],[[[2],[["_key","ShortText"],["location","WGS84GeoPoint"]],["http://example.org/","128452975x503157902"],["http://example.net/","128487316x502920929"]]]]
-  
+  column_create --table Site --name location --type WGS84GeoPoint
+  # [
+  #   [
+  #     -22, 
+  #     1336611847.07642, 
+  #     0.000628948211669922, 
+  #     "already used name was assigned: <Site.location>", 
+  #     [
+  #       [
+  #         "grn_obj_register", 
+  #         "db.c", 
+  #         6572
+  #       ]
+  #     ]
+  #   ], 
+  #   false
+  # ]
+  load --table Site
+  [
+   {"_key":"http://example.org/","location":"128452975x503157902"}
+   {"_key":"http://example.net/","location":"128487316x502920929"},
+  ]
+  # [[0,1336611847.27872,0.200761318206787],2]
+  select --table Site --query "_id:1 OR _id:2" --output_columns _key,location
+  # [
+  #   [
+  #     0, 
+  #     1336611847.68, 
+  #     0.00042724609375
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         2
+  #       ], 
+  #       [
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "location", 
+  #           "WGS84GeoPoint"
+  #         ]
+  #       ], 
+  #       [
+  #         "http://example.org/", 
+  #         "128452975x503157902"
+  #       ], 
+  #       [
+  #         "http://example.net/", 
+  #         "128487316x502920929"
+  #       ]
+  #     ]
+  #   ]
+  # ]

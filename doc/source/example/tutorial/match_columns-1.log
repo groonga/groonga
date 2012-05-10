@@ -1,21 +1,21 @@
 Execution example::
 
   table_create --name Blog1 --flags TABLE_HASH_KEY --key_type ShortText
-  # [[0,1336468399.6861,0.000176429748535156],true]
+  # [[0,1336611825.0818,0.000154495239257812],true]
   column_create --table Blog1 --name title --flags COLUMN_SCALAR --type ShortText
-  # [[0,1336468399.88692,0.000572443008422852],true]
+  # [[0,1336611825.28257,0.000925779342651367],true]
   column_create --table Blog1 --name message --flags COLUMN_SCALAR --type ShortText
-  # [[0,1336468400.08803,0.000512361526489258],true]
+  # [[0,1336611825.48417,0.000760078430175781],true]
   table_create --name IndexBlog1 --flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type ShortText --default_tokenizer TokenBigram
-  # [[0,1336468400.28907,0.000239133834838867],true]
+  # [[0,1336611825.68563,0.000369071960449219],true]
   column_create --table IndexBlog1 --name index_title --flags COLUMN_INDEX|WITH_POSITION --type Blog1 --source title
-  # [[0,1336468400.48983,0.00376629829406738],true]
+  # [[0,1336611825.8869,0.00517129898071289],true]
   column_create --table IndexBlog1 --name index_message --flags COLUMN_INDEX|WITH_POSITION --type Blog1 --source message
-  # [[0,1336468400.69408,0.00344538688659668],true]
+  # [[0,1336611826.09288,0.0058131217956543],true]
   load --table Blog1
   [
   {"_key":"grn1","title":"groonga test","message":"groonga message"},
   {"_key":"grn2","title":"baseball result","message":"rakutan eggs 4 - 4 groonga moritars"},
   {"_key":"grn3","title":"groonga message","message":"none"}
   ]
-  # [[0,1336468400.89804,0.202517986297607],3]
+  # [[0,1336611826.29967,0.202595233917236],3]

@@ -1,5 +1,19 @@
 Execution example::
 
-  > table_create --name Site --flags TABLE_HASH_KEY --key_type ShortText
-  [[0,1332484898.674,0.0103404521942139],true]
-  
+  table_create --name Site --flags TABLE_HASH_KEY --key_type ShortText
+  # [
+  #   [
+  #     -22, 
+  #     1336611841.34969, 
+  #     0.000652074813842773, 
+  #     "already used name was assigned: <Site>", 
+  #     [
+  #       [
+  #         "grn_obj_register", 
+  #         "db.c", 
+  #         6572
+  #       ]
+  #     ]
+  #   ], 
+  #   false
+  # ]

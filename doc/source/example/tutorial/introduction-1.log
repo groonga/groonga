@@ -1,4 +1,4 @@
 Execution example::
 
-  % groonga -n /tmp/groonga-databases/introduction.db
+% groonga -n /tmp/groonga-databases/introduction.db
   

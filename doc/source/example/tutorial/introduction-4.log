@@ -1,5 +1,145 @@
 Execution example::
 
-  > select --table Site
-  [[0,1332484898.88587,0.000526189804077148],[[[0],[["_id","UInt32"],["_key","ShortText"]]]]]
-  
+  select --table Site
+  # [
+  #   [
+  #     0, 
+  #     1336611841.5522, 
+  #     0.000861406326293945
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         9
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "country", 
+  #           "SiteCountry"
+  #         ], 
+  #         [
+  #           "domain", 
+  #           "SiteDomain"
+  #         ], 
+  #         [
+  #           "link", 
+  #           "Site"
+  #         ], 
+  #         [
+  #           "links", 
+  #           "Site"
+  #         ], 
+  #         [
+  #           "location", 
+  #           "WGS84GeoPoint"
+  #         ], 
+  #         [
+  #           "title", 
+  #           "ShortText"
+  #         ]
+  #       ], 
+  #       [
+  #         1, 
+  #         "http://example.org/", 
+  #         "japan", 
+  #         ".org", 
+  #         "http://example.net/", 
+  #         [
+  #           "http://example.net/", 
+  #           "http://example.org/", 
+  #           "http://example.com/"
+  #         ], 
+  #         "128452975x503157902", 
+  #         "This is test record 1!"
+  #       ], 
+  #       [
+  #         2, 
+  #         "http://example.net/", 
+  #         "brazil", 
+  #         ".net", 
+  #         "", 
+  #         [], 
+  #         "128487316x502920929", 
+  #         "test record 2."
+  #       ], 
+  #       [
+  #         3, 
+  #         "http://example.com/", 
+  #         "japan", 
+  #         ".com", 
+  #         "", 
+  #         [], 
+  #         "0x0", 
+  #         "test test record three."
+  #       ], 
+  #       [
+  #         4, 
+  #         "http://example.net/afr", 
+  #         "usa", 
+  #         ".net", 
+  #         "", 
+  #         [], 
+  #         "0x0", 
+  #         "test record four."
+  #       ], 
+  #       [
+  #         5, 
+  #         "http://example.org/aba", 
+  #         "korea", 
+  #         ".org", 
+  #         "", 
+  #         [], 
+  #         "0x0", 
+  #         "test test test record five."
+  #       ], 
+  #       [
+  #         6, 
+  #         "http://example.com/rab", 
+  #         "china", 
+  #         ".com", 
+  #         "", 
+  #         [], 
+  #         "0x0", 
+  #         "test test test test record six."
+  #       ], 
+  #       [
+  #         7, 
+  #         "http://example.net/atv", 
+  #         "china", 
+  #         ".net", 
+  #         "", 
+  #         [], 
+  #         "0x0", 
+  #         "test test test record seven."
+  #       ], 
+  #       [
+  #         8, 
+  #         "http://example.org/gat", 
+  #         "usa", 
+  #         ".org", 
+  #         "", 
+  #         [], 
+  #         "0x0", 
+  #         "test test record eight."
+  #       ], 
+  #       [
+  #         9, 
+  #         "http://example.com/vdw", 
+  #         "japan", 
+  #         ".com", 
+  #         "", 
+  #         [], 
+  #         "0x0", 
+  #         "test test record nine."
+  #       ]
+  #     ]
+  #   ]
+  # ]

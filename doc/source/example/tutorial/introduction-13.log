@@ -1,5 +1,65 @@
 Execution example::
 
-  > select --table Site --match_columns title --query this
-  [[0,1332484903.16096,0.000757932662963867],[[[1],[["_id","UInt32"],["_key","ShortText"],["title","ShortText"]],[1,"http://example.org/","This is test record 1!"]]]]
-  
+  select --table Site --match_columns title --query this
+  # [
+  #   [
+  #     0, 
+  #     1336611843.79923, 
+  #     0.000676631927490234
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         1
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "country", 
+  #           "SiteCountry"
+  #         ], 
+  #         [
+  #           "domain", 
+  #           "SiteDomain"
+  #         ], 
+  #         [
+  #           "link", 
+  #           "Site"
+  #         ], 
+  #         [
+  #           "links", 
+  #           "Site"
+  #         ], 
+  #         [
+  #           "location", 
+  #           "WGS84GeoPoint"
+  #         ], 
+  #         [
+  #           "title", 
+  #           "ShortText"
+  #         ]
+  #       ], 
+  #       [
+  #         1, 
+  #         "http://example.org/", 
+  #         "japan", 
+  #         ".org", 
+  #         "http://example.net/", 
+  #         [
+  #           "http://example.net/", 
+  #           "http://example.org/", 
+  #           "http://example.com/"
+  #         ], 
+  #         "128452975x503157902", 
+  #         "This is test record 1!"
+  #       ]
+  #     ]
+  #   ]
+  # ]

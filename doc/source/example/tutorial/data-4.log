@@ -1,19 +1,19 @@
 Execution example::
 
   column_create --table ToyBox --name name --type ShortText
-  # [[0,1336468396.05497,0.000494003295898438],true]
+  # [[0,1336611821.45016,0.000436305999755859],true]
   load --table ToyBox
   [
   {"_key":"Monkey","name":"Grease"}
   {"_key":"Flower","name":"Rose"}
   ]
-  # [[0,1336468396.25599,0.200543642044067],2]
+  # [[0,1336611821.65106,0.200551986694336],2]
   select --table ToyBox --output_columns _key,name
   # [
   #   [
   #     0, 
-  #     1336468396.65701, 
-  #     0.000139951705932617
+  #     1336611822.0521, 
+  #     0.000115394592285156
   #   ], 
   #   [
   #     [

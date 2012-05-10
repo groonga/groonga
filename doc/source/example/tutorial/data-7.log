@@ -1,16 +1,16 @@
 Execution example::
 
   column_create --table Site --name link --type Site
-  # [[0,1336468398.46454,0.00023341178894043],true]
+  # [[0,1336611823.86268,0.000335931777954102],true]
   load --table Site
   [{"_key":"http://example.org/","link":"http://example.net/"}]
   select --table Site --output_columns _key,title,link._key,link.title --query title:@this
-  # [[0,1336468398.66529,0.200507402420044],1]
+  # [[0,1336611824.0639,0.200538396835327],1]
   # [
   #   [
   #     0, 
-  #     1336468398.86583, 
-  #     0.00056004524230957
+  #     1336611824.2645, 
+  #     0.000945568084716797
   #   ], 
   #   [
   #     [

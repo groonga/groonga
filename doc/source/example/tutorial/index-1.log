@@ -1,15 +1,15 @@
 Execution example::
 
   table_create --name Video --flags TABLE_HASH_KEY --key_type UInt32
-  # [[0,1336468408.59485,0.000248908996582031],true]
+  # [[0,1336611834.01058,0.000293254852294922],true]
   table_create --name Tag --flags TABLE_HASH_KEY --key_type ShortText
-  # [[0,1336468408.79565,0.000237226486206055],true]
+  # [[0,1336611834.21159,0.000316381454467773],true]
   column_create --table Video --name title --flags COLUMN_SCALAR --type ShortText
-  # [[0,1336468408.9964,0.000552892684936523],true]
+  # [[0,1336611834.4127,0.000793695449829102],true]
   column_create --table Video --name tags --flags COLUMN_VECTOR --type Tag
-  # [[0,1336468409.19748,0.000529050827026367],true]
+  # [[0,1336611834.61425,0.000461101531982422],true]
   column_create --table Tag --name index_tags --flags COLUMN_INDEX --type Video --source tags
-  # [[0,1336468409.39853,0.00356459617614746],true]
+  # [[0,1336611834.81527,0.00487780570983887],true]
   load --table Video
   [
   {"_key":1,"title":"Soccer 2010","tags":["Sports","Soccer"]},
@@ -21,4 +21,4 @@ Execution example::
   {"_key":7,"title":"Draw 8 Month","tags":["Animation","Raccoon"]},
   {"_key":8,"title":"K.O.","tags":["Animation","Music"]}
   ]
-  # [[0,1336468409.60264,0.201507091522217],8]
+  # [[0,1336611835.02103,0.20155143737793],8]

@@ -1,4 +1,4 @@
 Execution example::
 
   table_create --name ToyBox --flags TABLE_HASH_KEY --key_type ShortText
-  # [[0,1336468394.04655,0.000269889831542969],true]
+  # [[0,1336611819.44127,0.000303030014038086],true]

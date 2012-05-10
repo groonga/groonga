@@ -1,17 +1,17 @@
 Execution example::
 
   table_create Entries TABLE_HASH_KEY ShortText
-  # [[0,1336468382.70925,0.000218391418457031],true]
+  # [[0,1336611808.06813,0.000176191329956055],true]
   column_create Entries content COLUMN_SCALAR Text
-  # [[0,1336468382.91008,0.000534534454345703],true]
+  # [[0,1336611808.26927,0.000956296920776367],true]
   column_create Entries n_likes COLUMN_SCALAR UInt32
-  # [[0,1336468383.11114,0.00021815299987793],true]
+  # [[0,1336611808.47111,0.000242948532104492],true]
   table_create Terms TABLE_PAT_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenBigram
-  # [[0,1336468383.31188,0.000239849090576172],true]
+  # [[0,1336611808.67209,0.000334978103637695],true]
   column_create Terms entries_key_index COLUMN_INDEX|WITH_POSITION Entries _key
-  # [[0,1336468383.51263,0.00399947166442871],true]
+  # [[0,1336611808.87329,0.00582623481750488],true]
   column_create Terms entries_content_index COLUMN_INDEX|WITH_POSITION Entries content
-  # [[0,1336468383.71716,0.00355195999145508],true]
+  # [[0,1336611809.07999,0.00536251068115234],true]
   load --table Entries
   [
   {"_key":    "The first post!",
@@ -24,4 +24,4 @@ Execution example::
    "content": "I also started to use mroonga. It's also very fast! Really fast!",
    "n_likes": 15}
   ]
-  # [[0,1336468383.92122,0.202519655227661],3]
+  # [[0,1336611809.28621,0.203172922134399],3]

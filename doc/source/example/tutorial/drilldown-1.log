@@ -1,24 +1,83 @@
 Execution example::
 
-  > table_create --name SiteDomain --flags TABLE_HASH_KEY --key_type ShortText
-  [[0,1317212750.98228,0.098212593],true]
-  > table_create --name SiteCountry --flags TABLE_HASH_KEY --key_type ShortText
-  > column_create --table Site --name domain --flags COLUMN_SCALAR --type SiteDomain
-  [[0,1317212751.28095,0.256200943],true]
-  [[0,1317212751.53719,0.085740621],true]
-  > column_create --table Site --name country --flags COLUMN_SCALAR --type SiteCountry
-  [[0,1317212751.82329,0.064026147],true]
-  > load --table Site
-  > [
-  > {"_key":"http://example.org/","domain":".org","country":"japan"},
-  > {"_key":"http://example.net/","domain":".net","country":"brazil"},
-  > {"_key":"http://example.com/","domain":".com","country":"japan"},
-  > {"_key":"http://example.net/afr","domain":".net","country":"usa"},
-  > {"_key":"http://example.org/aba","domain":".org","country":"korea"},
-  > {"_key":"http://example.com/rab","domain":".com","country":"china"},
-  > {"_key":"http://example.net/atv","domain":".net","country":"china"},
-  > {"_key":"http://example.org/gat","domain":".org","country":"usa"},
-  > {"_key":"http://example.com/vdw","domain":".com","country":"japan"}
-  > ]
-  [[0,1317212752.0878,2.202801388],9]
-  
+  table_create --name SiteDomain --flags TABLE_HASH_KEY --key_type ShortText
+  # [
+  #   [
+  #     -22, 
+  #     1336611851.32846, 
+  #     0.000257730484008789, 
+  #     "already used name was assigned: <SiteDomain>", 
+  #     [
+  #       [
+  #         "grn_obj_register", 
+  #         "db.c", 
+  #         6572
+  #       ]
+  #     ]
+  #   ], 
+  #   false
+  # ]
+  table_create --name SiteCountry --flags TABLE_HASH_KEY --key_type ShortText
+  # [
+  #   [
+  #     -22, 
+  #     1336611851.52966, 
+  #     0.000301361083984375, 
+  #     "already used name was assigned: <SiteCountry>", 
+  #     [
+  #       [
+  #         "grn_obj_register", 
+  #         "db.c", 
+  #         6572
+  #       ]
+  #     ]
+  #   ], 
+  #   false
+  # ]
+  column_create --table Site --name domain --flags COLUMN_SCALAR --type SiteDomain
+  # [
+  #   [
+  #     -22, 
+  #     1336611851.73073, 
+  #     0.000830650329589844, 
+  #     "already used name was assigned: <Site.domain>", 
+  #     [
+  #       [
+  #         "grn_obj_register", 
+  #         "db.c", 
+  #         6572
+  #       ]
+  #     ]
+  #   ], 
+  #   false
+  # ]
+  column_create --table Site --name country --flags COLUMN_SCALAR --type SiteCountry
+  # [
+  #   [
+  #     -22, 
+  #     1336611851.93283, 
+  #     0.000349521636962891, 
+  #     "already used name was assigned: <Site.country>", 
+  #     [
+  #       [
+  #         "grn_obj_register", 
+  #         "db.c", 
+  #         6572
+  #       ]
+  #     ]
+  #   ], 
+  #   false
+  # ]
+  load --table Site
+  [
+  {"_key":"http://example.org/","domain":".org","country":"japan"},
+  {"_key":"http://example.net/","domain":".net","country":"brazil"},
+  {"_key":"http://example.com/","domain":".com","country":"japan"},
+  {"_key":"http://example.net/afr","domain":".net","country":"usa"},
+  {"_key":"http://example.org/aba","domain":".org","country":"korea"},
+  {"_key":"http://example.com/rab","domain":".com","country":"china"},
+  {"_key":"http://example.net/atv","domain":".net","country":"china"},
+  {"_key":"http://example.org/gat","domain":".org","country":"usa"},
+  {"_key":"http://example.com/vdw","domain":".com","country":"japan"}
+  ]
+  # [[0,1336611852.13468,0.20110821723938],9]
