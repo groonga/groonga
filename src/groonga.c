@@ -600,7 +600,7 @@ print_return_code(grn_ctx *ctx, grn_rc rc, grn_obj *head, grn_obj *body, grn_obj
             grn_text_escape_xml(ctx, head, ctx->errfile, strlen(ctx->errfile));
             GRN_TEXT_PUTS(ctx, head, "\" LINE=\"");
             grn_text_itoa(ctx, head, ctx->errline);
-            GRN_TEXT_PUTS(ctx, head, "\">");
+            GRN_TEXT_PUTS(ctx, head, "\"/>");
           }
           GRN_TEXT_PUTS(ctx, head, "</ERROR>");
         }
