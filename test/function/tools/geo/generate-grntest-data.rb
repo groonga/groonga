@@ -126,6 +126,16 @@ class GrnTestData
       false
     end
   end
+
+  def point_or_line
+    point?(@longitude_start_degree, @latitude_start_degree,
+           @longitude_end_degree, @latitude_end_degree) ? "point" : "line"
+  end
+
+  def point?(start_longitude, start_latitude, end_longitude, end_latitude)
+    start_longitude == end_longitude and start_latitude == end_latitude
+  end
+
 end
 
 
@@ -163,10 +173,6 @@ end
 
 def south_axis?(lng, lat)
   lng == 0 and lat <= 0
-end
-
-def point?(start_lng, start_lat, end_lng, end_lat)
-  start_lng == end_lng and start_lat == end_lat
 end
 
 
@@ -283,7 +289,7 @@ if __FILE__ == $0
 
       prefix = grndata.long_or_short
 
-      type = point?(lng_sdeg, lat_sdeg, lng_edeg, lat_edeg) ? "point" : "line"
+      type = grndata.point_or_line
 
       if OPTS.has_key?(:file_name)
         filename = get_filename(lng_sdeg, lat_sdeg, lng_edeg, lat_edeg)
