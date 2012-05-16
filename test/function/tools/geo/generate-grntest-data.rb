@@ -20,6 +20,17 @@ SELECT = "select Geo --output_columns distance "
 SELECT_PRE = "[[0,0.0,0.0],[[[1],[[\"_score\",\"Int32\"]],["
 SELECT_POST = "]]]]"
 
+class GrnTestData
+
+  attr :csv_file, :options
+
+  def initialize(csv_file, options = {})
+    @csv_file = csv_file
+    @options = options
+  end
+
+end
+
 def long?(start_lng_deg, end_lng_deg)
   if start_lng_deg != end_lng_deg and
       ((start_lng_deg > 0 && end_lng_deg.to_i < 0) or
