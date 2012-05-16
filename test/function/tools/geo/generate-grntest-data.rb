@@ -199,7 +199,6 @@ class GrnTestData
       # default
       select_postfix = ")'\n"
     else
-      file_prefix = app_type + "_"
       select_postfix = ", \"#{app_type}\")'\n"
     end
     sprintf("%s%s\n%s\n%s%s%s%s",
@@ -215,7 +214,6 @@ end
 
 
 def get_point(lng, lat)
-  ret = ""
   # lng -> lat
   lng_desc = {
     0 => {
