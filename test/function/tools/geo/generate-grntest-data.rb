@@ -298,10 +298,12 @@ if __FILE__ == $0
       if OPTS.has_key?(:file_name)
         filename = grndata.generate_filename
 
-        puts "#{line.chomp}"
+        if OPTS.has_key?(:verbose)
+          puts "#{line.chomp}"
+        end
         # show new generated filename
-        puts grndata.generate_newdata(line, prefix, quadrant, type, filename)
-
+        #puts grndata.generate_newdata(line, prefix, quadrant, type, filename)
+        puts "#{prefix}/#{quadrant}/#{type}/#{filename}"
       elsif OPTS.has_key?(:test)
         app_types.each do |app_type|
           scorer = ""
@@ -353,4 +355,3 @@ if __FILE__ == $0
     end
   end
 end
-
