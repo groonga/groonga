@@ -91,6 +91,46 @@ class GrnTestData
     end
   end
 
+  def east_axis_to_north_axis?
+    east_axis?(@longitude_start_degree, @latitude_start_degree) and
+      north_axis?(@longitude_end_degree, @latitude_end_degree)
+  end
+
+  def north_axis_to_east_axis?
+    north_axis?(@longitude_start_degree, @latitude_start_degree) and
+      east_axis?(@longitude_end_degree, @latitude_end_degree)
+  end
+
+  def north_axis_to_west_axis?
+    north_axis?(@longitude_start_degree, @latitude_start_degree) and
+      west_axis?(@longitude_end_degree, @latitude_end_degree)
+  end
+
+  def west_axis_to_north_axis?
+    west_axis?(@longitude_start_degree, @latitude_start_degree) and
+      north_axis?(@longitude_end_degree, @latitude_end_degree)
+  end
+
+  def west_axis_to_south_axis?
+    west_axis?(@longitude_start_degree, @latitude_start_degree) and
+      south_axis?(@longitude_end_degree, @latitude_end_degree)
+  end
+
+  def south_axis_to_west_axis?
+    south_axis?(@longitude_start_degree, @latitude_start_degree) and
+      west_axis?(@longitude_end_degree, @latitude_end_degree)
+  end
+
+  def east_axis_to_south_axis?
+    east_axis?(@longitude_start_degree, @latitude_start_degree) and
+            south_axis?(@longitude_end_degree, @latitude_end_degree)
+  end
+
+  def south_axis_to_east_axis?
+    south_axis?(@longitude_start_degree, @latitude_start_degree) and
+      east_axis?(@longitude_end_degree, @latitude_end_degree)
+  end
+
   def quadrant_to
     squadrant = quadrant(@longitude_start_degree, @latitude_start_degree)
     equadrant = quadrant(@longitude_end_degree, @latitude_end_degree)
@@ -108,25 +148,13 @@ class GrnTestData
       "equator"
     elsif !squadrant or !equadrant
       if (not squadrant) and (not equadrant)
-        if east_axis?(@longitude_start_degree, @latitude_start_degree) and
-            north_axis?(@longitude_end_degree, @latitude_end_degree) or
-            north_axis?(@longitude_start_degree, @latitude_start_degree) and
-            east_axis?(@longitude_end_degree, @latitude_end_degree)
+        if east_axis_to_north_axis? or north_axis_to_east_axis?
           "1st"
-        elsif north_axis?(@longitude_start_degree, @latitude_start_degree) and
-            west_axis?(@longitude_end_degree, @latitude_end_degree) or
-            west_axis?(@longitude_start_degree, @latitude_start_degree) and
-            north_axis?(@longitude_end_degree, @latitude_end_degree)
+        elsif north_axis_to_west_axis? or west_axis_to_north_axis?
           "2nd"
-        elsif west_axis?(@longitude_start_degree, @latitude_start_degree) and
-            south_axis?(@longitude_end_degree, @latitude_end_degree) or
-            south_axis?(@longitude_start_degree, @latitude_start_degree) and
-            west_axis?(@longitude_end_degree, @latitude_end_degree)
+        elsif west_axis_to_south_axis? or south_axis_to_west_axis?
           "3rd"
-        elsif east_axis?(@longitude_start_degree, @latitude_start_degree) and
-            south_axis?(@longitude_end_degree, @latitude_end_degree) or
-            south_axis?(@longitude_start_degree, @latitude_start_degree) and
-            east_axis?(@longitude_end_degree, @latitude_end_degree)
+        elsif east_axis_to_south_axis? or south_axis_to_east_axis?
           "4th"
         end
       elsif not squadrant
