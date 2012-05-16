@@ -198,11 +198,21 @@ if __FILE__ == $0
 
   OPTS = {}
   parser = OptionParser.new
-  parser.on('-g', '--generate-filename') {|file_name| OPTS[:file_name] = file_name}
-  parser.on('-t', '--generate-test') {|test| OPTS[:test] = test}
-  parser.on('-e', '--generate-expected') {|expected| OPTS[:expected] = expected}
-  parser.on('-c CSV_FILE', '--csv CSV_FILE') {|csv_file| OPTS[:csv] = csv_file}
-  parser.on('-v', '--verbose') {|verbose| OPTS[:verbose] = verbose}
+  parser.on('-g', '--generate-filename') do |file_name|
+    OPTS[:file_name] = file_name
+  end
+  parser.on('-t', '--generate-test') do |test|
+    OPTS[:test] = test
+  end
+  parser.on('-e', '--generate-expected') do |expected|
+    OPTS[:expected] = expected
+  end
+  parser.on('-c CSV_FILE', '--csv CSV_FILE') do |csv_file|
+    OPTS[:csv] = csv_file
+  end
+  parser.on('-v', '--verbose') do |verbose|
+    OPTS[:verbose] = verbose
+  end
 
   parser.parse!(ARGV)
 
