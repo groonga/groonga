@@ -56,7 +56,7 @@ class GrnTestData
     @latitude_end_degree = @latitude_end_degree.to_i
   end
 
-  def get_quadrant(longitude, latitude)
+  def quadrant(longitude, latitude)
     if longitude > 0 and latitude > 0
       "1st"
     elsif longitude < 0 and latitude > 0
@@ -71,8 +71,8 @@ class GrnTestData
   end
 
   def quadrant_to
-    squadrant = get_quadrant(@longitude_start_degree, @latitude_start_degree)
-    equadrant = get_quadrant(@longitude_end_degree, @latitude_end_degree)
+    squadrant = quadrant(@longitude_start_degree, @latitude_start_degree)
+    equadrant = quadrant(@longitude_end_degree, @latitude_end_degree)
     # p squadrant
     # p equadrant
     # p start_lng
