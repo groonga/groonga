@@ -52,43 +52,23 @@ def equator?(lng, lat)
 end
 
 def east_axis?(lng, lat)
-  if lng >= 0 and lat == 0
-    true
-  else
-    false
-  end
+  lng >= 0 and lat == 0
 end
 
 def west_axis?(lng, lat)
-  if lng <= 0 and lat == 0
-    true
-  else
-    false
-  end
+  lng <= 0 and lat == 0
 end
 
 def north_axis?(lng, lat)
-  if lng == 0 and lat >= 0
-    true
-  else
-    false
-  end
+  lng == 0 and lat >= 0
 end
 
 def south_axis?(lng, lat)
-  if lng == 0 and lat <= 0
-    true
-  else
-    false
-  end
+  lng == 0 and lat <= 0
 end
 
 def point?(start_lng, start_lat, end_lng, end_lat)
-  if start_lng == end_lng and start_lat == end_lat
-    true
-  else
-    false
-  end
+  start_lng == end_lng and start_lat == end_lat
 end
 
 def get_quadrant_to(start_lng, start_lat, end_lng, end_lat)
