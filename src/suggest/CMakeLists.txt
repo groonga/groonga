@@ -17,7 +17,7 @@ read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/create_dataset_sources.am
   GROONGA_SUGGEST_CREATE_DATASET_SOURCES)
 add_executable(groonga-suggest-create-dataset
   ${GROONGA_SUGGEST_CREATE_DATASET_SOURCES})
-target_link_libraries(groonga-suggest-create-dataset ${LIBGROONGA})
+target_link_libraries(groonga-suggest-create-dataset libgroonga)
 install(
   TARGETS groonga-suggest-create-dataset
   DESTINATION ${BIN_DIR})
@@ -50,7 +50,7 @@ if(WITH_SUGGEST_LEARNER)
   add_executable(groonga-suggest-learner ${GROONGA_SUGGEST_LEARNER_SOURCES})
   target_link_libraries(groonga-suggest-learner
     groonga-suggest-util
-    ${LIBGROONGA}
+    libgroonga
     ${LIBEVENT_LIBRARIES}
     ${ZEROMQ_LIBRARIES}
     ${MESSAGE_PACK_LIBRARIES})
@@ -60,7 +60,7 @@ if(WITH_SUGGEST_LEARNER)
   add_executable(groonga-suggest-httpd ${GROONGA_SUGGEST_HTTPD_SOURCES})
   target_link_libraries(groonga-suggest-httpd
     groonga-suggest-util
-    ${LIBGROONGA}
+    libgroonga
     ${LIBEVENT_LIBRARIES}
     ${ZEROMQ_LIBRARIES}
     ${MESSAGE_PACK_LIBRARIES})

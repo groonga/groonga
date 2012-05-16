@@ -17,16 +17,16 @@ add_subdirectory(suggest)
 
 read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/groonga_sources.am GROONGA_SOURCES)
 add_executable(groonga ${GROONGA_SOURCES})
-target_link_libraries(groonga ${LIBGROONGA})
+target_link_libraries(groonga libgroonga)
 
 read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/grnslap_sources.am GRNSLAP_SOURCES)
 add_executable(grnslap ${GRNSLAP_SOURCES})
-target_link_libraries(grnslap ${LIBGROONGA})
+target_link_libraries(grnslap libgroonga)
 
 read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/groonga_benchmark_sources.am
   GROONGA_BENCHMARK_SOURCES)
 add_executable(groonga-benchmark ${GROONGA_BENCHMARK_SOURCES})
-target_link_libraries(groonga-benchmark ${LIBGROONGA})
+target_link_libraries(groonga-benchmark libgroonga)
 
 install(TARGETS groonga grnslap groonga-benchmark
   DESTINATION ${BIN_DIR})
