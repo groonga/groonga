@@ -38,7 +38,7 @@ class GrnTestData
   attr_accessor :distance
   attr_accessor :output_filename
 
-  def initialize(options = {})
+  def initialize(options={})
     @csv_file = options[:csv]
     @options = options
   end
