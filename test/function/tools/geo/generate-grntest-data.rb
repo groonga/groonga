@@ -331,7 +331,7 @@ if __FILE__ == $0
         # show new generated filename
         puts("#{prefix}/#{quadrant}/#{type}/#{filename}")
       elsif OPTS.has_key?(:csv_data)
-        puts grndata.generate_new_data(line, prefix, quadrant, type, filename)
+        puts(grndata.generate_new_data(line, prefix, quadrant, type, filename))
       elsif OPTS.has_key?(:test)
         app_types.each do |app_type|
           file_prefix = ""
