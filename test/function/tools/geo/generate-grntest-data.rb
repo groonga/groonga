@@ -226,12 +226,12 @@ if __FILE__ == $0
 
   exit if not OPTS.has_key? :csv
 
-  File.open(OPTS[:csv], "r") {|csvfile|
+  File.open(OPTS[:csv], "r") do |csvfile|
     lines = csvfile.readlines
 
     SELECT = "select Geo --output_columns distance "
 
-    lines.each_with_index { |line,i|
+    lines.each_with_index do |line, i|
       next if i == 0 # skip header
 
       #puts "line No #{i}"
@@ -257,7 +257,7 @@ if __FILE__ == $0
         puts line.chomp.split(",")[0..-2].join(",") + ",#{prefix}/#{quadrant}/#{type}/#{filename}"
 
       elsif OPTS.has_key? :test
-        app_types.each { |app_type|
+        app_types.each do |app_type|
           scorer = ""
           file_prefix = ""
           select_postfix = ""
@@ -295,16 +295,16 @@ if __FILE__ == $0
             # duplicated?
             puts "Warning! #{testname} duplicated"
           end
-          File.open(testname, "w+") { |testfile|
+          File.open(testname, "w+") do |testfile|
             if OPTS.has_key? :verbose
               puts testname
               puts dottest
             end
             testfile.puts(dottest)
-          }
-        }
+          end
+        end
       end
-    }
-  }
+    end
+  end
 end
 
