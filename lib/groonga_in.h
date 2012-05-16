@@ -419,6 +419,8 @@ typedef int grn_cond;
 #   define GRN_FMT_INT64D "lld"
 #   define GRN_FMT_INT64U "llu"
 #  endif /* __x86_64__ */
+#  define GRN_FMT_LLD "lld"
+#  define GRN_FMT_LLU "llu"
 # endif /* WIN32 */
 #endif /* HAVE_INTTYPES_H */
 
