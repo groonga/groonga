@@ -151,7 +151,7 @@ class GrnTestData
     path = ",#{prefix}/#{quadrant}/#{type}/#{filename}"
     geo_data + path
   end
-
+end
 
 def get_quadrant(lng, lat)
   if lng > 0 and lat > 0
