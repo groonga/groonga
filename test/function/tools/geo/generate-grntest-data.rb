@@ -143,7 +143,7 @@ class GrnTestData
     end
   end
 
-  def long_or_short
+  def type_of_diff_in_longitude
     long?(@longitude_start_degree, @longigude_end_degree) ? "long" : "short"
   end
 
@@ -317,7 +317,7 @@ if __FILE__ == $0
 
       quadrant = grndata.quadrant_to
 
-      prefix = grndata.long_or_short
+      type_longitude = grndata.type_of_diff_in_longitude
 
       type = grndata.point_or_line
 
@@ -329,9 +329,9 @@ if __FILE__ == $0
           puts(line)
         end
         # show new generated filename
-        puts("#{prefix}/#{quadrant}/#{type}/#{filename}")
+        puts("#{type_longitude}/#{quadrant}/#{type}/#{filename}")
       elsif OPTS.has_key?(:csv_data)
-        puts(grndata.generate_new_data(line, prefix, quadrant, type, filename))
+        puts(grndata.generate_new_data(line, type_longitude, quadrant, type, filename))
       elsif OPTS.has_key?(:test)
         app_types.each do |app_type|
           file_prefix = ""
