@@ -186,11 +186,11 @@ end
 
 def parse_line_data(data)
   lng_sdeg, lat_sdeg, lng_edeg, lat_edeg,
-  lng_start, lat_start, lng_end, lat_end,
-  distance, filename = data.chomp.split(",")
+    lng_start, lat_start, lng_end, lat_end,
+    distance, filename = data.chomp.split(",")
 
   return [lng_sdeg.to_i, lat_sdeg.to_i, lng_edeg.to_i, lat_edeg.to_i,
-  lng_start, lat_start, lng_end, lat_end, distance, filename]
+          lng_start, lat_start, lng_end, lat_end, distance, filename]
 end
 
 
@@ -217,8 +217,8 @@ if __FILE__ == $0
       #puts "line No #{i}"
 
       lng_sdeg, lat_sdeg, lng_edeg, lat_edeg,
-      lng_start, lat_start, lng_end, lat_end,
-      distance, filename = parse_line_data(line)
+        lng_start, lat_start, lng_end, lat_end,
+        distance, filename = parse_line_data(line)
 
       app_types = ["", "rectangle", "rect"]
       app_types = [""]
