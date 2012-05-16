@@ -109,20 +109,25 @@ class GrnTestData
     end
     ret
   end
-end
 
-def long?(start_lng_deg, end_lng_deg)
-  if start_lng_deg != end_lng_deg and
-      ((start_lng_deg > 0 && end_lng_deg.to_i < 0) or
-      (start_lng_deg < 0 && end_lng_deg.to_i > 0)) and
-      start_lng_deg.abs + end_lng_deg.to_i.abs > 180
-    # the difference in longitude striding accross meridian is over
-    # 180 degree.
-    true
-  else
-    false
+  def long_or_short
+    long?(@longitude_start_degree, @longigude_end_degree) ? "long" : "short"
+  end
+
+  def long?(start_lng_deg, end_lng_deg)
+    if start_lng_deg != end_lng_deg and
+        ((start_lng_deg > 0 && end_lng_deg.to_i < 0) or
+        (start_lng_deg < 0 && end_lng_deg.to_i > 0)) and
+        start_lng_deg.abs + end_lng_deg.to_i.abs > 180
+      # the difference in longitude striding accross meridian is over
+      # 180 degree.
+      true
+    else
+      false
+    end
   end
 end
+
 
 def get_quadrant(lng, lat)
   if lng > 0 and lat > 0
@@ -276,7 +281,7 @@ if __FILE__ == $0
 
       quadrant = grndata.quadrant_to
 
-      prefix = long?(lng_sdeg, lng_edeg) ? "long" : "short"
+      prefix = grndata.long_or_short
 
       type = point?(lng_sdeg, lat_sdeg, lng_edeg, lat_edeg) ? "point" : "line"
 
