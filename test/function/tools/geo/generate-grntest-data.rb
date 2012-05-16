@@ -136,6 +136,15 @@ class GrnTestData
     start_longitude == end_longitude and start_latitude == end_latitude
   end
 
+  def generate_filename
+    s = get_point(@longitude_start_degree, @latitude_start_degree)
+    e = get_point(@longitude_end_degree, @latitude_end_degree)
+    if s == e
+      "#{s}.test"
+    else
+      "#{s}_to_#{e}.test"
+    end
+  end
 end
 
 
@@ -232,16 +241,6 @@ def get_point(lng, lat)
   end
 end
 
-def get_filename(start_lng, start_lat, end_lng, end_lat)
-  s = get_point(start_lng, start_lat)
-  e = get_point(end_lng, end_lat)
-  if s == e
-    ret = "#{s}.test"
-  else
-    ret = "#{s}_to_#{e}.test"
-  end
-  ret
-end
 
 
 
@@ -292,7 +291,7 @@ if __FILE__ == $0
       type = grndata.point_or_line
 
       if OPTS.has_key?(:file_name)
-        filename = get_filename(lng_sdeg, lat_sdeg, lng_edeg, lat_edeg)
+        filename = grndata.generate_filename
 
         puts "#{line.chomp}"
         # show new generated filename
