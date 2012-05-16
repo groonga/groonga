@@ -131,7 +131,7 @@ class GrnTestData
       east_axis?(@longitude_end_degree, @latitude_end_degree)
   end
 
-  def quadrant_to
+  def quadrant
     squadrant = quadrant_point?(@longitude_start_degree, @latitude_start_degree)
     equadrant = quadrant_point?(@longitude_end_degree, @latitude_end_degree)
     # p squadrant
@@ -343,7 +343,7 @@ if __FILE__ == $0
       app_types = ["", "rectangle", "rect"]
       app_types = [""]
 
-      quadrant = grndata.quadrant_to
+      quadrant = grndata.quadrant
 
       type_longitude = grndata.type_of_diff_in_longitude
 
