@@ -56,6 +56,28 @@ class GrnTestData
     @latitude_end_degree = @latitude_end_degree.to_i
   end
 
+  def meridian?(lng, lat)
+  end
+
+  def equator?(lng, lat)
+  end
+
+  def east_axis?(lng, lat)
+    lng >= 0 and lat == 0
+  end
+
+  def west_axis?(lng, lat)
+    lng <= 0 and lat == 0
+  end
+
+  def north_axis?(lng, lat)
+    lng == 0 and lat >= 0
+  end
+
+  def south_axis?(lng, lat)
+    lng == 0 and lat <= 0
+  end
+
   def quadrant(longitude, latitude)
     if longitude > 0 and latitude > 0
       "1st"
@@ -188,28 +210,8 @@ class GrnTestData
             comment,
             SELECT, scorer, select_postfix)
   end
-end
 
-def meridian?(lng, lat)
-end
 
-def equator?(lng, lat)
-end
-
-def east_axis?(lng, lat)
-  lng >= 0 and lat == 0
-end
-
-def west_axis?(lng, lat)
-  lng <= 0 and lat == 0
-end
-
-def north_axis?(lng, lat)
-  lng == 0 and lat >= 0
-end
-
-def south_axis?(lng, lat)
-  lng == 0 and lat <= 0
 end
 
 
