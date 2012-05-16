@@ -18,7 +18,7 @@ LOAD_RESULT = "[[0,0.0,0.0],1]\n"
 SELECT_PRE = "[[0,0.0,0.0],[[[1],[[\"_score\",\"Int32\"]],["
 SELECT_POST = "]]]]"
 
-def is_long(start_lng_deg, end_lng_deg)
+def long?(start_lng_deg, end_lng_deg)
   if start_lng_deg != end_lng_deg and
       ((start_lng_deg > 0 && end_lng_deg.to_i < 0) or
       (start_lng_deg < 0 && end_lng_deg.to_i > 0)) and
@@ -45,13 +45,13 @@ def get_quadrant(lng, lat)
   end
 end
 
-def is_meridian(lng, lat)
+def meridian?(lng, lat)
 end
 
-def is_equator(lng, lat)
+def equator?(lng, lat)
 end
 
-def is_east_axis(lng, lat)
+def east_axis?(lng, lat)
   if lng >= 0 and lat == 0 then
     return true
   else
@@ -59,7 +59,7 @@ def is_east_axis(lng, lat)
   end
 end
 
-def is_west_axis(lng, lat)
+def west_axis?(lng, lat)
   if lng <= 0 and lat == 0 then
     return true
   else
@@ -67,7 +67,7 @@ def is_west_axis(lng, lat)
   end
 end
 
-def is_north_axis(lng, lat)
+def north_axis?(lng, lat)
   if lng == 0 and lat >= 0 then
     return true
   else
@@ -75,7 +75,7 @@ def is_north_axis(lng, lat)
   end
 end
 
-def is_south_axis(lng, lat)
+def south_axis?(lng, lat)
   if lng == 0 and lat <= 0 then
     return true
   else
@@ -83,7 +83,7 @@ def is_south_axis(lng, lat)
   end
 end
 
-def is_point(start_lng, start_lat, end_lng, end_lat)
+def point?(start_lng, start_lat, end_lng, end_lat)
   if start_lng == end_lng && start_lat == end_lat then
     return true
   else
@@ -107,17 +107,17 @@ def get_quadrant_to(start_lng, start_lat, end_lng, end_lat)
     ret = "equator"
   elsif !squadrant or !equadrant then
     if (not squadrant) && (not equadrant) then
-      if is_east_axis(start_lng, start_lat) && is_north_axis(end_lng, end_lat) ||
-          is_north_axis(start_lng, start_lat) && is_east_axis(end_lng, end_lat) then
+      if east_axis?(start_lng, start_lat) && north_axis?(end_lng, end_lat) ||
+          north_axis?(start_lng, start_lat) && east_axis?(end_lng, end_lat) then
         return "1st"
-      elsif is_north_axis(start_lng, start_lat) && is_west_axis(end_lng, end_lat) ||
-          is_west_axis(start_lng, start_lat) && is_north_axis(end_lng, end_lat) then
+      elsif north_axis?(start_lng, start_lat) && west_axis?(end_lng, end_lat) ||
+          west_axis?(start_lng, start_lat) && north_axis?(end_lng, end_lat) then
         return "2nd"
-      elsif is_west_axis(start_lng, start_lat) && is_south_axis(end_lng, end_lat) ||
-          is_south_axis(start_lng, start_lat) && is_west_axis(end_lng, end_lat) then
+      elsif west_axis?(start_lng, start_lat) && south_axis?(end_lng, end_lat) ||
+          south_axis?(start_lng, start_lat) && west_axis?(end_lng, end_lat) then
         return "3rd"
-      elsif is_east_axis(start_lng, start_lat) && is_south_axis(end_lng, end_lat) ||
-          is_south_axis(start_lng, start_lat) && is_east_axis(end_lng, end_lat) then
+      elsif east_axis?(start_lng, start_lat) && south_axis?(end_lng, end_lat) ||
+          south_axis?(start_lng, start_lat) && east_axis?(end_lng, end_lat) then
         return "4th"
       end
     elsif not squadrant then
@@ -245,9 +245,9 @@ if __FILE__ == $0 then
 
       quadrant = get_quadrant_to(lng_sdeg, lat_sdeg, lng_edeg, lat_edeg)
 
-      prefix = is_long(lng_sdeg, lng_edeg) ? "long" : "short"
+      prefix = long?(lng_sdeg, lng_edeg) ? "long" : "short"
 
-      type = is_point(lng_sdeg, lat_sdeg, lng_edeg, lat_edeg) ? "point" : "line"
+      type = point?(lng_sdeg, lat_sdeg, lng_edeg, lat_edeg) ? "point" : "line"
 
       if OPTS.has_key? :name then
         filename = get_filename(lng_sdeg, lat_sdeg, lng_edeg, lat_edeg)
