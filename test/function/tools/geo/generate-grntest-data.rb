@@ -323,11 +323,11 @@ if __FILE__ == $0
         filename = grndata.generate_filename
 
         if OPTS.has_key?(:verbose)
-          puts "#{line.chomp}"
+          puts("#{line.chomp}")
         end
         # show new generated filename
         #puts grndata.generate_new_data(line, prefix, quadrant, type, filename)
-        puts "#{prefix}/#{quadrant}/#{type}/#{filename}"
+        puts("#{prefix}/#{quadrant}/#{type}/#{filename}")
       elsif OPTS.has_key?(:test)
         app_types.each do |app_type|
           file_prefix = ""
@@ -351,12 +351,12 @@ if __FILE__ == $0
 
           if File.exists?(testname)
             # duplicated?
-            puts "Warning! #{testname} duplicated"
+            puts("Warning! #{testname} duplicated")
           end
           File.open(testname, "w+") do |testfile|
             if OPTS.has_key?(:verbose)
-              puts testname
-              puts dottest
+              puts(testname)
+              puts(dottest)
             end
             testfile.puts(dottest)
           end
