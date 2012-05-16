@@ -206,7 +206,7 @@ if __FILE__ == $0
 
   parser.parse!(ARGV)
 
-  exit if not OPTS.has_key? :csv
+  exit if not OPTS.has_key?(:csv)
 
   File.open(OPTS[:csv], "r") do |csvfile|
     lines = csvfile.readlines
@@ -229,14 +229,14 @@ if __FILE__ == $0
 
       type = point?(lng_sdeg, lat_sdeg, lng_edeg, lat_edeg) ? "point" : "line"
 
-      if OPTS.has_key? :name
+      if OPTS.has_key?(:name)
         filename = get_filename(lng_sdeg, lat_sdeg, lng_edeg, lat_edeg)
 
         puts "#{line.chomp}"
         # show new generated filename
         puts line.chomp.split(",")[0..-2].join(",") + ",#{prefix}/#{quadrant}/#{type}/#{filename}"
 
-      elsif OPTS.has_key? :test
+      elsif OPTS.has_key?(:test)
         app_types.each do |app_type|
           scorer = ""
           file_prefix = ""
@@ -276,7 +276,7 @@ if __FILE__ == $0
             puts "Warning! #{testname} duplicated"
           end
           File.open(testname, "w+") do |testfile|
-            if OPTS.has_key? :verbose
+            if OPTS.has_key?(:verbose)
               puts testname
               puts dottest
             end
