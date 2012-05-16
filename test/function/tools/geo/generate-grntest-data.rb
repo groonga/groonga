@@ -216,11 +216,11 @@ if __FILE__ == $0
 
   OPTS = {}
   parser = OptionParser.new
-  parser.on('-g', '--generate-filename'){ |v| OPTS[:name] = v }
-  parser.on('-t', '--generate-test'){ |v| OPTS[:test] = v }
-  parser.on('-e', '--generate-expected'){ |v| OPTS[:expected] = v }
-  parser.on('-c [VAL]', '--csv [VAL]'){ |v| OPTS[:csv] = v }
-  parser.on('-v', '--verbose'){ |v| OPTS[:verbose] = v }
+  parser.on('-g', '--generate-filename') {|option| OPTS[:name] = option}
+  parser.on('-t', '--generate-test') {|option| OPTS[:test] = option}
+  parser.on('-e', '--generate-expected') {|option| OPTS[:expected] = option}
+  parser.on('-c [VAL]', '--csv [VAL]') {|option| OPTS[:csv] = option}
+  parser.on('-v', '--verbose') {|option| OPTS[:verbose] = option}
 
   parser.parse!(ARGV)
 
