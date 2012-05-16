@@ -198,11 +198,11 @@ if __FILE__ == $0
 
   OPTS = {}
   parser = OptionParser.new
-  parser.on('-g', '--generate-filename') {|option| OPTS[:name] = option}
-  parser.on('-t', '--generate-test') {|option| OPTS[:test] = option}
-  parser.on('-e', '--generate-expected') {|option| OPTS[:expected] = option}
-  parser.on('-c [VAL]', '--csv [VAL]') {|option| OPTS[:csv] = option}
-  parser.on('-v', '--verbose') {|option| OPTS[:verbose] = option}
+  parser.on('-g', '--generate-filename') {|file_name| OPTS[:file_name] = file_name}
+  parser.on('-t', '--generate-test') {|test| OPTS[:test] = test}
+  parser.on('-e', '--generate-expected') {|expected| OPTS[:expected] = expected}
+  parser.on('-c [VAL]', '--csv [VAL]') {|csv_file| OPTS[:csv] = csv_file}
+  parser.on('-v', '--verbose') {|verbose| OPTS[:verbose] = verbose}
 
   parser.parse!(ARGV)
 
@@ -229,7 +229,7 @@ if __FILE__ == $0
 
       type = point?(lng_sdeg, lat_sdeg, lng_edeg, lat_edeg) ? "point" : "line"
 
-      if OPTS.has_key?(:name)
+      if OPTS.has_key?(:file_name)
         filename = get_filename(lng_sdeg, lat_sdeg, lng_edeg, lat_edeg)
 
         puts "#{line.chomp}"
