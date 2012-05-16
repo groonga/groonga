@@ -260,11 +260,11 @@ def get_point(lng, lat)
     -90 => "south_pole",
   }
   if lng == 0
-    return lng_desc[lng][lat]
+    lng_desc[lng][lat]
   elsif lat == 0
-    return lat_desc[lat][lng]
+    lat_desc[lat][lng]
   else
-    return lng_desc[lng] + "_" + lat_desc[lat]
+    lng_desc[lng] + "_" + lat_desc[lat]
   end
 end
 
