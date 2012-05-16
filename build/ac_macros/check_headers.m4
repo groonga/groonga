@@ -3,6 +3,7 @@
 AC_CHECK_HEADERS(dlfcn.h)
 AC_CHECK_HEADERS(errno.h)
 AC_CHECK_HEADERS(execinfo.h)
+AC_CHECK_HEADERS(inttypes.h)
 AC_CHECK_HEADERS(netdb.h)
 AC_CHECK_HEADERS(netinet/in.h)
 AC_CHECK_HEADERS(netinet/tcp.h)
