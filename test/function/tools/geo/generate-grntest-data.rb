@@ -215,14 +215,14 @@ end
 if __FILE__ == $0
 
   OPTS = {}
-  opt = OptionParser.new
-  opt.on('-g', '--generate-filename'){ |v| OPTS[:name] = v }
-  opt.on('-t', '--generate-test'){ |v| OPTS[:test] = v }
-  opt.on('-e', '--generate-expected'){ |v| OPTS[:expected] = v }
-  opt.on('-c [VAL]', '--csv [VAL]'){ |v| OPTS[:csv] = v }
-  opt.on('-v', '--verbose'){ |v| OPTS[:verbose] = v }
+  parser = OptionParser.new
+  parser.on('-g', '--generate-filename'){ |v| OPTS[:name] = v }
+  parser.on('-t', '--generate-test'){ |v| OPTS[:test] = v }
+  parser.on('-e', '--generate-expected'){ |v| OPTS[:expected] = v }
+  parser.on('-c [VAL]', '--csv [VAL]'){ |v| OPTS[:csv] = v }
+  parser.on('-v', '--verbose'){ |v| OPTS[:verbose] = v }
 
-  opt.parse!(ARGV)
+  parser.parse!(ARGV)
 
   exit if not OPTS.has_key? :csv
 
