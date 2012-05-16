@@ -22,10 +22,24 @@ SELECT_POST = "]]]]"
 
 class GrnTestData
 
-  attr :csv_file, :options
+  attr :csv_file
+  attr :options
 
-  def initialize(csv_file, options = {})
-    @csv_file = csv_file
+  attr_accessor :longitude_start_degree
+  attr_accessor :latitude_start_degree
+  attr_accessor :longitude_end_degree
+  attr_accessor :latitude_end_degree
+
+  attr_accessor :longitude_start
+  attr_accessor :latitude_start
+  attr_accessor :longitude_end
+  attr_accessor :latitude_end
+
+  attr_accessor :distance
+  attr_accessor :output_filename
+
+  def initialize(options = {})
+    @csv_file = options[:csv]
     @options = options
   end
 
