@@ -25,23 +25,23 @@ def long?(start_lng_deg, end_lng_deg)
       start_lng_deg.abs + end_lng_deg.to_i.abs > 180
     # the difference in longitude striding accross meridian is over
     # 180 degree.
-    return true
+    true
   else
-    return false
+    false
   end
 end
 
 def get_quadrant(lng, lat)
   if lng > 0 and lat > 0
-    return "1st"
+    "1st"
   elsif lng < 0 and lat > 0
-    return "2nd"
+    "2nd"
   elsif lng < 0 and lat < 0
-    return "3rd"
+    "3rd"
   elsif lng > 0 and lat < 0
-    return "4th"
+    "4th"
   else
-    return nil
+    nil
   end
 end
 
@@ -53,41 +53,41 @@ end
 
 def east_axis?(lng, lat)
   if lng >= 0 and lat == 0
-    return true
+    true
   else
-    return false
+    false
   end
 end
 
 def west_axis?(lng, lat)
   if lng <= 0 and lat == 0
-    return true
+    true
   else
-    return false
+    false
   end
 end
 
 def north_axis?(lng, lat)
   if lng == 0 and lat >= 0
-    return true
+    true
   else
-    return false
+    false
   end
 end
 
 def south_axis?(lng, lat)
   if lng == 0 and lat <= 0
-    return true
+    true
   else
-    return false
+    false
   end
 end
 
 def point?(start_lng, start_lat, end_lng, end_lat)
-  if start_lng == end_lng && start_lat == end_lat
-    return true
+  if start_lng == end_lng and start_lat == end_lat
+    true
   else
-    return false
+    false
   end
 end
 
