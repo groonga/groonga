@@ -212,7 +212,8 @@ if __FILE__ == $0
     lines = csv_file.readlines
 
     lines.each_with_index do |line, i|
-      next if i == 0 # skip header
+      is_header = i == 0
+      next if is_header
 
       #puts "line No #{i}"
 
