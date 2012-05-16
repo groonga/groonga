@@ -226,8 +226,8 @@ if __FILE__ == $0
 
   exit if not OPTS.has_key? :csv
 
-  File.open(OPTS[:csv], "r") {|fh|
-    lines = fh.readlines
+  File.open(OPTS[:csv], "r") {|csvfile|
+    lines = csvfile.readlines
 
     SELECT = "select Geo --output_columns distance "
 
