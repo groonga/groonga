@@ -185,7 +185,7 @@ class GrnTestData
     geo_data + path
   end
 
-  def generate_testdata(app_type)
+  def generate_test_data(app_type)
     select_postfix = ""
     comment = sprintf("# from (%s %s %s %s) to (%s %s %s %s)\n",
                       "longitude", @longitude_start_degree,
@@ -335,7 +335,7 @@ if __FILE__ == $0
             file_prefix = app_type + "_"
           end
 
-          dottest = grndata.generate_testdata(app_type)
+          dottest = grndata.generate_test_data(app_type)
 
           if filename and filename != ""
             testname = sprintf("%s/%s/%s/%s%s",
