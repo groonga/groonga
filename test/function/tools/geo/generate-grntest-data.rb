@@ -32,13 +32,13 @@ def long?(start_lng_deg, end_lng_deg)
 end
 
 def get_quadrant(lng, lat)
-  if (lng > 0 && lat > 0)
+  if lng > 0 and lat > 0
     return "1st"
-  elsif (lng < 0 && lat > 0)
+  elsif lng < 0 and lat > 0
     return "2nd"
-  elsif (lng < 0 && lat < 0)
+  elsif lng < 0 and lat < 0
     return "3rd"
-  elsif (lng > 0 && lat < 0)
+  elsif lng > 0 and lat < 0
     return "4th"
   else
     return nil
@@ -101,23 +101,23 @@ def get_quadrant_to(start_lng, start_lat, end_lng, end_lat)
   # p start_lat
   # p end_lng
   # p end_lat
-  if (start_lng == end_lng && start_lng == 0)
+  if (start_lng == end_lng and start_lng == 0)
     ret = "meridian"
-  elsif (start_lat == end_lat && start_lat == 0)
+  elsif (start_lat == end_lat and start_lat == 0)
     ret = "equator"
   elsif !squadrant or !equadrant
-    if (not squadrant) && (not equadrant)
-      if east_axis?(start_lng, start_lat) && north_axis?(end_lng, end_lat) ||
-          north_axis?(start_lng, start_lat) && east_axis?(end_lng, end_lat)
+    if (not squadrant) and (not equadrant)
+      if east_axis?(start_lng, start_lat) and north_axis?(end_lng, end_lat) or
+          north_axis?(start_lng, start_lat) and east_axis?(end_lng, end_lat)
         return "1st"
-      elsif north_axis?(start_lng, start_lat) && west_axis?(end_lng, end_lat) ||
-          west_axis?(start_lng, start_lat) && north_axis?(end_lng, end_lat)
+      elsif north_axis?(start_lng, start_lat) and west_axis?(end_lng, end_lat) or
+          west_axis?(start_lng, start_lat) and north_axis?(end_lng, end_lat)
         return "2nd"
-      elsif west_axis?(start_lng, start_lat) && south_axis?(end_lng, end_lat) ||
-          south_axis?(start_lng, start_lat) && west_axis?(end_lng, end_lat)
+      elsif west_axis?(start_lng, start_lat) and south_axis?(end_lng, end_lat) or
+          south_axis?(start_lng, start_lat) and west_axis?(end_lng, end_lat)
         return "3rd"
-      elsif east_axis?(start_lng, start_lat) && south_axis?(end_lng, end_lat) ||
-          south_axis?(start_lng, start_lat) && east_axis?(end_lng, end_lat)
+      elsif east_axis?(start_lng, start_lat) and south_axis?(end_lng, end_lat) or
+          south_axis?(start_lng, start_lat) and east_axis?(end_lng, end_lat)
         return "4th"
       end
     elsif not squadrant
