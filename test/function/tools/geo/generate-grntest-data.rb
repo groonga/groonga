@@ -323,7 +323,7 @@ if __FILE__ == $0
         filename = grndata.generate_filename
 
         if OPTS.has_key?(:verbose)
-          puts("#{line.chomp}")
+          puts(line)
         end
         # show new generated filename
         #puts grndata.generate_new_data(line, prefix, quadrant, type, filename)
