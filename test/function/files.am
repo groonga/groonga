@@ -2,29 +2,29 @@ test_files = \
 	suite/dump/table-tokenizer-index-column.test \
 	suite/geo/taiyaki/in-circle.test \
 	suite/geo/taiyaki/in-rectangle-long-latitude.test \
-	suite/load/each/scalar-geo-point-with-brace.test \
-	suite/load/each/scalar-geo-point-with-bracket.test \
-	suite/load/scalar-geo-point-index.test \
-	suite/load/scalar-geo-point-valid-large-latitude.test \
-	suite/load/scalar-geo-point-valid-large-longitude.test \
-	suite/load/scalar-geo-point-valid-small-latitude.test \
-	suite/load/scalar-geo-point-valid-small-longitude.test \
+	suite/load/each/brace.test \
+	suite/load/each/bracket.test \
+	suite/load/scalar-geo-point-max-latitude.test \
+	suite/load/scalar-geo-point-max-longitude.test \
+	suite/load/scalar-geo-point-min-latitude.test \
+	suite/load/scalar-geo-point-min-longitude.test \
+	suite/load/scalar-geo-point-update-index.test \
+	suite/select/filter/geo_in_circle/ellip_with_index.test \
+	suite/select/filter/geo_in_circle/ellip_without_index.test \
+	suite/select/filter/geo_in_circle/ellipsoid_with_index.test \
+	suite/select/filter/geo_in_circle/ellipsoid_without_index.test \
+	suite/select/filter/geo_in_circle/rect_with_index.test \
+	suite/select/filter/geo_in_circle/rect_without_index.test \
+	suite/select/filter/geo_in_circle/rectangle_with_index.test \
+	suite/select/filter/geo_in_circle/rectangle_without_index.test \
+	suite/select/filter/geo_in_circle/sphere_with_index.test \
+	suite/select/filter/geo_in_circle/sphere_without_index.test \
+	suite/select/filter/geo_in_circle/sphr_with_index.test \
+	suite/select/filter/geo_in_circle/sphr_without_index.test \
+	suite/select/filter/geo_in_circle/with_index.test \
+	suite/select/filter/geo_in_circle/without_index.test \
 	suite/select/filter/similar.test \
 	suite/select/output-columns/with-space.test \
-	suite/select/output/scalar-geo-point-by-geo-in-circle-ellip-with-index.test \
-	suite/select/output/scalar-geo-point-by-geo-in-circle-ellip-without-index.test \
-	suite/select/output/scalar-geo-point-by-geo-in-circle-ellipsoid-with-index.test \
-	suite/select/output/scalar-geo-point-by-geo-in-circle-ellipsoid-without-index.test \
-	suite/select/output/scalar-geo-point-by-geo-in-circle-rect-with-index.test \
-	suite/select/output/scalar-geo-point-by-geo-in-circle-rect-without-index.test \
-	suite/select/output/scalar-geo-point-by-geo-in-circle-rectangle-with-index.test \
-	suite/select/output/scalar-geo-point-by-geo-in-circle-rectangle-without-index.test \
-	suite/select/output/scalar-geo-point-by-geo-in-circle-sphere-with-index.test \
-	suite/select/output/scalar-geo-point-by-geo-in-circle-sphere-without-index.test \
-	suite/select/output/scalar-geo-point-by-geo-in-circle-sphr-with-index.test \
-	suite/select/output/scalar-geo-point-by-geo-in-circle-sphr-without-index.test \
-	suite/select/output/scalar-geo-point-by-geo-in-circle-with-index.test \
-	suite/select/output/scalar-geo-point-by-geo-in-circle-without-index.test \
 	suite/select/output/scalar-reference-default.test \
 	suite/select/output/vector-geo-point-by-accessor.test \
 	suite/select/output/vector-geo-point.test \
@@ -58,28 +58,29 @@ expected_files = \
 	suite/dump/table-tokenizer-index-column.expected \
 	suite/geo/taiyaki/in-circle.expected \
 	suite/geo/taiyaki/in-rectangle-long-latitude.expected \
-	suite/load/each/scalar-geo-point-with-brace.expected \
-	suite/load/each/scalar-geo-point-with-bracket.expected \
-	suite/load/scalar-geo-point-index.expected \
-	suite/load/scalar-geo-point-valid-large-latitude.expected \
-	suite/load/scalar-geo-point-valid-large-longitude.expected \
-	suite/load/scalar-geo-point-valid-small-latitude.expected \
-	suite/load/scalar-geo-point-valid-small-longitude.expected \
+	suite/load/each/brace.expected \
+	suite/load/each/bracket.expected \
+	suite/load/scalar-geo-point-max-latitude.expected \
+	suite/load/scalar-geo-point-max-longitude.expected \
+	suite/load/scalar-geo-point-min-latitude.expected \
+	suite/load/scalar-geo-point-min-longitude.expected \
+	suite/load/scalar-geo-point-update-index.expected \
+	suite/select/filter/geo_in_circle/ellip_with_index.expected \
+	suite/select/filter/geo_in_circle/ellip_without_index.expected \
+	suite/select/filter/geo_in_circle/ellipsoid_with_index.expected \
+	suite/select/filter/geo_in_circle/ellipsoid_without_index.expected \
+	suite/select/filter/geo_in_circle/rect_with_index.expected \
+	suite/select/filter/geo_in_circle/rect_without_index.expected \
+	suite/select/filter/geo_in_circle/rectangle_with_index.expected \
+	suite/select/filter/geo_in_circle/rectangle_without_index.expected \
+	suite/select/filter/geo_in_circle/sphere_with_index.expected \
+	suite/select/filter/geo_in_circle/sphere_without_index.expected \
+	suite/select/filter/geo_in_circle/sphr_with_index.expected \
+	suite/select/filter/geo_in_circle/sphr_without_index.expected \
+	suite/select/filter/geo_in_circle/with_index.expected \
+	suite/select/filter/geo_in_circle/without_index.expected \
 	suite/select/filter/similar.expected \
 	suite/select/output-columns/with-space.expected \
-	suite/select/output/scalar-geo-point-by-geo-in-circle-ellip-with-index.expected \
-	suite/select/output/scalar-geo-point-by-geo-in-circle-ellip-without-index.expected \
-	suite/select/output/scalar-geo-point-by-geo-in-circle-ellipsoid-with-index.expected \
-	suite/select/output/scalar-geo-point-by-geo-in-circle-ellipsoid-without-index.expected \
-	suite/select/output/scalar-geo-point-by-geo-in-circle-rect-with-index.expected \
-	suite/select/output/scalar-geo-point-by-geo-in-circle-rect-without-index.expected \
-	suite/select/output/scalar-geo-point-by-geo-in-circle-rectangle-with-index.expected \
-	suite/select/output/scalar-geo-point-by-geo-in-circle-sphere-with-index.expected \
-	suite/select/output/scalar-geo-point-by-geo-in-circle-sphere-without-index.expected \
-	suite/select/output/scalar-geo-point-by-geo-in-circle-sphr-with-index.expected \
-	suite/select/output/scalar-geo-point-by-geo-in-circle-sphr-without-index.expected \
-	suite/select/output/scalar-geo-point-by-geo-in-circle-with-index.expected \
-	suite/select/output/scalar-geo-point-by-geo-in-circle-without-index.expected \
 	suite/select/output/scalar-reference-default.expected \
 	suite/select/output/vector-geo-point-by-accessor.expected \
 	suite/select/output/vector-geo-point.expected \
