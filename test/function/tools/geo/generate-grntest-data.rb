@@ -148,12 +148,12 @@ class GrnTestData
   end
 
   def long?(start_lng_deg, end_lng_deg)
+    diff_in_longitude = start_lng_deg.abs + end_lng_deg.to_i.abs
+    east_to_west = start_lng_deg > 0 and end_lng_deg.to_i < 0
+    west_to_east = start_lng_deg < 0 and end_lng_deg.to_i > 0
     if start_lng_deg != end_lng_deg and
-        ((start_lng_deg > 0 and end_lng_deg.to_i < 0) or
-        (start_lng_deg < 0 and end_lng_deg.to_i > 0)) and
-        start_lng_deg.abs + end_lng_deg.to_i.abs > 180
-      # the difference in longitude striding accross meridian is over
-      # 180 degree.
+        (east_to_west or west_to_east) and
+        diff_in_longitude > 180
       true
     else
       false
