@@ -21,8 +21,8 @@ SELECT_PRE = "[[0,0.0,0.0],[[[1],[[\"_score\",\"Int32\"]],["
 SELECT_POST = "]]]]"
 
 class GrnTestData
-  attr :csv_file
-  attr :options
+  attr_accessor :csv_file
+  attr_accessor :options
 
   attr_accessor :longitude_start_degree
   attr_accessor :latitude_start_degree
