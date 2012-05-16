@@ -317,8 +317,9 @@ if __FILE__ == $0
 
       type = grndata.point_or_line
 
+      filename = grndata.generate_filename
+
       if OPTS.has_key?(:file_name)
-        filename = grndata.generate_filename
 
         if OPTS.has_key?(:verbose)
           puts(line)
