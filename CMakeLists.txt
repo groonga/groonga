@@ -252,7 +252,9 @@ else()
   set(WITH_MESSAGE_PACK FALSE)
 endif()
 
-set(LIBGROONGA ${CMAKE_BINARY_DIR}/lib/libgroonga.so)
+set(LIBGROONGA_BASE_NAME
+  "${CMAKE_SHARED_LIBRARY_PREFIX}groonga${CMAKE_SHARED_LIBRARY_SUFFIX}")
+set(LIBGROONGA "${CMAKE_BINARY_DIR}/lib/${LIBGROONGA_BASE_NAME}")
 
 add_subdirectory(lib)
 add_subdirectory(src)
