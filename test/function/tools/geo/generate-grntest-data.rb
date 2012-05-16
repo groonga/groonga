@@ -243,6 +243,8 @@ if __FILE__ == $0
 
   exit if not OPTS.has_key?(:csv)
 
+  grndata = new GrnTestData(OPTS)
+
   File.open(OPTS[:csv], "r") do |csv_file|
     lines = csv_file.readlines
 
