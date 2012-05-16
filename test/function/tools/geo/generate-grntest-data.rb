@@ -201,7 +201,7 @@ if __FILE__ == $0
   parser.on('-g', '--generate-filename') {|file_name| OPTS[:file_name] = file_name}
   parser.on('-t', '--generate-test') {|test| OPTS[:test] = test}
   parser.on('-e', '--generate-expected') {|expected| OPTS[:expected] = expected}
-  parser.on('-c [VAL]', '--csv [VAL]') {|csv_file| OPTS[:csv] = csv_file}
+  parser.on('-c CSV_FILE', '--csv CSV_FILE') {|csv_file| OPTS[:csv] = csv_file}
   parser.on('-v', '--verbose') {|verbose| OPTS[:verbose] = verbose}
 
   parser.parse!(ARGV)
