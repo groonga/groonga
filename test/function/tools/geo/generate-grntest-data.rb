@@ -22,7 +22,7 @@ def long?(start_lng_deg, end_lng_deg)
   if start_lng_deg != end_lng_deg and
       ((start_lng_deg > 0 && end_lng_deg.to_i < 0) or
       (start_lng_deg < 0 && end_lng_deg.to_i > 0)) and
-      start_lng_deg.abs + end_lng_deg.to_i.abs > 180 then
+      start_lng_deg.abs + end_lng_deg.to_i.abs > 180
     # the difference in longitude striding accross meridian is over
     # 180 degree.
     return true
@@ -32,13 +32,13 @@ def long?(start_lng_deg, end_lng_deg)
 end
 
 def get_quadrant(lng, lat)
-  if (lng > 0 && lat > 0) then
+  if (lng > 0 && lat > 0)
     return "1st"
-  elsif (lng < 0 && lat > 0) then
+  elsif (lng < 0 && lat > 0)
     return "2nd"
-  elsif (lng < 0 && lat < 0) then
+  elsif (lng < 0 && lat < 0)
     return "3rd"
-  elsif (lng > 0 && lat < 0) then
+  elsif (lng > 0 && lat < 0)
     return "4th"
   else
     return nil
@@ -52,7 +52,7 @@ def equator?(lng, lat)
 end
 
 def east_axis?(lng, lat)
-  if lng >= 0 and lat == 0 then
+  if lng >= 0 and lat == 0
     return true
   else
     return false
@@ -60,7 +60,7 @@ def east_axis?(lng, lat)
 end
 
 def west_axis?(lng, lat)
-  if lng <= 0 and lat == 0 then
+  if lng <= 0 and lat == 0
     return true
   else
     return false
@@ -68,7 +68,7 @@ def west_axis?(lng, lat)
 end
 
 def north_axis?(lng, lat)
-  if lng == 0 and lat >= 0 then
+  if lng == 0 and lat >= 0
     return true
   else
     return false
@@ -76,7 +76,7 @@ def north_axis?(lng, lat)
 end
 
 def south_axis?(lng, lat)
-  if lng == 0 and lat <= 0 then
+  if lng == 0 and lat <= 0
     return true
   else
     return false
@@ -84,7 +84,7 @@ def south_axis?(lng, lat)
 end
 
 def point?(start_lng, start_lat, end_lng, end_lat)
-  if start_lng == end_lng && start_lat == end_lat then
+  if start_lng == end_lng && start_lat == end_lat
     return true
   else
     return false
@@ -101,32 +101,32 @@ def get_quadrant_to(start_lng, start_lat, end_lng, end_lat)
   # p start_lat
   # p end_lng
   # p end_lat
-  if (start_lng == end_lng && start_lng == 0) then
+  if (start_lng == end_lng && start_lng == 0)
     ret = "meridian"
-  elsif (start_lat == end_lat && start_lat == 0) then
+  elsif (start_lat == end_lat && start_lat == 0)
     ret = "equator"
-  elsif !squadrant or !equadrant then
-    if (not squadrant) && (not equadrant) then
+  elsif !squadrant or !equadrant
+    if (not squadrant) && (not equadrant)
       if east_axis?(start_lng, start_lat) && north_axis?(end_lng, end_lat) ||
-          north_axis?(start_lng, start_lat) && east_axis?(end_lng, end_lat) then
+          north_axis?(start_lng, start_lat) && east_axis?(end_lng, end_lat)
         return "1st"
       elsif north_axis?(start_lng, start_lat) && west_axis?(end_lng, end_lat) ||
-          west_axis?(start_lng, start_lat) && north_axis?(end_lng, end_lat) then
+          west_axis?(start_lng, start_lat) && north_axis?(end_lng, end_lat)
         return "2nd"
       elsif west_axis?(start_lng, start_lat) && south_axis?(end_lng, end_lat) ||
-          south_axis?(start_lng, start_lat) && west_axis?(end_lng, end_lat) then
+          south_axis?(start_lng, start_lat) && west_axis?(end_lng, end_lat)
         return "3rd"
       elsif east_axis?(start_lng, start_lat) && south_axis?(end_lng, end_lat) ||
-          south_axis?(start_lng, start_lat) && east_axis?(end_lng, end_lat) then
+          south_axis?(start_lng, start_lat) && east_axis?(end_lng, end_lat)
         return "4th"
       end
-    elsif not squadrant then
+    elsif not squadrant
       ret = equadrant
-    elsif not equadrant then
+    elsif not equadrant
       ret = squadrant
     end
   else
-    if squadrant == equadrant then
+    if squadrant == equadrant
       ret = equadrant
     else
       ret = "#{squadrant}to#{equadrant}"
@@ -182,9 +182,9 @@ def get_point(lng, lat)
     -89 => "near_south_pole",
     -90 => "south_pole",
   }
-  if lng == 0 then
+  if lng == 0
     return lng_desc[lng][lat]
-  elsif lat == 0 then
+  elsif lat == 0
     return lat_desc[lat][lng]
   else
     return lng_desc[lng] + "_" + lat_desc[lat]
@@ -194,7 +194,7 @@ end
 def get_filename(start_lng, start_lat, end_lng, end_lat)
   s = get_point(start_lng, start_lat)
   e = get_point(end_lng, end_lat)
-  if s == e then
+  if s == e
     ret = "#{s}.test"
   else
     ret = "#{s}_to_#{e}.test"
@@ -212,7 +212,7 @@ def parse_line_data(data)
 end
 
 
-if __FILE__ == $0 then
+if __FILE__ == $0
 
   OPTS = {}
   opt = OptionParser.new
@@ -249,14 +249,14 @@ if __FILE__ == $0 then
 
       type = point?(lng_sdeg, lat_sdeg, lng_edeg, lat_edeg) ? "point" : "line"
 
-      if OPTS.has_key? :name then
+      if OPTS.has_key? :name
         filename = get_filename(lng_sdeg, lat_sdeg, lng_edeg, lat_edeg)
 
         puts "#{line.chomp}"
         # show new generated filename
         puts line.chomp.split(",")[0..-2].join(",") + ",#{prefix}/#{quadrant}/#{type}/#{filename}"
 
-      elsif OPTS.has_key? :test then
+      elsif OPTS.has_key? :test
         app_types.each { |app_type|
           scorer = ""
           file_prefix = ""
@@ -265,7 +265,7 @@ if __FILE__ == $0 then
                     lng_sdeg, lat_sdeg, lng_edeg, lat_edeg)
           scorer = sprintf("--scorer 'distance = geo_distance(\"%sx%s\", \"%sx%s\"",
                    lng_start, lat_start, lat_end, lng_end, app_type)
-          if app_type == "" then
+          if app_type == ""
             # default
             select_postfix = ")'\n"
           else
@@ -279,7 +279,7 @@ if __FILE__ == $0 then
                     comment,
                     SELECT, scorer, select_postfix)
 
-          if filename and filename != "" then
+          if filename and filename != ""
             testname = sprintf("%s/%s/%s/%s%s",
                        prefix, quadrant, type,
                        file_prefix, File.basename(filename))
@@ -287,16 +287,16 @@ if __FILE__ == $0 then
             exit 1
           end
 
-          if testname and not Dir.exists?(File.dirname(testname)) then
+          if testname and not Dir.exists?(File.dirname(testname))
             FileUtils.mkdir_p(File.dirname(testname))
           end
 
-          if File.exists?(testname) then
+          if File.exists?(testname)
             # duplicated?
             puts "Warning! #{testname} duplicated"
           end
           File.open(testname, "w+") { |f|
-            if OPTS.has_key? :verbose then
+            if OPTS.has_key? :verbose
               puts testname
               puts dottest
             end
