@@ -15,6 +15,8 @@ EOF
 CREATE_RESULT = "[[0,0.0,0.0],true]\n"
 LOAD_RESULT = "[[0,0.0,0.0],1]\n"
 
+SELECT = "select Geo --output_columns distance "
+
 SELECT_PRE = "[[0,0.0,0.0],[[[1],[[\"_score\",\"Int32\"]],["
 SELECT_POST = "]]]]"
 
@@ -208,8 +210,6 @@ if __FILE__ == $0
 
   File.open(OPTS[:csv], "r") do |csvfile|
     lines = csvfile.readlines
-
-    SELECT = "select Geo --output_columns distance "
 
     lines.each_with_index do |line, i|
       next if i == 0 # skip header
