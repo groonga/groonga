@@ -56,6 +56,59 @@ class GrnTestData
     @latitude_end_degree = @latitude_end_degree.to_i
   end
 
+  def quadrant_to
+    ret = ""
+    squadrant = get_quadrant(@longitude_start_degree, @latitude_start_degree)
+    equadrant = get_quadrant(@longitude_end_degree, @latitude_end_degree)
+    # p squadrant
+    # p equadrant
+    # p start_lng
+    # p start_lat
+    # p end_lng
+    # p end_lat
+    if (@longitude_start_degree == @longitude_end_degree and
+        @longitude_start_degree == 0)
+      ret = "meridian"
+    elsif (@latitude_start_degree == @latitude_end_degree and
+        @latitude_start_degree == 0)
+      ret = "equator"
+    elsif !squadrant or !equadrant
+      if (not squadrant) and (not equadrant)
+        if east_axis?(@longitude_start_degree, @latitude_start_degree) and
+            north_axis?(@longitude_end_degree, @latitude_end_degree) or
+            north_axis?(@longitude_start_degree, @latitude_start_degree) and
+            east_axis?(@longitude_end_degree, @latitude_end_degree)
+          return "1st"
+        elsif north_axis?(@longitude_start_degree, @latitude_start_degree) and
+            west_axis?(@longitude_end_degree, @latitude_end_degree) or
+            west_axis?(@longitude_start_degree, @latitude_start_degree) and
+            north_axis?(@longitude_end_degree, @latitude_end_degree)
+          return "2nd"
+        elsif west_axis?(@longitude_start_degree, @latitude_start_degree) and
+            south_axis?(@longitude_end_degree, @latitude_end_degree) or
+            south_axis?(@longitude_start_degree, @latitude_start_degree) and
+            west_axis?(@longitude_end_degree, @latitude_end_degree)
+          return "3rd"
+        elsif east_axis?(@longitude_start_degree, @latitude_start_degree) and
+            south_axis?(@longitude_end_degree, @latitude_end_degree) or
+            south_axis?(@longitude_start_degree, @latitude_start_degree) and
+            east_axis?(@longitude_end_degree, @latitude_end_degree)
+          return "4th"
+        end
+      elsif not squadrant
+        ret = equadrant
+      elsif not equadrant
+        ret = squadrant
+      end
+    else
+      if squadrant == equadrant
+        ret = equadrant
+      else
+        ret = "#{squadrant}to#{equadrant}"
+      end
+    end
+    ret
+  end
 end
 
 def long?(start_lng_deg, end_lng_deg)
@@ -111,49 +164,6 @@ def point?(start_lng, start_lat, end_lng, end_lat)
   start_lng == end_lng and start_lat == end_lat
 end
 
-def get_quadrant_to(start_lng, start_lat, end_lng, end_lat)
-  ret = ""
-  squadrant = get_quadrant(start_lng, start_lat)
-  equadrant = get_quadrant(end_lng, end_lat)
-  # p squadrant
-  # p equadrant
-  # p start_lng
-  # p start_lat
-  # p end_lng
-  # p end_lat
-  if (start_lng == end_lng and start_lng == 0)
-    ret = "meridian"
-  elsif (start_lat == end_lat and start_lat == 0)
-    ret = "equator"
-  elsif !squadrant or !equadrant
-    if (not squadrant) and (not equadrant)
-      if east_axis?(start_lng, start_lat) and north_axis?(end_lng, end_lat) or
-          north_axis?(start_lng, start_lat) and east_axis?(end_lng, end_lat)
-        return "1st"
-      elsif north_axis?(start_lng, start_lat) and west_axis?(end_lng, end_lat) or
-          west_axis?(start_lng, start_lat) and north_axis?(end_lng, end_lat)
-        return "2nd"
-      elsif west_axis?(start_lng, start_lat) and south_axis?(end_lng, end_lat) or
-          south_axis?(start_lng, start_lat) and west_axis?(end_lng, end_lat)
-        return "3rd"
-      elsif east_axis?(start_lng, start_lat) and south_axis?(end_lng, end_lat) or
-          south_axis?(start_lng, start_lat) and east_axis?(end_lng, end_lat)
-        return "4th"
-      end
-    elsif not squadrant
-      ret = equadrant
-    elsif not equadrant
-      ret = squadrant
-    end
-  else
-    if squadrant == equadrant
-      ret = equadrant
-    else
-      ret = "#{squadrant}to#{equadrant}"
-    end
-  end
-  ret
-end
 
 def get_point(lng, lat)
   ret = ""
@@ -264,7 +274,7 @@ if __FILE__ == $0
       app_types = ["", "rectangle", "rect"]
       app_types = [""]
 
-      quadrant = get_quadrant_to(lng_sdeg, lat_sdeg, lng_edeg, lat_edeg)
+      quadrant = grndata.quadrant_to
 
       prefix = long?(lng_sdeg, lng_edeg) ? "long" : "short"
 
