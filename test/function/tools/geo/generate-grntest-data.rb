@@ -287,6 +287,10 @@ if __FILE__ == $0
   parser.on("-c CSV_FILE", "--csv CSV_FILE", "source CSV file") do |csv_file|
     OPTS[:csv] = csv_file
   end
+  parser.on("-d", "--generate-filename-with-csv-data",
+            "generate test file name with geo data") do |csv_data|
+    OPTS[:csv_data] = csv_data
+  end
   parser.on("-v", "--verbose", "show log in detail") do |verbose|
     OPTS[:verbose] = verbose
   end
@@ -325,8 +329,9 @@ if __FILE__ == $0
           puts(line)
         end
         # show new generated filename
-        #puts grndata.generate_new_data(line, prefix, quadrant, type, filename)
         puts("#{prefix}/#{quadrant}/#{type}/#{filename}")
+      elsif OPTS.has_key?(:csv_data)
+        puts grndata.generate_new_data(line, prefix, quadrant, type, filename)
       elsif OPTS.has_key?(:test)
         app_types.each do |app_type|
           file_prefix = ""
