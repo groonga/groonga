@@ -43,6 +43,19 @@ class GrnTestData
     @options = options
   end
 
+  def parse_line_data(data)
+    @longitude_start_degree, @latitude_start_degree,
+      @longitude_end_degree, @latitude_end_degree,
+      @longitude_start, @latitude_start,
+      @longitude_end, @latitude_end,
+      @distance, @output_filename = data.chomp.split(",")
+
+    @longitude_start_degree = @longitude_start_degree.to_i
+    @latitude_start_degree = @latitude_start_degree.to_i
+    @longitude_end_degree = @longitude_end_degree.to_i
+    @latitude_end_degree = @latitude_end_degree.to_i
+  end
+
 end
 
 def long?(start_lng_deg, end_lng_deg)
@@ -209,14 +222,6 @@ def get_filename(start_lng, start_lat, end_lng, end_lat)
   ret
 end
 
-def parse_line_data(data)
-  lng_sdeg, lat_sdeg, lng_edeg, lat_edeg,
-    lng_start, lat_start, lng_end, lat_end,
-    distance, filename = data.chomp.split(",")
-
-  return [lng_sdeg.to_i, lat_sdeg.to_i, lng_edeg.to_i, lat_edeg.to_i,
-          lng_start, lat_start, lng_end, lat_end, distance, filename]
-end
 
 
 if __FILE__ == $0
@@ -254,9 +259,7 @@ if __FILE__ == $0
 
       #puts "line No #{i}"
 
-      lng_sdeg, lat_sdeg, lng_edeg, lat_edeg,
-        lng_start, lat_start, lng_end, lat_end,
-        distance, filename = parse_line_data(line)
+      grndata.parse_line_data(line)
 
       app_types = ["", "rectangle", "rect"]
       app_types = [""]
