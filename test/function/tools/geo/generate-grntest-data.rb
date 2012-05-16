@@ -151,6 +151,31 @@ class GrnTestData
     path = ",#{prefix}/#{quadrant}/#{type}/#{filename}"
     geo_data + path
   end
+
+  def generate_testdata(app_type)
+    select_postfix = ""
+    comment = sprintf("# from (%s %s %s %s) to (%s %s %s %s)\n",
+                      "longitude", @longitude_start_degree,
+                      "latitude", @latitude_start_degree,
+                      "longitude", @longigude_end_degree,
+                      "latitude", @latitude_end_degree)
+    scorer = sprintf("--scorer 'distance = geo_distance(\"%sx%s\", \"%sx%s\"",
+                     @longitude_start_degree, @latitude_start_degree,
+                     @longitude_end_degree, @latitude_end_degree, app_type)
+    if app_type == ""
+      # default
+      select_postfix = ")'\n"
+    else
+      file_prefix = app_type + "_"
+      select_postfix = ", \"#{app_type}\")'\n"
+    end
+    sprintf("%s%s\n%s\n%s%s%s%s",
+            TABLE_CREATE,
+            COLUMN_CREATE,
+            LOAD,
+            comment,
+            SELECT, scorer, select_postfix)
+  end
 end
 
 def get_quadrant(lng, lat)
@@ -306,26 +331,12 @@ if __FILE__ == $0
         puts "#{prefix}/#{quadrant}/#{type}/#{filename}"
       elsif OPTS.has_key?(:test)
         app_types.each do |app_type|
-          scorer = ""
           file_prefix = ""
-          select_postfix = ""
-          comment = sprintf("# from (longitude %s latitude %s) to (longitude %s latitude %s)\n",
-                    lng_sdeg, lat_sdeg, lng_edeg, lat_edeg)
-          scorer = sprintf("--scorer 'distance = geo_distance(\"%sx%s\", \"%sx%s\"",
-                   lng_start, lat_start, lat_end, lng_end, app_type)
-          if app_type == ""
-            # default
-            select_postfix = ")'\n"
-          else
+          if app_type != ""
             file_prefix = app_type + "_"
-            select_postfix = ", \"#{app_type}\")'\n"
           end
-          dottest = sprintf("%s%s\n%s\n%s%s%s%s",
-                    TABLE_CREATE,
-                    COLUMN_CREATE,
-                    LOAD,
-                    comment,
-                    SELECT, scorer, select_postfix)
+
+          dottest = grndata.generate_testdata(app_type)
 
           if filename and filename != ""
             testname = sprintf("%s/%s/%s/%s%s",
