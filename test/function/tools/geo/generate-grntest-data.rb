@@ -208,8 +208,8 @@ if __FILE__ == $0
 
   exit if not OPTS.has_key?(:csv)
 
-  File.open(OPTS[:csv], "r") do |csvfile|
-    lines = csvfile.readlines
+  File.open(OPTS[:csv], "r") do |csv_file|
+    lines = csv_file.readlines
 
     lines.each_with_index do |line, i|
       next if i == 0 # skip header
