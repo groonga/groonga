@@ -145,7 +145,12 @@ class GrnTestData
       "#{s}_to_#{e}.test"
     end
   end
-end
+
+  def generate_newdata(line, prefix, quadrant, type, filename)
+    geo_data = line.chomp.split(",")[0..-2].join(",")
+    path = ",#{prefix}/#{quadrant}/#{type}/#{filename}"
+    geo_data + path
+  end
 
 
 def get_quadrant(lng, lat)
@@ -295,7 +300,7 @@ if __FILE__ == $0
 
         puts "#{line.chomp}"
         # show new generated filename
-        puts line.chomp.split(",")[0..-2].join(",") + ",#{prefix}/#{quadrant}/#{type}/#{filename}"
+        puts grndata.generate_newdata(line, prefix, quadrant, type, filename)
 
       elsif OPTS.has_key?(:test)
         app_types.each do |app_type|
