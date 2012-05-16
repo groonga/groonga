@@ -56,6 +56,20 @@ class GrnTestData
     @latitude_end_degree = @latitude_end_degree.to_i
   end
 
+  def get_quadrant(longitude, latitude)
+    if longitude > 0 and latitude > 0
+      "1st"
+    elsif longitude < 0 and latitude > 0
+      "2nd"
+    elsif longitude < 0 and latitude < 0
+      "3rd"
+    elsif longitude > 0 and latitude < 0
+      "4th"
+    else
+      nil
+    end
+  end
+
   def quadrant_to
     squadrant = get_quadrant(@longitude_start_degree, @latitude_start_degree)
     equadrant = get_quadrant(@longitude_end_degree, @latitude_end_degree)
@@ -173,20 +187,6 @@ class GrnTestData
             LOAD,
             comment,
             SELECT, scorer, select_postfix)
-  end
-end
-
-def get_quadrant(lng, lat)
-  if lng > 0 and lat > 0
-    "1st"
-  elsif lng < 0 and lat > 0
-    "2nd"
-  elsif lng < 0 and lat < 0
-    "3rd"
-  elsif lng > 0 and lat < 0
-    "4th"
-  else
-    nil
   end
 end
 
