@@ -295,12 +295,12 @@ if __FILE__ == $0
             # duplicated?
             puts "Warning! #{testname} duplicated"
           end
-          File.open(testname, "w+") { |f|
+          File.open(testname, "w+") { |testfile|
             if OPTS.has_key? :verbose
               puts testname
               puts dottest
             end
-            f.puts dottest
+            testfile.puts(dottest)
           }
         }
       end
