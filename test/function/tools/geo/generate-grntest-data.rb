@@ -57,7 +57,6 @@ class GrnTestData
   end
 
   def quadrant_to
-    ret = ""
     squadrant = get_quadrant(@longitude_start_degree, @latitude_start_degree)
     equadrant = get_quadrant(@longitude_end_degree, @latitude_end_degree)
     # p squadrant
@@ -68,46 +67,45 @@ class GrnTestData
     # p end_lat
     if (@longitude_start_degree == @longitude_end_degree and
         @longitude_start_degree == 0)
-      ret = "meridian"
+      "meridian"
     elsif (@latitude_start_degree == @latitude_end_degree and
         @latitude_start_degree == 0)
-      ret = "equator"
+      "equator"
     elsif !squadrant or !equadrant
       if (not squadrant) and (not equadrant)
         if east_axis?(@longitude_start_degree, @latitude_start_degree) and
             north_axis?(@longitude_end_degree, @latitude_end_degree) or
             north_axis?(@longitude_start_degree, @latitude_start_degree) and
             east_axis?(@longitude_end_degree, @latitude_end_degree)
-          return "1st"
+          "1st"
         elsif north_axis?(@longitude_start_degree, @latitude_start_degree) and
             west_axis?(@longitude_end_degree, @latitude_end_degree) or
             west_axis?(@longitude_start_degree, @latitude_start_degree) and
             north_axis?(@longitude_end_degree, @latitude_end_degree)
-          return "2nd"
+          "2nd"
         elsif west_axis?(@longitude_start_degree, @latitude_start_degree) and
             south_axis?(@longitude_end_degree, @latitude_end_degree) or
             south_axis?(@longitude_start_degree, @latitude_start_degree) and
             west_axis?(@longitude_end_degree, @latitude_end_degree)
-          return "3rd"
+          "3rd"
         elsif east_axis?(@longitude_start_degree, @latitude_start_degree) and
             south_axis?(@longitude_end_degree, @latitude_end_degree) or
             south_axis?(@longitude_start_degree, @latitude_start_degree) and
             east_axis?(@longitude_end_degree, @latitude_end_degree)
-          return "4th"
+          "4th"
         end
       elsif not squadrant
-        ret = equadrant
+        equadrant
       elsif not equadrant
-        ret = squadrant
+        squadrant
       end
     else
       if squadrant == equadrant
-        ret = equadrant
+        equadrant
       else
-        ret = "#{squadrant}to#{equadrant}"
+        "#{squadrant}to#{equadrant}"
       end
     end
-    ret
   end
 
   def long_or_short
