@@ -355,7 +355,7 @@ if __FILE__ == $0
 
           if File.exists?(testname)
             # duplicated?
-            puts("Warning! #{testname} duplicated")
+            puts("Warning! [#{i}] #{testname} duplicated")
           end
           File.open(testname, "w+") do |testfile|
             if OPTS.has_key?(:verbose)
