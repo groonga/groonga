@@ -65,6 +65,7 @@ add_definitions(
 
 include_directories(
   ${CMAKE_BINARY_DIR}
+  ${CMAKE_SOURCE_DIR}
   ${CMAKE_SOURCE_DIR}/include
   )
 
