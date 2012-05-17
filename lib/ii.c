@@ -52,6 +52,13 @@
 
 #define NEXT_ADDR(p) (((byte *)(p)) + sizeof *(p))
 
+#ifndef S_IRUSR
+# define S_IRUSR 0400
+#endif /* S_IRUSR */
+#ifndef S_IWUSR
+# define S_IWUSR 0200
+#endif /* S_IWUSR */
+
 /* segment */
 
 inline static uint32_t
