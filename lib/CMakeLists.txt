@@ -13,6 +13,10 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+add_definitions(
+  -DGRN_DAT_EXPORT
+  )
+
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/dat
   )
