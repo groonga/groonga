@@ -120,6 +120,10 @@ if(UNIX)
   endif()
 endif()
 
+if(WIN32)
+  ac_check_lib(ws2_32 select)
+endif()
+
 option(WITH_NFKC "use NFKC based UTF8 normalization." ON)
 
 if(WIN32)
