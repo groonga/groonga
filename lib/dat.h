@@ -18,7 +18,7 @@
 #define GRN_DAT_H
 
 #ifndef GROONGA_IN_H
-#include "groonga_in.h"
+# include "groonga_in.h"
 #endif /* GROONGA_IN_H */
 
 #include "db.h"

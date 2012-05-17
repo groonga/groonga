@@ -19,27 +19,27 @@
 #define GRN_DAT_COMMON_HPP_
 
 #ifndef _MSC_VER
- #include <stddef.h>
- #include <stdint.h>
+# include <stddef.h>
+# include <stdint.h>
 #endif  // _MSC_VER
 
 #include <cstddef>
 #include <exception>
 
 #ifdef _DEBUG
- #include <iostream>
+# include <iostream>
 #endif  // _DEBUG
 
 #ifndef GRN_DAT_API
- #ifdef WIN32
-  #ifdef GRN_DAT_EXPORT
-   #define GRN_DAT_API __declspec(dllexport)
-  #else  // GRN_DAT_EXPORT
-   #define GRN_DAT_API __declspec(dllimport)
-  #endif  // GRN_DAT_EXPORT
- #else  // WIN32
-  #define GRN_DAT_API
- #endif  // WIN32
+# ifdef WIN32
+#  ifdef GRN_DAT_EXPORT
+#   define GRN_DAT_API __declspec(dllexport)
+#  else  // GRN_DAT_EXPORT
+#   define GRN_DAT_API __declspec(dllimport)
+#  endif  // GRN_DAT_EXPORT
+# else  // WIN32
+#  define GRN_DAT_API
+# endif  // WIN32
 #endif  // GRN_DAT_API
 
 namespace grn {
@@ -239,25 +239,22 @@ typedef Error<SIZE_ERROR> SizeError;
 typedef Error<UNEXPECTED_ERROR> UnexpectedError;
 typedef Error<STATUS_ERROR> StatusError;
 
-#define GRN_DAT_INT_TO_STR(value) \
-    #value
-#define GRN_DAT_LINE_TO_STR(line) \
-    GRN_DAT_INT_TO_STR(line)
-#define GRN_DAT_LINE_STR \
-    GRN_DAT_LINE_TO_STR(__LINE__)
+#define GRN_DAT_INT_TO_STR(value) #value
+#define GRN_DAT_LINE_TO_STR(line) GRN_DAT_INT_TO_STR(line)
+#define GRN_DAT_LINE_STR GRN_DAT_LINE_TO_STR(__LINE__)
 
-#define GRN_DAT_THROW(code, msg) \
-    (throw grn::dat::Error<code>(__FILE__, __LINE__, \
-     __FILE__ ":" GRN_DAT_LINE_STR ": " #code ": " msg))
-#define GRN_DAT_THROW_IF(code, cond) \
-    (void)((!(cond)) || (GRN_DAT_THROW(code, #cond), 0))
+#define GRN_DAT_THROW(code, msg)\
+  (throw grn::dat::Error<code>(__FILE__, __LINE__,\
+   __FILE__ ":" GRN_DAT_LINE_STR ": " #code ": " msg))
+#define GRN_DAT_THROW_IF(code, cond)\
+  (void)((!(cond)) || (GRN_DAT_THROW(code, #cond), 0))
 
 #ifdef _DEBUG
- #define GRN_DAT_DEBUG_THROW_IF(cond) \
-     GRN_DAT_THROW_IF(grn::dat::UNEXPECTED_ERROR, cond)
- #define GRN_DAT_DEBUG_LOG(var) \
-     (std::clog << __FILE__ ":" GRN_DAT_LINE_STR ": " #var ": " \
-                << (var) << std::endl)
+ #define GRN_DAT_DEBUG_THROW_IF(cond)\
+   GRN_DAT_THROW_IF(grn::dat::UNEXPECTED_ERROR, cond)
+ #define GRN_DAT_DEBUG_LOG(var)\
+   (std::clog << __FILE__ ":" GRN_DAT_LINE_STR ": " #var ": "\
+              << (var) << std::endl)
 #else  // _DEBUG
  #define GRN_DAT_DEBUG_THROW_IF(cond)
  #define GRN_DAT_DEBUG_LOG(var)

@@ -28,9 +28,9 @@
 #  undef max
 # endif  // max
 #else  // WIN32
-#include <fcntl.h>
-#include <sys/mman.h>
-#include <unistd.h>
+# include <fcntl.h>
+# include <sys/mman.h>
+# include <unistd.h>
 #endif  // WIN32
 
 #include <algorithm>
