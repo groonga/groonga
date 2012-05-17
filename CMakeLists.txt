@@ -54,8 +54,11 @@ set(GRN_DEFAULT_RELATIVE_DOCUMENT_ROOT
 set(GRN_DEFAULT_DOCUMENT_ROOT
   "${GRN_DATA_DIR}/${GRN_DEFAULT_RELATIVE_DOCUMENT_ROOT}"
   CACHE PATH "groonga default document root")
+set(GRN_RELATIVE_PLUGINS_DIR
+  "${CMAKE_PROJECT_NAME}/plugins"
+  CACHE PATH "groonga plugins' relative directory")
 set(GRN_PLUGINS_DIR
-  "${LIB_DIR}/${CMAKE_PROJECT_NAME}/plugins"
+  "${LIB_DIR}/${GRN_RELATIVE_PLUGINS_DIR}"
   CACHE PATH "groonga plugins' directory")
 set(GRN_PLUGIN_SUFFIX "${CMAKE_SHARED_MODULE_SUFFIX}")
 
