@@ -18,7 +18,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 #include <groonga.h>
 
 static void
@@ -94,15 +93,15 @@ main(int argc, char **argv)
 
   ctx = &ctx_;
   grn_ctx_init(ctx, 0);
-  if (access(db_path, F_OK) == 0) {
-    db = grn_db_open(ctx, db_path);
-    if (!db) {
+  db = grn_db_open(ctx, db_path);
+  if (!db) {
+    if (ctx->rc == GRN_NO_SUCH_FILE_OR_DIRECTORY) {
+      db = grn_db_create(ctx, db_path, NULL);
+      if (!db) {
+        fprintf(stderr, "DB create failed (%s): %s\n", db_path, ctx->errbuf);
+      }
+    } else {
       fprintf(stderr, "DB open failed (%s): %s\n", db_path, ctx->errbuf);
-    }
-  } else {
-    db = grn_db_create(ctx, db_path, NULL);
-    if (!db) {
-      fprintf(stderr, "DB create failed (%s): %s\n", db_path, ctx->errbuf);
     }
   }
 
