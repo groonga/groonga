@@ -20,5 +20,5 @@ include_directories(
 read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/sources.am TABLE_SOURCES)
 add_library(table MODULE ${TABLE_SOURCES})
 set_target_properties(table PROPERTIES PREFIX "")
-target_link_libraries(table ${LIBGROONGA})
+target_link_libraries(table libgroonga)
 install(TARGETS table DESTINATION "${GRN_PLUGINS_DIR}/table")

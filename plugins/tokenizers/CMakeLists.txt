@@ -26,7 +26,7 @@ if(WITH_MECAB)
   set_target_properties(mecab_tokenizer PROPERTIES
     PREFIX ""
     OUTPUT_NAME "mecab")
-  target_link_libraries(mecab_tokenizer ${LIBGROONGA} ${MECAB_LIBRARIES})
+  target_link_libraries(mecab_tokenizer libgroonga ${MECAB_LIBRARIES})
   install(TARGETS mecab_tokenizer DESTINATION "${TOKENIZERS_DIR}")
 endif()
 
@@ -38,6 +38,6 @@ if(WITH_KYTEA)
   set_target_properties(kytea_tokenizer PROPERTIES
     PREFIX ""
     OUTPUT_NAME "kytea")
-  target_link_libraries(kytea_tokenizer ${LIBGROONGA} ${KYTEA_LIBRARIES})
+  target_link_libraries(kytea_tokenizer libgroonga ${KYTEA_LIBRARIES})
   install(TARGETS kytea_tokenizer DESTINATION "${TOKENIZERS_DIR}")
 endif()
