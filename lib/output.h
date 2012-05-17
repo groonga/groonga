@@ -45,16 +45,19 @@ GRN_API void grn_output_map_open(grn_ctx *ctx, grn_obj *outbuf, grn_content_type
 GRN_API void grn_output_map_close(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type);
 void grn_output_int32(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                       int32_t value);
-void grn_output_int64(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
-                      int64_t value);
+GRN_API void grn_output_int64(grn_ctx *ctx, grn_obj *outbuf,
+                              grn_content_type output_type,
+                              int64_t value);
 void grn_output_float(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                       double value);
 GRN_API void grn_output_cstr(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                              const char *value);
-void grn_output_str(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
-                    const char *value, size_t value_len);
-void grn_output_bool(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
-                     char value);
+GRN_API void grn_output_str(grn_ctx *ctx, grn_obj *outbuf,
+                            grn_content_type output_type,
+                            const char *value, size_t value_len);
+GRN_API void grn_output_bool(grn_ctx *ctx, grn_obj *outbuf,
+                             grn_content_type output_type,
+                             char value);
 
 #define GRN_OUTPUT_ARRAY_OPEN(name,nelements) \
   (grn_output_array_open(ctx, ctx->impl->outbuf, ctx->impl->output_type, name, nelements))
