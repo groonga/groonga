@@ -118,6 +118,7 @@
 #cmakedefine HAVE_MECAB_DICTIONARY_INFO_T
 
 /* functions */
+#cmakedefine HAVE__STRTOUI64
 #cmakedefine HAVE_BACKTRACE
 #cmakedefine HAVE_CLOCK
 #cmakedefine HAVE_CLOCK_GETTIME
@@ -128,4 +129,5 @@
 #cmakedefine HAVE_MKOSTEMP
 #cmakedefine HAVE_OPEN
 #cmakedefine HAVE_READ
+#cmakedefine HAVE_STRTOULL
 #cmakedefine HAVE_WRITE
