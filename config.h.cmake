@@ -118,7 +118,7 @@
 #cmakedefine HAVE_MECAB_DICTIONARY_INFO_T
 
 /* functions */
-#cmakedefine HAVE__STRICMP
+#cmakedefine HAVE__STRNICMP
 #cmakedefine HAVE__STRTOUI64
 #cmakedefine HAVE_BACKTRACE
 #cmakedefine HAVE_CLOCK
