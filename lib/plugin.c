@@ -447,10 +447,7 @@ grn_plugin_free(grn_ctx *ctx, void *ptr, const char *file, int line,
 static void
 grn_plugin_ctx_log(grn_ctx *ctx, const char *format, va_list ap)
 {
-  va_list aq;
-  va_copy(aq, ap);
-  vsnprintf(ctx->errbuf, GRN_CTX_MSGSIZE, format, aq);
-  va_end(aq);
+  vsnprintf(ctx->errbuf, GRN_CTX_MSGSIZE, format, ap);
 }
 
 void
