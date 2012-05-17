@@ -9,7 +9,7 @@ AM_CFLAGS =					\
 	$(GRN_CFLAGS)				\
 	$(MESSAGE_PACK_CFLAGS)
 DEFAULT_INCLUDES = -I$(top_builddir) -I$(top_srcdir)/include
-DEFS += -D_REENTRANT $(GRN_DEFS)
+DEFS += -D_REENTRANT $(GRN_DEFS) -DGRN_DAT_EXPORT
 
 include sources.am
 
