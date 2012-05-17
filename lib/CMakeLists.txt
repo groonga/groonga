@@ -35,4 +35,9 @@ target_link_libraries(libgroonga
   ${DL_LIBS}
   ${WS2_32_LIBS})
 
-install(TARGETS libgroonga DESTINATION "${CMAKE_INSTALL_PREFIX}/lib")
+if(WIN32)
+  set(LIBGROONGA_INSTALL_DIR "${BIN_DIR}")
+else()
+  set(LIBGROONGA_INSTALL_DIR "${LIB_DIR}")
+endif()
+install(TARGETS libgroonga DESTINATION "${LIBGROONGA_INSTALL_DIR}")
