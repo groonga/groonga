@@ -114,7 +114,7 @@ endif()
 
 if(UNIX)
   ac_check_headers(pthread.h)
-  ac_check_lib(pthread pthread_mutex_init "" "")
+  ac_check_lib(pthread pthread_mutex_init)
   if(NOT ${HAVE_LIBPTHREAD} EQUAL 1)
     message(FATAL_ERROR "No libpthread found")
   endif()
