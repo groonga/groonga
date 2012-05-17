@@ -75,27 +75,27 @@ GRN_API grn_com_queue_entry *grn_com_queue_deque(grn_ctx *ctx, grn_com_queue *q)
 /******* grn_com ********/
 
 #ifdef USE_SELECT
-#ifdef HAVE_SYS_SELECT_H
-#include <sys/select.h>
-#endif /* HAVE_SYS_SELECT_H */
-#define GRN_COM_POLLIN  1
-#define GRN_COM_POLLOUT 2
+# ifdef HAVE_SYS_SELECT_H
+#  include <sys/select.h>
+# endif /* HAVE_SYS_SELECT_H */
+# define GRN_COM_POLLIN  1
+# define GRN_COM_POLLOUT 2
 #else /* USE_SELECT */
-#ifdef USE_EPOLL
-#include <sys/epoll.h>
-#define GRN_COM_POLLIN  EPOLLIN
-#define GRN_COM_POLLOUT EPOLLOUT
-#else /* USE_EPOLL */
-#ifdef USE_KQUEUE
-#include <sys/event.h>
-#define GRN_COM_POLLIN  EVFILT_READ
-#define GRN_COM_POLLOUT EVFILT_WRITE
-#else /* USE_KQUEUE */
-#include <sys/poll.h>
-#define GRN_COM_POLLIN  POLLIN
-#define GRN_COM_POLLOUT POLLOUT
-#endif /* USE_KQUEUE */
-#endif /* USE_EPOLL */
+# ifdef USE_EPOLL
+#  include <sys/epoll.h>
+#  define GRN_COM_POLLIN  EPOLLIN
+#  define GRN_COM_POLLOUT EPOLLOUT
+# else /* USE_EPOLL */
+#  ifdef USE_KQUEUE
+#   include <sys/event.h>
+#   define GRN_COM_POLLIN  EVFILT_READ
+#   define GRN_COM_POLLOUT EVFILT_WRITE
+#  else /* USE_KQUEUE */
+#   include <sys/poll.h>
+#   define GRN_COM_POLLIN  POLLIN
+#   define GRN_COM_POLLOUT POLLOUT
+#  endif /* USE_KQUEUE */
+# endif /* USE_EPOLL */
 #endif /* USE_SELECT */
 
 typedef struct _grn_com grn_com;
