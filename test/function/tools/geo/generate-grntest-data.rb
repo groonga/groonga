@@ -371,8 +371,8 @@ if __FILE__ == $0
 
           if filename and filename != ""
             testname = sprintf("%s/%s/%s/%s%s",
-                       type_longitude, quadrant, type,
-                       file_prefix, File.basename(filename))
+                               type_longitude, quadrant, type,
+                               file_prefix, File.basename(filename))
           else
             exit 1
           end
