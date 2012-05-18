@@ -168,12 +168,7 @@ class GrnTestData
     end_quadrant = quadrant_point_with_axis?(quadrant,
                                              @longitude_end_degree,
                                              @latitude_end_degree)
-    if quadrant == start_quadrant and
-       quadrant == end_quadrant
-      true
-    else
-      false
-    end
+    quadrant == start_quadrant and quadrant == end_quadrant
   end
 
   def quadrant
