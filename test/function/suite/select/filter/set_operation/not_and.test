@@ -1,0 +1,17 @@
+table_create Tags TABLE_HASH_KEY ShortText
+
+table_create Movies TABLE_HASH_KEY ShortText
+column_create Movies tags COLUMN_VECTOR Tags
+
+column_create Tags index COLUMN_INDEX Movies tags
+
+load --table Movies
+[
+{"_key": "Seven Samurai", tags: ["Samurai", "Japanese", "Kurosawa Akira"]},
+{"_key": "The Last Samurai", tags: ["Samurai", "English", "Tom Cruise"]},
+{"_key": "The Matrix", tags: ["Keanu Reeves", "SF", "English"]},
+{"_key": "Star Wars", tags: ["George Lucas", "SF", "English"]}
+]
+
+select Movies \
+  --filter 'tags @ "English" &! (tags @ "Keanu Reeves" && tags @ "SF")'
