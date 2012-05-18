@@ -237,6 +237,93 @@ class GrnTestData
     start_longitude == end_longitude and start_latitude == end_latitude
   end
 
+  def longitude_equal?
+    @longitude_start_degree == @longitude_end_degree
+  end
+
+  def latitude_equal?
+    @latitude_start_degree == @latitude_end_degree
+  end
+
+  def to_north?(check_longitude=true)
+    if check_longitude
+      longitude_equal? and @latitude_start_degree < @latitude_end_degree
+    else
+      @latitude_start_degree < @latitude_end_degree
+    end
+  end
+
+  def to_east?(check_latitude=true)
+    if check_latitude
+      latitude_equal? and @longitude_start_degree < @longitude_end_degree
+    else
+      @longitude_start_degree < @longitude_end_degree
+    end
+  end
+
+  def to_west?(check_latitude=true)
+    if check_latitude
+      latitude_equal? and @longitude_start_degree > @longitude_end_degree
+    else
+      @longitude_start_degree > @longitude_end_degree
+    end
+  end
+
+  def to_south?(check_longitude=true)
+    if check_longitude
+      longitude_equal? and @latitude_start_degree > @latitude_end_degree
+    else
+      @latitude_start_degree > @latitude_end_degree
+    end
+  end
+
+  def to_north_east?
+    to_north?(false) and to_east?(false)
+  end
+
+  def to_north_west?
+    to_north?(false) and to_west?(false)
+  end
+
+  def to_south_east?
+    to_south?(false) and to_east?(false)
+  end
+
+  def to_south_west?
+    to_south?(false) and to_west?(false)
+  end
+
+  def direction
+    is_point = point?(@longitude_start_degree, @latitude_start_degree,
+                      @longitude_end_degree, @latitude_end_degree)
+    if is_point
+      ""
+    else
+      if within_specified_quadrant?("1st") or
+         within_specified_quadrant?("2nd") or
+         within_specified_quadrant?("3rd") or
+         within_specified_quadrant?("4th")
+        if to_north?
+          "north"
+        elsif to_east?
+          "east"
+        elsif to_west?
+          "west"
+        elsif to_south?
+          "south_west"
+        elsif to_north_east?
+          "north_east"
+        elsif to_north_west?
+          "north_west"
+        elsif to_south_east?
+          "south_east"
+        elsif to_south_west?
+          "south_west"
+        end
+      end
+    end
+  end
+
   def generate_filename
     s = get_point(@longitude_start_degree, @latitude_start_degree)
     e = get_point(@longitude_end_degree, @latitude_end_degree)
