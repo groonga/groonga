@@ -384,7 +384,7 @@ if __FILE__ == $0
 
       grndata.parse_line_data(line)
 
-      if OPTS.has_key?(:quadrant_with_axis) then
+      if OPTS.has_key?(:quadrant_with_axis)
         next unless grndata.within_specified_quadrant?(OPTS[:quadrant_with_axis])
       end
 
