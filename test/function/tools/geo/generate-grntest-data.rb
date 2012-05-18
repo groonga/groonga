@@ -116,7 +116,7 @@ class GrnTestData
       south_axis?(@longitude_end_degree, @latitude_end_degree)
   end
 
-  def quadrant_point_with_axis?(quadrant, longitude, latitude)
+  def quadrant_point_with_axis(quadrant, longitude, latitude)
     case quadrant
     when "1st"
       if longitude >= 0 and latitude >= 0
