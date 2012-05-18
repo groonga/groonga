@@ -524,13 +524,15 @@ if __FILE__ == $0
 
           if filename and filename != ""
             if type == "line" then
-              testname = sprintf("%s/%s/%s/%s/%s%s",
+              testname = sprintf("%s/%s/%s/%s/%s/%s%s",
                                  type_longitude, quadrant, type, direction,
-                                 file_prefix, File.basename(filename))
+                                 longitude_position, file_prefix,
+                                 File.basename(filename))
             else
-              testname = sprintf("%s/%s/%s/%s%s",
+              testname = sprintf("%s/%s/%s/%s/%s%s",
                                  type_longitude, quadrant, type,
-                                 file_prefix, File.basename(filename))
+                                 longitude_position, file_prefix,
+                                 File.basename(filename))
             end
           else
             exit 1
