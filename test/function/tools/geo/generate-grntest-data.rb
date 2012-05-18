@@ -166,8 +166,8 @@ class GrnTestData
                                                @longitude_start_degree,
                                                @latitude_start_degree)
     end_quadrant = quadrant_point_with_axis?(quadrant,
-                                             @longitude_start_degree,
-                                             @latitude_start_degree)
+                                             @longitude_end_degree,
+                                             @latitude_end_degree)
     if quadrant == start_quadrant and
        quadrant == end_quadrant
       true
