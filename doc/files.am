@@ -241,6 +241,13 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/index.txt \
 	$(top_srcdir)/doc/source/indexing.txt \
 	$(top_srcdir)/doc/source/install.txt \
+	$(top_srcdir)/doc/source/install/centos.txt \
+	$(top_srcdir)/doc/source/install/debian.txt \
+	$(top_srcdir)/doc/source/install/fedora.txt \
+	$(top_srcdir)/doc/source/install/mac_os_x.txt \
+	$(top_srcdir)/doc/source/install/others.txt \
+	$(top_srcdir)/doc/source/install/ubuntu.txt \
+	$(top_srcdir)/doc/source/install/windows.txt \
 	$(top_srcdir)/doc/source/limitations.txt \
 	$(top_srcdir)/doc/source/log.txt \
 	$(top_srcdir)/doc/source/news.txt \
@@ -537,6 +544,13 @@ source_files_relative_from_doc_dir = \
 	source/index.txt \
 	source/indexing.txt \
 	source/install.txt \
+	source/install/centos.txt \
+	source/install/debian.txt \
+	source/install/fedora.txt \
+	source/install/mac_os_x.txt \
+	source/install/others.txt \
+	source/install/ubuntu.txt \
+	source/install/windows.txt \
 	source/limitations.txt \
 	source/log.txt \
 	source/news.txt \
@@ -761,6 +775,13 @@ html_files_relative_from_locale_dir = \
 	html/_sources/index.txt \
 	html/_sources/indexing.txt \
 	html/_sources/install.txt \
+	html/_sources/install/centos.txt \
+	html/_sources/install/debian.txt \
+	html/_sources/install/fedora.txt \
+	html/_sources/install/mac_os_x.txt \
+	html/_sources/install/others.txt \
+	html/_sources/install/ubuntu.txt \
+	html/_sources/install/windows.txt \
 	html/_sources/limitations.txt \
 	html/_sources/log.txt \
 	html/_sources/news.txt \
@@ -880,6 +901,13 @@ html_files_relative_from_locale_dir = \
 	html/index.html \
 	html/indexing.html \
 	html/install.html \
+	html/install/centos.html \
+	html/install/debian.html \
+	html/install/fedora.html \
+	html/install/mac_os_x.html \
+	html/install/others.html \
+	html/install/ubuntu.html \
+	html/install/windows.html \
 	html/limitations.html \
 	html/log.html \
 	html/news.html \
