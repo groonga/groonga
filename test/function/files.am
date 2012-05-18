@@ -23,6 +23,7 @@ test_files = \
 	suite/select/filter/geo_in_circle/sphr_without_index.test \
 	suite/select/filter/geo_in_circle/with_index.test \
 	suite/select/filter/geo_in_circle/without_index.test \
+	suite/select/filter/set_operation/not_and.test \
 	suite/select/filter/similar.test \
 	suite/select/output-columns/with-space.test \
 	suite/select/output/scalar-reference-default.test \
@@ -79,6 +80,7 @@ expected_files = \
 	suite/select/filter/geo_in_circle/sphr_without_index.expected \
 	suite/select/filter/geo_in_circle/with_index.expected \
 	suite/select/filter/geo_in_circle/without_index.expected \
+	suite/select/filter/set_operation/not_and.expected \
 	suite/select/filter/similar.expected \
 	suite/select/output-columns/with-space.expected \
 	suite/select/output/scalar-reference-default.expected \
