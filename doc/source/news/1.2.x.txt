@@ -228,7 +228,7 @@ Improvements
 * Supported :doc:`/commands/check` for hash table.
 * Ignored invalid _score in --sortby of :doc:`/commands/select`
   for convenience. #1030
-* Added document about :doc:`log`.
+* Added document about :doc:`/log`.
 * Supported ~/.editrc.
 * Supported ~/.groonga-history.
 
