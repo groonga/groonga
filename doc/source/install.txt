@@ -281,7 +281,7 @@ There is a package that provides `Munin <http://munin-monitoring.org/>`_ plugins
 
    Enable EPEL repository on any environment::
 
-     % sudo rpm -ivh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-5.noarch.rpm
+     % sudo rpm -ivh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-6.noarch.rpm
 
 Install groonga-munin-plugins package::
 
