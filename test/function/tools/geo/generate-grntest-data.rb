@@ -319,6 +319,10 @@ if __FILE__ == $0
             "generate test file name with geo data") do |csv_data|
     OPTS[:csv_data] = csv_data
   end
+  parser.on("--quadrant-with-axis QUADRANT",
+            "extract QUADRANT including axis data") do |quadrant_with_axis|
+    OPTS[:quadrant_with_axis] = quadrant_with_axis
+  end
   parser.on("-v", "--verbose", "show log in detail") do |verbose|
     OPTS[:verbose] = verbose
   end
