@@ -389,6 +389,10 @@ if __FILE__ == $0
 
       grndata.parse_line_data(line)
 
+      if OPTS.has_key?(:quadrant_with_axis) then
+        next unless grndata.within_specified_quadrant?(OPTS[:quadrant_with_axis])
+      end
+
       app_types = ["", "rectangle", "rect"]
       app_types = [""]
 
