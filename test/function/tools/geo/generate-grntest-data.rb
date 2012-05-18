@@ -484,6 +484,8 @@ if __FILE__ == $0
 
       type = grndata.point_or_line
 
+      direction = grndata.direction
+
       filename = grndata.generate_filename
 
       if OPTS.has_key?(:file_name)
@@ -491,8 +493,11 @@ if __FILE__ == $0
         if OPTS.has_key?(:verbose)
           puts(line)
         end
-        # show new generated filename
-        puts("#{type_longitude}/#{quadrant}/#{type}/#{filename}")
+        if type == "line" then
+          puts("#{type_longitude}/#{quadrant}/#{type}/#{direction}/#{filename}")
+        else
+          puts("#{type_longitude}/#{quadrant}/#{type}/#{filename}")
+        end
       elsif OPTS.has_key?(:csv_data)
         puts(grndata.generate_new_data(line, type_longitude, quadrant, type, filename))
       elsif OPTS.has_key?(:test)
@@ -505,9 +510,15 @@ if __FILE__ == $0
           dottest = grndata.generate_test_data(app_type)
 
           if filename and filename != ""
-            testname = sprintf("%s/%s/%s/%s%s",
-                               type_longitude, quadrant, type,
-                               file_prefix, File.basename(filename))
+            if type == "line" then
+              testname = sprintf("%s/%s/%s/%s/%s%s",
+                                 type_longitude, quadrant, type, direction,
+                                 file_prefix, File.basename(filename))
+            else
+              testname = sprintf("%s/%s/%s/%s%s",
+                                 type_longitude, quadrant, type,
+                                 file_prefix, File.basename(filename))
+            end
           else
             exit 1
           end
