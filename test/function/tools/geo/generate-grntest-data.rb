@@ -524,6 +524,8 @@ if __FILE__ == $0
 
       direction = grndata.direction
 
+      longitude_position = grndata.longitude_position
+
       filename = grndata.generate_filename
 
       if OPTS.has_key?(:file_name)
@@ -532,9 +534,24 @@ if __FILE__ == $0
           puts(line)
         end
         if type == "line" then
-          puts("#{type_longitude}/#{quadrant}/#{type}/#{direction}/#{filename}")
+          path = [
+            type_longitude,
+            quadrant,
+            type,
+            direction,
+            longitude_position,
+            filename
+          ].join("/")
+          puts(path)
         else
-          puts("#{type_longitude}/#{quadrant}/#{type}/#{filename}")
+          path = [
+            type_longitude,
+            quadrant,
+            type,
+            longitude_position,
+            filename
+          ].join("/")
+          puts(path)
         end
       elsif OPTS.has_key?(:csv_data)
         puts(grndata.generate_new_data(line, type_longitude, quadrant, type, filename))
