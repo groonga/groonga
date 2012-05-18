@@ -325,12 +325,25 @@ class GrnTestData
   end
 
   def generate_filename
-    s = get_point(@longitude_start_degree, @latitude_start_degree)
-    e = get_point(@longitude_end_degree, @latitude_end_degree)
-    if s == e
-      "#{s}.test"
+    sprintf("%s.test", latitude_position)
+  end
+
+  def latitude_position
+    latitude_desc = {
+      90 => "on_90_degrees",
+      89 => "almost_90_degrees_smaler",
+      1 => "almost_0_degree_larger",
+      0 => "on_0_degree",
+      -1 => "almost_0_degree_smaller",
+      -89 => "almost_-90_degrees_larger",
+      -90 => "on_-90_degrees",
+    }
+    if latitude_equal?
+      latitude_desc[@latitude_start_degree]
     else
-      "#{s}_to_#{e}.test"
+      start_degree = latitude_desc[@latitude_start_degree]
+      end_degree = latitude_desc[@latitude_end_degree]
+      "#{start_degree}_to_#{end_degree}"
     end
   end
 
