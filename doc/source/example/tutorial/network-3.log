@@ -1,35 +1,35 @@
 Execution example::
 
-http://HOST_NAME_OR_IP_ADDRESS[:PORT_NUMBER]/d/status
+  http://HOST_NAME_OR_IP_ADDRESS[:PORT_NUMBER]/d/status
   Executed command:
-    status
+  status
   # [
   #   [
   #     0, 
-  #     1336611845.64733, 
-  #     0.000109672546386719
+  #     1337330937.06225, 
+  #     0.000124931335449219
   #   ], 
   #   {
-  #     "uptime": 0, 
+  #     "uptime": 1, 
   #     "max_command_version": 2, 
   #     "n_queries": 0, 
   #     "cache_hit_rate": 0.0, 
-  #     "version": "2.0.2", 
+  #     "version": "2.0.2-28-g74fc93a", 
   #     "alloc_count": 131, 
   #     "command_version": 1, 
-  #     "starttime": 1336611845, 
+  #     "starttime": 1337330936, 
   #     "default_command_version": 1
   #   }
   # ]
-
+  
   http://HOST_NAME_OR_IP_ADDRESS[:PORT_NUMBER]/d/select?table=Site&query=title:@this
   Executed command:
-    select --table Site --query title:@this
+  select --table Site --query title:@this
   # [
   #   [
   #     0, 
-  #     1336611845.84951, 
-  #     0.00153684616088867
+  #     1337330937.26529, 
+  #     0.000821113586425781
   #   ], 
   #   [
   #     [
@@ -46,26 +46,6 @@ http://HOST_NAME_OR_IP_ADDRESS[:PORT_NUMBER]/d/status
   #           "ShortText"
   #         ], 
   #         [
-  #           "country", 
-  #           "SiteCountry"
-  #         ], 
-  #         [
-  #           "domain", 
-  #           "SiteDomain"
-  #         ], 
-  #         [
-  #           "link", 
-  #           "Site"
-  #         ], 
-  #         [
-  #           "links", 
-  #           "Site"
-  #         ], 
-  #         [
-  #           "location", 
-  #           "WGS84GeoPoint"
-  #         ], 
-  #         [
   #           "title", 
   #           "ShortText"
   #         ]
@@ -73,15 +53,6 @@ http://HOST_NAME_OR_IP_ADDRESS[:PORT_NUMBER]/d/status
   #       [
   #         1, 
   #         "http://example.org/", 
-  #         "japan", 
-  #         ".org", 
-  #         "http://example.net/", 
-  #         [
-  #           "http://example.net/", 
-  #           "http://example.org/", 
-  #           "http://example.com/"
-  #         ], 
-  #         "128452975x503157902", 
   #         "This is test record 1!"
   #       ]
   #     ]

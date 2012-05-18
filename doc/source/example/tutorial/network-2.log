@@ -1,6 +1,5 @@
 Execution example::
 
-% groonga -c
+  % groonga -c
   > shutdown
   %
-  

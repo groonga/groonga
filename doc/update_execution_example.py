@@ -121,16 +121,16 @@ def readfile(fname, outflag):
             print '### write start : ' + a
             fout.write("Execution example::\n\n")
         elif cmd.startswith('.. % '):
-          a = cmd[5:]
+          command_line = cmd[5:]
           if fout:
-            fout.write(a + "\n  ")
-          print a
-          os.system(a)
+            fout.write("  " + command_line + "\n")
+          print command_line
+          os.system(command_line)
         elif cmd.startswith('.. .. '):
-          a = cmd[6:]
+          command_line = cmd[6:]
           if fout:
-            fout.write(a + "\n  ")
-          print a
+            fout.write("  " + command_line + "\n")
+          print command_line
         elif cmd.startswith('..'):
           if cmd.replace(' ', '').replace("\t", '') == '..':
             while len(dat):

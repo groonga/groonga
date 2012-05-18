@@ -1,25 +1,24 @@
 Execution example::
 
-% groonga -c
-    status
+  % groonga -c
+  status
   # [
   #   [
   #     0, 
-  #     1336611845.44394, 
-  #     5.60283660888672e-05
+  #     1337330936.85818, 
+  #     0.000131368637084961
   #   ], 
   #   {
   #     "uptime": 0, 
   #     "max_command_version": 2, 
   #     "n_queries": 0, 
   #     "cache_hit_rate": 0.0, 
-  #     "version": "2.0.2", 
+  #     "version": "2.0.2-28-g74fc93a", 
   #     "alloc_count": 130, 
   #     "command_version": 1, 
-  #     "starttime": 1336611845, 
+  #     "starttime": 1337330936, 
   #     "default_command_version": 1
   #   }
   # ]
-> ctrl-d
+  > ctrl-d
   %
-  
