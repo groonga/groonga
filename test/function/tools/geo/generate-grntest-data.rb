@@ -328,6 +328,31 @@ class GrnTestData
     sprintf("%s.test", latitude_position)
   end
 
+  def longitude_position
+    longitude_desc = {
+      180 => "on_180_degrees",
+      179 => "almost_180_degrees",
+      91 => "almost_90_degrees_larger",
+      90 => "on_90_degrees",
+      89 => "almost_90_degrees_smaler",
+      1 => "almost_0_degree_larger",
+      0 => "on_0_degree",
+      -1 => "almost_0_degree_smaller",
+      -89 => "almost_-90_degrees_larger",
+      -90 => "on_-90_degrees",
+      -91 => "almost_-90_degrees_smaller",
+      -179 => "almost_-180_degrees",
+      -180 => "on_-180_degrees",
+    }
+    if longitude_equal?
+      longitude_desc[@longitude_start_degree]
+    else
+      start_degree = longitude_desc[@longitude_start_degree]
+      end_degree = longitude_desc[@longitude_end_degree]
+      "#{start_degree}_to_#{end_degree}"
+    end
+  end
+
   def latitude_position
     latitude_desc = {
       90 => "on_90_degrees",
