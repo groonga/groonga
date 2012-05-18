@@ -77,7 +77,7 @@ class GrnTestData
     lng == 0 and lat <= 0
   end
 
-  def quadrant_point?(longitude, latitude)
+  def quadrant_point(longitude, latitude)
     if longitude > 0 and latitude > 0
       "1st"
     elsif longitude < 0 and latitude > 0
@@ -172,8 +172,8 @@ class GrnTestData
   end
 
   def quadrant
-    squadrant = quadrant_point?(@longitude_start_degree, @latitude_start_degree)
-    equadrant = quadrant_point?(@longitude_end_degree, @latitude_end_degree)
+    squadrant = quadrant_point(@longitude_start_degree, @latitude_start_degree)
+    equadrant = quadrant_point(@longitude_end_degree, @latitude_end_degree)
     # p squadrant
     # p equadrant
     # p start_lng
