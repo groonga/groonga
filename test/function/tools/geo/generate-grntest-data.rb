@@ -116,6 +116,35 @@ class GrnTestData
       south_axis?(@longitude_end_degree, @latitude_end_degree)
   end
 
+  def quadrant_point_with_axis?(quadrant, longigude, latitude)
+    case quadrant
+    when "1st"
+      if longitude >= 0 and latitude >= 0
+        "1st"
+      else
+        nil
+      end
+    when "2nd"
+      if longitude <= 0 and latitude >= 0
+        "2nd"
+      else
+        nil
+      end
+    when "3rd"
+      if longitude <= 0 and latitude <= 0
+        "3rd"
+      else
+        nil
+      end
+    when "4th"
+      if longitude >= 0 and latitude <= 0
+        "4th"
+      else
+        nil
+      end
+    end
+  end
+
   def south_axis_to_west_axis?
     south_axis?(@longitude_start_degree, @latitude_start_degree) and
       west_axis?(@longitude_end_degree, @latitude_end_degree)
@@ -129,6 +158,22 @@ class GrnTestData
   def south_axis_to_east_axis?
     south_axis?(@longitude_start_degree, @latitude_start_degree) and
       east_axis?(@longitude_end_degree, @latitude_end_degree)
+  end
+
+
+  def within_specified_quadrant?(quadrant)
+    start_quadrant = quadrant_point_with_axis?(quadrant,
+                                               @longitude_start_degree,
+                                               @latitude_start_degree)
+    end_quadrant = quadrant_point_with_axis?(quadrant,
+                                             @longitude_start_degree,
+                                             @latitude_start_degree)
+    if quadrant == start_quadrant and
+       quadrant == end_quadrant
+      true
+    else
+      false
+    end
   end
 
   def quadrant
