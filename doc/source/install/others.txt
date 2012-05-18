@@ -247,7 +247,8 @@ option. If you have 4 cores CPU, it's good for using ``-j4`` option::
 
   % make -j4
 
-If you get some errors by ``make``, please report them to us: :doc:`/report`
+If you get some errors by ``make``, please report them to us:
+:doc:`/contribution/report`
 
 ``make install``
 ^^^^^^^^^^^^^^^^
