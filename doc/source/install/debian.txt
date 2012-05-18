@@ -1,0 +1,133 @@
+.. -*- rst -*-
+
+.. highlightlang:: none
+
+Debian GNU/Linux
+================
+
+This section describes how to install groonga related deb packages on
+Debian GNU/Linux. You can install them by `apt`.
+
+We distribute both 32-bit and 64-bit packages but we strongly
+recommend a 64-bit package for server. You should use a 32-bit package
+just only for tests or development. You will encounter an out of
+memory error with a 32-bit package even if you just process medium
+size data.
+
+squeeze
+-------
+
+Add the groonga apt repository.
+
+/etc/apt/sources.list.d/groonga.list::
+
+  deb http://packages.groonga.org/debian/ squeeze main
+  deb-src http://packages.groonga.org/debian/ squeeze main
+
+Install::
+
+  % sudo aptitude update
+  % sudo aptitude -V -D -y --allow-untrusted install groonga-keyring
+  % sudo aptitude -V -D -y install groonga
+
+If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a
+tokenizer, install groonga-tokenizer-mecab package.
+
+Install groonga-tokenizer-mecab package::
+
+  % sudo aptitude -V -D -y install groonga-tokenizer-mecab
+
+There is a package that provides `Munin
+<http://munin-monitoring.org/>`_ plugins. If you want to monitor
+groonga status by Munin, install groonga-munin-plugins package.
+
+Install groonga-munin-plugins package::
+
+  % sudo aptitude -V -D -y install groonga-munin-plugins
+
+wheezy
+------
+
+Add the groonga apt repository.
+
+/etc/apt/sources.list.d/groonga.list::
+
+  deb http://packages.groonga.org/debian/ wheezy main
+  deb-src http://packages.groonga.org/debian/ wheezy main
+
+Install::
+
+  % sudo aptitude update
+  % sudo aptitude -V -D -y --allow-untrusted install groonga-keyring
+  % sudo aptitude -V -D -y install groonga
+
+If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a
+tokenizer, install groonga-tokenizer-mecab package.
+
+Install groonga-tokenizer-mecab package::
+
+  % sudo aptitude -V -D -y install groonga-tokenizer-mecab
+
+There is a package that provides `Munin
+<http://munin-monitoring.org/>`_ plugins. If you want to monitor
+groonga status by Munin, install groonga-munin-plugins package.
+
+Install groonga-munin-plugins package::
+
+  % sudo aptitude -V -D -y install groonga-munin-plugins
+
+sid
+---
+
+Add the groonga apt repository.
+
+/etc/apt/sources.list.d/groonga.list::
+
+  deb http://packages.groonga.org/debian/ unstable main
+  deb-src http://packages.groonga.org/debian/ unstable main
+
+Install::
+
+  % sudo aptitude update
+  % sudo aptitude -V -D -y --allow-untrusted install groonga-keyring
+  % sudo aptitude -V -D -y install groonga
+
+If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a
+tokenizer, install groonga-tokenizer-mecab package.
+
+Install groonga-tokenizer-mecab package::
+
+  % sudo aptitude -V -D -y install groonga-tokenizer-mecab
+
+There is a package that provides `Munin
+<http://munin-monitoring.org/>`_ plugins. If you want to monitor
+groonga status by Munin, install groonga-munin-plugins package.
+
+Install groonga-munin-plugins package::
+
+  % sudo aptitude -V -D -y install groonga-munin-plugins
+
+Build from source
+-----------------
+
+Install required packages to build groonga::
+
+  % sudo aptitude -V -D -y install wget tar build-essential zlib1g-dev liblzo2-dev libmsgpack-dev libzmq-dev libevent-dev libmecab-dev
+
+Download source::
+
+  % wget http://packages.groonga.org/source/groonga/groonga-2.0.2.tar.gz
+  % tar xvzf groonga-2.0.2.tar.gz
+  % cd groonga-2.0.2
+
+Configure (see :ref:`source-configure` about ``configure`` options)::
+
+  % ./configure
+
+Build::
+
+  % make -j$(grep '^processor' /proc/cpuinfo | wc -l)
+
+Install::
+
+  % sudo make intall

@@ -78,6 +78,8 @@ update-latest-release:
 	  packages/rpm/fedora/groonga.spec.in			\
 	  packages/rpm/centos/groonga.spec.in			\
 	  packages/debian/changelog				\
+	  doc/source/install.txt				\
+	  doc/source/install/*.txt				\
 	  $(GROONGA_GITHUB_COM_PATH)/index.html			\
 	  $(GROONGA_GITHUB_COM_PATH)/ja/index.html
 

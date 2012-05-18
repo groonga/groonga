@@ -1,0 +1,72 @@
+.. -*- rst -*-
+
+.. highlightlang:: none
+
+Fedora
+======
+
+This section describes how to install groonga related RPM packages on
+Fedora. You can install them by `yum`.
+
+Groonga related RPM pakcages are also in the official Fedora yum
+repository. So you can use them instead of the groonga yum
+repository. The different between the groonga yum repository and the
+official Fedora yum repository is that the groonga yum repository
+provides the latest version at the release day but the official Fedora
+yum repository provides the latest version a few days later. That is,
+the different is very small. :-)
+
+We distribute both 32-bit and 64-bit packages but we strongly
+recommend a 64-bit package for server. You should use a 32-bit package
+just only for tests or development. You will encounter an out of
+memory error with a 32-bit package even if you just process medium
+size data.
+
+16
+--
+
+Install::
+
+  % sudo rpm -ivh http://packages.groonga.org/fedora/groonga-repository-1.0.1-0.noarch.rpm
+  % sudo yum update
+  % sudo yum install -y groonga
+
+If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a
+tokenizer, install groonga-tokenizer-mecab package.
+
+Install groonga-tokenizer-mecab package::
+
+  % sudo yum install -y groonga-tokenizer-mecab
+
+There is a package that provides `Munin
+<http://munin-monitoring.org/>`_ plugins. If you want to monitor
+groonga status by Munin, install groonga-munin-plugins package.
+
+Install groonga-munin-plugins package::
+
+  % sudo yum install -y groonga-munin-plugins
+
+Build from source
+-----------------
+
+Install required packages to build groonga::
+
+  % sudo yum install -y wget tar gcc-c++ make mecab-devel libedit-devel
+
+Download source::
+
+  % wget http://packages.groonga.org/source/groonga/groonga-2.0.2.tar.gz
+  % tar xvzf groonga-2.0.2.tar.gz
+  % cd groonga-2.0.2
+
+Configure (see :ref:`source-configure` about ``configure`` options)::
+
+  % ./configure
+
+Build::
+
+  % make -j$(grep '^processor' /proc/cpuinfo | wc -l)
+
+Install::
+
+  % sudo make intall

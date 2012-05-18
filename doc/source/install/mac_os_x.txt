@@ -1,0 +1,52 @@
+.. -*- rst -*-
+
+.. highlightlang:: none
+
+Mac OS X
+========
+
+This section describes how to install groonga on Mac OS X. You can
+install groonga MacPorts or Homebrew.
+
+We distribute both 32-bit and 64-bit packages but we strongly
+recommend a 64-bit package for server. You should use a 32-bit package
+just only for tests or development. You will encounter an out of
+memory error with a 32-bit package even if you just process medium
+size data.
+
+MacPorts
+--------
+
+Install::
+
+  % sudo port install groonga
+
+Homebrew
+--------
+
+Install::
+
+  % brew install groonga
+
+Build from source
+-----------------
+
+Install `Xcode <https://developer.apple.com/xcode/>`_.
+
+Download source::
+
+  % curl -O http://packages.groonga.org/source/groonga/groonga-2.0.2.tar.gz
+  % tar xvzf groonga-2.0.2.tar.gz
+  % cd groonga-2.0.2
+
+Configure (see :ref:`source-configure` about ``configure`` options)::
+
+  % ./configure
+
+Build::
+
+  % make -j$(/usr/sbin/sysctl -n hw.ncpu)
+
+Install::
+
+  % sudo make intall
