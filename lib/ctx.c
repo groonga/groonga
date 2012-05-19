@@ -659,6 +659,7 @@ grn_ctx_fin(grn_ctx *ctx)
       mi.map = (void *)ctx->impl;
       grn_io_anon_unmap(ctx, &mi, IMPL_SIZE);
     }
+    ctx->impl = NULL;
   }
   ctx->stat = GRN_CTX_FIN;
   return rc;
