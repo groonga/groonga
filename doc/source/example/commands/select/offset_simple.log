@@ -1,0 +1,29 @@
+Execution example::
+
+  select Entries --sortby _id --offset 3 --output_columns _key
+  # [
+  #   [
+  #     0, 
+  #     1337514624.78646, 
+  #     0.000315666198730469
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         5
+  #       ], 
+  #       [
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ]
+  #       ], 
+  #       [
+  #         "Good-bye Senna"
+  #       ], 
+  #       [
+  #         "Good-bye Tritonn"
+  #       ]
+  #     ]
+  #   ]
+  # ]

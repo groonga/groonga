@@ -609,16 +609,57 @@ it's just ignored but get a warning in log file.
 ``offset``
 """"""""""
 
-TODO: write in English and add example.
+It specifies offset to choose output records range. Offset is
+zero-origin. ``--offset 1`` means output range is started from the 2nd
+record.
 
-検索条件にマッチしたレコードのうち、出力対象となる最初のレコードの番号を0ベースで指定します。デフォルト値は0です。offsetに負の値を指定した場合は、ヒットした件数 + offset によって算出される値が指定されたものとみなされます。
+.. groonga-command
+.. include:: ../example/commands/select/offset_simple.log
+.. select Entries --sortby _id --offset 3 --output_columns _key
+
+The ``select`` command outputs from the 4th record.
+
+You can specify negative value. It means that ``the number of matched
+records + offset``. If you have 3 matched records and specify
+``--offset -2``, you get records from the 1st (``3 + -2 = 1``) record
+to the 3rd record.
+
+.. groonga-command
+.. include:: ../example/commands/select/offset_negative.log
+.. select Entries --sortby _id --offset -2 --output_columns _key
+
+The ``select`` command outputs from the 4th record because the total
+number of records is ``5``.
+
+The default value is ``0``.
 
 ``limit``
 """""""""
 
-TODO: write in English and add example.
+It specifies the max number of output records. If the number of
+matched records is less than ``limit``, all records are outputted.
 
-検索条件にマッチしたレコードのうち、出力を行うレコードの件数を指定します。デフォルト値は10です。実際には、offset + limit がヒットした件数を超えない範囲でレコードが出力されます。limitに負の値を指定した場合は、ヒットした件数 + limit + 1 によって算出される値が指定されたものとみなされます。
+Here is a simple ``limit`` usage example.
+
+.. groonga-command
+.. include:: ../example/commands/select/limit_simple.log
+.. select Entries --sortby _id --offset 2 --limit 3 --output_columns _key
+
+The ``select`` command outputs the 3rd, the 4th and the 5th records.
+
+You can specify negative value. It means that ``the number of matched
+records + limit + 1``. For example, ``--limit -1`` outputs all
+records. It's very useful value to show all records.
+
+Here is a simple negative ``limit`` value usage example.
+
+.. groonga-command
+.. include:: ../example/commands/select/limit_negative.log
+.. select Entries --limit -1
+
+The ``select`` command outputs all records.
+
+The default value is ``10``.
 
 ``scorer``
 """"""""""
