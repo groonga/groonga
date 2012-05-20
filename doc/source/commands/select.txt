@@ -358,14 +358,15 @@ See :doc:`/spec/query_syntax` for other operations.
 It specifies the filter text. Normally, it is used for complex search
 conditions. ``filter`` can be used with ``query`` parameter. If both
 ``filter`` and ``query`` are specified, there are conbined with
-logical and. It means that matched records shuold be matched against
+logical and. It means that matched records should be matched against
 both ``filter`` and ``query``.
 
 ``filter`` parameter is designed for complex conditions. A filter text
 should be formated in :doc:`/spec/script_syntax`. The syntax is
 similar to ECMAScript. For example, ``column == "value"`` means that
-the ``column`` column is equal to ``"value"``. ``column < value`` means
-that the value of ``column`` column is less than ``value``.
+the value of ``column`` column is equal to ``"value"``. ``column <
+value`` means that the value of ``column`` column is less than
+``value``.
 
 Here is a simple equality operator search example.
 
@@ -385,7 +386,7 @@ Here is a simple less than operator search example.
 The ``select`` command searches records that ``n_likes`` column value
 is less than ``11`` from ``Entries`` table.
 
-See :doc:`/spec/script_syntax` for other operations.
+See :doc:`/spec/script_syntax` for other operators.
 
 Advanced search parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -435,7 +436,7 @@ The second ``select`` command also searches records that contain a
 word ``groo`` in ``content`` column value from ``Entries`` table. And
 it also doesn't found matched records. In this case, the search
 storategy escalation is not used because the number of matched
-records (0) is less than ``match_escalation_threshold`` (-1). So no
+records (0) is larger than ``match_escalation_threshold`` (-1). So no
 more searches aren't executed. And no records are matched.
 
 ``query_expansion``
@@ -463,11 +464,10 @@ column.
 If a word in ``query`` is a key of substitution table, the word is
 substituted with substitution column value that is associated with the
 key. Substition isn't performed recursively. It means that
-substitution target words and pharses in substituted query aren't
-substituted.
+substitution target words in substituted query aren't substituted.
 
 Here is a sample substitution table to show a simple
-``query_expansion`` with subtitution column usage example.
+``query_expansion`` usage example.
 
 .. groonga-command
 .. include:: ../example/commands/select/query_expansion_substitution_table.log
