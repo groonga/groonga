@@ -1,0 +1,52 @@
+Execution example::
+
+  load --table Thesaurus
+  [
+  {"_key": "popular", "synonym": ["popular", "n_likes:>=10"]}
+  ]
+  # [[0,1337512074.0285,0.200526237487793],1]
+  select Entries --match_columns content --query "popular" --query_expansion Thesaurus.synonym
+  # [
+  #   [
+  #     0, 
+  #     1337512074.4299, 
+  #     0.000798463821411133
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         2
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "content", 
+  #           "Text"
+  #         ], 
+  #         [
+  #           "n_likes", 
+  #           "UInt32"
+  #         ]
+  #       ], 
+  #       [
+  #         2, 
+  #         "Groonga", 
+  #         "I started to use groonga. It's very fast!", 
+  #         10
+  #       ], 
+  #       [
+  #         3, 
+  #         "Mroonga", 
+  #         "I also started to use mroonga. It's also very fast! Really fast!", 
+  #         15
+  #       ]
+  #     ]
+  #   ]
+  # ]

@@ -1,0 +1,131 @@
+Execution example::
+
+  select Entries --match_columns content --query "mroonga"
+  # [
+  #   [
+  #     0, 
+  #     1337512073.4185, 
+  #     0.000695228576660156
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         1
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "content", 
+  #           "Text"
+  #         ], 
+  #         [
+  #           "n_likes", 
+  #           "UInt32"
+  #         ]
+  #       ], 
+  #       [
+  #         3, 
+  #         "Mroonga", 
+  #         "I also started to use mroonga. It's also very fast! Really fast!", 
+  #         15
+  #       ]
+  #     ]
+  #   ]
+  # ]
+  select Entries --match_columns content --query "mroonga" --query_expansion Thesaurus.synonym
+  # [
+  #   [
+  #     0, 
+  #     1337512073.6214, 
+  #     0.000687360763549805
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         2
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "content", 
+  #           "Text"
+  #         ], 
+  #         [
+  #           "n_likes", 
+  #           "UInt32"
+  #         ]
+  #       ], 
+  #       [
+  #         3, 
+  #         "Mroonga", 
+  #         "I also started to use mroonga. It's also very fast! Really fast!", 
+  #         15
+  #       ], 
+  #       [
+  #         5, 
+  #         "Good-bye Tritonn", 
+  #         "I also migrated all Tritonn system!", 
+  #         6
+  #       ]
+  #     ]
+  #   ]
+  # ]
+  select Entries --match_columns content --query "((mroonga) OR (tritonn) OR (groonga mysql))"
+  # [
+  #   [
+  #     0, 
+  #     1337512073.82467, 
+  #     0.000659942626953125
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         2
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "content", 
+  #           "Text"
+  #         ], 
+  #         [
+  #           "n_likes", 
+  #           "UInt32"
+  #         ]
+  #       ], 
+  #       [
+  #         3, 
+  #         "Mroonga", 
+  #         "I also started to use mroonga. It's also very fast! Really fast!", 
+  #         15
+  #       ], 
+  #       [
+  #         5, 
+  #         "Good-bye Tritonn", 
+  #         "I also migrated all Tritonn system!", 
+  #         6
+  #       ]
+  #     ]
+  #   ]
+  # ]

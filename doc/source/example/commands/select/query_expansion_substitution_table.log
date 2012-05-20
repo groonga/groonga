@@ -1,0 +1,12 @@
+Execution example::
+
+  table_create Thesaurus TABLE_PAT_KEY|KEY_NORMALIZE ShortText
+  # [[0,1337512072.6144,0.000249862670898438],true]
+  column_create Thesaurus synonym COLUMN_VECTOR ShortText
+  # [[0,1337512072.81539,0.000774383544921875],true]
+  load --table Thesaurus
+  [
+  {"_key": "mroonga", "synonym": ["mroonga", "tritonn", "groonga mysql"]},
+  {"_key": "groonga", "synonym": ["groonga", "senna"]}
+  ]
+  # [[0,1337512073.01694,0.200634479522705],2]
