@@ -574,7 +574,7 @@ name.
 Here is a simple ``sortby`` usage example.
 
 .. groonga-command
-.. include:: ../example/commands/select/sort_by_simple.log
+.. include:: ../example/commands/select/sortby_simple.log
 .. select Entries --sortby 'n_likes, _id'
 
 The ``select`` command sorts by ``n_likes`` column value in ascending
@@ -587,7 +587,7 @@ If you want to sort in descending order, add ``-`` before column name.
 Here is a descending order ``sortby`` usage example.
 
 .. groonga-command
-.. include:: ../example/commands/select/sort_by_descending.log
+.. include:: ../example/commands/select/sortby_descending.log
 .. select Entries --sortby '-n_likes, _id'
 
 The ``select`` command sorts by ``n_likes`` column value in descending
@@ -597,7 +597,7 @@ You can use ``_score`` pseudo column in ``sortby`` if you use
 ``query`` or ``filter`` parameter.
 
 .. groonga-command
-.. include:: ../example/commands/select/sort_by_score_with_query.log
+.. include:: ../example/commands/select/sortby_score_with_query.log
 .. select Entries --match_columns content --query fast --sortby -_score --output_columns '_key, _score'
 
 The ``select`` command sorts matched records by hit score in
