@@ -1,0 +1,31 @@
+Execution example::
+
+  select Entries --output_columns '_id, _key' --limit 1
+  # [
+  #   [
+  #     0, 
+  #     1337513353.65307, 
+  #     0.000175237655639648
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         5
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ]
+  #       ], 
+  #       [
+  #         1, 
+  #         "The first post!"
+  #       ]
+  #     ]
+  #   ]
+  # ]

@@ -73,7 +73,7 @@ Here are a schema definition and sample data to show usage.
 ..  "n_likes": 3},
 .. {"_key":    "Good-bye Tritonn",
 ..  "content": "I also migrated all Tritonn system!",
-..  "n_likes": 6}
+..  "n_likes": 3}
 .. ]
 
 There is a table, ``Entries``, for blog entries. An entry has title,
@@ -538,24 +538,73 @@ Output related parameters
 ``output_columns``
 """"""""""""""""""
 
-TODO: write in English and add example.
+It specifies output columns separated by ``,``.
 
-出力するカラム名のリストをカンマ(',')区切りで指定します。
+Here is a simple ``output_columns`` usage example.
 
-アスタリスク('*')を指定すると、全てのカラムが指定されたものとみなされます。または、script形式のgrn_expr文字列を指定します。 (デフォルトは、'_id, _key, \*')
+.. groonga-command
+.. include:: ../example/commands/select/output_columns_simple.log
+.. select Entries --output_columns '_id, _key' --limit 1
+
+The ``select`` command just outputs ``_id`` and ``_key`` column
+values.
+
+``*`` is a special value. It means that all columns that are not
+:doc:``/pseudo_column``.
+
+Here is a ``*`` usage example.
+
+.. groonga-command
+.. include:: ../example/commands/select/output_columns_asterisk.log
+.. select Entries --output_columns '_key, *' --limit 1
+
+The ``select`` command outputs ``_key`` pseudo column, ``content``
+column and ``n_likes`` column values but doesn't output ``_id`` pseudo
+column value.
+
+The default value is ``_id, _key, *``. It means that all column
+values except ``_score`` are outputted.
 
 ``sortby``
 """"""""""
 
-TODO: write in English and add example.
+It specifies sort keys separated by ``,``. Each sort key is column
+name.
 
-ソートキーとなるカラム名のリストをカンマ(',')区切りで指定します。::
+Here is a simple ``sortby`` usage example.
 
-  [-]カラム名1, [-]カラム名2, [-]カラム名3, ...
+.. groonga-command
+.. include:: ../example/commands/select/sort_by_simple.log
+.. select Entries --sortby 'n_likes, _id'
 
-カラム名1の値でソートし、値が同一である場合はカラム名2でソート、と順次比較を行いソートします。カラム名の前に - を付加した場合は降順にソートします。付加しない場合には昇順にソートします。
+The ``select`` command sorts by ``n_likes`` column value in ascending
+order. For records that has the same ``n_likes`` are sorted by ``_id``
+in ascending order. ``"Good-bye Senna"`` and ``"Good-bye Tritonn"``
+are the case.
 
-query引数またはfilter引数を指定した場合はカラム名に'_score'を使えます。'_score'を指定することでスコアでソートすることができます。query引数もfilter引数も指定していない状態で'_score'を指定するとエラーになります。
+If you want to sort in descending order, add ``-`` before column name.
+
+Here is a descending order ``sortby`` usage example.
+
+.. groonga-command
+.. include:: ../example/commands/select/sort_by_descending.log
+.. select Entries --sortby '-n_likes, _id'
+
+The ``select`` command sorts by ``n_likes`` column value in descending
+order. But ascending order is used for sorting by ``_id``.
+
+You can use ``_score`` pseudo column in ``sortby`` if you use
+``query`` or ``filter`` parameter.
+
+.. groonga-command
+.. include:: ../example/commands/select/sort_by_score_with_query.log
+.. select Entries --match_columns content --query fast --sortby -_score --output_columns '_key, _score'
+
+The ``select`` command sorts matched records by hit score in
+descending order and outputs entry key and hit score.
+
+If you use ``_score`` without ``query`` nor ``filter`` parameters,
+it's just ignored but get a warning in log file.
 
 ``offset``
 """"""""""

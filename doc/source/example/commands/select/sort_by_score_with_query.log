@@ -1,0 +1,35 @@
+Execution example::
+
+  select Entries --match_columns content --query fast --sortby -_score --output_columns '_key, _score'
+  # [
+  #   [
+  #     0, 
+  #     1337513354.46427, 
+  #     0.000624895095825195
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         2
+  #       ], 
+  #       [
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "_score", 
+  #           "Int32"
+  #         ]
+  #       ], 
+  #       [
+  #         "Mroonga", 
+  #         2
+  #       ], 
+  #       [
+  #         "Groonga", 
+  #         1
+  #       ]
+  #     ]
+  #   ]
+  # ]
