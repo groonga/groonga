@@ -85,6 +85,16 @@ def parse_du_result(result)
   usages
 end
 
+def compute_size(usages, base_path)
+  usage = 0
+  return usage if base_path.empty?
+
+  usages.each do |path, size|
+    usage += size if path.start_with?(base_path)
+  end
+  usage
+end
+
 case command
 when "autoconf", "detect"
   success, body = run("status")
@@ -140,21 +150,20 @@ unless $?.success?
   exit(false)
 end
 usages = parse_du_result(du_result)
-usage = usages[@path] || 0
+usage = compute_size(usages, @path)
 puts <<EOF
 database.value #{usage}
 EOF
 schema.each do |table|
   table_key = table["key"]
   table_name = table["name"]
-  usage = usages[table["path"]] || 0
+  usage = compute_size(usages, table["path"])
   puts <<EOF
 #{table_key}.value #{usage}
 EOF
   table["columns"].each do |column|
     column_key = column["key"]
-    usage = usages[column["path"]] || 0
-    usage += usages["#{column['path']}.c"] || 0
+    usage = compute_size(usages, column["path"])
     puts <<EOF
 #{column_key}.value #{usage}
 EOF
