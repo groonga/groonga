@@ -6,7 +6,7 @@ rvm:
 install:
   - echo "deb http://downloads.sourceforge.net/project/cutter/ubuntu/ $(lsb_release --short --codename) main" | sudo tee /etc/apt/sources.list.d/cutter.list
   - sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 1C837F31
-  - sudo apt-get install -y autotools-dev zlib1g-dev liblzo2-dev libmsgpack-dev libzmq-dev libevent-dev libmecab-dev cutter-testing-framework
+  - sudo apt-get install -y autotools-dev zlib1g-dev liblzo2-dev libmsgpack-dev libevent-dev libmecab-dev cutter-testing-framework
 before_script:
   - ./autogen.sh
   - ./configure
