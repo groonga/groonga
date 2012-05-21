@@ -17,7 +17,7 @@ LOAD_RESULT = "[[0,0.0,0.0],1]\n"
 
 SELECT = "select Geo --output_columns distance "
 
-SELECT_PRE = "[[0,0.0,0.0],[[[1],[[\"_score\",\"Int32\"]],["
+SELECT_PRE = "[[0,0.0,0.0],[[[1],[[\"distance\",\"Int32\"]],["
 SELECT_POST = "]]]]"
 
 class GrnTestData
@@ -414,7 +414,36 @@ class GrnTestData
             SELECT, scorer, select_postfix)
   end
 
+  def geo_distance(app_type)
+    0
+  end
 
+  def generate_expected_data(app_type)
+    select_postfix = ""
+    scorer = sprintf("--scorer 'distance = geo_distance(\"%sx%s\", \"%sx%s\"",
+                     @longitude_start, @latitude_start,
+                     @longitude_end, @latitude_end, app_type)
+    if app_type == ""
+      select_postfix = ")'\n"
+    else
+      select_postfix = ", \"#{app_type}\")'\n"
+    end
+    distance = geo_distance(app_type) unless @distance != ""
+    [
+      TABLE_CREATE,
+      CREATE_RESULT,
+      COLUMN_CREATE,
+      CREATE_RESULT,
+      LOAD,
+      LOAD_RESULT,
+      SELECT,
+      scorer,
+      select_postfix,
+      SELECT_PRE,
+      distance,
+      SELECT_POST
+    ].join
+  end
 end
 
 
@@ -563,7 +592,7 @@ if __FILE__ == $0
         end
       elsif OPTS.has_key?(:csv_data)
         puts(grndata.generate_new_data(line, type_longitude, quadrant, type, filename))
-      elsif OPTS.has_key?(:test)
+      elsif OPTS.has_key?(:test) or OPTS.has_key?(:expected)
         app_types.each do |app_type|
           file_prefix = ""
           if app_type != ""
@@ -592,6 +621,8 @@ if __FILE__ == $0
             FileUtils.mkdir_p(File.dirname(test_name))
           end
 
+          dot_expected = grndata.generate_expected_data(app_type)
+
           if File.exists?(test_name)
             # duplicated?
             puts("Warning! [#{i}] #{test_name} duplicated")
@@ -602,6 +633,18 @@ if __FILE__ == $0
               puts(dot_test)
             end
             test_file.puts(dot_test)
+          end
+          expected_name = sprintf("%s/%s.expected",
+                                  File.dirname(test_name),
+                                  File.basename(test_name, ".test"))
+          if OPTS.has_key?(:expected)
+            File.open(expected_name, "w+") do |expected_file|
+              if OPTS.has_key?(:verbose)
+                puts(expected_name)
+                puts(dot_expected)
+              end
+              expected_file.puts(dot_expected)
+            end
           end
         end
       end
