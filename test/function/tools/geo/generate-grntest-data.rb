@@ -533,7 +533,7 @@ if __FILE__ == $0
         if OPTS.has_key?(:verbose)
           puts(line)
         end
-        if type == "line" then
+        if type == "line"
           path = [
             type_longitude,
             quadrant,
@@ -565,7 +565,7 @@ if __FILE__ == $0
           dottest = grndata.generate_test_data(app_type)
 
           if filename and filename != ""
-            if type == "line" then
+            if type == "line"
               testname = sprintf("%s/%s/%s/%s/%s/%s%s",
                                  type_longitude, quadrant, type, direction,
                                  longitude_position, file_prefix,
