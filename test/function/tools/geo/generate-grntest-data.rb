@@ -546,23 +546,19 @@ if __FILE__ == $0
           puts(line)
         end
         if type == "line"
-          path = [
-            type_longitude,
-            quadrant,
-            type,
-            direction,
-            longitude_position,
-            filename
-          ].join(File::SEPARATOR)
+          path = File.join(type_longitude,
+                           quadrant,
+                           type,
+                           direction,
+                           longitude_position,
+                           filename)
           puts(path)
         else
-          path = [
-            type_longitude,
-            quadrant,
-            type,
-            longitude_position,
-            filename
-          ].join(File::SEPARATOR)
+          path = File.join(type_longitude,
+                           quadrant,
+                           type,
+                           longitude_position,
+                           filename)
           puts(path)
         end
       elsif OPTS.has_key?(:csv_data)
