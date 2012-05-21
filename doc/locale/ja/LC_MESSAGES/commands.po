@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-05-20 21:02\n"
-"PO-Revision-Date: 2012-05-20 23:37+0900\n"
+"PO-Revision-Date: 2012-05-21 11:09+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -1650,10 +1650,10 @@ msgid ""
 "``match_columns`` parameter. ``query`` parameter is designed for a fulltext "
 "search form in a Web page. A query text should be formated in :doc:`/spec/"
 "query_syntax`. The syntax is similar to common search form like Google's "
-"search form. For example, ``query1 query2`` means that matched records must "
-"contain both ``query1`` and ``query2``. ``query1 OR query2`` means that "
-"matched records must contain either ``query1`` or ``query2``."
-msgstr ""
+"search form. For example, ``word1 word2`` means that matched records must "
+"contain both ``word1`` and ``word2``. ``word1 OR word2`` means that "
+"matched records must contain either ``word1`` or ``word2``."
+msgstr "クエリテキストを指定します。通常、 ``match_columns`` 引数と一緒に全文検索をするために使います。 ``query`` 引数はWebページにある全文検索フォームで使いやすいように設計されています。クエリテキストは :doc:`/spec/query_syntax` という書式を使います。この書式はGoogleの検索フォームのように一般的な検索フォームと似ています。例えば、 ``word1 word2`` は ``word1`` と ``word2`` を含んでいるレコードを検索するという意味になります。 ``word1 OR word2`` は ``word1`` または ``word2`` を含んでいるレコードを検索するという意味になります。"
 
 # 19c0a971f31d469f940d93c9f303237e
 #: ../../../source/commands/select.txt:308
@@ -1910,14 +1910,13 @@ msgid ""
 "result. If you have a word that you don't want to be searched, you should "
 "not include the original word. For example, you can implement \"stop words\" "
 "by an empty vector value."
-msgstr ""
+msgstr "これらの類義語の値の中に ``\"mroonga\"`` や ``\"groonga\"`` といったキーの値も含まれていることに注意してください。このように類義語にキーの値も含めることを推奨します。もしキーの値を含めないと、置換した値には元の置換対象の値が含まれません。通常、元の値が含まれていた方がよい検索結果になります。もし、検索してほしくない単語がある場合は、元の単語を含めないでください。例えば、空のベクター値を指定することで「ストップワード」機能を実現することもできます。"
 
 # 1ccd84b3f15a4567b23bb0e7d8c66fcd
 #: ../../../source/commands/select.txt:498
-#, fuzzy
 msgid ""
-"Here is a simple ``query_expansion`` with substitution column usage example."
-msgstr "以下は簡単な ``query`` の使用例です。"
+"Here is a simple ``query_expansion`` usage example."
+msgstr "以下は簡単な ``query_expansion`` の使用例です。"
 
 # 6f322ed8d7d940aa98300f8cde469d75
 #: ../../../source/commands/select.txt:507
@@ -1927,7 +1926,7 @@ msgid ""
 "expansion. So a record that has ``\"tritonn\"`` is found. The third "
 "``select`` command doesn't use query expansion but it is same as the second "
 "``select`` command. The third one uses expanded query."
-msgstr ""
+msgstr "最初の ``select`` コマンドはクエリ展開を使いません。そのため、 ``\"tritonn\"`` という単語を含んでいるレコードは見つかりません。2番目の ``select`` コマンドはクエリ展開を使っています。そのため、 ``\"tritonn\"`` という単語を含んでいるレコードが見つかります。3番目の ``select`` コマンドはクエリ展開を使っていませんが、2番目の ``select`` コマンドと同じ結果になります。これは、3番目の ``select`` コマンドは展開後のクエリを使っているからです。"
 
 # e2e2eb2e8823445096de1215d64e23a9
 #: ../../../source/commands/select.txt:513
@@ -1935,31 +1934,28 @@ msgid ""
 "Each substitute value can contain any :doc:`/spec/query_syntax` syntax such "
 "as ``(...)`` and ``OR``. You can use complex substitution by using those "
 "syntax."
-msgstr ""
+msgstr "それぞれの置換する値は ``(...)`` や ``OR`` といった :doc:`/spec/query_syntax` を使えます。これらの構文を使うことにより複雑な置換をすることができます。"
 
 # 4fadcce1df4a4d24b9e055ebcded9dde
 #: ../../../source/commands/select.txt:517
 msgid "Here is a complex substitution usage example that uses query syntax."
-msgstr ""
+msgstr "以下はクエリ構文を使った複雑な痴漢の使用例です。"
 
 # 5db5121077db4548bf4e648482536d4a
 #: ../../../source/commands/select.txt:527
 msgid ""
-"The ``load`` command register a new synonym ``\"popular\"``. It is "
+"The ``load`` command registers a new synonym ``\"popular\"``. It is "
 "substituted with ``((popular) OR (n_likes:>=10))``. The substituted query "
 "means that \"popular\" is containing the word \"popular\" or 10 or more "
 "liked entries."
-msgstr ""
+msgstr "この ``load`` コマンドは新しく ``\"popular\"`` という類義語を登録しています。これは ``((popular) OR (n_likes:>=10))`` に置換されます。置換されたクエリは、「popular」というのは「popular」という単語を含んでいるか10以上の「いいね！」数を持つエントリという意味になります。"
 
 # dc8002538e794368b895d463ce15d092
 #: ../../../source/commands/select.txt:532
-#, fuzzy
 msgid ""
 "The ``select`` command outputs records that ``n_likes`` column value is "
 "equal to or more than ``10`` from ``Entries`` table."
-msgstr ""
-"この ``select`` コマンドは ``Entries`` テーブルの中から ``content`` カラムの"
-"値に ``fast`` を含んでいるレコードを検索します。"
+msgstr "この ``select`` コマンドは ``Entries`` テーブルの中から ``n_likes`` カラムの値が ``10`` 以上のレコードを出力します。"
 
 # a92aefff626342b8b2318131b132f569
 #: ../../../source/commands/select.txt:536
@@ -1968,59 +1964,55 @@ msgstr "出力関連の引数"
 
 # 4beb7f0f3d704fd0b3176496d7f55eb9
 #: ../../../source/commands/select.txt:541
-#, fuzzy
 msgid "It specifies output columns separated by ``,``."
-msgstr "出力するカラムを指定します。"
+msgstr "出力するカラムを ``,`` 区切りで指定します。"
 
 # 19c0a971f31d469f940d93c9f303237e
 #: ../../../source/commands/select.txt:543
-#, fuzzy
 msgid "Here is a simple ``output_columns`` usage example."
-msgstr "以下は簡単な ``match_columns`` の使用例です。"
+msgstr "以下は簡単な ``output_columns`` の使用例です。"
 
 # dc8002538e794368b895d463ce15d092
 #: ../../../source/commands/select.txt:549
 msgid "The ``select`` command just outputs ``_id`` and ``_key`` column values."
-msgstr ""
+msgstr "この ``select`` コマンドは ``_id`` と ``_key`` カラムの値だけを出力します。"
 
 # 470a3d728d73414290550a46e5e67f1a
 #: ../../../source/commands/select.txt:552
 msgid ""
 "``*`` is a special value. It means that all columns that are not :doc:``/"
 "pseudo_column``."
-msgstr ""
+msgstr "``*`` は特別な値です。 :doc:``/pseudo_column`` 以外のすべてのカラムという意味です。"
 
 # 1ccd84b3f15a4567b23bb0e7d8c66fcd
 #: ../../../source/commands/select.txt:555
-#, fuzzy
 msgid "Here is a ``*`` usage example."
-msgstr "以下は簡単な ``query`` の使用例です。"
+msgstr "以下は ``*`` の使用例です。"
 
 # 43ac02f5486b4de0b8f674844f6266c3
 #: ../../../source/commands/select.txt:561
 msgid ""
 "The ``select`` command outputs ``_key`` pseudo column, ``content`` column "
 "and ``n_likes`` column values but doesn't output ``_id`` pseudo column value."
-msgstr ""
+msgstr "この ``select`` コマンドは ``_key`` 擬似カラム、 ``content`` カラム、 ``n_likes`` カラムの値を出力しますが、 ``_id`` 擬似カラムの値は出力しません。"
 
 # 94fcc85c0643425b81cf310f8dcb0baf
 #: ../../../source/commands/select.txt:565
 msgid ""
 "The default value is ``_id, _key, *``. It means that all column values "
 "except ``_score`` are outputted."
-msgstr ""
+msgstr "デフォルト値は ``_id, _key, *`` です。これは ``_score`` 以外の全てのカラムを出力するという意味です。"
 
 # 5086490961c54103a7f0bdc3cd39f82f
 #: ../../../source/commands/select.txt:571
 msgid ""
 "It specifies sort keys separated by ``,``. Each sort key is column name."
-msgstr ""
+msgstr "ソートキーを ``,`` 区切りで指定します。それぞれのソートキーはカラム名を指定します。"
 
 # 1ccd84b3f15a4567b23bb0e7d8c66fcd
 #: ../../../source/commands/select.txt:574
-#, fuzzy
 msgid "Here is a simple ``sortby`` usage example."
-msgstr "以下は簡単な ``query`` の使用例です。"
+msgstr "以下は簡単な ``sortby`` の使用例です。"
 
 # de273bcc1dec4dc080894f7a313144fa
 #: ../../../source/commands/select.txt:580
@@ -2028,61 +2020,57 @@ msgid ""
 "The ``select`` command sorts by ``n_likes`` column value in ascending order. "
 "For records that has the same ``n_likes`` are sorted by ``_id`` in ascending "
 "order. ``\"Good-bye Senna\"`` and ``\"Good-bye Tritonn\"`` are the case."
-msgstr ""
+msgstr "この ``select`` コマンドは ``n_likes`` カラムの値で昇順にソートします。 ``n_likes`` の値が同じレコードについては ``_id`` カラムの値で昇順にソートします。 ``\"Good-bye Senna\"`` と ``\"Good-bye Tritonn\"`` が ``_id`` カラムの値でソートしているケースです。"
 
 # aabe26754c7c4a2caea2cace635cde15
 #: ../../../source/commands/select.txt:585
 msgid "If you want to sort in descending order, add ``-`` before column name."
-msgstr ""
+msgstr "降順でソートしたい場合はカラム名の前に ``-`` をつけてください。"
 
 # 1ccd84b3f15a4567b23bb0e7d8c66fcd
 #: ../../../source/commands/select.txt:587
-#, fuzzy
 msgid "Here is a descending order ``sortby`` usage example."
-msgstr "以下は簡単な ``query`` の使用例です。"
+msgstr "以下は降順の ``sortby`` の使用例です。"
 
 # dcc7b9dc2ec44b85b8d54ad67180b230
 #: ../../../source/commands/select.txt:593
 msgid ""
 "The ``select`` command sorts by ``n_likes`` column value in descending "
 "order. But ascending order is used for sorting by ``_id``."
-msgstr ""
+msgstr "この ``select`` コマンドは ``n_likes`` カラムの値で降順にソートします。しかし、 ``_id`` でソートするときは昇順でソートします。"
 
 # 836a5759ae764a5eb2fff185217fd627
 #: ../../../source/commands/select.txt:596
 msgid ""
 "You can use ``_score`` pseudo column in ``sortby`` if you use ``query`` or "
 "``filter`` parameter."
-msgstr ""
+msgstr "もし、 ``query`` または ``filter`` 引数を使っているときは、 ``sortby`` の中で ``_score`` 擬似カラムを使うことができます。"
 
 # dc8002538e794368b895d463ce15d092
 #: ../../../source/commands/select.txt:603
 msgid ""
 "The ``select`` command sorts matched records by hit score in descending "
-"order and outputs entry key and hit score."
-msgstr ""
+"order and outputs record key and hit score."
+msgstr "この ``select`` コマンドはマッチしたレコードをヒットスコアで降順にソートし、レコードのキーとヒットスコアを出力します。"
 
 # 0e10f4e0e288413ebb6303024b0532b1
 #: ../../../source/commands/select.txt:606
 msgid ""
 "If you use ``_score`` without ``query`` nor ``filter`` parameters, it's just "
 "ignored but get a warning in log file."
-msgstr ""
+msgstr "``query`` 引数も ``filter`` 引数も指定しないで ``_score`` を使った場合は、 ``_score`` を無視して、ログファイルに警告を出力します。"
 
 # b2b34fa4db01477b8b23e3dc58dc88d1
 #: ../../../source/commands/select.txt:612
-#, fuzzy
 msgid ""
-"It specifies offset to choose output records range. Offset is zero-origin. "
+"It specifies offset to determine output records range. Offset is zero-origin. "
 "``--offset 1`` means output range is started from the 2nd record."
-msgstr ""
-"``offset`` は0基点です。 ``--offset 1`` は2番目以降のレコードを出力するという"
-"意味になります。"
+msgstr "出力するレコードの範囲を決めるためのオフセットを指定します。オフセットは0基点です。 ``--offset 1`` は2番目以降のレコードを出力するという意味になります。"
 
 # b2b34fa4db01477b8b23e3dc58dc88d1
 #: ../../../source/commands/select.txt:620
 msgid "The ``select`` command outputs from the 4th record."
-msgstr ""
+msgstr "この ``select`` コマンドは4番目のレコードを出力します。"
 
 # 254e1e0c399c45369f40392207a2525c
 #: ../../../source/commands/select.txt:622
@@ -2090,41 +2078,36 @@ msgid ""
 "You can specify negative value. It means that ``the number of matched "
 "records + offset``. If you have 3 matched records and specify ``--offset "
 "-2``, you get records from the 1st (``3 + -2 = 1``) record to the 3rd record."
-msgstr ""
+msgstr "負の値を指定することもできます。負の値の場合は ``マッチしたレコード数 + offset`` 番目のレコードから始まる範囲という意味になります。もし、マッチしたレコードが3つあり、 ``--offset -2`` を指定した場合は1番目（ ``3 + -2 = 1`` ） のレコードから3番目のレコードが出力されます。"
 
 # dc8002538e794368b895d463ce15d092
 #: ../../../source/commands/select.txt:631
 msgid ""
 "The ``select`` command outputs from the 4th record because the total number "
 "of records is ``5``."
-msgstr ""
+msgstr "この ``select`` コマンドは4番目のレコードを出力します。なぜなら、全レコード数が ``5`` だからです。"
 
 # 75c38df430b54c44844526068cb9d03b
 #: ../../../source/commands/select.txt:634
 msgid "The default value is ``0``."
-msgstr ""
+msgstr "デフォルト値は ``0`` です。"
 
 # 24418f72e84544449baae5be89db83c4
 #: ../../../source/commands/select.txt:639
-#, fuzzy
 msgid ""
 "It specifies the max number of output records. If the number of matched "
 "records is less than ``limit``, all records are outputted."
-msgstr ""
-"``limit`` は出力レコード数の最大値を指定します。 ``--limit 1`` は多くても1レ"
-"コードを出力するという意味になります。もし、1つもレコードがマッチしていなけれ"
-"ば ``select`` コマンドはどのレコードも出力しません。"
+msgstr "``limit`` は出力レコード数の最大値を指定します。 もし、マッチしたレコード数が ``limit`` よりも小さい場合はすべてのレコードが出力されます。"
 
 # 19c0a971f31d469f940d93c9f303237e
 #: ../../../source/commands/select.txt:642
-#, fuzzy
 msgid "Here is a simple ``limit`` usage example."
-msgstr "以下は簡単な ``filter`` の使用例です。"
+msgstr "以下は簡単な ``limit`` の使用例です。"
 
 # dc8002538e794368b895d463ce15d092
 #: ../../../source/commands/select.txt:648
 msgid "The ``select`` command outputs the 3rd, the 4th and the 5th records."
-msgstr ""
+msgstr "この ``select`` コマンドは3番目、4番目、5番目のレコードを出力します。"
 
 # 6a449750ae904238a57325cc2827d37f
 #: ../../../source/commands/select.txt:650
@@ -2132,24 +2115,22 @@ msgid ""
 "You can specify negative value. It means that ``the number of matched "
 "records + limit + 1``. For example, ``--limit -1`` outputs all records. It's "
 "very useful value to show all records."
-msgstr ""
+msgstr "負の値を指定することもできます。負の値の場合は、最大で ``マッチしたレコード数 + limit + 1`` 件のレコードを出力するという意味になります。 例えば、 ``--limit -1`` はすべてのレコードを出力します。これはすべてのレコードを表示する場合にとても便利です。"
 
 # 19c0a971f31d469f940d93c9f303237e
 #: ../../../source/commands/select.txt:654
-#, fuzzy
 msgid "Here is a simple negative ``limit`` value usage example."
-msgstr "以下は簡単な ``filter`` の使用例です。"
+msgstr "以下は負の値を使った ``limit`` の簡単な使用例です。"
 
 # c48e12132c3a4894a59bec8f90aceb10
 #: ../../../source/commands/select.txt:660
-#, fuzzy
 msgid "The ``select`` command outputs all records."
-msgstr "補正を実行します。"
+msgstr "この ``select`` コマンドはすべてのレコードを出力します。"
 
 # 75c38df430b54c44844526068cb9d03b
 #: ../../../source/commands/select.txt:662
 msgid "The default value is ``10``."
-msgstr ""
+msgstr "デフォルト値は ``10`` です。"
 
 # a299ae40f44f4e01923982805289b6da
 # 907b70a9602e42d28d52bd14a9a6aa34

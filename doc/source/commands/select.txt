@@ -300,10 +300,10 @@ It specifies the query text. Normally, it is used for fulltext search
 with ``match_columns`` parameter. ``query`` parameter is designed for
 a fulltext search form in a Web page. A query text should be formated
 in :doc:`/spec/query_syntax`. The syntax is similar to common search
-form like Google's search form. For example, ``query1 query2`` means
-that matched records must contain both ``query1`` and
-``query2``. ``query1 OR query2`` means that matched records must
-contain either ``query1`` or ``query2``.
+form like Google's search form. For example, ``word1 word2`` means
+that groonga searches records that contain both ``word1`` and
+``word2``. ``word1 OR word2`` means that groogna searches records that
+contain either ``word1`` or ``word2``.
 
 Here is a simple logical and search example.
 
@@ -490,13 +490,13 @@ matched in case insensitive manner.
 Note that those synonym values include the key value such as
 ``"mroonga"`` and ``"groonga"``. It's recommended that you include the
 key value. If you don't include key value, substituted value doesn't
-include the original substuted value. Normally, including the original
-value is better search result. If you have a word that you don't want
-to be searched, you should not include the original word. For example,
-you can implement "stop words" by an empty vector value.
+include the original substitute target value. Normally, including the
+original value is better search result. If you have a word that you
+don't want to be searched, you should not include the original
+word. For example, you can implement "stop words" by an empty vector
+value.
 
-Here is a simple ``query_expansion`` with substitution column
-usage example.
+Here is a simple ``query_expansion`` usage example.
 
 .. groonga-command
 .. include:: ../example/commands/select/query_expansion_substitute.log
@@ -524,7 +524,7 @@ Here is a complex substitution usage example that uses query syntax.
 .. ]
 .. select Entries --match_columns content --query "popular" --query_expansion Thesaurus.synonym
 
-The ``load`` command register a new synonym ``"popular"``. It is
+The ``load`` command registers a new synonym ``"popular"``. It is
 substituted with ``((popular) OR (n_likes:>=10))``. The substituted
 query means that "popular" is containing the word "popular" or 10 or
 more liked entries.
@@ -601,7 +601,7 @@ You can use ``_score`` pseudo column in ``sortby`` if you use
 .. select Entries --match_columns content --query fast --sortby -_score --output_columns '_key, _score'
 
 The ``select`` command sorts matched records by hit score in
-descending order and outputs entry key and hit score.
+descending order and outputs record key and hit score.
 
 If you use ``_score`` without ``query`` nor ``filter`` parameters,
 it's just ignored but get a warning in log file.
@@ -609,7 +609,7 @@ it's just ignored but get a warning in log file.
 ``offset``
 """"""""""
 
-It specifies offset to choose output records range. Offset is
+It specifies offset to determine output records range. Offset is
 zero-origin. ``--offset 1`` means output range is started from the 2nd
 record.
 
