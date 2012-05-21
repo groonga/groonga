@@ -334,7 +334,7 @@ class GrnTestData
       179 => "almost_180_degrees",
       91 => "almost_90_degrees_larger",
       90 => "on_90_degrees",
-      89 => "almost_90_degrees_smaler",
+      89 => "almost_90_degrees_smaller",
       1 => "almost_0_degree_larger",
       0 => "on_0_degree",
       -1 => "almost_0_degree_smaller",
@@ -356,7 +356,7 @@ class GrnTestData
   def latitude_position
     latitude_desc = {
       90 => "on_90_degrees",
-      89 => "almost_90_degrees_smaler",
+      89 => "almost_90_degrees_smaller",
       1 => "almost_0_degree_larger",
       0 => "on_0_degree",
       -1 => "almost_0_degree_smaller",
@@ -541,7 +541,7 @@ if __FILE__ == $0
             direction,
             longitude_position,
             filename
-          ].join("/")
+          ].join(File::SEPARATOR)
           puts(path)
         else
           path = [
@@ -550,7 +550,7 @@ if __FILE__ == $0
             type,
             longitude_position,
             filename
-          ].join("/")
+          ].join(File::SEPARATOR)
           puts(path)
         end
       elsif OPTS.has_key?(:csv_data)
