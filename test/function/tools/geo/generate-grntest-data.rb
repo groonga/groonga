@@ -570,8 +570,7 @@ if __FILE__ == $0
         next unless grndata.within_specified_quadrant?(OPTS[:quadrant_with_axis])
       end
 
-      app_types = ["", "rectangle", "rect"]
-      app_types = [""]
+      app_types = ["", "rectangle", "rect", "sphere", "sphr", "ellipsoid", "ellip"]
 
       quadrant = grndata.quadrant
 
