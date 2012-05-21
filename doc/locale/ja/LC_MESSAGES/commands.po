@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-05-20 21:02\n"
-"PO-Revision-Date: 2012-05-21 12:45+0900\n"
+"PO-Revision-Date: 2012-05-21 13:02+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -1376,12 +1376,7 @@ msgid ""
 "table. There are three operators in the command, ``@``, ``&&`` and ``==``. "
 "``@`` is fulltext search operator. ``&&`` and ``==`` are the same as "
 "ECMAScript. ``&&`` is logical AND operator and ``==`` is equality operator."
-msgstr ""
-"この ``select`` コマンドは ``Entries`` テーブルの中の ``content`` カラムの値"
-"に ``fast`` という単語を含んでいて、かつ、 ``_key`` が ``Groonga`` のレコード"
-"を検索します。このコマンドの中には ``@`` と ``&&`` と ``==`` という3つの演算"
-"子があります。 ``@`` は全文検索用の演算子です。 ``&&`` と ``==`` はECMAScript"
-"と同じ意味です。 ``&&`` が論理和用の演算子で ``==`` が等価演算子です。"
+msgstr "この ``select`` コマンドは ``Entries`` テーブルの中の ``content`` カラムの値に ``fast`` という単語を含んでいて、かつ、 ``_key`` が ``Groonga`` のレコードを検索します。このコマンドの中には ``@`` と ``&&`` と ``==`` という3つの演算子があります。 ``@`` は全文検索用の演算子です。 ``&&`` と ``==`` はECMAScriptと同じ意味です。 ``&&`` が論理積用の演算子で ``==`` が等価演算子です。"
 
 # c9f4049227474068baf439c6ec31e09b
 #: ../../../source/commands/select.txt:162
@@ -1639,7 +1634,7 @@ msgstr ""
 msgid ""
 "It specifies the query text. Normally, it is used for fulltext search with "
 "``match_columns`` parameter. ``query`` parameter is designed for a fulltext "
-"search form in a Web page. A query text should be formated in :doc:`/spec/"
+"search form in a Web page. A query text should be formatted in :doc:`/spec/"
 "query_syntax`. The syntax is similar to common search form like Google's "
 "search form. For example, ``word1 word2`` means that matched records must "
 "contain both ``word1`` and ``word2``. ``word1 OR word2`` means that "
@@ -1683,7 +1678,7 @@ msgid ""
 "example, ``column:value`` means the value of ``column`` column is equal to "
 "``value``. ``column:<value`` means the value of ``column`` column is less "
 "than ``value``."
-msgstr "``query`` では全文検索だけではなく他の条件も使えます。例えば、 ``column:value`` は ``column`` の値が ``value`` と等しい意味です。 ``column:<value``は ``column`` の値が ``value`` より小さいという意味です。"
+msgstr "``query`` では全文検索だけではなく他の条件も使えます。例えば、 ``column:value`` は ``column`` の値が ``value`` と等しいという意味です。 ``column:<value`` は ``column`` の値が ``value`` より小さいという意味です。"
 
 # 1ccd84b3f15a4567b23bb0e7d8c66fcd
 #: ../../../source/commands/select.txt:335
@@ -1726,7 +1721,7 @@ msgid ""
 "``filter`` and ``query`` are specified, there are conbined with logical and. "
 "It means that matched records should be matched against both ``filter`` and "
 "``query``."
-msgstr "フィルターテキストを指定します。通常、 ``filter`` は複雑な条件を指定するために使います。 ``filter`` は ``query`` 引数と一緒に使うこともできます。 ``filter`` と ``query`` を両方指定した場合はそれらを論理積で組み合わせます。つまり、マッチするレコードは ``filter`` にも ``query``にもマッチしなければいけないということです。"
+msgstr "フィルターテキストを指定します。通常、 ``filter`` は複雑な条件を指定するために使います。 ``filter`` は ``query`` 引数と一緒に使うこともできます。 ``filter`` と ``query`` を両方指定した場合はそれらを論理積で組み合わせます。つまり、マッチするレコードは ``filter`` にも ``query`` にもマッチしなければいけないということです。"
 
 # 4f2a3aea1b994d01aecda600df7717d2
 #: ../../../source/commands/select.txt:364
@@ -1812,7 +1807,7 @@ msgid ""
 "the case, the search storategy escalation is used because the number of "
 "matched records (0) is equal to ``match_escalation_threshold`` (0). One "
 "record is matched against ``groo`` by unsplit search."
-msgstr "最初の ``select`` コマンドは ``Entries`` テーブルから ``content`` カラムの値に ``groo`` という単語を含むレコードを検索します。しかし、 ``TokenBigram`` トークナイザーは ``groonga`` を ``gr|ro|oo|on|ng|ga`` ではなく ``groonga`` とトークナイズするため、1つもマッチしません。（ ``TokenBigramSplitSymbolAlpha`` トークナイザー ``groonga`` を ``gr|ro|oo|on|ng|ga`` とトークナイズします。詳細は :doc:`/tokenizers` を参照してください。）これは、 ``groonga`` はインデックスされていますが、 ``groo`` はインデックスされていないということです。この場合、マッチしたレコード数（0）が ``match_escalation_threshold`` （0）と等しいので、検索方法をエスカレーションします。非わかち書き検索を行うと ``groo`` でレコードが1つマッチします。"
+msgstr "最初の ``select`` コマンドは ``Entries`` テーブルから ``content`` カラムの値に ``groo`` という単語を含むレコードを検索します。しかし、 ``TokenBigram`` トークナイザーは ``groonga`` を ``gr|ro|oo|on|ng|ga`` ではなく ``groonga`` とトークナイズするため、1つもマッチしません。（ ``TokenBigramSplitSymbolAlpha`` トークナイザーは ``groonga`` を ``gr|ro|oo|on|ng|ga`` とトークナイズします。詳細は :doc:`/tokenizers` を参照してください。）これは、 ``groonga`` はインデックスされていますが、 ``groo`` はインデックスされていないということです。この場合、マッチしたレコード数（0）が ``match_escalation_threshold`` （0）と等しいので、検索方法をエスカレーションします。非わかち書き検索を行うと ``groo`` でレコードが1つマッチします。"
 
 # c7034c19107347ef9516b239a50096a9
 #: ../../../source/commands/select.txt:434
@@ -1823,7 +1818,7 @@ msgid ""
 "is not used because the number of matched records (0) is larger than "
 "``match_escalation_threshold`` (-1). So no more searches aren't executed. "
 "And no records are matched."
-msgstr "2番目の ``select`` コマンドも ``Entries`` テーブルから ``content`` カラムの値に ``groo`` という単語を含むレコードを検索します。そして、この ``select`` コマンドもマッチしません。この場合、マッチしたレコード数（0）が ``match_escalation_threshold`` （-1）より大きいので、検索方法をエスカレーションしません。そして、1つもレコードががマッチしません。"
+msgstr "2番目の ``select`` コマンドも ``Entries`` テーブルから ``content`` カラムの値に ``groo`` という単語を含むレコードを検索します。そして、この ``select`` コマンドもマッチしません。この場合、マッチしたレコード数（0）が ``match_escalation_threshold`` （-1）より大きいので、検索方法をエスカレーションしません。そして、1つもレコードがマッチしません。"
 
 # 2a6a4e70ad95423fb535430d242aa1b8
 #: ../../../source/commands/select.txt:442
@@ -1930,7 +1925,7 @@ msgstr "それぞれの置換する値は ``(...)`` や ``OR`` といった :doc
 # 4fadcce1df4a4d24b9e055ebcded9dde
 #: ../../../source/commands/select.txt:517
 msgid "Here is a complex substitution usage example that uses query syntax."
-msgstr "以下はクエリ構文を使った複雑な痴漢の使用例です。"
+msgstr "以下はクエリ構文を使った複雑な置換の使用例です。"
 
 # 5db5121077db4548bf4e648482536d4a
 #: ../../../source/commands/select.txt:527
@@ -1971,9 +1966,9 @@ msgstr "この ``select`` コマンドは ``_id`` と ``_key`` カラムの値�
 # 470a3d728d73414290550a46e5e67f1a
 #: ../../../source/commands/select.txt:552
 msgid ""
-"``*`` is a special value. It means that all columns that are not :doc:``/"
-"pseudo_column``."
-msgstr "``*`` は特別な値です。 :doc:``/pseudo_column`` 以外のすべてのカラムという意味です。"
+"``*`` is a special value. It means that all columns that are not :doc:`/"
+"pseudo_column`."
+msgstr "``*`` は特別な値です。 :doc:`/pseudo_column` 以外のすべてのカラムという意味です。"
 
 # 1ccd84b3f15a4567b23bb0e7d8c66fcd
 #: ../../../source/commands/select.txt:555
@@ -2061,7 +2056,7 @@ msgstr "出力するレコードの範囲を決めるためのオフセットを
 # b2b34fa4db01477b8b23e3dc58dc88d1
 #: ../../../source/commands/select.txt:620
 msgid "The ``select`` command outputs from the 4th record."
-msgstr "この ``select`` コマンドは4番目のレコードを出力します。"
+msgstr "この ``select`` コマンドは4番目以降のレコードを出力します。"
 
 # 254e1e0c399c45369f40392207a2525c
 #: ../../../source/commands/select.txt:622
@@ -2076,7 +2071,7 @@ msgstr "負の値を指定することもできます。負の値の場合は ``
 msgid ""
 "The ``select`` command outputs from the 4th record because the total number "
 "of records is ``5``."
-msgstr "この ``select`` コマンドは4番目のレコードを出力します。なぜなら、全レコード数が ``5`` だからです。"
+msgstr "この ``select`` コマンドは4番目以降のレコードを出力します。なぜなら、全レコード数が ``5`` だからです。"
 
 # 75c38df430b54c44844526068cb9d03b
 #: ../../../source/commands/select.txt:634
@@ -3101,10 +3096,4 @@ msgstr ""
 #: ../../../source/example/commands/suggest-mixed.log:1
 #: ../../../source/example/commands/suggest-suggestion.log:1
 msgid "Execution example::"
-msgstr ""
-
-# 9c86b1a0b1024d89b6c9e4e8f2d4b5ad
-#~ msgid ""
-#~ "It specifies a column that is used to expand (substitute) ``query`` "
-#~ "parameter value."
-#~ msgstr "``query`` 引数の値を拡張（置換）するために使うカラムを指定します。"
+msgstr "実行例::"

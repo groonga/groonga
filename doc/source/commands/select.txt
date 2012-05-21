@@ -298,7 +298,7 @@ of blog entry is more important rather thatn content of blog entry.
 
 It specifies the query text. Normally, it is used for fulltext search
 with ``match_columns`` parameter. ``query`` parameter is designed for
-a fulltext search form in a Web page. A query text should be formated
+a fulltext search form in a Web page. A query text should be formatted
 in :doc:`/spec/query_syntax`. The syntax is similar to common search
 form like Google's search form. For example, ``word1 word2`` means
 that groonga searches records that contain both ``word1`` and
@@ -457,14 +457,14 @@ key.
 
 Column for query expansion is called "substitution
 column". Substitution column's value type must be
-``ShortText``. Column type must be vector (``COLUMN_VECTOR``). Key of
-substitution table in query is substituted with values in substitution
-column.
+``ShortText``. Column type must be vector (``COLUMN_VECTOR``).
 
-If a word in ``query`` is a key of substitution table, the word is
-substituted with substitution column value that is associated with the
-key. Substition isn't performed recursively. It means that
-substitution target words in substituted query aren't substituted.
+Query expansion substitutes key of substitution table in query with
+values in substitution column. If a word in ``query`` is a key of
+substitution table, the word is substituted with substitution column
+value that is associated with the key. Substition isn't performed
+recursively. It means that substitution target words in substituted
+query aren't substituted.
 
 Here is a sample substitution table to show a simple
 ``query_expansion`` usage example.
@@ -550,7 +550,7 @@ The ``select`` command just outputs ``_id`` and ``_key`` column
 values.
 
 ``*`` is a special value. It means that all columns that are not
-:doc:``/pseudo_column``.
+:doc:`/pseudo_column`.
 
 Here is a ``*`` usage example.
 
