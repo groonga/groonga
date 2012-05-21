@@ -562,7 +562,7 @@ if __FILE__ == $0
             file_prefix = app_type + "_"
           end
 
-          dottest = grndata.generate_test_data(app_type)
+          dot_test = grndata.generate_test_data(app_type)
 
           if filename and filename != ""
             if type == "line"
@@ -588,12 +588,12 @@ if __FILE__ == $0
             # duplicated?
             puts("Warning! [#{i}] #{test_name} duplicated")
           end
-          File.open(test_name, "w+") do |testfile|
+          File.open(test_name, "w+") do |test_file|
             if OPTS.has_key?(:verbose)
               puts(test_name)
-              puts(dottest)
+              puts(dot_test)
             end
-            testfile.puts(dottest)
+            test_file.puts(dot_test)
           end
         end
       end
