@@ -37,6 +37,15 @@ def reconnect(name):
 
 fout = None
 
+def normalize_output(output):
+  status = output[0]
+  if status:
+    normalized_start_time = 1337566253.89858
+    normalized_elapsed_time = 0.000355720520019531
+    status[1] = normalized_start_time
+    status[2] = normalized_elapsed_time
+  return output
+
 def execmd(command, fout):
   formatted_command_line = "  " + command + "\n"
   stdout.write(command + "\n")
@@ -65,7 +74,8 @@ def execmd(command, fout):
             formatted_output = output_buffer
           else:
             parsed_output = json.loads(output_buffer)
-            formatted_output = json.dumps(parsed_output,
+            normalized_output = normalize_output(parsed_output)
+            formatted_output = json.dumps(normalized_output,
                                           indent=2,
                                           ensure_ascii=False)
             formatted_output += "\n"
