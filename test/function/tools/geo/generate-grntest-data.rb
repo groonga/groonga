@@ -402,7 +402,7 @@ class GrnTestData
                       "latitude", @latitude_end_degree)
     scorer = sprintf("--scorer 'distance = geo_distance(\"%sx%s\", \"%sx%s\"",
                      @longitude_start_degree, @latitude_start_degree,
-                     @longitude_end_degree, @latitude_end_degree, app_type)
+                     @longitude_end_degree, @latitude_end_degree)
     if app_type == ""
       # default
       select_postfix = ")'\n"
@@ -438,7 +438,7 @@ class GrnTestData
     select_postfix = ""
     scorer = sprintf("--scorer 'distance = geo_distance(\"%sx%s\", \"%sx%s\"",
                      @longitude_start, @latitude_start,
-                     @longitude_end, @latitude_end, app_type)
+                     @longitude_end, @latitude_end)
     if app_type == ""
       select_postfix = ")'\n"
     else
