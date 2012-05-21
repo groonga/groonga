@@ -245,32 +245,36 @@ class GrnTestData
     @latitude_start_degree == @latitude_end_degree
   end
 
-  def to_north?(check_longitude=true)
-    if check_longitude
+  def to_north?(check_option=nil)
+    check_option ||= {:check_longitude => true}
+    if check_option[:check_longitude] == true
       longitude_equal? and @latitude_start_degree < @latitude_end_degree
     else
       @latitude_start_degree < @latitude_end_degree
     end
   end
 
-  def to_east?(check_latitude=true)
-    if check_latitude
+  def to_east?(check_option=nil)
+    check_option ||= {:check_latitude => true}
+    if check_option[:check_latitude] == true
       latitude_equal? and @longitude_start_degree < @longitude_end_degree
     else
       @longitude_start_degree < @longitude_end_degree
     end
   end
 
-  def to_west?(check_latitude=true)
-    if check_latitude
+  def to_west?(check_option=nil)
+    check_option ||= {:check_latitude => true}
+    if check_option[:check_latitude] == true
       latitude_equal? and @longitude_start_degree > @longitude_end_degree
     else
       @longitude_start_degree > @longitude_end_degree
     end
   end
 
-  def to_south?(check_longitude=true)
-    if check_longitude
+  def to_south?(check_option=nil)
+    check_option ||= {:check_longitude => true}
+    if check_option[:check_longitude] == true
       longitude_equal? and @latitude_start_degree > @latitude_end_degree
     else
       @latitude_start_degree > @latitude_end_degree
@@ -278,19 +282,27 @@ class GrnTestData
   end
 
   def to_north_east?
-    to_north?(false) and to_east?(false)
+    check_longitude = {:check_longitude => false}
+    check_latitude = {:check_latitude => false}
+    to_north?(check_longitude) and to_east?(check_latitude)
   end
 
   def to_north_west?
-    to_north?(false) and to_west?(false)
+    check_longitude = {:check_longitude => false}
+    check_latitude = {:check_latitude => false}
+    to_north?(check_longitude) and to_west?(check_latitude)
   end
 
   def to_south_east?
-    to_south?(false) and to_east?(false)
+    check_longitude = {:check_longitude => false}
+    check_latitude = {:check_latitude => false}
+    to_south?(check_longitude) and to_east?(check_latitude)
   end
 
   def to_south_west?
-    to_south?(false) and to_west?(false)
+    check_longitude = {:check_longitude => false}
+    check_latitude = {:check_latitude => false}
+    to_south?(check_longitude) and to_west?(check_latitude)
   end
 
   def direction
