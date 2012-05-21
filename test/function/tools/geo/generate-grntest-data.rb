@@ -325,7 +325,7 @@ class GrnTestData
   end
 
   def generate_filename
-    sprintf("%s.test", latitude_position)
+    "#{latitude_position}.test"
   end
 
   def longitude_position
