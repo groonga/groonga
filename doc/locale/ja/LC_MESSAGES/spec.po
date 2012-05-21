@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-27 23:53\n"
+"POT-Creation-Date: 2012-05-21 14:11\n"
 "PO-Revision-Date: 2012-04-28 11:40+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -28,6 +28,7 @@ msgstr "クエリ構文"
 
 # fce4a207dd274d16a8b2afc7cae872e3
 #: ../../../source/spec/query_syntax.txt:11
+#: ../../../source/spec/script_syntax.txt:11
 msgid "TODO: revised."
 msgstr ""
 
@@ -201,9 +202,147 @@ msgstr ""
 msgid "Script Syntax"
 msgstr "スクリプト構文"
 
-# fe884bf6e29c4463b588f80a985ddf99
-#: ../../../source/spec/script_syntax.txt:11
-msgid "TODO..."
+# 216313021a6947c89a8f2313c2faf4c7
+#: ../../../source/spec/script_syntax.txt:13
+msgid ""
+"スクリプト構文はECMAScriptに類似した構文で条件式などを表現するための構文で"
+"す。ECMAScriptにある演算子に加えてgroonga独自の演算子を追加しています。"
+msgstr ""
+
+# b6e53c0d39b84c4ab381ea445c4ad27c
+#: ../../../source/spec/script_syntax.txt:15
+msgid ""
+"まず、ECMAScriptにあるような基本的な演算子を説明し、その後、groongaが追加した"
+"独自の演算子を説明します。"
+msgstr ""
+
+# b67c2fd276f3407fa7275056c9e0c753
+#: ../../../source/spec/script_syntax.txt:18
+msgid "基本的な演算子"
+msgstr ""
+
+# bc9c493ee1074fb599e8035fe64990cf
+#: ../../../source/spec/script_syntax.txt:20
+msgid "TODO: ..."
+msgstr ""
+
+# cbce4f2a494e41079c227f52f383aa7f
+#: ../../../source/spec/script_syntax.txt:23
+msgid "独自の演算子"
+msgstr ""
+
+# 6a47196413fe4377bf2c93a22e281d72
+#: ../../../source/spec/script_syntax.txt:25
+msgid ""
+"groongaは検索に特化した2項演算子を追加しています。独自の2項演算子は ``@`` ま"
+"たは ``*`` ではじまります。"
+msgstr ""
+
+# 6702f68904204429a3407f6b8f7fb916
+#: ../../../source/spec/script_syntax.txt:28
+msgid "``カラム @ 値``"
+msgstr ""
+
+# 51053177503d41d9b6ed30be3b4decf2
+#: ../../../source/spec/script_syntax.txt:30
+msgid ""
+"``カラム`` をソースに設定している転置索引を用いて、 ``値`` で検索します。通常"
+"は全文検索になりますが、タグ検索などもこの書式で行います。 ``query`` ではデ"
+"フォルトでこの演算子を使っていることになります。"
+msgstr ""
+
+# 1e29b8f0b57d48a9a551e8651cdcc12c
+#: ../../../source/spec/script_syntax.txt:33
+msgid "``カラム @^ 値``"
+msgstr ""
+
+# d4285c5448a149ca91a1014e586b1f1f
+#: ../../../source/spec/script_syntax.txt:35
+msgid ""
+"``カラム`` の値を ``値`` で前方一致検索します。 ``カラム`` はパトリシアツリー"
+"またはダブル配列の主キー（ ``_key`` ）でなければいけません。"
+msgstr ""
+
+# 2d58a6f9de434ad183603dcf3916c5ce
+#: ../../../source/spec/script_syntax.txt:38
+msgid "``カラム @$ 値``"
+msgstr ""
+
+# 5f9dfa4819de402c9be0150a2ccd742d
+#: ../../../source/spec/script_syntax.txt:40
+msgid "``カラム`` の値を ``値`` で後方一致検索します。"
+msgstr ""
+
+# 0e454090a85440358334ac5df5ee9169
+# 611d7596303a4fb28c7aec8592b63e5a
+#: ../../../source/spec/script_syntax.txt:42
+#: ../../../source/spec/script_syntax.txt:49
+msgid "未サポートです。"
+msgstr ""
+
+# 5cd048942bc9434d96e9fa674e9fba02
+#: ../../../source/spec/script_syntax.txt:45
+msgid "``カラム *N \"単語1 単語2 ...\"``"
+msgstr ""
+
+# 5dc21e7a3d3d4409869ef8260dad5875
+#: ../../../source/spec/script_syntax.txt:47
+msgid ""
+"``カラム`` の値の中に ``単語1`` 、 ``単語2`` 、 ``...``  が近傍にある文書を検"
+"索します。（近傍検索。） ``カラム`` には全文検索用のインデックスが設定されて"
+"いなければいけません。"
+msgstr ""
+
+# 083ee5e54a0b4354948dc8dfed3aefb6
+#: ../../../source/spec/script_syntax.txt:52
+msgid "``カラム *S \"文書\"``"
+msgstr ""
+
+# b8b76373d15946f2a26a5410da1cc2e2
+#: ../../../source/spec/script_syntax.txt:54
+msgid ""
+"``カラム`` の値が ``文書`` に類似している文書を検索します。（類似文書検"
+"索。） ``カラム`` には全文検索用のインデックスが設定されていなければいけませ"
+"ん。"
+msgstr ""
+
+# d17be80be86b4d3a920e8e325104d6c1
+#: ../../../source/spec/script_syntax.txt:63
+msgid "``カラム *> 重み``"
+msgstr ""
+
+# ef3d7a46aaa04bd5ad6c2335336fadf3
+#: ../../../source/spec/script_syntax.txt:65
+msgid "``カラム`` の重みを ``重み`` 分上げます。"
+msgstr ""
+
+# e70f33dfdd0741a792207f51f77d4cb2
+# 6f399ff364e843f0b26f6005d900ceef
+# b0c9f3c996664751b3e6403e7b6aa027
+#: ../../../source/spec/script_syntax.txt:67
+#: ../../../source/spec/script_syntax.txt:74
+#: ../../../source/spec/script_syntax.txt:81
+msgid "未サポート。"
+msgstr ""
+
+# 4bc968572345470e8234912b6799be57
+#: ../../../source/spec/script_syntax.txt:70
+msgid "``カラム *< 重み``"
+msgstr ""
+
+# e77dbc84221c4112902819c3b70ecc3c
+#: ../../../source/spec/script_syntax.txt:72
+msgid "``カラム`` の重みを ``重み`` 分下げます。"
+msgstr ""
+
+# 6818e26f97474ce0ac774dc300d52f72
+#: ../../../source/spec/script_syntax.txt:77
+msgid "``カラム *~ 重み``"
+msgstr ""
+
+# 4b05d070d00b4c0fb3284f25858b1577
+#: ../../../source/spec/script_syntax.txt:79
+msgid "``カラム`` がマッチした場合、文書の検索スコアを ``重み`` 分下げます。"
 msgstr ""
 
 #: ../../../source/spec/search.txt:6

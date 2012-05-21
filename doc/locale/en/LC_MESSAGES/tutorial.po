@@ -7,80 +7,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 2.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-28 11:36\n"
+"POT-Creation-Date: 2012-05-21 14:05\n"
 "PO-Revision-Date: 2012-04-28 11:38+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
+"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-
-# 495cbb696fa348f8b43fff7b96506a81
-#: ../../../source/tutorial.txt:6
-msgid "Tutorial"
-msgstr "Tutorial"
-
-# 55c7c73c33eb43e09e4044bf2efc20c8
-#: ../../../source/tutorial/data.txt:11
-msgid "Various data types"
-msgstr "Various data types"
-
-# 703ec5b7d6e54e329515823f5c71b20d
-#: ../../../source/tutorial/data.txt:13
-msgid ""
-"Groonga is a full text search engine but also serves as a column-oriented "
-"data store. Groonga supports various data types, such as numeric types, "
-"string types, date and time type, longitude and latitude types, etc. This "
-"tutorial shows a list of data types and explains how to use them."
-msgstr ""
-"Groonga is a full text search engine but also serves as a column-oriented "
-"data store. Groonga supports various data types, such as numeric types, "
-"string types, date and time type, longitude and latitude types, etc. This "
-"tutorial shows a list of data types and explains how to use them."
-
-# b901cae2b4ac4f1aa468468278011d8f
-#: ../../../source/tutorial/data.txt:16
-msgid "Overview"
-msgstr "Overview"
-
-# fbe4c75e530942418bc11720b896fd0f
-#: ../../../source/tutorial/data.txt:18
-msgid ""
-"The basic data types of groonga are roughly divided into 5 groups --- "
-"boolean type, numeric types, string types, date/time type and longitude/"
-"latitude types. The numeric types are further divided according to whether "
-"integer or floating point number, signed or unsigned and the number of bits "
-"allocated to each integer. The string types are further divided according to "
-"the maximum length. The longitude/latitude types are further divided "
-"according to the geographic coordinate system. For more details, see :doc:`/"
-"type`."
-msgstr ""
-"The basic data types of groonga are roughly divided into 5 groups --- "
-"boolean type, numeric types, string types, date/time type and longitude/"
-"latitude types. The numeric types are further divided according to whether "
-"integer or floating point number, signed or unsigned and the number of bits "
-"allocated to each integer. The string types are further divided according to "
-"the maximum length. The longitude/latitude types are further divided "
-"according to the geographic coordinate system. For more details, see :doc:`/"
-"type`."
-
-# aad98611515047b1b42597d078f46bff
-#: ../../../source/tutorial/data.txt:20
-msgid ""
-"In addition, groonga supports reference types and vector types. Reference "
-"types are designed for accessing other tables. Vector types are designed for "
-"storing a variable number of values in one element."
-msgstr ""
-"In addition, groonga supports reference types and vector types. Reference "
-"types are designed for accessing other tables. Vector types are designed for "
-"storing a variable number of values in one element."
-
-# d3b90b641c094c498be0dea6ab6e3eb0
-#: ../../../source/tutorial/data.txt:22
-msgid "First, let's create a table for this tutorial."
-msgstr "First, let's create a table for this tutorial."
 
 # 2dd8a2a18d154ae88f7f00d1d7194425
 # f38b0fd8958b4fab900414278bd9e999
@@ -175,14 +110,6 @@ msgstr "First, let's create a table for this tutorial."
 #: ../../../source/example/tutorial/index-6.log:1
 #: ../../../source/example/tutorial/index-7.log:1
 #: ../../../source/example/tutorial/introduction-1.log:1
-#: ../../../source/example/tutorial/introduction-2.log:1
-#: ../../../source/example/tutorial/introduction-3.log:1
-#: ../../../source/example/tutorial/introduction-4.log:1
-#: ../../../source/example/tutorial/introduction-5.log:1
-#: ../../../source/example/tutorial/introduction-6.log:1
-#: ../../../source/example/tutorial/introduction-7.log:1
-#: ../../../source/example/tutorial/introduction-8.log:1
-#: ../../../source/example/tutorial/introduction-9.log:1
 #: ../../../source/example/tutorial/introduction-10.log:1
 #: ../../../source/example/tutorial/introduction-11.log:1
 #: ../../../source/example/tutorial/introduction-12.log:1
@@ -192,11 +119,20 @@ msgstr "First, let's create a table for this tutorial."
 #: ../../../source/example/tutorial/introduction-16.log:1
 #: ../../../source/example/tutorial/introduction-17.log:1
 #: ../../../source/example/tutorial/introduction-18.log:1
+#: ../../../source/example/tutorial/introduction-2.log:1
+#: ../../../source/example/tutorial/introduction-3.log:1
+#: ../../../source/example/tutorial/introduction-4.log:1
+#: ../../../source/example/tutorial/introduction-5.log:1
+#: ../../../source/example/tutorial/introduction-6.log:1
+#: ../../../source/example/tutorial/introduction-7.log:1
+#: ../../../source/example/tutorial/introduction-8.log:1
+#: ../../../source/example/tutorial/introduction-9.log:1
 #: ../../../source/example/tutorial/match_columns-1.log:1
 #: ../../../source/example/tutorial/match_columns-2.log:1
 #: ../../../source/example/tutorial/match_columns-3.log:1
 #: ../../../source/example/tutorial/match_columns-4.log:1
 #: ../../../source/example/tutorial/micro_blog-1.log:1
+#: ../../../source/example/tutorial/micro_blog-10.log:1
 #: ../../../source/example/tutorial/micro_blog-2.log:1
 #: ../../../source/example/tutorial/micro_blog-3.log:1
 #: ../../../source/example/tutorial/micro_blog-4.log:1
@@ -205,12 +141,8 @@ msgstr "First, let's create a table for this tutorial."
 #: ../../../source/example/tutorial/micro_blog-7.log:1
 #: ../../../source/example/tutorial/micro_blog-8.log:1
 #: ../../../source/example/tutorial/micro_blog-9.log:1
-#: ../../../source/example/tutorial/micro_blog-10.log:1
-#: ../../../source/tutorial/network.txt:31
-#: ../../../source/tutorial/network.txt:48
 #: ../../../source/example/tutorial/network-1.log:1
 #: ../../../source/example/tutorial/network-2.log:1
-#: ../../../source/tutorial/network.txt:112
 #: ../../../source/example/tutorial/network-3.log:1
 #: ../../../source/example/tutorial/patricia_trie-1.log:1
 #: ../../../source/example/tutorial/patricia_trie-2.log:1
@@ -224,8 +156,76 @@ msgstr "First, let's create a table for this tutorial."
 #: ../../../source/example/tutorial/search-5.log:1
 #: ../../../source/example/tutorial/search-6.log:1
 #: ../../../source/example/tutorial/search-7.log:1
+#: ../../../source/tutorial/network.txt:31
+#: ../../../source/tutorial/network.txt:48
+#: ../../../source/tutorial/network.txt:112
 msgid "Execution example::"
 msgstr "Execution example::"
+
+# 495cbb696fa348f8b43fff7b96506a81
+#: ../../../source/tutorial.txt:6
+msgid "Tutorial"
+msgstr "Tutorial"
+
+# 55c7c73c33eb43e09e4044bf2efc20c8
+#: ../../../source/tutorial/data.txt:11
+msgid "Various data types"
+msgstr "Various data types"
+
+# 703ec5b7d6e54e329515823f5c71b20d
+#: ../../../source/tutorial/data.txt:13
+msgid ""
+"Groonga is a full text search engine but also serves as a column-oriented "
+"data store. Groonga supports various data types, such as numeric types, "
+"string types, date and time type, longitude and latitude types, etc. This "
+"tutorial shows a list of data types and explains how to use them."
+msgstr ""
+"Groonga is a full text search engine but also serves as a column-oriented "
+"data store. Groonga supports various data types, such as numeric types, "
+"string types, date and time type, longitude and latitude types, etc. This "
+"tutorial shows a list of data types and explains how to use them."
+
+# b901cae2b4ac4f1aa468468278011d8f
+#: ../../../source/tutorial/data.txt:16
+msgid "Overview"
+msgstr "Overview"
+
+# fbe4c75e530942418bc11720b896fd0f
+#: ../../../source/tutorial/data.txt:18
+msgid ""
+"The basic data types of groonga are roughly divided into 5 groups --- "
+"boolean type, numeric types, string types, date/time type and longitude/"
+"latitude types. The numeric types are further divided according to whether "
+"integer or floating point number, signed or unsigned and the number of bits "
+"allocated to each integer. The string types are further divided according to "
+"the maximum length. The longitude/latitude types are further divided "
+"according to the geographic coordinate system. For more details, see :doc:`/"
+"type`."
+msgstr ""
+"The basic data types of groonga are roughly divided into 5 groups --- "
+"boolean type, numeric types, string types, date/time type and longitude/"
+"latitude types. The numeric types are further divided according to whether "
+"integer or floating point number, signed or unsigned and the number of bits "
+"allocated to each integer. The string types are further divided according to "
+"the maximum length. The longitude/latitude types are further divided "
+"according to the geographic coordinate system. For more details, see :doc:`/"
+"type`."
+
+# aad98611515047b1b42597d078f46bff
+#: ../../../source/tutorial/data.txt:20
+msgid ""
+"In addition, groonga supports reference types and vector types. Reference "
+"types are designed for accessing other tables. Vector types are designed for "
+"storing a variable number of values in one element."
+msgstr ""
+"In addition, groonga supports reference types and vector types. Reference "
+"types are designed for accessing other tables. Vector types are designed for "
+"storing a variable number of values in one element."
+
+# d3b90b641c094c498be0dea6ab6e3eb0
+#: ../../../source/tutorial/data.txt:22
+msgid "First, let's create a table for this tutorial."
+msgstr "First, let's create a table for this tutorial."
 
 # 32cabc4acfb44b35af812f9f03329560
 #: ../../../source/tutorial/data.txt:29

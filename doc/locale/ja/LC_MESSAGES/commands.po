@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-05-20 21:02\n"
+"POT-Creation-Date: 2012-05-21 14:11\n"
 "PO-Revision-Date: 2012-05-21 13:02+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -1229,7 +1229,11 @@ msgid ""
 "and the number of likes for the entry. Title is key of ``Entries``. Content "
 "is value of ``Entries.content`` column. The number of likes is value of "
 "``Entries.n_likes`` column."
-msgstr "ブログエントリ用の ``Entries`` テーブルがあります。各エントリはタイトルと内容と「いいね！」数を持っています。タイトルは ``Entries`` のキーとします。内容は ``Entries.content`` カラムの値とします。「いいね！」数は ``Entries.n_likes`` カラムの値とします。"
+msgstr ""
+"ブログエントリ用の ``Entries`` テーブルがあります。各エントリはタイトルと内容"
+"と「いいね！」数を持っています。タイトルは ``Entries`` のキーとします。内容"
+"は ``Entries.content`` カラムの値とします。「いいね！」数は ``Entries."
+"n_likes`` カラムの値とします。"
 
 # e675f12376d04a93b6a956b444d1c92a
 #: ../../../source/commands/select.txt:84
@@ -1237,7 +1241,10 @@ msgid ""
 "``Entries._key`` column and ``Entries.content`` column are indexed using "
 "``TokenBigram`` tokenizer. So both ``Entries._key`` and ``Entries.content`` "
 "are fulltext search ready."
-msgstr "``Entries._key`` カラムと ``Entries.content`` カラムには ``TokenBigram`` トークナイザーを使ったインデックスを作成します。そのため、 ``Entries._key`` と ``Entries.content`` は両方とも全文検索できます。"
+msgstr ""
+"``Entries._key`` カラムと ``Entries.content`` カラムには ``TokenBigram`` トー"
+"クナイザーを使ったインデックスを作成します。そのため、 ``Entries._key`` と "
+"``Entries.content`` は両方とも全文検索できます。"
 
 # b4c08ca492a64cb0a08bbd496ab74531
 #: ../../../source/commands/select.txt:88
@@ -1315,7 +1322,9 @@ msgid ""
 "Normally, ``query`` parameter is used for specifying fulltext search "
 "conditions. It can be used for non fulltext search conditions but ``filter`` "
 "is used for the propose."
-msgstr "通常は ``query`` 引数は全文検索条件を指定するために使います。全文検索条件以外も指定できますが、その用途には ``filter`` 引数の方が向いています。"
+msgstr ""
+"通常は ``query`` 引数は全文検索条件を指定するために使います。全文検索条件以外"
+"も指定できますが、その用途には ``filter`` 引数の方が向いています。"
 
 # 51855cd50b08498f92669d7e9ead6c7d
 #: ../../../source/commands/select.txt:126
@@ -1324,7 +1333,10 @@ msgid ""
 "parameter is used for specifying fulltext search conditions. "
 "``match_columns`` specifies which columnes and indexes are matched against "
 "``query``."
-msgstr "``query`` 引数で全文検索条件を指定する場合は、 ``match_columns`` 引数と一緒に使います。 ``match_columns`` はどのカラムまたはインデックスを使って ``query`` を検索するかを指定します。"
+msgstr ""
+"``query`` 引数で全文検索条件を指定する場合は、 ``match_columns`` 引数と一緒に"
+"使います。 ``match_columns`` はどのカラムまたはインデックスを使って "
+"``query`` を検索するかを指定します。"
 
 # 1ccd84b3f15a4567b23bb0e7d8c66fcd
 #: ../../../source/commands/select.txt:131
@@ -1376,7 +1388,12 @@ msgid ""
 "table. There are three operators in the command, ``@``, ``&&`` and ``==``. "
 "``@`` is fulltext search operator. ``&&`` and ``==`` are the same as "
 "ECMAScript. ``&&`` is logical AND operator and ``==`` is equality operator."
-msgstr "この ``select`` コマンドは ``Entries`` テーブルの中の ``content`` カラムの値に ``fast`` という単語を含んでいて、かつ、 ``_key`` が ``Groonga`` のレコードを検索します。このコマンドの中には ``@`` と ``&&`` と ``==`` という3つの演算子があります。 ``@`` は全文検索用の演算子です。 ``&&`` と ``==`` はECMAScriptと同じ意味です。 ``&&`` が論理積用の演算子で ``==`` が等価演算子です。"
+msgstr ""
+"この ``select`` コマンドは ``Entries`` テーブルの中の ``content`` カラムの値"
+"に ``fast`` という単語を含んでいて、かつ、 ``_key`` が ``Groonga`` のレコード"
+"を検索します。このコマンドの中には ``@`` と ``&&`` と ``==`` という3つの演算"
+"子があります。 ``@`` は全文検索用の演算子です。 ``&&`` と ``==`` はECMAScript"
+"と同じ意味です。 ``&&`` が論理積用の演算子で ``==`` が等価演算子です。"
 
 # c9f4049227474068baf439c6ec31e09b
 #: ../../../source/commands/select.txt:162
@@ -1631,15 +1648,23 @@ msgstr ""
 
 # a0145a0c4fbf4ab0a1fa14b59db7efb1
 #: ../../../source/commands/select.txt:299
+#, fuzzy
 msgid ""
 "It specifies the query text. Normally, it is used for fulltext search with "
 "``match_columns`` parameter. ``query`` parameter is designed for a fulltext "
 "search form in a Web page. A query text should be formatted in :doc:`/spec/"
 "query_syntax`. The syntax is similar to common search form like Google's "
-"search form. For example, ``word1 word2`` means that matched records must "
-"contain both ``word1`` and ``word2``. ``word1 OR word2`` means that "
-"matched records must contain either ``word1`` or ``word2``."
-msgstr "クエリテキストを指定します。通常、 ``match_columns`` 引数と一緒に全文検索をするために使います。 ``query`` 引数はWebページにある全文検索フォームで使いやすいように設計されています。クエリテキストは :doc:`/spec/query_syntax` という書式を使います。この書式はGoogleの検索フォームのように一般的な検索フォームと似ています。例えば、 ``word1 word2`` は ``word1`` と ``word2`` を含んでいるレコードを検索するという意味になります。 ``word1 OR word2`` は ``word1`` または ``word2`` を含んでいるレコードを検索するという意味になります。"
+"search form. For example, ``word1 word2`` means that groonga searches "
+"records that contain both ``word1`` and ``word2``. ``word1 OR word2`` means "
+"that groogna searches records that contain either ``word1`` or ``word2``."
+msgstr ""
+"クエリテキストを指定します。通常、 ``match_columns`` 引数と一緒に全文検索をす"
+"るために使います。 ``query`` 引数はWebページにある全文検索フォームで使いやす"
+"いように設計されています。クエリテキストは :doc:`/spec/query_syntax` という書"
+"式を使います。この書式はGoogleの検索フォームのように一般的な検索フォームと似"
+"ています。例えば、 ``word1 word2`` は ``word1`` と ``word2`` を含んでいるレ"
+"コードを検索するという意味になります。 ``word1 OR word2`` は ``word1`` また"
+"は ``word2`` を含んでいるレコードを検索するという意味になります。"
 
 # 19c0a971f31d469f940d93c9f303237e
 #: ../../../source/commands/select.txt:308
@@ -1651,7 +1676,9 @@ msgstr "以下は論理積を使った検索の簡単な例です。"
 msgid ""
 "The ``select`` command searches records that contain two words ``fast`` and "
 "``groonga`` in ``content`` column value from ``Entries`` table."
-msgstr "この ``select`` コマンドは ``Entries`` テーブルの中から ``content`` カラムの値に ``fast`` と ``groonga`` の2つの単語を含んでいるレコードを検索します。"
+msgstr ""
+"この ``select`` コマンドは ``Entries`` テーブルの中から ``content`` カラムの"
+"値に ``fast`` と ``groonga`` の2つの単語を含んでいるレコードを検索します。"
 
 # 19c0a971f31d469f940d93c9f303237e
 #: ../../../source/commands/select.txt:318
@@ -1664,7 +1691,10 @@ msgid ""
 "The ``select`` command searches records that contain one of two words "
 "``groonga`` or ``mroonga`` in ``content`` column value from ``Entries`` "
 "table."
-msgstr "この ``select`` コマンドは ``Entries`` テーブルの中から ``content`` カラムの値に ``fast`` または ``groonga`` のどちらかの単語を含んでいるレコードを検索します。"
+msgstr ""
+"この ``select`` コマンドは ``Entries`` テーブルの中から ``content`` カラムの"
+"値に ``fast`` または ``groonga`` のどちらかの単語を含んでいるレコードを検索し"
+"ます。"
 
 # 83e77c84e42145d6b459238678f259d9
 #: ../../../source/commands/select.txt:328
@@ -1678,35 +1708,42 @@ msgid ""
 "example, ``column:value`` means the value of ``column`` column is equal to "
 "``value``. ``column:<value`` means the value of ``column`` column is less "
 "than ``value``."
-msgstr "``query`` では全文検索だけではなく他の条件も使えます。例えば、 ``column:value`` は ``column`` の値が ``value`` と等しいという意味です。 ``column:<value`` は ``column`` の値が ``value`` より小さいという意味です。"
+msgstr ""
+"``query`` では全文検索だけではなく他の条件も使えます。例えば、 ``column:"
+"value`` は ``column`` の値が ``value`` と等しいという意味です。 ``column:"
+"<value`` は ``column`` の値が ``value`` より小さいという意味です。"
 
 # 1ccd84b3f15a4567b23bb0e7d8c66fcd
 #: ../../../source/commands/select.txt:335
-#: ../../../source/commands/select.txt:370
+#: ../../../source/commands/select.txt:371
 msgid "Here is a simple equality operator search example."
 msgstr "以下は等価演算子を使った検索の簡単な例です。"
 
 # dc8002538e794368b895d463ce15d092
 #: ../../../source/commands/select.txt:341
-#: ../../../source/commands/select.txt:376
+#: ../../../source/commands/select.txt:377
 msgid ""
 "The ``select`` command searches records that ``_key`` column value is "
 "``Groonga`` from ``Entries`` table."
-msgstr "この ``select`` コマンドは ``Entries`` テーブルの中から ``_key`` カラムの値が ``Groonga`` であるレコードを検索します。"
+msgstr ""
+"この ``select`` コマンドは ``Entries`` テーブルの中から ``_key`` カラムの値"
+"が ``Groonga`` であるレコードを検索します。"
 
 # 19c0a971f31d469f940d93c9f303237e
 #: ../../../source/commands/select.txt:344
-#: ../../../source/commands/select.txt:379
+#: ../../../source/commands/select.txt:380
 msgid "Here is a simple less than operator search example."
 msgstr "以下は比較演算子を使った検索の簡単な例です。"
 
 # dc8002538e794368b895d463ce15d092
 #: ../../../source/commands/select.txt:350
-#: ../../../source/commands/select.txt:385
+#: ../../../source/commands/select.txt:386
 msgid ""
 "The ``select`` command searches records that ``n_likes`` column value is "
 "less than ``11`` from ``Entries`` table."
-msgstr "この ``select`` コマンドは ``Entries`` テーブルの中から ``n_likes`` カラムの値が ``11`` より小さいレコードを検索します。"
+msgstr ""
+"この ``select`` コマンドは ``Entries`` テーブルの中から ``n_likes`` カラムの"
+"値が ``11`` より小さいレコードを検索します。"
 
 # 83e77c84e42145d6b459238678f259d9
 #: ../../../source/commands/select.txt:353
@@ -1721,44 +1758,58 @@ msgid ""
 "``filter`` and ``query`` are specified, there are conbined with logical and. "
 "It means that matched records should be matched against both ``filter`` and "
 "``query``."
-msgstr "フィルターテキストを指定します。通常、 ``filter`` は複雑な条件を指定するために使います。 ``filter`` は ``query`` 引数と一緒に使うこともできます。 ``filter`` と ``query`` を両方指定した場合はそれらを論理積で組み合わせます。つまり、マッチするレコードは ``filter`` にも ``query`` にもマッチしなければいけないということです。"
+msgstr ""
+"フィルターテキストを指定します。通常、 ``filter`` は複雑な条件を指定するため"
+"に使います。 ``filter`` は ``query`` 引数と一緒に使うこともできます。 "
+"``filter`` と ``query`` を両方指定した場合はそれらを論理積で組み合わせます。"
+"つまり、マッチするレコードは ``filter`` にも ``query`` にもマッチしなければい"
+"けないということです。"
 
 # 4f2a3aea1b994d01aecda600df7717d2
 #: ../../../source/commands/select.txt:364
 msgid ""
 "``filter`` parameter is designed for complex conditions. A filter text "
 "should be formated in :doc:`/spec/script_syntax`. The syntax is similar to "
-"ECMAScript. For example, ``column == \"value\"`` means that the value of ``column`` "
-"column is equal to ``\"value\"``. ``column < value`` means that the value of "
-"``column`` column is less than ``value``."
-msgstr "``filter`` 引数は複雑な条件用に設計されています。フィルターテキストは :doc:`/spec/script_syntax` 書式で指定します。この書式はECMAScriptに似ています。例えば、 ``column == \"value\"`` は ``column`` カラムの値が ``\"value\"`` と等しいという意味です。 ``column < value`` は ``column`` カラムの値が ``value`` よりも小さいという意味です。"
+"ECMAScript. For example, ``column == \"value\"`` means that the value of "
+"``column`` column is equal to ``\"value\"``. ``column < value`` means that "
+"the value of ``column`` column is less than ``value``."
+msgstr ""
+"``filter`` 引数は複雑な条件用に設計されています。フィルターテキストは :doc:`/"
+"spec/script_syntax` 書式で指定します。この書式はECMAScriptに似ています。例え"
+"ば、 ``column == \"value\"`` は ``column`` カラムの値が ``\"value\"`` と等し"
+"いという意味です。 ``column < value`` は ``column`` カラムの値が ``value`` よ"
+"りも小さいという意味です。"
 
 # f5fc8877da7b4638a79feea52c308d37
-#: ../../../source/commands/select.txt:388
+#: ../../../source/commands/select.txt:389
 msgid "See :doc:`/spec/script_syntax` for other operators."
 msgstr "他の演算子は :doc:`/spec/script_syntax` を参照してください。"
 
 # c5f24b504a224cf684d4e28c65d06f03
-#: ../../../source/commands/select.txt:391
+#: ../../../source/commands/select.txt:392
 msgid "Advanced search parameters"
 msgstr "高度な検索のための引数"
 
-#: ../../../source/commands/select.txt:394
+#: ../../../source/commands/select.txt:395
 msgid "``match_escalation_threshold``"
 msgstr ""
 
 # c56587595f4e47df927d37c0ab1de24d
-#: ../../../source/commands/select.txt:396
+#: ../../../source/commands/select.txt:397
 msgid ""
 "It specifies threshold to determine whether search storategy escalation is "
 "used or not. The threshold is compared against the number of matched "
 "records. If the number of matched records is equal to or less than the "
 "threshold, the search storategy escalation is used. See :doc:`/spec/search` "
 "about the search storategy escalation."
-msgstr "検索方法をエスカレーションするかどうかを決定するための閾値を指定します。この閾値はマッチしたレコード数との比較に使われます。マッチしたレコード数がこの閾値以下の場合は検索方法をエスカレーションします。検索方法のエスカレーションについては :doc:`/spec/search` を参照してください。"
+msgstr ""
+"検索方法をエスカレーションするかどうかを決定するための閾値を指定します。この"
+"閾値はマッチしたレコード数との比較に使われます。マッチしたレコード数がこの閾"
+"値以下の場合は検索方法をエスカレーションします。検索方法のエスカレーションに"
+"ついては :doc:`/spec/search` を参照してください。"
 
 # 94fcc85c0643425b81cf310f8dcb0baf
-#: ../../../source/commands/select.txt:402
+#: ../../../source/commands/select.txt:403
 msgid ""
 "The default threshold is 0. It means that search storategy escalation is "
 "used only when no records are matched."
@@ -1767,35 +1818,38 @@ msgstr ""
 "法をエスカレーションするということです。"
 
 # 7138f65c5f684072ad8ec9b276b6667d
-#: ../../../source/commands/select.txt:405
+#: ../../../source/commands/select.txt:406
 msgid "The default threshold can be customized by one of the followings."
 msgstr "デフォルトの閾値は以下の方法でカスタマイズできます。"
 
 # 2c2ba162241c4df6b7ab6251248e9b18
-#: ../../../source/commands/select.txt:407
+#: ../../../source/commands/select.txt:408
 msgid "``--with-match-escalation-threshold`` option of configure"
 msgstr "configureの ``--with-match-escalation-threshold`` オプション"
 
 # 016be2770bff43218f2090357e3540e1
-#: ../../../source/commands/select.txt:408
+#: ../../../source/commands/select.txt:409
 msgid "``--match-escalation-threshold`` option of groogna command"
 msgstr "groongaコマンドの ``--match-escalation-threshold`` オプション"
 
 # 5a636f4b765645cfbb10e220f6b97c77
-#: ../../../source/commands/select.txt:409
+#: ../../../source/commands/select.txt:410
 msgid "``match-escalation-threshold`` configuration item in configuration file"
 msgstr "設定ファイルの ``match-escalation-threshold`` 設定項目"
 
 # dbd1e0d2825d472ba21508237b46ebb6
-#: ../../../source/commands/select.txt:412
+#: ../../../source/commands/select.txt:413
 msgid ""
 "Here is a simple ``match_escalation_threshold`` usage example. The first "
 "``select`` doesn't have ``match_escalation_threshold`` parameter. The second "
 "``select`` has ``match_escalation_threshold`` parameter."
-msgstr "以下は簡単な ``match_escalation_threshold`` の使用例です。最初の ``select`` は ``match_escalation_threshold`` 引数がありません。2番目の ``select`` は ``match_escalation_threshold`` 引数があります。"
+msgstr ""
+"以下は簡単な ``match_escalation_threshold`` の使用例です。最初の ``select`` "
+"は ``match_escalation_threshold`` 引数がありません。2番目の ``select`` は "
+"``match_escalation_threshold`` 引数があります。"
 
 # 04bbdbf4bcf54b8389ba699c31612728
-#: ../../../source/commands/select.txt:422
+#: ../../../source/commands/select.txt:423
 msgid ""
 "The first ``select`` command searches records that contain a word ``groo`` "
 "in ``content`` column value from ``Entries`` table. But no records are "
@@ -1807,10 +1861,20 @@ msgid ""
 "the case, the search storategy escalation is used because the number of "
 "matched records (0) is equal to ``match_escalation_threshold`` (0). One "
 "record is matched against ``groo`` by unsplit search."
-msgstr "最初の ``select`` コマンドは ``Entries`` テーブルから ``content`` カラムの値に ``groo`` という単語を含むレコードを検索します。しかし、 ``TokenBigram`` トークナイザーは ``groonga`` を ``gr|ro|oo|on|ng|ga`` ではなく ``groonga`` とトークナイズするため、1つもマッチしません。（ ``TokenBigramSplitSymbolAlpha`` トークナイザーは ``groonga`` を ``gr|ro|oo|on|ng|ga`` とトークナイズします。詳細は :doc:`/tokenizers` を参照してください。）これは、 ``groonga`` はインデックスされていますが、 ``groo`` はインデックスされていないということです。この場合、マッチしたレコード数（0）が ``match_escalation_threshold`` （0）と等しいので、検索方法をエスカレーションします。非わかち書き検索を行うと ``groo`` でレコードが1つマッチします。"
+msgstr ""
+"最初の ``select`` コマンドは ``Entries`` テーブルから ``content`` カラムの値"
+"に ``groo`` という単語を含むレコードを検索します。しかし、 ``TokenBigram`` "
+"トークナイザーは ``groonga`` を ``gr|ro|oo|on|ng|ga`` ではなく ``groonga`` と"
+"トークナイズするため、1つもマッチしません。"
+"（ ``TokenBigramSplitSymbolAlpha`` トークナイザーは ``groonga`` を ``gr|ro|"
+"oo|on|ng|ga`` とトークナイズします。詳細は :doc:`/tokenizers` を参照してくだ"
+"さい。）これは、 ``groonga`` はインデックスされていますが、 ``groo`` はイン"
+"デックスされていないということです。この場合、マッチしたレコード数（0）が "
+"``match_escalation_threshold`` （0）と等しいので、検索方法をエスカレーション"
+"します。非わかち書き検索を行うと ``groo`` でレコードが1つマッチします。"
 
 # c7034c19107347ef9516b239a50096a9
-#: ../../../source/commands/select.txt:434
+#: ../../../source/commands/select.txt:435
 msgid ""
 "The second ``select`` command also searches records that contain a word "
 "``groo`` in ``content`` column value from ``Entries`` table. And it also "
@@ -1818,61 +1882,86 @@ msgid ""
 "is not used because the number of matched records (0) is larger than "
 "``match_escalation_threshold`` (-1). So no more searches aren't executed. "
 "And no records are matched."
-msgstr "2番目の ``select`` コマンドも ``Entries`` テーブルから ``content`` カラムの値に ``groo`` という単語を含むレコードを検索します。そして、この ``select`` コマンドもマッチしません。この場合、マッチしたレコード数（0）が ``match_escalation_threshold`` （-1）より大きいので、検索方法をエスカレーションしません。そして、1つもレコードがマッチしません。"
+msgstr ""
+"2番目の ``select`` コマンドも ``Entries`` テーブルから ``content`` カラムの値"
+"に ``groo`` という単語を含むレコードを検索します。そして、この ``select`` コ"
+"マンドもマッチしません。この場合、マッチしたレコード数（0）が "
+"``match_escalation_threshold`` （-1）より大きいので、検索方法をエスカレーショ"
+"ンしません。そして、1つもレコードがマッチしません。"
 
 # 2a6a4e70ad95423fb535430d242aa1b8
-#: ../../../source/commands/select.txt:442
+#: ../../../source/commands/select.txt:443
 msgid "``query_expansion``"
 msgstr ""
 
 # 88363d87f535428b8f392b38402d8866
-#: ../../../source/commands/select.txt:444
+#: ../../../source/commands/select.txt:445
 msgid ""
 "It's for query expansion. Query expansion substitutes specific words to "
 "another words in query. Nomally, it's used for synonym search."
-msgstr "クエリ展開用の引数です。クエリ展開はクエリ中の特定の単語を別の単語に置換します。通常は類義語検索に使います。"
+msgstr ""
+"クエリ展開用の引数です。クエリ展開はクエリ中の特定の単語を別の単語に置換しま"
+"す。通常は類義語検索に使います。"
 
 # f280e295b2054130ae98870936bc954a
-#: ../../../source/commands/select.txt:447
+#: ../../../source/commands/select.txt:448
 msgid ""
 "It specifies a column that is used to substitute ``query`` parameter value. "
 "The format of this parameter value is \"``${TABLE}.${COLUMN}``\". For "
 "example, \"``Terms.synonym``\" specifies ``synonym`` column in ``Terms`` "
 "table."
-msgstr "``query`` 引数の値を置換するために使うカラムを指定します。この引数の値の書式は「 ``${TABLE}.${COLUMN}`` 」です。例えば、 「 ``Terms.synonym`` 」は ``Terms`` テーブルの ``synonym`` カラムを指定しています。"
+msgstr ""
+"``query`` 引数の値を置換するために使うカラムを指定します。この引数の値の書式"
+"は「 ``${TABLE}.${COLUMN}`` 」です。例えば、 「 ``Terms.synonym`` 」は "
+"``Terms`` テーブルの ``synonym`` カラムを指定しています。"
 
 # e03df458e596469f80725a4cdff579a2
-#: ../../../source/commands/select.txt:452
+#: ../../../source/commands/select.txt:453
 msgid ""
 "Table for query expansion is called \"substitution table\". Substitution "
 "table's key must be ``ShortText``. So array table (``TABLE_NO_KEY``) can't "
 "be used for query expansion. Because array table doesn't have key."
-msgstr "クエリ展開用のテーブルを「置換テーブル」と呼びます。置換テーブルのキーは ``ShortText`` にしてください。そのため、配列テーブル（ ``TABLE_NO_KEY`` ）は置換テーブルに使うことはできません。なぜなら、配列テーブルにはキーがないからです。"
+msgstr ""
+"クエリ展開用のテーブルを「置換テーブル」と呼びます。置換テーブルのキーは "
+"``ShortText`` にしてください。そのため、配列テーブル（ ``TABLE_NO_KEY`` ）は"
+"置換テーブルに使うことはできません。なぜなら、配列テーブルにはキーがないから"
+"です。"
 
 # b1a8ad353b5446e2835cc912a4a0ba85
-#: ../../../source/commands/select.txt:457
+#: ../../../source/commands/select.txt:458
+#, fuzzy
 msgid ""
 "Column for query expansion is called \"substitution column\". Substitution "
 "column's value type must be ``ShortText``. Column type must be vector "
-"(``COLUMN_VECTOR``). Key of substitution table in query is substituted with "
-"values in substitution column."
-msgstr "クエリ展開用のカラムを「置換カラム」と呼びます。置換カラムの値の型は ``ShortText`` にしてください。カラムの種類はベクター（ ``COLUMN_VECTOR`` ）にしてください。クエリの中にある置換テーブルのキーを置換カラムの値で置換します。"
+"(``COLUMN_VECTOR``)."
+msgstr ""
+"クエリ展開用のカラムを「置換カラム」と呼びます。置換カラムの値の型は "
+"``ShortText`` にしてください。カラムの種類はベクター（ ``COLUMN_VECTOR`` ）に"
+"してください。クエリの中にある置換テーブルのキーを置換カラムの値で置換しま"
+"す。"
 
 # d88f6b3c049f4504a0069f2fda5f377f
-#: ../../../source/commands/select.txt:463
+#: ../../../source/commands/select.txt:462
+#, fuzzy
 msgid ""
-"If a word in ``query`` is a key of substitution table, the word is "
-"substituted with substitution column value that is associated with the key. "
-"Substition isn't performed recursively. It means that substitution target "
-"words in substituted query aren't substituted."
-msgstr "``query`` の中にある単語が置換テーブルのキーだったら、キーに対応する置換カラムの値でその単語を置換します。置換は再帰的に実行しません。これは、置換されたクエリ内に置換対象の単語があっても置換されないということです。"
+"Query expansion substitutes key of substitution table in query with values "
+"in substitution column. If a word in ``query`` is a key of substitution "
+"table, the word is substituted with substitution column value that is "
+"associated with the key. Substition isn't performed recursively. It means "
+"that substitution target words in substituted query aren't substituted."
+msgstr ""
+"``query`` の中にある単語が置換テーブルのキーだったら、キーに対応する置換カラ"
+"ムの値でその単語を置換します。置換は再帰的に実行しません。これは、置換された"
+"クエリ内に置換対象の単語があっても置換されないということです。"
 
 # 47f96f142663462cae8b2ede1893edee
 #: ../../../source/commands/select.txt:469
 msgid ""
 "Here is a sample substitution table to show a simple ``query_expansion`` "
 "usage example."
-msgstr "以下は ``query_expansion`` の簡単な使用例を示すためのサンプル置換テーブルです。"
+msgstr ""
+"以下は ``query_expansion`` の簡単な使用例を示すためのサンプル置換テーブルで"
+"す。"
 
 # bceccd12fefd43668607b369fb20f2c5
 #: ../../../source/commands/select.txt:482
@@ -1884,24 +1973,37 @@ msgid ""
 "(senna))\"``. Nomrally, it's good idea that substitution table has "
 "``KEY_NORMALIZE`` flag. If the flag is used, substitute target word is "
 "matched in case insensitive manner."
-msgstr "``Thesaurus`` 置換テーブルは2つの類義語があります。 ``\"mroonga\"`` と ``\"groonga\"`` です。ユーザが ``\"mroonga\"`` で検索すると、groongaは ``\"((mroonga) OR (tritonn) OR (groonga mysql))\"`` で検索します。ユーザーが ``\"groonga\"`` で検索すると、groongaは ``\"((groonga) OR (senna))\"`` で検索します。通常、置換テーブルには ``KEY_NORMALIZE`` フラグをつけた方がよいです。このフラグを使うと、置換対象の単語が大文字小文字区別せずにマッチするようになります。"
+msgstr ""
+"``Thesaurus`` 置換テーブルは2つの類義語があります。 ``\"mroonga\"`` と ``"
+"\"groonga\"`` です。ユーザが ``\"mroonga\"`` で検索すると、groongaは ``"
+"\"((mroonga) OR (tritonn) OR (groonga mysql))\"`` で検索します。ユーザーが ``"
+"\"groonga\"`` で検索すると、groongaは ``\"((groonga) OR (senna))\"`` で検索し"
+"ます。通常、置換テーブルには ``KEY_NORMALIZE`` フラグをつけた方がよいです。こ"
+"のフラグを使うと、置換対象の単語が大文字小文字区別せずにマッチするようになり"
+"ます。"
 
 # c282e51d992d43678b62c8287eccb484
 #: ../../../source/commands/select.txt:490
+#, fuzzy
 msgid ""
 "Note that those synonym values include the key value such as ``\"mroonga\"`` "
 "and ``\"groonga\"``. It's recommended that you include the key value. If you "
 "don't include key value, substituted value doesn't include the original "
-"substuted value. Normally, including the original value is better search "
-"result. If you have a word that you don't want to be searched, you should "
-"not include the original word. For example, you can implement \"stop words\" "
-"by an empty vector value."
-msgstr "これらの類義語の値の中に ``\"mroonga\"`` や ``\"groonga\"`` といったキーの値も含まれていることに注意してください。このように類義語にキーの値も含めることを推奨します。もしキーの値を含めないと、置換した値には元の置換対象の値が含まれません。通常、元の値が含まれていた方がよい検索結果になります。もし、検索してほしくない単語がある場合は、元の単語を含めないでください。例えば、空のベクター値を指定することで「ストップワード」機能を実現することもできます。"
+"substitute target value. Normally, including the original value is better "
+"search result. If you have a word that you don't want to be searched, you "
+"should not include the original word. For example, you can implement \"stop "
+"words\" by an empty vector value."
+msgstr ""
+"これらの類義語の値の中に ``\"mroonga\"`` や ``\"groonga\"`` といったキーの値"
+"も含まれていることに注意してください。このように類義語にキーの値も含めること"
+"を推奨します。もしキーの値を含めないと、置換した値には元の置換対象の値が含ま"
+"れません。通常、元の値が含まれていた方がよい検索結果になります。もし、検索し"
+"てほしくない単語がある場合は、元の単語を含めないでください。例えば、空のベク"
+"ター値を指定することで「ストップワード」機能を実現することもできます。"
 
 # 1ccd84b3f15a4567b23bb0e7d8c66fcd
-#: ../../../source/commands/select.txt:498
-msgid ""
-"Here is a simple ``query_expansion`` usage example."
+#: ../../../source/commands/select.txt:499
+msgid "Here is a simple ``query_expansion`` usage example."
 msgstr "以下は簡単な ``query_expansion`` の使用例です。"
 
 # 6f322ed8d7d940aa98300f8cde469d75
@@ -1912,7 +2014,13 @@ msgid ""
 "expansion. So a record that has ``\"tritonn\"`` is found. The third "
 "``select`` command doesn't use query expansion but it is same as the second "
 "``select`` command. The third one uses expanded query."
-msgstr "最初の ``select`` コマンドはクエリ展開を使いません。そのため、 ``\"tritonn\"`` という単語を含んでいるレコードは見つかりません。2番目の ``select`` コマンドはクエリ展開を使っています。そのため、 ``\"tritonn\"`` という単語を含んでいるレコードが見つかります。3番目の ``select`` コマンドはクエリ展開を使っていませんが、2番目の ``select`` コマンドと同じ結果になります。これは、3番目の ``select`` コマンドは展開後のクエリを使っているからです。"
+msgstr ""
+"最初の ``select`` コマンドはクエリ展開を使いません。そのため、 ``\"tritonn"
+"\"`` という単語を含んでいるレコードは見つかりません。2番目の ``select`` コマ"
+"ンドはクエリ展開を使っています。そのため、 ``\"tritonn\"`` という単語を含んで"
+"いるレコードが見つかります。3番目の ``select`` コマンドはクエリ展開を使ってい"
+"ませんが、2番目の ``select`` コマンドと同じ結果になります。これは、3番目の "
+"``select`` コマンドは展開後のクエリを使っているからです。"
 
 # e2e2eb2e8823445096de1215d64e23a9
 #: ../../../source/commands/select.txt:513
@@ -1920,7 +2028,10 @@ msgid ""
 "Each substitute value can contain any :doc:`/spec/query_syntax` syntax such "
 "as ``(...)`` and ``OR``. You can use complex substitution by using those "
 "syntax."
-msgstr "それぞれの置換する値は ``(...)`` や ``OR`` といった :doc:`/spec/query_syntax` を使えます。これらの構文を使うことにより複雑な置換をすることができます。"
+msgstr ""
+"それぞれの置換する値は ``(...)`` や ``OR`` といった :doc:`/spec/"
+"query_syntax` を使えます。これらの構文を使うことにより複雑な置換をすることが"
+"できます。"
 
 # 4fadcce1df4a4d24b9e055ebcded9dde
 #: ../../../source/commands/select.txt:517
@@ -1934,14 +2045,20 @@ msgid ""
 "substituted with ``((popular) OR (n_likes:>=10))``. The substituted query "
 "means that \"popular\" is containing the word \"popular\" or 10 or more "
 "liked entries."
-msgstr "この ``load`` コマンドは新しく ``\"popular\"`` という類義語を登録しています。これは ``((popular) OR (n_likes:>=10))`` に置換されます。置換されたクエリは、「popular」というのは「popular」という単語を含んでいるか10以上の「いいね！」数を持つエントリという意味になります。"
+msgstr ""
+"この ``load`` コマンドは新しく ``\"popular\"`` という類義語を登録しています。"
+"これは ``((popular) OR (n_likes:>=10))`` に置換されます。置換されたクエリは、"
+"「popular」というのは「popular」という単語を含んでいるか10以上の「いいね！」"
+"数を持つエントリという意味になります。"
 
 # dc8002538e794368b895d463ce15d092
 #: ../../../source/commands/select.txt:532
 msgid ""
 "The ``select`` command outputs records that ``n_likes`` column value is "
 "equal to or more than ``10`` from ``Entries`` table."
-msgstr "この ``select`` コマンドは ``Entries`` テーブルの中から ``n_likes`` カラムの値が ``10`` 以上のレコードを出力します。"
+msgstr ""
+"この ``select`` コマンドは ``Entries`` テーブルの中から ``n_likes`` カラムの"
+"値が ``10`` 以上のレコードを出力します。"
 
 # a92aefff626342b8b2318131b132f569
 #: ../../../source/commands/select.txt:536
@@ -1961,14 +2078,17 @@ msgstr "以下は簡単な ``output_columns`` の使用例です。"
 # dc8002538e794368b895d463ce15d092
 #: ../../../source/commands/select.txt:549
 msgid "The ``select`` command just outputs ``_id`` and ``_key`` column values."
-msgstr "この ``select`` コマンドは ``_id`` と ``_key`` カラムの値だけを出力します。"
+msgstr ""
+"この ``select`` コマンドは ``_id`` と ``_key`` カラムの値だけを出力します。"
 
 # 470a3d728d73414290550a46e5e67f1a
 #: ../../../source/commands/select.txt:552
 msgid ""
 "``*`` is a special value. It means that all columns that are not :doc:`/"
 "pseudo_column`."
-msgstr "``*`` は特別な値です。 :doc:`/pseudo_column` 以外のすべてのカラムという意味です。"
+msgstr ""
+"``*`` は特別な値です。 :doc:`/pseudo_column` 以外のすべてのカラムという意味で"
+"す。"
 
 # 1ccd84b3f15a4567b23bb0e7d8c66fcd
 #: ../../../source/commands/select.txt:555
@@ -1980,20 +2100,26 @@ msgstr "以下は ``*`` の使用例です。"
 msgid ""
 "The ``select`` command outputs ``_key`` pseudo column, ``content`` column "
 "and ``n_likes`` column values but doesn't output ``_id`` pseudo column value."
-msgstr "この ``select`` コマンドは ``_key`` 擬似カラム、 ``content`` カラム、 ``n_likes`` カラムの値を出力しますが、 ``_id`` 擬似カラムの値は出力しません。"
+msgstr ""
+"この ``select`` コマンドは ``_key`` 擬似カラム、 ``content`` カラム、 "
+"``n_likes`` カラムの値を出力しますが、 ``_id`` 擬似カラムの値は出力しません。"
 
 # 94fcc85c0643425b81cf310f8dcb0baf
 #: ../../../source/commands/select.txt:565
 msgid ""
 "The default value is ``_id, _key, *``. It means that all column values "
 "except ``_score`` are outputted."
-msgstr "デフォルト値は ``_id, _key, *`` です。これは ``_score`` 以外の全てのカラムを出力するという意味です。"
+msgstr ""
+"デフォルト値は ``_id, _key, *`` です。これは ``_score`` 以外の全てのカラムを"
+"出力するという意味です。"
 
 # 5086490961c54103a7f0bdc3cd39f82f
 #: ../../../source/commands/select.txt:571
 msgid ""
 "It specifies sort keys separated by ``,``. Each sort key is column name."
-msgstr "ソートキーを ``,`` 区切りで指定します。それぞれのソートキーはカラム名を指定します。"
+msgstr ""
+"ソートキーを ``,`` 区切りで指定します。それぞれのソートキーはカラム名を指定し"
+"ます。"
 
 # 1ccd84b3f15a4567b23bb0e7d8c66fcd
 #: ../../../source/commands/select.txt:574
@@ -2006,7 +2132,11 @@ msgid ""
 "The ``select`` command sorts by ``n_likes`` column value in ascending order. "
 "For records that has the same ``n_likes`` are sorted by ``_id`` in ascending "
 "order. ``\"Good-bye Senna\"`` and ``\"Good-bye Tritonn\"`` are the case."
-msgstr "この ``select`` コマンドは ``n_likes`` カラムの値で昇順にソートします。 ``n_likes`` の値が同じレコードについては ``_id`` カラムの値で昇順にソートします。 ``\"Good-bye Senna\"`` と ``\"Good-bye Tritonn\"`` が ``_id`` カラムの値でソートしているケースです。"
+msgstr ""
+"この ``select`` コマンドは ``n_likes`` カラムの値で昇順にソートします。 "
+"``n_likes`` の値が同じレコードについては ``_id`` カラムの値で昇順にソートしま"
+"す。 ``\"Good-bye Senna\"`` と ``\"Good-bye Tritonn\"`` が ``_id`` カラムの値"
+"でソートしているケースです。"
 
 # aabe26754c7c4a2caea2cace635cde15
 #: ../../../source/commands/select.txt:585
@@ -2023,35 +2153,45 @@ msgstr "以下は降順の ``sortby`` の使用例です。"
 msgid ""
 "The ``select`` command sorts by ``n_likes`` column value in descending "
 "order. But ascending order is used for sorting by ``_id``."
-msgstr "この ``select`` コマンドは ``n_likes`` カラムの値で降順にソートします。しかし、 ``_id`` でソートするときは昇順でソートします。"
+msgstr ""
+"この ``select`` コマンドは ``n_likes`` カラムの値で降順にソートします。しか"
+"し、 ``_id`` でソートするときは昇順でソートします。"
 
 # 836a5759ae764a5eb2fff185217fd627
 #: ../../../source/commands/select.txt:596
 msgid ""
 "You can use ``_score`` pseudo column in ``sortby`` if you use ``query`` or "
 "``filter`` parameter."
-msgstr "もし、 ``query`` または ``filter`` 引数を使っているときは、 ``sortby`` の中で ``_score`` 擬似カラムを使うことができます。"
+msgstr ""
+"もし、 ``query`` または ``filter`` 引数を使っているときは、 ``sortby`` の中"
+"で ``_score`` 擬似カラムを使うことができます。"
 
 # dc8002538e794368b895d463ce15d092
 #: ../../../source/commands/select.txt:603
 msgid ""
 "The ``select`` command sorts matched records by hit score in descending "
 "order and outputs record key and hit score."
-msgstr "この ``select`` コマンドはマッチしたレコードをヒットスコアで降順にソートし、レコードのキーとヒットスコアを出力します。"
+msgstr ""
+"この ``select`` コマンドはマッチしたレコードをヒットスコアで降順にソートし、"
+"レコードのキーとヒットスコアを出力します。"
 
 # 0e10f4e0e288413ebb6303024b0532b1
 #: ../../../source/commands/select.txt:606
 msgid ""
 "If you use ``_score`` without ``query`` nor ``filter`` parameters, it's just "
 "ignored but get a warning in log file."
-msgstr "``query`` 引数も ``filter`` 引数も指定しないで ``_score`` を使った場合は、 ``_score`` を無視して、ログファイルに警告を出力します。"
+msgstr ""
+"``query`` 引数も ``filter`` 引数も指定しないで ``_score`` を使った場合は、 "
+"``_score`` を無視して、ログファイルに警告を出力します。"
 
 # b2b34fa4db01477b8b23e3dc58dc88d1
 #: ../../../source/commands/select.txt:612
 msgid ""
-"It specifies offset to determine output records range. Offset is zero-origin. "
-"``--offset 1`` means output range is started from the 2nd record."
-msgstr "出力するレコードの範囲を決めるためのオフセットを指定します。オフセットは0基点です。 ``--offset 1`` は2番目以降のレコードを出力するという意味になります。"
+"It specifies offset to determine output records range. Offset is zero-"
+"origin. ``--offset 1`` means output range is started from the 2nd record."
+msgstr ""
+"出力するレコードの範囲を決めるためのオフセットを指定します。オフセットは0基点"
+"です。 ``--offset 1`` は2番目以降のレコードを出力するという意味になります。"
 
 # b2b34fa4db01477b8b23e3dc58dc88d1
 #: ../../../source/commands/select.txt:620
@@ -2064,14 +2204,20 @@ msgid ""
 "You can specify negative value. It means that ``the number of matched "
 "records + offset``. If you have 3 matched records and specify ``--offset "
 "-2``, you get records from the 1st (``3 + -2 = 1``) record to the 3rd record."
-msgstr "負の値を指定することもできます。負の値の場合は ``マッチしたレコード数 + offset`` 番目のレコードから始まる範囲という意味になります。もし、マッチしたレコードが3つあり、 ``--offset -2`` を指定した場合は1番目（ ``3 + -2 = 1`` ） のレコードから3番目のレコードが出力されます。"
+msgstr ""
+"負の値を指定することもできます。負の値の場合は ``マッチしたレコード数 + "
+"offset`` 番目のレコードから始まる範囲という意味になります。もし、マッチしたレ"
+"コードが3つあり、 ``--offset -2`` を指定した場合は1番目（ ``3 + -2 = 1`` ） "
+"のレコードから3番目のレコードが出力されます。"
 
 # dc8002538e794368b895d463ce15d092
 #: ../../../source/commands/select.txt:631
 msgid ""
 "The ``select`` command outputs from the 4th record because the total number "
 "of records is ``5``."
-msgstr "この ``select`` コマンドは4番目以降のレコードを出力します。なぜなら、全レコード数が ``5`` だからです。"
+msgstr ""
+"この ``select`` コマンドは4番目以降のレコードを出力します。なぜなら、全レコー"
+"ド数が ``5`` だからです。"
 
 # 75c38df430b54c44844526068cb9d03b
 #: ../../../source/commands/select.txt:634
@@ -2083,7 +2229,9 @@ msgstr "デフォルト値は ``0`` です。"
 msgid ""
 "It specifies the max number of output records. If the number of matched "
 "records is less than ``limit``, all records are outputted."
-msgstr "``limit`` は出力レコード数の最大値を指定します。 もし、マッチしたレコード数が ``limit`` よりも小さい場合はすべてのレコードが出力されます。"
+msgstr ""
+"``limit`` は出力レコード数の最大値を指定します。 もし、マッチしたレコード数"
+"が ``limit`` よりも小さい場合はすべてのレコードが出力されます。"
 
 # 19c0a971f31d469f940d93c9f303237e
 #: ../../../source/commands/select.txt:642
@@ -2101,7 +2249,11 @@ msgid ""
 "You can specify negative value. It means that ``the number of matched "
 "records + limit + 1``. For example, ``--limit -1`` outputs all records. It's "
 "very useful value to show all records."
-msgstr "負の値を指定することもできます。負の値の場合は、最大で ``マッチしたレコード数 + limit + 1`` 件のレコードを出力するという意味になります。 例えば、 ``--limit -1`` はすべてのレコードを出力します。これはすべてのレコードを表示する場合にとても便利です。"
+msgstr ""
+"負の値を指定することもできます。負の値の場合は、最大で ``マッチしたレコード"
+"数 + limit + 1`` 件のレコードを出力するという意味になります。 例えば、 ``--"
+"limit -1`` はすべてのレコードを出力します。これはすべてのレコードを表示する場"
+"合にとても便利です。"
 
 # 19c0a971f31d469f940d93c9f303237e
 #: ../../../source/commands/select.txt:654
@@ -2167,10 +2319,11 @@ msgid ""
 "一であるレコードをとりまとめて、それぞれについて結果レコードを出力します。"
 msgstr ""
 
+# 86b389f3f050487fabe47b7fe801672b
 #: ../../../source/commands/select.txt:688
 msgid ""
 "drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、ソー"
-"トキーとなるカラム名のリストをカンマ(',')区切りで指定します。sortby引数"
+"トキーとなるカラム名のリストをカンマ(',')区切りで指定します。sortbyパラメータ"
 "と同様に昇降順を指定できます。"
 msgstr ""
 
@@ -2214,11 +2367,12 @@ msgstr ""
 msgid "``no``"
 msgstr ""
 
+# ab8c2fa0516342fa895aba9be0beba85
 #: ../../../source/commands/select.txt:723
 msgid ""
 "検索結果をクエリキャッシュに残しません。キャッシュして再利用される可能性が低"
 "いクエリに対して用います。キャッシュ容量は有限です。有効なキャッシュが多く"
-"ヒットするために、この引数は有効です。"
+"ヒットするために、このパラメータは有効です。"
 msgstr ""
 
 #: ../../../source/commands/select.txt:730
