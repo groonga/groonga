@@ -215,7 +215,7 @@ class GrnTestData
   end
 
   def type_of_diff_in_longitude
-    long?(@longitude_start_degree, @longigude_end_degree) ? "long" : "short"
+    long?(@longitude_start_degree, @longitude_end_degree) ? "long" : "short"
   end
 
   def long?(start_lng_deg, end_lng_deg)
@@ -398,7 +398,7 @@ class GrnTestData
     comment = sprintf("# from (%s %s %s %s) to (%s %s %s %s)\n",
                       "longitude", @longitude_start_degree,
                       "latitude", @latitude_start_degree,
-                      "longitude", @longigude_end_degree,
+                      "longitude", @longitude_end_degree,
                       "latitude", @latitude_end_degree)
     scorer = sprintf("--scorer 'distance = geo_distance(\"%sx%s\", \"%sx%s\"",
                      @longitude_start_degree, @latitude_start_degree,
