@@ -20,6 +20,9 @@ SELECT = "select Geo --output_columns distance "
 SELECT_PRE = "[[0,0.0,0.0],[[[1],[[\"distance\",\"Int32\"]],["
 SELECT_POST = "]]]]"
 
+GRN_GEO_RESOLUTION=3600000
+GRN_GEO_RADIUS=6357303
+
 class GrnTestData
   attr_accessor :csv_file
   attr_accessor :options
@@ -414,8 +417,21 @@ class GrnTestData
             SELECT, scorer, select_postfix)
   end
 
+  def geo_int2rad(value)
+    ((Math::PI / (GRN_GEO_RESOLUTION * 180)) * (value))
+  end
+
   def geo_distance(app_type)
-    0
+    case app_type
+    when "", "rect", "rectangle"
+      lat1 = geo_int2rad(@latitude_start_degree)
+      lng1 = geo_int2rad(@longitude_start_degree)
+      lat2 = geo_int2rad(@latitude_end_degree)
+      lng2 = geo_int2rad(@longitude_end_degree)
+      x = (lng2 - lng1) * Math.cos((lat1 + lat2) * 0.5)
+      y = (lat2 - lat1)
+      return (Math.sqrt((x * x) + (y * y)) * GRN_GEO_RADIUS).floor
+    end
   end
 
   def generate_expected_data(app_type)
