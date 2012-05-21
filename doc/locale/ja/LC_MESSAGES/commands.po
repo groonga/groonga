@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-05-21 14:11\n"
-"PO-Revision-Date: 2012-05-21 13:02+0900\n"
+"PO-Revision-Date: 2012-05-21 14:24+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -1648,7 +1648,6 @@ msgstr ""
 
 # a0145a0c4fbf4ab0a1fa14b59db7efb1
 #: ../../../source/commands/select.txt:299
-#, fuzzy
 msgid ""
 "It specifies the query text. Normally, it is used for fulltext search with "
 "``match_columns`` parameter. ``query`` parameter is designed for a fulltext "
@@ -1657,14 +1656,7 @@ msgid ""
 "search form. For example, ``word1 word2`` means that groonga searches "
 "records that contain both ``word1`` and ``word2``. ``word1 OR word2`` means "
 "that groogna searches records that contain either ``word1`` or ``word2``."
-msgstr ""
-"クエリテキストを指定します。通常、 ``match_columns`` 引数と一緒に全文検索をす"
-"るために使います。 ``query`` 引数はWebページにある全文検索フォームで使いやす"
-"いように設計されています。クエリテキストは :doc:`/spec/query_syntax` という書"
-"式を使います。この書式はGoogleの検索フォームのように一般的な検索フォームと似"
-"ています。例えば、 ``word1 word2`` は ``word1`` と ``word2`` を含んでいるレ"
-"コードを検索するという意味になります。 ``word1 OR word2`` は ``word1`` また"
-"は ``word2`` を含んでいるレコードを検索するという意味になります。"
+msgstr "クエリテキストを指定します。通常、全文検索をするために ``match_columns`` 引数と一緒に使います。 ``query`` 引数はWebページにある全文検索フォームで使いやすいように設計されています。クエリテキストは :doc:`/spec/query_syntax` という書式を使います。この書式はGoogleの検索フォームのように一般的な検索フォームと似ています。例えば、 ``word1 word2`` は ``word1`` と ``word2`` を含んでいるレコードを検索するという意味になります。 ``word1 OR word2`` は ``word1`` または ``word2`` を含んでいるレコードを検索するという意味になります。"
 
 # 19c0a971f31d469f940d93c9f303237e
 #: ../../../source/commands/select.txt:308
@@ -1929,30 +1921,21 @@ msgstr ""
 
 # b1a8ad353b5446e2835cc912a4a0ba85
 #: ../../../source/commands/select.txt:458
-#, fuzzy
 msgid ""
 "Column for query expansion is called \"substitution column\". Substitution "
 "column's value type must be ``ShortText``. Column type must be vector "
 "(``COLUMN_VECTOR``)."
-msgstr ""
-"クエリ展開用のカラムを「置換カラム」と呼びます。置換カラムの値の型は "
-"``ShortText`` にしてください。カラムの種類はベクター（ ``COLUMN_VECTOR`` ）に"
-"してください。クエリの中にある置換テーブルのキーを置換カラムの値で置換しま"
-"す。"
+msgstr "クエリ展開用のカラムを「置換カラム」と呼びます。置換カラムの値の型は ``ShortText`` にしてください。カラムの種類はベクター（ ``COLUMN_VECTOR`` ）にしてください。"
 
 # d88f6b3c049f4504a0069f2fda5f377f
 #: ../../../source/commands/select.txt:462
-#, fuzzy
 msgid ""
 "Query expansion substitutes key of substitution table in query with values "
 "in substitution column. If a word in ``query`` is a key of substitution "
 "table, the word is substituted with substitution column value that is "
 "associated with the key. Substition isn't performed recursively. It means "
 "that substitution target words in substituted query aren't substituted."
-msgstr ""
-"``query`` の中にある単語が置換テーブルのキーだったら、キーに対応する置換カラ"
-"ムの値でその単語を置換します。置換は再帰的に実行しません。これは、置換された"
-"クエリ内に置換対象の単語があっても置換されないということです。"
+msgstr "クエリ展開はクエリの中にある置換テーブルのキーを置換カラムの値で置換します。 ``query`` の中にある単語が置換テーブルのキーだったら、キーに対応する置換カラムの値でその単語を置換します。置換は再帰的に実行しません。これは、置換されたクエリ内に置換対象の単語があっても置換されないということです。"
 
 # 47f96f142663462cae8b2ede1893edee
 #: ../../../source/commands/select.txt:469
@@ -1984,7 +1967,6 @@ msgstr ""
 
 # c282e51d992d43678b62c8287eccb484
 #: ../../../source/commands/select.txt:490
-#, fuzzy
 msgid ""
 "Note that those synonym values include the key value such as ``\"mroonga\"`` "
 "and ``\"groonga\"``. It's recommended that you include the key value. If you "
