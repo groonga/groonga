@@ -70,11 +70,12 @@ def execmd(command, fout):
       else:
         output_buffer += char
         if char == '\n':
+          parsed_output = json.loads(output_buffer)
+          normalized_output = normalize_output(parsed_output)
           if len(output_buffer) < 80:
-            formatted_output = output_buffer
+            formatted_output = json.dumps(normalized_output,
+                                          ensure_ascii=False)
           else:
-            parsed_output = json.loads(output_buffer)
-            normalized_output = normalize_output(parsed_output)
             formatted_output = json.dumps(normalized_output,
                                           indent=2,
                                           ensure_ascii=False)
