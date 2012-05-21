@@ -1,26 +1,26 @@
 Execution example::
 
   table_create Doc TABLE_PAT_KEY ShortText
-  # [[0,1336611848.49714,0.000167131423950195],true]
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
   column_create Doc body COLUMN_SCALAR ShortText
-  # [[0,1336611848.69792,0.000664710998535156],true]
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
   table_create Term TABLE_PAT_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenBigram
-  # [[0,1336611848.8991,0.000290870666503906],true]
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
   column_create Term Doc_body COLUMN_INDEX|WITH_POSITION Doc body
-  # [[0,1336611849.1001,0.00568056106567383],true]
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
   table_create Synonym TABLE_PAT_KEY ShortText
-  # [[0,1336611849.30661,0.000278949737548828],true]
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
   column_create Synonym body COLUMN_SCALAR ShortText
-  # [[0,1336611849.50759,0.00092005729675293],true]
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
   load --table Doc
   [
   {"_key": "001", "body": "すっぱいブドウと甘いシークァーサー"},
   {"_key": "002", "body": "シークヮーサージュースとゴーヤチャンプル"},
   ]
-  # [[0,1336611849.70934,0.201861143112183],2]
+  # [[0, 1337566253.89858, 0.000355720520019531], 2]
   load --table Synonym
   [
   {"_key": "シークァーサー", "body": "(シークァーサー OR シークヮーサー)"},
   {"_key": "シークヮーサー", "body": "(シークァーサー OR シークヮーサー)"},
   ]
-  # [[0,1336611850.11205,0.20064902305603],2]
+  # [[0, 1337566253.89858, 0.000355720520019531], 2]

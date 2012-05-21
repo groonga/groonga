@@ -3,16 +3,75 @@ Execution example::
   suggest --table item_query --column kana --types complete|correct|suggest --frequency_threshold 1 --query search
   # [
   #   [
-  #     -22, 
-  #     1336612570.20639, 
-  #     0.000174283981323242, 
-  #     "invalid command name: suggest", 
-  #     [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   {
+  #     "suggest": [
   #       [
-  #         "grn_ctx_qe_exec", 
-  #         "ctx.c", 
-  #         1307
+  #         2
+  #       ], 
+  #       [
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "_score", 
+  #           "Int32"
+  #         ]
+  #       ], 
+  #       [
+  #         "search engine", 
+  #         1
+  #       ], 
+  #       [
+  #         "web search realtime", 
+  #         1
+  #       ]
+  #     ], 
+  #     "complete": [
+  #       [
+  #         2
+  #       ], 
+  #       [
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "_score", 
+  #           "Int32"
+  #         ]
+  #       ], 
+  #       [
+  #         "search", 
+  #         2
+  #       ], 
+  #       [
+  #         "search engine", 
+  #         2
+  #       ]
+  #     ], 
+  #     "correct": [
+  #       [
+  #         1
+  #       ], 
+  #       [
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "_score", 
+  #           "Int32"
+  #         ]
+  #       ], 
+  #       [
+  #         "search", 
+  #         2
   #       ]
   #     ]
-  #   ]
+  #   }
   # ]

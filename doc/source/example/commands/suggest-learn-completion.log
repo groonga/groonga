@@ -1,21 +1,6 @@
 Execution example::
 
   load --table event_query --each 'suggest_preparer(_id, type, item, sequence, time, pair_query)'
-  # [
-  #   [
-  #     -63, 
-  #     1336612568.38862, 
-  #     0.000561952590942383, 
-  #     "Syntax error! (suggest_preparer(_id, type, item, sequence, time, pair_query))", 
-  #     [
-  #       [
-  #         "yy_syntax_error", 
-  #         "ecmascript.y", 
-  #         19
-  #       ]
-  #     ]
-  #   ]
-  # ]
   [
   {"sequence": "1", "time": 1312950803.86057, "item": "e"},
   {"sequence": "1", "time": 1312950803.96857, "item": "en"},
@@ -24,4 +9,4 @@ Execution example::
   {"sequence": "1", "time": 1312950804.76057, "item": "engin"},
   {"sequence": "1", "time": 1312950805.86057, "item": "engine", "type": "submit"}
   ]
-  # [[0,1336612568.38862,0.204388856887817],6]
+  # [[0, 1337566253.89858, 0.000355720520019531], 6]

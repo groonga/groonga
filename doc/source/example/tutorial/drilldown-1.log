@@ -4,8 +4,8 @@ Execution example::
   # [
   #   [
   #     -22, 
-  #     1336611851.32846, 
-  #     0.000257730484008789, 
+  #     1337566253.89858, 
+  #     0.000355720520019531, 
   #     "already used name was assigned: <SiteDomain>", 
   #     [
   #       [
@@ -21,8 +21,8 @@ Execution example::
   # [
   #   [
   #     -22, 
-  #     1336611851.52966, 
-  #     0.000301361083984375, 
+  #     1337566253.89858, 
+  #     0.000355720520019531, 
   #     "already used name was assigned: <SiteCountry>", 
   #     [
   #       [
@@ -38,8 +38,8 @@ Execution example::
   # [
   #   [
   #     -22, 
-  #     1336611851.73073, 
-  #     0.000830650329589844, 
+  #     1337566253.89858, 
+  #     0.000355720520019531, 
   #     "already used name was assigned: <Site.domain>", 
   #     [
   #       [
@@ -55,8 +55,8 @@ Execution example::
   # [
   #   [
   #     -22, 
-  #     1336611851.93283, 
-  #     0.000349521636962891, 
+  #     1337566253.89858, 
+  #     0.000355720520019531, 
   #     "already used name was assigned: <Site.country>", 
   #     [
   #       [
@@ -80,4 +80,4 @@ Execution example::
   {"_key":"http://example.org/gat","domain":".org","country":"usa"},
   {"_key":"http://example.com/vdw","domain":".com","country":"japan"}
   ]
-  # [[0,1336611852.13468,0.20110821723938],9]
+  # [[0, 1337566253.89858, 0.000355720520019531], 9]

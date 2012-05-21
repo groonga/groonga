@@ -4,13 +4,13 @@ Execution example::
   # [
   #   [
   #     0, 
-  #     1336611809.69057, 
-  #     0.000313520431518555
+  #     1337566253.89858, 
+  #     0.000355720520019531
   #   ], 
   #   [
   #     [
   #       [
-  #         3
+  #         5
   #       ], 
   #       [
   #         [
@@ -47,6 +47,18 @@ Execution example::
   #         "Mroonga", 
   #         "I also started to use mroonga. It's also very fast! Really fast!", 
   #         15
+  #       ], 
+  #       [
+  #         4, 
+  #         "Good-bye Senna", 
+  #         "I migrated all Senna system!", 
+  #         3
+  #       ], 
+  #       [
+  #         5, 
+  #         "Good-bye Tritonn", 
+  #         "I also migrated all Tritonn system!", 
+  #         3
   #       ]
   #     ]
   #   ]

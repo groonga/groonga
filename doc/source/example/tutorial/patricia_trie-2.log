@@ -1,22 +1,22 @@
 Execution example::
 
   table_create --name PatSuffix --flags TABLE_PAT_KEY|KEY_WITH_SIS --key_type ShortText
-  # [[0,1336611813.96192,0.000253677368164062],true]
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
   column_create --table PatSuffix --name original --type Bool
-  # [[0,1336611814.16294,0.000247478485107422],true]
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
   load --table PatSuffix
   [
   {"_key":"ひろゆき","original":true},
   {"_key":"まろゆき","original":true},
   {"_key":"ひろあき","original":true}
   ]
-  # [[0,1336611814.36409,0.200676918029785],3]
+  # [[0, 1337566253.89858, 0.000355720520019531], 3]
   select --table PatSuffix --query _key:@ゆき
   # [
   #   [
   #     0, 
-  #     1336611814.7656, 
-  #     0.000568866729736328
+  #     1337566253.89858, 
+  #     0.000355720520019531
   #   ], 
   #   [
   #     [
@@ -64,8 +64,8 @@ Execution example::
   # [
   #   [
   #     0, 
-  #     1336611814.96857, 
-  #     0.000341415405273438
+  #     1337566253.89858, 
+  #     0.000355720520019531
   #   ], 
   #   [
   #     [

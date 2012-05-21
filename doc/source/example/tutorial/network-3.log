@@ -6,18 +6,18 @@ Execution example::
   # [
   #   [
   #     0, 
-  #     1337330937.06225, 
-  #     0.000124931335449219
+  #     1337566253.89858, 
+  #     0.000355720520019531
   #   ], 
   #   {
-  #     "uptime": 1, 
+  #     "uptime": 0, 
   #     "max_command_version": 2, 
   #     "n_queries": 0, 
   #     "cache_hit_rate": 0.0, 
   #     "version": "2.0.2-28-g74fc93a", 
   #     "alloc_count": 131, 
   #     "command_version": 1, 
-  #     "starttime": 1337330936, 
+  #     "starttime": 1337566849, 
   #     "default_command_version": 1
   #   }
   # ]
@@ -28,8 +28,8 @@ Execution example::
   # [
   #   [
   #     0, 
-  #     1337330937.26529, 
-  #     0.000821113586425781
+  #     1337566253.89858, 
+  #     0.000355720520019531
   #   ], 
   #   [
   #     [
@@ -46,6 +46,26 @@ Execution example::
   #           "ShortText"
   #         ], 
   #         [
+  #           "country", 
+  #           "SiteCountry"
+  #         ], 
+  #         [
+  #           "domain", 
+  #           "SiteDomain"
+  #         ], 
+  #         [
+  #           "link", 
+  #           "Site"
+  #         ], 
+  #         [
+  #           "links", 
+  #           "Site"
+  #         ], 
+  #         [
+  #           "location", 
+  #           "WGS84GeoPoint"
+  #         ], 
+  #         [
   #           "title", 
   #           "ShortText"
   #         ]
@@ -53,6 +73,15 @@ Execution example::
   #       [
   #         1, 
   #         "http://example.org/", 
+  #         "japan", 
+  #         ".org", 
+  #         "http://example.net/", 
+  #         [
+  #           "http://example.net/", 
+  #           "http://example.org/", 
+  #           "http://example.com/"
+  #         ], 
+  #         "128452975x503157902", 
   #         "This is test record 1!"
   #       ]
   #     ]
