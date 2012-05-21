@@ -100,8 +100,8 @@ all records in ``Entries`` table.
 Why does the command output all records? There are two reasons. The
 first reason is that the command doesn't specify any search
 conditions. No search condition means all records are matched. The
-second reason is that the number of all records is 3. ``select``
-command outputs 10 records at a maximum by default. There are only 3
+second reason is that the number of all records is 5. ``select``
+command outputs 10 records at a maximum by default. There are only 5
 records. It is less than 10. So the command outputs all records.
 
 Search conditions
