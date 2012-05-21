@@ -566,31 +566,31 @@ if __FILE__ == $0
 
           if filename and filename != ""
             if type == "line"
-              testname = sprintf("%s/%s/%s/%s/%s/%s%s",
-                                 type_longitude, quadrant, type, direction,
-                                 longitude_position, file_prefix,
-                                 File.basename(filename))
+              test_name = sprintf("%s/%s/%s/%s/%s/%s%s",
+                                  type_longitude, quadrant, type, direction,
+                                  longitude_position, file_prefix,
+                                  File.basename(filename))
             else
-              testname = sprintf("%s/%s/%s/%s/%s%s",
-                                 type_longitude, quadrant, type,
-                                 longitude_position, file_prefix,
-                                 File.basename(filename))
+              test_name = sprintf("%s/%s/%s/%s/%s%s",
+                                  type_longitude, quadrant, type,
+                                  longitude_position, file_prefix,
+                                  File.basename(filename))
             end
           else
             exit 1
           end
 
-          if testname and not Dir.exists?(File.dirname(testname))
-            FileUtils.mkdir_p(File.dirname(testname))
+          if test_name and not Dir.exists?(File.dirname(test_name))
+            FileUtils.mkdir_p(File.dirname(test_name))
           end
 
-          if File.exists?(testname)
+          if File.exists?(test_name)
             # duplicated?
-            puts("Warning! [#{i}] #{testname} duplicated")
+            puts("Warning! [#{i}] #{test_name} duplicated")
           end
-          File.open(testname, "w+") do |testfile|
+          File.open(test_name, "w+") do |testfile|
             if OPTS.has_key?(:verbose)
-              puts(testname)
+              puts(test_name)
               puts(dottest)
             end
             testfile.puts(dottest)
