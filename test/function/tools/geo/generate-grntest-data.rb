@@ -424,10 +424,10 @@ class GrnTestData
   def geo_distance(app_type)
     case app_type
     when "", "rect", "rectangle"
-      lat1 = geo_int2rad(@latitude_start_degree)
-      lng1 = geo_int2rad(@longitude_start_degree)
-      lat2 = geo_int2rad(@latitude_end_degree)
-      lng2 = geo_int2rad(@longitude_end_degree)
+      lat1 = geo_int2rad(@latitude_start.to_i)
+      lng1 = geo_int2rad(@longitude_start.to_i)
+      lat2 = geo_int2rad(@latitude_end.to_i)
+      lng2 = geo_int2rad(@longitude_end.to_i)
       x = (lng2 - lng1) * Math.cos((lat1 + lat2) * 0.5)
       y = (lat2 - lat1)
       return (Math.sqrt((x * x) + (y * y)) * GRN_GEO_RADIUS).floor
