@@ -5,6 +5,53 @@
 News
 ====
 
+.. _release-2-0-3:
+
+Release 2.0.3 - 2012/05/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* Add a error message for not implemented expression
+* [doc] Add a document about release procedure
+* Add a table plugin
+* [doc] Add description about query_parameter of select command
+* [doc] Add description about filter parameter of select command
+* [doc] Add description about match_escalation_threshold parameter
+  of select command
+* [doc] Make execution example copy & paste friendly
+* [doc] Update execution examples
+* [doc] Fix execution examples path
+* Distribute zip source archive
+* [doc] Add a document about building from source
+* [doc] Add a document how to report bug on Issue Tracker or ML
+* Support separated files by munin plugin
+* [doc] Add description about query_expansion of select command
+* [doc] Add description about output_columns and sort_by of select command
+* [doc] Add description about offset and limit_by of select command
+* [doc] Use normalized start time and elapsed time in execution examples
+* [doc] Add description about groonga script syntax
+
+Fixes
+^^^^^
+
+* [doc] Fix GPG sign key update way for apt
+* Remove restriction about the max number of opened files to 4096
+* [rpm] Use yum makecache for updating repository information
+  [Suggested by @iwaim]
+* [deb] Fix a bug that log_repoen command in logrotate uses wrong protocol
+* [deb] Fix a problem that execution examples for included files
+  aren't updated
+* Fix broken ERROR XML document [#1363] [GitHub#13] [Patch by IWAI, Masaharu]
+* [doc] Update epel-release package version [Reported by @iwaim]
+* [doc] Disable Repoforge for Munin [Reported by @iwaim]
+
+Thanks
+^^^^^^
+
+* IWAI, Masaharu(@iwaim)
+
 .. _release-2-0-2:
 
 Release 2.0.2 - 2012/04/29
