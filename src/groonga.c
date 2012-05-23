@@ -55,6 +55,16 @@
 # define MSG_NOSIGNAL 0
 #endif /* USE_MSG_NOSIGNAL */
 
+#ifndef STDIN_FILENO
+# define STDIN_FILENO 0
+#endif /* STDIN_FILENO */
+#ifndef STDOUT_FILENO
+# define STDOUT_FILENO 1
+#endif /* STDOUT_FILENO */
+#ifndef STDERR_FILENO
+# define STDERR_FILENO 2
+#endif /* STDERR_FILENO */
+
 #define DEFAULT_PORT 10041
 #define DEFAULT_DEST "localhost"
 #define DEFAULT_MAX_NFTHREADS 8
@@ -874,10 +884,10 @@ daemonize(void)
   {
     int null_fd = GRN_OPEN("/dev/null", O_RDWR, 0);
     if (null_fd != -1) {
-      dup2(null_fd, 0);
-      dup2(null_fd, 1);
-      dup2(null_fd, 2);
-      if (null_fd > 2) { GRN_CLOSE(null_fd); }
+      dup2(null_fd, STDIN_FILENO);
+      dup2(null_fd, STDOUT_FILENO);
+      dup2(null_fd, STDERR_FILENO);
+      if (null_fd > STDERR_FILENO) { GRN_CLOSE(null_fd); }
     }
   }
 #endif /* WIN32 */
