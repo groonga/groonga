@@ -3,7 +3,7 @@ CHROOT_BASE = /var/lib/chroot
 ARCHITECTURES = i386 amd64
 CODES = squeeze wheezy unstable lucid natty oneiric precise
 REPOSITORY_PACKAGE = groonga-keyring
-REPOSITORY_VERSION = 2012.04.29
+REPOSITORY_VERSION = 2012.05.29
 REPOSITORY_BASE_NAME = $(REPOSITORY_PACKAGE)-$(REPOSITORY_VERSION)
 
 all:
