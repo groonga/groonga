@@ -17,7 +17,7 @@
 */
 
 #ifdef WIN32
-#define GROONGA_MAIN
+# define GROONGA_MAIN
 #endif /* WIN32 */
 #include "lib/groonga_in.h"
 
@@ -31,28 +31,28 @@
 #include <ctype.h>
 #include <fcntl.h>
 #ifdef HAVE_SYS_WAIT_H
-#include <sys/wait.h>
+# include <sys/wait.h>
 #endif /* HAVE_SYS_WAIT_H */
 #ifdef HAVE_SYS_SOCKET_H
-#include <sys/socket.h>
+# include <sys/socket.h>
 #endif /* HAVE_SYS_SOCKET_H */
 #ifdef HAVE_NETINET_IN_H
-#include <netinet/in.h>
+# include <netinet/in.h>
 #endif /* HAVE_NETINET_IN_H */
 
 #ifdef HAVE_SYS_RESOURCE_H
-#include <sys/resource.h>
+# include <sys/resource.h>
 #endif /* HAVE_SYS_RESOURCE_H */
 
 #ifdef HAVE_SYS_SYSCTL_H
-#include <sys/sysctl.h>
+# include <sys/sysctl.h>
 #endif /* HAVE_SYS_SYSCTL_H */
 
 #ifndef USE_MSG_NOSIGNAL
-#  ifdef MSG_NOSIGNAL
-#    undef MSG_NOSIGNAL
-#  endif
-#  define MSG_NOSIGNAL 0
+# ifdef MSG_NOSIGNAL
+#  undef MSG_NOSIGNAL
+# endif
+# define MSG_NOSIGNAL 0
 #endif /* USE_MSG_NOSIGNAL */
 
 #define DEFAULT_PORT 10041
