@@ -1139,6 +1139,7 @@ AC_DEFINE_UNQUOTED(GRN_CONFIG_PATH, ["$GRN_CONFIG_PATH"],
 AC_OUTPUT([
   packages/rpm/centos/groonga.spec
   packages/rpm/fedora/groonga.spec
+  packages/apt/debian/groonga-keyring.postrm
   groonga.pc
   ])
 

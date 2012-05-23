@@ -5,7 +5,7 @@ set -e
 case "$1" in
     remove)
 	if [ -x /usr/bin/apt-key ]; then
-	    apt-key del F10399C0
+	    apt-key del @GPG_UID@
 	fi
 	;;
     purge)
