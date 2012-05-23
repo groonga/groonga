@@ -260,6 +260,7 @@ fi
 %dir %{_libdir}/groonga
 %dir %{_libdir}/groonga/plugins
 %dir %{_libdir}/groonga/plugins/tokenizers
+%{_libdir}/groonga/plugins/table/table.so
 %{_datadir}/groonga/
 
 %files server
