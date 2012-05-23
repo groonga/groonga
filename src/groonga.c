@@ -75,6 +75,7 @@ static int (*do_server)(char *path);
 static FILE *pid_file = NULL;
 static const char *pid_file_path = NULL;
 static const char *input_path = NULL;
+static FILE *output = NULL;
 
 static grn_encoding encoding;
 static grn_command_version default_command_version;
@@ -729,7 +730,7 @@ do_alone(int argc, char **argv)
     grn_obj command;
     GRN_TEXT_INIT(&command, 0);
     GRN_CTX_USER_DATA(ctx)->ptr = &command;
-    grn_ctx_recv_handler_set(ctx, s_output, stdout);
+    grn_ctx_recv_handler_set(ctx, s_output, output);
     if (!argc) {
       grn_obj text;
       GRN_TEXT_INIT(&text, 0);
@@ -775,11 +776,11 @@ c_output(grn_ctx *ctx)
       GRN_TEXT_INIT(&foot, 0);
       GRN_TEXT_SET(ctx, &body, str, str_len);
       print_return_code(ctx, ctx->rc, &head, &body, &foot);
-      fwrite(GRN_TEXT_VALUE(&head), 1, GRN_TEXT_LEN(&head), stdout);
-      fwrite(GRN_TEXT_VALUE(&body), 1, GRN_TEXT_LEN(&body), stdout);
-      fwrite(GRN_TEXT_VALUE(&foot), 1, GRN_TEXT_LEN(&foot), stdout);
-      fputc('\n', stdout);
-      fflush(stdout);
+      fwrite(GRN_TEXT_VALUE(&head), 1, GRN_TEXT_LEN(&head), output);
+      fwrite(GRN_TEXT_VALUE(&body), 1, GRN_TEXT_LEN(&body), output);
+      fwrite(GRN_TEXT_VALUE(&foot), 1, GRN_TEXT_LEN(&foot), output);
+      fputc('\n', output);
+      fflush(output);
       GRN_OBJ_FIN(ctx, &head);
       GRN_OBJ_FIN(ctx, &body);
       GRN_OBJ_FIN(ctx, &foot);
@@ -2232,6 +2233,8 @@ static const char * const default_bind_address = "0.0.0.0";
 static void
 init_default_settings(void)
 {
+  output = stdout;
+
   default_encoding = grn_strtoenc(GRN_DEFAULT_ENCODING);
 
   {
@@ -2480,7 +2483,7 @@ main(int argc, char **argv)
     *cache_limit_arg = NULL, *document_root_arg = NULL,
     *default_command_version_arg = NULL,
     *default_match_escalation_threshold_arg = NULL,
-    *input_fd_arg = NULL;
+    *input_fd_arg = NULL, *output_fd_arg = NULL;
   const char *config_path = NULL;
   int exit_code = EXIT_SUCCESS;
   int i, mode = mode_alone;
@@ -2510,6 +2513,7 @@ main(int argc, char **argv)
     {'\0', "default-match-escalation-threshold", NULL, 0, getopt_op_none},
     {'\0', "bind-address", NULL, 0, getopt_op_none},
     {'\0', "input-fd", NULL, 0, getopt_op_none},
+    {'\0', "output-fd", NULL, 0, getopt_op_none},
     {'\0', NULL, NULL, 0, 0}
   };
   opts[0].arg = &port_arg;
@@ -2529,6 +2533,7 @@ main(int argc, char **argv)
   opts[22].arg = &default_match_escalation_threshold_arg;
   opts[23].arg = &bind_address_arg;
   opts[24].arg = &input_fd_arg;
+  opts[25].arg = &output_fd_arg;
 
   init_default_settings();
 
@@ -2572,10 +2577,10 @@ main(int argc, char **argv)
     show_version();
     return EXIT_SUCCESS;
   case mode_usage :
-    show_usage(stdout);
+    show_usage(output);
     return EXIT_SUCCESS;
   case mode_config :
-    show_config(stdout, opts, mode & ~MODE_MASK);
+    show_config(output, opts, mode & ~MODE_MASK);
     return EXIT_SUCCESS;
   case mode_error :
     show_usage(stderr);
@@ -2708,6 +2713,23 @@ main(int argc, char **argv)
       batchmode = !isatty(0);
     }
   }
+
+  if (output_fd_arg) {
+    const char * const end = output_fd_arg + strlen(output_fd_arg);
+    const char *rest = NULL;
+    const int output_fd = grn_atoi(output_fd_arg, end, &rest);
+    if (rest != end || output_fd == 0) {
+      fprintf(stderr, "invalid output FD: <%s>\n", output_fd_arg);
+      return EXIT_FAILURE;
+    }
+    output = fdopen(output_fd, "w");
+    if (!output) {
+      fprintf(stderr, "can't open output FD: %d (%s)\n",
+              output_fd, strerror(errno));
+      return EXIT_FAILURE;
+    }
+  }
+
 
   if (bind_address_arg) {
     const size_t bind_address_length = strlen(bind_address_arg);
@@ -2866,6 +2888,9 @@ main(int argc, char **argv)
     line_editor_fin();
   }
 #endif
+  if (output != stdout) {
+    fclose(output);
+  }
   grn_fin();
   return exit_code;
 }
