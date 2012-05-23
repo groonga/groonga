@@ -2412,6 +2412,8 @@ show_usage(FILE *output)
           "\n"
           "Standalone/client options:\n"
           "      --file <path>:          read commands from specified file\n"
+          "      --input-fd <FD>:        read commands from specified file descriptor\n"
+          "                              --file has a prioriry over --input-fd\n"
           "  -p, --port <port number>:   specify server port number (client mode only)\n"
           "                              (default: %d)\n"
           "\n"
@@ -2477,7 +2479,8 @@ main(int argc, char **argv)
     *log_path_arg = NULL, *query_log_path_arg = NULL,
     *cache_limit_arg = NULL, *document_root_arg = NULL,
     *default_command_version_arg = NULL,
-    *default_match_escalation_threshold_arg = NULL;
+    *default_match_escalation_threshold_arg = NULL,
+    *input_fd_arg = NULL;
   const char *config_path = NULL;
   int exit_code = EXIT_SUCCESS;
   int i, mode = mode_alone;
@@ -2506,6 +2509,7 @@ main(int argc, char **argv)
     {'\0', "default-command-version", NULL, 0, getopt_op_none},
     {'\0', "default-match-escalation-threshold", NULL, 0, getopt_op_none},
     {'\0', "bind-address", NULL, 0, getopt_op_none},
+    {'\0', "input-fd", NULL, 0, getopt_op_none},
     {'\0', NULL, NULL, 0, 0}
   };
   opts[0].arg = &port_arg;
@@ -2524,6 +2528,7 @@ main(int argc, char **argv)
   opts[21].arg = &default_command_version_arg;
   opts[22].arg = &default_match_escalation_threshold_arg;
   opts[23].arg = &bind_address_arg;
+  opts[24].arg = &input_fd_arg;
 
   init_default_settings();
 
@@ -2685,7 +2690,23 @@ main(int argc, char **argv)
     }
     batchmode = GRN_TRUE;
   } else {
-    batchmode = !isatty(0);
+    if (input_fd_arg) {
+      const char * const end = input_fd_arg + strlen(input_fd_arg);
+      const char *rest = NULL;
+      const int input_fd = grn_atoi(input_fd_arg, end, &rest);
+      if (rest != end || input_fd == 0) {
+        fprintf(stderr, "invalid input FD: <%s>\n", input_fd_arg);
+        return EXIT_FAILURE;
+      }
+      if (dup2(input_fd, STDIN_FILENO) == -1) {
+        fprintf(stderr, "can't open input FD: %d (%s)\n",
+                input_fd, strerror(errno));
+        return EXIT_FAILURE;
+      }
+      batchmode = GRN_TRUE;
+    } else {
+      batchmode = !isatty(0);
+    }
   }
 
   if (bind_address_arg) {
