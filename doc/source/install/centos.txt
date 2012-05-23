@@ -44,15 +44,18 @@ groonga status by Munin, install groonga-munin-plugins package.
 
    Enable Repoforge (RPMforge) repository on i386 environment::
 
-     % sudo rpm -ivh http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.2-2.el5.rf.i386.rpm
+     % wget http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.2-2.el5.rf.i386.rpm
+     % sudo rpm -ivh rpmforge-release-0.5.2-2.el5.rf.i386.rpm
 
    Enable Repoforge (RPMforge) repository on x86_64 environment::
 
-     % sudo rpm -ivh http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.2-2.el5.rf.x86_64.rpm
+     % wget http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.2-2.el5.rf.x86_64.rpm
+     % sudo rpm -ivh rpmforge-release-0.5.2-2.el5.rf.x86_64.rpm
 
    Enable EPEL repository on any environment::
 
-     % sudo rpm -ivh http://download.fedoraproject.org/pub/epel/5/i386/epel-release-5-4.noarch.rpm
+     % wget http://download.fedoraproject.org/pub/epel/5/i386/epel-release-5-4.noarch.rpm
+     % sudo rpm -ivh epel-release-5-4.noarch.rpm
 
 Install groonga-munin-plugins package::
 
