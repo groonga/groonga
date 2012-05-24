@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 2.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-05-21 14:05\n"
+"POT-Creation-Date: 2012-05-24 12:20\n"
 "PO-Revision-Date: 2012-04-28 11:38+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -79,8 +79,8 @@ msgstr ""
 # 0620e383955e465596983efa3acfc1d7
 # 0620e383955e465596983efa3acfc1d7
 # 0620e383955e465596983efa3acfc1d7
-#: ../../../source/install/centos.txt:20 ../../../source/install/centos.txt:65
-#: ../../../source/install/centos.txt:128
+#: ../../../source/install/centos.txt:20 ../../../source/install/centos.txt:68
+#: ../../../source/install/centos.txt:131
 #: ../../../source/install/debian.txt:27 ../../../source/install/debian.txt:58
 #: ../../../source/install/debian.txt:89
 #: ../../../source/install/debian.txt:131
@@ -105,7 +105,7 @@ msgstr "Install::"
 # 19910d2d00654afda5ce49d59252087a
 # 19910d2d00654afda5ce49d59252087a
 # 86a145330abf4154b307ca9148163e83
-#: ../../../source/install/centos.txt:26 ../../../source/install/centos.txt:71
+#: ../../../source/install/centos.txt:26 ../../../source/install/centos.txt:74
 #: ../../../source/install/debian.txt:33 ../../../source/install/debian.txt:64
 #: ../../../source/install/debian.txt:95 ../../../source/install/fedora.txt:34
 #: ../../../source/install/ubuntu.txt:40 ../../../source/install/ubuntu.txt:78
@@ -128,7 +128,7 @@ msgstr ""
 # 8316c5e8233c4ee29e76916d1b4b677b
 # 0368e573084e4c2db9620f255fe167f2
 # 0368e573084e4c2db9620f255fe167f2
-#: ../../../source/install/centos.txt:29 ../../../source/install/centos.txt:74
+#: ../../../source/install/centos.txt:29 ../../../source/install/centos.txt:77
 #: ../../../source/install/debian.txt:36 ../../../source/install/debian.txt:67
 #: ../../../source/install/debian.txt:98 ../../../source/install/fedora.txt:37
 #: ../../../source/install/ubuntu.txt:43 ../../../source/install/ubuntu.txt:81
@@ -146,7 +146,7 @@ msgstr "Install groonga-tokenizer-mecab package::"
 # 19910d2d00654afda5ce49d59252087a
 # 19910d2d00654afda5ce49d59252087a
 # 19910d2d00654afda5ce49d59252087a
-#: ../../../source/install/centos.txt:33 ../../../source/install/centos.txt:78
+#: ../../../source/install/centos.txt:33 ../../../source/install/centos.txt:81
 #: ../../../source/install/debian.txt:40 ../../../source/install/debian.txt:71
 #: ../../../source/install/debian.txt:102
 #: ../../../source/install/fedora.txt:41 ../../../source/install/ubuntu.txt:47
@@ -185,13 +185,14 @@ msgstr "Enable Repoforge (RPMforge) repository on i386 environment::"
 
 # 69c3dcfb02b147eaa46272d02b615725
 # 69c3dcfb02b147eaa46272d02b615725
-#: ../../../source/install/centos.txt:49
+#: ../../../source/install/centos.txt:50
 msgid "Enable Repoforge (RPMforge) repository on x86_64 environment::"
 msgstr "Enable Repoforge (RPMforge) repository on x86_64 environment::"
 
 # 610d5ad310b748c1b7ce401cd0c1db8c
 # 610d5ad310b748c1b7ce401cd0c1db8c
-#: ../../../source/install/centos.txt:53 ../../../source/install/centos.txt:98
+#: ../../../source/install/centos.txt:55
+#: ../../../source/install/centos.txt:101
 msgid "Enable EPEL repository on any environment::"
 msgstr "Enable EPEL repository on any environment::"
 
@@ -204,8 +205,8 @@ msgstr "Enable EPEL repository on any environment::"
 # 30c8cfa32ad14c1d973992139c2db098
 # 30c8cfa32ad14c1d973992139c2db098
 # 30c8cfa32ad14c1d973992139c2db098
-#: ../../../source/install/centos.txt:57
-#: ../../../source/install/centos.txt:102
+#: ../../../source/install/centos.txt:60
+#: ../../../source/install/centos.txt:105
 #: ../../../source/install/debian.txt:44 ../../../source/install/debian.txt:75
 #: ../../../source/install/debian.txt:106
 #: ../../../source/install/fedora.txt:45 ../../../source/install/ubuntu.txt:51
@@ -216,13 +217,13 @@ msgid "Install groonga-munin-plugins package::"
 msgstr "Install groonga-munin-plugins package::"
 
 # 61f643edeb264b119adb7b9d3bb9ed8a
-#: ../../../source/install/centos.txt:63
+#: ../../../source/install/centos.txt:66
 msgid "6"
 msgstr ""
 
 # 5b8d30249ea94988b79d80381fdd0496
 # 6b3398fd45b4465a98e016b4b5aa8eea
-#: ../../../source/install/centos.txt:84
+#: ../../../source/install/centos.txt:87
 #, fuzzy
 msgid ""
 "Groonga-munin-plugins package requires munin-node package that isn't "
@@ -241,7 +242,7 @@ msgstr ""
 # 59db80affe314f32a6ce76536f4a5497
 # ec703d27d3234966b9fc47ee0b2452e4
 # 2b8df69838dd4359ba0916f298551913
-#: ../../../source/install/centos.txt:108
+#: ../../../source/install/centos.txt:111
 #: ../../../source/install/debian.txt:111
 #: ../../../source/install/fedora.txt:50
 #: ../../../source/install/mac_os_x.txt:32
@@ -255,7 +256,7 @@ msgstr ""
 # 6fd3f5d260094206bed009bcc59c9bc0
 # a1273f9f74434e008d905308f05ae950
 # 4ae1610ba99e4616bb4cd656a68442d8
-#: ../../../source/install/centos.txt:110
+#: ../../../source/install/centos.txt:113
 #: ../../../source/install/debian.txt:113
 #: ../../../source/install/fedora.txt:52
 #: ../../../source/install/ubuntu.txt:172
@@ -267,7 +268,7 @@ msgstr ""
 # 5ff01f1e9c6f42eb9f3e289da87f4eff
 # 41c0b64ee2204b84b366a15ee1675eda
 # 4d0dfc5867f74ed1b5778e043a4bbcea
-#: ../../../source/install/centos.txt:114
+#: ../../../source/install/centos.txt:117
 #: ../../../source/install/debian.txt:117
 #: ../../../source/install/fedora.txt:56
 #: ../../../source/install/mac_os_x.txt:36
@@ -280,7 +281,7 @@ msgstr ""
 # 4faa2f4027f944eb9c65a687f4ac0d24
 # cccc1f7cdc334f5b84af04b6d13cdbd8
 # d81638bd7ff7441892eb97a7be0a7cd2
-#: ../../../source/install/centos.txt:120
+#: ../../../source/install/centos.txt:123
 #: ../../../source/install/debian.txt:123
 #: ../../../source/install/fedora.txt:62
 #: ../../../source/install/mac_os_x.txt:42
@@ -293,7 +294,7 @@ msgstr ""
 # 6befc5cd575b4083b6dfefbd38f3f403
 # 1be509df11fb4455aa5d56d3e9e25c38
 # 54aaf45241eb4affbe05bbf5cfc8c322
-#: ../../../source/install/centos.txt:124
+#: ../../../source/install/centos.txt:127
 #: ../../../source/install/debian.txt:127
 #: ../../../source/install/fedora.txt:66
 #: ../../../source/install/mac_os_x.txt:46
@@ -978,8 +979,8 @@ msgstr "Install"
 #: ../../../source/install/windows.txt:20
 #, fuzzy
 msgid ""
-"For 32-bit environment: download `groonga-2.0.2-x86.exe <http://packages."
-"groonga.org/windows/groonga/groonga-2.0.2-x86.exe>`_ and run it."
+"For 32-bit environment: download `groonga-2.0.3-x86.exe <http://packages."
+"groonga.org/windows/groonga/groonga-2.0.3-x86.exe>`_ and run it."
 msgstr ""
 "You just download a zip file from `packages.groonga.org/windows/ <http://"
 "packages.groonga.org/windows/groonga/>`_ and extract it."
@@ -988,8 +989,8 @@ msgstr ""
 #: ../../../source/install/windows.txt:24
 #, fuzzy
 msgid ""
-"For 64-bit environment, download `groonga-2.0.2-x64.exe <http://packages."
-"groonga.org/windows/groonga/groonga-2.0.2-x64.exe>`_ and run it."
+"For 64-bit environment, download `groonga-2.0.3-x64.exe <http://packages."
+"groonga.org/windows/groonga/groonga-2.0.3-x64.exe>`_ and run it."
 msgstr ""
 "You just download a zip file from `packages.groonga.org/windows/ <http://"
 "packages.groonga.org/windows/groonga/>`_ and extract it."
@@ -1008,8 +1009,8 @@ msgstr ""
 #: ../../../source/install/windows.txt:33
 #, fuzzy
 msgid ""
-"For 32-bit environment: download `groonga-2.0.2-x86.zip <http://packages."
-"groonga.org/windows/groonga/groonga-2.0.2-x86.zip>`_ and extract it."
+"For 32-bit environment: download `groonga-2.0.3-x86.zip <http://packages."
+"groonga.org/windows/groonga/groonga-2.0.3-x86.zip>`_ and extract it."
 msgstr ""
 "You just download a zip file from `packages.groonga.org/windows/ <http://"
 "packages.groonga.org/windows/groonga/>`_ and extract it."
@@ -1018,8 +1019,8 @@ msgstr ""
 #: ../../../source/install/windows.txt:37
 #, fuzzy
 msgid ""
-"For 64-bit environment, download `groonga-2.0.2-x64.zip <http://packages."
-"groonga.org/windows/groonga/groonga-2.0.2-x64.zip>`_ and extract it."
+"For 64-bit environment, download `groonga-2.0.3-x64.zip <http://packages."
+"groonga.org/windows/groonga/groonga-2.0.3-x64.zip>`_ and extract it."
 msgstr ""
 "You just download a zip file from `packages.groonga.org/windows/ <http://"
 "packages.groonga.org/windows/groonga/>`_ and extract it."
@@ -1052,8 +1053,8 @@ msgstr ""
 #: ../../../source/install/windows.txt:53
 #, fuzzy
 msgid ""
-"Download zipped source `groonga-2.0.2.zip <http://packages.groonga.org/"
-"source/groonga/groonga-2.0.2.tar.gz>`_ and extract it."
+"Download zipped source `groonga-2.0.3.zip <http://packages.groonga.org/"
+"source/groonga/groonga-2.0.3.tar.gz>`_ and extract it."
 msgstr ""
 "You just download a zip file from `packages.groonga.org/windows/ <http://"
 "packages.groonga.org/windows/groonga/>`_ and extract it."
@@ -1085,15 +1086,71 @@ msgid ""
 "\\bin\\groonga.exe``."
 msgstr ""
 
-# 19fd17706b744bbf9c6077fa58fcab8d
+# bdc37ce6b77740c0a5867da09b102933
+#~ msgid "Debian GNU/Linux squeeze"
+#~ msgstr "Debian GNU/Linux squeeze"
+
+# aadfb6db92ad43d68043cd8fa948ba4b
+#~ msgid "Debian GNU/Linux wheezy"
+#~ msgstr "Debian GNU/Linux wheezy"
+
+# 6a2f2857c221494faeb2085dcaa3cf54
+# 6a2f2857c221494faeb2085dcaa3cf54
+# 6a2f2857c221494faeb2085dcaa3cf54
 #~ msgid ""
-#~ "There are some `Munin <http://munin-monitoring.org/>`_ plugins in groonga "
-#~ "package. You need to specify `--with-munin-plugins` option if you want to "
-#~ "install them."
+#~ "You'll need to enable the universe repository of Ubuntu to install "
+#~ "groonga. The following describes how to do it."
 #~ msgstr ""
-#~ "There are some `Munin <http://munin-monitoring.org/>`_ plugins in groonga "
-#~ "package. You need to specify `--with-munin-plugins` option if you want to "
-#~ "install them."
+#~ "You'll need to enable the universe repository of Ubuntu to install "
+#~ "groonga. The following describes how to do it."
+
+# e54ce88fd05444e08d64ca22e3dd1a7b
+#~ msgid "CentOS 6"
+#~ msgstr "CentOS 6"
+
+# 3bd6451be6584979a28d31c8d9dd55a4
+#~ msgid "Enable Repoforge (RPMforge) repository on i686 environment::"
+#~ msgstr "Enable Repoforge (RPMforge) repository on i686 environment::"
+
+# eff06608d0a44762ad22ee06de537a08
+#~ msgid "Mac OS X (MacPorts)"
+#~ msgstr "Mac OS X (MacPorts)"
+
+# 21883879a42244b2aa2b937bf6a1fdbe
+#~ msgid "Mac OS X (Homebrew)"
+#~ msgstr "Mac OS X (Homebrew)"
+
+# 419c388b6ec6482ebe17ef5b03ab73fb
+#~ msgid "Windows (Installer)"
+#~ msgstr "Windows (Installer)"
+
+# 5598fef05cff42478eb33ac4a5d233e5
+#~ msgid ""
+#~ "You just download an installer (.exe file) from `packages.groonga.org/"
+#~ "windows/ <http://packages.groonga.org/windows/groonga/>`_ and execute it."
+#~ msgstr ""
+#~ "You just download an installer (.exe file) from `packages.groonga.org/"
+#~ "windows/ <http://packages.groonga.org/windows/groonga/>`_ and execute it."
+
+# dba899df1ff04191a70fdf77b9b6b066
+#~ msgid ""
+#~ "If you want to use a morphological analyzer for tokenization in full-text "
+#~ "indexing, please install `MeCab <http://mecab.sourceforge.net/>`_ before "
+#~ "installing groonga."
+#~ msgstr ""
+#~ "If you want to use a morphological analyzer for tokenization in full-text "
+#~ "indexing, please install `MeCab <http://mecab.sourceforge.net/>`_ before "
+#~ "installing groonga."
+
+# bdec343fdef64190850c67302139ee83
+#~ msgid ""
+#~ "Then, download a tar.gz file from `packages.groonga.org/source/ <http://"
+#~ "packages.groonga.org/source/groonga/>`_ and extract it. After that, "
+#~ "please run the following command to install groonga."
+#~ msgstr ""
+#~ "Then, download a tar.gz file from `packages.groonga.org/source/ <http://"
+#~ "packages.groonga.org/source/groonga/>`_ and extract it. After that, "
+#~ "please run the following command to install groonga."
 
 # b1e01a0daa41405a9d687b48c6a6d281
 #~ msgid ""
@@ -1107,68 +1164,12 @@ msgstr ""
 #~ "if you are not familiar with environment variables such as "
 #~ "LD_LIBRARY_PATH."
 
-# bdec343fdef64190850c67302139ee83
+# 19fd17706b744bbf9c6077fa58fcab8d
 #~ msgid ""
-#~ "Then, download a tar.gz file from `packages.groonga.org/source/ <http://"
-#~ "packages.groonga.org/source/groonga/>`_ and extract it. After that, "
-#~ "please run the following command to install groonga."
+#~ "There are some `Munin <http://munin-monitoring.org/>`_ plugins in groonga "
+#~ "package. You need to specify `--with-munin-plugins` option if you want to "
+#~ "install them."
 #~ msgstr ""
-#~ "Then, download a tar.gz file from `packages.groonga.org/source/ <http://"
-#~ "packages.groonga.org/source/groonga/>`_ and extract it. After that, "
-#~ "please run the following command to install groonga."
-
-# dba899df1ff04191a70fdf77b9b6b066
-#~ msgid ""
-#~ "If you want to use a morphological analyzer for tokenization in full-text "
-#~ "indexing, please install `MeCab <http://mecab.sourceforge.net/>`_ before "
-#~ "installing groonga."
-#~ msgstr ""
-#~ "If you want to use a morphological analyzer for tokenization in full-text "
-#~ "indexing, please install `MeCab <http://mecab.sourceforge.net/>`_ before "
-#~ "installing groonga."
-
-# 5598fef05cff42478eb33ac4a5d233e5
-#~ msgid ""
-#~ "You just download an installer (.exe file) from `packages.groonga.org/"
-#~ "windows/ <http://packages.groonga.org/windows/groonga/>`_ and execute it."
-#~ msgstr ""
-#~ "You just download an installer (.exe file) from `packages.groonga.org/"
-#~ "windows/ <http://packages.groonga.org/windows/groonga/>`_ and execute it."
-
-# 419c388b6ec6482ebe17ef5b03ab73fb
-#~ msgid "Windows (Installer)"
-#~ msgstr "Windows (Installer)"
-
-# 21883879a42244b2aa2b937bf6a1fdbe
-#~ msgid "Mac OS X (Homebrew)"
-#~ msgstr "Mac OS X (Homebrew)"
-
-# eff06608d0a44762ad22ee06de537a08
-#~ msgid "Mac OS X (MacPorts)"
-#~ msgstr "Mac OS X (MacPorts)"
-
-# 3bd6451be6584979a28d31c8d9dd55a4
-#~ msgid "Enable Repoforge (RPMforge) repository on i686 environment::"
-#~ msgstr "Enable Repoforge (RPMforge) repository on i686 environment::"
-
-# e54ce88fd05444e08d64ca22e3dd1a7b
-#~ msgid "CentOS 6"
-#~ msgstr "CentOS 6"
-
-# 6a2f2857c221494faeb2085dcaa3cf54
-# 6a2f2857c221494faeb2085dcaa3cf54
-# 6a2f2857c221494faeb2085dcaa3cf54
-#~ msgid ""
-#~ "You'll need to enable the universe repository of Ubuntu to install "
-#~ "groonga. The following describes how to do it."
-#~ msgstr ""
-#~ "You'll need to enable the universe repository of Ubuntu to install "
-#~ "groonga. The following describes how to do it."
-
-# aadfb6db92ad43d68043cd8fa948ba4b
-#~ msgid "Debian GNU/Linux wheezy"
-#~ msgstr "Debian GNU/Linux wheezy"
-
-# bdc37ce6b77740c0a5867da09b102933
-#~ msgid "Debian GNU/Linux squeeze"
-#~ msgstr "Debian GNU/Linux squeeze"
+#~ "There are some `Munin <http://munin-monitoring.org/>`_ plugins in groonga "
+#~ "package. You need to specify `--with-munin-plugins` option if you want to "
+#~ "install them."
