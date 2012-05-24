@@ -27,7 +27,7 @@ size data.
 
 Install::
 
-  % sudo rpm -ivh http://packages.groonga.org/fedora/groonga-repository-1.0.1-0.noarch.rpm
+  % sudo rpm -ivh http://packages.groonga.org/fedora/groonga-release-1.1.0-0.noarch.rpm
   % sudo yum update
   % sudo yum install -y groonga
 

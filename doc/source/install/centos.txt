@@ -19,7 +19,7 @@ size data.
 
 Install::
 
-  % sudo rpm -ivh http://packages.groonga.org/centos/groonga-repository-1.0.1-0.noarch.rpm
+  % sudo rpm -ivh http://packages.groonga.org/centos/groonga-release-1.1.0-0.noarch.rpm
   % sudo yum update
   % sudo yum install -y groonga
 
@@ -67,7 +67,7 @@ Install groonga-munin-plugins package::
 
 Install::
 
-  % sudo rpm -ivh http://packages.groonga.org/centos/groonga-repository-1.0.1-0.noarch.rpm
+  % sudo rpm -ivh http://packages.groonga.org/centos/groonga-release-1.1.0-0.noarch.rpm
   % sudo yum update
   % sudo yum install -y groonga
 
