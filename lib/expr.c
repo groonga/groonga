@@ -3448,7 +3448,6 @@ static scan_info **
 put_logical_op(grn_ctx *ctx, scan_info **sis, int *ip, grn_operator op, int start)
 {
   int nparens = 1, ndifops = 0, i = *ip, j = i, r = 0;
-  grn_operator op_ = op == GRN_OP_BUT ? GRN_OP_AND : op;
   while (j--) {
     scan_info *s_ = sis[j];
     if (s_->flags & SCAN_POP) {
@@ -3459,7 +3458,7 @@ put_logical_op(grn_ctx *ctx, scan_info **sis, int *ip, grn_operator op, int star
         if (!(--nparens)) {
           if (!r) {
             if (ndifops) {
-              if (j) {
+              if (j && op != GRN_OP_BUT) {
                 nparens = 1;
                 ndifops = 0;
                 r = j;
@@ -3494,7 +3493,7 @@ put_logical_op(grn_ctx *ctx, scan_info **sis, int *ip, grn_operator op, int star
           }
         }
       } else {
-        if (op_ != (s_->logical_op == GRN_OP_BUT ? GRN_OP_AND : s_->logical_op)) {
+        if ((op == GRN_OP_BUT) || (op != s_->logical_op)) {
           ndifops++;
         }
       }
