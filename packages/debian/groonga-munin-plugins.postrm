@@ -3,7 +3,7 @@
 set -e
 
 if [ "$1" = "purge" ]; then
-	rm /etc/munin/plugins/groonga_* > /dev/null 2>&1
+	rm -f /etc/munin/plugins/groonga_* > /dev/null 2>&1
 	invoke-rc.d munin-node restart
 fi
 
