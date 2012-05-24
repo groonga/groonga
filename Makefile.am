@@ -80,6 +80,7 @@ update-latest-release:
 	  packages/debian/changelog				\
 	  doc/source/install.txt				\
 	  doc/source/install/*.txt				\
+	  doc/locale/*/LC_MESSAGES/install.po			\
 	  $(GROONGA_GITHUB_COM_PATH)/index.html			\
 	  $(GROONGA_GITHUB_COM_PATH)/ja/index.html
 

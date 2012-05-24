@@ -6,7 +6,8 @@ Mac OS X
 ========
 
 This section describes how to install groonga on Mac OS X. You can
-install groonga MacPorts or Homebrew.
+install groonga by `MacPorts <http://www.macports.org/>`_ or `Homebrew
+<http://mxcl.github.com/homebrew/>`_.
 
 We distribute both 32-bit and 64-bit packages but we strongly
 recommend a 64-bit package for server. You should use a 32-bit package

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-02 12:59\n"
-"PO-Revision-Date: 2011-06-29 00:00+0900\n"
+"POT-Creation-Date: 2012-05-24 16:32\n"
+"PO-Revision-Date: 2012-05-24 16:35+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -661,20 +661,22 @@ msgid ""
 "learner`"
 msgstr ""
 
+# 1421ad2b40c04f899f22b0f9e4ed1d91
 #: ../../../source/executables/groonga.txt:6
-msgid "groonga実行ファイル"
-msgstr ""
+msgid "groonga command"
+msgstr "groongaコマンド"
 
 #: ../../../source/executables/groonga.txt:11
 msgid "groonga - 列指向データベース機能を持つ全文検索エンジンソフトウェア"
 msgstr ""
 
+# d079a50fe68d4f7694afb39c6cfb4f14
 #: ../../../source/executables/groonga.txt:23
 msgid ""
 "groongaは列指向のデータベース機能を持つ高速でスケーラブルな全文検索エンジンで"
-"す。 groongaのデータベースは、groonga実行ファイルかCライブラリインタフェース"
-"を通して操作することができます。このマニュアルページでは、groonga実行ファイル"
-"の使い方について説明します。"
+"す。 groongaのデータベースは、groongaコマンドかCライブラリインタフェースを通"
+"して操作することができます。このマニュアルページでは、groongaコマンドの使い方"
+"について説明します。"
 msgstr ""
 
 #: ../../../source/executables/groonga.txt:31
@@ -802,12 +804,12 @@ msgid ""
 "ます。"
 msgstr ""
 
+# 8c6abaaae0b044a2b67f915722b1cef1
 #: ../../../source/executables/groonga.txt:144
 msgid ""
-"groonga実行ファイルを通してデータベースを操作する命令をコマンドと呼びます。コ"
-"マンドは主にC言語で記述され、groongaプロセスにロードすることによって使用でき"
-"るようになります。 それぞれのコマンドは一意な名前と、0個以上の引数を持ちま"
-"す。"
+"groongaコマンドを通してデータベースを操作する命令をコマンドと呼びます。コマン"
+"ドは主にC言語で記述され、groongaプロセスにロードすることによって使用できるよ"
+"うになります。 それぞれのコマンドは一意な名前と、0個以上の引数を持ちます。"
 msgstr ""
 
 #: ../../../source/executables/groonga.txt:147

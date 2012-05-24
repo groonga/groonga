@@ -6,7 +6,7 @@ Fedora
 ======
 
 This section describes how to install groonga related RPM packages on
-Fedora. You can install them by `yum`.
+Fedora. You can install them by ``yum``.
 
 Groonga related RPM pakcages are also in the official Fedora yum
 repository. So you can use them instead of the groonga yum
@@ -22,8 +22,8 @@ just only for tests or development. You will encounter an out of
 memory error with a 32-bit package even if you just process medium
 size data.
 
-16
---
+Fedora 16
+---------
 
 Install::
 

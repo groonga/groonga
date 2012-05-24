@@ -87,6 +87,8 @@ After the above steps, :doc:`/executables/groonga` is found in
 The default build will work well but you can customize groonga at
 ``configure`` step.
 
+The following describes details about each step.
+
 .. _source-configure:
 
 ``configure``
@@ -101,7 +103,7 @@ options:
 Specifies the install base directory. Groonga related files are
 installed under ``${PATH}/`` directory.
 
-The default is ``/usr/local``. In this case, ``groonga`` command is
+The default is ``/usr/local``. In this case, :doc:`/executables/groonga` is
 installed into ``/usr/local/bin/groonga``.
 
 Here is an example that installs groonga into ``~/local`` for an user
@@ -155,11 +157,11 @@ Here is an example that Shift_JIS is used as the default encoding::
 
 Specifies the default match escalation threshold. See
 :doc:`/commands/select#match-escalation-threshold` about match
-escalation threshold. -1 means that search escalation is never used.
+escalation threshold. -1 means that match operation never escalate.
 
 The default is 0.
 
-Here is an example that search escalation isn't used by default::
+Here is an example that match escalation isn't used by default::
 
   % ./configure --with-match-escalation-threshold=-1
 
@@ -209,7 +211,7 @@ Here is an example that uses MessagePack built with
 Installs Munin plugins for groonga. They are installed into
 ``${PREFIX}/share/groonga/munin/plugins/``.
 
-They are not installed by default.
+Those plugins are not installed by default.
 
 Here is an example that installs Munin plugins for groonga::
 
@@ -223,10 +225,10 @@ script. Available platforms are ``redhat`` and ``fedora``. ``redhat``
 is for Red Hat and Red Hat clone distributions such as
 CentOS. ``fedora`` is for Fedora.
 
-They are not installed by default.
+Those system management files are not installed by default.
 
-Here is an example that installs platform specifiec system management
-files for CentOS::
+Here is an example that installs CentOS specific system management
+files::
 
   % ./configure --with-package-platform=redhat
 
