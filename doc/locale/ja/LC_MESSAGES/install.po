@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-05-21 14:11\n"
+"POT-Creation-Date: 2012-05-24 12:36\n"
 "PO-Revision-Date: 2012-04-28 18:25+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -64,8 +64,8 @@ msgstr "それぞれの環境毎にインストール方法を説明します。
 msgid "5"
 msgstr ""
 
-#: ../../../source/install/centos.txt:20 ../../../source/install/centos.txt:65
-#: ../../../source/install/centos.txt:128
+#: ../../../source/install/centos.txt:20 ../../../source/install/centos.txt:68
+#: ../../../source/install/centos.txt:131
 #: ../../../source/install/debian.txt:27 ../../../source/install/debian.txt:58
 #: ../../../source/install/debian.txt:89
 #: ../../../source/install/debian.txt:131
@@ -90,7 +90,7 @@ msgstr "インストール::"
 # 6e1d7ed1c08441cbae598c858f9316ef
 # 59fba3b92a54447eb4e15a8f19a867b8
 # 59fba3b92a54447eb4e15a8f19a867b8
-#: ../../../source/install/centos.txt:26 ../../../source/install/centos.txt:71
+#: ../../../source/install/centos.txt:26 ../../../source/install/centos.txt:74
 #: ../../../source/install/debian.txt:33 ../../../source/install/debian.txt:64
 #: ../../../source/install/debian.txt:95 ../../../source/install/fedora.txt:34
 #: ../../../source/install/ubuntu.txt:40 ../../../source/install/ubuntu.txt:78
@@ -113,7 +113,7 @@ msgstr ""
 # 5084fb2612f742a1a641034d8107f94a
 # bf151c5f2cb64eba9c98fcc1b4c95944
 # b38318895c87438caab31bc9a83225fb
-#: ../../../source/install/centos.txt:29 ../../../source/install/centos.txt:74
+#: ../../../source/install/centos.txt:29 ../../../source/install/centos.txt:77
 #: ../../../source/install/debian.txt:36 ../../../source/install/debian.txt:67
 #: ../../../source/install/debian.txt:98 ../../../source/install/fedora.txt:37
 #: ../../../source/install/ubuntu.txt:43 ../../../source/install/ubuntu.txt:81
@@ -126,7 +126,7 @@ msgstr "groonga-tokenizer-mecabパッケージのインストール::"
 # 9dbb644c0f304e798c8e769c455bf241
 # 1e86d7554f0348b0a5c65b70c7f987bd
 # 68faa6af5dcb440a93b1d0836303f4d9
-#: ../../../source/install/centos.txt:33 ../../../source/install/centos.txt:78
+#: ../../../source/install/centos.txt:33 ../../../source/install/centos.txt:81
 #: ../../../source/install/debian.txt:40 ../../../source/install/debian.txt:71
 #: ../../../source/install/debian.txt:102
 #: ../../../source/install/fedora.txt:41 ../../../source/install/ubuntu.txt:47
@@ -165,12 +165,13 @@ msgid "Enable Repoforge (RPMforge) repository on i386 environment::"
 msgstr "i386環境でRepoforge (RPMforge)リポジトリを有効にする::"
 
 # 38147f50a66d420a86a1ba5ba55456c2
-#: ../../../source/install/centos.txt:49
+#: ../../../source/install/centos.txt:50
 msgid "Enable Repoforge (RPMforge) repository on x86_64 environment::"
 msgstr "x86_64環境でRepoforge (RPMforge)リポジトリを有効にする::"
 
 # 38147f50a66d420a86a1ba5ba55456c2
-#: ../../../source/install/centos.txt:53 ../../../source/install/centos.txt:98
+#: ../../../source/install/centos.txt:55
+#: ../../../source/install/centos.txt:101
 msgid "Enable EPEL repository on any environment::"
 msgstr "EPELリポジトリを有効にする（環境非依存）::"
 
@@ -183,8 +184,8 @@ msgstr "EPELリポジトリを有効にする（環境非依存）::"
 # 5084fb2612f742a1a641034d8107f94a
 # bf151c5f2cb64eba9c98fcc1b4c95944
 # b38318895c87438caab31bc9a83225fb
-#: ../../../source/install/centos.txt:57
-#: ../../../source/install/centos.txt:102
+#: ../../../source/install/centos.txt:60
+#: ../../../source/install/centos.txt:105
 #: ../../../source/install/debian.txt:44 ../../../source/install/debian.txt:75
 #: ../../../source/install/debian.txt:106
 #: ../../../source/install/fedora.txt:45 ../../../source/install/ubuntu.txt:51
@@ -195,13 +196,13 @@ msgid "Install groonga-munin-plugins package::"
 msgstr "groonga-munin-pluginsパッケージのインストール::"
 
 # 9948fc8aa40c49bd857073804ae55452
-#: ../../../source/install/centos.txt:63
+#: ../../../source/install/centos.txt:66
 msgid "6"
 msgstr ""
 
 # 7b4911420849402a9fced72df9b2422f
 # 7b4911420849402a9fced72df9b2422f
-#: ../../../source/install/centos.txt:84
+#: ../../../source/install/centos.txt:87
 #, fuzzy
 msgid ""
 "Groonga-munin-plugins package requires munin-node package that isn't "
@@ -221,7 +222,7 @@ msgstr ""
 # 255bc55f658a42a39e855ef09314275d
 # bd816ffe992d4c6fb4f5545d11322eae
 # fb0c883dae63470091289ff8228987c3
-#: ../../../source/install/centos.txt:108
+#: ../../../source/install/centos.txt:111
 #: ../../../source/install/debian.txt:111
 #: ../../../source/install/fedora.txt:50
 #: ../../../source/install/mac_os_x.txt:32
@@ -235,7 +236,7 @@ msgstr ""
 # 8f52c92305ed42ebb92ca5c20378ed50
 # c46c238f2623468bbdfd5b448e136f97
 # aa5978964c284e878ed8482ac448b006
-#: ../../../source/install/centos.txt:110
+#: ../../../source/install/centos.txt:113
 #: ../../../source/install/debian.txt:113
 #: ../../../source/install/fedora.txt:52
 #: ../../../source/install/ubuntu.txt:172
@@ -247,7 +248,7 @@ msgstr ""
 # 0d7d3ec8845c48bea809a6585f12745a
 # 9783c9fc02b1418189f14d16ccc6ae3b
 # 6e465d126c794fc793ee16a314cc7e67
-#: ../../../source/install/centos.txt:114
+#: ../../../source/install/centos.txt:117
 #: ../../../source/install/debian.txt:117
 #: ../../../source/install/fedora.txt:56
 #: ../../../source/install/mac_os_x.txt:36
@@ -260,7 +261,7 @@ msgstr ""
 # 1929275bcd894a7eb023e099c9022d19
 # 45ccfcf011c1486a9446454c9ae7a0b2
 # 2121faf11be846b29749b58e87108d6f
-#: ../../../source/install/centos.txt:120
+#: ../../../source/install/centos.txt:123
 #: ../../../source/install/debian.txt:123
 #: ../../../source/install/fedora.txt:62
 #: ../../../source/install/mac_os_x.txt:42
@@ -273,7 +274,7 @@ msgstr ""
 # a8f816f704db453897ab4aa664f1b412
 # ad70634b7f5149b48083a7724ba098ed
 # 5d6ad8356b754a9390a4a4604bd1d6d5
-#: ../../../source/install/centos.txt:124
+#: ../../../source/install/centos.txt:127
 #: ../../../source/install/debian.txt:127
 #: ../../../source/install/fedora.txt:66
 #: ../../../source/install/mac_os_x.txt:46
@@ -937,8 +938,8 @@ msgstr "インストール"
 #: ../../../source/install/windows.txt:20
 #, fuzzy
 msgid ""
-"For 32-bit environment: download `groonga-2.0.2-x86.exe <http://packages."
-"groonga.org/windows/groonga/groonga-2.0.2-x86.exe>`_ and run it."
+"For 32-bit environment: download `groonga-2.0.3-x86.exe <http://packages."
+"groonga.org/windows/groonga/groonga-2.0.3-x86.exe>`_ and run it."
 msgstr ""
 "`packages.groonga.org/windows/ <http://packages.groonga.org/windows/groonga/"
 ">`_ からzipファイルをダウンロードして展開するだけで使えます。"
@@ -946,8 +947,8 @@ msgstr ""
 #: ../../../source/install/windows.txt:24
 #, fuzzy
 msgid ""
-"For 64-bit environment, download `groonga-2.0.2-x64.exe <http://packages."
-"groonga.org/windows/groonga/groonga-2.0.2-x64.exe>`_ and run it."
+"For 64-bit environment, download `groonga-2.0.3-x64.exe <http://packages."
+"groonga.org/windows/groonga/groonga-2.0.3-x64.exe>`_ and run it."
 msgstr ""
 "`packages.groonga.org/windows/ <http://packages.groonga.org/windows/groonga/"
 ">`_ からzipファイルをダウンロードして展開するだけで使えます。"
@@ -965,8 +966,8 @@ msgstr ""
 #: ../../../source/install/windows.txt:33
 #, fuzzy
 msgid ""
-"For 32-bit environment: download `groonga-2.0.2-x86.zip <http://packages."
-"groonga.org/windows/groonga/groonga-2.0.2-x86.zip>`_ and extract it."
+"For 32-bit environment: download `groonga-2.0.3-x86.zip <http://packages."
+"groonga.org/windows/groonga/groonga-2.0.3-x86.zip>`_ and extract it."
 msgstr ""
 "`packages.groonga.org/windows/ <http://packages.groonga.org/windows/groonga/"
 ">`_ からzipファイルをダウンロードして展開するだけで使えます。"
@@ -974,8 +975,8 @@ msgstr ""
 #: ../../../source/install/windows.txt:37
 #, fuzzy
 msgid ""
-"For 64-bit environment, download `groonga-2.0.2-x64.zip <http://packages."
-"groonga.org/windows/groonga/groonga-2.0.2-x64.zip>`_ and extract it."
+"For 64-bit environment, download `groonga-2.0.3-x64.zip <http://packages."
+"groonga.org/windows/groonga/groonga-2.0.3-x64.zip>`_ and extract it."
 msgstr ""
 "`packages.groonga.org/windows/ <http://packages.groonga.org/windows/groonga/"
 ">`_ からzipファイルをダウンロードして展開するだけで使えます。"
@@ -1007,8 +1008,8 @@ msgstr ""
 #: ../../../source/install/windows.txt:53
 #, fuzzy
 msgid ""
-"Download zipped source `groonga-2.0.2.zip <http://packages.groonga.org/"
-"source/groonga/groonga-2.0.2.tar.gz>`_ and extract it."
+"Download zipped source `groonga-2.0.3.zip <http://packages.groonga.org/"
+"source/groonga/groonga-2.0.3.tar.gz>`_ and extract it."
 msgstr ""
 "`packages.groonga.org/windows/ <http://packages.groonga.org/windows/groonga/"
 ">`_ からzipファイルをダウンロードして展開するだけで使えます。"
@@ -1040,45 +1041,15 @@ msgid ""
 "\\bin\\groonga.exe``."
 msgstr ""
 
-# fd9c45dc17b24d65a8564aa039fa524e
-# 827add09a0324562b5bb4ebeb19392b5
-# cd45acb254c545ee9c2847ab6bcaf158
+# 36fa88bfeec44258acca550e9427c224
 #~ msgid ""
-#~ "You'll need to enable the universe repository of Ubuntu to install "
-#~ "groonga. The following describes how to do it."
+#~ "There are some `Munin <http://munin-monitoring.org/>`_ plugins in groonga "
+#~ "package. You need to specify `--with-munin-plugins` option if you want to "
+#~ "install them."
 #~ msgstr ""
-#~ "Ubuntu本家のuniverseセクションもインストール対象としてください。設定方法は"
-#~ "以下で説明しています。"
-
-# 38147f50a66d420a86a1ba5ba55456c2
-#~ msgid "Enable Repoforge (RPMforge) repository on i686 environment::"
-#~ msgstr "i686環境でRepoforge (RPMforge)リポジトリを有効にする::"
-
-#~ msgid ""
-#~ "You just download an installer (.exe file) from `packages.groonga.org/"
-#~ "windows/ <http://packages.groonga.org/windows/groonga/>`_ and execute it."
-#~ msgstr ""
-#~ "`packages.groonga.org/windows/ <http://packages.groonga.org/windows/"
-#~ "groonga/>`_ からインストーラ（.exeファイル）をダウンロードして実行してくだ"
-#~ "さい。"
-
-#~ msgid ""
-#~ "If you want to use a morphological analyzer for tokenization in full-text "
-#~ "indexing, please install `MeCab <http://mecab.sourceforge.net/>`_ before "
-#~ "installing groonga."
-#~ msgstr ""
-#~ "形態素単位でトークナイズした全文検索索引を使用したい場合は、groongaをイン"
-#~ "ストールする前に `MeCab <http://mecab.sourceforge.net/>`_ をインストールし"
-#~ "てください。"
-
-#~ msgid ""
-#~ "Then, download a tar.gz file from `packages.groonga.org/source/ <http://"
-#~ "packages.groonga.org/source/groonga/>`_ and extract it. After that, "
-#~ "please run the following command to install groonga."
-#~ msgstr ""
-#~ "`packages.groonga.org/source/ <http://packages.groonga.org/source/groonga/"
-#~ ">`_ よりtar.gzファイルを取得し、インストール先の環境にファイルを展開して、"
-#~ "以下のように実行することでインストールできます。::"
+#~ "groongaパッケージに含まれている `Munin <http://munin-monitoring.org/>`_ プ"
+#~ "ラグインのインストールを有効にするには、 `--with-munin-plugins` オプション"
+#~ "を指定する必要があります。"
 
 #~ msgid ""
 #~ "The ``--prefix`` option specifies the path to install groonga. If you "
@@ -1090,12 +1061,42 @@ msgstr ""
 #~ "に指定しなければ、/usr/localが指定されたものとみなします。LD_LIBRARY_PATH"
 #~ "などに詳しくない人は、上記のように/usrを指定することをお勧めします。"
 
-# 36fa88bfeec44258acca550e9427c224
 #~ msgid ""
-#~ "There are some `Munin <http://munin-monitoring.org/>`_ plugins in groonga "
-#~ "package. You need to specify `--with-munin-plugins` option if you want to "
-#~ "install them."
+#~ "Then, download a tar.gz file from `packages.groonga.org/source/ <http://"
+#~ "packages.groonga.org/source/groonga/>`_ and extract it. After that, "
+#~ "please run the following command to install groonga."
 #~ msgstr ""
-#~ "groongaパッケージに含まれている `Munin <http://munin-monitoring.org/>`_ プ"
-#~ "ラグインのインストールを有効にするには、 `--with-munin-plugins` オプション"
-#~ "を指定する必要があります。"
+#~ "`packages.groonga.org/source/ <http://packages.groonga.org/source/groonga/"
+#~ ">`_ よりtar.gzファイルを取得し、インストール先の環境にファイルを展開して、"
+#~ "以下のように実行することでインストールできます。::"
+
+#~ msgid ""
+#~ "If you want to use a morphological analyzer for tokenization in full-text "
+#~ "indexing, please install `MeCab <http://mecab.sourceforge.net/>`_ before "
+#~ "installing groonga."
+#~ msgstr ""
+#~ "形態素単位でトークナイズした全文検索索引を使用したい場合は、groongaをイン"
+#~ "ストールする前に `MeCab <http://mecab.sourceforge.net/>`_ をインストールし"
+#~ "てください。"
+
+#~ msgid ""
+#~ "You just download an installer (.exe file) from `packages.groonga.org/"
+#~ "windows/ <http://packages.groonga.org/windows/groonga/>`_ and execute it."
+#~ msgstr ""
+#~ "`packages.groonga.org/windows/ <http://packages.groonga.org/windows/"
+#~ "groonga/>`_ からインストーラ（.exeファイル）をダウンロードして実行してくだ"
+#~ "さい。"
+
+# 38147f50a66d420a86a1ba5ba55456c2
+#~ msgid "Enable Repoforge (RPMforge) repository on i686 environment::"
+#~ msgstr "i686環境でRepoforge (RPMforge)リポジトリを有効にする::"
+
+# fd9c45dc17b24d65a8564aa039fa524e
+# 827add09a0324562b5bb4ebeb19392b5
+# cd45acb254c545ee9c2847ab6bcaf158
+#~ msgid ""
+#~ "You'll need to enable the universe repository of Ubuntu to install "
+#~ "groonga. The following describes how to do it."
+#~ msgstr ""
+#~ "Ubuntu本家のuniverseセクションもインストール対象としてください。設定方法は"
+#~ "以下で説明しています。"
