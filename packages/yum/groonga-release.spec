@@ -1,16 +1,17 @@
-Summary: groonga RPM repository configuration
-Name: groonga-repository
-Version: 1.0.1
+Summary: Groonga release files
+Name: groonga-release
+Version: 1.1.0
 Release: 0
 License: LGPLv2
 URL: http://packages.groonga.org/
-Source: groonga-repository.tar.gz
+Source: groonga-release.tar.gz
 Group: System Environment/Base
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-%(%{__id_u} -n)
 BuildArchitectures: noarch
+Obsoletes: groonga-repository < 1.1.0-0
 
 %description
-groonga RPM repository configuration.
+Groonga release files
 
 %prep
 %setup -c
@@ -37,6 +38,10 @@ groonga RPM repository configuration.
 %{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-groonga
 
 %changelog
+* Thu May 29 2012 Kouhei Sutou <kou@clear-code.com>
+- Rename to groonga-release from groonga-repository to follow
+  convention such as centos-release and fedora-release.
+
 * Sun Apr 29 2012 Kouhei Sutou <kou@clear-code.com>
 - Update GPG key.
 
