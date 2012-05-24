@@ -74,6 +74,7 @@ cmake_install.cmake
 /test/benchmark/fixtures/geo-select/load.grn
 /test/benchmark/bench-geo-select
 /test/benchmark/bench-normalize
+/packages/apt/debian/groonga-keyring.postrm
 /packages/apt/packages/debian/pool/*/*/*/*/*.diff.gz
 /packages/apt/packages/debian/pool/*/*/*/*/*.tar.gz
 /packages/apt/packages/debian/pool/*/*/*/*/*.build
