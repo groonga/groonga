@@ -27,6 +27,9 @@ Improvements
 * [munin] groonga_dist Munin plugin supported an object that has
   separated files.
 * Started using Travis CI.
+* [yum] Changed RPM package name that provides Yum repository from
+  groonga-repository to groonga-release to follow RPM package name
+  convension such as centos-release and fedora-release.
 
 Fixes
 ^^^^^
