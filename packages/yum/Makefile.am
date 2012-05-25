@@ -1,4 +1,5 @@
 SERVER_PATH = $(RSYNC_PATH)
+REPOSITORIES_PATH = repositories
 DISTRIBUTIONS = fedora centos
 ARCHITECTURES = i386 x86_64
 CHROOT_BASE = /var/lib/chroot
@@ -24,13 +25,16 @@ update:
 upload: ensure-rsync-path
 	for distribution in $(DISTRIBUTIONS); do		\
 	  rsync -avz --progress --delete --exclude .gitignore	\
-	    $${distribution}/ $(SERVER_PATH)/$${distribution};	\
+	    $(REPOSITORIES_PATH)/$${distribution}/		\
+	      $(SERVER_PATH)/$${distribution};			\
 	done
 
 download: ensure-rsync-path
-	for distribution in $(DISTRIBUTIONS); do		\
-	   rsync -avz --progress --delete			\
-	     $(SERVER_PATH)/$${distribution}/ $${distribution};	\
+	mkdir -p $(REPOSITORIES_PATH)
+	for distribution in $(DISTRIBUTIONS); do	\
+	   rsync -avz --progress --delete		\
+	     $(SERVER_PATH)/$${distribution}/		\
+	     $(REPOSITORIES_PATH)/$${distribution};	\
 	done
 
 build: build-in-chroot build-release-rpm
@@ -41,6 +45,7 @@ build-in-chroot: source
 	  $(VERSION)				\
 	  $(top_builddir)/$(PACKAGE)		\
 	  ../rpm				\
+	  $(REPOSITORIES_PATH)/			\
 	  $(CHROOT_BASE)			\
 	  '$(ARCHITECTURES)'			\
 	  '$(DISTRIBUTIONS)'			\
@@ -53,6 +58,7 @@ build-release-rpm: RPM-GPG-KEY-$(PACKAGE)
 	  $(PACKAGE)				\
 	  '$(PACKAGE_TITLE)'			\
 	  $(BASE_URL_PREFIX)			\
+	  $(REPOSITORIES_PATH)/			\
 	  '$(DISTRIBUTIONS)'			\
 	  $(HAVE_DEVELOPMENT_BRANCH)
 

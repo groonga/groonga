@@ -1,8 +1,8 @@
 #!/bin/sh
 
-if [ $# != 10 ]; then
-    echo "Usage: $0 PACKAGE VERSION SOURCE_BASE_NAME SPEC_DIR CHROOT_BASE ARCHITECTURES DISTRIBUTIONS HAVE_DEVELOPMENT_BRANCH USE_RPMFORGE USE_ATRPMS"
-    echo " e.g.: $0 milter-manager 1.1.1 ../milter-manager ../rpm /var/lib/chroot 'i386 x86_64' 'fedora centos' yes no no"
+if [ $# != 11 ]; then
+    echo "Usage: $0 PACKAGE VERSION SOURCE_BASE_NAME SPEC_DIR DESTINATION CHROOT_BASE ARCHITECTURES DISTRIBUTIONS HAVE_DEVELOPMENT_BRANCH USE_RPMFORGE USE_ATRPMS"
+    echo " e.g.: $0 milter-manager 1.1.1 ../milter-manager ../rpm repositories/ /var/lib/chroot 'i386 x86_64' 'fedora centos' yes no no"
     exit 1
 fi
 
@@ -10,12 +10,13 @@ PACKAGE=$1
 VERSION=$2
 SOURCE_BASE_NAME=$3
 SPEC_DIR=$4
-CHROOT_BASE=$5
-ARCHITECTURES=$6
-DISTRIBUTIONS=$7
-HAVE_DEVELOPMENT_BRANCH=$8
-USE_RPMFORGE=$9
-USE_ATRPMS=$10
+DESTINATION=$5
+CHROOT_BASE=$6
+ARCHITECTURES=$7
+DISTRIBUTIONS=$8
+HAVE_DEVELOPMENT_BRANCH=$9
+USE_RPMFORGE=$10
+USE_ATRPMS=$11
 
 PATH=/usr/local/sbin:/usr/sbin:$PATH
 
@@ -101,7 +102,7 @@ build()
     rpm_base_dir=${build_user_dir}/rpm
     rpm_dir=${rpm_base_dir}/RPMS/${architecture}
     srpm_dir=${rpm_base_dir}/SRPMS
-    pool_base_dir=${distribution}/${distribution_version}
+    pool_base_dir=${DESTINATION}${distribution}/${distribution_version}
     if test "${HAVE_DEVELOPMENT_BRANCH}" = "yes"; then
 	minor_version=$(echo $VERSION | ruby -pe '$_.gsub!(/\A\d+\.(\d+)\..*/, "\\1")')
 	if test $(expr ${minor_version} % 2) -eq 0; then

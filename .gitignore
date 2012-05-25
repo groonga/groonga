@@ -99,8 +99,7 @@ cmake_install.cmake
 /packages/rpm/*/*.spec
 /packages/yum/groonga.repo
 /packages/yum/RPM-GPG-KEY-groonga
-/packages/yum/fedora/
-/packages/yum/centos/
+/packages/yum/repositories/
 /packages/source/files/
 /packages/windows/tmp/
 /packages/windows/dist-x86/

@@ -2,17 +2,18 @@
 
 script_base_dir=`dirname $0`
 
-if [ $# != 5 ]; then
-    echo "Usage: $0 PACKAGE PACKAGE_TITLE BASE_URL_PREFIX DISTRIBUTIONS HAVE_DEVELOPMENT_BRANCH"
-    echo " e.g.: $0 milter-manager 'milter manager' http://downloads.sourceforge.net/milter-manager' 'fedora centos' yes"
+if [ $# != 6 ]; then
+    echo "Usage: $0 PACKAGE PACKAGE_TITLE BASE_URL_PREFIX DESTINATION DISTRIBUTIONS HAVE_DEVELOPMENT_BRANCH"
+    echo " e.g.: $0 milter-manager 'milter manager' http://downloads.sourceforge.net/milter-manager' repositories/ 'fedora centos' yes"
     exit 1
 fi
 
 PACKAGE=$1
 PACKAGE_TITLE=$2
 BASE_URL_PREFIX=$3
-DISTRIBUTIONS=$4
-HAVE_DEVELOPMENT_BRANCH=$5
+DESTINATION=$4
+DISTRIBUTIONS=$5
+HAVE_DEVELOPMENT_BRANCH=$6
 
 run()
 {
@@ -81,7 +82,7 @@ EOR
 
     run rpmbuild -ba $rpm_base_dir/SPECS/${PACKAGE}-release.spec
 
-    top_dir=$script_base_dir/$distribution
+    top_dir=${DESTINATION}${distribution}
 
     run mkdir -p $top_dir
     run cp -p \
