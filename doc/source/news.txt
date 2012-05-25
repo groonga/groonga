@@ -14,7 +14,7 @@ Improvements
 ^^^^^^^^^^^^
 
 * [doc] Added about release procedure.
-* Removeed restriction that the max number of opened files is 4096.
+* Removed restriction that the max number of opened files is 4096.
 * [experimental] Added table plugin.
 * [doc] Added more descriptions about :doc:`/commmands/select` command.
 * [doc] Made execution example copy & paste friendly.
