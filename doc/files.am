@@ -44,19 +44,31 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/contribution/report.txt \
 	$(top_srcdir)/doc/source/example/commands/select/filter_equal.log \
 	$(top_srcdir)/doc/source/example/commands/select/filter_less_than.log \
+	$(top_srcdir)/doc/source/example/commands/select/limit_negative.log \
+	$(top_srcdir)/doc/source/example/commands/select/limit_simple.log \
 	$(top_srcdir)/doc/source/example/commands/select/match_columns_simple.log \
 	$(top_srcdir)/doc/source/example/commands/select/match_columns_some_columns.log \
 	$(top_srcdir)/doc/source/example/commands/select/match_columns_weight.log \
 	$(top_srcdir)/doc/source/example/commands/select/match_escalation_threshold.log \
 	$(top_srcdir)/doc/source/example/commands/select/no_limit.log \
+	$(top_srcdir)/doc/source/example/commands/select/offset_negative.log \
+	$(top_srcdir)/doc/source/example/commands/select/offset_simple.log \
+	$(top_srcdir)/doc/source/example/commands/select/output_columns_asterisk.log \
+	$(top_srcdir)/doc/source/example/commands/select/output_columns_simple.log \
 	$(top_srcdir)/doc/source/example/commands/select/paging.log \
 	$(top_srcdir)/doc/source/example/commands/select/query_and.log \
 	$(top_srcdir)/doc/source/example/commands/select/query_equal.log \
+	$(top_srcdir)/doc/source/example/commands/select/query_expansion_complex.log \
+	$(top_srcdir)/doc/source/example/commands/select/query_expansion_substitute.log \
+	$(top_srcdir)/doc/source/example/commands/select/query_expansion_substitution_table.log \
 	$(top_srcdir)/doc/source/example/commands/select/query_less_than.log \
 	$(top_srcdir)/doc/source/example/commands/select/query_or.log \
 	$(top_srcdir)/doc/source/example/commands/select/simple_filter.log \
 	$(top_srcdir)/doc/source/example/commands/select/simple_query.log \
 	$(top_srcdir)/doc/source/example/commands/select/simple_usage.log \
+	$(top_srcdir)/doc/source/example/commands/select/sortby_descending.log \
+	$(top_srcdir)/doc/source/example/commands/select/sortby_score_with_query.log \
+	$(top_srcdir)/doc/source/example/commands/select/sortby_simple.log \
 	$(top_srcdir)/doc/source/example/commands/select/table_nonexistent.log \
 	$(top_srcdir)/doc/source/example/commands/select/usage_setup.log \
 	$(top_srcdir)/doc/source/example/commands/suggest-completion.log \
@@ -246,6 +258,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/install/fedora.txt \
 	$(top_srcdir)/doc/source/install/mac_os_x.txt \
 	$(top_srcdir)/doc/source/install/others.txt \
+	$(top_srcdir)/doc/source/install/solaris.txt \
 	$(top_srcdir)/doc/source/install/ubuntu.txt \
 	$(top_srcdir)/doc/source/install/windows.txt \
 	$(top_srcdir)/doc/source/limitations.txt \
@@ -347,19 +360,31 @@ source_files_relative_from_doc_dir = \
 	source/contribution/report.txt \
 	source/example/commands/select/filter_equal.log \
 	source/example/commands/select/filter_less_than.log \
+	source/example/commands/select/limit_negative.log \
+	source/example/commands/select/limit_simple.log \
 	source/example/commands/select/match_columns_simple.log \
 	source/example/commands/select/match_columns_some_columns.log \
 	source/example/commands/select/match_columns_weight.log \
 	source/example/commands/select/match_escalation_threshold.log \
 	source/example/commands/select/no_limit.log \
+	source/example/commands/select/offset_negative.log \
+	source/example/commands/select/offset_simple.log \
+	source/example/commands/select/output_columns_asterisk.log \
+	source/example/commands/select/output_columns_simple.log \
 	source/example/commands/select/paging.log \
 	source/example/commands/select/query_and.log \
 	source/example/commands/select/query_equal.log \
+	source/example/commands/select/query_expansion_complex.log \
+	source/example/commands/select/query_expansion_substitute.log \
+	source/example/commands/select/query_expansion_substitution_table.log \
 	source/example/commands/select/query_less_than.log \
 	source/example/commands/select/query_or.log \
 	source/example/commands/select/simple_filter.log \
 	source/example/commands/select/simple_query.log \
 	source/example/commands/select/simple_usage.log \
+	source/example/commands/select/sortby_descending.log \
+	source/example/commands/select/sortby_score_with_query.log \
+	source/example/commands/select/sortby_simple.log \
 	source/example/commands/select/table_nonexistent.log \
 	source/example/commands/select/usage_setup.log \
 	source/example/commands/suggest-completion.log \
@@ -549,6 +574,7 @@ source_files_relative_from_doc_dir = \
 	source/install/fedora.txt \
 	source/install/mac_os_x.txt \
 	source/install/others.txt \
+	source/install/solaris.txt \
 	source/install/ubuntu.txt \
 	source/install/windows.txt \
 	source/limitations.txt \
@@ -780,6 +806,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/install/fedora.txt \
 	html/_sources/install/mac_os_x.txt \
 	html/_sources/install/others.txt \
+	html/_sources/install/solaris.txt \
 	html/_sources/install/ubuntu.txt \
 	html/_sources/install/windows.txt \
 	html/_sources/limitations.txt \
@@ -906,6 +933,7 @@ html_files_relative_from_locale_dir = \
 	html/install/fedora.html \
 	html/install/mac_os_x.html \
 	html/install/others.html \
+	html/install/solaris.html \
 	html/install/ubuntu.html \
 	html/install/windows.html \
 	html/limitations.html \
