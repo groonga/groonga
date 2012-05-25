@@ -2,15 +2,16 @@
 
 script_base_dir=`dirname $0`
 
-if [ $# != 3 ]; then
-    echo "Usage: $0 PROJECT_NAME ARCHITECTURES CODES"
-    echo " e.g.: $0 mroonga 'i386 amd64' 'lenny unstable hardy karmic'"
+if [ $# != 4 ]; then
+    echo "Usage: $0 PROJECT_NAME DESTINATION ARCHITECTURES CODES"
+    echo " e.g.: $0 mroonga repositories/ 'i386 amd64' 'lenny unstable hardy karmic'"
     exit 1
 fi
 
 PROJECT_NAME=$1
-ARCHITECTURES=$2
-CODES=$3
+DESTINATION=$2
+ARCHITECTURES=$3
+CODES=$4
 
 run()
 {
@@ -118,8 +119,8 @@ for code_name in ${CODES}; do
 	    ;;
     esac
 
-    mkdir -p packages/${distribution}
-    (cd packages/${distribution}
+    mkdir -p ${DESTINATION}${distribution}
+    (cd ${DESTINATION}${distribution}
 	update_repository $distribution $code_name $component) &
     if [ "${PARALLEL}" != "yes" ]; then
 	wait

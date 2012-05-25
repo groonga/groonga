@@ -1,17 +1,18 @@
 #!/bin/sh
 
-if [ $# != 6 ]; then
-    echo "Usage: $0 PACKAGE VERSION SOURCE_DIR CHROOT_BASE ARCHITECTURES CODES"
-    echo " e.g.: $0 groonga 0.1.9 SOURCE_DIR /var/lib/chroot 'i386 amd64' 'lenny unstable hardy karmic'"
+if [ $# != 7 ]; then
+    echo "Usage: $0 PACKAGE VERSION SOURCE_DIR DESTINATION CHROOT_BASE ARCHITECTURES CODES"
+    echo " e.g.: $0 groonga 0.1.9 SOURCE_DIR repositories/ /var/lib/chroot 'i386 amd64' 'lenny unstable hardy karmic'"
     exit 1
 fi
 
 PACKAGE=$1
 VERSION=$2
 SOURCE_DIR=$3
-CHROOT_BASE=$4
-ARCHITECTURES=$5
-CODES=$6
+DESTINATION=$4
+CHROOT_BASE=$5
+ARCHITECTURES=$6
+CODES=$7
 
 PATH=/usr/local/sbin:/usr/sbin:$PATH
 
@@ -94,7 +95,7 @@ build()
     build_user=${PACKAGE}-build
     build_user_dir=${base_dir}/home/$build_user
     build_dir=${build_user_dir}/build
-    pool_base_dir=${script_base_dir}/packages/${distribution}/pool/${code_name}/${component}
+    pool_base_dir=${DESTINATION}${distribution}/pool/${code_name}/${component}
     package_initial=$(echo ${PACKAGE} | sed -e 's/\(.\).*/\1/')
     pool_dir=${pool_base_dir}/${package_initial}/${PACKAGE}
     run cp $source_dir/${PACKAGE}-${VERSION}.tar.gz \
