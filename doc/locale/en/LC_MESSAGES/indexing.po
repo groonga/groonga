@@ -7,15 +7,32 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 2.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-28 11:36\n"
+"POT-Creation-Date: 2012-05-25 12:54\n"
 "PO-Revision-Date: 2012-04-28 11:38+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
+"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+# a066d272e6144a87a613f245db07bf87
+# bb41cc15386649fcbc7a0c33986d8579
+# a9f42396e04846f99dba7b1f956b7e7d
+# 777da65395ec47479a797cba36fa9c57
+# ce0030a3739f41c8bfcc6ea3bc609093
+# f2941f76736848d7b099ff984546742d
+# e9e34d17476947b9883f60201e53791b
+#: ../../../source/example/indexing-data.log:1
+#: ../../../source/example/indexing-offline-index-construction.log:1
+#: ../../../source/example/indexing-online-index-construction.log:1
+#: ../../../source/example/indexing-schema.log:1
+#: ../../../source/example/indexing-search-after-offline-index-construction.log:1
+#: ../../../source/example/indexing-search-after-online-index-construction.log:1
+#: ../../../source/example/indexing-search-without-index.log:1
+msgid "Execution example::"
+msgstr "Execution example::"
 
 # bd971d607844461eb747647d8bee2759
 #: ../../../source/indexing.txt:9
@@ -120,22 +137,6 @@ msgstr ""
 #: ../../../source/indexing.txt:54
 msgid "We define a schema:"
 msgstr "We define a schema:"
-
-# a066d272e6144a87a613f245db07bf87
-# bb41cc15386649fcbc7a0c33986d8579
-# a9f42396e04846f99dba7b1f956b7e7d
-# 777da65395ec47479a797cba36fa9c57
-# ce0030a3739f41c8bfcc6ea3bc609093
-# f2941f76736848d7b099ff984546742d
-# e9e34d17476947b9883f60201e53791b
-#: ../../../example/indexing-schema.log:1 ../../../example/indexing-data.log:1
-#: ../../../example/indexing-search-without-index.log:1
-#: ../../../example/indexing-offline-index-construction.log:1
-#: ../../../example/indexing-search-after-offline-index-construction.log:1
-#: ../../../example/indexing-online-index-construction.log:1
-#: ../../../example/indexing-search-after-online-index-construction.log:1
-msgid "Execution example::"
-msgstr "Execution example::"
 
 # 64b062eeac7d49a4baae9da96690bb26
 #: ../../../source/indexing.txt:62
