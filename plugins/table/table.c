@@ -70,10 +70,10 @@ command_find(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   const char *table = GRN_TEXT_VALUE(VAR(0));
   unsigned int table_len = GRN_TEXT_LEN(VAR(0));
-  const char *match_columns = GRN_TEXT_VALUE(VAR(1));
-  unsigned int match_columns_len = GRN_TEXT_LEN(VAR(1));
-  const char *match_op = GRN_TEXT_VALUE(VAR(2));
-  unsigned int match_op_len = GRN_TEXT_LEN(VAR(2));
+  const char *columns = GRN_TEXT_VALUE(VAR(1));
+  unsigned int columns_len = GRN_TEXT_LEN(VAR(1));
+  const char *operator = GRN_TEXT_VALUE(VAR(2));
+  unsigned int operator_len = GRN_TEXT_LEN(VAR(2));
   const char *query = GRN_TEXT_VALUE(VAR(3));
   unsigned int query_len = GRN_TEXT_LEN(VAR(3));
   const char *set = GRN_TEXT_VALUE(VAR(4));
@@ -87,13 +87,13 @@ command_find(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_obj *set_;
   grn_obj *table_ = grn_ctx_get_table_by_name_or_id(ctx, table, table_len);
   if (table_) {
-    if (match_columns_len) {
-      grn_obj *v, *cond, *match_columns_;
+    if (columns_len) {
+      grn_obj *v, *cond, *columns_;
       GRN_EXPR_CREATE_FOR_QUERY(ctx, table_, cond, v);
       if (cond) {
-        GRN_EXPR_CREATE_FOR_QUERY(ctx, table_, match_columns_, v);
-        if (match_columns_) {
-          grn_expr_parse(ctx, match_columns_, match_columns, match_columns_len,
+        GRN_EXPR_CREATE_FOR_QUERY(ctx, table_, columns_, v);
+        if (columns_) {
+          grn_expr_parse(ctx, columns_, columns, columns_len,
                          NULL, GRN_OP_MATCH, GRN_OP_AND,
                          GRN_EXPR_SYNTAX_SCRIPT);
         }
@@ -101,7 +101,7 @@ command_find(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
           grn_expr_flags flags;
           flags = GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_PRAGMA|GRN_EXPR_ALLOW_COLUMN;
           grn_expr_parse(ctx, cond, query, query_len,
-                         match_columns_, GRN_OP_MATCH, GRN_OP_AND, flags);
+                         columns_, GRN_OP_MATCH, GRN_OP_AND, flags);
         }
         if (set_len) {
           set_ = grn_ctx_get_table_by_name_or_id(ctx, set, set_len);
@@ -294,11 +294,11 @@ GRN_PLUGIN_REGISTER(grn_ctx *ctx)
   grn_expr_var vars[18];
 
   DEF_VAR(vars[0], "table");
-  DEF_VAR(vars[1], "match_columns");
-  DEF_VAR(vars[2], "match_op");
-  DEF_VAR(vars[3], "match_value");
+  DEF_VAR(vars[1], "columns");
+  DEF_VAR(vars[2], "operator");
+  DEF_VAR(vars[3], "value");
   DEF_VAR(vars[4], "set");
-  DEF_VAR(vars[5], "set_op");
+  DEF_VAR(vars[5], "set_operation");
   DEF_VAR(vars[6], "expr");
   DEF_COMMAND("find", command_find, 7, vars);
 
