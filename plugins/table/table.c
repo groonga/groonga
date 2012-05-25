@@ -81,8 +81,6 @@ command_find(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   /* TODO: support them.
   const char *set_op = GRN_TEXT_VALUE(VAR(5));
   unsigned int set_op_len = GRN_TEXT_LEN(VAR(5));
-  const char *expr = GRN_TEXT_VALUE(VAR(6));
-  unsigned int expr_len = GRN_TEXT_LEN(VAR(6));
   */
   grn_obj *set_;
   grn_obj *table_ = grn_ctx_get_table_by_name_or_id(ctx, table, table_len);
@@ -299,8 +297,7 @@ GRN_PLUGIN_REGISTER(grn_ctx *ctx)
   DEF_VAR(vars[3], "value");
   DEF_VAR(vars[4], "set");
   DEF_VAR(vars[5], "set_operation");
-  DEF_VAR(vars[6], "expr");
-  DEF_COMMAND("find", command_find, 7, vars);
+  DEF_COMMAND("find", command_find, 6, vars);
 
   DEF_VAR(vars[0], "table");
   DEF_VAR(vars[1], "key");
