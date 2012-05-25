@@ -16,10 +16,12 @@ ensure-rsync-path:
 	fi
 
 sign:
-	./sign-rpm.sh '$(GPG_UID)' '$(DISTRIBUTIONS)'
+	./sign-rpm.sh '$(GPG_UID)' '$(REPOSITORIES_PATH)/' \
+	  '$(DISTRIBUTIONS)'
 
 update:
-	./update-repository.sh $(PACKAGE) '$(DISTRIBUTIONS)'
+	./update-repository.sh $(PACKAGE) '$(REPOSITORIES_PATH)/' \
+	  '$(DISTRIBUTIONS)'
 
 upload: ensure-rsync-path
 	for distribution in $(DISTRIBUTIONS); do		\

@@ -2,8 +2,8 @@
 
 script_base_dir=`dirname $0`
 
-if [ $# != 2 ]; then
-    echo "Usage: $0 GPG_KEY_NAME DISTRIBUTIONS"
+if [ $# != 3 ]; then
+    echo "Usage: $0 GPG_KEY_NAME DESTINATION DISTRIBUTIONS"
     echo " e.g.: $0 mitler-manager 'fedora centos'"
     exit 1
 fi
