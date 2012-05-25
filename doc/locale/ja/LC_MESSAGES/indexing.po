@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-02-27 21:54\n"
+"POT-Creation-Date: 2012-05-25 12:54\n"
 "PO-Revision-Date: 2012-02-27 21:54+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -24,13 +24,13 @@ msgstr ""
 # 86f813158fb74ecf98b92a40683e0847
 # bc81190a751d435b80a6d307500c72c0
 # cc0208c9593d41c3af00a5444aa4f394
-#: ../../../example/indexing-data.log:1
-#: ../../../example/indexing-offline-index-construction.log:1
-#: ../../../example/indexing-online-index-construction.log:1
-#: ../../../example/indexing-schema.log:1
-#: ../../../example/indexing-search-after-offline-index-construction.log:1
-#: ../../../example/indexing-search-after-online-index-construction.log:1
-#: ../../../example/indexing-search-without-index.log:1
+#: ../../../source/example/indexing-data.log:1
+#: ../../../source/example/indexing-offline-index-construction.log:1
+#: ../../../source/example/indexing-online-index-construction.log:1
+#: ../../../source/example/indexing-schema.log:1
+#: ../../../source/example/indexing-search-after-offline-index-construction.log:1
+#: ../../../source/example/indexing-search-after-online-index-construction.log:1
+#: ../../../source/example/indexing-search-without-index.log:1
 msgid "Execution example::"
 msgstr "実行例::"
 
