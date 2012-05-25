@@ -1,4 +1,3 @@
-SERVER_PATH = $(RSYNC_PATH)
 REPOSITORIES_PATH = repositories
 DISTRIBUTIONS = fedora centos
 ARCHITECTURES = i386 x86_64
@@ -26,14 +25,14 @@ upload: ensure-rsync-path
 	for distribution in $(DISTRIBUTIONS); do		\
 	  rsync -avz --progress --delete --exclude .gitignore	\
 	    $(REPOSITORIES_PATH)/$${distribution}/		\
-	      $(SERVER_PATH)/$${distribution};			\
+	      $(RSYNC_PATH)/$${distribution};			\
 	done
 
 download: ensure-rsync-path
 	mkdir -p $(REPOSITORIES_PATH)
 	for distribution in $(DISTRIBUTIONS); do	\
 	   rsync -avz --progress --delete		\
-	     $(SERVER_PATH)/$${distribution}/		\
+	     $(RSYNC_PATH)/$${distribution}/		\
 	     $(REPOSITORIES_PATH)/$${distribution};	\
 	done
 
