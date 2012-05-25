@@ -58,6 +58,7 @@ typedef struct {
   grn_obj *tokenizer;
   grn_proc_ctx pctx;
   uint32_t variant;
+  grn_str *nstr;
 } grn_token;
 
 enum {

@@ -406,7 +406,10 @@ grn_token_open(grn_ctx *ctx, grn_obj *table, const char *str, size_t str_len,
   grn_token *token;
   grn_encoding encoding;
   grn_obj *tokenizer;
-  if (grn_table_get_info(ctx, table, NULL, &encoding, &tokenizer)) { return NULL; }
+  grn_obj_flags table_flags;
+  if (grn_table_get_info(ctx, table, &table_flags, &encoding, &tokenizer)) {
+    return NULL;
+  }
   if (!(token = GRN_MALLOC(sizeof(grn_token)))) { return NULL; }
   token->table = table;
   token->mode = mode;
@@ -415,6 +418,7 @@ grn_token_open(grn_ctx *ctx, grn_obj *table, const char *str, size_t str_len,
   token->orig = str;
   token->orig_blen = str_len;
   token->curr = NULL;
+  token->nstr = NULL;
   token->curr_size = 0;
   token->pos = -1;
   token->status = grn_token_doing;
@@ -432,6 +436,16 @@ grn_token_open(grn_ctx *ctx, grn_obj *table, const char *str, size_t str_len,
     grn_ctx_push(ctx, &str_);
     ((grn_proc *)tokenizer)->funcs[PROC_INIT](ctx, 1, &table, &token->pctx.user_data);
     grn_obj_close(ctx, &str_);
+  } else {
+    int nflags = table_flags & GRN_OBJ_KEY_NORMALIZE;
+    token->nstr = grn_str_open_(ctx, str, str_len, nflags, token->encoding);
+    if (token->nstr) {
+      token->curr = (unsigned char *)token->nstr->norm;
+      token->curr_size = token->nstr->norm_blen;
+      token->status = grn_token_done;
+    } else {
+      ERR(GRN_TOKENIZER_ERROR, "grn_str_open failed at grn_token_open");
+    }
   }
   if (ctx->rc) {
     GRN_FREE(token);
@@ -467,10 +481,6 @@ grn_token_next(grn_ctx *ctx, grn_token *token)
           if (status & GRN_TOKEN_LAST) { token->force_prefix = 1; }
         }
       }
-    } else {
-      token->curr = token->orig;
-      token->curr_size = token->orig_blen;
-      token->status = grn_token_done;
     }
     if (token->mode == grn_token_add) {
       switch (table->header.type) {
@@ -549,6 +559,9 @@ grn_token_close(grn_ctx *ctx, grn_token *token)
     GRN_FREE(token);
     return GRN_SUCCESS;
   } else {
+    if (token->nstr) {
+      grn_str_close(ctx, token->nstr);
+    }
     return GRN_INVALID_ARGUMENT;
   }
 }
