@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-05-24 16:39\n"
-"PO-Revision-Date: 2012-05-24 16:39+0900\n"
+"POT-Creation-Date: 2012-05-25 11:10\n"
+"PO-Revision-Date: 2012-05-25 11:13+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -78,6 +78,7 @@ msgstr ""
 #: ../../../source/install/mac_os_x.txt:21
 #: ../../../source/install/mac_os_x.txt:28
 #: ../../../source/install/mac_os_x.txt:51
+#: ../../../source/install/solaris.txt:41
 #: ../../../source/install/ubuntu.txt:34 ../../../source/install/ubuntu.txt:72
 #: ../../../source/install/ubuntu.txt:110
 #: ../../../source/install/ubuntu.txt:148
@@ -239,6 +240,7 @@ msgstr "ソースからビルド"
 #: ../../../source/install/centos.txt:113
 #: ../../../source/install/debian.txt:113
 #: ../../../source/install/fedora.txt:52
+#: ../../../source/install/solaris.txt:14
 #: ../../../source/install/ubuntu.txt:172
 msgid "Install required packages to build groonga::"
 msgstr "groongaをビルドするために必要なパッケージをインストールします::"
@@ -252,6 +254,7 @@ msgstr "groongaをビルドするために必要なパッケージをインス�
 #: ../../../source/install/debian.txt:117
 #: ../../../source/install/fedora.txt:56
 #: ../../../source/install/mac_os_x.txt:37
+#: ../../../source/install/solaris.txt:18
 #: ../../../source/install/ubuntu.txt:176
 msgid "Download source::"
 msgstr "ソースをダウンロードします::"
@@ -280,6 +283,7 @@ msgstr ""
 #: ../../../source/install/debian.txt:127
 #: ../../../source/install/fedora.txt:66
 #: ../../../source/install/mac_os_x.txt:47
+#: ../../../source/install/solaris.txt:31
 #: ../../../source/install/ubuntu.txt:186
 msgid "Build::"
 msgstr "ビルド::"
@@ -985,6 +989,29 @@ msgstr ""
 "``${PREFIX}`` への書き込み権限がある場合は ``sudo`` を使う必要はありません。"
 "例えば、 ``--prefix=$HOME/local`` と指定した場合です。この場合は ``make "
 "install`` を使ってください::"
+
+# c33eafb679d148ab88d9450ace4e9f4d
+#: ../../../source/install/solaris.txt:6
+msgid "Oracle Solaris"
+msgstr ""
+
+#: ../../../source/install/solaris.txt:8
+msgid ""
+"This section describes how to install groonga from source on Oracle Solaris."
+msgstr "このセクションではOracle Solaris上でgroongaをソースコードからインストールする方法を説明します。"
+
+# c0a60454ab464a85af07ab73c392d9f3
+#: ../../../source/install/solaris.txt:12
+msgid "Oracle Solaris 11"
+msgstr ""
+
+# 9c11401f1e4e4c2ca5bdf282f2df0394
+#: ../../../source/install/solaris.txt:24
+msgid ""
+"Configure with ``CFLAGS=\"-m64\" CXXFLAGS=\"-m64\"`` variables. They are "
+"needed for building 64-bit version. To build 32-bit version, just remove "
+"those variables. (see :ref:`source-configure` about ``configure`` options)::"
+msgstr "``CFLAGS=\"-m64\" CXXFLAGS=\"-m64\"`` 変数付きでconfigureを実行します。これらの変数は64-bit版をビルドするために必要です。32-bit版をビルドする場合はこれらの変数を指定しないでしてください。 （ ``configure`` のオプションについては :ref:`source-configure` を参照してください）::"
 
 # 017f029331f848c98f6f3ba194dcf0c6
 #: ../../../source/install/ubuntu.txt:6

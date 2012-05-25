@@ -22,7 +22,7 @@ Download source::
   % cd groonga-2.0.3
 
 Configure with ``CFLAGS="-m64" CXXFLAGS="-m64"`` variables. They are
-needed for building 64-bit package. To build 32-bit package, just
+needed for building 64-bit version. To build 32-bit version, just
 remove those variables. (see :ref:`source-configure` about ``configure``
 options)::
 
