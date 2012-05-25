@@ -1,0 +1,43 @@
+.. -*- rst -*-
+
+.. highlightlang:: none
+
+Oracle Solaris
+==============
+
+This section describes how to install groonga from source on Oracle
+Solaris.
+
+Oracle Solaris 11
+-----------------
+
+Install required packages to build groonga::
+
+  % sudo pkg install gnu-tar gcc-45 system/header
+
+Download source::
+
+  % wget http://packages.groonga.org/source/groonga/groonga-2.0.3.tar.gz
+  % gtar xvzf groonga-2.0.3.tar.gz
+  % cd groonga-2.0.3
+
+Configure with ``CFLAGS="-m64" CXXFLAGS="-m64"`` variables. They are
+needed for building 64-bit package. To build 32-bit package, just
+remove those variables. (see :ref:`source-configure` about ``configure``
+options)::
+
+  % ./configure CFLAGS="-m64" CXXFLAGS="-m64"
+
+Build::
+
+  % make
+
+..
+   Build with multi processes. ( ``% sudo pkg install gnu-make`` is
+   required)::
+
+      % gmake -j$(psrinfo -p)
+
+Install::
+
+  % sudo make install
