@@ -2,14 +2,15 @@
 
 script_base_dir=`dirname $0`
 
-if [ $# != 2 ]; then
-    echo "Usage: $0 GPG_UID CODES"
-    echo " e.g.: $0 'F10399C0' 'lenny unstable hardy karmic'"
+if [ $# != 3 ]; then
+    echo "Usage: $0 GPG_UID DESITINATION CODES"
+    echo " e.g.: $0 'F10399C0' repositories/ 'lenny unstable hardy karmic'"
     exit 1
 fi
 
 GPG_UID=$1
-CODES=$2
+DESTINATION=$2
+CODES=$3
 
 run()
 {
@@ -30,7 +31,7 @@ for code_name in ${CODES}; do
 	    ;;
     esac
 
-    base_directory=packages/${distribution}
+    base_directory=${DESTINATION}${distribution}
     debsign --re-sign -k${GPG_UID} \
 	$(find ${base_directory} -name '*.dsc' -or -name '*.changes') &
     if [ "${PARALLEL}" != "yes" ]; then

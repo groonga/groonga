@@ -30,10 +30,11 @@ download: ensure-rsync-path
 	done
 
 sign-packages:
-	./sign-packages.sh '$(GPG_UID)' '$(CODES)'
+	./sign-packages.sh '$(GPG_UID)' '$(REPOSITORIES_PATH)/' '$(CODES)'
 
 update-repository:
-	./update-repository.sh '$(PACKAGE_NAME)' '$(ARCHITECTURES)' '$(CODES)'
+	./update-repository.sh '$(PACKAGE_NAME)' '$(REPOSITORIES_PATH)/' \
+	  '$(ARCHITECTURES)' '$(CODES)'
 
 sign-repository:
 	./sign-repository.sh '$(GPG_UID)' '$(CODES)'
