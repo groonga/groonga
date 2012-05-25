@@ -144,7 +144,7 @@ msgstr "[doc] yumリポジトリを更新するためのコマンドを修正。
 #: ../../../source/news.txt:42
 msgid ""
 "[deb] Fixed a bug that log_repoen command in logrotate uses wrong protocol."
-msgstr "logrotateでlog_reopenコマンドが誤ったプロトコルを使用する"
+msgstr "[deb] logrotateでlog_reopenコマンドが誤ったプロトコルを使用する"
 "不具合を修正。"
 
 # b1dc6f9f05f04edf988aec20c3b7ba69
