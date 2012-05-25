@@ -24,9 +24,8 @@ msgstr "News"
 
 # 9d3982d7f983419aa0e608ae86493802
 #: ../../../source/news.txt:11
-#, fuzzy
 msgid "Release 2.0.3 - 2012/05/29"
-msgstr "Release 2.0.2 - 2012/04/29"
+msgstr ""
 
 # 4663ad5256ff4787aff6c44661745be2
 # 4663ad5256ff4787aff6c44661745be2
@@ -82,11 +81,8 @@ msgstr ""
 
 # 1cfc1142079947319ff825e8bb3cb1b1
 #: ../../../source/news.txt:19
-#, fuzzy
 msgid "[doc] Added more descriptions about :doc:`/commmands/select` command."
 msgstr ""
-"Added `--query_expansion` option to :doc:`/commands/select` for query "
-"expansion."
 
 # fa443a7adc004700ad9b85f8f58b524b
 #: ../../../source/news.txt:20
@@ -169,27 +165,22 @@ msgstr "Fixes"
 
 # 0cc4b16a7b2c4048be6f3fc6b771a445
 #: ../../../source/news.txt:40
-#, fuzzy
 msgid ""
 "[doc] Fixed a command to update yum repository. [Suggested by IWAI, Masaharu]"
-msgstr "[rpm][fedora] Supported libedit. [#1325] [Suggested by IWAI, Masaharu]"
+msgstr ""
 
 # 8a8704f8557d470b88f9632c7dd8db61
 #: ../../../source/news.txt:42
-#, fuzzy
 msgid ""
 "[deb] Fixed a bug that log_repoen command in logrotate uses wrong protocol."
-msgstr "Fixed a bug that geo point is loaded as broken value."
+msgstr ""
 
 # 656b1cf2166545b0ba6446a76509e607
 #: ../../../source/news.txt:43
-#, fuzzy
 msgid ""
 "Fixed broken ERROR tag in XML response. [#1363] [GitHub#13] [Patch by IWAI, "
 "Masaharu]"
 msgstr ""
-"[deb][rpm] Added missing curl dependency. [GitHub#12] [Patch by IWAI, "
-"Masaharu]"
 
 # d15987bcfd94438f9c8f82ffc4907ef1
 #: ../../../source/news.txt:45
@@ -2641,9 +2632,8 @@ msgstr ""
 
 # 4609af1ee73c43148e6c61e5925057de
 #: ../../../source/news/1.2.x.txt:231
-#, fuzzy
 msgid "Added document about :doc:`/log`."
-msgstr "Added document about :doc:`log`."
+msgstr ""
 
 # bf66e95bf4f1462e9f368fbf1aa762c1
 #: ../../../source/news/1.2.x.txt:232

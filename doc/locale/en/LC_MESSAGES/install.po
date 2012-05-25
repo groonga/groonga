@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 2.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-05-25 12:54\n"
+"POT-Creation-Date: 2012-05-25 15:15\n"
 "PO-Revision-Date: 2012-04-28 11:38+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -50,23 +50,20 @@ msgstr ""
 
 # e54ce88fd05444e08d64ca22e3dd1a7b
 #: ../../../source/install/centos.txt:6
-#, fuzzy
 msgid "CentOS"
-msgstr "CentOS 5"
+msgstr ""
 
 # 610d5ad310b748c1b7ce401cd0c1db8c
 #: ../../../source/install/centos.txt:8
-#, fuzzy
 msgid ""
 "This section describes how to install groonga related RPM packages on "
 "CentOS. You can install them by ``yum``."
-msgstr "This section describes how to install groonga on each environment."
+msgstr ""
 
 # e54ce88fd05444e08d64ca22e3dd1a7b
 #: ../../../source/install/centos.txt:18
-#, fuzzy
 msgid "CentOS 5"
-msgstr "CentOS 6"
+msgstr ""
 
 # 0620e383955e465596983efa3acfc1d7
 # 0620e383955e465596983efa3acfc1d7
@@ -113,13 +110,10 @@ msgstr "Install::"
 #: ../../../source/install/ubuntu.txt:40 ../../../source/install/ubuntu.txt:78
 #: ../../../source/install/ubuntu.txt:116
 #: ../../../source/install/ubuntu.txt:154
-#, fuzzy
 msgid ""
 "If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a tokenizer, "
 "install groonga-tokenizer-mecab package."
 msgstr ""
-"If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a tokenizer. "
-"please install groonga-tokenizer-mecab package."
 
 # c3187a51a03e460db4c9b33e0af45835
 # 8316c5e8233c4ee29e76916d1b4b677b
@@ -155,30 +149,21 @@ msgstr "Install groonga-tokenizer-mecab package::"
 #: ../../../source/install/ubuntu.txt:85
 #: ../../../source/install/ubuntu.txt:123
 #: ../../../source/install/ubuntu.txt:161
-#, fuzzy
 msgid ""
 "There is a package that provides `Munin <http://munin-monitoring.org/>`_ "
 "plugins. If you want to monitor groonga status by Munin, install groonga-"
 "munin-plugins package."
 msgstr ""
-"There is a package that provides `Munin <http://munin-monitoring.org/>`_ "
-"plugins. If you want to monitor groonga status by Munin, please install "
-"groonga-munin-plugins package."
 
 # 5b8d30249ea94988b79d80381fdd0496
 # 6b3398fd45b4465a98e016b4b5aa8eea
 #: ../../../source/install/centos.txt:39
-#, fuzzy
 msgid ""
 "Groonga-munin-plugins package requires munin-node package that isn't "
 "included in the official CentOS repository. You need to enable `Repoforge "
 "(RPMforge) <http://repoforge.org/>`_ repository or `EPEL <http://"
 "fedoraproject.org/wiki/EPEL>`_ repository to install it by ``yum``."
 msgstr ""
-"Groonga-munin-plugins package requires munin-node package that isn't "
-"included in the official CentOS repository. You need to enable `Repoforge "
-"(RPMforge) <http://repoforge.org/>`_ repository or `EPEL <http://"
-"fedoraproject.org/wiki/EPEL>`_ repository to install it by yum."
 
 # 4cb85311e20741ff89e98f9a8c0f8650
 #: ../../../source/install/centos.txt:45
@@ -226,16 +211,11 @@ msgstr "CentOS 6"
 # 5b8d30249ea94988b79d80381fdd0496
 # 6b3398fd45b4465a98e016b4b5aa8eea
 #: ../../../source/install/centos.txt:87
-#, fuzzy
 msgid ""
 "Groonga-munin-plugins package requires munin-node package that isn't "
 "included in the official CentOS repository. You need to enable `EPEL <http://"
 "fedoraproject.org/wiki/EPEL>`_ repository to install it by ``yum``."
 msgstr ""
-"Groonga-munin-plugins package requires munin-node package that isn't "
-"included in the official CentOS repository. You need to enable `Repoforge "
-"(RPMforge) <http://repoforge.org/>`_ repository or `EPEL <http://"
-"fedoraproject.org/wiki/EPEL>`_ repository to install it by yum."
 
 # 8b03e949df9048f99875a6e56d3eff1e
 # 22603ea939974cc2be0d8da46d9f01f4
@@ -309,17 +289,15 @@ msgstr ""
 
 # cfdf7bc5d8a447f699531d1456eac4e1
 #: ../../../source/install/debian.txt:6
-#, fuzzy
 msgid "Debian GNU/Linux"
-msgstr "Debian GNU/Linux sid"
+msgstr ""
 
 # 610d5ad310b748c1b7ce401cd0c1db8c
 #: ../../../source/install/debian.txt:8
-#, fuzzy
 msgid ""
 "This section describes how to install groonga related deb packages on Debian "
 "GNU/Linux. You can install them by ``apt``."
-msgstr "This section describes how to install groonga on each environment."
+msgstr ""
 
 # c4b5d94f4c404ecaa0802387db9ddf70
 #: ../../../source/install/debian.txt:18
@@ -367,17 +345,15 @@ msgstr ""
 
 # 321a333ac68d41a1be6e272db0281ebb
 #: ../../../source/install/fedora.txt:6
-#, fuzzy
 msgid "Fedora"
-msgstr "Fedora 16"
+msgstr ""
 
 # 610d5ad310b748c1b7ce401cd0c1db8c
 #: ../../../source/install/fedora.txt:8
-#, fuzzy
 msgid ""
 "This section describes how to install groonga related RPM packages on "
 "Fedora. You can install them by ``yum``."
-msgstr "This section describes how to install groonga on each environment."
+msgstr ""
 
 # ce43e341c32e4b8cb15f40551e54f722
 #: ../../../source/install/fedora.txt:11
@@ -392,7 +368,6 @@ msgstr ""
 
 # 321a333ac68d41a1be6e272db0281ebb
 #: ../../../source/install/fedora.txt:26
-#, fuzzy
 msgid "Fedora 16"
 msgstr "Fedora 16"
 
@@ -403,12 +378,11 @@ msgstr ""
 
 # 610d5ad310b748c1b7ce401cd0c1db8c
 #: ../../../source/install/mac_os_x.txt:8
-#, fuzzy
 msgid ""
 "This section describes how to install groonga on Mac OS X. You can install "
 "groonga by `MacPorts <http://www.macports.org/>`_ or `Homebrew <http://mxcl."
 "github.com/homebrew/>`_."
-msgstr "This section describes how to install groonga on each environment."
+msgstr ""
 
 # 7be84ddf973f4e949dc57b94ffee5fe1
 #: ../../../source/install/mac_os_x.txt:19
@@ -432,11 +406,10 @@ msgstr "Others"
 
 # 610d5ad310b748c1b7ce401cd0c1db8c
 #: ../../../source/install/others.txt:8
-#, fuzzy
 msgid ""
 "This section describes how to install groonga from source on UNIX like "
 "environment."
-msgstr "This section describes how to install groonga on each environment."
+msgstr ""
 
 # b26e66c225814a08b549c3824ead8fc2
 #: ../../../source/install/others.txt:11
@@ -930,10 +903,9 @@ msgstr ""
 
 # 610d5ad310b748c1b7ce401cd0c1db8c
 #: ../../../source/install/solaris.txt:8
-#, fuzzy
 msgid ""
 "This section describes how to install groonga from source on Oracle Solaris."
-msgstr "This section describes how to install groonga on each environment."
+msgstr ""
 
 # 81bff1e671264615b59a962ddb147e15
 #: ../../../source/install/solaris.txt:12
@@ -955,17 +927,15 @@ msgstr ""
 
 # 610d5ad310b748c1b7ce401cd0c1db8c
 #: ../../../source/install/ubuntu.txt:8
-#, fuzzy
 msgid ""
 "This section describes how to install groonga related deb packages on "
 "Ubuntu. You can install them by ``apt``."
-msgstr "This section describes how to install groonga on each environment."
+msgstr ""
 
 # 7418443aacf244e7ab6aaf35acef652d
 #: ../../../source/install/ubuntu.txt:18
-#, fuzzy
 msgid "10.04 LTS Lucid Lynx"
-msgstr "Ubuntu 10.04 LTS Lucid Lynx"
+msgstr ""
 
 # 1a8d3d8990bb484a9f5d49c65ea17f67
 # c6ca9554922e4f35af5a0a3b9e8fee7d
@@ -979,15 +949,13 @@ msgstr ""
 
 # b277c0fcf3804dbe9e8aaed78a75fee7
 #: ../../../source/install/ubuntu.txt:56
-#, fuzzy
 msgid "11.04 Natty Narwhal"
-msgstr "Ubuntu 11.04 Natty Narwhal"
+msgstr ""
 
 # 7418443aacf244e7ab6aaf35acef652d
 #: ../../../source/install/ubuntu.txt:94
-#, fuzzy
 msgid "11.10 Oneiric Ocelot"
-msgstr "Ubuntu 11.10 Oneiric Ocelot"
+msgstr ""
 
 # 92c876db908a4ccaba4d0b56686559f8
 #: ../../../source/install/ubuntu.txt:132
@@ -996,43 +964,34 @@ msgstr ""
 
 # f751a7dc3ecf4e1381601044a81f7752
 #: ../../../source/install/windows.txt:6
-#, fuzzy
 msgid "Windows"
-msgstr "Windows (zip)"
+msgstr ""
 
 # 610d5ad310b748c1b7ce401cd0c1db8c
 #: ../../../source/install/windows.txt:8
-#, fuzzy
 msgid ""
 "This section describes how to install groonga on Windows. You can install "
 "groogna by extracting a zip package or running an installer."
-msgstr "This section describes how to install groonga on each environment."
+msgstr ""
 
 # ca2415459ea747379e514afafc8caab2
 #: ../../../source/install/windows.txt:18
-#, fuzzy
 msgid "Installer"
-msgstr "Install"
+msgstr ""
 
 # 72a299f3ce1d44a188f84b1d3ddd76c5
 #: ../../../source/install/windows.txt:20
-#, fuzzy
 msgid ""
 "For 32-bit environment, download `groonga-2.0.3-x86.exe <http://packages."
 "groonga.org/windows/groonga/groonga-2.0.3-x86.exe>`_ and run it."
 msgstr ""
-"You just download a zip file from `packages.groonga.org/windows/ <http://"
-"packages.groonga.org/windows/groonga/>`_ and extract it."
 
 # 72a299f3ce1d44a188f84b1d3ddd76c5
 #: ../../../source/install/windows.txt:24
-#, fuzzy
 msgid ""
 "For 64-bit environment, download `groonga-2.0.3-x64.exe <http://packages."
 "groonga.org/windows/groonga/groonga-2.0.3-x64.exe>`_ and run it."
 msgstr ""
-"You just download a zip file from `packages.groonga.org/windows/ <http://"
-"packages.groonga.org/windows/groonga/>`_ and extract it."
 
 # 6f713ee759834964a630aacf6ac8807a
 #: ../../../source/install/windows.txt:28
@@ -1047,23 +1006,17 @@ msgstr ""
 
 # 72a299f3ce1d44a188f84b1d3ddd76c5
 #: ../../../source/install/windows.txt:33
-#, fuzzy
 msgid ""
 "For 32-bit environment, download `groonga-2.0.3-x86.zip <http://packages."
 "groonga.org/windows/groonga/groonga-2.0.3-x86.zip>`_ and extract it."
 msgstr ""
-"You just download a zip file from `packages.groonga.org/windows/ <http://"
-"packages.groonga.org/windows/groonga/>`_ and extract it."
 
 # 72a299f3ce1d44a188f84b1d3ddd76c5
 #: ../../../source/install/windows.txt:37
-#, fuzzy
 msgid ""
 "For 64-bit environment, download `groonga-2.0.3-x64.zip <http://packages."
 "groonga.org/windows/groonga/groonga-2.0.3-x64.zip>`_ and extract it."
 msgstr ""
-"You just download a zip file from `packages.groonga.org/windows/ <http://"
-"packages.groonga.org/windows/groonga/>`_ and extract it."
 
 # f319dafec99e42a692500560751d52e5
 #: ../../../source/install/windows.txt:41
@@ -1091,13 +1044,10 @@ msgstr ""
 
 # 72a299f3ce1d44a188f84b1d3ddd76c5
 #: ../../../source/install/windows.txt:53
-#, fuzzy
 msgid ""
 "Download zipped source `groonga-2.0.3.zip <http://packages.groonga.org/"
 "source/groonga/groonga-2.0.3.tar.gz>`_ and extract it."
 msgstr ""
-"You just download a zip file from `packages.groonga.org/windows/ <http://"
-"packages.groonga.org/windows/groonga/>`_ and extract it."
 
 # 2a75b8795cec4ed78a1b96b7c652945f
 #: ../../../source/install/windows.txt:57

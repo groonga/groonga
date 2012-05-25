@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 2.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-05-25 12:54\n"
+"POT-Creation-Date: 2012-05-25 15:15\n"
 "PO-Revision-Date: 2012-04-28 11:36+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -1758,16 +1758,12 @@ msgstr "Here are a schema definition and sample data to show usage."
 
 # fb5493be21114444a39dea445ad03289
 #: ../../../source/commands/select.txt:79
-#, fuzzy
 msgid ""
 "There is a table, ``Entries``, for blog entries. An entry has title, content "
 "and the number of likes for the entry. Title is key of ``Entries``. Content "
 "is value of ``Entries.content`` column. The number of likes is value of "
 "``Entries.n_likes`` column."
 msgstr ""
-"There is a table, ``Entries``, for blog entries. An entry has title and "
-"content. Title is key of ``Entries``. Content is value of ``Entries."
-"content`` column."
 
 # ed2e139056f84208a88b95cd5458beae
 #: ../../../source/commands/select.txt:84
@@ -1801,7 +1797,6 @@ msgstr ""
 
 # 5e7672a3e95b4e8fa057b81ab8f83510
 #: ../../../source/commands/select.txt:100
-#, fuzzy
 msgid ""
 "Why does the command output all records? There are two reasons. The first "
 "reason is that the command doesn't specify any search conditions. No search "
@@ -1810,12 +1805,6 @@ msgid ""
 "maximum by default. There are only 5 records. It is less than 10. So the "
 "command outputs all records."
 msgstr ""
-"Why does the command output all records? There are two reasons. The first "
-"reason is that the command doesn't specify any search conditions. No search "
-"condition means all records are matched. The second reason is that the "
-"number of all records is 3. ``select`` command outputs 10 records at a "
-"maximum by default. There are only 3 records. It is less than 10. So the "
-"command outputs all records."
 
 # 7a842533f2f84099a2bc6135d6df6d84
 #: ../../../source/commands/select.txt:108
@@ -2196,42 +2185,33 @@ msgstr ""
 
 # 4e8f13cf1bbc4e22924614a285657160
 #: ../../../source/commands/select.txt:308
-#, fuzzy
 msgid "Here is a simple logical and search example."
-msgstr "Here is a simple ``filter`` usage example."
+msgstr ""
 
 # 9209a57756954bb6af07f05a36d8e053
 #: ../../../source/commands/select.txt:314
-#, fuzzy
 msgid ""
 "The ``select`` command searches records that contain two words ``fast`` and "
 "``groonga`` in ``content`` column value from ``Entries`` table."
 msgstr ""
-"The ``select`` command searches records that contain a word ``fast`` in "
-"``content`` column value from ``Entries`` table."
 
 # 4e8f13cf1bbc4e22924614a285657160
 #: ../../../source/commands/select.txt:318
-#, fuzzy
 msgid "Here is a simple logical or search example."
-msgstr "Here is a simple ``filter`` usage example."
+msgstr ""
 
 # 9209a57756954bb6af07f05a36d8e053
 #: ../../../source/commands/select.txt:324
-#, fuzzy
 msgid ""
 "The ``select`` command searches records that contain one of two words "
 "``groonga`` or ``mroonga`` in ``content`` column value from ``Entries`` "
 "table."
 msgstr ""
-"The ``select`` command searches records that contain a word ``fast`` in "
-"``content`` column value from ``Entries`` table."
 
 # f6a40af5f20c467b8bd54eacc136b6a2
 #: ../../../source/commands/select.txt:328
-#, fuzzy
 msgid "See :doc:`/spec/query_syntax` for other syntax."
-msgstr "See :doc:`/spec/query_syntax`."
+msgstr ""
 
 # 826a551c63294a79b2c0397ee79c8878
 #: ../../../source/commands/select.txt:330
@@ -2245,44 +2225,35 @@ msgstr ""
 # ff098fc3d342459d89be3763da12bbaf
 #: ../../../source/commands/select.txt:335
 #: ../../../source/commands/select.txt:371
-#, fuzzy
 msgid "Here is a simple equality operator search example."
-msgstr "Here is a simple ``query`` usage example."
+msgstr ""
 
 # 9209a57756954bb6af07f05a36d8e053
 #: ../../../source/commands/select.txt:341
 #: ../../../source/commands/select.txt:377
-#, fuzzy
 msgid ""
 "The ``select`` command searches records that ``_key`` column value is "
 "``Groonga`` from ``Entries`` table."
 msgstr ""
-"The ``select`` command searches records that contain a word ``fast`` in "
-"``content`` column value from ``Entries`` table."
 
 # 4e8f13cf1bbc4e22924614a285657160
 #: ../../../source/commands/select.txt:344
 #: ../../../source/commands/select.txt:380
-#, fuzzy
 msgid "Here is a simple less than operator search example."
-msgstr "Here is a simple ``filter`` usage example."
+msgstr ""
 
 # 9209a57756954bb6af07f05a36d8e053
 #: ../../../source/commands/select.txt:350
 #: ../../../source/commands/select.txt:386
-#, fuzzy
 msgid ""
 "The ``select`` command searches records that ``n_likes`` column value is "
 "less than ``11`` from ``Entries`` table."
 msgstr ""
-"The ``select`` command searches records that contain a word ``fast`` in "
-"``content`` column value from ``Entries`` table."
 
 # f6a40af5f20c467b8bd54eacc136b6a2
 #: ../../../source/commands/select.txt:353
-#, fuzzy
 msgid "See :doc:`/spec/query_syntax` for other operations."
-msgstr "See :doc:`/spec/query_syntax`."
+msgstr ""
 
 # 0fc5eec7ac124c7f9fd84047258ef870
 #: ../../../source/commands/select.txt:358
@@ -2306,9 +2277,8 @@ msgstr ""
 
 # 37338890b3ae4faba2348cb02934ac0a
 #: ../../../source/commands/select.txt:389
-#, fuzzy
 msgid "See :doc:`/spec/script_syntax` for other operators."
-msgstr "See :doc:`/spec/script_syntax`."
+msgstr ""
 
 # b4476e9ca79f4b03826f7c40c0dc4c18
 #: ../../../source/commands/select.txt:392
@@ -2322,7 +2292,6 @@ msgstr "``match_escalation_threshold``"
 
 # 860173bd4e0c41feb93032083dbf3366
 #: ../../../source/commands/select.txt:397
-#, fuzzy
 msgid ""
 "It specifies threshold to determine whether search storategy escalation is "
 "used or not. The threshold is compared against the number of matched "
@@ -2330,11 +2299,6 @@ msgid ""
 "threshold, the search storategy escalation is used. See :doc:`/spec/search` "
 "about the search storategy escalation."
 msgstr ""
-"It specifies threshold to determine whether search storategy escalation is "
-"used or not. The threshold is compared against the number of matched "
-"records. If the number of matched records is equal to or less than the "
-"threshold, search storategy escalation is used. See :doc:`/spec/search` "
-"about search storategy escalation."
 
 # cb029779f0e6432c87b04e6ca0c81943
 #: ../../../source/commands/select.txt:403
@@ -2449,11 +2413,10 @@ msgstr ""
 
 # ff098fc3d342459d89be3763da12bbaf
 #: ../../../source/commands/select.txt:469
-#, fuzzy
 msgid ""
 "Here is a sample substitution table to show a simple ``query_expansion`` "
 "usage example."
-msgstr "Here is a simple ``query`` usage example."
+msgstr ""
 
 # 12ee4549d7564c8db4695d16507aec75
 #: ../../../source/commands/select.txt:482
@@ -2481,9 +2444,8 @@ msgstr ""
 
 # ff098fc3d342459d89be3763da12bbaf
 #: ../../../source/commands/select.txt:499
-#, fuzzy
 msgid "Here is a simple ``query_expansion`` usage example."
-msgstr "Here is a simple ``query`` usage example."
+msgstr ""
 
 # 88e919cb1a8342a7b27fd639f5ea9308
 #: ../../../source/commands/select.txt:507
@@ -2519,13 +2481,10 @@ msgstr ""
 
 # 9209a57756954bb6af07f05a36d8e053
 #: ../../../source/commands/select.txt:532
-#, fuzzy
 msgid ""
 "The ``select`` command outputs records that ``n_likes`` column value is "
 "equal to or more than ``10`` from ``Entries`` table."
 msgstr ""
-"The ``select`` command searches records that contain a word ``fast`` in "
-"``content`` column value from ``Entries`` table."
 
 # 5bebd7b0e916410a9068e659babf23c6
 #: ../../../source/commands/select.txt:536
@@ -2534,15 +2493,13 @@ msgstr "Output related parameters"
 
 # f54375f0c3fc4ab6a3698d9607b45cf0
 #: ../../../source/commands/select.txt:541
-#, fuzzy
 msgid "It specifies output columns separated by ``,``."
-msgstr "It specifies output columns."
+msgstr ""
 
 # af9b331b53834f57a21eb58e8eaffec8
 #: ../../../source/commands/select.txt:543
-#, fuzzy
 msgid "Here is a simple ``output_columns`` usage example."
-msgstr "Here is a simple ``match_columns`` usage example."
+msgstr ""
 
 # ce3e5ff7ea464203a6771730d07b7ee5
 #: ../../../source/commands/select.txt:549
@@ -2558,9 +2515,8 @@ msgstr ""
 
 # ff098fc3d342459d89be3763da12bbaf
 #: ../../../source/commands/select.txt:555
-#, fuzzy
 msgid "Here is a ``*`` usage example."
-msgstr "Here is a simple ``query`` usage example."
+msgstr ""
 
 # 450b51f1dd1846cabfa1c51bb32ca88f
 #: ../../../source/commands/select.txt:561
@@ -2584,9 +2540,8 @@ msgstr ""
 
 # ff098fc3d342459d89be3763da12bbaf
 #: ../../../source/commands/select.txt:574
-#, fuzzy
 msgid "Here is a simple ``sortby`` usage example."
-msgstr "Here is a simple ``query`` usage example."
+msgstr ""
 
 # 32b321b5495a451eb3cdbe07755def00
 #: ../../../source/commands/select.txt:580
@@ -2603,9 +2558,8 @@ msgstr ""
 
 # ff098fc3d342459d89be3763da12bbaf
 #: ../../../source/commands/select.txt:587
-#, fuzzy
 msgid "Here is a descending order ``sortby`` usage example."
-msgstr "Here is a simple ``query`` usage example."
+msgstr ""
 
 # 348073d20a4c4abc9e8bf7a0da3a903b
 #: ../../../source/commands/select.txt:593
@@ -2637,13 +2591,10 @@ msgstr ""
 
 # 6f27b82242034036ad9a2bb76eadabbd
 #: ../../../source/commands/select.txt:612
-#, fuzzy
 msgid ""
 "It specifies offset to determine output records range. Offset is zero-"
 "origin. ``--offset 1`` means output range is started from the 2nd record."
 msgstr ""
-"``offset`` is zero-origin. ``--offset 1`` means output range is started from "
-"the 2nd record."
 
 # ee82e3416690457692d5c8227d732858
 #: ../../../source/commands/select.txt:620
@@ -2672,20 +2623,15 @@ msgstr ""
 
 # fe72405398874539b6c08a5fd1933968
 #: ../../../source/commands/select.txt:639
-#, fuzzy
 msgid ""
 "It specifies the max number of output records. If the number of matched "
 "records is less than ``limit``, all records are outputted."
 msgstr ""
-"``limit`` specifies the max number of output records. ``--limit 1`` means "
-"the number of output records is 1 at a maximium. If no records are matched, "
-"``select`` command outputs no records."
 
 # 4e8f13cf1bbc4e22924614a285657160
 #: ../../../source/commands/select.txt:642
-#, fuzzy
 msgid "Here is a simple ``limit`` usage example."
-msgstr "Here is a simple ``filter`` usage example."
+msgstr ""
 
 # aac2276c2bf74d57b9206f0e73bcd356
 #: ../../../source/commands/select.txt:648
@@ -2702,15 +2648,13 @@ msgstr ""
 
 # 4e8f13cf1bbc4e22924614a285657160
 #: ../../../source/commands/select.txt:654
-#, fuzzy
 msgid "Here is a simple negative ``limit`` value usage example."
-msgstr "Here is a simple ``filter`` usage example."
+msgstr ""
 
 # fc5a78e7fab9414a88867109216a702c
 #: ../../../source/commands/select.txt:660
-#, fuzzy
 msgid "The ``select`` command outputs all records."
-msgstr "The suggest command does correction."
+msgstr ""
 
 # 5046c040450a483387d82541646aedc0
 #: ../../../source/commands/select.txt:662
