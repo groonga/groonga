@@ -18,7 +18,10 @@ Improvements
 * [experimental] Added table plugin.
 * [doc] Added more descriptions about :doc:`/commmands/select` command.
 * [doc] Made execution example copy & paste friendly.
-* [windows] Supported build with Visual Studio 2010 Express and CMake.
+* [windows] Supported build with Visual Studio 2010 Express and
+  CMake. See :doc:`/install/windows` about details.
+* [doc][solaris] Added a document about building on Solaris.
+  See :doc:`/install/solaris` about details.
 * [doc][yum] Updated epel-release package version.
   [Reported by IWAI, Masaharu]
 * [doc][cenos6] Disabled Repoforge for Munin for CentOS 6.
@@ -40,6 +43,8 @@ Fixes
 * Fixed broken ERROR tag in XML response.
   [#1363] [GitHub#13] [Patch by IWAI, Masaharu]
 * Fixed a bug that grn_ctx isn't fully cleared by grn_ctx_fin().
+* Fixed a bug that ``&!`` set operation doesn't work with grouped
+  expression. [#1372]
 
 Thanks
 ^^^^^^
