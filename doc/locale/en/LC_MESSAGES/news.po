@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 2.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-05-25 12:54\n"
+"POT-Creation-Date: 2012-05-25 17:00\n"
 "PO-Revision-Date: 2012-04-28 11:38+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -69,9 +69,9 @@ msgstr "Improvements"
 msgid "[doc] Added about release procedure."
 msgstr ""
 
-# 7a957dc49b224c28b3cbb03966616135
+# 69f523c37d144ead99cccdc94b6c267d
 #: ../../../source/news.txt:17
-msgid "Removeed restriction that the max number of opened files is 4096."
+msgid "Removed restriction that the max number of opened files is 4096."
 msgstr ""
 
 # e1a33a5f7e59499f8734fcbb09e3f4c4

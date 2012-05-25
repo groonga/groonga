@@ -47,7 +47,7 @@ msgstr "[doc] リリース手順を追加。"
 
 # 6797452f55124d14b6397b0736976b8e
 #: ../../../source/news.txt:17
-msgid "Removeed restriction that the max number of opened files is 4096."
+msgid "Removed restriction that the max number of opened files is 4096."
 msgstr "オープン可能なファイル最大数が4096である制限を削除。"
 
 # 5d78ead32ce44f6bac631b8187162e91
