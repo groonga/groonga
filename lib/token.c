@@ -442,7 +442,6 @@ grn_token_open(grn_ctx *ctx, grn_obj *table, const char *str, size_t str_len,
     if (token->nstr) {
       token->curr = (unsigned char *)token->nstr->norm;
       token->curr_size = token->nstr->norm_blen;
-      token->status = grn_token_done;
     } else {
       ERR(GRN_TOKENIZER_ERROR, "grn_str_open failed at grn_token_open");
     }
@@ -481,6 +480,8 @@ grn_token_next(grn_ctx *ctx, grn_token *token)
           if (status & GRN_TOKEN_LAST) { token->force_prefix = 1; }
         }
       }
+    } else {
+      token->status = grn_token_done;
     }
     if (token->mode == grn_token_add) {
       switch (table->header.type) {
