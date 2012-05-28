@@ -30,7 +30,7 @@ Improvements
 * [munin] groonga_dist Munin plugin supported an object that has
   separated files.
 * Started using Travis CI.
-* [yum] Changed RPM package name that provides Yum repository from
+* [yum] Changed RPM package name that provides yum repository from
   groonga-repository to groonga-release to follow RPM package name
   convension such as centos-release and fedora-release.
 
@@ -45,6 +45,7 @@ Fixes
 * Fixed a bug that grn_ctx isn't fully cleared by grn_ctx_fin().
 * Fixed a bug that ``&!`` set operation doesn't work with grouped
   expression. [#1372]
+* Fixed a bug that a record key registered via index source isn't normalized.
 
 Thanks
 ^^^^^^
