@@ -32,7 +32,7 @@ for code_name in ${CODES}; do
     esac
 
     base_directory=${DESTINATION}${distribution}
-    debsign --re-sign -k${GPG_UID} \
+    debsign -pgpg2 --re-sign -k${GPG_UID} \
 	$(find ${base_directory} -name '*.dsc' -or -name '*.changes') &
     if [ "${PARALLEL}" != "yes" ]; then
 	wait
