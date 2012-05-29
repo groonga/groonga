@@ -24,9 +24,10 @@ ensure-rsync-path:
 	fi
 
 download: ensure-rsync-path
-	for distribution in $(DISTRIBUTIONS); do			\
-	  rsync -avz --progress --delete				\
-	    $(RSYNC_PATH)/$${distribution} ${REPOSITORIES_PATH}/;	\
+	for distribution in $(DISTRIBUTIONS); do	\
+	  rsync -avz --progress --delete		\
+	    $(RSYNC_PATH)/$${distribution}		\
+	    ${REPOSITORIES_PATH}/$${distribution}/;	\
 	done
 
 sign-packages:
