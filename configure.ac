@@ -1022,6 +1022,11 @@ AM_CONDITIONAL([HAVE_BUILT_DOCUMENT],
 AC_MSG_CHECKING([whether having built document])
 AC_MSG_RESULT($have_built_document)
 
+DOCUMENT_VERSION=groonga_version
+DOCUMENT_VERSION_FULL="$GRN_VERSION"
+AC_SUBST(DOCUMENT_VERSION)
+AC_SUBST(DOCUMENT_VERSION_FULL)
+
 # Munin plugins
 AC_MSG_CHECKING([whether install munin plugins])
 AC_ARG_WITH(munin-plugins,

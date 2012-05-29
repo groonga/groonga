@@ -70,23 +70,10 @@ copyright = u'2009-' + unicode(datetime.today().year) + ', Brazil, Inc'
 # built documents.
 #
 
-# read version from env/file.
-if os.environ.has_key('GRN_VERSION'):
-  version_sh = 'GRN_VERSION=' + os.environ['GRN_VERSION']
-else:
-  os.system('../../version-gen.sh')
-  version_sh = open(os.path.join(os.path.dirname(__file__), '../../version.sh')).read()
-
-release_regex = re.compile(r'^GRN_VERSION=(?P<release>.*)$')
-# The full version, including alpha/beta/rc tags.
-release = release_regex.search(version_sh).group('release')
-
-version_regex = re.compile(r'^(?P<version>\d+(\.\d+)*)')
 # The short X.Y version.
-version = version_regex.search(release).group('version')
-
-# NOTE: release == version, because release includes git tag.
-release = version
+version = os.environ["DOCUMENT_VERSION"]
+# The full version, including alpha/beta/rc tags.
+release = os.environ["DOCUMENT_VERSION_FULL"]
 
 # The directories that has *.mo files.
 locale_dirs = ["../locale"]
