@@ -53,7 +53,6 @@ build_chroot()
 	    run_sudo sed -i'' \
 		-e 's,http://archive,http://jp.archive,' \
 		-e 's/main$/main universe/' \
-		-e "\$adeb http://security.ubuntu.com/ubuntu ${code_name}-security main universe" \
 		$base_dir/etc/apt/sources.list
 	    ;;
     esac
