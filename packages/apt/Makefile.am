@@ -37,7 +37,7 @@ update-repository:
 	  '$(ARCHITECTURES)' '$(CODES)'
 
 sign-repository:
-	./sign-repository.sh '$(GPG_UID)' '$(CODES)'
+	./sign-repository.sh '$(GPG_UID)' '$(REPOSITORIES_PATH)/' '$(CODES)'
 
 upload: ensure-rsync-path
 	for distribution in $(DISTRIBUTIONS); do		\

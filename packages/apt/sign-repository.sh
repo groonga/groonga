@@ -3,13 +3,14 @@
 script_base_dir=`dirname $0`
 
 if [ $# != 2 ]; then
-    echo "Usage: $0 GPG_UID CODES"
-    echo " e.g.: $0 'F10399C0' 'lenny unstable hardy karmic'"
+    echo "Usage: $0 GPG_UID DESTINATION CODES"
+    echo " e.g.: $0 'F10399C0' repositories/ 'lenny unstable hardy karmic'"
     exit 1
 fi
 
 GPG_UID=$1
-CODES=$2
+DESTINATION=$2
+CODES=$3
 
 run()
 {
@@ -30,7 +31,7 @@ for code_name in ${CODES}; do
 	    ;;
     esac
 
-    release=repositories/${distribution}/dists/${code_name}/Release
+    release=${DESTINATION}${distribution}/dists/${code_name}/Release
     rm -f ${release}.gpg
     gpg2 --sign --detach-sign --armor \
 	--local-user ${GPG_UID} \
