@@ -9,7 +9,8 @@ if [ $# != 3 ]; then
 fi
 
 GPG_KEY_NAME=$1
-DISTRIBUTIONS=$2
+DESTINATION=$2
+DISTRIBUTIONS=$3
 
 run()
 {
