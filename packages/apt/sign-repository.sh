@@ -34,7 +34,6 @@ for code_name in ${CODES}; do
     rm -f ${release}.gpg
     gpg2 --sign --detach-sign --armor \
 	--local-user ${GPG_UID} \
-	--local-user 1C837F31 \
 	--output ${release}.gpg \
 	${release} &
 
