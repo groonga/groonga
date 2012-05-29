@@ -21,10 +21,10 @@ run()
 }
 
 for distribution in ${DISTRIBUTIONS}; do
-    for dir in $script_base_dir/${distribution}/*/*; do
+    for dir in ${DESTINATION}${distribution}/*/*; do
 	test -d $dir &&	run createrepo $dir
     done;
 
     run cp $script_base_dir/RPM-GPG-KEY-${GPG_KEY_NAME} \
-	$script_base_dir/${distribution}/RPM-GPG-KEY-${GPG_KEY_NAME};
+	${DESTINATION}${distribution}/RPM-GPG-KEY-${GPG_KEY_NAME};
 done
