@@ -20,7 +20,7 @@ sign:
 	  '$(DISTRIBUTIONS)'
 
 update:
-	./update-repository.sh $(PACKAGE) '$(REPOSITORIES_PATH)/' \
+	./update-repository.sh '$(PACKAGE)' '$(REPOSITORIES_PATH)/' \
 	  '$(DISTRIBUTIONS)'
 
 upload: ensure-rsync-path
