@@ -22,8 +22,8 @@ run()
 }
 
 rpms=""
-for distribution in ${DESTINATION}${DISTRIBUTIONS}; do
-    rpms="${rpms} $(echo $script_base_dir/${distribution}/*/*/*/*.rpm)"
+for distribution in ${DISTRIBUTIONS}; do
+    rpms="${rpms} $(echo ${DESTINATION}${distribution}/*/*/*/*.rpm)"
 done
 
 echo "NOTE: YOU JUST ENTER! YOU DON'T NEED TO INPUT PASSWORD!"
