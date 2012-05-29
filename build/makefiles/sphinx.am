@@ -30,7 +30,7 @@ EXTRA_DIST += $(required_build_stamps)
 endif
 
 man_files =					\
-	man/groonga.1
+	man/$(PACKAGE_NAME).1
 
 generated_files =				\
 	$(DOCTREES_BASE)			\
