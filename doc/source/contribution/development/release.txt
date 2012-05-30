@@ -621,7 +621,7 @@ RedClothが必要です。
 jekyllのインストールを行ったら、以下のコマンドでローカルにwebサーバを
 起動します。::
 
-    % jekyll --server --auto .
+    % jekyll --server --auto
 
 あとはブラウザにてhttp://localhost:4000にアクセスして内容に問題がない
 かを確認します。
