@@ -218,13 +218,37 @@ class GrnTestData
     long?(@longitude_start_degree, @longitude_end_degree) ? "long" : "short"
   end
 
+  def diff_in_longitude(start_degree, end_degree)
+    if start_degree >= 0
+      if end_degree >= 0
+        if start_degree > end_degree
+          start_degree - end_degree
+        else
+          end_degree - start_degree
+        end
+      else
+        start_degree + end_degree.abs
+      end
+    else
+      if end_degree >= 0
+        start_degree.abs + end_degree
+      else
+        if start_degree > end_degree
+          end_degree.abs - start_degree.abs
+        else
+          start_degree.abs - end_degree.abs
+        end
+      end
+    end
+  end
+
   def long?(start_lng_deg, end_lng_deg)
-    diff_in_longitude = start_lng_deg.abs + end_lng_deg.to_i.abs
+    longitude_diff = diff_in_longitude(start_lng_deg.to_i, end_lng_deg.to_i)
     east_to_west = start_lng_deg > 0 and end_lng_deg.to_i < 0
     west_to_east = start_lng_deg < 0 and end_lng_deg.to_i > 0
     if start_lng_deg != end_lng_deg and
         (east_to_west or west_to_east) and
-        diff_in_longitude > 180
+        longitude_diff > 180
       true
     else
       false
