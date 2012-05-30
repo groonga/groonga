@@ -828,6 +828,7 @@ fi
 AM_CONDITIONAL(WITH_MECAB, test "x$with_mecab" = "xyes")
 
 # KyTea
+REQUIRED_MINIMUM_KYTEA_VERSION=0.4.2
 AC_ARG_WITH(kytea,
   [AS_HELP_STRING([--with-kytea],
     [use KyTea for morphological analysis. [default=auto]])],
@@ -837,7 +838,10 @@ AC_MSG_CHECKING([whether enable KyTea])
 AC_MSG_RESULT($with_kytea)
 if test "x$with_kytea" != "xno"; then
   m4_ifdef([PKG_CHECK_MODULES], [
-    PKG_CHECK_MODULES([KYTEA], [kytea], [kytea_exists=yes], [kytea_exists=no])
+    PKG_CHECK_MODULES([KYTEA],
+                      [kytea >= $REQUIRED_MINIMUM_KYTEA_VERSION],
+                      [kytea_exists=yes],
+                      [kytea_exists=no])
     ],
     [kytea_exists=no])
   if test "$kytea_exists" = "no" -a "x$with_kytea" = "xyes"; then
