@@ -187,7 +187,9 @@ grn_obj *grn_kytea_init(grn_ctx *ctx, int num_args, grn_obj **args,
   grn_plugin_mutex_lock(ctx, kytea_mutex);
   try {
     const std::string str(query->ptr, query->length);
-    tokenizer->sentence = kytea::KyteaSentence(kytea_util->mapString(str));
+    const kytea::KyteaString &surface_str = kytea_util->mapString(str);
+    const kytea::KyteaString &normalized_str = kytea_util->normalize(surface_str);
+    tokenizer->sentence = kytea::KyteaSentence(surface_str, normalized_str);
     kytea_tagger->calculateWS(tokenizer->sentence);
   } catch (...) {
     grn_plugin_mutex_unlock(ctx, kytea_mutex);
@@ -200,7 +202,7 @@ grn_obj *grn_kytea_init(grn_ctx *ctx, int num_args, grn_obj **args,
   try {
     for (std::size_t i = 0; i < tokenizer->sentence.words.size(); ++i) {
       const std::string &token =
-          kytea_util->showString(tokenizer->sentence.words[i].surf);
+          kytea_util->showString(tokenizer->sentence.words[i].surface);
       const char *ptr = token.c_str();
       unsigned int left = static_cast<unsigned int>(token.length());
       while (left > 0) {
