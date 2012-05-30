@@ -250,7 +250,7 @@ class GrnTestData
 
   def to_north?(check_option=nil)
     check_option ||= {:check_longitude => true}
-    if check_option[:check_longitude] == true
+    if check_option[:check_longitude]
       longitude_equal? and @latitude_start_degree < @latitude_end_degree
     else
       @latitude_start_degree < @latitude_end_degree
@@ -259,7 +259,7 @@ class GrnTestData
 
   def to_east?(check_option=nil)
     check_option ||= {:check_latitude => true}
-    if check_option[:check_latitude] == true
+    if check_option[:check_latitude]
       latitude_equal? and @longitude_start_degree < @longitude_end_degree
     else
       @longitude_start_degree < @longitude_end_degree
@@ -268,7 +268,7 @@ class GrnTestData
 
   def to_west?(check_option=nil)
     check_option ||= {:check_latitude => true}
-    if check_option[:check_latitude] == true
+    if check_option[:check_latitude]
       latitude_equal? and @longitude_start_degree > @longitude_end_degree
     else
       @longitude_start_degree > @longitude_end_degree
@@ -277,7 +277,7 @@ class GrnTestData
 
   def to_south?(check_option=nil)
     check_option ||= {:check_longitude => true}
-    if check_option[:check_longitude] == true
+    if check_option[:check_longitude]
       longitude_equal? and @latitude_start_degree > @latitude_end_degree
     else
       @latitude_start_degree > @latitude_end_degree
