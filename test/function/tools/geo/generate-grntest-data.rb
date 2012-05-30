@@ -605,8 +605,7 @@ if __FILE__ == $0
           dot_expected = grndata.generate_expected_data(app_type)
 
           if File.exists?(test_name)
-            # duplicated?
-            puts("Warning! [#{i}] #{test_name} duplicated")
+            puts("Warning! [#{i}] #{test_name} duplicated [#{line.chomp}]")
           end
           File.open(test_name, "w+") do |test_file|
             if OPTS.has_key?(:verbose)
