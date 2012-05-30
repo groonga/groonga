@@ -364,10 +364,10 @@ class GrnTestData
   end
 
   def generate_filename
-    if @options.has_key?(:test) and @options[:test]
-      "#{latitude_position}.test"
-    else
+    if @options.has_key?(:expected) and @options[:expected]
       "#{latitude_position}.expected"
+    else
+      "#{latitude_position}.test"
     end
   end
 
