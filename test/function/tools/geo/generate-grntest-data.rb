@@ -59,9 +59,11 @@ class GrnTestData
   end
 
   def meridian?(lng, lat)
+    lng == 0
   end
 
   def equator?(lng, lat)
+    lat == 0
   end
 
   def east_axis?(lng, lat)
