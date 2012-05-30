@@ -463,64 +463,6 @@ class GrnTestData
 end
 
 
-def get_point(lng, lat)
-  # lng -> lat
-  lng_desc = {
-    0 => {
-      90 => "north_pole_on_meridian",
-      89 => "near_north_pole_on_meridian",
-      1 => "near_positive_origin_on_meridian",
-      0 => "origin_on_meridian",
-      -1 => "near_negative_origin_on_meridian",
-      -89 => "near_south_pole_on_meridian",
-      -90 => "south_pole_on_meridian",
-    },
-    -180 => "west_edge",
-    -179 => "near_west_edge",
-    -91 => "west_near_ninety_degrees",
-    -90 => "west_ninety_degrees",
-    -89 => "west_near_ninety_degrees",
-    -1 => "near_negative_origin",
-    1 => "near_positive_origin",
-    89 => "east_near_ninety_degrees",
-    90 => "east_ninety_degrees",
-    91 => "east_near_ninety_degrees",
-    179 => "near_east_edge",
-  }
-  lat_desc = {
-    0 => {
-      -180 => "west_edge_on_equator",
-      -179 => "near_west_edge_on_equator",
-      -91 => "west_near_ninety_degrees_on_equator",
-      -90 => "west_ninety_degrees_on_equator",
-      -89 => "west_near_ninety_degrees_on_equator",
-      -1 => "near_nagative_origin_on_equator",
-      0 => "origin",
-      1 => "near_positive_origin_on_equator",
-      89 => "east_near_ninetydegrees_on_equator",
-      90 => "east_ninety_degrees_on_equator",
-      91 => "east_near_ninety_degrees_on_equator",
-      179 => "near_east_edge_on_equator",
-    },
-    90 => "north_pole",
-    89 => "near_north_pole",
-    1 => "near_positive_origin",
-    -1 => "near_negative_origin",
-    -89 => "near_south_pole",
-    -90 => "south_pole",
-  }
-  if lng == 0
-    lng_desc[lng][lat]
-  elsif lat == 0
-    lat_desc[lat][lng]
-  else
-    lng_desc[lng] + "_" + lat_desc[lat]
-  end
-end
-
-
-
-
 if __FILE__ == $0
 
   OPTS = {}
