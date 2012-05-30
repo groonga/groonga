@@ -81,63 +81,13 @@ groongaプロジェクトでは署名用の鍵をリリース担当者の公開�
 鍵をインポートしただけでは使用することができないため、インポートした鍵
 に対してtrust,signを行う必要があります。
 
-以下のコマンドを実行して署名を行います。::
+以下のコマンドを実行して署名を行います。(途中の選択肢は省略)::
 
     % gpg --edit-key packages@groonga.org
-    gpg (GnuPG) 1.4.11; Copyright (C) 2010 Free Software Foundation, Inc.
-    This is free software: you are free to change and redistribute it.
-    There is NO WARRANTY, to the extent permitted by law.
-    
-    秘密鍵が使用できます。
-    
-    pub  1024R/F10399C0  作成: 2012-04-24  満了: 無期限       利用法: SC  
-                         信用: 未知の     有効性: 未知の
-    sub  1024R/BC009774  作成: 2012-04-24  満了: 無期限       利用法: E   
-    [ unknown] (1). groonga Key (groonga Official Signing Key)
-    <packages@groonga.org>
-    
     gpg> trust
-    pub  1024R/F10399C0  作成: 2012-04-24  満了: 無期限       利用法: SC  
-                         信用: 未知の     有効性: 未知の
-    sub  1024R/BC009774  作成: 2012-04-24  満了: 無期限       利用法: E   
-    [ unknown] (1). groonga Key (groonga Official Signing Key)
-    <packages@groonga.org>
-    
-    他のユーザーの鍵を正しく検証するために、このユーザーの信用度を決めてく
-    ださい
-    (パスポートを見せてもらったり、他から得た指紋を検査したり、などなど)
-    
-      1 = 知らない、または何とも言えない
-      2 = 信用し ない
-      3 = ある程度信用する
-      4 = 完全に信用する
-      5 = 絶対的に信用する
-      m = メーン・メニューに戻る
-    
-    あなたの決定は? 5
-    本当にこの鍵を絶対的に信用しますか? (y/N) y
-    
-    pub  1024R/F10399C0  作成: 2012-04-24  満了: 無期限       利用法: SC  
-                         信用: 絶対的     有効性: 未知の
-    sub  1024R/BC009774  作成: 2012-04-24  満了: 無期限       利用法: E   
-    [ unknown] (1). groonga Key (groonga Official Signing Key)
-    <packages@groonga.org>
-    プログラムを再起動するまで、表示された鍵の有効性は正しくないかもしれな
-    い、
-    ということを念頭においてください。
-    
     gpg> sign
-    
-    pub  1024R/F10399C0  作成: 2012-04-24  満了: 無期限       利用法: SC  
-                         信用: 絶対的     有効性: 未知の
-     主鍵の指紋: 31DC 7694 47A9 0527 6A67  58DB E9B7 1366 F103 99C0
-    
-         groonga Key (groonga Official Signing Key) <packages@groonga.org>
-    
-    本当に署名しますか? (y/N) y
-    
+    gpg> save
     gpg> quit
-    変更を保存しますか? (y/N) y
     
 変更点のまとめ
 --------------------------
