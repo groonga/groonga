@@ -574,7 +574,7 @@ if __FILE__ == $0
             exit 1
           end
 
-          if test_name and not Dir.exists?(File.dirname(test_name))
+          if test_name
             FileUtils.mkdir_p(File.dirname(test_name))
           end
 
