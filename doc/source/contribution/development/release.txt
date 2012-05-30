@@ -14,8 +14,8 @@
 なお、ビルド環境としては Ubuntu 12.04 LTS(Precise Pangolin)を前提とし
 て説明しています。その他の環境では適宜読み替えて下さい。::
 
-    % sudo apt-get install -V debootstrap rinse createrepo rpm　
-    mercurial　python-sphinx　ruby1.9.1-full mingw-w64 g++-mingw-w64 mecab libmecab-dev nsis gnupg2
+    % sudo apt-get install -V debootstrap rinse createrepo rpm
+    mercurial python-sphinx ruby1.9.1-full mingw-w64 g++-mingw-w64 mecab libmecab-dev nsis gnupg2
 
 rinseのバージョンが古いとCentOS 5/6パッケージのビルドを行うことができ
 ません。
