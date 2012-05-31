@@ -980,7 +980,6 @@ grn_ctx_connect(grn_ctx *ctx, const char *host, int port, int flags)
     grn_com *com = grn_com_copen(ctx, NULL, host, port);
     if (com) {
       ctx->impl->com = com;
-      return GRN_SUCCESS;
     }
   }
 exit :
