@@ -222,25 +222,9 @@ class GrnTestData
 
   def diff_in_longitude(start_degree, end_degree)
     if start_degree >= 0
-      if end_degree >= 0
-        if start_degree > end_degree
-          start_degree - end_degree
-        else
-          end_degree - start_degree
-        end
-      else
-        start_degree + end_degree.abs
-      end
+      (start_degree - end_degree).abs
     else
-      if end_degree >= 0
-        start_degree.abs + end_degree
-      else
-        if start_degree > end_degree
-          end_degree.abs - start_degree.abs
-        else
-          start_degree.abs - end_degree.abs
-        end
-      end
+      (end_degree - start_degree).abs
     end
   end
 
