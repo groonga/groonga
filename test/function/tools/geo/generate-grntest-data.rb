@@ -470,6 +470,21 @@ class GrnTestData
       SELECT_POST
     ].join
   end
+
+  def output_file(mode, file_name, file_content, line_no, line_data)
+    if OPTS.has_key?(mode)
+      if File.exists?(file_name)
+        puts("Warning! [#{line_no}] #{file_name} duplicated [#{line_data.chomp}]")
+      end
+      File.open(file_name, "w+") do |file|
+        if OPTS.has_key?(:verbose)
+          puts(file_name)
+          puts(file_content)
+        end
+        file.puts(file_content)
+      end
+    end
+  end
 end
 
 
@@ -589,29 +604,12 @@ if __FILE__ == $0
           end
 
           dot_expected = grndata.generate_expected_data(app_type)
+          grndata.output_file(:test, test_name, dot_test, i, line)
 
-          if File.exists?(test_name)
-            puts("Warning! [#{i}] #{test_name} duplicated [#{line.chomp}]")
-          end
-          File.open(test_name, "w+") do |test_file|
-            if OPTS.has_key?(:verbose)
-              puts(test_name)
-              puts(dot_test)
-            end
-            test_file.puts(dot_test)
-          end
           expected_name = sprintf("%s/%s.expected",
                                   File.dirname(test_name),
                                   File.basename(test_name, ".test"))
-          if OPTS.has_key?(:expected)
-            File.open(expected_name, "w+") do |expected_file|
-              if OPTS.has_key?(:verbose)
-                puts(expected_name)
-                puts(dot_expected)
-              end
-              expected_file.puts(dot_expected)
-            end
-          end
+          grndata.output_file(:expected, expected_name, dot_expected, i, line)
         end
       end
     end
