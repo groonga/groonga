@@ -2721,7 +2721,11 @@ main(int argc, char **argv)
       }
       batchmode = GRN_TRUE;
     } else {
-      batchmode = !isatty(0);
+      if (argc - i > 1) {
+        batchmode = GRN_TRUE;
+      } else {
+        batchmode = !isatty(0);
+      }
     }
   }
 
