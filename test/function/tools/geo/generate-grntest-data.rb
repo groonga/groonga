@@ -229,9 +229,9 @@ class GrnTestData
   end
 
   def long?(start_longitude, end_longitude)
-    longitude_diff = diff_in_longitude(start_longitude.to_i, end_longitude.to_i)
-    east_to_west = start_longitude > 0 and end_longitude.to_i < 0
-    west_to_east = start_longitude < 0 and end_longitude.to_i > 0
+    longitude_diff = diff_in_longitude(start_longitude, end_longitude)
+    east_to_west = start_longitude > 0 and end_longitude < 0
+    west_to_east = start_longitude < 0 and end_longitude > 0
     if start_longitude != end_longitude and
         (east_to_west or west_to_east) and
         longitude_diff > 180
