@@ -197,7 +197,44 @@ class GrnTestData
           "4th"
         end
       elsif not squadrant
-        equadrant
+        case equadrant
+        when "1st"
+          if north_axis?(@longitude_start_degree, @latitude_start_degree) or
+             east_axis?(@longitude_start_degree, @latitude_start_degree)
+            "1st"
+          elsif west_axis?(@longitude_start_degree, @latitude_start_degree)
+            "2ndto1st"
+          elsif south_axis?(@longitude_start_degree, @latitude_start_degree)
+            "4thto1st"
+          end
+        when "2nd"
+          if north_axis?(@longitude_start_degree, @latitude_start_degree) or
+             west_axis?(@longitude_start_degree, @latitude_start_degree)
+            "2nd"
+          elsif east_axis?(@longitude_start_degree, @latitude_start_degree)
+            "1stto2nd"
+          elsif south_axis?(@longitude_start_degree, @latitude_start_degree)
+            "3rdto2nd"
+          end
+        when "3rd"
+          if south_axis?(@longitude_start_degree, @latitude_start_degree) or
+             west_axis?(@longitude_start_degree, @latitude_start_degree)
+            "3rd"
+          elsif east_axis?(@longitude_start_degree, @latitude_start_degree)
+            "4thto3rd"
+          elsif north_axis?(@longitude_start_degree, @latitude_start_degree)
+            "2ndto3rd"
+          end
+        when "4th"
+          if south_axis?(@longitude_start_degree, @latitude_start_degree) or
+             east_axis?(@longitude_start_degree, @latitude_start_degree)
+            "4th"
+          elsif west_axis?(@longitude_start_degree, @latitude_start_degree)
+            "3rdto4th"
+          elsif north_axis?(@longitude_start_degree, @latitude_start_degree)
+            "1stto4th"
+          end
+        end
       elsif not equadrant
         case squadrant
         when "1st"
