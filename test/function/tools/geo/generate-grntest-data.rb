@@ -59,27 +59,27 @@ class GrnTestData
   end
 
   def meridian?(longitude, latitude)
-    longitude == 0
+    longitude.zero?
   end
 
   def equator?(longitude, latitude)
-    latitude == 0
+    latitude.zero?
   end
 
   def east_axis?(longitude, latitude)
-    longitude >= 0 and latitude == 0
+    longitude >= 0 and latitude.zero?
   end
 
   def west_axis?(longitude, latitude)
-    longitude <= 0 and latitude == 0
+    longitude <= 0 and latitude.zero?
   end
 
   def north_axis?(longitude, latitude)
-    longitude == 0 and latitude >= 0
+    longitude.zero? and latitude >= 0
   end
 
   def south_axis?(longitude, latitude)
-    longitude == 0 and latitude <= 0
+    longitude.zero? and latitude <= 0
   end
 
   def quadrant_point(longitude, latitude)
@@ -186,10 +186,10 @@ class GrnTestData
     # p end_lng
     # p end_lat
     if (@longitude_start_degree == @longitude_end_degree and
-        @longitude_start_degree == 0)
+        @longitude_start_degree.zero?)
       "meridian"
     elsif (@latitude_start_degree == @latitude_end_degree and
-        @latitude_start_degree == 0)
+           @latitude_start_degree.zero?)
       "equator"
     elsif !squadrant or !equadrant
       if (not squadrant) and (not equadrant)
@@ -515,7 +515,7 @@ if __FILE__ == $0
     lines = csv_file.readlines
 
     lines.each_with_index do |line, i|
-      is_header = i == 0
+      is_header = i.zero?
       next if is_header
 
       #puts "line No #{i}"
