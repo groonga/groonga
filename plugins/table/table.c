@@ -82,7 +82,7 @@ command_find(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   const char *set_op = GRN_TEXT_VALUE(VAR(5));
   unsigned int set_op_len = GRN_TEXT_LEN(VAR(5));
   */
-  grn_obj *set_;
+  grn_obj *set_ = NULL;
   grn_obj *table_ = grn_ctx_get_table_by_name_or_id(ctx, table, table_len);
   if (table_) {
     if (columns_len) {
