@@ -58,28 +58,28 @@ class GrnTestData
     @latitude_end_degree = @latitude_end_degree.to_i
   end
 
-  def meridian?(lng, lat)
-    lng == 0
+  def meridian?(longitude, latitude)
+    longitude == 0
   end
 
-  def equator?(lng, lat)
-    lat == 0
+  def equator?(longitude, latitude)
+    latitude == 0
   end
 
-  def east_axis?(lng, lat)
-    lng >= 0 and lat == 0
+  def east_axis?(longitude, latitude)
+    longitude >= 0 and latitude == 0
   end
 
-  def west_axis?(lng, lat)
-    lng <= 0 and lat == 0
+  def west_axis?(longitude, latitude)
+    longitude <= 0 and latitude == 0
   end
 
-  def north_axis?(lng, lat)
-    lng == 0 and lat >= 0
+  def north_axis?(longitude, latitude)
+    longitude == 0 and latitude >= 0
   end
 
-  def south_axis?(lng, lat)
-    lng == 0 and lat <= 0
+  def south_axis?(longitude, latitude)
+    longitude == 0 and latitude <= 0
   end
 
   def quadrant_point(longitude, latitude)
@@ -228,11 +228,11 @@ class GrnTestData
     end
   end
 
-  def long?(start_lng_deg, end_lng_deg)
-    longitude_diff = diff_in_longitude(start_lng_deg.to_i, end_lng_deg.to_i)
-    east_to_west = start_lng_deg > 0 and end_lng_deg.to_i < 0
-    west_to_east = start_lng_deg < 0 and end_lng_deg.to_i > 0
-    if start_lng_deg != end_lng_deg and
+  def long?(start_longitude, end_longitude)
+    longitude_diff = diff_in_longitude(start_longitude.to_i, end_longitude.to_i)
+    east_to_west = start_longitude > 0 and end_longitude.to_i < 0
+    west_to_east = start_longitude < 0 and end_longitude.to_i > 0
+    if start_longitude != end_longitude and
         (east_to_west or west_to_east) and
         longitude_diff > 180
       true
