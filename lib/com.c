@@ -688,6 +688,7 @@ grn_rc
 grn_com_send(grn_ctx *ctx, grn_com *cs,
              grn_com_header *header, const char *body, uint32_t size, int flags)
 {
+  grn_rc rc = GRN_SUCCESS;
   size_t whole_size = sizeof(grn_com_header) + size;
   ssize_t ret;
   header->size = htonl(size);
@@ -721,18 +722,21 @@ grn_com_send(grn_ctx *ctx, grn_com *cs,
     msg_iov[1].iov_len = size;
     if ((ret = sendmsg(cs->fd, &msg, MSG_NOSIGNAL|flags)) == -1) {
       SERR("sendmsg");
+      rc = ctx->rc;
     }
 #endif /* WIN32 */
   } else {
     if ((ret = send(cs->fd, (const void *)header, whole_size, MSG_NOSIGNAL|flags)) == -1) {
       SERR("send");
+      rc = ctx->rc;
     }
   }
   if (ret != whole_size) {
     GRN_LOG(ctx, GRN_LOG_ERROR, "sendmsg(%d): %" GRN_FMT_LLD " < %" GRN_FMT_LLU,
             cs->fd, (long long int)ret, (unsigned long long int)whole_size);
+    rc = ctx->rc;
   }
-  return ctx->rc;
+  return rc;
 }
 
 #define RETRY_MAX 10
