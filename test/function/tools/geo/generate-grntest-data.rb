@@ -179,12 +179,6 @@ class GrnTestData
   def quadrant
     squadrant = quadrant_point(@longitude_start_degree, @latitude_start_degree)
     equadrant = quadrant_point(@longitude_end_degree, @latitude_end_degree)
-    # p squadrant
-    # p equadrant
-    # p start_lng
-    # p start_lat
-    # p end_lng
-    # p end_lat
     if (@longitude_start_degree == @longitude_end_degree and
         @longitude_start_degree.zero?)
       "meridian"
