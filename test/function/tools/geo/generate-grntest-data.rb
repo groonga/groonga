@@ -199,7 +199,44 @@ class GrnTestData
       elsif not squadrant
         equadrant
       elsif not equadrant
-        squadrant
+        case squadrant
+        when "1st"
+          if north_axis?(@longitude_end_degree, @latitude_end_degree) or
+             east_axis?(@longitude_end_degree, @latitude_end_degree)
+            "1st"
+          elsif west_axis?(@longitude_end_degree, @latitude_end_degree)
+            "1stto2nd"
+          elsif south_axis?(@longitude_end_degree, @latitude_end_degree)
+            "1stto4th"
+          end
+        when "2nd"
+          if north_axis?(@longitude_end_degree, @latitude_end_degree) or
+             west_axis?(@longitude_end_degree, @latitude_end_degree)
+            "2nd"
+          elsif east_axis?(@longitude_end_degree, @latitude_end_degree)
+            "2ndto1st"
+          elsif south_axis?(@longitude_end_degree, @latitude_end_degree)
+            "2ndto4th"
+          end
+        when "3rd"
+          if west_axis?(@longitude_end_degree, @latitude_end_degree) or
+             south_axis?(@longitude_end_degree, @latitude_end_degree)
+            "3rd"
+          elsif north_axis?(@longitude_end_degree, @latitude_end_degree)
+            "3rdto2nd"
+          elsif east_axis?(@longitude_end_degree, @latitude_end_degree)
+            "3rdto4th"
+          end
+        when "4th"
+          if east_axis?(@longitude_end_degree, @latitude_end_degree) or
+             south_axis?(@longitude_end_degree, @latitude_end_degree)
+            "4th"
+          elsif north_axis?(@longitude_end_degree, @latitude_end_degree)
+            "4thto1st"
+          elsif west_axis?(@longitude_end_degree, @latitude_end_degree)
+            "4thto3rd"
+          end
+        end
       end
     else
       if squadrant == equadrant
@@ -528,7 +565,7 @@ if __FILE__ == $0
       grndata.parse_line_data(line)
 
       if OPTS.has_key?(:quadrant_with_axis)
-        next unless grndata.within_specified_quadrant?(OPTS[:quadrant_with_axis])
+        next unless grndata.quadrant == OPTS[:quadrant_with_axis]
       end
 
       app_types = ["", "rectangle", "rect", "sphere", "sphr", "ellipsoid", "ellip"]
