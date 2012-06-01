@@ -748,6 +748,8 @@ if __FILE__ == $0
 
   grndata = GrnTestData.new(OPTS)
 
+  grndata.check_rejected if OPTS.has_key?(:check_reject)
+
   File.open(OPTS[:csv], "r") do |csv_file|
     lines = csv_file.readlines
 
