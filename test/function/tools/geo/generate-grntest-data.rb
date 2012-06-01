@@ -23,6 +23,8 @@ SELECT_POST = "]]]]"
 GRN_GEO_RESOLUTION=3600000
 GRN_GEO_RADIUS=6357303
 
+GEO_DISTANCE_1LONGITUDE=111263
+
 class GrnTestData
   attr_accessor :csv_file
   attr_accessor :options
@@ -622,6 +624,72 @@ class GrnTestData
       end
     end
   end
+
+  def parse_distance_value(file_name)
+    if File.exists?(file_name)
+      File.open(file_name, "r") do |file|
+        data = file.read
+        if data =~ /.*,\[(\d+)\]\]\]\]\n$/
+          distance = $1.to_i
+        end
+      end
+    end
+  end
+
+  def parse_distance_test_data(file_name)
+    if File.exists?(file_name)
+      File.open(file_name, "r") do |file|
+        data = file.read
+        if data =~ /# from \((.+)\) to \((.+)\)/
+          start_degree = $1
+          end_degree = $2
+          if start_degree =~ /longitude (.+) latitude (.+)/
+            @longitude_start_degree = $1.to_i
+            @latitude_start_degree = $2.to_i
+          end
+          if end_degree =~ /longitude (.+) latitude (.+)/
+            @longitude_end_degree = $1.to_i
+            @latitude_end_degree = $2.to_i
+          end
+          @longitude_start = @longitude_start_degree * GRN_GEO_RESOLUTION
+          @longitude_end = @longitude_end_degree * GRN_GEO_RESOLUTION
+          @latitude_start = @latitude_start_degree * GRN_GEO_RESOLUTION
+          @latitude_end = @latitude_end_degree * GRN_GEO_RESOLUTION
+        end
+      end
+    end
+  end
+
+  def check_rejected
+    Dir.chdir(OPTS[:check_reject]) do
+      Dir.glob("**/*.reject") do |reject_file|
+        directory = File.dirname(reject_file)
+        basename = File.basename(reject_file, ".reject")
+        expected_file = File.join(directory, "#{basename}.expected")
+        test_file = File.join(directory, "#{basename}.test")
+        actual_distance = parse_distance_value(reject_file)
+        expected_distance = parse_distance_value(expected_file)
+        parse_distance_test_data(test_file)
+
+        distance_diff = actual_distance - expected_distance
+        if distance_diff.abs > GEO_DISTANCE_1LONGITUDE
+          pathdata = "test:#{directory}/#{basename}.test\n"
+          posdata = sprintf("(%s %d %s %d) to (%s %d %s %d)",
+                            "longitude", @longitude_start_degree,
+                            "latitude", @latitude_start_degree,
+                            "longitude", @longitude_end_degree,
+                            "latitude", @latitude_end_degree)
+          longitude_diff = (@longitude_end_degree - @longitude_start_degree).abs
+          about_distance = longitude_diff * GEO_DISTANCE_1LONGITUDE
+          data = sprintf("%s# %s\n# about:%d actual:%d expected:%d diff:%d",
+                         pathdata, posdata, about_distance,
+                         actual_distance, expected_distance,
+                         distance_diff)
+          puts(data)
+        end
+      end
+    end
+  end
 end
 
 
@@ -651,6 +719,10 @@ if __FILE__ == $0
   end
   parser.on("-v", "--verbose", "show log in detail") do |verbose|
     OPTS[:verbose] = verbose
+  end
+  parser.on("--check-reject DIRECTORY",
+            "check .reject and .expected in detail") do |directory|
+    OPTS[:check_reject] = directory
   end
 
   parser.parse!(ARGV)
