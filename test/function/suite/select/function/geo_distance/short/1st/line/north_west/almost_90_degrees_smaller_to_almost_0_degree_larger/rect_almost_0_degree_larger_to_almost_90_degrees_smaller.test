@@ -1,0 +1,10 @@
+table_create Geo TABLE_HASH_KEY ShortText
+column_create Geo distance COLUMN_SCALAR Int32
+
+load --table Geo
+[
+{"_key": "the record for geo_distance() result"}
+]
+
+# from (longitude 89 latitude 1) to (longitude 1 latitude 89)
+select Geo --output_columns distance --scorer 'distance = geo_distance("3600000x320400000", "320400000x3600000", "rect")'
