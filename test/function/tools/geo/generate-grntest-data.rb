@@ -523,24 +523,41 @@ class GrnTestData
     longitude_diff = (end_longitude - start_longitude)
     x = longitude_diff * Math.cos((start_latitude + end_latitude) * 0.5)
     y = (end_latitude - start_latitude)
-    (Math.sqrt((x * x) + (y * y)) * GRN_GEO_RADIUS).floor
+    Math.sqrt((x * x) + (y * y)) * GRN_GEO_RADIUS
   end
 
   def geo_distance(app_type)
     case app_type
     when "", "rect", "rectangle"
       if type_of_diff_in_longitude == "short"
-        calculate_distance(@longitude_start.to_i,
-                           @latitude_start.to_i,
-                           @longitude_end.to_i,
-                           @latitude_end.to_i)
+        case quadrant
+        when "1stto2nd", "2ndto1st"
+          longitude_delta = @longitude_end_degree - @longitude_start_degree
+          latitude_delta = @latitude_end_degree - @latitude_start_degree
+          slope = latitude_delta / longitude_delta.to_f
+          intercept = @latitude_start_degree - slope * @longitude_start_degree
+          east_distance = calculate_distance(@longitude_start.to_i,
+                                             @latitude_start.to_i,
+                                             0,
+                                             intercept * GRN_GEO_RESOLUTION)
+          west_distance = calculate_distance(0,
+                                             intercept * GRN_GEO_RESOLUTION,
+                                             @longitude_end.to_i,
+                                             @latitude_end.to_i)
+          (east_distance + west_distance).floor
+        else
+          calculate_distance(@longitude_start.to_i,
+                             @latitude_start.to_i,
+                             @longitude_end.to_i,
+                             @latitude_end.to_i).floor
+        end
       else
         if @latitude_start_degree == @latitude_end_degree
           east_distance = calculate_to_180_degree(@longitude_start.to_i.abs,
                                                   @latitude_start.to_i.abs)
           west_distance = calculate_to_180_degree(@longitude_end.to_i.abs,
                                                   @latitude_end.to_i.abs)
-          east_distance + west_distance
+          (east_distance + west_distance).floor
         else
           case quadrant
           when "1stto2nd"
@@ -559,7 +576,7 @@ class GrnTestData
                                                @latitude_end.to_i,
                                                180 * GRN_GEO_RESOLUTION,
                                                latitude_on_180 * GRN_GEO_RESOLUTION)
-            east_distance + west_distance
+            (east_distance + west_distance).floor
           when "2ndto1st"
             rounded_longitude = @longitude_start_degree + 360
             rounded_latitude = @latitude_start_degree
@@ -576,7 +593,7 @@ class GrnTestData
                                                @latitude_start.to_i,
                                                180 * GRN_GEO_RESOLUTION,
                                                latitude_on_180 * GRN_GEO_RESOLUTION)
-            east_distance + west_distance
+            (east_distance + west_distance).floor
           end
         end
       end
