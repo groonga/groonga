@@ -648,6 +648,8 @@ class GrnTestData
         data = file.read
         if data =~ /.*,\[(\d+)\]\]\]\]\n$/
           distance = $1.to_i
+        else
+          raise "failed to parse the value of distance"
         end
       end
     end
