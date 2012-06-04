@@ -1823,19 +1823,146 @@ exit :
   return r;
 }
 
+typedef enum {
+  SHORT_LONGITUDE,
+  LONG_LONGITUDE,
+} distance_type;
+
+typedef enum {
+  QUADRANT_1ST,
+  QUADRANT_2ND,
+  QUADRANT_3RD,
+  QUADRANT_4TH,
+  QUADRANT_1ST_TO_2ND,
+  QUADRANT_1ST_TO_3RD,
+  QUADRANT_1ST_TO_4TH,
+  QUADRANT_2ND_TO_1ST,
+  QUADRANT_2ND_TO_3RD,
+  QUADRANT_2ND_TO_4TH,
+  QUADRANT_3RD_TO_1ST,
+  QUADRANT_3RD_TO_2ND,
+  QUADRANT_3RD_TO_4TH,
+  QUADRANT_4TH_TO_1ST,
+  QUADRANT_4TH_TO_2ND,
+  QUADRANT_4TH_TO_3RD,
+} quadrant_type;
+
+static distance_type
+geo_longitude_distance_type(int start_longitude, int end_longitude)
+{
+  int diff_longitude;
+  int east_to_west;
+  int west_to_east;
+  if (start_longitude >= 0) {
+    diff_longitude = abs(start_longitude - end_longitude);
+  } else {
+    diff_longitude = abs(end_longitude - start_longitude);
+  }
+  east_to_west = start_longitude > 0 && end_longitude < 0;
+  west_to_east = start_longitude < 0 && end_longitude > 0;
+  if (start_longitude != end_longitude &&
+      (east_to_west || west_to_east) &&
+      diff_longitude > 180 * GRN_GEO_RESOLUTION) {
+    return LONG_LONGITUDE;
+  } else {
+    return SHORT_LONGITUDE;
+  }
+}
+
+static quadrant_type
+geo_quadrant_type(grn_geo_point *point1, grn_geo_point *point2)
+{
+#define QUADRANT_1ST_WITH_AXIS(point) \
+  (point->longitude >= 0) && (point->latitude >= 0)
+#define QUADRANT_2ND_WITH_AXIS(point) \
+  (point->longitude <= 0) && (point->latitude >= 0)
+#define QUADRANT_3RD_WITH_AXIS(point) \
+  (point->longitude <= 0) && (point->latitude <= 0)
+#define QUADRANT_4TH_WITH_AXIS(point) \
+  (point->longitude >= 0) && (point->latitude <= 0)
+
+  if (QUADRANT_1ST_WITH_AXIS(point1) && QUADRANT_1ST_WITH_AXIS(point2)) {
+    return QUADRANT_1ST;
+  } else if (QUADRANT_2ND_WITH_AXIS(point1) && QUADRANT_2ND_WITH_AXIS(point2)) {
+    return QUADRANT_2ND;
+  } else if (QUADRANT_3RD_WITH_AXIS(point1) && QUADRANT_3RD_WITH_AXIS(point2)) {
+    return QUADRANT_3RD;
+  } else if (QUADRANT_4TH_WITH_AXIS(point1) && QUADRANT_4TH_WITH_AXIS(point2)) {
+    return QUADRANT_4TH;
+  }
+#undef QUADRANT_1ST_WITH_AXIS
+#undef QUADRANT_2ND_WITH_AXIS
+#undef QUADRANT_3RD_WITH_AXIS
+#undef QUADRANT_4TH_WITH_AXIS
+}
+
+static double
+geo_distance_rectangle_abs(double start_longitude, double start_latitude,
+                           double end_longitude, double end_latitude)
+{
+  double rad_start_latitude, rad_start_longitude;
+  double rad_end_latitude, rad_end_longitude;
+  double diff_longitude, diff_latitude, sum_latitude;
+  double x, y;
+
+  rad_start_latitude = fabs(start_latitude);
+  rad_start_longitude = fabs(start_longitude);
+  rad_end_latitude = fabs(end_latitude);
+  rad_end_longitude = fabs(end_longitude);
+  diff_longitude = rad_end_longitude - rad_start_longitude;
+  sum_latitude = rad_start_latitude + rad_end_latitude;
+  diff_latitude = rad_end_latitude - rad_start_latitude;
+  x = diff_longitude * cos(sum_latitude * 0.5);
+  y = diff_latitude;
+  return sqrt((x * x) + (y * y)) * GRN_GEO_RADIUS;
+}
+
 double
 grn_geo_distance_rectangle_raw(grn_ctx *ctx,
                                grn_geo_point *point1, grn_geo_point *point2)
 {
-  double lng1, lat1, lng2, lat2, x, y;
+  double lng1, lat1, lng2, lat2, x, y, distance;
+  double slope, intercept, longitude_delta, latitude_delta;
+  double east_distance, west_distance;
+  distance_type dist_type;
+  quadrant_type quad_type;
 
   lat1 = GRN_GEO_INT2RAD(point1->latitude);
   lng1 = GRN_GEO_INT2RAD(point1->longitude);
   lat2 = GRN_GEO_INT2RAD(point2->latitude);
   lng2 = GRN_GEO_INT2RAD(point2->longitude);
-  x = (lng2 - lng1) * cos((lat1 + lat2) * 0.5);
-  y = (lat2 - lat1);
-  return sqrt((x * x) + (y * y)) * GRN_GEO_RADIUS;
+  dist_type = geo_longitude_distance_type(point1->longitude,
+                                          point2->longitude);
+  if (dist_type == SHORT_LONGITUDE) {
+    quad_type = geo_quadrant_type(point1, point2);
+    if (quad_type == QUADRANT_1ST ||
+        quad_type == QUADRANT_2ND ||
+        quad_type == QUADRANT_3RD ||
+        quad_type == QUADRANT_4TH) {
+      x = (lng2 - lng1) * cos((lat1 + lat2) * 0.5);
+      y = (lat2 - lat1);
+      distance = sqrt((x * x) + (y * y)) * GRN_GEO_RADIUS;
+    } else {
+      longitude_delta = lng2 - lng1;
+      latitude_delta = lat2 - lat1;
+      slope = latitude_delta / longitude_delta;
+      intercept = lat1 - slope * lng1;
+      east_distance = geo_distance_rectangle_abs(lng1,
+                                                 lat1,
+                                                 0,
+                                                 intercept);
+      west_distance = geo_distance_rectangle_abs(0,
+                                                 intercept,
+                                                 lng2,
+                                                 lat2);
+      distance = east_distance + west_distance;
+    }
+  } else {
+    x = (lng2 - lng1) * cos((lat1 + lat2) * 0.5);
+    y = (lat2 - lat1);
+    distance = sqrt((x * x) + (y * y)) * GRN_GEO_RADIUS;
+  }
+  return distance;
 }
 
 double
