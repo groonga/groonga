@@ -92,7 +92,7 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
 
   ngx_http_groonga_loc_conf_t *loc_conf;
   loc_conf = ngx_http_get_module_loc_conf(r, ngx_http_groonga_module);
-  printf("database: %*s\n", (int)loc_conf->database.len, loc_conf->database.data);
+  printf("database: %.*s\n", (int)loc_conf->database.len, loc_conf->database.data);
   printf("version: %s\n", grn_get_version());
 
   /* we response to 'GET' and 'HEAD' requests only */
