@@ -108,7 +108,7 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
 
   printf("database_path: %s\n", database_path);
   printf("version: %s\n", grn_get_version());
-  printf("uri: %d %.*s\n", (int)r->uri.len, (int)r->uri.len, r->uri.data);
+  printf("uri: %.*s\n", (int)r->uri.len, r->uri.data);
 
   grn_db_open(context, database_path);
   rc = ngx_http_groonga_context_check(context);
