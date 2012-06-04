@@ -96,6 +96,17 @@ ngx_str_null_terminate(const ngx_str_t *string) {
 }
 
 static ngx_int_t
+ngx_http_groonga_context_receive(grn_ctx *context, char **result, unsigned int *result_size)
+{
+  ngx_int_t rc;
+
+  int flags = 0;
+  grn_ctx_recv(context, result, result_size, &flags);
+  rc = ngx_http_groonga_context_check(context);
+  return rc;
+}
+
+static ngx_int_t
 ngx_http_groonga_handler(ngx_http_request_t *r)
 {
   static const int no_flags = 0;
@@ -106,7 +117,6 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
 
   grn_ctx context_;
   grn_ctx *context = &context_;
-  int flags = 0;
   char *result = NULL;
   unsigned int result_size = 0;
   unsigned char *body_data;
@@ -143,8 +153,7 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
     return rc;
   }
 
-  grn_ctx_recv(context, &result, &result_size, &flags);
-  rc = ngx_http_groonga_context_check(context);
+  rc = ngx_http_groonga_context_receive(context, &result, &result_size);
   if (rc != NGX_OK) {
     return rc;
   }
