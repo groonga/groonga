@@ -665,15 +665,21 @@ class GrnTestData
           if start_degree =~ /longitude (.+) latitude (.+)/
             @longitude_start_degree = $1.to_i
             @latitude_start_degree = $2.to_i
+          else
+            raise "failed to parse start point data"
           end
           if end_degree =~ /longitude (.+) latitude (.+)/
             @longitude_end_degree = $1.to_i
             @latitude_end_degree = $2.to_i
+          else
+            raise "failed to parse end point data"
           end
           @longitude_start = @longitude_start_degree * GRN_GEO_RESOLUTION
           @longitude_end = @longitude_end_degree * GRN_GEO_RESOLUTION
           @latitude_start = @latitude_start_degree * GRN_GEO_RESOLUTION
           @latitude_end = @latitude_end_degree * GRN_GEO_RESOLUTION
+        else
+          raise "failed to parse comment parts"
         end
       end
     end
