@@ -20,12 +20,12 @@
 #include <ngx_core.h>
 #include <ngx_http.h>
 
-static char *ngx_http_hello(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
+static char *ngx_http_groonga(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
 
-static ngx_command_t ngx_http_hello_commands[] = {
-    { ngx_string("hello"),
+static ngx_command_t ngx_http_groonga_commands[] = {
+    { ngx_string("groonga"),
       NGX_HTTP_LOC_CONF|NGX_CONF_NOARGS,
-      ngx_http_hello,
+      ngx_http_groonga,
       0,
       0,
       NULL },
@@ -33,9 +33,9 @@ static ngx_command_t ngx_http_hello_commands[] = {
     ngx_null_command
 };
 
-static u_char ngx_hello_string[] = "Hello, world!";
+static u_char ngx_groonga_string[] = "Hello, groonga!";
 
-static ngx_http_module_t ngx_http_hello_module_ctx = {
+static ngx_http_module_t ngx_http_groonga_module_ctx = {
     NULL,                          /* preconfiguration */
     NULL,                          /* postconfiguration */
 
@@ -49,10 +49,10 @@ static ngx_http_module_t ngx_http_hello_module_ctx = {
     NULL                           /* merge location configuration */
 };
 
-ngx_module_t ngx_http_hello_module = {
+ngx_module_t ngx_http_groonga_module = {
     NGX_MODULE_V1,
-    &ngx_http_hello_module_ctx,    /* module context */
-    ngx_http_hello_commands,       /* module directives */
+    &ngx_http_groonga_module_ctx,  /* module context */
+    ngx_http_groonga_commands,     /* module directives */
     NGX_HTTP_MODULE,               /* module type */
     NULL,                          /* init master */
     NULL,                          /* init module */
@@ -65,7 +65,7 @@ ngx_module_t ngx_http_hello_module = {
 };
 
 static ngx_int_t
-ngx_http_hello_handler(ngx_http_request_t *r)
+ngx_http_groonga_handler(ngx_http_request_t *r)
 {
     ngx_int_t    rc;
     ngx_buf_t   *b;
@@ -91,7 +91,7 @@ ngx_http_hello_handler(ngx_http_request_t *r)
     /* send the header only, if the request type is http 'HEAD' */
     if (r->method == NGX_HTTP_HEAD) {
         r->headers_out.status = NGX_HTTP_OK;
-        r->headers_out.content_length_n = sizeof(ngx_hello_string) - 1;
+        r->headers_out.content_length_n = sizeof(ngx_groonga_string) - 1;
 
         return ngx_http_send_header(r);
     }
@@ -107,14 +107,14 @@ ngx_http_hello_handler(ngx_http_request_t *r)
     out.next = NULL;
 
     /* adjust the pointers of the buffer */
-    b->pos = ngx_hello_string;
-    b->last = ngx_hello_string + sizeof(ngx_hello_string) - 1;
+    b->pos = ngx_groonga_string;
+    b->last = ngx_groonga_string + sizeof(ngx_groonga_string) - 1;
     b->memory = 1;    /* this buffer is in memory */
     b->last_buf = 1;  /* this is the last buffer in the buffer chain */
 
     /* set the status line */
     r->headers_out.status = NGX_HTTP_OK;
-    r->headers_out.content_length_n = sizeof(ngx_hello_string) - 1;
+    r->headers_out.content_length_n = sizeof(ngx_groonga_string) - 1;
 
     /* send the headers of your response */
     rc = ngx_http_send_header(r);
@@ -128,12 +128,12 @@ ngx_http_hello_handler(ngx_http_request_t *r)
 }
 
 static char *
-ngx_http_hello(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
+ngx_http_groonga(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 {
     ngx_http_core_loc_conf_t *clcf;
 
     clcf = ngx_http_conf_get_module_loc_conf(cf, ngx_http_core_module);
-    clcf->handler = ngx_http_hello_handler; /* handler to process the 'hello' directive */
+    clcf->handler = ngx_http_groonga_handler; /* handler to process the 'groonga' directive */
 
     return NGX_CONF_OK;
 }
