@@ -46,8 +46,6 @@ static ngx_command_t ngx_http_groonga_commands[] = {
   ngx_null_command
 };
 
-static u_char ngx_groonga_string[] = "Hello, groonga!";
-
 static void * ngx_http_groonga_create_loc_conf(ngx_conf_t *cf);
 static char * ngx_http_groonga_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child);
 
@@ -83,18 +81,58 @@ ngx_module_t ngx_http_groonga_module = {
   NGX_MODULE_V1_PADDING
 };
 
+static ngx_int_t ngx_http_groonga_context_check(grn_ctx *context);
+
 static ngx_int_t
 ngx_http_groonga_handler(ngx_http_request_t *r)
 {
+  static const int no_flags = 0;
+
   ngx_int_t    rc;
   ngx_buf_t   *b;
   ngx_chain_t  out;
+  char database_path[NGX_MAX_PATH];
+
+  grn_ctx context_;
+  grn_ctx *context = &context_;
+  int flags = 0;
+  char *result = NULL;
+  unsigned int result_size = 0;
 
   ngx_http_groonga_loc_conf_t *loc_conf;
   loc_conf = ngx_http_get_module_loc_conf(r, ngx_http_groonga_module);
-  printf("database: %.*s\n", (int)loc_conf->database.len, loc_conf->database.data);
+  grn_ctx_init(context, no_flags);
+
+  ngx_memcpy(database_path, loc_conf->database.data, loc_conf->database.len);
+  database_path[loc_conf->database.len] = '\0';
+
+  printf("database_path: %s\n", database_path);
   printf("version: %s\n", grn_get_version());
   printf("uri: %d %.*s\n", (int)r->uri.len, (int)r->uri.len, r->uri.data);
+
+  grn_db_open(context, database_path);
+  rc = ngx_http_groonga_context_check(context);
+  if (rc != NGX_OK) {
+    return rc;
+  }
+
+  grn_ctx_send(context, (char *)r->uri.data, r->uri.len, no_flags);
+  rc = ngx_http_groonga_context_check(context);
+  if (rc != NGX_OK) {
+    return rc;
+  }
+
+  grn_ctx_recv(context, &result, &result_size, &flags);
+  rc = ngx_http_groonga_context_check(context);
+  if (rc != NGX_OK) {
+    return rc;
+  }
+
+  grn_ctx_fin(context);
+  rc = ngx_http_groonga_context_check(context);
+  if (rc != NGX_OK) {
+    return rc;
+  }
 
   /* we response to 'GET' and 'HEAD' requests only */
   if (!(r->method & (NGX_HTTP_GET|NGX_HTTP_HEAD))) {
@@ -124,14 +162,14 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
   out.next = NULL;
 
   /* adjust the pointers of the buffer */
-  b->pos = ngx_groonga_string;
-  b->last = ngx_groonga_string + sizeof(ngx_groonga_string) - 1;
+  b->pos = (u_char *)result;
+  b->last = (u_char *)result + result_size;
   b->memory = 1;    /* this buffer is in memory */
   b->last_buf = 1;  /* this is the last buffer in the buffer chain */
 
   /* set the status line */
   r->headers_out.status = NGX_HTTP_OK;
-  r->headers_out.content_length_n = sizeof(ngx_groonga_string) - 1;
+  r->headers_out.content_length_n = result_size;
 
   /* send the headers of your response */
   rc = ngx_http_send_header(r);
@@ -210,4 +248,15 @@ ngx_http_groonga_exit_master(ngx_cycle_t *cycle)
   }
 
   return;
+}
+
+static ngx_int_t
+ngx_http_groonga_context_check(grn_ctx *context) {
+  if (context->rc == GRN_SUCCESS) {
+    return NGX_OK;
+  } else {
+    /* TODO: proper error handling */
+    printf("%s\n", context->errbuf);
+    return NGX_HTTP_INTERNAL_SERVER_ERROR;
+  }
 }
