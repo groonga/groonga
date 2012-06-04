@@ -46,7 +46,7 @@ static ngx_command_t ngx_http_groonga_commands[] = {
   ngx_null_command
 };
 
-static const char content_type[] = "text/html";
+static const char content_type[] = "application/json";
 
 static void *ngx_http_groonga_create_loc_conf(ngx_conf_t *cf);
 static char *ngx_http_groonga_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child);
