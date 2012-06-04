@@ -20,6 +20,10 @@
 #include <ngx_core.h>
 #include <ngx_http.h>
 
+typedef struct {
+  ngx_str_t database;
+} ngx_http_groonga_loc_conf_t;
+
 static char *ngx_http_groonga(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
 
 static ngx_command_t ngx_http_groonga_commands[] = {
@@ -30,10 +34,20 @@ static ngx_command_t ngx_http_groonga_commands[] = {
     0,
     NULL },
 
+  { ngx_string("groonga_database"),
+    NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
+    ngx_conf_set_str_slot,
+    NGX_HTTP_LOC_CONF_OFFSET,
+    offsetof(ngx_http_groonga_loc_conf_t, database),
+    NULL },
+
   ngx_null_command
 };
 
 static u_char ngx_groonga_string[] = "Hello, groonga!";
+
+static void * ngx_http_groonga_create_loc_conf(ngx_conf_t *cf);
+static char * ngx_http_groonga_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child);
 
 static ngx_http_module_t ngx_http_groonga_module_ctx = {
   NULL,                          /* preconfiguration */
@@ -45,8 +59,8 @@ static ngx_http_module_t ngx_http_groonga_module_ctx = {
   NULL,                          /* create server configuration */
   NULL,                          /* merge server configuration */
 
-  NULL,                          /* create location configuration */
-  NULL                           /* merge location configuration */
+  ngx_http_groonga_create_loc_conf, /* create location configuration */
+  ngx_http_groonga_merge_loc_conf,  /* merge location configuration */
 };
 
 ngx_module_t ngx_http_groonga_module = {
@@ -70,6 +84,10 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
   ngx_int_t    rc;
   ngx_buf_t   *b;
   ngx_chain_t  out;
+
+  ngx_http_groonga_loc_conf_t *loc_conf;
+  loc_conf = ngx_http_get_module_loc_conf(r, ngx_http_groonga_module);
+  printf("database: %*s\n", (int)loc_conf->database.len, loc_conf->database.data);
 
   /* we response to 'GET' and 'HEAD' requests only */
   if (!(r->method & (NGX_HTTP_GET|NGX_HTTP_HEAD))) {
@@ -135,6 +153,32 @@ ngx_http_groonga(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
   location_conf = ngx_http_conf_get_module_loc_conf(cf, ngx_http_core_module);
   /* handler to process the 'groonga' directive */
   location_conf->handler = ngx_http_groonga_handler;
+
+  return NGX_CONF_OK;
+}
+
+static void *
+ngx_http_groonga_create_loc_conf(ngx_conf_t *cf)
+{
+  ngx_http_groonga_loc_conf_t *conf;
+  conf = ngx_pcalloc(cf->pool, sizeof(ngx_http_groonga_loc_conf_t));
+  if (conf == NULL) {
+    return NGX_CONF_ERROR;
+  }
+
+  conf->database.data = NULL;
+  conf->database.len = 0;
+
+  return conf;
+}
+
+static char *
+ngx_http_groonga_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child)
+{
+  ngx_http_groonga_loc_conf_t *prev = parent;
+  ngx_http_groonga_loc_conf_t *conf = child;
+
+  ngx_conf_merge_str_value(conf->database, prev->database, NULL);
 
   return NGX_CONF_OK;
 }
