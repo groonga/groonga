@@ -46,8 +46,8 @@ static ngx_command_t ngx_http_groonga_commands[] = {
   ngx_null_command
 };
 
-static void * ngx_http_groonga_create_loc_conf(ngx_conf_t *cf);
-static char * ngx_http_groonga_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child);
+static void *ngx_http_groonga_create_loc_conf(ngx_conf_t *cf);
+static char *ngx_http_groonga_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child);
 
 static ngx_http_module_t ngx_http_groonga_module_ctx = {
   NULL,                          /* preconfiguration */
