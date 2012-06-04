@@ -100,6 +100,7 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
   int flags = 0;
   char *result = NULL;
   unsigned int result_size = 0;
+  unsigned char *body_data;
 
   ngx_http_groonga_loc_conf_t *loc_conf;
   loc_conf = ngx_http_get_module_loc_conf(r, ngx_http_groonga_module);
@@ -129,6 +130,12 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
   if (rc != NGX_OK) {
     return rc;
   }
+
+  body_data = ngx_pcalloc(r->pool, result_size);
+  if (body_data == NULL) {
+    return NGX_HTTP_INTERNAL_SERVER_ERROR;
+  }
+  ngx_memcpy(body_data, result, result_size);
 
   grn_ctx_fin(context);
   rc = ngx_http_groonga_context_check(context);
@@ -164,8 +171,8 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
   out.next = NULL;
 
   /* adjust the pointers of the buffer */
-  b->pos = (u_char *)result;
-  b->last = (u_char *)result + result_size;
+  b->pos = body_data;
+  b->last = body_data + result_size;
   b->memory = 1;    /* this buffer is in memory */
   b->last_buf = 1;  /* this is the last buffer in the buffer chain */
 
