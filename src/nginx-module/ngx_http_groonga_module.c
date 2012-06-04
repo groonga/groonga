@@ -24,6 +24,7 @@
 
 typedef struct {
   ngx_str_t database;
+  char *database_cstr;
 } ngx_http_groonga_loc_conf_t;
 
 static char *ngx_http_groonga(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
@@ -85,6 +86,14 @@ ngx_module_t ngx_http_groonga_module = {
 
 static ngx_int_t ngx_http_groonga_context_check(grn_ctx *context);
 
+static char *
+ngx_str_null_terminate(const ngx_str_t *string) {
+  char *result = malloc(string->len + 1);
+  memcpy(result, string->data, string->len);
+  result[string->len] = '\0';
+  return result;
+}
+
 static ngx_int_t
 ngx_http_groonga_handler(ngx_http_request_t *r)
 {
@@ -93,7 +102,6 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
   ngx_int_t    rc;
   ngx_buf_t   *b;
   ngx_chain_t  out;
-  char database_path[NGX_MAX_PATH];
 
   grn_ctx context_;
   grn_ctx *context = &context_;
@@ -106,14 +114,15 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
   loc_conf = ngx_http_get_module_loc_conf(r, ngx_http_groonga_module);
   grn_ctx_init(context, no_flags);
 
-  ngx_memcpy(database_path, loc_conf->database.data, loc_conf->database.len);
-  database_path[loc_conf->database.len] = '\0';
+  if (!loc_conf->database_cstr) {
+    loc_conf->database_cstr = ngx_str_null_terminate(&loc_conf->database);
+  }
 
-  printf("database_path: %s\n", database_path);
+  printf("database_path: %s\n", loc_conf->database_cstr);
   printf("version: %s\n", grn_get_version());
   printf("uri: %.*s\n", (int)r->unparsed_uri.len, r->unparsed_uri.data);
 
-  grn_db_open(context, database_path);
+  grn_db_open(context, loc_conf->database_cstr);
   rc = ngx_http_groonga_context_check(context);
   if (rc != NGX_OK) {
     return rc;
@@ -214,6 +223,7 @@ ngx_http_groonga_create_loc_conf(ngx_conf_t *cf)
 
   conf->database.data = NULL;
   conf->database.len = 0;
+  conf->database_cstr = NULL;
 
   return conf;
 }
