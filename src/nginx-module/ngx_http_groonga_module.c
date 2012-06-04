@@ -25,6 +25,7 @@
 typedef struct {
   ngx_str_t database;
   char *database_cstr;
+  grn_ctx *global_context;
 } ngx_http_groonga_loc_conf_t;
 
 static char *ngx_http_groonga(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
@@ -112,21 +113,29 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
 
   ngx_http_groonga_loc_conf_t *loc_conf;
   loc_conf = ngx_http_get_module_loc_conf(r, ngx_http_groonga_module);
-  grn_ctx_init(context, no_flags);
 
-  if (!loc_conf->database_cstr) {
-    loc_conf->database_cstr = ngx_str_null_terminate(&loc_conf->database);
+  if (!loc_conf->global_context) {
+    context = malloc(sizeof(grn_ctx));
+
+    grn_ctx_init(context, no_flags);
+
+    if (!loc_conf->database_cstr) {
+      loc_conf->database_cstr = ngx_str_null_terminate(&loc_conf->database);
+    }
+
+    grn_db_open(context, loc_conf->database_cstr);
+    rc = ngx_http_groonga_context_check(context);
+    if (rc != NGX_OK) {
+      return rc;
+    }
+    loc_conf->global_context = context;
   }
+
+  context = loc_conf->global_context;
 
   printf("database_path: %s\n", loc_conf->database_cstr);
   printf("version: %s\n", grn_get_version());
   printf("uri: %.*s\n", (int)r->unparsed_uri.len, r->unparsed_uri.data);
-
-  grn_db_open(context, loc_conf->database_cstr);
-  rc = ngx_http_groonga_context_check(context);
-  if (rc != NGX_OK) {
-    return rc;
-  }
 
   grn_ctx_send(context, (char *)r->unparsed_uri.data, r->unparsed_uri.len, no_flags);
   rc = ngx_http_groonga_context_check(context);
@@ -145,12 +154,6 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
     return NGX_HTTP_INTERNAL_SERVER_ERROR;
   }
   ngx_memcpy(body_data, result, result_size);
-
-  grn_ctx_fin(context);
-  rc = ngx_http_groonga_context_check(context);
-  if (rc != NGX_OK) {
-    return rc;
-  }
 
   /* we response to 'GET' and 'HEAD' requests only */
   if (!(r->method & (NGX_HTTP_GET|NGX_HTTP_HEAD))) {
@@ -224,6 +227,7 @@ ngx_http_groonga_create_loc_conf(ngx_conf_t *cf)
   conf->database.data = NULL;
   conf->database.len = 0;
   conf->database_cstr = NULL;
+  conf->global_context = NULL;
 
   return conf;
 }
