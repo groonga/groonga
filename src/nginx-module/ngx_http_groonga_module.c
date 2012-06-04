@@ -130,10 +130,11 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
 static char *
 ngx_http_groonga(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 {
-    ngx_http_core_loc_conf_t *clcf;
+    ngx_http_core_loc_conf_t *location_conf;
 
-    clcf = ngx_http_conf_get_module_loc_conf(cf, ngx_http_core_module);
-    clcf->handler = ngx_http_groonga_handler; /* handler to process the 'groonga' directive */
+    location_conf = ngx_http_conf_get_module_loc_conf(cf, ngx_http_core_module);
+    /* handler to process the 'groonga' directive */
+    location_conf->handler = ngx_http_groonga_handler;
 
     return NGX_CONF_OK;
 }
