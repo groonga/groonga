@@ -205,36 +205,36 @@ class GrnTestData
              east_axis?(@longitude_start_degree, @latitude_start_degree)
             "1st"
           elsif west_axis?(@longitude_start_degree, @latitude_start_degree)
-            "2ndto1st"
+            "2nd_to_1st"
           elsif south_axis?(@longitude_start_degree, @latitude_start_degree)
-            "4thto1st"
+            "4th_to_1st"
           end
         when "2nd"
           if north_axis?(@longitude_start_degree, @latitude_start_degree) or
              west_axis?(@longitude_start_degree, @latitude_start_degree)
             "2nd"
           elsif east_axis?(@longitude_start_degree, @latitude_start_degree)
-            "1stto2nd"
+            "1st_to_2nd"
           elsif south_axis?(@longitude_start_degree, @latitude_start_degree)
-            "3rdto2nd"
+            "3rd_to_2nd"
           end
         when "3rd"
           if south_axis?(@longitude_start_degree, @latitude_start_degree) or
              west_axis?(@longitude_start_degree, @latitude_start_degree)
             "3rd"
           elsif east_axis?(@longitude_start_degree, @latitude_start_degree)
-            "4thto3rd"
+            "4th_to_3rd"
           elsif north_axis?(@longitude_start_degree, @latitude_start_degree)
-            "2ndto3rd"
+            "2nd_to_3rd"
           end
         when "4th"
           if south_axis?(@longitude_start_degree, @latitude_start_degree) or
              east_axis?(@longitude_start_degree, @latitude_start_degree)
             "4th"
           elsif west_axis?(@longitude_start_degree, @latitude_start_degree)
-            "3rdto4th"
+            "3rd_to_4th"
           elsif north_axis?(@longitude_start_degree, @latitude_start_degree)
-            "1stto4th"
+            "1st_to_4th"
           end
         end
       elsif not equadrant
@@ -244,36 +244,36 @@ class GrnTestData
              east_axis?(@longitude_end_degree, @latitude_end_degree)
             "1st"
           elsif west_axis?(@longitude_end_degree, @latitude_end_degree)
-            "1stto2nd"
+            "1st_to_2nd"
           elsif south_axis?(@longitude_end_degree, @latitude_end_degree)
-            "1stto4th"
+            "1st_to_4th"
           end
         when "2nd"
           if north_axis?(@longitude_end_degree, @latitude_end_degree) or
              west_axis?(@longitude_end_degree, @latitude_end_degree)
             "2nd"
           elsif east_axis?(@longitude_end_degree, @latitude_end_degree)
-            "2ndto1st"
+            "2nd_to_1st"
           elsif south_axis?(@longitude_end_degree, @latitude_end_degree)
-            "2ndto4th"
+            "2nd_to_4th"
           end
         when "3rd"
           if west_axis?(@longitude_end_degree, @latitude_end_degree) or
              south_axis?(@longitude_end_degree, @latitude_end_degree)
             "3rd"
           elsif north_axis?(@longitude_end_degree, @latitude_end_degree)
-            "3rdto2nd"
+            "3rd_to_2nd"
           elsif east_axis?(@longitude_end_degree, @latitude_end_degree)
-            "3rdto4th"
+            "3rd_to_4th"
           end
         when "4th"
           if east_axis?(@longitude_end_degree, @latitude_end_degree) or
              south_axis?(@longitude_end_degree, @latitude_end_degree)
             "4th"
           elsif north_axis?(@longitude_end_degree, @latitude_end_degree)
-            "4thto1st"
+            "4th_to_1st"
           elsif west_axis?(@longitude_end_degree, @latitude_end_degree)
-            "4thto3rd"
+            "4th_to_3rd"
           end
         end
       end
@@ -281,7 +281,7 @@ class GrnTestData
       if squadrant == equadrant
         equadrant
       else
-        "#{squadrant}to#{equadrant}"
+        "#{squadrant}_to_#{equadrant}"
       end
     end
   end
@@ -398,8 +398,8 @@ class GrnTestData
          within_specified_quadrant?("2nd") or
          within_specified_quadrant?("3rd") or
          within_specified_quadrant?("4th") or
-         quadrant == "1stto2nd"
-         quadrant == "2ndto1st"
+         quadrant == "1st_to_2nd"
+         quadrant == "2nd_to_1st"
         if to_north?
           "north"
         elsif to_east?
@@ -531,7 +531,7 @@ class GrnTestData
     when "", "rect", "rectangle"
       if type_of_diff_in_longitude == "short"
         case quadrant
-        when "1stto2nd", "2ndto1st"
+        when "1st_to_2nd", "2nd_to_1st"
           longitude_delta = @longitude_end_degree - @longitude_start_degree
           latitude_delta = @latitude_end_degree - @latitude_start_degree
           slope = latitude_delta / longitude_delta.to_f
@@ -560,7 +560,7 @@ class GrnTestData
           (east_distance + west_distance).floor
         else
           case quadrant
-          when "1stto2nd"
+          when "1st_to_2nd"
             rounded_longitude = @longitude_end_degree + 360
             rounded_latitude = @latitude_end_degree
             longitude_delta = rounded_longitude - @longitude_start_degree
@@ -577,7 +577,7 @@ class GrnTestData
                                                180 * GRN_GEO_RESOLUTION,
                                                latitude_on_180 * GRN_GEO_RESOLUTION)
             (east_distance + west_distance).floor
-          when "2ndto1st"
+          when "2nd_to_1st"
             rounded_longitude = @longitude_start_degree + 360
             rounded_latitude = @latitude_start_degree
             longitude_delta = @longitude_end_degree - rounded_longitude
