@@ -642,7 +642,7 @@ class GrnTestData
     end
   end
 
-  def parse_distance_value(file_name)
+  def parse_distance(file_name)
     if File.exists?(file_name)
       File.open(file_name, "r") do |file|
         data = file.read
@@ -692,8 +692,8 @@ class GrnTestData
         basename = File.basename(reject_file, ".reject")
         expected_file = File.join(directory, "#{basename}.expected")
         test_file = File.join(directory, "#{basename}.test")
-        actual_distance = parse_distance_value(reject_file)
-        expected_distance = parse_distance_value(expected_file)
+        actual_distance = parse_distance(reject_file)
+        expected_distance = parse_distance(expected_file)
         parse_distance_test_data(test_file)
 
         distance_diff = actual_distance - expected_distance
