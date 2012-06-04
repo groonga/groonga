@@ -113,14 +113,6 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
   r->headers_out.content_type.len = sizeof("text/html") - 1;
   r->headers_out.content_type.data = (u_char *) "text/html";
 
-  /* send the header only, if the request type is http 'HEAD' */
-  if (r->method == NGX_HTTP_HEAD) {
-    r->headers_out.status = NGX_HTTP_OK;
-    r->headers_out.content_length_n = sizeof(ngx_groonga_string) - 1;
-
-    return ngx_http_send_header(r);
-  }
-
   /* allocate a buffer for your response body */
   b = ngx_pcalloc(r->pool, sizeof(ngx_buf_t));
   if (b == NULL) {
