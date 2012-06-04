@@ -20,10 +20,10 @@ SELECT = "select Geo --output_columns distance "
 SELECT_PRE = "[[0,0.0,0.0],[[[1],[[\"distance\",\"Int32\"]],["
 SELECT_POST = "]]]]"
 
-GRN_GEO_RESOLUTION=3600000
-GRN_GEO_RADIUS=6357303
+GRN_GEO_RESOLUTION = 3600000
+GRN_GEO_RADIUS = 6357303
 
-GEO_DISTANCE_1LONGITUDE=111263
+GEO_DISTANCE_1LONGITUDE = 111263
 
 class GrnTestData
   attr_accessor :csv_file
