@@ -65,18 +65,21 @@ static ngx_http_module_t ngx_http_groonga_module_ctx = {
   ngx_http_groonga_merge_loc_conf,  /* merge location configuration */
 };
 
+static ngx_int_t ngx_http_groonga_init_module(ngx_cycle_t *cycle);
+static void ngx_http_groonga_exit_master(ngx_cycle_t *cycle);
+
 ngx_module_t ngx_http_groonga_module = {
   NGX_MODULE_V1,
   &ngx_http_groonga_module_ctx,  /* module context */
   ngx_http_groonga_commands,     /* module directives */
   NGX_HTTP_MODULE,               /* module type */
   NULL,                          /* init master */
-  NULL,                          /* init module */
+  ngx_http_groonga_init_module,  /* init module */
   NULL,                          /* init process */
   NULL,                          /* init thread */
   NULL,                          /* exit thread */
   NULL,                          /* exit process */
-  NULL,                          /* exit master */
+  ngx_http_groonga_exit_master,  /* exit master */
   NGX_MODULE_V1_PADDING
 };
 
@@ -184,4 +187,34 @@ ngx_http_groonga_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child)
   ngx_conf_merge_str_value(conf->database, prev->database, NULL);
 
   return NGX_CONF_OK;
+}
+
+static ngx_int_t
+ngx_http_groonga_init_module(ngx_cycle_t *cycle)
+{
+  grn_rc rc;
+
+  printf("grn_init() is called\n");
+  rc = grn_init();
+  if (rc) {
+    printf("grn_init() failed..\n");
+    return NGX_ERROR;
+  }
+
+  return NGX_OK;
+}
+
+static void
+ngx_http_groonga_exit_master(ngx_cycle_t *cycle)
+{
+  grn_rc rc;
+
+  printf("grn_fin() is called\n");
+  rc = grn_fin();
+  if (rc) {
+    printf("grn_fin() failed..\n");
+    // there is nothing we can at this situation...
+  }
+
+  return;
 }
