@@ -111,7 +111,7 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
 
   printf("database_path: %s\n", database_path);
   printf("version: %s\n", grn_get_version());
-  printf("uri: %.*s\n", (int)r->uri.len, r->uri.data);
+  printf("uri: %.*s\n", (int)r->unparsed_uri.len, r->unparsed_uri.data);
 
   grn_db_open(context, database_path);
   rc = ngx_http_groonga_context_check(context);
@@ -119,7 +119,7 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
     return rc;
   }
 
-  grn_ctx_send(context, (char *)r->uri.data, r->uri.len, no_flags);
+  grn_ctx_send(context, (char *)r->unparsed_uri.data, r->unparsed_uri.len, no_flags);
   rc = ngx_http_groonga_context_check(context);
   if (rc != NGX_OK) {
     return rc;
