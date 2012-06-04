@@ -46,6 +46,8 @@ static ngx_command_t ngx_http_groonga_commands[] = {
   ngx_null_command
 };
 
+static const char content_type[] = "text/html";
+
 static void *ngx_http_groonga_create_loc_conf(ngx_conf_t *cf);
 static char *ngx_http_groonga_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child);
 
@@ -147,9 +149,9 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
   }
 
   /* set the 'Content-type' header */
-  r->headers_out.content_type_len = sizeof("text/html") - 1;
-  r->headers_out.content_type.len = sizeof("text/html") - 1;
-  r->headers_out.content_type.data = (u_char *) "text/html";
+  r->headers_out.content_type_len = sizeof(content_type) - 1;
+  r->headers_out.content_type.len = sizeof(content_type) - 1;
+  r->headers_out.content_type.data = (u_char *) content_type;
 
   /* allocate a buffer for your response body */
   b = ngx_pcalloc(r->pool, sizeof(ngx_buf_t));
