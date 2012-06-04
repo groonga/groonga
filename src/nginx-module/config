@@ -1,11 +1,12 @@
-groonga_without_switch()
+groonga_strip_switch()
 {
   # skip "-I" from "-I/usr/..."
-  echo "$1" | tail -c +3
+  tail -c +3
 }
 
-groonga_cflags="$(pkg-config --cflags-only-I groonga)"
-groonga_feature_path="$(groonga_without_switch "$groonga_cflags")"
+groonga_cflags="$(pkg-config --cflags groonga)"
+groonga_feature_path="$(pkg-config --cflags-only-I groonga |
+                        groonga_strip_switch)"
 groonga_libs="$(pkg-config --libs groonga)"
 
 ngx_feature="groonga"
