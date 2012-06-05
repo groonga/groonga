@@ -1889,6 +1889,9 @@ geo_quadrant_type(grn_geo_point *point1, grn_geo_point *point2)
     return QUADRANT_3RD;
   } else if (QUADRANT_4TH_WITH_AXIS(point1) && QUADRANT_4TH_WITH_AXIS(point2)) {
     return QUADRANT_4TH;
+  } else {
+    /* FIXME */
+    return QUADRANT_1ST;
   }
 #undef QUADRANT_1ST_WITH_AXIS
 #undef QUADRANT_2ND_WITH_AXIS
