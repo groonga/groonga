@@ -1824,8 +1824,8 @@ exit :
 }
 
 typedef enum {
-  SHORT_LONGITUDE,
-  LONG_LONGITUDE,
+  LONGITUDE_SHORT,
+  LONGITUDE_LONG,
 } distance_type;
 
 typedef enum {
@@ -1863,9 +1863,9 @@ geo_longitude_distance_type(int start_longitude, int end_longitude)
   if (start_longitude != end_longitude &&
       (east_to_west || west_to_east) &&
       diff_longitude > 180 * GRN_GEO_RESOLUTION) {
-    return LONG_LONGITUDE;
+    return LONGITUDE_LONG;
   } else {
-    return SHORT_LONGITUDE;
+    return LONGITUDE_SHORT;
   }
 }
 
@@ -1933,7 +1933,7 @@ grn_geo_distance_rectangle_raw(grn_ctx *ctx,
   lng2 = GRN_GEO_INT2RAD(point2->longitude);
   dist_type = geo_longitude_distance_type(point1->longitude,
                                           point2->longitude);
-  if (dist_type == SHORT_LONGITUDE) {
+  if (dist_type == LONGITUDE_SHORT) {
     quad_type = geo_quadrant_type(point1, point2);
     if (quad_type == QUADRANT_1ST ||
         quad_type == QUADRANT_2ND ||
