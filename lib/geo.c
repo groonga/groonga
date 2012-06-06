@@ -1935,10 +1935,7 @@ grn_geo_distance_rectangle_raw(grn_ctx *ctx,
   lat2 = GRN_GEO_INT2RAD(point2->latitude);
   lng2 = GRN_GEO_INT2RAD(point2->longitude);
   quad_type = geo_quadrant_type(point1, point2);
-  if (quad_type == QUADRANT_1ST ||
-      quad_type == QUADRANT_2ND ||
-      quad_type == QUADRANT_3RD ||
-      quad_type == QUADRANT_4TH) {
+  if (quad_type <= QUADRANT_4TH) {
     x = (lng2 - lng1) * cos((lat1 + lat2) * 0.5);
     y = (lat2 - lat1);
     distance = sqrt((x * x) + (y * y)) * GRN_GEO_RADIUS;
