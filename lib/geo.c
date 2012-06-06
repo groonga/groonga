@@ -1869,7 +1869,7 @@ geo_longitude_distance_type(int start_longitude, int end_longitude)
   }
 }
 
-static quadrant_type
+static inline quadrant_type
 geo_quadrant_type(grn_geo_point *point1, grn_geo_point *point2)
 {
 #define QUADRANT_1ST_WITH_AXIS(point) \
