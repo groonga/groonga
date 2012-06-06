@@ -106,6 +106,23 @@ ngx_http_groonga_context_receive(grn_ctx *context, char **result, unsigned int *
   return rc;
 }
 
+static ngx_buf_t *
+ngx_http_groonga_grn_obj_to_ngx_buf(ngx_pool_t *pool, grn_obj *object)
+{
+  ngx_buf_t *buffer;
+  buffer = ngx_pcalloc(pool, sizeof(ngx_buf_t));
+  if (buffer == NULL) {
+    return NULL;
+  }
+
+  /* adjust the pointers of the buffer */
+  buffer->pos = (u_char *)GRN_TEXT_VALUE(object);
+  buffer->last = (u_char *)GRN_TEXT_VALUE(object) + GRN_TEXT_LEN(object);
+  buffer->memory = 1;    /* this buffer is in memory */
+
+  return buffer;
+}
+
 static ngx_int_t
 ngx_http_groonga_handler(ngx_http_request_t *r)
 {
@@ -120,6 +137,8 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
   char *result = NULL;
   unsigned int result_size = 0;
   unsigned char *body_data;
+
+  grn_obj body;
 
   ngx_http_groonga_loc_conf_t *loc_conf;
   loc_conf = ngx_http_get_module_loc_conf(r, ngx_http_groonga_module);
@@ -182,20 +201,16 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
   r->headers_out.content_type.data = (u_char *) content_type;
 
   /* allocate a buffer for your response body */
-  b = ngx_pcalloc(r->pool, sizeof(ngx_buf_t));
+  GRN_TEXT_SET(context, &body, body_data, result_size);
+  b = ngx_http_groonga_grn_obj_to_ngx_buf(r->pool, &body);
   if (b == NULL) {
     return NGX_HTTP_INTERNAL_SERVER_ERROR;
   }
+  b->last_buf = 1;  /* this is the last buffer in the buffer chain */
 
   /* attach this buffer to the buffer chain */
   out.buf = b;
   out.next = NULL;
-
-  /* adjust the pointers of the buffer */
-  b->pos = body_data;
-  b->last = body_data + result_size;
-  b->memory = 1;    /* this buffer is in memory */
-  b->last_buf = 1;  /* this is the last buffer in the buffer chain */
 
   /* set the status line */
   r->headers_out.status = NGX_HTTP_OK;
