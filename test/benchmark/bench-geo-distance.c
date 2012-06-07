@@ -155,6 +155,32 @@ bench_setup_rectangular_tgs(gpointer user_data)
 }
 
 static void
+bench_setup_rectangular_wgs84_1st_to_2nd_quadrant_short(gpointer user_data)
+{
+  BenchmarkData *data = user_data;
+
+  bench_setup_common(user_data);
+  bench_setup_points(user_data,
+                     "128452975x503157902",
+                     "139380000x-31920000",
+                     GRN_DB_WGS84_GEO_POINT);
+  data->geo_distance_proc = GET(data->context, "geo_distance");
+}
+
+static void
+bench_setup_rectangular_wgs84_2nd_to_1st_quadrant_short(gpointer user_data)
+{
+  BenchmarkData *data = user_data;
+
+  bench_setup_common(user_data);
+  bench_setup_points(user_data,
+                     "139380000x-31920000",
+                     "128452975x503157902",
+                     GRN_DB_WGS84_GEO_POINT);
+  data->geo_distance_proc = GET(data->context, "geo_distance");
+}
+
+static void
 bench_setup_spherical_wgs84(gpointer user_data)
 {
   BenchmarkData *data = user_data;
@@ -242,6 +268,10 @@ main(int argc, gchar **argv)
                           &data)
   REGISTER("rectangular (WGS84)", rectangular_wgs84);
   REGISTER("rectangular (TOKYO)", rectangular_tgs);
+  REGISTER("rectangular (WGS84 Tokyo to Lisbon)",
+            rectangular_wgs84_1st_to_2nd_quadrant_short);
+  REGISTER("rectangular (WGS84 Lisbon to Tokyo)",
+            rectangular_wgs84_2nd_to_1st_quadrant_short);
   REGISTER("spherical (WGS84)", spherical_wgs84);
   REGISTER("spherical (TOKYO)", spherical_tgs);
   REGISTER("hubeny (WGS84)", hubeny_wgs84);
