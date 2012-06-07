@@ -15,7 +15,7 @@ class BenchmarkSummary
   def calc_total(data)
     total = {}
     @options[:count].times do |i|
-      data[i+1].each do |key, value|
+      data[i + 1].each do |key, value|
         if total[key]
           total[key] = total[key] + value
         else
