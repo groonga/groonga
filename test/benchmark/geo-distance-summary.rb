@@ -105,39 +105,39 @@ run-bench-geo-distance-orig-N1000-[N].log.
 
 if __FILE__ == $0
 
-  OPTS = {}
+  options = {}
   parser = OptionParser.new
   parser.on("-b", "--before PREFIX",
             "log file name must be PREFIX-[N].log") do |prefix|
-    OPTS[:before] = prefix
+    options[:before] = prefix
   end
   parser.on("-a", "--after PREFIX",
             "log file name must be PREFIX-[N].log") do |prefix|
-    OPTS[:after] = prefix
+    options[:after] = prefix
   end
   parser.on("-n", "data count") do |count|
-    OPTS[:count] = count
+    options[:count] = count
   end
 
   parser.parse!(ARGV)
 
-  if not OPTS.has_key?(:before) or not OPTS.has_key?(:after)
+  if not options.has_key?(:before) or not options.has_key?(:after)
     puts(parser.to_s)
     exit
   end
 
   bench_before_log = {}
   bench_after_log = {}
-  Dir.glob("#{OPTS[:before]}*.log") do |log|
+  Dir.glob("#{options[:before]}*.log") do |log|
     log =~ /(.+)-(\d+)\.log$/
     bench_before_log[$2.to_i] = log
   end
-  Dir.glob("#{OPTS[:after]}*.log") do |log|
+  Dir.glob("#{options[:after]}*.log") do |log|
     log =~ /(.+)-(\d+)\.log$/
     bench_after_log[$2.to_i] = log
   end
 
-  bench = BenchmarkSummary.new(OPTS)
+  bench = BenchmarkSummary.new(options)
   bench_before = bench.parse_log(bench_before_log)
   bench_after = bench.parse_log(bench_after_log)
 
