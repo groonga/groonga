@@ -5,16 +5,16 @@ require 'fileutils'
 require 'optparse'
 
 class BenchmarkSummary
-  attr_accessor :option
+  attr_accessor :options
 
-  def initialize(option)
-    @option = option
-    @option[:count] ||= 10
+  def initialize(options)
+    @options = options
+    @options[:count] ||= 10
   end
 
   def calc_total(data)
     total = {}
-    @option[:count].times do |i|
+    @options[:count].times do |i|
       data[i+1].each do |key, value|
         if total[key]
           total[key] = total[key] + value
@@ -29,20 +29,20 @@ class BenchmarkSummary
   def print_average(data)
     total = calc_total(data)
     text = "|項目|"
-    @option[:count].times do |i|
+    @options[:count].times do |i|
       text << "#{i+1}|"
-      text << "平均|\n" if i == @option[:count]-1
+      text << "平均|\n" if i == @options[:count]-1
     end
     total.each do |key, value|
       line = [key]
-      @option[:count].times do |i|
+      @options[:count].times do |i|
         data[i+1].each do |data_key, data_value|
           if key == data_key
             line << data_value
           end
         end
       end
-      line << [value/@option[:count].to_f]
+      line << [value/@options[:count].to_f]
       text << sprintf("|%s|\n", line.join("|"))
     end
     puts text
@@ -59,8 +59,8 @@ class BenchmarkSummary
     ratio.each do |key, value|
       text << sprintf("|%s|%f|%f|%f||\n",
               key,
-              before_total[key] / @option[:count].to_f,
-              after_total[key] / @option[:count].to_f,
+              before_total[key] / @options[:count].to_f,
+              after_total[key] / @options[:count].to_f,
               ratio[key])
     end
     puts text
