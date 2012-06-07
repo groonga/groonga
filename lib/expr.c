@@ -2140,7 +2140,7 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
   }                                                                     \
   if (GRN_BULK_VSIZE(var) != (sizeof(grn_obj *) + sizeof(grn_id))) {    \
     ERR(GRN_INVALID_ARGUMENT,                                           \
-        "invalid variable size: expected: %ld, actual: %ld",            \
+        "invalid variable size: expected: %zu, actual: %zu",            \
         (sizeof(grn_obj *) + sizeof(grn_id)), GRN_BULK_VSIZE(var));     \
     goto exit;                                                          \
   }                                                                     \
