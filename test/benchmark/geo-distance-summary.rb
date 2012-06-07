@@ -30,19 +30,19 @@ class BenchmarkSummary
     total = calc_total(data)
     text = "|項目|"
     @options[:count].times do |i|
-      text << "#{i+1}|"
-      text << "平均|\n" if i == @options[:count]-1
+      text << "#{i + 1}|"
+      text << "平均|\n" if i == @options[:count] - 1
     end
     total.each do |key, value|
       line = [key]
       @options[:count].times do |i|
-        data[i+1].each do |data_key, data_value|
+        data[i + 1].each do |data_key, data_value|
           if key == data_key
             line << data_value
           end
         end
       end
-      line << [value/@options[:count].to_f]
+      line << [value / @options[:count].to_f]
       text << sprintf("|%s|\n", line.join("|"))
     end
     puts text
