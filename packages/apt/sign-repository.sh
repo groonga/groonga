@@ -2,7 +2,7 @@
 
 script_base_dir=`dirname $0`
 
-if [ $# != 2 ]; then
+if [ $# != 3 ]; then
     echo "Usage: $0 GPG_UID DESTINATION CODES"
     echo " e.g.: $0 'F10399C0' repositories/ 'lenny unstable hardy karmic'"
     exit 1
