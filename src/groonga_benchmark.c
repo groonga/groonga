@@ -1482,9 +1482,11 @@ get_sysinfo(const char *path, char *result, int olen)
   }
 
   if (grntest_outtype == OUT_TSV) {
-    sprintf(tmpbuf, "%luKBytes\n", vfsbuf.f_blocks * 4);
+    sprintf(tmpbuf, "%" GRN_FMT_INT64U "KBytes\n", vfsbuf.f_blocks * 4);
   } else {
-    sprintf(tmpbuf, "  \"HDD\": \"%luKBytes\",\n", vfsbuf.f_blocks * 4);
+    sprintf(tmpbuf,
+            "  \"HDD\": \"%" GRN_FMT_INT64U "KBytes\",\n",
+            vfsbuf.f_blocks * 4);
   }
   strcat(result, tmpbuf);
 
