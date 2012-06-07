@@ -149,7 +149,7 @@ data_normalize(void)
 static const gchar *
 convert_encoding(const gchar *utf8, grn_encoding encoding)
 {
-  const gchar *encoded;
+  const gchar *encoded = NULL;
   GError *error = NULL;
 
   switch (encoding) {
