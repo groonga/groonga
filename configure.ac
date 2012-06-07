@@ -124,6 +124,7 @@ AC_DEFUN([REMOVE_CXXFLAG], [
   AC_MSG_RESULT([$remove_cxxflag])
 ])
 
+TEST_CFLAGS=""
 TEST_CXXFLAGS=""
 NO_STRICT_ALIASING_CFLAGS=""
 if test "$GCC" = "yes"; then
@@ -161,13 +162,19 @@ if test "$GCC" = "yes"; then
   CHECK_CXXFLAG([-fexceptions])
   CHECK_CXXFLAG([-fimplicit-templates])
 
+  CFLAGS_for_source="$CFLAGS"
   CXXFLAGS_for_source="$CXXFLAGS"
-  CHECK_CXXFLAG([-Wno-clobbered])
+  CHECK_BUILD_FLAG([-Wno-clobbered])
+  if test "x$check_cflag" = "xyes"; then
+    TEST_CFLAGS="-Wno-clobbered"
+  fi
   if test "x$check_cxxflag" = "xyes"; then
     TEST_CXXFLAGS="-Wno-clobbered"
   fi
+  CFLAGS="$CFLAGS_for_source"
   CXXFLAGS="$CXXFLAGS_for_source"
 fi
+AC_SUBST(TEST_CFLAGS)
 AC_SUBST(TEST_CXXFLAGS)
 AC_SUBST(NO_STRICT_ALIASING_CFLAGS)
 

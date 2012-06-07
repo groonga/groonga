@@ -11,7 +11,9 @@ INCLUDES =				\
 	-I$(top_srcdir)/lib		\
 	$(GROONGA_INCLUDEDIR)
 
-AM_CFLAGS = $(GCUTTER_CFLAGS)
+AM_CFLAGS =					\
+	$(GCUTTER_CFLAGS)			\
+	$(TEST_CFLAGS)
 
 AM_LDFLAGS =					\
 	-module					\

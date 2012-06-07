@@ -77,6 +77,7 @@ INCLUDES =			\
 
 AM_CFLAGS =						\
 	$(GCUTTER_CFLAGS)				\
+	$(TEST_CFLAGS)					\
 	-DGROONGA=\"$(abs_top_builddir)/src/groonga\"
 
 AM_LDFLAGS =					\

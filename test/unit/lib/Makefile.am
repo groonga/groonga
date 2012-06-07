@@ -22,7 +22,8 @@ INCLUDES =					\
 AM_CFLAGS =						\
 	-DCUT_RELATIVE_PATH="\"lib\""			\
 	-DGROONGA=\"$(abs_top_builddir)/src/groonga\"	\
-	$(GCUTTER_CFLAGS)
+	$(GCUTTER_CFLAGS)				\
+	$(TEST_CFLAGS)
 
 # We just need to add -rpath option to make .so. We use
 # $(libdir) here but we can use other absolute path like
