@@ -2669,7 +2669,7 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
       break;
     case GRN_DB_TIME :
       {
-        double dv= *((int64_t *)GRN_BULK_HEAD(obj));
+        double dv = *((int64_t *)GRN_BULK_HEAD(obj));
         dv /= 1000000.0;
         grn_text_ftoa(ctx, bulk, dv);
       }
