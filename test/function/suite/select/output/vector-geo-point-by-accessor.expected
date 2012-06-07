@@ -5,9 +5,7 @@ column_create Shops places COLUMN_VECTOR WGS84GeoPoint
 load --table Shops
 [
 ["_key","places"],
-["daruma",
-["130094061x505025099","130185500x505009000"]
-]
+["daruma",["130094061x505025099","130185500x505009000"]]
 ]
 [[0,0.0,0.0],1]
 select Shops --query _key:daruma
