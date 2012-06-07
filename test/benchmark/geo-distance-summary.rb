@@ -91,7 +91,7 @@ class BenchmarkSummary
   end
 end
 
-DESCRIPTION = <<-EOF
+=begin
 
 Usage: geo-distance-summary.rb \
 -b run-bench-geo-distance-orig-N1000 \
@@ -100,20 +100,19 @@ Usage: geo-distance-summary.rb \
 NOTE: expected that there are run-bench-geo-distance-orig-N1000-1.log \
 ... \
 run-bench-geo-distance-orig-N1000-[N].log.
-EOF
 
-def usage
-  puts DESCRIPTION
-end
+=end
 
 if __FILE__ == $0
 
   OPTS = {}
   parser = OptionParser.new
-  parser.on("-b", "--before PREFIX", "parse original log") do |prefix|
+  parser.on("-b", "--before PREFIX",
+            "log file name must be PREFIX-[N].log") do |prefix|
     OPTS[:before] = prefix
   end
-  parser.on("-a", "--after PREFIX", "parse modified log") do |prefix|
+  parser.on("-a", "--after PREFIX",
+            "log file name must be PREFIX-[N].log") do |prefix|
     OPTS[:after] = prefix
   end
   parser.on("-n", "data count") do |count|
@@ -123,7 +122,7 @@ if __FILE__ == $0
   parser.parse!(ARGV)
 
   if not OPTS.has_key?(:before) or not OPTS.has_key?(:after)
-    usage
+    puts(parser.to_s)
     exit
   end
 
