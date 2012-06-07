@@ -3355,7 +3355,11 @@ buffer_new(grn_ctx *ctx, grn_ii *ii, int size, uint32_t *pos,
                b->header.nterms * sizeof(buffer_term)) * 4 <
                b->header.chunk_size) */
             {
-              GRN_LOG(ctx, GRN_LOG_NOTICE, "nterms=%d chunk=%d total=%zu", b->header.nterms, b->header.chunk_size, ii->header->total_chunk_size >> 10);
+              GRN_LOG(ctx, GRN_LOG_NOTICE,
+                      "nterms=%d chunk=%d total=%" GRN_FMT_INT64U,
+                      b->header.nterms,
+                      b->header.chunk_size,
+                      ii->header->total_chunk_size >> 10);
             if (buffer_split(ctx, ii, LSEG(pos), h)) { break; }
           } else {
             if (buffer_flush(ctx, ii, LSEG(pos), h)) { break; }
@@ -3660,7 +3664,11 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
                b->header.nterms * sizeof(buffer_term)) * 4 <
                b->header.chunk_size)*/
             {
-              GRN_LOG(ctx, GRN_LOG_NOTICE, "nterms=%d chunk=%d total=%zu", b->header.nterms, b->header.chunk_size, ii->header->total_chunk_size >> 10);
+              GRN_LOG(ctx, GRN_LOG_NOTICE,
+                      "nterms=%d chunk=%d total=%" GRN_FMT_INT64U,
+                      b->header.nterms,
+                      b->header.chunk_size,
+                      ii->header->total_chunk_size >> 10);
             if ((rc = buffer_split(ctx, ii, LSEG(pos), h))) { goto exit; }
             continue;
           }
@@ -6874,7 +6882,8 @@ grn_ii_buffer_chunk_flush(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
   buffer_segment_update(ii_buffer->ii, ii_buffer->lseg, ii_buffer->dseg);
   ii_buffer->ii->header->total_chunk_size += ii_buffer->packed_len;
   ii_buffer->total_chunk_size += ii_buffer->packed_len;
-  GRN_LOG(ctx, GRN_LOG_NOTICE, "nterms=%d chunk=%d total=%zuKB",
+  GRN_LOG(ctx, GRN_LOG_NOTICE,
+          "nterms=%d chunk=%d total=%" GRN_FMT_INT64U "KB",
           ii_buffer->term_buffer->header.nterms,
           ii_buffer->term_buffer->header.chunk_size,
           ii_buffer->ii->header->total_chunk_size >> 10);
@@ -7190,7 +7199,8 @@ grn_ii_buffer_commit(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
     }
   }
 
-  GRN_LOG(ctx, GRN_LOG_NOTICE, "nblocks=%d, update_buffer_size=%zu",
+  GRN_LOG(ctx, GRN_LOG_NOTICE,
+          "nblocks=%d, update_buffer_size=%" GRN_FMT_INT64U,
           ii_buffer->nblocks, ii_buffer->update_buffer_size);
 
   datavec_init(ctx, ii_buffer->data_vectors, ii_buffer->ii->n_elements, 0, 0);
@@ -7237,7 +7247,8 @@ grn_ii_buffer_commit(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
     }
   }
   datavec_fin(ctx, ii_buffer->data_vectors);
-  GRN_LOG(ctx, GRN_LOG_NOTICE, "tmpfile_size:%jd > total_chunk_size:%zu",
+  GRN_LOG(ctx, GRN_LOG_NOTICE,
+          "tmpfile_size:%jd > total_chunk_size:%" GRN_FMT_INT64U,
           ii_buffer->filepos, ii_buffer->total_chunk_size);
   GRN_CLOSE(ii_buffer->tmpfd);
   unlink(ii_buffer->tmpfpath);
