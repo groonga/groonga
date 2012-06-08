@@ -649,8 +649,8 @@ grn_dat_update(grn_ctx *ctx, grn_dat *dat,
 }
 
 int grn_dat_scan(grn_ctx *ctx, grn_dat *dat, const char *str,
-                         unsigned int str_size, grn_dat_scan_hit *scan_hits,
-                         unsigned int max_num_scan_hits, const char **str_rest) {
+                 unsigned int str_size, grn_dat_scan_hit *scan_hits,
+                 unsigned int max_num_scan_hits, const char **str_rest) {
   if (!grn_dat_open_trie_if_needed(ctx, dat) || !str ||
       !(dat->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) || !scan_hits) {
     return -1;
