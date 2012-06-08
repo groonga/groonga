@@ -1907,7 +1907,7 @@ geo_quadrant_type(grn_geo_point *point1, grn_geo_point *point2)
 #undef QUADRANT_4TH_WITH_AXIS
 }
 
-static double
+static inline double
 geo_distance_rectangle_abs(double start_longitude, double start_latitude,
                            double end_longitude, double end_latitude)
 {
