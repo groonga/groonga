@@ -19,7 +19,7 @@ class BenchmarkSummary
         if total[key]
           total[key] = total[key] + value
         else
-          total[key] = 0
+          total[key] = value
         end
       end
     end
