@@ -72,18 +72,11 @@ class BenchmarkSummary
       File.open(log, "r") do |file|
         data = file.read
         entry = {}
-        data =~ /(rectangular \(WGS84\)): \((.+)\)\n/
-        entry[$1] = $2.to_f
-        data =~ /(rectangular \(TOKYO\)): \((.+)\)\n/
-        entry[$1] = $2.to_f
-        data =~ /(spherical \(WGS84\)): \((.+)\)\n/
-        entry[$1] = $2.to_f
-        data =~ /(spherical \(TOKYO\)): \((.+)\)\n/
-        entry[$1] = $2.to_f
-        data =~ /(hubeny \(WGS84\)): \((.+)\)\n/
-        entry[$1] = $2.to_f
-        data =~ /(hubeny \(TOKYO\)): \((.+)\)\n/
-        entry[$1] = $2.to_f
+        data.split("\n").each do |line|
+          if line =~ /\s*(.+?):\s+\((.+)\)/
+            entry[$1] = $2.to_f
+          end
+        end
         parse_result[index] = entry
       end
     end
