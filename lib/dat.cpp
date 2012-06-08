@@ -672,15 +672,17 @@ grn_dat_scan(grn_ctx *ctx, grn_dat *dat, const char *str,
   int num_scan_hits = 0;
   try {
     if (dat->obj.header.flags & GRN_OBJ_KEY_NORMALIZE) {
-      grn_str * const normalized_str = grn_str_open(
-          ctx, str, str_size, GRN_STR_NORMALIZE | GRN_STR_WITH_CHECKS);
-      if (!normalized_str) {
-        fprintf(stderr, "error: grn_str_open() failed!\n");
+      grn_obj *normalizer = GRN_NORMALIZER_AUTO;
+      int flags = GRN_STRING_WITH_CHECKS;
+      grn_obj * const normalized_string = grn_string_open(ctx, str, str_size,
+                                                          normalizer,
+                                                          flags);
+      if (!normalized_string) {
+        fprintf(stderr, "error: grn_string_open() failed!\n");
         return -1;
       }
-      str = normalized_str->norm;
-      str_size = normalized_str->norm_blen;
-      const short *checks = normalized_str->checks;
+      grn_string_get_normalized(ctx, normalized_string, &str, &str_size, NULL);
+      const short *checks = grn_string_get_checks(ctx, normalized_string);
       unsigned int offset = 0;
       while (str_size) {
         if (*checks) {
@@ -717,9 +719,10 @@ grn_dat_scan(grn_ctx *ctx, grn_dat *dat, const char *str,
         ++checks;
       }
       if (str_rest) {
-        *str_rest = normalized_str->orig + offset;
+        grn_string_get_original(ctx, normalized_string, str_rest, NULL);
+        *str_rest += offset;
       }
-      grn_str_close(ctx, normalized_str);
+      grn_obj_close(ctx, normalized_string);
     } else {
       const char * const begin = str;
       while (str_size) {

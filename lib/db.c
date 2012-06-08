@@ -26,6 +26,7 @@
 #include "plugin_in.h"
 #include "geo.h"
 #include "snip.h"
+#include "string_in.h"
 #include "util.h"
 #include <string.h>
 #include <float.h>
@@ -34,12 +35,14 @@
 
 #define WITH_NORMALIZE(table,key,key_size,block) do {\
   if ((table)->obj.header.flags & GRN_OBJ_KEY_NORMALIZE) {\
-    grn_str *nstr;\
-    if ((nstr = grn_str_open(ctx, key, key_size, GRN_STR_NORMALIZE))) { \
-      char *key = nstr->norm;\
-      unsigned int key_size = nstr->norm_blen;\
+    grn_obj *nstr;\
+    if ((nstr = grn_string_open(ctx, key, key_size,\
+                                GRN_NORMALIZER_AUTO, 0))) {\
+      const char *key;\
+      unsigned int key_size;\
+      grn_string_get_normalized(ctx, nstr, &key, &key_size, NULL);\
       block\
-      grn_str_close(ctx, nstr);\
+      grn_obj_close(ctx, nstr);\
     }\
   } else {\
     block\
@@ -6925,6 +6928,9 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
       break;
     case GRN_SNIP :
       rc = grn_snip_close_real(ctx, (grn_snip *)obj);
+      break;
+    case GRN_STRING :
+      rc = grn_string_close(ctx, obj);
       break;
     case GRN_CURSOR_TABLE_PAT_KEY :
       grn_pat_cursor_close(ctx, (grn_pat_cursor *)obj);

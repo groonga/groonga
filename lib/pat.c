@@ -1527,11 +1527,16 @@ grn_pat_scan(grn_ctx *ctx, grn_pat *pat, const char *str, unsigned int str_len,
   int n = 0;
   grn_id tid;
   if (pat->obj.header.flags & GRN_OBJ_KEY_NORMALIZE) {
-    grn_str *nstr = grn_str_open(ctx, str, str_len, GRN_STR_NORMALIZE|GRN_STR_WITH_CHECKS);
+    grn_obj *nstr = grn_string_open(ctx, str, str_len,
+                                    GRN_NORMALIZER_AUTO, GRN_STRING_WITH_CHECKS);
     if (nstr) {
-      int16_t *cp = nstr->checks;
+      const short *cp = grn_string_get_checks(ctx, nstr);
       unsigned int offset = 0, offset0 = 0;
-      const char *sp = nstr->norm, *se = nstr->norm + nstr->norm_blen;
+      unsigned int normalized_length_in_bytes;
+      const char *sp, *se;
+      grn_string_get_normalized(ctx, nstr, &sp, &normalized_length_in_bytes,
+                                NULL);
+      se = sp + normalized_length_in_bytes;
       while (n < sh_size) {
         if ((tid = grn_pat_lcp_search(ctx, pat, sp, se - sp))) {
           uint32_t len;
@@ -1552,8 +1557,11 @@ grn_pat_scan(grn_ctx *ctx, grn_pat *pat, const char *str, unsigned int str_len,
         }
         if (se <= sp) { offset = str_len; break; }
       }
-      if (rest) { *rest = nstr->orig + offset; }
-      grn_str_close(ctx, nstr);
+      if (rest) {
+        grn_string_get_original(ctx, nstr, rest, NULL);
+        *rest += offset;
+      }
+      grn_obj_close(ctx, nstr);
     } else {
       n = -1;
       if (rest) { *rest = str; }

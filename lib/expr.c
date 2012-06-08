@@ -2240,13 +2240,14 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
 void
 pseudo_query_scan(grn_ctx *ctx, grn_obj *x, grn_obj *y, grn_obj *res)
 {
-  grn_str *a = NULL, *b = NULL;
+  grn_obj *a = NULL, *b = NULL;
 
   switch (x->header.domain) {
   case GRN_DB_SHORT_TEXT:
   case GRN_DB_TEXT:
   case GRN_DB_LONG_TEXT:
-    a = grn_str_open(ctx, GRN_TEXT_VALUE(x), GRN_TEXT_LEN(x), GRN_STR_NORMALIZE);
+    a = grn_string_open(ctx, GRN_TEXT_VALUE(x), GRN_TEXT_LEN(x),
+                        GRN_NORMALIZER_AUTO, 0);
     break;
   default:
     break;
@@ -2256,23 +2257,27 @@ pseudo_query_scan(grn_ctx *ctx, grn_obj *x, grn_obj *y, grn_obj *res)
   case GRN_DB_SHORT_TEXT:
   case GRN_DB_TEXT:
   case GRN_DB_LONG_TEXT:
-    b = grn_str_open(ctx, GRN_TEXT_VALUE(y), GRN_TEXT_LEN(y), GRN_STR_NORMALIZE);
+    b = grn_string_open(ctx, GRN_TEXT_VALUE(y), GRN_TEXT_LEN(y),
+                        GRN_NORMALIZER_AUTO, 0);
     break;
   default:
     break;
   }
 
   /* normalized str doesn't contain '\0'. */
-  if (a && b && strstr(a->norm, b->norm)) {
-    GRN_INT32_SET(ctx, res, 1);
+  if (a && b) {
+    const char *a_norm, *b_norm;
+    grn_string_get_normalized(ctx, a, &a_norm, NULL, NULL);
+    grn_string_get_normalized(ctx, b, &b_norm, NULL, NULL);
+    GRN_INT32_SET(ctx, res, strstr(a_norm, b_norm) != NULL);
   } else {
     GRN_INT32_SET(ctx, res, 0);
   }
   res->header.type = GRN_BULK;
   res->header.domain = GRN_DB_INT32;
 
-  if (a) { grn_str_close(ctx, a); }
-  if (b) { grn_str_close(ctx, b); }
+  if (a) { grn_obj_close(ctx, a); }
+  if (b) { grn_obj_close(ctx, b); }
 }
 
 grn_obj *

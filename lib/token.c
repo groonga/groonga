@@ -23,6 +23,7 @@
 #include "pat.h"
 #include "dat.h"
 #include "hash.h"
+#include "string_in.h"
 
 grn_obj *grn_uvector_tokenizer = NULL;
 
@@ -79,7 +80,7 @@ uvector_fin(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 }
 
 typedef struct {
-  grn_str *nstr;
+  grn_obj *nstr;
   const uint8_t *delimiter;
   uint32_t delimiter_len;
   int32_t pos;
@@ -97,7 +98,10 @@ delimited_init(grn_ctx *ctx, grn_obj *table, grn_user_data *user_data,
                const uint8_t *delimiter, uint32_t delimiter_len)
 {
   grn_obj *str;
+  grn_obj *normalizer = NULL;
   int nflags = 0;
+  const char *normalized;
+  unsigned int normalized_length_in_bytes;
   grn_delimited_tokenizer *token;
   grn_obj_flags table_flags;
   if (!(str = grn_ctx_pop(ctx))) {
@@ -110,16 +114,21 @@ delimited_init(grn_ctx *ctx, grn_obj *table, grn_user_data *user_data,
   token->delimiter_len = delimiter_len;
   token->pos = 0;
   grn_table_get_info(ctx, table, &table_flags, &token->encoding, NULL);
-  nflags |= (table_flags & GRN_OBJ_KEY_NORMALIZE);
-  if (!(token->nstr = grn_str_open_(ctx, GRN_TEXT_VALUE(str), GRN_TEXT_LEN(str),
-                                    nflags, token->encoding))) {
+  if (table_flags & GRN_OBJ_KEY_NORMALIZE) {
+    normalizer = GRN_NORMALIZER_AUTO;
+  }
+  if (!(token->nstr = grn_string_open_(ctx,
+                                       GRN_TEXT_VALUE(str), GRN_TEXT_LEN(str),
+                                       normalizer, nflags, token->encoding))) {
     GRN_FREE(token);
-    ERR(GRN_TOKENIZER_ERROR, "grn_str_open failed at grn_token_open");
+    ERR(GRN_TOKENIZER_ERROR, "grn_string_open failed at grn_token_open");
     return NULL;
   }
-  token->next = (unsigned char *)token->nstr->norm;
-  token->end = token->next + token->nstr->norm_blen;
-  token->len = token->nstr->length;
+  grn_string_get_normalized(ctx, token->nstr,
+                            &normalized, &normalized_length_in_bytes,
+                            &(token->len));
+  token->next = (const unsigned char *)normalized;
+  token->end = token->next + normalized_length_in_bytes;
   GRN_TEXT_INIT(&token->curr_, GRN_OBJ_DO_SHALLOW_COPY);
   GRN_UINT32_INIT(&token->stat_, 0);
   return NULL;
@@ -154,7 +163,7 @@ static grn_obj *
 delimited_fin(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_delimited_tokenizer *token = user_data->ptr;
-  grn_str_close(ctx, token->nstr);
+  grn_obj_close(ctx, token->nstr);
   GRN_FREE(token);
   return NULL;
 }
@@ -178,7 +187,7 @@ delimit_null_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
 /* ngram tokenizer */
 
 typedef struct {
-  grn_str *nstr;
+  grn_obj *nstr;
   uint8_t uni_alpha;
   uint8_t uni_digit;
   uint8_t uni_symbol;
@@ -190,7 +199,7 @@ typedef struct {
   grn_encoding encoding;
   const unsigned char *next;
   const unsigned char *end;
-  uint_least8_t *ctypes;
+  const uint_least8_t *ctypes;
   int32_t len;
   uint32_t tail;
   grn_obj curr_;
@@ -202,7 +211,10 @@ ngram_init(grn_ctx *ctx, grn_obj *table, grn_user_data *user_data, uint8_t ngram
            uint8_t uni_alpha, uint8_t uni_digit, uint8_t uni_symbol, uint8_t ignore_blank)
 {
   grn_obj *str;
-  int nflags = GRN_STR_REMOVEBLANK|GRN_STR_WITH_CTYPES;
+  grn_obj *normalizer = NULL;
+  int nflags = GRN_STRING_REMOVE_BLANK|GRN_STRING_WITH_TYPES;
+  const char *normalized;
+  unsigned int normalized_length_in_bytes;
   grn_ngram_tokenizer *token;
   grn_obj_flags table_flags;
   if (!(str = grn_ctx_pop(ctx))) {
@@ -220,17 +232,22 @@ ngram_init(grn_ctx *ctx, grn_obj *table, grn_user_data *user_data, uint8_t ngram
   token->pos = 0;
   token->skip = 0;
   grn_table_get_info(ctx, table, &table_flags, &token->encoding, NULL);
-  nflags |= (table_flags & GRN_OBJ_KEY_NORMALIZE);
-  if (!(token->nstr = grn_str_open_(ctx, GRN_TEXT_VALUE(str), GRN_TEXT_LEN(str),
-                                    nflags, token->encoding))) {
+  if (table_flags & GRN_OBJ_KEY_NORMALIZE) {
+    normalizer = GRN_NORMALIZER_AUTO;
+  }
+  if (!(token->nstr = grn_string_open_(ctx,
+                                       GRN_TEXT_VALUE(str), GRN_TEXT_LEN(str),
+                                       normalizer, nflags, token->encoding))) {
     GRN_FREE(token);
-    ERR(GRN_TOKENIZER_ERROR, "grn_str_open failed at grn_token_open");
+    ERR(GRN_TOKENIZER_ERROR, "grn_string_open failed at grn_token_open");
     return NULL;
   }
-  token->next = (unsigned char *)token->nstr->norm;
-  token->end = token->next + token->nstr->norm_blen;
-  token->ctypes = token->nstr->ctypes;
-  token->len = token->nstr->length;
+  grn_string_get_normalized(ctx, token->nstr,
+                            &normalized, &normalized_length_in_bytes,
+                            &(token->len));
+  token->next = (const unsigned char *)normalized;
+  token->end = token->next + normalized_length_in_bytes;
+  token->ctypes = grn_string_get_types(ctx, token->nstr);
   GRN_TEXT_INIT(&token->curr_, GRN_OBJ_DO_SHALLOW_COPY);
   GRN_UINT32_INIT(&token->stat_, 0);
   return NULL;
@@ -283,7 +300,7 @@ ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_ngram_tokenizer *token = user_data->ptr;
   const unsigned char *p = token->next, *r = p, *e = token->end;
   int32_t len = 0, pos = token->pos + token->skip, status = 0;
-  uint_least8_t *cp = token->ctypes ? token->ctypes + pos : NULL;
+  const uint_least8_t *cp = token->ctypes ? token->ctypes + pos : NULL;
   if (cp && token->uni_alpha && GRN_STR_CTYPE(*cp) == grn_str_alpha) {
     while ((cl = grn_charlen_(ctx, (char *)r, (char *)e, token->encoding))) {
       len++;
@@ -371,7 +388,7 @@ static grn_obj *
 ngram_fin(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_ngram_tokenizer *token = user_data->ptr;
-  grn_str_close(ctx, token->nstr);
+  grn_obj_close(ctx, token->nstr);
   GRN_FREE(token);
   return NULL;
 }
@@ -437,13 +454,20 @@ grn_token_open(grn_ctx *ctx, grn_obj *table, const char *str, size_t str_len,
     ((grn_proc *)tokenizer)->funcs[PROC_INIT](ctx, 1, &table, &token->pctx.user_data);
     grn_obj_close(ctx, &str_);
   } else {
-    int nflags = table_flags & GRN_OBJ_KEY_NORMALIZE;
-    token->nstr = grn_str_open_(ctx, str, str_len, nflags, token->encoding);
+    grn_obj *normalizer = NULL;
+    int nflags = 0;
+    if (table_flags & GRN_OBJ_KEY_NORMALIZE) {
+      normalizer = GRN_NORMALIZER_AUTO;
+    }
+    token->nstr = grn_string_open_(ctx, str, str_len,
+                                   normalizer, nflags, token->encoding);
     if (token->nstr) {
-      token->curr = (unsigned char *)token->nstr->norm;
-      token->curr_size = token->nstr->norm_blen;
+      const char *normalized;
+      grn_string_get_normalized(ctx, token->nstr,
+                                &normalized, &(token->curr_size), NULL);
+      token->curr = (const unsigned char *)normalized;
     } else {
-      ERR(GRN_TOKENIZER_ERROR, "grn_str_open failed at grn_token_open");
+      ERR(GRN_TOKENIZER_ERROR, "grn_string_open failed at grn_token_open");
     }
   }
   if (ctx->rc) {
@@ -561,7 +585,7 @@ grn_token_close(grn_ctx *ctx, grn_token *token)
     return GRN_SUCCESS;
   } else {
     if (token->nstr) {
-      grn_str_close(ctx, token->nstr);
+      grn_obj_close(ctx, token->nstr);
     }
     return GRN_INVALID_ARGUMENT;
   }

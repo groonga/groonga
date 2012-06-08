@@ -25,6 +25,7 @@
 #include "ctx.h"
 #include "db.h"
 #include "str.h"
+#include "string_in.h"
 #include "token.h"
 
 /*
@@ -116,14 +117,23 @@ grn_tokenizer_query *grn_tokenizer_query_create(grn_ctx *ctx,
       }
       grn_table_get_info(ctx, table, &table_flags, &table_encoding, NULL);
       {
-        grn_str * const str = grn_str_open_(ctx, GRN_TEXT_VALUE(query_str),
-                                            GRN_TEXT_LEN(query_str),
-                                            table_flags & GRN_OBJ_KEY_NORMALIZE,
-                                            table_encoding);
-        if (str == NULL) {
+        grn_obj *normalizer = NULL;
+        int flags = 0;
+        grn_obj *normalized_string;
+        if (table_flags & GRN_OBJ_KEY_NORMALIZE) {
+          normalizer = GRN_NORMALIZER_AUTO;
+        }
+        normalized_string = grn_string_open_(ctx,
+                                             GRN_TEXT_VALUE(query_str),
+                                             GRN_TEXT_LEN(query_str),
+                                             normalizer,
+                                             flags,
+                                             table_encoding);
+        if (!normalized_string) {
           GRN_PLUGIN_FREE(ctx, query);
           return NULL;
         }
+        query->normalized_query = normalized_string;
         memcpy(query_buf, GRN_TEXT_VALUE(query_str), query_length);
         query_buf[query_length] = '\0';
         query->query_buf = query_buf;

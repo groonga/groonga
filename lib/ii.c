@@ -5776,7 +5776,9 @@ grn_ii_term_extract(grn_ctx *ctx, grn_ii *ii, const char *string,
   grn_rset_posinfo pi;
   grn_id tid;
   const char *p, *pe;
-  grn_str *nstr;
+  grn_obj *nstr;
+  const char *normalized;
+  unsigned int normalized_length_in_bytes;
   grn_ii_cursor *c;
   grn_ii_posting *pos;
   int skip, rep, policy;
@@ -5785,7 +5787,7 @@ grn_ii_term_extract(grn_ctx *ctx, grn_ii *ii, const char *string,
   if (!ii || !string || !string_len || !s || !optarg) {
     return GRN_INVALID_ARGUMENT;
   }
-  if (!(nstr = grn_str_open(ctx, string, string_len, 0))) {
+  if (!(nstr = grn_string_open(ctx, string, string_len, NULL, 0))) {
     return GRN_INVALID_ARGUMENT;
   }
   policy = optarg->max_interval;
@@ -5801,7 +5803,9 @@ grn_ii_term_extract(grn_ctx *ctx, grn_ii *ii, const char *string,
   rep = (s->record_unit == grn_rec_position || s->subrec_unit == grn_rec_position);
   */
   rep = 0;
-  for (p = nstr->norm, pe = p + nstr->norm_blen; p < pe; p += skip) {
+  grn_string_get_normalized(ctx, nstr, &normalized, &normalized_length_in_bytes,
+                            NULL);
+  for (p = normalized, pe = p + normalized_length_in_bytes; p < pe; p += skip) {
     if ((tid = grn_table_lcp_search(ctx, ii->lexicon, p, pe - p))) {
       if (policy == TERM_EXTRACT_EACH_POST) {
         if (!(skip = grn_table_get_key(ctx, ii->lexicon, tid, NULL, 0))) { break; }
@@ -5827,7 +5831,7 @@ grn_ii_term_extract(grn_ctx *ctx, grn_ii *ii, const char *string,
         while (grn_ii_cursor_next(ctx, c)) {
           if (policy == TERM_EXTRACT_EACH_POST) {
             pi.rid = c->post->rid;
-            pi.sid = p - nstr->norm;
+            pi.sid = p - normalized;
             res_add(ctx, s, &pi, pi.sid + 1, op);
           } else {
             pos = c->post;
@@ -5843,7 +5847,7 @@ grn_ii_term_extract(grn_ctx *ctx, grn_ii *ii, const char *string,
       }
     }
   }
-  grn_str_close(ctx, nstr);
+  grn_obj_close(ctx, nstr);
   return rc;
 }
 

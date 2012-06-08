@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009 Brazil
+/* Copyright(C) 2009-2012 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -50,7 +50,7 @@ typedef struct _snip_cond
   const char *closetag;
   size_t opentag_len;
   size_t closetag_len;
-  grn_str *keyword;
+  grn_obj *keyword;
 
   /* Tuned BM pre */
   size_t bmBc[ASIZE];
@@ -108,7 +108,7 @@ struct _grn_snip
   unsigned int snip_count;
 
   const char *string;
-  grn_str *nstr;
+  grn_obj *nstr;
 
   _snip_result snip_result[MAX_SNIP_RESULT_COUNT];
   _snip_tag_result tag_result[MAX_SNIP_TAG_COUNT];
@@ -121,7 +121,7 @@ grn_rc grn_snip_cond_init(grn_ctx *ctx, snip_cond *sc, const char *keyword, unsi
                           grn_encoding enc, int flags);
 void grn_snip_cond_reinit(snip_cond *cond);
 grn_rc grn_snip_cond_close(grn_ctx *ctx, snip_cond *cond);
-void grn_bm_tunedbm(snip_cond *cond, grn_str *object, int flags);
+void grn_bm_tunedbm(grn_ctx *ctx, snip_cond *cond, grn_obj *string, int flags);
 
 #ifdef __cplusplus
 }
