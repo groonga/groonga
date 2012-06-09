@@ -176,7 +176,7 @@ module HTTPSelectDrilldownTests
   def test_default_limit
     assert_drilldown([["title", "ShortText"],
                       ["date", "Time"]],
-                     [["肉の会・パート1", 20091221.0]],
+                     [["groongaリリース（前編）", 20091218.0]],
                      [[[12],
                        [["_key", "Time"],
                         ["_nsubrecs", "Int32"]],
