@@ -33,6 +33,9 @@ if test -z "$GROONGA_BENCHMARK"; then
 fi
 export GROONGA_BENCHMARK
 
+TZ=JST
+export TZ
+
 CUTTER_ARGS=
 CUTTER_WRAPPER=
 if test x"$CUTTER_DEBUG" = x"yes"; then
