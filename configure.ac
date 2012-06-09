@@ -682,14 +682,15 @@ if test "x$RUBY" = "xno"; then
   RUBY=
 else
   if test "x$RUBY" = "xyes"; then
-    AC_PATH_PROGS(RUBY, [ruby1.9 ruby19 ruby1.9.1], none)
-    if test "$RUBY" != "none"; then
+    AC_PATH_PROGS(RUBY, [ruby1.9 ruby19 ruby1.9.1], ruby19-not-found)
+    if test "$RUBY" != "ruby19-not-found"; then
       ac_cv_ruby_available="yes"
     fi
   else
     AC_CHECK_FILE([$RUBY],
 		  [ac_cv_ruby_available="yes"],
-		  [AC_MSG_WARN([$RUBY is not found. Disable HTTP test.])])
+		  [AC_MSG_WARN([$RUBY is not found. Disable HTTP test.])
+		   RUBY="$RUBY-not-found"])
   fi
 fi
 AC_SUBST(RUBY)
