@@ -59,7 +59,6 @@ groonga status by Munin, install groonga-munin-plugins package.
 
 Install groonga-munin-plugins package::
 
-  % sudo yum update
   % sudo yum install -y groonga-munin-plugins
 
 CentOS 6
@@ -104,7 +103,6 @@ groonga status by Munin, install groonga-munin-plugins package.
 
 Install groonga-munin-plugins package::
 
-  % sudo yum update
   % sudo yum install -y groonga-munin-plugins
 
 Build from source
