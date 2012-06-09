@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2010-2011  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2010-2012  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -363,7 +363,7 @@ test_geo_point_wgs84(void)
 {
   gint takane_latitude, takane_longitude;
 
-  takane_latitude = grn_test_coordinate_in_milliseconds(35.69869);
+  takane_latitude = grn_test_coordinate_in_milliseconds(35.6986901);
   takane_longitude = grn_test_coordinate_in_milliseconds(139.56099);
 
   geo_point_wgs84 = grn_obj_open(context, GRN_BULK, 0, GRN_DB_WGS84_GEO_POINT);
