@@ -33,7 +33,7 @@ if test -z "$GROONGA_BENCHMARK"; then
 fi
 export GROONGA_BENCHMARK
 
-TZ=JST
+TZ=Asia/Tokyo
 export TZ
 
 CUTTER_ARGS=
