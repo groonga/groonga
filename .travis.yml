@@ -9,6 +9,6 @@ install:
   - sudo apt-get install -y autotools-dev zlib1g-dev liblzo2-dev libmsgpack-dev libevent-dev libmecab-dev mecab-naist-jdic cutter-testing-framework
 before_script:
   - ./autogen.sh
-  - ./configure
+  - ./configure --with-ruby19
 script:
   - test/unit/run-test.sh
