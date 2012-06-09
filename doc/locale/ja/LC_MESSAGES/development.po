@@ -7,20 +7,20 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 2.0.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-09 22:35\n"
-"PO-Revision-Date: 2012-06-09 22:35+0900\n"
+"POT-Creation-Date: 2012-06-09 23:15\n"
+"PO-Revision-Date: 2012-06-09 23:16+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
+"Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: ja\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 # ad2d4e2869a349b9a8985e6120bbe6c1
 #: ../../../source/development.txt:6
 msgid "Development"
-msgstr ""
+msgstr "開発"
 
 # ee60bc7d21f047fba1426b8e9e69300f
 #: ../../../source/development.txt:8
@@ -29,6 +29,9 @@ msgid ""
 "application that uses groonga as its detabase, a library that uses "
 "libgroonga, language bindings of libgroonga and so on."
 msgstr ""
+"このセクションではgroongaを使った開発について説明します。例えば、groongaを"
+"データベースとして使ったアプリケーション、libgroongaを使ったライブラリ、"
+"libgroongaの言語バインディングなどを開発することがあるでしょう。"
 
 # 7f58ddffa7f04c2d8c029a397dcc18ff
 #: ../../../source/development/travis-ci.txt:6
@@ -42,6 +45,9 @@ msgid ""
 "org/>`_. Travis CI is a hosted continuous integration service for the open "
 "source community."
 msgstr ""
+"このセクションでは `Travis CI <http://travis-ci.org/>`_ 上でgroongaを使う方法"
+"について説明します。Travis CIはオープンソースコミュニティ用の継続的インテグ"
+"レーション（CI）サービスです。"
 
 # e9b3427aeea44dbc9f5d90d69ba02b13
 #: ../../../source/development/travis-ci.txt:12
@@ -50,106 +56,104 @@ msgid ""
 "describes about groonga related configuration. See `Travis CI: Documentation "
 "<http://about.travis-ci.org/docs/>`_ about general Travis CI."
 msgstr ""
+"オープンソースソフトウェアを開発しているならTravis CIを使えます。このセクショ"
+"ンではgroonga関連の設定のみ説明します。Travis CI一般については `Travis CI: "
+"Documentation <http://about.travis-ci.org/docs/>`_ を読んでください。"
 
 # f6186316fe91417f8cd64fb1a0ad0215
 #: ../../../source/development/travis-ci.txt:18
 msgid "Configuration"
-msgstr ""
+msgstr "設定"
 
 # 514db429bebf4729abf0a273db593924
 #: ../../../source/development/travis-ci.txt:20
 msgid ""
-"Travis CI is running on 32-bit Ubuntu 11.10 [#environment]_. You can use apt-"
-"line for Ubuntu 11.10 provided by groonga project to install groonga on "
-"Travis CI."
-msgstr ""
+"Travis CI is running on 32-bit Ubuntu 11.10. (See `Travis CI: About Travis "
+"CI Environment <http://about.travis-ci.org/docs/user/ci-environment/>`_.)  "
+"You can use apt-line for Ubuntu 11.10 provided by groonga project to install "
+"groonga on Travis CI."
+msgstr "Travis CIは32-bit版のUbuntu 11.10を使っています。（ `Travis CI: About Travis CI Environment <http://about.travis-ci.org/docs/user/ci-environment/>`_ 参照。）Travis CIにgroongaをインストールするために、groongaプロジェクトが提供しているUbuntu 11.10用のapt-lineを使えます。"
 
 # ccf892ca5eb740ae8467f66720b0248d
-#: ../../../source/development/travis-ci.txt:24
+#: ../../../source/development/travis-ci.txt:26
 msgid ""
-"You can custom build lifecycle by ``.travis.yml`` [#build-configuration]_. "
-"You can use ``before_install`` hook or ``install`` hook. You should use "
-"``before_install`` if your software uses a language that is supported by "
-"Travis CI such as Ruby. You should use ``install`` otherwise."
-msgstr ""
+"You can custom build lifecycle by ``.travis.yml``. (See `Travis CI: "
+"Conifugration your Travis CI build with .travis.yml <http://about.travis-ci."
+"org/docs/user/build-configuration/>`_.) You can use ``before_install`` hook "
+"or ``install`` hook. You should use ``before_install`` if your software uses "
+"a language that is supported by Travis CI such as Ruby. You should use "
+"``install`` otherwise."
+msgstr "``.travis.yml`` でビルド方法を変更することができます。（ `Travis CI: Conifugration your Travis CI build with .travis.yml <http://about.travis-ci.org/docs/user/build-configuration/>`_ 参照。） ``before_install`` フックまたは ``install`` フックを使います。もし、Travis CIがサポートしている言語（例えばRuby）を使ったソフトウェアの場合は ``before_install`` を使います。そうでない場合は ``install`` を使います。"
 
 # 18a966a785e642798568e44c7d0cc3e0
-#: ../../../source/development/travis-ci.txt:30
-msgid "Add the following configuration to ``before_install``::"
-msgstr ""
+#: ../../../source/development/travis-ci.txt:33
+msgid "Add the following ``before_install`` configuration to ``.travisyml``::"
+msgstr "以下の ``before_install`` の設定を ``.travis.yml`` に加えます::"
 
 # a6b8de9cbf144b01979b948a8a865b2d
-#: ../../../source/development/travis-ci.txt:39
+#: ../../../source/development/travis-ci.txt:42
 msgid ""
 "If you need to use ``install`` hook instead of ``before_install``, you just "
 "substitute ``before_install:`` with ``install:``."
 msgstr ""
+"``before_install`` フックではなく ``install`` フックを使わなければいけない場"
+"合は、単に ``before_install:`` を ``install:`` に書き換えてください。"
 
 # e462315d4c4347e08b399275daef7dca
-#: ../../../source/development/travis-ci.txt:42
+#: ../../../source/development/travis-ci.txt:45
 msgid "With the above configuration, you can use groonga for your build."
-msgstr ""
+msgstr "上記の設定でビルド中にgroongaを使えるようになります。"
 
 # b0b0b6a38cf24189a2effe6cd3ba63b3
-#: ../../../source/development/travis-ci.txt:45
+#: ../../../source/development/travis-ci.txt:48
 msgid "Examples"
-msgstr ""
+msgstr "例"
 
 # be1f9402c2fe413fb5b165d7ad3936ae
-#: ../../../source/development/travis-ci.txt:47
+#: ../../../source/development/travis-ci.txt:50
 msgid "Here are open source softwares that use groonga on Travis CI:"
 msgstr ""
+"Travis CI上でgroongaを使っているオープンソースソフトウェアは以下の通りです"
 
 # 1289ab120456443c8b2b22145c4bed8e
-#: ../../../source/development/travis-ci.txt:49
+#: ../../../source/development/travis-ci.txt:52
 msgid ""
 "`rroonga <http://groonga.rubyforge.org/#about-rroonga>`_ (Ruby bindings)"
 msgstr ""
+"`rroonga <http://groonga.rubyforge.org/#about-rroonga>`_ （Rubyバインディン"
+"グ）"
 
 # f71c9e0c4eef4ee59805c08a46068a95
-#: ../../../source/development/travis-ci.txt:51
+#: ../../../source/development/travis-ci.txt:54
 msgid "`rroonga on Travis CI <http://travis-ci.org/#!/ranguba/rroonga>`_"
 msgstr ""
+"`Travis CIでのrroongaのビルド結果 <http://travis-ci.org/#!/ranguba/rroonga>`_"
 
 # fadbc4c17f28497aaba5042574796fd8
-#: ../../../source/development/travis-ci.txt:52
+#: ../../../source/development/travis-ci.txt:55
 msgid ""
 "`.travis.yml for rroonga <https://github.com/ranguba/rroonga/blob/master/."
 "travis.yml>`_"
 msgstr ""
+"`rroonga用の.travis.yml <https://github.com/ranguba/rroonga/blob/master/."
+"travis.yml>`_"
 
 # db6e279d295f4822a2eba569d27aa98d
-#: ../../../source/development/travis-ci.txt:54
+#: ../../../source/development/travis-ci.txt:57
 msgid "`nroonga <http://nroonga.github.com/>`_ (node.js bindings)"
-msgstr ""
+msgstr "`nroonga <http://nroonga.github.com/>`_ （node.jsバインディング）"
 
 # 0ab0b4dd3a5e4b978d1d27ccc7103fe0
-#: ../../../source/development/travis-ci.txt:56
+#: ../../../source/development/travis-ci.txt:59
 msgid "`nroonga on Travis CI <http://travis-ci.org/#!/nroonga/nroonga>`_"
 msgstr ""
+"`Travis CIでのnroongaのビルド結果 <http://travis-ci.org/#!/nroonga/nroonga>`_"
 
 # 4b784c45ae9242f7a2fa5d3ef87f4466
-#: ../../../source/development/travis-ci.txt:57
+#: ../../../source/development/travis-ci.txt:60
 msgid ""
-"`.travis.yml for nroong <https://github.com/nroonga/nroonga/blob/master/."
+"`.travis.yml for nroonga <https://github.com/nroonga/nroonga/blob/master/."
 "travis.yml>`_"
 msgstr ""
-
-# f7d790ab0f31456b8428ca711fabe24c
-#: ../../../source/development/travis-ci.txt:60
-msgid "Footnotes"
-msgstr ""
-
-# d6a7ae72b7f640648d1a25f1edb51ce7
-#: ../../../source/development/travis-ci.txt:61
-msgid ""
-"See `Travis CI: About Travis CI Environment <http://about.travis-ci.org/docs/"
-"user/ci-environment/>`_ for more details."
-msgstr ""
-
-# 3f19b4173cbf4fa09cb0af76ff9b2c86
-#: ../../../source/development/travis-ci.txt:64
-msgid ""
-"See `Travis CI: Conifugration your Travis CI build with .travis.yml <http://"
-"about.travis-ci.org/docs/user/build-configuration/>`_ for more details."
-msgstr ""
+"`nroonga用の.travis.yml <https://github.com/nroonga/nroonga/blob/master/."
+"travis.yml>`_"
