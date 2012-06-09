@@ -35,6 +35,7 @@ Install::
 
   % sudo apt-get update
   % sudo apt-get -y --allow-unauthenticated install groonga-keyring
+  % sudo apt-get update
   % sudo apt-get -y install groonga
 
 If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a
@@ -73,6 +74,7 @@ Install::
 
   % sudo apt-get update
   % sudo apt-get -y --allow-unauthenticated install groonga-keyring
+  % sudo apt-get update
   % sudo apt-get -y install groonga
 
 If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a
@@ -111,6 +113,7 @@ Install::
 
   % sudo apt-get update
   % sudo apt-get -y --allow-unauthenticated install groonga-keyring
+  % sudo apt-get update
   % sudo apt-get -y install groonga
 
 If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a
@@ -149,6 +152,7 @@ Install::
 
   % sudo apt-get update
   % sudo apt-get -y --allow-unauthenticated install groonga-keyring
+  % sudo apt-get update
   % sudo apt-get -y install groonga
 
 If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a
