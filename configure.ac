@@ -687,10 +687,24 @@ else
       ac_cv_ruby_available="yes"
     fi
   else
-    AC_CHECK_FILE([$RUBY],
-		  [ac_cv_ruby_available="yes"],
-		  [AC_MSG_WARN([$RUBY is not found. Disable HTTP test.])
-		   RUBY="$RUBY-not-found"])
+    ruby_not_found_warning_message="$RUBY is not found. Disable HTTP test."
+    case "$RUBY" in
+    /*)
+      AC_CHECK_FILE([$RUBY],
+                    [ac_cv_ruby_available="yes"],
+                    [AC_MSG_WARN([$ruby_not_found_warning_message])
+                     RUBY="$RUBY-not-found"])
+      ;;
+    *)
+      ruby_not_found="$RUBY-not-found"
+      AC_PATH_PROGS(RUBY, "$RUBY", "$ruby_not_found")
+      if test "$RUBY" = "$ruby_not_found"; then
+        AC_MSG_WARN([$ruby_not_found_warning_message])
+      else
+        ac_cv_ruby_available="yes"
+      fi
+      ;;
+    esac
   fi
 fi
 AC_SUBST(RUBY)
