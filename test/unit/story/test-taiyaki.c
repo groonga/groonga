@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2010-2011  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2010-2012  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -337,7 +337,7 @@ void
 test_filter_by_tag_and_sort_by_distance_from_tokyo_tocho(void)
 {
   gdouble tokyo_tocho_latitude = 35.689444;
-  gdouble tokyo_tocho_longitude = 139.691667;
+  gdouble tokyo_tocho_longitude = 139.69166701;
 
   cut_assert_equal_string(
     "[[[31],"
