@@ -17,17 +17,20 @@ Travis CI.
 Configuration
 -------------
 
-Travis CI is running on 32-bit Ubuntu 11.10 [#environment]_.
-You can use apt-line for Ubuntu 11.10 provided by groonga project to
-install groonga on Travis CI.
+Travis CI is running on 32-bit Ubuntu 11.10. (See `Travis CI: About
+Travis CI Environment
+<http://about.travis-ci.org/docs/user/ci-environment/>`_.)  You can
+use apt-line for Ubuntu 11.10 provided by groonga project to install
+groonga on Travis CI.
 
-You can custom build lifecycle by ``.travis.yml``
-[#build-configuration]_. You can use ``before_install`` hook or
-``install`` hook. You should use ``before_install`` if your software
-uses a language that is supported by Travis CI such as Ruby. You
-should use ``install`` otherwise.
+You can custom build lifecycle by ``.travis.yml``. (See `Travis CI:
+Conifugration your Travis CI build with .travis.yml
+<http://about.travis-ci.org/docs/user/build-configuration/>`_.) You
+can use ``before_install`` hook or ``install`` hook. You should use
+``before_install`` if your software uses a language that is supported
+by Travis CI such as Ruby. You should use ``install`` otherwise.
 
-Add the following configuration to ``before_install``::
+Add the following ``before_install`` configuration to ``.travisyml``::
 
   before_install:
     - echo "deb http://packages.groonga.org/ubuntu/ $(lsb_release --short --codename) universe" | sudo tee /etc/apt/sources.list.d/groonga.list
@@ -54,14 +57,4 @@ Here are open source softwares that use groonga on Travis CI:
   * `nroonga <http://nroonga.github.com/>`_ (node.js bindings)
 
     * `nroonga on Travis CI <http://travis-ci.org/#!/nroonga/nroonga>`_
-    * `.travis.yml for nroong <https://github.com/nroonga/nroonga/blob/master/.travis.yml>`_
-
-.. rubric:: Footnotes
-
-.. [#environment] See `Travis CI: About Travis CI Environment
-   <http://about.travis-ci.org/docs/user/ci-environment/>`_ for more
-   details.
-.. [#build-configuration] See `Travis CI: Conifugration your Travis CI
-   build with .travis.yml
-   <http://about.travis-ci.org/docs/user/build-configuration/>`_ for
-   more details.
+    * `.travis.yml for nroonga <https://github.com/nroonga/nroonga/blob/master/.travis.yml>`_
