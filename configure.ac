@@ -682,9 +682,14 @@ if test "x$RUBY" = "xno"; then
   RUBY=
 else
   if test "x$RUBY" = "xyes"; then
-    AC_PATH_PROGS(RUBY, [ruby1.9 ruby19 ruby1.9.1], ruby19-not-found)
+    AC_PATH_PROGS(RUBY, [ruby1.9 ruby19 ruby1.9.1 ruby], ruby19-not-found)
     if test "$RUBY" != "ruby19-not-found"; then
-      ac_cv_ruby_available="yes"
+      ruby_version="`$RUBY --version`"
+      if echo "$ruby_version" | grep -q -- 'ruby 1\.9'; then
+        ac_cv_ruby_available="yes"
+      else
+        AC_MSG_WARN([$RUBY isn't Ruby 1.9 ($ruby_version)])
+      fi
     fi
   else
     ruby_not_found_warning_message="$RUBY is not found. Disable HTTP test."
