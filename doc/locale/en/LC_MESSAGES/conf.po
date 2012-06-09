@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-28 11:36+0900\n"
+"POT-Creation-Date: 2012-06-09 20:32+0900\n"
 "PO-Revision-Date: 2012-04-28 11:37+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -17,15 +17,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../../../source/conf.py:166
+#: ../../../source/conf.py:153
 #, python-format
 msgid "%(project)s v%(release)s documentation"
 msgstr "%(project)s v%(release)s documentation"
 
-#: ../../../source/conf.py:240 ../../../source/conf.py:283
+#: ../../../source/conf.py:227 ../../../source/conf.py:270
 msgid "groonga documentation"
 msgstr "groonga documentation"
 
-#: ../../../source/conf.py:266
+#: ../../../source/conf.py:253
 msgid "groonga project"
 msgstr "groonga project"

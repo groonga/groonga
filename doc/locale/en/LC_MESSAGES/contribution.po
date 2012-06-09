@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 2.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-05-21 14:05\n"
+"POT-Creation-Date: 2012-06-09 20:32\n"
 "PO-Revision-Date: 2012-04-28 11:37+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -714,16 +714,16 @@ msgstr ""
 # 5b8840373e5e4025a2a76a47f6b37c11
 #: ../../../source/contribution/development/release.txt:84
 #, fuzzy
-msgid "以下のコマンドを実行して署名を行います。::"
+msgid "以下のコマンドを実行して署名を行います。(途中の選択肢は省略)::"
 msgstr "以下のコマンドでpdfが作成されます。::"
 
 # 739e5432c6a04165b13470838d774a42
-#: ../../../source/contribution/development/release.txt:143
+#: ../../../source/contribution/development/release.txt:93
 msgid "変更点のまとめ"
 msgstr ""
 
 # 0f7eb8e37e9044538bd6ef7ddf748039
-#: ../../../source/contribution/development/release.txt:145
+#: ../../../source/contribution/development/release.txt:95
 msgid ""
 "前回リリース時からの変更点をdoc/source/news.txtにまとめます。 ここでまとめた"
 "内容についてはリリースアナウンスにも使用します。"
@@ -731,57 +731,57 @@ msgstr ""
 
 # bd7c3109aad24828b4ba0b8d8d8c2892
 # 0e1818e0a8c4443a8e2c0482427e7ec5
-#: ../../../source/contribution/development/release.txt:148
+#: ../../../source/contribution/development/release.txt:98
 #, fuzzy
 msgid "前回リリースからの変更履歴を参照するには以下のコマンドを実行します。::"
 msgstr "groongaのトップディレクトリで、以下のコマンドを実行します。::"
 
 # 7851b1f5d6a54939ad4312d36f8ff034
-#: ../../../source/contribution/development/release.txt:152
+#: ../../../source/contribution/development/release.txt:102
 msgid ""
 "ログを^commitで検索しながら、以下の基準を目安として変更点を追記してい きま"
 "す。"
 msgstr ""
 
 # 88ea44b77a4641e0925054901411ba73
-#: ../../../source/contribution/development/release.txt:155
+#: ../../../source/contribution/development/release.txt:105
 msgid "含めるもの"
 msgstr ""
 
 # 02f9eb852d9a475590cf580efbfda077
-#: ../../../source/contribution/development/release.txt:157
+#: ../../../source/contribution/development/release.txt:107
 msgid "ユーザへ影響するような変更"
 msgstr ""
 
 # b9cc9e2b39f4494eb1aa953379cc8a2e
-#: ../../../source/contribution/development/release.txt:158
+#: ../../../source/contribution/development/release.txt:108
 msgid "互換性がなくなるような変更"
 msgstr ""
 
 # 3b9729d676af4f8d86fc9da08657701a
-#: ../../../source/contribution/development/release.txt:160
+#: ../../../source/contribution/development/release.txt:110
 msgid "含めないもの"
 msgstr ""
 
 # 1481d121efd04c708d152daace33955f
-#: ../../../source/contribution/development/release.txt:162
+#: ../../../source/contribution/development/release.txt:112
 msgid "内部的な変更(変数名の変更やらリファクタリング)"
 msgstr ""
 
 # f4e7738055af44e1a99d828f25e7c8c6
-#: ../../../source/contribution/development/release.txt:166
+#: ../../../source/contribution/development/release.txt:116
 msgid "groongaのウェブサイトの取得"
 msgstr ""
 
 # 02e55b401d174306b98eecc810231795
-#: ../../../source/contribution/development/release.txt:168
+#: ../../../source/contribution/development/release.txt:118
 msgid ""
 "groongaのウェブサイトのソースはgroonga同様にgithubにリポジトリを置いて いま"
 "す。"
 msgstr ""
 
 # d30a7186a03b405da90b80359f753ad8
-#: ../../../source/contribution/development/release.txt:171
+#: ../../../source/contribution/development/release.txt:121
 msgid ""
 "リリース作業では後述するコマンド(make update-latest-release)にてトップページ"
 "のバージョンを 置き換えることができるようになっています。"
@@ -789,24 +789,24 @@ msgstr ""
 
 # bd7c3109aad24828b4ba0b8d8d8c2892
 # 0e1818e0a8c4443a8e2c0482427e7ec5
-#: ../../../source/contribution/development/release.txt:174
+#: ../../../source/contribution/development/release.txt:124
 #, fuzzy
 msgid ""
 "groongaのウェブサイトのソースコードは以下コマンドにてのように取得します。::"
 msgstr "groongaのトップディレクトリで、以下のコマンドを実行します。::"
 
 # 4923c8444e644174bab8883f3ca5ac14
-#: ../../../source/contribution/development/release.txt:178
+#: ../../../source/contribution/development/release.txt:128
 msgid "これで、~/work/groonga/groonga.github.comにソースを取得できます。"
 msgstr ""
 
 # c16e978ac05e4b1396086429d9d2274a
-#: ../../../source/contribution/development/release.txt:181
+#: ../../../source/contribution/development/release.txt:131
 msgid "configureスクリプトの生成"
 msgstr ""
 
 # 13a59bdca2d842de9ff4d50d9a671987
-#: ../../../source/contribution/development/release.txt:183
+#: ../../../source/contribution/development/release.txt:133
 msgid ""
 "ソースコードをcloneした時点ではconfigureスクリプトが含まれておらず そのまま"
 "makeコマンドにてビルドすることができません。"
@@ -814,50 +814,50 @@ msgstr ""
 
 # bd7c3109aad24828b4ba0b8d8d8c2892
 # 0e1818e0a8c4443a8e2c0482427e7ec5
-#: ../../../source/contribution/development/release.txt:186
+#: ../../../source/contribution/development/release.txt:136
 #, fuzzy
 msgid ""
 "groongaのリリース作業ディレクトリでautogen.shを以下のように実行します。::"
 msgstr "groongaのトップディレクトリで、以下のコマンドを実行します。::"
 
 # 7541cc1867e4403185eff3e2950f7257
-#: ../../../source/contribution/development/release.txt:190
+#: ../../../source/contribution/development/release.txt:140
 msgid "このコマンドの実行により、configureスクリプトが生成されます。"
 msgstr ""
 
 # f1cbd3d9c76a48378c739e28786359b5
-#: ../../../source/contribution/development/release.txt:193
+#: ../../../source/contribution/development/release.txt:143
 msgid "configureスクリプトの実行"
 msgstr ""
 
 # d445bbee243d4006872fd49f9f216eaf
-#: ../../../source/contribution/development/release.txt:195
+#: ../../../source/contribution/development/release.txt:145
 msgid "Makefileを生成するためにconfigureスクリプトを実行します。"
 msgstr ""
 
 # 50d5d1e6820b4aada27a1bf896cddb9b
-#: ../../../source/contribution/development/release.txt:197
+#: ../../../source/contribution/development/release.txt:147
 msgid ""
 "リリース用にビルドするためには以下のオプションを指定してconfigureを実行し ま"
 "す。::"
 msgstr ""
 
 # 1e51922ca5bd40a49416c58c33ca7bae
-#: ../../../source/contribution/development/release.txt:202
+#: ../../../source/contribution/development/release.txt:152
 msgid ""
 "configureオプションである--with-groonga-github-com-pathにはgroongaのウェ ブサ"
 "イトのリポジトリをcloneした場所を指定します。"
 msgstr ""
 
 # 996dfa180c2046a9bdd98a0624e710fe
-#: ../../../source/contribution/development/release.txt:205
+#: ../../../source/contribution/development/release.txt:155
 msgid ""
 "以下のようにgroongaのソースコードをcloneした先からの相対パスを指定することも"
 "できます。::"
 msgstr ""
 
 # 2f9599bd619147f2a51eaa53651a6002
-#: ../../../source/contribution/development/release.txt:209
+#: ../../../source/contribution/development/release.txt:159
 msgid ""
 "あらかじめpackagesユーザでpackages.groonga.orgにsshログインできることを 確認"
 "しておいてください。"
@@ -865,18 +865,18 @@ msgstr ""
 
 # bd7c3109aad24828b4ba0b8d8d8c2892
 # 0e1818e0a8c4443a8e2c0482427e7ec5
-#: ../../../source/contribution/development/release.txt:212
+#: ../../../source/contribution/development/release.txt:162
 #, fuzzy
 msgid "ログイン可能であるかの確認は以下のようにコマンドを実行して行います。::"
 msgstr "groongaのトップディレクトリで、以下のコマンドを実行します。::"
 
 # 380e09326b2c42e9bd7c0f7a5806c34b
-#: ../../../source/contribution/development/release.txt:217
+#: ../../../source/contribution/development/release.txt:167
 msgid "make update-latest-releaseの実行"
 msgstr ""
 
 # 3e2c5e0528c94c388cb202cbf60df1d9
-#: ../../../source/contribution/development/release.txt:219
+#: ../../../source/contribution/development/release.txt:169
 msgid ""
 "make update-latest-releaseコマンドでは、 OLD_RELEASE_DATEに前回のリリースの日"
 "付を、NEW_RELEASE_DATEに次回リリー スの日付を指定します。"
@@ -884,13 +884,13 @@ msgstr ""
 
 # bd7c3109aad24828b4ba0b8d8d8c2892
 # 0e1818e0a8c4443a8e2c0482427e7ec5
-#: ../../../source/contribution/development/release.txt:223
+#: ../../../source/contribution/development/release.txt:173
 #, fuzzy
 msgid "2.0.2のリリースを行った際は以下のコマンドを実行しました。:: ::"
 msgstr "groongaのトップディレクトリで、以下のコマンドを実行します。::"
 
 # ef726d588f824d33886388f2613ef5dd
-#: ../../../source/contribution/development/release.txt:228
+#: ../../../source/contribution/development/release.txt:178
 msgid ""
 "これにより、clone済みのgroongaのWebサイトのトップページのソース (index.html,"
 "ja/index.html)やRPMパッケージのspecファイルのバージョン表記などが更新されま"
@@ -898,19 +898,19 @@ msgid ""
 msgstr ""
 
 # 41182f1f6c564c179bb0b7e91ea6323d
-#: ../../../source/contribution/development/release.txt:232
+#: ../../../source/contribution/development/release.txt:182
 msgid ""
 "このとき更新されるspecファイルは現在リリースする人の名前が固定となっているの"
 "でリリース作業後にカスタマイズ指定可能なように修正を入れる"
 msgstr ""
 
 # a96cc6a6715f4161a78eeb3100fc9897
-#: ../../../source/contribution/development/release.txt:235
+#: ../../../source/contribution/development/release.txt:185
 msgid "make update-filesの実行"
 msgstr ""
 
 # 486fb9ac67924d2cb4272e1ac00b5e5a
-#: ../../../source/contribution/development/release.txt:237
+#: ../../../source/contribution/development/release.txt:187
 msgid ""
 "ロケールメッセージの更新や変更されたファイルのリスト等を更新するために 以下の"
 "コマンドを実行します。(このコマンドを実行するにはあらかじめ sphinxのインス"
@@ -918,119 +918,119 @@ msgid ""
 msgstr ""
 
 # 08bf3bd3a6ae4ff9a82cc7fab7dc4732
-#: ../../../source/contribution/development/release.txt:243
+#: ../../../source/contribution/development/release.txt:193
 msgid ""
 "make update-filesを実行すると新規に追加されたファイルなどが 各種.amファイルへ"
 "とリストアップされます。"
 msgstr ""
 
 # cce586bfd7d14d55acfc2e9c18e77444
-#: ../../../source/contribution/development/release.txt:246
+#: ../../../source/contribution/development/release.txt:196
 msgid "リリースに必要なファイルですので漏れなくコミットします。"
 msgstr ""
 
 # d97a9010e5914000aaafd4d41e8a69dd
-#: ../../../source/contribution/development/release.txt:249
+#: ../../../source/contribution/development/release.txt:199
 msgid "make update-poの実行"
 msgstr ""
 
 # 6090fc4519f34d51807cd3c453d2d3e0
-#: ../../../source/contribution/development/release.txt:251
+#: ../../../source/contribution/development/release.txt:201
 msgid ""
 "ドキュメントの最新版と各国語版の内容を同期するために、 poファイルの更新を以下"
 "のコマンドにて実行します。::"
 msgstr ""
 
 # 3d4aaea863a64a128498cc15f688ec1f
-#: ../../../source/contribution/development/release.txt:256
+#: ../../../source/contribution/development/release.txt:206
 msgid ""
 "make update-poを実行すると、doc/locale/ja/LC_MESSAGES以下の各種.poファ イルが"
 "更新されます。"
 msgstr ""
 
 # fca4e7680726418f9627f88a0251fd80
-#: ../../../source/contribution/development/release.txt:260
+#: ../../../source/contribution/development/release.txt:210
 msgid "poファイルの翻訳"
 msgstr ""
 
 # 989bef178e3b4e15a26ad5762b1443ad
-#: ../../../source/contribution/development/release.txt:262
+#: ../../../source/contribution/development/release.txt:212
 msgid "make update-poコマンドの実行により更新した各種.poファイルを翻訳します。"
 msgstr ""
 
 # bd7c3109aad24828b4ba0b8d8d8c2892
 # 0e1818e0a8c4443a8e2c0482427e7ec5
-#: ../../../source/contribution/development/release.txt:264
+#: ../../../source/contribution/development/release.txt:214
 #, fuzzy
 msgid "翻訳結果をHTMLで確認するために、以下のコマンドを実行します。::"
 msgstr "groongaのトップディレクトリで、以下のコマンドを実行します。::"
 
 # 144241e7a4144264ac4ad7e1719d9feb
-#: ../../../source/contribution/development/release.txt:269
+#: ../../../source/contribution/development/release.txt:219
 msgid "確認が完了したら、翻訳済みpoファイルをコミットします。"
 msgstr ""
 
 # bf62c0e688934a4797f8fd0bd042c63f
-#: ../../../source/contribution/development/release.txt:273
+#: ../../../source/contribution/development/release.txt:223
 msgid "リリース用アーカイブファイルの作成"
 msgstr ""
 
 # 1d5230df65124c809421a8f27e23c3a6
-#: ../../../source/contribution/development/release.txt:275
+#: ../../../source/contribution/development/release.txt:225
 msgid ""
 "リリース用のソースアーカイブファイルを作成するために 以下のコマンドをgroonga."
 "clean直下で実行します。::"
 msgstr ""
 
 # 9d060c0abc0f475694b41b4b7131cc82
-#: ../../../source/contribution/development/release.txt:280
+#: ../../../source/contribution/development/release.txt:230
 msgid "これによりgroonga.clean/groonga-(バージョン).tar.gzが作成されます。"
 msgstr ""
 
 # 2168ddf7cf0e45cfb27ac79f7ecf4d0c
-#: ../../../source/contribution/development/release.txt:283
+#: ../../../source/contribution/development/release.txt:233
 msgid "パッケージのビルド"
 msgstr ""
 
 # 90d2448a21f14930a2d1aa361db667bd
-#: ../../../source/contribution/development/release.txt:285
+#: ../../../source/contribution/development/release.txt:235
 msgid ""
 "リリース用のアーカイブファイルができたので、 パッケージ化する作業を行います。"
 msgstr ""
 
 # 3856e8fef3d1405faa92c5eb0011f57a
-#: ../../../source/contribution/development/release.txt:288
+#: ../../../source/contribution/development/release.txt:238
 msgid "パッケージ化作業は以下の3種類を対象に行います。"
 msgstr ""
 
 # beff585ee61d4da6bfa0021e4cf77e8d
-#: ../../../source/contribution/development/release.txt:290
+#: ../../../source/contribution/development/release.txt:240
 msgid "Debian系(.deb)"
 msgstr ""
 
 # 3d905311326c4b17bb5fdfe446ff87f4
-#: ../../../source/contribution/development/release.txt:291
+#: ../../../source/contribution/development/release.txt:241
 msgid "Red Hat系(.rpm)"
 msgstr ""
 
 # 53f87c7c95f2475696a3c6e87bbf1f4a
-#: ../../../source/contribution/development/release.txt:292
+#: ../../../source/contribution/development/release.txt:242
 msgid "Windows系(.exe,.zip)"
 msgstr ""
 
 # a87b59ac56934f5fab4c650c58a14404
-#: ../../../source/contribution/development/release.txt:294
+#: ../../../source/contribution/development/release.txt:244
 msgid "パッケージのビルドではいくつかのサブタスクから構成されています。"
 msgstr ""
 
 # 4aa110e55829456f87619db203b041c8
-#: ../../../source/contribution/development/release.txt:297
+#: ../../../source/contribution/development/release.txt:247
 msgid "ビルド用パッケージのダウンロード"
 msgstr ""
 
 # bd7c3109aad24828b4ba0b8d8d8c2892
 # 0e1818e0a8c4443a8e2c0482427e7ec5
-#: ../../../source/contribution/development/release.txt:299
+#: ../../../source/contribution/development/release.txt:249
 #, fuzzy
 msgid ""
 "debパッケージのビルドに必要なパッケージをダウンロードするには 以下のコマンド"
@@ -1038,7 +1038,7 @@ msgid ""
 msgstr "groongaのトップディレクトリで、以下のコマンドを実行します。::"
 
 # 5c4ce32234f343ce8e1da0ba229c6a59
-#: ../../../source/contribution/development/release.txt:305
+#: ../../../source/contribution/development/release.txt:255
 msgid ""
 "これにより、lucid以降の関連する.debパッケージやソースアーカイブなどがカ レン"
 "トディレクトリ以下へとダウンロードされます。"
@@ -1046,7 +1046,7 @@ msgstr ""
 
 # bd7c3109aad24828b4ba0b8d8d8c2892
 # 0e1818e0a8c4443a8e2c0482427e7ec5
-#: ../../../source/contribution/development/release.txt:308
+#: ../../../source/contribution/development/release.txt:258
 #, fuzzy
 msgid ""
 "rpmパッケージのビルドに必要なパッケージをダウンロードするには 以下のコマンド"
@@ -1054,7 +1054,7 @@ msgid ""
 msgstr "groongaのトップディレクトリで、以下のコマンドを実行します。::"
 
 # d9d101c3d76b47d099add3c0d80b5f20
-#: ../../../source/contribution/development/release.txt:314
+#: ../../../source/contribution/development/release.txt:264
 msgid ""
 "これにより、groongaやMySQLのRPM/SRPMパッケージなどがカレントディレクト リ以下"
 "へとダウンロードされます。"
@@ -1062,7 +1062,7 @@ msgstr ""
 
 # bd7c3109aad24828b4ba0b8d8d8c2892
 # 0e1818e0a8c4443a8e2c0482427e7ec5
-#: ../../../source/contribution/development/release.txt:317
+#: ../../../source/contribution/development/release.txt:267
 #, fuzzy
 msgid ""
 "windowsパッケージのビルドに必要なパッケージをダウンロードするには 以下のコマ"
@@ -1070,7 +1070,7 @@ msgid ""
 msgstr "groongaのトップディレクトリで、以下のコマンドを実行します。::"
 
 # 191486d5a5854084b6d4d6c509ef3e33
-#: ../../../source/contribution/development/release.txt:323
+#: ../../../source/contribution/development/release.txt:273
 msgid ""
 "これにより、groongaのインストーラやzipアーカイブがカレントディレクトリ 以下へ"
 "とダウンロードされます。"
@@ -1078,7 +1078,7 @@ msgstr ""
 
 # bd7c3109aad24828b4ba0b8d8d8c2892
 # 0e1818e0a8c4443a8e2c0482427e7ec5
-#: ../../../source/contribution/development/release.txt:326
+#: ../../../source/contribution/development/release.txt:276
 #, fuzzy
 msgid ""
 "sourceパッケージに必要なものをダウンロードするには以下のコマンドを 実行しま"
@@ -1086,20 +1086,20 @@ msgid ""
 msgstr "groongaのトップディレクトリで、以下のコマンドを実行します。::"
 
 # a124ea5745b34367a47ab536a6ab89b1
-#: ../../../source/contribution/development/release.txt:332
+#: ../../../source/contribution/development/release.txt:282
 msgid ""
 "これにより過去にリリースしたソースアーカイブ(.tar.gz)が packages/source/files"
 "ディレクトリ以下へとダウンロードされます。"
 msgstr ""
 
 # 6c65a1b5191f483b9b7c65f3ec0b8c25
-#: ../../../source/contribution/development/release.txt:337
+#: ../../../source/contribution/development/release.txt:287
 msgid "Debian系パッケージのビルド"
 msgstr ""
 
 # bd7c3109aad24828b4ba0b8d8d8c2892
 # 0e1818e0a8c4443a8e2c0482427e7ec5
-#: ../../../source/contribution/development/release.txt:339
+#: ../../../source/contribution/development/release.txt:289
 #, fuzzy
 msgid ""
 "groongaのpackages/aptサブディレクトリに移動して、以下のコマンドを実行しま"
@@ -1108,8 +1108,8 @@ msgstr "groongaのトップディレクトリで、以下のコマンドを実�
 
 # 6c965c961c554395b924356d6b090481
 # 902652c3db96417ea89bf3fba86af495
+#: ../../../source/contribution/development/release.txt:294
 #: ../../../source/contribution/development/release.txt:344
-#: ../../../source/contribution/development/release.txt:394
 msgid ""
 "make build PALALLEL=yesコマンドを実行すると、ディストリビューションの リリー"
 "スとアーキテクチャの組み合わせでビルドを平行して行うことができま す。"
@@ -1117,66 +1117,66 @@ msgstr ""
 
 # afd697bf5f984c3aa937e20d1236049c
 # c6f9b49dd9774bbc8494cd92078bcc3a
+#: ../../../source/contribution/development/release.txt:298
 #: ../../../source/contribution/development/release.txt:348
-#: ../../../source/contribution/development/release.txt:398
 msgid "現在サポートされているのは以下の通りです。"
 msgstr ""
 
 # fcaec813de964b0296d2aa3f466f0b11
-#: ../../../source/contribution/development/release.txt:350
+#: ../../../source/contribution/development/release.txt:300
 msgid "squeeze i386/amd64"
 msgstr ""
 
 # d1fedd4336cb446ea716f3e3624ab19c
-#: ../../../source/contribution/development/release.txt:351
+#: ../../../source/contribution/development/release.txt:301
 msgid "wheezy i386/amd64"
 msgstr ""
 
 # 157fb5e5710b48e5b0f6bf8ad3b589ce
-#: ../../../source/contribution/development/release.txt:352
+#: ../../../source/contribution/development/release.txt:302
 msgid "unstable i386/amd64"
 msgstr ""
 
 # 73201da36dac4cdfb813a92373f2b91f
-#: ../../../source/contribution/development/release.txt:353
+#: ../../../source/contribution/development/release.txt:303
 msgid "lucid i386/amd64"
 msgstr ""
 
 # 1c1ad050181446ea8b03f27e2fdc1f32
-#: ../../../source/contribution/development/release.txt:354
+#: ../../../source/contribution/development/release.txt:304
 msgid "natty i386/amd64"
 msgstr ""
 
 # 8deab6c0599949df960ac55668bc3f97
-#: ../../../source/contribution/development/release.txt:355
+#: ../../../source/contribution/development/release.txt:305
 msgid "oneiric i386/amd64"
 msgstr ""
 
 # a1d9f4ce0de04029b6bbfd9e5175e7ed
-#: ../../../source/contribution/development/release.txt:356
+#: ../../../source/contribution/development/release.txt:306
 msgid "precise i386/amd64"
 msgstr ""
 
 # 96548567af284bc7b6eb7b443c7a8e97
-#: ../../../source/contribution/development/release.txt:359
+#: ../../../source/contribution/development/release.txt:309
 msgid ""
 "unstable i386/amd64はpreciseに構築したchroot環境ではパッケージのビ ルドが行え"
 "ることを確認できていないことに注意。"
 msgstr ""
 
 # 2c83775daeba46249e0b385b511f5aad
-#: ../../../source/contribution/development/release.txt:362
+#: ../../../source/contribution/development/release.txt:312
 msgid ""
 "正常にビルドが終了すると以下のディレクトリへと.debパッケージが生成され ます。"
 msgstr ""
 
 # 1fd960d6e34941528f21e46fb2689ed1
-#: ../../../source/contribution/development/release.txt:365
+#: ../../../source/contribution/development/release.txt:315
 msgid "packages/apt/packages/debian/pool/squeeze/main/g/groonga"
 msgstr ""
 
 # f2bad340064f4f9da546cfed1c0fac0c
-#: ../../../source/contribution/development/release.txt:367
+#: ../../../source/contribution/development/release.txt:317
 msgid ""
 "make build ですんなりビルドできないこともあります。 その場合にはbuildのサブタ"
 "スクであるbuild-package-debと build-repository-debを個別に実行して問題が発生"
@@ -1185,15 +1185,15 @@ msgstr ""
 
 # bd7c3109aad24828b4ba0b8d8d8c2892
 # 0e1818e0a8c4443a8e2c0482427e7ec5
-#: ../../../source/contribution/development/release.txt:373
+#: ../../../source/contribution/development/release.txt:323
 #, fuzzy
 msgid "生成したパッケージへの署名を行うには以下のコマンドを実行します。::"
 msgstr "groongaのトップディレクトリで、以下のコマンドを実行します。::"
 
 # bd7c3109aad24828b4ba0b8d8d8c2892
 # 0e1818e0a8c4443a8e2c0482427e7ec5
-#: ../../../source/contribution/development/release.txt:377
-#: ../../../source/contribution/development/release.txt:422
+#: ../../../source/contribution/development/release.txt:327
+#: ../../../source/contribution/development/release.txt:372
 #, fuzzy
 msgid ""
 "リリース対象のファイルをリポジトリに反映するには以下のコマンドを実行しま"
@@ -1202,19 +1202,19 @@ msgstr "groongaのトップディレクトリで、以下のコマンドを実�
 
 # bd7c3109aad24828b4ba0b8d8d8c2892
 # 0e1818e0a8c4443a8e2c0482427e7ec5
-#: ../../../source/contribution/development/release.txt:381
+#: ../../../source/contribution/development/release.txt:331
 #, fuzzy
 msgid "リポジトリにGnuPGで署名を行うために以下のコマンドを実行します。::"
 msgstr "groongaのトップディレクトリで、以下のコマンドを実行します。::"
 
 # 9cd864f361804f5eae011367414fb636
-#: ../../../source/contribution/development/release.txt:387
+#: ../../../source/contribution/development/release.txt:337
 msgid "Red Hat系パッケージのビルド"
 msgstr ""
 
 # bd7c3109aad24828b4ba0b8d8d8c2892
 # 0e1818e0a8c4443a8e2c0482427e7ec5
-#: ../../../source/contribution/development/release.txt:389
+#: ../../../source/contribution/development/release.txt:339
 #, fuzzy
 msgid ""
 "groongaのpackages/yumサブディレクトリに移動して、以下のコマンドを実行しま"
@@ -1222,208 +1222,208 @@ msgid ""
 msgstr "groongaのトップディレクトリで、以下のコマンドを実行します。::"
 
 # de30f88ffbb743839765fe0792cd6dc4
-#: ../../../source/contribution/development/release.txt:400
+#: ../../../source/contribution/development/release.txt:350
 msgid "centos-5 i386/x86_64"
 msgstr ""
 
 # bda8bb5d14d14107add6539115c0153e
-#: ../../../source/contribution/development/release.txt:401
+#: ../../../source/contribution/development/release.txt:351
 msgid "centos-6 i386/x86_64"
 msgstr ""
 
 # 49635c722ec54670935c071420271334
-#: ../../../source/contribution/development/release.txt:402
+#: ../../../source/contribution/development/release.txt:352
 msgid "fedora-16 i386/x86_64"
 msgstr ""
 
 # 70128245f5084611bd181f4067ecd8a6
-#: ../../../source/contribution/development/release.txt:404
+#: ../../../source/contribution/development/release.txt:354
 msgid "ビルドが正常終了すると以下のディレクトリにRPMが生成されます。"
 msgstr ""
 
 # ec4e0a0f55e5401da6ee5da78ac8ed9a
-#: ../../../source/contribution/development/release.txt:406
+#: ../../../source/contribution/development/release.txt:356
 msgid "packages/yum/centos/5/i386/Packages"
 msgstr ""
 
 # 955d08adfd2849f7abaf921dd6d7865c
-#: ../../../source/contribution/development/release.txt:407
+#: ../../../source/contribution/development/release.txt:357
 msgid "packages/yum/centos/5/x86_64/Packages"
 msgstr ""
 
 # 0701741013544002913d11442359d658
-#: ../../../source/contribution/development/release.txt:408
+#: ../../../source/contribution/development/release.txt:358
 msgid "packages/yum/centos/6/i386/Packages"
 msgstr ""
 
 # 21d55c86f06946ff872177940089d362
-#: ../../../source/contribution/development/release.txt:409
+#: ../../../source/contribution/development/release.txt:359
 msgid "packages/yum/centos/6/x86_64/Packages"
 msgstr ""
 
 # f6ce8c61a2c545e8b84e4834204fdeed
-#: ../../../source/contribution/development/release.txt:410
+#: ../../../source/contribution/development/release.txt:360
 msgid "packages/yum/fedora/16/i386/Packages"
 msgstr ""
 
 # 7e7ac5ea687643b0ad63acc44000a35a
-#: ../../../source/contribution/development/release.txt:411
+#: ../../../source/contribution/development/release.txt:361
 msgid "packages/yum/fedora/16/x86_64/Packages"
 msgstr ""
 
 # bd7c3109aad24828b4ba0b8d8d8c2892
 # 0e1818e0a8c4443a8e2c0482427e7ec5
-#: ../../../source/contribution/development/release.txt:414
+#: ../../../source/contribution/development/release.txt:364
 #, fuzzy
 msgid "リポジトリを作成するには以下のコマンドを実行します。::"
 msgstr "groongaのトップディレクトリで、以下のコマンドを実行します。::"
 
 # bd7c3109aad24828b4ba0b8d8d8c2892
 # 0e1818e0a8c4443a8e2c0482427e7ec5
-#: ../../../source/contribution/development/release.txt:418
+#: ../../../source/contribution/development/release.txt:368
 #, fuzzy
 msgid "リリース対象のRPMに署名を行うには以下のコマンドを実行します。::"
 msgstr "groongaのトップディレクトリで、以下のコマンドを実行します。::"
 
 # 34b04243159646299d25e6cff4d85a73
-#: ../../../source/contribution/development/release.txt:428
+#: ../../../source/contribution/development/release.txt:378
 msgid "Windows用パッケージのビルド"
 msgstr ""
 
 # bd7c3109aad24828b4ba0b8d8d8c2892
 # 0e1818e0a8c4443a8e2c0482427e7ec5
-#: ../../../source/contribution/development/release.txt:430
+#: ../../../source/contribution/development/release.txt:380
 #, fuzzy
 msgid ""
 "packages/windowsサブディレクトリに移動して、以下のコマンドを実行します。::"
 msgstr "groongaのトップディレクトリで、以下のコマンドを実行します。::"
 
 # 6ed7744c7a5740fd8fee07d83331787b
-#: ../../../source/contribution/development/release.txt:437
+#: ../../../source/contribution/development/release.txt:387
 msgid ""
 "make releaseを実行することでbuildからuploadまで一気に実行することがで きます"
 "が、途中で失敗することもあるので順に実行することをおすすめします。"
 msgstr ""
 
-# b9b466e17ac94244ae5ed0232645e598
-#: ../../../source/contribution/development/release.txt:440
+# dd39618ba9f6405683e002f5278a5edf
+#: ../../../source/contribution/development/release.txt:390
 msgid ""
-"make buildが正常に終了するとクロスコンパイルし dist-x64/dist-x86ディレクトリ"
-"以下にx64/x86バイナリを作成します。"
+"make buildでクロスコンパイルを行います。 正常に終了するとdist-x64/dist-x86"
+"ディレクトリ以下にx64/x86バイナリを作成します。"
 msgstr ""
 
 # 51f88748fe2e4cd988a2e29b98f8ff9a
-#: ../../../source/contribution/development/release.txt:443
+#: ../../../source/contribution/development/release.txt:393
 msgid ""
 "make packageが正常に終了するとzipアーカイブをfilesディレクトリ以下に作成しま"
 "す。"
 msgstr ""
 
 # 1fc1943c1c4a4d36bd3d52e5e265de00
-#: ../../../source/contribution/development/release.txt:445
+#: ../../../source/contribution/development/release.txt:395
 msgid ""
 "make installerが正常に終了するとWindowsインストーラをfilesディレクトリ以 下に"
 "作成します。"
 msgstr ""
 
 # 2d6724471de741a6ac7fb6b0f9f4cf35
-#: ../../../source/contribution/development/release.txt:449
+#: ../../../source/contribution/development/release.txt:399
 msgid "パッケージの動作確認"
 msgstr ""
 
 # 10994d9326d5438daf64ed1d46175348
-#: ../../../source/contribution/development/release.txt:451
+#: ../../../source/contribution/development/release.txt:401
 msgid "ビルドしたパッケージに対しリリース前の動作確認を行います。"
 msgstr ""
 
 # 727bf6f14d0a428ca12e2a18a3db663a
-#: ../../../source/contribution/development/release.txt:453
+#: ../../../source/contribution/development/release.txt:403
 msgid ""
 "Debian系もしくはRed Hat系の場合には本番環境へとアップロードする前に ローカル"
 "のaptないしyumのリポジトリを参照して正常に更新できることを 確認します。"
 msgstr ""
 
 # c3d3837cc92244798c852e188b397045
-#: ../../../source/contribution/development/release.txt:457
+#: ../../../source/contribution/development/release.txt:407
 msgid ""
 "ここでは以下のようにrubyを利用してリポジトリをwebサーバ経由で 参照できるよう"
 "にします。::"
 msgstr ""
 
 # d7e88c5f5ba0460fac7f59dfbc14f67a
-#: ../../../source/contribution/development/release.txt:464
+#: ../../../source/contribution/development/release.txt:414
 msgid "grntestの準備"
 msgstr ""
 
 # 3289e4ef78a045da9b7ace8d7f435b26
-#: ../../../source/contribution/development/release.txt:466
+#: ../../../source/contribution/development/release.txt:416
 msgid ""
 "grntestを実行するためにはgroongaのテストデータとgrntestのソースが 必要です。"
 msgstr ""
 
 # bd7c3109aad24828b4ba0b8d8d8c2892
 # 0e1818e0a8c4443a8e2c0482427e7ec5
-#: ../../../source/contribution/development/release.txt:469
+#: ../../../source/contribution/development/release.txt:419
 #, fuzzy
 msgid "まずgroongaのソースを任意のディレクトリへと展開します。::"
 msgstr "groongaのトップディレクトリで、以下のコマンドを実行します。::"
 
 # 77d8d19f852446c6a7f4033ca4e9fd68
-#: ../../../source/contribution/development/release.txt:473
+#: ../../../source/contribution/development/release.txt:423
 msgid ""
 "次にgroongaのtest/functionディレクトリ以下にgrntestのソースを展開します。 つ"
 "まりtest/function/grntestという名前でgrntestのソースを配置します。::"
 msgstr ""
 
 # bd2e2f856a1d48e8bb7eb49e9d8f3646
-#: ../../../source/contribution/development/release.txt:480
+#: ../../../source/contribution/development/release.txt:430
 msgid "grntestの実行方法"
 msgstr ""
 
 # 1063281ba653470d9585bf3aa07eafa6
-#: ../../../source/contribution/development/release.txt:482
+#: ../../../source/contribution/development/release.txt:432
 msgid ""
 "grntestではgroongaコマンドを明示的にしていすることができます。 後述のパッケー"
 "ジごとのgrntestによる動作確認では以下のようにして 実行します。::"
 msgstr ""
 
 # 41984fc1ee264da090d9226e0d1e705c
-#: ../../../source/contribution/development/release.txt:488
+#: ../../../source/contribution/development/release.txt:438
 msgid "最後にgrntestによる実行結果が以下のようにまとめて表示されます。::"
 msgstr ""
 
 # ca4a8392373c435c9aa81ec9f815fb70
-#: ../../../source/contribution/development/release.txt:493
+#: ../../../source/contribution/development/release.txt:443
 #, fuzzy
 msgid "grntestでエラーが発生しないことを確認します。"
 msgstr "v1の値とv2の値が等しくないことを表します。"
 
 # 646d2c9df7634cfa885bb2e5b643efd2
-#: ../../../source/contribution/development/release.txt:497
+#: ../../../source/contribution/development/release.txt:447
 msgid "Debian系の場合"
 msgstr ""
 
 # 826c57d620d643fa88ceba09a40bae73
-#: ../../../source/contribution/development/release.txt:499
+#: ../../../source/contribution/development/release.txt:449
 msgid "Debian系の場合の動作確認手順は以下の通りとなります。"
 msgstr ""
 
 # 1b31d631c46b448b9da1d4c62ef15b15
-#: ../../../source/contribution/development/release.txt:501
+#: ../../../source/contribution/development/release.txt:451
 msgid "旧バージョンをchroot環境へとインストールする"
 msgstr ""
 
 # 3364983ad6bc410f9dbc183b16c97ad4
 # 510db767b0524f2382b4bc922932474b
-#: ../../../source/contribution/development/release.txt:502
-#: ../../../source/contribution/development/release.txt:518
+#: ../../../source/contribution/development/release.txt:452
+#: ../../../source/contribution/development/release.txt:468
 msgid ""
 "chroot環境の/etc/hostsを書き換えてpackages.groonga.orgがホストを 参照するよう"
 "に変更する"
 msgstr ""
 
 # d0f58e0cecbb4dab8dab5ca0eec341bd
-#: ../../../source/contribution/development/release.txt:504
+#: ../../../source/contribution/development/release.txt:454
 msgid ""
 "ホストでwebサーバを起動してドキュメントルートをビルド環境のもの (packages/"
 "apt/packages)に設定する"
@@ -1431,17 +1431,17 @@ msgstr ""
 
 # defbb32c6b1245d69dd1f690e58be143
 # e8213d2fedab4c548f7d57273f6aa489
-#: ../../../source/contribution/development/release.txt:506
-#: ../../../source/contribution/development/release.txt:522
+#: ../../../source/contribution/development/release.txt:456
+#: ../../../source/contribution/development/release.txt:472
 msgid "アップグレード手順を実行する"
 msgstr ""
 
 # 35170759b5a14a34917c974e8ef11ee6
 # 7d365ba5cd7548aea0545262d4be59eb
 # baa8d1992b7c4f8bbc9387ded689a666
-#: ../../../source/contribution/development/release.txt:507
-#: ../../../source/contribution/development/release.txt:523
-#: ../../../source/contribution/development/release.txt:532
+#: ../../../source/contribution/development/release.txt:457
+#: ../../../source/contribution/development/release.txt:473
+#: ../../../source/contribution/development/release.txt:482
 msgid ""
 "grntestのアーカイブを展開してインストールしたバージョンでテストを実 行する"
 msgstr ""
@@ -1449,137 +1449,137 @@ msgstr ""
 # d733908ec9bc46f9b44f2a109a9f2dd2
 # 47b51c3edfa141ac94caf5402f3b3768
 # 1b048df8b6db42a4a74d4009cbd9b072
-#: ../../../source/contribution/development/release.txt:509
-#: ../../../source/contribution/development/release.txt:525
-#: ../../../source/contribution/development/release.txt:534
+#: ../../../source/contribution/development/release.txt:459
+#: ../../../source/contribution/development/release.txt:475
+#: ../../../source/contribution/development/release.txt:484
 msgid "grntestの正常終了を確認する"
 msgstr ""
 
 # 4911bd4f1c9c4e678ac89cf4fd2e6f00
-#: ../../../source/contribution/development/release.txt:513
+#: ../../../source/contribution/development/release.txt:463
 msgid "Red Hat系の場合"
 msgstr ""
 
 # d8bfb902380c40cfa7567a9fb7ad0c95
-#: ../../../source/contribution/development/release.txt:515
+#: ../../../source/contribution/development/release.txt:465
 msgid "Red Hat系の場合の動作確認手順は以下の通りとなります。"
 msgstr ""
 
 # 1501800a25e84b4383f4289bb7e756c8
-#: ../../../source/contribution/development/release.txt:517
+#: ../../../source/contribution/development/release.txt:467
 msgid "旧バージョンをchroot環境へとインストール"
 msgstr ""
 
 # 965d62017a9540048e9dfb6be9f388ca
-#: ../../../source/contribution/development/release.txt:520
+#: ../../../source/contribution/development/release.txt:470
 msgid ""
 "ホストでwebサーバを起動してドキュメントルートをビルド環境のもの (packages/"
 "yum)に設定する"
 msgstr ""
 
 # 3e2c0dcb85f94389acd061d830f4190c
-#: ../../../source/contribution/development/release.txt:529
+#: ../../../source/contribution/development/release.txt:479
 msgid "Windows向けの場合"
 msgstr ""
 
 # 940a528ebe714a8a929f9f476ed10c63
-#: ../../../source/contribution/development/release.txt:531
+#: ../../../source/contribution/development/release.txt:481
 msgid "新規インストール/上書きインストールを行う"
 msgstr ""
 
 # 610889a9f85340c6843ce205678d98b4
-#: ../../../source/contribution/development/release.txt:536
+#: ../../../source/contribution/development/release.txt:486
 msgid "zipアーカイブも同様にしてgrntestを実行し動作確認を行います。"
 msgstr ""
 
 # 97229d1ea46f41e4ba9bbcea28e2950a
-#: ../../../source/contribution/development/release.txt:539
+#: ../../../source/contribution/development/release.txt:489
 msgid "リリースアナウンスの作成"
 msgstr ""
 
 # f6a4efc07c294169864ec9f1f5b0bfaf
-#: ../../../source/contribution/development/release.txt:541
+#: ../../../source/contribution/development/release.txt:491
 msgid "リリースの際にはリリースアナウンスを流して、 groongaを広く通知します。"
 msgstr ""
 
 # c0dd5541cd6c402dab232a65eadcaf7f
-#: ../../../source/contribution/development/release.txt:544
+#: ../../../source/contribution/development/release.txt:494
 msgid ""
 "news.txtに変更点をまとめましたが、それを元にリリースアナウンスを 作成します。"
 msgstr ""
 
 # 92d7bf252d1f461f9e4433a89e2edf08
-#: ../../../source/contribution/development/release.txt:547
+#: ../../../source/contribution/development/release.txt:497
 msgid "リリースアナウンスには以下を含めます。"
 msgstr ""
 
 # 97697f6fee0743c7a129446321fbc9a0
-#: ../../../source/contribution/development/release.txt:549
+#: ../../../source/contribution/development/release.txt:499
 msgid "インストール方法へのリンク"
 msgstr ""
 
 # 0532271325fc43f6a8f1419a4e3a82ab
-#: ../../../source/contribution/development/release.txt:550
+#: ../../../source/contribution/development/release.txt:500
 msgid "リリースのトピック紹介"
 msgstr ""
 
 # 65e3664957aa4ff08c29f1c9208f0097
-#: ../../../source/contribution/development/release.txt:551
+#: ../../../source/contribution/development/release.txt:501
 msgid "リリース変更点へのリンク"
 msgstr ""
 
 # f59c06204cdc4070bbfb45eb6dfb9e6e
-#: ../../../source/contribution/development/release.txt:552
+#: ../../../source/contribution/development/release.txt:502
 msgid "リリース変更点(news.txtの内容)"
 msgstr ""
 
 # 55996c28c4e84d7bb29f53e7fb85b917
-#: ../../../source/contribution/development/release.txt:554
+#: ../../../source/contribution/development/release.txt:504
 msgid ""
 "リリースのトピック紹介では、これからgroongaを使う人へアピールする点や 既存の"
 "バージョンを利用している人がアップグレードする際に必要な 情報を提供します。"
 msgstr ""
 
 # 16854433544b45df81f7974da51fa090
-#: ../../../source/contribution/development/release.txt:558
+#: ../../../source/contribution/development/release.txt:508
 msgid ""
 "非互換な変更が含まれるのであれば、回避方法等の案内を載せることも重要で す。"
 msgstr ""
 
 # 5a1ddebaa84a4d53ba198926f4a85764
-#: ../../../source/contribution/development/release.txt:561
+#: ../../../source/contribution/development/release.txt:511
 msgid "参考までに過去のリリースアナウンスへのリンクを以下に示します。"
 msgstr ""
 
 # bea6b9ffe7db496e86fd1ee993eaba11
-#: ../../../source/contribution/development/release.txt:563
+#: ../../../source/contribution/development/release.txt:513
 msgid "[Groonga-talk] [ANN] groonga 2.0.2"
 msgstr ""
 
 # 4fecfd9194bb4522b8eaf6869edd2bff
-#: ../../../source/contribution/development/release.txt:565
+#: ../../../source/contribution/development/release.txt:515
 msgid "http://sourceforge.net/mailarchive/message.php?msg_id=29195195"
 msgstr ""
 
 # 675822e4f29446c2bf809822045963b2
-#: ../../../source/contribution/development/release.txt:567
+#: ../../../source/contribution/development/release.txt:517
 msgid "[groonga-dev,00794] [ANN] groonga 2.0.2"
 msgstr ""
 
 # 765e494e9bbb45469a5a6ccf6cbaa7f6
-#: ../../../source/contribution/development/release.txt:569
+#: ../../../source/contribution/development/release.txt:519
 msgid ""
 "http://sourceforge.jp/projects/groonga/lists/archive/dev/2012-April/000794."
 "html"
 msgstr ""
 
 # 8cf2751501d74521bcaa8c80f82ab21f
-#: ../../../source/contribution/development/release.txt:573
+#: ../../../source/contribution/development/release.txt:523
 msgid "パッケージのアップロード"
 msgstr ""
 
 # ece19a78837248078049d4fa3f9bae3e
-#: ../../../source/contribution/development/release.txt:575
+#: ../../../source/contribution/development/release.txt:525
 msgid ""
 "動作確認が完了し、Debian系、Red Hat系、Windows向け、ソースコードそ れぞれにお"
 "いてパッケージやアーカイブのアップロードを行います。"
@@ -1587,99 +1587,99 @@ msgstr ""
 
 # bd7c3109aad24828b4ba0b8d8d8c2892
 # 0e1818e0a8c4443a8e2c0482427e7ec5
-#: ../../../source/contribution/development/release.txt:578
+#: ../../../source/contribution/development/release.txt:528
 #, fuzzy
 msgid "Debian系のパッケージのアップロードには以下のコマンドを実行します。::"
 msgstr "groongaのトップディレクトリで、以下のコマンドを実行します。::"
 
 # bd7c3109aad24828b4ba0b8d8d8c2892
 # 0e1818e0a8c4443a8e2c0482427e7ec5
-#: ../../../source/contribution/development/release.txt:583
+#: ../../../source/contribution/development/release.txt:533
 #, fuzzy
 msgid "Red Hat系のパッケージのアップロードには以下のコマンドを実行します。::"
 msgstr "groongaのトップディレクトリで、以下のコマンドを実行します。::"
 
 # bd7c3109aad24828b4ba0b8d8d8c2892
 # 0e1818e0a8c4443a8e2c0482427e7ec5
-#: ../../../source/contribution/development/release.txt:588
+#: ../../../source/contribution/development/release.txt:538
 #, fuzzy
 msgid "Windows向けのパッケージのアップロードには以下のコマンドを実行します。::"
 msgstr "groongaのトップディレクトリで、以下のコマンドを実行します。::"
 
 # bd7c3109aad24828b4ba0b8d8d8c2892
 # 0e1818e0a8c4443a8e2c0482427e7ec5
-#: ../../../source/contribution/development/release.txt:593
+#: ../../../source/contribution/development/release.txt:543
 #, fuzzy
 msgid "ソースアーカイブのアップロードには以下のコマンドを実行します。::"
 msgstr "groongaのトップディレクトリで、以下のコマンドを実行します。::"
 
 # ce94f7f318774101a01f2767b467138e
-#: ../../../source/contribution/development/release.txt:598
+#: ../../../source/contribution/development/release.txt:548
 msgid ""
 "アップロードが正常終了すると、リリース対象のリポジトリデータやパッケージ、"
 "アーカイブ 等がpackages.groonga.orgへと反映されます。"
 msgstr ""
 
 # e08f80a0cd7d465e8ec0bc75872e88e8
-#: ../../../source/contribution/development/release.txt:602
+#: ../../../source/contribution/development/release.txt:552
 msgid "blogroonga(ブログ)の更新"
 msgstr ""
 
 # a278891e6a224bb49f514527a12cae86
-#: ../../../source/contribution/development/release.txt:604
+#: ../../../source/contribution/development/release.txt:554
 msgid ""
 "http://groonga.org/blog/ および http://groonga.org/blog/ にて 公開されている"
 "リリース案内を作成します。"
 msgstr ""
 
 # 8acd296637d047edab85bda411b7a6e6
-#: ../../../source/contribution/development/release.txt:607
+#: ../../../source/contribution/development/release.txt:557
 msgid "基本的にはリリースアナウンスの内容をそのまま記載します。"
 msgstr ""
 
 # b5f09669f796483998d42aa6b7f45997
-#: ../../../source/contribution/development/release.txt:609
+#: ../../../source/contribution/development/release.txt:559
 msgid "cloneしたWebサイトのソースに対して以下のファイルを新規追加します。"
 msgstr ""
 
 # 1620a173d8ee4cf38a9f695eb549ab4f
-#: ../../../source/contribution/development/release.txt:611
+#: ../../../source/contribution/development/release.txt:561
 msgid "groonga.github.com/en/_post/(リリース日)-release.textile"
 msgstr ""
 
 # 0d1a7246e773438bb7582dba4fc0cc96
-#: ../../../source/contribution/development/release.txt:612
+#: ../../../source/contribution/development/release.txt:562
 msgid "groonga.github.com/ja/_post/(リリース日)-release.textile"
 msgstr ""
 
 # 96473f51ec074922ae512e63018839b4
-#: ../../../source/contribution/development/release.txt:615
+#: ../../../source/contribution/development/release.txt:565
 msgid ""
 "編集した内容をpushする前に確認したい場合にはjekyllおよび RedClothが必要で"
 "す。 インストールするには以下のコマンドを実行します。::"
 msgstr ""
 
 # d04fed6e31cd463c9ccced04e2485de4
-#: ../../../source/contribution/development/release.txt:621
+#: ../../../source/contribution/development/release.txt:571
 msgid ""
 "jekyllのインストールを行ったら、以下のコマンドでローカルにwebサーバを 起動し"
 "ます。::"
 msgstr ""
 
 # ba068960fb3e45b7b9a431d56c55e7ca
-#: ../../../source/contribution/development/release.txt:626
+#: ../../../source/contribution/development/release.txt:576
 msgid ""
 "あとはブラウザにてhttp://localhost:4000にアクセスして内容に問題がない かを確"
 "認します。"
 msgstr ""
 
 # 6a52edb5dbfb42ffad913be7d58befb0
-#: ../../../source/contribution/development/release.txt:630
+#: ../../../source/contribution/development/release.txt:580
 msgid "ドキュメントのアップロード"
 msgstr ""
 
 # b32779027e2f4ed5b8c8907385e534fd
-#: ../../../source/contribution/development/release.txt:632
+#: ../../../source/contribution/development/release.txt:582
 msgid ""
 "doc/source以下のドキュメントを更新、翻訳まで完了している状態で、 ドキュメント"
 "のアップロード作業を行います。"
@@ -1687,73 +1687,73 @@ msgstr ""
 
 # bd7c3109aad24828b4ba0b8d8d8c2892
 # 0e1818e0a8c4443a8e2c0482427e7ec5
-#: ../../../source/contribution/development/release.txt:635
+#: ../../../source/contribution/development/release.txt:585
 #, fuzzy
 msgid "そのためにはまず以下のコマンドを実行します。::"
 msgstr "groongaのトップディレクトリで、以下のコマンドを実行します。::"
 
 # 7c995150f9c3484dbca12b99c7abb740
-#: ../../../source/contribution/development/release.txt:639
+#: ../../../source/contribution/development/release.txt:589
 msgid ""
 "これによりcloneしておいたgroonga.github.comのdoc/locale以下に更新した ドキュ"
 "メントがコピーされます。"
 msgstr ""
 
 # 67be12e5964f4ad09219aa40141f1c4f
-#: ../../../source/contribution/development/release.txt:642
+#: ../../../source/contribution/development/release.txt:592
 msgid ""
 "生成されているドキュメントに問題のないことを確認できたら、 コミット、pushして"
 "groonga.orgへと反映します。"
 msgstr ""
 
 # 550c25d399384e87b04c403b0fae3b16
-#: ../../../source/contribution/development/release.txt:646
+#: ../../../source/contribution/development/release.txt:596
 msgid "リリースアナウンス"
 msgstr ""
 
 # 76f333c265af4b64af2813c84def2cd6
-#: ../../../source/contribution/development/release.txt:648
+#: ../../../source/contribution/development/release.txt:598
 msgid "作成したリリースアナウンスをメーリングリストへと流します。"
 msgstr ""
 
 # f2efb3d90fd04e3d8fe97794d3e177b8
-#: ../../../source/contribution/development/release.txt:650
+#: ../../../source/contribution/development/release.txt:600
 msgid "groonga-dev groonga-dev@lists.sourceforge.jp"
 msgstr ""
 
 # 9154fc60f74145a88a08bca20b4f18ba
-#: ../../../source/contribution/development/release.txt:651
+#: ../../../source/contribution/development/release.txt:601
 msgid "Groonga-talk groonga-talk@lists.sourceforge.net"
 msgstr ""
 
 # f1333b48fefa41e496f160bce73c024a
-#: ../../../source/contribution/development/release.txt:653
+#: ../../../source/contribution/development/release.txt:603
 msgid "以上でリリース作業は終了です。"
 msgstr ""
 
 # 7e625fabdfb54b7898f1799a897ead42
-#: ../../../source/contribution/development/release.txt:656
+#: ../../../source/contribution/development/release.txt:606
 msgid "ビルド時のTIPS"
 msgstr ""
 
 # c23d19c786e34310aa3334ec673d7b3f
-#: ../../../source/contribution/development/release.txt:659
+#: ../../../source/contribution/development/release.txt:609
 msgid "ビルドを並列化したい"
 msgstr ""
 
 # bdfaa25255d0409487ef5decaf67662c
-#: ../../../source/contribution/development/release.txt:661
+#: ../../../source/contribution/development/release.txt:611
 msgid ""
 "make build PALALLES=yesを指定するとchroot環境で並列にビルドを 実行できます。"
 msgstr ""
 
 # 79b687614c184557abfcf37af83f0a33
-#: ../../../source/contribution/development/release.txt:666
+#: ../../../source/contribution/development/release.txt:616
 msgid "特定の環境向けのみビルドしたい"
 msgstr ""
 
 # 31cda45a345f4165809fb18430a0fb73
-#: ../../../source/contribution/development/release.txt:668
+#: ../../../source/contribution/development/release.txt:618
 msgid ""
 "Debian系の場合、CODES,ARCHITECTURESオプションを明示的に指定することで、 特定"
 "のリリース、アーキテクチャのみビルドすることができます。"
@@ -1761,20 +1761,20 @@ msgstr ""
 
 # bd7c3109aad24828b4ba0b8d8d8c2892
 # 0e1818e0a8c4443a8e2c0482427e7ec5
-#: ../../../source/contribution/development/release.txt:671
+#: ../../../source/contribution/development/release.txt:621
 #, fuzzy
 msgid "squeezeのi386のみビルドしたい場合には以下のコマンドを実行します。::"
 msgstr "groongaのトップディレクトリで、以下のコマンドを実行します。::"
 
 # 3fdc883a2c314e179d0e9d613edc3042
-#: ../../../source/contribution/development/release.txt:675
+#: ../../../source/contribution/development/release.txt:625
 msgid ""
 "buildコマンド以外でも build-package-deb build-repository-debなどの サブタスク"
 "でもARCHITECTURES,CODES指定は有効です。"
 msgstr ""
 
 # 7d5b59574ec94bf18741f6c66fae4056
-#: ../../../source/contribution/development/release.txt:678
+#: ../../../source/contribution/development/release.txt:628
 msgid ""
 "Red Hat系の場合、ARCHITECTURES,DISTRIBUTIONSオプションを明示的に指定す ること"
 "で、特定のリリース、アーキテクチャのみビルドすることができます。"
@@ -1782,32 +1782,32 @@ msgstr ""
 
 # bd7c3109aad24828b4ba0b8d8d8c2892
 # 0e1818e0a8c4443a8e2c0482427e7ec5
-#: ../../../source/contribution/development/release.txt:681
+#: ../../../source/contribution/development/release.txt:631
 #, fuzzy
 msgid "fedoraのi386のみビルドしたい場合には以下のコマンドを実行します。::"
 msgstr "groongaのトップディレクトリで、以下のコマンドを実行します。::"
 
 # d6a17275dd424e778e8751b1a560d54f
-#: ../../../source/contribution/development/release.txt:685
+#: ../../../source/contribution/development/release.txt:635
 msgid ""
 "buildコマンド以外でも build-in-chroot build-repository-rpmなどの サブタスクで"
 "もARCHITECTURES,DISTRIBUTIONSの指定は有効です。"
 msgstr ""
 
 # ac7ec8b156394802b435b58a899fc9bc
-#: ../../../source/contribution/development/release.txt:688
+#: ../../../source/contribution/development/release.txt:638
 msgid ""
 "ただし、centosの場合 バージョンまで明示して5のみビルドや6のみビルド すること"
 "はできません。まとめてcentosとしてビルドされます。"
 msgstr ""
 
 # ea7545233fd645e0a7b64fca37aa3714
-#: ../../../source/contribution/development/release.txt:692
+#: ../../../source/contribution/development/release.txt:642
 msgid "パッケージの署名用のパスフレーズを知りたい"
 msgstr ""
 
 # 62aa637adbc74f7f96d23cc40d21dcc0
-#: ../../../source/contribution/development/release.txt:694
+#: ../../../source/contribution/development/release.txt:644
 msgid ""
 "パッケージの署名に必要な秘密鍵のパスフレーズについては リリース担当者向けの秘"
 "密鍵を復号したテキストの1行目に記載してあります。"

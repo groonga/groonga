@@ -1,0 +1,164 @@
+# English translations for 2.0.4 package.
+# Copyright (C) 2009-2012, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2012.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 2.0.4\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-06-09 22:02\n"
+"PO-Revision-Date: 2012-06-09 22:02+0900\n"
+"Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
+"Language-Team: English\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+# ea361969f364486cac7c98c0b72d222e
+#: ../../../source/development.txt:6
+msgid "Development"
+msgstr "Development"
+
+# 20edb07caa574da8b708ac7fb3482971
+#: ../../../source/development.txt:8
+msgid ""
+"This section describes about developing with groonga. You may develop an "
+"application that uses groonga as its detabase, a library that uses "
+"libgroonga, language bindings of libgroonga and so on."
+msgstr ""
+"This section describes about developing with groonga. You may develop an "
+"application that uses groonga as its detabase, a library that uses "
+"libgroonga, language bindings of libgroonga and so on."
+
+# 4f73de9530994fc78251fff04fc66aa8
+#: ../../../source/development/travis-ci.txt:6
+msgid "Travis CI"
+msgstr "Travis CI"
+
+# 81eeb8d8ecda4b7884577a3ddb96a920
+#: ../../../source/development/travis-ci.txt:8
+msgid ""
+"This section describes about using groonga on `Travis CI <http://travis-ci."
+"org/>`_. Travis CI is a hosted continuous integration service for the open "
+"source community."
+msgstr ""
+"This section describes about using groonga on `Travis CI <http://travis-ci."
+"org/>`_. Travis CI is a hosted continuous integration service for the open "
+"source community."
+
+# 97d845cf20354e53b1364c0e34cee107
+#: ../../../source/development/travis-ci.txt:12
+msgid ""
+"You can use Travis CI for your open source software. This section only "
+"describes about groonga related configuration. See `Travis CI: Documentation "
+"<http://about.travis-ci.org/docs/>`_ about general Travis CI."
+msgstr ""
+"You can use Travis CI for your open source software. This section only "
+"describes about groonga related configuration. See `Travis CI: Documentation "
+"<http://about.travis-ci.org/docs/>`_ about general Travis CI."
+
+# 17a036d7ac0b458b894a9fc3a49a8ab6
+#: ../../../source/development/travis-ci.txt:18
+msgid "Configuration"
+msgstr "Configuration"
+
+# ec17193e41e24c2a9ee95cbbd78a90e7
+#: ../../../source/development/travis-ci.txt:20
+msgid ""
+"Travis CI is running on 32-bit Ubuntu 11.10 [#environment]_. You can use apt-"
+"line for Ubuntu 11.10 provided by groonga project to install groonga on "
+"Travis CI."
+msgstr ""
+"Travis CI is running on 32-bit Ubuntu 11.10 [#environment]_. You can use apt-"
+"line for Ubuntu 11.10 provided by groonga project to install groonga on "
+"Travis CI."
+
+# 79e4f730b77045c8b1b9a93cd2474901
+#: ../../../source/development/travis-ci.txt:24
+msgid ""
+"You can custom build lifecycle by ``.travis.yml`` [#build-configuration]_. "
+"You can use ``before_install`` hook or ``install`` hook. You should use "
+"``before_install`` if your software uses a language that is supported by "
+"Travis CI such as Ruby. You should use ``install`` otherwise."
+msgstr ""
+"You can custom build lifecycle by ``.travis.yml`` [#build-configuration]_. "
+"You can use ``before_install`` hook or ``install`` hook. You should use "
+"``before_install`` if your software uses a language that is supported by "
+"Travis CI such as Ruby. You should use ``install`` otherwise."
+
+# 59f8800890a84fd1963858e3debfbc7a
+#: ../../../source/development/travis-ci.txt:30
+msgid "Add the following configuration to ``before_install``::"
+msgstr "Add the following configuration to ``before_install``::"
+
+# 70a119f7bcf945aeaa767f94e47f17c8
+#: ../../../source/development/travis-ci.txt:39
+msgid ""
+"If you need to use ``install`` hook instead of ``before_install``, you just "
+"substitute ``before_install:`` with ``install:``."
+msgstr ""
+"If you need to use ``install`` hook instead of ``before_install``, you just "
+"substitute ``before_install:`` with ``install:``."
+
+# 9bd49c9936a943a4928351be9ae63bee
+#: ../../../source/development/travis-ci.txt:42
+msgid "With the above configuration, you can use groonga for your build."
+msgstr "With the above configuration, you can use groonga for your build."
+
+# 27b2900ffa6f4943be014c44a88442d0
+#: ../../../source/development/travis-ci.txt:45
+msgid "Examples"
+msgstr "Examples"
+
+# 66fe617ac4d8439d8233e520a183d30f
+#: ../../../source/development/travis-ci.txt:47
+msgid "Here are open source softwares that use groonga on Travis CI:"
+msgstr "Here are open source softwares that use groonga on Travis CI:"
+
+# 2c2ebf8fe6804bf5ae1abc8f6d8b163e
+#: ../../../source/development/travis-ci.txt:49
+msgid ""
+"`rroonga <http://groonga.rubyforge.org/#about-rroonga>`_ * `rroonga on "
+"Travis CI <http://travis-ci.org/#!/ranguba/rroonga>`_ * `.travis.yml for "
+"rroonga <https://github.com/ranguba/rroonga/blob/master/.travis.yml>`_"
+msgstr ""
+"`rroonga <http://groonga.rubyforge.org/#about-rroonga>`_ * `rroonga on "
+"Travis CI <http://travis-ci.org/#!/ranguba/rroonga>`_ * `.travis.yml for "
+"rroonga <https://github.com/ranguba/rroonga/blob/master/.travis.yml>`_"
+
+# e3c4785e76584800918e01ec2d62bc26
+#: ../../../source/development/travis-ci.txt:52
+msgid ""
+"`nroonga <http://nroonga.github.com/>`_ * `nroonga on Travis CI <http://"
+"travis-ci.org/#!/nroonga/nroonga>`_ * `.travis.yml for nroong <https://"
+"github.com/nroonga/nroonga/blob/master/.travis.yml>`_"
+msgstr ""
+"`nroonga <http://nroonga.github.com/>`_ * `nroonga on Travis CI <http://"
+"travis-ci.org/#!/nroonga/nroonga>`_ * `.travis.yml for nroong <https://"
+"github.com/nroonga/nroonga/blob/master/.travis.yml>`_"
+
+# 1f58f8e068a04d1880aa787f2b6f1de9
+#: ../../../source/development/travis-ci.txt:57
+msgid "Footnotes"
+msgstr "Footnotes"
+
+# 6b8e8af7968d4f15a1ede39fbee0178c
+#: ../../../source/development/travis-ci.txt:58
+msgid ""
+"See `Travis CI: About Travis CI Environment <http://about.travis-ci.org/docs/"
+"user/ci-environment/>`_ for more details."
+msgstr ""
+"See `Travis CI: About Travis CI Environment <http://about.travis-ci.org/docs/"
+"user/ci-environment/>`_ for more details."
+
+# 62a1c63ae3fb49378582fcd3a592d977
+#: ../../../source/development/travis-ci.txt:61
+msgid ""
+"See `Travis CI: Conifugration your Travis CI build with .travis.yml <http://"
+"about.travis-ci.org/docs/user/build-configuration/>`_ for more details."
+msgstr ""
+"See `Travis CI: Conifugration your Travis CI build with .travis.yml <http://"
+"about.travis-ci.org/docs/user/build-configuration/>`_ for more details."

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 2.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-05-21 14:05\n"
+"POT-Creation-Date: 2012-06-09 22:02\n"
 "PO-Revision-Date: 2012-04-28 11:37+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -28,16 +28,16 @@ msgid ":doc:`news`"
 msgstr ":doc:`news`"
 
 # f6c73d1d861d4925b5b72572ab3added
-#: ../../../source/index.txt:29
+#: ../../../source/index.txt:30
 msgid ":ref:`genindex`"
 msgstr ":ref:`genindex`"
 
 # 436635d2bb154ae6acadc4ac51b5ffbf
-#: ../../../source/index.txt:30
+#: ../../../source/index.txt:31
 msgid ":ref:`modindex`"
 msgstr ":ref:`modindex`"
 
 # 038ca29b608c44768fa153ae509af8f5
-#: ../../../source/index.txt:31
+#: ../../../source/index.txt:32
 msgid ":ref:`search`"
 msgstr ":ref:`search`"
