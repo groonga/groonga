@@ -96,7 +96,6 @@ if test "$NO_CUTTER" != "yes" -a -n "$CUTTER"; then
     no_test=0
 fi
 
-set -x
 ruby_result=0
 if test "$NO_RUBY" != "yes" -a -n "$RUBY"; then
     : ${TEST_UNIT_MAX_DIFF_TARGET_STRING_SIZE:=30000}
@@ -109,7 +108,8 @@ if test "$NO_RUBY" != "yes" -a -n "$RUBY"; then
     if ! type bundle > /dev/null; then
 	$RUBY -S gem install bundler
     fi
-    if [ "$BUNDLE_GEMFILE" -nt "$BUNDLE_GEMFILE.lock" ]; then
+    if [ ! -e "$BUNDLE_GEMFILE.lock" -o \
+	 "$BUNDLE_GEMFILE" -nt "$BUNDLE_GEMFILE.lock" ]; then
 	$RUBY -S bundle install
     fi
     $RUBY $BASE_DIR/run-test.rb $RUBY_TEST_ARGS "$@"
