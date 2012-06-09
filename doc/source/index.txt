@@ -24,6 +24,7 @@ groonga documentation
    spec
    limitations
    troubleshooting
+   development
    contribution
 
 * :ref:`genindex`

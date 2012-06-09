@@ -42,6 +42,8 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/contribution/documentation/c-api.txt \
 	$(top_srcdir)/doc/source/contribution/documentation/i18n.txt \
 	$(top_srcdir)/doc/source/contribution/report.txt \
+	$(top_srcdir)/doc/source/development.txt \
+	$(top_srcdir)/doc/source/development/travis-ci.txt \
 	$(top_srcdir)/doc/source/example/commands/select/filter_equal.log \
 	$(top_srcdir)/doc/source/example/commands/select/filter_less_than.log \
 	$(top_srcdir)/doc/source/example/commands/select/limit_negative.log \
@@ -358,6 +360,8 @@ source_files_relative_from_doc_dir = \
 	source/contribution/documentation/c-api.txt \
 	source/contribution/documentation/i18n.txt \
 	source/contribution/report.txt \
+	source/development.txt \
+	source/development/travis-ci.txt \
 	source/example/commands/select/filter_equal.log \
 	source/example/commands/select/filter_less_than.log \
 	source/example/commands/select/limit_negative.log \
@@ -637,6 +641,7 @@ po_files = \
 	community.po \
 	conf.po \
 	contribution.po \
+	development.po \
 	executables.po \
 	expr.po \
 	functions.po \
@@ -665,6 +670,7 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/community.po \
 	LC_MESSAGES/conf.po \
 	LC_MESSAGES/contribution.po \
+	LC_MESSAGES/development.po \
 	LC_MESSAGES/executables.po \
 	LC_MESSAGES/expr.po \
 	LC_MESSAGES/functions.po \
@@ -693,6 +699,7 @@ mo_files = \
 	community.mo \
 	conf.mo \
 	contribution.mo \
+	development.mo \
 	executables.mo \
 	expr.mo \
 	functions.mo \
@@ -721,6 +728,7 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/community.mo \
 	LC_MESSAGES/conf.mo \
 	LC_MESSAGES/contribution.mo \
+	LC_MESSAGES/development.mo \
 	LC_MESSAGES/executables.mo \
 	LC_MESSAGES/expr.mo \
 	LC_MESSAGES/functions.mo \
@@ -783,6 +791,8 @@ html_files_relative_from_locale_dir = \
 	html/_sources/contribution/documentation/c-api.txt \
 	html/_sources/contribution/documentation/i18n.txt \
 	html/_sources/contribution/report.txt \
+	html/_sources/development.txt \
+	html/_sources/development/travis-ci.txt \
 	html/_sources/executables.txt \
 	html/_sources/executables/grnslap.txt \
 	html/_sources/executables/grntest.txt \
@@ -909,6 +919,8 @@ html_files_relative_from_locale_dir = \
 	html/contribution/documentation/c-api.html \
 	html/contribution/documentation/i18n.html \
 	html/contribution/report.html \
+	html/development.html \
+	html/development/travis-ci.html \
 	html/executables.html \
 	html/executables/grnslap.html \
 	html/executables/grntest.html \

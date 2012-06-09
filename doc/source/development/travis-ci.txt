@@ -1,0 +1,67 @@
+.. -*- rst -*-
+
+.. highlightlang:: none
+
+Travis CI
+=========
+
+This section describes about using groonga on `Travis CI
+<http://travis-ci.org/>`_. Travis CI is a hosted continuous
+integration service for the open source community.
+
+You can use Travis CI for your open source software. This section only
+describes about groonga related configuration. See `Travis CI:
+Documentation <http://about.travis-ci.org/docs/>`_ about general
+Travis CI.
+
+Configuration
+-------------
+
+Travis CI is running on 32-bit Ubuntu 11.10 [#environment]_.
+You can use apt-line for Ubuntu 11.10 provided by groonga project to
+install groonga on Travis CI.
+
+You can custom build lifecycle by ``.travis.yml``
+[#build-configuration]_. You can use ``before_install`` hook or
+``install`` hook. You should use ``before_install`` if your software
+uses a language that is supported by Travis CI such as Ruby. You
+should use ``install`` otherwise.
+
+Add the following configuration to ``before_install``::
+
+  before_install:
+    - echo "deb http://packages.groonga.org/ubuntu/ $(lsb_release --short --codename) universe" | sudo tee /etc/apt/sources.list.d/groonga.list
+    - sudo apt-get update
+    - sudo apt-get -y --allow-unauthenticated install groonga-keyring
+    - sudo apt-get update
+    - sudo apt-get -y install libgroonga-dev
+
+If you need to use ``install`` hook instead of ``before_install``, you
+just substitute ``before_install:`` with ``install:``.
+
+With the above configuration, you can use groonga for your build.
+
+Examples
+--------
+
+Here are open source softwares that use groonga on Travis CI:
+
+  * `rroonga <http://groonga.rubyforge.org/#about-rroonga>`_ (Ruby bindings)
+
+    * `rroonga on Travis CI <http://travis-ci.org/#!/ranguba/rroonga>`_
+    * `.travis.yml for rroonga <https://github.com/ranguba/rroonga/blob/master/.travis.yml>`_
+
+  * `nroonga <http://nroonga.github.com/>`_ (node.js bindings)
+
+    * `nroonga on Travis CI <http://travis-ci.org/#!/nroonga/nroonga>`_
+    * `.travis.yml for nroong <https://github.com/nroonga/nroonga/blob/master/.travis.yml>`_
+
+.. rubric:: Footnotes
+
+.. [#environment] See `Travis CI: About Travis CI Environment
+   <http://about.travis-ci.org/docs/user/ci-environment/>`_ for more
+   details.
+.. [#build-configuration] See `Travis CI: Conifugration your Travis CI
+   build with .travis.yml
+   <http://about.travis-ci.org/docs/user/build-configuration/>`_ for
+   more details.
