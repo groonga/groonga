@@ -20,7 +20,7 @@ CentOS 5
 Install::
 
   % sudo rpm -ivh http://packages.groonga.org/centos/groonga-release-1.1.0-0.noarch.rpm
-  % sudo yum update
+  % sudo yum makecache
   % sudo yum install -y groonga
 
 If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a
@@ -68,7 +68,7 @@ CentOS 6
 Install::
 
   % sudo rpm -ivh http://packages.groonga.org/centos/groonga-release-1.1.0-0.noarch.rpm
-  % sudo yum update
+  % sudo yum makecache
   % sudo yum install -y groonga
 
 If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a
