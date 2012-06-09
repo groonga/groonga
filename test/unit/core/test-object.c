@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2011  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2011-2012  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -83,7 +83,7 @@ void
 data_is_builtin(void)
 {
 #define ADD_DATUM(expected, name)                                       \
-  gcut_add_datum((expected ? "built-in -" #name : "custom - " #name),   \
+  gcut_add_datum((expected ? "built-in - " #name : "custom - " #name),  \
                  "expected", G_TYPE_BOOLEAN, expected,                  \
                  "name", G_TYPE_STRING, name,                           \
                  NULL)
