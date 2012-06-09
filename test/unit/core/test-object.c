@@ -83,7 +83,7 @@ void
 data_is_builtin(void)
 {
 #define ADD_DATUM(expected, name)                                       \
-  gcut_add_datum((expected ? "built-in - " #name : "custom - " #name),  \
+  gcut_add_datum((expected ? "built-in - " name : "custom - " name),    \
                  "expected", G_TYPE_BOOLEAN, expected,                  \
                  "name", G_TYPE_STRING, name,                           \
                  NULL)
