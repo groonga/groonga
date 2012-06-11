@@ -1911,21 +1911,13 @@ static inline double
 geo_distance_rectangle_abs(double start_longitude, double start_latitude,
                            double end_longitude, double end_latitude)
 {
-  double rad_start_latitude, rad_start_longitude;
-  double rad_end_latitude, rad_end_longitude;
-  double diff_longitude, diff_latitude, sum_latitude;
+  double diff_longitude;
   double x, y;
 
-  rad_start_latitude = fabs(start_latitude);
-  rad_start_longitude = fabs(start_longitude);
-  rad_end_latitude = fabs(end_latitude);
-  rad_end_longitude = fabs(end_longitude);
-  diff_longitude = rad_end_longitude - rad_start_longitude;
-  sum_latitude = rad_start_latitude + rad_end_latitude;
-  diff_latitude = rad_end_latitude - rad_start_latitude;
-  x = diff_longitude * cos(sum_latitude * 0.5);
-  y = diff_latitude;
-  return sqrt((x * x) + (y * y)) * GRN_GEO_RADIUS;
+  diff_longitude = end_longitude - start_longitude;
+  x = diff_longitude * cos((start_latitude + end_latitude) * 0.5);
+  y = end_latitude - start_latitude;
+  return sqrt((x * x) + (y * y));
 }
 
 double
@@ -1963,7 +1955,7 @@ grn_geo_distance_rectangle_raw(grn_ctx *ctx,
                                                  intercept,
                                                  lng2,
                                                  lat2);
-      distance = east_distance + west_distance;
+      distance = (east_distance + west_distance) * GRN_GEO_RADIUS;
     } else {
       x = (lng2 - lng1) * cos((lat1 + lat2) * 0.5);
       y = (lat2 - lat1);
