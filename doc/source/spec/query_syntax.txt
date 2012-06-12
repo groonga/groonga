@@ -20,7 +20,7 @@ condition. ``Combinded expression`` consists of one or more
 ``conditional expression`` or ``combined expression``.
 
 Sample data
--------------
+-----------
 
 Here are a schema definition and sample data to show usage.
 
@@ -129,35 +129,141 @@ The expression matches records that contain a phrase ``I started`` in
 ``I`` and ``started`` aren't adjacent. ``content`` column is the
 default match column.
 
-``カラム名:値``
+Equal condition
 ^^^^^^^^^^^^^^^
 
-一致条件( ``カラム値 == 値`` )
+Its syntax is ``column:value``.
 
-``カラム名:!値``
-^^^^^^^^^^^^^^^^
+It matches records that ``column`` value is equal to ``value``.
 
-不一致条件( ``カラム値 != 値`` )
+It doesn't require the default match columns such as ``full text
+search condition`` and ``phrase search condition``.
 
-``カラム名:<値``
-^^^^^^^^^^^^^^^^
+Here is a simple exmaple.
 
-比較条件( ``カラム値 < 値`` )
+.. groonga-command
+.. include:: ../example/spec/query_syntax/simple_equal.log
+.. select Entries --query _key:Groonga
 
-``カラム名:>値``
-^^^^^^^^^^^^^^^^
+The expression matches records that ``_key`` column value is
+equal to ``Groonga`` from ``Entries`` table.
 
-比較条件( ``カラム値 > 値`` )
+Not equal condition
+^^^^^^^^^^^^^^^^^^^
 
-``カラム名:<=値``
-^^^^^^^^^^^^^^^^^
+Its syntax is ``column:!value``.
 
-比較条件( ``カラム値 <= 値`` )
+It matches records that ``column`` value isn't equal to ``value``.
 
-``カラム名:>=値``
-^^^^^^^^^^^^^^^^^
+It doesn't require the default match columns such as ``full text
+search condition`` and ``phrase search condition``.
 
-比較条件( ``カラム値 >= 値`` )
+Here is a simple exmaple.
+
+.. groonga-command
+.. include:: ../example/spec/query_syntax/simple_not_equal.log
+.. select Entries --query _key:!Groonga
+
+The expression matches records that ``_key`` column value is not equal
+to ``Groonga`` from ``Entries`` table.
+
+Less than condition
+^^^^^^^^^^^^^^^^^^^
+
+Its syntax is ``column:<value``.
+
+It matches records that ``column`` value is less than ``value``.
+
+If ``column`` type is numerical type such as ``Int32``, ``column``
+value and ``value`` are compared as number. If ``column`` type is text
+type such as ``ShortText``, ``column`` value and ``value`` are
+compared as bit sequence.
+
+It doesn't require the default match columns such as ``full text
+search condition`` and ``phrase search condition``.
+
+Here is a simple exmaple.
+
+.. groonga-command
+.. include:: ../example/spec/query_syntax/simple_less_than.log
+.. select Entries --query n_likes:<10
+
+The expression matches records that ``n_likes`` column value is less
+than ``10`` from ``Entries`` table.
+
+Greater than condition
+^^^^^^^^^^^^^^^^^^^^^^
+
+Its syntax is ``column:>value``.
+
+It matches records that ``column`` value is greater than ``value``.
+
+If ``column`` type is numerical type such as ``Int32``, ``column``
+value and ``value`` are compared as number. If ``column`` type is text
+type such as ``ShortText``, ``column`` value and ``value`` are
+compared as bit sequence.
+
+It doesn't require the default match columns such as ``full text
+search condition`` and ``phrase search condition``.
+
+Here is a simple exmaple.
+
+.. groonga-command
+.. include:: ../example/spec/query_syntax/simple_greater_than.log
+.. select Entries --query n_likes:>10
+
+The expression matches records that ``n_likes`` column value is greater
+than ``10`` from ``Entries`` table.
+
+Less than or equal to condition
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Its syntax is ``column:<=value``.
+
+It matches records that ``column`` value is less than or equal to
+``value``.
+
+If ``column`` type is numerical type such as ``Int32``, ``column``
+value and ``value`` are compared as number. If ``column`` type is text
+type such as ``ShortText``, ``column`` value and ``value`` are
+compared as bit sequence.
+
+It doesn't require the default match columns such as ``full text
+search condition`` and ``phrase search condition``.
+
+Here is a simple exmaple.
+
+.. groonga-command
+.. include:: ../example/spec/query_syntax/simple_less_than_or_equal_to.log
+.. select Entries --query n_likes:<=10
+
+The expression matches records that ``n_likes`` column value is less
+than or equal to ``10`` from ``Entries`` table.
+
+Greater than or equal to condition
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Its syntax is ``column:>=value``.
+
+It matches records that ``column`` value is greater than or equal to
+``value``.
+
+If ``column`` type is numerical type such as ``Int32``, ``column``
+value and ``value`` are compared as number. If ``column`` type is text
+type such as ``ShortText``, ``column`` value and ``value`` are
+compared as bit sequence.
+
+It doesn't require the default match columns such as ``full text
+search condition`` and ``phrase search condition``.
+
+Here is a simple exmaple.
+
+.. groonga-command
+.. include:: ../example/spec/query_syntax/simple_greater_than_or_equal_to.log
+.. select Entries --query n_likes:>=10
+
+The expression matches records that ``n_likes`` column value is
+greater than or equal to ``10`` from ``Entries`` table.
 
 ``カラム名:@文字列``
 ^^^^^^^^^^^^^^^^^^^^
