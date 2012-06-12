@@ -610,7 +610,11 @@ class GrnTestData
     else
       select_postfix = ", \"#{app_type}\")'\n"
     end
-    distance = geo_distance(app_type) unless @distance != ""
+    if @distance != ""
+      distance = @distance
+    else
+      distance = geo_distance(app_type)
+    end
     [
       TABLE_CREATE,
       CREATE_RESULT,
