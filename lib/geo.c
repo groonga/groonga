@@ -1924,9 +1924,11 @@ double
 grn_geo_distance_rectangle_raw(grn_ctx *ctx,
                                grn_geo_point *point1, grn_geo_point *point2)
 {
+#define M_2PI 6.28318530717958647692
+
   double lng1, lat1, lng2, lat2, x, y, distance;
   double slope, intercept, longitude_delta, latitude_delta;
-  double east_distance, west_distance;
+  double east_distance, west_distance, intercept_edge;
   distance_type dist_type;
   quadrant_type quad_type;
 
@@ -1957,12 +1959,30 @@ grn_geo_distance_rectangle_raw(grn_ctx *ctx,
                                                  lat2);
       distance = (east_distance + west_distance) * GRN_GEO_RADIUS;
     } else {
-      x = (lng2 - lng1) * cos((lat1 + lat2) * 0.5);
-      y = (lat2 - lat1);
-      distance = sqrt((x * x) + (y * y)) * GRN_GEO_RADIUS;
+      if (quad_type == QUADRANT_1ST_TO_2ND) {
+        longitude_delta = lng2 + M_2PI - lng1;
+        latitude_delta = lat2 - lat1;
+        slope = latitude_delta / longitude_delta;
+        intercept = lat1 - slope * lng1;
+        intercept_edge = slope * M_PI + intercept;
+        east_distance = geo_distance_rectangle_abs(lng1,
+                                                   lat1,
+                                                   M_PI,
+                                                   intercept_edge);
+        west_distance = geo_distance_rectangle_abs(-lng2,
+                                                   lat2,
+                                                   M_PI,
+                                                   intercept_edge);
+        distance = (east_distance + west_distance) * GRN_GEO_RADIUS;
+      } else {
+        x = (lng2 - lng1) * cos((lat1 + lat2) * 0.5);
+        y = (lat2 - lat1);
+        distance = sqrt((x * x) + (y * y)) * GRN_GEO_RADIUS;
+      }
     }
   }
   return distance;
+#undef M_2PI
 }
 
 double
