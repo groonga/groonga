@@ -8,26 +8,126 @@
 Query syntax
 ============
 
-TODO: revised.
+Query syntax is a syntax to specify search condition for common Web
+search form. It is similar to Google's search form. For example,
+``word1 word2`` means that groonga searches records that contain both
+``word1`` and ``word2``. ``word1 OR word2`` means that groogna
+searches records that contain either ``word1`` or ``word2``.
 
-一般的なWebページの検索フォームで使われるような書式を使って検索条件を指定することができます。これをクエリ構文と呼びます。
+Query syntax consists of ``conditional expression`` and ``combind
+expression``. ``Conditinal expression`` specifies an
+condition. ``Combinded expression`` consists of one or more
+``conditional expression`` or ``combined expression``.
 
-クエリ構文は「条件式」と条件式を組み合わせる「結合式」からなります。
+Sample data
+-------------
 
-条件式
-------
+Here are a schema definition and sample data to show usage.
 
-以下の条件式が使用できます。
+.. groonga-command
+.. include:: ../example/spec/query_syntax/setup.log
+.. table_create Entries TABLE_HASH_KEY ShortText
+.. column_create Entries content COLUMN_SCALAR Text
+.. column_create Entries n_likes COLUMN_SCALAR UInt32
+.. table_create Terms TABLE_PAT_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenBigram
+.. column_create Terms entries_key_index COLUMN_INDEX|WITH_POSITION Entries _key
+.. column_create Terms entries_content_index COLUMN_INDEX|WITH_POSITION Entries content
+.. load --table Entries
+.. [
+.. {"_key":    "The first post!",
+..  "content": "Welcome! This is my first post!",
+..  "n_likes": 5},
+.. {"_key":    "Groonga",
+..  "content": "I started to use groonga. It's very fast!",
+..  "n_likes": 10},
+.. {"_key":    "Mroonga",
+..  "content": "I also started to use mroonga. It's also very fast! Really fast!",
+..  "n_likes": 15},
+.. {"_key":    "Good-bye Senna",
+..  "content": "I migrated all Senna system!",
+..  "n_likes": 3},
+.. {"_key":    "Good-bye Tritonn",
+..  "content": "I also migrated all Tritonn system!",
+..  "n_likes": 3}
+.. ]
 
-``文字列``
-^^^^^^^^^^
+There is a table, ``Entries``, for blog entries. An entry has title,
+content and the number of likes for the entry. Title is key of
+``Entries``. Content is value of ``Entries.content`` column. The
+number of likes is value of ``Entries.n_likes`` column.
 
-全文検索条件(デフォルト検索対象カラムの値が指定された文字列を含んでいる)
+``Entries._key`` column and ``Entries.content`` column are indexed
+using ``TokenBigram`` tokenizer. So both ``Entries._key`` and
+``Entries.content`` are fulltext search ready.
 
-``"文字列"``
-^^^^^^^^^^^^
+OK. The schema and data for examples are ready.
 
-フレーズ検索条件(デフォルト検索対象カラムの値が指定されたフレーズを含んでいる)
+Conditional expression
+----------------------
+
+Here is available conditional expression list.
+
+Full text search condition
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Its syntax is ``keyword``.
+
+``Full text search condition`` is the most simple conditional
+expression. It specifies a full text search condition against the
+default match columns.
+
+You should specify the default match columns for full text
+search. They can be specified by ``--match_columns`` option in
+:doc:`/commands/select`. If you don't specify the default match
+columns, this conditional expression fails.
+
+This conditional expression does full text search with
+``keyword``. ``keyword`` should not contain any spaces. If ``keyword``
+contains a space such as ``search keyword``, it means two full text
+search conditions; ``search`` and ``keyword``. If you want to
+specifies a keyword that contains one or more spaces, you can use
+``phrase search condition`` that is described below.
+
+Here is a simple exmaple.
+
+.. groonga-command
+.. include:: ../example/spec/query_syntax/simple_full_text_search.log
+.. select Entries --match_columns content --query fast
+
+The expression matches records that contain a word ``fast`` in
+``content`` column value. ``content`` column is the default match
+column.
+
+Phrase search condition
+^^^^^^^^^^^^^^^^^^^^^^^
+
+Its syntax is ``"search keyword"``.
+
+``Phrase search condition`` specifies a phrase search condition
+against the default match columns.
+
+You should specify the default match columns for full text
+search. They can be specified by ``--match_columns`` option in
+:doc:`/commands/select`. If you don't specify the default match
+columns, this conditional expression fails.
+
+This conditional expression does phrase search with ``search
+keyword``. Phrase search searches records that contain ``search`` and
+``keyword`` and those terms are appeared in the same order and
+adjacent. Thus, ``Put a search keyword in the form`` is matched but
+``Search by the keyword`` and ``There is a keyword. Search by it!``
+aren't matched.
+
+Here is a simple exmaple.
+
+.. groonga-command
+.. include:: ../example/spec/query_syntax/simple_phrase_search.log
+.. select Entries --match_columns content --query '"I started"'
+
+The expression matches records that contain a phrase ``I started`` in
+``content`` column value. ``I also started`` isn't matched because
+``I`` and ``started`` aren't adjacent. ``content`` column is the
+default match column.
 
 ``カラム名:値``
 ^^^^^^^^^^^^^^^
@@ -64,8 +164,8 @@ TODO: revised.
 
 全文検索条件(カラム値が指定された文字列を含んでいる)
 
-結合演算子
-----------
+Combined expression
+-------------------
 
 複数の条件式を結合するために以下の演算子が使用できます。
 
