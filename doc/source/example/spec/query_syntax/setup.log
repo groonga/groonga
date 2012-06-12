@@ -1,0 +1,33 @@
+Execution example::
+
+  table_create Entries TABLE_HASH_KEY ShortText
+  column_create Entries content COLUMN_SCALAR Text
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  column_create Entries n_likes COLUMN_SCALAR UInt32
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  table_create Terms TABLE_PAT_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenBigram
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  column_create Terms entries_key_index COLUMN_INDEX|WITH_POSITION Entries _key
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  column_create Terms entries_content_index COLUMN_INDEX|WITH_POSITION Entries content
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  load --table Entries
+  [
+  {"_key":    "The first post!",
+   "content": "Welcome! This is my first post!",
+   "n_likes": 5},
+  {"_key":    "Groonga",
+   "content": "I started to use groonga. It's very fast!",
+   "n_likes": 10},
+  {"_key":    "Mroonga",
+   "content": "I also started to use mroonga. It's also very fast! Really fast!",
+   "n_likes": 15},
+  {"_key":    "Good-bye Senna",
+   "content": "I migrated all Senna system!",
+   "n_likes": 3},
+  {"_key":    "Good-bye Tritonn",
+   "content": "I also migrated all Tritonn system!",
+   "n_likes": 3}
+  ]
+  # [[0, 1337566253.89858, 0.000355720520019531], 5]
