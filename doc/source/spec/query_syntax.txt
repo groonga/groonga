@@ -148,7 +148,7 @@ Here is a simple exmaple.
 .. select Entries --query _key:Groonga
 
 The expression matches records that ``_key`` column value is
-equal to ``Groonga`` from ``Entries`` table.
+equal to ``Groonga``.
 
 Not equal condition
 ^^^^^^^^^^^^^^^^^^^
@@ -167,7 +167,7 @@ Here is a simple exmaple.
 .. select Entries --query _key:!Groonga
 
 The expression matches records that ``_key`` column value is not equal
-to ``Groonga`` from ``Entries`` table.
+to ``Groonga``.
 
 Less than condition
 ^^^^^^^^^^^^^^^^^^^
@@ -191,7 +191,7 @@ Here is a simple exmaple.
 .. select Entries --query n_likes:<10
 
 The expression matches records that ``n_likes`` column value is less
-than ``10`` from ``Entries`` table.
+than ``10``.
 
 Greater than condition
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -215,7 +215,7 @@ Here is a simple exmaple.
 .. select Entries --query n_likes:>10
 
 The expression matches records that ``n_likes`` column value is greater
-than ``10`` from ``Entries`` table.
+than ``10``.
 
 Less than or equal to condition
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -240,7 +240,7 @@ Here is a simple exmaple.
 .. select Entries --query n_likes:<=10
 
 The expression matches records that ``n_likes`` column value is less
-than or equal to ``10`` from ``Entries`` table.
+than or equal to ``10``.
 
 Greater than or equal to condition
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -265,7 +265,7 @@ Here is a simple exmaple.
 .. select Entries --query n_likes:>=10
 
 The expression matches records that ``n_likes`` column value is
-greater than or equal to ``10`` from ``Entries`` table.
+greater than or equal to ``10``.
 
 Full text search condition (with explicit match column)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -337,24 +337,92 @@ The expression matches records that contain a phrase ``I started`` in
 Combined expression
 -------------------
 
-複数の条件式を結合するために以下の演算子が使用できます。
+Here is available ccombined expression list.
 
-``a OR b``
+Logical OR
 ^^^^^^^^^^
 
-論理和( ``a`` と ``b`` といずれかの条件がマッチする)
+Its syntax is ``a OR b``.
 
-``a + b``
-^^^^^^^^^
+``a`` and ``b`` are conditional expressions or conbinded expressions.
 
-論理積( ``a`` と ``b`` の両方がマッチする)
+If at least one of ``a`` and ``b`` are matched, ``a OR b`` is matched.
 
-``a - b``
-^^^^^^^^^
+Here is a simple exmaple.
 
-``a`` にマッチし、 ``b`` にはマッチしない
+.. groonga-command
+.. include:: ../example/spec/query_syntax/simple_logical_or.log
+.. select Entries --query 'n_likes:<10 OR content:@senna'
 
-``(...)``
-^^^^^^^^^
+The expression matches records that ``n_likes`` column value is less
+than ``10`` or contain a word ``senna`` in ``content`` column
+value.
 
-複数の条件をまとめる
+Logical AND
+^^^^^^^^^^^
+
+Its syntax is ``a + b`` or just ``a b``.
+
+``a`` and ``b`` are conditional expressions or conbinded expressions.
+
+If both ``a`` and ``b`` are matched, ``a + b`` is matched.
+
+You can specify ``+`` the first expression such as ``+a``. The ``+``
+is just ignored.
+
+Here is a simple exmaple.
+
+.. groonga-command
+.. include:: ../example/spec/query_syntax/simple_logical_and.log
+.. select Entries --query 'n_likes:>=10 + content:@senna'
+
+The expression matches records that ``n_likes`` column value is
+greater than or equal to ``10`` and contain a word ``senna`` in
+``content`` column value.
+
+Logical NOT
+^^^^^^^^^^^
+
+Its syntax is ``a - b``.
+
+``a`` and ``b`` are conditional expressions or conbinded expressions.
+
+If ``a`` is matched and ``b`` is not matched, ``a - b`` is matched.
+
+You can not specify ``-`` the first expression such as ``-a``. It's
+syntax error.
+
+Here is a simple exmaple.
+
+.. groonga-command
+.. include:: ../example/spec/query_syntax/simple_logical_not.log
+.. select Entries --query 'n_likes:>=10 - content:@senna'
+
+The expression matches records that ``n_likes`` column value is
+greater than or equal to ``10`` and don't contain a word ``senna`` in
+``content`` column value.
+
+Grouping
+^^^^^^^^
+
+Its syntax is ``(...)``. ``...`` is one or more expressions.
+
+``(...)`` groups one ore more expressions and they can be processed as
+an expression. ``a b OR c`` means that ``a`` and ``b`` are matched or
+``c`` is matched. ``a (b OR c)`` means that ``a`` and one of ``b`` and
+``c`` are matched.
+
+Here is a simple exmaple.
+
+.. groonga-command
+.. include:: ../example/spec/query_syntax/simple_grouping.log
+.. select Entries --query 'n_likes:>=10 content:@senna OR content:@fast'
+.. select Entries --query 'n_likes:>=10 (content:@senna OR content:@fast)'
+
+The first expression doesn't use grouping. It matches records that
+``n_likes:>=10`` and ``content:@senna`` are matched or
+``content:@fast`` is matched.
+
+The second expression uses grouping. It matches records that
+``n_likes:>=10`` and one of ``content:@senna`` or ``content:@fast``
+are matched.
