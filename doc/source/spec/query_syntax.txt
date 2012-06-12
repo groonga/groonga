@@ -131,6 +131,73 @@ The expression matches records that contain a phrase ``I started`` in
 
 ``content`` column is the default match column.
 
+Full text search condition (with explicit match column)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Its syntax is ``column:@keyword``.
+
+It's similar to ``full text search condition`` but it doesn't require
+the default match columns. You need to specify match column for the
+full text search condition by ``column:`` instead of
+``--match_columns`` option in :doc:`/commands/select`.
+
+This condtional expression is useful when you want to use two or more
+full text search against different columns. The default match columns
+specified by ``match_columns`` option can't be specified multiple
+times. You need to specify the second match column by this conditional
+expression.
+
+The different between ``full text search condition`` and ``full text
+search condition (with explicit match column)`` is whether advanced
+match columns are supported or not. ``Full text search condition``
+supports advanced match columns but ``full text search condition (with
+explicit match column)`` isn't supported. Advanced match columns has
+the following features:
+
+  * Weight is supported.
+  * Multiple match columns are supported.
+  * Index column is supported.
+
+See description of ``--match_columns`` option in
+:doc:`/commands/select` about them.
+
+Here is a simple exmaple.
+
+.. groonga-command
+.. include:: ../example/spec/query_syntax/simple_full_text_search_with_explicit_match_column.log
+.. select Entries --query content:@fast
+
+The expression matches records that contain a word ``fast`` in
+``content`` column value.
+
+Phrase search condition (with explicit match column)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Its syntax is ``column:@"search keyword"``.
+
+It's similar to ``phrase search condition`` but it doesn't require the
+default match columns. You need to specify match column for the phrase
+search condition by ``column:`` instead of ``--match_columns`` option
+in :doc:`/commands/select`.
+
+The different between ``phrase search condition`` and ``phrase search
+condition (with explicit match column)`` is similar to between ``full
+text search condition`` and ``full text search condition (with
+explicit match column)``. ``Phrase search condition`` supports
+advanced match columns but ``phrase search condition (with explicit
+match column)`` isn't supported. See description of ``full text search
+condition (with explicit match column)`` about advanced match columns.
+
+Here is a simple exmaple.
+
+.. groonga-command
+.. include:: ../example/spec/query_syntax/simple_phrase_search_with_explicit_match_column.log
+.. select Entries --query 'content:@"I started"'
+
+The expression matches records that contain a phrase ``I started`` in
+``content`` column value. ``I also started`` isn't matched because
+``I`` and ``started`` aren't adjacent.
+
 Equal condition
 ^^^^^^^^^^^^^^^
 
@@ -266,73 +333,6 @@ Here is a simple exmaple.
 
 The expression matches records that ``n_likes`` column value is
 greater than or equal to ``10``.
-
-Full text search condition (with explicit match column)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Its syntax is ``column:@keyword``.
-
-It's similar to ``full text search condition`` but it doesn't require
-the default match columns. You need to specify match column for the
-full text search condition by ``column:`` instead of
-``--match_columns`` option in :doc:`/commands/select`.
-
-This condtional expression is useful when you want to use two or more
-full text search against different columns. The default match columns
-specified by ``match_columns`` option can't be specified multiple
-times. You need to specify the second match column by this conditional
-expression.
-
-The different between ``full text search condition`` and ``full text
-search condition (with explicit match column)`` is whether advanced
-match columns are supported or not. ``Full text search condition``
-supports advanced match columns but ``full text search condition (with
-explicit match column)`` isn't supported. Advanced match columns has
-the following features:
-
-  * Weight is supported.
-  * Multiple match columns are supported.
-  * Index column is supported.
-
-See description of ``--match_columns`` option in
-:doc:`/commands/select` about them.
-
-Here is a simple exmaple.
-
-.. groonga-command
-.. include:: ../example/spec/query_syntax/simple_full_text_search_with_explicit_match_column.log
-.. select Entries --query content:@fast
-
-The expression matches records that contain a word ``fast`` in
-``content`` column value.
-
-Phrase search condition (with explicit match column)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Its syntax is ``column:@"search keyword"``.
-
-It's similar to ``phrase search condition`` but it doesn't require the
-default match columns. You need to specify match column for the phrase
-search condition by ``column:`` instead of ``--match_columns`` option
-in :doc:`/commands/select`.
-
-The different between ``phrase search condition`` and ``phrase search
-condition (with explicit match column)`` is similar to between ``full
-text search condition`` and ``full text search condition (with
-explicit match column)``. ``Phrase search condition`` supports
-advanced match columns but ``phrase search condition (with explicit
-match column)`` isn't supported. See description of ``full text search
-condition (with explicit match column)`` about advanced match columns.
-
-Here is a simple exmaple.
-
-.. groonga-command
-.. include:: ../example/spec/query_syntax/simple_phrase_search_with_explicit_match_column.log
-.. select Entries --query 'content:@"I started"'
-
-The expression matches records that contain a phrase ``I started`` in
-``content`` column value. ``I also started`` isn't matched because
-``I`` and ``started`` aren't adjacent.
 
 Combined expression
 -------------------
