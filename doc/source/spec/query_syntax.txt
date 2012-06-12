@@ -14,10 +14,17 @@ search form. It is similar to Google's search form. For example,
 ``word1`` and ``word2``. ``word1 OR word2`` means that groogna
 searches records that contain either ``word1`` or ``word2``.
 
-Query syntax consists of ``conditional expression`` and ``combind
-expression``. ``Conditinal expression`` specifies an
-condition. ``Combinded expression`` consists of one or more
-``conditional expression`` or ``combined expression``.
+Query syntax consists of ``conditional expression``, ``combind
+expression`` and ``assignment expression``. Nomrally ``assignment
+expression`` can be ignored. Because ``Assignment expression`` is
+disabled in ``--query`` option of :doc:`/commands/select`. You can use
+it if you use groonga as library and customize query syntax parser
+options.
+
+``Conditinal expression`` specifies an condition. ``Combinded
+expression`` consists of one or more ``conditional expression``,
+``combined expression`` or ``assignment expression``. ``Assignment
+expression`` can assigns a column to a value.
 
 Sample data
 -----------
@@ -77,7 +84,7 @@ expression. It specifies a full text search condition against the
 default match columns.
 
 You should specify the default match columns for full text
-search. They can be specified by ``--match_columns`` option in
+search. They can be specified by ``--match_columns`` option of
 :doc:`/commands/select`. If you don't specify the default match
 columns, this conditional expression fails.
 
@@ -108,7 +115,7 @@ Its syntax is ``"search keyword"``.
 against the default match columns.
 
 You should specify the default match columns for full text
-search. They can be specified by ``--match_columns`` option in
+search. They can be specified by ``--match_columns`` option of
 :doc:`/commands/select`. If you don't specify the default match
 columns, this conditional expression fails.
 
@@ -139,7 +146,7 @@ Its syntax is ``column:@keyword``.
 It's similar to ``full text search condition`` but it doesn't require
 the default match columns. You need to specify match column for the
 full text search condition by ``column:`` instead of
-``--match_columns`` option in :doc:`/commands/select`.
+``--match_columns`` option of :doc:`/commands/select`.
 
 This condtional expression is useful when you want to use two or more
 full text search against different columns. The default match columns
@@ -158,7 +165,7 @@ the following features:
   * Multiple match columns are supported.
   * Index column is supported.
 
-See description of ``--match_columns`` option in
+See description of ``--match_columns`` option of
 :doc:`/commands/select` about them.
 
 Here is a simple exmaple.
@@ -178,7 +185,7 @@ Its syntax is ``column:@"search keyword"``.
 It's similar to ``phrase search condition`` but it doesn't require the
 default match columns. You need to specify match column for the phrase
 search condition by ``column:`` instead of ``--match_columns`` option
-in :doc:`/commands/select`.
+of :doc:`/commands/select`.
 
 The different between ``phrase search condition`` and ``phrase search
 condition (with explicit match column)`` is similar to between ``full
@@ -197,6 +204,20 @@ Here is a simple exmaple.
 The expression matches records that contain a phrase ``I started`` in
 ``content`` column value. ``I also started`` isn't matched because
 ``I`` and ``started`` aren't adjacent.
+
+Prefix search condition
+^^^^^^^^^^^^^^^^^^^^^^^
+
+Its syntax is ``column:^value`` or ``value*``.
+
+TODO: describe me.
+
+Suffix search condition
+^^^^^^^^^^^^^^^^^^^^^^^
+
+Its syntax is ``column:^value``.
+
+TODO: describe me.
 
 Equal condition
 ^^^^^^^^^^^^^^^
@@ -337,7 +358,7 @@ greater than or equal to ``10``.
 Combined expression
 -------------------
 
-Here is available ccombined expression list.
+Here is available combined expression list.
 
 Logical OR
 ^^^^^^^^^^
@@ -426,3 +447,15 @@ The first expression doesn't use grouping. It matches records that
 The second expression uses grouping. It matches records that
 ``n_likes:>=10`` and one of ``content:@senna`` or ``content:@fast``
 are matched.
+
+Assignment expression
+---------------------
+
+This section is for advanced users. Because assignment expression is
+disabled in ``--query`` option of :doc:`/commands/select`. You need to
+use groonga as a library instead of server or command line tool for
+assignment expression.
+
+There is only one syntax for assignment expression. It's ``column:=value``.
+
+TODO: describe me.
