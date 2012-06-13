@@ -1,0 +1,13 @@
+register table/table
+table_create Shops TABLE_PAT_KEY ShortText
+column_create Shops name COLUMN_SCALAR ShortText
+column_create Shops tags COLUMN_VECTOR ShortText
+
+table_create Events TABLE_NO_KEY
+column_create Events value COLUMN_SCALAR ShortText
+
+add Shops '{"_key":"kuriko-an","tags":["たいやき","養殖"]}'
+select Shops
+
+add Events '{"value":"田無店新規開店!"}'
+select Events

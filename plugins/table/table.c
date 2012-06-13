@@ -273,6 +273,15 @@ command_unlink(grn_ctx *ctx, int nargs, grn_obj **args,
 static grn_obj *
 command_add(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
+  grn_load_(ctx, GRN_CONTENT_JSON,
+            GRN_TEXT_VALUE(VAR(0)), GRN_TEXT_LEN(VAR(0)),
+            NULL, 0,
+            GRN_TEXT_VALUE(VAR(1)), GRN_TEXT_LEN(VAR(1)),
+            NULL, 0, NULL, 0, 0);
+  GRN_OUTPUT_BOOL(ctx->impl->loader.nrecords);
+  if (ctx->impl->loader.table) {
+    grn_db_touch(ctx, DB_OBJ(ctx->impl->loader.table)->db);
+  }
   return NULL;
 }
 
@@ -362,12 +371,12 @@ GRN_PLUGIN_REGISTER(grn_ctx *ctx)
   DEF_COMMAND("unlink", command_unlink, 1, vars);
 
   DEF_VAR(vars[0], "table");
-  DEF_VAR(vars[1], "key");
-  DEF_VAR(vars[2], "columns");
-  DEF_VAR(vars[3], "values");
+  DEF_VAR(vars[1], "values");
+  DEF_VAR(vars[2], "key");
+  DEF_VAR(vars[3], "columns");
   DEF_VAR(vars[4], "output_columns");
   DEF_VAR(vars[5], "id");
-  DEF_COMMAND("add", command_add, 5, vars);
+  DEF_COMMAND("add", command_add, 2, vars);
   DEF_COMMAND("set", command_set, 6, vars);
 
   return ctx->rc;

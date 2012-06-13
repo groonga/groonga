@@ -8676,7 +8676,7 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
   GRN_ASSERT(value->header.domain & OPEN_BRACKET);
   GRN_UINT32_SET(ctx, value, loader->values_size - begin - 1);
   value++;
-  if (GRN_BULK_VSIZE(&loader->level) <= sizeof(uint32_t)) {
+  if (GRN_BULK_VSIZE(&loader->level) <= sizeof(uint32_t) * loader->emit_level) {
     ndata = values_len(ctx, value, ve);
     if (loader->table) {
       switch (loader->table->header.type) {
@@ -8816,7 +8816,7 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
   GRN_ASSERT(value->header.domain & OPEN_BRACKET);
   GRN_UINT32_SET(ctx, value, loader->values_size - begin - 1);
   value++;
-  if (GRN_BULK_VSIZE(&loader->level) <= sizeof(uint32_t)) {
+  if (GRN_BULK_VSIZE(&loader->level) <= sizeof(uint32_t) * loader->emit_level) {
     if (loader->table) {
       switch (loader->table->header.type) {
       case GRN_TABLE_HASH_KEY :
@@ -9263,22 +9263,18 @@ exit:
 
 static grn_com_addr *addr;
 
-grn_rc
-grn_load(grn_ctx *ctx, grn_content_type input_type,
-         const char *table, unsigned int table_len,
-         const char *columns, unsigned int columns_len,
-         const char *values, unsigned int values_len,
-         const char *ifexists, unsigned int ifexists_len,
-         const char *each, unsigned int each_len)
+void
+grn_load_(grn_ctx *ctx, grn_content_type input_type,
+          const char *table, unsigned int table_len,
+          const char *columns, unsigned int columns_len,
+          const char *values, unsigned int values_len,
+          const char *ifexists, unsigned int ifexists_len,
+          const char *each, unsigned int each_len,
+          uint32_t emit_level)
 {
   grn_loader *loader;
-  if (!ctx || !ctx->impl) {
-    ERR(GRN_INVALID_ARGUMENT, "db not initialized");
-    return ctx->rc;
-  }
-  GRN_API_ENTER;
   loader = &ctx->impl->loader;
-
+  loader->emit_level = emit_level;
   if (ctx->impl->edge) {
     grn_edge *edge = grn_edges_add_communicator(ctx, addr);
     grn_obj *msg = grn_msg_open(ctx, edge->com, &ctx->impl->edge->send_old);
@@ -9290,12 +9286,12 @@ grn_load(grn_ctx *ctx, grn_content_type input_type,
     loader->input_type = input_type;
     if (grn_db_check_name(ctx, table, table_len)) {
       GRN_DB_CHECK_NAME_ERR("[table][load]", table, table_len);
-      goto exit;
+      return;
     }
     loader->table = grn_ctx_get(ctx, table, table_len);
     if (!loader->table) {
       ERR(GRN_INVALID_ARGUMENT, "nonexistent table: <%.*s>", table_len, table);
-      goto exit;
+      return;
     }
     if (loader->table && columns && columns_len) {
       int i, n_columns;
@@ -9304,7 +9300,7 @@ grn_load(grn_ctx *ctx, grn_content_type input_type,
       GRN_PTR_INIT(&parsed_columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
       if (parse_load_columns(ctx, loader->table, columns, columns_len,
                              &parsed_columns)) {
-        goto exit;
+        return;
       }
       n_columns = GRN_BULK_VSIZE(&parsed_columns) / sizeof(grn_obj *);
       for (i = 0; i < n_columns; i++) {
@@ -9353,6 +9349,23 @@ grn_load(grn_ctx *ctx, grn_content_type input_type,
     // todo
     break;
   }
-exit:
+}
+
+grn_rc
+grn_load(grn_ctx *ctx, grn_content_type input_type,
+         const char *table, unsigned int table_len,
+         const char *columns, unsigned int columns_len,
+         const char *values, unsigned int values_len,
+         const char *ifexists, unsigned int ifexists_len,
+         const char *each, unsigned int each_len)
+{
+  if (!ctx || !ctx->impl) {
+    ERR(GRN_INVALID_ARGUMENT, "db not initialized");
+    return ctx->rc;
+  }
+  GRN_API_ENTER;
+  grn_load_(ctx, input_type, table, table_len,
+            columns, columns_len, values, values_len,
+            ifexists, ifexists_len, each, each_len, 1);
   GRN_API_RETURN(ctx->rc);
 }

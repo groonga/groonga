@@ -1,0 +1,87 @@
+register table/table
+[[0,0.0,0.0],true]
+table_create Shops TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Shops name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Shops tags COLUMN_VECTOR ShortText
+[[0,0.0,0.0],true]
+table_create Events TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Events value COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+add Shops '{"_key":"kuriko-an","tags":["たいやき","養殖"]}'
+[[0,0.0,0.0],true]
+select Shops
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "name",
+          "ShortText"
+        ],
+        [
+          "tags",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "kuriko-an",
+        "",
+        [
+          "たいやき",
+          "養殖"
+        ]
+      ]
+    ]
+  ]
+]
+add Events '{"value":"田無店新規開店!"}'
+[[0,0.0,0.0],true]
+select Events
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "value",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "田無店新規開店!"
+      ]
+    ]
+  ]
+]

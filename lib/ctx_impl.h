@@ -61,6 +61,7 @@ typedef struct {
   grn_obj values;
   grn_obj level;
   grn_obj columns;
+  uint32_t emit_level;
   int32_t key_offset;
   grn_obj *table;
   grn_obj *last;
