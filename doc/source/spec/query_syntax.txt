@@ -373,10 +373,10 @@ Here is a simple exmaple.
 
 .. groonga-command
 .. include:: ../example/spec/query_syntax/simple_logical_or.log
-.. select Entries --query 'n_likes:<10 OR content:@senna'
+.. select Entries --query 'n_likes:>10 OR content:@senna'
 
-The expression matches records that ``n_likes`` column value is less
-than ``10`` or contain a word ``senna`` in ``content`` column
+The expression matches records that ``n_likes`` column value is
+greater than ``10`` or contain a word ``senna`` in ``content`` column
 value.
 
 Logical AND
@@ -395,10 +395,10 @@ Here is a simple exmaple.
 
 .. groonga-command
 .. include:: ../example/spec/query_syntax/simple_logical_and.log
-.. select Entries --query 'n_likes:>=10 + content:@senna'
+.. select Entries --query 'n_likes:>=10 + content:@groonga'
 
 The expression matches records that ``n_likes`` column value is
-greater than or equal to ``10`` and contain a word ``senna`` in
+greater than or equal to ``10`` and contain a word ``groonga`` in
 ``content`` column value.
 
 Logical NOT
@@ -417,10 +417,10 @@ Here is a simple exmaple.
 
 .. groonga-command
 .. include:: ../example/spec/query_syntax/simple_logical_not.log
-.. select Entries --query 'n_likes:>=10 - content:@senna'
+.. select Entries --query 'n_likes:>=10 - content:@groonga'
 
 The expression matches records that ``n_likes`` column value is
-greater than or equal to ``10`` and don't contain a word ``senna`` in
+greater than or equal to ``10`` and don't contain a word ``groonga`` in
 ``content`` column value.
 
 Grouping
