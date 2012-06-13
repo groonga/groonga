@@ -1,15 +1,20 @@
 #!/bin/sh
 
-OPTIONS=`getopt -n $0 -u -o " " -l protocol: -- "$@"`
+OPTIONS=`getopt -n $0 -u -o " " -l protocol:,groonga-httpd: -- "$@"`
 if test $? -ne 0; then
     exit 1
 fi
 set -- $OPTIONS
+
 while true;
 do
     case $1 in
 	--protocol)
 	    protocol=$2
+	    shift
+            ;;
+	--groonga-httpd)
+	    groonga_httpd=$2
 	    shift
             ;;
 	--)
@@ -80,10 +85,17 @@ if test -z $protocol; then
     protocol="gqtp"
 fi
 
+if test -n "$groonga_httpd"; then
+    groonga_httpd_option="--groonga-httpd $groonga_httpd"
+else
+    groonga_httpd_option=
+fi
+
 $RUBY -I "$grntest_dir/lib" \
     "$grntest_dir/bin/grntest" \
     --groonga "$GROONGA" \
     --groonga-suggest-create-dataset "$GROONGA_SUGGEST_CREATE_DATASET" \
     --base-directory "$BASE_DIR" \
     --protocol "$protocol" \
+    $groonga_httpd_option \
     "$targets" "$@"
