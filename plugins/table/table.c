@@ -270,6 +270,44 @@ command_unlink(grn_ctx *ctx, int nargs, grn_obj **args,
   return NULL;
 }
 
+static grn_obj *
+command_add(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  return NULL;
+}
+
+static grn_obj *
+command_set(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  /* TODO: implement */
+  grn_obj *table = grn_ctx_get(ctx, GRN_TEXT_VALUE(VAR(0)), GRN_TEXT_LEN(VAR(0)));
+  if (table) {
+    grn_id id;
+    if (GRN_TEXT_LEN(VAR(1))) {
+      if ((id = grn_table_get(ctx, table, GRN_TEXT_VALUE(VAR(1)), GRN_TEXT_LEN(VAR(1))))) {
+        grn_obj obj;
+        grn_obj_format format;
+        GRN_RECORD_INIT(&obj, 0, ((grn_db_obj *)table)->id);
+        GRN_OBJ_FORMAT_INIT(&format, 1, 0, 1, 0);
+        GRN_RECORD_SET(ctx, &obj, id);
+        grn_obj_columns(ctx, table,
+                        GRN_TEXT_VALUE(VAR(4)),
+                        GRN_TEXT_LEN(VAR(4)), &format.columns);
+        format.flags = 0 /* GRN_OBJ_FORMAT_WITH_COLUMN_NAMES */;
+        GRN_OUTPUT_OBJ(&obj, &format);
+        GRN_OBJ_FORMAT_FIN(ctx, &format);
+      } else {
+        /* todo : error handling */
+      }
+    } else {
+      /* todo : get_by_id */
+    }
+  } else {
+    /* todo : error handling */
+  }
+  return NULL;
+}
+
 grn_rc
 GRN_PLUGIN_INIT(grn_ctx *ctx)
 {
@@ -322,6 +360,15 @@ GRN_PLUGIN_REGISTER(grn_ctx *ctx)
 
   DEF_VAR(vars[0], "table");
   DEF_COMMAND("unlink", command_unlink, 1, vars);
+
+  DEF_VAR(vars[0], "table");
+  DEF_VAR(vars[1], "key");
+  DEF_VAR(vars[2], "columns");
+  DEF_VAR(vars[3], "values");
+  DEF_VAR(vars[4], "output_columns");
+  DEF_VAR(vars[5], "id");
+  DEF_COMMAND("add", command_add, 5, vars);
+  DEF_COMMAND("set", command_set, 6, vars);
 
   return ctx->rc;
 }
