@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-13 10:30\n"
-"PO-Revision-Date: 2012-06-13 13:17+0900\n"
+"POT-Creation-Date: 2012-06-13 13:18\n"
+"PO-Revision-Date: 2012-06-13 13:20+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -166,7 +166,9 @@ msgid ""
 "``Full text search condition`` specifies a full text search condition "
 "against the default match columns. Match columns are full text search target "
 "columns."
-msgstr "``全文検索条件`` はデフォルトのマッチカラムに対して全文検索するという条件を指定します。マッチカラムとは全文検索対象のカラムのことです。"
+msgstr ""
+"``全文検索条件`` はデフォルトのマッチカラムに対して全文検索するという条件を指"
+"定します。マッチカラムとは全文検索対象のカラムのことです。"
 
 # f85f7ad533d94b6abb9f888236007467
 # 2e061719632b465184bb238c02394431
@@ -191,7 +193,12 @@ msgid ""
 "``search`` and ``keyword``. If you want to specifies a keyword that contains "
 "one or more spaces, you can use ``phrase search condition`` that is "
 "described below."
-msgstr "この条件式は ``keyword`` で全文検索をします。 ``keyword`` には空白を含めることはできません。 ``search keyword`` というように空白を含んでいる場合は、 ``search`` と ``keyword`` という2つの全文検索条件を指定したことになります。もし、キーワードに空白を含めたい場合は以下で説明する ``フレーズ検索条件`` を使ってください。"
+msgstr ""
+"この条件式は ``keyword`` で全文検索をします。 ``keyword`` には空白を含めるこ"
+"とはできません。 ``search keyword`` というように空白を含んでいる場合は、 "
+"``search`` と ``keyword`` という2つの全文検索条件を指定したことになります。も"
+"し、キーワードに空白を含めたい場合は以下で説明する ``フレーズ検索条件`` を"
+"使ってください。"
 
 # 66118ec4f5df49de8fe063dccd69c0fb
 # c42ed95cabcd456da899b9f068eba075
@@ -231,7 +238,9 @@ msgstr "以下は簡単な使用例です。"
 msgid ""
 "The expression matches records that contain a word ``fast`` in ``content`` "
 "column value."
-msgstr "この式は ``content`` カラムの値に ``fast`` という単語を含んでいるレコードにマッチします。"
+msgstr ""
+"この式は ``content`` カラムの値に ``fast`` という単語を含んでいるレコードに"
+"マッチします。"
 
 # 1382126f16c64c678bc7698d6b26296c
 # 3c23eb014e8c42eea7fcfebb04fca3f5
@@ -255,7 +264,9 @@ msgstr "構文は ``\"search keyword\"`` です。"
 msgid ""
 "``Phrase search condition`` specifies a phrase search condition against the "
 "default match columns."
-msgstr "``フレーズ検索条件`` はデフォルトのマッチカラムに対してフレーズ検索するという条件を指定します。"
+msgstr ""
+"``フレーズ検索条件`` はデフォルトのマッチカラムに対してフレーズ検索するという"
+"条件を指定します。"
 
 # 57e178d85a014c3c99812be49f465503
 #: ../../../source/spec/query_syntax.txt:122
@@ -265,7 +276,12 @@ msgid ""
 "those terms are appeared in the same order and adjacent. Thus, ``Put a "
 "search keyword in the form`` is matched but ``Search by the keyword`` and "
 "``There is a keyword. Search by it!`` aren't matched."
-msgstr "この条件式は ``search keyword`` でフレーズ検索をします。フレーズ検索は ``search`` と ``keyword`` がこの順番で隣接して含まれているレコードにマッチします。つまり、 ``Put a search keyword in the form`` にはマッチしますが、 ``Search by the keyword`` や ``There is a keyword. Search by it!`` にはマッチしません。"
+msgstr ""
+"この条件式は ``search keyword`` でフレーズ検索をします。フレーズ検索は "
+"``search`` と ``keyword`` がこの順番で隣接して含まれているレコードにマッチし"
+"ます。つまり、 ``Put a search keyword in the form`` にはマッチしますが、 "
+"``Search by the keyword`` や ``There is a keyword. Search by it!`` にはマッチ"
+"しません。"
 
 # a3ee4c7c60684f028e00cfc4d6d5412d
 # f5388f9835bf43e282ebdcdf81150910
@@ -275,7 +291,10 @@ msgid ""
 "The expression matches records that contain a phrase ``I started`` in "
 "``content`` column value. ``I also started`` isn't matched because ``I`` and "
 "``started`` aren't adjacent."
-msgstr "この式は ``content`` カラムの値に ``I started`` というフレーズを含んでいるレコードにマッチします。 ``I also started`` にはマッチしません。これは ``I`` と ``started`` が隣接していないからです。"
+msgstr ""
+"この式は ``content`` カラムの値に ``I started`` というフレーズを含んでいるレ"
+"コードにマッチします。 ``I also started`` にはマッチしません。これは ``I`` "
+"と ``started`` が隣接していないからです。"
 
 # bc3be4d0f7be40c58296d3f8f8bb11f6
 #: ../../../source/spec/query_syntax.txt:142
@@ -294,16 +313,23 @@ msgid ""
 "default match columns. You need to specify match column for the full text "
 "search condition by ``column:`` instead of ``--match_columns`` option of :"
 "doc:`/commands/select`."
-msgstr "これは ``全文検索条件`` と似ていますが、デフォルトのマッチカラムは必要ありません。全文検索用のマッチカラムは :doc:`/commands/select` の ``--match_columns`` オプションではなく ``column:`` で指定します。"
+msgstr ""
+"これは ``全文検索条件`` と似ていますが、デフォルトのマッチカラムは必要ありま"
+"せん。全文検索用のマッチカラムは :doc:`/commands/select` の ``--"
+"match_columns`` オプションではなく ``column:`` で指定します。"
 
 # d373c295c4f9455d8e89ce957ad90d3b
 #: ../../../source/spec/query_syntax.txt:151
 msgid ""
 "This condtional expression is useful when you want to use two or more full "
 "text search against different columns. The default match columns specified "
-"by ``match_columns`` option can't be specified multiple times. You need to "
+"by ``--match_columns`` option can't be specified multiple times. You need to "
 "specify the second match column by this conditional expression."
-msgstr "この条件式は異なったカラムに対して複数の全文検索をしたい場合に便利です。 ``--match_columns`` オプションで指定するデフォルトのマッチカラムは複数回指定することができません。2つめのマッチカラムを指定するためにはこの条件式を使う必要があります。"
+msgstr ""
+"この条件式は異なったカラムに対して複数の全文検索をしたい場合に便利です。 ``--"
+"match_columns`` オプションで指定するデフォルトのマッチカラムは複数回指定する"
+"ことができません。2つめのマッチカラムを指定するためにはこの条件式を使う必要が"
+"あります。"
 
 # af23850f501449268f20b4f48f18e39d
 #: ../../../source/spec/query_syntax.txt:157
@@ -313,7 +339,12 @@ msgid ""
 "are supported or not. ``Full text search condition`` supports advanced match "
 "columns but ``full text search condition (with explicit match column)`` "
 "isn't supported. Advanced match columns has the following features:"
-msgstr "\n``全文検索条件`` と ``全文検索条件（マッチカラム指定あり）`` の違いは高度なマッチカラムをサポートしているかどうかです。 ``全文検索条件`` は高度なマッチカラムをサポートしていますが、 ``全文検索条件（マッチカラム指定あり）`` はサポートしていません。高度なマッチカラムには以下の機能があります:"
+msgstr ""
+"\n"
+"``全文検索条件`` と ``全文検索条件（マッチカラム指定あり）`` の違いは高度な"
+"マッチカラムをサポートしているかどうかです。 ``全文検索条件`` は高度なマッチ"
+"カラムをサポートしていますが、 ``全文検索条件（マッチカラム指定あり）`` はサ"
+"ポートしていません。高度なマッチカラムには以下の機能があります:"
 
 # b038d03d87e945d8b75b8e9c52203b21
 #: ../../../source/spec/query_syntax.txt:164
@@ -322,20 +353,22 @@ msgstr "重みをサポートしている。"
 
 # 102843eec18e480ab2367c92dce7f13a
 #: ../../../source/spec/query_syntax.txt:165
-msgid "Multiple match columns are supported."
-msgstr "複数のマッチカラム指定をサポートしている。"
+msgid "Using multiple columns are supported."
+msgstr "複数のカラムを指定できる。"
 
 # 394c09be80b14ebe8903a4f7aa398cd2
 #: ../../../source/spec/query_syntax.txt:166
-msgid "Index column is supported."
-msgstr "インデックスカラム指定をサポートしている。"
+msgid "Using index column as a match column is supported."
+msgstr "マッチカラムとしてインデックスカラムを使える。"
 
 # bbc4ba5a3444421aaf1048616acc13b3
 #: ../../../source/spec/query_syntax.txt:168
 msgid ""
 "See description of ``--match_columns`` option of :doc:`/commands/select` "
 "about them."
-msgstr "これらについては :doc:`/commands/select` の ``--match_columns`` オプションを参照してください。"
+msgstr ""
+"これらについては :doc:`/commands/select` の ``--match_columns`` オプションを"
+"参照してください。"
 
 # 82a402b288a149a98368f174de47e9e0
 #: ../../../source/spec/query_syntax.txt:181
@@ -354,7 +387,10 @@ msgid ""
 "default match columns. You need to specify match column for the phrase "
 "search condition by ``column:`` instead of ``--match_columns`` option of :"
 "doc:`/commands/select`."
-msgstr "これは ``フレーズ検索条件`` に似ていますが、デフォルトのマッチカラムは必要ありません。フレーズ検索用のマッチカラムは :doc:`/commands/select` の ``--match_columns`` オプションではなく ``column:`` で指定します。"
+msgstr ""
+"これは ``フレーズ検索条件`` に似ていますが、デフォルトのマッチカラムは必要あ"
+"りません。フレーズ検索用のマッチカラムは :doc:`/commands/select` の ``--"
+"match_columns`` オプションではなく ``column:`` で指定します。"
 
 # 4a5b2228e91c4a028c67de49852e0c39
 #: ../../../source/spec/query_syntax.txt:190
@@ -366,7 +402,13 @@ msgid ""
 "``phrase search condition (with explicit match column)`` isn't supported. "
 "See description of ``full text search condition (with explicit match column)"
 "`` about advanced match columns."
-msgstr "``フレーズ検索条件`` と ``フレーズ検索条件（マッチカラム指定あり）`` は ``全文検索条件`` と ``全文検索条件（マッチカラム指定あり）`` の関係と似ています。 ``フレーズ検索条件`` は高度なマッチカラムをサポートしていますが、 ``フレーズ検索条件（マッチカラム指定あり）`` はサポートしていません。高度なマッチカラムについては ``全文検索条件（マッチカラム指定あり）`` を参照してください。"
+msgstr ""
+"``フレーズ検索条件`` と ``フレーズ検索条件（マッチカラム指定あり）`` は ``全"
+"文検索条件`` と ``全文検索条件（マッチカラム指定あり）`` の関係と似ていま"
+"す。 ``フレーズ検索条件`` は高度なマッチカラムをサポートしていますが、 ``フ"
+"レーズ検索条件（マッチカラム指定あり）`` はサポートしていません。高度なマッチ"
+"カラムについては ``全文検索条件（マッチカラム指定あり）`` を参照してくださ"
+"い。"
 
 # 3ed9557e11644100834e055fb607f7f3
 #: ../../../source/spec/query_syntax.txt:209
@@ -392,9 +434,9 @@ msgstr ""
 msgid "Suffix search condition"
 msgstr "後方一致検索所受け件"
 
-# c38ba0447d074b51badfdecaaac7df41
+# 61fab56d6e9c4f4d8756ed4c9af116dd
 #: ../../../source/spec/query_syntax.txt:218
-msgid "Its syntax is ``column:^value``."
+msgid "Its syntax is ``column:$value``."
 msgstr "構文は ``column:$value`` です。"
 
 # a252c9bced7c4fbbaba793b391408b41
@@ -427,7 +469,9 @@ msgstr "``column`` の値が ``value`` と等しいレコードにマッチし�
 msgid ""
 "It doesn't require the default match columns such as ``full text search "
 "condition`` and ``phrase search condition``."
-msgstr "``全文検索条件`` や ``フレーズ検索条件`` と異なり、デフォルトのマッチカラムは必要ありません。"
+msgstr ""
+"``全文検索条件`` や ``フレーズ検索条件`` と異なり、デフォルトのマッチカラムは"
+"必要ありません。"
 
 # 58e72771aead470cb2e8bf0120646a28
 #: ../../../source/spec/query_syntax.txt:238
@@ -456,7 +500,8 @@ msgstr "``column`` の値が ``value`` と等しくないレコードにマッ�
 msgid ""
 "The expression matches records that ``_key`` column value is not equal to "
 "``Groonga``."
-msgstr "この式は ``_key`` カラムの値が ``Groonga`` ではないレコードにマッチします。"
+msgstr ""
+"この式は ``_key`` カラムの値が ``Groonga`` ではないレコードにマッチします。"
 
 # 48c6cbe6a50b49489c4add61256792f2
 #: ../../../source/spec/query_syntax.txt:261
@@ -485,14 +530,18 @@ msgid ""
 "If ``column`` type is numerical type such as ``Int32``, ``column`` value and "
 "``value`` are compared as number. If ``column`` type is text type such as "
 "``ShortText``, ``column`` value and ``value`` are compared as bit sequence."
-msgstr "``column`` の型が ``Int32`` などの数値型の場合、 ``column`` の値と ``value`` は数値として比較します。もし、 ``column`` の型が ``ShortText`` のような文字列型の場合は ``column`` の値と ``value`` はビット列として比較します。"
+msgstr ""
+"``column`` の型が ``Int32`` などの数値型の場合、 ``column`` の値と ``value`` "
+"は数値として比較します。もし、 ``column`` の型が ``ShortText`` のような文字列"
+"型の場合は ``column`` の値と ``value`` はビット列として比較します。"
 
 # aac77b4ce51c45a4afd6b346ce558dab
 #: ../../../source/spec/query_syntax.txt:281
 msgid ""
 "The expression matches records that ``n_likes`` column value is less than "
 "``10``."
-msgstr "この式は ``n_likes`` カラムの値が ``10`` より小さいレコードにマッチします。"
+msgstr ""
+"この式は ``n_likes`` カラムの値が ``10`` より小さいレコードにマッチします。"
 
 # 59282efa52354653a5f29b1c139b5a8a
 #: ../../../source/spec/query_syntax.txt:285
