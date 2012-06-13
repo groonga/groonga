@@ -5014,7 +5014,6 @@ parse_query(grn_ctx *ctx, efs_info *q)
       PARSE(GRN_EXPR_TOKEN_PARENL);
       block_started = GRN_TRUE;
       break;
-    case '=' :
     case 'O' :
       if (q->cur[1] == 'R' && q->cur[2] == ' ') {
         q->cur += 2;
