@@ -9,14 +9,14 @@ Query syntax
 ============
 
 Query syntax is a syntax to specify search condition for common Web
-search form. It is similar to Google's search form. For example,
-``word1 word2`` means that groonga searches records that contain both
-``word1`` and ``word2``. ``word1 OR word2`` means that groogna
-searches records that contain either ``word1`` or ``word2``.
+search form. It is similar to the syntax of Google's search form. For
+example, ``word1 word2`` means that groonga searches records that
+contain both ``word1`` and ``word2``. ``word1 OR word2`` means that
+groogna searches records that contain either ``word1`` or ``word2``.
 
 Query syntax consists of ``conditional expression``, ``combind
 expression`` and ``assignment expression``. Nomrally ``assignment
-expression`` can be ignored. Because ``Assignment expression`` is
+expression`` can be ignored. Because ``assignment expression`` is
 disabled in ``--query`` option of :doc:`/commands/select`. You can use
 it if you use groonga as library and customize query syntax parser
 options.
@@ -79,9 +79,9 @@ Full text search condition
 
 Its syntax is ``keyword``.
 
-``Full text search condition`` is the most simple conditional
-expression. It specifies a full text search condition against the
-default match columns.
+``Full text search condition`` specifies a full text search condition
+against the default match columns. Match columns are full text search
+target columns.
 
 You should specify the default match columns for full text
 search. They can be specified by ``--match_columns`` option of

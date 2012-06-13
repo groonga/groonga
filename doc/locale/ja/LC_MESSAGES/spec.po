@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-13 10:02\n"
-"PO-Revision-Date: 2012-04-28 11:40+0900\n"
+"POT-Creation-Date: 2012-06-13 10:30\n"
+"PO-Revision-Date: 2012-06-13 10:55+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -48,11 +48,12 @@ msgstr ""
 #: ../../../source/example/spec/query_syntax/simple_phrase_search.log:1
 #: ../../../source/example/spec/query_syntax/simple_phrase_search_with_explicit_match_column.log:1
 msgid "Execution example::"
-msgstr ""
+msgstr "実行例::"
 
+# 0c775086f1a84f07bba142e27f619c73
 #: ../../../source/spec.txt:6
-msgid "仕様"
-msgstr ""
+msgid "Specification"
+msgstr "仕様"
 
 # f22814ecf4034afc9219c94acde3344c
 #: ../../../source/spec/query_syntax.txt:9
@@ -63,21 +64,32 @@ msgstr "クエリ構文"
 #: ../../../source/spec/query_syntax.txt:11
 msgid ""
 "Query syntax is a syntax to specify search condition for common Web search "
-"form. It is similar to Google's search form. For example, ``word1 word2`` "
-"means that groonga searches records that contain both ``word1`` and "
-"``word2``. ``word1 OR word2`` means that groogna searches records that "
-"contain either ``word1`` or ``word2``."
+"form. It is similar to the syntax of Google's search form. For example, "
+"``word1 word2`` means that groonga searches records that contain both "
+"``word1`` and ``word2``. ``word1 OR word2`` means that groogna searches "
+"records that contain either ``word1`` or ``word2``."
 msgstr ""
+"クエリ構文は一般的なWebの検索フォームで検索条件を指定するための構文です。"
+"Googleの検索フォームで使われている構文に似ています。例えば、 ``word1 word2`` "
+"は ``word1`` と ``word2`` の両方の単語を含んだレコードを検索するという意味で"
+"す。 ``word1 OR word2`` は ``word1`` または ``word2`` のどちらかの単語を含ん"
+"だレコードを検索します。"
 
 # 3b76c01350d74e93a2e3194f8d2bca82
 #: ../../../source/spec/query_syntax.txt:17
+#, fuzzy
 msgid ""
 "Query syntax consists of ``conditional expression``, ``combind expression`` "
 "and ``assignment expression``. Nomrally ``assignment expression`` can be "
-"ignored. Because ``Assignment expression`` is disabled in ``--query`` option "
+"ignored. Because ``assignment expression`` is disabled in ``--query`` option "
 "of :doc:`/commands/select`. You can use it if you use groonga as library and "
 "customize query syntax parser options."
 msgstr ""
+"クエリ構文は ``条件式`` と ``結合式`` と ``代入式`` から成ります。通常、 ``代"
+"入式`` は考えなくてよいです。なぜなら、 ``代入式`` は :doc:`/commands/"
+"select` の ``--query`` オプションでは無効になっているからです。groongaをライ"
+"ブラリとして使ったときは、クエリ構文のパーサーのオプションをカスタマイズする"
+"ことで ``代入式`` を有効にすることができます。"
 
 # f23c41dac8994a2e82f76df831354e96
 #: ../../../source/spec/query_syntax.txt:24
@@ -87,16 +99,18 @@ msgid ""
 "or ``assignment expression``. ``Assignment expression`` can assigns a column "
 "to a value."
 msgstr ""
+"``条件式`` は条件を指定します。 ``結合式`` は1つ以上の ``条件式`` 、 ``結合式"
+"`` 、 ``代入式`` から成ります。 ``代入式`` はカラムに値を代入します。"
 
 # 69f87742861a4aa18eabdb09f719e196
 #: ../../../source/spec/query_syntax.txt:30
 msgid "Sample data"
-msgstr ""
+msgstr "サンプルデータ"
 
 # 8f5aa6b4c71346a684b9ec9be85d9d41
 #: ../../../source/spec/query_syntax.txt:32
 msgid "Here are a schema definition and sample data to show usage."
-msgstr ""
+msgstr "以下は使い方を示すために使うスキーマ定義とサンプルデータです。"
 
 # fc1abb5337ca4b508cfab8490c65a053
 #: ../../../source/spec/query_syntax.txt:61
@@ -106,6 +120,10 @@ msgid ""
 "is value of ``Entries.content`` column. The number of likes is value of "
 "``Entries.n_likes`` column."
 msgstr ""
+"ブログエントリ用の ``Entries`` テーブルがあります。各エントリはタイトルと内容"
+"と「いいね！」数を持っています。タイトルは ``Entries`` のキーとします。内容"
+"は ``Entries.content`` カラムの値とします。「いいね！」数は ``Entries."
+"n_likes`` カラムの値とします。"
 
 # 90a4877e386e42c18e74b3099cefcf52
 #: ../../../source/spec/query_syntax.txt:66
@@ -114,38 +132,42 @@ msgid ""
 "``TokenBigram`` tokenizer. So both ``Entries._key`` and ``Entries.content`` "
 "are fulltext search ready."
 msgstr ""
+"``Entries._key`` カラムと ``Entries.content`` カラムには ``TokenBigram`` トー"
+"クナイザーを使ったインデックスを作成します。そのため、 ``Entries._key`` と "
+"``Entries.content`` は両方とも全文検索できます。"
 
 # cf2e2189b4dc49c58208466d8cdd57f1
 #: ../../../source/spec/query_syntax.txt:70
 msgid "OK. The schema and data for examples are ready."
-msgstr ""
+msgstr "これで例を示すためのスキーマとデータの準備ができました。"
 
 # b0982ea05b1145fd92880c2514e1fc44
 #: ../../../source/spec/query_syntax.txt:73
 msgid "Conditional expression"
-msgstr ""
+msgstr "条件式"
 
 # 533671a3312549f883cd50bb4bc07325
 #: ../../../source/spec/query_syntax.txt:75
 msgid "Here is available conditional expression list."
-msgstr ""
+msgstr "以下は利用可能な条件式の一覧です。"
 
 # 0a5a69ae088147119cbc51c95844b9dc
 #: ../../../source/spec/query_syntax.txt:78
 msgid "Full text search condition"
-msgstr ""
+msgstr "全文検索条件"
 
 # 406f4fe2dee64f5cbc5d47fa9b83e123
 #: ../../../source/spec/query_syntax.txt:80
 msgid "Its syntax is ``keyword``."
-msgstr ""
+msgstr "構文は ``keyword`` です。"
 
 # 4bfb030a4e2b43cbab50df42327d4e68
 #: ../../../source/spec/query_syntax.txt:82
 msgid ""
-"``Full text search condition`` is the most simple conditional expression. It "
-"specifies a full text search condition against the default match columns."
-msgstr ""
+"``Full text search condition`` specifies a full text search condition "
+"against the default match columns. Match columns are full text search target "
+"columns."
+msgstr "``全文検索条件`` はデフォルトのマッチカラムに対して全文検索する条件を指定します。マッチカラムとは全文検索対象のカラムのことです。"
 
 # f85f7ad533d94b6abb9f888236007467
 # 2e061719632b465184bb238c02394431
@@ -157,6 +179,9 @@ msgid ""
 "you don't specify the default match columns, this conditional expression "
 "fails."
 msgstr ""
+"全文検索に使うデフォルトのマッチカラムを指定する必要があります。マッチカラム"
+"は :doc:`/commands/select` の ``--match_columns`` オプションで指定します。デ"
+"フォルトのマッチカラムを指定していない場合、この条件式は失敗します。"
 
 # ab7d4f280bdc4a15b90ed7324353722e
 #: ../../../source/spec/query_syntax.txt:91
@@ -167,7 +192,7 @@ msgid ""
 "``search`` and ``keyword``. If you want to specifies a keyword that contains "
 "one or more spaces, you can use ``phrase search condition`` that is "
 "described below."
-msgstr ""
+msgstr "この条件式は ``keyword`` で全文検索をします。 ``keyword`` には空白を含めることはできません。 ``search keyword`` というように空白を含んでいる場合は、 ``search`` と ``keyword`` という2つの全文検索条件を指定したことになります。もし、キーワードに空白を含めたい場合は以下で説明する ``フレーズ検索条件`` を使ってください。"
 
 # 66118ec4f5df49de8fe063dccd69c0fb
 # c42ed95cabcd456da899b9f068eba075
@@ -198,7 +223,7 @@ msgstr ""
 #: ../../../source/spec/query_syntax.txt:416
 #: ../../../source/spec/query_syntax.txt:436
 msgid "Here is a simple exmaple."
-msgstr ""
+msgstr "以下は簡単な使用例です。"
 
 # aec120f786864fc0b3dac6dc4929bb9b
 # 466caa2be8f748eea022f947f2561c05
@@ -207,19 +232,19 @@ msgstr ""
 msgid ""
 "The expression matches records that contain a word ``fast`` in ``content`` "
 "column value."
-msgstr ""
+msgstr "この式は ``content`` カラムの値に ``fast`` という単語を含んでいるレコードにマッチします。"
 
 # 1382126f16c64c678bc7698d6b26296c
 # 3c23eb014e8c42eea7fcfebb04fca3f5
 #: ../../../source/spec/query_syntax.txt:107
 #: ../../../source/spec/query_syntax.txt:139
 msgid "``content`` column is the default match column."
-msgstr ""
+msgstr "``content`` カラムはデフォルトのマッチカラムです。"
 
 # c5951ac356e7497191c7885dc156755b
 #: ../../../source/spec/query_syntax.txt:110
 msgid "Phrase search condition"
-msgstr ""
+msgstr "フレーズ検索条件"
 
 # 3562c44d1e7c41c78c21abdd7cff1567
 #: ../../../source/spec/query_syntax.txt:112
