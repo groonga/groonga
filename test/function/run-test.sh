@@ -1,5 +1,25 @@
 #!/bin/sh
 
+OPTIONS=`getopt -n $0 -u -o " " -l protocol: -- "$@"`
+if test $? -ne 0; then
+    exit 1
+fi
+set -- $OPTIONS
+while true;
+do
+    case $1 in
+	--protocol)
+	    protocol=$2
+	    shift
+            ;;
+	--)
+	    shift
+	    break
+	    ;;
+    esac
+    shift
+done
+
 export BASE_DIR="`dirname $0`"
 if test -z "$BUILD_DIR"; then
     BUILD_DIR="$BASE_DIR"
@@ -56,9 +76,14 @@ else
     targets=
 fi
 
+if test -z $protocol; then
+    protocol="gqtp"
+fi
+
 $RUBY -I "$grntest_dir/lib" \
     "$grntest_dir/bin/grntest" \
     --groonga "$GROONGA" \
     --groonga-suggest-create-dataset "$GROONGA_SUGGEST_CREATE_DATASET" \
     --base-directory "$BASE_DIR" \
+    --protocol "$protocol" \
     "$targets" "$@"
