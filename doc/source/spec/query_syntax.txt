@@ -150,7 +150,7 @@ full text search condition by ``column:`` instead of
 
 This condtional expression is useful when you want to use two or more
 full text search against different columns. The default match columns
-specified by ``match_columns`` option can't be specified multiple
+specified by ``--match_columns`` option can't be specified multiple
 times. You need to specify the second match column by this conditional
 expression.
 
@@ -162,8 +162,8 @@ explicit match column)`` isn't supported. Advanced match columns has
 the following features:
 
   * Weight is supported.
-  * Multiple match columns are supported.
-  * Index column is supported.
+  * Using multiple columns are supported.
+  * Using index column as a match column is supported.
 
 See description of ``--match_columns`` option of
 :doc:`/commands/select` about them.
@@ -215,7 +215,7 @@ TODO: describe me.
 Suffix search condition
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-Its syntax is ``column:^value``.
+Its syntax is ``column:$value``.
 
 TODO: describe me.
 
