@@ -365,7 +365,8 @@ Logical OR
 
 Its syntax is ``a OR b``.
 
-``a`` and ``b`` are conditional expressions or conbinded expressions.
+``a`` and ``b`` are conditional expressions, conbinded expressions or
+assignment expressions.
 
 If at least one of ``a`` and ``b`` are matched, ``a OR b`` is matched.
 
@@ -384,7 +385,8 @@ Logical AND
 
 Its syntax is ``a + b`` or just ``a b``.
 
-``a`` and ``b`` are conditional expressions or conbinded expressions.
+``a`` and ``b`` are conditional expressions, conbinded expressions or
+assignment expressions.
 
 If both ``a`` and ``b`` are matched, ``a + b`` is matched.
 
@@ -406,7 +408,8 @@ Logical NOT
 
 Its syntax is ``a - b``.
 
-``a`` and ``b`` are conditional expressions or conbinded expressions.
+``a`` and ``b`` are conditional expressions, conbinded expressions or
+assignment expressions.
 
 If ``a`` is matched and ``b`` is not matched, ``a - b`` is matched.
 
@@ -426,12 +429,12 @@ greater than or equal to ``10`` and don't contain a word ``groonga`` in
 Grouping
 ^^^^^^^^
 
-Its syntax is ``(...)``. ``...`` is one or more expressions.
+Its syntax is ``(...)``. ``...`` is space separated expression list.
 
-``(...)`` groups one ore more expressions and they can be processed as
-an expression. ``a b OR c`` means that ``a`` and ``b`` are matched or
-``c`` is matched. ``a (b OR c)`` means that ``a`` and one of ``b`` and
-``c`` are matched.
+``(...)`` groups one ore more expressions and they can be
+processed as an expression. ``a b OR c`` means that ``a`` and ``b``
+are matched or ``c`` is matched. ``a (b OR c)`` means that ``a`` and
+one of ``b`` and ``c`` are matched.
 
 Here is a simple exmaple.
 

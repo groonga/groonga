@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-13 13:18\n"
-"PO-Revision-Date: 2012-06-13 14:54+0900\n"
+"POT-Creation-Date: 2012-06-13 23:12\n"
+"PO-Revision-Date: 2012-06-13 23:13+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -224,10 +224,10 @@ msgstr ""
 #: ../../../source/spec/query_syntax.txt:299
 #: ../../../source/spec/query_syntax.txt:324
 #: ../../../source/spec/query_syntax.txt:349
-#: ../../../source/spec/query_syntax.txt:372
-#: ../../../source/spec/query_syntax.txt:394
-#: ../../../source/spec/query_syntax.txt:416
-#: ../../../source/spec/query_syntax.txt:436
+#: ../../../source/spec/query_syntax.txt:373
+#: ../../../source/spec/query_syntax.txt:396
+#: ../../../source/spec/query_syntax.txt:419
+#: ../../../source/spec/query_syntax.txt:439
 msgid "Here is a simple exmaple."
 msgstr "以下は簡単な使用例です。"
 
@@ -339,7 +339,11 @@ msgid ""
 "are supported or not. ``Full text search condition`` supports advanced match "
 "columns but ``full text search condition (with explicit match column)`` "
 "isn't supported. Advanced match columns has the following features:"
-msgstr "``全文検索条件`` と ``全文検索条件（マッチカラム指定あり）`` の違いは高度なマッチカラムをサポートしているかどうかです。 ``全文検索条件`` は高度なマッチカラムをサポートしていますが、 ``全文検索条件（マッチカラム指定あり）`` はサポートしていません。高度なマッチカラムには以下の機能があります:"
+msgstr ""
+"``全文検索条件`` と ``全文検索条件（マッチカラム指定あり）`` の違いは高度な"
+"マッチカラムをサポートしているかどうかです。 ``全文検索条件`` は高度なマッチ"
+"カラムをサポートしていますが、 ``全文検索条件（マッチカラム指定あり）`` はサ"
+"ポートしていません。高度なマッチカラムには以下の機能があります:"
 
 # b038d03d87e945d8b75b8e9c52203b21
 #: ../../../source/spec/query_syntax.txt:164
@@ -420,7 +424,7 @@ msgstr "構文は ``column:^value`` または ``value*`` です。"
 # 6340bbce93684f468e1de546a3c38b59
 #: ../../../source/spec/query_syntax.txt:213
 #: ../../../source/spec/query_syntax.txt:220
-#: ../../../source/spec/query_syntax.txt:461
+#: ../../../source/spec/query_syntax.txt:464
 msgid "TODO: describe me."
 msgstr ""
 
@@ -437,7 +441,7 @@ msgstr "構文は ``column:$value`` です。"
 # a252c9bced7c4fbbaba793b391408b41
 #: ../../../source/spec/query_syntax.txt:223
 msgid "Equal condition"
-msgstr "一致条件"
+msgstr "等価条件"
 
 # 61fab56d6e9c4f4d8756ed4c9af116dd
 #: ../../../source/spec/query_syntax.txt:225
@@ -478,7 +482,7 @@ msgstr "この式は ``_key`` カラムの値が ``Groonga`` のレコードに�
 # f506ea57a6fa4ea48578fc07e477747e
 #: ../../../source/spec/query_syntax.txt:242
 msgid "Not equal condition"
-msgstr "不一致条件"
+msgstr "不等価条件"
 
 # 06c6395059914125a1cd1d0235957d1e
 #: ../../../source/spec/query_syntax.txt:244
@@ -501,7 +505,7 @@ msgstr ""
 # 48c6cbe6a50b49489c4add61256792f2
 #: ../../../source/spec/query_syntax.txt:261
 msgid "Less than condition"
-msgstr ""
+msgstr "小なり条件"
 
 # e1ccda2ff1f04f3bb022982c35229e63
 #: ../../../source/spec/query_syntax.txt:263
@@ -541,17 +545,17 @@ msgstr ""
 # 59282efa52354653a5f29b1c139b5a8a
 #: ../../../source/spec/query_syntax.txt:285
 msgid "Greater than condition"
-msgstr ""
+msgstr "大なり条件"
 
 # 23172d36e9af465e898d459b2655c21a
 #: ../../../source/spec/query_syntax.txt:287
 msgid "Its syntax is ``column:>value``."
-msgstr ""
+msgstr "構文は ``column:>value`` です。"
 
 # 8ad49944ac0b4015b07d8c304456a0fb
 #: ../../../source/spec/query_syntax.txt:289
 msgid "It matches records that ``column`` value is greater than ``value``."
-msgstr ""
+msgstr "``column`` の値が ``value`` より大きいレコードにマッチします。"
 
 # aaf7506ffd9941a7a3674aa65bc3859c
 #: ../../../source/spec/query_syntax.txt:305
@@ -559,46 +563,47 @@ msgid ""
 "The expression matches records that ``n_likes`` column value is greater than "
 "``10``."
 msgstr ""
+"この式は ``n_likes`` カラムの値が ``10`` より大きいレコードにマッチします。"
 
 # 42daf31653de41a8b6b9454583e2f8d6
 #: ../../../source/spec/query_syntax.txt:309
 msgid "Less than or equal to condition"
-msgstr ""
+msgstr "以下条件"
 
 # 52dd3f0b517e4d1c937cbb1bcffdcbbc
 #: ../../../source/spec/query_syntax.txt:311
 msgid "Its syntax is ``column:<=value``."
-msgstr ""
+msgstr "構文は ``column:<=value`` です。"
 
 # d3c38705d0bc4c58b065eba756f7b61d
 #: ../../../source/spec/query_syntax.txt:313
 msgid ""
 "It matches records that ``column`` value is less than or equal to ``value``."
-msgstr ""
+msgstr "``column`` の値が ``value`` 以下のレコードにマッチします。"
 
 # 05681d395ddf4b2ba94f4131bec5c97d
 #: ../../../source/spec/query_syntax.txt:330
 msgid ""
 "The expression matches records that ``n_likes`` column value is less than or "
 "equal to ``10``."
-msgstr ""
+msgstr "この式は ``n_likes`` カラムの値が ``10``以下のレコードにマッチします。"
 
 # fab0784dc5ca4f8db00e7c660b4e0b23
 #: ../../../source/spec/query_syntax.txt:334
 msgid "Greater than or equal to condition"
-msgstr ""
+msgstr "以上条件"
 
 # 6253cad863bc4ea1a2ab326645e7a2b4
 #: ../../../source/spec/query_syntax.txt:336
 msgid "Its syntax is ``column:>=value``."
-msgstr ""
+msgstr "構文は ``column:>=value`` です。"
 
 # 6ec85f8976f949a69748c5b1f5532223
 #: ../../../source/spec/query_syntax.txt:338
 msgid ""
 "It matches records that ``column`` value is greater than or equal to "
 "``value``."
-msgstr ""
+msgstr "``column`` の値が ``value`` 以上のレコードにマッチします。"
 
 # 6e486d931ffd49f686322a0c8eb18756
 #: ../../../source/spec/query_syntax.txt:355
@@ -606,160 +611,191 @@ msgid ""
 "The expression matches records that ``n_likes`` column value is greater than "
 "or equal to ``10``."
 msgstr ""
+"この式は ``n_likes`` カラムの値が ``10`` 以上のレコードにマッチします。"
 
 # a8485d9e91224f5591b5e3600c82f32c
 #: ../../../source/spec/query_syntax.txt:359
 msgid "Combined expression"
-msgstr ""
+msgstr "結合式"
 
 # d8cb74efee504a54bd654548b7a523d3
 #: ../../../source/spec/query_syntax.txt:361
 msgid "Here is available combined expression list."
-msgstr ""
+msgstr "以下は利用可能な結合式のリストです。"
 
 # 8bc8e518c04d4b6ebecbf7b89d658150
 #: ../../../source/spec/query_syntax.txt:364
 msgid "Logical OR"
-msgstr ""
+msgstr "論理和"
 
 # 14b938bb7b474a0ab8e5f5781c2830d7
 #: ../../../source/spec/query_syntax.txt:366
 msgid "Its syntax is ``a OR b``."
-msgstr ""
+msgstr "構文は ``a OR b`` です。"
 
 # 5508e8f370774e55b67b8b605c9e1243
 # 0eec35ec6e5a487db0c550ccdf0317c1
 # a5db048aa7804166989e618986f53687
 #: ../../../source/spec/query_syntax.txt:368
-#: ../../../source/spec/query_syntax.txt:387
-#: ../../../source/spec/query_syntax.txt:409
-msgid "``a`` and ``b`` are conditional expressions or conbinded expressions."
-msgstr ""
+#: ../../../source/spec/query_syntax.txt:388
+#: ../../../source/spec/query_syntax.txt:411
+msgid ""
+"``a`` and ``b`` are conditional expressions, conbinded expressions or "
+"assignment expressions."
+msgstr "``a`` と ``b`` は条件式または結合式または代入式です。"
 
 # c3527e4fe2b94adb8731bf9ee0e93fe0
-#: ../../../source/spec/query_syntax.txt:370
+#: ../../../source/spec/query_syntax.txt:371
 msgid "If at least one of ``a`` and ``b`` are matched, ``a OR b`` is matched."
 msgstr ""
+"``a`` と ``b`` のうち少なくともひとつの式がマッチすれば ``a OR b`` はマッチし"
+"ます。"
 
 # 3da0793ec2aa4fe0ab997c2efc28bc7d
-#: ../../../source/spec/query_syntax.txt:378
+#: ../../../source/spec/query_syntax.txt:379
 msgid ""
 "The expression matches records that ``n_likes`` column value is greater than "
 "``10`` or contain a word ``senna`` in ``content`` column value."
 msgstr ""
+"この式は ``n_likes`` カラムの値が ``10`` より大きいか ``content`` カラムの値"
+"に ``senna`` という単語を含んでいるレコードにマッチします。"
 
 # 1c79b0c247d54a2687ea33f9f6faebbe
-#: ../../../source/spec/query_syntax.txt:383
+#: ../../../source/spec/query_syntax.txt:384
 msgid "Logical AND"
-msgstr ""
+msgstr "論理積"
 
 # cf26472183774a21b8c21e0eb1e14325
-#: ../../../source/spec/query_syntax.txt:385
+#: ../../../source/spec/query_syntax.txt:386
 msgid "Its syntax is ``a + b`` or just ``a b``."
-msgstr ""
+msgstr "構文は ``a + b`` です。あるいは単に ``a b`` と書くこともできます。"
 
 # 14eb5f6196604dea8b2e58754a5ff77f
-#: ../../../source/spec/query_syntax.txt:389
+#: ../../../source/spec/query_syntax.txt:391
 msgid "If both ``a`` and ``b`` are matched, ``a + b`` is matched."
-msgstr ""
+msgstr "``a`` と ``b`` の両方にマッチすれば ``a + b`` はマッチします。"
 
 # 6c271ed34e834f2388017bbf8e6e11f7
-#: ../../../source/spec/query_syntax.txt:391
+#: ../../../source/spec/query_syntax.txt:393
 msgid ""
 "You can specify ``+`` the first expression such as ``+a``. The ``+`` is just "
 "ignored."
 msgstr ""
+"``+a`` というように最初の式に ``+`` を指定することもできます。この場合は ``"
+"+`` は単に無視されます。"
 
 # 5779369be5a247d0b0a765b7020c4ca1
-#: ../../../source/spec/query_syntax.txt:400
+#: ../../../source/spec/query_syntax.txt:402
 msgid ""
 "The expression matches records that ``n_likes`` column value is greater than "
 "or equal to ``10`` and contain a word ``groonga`` in ``content`` column "
 "value."
 msgstr ""
+"この式は ``n_likes`` カラムの値が ``10`` 以上で ``content`` カラムの値に "
+"``groonga`` という単語を含むレコードにマッチします。"
 
 # 5ea0ed2ad8054405964b79a8cdcaab72
-#: ../../../source/spec/query_syntax.txt:405
+#: ../../../source/spec/query_syntax.txt:407
 msgid "Logical NOT"
-msgstr ""
+msgstr "論理否定"
 
 # 622e416c9bae41fe8c51b82f45ff181f
-#: ../../../source/spec/query_syntax.txt:407
+#: ../../../source/spec/query_syntax.txt:409
 msgid "Its syntax is ``a - b``."
-msgstr ""
+msgstr "構文は ``a - b`` です。"
 
 # 5285a8655de84f9bae3506c36352beca
-#: ../../../source/spec/query_syntax.txt:411
+#: ../../../source/spec/query_syntax.txt:414
 msgid "If ``a`` is matched and ``b`` is not matched, ``a - b`` is matched."
 msgstr ""
+"``a`` にマッチして ``b`` にマッチしなければ、 ``a - b`` はマッチします。"
 
 # d33bf8eae6e64ab6ad77d6199308815f
-#: ../../../source/spec/query_syntax.txt:413
+#: ../../../source/spec/query_syntax.txt:416
 msgid ""
 "You can not specify ``-`` the first expression such as ``-a``. It's syntax "
 "error."
 msgstr ""
+"``-a`` というように最初の式に ``-`` を指定することはできません。この場合は構"
+"文エラーになります。"
 
 # a4cd249fabb648e8ab84261b9fa16ab3
-#: ../../../source/spec/query_syntax.txt:422
+#: ../../../source/spec/query_syntax.txt:425
 msgid ""
 "The expression matches records that ``n_likes`` column value is greater than "
 "or equal to ``10`` and don't contain a word ``groonga`` in ``content`` "
 "column value."
 msgstr ""
+"この式は ``n_likes`` カラムの値が ``10`` 以上で ``content`` カラムの値に "
+"``groonga`` という単語を含まないレコードにマッチします。"
 
 # ea9a9be2cee845249dc690b844bfee4d
-#: ../../../source/spec/query_syntax.txt:427
+#: ../../../source/spec/query_syntax.txt:430
 msgid "Grouping"
-msgstr ""
+msgstr "グループ化"
 
 # a9df0d726d0f47789d16dbf11f87cc74
-#: ../../../source/spec/query_syntax.txt:429
-msgid "Its syntax is ``(...)``. ``...`` is one or more expressions."
-msgstr ""
+#: ../../../source/spec/query_syntax.txt:432
+msgid "Its syntax is ``(...)``. ``...`` is space separated expression list."
+msgstr "構文は ``(...)`` です。 ``...`` は空白区切りの式のリストです。"
 
 # 26194c8712594b97b88c8c6caaf11491
-#: ../../../source/spec/query_syntax.txt:431
+#: ../../../source/spec/query_syntax.txt:434
 msgid ""
 "``(...)`` groups one ore more expressions and they can be processed as an "
 "expression. ``a b OR c`` means that ``a`` and ``b`` are matched or ``c`` is "
 "matched. ``a (b OR c)`` means that ``a`` and one of ``b`` and ``c`` are "
 "matched."
 msgstr ""
+"``(...)`` 1つ以上の式をグループ化します。グループ化された式は1つの式として処"
+"理されます。 ``a b OR c`` は ``a`` と ``b`` の両方がマッチするか、 ``c`` が"
+"マッチすれば式全体がマッチする、という意味になります。 ``a (b OR c)`` は "
+"``a`` がマッチして ``b`` と ``c`` はどちらか一方がマッチすれば式全体がマッチ"
+"する、という意味になります。"
 
 # 8da34e43527d433ea16802f7fe2044f4
-#: ../../../source/spec/query_syntax.txt:443
+#: ../../../source/spec/query_syntax.txt:446
 msgid ""
 "The first expression doesn't use grouping. It matches records that ``n_likes:"
 "<5`` and ``content:@senna`` are matched or ``content:@fast`` is matched."
 msgstr ""
+"最初の式はグループ化していません。この式は ``n_likes:<5`` と ``content:"
+"@senna`` の両方がマッチするか ``content:@fast`` がマッチするレコードにマッチ"
+"します。"
 
 # b9cbf6e79fb146d4a02867e0e2a4ff1f
-#: ../../../source/spec/query_syntax.txt:447
+#: ../../../source/spec/query_syntax.txt:450
 msgid ""
 "The second expression uses grouping. It matches records that ``n_likes:<5`` "
 "and one of ``content:@senna`` or ``content:@fast`` are matched."
 msgstr ""
+"2番目の式はグループ化しています。この式は ``n_likes:<5`` にマッチして、 "
+"``content:@senna`` と ``content:@fast`` は少なくともどちらか一方にマッチする"
+"レコードにマッチします。"
 
 # 137139f09a1f436e8f13e7c75841306e
-#: ../../../source/spec/query_syntax.txt:452
+#: ../../../source/spec/query_syntax.txt:455
 msgid "Assignment expression"
-msgstr ""
+msgstr "代入式"
 
 # bcdcbdaea046466a8ff62b9cf8dafc16
-#: ../../../source/spec/query_syntax.txt:454
+#: ../../../source/spec/query_syntax.txt:457
 msgid ""
 "This section is for advanced users. Because assignment expression is "
 "disabled in ``--query`` option of :doc:`/commands/select`. You need to use "
 "groonga as a library instead of server or command line tool for assignment "
 "expression."
 msgstr ""
+"このセクションは高度なユーザー向けです。それは、代入式は :doc:`/commands/"
+"select` の ``--query`` オプションでは無効になっているからです。代入演算子を使"
+"うには、groongaをサーバーやコマンドラインツールとして使うのではなくライブラリ"
+"と使わなければいけません。"
 
 # a37cee15bcd849088f435a86376466c3
-#: ../../../source/spec/query_syntax.txt:459
+#: ../../../source/spec/query_syntax.txt:462
 msgid ""
 "There is only one syntax for assignment expression. It's ``column:=value``."
-msgstr ""
+msgstr "代入式の構文は1つだけです。 ``column:=value`` となります。"
 
 # 47dc2b34beb1410495604199c7f24873
 #: ../../../source/spec/script_syntax.txt:9
