@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-05-21 14:11\n"
+"POT-Creation-Date: 2012-06-13 10:02\n"
 "PO-Revision-Date: 2012-04-28 11:40+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -16,6 +16,39 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+
+# 621737a2a5f945ea906e29d3f76e9883
+# 9d8571725e62446bbf3c19ec648a88b9
+# 2403ce8b457f451ca7e5f32a195afae7
+# e27f90c0e82f4eb5aa747f0550c24954
+# ff080511cccb41969e0196269912020f
+# 4fd8e1a5fb3c41bb9f3a6f41022048cc
+# f9cfb6a4789c4df4819a55692bfd083a
+# f65538e2cdd34a99bbba182ed2a3b124
+# f66a82ec28f64a20b8df3b9ee14177d1
+# c2534f475b0f4b438b064f66c16d700d
+# 3dda7928e22a432cbfa435393685165c
+# 57c98b9984d446f4bf8e4ce5495b4175
+# 288be8ed796b40519fbea28ff3e3abce
+# 1497639395f34aec92e88fc1d300dc4a
+# ed2566a34d74449ea855878e97e4a3b7
+#: ../../../source/example/spec/query_syntax/setup.log:1
+#: ../../../source/example/spec/query_syntax/simple_equal.log:1
+#: ../../../source/example/spec/query_syntax/simple_full_text_search.log:1
+#: ../../../source/example/spec/query_syntax/simple_full_text_search_with_explicit_match_column.log:1
+#: ../../../source/example/spec/query_syntax/simple_greater_than.log:1
+#: ../../../source/example/spec/query_syntax/simple_greater_than_or_equal_to.log:1
+#: ../../../source/example/spec/query_syntax/simple_grouping.log:1
+#: ../../../source/example/spec/query_syntax/simple_less_than.log:1
+#: ../../../source/example/spec/query_syntax/simple_less_than_or_equal_to.log:1
+#: ../../../source/example/spec/query_syntax/simple_logical_and.log:1
+#: ../../../source/example/spec/query_syntax/simple_logical_not.log:1
+#: ../../../source/example/spec/query_syntax/simple_logical_or.log:1
+#: ../../../source/example/spec/query_syntax/simple_not_equal.log:1
+#: ../../../source/example/spec/query_syntax/simple_phrase_search.log:1
+#: ../../../source/example/spec/query_syntax/simple_phrase_search_with_explicit_match_column.log:1
+msgid "Execution example::"
+msgstr ""
 
 #: ../../../source/spec.txt:6
 msgid "仕様"
@@ -26,181 +59,649 @@ msgstr ""
 msgid "Query syntax"
 msgstr "クエリ構文"
 
-# fce4a207dd274d16a8b2afc7cae872e3
+# c7c0665acac845c6b66138c0715ee87f
 #: ../../../source/spec/query_syntax.txt:11
-#: ../../../source/spec/script_syntax.txt:11
-msgid "TODO: revised."
-msgstr ""
-
-# d8984965600447b98b53108c8d7288f6
-#: ../../../source/spec/query_syntax.txt:13
 msgid ""
-"一般的なWebページの検索フォームで使われるような書式を使って検索条件を指定する"
-"ことができます。これをクエリ構文と呼びます。"
+"Query syntax is a syntax to specify search condition for common Web search "
+"form. It is similar to Google's search form. For example, ``word1 word2`` "
+"means that groonga searches records that contain both ``word1`` and "
+"``word2``. ``word1 OR word2`` means that groogna searches records that "
+"contain either ``word1`` or ``word2``."
 msgstr ""
 
-# 8b908dae3a29426ab6aca450314ac731
-#: ../../../source/spec/query_syntax.txt:15
-msgid "クエリ構文は「条件式」と条件式を組み合わせる「結合式」からなります。"
-msgstr ""
-
-# 5a40d0eae09349a4ab89c40c6fae03f8
-#: ../../../source/spec/query_syntax.txt:18
-msgid "条件式"
-msgstr ""
-
-# 51fb7a3950a14809bee5373ad438a1ec
-#: ../../../source/spec/query_syntax.txt:20
-msgid "以下の条件式が使用できます。"
-msgstr ""
-
-# 027e7df3def14565aa1a974d18390b43
-#: ../../../source/spec/query_syntax.txt:23
-msgid "``文字列``"
-msgstr ""
-
-# ba5ab2d7ae0f4931a7f26b964a1ef8a5
-#: ../../../source/spec/query_syntax.txt:25
+# 3b76c01350d74e93a2e3194f8d2bca82
+#: ../../../source/spec/query_syntax.txt:17
 msgid ""
-"全文検索条件(デフォルト検索対象カラムの値が指定された文字列を含んでいる)"
+"Query syntax consists of ``conditional expression``, ``combind expression`` "
+"and ``assignment expression``. Nomrally ``assignment expression`` can be "
+"ignored. Because ``Assignment expression`` is disabled in ``--query`` option "
+"of :doc:`/commands/select`. You can use it if you use groonga as library and "
+"customize query syntax parser options."
 msgstr ""
 
-# 96e54ce0ee634ff8b86897acc629b6e1
-#: ../../../source/spec/query_syntax.txt:28
-msgid "``\"文字列\"``"
+# f23c41dac8994a2e82f76df831354e96
+#: ../../../source/spec/query_syntax.txt:24
+msgid ""
+"``Conditinal expression`` specifies an condition. ``Combinded expression`` "
+"consists of one or more ``conditional expression``, ``combined expression`` "
+"or ``assignment expression``. ``Assignment expression`` can assigns a column "
+"to a value."
 msgstr ""
 
-# c4708d61b52245ea96f57164196d493d
+# 69f87742861a4aa18eabdb09f719e196
 #: ../../../source/spec/query_syntax.txt:30
+msgid "Sample data"
+msgstr ""
+
+# 8f5aa6b4c71346a684b9ec9be85d9d41
+#: ../../../source/spec/query_syntax.txt:32
+msgid "Here are a schema definition and sample data to show usage."
+msgstr ""
+
+# fc1abb5337ca4b508cfab8490c65a053
+#: ../../../source/spec/query_syntax.txt:61
 msgid ""
-"フレーズ検索条件(デフォルト検索対象カラムの値が指定されたフレーズを含んでい"
-"る)"
+"There is a table, ``Entries``, for blog entries. An entry has title, content "
+"and the number of likes for the entry. Title is key of ``Entries``. Content "
+"is value of ``Entries.content`` column. The number of likes is value of "
+"``Entries.n_likes`` column."
 msgstr ""
 
-# 6217ff813649445aacd9d56468520fdb
-#: ../../../source/spec/query_syntax.txt:33
-msgid "``カラム名:値``"
+# 90a4877e386e42c18e74b3099cefcf52
+#: ../../../source/spec/query_syntax.txt:66
+msgid ""
+"``Entries._key`` column and ``Entries.content`` column are indexed using "
+"``TokenBigram`` tokenizer. So both ``Entries._key`` and ``Entries.content`` "
+"are fulltext search ready."
 msgstr ""
 
-# d53d947810b649a7a7c265b1d2dbafa0
-#: ../../../source/spec/query_syntax.txt:35
-msgid "一致条件( ``カラム値 == 値`` )"
-msgstr ""
-
-# 44316e1487f348f0827bd6fb50204d50
-#: ../../../source/spec/query_syntax.txt:38
-msgid "``カラム名:!値``"
-msgstr ""
-
-# b039648276c442ac80d739c223df013c
-#: ../../../source/spec/query_syntax.txt:40
-msgid "不一致条件( ``カラム値 != 値`` )"
-msgstr ""
-
-# 15483f6433064c29b9198039af6806eb
-#: ../../../source/spec/query_syntax.txt:43
-msgid "``カラム名:<値``"
-msgstr ""
-
-# f742206e60694350ba21da48867347c2
-#: ../../../source/spec/query_syntax.txt:45
-msgid "比較条件( ``カラム値 < 値`` )"
-msgstr ""
-
-# 2af698502f0045bfbf66c9e4b87e7057
-#: ../../../source/spec/query_syntax.txt:48
-msgid "``カラム名:>値``"
-msgstr ""
-
-# 6a444ec968214761937efe4981010308
-#: ../../../source/spec/query_syntax.txt:50
-msgid "比較条件( ``カラム値 > 値`` )"
-msgstr ""
-
-# 3390dd350d3c456ea883e62157ad9631
-#: ../../../source/spec/query_syntax.txt:53
-msgid "``カラム名:<=値``"
-msgstr ""
-
-# ff17dde0531249d6aa417c5ad390125c
-#: ../../../source/spec/query_syntax.txt:55
-msgid "比較条件( ``カラム値 <= 値`` )"
-msgstr ""
-
-# 2048e438f1de45a5b4d60f8fdeab7246
-#: ../../../source/spec/query_syntax.txt:58
-msgid "``カラム名:>=値``"
-msgstr ""
-
-# ee68fb3e32aa48c3b48ab90375b12bc9
-#: ../../../source/spec/query_syntax.txt:60
-msgid "比較条件( ``カラム値 >= 値`` )"
-msgstr ""
-
-# cd05ea93353a4d20bcdbc410dd858bb9
-#: ../../../source/spec/query_syntax.txt:63
-msgid "``カラム名:@文字列``"
-msgstr ""
-
-# 92d5ab0ee5724e0097e72cf1633c032c
-#: ../../../source/spec/query_syntax.txt:65
-msgid "全文検索条件(カラム値が指定された文字列を含んでいる)"
-msgstr ""
-
-# ffb13e06010846caba98f29f91dc95f4
-#: ../../../source/spec/query_syntax.txt:68
-msgid "結合演算子"
-msgstr ""
-
-# 9ca6d1aaf0ed4f03988543af9b3ff7fb
+# cf2e2189b4dc49c58208466d8cdd57f1
 #: ../../../source/spec/query_syntax.txt:70
-msgid "複数の条件式を結合するために以下の演算子が使用できます。"
+msgid "OK. The schema and data for examples are ready."
 msgstr ""
 
-# d13dfb01f94c4993897756c5d107f562
+# b0982ea05b1145fd92880c2514e1fc44
 #: ../../../source/spec/query_syntax.txt:73
-msgid "``a OR b``"
+msgid "Conditional expression"
 msgstr ""
 
-# 4614194e0e304f88aa26d1d0848b2a07
+# 533671a3312549f883cd50bb4bc07325
 #: ../../../source/spec/query_syntax.txt:75
-msgid "論理和( ``a`` と ``b`` といずれかの条件がマッチする)"
+msgid "Here is available conditional expression list."
 msgstr ""
 
-# bb849f7965d24b8896c5ec715b93e45b
+# 0a5a69ae088147119cbc51c95844b9dc
 #: ../../../source/spec/query_syntax.txt:78
-msgid "``a + b``"
+msgid "Full text search condition"
 msgstr ""
 
-# d574a68f0c4b4585abb5f04fcf28a64f
+# 406f4fe2dee64f5cbc5d47fa9b83e123
 #: ../../../source/spec/query_syntax.txt:80
-msgid "論理積( ``a`` と ``b`` の両方がマッチする)"
+msgid "Its syntax is ``keyword``."
 msgstr ""
 
-# 2bf9b3626d394031bc5ccc8fa8badfa3
-#: ../../../source/spec/query_syntax.txt:83
-msgid "``a - b``"
+# 4bfb030a4e2b43cbab50df42327d4e68
+#: ../../../source/spec/query_syntax.txt:82
+msgid ""
+"``Full text search condition`` is the most simple conditional expression. It "
+"specifies a full text search condition against the default match columns."
 msgstr ""
 
-# b28f7ef713ee47eeb4b177a4bdaf6e7f
-#: ../../../source/spec/query_syntax.txt:85
-msgid "``a`` にマッチし、 ``b`` にはマッチしない"
+# f85f7ad533d94b6abb9f888236007467
+# 2e061719632b465184bb238c02394431
+#: ../../../source/spec/query_syntax.txt:86
+#: ../../../source/spec/query_syntax.txt:117
+msgid ""
+"You should specify the default match columns for full text search. They can "
+"be specified by ``--match_columns`` option of :doc:`/commands/select`. If "
+"you don't specify the default match columns, this conditional expression "
+"fails."
 msgstr ""
 
-# 04c030028e0d45d0875b8f13e5576d5e
-#: ../../../source/spec/query_syntax.txt:88
-msgid "``(...)``"
+# ab7d4f280bdc4a15b90ed7324353722e
+#: ../../../source/spec/query_syntax.txt:91
+msgid ""
+"This conditional expression does full text search with ``keyword``. "
+"``keyword`` should not contain any spaces. If ``keyword`` contains a space "
+"such as ``search keyword``, it means two full text search conditions; "
+"``search`` and ``keyword``. If you want to specifies a keyword that contains "
+"one or more spaces, you can use ``phrase search condition`` that is "
+"described below."
 msgstr ""
 
-# 982eeec671634ee488b0bf995e02703f
-#: ../../../source/spec/query_syntax.txt:90
-msgid "複数の条件をまとめる"
+# 66118ec4f5df49de8fe063dccd69c0fb
+# c42ed95cabcd456da899b9f068eba075
+# 94f458e8530046a393684dc097170d21
+# ca3e6750ea7042ea90ab6e4630c445bd
+# a734159306714f07871b4b9beadd3cdd
+# 8c73bdfed90e44c698e8976d7ed32ecc
+# f4b7f86f4c3949f3acf09025710d5d8f
+# 02211c315a65446b9465708bbfb50907
+# 05d3b38df8084ff99224d4e9721423eb
+# 0b360a2a047e41fc96447e110fde492b
+# 72a1d8c67c88481b8df80fb40cbc866a
+# 66be396b45984f1d866d5b15b40ffcc9
+# fc7e5c9cacbb40c6aedf2f62640e5a99
+# 19e209544d5847f8815d405ec8fb28e7
+#: ../../../source/spec/query_syntax.txt:98
+#: ../../../source/spec/query_syntax.txt:129
+#: ../../../source/spec/query_syntax.txt:171
+#: ../../../source/spec/query_syntax.txt:198
+#: ../../../source/spec/query_syntax.txt:232
+#: ../../../source/spec/query_syntax.txt:251
+#: ../../../source/spec/query_syntax.txt:275
+#: ../../../source/spec/query_syntax.txt:299
+#: ../../../source/spec/query_syntax.txt:324
+#: ../../../source/spec/query_syntax.txt:349
+#: ../../../source/spec/query_syntax.txt:372
+#: ../../../source/spec/query_syntax.txt:394
+#: ../../../source/spec/query_syntax.txt:416
+#: ../../../source/spec/query_syntax.txt:436
+msgid "Here is a simple exmaple."
+msgstr ""
+
+# aec120f786864fc0b3dac6dc4929bb9b
+# 466caa2be8f748eea022f947f2561c05
+#: ../../../source/spec/query_syntax.txt:104
+#: ../../../source/spec/query_syntax.txt:177
+msgid ""
+"The expression matches records that contain a word ``fast`` in ``content`` "
+"column value."
+msgstr ""
+
+# 1382126f16c64c678bc7698d6b26296c
+# 3c23eb014e8c42eea7fcfebb04fca3f5
+#: ../../../source/spec/query_syntax.txt:107
+#: ../../../source/spec/query_syntax.txt:139
+msgid "``content`` column is the default match column."
+msgstr ""
+
+# c5951ac356e7497191c7885dc156755b
+#: ../../../source/spec/query_syntax.txt:110
+msgid "Phrase search condition"
+msgstr ""
+
+# 3562c44d1e7c41c78c21abdd7cff1567
+#: ../../../source/spec/query_syntax.txt:112
+msgid "Its syntax is ``\"search keyword\"``."
+msgstr ""
+
+# d9743fd4dbed47808f045edac13136a2
+#: ../../../source/spec/query_syntax.txt:114
+msgid ""
+"``Phrase search condition`` specifies a phrase search condition against the "
+"default match columns."
+msgstr ""
+
+# 57e178d85a014c3c99812be49f465503
+#: ../../../source/spec/query_syntax.txt:122
+msgid ""
+"This conditional expression does phrase search with ``search keyword``. "
+"Phrase search searches records that contain ``search`` and ``keyword`` and "
+"those terms are appeared in the same order and adjacent. Thus, ``Put a "
+"search keyword in the form`` is matched but ``Search by the keyword`` and "
+"``There is a keyword. Search by it!`` aren't matched."
+msgstr ""
+
+# a3ee4c7c60684f028e00cfc4d6d5412d
+# f5388f9835bf43e282ebdcdf81150910
+#: ../../../source/spec/query_syntax.txt:135
+#: ../../../source/spec/query_syntax.txt:204
+msgid ""
+"The expression matches records that contain a phrase ``I started`` in "
+"``content`` column value. ``I also started`` isn't matched because ``I`` and "
+"``started`` aren't adjacent."
+msgstr ""
+
+# bc3be4d0f7be40c58296d3f8f8bb11f6
+#: ../../../source/spec/query_syntax.txt:142
+msgid "Full text search condition (with explicit match column)"
+msgstr ""
+
+# 12506266a15e441a836182f4f3c20b51
+#: ../../../source/spec/query_syntax.txt:144
+msgid "Its syntax is ``column:@keyword``."
+msgstr ""
+
+# 65c01da0052645c2a9374095bce7e63e
+#: ../../../source/spec/query_syntax.txt:146
+msgid ""
+"It's similar to ``full text search condition`` but it doesn't require the "
+"default match columns. You need to specify match column for the full text "
+"search condition by ``column:`` instead of ``--match_columns`` option of :"
+"doc:`/commands/select`."
+msgstr ""
+
+# d373c295c4f9455d8e89ce957ad90d3b
+#: ../../../source/spec/query_syntax.txt:151
+msgid ""
+"This condtional expression is useful when you want to use two or more full "
+"text search against different columns. The default match columns specified "
+"by ``match_columns`` option can't be specified multiple times. You need to "
+"specify the second match column by this conditional expression."
+msgstr ""
+
+# af23850f501449268f20b4f48f18e39d
+#: ../../../source/spec/query_syntax.txt:157
+msgid ""
+"The different between ``full text search condition`` and ``full text search "
+"condition (with explicit match column)`` is whether advanced match columns "
+"are supported or not. ``Full text search condition`` supports advanced match "
+"columns but ``full text search condition (with explicit match column)`` "
+"isn't supported. Advanced match columns has the following features:"
+msgstr ""
+
+# b038d03d87e945d8b75b8e9c52203b21
+#: ../../../source/spec/query_syntax.txt:164
+msgid "Weight is supported."
+msgstr ""
+
+# 102843eec18e480ab2367c92dce7f13a
+#: ../../../source/spec/query_syntax.txt:165
+msgid "Multiple match columns are supported."
+msgstr ""
+
+# 394c09be80b14ebe8903a4f7aa398cd2
+#: ../../../source/spec/query_syntax.txt:166
+msgid "Index column is supported."
+msgstr ""
+
+# bbc4ba5a3444421aaf1048616acc13b3
+#: ../../../source/spec/query_syntax.txt:168
+msgid ""
+"See description of ``--match_columns`` option of :doc:`/commands/select` "
+"about them."
+msgstr ""
+
+# 82a402b288a149a98368f174de47e9e0
+#: ../../../source/spec/query_syntax.txt:181
+msgid "Phrase search condition (with explicit match column)"
+msgstr ""
+
+# fd1cbe95dcc649f8a14965af3367fcff
+#: ../../../source/spec/query_syntax.txt:183
+msgid "Its syntax is ``column:@\"search keyword\"``."
+msgstr ""
+
+# 78a72a954ac442a48c4b62351fb1bd3b
+#: ../../../source/spec/query_syntax.txt:185
+msgid ""
+"It's similar to ``phrase search condition`` but it doesn't require the "
+"default match columns. You need to specify match column for the phrase "
+"search condition by ``column:`` instead of ``--match_columns`` option of :"
+"doc:`/commands/select`."
+msgstr ""
+
+# 4a5b2228e91c4a028c67de49852e0c39
+#: ../../../source/spec/query_syntax.txt:190
+msgid ""
+"The different between ``phrase search condition`` and ``phrase search "
+"condition (with explicit match column)`` is similar to between ``full text "
+"search condition`` and ``full text search condition (with explicit match "
+"column)``. ``Phrase search condition`` supports advanced match columns but "
+"``phrase search condition (with explicit match column)`` isn't supported. "
+"See description of ``full text search condition (with explicit match column)"
+"`` about advanced match columns."
+msgstr ""
+
+# 3ed9557e11644100834e055fb607f7f3
+#: ../../../source/spec/query_syntax.txt:209
+msgid "Prefix search condition"
+msgstr ""
+
+# cedd80752f344ef296039368cce4011e
+#: ../../../source/spec/query_syntax.txt:211
+msgid "Its syntax is ``column:^value`` or ``value*``."
+msgstr ""
+
+# 6340bbce93684f468e1de546a3c38b59
+# 6340bbce93684f468e1de546a3c38b59
+# 6340bbce93684f468e1de546a3c38b59
+#: ../../../source/spec/query_syntax.txt:213
+#: ../../../source/spec/query_syntax.txt:220
+#: ../../../source/spec/query_syntax.txt:461
+msgid "TODO: describe me."
+msgstr ""
+
+# 9ce75f34143f463c86d81ed1fbdf8c4c
+#: ../../../source/spec/query_syntax.txt:216
+msgid "Suffix search condition"
+msgstr ""
+
+# c38ba0447d074b51badfdecaaac7df41
+#: ../../../source/spec/query_syntax.txt:218
+msgid "Its syntax is ``column:^value``."
+msgstr ""
+
+# a252c9bced7c4fbbaba793b391408b41
+#: ../../../source/spec/query_syntax.txt:223
+msgid "Equal condition"
+msgstr ""
+
+# 61fab56d6e9c4f4d8756ed4c9af116dd
+#: ../../../source/spec/query_syntax.txt:225
+msgid "Its syntax is ``column:value``."
+msgstr ""
+
+# 853203337e5049fcb7d70466f0580b26
+#: ../../../source/spec/query_syntax.txt:227
+msgid "It matches records that ``column`` value is equal to ``value``."
+msgstr ""
+
+# 682cdd7c30fa4d4080cb14117ea4720a
+# 4c5250ae93b04c02b62e0b0bc7f2be43
+# 57358eb81c3c47fe876df88a4e4d21f2
+# 6b0d63dc793049b091d29f47b5c4161e
+# bb52c3fa672b4f8dafaa8400d6a48e66
+# 2b6913f05f284958b3f4fd2f70417610
+#: ../../../source/spec/query_syntax.txt:229
+#: ../../../source/spec/query_syntax.txt:248
+#: ../../../source/spec/query_syntax.txt:272
+#: ../../../source/spec/query_syntax.txt:296
+#: ../../../source/spec/query_syntax.txt:321
+#: ../../../source/spec/query_syntax.txt:346
+msgid ""
+"It doesn't require the default match columns such as ``full text search "
+"condition`` and ``phrase search condition``."
+msgstr ""
+
+# 58e72771aead470cb2e8bf0120646a28
+#: ../../../source/spec/query_syntax.txt:238
+msgid ""
+"The expression matches records that ``_key`` column value is equal to "
+"``Groonga``."
+msgstr ""
+
+# f506ea57a6fa4ea48578fc07e477747e
+#: ../../../source/spec/query_syntax.txt:242
+msgid "Not equal condition"
+msgstr ""
+
+# 06c6395059914125a1cd1d0235957d1e
+#: ../../../source/spec/query_syntax.txt:244
+msgid "Its syntax is ``column:!value``."
+msgstr ""
+
+# 319929d74c354373b4cf3929a27b9d3c
+#: ../../../source/spec/query_syntax.txt:246
+msgid "It matches records that ``column`` value isn't equal to ``value``."
+msgstr ""
+
+# 5f856dbba9c24dc88ab6a7c3ca21dcf3
+#: ../../../source/spec/query_syntax.txt:257
+msgid ""
+"The expression matches records that ``_key`` column value is not equal to "
+"``Groonga``."
+msgstr ""
+
+# 48c6cbe6a50b49489c4add61256792f2
+#: ../../../source/spec/query_syntax.txt:261
+msgid "Less than condition"
+msgstr ""
+
+# e1ccda2ff1f04f3bb022982c35229e63
+#: ../../../source/spec/query_syntax.txt:263
+msgid "Its syntax is ``column:<value``."
+msgstr ""
+
+# 9acfd4de96ff44f68a361d223d58dd32
+#: ../../../source/spec/query_syntax.txt:265
+msgid "It matches records that ``column`` value is less than ``value``."
+msgstr ""
+
+# 17099a76a1524fafaa6adea02711b6e6
+# d514a27b51304204b1a9b5c4ae069d5e
+# 35b9ae7dace941bebfec2a3eba56eeec
+# 8cf7fb0d85b34b6aad37acd65581884a
+#: ../../../source/spec/query_syntax.txt:267
+#: ../../../source/spec/query_syntax.txt:291
+#: ../../../source/spec/query_syntax.txt:316
+#: ../../../source/spec/query_syntax.txt:341
+msgid ""
+"If ``column`` type is numerical type such as ``Int32``, ``column`` value and "
+"``value`` are compared as number. If ``column`` type is text type such as "
+"``ShortText``, ``column`` value and ``value`` are compared as bit sequence."
+msgstr ""
+
+# aac77b4ce51c45a4afd6b346ce558dab
+#: ../../../source/spec/query_syntax.txt:281
+msgid ""
+"The expression matches records that ``n_likes`` column value is less than "
+"``10``."
+msgstr ""
+
+# 59282efa52354653a5f29b1c139b5a8a
+#: ../../../source/spec/query_syntax.txt:285
+msgid "Greater than condition"
+msgstr ""
+
+# 23172d36e9af465e898d459b2655c21a
+#: ../../../source/spec/query_syntax.txt:287
+msgid "Its syntax is ``column:>value``."
+msgstr ""
+
+# 8ad49944ac0b4015b07d8c304456a0fb
+#: ../../../source/spec/query_syntax.txt:289
+msgid "It matches records that ``column`` value is greater than ``value``."
+msgstr ""
+
+# aaf7506ffd9941a7a3674aa65bc3859c
+#: ../../../source/spec/query_syntax.txt:305
+msgid ""
+"The expression matches records that ``n_likes`` column value is greater than "
+"``10``."
+msgstr ""
+
+# 42daf31653de41a8b6b9454583e2f8d6
+#: ../../../source/spec/query_syntax.txt:309
+msgid "Less than or equal to condition"
+msgstr ""
+
+# 52dd3f0b517e4d1c937cbb1bcffdcbbc
+#: ../../../source/spec/query_syntax.txt:311
+msgid "Its syntax is ``column:<=value``."
+msgstr ""
+
+# d3c38705d0bc4c58b065eba756f7b61d
+#: ../../../source/spec/query_syntax.txt:313
+msgid ""
+"It matches records that ``column`` value is less than or equal to ``value``."
+msgstr ""
+
+# 05681d395ddf4b2ba94f4131bec5c97d
+#: ../../../source/spec/query_syntax.txt:330
+msgid ""
+"The expression matches records that ``n_likes`` column value is less than or "
+"equal to ``10``."
+msgstr ""
+
+# fab0784dc5ca4f8db00e7c660b4e0b23
+#: ../../../source/spec/query_syntax.txt:334
+msgid "Greater than or equal to condition"
+msgstr ""
+
+# 6253cad863bc4ea1a2ab326645e7a2b4
+#: ../../../source/spec/query_syntax.txt:336
+msgid "Its syntax is ``column:>=value``."
+msgstr ""
+
+# 6ec85f8976f949a69748c5b1f5532223
+#: ../../../source/spec/query_syntax.txt:338
+msgid ""
+"It matches records that ``column`` value is greater than or equal to "
+"``value``."
+msgstr ""
+
+# 6e486d931ffd49f686322a0c8eb18756
+#: ../../../source/spec/query_syntax.txt:355
+msgid ""
+"The expression matches records that ``n_likes`` column value is greater than "
+"or equal to ``10``."
+msgstr ""
+
+# a8485d9e91224f5591b5e3600c82f32c
+#: ../../../source/spec/query_syntax.txt:359
+msgid "Combined expression"
+msgstr ""
+
+# d8cb74efee504a54bd654548b7a523d3
+#: ../../../source/spec/query_syntax.txt:361
+msgid "Here is available combined expression list."
+msgstr ""
+
+# 8bc8e518c04d4b6ebecbf7b89d658150
+#: ../../../source/spec/query_syntax.txt:364
+msgid "Logical OR"
+msgstr ""
+
+# 14b938bb7b474a0ab8e5f5781c2830d7
+#: ../../../source/spec/query_syntax.txt:366
+msgid "Its syntax is ``a OR b``."
+msgstr ""
+
+# 5508e8f370774e55b67b8b605c9e1243
+# 0eec35ec6e5a487db0c550ccdf0317c1
+# a5db048aa7804166989e618986f53687
+#: ../../../source/spec/query_syntax.txt:368
+#: ../../../source/spec/query_syntax.txt:387
+#: ../../../source/spec/query_syntax.txt:409
+msgid "``a`` and ``b`` are conditional expressions or conbinded expressions."
+msgstr ""
+
+# c3527e4fe2b94adb8731bf9ee0e93fe0
+#: ../../../source/spec/query_syntax.txt:370
+msgid "If at least one of ``a`` and ``b`` are matched, ``a OR b`` is matched."
+msgstr ""
+
+# 3da0793ec2aa4fe0ab997c2efc28bc7d
+#: ../../../source/spec/query_syntax.txt:378
+msgid ""
+"The expression matches records that ``n_likes`` column value is greater than "
+"``10`` or contain a word ``senna`` in ``content`` column value."
+msgstr ""
+
+# 1c79b0c247d54a2687ea33f9f6faebbe
+#: ../../../source/spec/query_syntax.txt:383
+msgid "Logical AND"
+msgstr ""
+
+# cf26472183774a21b8c21e0eb1e14325
+#: ../../../source/spec/query_syntax.txt:385
+msgid "Its syntax is ``a + b`` or just ``a b``."
+msgstr ""
+
+# 14eb5f6196604dea8b2e58754a5ff77f
+#: ../../../source/spec/query_syntax.txt:389
+msgid "If both ``a`` and ``b`` are matched, ``a + b`` is matched."
+msgstr ""
+
+# 6c271ed34e834f2388017bbf8e6e11f7
+#: ../../../source/spec/query_syntax.txt:391
+msgid ""
+"You can specify ``+`` the first expression such as ``+a``. The ``+`` is just "
+"ignored."
+msgstr ""
+
+# 5779369be5a247d0b0a765b7020c4ca1
+#: ../../../source/spec/query_syntax.txt:400
+msgid ""
+"The expression matches records that ``n_likes`` column value is greater than "
+"or equal to ``10`` and contain a word ``groonga`` in ``content`` column "
+"value."
+msgstr ""
+
+# 5ea0ed2ad8054405964b79a8cdcaab72
+#: ../../../source/spec/query_syntax.txt:405
+msgid "Logical NOT"
+msgstr ""
+
+# 622e416c9bae41fe8c51b82f45ff181f
+#: ../../../source/spec/query_syntax.txt:407
+msgid "Its syntax is ``a - b``."
+msgstr ""
+
+# 5285a8655de84f9bae3506c36352beca
+#: ../../../source/spec/query_syntax.txt:411
+msgid "If ``a`` is matched and ``b`` is not matched, ``a - b`` is matched."
+msgstr ""
+
+# d33bf8eae6e64ab6ad77d6199308815f
+#: ../../../source/spec/query_syntax.txt:413
+msgid ""
+"You can not specify ``-`` the first expression such as ``-a``. It's syntax "
+"error."
+msgstr ""
+
+# a4cd249fabb648e8ab84261b9fa16ab3
+#: ../../../source/spec/query_syntax.txt:422
+msgid ""
+"The expression matches records that ``n_likes`` column value is greater than "
+"or equal to ``10`` and don't contain a word ``groonga`` in ``content`` "
+"column value."
+msgstr ""
+
+# ea9a9be2cee845249dc690b844bfee4d
+#: ../../../source/spec/query_syntax.txt:427
+msgid "Grouping"
+msgstr ""
+
+# a9df0d726d0f47789d16dbf11f87cc74
+#: ../../../source/spec/query_syntax.txt:429
+msgid "Its syntax is ``(...)``. ``...`` is one or more expressions."
+msgstr ""
+
+# 26194c8712594b97b88c8c6caaf11491
+#: ../../../source/spec/query_syntax.txt:431
+msgid ""
+"``(...)`` groups one ore more expressions and they can be processed as an "
+"expression. ``a b OR c`` means that ``a`` and ``b`` are matched or ``c`` is "
+"matched. ``a (b OR c)`` means that ``a`` and one of ``b`` and ``c`` are "
+"matched."
+msgstr ""
+
+# 8da34e43527d433ea16802f7fe2044f4
+#: ../../../source/spec/query_syntax.txt:443
+msgid ""
+"The first expression doesn't use grouping. It matches records that ``n_likes:"
+"<5`` and ``content:@senna`` are matched or ``content:@fast`` is matched."
+msgstr ""
+
+# b9cbf6e79fb146d4a02867e0e2a4ff1f
+#: ../../../source/spec/query_syntax.txt:447
+msgid ""
+"The second expression uses grouping. It matches records that ``n_likes:<5`` "
+"and one of ``content:@senna`` or ``content:@fast`` are matched."
+msgstr ""
+
+# 137139f09a1f436e8f13e7c75841306e
+#: ../../../source/spec/query_syntax.txt:452
+msgid "Assignment expression"
+msgstr ""
+
+# bcdcbdaea046466a8ff62b9cf8dafc16
+#: ../../../source/spec/query_syntax.txt:454
+msgid ""
+"This section is for advanced users. Because assignment expression is "
+"disabled in ``--query`` option of :doc:`/commands/select`. You need to use "
+"groonga as a library instead of server or command line tool for assignment "
+"expression."
+msgstr ""
+
+# a37cee15bcd849088f435a86376466c3
+#: ../../../source/spec/query_syntax.txt:459
+msgid ""
+"There is only one syntax for assignment expression. It's ``column:=value``."
 msgstr ""
 
 # 47dc2b34beb1410495604199c7f24873
 #: ../../../source/spec/script_syntax.txt:9
 msgid "Script Syntax"
 msgstr "スクリプト構文"
+
+# fce4a207dd274d16a8b2afc7cae872e3
+#: ../../../source/spec/script_syntax.txt:11
+msgid "TODO: revised."
+msgstr ""
 
 # 216313021a6947c89a8f2313c2faf4c7
 #: ../../../source/spec/script_syntax.txt:13
