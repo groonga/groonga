@@ -1974,6 +1974,21 @@ grn_geo_distance_rectangle_raw(grn_ctx *ctx,
                                                            M_PI,
                                                            intercept_edge);
         distance = (east_distance + west_distance) * GRN_GEO_RADIUS;
+      } else if (quad_type == QUADRANT_2ND_TO_1ST) {
+        longitude_delta = lng1 + M_2PI - lng2;
+        latitude_delta = lat1 - lat2;
+        slope = latitude_delta / longitude_delta;
+        intercept = lat2 - slope * lng2;
+        intercept_edge = slope * M_PI + intercept;
+        east_distance = geo_distance_rectangle_calculation(lng2,
+                                                           lat2,
+                                                           M_PI,
+                                                           intercept_edge);
+        west_distance = geo_distance_rectangle_calculation(-lng1,
+                                                           lat1,
+                                                           M_PI,
+                                                           intercept_edge);
+        distance = (east_distance + west_distance) * GRN_GEO_RADIUS;
       } else {
         x = (lng2 - lng1) * cos((lat1 + lat2) * 0.5);
         y = (lat2 - lat1);
