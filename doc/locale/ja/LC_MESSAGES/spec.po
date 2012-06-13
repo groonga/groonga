@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-06-13 13:18\n"
-"PO-Revision-Date: 2012-06-13 13:20+0900\n"
+"PO-Revision-Date: 2012-06-13 14:54+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -427,7 +427,7 @@ msgstr ""
 # 9ce75f34143f463c86d81ed1fbdf8c4c
 #: ../../../source/spec/query_syntax.txt:216
 msgid "Suffix search condition"
-msgstr "後方一致検索所受け件"
+msgstr "後方一致検索条件"
 
 # 61fab56d6e9c4f4d8756ed4c9af116dd
 #: ../../../source/spec/query_syntax.txt:218
