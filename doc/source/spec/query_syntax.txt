@@ -437,15 +437,15 @@ Here is a simple exmaple.
 
 .. groonga-command
 .. include:: ../example/spec/query_syntax/simple_grouping.log
-.. select Entries --query 'n_likes:>=10 content:@senna OR content:@fast'
-.. select Entries --query 'n_likes:>=10 (content:@senna OR content:@fast)'
+.. select Entries --query 'n_likes:<5 content:@senna OR content:@fast'
+.. select Entries --query 'n_likes:<5 (content:@senna OR content:@fast)'
 
 The first expression doesn't use grouping. It matches records that
-``n_likes:>=10`` and ``content:@senna`` are matched or
+``n_likes:<5`` and ``content:@senna`` are matched or
 ``content:@fast`` is matched.
 
 The second expression uses grouping. It matches records that
-``n_likes:>=10`` and one of ``content:@senna`` or ``content:@fast``
+``n_likes:<5`` and one of ``content:@senna`` or ``content:@fast``
 are matched.
 
 Assignment expression
