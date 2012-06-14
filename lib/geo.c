@@ -1908,7 +1908,7 @@ geo_quadrant_type(grn_geo_point *point1, grn_geo_point *point2)
 }
 
 static inline double
-geo_distance_rectangle_calculation(double start_longitude, double start_latitude,
+geo_distance_rectangle_square_root(double start_longitude, double start_latitude,
                                    double end_longitude, double end_latitude)
 {
   double diff_longitude;
@@ -1949,11 +1949,11 @@ grn_geo_distance_rectangle_raw(grn_ctx *ctx,
       latitude_delta = lat2 - lat1;
       slope = latitude_delta / longitude_delta;
       intercept = lat1 - slope * lng1;
-      east_distance = geo_distance_rectangle_calculation(lng1,
+      east_distance = geo_distance_rectangle_square_root(lng1,
                                                          lat1,
                                                          0,
                                                          intercept);
-      west_distance = geo_distance_rectangle_calculation(0,
+      west_distance = geo_distance_rectangle_square_root(0,
                                                          intercept,
                                                          lng2,
                                                          lat2);
@@ -1965,11 +1965,11 @@ grn_geo_distance_rectangle_raw(grn_ctx *ctx,
         slope = latitude_delta / longitude_delta;
         intercept = lat1 - slope * lng1;
         intercept_edge = slope * M_PI + intercept;
-        east_distance = geo_distance_rectangle_calculation(lng1,
+        east_distance = geo_distance_rectangle_square_root(lng1,
                                                            lat1,
                                                            M_PI,
                                                            intercept_edge);
-        west_distance = geo_distance_rectangle_calculation(-lng2,
+        west_distance = geo_distance_rectangle_square_root(-lng2,
                                                            lat2,
                                                            M_PI,
                                                            intercept_edge);
@@ -1980,11 +1980,11 @@ grn_geo_distance_rectangle_raw(grn_ctx *ctx,
         slope = latitude_delta / longitude_delta;
         intercept = lat2 - slope * lng2;
         intercept_edge = slope * M_PI + intercept;
-        east_distance = geo_distance_rectangle_calculation(lng2,
+        east_distance = geo_distance_rectangle_square_root(lng2,
                                                            lat2,
                                                            M_PI,
                                                            intercept_edge);
-        west_distance = geo_distance_rectangle_calculation(-lng1,
+        west_distance = geo_distance_rectangle_square_root(-lng1,
                                                            lat1,
                                                            M_PI,
                                                            intercept_edge);
