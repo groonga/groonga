@@ -7366,10 +7366,12 @@ grn_obj_clear_lock(grn_ctx *ctx, grn_obj *obj)
     }
     grn_io_clear_lock(grn_obj_io(obj));
     break;
+  case GRN_TABLE_NO_KEY :
+    grn_array_queue_lock_clear(ctx, (grn_array *)obj);
+    /* fallthru */
   case GRN_TABLE_HASH_KEY :
   case GRN_TABLE_PAT_KEY :
   case GRN_TABLE_DAT_KEY :
-  case GRN_TABLE_NO_KEY :
     {
       grn_hash *cols;
       if ((cols = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,

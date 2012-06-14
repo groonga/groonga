@@ -166,6 +166,7 @@ struct _grn_array_cursor {
 grn_rc grn_array_truncate(grn_ctx *ctx, grn_array *array);
 grn_rc grn_array_copy_sort_key(grn_ctx *ctx, grn_array *array,
                                grn_table_sort_key *keys, int n_keys);
+void grn_array_queue_lock_clear(grn_ctx *ctx, grn_array *array);
 
 /**** grn_hash ****/
 

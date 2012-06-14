@@ -263,6 +263,13 @@ typedef pthread_mutex_t grn_mutex;
 #define MUTEX_LOCK(m)   pthread_mutex_lock(&m)
 #define MUTEX_UNLOCK(m) pthread_mutex_unlock(&m)
 #define MUTEX_FIN(m)
+#define MUTEX_INIT_SHARED(m) do {\
+  pthread_mutexattr_t mutexattr;\
+  pthread_mutexattr_init(&mutexattr);\
+  pthread_mutexattr_setpshared(&mutexattr, PTHREAD_PROCESS_SHARED);\
+  pthread_mutex_init(&m, &mutexattr);\
+} while (0)
+
 typedef pthread_mutex_t grn_critical_section;
 #define CRITICAL_SECTION_INIT(cs)  pthread_mutex_init(&(cs), NULL)
 #define CRITICAL_SECTION_ENTER(cs) pthread_mutex_lock(&(cs))
@@ -273,6 +280,12 @@ typedef pthread_cond_t grn_cond;
 #define COND_INIT(c)   pthread_cond_init(&c, NULL)
 #define COND_SIGNAL(c) pthread_cond_signal(&c)
 #define COND_WAIT(c,m) pthread_cond_wait(&c, &m)
+#define COND_INIT_SHARED(c) do {\
+  pthread_condattr_t condattr;\
+  pthread_condattr_init(&condattr);\
+  pthread_condattr_setpshared(&condattr, PTHREAD_PROCESS_SHARED);\
+  pthread_cond_init(&c, &condattr);\
+} while (0)
 
 typedef pthread_key_t grn_thread_key;
 #define THREAD_KEY_CREATE(key, destr)  pthread_key_create(key, destr)

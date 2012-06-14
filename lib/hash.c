@@ -318,9 +318,36 @@ grn_io_array_bit_flip(grn_ctx *ctx, grn_io *io,
   return ptr;
 }
 
+/* grn_table_queue */
+
+typedef struct _grn_table_queue grn_table_queue;
+
+struct _grn_table_queue {
+  grn_mutex mutex;
+  grn_cond cond;
+  grn_id head;
+  grn_id tail;
+  grn_id cap;
+};
+
+static void
+grn_table_queue_lock_init(grn_ctx *ctx, grn_table_queue *queue)
+{
+  MUTEX_INIT_SHARED(queue->mutex);
+  COND_INIT_SHARED(queue->cond);
+}
+
+static void
+grn_table_queue_init(grn_ctx *ctx, grn_table_queue *queue)
+{
+  queue->head = 0;
+  queue->tail = 0;
+  queue->cap = GRN_ID_MAX;
+  grn_table_queue_lock_init(ctx, queue);
+}
+
 /* grn_array */
 
-#define GRN_ARRAY_HEADER_SIZE  0x9000
 #define GRN_ARRAY_SEGMENT_SIZE 0x400000
 
 /* Header of grn_io-based grn_array. */
@@ -332,7 +359,8 @@ struct grn_array_header {
   uint32_t n_garbages;
   grn_id garbages;
   uint32_t lock;
-  uint32_t reserved[5];
+  uint32_t reserved[9];
+  grn_table_queue queue;
 };
 
 /*
@@ -443,7 +471,7 @@ grn_array_init_io_array(grn_ctx *ctx, grn_array *array, const char *path,
   header->n_entries = 0;
   header->n_garbages = 0;
   header->garbages = GRN_ID_NIL;
-
+  grn_table_queue_init(ctx, &header->queue);
   array->obj.header.flags = flags;
   array->ctx = ctx;
   array->value_size = value_size;
@@ -455,6 +483,14 @@ grn_array_init_io_array(grn_ctx *ctx, grn_array *array, const char *path,
   array->header = header;
   array->lock = &header->lock;
   return GRN_SUCCESS;
+}
+
+void
+grn_array_queue_lock_clear(grn_ctx *ctx, grn_array *array)
+{
+  struct grn_array_header *header;
+  header = grn_io_header(array->io);
+  grn_table_queue_lock_init(ctx, &header->queue);
 }
 
 static grn_rc
