@@ -69,6 +69,28 @@ using ``TokenBigram`` tokenizer. So both ``Entries._key`` and
 
 OK. The schema and data for examples are ready.
 
+Escape
+------
+
+There are special characters in query syntax. To use a special
+character as itself, it should be escaped by prepending ``\``. For
+example, ``"`` is a special character. It is escaped as ``\"``.
+
+Here is a special character list:
+
+  * `` `` (a space) (escaped as ``\ ``)
+  * ``"`` (escaped as ``\"``)
+  * ``'`` (escaped as ``\'``)
+  * ``(`` (escaped as ``\(``)
+  * ``)`` (escaped as ``\)``)
+  * ``\`` (escaped as ``\\``)
+
+You can use quote instead of escape. Quote's syntax is ``"..."`` or
+``'...'``. You need escape ``"`` as ``\"`` in ``"..."`` quote syntax.
+You need escape ``'`` as ``\'`` in ``'...'`` quote syntax. For
+example, ``Alice's brother (Bob)`` can be quoted ``"Alice's brother
+(Bob)"`` or ``'Alice\'s brother (Bob)'``.
+
 Conditional expression
 ----------------------
 
