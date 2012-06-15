@@ -23,6 +23,11 @@ if test -z "$GROONGA"; then
 fi
 export GROONGA
 
+if test -z "$GROONGA_HTTPD"; then
+    GROONGA_HTTPD="`make -s -C $top_dir echo-groonga-httpd`"
+fi
+export GROONGA_HTTPD
+
 if test -z "$GROONGA_SUGGEST_CREATE_DATASET"; then
     GROONGA_SUGGEST_CREATE_DATASET="`make -s -C $top_dir echo-groonga-suggest-create-dataset`"
 fi
@@ -82,6 +87,7 @@ fi
 $RUBY -I "$grntest_dir/lib" \
     "$grntest_dir/bin/grntest" \
     --groonga "$GROONGA" \
+    --groonga-httpd "$GROONGA_HTTPD" \
     --groonga-suggest-create-dataset "$GROONGA_SUGGEST_CREATE_DATASET" \
     --base-directory "$BASE_DIR" \
     "${grntest_options[@]}"

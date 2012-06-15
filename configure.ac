@@ -611,6 +611,10 @@ AC_SUBST(WINDOWS_LIBS)
 GROONGA="\$(abs_top_builddir)/src/groonga"
 AC_SUBST(GROONGA)
 
+# groonga-httpd binary path
+GROONGA="\$(abs_top_builddir)/src/httpd/groonga-httpd"
+AC_SUBST(GROONGA_HTTPD)
+
 # groonga-benchmark binary path
 GROONGA_BENCHMARK="\$(abs_top_builddir)/src/groonga-benchmark"
 AC_SUBST(GROONGA_BENCHMARK)

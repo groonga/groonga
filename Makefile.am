@@ -124,6 +124,9 @@ endif
 echo-groonga:
 	@echo $(GROONGA)
 
+echo-groonga-httpd:
+	@echo $(GROONGA_HTTPD)
+
 echo-groonga-suggest-create-dataset:
 	@echo $(GROONGA_SUGGEST_CREATE_DATASET)
 
