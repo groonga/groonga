@@ -1036,3 +1036,465 @@ grn_output_obj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
 }
 
 #endif /* USE_GRN_TEXT_OTOJ */
+
+typedef enum {
+  XML_START,
+  XML_START_ELEMENT,
+  XML_END_ELEMENT,
+  XML_TEXT
+} xml_status;
+
+typedef enum {
+  XML_PLACE_NONE,
+  XML_PLACE_COLUMN,
+  XML_PLACE_HIT
+} xml_place;
+
+static char *
+transform_xml_next_column(grn_obj *columns, int n)
+{
+  char *column = GRN_TEXT_VALUE(columns);
+  while (n--) {
+    while (*column) {
+      column++;
+    }
+    column++;
+  }
+  return column;
+}
+
+static void
+transform_xml(grn_ctx *ctx, grn_obj *output, grn_obj *transformed)
+{
+  char *s, *e;
+  xml_status status = XML_START;
+  xml_place place = XML_PLACE_NONE;
+  grn_obj buf, name, columns, *expr;
+  unsigned int len;
+  int offset = 0, limit = 0, record_n = 0;
+  int column_n = 0, column_text_n = 0, result_set_n = -1;
+  int in_vector = 0, first_vector_element = 0;
+
+  s = GRN_TEXT_VALUE(output);
+  e = GRN_BULK_CURR(output);
+  GRN_TEXT_INIT(&buf, 0);
+  GRN_TEXT_INIT(&name, 0);
+  GRN_TEXT_INIT(&columns, 0);
+
+  expr = ctx->impl->curr_expr;
+
+#define EQUAL_NAME_P(_name) \
+  (GRN_TEXT_LEN(&name) == strlen(_name) && \
+   !memcmp(GRN_TEXT_VALUE(&name), _name, strlen(_name)))
+
+  while (s < e) {
+    switch (*s) {
+    case '<' :
+      s++;
+      switch (*s) {
+      case '/' :
+        status = XML_END_ELEMENT;
+        s++;
+        break;
+      default :
+        status = XML_START_ELEMENT;
+        break;
+      }
+      GRN_BULK_REWIND(&name);
+      break;
+    case '>' :
+      switch (status) {
+      case XML_START_ELEMENT :
+        if (EQUAL_NAME_P("COLUMN")) {
+          place = XML_PLACE_COLUMN;
+          column_text_n = 0;
+        } else if (EQUAL_NAME_P("HIT")) {
+          place = XML_PLACE_HIT;
+          column_n = 0;
+          if (result_set_n == 0) {
+            GRN_TEXT_PUTS(ctx, transformed, "<HIT NO=\"");
+            grn_text_itoa(ctx, transformed, record_n++);
+            GRN_TEXT_PUTS(ctx, transformed, "\">\n");
+          } else {
+            GRN_TEXT_PUTS(ctx, transformed, "<NAVIGATIONELEMENT ");
+          }
+        } else if (EQUAL_NAME_P("RESULTSET")) {
+          GRN_BULK_REWIND(&columns);
+          result_set_n++;
+          if (result_set_n == 0) {
+          } else {
+            GRN_TEXT_PUTS(ctx, transformed, "<NAVIGATIONENTRY>\n");
+          }
+        } else if (EQUAL_NAME_P("VECTOR")) {
+          char *c = transform_xml_next_column(&columns, column_n++);
+          in_vector = 1;
+          first_vector_element = 1;
+          GRN_TEXT_PUTS(ctx, transformed, "<FIELD NAME=\"");
+          GRN_TEXT_PUTS(ctx, transformed, c);
+          GRN_TEXT_PUTS(ctx, transformed, "\">");
+        }
+        break;
+      case XML_END_ELEMENT :
+        if (EQUAL_NAME_P("HIT")) {
+          place = XML_PLACE_NONE;
+          if (result_set_n == 0) {
+            GRN_TEXT_PUTS(ctx, transformed, "</HIT>\n");
+          } else {
+            GRN_TEXT_PUTS(ctx, transformed, "/>\n");
+          }
+        } else if (EQUAL_NAME_P("RESULTSET")) {
+          place = XML_PLACE_NONE;
+          if (result_set_n == 0) {
+            GRN_TEXT_PUTS(ctx, transformed, "</RESULTSET>\n");
+          } else {
+            GRN_TEXT_PUTS(ctx, transformed,
+                          "</NAVIGATIONELEMENTS>\n"
+                          "</NAVIGATIONENTRY>\n");
+          }
+        } else if (EQUAL_NAME_P("RESULT")) {
+          GRN_TEXT_PUTS(ctx, transformed,
+                        "</RESULTPAGE>\n"
+                        "</SEGMENT>\n"
+                        "</SEGMENTS>\n");
+        } else if (EQUAL_NAME_P("VECTOR")) {
+          in_vector = 0;
+          first_vector_element = 0;
+          GRN_TEXT_PUTS(ctx, transformed, "</FIELD>\n");
+        } else {
+          switch (place) {
+          case XML_PLACE_HIT :
+            if (result_set_n == 0) {
+              if (!in_vector) {
+                char *c = transform_xml_next_column(&columns, column_n++);
+                GRN_TEXT_PUTS(ctx, transformed, "<FIELD NAME=\"");
+                GRN_TEXT_PUTS(ctx, transformed, c);
+                GRN_TEXT_PUTS(ctx, transformed, "\">");
+              }
+              if (in_vector && !first_vector_element) {
+                GRN_TEXT_PUTS(ctx, transformed, ", ");
+              }
+              GRN_TEXT_PUT(ctx, transformed,
+                           GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf));
+              if (!in_vector) {
+                GRN_TEXT_PUTS(ctx, transformed, "</FIELD>\n");
+              }
+            } else {
+              char *c = transform_xml_next_column(&columns, column_n++);
+              GRN_TEXT_PUTS(ctx, transformed, c);
+              GRN_TEXT_PUTS(ctx, transformed, "=\"");
+              GRN_TEXT_PUT(ctx, transformed,
+                           GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf));
+              GRN_TEXT_PUTS(ctx, transformed, "\" ");
+            }
+            first_vector_element = 0;
+            break;
+          default :
+            if (EQUAL_NAME_P("NHITS")) {
+              if (result_set_n == 0) {
+                uint32_t nhits;
+                grn_obj *offset_value, *limit_value;
+
+                nhits = grn_atoui(GRN_TEXT_VALUE(&buf), GRN_BULK_CURR(&buf),
+                                  NULL);
+                offset_value = grn_expr_get_var(ctx, expr,
+                                                "offset", strlen("offset"));
+                limit_value = grn_expr_get_var(ctx, expr,
+                                               "limit", strlen("limit"));
+                if (GRN_TEXT_LEN(offset_value)) {
+                  offset = grn_atoi(GRN_TEXT_VALUE(offset_value),
+                                    GRN_BULK_CURR(offset_value),
+                                    NULL);
+                } else {
+                  offset = 0;
+                }
+                if (GRN_TEXT_LEN(limit_value)) {
+                  limit = grn_atoi(GRN_TEXT_VALUE(limit_value),
+                                   GRN_BULK_CURR(limit_value),
+                                   NULL);
+                } else {
+#define DEFAULT_LIMIT 10
+                  limit = DEFAULT_LIMIT;
+#undef DEFAULT_LIMIT
+                }
+                grn_normalize_offset_and_limit(ctx, nhits, &offset, &limit);
+                record_n = offset + 1;
+                GRN_TEXT_PUTS(ctx, transformed,
+                              "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
+                              "<SEGMENTS>\n"
+                              "<SEGMENT>\n"
+                              "<RESULTPAGE>\n"
+                              "<RESULTSET OFFSET=\"");
+                grn_text_lltoa(ctx, transformed, offset);
+                GRN_TEXT_PUTS(ctx, transformed, "\" LIMIT=\"");
+                grn_text_lltoa(ctx, transformed, limit);
+                GRN_TEXT_PUTS(ctx, transformed, "\" NHITS=\"");
+                grn_text_lltoa(ctx, transformed, nhits);
+                GRN_TEXT_PUTS(ctx, transformed, "\">\n");
+              } else {
+                GRN_TEXT_PUTS(ctx, transformed,
+                              "<NAVIGATIONELEMENTS COUNT=\"");
+                GRN_TEXT_PUT(ctx, transformed,
+                             GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf));
+                GRN_TEXT_PUTS(ctx, transformed,
+                              "\">\n");
+              }
+            } else if (EQUAL_NAME_P("TEXT")) {
+              switch (place) {
+              case XML_PLACE_COLUMN :
+                if (column_text_n == 0) {
+                  GRN_TEXT_PUT(ctx, &columns,
+                               GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf));
+                  GRN_TEXT_PUTC(ctx, &columns, '\0');
+                }
+                column_text_n++;
+                break;
+              default :
+                break;
+              }
+            }
+          }
+        }
+      default :
+        break;
+      }
+      s++;
+      GRN_BULK_REWIND(&buf);
+      status = XML_TEXT;
+      break;
+    default :
+      len = grn_charlen(ctx, s, e);
+      switch (status) {
+      case XML_START_ELEMENT :
+      case XML_END_ELEMENT :
+        GRN_TEXT_PUT(ctx, &name, s, len);
+        break;
+      default :
+        GRN_TEXT_PUT(ctx, &buf, s, len);
+        break;
+      }
+      s += len;
+      break;
+    }
+  }
+#undef EQUAL_NAME_P
+
+  GRN_OBJ_FIN(ctx, &buf);
+  GRN_OBJ_FIN(ctx, &name);
+  GRN_OBJ_FIN(ctx, &columns);
+}
+
+#ifdef WITH_MESSAGE_PACK
+typedef struct {
+  grn_ctx *ctx;
+  grn_obj *buffer;
+} msgpack_writer_ctx;
+
+static inline int
+msgpack_buffer_writer(void* data, const char* buf, unsigned int len)
+{
+  msgpack_writer_ctx *writer_ctx = (msgpack_writer_ctx *)data;
+  return grn_bulk_write(writer_ctx->ctx, writer_ctx->buffer, buf, len);
+}
+#endif
+
+void
+grn_output_envelope(grn_ctx *ctx,
+                    grn_rc rc,
+                    grn_obj *head,
+                    grn_obj *body,
+                    grn_obj *foot,
+                    const char *file,
+                    int line)
+
+{
+  double started, finished, elapsed;
+
+  grn_timeval tv_now;
+  grn_timeval_now(ctx, &tv_now);
+  started = ctx->impl->tv.tv_sec;
+  started += ctx->impl->tv.tv_nsec / GRN_TIME_NSEC_PER_SEC_F;
+  finished = tv_now.tv_sec;
+  finished += tv_now.tv_nsec / GRN_TIME_NSEC_PER_SEC_F;
+  elapsed = finished - started;
+
+  switch (ctx->impl->output_type) {
+  case GRN_CONTENT_JSON:
+    GRN_TEXT_PUTS(ctx, head, "[[");
+    grn_text_itoa(ctx, head, rc);
+    GRN_TEXT_PUTC(ctx, head, ',');
+    grn_text_ftoa(ctx, head, started);
+    GRN_TEXT_PUTC(ctx, head, ',');
+    grn_text_ftoa(ctx, head, elapsed);
+    if (rc != GRN_SUCCESS) {
+      GRN_TEXT_PUTC(ctx, head, ',');
+      grn_text_esc(ctx, head, ctx->errbuf, strlen(ctx->errbuf));
+      if (ctx->errfunc && ctx->errfile) {
+        grn_obj *command;
+        /* TODO: output backtrace */
+        GRN_TEXT_PUTS(ctx, head, ",[[");
+        grn_text_esc(ctx, head, ctx->errfunc, strlen(ctx->errfunc));
+        GRN_TEXT_PUTC(ctx, head, ',');
+        grn_text_esc(ctx, head, ctx->errfile, strlen(ctx->errfile));
+        GRN_TEXT_PUTC(ctx, head, ',');
+        grn_text_itoa(ctx, head, ctx->errline);
+        if (file && (command = GRN_CTX_USER_DATA(ctx)->ptr)) {
+          GRN_TEXT_PUTC(ctx, head, ',');
+          grn_text_esc(ctx, head, file, strlen(file));
+          GRN_TEXT_PUTC(ctx, head, ',');
+          grn_text_itoa(ctx, head, line);
+          GRN_TEXT_PUTC(ctx, head, ',');
+          grn_text_esc(ctx, head, GRN_TEXT_VALUE(command), GRN_TEXT_LEN(command));
+        }
+        GRN_TEXT_PUTS(ctx, head, "]]");
+      }
+    }
+    GRN_TEXT_PUTC(ctx, head, ']');
+    if (GRN_TEXT_LEN(body)) { GRN_TEXT_PUTC(ctx, head, ','); }
+    GRN_TEXT_PUTC(ctx, foot, ']');
+    break;
+  case GRN_CONTENT_TSV:
+    grn_text_itoa(ctx, head, rc);
+    GRN_TEXT_PUTC(ctx, head, '\t');
+    grn_text_ftoa(ctx, head, started);
+    GRN_TEXT_PUTC(ctx, head, '\t');
+    grn_text_ftoa(ctx, head, elapsed);
+    if (rc != GRN_SUCCESS) {
+      GRN_TEXT_PUTC(ctx, head, '\t');
+      grn_text_esc(ctx, head, ctx->errbuf, strlen(ctx->errbuf));
+      if (ctx->errfunc && ctx->errfile) {
+        /* TODO: output backtrace */
+        GRN_TEXT_PUTC(ctx, head, '\t');
+        grn_text_esc(ctx, head, ctx->errfunc, strlen(ctx->errfunc));
+        GRN_TEXT_PUTC(ctx, head, '\t');
+        grn_text_esc(ctx, head, ctx->errfile, strlen(ctx->errfile));
+        GRN_TEXT_PUTC(ctx, head, '\t');
+        grn_text_itoa(ctx, head, ctx->errline);
+      }
+    }
+    GRN_TEXT_PUTS(ctx, head, "\n");
+    GRN_TEXT_PUTS(ctx, foot, "\nEND");
+    break;
+  case GRN_CONTENT_XML:
+    {
+      char buf[GRN_TABLE_MAX_KEY_SIZE];
+      int is_select = 0;
+      if (!rc && ctx->impl->curr_expr) {
+        int len = grn_obj_name(ctx, ctx->impl->curr_expr,
+                               buf, GRN_TABLE_MAX_KEY_SIZE);
+        buf[len] = '\0';
+        is_select = strcmp(buf, "select") == 0;
+      }
+      if (is_select) {
+        grn_obj transformed;
+        GRN_TEXT_INIT(&transformed, 0);
+        transform_xml(ctx, body, &transformed);
+        GRN_TEXT_SET(ctx, body,
+                     GRN_TEXT_VALUE(&transformed), GRN_TEXT_LEN(&transformed));
+        GRN_OBJ_FIN(ctx, &transformed);
+      } else {
+        GRN_TEXT_PUTS(ctx, head, "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<RESULT CODE=\"");
+        grn_text_itoa(ctx, head, rc);
+        GRN_TEXT_PUTS(ctx, head, "\" UP=\"");
+        grn_text_ftoa(ctx, head, started);
+        GRN_TEXT_PUTS(ctx, head, "\" ELAPSED=\"");
+        grn_text_ftoa(ctx, head, elapsed);
+        GRN_TEXT_PUTS(ctx, head, "\">\n");
+        if (rc != GRN_SUCCESS) {
+          GRN_TEXT_PUTS(ctx, head, "<ERROR>");
+          grn_text_escape_xml(ctx, head, ctx->errbuf, strlen(ctx->errbuf));
+          if (ctx->errfunc && ctx->errfile) {
+            /* TODO: output backtrace */
+            GRN_TEXT_PUTS(ctx, head, "<INFO FUNC=\"");
+            grn_text_escape_xml(ctx, head, ctx->errfunc, strlen(ctx->errfunc));
+            GRN_TEXT_PUTS(ctx, head, "\" FILE=\"");
+            grn_text_escape_xml(ctx, head, ctx->errfile, strlen(ctx->errfile));
+            GRN_TEXT_PUTS(ctx, head, "\" LINE=\"");
+            grn_text_itoa(ctx, head, ctx->errline);
+            GRN_TEXT_PUTS(ctx, head, "\"/>");
+          }
+          GRN_TEXT_PUTS(ctx, head, "</ERROR>");
+        }
+        GRN_TEXT_PUTS(ctx, foot, "\n</RESULT>");
+      }
+    }
+    break;
+  case GRN_CONTENT_MSGPACK:
+#ifdef WITH_MESSAGE_PACK
+    {
+      msgpack_writer_ctx head_writer_ctx;
+      msgpack_packer header_packer;
+      int header_size;
+
+      head_writer_ctx.ctx = ctx;
+      head_writer_ctx.buffer = head;
+      msgpack_packer_init(&header_packer, &head_writer_ctx, msgpack_buffer_writer);
+
+       /* [HEAD, (BODY)] */
+      if (GRN_TEXT_LEN(body) > 0) {
+        msgpack_pack_array(&header_packer, 2);
+      } else {
+        msgpack_pack_array(&header_packer, 1);
+      }
+
+      /* HEAD := [rc, started, elapsed, (error, (ERROR DETAIL))] */
+      header_size = 3;
+      if (rc != GRN_SUCCESS) {
+        header_size++;
+        if (ctx->errfunc && ctx->errfile) {
+          header_size++;
+        }
+      }
+      msgpack_pack_array(&header_packer, header_size);
+      msgpack_pack_int(&header_packer, rc);
+
+      msgpack_pack_double(&header_packer, started);
+      msgpack_pack_double(&header_packer, elapsed);
+
+      if (rc != GRN_SUCCESS) {
+        msgpack_pack_raw(&header_packer, strlen(ctx->errbuf));
+        msgpack_pack_raw_body(&header_packer, ctx->errbuf, strlen(ctx->errbuf));
+        if (ctx->errfunc && ctx->errfile) {
+          grn_obj *command = GRN_CTX_USER_DATA(ctx)->ptr;
+          int error_detail_size;
+
+          /* ERROR DETAIL := [[errfunc, errfile, errline,
+                               (file, line, command)]] */
+          /* TODO: output backtrace */
+          msgpack_pack_array(&header_packer, 1);
+          error_detail_size = 3;
+          if (command) {
+            error_detail_size += 3;
+          }
+          msgpack_pack_array(&header_packer, error_detail_size);
+
+          msgpack_pack_raw(&header_packer, strlen(ctx->errfunc));
+          msgpack_pack_raw_body(&header_packer, ctx->errfunc, strlen(ctx->errfunc));
+
+          msgpack_pack_raw(&header_packer, strlen(ctx->errfile));
+          msgpack_pack_raw_body(&header_packer, ctx->errfile, strlen(ctx->errfile));
+
+          msgpack_pack_int(&header_packer, ctx->errline);
+
+          if (command) {
+            if (file) {
+              msgpack_pack_raw(&header_packer, strlen(file));
+              msgpack_pack_raw_body(&header_packer, file, strlen(file));
+            } else {
+              msgpack_pack_raw(&header_packer, 7);
+              msgpack_pack_raw_body(&header_packer, "(stdin)", 7);
+            }
+
+            msgpack_pack_int(&header_packer, line);
+
+            msgpack_pack_raw(&header_packer, GRN_TEXT_LEN(command));
+            msgpack_pack_raw_body(&header_packer, GRN_TEXT_VALUE(command), GRN_TEXT_LEN(command));
+          }
+        }
+      }
+    }
+#endif
+    break;
+  case GRN_CONTENT_NONE:
+    break;
+  }
+}
