@@ -411,8 +411,19 @@ class GrnTestData
          within_specified_quadrant?("3rd") or
          within_specified_quadrant?("4th") or
          quadrant == "1st_to_2nd" or
+         quadrant == "1st_to_3rd" or
+         quadrant == "1st_to_4th" or
          quadrant == "2nd_to_1st" or
-         quadrant == "equator"
+         quadrant == "2nd_to_3rd" or
+         quadrant == "2nd_to_4th" or
+         quadrant == "3rd_to_1st" or
+         quadrant == "3rd_to_2nd" or
+         quadrant == "3rd_to_4th" or
+         quadrant == "4th_to_1st" or
+         quadrant == "4th_to_2nd" or
+         quadrant == "4th_to_3rd" or
+         quadrant == "equator" or
+         quadrant == "meridian"
         if to_north?
           "north"
         elsif to_east?
