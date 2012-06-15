@@ -536,6 +536,15 @@ disabled in ``--query`` option of :doc:`/commands/select`. You need to
 use groonga as a library instead of server or command line tool for
 assignment expression.
 
+Assignment expression in query syntax has some limitations. So you
+should use :doc:`/spec/script_syntax` instead of query syntax for
+assignment.
+
 There is only one syntax for assignment expression. It's ``column:=value``.
 
-TODO: describe me.
+``value`` is assigend to ``column``. ``value`` is always processed as
+string in query syntax. ``value`` is casted to the type of ``column``
+automatically. It causes some limitations. For example, you cannot use
+boolean literal such as ``true`` and ``false`` for ``Bool`` type
+column. You need to use empty string for ``false`` but query syntax
+doesn't support ``column:=`` syntax.
