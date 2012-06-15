@@ -200,7 +200,7 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
   r->headers_out.content_type.len = sizeof(content_type) - 1;
   r->headers_out.content_type.data = (u_char *) content_type;
 
-  /* allocate a buffer for your response body */
+  /* allocate buffers for a response body */
   GRN_TEXT_INIT(&head, no_flags);
   GRN_TEXT_INIT(&body, no_flags);
   GRN_TEXT_INIT(&foot, no_flags);
@@ -225,7 +225,7 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
   }
   foot_buf->last_buf = 1;  /* this is the last buffer in the buffer chain */
 
-  /* attach this buffer to the buffer chain */
+  /* attach buffers to the buffer chain */
   head_chain.buf = head_buf;
   head_chain.next = &body_chain;
   body_chain.buf = body_buf;
