@@ -166,7 +166,6 @@ struct _grn_array_cursor {
 grn_rc grn_array_truncate(grn_ctx *ctx, grn_array *array);
 grn_rc grn_array_copy_sort_key(grn_ctx *ctx, grn_array *array,
                                grn_table_sort_key *keys, int n_keys);
-void grn_array_queue_lock_clear(grn_ctx *ctx, grn_array *array);
 
 /**** grn_hash ****/
 
@@ -278,6 +277,22 @@ grn_rc grn_hash_unlock(grn_ctx *ctx, grn_hash *hash);
 grn_rc grn_hash_clear_lock(grn_ctx *ctx, grn_hash *hash);
 
 #define GRN_HASH_SIZE(hash) (*((hash)->n_entries))
+
+/* grn_table_queue */
+
+typedef struct _grn_table_queue grn_table_queue;
+
+struct _grn_table_queue {
+  grn_mutex mutex;
+  grn_cond cond;
+  grn_id head;
+  grn_id tail;
+  grn_id cap;
+};
+
+void grn_array_queue_lock_clear(grn_ctx *ctx, grn_array *array);
+void grn_array_clear_curr_rec(grn_ctx *ctx, grn_array *array);
+grn_table_queue *grn_array_queue(grn_ctx *ctx, grn_array *array);
 
 /* private */
 typedef enum {

@@ -317,6 +317,148 @@ command_set(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   return NULL;
 }
 
+uint32_t
+grn_table_queue_size(grn_table_queue *queue)
+{
+  return (queue->head < queue->tail)
+    ? 2 * queue->cap + queue->head - queue->tail
+    : queue->head - queue->tail;
+}
+
+void
+grn_table_queue_head_increment(grn_table_queue *queue)
+{
+  if (queue->head == 2 * queue->cap) {
+    queue->head = 1;
+  } else {
+    queue->head++;
+  }
+}
+
+void
+grn_table_queue_tail_increment(grn_table_queue *queue)
+{
+  if (queue->tail == 2 * queue->cap) {
+    queue->tail = 1;
+  } else {
+    queue->tail++;
+  }
+}
+
+grn_id
+grn_table_queue_head(grn_table_queue *queue)
+{
+  return queue->head > queue->cap
+    ? queue->head - queue->cap
+    : queue->head;
+}
+
+grn_id
+grn_table_queue_tail(grn_table_queue *queue)
+{
+  return queue->tail > queue->cap
+    ? queue->tail - queue->cap
+    : queue->tail;
+}
+
+static grn_obj *
+command_push(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  grn_obj *table = grn_ctx_get(ctx, GRN_TEXT_VALUE(VAR(0)), GRN_TEXT_LEN(VAR(0)));
+  if (table) {
+    switch (table->header.type) {
+    case GRN_TABLE_NO_KEY:
+      {
+        grn_array *array = (grn_array *)table;
+        grn_table_queue *queue = grn_array_queue(ctx, array);
+        if (queue) {
+          MUTEX_LOCK(queue->mutex);
+          if (grn_table_queue_head(queue) == queue->cap) {
+            grn_array_clear_curr_rec(ctx, array);
+          }
+          grn_load_(ctx, GRN_CONTENT_JSON,
+                    GRN_TEXT_VALUE(VAR(0)), GRN_TEXT_LEN(VAR(0)),
+                    NULL, 0,
+                    GRN_TEXT_VALUE(VAR(1)), GRN_TEXT_LEN(VAR(1)),
+                    NULL, 0, NULL, 0, 0);
+          if (grn_table_queue_size == queue->cap) {
+            grn_table_queue_tail_increment(queue);
+          }
+          grn_table_queue_head_increment(queue);
+          COND_SIGNAL(queue->cond);
+          MUTEX_UNLOCK(queue->mutex);
+          GRN_OUTPUT_BOOL(ctx->impl->loader.nrecords);
+          if (ctx->impl->loader.table) {
+            grn_db_touch(ctx, DB_OBJ(ctx->impl->loader.table)->db);
+          }
+        } else {
+          ERR(GRN_OPERATION_NOT_SUPPORTED, "table '%.*s' doesn't support push",
+              (int)GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)));
+        }
+      }
+      break;
+    default :
+      ERR(GRN_OPERATION_NOT_SUPPORTED, "table '%.*s' doesn't support push",
+          (int)GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)));
+    }
+  } else {
+    ERR(GRN_INVALID_ARGUMENT, "table '%.*s' does not exist.",
+        (int)GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)));
+  }
+  return NULL;
+}
+
+static grn_obj *
+command_pull(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  grn_obj *table = grn_ctx_get(ctx, GRN_TEXT_VALUE(VAR(0)), GRN_TEXT_LEN(VAR(0)));
+  if (table) {
+    switch (table->header.type) {
+    case GRN_TABLE_NO_KEY:
+      {
+        grn_array *array = (grn_array *)table;
+        grn_table_queue *queue = grn_array_queue(ctx, array);
+        if (queue) {
+          MUTEX_LOCK(queue->mutex);
+          while (grn_table_queue_size(queue) == 0) {
+            if (GRN_TEXT_LEN(VAR(2))) {
+              MUTEX_UNLOCK(queue->mutex);
+              GRN_OUTPUT_BOOL(0);
+              return NULL;
+            }
+            COND_WAIT(queue->cond, queue->mutex);
+          }
+          grn_table_queue_tail_increment(queue);
+          {
+            grn_obj obj;
+            grn_obj_format format;
+            GRN_RECORD_INIT(&obj, 0, ((grn_db_obj *)table)->id);
+            GRN_OBJ_FORMAT_INIT(&format, 1, 0, 1, 0);
+            GRN_RECORD_SET(ctx, &obj, grn_table_queue_tail(queue));
+            grn_obj_columns(ctx, table, GRN_TEXT_VALUE(VAR(1)), GRN_TEXT_LEN(VAR(1)),
+                            &format.columns);
+            format.flags = 0 /* GRN_OBJ_FORMAT_WITH_COLUMN_NAMES */;
+            GRN_OUTPUT_OBJ(&obj, &format);
+            GRN_OBJ_FORMAT_FIN(ctx, &format);
+          }
+          MUTEX_UNLOCK(queue->mutex);
+        } else {
+          ERR(GRN_OPERATION_NOT_SUPPORTED, "table '%.*s' doesn't support pull",
+              (int)GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)));
+        }
+      }
+      break;
+    default :
+      ERR(GRN_OPERATION_NOT_SUPPORTED, "table '%.*s' doesn't support pull",
+          (int)GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)));
+    }
+  } else {
+    ERR(GRN_INVALID_ARGUMENT, "table '%.*s' does not exist.",
+        (int)GRN_TEXT_LEN(VAR(0)), GRN_TEXT_VALUE(VAR(0)));
+  }
+  return NULL;
+}
+
 grn_rc
 GRN_PLUGIN_INIT(grn_ctx *ctx)
 {
@@ -377,7 +519,13 @@ GRN_PLUGIN_REGISTER(grn_ctx *ctx)
   DEF_VAR(vars[4], "output_columns");
   DEF_VAR(vars[5], "id");
   DEF_COMMAND("add", command_add, 2, vars);
+  DEF_COMMAND("push", command_push, 2, vars);
   DEF_COMMAND("set", command_set, 6, vars);
+
+  DEF_VAR(vars[0], "table");
+  DEF_VAR(vars[1], "output_columns");
+  DEF_VAR(vars[2], "non_block");
+  DEF_COMMAND("pull", command_pull, 3, vars);
 
   return ctx->rc;
 }

@@ -320,16 +320,6 @@ grn_io_array_bit_flip(grn_ctx *ctx, grn_io *io,
 
 /* grn_table_queue */
 
-typedef struct _grn_table_queue grn_table_queue;
-
-struct _grn_table_queue {
-  grn_mutex mutex;
-  grn_cond cond;
-  grn_id head;
-  grn_id tail;
-  grn_id cap;
-};
-
 static void
 grn_table_queue_lock_init(grn_ctx *ctx, grn_table_queue *queue)
 {
@@ -491,6 +481,18 @@ grn_array_queue_lock_clear(grn_ctx *ctx, grn_array *array)
   struct grn_array_header *header;
   header = grn_io_header(array->io);
   grn_table_queue_lock_init(ctx, &header->queue);
+}
+
+grn_table_queue *
+grn_array_queue(grn_ctx *ctx, grn_array *array)
+{
+  if (grn_array_is_io_array(array)) {
+    struct grn_array_header *header;
+    header = grn_io_header(array->io);
+    return &header->queue;
+  } else {
+    return NULL;
+  }
 }
 
 static grn_rc
@@ -1021,6 +1023,13 @@ grn_array_add_to_io_array(grn_ctx *ctx, grn_array *array, void **value)
   (*array->n_entries)++;
   if (value) { *value = entry; }
   return id;
+}
+
+void
+grn_array_clear_curr_rec(grn_ctx *ctx, grn_array *array)
+{
+  struct grn_array_header * const header = array->header;
+  header->curr_rec = GRN_ID_NIL;
 }
 
 grn_id
