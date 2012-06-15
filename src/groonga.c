@@ -246,9 +246,9 @@ typedef enum {
 } grn_http_request_type;
 
 static void
-print_return_code(grn_ctx *ctx, grn_rc rc, grn_obj *head, grn_obj *body, grn_obj *foot)
+output_envelope(grn_ctx *ctx, grn_rc rc, grn_obj *head, grn_obj *body, grn_obj *foot)
 {
-  grn_print_return_code(ctx, rc, head, body, foot, input_path, number_of_lines);
+  grn_output_envelope(ctx, rc, head, body, foot, input_path, number_of_lines);
 }
 
 static void
@@ -262,7 +262,7 @@ s_output(grn_ctx *ctx, int flags, void *arg)
       grn_obj head, foot;
       GRN_TEXT_INIT(&head, 0);
       GRN_TEXT_INIT(&foot, 0);
-      print_return_code(ctx, ctx->rc, &head, buf, &foot);
+      output_envelope(ctx, ctx->rc, &head, buf, &foot);
       fwrite(GRN_TEXT_VALUE(&head), 1, GRN_TEXT_LEN(&head), stream);
       fwrite(GRN_TEXT_VALUE(buf), 1, GRN_TEXT_LEN(buf), stream);
       fwrite(GRN_TEXT_VALUE(&foot), 1, GRN_TEXT_LEN(&foot), stream);
@@ -336,7 +336,7 @@ c_output(grn_ctx *ctx)
       GRN_TEXT_INIT(&body, GRN_OBJ_DO_SHALLOW_COPY);
       GRN_TEXT_INIT(&foot, 0);
       GRN_TEXT_SET(ctx, &body, str, str_len);
-      print_return_code(ctx, ctx->rc, &head, &body, &foot);
+      output_envelope(ctx, ctx->rc, &head, &body, &foot);
       fwrite(GRN_TEXT_VALUE(&head), 1, GRN_TEXT_LEN(&head), output);
       fwrite(GRN_TEXT_VALUE(&body), 1, GRN_TEXT_LEN(&body), output);
       fwrite(GRN_TEXT_VALUE(&foot), 1, GRN_TEXT_LEN(&foot), output);
@@ -565,10 +565,10 @@ h_output(grn_ctx *ctx, int flags, void *arg)
     if (jsonp_func && GRN_TEXT_LEN(jsonp_func)) {
       GRN_TEXT_PUT(ctx, &head, GRN_TEXT_VALUE(jsonp_func), GRN_TEXT_LEN(jsonp_func));
       GRN_TEXT_PUTC(ctx, &head, '(');
-      print_return_code(ctx, expr_rc, &head, outbuf, &foot);
+      output_envelope(ctx, expr_rc, &head, outbuf, &foot);
       GRN_TEXT_PUTS(ctx, &foot, ");");
     } else {
-      print_return_code(ctx, expr_rc, &head, outbuf, &foot);
+      output_envelope(ctx, expr_rc, &head, outbuf, &foot);
     }
     GRN_TEXT_SETS(ctx, body, "HTTP/1.1 200 OK\r\n");
     GRN_TEXT_PUTS(ctx, body, "Connection: close\r\n");
@@ -580,7 +580,7 @@ h_output(grn_ctx *ctx, int flags, void *arg)
     GRN_TEXT_PUTS(ctx, body, "\r\n\r\n");
   } else {
     GRN_BULK_REWIND(outbuf);
-    print_return_code(ctx, expr_rc, &head, outbuf, &foot);
+    output_envelope(ctx, expr_rc, &head, outbuf, &foot);
     if (expr_rc == GRN_NO_SUCH_FILE_OR_DIRECTORY) {
       GRN_TEXT_SETS(ctx, body, "HTTP/1.1 404 Not Found\r\n");
     } else {

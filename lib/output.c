@@ -1298,13 +1298,13 @@ msgpack_buffer_writer(void* data, const char* buf, unsigned int len)
 #endif
 
 void
-grn_print_return_code(grn_ctx *ctx,
-                      grn_rc rc,
-                      grn_obj *head,
-                      grn_obj *body,
-                      grn_obj *foot,
-                      const char *file,
-                      int line)
+grn_output_envelope(grn_ctx *ctx,
+                    grn_rc rc,
+                    grn_obj *head,
+                    grn_obj *body,
+                    grn_obj *foot,
+                    const char *file,
+                    int line)
 
 {
   double started, finished, elapsed;
