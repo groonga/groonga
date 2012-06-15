@@ -1482,6 +1482,7 @@ grn_io_hash_init(grn_ctx *ctx, grn_hash *hash, const char *path,
   header->n_entries = 0;
   header->n_garbages = 0;
   header->tokenizer = GRN_ID_NIL;
+  grn_table_queue_init(ctx, &header->queue);
 
   hash->obj.header.flags = flags;
   hash->ctx = ctx;
