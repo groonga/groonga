@@ -1,29 +1,4 @@
-#!/bin/sh
-
-OPTIONS=`getopt -n $0 -u -o " " -l protocol:,groonga-httpd: -- "$@"`
-if test $? -ne 0; then
-    exit 1
-fi
-set -- $OPTIONS
-
-while true;
-do
-    case $1 in
-	--protocol)
-	    protocol=$2
-	    shift
-            ;;
-	--groonga-httpd)
-	    groonga_httpd=$2
-	    shift
-            ;;
-	--)
-	    shift
-	    break
-	    ;;
-    esac
-    shift
-done
+#!/bin/bash
 
 export BASE_DIR="`dirname $0`"
 if test -z "$BUILD_DIR"; then
@@ -75,20 +50,33 @@ if ! test -d "$grntest_dir"; then
     git clone git://github.com/groonga/grntest.git "$grntest_dir"
 fi
 
-if test $# -eq 0; then
-    targets="$BASE_DIR/suite"
-else
-    targets=
-fi
+have_targets="false"
+next_argument_is_long_option_value="false"
+for argument in "$@"; do
+    case "$argument" in
+	--*=*)
+	    ;;
+	--keep-database|--no-*|--version|--help)
+	    # no argument options
+	    ;;
+	--*)
+	    next_argument_is_long_option_value="true"
+	    break
+	    ;;
+	-*)
+	    ;;
+	*)
+	    if test "$next_argument_is_long_option_value" != "true"; then
+		have_targets="true"
+	    fi
+	    ;;
+    esac
+    next_argument_is_long_option_value="false"
+done
 
-if test -z $protocol; then
-    protocol="gqtp"
-fi
-
-if test -n "$groonga_httpd"; then
-    groonga_httpd_option="--groonga-httpd $groonga_httpd"
-else
-    groonga_httpd_option=
+grntest_options=("$@")
+if test "$have_targets" != "true"; then
+    grntest_options=("${grntest_options[@]}" "${BASE_DIR}/suite")
 fi
 
 $RUBY -I "$grntest_dir/lib" \
@@ -96,6 +84,4 @@ $RUBY -I "$grntest_dir/lib" \
     --groonga "$GROONGA" \
     --groonga-suggest-create-dataset "$GROONGA_SUGGEST_CREATE_DATASET" \
     --base-directory "$BASE_DIR" \
-    --protocol "$protocol" \
-    $groonga_httpd_option \
-    "$targets" "$@"
+    "${grntest_options[@]}"
