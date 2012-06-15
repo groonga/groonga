@@ -548,3 +548,5 @@ automatically. It causes some limitations. For example, you cannot use
 boolean literal such as ``true`` and ``false`` for ``Bool`` type
 column. You need to use empty string for ``false`` but query syntax
 doesn't support ``column:=`` syntax.
+
+See :doc:`/spec/cast` about cast.
