@@ -103,6 +103,12 @@ class GrnTestData
       north_axis?(@longitude_end_degree, @latitude_end_degree)
   end
 
+  def east_axis_to_west_axis?
+    is_east_axis = east_axis?(@longitude_start_degree, @latitude_start_degree)
+    is_west_axis = west_axis?(@longitude_end_degree, @latitude_end_degree)
+    is_east_axis and is_west_axis
+  end
+
   def north_axis_to_east_axis?
     north_axis?(@longitude_start_degree, @latitude_start_degree) and
       east_axis?(@longitude_end_degree, @latitude_end_degree)
@@ -116,6 +122,12 @@ class GrnTestData
   def west_axis_to_north_axis?
     west_axis?(@longitude_start_degree, @latitude_start_degree) and
       north_axis?(@longitude_end_degree, @latitude_end_degree)
+  end
+
+  def west_axis_to_east_axis?
+    is_west_axis = west_axis?(@longitude_start_degree, @latitude_start_degree)
+    is_east_axis = east_axis?(@longitude_end_degree, @latitude_end_degree)
+    is_west_axis and is_east_axis
   end
 
   def west_axis_to_south_axis?
@@ -545,6 +557,27 @@ class GrnTestData
                                              @longitude_end.to_i,
                                              @latitude_end.to_i)
           (east_distance + west_distance).floor
+        when "equator"
+          if point_or_line == "point"
+            0
+          else
+            if east_axis_to_west_axis? or west_axis_to_east_axis?
+              east_distance = calculate_distance(@longitude_start.to_i,
+                                                 @latitude_start.to_i,
+                                                 0,
+                                                 @latitude_start.to_i)
+              west_distance = calculate_distance(0,
+                                                 @latitude_end.to_i,
+                                                 @longitude_end.to_i,
+                                                 @latitude_end.to_i)
+              (east_distance + west_distance).floor
+            else
+              calculate_distance(@longitude_start.to_i,
+                                 @latitude_start.to_i,
+                                 @longitude_end.to_i,
+                                 @latitude_end.to_i).floor
+            end
+          end
         else
           calculate_distance(@longitude_start.to_i,
                              @latitude_start.to_i,
