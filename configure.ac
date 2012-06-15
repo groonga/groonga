@@ -612,7 +612,7 @@ GROONGA="\$(abs_top_builddir)/src/groonga"
 AC_SUBST(GROONGA)
 
 # groonga-httpd binary path
-GROONGA="\$(abs_top_builddir)/src/httpd/groonga-httpd"
+GROONGA_HTTPD="\$(abs_top_builddir)/src/httpd/groonga-httpd"
 AC_SUBST(GROONGA_HTTPD)
 
 # groonga-benchmark binary path
