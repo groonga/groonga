@@ -410,7 +410,7 @@ class GrnTestData
          within_specified_quadrant?("2nd") or
          within_specified_quadrant?("3rd") or
          within_specified_quadrant?("4th") or
-         quadrant == "1st_to_2nd"
+         quadrant == "1st_to_2nd" or
          quadrant == "2nd_to_1st"
         if to_north?
           "north"
