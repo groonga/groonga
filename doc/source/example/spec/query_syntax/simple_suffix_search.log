@@ -1,0 +1,46 @@
+Execution example::
+
+  table_create Titles TABLE_PAT_KEY|KEY_WITH_SIS ShortText
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  load --table Titles
+  [
+  {"_key": "The first post!"},
+  {"_key": "Groonga"},
+  {"_key": "Mroonga"},
+  {"_key": "Good-bye Senna"},
+  {"_key": "Good-bye Tritonn"}
+  ]
+  # [[0, 1337566253.89858, 0.000355720520019531], 5]
+  select Titles --query '_key:$oonga'
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         2
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ]
+  #       ], 
+  #       [
+  #         2, 
+  #         "Groonga"
+  #       ], 
+  #       [
+  #         3, 
+  #         "Mroonga"
+  #       ]
+  #     ]
+  #   ]
+  # ]

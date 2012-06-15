@@ -33,7 +33,7 @@ Here are a schema definition and sample data to show usage.
 
 .. groonga-command
 .. include:: ../example/spec/query_syntax/setup.log
-.. table_create Entries TABLE_HASH_KEY ShortText
+.. table_create Entries TABLE_PAT_KEY ShortText
 .. column_create Entries content COLUMN_SCALAR Text
 .. column_create Entries n_likes COLUMN_SCALAR UInt32
 .. table_create Terms TABLE_PAT_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenBigram
@@ -232,14 +232,69 @@ Prefix search condition
 
 Its syntax is ``column:^value`` or ``value*``.
 
-TODO: describe me.
+This conditional expression does prefix search with ``value``. Prefix
+search searches records that contain a word taht starts with ``value``.
+
+To use fast prefix search, you need to use patricia trie table
+(``TABLE_PAT_KEY``) or double array trie table
+(``TABLE_DAT_KEY``). You can use prefix search against ``_key`` value
+of patricia trie table or double trie table.
+
+Prefix search can be used with other table types but it causes all
+records scan. It's not problem for small records but it spends more
+time for large records.
+
+It doesn't require the default match columns such as ``full text
+search condition`` and ``phrase search condition``.
+
+Here is a simple exmaple.
+
+.. groonga-command
+.. include:: ../example/spec/query_syntax/simple_prefix_search.log
+.. select Entries --query '_key:^Goo'
+
+The expression matches records that contain a word that starts with
+``Goo`` in ``_key`` pseudo column value. ``Good-bye Senna`` and
+``Good-bye Tritonn`` are matched with the expression.
 
 Suffix search condition
 ^^^^^^^^^^^^^^^^^^^^^^^
 
 Its syntax is ``column:$value``.
 
-TODO: describe me.
+This conditional expression does suffix search with ``value``. Suffix
+search searches records that contain a word taht ends with ``value``.
+
+To use fast suffix search, you need to use patricia trie table
+(``TABLE_PAT_KEY``) with ``KEY_WITH_SIS`` flag. You can use suffix
+search against ``_key`` value of patricia trie table.
+
+Suffix search can be used with other table types or patricia trie
+table without ``KEY_WITH_SIS`` flag but it causes all records
+scan. It's not problem for small records but it spends more time for
+large records.
+
+It doesn't require the default match columns such as ``full text
+search condition`` and ``phrase search condition``.
+
+Here is a simple exmaple.
+
+.. groonga-command
+.. include:: ../example/spec/query_syntax/simple_suffix_search.log
+.. table_create Titles TABLE_PAT_KEY|KEY_WITH_SIS ShortText
+.. load --table Titles
+.. [
+.. {"_key": "The first post!"},
+.. {"_key": "Groonga"},
+.. {"_key": "Mroonga"},
+.. {"_key": "Good-bye Senna"},
+.. {"_key": "Good-bye Tritonn"}
+.. ]
+.. select Titles --query '_key:$oonga'
+
+The expression matches records that contain a word that ends with
+``oonga`` in ``_key`` pseudo column value. ``Groonga`` and
+``Mroonga`` are matched with the expression.
 
 Equal condition
 ^^^^^^^^^^^^^^^
