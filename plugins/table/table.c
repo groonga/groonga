@@ -381,7 +381,7 @@ command_push(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                     NULL, 0,
                     GRN_TEXT_VALUE(VAR(1)), GRN_TEXT_LEN(VAR(1)),
                     NULL, 0, NULL, 0, 0);
-          if (grn_table_queue_size == queue->cap) {
+          if (grn_table_queue_size(queue) == queue->cap) {
             grn_table_queue_tail_increment(queue);
           }
           grn_table_queue_head_increment(queue);
