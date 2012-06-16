@@ -1,0 +1,61 @@
+table_create Names TABLE_PAT_KEY|KEY_WITH_SIS ShortText
+[[0,0.0,0.0],true]
+column_create Names original COLUMN_SCALAR Bool
+[[0,0.0,0.0],true]
+load --table Names
+[
+{"_key": "ひろゆき", "original": true},
+{"_key": "まろゆき", "original": true},
+{"_key": "ひろあき", "original": true},
+{"_key": "ゆきひろ", "original": true}
+]
+[[0,0.0,0.0],4]
+select --table Names --query _key:$ゆき
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        4
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "original",
+          "Bool"
+        ]
+      ],
+      [
+        3,
+        "ゆき",
+        false
+      ],
+      [
+        2,
+        "ろゆき",
+        false
+      ],
+      [
+        5,
+        "まろゆき",
+        true
+      ],
+      [
+        1,
+        "ひろゆき",
+        true
+      ]
+    ]
+  ]
+]

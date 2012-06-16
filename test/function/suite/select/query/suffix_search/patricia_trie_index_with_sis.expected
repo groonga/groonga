@@ -1,0 +1,49 @@
+table_create People TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create People name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Names TABLE_PAT_KEY|KEY_WITH_SIS ShortText
+[[0,0.0,0.0],true]
+column_create Names people_index COLUMN_INDEX People name
+[[0,0.0,0.0],true]
+load --table People
+[
+{"name": "ひろゆき"},
+{"name": "まろゆき"},
+{"name": "ひろあき"},
+{"name": "ゆきひろ"}
+]
+[[0,0.0,0.0],4]
+select --table People --query name:$ゆき
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "name",
+          "ShortText"
+        ]
+      ],
+      [
+        2,
+        "まろゆき"
+      ],
+      [
+        1,
+        "ひろゆき"
+      ]
+    ]
+  ]
+]

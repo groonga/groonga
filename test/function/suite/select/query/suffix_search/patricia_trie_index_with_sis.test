@@ -1,0 +1,13 @@
+table_create People TABLE_NO_KEY
+column_create People name COLUMN_SCALAR ShortText
+table_create Names TABLE_PAT_KEY|KEY_WITH_SIS ShortText
+column_create Names people_index COLUMN_INDEX People name
+
+load --table People
+[
+{"name": "ひろゆき"},
+{"name": "まろゆき"},
+{"name": "ひろあき"},
+{"name": "ゆきひろ"}
+]
+select --table People --query name:$ゆき

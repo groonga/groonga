@@ -1,0 +1,11 @@
+table_create People TABLE_NO_KEY
+column_create People name COLUMN_SCALAR ShortText
+
+load --table People
+[
+{"name": "ひろゆき"},
+{"name": "まろゆき"},
+{"name": "ひろあき"},
+{"name": "ゆきひろ"}
+]
+select --table People --query name:$ゆき
