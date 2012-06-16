@@ -1,0 +1,9 @@
+table_create Names TABLE_HASH_KEY ShortText
+load --table Names
+[
+{"_key":"ひろゆき"},
+{"_key":"まろゆき"},
+{"_key":"ひろあき"},
+{"_key":"ゆきひろ"}
+]
+select --table Names --query _key:^ひろ

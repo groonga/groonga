@@ -1,0 +1,43 @@
+table_create Names TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+load --table Names
+[
+{"_key":"ひろゆき"},
+{"_key":"まろゆき"},
+{"_key":"ひろあき"},
+{"_key":"ゆきひろ"}
+]
+[[0,0.0,0.0],4]
+select --table Names --query _key:^ひろ
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "ひろゆき"
+      ],
+      [
+        3,
+        "ひろあき"
+      ]
+    ]
+  ]
+]
