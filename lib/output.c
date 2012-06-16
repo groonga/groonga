@@ -22,6 +22,7 @@
 #include <string.h>
 #include "str.h"
 #include "db.h"
+#include "util.h"
 #include "output.h"
 
 #define LEVELS (&ctx->impl->levels)
