@@ -56,21 +56,21 @@ Lets's learn about ``geo_distance`` usage with examples.
 This section shows simple usages.
 
 Here are two schema definition and sample data to show usage.
-These samples show how to calculate the value of distance between Tokyo and Sapporo.
+Those samples show how to calculate the value of distance between Tokyo and Sapporo.
 
-#. use the column value of location for calculating the distance(Stations table)
-#. use the explicitly specified value of location for calculating the distance(Geo table)
+#. Using the column value of location for calculating the distance (``Station`` table)
+#. Using the explicitly specified value of location for calculating the distance (``Geo`` table)
 
-use the column value of location
-""""""""""""""""""""""""""""""""
+Using the column value of location
+""""""""""""""""""""""""""""""""""
 
 Here is a schema definition of Station.
 
  .. groonga-command
 .. include:: ../example/functions/geo_distance_setup_location.log
 
-use the explicitly specified value of location
-""""""""""""""""""""""""""""""""""""""""""""""
+Using the explicitly specified value of location
+""""""""""""""""""""""""""""""""""""""""""""""""
 
 Here is a schema definition of Geo.
 
