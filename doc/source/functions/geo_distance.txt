@@ -19,9 +19,9 @@ The parameter ``approximate_type`` is optional::
     geo_distance(point1, point2)
     geo_distance(point1, point2, approximate_type)
 
-The default value of ``approximate_type`` is "rectangle".
+The default value of ``approximate_type`` is ``"rectangle"``.
 If you omit ``approximate_type``, ``geo_distance`` calculates the value of
-distance as if "rectangle" was specified.
+distance as if ``"rectangle"`` was specified.
 
 Return value
 ------------
