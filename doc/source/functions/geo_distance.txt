@@ -23,7 +23,7 @@ groonga組込関数の一つであるgeo_distanceについて説明します。�
 
 geo_distance() 関数は、point1に指定した座標とpoint2に指定した座標の間の距離(近似値)を求めます。
 
-... note::
+.. note::
 
     geo_distance()の他に、距離計算アルゴリズムの異なる、geo_distance2()、geo_distance3()がありましたが、1.2.9から非推奨になりました。 ``geo_distance2()`` の代わりに ``geo_distance(point1, point2, "sphere")`` を、 ``geo_distance3()`` の代わりに ``geo_distance(point1, point2, "ellipsoid")`` を使ってください。
 
