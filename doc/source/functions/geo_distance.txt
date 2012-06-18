@@ -5,88 +5,188 @@
 geo_distance
 ============
 
-名前
-----
+Summary
+-------
 
-geo_distance - 指定した2点の距離を計算する
+``geo_distance`` calculates the value of distance between specified two points.
 
-書式
-----
-::
+Syntax
+------
 
- geo_distance(point1, point2[, approximate_type])
+``geo_distance`` requires two point.
+The parameter ``approximate_type`` is optional::
 
-説明
-----
+    geo_distance(point1, point2)
+    geo_distance(point1, point2, approximate_type)
 
-groonga組込関数の一つであるgeo_distanceについて説明します。組込関数は、script形式の :doc:`grn_expr </expr>` 中で呼び出すことができます。
+Return value
+------------
 
-geo_distance() 関数は、point1に指定した座標とpoint2に指定した座標の間の距離(近似値)を求めます。
+``geo_distance`` returns the value of distance in float type.
+The unit of return value is meter.
+
+Usage
+-----
+
+This section explains geo_distance.
+``geo_distance`` is one of the groonga builtin functions.
+
+You can call a builtin function in :doc:`/expr` 
+
+``geo_distance`` function calculates the value of distance(approximate value)
+between the coordinate of ``point1`` and the coordinate of ``point2``.
 
 .. note::
 
-    geo_distance()の他に、距離計算アルゴリズムの異なる、geo_distance2()、geo_distance3()がありましたが、1.2.9から非推奨になりました。 ``geo_distance2()`` の代わりに ``geo_distance(point1, point2, "sphere")`` を、 ``geo_distance3()`` の代わりに ``geo_distance(point1, point2, "ellipsoid")`` を使ってください。
+    groonga provides three built in functions for calculating the value of distance.There are geo_distance(), geo_distance2(), geo_distance3(). The difference of those are the algorithm of calculating distance. geo_distance2(), geo_distance3() are now deprecated since version 1.2.9. Please use ``geo_distance(point1, point2, "sphere")`` instead of ``geo_distance2()``. Please use ``geo_distance(point1, point2, "ellipsoid")`` instead of ``geo_distance3()``.
 
-引数
-----
+Simple usage
+^^^^^^^^^^^^
+
+Lets's learn about ``geo_distance`` usage with examples.
+This section shows simple usages.
+
+Here are two schema definition and sample data to show usage.
+These samples show how to calculate the value of distance between Tokyo and Sapporo.
+
+#. use the column value of location for calculating the distance(Stations table)
+#. use the explicitly specified value of location for calculating the distance(Geo table)
+
+use the column value of location
+""""""""""""""""""""""""""""""""
+
+Here is a schema definition of Station.
+
+ .. groonga-command
+.. include:: ../example/functions/geo_distance_setup_location.log
+
+use the explicitly specified value of location
+""""""""""""""""""""""""""""""""""""""""""""""
+
+Here is a schema definition of Geo.
+
+.. groonga-command
+.. include:: ../example/functions/geo_distance_setup_distance.log
+
+Parameters
+----------
+
+Required parameter
+^^^^^^^^^^^^^^^^^^
+
+There are two required parameter, ``point1`` and ``point2``.
 
 ``point1``
+""""""""""
 
-  距離を求める2点のうち一つを指定します。GeoPoint型の値を指定できます。 [#]_
+It specifies the start point that
+you want to calculate the value of distance between two points.
+
+You can specify the value of GeoPoint type. [#]_
 
 ``point2``
+""""""""""
 
-  距離を求める2点のうちもう一つを指定します。GeoPoint型の値、あるいは座標を示す文字列を指定できます。
+It specifies the end point that
+you want to calculate the value of distance between two points.
+
+You can specify the value of GeoPoint type or 
+the string indicating the coordinate.
+
+Optional parameter
+^^^^^^^^^^^^^^^^^^
+
+There is a optional parameter, ``approximate_type``.
 
 ``approximate_type``
+""""""""""""""""""""
 
-  距離を求めるために地形をどのように近似するかを指定します。指定できる値は以下の通りです。
+It specifies how to approximate the geographical features for calculating
+the value of distance.
 
-  ``"rectangle"``
+You can specify the value of ``approximate_type`` by one of the followings.
 
-    方形近似で近似します。単純な計算式で距離を求めることができるため高速ですが、極付近では誤差が大きくなります。
+  * ``rectangle``
+  * ``sphere``
+  * ``ellipsoid``
 
-    ``"rect"`` と省略して指定することもできます。
+.. note::
 
-    この近似方法がデフォルト値です。 ``approximate_type`` を省略した場合は方形近似になります。
+    There is a limitation about geo_distance. geo_distance can not calculate the value of distance between two points across meridian nor equator. This is temporary limitation according to the implementation of groonga, but it will be fixed in the future release.
 
-  ``"sphere"``
+.. note::
 
-    球面近似で近似します。 ``"rectangle"`` よりも遅くなりますが、誤差は小さいです。
+    There is a limitation about geo_distance above notice. But it relaxes the limitation if you use ``rectangle`` as approximate type. You can calculate the correct distance if two point are placed at northern hemisphere.
 
-    ``"sphr"`` と省略して指定することもできます。
+``rectangle``
+...............
 
-  ``"ellipsoid"``
+This parameter require to approximate the geographical features
+by square approximation.
 
-    楕円体近似で近似します。距離の計算にはヒュベニの距離計算式を用います。 ``"sphere"`` よりも遅くなりますが、誤差は小さくなります。
+Since the value of distance is calculated by simple formula,
+you can calculate the value of distance fast.
+But, the error of distance increases as it approaches the pole.
 
-    ``"ellip"`` と省略して指定することもできます。
+You can also specify ``rect`` as abbrev expression.
 
+Here is a sample about calculating the value of distance with column value.
 
-返値
-----
+.. groonga-command
+.. include:: ../example/functions/geo_distance_location_rectangle.log
 
-指定した2点の距離をFloat型の値(単位:メートル)として返します。
+Here is a sample about calculating the value of distance with explicitly specified point.
 
-例
---
-::
+.. groonga-command
+.. include:: ../example/functions/geo_distance_distance_rectangle.log
 
- geo_distance(pos, "150x150")
- 100.0
+.. note::
 
- # 方形近似を利用
- geo_distance(pos, "150x150", "rectangle")
- 100.0
+    ``geo_distance`` uses square approximation as default. If you omit ``approximate_type``, ``geo_distance`` behaves like ``rectangle`` was specified.
 
- # 球面近似を利用
- geo_distance(pos, "150x150", "sphere")
- 100.0
+``sphere``
+...............
 
- # 楕円体近似を利用
- geo_distance(pos, "150x150", "ellipsoid")
- 100.0
+This parameter require to approximate the geographical features
+by spherical approximation.
 
-.. rubric:: 脚注
+It is slower than ``rectangle``, but the error of distance becomes
+smaller than ``rectangle``.
 
-.. [#] TokyoGeoPoint(日本測地系座標)かWGS84GeoPoint(世界測地系座標)のいずれかを指定できます。
+You can also specify ``sphr`` as abbrev expression.
+
+Here is a sample about calculating the value of distance with column value.
+
+.. groonga-command
+.. include:: ../example/functions/geo_distance_location_sphere.log
+
+Here is a sample about calculating the value of distance with explicitly specified point.
+
+.. groonga-command
+.. include:: ../example/functions/geo_distance_distance_sphere.log
+
+``ellipsoid``
+...............
+
+This parameter require to approximate the geographical features
+by ellipsoid approximation.
+
+It uses the calculation of distance by the formula of Hubeny.
+It is slower than ``sphere``, but the error of distance becomes
+smaller than ``sphere``.
+
+You can also specify ``ellip`` as abbrev expression.
+
+Here is a sample about calculating the value of distance with column value.
+
+.. groonga-command
+.. include:: ../example/functions/geo_distance_location_ellipsoid.log
+
+Here is a sample about calculating the value of distance with explicitly specified point.
+
+.. groonga-command
+.. include:: ../example/functions/geo_distance_distance_ellipsoid.log
+
+.. rubric:: Footnote
+
+.. [#] You can specify whether TokyoGeoPoint or WGS84GeoPoint.
