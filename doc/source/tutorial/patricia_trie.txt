@@ -23,9 +23,10 @@ table_createコマンドのflagsオプションにTABLE_PAT_KEYを指定する�
 .. [
 .. {"_key":"ひろゆき"},
 .. {"_key":"まろゆき"},
-.. {"_key":"ひろあき"}
+.. {"_key":"ひろあき"},
+.. {"_key":"ゆきひろ"}
 .. ]
-.. select --table PatPrefix --query _key:@ひろ
+.. select --table PatPrefix --query _key:^ひろ
 
 主キーによる後方一致検索
 ------------------------
@@ -34,7 +35,7 @@ table_createコマンドのflagsオプションにTABLE_PAT_KEYとKEY_WITH_SIS�
 
 KEY_WITH_SISフラグを付与すると、データを追加する際に後方一致用のレコードも追加されてしまいます。そのため、単純に検索すると、元のレコードに加えて自動的に追加されたレコードまでヒットしてしまいます。元のレコードのみ検索するために、一工夫必要になります。
 
-例えば、元のレコードと自動的に追加されたレコードとの区別をつけるために、元のレコードであることを示すoriginalカラムを追加して、検索時にはoriginalカラムが ``true`` も検索条件に加えます。
+例えば、元のレコードと自動的に追加されたレコードとの区別をつけるために、元のレコードであることを示すoriginalカラムを追加して、検索時にはoriginalカラムが ``true`` も検索条件に加えます。 ``--query`` オプションでは ``Bool`` 型の値を直感的に指定することができないので ``--filter`` オプションを使っていることに注意してください。
 
 .. groonga-command
 .. include:: ../example/tutorial/patricia_trie-2.log
@@ -45,7 +46,8 @@ KEY_WITH_SISフラグを付与すると、データを追加する際に後方�
 .. [
 .. {"_key":"ひろゆき","original":true},
 .. {"_key":"まろゆき","original":true},
-.. {"_key":"ひろあき","original":true}
+.. {"_key":"ひろあき","original":true},
+.. {"_key":"ゆきひろ","original":true}
 .. ]
-.. select --table PatSuffix --query _key:@ゆき
-.. select --table PatSuffix --query "_key:@ゆき original:true"
+.. select --table PatSuffix --query _key:$ゆき
+.. select --table PatSuffix --filter '_key @$ "ゆき" && original == true'

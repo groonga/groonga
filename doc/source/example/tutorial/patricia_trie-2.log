@@ -8,10 +8,11 @@ Execution example::
   [
   {"_key":"ひろゆき","original":true},
   {"_key":"まろゆき","original":true},
-  {"_key":"ひろあき","original":true}
+  {"_key":"ひろあき","original":true},
+  {"_key":"ゆきひろ","original":true}
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 3]
-  select --table PatSuffix --query _key:@ゆき
+  # [[0, 1337566253.89858, 0.000355720520019531], 4]
+  select --table PatSuffix --query _key:$ゆき
   # [
   #   [
   #     0, 
@@ -60,7 +61,7 @@ Execution example::
   #     ]
   #   ]
   # ]
-  select --table PatSuffix --query "_key:@ゆき original:true"
+  select --table PatSuffix --filter '_key @$ "ゆき" && original == true'
   # [
   #   [
   #     0, 
