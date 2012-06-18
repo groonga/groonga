@@ -31,7 +31,7 @@ Usage
 This section explains geo_distance.
 ``geo_distance`` is one of the groonga builtin functions.
 
-You can call a builtin function in :doc:`/expr` 
+You can call a builtin function in :doc:`/reference/grn_expr` 
 
 ``geo_distance`` function calculates the value of distance(approximate value)
 between the coordinate of ``point1`` and the coordinate of ``point2``.
