@@ -3,7 +3,7 @@
 .. highlightlang:: none
 
 .. groonga-command
-.. database: spec_script_syntax
+.. database: reference_grn_expr_script_syntax
 
 Script Syntax
 =============

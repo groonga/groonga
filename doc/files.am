@@ -89,6 +89,23 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/indexing-search-after-offline-index-construction.log \
 	$(top_srcdir)/doc/source/example/indexing-search-after-online-index-construction.log \
 	$(top_srcdir)/doc/source/example/indexing-search-without-index.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/setup.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/simple_equal.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/simple_full_text_search.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/simple_full_text_search_with_explicit_match_column.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/simple_greater_than.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/simple_greater_than_or_equal_to.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/simple_grouping.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/simple_less_than.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/simple_less_than_or_equal_to.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/simple_logical_and.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/simple_logical_not.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/simple_logical_or.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/simple_not_equal.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/simple_phrase_search.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/simple_phrase_search_with_explicit_match_column.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/simple_prefix_search.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/simple_suffix_search.log \
 	$(top_srcdir)/doc/source/example/suggestion-1.log \
 	$(top_srcdir)/doc/source/example/tutorial/data-1.log \
 	$(top_srcdir)/doc/source/example/tutorial/data-2.log \
@@ -164,7 +181,6 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/executables/groonga-http.txt \
 	$(top_srcdir)/doc/source/executables/groonga-suggest-create-dataset.txt \
 	$(top_srcdir)/doc/source/executables/groonga.txt \
-	$(top_srcdir)/doc/source/expr.txt \
 	$(top_srcdir)/doc/source/functions.txt \
 	$(top_srcdir)/doc/source/functions/edit_distance.txt \
 	$(top_srcdir)/doc/source/functions/geo_distance.txt \
@@ -275,9 +291,11 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/pseudo_column.txt \
 	$(top_srcdir)/doc/source/rdoc.py \
 	$(top_srcdir)/doc/source/reference.txt \
+	$(top_srcdir)/doc/source/reference/cast.txt \
+	$(top_srcdir)/doc/source/reference/grn_expr.txt \
+	$(top_srcdir)/doc/source/reference/grn_expr/query_syntax.txt \
+	$(top_srcdir)/doc/source/reference/grn_expr/script_syntax.txt \
 	$(top_srcdir)/doc/source/spec.txt \
-	$(top_srcdir)/doc/source/spec/query_syntax.txt \
-	$(top_srcdir)/doc/source/spec/script_syntax.txt \
 	$(top_srcdir)/doc/source/spec/search.txt \
 	$(top_srcdir)/doc/source/suggest.txt \
 	$(top_srcdir)/doc/source/suggest/completion.txt \
@@ -407,6 +425,23 @@ source_files_relative_from_doc_dir = \
 	source/example/indexing-search-after-offline-index-construction.log \
 	source/example/indexing-search-after-online-index-construction.log \
 	source/example/indexing-search-without-index.log \
+	source/example/reference/grn_expr/query_syntax/setup.log \
+	source/example/reference/grn_expr/query_syntax/simple_equal.log \
+	source/example/reference/grn_expr/query_syntax/simple_full_text_search.log \
+	source/example/reference/grn_expr/query_syntax/simple_full_text_search_with_explicit_match_column.log \
+	source/example/reference/grn_expr/query_syntax/simple_greater_than.log \
+	source/example/reference/grn_expr/query_syntax/simple_greater_than_or_equal_to.log \
+	source/example/reference/grn_expr/query_syntax/simple_grouping.log \
+	source/example/reference/grn_expr/query_syntax/simple_less_than.log \
+	source/example/reference/grn_expr/query_syntax/simple_less_than_or_equal_to.log \
+	source/example/reference/grn_expr/query_syntax/simple_logical_and.log \
+	source/example/reference/grn_expr/query_syntax/simple_logical_not.log \
+	source/example/reference/grn_expr/query_syntax/simple_logical_or.log \
+	source/example/reference/grn_expr/query_syntax/simple_not_equal.log \
+	source/example/reference/grn_expr/query_syntax/simple_phrase_search.log \
+	source/example/reference/grn_expr/query_syntax/simple_phrase_search_with_explicit_match_column.log \
+	source/example/reference/grn_expr/query_syntax/simple_prefix_search.log \
+	source/example/reference/grn_expr/query_syntax/simple_suffix_search.log \
 	source/example/suggestion-1.log \
 	source/example/tutorial/data-1.log \
 	source/example/tutorial/data-2.log \
@@ -482,7 +517,6 @@ source_files_relative_from_doc_dir = \
 	source/executables/groonga-http.txt \
 	source/executables/groonga-suggest-create-dataset.txt \
 	source/executables/groonga.txt \
-	source/expr.txt \
 	source/functions.txt \
 	source/functions/edit_distance.txt \
 	source/functions/geo_distance.txt \
@@ -593,9 +627,11 @@ source_files_relative_from_doc_dir = \
 	source/pseudo_column.txt \
 	source/rdoc.py \
 	source/reference.txt \
+	source/reference/cast.txt \
+	source/reference/grn_expr.txt \
+	source/reference/grn_expr/query_syntax.txt \
+	source/reference/grn_expr/script_syntax.txt \
 	source/spec.txt \
-	source/spec/query_syntax.txt \
-	source/spec/script_syntax.txt \
 	source/spec/search.txt \
 	source/suggest.txt \
 	source/suggest/completion.txt \
@@ -643,7 +679,6 @@ po_files = \
 	contribution.po \
 	development.po \
 	executables.po \
-	expr.po \
 	functions.po \
 	geolocation_search.po \
 	index.po \
@@ -672,7 +707,6 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/contribution.po \
 	LC_MESSAGES/development.po \
 	LC_MESSAGES/executables.po \
-	LC_MESSAGES/expr.po \
 	LC_MESSAGES/functions.po \
 	LC_MESSAGES/geolocation_search.po \
 	LC_MESSAGES/index.po \
@@ -701,7 +735,6 @@ mo_files = \
 	contribution.mo \
 	development.mo \
 	executables.mo \
-	expr.mo \
 	functions.mo \
 	geolocation_search.mo \
 	index.mo \
@@ -730,7 +763,6 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/contribution.mo \
 	LC_MESSAGES/development.mo \
 	LC_MESSAGES/executables.mo \
-	LC_MESSAGES/expr.mo \
 	LC_MESSAGES/functions.mo \
 	LC_MESSAGES/geolocation_search.mo \
 	LC_MESSAGES/index.mo \
@@ -799,7 +831,6 @@ html_files_relative_from_locale_dir = \
 	html/_sources/executables/groonga-http.txt \
 	html/_sources/executables/groonga-suggest-create-dataset.txt \
 	html/_sources/executables/groonga.txt \
-	html/_sources/expr.txt \
 	html/_sources/functions.txt \
 	html/_sources/functions/edit_distance.txt \
 	html/_sources/functions/geo_distance.txt \
@@ -830,9 +861,11 @@ html_files_relative_from_locale_dir = \
 	html/_sources/output.txt \
 	html/_sources/pseudo_column.txt \
 	html/_sources/reference.txt \
+	html/_sources/reference/cast.txt \
+	html/_sources/reference/grn_expr.txt \
+	html/_sources/reference/grn_expr/query_syntax.txt \
+	html/_sources/reference/grn_expr/script_syntax.txt \
 	html/_sources/spec.txt \
-	html/_sources/spec/query_syntax.txt \
-	html/_sources/spec/script_syntax.txt \
 	html/_sources/spec/search.txt \
 	html/_sources/suggest.txt \
 	html/_sources/suggest/completion.txt \
@@ -927,7 +960,6 @@ html_files_relative_from_locale_dir = \
 	html/executables/groonga-http.html \
 	html/executables/groonga-suggest-create-dataset.html \
 	html/executables/groonga.html \
-	html/expr.html \
 	html/functions.html \
 	html/functions/edit_distance.html \
 	html/functions/geo_distance.html \
@@ -960,11 +992,13 @@ html_files_relative_from_locale_dir = \
 	html/output.html \
 	html/pseudo_column.html \
 	html/reference.html \
+	html/reference/cast.html \
+	html/reference/grn_expr.html \
+	html/reference/grn_expr/query_syntax.html \
+	html/reference/grn_expr/script_syntax.html \
 	html/search.html \
 	html/searchindex.js \
 	html/spec.html \
-	html/spec/query_syntax.html \
-	html/spec/script_syntax.html \
 	html/spec/search.html \
 	html/suggest.html \
 	html/suggest/completion.html \

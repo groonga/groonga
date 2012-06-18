@@ -14,7 +14,7 @@
    type
    tokenizers
    pseudo_column
-   expr
+   reference/grn_expr
    functions
    indexing
    log

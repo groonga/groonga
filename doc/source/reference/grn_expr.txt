@@ -5,6 +5,13 @@
 grn_expr
 ========
 
+.. toctree::
+   :maxdepth: 1
+   :glob:
+
+   grn_expr/query_syntax
+   grn_expr/script_syntax
+
 名前
 ----
 
@@ -42,4 +49,3 @@ script形式でcolumn1の値が'hoge'に等しいという条件
 
   column1 == "hoge"
 
-.. rubric:: 脚注
