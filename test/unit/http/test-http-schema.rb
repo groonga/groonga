@@ -103,15 +103,6 @@ module HTTPSchemaTests
     assert_table_list([])
   end
 
-  def test_table_list_exist
-    create_bookmarks_table
-    assert_table_list([[@bookmarks_table_id,
-                        "bookmarks",
-                        "TABLE_PAT_KEY|PERSISTENT",
-                        "ShortText",
-                        "Object"]])
-  end
-
   def test_table_list_with_invalid_output_type
     omit('now invalid output types are interpreted to json')
     response = get(command_path(:table_list,
