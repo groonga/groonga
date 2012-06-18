@@ -32,7 +32,7 @@ Sample data
 Here are a schema definition and sample data to show usage.
 
 .. groonga-command
-.. include:: ../example/reference/grn_expr/query_syntax/setup.log
+.. include:: ../../example/reference/grn_expr/query_syntax/setup.log
 .. table_create Entries TABLE_PAT_KEY ShortText
 .. column_create Entries content COLUMN_SCALAR Text
 .. column_create Entries n_likes COLUMN_SCALAR UInt32
@@ -120,7 +120,7 @@ specifies a keyword that contains one or more spaces, you can use
 Here is a simple exmaple.
 
 .. groonga-command
-.. include:: ../example/reference/grn_expr/query_syntax/simple_full_text_search.log
+.. include:: ../../example/reference/grn_expr/query_syntax/simple_full_text_search.log
 .. select Entries --match_columns content --query fast
 
 The expression matches records that contain a word ``fast`` in
@@ -151,7 +151,7 @@ aren't matched.
 Here is a simple exmaple.
 
 .. groonga-command
-.. include:: ../example/reference/grn_expr/query_syntax/simple_phrase_search.log
+.. include:: ../../example/reference/grn_expr/query_syntax/simple_phrase_search.log
 .. select Entries --match_columns content --query '"I started"'
 
 The expression matches records that contain a phrase ``I started`` in
@@ -193,7 +193,7 @@ See description of ``--match_columns`` option of
 Here is a simple exmaple.
 
 .. groonga-command
-.. include:: ../example/reference/grn_expr/query_syntax/simple_full_text_search_with_explicit_match_column.log
+.. include:: ../../example/reference/grn_expr/query_syntax/simple_full_text_search_with_explicit_match_column.log
 .. select Entries --query content:@fast
 
 The expression matches records that contain a word ``fast`` in
@@ -220,7 +220,7 @@ condition (with explicit match column)`` about advanced match columns.
 Here is a simple exmaple.
 
 .. groonga-command
-.. include:: ../example/reference/grn_expr/query_syntax/simple_phrase_search_with_explicit_match_column.log
+.. include:: ../../example/reference/grn_expr/query_syntax/simple_phrase_search_with_explicit_match_column.log
 .. select Entries --query 'content:@"I started"'
 
 The expression matches records that contain a phrase ``I started`` in
@@ -250,7 +250,7 @@ search condition`` and ``phrase search condition``.
 Here is a simple exmaple.
 
 .. groonga-command
-.. include:: ../example/reference/grn_expr/query_syntax/simple_prefix_search.log
+.. include:: ../../example/reference/grn_expr/query_syntax/simple_prefix_search.log
 .. select Entries --query '_key:^Goo'
 
 The expression matches records that contain a word that starts with
@@ -280,7 +280,7 @@ search condition`` and ``phrase search condition``.
 Here is a simple exmaple.
 
 .. groonga-command
-.. include:: ../example/reference/grn_expr/query_syntax/simple_suffix_search.log
+.. include:: ../../example/reference/grn_expr/query_syntax/simple_suffix_search.log
 .. table_create Titles TABLE_PAT_KEY|KEY_WITH_SIS ShortText
 .. load --table Titles
 .. [
@@ -309,7 +309,7 @@ search condition`` and ``phrase search condition``.
 Here is a simple exmaple.
 
 .. groonga-command
-.. include:: ../example/reference/grn_expr/query_syntax/simple_equal.log
+.. include:: ../../example/reference/grn_expr/query_syntax/simple_equal.log
 .. select Entries --query _key:Groonga
 
 The expression matches records that ``_key`` column value is
@@ -328,7 +328,7 @@ search condition`` and ``phrase search condition``.
 Here is a simple exmaple.
 
 .. groonga-command
-.. include:: ../example/reference/grn_expr/query_syntax/simple_not_equal.log
+.. include:: ../../example/reference/grn_expr/query_syntax/simple_not_equal.log
 .. select Entries --query _key:!Groonga
 
 The expression matches records that ``_key`` column value is not equal
@@ -352,7 +352,7 @@ search condition`` and ``phrase search condition``.
 Here is a simple exmaple.
 
 .. groonga-command
-.. include:: ../example/reference/grn_expr/query_syntax/simple_less_than.log
+.. include:: ../../example/reference/grn_expr/query_syntax/simple_less_than.log
 .. select Entries --query n_likes:<10
 
 The expression matches records that ``n_likes`` column value is less
@@ -376,7 +376,7 @@ search condition`` and ``phrase search condition``.
 Here is a simple exmaple.
 
 .. groonga-command
-.. include:: ../example/reference/grn_expr/query_syntax/simple_greater_than.log
+.. include:: ../../example/reference/grn_expr/query_syntax/simple_greater_than.log
 .. select Entries --query n_likes:>10
 
 The expression matches records that ``n_likes`` column value is greater
@@ -401,7 +401,7 @@ search condition`` and ``phrase search condition``.
 Here is a simple exmaple.
 
 .. groonga-command
-.. include:: ../example/reference/grn_expr/query_syntax/simple_less_than_or_equal_to.log
+.. include:: ../../example/reference/grn_expr/query_syntax/simple_less_than_or_equal_to.log
 .. select Entries --query n_likes:<=10
 
 The expression matches records that ``n_likes`` column value is less
@@ -426,7 +426,7 @@ search condition`` and ``phrase search condition``.
 Here is a simple exmaple.
 
 .. groonga-command
-.. include:: ../example/reference/grn_expr/query_syntax/simple_greater_than_or_equal_to.log
+.. include:: ../../example/reference/grn_expr/query_syntax/simple_greater_than_or_equal_to.log
 .. select Entries --query n_likes:>=10
 
 The expression matches records that ``n_likes`` column value is
@@ -450,7 +450,7 @@ If at least one of ``a`` and ``b`` are matched, ``a OR b`` is matched.
 Here is a simple exmaple.
 
 .. groonga-command
-.. include:: ../example/reference/grn_expr/query_syntax/simple_logical_or.log
+.. include:: ../../example/reference/grn_expr/query_syntax/simple_logical_or.log
 .. select Entries --query 'n_likes:>10 OR content:@senna'
 
 The expression matches records that ``n_likes`` column value is
@@ -473,7 +473,7 @@ is just ignored.
 Here is a simple exmaple.
 
 .. groonga-command
-.. include:: ../example/reference/grn_expr/query_syntax/simple_logical_and.log
+.. include:: ../../example/reference/grn_expr/query_syntax/simple_logical_and.log
 .. select Entries --query 'n_likes:>=10 + content:@groonga'
 
 The expression matches records that ``n_likes`` column value is
@@ -496,7 +496,7 @@ syntax error.
 Here is a simple exmaple.
 
 .. groonga-command
-.. include:: ../example/reference/grn_expr/query_syntax/simple_logical_not.log
+.. include:: ../../example/reference/grn_expr/query_syntax/simple_logical_not.log
 .. select Entries --query 'n_likes:>=10 - content:@groonga'
 
 The expression matches records that ``n_likes`` column value is
@@ -516,7 +516,7 @@ one of ``b`` and ``c`` are matched.
 Here is a simple exmaple.
 
 .. groonga-command
-.. include:: ../example/reference/grn_expr/query_syntax/simple_grouping.log
+.. include:: ../../example/reference/grn_expr/query_syntax/simple_grouping.log
 .. select Entries --query 'n_likes:<5 content:@senna OR content:@fast'
 .. select Entries --query 'n_likes:<5 (content:@senna OR content:@fast)'
 

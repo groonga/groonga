@@ -31,18 +31,6 @@ Execution example::
   #         ]
   #       ], 
   #       [
-  #         1, 
-  #         "The first post!", 
-  #         "Welcome! This is my first post!", 
-  #         5
-  #       ], 
-  #       [
-  #         2, 
-  #         "Groonga", 
-  #         "I started to use groonga. It's very fast!", 
-  #         10
-  #       ], 
-  #       [
   #         4, 
   #         "Good-bye Senna", 
   #         "I migrated all Senna system!", 
@@ -53,6 +41,18 @@ Execution example::
   #         "Good-bye Tritonn", 
   #         "I also migrated all Tritonn system!", 
   #         3
+  #       ], 
+  #       [
+  #         2, 
+  #         "Groonga", 
+  #         "I started to use groonga. It's very fast!", 
+  #         10
+  #       ], 
+  #       [
+  #         1, 
+  #         "The first post!", 
+  #         "Welcome! This is my first post!", 
+  #         5
   #       ]
   #     ]
   #   ]
