@@ -1,0 +1,12 @@
+Execution example::
+
+  table_create Stations TABLE_HASH_KEY ShortText
+  # [[0,0.0,0.0],true]
+  column_create Stations location COLUMN_SCALAR WGS84GeoPoint
+  # [[0,0.0,0.0],true]
+  load --table Stations
+  [
+  ["_key", "location"],
+  ["Tokyo", "128452975x503157902"],
+  ]
+  # [[0,0.0,0.0],1]

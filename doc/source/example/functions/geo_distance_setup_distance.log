@@ -1,0 +1,12 @@
+Execution example::
+
+  table_create Geo TABLE_HASH_KEY ShortText
+  # [[0,0.0,0.0],true]
+  column_create Geo distance COLUMN_SCALAR Int32
+  # [[0,0.0,0.0],true]
+  load --table Geo
+  [
+  {"_key": "the record for geo_distance() result"}
+  ]
+  # [[0,0.0,0.0],1]
+  

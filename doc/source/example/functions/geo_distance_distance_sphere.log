@@ -1,0 +1,15 @@
+Execution example::
+
+  select Geo --output_columns distance --scorer 'distance = geo_distance("128452975x503157902", "155047000x508862800", "sphere")'
+  # [
+  #   [0,0.0,0.0],
+  #   [
+  #     [
+  #       [1],
+  #       [
+  #         ["distance","Int32"]
+  #       ],
+  #       [0]
+  #     ]
+  #   ]
+  # ]
