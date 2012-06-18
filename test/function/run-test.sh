@@ -60,23 +60,24 @@ next_argument_is_long_option_value="false"
 for argument in "$@"; do
     case "$argument" in
 	--*=*)
+	    next_argument_is_long_option_value="false"
 	    ;;
 	--keep-database|--no-*|--version|--help)
-	    # no argument options
+	    next_argument_is_long_option_value="false"
 	    ;;
 	--*)
 	    next_argument_is_long_option_value="true"
-	    break
 	    ;;
 	-*)
+	    next_argument_is_long_option_value="false"
 	    ;;
 	*)
 	    if test "$next_argument_is_long_option_value" != "true"; then
 		have_targets="true"
 	    fi
+	    next_argument_is_long_option_value="false"
 	    ;;
     esac
-    next_argument_is_long_option_value="false"
 done
 
 grntest_options=("$@")
