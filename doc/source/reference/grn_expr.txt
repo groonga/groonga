@@ -5,6 +5,47 @@
 grn_expr
 ========
 
+Grn_expr is an object that searches records with specified conditions
+and manipulates a database. It's pronounced as ``gurun expression``.
+
+Conditions for searching records from a database can be represented by
+conbining condition expressions such as ``equal condition expression``
+and ``less than condition expression`` with set operations such as
+``AND``, ``OR`` and ``NOT``. Grn_expr executes those conditions to
+search records. You can also use advanced searches such as similar
+search and near search by grn_expr. You can also use flexible full
+text search. For example, you can control hit scores for specified
+words and improve recall by re-searching with high-recall algolithm
+dinamically. To determine whether re-searching or not, the number of
+matched rescords is used.
+
+There are three ways to create grn_expr:
+
+  * Parsing :doc:`/reference/grn_expr/query_syntax` string.
+  * Parsing :doc:`/reference/grn_expr/script_syntax` string.
+  * Calling grn_expr related APIs.
+
+:doc:`/reference/grn_expr/query_syntax` is for common search form in
+Internet search site. It's simple and easy to use but it has a
+limitation. You can not use all condition expressions and set
+operations in :doc:`/reference/grn_expr/query_syntax`. You can use
+:doc:`/reference/grn_expr/query_syntax` with ``query`` option in
+:doc:`/commands/select`.
+
+:doc:`/reference/grn_expr/script_syntax` is ECMAScript like
+syntax. You can use all condition expresssions and set operations in
+:doc:`/reference/grn_expr/script_syntax`. You can use
+:doc:`/reference/grn_expr/script_syntax` with ``filter`` option and
+``scorer`` option in :doc:`/commands/select`.
+
+You can use groonga as a library and create a grn_expr by calling
+grn_expr related APIs. You can use full features with calling APIs
+like :doc:`/reference/grn_expr/script_syntax`. Calling APIs is useful
+creating a custom syntax to create grn_expr. They are used in `rroonga
+<http://groonga.rubyforge.org/#about-rroonga>`_ that is Ruby bindings
+of groonga. Rroonga can create a grn_expr by Ruby's syntax instead of
+parsing string.
+
 .. toctree::
    :maxdepth: 1
    :glob:
@@ -12,40 +53,7 @@ grn_expr
    grn_expr/query_syntax
    grn_expr/script_syntax
 
-名前
-----
+See also
+--------
 
-grn_expr - 検索条件やデータベースへの操作を表現するデータ構造(読み方:"ぐるんしき")
-
-説明
-----
-
-grn_exprは、検索条件やデータベースへの操作を表現するために使用されるデータ構造の形式です。
-
-データベースの中から特定の条件を満たすレコードを取り出すために、様々な条件をand,or,notなどの演算子で結合して自由に表現することができます。grn_exprは、一連のAPI関数を呼ぶことによって組み立てることができます。特定の文字列形式には依存していません。組み込みコマンドselectのqueryパラメータでは、検索エンジンのユーザがフォームで入力する文字列を直接受け取ることを想定して、文字列からgrn_exprを生成しています。また、多くの組み込みコマンドで共通に使用するために、ECMAScript形式の文字列からgrn_exprを生成するAPI関数grn_expr_parse()を用意しています。grn_expr_parseでパースできる文字列を特にscript形式のgrn_exprと呼びます。
-
-grn_exprを使うことによって非常に柔軟に検索条件を記述することができます。類似文書検索や近傍検索のような高度な検索もすべてgrn_exprによって記述できます。また、全文検索クエリにおいて、特定の文字列を含むレコードのスコアを細かく制御したり、検索結果数の多寡に応じてより検索漏れの少ないアルゴリズムで再検索するような機能も、grn_exprとgrn_table_select()API関数を組み合わせることによって自由に定義できます。
-
-script形式のgrn_expr
---------------------
-
-ECMAScript風の構文で検索条件やレコードへの操作を記述します。
-
-式中のIDENTIFIER(識別子)は、以下のいずれかを指します。
-
-:引数名:
-  grn_exprが受け取る引数の名前
-
-:カラム名:
-  操作対象としているレコードのカラム名
-
-:型名・関数名・テーブル名:
-  データベースに定義された型・テーブル・関数の名前
-
-例
---
-
-script形式でcolumn1の値が'hoge'に等しいという条件
-
-  column1 == "hoge"
-
+  * :doc:`/reference/api/grn_expr`: grn_expr related APIs

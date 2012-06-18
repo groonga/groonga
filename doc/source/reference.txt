@@ -18,3 +18,4 @@
    functions
    indexing
    log
+   reference/api
