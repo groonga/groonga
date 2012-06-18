@@ -42,7 +42,12 @@ between the coordinate of ``point1`` and the coordinate of ``point2``.
 
 .. note::
 
-    groonga provides three built in functions for calculating the value of distance.There are geo_distance(), geo_distance2(), geo_distance3(). The difference of those are the algorithm of calculating distance. geo_distance2(), geo_distance3() are now deprecated since version 1.2.9. Please use ``geo_distance(point1, point2, "sphere")`` instead of ``geo_distance2()``. Please use ``geo_distance(point1, point2, "ellipsoid")`` instead of ``geo_distance3()``.
+    groonga provides three built in functions for calculating the value of distance. 
+    There are geo_distance(), geo_distance2() and geo_distance3().
+    The difference of them is the algorithm of calculating distance.
+    geo_distance2() and geo_distance3() were deprecated since version 1.2.9.
+    Use ``geo_distance(point1, point2, "sphere")`` instead of ``geo_distance2(point1, point2)``.
+    Use ``geo_distance(point1, point2, "ellipsoid")`` instead of ``geo_distance3(point1, point2)``.
 
 Simple usage
 ^^^^^^^^^^^^
