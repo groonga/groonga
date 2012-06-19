@@ -93,6 +93,8 @@ you want to calculate the value of distance between two points.
 
 You can specify the value of GeoPoint type. [#]_
 
+See :doc:`/type` about GeoPoint.
+
 ``point2``
 """"""""""
 
@@ -101,6 +103,8 @@ you want to calculate the value of distance between two points.
 
 You can specify the value of GeoPoint type or 
 the string indicating the coordinate.
+
+See :doc:`/type` about GeoPoint and the coordinate.
 
 Optional parameter
 ^^^^^^^^^^^^^^^^^^
