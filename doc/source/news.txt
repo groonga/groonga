@@ -16,7 +16,7 @@ Improvements
 * [doc] Added about release procedure.
 * Removed restriction that the max number of opened files is 4096.
 * [experimental] Added table plugin.
-* [doc] Added more descriptions about :doc:`/commmands/select` command.
+* [doc] Added more descriptions about :doc:`/commands/select` command.
 * [doc] Made execution example copy & paste friendly.
 * [windows] Supported build with Visual Studio 2010 Express and
   CMake. See :doc:`/install/windows` about details.
