@@ -536,8 +536,6 @@ run_server(grn_ctx *ctx, grn_obj *db, grn_com_event *ev,
   return exit_code;
 }
 
-#define JSON_CALLBACK_PARAM "callback"
-
 typedef struct {
   grn_obj body;
   grn_msg *msg;
@@ -555,20 +553,7 @@ h_output(grn_ctx *ctx, int flags, void *arg)
   GRN_TEXT_INIT(&head, 0);
   GRN_TEXT_INIT(&foot, 0);
   if (!expr_rc) {
-    grn_obj *expr = ctx->impl->curr_expr;
-    grn_obj *jsonp_func = NULL;
-    if (expr) {
-      jsonp_func = grn_expr_get_var(ctx, expr, JSON_CALLBACK_PARAM,
-                                    strlen(JSON_CALLBACK_PARAM));
-    }
-    if (jsonp_func && GRN_TEXT_LEN(jsonp_func)) {
-      GRN_TEXT_PUT(ctx, &head, GRN_TEXT_VALUE(jsonp_func), GRN_TEXT_LEN(jsonp_func));
-      GRN_TEXT_PUTC(ctx, &head, '(');
-      output_envelope(ctx, expr_rc, &head, outbuf, &foot);
-      GRN_TEXT_PUTS(ctx, &foot, ");");
-    } else {
-      output_envelope(ctx, expr_rc, &head, outbuf, &foot);
-    }
+    output_envelope(ctx, expr_rc, &head, outbuf, &foot);
     GRN_TEXT_SETS(ctx, body, "HTTP/1.1 200 OK\r\n");
     GRN_TEXT_PUTS(ctx, body, "Connection: close\r\n");
     GRN_TEXT_PUTS(ctx, body, "Content-Type: ");
