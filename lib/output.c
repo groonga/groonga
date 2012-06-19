@@ -1298,6 +1298,8 @@ msgpack_buffer_writer(void* data, const char* buf, unsigned int len)
 }
 #endif
 
+#define JSON_CALLBACK_PARAM "callback"
+
 void
 grn_output_envelope(grn_ctx *ctx,
                     grn_rc rc,
@@ -1317,6 +1319,17 @@ grn_output_envelope(grn_ctx *ctx,
   finished = tv_now.tv_sec;
   finished += tv_now.tv_nsec / GRN_TIME_NSEC_PER_SEC_F;
   elapsed = finished - started;
+
+  grn_obj *expr = ctx->impl->curr_expr;
+  grn_obj *jsonp_func = NULL;
+  if (expr) {
+    jsonp_func = grn_expr_get_var(ctx, expr, JSON_CALLBACK_PARAM,
+                                  strlen(JSON_CALLBACK_PARAM));
+  }
+  if (jsonp_func && GRN_TEXT_LEN(jsonp_func)) {
+    GRN_TEXT_PUT(ctx, head, GRN_TEXT_VALUE(jsonp_func), GRN_TEXT_LEN(jsonp_func));
+    GRN_TEXT_PUTC(ctx, head, '(');
+  }
 
   switch (ctx->impl->output_type) {
   case GRN_CONTENT_JSON:
@@ -1497,5 +1510,9 @@ grn_output_envelope(grn_ctx *ctx,
     break;
   case GRN_CONTENT_NONE:
     break;
+  }
+
+  if (jsonp_func && GRN_TEXT_LEN(jsonp_func)) {
+    GRN_TEXT_PUTS(ctx, foot, ");");
   }
 }
