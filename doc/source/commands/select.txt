@@ -138,7 +138,7 @@ The ``select`` command searches records that contain a word ``fast``
 in ``content`` column value from ``Entries`` table.
 
 ``query`` has query syntax but its deatils aren't described here. See
-:doc:`/spec/query_syntax` for datails.
+:doc:`/reference/grn_expr/query_syntax` for datails.
 
 Search condition: ``filter``
 """"""""""""""""""""""""""""
@@ -160,7 +160,7 @@ in ``content`` column value and has ``Groonga`` as ``_key`` from
 ``==`` is equality operator.
 
 ``filter`` has more operators and syntax like grouping by ``(...)``
-its deatils aren't described here. See :doc:`/spec/script_syntax` for
+its deatils aren't described here. See :doc:`/reference/grn_expr/script_syntax` for
 datails.
 
 Paging
@@ -299,7 +299,7 @@ of blog entry is more important rather thatn content of blog entry.
 It specifies the query text. Normally, it is used for fulltext search
 with ``match_columns`` parameter. ``query`` parameter is designed for
 a fulltext search form in a Web page. A query text should be formatted
-in :doc:`/spec/query_syntax`. The syntax is similar to common search
+in :doc:`/reference/grn_expr/query_syntax`. The syntax is similar to common search
 form like Google's search form. For example, ``word1 word2`` means
 that groonga searches records that contain both ``word1`` and
 ``word2``. ``word1 OR word2`` means that groogna searches records that
@@ -325,7 +325,7 @@ The ``select`` command searches records that contain one of two words
 ``groonga`` or ``mroonga`` in ``content`` column value from
 ``Entries`` table.
 
-See :doc:`/spec/query_syntax` for other syntax.
+See :doc:`/reference/grn_expr/query_syntax` for other syntax.
 
 It can be used for not only fulltext search but also other
 conditions. For example, ``column:value`` means the value of
@@ -350,7 +350,7 @@ Here is a simple less than operator search example.
 The ``select`` command searches records that ``n_likes`` column value
 is less than ``11`` from ``Entries`` table.
 
-See :doc:`/spec/query_syntax` for other operations.
+See :doc:`/reference/grn_expr/query_syntax` for other operations.
 
 ``filter``
 """"""""""
@@ -362,7 +362,7 @@ logical and. It means that matched records should be matched against
 both ``filter`` and ``query``.
 
 ``filter`` parameter is designed for complex conditions. A filter text
-should be formated in :doc:`/spec/script_syntax`. The syntax is
+should be formated in :doc:`/reference/grn_expr/script_syntax`. The syntax is
 similar to ECMAScript. For example, ``column == "value"`` means that
 the value of ``column`` column is equal to ``"value"``. ``column <
 value`` means that the value of ``column`` column is less than
@@ -386,7 +386,7 @@ Here is a simple less than operator search example.
 The ``select`` command searches records that ``n_likes`` column value
 is less than ``11`` from ``Entries`` table.
 
-See :doc:`/spec/script_syntax` for other operators.
+See :doc:`/reference/grn_expr/script_syntax` for other operators.
 
 Advanced search parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -510,7 +510,7 @@ query expansion. So a record that has ``"tritonn"`` is found. The
 third ``select`` command doesn't use query expansion but it is same as
 the second ``select`` command. The third one uses expanded query.
 
-Each substitute value can contain any :doc:`/spec/query_syntax` syntax
+Each substitute value can contain any :doc:`/reference/grn_expr/query_syntax` syntax
 such as ``(...)`` and ``OR``. You can use complex substitution by
 using those syntax.
 
@@ -793,5 +793,5 @@ TODO: write in English and add example.
 See also
 --------
 
-  * :doc:`/spec/query_syntax`
-  * :doc:`/spec/script_syntax`
+  * :doc:`/reference/grn_expr/query_syntax`
+  * :doc:`/reference/grn_expr/script_syntax`

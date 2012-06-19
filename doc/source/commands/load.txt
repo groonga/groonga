@@ -97,4 +97,4 @@ JSON形式
 関連項目
 --------
 
-:doc:`../expr`
+:doc:`/reference/grn_expr`
