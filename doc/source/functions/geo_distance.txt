@@ -67,7 +67,9 @@ The coordinate of Tokyo is stored as sample data.
 .. include:: ../example/functions/geo_distance_location_rectangle.log
 
 This sample shows that ``geo_distance`` use the value of ``location`` column
-and the value of coordinate [#]_ to calculate distance.
+and the value of coordinate to calculate distance.
+
+Note that the coordinate of Sapporo is "155047000x508862800".
 
 
 Using the explicitly specified value of location
@@ -228,4 +230,3 @@ The unit of return value is meter.
 
 .. [#] You can specify whether TokyoGeoPoint or WGS84GeoPoint.
 
-.. [#] The coordinate of Sapporo is "155047000x508862800".
