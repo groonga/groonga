@@ -58,13 +58,13 @@ This section shows simple usages.
 Here are two schema definition and sample data to show usage.
 Those samples show how to calculate the value of distance between Tokyo and Sapporo.
 
-#. Using the column value of location for calculating the distance (``Station`` table)
+#. Using the column value of location for calculating the distance (``Stations`` table)
 #. Using the explicitly specified value of location for calculating the distance (``Geo`` table)
 
 Using the column value of location
 """"""""""""""""""""""""""""""""""
 
-Here is a schema definition of Station.
+Here is a schema definition of ``Stations`` table.
 
 .. groonga-command
 .. include:: ../example/functions/geo_distance_setup_location.log
@@ -72,7 +72,7 @@ Here is a schema definition of Station.
 Using the explicitly specified value of location
 """"""""""""""""""""""""""""""""""""""""""""""""
 
-Here is a schema definition of Geo.
+Here is a schema definition of ``Geo`` table.
 
 .. groonga-command
 .. include:: ../example/functions/geo_distance_setup_distance.log
