@@ -203,8 +203,8 @@ module GroongaTestUtils
       th_stderr = Thread.new { err_parent.read } if capture_error
       in_parent.write(input_data.to_str)
       in_parent.close
-      if (!capture_output || th_stdout.join(10)) &&
-          (!capture_error || th_stderr.join(10))
+      if (!capture_output || th_stdout.join(60)) &&
+          (!capture_error || th_stderr.join(60))
         stdout = th_stdout.value if capture_output
         stderr = th_stderr.value if capture_error
       else
