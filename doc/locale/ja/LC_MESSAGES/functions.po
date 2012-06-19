@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-19 18:19\n"
+"POT-Creation-Date: 2012-06-19 18:42\n"
 "PO-Revision-Date: 2011-05-09 00:36+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -265,18 +265,23 @@ msgstr ""
 #: ../../../source/functions/geo_distance.txt:69
 msgid ""
 "This sample shows that ``geo_distance`` use the value of ``location`` column "
-"and the value of coordinate [#]_ to calculate distance."
+"and the value of coordinate to calculate distance."
 msgstr ""
-"このサンプルは ``geo_distance`` が ``location`` カラムと座標値 [2]_ から距離"
+"このサンプルは ``geo_distance`` が ``location`` カラムと座標値から距離"
 "を計算していることを示します。"
 
+# 55ce109fd2734ac0a590315ba1f4b910
+#: ../../../source/functions/geo_distance.txt:72
+msgid "Note that the coordinate of Sapporo is \"155047000x508862800\"."
+msgstr "札幌の座標値は \"155047000x508862800\"です。"
+
 # 44d6b19124b9469389dd4961713668c3
-#: ../../../source/functions/geo_distance.txt:74
+#: ../../../source/functions/geo_distance.txt:76
 msgid "Using the explicitly specified value of location"
 msgstr "明示的に指定した位置を使う"
 
 # 9e614385bab349a3bc8059f3422715a9
-#: ../../../source/functions/geo_distance.txt:76
+#: ../../../source/functions/geo_distance.txt:78
 msgid ""
 "Here are a schema definition of ``Geo`` table and sample data to show usage."
 msgstr ""
@@ -284,7 +289,7 @@ msgstr ""
 "です。"
 
 # 677bb0fe4cc445a085ca76443035995d
-#: ../../../source/functions/geo_distance.txt:81
+#: ../../../source/functions/geo_distance.txt:83
 msgid ""
 "There is a table named ``Geo``. ``Geo`` table has one column, ``distance``. "
 "``distance`` column stores the value of distance."
@@ -293,7 +298,7 @@ msgstr ""
 "があります。 ``distance`` カラムは距離を保存します。"
 
 # d6a2da1f01a94fcb89dcbc342549db37
-#: ../../../source/functions/geo_distance.txt:87
+#: ../../../source/functions/geo_distance.txt:89
 msgid ""
 "This sample shows that ``geo_distance`` use the coordinate of Tokyo and the "
 "coordinate of Sapporo to calculate distance."
@@ -302,117 +307,117 @@ msgstr ""
 "ることを示します。"
 
 # 18532e03e38c4f96970d5935b7432cba
-#: ../../../source/functions/geo_distance.txt:91
+#: ../../../source/functions/geo_distance.txt:93
 msgid "Parameters"
 msgstr "引数"
 
 # 852d1057fa6546bc9ab1ff1a04d6f857
-#: ../../../source/functions/geo_distance.txt:94
+#: ../../../source/functions/geo_distance.txt:96
 msgid "Required parameter"
 msgstr "必須引数"
 
 # b90bfd8b177440e6b2a2ff7f128303f9
-#: ../../../source/functions/geo_distance.txt:96
+#: ../../../source/functions/geo_distance.txt:98
 msgid "There are two required parameter, ``point1`` and ``point2``."
 msgstr "必須引数は二つあります。 ``point1`` と ``point2`` です。"
 
-#: ../../../source/functions/geo_distance.txt:99
+#: ../../../source/functions/geo_distance.txt:101
 msgid "``point1``"
 msgstr ""
 
 # 9b1a2e5d87524b94b57d4cbc0f5b885b
-#: ../../../source/functions/geo_distance.txt:101
+#: ../../../source/functions/geo_distance.txt:103
 msgid ""
 "It specifies the start point that you want to calculate the value of "
 "distance between two points."
 msgstr "計算しようとしている二点間の開始地点を指定します。"
 
 # 08a5d2b440ab42559403a3c7e4903ce1
-#: ../../../source/functions/geo_distance.txt:104
+#: ../../../source/functions/geo_distance.txt:106
 msgid "You can specify the value of GeoPoint type. [#]_"
 msgstr "GeoPoint型の値を指定することができます。 [1]_"
 
 # cb3be32e3bed440fbedddd88be69fe9f
-#: ../../../source/functions/geo_distance.txt:106
+#: ../../../source/functions/geo_distance.txt:108
 msgid "See :doc:`/type` about GeoPoint."
 msgstr "GeoPoint型については :doc:`/type` を参照してください。"
 
-#: ../../../source/functions/geo_distance.txt:109
+#: ../../../source/functions/geo_distance.txt:111
 msgid "``point2``"
 msgstr ""
 
 # 471bcd5c71b74618b7a52ada00ecb7eb
-#: ../../../source/functions/geo_distance.txt:111
+#: ../../../source/functions/geo_distance.txt:113
 msgid ""
 "It specifies the end point that you want to calculate the value of distance "
 "between two points."
 msgstr "計算しようとしている二点間の終了地点を指定します。"
 
 # 93d1be8ed5cc4f09b686aca96c27caca
-#: ../../../source/functions/geo_distance.txt:114
+#: ../../../source/functions/geo_distance.txt:116
 msgid ""
 "You can specify the value of GeoPoint type or the string indicating the "
 "coordinate."
 msgstr "GeoPoint型の値か座標を表す文字列を指定することができます。"
 
 # 93d1be8ed5cc4f09b686aca96c27caca
-#: ../../../source/functions/geo_distance.txt:117
+#: ../../../source/functions/geo_distance.txt:119
 msgid "See :doc:`/type` about GeoPoint and the coordinate."
 msgstr "GeoPoint型や座標の表記については :doc:`/type` を参照してください。"
 
 # 063b335227cc45469a645aec28feca86
-#: ../../../source/functions/geo_distance.txt:120
+#: ../../../source/functions/geo_distance.txt:122
 msgid "Optional parameter"
 msgstr "省略可能引数"
 
 # adaf6aea33734076a433a69a89e0b440
-#: ../../../source/functions/geo_distance.txt:122
+#: ../../../source/functions/geo_distance.txt:124
 msgid "There is a optional parameter, ``approximate_type``."
 msgstr "省略可能な引数として ``approximate_type`` があります。"
 
 # 717449798dfd48c4b1d4197475ca41a4
 # 3681f9b79a3b45ed96ce85e3429fc9c6
-#: ../../../source/functions/geo_distance.txt:125
+#: ../../../source/functions/geo_distance.txt:127
 #: ../../../source/functions/geo_in_circle.txt:42
 msgid "``approximate_type``"
 msgstr ""
 
 # 33db3c7afa984a5ba02cce4dcf90e9e0
-#: ../../../source/functions/geo_distance.txt:127
+#: ../../../source/functions/geo_distance.txt:129
 msgid ""
 "It specifies how to approximate the geographical features for calculating "
 "the value of distance."
 msgstr "距離を計算するときに地形をどのように近似するかを指定します。"
 
 # 3fe88937ec054b13aecea52df2e77b0b
-#: ../../../source/functions/geo_distance.txt:130
+#: ../../../source/functions/geo_distance.txt:132
 msgid ""
 "You can specify the value of ``approximate_type`` by one of the followings."
 msgstr "``approximate_type`` の値は以下を指定することができます。"
 
 # b7c60aca823b476a9b03fc64ce99abae
 # a35c6823701045b8949f767b52a069f3
-#: ../../../source/functions/geo_distance.txt:132
-#: ../../../source/functions/geo_distance.txt:152
+#: ../../../source/functions/geo_distance.txt:134
+#: ../../../source/functions/geo_distance.txt:154
 msgid "``rectangle``"
 msgstr ""
 
 # 6f4835ed8f0749a69480bae00c4f84aa
 # fadabcdcd119484db4483cb8213f3eee
-#: ../../../source/functions/geo_distance.txt:133
-#: ../../../source/functions/geo_distance.txt:189
+#: ../../../source/functions/geo_distance.txt:135
+#: ../../../source/functions/geo_distance.txt:191
 msgid "``sphere``"
 msgstr ""
 
 # 340afa18921d4a71b747c62774cf844c
 # ae833ce768ec428f8410659999fddbd0
-#: ../../../source/functions/geo_distance.txt:134
-#: ../../../source/functions/geo_distance.txt:205
+#: ../../../source/functions/geo_distance.txt:136
+#: ../../../source/functions/geo_distance.txt:207
 msgid "``ellipsoid``"
 msgstr ""
 
 # 2f22ea4ca0984255b3d0fc55a20538e5
-#: ../../../source/functions/geo_distance.txt:138
+#: ../../../source/functions/geo_distance.txt:140
 msgid ""
 "There is a limitation about ``geo_distance``. ``geo_distance`` can not "
 "calculate the value of distance between two points across meridian, euator "
@@ -424,7 +429,7 @@ msgstr ""
 "が、将来的には修正される予定です。"
 
 # cdabfa7ff28a4538949fd09fea604612
-#: ../../../source/functions/geo_distance.txt:146
+#: ../../../source/functions/geo_distance.txt:148
 msgid ""
 "There is a limitation about ``geo_distance`` above notice. But it relaxes "
 "the limitation if you use ``rectangle`` as approximate type. You can "
@@ -436,14 +441,14 @@ msgstr ""
 "しく算出することができます。"
 
 # 6060a0e7b2064d03aa51c9da14fd9207
-#: ../../../source/functions/geo_distance.txt:154
+#: ../../../source/functions/geo_distance.txt:156
 msgid ""
 "This parameter require to approximate the geographical features by square "
 "approximation."
 msgstr "この引数は地形を方形近似することを要求します。"
 
 # ada49c867dea4483b996867e86980020
-#: ../../../source/functions/geo_distance.txt:157
+#: ../../../source/functions/geo_distance.txt:159
 msgid ""
 "Since the value of distance is calculated by simple formula, you can "
 "calculate the value of distance fast. But, the error of distance increases "
@@ -453,16 +458,16 @@ msgstr ""
 "は誤差が増大します。"
 
 # 9649a83bf0474bba97cde2107fbd40d4
-#: ../../../source/functions/geo_distance.txt:161
+#: ../../../source/functions/geo_distance.txt:163
 msgid "You can also specify ``rect`` as abbrev expression."
 msgstr "``rect`` を省略表記として指定することができます。"
 
 # 955a1b0b68b4498e9829d716ff0eefc8
 # a24bf00cce7e4d67ab2d52c7f1e482f6
 # a59e253aceca43c4be9cbb1e7a8eca82
-#: ../../../source/functions/geo_distance.txt:163
-#: ../../../source/functions/geo_distance.txt:199
-#: ../../../source/functions/geo_distance.txt:216
+#: ../../../source/functions/geo_distance.txt:165
+#: ../../../source/functions/geo_distance.txt:201
+#: ../../../source/functions/geo_distance.txt:218
 msgid ""
 "Here is a sample about calculating the value of distance with column value."
 msgstr "カラムの値で距離を計算するサンプルは以下の通りです。"
@@ -470,14 +475,14 @@ msgstr "カラムの値で距離を計算するサンプルは以下の通りで
 # ceea3a2f9b1d4700b37a56b6f8d25d33
 # ca553b9ff94f4b3994bee2ab8c06620d
 # e4f23df1186f43ba9bec59745646b676
-#: ../../../source/functions/geo_distance.txt:168
+#: ../../../source/functions/geo_distance.txt:170
 msgid ""
 "Here is a sample about calculating the value of distance with explicitly "
 "specified point."
 msgstr "明示的に位置を指定して距離を計算するサンプルは以下の通りです。"
 
 # 09f03cbda1dd47ab816d7837212ddce6
-#: ../../../source/functions/geo_distance.txt:175
+#: ../../../source/functions/geo_distance.txt:177
 msgid ""
 "``geo_distance`` uses square approximation as default. If you omit "
 "``approximate_type``, ``geo_distance`` behaves like ``rectangle`` was "
@@ -488,7 +493,7 @@ msgstr ""
 "れたものとして振舞います。"
 
 # 95487e11cab343329d7dde6ce752dc88
-#: ../../../source/functions/geo_distance.txt:179
+#: ../../../source/functions/geo_distance.txt:181
 msgid ""
 "``geo_distance`` accepts the string indicating the coordinate as the value "
 "of ``point1`` when the value of ``approximate_type`` is ``\"rectangle\"``. "
@@ -502,14 +507,14 @@ msgstr ""
 "``geo_distance`` は距離の値として0を返します。"
 
 # c2d459e1d5cf421fb810f8c34c9efbb7
-#: ../../../source/functions/geo_distance.txt:191
+#: ../../../source/functions/geo_distance.txt:193
 msgid ""
 "This parameter require to approximate the geographical features by spherical "
 "approximation."
 msgstr "この引数は球面近似で地形を近似することを要求します。"
 
 # ae430be8c8d24905b3144a03794597ee
-#: ../../../source/functions/geo_distance.txt:194
+#: ../../../source/functions/geo_distance.txt:196
 msgid ""
 "It is slower than ``rectangle``, but the error of distance becomes smaller "
 "than ``rectangle``."
@@ -518,19 +523,19 @@ msgstr ""
 "さくなります。"
 
 # 3e5dfacb65514829927cb8f277c89f8b
-#: ../../../source/functions/geo_distance.txt:197
+#: ../../../source/functions/geo_distance.txt:199
 msgid "You can also specify ``sphr`` as abbrev expression."
 msgstr "``sphr`` を省略表記として指定することができます。"
 
 # f5301b5d6bdd4beb8aefc4202b1ebd40
-#: ../../../source/functions/geo_distance.txt:207
+#: ../../../source/functions/geo_distance.txt:209
 msgid ""
 "This parameter require to approximate the geographical features by ellipsoid "
 "approximation."
 msgstr "この引数は楕円近似で地形を近似することを要求します。"
 
 # 95b3f4b2e8cc4725a608cee269b9e176
-#: ../../../source/functions/geo_distance.txt:210
+#: ../../../source/functions/geo_distance.txt:212
 msgid ""
 "It uses the calculation of distance by the formula of Hubeny. It is slower "
 "than ``sphere``, but the error of distance becomes smaller than ``sphere``."
@@ -539,17 +544,17 @@ msgstr ""
 "``sphere`` より誤差は小さくなります。"
 
 # bde1f151c06c4cf388b020696da6c6e2
-#: ../../../source/functions/geo_distance.txt:214
+#: ../../../source/functions/geo_distance.txt:216
 msgid "You can also specify ``ellip`` as abbrev expression."
 msgstr "``ellip`` を省略表記として指定することができます。"
 
 # f18ad5e74b9c45f783d38e24995b3abe
-#: ../../../source/functions/geo_distance.txt:219
+#: ../../../source/functions/geo_distance.txt:221
 msgid "Return value"
 msgstr "返値"
 
 # 594a793a53bd46fc8daf8c2a62b200fd
-#: ../../../source/functions/geo_distance.txt:221
+#: ../../../source/functions/geo_distance.txt:223
 msgid ""
 "``geo_distance`` returns the value of distance in float type. The unit of "
 "return value is meter."
@@ -557,19 +562,14 @@ msgstr ""
 "``geo_distance`` はFloat型の値を距離として返します。単位はメートルです。"
 
 # 25a1b8ba25cb4de8a6e6d6a73fb3af6f
-#: ../../../source/functions/geo_distance.txt:228
+#: ../../../source/functions/geo_distance.txt:230
 msgid "Footnote"
 msgstr "脚注"
 
 # 8a736f54a069422ab45d8e0170bfbdda
-#: ../../../source/functions/geo_distance.txt:229
+#: ../../../source/functions/geo_distance.txt:231
 msgid "You can specify whether TokyoGeoPoint or WGS84GeoPoint."
 msgstr "日本測地系座標か世界測地系座標のいずれかを指定することができます。"
-
-# 55ce109fd2734ac0a590315ba1f4b910
-#: ../../../source/functions/geo_distance.txt:231
-msgid "The coordinate of Sapporo is \"155047000x508862800\"."
-msgstr "札幌の座標は \"155047000x508862800\"です。"
 
 #: ../../../source/functions/geo_in_circle.txt:6
 msgid "geo_in_circle"
