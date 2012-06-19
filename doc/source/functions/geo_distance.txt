@@ -23,12 +23,6 @@ The default value of ``approximate_type`` is ``"rectangle"``.
 If you omit ``approximate_type``, ``geo_distance`` calculates the value of
 distance as if ``"rectangle"`` was specified.
 
-Return value
-------------
-
-``geo_distance`` returns the value of distance in float type.
-The unit of return value is meter.
-
 Usage
 -----
 
@@ -220,6 +214,12 @@ smaller than ``sphere``.
 You can also specify ``ellip`` as abbrev expression.
 
 Here is a sample about calculating the value of distance with column value.
+
+Return value
+------------
+
+``geo_distance`` returns the value of distance in float type.
+The unit of return value is meter.
 
 .. groonga-command
 .. include:: ../example/functions/geo_distance_location_ellipsoid.log
