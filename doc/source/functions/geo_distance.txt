@@ -125,7 +125,11 @@ You can specify the value of ``approximate_type`` by one of the followings.
 
 .. note::
 
-    There is a limitation about geo_distance. geo_distance can not calculate the value of distance between two points across meridian nor equator. This is temporary limitation according to the implementation of groonga, but it will be fixed in the future release.
+    There is a limitation about geo_distance. geo_distance can not calculate
+    the value of distance between two points across meridian, euator or 
+    the date line.
+    This is temporary limitation according to the implementation of groonga,
+    but it will be fixed in the future release.
 
 .. note::
 
