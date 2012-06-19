@@ -99,10 +99,6 @@ module HTTPSchemaTests
 
   include Utils
 
-  def test_table_list_empty
-    assert_table_list([])
-  end
-
   def test_table_list_with_invalid_output_type
     omit('now invalid output types are interpreted to json')
     response = get(command_path(:table_list,
