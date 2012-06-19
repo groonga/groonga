@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-18 17:14\n"
+"POT-Creation-Date: 2012-06-19 14:49\n"
 "PO-Revision-Date: 2012-06-18 17:16+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -16,6 +16,43 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+
+# 5b7e3a9725304092bc80446f05f14c67
+# d9d1d176bb2043f7862e0ebd6c89eed4
+# 3da949c390874b228fa113ad7f7c58a8
+# 59fa57b3dcd34c44ba22a7a0c101dd6d
+# 2f69d6caf83a4ccc8ea80b5d00544083
+# 97536a90b315475493af7e77c9a44974
+# a7faad5abee943ffa15c270be72143a0
+# 3392b32e511a4f20a46da2e8576073e9
+# 61b6840e2cfb41f09230c9749f993a62
+# 597d3462f6a2410abe487fc1aa3fc3f7
+# 2e19d38532be4727b2b6b0a2544b3c95
+# 1bbd6840ea1b418689ad9aa41fca8bcf
+# ccbba423f0bf48b395557a4fab8b8799
+# f22db1880d5e405e8ebfedf90252d8c4
+# cb4eb1fd1e924afb914e225e6714f75d
+# fa553d9ecb014133abab1153f57a2d5d
+# bd11b63239864329881e23b5ef6b42e5
+#: ../../../source/example/reference/grn_expr/query_syntax/setup.log:1
+#: ../../../source/example/reference/grn_expr/query_syntax/simple_equal.log:1
+#: ../../../source/example/reference/grn_expr/query_syntax/simple_full_text_search.log:1
+#: ../../../source/example/reference/grn_expr/query_syntax/simple_full_text_search_with_explicit_match_column.log:1
+#: ../../../source/example/reference/grn_expr/query_syntax/simple_greater_than.log:1
+#: ../../../source/example/reference/grn_expr/query_syntax/simple_greater_than_or_equal_to.log:1
+#: ../../../source/example/reference/grn_expr/query_syntax/simple_grouping.log:1
+#: ../../../source/example/reference/grn_expr/query_syntax/simple_less_than.log:1
+#: ../../../source/example/reference/grn_expr/query_syntax/simple_less_than_or_equal_to.log:1
+#: ../../../source/example/reference/grn_expr/query_syntax/simple_logical_and.log:1
+#: ../../../source/example/reference/grn_expr/query_syntax/simple_logical_not.log:1
+#: ../../../source/example/reference/grn_expr/query_syntax/simple_logical_or.log:1
+#: ../../../source/example/reference/grn_expr/query_syntax/simple_not_equal.log:1
+#: ../../../source/example/reference/grn_expr/query_syntax/simple_phrase_search.log:1
+#: ../../../source/example/reference/grn_expr/query_syntax/simple_phrase_search_with_explicit_match_column.log:1
+#: ../../../source/example/reference/grn_expr/query_syntax/simple_prefix_search.log:1
+#: ../../../source/example/reference/grn_expr/query_syntax/simple_suffix_search.log:1
+msgid "Execution example::"
+msgstr "実行例::"
 
 #: ../../../source/reference.txt:6
 msgid "リファレンスマニュアル"
@@ -1196,23 +1233,3 @@ msgstr ""
 #: ../../../source/reference/grn_expr/script_syntax.txt:79
 msgid "``カラム`` がマッチした場合、文書の検索スコアを ``重み`` 分下げます。"
 msgstr ""
-
-# 5b7e3a9725304092bc80446f05f14c67
-# d9d1d176bb2043f7862e0ebd6c89eed4
-# 3da949c390874b228fa113ad7f7c58a8
-# 59fa57b3dcd34c44ba22a7a0c101dd6d
-# 2f69d6caf83a4ccc8ea80b5d00544083
-# 97536a90b315475493af7e77c9a44974
-# a7faad5abee943ffa15c270be72143a0
-# 3392b32e511a4f20a46da2e8576073e9
-# 61b6840e2cfb41f09230c9749f993a62
-# 597d3462f6a2410abe487fc1aa3fc3f7
-# 2e19d38532be4727b2b6b0a2544b3c95
-# 1bbd6840ea1b418689ad9aa41fca8bcf
-# ccbba423f0bf48b395557a4fab8b8799
-# f22db1880d5e405e8ebfedf90252d8c4
-# cb4eb1fd1e924afb914e225e6714f75d
-# fa553d9ecb014133abab1153f57a2d5d
-# bd11b63239864329881e23b5ef6b42e5
-#~ msgid "Execution example::"
-#~ msgstr "実行例::"
