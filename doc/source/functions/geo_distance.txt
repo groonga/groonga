@@ -169,11 +169,6 @@ Here is a sample about calculating the value of distance with column value.
 .. groonga-command
 .. include:: ../example/functions/geo_distance_location_sphere.log
 
-Here is a sample about calculating the value of distance with explicitly specified point.
-
-.. groonga-command
-.. include:: ../example/functions/geo_distance_distance_sphere.log
-
 ``ellipsoid``
 ...............
 
@@ -190,11 +185,6 @@ Here is a sample about calculating the value of distance with column value.
 
 .. groonga-command
 .. include:: ../example/functions/geo_distance_location_ellipsoid.log
-
-Here is a sample about calculating the value of distance with explicitly specified point.
-
-.. groonga-command
-.. include:: ../example/functions/geo_distance_distance_ellipsoid.log
 
 .. rubric:: Footnote
 
