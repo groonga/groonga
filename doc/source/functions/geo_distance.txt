@@ -153,6 +153,17 @@ Here is a sample about calculating the value of distance with explicitly specifi
 
     ``geo_distance`` uses square approximation as default. If you omit ``approximate_type``, ``geo_distance`` behaves like ``rectangle`` was specified.
 
+.. note::
+
+    ``geo_distance`` accepts the string indicating the coordinate as
+    the value of ``point1`` when the value of ``approximate_type`` is
+    ``"rectangle"``.
+    If you specified the string indicating the coordinate as the value
+    of ``point1`` with ``sphere`` or ``ellipsoid``, ``geo_distance``
+    returns 0 as the value of distance.
+
+
+
 ``sphere``
 ...............
 
