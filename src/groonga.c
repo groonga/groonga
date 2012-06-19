@@ -550,7 +550,6 @@ h_output(grn_ctx *ctx, int flags, void *arg)
   ht_context *hc = (ht_context *)arg;
   grn_sock fd = hc->msg->u.fd;
   grn_obj *body = &hc->body;
-  const char *mime_type = ctx->impl->mime_type;
   grn_obj head, foot, *outbuf = ctx->impl->outbuf;
   if (!(flags & GRN_CTX_TAIL)) { return; }
   GRN_TEXT_INIT(&head, 0);
@@ -573,7 +572,7 @@ h_output(grn_ctx *ctx, int flags, void *arg)
     GRN_TEXT_SETS(ctx, body, "HTTP/1.1 200 OK\r\n");
     GRN_TEXT_PUTS(ctx, body, "Connection: close\r\n");
     GRN_TEXT_PUTS(ctx, body, "Content-Type: ");
-    GRN_TEXT_PUTS(ctx, body, mime_type);
+    GRN_TEXT_PUTS(ctx, body, grn_output_type(ctx));
     GRN_TEXT_PUTS(ctx, body, "\r\nContent-Length: ");
     grn_text_lltoa(ctx, body,
                    GRN_TEXT_LEN(&head) + GRN_TEXT_LEN(outbuf) + GRN_TEXT_LEN(&foot));
@@ -587,7 +586,7 @@ h_output(grn_ctx *ctx, int flags, void *arg)
       GRN_TEXT_SETS(ctx, body, "HTTP/1.1 500 Internal Server Error\r\n");
     }
     GRN_TEXT_PUTS(ctx, body, "Content-Type: ");
-    GRN_TEXT_PUTS(ctx, body, mime_type);
+    GRN_TEXT_PUTS(ctx, body, grn_output_type(ctx));
     GRN_TEXT_PUTS(ctx, body, "\r\n\r\n");
   }
   {
