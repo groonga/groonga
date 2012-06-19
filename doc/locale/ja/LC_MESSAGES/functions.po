@@ -389,7 +389,6 @@ msgstr ""
 
 # 2f22ea4ca0984255b3d0fc55a20538e5
 #: ../../../source/functions/geo_distance.txt:128
-#, fuzzy
 msgid ""
 "There is a limitation about geo_distance. geo_distance can not calculate the "
 "value of distance between two points across meridian, euator or the date "
