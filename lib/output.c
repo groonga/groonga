@@ -1311,6 +1311,8 @@ grn_output_envelope(grn_ctx *ctx,
 
 {
   double started, finished, elapsed;
+  grn_obj *expr = NULL;
+  grn_obj *jsonp_func = NULL;
 
   grn_timeval tv_now;
   grn_timeval_now(ctx, &tv_now);
@@ -1320,19 +1322,17 @@ grn_output_envelope(grn_ctx *ctx,
   finished += tv_now.tv_nsec / GRN_TIME_NSEC_PER_SEC_F;
   elapsed = finished - started;
 
-  grn_obj *expr = ctx->impl->curr_expr;
-  grn_obj *jsonp_func = NULL;
-  if (expr) {
-    jsonp_func = grn_expr_get_var(ctx, expr, JSON_CALLBACK_PARAM,
-                                  strlen(JSON_CALLBACK_PARAM));
-  }
-  if (jsonp_func && GRN_TEXT_LEN(jsonp_func)) {
-    GRN_TEXT_PUT(ctx, head, GRN_TEXT_VALUE(jsonp_func), GRN_TEXT_LEN(jsonp_func));
-    GRN_TEXT_PUTC(ctx, head, '(');
-  }
-
   switch (ctx->impl->output_type) {
   case GRN_CONTENT_JSON:
+    expr = ctx->impl->curr_expr;
+    if (expr) {
+      jsonp_func = grn_expr_get_var(ctx, expr, JSON_CALLBACK_PARAM,
+                                    strlen(JSON_CALLBACK_PARAM));
+    }
+    if (jsonp_func && GRN_TEXT_LEN(jsonp_func)) {
+      GRN_TEXT_PUT(ctx, head, GRN_TEXT_VALUE(jsonp_func), GRN_TEXT_LEN(jsonp_func));
+      GRN_TEXT_PUTC(ctx, head, '(');
+    }
     GRN_TEXT_PUTS(ctx, head, "[[");
     grn_text_itoa(ctx, head, rc);
     GRN_TEXT_PUTC(ctx, head, ',');
@@ -1365,6 +1365,9 @@ grn_output_envelope(grn_ctx *ctx,
     GRN_TEXT_PUTC(ctx, head, ']');
     if (GRN_TEXT_LEN(body)) { GRN_TEXT_PUTC(ctx, head, ','); }
     GRN_TEXT_PUTC(ctx, foot, ']');
+    if (jsonp_func && GRN_TEXT_LEN(jsonp_func)) {
+      GRN_TEXT_PUTS(ctx, foot, ");");
+    }
     break;
   case GRN_CONTENT_TSV:
     grn_text_itoa(ctx, head, rc);
@@ -1510,9 +1513,5 @@ grn_output_envelope(grn_ctx *ctx,
     break;
   case GRN_CONTENT_NONE:
     break;
-  }
-
-  if (jsonp_func && GRN_TEXT_LEN(jsonp_func)) {
-    GRN_TEXT_PUTS(ctx, foot, ");");
   }
 }
