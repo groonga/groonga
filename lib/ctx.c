@@ -1006,6 +1006,16 @@ grn_ctx_get_command_version(grn_ctx *ctx)
   }
 }
 
+const char *
+grn_ctx_get_mime_type(grn_ctx *ctx)
+{
+  if (ctx->impl) {
+    return ctx->impl->mime_type;
+  } else {
+    return NULL;
+  }
+}
+
 grn_rc
 grn_ctx_set_command_version(grn_ctx *ctx, grn_command_version version)
 {

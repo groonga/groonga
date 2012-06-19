@@ -1499,9 +1499,3 @@ grn_output_envelope(grn_ctx *ctx,
     break;
   }
 }
-
-const char *
-grn_output_type(grn_ctx *ctx)
-{
-  return ctx->impl->mime_type;
-}
