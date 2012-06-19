@@ -66,7 +66,7 @@ Using the column value of location
 
 Here is a schema definition of Station.
 
- .. groonga-command
+.. groonga-command
 .. include:: ../example/functions/geo_distance_setup_location.log
 
 Using the explicitly specified value of location
