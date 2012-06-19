@@ -32,7 +32,7 @@ The unit of return value is meter.
 Usage
 -----
 
-This section explains geo_distance.
+This section explains ``geo_distance``.
 ``geo_distance`` is one of the groonga builtin functions.
 
 You can call a builtin function in :doc:`/reference/grn_expr` 
@@ -43,9 +43,9 @@ between the coordinate of ``point1`` and the coordinate of ``point2``.
 .. note::
 
     groonga provides three built in functions for calculating the value of distance. 
-    There are geo_distance(), geo_distance2() and geo_distance3().
+    There are ``geo_distance()``, ``geo_distance2()`` and ``geo_distance3()``.
     The difference of them is the algorithm of calculating distance.
-    geo_distance2() and geo_distance3() were deprecated since version 1.2.9.
+    ``geo_distance2()`` and ``geo_distance3()`` were deprecated since version 1.2.9.
     Use ``geo_distance(point1, point2, "sphere")`` instead of ``geo_distance2(point1, point2)``.
     Use ``geo_distance(point1, point2, "ellipsoid")`` instead of ``geo_distance3(point1, point2)``.
 
@@ -125,15 +125,18 @@ You can specify the value of ``approximate_type`` by one of the followings.
 
 .. note::
 
-    There is a limitation about geo_distance. geo_distance can not calculate
-    the value of distance between two points across meridian, euator or 
-    the date line.
+    There is a limitation about ``geo_distance``. ``geo_distance`` can not
+    calculate the value of distance between two points across meridian,
+    euator or the date line.
     This is temporary limitation according to the implementation of groonga,
     but it will be fixed in the future release.
 
 .. note::
 
-    There is a limitation about geo_distance above notice. But it relaxes the limitation if you use ``rectangle`` as approximate type. You can calculate the correct distance if two point are placed at northern hemisphere.
+    There is a limitation about ``geo_distance`` above notice.
+    But it relaxes the limitation if you use ``rectangle`` as approximate type.
+    You can calculate the correct distance if two point are placed at northern
+    hemisphere.
 
 ``rectangle``
 ...............
