@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-05-28 11:02\n"
+"POT-Creation-Date: 2012-06-20 14:19\n"
 "PO-Revision-Date: 2012-05-28 11:10+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -48,7 +48,8 @@ msgstr "[doc] リリース手順を追加。"
 # 6797452f55124d14b6397b0736976b8e
 #: ../../../source/news.txt:17
 msgid "Removed restriction that the max number of opened files is 4096."
-msgstr "1プロセスで開けるファイルディスクリプターの最大数が4096という制限を削除。"
+msgstr ""
+"1プロセスで開けるファイルディスクリプターの最大数が4096という制限を削除。"
 
 # 5d78ead32ce44f6bac631b8187162e91
 #: ../../../source/news.txt:18
@@ -57,7 +58,8 @@ msgstr "[実験的] tableプラグインを追加。"
 
 # d3be6cfcd52948bebb170b9cbdc3bf3d
 #: ../../../source/news.txt:19
-msgid "[doc] Added more descriptions about :doc:`/commmands/select` command."
+#, fuzzy
+msgid "[doc] Added more descriptions about :doc:`/commands/select` command."
 msgstr "[doc] :doc:`/commands/select` コマンドの説明を追加。"
 
 # d17ed455fabc4aa5bc74e78060813f93
@@ -70,7 +72,9 @@ msgstr "[doc] 実行例をコピー&ペーストしやすくした。"
 msgid ""
 "[windows] Supported build with Visual Studio 2010 Express and CMake. See :"
 "doc:`/install/windows` about details."
-msgstr "[windows] Visual Studio 2010 ExpressとCMakeを使ったビルドをサポート。詳細は :doc:`/install/windows` を参照してください。"
+msgstr ""
+"[windows] Visual Studio 2010 ExpressとCMakeを使ったビルドをサポート。詳細は :"
+"doc:`/install/windows` を参照してください。"
 
 # 022eaf14fc1d4d24b91dfbc94fd24fac
 #: ../../../source/news.txt:23
@@ -92,7 +96,9 @@ msgstr "[doc][yum] epel-releaseパッケージのバージョンを更新。[岩
 msgid ""
 "[doc][cenos6] Disabled Repoforge for Munin for CentOS 6. [Reported by IWAI, "
 "Masaharu]"
-msgstr "[doc][centos6] RepoforgeにあるCentOS 6用のMuninを使うという設定を削除。[岩井さんが報告]"
+msgstr ""
+"[doc][centos6] RepoforgeにあるCentOS 6用のMuninを使うという設定を削除。[岩井"
+"さんが報告]"
 
 # 2cda313528c547ce8b137b046c42b8fd
 #: ../../../source/news.txt:29
@@ -104,7 +110,9 @@ msgstr "ソースをzip形式でも配布するようにした。"
 msgid ""
 "[munin] groonga_dist Munin plugin supported an object that has separated "
 "files."
-msgstr "[munin] groonga_dist Muninプラグインが複数のファイルを使っているオブジェクトをサポート。"
+msgstr ""
+"[munin] groonga_dist Muninプラグインが複数のファイルを使っているオブジェクト"
+"をサポート。"
 
 # 12a90a2b5a5a40e7ba9a3e842d9f159f
 #: ../../../source/news.txt:32
@@ -117,7 +125,10 @@ msgid ""
 "[yum] Changed RPM package name that provides yum repository from groonga-"
 "repository to groonga-release to follow RPM package name convension such as "
 "centos-release and fedora-release."
-msgstr "[yum] groongaのyumリポジトリを提供するRPMパッケージ名をgroonga-repositoryからgroonga-releaseへと変更。これは、centos-releaseやfedora-releaseといったRPMパッケージの命名規則とあわせるためである。"
+msgstr ""
+"[yum] groongaのyumリポジトリを提供するRPMパッケージ名をgroonga-repositoryから"
+"groonga-releaseへと変更。これは、centos-releaseやfedora-releaseといったRPM"
+"パッケージの命名規則とあわせるためである。"
 
 #: ../../../source/news.txt:38 ../../../source/news.txt:96
 #: ../../../source/news.txt:152 ../../../source/news.txt:198
@@ -147,7 +158,9 @@ msgstr ""
 msgid ""
 "Fixed broken ERROR tag in XML response. [#1363] [GitHub#13] [Patch by IWAI, "
 "Masaharu]"
-msgstr "XMLレスポンスのERRORタグが壊れている問題を修正。[#1363] [GitHub#13] [岩井さんがパッチ提供]"
+msgstr ""
+"XMLレスポンスのERRORタグが壊れている問題を修正。[#1363] [GitHub#13] [岩井さん"
+"がパッチ提供]"
 
 # 9650b97a946649a5854e29324ee51eb4
 #: ../../../source/news.txt:45
@@ -159,13 +172,17 @@ msgstr "grn_ctx_fin()がgrn_ctxの一部をクリアしきれていない問題�
 msgid ""
 "Fixed a bug that ``&!`` set operation doesn't work with grouped expression. "
 "[#1372]"
-msgstr "``&!`` 演算子をグループ化した式と一緒に使うと間違った結果を返す不具合を修正。[#1372]"
+msgstr ""
+"``&!`` 演算子をグループ化した式と一緒に使うと間違った結果を返す不具合を修正。"
+"[#1372]"
 
 # 9650b97a946649a5854e29324ee51eb4
 #: ../../../source/news.txt:48
 msgid ""
 "Fixed a bug that a record key registered via index source isn't normalized."
-msgstr "インデックスのソースに指定したカラム経由でレコードのキーを登録するとキーが正規化されない問題を修正。"
+msgstr ""
+"インデックスのソースに指定したカラム経由でレコードのキーを登録するとキーが正"
+"規化されない問題を修正。"
 
 #: ../../../source/news.txt:51 ../../../source/news.txt:118
 #: ../../../source/news.txt:163 ../../../source/news.txt:208
