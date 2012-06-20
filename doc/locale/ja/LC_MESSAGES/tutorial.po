@@ -1841,7 +1841,7 @@ msgstr "gqtpサーバへの接続"
 # f5ec19849c3d416b9704b474f9716929
 #: ../../../source/tutorial/network.txt:57
 msgid "You can run groonga as a gqtp client as follows:"
-msgstr "gtqpサーバに接続するクライアントは、以下のように起動します。"
+msgstr "gqtpサーバに接続するクライアントは、以下のように起動します。"
 
 # abf4e97bb050457ba3d7c2543db16c19
 #: ../../../source/tutorial/network.txt:63
