@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-19 14:49\n"
+"POT-Creation-Date: 2012-06-20 18:30\n"
 "PO-Revision-Date: 2012-06-18 17:16+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -277,7 +277,7 @@ msgstr "これで例を示すためのスキーマとデータの準備ができ
 # 0fc9d4df1b554e148f606891415042a2
 #: ../../../source/reference/grn_expr/query_syntax.txt:73
 msgid "Escape"
-msgstr ""
+msgstr "エスケープ"
 
 # e280ef34f56a4188943f3a7edea2dd56
 #: ../../../source/reference/grn_expr/query_syntax.txt:75
@@ -613,12 +613,14 @@ msgstr "前方一致検索条件"
 msgid "Its syntax is ``column:^value`` or ``value*``."
 msgstr "構文は ``column:^value`` または ``value*`` です。"
 
-# fe082a04b6c14f5cb9b629109ae499dc
+# 4e443cf589384fcaa91307f35fea24b4
 #: ../../../source/reference/grn_expr/query_syntax.txt:235
 msgid ""
 "This conditional expression does prefix search with ``value``. Prefix search "
-"searches records that contain a word taht starts with ``value``."
+"searches records that contain a word that starts with ``value``."
 msgstr ""
+"この条件式は前方一致検索を ``value`` で行います。前方一致検索は ``value`` で"
+"始まる単語を含むレコードを検索します。"
 
 # a23c11e916ea47c1a6b4166fe5ae80ba
 #: ../../../source/reference/grn_expr/query_syntax.txt:238
@@ -627,7 +629,12 @@ msgid ""
 "(``TABLE_PAT_KEY``) or double array trie table (``TABLE_DAT_KEY``). You can "
 "use prefix search against ``_key`` value of patricia trie table or double "
 "trie table."
-msgstr ""
+msgstr "前方一致検索を高速に行うためには、パトリシアトライを使用したテーブル"
+" (``TABLE_PAT_KEY``) もしくは ダブル配列を使用したテーブル"
+" (``TABLE_DAT_KEY``) を使う必要があります。"
+"パトリシアトライを使用したテーブルもしくはダブル配列を使用したテーブル"
+"の ``_key`` の値に対して前方一致検索を行うことができます。"
+
 
 # f351c7f537da419fb4aa896b6f4af069
 #: ../../../source/reference/grn_expr/query_syntax.txt:243
@@ -635,7 +642,10 @@ msgid ""
 "Prefix search can be used with other table types but it causes all records "
 "scan. It's not problem for small records but it spends more time for large "
 "records."
-msgstr ""
+msgstr "前方一致検索は他の種類のテーブルでも使われますが、レコード全件"
+"の走査を行います。"
+"レコード数が少ない場合には問題ありませんが、大規模なレコードに対しては"
+"時間がかかります。"
 
 # 682cdd7c30fa4d4080cb14117ea4720a
 # 4c5250ae93b04c02b62e0b0bc7f2be43
@@ -661,15 +671,13 @@ msgstr ""
 # a3ee4c7c60684f028e00cfc4d6d5412d
 # f5388f9835bf43e282ebdcdf81150910
 #: ../../../source/reference/grn_expr/query_syntax.txt:256
-#, fuzzy
 msgid ""
 "The expression matches records that contain a word that starts with ``Goo`` "
 "in ``_key`` pseudo column value. ``Good-bye Senna`` and ``Good-bye Tritonn`` "
 "are matched with the expression."
 msgstr ""
-"この式は ``content`` カラムの値に ``I started`` というフレーズを含んでいるレ"
-"コードにマッチします。 ``I also started`` にはマッチしません。これは ``I`` "
-"と ``started`` が隣接していないからです。"
+"この式は ``_key`` カラムの値が ``Goo`` で始まる単語を含むレコードにマッチしま"
+"す。この式には ``Good-bye Senna`` と ``Good-bye Tritonn`` がマッチします。"
 
 # 9ce75f34143f463c86d81ed1fbdf8c4c
 #: ../../../source/reference/grn_expr/query_syntax.txt:261
@@ -685,8 +693,10 @@ msgstr "構文は ``column:$value`` です。"
 #: ../../../source/reference/grn_expr/query_syntax.txt:265
 msgid ""
 "This conditional expression does suffix search with ``value``. Suffix search "
-"searches records that contain a word taht ends with ``value``."
+"searches records that contain a word that ends with ``value``."
 msgstr ""
+"この条件式は後方一致検索を ``value`` で行います。後方一致検索は ``value`` で"
+"終わる単語を含むレコードを検索します。"
 
 # 681efc9c6cb14ae38d810049ebff894c
 #: ../../../source/reference/grn_expr/query_syntax.txt:268
@@ -694,7 +704,10 @@ msgid ""
 "To use fast suffix search, you need to use patricia trie table "
 "(``TABLE_PAT_KEY``) with ``KEY_WITH_SIS`` flag. You can use suffix search "
 "against ``_key`` value of patricia trie table."
-msgstr ""
+msgstr "後方一致検索を高速に行うためには、パトリシアトライを使用したテーブル"
+" (``TABLE_PAT_KEY``) を ``KEY_WITH_SIS`` フラグと一緒に使う必要があります。"
+"パトリシアトライを使用したテーブルの ``_key`` の値に対して"
+"後方一致検索を行うことができます。"
 
 # 01c733b4c53a418c895b92b88fa5fd52
 #: ../../../source/reference/grn_expr/query_syntax.txt:272
@@ -702,20 +715,23 @@ msgid ""
 "Suffix search can be used with other table types or patricia trie table "
 "without ``KEY_WITH_SIS`` flag but it causes all records scan. It's not "
 "problem for small records but it spends more time for large records."
-msgstr ""
+msgstr "後方一致検索は他の種類テーブルもしくはパトリシアトライを"
+" ``KEY_WITH_SIS`` フラグなしで使用しているテーブルに対しても使われますが、"
+"レコード全件の走査を行います。"
+"レコード数が少ない場合には問題ありませんが、大規模なレコードに対して"
+"は時間がかかります。"
 
 # a3ee4c7c60684f028e00cfc4d6d5412d
 # f5388f9835bf43e282ebdcdf81150910
 #: ../../../source/reference/grn_expr/query_syntax.txt:295
-#, fuzzy
 msgid ""
 "The expression matches records that contain a word that ends with ``oonga`` "
 "in ``_key`` pseudo column value. ``Groonga`` and ``Mroonga`` are matched "
 "with the expression."
 msgstr ""
-"この式は ``content`` カラムの値に ``I started`` というフレーズを含んでいるレ"
-"コードにマッチします。 ``I also started`` にはマッチしません。これは ``I`` "
-"と ``started`` が隣接していないからです。"
+"この式は ``_key`` カラムの値が ``oonga`` で終わる単語を含むレコードに"
+"マッチします。"
+" ``Groonga`` と ``Mroonga`` がこの式でマッチします。"
 
 # a252c9bced7c4fbbaba793b391408b41
 #: ../../../source/reference/grn_expr/query_syntax.txt:300
@@ -846,7 +862,7 @@ msgstr "``column`` の値が ``value`` 以下のレコードにマッチしま�
 msgid ""
 "The expression matches records that ``n_likes`` column value is less than or "
 "equal to ``10``."
-msgstr "この式は ``n_likes`` カラムの値が ``10``以下のレコードにマッチします。"
+msgstr "この式は ``n_likes`` カラムの値が ``10`` 以下のレコードにマッチします。"
 
 # fab0784dc5ca4f8db00e7c660b4e0b23
 #: ../../../source/reference/grn_expr/query_syntax.txt:411
@@ -1057,7 +1073,9 @@ msgid ""
 "Assignment expression in query syntax has some limitations. So you should "
 "use :doc:`/reference/grn_expr/script_syntax` instead of query syntax for "
 "assignment."
-msgstr ""
+msgstr "クエリ構文における代入式にはいくつか制限があります。"
+"代入にはクエリ構文の代りに :doc:`/reference/grn_expr/script_syntax` を"
+"使ってください。"
 
 # a37cee15bcd849088f435a86376466c3
 #: ../../../source/reference/grn_expr/query_syntax.txt:543
@@ -1074,12 +1092,19 @@ msgid ""
 "boolean literal such as ``true`` and ``false`` for ``Bool`` type column. You "
 "need to use empty string for ``false`` but query syntax doesn't support "
 "``column:=`` syntax."
-msgstr ""
+msgstr "``value`` は ``column`` に代入されます。"
+" ``value`` は常にクエリ構文では文字列として扱われます。"
+" ``value`` は ``column`` の型へと自動的にキャストされます。"
+" キャストにはいくつか制限があります。例えば ``true`` や ``false`` "
+"といった真偽値のリテラルを ``Bool`` 型のカラムに使用することが"
+"できません。"
+" ``false`` については空文字列を使う必要がありますが、クエリ構文は"
+" ``column:=`` 構文をサポートしていません。"
 
 # bde897b0ca22430eb927c3f3d85d70d2
 #: ../../../source/reference/grn_expr/query_syntax.txt:552
 msgid "See :doc:`/reference/cast` about cast."
-msgstr ""
+msgstr "キャストについては :doc:`/reference/cast` を参照してください。"
 
 # 47dc2b34beb1410495604199c7f24873
 #: ../../../source/reference/grn_expr/script_syntax.txt:9
