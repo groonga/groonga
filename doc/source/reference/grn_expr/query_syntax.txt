@@ -233,7 +233,7 @@ Prefix search condition
 Its syntax is ``column:^value`` or ``value*``.
 
 This conditional expression does prefix search with ``value``. Prefix
-search searches records that contain a word taht starts with ``value``.
+search searches records that contain a word that starts with ``value``.
 
 To use fast prefix search, you need to use patricia trie table
 (``TABLE_PAT_KEY``) or double array trie table
@@ -263,7 +263,7 @@ Suffix search condition
 Its syntax is ``column:$value``.
 
 This conditional expression does suffix search with ``value``. Suffix
-search searches records that contain a word taht ends with ``value``.
+search searches records that contain a word that ends with ``value``.
 
 To use fast suffix search, you need to use patricia trie table
 (``TABLE_PAT_KEY``) with ``KEY_WITH_SIS`` flag. You can use suffix
