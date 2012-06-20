@@ -1,0 +1,3 @@
+table_create site TABLE_HASH_KEY ShortText
+table_create bookmarks TABLE_PAT_KEY ShortText Object
+table_list
