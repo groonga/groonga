@@ -78,7 +78,9 @@ example, ``"`` is a special character. It is escaped as ``\"``.
 
 Here is a special character list:
 
-  * `` `` (a space) (escaped as ``\ ``)
+  * ``[space]`` (escaped as ``[backquote][space]``) (You should
+    substitute ``[space]`` with a white space character that is 0x20
+    in ASCII and ``[backquote]`` with ``\\``.)
   * ``"`` (escaped as ``\"``)
   * ``'`` (escaped as ``\'``)
   * ``(`` (escaped as ``\(``)
