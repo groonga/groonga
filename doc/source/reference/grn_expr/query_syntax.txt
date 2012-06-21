@@ -444,7 +444,7 @@ Here is a simple exmaple.
 The expression matches records that ``n_likes`` column value is
 greater than or equal to ``10``.
 
-.. _combined_expression:
+.. _combined-expression:
 
 Combined expression
 -------------------
