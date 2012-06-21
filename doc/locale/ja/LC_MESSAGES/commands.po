@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-05-21 14:11\n"
+"POT-Creation-Date: 2012-06-21 12:56\n"
 "PO-Revision-Date: 2012-05-21 14:24+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -756,9 +756,11 @@ msgid ""
 "す。::"
 msgstr ""
 
+# 82b3e17186914f92af7f341c6ece0ad2
+# 7f1ecf8eccdc4fff809128a7daff1ef6
 #: ../../../source/commands/define_selector.txt:116
 #: ../../../source/commands/load.txt:100
-msgid ":doc:`../expr`"
+msgid ":doc:`/reference/grn_expr`"
 msgstr ""
 
 #: ../../../source/commands/defrag.txt:6
@@ -1356,10 +1358,10 @@ msgstr ""
 #: ../../../source/commands/select.txt:140
 msgid ""
 "``query`` has query syntax but its deatils aren't described here. See :doc:`/"
-"spec/query_syntax` for datails."
+"reference/grn_expr/query_syntax` for datails."
 msgstr ""
 "``query`` はクエリ構文という構文を使いますが、詳細はここでは説明しません。詳"
-"細は :doc:`/spec/query_syntax` を参照してください。"
+"細は :doc:`/reference/grn_expr/query_syntax` を参照してください。"
 
 # 3fdd2f2c44104d3c9b77b445bca2477a
 #: ../../../source/commands/select.txt:144
@@ -1399,11 +1401,12 @@ msgstr ""
 #: ../../../source/commands/select.txt:162
 msgid ""
 "``filter`` has more operators and syntax like grouping by ``(...)`` its "
-"deatils aren't described here. See :doc:`/spec/script_syntax` for datails."
+"deatils aren't described here. See :doc:`/reference/grn_expr/script_syntax` "
+"for datails."
 msgstr ""
 "``filter`` にはもっと演算子や構文があります。例えば、 ``(...)`` を使った検索"
 "条件のグループ化などです。しかし、ここでは詳細は説明しません。詳細は :doc:`/"
-"spec/script_syntax` を参照してください。"
+"reference/grn_expr/script_syntax` を参照してください。"
 
 # 75d9a9918b454209bd41a305d28c9107
 #: ../../../source/commands/select.txt:167
@@ -1651,12 +1654,21 @@ msgstr ""
 msgid ""
 "It specifies the query text. Normally, it is used for fulltext search with "
 "``match_columns`` parameter. ``query`` parameter is designed for a fulltext "
-"search form in a Web page. A query text should be formatted in :doc:`/spec/"
-"query_syntax`. The syntax is similar to common search form like Google's "
-"search form. For example, ``word1 word2`` means that groonga searches "
-"records that contain both ``word1`` and ``word2``. ``word1 OR word2`` means "
-"that groogna searches records that contain either ``word1`` or ``word2``."
-msgstr "クエリテキストを指定します。通常、全文検索をするために ``match_columns`` 引数と一緒に使います。 ``query`` 引数はWebページにある全文検索フォームで使いやすいように設計されています。クエリテキストは :doc:`/spec/query_syntax` という書式を使います。この書式はGoogleの検索フォームのように一般的な検索フォームと似ています。例えば、 ``word1 word2`` は ``word1`` と ``word2`` を含んでいるレコードを検索するという意味になります。 ``word1 OR word2`` は ``word1`` または ``word2`` を含んでいるレコードを検索するという意味になります。"
+"search form in a Web page. A query text should be formatted in :doc:`/"
+"reference/grn_expr/query_syntax`. The syntax is similar to common search "
+"form like Google's search form. For example, ``word1 word2`` means that "
+"groonga searches records that contain both ``word1`` and ``word2``. ``word1 "
+"OR word2`` means that groogna searches records that contain either ``word1`` "
+"or ``word2``."
+msgstr ""
+"クエリテキストを指定します。通常、全文検索をするために ``match_columns`` 引数"
+"と一緒に使います。 ``query`` 引数はWebページにある全文検索フォームで使いやす"
+"いように設計されています。クエリテキストは :doc:`/reference/grn_expr/query_syntax`"
+"という書式を使います。"
+"この書式はGoogleの検索フォームのように一般的な検索フォームと似"
+"ています。例えば、 ``word1 word2`` は ``word1`` と ``word2`` を含んでいるレ"
+"コードを検索するという意味になります。 ``word1 OR word2`` は ``word1`` また"
+"は ``word2`` を含んでいるレコードを検索するという意味になります。"
 
 # 19c0a971f31d469f940d93c9f303237e
 #: ../../../source/commands/select.txt:308
@@ -1690,7 +1702,8 @@ msgstr ""
 
 # 83e77c84e42145d6b459238678f259d9
 #: ../../../source/commands/select.txt:328
-msgid "See :doc:`/spec/query_syntax` for other syntax."
+#, fuzzy
+msgid "See :doc:`/reference/grn_expr/query_syntax` for other syntax."
 msgstr "他の構文は :doc:`/spec/query_syntax` を参照してください。"
 
 # f48833e9b04d4c9e90bb72c21484c588
@@ -1739,8 +1752,8 @@ msgstr ""
 
 # 83e77c84e42145d6b459238678f259d9
 #: ../../../source/commands/select.txt:353
-msgid "See :doc:`/spec/query_syntax` for other operations."
-msgstr "他の演算子は :doc:`/spec/query_syntax` を参照してください。"
+msgid "See :doc:`/reference/grn_expr/query_syntax` for other operations."
+msgstr "他の演算子は :doc:`/reference/grn_expr/query_syntax` を参照してください。"
 
 # 4fcc714fb0ca4faf9647627092e7821d
 #: ../../../source/commands/select.txt:358
@@ -1761,21 +1774,21 @@ msgstr ""
 #: ../../../source/commands/select.txt:364
 msgid ""
 "``filter`` parameter is designed for complex conditions. A filter text "
-"should be formated in :doc:`/spec/script_syntax`. The syntax is similar to "
-"ECMAScript. For example, ``column == \"value\"`` means that the value of "
-"``column`` column is equal to ``\"value\"``. ``column < value`` means that "
-"the value of ``column`` column is less than ``value``."
+"should be formated in :doc:`/reference/grn_expr/script_syntax`. The syntax "
+"is similar to ECMAScript. For example, ``column == \"value\"`` means that "
+"the value of ``column`` column is equal to ``\"value\"``. ``column < value`` "
+"means that the value of ``column`` column is less than ``value``."
 msgstr ""
 "``filter`` 引数は複雑な条件用に設計されています。フィルターテキストは :doc:`/"
-"spec/script_syntax` 書式で指定します。この書式はECMAScriptに似ています。例え"
+"reference/grn_expr/script_syntax` 書式で指定します。この書式はECMAScriptに似ています。例え"
 "ば、 ``column == \"value\"`` は ``column`` カラムの値が ``\"value\"`` と等し"
 "いという意味です。 ``column < value`` は ``column`` カラムの値が ``value`` よ"
 "りも小さいという意味です。"
 
 # f5fc8877da7b4638a79feea52c308d37
 #: ../../../source/commands/select.txt:389
-msgid "See :doc:`/spec/script_syntax` for other operators."
-msgstr "他の演算子は :doc:`/spec/script_syntax` を参照してください。"
+msgid "See :doc:`/reference/grn_expr/script_syntax` for other operators."
+msgstr "他の演算子は :doc:`/reference/grn_expr/script_syntax` を参照してください。"
 
 # c5f24b504a224cf684d4e28c65d06f03
 #: ../../../source/commands/select.txt:392
@@ -1925,7 +1938,10 @@ msgid ""
 "Column for query expansion is called \"substitution column\". Substitution "
 "column's value type must be ``ShortText``. Column type must be vector "
 "(``COLUMN_VECTOR``)."
-msgstr "クエリ展開用のカラムを「置換カラム」と呼びます。置換カラムの値の型は ``ShortText`` にしてください。カラムの種類はベクター（ ``COLUMN_VECTOR`` ）にしてください。"
+msgstr ""
+"クエリ展開用のカラムを「置換カラム」と呼びます。置換カラムの値の型は "
+"``ShortText`` にしてください。カラムの種類はベクター（ ``COLUMN_VECTOR`` ）に"
+"してください。"
 
 # d88f6b3c049f4504a0069f2fda5f377f
 #: ../../../source/commands/select.txt:462
@@ -1935,7 +1951,11 @@ msgid ""
 "table, the word is substituted with substitution column value that is "
 "associated with the key. Substition isn't performed recursively. It means "
 "that substitution target words in substituted query aren't substituted."
-msgstr "クエリ展開はクエリの中にある置換テーブルのキーを置換カラムの値で置換します。 ``query`` の中にある単語が置換テーブルのキーだったら、キーに対応する置換カラムの値でその単語を置換します。置換は再帰的に実行しません。これは、置換されたクエリ内に置換対象の単語があっても置換されないということです。"
+msgstr ""
+"クエリ展開はクエリの中にある置換テーブルのキーを置換カラムの値で置換します。 "
+"``query`` の中にある単語が置換テーブルのキーだったら、キーに対応する置換カラ"
+"ムの値でその単語を置換します。置換は再帰的に実行しません。これは、置換された"
+"クエリ内に置換対象の単語があっても置換されないということです。"
 
 # 47f96f142663462cae8b2ede1893edee
 #: ../../../source/commands/select.txt:469
@@ -2007,11 +2027,11 @@ msgstr ""
 # e2e2eb2e8823445096de1215d64e23a9
 #: ../../../source/commands/select.txt:513
 msgid ""
-"Each substitute value can contain any :doc:`/spec/query_syntax` syntax such "
-"as ``(...)`` and ``OR``. You can use complex substitution by using those "
-"syntax."
+"Each substitute value can contain any :doc:`/reference/grn_expr/"
+"query_syntax` syntax such as ``(...)`` and ``OR``. You can use complex "
+"substitution by using those syntax."
 msgstr ""
-"それぞれの置換する値は ``(...)`` や ``OR`` といった :doc:`/spec/"
+"それぞれの置換する値は ``(...)`` や ``OR`` といった :doc:`/reference/grn_expr/"
 "query_syntax` を使えます。これらの構文を使うことにより複雑な置換をすることが"
 "できます。"
 
@@ -2478,14 +2498,14 @@ msgstr ""
 msgid "See also"
 msgstr "参考"
 
-# f822703733064ef0b6b63625297ec2e5
+# bb5b870aa8eb4c93871f837a34e6cb41
 #: ../../../source/commands/select.txt:796
-msgid ":doc:`/spec/query_syntax`"
+msgid ":doc:`/reference/grn_expr/query_syntax`"
 msgstr ""
 
-# f822703733064ef0b6b63625297ec2e5
+# 4c7f959a00c4494ebc92dd9511125bab
 #: ../../../source/commands/select.txt:797
-msgid ":doc:`/spec/script_syntax`"
+msgid ":doc:`/reference/grn_expr/script_syntax`"
 msgstr ""
 
 #: ../../../source/commands/shutdown.txt:6

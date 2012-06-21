@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 2.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-05-21 14:05\n"
+"POT-Creation-Date: 2012-06-21 12:37\n"
 "PO-Revision-Date: 2012-04-28 11:38+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -2392,12 +2392,12 @@ msgstr ""
 "による前方一致検索ができるようになります。"
 
 # fca6ebbdff1442dc86fd8bc4a4b975a2
-#: ../../../source/tutorial/patricia_trie.txt:31
+#: ../../../source/tutorial/patricia_trie.txt:32
 msgid "主キーによる後方一致検索"
 msgstr "主キーによる後方一致検索"
 
 # c8fd887aacf74cb7a7cc156d4f0a12b3
-#: ../../../source/tutorial/patricia_trie.txt:33
+#: ../../../source/tutorial/patricia_trie.txt:34
 msgid ""
 "table_createコマンドのflagsオプションにTABLE_PAT_KEYとKEY_WITH_SISを指定する"
 "ことで、主キーによる前方一致検索・後方一致検索の両方が可能となります。"
@@ -2406,7 +2406,7 @@ msgstr ""
 "ことで、主キーによる前方一致検索・後方一致検索の両方が可能となります。"
 
 # b2513bc0dc444681874d9b0e6dc40432
-#: ../../../source/tutorial/patricia_trie.txt:35
+#: ../../../source/tutorial/patricia_trie.txt:36
 msgid ""
 "KEY_WITH_SISフラグを付与すると、データを追加する際に後方一致用のレコードも追"
 "加されてしまいます。そのため、単純に検索すると、元のレコードに加えて自動的に"
@@ -2419,15 +2419,19 @@ msgstr ""
 "一工夫必要になります。"
 
 # 1acd2faf28fa41d2b3b49786153e53ae
-#: ../../../source/tutorial/patricia_trie.txt:37
+#: ../../../source/tutorial/patricia_trie.txt:38
 msgid ""
 "例えば、元のレコードと自動的に追加されたレコードとの区別をつけるために、元の"
 "レコードであることを示すoriginalカラムを追加して、検索時にはoriginalカラムが "
-"``true`` も検索条件に加えます。"
+"``true`` も検索条件に加えます。 ``--query`` オプションでは ``Bool`` 型の値を"
+"直感的に指定することができないので ``--filter`` オプションを使っていることに"
+"注意してください。"
 msgstr ""
 "例えば、元のレコードと自動的に追加されたレコードとの区別をつけるために、元の"
 "レコードであることを示すoriginalカラムを追加して、検索時にはoriginalカラムが "
-"``true`` も検索条件に加えます。"
+"``true`` も検索条件に加えます。 ``--query`` オプションでは ``Bool`` 型の値を"
+"直感的に指定することができないので ``--filter`` オプションを使っていることに"
+"注意してください。"
 
 # 439a1ea5fb3f484fbcec5ca6f6ce70cd
 #: ../../../source/tutorial/query_expansion.txt:9

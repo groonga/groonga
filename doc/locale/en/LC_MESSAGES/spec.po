@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 2.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-05-21 14:05\n"
+"POT-Creation-Date: 2012-06-21 17:13\n"
 "PO-Revision-Date: 2012-04-28 11:38+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -17,346 +17,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-# 7a7e295ea9fc42c396f7f5c792cd32ff
+# 45cc8f3066f24303a525f30931d2fb60
 #: ../../../source/spec.txt:6
-msgid "仕様"
-msgstr "仕様"
-
-# 8668950290e44936a5a15512cd19afd6
-#: ../../../source/spec/query_syntax.txt:9
-msgid "Query syntax"
-msgstr "Query syntax"
-
-# 32c9eb3503a5405ba9b605d4f1375c69
-#: ../../../source/spec/query_syntax.txt:11
-#: ../../../source/spec/script_syntax.txt:11
-msgid "TODO: revised."
-msgstr "TODO: revised."
-
-# 5af3428bfe9c44c49f5240b4881776a0
-#: ../../../source/spec/query_syntax.txt:13
-msgid ""
-"一般的なWebページの検索フォームで使われるような書式を使って検索条件を指定する"
-"ことができます。これをクエリ構文と呼びます。"
-msgstr ""
-"一般的なWebページの検索フォームで使われるような書式を使って検索条件を指定する"
-"ことができます。これをクエリ構文と呼びます。"
-
-# 37ef4b3ef2a7408e91e2a066210bd02e
-#: ../../../source/spec/query_syntax.txt:15
-msgid "クエリ構文は「条件式」と条件式を組み合わせる「結合式」からなります。"
-msgstr "クエリ構文は「条件式」と条件式を組み合わせる「結合式」からなります。"
-
-# 1fb0da06101e48aa858cf3311d733dca
-#: ../../../source/spec/query_syntax.txt:18
-msgid "条件式"
-msgstr "条件式"
-
-# 04d2c1fd0757431f80b81466426b17d2
-#: ../../../source/spec/query_syntax.txt:20
-msgid "以下の条件式が使用できます。"
-msgstr "以下の条件式が使用できます。"
-
-# 66117a22555c4b1ca79b193a39a41000
-#: ../../../source/spec/query_syntax.txt:23
-msgid "``文字列``"
-msgstr "``文字列``"
-
-# ab6e7e4c588140289f815c042b6f9dd9
-#: ../../../source/spec/query_syntax.txt:25
-msgid ""
-"全文検索条件(デフォルト検索対象カラムの値が指定された文字列を含んでいる)"
-msgstr ""
-"全文検索条件(デフォルト検索対象カラムの値が指定された文字列を含んでいる)"
-
-# 6f2d04df8bbb45dea914c61679c35cb1
-#: ../../../source/spec/query_syntax.txt:28
-msgid "``\"文字列\"``"
-msgstr "``\"文字列\"``"
-
-# e690dd2fd2034e7d962c49b9f485d4e1
-#: ../../../source/spec/query_syntax.txt:30
-msgid ""
-"フレーズ検索条件(デフォルト検索対象カラムの値が指定されたフレーズを含んでい"
-"る)"
-msgstr ""
-"フレーズ検索条件(デフォルト検索対象カラムの値が指定されたフレーズを含んでい"
-"る)"
-
-# 2a9f1346ced74083a6ecb91005b9fa2e
-#: ../../../source/spec/query_syntax.txt:33
-msgid "``カラム名:値``"
-msgstr "``カラム名:値``"
-
-# d8c3a2546104485f9d77311d700a7ef5
-#: ../../../source/spec/query_syntax.txt:35
-msgid "一致条件( ``カラム値 == 値`` )"
-msgstr "一致条件( ``カラム値 == 値`` )"
-
-# 187b1217a62d4f5aaf32a1c1b2b3368a
-#: ../../../source/spec/query_syntax.txt:38
-msgid "``カラム名:!値``"
-msgstr "``カラム名:!値``"
-
-# 6952a37161ba477a81db6de10a899333
-#: ../../../source/spec/query_syntax.txt:40
-msgid "不一致条件( ``カラム値 != 値`` )"
-msgstr "不一致条件( ``カラム値 != 値`` )"
-
-# cf74ccd5efa44cca8363eb260b7cd6b9
-#: ../../../source/spec/query_syntax.txt:43
-msgid "``カラム名:<値``"
-msgstr "``カラム名:<値``"
-
-# be03fd732051466886f428672e8359ad
-#: ../../../source/spec/query_syntax.txt:45
-msgid "比較条件( ``カラム値 < 値`` )"
-msgstr "比較条件( ``カラム値 < 値`` )"
-
-# fce32ef6ef3b435cbb8c144e7758d85b
-#: ../../../source/spec/query_syntax.txt:48
-msgid "``カラム名:>値``"
-msgstr "``カラム名:>値``"
-
-# 179cb4fe2c5a473e915101e5b48a29ea
-#: ../../../source/spec/query_syntax.txt:50
-msgid "比較条件( ``カラム値 > 値`` )"
-msgstr "比較条件( ``カラム値 > 値`` )"
-
-# 5d66ef32e200457c944654a896e6e352
-#: ../../../source/spec/query_syntax.txt:53
-msgid "``カラム名:<=値``"
-msgstr "``カラム名:<=値``"
-
-# 3f954be92453460badfb36b322cb27d3
-#: ../../../source/spec/query_syntax.txt:55
-msgid "比較条件( ``カラム値 <= 値`` )"
-msgstr "比較条件( ``カラム値 <= 値`` )"
-
-# 172337c4178c4c608a5274790bfc4e14
-#: ../../../source/spec/query_syntax.txt:58
-msgid "``カラム名:>=値``"
-msgstr "``カラム名:>=値``"
-
-# e9f10d23442a402cb84b4ed8df493848
-#: ../../../source/spec/query_syntax.txt:60
-msgid "比較条件( ``カラム値 >= 値`` )"
-msgstr "比較条件( ``カラム値 >= 値`` )"
-
-# d5adfc2b482a4f0da4a48cb5bae7fc28
-#: ../../../source/spec/query_syntax.txt:63
-msgid "``カラム名:@文字列``"
-msgstr "``カラム名:@文字列``"
-
-# f31d56816e14415b9ffd98f4d860c5c0
-#: ../../../source/spec/query_syntax.txt:65
-msgid "全文検索条件(カラム値が指定された文字列を含んでいる)"
-msgstr "全文検索条件(カラム値が指定された文字列を含んでいる)"
-
-# f9737bab5981425a9089f3be104affc9
-#: ../../../source/spec/query_syntax.txt:68
-msgid "結合演算子"
-msgstr "結合演算子"
-
-# 59f0ee7a49dc4de182026c8326349b3d
-#: ../../../source/spec/query_syntax.txt:70
-msgid "複数の条件式を結合するために以下の演算子が使用できます。"
-msgstr "複数の条件式を結合するために以下の演算子が使用できます。"
-
-# 5b14ec2a09ed43a18de41d3b5bbb5b81
-#: ../../../source/spec/query_syntax.txt:73
-msgid "``a OR b``"
-msgstr "``a OR b``"
-
-# 34f09a3a2a534a3aa92291d4fef54d6c
-#: ../../../source/spec/query_syntax.txt:75
-msgid "論理和( ``a`` と ``b`` といずれかの条件がマッチする)"
-msgstr "論理和( ``a`` と ``b`` といずれかの条件がマッチする)"
-
-# 49114881c0f54b4bb6e0bebb4e222dbe
-#: ../../../source/spec/query_syntax.txt:78
-msgid "``a + b``"
-msgstr "``a + b``"
-
-# 983dba17786e4f0bbe229339e552f9d2
-#: ../../../source/spec/query_syntax.txt:80
-msgid "論理積( ``a`` と ``b`` の両方がマッチする)"
-msgstr "論理積( ``a`` と ``b`` の両方がマッチする)"
-
-# bcb8edde766742cebe4b7eebc26630b7
-#: ../../../source/spec/query_syntax.txt:83
-msgid "``a - b``"
-msgstr "``a - b``"
-
-# 55efb0916dd0463a85dc3eed88ce7dec
-#: ../../../source/spec/query_syntax.txt:85
-msgid "``a`` にマッチし、 ``b`` にはマッチしない"
-msgstr "``a`` にマッチし、 ``b`` にはマッチしない"
-
-# cf3fefb115e745f2b3b6b66d3e9eafcc
-#: ../../../source/spec/query_syntax.txt:88
-msgid "``(...)``"
-msgstr "``(...)``"
-
-# 48ba7a13fd414227b432ea78a8e4dbaa
-#: ../../../source/spec/query_syntax.txt:90
-msgid "複数の条件をまとめる"
-msgstr "複数の条件をまとめる"
-
-# 86e6ccda839d48c5b052c07d7a6af3a4
-#: ../../../source/spec/script_syntax.txt:9
-msgid "Script Syntax"
-msgstr "Script Syntax"
-
-# d6444a80a0474bd8a2a8b83217f4e62a
-#: ../../../source/spec/script_syntax.txt:13
-msgid ""
-"スクリプト構文はECMAScriptに類似した構文で条件式などを表現するための構文で"
-"す。ECMAScriptにある演算子に加えてgroonga独自の演算子を追加しています。"
-msgstr ""
-
-# 9a251a990031466d87c0a7f6b24689ea
-#: ../../../source/spec/script_syntax.txt:15
-msgid ""
-"まず、ECMAScriptにあるような基本的な演算子を説明し、その後、groongaが追加した"
-"独自の演算子を説明します。"
-msgstr ""
-
-# 0b1d8bb0df5e487c9df48af5c2965bb9
-#: ../../../source/spec/script_syntax.txt:18
-msgid "基本的な演算子"
-msgstr ""
-
-# 4aa86828eb6f4b1b8cf980500ae88c29
-#: ../../../source/spec/script_syntax.txt:20
-#, fuzzy
-msgid "TODO: ..."
-msgstr "TODO..."
-
-# 6d24179b7479434ab389e80b7ee2de69
-#: ../../../source/spec/script_syntax.txt:23
-msgid "独自の演算子"
-msgstr ""
-
-# 4b7c541c76634d8b89a0742287307610
-#: ../../../source/spec/script_syntax.txt:25
-msgid ""
-"groongaは検索に特化した2項演算子を追加しています。独自の2項演算子は ``@`` ま"
-"たは ``*`` ではじまります。"
-msgstr ""
-
-# 2a9f1346ced74083a6ecb91005b9fa2e
-#: ../../../source/spec/script_syntax.txt:28
-#, fuzzy
-msgid "``カラム @ 値``"
-msgstr "``カラム名:値``"
-
-# 6fd9e8e8ab6742b68cd61903b17baea5
-#: ../../../source/spec/script_syntax.txt:30
-msgid ""
-"``カラム`` をソースに設定している転置索引を用いて、 ``値`` で検索します。通常"
-"は全文検索になりますが、タグ検索などもこの書式で行います。 ``query`` ではデ"
-"フォルトでこの演算子を使っていることになります。"
-msgstr ""
-
-# 2a9f1346ced74083a6ecb91005b9fa2e
-#: ../../../source/spec/script_syntax.txt:33
-#, fuzzy
-msgid "``カラム @^ 値``"
-msgstr "``カラム名:値``"
-
-# 807f8b2bba4743d8b7f669bc41a4d8f0
-#: ../../../source/spec/script_syntax.txt:35
-msgid ""
-"``カラム`` の値を ``値`` で前方一致検索します。 ``カラム`` はパトリシアツリー"
-"またはダブル配列の主キー（ ``_key`` ）でなければいけません。"
-msgstr ""
-
-# 2a9f1346ced74083a6ecb91005b9fa2e
-#: ../../../source/spec/script_syntax.txt:38
-#, fuzzy
-msgid "``カラム @$ 値``"
-msgstr "``カラム名:値``"
-
-# 7f2bc4215d57492ca4402f7d1ee29945
-#: ../../../source/spec/script_syntax.txt:40
-msgid "``カラム`` の値を ``値`` で後方一致検索します。"
-msgstr ""
-
-# f49cb4ee392c42ed972f9805601ba96c
-# 2c691e018e714b449b8ff5c4f3bc4351
-#: ../../../source/spec/script_syntax.txt:42
-#: ../../../source/spec/script_syntax.txt:49
-msgid "未サポートです。"
-msgstr ""
-
-# 87dd03832d63406cbda2e471957a606c
-#: ../../../source/spec/script_syntax.txt:45
-msgid "``カラム *N \"単語1 単語2 ...\"``"
-msgstr ""
-
-# 4dc2c9f03bcb46dc97d6c3ff51171907
-#: ../../../source/spec/script_syntax.txt:47
-msgid ""
-"``カラム`` の値の中に ``単語1`` 、 ``単語2`` 、 ``...``  が近傍にある文書を検"
-"索します。（近傍検索。） ``カラム`` には全文検索用のインデックスが設定されて"
-"いなければいけません。"
-msgstr ""
-
-# d5adfc2b482a4f0da4a48cb5bae7fc28
-#: ../../../source/spec/script_syntax.txt:52
-#, fuzzy
-msgid "``カラム *S \"文書\"``"
-msgstr "``カラム名:@文字列``"
-
-# c4e83f0c286449dfa2c553315c6ee1f4
-#: ../../../source/spec/script_syntax.txt:54
-msgid ""
-"``カラム`` の値が ``文書`` に類似している文書を検索します。（類似文書検"
-"索。） ``カラム`` には全文検索用のインデックスが設定されていなければいけませ"
-"ん。"
-msgstr ""
-
-# 2a9f1346ced74083a6ecb91005b9fa2e
-#: ../../../source/spec/script_syntax.txt:63
-#, fuzzy
-msgid "``カラム *> 重み``"
-msgstr "``カラム名:値``"
-
-# a13a3f687abc4d91a85d4640dd226ed7
-#: ../../../source/spec/script_syntax.txt:65
-msgid "``カラム`` の重みを ``重み`` 分上げます。"
-msgstr ""
-
-# 5879d737c34e4167becff6c1880e729e
-# 3f0248696e524598be907704bbf6c8ad
-# bd228a3d3014427787b1d2167c09450c
-#: ../../../source/spec/script_syntax.txt:67
-#: ../../../source/spec/script_syntax.txt:74
-#: ../../../source/spec/script_syntax.txt:81
-msgid "未サポート。"
-msgstr ""
-
-# 2a9f1346ced74083a6ecb91005b9fa2e
-#: ../../../source/spec/script_syntax.txt:70
-#, fuzzy
-msgid "``カラム *< 重み``"
-msgstr "``カラム名:値``"
-
-# edc0c1af19684e0b9ebd11d191ebf052
-#: ../../../source/spec/script_syntax.txt:72
-msgid "``カラム`` の重みを ``重み`` 分下げます。"
-msgstr ""
-
-# 2a9f1346ced74083a6ecb91005b9fa2e
-#: ../../../source/spec/script_syntax.txt:77
-#, fuzzy
-msgid "``カラム *~ 重み``"
-msgstr "``カラム名:値``"
-
-# cb93c71cb2ea41c1985479b41f8ef9d6
-#: ../../../source/spec/script_syntax.txt:79
-msgid "``カラム`` がマッチした場合、文書の検索スコアを ``重み`` 分下げます。"
+msgid "Specification"
 msgstr ""
 
 # a911c68a5e4d44318f9d842073a60281
@@ -742,3 +405,198 @@ msgid ""
 msgstr ""
 "そのため、descriptionに「スープカレーライス」が含まれていても、「スープカレー"
 "ライス」は「スープカレー」に完全一致しないのでヒットしません。"
+
+# 2a9f1346ced74083a6ecb91005b9fa2e
+#, fuzzy
+#~ msgid "``カラム *~ 重み``"
+#~ msgstr "``カラム名:値``"
+
+# 2a9f1346ced74083a6ecb91005b9fa2e
+#, fuzzy
+#~ msgid "``カラム *< 重み``"
+#~ msgstr "``カラム名:値``"
+
+# 2a9f1346ced74083a6ecb91005b9fa2e
+#, fuzzy
+#~ msgid "``カラム *> 重み``"
+#~ msgstr "``カラム名:値``"
+
+# d5adfc2b482a4f0da4a48cb5bae7fc28
+#, fuzzy
+#~ msgid "``カラム *S \"文書\"``"
+#~ msgstr "``カラム名:@文字列``"
+
+# 2a9f1346ced74083a6ecb91005b9fa2e
+#, fuzzy
+#~ msgid "``カラム @$ 値``"
+#~ msgstr "``カラム名:値``"
+
+# 2a9f1346ced74083a6ecb91005b9fa2e
+#, fuzzy
+#~ msgid "``カラム @^ 値``"
+#~ msgstr "``カラム名:値``"
+
+# 2a9f1346ced74083a6ecb91005b9fa2e
+#, fuzzy
+#~ msgid "``カラム @ 値``"
+#~ msgstr "``カラム名:値``"
+
+# 4aa86828eb6f4b1b8cf980500ae88c29
+#, fuzzy
+#~ msgid "TODO: ..."
+#~ msgstr "TODO..."
+
+# 86e6ccda839d48c5b052c07d7a6af3a4
+#~ msgid "Script Syntax"
+#~ msgstr "Script Syntax"
+
+# 48ba7a13fd414227b432ea78a8e4dbaa
+#~ msgid "複数の条件をまとめる"
+#~ msgstr "複数の条件をまとめる"
+
+# cf3fefb115e745f2b3b6b66d3e9eafcc
+#~ msgid "``(...)``"
+#~ msgstr "``(...)``"
+
+# 55efb0916dd0463a85dc3eed88ce7dec
+#~ msgid "``a`` にマッチし、 ``b`` にはマッチしない"
+#~ msgstr "``a`` にマッチし、 ``b`` にはマッチしない"
+
+# bcb8edde766742cebe4b7eebc26630b7
+#~ msgid "``a - b``"
+#~ msgstr "``a - b``"
+
+# 983dba17786e4f0bbe229339e552f9d2
+#~ msgid "論理積( ``a`` と ``b`` の両方がマッチする)"
+#~ msgstr "論理積( ``a`` と ``b`` の両方がマッチする)"
+
+# 49114881c0f54b4bb6e0bebb4e222dbe
+#~ msgid "``a + b``"
+#~ msgstr "``a + b``"
+
+# 34f09a3a2a534a3aa92291d4fef54d6c
+#~ msgid "論理和( ``a`` と ``b`` といずれかの条件がマッチする)"
+#~ msgstr "論理和( ``a`` と ``b`` といずれかの条件がマッチする)"
+
+# 5b14ec2a09ed43a18de41d3b5bbb5b81
+#~ msgid "``a OR b``"
+#~ msgstr "``a OR b``"
+
+# 59f0ee7a49dc4de182026c8326349b3d
+#~ msgid "複数の条件式を結合するために以下の演算子が使用できます。"
+#~ msgstr "複数の条件式を結合するために以下の演算子が使用できます。"
+
+# f9737bab5981425a9089f3be104affc9
+#~ msgid "結合演算子"
+#~ msgstr "結合演算子"
+
+# f31d56816e14415b9ffd98f4d860c5c0
+#~ msgid "全文検索条件(カラム値が指定された文字列を含んでいる)"
+#~ msgstr "全文検索条件(カラム値が指定された文字列を含んでいる)"
+
+# d5adfc2b482a4f0da4a48cb5bae7fc28
+#~ msgid "``カラム名:@文字列``"
+#~ msgstr "``カラム名:@文字列``"
+
+# e9f10d23442a402cb84b4ed8df493848
+#~ msgid "比較条件( ``カラム値 >= 値`` )"
+#~ msgstr "比較条件( ``カラム値 >= 値`` )"
+
+# 172337c4178c4c608a5274790bfc4e14
+#~ msgid "``カラム名:>=値``"
+#~ msgstr "``カラム名:>=値``"
+
+# 3f954be92453460badfb36b322cb27d3
+#~ msgid "比較条件( ``カラム値 <= 値`` )"
+#~ msgstr "比較条件( ``カラム値 <= 値`` )"
+
+# 5d66ef32e200457c944654a896e6e352
+#~ msgid "``カラム名:<=値``"
+#~ msgstr "``カラム名:<=値``"
+
+# 179cb4fe2c5a473e915101e5b48a29ea
+#~ msgid "比較条件( ``カラム値 > 値`` )"
+#~ msgstr "比較条件( ``カラム値 > 値`` )"
+
+# fce32ef6ef3b435cbb8c144e7758d85b
+#~ msgid "``カラム名:>値``"
+#~ msgstr "``カラム名:>値``"
+
+# be03fd732051466886f428672e8359ad
+#~ msgid "比較条件( ``カラム値 < 値`` )"
+#~ msgstr "比較条件( ``カラム値 < 値`` )"
+
+# cf74ccd5efa44cca8363eb260b7cd6b9
+#~ msgid "``カラム名:<値``"
+#~ msgstr "``カラム名:<値``"
+
+# 6952a37161ba477a81db6de10a899333
+#~ msgid "不一致条件( ``カラム値 != 値`` )"
+#~ msgstr "不一致条件( ``カラム値 != 値`` )"
+
+# 187b1217a62d4f5aaf32a1c1b2b3368a
+#~ msgid "``カラム名:!値``"
+#~ msgstr "``カラム名:!値``"
+
+# d8c3a2546104485f9d77311d700a7ef5
+#~ msgid "一致条件( ``カラム値 == 値`` )"
+#~ msgstr "一致条件( ``カラム値 == 値`` )"
+
+# 2a9f1346ced74083a6ecb91005b9fa2e
+#~ msgid "``カラム名:値``"
+#~ msgstr "``カラム名:値``"
+
+# e690dd2fd2034e7d962c49b9f485d4e1
+#~ msgid ""
+#~ "フレーズ検索条件(デフォルト検索対象カラムの値が指定されたフレーズを含んで"
+#~ "いる)"
+#~ msgstr ""
+#~ "フレーズ検索条件(デフォルト検索対象カラムの値が指定されたフレーズを含んで"
+#~ "いる)"
+
+# 6f2d04df8bbb45dea914c61679c35cb1
+#~ msgid "``\"文字列\"``"
+#~ msgstr "``\"文字列\"``"
+
+# ab6e7e4c588140289f815c042b6f9dd9
+#~ msgid ""
+#~ "全文検索条件(デフォルト検索対象カラムの値が指定された文字列を含んでいる)"
+#~ msgstr ""
+#~ "全文検索条件(デフォルト検索対象カラムの値が指定された文字列を含んでいる)"
+
+# 66117a22555c4b1ca79b193a39a41000
+#~ msgid "``文字列``"
+#~ msgstr "``文字列``"
+
+# 04d2c1fd0757431f80b81466426b17d2
+#~ msgid "以下の条件式が使用できます。"
+#~ msgstr "以下の条件式が使用できます。"
+
+# 1fb0da06101e48aa858cf3311d733dca
+#~ msgid "条件式"
+#~ msgstr "条件式"
+
+# 37ef4b3ef2a7408e91e2a066210bd02e
+#~ msgid "クエリ構文は「条件式」と条件式を組み合わせる「結合式」からなります。"
+#~ msgstr ""
+#~ "クエリ構文は「条件式」と条件式を組み合わせる「結合式」からなります。"
+
+# 5af3428bfe9c44c49f5240b4881776a0
+#~ msgid ""
+#~ "一般的なWebページの検索フォームで使われるような書式を使って検索条件を指定"
+#~ "することができます。これをクエリ構文と呼びます。"
+#~ msgstr ""
+#~ "一般的なWebページの検索フォームで使われるような書式を使って検索条件を指定"
+#~ "することができます。これをクエリ構文と呼びます。"
+
+# 32c9eb3503a5405ba9b605d4f1375c69
+#~ msgid "TODO: revised."
+#~ msgstr "TODO: revised."
+
+# 8668950290e44936a5a15512cd19afd6
+#~ msgid "Query syntax"
+#~ msgstr "Query syntax"
+
+# 7a7e295ea9fc42c396f7f5c792cd32ff
+#~ msgid "仕様"
+#~ msgstr "仕様"

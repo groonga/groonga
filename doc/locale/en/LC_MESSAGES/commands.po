@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 2.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-09 22:02\n"
+"POT-Creation-Date: 2012-06-21 17:13\n"
 "PO-Revision-Date: 2012-04-28 11:36+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -1133,8 +1133,8 @@ msgstr ""
 # 99a61b1808a3442d8c57792eb4168849
 #: ../../../source/commands/define_selector.txt:116
 #: ../../../source/commands/load.txt:100
-msgid ":doc:`../expr`"
-msgstr ":doc:`../expr`"
+msgid ":doc:`/reference/grn_expr`"
+msgstr ":doc:`/reference/grn_expr`"
 
 # 953d8baf546840c7915b996b6da3d3f8
 #: ../../../source/commands/defrag.txt:6
@@ -1882,10 +1882,10 @@ msgstr ""
 #: ../../../source/commands/select.txt:140
 msgid ""
 "``query`` has query syntax but its deatils aren't described here. See :doc:`/"
-"spec/query_syntax` for datails."
+"reference/grn_expr/query_syntax` for datails."
 msgstr ""
 "``query`` has query syntax but its deatils aren't described here. See :doc:`/"
-"spec/query_syntax` for datails."
+"reference/grn_expr/query_syntax` for datails."
 
 # 00714bb1fe95428d8a678342cbbe6670
 #: ../../../source/commands/select.txt:144
@@ -1925,10 +1925,12 @@ msgstr ""
 #: ../../../source/commands/select.txt:162
 msgid ""
 "``filter`` has more operators and syntax like grouping by ``(...)`` its "
-"deatils aren't described here. See :doc:`/spec/script_syntax` for datails."
+"deatils aren't described here. See :doc:`/reference/grn_expr/script_syntax` "
+"for datails."
 msgstr ""
 "``filter`` has more operators and syntax like grouping by ``(...)`` its "
-"deatils aren't described here. See :doc:`/spec/script_syntax` for datails."
+"deatils aren't described here. See :doc:`/reference/grn_expr/script_syntax` "
+"for datails."
 
 # a5427ed92a51488c9634432e65ace520
 #: ../../../source/commands/select.txt:167
@@ -2171,16 +2173,17 @@ msgstr ""
 "``content`` column value. In this example, title of blog entry is more "
 "important rather thatn content of blog entry."
 
-# b9368efb4dd64cf2aa8fdbd8ed7c3aaa
+# 60b6db63baf84769a8128382a6f343eb
 #: ../../../source/commands/select.txt:299
 msgid ""
 "It specifies the query text. Normally, it is used for fulltext search with "
 "``match_columns`` parameter. ``query`` parameter is designed for a fulltext "
-"search form in a Web page. A query text should be formatted in :doc:`/spec/"
-"query_syntax`. The syntax is similar to common search form like Google's "
-"search form. For example, ``word1 word2`` means that groonga searches "
-"records that contain both ``word1`` and ``word2``. ``word1 OR word2`` means "
-"that groogna searches records that contain either ``word1`` or ``word2``."
+"search form in a Web page. A query text should be formatted in :doc:`/"
+"reference/grn_expr/query_syntax`. The syntax is similar to common search "
+"form like Google's search form. For example, ``word1 word2`` means that "
+"groonga searches records that contain both ``word1`` and ``word2``. ``word1 "
+"OR word2`` means that groogna searches records that contain either ``word1`` "
+"or ``word2``."
 msgstr ""
 
 # 4e8f13cf1bbc4e22924614a285657160
@@ -2208,9 +2211,9 @@ msgid ""
 "table."
 msgstr ""
 
-# f6a40af5f20c467b8bd54eacc136b6a2
+# 60265657be91457ba59dd966e1df6ff2
 #: ../../../source/commands/select.txt:328
-msgid "See :doc:`/spec/query_syntax` for other syntax."
+msgid "See :doc:`/reference/grn_expr/query_syntax` for other syntax."
 msgstr ""
 
 # 826a551c63294a79b2c0397ee79c8878
@@ -2250,9 +2253,9 @@ msgid ""
 "less than ``11`` from ``Entries`` table."
 msgstr ""
 
-# f6a40af5f20c467b8bd54eacc136b6a2
+# 33278e9445d748db8e5c314d594adca9
 #: ../../../source/commands/select.txt:353
-msgid "See :doc:`/spec/query_syntax` for other operations."
+msgid "See :doc:`/reference/grn_expr/query_syntax` for other operations."
 msgstr ""
 
 # 0fc5eec7ac124c7f9fd84047258ef870
@@ -2265,19 +2268,19 @@ msgid ""
 "``query``."
 msgstr ""
 
-# 73d0a6760387474fba6ac5a51504efe3
+# 950853e0d41940c2b855723602e0fa63
 #: ../../../source/commands/select.txt:364
 msgid ""
 "``filter`` parameter is designed for complex conditions. A filter text "
-"should be formated in :doc:`/spec/script_syntax`. The syntax is similar to "
-"ECMAScript. For example, ``column == \"value\"`` means that the value of "
-"``column`` column is equal to ``\"value\"``. ``column < value`` means that "
-"the value of ``column`` column is less than ``value``."
+"should be formated in :doc:`/reference/grn_expr/script_syntax`. The syntax "
+"is similar to ECMAScript. For example, ``column == \"value\"`` means that "
+"the value of ``column`` column is equal to ``\"value\"``. ``column < value`` "
+"means that the value of ``column`` column is less than ``value``."
 msgstr ""
 
-# 37338890b3ae4faba2348cb02934ac0a
+# 3fd29e530b1b44a4b99f8d798f41c676
 #: ../../../source/commands/select.txt:389
-msgid "See :doc:`/spec/script_syntax` for other operators."
+msgid "See :doc:`/reference/grn_expr/script_syntax` for other operators."
 msgstr ""
 
 # b4476e9ca79f4b03826f7c40c0dc4c18
@@ -2457,12 +2460,12 @@ msgid ""
 "``select`` command. The third one uses expanded query."
 msgstr ""
 
-# f9929febfeef4f9f91604c5b99cdec8b
+# 5fbd650ce44448569ccf92ac00563491
 #: ../../../source/commands/select.txt:513
 msgid ""
-"Each substitute value can contain any :doc:`/spec/query_syntax` syntax such "
-"as ``(...)`` and ``OR``. You can use complex substitution by using those "
-"syntax."
+"Each substitute value can contain any :doc:`/reference/grn_expr/"
+"query_syntax` syntax such as ``(...)`` and ``OR``. You can use complex "
+"substitution by using those syntax."
 msgstr ""
 
 # 58dda20c13a54aabb746a25dde3cb8c6
@@ -2964,13 +2967,13 @@ msgstr "See also"
 
 # 360cc5154bf244f49024ed2d8183f5c6
 #: ../../../source/commands/select.txt:796
-msgid ":doc:`/spec/query_syntax`"
-msgstr ":doc:`/spec/query_syntax`"
+msgid ":doc:`/reference/grn_expr/query_syntax`"
+msgstr ":doc:`/reference/grn_expr/query_syntax`"
 
 # 360cc5154bf244f49024ed2d8183f5c6
 #: ../../../source/commands/select.txt:797
-msgid ":doc:`/spec/script_syntax`"
-msgstr ":doc:`/spec/script_syntax`"
+msgid ":doc:`/reference/grn_expr/script_syntax`"
+msgstr ":doc:`/reference/grn_expr/script_syntax`"
 
 # 513ba7acf83344eeacf8866c67e6dbf4
 #: ../../../source/commands/shutdown.txt:6
@@ -3872,36 +3875,67 @@ msgstr "view_add Ventry Entry [true]"
 msgid "Execution example::"
 msgstr "Execution example::"
 
-# 18d80b86a5214a3c8e4ab858c7e5c458
-# 18d80b86a5214a3c8e4ab858c7e5c458
-#~ msgid "TODO: write short description and add example."
-#~ msgstr "TODO: write short description and add example."
-
-# 54008bb20ab341bb9e6dc9b0a38529d8
-#~ msgid "TODO: add example."
-#~ msgstr "TODO: add example."
-
-# 77edd8442dd140358ec113f8bf2e338d
+# 9c61b813ea6644459b5d734d49c2df70
 #~ msgid ""
-#~ "It specifies a column that is used to expand (substitute) ``query`` "
-#~ "parameter value."
+#~ "検索条件にマッチしたレコードのうち、出力を行うレコードの件数を指定します。"
+#~ "デフォルト値は10です。実際には、offset + limit がヒットした件数を超えない"
+#~ "範囲でレコードが出力されます。limitに負の値を指定した場合は、ヒットした件"
+#~ "数 + limit + 1 によって算出される値が指定されたものとみなされます。"
 #~ msgstr ""
-#~ "It specifies a column that is used to expand (substitute) ``query`` "
-#~ "parameter value."
+#~ "検索条件にマッチしたレコードのうち、出力を行うレコードの件数を指定します。"
+#~ "デフォルト値は10です。実際には、offset + limit がヒットした件数を超えない"
+#~ "範囲でレコードが出力されます。limitに負の値を指定した場合は、ヒットした件"
+#~ "数 + limit + 1 によって算出される値が指定されたものとみなされます。"
 
-# 4621394a7f2b499b95697dbac131b9cf
+# 547b09b9971645f18f9f24bfac79f838
 #~ msgid ""
-#~ "query_expansionパラメータには、queryパラメータに指定された文字列を置換(拡"
-#~ "張)する条件となるテーブル・カラムを指定します。フォーマットは「${テーブル"
-#~ "名}.${カラム名}」となります。指定するテーブルは文字列を主キーとするハッ"
-#~ "シュ型あるいはパトリシア木型のテーブルで、一つ以上の文字列型のカラムが定義"
-#~ "されている必要があります。(ここでは置換テーブルと呼びます。)"
+#~ "検索条件にマッチしたレコードのうち、出力対象となる最初のレコードの番号を0"
+#~ "ベースで指定します。デフォルト値は0です。offsetに負の値を指定した場合は、"
+#~ "ヒットした件数 + offset によって算出される値が指定されたものとみなされま"
+#~ "す。"
 #~ msgstr ""
-#~ "query_expansionパラメータには、queryパラメータに指定された文字列を置換(拡"
-#~ "張)する条件となるテーブル・カラムを指定します。フォーマットは「${テーブル"
-#~ "名}.${カラム名}」となります。指定するテーブルは文字列を主キーとするハッ"
-#~ "シュ型あるいはパトリシア木型のテーブルで、一つ以上の文字列型のカラムが定義"
-#~ "されている必要があります。(ここでは置換テーブルと呼びます。)"
+#~ "検索条件にマッチしたレコードのうち、出力対象となる最初のレコードの番号を0"
+#~ "ベースで指定します。デフォルト値は0です。offsetに負の値を指定した場合は、"
+#~ "ヒットした件数 + offset によって算出される値が指定されたものとみなされま"
+#~ "す。"
+
+# abe7421f4582410888d65840d86cdfd2
+#~ msgid ""
+#~ "query引数またはfilter引数を指定した場合はカラム名に'_score'を使えま"
+#~ "す。'_score'を指定することでスコアでソートすることができます。query引数も"
+#~ "filter引数も指定していない状態で'_score'を指定するとエラーになります。"
+#~ msgstr ""
+#~ "query引数またはfilter引数を指定した場合はカラム名に'_score'を使えま"
+#~ "す。'_score'を指定することでスコアでソートすることができます。query引数も"
+#~ "filter引数も指定していない状態で'_score'を指定するとエラーになります。"
+
+# 7b981fad01854653afeb0de778073d19
+#~ msgid ""
+#~ "カラム名1の値でソートし、値が同一である場合はカラム名2でソート、と順次比較"
+#~ "を行いソートします。カラム名の前に - を付加した場合は降順にソートします。"
+#~ "付加しない場合には昇順にソートします。"
+#~ msgstr ""
+#~ "カラム名1の値でソートし、値が同一である場合はカラム名2でソート、と順次比較"
+#~ "を行いソートします。カラム名の前に - を付加した場合は降順にソートします。"
+#~ "付加しない場合には昇順にソートします。"
+
+# 69dad63741a1451ea83336e95121c4ae
+#~ msgid "ソートキーとなるカラム名のリストをカンマ(',')区切りで指定します。::"
+#~ msgstr "ソートキーとなるカラム名のリストをカンマ(',')区切りで指定します。::"
+
+# e8a847361929497c916038cce5031068
+#~ msgid ""
+#~ "アスタリスク('*')を指定すると、全てのカラムが指定されたものとみなされま"
+#~ "す。または、script形式のgrn_expr文字列を指定します。 (デフォルトは、'_id, "
+#~ "_key, \\*')"
+#~ msgstr ""
+#~ "アスタリスク('*')を指定すると、全てのカラムが指定されたものとみなされま"
+#~ "す。または、script形式のgrn_expr文字列を指定します。 (デフォルトは、'_id, "
+#~ "_key, \\*')"
+
+# 1c51d64563f34499866d0cdddfc47d1b
+#~ msgid "出力するカラム名のリストをカンマ(',')区切りで指定します。"
+#~ msgstr "出力するカラム名のリストをカンマ(',')区切りで指定します。"
 
 # 3230169ac5b743eb888a78a7b000ff43
 #~ msgid ""
@@ -3925,64 +3959,33 @@ msgstr "Execution example::"
 #~ "なるカラムの値には、括弧や*, ORなど、queryパラメータで利用可能な全ての演算"
 #~ "子を指定することができます。"
 
-# 1c51d64563f34499866d0cdddfc47d1b
-#~ msgid "出力するカラム名のリストをカンマ(',')区切りで指定します。"
-#~ msgstr "出力するカラム名のリストをカンマ(',')区切りで指定します。"
-
-# e8a847361929497c916038cce5031068
+# 4621394a7f2b499b95697dbac131b9cf
 #~ msgid ""
-#~ "アスタリスク('*')を指定すると、全てのカラムが指定されたものとみなされま"
-#~ "す。または、script形式のgrn_expr文字列を指定します。 (デフォルトは、'_id, "
-#~ "_key, \\*')"
+#~ "query_expansionパラメータには、queryパラメータに指定された文字列を置換(拡"
+#~ "張)する条件となるテーブル・カラムを指定します。フォーマットは「${テーブル"
+#~ "名}.${カラム名}」となります。指定するテーブルは文字列を主キーとするハッ"
+#~ "シュ型あるいはパトリシア木型のテーブルで、一つ以上の文字列型のカラムが定義"
+#~ "されている必要があります。(ここでは置換テーブルと呼びます。)"
 #~ msgstr ""
-#~ "アスタリスク('*')を指定すると、全てのカラムが指定されたものとみなされま"
-#~ "す。または、script形式のgrn_expr文字列を指定します。 (デフォルトは、'_id, "
-#~ "_key, \\*')"
+#~ "query_expansionパラメータには、queryパラメータに指定された文字列を置換(拡"
+#~ "張)する条件となるテーブル・カラムを指定します。フォーマットは「${テーブル"
+#~ "名}.${カラム名}」となります。指定するテーブルは文字列を主キーとするハッ"
+#~ "シュ型あるいはパトリシア木型のテーブルで、一つ以上の文字列型のカラムが定義"
+#~ "されている必要があります。(ここでは置換テーブルと呼びます。)"
 
-# 69dad63741a1451ea83336e95121c4ae
-#~ msgid "ソートキーとなるカラム名のリストをカンマ(',')区切りで指定します。::"
-#~ msgstr "ソートキーとなるカラム名のリストをカンマ(',')区切りで指定します。::"
-
-# 7b981fad01854653afeb0de778073d19
+# 77edd8442dd140358ec113f8bf2e338d
 #~ msgid ""
-#~ "カラム名1の値でソートし、値が同一である場合はカラム名2でソート、と順次比較"
-#~ "を行いソートします。カラム名の前に - を付加した場合は降順にソートします。"
-#~ "付加しない場合には昇順にソートします。"
+#~ "It specifies a column that is used to expand (substitute) ``query`` "
+#~ "parameter value."
 #~ msgstr ""
-#~ "カラム名1の値でソートし、値が同一である場合はカラム名2でソート、と順次比較"
-#~ "を行いソートします。カラム名の前に - を付加した場合は降順にソートします。"
-#~ "付加しない場合には昇順にソートします。"
+#~ "It specifies a column that is used to expand (substitute) ``query`` "
+#~ "parameter value."
 
-# abe7421f4582410888d65840d86cdfd2
-#~ msgid ""
-#~ "query引数またはfilter引数を指定した場合はカラム名に'_score'を使えま"
-#~ "す。'_score'を指定することでスコアでソートすることができます。query引数も"
-#~ "filter引数も指定していない状態で'_score'を指定するとエラーになります。"
-#~ msgstr ""
-#~ "query引数またはfilter引数を指定した場合はカラム名に'_score'を使えま"
-#~ "す。'_score'を指定することでスコアでソートすることができます。query引数も"
-#~ "filter引数も指定していない状態で'_score'を指定するとエラーになります。"
+# 54008bb20ab341bb9e6dc9b0a38529d8
+#~ msgid "TODO: add example."
+#~ msgstr "TODO: add example."
 
-# 547b09b9971645f18f9f24bfac79f838
-#~ msgid ""
-#~ "検索条件にマッチしたレコードのうち、出力対象となる最初のレコードの番号を0"
-#~ "ベースで指定します。デフォルト値は0です。offsetに負の値を指定した場合は、"
-#~ "ヒットした件数 + offset によって算出される値が指定されたものとみなされま"
-#~ "す。"
-#~ msgstr ""
-#~ "検索条件にマッチしたレコードのうち、出力対象となる最初のレコードの番号を0"
-#~ "ベースで指定します。デフォルト値は0です。offsetに負の値を指定した場合は、"
-#~ "ヒットした件数 + offset によって算出される値が指定されたものとみなされま"
-#~ "す。"
-
-# 9c61b813ea6644459b5d734d49c2df70
-#~ msgid ""
-#~ "検索条件にマッチしたレコードのうち、出力を行うレコードの件数を指定します。"
-#~ "デフォルト値は10です。実際には、offset + limit がヒットした件数を超えない"
-#~ "範囲でレコードが出力されます。limitに負の値を指定した場合は、ヒットした件"
-#~ "数 + limit + 1 によって算出される値が指定されたものとみなされます。"
-#~ msgstr ""
-#~ "検索条件にマッチしたレコードのうち、出力を行うレコードの件数を指定します。"
-#~ "デフォルト値は10です。実際には、offset + limit がヒットした件数を超えない"
-#~ "範囲でレコードが出力されます。limitに負の値を指定した場合は、ヒットした件"
-#~ "数 + limit + 1 によって算出される値が指定されたものとみなされます。"
+# 18d80b86a5214a3c8e4ab858c7e5c458
+# 18d80b86a5214a3c8e4ab858c7e5c458
+#~ msgid "TODO: write short description and add example."
+#~ msgstr "TODO: write short description and add example."

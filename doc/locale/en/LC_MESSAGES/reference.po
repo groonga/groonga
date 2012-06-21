@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 2.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-05-21 14:05\n"
+"POT-Creation-Date: 2012-06-21 17:13\n"
 "PO-Revision-Date: 2012-04-28 11:38+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -17,7 +17,1094 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+# 705b9478996148efbde1e651a7cd9436
+# c6d2203966894f9685751da40afaacdf
+# 40be5c6501a740db9fde01e9791f693c
+# 5679f4cb9fbd40ecbb0ce246307fb188
+# 33600a92b1ad42bebde44b0a5378ecde
+# 035ba6e7f2d44439899ccf46f1ba4d20
+# 1a1526d08d3441bd96f18cf5c7ca542b
+# a9fb54b3c5ff481bb1e8550bdd35ebab
+# 728c16a3baf542b3a64459a8da9ea01f
+# 1309275706fc4615922ec623eacb21e8
+# 121b61a6b328441daf22049944de0ca3
+# 1b7c8e0b7d3846859465f57ed7048011
+# dd6324d2598d48d5b6e05d3ffe887fca
+# 0aa30a693ff4473fbe2ca0c03656c280
+# a1b091f8eee746a7917d9dee07a6a811
+# 4136b70b1ddc46f1a582c027debf2009
+# bd73217134484daf9b5a36221a874fa2
+#: ../../../source/example/reference/grn_expr/query_syntax/setup.log:1
+#: ../../../source/example/reference/grn_expr/query_syntax/simple_equal.log:1
+#: ../../../source/example/reference/grn_expr/query_syntax/simple_full_text_search.log:1
+#: ../../../source/example/reference/grn_expr/query_syntax/simple_full_text_search_with_explicit_match_column.log:1
+#: ../../../source/example/reference/grn_expr/query_syntax/simple_greater_than.log:1
+#: ../../../source/example/reference/grn_expr/query_syntax/simple_greater_than_or_equal_to.log:1
+#: ../../../source/example/reference/grn_expr/query_syntax/simple_grouping.log:1
+#: ../../../source/example/reference/grn_expr/query_syntax/simple_less_than.log:1
+#: ../../../source/example/reference/grn_expr/query_syntax/simple_less_than_or_equal_to.log:1
+#: ../../../source/example/reference/grn_expr/query_syntax/simple_logical_and.log:1
+#: ../../../source/example/reference/grn_expr/query_syntax/simple_logical_not.log:1
+#: ../../../source/example/reference/grn_expr/query_syntax/simple_logical_or.log:1
+#: ../../../source/example/reference/grn_expr/query_syntax/simple_not_equal.log:1
+#: ../../../source/example/reference/grn_expr/query_syntax/simple_phrase_search.log:1
+#: ../../../source/example/reference/grn_expr/query_syntax/simple_phrase_search_with_explicit_match_column.log:1
+#: ../../../source/example/reference/grn_expr/query_syntax/simple_prefix_search.log:1
+#: ../../../source/example/reference/grn_expr/query_syntax/simple_suffix_search.log:1
+msgid "Execution example::"
+msgstr ""
+
 # 9f1c09851cf54ddeaca10bc7b67089e9
 #: ../../../source/reference.txt:6
 msgid "リファレンスマニュアル"
 msgstr "リファレンスマニュアル"
+
+# d9c3674e05df4e29907ae3a53de091a1
+#: ../../../source/reference/api.txt:6
+msgid "API"
+msgstr ""
+
+# 20a8e90dc03d4b8992eaabedb1466cbd
+# 912f31290564487fb4e172a1b1f52a76
+# 5509742d031744658a086a1291b7d91a
+#: ../../../source/reference/api.txt:8
+#: ../../../source/reference/api/grn_expr.txt:8
+#: ../../../source/reference/cast.txt:8
+msgid "TODO..."
+msgstr ""
+
+# f56692acc51c407cb18b339b17412c22
+# 314dc233da924b819f39b111ab01c1fe
+#: ../../../source/reference/api/grn_expr.txt:6
+#: ../../../source/reference/grn_expr.txt:6
+msgid "grn_expr"
+msgstr ""
+
+# 1fec447852894b88a1ff27813aac050e
+#: ../../../source/reference/cast.txt:6
+msgid "Cast"
+msgstr ""
+
+# f6af142cb1f64c58a77a33a243172be5
+#: ../../../source/reference/grn_expr.txt:8
+msgid ""
+"Grn_expr is an object that searches records with specified conditions and "
+"manipulates a database. It's pronounced as ``gurun expression``."
+msgstr ""
+
+# 84621c04535b4003ac03025663fd0da2
+#: ../../../source/reference/grn_expr.txt:11
+msgid ""
+"Conditions for searching records from a database can be represented by "
+"conbining condition expressions such as ``equal condition expression`` and "
+"``less than condition expression`` with set operations such as ``AND``, "
+"``OR`` and ``NOT``. Grn_expr executes those conditions to search records. "
+"You can also use advanced searches such as similar search and near search by "
+"grn_expr. You can also use flexible full text search. For example, you can "
+"control hit scores for specified words and improve recall by re-searching "
+"with high-recall algolithm dinamically. To determine whether re-searching or "
+"not, the number of matched rescords is used."
+msgstr ""
+
+# 34370d23f37b453abdd09f8d4ab0422e
+#: ../../../source/reference/grn_expr.txt:22
+msgid "There are three ways to create grn_expr:"
+msgstr ""
+
+# f13852f9cdaf439fbcea6e0b912344d0
+#: ../../../source/reference/grn_expr.txt:24
+msgid "Parsing :doc:`/reference/grn_expr/query_syntax` string."
+msgstr ""
+
+# a36c7f58fa9c434e958e45ea66b2e7c5
+#: ../../../source/reference/grn_expr.txt:25
+msgid "Parsing :doc:`/reference/grn_expr/script_syntax` string."
+msgstr ""
+
+# f20e36d66b69464c9693e8a9a1eab7a5
+#: ../../../source/reference/grn_expr.txt:26
+msgid "Calling grn_expr related APIs."
+msgstr ""
+
+# bb67731a46e94ff3aea9572fa97ada4b
+#: ../../../source/reference/grn_expr.txt:28
+msgid ""
+":doc:`/reference/grn_expr/query_syntax` is for common search form in "
+"Internet search site. It's simple and easy to use but it has a limitation. "
+"You can not use all condition expressions and set operations in :doc:`/"
+"reference/grn_expr/query_syntax`. You can use :doc:`/reference/grn_expr/"
+"query_syntax` with ``query`` option in :doc:`/commands/select`."
+msgstr ""
+
+# f17b4ef3d06046688f4f830000a4406a
+#: ../../../source/reference/grn_expr.txt:35
+msgid ""
+":doc:`/reference/grn_expr/script_syntax` is ECMAScript like syntax. You can "
+"use all condition expresssions and set operations in :doc:`/reference/"
+"grn_expr/script_syntax`. You can use :doc:`/reference/grn_expr/"
+"script_syntax` with ``filter`` option and ``scorer`` option in :doc:`/"
+"commands/select`."
+msgstr ""
+
+# eccb350116904d58a7e03a792f82dbf2
+#: ../../../source/reference/grn_expr.txt:41
+msgid ""
+"You can use groonga as a library and create a grn_expr by calling grn_expr "
+"related APIs. You can use full features with calling APIs like :doc:`/"
+"reference/grn_expr/script_syntax`. Calling APIs is useful creating a custom "
+"syntax to create grn_expr. They are used in `rroonga <http://groonga."
+"rubyforge.org/#about-rroonga>`_ that is Ruby bindings of groonga. Rroonga "
+"can create a grn_expr by Ruby's syntax instead of parsing string."
+msgstr ""
+
+# cc3c8ad7f3144ce1bcb0ae599422f093
+#: ../../../source/reference/grn_expr.txt:57
+msgid "See also"
+msgstr ""
+
+# 6ef9b1a51bfc4f7e938f1fa833dc785f
+#: ../../../source/reference/grn_expr.txt:59
+msgid ":doc:`/reference/api/grn_expr`: grn_expr related APIs"
+msgstr ""
+
+# c377c1d6ceec45ad9ec4ced7f52fc684
+#: ../../../source/reference/grn_expr/query_syntax.txt:9
+msgid "Query syntax"
+msgstr ""
+
+# f6d9ea05d91546f0b913b56d291bc6ca
+#: ../../../source/reference/grn_expr/query_syntax.txt:11
+msgid ""
+"Query syntax is a syntax to specify search condition for common Web search "
+"form. It is similar to the syntax of Google's search form. For example, "
+"``word1 word2`` means that groonga searches records that contain both "
+"``word1`` and ``word2``. ``word1 OR word2`` means that groogna searches "
+"records that contain either ``word1`` or ``word2``."
+msgstr ""
+
+# 94d4e0cd5ba041e2b99ca74b4564e439
+#: ../../../source/reference/grn_expr/query_syntax.txt:17
+msgid ""
+"Query syntax consists of ``conditional expression``, ``combind expression`` "
+"and ``assignment expression``. Nomrally ``assignment expression`` can be "
+"ignored. Because ``assignment expression`` is disabled in ``--query`` option "
+"of :doc:`/commands/select`. You can use it if you use groonga as library and "
+"customize query syntax parser options."
+msgstr ""
+
+# a33f6abf62274562a5f76e7434e4d50a
+#: ../../../source/reference/grn_expr/query_syntax.txt:24
+msgid ""
+"``Conditinal expression`` specifies an condition. ``Combinded expression`` "
+"consists of one or more ``conditional expression``, ``combined expression`` "
+"or ``assignment expression``. ``Assignment expression`` can assigns a column "
+"to a value."
+msgstr ""
+
+# 46c2b1c679a045059beda7958b53048a
+#: ../../../source/reference/grn_expr/query_syntax.txt:30
+msgid "Sample data"
+msgstr ""
+
+# e196fd0e34864991a7db6be8ca0c4e70
+#: ../../../source/reference/grn_expr/query_syntax.txt:32
+msgid "Here are a schema definition and sample data to show usage."
+msgstr ""
+
+# 2db98db7a47c4800ac33b662c6cb28c4
+#: ../../../source/reference/grn_expr/query_syntax.txt:61
+msgid ""
+"There is a table, ``Entries``, for blog entries. An entry has title, content "
+"and the number of likes for the entry. Title is key of ``Entries``. Content "
+"is value of ``Entries.content`` column. The number of likes is value of "
+"``Entries.n_likes`` column."
+msgstr ""
+
+# b47d4b2f93ef4c1cb83f883312fa45a1
+#: ../../../source/reference/grn_expr/query_syntax.txt:66
+msgid ""
+"``Entries._key`` column and ``Entries.content`` column are indexed using "
+"``TokenBigram`` tokenizer. So both ``Entries._key`` and ``Entries.content`` "
+"are fulltext search ready."
+msgstr ""
+
+# 0a862612cbd04592807c4fab204ce864
+#: ../../../source/reference/grn_expr/query_syntax.txt:70
+msgid "OK. The schema and data for examples are ready."
+msgstr ""
+
+# 605e2610fee3410b9798ab16ef3a941a
+#: ../../../source/reference/grn_expr/query_syntax.txt:73
+msgid "Escape"
+msgstr ""
+
+# 0a046a98977b40eaa45c374db58628ef
+#: ../../../source/reference/grn_expr/query_syntax.txt:75
+msgid ""
+"There are special characters in query syntax. To use a special character as "
+"itself, it should be escaped by prepending ``\\``. For example, ``\"`` is a "
+"special character. It is escaped as ``\\\"``."
+msgstr ""
+
+# 47c43cd6224f47d1bfb4d7f372698cb8
+#: ../../../source/reference/grn_expr/query_syntax.txt:79
+msgid "Here is a special character list:"
+msgstr ""
+
+# f48e582a5713461382a5e2a7497fa145
+#: ../../../source/reference/grn_expr/query_syntax.txt:81
+msgid ""
+"``[space]`` (escaped as ``[backquote][space]``) (You should substitute ``"
+"[space]`` with a white space character that is 0x20 in ASCII and ``"
+"[backquote]`` with ``\\\\``.)"
+msgstr ""
+
+# ff6856c6d75041229c7b8c3d07283710
+#: ../../../source/reference/grn_expr/query_syntax.txt:84
+msgid "``\"`` (escaped as ``\\\"``)"
+msgstr ""
+
+# c51e785b0e8c4447be4daa504f4b9ddf
+#: ../../../source/reference/grn_expr/query_syntax.txt:85
+msgid "``'`` (escaped as ``\\'``)"
+msgstr ""
+
+# 286be6883beb489181c4c61e1bec2f6e
+#: ../../../source/reference/grn_expr/query_syntax.txt:86
+msgid "``(`` (escaped as ``\\(``)"
+msgstr ""
+
+# 379f21133b254093ad607afcb9a3365a
+#: ../../../source/reference/grn_expr/query_syntax.txt:87
+msgid "``)`` (escaped as ``\\)``)"
+msgstr ""
+
+# fbdb2dd4de80429c845b9ac758fd121d
+#: ../../../source/reference/grn_expr/query_syntax.txt:88
+msgid "``\\`` (escaped as ``\\\\``)"
+msgstr ""
+
+# 59efe0d273c94b8b9a40912f73fa53be
+#: ../../../source/reference/grn_expr/query_syntax.txt:90
+msgid ""
+"You can use quote instead of escape. Quote's syntax is ``\"...\"`` or "
+"``'...'``. You need escape ``\"`` as ``\\\"`` in ``\"...\"`` quote syntax. "
+"You need escape ``'`` as ``\\'`` in ``'...'`` quote syntax. For example, "
+"``Alice's brother (Bob)`` can be quoted ``\"Alice's brother (Bob)\"`` or "
+"``'Alice\\'s brother (Bob)'``."
+msgstr ""
+
+# bf26476fd06d483c90e241a2dc28de0e
+#: ../../../source/reference/grn_expr/query_syntax.txt:99
+msgid "Conditional expression"
+msgstr ""
+
+# d590f55ba23b4c9d97de4abf3078798c
+#: ../../../source/reference/grn_expr/query_syntax.txt:101
+msgid "Here is available conditional expression list."
+msgstr ""
+
+# 5746ee1963af423d8c41e04ea1f15bad
+#: ../../../source/reference/grn_expr/query_syntax.txt:106
+msgid "Full text search condition"
+msgstr ""
+
+# 9954f935ce6b4f9fbe18dce8e92a5ceb
+#: ../../../source/reference/grn_expr/query_syntax.txt:108
+msgid "Its syntax is ``keyword``."
+msgstr ""
+
+# 5b0ffdbd38a14e848fdea946fdb9b98b
+#: ../../../source/reference/grn_expr/query_syntax.txt:110
+msgid ""
+"``Full text search condition`` specifies a full text search condition "
+"against the default match columns. Match columns are full text search target "
+"columns."
+msgstr ""
+
+# e7d820900b424ff9ab20b14b7f3efd6b
+# f25152923e364669917501e5a933b773
+#: ../../../source/reference/grn_expr/query_syntax.txt:114
+#: ../../../source/reference/grn_expr/query_syntax.txt:147
+msgid ""
+"You should specify the default match columns for full text search. They can "
+"be specified by ``--match_columns`` option of :doc:`/commands/select`. If "
+"you don't specify the default match columns, this conditional expression "
+"fails."
+msgstr ""
+
+# 904c3dac92614998b5cc76f4e4c2b581
+#: ../../../source/reference/grn_expr/query_syntax.txt:119
+msgid ""
+"This conditional expression does full text search with ``keyword``. "
+"``keyword`` should not contain any spaces. If ``keyword`` contains a space "
+"such as ``search keyword``, it means two full text search conditions; "
+"``search`` and ``keyword``. If you want to specifies a keyword that contains "
+"one or more spaces, you can use ``phrase search condition`` that is "
+"described below."
+msgstr ""
+
+# f1181cd3b8004739a5f2a424e16131aa
+# 48cc974c08f845b4b67adeca0186e693
+# 2ccc5a570e694710b053a4e96d8a29a2
+# 0e9275b41d9c47e8a0d796d0cdfbe10f
+# d89939e6ff714e81a9bb2937bb807679
+# e70d5461339843769690342bb0e9e813
+# 29d38ef0a0034f8a8a4e75754f0a2951
+# 77d7e796222e4d66a33c1bdbfc1e9128
+# ead075eeb0544be1942f22e4b9c4600c
+# a9eebe1855874cc2bfdca181167ee3f8
+# dc35e1af68b043d99942ad509ba2a94c
+# ae2463dc11be48128cef2cb76dcc3204
+# d67d740f64df45508d017f7c5fceb611
+# a2039262323640608dd7caf03c96895c
+# 9b3563196a6e496fb7453c3a360d3e88
+# 64d08bf2b4f04c6a8485d41c553ef69c
+#: ../../../source/reference/grn_expr/query_syntax.txt:126
+#: ../../../source/reference/grn_expr/query_syntax.txt:159
+#: ../../../source/reference/grn_expr/query_syntax.txt:201
+#: ../../../source/reference/grn_expr/query_syntax.txt:228
+#: ../../../source/reference/grn_expr/query_syntax.txt:260
+#: ../../../source/reference/grn_expr/query_syntax.txt:292
+#: ../../../source/reference/grn_expr/query_syntax.txt:321
+#: ../../../source/reference/grn_expr/query_syntax.txt:340
+#: ../../../source/reference/grn_expr/query_syntax.txt:364
+#: ../../../source/reference/grn_expr/query_syntax.txt:388
+#: ../../../source/reference/grn_expr/query_syntax.txt:413
+#: ../../../source/reference/grn_expr/query_syntax.txt:438
+#: ../../../source/reference/grn_expr/query_syntax.txt:464
+#: ../../../source/reference/grn_expr/query_syntax.txt:487
+#: ../../../source/reference/grn_expr/query_syntax.txt:510
+#: ../../../source/reference/grn_expr/query_syntax.txt:530
+msgid "Here is a simple exmaple."
+msgstr ""
+
+# cb83e2c63e074aebb58137acc50bb566
+# ec8796033e8c42bab29476bb8e329013
+#: ../../../source/reference/grn_expr/query_syntax.txt:132
+#: ../../../source/reference/grn_expr/query_syntax.txt:207
+msgid ""
+"The expression matches records that contain a word ``fast`` in ``content`` "
+"column value."
+msgstr ""
+
+# d059abbebd9249a5a37e1cbf3d241cb6
+# e0715af09e7c4527a3b53f9252b4f07a
+#: ../../../source/reference/grn_expr/query_syntax.txt:135
+#: ../../../source/reference/grn_expr/query_syntax.txt:169
+msgid "``content`` column is the default match column."
+msgstr ""
+
+# a2e27b57afcb43769c53683e79bfb11b
+#: ../../../source/reference/grn_expr/query_syntax.txt:140
+msgid "Phrase search condition"
+msgstr ""
+
+# 02b9403c0a654aa6af7bfa67839c2697
+#: ../../../source/reference/grn_expr/query_syntax.txt:142
+msgid "Its syntax is ``\"search keyword\"``."
+msgstr ""
+
+# 548daa620da946fa81c6e735aa1ade18
+#: ../../../source/reference/grn_expr/query_syntax.txt:144
+msgid ""
+"``Phrase search condition`` specifies a phrase search condition against the "
+"default match columns."
+msgstr ""
+
+# 4284d2bea3f743e7a5f7e9d50b4f8344
+#: ../../../source/reference/grn_expr/query_syntax.txt:152
+msgid ""
+"This conditional expression does phrase search with ``search keyword``. "
+"Phrase search searches records that contain ``search`` and ``keyword`` and "
+"those terms are appeared in the same order and adjacent. Thus, ``Put a "
+"search keyword in the form`` is matched but ``Search by the keyword`` and "
+"``There is a keyword. Search by it!`` aren't matched."
+msgstr ""
+
+# 6aa6fc45e9c1495a825c2c725a1af6df
+# bed5af0505ca4cf2b3009449d56c07c4
+#: ../../../source/reference/grn_expr/query_syntax.txt:165
+#: ../../../source/reference/grn_expr/query_syntax.txt:234
+msgid ""
+"The expression matches records that contain a phrase ``I started`` in "
+"``content`` column value. ``I also started`` isn't matched because ``I`` and "
+"``started`` aren't adjacent."
+msgstr ""
+
+# 5f4b09cc042e40e0a9b1337a91b62f27
+#: ../../../source/reference/grn_expr/query_syntax.txt:172
+msgid "Full text search condition (with explicit match column)"
+msgstr ""
+
+# 3f0986aaf14948a2a05be4222e014834
+#: ../../../source/reference/grn_expr/query_syntax.txt:174
+msgid "Its syntax is ``column:@keyword``."
+msgstr ""
+
+# 255f3de7a37a4cd6bfbc2c167fb0960e
+#: ../../../source/reference/grn_expr/query_syntax.txt:176
+msgid ""
+"It's similar to ``full text search condition`` but it doesn't require the "
+"default match columns. You need to specify match column for the full text "
+"search condition by ``column:`` instead of ``--match_columns`` option of :"
+"doc:`/commands/select`."
+msgstr ""
+
+# d1ec6a9bf9e24c4badfca79f1bee1840
+#: ../../../source/reference/grn_expr/query_syntax.txt:181
+msgid ""
+"This condtional expression is useful when you want to use two or more full "
+"text search against different columns. The default match columns specified "
+"by ``--match_columns`` option can't be specified multiple times. You need to "
+"specify the second match column by this conditional expression."
+msgstr ""
+
+# b320e7c956c94772983a5cf74eda735d
+#: ../../../source/reference/grn_expr/query_syntax.txt:187
+msgid ""
+"The different between ``full text search condition`` and ``full text search "
+"condition (with explicit match column)`` is whether advanced match columns "
+"are supported or not. ``Full text search condition`` supports advanced match "
+"columns but ``full text search condition (with explicit match column)`` "
+"isn't supported. Advanced match columns has the following features:"
+msgstr ""
+
+# 40fabb96274f4dc093d78a7ca299243c
+#: ../../../source/reference/grn_expr/query_syntax.txt:194
+msgid "Weight is supported."
+msgstr ""
+
+# 541052757f9d46379f87cdf25321ea9a
+#: ../../../source/reference/grn_expr/query_syntax.txt:195
+msgid "Using multiple columns are supported."
+msgstr ""
+
+# 7181f4d25e47437eb6b4164a2b19acb7
+#: ../../../source/reference/grn_expr/query_syntax.txt:196
+msgid "Using index column as a match column is supported."
+msgstr ""
+
+# 7ce3ca70f31747829ae48a325518e5a5
+#: ../../../source/reference/grn_expr/query_syntax.txt:198
+msgid ""
+"See description of ``--match_columns`` option of :doc:`/commands/select` "
+"about them."
+msgstr ""
+
+# 137d676c75bc4ff0a653fcef22850a7c
+#: ../../../source/reference/grn_expr/query_syntax.txt:211
+msgid "Phrase search condition (with explicit match column)"
+msgstr ""
+
+# 2260a4267ebc41d09354f295fdd24bf1
+#: ../../../source/reference/grn_expr/query_syntax.txt:213
+msgid "Its syntax is ``column:@\"search keyword\"``."
+msgstr ""
+
+# 2e663ff424e34a0cbe777d62fe1e2f2c
+#: ../../../source/reference/grn_expr/query_syntax.txt:215
+msgid ""
+"It's similar to ``phrase search condition`` but it doesn't require the "
+"default match columns. You need to specify match column for the phrase "
+"search condition by ``column:`` instead of ``--match_columns`` option of :"
+"doc:`/commands/select`."
+msgstr ""
+
+# ea36adc96d564cedaefb1645da6a8632
+#: ../../../source/reference/grn_expr/query_syntax.txt:220
+msgid ""
+"The different between ``phrase search condition`` and ``phrase search "
+"condition (with explicit match column)`` is similar to between ``full text "
+"search condition`` and ``full text search condition (with explicit match "
+"column)``. ``Phrase search condition`` supports advanced match columns but "
+"``phrase search condition (with explicit match column)`` isn't supported. "
+"See description of ``full text search condition (with explicit match column)"
+"`` about advanced match columns."
+msgstr ""
+
+# 0f9e956a0c614702807ab6eddae465d9
+#: ../../../source/reference/grn_expr/query_syntax.txt:241
+msgid "Prefix search condition"
+msgstr ""
+
+# a71fb1169623477aa8b278e996cfd6bb
+#: ../../../source/reference/grn_expr/query_syntax.txt:243
+msgid "Its syntax is ``column:^value`` or ``value*``."
+msgstr ""
+
+# 32f169b69bfc4a22bf83b915b94174ee
+#: ../../../source/reference/grn_expr/query_syntax.txt:245
+msgid ""
+"This conditional expression does prefix search with ``value``. Prefix search "
+"searches records that contain a word that starts with ``value``."
+msgstr ""
+
+# 849dba5f0de64d8191fb5d71faf20e5a
+#: ../../../source/reference/grn_expr/query_syntax.txt:248
+msgid ""
+"To use fast prefix search, you need to use patricia trie table "
+"(``TABLE_PAT_KEY``) or double array trie table (``TABLE_DAT_KEY``). You can "
+"use prefix search against ``_key`` value of patricia trie table or double "
+"array trie table."
+msgstr ""
+
+# 13aa3a82dabf403fa75b765a6aeeaa15
+#: ../../../source/reference/grn_expr/query_syntax.txt:253
+msgid ""
+"Prefix search can be used with other table types but it causes all records "
+"scan. It's not problem for small records but it spends more time for large "
+"records."
+msgstr ""
+
+# 08e55642a10d43689813df3f3f60dfd1
+# 2936645dc4a54d51a5e1c43d061257c4
+# 8cbf3ff10d4046db91a2b1df6f7e1fab
+# b588d3a5f109404b89ccea2c19e66f0a
+# e3baa28d94c548f1bb1c5d6c79eeef51
+# e9fce9f68c4e43828542b58fe13299bb
+# 82f8591376ee46eab1272d3477537ac0
+# af6c6ff06d124a76bcc9bb0f80fdf78b
+#: ../../../source/reference/grn_expr/query_syntax.txt:257
+#: ../../../source/reference/grn_expr/query_syntax.txt:289
+#: ../../../source/reference/grn_expr/query_syntax.txt:318
+#: ../../../source/reference/grn_expr/query_syntax.txt:337
+#: ../../../source/reference/grn_expr/query_syntax.txt:361
+#: ../../../source/reference/grn_expr/query_syntax.txt:385
+#: ../../../source/reference/grn_expr/query_syntax.txt:410
+#: ../../../source/reference/grn_expr/query_syntax.txt:435
+msgid ""
+"It doesn't require the default match columns such as ``full text search "
+"condition`` and ``phrase search condition``."
+msgstr ""
+
+# ca3e9050167a47e798a6acfc32c27e61
+#: ../../../source/reference/grn_expr/query_syntax.txt:266
+msgid ""
+"The expression matches records that contain a word that starts with ``Goo`` "
+"in ``_key`` pseudo column value. ``Good-bye Senna`` and ``Good-bye Tritonn`` "
+"are matched with the expression."
+msgstr ""
+
+# f1bc74b5ae124b59b543dc054f935b0c
+#: ../../../source/reference/grn_expr/query_syntax.txt:273
+msgid "Suffix search condition"
+msgstr ""
+
+# 5f7f6e65826d4ae885aacafe246c32b3
+#: ../../../source/reference/grn_expr/query_syntax.txt:275
+msgid "Its syntax is ``column:$value``."
+msgstr ""
+
+# 61cddcb3b6864f2cafd285f302fe7380
+#: ../../../source/reference/grn_expr/query_syntax.txt:277
+msgid ""
+"This conditional expression does suffix search with ``value``. Suffix search "
+"searches records that contain a word that ends with ``value``."
+msgstr ""
+
+# 4037b704e0e44e6fb95114d48dc398e1
+#: ../../../source/reference/grn_expr/query_syntax.txt:280
+msgid ""
+"To use fast suffix search, you need to use patricia trie table "
+"(``TABLE_PAT_KEY``) with ``KEY_WITH_SIS`` flag. You can use suffix search "
+"against ``_key`` value of patricia trie table."
+msgstr ""
+
+# 7fb5f0f5f199413cbd39f9c2d026b049
+#: ../../../source/reference/grn_expr/query_syntax.txt:284
+msgid ""
+"Suffix search can be used with other table types or patricia trie table "
+"without ``KEY_WITH_SIS`` flag but it causes all records scan. It's not "
+"problem for small records but it spends more time for large records."
+msgstr ""
+
+# 7814ff5528564a0c96b6ef76aa557d7c
+#: ../../../source/reference/grn_expr/query_syntax.txt:307
+msgid ""
+"The expression matches records that contain a word that ends with ``oonga`` "
+"in ``_key`` pseudo column value. ``Groonga`` and ``Mroonga`` are matched "
+"with the expression."
+msgstr ""
+
+# e82b4bdcc69441f687776b010a8e464a
+#: ../../../source/reference/grn_expr/query_syntax.txt:312
+msgid "Equal condition"
+msgstr ""
+
+# eae1b7c345154f12ba48980512f8ca3f
+#: ../../../source/reference/grn_expr/query_syntax.txt:314
+msgid "Its syntax is ``column:value``."
+msgstr ""
+
+# 536e7e629b7d4be0a78aaed97095c538
+#: ../../../source/reference/grn_expr/query_syntax.txt:316
+msgid "It matches records that ``column`` value is equal to ``value``."
+msgstr ""
+
+# 5d4d55de1d404d4c98d5c61c75e86a57
+#: ../../../source/reference/grn_expr/query_syntax.txt:327
+msgid ""
+"The expression matches records that ``_key`` column value is equal to "
+"``Groonga``."
+msgstr ""
+
+# 3eb3f54e4a784bbd8ce783707e01280a
+#: ../../../source/reference/grn_expr/query_syntax.txt:331
+msgid "Not equal condition"
+msgstr ""
+
+# abe55998c9dd417790895d7ed7b016fa
+#: ../../../source/reference/grn_expr/query_syntax.txt:333
+msgid "Its syntax is ``column:!value``."
+msgstr ""
+
+# 53e782667c8f408e8b0a798b75a22823
+#: ../../../source/reference/grn_expr/query_syntax.txt:335
+msgid "It matches records that ``column`` value isn't equal to ``value``."
+msgstr ""
+
+# a2fff0da3f9949aea0117e3ff4c1bda6
+#: ../../../source/reference/grn_expr/query_syntax.txt:346
+msgid ""
+"The expression matches records that ``_key`` column value is not equal to "
+"``Groonga``."
+msgstr ""
+
+# 12e290cfe42b42a0ad2f7cf95826ed16
+#: ../../../source/reference/grn_expr/query_syntax.txt:350
+msgid "Less than condition"
+msgstr ""
+
+# 9b13b730c98c4fd9bc4d5fa3922f5793
+#: ../../../source/reference/grn_expr/query_syntax.txt:352
+msgid "Its syntax is ``column:<value``."
+msgstr ""
+
+# 0c270ba8586f45f6a9adbd60260d8c1e
+#: ../../../source/reference/grn_expr/query_syntax.txt:354
+msgid "It matches records that ``column`` value is less than ``value``."
+msgstr ""
+
+# 32e09ab1c75b49e7b7bbe6fccf300880
+# 23ca8b49a13d4d31b3421bfb7e4421a0
+# 00a175eeae674c6d81d2f072536adacd
+# 02465c2a5a294bb68ed02425dcfb7564
+#: ../../../source/reference/grn_expr/query_syntax.txt:356
+#: ../../../source/reference/grn_expr/query_syntax.txt:380
+#: ../../../source/reference/grn_expr/query_syntax.txt:405
+#: ../../../source/reference/grn_expr/query_syntax.txt:430
+msgid ""
+"If ``column`` type is numerical type such as ``Int32``, ``column`` value and "
+"``value`` are compared as number. If ``column`` type is text type such as "
+"``ShortText``, ``column`` value and ``value`` are compared as bit sequence."
+msgstr ""
+
+# 5f012ff271b04f30a5c41761949db42c
+#: ../../../source/reference/grn_expr/query_syntax.txt:370
+msgid ""
+"The expression matches records that ``n_likes`` column value is less than "
+"``10``."
+msgstr ""
+
+# e78f21d360e149da8f151d972a2f03c8
+#: ../../../source/reference/grn_expr/query_syntax.txt:374
+msgid "Greater than condition"
+msgstr ""
+
+# 7c769da85c9443c28b987c2c7f7e36f5
+#: ../../../source/reference/grn_expr/query_syntax.txt:376
+msgid "Its syntax is ``column:>value``."
+msgstr ""
+
+# a1869255686243cd8a186a3d62ede732
+#: ../../../source/reference/grn_expr/query_syntax.txt:378
+msgid "It matches records that ``column`` value is greater than ``value``."
+msgstr ""
+
+# ddd107796eb149a3b10b2bc738eee6e0
+#: ../../../source/reference/grn_expr/query_syntax.txt:394
+msgid ""
+"The expression matches records that ``n_likes`` column value is greater than "
+"``10``."
+msgstr ""
+
+# e2b40060a4194ed3b8c23f2afa54c437
+#: ../../../source/reference/grn_expr/query_syntax.txt:398
+msgid "Less than or equal to condition"
+msgstr ""
+
+# 66c0a1cab40f4036bcd91ba1cf0379e0
+#: ../../../source/reference/grn_expr/query_syntax.txt:400
+msgid "Its syntax is ``column:<=value``."
+msgstr ""
+
+# 13cca2edb1e649f2bc34a6779eb6ee4f
+#: ../../../source/reference/grn_expr/query_syntax.txt:402
+msgid ""
+"It matches records that ``column`` value is less than or equal to ``value``."
+msgstr ""
+
+# 96e9c2e62b4b46ab803c0f0d50458d46
+#: ../../../source/reference/grn_expr/query_syntax.txt:419
+msgid ""
+"The expression matches records that ``n_likes`` column value is less than or "
+"equal to ``10``."
+msgstr ""
+
+# cdd7af71112e4bf98b0150957a40ab43
+#: ../../../source/reference/grn_expr/query_syntax.txt:423
+msgid "Greater than or equal to condition"
+msgstr ""
+
+# a33fb60106d849f6be7b5adea248f971
+#: ../../../source/reference/grn_expr/query_syntax.txt:425
+msgid "Its syntax is ``column:>=value``."
+msgstr ""
+
+# a77a4b270f034c199012be5d100d6ac5
+#: ../../../source/reference/grn_expr/query_syntax.txt:427
+msgid ""
+"It matches records that ``column`` value is greater than or equal to "
+"``value``."
+msgstr ""
+
+# 0d2475358968449fa833aa1ca0c940d6
+#: ../../../source/reference/grn_expr/query_syntax.txt:444
+msgid ""
+"The expression matches records that ``n_likes`` column value is greater than "
+"or equal to ``10``."
+msgstr ""
+
+# 6e2c204a2d5c458eb11ec0e07d9888e9
+#: ../../../source/reference/grn_expr/query_syntax.txt:450
+msgid "Combined expression"
+msgstr ""
+
+# adddbbbea19c4c488dbf4241e03d299e
+#: ../../../source/reference/grn_expr/query_syntax.txt:452
+msgid "Here is available combined expression list."
+msgstr ""
+
+# 9da04004b8ea42718a81b292daf8fa5b
+#: ../../../source/reference/grn_expr/query_syntax.txt:455
+msgid "Logical OR"
+msgstr ""
+
+# 66230f79e2b74a2e811ab5924777c594
+#: ../../../source/reference/grn_expr/query_syntax.txt:457
+msgid "Its syntax is ``a OR b``."
+msgstr ""
+
+# 85ef17d4d90647cf854985cc55d0eb6a
+# 347eeb85a3d9484a9cb33931bfc79f39
+# e50c48936db84631bee69239a9f9fdd7
+#: ../../../source/reference/grn_expr/query_syntax.txt:459
+#: ../../../source/reference/grn_expr/query_syntax.txt:479
+#: ../../../source/reference/grn_expr/query_syntax.txt:502
+msgid ""
+"``a`` and ``b`` are conditional expressions, conbinded expressions or "
+"assignment expressions."
+msgstr ""
+
+# 12a8ee1d12654de3bf9960905659edaf
+#: ../../../source/reference/grn_expr/query_syntax.txt:462
+msgid "If at least one of ``a`` and ``b`` are matched, ``a OR b`` is matched."
+msgstr ""
+
+# 9eff6d1966c34ed2976bd3a9e7599953
+#: ../../../source/reference/grn_expr/query_syntax.txt:470
+msgid ""
+"The expression matches records that ``n_likes`` column value is greater than "
+"``10`` or contain a word ``senna`` in ``content`` column value."
+msgstr ""
+
+# a0dc2647b8184297afd52e6bd5556a09
+#: ../../../source/reference/grn_expr/query_syntax.txt:475
+msgid "Logical AND"
+msgstr ""
+
+# 28c02a9e3d234a79890fdb8b2ca66fad
+#: ../../../source/reference/grn_expr/query_syntax.txt:477
+msgid "Its syntax is ``a + b`` or just ``a b``."
+msgstr ""
+
+# 81023e70e50e41fcb44ce848762c0ab4
+#: ../../../source/reference/grn_expr/query_syntax.txt:482
+msgid "If both ``a`` and ``b`` are matched, ``a + b`` is matched."
+msgstr ""
+
+# 76a45710e33843cbb9fcd6d928f9725a
+#: ../../../source/reference/grn_expr/query_syntax.txt:484
+msgid ""
+"You can specify ``+`` the first expression such as ``+a``. The ``+`` is just "
+"ignored."
+msgstr ""
+
+# 9d684dc0fa17432ab2134758502536d4
+#: ../../../source/reference/grn_expr/query_syntax.txt:493
+msgid ""
+"The expression matches records that ``n_likes`` column value is greater than "
+"or equal to ``10`` and contain a word ``groonga`` in ``content`` column "
+"value."
+msgstr ""
+
+# ce8cc446faf145f087da4fa3b9334cc2
+#: ../../../source/reference/grn_expr/query_syntax.txt:498
+msgid "Logical NOT"
+msgstr ""
+
+# 209d51167e5f492198403b1b4a768514
+#: ../../../source/reference/grn_expr/query_syntax.txt:500
+msgid "Its syntax is ``a - b``."
+msgstr ""
+
+# 7b8cf1ba65f3407ba5dcfbf5d65ba2a1
+#: ../../../source/reference/grn_expr/query_syntax.txt:505
+msgid "If ``a`` is matched and ``b`` is not matched, ``a - b`` is matched."
+msgstr ""
+
+# 14ba78f58d4b4d7abdc1ee08a21539a3
+#: ../../../source/reference/grn_expr/query_syntax.txt:507
+msgid ""
+"You can not specify ``-`` the first expression such as ``-a``. It's syntax "
+"error."
+msgstr ""
+
+# 956c1a20efcf43f2812846cc980b0f76
+#: ../../../source/reference/grn_expr/query_syntax.txt:516
+msgid ""
+"The expression matches records that ``n_likes`` column value is greater than "
+"or equal to ``10`` and don't contain a word ``groonga`` in ``content`` "
+"column value."
+msgstr ""
+
+# 50e66d1cc07443d2acb774c201591e09
+#: ../../../source/reference/grn_expr/query_syntax.txt:521
+msgid "Grouping"
+msgstr ""
+
+# f39746e762d642b881128ce0b3b5dd3b
+#: ../../../source/reference/grn_expr/query_syntax.txt:523
+msgid "Its syntax is ``(...)``. ``...`` is space separated expression list."
+msgstr ""
+
+# 96e5a8caa7004fc69efdc0bbffb1e385
+#: ../../../source/reference/grn_expr/query_syntax.txt:525
+msgid ""
+"``(...)`` groups one ore more expressions and they can be processed as an "
+"expression. ``a b OR c`` means that ``a`` and ``b`` are matched or ``c`` is "
+"matched. ``a (b OR c)`` means that ``a`` and one of ``b`` and ``c`` are "
+"matched."
+msgstr ""
+
+# e43006034fd5465ab6b450d2db256e6f
+#: ../../../source/reference/grn_expr/query_syntax.txt:537
+msgid ""
+"The first expression doesn't use grouping. It matches records that ``n_likes:"
+"<5`` and ``content:@senna`` are matched or ``content:@fast`` is matched."
+msgstr ""
+
+# a0e33df4c31f4b6b97553e8b58f2b659
+#: ../../../source/reference/grn_expr/query_syntax.txt:541
+msgid ""
+"The second expression uses grouping. It matches records that ``n_likes:<5`` "
+"and one of ``content:@senna`` or ``content:@fast`` are matched."
+msgstr ""
+
+# 8d3865009a6a43578b704114e6c5bd5f
+#: ../../../source/reference/grn_expr/query_syntax.txt:546
+msgid "Assignment expression"
+msgstr ""
+
+# a0f4e794c87946cba84da78e95847f00
+#: ../../../source/reference/grn_expr/query_syntax.txt:548
+msgid ""
+"This section is for advanced users. Because assignment expression is "
+"disabled in ``--query`` option of :doc:`/commands/select`. You need to use "
+"groonga as a library instead of server or command line tool for assignment "
+"expression."
+msgstr ""
+
+# 2dfa18189fe041e480829f1fb12d8b23
+#: ../../../source/reference/grn_expr/query_syntax.txt:553
+msgid ""
+"Assignment expression in query syntax has some limitations. So you should "
+"use :doc:`/reference/grn_expr/script_syntax` instead of query syntax for "
+"assignment."
+msgstr ""
+
+# 4c8ce4361472436793bd69d1de64a34e
+#: ../../../source/reference/grn_expr/query_syntax.txt:557
+msgid ""
+"There is only one syntax for assignment expression. It's ``column:=value``."
+msgstr ""
+
+# ca7aa3eaad244710abeadb839ea298f7
+#: ../../../source/reference/grn_expr/query_syntax.txt:559
+msgid ""
+"``value`` is assigend to ``column``. ``value`` is always processed as string "
+"in query syntax. ``value`` is casted to the type of ``column`` "
+"automatically. It causes some limitations. For example, you cannot use "
+"boolean literal such as ``true`` and ``false`` for ``Bool`` type column. You "
+"need to use empty string for ``false`` but query syntax doesn't support "
+"``column:=`` syntax."
+msgstr ""
+
+# 7fd5fb6794e0475b83cfde7b8faa7afe
+#: ../../../source/reference/grn_expr/query_syntax.txt:566
+msgid "See :doc:`/reference/cast` about cast."
+msgstr ""
+
+# 726ed5e957fa4b9196fb24c831812248
+#: ../../../source/reference/grn_expr/script_syntax.txt:9
+msgid "Script Syntax"
+msgstr ""
+
+# 43ba752096bf4679b53986ba1449183e
+#: ../../../source/reference/grn_expr/script_syntax.txt:11
+msgid "TODO: revised."
+msgstr ""
+
+# 259c211ba97c4cc0885f266c850f910f
+#: ../../../source/reference/grn_expr/script_syntax.txt:13
+msgid ""
+"スクリプト構文はECMAScriptに類似した構文で条件式などを表現するための構文で"
+"す。ECMAScriptにある演算子に加えてgroonga独自の演算子を追加しています。"
+msgstr ""
+
+# 2bd26b8ca2f44ac28da1af6d83646c37
+#: ../../../source/reference/grn_expr/script_syntax.txt:15
+msgid ""
+"まず、ECMAScriptにあるような基本的な演算子を説明し、その後、groongaが追加した"
+"独自の演算子を説明します。"
+msgstr ""
+
+# f959cb853c5a4c9f9ebaa987901c3c5e
+#: ../../../source/reference/grn_expr/script_syntax.txt:18
+msgid "基本的な演算子"
+msgstr ""
+
+# 40be9b0843624cb09a81a8856e560134
+#: ../../../source/reference/grn_expr/script_syntax.txt:20
+msgid "TODO: ..."
+msgstr ""
+
+# ed337d0bcf69468dbd7d927d9e824254
+#: ../../../source/reference/grn_expr/script_syntax.txt:23
+msgid "独自の演算子"
+msgstr ""
+
+# 485202f2850549838896c988972d6e30
+#: ../../../source/reference/grn_expr/script_syntax.txt:25
+msgid ""
+"groongaは検索に特化した2項演算子を追加しています。独自の2項演算子は ``@`` ま"
+"たは ``*`` ではじまります。"
+msgstr ""
+
+# a1a56fc10e3248daa2f08c22102fe438
+#: ../../../source/reference/grn_expr/script_syntax.txt:28
+msgid "``カラム @ 値``"
+msgstr ""
+
+# 3520d974459b46bd841890858f320d53
+#: ../../../source/reference/grn_expr/script_syntax.txt:30
+msgid ""
+"``カラム`` をソースに設定している転置索引を用いて、 ``値`` で検索します。通常"
+"は全文検索になりますが、タグ検索などもこの書式で行います。 ``query`` ではデ"
+"フォルトでこの演算子を使っていることになります。"
+msgstr ""
+
+# 210eb61a2c404738b64a1560be616eff
+#: ../../../source/reference/grn_expr/script_syntax.txt:33
+msgid "``カラム @^ 値``"
+msgstr ""
+
+# 8a2974eed2694913ab6aa3d9ed665bdb
+#: ../../../source/reference/grn_expr/script_syntax.txt:35
+msgid ""
+"``カラム`` の値を ``値`` で前方一致検索します。 ``カラム`` はパトリシアツリー"
+"またはダブル配列の主キー（ ``_key`` ）でなければいけません。"
+msgstr ""
+
+# 4d10031debcb404086957302211dff6a
+#: ../../../source/reference/grn_expr/script_syntax.txt:38
+msgid "``カラム @$ 値``"
+msgstr ""
+
+# e710edf2b0444a47abdb78cdf97ac395
+#: ../../../source/reference/grn_expr/script_syntax.txt:40
+msgid "``カラム`` の値を ``値`` で後方一致検索します。"
+msgstr ""
+
+# 82a874e84cf749eab69de18a7430ee02
+# 4c8fdbe910c04000a2c11c3b61126e82
+#: ../../../source/reference/grn_expr/script_syntax.txt:42
+#: ../../../source/reference/grn_expr/script_syntax.txt:49
+msgid "未サポートです。"
+msgstr ""
+
+# 809172de6a1b49ac95c66e741ffe7a5e
+#: ../../../source/reference/grn_expr/script_syntax.txt:45
+msgid "``カラム *N \"単語1 単語2 ...\"``"
+msgstr ""
+
+# 31fd3cf9727d45e3bfaf5d4aef2f1f04
+#: ../../../source/reference/grn_expr/script_syntax.txt:47
+msgid ""
+"``カラム`` の値の中に ``単語1`` 、 ``単語2`` 、 ``...``  が近傍にある文書を検"
+"索します。（近傍検索。） ``カラム`` には全文検索用のインデックスが設定されて"
+"いなければいけません。"
+msgstr ""
+
+# 6781cdb70864463ab3377647b2efccbc
+#: ../../../source/reference/grn_expr/script_syntax.txt:52
+msgid "``カラム *S \"文書\"``"
+msgstr ""
+
+# 755342a8c88549079679df081e044250
+#: ../../../source/reference/grn_expr/script_syntax.txt:54
+msgid ""
+"``カラム`` の値が ``文書`` に類似している文書を検索します。（類似文書検"
+"索。） ``カラム`` には全文検索用のインデックスが設定されていなければいけませ"
+"ん。"
+msgstr ""
+
+# de7828f7dc9a4167adb3126dc0b49293
+#: ../../../source/reference/grn_expr/script_syntax.txt:63
+msgid "``カラム *> 重み``"
+msgstr ""
+
+# 5dc6dc81ea43484096be9acd3a3610f8
+#: ../../../source/reference/grn_expr/script_syntax.txt:65
+msgid "``カラム`` の重みを ``重み`` 分上げます。"
+msgstr ""
+
+# b0f6e884a9934c61afd6176315e41385
+# 25136dedf31841139d8b8b696f2937a4
+# 4329d41f216b4218bcc16754f6d01372
+#: ../../../source/reference/grn_expr/script_syntax.txt:67
+#: ../../../source/reference/grn_expr/script_syntax.txt:74
+#: ../../../source/reference/grn_expr/script_syntax.txt:81
+msgid "未サポート。"
+msgstr ""
+
+# 937d45bd87744ab49af3921b59713943
+#: ../../../source/reference/grn_expr/script_syntax.txt:70
+msgid "``カラム *< 重み``"
+msgstr ""
+
+# 8a0105a045224df793ff2802426b5cfc
+#: ../../../source/reference/grn_expr/script_syntax.txt:72
+msgid "``カラム`` の重みを ``重み`` 分下げます。"
+msgstr ""
+
+# 0acf30e9975d4e7cac5c1f00cad3279c
+#: ../../../source/reference/grn_expr/script_syntax.txt:77
+msgid "``カラム *~ 重み``"
+msgstr ""
+
+# 726b01dcfa6b48f9a70daf557e0a3795
+#: ../../../source/reference/grn_expr/script_syntax.txt:79
+msgid "``カラム`` がマッチした場合、文書の検索スコアを ``重み`` 分下げます。"
+msgstr ""
