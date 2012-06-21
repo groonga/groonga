@@ -20,7 +20,7 @@ SYNOPSTIS
 DESCTIPION
 ----------
 
-groonga-suggest-create-dataset creates a dataset for :doc:`/suggest`. A database has many datasets. This command just defines schea for a suggestion dataset.
+groonga-suggest-create-dataset creates a dataset for :doc:`/suggest`. A database has many datasets. This command just defines schema for a suggestion dataset.
 
 OPTIONS
 -------
