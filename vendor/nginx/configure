@@ -15,4 +15,5 @@ cd ../nginx-1.2.1/
   --conf-path="${GROONGA_HTTPD_CONF_PATH}" \
   --error-log-path="${GROONGA_HTTPD_ERROR_LOG_PATH}" \
   --http-log-path="${GROONGA_HTTPD_HTTP_LOG_PATH}" \
-  --add-module="${GROONGA_HTTPD_MODULE_PATH}"
+  --add-module="${GROONGA_HTTPD_MODULE_PATH}" \
+  --without-http_rewrite_module
