@@ -47,6 +47,9 @@ Also, you can browse Web-based adiministration tool at http://localhost:10041/.
 Configuration directives
 ------------------------
 
+The following directives can be used in the configuration file of groonga-httpd.
+By default, it's located at /etc/groonga/httpd/groonga-httpd.conf.
+
 Groonga-specific directives
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
