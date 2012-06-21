@@ -43,7 +43,7 @@ Then, execute groonga-httpd::
 To check, request a simple query.::
 
    % curl http://localhost:10041/d/status
- 
+
 Also, you can browse Web-based adiministration tool at http://localhost:10041/.
 
 Configuration directives
