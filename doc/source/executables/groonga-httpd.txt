@@ -47,4 +47,30 @@ Also, you can browse Web-based adiministration tool at http://localhost:10041/.
 Configuration directives
 ------------------------
 
-(wip...)
+Groonga-specific directives
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The following directives aren't provided by nginx. They are provided by
+groonga-httpd to configure groonga-httpd-specific directives.
+
+``groonga_database``
+""""""""""""""""""""
+
+Specifies the path to a groonga database.
+
+Performance-related directives
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The following directives are related to performance.
+
+``worker_processess``
+"""""""""""""""""""""
+
+For optimum performance, set this to be equal to the number of CPUs or cores. In
+many cases, groonga queries may be CPU-intensive work, so to fully utilize
+multi-CPU/core systems, it's essential to set this accordingly.
+
+This isn't a groonga-httpd specific directive, but an nginx's one. For details,
+see http://wiki.nginx.org/CoreModule#worker_processes.
+
+By default, this is set to 1. It is nginx's default.
