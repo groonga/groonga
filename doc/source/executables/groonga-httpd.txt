@@ -19,6 +19,8 @@ groonga-httpdにはHTML + JavaScriptで実装された管理ツールが標準�
 Synopsis
 --------
 
+::
+
  groonga-httpd [nginx options]
 
 Usage
@@ -26,22 +28,22 @@ Usage
 
 First, you'll need to edit the configuration file for groonga-httpd to specify
 database. Edit /etc/groonga/httpd/groonga-httpd.conf to enable
-groonga_database directive like this:
+groonga_database directive like this::
 
-  location /d/ {
-    groonga;
-    groonga_database /var/lib/groonga/db/db; # <= Specify actual database and
-                                             #    enable this directive
-  }
+   location /d/ {
+     groonga;
+     groonga_database /var/lib/groonga/db/db; # <= Specify actual database and
+                                              #    enable this directive
+   }
 
-Then, execute groonga-httpd
+Then, execute groonga-httpd::
 
-  % groonga-http
+   % groonga-http
 
-To check, request a simple query.
+To check, request a simple query.::
 
-  % curl http://localhost:10041/d/status
-
+   % curl http://localhost:10041/d/status
+ 
 Also, you can browse Web-based adiministration tool at http://localhost:10041/.
 
 Configuration directives
