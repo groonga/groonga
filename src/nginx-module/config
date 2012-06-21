@@ -8,7 +8,7 @@ if [ "$GROONGA_HTTPD_IN_TREE" = yes ]; then
   export PKG_CONFIG_PATH="${GROONGA_HTTPD_PKG_CONFIG_PATH}"
 
   groonga_cflags="$(pkg-config --cflags groonga) -I ${GROONGA_HTTPD_INCLUDE_PATH}"
-  groonga_libs="$(pkg-config --libs groonga) -Wl,-rpath=${GROONGA_HTTPD_LINK_PATH} -L ${GROONGA_HTTPD_LINK_PATH}"
+  groonga_libs="$(pkg-config --libs groonga) -Wl,-rpath=${GROONGA_HTTPD_RPATH} -L ${GROONGA_HTTPD_LINK_PATH}"
 
   ngx_addon_name=ngx_http_groonga_module
   HTTP_MODULES="$HTTP_MODULES ngx_http_groonga_module"
