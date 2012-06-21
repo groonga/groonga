@@ -238,7 +238,7 @@ search searches records that contain a word that starts with ``value``.
 To use fast prefix search, you need to use patricia trie table
 (``TABLE_PAT_KEY``) or double array trie table
 (``TABLE_DAT_KEY``). You can use prefix search against ``_key`` value
-of patricia trie table or double trie table.
+of patricia trie table or double trie trie table.
 
 Prefix search can be used with other table types but it causes all
 records scan. It's not problem for small records but it spends more
