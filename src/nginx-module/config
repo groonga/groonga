@@ -4,6 +4,21 @@ groonga_strip_switch()
   tail -c +3
 }
 
+if [ "$GROONGA_HTTPD_IN_TREE" = yes ]; then
+  export PKG_CONFIG_PATH="${GROONGA_HTTPD_PKG_CONFIG_PATH}"
+
+  groonga_cflags="$(pkg-config --cflags groonga) -I ${GROONGA_HTTPD_INCLUDE_PATH}"
+  groonga_libs="$(pkg-config --libs groonga) -Wl,-rpath=${GROONGA_HTTPD_LINK_PATH} -L ${GROONGA_HTTPD_LINK_PATH}"
+
+  ngx_addon_name=ngx_http_groonga_module
+  HTTP_MODULES="$HTTP_MODULES ngx_http_groonga_module"
+  NGX_ADDON_SRCS="$NGX_ADDON_SRCS $ngx_addon_dir/ngx_http_groonga_module.c"
+  CFLAGS="$CFLAGS $groonga_cflags"
+  CORE_LIBS="$CORE_LIBS $groonga_libs"
+
+  return 0
+fi
+
 groonga_cflags="$(pkg-config --cflags groonga)"
 groonga_feature_path="$(pkg-config --cflags-only-I groonga |
                         groonga_strip_switch)"

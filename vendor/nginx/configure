@@ -1,0 +1,18 @@
+set -e
+
+cd $(dirname $0)
+base_dir="$(pwd)"
+top_dir="$base_dir/../.."
+
+export GROONGA_HTTPD_IN_TREE=yes
+source "${top_dir}/groonga-httpd-conf.sh"
+
+cd ../nginx-1.2.1/
+
+./configure \
+  --prefix="${GROONGA_HTTPD_PREFIX}" \
+  --sbin-path="${GROONGA_HTTPD_BIN_PATH}" \
+  --conf-path="${GROONGA_HTTPD_CONF_PATH}" \
+  --error-log-path="${GROONGA_HTTPD_ERROR_LOG_PATH}" \
+  --http-log-path="${GROONGA_HTTPD_HTTP_LOG_PATH}" \
+  --add-module="${GROONGA_HTTPD_MODULE_PATH}"

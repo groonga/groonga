@@ -1,0 +1,32 @@
+worker_processes 1;
+
+events {
+  worker_connections 1024;
+}
+
+http {
+  include mime.types;
+  default_type application/octet-stream;
+  sendfile on;
+  keepalive_timeout 65;
+
+  server {
+    listen 10041;
+    server_name localhost;
+
+    location /d/ {
+      groonga;
+      #groonga_database /path/to/database;
+    }
+
+    location / {
+      root @GROONGA_HTTPD_DOCUMENT_ROOT@;
+      index index.html;
+    }
+
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+      root html;
+    }
+  }
+}

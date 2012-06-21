@@ -274,6 +274,7 @@ AC_CONFIG_FILES([
   test/benchmark/fixtures/Makefile
   test/benchmark/fixtures/geo-select/Makefile
   test/benchmark/lib/Makefile
+  vendor/Makefile
 ])
 
 if test "$GCC" = "yes"; then
@@ -1124,7 +1125,7 @@ AC_SUBST(examples_dictionarydir)
 
 # for document root
 GRN_DEFAULT_DOCUMENT_ROOT_BASE="html/admin"
-GRN_DEFAULT_DOCUMENT_ROOT="\$(pkgdatadir)/\$(GRN_DEFAULT_DOCUMENT_ROOT_BASE)"
+GRN_DEFAULT_DOCUMENT_ROOT="\${pkgdatadir}/\${GRN_DEFAULT_DOCUMENT_ROOT_BASE}"
 GRN_EXPANDED_DEFAULT_DOCUMENT_ROOT="\${datadir}/${PACKAGE}/${GRN_DEFAULT_DOCUMENT_ROOT_BASE}"
 GRN_DEFAULT_RELATIVE_DOCUMENT_ROOT="share/\$(PACKAGE)/\$(GRN_DEFAULT_DOCUMENT_ROOT_BASE)"
 AC_SUBST(GRN_DEFAULT_DOCUMENT_ROOT_BASE)
@@ -1155,6 +1156,16 @@ AC_ARG_WITH(groonga-github-com-path,
             [GROONGA_GITHUB_COM_PATH=""])
 AC_SUBST(GROONGA_GITHUB_COM_PATH)
 
+# nginx
+AC_ARG_ENABLE(nginx,
+  [AS_HELP_STRING([--enable-nginx],
+    [enable nginx used for groonga-httpd. [default=yes]])],
+  [enable_nginx="$enableval"],
+  [enable_nginx="auto"])
+if test "x$enable_nginx" != "xno"; then
+  AC_CONFIG_SUBDIRS([vendor/nginx])
+fi
+
 # For package
 AC_ARG_WITH(rsync-path,
             [AS_HELP_STRING([--with-rsync-path=PATH],
@@ -1166,7 +1177,7 @@ AC_SUBST(RSYNC_PATH)
 GPG_UID=m4_include(gpg_uid)
 AC_SUBST(GPG_UID)
 
-pkgsysconfdir="\$(sysconfdir)/$PACKAGE_NAME"
+pkgsysconfdir="\${sysconfdir}/$PACKAGE_NAME"
 AC_SUBST(pkgsysconfdir)
 
 GRN_CONFIG_PATH="`
@@ -1176,11 +1187,19 @@ GRN_CONFIG_PATH="`
 AC_DEFINE_UNQUOTED(GRN_CONFIG_PATH, ["$GRN_CONFIG_PATH"],
   [Default command line option configuration file.])
 
+GROONGA_HTTPD_DOCUMENT_ROOT="`
+  test \"$prefix\" = NONE && prefix=/usr/local
+  eval eval eval echo ${GRN_EXPANDED_DEFAULT_DOCUMENT_ROOT}
+`"
+AC_SUBST(GROONGA_HTTPD_DOCUMENT_ROOT)
+
 AC_OUTPUT([
   packages/rpm/centos/groonga.spec
   packages/rpm/fedora/groonga.spec
   packages/apt/debian/groonga-keyring.postrm
   groonga.pc
+  groonga-httpd-conf.sh
+  data/groonga-httpd.conf
   ])
 
 echo "$PACKAGE_NAME $PACKAGE_VERSION configuration:"
