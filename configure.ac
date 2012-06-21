@@ -1193,6 +1193,12 @@ GROONGA_HTTPD_DOCUMENT_ROOT="`
 `"
 AC_SUBST(GROONGA_HTTPD_DOCUMENT_ROOT)
 
+groonga_libs="-L\${libdir} -lgroonga"
+AC_SUBST(groonga_libs)
+
+groonga_cflags="-I\${includedir}/groonga"
+AC_SUBST(groonga_cflags)
+
 AC_OUTPUT([
   packages/rpm/centos/groonga.spec
   packages/rpm/fedora/groonga.spec

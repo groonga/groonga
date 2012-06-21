@@ -9,9 +9,11 @@ document_root=@GRN_EXPANDED_DEFAULT_DOCUMENT_ROOT@
 groonga=${bindir}/groonga@EXEEXT@
 groonga_suggest_create_dataset=${bindir}/groonga-suggest-create-dataset@EXEEXT@
 groonga_version=@GRN_VERSION@
+groonga_libs=@groonga_libs@
+groonga_cflags=@groonga_cflags@
 
 Name: Groonga
 Description: An Embeddable Fulltext Search Engine
 Version: @VERSION@
-Libs: -L${libdir} -lgroonga
-Cflags: -I${includedir}/groonga
+Libs: ${groonga_libs}
+Cflags: ${groonga_cflags}
