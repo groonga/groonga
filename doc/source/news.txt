@@ -38,7 +38,7 @@ Fixes
   by using batch mode on Mac OS X.
   [Reported by @soundkitchen]
 * Fixed not to terminate after an invalid command in client mode. [#1305]
-* Fixed a problem that '=R' is treated as 'OR'. [#1393]
+* Fixed a problem that '=R' is treated as 'OR' in --query syntax. [#1393]
 
 Thanks
 ^^^^^^
