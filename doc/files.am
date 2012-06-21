@@ -82,6 +82,14 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/commands/suggest-suggestion.log \
 	$(top_srcdir)/doc/source/example/completion-1.log \
 	$(top_srcdir)/doc/source/example/correction-1.log \
+	$(top_srcdir)/doc/source/example/functions/geo_distance_distance_ellipsoid.log \
+	$(top_srcdir)/doc/source/example/functions/geo_distance_distance_rectangle.log \
+	$(top_srcdir)/doc/source/example/functions/geo_distance_distance_sphere.log \
+	$(top_srcdir)/doc/source/example/functions/geo_distance_location_ellipsoid.log \
+	$(top_srcdir)/doc/source/example/functions/geo_distance_location_rectangle.log \
+	$(top_srcdir)/doc/source/example/functions/geo_distance_location_sphere.log \
+	$(top_srcdir)/doc/source/example/functions/geo_distance_setup_distance.log \
+	$(top_srcdir)/doc/source/example/functions/geo_distance_setup_location.log \
 	$(top_srcdir)/doc/source/example/indexing-data.log \
 	$(top_srcdir)/doc/source/example/indexing-offline-index-construction.log \
 	$(top_srcdir)/doc/source/example/indexing-online-index-construction.log \
@@ -291,6 +299,8 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/pseudo_column.txt \
 	$(top_srcdir)/doc/source/rdoc.py \
 	$(top_srcdir)/doc/source/reference.txt \
+	$(top_srcdir)/doc/source/reference/api.txt \
+	$(top_srcdir)/doc/source/reference/api/grn_expr.txt \
 	$(top_srcdir)/doc/source/reference/cast.txt \
 	$(top_srcdir)/doc/source/reference/grn_expr.txt \
 	$(top_srcdir)/doc/source/reference/grn_expr/query_syntax.txt \
@@ -418,6 +428,14 @@ source_files_relative_from_doc_dir = \
 	source/example/commands/suggest-suggestion.log \
 	source/example/completion-1.log \
 	source/example/correction-1.log \
+	source/example/functions/geo_distance_distance_ellipsoid.log \
+	source/example/functions/geo_distance_distance_rectangle.log \
+	source/example/functions/geo_distance_distance_sphere.log \
+	source/example/functions/geo_distance_location_ellipsoid.log \
+	source/example/functions/geo_distance_location_rectangle.log \
+	source/example/functions/geo_distance_location_sphere.log \
+	source/example/functions/geo_distance_setup_distance.log \
+	source/example/functions/geo_distance_setup_location.log \
 	source/example/indexing-data.log \
 	source/example/indexing-offline-index-construction.log \
 	source/example/indexing-online-index-construction.log \
@@ -627,6 +645,8 @@ source_files_relative_from_doc_dir = \
 	source/pseudo_column.txt \
 	source/rdoc.py \
 	source/reference.txt \
+	source/reference/api.txt \
+	source/reference/api/grn_expr.txt \
 	source/reference/cast.txt \
 	source/reference/grn_expr.txt \
 	source/reference/grn_expr/query_syntax.txt \
@@ -861,6 +881,8 @@ html_files_relative_from_locale_dir = \
 	html/_sources/output.txt \
 	html/_sources/pseudo_column.txt \
 	html/_sources/reference.txt \
+	html/_sources/reference/api.txt \
+	html/_sources/reference/api/grn_expr.txt \
 	html/_sources/reference/cast.txt \
 	html/_sources/reference/grn_expr.txt \
 	html/_sources/reference/grn_expr/query_syntax.txt \
@@ -992,6 +1014,8 @@ html_files_relative_from_locale_dir = \
 	html/output.html \
 	html/pseudo_column.html \
 	html/reference.html \
+	html/reference/api.html \
+	html/reference/api/grn_expr.html \
 	html/reference/cast.html \
 	html/reference/grn_expr.html \
 	html/reference/grn_expr/query_syntax.html \
