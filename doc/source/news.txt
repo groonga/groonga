@@ -20,14 +20,14 @@ Improvements
   argument in northern hemisphere. [#1386] [#1387] [#1388] [#1389]
 * [doc] Added a document about :doc:`/development/travis-ci` integration.
 * [doc] Added descriptions about full text search and phrase search.
-  See :ref:`full_text_search_condition` and :ref:`phrase_search_condition`
+  See :ref:`full-text-search-condition` and :ref:`phrase-search-condition`
   about detail.
 * [doc] Added descriptions about comparison conditions.
-  See :ref:`conditional_expression` about detail.
+  See :ref:`conditional-expression` about detail.
 * [doc] Added examples for :doc:`/reference/grn_expr/query_syntax`.
-* [doc] Added descriptions about :ref:`combined_expression`.
-* [doc] Added descriptions about :ref:`prefix_search_condition` and
-  :ref:`suffix_search_condition`.
+* [doc] Added descriptions about :ref:`combined-expression`.
+* [doc] Added descriptions about :ref:`prefix-search-condition` and
+  :ref:`suffix-search-condition`.
 * Supported suffix search by index.
 * [doc] Added a document about :doc:`/reference/grn_expr`.
 

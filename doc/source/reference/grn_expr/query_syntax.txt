@@ -93,14 +93,14 @@ You need escape ``'`` as ``\'`` in ``'...'`` quote syntax. For
 example, ``Alice's brother (Bob)`` can be quoted ``"Alice's brother
 (Bob)"`` or ``'Alice\'s brother (Bob)'``.
 
-.. _conditional_expression:
+.. _conditional-expression:
 
 Conditional expression
 ----------------------
 
 Here is available conditional expression list.
 
-.. _full_text_search_condition:
+.. _full-text-search-condition:
 
 Full text search condition
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -134,7 +134,7 @@ The expression matches records that contain a word ``fast`` in
 
 ``content`` column is the default match column.
 
-.. _phrase_search_condition:
+.. _phrase-search-condition:
 
 Phrase search condition
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -235,7 +235,7 @@ The expression matches records that contain a phrase ``I started`` in
 ``content`` column value. ``I also started`` isn't matched because
 ``I`` and ``started`` aren't adjacent.
 
-.. _prefix_search_condition:
+.. _prefix-search-condition:
 
 Prefix search condition
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -267,7 +267,7 @@ The expression matches records that contain a word that starts with
 ``Goo`` in ``_key`` pseudo column value. ``Good-bye Senna`` and
 ``Good-bye Tritonn`` are matched with the expression.
 
-.. _suffix_search_condition:
+.. _suffix-search-condition:
 
 Suffix search condition
 ^^^^^^^^^^^^^^^^^^^^^^^
