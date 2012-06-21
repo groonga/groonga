@@ -391,6 +391,8 @@ See :doc:`/reference/grn_expr/script_syntax` for other operators.
 Advanced search parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+.. _match-escalation-threshold:
+
 ``match_escalation_threshold``
 """"""""""""""""""""""""""""""
 
