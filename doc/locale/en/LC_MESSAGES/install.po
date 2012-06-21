@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 2.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-21 17:13\n"
+"POT-Creation-Date: 2012-06-21 17:55\n"
 "PO-Revision-Date: 2012-04-28 11:38+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -1076,86 +1076,3 @@ msgid ""
 "\\bin\\groonga.exe``."
 msgstr ""
 
-# 19fd17706b744bbf9c6077fa58fcab8d
-#~ msgid ""
-#~ "There are some `Munin <http://munin-monitoring.org/>`_ plugins in groonga "
-#~ "package. You need to specify `--with-munin-plugins` option if you want to "
-#~ "install them."
-#~ msgstr ""
-#~ "There are some `Munin <http://munin-monitoring.org/>`_ plugins in groonga "
-#~ "package. You need to specify `--with-munin-plugins` option if you want to "
-#~ "install them."
-
-# b1e01a0daa41405a9d687b48c6a6d281
-#~ msgid ""
-#~ "The `--prefix` option specifies the path to install groonga. If you don't "
-#~ "specify the install path, \"/usr/local\" is used. Please specify \"/usr\" "
-#~ "if you are not familiar with environment variables such as "
-#~ "LD_LIBRARY_PATH."
-#~ msgstr ""
-#~ "The `--prefix` option specifies the path to install groonga. If you don't "
-#~ "specify the install path, \"/usr/local\" is used. Please specify \"/usr\" "
-#~ "if you are not familiar with environment variables such as "
-#~ "LD_LIBRARY_PATH."
-
-# bdec343fdef64190850c67302139ee83
-#~ msgid ""
-#~ "Then, download a tar.gz file from `packages.groonga.org/source/ <http://"
-#~ "packages.groonga.org/source/groonga/>`_ and extract it. After that, "
-#~ "please run the following command to install groonga."
-#~ msgstr ""
-#~ "Then, download a tar.gz file from `packages.groonga.org/source/ <http://"
-#~ "packages.groonga.org/source/groonga/>`_ and extract it. After that, "
-#~ "please run the following command to install groonga."
-
-# dba899df1ff04191a70fdf77b9b6b066
-#~ msgid ""
-#~ "If you want to use a morphological analyzer for tokenization in full-text "
-#~ "indexing, please install `MeCab <http://mecab.sourceforge.net/>`_ before "
-#~ "installing groonga."
-#~ msgstr ""
-#~ "If you want to use a morphological analyzer for tokenization in full-text "
-#~ "indexing, please install `MeCab <http://mecab.sourceforge.net/>`_ before "
-#~ "installing groonga."
-
-# 5598fef05cff42478eb33ac4a5d233e5
-#~ msgid ""
-#~ "You just download an installer (.exe file) from `packages.groonga.org/"
-#~ "windows/ <http://packages.groonga.org/windows/groonga/>`_ and execute it."
-#~ msgstr ""
-#~ "You just download an installer (.exe file) from `packages.groonga.org/"
-#~ "windows/ <http://packages.groonga.org/windows/groonga/>`_ and execute it."
-
-# 419c388b6ec6482ebe17ef5b03ab73fb
-#~ msgid "Windows (Installer)"
-#~ msgstr "Windows (Installer)"
-
-# 21883879a42244b2aa2b937bf6a1fdbe
-#~ msgid "Mac OS X (Homebrew)"
-#~ msgstr "Mac OS X (Homebrew)"
-
-# eff06608d0a44762ad22ee06de537a08
-#~ msgid "Mac OS X (MacPorts)"
-#~ msgstr "Mac OS X (MacPorts)"
-
-# 3bd6451be6584979a28d31c8d9dd55a4
-#~ msgid "Enable Repoforge (RPMforge) repository on i686 environment::"
-#~ msgstr "Enable Repoforge (RPMforge) repository on i686 environment::"
-
-# 6a2f2857c221494faeb2085dcaa3cf54
-# 6a2f2857c221494faeb2085dcaa3cf54
-# 6a2f2857c221494faeb2085dcaa3cf54
-#~ msgid ""
-#~ "You'll need to enable the universe repository of Ubuntu to install "
-#~ "groonga. The following describes how to do it."
-#~ msgstr ""
-#~ "You'll need to enable the universe repository of Ubuntu to install "
-#~ "groonga. The following describes how to do it."
-
-# aadfb6db92ad43d68043cd8fa948ba4b
-#~ msgid "Debian GNU/Linux wheezy"
-#~ msgstr "Debian GNU/Linux wheezy"
-
-# bdc37ce6b77740c0a5867da09b102933
-#~ msgid "Debian GNU/Linux squeeze"
-#~ msgstr "Debian GNU/Linux squeeze"

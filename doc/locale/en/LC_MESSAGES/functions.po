@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 2.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-21 17:13\n"
+"POT-Creation-Date: 2012-06-21 17:55\n"
 "PO-Revision-Date: 2012-04-28 11:37+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -900,52 +900,3 @@ msgstr ""
 msgid "0 と max の間の数を表すInt32型の値を返します。"
 msgstr "0 と max の間の数を表すInt32型の値を返します。"
 
-# 97c3606ba86345df82f0092b57929701
-#~ msgid "指定した2点の距離をFloat型の値(単位:メートル)として返します。"
-#~ msgstr "指定した2点の距離をFloat型の値(単位:メートル)として返します。"
-
-# 67f8a6a6e3f4452c83a168da1fc57354
-#~ msgid ""
-#~ "距離を求めるために地形をどのように近似するかを指定します。指定できる値は以"
-#~ "下の通りです。"
-#~ msgstr ""
-#~ "距離を求めるために地形をどのように近似するかを指定します。指定できる値は以"
-#~ "下の通りです。"
-
-# 33d3a8740f704be8b250e01917f835ec
-#~ msgid ""
-#~ "距離を求める2点のうちもう一つを指定します。GeoPoint型の値、あるいは座標を"
-#~ "示す文字列を指定できます。"
-#~ msgstr ""
-#~ "距離を求める2点のうちもう一つを指定します。GeoPoint型の値、あるいは座標を"
-#~ "示す文字列を指定できます。"
-
-# 05af13bb759d4f4db27ebc8633900148
-#~ msgid ""
-#~ "距離を求める2点のうち一つを指定します。GeoPoint型の値を指定できます。 [#]_"
-#~ msgstr ""
-#~ "距離を求める2点のうち一つを指定します。GeoPoint型の値を指定できます。 [#]_"
-
-# b7ec08174a0e4b5094dd31c858e624d8
-#~ msgid "... note::"
-#~ msgstr "... note::"
-
-# 8c9b9c81ed2947bfa3d5eb2144183143
-#~ msgid ""
-#~ "geo_distance() 関数は、point1に指定した座標とpoint2に指定した座標の間の距"
-#~ "離(近似値)を求めます。"
-#~ msgstr ""
-#~ "geo_distance() 関数は、point1に指定した座標とpoint2に指定した座標の間の距"
-#~ "離(近似値)を求めます。"
-
-# f05ed89dad7f477ca346c3328d304bc3
-#~ msgid ""
-#~ "groonga組込関数の一つであるgeo_distanceについて説明します。組込関数は、"
-#~ "script形式のgrn_expr中で呼び出すことができます。"
-#~ msgstr ""
-#~ "groonga組込関数の一つであるgeo_distanceについて説明します。組込関数は、"
-#~ "script形式のgrn_expr中で呼び出すことができます。"
-
-# 368983a91a1e4a5a8abe61e81f09e425
-#~ msgid "geo_distance - 指定した2点の距離を計算する"
-#~ msgstr "geo_distance - 指定した2点の距離を計算する"

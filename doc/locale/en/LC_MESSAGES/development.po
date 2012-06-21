@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 2.0.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-21 17:13\n"
+"POT-Creation-Date: 2012-06-21 17:55\n"
 "PO-Revision-Date: 2012-06-09 22:02+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -161,34 +161,3 @@ msgstr ""
 "`.travis.yml for nroonga <https://github.com/nroonga/nroonga/blob/master/."
 "travis.yml>`_"
 
-# 62a1c63ae3fb49378582fcd3a592d977
-#~ msgid ""
-#~ "See `Travis CI: Conifugration your Travis CI build with .travis.yml "
-#~ "<http://about.travis-ci.org/docs/user/build-configuration/>`_ for more "
-#~ "details."
-#~ msgstr ""
-#~ "See `Travis CI: Conifugration your Travis CI build with .travis.yml "
-#~ "<http://about.travis-ci.org/docs/user/build-configuration/>`_ for more "
-#~ "details."
-
-# 6b8e8af7968d4f15a1ede39fbee0178c
-#~ msgid ""
-#~ "See `Travis CI: About Travis CI Environment <http://about.travis-ci.org/"
-#~ "docs/user/ci-environment/>`_ for more details."
-#~ msgstr ""
-#~ "See `Travis CI: About Travis CI Environment <http://about.travis-ci.org/"
-#~ "docs/user/ci-environment/>`_ for more details."
-
-# 1f58f8e068a04d1880aa787f2b6f1de9
-#~ msgid "Footnotes"
-#~ msgstr "Footnotes"
-
-# 2c2ebf8fe6804bf5ae1abc8f6d8b163e
-#~ msgid ""
-#~ "`rroonga <http://groonga.rubyforge.org/#about-rroonga>`_ * `rroonga on "
-#~ "Travis CI <http://travis-ci.org/#!/ranguba/rroonga>`_ * `.travis.yml for "
-#~ "rroonga <https://github.com/ranguba/rroonga/blob/master/.travis.yml>`_"
-#~ msgstr ""
-#~ "`rroonga <http://groonga.rubyforge.org/#about-rroonga>`_ * `rroonga on "
-#~ "Travis CI <http://travis-ci.org/#!/ranguba/rroonga>`_ * `.travis.yml for "
-#~ "rroonga <https://github.com/ranguba/rroonga/blob/master/.travis.yml>`_"
