@@ -35,10 +35,10 @@ Fixes
 ^^^^^
 
 * Fixed a problem that display of command prompt changes to not intended state
-  by using batch mode on Mac OS X. *FIXME*
+  by using batch mode on Mac OS X.
   [Reported by @soundkitchen]
 * Fixed not to terminate after an invalid command in client mode. [#1305]
-* Fixed a problem that '=R' is treated as 'OR'. [#1393] *FIXME*
+* Fixed a problem that '=R' is treated as 'OR'. [#1393]
 
 Thanks
 ^^^^^^
