@@ -1181,7 +1181,7 @@ pkgsysconfdir="\${sysconfdir}/$PACKAGE_NAME"
 AC_SUBST(pkgsysconfdir)
 
 GRN_CONFIG_PATH="`
-  test \"$prefix\" = NONE && prefix=
+  test \"$prefix\" = NONE && prefix=/usr/local
   eval echo ${sysconfdir}/groonga/groonga.conf
 `"
 AC_DEFINE_UNQUOTED(GRN_CONFIG_PATH, ["$GRN_CONFIG_PATH"],
