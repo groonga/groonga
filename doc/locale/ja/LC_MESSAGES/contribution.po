@@ -2049,31 +2049,29 @@ msgid "How to report a bug"
 msgstr "バグレポートの送り方"
 
 #: ../../../source/contribution/report.txt:8
-#, fuzzy
 msgid "There are two ways to report a bug:"
-msgstr "バグレポートの送り方"
+msgstr "バグレポートを送るには2つやり方があります:"
 
 # 2b09d78c78f74da7b02228a8e7023e3f
 # b994167e37994e92815c339b319ef288
 #: ../../../source/contribution/report.txt:10
 #: ../../../source/contribution/report.txt:16
 msgid "Submit a bug to the issue tracker"
-msgstr ""
+msgstr "課題追跡システムへ登録する"
 
 # fc3befd2d89e4df2be38ceffced66476
 # eb1660cdf36d482bb3ebdf796812e6dd
 #: ../../../source/contribution/report.txt:11
 #: ../../../source/contribution/report.txt:25
 msgid "Report a bug to the mailing list"
-msgstr ""
+msgstr "メーリングリストへ報告する"
 
 # 43a66d6c6b404281a223a81077bae313
 #: ../../../source/contribution/report.txt:13
 msgid "You can use either way It makes no difference to us."
-msgstr ""
+msgstr "どちらのやり方でも大丈夫です。"
 
 #: ../../../source/contribution/report.txt:18
-#, fuzzy
 msgid ""
 "Groonga project has two issue tracking systems, `Redmine <http://redmine."
 "groonga.org/projects/groonga/issues>`_ and `GitHub issue tracker <https://"
@@ -2091,4 +2089,5 @@ msgstr ""
 msgid ""
 "Groonga project has :doc:`/community` for discussing about groonga. Please "
 "send a mail that describes a bug."
-msgstr ""
+msgstr "groongaプロジェクトではgroongaについて議論するための :doc:`/community` "
+"があります。バグを説明したメールを送ってください。"
