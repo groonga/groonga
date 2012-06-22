@@ -1,0 +1,2 @@
+table_create bookmarks TABLE_DAT_KEY
+table_list
