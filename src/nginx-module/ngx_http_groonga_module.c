@@ -48,8 +48,6 @@ static ngx_command_t ngx_http_groonga_commands[] = {
   ngx_null_command
 };
 
-static const char content_type[] = "application/json";
-
 static void *ngx_http_groonga_create_loc_conf(ngx_conf_t *cf);
 static char *ngx_http_groonga_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child);
 
@@ -139,6 +137,7 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
   unsigned char *body_data;
 
   grn_obj head, body, foot;
+  const char *content_type;
 
   ngx_http_groonga_loc_conf_t *loc_conf;
   loc_conf = ngx_http_get_module_loc_conf(r, ngx_http_groonga_module);
@@ -196,7 +195,8 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
   }
 
   /* set the 'Content-type' header */
-  r->headers_out.content_type.len = sizeof(content_type) - 1;
+  content_type = grn_ctx_get_mime_type(context);
+  r->headers_out.content_type.len = strlen(content_type);
   r->headers_out.content_type.data = (u_char *) content_type;
 
   /* allocate buffers for a response body */
