@@ -30,6 +30,8 @@ Improvements
   :ref:`suffix-search-condition`.
 * Supported suffix search by index.
 * [doc] Added a document about :doc:`/reference/grn_expr`.
+* Supported JSON library installed by RubyGems [GitHub#17]
+  [Patch by IWAI, Masaharu]
 
 Fixes
 ^^^^^
