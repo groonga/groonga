@@ -2,6 +2,8 @@
 
 .. highlightlang:: none
 
+.. _groonga-http-service:
+
 groonga HTTPサービス
 ====================
 

@@ -8,7 +8,7 @@ groonga-httpd
 Summary
 -------
 
-groonga-httpd is an HTTP groonga server. It functions as same as groonga-http.
+groonga-httpd is an HTTP groonga server. It functions as same as :ref:`groonga-http-service`.
 The difference is that groonga-httpd processes HTTP requests by embedded nginx.
 On the other hand, groonga-http does by a minimal built-in HTTP server. All
 standards-compilicance and features provided by nginx is also available in
