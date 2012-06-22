@@ -49,7 +49,9 @@ static ngx_command_t ngx_http_groonga_commands[] = {
 };
 
 static void *ngx_http_groonga_create_loc_conf(ngx_conf_t *cf);
-static char *ngx_http_groonga_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child);
+static char *ngx_http_groonga_merge_loc_conf(ngx_conf_t *cf,
+                                             void *parent,
+                                             void *child);
 
 static ngx_http_module_t ngx_http_groonga_module_ctx = {
   NULL,                          /* preconfiguration */
@@ -198,7 +200,10 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
   grn_ctx_recv_handler_set(context,
                            ngx_http_groonga_context_receive_handler,
                            (void *)&output);
-  grn_ctx_send(context, (char *)r->unparsed_uri.data, r->unparsed_uri.len, GRN_NO_FLAGS);
+  grn_ctx_send(context,
+               (char *)r->unparsed_uri.data,
+               r->unparsed_uri.len,
+               GRN_NO_FLAGS);
   rc = ngx_http_groonga_context_check(context);
   if (rc != NGX_OK) {
     return rc;
@@ -254,7 +259,9 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
 
   /* set the status line */
   r->headers_out.status = NGX_HTTP_OK;
-  r->headers_out.content_length_n = GRN_TEXT_LEN(&output.head) + GRN_TEXT_LEN(&output.body) + GRN_TEXT_LEN(&output.foot);
+  r->headers_out.content_length_n = GRN_TEXT_LEN(&output.head) +
+                                    GRN_TEXT_LEN(&output.body) +
+                                    GRN_TEXT_LEN(&output.foot);
 
   /* send the headers of your response */
   rc = ngx_http_send_header(r);
