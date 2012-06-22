@@ -142,9 +142,17 @@ ngx_http_groonga_context_receive_handler(grn_ctx *context,
 
     if (flags == GRN_CTX_QUIT) {
       ngx_int_t ngx_rc;
+      ngx_int_t ngx_pid;
+
+      if (ngx_process == NGX_PROCESS_SINGLE) {
+        ngx_pid = getpid();
+      } else {
+        ngx_pid = getppid();
+      }
+
       ngx_rc = ngx_os_signal_process((ngx_cycle_t*)ngx_cycle,
                                      "stop",
-                                     getppid());
+                                     ngx_pid);
       if (ngx_rc == NGX_OK) {
         context->stat &= ~GRN_CTX_QUIT;
         grn_ctx_recv(context, &result, &result_size, &flags);
