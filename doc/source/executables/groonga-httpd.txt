@@ -14,7 +14,7 @@ On the other hand, groonga-http does by a minimal built-in HTTP server. All
 standards-compilicance and features provided by nginx is also available in
 groonga-httpd. For details about nginx, see http://www.nginx.org/
 
-groonga-httpdにはHTML + JavaScriptで実装された管理ツールが標準で付属しています。ウェブブラウザでhttp://hostname:port/にアクセスすると、管理ツールを利用できます。
+groonga-httpd has an Web-based adiministration tool implemented with HTML and JavaScript. You can access to it via http://hostname:port/.
 
 Synopsis
 --------
