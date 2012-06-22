@@ -319,10 +319,8 @@ ngx_http_groonga_init_module(ngx_cycle_t *cycle)
 {
   grn_rc rc;
 
-  printf("grn_init() is called\n");
   rc = grn_init();
   if (rc) {
-    printf("grn_init() failed..\n");
     return NGX_ERROR;
   }
 
@@ -334,10 +332,8 @@ ngx_http_groonga_exit_master(ngx_cycle_t *cycle)
 {
   grn_rc rc;
 
-  printf("grn_fin() is called\n");
   rc = grn_fin();
   if (rc) {
-    printf("grn_fin() failed..\n");
     /* there is nothing we can at this situation... */
   }
 
