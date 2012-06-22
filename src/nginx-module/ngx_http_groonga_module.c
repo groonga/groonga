@@ -110,6 +110,7 @@ ngx_http_groonga_grn_obj_to_ngx_buf(ngx_pool_t *pool, grn_obj *object)
   return buffer;
 }
 
+#define GRN_NO_FLAGS 0
 GRN_API void grn_ctx_recv_handler_set(grn_ctx *,
                                       void (*func)(grn_ctx *, int, void *),
                                       void *func_arg);
@@ -126,16 +127,16 @@ ngx_http_groonga_context_receive_handler(grn_ctx *context,
   if (context && context->impl && (flags & GRN_CTX_TAIL)) {
     char *result = NULL;
     unsigned int result_size = 0;
-    int flags = 0;
+    int flags = GRN_NO_FLAGS;
     grn_ctx_recv(context, &result, &result_size, &flags);
 
     if (result_size || context->rc) {
       ngx_http_groonga_output_t *output =
         (ngx_http_groonga_output_t *)callback_data;
 
-      GRN_TEXT_INIT(&output->head, 0);
-      GRN_TEXT_INIT(&output->body, 0);
-      GRN_TEXT_INIT(&output->foot, 0);
+      GRN_TEXT_INIT(&output->head, GRN_NO_FLAGS);
+      GRN_TEXT_INIT(&output->body, GRN_NO_FLAGS);
+      GRN_TEXT_INIT(&output->foot, GRN_NO_FLAGS);
 
       GRN_TEXT_SET(context,
                    &output->body,
@@ -156,8 +157,6 @@ ngx_http_groonga_context_receive_handler(grn_ctx *context,
 static ngx_int_t
 ngx_http_groonga_handler(ngx_http_request_t *r)
 {
-  static const int no_flags = 0;
-
   ngx_int_t    rc;
   ngx_buf_t   *head_buf, *body_buf, *foot_buf;
   ngx_chain_t  head_chain, body_chain, foot_chain;
@@ -177,7 +176,7 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
   if (!loc_conf->global_context) {
     context = malloc(sizeof(grn_ctx));
 
-    grn_ctx_init(context, no_flags);
+    grn_ctx_init(context, GRN_NO_FLAGS);
 
     if (!loc_conf->database_cstr) {
       loc_conf->database_cstr = ngx_str_null_terminate(&loc_conf->database);
@@ -200,7 +199,7 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
   grn_ctx_recv_handler_set(context,
                            ngx_http_groonga_context_receive_handler,
                            (void *)&output);
-  grn_ctx_send(context, (char *)r->unparsed_uri.data, r->unparsed_uri.len, no_flags);
+  grn_ctx_send(context, (char *)r->unparsed_uri.data, r->unparsed_uri.len, GRN_NO_FLAGS);
   rc = ngx_http_groonga_context_check(context);
   if (rc != NGX_OK) {
     return rc;
