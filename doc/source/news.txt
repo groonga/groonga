@@ -46,6 +46,7 @@ Thanks
 ^^^^^^
 
 * @soundkitchen
+* IWAI, Masaharu
 
 .. _release-2-0-3:
 
