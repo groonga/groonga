@@ -2,14 +2,15 @@
 # Copyright (C) 2009-2011, Brazil, Inc
 # This file is distributed under the same license as the groonga package.
 # Kouhei Sutou <kou@clear-code.com>, 2011.
+# Ryo Onodera <onodera@clear-code.com>, 2012.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.3\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-06-22 18:14\n"
-"PO-Revision-Date: 2012-05-24 16:35+0900\n"
-"Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
+"PO-Revision-Date: 2012-06-22 18:37+0900\n"
+"Last-Translator: Ryo Onodera <onodera@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
@@ -589,7 +590,7 @@ msgstr ""
 # 909fc52b77cf4244b8ee8f95ca993b33
 #: ../../../source/executables/groonga-httpd.txt:9
 msgid "Summary"
-msgstr ""
+msgstr "概要"
 
 # 29f8fdc647b946d5974de3fba91f88df
 #: ../../../source/executables/groonga-httpd.txt:11
@@ -601,6 +602,12 @@ msgid ""
 "provided by nginx is also available in groonga-httpd. For details about "
 "nginx, see http://www.nginx.org/"
 msgstr ""
+"groonga-httpdはHTTPのgroongaサーバーです。 機能的には、 :ref:`groonga-http-"
+"service` と同じになっています。両者の違いは、groonga-httpは、HTTPリクエストを"
+"内蔵された必要最低限のHTTPサーバーで処理するのに対し、groonga-httpdはnginxを"
+"埋め込んで処理していることです。 groonga-httpdでは、nginxが準拠しているHTTPの"
+"仕様と機能が全て利用できます。nginxの詳細については、http://www.nginx.org/を"
+"参照してください。"
 
 # 8af2985c1c9d4763aa130b6cbe30ef7e
 #: ../../../source/executables/groonga-httpd.txt:17
@@ -608,11 +615,14 @@ msgid ""
 "groonga-httpd has an Web-based adiministration tool implemented with HTML "
 "and JavaScript. You can access to it via http://hostname:port/."
 msgstr ""
+"groonga-httpdにはHTML + JavaScriptで実装された管理ツールが標準で付属していま"
+"す。ウェブブラウザでhttp://hostname:port/にアクセスすると、管理ツールを利用で"
+"きます。"
 
 # d4b690f7a4614baaa6dc658020f511fd
 #: ../../../source/executables/groonga-httpd.txt:20
 msgid "Synopsis"
-msgstr ""
+msgstr "書式"
 
 # 09d40eac91774db29b40ff7e960663da
 #: ../../../source/executables/groonga-httpd.txt:27
