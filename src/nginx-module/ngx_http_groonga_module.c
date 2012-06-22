@@ -93,17 +93,6 @@ ngx_str_null_terminate(const ngx_str_t *string) {
   return result;
 }
 
-static ngx_int_t
-ngx_http_groonga_context_receive(grn_ctx *context, char **result, unsigned int *result_size)
-{
-  ngx_int_t rc;
-
-  int flags = 0;
-  grn_ctx_recv(context, result, result_size, &flags);
-  rc = ngx_http_groonga_context_check(context);
-  return rc;
-}
-
 static ngx_buf_t *
 ngx_http_groonga_grn_obj_to_ngx_buf(ngx_pool_t *pool, grn_obj *object)
 {
@@ -121,6 +110,49 @@ ngx_http_groonga_grn_obj_to_ngx_buf(ngx_pool_t *pool, grn_obj *object)
   return buffer;
 }
 
+GRN_API void grn_ctx_recv_handler_set(grn_ctx *,
+                                      void (*func)(grn_ctx *, int, void *),
+                                      void *func_arg);
+
+typedef struct {
+  grn_obj head, body, foot;
+} ngx_http_groonga_output_t;
+
+static void
+ngx_http_groonga_context_receive_handler(grn_ctx *context,
+                                         int flags,
+                                         void *callback_data)
+{
+  if (context && context->impl && (flags & GRN_CTX_TAIL)) {
+    char *result = NULL;
+    unsigned int result_size = 0;
+    int flags = 0;
+    grn_ctx_recv(context, &result, &result_size, &flags);
+
+    if (result_size || context->rc) {
+      ngx_http_groonga_output_t *output =
+        (ngx_http_groonga_output_t *)callback_data;
+
+      GRN_TEXT_INIT(&output->head, 0);
+      GRN_TEXT_INIT(&output->body, 0);
+      GRN_TEXT_INIT(&output->foot, 0);
+
+      GRN_TEXT_SET(context,
+                   &output->body,
+                   result,
+                   result_size);
+
+      grn_output_envelope(context,
+                          context->rc,
+                          &output->head,
+                          &output->body,
+                          &output->foot,
+                          NULL,
+                          0);
+    }
+  }
+}
+
 static ngx_int_t
 ngx_http_groonga_handler(ngx_http_request_t *r)
 {
@@ -136,7 +168,7 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
   unsigned int result_size = 0;
   unsigned char *body_data;
 
-  grn_obj head, body, foot;
+  ngx_http_groonga_output_t output;
   const char *content_type;
 
   ngx_http_groonga_loc_conf_t *loc_conf;
@@ -165,13 +197,11 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
   printf("version: %s\n", grn_get_version());
   printf("uri: %.*s\n", (int)r->unparsed_uri.len, r->unparsed_uri.data);
 
+  grn_ctx_recv_handler_set(context,
+                           ngx_http_groonga_context_receive_handler,
+                           (void *)&output);
   grn_ctx_send(context, (char *)r->unparsed_uri.data, r->unparsed_uri.len, no_flags);
   rc = ngx_http_groonga_context_check(context);
-  if (rc != NGX_OK) {
-    return rc;
-  }
-
-  rc = ngx_http_groonga_context_receive(context, &result, &result_size);
   if (rc != NGX_OK) {
     return rc;
   }
@@ -200,25 +230,17 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
   r->headers_out.content_type.data = (u_char *) content_type;
 
   /* allocate buffers for a response body */
-  GRN_TEXT_INIT(&head, no_flags);
-  GRN_TEXT_INIT(&body, no_flags);
-  GRN_TEXT_INIT(&foot, no_flags);
-
-  GRN_TEXT_SET(context, &body, result, result_size);
-
-  grn_output_envelope(context, context->rc, &head, &body, &foot, NULL, 0);
-
-  head_buf = ngx_http_groonga_grn_obj_to_ngx_buf(r->pool, &head);
+  head_buf = ngx_http_groonga_grn_obj_to_ngx_buf(r->pool, &output.head);
   if (head_buf == NULL) {
     return NGX_HTTP_INTERNAL_SERVER_ERROR;
   }
 
-  body_buf = ngx_http_groonga_grn_obj_to_ngx_buf(r->pool, &body);
+  body_buf = ngx_http_groonga_grn_obj_to_ngx_buf(r->pool, &output.body);
   if (body_buf == NULL) {
     return NGX_HTTP_INTERNAL_SERVER_ERROR;
   }
 
-  foot_buf = ngx_http_groonga_grn_obj_to_ngx_buf(r->pool, &foot);
+  foot_buf = ngx_http_groonga_grn_obj_to_ngx_buf(r->pool, &output.foot);
   if (foot_buf == NULL) {
     return NGX_HTTP_INTERNAL_SERVER_ERROR;
   }
@@ -234,7 +256,7 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
 
   /* set the status line */
   r->headers_out.status = NGX_HTTP_OK;
-  r->headers_out.content_length_n = GRN_TEXT_LEN(&head) + result_size + GRN_TEXT_LEN(&foot);
+  r->headers_out.content_length_n = GRN_TEXT_LEN(&output.head) + GRN_TEXT_LEN(&output.body) + GRN_TEXT_LEN(&output.foot);
 
   /* send the headers of your response */
   rc = ngx_http_send_header(r);
@@ -246,9 +268,9 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
   /* send the buffer chain of your response */
   rc = ngx_http_output_filter(r, &head_chain);
 
-  GRN_OBJ_FIN(context, &head);
-  GRN_OBJ_FIN(context, &body);
-  GRN_OBJ_FIN(context, &foot);
+  GRN_OBJ_FIN(context, &output.head);
+  GRN_OBJ_FIN(context, &output.body);
+  GRN_OBJ_FIN(context, &output.foot);
 
   return rc;
 }
