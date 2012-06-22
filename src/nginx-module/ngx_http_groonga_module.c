@@ -338,7 +338,7 @@ ngx_http_groonga_exit_master(ngx_cycle_t *cycle)
   rc = grn_fin();
   if (rc) {
     printf("grn_fin() failed..\n");
-    // there is nothing we can at this situation...
+    /* there is nothing we can at this situation... */
   }
 
   return;
