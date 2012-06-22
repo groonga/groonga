@@ -36,15 +36,20 @@ groonga_database directive like this::
                                               #    enable this directive
    }
 
-Then, execute groonga-httpd::
+Then, run groonga-httpd. Note that the control immediately returns back to the
+console because groonga-httpd runs as a daemon process by default.::
 
-   % groonga-http
+   % groonga-httpd
 
 To check, request a simple query.::
 
    % curl http://localhost:10041/d/status
 
 Also, you can browse Web-based adiministration tool at http://localhost:10041/.
+
+Finally, to terminate the running groonga-httpd daemon, run this::
+
+   % groonga-httpd -s stop
 
 Configuration directives
 ------------------------
