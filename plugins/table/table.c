@@ -65,6 +65,80 @@ grn_output_table_name_or_id(grn_ctx *ctx, grn_obj *table)
   }
 }
 
+static grn_bool
+parse_bool_value(grn_ctx *ctx, grn_obj *text)
+{
+  grn_bool value = GRN_FALSE;
+  if (GRN_TEXT_LEN(text) == 3 &&
+      memcmp("yes", GRN_TEXT_VALUE(text), 3) == 0) {
+    value = GRN_TRUE;
+  }
+  return value;
+}
+
+static grn_operator
+parse_set_operator_value(grn_ctx *ctx, grn_obj *text)
+{
+  grn_operator value = GRN_OP_OR;
+  if (GRN_TEXT_LEN(text) == 3) {
+    if (memcmp("and", GRN_TEXT_VALUE(text), 3) == 0) {
+      value = GRN_OP_AND;
+    } else if (memcmp("but", GRN_TEXT_VALUE(text), 3) == 0) {
+      value = GRN_OP_BUT;
+    }
+  } else if (GRN_TEXT_LEN(text) == 6 &&
+             memcmp("adjust", GRN_TEXT_VALUE(text), 6) == 0) {
+    value = GRN_OP_ADJUST;
+  }
+  return value;
+}
+
+static grn_obj *
+command_match(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  grn_obj *resultset = NULL;
+  grn_obj *table = grn_ctx_get_table_by_name_or_id(ctx, TEXT_VALUE_LEN(VAR(0)));
+  if (table) {
+    grn_expr_flags flags = GRN_EXPR_SYNTAX_QUERY;
+    grn_obj *v, *query, *columns = NULL;
+    GRN_EXPR_CREATE_FOR_QUERY(ctx, table, query, v);
+    if (query) {
+      if (GRN_TEXT_LEN(VAR(1))) {
+        GRN_EXPR_CREATE_FOR_QUERY(ctx, table, columns, v);
+        if (columns) {
+          grn_expr_parse(ctx, columns, TEXT_VALUE_LEN(VAR(1)),
+                         NULL, GRN_OP_MATCH, GRN_OP_AND,
+                         GRN_EXPR_SYNTAX_SCRIPT);
+        }
+      }
+      if (parse_bool_value(ctx, VAR(5))) {
+        flags |= GRN_EXPR_ALLOW_COLUMN;
+      }
+      if (parse_bool_value(ctx, VAR(6))) {
+        flags |= GRN_EXPR_ALLOW_PRAGMA;
+      }
+      grn_expr_parse(ctx, query, TEXT_VALUE_LEN(VAR(2)),
+                     columns, GRN_OP_MATCH, GRN_OP_AND, flags);
+      if (GRN_TEXT_LEN(VAR(3))) {
+        resultset = grn_ctx_get_table_by_name_or_id(ctx, TEXT_VALUE_LEN(VAR(3)));
+      } else {
+        resultset = grn_table_create(ctx, NULL, 0, NULL,
+                                GRN_TABLE_HASH_KEY|
+                                GRN_OBJ_WITH_SUBREC,
+                                table, NULL);
+      }
+      if (resultset) {
+        grn_table_select(ctx, table, query, resultset,
+                         parse_set_operator_value(ctx, VAR(4)));
+      }
+      grn_obj_unlink(ctx, columns);
+      grn_obj_unlink(ctx, query);
+    }
+  }
+  grn_output_table_name_or_id(ctx, resultset);
+  return NULL;
+}
+
 static grn_obj *
 command_find(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
@@ -95,6 +169,10 @@ command_find(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                          NULL, GRN_OP_MATCH, GRN_OP_AND,
                          GRN_EXPR_SYNTAX_SCRIPT);
         }
+        if (operator && operator_len) {
+          /* parse operator */
+        }
+
         {
           grn_expr_flags flags;
           flags = GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_PRAGMA|GRN_EXPR_ALLOW_COLUMN;
@@ -527,6 +605,14 @@ GRN_PLUGIN_REGISTER(grn_ctx *ctx)
   DEF_VAR(vars[2], "non_block");
   DEF_COMMAND("pull", command_pull, 3, vars);
 
+  DEF_VAR(vars[0], "table");
+  DEF_VAR(vars[1], "columns");
+  DEF_VAR(vars[2], "query");
+  DEF_VAR(vars[3], "resultset");
+  DEF_VAR(vars[4], "set_operation");
+  DEF_VAR(vars[5], "allow_column_expression");
+  DEF_VAR(vars[6], "allow_pragma");
+  DEF_COMMAND("match", command_match, 7, vars);
   return ctx->rc;
 }
 
