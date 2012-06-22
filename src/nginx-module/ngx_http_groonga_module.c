@@ -140,6 +140,22 @@ ngx_http_groonga_context_receive_handler(grn_ctx *context,
 
     grn_ctx_recv(context, &result, &result_size, &flags);
 
+    if (flags == GRN_CTX_QUIT) {
+      ngx_int_t ngx_rc;
+      ngx_rc = ngx_os_signal_process((ngx_cycle_t*)ngx_cycle,
+                                     "stop",
+                                     getppid());
+      if (ngx_rc == NGX_OK) {
+        context->stat &= ~GRN_CTX_QUIT;
+        grn_ctx_recv(context, &result, &result_size, &flags);
+        context->stat |= GRN_CTX_QUIT;
+      } else {
+        context->rc = GRN_OPERATION_NOT_PERMITTED;
+        GRN_TEXT_PUTS(context, &output->body, "false");
+        context->stat &= ~GRN_CTX_QUIT;
+      }
+    }
+
     if (result_size || GRN_TEXT_LEN(&output->body) || context->rc) {
       if (!GRN_TEXT_LEN(&output->body)) {
         GRN_TEXT_SET(context,
