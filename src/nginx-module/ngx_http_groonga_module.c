@@ -196,7 +196,6 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
   }
 
   /* set the 'Content-type' header */
-  r->headers_out.content_type_len = sizeof(content_type) - 1;
   r->headers_out.content_type.len = sizeof(content_type) - 1;
   r->headers_out.content_type.data = (u_char *) content_type;
 
