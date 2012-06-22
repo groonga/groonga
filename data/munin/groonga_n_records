@@ -4,7 +4,12 @@
 #%# capabilities=autoconf
 
 require 'shellwords'
-require 'json'
+begin
+  require 'json'
+rescue LoadError
+  require 'rubygems'
+  require 'json'
+end
 
 label = ENV["label"]
 @groonga = ENV["groonga"] || "groonga"
