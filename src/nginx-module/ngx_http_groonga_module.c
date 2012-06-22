@@ -140,11 +140,13 @@ ngx_http_groonga_context_receive_handler(grn_ctx *context,
 
     grn_ctx_recv(context, &result, &result_size, &flags);
 
-    if (result_size || context->rc) {
-      GRN_TEXT_SET(context,
-                   &output->body,
-                   result,
-                   result_size);
+    if (result_size || GRN_TEXT_LEN(&output->body) || context->rc) {
+      if (!GRN_TEXT_LEN(&output->body)) {
+        GRN_TEXT_SET(context,
+                     &output->body,
+                     result,
+                     result_size);
+      }
 
       grn_output_envelope(context,
                           context->rc,
