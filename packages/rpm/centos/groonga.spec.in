@@ -203,12 +203,14 @@ fi
 %{_datadir}/man/*/man1/*
 %{_bindir}/groonga
 %{_bindir}/groonga-benchmark
+%{_bindir}/groonga-httpd
 
 %files libs
 %defattr(-,root,root,-)
 %doc README AUTHORS COPYING
 %{_libdir}/*.so.*
 %dir %{_libdir}/groonga
+%dir %{_libdir}/groonga/httpd/*
 %dir %{_libdir}/groonga/plugins
 %dir %{_libdir}/groonga/plugins/tokenizers
 %{_libdir}/groonga/plugins/table/table.so

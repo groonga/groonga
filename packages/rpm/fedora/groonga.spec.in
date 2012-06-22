@@ -252,6 +252,7 @@ fi
 %{_datadir}/man/*/man1/*
 %{_bindir}/groonga
 %{_bindir}/groonga-benchmark
+%{_bindir}/groonga-httpd
 
 %files libs
 %defattr(-,root,root,-)
@@ -266,6 +267,7 @@ fi
 %files server
 %defattr(-,root,root,-)
 %config(noreplace) %{_sysconfdir}/groonga/
+%config(noreplace) %{_sysconfdir}/groonga/httpd/*
 %config(noreplace) %{_sysconfdir}/sysconfig/groonga
 %dir %{_unitdir}/groonga.service
 %ghost %dir %{_localstatedir}/run/%{name}
