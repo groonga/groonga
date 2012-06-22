@@ -420,7 +420,6 @@ msgstr ""
 # cd5a97e645994df4a4010c53aa2658b6
 #: ../../../source/functions/geo_distance.txt:134
 #: ../../../source/functions/geo_distance.txt:154
-#, fuzzy
 msgid "``rectangle``"
 msgstr "``\"rectangle\"``"
 
@@ -428,7 +427,6 @@ msgstr "``\"rectangle\"``"
 # 70031b35b15541e39b2f775e8f2c678d
 #: ../../../source/functions/geo_distance.txt:135
 #: ../../../source/functions/geo_distance.txt:191
-#, fuzzy
 msgid "``sphere``"
 msgstr "``\"sphere\"``"
 
@@ -436,7 +434,6 @@ msgstr "``\"sphere\"``"
 # eca56a54b74a496994559385c82f599d
 #: ../../../source/functions/geo_distance.txt:136
 #: ../../../source/functions/geo_distance.txt:207
-#, fuzzy
 msgid "``ellipsoid``"
 msgstr "``\"ellipsoid\"``"
 
