@@ -134,13 +134,13 @@ ngx_http_groonga_context_receive_handler(grn_ctx *context,
     ngx_http_groonga_output_t *output =
       (ngx_http_groonga_output_t *)callback_data;
 
+    GRN_TEXT_INIT(&output->head, GRN_NO_FLAGS);
+    GRN_TEXT_INIT(&output->body, GRN_NO_FLAGS);
+    GRN_TEXT_INIT(&output->foot, GRN_NO_FLAGS);
+
     grn_ctx_recv(context, &result, &result_size, &flags);
 
     if (result_size || context->rc) {
-      GRN_TEXT_INIT(&output->head, GRN_NO_FLAGS);
-      GRN_TEXT_INIT(&output->body, GRN_NO_FLAGS);
-      GRN_TEXT_INIT(&output->foot, GRN_NO_FLAGS);
-
       GRN_TEXT_SET(context,
                    &output->body,
                    result,
