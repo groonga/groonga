@@ -204,10 +204,6 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
                (char *)r->unparsed_uri.data,
                r->unparsed_uri.len,
                GRN_NO_FLAGS);
-  rc = ngx_http_groonga_context_check(context);
-  if (rc != NGX_OK) {
-    return rc;
-  }
 
   body_data = ngx_pcalloc(r->pool, result_size);
   if (body_data == NULL) {
