@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 2.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-21 17:55\n"
+"POT-Creation-Date: 2012-06-22 10:48\n"
 "PO-Revision-Date: 2012-04-28 11:38+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -711,12 +711,12 @@ msgstr ""
 msgid "``--with-match-escalation-threshold=NUMBER``"
 msgstr ""
 
-# b2b5f31622584075917dc77cf0d0b25a
+# 9e3f14234acf4d29b543bde6fcf0edfc
 #: ../../../source/install/others.txt:158
 msgid ""
-"Specifies the default match escalation threshold. See :doc:`/commands/"
-"select#match-escalation-threshold` about match escalation threshold. -1 "
-"means that match operation never escalate."
+"Specifies the default match escalation threshold. See :ref:`match-escalation-"
+"threshold` about match escalation threshold. -1 means that match operation "
+"never escalate."
 msgstr ""
 
 # 487a399a87ca4454a2a21c45f6b78f42
@@ -1075,4 +1075,3 @@ msgid ""
 "After the above steps, :doc:`/executables/groonga` is found in ``c:\\groonga"
 "\\bin\\groonga.exe``."
 msgstr ""
-
