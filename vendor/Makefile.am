@@ -7,3 +7,5 @@ all-local:
 
 install-exec-local:
 	(cd nginx-1.2.1 && $(MAKE) install)
+
+EXTRA_DIST = nginx nginx-1.2.1
