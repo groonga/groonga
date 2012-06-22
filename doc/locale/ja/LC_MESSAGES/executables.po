@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: 1.2.3\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-06-22 18:14\n"
-"PO-Revision-Date: 2012-06-22 18:37+0900\n"
+"PO-Revision-Date: 2012-06-22 19:06+0900\n"
 "Last-Translator: Ryo Onodera <onodera@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -627,7 +627,7 @@ msgstr "書式"
 # 09d40eac91774db29b40ff7e960663da
 #: ../../../source/executables/groonga-httpd.txt:27
 msgid "Usage"
-msgstr ""
+msgstr "使い方"
 
 # 22575ca2454d489bbeedcf71556855c3
 #: ../../../source/executables/groonga-httpd.txt:29
@@ -636,6 +636,9 @@ msgid ""
 "specify database. Edit /etc/groonga/httpd/groonga-httpd.conf to enable "
 "groonga_database directive like this::"
 msgstr ""
+"まずは、groonga-httpdの設定ファイルを編集する必要があります。groonga_database"
+"ディレクティブを有効にするために、次のように/etc/groonga/httpd/groonga-httpd."
+"confを編集してください。"
 
 # 5631da48f9584e939b28c279d8d32407
 #: ../../../source/executables/groonga-httpd.txt:39
@@ -643,11 +646,13 @@ msgid ""
 "Then, run groonga-httpd. Note that the control immediately returns back to "
 "the console because groonga-httpd runs as a daemon process by default.::"
 msgstr ""
+"次に、groonga-httpdを実行してください。すぐにターミナルに制御が戻ってきます"
+"が、groonga-httpdはデフォルトでデーモンプロセスとして実行されるからです。"
 
 # 36e989ebd0744bf2a1cfc82b3d88dfa8
 #: ../../../source/executables/groonga-httpd.txt:44
 msgid "To check, request a simple query.::"
-msgstr ""
+msgstr "動作を確認するため、簡単なクエリをリクエストしてみます。"
 
 # 5bc0ec69050246ccafe2b6fa093e59e2
 #: ../../../source/executables/groonga-httpd.txt:67
@@ -655,16 +660,20 @@ msgid ""
 "Also, you can browse Web-based adiministration tool at http://"
 "localhost:10041/."
 msgstr ""
+"補足ですが、 http://localhost:10041/ にアクセスすると管理ツールを利用できま"
+"す。"
 
 # 4e059987084c4e96bb539406c0b1e6f3
 #: ../../../source/executables/groonga-httpd.txt:69
 msgid "Finally, to terminate the running groonga-httpd daemon, run this::"
 msgstr ""
+"最後に、動作中のgroonga-httpdデーモンを終了するためには、次のコマンドを実行し"
+"てください。"
 
 # 6d9008c42d25420796173456bb7cd912
 #: ../../../source/executables/groonga-httpd.txt:74
 msgid "Configuration directives"
-msgstr ""
+msgstr "設定ディレクティブ"
 
 # 820597d18d134ab1a109674f09fe06cb
 #: ../../../source/executables/groonga-httpd.txt:76
@@ -672,11 +681,14 @@ msgid ""
 "The following directives can be used in the configuration file of groonga-"
 "httpd. By default, it's located at /etc/groonga/httpd/groonga-httpd.conf."
 msgstr ""
+"以下のディレクティブはgroonga-httpdの設定ファイル中で使用することができます。"
+"デフォルトでは、設定ファイルは/etc/groonga/httpd/groonga-httpd.confに置かれて"
+"います。"
 
 # d768083be937419086eeaa43aa178ea3
 #: ../../../source/executables/groonga-httpd.txt:80
 msgid "Groonga-specific directives"
-msgstr ""
+msgstr "groonga関連のディレクティブ"
 
 # b7d2d22162664fde81e1ebbff2094e80
 #: ../../../source/executables/groonga-httpd.txt:82
@@ -684,6 +696,8 @@ msgid ""
 "The following directives aren't provided by nginx. They are provided by "
 "groonga-httpd to configure groonga-httpd-specific directives."
 msgstr ""
+"以下のディレクティブはnginxから提供されているものではなく、groonga-httpdから"
+"提供されているディレクティブです。"
 
 # ae6fd0bed9f44cef821a1287f3971e34
 #: ../../../source/executables/groonga-httpd.txt:86
@@ -693,17 +707,17 @@ msgstr ""
 # 6fcfa307e73a4d958ab3dce70d1b854e
 #: ../../../source/executables/groonga-httpd.txt:88
 msgid "Specifies the path to a groonga database."
-msgstr ""
+msgstr "groongaデータベースのパスを指定します。"
 
 # e071414d35f94a4bbc0b26a58ea9d666
 #: ../../../source/executables/groonga-httpd.txt:91
 msgid "Performance-related directives"
-msgstr ""
+msgstr "性能関連のディレクティブ"
 
 # cd4956eac02746dc8b3ab4dd7282db93
 #: ../../../source/executables/groonga-httpd.txt:93
 msgid "The following directives are related to performance."
-msgstr ""
+msgstr "以下のディレクティブは性能に関連しているディレクティブです。"
 
 # 4ee50b0026474705abd02b957d01935a
 #: ../../../source/executables/groonga-httpd.txt:96
@@ -717,6 +731,10 @@ msgid ""
 "cores. In many cases, groonga queries may be CPU-intensive work, so to fully "
 "utilize multi-CPU/core systems, it's essential to set this accordingly."
 msgstr ""
+"最適なパフォーマンスを得るためには、CPU数あるいはコア数と同じ数になるようにこ"
+"のディレクティブを設定してください。大抵の場合、groongaのクエリはCPU負荷が高"
+"いものとなり、複数のCPU/コアを使い切るためには、このディレクティブを設定する"
+"必要があります。"
 
 # 270d574b530641ff92d7e897cffc775f
 #: ../../../source/executables/groonga-httpd.txt:102
@@ -724,11 +742,14 @@ msgid ""
 "This isn't a groonga-httpd specific directive, but an nginx's one. For "
 "details, see http://wiki.nginx.org/CoreModule#worker_processes."
 msgstr ""
+"このディレクティブはgroonga-httpdのディレクティブではなく、nginxのディレク"
+"ティブです。詳細については、 http://wiki.nginx.org/"
+"CoreModule#worker_processes を参照してください。"
 
 # 1c978a3757964495a15bfe4d776e5274
 #: ../../../source/executables/groonga-httpd.txt:105
 msgid "By default, this is set to 1. It is nginx's default."
-msgstr ""
+msgstr "デフォルトで、このディレクティブには1が設定されています。"
 
 # 7d952f6ed5304439a75622c59ec89f01
 #: ../../../source/executables/groonga-suggest-create-dataset.txt:6
