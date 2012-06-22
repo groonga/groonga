@@ -5,7 +5,7 @@
 
 require 'shellwords'
 begin
-require 'json'
+  require 'json'
 rescue LoadError
   require 'rubygems'
   require 'json'
