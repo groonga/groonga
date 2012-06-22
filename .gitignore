@@ -31,6 +31,9 @@
 /lt*.m4
 /missing
 /groonga.pc
+/groonga-httpd-conf.sh
+/data/groonga-httpd.conf
+/vendor/nginx-1.2.1/objs
 /groonga.spec
 /stamp-h1
 /CMakeCache.txt
