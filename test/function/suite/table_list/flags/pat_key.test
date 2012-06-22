@@ -1,0 +1,2 @@
+table_create bookmarks TABLE_PAT_KEY
+table_list
