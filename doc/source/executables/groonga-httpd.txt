@@ -43,7 +43,26 @@ console because groonga-httpd runs as a daemon process by default.::
 
 To check, request a simple query.::
 
-   % curl http://localhost:10041/d/status
+   % curl -s http://localhost:10041/d/status | python -m json.tool
+   [
+       [
+           0,
+           1340331537.24441,
+           5.17368316650391e-05
+       ],
+       {
+           "alloc_count": 125,
+           "cache_hit_rate": 0.0,
+           "command_version": 1,
+           "default_command_version": 1,
+           "max_command_version": 2,
+           "n_queries": 0,
+           "starttime": 1340331494,
+           "uptime": 43,
+           "version": "2.0.3-278-g6071d65"
+       }
+   ]
+
 
 Also, you can browse Web-based adiministration tool at http://localhost:10041/.
 
