@@ -1,0 +1,2 @@
+table_create bookmarks TABLE_PAT_KEY|KEY_NORMALIZE
+table_list
