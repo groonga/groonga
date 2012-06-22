@@ -161,8 +161,7 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
   ngx_buf_t   *head_buf, *body_buf, *foot_buf;
   ngx_chain_t  head_chain, body_chain, foot_chain;
 
-  grn_ctx context_;
-  grn_ctx *context = &context_;
+  grn_ctx *context;
   char *result = NULL;
   unsigned int result_size = 0;
   unsigned char *body_data;
