@@ -15,6 +15,6 @@ include $(top_srcdir)/test/function/files.am
 
 EXTRA_DIST =					\
 	run-test.sh				\
-	$(test_files)				\
-	$(expected_files)			\
-	$(fixture_files)
+	fixture					\
+	suite
+
