@@ -86,26 +86,44 @@ typedef struct {
 } grn_suggest_learner;
 
 static int
-grn_parse_suggest_types(const char *nptr, const char *end)
+grn_parse_suggest_types(grn_obj *text)
 {
+  const char *nptr = GRN_TEXT_VALUE(text);
+  const char *end = GRN_BULK_CURR(text);
   int types = 0;
   while (nptr < end) {
     if (*nptr == '|') {
       nptr += 1;
       continue;
     }
-    if (!memcmp(nptr, CONST_STR_LEN("complete"))) {
-      types |= COMPLETE;
-      nptr += sizeof("complete") - 1;
-    } else if (!memcmp(nptr, CONST_STR_LEN("correct"))) {
-      types |= CORRECT;
-      nptr += sizeof("correct") - 1;
-    } else if (!memcmp(nptr, CONST_STR_LEN("suggest"))) {
-      types |= SUGGEST;
-      nptr += sizeof("suggest") - 1;
-    } else {
-      break;
+    {
+      const char *string = "complete";
+      size_t length = sizeof(string) - 1;
+      if (nptr + length <= end && memcmp(nptr, string, length) == 0) {
+        types |= COMPLETE;
+        nptr += length;
+        continue;
+      }
     }
+    {
+      const char *string = "correct";
+      size_t length = sizeof(string) - 1;
+      if (nptr + length <= end && memcmp(nptr, string, length) == 0) {
+        types |= CORRECT;
+        nptr += length;
+        continue;
+      }
+    }
+    {
+      const char *string = "suggest";
+      size_t length = sizeof(string) - 1;
+      if (nptr + length <= end && memcmp(nptr, string, length) == 0) {
+        types |= SUGGEST;
+        nptr += length;
+        continue;
+      }
+    }
+    break;
   }
   return types;
 }
@@ -521,7 +539,7 @@ command_suggest(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
   grn_suggest_search_mode prefix_search_mode;
   grn_suggest_search_mode similar_search_mode;
 
-  types = grn_parse_suggest_types(GRN_TEXT_VALUE(VAR(0)), GRN_BULK_CURR(VAR(0)));
+  types = grn_parse_suggest_types(VAR(0));
   if (GRN_TEXT_LEN(VAR(6)) > 0) {
     offset = grn_atoi(GRN_TEXT_VALUE(VAR(6)), GRN_BULK_CURR(VAR(6)), NULL);
   }
