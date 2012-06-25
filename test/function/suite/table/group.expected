@@ -1,0 +1,236 @@
+register table/table
+[[0,0.0,0.0],true]
+table_create Shops TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Tags TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Shops tags COLUMN_VECTOR Tags
+[[0,0.0,0.0],true]
+column_create Tags shops_tag COLUMN_INDEX Shops tags
+[[0,0.0,0.0],true]
+column_create Shops budget COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+add Shops '{"_key":"くりこあん","tags":["たいやき","養殖"],"budget":180}'
+[[0,0.0,0.0],true]
+add Shops '{"_key":"なか一","tags":["季節料理"],"budget":800}'
+[[0,0.0,0.0],true]
+add Shops '{"_key":"魚寅食堂","tags":["漁師","季節料理"],"budget":750}'
+[[0,0.0,0.0],true]
+add Shops '{"_key":"DRAGON飯店","tags":["中華"],"budget":600}'
+[[0,0.0,0.0],true]
+add Shops '{"_key":"魚浜","tags":["回転寿司"],"budget":600}'
+[[0,0.0,0.0],true]
+add Shops '{"_key":"beanDaisy","tags":["caffe","カプチーノ"],"budget":650}'
+[[0,0.0,0.0],true]
+add Shops '{"_key":"維新","tags":["麺や"],"budget":800}'
+[[0,0.0,0.0],true]
+add Shops '{"_key":"ひづめ","tags":["とんかつ"],"budget":900}'
+[[0,0.0,0.0],true]
+add Shops '{"_key":"和互","tags":["魚"],"budget":1000}'
+[[0,0.0,0.0],true]
+group Shops tags
+[[0,0.0,0.0],2147483649]
+output 2147483649 _key,_nsubrecs
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      11
+    ],
+    [
+      [
+        "_key",
+        "ShortText"
+      ],
+      [
+        "_nsubrecs",
+        "Int32"
+      ]
+    ],
+    [
+      "中華",
+      1
+    ],
+    [
+      "caffe",
+      1
+    ],
+    [
+      "カプチーノ",
+      1
+    ],
+    [
+      "たいやき",
+      1
+    ],
+    [
+      "養殖",
+      1
+    ],
+    [
+      "季節料理",
+      2
+    ],
+    [
+      "とんかつ",
+      1
+    ],
+    [
+      "魚",
+      1
+    ],
+    [
+      "麺や",
+      1
+    ],
+    [
+      "漁師",
+      1
+    ]
+  ]
+]
+group Shops budget
+[[0,0.0,0.0],2147483650]
+output 2147483650 _key,_nsubrecs
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      7
+    ],
+    [
+      [
+        "_key",
+        "UInt32"
+      ],
+      [
+        "_nsubrecs",
+        "Int32"
+      ]
+    ],
+    [
+      600,
+      2
+    ],
+    [
+      650,
+      1
+    ],
+    [
+      180,
+      1
+    ],
+    [
+      800,
+      2
+    ],
+    [
+      900,
+      1
+    ],
+    [
+      1000,
+      1
+    ],
+    [
+      750,
+      1
+    ]
+  ]
+]
+filter_by_script Shops 'budget > 100'
+[[0,0.0,0.0],2147483652]
+group 2147483652 budget --range_gap 100
+[[0,0.0,0.0],2147483651]
+output 2147483651 _key,_nsubrecs
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      6
+    ],
+    [
+      [
+        "_key",
+        "UInt32"
+      ],
+      [
+        "_nsubrecs",
+        "Int32"
+      ]
+    ],
+    [
+      600,
+      3
+    ],
+    [
+      100,
+      1
+    ],
+    [
+      800,
+      2
+    ],
+    [
+      900,
+      1
+    ],
+    [
+      1000,
+      1
+    ],
+    [
+      700,
+      1
+    ]
+  ]
+]
+group 2147483652 budget --range_gap 500
+[[0,0.0,0.0],2147483653]
+output 2147483653 _key,_nsubrecs
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      3
+    ],
+    [
+      [
+        "_key",
+        "UInt32"
+      ],
+      [
+        "_nsubrecs",
+        "Int32"
+      ]
+    ],
+    [
+      500,
+      7
+    ],
+    [
+      0,
+      1
+    ],
+    [
+      1000,
+      1
+    ]
+  ]
+]
