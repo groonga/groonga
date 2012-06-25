@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-22 12:42\n"
+"POT-Creation-Date: 2012-06-25 11:25\n"
 "PO-Revision-Date: 2012-05-28 11:10+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -52,8 +52,8 @@ msgstr "KyTea 0.4.1以前のサポートを削除。"
 
 # 87d536f9386a44eeabbbf658e1086709
 #: ../../../source/news.txt:18
-msgid "Supported nginx based groonga HTTP interface."
-msgstr "nginxベースのHTTPインタフェースをサポート。"
+msgid "[experimental] Supported nginx based groonga HTTP interface."
+msgstr "[実験的] nginxベースのHTTPインタフェースをサポート。"
 
 # d234095c54e742bda59bd54ff64ce492
 #: ../../../source/news.txt:19
@@ -121,8 +121,8 @@ msgid ""
 "[munin] Supported JSON library installed by RubyGems [GitHub#17] [Patch by "
 "IWAI, Masaharu]"
 msgstr ""
-"[munin] RubyGemsでインストールしたJSONライブラリをサポート。"
-" [GitHub#17] [岩井さんがパッチ提供]"
+"[munin] RubyGemsでインストールしたJSONライブラリをサポート。 [GitHub#17] [岩"
+"井さんがパッチ提供]"
 
 #: ../../../source/news.txt:37 ../../../source/news.txt:81
 #: ../../../source/news.txt:139 ../../../source/news.txt:195
@@ -154,8 +154,8 @@ msgstr ""
 msgid ""
 "Fixed a problem that '=R' is treated as 'OR' in ``--query`` syntax. [#1393]"
 msgstr ""
-"``--query`` 構文で ``'=R'`` が ``'OR'`` として扱われてしまう問題を修正。"
-" [#1393]"
+"``--query`` 構文で ``'=R'`` が ``'OR'`` として扱われてしまう問題を修正。 "
+"[#1393]"
 
 #: ../../../source/news.txt:46 ../../../source/news.txt:94
 #: ../../../source/news.txt:161 ../../../source/news.txt:206
