@@ -15,7 +15,7 @@ Improvements
 
 * Supported only KyTea 0.4.2.
 * Dropped KyTea 0.4.1 or ealier support.
-* Supported nginx based groonga HTTP interface.
+* [experimental] Supported nginx based groonga HTTP interface.
 * Supported calculating the value of distance with "rect" or "rectangle"
   argument in northern hemisphere. [#1386] [#1387] [#1388] [#1389]
 * [doc] Added a document about :doc:`/development/travis-ci` integration.
