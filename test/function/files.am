@@ -5629,6 +5629,12 @@ test_files = \
 	suite/suggest/suggest/coocurrence.test \
 	suite/suggest/suggest/learn-duplicated.test \
 	suite/table/add.test \
+	suite/table_list/flags/default.test \
+	suite/table_list/flags/key_normalize.test \
+	suite/table_list/flags/key_with_sis.test \
+	suite/table_list/flags/table_dat_key.test \
+	suite/table_list/flags/table_hash_key.test \
+	suite/table_list/flags/table_pat_key.test \
 	suite/table_list/multi_tables.test \
 	suite/table_list/one_table.test \
 	suite/table_list/zero_table.test \
@@ -11270,6 +11276,12 @@ expected_files = \
 	suite/suggest/suggest/coocurrence.expected \
 	suite/suggest/suggest/learn-duplicated.expected \
 	suite/table/add.expected \
+	suite/table_list/flags/default.expected \
+	suite/table_list/flags/key_normalize.expected \
+	suite/table_list/flags/key_with_sis.expected \
+	suite/table_list/flags/table_dat_key.expected \
+	suite/table_list/flags/table_hash_key.expected \
+	suite/table_list/flags/table_pat_key.expected \
 	suite/table_list/multi_tables.expected \
 	suite/table_list/one_table.expected \
 	suite/table_list/zero_table.expected \
