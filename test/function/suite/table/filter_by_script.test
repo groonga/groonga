@@ -13,6 +13,6 @@ add Shops '{"_key":"beanDaisy","tags":["caffe","カプチーノ"]}'
 add Shops '{"_key":"維新","tags":["麺や"]}'
 add Shops '{"_key":"ひづめ","tags":["とんかつ"]}'
 add Shops '{"_key":"和互","tags":["魚"]}'
-find Shops tags match 季節料理
-output 2147483651 _id,_key
-output 2147483651 _id,tags
+filter_by_script Shops 'tags @ "季節料理"'
+output 2147483650 _id,_key
+output 2147483650 _id,tags

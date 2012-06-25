@@ -26,9 +26,9 @@ add Shops '{"_key":"ひづめ","tags":["とんかつ"]}'
 [[0,0.0,0.0],true]
 add Shops '{"_key":"和互","tags":["魚"]}'
 [[0,0.0,0.0],true]
-find Shops tags match 季節料理
-[[0,0.0,0.0],2147483651]
-output 2147483651 _id,_key
+filter_by_script Shops 'tags @ "季節料理"'
+[[0,0.0,0.0],2147483650]
+output 2147483650 _id,_key
 [
   [
     0,
@@ -59,7 +59,7 @@ output 2147483651 _id,_key
     ]
   ]
 ]
-output 2147483651 _id,tags
+output 2147483650 _id,tags
 [
   [
     0,
