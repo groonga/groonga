@@ -401,6 +401,9 @@ typedef int grn_cond;
 
 #endif /* WIN32 */
 
+#define MUTEX_INIT_SHARED MUTEX_INIT
+#define COND_INIT_SHARED COND_INIT
+
 #define GRN_TEST_YIELD() do {} while (0)
 
 #endif /* HAVE_PTHREAD_H */
