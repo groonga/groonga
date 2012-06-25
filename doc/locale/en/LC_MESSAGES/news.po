@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 2.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-22 12:41\n"
+"POT-Creation-Date: 2012-06-25 11:29\n"
 "PO-Revision-Date: 2012-04-28 11:38+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -76,7 +76,7 @@ msgstr "Dropped KyTea 0.4.1 or ealier support."
 
 # 8c00e04f4a674ec093bd948316a22d6f
 #: ../../../source/news.txt:18
-msgid "Supported nginx based groonga HTTP interface."
+msgid "[experimental] Supported nginx based groonga HTTP interface."
 msgstr ""
 
 # 175896c413a74dac87e39e572c81516b
