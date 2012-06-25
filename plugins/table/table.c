@@ -200,11 +200,17 @@ command_group(grn_ctx *ctx, int nargs, grn_obj **args,
                                           gkeys[0].key, NULL);
       }
       if (set_) {
-        grn_table_group_result g = {
-          set_, 0, 0, 1,
-          GRN_TABLE_GROUP_CALC_COUNT, 0
-        };
-        grn_table_group(ctx, table_, gkeys, 1, &g, 1);
+        if (GRN_TEXT_LEN(VAR(3))) {
+          uint32_t gap = grn_atoui(GRN_TEXT_VALUE(VAR(3)),
+                                   GRN_BULK_CURR(VAR(3)), NULL);
+          grn_table_group_with_range_gap(ctx, table_, gkeys, set_, gap);
+        } else {
+          grn_table_group_result g = {
+            set_, 0, 0, 1,
+            GRN_TABLE_GROUP_CALC_COUNT, 0
+          };
+          grn_table_group(ctx, table_, gkeys, 1, &g, 1);
+        }
       }
       grn_table_sort_key_close(ctx, gkeys, ngkeys);
     }
@@ -545,7 +551,8 @@ GRN_PLUGIN_REGISTER(grn_ctx *ctx)
   DEF_VAR(vars[0], "table");
   DEF_VAR(vars[1], "key");
   DEF_VAR(vars[2], "result_set");
-  DEF_COMMAND("group", command_group, 3, vars);
+  DEF_VAR(vars[3], "range_gap");
+  DEF_COMMAND("group", command_group, 4, vars);
 
   DEF_VAR(vars[0], "table");
   DEF_VAR(vars[1], "keys");

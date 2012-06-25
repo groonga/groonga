@@ -2944,6 +2944,106 @@ accelerated_table_group(grn_ctx *ctx, grn_obj *table, grn_obj *key, grn_obj *res
 }
 
 grn_rc
+grn_table_group_with_range_gap(grn_ctx *ctx, grn_obj *table,
+                               grn_table_sort_key *group_key,
+                               grn_obj *res, uint32_t range_gap)
+{
+  grn_obj *key = group_key->key;
+  if (key->header.type == GRN_ACCESSOR) {
+    grn_accessor *a = (grn_accessor *)key;
+    if (a->action == GRN_ACCESSOR_GET_KEY &&
+        a->next && a->next->action == GRN_ACCESSOR_GET_COLUMN_VALUE &&
+        a->next->obj && !a->next->next) {
+      grn_obj *range = grn_ctx_at(ctx, grn_obj_get_range(ctx, key));
+      int idp = GRN_OBJ_TABLEP(range);
+      grn_table_cursor *tc;
+      if ((tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL,
+                                      0, 0, -1, 0))) {
+        switch (a->next->obj->header.type) {
+        case GRN_COLUMN_FIX_SIZE :
+          {
+            grn_id id;
+            grn_ra *ra = (grn_ra *)a->next->obj;
+            unsigned int element_size = (ra)->header->element_size;
+            grn_ra_cache cache;
+            GRN_RA_CACHE_INIT(ra, &cache);
+            while ((id = grn_table_cursor_next_inline(ctx, tc))) {
+              void *v, *value;
+              grn_id *id_;
+              uint32_t key_size;
+              grn_rset_recinfo *ri = NULL;
+              if (DB_OBJ(table)->header.flags & GRN_OBJ_WITH_SUBREC) {
+                grn_table_cursor_get_value_inline(ctx, tc, (void **)&ri);
+              }
+              id_ = (grn_id *)_grn_table_key(ctx, table, id, &key_size);
+              v = grn_ra_ref_cache(ctx, ra, *id_, &cache);
+              if (idp && *((grn_id *)v) &&
+                  grn_table_at(ctx, range, *((grn_id *)v)) == GRN_ID_NIL) {
+                continue;
+              }
+              if ((!idp || *((grn_id *)v))) {
+                grn_id id;
+                if (element_size == sizeof(uint32_t)) {
+                  uint32_t quantized = (*(uint32_t *)v);
+                  quantized -= quantized % range_gap;
+                  id = grn_table_add_v_inline(ctx, res, &quantized,
+                                              element_size, &value, NULL);
+                } else {
+                  id = grn_table_add_v_inline(ctx, res, v,
+                                              element_size, &value, NULL);
+                }
+                if (id) {
+                  grn_table_add_subrec_inline(res, value,
+                                              ri ? ri->score : 0, NULL, 0);
+                }
+              }
+            }
+            GRN_RA_CACHE_FIN(ra, &cache);
+          }
+          break;
+        case GRN_COLUMN_VAR_SIZE :
+          if (idp) { /* todo : support other type */
+            grn_id id;
+            grn_ja *ja = (grn_ja *)a->next->obj;
+            while ((id = grn_table_cursor_next_inline(ctx, tc))) {
+              grn_io_win jw;
+              unsigned int len = 0;
+              void *value;
+              grn_id *v, *id_;
+              uint32_t key_size;
+              grn_rset_recinfo *ri = NULL;
+              if (DB_OBJ(table)->header.flags & GRN_OBJ_WITH_SUBREC) {
+                grn_table_cursor_get_value_inline(ctx, tc, (void **)&ri);
+              }
+              id_ = (grn_id *)_grn_table_key(ctx, table, id, &key_size);
+              if ((v = grn_ja_ref(ctx, ja, *id_, &jw, &len))) {
+                while (len) {
+                  if ((*v != GRN_ID_NIL) &&
+                      grn_table_add_v_inline(ctx, res, v, sizeof(grn_id), &value, NULL)) {
+                    grn_table_add_subrec_inline(res, value, ri ? ri->score : 0, NULL, 0);
+                  }
+                  v++;
+                  len -= sizeof(grn_id);
+                }
+                grn_ja_unref(ctx, &jw);
+              }
+            }
+          } else {
+            return 0;
+          }
+          break;
+        default :
+          return 0;
+        }
+        grn_table_cursor_close(ctx, tc);
+        return 1;
+      }
+    }
+  }
+  return 0;
+}
+
+grn_rc
 grn_table_group(grn_ctx *ctx, grn_obj *table,
                 grn_table_sort_key *keys, int n_keys,
                 grn_table_group_result *results, int n_results)
