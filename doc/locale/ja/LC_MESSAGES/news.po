@@ -122,7 +122,7 @@ msgid ""
 "IWAI, Masaharu]"
 msgstr ""
 "[munin] RubyGemsでインストールしたJSONライブラリをサポート。"
-"[GitHub#17] [岩井さんがパッチ提供]"
+" [GitHub#17] [岩井さんがパッチ提供]"
 
 #: ../../../source/news.txt:37 ../../../source/news.txt:81
 #: ../../../source/news.txt:139 ../../../source/news.txt:195
@@ -141,13 +141,13 @@ msgid ""
 "by using batch mode on Mac OS X. [Reported by @soundkitchen]"
 msgstr ""
 "Mac OS Xでバッチモードを使用した際にコマンドプロンプトの表示が意図しない状態"
-"になる問題を修正。[@soundkitchenさんが報告]"
+"になる問題を修正。 [@soundkitchenさんが報告]"
 
 # 249e90eec6284764a9cbfdee22a34383
 #: ../../../source/news.txt:42
 msgid "Fixed not to terminate after an invalid command in client mode. [#1305]"
 msgstr ""
-"誤ったコマンドをクライアントモードで実行しても終了しないように修正。[#1305]"
+"誤ったコマンドをクライアントモードで実行しても終了しないように修正。 [#1305]"
 
 # 249e90eec6284764a9cbfdee22a34383
 #: ../../../source/news.txt:43
@@ -155,7 +155,7 @@ msgid ""
 "Fixed a problem that '=R' is treated as 'OR' in ``--query`` syntax. [#1393]"
 msgstr ""
 "``--query`` 構文で ``'=R'`` が ``'OR'`` として扱われてしまう問題を修正。"
-"[#1393]"
+" [#1393]"
 
 #: ../../../source/news.txt:46 ../../../source/news.txt:94
 #: ../../../source/news.txt:161 ../../../source/news.txt:206
