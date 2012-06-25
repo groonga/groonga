@@ -97,7 +97,7 @@ grn_parse_suggest_types(grn_obj *text)
       continue;
     }
     {
-      const char *string = "complete";
+      const char string[] = "complete";
       size_t length = sizeof(string) - 1;
       if (nptr + length <= end && memcmp(nptr, string, length) == 0) {
         types |= COMPLETE;
@@ -106,7 +106,7 @@ grn_parse_suggest_types(grn_obj *text)
       }
     }
     {
-      const char *string = "correct";
+      const char string[] = "correct";
       size_t length = sizeof(string) - 1;
       if (nptr + length <= end && memcmp(nptr, string, length) == 0) {
         types |= CORRECT;
@@ -115,7 +115,7 @@ grn_parse_suggest_types(grn_obj *text)
       }
     }
     {
-      const char *string = "suggest";
+      const char string[] = "suggest";
       size_t length = sizeof(string) - 1;
       if (nptr + length <= end && memcmp(nptr, string, length) == 0) {
         types |= SUGGEST;
