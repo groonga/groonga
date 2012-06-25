@@ -123,9 +123,9 @@ command_match(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
         result_set = grn_ctx_get_table_by_name_or_id(ctx, TEXT_VALUE_LEN(VAR(3)));
       } else {
         result_set = grn_table_create(ctx, NULL, 0, NULL,
-                                GRN_TABLE_HASH_KEY|
-                                GRN_OBJ_WITH_SUBREC,
-                                table, NULL);
+                                      GRN_TABLE_HASH_KEY|
+                                      GRN_OBJ_WITH_SUBREC,
+                                      table, NULL);
       }
       if (result_set) {
         grn_table_select(ctx, table, query, result_set,

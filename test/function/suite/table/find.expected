@@ -1,0 +1,97 @@
+register table/table
+[[0,0.0,0.0],true]
+table_create Shops TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Tags TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Shops tags COLUMN_VECTOR Tags
+[[0,0.0,0.0],true]
+column_create Tags shops_tag COLUMN_INDEX Shops tags
+[[0,0.0,0.0],true]
+add Shops '{"_key":"くりこあん","tags":["たいやき","養殖"]}'
+[[0,0.0,0.0],true]
+add Shops '{"_key":"なか一","tags":["季節料理"]}'
+[[0,0.0,0.0],true]
+add Shops '{"_key":"魚寅食堂","tags":["漁師","季節料理"]}'
+[[0,0.0,0.0],true]
+add Shops '{"_key":"DRAGON飯店","tags":["中華"]}'
+[[0,0.0,0.0],true]
+add Shops '{"_key":"魚浜","tags":["回転寿司"]}'
+[[0,0.0,0.0],true]
+add Shops '{"_key":"beanDaisy","tags":["caffe","カプチーノ"]}'
+[[0,0.0,0.0],true]
+add Shops '{"_key":"維新","tags":["麺や"]}'
+[[0,0.0,0.0],true]
+add Shops '{"_key":"ひづめ","tags":["とんかつ"]}'
+[[0,0.0,0.0],true]
+add Shops '{"_key":"和互","tags":["魚"]}'
+[[0,0.0,0.0],true]
+find Shops tags match 季節料理
+[[0,0.0,0.0],2147483651]
+output 2147483651 _id,_key
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      2
+    ],
+    [
+      [
+        "_id",
+        "UInt32"
+      ],
+      [
+        "_key",
+        "ShortText"
+      ]
+    ],
+    [
+      2,
+      "なか一"
+    ],
+    [
+      3,
+      "魚寅食堂"
+    ]
+  ]
+]
+output 2147483651 _id,tags
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      2
+    ],
+    [
+      [
+        "_id",
+        "UInt32"
+      ],
+      [
+        "tags",
+        "Tags"
+      ]
+    ],
+    [
+      2,
+      [
+        "季節料理"
+      ]
+    ],
+    [
+      3,
+      [
+        "漁師",
+        "季節料理"
+      ]
+    ]
+  ]
+]
