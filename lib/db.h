@@ -432,13 +432,13 @@ GRN_API grn_obj *grn_table_create_for_group(grn_ctx *ctx,
 #define KEY_NAME "_key"
 #define ID_NAME "_id"
 
-void grn_load_(grn_ctx *ctx, grn_content_type input_type,
-               const char *table, unsigned int table_len,
-               const char *columns, unsigned int columns_len,
-               const char *values, unsigned int values_len,
-               const char *ifexists, unsigned int ifexists_len,
-               const char *each, unsigned int each_len,
-               uint32_t emit_level);
+GRN_API void grn_load_(grn_ctx *ctx, grn_content_type input_type,
+                       const char *table, unsigned int table_len,
+                       const char *columns, unsigned int columns_len,
+                       const char *values, unsigned int values_len,
+                       const char *ifexists, unsigned int ifexists_len,
+                       const char *each, unsigned int each_len,
+                       uint32_t emit_level);
 
 #ifdef __cplusplus
 }

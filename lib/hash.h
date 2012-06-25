@@ -179,9 +179,9 @@ struct _grn_table_queue {
   grn_id cap;
 };
 
-void grn_array_queue_lock_clear(grn_ctx *ctx, grn_array *array);
-void grn_array_clear_curr_rec(grn_ctx *ctx, grn_array *array);
-grn_table_queue *grn_array_queue(grn_ctx *ctx, grn_array *array);
+GRN_API void grn_array_queue_lock_clear(grn_ctx *ctx, grn_array *array);
+GRN_API void grn_array_clear_curr_rec(grn_ctx *ctx, grn_array *array);
+GRN_API grn_table_queue *grn_array_queue(grn_ctx *ctx, grn_array *array);
 
 /**** grn_hash ****/
 
