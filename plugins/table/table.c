@@ -562,13 +562,13 @@ GRN_PLUGIN_REGISTER(grn_ctx *ctx)
   DEF_VAR(vars[1], "columns");
   DEF_VAR(vars[2], "operator");
   DEF_VAR(vars[3], "value");
-  DEF_VAR(vars[4], "set");
+  DEF_VAR(vars[4], "result_set");
   DEF_VAR(vars[5], "set_operation");
   DEF_COMMAND("find", command_find, 6, vars);
 
   DEF_VAR(vars[0], "table");
   DEF_VAR(vars[1], "key");
-  DEF_VAR(vars[2], "set");
+  DEF_VAR(vars[2], "result_set");
   DEF_COMMAND("group", command_group, 3, vars);
 
   DEF_VAR(vars[0], "table");
@@ -584,7 +584,7 @@ GRN_PLUGIN_REGISTER(grn_ctx *ctx)
   DEF_COMMAND("output", command_output, 4, vars);
 
   DEF_VAR(vars[0], "table");
-  DEF_VAR(vars[1], "expr");
+  DEF_VAR(vars[1], "expression");
   DEF_COMMAND("each", command_each, 2, vars);
 
   DEF_VAR(vars[0], "table");
@@ -613,6 +613,7 @@ GRN_PLUGIN_REGISTER(grn_ctx *ctx)
   DEF_VAR(vars[5], "allow_column_expression");
   DEF_VAR(vars[6], "allow_pragma");
   DEF_COMMAND("match", command_match, 7, vars);
+
   return ctx->rc;
 }
 
