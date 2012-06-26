@@ -130,7 +130,7 @@ msgid ""
 "[doc] Updated the description of how to specify a value as Time in tutorial. "
 "[#1405] [Reported by IWAI, Masaharu]"
 msgstr ""
-"[doc] チュートリアル記載のTime型指定値についての説明を更新。[岩井さんが報告]"
+"[doc] チュートリアル記載のTime型指定値についての説明を更新。 [#1405] [岩井さんが報告]"
 
 #: ../../../source/news.txt:39 ../../../source/news.txt:83
 #: ../../../source/news.txt:141 ../../../source/news.txt:197
