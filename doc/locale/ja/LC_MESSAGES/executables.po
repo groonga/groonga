@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-22 18:14\n"
-"PO-Revision-Date: 2012-06-22 19:06+0900\n"
+"POT-Creation-Date: 2012-06-26 17:14\n"
+"PO-Revision-Date: 2012-06-26 17:24+0900\n"
 "Last-Translator: Ryo Onodera <onodera@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -595,53 +595,58 @@ msgstr "概要"
 # 29f8fdc647b946d5974de3fba91f88df
 #: ../../../source/executables/groonga-httpd.txt:11
 msgid ""
-"groonga-httpd is an HTTP groonga server. It functions as same as :ref:"
-"`groonga-http-service`. The difference is that groonga-httpd processes HTTP "
-"requests by embedded nginx. On the other hand, groonga-http does by a "
-"minimal built-in HTTP server. All standards-compilicance and features "
-"provided by nginx is also available in groonga-httpd. For details about "
-"nginx, see http://www.nginx.org/"
+"groonga-httpd is a program to communicate with a groonga server using the "
+"HTTP protocol. It functions as same as :ref:`groonga-http-service`. "
+"Although :ref:`groonga-http-service` has limited support for HTTP with a "
+"minimal built-in HTTP server, :ref:`groonga-httpd` has full support for HTTP "
+"with an embedded nginx. All standards-compliance and features provided by "
+"nginx is also available in groonga-httpd. For details about nginx, see "
+"http://www.nginx.org/"
 msgstr ""
-"groonga-httpdはHTTPのgroongaサーバーです。 機能的には、 :ref:`groonga-http-"
-"service` と同じになっています。両者の違いは、groonga-httpは、HTTPリクエストを"
-"内蔵された必要最低限のHTTPサーバーで処理するのに対し、groonga-httpdはnginxを"
-"埋め込んで処理していることです。 groonga-httpdでは、nginxが準拠しているHTTPの"
-"仕様と機能が全て利用できます。nginxの詳細については、http://www.nginx.org/を"
-"参照してください。"
+"groonga-httpdはgroongaサーバーとhttpプロトコルで通信するプログラムです。 機能"
+"的には、 :ref:`groonga-http-service` と同じになっています。groonga-httpはHTTP"
+"サーバーとしては最小限の機能しか持ちませんが、一方のgroonga-httpdはnginxを組"
+"み込むことでnginxが準拠しているHTTPの仕様と機能が全て利用できます。nginxの詳"
+"細については、http://www.nginx.org/を参照してください。"
 
 # 8af2985c1c9d4763aa130b6cbe30ef7e
-#: ../../../source/executables/groonga-httpd.txt:17
+#: ../../../source/executables/groonga-httpd.txt:18
 msgid ""
-"groonga-httpd has an Web-based adiministration tool implemented with HTML "
-"and JavaScript. You can access to it via http://hostname:port/."
+"groonga-httpd has an Web-based administration tool implemented with HTML and "
+"JavaScript. You can access to it from http://hostname:port/."
 msgstr ""
 "groonga-httpdにはHTML + JavaScriptで実装された管理ツールが標準で付属していま"
 "す。ウェブブラウザでhttp://hostname:port/にアクセスすると、管理ツールを利用で"
 "きます。"
 
 # d4b690f7a4614baaa6dc658020f511fd
-#: ../../../source/executables/groonga-httpd.txt:20
+#: ../../../source/executables/groonga-httpd.txt:22
 msgid "Synopsis"
 msgstr "書式"
 
 # 09d40eac91774db29b40ff7e960663da
-#: ../../../source/executables/groonga-httpd.txt:27
+#: ../../../source/executables/groonga-httpd.txt:29
 msgid "Usage"
 msgstr "使い方"
 
+# d85f3f900edd445ab3b6f9915cfa1f13
+#: ../../../source/executables/groonga-httpd.txt:32
+msgid "Set up"
+msgstr "設定をする"
+
 # 22575ca2454d489bbeedcf71556855c3
-#: ../../../source/executables/groonga-httpd.txt:29
+#: ../../../source/executables/groonga-httpd.txt:34
 msgid ""
-"First, you'll need to edit the configuration file for groonga-httpd to "
-"specify database. Edit /etc/groonga/httpd/groonga-httpd.conf to enable "
+"First, you'll need to edit the groonga-httpd configuration file to specify a "
+"database. Edit /etc/groonga/httpd/groonga-httpd.conf to enable the "
 "groonga_database directive like this::"
 msgstr ""
-"まずは、groonga-httpdの設定ファイルを編集する必要があります。groonga_database"
-"ディレクティブを有効にするために、次のように/etc/groonga/httpd/groonga-httpd."
-"confを編集してください。"
+"まずは、データベースを指定するためにgroonga-httpdの設定ファイルを編集する必要"
+"があります。groonga_databaseディレクティブを有効にするために、次のように/etc/"
+"groonga/httpd/groonga-httpd.confを編集してください。"
 
 # 5631da48f9584e939b28c279d8d32407
-#: ../../../source/executables/groonga-httpd.txt:39
+#: ../../../source/executables/groonga-httpd.txt:44
 msgid ""
 "Then, run groonga-httpd. Note that the control immediately returns back to "
 "the console because groonga-httpd runs as a daemon process by default.::"
@@ -649,83 +654,109 @@ msgstr ""
 "次に、groonga-httpdを実行してください。すぐにターミナルに制御が戻ってきます"
 "が、groonga-httpdはデフォルトでデーモンプロセスとして実行されるからです。"
 
+# 2b613ca06fe74267aaaeeb33dd55c941
+#: ../../../source/executables/groonga-httpd.txt:50
+msgid "Request queries"
+msgstr "クエリを実行する"
+
 # 36e989ebd0744bf2a1cfc82b3d88dfa8
-#: ../../../source/executables/groonga-httpd.txt:44
+#: ../../../source/executables/groonga-httpd.txt:52
 msgid "To check, request a simple query.::"
 msgstr "動作を確認するため、簡単なクエリをリクエストしてみます。"
 
+# 3285b47a935f41deb301e9e1f7a8b237
+#: ../../../source/executables/groonga-httpd.txt:75
+msgid "Browse the administration tool"
+msgstr "管理ツールを使う"
+
 # 5bc0ec69050246ccafe2b6fa093e59e2
-#: ../../../source/executables/groonga-httpd.txt:67
+#: ../../../source/executables/groonga-httpd.txt:77
 msgid ""
-"Also, you can browse Web-based adiministration tool at http://"
+"Also, you can browse Web-based administration tool at http://"
 "localhost:10041/."
 msgstr ""
 "補足ですが、 http://localhost:10041/ にアクセスすると管理ツールを利用できま"
 "す。"
 
+# e762fdaa976844d99174991e15d79eea
+#: ../../../source/executables/groonga-httpd.txt:80
+msgid "Shut down"
+msgstr "終了する"
+
 # 4e059987084c4e96bb539406c0b1e6f3
-#: ../../../source/executables/groonga-httpd.txt:69
+#: ../../../source/executables/groonga-httpd.txt:82
 msgid "Finally, to terminate the running groonga-httpd daemon, run this::"
 msgstr ""
 "最後に、動作中のgroonga-httpdデーモンを終了するためには、次のコマンドを実行し"
 "てください。"
 
 # 6d9008c42d25420796173456bb7cd912
-#: ../../../source/executables/groonga-httpd.txt:74
+#: ../../../source/executables/groonga-httpd.txt:87
 msgid "Configuration directives"
 msgstr "設定ディレクティブ"
 
-# 820597d18d134ab1a109674f09fe06cb
-#: ../../../source/executables/groonga-httpd.txt:76
+# 127236a789a8448ab5608b5502196c42
+#: ../../../source/executables/groonga-httpd.txt:89
 msgid ""
-"The following directives can be used in the configuration file of groonga-"
-"httpd. By default, it's located at /etc/groonga/httpd/groonga-httpd.conf."
+"There are two kinds of configuration directives. One is provided by nginx, "
+"the other is by groonga-httpd."
+msgstr ""
+"ディレクティブには2種類あります。groonga由来のものとnginx由来のものがありま"
+"す。"
+
+# 820597d18d134ab1a109674f09fe06cb
+#: ../../../source/executables/groonga-httpd.txt:92
+msgid ""
+"The following directives can be used in the groonga-httpd configuration "
+"file. By default, it's located at /etc/groonga/httpd/groonga-httpd.conf."
 msgstr ""
 "以下のディレクティブはgroonga-httpdの設定ファイル中で使用することができます。"
 "デフォルトでは、設定ファイルは/etc/groonga/httpd/groonga-httpd.confに置かれて"
 "います。"
 
 # d768083be937419086eeaa43aa178ea3
-#: ../../../source/executables/groonga-httpd.txt:80
+#: ../../../source/executables/groonga-httpd.txt:96
 msgid "Groonga-specific directives"
 msgstr "groonga関連のディレクティブ"
 
 # b7d2d22162664fde81e1ebbff2094e80
-#: ../../../source/executables/groonga-httpd.txt:82
+#: ../../../source/executables/groonga-httpd.txt:98
 msgid ""
 "The following directives aren't provided by nginx. They are provided by "
-"groonga-httpd to configure groonga-httpd-specific directives."
+"groonga-httpd to configure groonga-httpd-specific configurations."
 msgstr ""
-"以下のディレクティブはnginxから提供されているものではなく、groonga-httpdから"
-"提供されているディレクティブです。"
+"以下のディレクティブはnginxから提供されているものではなく、groonga-httpd関連"
+"の設定をするためにgroonga-httpdから提供されているディレクティブです。"
 
 # ae6fd0bed9f44cef821a1287f3971e34
-#: ../../../source/executables/groonga-httpd.txt:86
+#: ../../../source/executables/groonga-httpd.txt:102
 msgid "``groonga_database``"
-msgstr ""
+msgstr "``groonga_database``"
 
 # 6fcfa307e73a4d958ab3dce70d1b854e
-#: ../../../source/executables/groonga-httpd.txt:88
+#: ../../../source/executables/groonga-httpd.txt:104
 msgid "Specifies the path to a groonga database."
 msgstr "groongaデータベースのパスを指定します。"
 
 # e071414d35f94a4bbc0b26a58ea9d666
-#: ../../../source/executables/groonga-httpd.txt:91
+#: ../../../source/executables/groonga-httpd.txt:107
 msgid "Performance-related directives"
 msgstr "性能関連のディレクティブ"
 
 # cd4956eac02746dc8b3ab4dd7282db93
-#: ../../../source/executables/groonga-httpd.txt:93
-msgid "The following directives are related to performance."
-msgstr "以下のディレクティブは性能に関連しているディレクティブです。"
+#: ../../../source/executables/groonga-httpd.txt:109
+msgid ""
+"The following directives are related to the performance of groonga-httpd."
+msgstr ""
+"以下のディレクティブはgronoga-httpdの性能に関連しているディレクティブです。"
 
 # 4ee50b0026474705abd02b957d01935a
-#: ../../../source/executables/groonga-httpd.txt:96
-msgid "``worker_processess``"
-msgstr ""
+#: ../../../source/executables/groonga-httpd.txt:112
+msgid "``worker_processes``"
+msgstr "``worker_processes``"
 
 # fe1cf4dcd10b4524891de86128eba10d
-#: ../../../source/executables/groonga-httpd.txt:98
+#: ../../../source/executables/groonga-httpd.txt:114
 msgid ""
 "For optimum performance, set this to be equal to the number of CPUs or "
 "cores. In many cases, groonga queries may be CPU-intensive work, so to fully "
@@ -737,7 +768,7 @@ msgstr ""
 "必要があります。"
 
 # 270d574b530641ff92d7e897cffc775f
-#: ../../../source/executables/groonga-httpd.txt:102
+#: ../../../source/executables/groonga-httpd.txt:118
 msgid ""
 "This isn't a groonga-httpd specific directive, but an nginx's one. For "
 "details, see http://wiki.nginx.org/CoreModule#worker_processes."
@@ -747,9 +778,27 @@ msgstr ""
 "CoreModule#worker_processes を参照してください。"
 
 # 1c978a3757964495a15bfe4d776e5274
-#: ../../../source/executables/groonga-httpd.txt:105
+#: ../../../source/executables/groonga-httpd.txt:121
 msgid "By default, this is set to 1. It is nginx's default."
 msgstr "デフォルトで、このディレクティブには1が設定されています。"
+
+# e914b6c5fd6143e684506e61b4b424d4
+#: ../../../source/executables/groonga-httpd.txt:124
+msgid "Available nginx modules"
+msgstr "利用可能なnginxモジュール"
+
+# 177bb78187954c29b18c36cef58b6745
+#: ../../../source/executables/groonga-httpd.txt:126
+msgid ""
+"All standard HTTP modules except HttpRewriteModule is available. "
+"HttpRewriteModule is disabled to avoid to depend on PCRE (Perl Compatible "
+"Regular Expressions). For the list of other standard HTTP modules, see "
+"http://wiki.nginx.org/Modules."
+msgstr ""
+"HttpRewriteModuleを除く全てのHTTPの標準モジュールが利用可能です。"
+"HttpRewriteModuleはPCRE (Perl Compatible Regular Expressions)へ依存しないよう"
+"にするために無効化されています。残りの標準モジュールの一覧は、 http://wiki."
+"nginx.org/Modules を参照してください。"
 
 # 7d952f6ed5304439a75622c59ec89f01
 #: ../../../source/executables/groonga-suggest-create-dataset.txt:6
