@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 2.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-21 12:37\n"
+"POT-Creation-Date: 2012-06-26 14:33\n"
 "PO-Revision-Date: 2012-04-28 11:38+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -1861,35 +1861,34 @@ msgstr ""
 # a1486122abcb45c08c9f34aeffa67fa5
 #: ../../../source/tutorial/micro_blog.txt:242
 msgid ""
-"Commentsテーブルのlast_modifiedカラムは、Time型です。この型での値の指定方法"
-"は、マイクロ秒数の値を直接指定する方法のほかに、文字列で指定する方法もありま"
-"す。\"年/月/日 時:分:秒\"というフォーマットで記述することで、データロードの際"
-"に文字列からキャストされ、マイクロ秒数の値が格納されます。"
+"Commentsテーブルのlast_modifiedカラムは、Time型です。この型での値を指定する方"
+"法は2つあります。 1つ目の方法は、1970年1月1日0時0分0秒からの経過秒数の値を直"
+"接指定する方法です。小数部分を指定することで秒よりも細かい値の指定が可能で"
+"す。指定した秒数はデータのロードの際にマイクロ秒数に変換後、格納されます。 2"
+"つ目の方法は、文字列で日時と時刻を指定する方法です。\"年/月/日 時:分:秒\"とい"
+"うフォーマットで記述することで、データロードの際に文字列からキャストされ、マ"
+"イクロ秒数の値が格納されます。"
 msgstr ""
-"Commentsテーブルのlast_modifiedカラムは、Time型です。この型での値の指定方法"
-"は、マイクロ秒数の値を直接指定する方法のほかに、文字列で指定する方法もありま"
-"す。\"年/月/日 時:分:秒\"というフォーマットで記述することで、データロードの際"
-"に文字列からキャストされ、マイクロ秒数の値が格納されます。"
 
 # 2e98f1fd30a8423fa68abcfb68bee579
 # 39ea7491c3a74d21a2addb29ebb94000
-#: ../../../source/tutorial/micro_blog.txt:370
+#: ../../../source/tutorial/micro_blog.txt:372
 #: ../../../source/tutorial/query_expansion.txt:46
 msgid "検索"
 msgstr "検索"
 
 # b2d401caa4054d6789e258d2a7e63d9d
-#: ../../../source/tutorial/micro_blog.txt:372
+#: ../../../source/tutorial/micro_blog.txt:374
 msgid "それでは、実際に検索をしてみましょう。"
 msgstr "それでは、実際に検索をしてみましょう。"
 
 # 3d42f41fd96b418dbe49089c9fffd8f1
-#: ../../../source/tutorial/micro_blog.txt:375
+#: ../../../source/tutorial/micro_blog.txt:377
 msgid "キーワードでユーザー検索"
 msgstr "キーワードでユーザー検索"
 
 # 38386581826c4294a14ce92a2cfc85b6
-#: ../../../source/tutorial/micro_blog.txt:376
+#: ../../../source/tutorial/micro_blog.txt:378
 msgid ""
 "ここでは、 :doc:`match_columns` で扱った、複数カラムを対象とした検索を行いま"
 "す。 指定された文字列で、ユーザー名・現在地・自己紹介文を対象に検索をします。"
@@ -1898,7 +1897,7 @@ msgstr ""
 "す。 指定された文字列で、ユーザー名・現在地・自己紹介文を対象に検索をします。"
 
 # 53827863d9aa466b9fb7ff11bf32b2b1
-#: ../../../source/tutorial/micro_blog.txt:383
+#: ../../../source/tutorial/micro_blog.txt:385
 msgid ""
 "「東京」をキーワードにユーザー検索した結果、東京都に住んでいる「グニャラく"
 "ん」と「OffGao」がヒットしました。"
@@ -1907,12 +1906,12 @@ msgstr ""
 "ん」と「OffGao」がヒットしました。"
 
 # 3e0f41018ccb4273976a5165031dad93
-#: ../../../source/tutorial/micro_blog.txt:386
+#: ../../../source/tutorial/micro_blog.txt:388
 msgid "GeoPointでユーザー検索"
 msgstr "GeoPointでユーザー検索"
 
 # b016628e84914d8cb48b02787ff86554
-#: ../../../source/tutorial/micro_blog.txt:388
+#: ../../../source/tutorial/micro_blog.txt:390
 msgid ""
 "ここでは、 :doc:`search` で扱った、GeoPoint型のカラムで検索をします。 以下の"
 "例では、指定された位置から5000m以内にいるユーザーを検索しています。"
@@ -1921,7 +1920,7 @@ msgstr ""
 "例では、指定された位置から5000m以内にいるユーザーを検索しています。"
 
 # 93581c7b65b24f04b6bc3dda092a7b13
-#: ../../../source/tutorial/micro_blog.txt:395
+#: ../../../source/tutorial/micro_blog.txt:397
 msgid ""
 "新宿駅から5km以内にすんでいるユーザーを検索したところ、「グニャラくん」と"
 "「OffGao」がヒットしました。"
@@ -1930,12 +1929,12 @@ msgstr ""
 "「OffGao」がヒットしました。"
 
 # a038e45591624b5492e382cb5bfce5ab
-#: ../../../source/tutorial/micro_blog.txt:398
+#: ../../../source/tutorial/micro_blog.txt:400
 msgid "あるユーザーをフォローしているユーザーの検索"
 msgstr "あるユーザーをフォローしているユーザーの検索"
 
 # 8f3ed2e89c144cc58440b340a7b52824
-#: ../../../source/tutorial/micro_blog.txt:400
+#: ../../../source/tutorial/micro_blog.txt:402
 msgid ""
 "ここでは、 :doc:`index` で扱った、参照関係の逆引きをします。 以下の例では、"
 "Usersテーブルのfollowerカラムにあるフォローリストを逆引きします。"
@@ -1944,7 +1943,7 @@ msgstr ""
 "Usersテーブルのfollowerカラムにあるフォローリストを逆引きします。"
 
 # ff4c3bf8f3634d5d929e3807e18639b7
-#: ../../../source/tutorial/micro_blog.txt:407
+#: ../../../source/tutorial/micro_blog.txt:409
 msgid ""
 "「グニャラくん」をフォローしている「hsiomaneki」と「OffGao」がヒットしまし"
 "た。"
@@ -1953,12 +1952,12 @@ msgstr ""
 "た。"
 
 # c15e56846d69454a897c4ffec882117e
-#: ../../../source/tutorial/micro_blog.txt:410
+#: ../../../source/tutorial/micro_blog.txt:412
 msgid "GeoPointでコメント検索"
 msgstr "GeoPointでコメント検索"
 
 # 9e425c0a76014971abfa27f77975d0eb
-#: ../../../source/tutorial/micro_blog.txt:411
+#: ../../../source/tutorial/micro_blog.txt:413
 msgid ""
 "ある範囲内で書かれたコメントを検索します。 また、 :doc:`drilldown` で扱ったド"
 "リルダウンも行います。検索結果をハッシュタグとユーザーでドリルダウンし、ユー"
@@ -1969,7 +1968,7 @@ msgstr ""
 "ザー別・ハッシュタグ別のカウントを出します。"
 
 # ab81543d18b04f42a8f951f8a02f0aa3
-#: ../../../source/tutorial/micro_blog.txt:418
+#: ../../../source/tutorial/micro_blog.txt:420
 msgid ""
 "範囲を広く指定したため、位置情報のあるすべてのコメントがヒットしました。そし"
 "て、ヒットしたコメントからドリルダウンされた結果も返ってきており、ハッシュタ"
@@ -1982,12 +1981,12 @@ msgstr ""
 "それぞれ2件ずつであることがわかります。"
 
 # 16e1ef02a8f343588dab21ce47e2a5ee
-#: ../../../source/tutorial/micro_blog.txt:421
+#: ../../../source/tutorial/micro_blog.txt:423
 msgid "キーワードでコメント検索"
 msgstr "キーワードでコメント検索"
 
 # edb6b0e121b54d77ac8fc0643784d294
-#: ../../../source/tutorial/micro_blog.txt:422
+#: ../../../source/tutorial/micro_blog.txt:424
 msgid ""
 "あるキーワードを含むコメントを検索します。 さらに、 :doc:`search` で扱った、"
 "スコア値_scoreも出してみましょう。"
@@ -1996,7 +1995,7 @@ msgstr ""
 "スコア値_scoreも出してみましょう。"
 
 # a0a0b5a84cf44c11a4262e9b86c63bd0
-#: ../../../source/tutorial/micro_blog.txt:429
+#: ../../../source/tutorial/micro_blog.txt:431
 msgid ""
 "「なう」をキーワードにコメント検索した結果、2件のコメントがヒットしました。ま"
 "た、_scoreの値も返ってきており、「なう」の数が出力されていることが確認できま"
@@ -2007,12 +2006,12 @@ msgstr ""
 "す。"
 
 # ecdfcc45d8f64549b92435434eb86b8b
-#: ../../../source/tutorial/micro_blog.txt:432
+#: ../../../source/tutorial/micro_blog.txt:434
 msgid "GeoPointとキーワードでコメント検索"
 msgstr "GeoPointとキーワードでコメント検索"
 
 # 16112d924dc44bfca127e1ba94490240
-#: ../../../source/tutorial/micro_blog.txt:433
+#: ../../../source/tutorial/micro_blog.txt:435
 msgid ""
 "今度は、キーワードとGeoPointの両方を条件に検索をしてみます。--queryと--filter"
 "の両方を使用した場合、両方の条件に一致するレコードがヒットします。"
@@ -2021,7 +2020,7 @@ msgstr ""
 "の両方を使用した場合、両方の条件に一致するレコードがヒットします。"
 
 # 56a967afca8f4af9991aa11e9b9a1925
-#: ../../../source/tutorial/micro_blog.txt:439
+#: ../../../source/tutorial/micro_blog.txt:441
 msgid ""
 "両方の条件を満たすコメントが1件ヒットしました。また、ドリルダウンの結果も返っ"
 "てきており、「グニャラくん」のコメント1件であることがわかります。"
@@ -2030,12 +2029,12 @@ msgstr ""
 "てきており、「グニャラくん」のコメント1件であることがわかります。"
 
 # 9e69eaa907a44dfa8319cb5489fe1f5f
-#: ../../../source/tutorial/micro_blog.txt:442
+#: ../../../source/tutorial/micro_blog.txt:444
 msgid "ハッシュタグでコメント検索"
 msgstr "ハッシュタグでコメント検索"
 
 # 925e29f455a94487be72e58b4b3b9f01
-#: ../../../source/tutorial/micro_blog.txt:443
+#: ../../../source/tutorial/micro_blog.txt:445
 msgid ""
 "あるハッシュタグのついているコメントを検索します。 これも、 :doc:`index` で"
 "扱った、参照関係の逆引きを使います。"
@@ -2044,7 +2043,7 @@ msgstr ""
 "扱った、参照関係の逆引きを使います。"
 
 # 3eb9fb70d777421fbcd579d19b2beb8f
-#: ../../../source/tutorial/micro_blog.txt:450
+#: ../../../source/tutorial/micro_blog.txt:452
 msgid ""
 "#groongaタグの付いている2件のコメントがヒットしました。また、投稿者のドリルダ"
 "ウンも返ってきており、2件とも「グニャラくん」のものであることがわかります。"
@@ -2053,17 +2052,17 @@ msgstr ""
 "ウンも返ってきており、2件とも「グニャラくん」のものであることがわかります。"
 
 # 56c329a46b52495c9d49f2fec6751715
-#: ../../../source/tutorial/micro_blog.txt:453
+#: ../../../source/tutorial/micro_blog.txt:455
 msgid "ユーザーIDでコメント検索"
 msgstr "ユーザーIDでコメント検索"
 
 # c945288059b64d8eb9d56d770f4ce11d
-#: ../../../source/tutorial/micro_blog.txt:454
+#: ../../../source/tutorial/micro_blog.txt:456
 msgid "あるユーザーが投稿したコメントを検索します。"
 msgstr "あるユーザーが投稿したコメントを検索します。"
 
 # fb8cf950260b45328179b993e011aba1
-#: ../../../source/tutorial/micro_blog.txt:460
+#: ../../../source/tutorial/micro_blog.txt:462
 msgid ""
 "「グニャラくん」が書き込んだ4件のコメントがヒットしました。また、ハッシュタグ"
 "でドリルダウンした結果も返ってきており、ハッシュタグは「#groonga」が2つに"
@@ -2074,28 +2073,28 @@ msgstr ""
 "「#travel」が1つあることがわかります。"
 
 # 88e987d953494f1fbbc8cdc3e92a98ae
-#: ../../../source/tutorial/micro_blog.txt:463
+#: ../../../source/tutorial/micro_blog.txt:465
 msgid "ユーザーのお気に入りコメントを検索"
 msgstr "ユーザーのお気に入りコメントを検索"
 
 # b35e955d73f64e23be91729d297bc6d4
-#: ../../../source/tutorial/micro_blog.txt:464
+#: ../../../source/tutorial/micro_blog.txt:466
 msgid "あるユーザーがお気に入りに入れているコメントを検索します。"
 msgstr "あるユーザーがお気に入りに入れているコメントを検索します。"
 
 # f5f9c37c22a84a0eabd81ae9ec5805fc
-#: ../../../source/tutorial/micro_blog.txt:470
+#: ../../../source/tutorial/micro_blog.txt:472
 msgid "「グニャラくん」がお気に入りに入れている2件のコメントがヒットしました。"
 msgstr ""
 "「グニャラくん」がお気に入りに入れている2件のコメントがヒットしました。"
 
 # 7dd92c42ee2144c2bb317995d29a654f
-#: ../../../source/tutorial/micro_blog.txt:473
+#: ../../../source/tutorial/micro_blog.txt:475
 msgid "投稿時間でコメント検索"
 msgstr "投稿時間でコメント検索"
 
 # 4280e652a72c497ca3c76e3fe7b9613e
-#: ../../../source/tutorial/micro_blog.txt:474
+#: ../../../source/tutorial/micro_blog.txt:476
 msgid ""
 "コメントの投稿時間で検索をします。Time型については :doc:`data` で扱っていま"
 "す。 この例では、指定した時間よりも前に投稿されているコメントを検索します。"
@@ -2104,7 +2103,7 @@ msgstr ""
 "す。 この例では、指定した時間よりも前に投稿されているコメントを検索します。"
 
 # 34c5dd5de0c74d3793d55e3b52a878d6
-#: ../../../source/tutorial/micro_blog.txt:481
+#: ../../../source/tutorial/micro_blog.txt:483
 msgid ""
 "2010/03/17 14:00:00以前に書かれたコメント5件がヒットしました。また、ドリルダ"
 "ウンの結果も返ってきており、「hsiomaneki」が2件、「グニャラくん」が3件ヒット"
