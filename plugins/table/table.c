@@ -184,7 +184,7 @@ command_filter(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
   }
   if (!(column = grn_obj_column(ctx, table, TEXT_VALUE_LEN(VAR(1))))) {
     ERR(GRN_INVALID_ARGUMENT, "invalid column name: <%.*s>",
-        GRN_TEXT_LEN(VAR(1)), GRN_TEXT_VALUE(VAR(1)));
+        (int)GRN_TEXT_LEN(VAR(1)), GRN_TEXT_VALUE(VAR(1)));
     goto exit;
   }
   if (TEXT_VALUE_LEN(VAR(2)) == 0) {
