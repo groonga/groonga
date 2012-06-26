@@ -442,7 +442,13 @@ GRN_API void grn_load_(grn_ctx *ctx, grn_content_type input_type,
 
 GRN_API grn_rc grn_table_group_with_range_gap(grn_ctx *ctx, grn_obj *table,
                                               grn_table_sort_key *group_key,
-                                              grn_obj *result_set, uint32_t range_gap);
+                                              grn_obj *result_set,
+                                              uint32_t range_gap);
+
+GRN_API grn_rc grn_column_filter(grn_ctx *ctx, grn_obj *column,
+                                 grn_operator op,
+                                 grn_obj *value, grn_obj *result_set,
+                                 grn_operator set_op);
 
 #ifdef __cplusplus
 }

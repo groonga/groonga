@@ -175,6 +175,55 @@ command_filter_by_script(grn_ctx *ctx, int nargs,
 }
 
 static grn_obj *
+command_filter(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  grn_operator operator = GRN_OP_NOP;
+  grn_obj *table, *column, *result_set = NULL;
+  if (!(table = grn_ctx_get_table_by_name_or_id(ctx, TEXT_VALUE_LEN(VAR(0))))) {
+    goto exit;
+  }
+  if (!(column = grn_obj_column(ctx, table, TEXT_VALUE_LEN(VAR(1))))) {
+    ERR(GRN_INVALID_ARGUMENT, "invalid column name: <%.*s>",
+        GRN_TEXT_LEN(VAR(1)), GRN_TEXT_VALUE(VAR(1)));
+    goto exit;
+  }
+  if (TEXT_VALUE_LEN(VAR(2)) == 0) {
+    ERR(GRN_INVALID_ARGUMENT, "missing mandatory argument: operator");
+    goto exit;
+  } else {
+    uint32_t operator_len = GRN_TEXT_LEN(VAR(2));
+    const char *operator_text = GRN_TEXT_VALUE(VAR(2));
+    switch (operator_text[0]) {
+    case '<' :
+      if (operator_len == 1) {
+        operator = GRN_OP_LESS;
+      }
+      break;
+    }
+    if (operator == GRN_OP_NOP) {
+      ERR(GRN_INVALID_ARGUMENT, "invalid operator: <%.*s>",
+          operator_len, operator_text);
+      goto exit;
+    }
+  }
+  if (GRN_TEXT_LEN(VAR(4))) {
+    result_set = grn_ctx_get_table_by_name_or_id(ctx, TEXT_VALUE_LEN(VAR(4)));
+  } else {
+    result_set = grn_table_create(ctx, NULL, 0, NULL,
+                                  GRN_TABLE_HASH_KEY|
+                                  GRN_OBJ_WITH_SUBREC,
+                                  table, NULL);
+  }
+  if (result_set) {
+    grn_column_filter(ctx, column, operator, VAR(3), result_set,
+                      parse_set_operator_value(ctx, VAR(5)));
+  }
+exit :
+  grn_output_table_name_or_id(ctx, result_set);
+  return NULL;
+}
+
+static grn_obj *
 command_group(grn_ctx *ctx, int nargs, grn_obj **args,
               grn_user_data *user_data)
 {
@@ -547,6 +596,14 @@ GRN_PLUGIN_REGISTER(grn_ctx *ctx)
   DEF_VAR(vars[3], "set_operation");
   DEF_VAR(vars[4], "allow_update");
   DEF_COMMAND("filter_by_script", command_filter_by_script, 5, vars);
+
+  DEF_VAR(vars[0], "table");
+  DEF_VAR(vars[1], "column");
+  DEF_VAR(vars[2], "operator");
+  DEF_VAR(vars[3], "value");
+  DEF_VAR(vars[4], "result_set");
+  DEF_VAR(vars[5], "set_operation");
+  DEF_COMMAND("filter", command_filter, 6, vars);
 
   DEF_VAR(vars[0], "table");
   DEF_VAR(vars[1], "key");
