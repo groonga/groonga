@@ -32,6 +32,8 @@ Improvements
 * [doc] Added a document about :doc:`/reference/grn_expr`.
 * [munin] Supported JSON library installed by RubyGems [GitHub#17]
   [Patch by IWAI, Masaharu]
+* [doc] Updated the description of how to specify a value as Time in tutorial.
+  [#1405] [Reported by IWAI, Masaharu]
 
 Fixes
 ^^^^^
