@@ -164,8 +164,10 @@ ngx_http_groonga_context_receive_handler(grn_ctx *context,
       }
     }
 
-    if (result_size || GRN_TEXT_LEN(&output->body) || context->rc) {
-      if (!GRN_TEXT_LEN(&output->body)) {
+    if (result_size > 0 ||
+        GRN_TEXT_LEN(&output->body) > 0 ||
+        context->rc != GRN_SUCCESS) {
+      if (GRN_TEXT_LEN(&output->body) == 0) {
         GRN_TEXT_SET(context,
                      &output->body,
                      result,
@@ -349,7 +351,7 @@ ngx_http_groonga_init_module(ngx_cycle_t *cycle)
   grn_rc rc;
 
   rc = grn_init();
-  if (rc) {
+  if (rc != GRN_SUCCESS) {
     return NGX_ERROR;
   }
 
@@ -362,7 +364,7 @@ ngx_http_groonga_exit_master(ngx_cycle_t *cycle)
   grn_rc rc;
 
   rc = grn_fin();
-  if (rc) {
+  if (rc != GRN_SUCCESS) {
     /* there is nothing we can at this situation... */
   }
 
