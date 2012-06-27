@@ -21,7 +21,6 @@ BuildRequires:	php-devel
 BuildRequires:	libedit-devel
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	%{name}-plugin-suggest = %{version}-%{release}
-Requires:	%{name}-tokenizer-mecab = %{version}-%{release}
 Requires(post):	systemd-units
 Requires(preun):	systemd-units
 Requires(postun):	systemd-units
@@ -311,6 +310,7 @@ fi
 %changelog
 * Fri Jun 29 2012 Kouhei Sutou <kou@clear-code.com> - 2.0.4-0
 - new upstream release.
+- groonga package does not require groonga-tokenizer-mecab package.
 
 * Tue May 29 2012 Kouhei Sutou <kou@clear-code.com> - 2.0.3-0
 - new upstream release.
