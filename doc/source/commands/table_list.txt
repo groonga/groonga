@@ -76,29 +76,6 @@ json形式
   ``テーブル情報名n`` で示された情報の配列を出力します。
   情報の順序は ``テーブル情報名n`` の順序と同じです。
 
-例
---
-::
-
- table_list Entry
-
- [[["id", "UInt32"],
-   ["name","ShortText"],
-   ["path","ShortText"],
-   ["flags","ShortText"],
-   ["domain", "ShortText"],
-   ["range","ShortText"]],
-  [256,
-   "Entry",
-   "test.db.0000100",
-   "TABLE_HASH_KEY|PERSISTENT",
-   "ShortText",
-   "null"],
-  [257,
-   "Term",
-   "test.db.0000101",
-   "TABLE_PAT_KEY|KEY_NORMALIZE|PERSISTENT",
-   "ShortText",
-   "null"]]
-
-注: 実際は改行が入りません。
+.. groonga-command
+.. include:: ../example/commands/table_list.log
+.. table_list
