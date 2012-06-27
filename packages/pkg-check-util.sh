@@ -59,7 +59,7 @@ host_address ()
 {
     ifconfig_result=`LANG=C /sbin/ifconfig`
     inet_addr=`echo "$ifconfig_result" | grep "inet addr:192"`
-    address=`echo $inet_addr | perl -ne 'if($_=~/inet addr\:(.+?)\s/){print "$1"}'`
+    address=`echo $inet_addr | ruby -ne '/inet addr:(.+?)\s/ =~ $_ && puts($1)'`
     HOST_ADDRESS=$address
 }
 
