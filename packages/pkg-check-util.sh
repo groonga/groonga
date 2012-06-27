@@ -63,7 +63,46 @@ host_address ()
 
 check_installed_groonga_packages ()
 {
-    :
+    cat > check-deb-groonga.sh <<EOF
+#!/bin/sh
+dpkg -l | grep groonga
+EOF
+    cat > check-rpm-groonga.sh <<EOF
+#!/bin/sh
+rpm -qa | grep groonga
+EOF
+    for code in $CODES; do
+	for arch in $DEB_ARCHITECTURES; do
+	    root_dir=$CHROOT_ROOT/$code-$arch
+	    CHECK_SCRIPT=check-deb-groonga.sh
+	    echo "copy check script $CHECK_SCRIPT to $root_dir/tmp"
+	    sudo rm -f $root_dir/tmp/$CHECK_SCRIPT
+	    cp $CHECK_SCRIPT $root_dir/tmp
+	    chmod 755 $root_dir/tmp/$CHECK_SCRIPT
+	    sudo chname $code-$arch chroot $root_dir /tmp/$CHECK_SCRIPT
+	done
+    done
+    for dist in $DISTRIBUTIONS; do
+	case $dist in
+	    "fedora")
+		DISTRIBUTIONS_VERSION="16"
+		;;
+	    "centos")
+		DISTRIBUTIONS_VERSION="5 6"
+		;;
+	esac
+	for ver in $DISTRIBUTIONS_VERSION; do
+	    for arch in $RPM_ARCHITECTURES; do
+		CHECK_SCRIPT=check-rpm-groonga.sh
+		root_dir=$CHROOT_ROOT/$dist-$ver-$arch
+		echo "copy check script $CHECK_SCRIPT to $root_dir/tmp"
+		sudo rm -f $root_dir/tmp/$CHECK_SCRIPT
+		cp $CHECK_SCRIPT $root_dir/tmp
+		chmod 755 $root_dir/tmp/$CHECK_SCRIPT
+		sudo chname $code-$ver-$arch chroot $root_dir /tmp/$CHECK_SCRIPT
+	    done
+	done
+    done
 }
 
 install_groonga_packages ()
