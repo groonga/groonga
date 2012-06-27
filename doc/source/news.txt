@@ -34,6 +34,8 @@ Improvements
   [Patch by IWAI, Masaharu]
 * [doc] Updated the description of how to specify a value as Time in tutorial.
   [#1405] [Reported by IWAI, Masaharu]
+* [rpm] Removed groonga-tokenizer-mecab dependency from groonga package.
+  [GitHub#18] [Patch by IWAI, Masaharu]
 
 Fixes
 ^^^^^
