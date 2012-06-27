@@ -11,14 +11,8 @@
 if [ -z "$DEB_ARCHITECTURES" ]; then
     DEB_ARCHITECTURES="i386 amd64"
 fi
-if [ -z "$CODES" ]; then
-    CODES="squeeze wheezy unstable lucid natty oneiric precise"
-fi 
 if [ -z "$RPM_ARCHITECTURES" ]; then
     RPM_ARCHITECTURES="i386 x86_64"
-fi
-if [ -z "$DISTRIBUTIONS" ]; then
-    DISTRIBUTIONS="centos fedora"
 fi
 CHROOT_ROOT=/var/lib/chroot
 
