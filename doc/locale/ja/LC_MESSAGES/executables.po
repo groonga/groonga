@@ -667,7 +667,7 @@ msgstr "クエリを実行する"
 
 # 36e989ebd0744bf2a1cfc82b3d88dfa8
 #: ../../../source/executables/groonga-httpd.txt:52
-msgid "To check, request a simple query (:ref:`command-status`).::"
+msgid "To check, request a simple query (:ref:`command-status`)."
 msgstr "動作を確認するため、簡単なクエリ(:ref:`command-status`)をリクエストしてみます。"
 
 # 3285b47a935f41deb301e9e1f7a8b237
