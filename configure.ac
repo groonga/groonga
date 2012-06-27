@@ -1161,10 +1161,11 @@ AC_ARG_ENABLE(nginx,
   [AS_HELP_STRING([--enable-nginx],
     [enable nginx used for groonga-httpd. [default=yes]])],
   [enable_nginx="$enableval"],
-  [enable_nginx="auto"])
+  [enable_nginx="yes"])
 if test "x$enable_nginx" != "xno"; then
   AC_CONFIG_SUBDIRS([vendor/nginx])
 fi
+AM_CONDITIONAL(WITH_NGINX, test "$enable_nginx" = "yes")
 
 # For package
 AC_ARG_WITH(rsync-path,
@@ -1219,6 +1220,7 @@ echo "    buildable:           ${document_buildable}"
 echo "    built:               ${have_built_document}"
 echo "  Munin plugins:         ${install_munin_plugins}"
 echo "  Package platform:      ${package_platform}"
+echo "  groonga-httpd:         ${enable_nginx}"
 echo
 echo "Paths:"
 echo "  Install path prefix:   ${prefix}"
