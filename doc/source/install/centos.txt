@@ -99,7 +99,7 @@ groonga status by Munin, install groonga-munin-plugins package.
 
    Enable EPEL repository on any environment::
 
-     % sudo rpm -ivh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-6.noarch.rpm
+     % sudo rpm -ivh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-7.noarch.rpm
 
 Install groonga-munin-plugins package::
 
