@@ -18,6 +18,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+# f1e03b584ff343688d79229a67fe2860
+#: ../../../source/example/executables/groonga-httpd.log:1
+msgid "Execution example::"
+msgstr "実行例::"
+
 #: ../../../source/executables.txt:6
 msgid "実行ファイル"
 msgstr ""

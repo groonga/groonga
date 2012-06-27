@@ -47,14 +47,19 @@ def normalize_output(output):
   return output
 
 def execmd(command, fout):
-  formatted_command_line = "  " + command + "\n"
   stdout.write(command + "\n")
   stdout.flush()
   groonga_process.stdin.write(command + "\n")
   groonga_process.stdin.flush()
+  is_command = re.match("[a-z/]", command)
+  is_console = not re.match("/", command)
   if fout:
+    if is_console:
+      prefix = "  "
+    else:
+      prefix = "  % curl http://localhost:10041"
+    formatted_command_line = prefix + command + "\n"
     fout.write(formatted_command_line)
-  is_command = re.match("[a-z]", command)
   is_load_data_end = re.match("^\]", command)
   if not is_command and not is_load_data_end:
     return
@@ -83,8 +88,12 @@ def execmd(command, fout):
             formatted_output = formatted_output.encode("utf-8")
           stdout.write(formatted_output)
           if fout:
+            if is_console:
+              prefix = "  # "
+            else:
+              prefix = "  "
             first_lines_re = re.compile("^", re.M)
-            fout.write(first_lines_re.sub("  # ", formatted_output.strip()))
+            fout.write(first_lines_re.sub(prefix, formatted_output.strip()))
             fout.write("\n")
           output_buffer = ""
     else:
