@@ -158,6 +158,7 @@ while [ $# -ne 0 ]; do
     case $1 in
 	--check-install)
 	    check_installed_groonga_packages
+	    shift
 	    ;;
 	--check-address)
 	    check_packages_repository_address
