@@ -53,9 +53,6 @@ json形式
 例
 --
 
-::
-
- status
- {"alloc_count":104,
-  "starttime":1268213679,
-  "uptime":1}
+.. groonga-command
+.. include:: ../example/commands/status.log
+.. status
