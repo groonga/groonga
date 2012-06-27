@@ -107,6 +107,63 @@ EOF
 	    #sudo chname $code-$arch chroot $root_dir /tmp/$INSTALL_SCRIPT
 	done
     done
+    cat > install-centos5-groonga.sh <<EOF
+sudo rpm -ivh http://packages.groonga.org/centos/groonga-release-1.1.0-0.noarch.rpm
+sudo yum makecache
+sudo yum install -y groonga
+sudo yum install -y groonga-tokenizer-mecab
+wget http://download.fedoraproject.org/pub/epel/5/i386/epel-release-5-4.noarch.rpm
+sudo rpm -ivh epel-release-5-4.noarch.rpm
+sudo yum install -y groonga-munin-plugins
+EOF
+    cat > install-centos6-groonga.sh <<EOF
+sudo rpm -ivh http://packages.groonga.org/centos/groonga-release-1.1.0-0.noarch.rpm
+sudo yum makecache
+sudo yum install -y groonga
+sudo yum install -y groonga-tokenizer-mecab
+sudo rpm -ivh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-7.noarch.rpm
+sudo yum install -y groonga-munin-plugins
+EOF
+    cat > install-fedora-groonga.sh <<EOF
+sudo rpm -ivh http://packages.groonga.org/centos/groonga-release-1.1.0-0.noarch.rpm
+sudo yum makecache
+sudo yum install -y groonga
+sudo yum install -y groonga-tokenizer-mecab
+sudo yum install -y groonga-munin-plugins
+EOF
+    for dist in $DISTRIBUTIONS; do
+	case $dist in
+	    "fedora")
+		DISTRIBUTIONS_VERSION="16"
+		;;
+	    "centos")
+		DISTRIBUTIONS_VERSION="5 6"
+		;;
+	esac
+	for ver in $DISTRIBUTIONS_VERSION; do
+	    for arch in $RPM_ARCHITECTURES; do
+		case "$dist-$ver" in
+		    centos-5)
+			INSTALL_SCRIPT=install-centos5-groonga.sh
+			;;
+		    centos-6)
+			INSTALL_SCRIPT=install-centos6-groonga.sh
+			;;
+		    fedora-16)
+			INSTALL_SCRIPT=install-fedora-groonga.sh
+			;;
+		    *)
+			;;
+		esac
+		root_dir=$CHROOT_ROOT/$dist-$ver-$arch
+		echo "copy install script $INSTALL_SCRIPT to $root_dir/tmp"
+		sudo rm -f $root_dir/tmp/$INSTALL_SCRIPT
+		cp $INSTALL_SCRIPT $root_dir/tmp
+		chmod 755 $root_dir/tmp/$INSTALL_SCRIPT
+		sudo chname $code-$ver-$arch chroot $root_dir /tmp/$INSTALL_SCRIPT
+	    done
+	done
+    done
 }
 
 enable_temporaly_groonga_repository ()
