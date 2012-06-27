@@ -2,15 +2,15 @@
 
 .. highlightlang:: none
 
-.. _groonga-http-service:
+.. _groonga-server-http:
 
-groonga HTTPサービス
+groonga HTTPサーバー
 ====================
 
 名前
 ----
 
-groonga HTTPサービス
+groonga HTTPサーバー
 
 書式
 ----
