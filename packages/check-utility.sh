@@ -8,13 +8,13 @@
 # CODES="squeeze wheezy unstable lucid natty oneiric precise"
 # DISTRIBUTIONS="centos fedora"
 
-if [ -z "$DEB_ARCHITECTURES" ]; then
-    DEB_ARCHITECTURES="i386 amd64"
-fi
-if [ -z "$RPM_ARCHITECTURES" ]; then
-    RPM_ARCHITECTURES="i386 x86_64"
-fi
 CHROOT_ROOT=/var/lib/chroot
+CHECK_ADDRESS=0
+CHECK_INSTALL=0
+ENABLE_REPOSITORY=0
+DISABLE_REPOSITORY=0
+INSTALL_SCRIPT=0
+INSTALL_GROONGA=0
 
 echo_packages_repository_address ()
 {
@@ -249,25 +249,92 @@ EOF
     check_packages_repository_address
 }
 
+disable_temporaly_groonga_repository ()
+{
+    cat > disable-repository.sh <<EOF
+#!/bin/sh
+
+grep -v "packages.groonga.org" /etc/hosts > /tmp/hosts
+cp -f /tmp/hosts /etc/hosts
+EOF
+    DISABLE_SCRIPT=disable-repository.sh
+    for code in $CODES; do
+	for arch in $DEB_ARCHITECTURES; do
+	    root_dir=$CHROOT_ROOT/$code-$arch
+	    today=`date '+%Y%m%d.%s'`
+	    sudo cp $root_dir/etc/hosts $root_dir/etc/hosts.$today
+	    cp $DISABLE_SCRIPT $root_dir/tmp
+	    chmod 755 $root_dir/tmp/$DISABLE_SCRIPT
+	    sudo chname $code-$arch chroot $root_dir /tmp/$DISABLE_SCRIPT
+	done
+    done
+    for dist in $DISTRIBUTIONS; do
+	case $dist in
+	    "fedora")
+		DISTRIBUTIONS_VERSION="16"
+		;;
+	    "centos")
+		DISTRIBUTIONS_VERSION="5 6"
+		;;
+	esac
+	for ver in $DISTRIBUTIONS_VERSION; do
+	    for arch in $RPM_ARCHITECTURES; do
+		root_dir=$CHROOT_ROOT/$dist-$ver-$arch
+		today=`date '+%Y%m%d.%s'`
+		sudo cp $root_dir/etc/hosts $root_dir/etc/hosts.$today
+		cp $DISABLE_SCRIPT $root_dir/tmp
+		chmod 755 $root_dir/tmp/$DISABLE_SCRIPT
+		sudo chname $code-$arch chroot $root_dir /tmp/$DISABLE_SCRIPT
+	    done
+	done
+    done
+
+    check_packages_repository_address
+}
+
 host_address
 echo $HOST_ADDRESS
 
 while [ $# -ne 0 ]; do
     case $1 in
 	--check-install)
-	    check_installed_groonga_packages
+	    CHECK_INSTALL=1
 	    shift
 	    ;;
 	--check-address)
-	    check_packages_repository_address
+	    CHECK_ADDRESS=1
 	    shift
 	    ;;
 	--enable-repository)
-	    enable_temporaly_groonga_repository
+	    ENABLE_REPOSITORY=1
+	    shift
+	    ;;
+	--disable-repository)
+	    DISABLE_REPOSITORY=1
 	    shift
 	    ;;
 	--install-groonga)
-	    install_groonga_packages
+	    INSTALL_GROONGA=1
+	    shift
+	    ;;
+	--code)
+	    shift
+	    CODES=$1
+	    shift
+	    ;;
+	--code-arch)
+	    shift
+	    DEB_ARCHITECTURES=$1
+	    shift
+	    ;;
+	--dist)
+	    shift
+	    DISTRIBUTIONS=$1
+	    shift
+	    ;;
+	--dist-arch)
+	    shift
+	    RPM_ARCHITECTURES=$1
 	    shift
 	    ;;
 	*)
@@ -276,5 +343,26 @@ while [ $# -ne 0 ]; do
     esac
 done
 
+if [ -z "$DEB_ARCHITECTURES" ]; then
+    DEB_ARCHITECTURES="i386 amd64"
+fi
+if [ -z "$RPM_ARCHITECTURES" ]; then
+    RPM_ARCHITECTURES="i386 x86_64"
+fi
 
+if [ $CHECK_INSTALL -ne 0 ]; then
+    check_installed_groonga_packages
+fi
+if [ $CHECK_ADDRESS -ne 0 ]; then
+    check_packages_repository_address
+fi
+if [ $ENABLE_REPOSITORY -ne 0 ]; then
+    enable_temporaly_groonga_repository
+fi
+if [ $DISABLE_REPOSITORY -ne 0 ]; then
+    disable_temporaly_groonga_repository
+fi
+if [ $INSTALL_GROONGA -ne 0 ]; then
+    install_groonga_packages
+fi
 
