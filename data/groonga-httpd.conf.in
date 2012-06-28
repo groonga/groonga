@@ -1,5 +1,9 @@
 worker_processes 1;
 
+# Match this to the file owner of groonga database files if groonga-httpd is
+# run as root.
+#user groonga;
+
 events {
   worker_connections 1024;
 }
@@ -14,8 +18,11 @@ http {
     listen 10041;
     server_name localhost;
 
+    # Don't change the location; currently only /d/ is supported.
     location /d/ {
       groonga;
+
+      # Specify an actual database and enable this.
       #groonga_database /path/to/database;
     }
 
