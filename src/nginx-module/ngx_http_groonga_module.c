@@ -53,8 +53,10 @@ static char *ngx_http_groonga_merge_loc_conf(ngx_conf_t *cf,
                                              void *parent,
                                              void *child);
 
+static ngx_int_t ngx_http_groonga_pre_configuration(ngx_cycle_t *cycle);
+
 static ngx_http_module_t ngx_http_groonga_module_ctx = {
-  NULL,                          /* preconfiguration */
+  ngx_http_groonga_pre_configuration, /* preconfiguration */
   NULL,                          /* postconfiguration */
 
   NULL,                          /* create main configuration */
@@ -67,7 +69,6 @@ static ngx_http_module_t ngx_http_groonga_module_ctx = {
   ngx_http_groonga_merge_loc_conf,  /* merge location configuration */
 };
 
-static ngx_int_t ngx_http_groonga_init_module(ngx_cycle_t *cycle);
 static void ngx_http_groonga_exit_master(ngx_cycle_t *cycle);
 
 ngx_module_t ngx_http_groonga_module = {
@@ -76,7 +77,7 @@ ngx_module_t ngx_http_groonga_module = {
   ngx_http_groonga_commands,     /* module directives */
   NGX_HTTP_MODULE,               /* module type */
   NULL,                          /* init master */
-  ngx_http_groonga_init_module,  /* init module */
+  NULL,                          /* init module */
   NULL,                          /* init process */
   NULL,                          /* init thread */
   NULL,                          /* exit thread */
@@ -226,13 +227,6 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
   ngx_http_groonga_loc_conf_t *loc_conf;
   loc_conf = ngx_http_get_module_loc_conf(r, ngx_http_groonga_module);
 
-  if (!loc_conf->global_context) {
-    rc = ngx_http_groonga_open_database(r->connection->log, loc_conf);
-    if (rc != NGX_OK) {
-      return rc;
-    }
-  }
-
   context = loc_conf->global_context;
 
   printf("database_path: %s\n", loc_conf->database_cstr);
@@ -350,6 +344,7 @@ ngx_http_groonga_create_loc_conf(ngx_conf_t *cf)
 static char *
 ngx_http_groonga_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child)
 {
+  ngx_int_t rc;
   ngx_http_core_loc_conf_t *location_conf;
   ngx_http_groonga_loc_conf_t *prev = parent;
   ngx_http_groonga_loc_conf_t *conf = child;
@@ -363,13 +358,20 @@ ngx_http_groonga_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child)
         "\"groonga_database\" must be specified");
       return NGX_CONF_ERROR;
     }
+
+    rc = ngx_http_groonga_open_database(cf->log, conf);
+    if (rc != NGX_OK) {
+      ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
+        "failed to open the specified database");
+      return NGX_CONF_ERROR;
+    }
   }
 
   return NGX_CONF_OK;
 }
 
 static ngx_int_t
-ngx_http_groonga_init_module(ngx_cycle_t *cycle)
+ngx_http_groonga_pre_configuration(ngx_cycle_t *cycle)
 {
   grn_rc rc;
 
