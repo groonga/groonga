@@ -112,6 +112,9 @@ install_groonga_packages ()
 {
     cat > install-debian-groonga.sh <<EOF
 #!/bin/sh
+sudo aptitude clean
+rm -f /var/lib/apt/lists/packages.groonga.org_*
+rm -f /var/lib/apt/lists/partial/packages.groonga.org_*
 sudo aptitude update
 sudo aptitude -V -D -y --allow-untrusted install groonga-keyring
 sudo aptitude update
