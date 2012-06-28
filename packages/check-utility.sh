@@ -125,9 +125,9 @@ rm -f /var/lib/apt/lists/partial/packages.groonga.org_*
 sudo apt-get update
 sudo apt-get -y --allow-unauthenticated install groonga-keyring
 sudo apt-get update
-sudo apt-get -y --force-yes install groonga
-sudo apt-get -y --force-yes install groonga-tokenizer-mecab
-sudo apt-get -y --force-yes install groonga-munin-plugins
+sudo apt-get -y install groonga
+sudo apt-get -y install groonga-tokenizer-mecab
+sudo apt-get -y install groonga-munin-plugins
 EOF
     for code in $CODES; do
 	for arch in $DEB_ARCHITECTURES; do
