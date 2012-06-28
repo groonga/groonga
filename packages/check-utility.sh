@@ -80,7 +80,7 @@ EOF
 	    echo "copy check script $CHECK_SCRIPT to $root_dir/tmp"
 	    sudo rm -f $root_dir/tmp/$CHECK_SCRIPT
 	    cp $CHECK_SCRIPT $root_dir/tmp
-	    chmod 755 $root_dir/tmp/$CHECK_SCRIPT
+	    sudo chmod 755 $root_dir/tmp/$CHECK_SCRIPT
 	    sudo chname $code-$arch chroot $root_dir /tmp/$CHECK_SCRIPT
 	done
     done
@@ -100,7 +100,7 @@ EOF
 		echo "copy check script $CHECK_SCRIPT to $root_dir/tmp"
 		sudo rm -f $root_dir/tmp/$CHECK_SCRIPT
 		cp $CHECK_SCRIPT $root_dir/tmp
-		chmod 755 $root_dir/tmp/$CHECK_SCRIPT
+		sudo chmod 755 $root_dir/tmp/$CHECK_SCRIPT
 		sudo chname $code-$ver-$arch chroot $root_dir /tmp/$CHECK_SCRIPT
 	    done
 	done
