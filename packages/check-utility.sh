@@ -123,6 +123,7 @@ sudo aptitude -V -D -y install groonga-tokenizer-mecab
 sudo aptitude -V -D -y install groonga-munin-plugins
 EOF
     cat > install-ubuntu-groonga.sh <<EOF
+#!/bin/sh
 sudo apt-get clean
 rm -f /var/lib/apt/lists/packages.groonga.org_*
 rm -f /var/lib/apt/lists/partial/packages.groonga.org_*
