@@ -337,10 +337,20 @@ ngx_http_groonga_create_loc_conf(ngx_conf_t *cf)
 static char *
 ngx_http_groonga_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child)
 {
+  ngx_http_core_loc_conf_t *location_conf;
   ngx_http_groonga_loc_conf_t *prev = parent;
   ngx_http_groonga_loc_conf_t *conf = child;
 
   ngx_conf_merge_str_value(conf->database, prev->database, NULL);
+
+  location_conf = ngx_http_conf_get_module_loc_conf(cf, ngx_http_core_module);
+  if (location_conf->handler == ngx_http_groonga_handler) {
+    if (conf->database.data == NULL) {
+      ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
+        "\"groonga_database\" must be specified");
+      return NGX_CONF_ERROR;
+    }
+  }
 
   return NGX_CONF_OK;
 }
