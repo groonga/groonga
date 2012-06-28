@@ -85,7 +85,8 @@ ngx_module_t ngx_http_groonga_module = {
   NGX_MODULE_V1_PADDING
 };
 
-static ngx_int_t ngx_http_groonga_context_check(grn_ctx *context);
+static ngx_int_t ngx_http_groonga_context_check(ngx_log_t *log,
+                                                grn_ctx *context);
 
 static char *
 ngx_str_null_terminate(const ngx_str_t *string) {
@@ -186,7 +187,8 @@ ngx_http_groonga_context_receive_handler(grn_ctx *context,
 }
 
 static ngx_int_t
-ngx_http_groonga_open_database(ngx_http_groonga_loc_conf_t *loc_conf) {
+ngx_http_groonga_open_database(ngx_log_t *log,
+                               ngx_http_groonga_loc_conf_t *loc_conf) {
   ngx_int_t    rc;
   grn_ctx *context = malloc(sizeof(grn_ctx));
 
@@ -197,7 +199,7 @@ ngx_http_groonga_open_database(ngx_http_groonga_loc_conf_t *loc_conf) {
   }
 
   grn_db_open(context, loc_conf->database_cstr);
-  rc = ngx_http_groonga_context_check(context);
+  rc = ngx_http_groonga_context_check(log, context);
   if (rc != NGX_OK) {
     return rc;
   }
@@ -225,7 +227,7 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
   loc_conf = ngx_http_get_module_loc_conf(r, ngx_http_groonga_module);
 
   if (!loc_conf->global_context) {
-    rc = ngx_http_groonga_open_database(loc_conf);
+    rc = ngx_http_groonga_open_database(r->connection->log, loc_conf);
     if (rc != NGX_OK) {
       return rc;
     }
@@ -393,12 +395,11 @@ ngx_http_groonga_exit_master(ngx_cycle_t *cycle)
 }
 
 static ngx_int_t
-ngx_http_groonga_context_check(grn_ctx *context) {
+ngx_http_groonga_context_check(ngx_log_t *log, grn_ctx *context) {
   if (context->rc == GRN_SUCCESS) {
     return NGX_OK;
   } else {
-    /* TODO: proper error handling */
-    printf("%s\n", context->errbuf);
+    ngx_log_error(NGX_LOG_ERR, log, 0, context->errbuf);
     return NGX_HTTP_INTERNAL_SERVER_ERROR;
   }
 }
