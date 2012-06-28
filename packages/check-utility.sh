@@ -150,7 +150,7 @@ EOF
 	    sudo rm -f $root_dir/tmp/$INSTALL_SCRIPT
 	    cp $INSTALL_SCRIPT $root_dir/tmp
 	    chmod 755 $root_dir/tmp/$INSTALL_SCRIPT
-	    #sudo chname $code-$arch chroot $root_dir /tmp/$INSTALL_SCRIPT
+	    sudo chname $code-$arch chroot $root_dir /tmp/$INSTALL_SCRIPT
 	done
     done
     cat > install-centos5-groonga.sh <<EOF
