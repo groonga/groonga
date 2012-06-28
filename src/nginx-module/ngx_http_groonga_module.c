@@ -53,7 +53,7 @@ static char *ngx_http_groonga_merge_loc_conf(ngx_conf_t *cf,
                                              void *parent,
                                              void *child);
 
-static ngx_int_t ngx_http_groonga_pre_configuration(ngx_cycle_t *cycle);
+static ngx_int_t ngx_http_groonga_pre_configuration(ngx_conf_t *conf);
 
 static ngx_http_module_t ngx_http_groonga_module_ctx = {
   ngx_http_groonga_pre_configuration, /* preconfiguration */
@@ -371,7 +371,7 @@ ngx_http_groonga_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child)
 }
 
 static ngx_int_t
-ngx_http_groonga_pre_configuration(ngx_cycle_t *cycle)
+ngx_http_groonga_pre_configuration(ngx_conf_t *conf)
 {
   grn_rc rc;
 
