@@ -1,9 +1,9 @@
 #!/bin/sh
 
-# Usage: pkg-check-install.sh [--install-groonga]
-#                             [--check-install]
-#                             [--check-address]
-#                             [--enable-repository]
+# Usage: check-utility.sh [--install-groonga]
+#                         [--check-install]
+#                         [--check-address]
+#                         [--enable-repository]
 #
 # CODES="squeeze wheezy unstable lucid natty oneiric precise"
 # DISTRIBUTIONS="centos fedora"
