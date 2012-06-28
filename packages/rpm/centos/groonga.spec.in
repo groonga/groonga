@@ -209,7 +209,6 @@ fi
 %doc README AUTHORS COPYING
 %{_libdir}/*.so.*
 %dir %{_libdir}/groonga
-%dir %{_libdir}/groonga/httpd/*
 %dir %{_libdir}/groonga/plugins
 %dir %{_libdir}/groonga/plugins/tokenizers
 %{_libdir}/groonga/plugins/table/table.so
@@ -218,6 +217,7 @@ fi
 %files server
 %defattr(-,root,root,-)
 %config(noreplace) %{_sysconfdir}/groonga/
+%config(noreplace) %{_sysconfdir}/groonga/httpd/*
 %config(noreplace) %{_sysconfdir}/sysconfig/groonga
 %{_initddir}/*
 %ghost %dir %{_localstatedir}/run/%{name}
