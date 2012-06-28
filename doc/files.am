@@ -73,6 +73,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/commands/select/sortby_simple.log \
 	$(top_srcdir)/doc/source/example/commands/select/table_nonexistent.log \
 	$(top_srcdir)/doc/source/example/commands/select/usage_setup.log \
+	$(top_srcdir)/doc/source/example/commands/status.log \
 	$(top_srcdir)/doc/source/example/commands/suggest-completion.log \
 	$(top_srcdir)/doc/source/example/commands/suggest-correction.log \
 	$(top_srcdir)/doc/source/example/commands/suggest-learn-completion.log \
@@ -80,8 +81,10 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/commands/suggest-learn-suggestion.log \
 	$(top_srcdir)/doc/source/example/commands/suggest-mixed.log \
 	$(top_srcdir)/doc/source/example/commands/suggest-suggestion.log \
+	$(top_srcdir)/doc/source/example/commands/table_list.log \
 	$(top_srcdir)/doc/source/example/completion-1.log \
 	$(top_srcdir)/doc/source/example/correction-1.log \
+	$(top_srcdir)/doc/source/example/executables/groonga-httpd.log \
 	$(top_srcdir)/doc/source/example/functions/geo_distance_distance_ellipsoid.log \
 	$(top_srcdir)/doc/source/example/functions/geo_distance_distance_rectangle.log \
 	$(top_srcdir)/doc/source/example/functions/geo_distance_distance_sphere.log \
@@ -420,6 +423,7 @@ source_files_relative_from_doc_dir = \
 	source/example/commands/select/sortby_simple.log \
 	source/example/commands/select/table_nonexistent.log \
 	source/example/commands/select/usage_setup.log \
+	source/example/commands/status.log \
 	source/example/commands/suggest-completion.log \
 	source/example/commands/suggest-correction.log \
 	source/example/commands/suggest-learn-completion.log \
@@ -427,8 +431,10 @@ source_files_relative_from_doc_dir = \
 	source/example/commands/suggest-learn-suggestion.log \
 	source/example/commands/suggest-mixed.log \
 	source/example/commands/suggest-suggestion.log \
+	source/example/commands/table_list.log \
 	source/example/completion-1.log \
 	source/example/correction-1.log \
+	source/example/executables/groonga-httpd.log \
 	source/example/functions/geo_distance_distance_ellipsoid.log \
 	source/example/functions/geo_distance_distance_rectangle.log \
 	source/example/functions/geo_distance_distance_sphere.log \

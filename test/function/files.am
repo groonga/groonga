@@ -5629,6 +5629,7 @@ test_files = \
 	suite/suggest/suggest/coocurrence.test \
 	suite/suggest/suggest/learn-duplicated.test \
 	suite/table/add.test \
+	suite/table/filter.test \
 	suite/table/filter_by_script.test \
 	suite/table/group.test \
 	suite/table/match.test \
@@ -11279,6 +11280,7 @@ expected_files = \
 	suite/suggest/suggest/coocurrence.expected \
 	suite/suggest/suggest/learn-duplicated.expected \
 	suite/table/add.expected \
+	suite/table/filter.expected \
 	suite/table/filter_by_script.expected \
 	suite/table/group.expected \
 	suite/table/match.expected \
