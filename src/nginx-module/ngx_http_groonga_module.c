@@ -186,6 +186,27 @@ ngx_http_groonga_context_receive_handler(grn_ctx *context,
 }
 
 static ngx_int_t
+ngx_http_groonga_open_database(ngx_http_groonga_loc_conf_t *loc_conf) {
+  ngx_int_t    rc;
+  grn_ctx *context = malloc(sizeof(grn_ctx));
+
+  grn_ctx_init(context, GRN_NO_FLAGS);
+
+  if (!loc_conf->database_cstr) {
+    loc_conf->database_cstr = ngx_str_null_terminate(&loc_conf->database);
+  }
+
+  grn_db_open(context, loc_conf->database_cstr);
+  rc = ngx_http_groonga_context_check(context);
+  if (rc != NGX_OK) {
+    return rc;
+  }
+
+  loc_conf->global_context = context;
+  return NGX_OK;
+}
+
+static ngx_int_t
 ngx_http_groonga_handler(ngx_http_request_t *r)
 {
   ngx_int_t    rc;
@@ -204,20 +225,10 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
   loc_conf = ngx_http_get_module_loc_conf(r, ngx_http_groonga_module);
 
   if (!loc_conf->global_context) {
-    context = malloc(sizeof(grn_ctx));
-
-    grn_ctx_init(context, GRN_NO_FLAGS);
-
-    if (!loc_conf->database_cstr) {
-      loc_conf->database_cstr = ngx_str_null_terminate(&loc_conf->database);
-    }
-
-    grn_db_open(context, loc_conf->database_cstr);
-    rc = ngx_http_groonga_context_check(context);
+    rc = ngx_http_groonga_open_database(loc_conf);
     if (rc != NGX_OK) {
       return rc;
     }
-    loc_conf->global_context = context;
   }
 
   context = loc_conf->global_context;
