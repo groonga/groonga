@@ -68,11 +68,11 @@ check_installed_groonga_packages ()
 {
     cat > check-deb-groonga.sh <<EOF
 #!/bin/sh
-dpkg -l | grep groonga
+dpkg -l | grep roonga
 EOF
     cat > check-rpm-groonga.sh <<EOF
 #!/bin/sh
-rpm -qa | grep groonga
+rpm -qa | grep roonga
 EOF
     for code in $CODES; do
 	for arch in $DEB_ARCHITECTURES; do
