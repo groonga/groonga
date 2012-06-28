@@ -35,10 +35,20 @@ First, you'll need to edit the groonga-httpd configuration file to specify a
 database. Edit /etc/groonga/httpd/groonga-httpd.conf to enable the
 groonga_database directive like this::
 
-   location /d/ { # <= Don't change the location; currently only /d/ is supported.
-     groonga;     # <= This means to turn on groonga-httpd.
-     groonga_database /var/lib/groonga/db/db; # <= Specify an actual database and
-                                              #    enable this directive.
+   # Match this to the file owner of groonga database files if groonga-httpd is
+   # run as root.
+   #user groonga;
+   ...
+   http {
+     ...
+     # Don't change the location; currently only /d/ is supported.
+     location /d/ {
+       groonga; # <= This means to turn on groonga-httpd.
+
+       # Specify an actual database and enable this.
+       groonga_database /var/lib/groonga/db/db;
+     }
+     ...
    }
 
 Then, run groonga-httpd. Note that the control immediately returns back to the
