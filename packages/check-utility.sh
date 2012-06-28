@@ -241,7 +241,6 @@ EOF
 		sudo cp $root_dir/etc/hosts $root_dir/etc/hosts.$today
 		sudo cp enable-repository.sh $root_dir/tmp
 		sudo chname $code-$arch chroot $root_dir /tmp/enable-repository.sh
-		echo_packages_repository_address "$root_dir" "$dist-$ver" "$arch"
 	    done
 	done
     done
