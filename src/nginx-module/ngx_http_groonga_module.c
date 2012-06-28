@@ -57,32 +57,32 @@ static ngx_int_t ngx_http_groonga_pre_configuration(ngx_cycle_t *cycle);
 
 static ngx_http_module_t ngx_http_groonga_module_ctx = {
   ngx_http_groonga_pre_configuration, /* preconfiguration */
-  NULL,                          /* postconfiguration */
+  NULL, /* postconfiguration */
 
-  NULL,                          /* create main configuration */
-  NULL,                          /* init main configuration */
+  NULL, /* create main configuration */
+  NULL, /* init main configuration */
 
-  NULL,                          /* create server configuration */
-  NULL,                          /* merge server configuration */
+  NULL, /* create server configuration */
+  NULL, /* merge server configuration */
 
   ngx_http_groonga_create_loc_conf, /* create location configuration */
-  ngx_http_groonga_merge_loc_conf,  /* merge location configuration */
+  ngx_http_groonga_merge_loc_conf, /* merge location configuration */
 };
 
 static void ngx_http_groonga_exit_master(ngx_cycle_t *cycle);
 
 ngx_module_t ngx_http_groonga_module = {
   NGX_MODULE_V1,
-  &ngx_http_groonga_module_ctx,  /* module context */
-  ngx_http_groonga_commands,     /* module directives */
-  NGX_HTTP_MODULE,               /* module type */
-  NULL,                          /* init master */
-  NULL,                          /* init module */
-  NULL,                          /* init process */
-  NULL,                          /* init thread */
-  NULL,                          /* exit thread */
-  NULL,                          /* exit process */
-  ngx_http_groonga_exit_master,  /* exit master */
+  &ngx_http_groonga_module_ctx, /* module context */
+  ngx_http_groonga_commands, /* module directives */
+  NGX_HTTP_MODULE, /* module type */
+  NULL, /* init master */
+  NULL, /* init module */
+  NULL, /* init process */
+  NULL, /* init thread */
+  NULL, /* exit thread */
+  NULL, /* exit process */
+  ngx_http_groonga_exit_master, /* exit master */
   NGX_MODULE_V1_PADDING
 };
 
