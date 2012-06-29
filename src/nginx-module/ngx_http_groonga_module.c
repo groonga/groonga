@@ -229,10 +229,6 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
 
   context = loc_conf->global_context;
 
-  printf("database_path: %s\n", loc_conf->database_cstr);
-  printf("version: %s\n", grn_get_version());
-  printf("uri: %.*s\n", (int)r->unparsed_uri.len, r->unparsed_uri.data);
-
   grn_ctx_recv_handler_set(context,
                            ngx_http_groonga_context_receive_handler,
                            (void *)&output);
