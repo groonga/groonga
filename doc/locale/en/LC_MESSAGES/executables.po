@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 2.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-28 11:41\n"
+"POT-Creation-Date: 2012-06-29 12:38\n"
 "PO-Revision-Date: 2012-04-28 11:37+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -880,103 +880,103 @@ msgid ""
 msgstr ""
 
 # 543d77f20d864bd08c5ef8eae396fc8d
-#: ../../../source/executables/groonga-httpd.txt:44
+#: ../../../source/executables/groonga-httpd.txt:54
 msgid ""
 "Then, run groonga-httpd. Note that the control immediately returns back to "
 "the console because groonga-httpd runs as a daemon process by default.::"
 msgstr ""
 
 # 58fa0beee0ad40939b3c5c622360e104
-#: ../../../source/executables/groonga-httpd.txt:50
+#: ../../../source/executables/groonga-httpd.txt:60
 msgid "Request queries"
 msgstr ""
 
 # 1aeae1042a9e42f9aba4c0db9d44b28c
-#: ../../../source/executables/groonga-httpd.txt:52
+#: ../../../source/executables/groonga-httpd.txt:62
 msgid "To check, request a simple query (:ref:`command-status`)."
 msgstr ""
 
 # 8b1c16ecf197417bb0ab5d326bdd24f4
-#: ../../../source/executables/groonga-httpd.txt:60
+#: ../../../source/executables/groonga-httpd.txt:70
 msgid "Browse the administration tool"
 msgstr ""
 
 # 0e4d0ad628da48ce8745e5a0c513f00a
-#: ../../../source/executables/groonga-httpd.txt:62
+#: ../../../source/executables/groonga-httpd.txt:72
 msgid ""
 "Also, you can browse Web-based administration tool at http://"
 "localhost:10041/."
 msgstr ""
 
 # 16930a665ff7421888d654594f82a1d4
-#: ../../../source/executables/groonga-httpd.txt:65
+#: ../../../source/executables/groonga-httpd.txt:75
 msgid "Shut down"
 msgstr ""
 
 # 2da098e2c07a4e0092fc103af36568af
-#: ../../../source/executables/groonga-httpd.txt:67
+#: ../../../source/executables/groonga-httpd.txt:77
 msgid "Finally, to terminate the running groonga-httpd daemon, run this::"
 msgstr ""
 
 # 2bd510014cc74c24968f5b9012302b29
-#: ../../../source/executables/groonga-httpd.txt:72
+#: ../../../source/executables/groonga-httpd.txt:82
 msgid "Configuration directives"
 msgstr ""
 
 # e6f40f4eb6ab42ae8006bcf0c556b9f9
-#: ../../../source/executables/groonga-httpd.txt:74
+#: ../../../source/executables/groonga-httpd.txt:84
 msgid ""
 "There are two kinds of configuration directives. One is provided by nginx, "
 "the other is by groonga-httpd."
 msgstr ""
 
 # f98d2b2ca9f449cc8381692916847998
-#: ../../../source/executables/groonga-httpd.txt:77
+#: ../../../source/executables/groonga-httpd.txt:87
 msgid ""
 "The following directives can be used in the groonga-httpd configuration "
 "file. By default, it's located at /etc/groonga/httpd/groonga-httpd.conf."
 msgstr ""
 
 # 4e64011d8ee8469287405ee6bed0491d
-#: ../../../source/executables/groonga-httpd.txt:81
+#: ../../../source/executables/groonga-httpd.txt:91
 msgid "Groonga-specific directives"
 msgstr ""
 
 # 324d7aaf03ff492790410b73e4d51bac
-#: ../../../source/executables/groonga-httpd.txt:83
+#: ../../../source/executables/groonga-httpd.txt:93
 msgid ""
 "The following directives aren't provided by nginx. They are provided by "
 "groonga-httpd to configure groonga-httpd-specific configurations."
 msgstr ""
 
 # 2e00f8536608498ebcfb5af2cc2435d5
-#: ../../../source/executables/groonga-httpd.txt:87
+#: ../../../source/executables/groonga-httpd.txt:97
 msgid "``groonga_database``"
 msgstr ""
 
 # 3e34279c096c4eac8d7665ea8283885b
-#: ../../../source/executables/groonga-httpd.txt:89
+#: ../../../source/executables/groonga-httpd.txt:99
 msgid "Specifies the path to a groonga database."
 msgstr ""
 
 # d44422ef36864f79b71f30ec0a495549
-#: ../../../source/executables/groonga-httpd.txt:92
+#: ../../../source/executables/groonga-httpd.txt:102
 msgid "Performance-related directives"
 msgstr ""
 
 # 90ede796e1d64ae79b1974767947e998
-#: ../../../source/executables/groonga-httpd.txt:94
+#: ../../../source/executables/groonga-httpd.txt:104
 msgid ""
 "The following directives are related to the performance of groonga-httpd."
 msgstr ""
 
 # 37fb65cfc27f46ac9f4ef0f5e8d71690
-#: ../../../source/executables/groonga-httpd.txt:97
+#: ../../../source/executables/groonga-httpd.txt:107
 msgid "``worker_processes``"
 msgstr ""
 
 # 8a4d9b2801af4557b1adb89113d700e4
-#: ../../../source/executables/groonga-httpd.txt:99
+#: ../../../source/executables/groonga-httpd.txt:109
 msgid ""
 "For optimum performance, set this to be equal to the number of CPUs or "
 "cores. In many cases, groonga queries may be CPU-intensive work, so to fully "
@@ -984,24 +984,24 @@ msgid ""
 msgstr ""
 
 # 0cd3ccc9a09a44b4a8d07680e1d4a061
-#: ../../../source/executables/groonga-httpd.txt:103
+#: ../../../source/executables/groonga-httpd.txt:113
 msgid ""
 "This isn't a groonga-httpd specific directive, but an nginx's one. For "
 "details, see http://wiki.nginx.org/CoreModule#worker_processes."
 msgstr ""
 
 # c24225099c4a4211acc82e9b94776374
-#: ../../../source/executables/groonga-httpd.txt:106
+#: ../../../source/executables/groonga-httpd.txt:116
 msgid "By default, this is set to 1. It is nginx's default."
 msgstr ""
 
 # 65b540435df44be98f909472f38199e2
-#: ../../../source/executables/groonga-httpd.txt:109
+#: ../../../source/executables/groonga-httpd.txt:119
 msgid "Available nginx modules"
 msgstr ""
 
 # 6db5c5ce1d314da1bd585393b6747f52
-#: ../../../source/executables/groonga-httpd.txt:111
+#: ../../../source/executables/groonga-httpd.txt:121
 msgid ""
 "All standard HTTP modules except HttpRewriteModule is available. "
 "HttpRewriteModule is disabled to avoid to depend on PCRE (Perl Compatible "

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-21 19:16\n"
+"POT-Creation-Date: 2012-06-29 12:39\n"
 "PO-Revision-Date: 2012-05-21 14:24+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -44,7 +44,7 @@ msgstr ""
 #: ../../../source/commands/log_put.txt:9
 #: ../../../source/commands/log_reopen.txt:9
 #: ../../../source/commands/quit.txt:9 ../../../source/commands/shutdown.txt:9
-#: ../../../source/commands/status.txt:9
+#: ../../../source/commands/status.txt:11
 #: ../../../source/commands/table_create.txt:9
 #: ../../../source/commands/table_list.txt:9
 #: ../../../source/commands/table_remove.txt:9
@@ -71,7 +71,7 @@ msgstr ""
 #: ../../../source/commands/log_reopen.txt:14
 #: ../../../source/commands/quit.txt:14
 #: ../../../source/commands/shutdown.txt:14
-#: ../../../source/commands/status.txt:14
+#: ../../../source/commands/status.txt:16
 #: ../../../source/commands/table_create.txt:14
 #: ../../../source/commands/table_list.txt:14
 #: ../../../source/commands/table_remove.txt:14
@@ -94,7 +94,7 @@ msgstr ""
 #: ../../../source/commands/log_reopen.txt:20
 #: ../../../source/commands/quit.txt:20
 #: ../../../source/commands/shutdown.txt:20
-#: ../../../source/commands/status.txt:20
+#: ../../../source/commands/status.txt:22
 #: ../../../source/commands/table_create.txt:20
 #: ../../../source/commands/table_list.txt:20
 #: ../../../source/commands/table_remove.txt:20
@@ -128,7 +128,7 @@ msgstr ""
 #: ../../../source/commands/log_reopen.txt:29
 #: ../../../source/commands/quit.txt:27
 #: ../../../source/commands/shutdown.txt:27
-#: ../../../source/commands/status.txt:27
+#: ../../../source/commands/status.txt:29
 #: ../../../source/commands/table_create.txt:29
 #: ../../../source/commands/table_list.txt:27
 #: ../../../source/commands/table_remove.txt:27
@@ -160,7 +160,7 @@ msgstr ""
 #: ../../../source/commands/quit.txt:32
 #: ../../../source/commands/select.txt:728
 #: ../../../source/commands/shutdown.txt:32
-#: ../../../source/commands/status.txt:32
+#: ../../../source/commands/status.txt:34
 #: ../../../source/commands/table_create.txt:92
 #: ../../../source/commands/table_list.txt:32
 #: ../../../source/commands/table_remove.txt:33
@@ -187,9 +187,8 @@ msgstr ""
 #: ../../../source/commands/log_reopen.txt:48
 #: ../../../source/commands/quit.txt:37
 #: ../../../source/commands/shutdown.txt:37
-#: ../../../source/commands/status.txt:54
+#: ../../../source/commands/status.txt:56
 #: ../../../source/commands/table_create.txt:106
-#: ../../../source/commands/table_list.txt:80
 #: ../../../source/commands/table_remove.txt:47
 #: ../../../source/commands/view_add.txt:52
 msgid "例"
@@ -237,7 +236,7 @@ msgstr ""
 #: ../../../source/commands/log_level.txt:46
 #: ../../../source/commands/log_put.txt:50
 #: ../../../source/commands/log_reopen.txt:37
-#: ../../../source/commands/status.txt:35
+#: ../../../source/commands/status.txt:37
 #: ../../../source/commands/table_create.txt:95
 #: ../../../source/commands/table_list.txt:35
 #: ../../../source/commands/table_remove.txt:36
@@ -555,7 +554,6 @@ msgid ""
 msgstr ""
 
 #: ../../../source/commands/column_list.txt:111
-#: ../../../source/commands/table_list.txt:104
 msgid "注: 実際は改行が入りません。"
 msgstr ""
 
@@ -1114,7 +1112,7 @@ msgstr ""
 #: ../../../source/commands/quit.txt:29 ../../../source/commands/quit.txt:34
 #: ../../../source/commands/shutdown.txt:29
 #: ../../../source/commands/shutdown.txt:34
-#: ../../../source/commands/status.txt:29
+#: ../../../source/commands/status.txt:31
 #: ../../../source/commands/table_list.txt:29
 msgid "ありません。"
 msgstr ""
@@ -1703,7 +1701,8 @@ msgstr ""
 # 83e77c84e42145d6b459238678f259d9
 #: ../../../source/commands/select.txt:328
 msgid "See :doc:`/reference/grn_expr/query_syntax` for other syntax."
-msgstr "他の構文は :doc:`/reference/grn_expr/query_syntax` を参照してください。"
+msgstr ""
+"他の構文は :doc:`/reference/grn_expr/query_syntax` を参照してください。"
 
 # f48833e9b04d4c9e90bb72c21484c588
 #: ../../../source/commands/select.txt:330
@@ -2528,22 +2527,22 @@ msgstr ""
 msgid "shutdownは、接続しているgroongaサーバプロセスを停止します。"
 msgstr ""
 
-#: ../../../source/commands/status.txt:6
+#: ../../../source/commands/status.txt:8
 msgid "status"
 msgstr ""
 
-#: ../../../source/commands/status.txt:11
+#: ../../../source/commands/status.txt:13
 msgid "status - groongaプロセスの状態表示"
 msgstr ""
 
-#: ../../../source/commands/status.txt:22
+#: ../../../source/commands/status.txt:24
 msgid ""
 "groonga組込コマンドの一つであるstatusについて説明します。組込コマンドは、"
 "groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
 "エストを送信することによって実行します。"
 msgstr ""
 
-#: ../../../source/commands/status.txt:24
+#: ../../../source/commands/status.txt:26
 msgid ""
 "statusコマンドは、groongaプロセスの状態を表示します。主にgroongaサーバプロセ"
 "スに対して使用することを想定しています。"
@@ -3245,6 +3244,7 @@ msgstr ""
 #: ../../../source/example/commands/select/sortby_simple.log:1
 #: ../../../source/example/commands/select/table_nonexistent.log:1
 #: ../../../source/example/commands/select/usage_setup.log:1
+#: ../../../source/example/commands/status.log:1
 #: ../../../source/example/commands/suggest-completion.log:1
 #: ../../../source/example/commands/suggest-correction.log:1
 #: ../../../source/example/commands/suggest-learn-completion.log:1
@@ -3252,5 +3252,6 @@ msgstr ""
 #: ../../../source/example/commands/suggest-learn-suggestion.log:1
 #: ../../../source/example/commands/suggest-mixed.log:1
 #: ../../../source/example/commands/suggest-suggestion.log:1
+#: ../../../source/example/commands/table_list.log:1
 msgid "Execution example::"
 msgstr "実行例::"
