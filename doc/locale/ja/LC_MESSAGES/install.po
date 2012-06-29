@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-21 19:16\n"
+"POT-Creation-Date: 2012-06-29 15:42\n"
 "PO-Revision-Date: 2012-05-25 11:13+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -786,8 +786,8 @@ msgid ""
 "never escalate."
 msgstr ""
 "マッチ演算でエスカレーションをするかどうかのデフォルトの閾値を指定します。こ"
-"の閾値については :ref:`match-escalation-threshold` を参照し"
-"てください。-1はマッチ演算でエスカレーションしないという意味です。"
+"の閾値については :ref:`match-escalation-threshold` を参照してください。-1は"
+"マッチ演算でエスカレーションしないという意味です。"
 
 # 718003b153b8472ab631bb7841df65b9
 #: ../../../source/install/others.txt:162
@@ -1156,10 +1156,10 @@ msgstr ""
 #: ../../../source/install/windows.txt:53
 msgid ""
 "Download zipped source `groonga-2.0.4.zip <http://packages.groonga.org/"
-"source/groonga/groonga-2.0.4.tar.gz>`_ and extract it."
+"source/groonga/groonga-2.0.4.zip>`_ and extract it."
 msgstr ""
 "zipでアーカイブされたソース `groonga-2.0.4.zip <http://packages.groonga.org/"
-"source/groonga/groonga-2.0.4.tar.gz>`_ をダウンロードして展開します。"
+"source/groonga/groonga-2.0.4.zip>`_ をダウンロードして展開します。"
 
 # 49a6d04509ea401db47310ba67cc6116
 #: ../../../source/install/windows.txt:57

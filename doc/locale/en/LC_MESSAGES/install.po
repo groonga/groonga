@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 2.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-22 10:48\n"
+"POT-Creation-Date: 2012-06-29 15:42\n"
 "PO-Revision-Date: 2012-04-28 11:38+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -1043,11 +1043,11 @@ msgstr ""
 msgid "`CMake <http://www.cmake.org/>`_"
 msgstr ""
 
-# 72a299f3ce1d44a188f84b1d3ddd76c5
+# 4310c8b0c4114a6c9ea0f3f5edf2ccbc
 #: ../../../source/install/windows.txt:53
 msgid ""
 "Download zipped source `groonga-2.0.4.zip <http://packages.groonga.org/"
-"source/groonga/groonga-2.0.4.tar.gz>`_ and extract it."
+"source/groonga/groonga-2.0.4.zip>`_ and extract it."
 msgstr ""
 
 # 2a75b8795cec4ed78a1b96b7c652945f
