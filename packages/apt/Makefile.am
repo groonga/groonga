@@ -27,7 +27,7 @@ download: ensure-rsync-path
 	for distribution in $(DISTRIBUTIONS); do	\
 	  rsync -avz --progress --delete		\
 	    $(RSYNC_PATH)/$${distribution}		\
-	    ${REPOSITORIES_PATH}/$${distribution}/;	\
+	    ${REPOSITORIES_PATH}/;	\
 	done
 
 sign-packages:
