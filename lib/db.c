@@ -9388,11 +9388,13 @@ grn_load_(grn_ctx *ctx, grn_content_type input_type,
     loader->input_type = input_type;
     if (grn_db_check_name(ctx, table, table_len)) {
       GRN_DB_CHECK_NAME_ERR("[table][load]", table, table_len);
+      loader->stat = GRN_LOADER_END;
       return;
     }
     loader->table = grn_ctx_get(ctx, table, table_len);
     if (!loader->table) {
       ERR(GRN_INVALID_ARGUMENT, "nonexistent table: <%.*s>", table_len, table);
+      loader->stat = GRN_LOADER_END;
       return;
     }
     if (loader->table && columns && columns_len) {
@@ -9437,6 +9439,11 @@ grn_load_(grn_ctx *ctx, grn_content_type input_type,
       }
     }
   } else {
+    if (!loader->table) {
+      ERR(GRN_INVALID_ARGUMENT, "mandatory \"table\" parameter is absent");
+      loader->stat = GRN_LOADER_END;
+      return;
+    }
     input_type = loader->input_type;
   }
   switch (input_type) {
