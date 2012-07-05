@@ -1406,7 +1406,9 @@ grn_ctx_send(grn_ctx *ctx, const char *str, unsigned int str_len, int flags)
         }
       }
       if (ctx->stat == GRN_CTX_QUITTING) { ctx->stat = GRN_CTX_QUIT; }
-      if (!ctx->impl->qe_next) {
+      if (ctx->impl->qe_next) {
+        ERRCLR(ctx);
+      } else {
         LAP("<", "rc=%d", ctx->rc);
       }
     output :

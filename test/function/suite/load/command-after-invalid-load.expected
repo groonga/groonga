@@ -1,0 +1,55 @@
+table_create Hoge TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Hoge point COLUMN_SCALAR WGS84GeoPoint
+[[0,0.0,0.0],true]
+column_create Hoge text COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Hoge
+[
+{"_key":"a","point":"x","text":"a0000000"}
+]
+[[0,0.0,0.0],1]
+table_list
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        "id",
+        "UInt32"
+      ],
+      [
+        "name",
+        "ShortText"
+      ],
+      [
+        "path",
+        "ShortText"
+      ],
+      [
+        "flags",
+        "ShortText"
+      ],
+      [
+        "domain",
+        "ShortText"
+      ],
+      [
+        "range",
+        "ShortText"
+      ]
+    ],
+    [
+      256,
+      "Hoge",
+      "tmp/db.0000100",
+      "TABLE_HASH_KEY|PERSISTENT",
+      "ShortText",
+      "null"
+    ]
+  ]
+]
