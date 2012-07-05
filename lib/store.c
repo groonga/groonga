@@ -818,7 +818,7 @@ grn_ja_put_raw(grn_ctx *ctx, grn_ja *ja, grn_id id,
               memcpy(b + pos, value, value_len);
               *((uint32_t *)(b + el)) = pos + value_len;
             }
-            return ctx->rc;
+            return GRN_SUCCESS;
           } else {
             if ((rc = grn_ja_alloc(ctx, ja, id,
                                    value_len + old_len + sizeof(uint32_t),
@@ -868,7 +868,7 @@ grn_ja_put_raw(grn_ctx *ctx, grn_ja *ja, grn_id id,
               memcpy(b + pos - value_len, value, value_len);
               *((uint32_t *)(b + el)) = pos - value_len;
             }
-            return ctx->rc;
+            return GRN_SUCCESS;
           } else {
             if ((rc = grn_ja_alloc(ctx, ja, id,
                                    value_len + old_len + sizeof(uint32_t),
@@ -937,17 +937,15 @@ grn_ja_put_raw(grn_ctx *ctx, grn_ja *ja, grn_id id,
     break;
   default :
     ERR(GRN_INVALID_ARGUMENT, "grn_ja_put_raw called with illegal flags value");
-    return ctx->rc;
+    return GRN_INVALID_ARGUMENT;
   }
-  if (grn_ja_replace(ctx, ja, id, &einfo, cas)) {
-    grn_rc rc = ctx->rc;
-    ctx->rc = GRN_SUCCESS;
-    if (grn_io_lock(ctx, ja->io, 10000000)) { return ctx->rc; }
-    grn_ja_free(ctx, ja, &einfo);
-    grn_io_unlock(ja->io);
-    ctx->rc = rc;
+  if ((rc = grn_ja_replace(ctx, ja, id, &einfo, cas))) {
+    if (!grn_io_lock(ctx, ja->io, 10000000)) {
+      grn_ja_free(ctx, ja, &einfo);
+      grn_io_unlock(ja->io);
+    }
   }
-  return ctx->rc;
+  return rc;
 }
 
 grn_rc
