@@ -1899,6 +1899,9 @@ geo_quadrant_type(grn_geo_point *point1, grn_geo_point *point2)
     } else if (point1->longitude < 0 && point2->longitude > 0 &&
                point1->latitude <= 0 && point2->latitude <= 0) {
       return QUADRANT_3RD_TO_4TH;
+    } else if (point1->longitude > 0 && point2->longitude < 0 &&
+               point1->latitude <= 0 && point2->latitude <= 0) {
+      return QUADRANT_4TH_TO_3RD;
     } else {
       /* FIXME */
       return QUADRANT_1ST;
