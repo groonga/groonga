@@ -555,7 +555,7 @@ class GrnTestData
     when "", "rect", "rectangle"
       if type_of_diff_in_longitude == "short"
         case quadrant
-        when "1st_to_2nd", "2nd_to_1st", "3rd_to_4th"
+        when "1st_to_2nd", "2nd_to_1st", "3rd_to_4th", "4th_to_3rd"
           longitude_delta = @longitude_end_degree - @longitude_start_degree
           latitude_delta = @latitude_end_degree - @latitude_start_degree
           slope = latitude_delta / longitude_delta.to_f
