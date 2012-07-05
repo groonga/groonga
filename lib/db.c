@@ -3864,7 +3864,7 @@ grn_vector_decode(grn_ctx *ctx, grn_obj *v, const char *data, uint32_t data_size
     }
   }
   v->u.v.n_sections += n;
-  return ctx->rc;
+  return GRN_SUCCESS;
 }
 
 grn_rc
