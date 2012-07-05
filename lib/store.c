@@ -557,19 +557,24 @@ grn_ja_free(grn_ctx *ctx, grn_ja *ja, grn_ja_einfo *einfo)
 }
 
 grn_rc
-grn_ja_replace(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_ja_einfo *ei, uint64_t *cas)
+grn_ja_replace(grn_ctx *ctx, grn_ja *ja, grn_id id,
+               grn_ja_einfo *ei, uint64_t *cas)
 {
+  grn_rc rc = GRN_SUCCESS;
   uint32_t lseg, *pseg, pos;
   grn_ja_einfo *einfo = NULL, eback;
   lseg = id >> JA_W_EINFO_IN_A_SEGMENT;
   pos = id & JA_M_EINFO_IN_A_SEGMENT;
   pseg = &ja->header->esegs[lseg];
-  if (grn_io_lock(ctx, ja->io, 10000000)) { return ctx->rc; }
+  if (grn_io_lock(ctx, ja->io, 10000000)) {
+    return ctx->rc;
+  }
   if (*pseg == JA_ESEG_VOID) {
     int i = 0;
     while (SEGMENTS_AT(ja, i)) {
       if (++i >= JA_N_DSEGMENTS) {
         ERR(GRN_NOT_ENOUGH_SPACE, "grn_ja file (%s) is full", ja->io->path);
+        rc = GRN_NOT_ENOUGH_SPACE;
         goto exit;
       }
     }
@@ -577,11 +582,15 @@ grn_ja_replace(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_ja_einfo *ei, uint64_t *
     *pseg = i;
   }
   GRN_IO_SEG_REF(ja->io, *pseg, einfo);
-  if (!einfo) { goto exit; }
+  if (!einfo) {
+    rc = GRN_NO_MEMORY_AVAILABLE;
+    goto exit;
+  }
   eback = einfo[pos];
   if (cas && *cas != *((uint64_t *)&eback)) {
     ERR(GRN_CAS_ERROR, "cas failed (%d)", id);
     GRN_IO_SEG_UNREF(ja->io, *pseg);
+    rc = GRN_CAS_ERROR;
     goto exit;
   }
   // smb_wmb();
@@ -594,7 +603,7 @@ grn_ja_replace(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_ja_einfo *ei, uint64_t *
   grn_ja_free(ctx, ja, &eback);
 exit :
   grn_io_unlock(ja->io);
-  return ctx->rc;
+  return rc;
 }
 
 #define JA_N_GARBAGES_TH 10

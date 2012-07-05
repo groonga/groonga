@@ -1,0 +1,17 @@
+table_create Hoge TABLE_HASH_KEY ShortText
+column_create Hoge point COLUMN_SCALAR WGS84GeoPoint
+column_create Hoge text COLUMN_SCALAR ShortText
+
+load --table Hoge
+[
+{"_key":"a","point":"x","text":"a0000000"},
+{"_key":"b","point":"x","text":"b0000000"},
+{"_key":"b","point":"x","text":"b0000001"},
+{"_key":"b","point":"x","text":"b0000002"},
+{"_key":"b","point":"x","text":"b0000003"},
+{"_key":"b","point":"x","text":"b0000004"},
+{"_key":"b","point":"x","text":"b0000005"},
+{"_key":"b","point":"x","text":"b0000006"}
+]
+
+select Hoge --filter 'text == "a0000000"' --output_columns _key
