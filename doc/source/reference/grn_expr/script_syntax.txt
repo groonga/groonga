@@ -10,9 +10,90 @@ Script Syntax
 
 TODO: revised.
 
-スクリプト構文はECMAScriptに類似した構文で条件式などを表現するための構文です。ECMAScriptにある演算子に加えてgroonga独自の演算子を追加しています。
+Script syntax is a syntax to specify complex search condition. It is
+similar to ECMAScript. For example, ``_key == "book"`` means that
+groonga searches records that ``_key`` value is ``"book"``. All values
+are string in :doc:`/reference/grn_expr/query_syntax` but its own type
+in script syntax. For example, ``"book"`` is string, ``1`` is integer,
+``TokenBigram`` is the object whose name is ``TokenBigram`` and so
+on.
 
-まず、ECMAScriptにあるような基本的な演算子を説明し、その後、groongaが追加した独自の演算子を説明します。
+Script syntax has the original additional operators. They are
+described after literals and basic oprators are described.
+
+Literals
+--------
+
+Integer
+^^^^^^^
+
+Integer literal is sequence of ``0`` to ``9`` such as
+``1234567890``. ``+`` and ``-`` can be prepended such as ``+29`` and
+``-29``. Integer literal must be decimal. Octal notation, hex and so
+on can't be used.
+
+The maximum value of integer literal is ``9223372036854775807`` (``= 2
+** 63 - 1``). The minimum value of integer literal is
+``-9223372036854775808`` (``= -(2 ** 63)``).
+
+Float
+^^^^^
+
+Float literal is sequence of ``0`` to ``9``, ``.`` and ``0`` to ``9``
+such as ``3.14``. ``+`` and ``-`` can be prepended such as ``+3.14``
+and ``-3.14``. ``${RADIX}e${EXPORNENTIAL}`` and
+``${RADIX}E${EXPORNENTIAL}`` formats are also supported. For example,
+``314e-2`` is the same as ``3.14``.
+
+String
+^^^^^^
+
+String literal is ``"..."``. You need to escape ``"`` in literal by
+prepending ``\\'' such as ``\"``. For example, ``"Say \"Hello!\".`` is
+a literal for ``Say "Hello!".`` string.
+
+String encoding must be the same as encoding of database. The default
+encoding is UTF-8. It can be changed by ``--with-default-encoding``
+configure option, ``--encodiong`` :doc:`/executables/groonga` option
+and so on.
+
+Boolean
+^^^^^^^
+
+Boolean literal is ``true`` and ``false``. ``true`` means true and
+``false`` means false.
+
+Null
+^^^^
+
+Null literal is ``null``. Groonga doesn't support null value but null
+literal is supported.
+
+Time
+^^^^
+
+TODO: ...
+
+Time literal doesn't exit. String time notation, integer time notation,
+float time notation are used for it.
+
+Geo Point
+^^^^^^^^^
+
+TODO: ...
+
+Geo point literal doesn't exist. String geo point notation is used for
+it.
+
+Array
+^^^^^
+
+TODO: ...
+
+Object Literal
+^^^^^^^^^^^^^^
+
+TODO: ...
 
 基本的な演算子
 --------------
