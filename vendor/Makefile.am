@@ -6,10 +6,15 @@ if WITH_NGINX
 NGINX_DIR = nginx-1.2.1
 
 NGINX_MAKEILE = $(NGINX_DIR)/Makefile
+NGINX_MAKEFILE_DEPEND_FILES =			\
+	$(NGINX_DIR)/configure			\
+	Makefile.am				\
+	$(top_builddir)/config.status		\
+	$(top_srcdir)/src/nginx-module/config
 
-$(NGINX_MAKEILE): $(NGINX_DIR)/configure Makefile.am ../config.status
 	(cd .. && \
 	  $(SHELL) $(abs_top_srcdir)/vendor/nginx/configure \
+$(NGINX_MAKEILE): $(NGINX_MAKEFILE_DEPEND_FILES)
 	    `./config.status --config`)
 
 all-local: $(NGINX_MAKEILE)
