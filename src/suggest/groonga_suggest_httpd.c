@@ -16,7 +16,7 @@
 */
 
 /* groonga origin headers */
-#include <lib/str.h>
+#include <str.h>
 
 #include <stdio.h>
 #include <signal.h>
