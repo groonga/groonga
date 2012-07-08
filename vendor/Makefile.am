@@ -3,11 +3,19 @@
 # So, override the all rule.
 
 if WITH_NGINX
-all-local:
-	(cd nginx-1.2.1 && $(MAKE) build)
+NGINX_DIR = nginx-1.2.1
 
-install-exec-local:
-	(cd nginx-1.2.1 && $(MAKE) install)
+NGINX_MAKEILE = $(NGINX_DIR)/Makefile
+
+$(NGINX_MAKEILE): $(NGINX_DIR)/configure Makefile.am ../config.status
+	(cd .. && \
+	  vendor/$(top_srcdir)/vendor/nginx/configure `./config.status --config`)
+
+all-local: $(NGINX_MAKEILE)
+	(cd $(NGINX_DIR) && $(MAKE) build)
+
+install-exec-local: $(NGINX_MAKEILE)
+	(cd $(NGINX_DIR) && $(MAKE) install)
 endif
 
-EXTRA_DIST = nginx nginx-1.2.1
+EXTRA_DIST = nginx $(NGINX_DIR)
