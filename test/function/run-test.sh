@@ -61,7 +61,7 @@ for argument in "$@"; do
     case "$argument" in
 	--*=*)
 	    ;;
-	--keep-database|--no-*|--version|--help)
+	--keep-database|--no-*|--gdb|--version|--help)
 	    # no argument options
 	    ;;
 	--*)
