@@ -13,8 +13,8 @@ NGINX_MAKEFILE_DEPEND_FILES =			\
 	$(top_srcdir)/src/nginx-module/config
 
 	(cd .. && \
-	  $(SHELL) $(abs_top_srcdir)/vendor/nginx/configure \
 $(NGINX_MAKEILE): $(NGINX_MAKEFILE_DEPEND_FILES)
+	  $(SHELL) "$(abs_top_srcdir)/vendor/nginx/configure" \
 	    `./config.status --config`)
 
 all-local: $(NGINX_MAKEILE)
