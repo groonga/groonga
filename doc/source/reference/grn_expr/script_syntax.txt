@@ -5,7 +5,7 @@
 .. groonga-command
 .. database: reference_grn_expr_script_syntax
 
-Script Syntax
+Script syntax
 =============
 
 TODO: revised.
@@ -19,7 +19,51 @@ in script syntax. For example, ``"book"`` is string, ``1`` is integer,
 on.
 
 Script syntax has the original additional operators. They are
-described after literals and basic oprators are described.
+described after literals and basic oprators are described. All of them
+are described with sample data and execution samples.
+
+Sample data
+-----------
+
+Here are a schema definition and sample data to show usage.
+
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/query_syntax/setup.log
+.. table_create Entries TABLE_PAT_KEY ShortText
+.. column_create Entries content COLUMN_SCALAR Text
+.. column_create Entries n_likes COLUMN_SCALAR UInt32
+.. table_create Terms TABLE_PAT_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenBigram
+.. column_create Terms entries_key_index COLUMN_INDEX|WITH_POSITION Entries _key
+.. column_create Terms entries_content_index COLUMN_INDEX|WITH_POSITION Entries content
+.. load --table Entries
+.. [
+.. {"_key":    "The first post!",
+..  "content": "Welcome! This is my first post!",
+..  "n_likes": 5},
+.. {"_key":    "Groonga",
+..  "content": "I started to use groonga. It's very fast!",
+..  "n_likes": 10},
+.. {"_key":    "Mroonga",
+..  "content": "I also started to use mroonga. It's also very fast! Really fast!",
+..  "n_likes": 15},
+.. {"_key":    "Good-bye Senna",
+..  "content": "I migrated all Senna system!",
+..  "n_likes": 3},
+.. {"_key":    "Good-bye Tritonn",
+..  "content": "I also migrated all Tritonn system!",
+..  "n_likes": 3}
+.. ]
+
+There is a table, ``Entries``, for blog entries. An entry has title,
+content and the number of likes for the entry. Title is key of
+``Entries``. Content is value of ``Entries.content`` column. The
+number of likes is value of ``Entries.n_likes`` column.
+
+``Entries._key`` column and ``Entries.content`` column are indexed
+using ``TokenBigram`` tokenizer. So both ``Entries._key`` and
+``Entries.content`` are fulltext search ready.
+
+OK. The schema and data for examples are ready.
 
 Literals
 --------
@@ -77,7 +121,7 @@ TODO: ...
 Time literal doesn't exit. String time notation, integer time notation,
 float time notation are used for it.
 
-Geo Point
+Geo point
 ^^^^^^^^^
 
 TODO: ...
@@ -90,44 +134,163 @@ Array
 
 TODO: ...
 
-Object Literal
+Object literal
 ^^^^^^^^^^^^^^
 
 TODO: ...
 
-基本的な演算子
---------------
+Basic operators
+---------------
 
 TODO: ...
 
-独自の演算子
-------------
+Original operators
+------------------
 
-groongaは検索に特化した2項演算子を追加しています。独自の2項演算子は ``@`` または ``*`` ではじまります。
+Groonga adds the original binary opearators to ECMAScript syntax. They
+operate search specific operations. They are starts with ``@`` or
+``*``.
 
-``カラム @ 値``
-^^^^^^^^^^^^^^^
+.. _match-oeprator:
 
-``カラム`` をソースに設定している転置索引を用いて、 ``値`` で検索します。通常は全文検索になりますが、タグ検索などもこの書式で行います。 ``query`` ではデフォルトでこの演算子を使っていることになります。
+Match operator
+^^^^^^^^^^^^^^
 
-``カラム @^ 値``
-^^^^^^^^^^^^^^^^
+Its syntax is ``column @ value``.
 
-``カラム`` の値を ``値`` で前方一致検索します。 ``カラム`` はパトリシアツリーまたはダブル配列の主キー（ ``_key`` ）でなければいけません。
+``Match oeprator`` searches ``value`` by inverted index of ``column``.
+Normally, full text search is operated but tag search can be operated.
+Because tag search is also implemented by inverted index.
 
-``カラム @$ 値``
-^^^^^^^^^^^^^^^^
+:doc:`query_syntax` uses this operator by default.
 
-``カラム`` の値を ``値`` で後方一致検索します。
+Here is a simple exmaple.
 
-未サポートです。
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/script_syntax/simple_match_operator.log
+.. select Entries --filter 'content @ "fast"' --output_columns content
 
-``カラム *N "単語1 単語2 ..."``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The expression matches records that contain a word ``fast`` in
+``content`` column value.
 
-``カラム`` の値の中に ``単語1`` 、 ``単語2`` 、 ``...``  が近傍にある文書を検索します。（近傍検索。） ``カラム`` には全文検索用のインデックスが設定されていなければいけません。
+``content`` column is the default match column.
 
-未サポートです。
+.. _prefix-search-operator:
+
+Prefix search operator
+^^^^^^^^^^^^^^^^^^^^^^
+
+Its syntax is ``column @^ value``.
+
+The operator does prefix search with ``value``. Prefix search searches
+records that contain a word that starts with ``value``.
+
+To use fast prefix search, you need to use patricia trie table
+(``TABLE_PAT_KEY``) or double array trie table
+(``TABLE_DAT_KEY``). You can also use fast prefix search against
+``_key`` value of patricia trie table or double array trie table.
+
+Prefix search can be used with other table types but it causes all
+records scan. It's not problem for small records but it spends more
+time for large records.
+
+Here is a simple exmaple.
+
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/script_syntax/simple_prefix_search_operator.log
+.. select Entries --filter '_key @^ "Goo"' --output_columns _key
+
+The expression matches records that contain a word that starts with
+``Goo`` in ``_key`` pseudo column value. ``Good-bye Senna`` and
+``Good-bye Tritonn`` are matched with the expression.
+
+.. _suffix-search-operator:
+
+Suffix search operator
+^^^^^^^^^^^^^^^^^^^^^^
+
+Its syntax is ``column @$ value``.
+
+This operator does suffix search with ``value``. Suffix search
+searches records that contain a word that ends with ``value``.
+
+To use fast suffix search, you need to use patricia trie table
+(``TABLE_PAT_KEY``) with ``KEY_WITH_SIS`` flag. You can also use fast
+suffix search against ``_key`` value of patricia trie table.
+
+.. note::
+
+   You can use ``KEY_WITH_SIS`` based fast suffix search for non-ASCII
+   characters such as Japanese but cannot use it for ASCII
+   characters. You need to use ``_key`` based fast suffix search
+   instead of ``KEY_WITH_SIS`` based fast suffix search for ASCII
+   characters.
+
+Suffix search can be used with other table types or patricia trie
+table without ``KEY_WITH_SIS`` flag but it causes all records
+scan. It's not problem for small records but it spends more time for
+large records.
+
+Here is a simple exmaple. It uses ``_key`` based fast suffix search
+not ``KEY_WITH_SIS`` based fast suffix search.
+
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/script_syntax/simple_suffix_search_operator.log
+.. table_create Titles TABLE_PAT_KEY ShortText
+.. load --table Titles
+.. [
+.. {"_key": "The first post!"},
+.. {"_key": "Groonga"},
+.. {"_key": "Mroonga"},
+.. {"_key": "Good-bye Senna"},
+.. {"_key": "Good-bye Tritonn"}
+.. ]
+.. select Titles --filter '_key @$ "oonga"' --output_columns _key
+
+The expression matches records that contain a word that ends with
+``oonga`` in ``_key`` pseudo column value. ``Groonga`` and ``Mroonga``
+are matched with the expression.
+
+Near search opeorator
+^^^^^^^^^^^^^^^^^^^^^
+
+Its syntax is ``column *N "word1 word2 ..."``.
+
+The operator does near search with words ``word1 word2 ...``. Near
+search searches records that contain the words and the words are
+appeared in the near distance. Near distance is always ``10`` for
+now. The unit of near distance is number of character in N-gram family
+tokenizers and number of words in morphological analysis family
+tokenizers.
+
+Note that an index column for full text search must be defined for
+``column``.
+
+Here is a simple exmaple.
+
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/script_syntax/simple_near_search_operator.log
+.. select Entries --filter 'content *N "I fast"'      --output_columns content
+.. select Entries --filter 'content *N "I Really"'    --output_columns content
+.. select Entries --filter 'content *N "also Really"' --output_columns content
+
+The first expression matches records that contain ``I`` and ``fast``
+and the near distance of those words are in 10 words. So the record
+that its content is ``I also st arted to use mroonga. Its' also very
+fast! ...`` is matched. The number of words between ``I`` and ``fast``
+is just 10.
+
+The second expression matches records that contain ``I`` and
+``Really`` and the near distance of those words are in 10 words. So
+the record that its content is ``I also st arted to use mroonga. Its'
+also very fast! Really fast!`` is not matched. The number of words between
+``I`` and ``Really`` is 11.
+
+The third expression matches records that contain ``also`` and
+``Really`` and the near distance of those words are in 10 words. So
+the record that its content is ``I also st arted to use mroonga. Its'
+also very fast! Really fast!`` is matched. The number of words between
+``also`` and ``Really`` is 10.
 
 ``カラム *S "文書"``
 ^^^^^^^^^^^^^^^^^^^^

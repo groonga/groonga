@@ -11,7 +11,7 @@ Execution example::
   {"_key": "Good-bye Tritonn"}
   ]
   # [[0, 1337566253.89858, 0.000355720520019531], 5]
-  select Titles --query '_key:$oonga'
+  select Titles --filter '_key @$ "oonga"' --output_columns _key
   # [
   #   [
   #     0, 
@@ -25,20 +25,14 @@ Execution example::
   #       ], 
   #       [
   #         [
-  #           "_id", 
-  #           "UInt32"
-  #         ], 
-  #         [
   #           "_key", 
   #           "ShortText"
   #         ]
   #       ], 
   #       [
-  #         2, 
   #         "Groonga"
   #       ], 
   #       [
-  #         3, 
   #         "Mroonga"
   #       ]
   #     ]

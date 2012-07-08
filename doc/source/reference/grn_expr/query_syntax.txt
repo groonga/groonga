@@ -247,8 +247,8 @@ search searches records that contain a word that starts with ``value``.
 
 To use fast prefix search, you need to use patricia trie table
 (``TABLE_PAT_KEY``) or double array trie table
-(``TABLE_DAT_KEY``). You can use prefix search against ``_key`` value
-of patricia trie table or double array trie table.
+(``TABLE_DAT_KEY``). You can also use fast prefix search against
+``_key`` value of patricia trie table or double array trie table.
 
 Prefix search can be used with other table types but it causes all
 records scan. It's not problem for small records but it spends more
@@ -278,8 +278,16 @@ This conditional expression does suffix search with ``value``. Suffix
 search searches records that contain a word that ends with ``value``.
 
 To use fast suffix search, you need to use patricia trie table
-(``TABLE_PAT_KEY``) with ``KEY_WITH_SIS`` flag. You can use suffix
-search against ``_key`` value of patricia trie table.
+(``TABLE_PAT_KEY``) with ``KEY_WITH_SIS`` flag. You can also use fast
+suffix search against ``_key`` value of patricia trie table.
+
+.. note::
+
+   You can use ``KEY_WITH_SIS`` based fast suffix search for non-ASCII
+   characters such as Japanese but cannot use it for ASCII
+   characters. You need to use ``_key`` based fast suffix search
+   instead of ``KEY_WITH_SIS`` based fast suffix search for ASCII
+   characters.
 
 Suffix search can be used with other table types or patricia trie
 table without ``KEY_WITH_SIS`` flag but it causes all records
@@ -289,11 +297,12 @@ large records.
 It doesn't require the default match columns such as ``full text
 search condition`` and ``phrase search condition``.
 
-Here is a simple exmaple.
+Here is a simple exmaple. It uses ``_key`` based fast suffix search
+not ``KEY_WITH_SIS`` based fast suffix search.
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/query_syntax/simple_suffix_search.log
-.. table_create Titles TABLE_PAT_KEY|KEY_WITH_SIS ShortText
+.. table_create Titles TABLE_PAT_KEY ShortText
 .. load --table Titles
 .. [
 .. {"_key": "The first post!"},
@@ -305,8 +314,8 @@ Here is a simple exmaple.
 .. select Titles --query '_key:$oonga'
 
 The expression matches records that contain a word that ends with
-``oonga`` in ``_key`` pseudo column value. ``Groonga`` and
-``Mroonga`` are matched with the expression.
+``oonga`` in ``_key`` pseudo column value. ``Groonga`` and ``Mroonga``
+are matched with the expression.
 
 Equal condition
 ^^^^^^^^^^^^^^^
