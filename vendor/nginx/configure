@@ -1,13 +1,22 @@
+#!/bin/sh
+
 set -e
 
-cd $(dirname $0)
-base_dir="$(pwd)"
-top_dir="$base_dir/../.."
+nginx_version=1.2.1
 
 export GROONGA_HTTPD_IN_TREE=yes
-source "${top_dir}/groonga-httpd-conf.sh"
+. "./groonga-httpd-conf.sh"
 
-cd ../nginx-1.2.1/
+echo "$0"
+source_directory="`dirname \"$0\"`"
+absolute_source_directory="`cd \"$source_directory\"/../.. && pwd`"
+
+if [ "$absolute_source_directory" != "`pwd`" ]; then
+    rm -rf vendor/nginx-${nginx_version}
+    cp -rp "$absolute_source_directory/vendor/nginx-${nginx_version}" vendor/
+fi
+
+cd "vendor/nginx-${nginx_version}"
 
 ./configure \
   --prefix="${GROONGA_HTTPD_PREFIX}" \

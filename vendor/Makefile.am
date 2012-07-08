@@ -9,7 +9,8 @@ NGINX_MAKEILE = $(NGINX_DIR)/Makefile
 
 $(NGINX_MAKEILE): $(NGINX_DIR)/configure Makefile.am ../config.status
 	(cd .. && \
-	  vendor/$(top_srcdir)/vendor/nginx/configure `./config.status --config`)
+	  $(SHELL) $(abs_top_srcdir)/vendor/nginx/configure \
+	    `./config.status --config`)
 
 all-local: $(NGINX_MAKEILE)
 	(cd $(NGINX_DIR) && $(MAKE) build)
