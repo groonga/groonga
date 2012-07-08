@@ -52,6 +52,7 @@ def execmd(command, fout):
   groonga_process.stdin.write(command + "\n")
   groonga_process.stdin.flush()
   is_command = re.match("[a-z/]", command)
+  is_load_command = re.match("load ", command)
   is_console = not re.match("/", command)
   if fout:
     if is_console:
@@ -61,11 +62,17 @@ def execmd(command, fout):
     formatted_command_line = prefix + command + "\n"
     fout.write(formatted_command_line)
   is_load_data_end = re.match("^\]", command)
+  if is_load_command:
+    return
   if not is_command and not is_load_data_end:
     return
   output_buffer = ""
+  first_timeout = 1
+  rest_timeout = 0.1
+  timeout = first_timeout
   while True:
-    out = select([groonga_process.stdout], [], [], 0.2)
+    out = select([groonga_process.stdout], [], [], timeout)
+    timeout = rest_timeout
     if len(out[0]):
       char = groonga_process.stdout.read(1)
       if char is None:
