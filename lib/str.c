@@ -3176,12 +3176,24 @@ grn_text_urldec(grn_ctx *ctx, grn_obj *buf, const char *p, const char *e, char d
 }
 
 const char *
-grn_text_cgidec(grn_ctx *ctx, grn_obj *buf, const char *p, const char *e, char d)
+grn_text_cgidec(grn_ctx *ctx, grn_obj *buf, const char *p, const char *e,
+                const char *delimiters)
 {
   while (p < e) {
-    if (*p == d) {
-      p++; break;
-    } else if (*p == '+') {
+    grn_bool found_delimiter = GRN_FALSE;
+    const char *delimiter;
+    for (delimiter = delimiters; *delimiter; delimiter++) {
+      if (*p == *delimiter) {
+        found_delimiter = GRN_TRUE;
+        break;
+      }
+    }
+    if (found_delimiter) {
+      p++;
+      break;
+    }
+
+    if (*p == '+') {
       GRN_TEXT_PUTC(ctx, buf, ' ');
       p++;
     } else if (*p == '%' && p + 3 <= e) {

@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2008-2011  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2008-2012  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -415,20 +415,23 @@ test_urldec(gconstpointer data)
 void
 data_cgidec(void)
 {
-#define ADD_DATUM(label, expected, input, input_length, end_char)       \
+#define ADD_DATUM(label, expected, input, input_length, delimiter)      \
   gcut_add_datum(label,                                                 \
                  "expected", G_TYPE_STRING, expected,                   \
                  "input", G_TYPE_STRING, input,                         \
                  "input-length", G_TYPE_INT, input_length,              \
-                 "end-char", G_TYPE_CHAR, end_char,                     \
+                 "delimiter", G_TYPE_STRING, delimiter,                 \
                  NULL)
 
+  ADD_DATUM("?", "/d/select?table=users&limit=10", "/d/select", -1, "?");
+  ADD_DATUM("&", "table=users&limit=10", "table=users", -1, "&;");
+  ADD_DATUM(";", "table=users;limit=10", "table=users", -1, "&;");
   ADD_DATUM("Japanese",
             " 日本語です。 ",
             "+%e6%97%a5%e6%9c%ac%e8%aa%9e%e3%81%a7%e3%81%99%e3%80%82+$yo",
             -1,
-            '$');
-  ADD_DATUM("invalid", "%1%2%3", "%1%2%3", -1, '\0');
+            "$");
+  ADD_DATUM("invalid", "%1%2%3", "%1%2%3", -1, "");
 
 #undef ADD_DATUM
 }
@@ -439,19 +442,19 @@ test_cgidec(gconstpointer data)
   grn_obj buffer;
   const gchar *expected, *input;
   gint input_length;
-  gchar end_char;
+  const gchar *delimiter;
 
   expected = gcut_data_get_string(data, "expected");
   input = gcut_data_get_string(data, "input");
   input_length = gcut_data_get_int(data, "input-length");
-  end_char = gcut_data_get_char(data, "end-char");
+  delimiter = gcut_data_get_string(data, "delimiter");
 
   if (input_length < 0) {
     input_length = strchr(input, '\0') - input;
   }
 
   GRN_TEXT_INIT(&buffer, 0);
-  grn_text_cgidec(&context, &buffer, input, input + input_length, end_char);
+  grn_text_cgidec(&context, &buffer, input, input + input_length, delimiter);
   cut_assert_equal_substring(expected,
                              GRN_TEXT_VALUE(&buffer),
                              GRN_TEXT_LEN(&buffer));

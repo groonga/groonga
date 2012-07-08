@@ -1215,18 +1215,18 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_len)
     while (p < e) {
       int l;
       GRN_BULK_REWIND(&buf);
-      p = grn_text_cgidec(ctx, &buf, p, e, '=');
+      p = grn_text_cgidec(ctx, &buf, p, e, "=");
       v = GRN_TEXT_VALUE(&buf);
       l = GRN_TEXT_LEN(&buf);
       if (l == OUTPUT_TYPE_LEN && !memcmp(v, OUTPUT_TYPE, OUTPUT_TYPE_LEN)) {
         GRN_BULK_REWIND(&buf);
-        p = grn_text_cgidec(ctx, &buf, p, e, '&');
+        p = grn_text_cgidec(ctx, &buf, p, e, "&;");
         v = GRN_TEXT_VALUE(&buf);
         get_content_mime_type(ctx, v, GRN_BULK_CURR(&buf));
       } else if (l == COMMAND_VERSION_LEN &&
                  !memcmp(v, COMMAND_VERSION, COMMAND_VERSION_LEN)) {
         GRN_BULK_REWIND(&buf);
-        p = grn_text_cgidec(ctx, &buf, p, e, '&');
+        p = grn_text_cgidec(ctx, &buf, p, e, "&;");
         get_command_version(ctx, GRN_TEXT_VALUE(&buf), GRN_BULK_CURR(&buf));
         if (ctx->rc) { goto exit; }
       } else {
@@ -1234,7 +1234,7 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_len)
           val = &buf;
         }
         grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
-        p = grn_text_cgidec(ctx, val, p, e, '&');
+        p = grn_text_cgidec(ctx, val, p, e, "&;");
       }
     }
     ctx->impl->curr_expr = expr;

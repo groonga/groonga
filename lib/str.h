@@ -101,7 +101,8 @@ GRN_API grn_str *grn_str_open_(grn_ctx *ctx, const char *str, unsigned int str_l
 grn_rc grn_text_ulltoa(grn_ctx *ctx, grn_obj *buf, unsigned long long int i);
 
 GRN_API const char *grn_text_cgidec(grn_ctx *ctx, grn_obj *buf,
-                                    const char *p, const char *e, char d);
+                                    const char *p, const char *e,
+                                    const char *delimiters);
 
 #define GRN_TOK_VOID                   (0x00)
 #define GRN_TOK_SYMBOL                 (0x01)
