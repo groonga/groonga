@@ -943,6 +943,8 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
     case GRN_OP_TABLE_CREATE :
     case GRN_OP_EXPR_GET_VAR :
     case GRN_OP_MATCH :
+    case GRN_OP_NEAR :
+    case GRN_OP_NEAR2 :
     case GRN_OP_SIMILAR :
     case GRN_OP_PREFIX :
     case GRN_OP_SUFFIX :
@@ -3585,6 +3587,8 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
   for (stat = SCAN_START, c = e->codes, ce = &e->codes[e->codes_curr]; c < ce; c++) {
     switch (c->op) {
     case GRN_OP_MATCH :
+    case GRN_OP_NEAR :
+    case GRN_OP_NEAR2 :
     case GRN_OP_SIMILAR :
     case GRN_OP_PREFIX :
     case GRN_OP_SUFFIX :
@@ -3648,6 +3652,8 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
   for (i = 0, stat = SCAN_START, c = e->codes, ce = &e->codes[e->codes_curr]; c < ce; c++) {
     switch (c->op) {
     case GRN_OP_MATCH :
+    case GRN_OP_NEAR :
+    case GRN_OP_NEAR2 :
     case GRN_OP_SIMILAR :
     case GRN_OP_PREFIX :
     case GRN_OP_SUFFIX :
@@ -4135,6 +4141,8 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
               }
               break;
             case GRN_OP_MATCH :
+            case GRN_OP_NEAR :
+            case GRN_OP_NEAR2 :
             case GRN_OP_SIMILAR :
               {
                 grn_obj wv, **ip = &GRN_PTR_VALUE(&si->index);
@@ -4148,7 +4156,17 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
                   optarg.mode = si->op;
                 }
                 optarg.similarity_threshold = 0;
-                optarg.max_interval = 0;
+                switch (si->op) {
+                case GRN_OP_NEAR :
+                case GRN_OP_NEAR2 :
+#define DEFAULT_NEAR_MAX_INTERVAL 10
+                  optarg.max_interval = DEFAULT_NEAR_MAX_INTERVAL;
+#undef DEFAULT_NEAR_MAX_INTERVAL
+                  break;
+                default :
+                  optarg.max_interval = 0;
+                  break;
+                }
                 optarg.weight_vector = (int *)GRN_BULK_HEAD(&wv);
                 /* optarg.vector_size = GRN_BULK_VSIZE(&si->wv); */
                 optarg.vector_size = 1;

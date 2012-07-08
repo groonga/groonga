@@ -6038,8 +6038,17 @@ grn_ii_sel(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_len
     grn_select_optarg arg = {GRN_OP_EXACT, 0, 0, NULL, 0, NULL, NULL, 0};
     if (!s) { return GRN_INVALID_ARGUMENT; }
     if (optarg) {
-      if (optarg->mode == GRN_OP_SIMILAR) {
+      switch (optarg->mode) {
+      case GRN_OP_NEAR :
+      case GRN_OP_NEAR2 :
         arg.mode = optarg->mode;
+        arg.max_interval = optarg->max_interval;
+        break;
+      case GRN_OP_SIMILAR :
+        arg.mode = optarg->mode;
+        break;
+      default :
+        break;
       }
       if (optarg->vector_size > 0) {
         arg.weight_vector = optarg->weight_vector;
