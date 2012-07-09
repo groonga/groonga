@@ -1,17 +1,22 @@
 Execution example::
 
-  table_create Titles TABLE_PAT_KEY ShortText
+  table_create Titles TABLE_NO_KEY
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  column_create Titles content COLUMN_SCALAR ShortText
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  table_create SuffixSearchTerms TABLE_PAT_KEY|KEY_WITH_SIS ShortText
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  column_create SuffixSearchTerms index COLUMN_INDEX Titles content
   # [[0, 1337566253.89858, 0.000355720520019531], true]
   load --table Titles
   [
-  {"_key": "The first post!"},
-  {"_key": "Groonga"},
-  {"_key": "Mroonga"},
-  {"_key": "Good-bye Senna"},
-  {"_key": "Good-bye Tritonn"}
+  {"content": "ぐるんが"},
+  {"content": "むるんが"},
+  {"content": "せな"},
+  {"content": "とりとん"}
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 5]
-  select Titles --query '_key:$oonga'
+  # [[0, 1337566253.89858, 0.000355720520019531], 4]
+  select Titles --query 'content:$んが'
   # [
   #   [
   #     0, 
@@ -29,17 +34,17 @@ Execution example::
   #           "UInt32"
   #         ], 
   #         [
-  #           "_key", 
+  #           "content", 
   #           "ShortText"
   #         ]
   #       ], 
   #       [
   #         2, 
-  #         "Groonga"
+  #         "むるんが"
   #       ], 
   #       [
-  #         3, 
-  #         "Mroonga"
+  #         1, 
+  #         "ぐるんが"
   #       ]
   #     ]
   #   ]

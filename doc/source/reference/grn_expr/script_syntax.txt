@@ -214,42 +214,48 @@ Its syntax is ``column @$ value``.
 This operator does suffix search with ``value``. Suffix search
 searches records that contain a word that ends with ``value``.
 
-To use fast suffix search, you need to use patricia trie table
-(``TABLE_PAT_KEY``) with ``KEY_WITH_SIS`` flag. You can also use fast
-suffix search against ``_key`` value of patricia trie table.
+To use fast suffix search, you need to define an index column whose
+table is patricia trie table (``TABLE_PAT_KEY``) with ``KEY_WITH_SIS``
+flag. You can also use fast suffix search against ``_key`` pseudo
+column whose table is patricia trie table (``TABLE_PAT_KEY``) with
+``KEY_WITH_SIS`` flag without index column. We recommended that you
+use index column based fast suffix search instead of ``_key`` based
+fast suffix search. ``_key`` based fast suffix search returnes
+automatically registered substrings. (TODO: write document about
+suffix search and link to it from here.)
 
 .. note::
 
-   You can use ``KEY_WITH_SIS`` based fast suffix search for non-ASCII
-   characters such as Japanese but cannot use it for ASCII
-   characters. You need to use ``_key`` based fast suffix search
-   instead of ``KEY_WITH_SIS`` based fast suffix search for ASCII
-   characters.
+   Fast suffix search can be used only for non-ASCII characters such
+   as hiragana in Japanese. You cannot use fast suffix search for
+   ASCII character.
 
 Suffix search can be used with other table types or patricia trie
 table without ``KEY_WITH_SIS`` flag but it causes all records
 scan. It's not problem for small records but it spends more time for
 large records.
 
-Here is a simple exmaple. It uses ``_key`` based fast suffix search
-not ``KEY_WITH_SIS`` based fast suffix search.
+Here is a simple exmaple. It uses fast suffix search for hiragana in
+Japanese that is one of non-ASCII characters.
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/script_syntax/simple_suffix_search_operator.log
-.. table_create Titles TABLE_PAT_KEY ShortText
+.. table_create Titles TABLE_NO_KEY
+.. column_create Titles content COLUMN_SCALAR ShortText
+.. table_create SuffixSearchTerms TABLE_PAT_KEY|KEY_WITH_SIS ShortText
+.. column_create SuffixSearchTerms index COLUMN_INDEX Titles content
 .. load --table Titles
 .. [
-.. {"_key": "The first post!"},
-.. {"_key": "Groonga"},
-.. {"_key": "Mroonga"},
-.. {"_key": "Good-bye Senna"},
-.. {"_key": "Good-bye Tritonn"}
+.. {"content": "ぐるんが"},
+.. {"content": "むるんが"},
+.. {"content": "せな"},
+.. {"content": "とりとん"}
 .. ]
-.. select Titles --filter '_key @$ "oonga"' --output_columns _key
+.. select Titles --query 'content:$んが'
 
-The expression matches records that contain a word that ends with
-``oonga`` in ``_key`` pseudo column value. ``Groonga`` and ``Mroonga``
-are matched with the expression.
+The expression matches records that have value that ends with ``んが``
+in ``content`` column value. ``ぐるんが`` and ``むるんが`` are matched
+with the expression.
 
 Near search opeorator
 ^^^^^^^^^^^^^^^^^^^^^
