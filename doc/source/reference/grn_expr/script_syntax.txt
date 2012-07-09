@@ -11,10 +11,9 @@ Script syntax
 Script syntax is a syntax to specify complex search condition. It is
 similar to ECMAScript. For example, ``_key == "book"`` means that
 groonga searches records that ``_key`` value is ``"book"``. All values
-are string in :doc:`/reference/grn_expr/query_syntax` but its own type
-in script syntax. For example, ``"book"`` is string, ``1`` is integer,
-``TokenBigram`` is the object whose name is ``TokenBigram`` and so
-on.
+are string in :doc:`query_syntax` but its own type in script
+syntax. For example, ``"book"`` is string, ``1`` is integer,
+``TokenBigram`` is the object whose name is ``TokenBigram`` and so on.
 
 Script syntax doesn't support full ECMAScript syntax. For example,
 script syntax doesn't support statement such as ``if`` control
@@ -73,9 +72,9 @@ Integer
 ^^^^^^^
 
 Integer literal is sequence of ``0`` to ``9`` such as
-``1234567890``. ``+`` and ``-`` can be prepended such as ``+29`` and
-``-29``. Integer literal must be decimal. Octal notation, hex and so
-on can't be used.
+``1234567890``. ``+`` or ``-`` can be prepended as sign such as
+``+29`` and ``-29``. Integer literal must be decimal. Octal notation,
+hex and so on can't be used.
 
 The maximum value of integer literal is ``9223372036854775807`` (``= 2
 ** 63 - 1``). The minimum value of integer literal is
@@ -85,8 +84,8 @@ Float
 ^^^^^
 
 Float literal is sequence of ``0`` to ``9``, ``.`` and ``0`` to ``9``
-such as ``3.14``. ``+`` and ``-`` can be prepended such as ``+3.14``
-and ``-3.14``. ``${RADIX}e${EXPORNENTIAL}`` and
+such as ``3.14``. ``+`` or ``-`` can be prepended as sign such as
+``+3.14`` and ``-3.14``. ``${RADIX}e${EXPORNENTIAL}`` and
 ``${RADIX}E${EXPORNENTIAL}`` formats are also supported. For example,
 ``314e-2`` is the same as ``3.14``.
 
@@ -401,10 +400,12 @@ Its syntax is ``column @^ value``.
 The operator does prefix search with ``value``. Prefix search searches
 records that contain a word that starts with ``value``.
 
-To use fast prefix search, you need to use patricia trie table
+You can use fast prefix search against a column. The column must be
+indexed and index table must be patricia trie table
 (``TABLE_PAT_KEY``) or double array trie table
 (``TABLE_DAT_KEY``). You can also use fast prefix search against
-``_key`` value of patricia trie table or double array trie table.
+``_key`` pseudo column of patricia trie table or double array trie
+table. You don't need to index ``_key``.
 
 Prefix search can be used with other table types but it causes all
 records scan. It's not problem for small records but it spends more
@@ -430,15 +431,16 @@ Its syntax is ``column @$ value``.
 This operator does suffix search with ``value``. Suffix search
 searches records that contain a word that ends with ``value``.
 
-To use fast suffix search, you need to define an index column whose
-table is patricia trie table (``TABLE_PAT_KEY``) with ``KEY_WITH_SIS``
-flag. You can also use fast suffix search against ``_key`` pseudo
-column whose table is patricia trie table (``TABLE_PAT_KEY``) with
-``KEY_WITH_SIS`` flag without index column. We recommended that you
-use index column based fast suffix search instead of ``_key`` based
-fast suffix search. ``_key`` based fast suffix search returnes
-automatically registered substrings. (TODO: write document about
-suffix search and link to it from here.)
+You can use fast suffix search against a column. The column must be
+indexed and index table must be patricia trie table
+(``TABLE_PAT_KEY``) with ``KEY_WITH_SIS`` flag. You can also use fast
+suffix search against ``_key`` pseudo column of patricia trie table
+(``TABLE_PAT_KEY``) with ``KEY_WITH_SIS`` flag. You don't need to
+index ``_key``. We recommended that you use index column based fast
+suffix search instead of ``_key`` based fast suffix search. ``_key``
+based fast suffix search returns automatically registered
+substrings. (TODO: write document about suffix search and link to it
+from here.)
 
 .. note::
 

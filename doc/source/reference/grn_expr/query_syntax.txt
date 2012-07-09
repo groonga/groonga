@@ -87,7 +87,7 @@ Here is a special character list:
   * ``)`` (escaped as ``\)``)
   * ``\`` (escaped as ``\\``)
 
-You can use quote instead of escape. Quote's syntax is ``"..."`` or
+You can use quote instead of escape. Quote syntax is ``"..."`` or
 ``'...'``. You need escape ``"`` as ``\"`` in ``"..."`` quote syntax.
 You need escape ``'`` as ``\'`` in ``'...'`` quote syntax. For
 example, ``Alice's brother (Bob)`` can be quoted ``"Alice's brother
@@ -245,10 +245,12 @@ Its syntax is ``column:^value`` or ``value*``.
 This conditional expression does prefix search with ``value``. Prefix
 search searches records that contain a word that starts with ``value``.
 
-To use fast prefix search, you need to use patricia trie table
+You can use fast prefix search against a column. The column must be
+indexed and index table must be patricia trie table
 (``TABLE_PAT_KEY``) or double array trie table
 (``TABLE_DAT_KEY``). You can also use fast prefix search against
-``_key`` value of patricia trie table or double array trie table.
+``_key`` pseudo column of patricia trie table or double array trie
+table. You don't need to index ``_key``.
 
 Prefix search can be used with other table types but it causes all
 records scan. It's not problem for small records but it spends more
@@ -277,15 +279,16 @@ Its syntax is ``column:$value``.
 This conditional expression does suffix search with ``value``. Suffix
 search searches records that contain a word that ends with ``value``.
 
-To use fast suffix search, you need to define an index column whose
-table is patricia trie table (``TABLE_PAT_KEY``) with ``KEY_WITH_SIS``
-flag. You can also use fast suffix search against ``_key`` pseudo
-column whose table is patricia trie table (``TABLE_PAT_KEY``) with
-``KEY_WITH_SIS`` flag without index column. We recommended that you
-use index column based fast suffix search instead of ``_key`` based
-fast suffix search. ``_key`` based fast suffix search returnes
-automatically registered substrings. (TODO: write document about
-suffix search and link to it from here.)
+You can use fast suffix search against a column. The column must be
+indexed and index table must be patricia trie table
+(``TABLE_PAT_KEY``) with ``KEY_WITH_SIS`` flag. You can also use fast
+suffix search against ``_key`` pseudo column of patricia trie table
+(``TABLE_PAT_KEY``) with ``KEY_WITH_SIS`` flag. You don't need to
+index ``_key``. We recommended that you use index column based fast
+suffix search instead of ``_key`` based fast suffix search. ``_key``
+based fast suffix search returns automatically registered
+substrings. (TODO: write document about suffix search and link to it
+from here.)
 
 .. note::
 
