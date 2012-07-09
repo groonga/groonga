@@ -94,6 +94,7 @@ def execmd(command, fout):
             formatted_output += "\n"
             formatted_output = formatted_output.encode("utf-8")
           stdout.write(formatted_output)
+          stdout.write("\n")
           if fout:
             if is_console:
               prefix = "  # "
