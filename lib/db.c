@@ -8261,6 +8261,8 @@ grn_column_index(grn_ctx *ctx, grn_obj *obj, grn_operator op,
       }
       break;
     case GRN_OP_MATCH :
+    case GRN_OP_NEAR :
+    case GRN_OP_NEAR2 :
     case GRN_OP_SIMILAR :
       {
         grn_accessor *a = (grn_accessor *)obj;

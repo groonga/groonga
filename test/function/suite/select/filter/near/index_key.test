@@ -1,0 +1,16 @@
+table_create Entries TABLE_HASH_KEY ShortText
+
+table_create Terms TABLE_PAT_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenBigram
+column_create Terms entries_key_index COLUMN_INDEX|WITH_POSITION Entries _key
+
+load --table Entries
+[
+{"_key": "Welcome! This is my first post!"},
+{"_key": "I started to use groonga. It's very fast!"},
+{"_key": "I also started to use mroonga. It's also very fast! Really fast!"},
+{"_key": "I also started to use mroonga. It's also very very fast!"},
+{"_key": "I migrated all Senna system!"},
+{"_key": "I also migrated all Tritonn system!"}
+]
+
+select Entries --filter '_key *N "I fast"' --output_columns '_key, _score'
