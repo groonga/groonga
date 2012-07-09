@@ -29,7 +29,7 @@ Usage
 -----
 
 Set up
-^^^^^
+^^^^^^
 
 First, you'll need to edit the groonga-httpd configuration file to specify a
 database. Edit /etc/groonga/httpd/groonga-httpd.conf to enable the
