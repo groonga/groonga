@@ -12,8 +12,8 @@ source_directory="`dirname \"$0\"`"
 absolute_source_directory="`cd \"$source_directory\"/../.. && pwd`"
 
 if [ "$absolute_source_directory" != "`pwd`" ]; then
-    rm -rf vendor/nginx-${nginx_version}
-    cp -rp "$absolute_source_directory/vendor/nginx-${nginx_version}" vendor/
+    rm -rf ../nginx-${nginx_version}
+    cp -rp "$absolute_source_directory/vendor/nginx-${nginx_version}" ../
 fi
 
 cd "../nginx-${nginx_version}"
