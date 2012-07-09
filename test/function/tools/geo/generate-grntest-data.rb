@@ -622,7 +622,7 @@ class GrnTestData
                                                180 * GRN_GEO_RESOLUTION,
                                                latitude_on_180 * GRN_GEO_RESOLUTION)
             (east_distance + west_distance).floor
-          when "2nd_to_1st"
+          when "2nd_to_1st", "3rd_to_4th"
             rounded_longitude = @longitude_start_degree + 360
             rounded_latitude = @latitude_start_degree
             longitude_delta = @longitude_end_degree - rounded_longitude
