@@ -14,4 +14,4 @@ load --table Entries
 {"content": "I also migrated all Tritonn system!"}
 ]
 
-select Entries --filter 'content *N "I fast"' --output_columns '_key, _score, content'
+select Entries --filter 'content *N "I fast"' --output_columns '_score, content'
