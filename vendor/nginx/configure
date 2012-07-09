@@ -7,11 +7,10 @@ nginx_version=1.2.1
 export GROONGA_HTTPD_IN_TREE=yes
 . "../../groonga-httpd-conf.sh"
 
-echo "$0"
 source_directory="`dirname \"$0\"`"
 absolute_source_directory="`cd \"$source_directory\"/../.. && pwd`"
 
-if [ "$absolute_source_directory" != "`pwd`" ]; then
+if [ "$absolute_source_directory/vendor/nginx" != "`pwd`" ]; then
     rm -rf ../nginx-${nginx_version}
     cp -rp "$absolute_source_directory/vendor/nginx-${nginx_version}" ../
 fi
