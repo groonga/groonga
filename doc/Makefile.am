@@ -8,10 +8,11 @@ all:
 
 include $(top_srcdir)/doc/files.am
 
+SOURCES = $(srcdir)/source
 update-examples:
 	PATH=$(top_builddir)/src:$(top_builddir)/src/suggest:$$PATH	\
 	  $(srcdir)/update_execution_example.py				\
-	  $(srcdir)/source
+	  $(SOURCES)
 
 files.am: update-files.sh
 	update-files
