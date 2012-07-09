@@ -1,0 +1,45 @@
+table_create Entries TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenBigram
+[[0,0.0,0.0],true]
+column_create Terms entries_key_index COLUMN_INDEX|WITH_POSITION Entries _key
+[[0,0.0,0.0],true]
+load --table Entries
+[
+{"_key": "Welcome! This is my first post!"},
+{"_key": "I started to use groonga. It's very fast!"},
+{"_key": "I also started to use mroonga. It's also very fast! Really fast!"},
+{"_key": "I also started to use mroonga. It's also very very fast!"},
+{"_key": "I migrated all Senna system!"},
+{"_key": "I also migrated all Tritonn system!"}
+]
+[[0,0.0,0.0],6]
+select Entries --filter '_key *N "I fast"' --output_columns '_key, _score'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "_score",
+          "Int32"
+        ]
+      ],
+      [
+        "I started to use groonga. It's very fast!",
+        1
+      ]
+    ]
+  ]
+]
