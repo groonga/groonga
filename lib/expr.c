@@ -3338,6 +3338,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       default :
         ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "not implemented operator assigned");
+        goto exit;
         break;
       }
     }
