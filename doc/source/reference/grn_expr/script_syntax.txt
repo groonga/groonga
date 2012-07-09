@@ -8,8 +8,6 @@
 Script syntax
 =============
 
-TODO: revised.
-
 Script syntax is a syntax to specify complex search condition. It is
 similar to ECMAScript. For example, ``_key == "book"`` means that
 groonga searches records that ``_key`` value is ``"book"``. All values
@@ -18,9 +16,12 @@ in script syntax. For example, ``"book"`` is string, ``1`` is integer,
 ``TokenBigram`` is the object whose name is ``TokenBigram`` and so
 on.
 
-Script syntax has the original additional operators. They are
-described after literals and basic oprators are described. All of them
-are described with sample data and execution samples.
+Script syntax doesn't support full ECMAScript syntax. For example,
+script syntax doesn't support statement such as ``if`` control
+statement, ``for`` iteration statement and variable definition
+statement. Function definion is not supported too. But script syntax
+addes the original additional operators.  They are described after
+ECMAScript syntax is described.
 
 Sample data
 -----------
@@ -118,6 +119,10 @@ Time
 
 TODO: ...
 
+.. note::
+
+   This is the groonga original notation.
+
 Time literal doesn't exit. String time notation, integer time notation,
 float time notation are used for it.
 
@@ -125,6 +130,10 @@ Geo point
 ^^^^^^^^^
 
 TODO: ...
+
+.. note::
+
+   This is the groonga original notation.
 
 Geo point literal doesn't exist. String geo point notation is used for
 it.
@@ -139,8 +148,215 @@ Object literal
 
 TODO: ...
 
+Control syntaxes
+----------------
+
+Groonga only supports expression. Statement isn't supported. So you
+cannot use control statement such as ``if``. You use only use ``A ?
+B : C`` expression as control syntax.
+
+``A ? B : C`` returns ``B`` if ``A`` is true, ``C`` otherwise.
+
+TODO: example
+
+Grouping
+--------
+
+Its syntax is ``(...)``. ``...`` is space separated expression list.
+
+``(...)`` groups one ore more expressions and they can be
+processed as an expression. ``a b OR c`` means that ``a`` and ``b``
+are matched or ``c`` is matched. ``a (b OR c)`` means that ``a`` and
+one of ``b`` and ``c`` are matched.
+
+TODO: example
+
+Function call
+-------------
+
+Its syntax is ``name(arugment1, argument2, ...)``.
+
+TODO: description
+
+TODO: example
+
 Basic operators
 ---------------
+
+Groonga supports oeprators defined in ECMAScript.
+
+Multiplication operator
+^^^^^^^^^^^^^^^^^^^^^^^
+
+Its syntax is ``number1 * number2``.
+
+The operator multiplies ``number1`` and ``number2`` and returns the result.
+
+TODO: example
+
+Addition operator
+^^^^^^^^^^^^^^^^^
+
+Its syntax is ``number1 + number2``.
+
+The operator adds ``number1`` and ``number2`` and returns the result.
+
+TODO: example
+
+Addition operator
+^^^^^^^^^^^^^^^^^
+
+Its syntax is ``number1 + number2``.
+
+The operator adds ``number1`` and ``number2`` and returns the result.
+
+TODO: example
+
+Subtraction operator
+^^^^^^^^^^^^^^^^^^^^
+
+Its syntax is ``number1 - number2``.
+
+The operator subtracts ``number2`` from ``number1`` and returns the result.
+
+TODO: example
+
+Division operator
+^^^^^^^^^^^^^^^^^
+
+Its syntax is ``number1 / number2`` and ``number % number2``.
+
+The operator divides ``number2`` by ``number1``. ``/`` returns the
+quotient of result. ``%`` returns the remainder of result.
+
+TODO: example
+
+Logical NOT operator
+^^^^^^^^^^^^^^^^^^^^
+
+Its syntax is ``!condition``.
+
+The operator inverts boolean value of ``condition``.
+
+TODO: example
+
+Bitwise NOT operator
+^^^^^^^^^^^^^^^^^^^^
+
+Its syntax is ``~number``.
+
+The operator returns bitwise NOT of ``number``.
+
+TODO: example
+
+Bitwise AND operator
+^^^^^^^^^^^^^^^^^^^^
+
+Its syntax is ``number1 & number2``.
+
+The operator returns bitwise AND between ``number1`` and ``number2``.
+
+TODO: example
+
+Logical AND operator
+^^^^^^^^^^^^^^^^^^^^
+
+Its syntax is ``condition1 && condition2``.
+
+The operator returns logical AND between ``condition1`` and
+``condition2``.
+
+TODO: example
+
+Logical NOT operator
+^^^^^^^^^^^^^^^^^^^^
+
+Its syntax is ``condition1 &! condition2``.
+
+The operator returns true if ``condition1`` returns true but
+``condition2`` returns false, false otherwise.
+
+TODO: example
+
+Left shift operator
+^^^^^^^^^^^^^^^^^^^
+
+Its syntax is ``number1 << number2``.
+
+The operator performs a bitwise left shift operation on ``number1`` by
+``number2``.
+
+TODO: example
+
+Signed right shift operator
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Its syntax is ``number1 >> number2``.
+
+The operator performs a sign-filling bitwise right shift operation on
+``number1`` by ``number2``.
+
+TODO: example
+
+Unsigned right shift operator
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Its syntax is ``number1 >>> number2``.
+
+The operator performs zero-filling bitwise right shift operation on
+``number1`` by ``number2``.
+
+TODO: example
+
+Bitwise OR operator
+^^^^^^^^^^^^^^^^^^^
+
+Its syntax is ``number1 | number2``.
+
+The operator returns bitwise OR between ``number1`` and ``number2``.
+
+TODO: example
+
+Bitwise XOR operator
+^^^^^^^^^^^^^^^^^^^^
+
+Its syntax is ``number1 ^ number2``.
+
+The operator returns bitwise XOR between ``number1`` and ``number2``.
+
+TODO: example
+
+Logical OR operator
+^^^^^^^^^^^^^^^^^^^
+
+Its syntax is ``condition1 || condition2``.
+
+The operator returns logical OR between ``condition1 | condition2``.
+
+TODO: example
+
+Equal operator
+^^^^^^^^^^^^^^
+
+Its syntax is ``object1 == object2``.
+
+The operator returns true if ``object1`` equals to ``object2``, false
+otherwise.
+
+TODO: example
+
+Not equal operator
+^^^^^^^^^^^^^^^^^^
+
+Its syntax is ``object1 != object2``.
+
+The operator returns true if ``object1`` does not equal to
+``object2``, false otherwise.
+
+TODO: example
+
+Assignment operators
+--------------------
 
 TODO: ...
 
@@ -257,8 +473,10 @@ The expression matches records that have value that ends with ``んが``
 in ``content`` column value. ``ぐるんが`` and ``むるんが`` are matched
 with the expression.
 
-Near search opeorator
-^^^^^^^^^^^^^^^^^^^^^
+.. _near-search-operator:
+
+Near search operator
+^^^^^^^^^^^^^^^^^^^^
 
 Its syntax is ``column *N "word1 word2 ..."``.
 
@@ -298,34 +516,62 @@ the record that its content is ``I also st arted to use mroonga. Its'
 also very fast! Really fast!`` is matched. The number of words between
 ``also`` and ``Really`` is 10.
 
-``カラム *S "文書"``
-^^^^^^^^^^^^^^^^^^^^
+.. _similar-search-operator:
 
-``カラム`` の値が ``文書`` に類似している文書を検索します。（類似文書検索。） ``カラム`` には全文検索用のインデックスが設定されていなければいけません。
+Similar search
+^^^^^^^^^^^^^^
 
-..
-   ``カラム *T "単語"``
-   ^^^^^^^^^^^^^^^^^^^^
+Its syntax is ``column *S "document"``.
 
-   ???
+The operator does similar search with document ``document``. Similar
+search searches records that have similar content to
+``document``.
 
-``カラム *> 重み``
-^^^^^^^^^^^^^^^^^^^^
+Note that an index column for full text search must be defined for
+``column``.
 
-``カラム`` の重みを ``重み`` 分上げます。
+Here is a simple exmaple.
 
-未サポート。
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/script_syntax/simple_similar_search_operator.log
+.. select Entries --filter 'content *S "I migrated all Solr system!"' --output_columns content
 
-``カラム *< 重み``
-^^^^^^^^^^^^^^^^^^^^
+The expression matches records that have similar content to ``I
+migrated all Solr system!``. In this case, records that have ``I
+migrated all XXX system!`` content are matched.
 
-``カラム`` の重みを ``重み`` 分下げます。
+.. _term-extract-operator:
 
-未サポート。
+Term extract operator
+^^^^^^^^^^^^^^^^^^^^^
 
-``カラム *~ 重み``
-^^^^^^^^^^^^^^^^^^^^
+Its syntax is ``_key *T "document"``.
 
-``カラム`` がマッチした場合、文書の検索スコアを ``重み`` 分下げます。
+The operator extracts terms from ``document``. Terms are keys of the
+table of ``_key``.
 
-未サポート。
+Note that the table must be patricia trie (``TABLE_PAT_KEY``) or
+double array trie (``TABLE_DAT_KEY``). You can't use hash table
+(``TABLE_HASH_KEY``) and array (``TABLE_NO_KEY``) becuase they don't
+support longest common prefix search. Longest common prefix search is
+used to implement the operator.
+
+Here is a simple exmaple.
+
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/script_syntax/simple_term_extract_operator.log
+.. table_create Words TABLE_PAT_KEY|KEY_NORMALIZE ShortText
+.. load --table Words
+.. [
+.. {"_key": "groonga"},
+.. {"_key": "mroonga"},
+.. {"_key": "Senna"},
+.. {"_key": "Tritonn"}
+.. ]
+.. select Words --filter '_key *T "Groonga is the successor project to Senna."' --output_columns _key
+
+The expression extrcts terms that included in document ``Groonga is
+the successor project to Senna.``. In this case, ``KEY_NORMALIZE``
+flag is specified to ``Words``. So ``Groonga`` can be extracted even
+if it is loaded as ``groonga`` into ``Words``. All of extracted terms
+are also normalized.
