@@ -5,7 +5,7 @@ set -e
 nginx_version=1.2.1
 
 export GROONGA_HTTPD_IN_TREE=yes
-. "./groonga-httpd-conf.sh"
+. "../../groonga-httpd-conf.sh"
 
 echo "$0"
 source_directory="`dirname \"$0\"`"
@@ -16,7 +16,7 @@ if [ "$absolute_source_directory" != "`pwd`" ]; then
     cp -rp "$absolute_source_directory/vendor/nginx-${nginx_version}" vendor/
 fi
 
-cd "vendor/nginx-${nginx_version}"
+cd "../nginx-${nginx_version}"
 
 ./configure \
   --prefix="${GROONGA_HTTPD_PREFIX}" \
