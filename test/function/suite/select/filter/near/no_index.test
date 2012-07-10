@@ -1,0 +1,14 @@
+table_create Entries TABLE_NO_KEY
+column_create Entries content COLUMN_SCALAR Text
+
+load --table Entries
+[
+{"content": "Welcome! This is my first post!"},
+{"content": "I started to use groonga. It's very fast!"},
+{"content": "I also started to use mroonga. It's also very fast! Really fast!"},
+{"content": "I also started to use mroonga. It's also very very fast!"},
+{"content": "I migrated all Senna system!"},
+{"content": "I also migrated all Tritonn system!"}
+]
+
+select Entries --filter 'content *N "I fast"' --output_columns '_score, content'
