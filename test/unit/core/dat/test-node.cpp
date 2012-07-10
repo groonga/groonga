@@ -24,33 +24,36 @@
 
 #include <iostream>
 
-namespace cut
+namespace grn
 {
-  std::ostream &operator<<(std::ostream &stream, const grn::dat::Base &base)
+  namespace dat
   {
-    if (base.is_linker()) {
-      stream << "linker: " << base.key_pos();
-    } else {
-      stream << "non-linker: " << base.offset();
-    }
-    return stream;
-  }
-
-  std::ostream &operator<<(std::ostream &stream, const grn::dat::Check &check)
-  {
-    if (check.is_offset()) {
-      stream << "offset: " << check.except_is_offset() << "; ";
-    } else {
-      stream << "not offset: " << check.except_is_offset() << "; ";
+    std::ostream &operator<<(std::ostream &stream, const grn::dat::Base &base)
+    {
+      if (base.is_linker()) {
+        stream << "linker: " << base.key_pos();
+      } else {
+        stream << "non-linker: " << base.offset();
+      }
+      return stream;
     }
 
-    if (check.is_phantom()) {
-      stream << "phantom: " << check.next() << ", " << check.prev();
-    } else {
-      stream << "non-phantom: " << check.label()
-             << ", " << check.child() << ", " << check.sibling();
+    std::ostream &operator<<(std::ostream &stream, const grn::dat::Check &check)
+    {
+      if (check.is_offset()) {
+        stream << "offset: " << check.except_is_offset() << "; ";
+      } else {
+        stream << "not offset: " << check.except_is_offset() << "; ";
+      }
+
+      if (check.is_phantom()) {
+        stream << "phantom: " << check.next() << ", " << check.prev();
+      } else {
+        stream << "non-phantom: " << check.label()
+               << ", " << check.child() << ", " << check.sibling();
+      }
+      return stream;
     }
-    return stream;
   }
 }
 

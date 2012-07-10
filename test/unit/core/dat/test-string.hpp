@@ -23,13 +23,15 @@
 
 #include <iostream>
 
-namespace cut {
+namespace grn {
+namespace dat {
 
 inline std::ostream &operator<<(std::ostream &stream,
                                 const grn::dat::String &str) {
   return stream.write(static_cast<const char *>(str.ptr()), str.length());
 }
 
-}  // namespace cut
+}  // namespace dat
+}  // namespace grn
 
 #endif  // GRN_DAT_TEST_STRING_HPP_
