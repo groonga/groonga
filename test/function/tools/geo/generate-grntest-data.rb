@@ -605,7 +605,7 @@ class GrnTestData
           (east_distance + west_distance).floor
         else
           case quadrant
-          when "1st_to_2nd"
+          when "1st_to_2nd", "4th_to_3rd"
             rounded_longitude = @longitude_end_degree + 360
             rounded_latitude = @latitude_end_degree
             longitude_delta = rounded_longitude - @longitude_start_degree
