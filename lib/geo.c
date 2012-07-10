@@ -1966,7 +1966,8 @@ grn_geo_distance_rectangle_raw(grn_ctx *ctx,
                                                          lat2);
       distance = (east_distance + west_distance) * GRN_GEO_RADIUS;
     } else {
-      if (quad_type == QUADRANT_1ST_TO_2ND) {
+      if (quad_type == QUADRANT_1ST_TO_2ND ||
+          quad_type == QUADRANT_4TH_TO_3RD) {
         longitude_delta = lng2 + M_2PI - lng1;
         latitude_delta = lat2 - lat1;
         slope = latitude_delta / longitude_delta;
