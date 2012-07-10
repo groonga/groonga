@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-07-10 12:38\n"
-"PO-Revision-Date: 2012-07-10 12:40+0900\n"
+"PO-Revision-Date: 2012-07-10 15:02+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -662,13 +662,7 @@ msgid ""
 "array trie table (``TABLE_DAT_KEY``). You can also use fast prefix search "
 "against ``_key`` pseudo column of patricia trie table or double array trie "
 "table. You don't need to index ``_key``."
-msgstr ""
-"カラムの値を高速に前方一致検索できます。ただし、そのカラムにはインデックスを"
-"作成し、そのインデックス用のテーブルをパトリシアトライテーブル"
-"（ ``TABLE_PAT_KEY`` ）またはダブル配列テーブル（ ``TABLE_DAT_KEY`` ）にしな"
-"ければいけません。あるいは、パトリシアトライテーブルまたはダブル配列テーブル"
-"の ``_key`` も高速に前方一致検索できます。 ``_key`` にインデックスを作成する"
-"必要はありません。"
+msgstr "カラムの値を高速に前方一致検索できます。ただし、そのカラムにはインデックスを作成し、そのインデックス用のテーブルをパトリシアトライ（ ``TABLE_PAT_KEY`` ）またはダブル配列トライ（ ``TABLE_DAT_KEY`` ）にしなければいけません。あるいは、パトリシアトライテーブルまたはダブル配列テーブルの ``_key`` も高速に前方一致検索できます。 ``_key`` にインデックスを作成する必要はありません。"
 
 # f351c7f537da419fb4aa896b6f4af069
 #: ../../../source/reference/grn_expr/query_syntax.txt:255
@@ -1986,7 +1980,7 @@ msgid ""
 "(``TABLE_HASH_KEY``) and array (``TABLE_NO_KEY``) becuase they don't support "
 "longest common prefix search. Longest common prefix search is used to "
 "implement the operator."
-msgstr "テーブルはパトリシアトライ（ ``TABLE_PAT_KEY`` ）またはダブルアレイトライ（ ``TABLE_DAT_KEY`` ）でなければいけません。ハッシュテーブル（ ``TABLE_HASH_KEY`` ）や配列（ ``TABLE_NO_KEY`` ）は最長共通接頭辞検索（Longest Common Prefix Search）できないため使えません。この演算子は最長共通接頭辞検索を使っています。"
+msgstr "テーブルはパトリシアトライ（ ``TABLE_PAT_KEY`` ）またはダブル配列トライ（ ``TABLE_DAT_KEY`` ）でなければいけません。ハッシュテーブル（ ``TABLE_HASH_KEY`` ）や配列（ ``TABLE_NO_KEY`` ）は最長共通接頭辞検索（Longest Common Prefix Search）できないため使えません。この演算子は最長共通接頭辞検索を使っています。"
 
 # 3c9684c10ce64bebb97d61aaa9dc62c2
 #: ../../../source/reference/grn_expr/script_syntax.txt:568
