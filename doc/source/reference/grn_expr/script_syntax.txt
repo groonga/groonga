@@ -150,9 +150,9 @@ TODO: ...
 Control syntaxes
 ----------------
 
-Groonga only supports expression. Statement isn't supported. So you
-cannot use control statement such as ``if``. You use only use ``A ?
-B : C`` expression as control syntax.
+Script syntax doesn't support statement. So you cannot use control
+statement such as ``if``. You can only use ``A ? B : C`` expression as
+control syntax.
 
 ``A ? B : C`` returns ``B`` if ``A`` is true, ``C`` otherwise.
 
@@ -182,7 +182,7 @@ TODO: example
 Basic operators
 ---------------
 
-Groonga supports oeprators defined in ECMAScript.
+Groonga supports operators defined in ECMAScript.
 
 Multiplication operator
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -262,8 +262,8 @@ Logical AND operator
 
 Its syntax is ``condition1 && condition2``.
 
-The operator returns logical AND between ``condition1`` and
-``condition2``.
+The operator returns true if both of ``condition1`` and
+``condition2`` are true, false otherwise.
 
 TODO: example
 
@@ -272,8 +272,8 @@ Logical NOT operator
 
 Its syntax is ``condition1 &! condition2``.
 
-The operator returns true if ``condition1`` returns true but
-``condition2`` returns false, false otherwise.
+The operator returns true if ``condition1`` is true but
+``condition2`` is false, false otherwise.
 
 TODO: example
 
@@ -292,8 +292,8 @@ Signed right shift operator
 
 Its syntax is ``number1 >> number2``.
 
-The operator performs a sign-filling bitwise right shift operation on
-``number1`` by ``number2``.
+The operator shifts bits of ``number1`` to right by ``number2``. The sign
+of the result is the same as ``number1``.
 
 TODO: example
 
@@ -302,8 +302,8 @@ Unsigned right shift operator
 
 Its syntax is ``number1 >>> number2``.
 
-The operator performs zero-filling bitwise right shift operation on
-``number1`` by ``number2``.
+The operator shifts bits of ``number1`` to right by ``number2``. The
+sign of the result is always positive.
 
 TODO: example
 
@@ -330,7 +330,8 @@ Logical OR operator
 
 Its syntax is ``condition1 || condition2``.
 
-The operator returns logical OR between ``condition1 | condition2``.
+The operator returns true if either ``condition1`` or ``condition2`` is
+true, false otherwise.
 
 TODO: example
 
@@ -362,9 +363,9 @@ TODO: ...
 Original operators
 ------------------
 
-Groonga adds the original binary opearators to ECMAScript syntax. They
-operate search specific operations. They are starts with ``@`` or
-``*``.
+Script syntax adds the original binary opearators to ECMAScript
+syntax. They operate search specific operations. They are starts with
+``@`` or ``*``.
 
 .. _match-oeprator:
 
@@ -373,7 +374,7 @@ Match operator
 
 Its syntax is ``column @ value``.
 
-``Match oeprator`` searches ``value`` by inverted index of ``column``.
+The operator searches ``value`` by inverted index of ``column``.
 Normally, full text search is operated but tag search can be operated.
 Because tag search is also implemented by inverted index.
 
@@ -549,8 +550,8 @@ Term extract operator
 
 Its syntax is ``_key *T "document"``.
 
-The operator extracts terms from ``document``. Terms are keys of the
-table of ``_key``.
+The operator extracts terms from ``document``. Terms must be
+registered as keys of the table of ``_key``.
 
 Note that the table must be patricia trie (``TABLE_PAT_KEY``) or
 double array trie (``TABLE_DAT_KEY``). You can't use hash table

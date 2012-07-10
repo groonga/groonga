@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-10 00:15\n"
-"PO-Revision-Date: 2012-07-10 00:23+0900\n"
+"POT-Creation-Date: 2012-07-10 10:59\n"
+"PO-Revision-Date: 2012-07-10 11:49+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -54,7 +54,9 @@ msgstr ""
 #: ../../../source/example/reference/grn_expr/script_syntax/simple_match_operator.log:1
 #: ../../../source/example/reference/grn_expr/script_syntax/simple_near_search_operator.log:1
 #: ../../../source/example/reference/grn_expr/script_syntax/simple_prefix_search_operator.log:1
+#: ../../../source/example/reference/grn_expr/script_syntax/simple_similar_search_operator.log:1
 #: ../../../source/example/reference/grn_expr/script_syntax/simple_suffix_search_operator.log:1
+#: ../../../source/example/reference/grn_expr/script_syntax/simple_term_extract_operator.log:1
 msgid "Execution example::"
 msgstr "実行例::"
 
@@ -445,11 +447,11 @@ msgstr ""
 #: ../../../source/reference/grn_expr/query_syntax.txt:505
 #: ../../../source/reference/grn_expr/query_syntax.txt:528
 #: ../../../source/reference/grn_expr/query_syntax.txt:548
-#: ../../../source/reference/grn_expr/script_syntax.txt:382
-#: ../../../source/reference/grn_expr/script_syntax.txt:414
-#: ../../../source/reference/grn_expr/script_syntax.txt:495
-#: ../../../source/reference/grn_expr/script_syntax.txt:535
-#: ../../../source/reference/grn_expr/script_syntax.txt:561
+#: ../../../source/reference/grn_expr/script_syntax.txt:383
+#: ../../../source/reference/grn_expr/script_syntax.txt:415
+#: ../../../source/reference/grn_expr/script_syntax.txt:496
+#: ../../../source/reference/grn_expr/script_syntax.txt:536
+#: ../../../source/reference/grn_expr/script_syntax.txt:562
 msgid "Here is a simple exmaple."
 msgstr "以下は簡単な使用例です。"
 
@@ -457,7 +459,7 @@ msgstr "以下は簡単な使用例です。"
 # 466caa2be8f748eea022f947f2561c05
 #: ../../../source/reference/grn_expr/query_syntax.txt:132
 #: ../../../source/reference/grn_expr/query_syntax.txt:207
-#: ../../../source/reference/grn_expr/script_syntax.txt:388
+#: ../../../source/reference/grn_expr/script_syntax.txt:389
 msgid ""
 "The expression matches records that contain a word ``fast`` in ``content`` "
 "column value."
@@ -469,7 +471,7 @@ msgstr ""
 # 3c23eb014e8c42eea7fcfebb04fca3f5
 #: ../../../source/reference/grn_expr/query_syntax.txt:135
 #: ../../../source/reference/grn_expr/query_syntax.txt:169
-#: ../../../source/reference/grn_expr/script_syntax.txt:391
+#: ../../../source/reference/grn_expr/script_syntax.txt:392
 msgid "``content`` column is the default match column."
 msgstr "``content`` カラムはデフォルトのマッチカラムです。"
 
@@ -648,24 +650,28 @@ msgstr "構文は ``column:^value`` または ``value*`` です。"
 msgid ""
 "This conditional expression does prefix search with ``value``. Prefix search "
 "searches records that contain a word that starts with ``value``."
-msgstr ""
-"この条件式は前方一致検索を ``value`` で行います。前方一致検索は ``value`` で"
-"始まる単語を含むレコードを検索します。"
+msgstr "この条件式は ``value`` で前方一致検索をします。前方一致検索は ``value`` で始まる単語を含むレコードを検索します。"
 
 # a23c11e916ea47c1a6b4166fe5ae80ba
 #: ../../../source/reference/grn_expr/query_syntax.txt:248
-#: ../../../source/reference/grn_expr/script_syntax.txt:403
+#: ../../../source/reference/grn_expr/script_syntax.txt:404
 msgid ""
 "You can use fast prefix search against a column. The column must be indexed "
 "and index table must be patricia trie table (``TABLE_PAT_KEY``) or double "
 "array trie table (``TABLE_DAT_KEY``). You can also use fast prefix search "
 "against ``_key`` pseudo column of patricia trie table or double array trie "
 "table. You don't need to index ``_key``."
-msgstr "カラムの値を高速に前方一致検索できます。ただし、そのカラムにはインデックスを作成し、そのインデックス用のテーブルをパトリシアトライテーブル（ ``TABLE_PAT_KEY`` ）またはダブル配列テーブル（ ``TABLE_DAT_KEY`` ）にしなければいけません。あるいは、パトリシアトライテーブルまたはダブル配列テーブルの ``_key`` も高速に前方一致検索できます。 ``_key`` にインデックスを作成する必要はありません。"
+msgstr ""
+"カラムの値を高速に前方一致検索できます。ただし、そのカラムにはインデックスを"
+"作成し、そのインデックス用のテーブルをパトリシアトライテーブル"
+"（ ``TABLE_PAT_KEY`` ）またはダブル配列テーブル（ ``TABLE_DAT_KEY`` ）にしな"
+"ければいけません。あるいは、パトリシアトライテーブルまたはダブル配列テーブル"
+"の ``_key`` も高速に前方一致検索できます。 ``_key`` にインデックスを作成する"
+"必要はありません。"
 
 # f351c7f537da419fb4aa896b6f4af069
 #: ../../../source/reference/grn_expr/query_syntax.txt:255
-#: ../../../source/reference/grn_expr/script_syntax.txt:410
+#: ../../../source/reference/grn_expr/script_syntax.txt:411
 msgid ""
 "Prefix search can be used with other table types but it causes all records "
 "scan. It's not problem for small records but it spends more time for large "
@@ -699,7 +705,7 @@ msgstr ""
 # a3ee4c7c60684f028e00cfc4d6d5412d
 # f5388f9835bf43e282ebdcdf81150910
 #: ../../../source/reference/grn_expr/query_syntax.txt:268
-#: ../../../source/reference/grn_expr/script_syntax.txt:420
+#: ../../../source/reference/grn_expr/script_syntax.txt:421
 msgid ""
 "The expression matches records that contain a word that starts with ``Goo`` "
 "in ``_key`` pseudo column value. ``Good-bye Senna`` and ``Good-bye Tritonn`` "
@@ -723,14 +729,12 @@ msgstr "構文は ``column:$value`` です。"
 msgid ""
 "This conditional expression does suffix search with ``value``. Suffix search "
 "searches records that contain a word that ends with ``value``."
-msgstr ""
-"この条件式は後方一致検索を ``value`` で行います。後方一致検索は ``value`` で"
-"終わる単語を含むレコードを検索します。"
+msgstr "この条件式は ``value`` で後方一致検索します。後方一致検索は ``value`` で終わる単語を含むレコードを検索します。"
 
 # 86c722c48213495c9d6d62d3329c5baf
 # abf09e113195417db92968f6e14794a2
 #: ../../../source/reference/grn_expr/query_syntax.txt:282
-#: ../../../source/reference/grn_expr/script_syntax.txt:434
+#: ../../../source/reference/grn_expr/script_syntax.txt:435
 msgid ""
 "You can use fast suffix search against a column. The column must be indexed "
 "and index table must be patricia trie table (``TABLE_PAT_KEY``) with "
@@ -755,15 +759,17 @@ msgstr ""
 # a4136b5c86504b8cbc0a6be9f704a081
 # be23eea770094e29ae208b035921ab24
 #: ../../../source/reference/grn_expr/query_syntax.txt:295
-#: ../../../source/reference/grn_expr/script_syntax.txt:447
+#: ../../../source/reference/grn_expr/script_syntax.txt:448
 msgid ""
 "Fast suffix search can be used only for non-ASCII characters such as "
 "hiragana in Japanese. You cannot use fast suffix search for ASCII character."
-msgstr "高速な後方一致検索は日本語のひらがななど非ASCII文字にしか使えません。ASCII文字には高速な後方一致検索を使えません。"
+msgstr ""
+"高速な後方一致検索は日本語のひらがななど非ASCII文字にしか使えません。ASCII文"
+"字には高速な後方一致検索を使えません。"
 
 # 01c733b4c53a418c895b92b88fa5fd52
 #: ../../../source/reference/grn_expr/query_syntax.txt:299
-#: ../../../source/reference/grn_expr/script_syntax.txt:451
+#: ../../../source/reference/grn_expr/script_syntax.txt:452
 msgid ""
 "Suffix search can be used with other table types or patricia trie table "
 "without ``KEY_WITH_SIS`` flag but it causes all records scan. It's not "
@@ -777,16 +783,18 @@ msgstr ""
 # bceb3484d0be4a08ba97613f02f8372d
 # 676d1d1f1b9e4ab887d7d01a09c68d75
 #: ../../../source/reference/grn_expr/query_syntax.txt:307
-#: ../../../source/reference/grn_expr/script_syntax.txt:456
+#: ../../../source/reference/grn_expr/script_syntax.txt:457
 msgid ""
 "Here is a simple exmaple. It uses fast suffix search for hiragana in "
 "Japanese that is one of non-ASCII characters."
-msgstr "簡単な例です。ASCII文字ではない文字である日本語のひらがなに対して高速な後方一致検索をしています。"
+msgstr ""
+"簡単な例です。ASCII文字ではない文字である日本語のひらがなに対して高速な後方一"
+"致検索をしています。"
 
 # a3ee4c7c60684f028e00cfc4d6d5412d
 # f5388f9835bf43e282ebdcdf81150910
 #: ../../../source/reference/grn_expr/query_syntax.txt:325
-#: ../../../source/reference/grn_expr/script_syntax.txt:474
+#: ../../../source/reference/grn_expr/script_syntax.txt:475
 msgid ""
 "The expression matches records that have value that ends with ``んが`` in "
 "``content`` column value. ``ぐるんが`` and ``むるんが`` are matched with the "
@@ -1268,7 +1276,10 @@ msgid ""
 "String literal is ``\"...\"``. You need to escape ``\"`` in literal by "
 "prepending ``\\\\'' such as ``\\\"``. For example, ``\"Say \\\"Hello!\\\".`` "
 "is a literal for ``Say \"Hello!\".`` string."
-msgstr "文字列リテラルは ``\"...\"`` です。リテラル中の ``\"`` は ``\\\"`` というように ``\\\\'' を前につけてエスケープします。例えば、 ``\"Say \\\"Hello!\\\".`` は ``Say \"Hello!\".`` という文字列のリテラルです。"
+msgstr ""
+"文字列リテラルは ``\"...\"`` です。リテラル中の ``\"`` は ``\\\"`` というよう"
+"に ``\\\\'' を前につけてエスケープします。例えば、 ``\"Say \\\"Hello!\\\".`` "
+"は ``Say \"Hello!\".`` という文字列のリテラルです。"
 
 # 1bb75df4fa5e4587ac36c58c14840389
 #: ../../../source/reference/grn_expr/script_syntax.txt:99
@@ -1277,7 +1288,11 @@ msgid ""
 "encoding is UTF-8. It can be changed by ``--with-default-encoding`` "
 "configure option, ``--encodiong`` :doc:`/executables/groonga` option and so "
 "on."
-msgstr "文字列エンコーディングはデータベースのエンコーディングと合わせなければいけません。デフォルトのエンコーディングはUTF-8です。これは configure の ``--with-default-encoding`` オプションや :doc:`/executables/groonga` の ``--encodiong`` などで変更できます。"
+msgstr ""
+"文字列エンコーディングはデータベースのエンコーディングと合わせなければいけま"
+"せん。デフォルトのエンコーディングはUTF-8です。これは configure の ``--with-"
+"default-encoding`` オプションや :doc:`/executables/groonga` の ``--"
+"encodiong`` などで変更できます。"
 
 # 05a14914db4c45b78e71bda4574e9db4
 #: ../../../source/reference/grn_expr/script_syntax.txt:105
@@ -1289,7 +1304,9 @@ msgstr "真偽値"
 msgid ""
 "Boolean literal is ``true`` and ``false``. ``true`` means true and ``false`` "
 "means false."
-msgstr "真偽値のリテラルは ``true`` と ``false`` です。 ``true`` は真という意味で、 ``false`` は偽という意味です。"
+msgstr ""
+"真偽値のリテラルは ``true`` と ``false`` です。 ``true`` は真という意味で、 "
+"``false`` は偽という意味です。"
 
 # 9fa503e9a0e040dba38d15a3a83e55a0
 #: ../../../source/reference/grn_expr/script_syntax.txt:111
@@ -1301,7 +1318,9 @@ msgstr "NULL"
 msgid ""
 "Null literal is ``null``. Groonga doesn't support null value but null "
 "literal is supported."
-msgstr "NULLのリテラルは ``null`` です。groongaはNULL値をサポートしてませんが、NULLリテラルをサポートしています。"
+msgstr ""
+"NULLのリテラルは ``null`` です。groongaはNULL値をサポートしてませんが、NULLリ"
+"テラルをサポートしています。"
 
 # d1e7bd098f4d46f0a4b1a630a02ee99e
 #: ../../../source/reference/grn_expr/script_syntax.txt:117
@@ -1313,7 +1332,7 @@ msgstr "時間"
 #: ../../../source/reference/grn_expr/script_syntax.txt:131
 #: ../../../source/reference/grn_expr/script_syntax.txt:143
 #: ../../../source/reference/grn_expr/script_syntax.txt:148
-#: ../../../source/reference/grn_expr/script_syntax.txt:360
+#: ../../../source/reference/grn_expr/script_syntax.txt:361
 msgid "TODO: ..."
 msgstr ""
 
@@ -1329,7 +1348,9 @@ msgstr "これはgroonga独自の記法です。"
 msgid ""
 "Time literal doesn't exit. String time notation, integer time notation, "
 "float time notation are used for it."
-msgstr "時間のリテラルはありません。文字列での時間記法、整数での時間記法または浮動小数点数での時間記法を使ってください。"
+msgstr ""
+"時間のリテラルはありません。文字列での時間記法、整数での時間記法または浮動小"
+"数点数での時間記法を使ってください。"
 
 # bd5a6e4d7ba842ee9eda5721db2b83f3
 #: ../../../source/reference/grn_expr/script_syntax.txt:129
@@ -1357,18 +1378,21 @@ msgstr "オブジェクトリテラル"
 msgid "Control syntaxes"
 msgstr "制御構文"
 
-# d537d784bbbd40eba700f4837a2feac5
+# 34a3cd0306574de1b423b8b704e64315
 #: ../../../source/reference/grn_expr/script_syntax.txt:153
 msgid ""
-"Groonga only supports expression. Statement isn't supported. So you cannot "
-"use control statement such as ``if``. You use only use ``A ? B : C`` "
-"expression as control syntax."
+"Script syntax doesn't support statement. So you cannot use control statement "
+"such as ``if``. You can only use ``A ? B : C`` expression as control syntax."
 msgstr ""
+"スクリプト構文は文をサポートしていません。そのため、 ``if`` のような制御分を"
+"使うことはできません。制御用の構文は ``A ? B : C`` 式だけ使うことができます。"
 
 # 95d2264b15b94decbd577acce17633bb
 #: ../../../source/reference/grn_expr/script_syntax.txt:157
 msgid "``A ? B : C`` returns ``B`` if ``A`` is true, ``C`` otherwise."
 msgstr ""
+"``A ? B : C`` は ``A`` が真なら ``B`` を返して、そうでなかったら ``C`` を返し"
+"ます。"
 
 # 4147217a8f9840a6b984ef92ce2c85a4
 # 8469072ed57a45d1b24167d10969cbfc
@@ -1409,22 +1433,21 @@ msgstr ""
 #: ../../../source/reference/grn_expr/script_syntax.txt:308
 #: ../../../source/reference/grn_expr/script_syntax.txt:317
 #: ../../../source/reference/grn_expr/script_syntax.txt:326
-#: ../../../source/reference/grn_expr/script_syntax.txt:335
-#: ../../../source/reference/grn_expr/script_syntax.txt:345
-#: ../../../source/reference/grn_expr/script_syntax.txt:355
+#: ../../../source/reference/grn_expr/script_syntax.txt:336
+#: ../../../source/reference/grn_expr/script_syntax.txt:346
+#: ../../../source/reference/grn_expr/script_syntax.txt:356
 msgid "TODO: example"
 msgstr ""
 
 # fecf7ecb80a944859f3c51a371f8b721
 #: ../../../source/reference/grn_expr/script_syntax.txt:174
 msgid "Function call"
-msgstr ""
+msgstr "関数呼び出し"
 
 # 61fab56d6e9c4f4d8756ed4c9af116dd
 #: ../../../source/reference/grn_expr/script_syntax.txt:176
-#, fuzzy
 msgid "Its syntax is ``name(arugment1, argument2, ...)``."
-msgstr "構文は ``column:value`` です。"
+msgstr "構文は ``name(arugment1, argument2, ...)`` です。"
 
 # 1a93860b599046869a9437683ddd66d5
 #: ../../../source/reference/grn_expr/script_syntax.txt:178
@@ -1434,77 +1457,74 @@ msgstr ""
 # 29a7723b10fc4a60b459d14af99ef947
 #: ../../../source/reference/grn_expr/script_syntax.txt:183
 msgid "Basic operators"
-msgstr ""
+msgstr "基本的な演算子"
 
 # f3ab6be9d9184bbda0224aff27ba735b
 #: ../../../source/reference/grn_expr/script_syntax.txt:185
-msgid "Groonga supports oeprators defined in ECMAScript."
-msgstr ""
+msgid "Groonga supports operators defined in ECMAScript."
+msgstr "groongaはECMAScriptで定義されている演算子をサポートしています。"
 
 # dbabae34f68848a19acc1ec3319bfc20
 #: ../../../source/reference/grn_expr/script_syntax.txt:188
 msgid "Multiplication operator"
-msgstr ""
+msgstr "乗算演算子"
 
 # 622e416c9bae41fe8c51b82f45ff181f
 #: ../../../source/reference/grn_expr/script_syntax.txt:190
-#, fuzzy
 msgid "Its syntax is ``number1 * number2``."
-msgstr "構文は ``a - b`` です。"
+msgstr "構文は ``number1 * number2`` です。"
 
 # 97930431d57044bf8e3765159ee44f7a
 #: ../../../source/reference/grn_expr/script_syntax.txt:192
 msgid ""
 "The operator multiplies ``number1`` and ``number2`` and returns the result."
-msgstr ""
+msgstr "この演算子は ``number1`` と ``number2`` を掛けた結果を返します。"
 
 # 40055e4561224389b83f4613af8ce2f7
 # 3d8bd7a8fd78446bbb3e71d5315a0dd2
 #: ../../../source/reference/grn_expr/script_syntax.txt:197
 #: ../../../source/reference/grn_expr/script_syntax.txt:206
 msgid "Addition operator"
-msgstr ""
+msgstr "加算演算子"
 
 # 622e416c9bae41fe8c51b82f45ff181f
 #: ../../../source/reference/grn_expr/script_syntax.txt:199
 #: ../../../source/reference/grn_expr/script_syntax.txt:208
-#, fuzzy
 msgid "Its syntax is ``number1 + number2``."
-msgstr "構文は ``a - b`` です。"
+msgstr "構文は ``number1 + number2`` です。"
 
 # a7df120b93e44bc2851f6d96b68c37a1
 # 1a4e57d1ab6c46018f4afabf15ea5554
 #: ../../../source/reference/grn_expr/script_syntax.txt:201
 #: ../../../source/reference/grn_expr/script_syntax.txt:210
 msgid "The operator adds ``number1`` and ``number2`` and returns the result."
-msgstr ""
+msgstr "この演算子は ``number1`` と ``number2`` を足した結果を返します。"
 
 # e102dd0b372c4d5f96aa392320b45b97
 #: ../../../source/reference/grn_expr/script_syntax.txt:215
 msgid "Subtraction operator"
-msgstr ""
+msgstr "減算演算子"
 
 # 622e416c9bae41fe8c51b82f45ff181f
 #: ../../../source/reference/grn_expr/script_syntax.txt:217
-#, fuzzy
 msgid "Its syntax is ``number1 - number2``."
-msgstr "構文は ``a - b`` です。"
+msgstr "構文は ``number1 - number2`` です。"
 
 # e8d4a497492241abbb7a8cb887fc6823
 #: ../../../source/reference/grn_expr/script_syntax.txt:219
 msgid ""
 "The operator subtracts ``number2`` from ``number1`` and returns the result."
-msgstr ""
+msgstr "この演算子は ``number2`` から ``number1`` を引いた結果を返します。"
 
 # d49d0245974c48398cf33d4381840c80
 #: ../../../source/reference/grn_expr/script_syntax.txt:224
 msgid "Division operator"
-msgstr ""
+msgstr "除算演算子"
 
 # b9b1a85af1814869995cc4aa140d7947
 #: ../../../source/reference/grn_expr/script_syntax.txt:226
 msgid "Its syntax is ``number1 / number2`` and ``number % number2``."
-msgstr ""
+msgstr "構文は ``number1 / number2`` と ``number % number2`` です。"
 
 # 7b7f372be09a42a9bfb948f3190f9458
 #: ../../../source/reference/grn_expr/script_syntax.txt:228
@@ -1512,437 +1532,412 @@ msgid ""
 "The operator divides ``number2`` by ``number1``. ``/`` returns the quotient "
 "of result. ``%`` returns the remainder of result."
 msgstr ""
+"この演算子は ``number2`` を ``number1`` で割ります。 ``/`` は商を返します。 "
+"``%`` は余りを返します。"
 
 # 5ea0ed2ad8054405964b79a8cdcaab72
 #: ../../../source/reference/grn_expr/script_syntax.txt:234
 #: ../../../source/reference/grn_expr/script_syntax.txt:271
-#, fuzzy
 msgid "Logical NOT operator"
-msgstr "論理否定"
+msgstr "論理否定演算子"
 
 # 406f4fe2dee64f5cbc5d47fa9b83e123
 #: ../../../source/reference/grn_expr/script_syntax.txt:236
-#, fuzzy
 msgid "Its syntax is ``!condition``."
-msgstr "構文は ``keyword`` です。"
+msgstr "構文は ``!condition`` です。"
 
 # fbb7b1d6776a4535be6ecbdd02474653
 #: ../../../source/reference/grn_expr/script_syntax.txt:238
 msgid "The operator inverts boolean value of ``condition``."
-msgstr ""
+msgstr "この演算子は ``condition`` の真偽値を反転します。"
 
 # 5f3ee1ec846b48b5b2e6b84261db0d5c
 #: ../../../source/reference/grn_expr/script_syntax.txt:243
 msgid "Bitwise NOT operator"
-msgstr ""
+msgstr "ビット否定演算子"
 
 # 406f4fe2dee64f5cbc5d47fa9b83e123
 #: ../../../source/reference/grn_expr/script_syntax.txt:245
-#, fuzzy
 msgid "Its syntax is ``~number``."
-msgstr "構文は ``keyword`` です。"
+msgstr "構文は ``~number`` です。"
 
 # 887d377dd3d64f8c98cff56ee24b5e32
 #: ../../../source/reference/grn_expr/script_syntax.txt:247
 msgid "The operator returns bitwise NOT of ``number``."
-msgstr ""
+msgstr "この演算子は ``number`` のビット単位でNOTをした結果を返します。"
 
 # 38cc6f429af342498061adcf215c3347
 #: ../../../source/reference/grn_expr/script_syntax.txt:252
 msgid "Bitwise AND operator"
-msgstr ""
+msgstr "ビット論理積演算子"
 
 # 622e416c9bae41fe8c51b82f45ff181f
 #: ../../../source/reference/grn_expr/script_syntax.txt:254
-#, fuzzy
 msgid "Its syntax is ``number1 & number2``."
-msgstr "構文は ``a - b`` です。"
+msgstr "構文は ``number1 & number2`` です。"
 
 # 3cc8e455512444c6800874d4f4e78463
 #: ../../../source/reference/grn_expr/script_syntax.txt:256
 msgid "The operator returns bitwise AND between ``number1`` and ``number2``."
 msgstr ""
+"この演算子は ``number1`` と ``number2`` をビット単位で論理積をした結果を返し"
+"ます。"
 
 # 1c79b0c247d54a2687ea33f9f6faebbe
 #: ../../../source/reference/grn_expr/script_syntax.txt:261
-#, fuzzy
 msgid "Logical AND operator"
-msgstr "論理積"
+msgstr "論理積演算子"
 
 # 622e416c9bae41fe8c51b82f45ff181f
 #: ../../../source/reference/grn_expr/script_syntax.txt:263
-#, fuzzy
 msgid "Its syntax is ``condition1 && condition2``."
-msgstr "構文は ``a - b`` です。"
+msgstr "構文は ``condition1 && condition2`` です。"
 
 # 47027c32528c4771bd2aaab3a3dad626
 #: ../../../source/reference/grn_expr/script_syntax.txt:265
 msgid ""
-"The operator returns logical AND between ``condition1`` and ``condition2``."
+"The operator returns true if both of ``condition1`` and ``condition2`` are "
+"true, false otherwise."
 msgstr ""
+"この演算子は ``condition1`` と ``condition2`` の両方が真のときに真を返し、そ"
+"うでなければ偽を返します。"
 
 # 622e416c9bae41fe8c51b82f45ff181f
 #: ../../../source/reference/grn_expr/script_syntax.txt:273
-#, fuzzy
 msgid "Its syntax is ``condition1 &! condition2``."
-msgstr "構文は ``a - b`` です。"
+msgstr "構文は ``condition1 &! condition2`` です。"
 
-# 570fd7b8be5142c88e2c1a6287b347d8
+# 47027c32528c4771bd2aaab3a3dad626
 #: ../../../source/reference/grn_expr/script_syntax.txt:275
 msgid ""
-"The operator returns true if ``condition1`` returns true but ``condition2`` "
-"returns false, false otherwise."
+"The operator returns true if ``condition1`` is true but ``condition2`` is "
+"false, false otherwise."
 msgstr ""
+"この演算子は ``condition1`` が真で ``condition2`` が偽のときに真を返し、そう"
+"でなければ偽を返します。"
 
 # f0d4d6ad876a4068bf24ff8740091b7f
 #: ../../../source/reference/grn_expr/script_syntax.txt:281
 msgid "Left shift operator"
-msgstr ""
+msgstr "左シフト演算子"
 
 # 622e416c9bae41fe8c51b82f45ff181f
 #: ../../../source/reference/grn_expr/script_syntax.txt:283
-#, fuzzy
 msgid "Its syntax is ``number1 << number2``."
-msgstr "構文は ``a - b`` です。"
+msgstr "構文は ``number1 << number2`` です。"
 
 # f7c296f2c9c0431ba3a34a67cd2faa5e
 #: ../../../source/reference/grn_expr/script_syntax.txt:285
 msgid ""
 "The operator performs a bitwise left shift operation on ``number1`` by "
 "``number2``."
-msgstr ""
+msgstr "この演算子は ``number1`` のビットを左に ``number2`` ビットシフトする。"
 
 # e6bb27cdd7104d8ea02810464e66ba0c
 #: ../../../source/reference/grn_expr/script_syntax.txt:291
 msgid "Signed right shift operator"
-msgstr ""
+msgstr "符号付き右シフト演算子"
 
 # 622e416c9bae41fe8c51b82f45ff181f
 #: ../../../source/reference/grn_expr/script_syntax.txt:293
-#, fuzzy
 msgid "Its syntax is ``number1 >> number2``."
-msgstr "構文は ``a - b`` です。"
+msgstr "構文は ``number1 >> number2`` です。"
 
-# fc50c4a2670f4734931be92f0124eb8c
+# e8d4a497492241abbb7a8cb887fc6823
 #: ../../../source/reference/grn_expr/script_syntax.txt:295
 msgid ""
-"The operator performs a sign-filling bitwise right shift operation on "
-"``number1`` by ``number2``."
-msgstr ""
+"The operator shifts bits of ``number1`` to right by ``number2``. The sign of "
+"the result is the same as ``number1``."
+msgstr "この演算子は ``number1`` のビットを右に ``number2`` ビットシフトします。結果の符号は ``number1`` の符号と同じです。"
 
 # 6be4d84131ee47c79878cd836d12b592
 #: ../../../source/reference/grn_expr/script_syntax.txt:301
 msgid "Unsigned right shift operator"
-msgstr ""
+msgstr "符号なし右シフト演算子"
 
 # 622e416c9bae41fe8c51b82f45ff181f
 #: ../../../source/reference/grn_expr/script_syntax.txt:303
-#, fuzzy
 msgid "Its syntax is ``number1 >>> number2``."
-msgstr "構文は ``a - b`` です。"
+msgstr "構文は ``number1 >>> number2`` です。"
 
-# ebb50abf263b41ebb77c305d1c0f1120
+# e8d4a497492241abbb7a8cb887fc6823
 #: ../../../source/reference/grn_expr/script_syntax.txt:305
 msgid ""
-"The operator performs zero-filling bitwise right shift operation on "
-"``number1`` by ``number2``."
-msgstr ""
+"The operator shifts bits of ``number1`` to right by ``number2``. The sign of "
+"the result is always positive."
+msgstr "この演算子は ``number1`` のビットを右に ``number2`` ビットシフトします。結果の符号は常に正です。"
 
 # d92066aafa5d47c88e80e52d9245a917
 #: ../../../source/reference/grn_expr/script_syntax.txt:311
 msgid "Bitwise OR operator"
-msgstr ""
+msgstr "ビット論理和演算子"
 
 # 622e416c9bae41fe8c51b82f45ff181f
 #: ../../../source/reference/grn_expr/script_syntax.txt:313
-#, fuzzy
 msgid "Its syntax is ``number1 | number2``."
-msgstr "構文は ``a - b`` です。"
+msgstr "構文は ``number1 | number2`` です。"
 
 # 1a638d05399b4b21a10977fd3f392c0f
 #: ../../../source/reference/grn_expr/script_syntax.txt:315
 msgid "The operator returns bitwise OR between ``number1`` and ``number2``."
-msgstr ""
+msgstr "この演算子は ``number1`` と ``number2`` をビット単位で論理和した結果を返します。"
 
 # 253b80a2015b468e8f51294cae583779
 #: ../../../source/reference/grn_expr/script_syntax.txt:320
 msgid "Bitwise XOR operator"
-msgstr ""
+msgstr "ビット排他的論理和演算子"
 
 # 622e416c9bae41fe8c51b82f45ff181f
 #: ../../../source/reference/grn_expr/script_syntax.txt:322
-#, fuzzy
 msgid "Its syntax is ``number1 ^ number2``."
-msgstr "構文は ``a - b`` です。"
+msgstr "構文は ``number1 ^ number2`` です。"
 
 # cf3c5bb995414c329712416a38ef2d4c
 #: ../../../source/reference/grn_expr/script_syntax.txt:324
 msgid "The operator returns bitwise XOR between ``number1`` and ``number2``."
-msgstr ""
+msgstr "この演算子は ``number1`` と ``number2`` をビット単位で排他的論理和した結果を返します。"
 
 # 8bc8e518c04d4b6ebecbf7b89d658150
 #: ../../../source/reference/grn_expr/script_syntax.txt:329
-#, fuzzy
 msgid "Logical OR operator"
-msgstr "論理和"
+msgstr "論理和演算子"
 
 # 622e416c9bae41fe8c51b82f45ff181f
 #: ../../../source/reference/grn_expr/script_syntax.txt:331
-#, fuzzy
 msgid "Its syntax is ``condition1 || condition2``."
-msgstr "構文は ``a - b`` です。"
+msgstr "構文は ``condition1 || condition2`` です。"
 
-# dadef33d90fb4f89ba340407c46b86b3
+# 47027c32528c4771bd2aaab3a3dad626
 #: ../../../source/reference/grn_expr/script_syntax.txt:333
-msgid "The operator returns logical OR between ``condition1 | condition2``."
-msgstr ""
+msgid ""
+"The operator returns true if either ``condition1`` or ``condition2`` is "
+"true, false otherwise."
+msgstr "この演算子は ``condition1`` と ``condition2`` のどちらか一方が真のときに真を返し、そうでなければ偽を返します。"
 
 # a252c9bced7c4fbbaba793b391408b41
-#: ../../../source/reference/grn_expr/script_syntax.txt:338
-#, fuzzy
+#: ../../../source/reference/grn_expr/script_syntax.txt:339
 msgid "Equal operator"
-msgstr "等価条件"
+msgstr "等価演算子"
 
 # 622e416c9bae41fe8c51b82f45ff181f
-#: ../../../source/reference/grn_expr/script_syntax.txt:340
-#, fuzzy
+#: ../../../source/reference/grn_expr/script_syntax.txt:341
 msgid "Its syntax is ``object1 == object2``."
-msgstr "構文は ``a - b`` です。"
+msgstr "構文は ``object1 == object2`` です。"
 
 # 5414f5f0938f4315a5dd0982c3c02c3b
-#: ../../../source/reference/grn_expr/script_syntax.txt:342
+#: ../../../source/reference/grn_expr/script_syntax.txt:343
 msgid ""
 "The operator returns true if ``object1`` equals to ``object2``, false "
 "otherwise."
-msgstr ""
+msgstr "この演算子は ``object1`` が ``object2`` と等しいときは真を返し、そうでなければ偽を返します。"
 
 # f506ea57a6fa4ea48578fc07e477747e
-#: ../../../source/reference/grn_expr/script_syntax.txt:348
-#, fuzzy
+#: ../../../source/reference/grn_expr/script_syntax.txt:349
 msgid "Not equal operator"
-msgstr "不等価条件"
+msgstr "不等価演算子"
 
 # 622e416c9bae41fe8c51b82f45ff181f
-#: ../../../source/reference/grn_expr/script_syntax.txt:350
-#, fuzzy
+#: ../../../source/reference/grn_expr/script_syntax.txt:351
 msgid "Its syntax is ``object1 != object2``."
-msgstr "構文は ``a - b`` です。"
+msgstr "構文は ``object1 != object2`` です。"
 
 # f084688a4a774864a5844e10b54d7d32
-#: ../../../source/reference/grn_expr/script_syntax.txt:352
+#: ../../../source/reference/grn_expr/script_syntax.txt:353
 msgid ""
 "The operator returns true if ``object1`` does not equal to ``object2``, "
 "false otherwise."
-msgstr ""
+msgstr "この演算子は ``object1`` が ``object2`` と等しくないときに真を返し、そうでなければ偽を返します。"
 
 # 137139f09a1f436e8f13e7c75841306e
-#: ../../../source/reference/grn_expr/script_syntax.txt:358
-#, fuzzy
+#: ../../../source/reference/grn_expr/script_syntax.txt:359
 msgid "Assignment operators"
-msgstr "代入式"
+msgstr "代入演算子"
 
 # 550e5bd76e56437fab6d69889c15e8b0
-#: ../../../source/reference/grn_expr/script_syntax.txt:363
+#: ../../../source/reference/grn_expr/script_syntax.txt:364
 msgid "Original operators"
-msgstr ""
+msgstr "独自の演算子"
 
 # cad4d82e3c604bb584f7fb8d4d8e98ec
-#: ../../../source/reference/grn_expr/script_syntax.txt:365
+#: ../../../source/reference/grn_expr/script_syntax.txt:366
 msgid ""
-"Groonga adds the original binary opearators to ECMAScript syntax. They "
+"Script syntax adds the original binary opearators to ECMAScript syntax. They "
 "operate search specific operations. They are starts with ``@`` or ``*``."
-msgstr ""
+msgstr "スクリプト構文はECMAScriptの構文に独自の二項演算子を追加しています。これらは検索に特化した操作をします。演算子の最初の文字は ``@`` または ``*`` です。"
 
 # 6aa4182a97114fa5b0180d5a7a0ba48c
-#: ../../../source/reference/grn_expr/script_syntax.txt:372
+#: ../../../source/reference/grn_expr/script_syntax.txt:373
 msgid "Match operator"
-msgstr ""
+msgstr "マッチ演算子"
 
 # 61fab56d6e9c4f4d8756ed4c9af116dd
-#: ../../../source/reference/grn_expr/script_syntax.txt:374
-#, fuzzy
+#: ../../../source/reference/grn_expr/script_syntax.txt:375
 msgid "Its syntax is ``column @ value``."
-msgstr "構文は ``column:value`` です。"
+msgstr "構文は ``column @ value`` です。"
 
 # 3a042474e261417b98d2fa90e31d7d58
-#: ../../../source/reference/grn_expr/script_syntax.txt:376
+#: ../../../source/reference/grn_expr/script_syntax.txt:377
 msgid ""
-"``Match oeprator`` searches ``value`` by inverted index of ``column``. "
+"The operator searches ``value`` by inverted index of ``column``. "
 "Normally, full text search is operated but tag search can be operated. "
 "Because tag search is also implemented by inverted index."
-msgstr ""
+msgstr "この演算子は ``column`` の転置インデックスを使って ``value`` を検索します。普通は全文検索をしますが、タグ検索もできます。これは、タグ検索も転置インデックスを使って実現しているからです。"
 
 # bbf2fc7ec5194da6a3c0819a818d32e5
-#: ../../../source/reference/grn_expr/script_syntax.txt:380
+#: ../../../source/reference/grn_expr/script_syntax.txt:381
 msgid ":doc:`query_syntax` uses this operator by default."
-msgstr ""
+msgstr ":doc:`query_syntax` はデフォルトでこの演算子を使っています。"
 
 # 3ed9557e11644100834e055fb607f7f3
-#: ../../../source/reference/grn_expr/script_syntax.txt:396
-#, fuzzy
+#: ../../../source/reference/grn_expr/script_syntax.txt:397
 msgid "Prefix search operator"
-msgstr "前方一致検索条件"
+msgstr "前方一致検索演算子"
 
 # 61fab56d6e9c4f4d8756ed4c9af116dd
-#: ../../../source/reference/grn_expr/script_syntax.txt:398
-#, fuzzy
+#: ../../../source/reference/grn_expr/script_syntax.txt:399
 msgid "Its syntax is ``column @^ value``."
-msgstr "構文は ``column:value`` です。"
+msgstr "構文は ``column @^ value`` です。"
 
 # 4e443cf589384fcaa91307f35fea24b4
-#: ../../../source/reference/grn_expr/script_syntax.txt:400
-#, fuzzy
+#: ../../../source/reference/grn_expr/script_syntax.txt:401
 msgid ""
 "The operator does prefix search with ``value``. Prefix search searches "
 "records that contain a word that starts with ``value``."
-msgstr ""
-"この条件式は前方一致検索を ``value`` で行います。前方一致検索は ``value`` で"
-"始まる単語を含むレコードを検索します。"
+msgstr "この条件式は ``value`` で前方一致検索します。前方一致検索は ``value`` で始まる単語を含むレコードを検索します。"
 
 # 9ce75f34143f463c86d81ed1fbdf8c4c
-#: ../../../source/reference/grn_expr/script_syntax.txt:427
-#, fuzzy
+#: ../../../source/reference/grn_expr/script_syntax.txt:428
 msgid "Suffix search operator"
-msgstr "後方一致検索条件"
+msgstr "後方一致検索演算子"
 
 # 61fab56d6e9c4f4d8756ed4c9af116dd
-#: ../../../source/reference/grn_expr/script_syntax.txt:429
-#, fuzzy
+#: ../../../source/reference/grn_expr/script_syntax.txt:430
 msgid "Its syntax is ``column @$ value``."
-msgstr "構文は ``column:$value`` です。"
+msgstr "構文は ``column @$ value`` です。"
 
 # 4e443cf589384fcaa91307f35fea24b4
-#: ../../../source/reference/grn_expr/script_syntax.txt:431
-#, fuzzy
+#: ../../../source/reference/grn_expr/script_syntax.txt:432
 msgid ""
 "This operator does suffix search with ``value``. Suffix search searches "
 "records that contain a word that ends with ``value``."
-msgstr ""
-"この条件式は後方一致検索を ``value`` で行います。後方一致検索は ``value`` で"
-"終わる単語を含むレコードを検索します。"
+msgstr "この演算子は ``value`` で後方一致検索します。後方一致検索は ``value`` で終わる単語を含むレコードを検索します。"
 
 # 7897b58f2edb49489e7d0da5394fa952
-#: ../../../source/reference/grn_expr/script_syntax.txt:481
+#: ../../../source/reference/grn_expr/script_syntax.txt:482
 msgid "Near search operator"
-msgstr ""
+msgstr "近傍検索演算子"
 
 # fd1cbe95dcc649f8a14965af3367fcff
-#: ../../../source/reference/grn_expr/script_syntax.txt:483
-#, fuzzy
+#: ../../../source/reference/grn_expr/script_syntax.txt:484
 msgid "Its syntax is ``column *N \"word1 word2 ...\"``."
-msgstr "構文は ``column:@\"search keyword\"`` です。"
+msgstr "構文は ``column *N \"word1 word2 ...\"`` です。"
 
 # 59dd7dc5612c4af788f65f35125b618b
-#: ../../../source/reference/grn_expr/script_syntax.txt:485
+#: ../../../source/reference/grn_expr/script_syntax.txt:486
 msgid ""
 "The operator does near search with words ``word1 word2 ...``. Near search "
 "searches records that contain the words and the words are appeared in the "
 "near distance. Near distance is always ``10`` for now. The unit of near "
 "distance is number of character in N-gram family tokenizers and number of "
 "words in morphological analysis family tokenizers."
-msgstr ""
+msgstr "この演算子は ``word1 word2 ...`` という単語で近傍検索します。近傍検索はすべての単語が含まれていてかつそれぞれの単語が近くにあるレコードを検索します。今のところ、距離が ``10`` 以内の近さであれば近くにあると判断します。距離の単位はN-gram系のトークナイザーでは文字数で、形態素解析系のトークナイザーでは単語数です。"
 
 # 6a1e25cdda234cee83c208ad08d84cdd
 # 0c824dc6893c4d4786c8aaaa2b106564
-#: ../../../source/reference/grn_expr/script_syntax.txt:492
-#: ../../../source/reference/grn_expr/script_syntax.txt:532
+#: ../../../source/reference/grn_expr/script_syntax.txt:493
+#: ../../../source/reference/grn_expr/script_syntax.txt:533
 msgid ""
 "Note that an index column for full text search must be defined for "
 "``column``."
-msgstr ""
+msgstr "``column`` 用の全文検索用インデックスカラムを定義しておく必要があることに注意してください。"
 
 # 3f03e4eb2ae840818b012268522169a2
-#: ../../../source/reference/grn_expr/script_syntax.txt:503
+#: ../../../source/reference/grn_expr/script_syntax.txt:504
 msgid ""
 "The first expression matches records that contain ``I`` and ``fast`` and the "
 "near distance of those words are in 10 words. So the record that its content "
 "is ``I also st arted to use mroonga. Its' also very fast! ...`` is matched. "
 "The number of words between ``I`` and ``fast`` is just 10."
-msgstr ""
+msgstr "最初の式は ``I`` と ``fast`` が含まれていて、かつ、これらの単語が10単語以内近くにあるレコードにマッチします。そのため ``I also st arted to use mroonga. Its' also very fast! ...`` にマッチします。 ``I`` と ``fast`` の間の単語数はちょうど10です。"
 
 # 8e211fc763c640a9afb34eb5b0cb4016
-#: ../../../source/reference/grn_expr/script_syntax.txt:509
+#: ../../../source/reference/grn_expr/script_syntax.txt:510
 msgid ""
 "The second expression matches records that contain ``I`` and ``Really`` and "
 "the near distance of those words are in 10 words. So the record that its "
 "content is ``I also st arted to use mroonga. Its' also very fast! Really "
 "fast!`` is not matched. The number of words between ``I`` and ``Really`` is "
 "11."
-msgstr ""
+msgstr "二番目の式は ``I`` と ``Really`` が含まれていて、かつ、これらの単語が10単語以内近くにあるレコードにマッチします。そのため、 ``I also st arted to use mroonga. Its' also very fast! Really fast!`` はマッチしません。 ``I`` と ``Really`` の間の単語数は11です。"
 
 # 0b412282519d4ce5bc1b047c054108aa
-#: ../../../source/reference/grn_expr/script_syntax.txt:515
+#: ../../../source/reference/grn_expr/script_syntax.txt:516
 msgid ""
 "The third expression matches records that contain ``also`` and ``Really`` "
 "and the near distance of those words are in 10 words. So the record that its "
 "content is ``I also st arted to use mroonga. Its' also very fast! Really "
 "fast!`` is matched. The number of words between ``also`` and ``Really`` is "
 "10."
-msgstr ""
+msgstr "三番目の式は ``also`` と ``Really`` が含まれていて、かつ、これらの単語が10単語以内近くにあるレコードにマッチします。そのため、 ``I also st arted to use mroonga. Its' also very fast! Really fast!`` にマッチします。 ``also`` と ``Really`` の間の単語数は10です。"
 
 # 5f1a4a1c092b4593bf1cb9d6d423bccf
-#: ../../../source/reference/grn_expr/script_syntax.txt:524
+#: ../../../source/reference/grn_expr/script_syntax.txt:525
 msgid "Similar search"
-msgstr ""
+msgstr "類似文書検索"
 
 # 61fab56d6e9c4f4d8756ed4c9af116dd
-#: ../../../source/reference/grn_expr/script_syntax.txt:526
-#, fuzzy
+#: ../../../source/reference/grn_expr/script_syntax.txt:527
 msgid "Its syntax is ``column *S \"document\"``."
-msgstr "構文は ``column:value`` です。"
+msgstr "構文は ``column *S \"document\"`` です。"
 
 # 4e443cf589384fcaa91307f35fea24b4
-#: ../../../source/reference/grn_expr/script_syntax.txt:528
-#, fuzzy
+#: ../../../source/reference/grn_expr/script_syntax.txt:529
 msgid ""
 "The operator does similar search with document ``document``. Similar search "
 "searches records that have similar content to ``document``."
-msgstr ""
-"この条件式は後方一致検索を ``value`` で行います。後方一致検索は ``value`` で"
-"終わる単語を含むレコードを検索します。"
+msgstr "この演算子は ``document`` というドキュメントで類似文書検索をします。類似文書検索は ``document`` と似た内容を持つレコードを検索します。"
 
 # 46ec1f0cad234e398d10aa54061caaac
-#: ../../../source/reference/grn_expr/script_syntax.txt:541
+#: ../../../source/reference/grn_expr/script_syntax.txt:542
 msgid ""
 "The expression matches records that have similar content to ``I migrated all "
 "Solr system!``. In this case, records that have ``I migrated all XXX system!"
 "`` content are matched."
-msgstr ""
+msgstr "この式は ``I migrated all Solr system!`` と似た内容を持つレコードを検索します。この場合は、 ``I migrated all XXX system!`` という内容のレコードがマッチします。"
 
 # 58fb46fc36094d50a413708380e4924d
-#: ../../../source/reference/grn_expr/script_syntax.txt:548
+#: ../../../source/reference/grn_expr/script_syntax.txt:549
 msgid "Term extract operator"
-msgstr ""
+msgstr "単語抽出演算子"
 
 # 406f4fe2dee64f5cbc5d47fa9b83e123
-#: ../../../source/reference/grn_expr/script_syntax.txt:550
-#, fuzzy
+#: ../../../source/reference/grn_expr/script_syntax.txt:551
 msgid "Its syntax is ``_key *T \"document\"``."
-msgstr "構文は ``keyword`` です。"
+msgstr "構文は ``_key *T \"document\"`` です。"
 
 # 3c4f51de316e4cc684aa6f6282009946
-#: ../../../source/reference/grn_expr/script_syntax.txt:552
+#: ../../../source/reference/grn_expr/script_syntax.txt:553
 msgid ""
-"The operator extracts terms from ``document``. Terms are keys of the table "
+"The operator extracts terms from ``document``. Terms must be registered as keys of the table "
 "of ``_key``."
-msgstr ""
+msgstr "この演算子は ``document`` から単語を抽出します。単語は ``_key`` のテーブルのキーとして登録されていなければいけません。"
 
 # 239ed5957a604f59be7df2c4d01190b9
-#: ../../../source/reference/grn_expr/script_syntax.txt:555
+#: ../../../source/reference/grn_expr/script_syntax.txt:556
 msgid ""
 "Note that the table must be patricia trie (``TABLE_PAT_KEY``) or double "
 "array trie (``TABLE_DAT_KEY``). You can't use hash table "
 "(``TABLE_HASH_KEY``) and array (``TABLE_NO_KEY``) becuase they don't support "
 "longest common prefix search. Longest common prefix search is used to "
 "implement the operator."
-msgstr ""
+msgstr "テーブルはパトリシアトライ（ ``TABLE_PAT_KEY`` ）またはダブルアレイトライ（ ``TABLE_DAT_KEY`` ）でなければいけないことに注意してください。ハッシュテーブル（ ``TABLE_HASH_KEY`` ）や配列（ ``TABLE_NO_KEY`` ）は最長共通接頭辞検索（Longest Common Prefix Search）をできないため使えません。この演算子は最長共通接頭辞検索を使っています。"
 
 # 3c9684c10ce64bebb97d61aaa9dc62c2
-#: ../../../source/reference/grn_expr/script_syntax.txt:575
+#: ../../../source/reference/grn_expr/script_syntax.txt:576
 msgid ""
 "The expression extrcts terms that included in document ``Groonga is the "
 "successor project to Senna.``. In this case, ``KEY_NORMALIZE`` flag is "
 "specified to ``Words``. So ``Groonga`` can be extracted even if it is loaded "
 "as ``groonga`` into ``Words``. All of extracted terms are also normalized."
-msgstr ""
+msgstr "この式はドキュメント ``Groonga is the successor project to Senna.`` に含まれている単語を抽出します。今回は ``Words`` に ``KEY_NORMALIZE`` フラグが指定されています。そのため、 ``Words`` には ``groonga`` とロードしていますが ``Groonga`` も抽出できています。また、全ての抽出された単語も正規化されています。"
 
