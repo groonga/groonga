@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-11 14:08\n"
+"POT-Creation-Date: 2012-07-11 14:34\n"
 "PO-Revision-Date: 2011-05-09 00:36+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -233,7 +233,7 @@ msgstr "距離の計算にlocationカラムの値を使う ( ``Stations`` テー
 # b7017435ec0b46ea8732d08a9e92997a
 #: ../../../source/functions/geo_distance.txt:52
 msgid ""
-"Using the explicitly specified coodinates for calculating the distance "
+"Using the explicitly specified coordinates for calculating the distance "
 "(``Geo`` table)"
 msgstr "距離の計算に明示的に指定した座標値を使う ( ``Geo`` テーブル)"
 
@@ -277,8 +277,8 @@ msgid ""
 "The value (\"155047000x508862800\") passed to ``geo_distance`` as the second "
 "argument is the coordinate of Sapporo."
 msgstr ""
-"``geo_distance`` の第二引数として渡された値 (\"155047000x508862800\") "
-"は札幌の座標値です。"
+"``geo_distance`` の第二引数として渡された値 (\"155047000x508862800\") は札幌"
+"の座標値です。"
 
 # 44d6b19124b9469389dd4961713668c3
 #: ../../../source/functions/geo_distance.txt:77

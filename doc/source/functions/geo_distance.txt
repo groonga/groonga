@@ -49,7 +49,7 @@ Here are two schema definition and sample data to show the difference according 
 Those samples show how to calculate the value of distance between Tokyo and Sapporo.
 
 #. Using the column value of location for calculating the distance (``Stations`` table)
-#. Using the explicitly specified coodinates for calculating the distance (``Geo`` table)
+#. Using the explicitly specified coordinates for calculating the distance (``Geo`` table)
 
 Using the column value of location
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
