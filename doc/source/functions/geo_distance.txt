@@ -148,7 +148,7 @@ You can specify the value of ``approximate_type`` by one of the followings.
     There is a limitation about ``geo_distance`` above notice.
     But it relaxes the limitation if you use ``rectangle`` as approximate type.
     You can calculate the correct distance if two point are placed at northern
-    hemisphere.
+    hemisphere or southern hemisphere.
 
 ``rectangle``
 ...............
