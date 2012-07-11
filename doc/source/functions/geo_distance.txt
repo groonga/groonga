@@ -217,14 +217,14 @@ You can also specify ``ellip`` as abbrev expression.
 
 Here is a sample about calculating the value of distance with column value.
 
+.. groonga-command
+.. include:: ../example/functions/geo_distance_location_ellipsoid.log
+
 Return value
 ------------
 
 ``geo_distance`` returns the value of distance in float type.
 The unit of return value is meter.
-
-.. groonga-command
-.. include:: ../example/functions/geo_distance_location_ellipsoid.log
 
 .. rubric:: Footnote
 
