@@ -45,11 +45,11 @@ between the coordinate of ``point1`` and the coordinate of ``point2``.
 Lets's learn about ``geo_distance`` usage with examples.
 This section shows simple usages.
 
-Here are two schema definition and sample data to show usage.
+Here are two schema definition and sample data to show the difference according to the usage.
 Those samples show how to calculate the value of distance between Tokyo and Sapporo.
 
 #. Using the column value of location for calculating the distance (``Stations`` table)
-#. Using the explicitly specified value of location for calculating the distance (``Geo`` table)
+#. Using the explicitly specified coodinates for calculating the distance (``Geo`` table)
 
 Using the column value of location
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -59,7 +59,7 @@ Here are a schema definition of ``Stations`` table and sample data to show usage
 .. groonga-command
 .. include:: ../example/functions/geo_distance_setup_location.log
 
-There is a table named ``Stations``. ``Stations`` table has one column, ``location``.
+This execution example creates a table named ``Stations`` which has one column named ``location``.
 ``location`` column stores the value of coordinate.
 The coordinate of Tokyo is stored as sample data.
 
@@ -69,7 +69,8 @@ The coordinate of Tokyo is stored as sample data.
 This sample shows that ``geo_distance`` use the value of ``location`` column
 and the value of coordinate to calculate distance.
 
-Note that the coordinate of Sapporo is "155047000x508862800".
+The value ("155047000x508862800") passed to ``geo_distance`` as the second argument is
+the coordinate of Sapporo.
 
 
 Using the explicitly specified value of location
@@ -80,7 +81,7 @@ Here are a schema definition of ``Geo`` table and sample data to show usage.
 .. groonga-command
 .. include:: ../example/functions/geo_distance_setup_distance.log
 
-There is a table named ``Geo``. ``Geo`` table has one column, ``distance``.
+This execution example creates a table named ``Geo`` which has one column named ``distance``.
 ``distance`` column stores the value of distance.
 
 .. groonga-command
@@ -154,7 +155,7 @@ You can specify the value of ``approximate_type`` by one of the followings.
 ...............
 
 This parameter require to approximate the geographical features
-by square approximation.
+by square approximation for calculating the distance.
 
 Since the value of distance is calculated by simple formula,
 you can calculate the value of distance fast.
@@ -191,7 +192,7 @@ Here is a sample about calculating the value of distance with explicitly specifi
 ...............
 
 This parameter require to approximate the geographical features
-by spherical approximation.
+by spherical approximation for calculating the distance.
 
 It is slower than ``rectangle``, but the error of distance becomes
 smaller than ``rectangle``.
@@ -207,7 +208,7 @@ Here is a sample about calculating the value of distance with column value.
 ...............
 
 This parameter require to approximate the geographical features
-by ellipsoid approximation.
+by ellipsoid approximation for calculating the distance.
 
 It uses the calculation of distance by the formula of Hubeny.
 It is slower than ``sphere``, but the error of distance becomes
