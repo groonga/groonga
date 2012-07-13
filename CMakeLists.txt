@@ -57,6 +57,10 @@ set(GRN_DEFAULT_RELATIVE_DOCUMENT_ROOT
 set(GRN_DEFAULT_DOCUMENT_ROOT
   "${GRN_DATA_DIR}/${GRN_DEFAULT_DOCUMENT_ROOT_BASE}"
   CACHE PATH "groonga default document root")
+set(GRN_STACK_SIZE
+  1024
+  CACHE STRING
+  "DANGER!!! groonga stack size. Normarlly, you should not change this variable.")
 set(GRN_RELATIVE_PLUGINS_DIR
   "${CMAKE_PROJECT_NAME}/plugins"
   CACHE PATH "groonga plugins' relative directory")

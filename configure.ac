@@ -400,11 +400,21 @@ AC_DEFINE_UNQUOTED(GRN_DEFAULT_MATCH_ESCALATION_THRESHOLD, $GRN_DEFAULT_MATCH_ES
 # default DB key management algorithm
 AC_ARG_WITH(default_db_key,
   [AS_HELP_STRING([--with-default-db-key=ALGORITHM],
-    [specify groonga default DB key(pat/dat/auto)])],
+    [specify groonga default DB key (pat/dat/auto)])],
   GRN_DEFAULT_DB_KEY="$withval",
   GRN_DEFAULT_DB_KEY="auto")
 AC_DEFINE_UNQUOTED(GRN_DEFAULT_DB_KEY, "$GRN_DEFAULT_DB_KEY",
                    "specified default DB key management algorithm")
+
+# DANGER!!!: stack size
+GRN_STACK_SIZE=1024
+AC_ARG_WITH(stack_size,
+  [AS_HELP_STRING([--with-stack-size=SIZE],
+    [DANGER!!!
+     This option specifies stack size. (default=$GRN_STACK_SIZE)
+     Normally, you should not use this option.])],
+  GRN_STACK_SIZE="$withval")
+AC_DEFINE_UNQUOTED(GRN_STACK_SIZE, [$GRN_STACK_SIZE], [stack size])
 
 if test "$os_win32" != "yes"; then
   AC_CHECK_HEADERS(pthread.h)
@@ -1209,6 +1219,7 @@ echo "  Compiler:              ${CC}"
 echo "  CFLAGS:                ${CFLAGS}"
 echo "  CXXFLAGS:              ${CXXFLAGS}"
 echo "  Libraries:             ${LIBS}"
+echo "  Stack size:            ${GRN_STACK_SIZE}"
 echo "  Document:              ${document_available}"
 echo "    buildable:           ${document_buildable}"
 echo "    built:               ${have_built_document}"

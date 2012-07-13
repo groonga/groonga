@@ -74,7 +74,6 @@ typedef struct {
   grn_content_type input_type;
 } grn_loader;
 
-#define GRN_STACK_SIZE 1024
 #define GRN_CTX_N_SEGMENTS 512
 
 #ifdef USE_MEMORY_DEBUG
