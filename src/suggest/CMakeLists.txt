@@ -13,6 +13,8 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+include_directories(${CMAKE_SOURCE_DIR}/lib)
+
 read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/create_dataset_sources.am
   GROONGA_SUGGEST_CREATE_DATASET_SOURCES)
 add_executable(groonga-suggest-create-dataset
@@ -30,7 +32,6 @@ endif()
 
 if(WITH_SUGGEST_LEARNER)
   include_directories(
-    ${CMAKE_BINARY_DIR}/lib
     ${LIBEVENT_INCLUDE_DIRS}
     ${ZEROMQ_INCLUDE_DIRS}
     ${MESSAGE_PACK_INCLUDE_DIRS}
