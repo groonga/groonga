@@ -7,6 +7,18 @@ nginx_version=1.2.1
 export GROONGA_HTTPD_IN_TREE=yes
 . "../../groonga-httpd-conf.sh"
 
+eval "`../../libtool --config | grep sys_lib_dlsearch_path_spec=`"
+found_libdir_in_dlsearch_path="no"
+for dlsearch_path in $sys_lib_dlsearch_path_spec; do
+  if [ "$dlsearch_path" = "$libdir" ]; then
+    found_libdir_in_dlsearch_path="yes"
+    break
+  fi
+done
+if [ "$found_libdir_in_dlsearch_path" = "no" ]; then
+  export GROONGA_HTTPD_RPATH="${libdir}"
+fi
+
 source_directory="`dirname \"$0\"`"
 absolute_source_directory="`cd \"$source_directory\"/../.. && pwd`"
 
