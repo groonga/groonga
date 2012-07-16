@@ -87,19 +87,10 @@ if ! rpm -q mecab-devel > /dev/null; then
 base=http://download.fedoraproject.org/pub/fedora/linux/releases/15/Everything/source/SRPMS
 srpm=\$1
 
-if [ ! -f ~/.rpmmacros ]; then
-    cat <<EOM > ~/.rpmmacros
-%_topdir \$HOME/rpm
-EOM
-fi
+rm -rf rpmbuild
 
-rm -rf rpm
-
-mkdir -p rpm/BUILD
-mkdir -p rpm/RPMS
-mkdir -p rpm/SRPMS
-mkdir -p rpm/SOURCES
-mkdir -p rpm/SPECS
+rm -rf .rpmmacros
+rpmdev-setuptree
 
 mkdir -p dependencies/RPMS
 mkdir -p dependencies/SRPMS
@@ -109,14 +100,14 @@ cd tmp
 wget \$base/\$srpm
 rpm2cpio \$srpm | cpio -id
 rm \$srpm
-mv *.spec ~/rpm/SPECS/
-mv * ~/rpm/SOURCES/
+mv *.spec ~/rpmbuild/SPECS/
+mv * ~/rpmbuild/SOURCES/
 cd ..
 rm -rf tmp
-rpmbuild -ba rpm/SPECS/*.spec
+rpmbuild -ba rpmbuild/SPECS/*.spec
 
-cp -p rpm/RPMS/*/*.rpm dependencies/RPMS/
-cp -p rpm/SRPMS/*.rpm dependencies/SRPMS/
+cp -p rpmbuild/RPMS/*/*.rpm dependencies/RPMS/
+cp -p rpmbuild/SRPMS/*.rpm dependencies/SRPMS/
 EOF
 
     run chmod +x $BUILD_SCRIPT
@@ -124,10 +115,10 @@ EOF
                mecab-ipadic-2.7.0.20070801-4.fc15.1.src.rpm \
                mecab-jumandic-5.1.20070304-5.fc15.src.rpm; do
 	run su - $USER_NAME $BUILD_SCRIPT $rpm
-	run rpm -Uvh /home/$USER_NAME/rpm/RPMS/*/*.rpm
+	run rpm -Uvh /home/$USER_NAME/rpmbuild/RPMS/*/*.rpm
     done
 fi
-run yum install ${yum_options} -y rpm-build tar ${DEPENDED_PACKAGES}
+run yum install ${yum_options} -y rpm-build rpmdevtools tar ${DEPENDED_PACKAGES}
 run yum clean ${yum_options} packages
 
 # for debug
@@ -136,22 +127,12 @@ run yum clean ${yum_options} packages
 cat <<EOF > $BUILD_SCRIPT
 #!/bin/sh
 
-if [ ! -f ~/.rpmmacros ]; then
-    cat <<EOM > ~/.rpmmacros
-%_topdir \$HOME/rpm
-EOM
-fi
-
-# rm -rf rpm
-mkdir -p rpm/SOURCES
-mkdir -p rpm/SPECS
-mkdir -p rpm/BUILD
-mkdir -p rpm/RPMS
-mkdir -p rpm/SRPMS
+rm -rf .rpmmacros
+rpmdev-setuptree
 
 if test -f /tmp/${SOURCE_BASE_NAME}-$VERSION-*.src.rpm; then
     if ! rpm -Uvh /tmp/${SOURCE_BASE_NAME}-$VERSION-*.src.rpm; then
-        cd rpm/SOURCES
+        cd rpmbuild/SOURCES
         rpm2cpio /tmp/${SOURCE_BASE_NAME}-$VERSION-*.src.rpm | cpio -id
         if ! yum info tcp_wrappers-devel >/dev/null 2>&1; then
             sed -i'' -e 's/tcp_wrappers-devel/tcp_wrappers/g' ${PACKAGE}.spec
@@ -164,13 +145,13 @@ if test -f /tmp/${SOURCE_BASE_NAME}-$VERSION-*.src.rpm; then
         cd
     fi
 else
-    cp /tmp/${SOURCE_BASE_NAME}-$VERSION.* rpm/SOURCES/
-    cp /tmp/${PACKAGE}.spec rpm/SPECS/
+    cp /tmp/${SOURCE_BASE_NAME}-$VERSION.* rpmbuild/SOURCES/
+    cp /tmp/${PACKAGE}.spec rpmbuild/SPECS/
 fi
 
-chmod o+rx . rpm rpm/RPMS rpm/SRPMS
+chmod o+rx . rpmbuild rpmbuild/RPMS rpmbuild/SRPMS
 
-rpmbuild -ba ${rpmbuild_options} rpm/SPECS/${PACKAGE}.spec
+rpmbuild -ba ${rpmbuild_options} rpmbuild/SPECS/${PACKAGE}.spec
 EOF
 
 run chmod +x $BUILD_SCRIPT

@@ -99,7 +99,7 @@ build()
 
     build_user=${PACKAGE}-build
     build_user_dir=${base_dir}/home/${build_user}
-    rpm_base_dir=${build_user_dir}/rpm
+    rpm_base_dir=${build_user_dir}/rpmbuild
     rpm_dir=${rpm_base_dir}/RPMS/${architecture}
     srpm_dir=${rpm_base_dir}/SRPMS
     pool_base_dir=${DESTINATION}${distribution}/${distribution_version}
