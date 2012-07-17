@@ -1,20 +1,36 @@
-table_create Hoge TABLE_HASH_KEY ShortText
+table_create Shops TABLE_HASH_KEY ShortText
 [[0,0.0,0.0],true]
-column_create Hoge point COLUMN_SCALAR WGS84GeoPoint
+column_create Shops location COLUMN_SCALAR WGS84GeoPoint
 [[0,0.0,0.0],true]
-column_create Hoge text COLUMN_SCALAR ShortText
+column_create Shops code COLUMN_SCALAR ShortText
 [[0,0.0,0.0],true]
-load --table Hoge
+load --table Shops
 [
-{"_key":"a","point":"x","text":"a0000000"},
-{"_key":"b","point":"x","text":"b0000000"},
-{"_key":"b","point":"x","text":"b0000001"},
-{"_key":"b","point":"x","text":"b0000002"},
-{"_key":"b","point":"x","text":"b0000003"},
-{"_key":"b","point":"x","text":"b0000004"},
-{"_key":"b","point":"x","text":"b0000005"},
-{"_key":"b","point":"x","text":"b0000006"}
+{"_key":"a","location":"x","code":"a0000000"},
+{"_key":"b","location":"x","code":"b0000000"},
+{"_key":"b","location":"x","code":"b0000001"},
+{"_key":"b","location":"x","code":"b0000002"},
+{"_key":"b","location":"x","code":"b0000003"},
+{"_key":"b","location":"x","code":"b0000004"},
+{"_key":"b","location":"x","code":"b0000005"},
+{"_key":"b","location":"x","code":"b0000006"}
 ]
 [[0,0.0,0.0],8]
-select Hoge --filter 'text == "a0000000"' --output_columns _key
+#|e| <Shops.location>: failed to cast to <WGS84GeoPoint>: <"x">
+#|e| [table][load] failed to set column value: <Shops.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"a">, column: <location>, value: <"x">
+#|e| <Shops.location>: failed to cast to <WGS84GeoPoint>: <"x">
+#|e| [table][load] failed to set column value: <Shops.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"b">, column: <location>, value: <"x">
+#|e| <Shops.location>: failed to cast to <WGS84GeoPoint>: <"x">
+#|e| [table][load] failed to set column value: <Shops.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"b">, column: <location>, value: <"x">
+#|e| <Shops.location>: failed to cast to <WGS84GeoPoint>: <"x">
+#|e| [table][load] failed to set column value: <Shops.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"b">, column: <location>, value: <"x">
+#|e| <Shops.location>: failed to cast to <WGS84GeoPoint>: <"x">
+#|e| [table][load] failed to set column value: <Shops.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"b">, column: <location>, value: <"x">
+#|e| <Shops.location>: failed to cast to <WGS84GeoPoint>: <"x">
+#|e| [table][load] failed to set column value: <Shops.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"b">, column: <location>, value: <"x">
+#|e| <Shops.location>: failed to cast to <WGS84GeoPoint>: <"x">
+#|e| [table][load] failed to set column value: <Shops.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"b">, column: <location>, value: <"x">
+#|e| <Shops.location>: failed to cast to <WGS84GeoPoint>: <"x">
+#|e| [table][load] failed to set column value: <Shops.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"b">, column: <location>, value: <"x">
+select Shops --filter 'code == "a0000000"' --output_columns _key
 [[0,0.0,0.0],[[[1],[["_key","ShortText"]],["a"]]]]
