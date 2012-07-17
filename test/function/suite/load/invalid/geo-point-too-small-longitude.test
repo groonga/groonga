@@ -5,3 +5,5 @@ load --table Shops
 [
 {"_key": "Statue of Liberty", "location": "40.689167x-648000001"}
 ]
+
+select Shops

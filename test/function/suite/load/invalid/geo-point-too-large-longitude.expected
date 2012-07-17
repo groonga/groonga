@@ -9,3 +9,37 @@ load --table Shops
 [[0,0.0,0.0],1]
 #|e| <Shops.location>: failed to cast to <WGS84GeoPoint>: <"40.689167x648000001">
 #|e| [table][load] failed to set column value: <Shops.location>: failed to cast to <WGS84GeoPoint>: <"40.689167x648000001">: key: <"Statue of Liberty">, column: <location>, value: <"40.689167x648000001">
+select Shops
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "location",
+          "WGS84GeoPoint"
+        ]
+      ],
+      [
+        1,
+        "Statue of Liberty",
+        "0x0"
+      ]
+    ]
+  ]
+]
