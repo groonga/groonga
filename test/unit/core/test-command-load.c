@@ -42,7 +42,6 @@ void test_invalid_table_name(void);
 void data_each(void);
 void test_each(gconstpointer data);
 void test_vector_reference_column(void);
-void test_invalid_int32_value(void);
 
 static gchar *tmp_directory;
 static const gchar *database_path;
@@ -475,27 +474,5 @@ test_vector_reference_column(void)
       "[\"_key\",\"ShortText\"],"
       "[\"tags\",\"Tags\"]],"
      "[1,\"mori\",[\"groonga\",\"search\",\"engine\"]]]]",
-    send_command("select Users"));
-}
-
-void
-test_invalid_int32_value(void)
-{
-  assert_send_command("table_create Users TABLE_NO_KEY");
-  assert_send_command("column_create Users age COLUMN_SCALAR Int32");
-  grn_test_assert_send_command_error(
-    context,
-    GRN_INVALID_ARGUMENT,
-    "<Users.age>: failed to cast to <Int32>: <\"invalid number!\">",
-    "load --table Users\n"
-    "[\n"
-    "{\"age\": \"invalid number!\"}\n"
-    "]\n");
-  send_command("]\n");
-  cut_assert_equal_string(
-    "[[[1],"
-     "[[\"_id\",\"UInt32\"],"
-      "[\"age\",\"Int32\"]],"
-     "[1,0]]]",
     send_command("select Users"));
 }

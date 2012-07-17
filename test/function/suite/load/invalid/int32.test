@@ -1,0 +1,9 @@
+table_create Users TABLE_NO_KEY
+column_create Users age COLUMN_SCALAR Int32
+
+load --table Users
+[
+{"age": "invalid number!"}
+]
+
+select Users
