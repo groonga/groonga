@@ -1,0 +1,11 @@
+table_create Shops TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Shops location COLUMN_SCALAR WGS84GeoPoint
+[[0,0.0,0.0],true]
+load --table Shops
+[
+{"_key": "Statue of Liberty", "location": "324000001x-74.044444"}
+]
+[[0,0.0,0.0],1]
+#|e| <Shops.location>: failed to cast to <WGS84GeoPoint>: <"324000001x-74.044444">
+#|e| [table][load] failed to set column value: <Shops.location>: failed to cast to <WGS84GeoPoint>: <"324000001x-74.044444">: key: <"Statue of Liberty">, column: <location>, value: <"324000001x-74.044444">

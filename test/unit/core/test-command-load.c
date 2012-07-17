@@ -43,8 +43,6 @@ void data_each(void);
 void test_each(gconstpointer data);
 void test_vector_reference_column(void);
 void test_invalid_int32_value(void);
-void data_invalid_geo_point_valid(void);
-void test_invalid_geo_point_value(gconstpointer data);
 
 static gchar *tmp_directory;
 static const gchar *database_path;
@@ -500,47 +498,4 @@ test_invalid_int32_value(void)
       "[\"age\",\"Int32\"]],"
      "[1,0]]]",
     send_command("select Users"));
-}
-
-
-void
-data_invalid_geo_point_value(void)
-{
-#define ADD_DATUM(label, location)                                      \
-  gcut_add_datum(label " (" location ")",                               \
-                 "location", G_TYPE_STRING, location,                   \
-                 NULL)
-
-  ADD_DATUM("too large latitude", "324000001x502419287");
-  ADD_DATUM("too small latitude", "-324000001x502419287");
-  ADD_DATUM("too large longitude", "128514964x648000001");
-  ADD_DATUM("too small longitude", "128514964x-648000001");
-
-#undef ADD_DATUM
-}
-
-void
-test_invalid_geo_point_value(gconstpointer data)
-{
-  assert_send_command("table_create Shops TABLE_HASH_KEY ShortText");
-  assert_send_command("column_create Shops location COLUMN_SCALAR WGS84GeoPoint");
-  grn_test_assert_send_command_error(
-    context,
-    GRN_INVALID_ARGUMENT,
-    cut_take_printf("<Shops.location>: "
-                    "failed to cast to <WGS84GeoPoint>: <\"%s\">",
-                    gcut_data_get_string(data, "location")),
-    cut_take_printf("load --table Shops\n"
-                    "[\n"
-                    "{\"_key\": \"たかね\", \"location\": \"%s\"}\n"
-                    "]\n",
-                    gcut_data_get_string(data, "location")));
-  send_command("]\n");
-  cut_assert_equal_string(
-    "[[[1],"
-     "[[\"_id\",\"UInt32\"],"
-      "[\"_key\",\"ShortText\"],"
-      "[\"location\",\"WGS84GeoPoint\"]],"
-     "[1,\"たかね\",\"0x0\"]]]",
-    send_command("select Shops"));
 }

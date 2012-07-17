@@ -1,0 +1,7 @@
+table_create Shops TABLE_HASH_KEY ShortText
+column_create Shops location COLUMN_SCALAR WGS84GeoPoint
+
+load --table Shops
+[
+{"_key": "Statue of Liberty", "location": "-324000001x-74.044444"}
+]
