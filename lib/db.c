@@ -9408,6 +9408,7 @@ grn_load_(grn_ctx *ctx, grn_content_type input_type,
       GRN_PTR_INIT(&parsed_columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
       if (parse_load_columns(ctx, loader->table, columns, columns_len,
                              &parsed_columns)) {
+        loader->stat = GRN_LOADER_END;
         return;
       }
       n_columns = GRN_BULK_VSIZE(&parsed_columns) / sizeof(grn_obj *);

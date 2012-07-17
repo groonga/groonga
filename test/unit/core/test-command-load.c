@@ -32,7 +32,6 @@ void test_time_float(void);
 void data_null(void);
 void test_null(gconstpointer data);
 void test_index_geo_point(void);
-void test_nonexistent_columns(void);
 void test_no_key_table(void);
 void test_two_bigram_indexes_to_key(void);
 void test_invalid_start_with_symbol(void);
@@ -306,22 +305,6 @@ test_null(gconstpointer data)
                           send_command(gcut_data_get_string(data, "load")));
   cut_assert_equal_string(gcut_data_get_string(data, "expected"),
                           send_command("select Students"));
-}
-
-
-void
-test_nonexistent_columns(void)
-{
-  assert_send_command("table_create Users TABLE_NO_KEY");
-  assert_send_command("column_create Users name COLUMN_SCALAR ShortText");
-  grn_test_assert_send_command_error(context,
-                                     GRN_INVALID_ARGUMENT,
-                                     "nonexistent column: <nonexistent>",
-                                     "load "
-                                     "--table Users "
-                                     "--columns nonexistent "
-                                     "--values "
-                                     "'[[\"nonexistent column value\"]]'");
 }
 
 void

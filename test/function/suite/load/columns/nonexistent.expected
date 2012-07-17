@@ -1,0 +1,9 @@
+table_create Users TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Users name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load   --table Users   --columns nonexistent   --values '[["nonexistent column value"]]'
+[[[-22,0.0,0.0],"nonexistent column: <nonexistent>"],0]
+#|e| nonexistent column: <nonexistent>
+select Users
+[[0,0.0,0.0],[[[0],[["_id","UInt32"],["name","ShortText"]]]]]
