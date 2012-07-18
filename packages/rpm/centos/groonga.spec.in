@@ -251,6 +251,9 @@ fi
 %config(noreplace) %{_sysconfdir}/munin/plugin-conf.d/*
 
 %changelog
+* Sun Jul 29 2012 Kouhei Sutou <kou@clear-code.com> - 2.0.5-0
+- new upstream release.
+
 * Fri Jun 29 2012 Kouhei Sutou <kou@clear-code.com> - 2.0.4-0
 - new upstream release.
 - groonga package does not require groonga-tokenizer-mecab package.
