@@ -173,7 +173,8 @@ for architecture in $ARCHITECTURES; do
 	    if test "$parallel" = "yes"; then
 		build $architecture $distribution $distribution_version &
 	    else
-		build_log=/tmp/build-$distribution-$distribution_version-$architecture.log
+		mkdir -p tmp
+		build_log=tmp/build-$distribution-$distribution_version-$architecture.log
 		build $architecture $distribution $distribution_version 2>&1 | tee $build_log
 	    fi;
 	done;
