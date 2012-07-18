@@ -3,160 +3,38 @@ Execution example::
   column_create --table Site --name title --type ShortText
   # [
   #   [
-  #     -22, 
-  #     1337566253.89858, 
-  #     0.000355720520019531, 
-  #     "already used name was assigned: <Site.title>", 
-  #     [
-  #       [
-  #         "grn_obj_register", 
-  #         "db.c", 
-  #         6572
-  #       ]
-  #     ]
-  #   ], 
-  #   false
+  #	0,
+  # 	1342584190.15707,
+  # 	0.0806183815002441
+  #   ],
+  #   true
   # ]
   select --table Site
   # [
   #   [
-  #     0, 
-  #     1337566253.89858, 
-  #     0.000355720520019531
-  #   ], 
+  #	0,
+  #	1342584642.15339,
+  #	0.0175399780273438
+  #   ],
   #   [
-  #     [
-  #       [
-  #         9
-  #       ], 
-  #       [
-  #         [
-  #           "_id", 
-  #           "UInt32"
-  #         ], 
-  #         [
-  #           "_key", 
-  #           "ShortText"
-  #         ], 
-  #         [
-  #           "country", 
-  #           "SiteCountry"
-  #         ], 
-  #         [
-  #           "domain", 
-  #           "SiteDomain"
-  #         ], 
-  #         [
-  #           "link", 
-  #           "Site"
-  #         ], 
-  #         [
-  #           "links", 
-  #           "Site"
-  #         ], 
-  #         [
-  #           "location", 
-  #           "WGS84GeoPoint"
-  #         ], 
-  #         [
-  #           "title", 
-  #           "ShortText"
-  #         ]
-  #       ], 
-  #       [
-  #         1, 
-  #         "http://example.org/", 
-  #         "japan", 
-  #         ".org", 
-  #         "http://example.net/", 
-  #         [
-  #           "http://example.net/", 
-  #           "http://example.org/", 
-  #           "http://example.com/"
-  #         ], 
-  #         "128452975x503157902", 
-  #         "This is test record 1!"
-  #       ], 
-  #       [
-  #         2, 
-  #         "http://example.net/", 
-  #         "brazil", 
-  #         ".net", 
-  #         "", 
-  #         [], 
-  #         "128487316x502920929", 
-  #         "test record 2."
-  #       ], 
-  #       [
-  #         3, 
-  #         "http://example.com/", 
-  #         "japan", 
-  #         ".com", 
-  #         "", 
-  #         [], 
-  #         "0x0", 
-  #         "test test record three."
-  #       ], 
-  #       [
-  #         4, 
-  #         "http://example.net/afr", 
-  #         "usa", 
-  #         ".net", 
-  #         "", 
-  #         [], 
-  #         "0x0", 
-  #         "test record four."
-  #       ], 
-  #       [
-  #         5, 
-  #         "http://example.org/aba", 
-  #         "korea", 
-  #         ".org", 
-  #         "", 
-  #         [], 
-  #         "0x0", 
-  #         "test test test record five."
-  #       ], 
-  #       [
-  #         6, 
-  #         "http://example.com/rab", 
-  #         "china", 
-  #         ".com", 
-  #         "", 
-  #         [], 
-  #         "0x0", 
-  #         "test test test test record six."
-  #       ], 
-  #       [
-  #         7, 
-  #         "http://example.net/atv", 
-  #         "china", 
-  #         ".net", 
-  #         "", 
-  #         [], 
-  #         "0x0", 
-  #         "test test test record seven."
-  #       ], 
-  #       [
-  #         8, 
-  #         "http://example.org/gat", 
-  #         "usa", 
-  #         ".org", 
-  #         "", 
-  #         [], 
-  #         "0x0", 
-  #         "test test record eight."
-  #       ], 
-  #       [
-  #         9, 
-  #         "http://example.com/vdw", 
-  #         "japan", 
-  #         ".com", 
-  #         "", 
-  #         [], 
-  #         "0x0", 
-  #         "test test record nine."
-  #       ]
+  #	[
+  #	  [
+  #	    0
+  #	  ],
+  #	  [
+  #	    [
+  #  	      "_id",
+  #	      "UInt32"
+  #	    ],
+  #	    [
+  #	      "_key",
+  #	      "ShortText"
+  #	    ],
+  #	    [
+  #	      "title",
+  #	      "ShortText"
+  #	    ]
+  #	  ]
   #     ]
   #   ]
   # ]
