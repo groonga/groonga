@@ -517,6 +517,7 @@ grn_proc_create(grn_ctx *ctx, const char *name, unsigned int name_size, grn_proc
   }
   if (name && name_size) {
     grn_db *s = (grn_db *)db;
+    if (!(id = grn_table_get(ctx, s->keys, name, name_size))) {
     if (!(id = grn_table_add(ctx, s->keys, name, name_size, &added))) {
       ERR(GRN_NO_MEMORY_AVAILABLE, "grn_table_add failed");
       GRN_API_RETURN(NULL);
@@ -531,6 +532,7 @@ grn_proc_create(grn_ctx *ctx, const char *name, unsigned int name_size, grn_proc
       } else {
         added = 1;
       }
+    }
     }
   } else if (ctx->impl && ctx->impl->values) {
     id = grn_array_add(ctx, ctx->impl->values, NULL) | GRN_OBJ_TMP_OBJECT;
