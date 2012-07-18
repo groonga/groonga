@@ -16,7 +16,13 @@ for dlsearch_path in $sys_lib_dlsearch_path_spec; do
   fi
 done
 if [ "$found_libdir_in_dlsearch_path" = "no" ]; then
-  export GROONGA_HTTPD_RPATH="${libdir}"
+  case "$libdir" in
+    /usr/lib|/usr/lib64)
+      ;;
+    *)
+      export GROONGA_HTTPD_RPATH="${libdir}"
+      ;;
+  esac
 fi
 
 source_directory="`dirname \"$0\"`"
