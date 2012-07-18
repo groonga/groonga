@@ -83,6 +83,12 @@ build_chroot()
 	run_sudo su -c "chroot ${base_dir} yum -y clean all"
 	run_sudo su -c "chroot ${base_dir} yum -y --releasever=16 --disableplugin=presto distro-sync"
     fi
+    if [ "$distribution_name-$distribution_version" = "fedora-17" ]; then
+	run_sudo su -c "chroot ${base_dir} rpm --import https://fedoraproject.org/static/1ACA3465.txt"
+	run_sudo su -c "chroot ${base_dir} yum -y update yum"
+	run_sudo su -c "chroot ${base_dir} yum -y clean all"
+	run_sudo su -c "chroot ${base_dir} yum -y --releasever=17 --disableplugin=presto distro-sync"
+    fi
 }
 
 build()
@@ -157,7 +163,7 @@ for architecture in $ARCHITECTURES; do
     for distribution in $DISTRIBUTIONS; do
 	case $distribution in
 	    fedora)
-		distribution_versions="16"
+		distribution_versions="16 17"
 		;;
 	    centos)
 		distribution_versions="5 6"
