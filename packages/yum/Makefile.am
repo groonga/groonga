@@ -7,7 +7,7 @@ HAVE_DEVELOPMENT_BRANCH = no
 USE_RPMFORGE = no
 USE_ATRPMS = no
 
-release: download build sign update upload
+release: download build sign-packages update-repository upload
 
 ensure-rsync-path:
 	@if test -z "$(RSYNC_PATH)"; then				\
@@ -15,11 +15,11 @@ ensure-rsync-path:
 	  false;							\
 	fi
 
-sign:
+sign-packages:
 	./sign-rpm.sh '$(GPG_UID)' '$(REPOSITORIES_PATH)/' \
 	  '$(DISTRIBUTIONS)'
 
-update:
+update-repository:
 	./update-repository.sh '$(PACKAGE)' '$(REPOSITORIES_PATH)/' \
 	  '$(DISTRIBUTIONS)'
 
