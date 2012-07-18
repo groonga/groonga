@@ -1318,16 +1318,21 @@ jQuery.extend(GroongaAdmin.prototype, {
       i--;
     }
     if ( $("#loadingdialog").size() == 0 && !hide_dialog) {
-      var errtext;
+      var error_label;
+      var error_message;
       if (json){
-        errtext = "groongaでエラーが発生しました。<br>" + json[0][3] + "(" + json[0][0] + ")";
+        error_label = "groongaでエラーが発生しました。";
+        error_message = json[0][3] + "(" + json[0][0] + ")";
       } else if (ajax) {
-        errtext = "通信エラーが発生しました。<br>" + ajax.status + ajax.statusText;
+        error_label = "通信エラーが発生しました。";
+        error_message = "" + ajax.status + ": " + ajax.statusText;
       } else {
-        errtext = "通信エラーが発生しました。";
+        error_label = "通信エラーが発生しました。";
+        error_message = "";
       }
       $("<div />")
-        .append(errtext)
+        .append($("<div />").text(error_label))
+        .append($("<div />").text(error_message))
         .attr("id", "loadingdialog")
         .dialog({
           title: "",
