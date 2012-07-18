@@ -69,10 +69,12 @@ check_installed_groonga_packages ()
     cat > check-deb-groonga.sh <<EOF
 #!/bin/sh
 dpkg -l | grep roonga
+dpkg -l | grep mysql
 EOF
     cat > check-rpm-groonga.sh <<EOF
 #!/bin/sh
 rpm -qa | grep roonga
+rpm -qa | grep mysql
 EOF
     for code in $CODES; do
 	for arch in $DEB_ARCHITECTURES; do
