@@ -3,17 +3,9 @@ Execution example::
   table_create --name Site --flags TABLE_HASH_KEY --key_type ShortText
   # [
   #   [
-  #     -22, 
-  #     1337566253.89858, 
-  #     0.000355720520019531, 
-  #     "already used name was assigned: <Site>", 
-  #     [
-  #       [
-  #         "grn_obj_register", 
-  #         "db.c", 
-  #         6572
-  #       ]
-  #     ]
-  #   ], 
-  #   false
+  #     0,
+  # 	1342583420.16362,
+  # 	0.0770280361175537
+  #   ],
+  #   true
   # ]
