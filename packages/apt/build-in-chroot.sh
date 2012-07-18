@@ -122,7 +122,8 @@ for architecture in $ARCHITECTURES; do
 	if test "$parallel" = "yes"; then
 	    build $architecture $code_name &
 	else
-	    build_log=/tmp/build-$code_name-$architecture.log
+	    mkdir -p tmp
+	    build_log=tmp/build-$code_name-$architecture.log
 	    build $architecture $code_name 2>&1 | tee $build_log
 	fi;
     done;
