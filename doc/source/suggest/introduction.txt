@@ -47,7 +47,9 @@ For example, there are registered correction pairs:
 | wrong word | correct word |
 +============+==============+
 | grroonga   | groonga      |
++------------+--------------+
 | gronga     | groonga      |
++------------+--------------+
 | gronnga    | groonga      |
 +------------+--------------+
 
