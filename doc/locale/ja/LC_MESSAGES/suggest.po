@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-01-29 13:03\n"
-"PO-Revision-Date: 2011-08-17 16:52+0900\n"
+"PO-Revision-Date: 2012-07-19 14:51+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -844,14 +844,12 @@ msgstr ""
 msgid ""
 "Correction also helps user input. If user inputs a wrong word, groonga can "
 "return correct words from registered correction pairs."
-msgstr ""
-"修正もユーザの入力を支援します。ユーザが間違った語を入力したときに登録済みの"
-"修正ペアの中から修正された語を返します。"
+msgstr "補正もユーザの入力を支援します。ユーザが間違った語を入力したときに登録済みの補正ペアの中から補正された語を返します。"
 
 # 8c65fa9a8589441dab961625c8b42c00
 #: ../../../source/suggest/introduction.txt:44
 msgid "For example, there are registered correction pairs:"
-msgstr "例えば、以下のような修正ペアが登録されていたとします。"
+msgstr "例えば、以下のような補正ペアが登録されていたとします。"
 
 # 39cee16aa46641ecac67aa0abf535956
 #: ../../../source/suggest/introduction.txt:47

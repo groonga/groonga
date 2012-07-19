@@ -1,5 +1,8 @@
 parameter	引数
 index	インデックス
-inverted index        転置インデックス
-document 文書
-double array trie       ダブル配列トライ
+inverted index	転置インデックス
+document	文書
+double array trie	ダブル配列トライ
+complete	補完
+correct	補正
+suggest	提案
