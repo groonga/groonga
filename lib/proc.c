@@ -1330,67 +1330,73 @@ static grn_obj *
 proc_table_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_table_cursor *cur;
-  int table_list_length = -1;
+  grn_obj tables;
+  int n_top_level_elements;
+  int n_elements_for_header = 1;
+  int n_tables;
+  int i;
 
-#ifdef WITH_MESSAGE_PACK
-  if (ctx->impl->output_type == GRN_CONTENT_MSGPACK) {
-    table_list_length = 1; /* header */
-    if ((cur = grn_table_cursor_open(ctx, ctx->impl->db, NULL, 0, NULL, 0, 0, -1, 0))) {
-      grn_id id;
-      while ((id = grn_table_cursor_next(ctx, cur)) != GRN_ID_NIL) {
-        grn_obj *o;
-        if ((o = grn_ctx_at(ctx, id))) {
-          if (is_table(o)) {
-            table_list_length++;
-          }
-          grn_obj_unlink(ctx, o);
-        }
-      }
-    }
-  }
-#endif
+  GRN_PTR_INIT(&tables, GRN_OBJ_VECTOR, GRN_ID_NIL);
 
   if ((cur = grn_table_cursor_open(ctx, ctx->impl->db, NULL, 0, NULL, 0, 0, -1, 0))) {
     grn_id id;
-    GRN_OUTPUT_ARRAY_OPEN("TABLE_LIST", table_list_length);
-    GRN_OUTPUT_ARRAY_OPEN("HEADER", 6);
-    GRN_OUTPUT_ARRAY_OPEN("PROPERTY", 2);
-    GRN_OUTPUT_CSTR("id");
-    GRN_OUTPUT_CSTR("UInt32");
-    GRN_OUTPUT_ARRAY_CLOSE();
-    GRN_OUTPUT_ARRAY_OPEN("PROPERTY", 2);
-    GRN_OUTPUT_CSTR("name");
-    GRN_OUTPUT_CSTR("ShortText");
-    GRN_OUTPUT_ARRAY_CLOSE();
-    GRN_OUTPUT_ARRAY_OPEN("PROPERTY", 2);
-    GRN_OUTPUT_CSTR("path");
-    GRN_OUTPUT_CSTR("ShortText");
-    GRN_OUTPUT_ARRAY_CLOSE();
-    GRN_OUTPUT_ARRAY_OPEN("PROPERTY", 2);
-    GRN_OUTPUT_CSTR("flags");
-    GRN_OUTPUT_CSTR("ShortText");
-    GRN_OUTPUT_ARRAY_CLOSE();
-    GRN_OUTPUT_ARRAY_OPEN("PROPERTY", 2);
-    GRN_OUTPUT_CSTR("domain");
-    GRN_OUTPUT_CSTR("ShortText");
-    GRN_OUTPUT_ARRAY_CLOSE();
-    GRN_OUTPUT_ARRAY_OPEN("PROPERTY", 2);
-    GRN_OUTPUT_CSTR("range");
-    GRN_OUTPUT_CSTR("ShortText");
-    GRN_OUTPUT_ARRAY_CLOSE();
-    GRN_OUTPUT_ARRAY_CLOSE();
     while ((id = grn_table_cursor_next(ctx, cur)) != GRN_ID_NIL) {
-      grn_obj *o;
-      if ((o = grn_ctx_at(ctx, id))) {
-        if (is_table(o)) {
-          print_tableinfo(ctx, o);
+      grn_obj *object;
+      if ((object = grn_ctx_at(ctx, id))) {
+        if (is_table(object)) {
+          GRN_PTR_PUT(ctx, &tables, object);
+        } else {
+          grn_obj_unlink(ctx, object);
         }
-        grn_obj_unlink(ctx, o);
+      } else {
+        if (ctx->rc != GRN_SUCCESS) {
+          ERRCLR(ctx);
+        }
       }
     }
-    GRN_OUTPUT_ARRAY_CLOSE();
     grn_table_cursor_close(ctx, cur);
   }
+
+  n_tables = GRN_BULK_VSIZE(&tables) / sizeof(grn_obj *);
+  n_top_level_elements = n_elements_for_header + n_tables;
+  GRN_OUTPUT_ARRAY_OPEN("TABLE_LIST", n_top_level_elements);
+
+  GRN_OUTPUT_ARRAY_OPEN("HEADER", 6);
+  GRN_OUTPUT_ARRAY_OPEN("PROPERTY", 2);
+  GRN_OUTPUT_CSTR("id");
+  GRN_OUTPUT_CSTR("UInt32");
+  GRN_OUTPUT_ARRAY_CLOSE();
+  GRN_OUTPUT_ARRAY_OPEN("PROPERTY", 2);
+  GRN_OUTPUT_CSTR("name");
+  GRN_OUTPUT_CSTR("ShortText");
+  GRN_OUTPUT_ARRAY_CLOSE();
+  GRN_OUTPUT_ARRAY_OPEN("PROPERTY", 2);
+  GRN_OUTPUT_CSTR("path");
+  GRN_OUTPUT_CSTR("ShortText");
+  GRN_OUTPUT_ARRAY_CLOSE();
+  GRN_OUTPUT_ARRAY_OPEN("PROPERTY", 2);
+  GRN_OUTPUT_CSTR("flags");
+  GRN_OUTPUT_CSTR("ShortText");
+  GRN_OUTPUT_ARRAY_CLOSE();
+  GRN_OUTPUT_ARRAY_OPEN("PROPERTY", 2);
+  GRN_OUTPUT_CSTR("domain");
+  GRN_OUTPUT_CSTR("ShortText");
+  GRN_OUTPUT_ARRAY_CLOSE();
+  GRN_OUTPUT_ARRAY_OPEN("PROPERTY", 2);
+  GRN_OUTPUT_CSTR("range");
+  GRN_OUTPUT_CSTR("ShortText");
+  GRN_OUTPUT_ARRAY_CLOSE();
+  GRN_OUTPUT_ARRAY_CLOSE();
+
+  for (i = 0; i < n_tables; i++) {
+    grn_obj *table = ((grn_obj **)GRN_BULK_HEAD(&tables))[i];
+    print_tableinfo(ctx, table);
+    grn_obj_unlink(ctx, table);
+  }
+  GRN_OBJ_FIN(ctx, &tables);
+
+  GRN_OUTPUT_ARRAY_CLOSE();
+
   return NULL;
 }
 
