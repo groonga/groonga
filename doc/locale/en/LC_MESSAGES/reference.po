@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 2.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-21 17:13\n"
+"POT-Creation-Date: 2012-07-19 10:01\n"
 "PO-Revision-Date: 2012-04-28 11:38+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -51,6 +51,12 @@ msgstr ""
 #: ../../../source/example/reference/grn_expr/query_syntax/simple_phrase_search_with_explicit_match_column.log:1
 #: ../../../source/example/reference/grn_expr/query_syntax/simple_prefix_search.log:1
 #: ../../../source/example/reference/grn_expr/query_syntax/simple_suffix_search.log:1
+#: ../../../source/example/reference/grn_expr/script_syntax/simple_match_operator.log:1
+#: ../../../source/example/reference/grn_expr/script_syntax/simple_near_search_operator.log:1
+#: ../../../source/example/reference/grn_expr/script_syntax/simple_prefix_search_operator.log:1
+#: ../../../source/example/reference/grn_expr/script_syntax/simple_similar_search_operator.log:1
+#: ../../../source/example/reference/grn_expr/script_syntax/simple_suffix_search_operator.log:1
+#: ../../../source/example/reference/grn_expr/script_syntax/simple_term_extract_operator.log:1
 msgid "Execution example::"
 msgstr ""
 
@@ -203,16 +209,19 @@ msgstr ""
 
 # 46c2b1c679a045059beda7958b53048a
 #: ../../../source/reference/grn_expr/query_syntax.txt:30
+#: ../../../source/reference/grn_expr/script_syntax.txt:26
 msgid "Sample data"
 msgstr ""
 
 # e196fd0e34864991a7db6be8ca0c4e70
 #: ../../../source/reference/grn_expr/query_syntax.txt:32
+#: ../../../source/reference/grn_expr/script_syntax.txt:28
 msgid "Here are a schema definition and sample data to show usage."
 msgstr ""
 
 # 2db98db7a47c4800ac33b662c6cb28c4
 #: ../../../source/reference/grn_expr/query_syntax.txt:61
+#: ../../../source/reference/grn_expr/script_syntax.txt:57
 msgid ""
 "There is a table, ``Entries``, for blog entries. An entry has title, content "
 "and the number of likes for the entry. Title is key of ``Entries``. Content "
@@ -222,6 +231,7 @@ msgstr ""
 
 # b47d4b2f93ef4c1cb83f883312fa45a1
 #: ../../../source/reference/grn_expr/query_syntax.txt:66
+#: ../../../source/reference/grn_expr/script_syntax.txt:62
 msgid ""
 "``Entries._key`` column and ``Entries.content`` column are indexed using "
 "``TokenBigram`` tokenizer. So both ``Entries._key`` and ``Entries.content`` "
@@ -230,6 +240,7 @@ msgstr ""
 
 # 0a862612cbd04592807c4fab204ce864
 #: ../../../source/reference/grn_expr/query_syntax.txt:70
+#: ../../../source/reference/grn_expr/script_syntax.txt:66
 msgid "OK. The schema and data for examples are ready."
 msgstr ""
 
@@ -284,10 +295,10 @@ msgstr ""
 msgid "``\\`` (escaped as ``\\\\``)"
 msgstr ""
 
-# 59efe0d273c94b8b9a40912f73fa53be
+# e0576e2b3d724889bcae2ce1a6687ec3
 #: ../../../source/reference/grn_expr/query_syntax.txt:90
 msgid ""
-"You can use quote instead of escape. Quote's syntax is ``\"...\"`` or "
+"You can use quote instead of escape. Quote syntax is ``\"...\"`` or "
 "``'...'``. You need escape ``\"`` as ``\\\"`` in ``\"...\"`` quote syntax. "
 "You need escape ``'`` as ``\\'`` in ``'...'`` quote syntax. For example, "
 "``Alice's brother (Bob)`` can be quoted ``\"Alice's brother (Bob)\"`` or "
@@ -364,18 +375,22 @@ msgstr ""
 #: ../../../source/reference/grn_expr/query_syntax.txt:159
 #: ../../../source/reference/grn_expr/query_syntax.txt:201
 #: ../../../source/reference/grn_expr/query_syntax.txt:228
-#: ../../../source/reference/grn_expr/query_syntax.txt:260
-#: ../../../source/reference/grn_expr/query_syntax.txt:292
-#: ../../../source/reference/grn_expr/query_syntax.txt:321
-#: ../../../source/reference/grn_expr/query_syntax.txt:340
-#: ../../../source/reference/grn_expr/query_syntax.txt:364
-#: ../../../source/reference/grn_expr/query_syntax.txt:388
-#: ../../../source/reference/grn_expr/query_syntax.txt:413
-#: ../../../source/reference/grn_expr/query_syntax.txt:438
-#: ../../../source/reference/grn_expr/query_syntax.txt:464
-#: ../../../source/reference/grn_expr/query_syntax.txt:487
-#: ../../../source/reference/grn_expr/query_syntax.txt:510
-#: ../../../source/reference/grn_expr/query_syntax.txt:530
+#: ../../../source/reference/grn_expr/query_syntax.txt:262
+#: ../../../source/reference/grn_expr/query_syntax.txt:339
+#: ../../../source/reference/grn_expr/query_syntax.txt:358
+#: ../../../source/reference/grn_expr/query_syntax.txt:382
+#: ../../../source/reference/grn_expr/query_syntax.txt:406
+#: ../../../source/reference/grn_expr/query_syntax.txt:431
+#: ../../../source/reference/grn_expr/query_syntax.txt:456
+#: ../../../source/reference/grn_expr/query_syntax.txt:482
+#: ../../../source/reference/grn_expr/query_syntax.txt:505
+#: ../../../source/reference/grn_expr/query_syntax.txt:528
+#: ../../../source/reference/grn_expr/query_syntax.txt:548
+#: ../../../source/reference/grn_expr/script_syntax.txt:372
+#: ../../../source/reference/grn_expr/script_syntax.txt:402
+#: ../../../source/reference/grn_expr/script_syntax.txt:488
+#: ../../../source/reference/grn_expr/script_syntax.txt:528
+#: ../../../source/reference/grn_expr/script_syntax.txt:554
 msgid "Here is a simple exmaple."
 msgstr ""
 
@@ -383,6 +398,7 @@ msgstr ""
 # ec8796033e8c42bab29476bb8e329013
 #: ../../../source/reference/grn_expr/query_syntax.txt:132
 #: ../../../source/reference/grn_expr/query_syntax.txt:207
+#: ../../../source/reference/grn_expr/script_syntax.txt:378
 msgid ""
 "The expression matches records that contain a word ``fast`` in ``content`` "
 "column value."
@@ -540,17 +556,21 @@ msgid ""
 "searches records that contain a word that starts with ``value``."
 msgstr ""
 
-# 849dba5f0de64d8191fb5d71faf20e5a
+# 83e2f7bb6eb341d2ae30c1cb2daf7478
+# 62f052c9c5994cb198aa143108740db5
 #: ../../../source/reference/grn_expr/query_syntax.txt:248
+#: ../../../source/reference/grn_expr/script_syntax.txt:391
 msgid ""
-"To use fast prefix search, you need to use patricia trie table "
-"(``TABLE_PAT_KEY``) or double array trie table (``TABLE_DAT_KEY``). You can "
-"use prefix search against ``_key`` value of patricia trie table or double "
-"array trie table."
+"You can use fast prefix search against a column. The column must be indexed "
+"and index table must be patricia trie table (``TABLE_PAT_KEY``) or double "
+"array trie table (``TABLE_DAT_KEY``). You can also use fast prefix search "
+"against ``_key`` pseudo column of patricia trie table or double array trie "
+"table. You don't need to index ``_key``."
 msgstr ""
 
 # 13aa3a82dabf403fa75b765a6aeeaa15
-#: ../../../source/reference/grn_expr/query_syntax.txt:253
+#: ../../../source/reference/grn_expr/query_syntax.txt:255
+#: ../../../source/reference/grn_expr/script_syntax.txt:398
 msgid ""
 "Prefix search can be used with other table types but it causes all records "
 "scan. It's not problem for small records but it spends more time for large "
@@ -565,21 +585,22 @@ msgstr ""
 # e9fce9f68c4e43828542b58fe13299bb
 # 82f8591376ee46eab1272d3477537ac0
 # af6c6ff06d124a76bcc9bb0f80fdf78b
-#: ../../../source/reference/grn_expr/query_syntax.txt:257
-#: ../../../source/reference/grn_expr/query_syntax.txt:289
-#: ../../../source/reference/grn_expr/query_syntax.txt:318
-#: ../../../source/reference/grn_expr/query_syntax.txt:337
-#: ../../../source/reference/grn_expr/query_syntax.txt:361
-#: ../../../source/reference/grn_expr/query_syntax.txt:385
-#: ../../../source/reference/grn_expr/query_syntax.txt:410
-#: ../../../source/reference/grn_expr/query_syntax.txt:435
+#: ../../../source/reference/grn_expr/query_syntax.txt:259
+#: ../../../source/reference/grn_expr/query_syntax.txt:304
+#: ../../../source/reference/grn_expr/query_syntax.txt:336
+#: ../../../source/reference/grn_expr/query_syntax.txt:355
+#: ../../../source/reference/grn_expr/query_syntax.txt:379
+#: ../../../source/reference/grn_expr/query_syntax.txt:403
+#: ../../../source/reference/grn_expr/query_syntax.txt:428
+#: ../../../source/reference/grn_expr/query_syntax.txt:453
 msgid ""
 "It doesn't require the default match columns such as ``full text search "
 "condition`` and ``phrase search condition``."
 msgstr ""
 
 # ca3e9050167a47e798a6acfc32c27e61
-#: ../../../source/reference/grn_expr/query_syntax.txt:266
+#: ../../../source/reference/grn_expr/query_syntax.txt:268
+#: ../../../source/reference/grn_expr/script_syntax.txt:408
 msgid ""
 "The expression matches records that contain a word that starts with ``Goo`` "
 "in ``_key`` pseudo column value. ``Good-bye Senna`` and ``Good-bye Tritonn`` "
@@ -587,102 +608,131 @@ msgid ""
 msgstr ""
 
 # f1bc74b5ae124b59b543dc054f935b0c
-#: ../../../source/reference/grn_expr/query_syntax.txt:273
+#: ../../../source/reference/grn_expr/query_syntax.txt:275
 msgid "Suffix search condition"
 msgstr ""
 
 # 5f7f6e65826d4ae885aacafe246c32b3
-#: ../../../source/reference/grn_expr/query_syntax.txt:275
+#: ../../../source/reference/grn_expr/query_syntax.txt:277
 msgid "Its syntax is ``column:$value``."
 msgstr ""
 
 # 61cddcb3b6864f2cafd285f302fe7380
-#: ../../../source/reference/grn_expr/query_syntax.txt:277
+#: ../../../source/reference/grn_expr/query_syntax.txt:279
 msgid ""
 "This conditional expression does suffix search with ``value``. Suffix search "
 "searches records that contain a word that ends with ``value``."
 msgstr ""
 
-# 4037b704e0e44e6fb95114d48dc398e1
-#: ../../../source/reference/grn_expr/query_syntax.txt:280
+# 840bf318cf384efd82d9bd61d5e07ae4
+# 4b7554e8ff0246de87406f46fca6c1a7
+#: ../../../source/reference/grn_expr/query_syntax.txt:282
+#: ../../../source/reference/grn_expr/script_syntax.txt:422
 msgid ""
-"To use fast suffix search, you need to use patricia trie table "
-"(``TABLE_PAT_KEY``) with ``KEY_WITH_SIS`` flag. You can use suffix search "
-"against ``_key`` value of patricia trie table."
+"You can use fast suffix search against a column. The column must be indexed "
+"and index table must be patricia trie table (``TABLE_PAT_KEY``) with "
+"``KEY_WITH_SIS`` flag. You can also use fast suffix search against ``_key`` "
+"pseudo column of patricia trie table (``TABLE_PAT_KEY``) with "
+"``KEY_WITH_SIS`` flag. You don't need to index ``_key``. We recommended that "
+"you use index column based fast suffix search instead of ``_key`` based fast "
+"suffix search. ``_key`` based fast suffix search returns automatically "
+"registered substrings. (TODO: write document about suffix search and link to "
+"it from here.)"
+msgstr ""
+
+# 2bebb60d78da478e84c7e9a00785d7eb
+# b53a0e260d5a4341baef362ae58c6a2b
+#: ../../../source/reference/grn_expr/query_syntax.txt:295
+#: ../../../source/reference/grn_expr/script_syntax.txt:435
+msgid ""
+"Fast suffix search can be used only for non-ASCII characters such as "
+"hiragana in Japanese. You cannot use fast suffix search for ASCII character."
 msgstr ""
 
 # 7fb5f0f5f199413cbd39f9c2d026b049
-#: ../../../source/reference/grn_expr/query_syntax.txt:284
+#: ../../../source/reference/grn_expr/query_syntax.txt:299
+#: ../../../source/reference/grn_expr/script_syntax.txt:439
 msgid ""
 "Suffix search can be used with other table types or patricia trie table "
 "without ``KEY_WITH_SIS`` flag but it causes all records scan. It's not "
 "problem for small records but it spends more time for large records."
 msgstr ""
 
-# 7814ff5528564a0c96b6ef76aa557d7c
+# c1c2383d9ef54a91a773220a22a6e225
+# 1433d22b35cb497f97d406fe4da9c74e
 #: ../../../source/reference/grn_expr/query_syntax.txt:307
+#: ../../../source/reference/grn_expr/script_syntax.txt:444
 msgid ""
-"The expression matches records that contain a word that ends with ``oonga`` "
-"in ``_key`` pseudo column value. ``Groonga`` and ``Mroonga`` are matched "
-"with the expression."
+"Here is a simple exmaple. It uses fast suffix search for hiragana in "
+"Japanese that is one of non-ASCII characters."
+msgstr ""
+
+# 06e4655951154dcfbaa8e0276aed787d
+# d6ea6f134e8b4bb0b73be7fb7b7b7370
+#: ../../../source/reference/grn_expr/query_syntax.txt:325
+#: ../../../source/reference/grn_expr/script_syntax.txt:462
+msgid ""
+"The expression matches records that have value that ends with ``んが`` in "
+"``content`` column value. ``ぐるんが`` and ``むるんが`` are matched with the "
+"expression."
 msgstr ""
 
 # e82b4bdcc69441f687776b010a8e464a
-#: ../../../source/reference/grn_expr/query_syntax.txt:312
+#: ../../../source/reference/grn_expr/query_syntax.txt:330
 msgid "Equal condition"
 msgstr ""
 
 # eae1b7c345154f12ba48980512f8ca3f
-#: ../../../source/reference/grn_expr/query_syntax.txt:314
+#: ../../../source/reference/grn_expr/query_syntax.txt:332
 msgid "Its syntax is ``column:value``."
 msgstr ""
 
 # 536e7e629b7d4be0a78aaed97095c538
-#: ../../../source/reference/grn_expr/query_syntax.txt:316
+#: ../../../source/reference/grn_expr/query_syntax.txt:334
 msgid "It matches records that ``column`` value is equal to ``value``."
 msgstr ""
 
 # 5d4d55de1d404d4c98d5c61c75e86a57
-#: ../../../source/reference/grn_expr/query_syntax.txt:327
+#: ../../../source/reference/grn_expr/query_syntax.txt:345
 msgid ""
 "The expression matches records that ``_key`` column value is equal to "
 "``Groonga``."
 msgstr ""
 
 # 3eb3f54e4a784bbd8ce783707e01280a
-#: ../../../source/reference/grn_expr/query_syntax.txt:331
+#: ../../../source/reference/grn_expr/query_syntax.txt:349
 msgid "Not equal condition"
 msgstr ""
 
 # abe55998c9dd417790895d7ed7b016fa
-#: ../../../source/reference/grn_expr/query_syntax.txt:333
+#: ../../../source/reference/grn_expr/query_syntax.txt:351
 msgid "Its syntax is ``column:!value``."
 msgstr ""
 
 # 53e782667c8f408e8b0a798b75a22823
-#: ../../../source/reference/grn_expr/query_syntax.txt:335
+#: ../../../source/reference/grn_expr/query_syntax.txt:353
 msgid "It matches records that ``column`` value isn't equal to ``value``."
 msgstr ""
 
 # a2fff0da3f9949aea0117e3ff4c1bda6
-#: ../../../source/reference/grn_expr/query_syntax.txt:346
+#: ../../../source/reference/grn_expr/query_syntax.txt:364
 msgid ""
 "The expression matches records that ``_key`` column value is not equal to "
 "``Groonga``."
 msgstr ""
 
 # 12e290cfe42b42a0ad2f7cf95826ed16
-#: ../../../source/reference/grn_expr/query_syntax.txt:350
+#: ../../../source/reference/grn_expr/query_syntax.txt:368
 msgid "Less than condition"
 msgstr ""
 
 # 9b13b730c98c4fd9bc4d5fa3922f5793
-#: ../../../source/reference/grn_expr/query_syntax.txt:352
+#: ../../../source/reference/grn_expr/query_syntax.txt:370
 msgid "Its syntax is ``column:<value``."
 msgstr ""
 
 # 0c270ba8586f45f6a9adbd60260d8c1e
-#: ../../../source/reference/grn_expr/query_syntax.txt:354
+#: ../../../source/reference/grn_expr/query_syntax.txt:372
 msgid "It matches records that ``column`` value is less than ``value``."
 msgstr ""
 
@@ -690,10 +740,10 @@ msgstr ""
 # 23ca8b49a13d4d31b3421bfb7e4421a0
 # 00a175eeae674c6d81d2f072536adacd
 # 02465c2a5a294bb68ed02425dcfb7564
-#: ../../../source/reference/grn_expr/query_syntax.txt:356
-#: ../../../source/reference/grn_expr/query_syntax.txt:380
-#: ../../../source/reference/grn_expr/query_syntax.txt:405
-#: ../../../source/reference/grn_expr/query_syntax.txt:430
+#: ../../../source/reference/grn_expr/query_syntax.txt:374
+#: ../../../source/reference/grn_expr/query_syntax.txt:398
+#: ../../../source/reference/grn_expr/query_syntax.txt:423
+#: ../../../source/reference/grn_expr/query_syntax.txt:448
 msgid ""
 "If ``column`` type is numerical type such as ``Int32``, ``column`` value and "
 "``value`` are compared as number. If ``column`` type is text type such as "
@@ -701,148 +751,148 @@ msgid ""
 msgstr ""
 
 # 5f012ff271b04f30a5c41761949db42c
-#: ../../../source/reference/grn_expr/query_syntax.txt:370
+#: ../../../source/reference/grn_expr/query_syntax.txt:388
 msgid ""
 "The expression matches records that ``n_likes`` column value is less than "
 "``10``."
 msgstr ""
 
 # e78f21d360e149da8f151d972a2f03c8
-#: ../../../source/reference/grn_expr/query_syntax.txt:374
+#: ../../../source/reference/grn_expr/query_syntax.txt:392
 msgid "Greater than condition"
 msgstr ""
 
 # 7c769da85c9443c28b987c2c7f7e36f5
-#: ../../../source/reference/grn_expr/query_syntax.txt:376
+#: ../../../source/reference/grn_expr/query_syntax.txt:394
 msgid "Its syntax is ``column:>value``."
 msgstr ""
 
 # a1869255686243cd8a186a3d62ede732
-#: ../../../source/reference/grn_expr/query_syntax.txt:378
+#: ../../../source/reference/grn_expr/query_syntax.txt:396
 msgid "It matches records that ``column`` value is greater than ``value``."
 msgstr ""
 
 # ddd107796eb149a3b10b2bc738eee6e0
-#: ../../../source/reference/grn_expr/query_syntax.txt:394
+#: ../../../source/reference/grn_expr/query_syntax.txt:412
 msgid ""
 "The expression matches records that ``n_likes`` column value is greater than "
 "``10``."
 msgstr ""
 
 # e2b40060a4194ed3b8c23f2afa54c437
-#: ../../../source/reference/grn_expr/query_syntax.txt:398
+#: ../../../source/reference/grn_expr/query_syntax.txt:416
 msgid "Less than or equal to condition"
 msgstr ""
 
 # 66c0a1cab40f4036bcd91ba1cf0379e0
-#: ../../../source/reference/grn_expr/query_syntax.txt:400
+#: ../../../source/reference/grn_expr/query_syntax.txt:418
 msgid "Its syntax is ``column:<=value``."
 msgstr ""
 
 # 13cca2edb1e649f2bc34a6779eb6ee4f
-#: ../../../source/reference/grn_expr/query_syntax.txt:402
+#: ../../../source/reference/grn_expr/query_syntax.txt:420
 msgid ""
 "It matches records that ``column`` value is less than or equal to ``value``."
 msgstr ""
 
 # 96e9c2e62b4b46ab803c0f0d50458d46
-#: ../../../source/reference/grn_expr/query_syntax.txt:419
+#: ../../../source/reference/grn_expr/query_syntax.txt:437
 msgid ""
 "The expression matches records that ``n_likes`` column value is less than or "
 "equal to ``10``."
 msgstr ""
 
 # cdd7af71112e4bf98b0150957a40ab43
-#: ../../../source/reference/grn_expr/query_syntax.txt:423
+#: ../../../source/reference/grn_expr/query_syntax.txt:441
 msgid "Greater than or equal to condition"
 msgstr ""
 
 # a33fb60106d849f6be7b5adea248f971
-#: ../../../source/reference/grn_expr/query_syntax.txt:425
+#: ../../../source/reference/grn_expr/query_syntax.txt:443
 msgid "Its syntax is ``column:>=value``."
 msgstr ""
 
 # a77a4b270f034c199012be5d100d6ac5
-#: ../../../source/reference/grn_expr/query_syntax.txt:427
+#: ../../../source/reference/grn_expr/query_syntax.txt:445
 msgid ""
 "It matches records that ``column`` value is greater than or equal to "
 "``value``."
 msgstr ""
 
 # 0d2475358968449fa833aa1ca0c940d6
-#: ../../../source/reference/grn_expr/query_syntax.txt:444
+#: ../../../source/reference/grn_expr/query_syntax.txt:462
 msgid ""
 "The expression matches records that ``n_likes`` column value is greater than "
 "or equal to ``10``."
 msgstr ""
 
 # 6e2c204a2d5c458eb11ec0e07d9888e9
-#: ../../../source/reference/grn_expr/query_syntax.txt:450
+#: ../../../source/reference/grn_expr/query_syntax.txt:468
 msgid "Combined expression"
 msgstr ""
 
 # adddbbbea19c4c488dbf4241e03d299e
-#: ../../../source/reference/grn_expr/query_syntax.txt:452
+#: ../../../source/reference/grn_expr/query_syntax.txt:470
 msgid "Here is available combined expression list."
 msgstr ""
 
 # 9da04004b8ea42718a81b292daf8fa5b
-#: ../../../source/reference/grn_expr/query_syntax.txt:455
+#: ../../../source/reference/grn_expr/query_syntax.txt:473
 msgid "Logical OR"
 msgstr ""
 
 # 66230f79e2b74a2e811ab5924777c594
-#: ../../../source/reference/grn_expr/query_syntax.txt:457
+#: ../../../source/reference/grn_expr/query_syntax.txt:475
 msgid "Its syntax is ``a OR b``."
 msgstr ""
 
 # 85ef17d4d90647cf854985cc55d0eb6a
 # 347eeb85a3d9484a9cb33931bfc79f39
 # e50c48936db84631bee69239a9f9fdd7
-#: ../../../source/reference/grn_expr/query_syntax.txt:459
-#: ../../../source/reference/grn_expr/query_syntax.txt:479
-#: ../../../source/reference/grn_expr/query_syntax.txt:502
+#: ../../../source/reference/grn_expr/query_syntax.txt:477
+#: ../../../source/reference/grn_expr/query_syntax.txt:497
+#: ../../../source/reference/grn_expr/query_syntax.txt:520
 msgid ""
 "``a`` and ``b`` are conditional expressions, conbinded expressions or "
 "assignment expressions."
 msgstr ""
 
 # 12a8ee1d12654de3bf9960905659edaf
-#: ../../../source/reference/grn_expr/query_syntax.txt:462
+#: ../../../source/reference/grn_expr/query_syntax.txt:480
 msgid "If at least one of ``a`` and ``b`` are matched, ``a OR b`` is matched."
 msgstr ""
 
 # 9eff6d1966c34ed2976bd3a9e7599953
-#: ../../../source/reference/grn_expr/query_syntax.txt:470
+#: ../../../source/reference/grn_expr/query_syntax.txt:488
 msgid ""
 "The expression matches records that ``n_likes`` column value is greater than "
 "``10`` or contain a word ``senna`` in ``content`` column value."
 msgstr ""
 
 # a0dc2647b8184297afd52e6bd5556a09
-#: ../../../source/reference/grn_expr/query_syntax.txt:475
+#: ../../../source/reference/grn_expr/query_syntax.txt:493
 msgid "Logical AND"
 msgstr ""
 
 # 28c02a9e3d234a79890fdb8b2ca66fad
-#: ../../../source/reference/grn_expr/query_syntax.txt:477
+#: ../../../source/reference/grn_expr/query_syntax.txt:495
 msgid "Its syntax is ``a + b`` or just ``a b``."
 msgstr ""
 
 # 81023e70e50e41fcb44ce848762c0ab4
-#: ../../../source/reference/grn_expr/query_syntax.txt:482
+#: ../../../source/reference/grn_expr/query_syntax.txt:500
 msgid "If both ``a`` and ``b`` are matched, ``a + b`` is matched."
 msgstr ""
 
 # 76a45710e33843cbb9fcd6d928f9725a
-#: ../../../source/reference/grn_expr/query_syntax.txt:484
+#: ../../../source/reference/grn_expr/query_syntax.txt:502
 msgid ""
 "You can specify ``+`` the first expression such as ``+a``. The ``+`` is just "
 "ignored."
 msgstr ""
 
 # 9d684dc0fa17432ab2134758502536d4
-#: ../../../source/reference/grn_expr/query_syntax.txt:493
+#: ../../../source/reference/grn_expr/query_syntax.txt:511
 msgid ""
 "The expression matches records that ``n_likes`` column value is greater than "
 "or equal to ``10`` and contain a word ``groonga`` in ``content`` column "
@@ -850,29 +900,29 @@ msgid ""
 msgstr ""
 
 # ce8cc446faf145f087da4fa3b9334cc2
-#: ../../../source/reference/grn_expr/query_syntax.txt:498
+#: ../../../source/reference/grn_expr/query_syntax.txt:516
 msgid "Logical NOT"
 msgstr ""
 
 # 209d51167e5f492198403b1b4a768514
-#: ../../../source/reference/grn_expr/query_syntax.txt:500
+#: ../../../source/reference/grn_expr/query_syntax.txt:518
 msgid "Its syntax is ``a - b``."
 msgstr ""
 
 # 7b8cf1ba65f3407ba5dcfbf5d65ba2a1
-#: ../../../source/reference/grn_expr/query_syntax.txt:505
+#: ../../../source/reference/grn_expr/query_syntax.txt:523
 msgid "If ``a`` is matched and ``b`` is not matched, ``a - b`` is matched."
 msgstr ""
 
 # 14ba78f58d4b4d7abdc1ee08a21539a3
-#: ../../../source/reference/grn_expr/query_syntax.txt:507
+#: ../../../source/reference/grn_expr/query_syntax.txt:525
 msgid ""
 "You can not specify ``-`` the first expression such as ``-a``. It's syntax "
 "error."
 msgstr ""
 
 # 956c1a20efcf43f2812846cc980b0f76
-#: ../../../source/reference/grn_expr/query_syntax.txt:516
+#: ../../../source/reference/grn_expr/query_syntax.txt:534
 msgid ""
 "The expression matches records that ``n_likes`` column value is greater than "
 "or equal to ``10`` and don't contain a word ``groonga`` in ``content`` "
@@ -880,17 +930,19 @@ msgid ""
 msgstr ""
 
 # 50e66d1cc07443d2acb774c201591e09
-#: ../../../source/reference/grn_expr/query_syntax.txt:521
+#: ../../../source/reference/grn_expr/query_syntax.txt:539
+#: ../../../source/reference/grn_expr/script_syntax.txt:162
 msgid "Grouping"
 msgstr ""
 
 # f39746e762d642b881128ce0b3b5dd3b
-#: ../../../source/reference/grn_expr/query_syntax.txt:523
+#: ../../../source/reference/grn_expr/query_syntax.txt:541
+#: ../../../source/reference/grn_expr/script_syntax.txt:164
 msgid "Its syntax is ``(...)``. ``...`` is space separated expression list."
 msgstr ""
 
 # 96e5a8caa7004fc69efdc0bbffb1e385
-#: ../../../source/reference/grn_expr/query_syntax.txt:525
+#: ../../../source/reference/grn_expr/query_syntax.txt:543
 msgid ""
 "``(...)`` groups one ore more expressions and they can be processed as an "
 "expression. ``a b OR c`` means that ``a`` and ``b`` are matched or ``c`` is "
@@ -899,26 +951,26 @@ msgid ""
 msgstr ""
 
 # e43006034fd5465ab6b450d2db256e6f
-#: ../../../source/reference/grn_expr/query_syntax.txt:537
+#: ../../../source/reference/grn_expr/query_syntax.txt:555
 msgid ""
 "The first expression doesn't use grouping. It matches records that ``n_likes:"
 "<5`` and ``content:@senna`` are matched or ``content:@fast`` is matched."
 msgstr ""
 
 # a0e33df4c31f4b6b97553e8b58f2b659
-#: ../../../source/reference/grn_expr/query_syntax.txt:541
+#: ../../../source/reference/grn_expr/query_syntax.txt:559
 msgid ""
 "The second expression uses grouping. It matches records that ``n_likes:<5`` "
 "and one of ``content:@senna`` or ``content:@fast`` are matched."
 msgstr ""
 
 # 8d3865009a6a43578b704114e6c5bd5f
-#: ../../../source/reference/grn_expr/query_syntax.txt:546
+#: ../../../source/reference/grn_expr/query_syntax.txt:564
 msgid "Assignment expression"
 msgstr ""
 
 # a0f4e794c87946cba84da78e95847f00
-#: ../../../source/reference/grn_expr/query_syntax.txt:548
+#: ../../../source/reference/grn_expr/query_syntax.txt:566
 msgid ""
 "This section is for advanced users. Because assignment expression is "
 "disabled in ``--query`` option of :doc:`/commands/select`. You need to use "
@@ -927,7 +979,7 @@ msgid ""
 msgstr ""
 
 # 2dfa18189fe041e480829f1fb12d8b23
-#: ../../../source/reference/grn_expr/query_syntax.txt:553
+#: ../../../source/reference/grn_expr/query_syntax.txt:571
 msgid ""
 "Assignment expression in query syntax has some limitations. So you should "
 "use :doc:`/reference/grn_expr/script_syntax` instead of query syntax for "
@@ -935,13 +987,13 @@ msgid ""
 msgstr ""
 
 # 4c8ce4361472436793bd69d1de64a34e
-#: ../../../source/reference/grn_expr/query_syntax.txt:557
+#: ../../../source/reference/grn_expr/query_syntax.txt:575
 msgid ""
 "There is only one syntax for assignment expression. It's ``column:=value``."
 msgstr ""
 
 # ca7aa3eaad244710abeadb839ea298f7
-#: ../../../source/reference/grn_expr/query_syntax.txt:559
+#: ../../../source/reference/grn_expr/query_syntax.txt:577
 msgid ""
 "``value`` is assigend to ``column``. ``value`` is always processed as string "
 "in query syntax. ``value`` is casted to the type of ``column`` "
@@ -952,159 +1004,726 @@ msgid ""
 msgstr ""
 
 # 7fd5fb6794e0475b83cfde7b8faa7afe
-#: ../../../source/reference/grn_expr/query_syntax.txt:566
+#: ../../../source/reference/grn_expr/query_syntax.txt:584
 msgid "See :doc:`/reference/cast` about cast."
 msgstr ""
 
-# 726ed5e957fa4b9196fb24c831812248
+# 5f43ff4dbfde4dc5a5153768b60bd031
 #: ../../../source/reference/grn_expr/script_syntax.txt:9
-msgid "Script Syntax"
+msgid "Script syntax"
 msgstr ""
 
-# 43ba752096bf4679b53986ba1449183e
+# 3187c591a3584a72ad3e90c3b6379627
 #: ../../../source/reference/grn_expr/script_syntax.txt:11
-msgid "TODO: revised."
-msgstr ""
-
-# 259c211ba97c4cc0885f266c850f910f
-#: ../../../source/reference/grn_expr/script_syntax.txt:13
 msgid ""
-"スクリプト構文はECMAScriptに類似した構文で条件式などを表現するための構文で"
-"す。ECMAScriptにある演算子に加えてgroonga独自の演算子を追加しています。"
+"Script syntax is a syntax to specify complex search condition. It is similar "
+"to ECMAScript. For example, ``_key == \"book\"`` means that groonga searches "
+"records that ``_key`` value is ``\"book\"``. All values are string in :doc:"
+"`query_syntax` but its own type in script syntax. For example, ``\"book\"`` "
+"is string, ``1`` is integer, ``TokenBigram`` is the object whose name is "
+"``TokenBigram`` and so on."
 msgstr ""
 
-# 2bd26b8ca2f44ac28da1af6d83646c37
-#: ../../../source/reference/grn_expr/script_syntax.txt:15
-msgid ""
-"まず、ECMAScriptにあるような基本的な演算子を説明し、その後、groongaが追加した"
-"独自の演算子を説明します。"
-msgstr ""
-
-# f959cb853c5a4c9f9ebaa987901c3c5e
+# f8aa88dad8ab42ab9de8889154135c28
 #: ../../../source/reference/grn_expr/script_syntax.txt:18
-msgid "基本的な演算子"
+msgid ""
+"Script syntax doesn't support full ECMAScript syntax. For example, script "
+"syntax doesn't support statement such as ``if`` control statement, ``for`` "
+"iteration statement and variable definition statement. Function definion is "
+"not supported too. But script syntax addes the original additional "
+"operators.  They are described after ECMAScript syntax is described."
+msgstr ""
+
+# 3b0166cb445548b7b8d9a265d59d6db7
+#: ../../../source/reference/grn_expr/script_syntax.txt:69
+msgid "Literals"
+msgstr ""
+
+# 4a9603b9106f4381a138206c23a64937
+#: ../../../source/reference/grn_expr/script_syntax.txt:72
+msgid "Integer"
+msgstr ""
+
+# d37c661cac324c7389bde7c59b98190c
+#: ../../../source/reference/grn_expr/script_syntax.txt:74
+msgid ""
+"Integer literal is sequence of ``0`` to ``9`` such as ``1234567890``. ``+`` "
+"or ``-`` can be prepended as sign such as ``+29`` and ``-29``. Integer "
+"literal must be decimal. Octal notation, hex and so on can't be used."
+msgstr ""
+
+# 42bd8dbb40e54c1b804ec8fa0020eab3
+#: ../../../source/reference/grn_expr/script_syntax.txt:79
+msgid ""
+"The maximum value of integer literal is ``9223372036854775807`` (``= 2 ** 63 "
+"- 1``). The minimum value of integer literal is ``-9223372036854775808`` "
+"(``= -(2 ** 63)``)."
+msgstr ""
+
+# 0c6bd24146d44695b43d98038a852884
+#: ../../../source/reference/grn_expr/script_syntax.txt:84
+msgid "Float"
+msgstr ""
+
+# d912f1025d6246c9b6a3aeb7621f53b8
+#: ../../../source/reference/grn_expr/script_syntax.txt:86
+msgid ""
+"Float literal is sequence of ``0`` to ``9``, ``.`` and ``0`` to ``9`` such "
+"as ``3.14``. ``+`` or ``-`` can be prepended as sign such as ``+3.14`` and "
+"``-3.14``. ``${RADIX}e${EXPORNENTIAL}`` and ``${RADIX}E${EXPORNENTIAL}`` "
+"formats are also supported. For example, ``314e-2`` is the same as ``3.14``."
+msgstr ""
+
+# a58cc8f1758f45c7b7134870a0776386
+#: ../../../source/reference/grn_expr/script_syntax.txt:93
+msgid "String"
+msgstr ""
+
+# e00735f1bf7a48dba3b0e39d3a48d5e1
+#: ../../../source/reference/grn_expr/script_syntax.txt:95
+msgid ""
+"String literal is ``\"...\"``. You need to escape ``\"`` in literal by "
+"prepending ``\\\\'' such as ``\\\"``. For example, ``\"Say \\\"Hello!\\\"."
+"\"`` is a literal for ``Say \"Hello!\".`` string."
+msgstr ""
+
+# 06d3e338a232430b902f21215876526e
+#: ../../../source/reference/grn_expr/script_syntax.txt:99
+msgid ""
+"String encoding must be the same as encoding of database. The default "
+"encoding is UTF-8. It can be changed by ``--with-default-encoding`` "
+"configure option, ``--encodiong`` :doc:`/executables/groonga` option and so "
+"on."
+msgstr ""
+
+# 8e6c7bf5c87445608774fab75733df84
+#: ../../../source/reference/grn_expr/script_syntax.txt:105
+msgid "Boolean"
+msgstr ""
+
+# d767ea88c8e24b1ebfa62c46ac567b5b
+#: ../../../source/reference/grn_expr/script_syntax.txt:107
+msgid ""
+"Boolean literal is ``true`` and ``false``. ``true`` means true and ``false`` "
+"means false."
+msgstr ""
+
+# d842a397e54742b38d1cb6a948b3a8a2
+#: ../../../source/reference/grn_expr/script_syntax.txt:111
+msgid "Null"
+msgstr ""
+
+# 12a1f1eea61b4c99aaaa8477f3b073e8
+#: ../../../source/reference/grn_expr/script_syntax.txt:113
+msgid ""
+"Null literal is ``null``. Groonga doesn't support null value but null "
+"literal is supported."
+msgstr ""
+
+# 1a0d405096194f148bbd6a9c6dcdb7b6
+#: ../../../source/reference/grn_expr/script_syntax.txt:117
+msgid "Time"
 msgstr ""
 
 # 40be9b0843624cb09a81a8856e560134
-#: ../../../source/reference/grn_expr/script_syntax.txt:20
+#: ../../../source/reference/grn_expr/script_syntax.txt:119
+#: ../../../source/reference/grn_expr/script_syntax.txt:131
+#: ../../../source/reference/grn_expr/script_syntax.txt:143
+#: ../../../source/reference/grn_expr/script_syntax.txt:148
+#: ../../../source/reference/grn_expr/script_syntax.txt:350
 msgid "TODO: ..."
 msgstr ""
 
-# ed337d0bcf69468dbd7d927d9e824254
-#: ../../../source/reference/grn_expr/script_syntax.txt:23
-msgid "独自の演算子"
+# 8522a6abd8a84df9982e3f08d24a3d74
+# bc5dabad610f4495aca419638f78897d
+#: ../../../source/reference/grn_expr/script_syntax.txt:123
+#: ../../../source/reference/grn_expr/script_syntax.txt:135
+msgid "This is the groonga original notation."
 msgstr ""
 
-# 485202f2850549838896c988972d6e30
-#: ../../../source/reference/grn_expr/script_syntax.txt:25
+# dbb240a47ad04a6e92c7ab3c30a2fb7d
+#: ../../../source/reference/grn_expr/script_syntax.txt:125
 msgid ""
-"groongaは検索に特化した2項演算子を追加しています。独自の2項演算子は ``@`` ま"
-"たは ``*`` ではじまります。"
+"Time literal doesn't exit. String time notation, integer time notation, "
+"float time notation are used for it."
 msgstr ""
 
-# a1a56fc10e3248daa2f08c22102fe438
-#: ../../../source/reference/grn_expr/script_syntax.txt:28
-msgid "``カラム @ 値``"
+# 88f9afe0c4ee45c6a3d87b5628dfc62e
+#: ../../../source/reference/grn_expr/script_syntax.txt:129
+msgid "Geo point"
 msgstr ""
 
-# 3520d974459b46bd841890858f320d53
-#: ../../../source/reference/grn_expr/script_syntax.txt:30
+# 775f9aea4d0049c7a9cc884578b30584
+#: ../../../source/reference/grn_expr/script_syntax.txt:137
 msgid ""
-"``カラム`` をソースに設定している転置索引を用いて、 ``値`` で検索します。通常"
-"は全文検索になりますが、タグ検索などもこの書式で行います。 ``query`` ではデ"
-"フォルトでこの演算子を使っていることになります。"
+"Geo point literal doesn't exist. String geo point notation is used for it."
 msgstr ""
 
-# 210eb61a2c404738b64a1560be616eff
-#: ../../../source/reference/grn_expr/script_syntax.txt:33
-msgid "``カラム @^ 値``"
+# 7606d4ef95df46d0802091d78ff82bf9
+#: ../../../source/reference/grn_expr/script_syntax.txt:141
+msgid "Array"
 msgstr ""
 
-# 8a2974eed2694913ab6aa3d9ed665bdb
-#: ../../../source/reference/grn_expr/script_syntax.txt:35
+# 32100750fe0b4f4698d44199322ca1d6
+#: ../../../source/reference/grn_expr/script_syntax.txt:146
+msgid "Object literal"
+msgstr ""
+
+# 662d44fb73c74346a9f6dc2022a989b1
+#: ../../../source/reference/grn_expr/script_syntax.txt:151
+msgid "Control syntaxes"
+msgstr ""
+
+# 8148677fc9e14c2d967565fd58bd6867
+#: ../../../source/reference/grn_expr/script_syntax.txt:153
 msgid ""
-"``カラム`` の値を ``値`` で前方一致検索します。 ``カラム`` はパトリシアツリー"
-"またはダブル配列の主キー（ ``_key`` ）でなければいけません。"
+"Script syntax doesn't support statement. So you cannot use control statement "
+"such as ``if``. You can only use ``A ? B : C`` expression as control syntax."
 msgstr ""
 
-# 4d10031debcb404086957302211dff6a
-#: ../../../source/reference/grn_expr/script_syntax.txt:38
-msgid "``カラム @$ 値``"
+# ee643cdf4dab4198b3a41a6171cb1490
+#: ../../../source/reference/grn_expr/script_syntax.txt:157
+msgid "``A ? B : C`` returns ``B`` if ``A`` is true, ``C`` otherwise."
 msgstr ""
 
-# e710edf2b0444a47abdb78cdf97ac395
-#: ../../../source/reference/grn_expr/script_syntax.txt:40
-msgid "``カラム`` の値を ``値`` で後方一致検索します。"
+# 20a9d137677940df9448d8844cfe1162
+# f4169faaa66543cfadec53288974345b
+# deabd98dbe6448dc8f0d36afa0836391
+# 2da4c24287434d77a1e7ccc71303ac2e
+# 26525318532c4a6ab666b36c79276bb6
+# ea3bb3d5f99a4c64a88a6d1729ac8f0b
+# 0a4f5de0918940809e8262f8ed738591
+# a8a90e06f5d547be8763216825d499ee
+# d07a0e64b72d49ba8d32fa192f331215
+# af494474cca249af82d79ae62f06f6aa
+# 96c0d4e5d6134114946c2540b954d854
+# 3f6d856a142a471fb9191bd4ff5619a2
+# 77d85fcdc4734a01873ccaf8cd37d938
+# 48f24d84919747f7a18d7a72f108b8b5
+# 33d29f5c681e4de6b9026e191d139be2
+# be473af1feba4d88b96dc038a2f5ac6f
+# 2d50bbe478424048959d32aa57eee8a6
+# d76072f80492461e80e163a1b38c37cb
+# 643a1ed466a045869c53c1993333920a
+# 89dfad7ec2c14d34a82d379b79b4e105
+#: ../../../source/reference/grn_expr/script_syntax.txt:159
+#: ../../../source/reference/grn_expr/script_syntax.txt:168
+#: ../../../source/reference/grn_expr/script_syntax.txt:177
+#: ../../../source/reference/grn_expr/script_syntax.txt:191
+#: ../../../source/reference/grn_expr/script_syntax.txt:200
+#: ../../../source/reference/grn_expr/script_syntax.txt:209
+#: ../../../source/reference/grn_expr/script_syntax.txt:219
+#: ../../../source/reference/grn_expr/script_syntax.txt:228
+#: ../../../source/reference/grn_expr/script_syntax.txt:237
+#: ../../../source/reference/grn_expr/script_syntax.txt:246
+#: ../../../source/reference/grn_expr/script_syntax.txt:256
+#: ../../../source/reference/grn_expr/script_syntax.txt:266
+#: ../../../source/reference/grn_expr/script_syntax.txt:276
+#: ../../../source/reference/grn_expr/script_syntax.txt:286
+#: ../../../source/reference/grn_expr/script_syntax.txt:297
+#: ../../../source/reference/grn_expr/script_syntax.txt:306
+#: ../../../source/reference/grn_expr/script_syntax.txt:315
+#: ../../../source/reference/grn_expr/script_syntax.txt:325
+#: ../../../source/reference/grn_expr/script_syntax.txt:335
+#: ../../../source/reference/grn_expr/script_syntax.txt:345
+msgid "TODO: example"
 msgstr ""
 
-# 82a874e84cf749eab69de18a7430ee02
-# 4c8fdbe910c04000a2c11c3b61126e82
-#: ../../../source/reference/grn_expr/script_syntax.txt:42
-#: ../../../source/reference/grn_expr/script_syntax.txt:49
-msgid "未サポートです。"
+# 78233e468ad547f293a95d9932f4ce85
+# 29afaa2220794254941ae6f8d44b19fe
+#: ../../../source/reference/grn_expr/script_syntax.txt:166
+#: ../../../source/reference/grn_expr/script_syntax.txt:175
+msgid "TODO: description"
 msgstr ""
 
-# 809172de6a1b49ac95c66e741ffe7a5e
-#: ../../../source/reference/grn_expr/script_syntax.txt:45
-msgid "``カラム *N \"単語1 単語2 ...\"``"
+# 50ead722cd104b629c2bdeb2b81a6377
+#: ../../../source/reference/grn_expr/script_syntax.txt:171
+msgid "Function call"
 msgstr ""
 
-# 31fd3cf9727d45e3bfaf5d4aef2f1f04
-#: ../../../source/reference/grn_expr/script_syntax.txt:47
+# 0327687630154a59a22103b020f24c29
+#: ../../../source/reference/grn_expr/script_syntax.txt:173
+msgid "Its syntax is ``name(arugment1, argument2, ...)``."
+msgstr ""
+
+# f888c40cb6f44deba534cecbdde52a4f
+#: ../../../source/reference/grn_expr/script_syntax.txt:180
+msgid "Basic operators"
+msgstr ""
+
+# f21cba4ca2de421ab87c2d93a268ed9e
+#: ../../../source/reference/grn_expr/script_syntax.txt:182
+msgid "Groonga supports operators defined in ECMAScript."
+msgstr ""
+
+# 1d8d6cb9a9934ce1a1164feb93b35536
+#: ../../../source/reference/grn_expr/script_syntax.txt:185
+msgid "Multiplication operator"
+msgstr ""
+
+# ac8fc6dfc8844f4794efa49699f58bf4
+#: ../../../source/reference/grn_expr/script_syntax.txt:187
+msgid "Its syntax is ``number1 * number2``."
+msgstr ""
+
+# 56ffec4b19dc420da1c8501452279713
+#: ../../../source/reference/grn_expr/script_syntax.txt:189
 msgid ""
-"``カラム`` の値の中に ``単語1`` 、 ``単語2`` 、 ``...``  が近傍にある文書を検"
-"索します。（近傍検索。） ``カラム`` には全文検索用のインデックスが設定されて"
-"いなければいけません。"
+"The operator multiplies ``number1`` and ``number2`` and returns the result."
 msgstr ""
 
-# 6781cdb70864463ab3377647b2efccbc
-#: ../../../source/reference/grn_expr/script_syntax.txt:52
-msgid "``カラム *S \"文書\"``"
+# 78574c1fbedf410789b0d32116398a1c
+#: ../../../source/reference/grn_expr/script_syntax.txt:194
+msgid "Addition operator"
 msgstr ""
 
-# 755342a8c88549079679df081e044250
-#: ../../../source/reference/grn_expr/script_syntax.txt:54
+# 686f1773662b4d7a9ab796548d717e03
+#: ../../../source/reference/grn_expr/script_syntax.txt:196
+msgid "Its syntax is ``number1 + number2``."
+msgstr ""
+
+# d2d7f1ef140e47f7a4c8fcad7fc2b724
+#: ../../../source/reference/grn_expr/script_syntax.txt:198
+msgid "The operator adds ``number1`` and ``number2`` and returns the result."
+msgstr ""
+
+# e4de036590034b08bdf6b8ac06f818c1
+#: ../../../source/reference/grn_expr/script_syntax.txt:203
+msgid "Subtraction operator"
+msgstr ""
+
+# 905b23dc93db43d4ab0f52d4665ff7b3
+#: ../../../source/reference/grn_expr/script_syntax.txt:205
+msgid "Its syntax is ``number1 - number2``."
+msgstr ""
+
+# baa2fa34cad24c60982cab1bcf0d4e81
+#: ../../../source/reference/grn_expr/script_syntax.txt:207
 msgid ""
-"``カラム`` の値が ``文書`` に類似している文書を検索します。（類似文書検"
-"索。） ``カラム`` には全文検索用のインデックスが設定されていなければいけませ"
-"ん。"
+"The operator subtracts ``number2`` from ``number1`` and returns the result."
 msgstr ""
 
-# de7828f7dc9a4167adb3126dc0b49293
-#: ../../../source/reference/grn_expr/script_syntax.txt:63
-msgid "``カラム *> 重み``"
+# 09ec03af9d6b42d5a8335105a3e83f82
+#: ../../../source/reference/grn_expr/script_syntax.txt:212
+msgid "Division operator"
 msgstr ""
 
-# 5dc6dc81ea43484096be9acd3a3610f8
-#: ../../../source/reference/grn_expr/script_syntax.txt:65
-msgid "``カラム`` の重みを ``重み`` 分上げます。"
+# 71fdd536dcf74b3396fa333f8b430066
+#: ../../../source/reference/grn_expr/script_syntax.txt:214
+msgid "Its syntax is ``number1 / number2`` and ``number1 % number2``."
 msgstr ""
 
-# b0f6e884a9934c61afd6176315e41385
-# 25136dedf31841139d8b8b696f2937a4
-# 4329d41f216b4218bcc16754f6d01372
-#: ../../../source/reference/grn_expr/script_syntax.txt:67
-#: ../../../source/reference/grn_expr/script_syntax.txt:74
-#: ../../../source/reference/grn_expr/script_syntax.txt:81
-msgid "未サポート。"
+# e87ae417dfcf4eda842184dac8c7274a
+#: ../../../source/reference/grn_expr/script_syntax.txt:216
+msgid ""
+"The operator divides ``number2`` by ``number1``. ``/`` returns the quotient "
+"of result. ``%`` returns the remainder of result."
 msgstr ""
 
-# 937d45bd87744ab49af3921b59713943
-#: ../../../source/reference/grn_expr/script_syntax.txt:70
-msgid "``カラム *< 重み``"
+# 0e317a787cc1496f8d0390a9a33dd0ae
+# 429459e1a2de45f394d9a72e6caec3bc
+#: ../../../source/reference/grn_expr/script_syntax.txt:222
+#: ../../../source/reference/grn_expr/script_syntax.txt:259
+msgid "Logical NOT operator"
 msgstr ""
 
-# 8a0105a045224df793ff2802426b5cfc
-#: ../../../source/reference/grn_expr/script_syntax.txt:72
-msgid "``カラム`` の重みを ``重み`` 分下げます。"
+# 03073cbd73bd4a9ebfb3736809af0d12
+#: ../../../source/reference/grn_expr/script_syntax.txt:224
+msgid "Its syntax is ``!condition``."
 msgstr ""
 
-# 0acf30e9975d4e7cac5c1f00cad3279c
-#: ../../../source/reference/grn_expr/script_syntax.txt:77
-msgid "``カラム *~ 重み``"
+# ffae8f043eca464f9fa2055a2e75d9cf
+#: ../../../source/reference/grn_expr/script_syntax.txt:226
+msgid "The operator inverts boolean value of ``condition``."
 msgstr ""
 
-# 726b01dcfa6b48f9a70daf557e0a3795
-#: ../../../source/reference/grn_expr/script_syntax.txt:79
-msgid "``カラム`` がマッチした場合、文書の検索スコアを ``重み`` 分下げます。"
+# a05c86531c5246678669128910c89597
+#: ../../../source/reference/grn_expr/script_syntax.txt:231
+msgid "Bitwise NOT operator"
+msgstr ""
+
+# adf3a54aa16341a9ba65011bd25cb3fc
+#: ../../../source/reference/grn_expr/script_syntax.txt:233
+msgid "Its syntax is ``~number``."
+msgstr ""
+
+# 866d500466bc462e8d2e5bcce34a1070
+#: ../../../source/reference/grn_expr/script_syntax.txt:235
+msgid "The operator returns bitwise NOT of ``number``."
+msgstr ""
+
+# fb437d69ad1545c0b8697d32095c5e6c
+#: ../../../source/reference/grn_expr/script_syntax.txt:240
+msgid "Bitwise AND operator"
+msgstr ""
+
+# a1094bbc9a2c4fe780c93863bd263660
+#: ../../../source/reference/grn_expr/script_syntax.txt:242
+msgid "Its syntax is ``number1 & number2``."
+msgstr ""
+
+# aa9a743babb64b07b4498007fd759f97
+#: ../../../source/reference/grn_expr/script_syntax.txt:244
+msgid "The operator returns bitwise AND between ``number1`` and ``number2``."
+msgstr ""
+
+# 6d8d5705d9f64a26833346276b77faf1
+#: ../../../source/reference/grn_expr/script_syntax.txt:249
+msgid "Logical AND operator"
+msgstr ""
+
+# 12e734420ea24c3c82ea6514e0eedbf9
+#: ../../../source/reference/grn_expr/script_syntax.txt:251
+msgid "Its syntax is ``condition1 && condition2``."
+msgstr ""
+
+# aad1ed8d61244d0e83a5c1798e7d725b
+#: ../../../source/reference/grn_expr/script_syntax.txt:253
+msgid ""
+"The operator returns true if both of ``condition1`` and ``condition2`` are "
+"true, false otherwise."
+msgstr ""
+
+# 3f1cd5542f7a4d73a2a82198ca412487
+#: ../../../source/reference/grn_expr/script_syntax.txt:261
+msgid "Its syntax is ``condition1 &! condition2``."
+msgstr ""
+
+# 3670bf8c61ad41f8bde40c27c585fdf2
+#: ../../../source/reference/grn_expr/script_syntax.txt:263
+msgid ""
+"The operator returns true if ``condition1`` is true but ``condition2`` is "
+"false, false otherwise."
+msgstr ""
+
+# 0c4ff6c6db004b30af3854465c2b7eca
+#: ../../../source/reference/grn_expr/script_syntax.txt:269
+msgid "Left shift operator"
+msgstr ""
+
+# 714fdd11d2a74b92b6827efcafb4c167
+#: ../../../source/reference/grn_expr/script_syntax.txt:271
+msgid "Its syntax is ``number1 << number2``."
+msgstr ""
+
+# 59b545129f8c4a41a884946100c2e819
+#: ../../../source/reference/grn_expr/script_syntax.txt:273
+msgid ""
+"The operator performs a bitwise left shift operation on ``number1`` by "
+"``number2``."
+msgstr ""
+
+# fea9e6da12a54418a91b13892dd40bc1
+#: ../../../source/reference/grn_expr/script_syntax.txt:279
+msgid "Signed right shift operator"
+msgstr ""
+
+# 0855e2b95a2b4ff2a4ec2d53c0d6004b
+#: ../../../source/reference/grn_expr/script_syntax.txt:281
+msgid "Its syntax is ``number1 >> number2``."
+msgstr ""
+
+# 7b227c86ab5d474abe093d0ce1918fb8
+#: ../../../source/reference/grn_expr/script_syntax.txt:283
+msgid ""
+"The operator shifts bits of ``number1`` to right by ``number2``. The sign of "
+"the result is the same as ``number1``."
+msgstr ""
+
+# 41d0b5020ec2433f912f1712d58a33e1
+#: ../../../source/reference/grn_expr/script_syntax.txt:289
+msgid "Unsigned right shift operator"
+msgstr ""
+
+# a097f3b3e870494d90c3ad7517340966
+#: ../../../source/reference/grn_expr/script_syntax.txt:291
+msgid "Its syntax is ``number1 >>> number2``."
+msgstr ""
+
+# f63ebec2a63a4406a0f007c97a6294fd
+#: ../../../source/reference/grn_expr/script_syntax.txt:293
+msgid ""
+"The operator shifts bits of ``number1`` to right by ``number2``. If "
+"``number2`` is larger than 0, the sign of the result is always positive."
+msgstr ""
+
+# c28f60cb102f4afbb7d181486d1a2b78
+#: ../../../source/reference/grn_expr/script_syntax.txt:300
+msgid "Bitwise OR operator"
+msgstr ""
+
+# ba23e02be46d4461a6832f66f27c92f5
+#: ../../../source/reference/grn_expr/script_syntax.txt:302
+msgid "Its syntax is ``number1 | number2``."
+msgstr ""
+
+# e460cd311f5f4c2aa766380a4f42f2a3
+#: ../../../source/reference/grn_expr/script_syntax.txt:304
+msgid "The operator returns bitwise OR between ``number1`` and ``number2``."
+msgstr ""
+
+# 68f89a46ce9b41f68136ede66598ab82
+#: ../../../source/reference/grn_expr/script_syntax.txt:309
+msgid "Bitwise XOR operator"
+msgstr ""
+
+# 39e3beb1e3c744c78dc57cce21f22a18
+#: ../../../source/reference/grn_expr/script_syntax.txt:311
+msgid "Its syntax is ``number1 ^ number2``."
+msgstr ""
+
+# 94e0d164c48b4a20921aef00b14a0824
+#: ../../../source/reference/grn_expr/script_syntax.txt:313
+msgid "The operator returns bitwise XOR between ``number1`` and ``number2``."
+msgstr ""
+
+# 9297ef8c67e14dcba793d10fce5e6b2f
+#: ../../../source/reference/grn_expr/script_syntax.txt:318
+msgid "Logical OR operator"
+msgstr ""
+
+# 8c7c8ebc51234667b29a31fc7d6a130e
+#: ../../../source/reference/grn_expr/script_syntax.txt:320
+msgid "Its syntax is ``condition1 || condition2``."
+msgstr ""
+
+# 64d357b978a4418788480d6a976c44a8
+#: ../../../source/reference/grn_expr/script_syntax.txt:322
+msgid ""
+"The operator returns true if either ``condition1`` or ``condition2`` is "
+"true, false otherwise."
+msgstr ""
+
+# e10a3f5cce8d4944adaaf71beb9764d8
+#: ../../../source/reference/grn_expr/script_syntax.txt:328
+msgid "Equal operator"
+msgstr ""
+
+# bdc5c590185b4ce79be76c7639786158
+#: ../../../source/reference/grn_expr/script_syntax.txt:330
+msgid "Its syntax is ``object1 == object2``."
+msgstr ""
+
+# 13a2b9e37ee742ffa5096a8f9f859ae1
+#: ../../../source/reference/grn_expr/script_syntax.txt:332
+msgid ""
+"The operator returns true if ``object1`` equals to ``object2``, false "
+"otherwise."
+msgstr ""
+
+# 49c65fb67a2e4c019e2a8f4850592825
+#: ../../../source/reference/grn_expr/script_syntax.txt:338
+msgid "Not equal operator"
+msgstr ""
+
+# 8d751d2db4bf4758bb2258572dfcc209
+#: ../../../source/reference/grn_expr/script_syntax.txt:340
+msgid "Its syntax is ``object1 != object2``."
+msgstr ""
+
+# ffeec8d3e736404b91bd89a6e532d116
+#: ../../../source/reference/grn_expr/script_syntax.txt:342
+msgid ""
+"The operator returns true if ``object1`` does not equal to ``object2``, "
+"false otherwise."
+msgstr ""
+
+# 9f860c28ee19403fa54b4d3810df8b24
+#: ../../../source/reference/grn_expr/script_syntax.txt:348
+msgid "Assignment operators"
+msgstr ""
+
+# 2fbe97fd5dc7436ba329aa8f326fa33a
+#: ../../../source/reference/grn_expr/script_syntax.txt:353
+msgid "Original operators"
+msgstr ""
+
+# dc4cd431bbe64ff599bc269d22f2d2ac
+#: ../../../source/reference/grn_expr/script_syntax.txt:355
+msgid ""
+"Script syntax adds the original binary opearators to ECMAScript syntax. They "
+"operate search specific operations. They are starts with ``@`` or ``*``."
+msgstr ""
+
+# fafc6ef61b754b4fa5591e53ac039c34
+#: ../../../source/reference/grn_expr/script_syntax.txt:362
+msgid "Match operator"
+msgstr ""
+
+# b8a178ce74e742998ad694653f9ac15f
+#: ../../../source/reference/grn_expr/script_syntax.txt:364
+msgid "Its syntax is ``column @ value``."
+msgstr ""
+
+# 64b9ef58868a4c3fa5649a9fceb10dfa
+#: ../../../source/reference/grn_expr/script_syntax.txt:366
+msgid ""
+"The operator searches ``value`` by inverted index of ``column``. Normally, "
+"full text search is operated but tag search can be operated. Because tag "
+"search is also implemented by inverted index."
+msgstr ""
+
+# 1e3cc47bf3944249b3114f490446a6da
+#: ../../../source/reference/grn_expr/script_syntax.txt:370
+msgid ":doc:`query_syntax` uses this operator by default."
+msgstr ""
+
+# 94dd48cbf1164f009ed2cb69482fb39b
+#: ../../../source/reference/grn_expr/script_syntax.txt:384
+msgid "Prefix search operator"
+msgstr ""
+
+# 01c1d9f3d09d49e29c61a8156a2b2976
+#: ../../../source/reference/grn_expr/script_syntax.txt:386
+msgid "Its syntax is ``column @^ value``."
+msgstr ""
+
+# ff0dcf8f434a44af81942873ee0ef91b
+#: ../../../source/reference/grn_expr/script_syntax.txt:388
+msgid ""
+"The operator does prefix search with ``value``. Prefix search searches "
+"records that contain a word that starts with ``value``."
+msgstr ""
+
+# 0d23bba374654dc8a5a21e8408917afb
+#: ../../../source/reference/grn_expr/script_syntax.txt:415
+msgid "Suffix search operator"
+msgstr ""
+
+# 1dc9a13e48434d24b23f35f6f6d0a815
+#: ../../../source/reference/grn_expr/script_syntax.txt:417
+msgid "Its syntax is ``column @$ value``."
+msgstr ""
+
+# 776c4b044b9d45788bdd93ad910e751c
+#: ../../../source/reference/grn_expr/script_syntax.txt:419
+msgid ""
+"This operator does suffix search with ``value``. Suffix search searches "
+"records that contain a word that ends with ``value``."
+msgstr ""
+
+# 865c5809435f42d2a9d047d983605fdb
+#: ../../../source/reference/grn_expr/script_syntax.txt:469
+msgid "Near search operator"
+msgstr ""
+
+# 87ac5dc18fb9467ba1802df8c6f405de
+#: ../../../source/reference/grn_expr/script_syntax.txt:471
+msgid "Its syntax is ``column *N \"word1 word2 ...\"``."
+msgstr ""
+
+# ee688ba059554ad6b90d0fde7e33b418
+#: ../../../source/reference/grn_expr/script_syntax.txt:473
+msgid ""
+"The operator does near search with words ``word1 word2 ...``. Near search "
+"searches records that contain the words and the words are appeared in the "
+"near distance. Near distance is always ``10`` for now. The unit of near "
+"distance is the number of characters in N-gram family tokenizers and the "
+"number of words in morphological analysis family tokenizers."
+msgstr ""
+
+# 6113ad9d23ce4249800116cd34dd9b75
+#: ../../../source/reference/grn_expr/script_syntax.txt:480
+msgid ""
+"(TODO: Add a description about ``TokenBigram`` doesn't split ASCII only word "
+"into tokens. So the unit for ASCII words with ``TokenBigram`` is the number "
+"of words even if ``TokenBigram`` is a N-gram family tokenizer.)"
+msgstr ""
+
+# 32551f1a87554d84a52deb8f28dcbdae
+# 3bac2032d698460fa5fb7e7214002806
+#: ../../../source/reference/grn_expr/script_syntax.txt:485
+#: ../../../source/reference/grn_expr/script_syntax.txt:525
+msgid ""
+"Note that an index column for full text search must be defined for "
+"``column``."
+msgstr ""
+
+# 5930235c8fdf4f1ead24aeaa7ced1652
+#: ../../../source/reference/grn_expr/script_syntax.txt:496
+msgid ""
+"The first expression matches records that contain ``I`` and ``fast`` and the "
+"near distance of those words are in 10 words. So the record that its content "
+"is ``I also started to use mroonga. It's also very fast! ...`` is matched. "
+"The number of words between ``I`` and ``fast`` is just 10."
+msgstr ""
+
+# af60b784a2e14d55b48cf4c4b7921c6a
+#: ../../../source/reference/grn_expr/script_syntax.txt:502
+msgid ""
+"The second expression matches records that contain ``I`` and ``Really`` and "
+"the near distance of those words are in 10 words. So the record that its "
+"content is ``I also started to use mroonga. It's also very fast! Really fast!"
+"`` is not matched. The number of words between ``I`` and ``Really`` is 11."
+msgstr ""
+
+# d24e8d239a4a41cda220b468505207a1
+#: ../../../source/reference/grn_expr/script_syntax.txt:508
+msgid ""
+"The third expression matches records that contain ``also`` and ``Really`` "
+"and the near distance of those words are in 10 words. So the record that its "
+"content is ``I also st arted to use mroonga. It's also very fast! Really "
+"fast!`` is matched. The number of words between ``also`` and ``Really`` is "
+"10."
+msgstr ""
+
+# 67166762631b4af1905e4584dc920f9f
+#: ../../../source/reference/grn_expr/script_syntax.txt:517
+msgid "Similar search"
+msgstr ""
+
+# 46d497c3a3f149f9ad9e6cb9c345da64
+#: ../../../source/reference/grn_expr/script_syntax.txt:519
+msgid "Its syntax is ``column *S \"document\"``."
+msgstr ""
+
+# 3febe9460ccf4f32a9ea6f7af05b0430
+#: ../../../source/reference/grn_expr/script_syntax.txt:521
+msgid ""
+"The operator does similar search with document ``document``. Similar search "
+"searches records that have similar content to ``document``."
+msgstr ""
+
+# fb2116d4dece4d57a7a831562219ee3b
+#: ../../../source/reference/grn_expr/script_syntax.txt:534
+msgid ""
+"The expression matches records that have similar content to ``I migrated all "
+"Solr system!``. In this case, records that have ``I migrated all XXX system!"
+"`` content are matched."
+msgstr ""
+
+# 6b672a08b013429682fc1ff09ed06d5a
+#: ../../../source/reference/grn_expr/script_syntax.txt:541
+msgid "Term extract operator"
+msgstr ""
+
+# b2ca3ecee2004c88ad2dc3b15b21867c
+#: ../../../source/reference/grn_expr/script_syntax.txt:543
+msgid "Its syntax is ``_key *T \"document\"``."
+msgstr ""
+
+# 0242c5cb371246daad9929104cc9addb
+#: ../../../source/reference/grn_expr/script_syntax.txt:545
+msgid ""
+"The operator extracts terms from ``document``. Terms must be registered as "
+"keys of the table of ``_key``."
+msgstr ""
+
+# 08e7af2a16f2443a985c1a6222ef393f
+#: ../../../source/reference/grn_expr/script_syntax.txt:548
+msgid ""
+"Note that the table must be patricia trie (``TABLE_PAT_KEY``) or double "
+"array trie (``TABLE_DAT_KEY``). You can't use hash table "
+"(``TABLE_HASH_KEY``) and array (``TABLE_NO_KEY``) becuase they don't support "
+"longest common prefix search. Longest common prefix search is used to "
+"implement the operator."
+msgstr ""
+
+# 9fdeb2d0aff64948bf2e586e20b01961
+#: ../../../source/reference/grn_expr/script_syntax.txt:568
+msgid ""
+"The expression extrcts terms that included in document ``Groonga is the "
+"successor project to Senna.``. In this case, ``KEY_NORMALIZE`` flag is "
+"specified to ``Words``. So ``Groonga`` can be extracted even if it is loaded "
+"as ``groonga`` into ``Words``. All of extracted terms are also normalized."
 msgstr ""

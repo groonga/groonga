@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 2.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-11 13:24\n"
+"POT-Creation-Date: 2012-07-19 10:01\n"
 "PO-Revision-Date: 2012-04-28 11:37+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -247,11 +247,12 @@ msgid ""
 "simple usages."
 msgstr ""
 
-# 22f46bc2541345c28397b53f9ebc8f43
+# 483f61fa87fc48378eb820ca3ab96ce2
 #: ../../../source/functions/geo_distance.txt:48
 msgid ""
-"Here are two schema definition and sample data to show usage. Those samples "
-"show how to calculate the value of distance between Tokyo and Sapporo."
+"Here are two schema definition and sample data to show the difference "
+"according to the usage. Those samples show how to calculate the value of "
+"distance between Tokyo and Sapporo."
 msgstr ""
 
 # cc505e5faa1a486dbfd5bd51db61e968
@@ -261,11 +262,11 @@ msgid ""
 "(``Stations`` table)"
 msgstr ""
 
-# 1eb1c05f6cc04bd99f2b747ea406f5e0
+# 9fd47b9570354bf0923358bdbb861d2f
 #: ../../../source/functions/geo_distance.txt:52
 msgid ""
-"Using the explicitly specified value of location for calculating the "
-"distance (``Geo`` table)"
+"Using the explicitly specified coordinates for calculating the distance "
+"(``Geo`` table)"
 msgstr ""
 
 # 8e0ea0e1c1eb4d7c9b2206f71bde0923
@@ -295,10 +296,10 @@ msgid ""
 "and the value of coordinate to calculate distance."
 msgstr ""
 
-# b99fdc692ebb4b778e299aa89473552b
+# 7c04fad1855e455a88b12f3da8e3b3df
 #: ../../../source/functions/geo_distance.txt:72
 msgid ""
-"The value (\"155047000x508862800\") passed to geo_distance as the second "
+"The value (\"155047000x508862800\") passed to ``geo_distance`` as the second "
 "argument is the coordinate of Sapporo."
 msgstr ""
 
@@ -457,11 +458,11 @@ msgid ""
 "hemisphere or southern hemisphere."
 msgstr ""
 
-# 1ea593ffd9bc492d8ce76f3fbf384f51
+# cd916fa2c6de459c90c62c2b16b4493b
 #: ../../../source/functions/geo_distance.txt:157
 msgid ""
 "This parameter require to approximate the geographical features by square "
-"approximation."
+"approximation for calculating the distance."
 msgstr ""
 
 # ea7c24750d9a4a4abe1079861354ff8a
@@ -512,11 +513,11 @@ msgid ""
 "the value of distance."
 msgstr ""
 
-# 7003ba6576634c04987962a5d7b81338
+# f6d768660ed843448739961321f032ae
 #: ../../../source/functions/geo_distance.txt:194
 msgid ""
 "This parameter require to approximate the geographical features by spherical "
-"approximation."
+"approximation for calculating the distance."
 msgstr ""
 
 # fdbf5ae7896440f3b81681f6cbd043fc
@@ -531,11 +532,11 @@ msgstr ""
 msgid "You can also specify ``sphr`` as abbrev expression."
 msgstr ""
 
-# bedeb92553b74b3f91dbd76b88ffa865
+# 5ef2486f46544d4492465afd01f78d22
 #: ../../../source/functions/geo_distance.txt:210
 msgid ""
 "This parameter require to approximate the geographical features by ellipsoid "
-"approximation."
+"approximation for calculating the distance."
 msgstr ""
 
 # 3c21b6dd3e144931a44f4d2c422496e3
