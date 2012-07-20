@@ -33,6 +33,7 @@ void test_expire_cache_on_recreate(void);
 void test_expression_lifetime_over_database(void);
 void test_get(void);
 void test_at(void);
+void test_lock(void);
 
 static gchar *tmp_directory;
 
@@ -304,4 +305,19 @@ test_at(void)
   grn_test_assert_equal_id(context,
                            GRN_DB_SHORT_TEXT,
                            grn_table_at(context, database, GRN_DB_SHORT_TEXT));
+}
+
+void
+test_lock(void)
+{
+  const gchar *path;
+
+  path = cut_build_path(tmp_directory, "database.groonga", NULL);
+  database = grn_db_create(context, path, NULL);
+  grn_obj_lock(context, database, GRN_ID_NIL, 0);
+  cut_assert_true(grn_obj_is_locked(context, database));
+
+  database2 = grn_db_open(context2, path);
+  grn_obj_unlock(context2, database2, GRN_ID_NIL);
+  cut_assert_false(grn_obj_is_locked(context, database));
 }

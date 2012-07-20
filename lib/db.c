@@ -517,19 +517,21 @@ grn_proc_create(grn_ctx *ctx, const char *name, unsigned int name_size, grn_proc
   }
   if (name && name_size) {
     grn_db *s = (grn_db *)db;
-    if (!(id = grn_table_add(ctx, s->keys, name, name_size, &added))) {
-      ERR(GRN_NO_MEMORY_AVAILABLE, "grn_table_add failed");
-      GRN_API_RETURN(NULL);
-    }
-    if (!added) {
-      db_value *vp;
-      if ((vp = grn_tiny_array_at(&s->values, id)) && (res = (grn_proc *)vp->ptr)) {
-        if (res->funcs[PROC_INIT]) {
-          ERR(GRN_INVALID_ARGUMENT, "already used name");
-          GRN_API_RETURN(NULL);
+    if (!(id = grn_table_get(ctx, s->keys, name, name_size))) {
+      if (!(id = grn_table_add(ctx, s->keys, name, name_size, &added))) {
+        ERR(GRN_NO_MEMORY_AVAILABLE, "grn_table_add failed");
+        GRN_API_RETURN(NULL);
+      }
+      if (!added) {
+        db_value *vp;
+        if ((vp = grn_tiny_array_at(&s->values, id)) && (res = (grn_proc *)vp->ptr)) {
+          if (res->funcs[PROC_INIT]) {
+            ERR(GRN_INVALID_ARGUMENT, "already used name");
+            GRN_API_RETURN(NULL);
+          }
+        } else {
+          added = 1;
         }
-      } else {
-        added = 1;
       }
     }
   } else if (ctx->impl && ctx->impl->values) {
