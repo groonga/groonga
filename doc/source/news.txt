@@ -20,7 +20,7 @@ Improvements
 * Supported ";" as a query parameter separator. [#1406]
   [Suggested by IWAI, Masaharu]
 * [doc] Added descriptions about script syntax.
-* Supported near search by 'column *N "word1 word2 ..."' in script syntax.
+* Supported near search by ``'column *N "word1 word2 ..."'`` in script syntax.
   [#1423]
 * [doc] Added a description about limitation of suffix search.
 * Supported near search for _key pseudo column. [GitHub#19]
