@@ -33,7 +33,7 @@ void test_expire_cache_on_recreate(void);
 void test_expression_lifetime_over_database(void);
 void test_get(void);
 void test_at(void);
-void test_lock(void);
+void test_open_locked_database_and_unlock(void);
 
 static gchar *tmp_directory;
 
@@ -308,7 +308,7 @@ test_at(void)
 }
 
 void
-test_lock(void)
+test_open_locked_database_and_unlock(void)
 {
   const gchar *path;
 
