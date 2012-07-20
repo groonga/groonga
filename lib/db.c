@@ -522,6 +522,7 @@ grn_proc_create(grn_ctx *ctx, const char *name, unsigned int name_size, grn_proc
         ERR(GRN_NO_MEMORY_AVAILABLE, "grn_table_add failed");
         GRN_API_RETURN(NULL);
       }
+    }
       if (!added) {
         db_value *vp;
         if ((vp = grn_tiny_array_at(&s->values, id)) && (res = (grn_proc *)vp->ptr)) {
@@ -533,7 +534,6 @@ grn_proc_create(grn_ctx *ctx, const char *name, unsigned int name_size, grn_proc
           added = 1;
         }
       }
-    }
   } else if (ctx->impl && ctx->impl->values) {
     id = grn_array_add(ctx, ctx->impl->values, NULL) | GRN_OBJ_TMP_OBJECT;
     added = 1;
