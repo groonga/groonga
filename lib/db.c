@@ -523,17 +523,17 @@ grn_proc_create(grn_ctx *ctx, const char *name, unsigned int name_size, grn_proc
         GRN_API_RETURN(NULL);
       }
     }
-      if (!added) {
-        db_value *vp;
-        if ((vp = grn_tiny_array_at(&s->values, id)) && (res = (grn_proc *)vp->ptr)) {
-          if (res->funcs[PROC_INIT]) {
-            ERR(GRN_INVALID_ARGUMENT, "already used name");
-            GRN_API_RETURN(NULL);
-          }
-        } else {
-          added = 1;
+    if (!added) {
+      db_value *vp;
+      if ((vp = grn_tiny_array_at(&s->values, id)) && (res = (grn_proc *)vp->ptr)) {
+        if (res->funcs[PROC_INIT]) {
+          ERR(GRN_INVALID_ARGUMENT, "already used name");
+          GRN_API_RETURN(NULL);
         }
+      } else {
+        added = 1;
       }
+    }
   } else if (ctx->impl && ctx->impl->values) {
     id = grn_array_add(ctx, ctx->impl->values, NULL) | GRN_OBJ_TMP_OBJECT;
     added = 1;
