@@ -120,7 +120,9 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_match_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_near_search_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_prefix_search_operator.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_similar_search_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_suffix_search_operator.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_term_extract_operator.log \
 	$(top_srcdir)/doc/source/example/suggestion-1.log \
 	$(top_srcdir)/doc/source/example/tutorial/data-1.log \
 	$(top_srcdir)/doc/source/example/tutorial/data-2.log \
@@ -474,7 +476,9 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/grn_expr/script_syntax/simple_match_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_near_search_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_prefix_search_operator.log \
+	source/example/reference/grn_expr/script_syntax/simple_similar_search_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_suffix_search_operator.log \
+	source/example/reference/grn_expr/script_syntax/simple_term_extract_operator.log \
 	source/example/suggestion-1.log \
 	source/example/tutorial/data-1.log \
 	source/example/tutorial/data-2.log \
