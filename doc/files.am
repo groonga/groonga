@@ -755,22 +755,81 @@ theme_files_relative_from_doc_dir = \
 	$(NULL)
 
 po_files = \
+	characteristic.po \
+	community.po \
+	conf.po \
+	contribution.po \
+	development.po \
+	geolocation_search.po \
+	index.po \
+	install.po \
+	limitations.po \
+	news.po \
+	reference.po \
+	spec.po \
+	suggest.po \
+	troubleshooting.po \
+	tutorial.po \
 	$(NULL)
 
 po_files_relative_from_locale_dir = \
+	LC_MESSAGES/characteristic.po \
+	LC_MESSAGES/community.po \
+	LC_MESSAGES/conf.po \
+	LC_MESSAGES/contribution.po \
+	LC_MESSAGES/development.po \
+	LC_MESSAGES/geolocation_search.po \
+	LC_MESSAGES/index.po \
+	LC_MESSAGES/install.po \
+	LC_MESSAGES/limitations.po \
+	LC_MESSAGES/news.po \
+	LC_MESSAGES/reference.po \
+	LC_MESSAGES/spec.po \
+	LC_MESSAGES/suggest.po \
+	LC_MESSAGES/troubleshooting.po \
+	LC_MESSAGES/tutorial.po \
 	$(NULL)
 
 mo_files = \
+	characteristic.mo \
+	community.mo \
+	conf.mo \
+	contribution.mo \
+	development.mo \
+	geolocation_search.mo \
+	index.mo \
+	install.mo \
+	limitations.mo \
+	news.mo \
+	reference.mo \
+	spec.mo \
+	suggest.mo \
+	troubleshooting.mo \
+	tutorial.mo \
 	$(NULL)
 
 mo_files_relative_from_locale_dir = \
+	LC_MESSAGES/characteristic.mo \
+	LC_MESSAGES/community.mo \
+	LC_MESSAGES/conf.mo \
+	LC_MESSAGES/contribution.mo \
+	LC_MESSAGES/development.mo \
+	LC_MESSAGES/geolocation_search.mo \
+	LC_MESSAGES/index.mo \
+	LC_MESSAGES/install.mo \
+	LC_MESSAGES/limitations.mo \
+	LC_MESSAGES/news.mo \
+	LC_MESSAGES/reference.mo \
+	LC_MESSAGES/spec.mo \
+	LC_MESSAGES/suggest.mo \
+	LC_MESSAGES/troubleshooting.mo \
+	LC_MESSAGES/tutorial.mo \
 	$(NULL)
 
 html_files_relative_from_locale_dir = \
 	html/.buildinfo \
 	html/_images/geo-points.png \
 	html/_sources/characteristic.txt \
-	html/_sources/command_version.txt \
 	html/_sources/community.txt \
 	html/_sources/contribution.txt \
 	html/_sources/contribution/development.txt \
@@ -807,6 +866,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/api.txt \
 	html/_sources/reference/api/grn_expr.txt \
 	html/_sources/reference/cast.txt \
+	html/_sources/reference/command_version.txt \
 	html/_sources/reference/commands.txt \
 	html/_sources/reference/commands/cache_limit.txt \
 	html/_sources/reference/commands/check.txt \
@@ -905,7 +965,6 @@ html_files_relative_from_locale_dir = \
 	html/_static/us.png \
 	html/_static/websupport.js \
 	html/characteristic.html \
-	html/command_version.html \
 	html/community.html \
 	html/contribution.html \
 	html/contribution/development.html \
@@ -944,6 +1003,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/api.html \
 	html/reference/api/grn_expr.html \
 	html/reference/cast.html \
+	html/reference/command_version.html \
 	html/reference/commands.html \
 	html/reference/commands/cache_limit.html \
 	html/reference/commands/check.html \
