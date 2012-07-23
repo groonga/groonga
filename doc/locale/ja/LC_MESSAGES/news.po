@@ -119,7 +119,7 @@ msgid ""
 "Fixed a build problem about groonga-httpd on Mac OS X. [Reported by SHIMADA "
 "Koji]"
 msgstr ""
-"groonga-httpdが Mac OS Xでビルドできない問題を修正。[SHIMADA Kojiさんが報告]"
+"groonga-httpdが Mac OS Xでビルドできない問題を修正。[島田 浩二さんが報告]"
 
 # 56f6e702bc9c4dbe8c9d941272ddefe0
 #: ../../../source/news.txt:35
@@ -189,7 +189,7 @@ msgstr "感謝"
 # d57ff5dd3dc542cea83143484c6868f4
 #: ../../../source/news.txt:50
 msgid "SHIMADA Koji"
-msgstr "SHIMADA Kojiさん"
+msgstr "島田 浩二さん"
 
 # 96dd9cfb2ff048c3a38a1d05e8efa773
 #: ../../../source/news.txt:51 ../../../source/news.txt:99
