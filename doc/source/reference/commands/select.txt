@@ -90,7 +90,7 @@ OK. The schema and data for examples are ready.
 Simple usage
 ^^^^^^^^^^^^
 
-Here is the most simple usage with the above shema and data. It outputs
+Here is the most simple usage with the above schema and data. It outputs
 all records in ``Entries`` table.
 
 .. groonga-command
