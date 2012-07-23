@@ -2,33 +2,6 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/__init__.py \
 	$(top_srcdir)/doc/source/characteristic.txt \
 	$(top_srcdir)/doc/source/command_version.txt \
-	$(top_srcdir)/doc/source/commands.txt \
-	$(top_srcdir)/doc/source/commands/cache_limit.txt \
-	$(top_srcdir)/doc/source/commands/check.txt \
-	$(top_srcdir)/doc/source/commands/clearlock.txt \
-	$(top_srcdir)/doc/source/commands/column_create.txt \
-	$(top_srcdir)/doc/source/commands/column_list.txt \
-	$(top_srcdir)/doc/source/commands/column_remove.txt \
-	$(top_srcdir)/doc/source/commands/define_selector.txt \
-	$(top_srcdir)/doc/source/commands/defrag.txt \
-	$(top_srcdir)/doc/source/commands/delete.txt \
-	$(top_srcdir)/doc/source/commands/dump.txt \
-	$(top_srcdir)/doc/source/commands/load.txt \
-	$(top_srcdir)/doc/source/commands/log_level.txt \
-	$(top_srcdir)/doc/source/commands/log_put.txt \
-	$(top_srcdir)/doc/source/commands/log_reopen.txt \
-	$(top_srcdir)/doc/source/commands/quit.txt \
-	$(top_srcdir)/doc/source/commands/select.txt \
-	$(top_srcdir)/doc/source/commands/shutdown.txt \
-	$(top_srcdir)/doc/source/commands/status.txt \
-	$(top_srcdir)/doc/source/commands/suggest.txt \
-	$(top_srcdir)/doc/source/commands/table_create.txt \
-	$(top_srcdir)/doc/source/commands/table_list.txt \
-	$(top_srcdir)/doc/source/commands/table_remove.txt \
-	$(top_srcdir)/doc/source/commands/view_add.txt \
-	$(top_srcdir)/doc/source/commands_not_implemented/add.txt \
-	$(top_srcdir)/doc/source/commands_not_implemented/get.txt \
-	$(top_srcdir)/doc/source/commands_not_implemented/set.txt \
 	$(top_srcdir)/doc/source/community.txt \
 	$(top_srcdir)/doc/source/conf.py \
 	$(top_srcdir)/doc/source/contribution.txt \
@@ -44,62 +17,55 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/contribution/report.txt \
 	$(top_srcdir)/doc/source/development.txt \
 	$(top_srcdir)/doc/source/development/travis-ci.txt \
-	$(top_srcdir)/doc/source/example/commands/select/filter_equal.log \
-	$(top_srcdir)/doc/source/example/commands/select/filter_less_than.log \
-	$(top_srcdir)/doc/source/example/commands/select/limit_negative.log \
-	$(top_srcdir)/doc/source/example/commands/select/limit_simple.log \
-	$(top_srcdir)/doc/source/example/commands/select/match_columns_simple.log \
-	$(top_srcdir)/doc/source/example/commands/select/match_columns_some_columns.log \
-	$(top_srcdir)/doc/source/example/commands/select/match_columns_weight.log \
-	$(top_srcdir)/doc/source/example/commands/select/match_escalation_threshold.log \
-	$(top_srcdir)/doc/source/example/commands/select/no_limit.log \
-	$(top_srcdir)/doc/source/example/commands/select/offset_negative.log \
-	$(top_srcdir)/doc/source/example/commands/select/offset_simple.log \
-	$(top_srcdir)/doc/source/example/commands/select/output_columns_asterisk.log \
-	$(top_srcdir)/doc/source/example/commands/select/output_columns_simple.log \
-	$(top_srcdir)/doc/source/example/commands/select/paging.log \
-	$(top_srcdir)/doc/source/example/commands/select/query_and.log \
-	$(top_srcdir)/doc/source/example/commands/select/query_equal.log \
-	$(top_srcdir)/doc/source/example/commands/select/query_expansion_complex.log \
-	$(top_srcdir)/doc/source/example/commands/select/query_expansion_substitute.log \
-	$(top_srcdir)/doc/source/example/commands/select/query_expansion_substitution_table.log \
-	$(top_srcdir)/doc/source/example/commands/select/query_less_than.log \
-	$(top_srcdir)/doc/source/example/commands/select/query_or.log \
-	$(top_srcdir)/doc/source/example/commands/select/simple_filter.log \
-	$(top_srcdir)/doc/source/example/commands/select/simple_query.log \
-	$(top_srcdir)/doc/source/example/commands/select/simple_usage.log \
-	$(top_srcdir)/doc/source/example/commands/select/sortby_descending.log \
-	$(top_srcdir)/doc/source/example/commands/select/sortby_score_with_query.log \
-	$(top_srcdir)/doc/source/example/commands/select/sortby_simple.log \
-	$(top_srcdir)/doc/source/example/commands/select/table_nonexistent.log \
-	$(top_srcdir)/doc/source/example/commands/select/usage_setup.log \
-	$(top_srcdir)/doc/source/example/commands/status.log \
-	$(top_srcdir)/doc/source/example/commands/suggest-completion.log \
-	$(top_srcdir)/doc/source/example/commands/suggest-correction.log \
-	$(top_srcdir)/doc/source/example/commands/suggest-learn-completion.log \
-	$(top_srcdir)/doc/source/example/commands/suggest-learn-correction.log \
-	$(top_srcdir)/doc/source/example/commands/suggest-learn-suggestion.log \
-	$(top_srcdir)/doc/source/example/commands/suggest-mixed.log \
-	$(top_srcdir)/doc/source/example/commands/suggest-suggestion.log \
-	$(top_srcdir)/doc/source/example/commands/table_list.log \
 	$(top_srcdir)/doc/source/example/completion-1.log \
 	$(top_srcdir)/doc/source/example/correction-1.log \
-	$(top_srcdir)/doc/source/example/executables/groonga-httpd.log \
-	$(top_srcdir)/doc/source/example/functions/geo_distance_distance_ellipsoid.log \
-	$(top_srcdir)/doc/source/example/functions/geo_distance_distance_rectangle.log \
-	$(top_srcdir)/doc/source/example/functions/geo_distance_distance_sphere.log \
-	$(top_srcdir)/doc/source/example/functions/geo_distance_location_ellipsoid.log \
-	$(top_srcdir)/doc/source/example/functions/geo_distance_location_rectangle.log \
-	$(top_srcdir)/doc/source/example/functions/geo_distance_location_sphere.log \
-	$(top_srcdir)/doc/source/example/functions/geo_distance_setup_distance.log \
-	$(top_srcdir)/doc/source/example/functions/geo_distance_setup_location.log \
-	$(top_srcdir)/doc/source/example/indexing-data.log \
-	$(top_srcdir)/doc/source/example/indexing-offline-index-construction.log \
-	$(top_srcdir)/doc/source/example/indexing-online-index-construction.log \
-	$(top_srcdir)/doc/source/example/indexing-schema.log \
-	$(top_srcdir)/doc/source/example/indexing-search-after-offline-index-construction.log \
-	$(top_srcdir)/doc/source/example/indexing-search-after-online-index-construction.log \
-	$(top_srcdir)/doc/source/example/indexing-search-without-index.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/filter_equal.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/filter_less_than.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/limit_negative.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/limit_simple.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/match_columns_simple.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/match_columns_some_columns.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/match_columns_weight.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/match_escalation_threshold.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/no_limit.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/offset_negative.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/offset_simple.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/output_columns_asterisk.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/output_columns_simple.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/paging.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/query_and.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/query_equal.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/query_expansion_complex.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/query_expansion_substitute.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/query_expansion_substitution_table.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/query_less_than.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/query_or.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/simple_filter.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/simple_query.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/simple_usage.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/sortby_descending.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/sortby_score_with_query.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/sortby_simple.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/table_nonexistent.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/usage_setup.log \
+	$(top_srcdir)/doc/source/example/reference/commands/status.log \
+	$(top_srcdir)/doc/source/example/reference/commands/suggest-completion.log \
+	$(top_srcdir)/doc/source/example/reference/commands/suggest-correction.log \
+	$(top_srcdir)/doc/source/example/reference/commands/suggest-learn-completion.log \
+	$(top_srcdir)/doc/source/example/reference/commands/suggest-learn-correction.log \
+	$(top_srcdir)/doc/source/example/reference/commands/suggest-learn-suggestion.log \
+	$(top_srcdir)/doc/source/example/reference/commands/suggest-mixed.log \
+	$(top_srcdir)/doc/source/example/reference/commands/suggest-suggestion.log \
+	$(top_srcdir)/doc/source/example/reference/commands/table_list.log \
+	$(top_srcdir)/doc/source/example/reference/executables/groonga-httpd.log \
+	$(top_srcdir)/doc/source/example/reference/functions/geo_distance_distance_ellipsoid.log \
+	$(top_srcdir)/doc/source/example/reference/functions/geo_distance_distance_rectangle.log \
+	$(top_srcdir)/doc/source/example/reference/functions/geo_distance_distance_sphere.log \
+	$(top_srcdir)/doc/source/example/reference/functions/geo_distance_location_ellipsoid.log \
+	$(top_srcdir)/doc/source/example/reference/functions/geo_distance_location_rectangle.log \
+	$(top_srcdir)/doc/source/example/reference/functions/geo_distance_location_sphere.log \
+	$(top_srcdir)/doc/source/example/reference/functions/geo_distance_setup_distance.log \
+	$(top_srcdir)/doc/source/example/reference/functions/geo_distance_setup_location.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/setup.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/simple_equal.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/simple_full_text_search.log \
@@ -117,12 +83,20 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/simple_phrase_search_with_explicit_match_column.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/simple_prefix_search.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/simple_suffix_search.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_control_syntax_ternary_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_match_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_near_search_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_prefix_search_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_similar_search_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_suffix_search_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_term_extract_operator.log \
+	$(top_srcdir)/doc/source/example/reference/indexing-data.log \
+	$(top_srcdir)/doc/source/example/reference/indexing-offline-index-construction.log \
+	$(top_srcdir)/doc/source/example/reference/indexing-online-index-construction.log \
+	$(top_srcdir)/doc/source/example/reference/indexing-schema.log \
+	$(top_srcdir)/doc/source/example/reference/indexing-search-after-offline-index-construction.log \
+	$(top_srcdir)/doc/source/example/reference/indexing-search-after-online-index-construction.log \
+	$(top_srcdir)/doc/source/example/reference/indexing-search-without-index.log \
 	$(top_srcdir)/doc/source/example/suggestion-1.log \
 	$(top_srcdir)/doc/source/example/tutorial/data-1.log \
 	$(top_srcdir)/doc/source/example/tutorial/data-2.log \
@@ -192,20 +166,6 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/tutorial/search-5.log \
 	$(top_srcdir)/doc/source/example/tutorial/search-6.log \
 	$(top_srcdir)/doc/source/example/tutorial/search-7.log \
-	$(top_srcdir)/doc/source/executables.txt \
-	$(top_srcdir)/doc/source/executables/grnslap.txt \
-	$(top_srcdir)/doc/source/executables/grntest.txt \
-	$(top_srcdir)/doc/source/executables/groonga-http.txt \
-	$(top_srcdir)/doc/source/executables/groonga-httpd.txt \
-	$(top_srcdir)/doc/source/executables/groonga-suggest-create-dataset.txt \
-	$(top_srcdir)/doc/source/executables/groonga.txt \
-	$(top_srcdir)/doc/source/functions.txt \
-	$(top_srcdir)/doc/source/functions/edit_distance.txt \
-	$(top_srcdir)/doc/source/functions/geo_distance.txt \
-	$(top_srcdir)/doc/source/functions/geo_in_circle.txt \
-	$(top_srcdir)/doc/source/functions/geo_in_rectangle.txt \
-	$(top_srcdir)/doc/source/functions/now.txt \
-	$(top_srcdir)/doc/source/functions/rand.txt \
 	$(top_srcdir)/doc/source/geolocation_search.txt \
 	$(top_srcdir)/doc/source/images/fulltext-introduction/array.png \
 	$(top_srcdir)/doc/source/images/fulltext-introduction/array.svg \
@@ -287,7 +247,6 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/images/geo-search-in-rectangle.png \
 	$(top_srcdir)/doc/source/images/geo-search-in-rectangle.svg \
 	$(top_srcdir)/doc/source/index.txt \
-	$(top_srcdir)/doc/source/indexing.txt \
 	$(top_srcdir)/doc/source/install.txt \
 	$(top_srcdir)/doc/source/install/centos.txt \
 	$(top_srcdir)/doc/source/install/debian.txt \
@@ -298,23 +257,67 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/install/ubuntu.txt \
 	$(top_srcdir)/doc/source/install/windows.txt \
 	$(top_srcdir)/doc/source/limitations.txt \
-	$(top_srcdir)/doc/source/log.txt \
 	$(top_srcdir)/doc/source/news.txt \
 	$(top_srcdir)/doc/source/news/0.x.txt \
 	$(top_srcdir)/doc/source/news/1.0.x.txt \
 	$(top_srcdir)/doc/source/news/1.1.x.txt \
 	$(top_srcdir)/doc/source/news/1.2.x.txt \
 	$(top_srcdir)/doc/source/news/senna.txt \
-	$(top_srcdir)/doc/source/output.txt \
-	$(top_srcdir)/doc/source/pseudo_column.txt \
 	$(top_srcdir)/doc/source/rdoc.py \
 	$(top_srcdir)/doc/source/reference.txt \
 	$(top_srcdir)/doc/source/reference/api.txt \
 	$(top_srcdir)/doc/source/reference/api/grn_expr.txt \
 	$(top_srcdir)/doc/source/reference/cast.txt \
+	$(top_srcdir)/doc/source/reference/commands.txt \
+	$(top_srcdir)/doc/source/reference/commands/cache_limit.txt \
+	$(top_srcdir)/doc/source/reference/commands/check.txt \
+	$(top_srcdir)/doc/source/reference/commands/clearlock.txt \
+	$(top_srcdir)/doc/source/reference/commands/column_create.txt \
+	$(top_srcdir)/doc/source/reference/commands/column_list.txt \
+	$(top_srcdir)/doc/source/reference/commands/column_remove.txt \
+	$(top_srcdir)/doc/source/reference/commands/define_selector.txt \
+	$(top_srcdir)/doc/source/reference/commands/defrag.txt \
+	$(top_srcdir)/doc/source/reference/commands/delete.txt \
+	$(top_srcdir)/doc/source/reference/commands/dump.txt \
+	$(top_srcdir)/doc/source/reference/commands/load.txt \
+	$(top_srcdir)/doc/source/reference/commands/log_level.txt \
+	$(top_srcdir)/doc/source/reference/commands/log_put.txt \
+	$(top_srcdir)/doc/source/reference/commands/log_reopen.txt \
+	$(top_srcdir)/doc/source/reference/commands/quit.txt \
+	$(top_srcdir)/doc/source/reference/commands/select.txt \
+	$(top_srcdir)/doc/source/reference/commands/shutdown.txt \
+	$(top_srcdir)/doc/source/reference/commands/status.txt \
+	$(top_srcdir)/doc/source/reference/commands/suggest.txt \
+	$(top_srcdir)/doc/source/reference/commands/table_create.txt \
+	$(top_srcdir)/doc/source/reference/commands/table_list.txt \
+	$(top_srcdir)/doc/source/reference/commands/table_remove.txt \
+	$(top_srcdir)/doc/source/reference/commands/view_add.txt \
+	$(top_srcdir)/doc/source/reference/commands_not_implemented/add.txt \
+	$(top_srcdir)/doc/source/reference/commands_not_implemented/get.txt \
+	$(top_srcdir)/doc/source/reference/commands_not_implemented/set.txt \
+	$(top_srcdir)/doc/source/reference/executables.txt \
+	$(top_srcdir)/doc/source/reference/executables/grnslap.txt \
+	$(top_srcdir)/doc/source/reference/executables/grntest.txt \
+	$(top_srcdir)/doc/source/reference/executables/groonga-http.txt \
+	$(top_srcdir)/doc/source/reference/executables/groonga-httpd.txt \
+	$(top_srcdir)/doc/source/reference/executables/groonga-suggest-create-dataset.txt \
+	$(top_srcdir)/doc/source/reference/executables/groonga.txt \
+	$(top_srcdir)/doc/source/reference/functions.txt \
+	$(top_srcdir)/doc/source/reference/functions/edit_distance.txt \
+	$(top_srcdir)/doc/source/reference/functions/geo_distance.txt \
+	$(top_srcdir)/doc/source/reference/functions/geo_in_circle.txt \
+	$(top_srcdir)/doc/source/reference/functions/geo_in_rectangle.txt \
+	$(top_srcdir)/doc/source/reference/functions/now.txt \
+	$(top_srcdir)/doc/source/reference/functions/rand.txt \
 	$(top_srcdir)/doc/source/reference/grn_expr.txt \
 	$(top_srcdir)/doc/source/reference/grn_expr/query_syntax.txt \
 	$(top_srcdir)/doc/source/reference/grn_expr/script_syntax.txt \
+	$(top_srcdir)/doc/source/reference/indexing.txt \
+	$(top_srcdir)/doc/source/reference/log.txt \
+	$(top_srcdir)/doc/source/reference/output.txt \
+	$(top_srcdir)/doc/source/reference/pseudo_column.txt \
+	$(top_srcdir)/doc/source/reference/tokenizers.txt \
+	$(top_srcdir)/doc/source/reference/type.txt \
 	$(top_srcdir)/doc/source/spec.txt \
 	$(top_srcdir)/doc/source/spec/search.txt \
 	$(top_srcdir)/doc/source/suggest.txt \
@@ -324,7 +327,6 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/suggest/suggestion.txt \
 	$(top_srcdir)/doc/source/suggest/tutorial.txt \
 	$(top_srcdir)/doc/source/textile.py \
-	$(top_srcdir)/doc/source/tokenizers.txt \
 	$(top_srcdir)/doc/source/troubleshooting.txt \
 	$(top_srcdir)/doc/source/troubleshooting/different_results_with_the_same_keyword.txt \
 	$(top_srcdir)/doc/source/tutorial.txt \
@@ -339,7 +341,6 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/tutorial/patricia_trie.txt \
 	$(top_srcdir)/doc/source/tutorial/query_expansion.txt \
 	$(top_srcdir)/doc/source/tutorial/search.txt \
-	$(top_srcdir)/doc/source/type.txt \
 	$(NULL)
 
 absolute_theme_files = \
@@ -358,33 +359,6 @@ source_files_relative_from_doc_dir = \
 	source/__init__.py \
 	source/characteristic.txt \
 	source/command_version.txt \
-	source/commands.txt \
-	source/commands/cache_limit.txt \
-	source/commands/check.txt \
-	source/commands/clearlock.txt \
-	source/commands/column_create.txt \
-	source/commands/column_list.txt \
-	source/commands/column_remove.txt \
-	source/commands/define_selector.txt \
-	source/commands/defrag.txt \
-	source/commands/delete.txt \
-	source/commands/dump.txt \
-	source/commands/load.txt \
-	source/commands/log_level.txt \
-	source/commands/log_put.txt \
-	source/commands/log_reopen.txt \
-	source/commands/quit.txt \
-	source/commands/select.txt \
-	source/commands/shutdown.txt \
-	source/commands/status.txt \
-	source/commands/suggest.txt \
-	source/commands/table_create.txt \
-	source/commands/table_list.txt \
-	source/commands/table_remove.txt \
-	source/commands/view_add.txt \
-	source/commands_not_implemented/add.txt \
-	source/commands_not_implemented/get.txt \
-	source/commands_not_implemented/set.txt \
 	source/community.txt \
 	source/conf.py \
 	source/contribution.txt \
@@ -400,62 +374,55 @@ source_files_relative_from_doc_dir = \
 	source/contribution/report.txt \
 	source/development.txt \
 	source/development/travis-ci.txt \
-	source/example/commands/select/filter_equal.log \
-	source/example/commands/select/filter_less_than.log \
-	source/example/commands/select/limit_negative.log \
-	source/example/commands/select/limit_simple.log \
-	source/example/commands/select/match_columns_simple.log \
-	source/example/commands/select/match_columns_some_columns.log \
-	source/example/commands/select/match_columns_weight.log \
-	source/example/commands/select/match_escalation_threshold.log \
-	source/example/commands/select/no_limit.log \
-	source/example/commands/select/offset_negative.log \
-	source/example/commands/select/offset_simple.log \
-	source/example/commands/select/output_columns_asterisk.log \
-	source/example/commands/select/output_columns_simple.log \
-	source/example/commands/select/paging.log \
-	source/example/commands/select/query_and.log \
-	source/example/commands/select/query_equal.log \
-	source/example/commands/select/query_expansion_complex.log \
-	source/example/commands/select/query_expansion_substitute.log \
-	source/example/commands/select/query_expansion_substitution_table.log \
-	source/example/commands/select/query_less_than.log \
-	source/example/commands/select/query_or.log \
-	source/example/commands/select/simple_filter.log \
-	source/example/commands/select/simple_query.log \
-	source/example/commands/select/simple_usage.log \
-	source/example/commands/select/sortby_descending.log \
-	source/example/commands/select/sortby_score_with_query.log \
-	source/example/commands/select/sortby_simple.log \
-	source/example/commands/select/table_nonexistent.log \
-	source/example/commands/select/usage_setup.log \
-	source/example/commands/status.log \
-	source/example/commands/suggest-completion.log \
-	source/example/commands/suggest-correction.log \
-	source/example/commands/suggest-learn-completion.log \
-	source/example/commands/suggest-learn-correction.log \
-	source/example/commands/suggest-learn-suggestion.log \
-	source/example/commands/suggest-mixed.log \
-	source/example/commands/suggest-suggestion.log \
-	source/example/commands/table_list.log \
 	source/example/completion-1.log \
 	source/example/correction-1.log \
-	source/example/executables/groonga-httpd.log \
-	source/example/functions/geo_distance_distance_ellipsoid.log \
-	source/example/functions/geo_distance_distance_rectangle.log \
-	source/example/functions/geo_distance_distance_sphere.log \
-	source/example/functions/geo_distance_location_ellipsoid.log \
-	source/example/functions/geo_distance_location_rectangle.log \
-	source/example/functions/geo_distance_location_sphere.log \
-	source/example/functions/geo_distance_setup_distance.log \
-	source/example/functions/geo_distance_setup_location.log \
-	source/example/indexing-data.log \
-	source/example/indexing-offline-index-construction.log \
-	source/example/indexing-online-index-construction.log \
-	source/example/indexing-schema.log \
-	source/example/indexing-search-after-offline-index-construction.log \
-	source/example/indexing-search-after-online-index-construction.log \
-	source/example/indexing-search-without-index.log \
+	source/example/reference/commands/select/filter_equal.log \
+	source/example/reference/commands/select/filter_less_than.log \
+	source/example/reference/commands/select/limit_negative.log \
+	source/example/reference/commands/select/limit_simple.log \
+	source/example/reference/commands/select/match_columns_simple.log \
+	source/example/reference/commands/select/match_columns_some_columns.log \
+	source/example/reference/commands/select/match_columns_weight.log \
+	source/example/reference/commands/select/match_escalation_threshold.log \
+	source/example/reference/commands/select/no_limit.log \
+	source/example/reference/commands/select/offset_negative.log \
+	source/example/reference/commands/select/offset_simple.log \
+	source/example/reference/commands/select/output_columns_asterisk.log \
+	source/example/reference/commands/select/output_columns_simple.log \
+	source/example/reference/commands/select/paging.log \
+	source/example/reference/commands/select/query_and.log \
+	source/example/reference/commands/select/query_equal.log \
+	source/example/reference/commands/select/query_expansion_complex.log \
+	source/example/reference/commands/select/query_expansion_substitute.log \
+	source/example/reference/commands/select/query_expansion_substitution_table.log \
+	source/example/reference/commands/select/query_less_than.log \
+	source/example/reference/commands/select/query_or.log \
+	source/example/reference/commands/select/simple_filter.log \
+	source/example/reference/commands/select/simple_query.log \
+	source/example/reference/commands/select/simple_usage.log \
+	source/example/reference/commands/select/sortby_descending.log \
+	source/example/reference/commands/select/sortby_score_with_query.log \
+	source/example/reference/commands/select/sortby_simple.log \
+	source/example/reference/commands/select/table_nonexistent.log \
+	source/example/reference/commands/select/usage_setup.log \
+	source/example/reference/commands/status.log \
+	source/example/reference/commands/suggest-completion.log \
+	source/example/reference/commands/suggest-correction.log \
+	source/example/reference/commands/suggest-learn-completion.log \
+	source/example/reference/commands/suggest-learn-correction.log \
+	source/example/reference/commands/suggest-learn-suggestion.log \
+	source/example/reference/commands/suggest-mixed.log \
+	source/example/reference/commands/suggest-suggestion.log \
+	source/example/reference/commands/table_list.log \
+	source/example/reference/executables/groonga-httpd.log \
+	source/example/reference/functions/geo_distance_distance_ellipsoid.log \
+	source/example/reference/functions/geo_distance_distance_rectangle.log \
+	source/example/reference/functions/geo_distance_distance_sphere.log \
+	source/example/reference/functions/geo_distance_location_ellipsoid.log \
+	source/example/reference/functions/geo_distance_location_rectangle.log \
+	source/example/reference/functions/geo_distance_location_sphere.log \
+	source/example/reference/functions/geo_distance_setup_distance.log \
+	source/example/reference/functions/geo_distance_setup_location.log \
 	source/example/reference/grn_expr/query_syntax/setup.log \
 	source/example/reference/grn_expr/query_syntax/simple_equal.log \
 	source/example/reference/grn_expr/query_syntax/simple_full_text_search.log \
@@ -473,12 +440,20 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/grn_expr/query_syntax/simple_phrase_search_with_explicit_match_column.log \
 	source/example/reference/grn_expr/query_syntax/simple_prefix_search.log \
 	source/example/reference/grn_expr/query_syntax/simple_suffix_search.log \
+	source/example/reference/grn_expr/script_syntax/simple_control_syntax_ternary_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_match_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_near_search_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_prefix_search_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_similar_search_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_suffix_search_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_term_extract_operator.log \
+	source/example/reference/indexing-data.log \
+	source/example/reference/indexing-offline-index-construction.log \
+	source/example/reference/indexing-online-index-construction.log \
+	source/example/reference/indexing-schema.log \
+	source/example/reference/indexing-search-after-offline-index-construction.log \
+	source/example/reference/indexing-search-after-online-index-construction.log \
+	source/example/reference/indexing-search-without-index.log \
 	source/example/suggestion-1.log \
 	source/example/tutorial/data-1.log \
 	source/example/tutorial/data-2.log \
@@ -548,20 +523,6 @@ source_files_relative_from_doc_dir = \
 	source/example/tutorial/search-5.log \
 	source/example/tutorial/search-6.log \
 	source/example/tutorial/search-7.log \
-	source/executables.txt \
-	source/executables/grnslap.txt \
-	source/executables/grntest.txt \
-	source/executables/groonga-http.txt \
-	source/executables/groonga-httpd.txt \
-	source/executables/groonga-suggest-create-dataset.txt \
-	source/executables/groonga.txt \
-	source/functions.txt \
-	source/functions/edit_distance.txt \
-	source/functions/geo_distance.txt \
-	source/functions/geo_in_circle.txt \
-	source/functions/geo_in_rectangle.txt \
-	source/functions/now.txt \
-	source/functions/rand.txt \
 	source/geolocation_search.txt \
 	source/images/fulltext-introduction/array.png \
 	source/images/fulltext-introduction/array.svg \
@@ -643,7 +604,6 @@ source_files_relative_from_doc_dir = \
 	source/images/geo-search-in-rectangle.png \
 	source/images/geo-search-in-rectangle.svg \
 	source/index.txt \
-	source/indexing.txt \
 	source/install.txt \
 	source/install/centos.txt \
 	source/install/debian.txt \
@@ -654,23 +614,67 @@ source_files_relative_from_doc_dir = \
 	source/install/ubuntu.txt \
 	source/install/windows.txt \
 	source/limitations.txt \
-	source/log.txt \
 	source/news.txt \
 	source/news/0.x.txt \
 	source/news/1.0.x.txt \
 	source/news/1.1.x.txt \
 	source/news/1.2.x.txt \
 	source/news/senna.txt \
-	source/output.txt \
-	source/pseudo_column.txt \
 	source/rdoc.py \
 	source/reference.txt \
 	source/reference/api.txt \
 	source/reference/api/grn_expr.txt \
 	source/reference/cast.txt \
+	source/reference/commands.txt \
+	source/reference/commands/cache_limit.txt \
+	source/reference/commands/check.txt \
+	source/reference/commands/clearlock.txt \
+	source/reference/commands/column_create.txt \
+	source/reference/commands/column_list.txt \
+	source/reference/commands/column_remove.txt \
+	source/reference/commands/define_selector.txt \
+	source/reference/commands/defrag.txt \
+	source/reference/commands/delete.txt \
+	source/reference/commands/dump.txt \
+	source/reference/commands/load.txt \
+	source/reference/commands/log_level.txt \
+	source/reference/commands/log_put.txt \
+	source/reference/commands/log_reopen.txt \
+	source/reference/commands/quit.txt \
+	source/reference/commands/select.txt \
+	source/reference/commands/shutdown.txt \
+	source/reference/commands/status.txt \
+	source/reference/commands/suggest.txt \
+	source/reference/commands/table_create.txt \
+	source/reference/commands/table_list.txt \
+	source/reference/commands/table_remove.txt \
+	source/reference/commands/view_add.txt \
+	source/reference/commands_not_implemented/add.txt \
+	source/reference/commands_not_implemented/get.txt \
+	source/reference/commands_not_implemented/set.txt \
+	source/reference/executables.txt \
+	source/reference/executables/grnslap.txt \
+	source/reference/executables/grntest.txt \
+	source/reference/executables/groonga-http.txt \
+	source/reference/executables/groonga-httpd.txt \
+	source/reference/executables/groonga-suggest-create-dataset.txt \
+	source/reference/executables/groonga.txt \
+	source/reference/functions.txt \
+	source/reference/functions/edit_distance.txt \
+	source/reference/functions/geo_distance.txt \
+	source/reference/functions/geo_in_circle.txt \
+	source/reference/functions/geo_in_rectangle.txt \
+	source/reference/functions/now.txt \
+	source/reference/functions/rand.txt \
 	source/reference/grn_expr.txt \
 	source/reference/grn_expr/query_syntax.txt \
 	source/reference/grn_expr/script_syntax.txt \
+	source/reference/indexing.txt \
+	source/reference/log.txt \
+	source/reference/output.txt \
+	source/reference/pseudo_column.txt \
+	source/reference/tokenizers.txt \
+	source/reference/type.txt \
 	source/spec.txt \
 	source/spec/search.txt \
 	source/suggest.txt \
@@ -680,7 +684,6 @@ source_files_relative_from_doc_dir = \
 	source/suggest/suggestion.txt \
 	source/suggest/tutorial.txt \
 	source/textile.py \
-	source/tokenizers.txt \
 	source/troubleshooting.txt \
 	source/troubleshooting/different_results_with_the_same_keyword.txt \
 	source/tutorial.txt \
@@ -695,7 +698,6 @@ source_files_relative_from_doc_dir = \
 	source/tutorial/patricia_trie.txt \
 	source/tutorial/query_expansion.txt \
 	source/tutorial/search.txt \
-	source/type.txt \
 	$(NULL)
 
 theme_files_relative_from_doc_dir = \
@@ -713,113 +715,77 @@ theme_files_relative_from_doc_dir = \
 po_files = \
 	characteristic.po \
 	command_version.po \
-	commands.po \
 	community.po \
 	conf.po \
 	contribution.po \
 	development.po \
-	executables.po \
-	functions.po \
 	geolocation_search.po \
 	index.po \
-	indexing.po \
 	install.po \
 	limitations.po \
-	log.po \
 	news.po \
-	output.po \
-	pseudo_column.po \
 	reference.po \
 	spec.po \
 	suggest.po \
-	tokenizers.po \
 	troubleshooting.po \
 	tutorial.po \
-	type.po \
 	$(NULL)
 
 po_files_relative_from_locale_dir = \
 	LC_MESSAGES/characteristic.po \
 	LC_MESSAGES/command_version.po \
-	LC_MESSAGES/commands.po \
 	LC_MESSAGES/community.po \
 	LC_MESSAGES/conf.po \
 	LC_MESSAGES/contribution.po \
 	LC_MESSAGES/development.po \
-	LC_MESSAGES/executables.po \
-	LC_MESSAGES/functions.po \
 	LC_MESSAGES/geolocation_search.po \
 	LC_MESSAGES/index.po \
-	LC_MESSAGES/indexing.po \
 	LC_MESSAGES/install.po \
 	LC_MESSAGES/limitations.po \
-	LC_MESSAGES/log.po \
 	LC_MESSAGES/news.po \
-	LC_MESSAGES/output.po \
-	LC_MESSAGES/pseudo_column.po \
 	LC_MESSAGES/reference.po \
 	LC_MESSAGES/spec.po \
 	LC_MESSAGES/suggest.po \
-	LC_MESSAGES/tokenizers.po \
 	LC_MESSAGES/troubleshooting.po \
 	LC_MESSAGES/tutorial.po \
-	LC_MESSAGES/type.po \
 	$(NULL)
 
 mo_files = \
 	characteristic.mo \
 	command_version.mo \
-	commands.mo \
 	community.mo \
 	conf.mo \
 	contribution.mo \
 	development.mo \
-	executables.mo \
-	functions.mo \
 	geolocation_search.mo \
 	index.mo \
-	indexing.mo \
 	install.mo \
 	limitations.mo \
-	log.mo \
 	news.mo \
-	output.mo \
-	pseudo_column.mo \
 	reference.mo \
 	spec.mo \
 	suggest.mo \
-	tokenizers.mo \
 	troubleshooting.mo \
 	tutorial.mo \
-	type.mo \
 	$(NULL)
 
 mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/characteristic.mo \
 	LC_MESSAGES/command_version.mo \
-	LC_MESSAGES/commands.mo \
 	LC_MESSAGES/community.mo \
 	LC_MESSAGES/conf.mo \
 	LC_MESSAGES/contribution.mo \
 	LC_MESSAGES/development.mo \
-	LC_MESSAGES/executables.mo \
-	LC_MESSAGES/functions.mo \
 	LC_MESSAGES/geolocation_search.mo \
 	LC_MESSAGES/index.mo \
-	LC_MESSAGES/indexing.mo \
 	LC_MESSAGES/install.mo \
 	LC_MESSAGES/limitations.mo \
-	LC_MESSAGES/log.mo \
 	LC_MESSAGES/news.mo \
-	LC_MESSAGES/output.mo \
-	LC_MESSAGES/pseudo_column.mo \
 	LC_MESSAGES/reference.mo \
 	LC_MESSAGES/spec.mo \
 	LC_MESSAGES/suggest.mo \
-	LC_MESSAGES/tokenizers.mo \
 	LC_MESSAGES/troubleshooting.mo \
 	LC_MESSAGES/tutorial.mo \
-	LC_MESSAGES/type.mo \
 	$(NULL)
 
 html_files_relative_from_locale_dir = \
@@ -827,30 +793,6 @@ html_files_relative_from_locale_dir = \
 	html/_images/geo-points.png \
 	html/_sources/characteristic.txt \
 	html/_sources/command_version.txt \
-	html/_sources/commands.txt \
-	html/_sources/commands/cache_limit.txt \
-	html/_sources/commands/check.txt \
-	html/_sources/commands/clearlock.txt \
-	html/_sources/commands/column_create.txt \
-	html/_sources/commands/column_list.txt \
-	html/_sources/commands/column_remove.txt \
-	html/_sources/commands/define_selector.txt \
-	html/_sources/commands/defrag.txt \
-	html/_sources/commands/delete.txt \
-	html/_sources/commands/dump.txt \
-	html/_sources/commands/load.txt \
-	html/_sources/commands/log_level.txt \
-	html/_sources/commands/log_put.txt \
-	html/_sources/commands/log_reopen.txt \
-	html/_sources/commands/quit.txt \
-	html/_sources/commands/select.txt \
-	html/_sources/commands/shutdown.txt \
-	html/_sources/commands/status.txt \
-	html/_sources/commands/suggest.txt \
-	html/_sources/commands/table_create.txt \
-	html/_sources/commands/table_list.txt \
-	html/_sources/commands/table_remove.txt \
-	html/_sources/commands/view_add.txt \
 	html/_sources/community.txt \
 	html/_sources/contribution.txt \
 	html/_sources/contribution/development.txt \
@@ -865,23 +807,8 @@ html_files_relative_from_locale_dir = \
 	html/_sources/contribution/report.txt \
 	html/_sources/development.txt \
 	html/_sources/development/travis-ci.txt \
-	html/_sources/executables.txt \
-	html/_sources/executables/grnslap.txt \
-	html/_sources/executables/grntest.txt \
-	html/_sources/executables/groonga-http.txt \
-	html/_sources/executables/groonga-httpd.txt \
-	html/_sources/executables/groonga-suggest-create-dataset.txt \
-	html/_sources/executables/groonga.txt \
-	html/_sources/functions.txt \
-	html/_sources/functions/edit_distance.txt \
-	html/_sources/functions/geo_distance.txt \
-	html/_sources/functions/geo_in_circle.txt \
-	html/_sources/functions/geo_in_rectangle.txt \
-	html/_sources/functions/now.txt \
-	html/_sources/functions/rand.txt \
 	html/_sources/geolocation_search.txt \
 	html/_sources/index.txt \
-	html/_sources/indexing.txt \
 	html/_sources/install.txt \
 	html/_sources/install/centos.txt \
 	html/_sources/install/debian.txt \
@@ -892,22 +819,66 @@ html_files_relative_from_locale_dir = \
 	html/_sources/install/ubuntu.txt \
 	html/_sources/install/windows.txt \
 	html/_sources/limitations.txt \
-	html/_sources/log.txt \
 	html/_sources/news.txt \
 	html/_sources/news/0.x.txt \
 	html/_sources/news/1.0.x.txt \
 	html/_sources/news/1.1.x.txt \
 	html/_sources/news/1.2.x.txt \
 	html/_sources/news/senna.txt \
-	html/_sources/output.txt \
-	html/_sources/pseudo_column.txt \
 	html/_sources/reference.txt \
 	html/_sources/reference/api.txt \
 	html/_sources/reference/api/grn_expr.txt \
 	html/_sources/reference/cast.txt \
+	html/_sources/reference/commands.txt \
+	html/_sources/reference/commands/cache_limit.txt \
+	html/_sources/reference/commands/check.txt \
+	html/_sources/reference/commands/clearlock.txt \
+	html/_sources/reference/commands/column_create.txt \
+	html/_sources/reference/commands/column_list.txt \
+	html/_sources/reference/commands/column_remove.txt \
+	html/_sources/reference/commands/define_selector.txt \
+	html/_sources/reference/commands/defrag.txt \
+	html/_sources/reference/commands/delete.txt \
+	html/_sources/reference/commands/dump.txt \
+	html/_sources/reference/commands/load.txt \
+	html/_sources/reference/commands/log_level.txt \
+	html/_sources/reference/commands/log_put.txt \
+	html/_sources/reference/commands/log_reopen.txt \
+	html/_sources/reference/commands/quit.txt \
+	html/_sources/reference/commands/select.txt \
+	html/_sources/reference/commands/shutdown.txt \
+	html/_sources/reference/commands/status.txt \
+	html/_sources/reference/commands/suggest.txt \
+	html/_sources/reference/commands/table_create.txt \
+	html/_sources/reference/commands/table_list.txt \
+	html/_sources/reference/commands/table_remove.txt \
+	html/_sources/reference/commands/view_add.txt \
+	html/_sources/reference/commands_not_implemented/add.txt \
+	html/_sources/reference/commands_not_implemented/get.txt \
+	html/_sources/reference/commands_not_implemented/set.txt \
+	html/_sources/reference/executables.txt \
+	html/_sources/reference/executables/grnslap.txt \
+	html/_sources/reference/executables/grntest.txt \
+	html/_sources/reference/executables/groonga-http.txt \
+	html/_sources/reference/executables/groonga-httpd.txt \
+	html/_sources/reference/executables/groonga-suggest-create-dataset.txt \
+	html/_sources/reference/executables/groonga.txt \
+	html/_sources/reference/functions.txt \
+	html/_sources/reference/functions/edit_distance.txt \
+	html/_sources/reference/functions/geo_distance.txt \
+	html/_sources/reference/functions/geo_in_circle.txt \
+	html/_sources/reference/functions/geo_in_rectangle.txt \
+	html/_sources/reference/functions/now.txt \
+	html/_sources/reference/functions/rand.txt \
 	html/_sources/reference/grn_expr.txt \
 	html/_sources/reference/grn_expr/query_syntax.txt \
 	html/_sources/reference/grn_expr/script_syntax.txt \
+	html/_sources/reference/indexing.txt \
+	html/_sources/reference/log.txt \
+	html/_sources/reference/output.txt \
+	html/_sources/reference/pseudo_column.txt \
+	html/_sources/reference/tokenizers.txt \
+	html/_sources/reference/type.txt \
 	html/_sources/spec.txt \
 	html/_sources/spec/search.txt \
 	html/_sources/suggest.txt \
@@ -916,7 +887,6 @@ html_files_relative_from_locale_dir = \
 	html/_sources/suggest/introduction.txt \
 	html/_sources/suggest/suggestion.txt \
 	html/_sources/suggest/tutorial.txt \
-	html/_sources/tokenizers.txt \
 	html/_sources/troubleshooting.txt \
 	html/_sources/troubleshooting/different_results_with_the_same_keyword.txt \
 	html/_sources/tutorial.txt \
@@ -931,7 +901,6 @@ html_files_relative_from_locale_dir = \
 	html/_sources/tutorial/patricia_trie.txt \
 	html/_sources/tutorial/query_expansion.txt \
 	html/_sources/tutorial/search.txt \
-	html/_sources/type.txt \
 	html/_static/ajax-loader.gif \
 	html/_static/basic.css \
 	html/_static/comment-bright.png \
@@ -959,30 +928,6 @@ html_files_relative_from_locale_dir = \
 	html/_static/websupport.js \
 	html/characteristic.html \
 	html/command_version.html \
-	html/commands.html \
-	html/commands/cache_limit.html \
-	html/commands/check.html \
-	html/commands/clearlock.html \
-	html/commands/column_create.html \
-	html/commands/column_list.html \
-	html/commands/column_remove.html \
-	html/commands/define_selector.html \
-	html/commands/defrag.html \
-	html/commands/delete.html \
-	html/commands/dump.html \
-	html/commands/load.html \
-	html/commands/log_level.html \
-	html/commands/log_put.html \
-	html/commands/log_reopen.html \
-	html/commands/quit.html \
-	html/commands/select.html \
-	html/commands/shutdown.html \
-	html/commands/status.html \
-	html/commands/suggest.html \
-	html/commands/table_create.html \
-	html/commands/table_list.html \
-	html/commands/table_remove.html \
-	html/commands/view_add.html \
 	html/community.html \
 	html/contribution.html \
 	html/contribution/development.html \
@@ -997,24 +942,9 @@ html_files_relative_from_locale_dir = \
 	html/contribution/report.html \
 	html/development.html \
 	html/development/travis-ci.html \
-	html/executables.html \
-	html/executables/grnslap.html \
-	html/executables/grntest.html \
-	html/executables/groonga-http.html \
-	html/executables/groonga-httpd.html \
-	html/executables/groonga-suggest-create-dataset.html \
-	html/executables/groonga.html \
-	html/functions.html \
-	html/functions/edit_distance.html \
-	html/functions/geo_distance.html \
-	html/functions/geo_in_circle.html \
-	html/functions/geo_in_rectangle.html \
-	html/functions/now.html \
-	html/functions/rand.html \
 	html/genindex.html \
 	html/geolocation_search.html \
 	html/index.html \
-	html/indexing.html \
 	html/install.html \
 	html/install/centos.html \
 	html/install/debian.html \
@@ -1025,7 +955,6 @@ html_files_relative_from_locale_dir = \
 	html/install/ubuntu.html \
 	html/install/windows.html \
 	html/limitations.html \
-	html/log.html \
 	html/news.html \
 	html/news/0.x.html \
 	html/news/1.0.x.html \
@@ -1033,15 +962,60 @@ html_files_relative_from_locale_dir = \
 	html/news/1.2.x.html \
 	html/news/senna.html \
 	html/objects.inv \
-	html/output.html \
-	html/pseudo_column.html \
 	html/reference.html \
 	html/reference/api.html \
 	html/reference/api/grn_expr.html \
 	html/reference/cast.html \
+	html/reference/commands.html \
+	html/reference/commands/cache_limit.html \
+	html/reference/commands/check.html \
+	html/reference/commands/clearlock.html \
+	html/reference/commands/column_create.html \
+	html/reference/commands/column_list.html \
+	html/reference/commands/column_remove.html \
+	html/reference/commands/define_selector.html \
+	html/reference/commands/defrag.html \
+	html/reference/commands/delete.html \
+	html/reference/commands/dump.html \
+	html/reference/commands/load.html \
+	html/reference/commands/log_level.html \
+	html/reference/commands/log_put.html \
+	html/reference/commands/log_reopen.html \
+	html/reference/commands/quit.html \
+	html/reference/commands/select.html \
+	html/reference/commands/shutdown.html \
+	html/reference/commands/status.html \
+	html/reference/commands/suggest.html \
+	html/reference/commands/table_create.html \
+	html/reference/commands/table_list.html \
+	html/reference/commands/table_remove.html \
+	html/reference/commands/view_add.html \
+	html/reference/commands_not_implemented/add.html \
+	html/reference/commands_not_implemented/get.html \
+	html/reference/commands_not_implemented/set.html \
+	html/reference/executables.html \
+	html/reference/executables/grnslap.html \
+	html/reference/executables/grntest.html \
+	html/reference/executables/groonga-http.html \
+	html/reference/executables/groonga-httpd.html \
+	html/reference/executables/groonga-suggest-create-dataset.html \
+	html/reference/executables/groonga.html \
+	html/reference/functions.html \
+	html/reference/functions/edit_distance.html \
+	html/reference/functions/geo_distance.html \
+	html/reference/functions/geo_in_circle.html \
+	html/reference/functions/geo_in_rectangle.html \
+	html/reference/functions/now.html \
+	html/reference/functions/rand.html \
 	html/reference/grn_expr.html \
 	html/reference/grn_expr/query_syntax.html \
 	html/reference/grn_expr/script_syntax.html \
+	html/reference/indexing.html \
+	html/reference/log.html \
+	html/reference/output.html \
+	html/reference/pseudo_column.html \
+	html/reference/tokenizers.html \
+	html/reference/type.html \
 	html/search.html \
 	html/searchindex.js \
 	html/spec.html \
@@ -1052,7 +1026,6 @@ html_files_relative_from_locale_dir = \
 	html/suggest/introduction.html \
 	html/suggest/suggestion.html \
 	html/suggest/tutorial.html \
-	html/tokenizers.html \
 	html/troubleshooting.html \
 	html/troubleshooting/different_results_with_the_same_keyword.html \
 	html/tutorial.html \
@@ -1067,6 +1040,5 @@ html_files_relative_from_locale_dir = \
 	html/tutorial/patricia_trie.html \
 	html/tutorial/query_expansion.html \
 	html/tutorial/search.html \
-	html/type.html \
 	$(NULL)
 

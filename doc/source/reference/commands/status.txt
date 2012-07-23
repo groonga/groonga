@@ -56,5 +56,5 @@ json形式
 --
 
 .. groonga-command
-.. include:: ../example/commands/status.log
+.. include:: ../../example/reference/commands/status.log
 .. status

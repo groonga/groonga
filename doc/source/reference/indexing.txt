@@ -54,7 +54,7 @@ to a column that already has data.
 We define a schema:
 
 .. groonga-command
-.. include:: example/indexing-schema.log
+.. include:: ../example/reference/indexing-schema.log
 .. table_create Tweets TABLE_NO_KEY
 .. column_create Tweets content COLUMN_SCALAR ShortText
 .. table_create Lexicon TABLE_HASH_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenBigram
@@ -62,7 +62,7 @@ We define a schema:
 We register data:
 
 .. groonga-command
-.. include:: example/indexing-data.log
+.. include:: ../example/reference/indexing-data.log
 .. load --table Tweets
 .. [
 .. {"content":"Hello!"},
@@ -73,7 +73,7 @@ We register data:
 We search without index. We get no result:
 
 .. groonga-command
-.. include:: example/indexing-search-without-index.log
+.. include:: ../example/reference/indexing-search-without-index.log
 .. select Tweets --match_columns content --query 'good nice'
 
 We create index for ``Tweets.content``. Already registered
@@ -81,20 +81,20 @@ data in ``Tweets.content`` are indexed by offline index
 construction:
 
 .. groonga-command
-.. include:: example/indexing-offline-index-construction.log
+.. include:: ../example/reference/indexing-offline-index-construction.log
 .. column_create Lexicon tweet COLUMN_INDEX|WITH_POSITION Tweets content
 
 We search with index. We get a matched record:
 
 .. groonga-command
-.. include:: example/indexing-search-after-offline-index-construction.log
+.. include:: ../example/reference/indexing-search-after-offline-index-construction.log
 .. select Tweets --match_columns content --query 'good nice'
 
 We register data again. They are indexed by online index
 construction:
 
 .. groonga-command
-.. include:: example/indexing-online-index-construction.log
+.. include:: ../example/reference/indexing-online-index-construction.log
 .. load --table Tweets
 .. [
 .. {"content":"Good morning! Nice day."},
@@ -104,5 +104,5 @@ construction:
 We can also get newly registered records by searching:
 
 .. groonga-command
-.. include:: example/indexing-search-after-online-index-construction.log
+.. include:: ../example/reference/indexing-search-after-online-index-construction.log
 .. select Tweets --match_columns content --query 'good nice'

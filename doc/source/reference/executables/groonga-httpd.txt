@@ -63,7 +63,7 @@ To check, request a simple query (:ref:`command-status`).
 
 .. groonga-command
 .. database: groonga-httpd
-.. include:: ../example/executables/groonga-httpd.log
+.. include:: ../../example/reference/executables/groonga-httpd.log
 .. /d/status
 
 Browse the administration tool

@@ -77,5 +77,5 @@ json形式
   情報の順序は ``テーブル情報名n`` の順序と同じです。
 
 .. groonga-command
-.. include:: ../example/commands/table_list.log
+.. include:: ../../example/reference/commands/table_list.log
 .. table_list

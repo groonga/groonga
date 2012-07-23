@@ -8,14 +8,14 @@
 .. toctree::
    :maxdepth: 2
 
-   executables
-   output
-   commands
-   type
-   tokenizers
-   pseudo_column
+   reference/executables
+   reference/output
+   reference/commands
+   reference/type
+   reference/tokenizers
+   reference/pseudo_column
    reference/grn_expr
-   functions
-   indexing
-   log
+   reference/functions
+   reference/indexing
+   reference/log
    reference/api
