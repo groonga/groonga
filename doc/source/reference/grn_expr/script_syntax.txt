@@ -98,7 +98,7 @@ a literal for ``Say "Hello!".`` string.
 
 String encoding must be the same as encoding of database. The default
 encoding is UTF-8. It can be changed by ``--with-default-encoding``
-configure option, ``--encodiong`` :doc:`/executables/groonga` option
+configure option, ``--encodiong`` :doc:`/reference/executables/groonga` option
 and so on.
 
 Boolean
@@ -116,36 +116,58 @@ literal is supported.
 Time
 ^^^^
 
-TODO: ...
-
 .. note::
 
    This is the groonga original notation.
 
-Time literal doesn't exit. String time notation, integer time notation,
-float time notation are used for it.
+Time literal doesn't exit. There are string time notation, integer
+time notation and float time notation.
+
+String time notation is ``"YYYY/MM/DD hh:mm:ss.uuuuuu"`` or
+``"YYYY-MM-DD hh:mm:ss.uuuuuu"``. ``YYYY`` is year, ``MM`` is month,
+``DD`` is day, ``hh`` is hour, ``mm`` is minute, ``ss`` is second and
+``uuuuuu`` is micro second. It is local time. For example,
+``"2012/07/23 02:41:10.436218"`` is ``2012-07-23T02:41:10.436218`` in
+ISO 8601 format.
+
+Integer time notation is the number of seconds that have elapsed since
+midnight UTC, January 1, 1970. It is also known as POSIX time. For
+example, ``1343011270`` is ``2012-07-23T02:41:10`` in ISO 8601 format.
+
+Float time notation is the number of seconds and micro seconds that
+have elapsed since midnight UTC, January 1, 1970. It is also known as
+POSIX time. For example, ``1343011270.436218`` is
+``2012-07-23T02:41:10.436218`` in ISO 8601 format.
 
 Geo point
 ^^^^^^^^^
 
-TODO: ...
-
 .. note::
 
    This is the groonga original notation.
 
-Geo point literal doesn't exist. String geo point notation is used for
-it.
+Geo point literal doesn't exist. There is string geo point notation.
+
+String geo point notation has the following patterns:
+
+  * ``"LATITUDE_IN_MSECxLONGITUDE_IN_MSEC"``
+  * ``"LATITUDE_IN_MSEC,LONGITUDE_IN_MSEC"``
+  * ``"LATITUDE_IN_DEGREExLONGITUDE_IN_DEGREE"``
+  * ``"LATITUDE_IN_DEGREE,LONGITUDE_IN_DEGREE"``
+
+``x`` and ``,`` can be used for separator. Latitude and longitude can
+be represented in milliseconds or degree.
 
 Array
 ^^^^^
 
-TODO: ...
+Array literal is ``[element1, element2, ...]``.
 
 Object literal
 ^^^^^^^^^^^^^^
 
-TODO: ...
+Object literal is ``{name1: value1, name2: value2, ...}``. Groonga
+doesn't support object literal yet.
 
 Control syntaxes
 ----------------
@@ -207,7 +229,7 @@ Here is a simple exmaple.
 .. include:: ../../example/reference/grn_expr/script_syntax/simple_function.log
 .. select Entries --filter 'edit_distance(_key, "Groonga") <= 1'
 
-The expression uses :doc:`/reference/function/edit_distance`. It
+The expression uses :doc:`/reference/functions/edit_distance`. It
 matches records that ``_key`` column value is ``"Groonga"`` like
 value. Similality of ``"Groonga"`` is computed as edit distance. If
 edit distance is less than or equal to 1, the value is treated as
