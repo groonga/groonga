@@ -1,7 +1,6 @@
 absolute_source_files = \
 	$(top_srcdir)/doc/source/__init__.py \
 	$(top_srcdir)/doc/source/characteristic.txt \
-	$(top_srcdir)/doc/source/command_version.txt \
 	$(top_srcdir)/doc/source/community.txt \
 	$(top_srcdir)/doc/source/conf.py \
 	$(top_srcdir)/doc/source/contribution.txt \
@@ -83,13 +82,34 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/simple_phrase_search_with_explicit_match_column.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/simple_prefix_search.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/simple_suffix_search.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_addition_operator.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_bitwise_and_operator.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_bitwise_not_operator.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_bitwise_or_operator.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_bitwise_xor_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_control_syntax_ternary_operator.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_division_operator_quotient.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_division_operator_remainder.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_equal_operator.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_function.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_grouping.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_left_shift_operator.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_logical_and_operator.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_logical_but_operator.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_logical_not_operator.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_logical_or_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_match_operator.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_multiplication_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_near_search_operator.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_not_equal_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_prefix_search_operator.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_right_shift_operator.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_signed_right_shift_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_similar_search_operator.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_subtraction_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_suffix_search_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_term_extract_operator.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_unsigned_right_shift_operator.log \
 	$(top_srcdir)/doc/source/example/reference/indexing-data.log \
 	$(top_srcdir)/doc/source/example/reference/indexing-offline-index-construction.log \
 	$(top_srcdir)/doc/source/example/reference/indexing-online-index-construction.log \
@@ -268,6 +288,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/api.txt \
 	$(top_srcdir)/doc/source/reference/api/grn_expr.txt \
 	$(top_srcdir)/doc/source/reference/cast.txt \
+	$(top_srcdir)/doc/source/reference/command_version.txt \
 	$(top_srcdir)/doc/source/reference/commands.txt \
 	$(top_srcdir)/doc/source/reference/commands/cache_limit.txt \
 	$(top_srcdir)/doc/source/reference/commands/check.txt \
@@ -358,7 +379,6 @@ absolute_theme_files = \
 source_files_relative_from_doc_dir = \
 	source/__init__.py \
 	source/characteristic.txt \
-	source/command_version.txt \
 	source/community.txt \
 	source/conf.py \
 	source/contribution.txt \
@@ -440,13 +460,34 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/grn_expr/query_syntax/simple_phrase_search_with_explicit_match_column.log \
 	source/example/reference/grn_expr/query_syntax/simple_prefix_search.log \
 	source/example/reference/grn_expr/query_syntax/simple_suffix_search.log \
+	source/example/reference/grn_expr/script_syntax/simple_addition_operator.log \
+	source/example/reference/grn_expr/script_syntax/simple_bitwise_and_operator.log \
+	source/example/reference/grn_expr/script_syntax/simple_bitwise_not_operator.log \
+	source/example/reference/grn_expr/script_syntax/simple_bitwise_or_operator.log \
+	source/example/reference/grn_expr/script_syntax/simple_bitwise_xor_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_control_syntax_ternary_operator.log \
+	source/example/reference/grn_expr/script_syntax/simple_division_operator_quotient.log \
+	source/example/reference/grn_expr/script_syntax/simple_division_operator_remainder.log \
+	source/example/reference/grn_expr/script_syntax/simple_equal_operator.log \
+	source/example/reference/grn_expr/script_syntax/simple_function.log \
+	source/example/reference/grn_expr/script_syntax/simple_grouping.log \
+	source/example/reference/grn_expr/script_syntax/simple_left_shift_operator.log \
+	source/example/reference/grn_expr/script_syntax/simple_logical_and_operator.log \
+	source/example/reference/grn_expr/script_syntax/simple_logical_but_operator.log \
+	source/example/reference/grn_expr/script_syntax/simple_logical_not_operator.log \
+	source/example/reference/grn_expr/script_syntax/simple_logical_or_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_match_operator.log \
+	source/example/reference/grn_expr/script_syntax/simple_multiplication_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_near_search_operator.log \
+	source/example/reference/grn_expr/script_syntax/simple_not_equal_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_prefix_search_operator.log \
+	source/example/reference/grn_expr/script_syntax/simple_right_shift_operator.log \
+	source/example/reference/grn_expr/script_syntax/simple_signed_right_shift_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_similar_search_operator.log \
+	source/example/reference/grn_expr/script_syntax/simple_subtraction_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_suffix_search_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_term_extract_operator.log \
+	source/example/reference/grn_expr/script_syntax/simple_unsigned_right_shift_operator.log \
 	source/example/reference/indexing-data.log \
 	source/example/reference/indexing-offline-index-construction.log \
 	source/example/reference/indexing-online-index-construction.log \
@@ -625,6 +666,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/api.txt \
 	source/reference/api/grn_expr.txt \
 	source/reference/cast.txt \
+	source/reference/command_version.txt \
 	source/reference/commands.txt \
 	source/reference/commands/cache_limit.txt \
 	source/reference/commands/check.txt \
@@ -713,79 +755,15 @@ theme_files_relative_from_doc_dir = \
 	$(NULL)
 
 po_files = \
-	characteristic.po \
-	command_version.po \
-	community.po \
-	conf.po \
-	contribution.po \
-	development.po \
-	geolocation_search.po \
-	index.po \
-	install.po \
-	limitations.po \
-	news.po \
-	reference.po \
-	spec.po \
-	suggest.po \
-	troubleshooting.po \
-	tutorial.po \
 	$(NULL)
 
 po_files_relative_from_locale_dir = \
-	LC_MESSAGES/characteristic.po \
-	LC_MESSAGES/command_version.po \
-	LC_MESSAGES/community.po \
-	LC_MESSAGES/conf.po \
-	LC_MESSAGES/contribution.po \
-	LC_MESSAGES/development.po \
-	LC_MESSAGES/geolocation_search.po \
-	LC_MESSAGES/index.po \
-	LC_MESSAGES/install.po \
-	LC_MESSAGES/limitations.po \
-	LC_MESSAGES/news.po \
-	LC_MESSAGES/reference.po \
-	LC_MESSAGES/spec.po \
-	LC_MESSAGES/suggest.po \
-	LC_MESSAGES/troubleshooting.po \
-	LC_MESSAGES/tutorial.po \
 	$(NULL)
 
 mo_files = \
-	characteristic.mo \
-	command_version.mo \
-	community.mo \
-	conf.mo \
-	contribution.mo \
-	development.mo \
-	geolocation_search.mo \
-	index.mo \
-	install.mo \
-	limitations.mo \
-	news.mo \
-	reference.mo \
-	spec.mo \
-	suggest.mo \
-	troubleshooting.mo \
-	tutorial.mo \
 	$(NULL)
 
 mo_files_relative_from_locale_dir = \
-	LC_MESSAGES/characteristic.mo \
-	LC_MESSAGES/command_version.mo \
-	LC_MESSAGES/community.mo \
-	LC_MESSAGES/conf.mo \
-	LC_MESSAGES/contribution.mo \
-	LC_MESSAGES/development.mo \
-	LC_MESSAGES/geolocation_search.mo \
-	LC_MESSAGES/index.mo \
-	LC_MESSAGES/install.mo \
-	LC_MESSAGES/limitations.mo \
-	LC_MESSAGES/news.mo \
-	LC_MESSAGES/reference.mo \
-	LC_MESSAGES/spec.mo \
-	LC_MESSAGES/suggest.mo \
-	LC_MESSAGES/troubleshooting.mo \
-	LC_MESSAGES/tutorial.mo \
 	$(NULL)
 
 html_files_relative_from_locale_dir = \
