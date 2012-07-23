@@ -191,7 +191,7 @@ not equal to 1 and ``n_likes`` column value is equal to ``3``.
 Grouping
 --------
 
-Its syntax is ``(...)``. ``...`` is space separated expression list.
+Its syntax is ``(...)``. ``...`` is comma separated expression list.
 
 ``(...)`` groups one ore more expressions and they can be processed as
 an expression. ``a && b || c`` means that ``a`` and ``b`` are matched
