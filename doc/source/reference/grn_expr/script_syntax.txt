@@ -132,12 +132,12 @@ ISO 8601 format.
 
 Integer time notation is the number of seconds that have elapsed since
 midnight UTC, January 1, 1970. It is also known as POSIX time. For
-example, ``1343011270`` is ``2012-07-23T02:41:10`` in ISO 8601 format.
+example, ``1343011270`` is ``2012-07-23T02:41:10Z`` in ISO 8601 format.
 
 Float time notation is the number of seconds and micro seconds that
-have elapsed since midnight UTC, January 1, 1970. It is also known as
-POSIX time. For example, ``1343011270.436218`` is
-``2012-07-23T02:41:10.436218`` in ISO 8601 format.
+have elapsed since midnight UTC, January 1, 1970. For example,
+``1343011270.436218`` is ``2012-07-23T02:41:10.436218Z`` in ISO 8601
+format.
 
 Geo point
 ^^^^^^^^^
@@ -230,11 +230,11 @@ Here is a simple exmaple.
 .. select Entries --filter 'edit_distance(_key, "Groonga") <= 1'
 
 The expression uses :doc:`/reference/functions/edit_distance`. It
-matches records that ``_key`` column value is ``"Groonga"`` like
-value. Similality of ``"Groonga"`` is computed as edit distance. If
-edit distance is less than or equal to 1, the value is treated as
-similar. In this case, ``"Groonga"`` and ``"Mroonga"`` are treated as
-similar.
+matches records that ``_key`` column value is similar to
+``"Groonga"``. Similality of ``"Groonga"`` is computed as edit
+distance. If edit distance is less than or equal to 1, the value is
+treated as similar. In this case, ``"Groonga"`` and ``"Mroonga"`` are
+treated as similar.
 
 Basic operators
 ---------------
@@ -343,7 +343,7 @@ Here is a simple example.
 .. select Entries --filter '~n_likes == -6'
 
 The expression matches records that ``n_likes`` column value is equal
-to ``5`` because bitwise NOT of ``~5`` is ``-6``.
+to ``5`` because bitwise NOT of ``5`` is equal to ``-6``.
 
 Bitwise AND operator
 ^^^^^^^^^^^^^^^^^^^^
