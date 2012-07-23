@@ -79,7 +79,7 @@ msgid ""
 "Supported near search by ``'column *N \"word1 word2 ...\"'`` in script "
 "syntax. [#1423]"
 msgstr ""
-"スクリプト構文で近傍検索を行う 'column *N \"word1 word2 ...\"' 構文をサポー"
+"スクリプト構文で近傍検索を行う ``'column *N \"word1 word2 ...\"'`` 構文をサポー"
 "ト。 [#1423]"
 
 # b59f74b815014a99a60996b9436b0f1a
