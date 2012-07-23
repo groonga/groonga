@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-07-23 15:32\n"
-"PO-Revision-Date: 2012-07-23 17:54+0900\n"
+"PO-Revision-Date: 2012-07-23 18:34+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -2735,13 +2735,8 @@ msgstr ""
 #: ../../../source/reference/grn_expr/query_syntax.txt:32
 #: ../../../source/reference/grn_expr/script_syntax.txt:28
 #: ../../../source/commands/select.txt:50
-#, fuzzy
 msgid "Here are a schema definition and sample data to show usage."
-msgstr ""
-"#-#-#-#-#  reference.po (1.2.1)  #-#-#-#-#\n"
-"以下は使い方を示すために使うスキーマ定義とサンプルデータです。\n"
-"#-#-#-#-#  commands.po (1.2.1)  #-#-#-#-#\n"
-"使い方を示すために使うスキーマ定義とサンプルデータは以下の通りです。"
+msgstr "使い方を示すために使うスキーマ定義とサンプルデータは以下の通りです。"
 
 # fc1abb5337ca4b508cfab8490c65a053
 # 6cf6adc0a2064db59d4c80c6d7854f78
@@ -2804,7 +2799,6 @@ msgstr ""
 # 8ab1430e32644c2e9b276ecf6548ed31
 #: ../../../source/reference/commands/select.txt:100
 #: ../../../source/commands/select.txt:100
-#, fuzzy
 msgid ""
 "Why does the command output all records? There are two reasons. The first "
 "reason is that the command doesn't specify any search conditions. No search "
@@ -2812,21 +2806,7 @@ msgid ""
 "number of all records is 5. ``select`` command outputs 10 records at a "
 "maximum by default. There are only 5 records. It is less than 10. So the "
 "command outputs all records."
-msgstr ""
-"#-#-#-#-#  reference.po (1.2.1)  #-#-#-#-#\n"
-"どうしてこのコマンドがすべてのレコードを出力するのか。それには2つの理由があり"
-"ます。1つめの理由はこのコマンドが1つも検索条件を指定していないことです。検索"
-"条件を指定しないということはすべてのレコードにマッチするという意味に成りま"
-"す。2つめの理由は全レコード数が5だということです。 ``select`` コマンドはデ"
-"フォルトで最大10レコード出力します。今は5レコードしかなく、これは10より少ない"
-"のでこのこのコマンドはすべてのレコードを出力します。\n"
-"#-#-#-#-#  commands.po (1.2.1)  #-#-#-#-#\n"
-"どうしてこのコマンドがすべてのレコードを出力するのでしょうか？理由は2つです。"
-"1つ目の理由はこのコマンドが検索条件を何も指定していないからです。検索条件を指"
-"定しないとすべてのレコードがマッチします。2つ目の理由は全レコード数が5だから"
-"です。 ``select`` コマンドはデフォルトでは最大10レコードを出力します。この例"
-"では5レコードしかありません。これは10よりも少ないのですべてのレコードを出力し"
-"ます。"
+msgstr "どうしてこのコマンドがすべてのレコードを出力するのでしょうか？理由は2つです。1つ目の理由はこのコマンドが検索条件を何も指定していないからです。検索条件を指定しないとすべてのレコードがマッチします。2つ目の理由は全レコード数が5だからです。 ``select`` コマンドはデフォルトでは最大10レコードを出力します。この例では5レコードしかありません。これは10よりも少ないのですべてのレコードを出力します。"
 
 # 9ce75f34143f463c86d81ed1fbdf8c4c
 # 11c7128772da489fa224cede43ccfb8e
@@ -2839,20 +2819,11 @@ msgstr "検索条件"
 # 04f1a06e812943cf9418e4bfcd8d40d0
 #: ../../../source/reference/commands/select.txt:110
 #: ../../../source/commands/select.txt:110
-#, fuzzy
 msgid ""
 "Search conditions are specified by ``query`` or ``filter``. You can also "
 "specify both ``query`` and ``filter``. It means that selected records must "
 "be matched against both ``query`` and ``filter``."
-msgstr ""
-"#-#-#-#-#  reference.po (1.2.1)  #-#-#-#-#\n"
-"検索条件は ``query`` または ``filter`` で指定します。 ``query`` と "
-"``filter`` を両方指定することもできます。両方指定した場合は、 ``query`` と "
-"``filter`` の両方にマッチしたレコードを検索するという意味になります。\n"
-"#-#-#-#-#  commands.po (1.2.1)  #-#-#-#-#\n"
-"検索条件は ``query`` または ``filter`` で指定します。 ``query`` と "
-"``filter`` を両方指定することもできます。この場合は ``query`` と ``filter`` "
-"の両方の条件にマッチしたレコードが出力されます。"
+msgstr "検索条件は ``query`` または ``filter`` で指定します。 ``query`` と ``filter`` を両方指定することもできます。この場合は ``query`` と ``filter`` の両方の条件にマッチしたレコードが出力されます。"
 
 # 9ce75f34143f463c86d81ed1fbdf8c4c
 # 68e89afbcfed400884d18afd217646c9
@@ -4216,23 +4187,15 @@ msgstr "参考"
 # bb5b870aa8eb4c93871f837a34e6cb41
 #: ../../../source/reference/commands/select.txt:798
 #: ../../../source/commands/select.txt:798
-#, fuzzy
 msgid ":doc:`/reference/grn_expr/query_syntax`"
 msgstr ""
-"#-#-#-#-#  reference.po (1.2.1)  #-#-#-#-#\n"
-":doc:`/reference/grn_expr/query_syntax` の文字列をパースする。\n"
-"#-#-#-#-#  commands.po (1.2.1)  #-#-#-#-#\n"
 
 # 4163ce1de7ac4756b1f856391aa86e46
 # 4c7f959a00c4494ebc92dd9511125bab
 #: ../../../source/reference/commands/select.txt:799
 #: ../../../source/commands/select.txt:799
-#, fuzzy
 msgid ":doc:`/reference/grn_expr/script_syntax`"
 msgstr ""
-"#-#-#-#-#  reference.po (1.2.1)  #-#-#-#-#\n"
-":doc:`/reference/grn_expr/script_syntax` の文字列をパースする。\n"
-"#-#-#-#-#  commands.po (1.2.1)  #-#-#-#-#\n"
 
 # 00db2c5fadde428ebb143245a5b3a855
 #: ../../../source/reference/commands/shutdown.txt:6
@@ -6987,9 +6950,8 @@ msgstr "GeoPoint型の値を指定することができます。 [1]_"
 
 # bde897b0ca22430eb927c3f3d85d70d2
 #: ../../../source/reference/functions/geo_distance.txt:109
-#, fuzzy
 msgid "See :doc:`/reference/type` about GeoPoint."
-msgstr "キャストについては :doc:`/reference/cast` を参照してください。"
+msgstr "GeoPointについては :doc:`/reference/type` を参照してください。"
 
 # f7da97f129624e1299e5459a8ac8caeb
 #: ../../../source/reference/functions/geo_distance.txt:112
@@ -7013,9 +6975,8 @@ msgstr "GeoPoint型の値か座標を表す文字列を指定することがで�
 
 # bde897b0ca22430eb927c3f3d85d70d2
 #: ../../../source/reference/functions/geo_distance.txt:120
-#, fuzzy
 msgid "See :doc:`/reference/type` about GeoPoint and the coordinate."
-msgstr "キャストについては :doc:`/reference/cast` を参照してください。"
+msgstr "GeoPointと座標については :doc:`/reference/type` を参照してください。"
 
 # 063b335227cc45469a645aec28feca86
 #: ../../../source/functions/geo_distance.txt:123
@@ -7622,7 +7583,6 @@ msgstr "grn_expr関連のAPIを呼ぶ。"
 
 # cea010513de244acbd5f40c33eea2882
 #: ../../../source/reference/grn_expr.txt:28
-#, fuzzy
 msgid ""
 ":doc:`/reference/grn_expr/query_syntax` is for common search form in "
 "Internet search site. It's simple and easy to use but it has a limitation. "
@@ -7638,19 +7598,13 @@ msgstr ""
 
 # 1b2b1a4bcb0e4d22940c5021f63a2b50
 #: ../../../source/reference/grn_expr.txt:35
-#, fuzzy
 msgid ""
 ":doc:`/reference/grn_expr/script_syntax` is ECMAScript like syntax. You can "
 "use all condition expresssions and set operations in :doc:`/reference/"
 "grn_expr/script_syntax`. You can use :doc:`/reference/grn_expr/"
 "script_syntax` with ``filter`` option and ``scorer`` option in :doc:`/"
 "reference/commands/select`."
-msgstr ""
-":doc:`/reference/grn_expr/script_syntax` はECMAScript似の構文です。 :doc:`/"
-"reference/grn_expr/script_syntax` ではすべての条件式と集合演算を使えます。 :"
-"doc:`/reference/grn_expr/script_syntax` は :doc:`/commands/select` の "
-"``filter`` オプションで指定する検索条件や ``scorer`` オプションで指定する式で"
-"使えます。"
+msgstr ":doc:`/reference/grn_expr/script_syntax` はECMAScriptに似た構文です。 :doc:`/reference/grn_expr/script_syntax` ではすべての条件式と集合演算を使えます。 :doc:`/reference/grn_expr/script_syntax` は :doc:`/commands/select` の ``filter`` オプションで指定する検索条件や ``scorer`` オプションで指定する式で使えます。"
 
 # 08047bc04d47463db4be5290e839e4b4
 #: ../../../source/reference/grn_expr.txt:41
@@ -7696,19 +7650,13 @@ msgstr ""
 
 # 3b76c01350d74e93a2e3194f8d2bca82
 #: ../../../source/reference/grn_expr/query_syntax.txt:17
-#, fuzzy
 msgid ""
 "Query syntax consists of ``conditional expression``, ``combind expression`` "
 "and ``assignment expression``. Nomrally ``assignment expression`` can be "
 "ignored. Because ``assignment expression`` is disabled in ``--query`` option "
 "of :doc:`/reference/commands/select`. You can use it if you use groonga as "
 "library and customize query syntax parser options."
-msgstr ""
-"クエリ構文は ``条件式`` と ``結合式`` と ``代入式`` から成ります。通常、 ``代"
-"入式`` は考えなくてよいです。なぜなら、 ``代入式`` は :doc:`/commands/"
-"select` の ``--query`` オプションでは無効になっているからです。groongaをライ"
-"ブラリとして使ったときは、クエリ構文のパーサーのオプションをカスタマイズする"
-"ことで ``代入式`` を有効にすることができます。"
+msgstr "クエリ構文は ``条件式`` と ``結合式`` と ``代入式`` から成ります。通常、 ``代入式`` は考えなくてよいです。なぜなら、 ``代入式`` は :doc:`/reference/commands/select` の ``--query`` オプションでは無効になっているからです。groongaをライブラリとして使ったときは、クエリ構文のパーサーのオプションをカスタマイズすることで ``代入式`` を有効にすることができます。"
 
 # f23c41dac8994a2e82f76df831354e96
 #: ../../../source/reference/grn_expr/query_syntax.txt:24
@@ -7834,16 +7782,12 @@ msgstr ""
 # 2e061719632b465184bb238c02394431
 #: ../../../source/reference/grn_expr/query_syntax.txt:114
 #: ../../../source/reference/grn_expr/query_syntax.txt:147
-#, fuzzy
 msgid ""
 "You should specify the default match columns for full text search. They can "
 "be specified by ``--match_columns`` option of :doc:`/reference/commands/"
 "select`. If you don't specify the default match columns, this conditional "
 "expression fails."
-msgstr ""
-"全文検索に使うデフォルトのマッチカラムを指定する必要があります。マッチカラム"
-"は :doc:`/commands/select` の ``--match_columns`` オプションで指定します。デ"
-"フォルトのマッチカラムを指定していない場合、この条件式は失敗します。"
+msgstr "全文検索に使うデフォルトのマッチカラムを指定する必要があります。マッチカラムは :doc:`/reference//commands/select` の ``--match_columns`` オプションで指定します。デフォルトのマッチカラムを指定していない場合、この条件式は失敗します。"
 
 # ab7d4f280bdc4a15b90ed7324353722e
 #: ../../../source/reference/grn_expr/query_syntax.txt:119
@@ -7979,16 +7923,12 @@ msgstr "構文は ``column:@keyword`` です。"
 
 # 65c01da0052645c2a9374095bce7e63e
 #: ../../../source/reference/grn_expr/query_syntax.txt:176
-#, fuzzy
 msgid ""
 "It's similar to ``full text search condition`` but it doesn't require the "
 "default match columns. You need to specify match column for the full text "
 "search condition by ``column:`` instead of ``--match_columns`` option of :"
 "doc:`/reference/commands/select`."
-msgstr ""
-"これは ``全文検索条件`` と似ていますが、デフォルトのマッチカラムは必要ありま"
-"せん。全文検索用のマッチカラムは :doc:`/commands/select` の ``--"
-"match_columns`` オプションではなく ``column:`` で指定します。"
+msgstr "これは ``全文検索条件`` と似ていますが、デフォルトのマッチカラムは必要ありません。全文検索用のマッチカラムは :doc:`/reference/commands/select` の ``--match_columns`` オプションではなく ``column:`` で指定します。"
 
 # d373c295c4f9455d8e89ce957ad90d3b
 #: ../../../source/reference/grn_expr/query_syntax.txt:181
@@ -8034,13 +7974,10 @@ msgstr "マッチカラムとしてインデックスカラムを使える。"
 
 # bbc4ba5a3444421aaf1048616acc13b3
 #: ../../../source/reference/grn_expr/query_syntax.txt:198
-#, fuzzy
 msgid ""
 "See description of ``--match_columns`` option of :doc:`/reference/commands/"
 "select` about them."
-msgstr ""
-"これらについては :doc:`/commands/select` の ``--match_columns`` オプションを"
-"参照してください。"
+msgstr "これらについては :doc:`/reference/commands/select` の ``--match_columns`` オプションを参照してください。"
 
 # 82a402b288a149a98368f174de47e9e0
 #: ../../../source/reference/grn_expr/query_syntax.txt:211
@@ -8054,7 +7991,6 @@ msgstr "構文は ``column:@\"search keyword\"`` です。"
 
 # 78a72a954ac442a48c4b62351fb1bd3b
 #: ../../../source/reference/grn_expr/query_syntax.txt:215
-#, fuzzy
 msgid ""
 "It's similar to ``phrase search condition`` but it doesn't require the "
 "default match columns. You need to specify match column for the phrase "
@@ -8062,7 +7998,7 @@ msgid ""
 "doc:`/reference/commands/select`."
 msgstr ""
 "これは ``フレーズ検索条件`` に似ていますが、デフォルトのマッチカラムは必要あ"
-"りません。フレーズ検索用のマッチカラムは :doc:`/commands/select` の ``--"
+"りません。フレーズ検索用のマッチカラムは :doc:`/reference/commands/select` の ``--"
 "match_columns`` オプションではなく ``column:`` で指定します。"
 
 # 4a5b2228e91c4a028c67de49852e0c39
@@ -8580,14 +8516,13 @@ msgstr "代入式"
 
 # bcdcbdaea046466a8ff62b9cf8dafc16
 #: ../../../source/reference/grn_expr/query_syntax.txt:566
-#, fuzzy
 msgid ""
 "This section is for advanced users. Because assignment expression is "
 "disabled in ``--query`` option of :doc:`/reference/commands/select`. You "
 "need to use groonga as a library instead of server or command line tool for "
 "assignment expression."
 msgstr ""
-"このセクションは高度なユーザー向けです。それは、代入式は :doc:`/commands/"
+"このセクションは高度なユーザー向けです。それは、代入式は :doc:`/reference/commands/"
 "select` の ``--query`` オプションでは無効になっているからです。代入演算子を使"
 "うには、groongaをサーバーやコマンドラインツールとして使うのではなくライブラリ"
 "と使わなければいけません。"
@@ -8734,7 +8669,6 @@ msgstr ""
 
 # 1bb75df4fa5e4587ac36c58c14840389
 #: ../../../source/reference/grn_expr/script_syntax.txt:99
-#, fuzzy
 msgid ""
 "String encoding must be the same as encoding of database. The default "
 "encoding is UTF-8. It can be changed by ``--with-default-encoding`` "
@@ -8743,7 +8677,7 @@ msgid ""
 msgstr ""
 "文字列エンコーディングはデータベースのエンコーディングと合わせなければいけま"
 "せん。デフォルトのエンコーディングはUTF-8です。これは configure の ``--with-"
-"default-encoding`` オプションや :doc:`/executables/groonga` の ``--"
+"default-encoding`` オプションや :doc:`/reference/executables/groonga` の ``--"
 "encodiong`` などで変更できます。"
 
 # 05a14914db4c45b78e71bda4574e9db4
@@ -8788,7 +8722,6 @@ msgstr "これはgroonga独自の記法です。"
 
 # bf078ca76a7a41a882d7540ba5d676bd
 #: ../../../source/reference/grn_expr/script_syntax.txt:123
-#, fuzzy
 msgid ""
 "Time literal doesn't exit. There are string time notation, integer time "
 "notation and float time notation."
@@ -8804,24 +8737,24 @@ msgid ""
 "``hh`` is hour, ``mm`` is minute, ``ss`` is second and ``uuuuuu`` is micro "
 "second. It is local time. For example, ``\"2012/07/23 02:41:10.436218\"`` is "
 "``2012-07-23T02:41:10.436218`` in ISO 8601 format."
-msgstr ""
+msgstr "文字列での時間記法は ``\"YYYY/MM/DD hh:mm:ss.uuuuuu\"`` または ``\"YYYY-MM-DD hh:mm:ss.uuuuuu\"`` です。 ``YYYY`` は西暦、 ``MM`` は月、 ``DD`` は日、 ``hh`` は時、 ``mm`` は分、 ``ss`` は秒、 ``uuuuuu`` はマイクロ秒です。ローカル時間です。例えば、 ``\"2012/07/23 02:41:10.436218\"`` はISO 8601形式では ``2012-07-23T02:41:10.436218`` になります。"
 
 # 00829647e7d04199844ab02a5b673aab
 #: ../../../source/reference/grn_expr/script_syntax.txt:133
 msgid ""
 "Integer time notation is the number of seconds that have elapsed since "
 "midnight UTC, January 1, 1970. It is also known as POSIX time. For example, "
-"``1343011270`` is ``2012-07-23T02:41:10`` in ISO 8601 format."
-msgstr ""
+"``1343011270`` is ``2012-07-23T02:41:10Z`` in ISO 8601 format."
+msgstr "整数での時間記法はUTC時間で1970年1月1日0時0分0秒からの経過秒数を使います。この時間はPOSIX時間とも呼ばれています。例えば、 ``1343011270`` はISO 8601形式では ``2012-07-23T02:41:10Z`` になります。"
 
 # fa3c06f343c84c88a39c869cfd46079e
 #: ../../../source/reference/grn_expr/script_syntax.txt:137
 msgid ""
 "Float time notation is the number of seconds and micro seconds that have "
-"elapsed since midnight UTC, January 1, 1970. It is also known as POSIX time. "
-"For example, ``1343011270.436218`` is ``2012-07-23T02:41:10.436218`` in ISO "
+"elapsed since midnight UTC, January 1, 1970. "
+"For example, ``1343011270.436218`` is ``2012-07-23T02:41:10.436218Z`` in ISO "
 "8601 format."
-msgstr ""
+msgstr "浮動小数点数での時間記法はUTC時間で1970年1月1日0時0分0秒からの経過秒数と経過マイクロ秒数を使います。例えば、 ``1343011270.436218`` はISO 8601形式では ``2012-07-23T02:41:10.346218Z`` になります。"
 
 # bd5a6e4d7ba842ee9eda5721db2b83f3
 #: ../../../source/reference/grn_expr/script_syntax.txt:143
@@ -8830,41 +8763,40 @@ msgstr "座標値"
 
 # 927d6f1f3cb545a9ba8d70e68cb4f45e
 #: ../../../source/reference/grn_expr/script_syntax.txt:149
-#, fuzzy
 msgid "Geo point literal doesn't exist. There is string geo point notation."
 msgstr "座標値のリテラルはありません。文字列での座標値記法を使ってください。"
 
 # 2e14fb0e9dc04c438dd6e1bf58b0770f
 #: ../../../source/reference/grn_expr/script_syntax.txt:151
 msgid "String geo point notation has the following patterns:"
-msgstr ""
+msgstr "文字列での座標値記法には以下のパターンがあります。"
 
 # 68ca2419b2944e2697d8e568a4cb9c58
 #: ../../../source/reference/grn_expr/script_syntax.txt:153
 msgid "``\"LATITUDE_IN_MSECxLONGITUDE_IN_MSEC\"``"
-msgstr ""
+msgstr "``\"ミリ秒表記の緯度xミリ秒表記の経度\"``"
 
 # 6d2ccfa29c3d4f0ab5ae9da1cda70feb
 #: ../../../source/reference/grn_expr/script_syntax.txt:154
 msgid "``\"LATITUDE_IN_MSEC,LONGITUDE_IN_MSEC\"``"
-msgstr ""
+msgstr "``\"ミリ秒表記の緯度,ミリ秒表記の経度\"``"
 
 # 0c13fe076739473f82132fefea590997
 #: ../../../source/reference/grn_expr/script_syntax.txt:155
 msgid "``\"LATITUDE_IN_DEGREExLONGITUDE_IN_DEGREE\"``"
-msgstr ""
+msgstr "``\"度数表記の緯度x度数表記の経度\"``"
 
 # 82c1d4088673435aa7019970288609d0
 #: ../../../source/reference/grn_expr/script_syntax.txt:156
 msgid "``\"LATITUDE_IN_DEGREE,LONGITUDE_IN_DEGREE\"``"
-msgstr ""
+msgstr "``\"度数表記の緯度,度数表記の経度\"``"
 
 # 04e6629a4b844941919327f3005224b7
 #: ../../../source/reference/grn_expr/script_syntax.txt:158
 msgid ""
 "``x`` and ``,`` can be used for separator. Latitude and longitude can be "
 "represented in milliseconds or degree."
-msgstr ""
+msgstr "``x`` と ``,`` のどちらも区切り文字として使えます。緯度と経度はミリ秒または度数で指定します。"
 
 # 71d45f9a11c04fe49db3d677e25625f7
 #: ../../../source/reference/grn_expr/script_syntax.txt:162
@@ -8873,9 +8805,8 @@ msgstr "配列"
 
 # 61fab56d6e9c4f4d8756ed4c9af116dd
 #: ../../../source/reference/grn_expr/script_syntax.txt:164
-#, fuzzy
 msgid "Array literal is ``[element1, element2, ...]``."
-msgstr "構文は ``name(arugment1, argument2, ...)`` です。"
+msgstr "配列リテラルは ``[element1, element2, ...]`` です。"
 
 # d18478293d984cca9f1ff627b42608dd
 #: ../../../source/reference/grn_expr/script_syntax.txt:167
@@ -8884,13 +8815,10 @@ msgstr "オブジェクトリテラル"
 
 # ba6399db8a7d4fd5b2b6483212273946
 #: ../../../source/reference/grn_expr/script_syntax.txt:169
-#, fuzzy
 msgid ""
 "Object literal is ``{name1: value1, name2: value2, ...}``. Groonga doesn't "
 "support object literal yet."
-msgstr ""
-"NULLのリテラルは ``null`` です。groongaはNULL値をサポートしてませんが、NULLリ"
-"テラルをサポートしています。"
+msgstr "オブジェクトのリテラルは ``{name1: value1, name2: value2, ...}`` です。groongaはまだオブジェクトリテラルをサポートしていません。"
 
 # 695e444809894f86af0b5cb97aa241ce
 #: ../../../source/reference/grn_expr/script_syntax.txt:173
@@ -8915,52 +8843,35 @@ msgstr ""
 
 # a4cd249fabb648e8ab84261b9fa16ab3
 #: ../../../source/reference/grn_expr/script_syntax.txt:187
-#, fuzzy
 msgid ""
 "The expression matches records that ``_id`` column value is equal to ``1`` "
 "and ``n_likes`` column value is equal to ``5`` or ``_id`` column value is "
 "not equal to 1 and ``n_likes`` column value is equal to ``3``."
-msgstr ""
-"この式は ``n_likes`` カラムの値が ``10`` 以上で ``content`` カラムの値に "
-"``groonga`` という単語を含まないレコードにマッチします。"
+msgstr "この式は ``_id`` カラムの値が ``1`` で ``n_likes`` カラムの値が ``5`` または ``_id`` カラムの値が ``1`` ではなく ``n_likes`` カラムの値が ``3`` のレコードにマッチします。"
 
 # 26194c8712594b97b88c8c6caaf11491
 #: ../../../source/reference/grn_expr/script_syntax.txt:196
-#, fuzzy
 msgid ""
 "``(...)`` groups one ore more expressions and they can be processed as an "
 "expression. ``a && b || c`` means that ``a`` and ``b`` are matched or ``c`` "
 "is matched. ``a && (b || c)`` means that ``a`` and one of ``b`` and ``c`` "
 "are matched."
-msgstr ""
-"``(...)`` は1つ以上の式をグループ化します。グループ化された式は1つの式として"
-"処理されます。 ``a b OR c`` は ``a`` と ``b`` の両方がマッチするか、 ``c`` が"
-"マッチすれば式全体がマッチする、という意味になります。 ``a (b OR c)`` は "
-"``a`` がマッチして ``b`` と ``c`` はどちらか一方がマッチすれば式全体がマッチ"
-"する、という意味になります。"
+msgstr "``(...)`` は1つ以上の式をグループ化します。グループ化された式は1つの式として処理されます。 ``a && b || c`` は ``a`` と ``b`` の両方がマッチするか、 ``c`` がマッチすれば式全体がマッチする、という意味になります。 ``a && (b || c)`` は ``a`` がマッチして ``b`` と ``c`` はどちらか一方がマッチすれば式全体がマッチする、という意味になります。"
 
 # 8da34e43527d433ea16802f7fe2044f4
 #: ../../../source/reference/grn_expr/script_syntax.txt:208
-#, fuzzy
 msgid ""
 "The first expression doesn't use grouping. It matches records that ``n_likes "
 "< 5`` and ``content @ \"senna\"`` are matched or ``content @ \"fast\"`` is "
 "matched."
-msgstr ""
-"最初の式はグループ化していません。この式は ``n_likes:<5`` と ``content:"
-"@senna`` の両方がマッチするか ``content:@fast`` がマッチするレコードにマッチ"
-"します。"
+msgstr "最初の式はグループ化していません。この式は ``n_likes < 5`` と ``content @ \"senna\"`` の両方がマッチするか ``content @ \"fast\"`` がマッチするレコードにマッチします。"
 
 # b9cbf6e79fb146d4a02867e0e2a4ff1f
 #: ../../../source/reference/grn_expr/script_syntax.txt:212
-#, fuzzy
 msgid ""
 "The second expression uses grouping. It matches records that ``n_likes < 5`` "
 "and one of ``content @ \"senna\"`` or ``content @ \"fast\"`` are matched."
-msgstr ""
-"2番目の式はグループ化しています。この式は ``n_likes:<5`` にマッチして、 "
-"``content:@senna`` と ``content:@fast`` は少なくともどちらか一方にマッチする"
-"レコードにマッチします。"
+msgstr "2番目の式はグループ化しています。この式は ``n_likes < 5`` にマッチして、 ``content @ \"senna\"`` と ``content @ \"fast\"`` は少なくともどちらか一方にマッチするレコードにマッチします。"
 
 # fecf7ecb80a944859f3c51a371f8b721
 #: ../../../source/reference/grn_expr/script_syntax.txt:217
@@ -8977,23 +8888,22 @@ msgstr "構文は ``name(arugment1, argument2, ...)`` です。"
 msgid ""
 "``name(argument1, argument2, ...)`` calls a function that is named ``name`` "
 "with arguments ``argument1``, ``argument2`` and ``...``."
-msgstr ""
+msgstr "``name(argument1, argument2, ...)`` は ``name`` という関数を引数 ``argument1``, ``argument2``, ``...`` で呼び出します。"
 
 # bde897b0ca22430eb927c3f3d85d70d2
 #: ../../../source/reference/grn_expr/script_syntax.txt:224
-#, fuzzy
 msgid "See :doc:`/reference/functions/` for available functin list."
-msgstr "キャストについては :doc:`/reference/cast` を参照してください。"
+msgstr "利用可能な関数の一覧は :doc:`/reference/functions/` を参照してください。"
 
 # 9578eff043bd4d21b54d81d83f7684dd
 #: ../../../source/reference/grn_expr/script_syntax.txt:232
 msgid ""
 "The expression uses :doc:`/reference/functions/edit_distance`. It matches "
-"records that ``_key`` column value is ``\"Groonga\"`` like value. Similality "
+"records that ``_key`` column value is similar to ``\"Groonga\"``. Similality "
 "of ``\"Groonga\"`` is computed as edit distance. If edit distance is less "
 "than or equal to 1, the value is treated as similar. In this case, ``"
 "\"Groonga\"`` and ``\"Mroonga\"`` are treated as similar."
-msgstr ""
+msgstr "この式は :doc:`/reference/functions/edit_distance` を使っています。この式は ``_key`` カラムの値が `\"Groonga\"`` に似ているレコードにマッチします。 ``\"Groonga\"`` との類似度は編集距離で計算します。編集距離が1文字以下なら似ているとします。この場合は ``\"Groonga\"`` と ``\"Mroonga\"`` が似ている値です。"
 
 # 29a7723b10fc4a60b459d14af99ef947
 #: ../../../source/reference/grn_expr/script_syntax.txt:240
@@ -9051,18 +8961,15 @@ msgstr "この演算子は ``number1`` と ``number2`` を掛けた結果を返�
 #: ../../../source/reference/grn_expr/script_syntax.txt:492
 #: ../../../source/reference/grn_expr/script_syntax.txt:509
 #: ../../../source/reference/grn_expr/script_syntax.txt:526
-#, fuzzy
 msgid "Here is a simple example."
 msgstr "以下は簡単な使用例です。"
 
 # aac77b4ce51c45a4afd6b346ce558dab
 #: ../../../source/reference/grn_expr/script_syntax.txt:257
-#, fuzzy
 msgid ""
 "The expression matches records that ``n_likes`` column value is equal to "
 "``15`` (= ``3 * 5``)."
-msgstr ""
-"この式は ``n_likes`` カラムの値が ``10`` より小さいレコードにマッチします。"
+msgstr "この式は ``n_likes`` カラムの値が ``15`` (= ``3 * 5``) のレコードにマッチします。"
 
 # 40055e4561224389b83f4613af8ce2f7
 # 3d8bd7a8fd78446bbb3e71d5315a0dd2
@@ -9083,12 +8990,10 @@ msgstr "この演算子は ``number1`` と ``number2`` を足した結果を返�
 
 # aac77b4ce51c45a4afd6b346ce558dab
 #: ../../../source/reference/grn_expr/script_syntax.txt:273
-#, fuzzy
 msgid ""
 "The expression matches records that ``n_likes`` column value is equal to "
 "``15`` (= ``10 + 5``)."
-msgstr ""
-"この式は ``n_likes`` カラムの値が ``10`` より小さいレコードにマッチします。"
+msgstr "この式は ``n_likes`` カラムの値が ``15`` (= ``10 + 5``) のレコードにマッチします。"
 
 # e102dd0b372c4d5f96aa392320b45b97
 #: ../../../source/reference/grn_expr/script_syntax.txt:277
@@ -9108,12 +9013,10 @@ msgstr "この演算子は ``number2`` から ``number1`` を引いた結果を�
 
 # aac77b4ce51c45a4afd6b346ce558dab
 #: ../../../source/reference/grn_expr/script_syntax.txt:289
-#, fuzzy
 msgid ""
 "The expression matches records that ``n_likes`` column value is equal to "
 "``15`` (= ``20 - 5``)."
-msgstr ""
-"この式は ``n_likes`` カラムの値が ``10`` より小さいレコードにマッチします。"
+msgstr "この式は ``n_likes`` カラムの値が ``15`` (= ``20 - 5``) のレコードにマッチします。"
 
 # d49d0245974c48398cf33d4381840c80
 #: ../../../source/reference/grn_expr/script_syntax.txt:293
@@ -9149,25 +9052,22 @@ msgstr ""
 # fc7e5c9cacbb40c6aedf2f62640e5a99
 # 19e209544d5847f8815d405ec8fb28e7
 #: ../../../source/reference/grn_expr/script_syntax.txt:300
-#, fuzzy
 msgid "Here is simple examples."
 msgstr "以下は簡単な使用例です。"
 
 # 58e72771aead470cb2e8bf0120646a28
 #: ../../../source/reference/grn_expr/script_syntax.txt:306
-#, fuzzy
 msgid ""
 "The expression matches records that ``n_likes`` column value is equal to "
 "``3`` (= ``26 / 7``)."
-msgstr "この式は ``_key`` カラムの値が ``Groonga`` のレコードにマッチします。"
+msgstr "この式は ``n_likes`` カラムの値が ``3`` (= ``26 / 7``) のレコードにマッチします。"
 
 # 58e72771aead470cb2e8bf0120646a28
 #: ../../../source/reference/grn_expr/script_syntax.txt:313
-#, fuzzy
 msgid ""
 "The expression matches records that ``n_likes`` column value is equal to "
 "``5`` (= ``26 % 7``)."
-msgstr "この式は ``_key`` カラムの値が ``Groonga`` のレコードにマッチします。"
+msgstr "この式は ``n_likes`` カラムの値が ``5`` (= ``26 % 7``) の値にマッチします。"
 
 # 5ea0ed2ad8054405964b79a8cdcaab72
 #: ../../../source/reference/grn_expr/script_syntax.txt:317
@@ -9187,12 +9087,10 @@ msgstr "この演算子は ``condition`` の真偽値を反転します。"
 # 5f856dbba9c24dc88ab6a7c3ca21dcf3
 #: ../../../source/reference/grn_expr/script_syntax.txt:329
 #: ../../../source/reference/grn_expr/script_syntax.txt:532
-#, fuzzy
 msgid ""
 "The expression matches records that ``n_likes`` column value is not equal to "
 "``5``."
-msgstr ""
-"この式は ``_key`` カラムの値が ``Groonga`` ではないレコードにマッチします。"
+msgstr "この式は ``n_likes`` カラムの値が ``5`` ではない式にマッチします。"
 
 # 5f3ee1ec846b48b5b2e6b84261db0d5c
 #: ../../../source/reference/grn_expr/script_syntax.txt:333
@@ -9211,12 +9109,10 @@ msgstr "この演算子は ``number`` の各ビットを反転した結果を返
 
 # 05681d395ddf4b2ba94f4131bec5c97d
 #: ../../../source/reference/grn_expr/script_syntax.txt:345
-#, fuzzy
 msgid ""
 "The expression matches records that ``n_likes`` column value is equal to "
-"``5`` because bitwise NOT of ``~5`` is ``-6``."
-msgstr ""
-"この式は ``n_likes`` カラムの値が ``10`` 以下のレコードにマッチします。"
+"``5`` because bitwise NOT of ``5`` is equal to ``-6``."
+msgstr "この式は ``n_likes`` カラムの値が ``5`` のレコードにマッチします。なぜならば、 ``5`` の各ビットを反転すると ``-6`` になるからです。"
 
 # 38cc6f429af342498061adcf215c3347
 #: ../../../source/reference/grn_expr/script_syntax.txt:349
@@ -9237,14 +9133,11 @@ msgstr ""
 
 # 5779369be5a247d0b0a765b7020c4ca1
 #: ../../../source/reference/grn_expr/script_syntax.txt:361
-#, fuzzy
 msgid ""
 "The expression matches records that ``n_likes`` column value is even number "
 "because bitwise AND between an even number and ``1`` is equal to ``1`` and "
 "bitwise AND between an odd number and ``1`` is equal to ``0``."
-msgstr ""
-"この式は ``n_likes`` カラムの値が ``10`` 以上で ``content`` カラムの値に "
-"``groonga`` という単語を含むレコードにマッチします。"
+msgstr "この式は ``n_likes`` カラムの値が偶数のレコードにマッチします。なぜならば、偶数と ``1`` のビット単位の論理積は ``1`` になり、奇数と ``1`` のビット単位の論理積は ``0`` になるからです。"
 
 # 1c79b0c247d54a2687ea33f9f6faebbe
 #: ../../../source/reference/grn_expr/script_syntax.txt:367
@@ -9267,18 +9160,15 @@ msgstr ""
 
 # 6e486d931ffd49f686322a0c8eb18756
 #: ../../../source/reference/grn_expr/script_syntax.txt:380
-#, fuzzy
 msgid ""
 "The expression matches records that ``content`` column value has the word "
 "``fast`` and ``n_likes`` column value is greater or equal to ``10``."
-msgstr ""
-"この式は ``n_likes`` カラムの値が ``10`` 以上のレコードにマッチします。"
+msgstr "この式は ``content`` カラムの値が ``fast`` を含んでいて、 ``n_likes`` カラムの値が ``10`` 以上のレコードにマッチします。"
 
 # 5ea0ed2ad8054405964b79a8cdcaab72
 #: ../../../source/reference/grn_expr/script_syntax.txt:385
-#, fuzzy
 msgid "Logical BUT operator"
-msgstr "論理否定演算子"
+msgstr "論理差演算子"
 
 # 622e416c9bae41fe8c51b82f45ff181f
 #: ../../../source/reference/grn_expr/script_syntax.txt:387
@@ -9287,22 +9177,17 @@ msgstr "構文は ``condition1 &! condition2`` です。"
 
 # 47027c32528c4771bd2aaab3a3dad626
 #: ../../../source/reference/grn_expr/script_syntax.txt:389
-#, fuzzy
 msgid ""
 "The operator returns true if ``condition1`` is true but ``condition2`` is "
 "false, false otherwise. It returns difference set."
-msgstr ""
-"この演算子は ``condition1`` が真で ``condition2`` が偽のときに真を返し、そう"
-"でなければ偽を返します。"
+msgstr "この演算子は ``condition1`` が真で ``condition2`` が偽のときに真を返し、そうでなければ偽を返します。差集合を返すということです。"
 
 # 5f856dbba9c24dc88ab6a7c3ca21dcf3
 #: ../../../source/reference/grn_expr/script_syntax.txt:398
-#, fuzzy
 msgid ""
 "The expression matches records that ``content`` column value has the word "
 "``fast`` but doesn't have the word ``mroonga``."
-msgstr ""
-"この式は ``_key`` カラムの値が ``Groonga`` ではないレコードにマッチします。"
+msgstr "この式は ``content`` カラムの値が ``fast`` を含んでいるが ``mroonga`` を含んでいないレコードにマッチします。"
 
 # f0d4d6ad876a4068bf24ff8740091b7f
 #: ../../../source/reference/grn_expr/script_syntax.txt:402
@@ -9323,12 +9208,10 @@ msgstr "この演算子は ``number1`` のビットを左に ``number2`` ビッ�
 
 # aac77b4ce51c45a4afd6b346ce558dab
 #: ../../../source/reference/grn_expr/script_syntax.txt:415
-#, fuzzy
 msgid ""
 "The expression matches records that ``n_likes`` column value is equal to "
 "``10`` (= ``5 << 1``)."
-msgstr ""
-"この式は ``n_likes`` カラムの値が ``10`` より小さいレコードにマッチします。"
+msgstr "この式は ``n_likes`` カラムの値が ``10`` (= ``5 << 1``) のレコードにマッチします。"
 
 # e6bb27cdd7104d8ea02810464e66ba0c
 #: ../../../source/reference/grn_expr/script_syntax.txt:419
@@ -9351,12 +9234,10 @@ msgstr ""
 
 # 05681d395ddf4b2ba94f4131bec5c97d
 #: ../../../source/reference/grn_expr/script_syntax.txt:432
-#, fuzzy
 msgid ""
 "The expression matches records that ``n_likes`` column value is equal to "
 "``5`` (= ``-(-10 >> 1)`` = ``-(-5)``)."
-msgstr ""
-"この式は ``n_likes`` カラムの値が ``10`` 以下のレコードにマッチします。"
+msgstr "この式は ``n_likes`` カラムの値が ``5`` (= ``-(-10 >> 1)`` = ``-(-5)``) のレコードにマッチします。"
 
 # 6be4d84131ee47c79878cd836d12b592
 #: ../../../source/reference/grn_expr/script_syntax.txt:436
@@ -9370,22 +9251,17 @@ msgstr "構文は ``number1 >>> number2`` です。"
 
 # e8d4a497492241abbb7a8cb887fc6823
 #: ../../../source/reference/grn_expr/script_syntax.txt:440
-#, fuzzy
 msgid ""
 "The operator shifts bits of ``number1`` to right by ``number2``. The "
 "leftmost ``number2`` bits are filled by ``0``."
-msgstr ""
-"この演算子は ``number1`` のビットを右に ``number2`` ビットシフトします。結果"
-"の符号は ``number1`` の符号と同じです。"
+msgstr "この演算子は ``number1`` のビットを右に ``number2`` ビットシフトします。左の ``number2`` ビットには ``0`` が入ります。"
 
 # 05681d395ddf4b2ba94f4131bec5c97d
 #: ../../../source/reference/grn_expr/script_syntax.txt:449
-#, fuzzy
 msgid ""
 "The expression matches records that ``n_likes`` column value is equal to "
 "``5`` (= ``2147483648 - (-10 >>> 1)`` = ``2147483648 - 2147483643``)."
-msgstr ""
-"この式は ``n_likes`` カラムの値が ``10`` 以下のレコードにマッチします。"
+msgstr "この式は ``n_likes`` カラムの値が ``5`` (= ``2147483648 - (-10 >>> 1)`` = ``2147483648 - 2147483643``) のレコードにマッチします。"
 
 # d92066aafa5d47c88e80e52d9245a917
 #: ../../../source/reference/grn_expr/script_syntax.txt:453
@@ -9406,12 +9282,10 @@ msgstr ""
 
 # aac77b4ce51c45a4afd6b346ce558dab
 #: ../../../source/reference/grn_expr/script_syntax.txt:465
-#, fuzzy
 msgid ""
 "The expression matches records that ``n_likes`` column value is equal to "
 "``5`` (= ``1 | 4``)."
-msgstr ""
-"この式は ``n_likes`` カラムの値が ``10`` より小さいレコードにマッチします。"
+msgstr "この式は ``n_likes`` カラムの値が ``5`` (= ``1 | 4``) のレコードにマッチします。"
 
 # 253b80a2015b468e8f51294cae583779
 #: ../../../source/reference/grn_expr/script_syntax.txt:469
@@ -9432,12 +9306,10 @@ msgstr ""
 
 # aac77b4ce51c45a4afd6b346ce558dab
 #: ../../../source/reference/grn_expr/script_syntax.txt:481
-#, fuzzy
 msgid ""
 "The expression matches records that ``n_likes`` column value is equal to "
 "``5`` (= ``10 ^ 15``)."
-msgstr ""
-"この式は ``n_likes`` カラムの値が ``10`` より小さいレコードにマッチします。"
+msgstr "この式は ``n_likes`` カラムの値が ``5`` (= ``10 ^ 15``) の値にマッチします。"
 
 # 8bc8e518c04d4b6ebecbf7b89d658150
 #: ../../../source/reference/grn_expr/script_syntax.txt:485
@@ -9460,12 +9332,10 @@ msgstr ""
 
 # aac77b4ce51c45a4afd6b346ce558dab
 #: ../../../source/reference/grn_expr/script_syntax.txt:498
-#, fuzzy
 msgid ""
 "The expression matches records that ``n_likes`` column value is equal to "
 "``5`` or ``10``."
-msgstr ""
-"この式は ``n_likes`` カラムの値が ``10`` より小さいレコードにマッチします。"
+msgstr "この式は ``n_likes`` カラムの値が ``5`` または ``10`` のレコードにマッチします。"
 
 # a252c9bced7c4fbbaba793b391408b41
 #: ../../../source/reference/grn_expr/script_syntax.txt:502
@@ -9488,11 +9358,10 @@ msgstr ""
 
 # 58e72771aead470cb2e8bf0120646a28
 #: ../../../source/reference/grn_expr/script_syntax.txt:515
-#, fuzzy
 msgid ""
 "The expression matches records that ``n_likes`` column value is equal to "
 "``5``."
-msgstr "この式は ``_key`` カラムの値が ``Groonga`` のレコードにマッチします。"
+msgstr "この式は ``n_likes`` カラムの値が ``5`` の値にマッチします。"
 
 # f506ea57a6fa4ea48578fc07e477747e
 #: ../../../source/reference/grn_expr/script_syntax.txt:519
@@ -10065,12 +9934,8 @@ msgstr ""
 #: ../../../source/log.txt:173 ../../../source/log.txt:180
 #: ../../../source/log.txt:187 ../../../source/log.txt:195
 #: ../../../source/log.txt:203 ../../../source/log.txt:208
-#, fuzzy
 msgid "Example::"
-msgstr ""
-"#-#-#-#-#  reference.po (1.2.1)  #-#-#-#-#\n"
-"実行例::\n"
-"#-#-#-#-#  log.po (1.2.4)  #-#-#-#-#\n"
+msgstr "実行例::"
 
 # ce9d612a264a479da49fc4f1df81bcc0
 # db7d26f27bd040ef85e79a6a979ddd2b
@@ -10676,12 +10541,8 @@ msgstr ""
 
 # b10c0655d6bf47f0b66775b39082fb89
 #: ../../../source/reference/type.txt:73 ../../../source/type.txt:73
-#, fuzzy
 msgid "``Float``"
-msgstr ""
-"#-#-#-#-#  reference.po (1.2.1)  #-#-#-#-#\n"
-"浮動小数点数\n"
-"#-#-#-#-#  type.po (1.2.1)  #-#-#-#-#\n"
+msgstr "浮動小数点数"
 
 # 05e04a8732bd47d28b6f6275a62b257b
 # 58ec3c9c3ad54535b035078bc9351686
@@ -10701,12 +10562,8 @@ msgstr ""
 
 # d1e7bd098f4d46f0a4b1a630a02ee99e
 #: ../../../source/reference/type.txt:79 ../../../source/type.txt:79
-#, fuzzy
 msgid "``Time``"
-msgstr ""
-"#-#-#-#-#  reference.po (1.2.1)  #-#-#-#-#\n"
-"時間\n"
-"#-#-#-#-#  type.po (1.2.1)  #-#-#-#-#\n"
+msgstr "時間"
 
 # 04f9c25097554a76bae69036d16eb7b5
 # 329781a7a5bd4783ae8b640990b5dda6
@@ -10994,11 +10851,3 @@ msgid ""
 "度分秒形式からミリ秒形式への変換方法や :doc:`/commands/load` コマンドにおける"
 "指定方法はTokyoGeoPointと同じです。"
 msgstr ""
-
-# e8d4a497492241abbb7a8cb887fc6823
-#~ msgid ""
-#~ "The operator shifts bits of ``number1`` to right by ``number2``. If "
-#~ "``number2`` is larger than 0, the sign of the result is always positive."
-#~ msgstr ""
-#~ "この演算子は ``number1`` のビットを右に ``number2`` ビットシフトします。 "
-#~ "``number2`` が0より大きければ、結果の符号は常に正です。"
