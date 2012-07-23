@@ -217,9 +217,6 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
   ngx_chain_t  head_chain, body_chain, foot_chain;
 
   grn_ctx *context;
-  char *result = NULL;
-  unsigned int result_size = 0;
-  unsigned char *body_data;
 
   ngx_http_groonga_output_t output;
   const char *content_type;
@@ -236,12 +233,6 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
                (char *)r->unparsed_uri.data,
                r->unparsed_uri.len,
                GRN_NO_FLAGS);
-
-  body_data = ngx_pcalloc(r->pool, result_size);
-  if (body_data == NULL) {
-    return NGX_HTTP_INTERNAL_SERVER_ERROR;
-  }
-  ngx_memcpy(body_data, result, result_size);
 
   /* we response to 'GET' and 'HEAD' requests only */
   if (!(r->method & (NGX_HTTP_GET|NGX_HTTP_HEAD))) {
