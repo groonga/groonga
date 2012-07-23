@@ -12,11 +12,11 @@
 ^^^^
 
 * 編集距離（レーベンシュタイン距離）を計算する
-  :doc:`/functions/edit_distance` ()関数の追加。
+  :doc:`/reference/functions/edit_distance` ()関数の追加。
 
 * manを追加。
 
-* :doc:`/commands/delete` コマンドでデータの整合性が壊れる場合はエラー
+* :doc:`/reference/commands/delete` コマンドでデータの整合性が壊れる場合はエラー
   を返すようにした。
 
 * MeCabの辞書のエンコーディング検出処理を改善。
@@ -26,7 +26,7 @@
 修正
 ^^^^
 
-* :doc:`/functions/geo_in_rectangle` ()関数が引数を「左上」と「右下」で
+* :doc:`/reference/functions/geo_in_rectangle` ()関数が引数を「左上」と「右下」で
   はなく、「左下」と「右上」と扱っていた問題を修正。
 
 * 前方一致検索がマッチしない問題を修正。

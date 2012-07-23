@@ -25,7 +25,7 @@ For 64-bit environment, download `groonga-2.0.5-x64.exe
 <http://packages.groonga.org/windows/groonga/groonga-2.0.5-x64.exe>`_
 and run it.
 
-Use command prompt for :doc:`/executables/groonga` installed in start menu.
+Use command prompt for :doc:`/reference/executables/groonga` installed in start menu.
 
 zip
 ---
@@ -38,7 +38,7 @@ For 64-bit environment, download `groonga-2.0.5-x64.zip
 <http://packages.groonga.org/windows/groonga/groonga-2.0.5-x64.zip>`_
 and extract it.
 
-:doc:`/executables/groonga` is in ``bin`` folder.
+:doc:`/reference/executables/groonga` is in ``bin`` folder.
 
 Build from source
 -----------------
@@ -73,5 +73,5 @@ Install::
 
   groonga-2.0.5> devenv groonga.sln /Build Release /Project Install
 
-After the above steps, :doc:`/executables/groonga` is found in
+After the above steps, :doc:`/reference/executables/groonga` is found in
 ``c:\groonga\bin\groonga.exe``.

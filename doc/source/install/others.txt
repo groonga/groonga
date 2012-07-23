@@ -60,7 +60,7 @@ All libraries are optional. Here are optional libraries:
   * `MessagePack <http://msgpack.org/>`_ for supporting MessagePack
     output and :doc:`/suggest`
   * `libedit <http://www.thrysoee.dk/editline/>`_ for command line
-    editing in :doc:`/executables/groonga`
+    editing in :doc:`/reference/executables/groonga`
   * `zlib <http://zlib.net/>`_ for compressing column value
   * `LZO <http://www.oberhumer.com/opensource/lzo/>`_ for compressing
     column value
@@ -81,7 +81,7 @@ steps::
   % make
   % sudo make install
 
-After the above steps, :doc:`/executables/groonga` is found in
+After the above steps, :doc:`/reference/executables/groonga` is found in
 ``/usr/local/bin/groonga``.
 
 The default build will work well but you can customize groonga at
@@ -103,7 +103,7 @@ options:
 Specifies the install base directory. Groonga related files are
 installed under ``${PATH}/`` directory.
 
-The default is ``/usr/local``. In this case, :doc:`/executables/groonga` is
+The default is ``/usr/local``. In this case, :doc:`/reference/executables/groonga` is
 installed into ``/usr/local/bin/groonga``.
 
 Here is an example that installs groonga into ``~/local`` for an user

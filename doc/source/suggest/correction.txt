@@ -66,7 +66,7 @@ Similar search
 Similar search can find registered words that has one or
 more the same tokens as user input. TokenBigram tokenizer is
 used for tokenization because suggest dataset schema
-created by :doc:`/executables/groonga-suggest-create-dataset`
+created by :doc:`/reference/executables/groonga-suggest-create-dataset`
 uses TokenBigram tokenizer as the default tokenizer.
 
 For example, there is a registered query "search engine". An
@@ -101,7 +101,7 @@ How to use
 .. {"sequence": "1", "time": 1312950810.86057, "item": "search", "type": "submit"}
 .. ]
 
-Groonga provides :doc:`/commands/suggest` command to use
+Groonga provides :doc:`/reference/commands/suggest` command to use
 correction. `--type correct` option requests corrections.
 
 For example, here is an command to get correction results by

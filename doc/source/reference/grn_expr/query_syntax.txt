@@ -17,7 +17,7 @@ groogna searches records that contain either ``word1`` or ``word2``.
 Query syntax consists of ``conditional expression``, ``combind
 expression`` and ``assignment expression``. Nomrally ``assignment
 expression`` can be ignored. Because ``assignment expression`` is
-disabled in ``--query`` option of :doc:`/commands/select`. You can use
+disabled in ``--query`` option of :doc:`/reference/commands/select`. You can use
 it if you use groonga as library and customize query syntax parser
 options.
 
@@ -113,7 +113,7 @@ target columns.
 
 You should specify the default match columns for full text
 search. They can be specified by ``--match_columns`` option of
-:doc:`/commands/select`. If you don't specify the default match
+:doc:`/reference/commands/select`. If you don't specify the default match
 columns, this conditional expression fails.
 
 This conditional expression does full text search with
@@ -146,7 +146,7 @@ against the default match columns.
 
 You should specify the default match columns for full text
 search. They can be specified by ``--match_columns`` option of
-:doc:`/commands/select`. If you don't specify the default match
+:doc:`/reference/commands/select`. If you don't specify the default match
 columns, this conditional expression fails.
 
 This conditional expression does phrase search with ``search
@@ -176,7 +176,7 @@ Its syntax is ``column:@keyword``.
 It's similar to ``full text search condition`` but it doesn't require
 the default match columns. You need to specify match column for the
 full text search condition by ``column:`` instead of
-``--match_columns`` option of :doc:`/commands/select`.
+``--match_columns`` option of :doc:`/reference/commands/select`.
 
 This condtional expression is useful when you want to use two or more
 full text search against different columns. The default match columns
@@ -196,7 +196,7 @@ the following features:
   * Using index column as a match column is supported.
 
 See description of ``--match_columns`` option of
-:doc:`/commands/select` about them.
+:doc:`/reference/commands/select` about them.
 
 Here is a simple exmaple.
 
@@ -215,7 +215,7 @@ Its syntax is ``column:@"search keyword"``.
 It's similar to ``phrase search condition`` but it doesn't require the
 default match columns. You need to specify match column for the phrase
 search condition by ``column:`` instead of ``--match_columns`` option
-of :doc:`/commands/select`.
+of :doc:`/reference/commands/select`.
 
 The different between ``phrase search condition`` and ``phrase search
 condition (with explicit match column)`` is similar to between ``full
@@ -564,7 +564,7 @@ Assignment expression
 ---------------------
 
 This section is for advanced users. Because assignment expression is
-disabled in ``--query`` option of :doc:`/commands/select`. You need to
+disabled in ``--query`` option of :doc:`/reference/commands/select`. You need to
 use groonga as a library instead of server or command line tool for
 assignment expression.
 

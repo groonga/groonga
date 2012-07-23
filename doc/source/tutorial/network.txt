@@ -74,7 +74,7 @@ In interactive mode, groonga reads commands from the standard input and executes
 How to terminate a gqtp server
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-You can terminate a gqtp server with a :doc:`/commands/shutdown` command.
+You can terminate a gqtp server with a :doc:`/reference/commands/shutdown` command.
 
 .. groonga-command
 .. include:: ../example/tutorial/network-2.log

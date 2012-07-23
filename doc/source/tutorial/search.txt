@@ -92,7 +92,7 @@ groongaでは、位置情報（経緯度）を保存することができます�
 .. ]
 .. select --table Site --query "_id:1 OR _id:2" --output_columns _key,location
 
-scorerパラメータにおいて、 :doc:`/functions/geo_distance` 関数を用いることにより、２点間の距離を計算することができます。
+scorerパラメータにおいて、 :doc:`/reference/functions/geo_distance` 関数を用いることにより、２点間の距離を計算することができます。
 
 ここでは、秋葉原駅からの距離を表示させてみましょう。世界測地系では、秋葉原駅の位置は緯度が35度41分55.259秒、経度が139度46分27.188秒です。よって、geo_distance関数に与える文字列は"128515259x503187188"となります。
 
@@ -110,7 +110,7 @@ geo_distance関数は、_scoreを通じてソートでも用いることがで�
 
 「ある地点から何m以内に存在する」といった絞込も可能です。
 
-filterパラメータにおいて、 :doc:`/functions/geo_in_circle` 関数を用いることにより、２点間の距離が指定のm以下におさまるかどうかを判定することができます。
+filterパラメータにおいて、 :doc:`/reference/functions/geo_in_circle` 関数を用いることにより、２点間の距離が指定のm以下におさまるかどうかを判定することができます。
 
 たとえば、秋葉原駅から5000m以内にあるレコードを検索してみましょう。
 
@@ -118,4 +118,4 @@ filterパラメータにおいて、 :doc:`/functions/geo_in_circle` 関数を�
 .. include:: ../example/tutorial/search-7.log
 .. select --table Site --output_columns _key,location --filter 'geo_in_circle(location, "128515259x503187188", 5000)'
 
-また、経緯度が指定の矩形領域内であるかどうかを判定する :doc:`../functions/geo_in_rectangle` 関数も存在します。
+また、経緯度が指定の矩形領域内であるかどうかを判定する :doc:`/reference/functions/geo_in_rectangle` 関数も存在します。

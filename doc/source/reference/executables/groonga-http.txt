@@ -50,7 +50,7 @@ GETメソッドのみが使用可能です。
 
 output_typeにはjson, tsv, xmlが指定可能です。
 
-command_versionはコマンドの仕様の互換性を指定します。詳細は :doc:`/command_version` を参照してください。
+command_versionはコマンドの仕様の互換性を指定します。詳細は :doc:`/reference/command_version` を参照してください。
 
 返値
 ----

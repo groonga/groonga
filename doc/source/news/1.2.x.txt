@@ -21,10 +21,10 @@ Improvements
 * Added ``grn_obj_get_values()``.
 * Added ``grn_obj_delete_by_id()``.
 * Supported string vector column for query expansion. [#1216]
-* Added ``--filter`` option to :doc:`/commands/delete` to delete
+* Added ``--filter`` option to :doc:`/reference/commands/delete` to delete
   many record at once. [#1225]
 * Supported approximate type customization for
-  :doc:`/functions/geo_in_circle` and :doc:`/functions/geo_distance`. [#1226]
+  :doc:`/reference/functions/geo_in_circle` and :doc:`/reference/functions/geo_distance`. [#1226]
 * Made ``geo_distance2()`` and ``geo_distance3()`` are deprecated.
 * Changed to use ``null`` instead of ``""`` for empty geo
   point value in JSON output.
@@ -162,9 +162,9 @@ Improvements
 * Added geo point value validation on type cast.
 * Supported :doc:`/tutorial/query_expansion`.
 * Added `--query_expansion` option to
-  :doc:`/commands/select` for query expansion.
+  :doc:`/reference/commands/select` for query expansion.
 * Added geometry conversion macro between degree and msec.
-* Supported type cast in :doc:`/functions/geo_distance` ().
+* Supported type cast in :doc:`/reference/functions/geo_distance` ().
 * Don't split tokens with full width space in command line. #986
 * Supported conversion between TokyoGeoPoint and WGS84GeoPoint.
 * Exported grn_geo_select_in_circle() and grn_geo_select_in_rectangle().
@@ -193,11 +193,11 @@ Improvements
 * Added experimental Windows installer support.
 * Accepted "#" and "-" as a valid name characters. #1043
 * Accepted all valid characters except "_" as the first character. #1043
-* Supported `--each` for `[...]` form :doc:`/commands/load`. #1044
+* Supported `--each` for `[...]` form :doc:`/reference/commands/load`. #1044
 * Added documentation for :doc:`/suggest`.
 * Supported threshold as `--frequency_threshold` and
   `--conditional_probability_threshold` options in all
-  :doc:`/commands/suggest` types. #1042
+  :doc:`/reference/commands/suggest` types. #1042
 * [groonga-suggest-httpd] Supported log reopen by SIGUSR1. #1048
 * Supported string input for reference vector column value. #1051
 * [groonga-suggest-httpd] Added `--n-lines-per-log-file`
@@ -211,7 +211,7 @@ Fixes
 ^^^^^
 
 * Fixed a crash bug that invalid value is passed as match expression
-  argument in :doc:`/commands/select`. #1047
+  argument in :doc:`/reference/commands/select`. #1047
 * Fixed a bug that hash table cursor returns garbage records.
 
 .. _release-1-2-4:
@@ -225,8 +225,8 @@ Improvements
 * Re-supported ``*BSD``. (Reported by OBATA Akio)
 * Improved sed related portability. (Suggested by OBATA Akio)
 * Re-supported Visual C++ 2008.
-* Supported :doc:`/commands/check` for hash table.
-* Ignored invalid _score in --sortby of :doc:`/commands/select`
+* Supported :doc:`/reference/commands/check` for hash table.
+* Ignored invalid _score in --sortby of :doc:`/reference/commands/select`
   for convenience. #1030
 * Added document about :doc:`/log`.
 * Supported ~/.editrc.
@@ -261,7 +261,7 @@ Improvements
 * Added groonga-query-log-analyzer that analyze query log.
 * groonga command shows failed command on error.
 * groonga command shows file name and line no on error.
-* Improved error message of :doc:`/commands/column_create`. #952
+* Improved error message of :doc:`/reference/commands/column_create`. #952
 * Added GRN_OBJ_TABLE_DAT_KEY, double array trie, table. (experimental)
 
 Fixes
@@ -304,7 +304,7 @@ Improvements
 * plugin: Added grn_plugin_get_system_plugins_dir() and
   grn_plugin_get_suffix() API.
 * Added grn_obj_is_builtin() API.
-* :doc:`/commands/load`: Added table name check. #934
+* :doc:`/reference/commands/load`: Added table name check. #934
 * Showed invalid name context in error message. #935
 
 Fixes
@@ -365,14 +365,14 @@ Fixes
 * MeCabトークナイザーの読み込みに失敗したときにクラッシュする問題を修正。
   （@tomotaka_itoさんが報告）
 * [非互換] 位置情報の小数表記からミリ秒への変換誤差が大きい問題を修正。
-* :doc:`/functions/geo_in_rectangle` の ``top_left`` と
+* :doc:`/reference/functions/geo_in_rectangle` の ``top_left`` と
   ``bottom_right`` に同じ位置を指定するとクラッシュする問題を修正。
 * メモリリークを修正。
 * 小数形式のTimeリテラルをロードするとミリ秒情報が落ちる問題を修正。 #880
-* :doc:`/commands/column_list` のドキュメントを修正。 #758
-* :doc:`/commands/table_list` のドキュメントを修正。
-* :doc:`/commands/load` で_valueを指定するとメモリリークする問題を修正。 #878
-* :doc:`/commands/load` でクラッシュする問題を修正。 #661
+* :doc:`/reference/commands/column_list` のドキュメントを修正。 #758
+* :doc:`/reference/commands/table_list` のドキュメントを修正。
+* :doc:`/reference/commands/load` で_valueを指定するとメモリリークする問題を修正。 #878
+* :doc:`/reference/commands/load` でクラッシュする問題を修正。 #661
 
 実験的
 ^^^^^^

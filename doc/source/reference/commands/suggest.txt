@@ -267,4 +267,4 @@ SEE ALSO
 --------
 
 * :doc:`/suggest`
-* :doc:`/executables/groonga-suggest-create-dataset`
+* :doc:`/reference/executables/groonga-suggest-create-dataset`

@@ -15,7 +15,7 @@ Groonga is a full text search engine but also serves as a column-oriented data s
 Overview
 --------
 
-The basic data types of groonga are roughly divided into 5 groups --- boolean type, numeric types, string types, date/time type and longitude/latitude types. The numeric types are further divided according to whether integer or floating point number, signed or unsigned and the number of bits allocated to each integer. The string types are further divided according to the maximum length. The longitude/latitude types are further divided according to the geographic coordinate system. For more details, see :doc:`/type`.
+The basic data types of groonga are roughly divided into 5 groups --- boolean type, numeric types, string types, date/time type and longitude/latitude types. The numeric types are further divided according to whether integer or floating point number, signed or unsigned and the number of bits allocated to each integer. The string types are further divided according to the maximum length. The longitude/latitude types are further divided according to the geographic coordinate system. For more details, see :doc:`/reference/type`.
 
 In addition, groonga supports reference types and vector types. Reference types are designed for accessing other tables. Vector types are designed for storing a variable number of values in one element.
 
@@ -28,7 +28,7 @@ First, let's create a table for this tutorial.
 Boolean type
 ------------
 
-The boolean type is used to store true or false. To create a boolean type column, specify Bool to the `type` parameter of :doc:`/commands/column_create` command. The default value of the boolean type is false.
+The boolean type is used to store true or false. To create a boolean type column, specify Bool to the `type` parameter of :doc:`/reference/commands/column_create` command. The default value of the boolean type is false.
 
 The following example creates a boolean type column and adds three records. Note that the third record has the default value because no value is specified.
 
@@ -46,9 +46,9 @@ The following example creates a boolean type column and adds three records. Note
 Numeric types
 -------------
 
-The numeric types are divided into integer types and a floating point number type. The integer types are further divided into the signed integer types and unsigned integer types. In addition, you can choose the number of bits allocated to each integer. For more details, see :doc:`/type`. The default value of the numeric types is 0.
+The numeric types are divided into integer types and a floating point number type. The integer types are further divided into the signed integer types and unsigned integer types. In addition, you can choose the number of bits allocated to each integer. For more details, see :doc:`/reference/type`. The default value of the numeric types is 0.
 
-The following example creates an Int8 column and a Float column, and then updates existing records. The :doc:`/commands/load` command updates the weight column as expected. On the other hand, the price column values are different from the specified values because 15.9 is not an integer and 200 is too large. 15.9 is converted to 15 by removing the fractional part. 200 causes an overflow and the result becomes -56. Note that the result of an overflow/underflow is undefined.
+The following example creates an Int8 column and a Float column, and then updates existing records. The :doc:`/reference/commands/load` command updates the weight column as expected. On the other hand, the price column values are different from the specified values because 15.9 is not an integer and 200 is too large. 15.9 is converted to 15 by removing the fractional part. 200 causes an overflow and the result becomes -56. Note that the result of an overflow/underflow is undefined.
 
 .. groonga-command
 .. include:: ../example/tutorial/data-3.log
@@ -65,7 +65,7 @@ The following example creates an Int8 column and a Float column, and then update
 String types
 ------------
 
-The string types are divided according to the maximum length. For more details, see :doc:`/type`. The default value is the zero-length string.
+The string types are divided according to the maximum length. For more details, see :doc:`/reference/type`. The default value is the zero-length string.
 
 The following example creates a ShortText column and updates existing records. The third record has the default value because not updated.
 
@@ -82,7 +82,7 @@ The following example creates a ShortText column and updates existing records. T
 Date and time type
 ------------------
 
-The date and time type of groonga is Time. Actually, a Time column stores a date and time as the number of microseconds since the Epoch, 1970-01-01 00:00:00. A Time value can represent a date and time before the Epoch because the actual data type is a signed integer. Note that :doc:`/commands/load` and :doc:`/commands/select` commands use a decimal number to represent a data and time in seconds. The default value is 0.0, which means the Epoch.
+The date and time type of groonga is Time. Actually, a Time column stores a date and time as the number of microseconds since the Epoch, 1970-01-01 00:00:00. A Time value can represent a date and time before the Epoch because the actual data type is a signed integer. Note that :doc:`/reference//commands/load` and :doc:`/commands/select` commands use a decimal number to represent a data and time in seconds. The default value is 0.0, which means the Epoch.
 
 The following example creates a Time column and updates existing records. The first record has the default value because not updated.
 
@@ -99,7 +99,7 @@ The following example creates a Time column and updates existing records. The fi
 Longitude and latitude types
 ----------------------------
 
-The longitude and latitude types are divided according to the geographic coordinate system. For more details, see :doc:`/type`. To represent a longitude and latitude, groonga uses a string formatted as follows:
+The longitude and latitude types are divided according to the geographic coordinate system. For more details, see :doc:`/reference/type`. To represent a longitude and latitude, groonga uses a string formatted as follows:
 
 * "longitude x latitude" in milliseconds (e.g.: "128452975x503157902")
 * "longitude x latitude" in degrees (e.g.: "35.6813819x139.7660839")
@@ -123,7 +123,7 @@ Reference types
 
 Groonga supports a reference column, which stores references to records in its associated table. In practice, a reference column stores the IDs of the referred records in the associated table and enables access to those records.
 
-You can specify a column in the associated table to the `output_columns` parameter of a :doc:`/commands/select` command. The format is "Src.Dest" where Src is the name of the reference column and Dest is the name of the target column. If only the reference column is specified, it is handled as "Src._key". Note that if a reference does not point to a valid record, a :doc:`/commands/select` command outputs the default value of the target column.
+You can specify a column in the associated table to the `output_columns` parameter of a :doc:`/reference/commands/select` command. The format is "Src.Dest" where Src is the name of the reference column and Dest is the name of the target column. If only the reference column is specified, it is handled as "Src._key". Note that if a reference does not point to a valid record, a :doc:`/reference/commands/select` command outputs the default value of the target column.
 
 The following example adds a reference column to the Site table that was created in the previous tutorial. The new column, named link, is designed for storing links among records in the Site table.
 
@@ -134,12 +134,12 @@ The following example adds a reference column to the Site table that was created
 .. [{"_key":"http://example.org/","link":"http://example.net/"}]
 .. select --table Site --output_columns _key,title,link._key,link.title --query title:@this
 
-The `type` parameter of the :doc:`/commands/column_create` command specifies the table to be associated with the reference column. In this example, the reference column is associated with the own table. Then, the :doc:`/commands/load` command registers a link from "http://example.org" to "http://example.net". Note that a reference column requires the primary key, not the ID, of the record to be referred to. After that, the link is confirmed by the :doc:`/commands/select` command. In this case, the primary key and the title of the referred record are output because link._key and link.title are specified to the `output_columns` parameter.
+The `type` parameter of the :doc:`/reference/commands/column_create` command specifies the table to be associated with the reference column. In this example, the reference column is associated with the own table. Then, the :doc:`/reference/commands/load` command registers a link from "http://example.org" to "http://example.net". Note that a reference column requires the primary key, not the ID, of the record to be referred to. After that, the link is confirmed by the :doc:`/reference/commands/select` command. In this case, the primary key and the title of the referred record are output because link._key and link.title are specified to the `output_columns` parameter.
 
 Vector types
 ------------
 
-Groonga supports a vector column, in which each element can store a variable number of values. To create a vector column, specify the COLUMN_VECTOR flag to the `flags` parameter of a :doc:`/commands/column_create` command. A vector column is useful to represent a many-to-many relationship.
+Groonga supports a vector column, in which each element can store a variable number of values. To create a vector column, specify the COLUMN_VECTOR flag to the `flags` parameter of a :doc:`/reference/commands/column_create` command. A vector column is useful to represent a many-to-many relationship.
 
 The previous example used a regular column, so each record could have at most one link. Obviously, the specification is insufficient because a site usually has more than one links. To solve this problem, the following example uses a vector column.
 
@@ -152,4 +152,4 @@ The previous example used a regular column, so each record could have at most on
 .. [{"_key":"http://example.org/","links":["http://example.net/","http://example.org/","http://example.com/"]}]
 .. select --table Site --output_columns _key,title,links._key,links.title --query title:@this
 
-The only difference at the first step is the `flags` parameter that specifies to create a vector column. The `type` parameter of the :doc:`/commands/column_create` command is the same as in the previous example. Then, the :doc:`/commands/load` command registers three links from "http://example.org/" to "http://example.net/", "http://example.org/" and "http://example.com/". After that, the links are confirmed by the :doc:`/commands/select` command. In this case, the primary keys and the titles are output as arrays because links._key and links.title are specified to the `output_columns` parameter.
+The only difference at the first step is the `flags` parameter that specifies to create a vector column. The `type` parameter of the :doc:`/reference/commands/column_create` command is the same as in the previous example. Then, the :doc:`/reference/commands/load` command registers three links from "http://example.org/" to "http://example.net/", "http://example.org/" and "http://example.com/". After that, the links are confirmed by the :doc:`/reference/commands/select` command. In this case, the primary keys and the titles are output as arrays because links._key and links.title are specified to the `output_columns` parameter.

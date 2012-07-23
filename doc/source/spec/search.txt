@@ -5,7 +5,7 @@
 検索
 ====
 
-:doc:`/commands/select` コマンドがqueryパラメータを使ってどのように検索するのかを説明します。
+:doc:`/reference/commands/select` コマンドがqueryパラメータを使ってどのように検索するのかを説明します。
 
 検索の挙動
 ----------

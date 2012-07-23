@@ -427,12 +427,12 @@ The first ``select`` command searches records that contain a word
 records are matched because the ``TokenBigram`` tokenizer tokenizes
 ``groonga`` to ``groonga`` not ``gr|ro|oo|on|ng|ga``. (The
 ``TokenBigramSplitSymbolAlpha`` tokenizer tokenizes ``groonga`` to
-``gr|ro|oo|on|ng|ga``. See :doc:`/tokenizers` for details.) It means
-that ``groonga`` is indexed but ``groo`` isn't indexed. So no records
-are matched against ``groo`` by exact match. In the case, the search
-storategy escalation is used because the number of matched records (0)
-is equal to ``match_escalation_threshold`` (0). One record is matched
-against ``groo`` by unsplit search.
+``gr|ro|oo|on|ng|ga``. See :doc:`/reference//tokenizers` for details.)
+It means that ``groonga`` is indexed but ``groo`` isn't indexed. So no
+records are matched against ``groo`` by exact match. In the case, the
+search storategy escalation is used because the number of matched
+records (0) is equal to ``match_escalation_threshold`` (0). One record
+is matched against ``groo`` by unsplit search.
 
 The second ``select`` command also searches records that contain a
 word ``groo`` in ``content`` column value from ``Entries`` table. And
@@ -552,7 +552,7 @@ The ``select`` command just outputs ``_id`` and ``_key`` column
 values.
 
 ``*`` is a special value. It means that all columns that are not
-:doc:`/pseudo_column`.
+:doc:`/reference/pseudo_column`.
 
 Here is a ``*`` usage example.
 

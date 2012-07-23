@@ -81,7 +81,7 @@ How to use
 .. {"sequence": "1", "time": 1312950808.86057, "item": "web search realtime", "type": "submit"}
 .. ]
 
-Groonga provides :doc:`/commands/suggest` command to use
+Groonga provides :doc:`/reference/commands/suggest` command to use
 suggestion. `--type suggest` option requests suggestion
 
 For example, here is an command to get suggestion results by

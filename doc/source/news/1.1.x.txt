@@ -14,7 +14,7 @@
 * TokenDelimitNullトークナイザーを追加。
 * プラグイン登録APIの名前を改良。
   grn_db_register_by_name() -> grn_plugin_register() #834
-* :doc:`/commands/select` の--query内で前方一致検索構文"キーワード*"対応。 #837
+* :doc:`/reference/commands/select` の--query内で前方一致検索構文"キーワード*"対応。 #837
 * groonga.pcにgroonga-suggest-create-datasetのパスが設定されている
   groonga_suggest_create_dataset変数を追加。
 
