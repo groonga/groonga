@@ -999,6 +999,11 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
       }
       DFI_PUT(e, type, domain, code);
       break;
+    case GRN_OP_NOT :
+      if (nargs == 1) {
+        PUSH_CODE(e, op, obj, nargs, code);
+      }
+      break;
     case GRN_OP_PLUS :
       if (nargs > 1) {
         PUSH_N_ARGS_ARITHMETIC_OP(e, op, obj, nargs, code);
@@ -3335,6 +3340,16 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_DECR_POST :
         UNARY_OPERATE_AND_ASSIGN_DISPATCH(EXEC_OPERATE_POST, 1, GRN_OBJ_DECR);
+        break;
+      case GRN_OP_NOT :
+        {
+          grn_obj *value;
+          POP1ALLOC1(value, res);
+          grn_obj_reinit(ctx, res, GRN_DB_BOOL, 0);
+          grn_obj_cast(ctx, value, res, GRN_FALSE);
+          GRN_BOOL_SET(ctx, res, !GRN_BOOL_VALUE(res));
+        }
+        code++;
         break;
       default :
         ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "not implemented operator assigned");

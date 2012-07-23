@@ -1,0 +1,44 @@
+table_create Users TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Users name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"name": "Alice"},
+{"name": "Bob"},
+{"name": "Calros"}
+]
+[[0,0.0,0.0],3]
+select Users --filter '!(name == "Alice")'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "name",
+          "ShortText"
+        ]
+      ],
+      [
+        2,
+        "Bob"
+      ],
+      [
+        3,
+        "Calros"
+      ]
+    ]
+  ]
+]
