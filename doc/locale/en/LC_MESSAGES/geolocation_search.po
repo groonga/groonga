@@ -1,28 +1,28 @@
-# English translations for 2.0.1 package.
+# English translations for groonga package.
 # Copyright (C) 2009-2012, Brazil, Inc
 # This file is distributed under the same license as the groonga package.
 # Kouhei Sutou <kou@clear-code.com>, 2012.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: 2.0.1\n"
+"Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-05-21 14:05\n"
-"PO-Revision-Date: 2012-04-28 11:37+0900\n"
+"POT-Creation-Date: 2012-07-23 17:56\n"
+"PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
-"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-# 7b4cf13ab693453d884271990ba80be4
+# 2fb9f02e343f4b82bfce830bfb2a96f6
 #: ../../../source/geolocation_search.txt:6
 msgid "Geolocation Search"
 msgstr "Geolocation Search"
 
-# ede35f19cdaf488b848183f46c100fcf
+# 3a028cc7907140eea914e982a2a49b66
 #: ../../../source/geolocation_search.txt:8
 msgid ""
 "Groonga supports geolocation search. It uses index for search. It means that "
@@ -31,12 +31,12 @@ msgstr ""
 "Groonga supports geolocation search. It uses index for search. It means that "
 "you can search by geolocation fast like fulltext search."
 
-# 4758b7e0531c4e21b48de1bac057e53b
+# 595347d236434d879677f84cc4c42dbf
 #: ../../../source/geolocation_search.txt:13
 msgid "Supported features"
 msgstr "Supported features"
 
-# cdc2412ffd6a48428dc1b2179b68ca58
+# 893f6d34a8304028b4f02db01583631a
 #: ../../../source/geolocation_search.txt:15
 msgid ""
 "Groonga supports only point as data type. Line, surface and so on aren't "
@@ -45,29 +45,29 @@ msgstr ""
 "Groonga supports only point as data type. Line, surface and so on aren't "
 "supported yet. Here is a feature list:"
 
-# cb696584f7da48d9aed11b5fef31398e
+# 42e76ab0a8ee44f88a7bd0363134fca4
 #: ../../../source/geolocation_search.txt:18
 msgid "Groonga can store a point to a column."
 msgstr "Groonga can store a point to a column."
 
-# 312ab62afd9248a2838ed3ab2ac2b51e
+# e3373e25870743f49862bacb3cf8a4a8
 #: ../../../source/geolocation_search.txt:19
 msgid ""
 "Groonga can search records that have a point in the specified rectangle."
 msgstr ""
 "Groonga can search records that have a point in the specified rectangle."
 
-# f8a392ec747340a6975edf89640c78a2
+# c111f9b4b7b14989ba84933fe014ee59
 #: ../../../source/geolocation_search.txt:20
 msgid "Groonga can search records that have a point in the specified circle."
 msgstr "Groonga can search records that have a point in the specified circle."
 
-# 31bc6b1af5aa45b8b7fc2d6968f61c13
+# 2b2377a525c84d9abce8d09c77077695
 #: ../../../source/geolocation_search.txt:21
 msgid "Groonga can calculate distance between two points."
 msgstr "Groonga can calculate distance between two points."
 
-# f8a392ec747340a6975edf89640c78a2
+# d227160f47ef4f1bbd1c959745f51b29
 #: ../../../source/geolocation_search.txt:22
 msgid ""
 "Groonga can sort records by distance from the specified point in ascending "
@@ -76,17 +76,17 @@ msgstr ""
 "Groonga can sort records by distance from the specified point in ascending "
 "order."
 
-# cdb747a5cd4a41f4b9ff632fbc57bfd1
+# 41cec27a8cf7430bb094999f427ee421
 #: ../../../source/geolocation_search.txt:25
 msgid "Here are use cases for groonga's geolocation search:"
 msgstr "Here are use cases for groonga's geolocation search:"
 
-# 4740baa6d20d4cb492ab3f77df197759
+# bd8b003692d14e4b86ae60ef2147b2b3
 #: ../../../source/geolocation_search.txt:27
 msgid "You list McDonald's around a station."
 msgstr "You list McDonald's around a station."
 
-# 59f922364c0c40cbbf62b596aed70753
+# 953d74c99a434b52a7c9888ed16cdfb4
 #: ../../../source/geolocation_search.txt:28
 msgid ""
 "You list KFS around the current location sort by distance from the current "
@@ -95,12 +95,12 @@ msgstr ""
 "You list KFS around the current location sort by distance from the current "
 "location in ascending order with distance."
 
-# a8073a2ba9b44000a628a952927ad818
+# 64a32d53a55f4b50b504692ecdff6d0e
 #: ../../../source/geolocation_search.txt:31
 msgid "Here are not use cases:"
 msgstr "Here are not use cases:"
 
-# d9fdaf3e043640eb91d14e5035b5a8bb
+# d993182babec4dfbab32760baffdf7c1
 #: ../../../source/geolocation_search.txt:33
 msgid ""
 "You search McDonald's in a city. (Groonga doesn't support geolocation search "
@@ -109,7 +109,7 @@ msgstr ""
 "You search McDonald's in a city. (Groonga doesn't support geolocation search "
 "by a shape except a rectangle and a circle.)"
 
-# 57743427f97c43c98048f6b50de06e45
+# f2a7040b783a4de2b1c40ce395ee47bd
 #: ../../../source/geolocation_search.txt:36
 msgid ""
 "You store a region instead of a point as a lake record. (A column can't has "
@@ -118,13 +118,13 @@ msgstr ""
 "You store a region instead of a point as a lake record. (A column can't has "
 "geolocation data except a point.)"
 
-# 846a719d480a4b539c428e719e2da229
+# e19671658b67461ea8e3fe4e627eb20e
 #: ../../../source/geolocation_search.txt:40
 msgid "The following figures show about groonga's geolocation search features."
 msgstr ""
 "The following figures show about groonga's geolocation search features."
 
-# bdd22fd7b6f1461c850b422c441164b2
+# 364f4683406b430db173b6896139f06a
 #: ../../../source/geolocation_search.txt:43
 msgid ""
 "Here is a figure that only has records. A black point describes a record. "
@@ -133,7 +133,7 @@ msgstr ""
 "Here is a figure that only has records. A black point describes a record. "
 "The following figures shows how records are treated."
 
-# 321d2c9e1a694ccd9ed3c645fab7ee5d
+# fc470c47528a40f8a33b63f4a709d8d3
 #: ../../../source/geolocation_search.txt:51
 msgid "Coming soon..."
 msgstr "Coming soon..."

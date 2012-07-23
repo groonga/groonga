@@ -1,28 +1,28 @@
-# English translations for 2.0.1 package.
+# English translations for groonga package.
 # Copyright (C) 2009-2012, Brazil, Inc
 # This file is distributed under the same license as the groonga package.
 # Kouhei Sutou <kou@clear-code.com>, 2012.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: 2.0.1\n"
+"Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-29 15:42\n"
-"PO-Revision-Date: 2012-04-28 11:38+0900\n"
+"POT-Creation-Date: 2012-07-23 17:56\n"
+"PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
-"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-# ca2415459ea747379e514afafc8caab2
+# ce5a1582048f4f51ac69236aa73d7696
 #: ../../../source/install.txt:6
 msgid "Install"
 msgstr "Install"
 
-# 52a1dc21eb364775b9e77e75d130f237
+# 81666e32902a44f193d3b18db08ddb8e
 #: ../../../source/install.txt:8
 msgid ""
 "This section describes how to install groonga on each environment. There are "
@@ -30,8 +30,18 @@ msgid ""
 "of building groonga by yourself. But don't warry. There is a document about "
 "building groonga from source."
 msgstr ""
+"This section describes how to install groonga on each environment. There are "
+"packages for major platforms. It's recommended that you use package instead "
+"of building groonga by yourself. But don't warry. There is a document about "
+"building groonga from source."
 
-# 90c94b2d1f654a9da15a3f4729c5f222
+# 46c1b874ec974dd7b6e08732ecc00a26
+# e1b7c0a3a1194c97bbf80d83a53a6c2d
+# 69d4b79983904d929eff7cee259872aa
+# 1d5d3c315bb744f1924bc0caad8d2bbc
+# 4f13cc39a09a416488b16e6f902c1c15
+# f2441b177ffc4ec2b628862c2868fbdb
+# 95d9b289ae314ee5915f51994ced7d7c
 #: ../../../source/install.txt:13 ../../../source/install/centos.txt:11
 #: ../../../source/install/debian.txt:11 ../../../source/install/fedora.txt:19
 #: ../../../source/install/mac_os_x.txt:12
@@ -48,35 +58,44 @@ msgstr ""
 "or development. You will encounter an out of memory error with a 32-bit "
 "package even if you just process medium size data."
 
-# e54ce88fd05444e08d64ca22e3dd1a7b
+# b0beba5a1f3a4fa68f37ddb8f772c1d2
 #: ../../../source/install/centos.txt:6
 msgid "CentOS"
-msgstr ""
+msgstr "CentOS"
 
-# 610d5ad310b748c1b7ce401cd0c1db8c
+# 98032bd4d33548938c17d75fd2ac72cb
 #: ../../../source/install/centos.txt:8
 msgid ""
 "This section describes how to install groonga related RPM packages on "
 "CentOS. You can install them by ``yum``."
 msgstr ""
+"This section describes how to install groonga related RPM packages on "
+"CentOS. You can install them by ``yum``."
 
-# e54ce88fd05444e08d64ca22e3dd1a7b
+# b7e4b91c595146d0a7112249d319793b
 #: ../../../source/install/centos.txt:18
 msgid "CentOS 5"
-msgstr ""
+msgstr "CentOS 5"
 
-# 0620e383955e465596983efa3acfc1d7
-# 0620e383955e465596983efa3acfc1d7
-# 0620e383955e465596983efa3acfc1d7
-# 0620e383955e465596983efa3acfc1d7
-# 0620e383955e465596983efa3acfc1d7
-# 0620e383955e465596983efa3acfc1d7
-# 0620e383955e465596983efa3acfc1d7
-# 0620e383955e465596983efa3acfc1d7
-# 0620e383955e465596983efa3acfc1d7
-# 0620e383955e465596983efa3acfc1d7
-# 0620e383955e465596983efa3acfc1d7
-# 0620e383955e465596983efa3acfc1d7
+# f437b1eeea9a4208ae224f5d520c8599
+# c9ee7d183bfe49ca83d8aec682921801
+# 60732f6f6892407ebe4f9b956dea6520
+# afc77dfd9316415cafd1c9230116b7c1
+# b1758f6804454414a52714b2699c9189
+# 970d23fbff9844c68b5c7c9e83c48845
+# 6ce3383d0a4244529bb6f9786ada66ce
+# abf8a57e9a104bf6878b3acce84eee2a
+# 3d0a21b3b1054a6db9ebaf6681295ae0
+# c975db63204b4f1d9c7ee6bc8341f1cf
+# c975db63204b4f1d9c7ee6bc8341f1cf
+# c975db63204b4f1d9c7ee6bc8341f1cf
+# 8da254ac49894d9a9eedbbb254426874
+# 0f17ebdc776148e79f81aac2750504a9
+# aba67f3d06cc4f8196a563fbc15ab353
+# 58c64614be224fdaa26d426fb4045205
+# 5e49f7613072461cbf7cec607fb23e77
+# faa86f15967d4eaeb8a59605d382560d
+# 3435714dfd5e4d38a9bb58457ae42bf9
 #: ../../../source/install/centos.txt:20 ../../../source/install/centos.txt:67
 #: ../../../source/install/centos.txt:129
 #: ../../../source/install/debian.txt:27 ../../../source/install/debian.txt:59
@@ -95,15 +114,16 @@ msgstr ""
 msgid "Install::"
 msgstr "Install::"
 
-# 83d1dc369893468cbff4e84a07a12562
-# 19910d2d00654afda5ce49d59252087a
-# 48d31e861c7b46c4a5afa0f769047125
-# 83d1dc369893468cbff4e84a07a12562
-# 19910d2d00654afda5ce49d59252087a
-# 19910d2d00654afda5ce49d59252087a
-# 19910d2d00654afda5ce49d59252087a
-# 19910d2d00654afda5ce49d59252087a
-# 86a145330abf4154b307ca9148163e83
+# 8ae0ee0368f647a4860befcc7c31f4fe
+# a7d99bdb45f643cea57cb4177bb4ee49
+# bc95b9f019434e2e9c8e91b31533a77f
+# ec2b1ad73d0f4be086ce95be5f7c8de3
+# c6c9ef210b4b48c58162a3542f0c95f1
+# 899ae35bba8f48899331a6d0e4a7a2e9
+# 42badd06fcae440d86e6c10fd5dba997
+# ba5804921057426fae906eab3342c78a
+# 2a8c06e784af43e4bee68f39d365e851
+# 385abfe0e4484587915e778b3800712d
 #: ../../../source/install/centos.txt:26 ../../../source/install/centos.txt:73
 #: ../../../source/install/debian.txt:34 ../../../source/install/debian.txt:66
 #: ../../../source/install/debian.txt:98 ../../../source/install/fedora.txt:34
@@ -114,16 +134,19 @@ msgid ""
 "If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a tokenizer, "
 "install groonga-tokenizer-mecab package."
 msgstr ""
+"If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a tokenizer, "
+"install groonga-tokenizer-mecab package."
 
-# c3187a51a03e460db4c9b33e0af45835
-# 8316c5e8233c4ee29e76916d1b4b677b
-# 8316c5e8233c4ee29e76916d1b4b677b
-# 1a8723a7f0584f30812002f12225b615
-# 0368e573084e4c2db9620f255fe167f2
-# 5a71102841cc4ab7bfbf25bce3409fb2
-# 8316c5e8233c4ee29e76916d1b4b677b
-# 0368e573084e4c2db9620f255fe167f2
-# 0368e573084e4c2db9620f255fe167f2
+# 79553514d3da449ebbf935f9b2d8906f
+# 745b0d34490c411e860cefb7e1d15122
+# f91a62276f8b4b79a953c8da1ed0322c
+# c75c38b85cda4e0f82d6535c534550b8
+# 57a57b03e6ae43378c0a62d275639b23
+# 6b38f1d2be1b4b14b5617744b61044d3
+# 65db53cde686446cb3529f2dd133e634
+# c663300f123f4443b4cdb39e0ded6163
+# 95b8f06adfc2445e904aaa382c9fbe80
+# 9fa39341dae24920a8904be4e859dd5f
 #: ../../../source/install/centos.txt:29 ../../../source/install/centos.txt:76
 #: ../../../source/install/debian.txt:37 ../../../source/install/debian.txt:69
 #: ../../../source/install/debian.txt:101
@@ -134,15 +157,16 @@ msgstr ""
 msgid "Install groonga-tokenizer-mecab package::"
 msgstr "Install groonga-tokenizer-mecab package::"
 
-# 19910d2d00654afda5ce49d59252087a
-# 19910d2d00654afda5ce49d59252087a
-# 19910d2d00654afda5ce49d59252087a
-# 19910d2d00654afda5ce49d59252087a
-# 19910d2d00654afda5ce49d59252087a
-# 19910d2d00654afda5ce49d59252087a
-# 19910d2d00654afda5ce49d59252087a
-# 19910d2d00654afda5ce49d59252087a
-# 19910d2d00654afda5ce49d59252087a
+# e0f8e8bd06bb46409e3f44888b6fba98
+# 250429312eb54d66817caa9c20dc7ef2
+# 9ef67a80246f44c198853999d2321061
+# 9d294448ed8a4b2180843a650ff43524
+# 6fdc138c9f154d68b08855422eb74129
+# ecacd8cf83244d46ad7d0eeef6207579
+# 92c632ba2d794c03be66f8638678f484
+# 11c53a90fbad4f8ba3b8e0682384643a
+# d9b7ac32948b4de0b83f219b19bb4fac
+# e66af84810354698a6644ff338210539
 #: ../../../source/install/centos.txt:33 ../../../source/install/centos.txt:80
 #: ../../../source/install/debian.txt:41 ../../../source/install/debian.txt:73
 #: ../../../source/install/debian.txt:105
@@ -155,9 +179,11 @@ msgid ""
 "plugins. If you want to monitor groonga status by Munin, install groonga-"
 "munin-plugins package."
 msgstr ""
+"There is a package that provides `Munin <http://munin-monitoring.org/>`_ "
+"plugins. If you want to monitor groonga status by Munin, install groonga-"
+"munin-plugins package."
 
-# 5b8d30249ea94988b79d80381fdd0496
-# 6b3398fd45b4465a98e016b4b5aa8eea
+# 037127012750439fbef51ef7b76815f7
 #: ../../../source/install/centos.txt:39
 msgid ""
 "Groonga-munin-plugins package requires munin-node package that isn't "
@@ -165,34 +191,38 @@ msgid ""
 "(RPMforge) <http://repoforge.org/>`_ repository or `EPEL <http://"
 "fedoraproject.org/wiki/EPEL>`_ repository to install it by ``yum``."
 msgstr ""
+"Groonga-munin-plugins package requires munin-node package that isn't "
+"included in the official CentOS repository. You need to enable `Repoforge "
+"(RPMforge) <http://repoforge.org/>`_ repository or `EPEL <http://"
+"fedoraproject.org/wiki/EPEL>`_ repository to install it by ``yum``."
 
-# 4cb85311e20741ff89e98f9a8c0f8650
+# e221ed33239a4d7daba1b73851506a10
 #: ../../../source/install/centos.txt:45
 msgid "Enable Repoforge (RPMforge) repository on i386 environment::"
 msgstr "Enable Repoforge (RPMforge) repository on i386 environment::"
 
-# 69c3dcfb02b147eaa46272d02b615725
-# 69c3dcfb02b147eaa46272d02b615725
+# 86cb8e2ab2f44493a84ce4868083f310
 #: ../../../source/install/centos.txt:50
 msgid "Enable Repoforge (RPMforge) repository on x86_64 environment::"
 msgstr "Enable Repoforge (RPMforge) repository on x86_64 environment::"
 
-# 610d5ad310b748c1b7ce401cd0c1db8c
-# 610d5ad310b748c1b7ce401cd0c1db8c
+# d3ac8966909a42e7b7529f565900806d
+# 0dce5cb16732407a8f744070319f3b84
 #: ../../../source/install/centos.txt:55
 #: ../../../source/install/centos.txt:100
 msgid "Enable EPEL repository on any environment::"
 msgstr "Enable EPEL repository on any environment::"
 
-# 30c8cfa32ad14c1d973992139c2db098
-# 30c8cfa32ad14c1d973992139c2db098
-# 30c8cfa32ad14c1d973992139c2db098
-# 30c8cfa32ad14c1d973992139c2db098
-# 30c8cfa32ad14c1d973992139c2db098
-# 30c8cfa32ad14c1d973992139c2db098
-# 30c8cfa32ad14c1d973992139c2db098
-# 30c8cfa32ad14c1d973992139c2db098
-# 30c8cfa32ad14c1d973992139c2db098
+# db74ebc6d29f4a76bc19b1246b17a047
+# eaa350249e74450da83b55bd72db7920
+# c22560e1fb3c471b9eb932406d43f082
+# 3491028690054d08953f41428f1c64b5
+# b33e1ba48f20490780852f564fc5c5f5
+# e6ea3554156a4952875b192053ed47ff
+# 8ff3e039118c48a78c55218afcf58540
+# 9736aa2d003f4bb4b4698df783504c65
+# 72d180993fa44a5c9975ee28b59bb850
+# 088540eb40474b34a88bb12ea391e6c6
 #: ../../../source/install/centos.txt:60
 #: ../../../source/install/centos.txt:104
 #: ../../../source/install/debian.txt:45 ../../../source/install/debian.txt:77
@@ -204,27 +234,29 @@ msgstr "Enable EPEL repository on any environment::"
 msgid "Install groonga-munin-plugins package::"
 msgstr "Install groonga-munin-plugins package::"
 
-# e54ce88fd05444e08d64ca22e3dd1a7b
+# 6b342329b45840a68bc861aaf7d49b0a
 #: ../../../source/install/centos.txt:65
 msgid "CentOS 6"
 msgstr "CentOS 6"
 
-# 5b8d30249ea94988b79d80381fdd0496
-# 6b3398fd45b4465a98e016b4b5aa8eea
+# 7e5a331cd41c4a0991a52c090b6a4dcc
 #: ../../../source/install/centos.txt:86
 msgid ""
 "Groonga-munin-plugins package requires munin-node package that isn't "
 "included in the official CentOS repository. You need to enable `EPEL <http://"
 "fedoraproject.org/wiki/EPEL>`_ repository to install it by ``yum``."
 msgstr ""
+"Groonga-munin-plugins package requires munin-node package that isn't "
+"included in the official CentOS repository. You need to enable `EPEL <http://"
+"fedoraproject.org/wiki/EPEL>`_ repository to install it by ``yum``."
 
-# 8b03e949df9048f99875a6e56d3eff1e
-# 22603ea939974cc2be0d8da46d9f01f4
-# d7e44906dd2849e1afd70846af599826
-# 322f25cac209421c956038ae8a037f1c
-# 59db80affe314f32a6ce76536f4a5497
-# ec703d27d3234966b9fc47ee0b2452e4
-# 2b8df69838dd4359ba0916f298551913
+# 0e7f2b6d2cac42ce971ee9b11e36a92a
+# f58489c1a3304bc5bbaba4320865522d
+# 327871e0e67a428fa4106f23ee6c056b
+# 8022e4c0bc2b44e28fa6fa0e2eaf0681
+# 45e677df4dd2400d8f057b35e3161604
+# 81d520b6f6304f3089b1f8525030dc82
+# 6dbe6580cf604af38351363b378f6d40
 #: ../../../source/install/centos.txt:109
 #: ../../../source/install/debian.txt:114
 #: ../../../source/install/fedora.txt:50
@@ -233,25 +265,27 @@ msgstr ""
 #: ../../../source/install/ubuntu.txt:174
 #: ../../../source/install/windows.txt:44
 msgid "Build from source"
-msgstr ""
+msgstr "Build from source"
 
-# f73af9b4faa3414790164d6536705023
-# 6fd3f5d260094206bed009bcc59c9bc0
-# a1273f9f74434e008d905308f05ae950
-# 4ae1610ba99e4616bb4cd656a68442d8
+# 4a03da3920614107a55fed4942bdb66d
+# 086f7458c2334665965796a64842dac3
+# d6160ce7ff6a4f1a98ee9cda9559def0
+# 85948f2410a645d1b75e38b7ccdd87fb
+# 133fbfb38d284e48887b4275f4ae3de6
 #: ../../../source/install/centos.txt:111
 #: ../../../source/install/debian.txt:116
 #: ../../../source/install/fedora.txt:52
 #: ../../../source/install/solaris.txt:14
 #: ../../../source/install/ubuntu.txt:176
 msgid "Install required packages to build groonga::"
-msgstr ""
+msgstr "Install required packages to build groonga::"
 
-# f1f98606fb704b15867fd3aacb4b3de8
-# 3a8af08504f44d288d9797cf55c7c429
-# 5ff01f1e9c6f42eb9f3e289da87f4eff
-# 41c0b64ee2204b84b366a15ee1675eda
-# 4d0dfc5867f74ed1b5778e043a4bbcea
+# ab83d63fddfd47aaaef39d48cc6ae88b
+# 7ab19882f40846d5b3366366e9448db1
+# 4f46ed376832463e869314e85ca884af
+# d85fabdee74a4e0682a5febc3f6ecb56
+# 2e8ca4ff722a4ea3a87ab7d747236fec
+# 7d18e6ca13674a5691f9e161f70f494b
 #: ../../../source/install/centos.txt:115
 #: ../../../source/install/debian.txt:120
 #: ../../../source/install/fedora.txt:56
@@ -259,26 +293,27 @@ msgstr ""
 #: ../../../source/install/solaris.txt:18
 #: ../../../source/install/ubuntu.txt:180
 msgid "Download source::"
-msgstr ""
+msgstr "Download source::"
 
-# 0051bcad842a4077983802410ced6760
-# 245810549bb94ecb94be8112bc71b1e0
-# 4faa2f4027f944eb9c65a687f4ac0d24
-# cccc1f7cdc334f5b84af04b6d13cdbd8
-# d81638bd7ff7441892eb97a7be0a7cd2
+# 6ca01a3a215a4cb09aa46ca5567ff107
+# 85d1d4b4a11549fcb4c59e969c80bc3d
+# 5164750331874b8d9dab3c1a501c0f22
+# b7aa9c07577e45dd9fa6614b522dc4d6
+# d14e1922ad544ade9efe5a17578cfa6b
 #: ../../../source/install/centos.txt:121
 #: ../../../source/install/debian.txt:126
 #: ../../../source/install/fedora.txt:62
 #: ../../../source/install/mac_os_x.txt:43
 #: ../../../source/install/ubuntu.txt:186
 msgid "Configure (see :ref:`source-configure` about ``configure`` options)::"
-msgstr ""
+msgstr "Configure (see :ref:`source-configure` about ``configure`` options)::"
 
-# 136b0f86786e470bb38bd3e4b6000c65
-# 6841d26fc26543ddb843cf1dfa2f9ba7
-# 6befc5cd575b4083b6dfefbd38f3f403
-# 1be509df11fb4455aa5d56d3e9e25c38
-# 54aaf45241eb4affbe05bbf5cfc8c322
+# b305b634d3f54db0b1ca59ab3ea97657
+# 016409a61ceb45169ffc5444505773c9
+# 5135a8cfefde48b8a449553ea26310db
+# d0515d547d334445b868f8e302144dbd
+# 96d76e9f1400419ba107717d28d3d54b
+# 6a6b260a72724a1282902e93f3acc1c8
 #: ../../../source/install/centos.txt:125
 #: ../../../source/install/debian.txt:130
 #: ../../../source/install/fedora.txt:66
@@ -286,46 +321,49 @@ msgstr ""
 #: ../../../source/install/solaris.txt:31
 #: ../../../source/install/ubuntu.txt:190
 msgid "Build::"
-msgstr ""
+msgstr "Build::"
 
-# cfdf7bc5d8a447f699531d1456eac4e1
+# 1becec2af6da4b148f06d86745f32ce9
 #: ../../../source/install/debian.txt:6
 msgid "Debian GNU/Linux"
-msgstr ""
+msgstr "Debian GNU/Linux"
 
-# 610d5ad310b748c1b7ce401cd0c1db8c
+# 297b5385bbea42d4aef29f1d74688b5e
 #: ../../../source/install/debian.txt:8
 msgid ""
 "This section describes how to install groonga related deb packages on Debian "
 "GNU/Linux. You can install them by ``apt``."
 msgstr ""
+"This section describes how to install groonga related deb packages on Debian "
+"GNU/Linux. You can install them by ``apt``."
 
-# c4b5d94f4c404ecaa0802387db9ddf70
+# 759f4dece0294edcbc12124ced54fb74
 #: ../../../source/install/debian.txt:18
 msgid "squeeze"
-msgstr ""
+msgstr "squeeze"
 
-# 93309af4298a4ceabc1f7a6f735fe901
-# 576e7dee65a249ba84b49e5853a238ad
-# b3aca5040c04407cb85cdfe0cfd740a9
-# 97cd0c519f48438c972e5ed7d6c3320b
-# 175bda860da14f49b92dcbeae676b82c
-# db2f925afb4c4e2fbf69c96b6aaccc06
-# 1b34da7610664b1ab638328e3468a9b3
+# 50be7c1a609e4bfe936cd01ebc24b4b7
+# 3b2ecd16d25a4aeaa49ca362b496454d
+# eba2f512f92546cea851acc8898f3fc9
+# b2be87140a6049cea63ab1abe32f1e47
+# 73eca8c3d130407893bb314a2816c342
+# 7c4b2a2fadd84f0c9446823ac8e51dcd
+# bb4153c41f7e4f25abcf5b4aa7865dbd
 #: ../../../source/install/debian.txt:20 ../../../source/install/debian.txt:52
 #: ../../../source/install/debian.txt:84 ../../../source/install/ubuntu.txt:27
 #: ../../../source/install/ubuntu.txt:66
 #: ../../../source/install/ubuntu.txt:105
 #: ../../../source/install/ubuntu.txt:144
 msgid "Add the groonga apt repository."
-msgstr ""
+msgstr "Add the groonga apt repository."
 
-# 42e132e8746c418ba9b7e7eb25790010
-# 42e132e8746c418ba9b7e7eb25790010
-# 42e132e8746c418ba9b7e7eb25790010
-# 42e132e8746c418ba9b7e7eb25790010
-# 42e132e8746c418ba9b7e7eb25790010
-# 42e132e8746c418ba9b7e7eb25790010
+# 60b083084f0a449f9fd927f49f307fd7
+# 7cca3374e3e143d48355d2f3b8afdf08
+# ea12916e8c484b8d8b15deda19f06c36
+# aebe4d5b9d074036b514b44f73d26a45
+# 9f68655dcf904963a0eaaf3d242603b0
+# 8bd96b92b308450fa8d711b63d5cb0dd
+# 0f61ea1f32f64d49bce1e94af192a598
 #: ../../../source/install/debian.txt:22 ../../../source/install/debian.txt:54
 #: ../../../source/install/debian.txt:86 ../../../source/install/ubuntu.txt:29
 #: ../../../source/install/ubuntu.txt:68
@@ -334,29 +372,31 @@ msgstr ""
 msgid "/etc/apt/sources.list.d/groonga.list::"
 msgstr "/etc/apt/sources.list.d/groonga.list::"
 
-# b1413e4bc09a4971b130a7b2104511b3
+# 2ef83626aca84b7b9e5bedb95cbd86d2
 #: ../../../source/install/debian.txt:50
 msgid "wheezy"
-msgstr ""
+msgstr "wheezy"
 
-# fe9d2d040ebe4fe4be18abed43ba311f
+# 74877f0da12340938457eb4f52cbf90a
 #: ../../../source/install/debian.txt:82
 msgid "sid"
-msgstr ""
+msgstr "sid"
 
-# 321a333ac68d41a1be6e272db0281ebb
+# 2293d519a57d42f195ec5cd8118dfbc3
 #: ../../../source/install/fedora.txt:6
 msgid "Fedora"
-msgstr ""
+msgstr "Fedora"
 
-# 610d5ad310b748c1b7ce401cd0c1db8c
+# bd4f3f3bf15a49fcb73e57ccf6c76d64
 #: ../../../source/install/fedora.txt:8
 msgid ""
 "This section describes how to install groonga related RPM packages on "
 "Fedora. You can install them by ``yum``."
 msgstr ""
+"This section describes how to install groonga related RPM packages on "
+"Fedora. You can install them by ``yum``."
 
-# ce43e341c32e4b8cb15f40551e54f722
+# 1420634be8ad48fdbbab108750730683
 #: ../../../source/install/fedora.txt:11
 msgid ""
 "Groonga related RPM pakcages are also in the official Fedora yum repository. "
@@ -366,712 +406,828 @@ msgid ""
 "day but the official Fedora yum repository provides the latest version a few "
 "days later. That is, the different is very small. :-)"
 msgstr ""
+"Groonga related RPM pakcages are also in the official Fedora yum repository. "
+"So you can use them instead of the groonga yum repository. The different "
+"between the groonga yum repository and the official Fedora yum repository is "
+"that the groonga yum repository provides the latest version at the release "
+"day but the official Fedora yum repository provides the latest version a few "
+"days later. That is, the different is very small. :-)"
 
-# 321a333ac68d41a1be6e272db0281ebb
+# 42ad06b8b53147088e9622d861e034e1
 #: ../../../source/install/fedora.txt:26
 msgid "Fedora 16"
 msgstr "Fedora 16"
 
-# c4de18a598bd40a3bcb8e9bfa5efc0c7
+# 802a7c53c7f24630bb3d666c9e423d15
 #: ../../../source/install/mac_os_x.txt:6
 msgid "Mac OS X"
-msgstr ""
+msgstr "Mac OS X"
 
-# 610d5ad310b748c1b7ce401cd0c1db8c
+# 33310205edbb42b1a97eb179706495a4
 #: ../../../source/install/mac_os_x.txt:8
 msgid ""
 "This section describes how to install groonga on Mac OS X. You can install "
 "groonga by `MacPorts <http://www.macports.org/>`_ or `Homebrew <http://mxcl."
 "github.com/homebrew/>`_."
 msgstr ""
+"This section describes how to install groonga on Mac OS X. You can install "
+"groonga by `MacPorts <http://www.macports.org/>`_ or `Homebrew <http://mxcl."
+"github.com/homebrew/>`_."
 
-# 7be84ddf973f4e949dc57b94ffee5fe1
+# 4fb446c69efa4b539029ce4702a933ec
 #: ../../../source/install/mac_os_x.txt:19
 msgid "MacPorts"
-msgstr ""
+msgstr "MacPorts"
 
-# 44051bec13184c678d0a9d37c9f3acdb
+# 794634aeb06e43359a4ddd0622cf167a
 #: ../../../source/install/mac_os_x.txt:26
 msgid "Homebrew"
-msgstr ""
+msgstr "Homebrew"
 
-# 6b19ed6381844720b696fb32c818c914
+# 141772b447f6468ba28bd8c2120be3ec
 #: ../../../source/install/mac_os_x.txt:35
 msgid "Install `Xcode <https://developer.apple.com/xcode/>`_."
-msgstr ""
+msgstr "Install `Xcode <https://developer.apple.com/xcode/>`_."
 
-# 8af8736fd90f45b8b4a388da718871c0
+# b15838ef920c4069b98654568b5cc9ac
 #: ../../../source/install/others.txt:6
 msgid "Others"
 msgstr "Others"
 
-# 610d5ad310b748c1b7ce401cd0c1db8c
+# bdd32fff222441809e6ed4f2bdfff3d7
 #: ../../../source/install/others.txt:8
 msgid ""
 "This section describes how to install groonga from source on UNIX like "
 "environment."
 msgstr ""
+"This section describes how to install groonga from source on UNIX like "
+"environment."
 
-# b26e66c225814a08b549c3824ead8fc2
+# adfe3cb6a3ca472baa6405bf15b660aa
 #: ../../../source/install/others.txt:11
 msgid ""
 "To get more detail about installing groonga from source on the specific "
 "environment, find the document for the specific environment from :doc:`/"
 "install`."
 msgstr ""
+"To get more detail about installing groonga from source on the specific "
+"environment, find the document for the specific environment from :doc:`/"
+"install`."
 
-# 937411e531a846de9f155ac431298ed9
+# bbc82fb328884e88a6d3f6b080729e22
 #: ../../../source/install/others.txt:16
 msgid "Dependencies"
-msgstr ""
+msgstr "Dependencies"
 
-# 8c2d44fed3a94ad3af6358c561d63850
+# 9639f7da41084751982a0cfd112a1635
 #: ../../../source/install/others.txt:18
 msgid ""
 "Groonga doesn't require any special libraries but requires some tools for "
 "build."
 msgstr ""
+"Groonga doesn't require any special libraries but requires some tools for "
+"build."
 
-# 0d541c0530f8461f88617f7889db62a0
+# ceb3f344f07f402aa6f0ae8927bd76f1
 #: ../../../source/install/others.txt:22
 msgid "Tools"
-msgstr ""
+msgstr "Tools"
 
-# 6939b893bd134b25985c06c5f0d1060f
+# 7049ffba29b643eb8c9994136d935070
 #: ../../../source/install/others.txt:24
 msgid "Here are required tools:"
-msgstr ""
+msgstr "Here are required tools:"
 
-# 919eda31f72749c19a15f98aaec9da25
+# 27ecd81df31449049eb663f11aaa22f5
 #: ../../../source/install/others.txt:26
 msgid "``wget``, ``curl`` or Web browser for downloading source archive"
-msgstr ""
+msgstr "``wget``, ``curl`` or Web browser for downloading source archive"
 
-# 0188de64de5e42628753943e98c70462
+# 02710278d1a34680bf1b5db6a4240a5d
 #: ../../../source/install/others.txt:27
 msgid "``tar`` and ``gzip`` for extracting source archive"
-msgstr ""
+msgstr "``tar`` and ``gzip`` for extracting source archive"
 
-# ffc436780bb64a8aaeae2053230732a8
+# 6f415343c03d4606810eab6ef1db2cfb
 #: ../../../source/install/others.txt:28
 msgid "shell (many shells such as ``dash``, ``bash`` and ``zsh`` will work)"
-msgstr ""
+msgstr "shell (many shells such as ``dash``, ``bash`` and ``zsh`` will work)"
 
-# 0d99e90854074b0c9f2a1310a5614ccd
+# c9a97b8ee5704b8bbf41c5febc850f1f
 #: ../../../source/install/others.txt:30
 msgid ""
 "C compiler and C++ compiler (``gcc`` and ``g++`` are supported but other "
 "compilers may work)"
 msgstr ""
+"C compiler and C++ compiler (``gcc`` and ``g++`` are supported but other "
+"compilers may work)"
 
-# 73859d9758764ee4b5f016535afb8aea
+# aa9ce43f296244c0b930bae5164eb508
 #: ../../../source/install/others.txt:32
 msgid "``make`` (GNU make is supported but other make like BSD make will work)"
 msgstr ""
+"``make`` (GNU make is supported but other make like BSD make will work)"
 
-# a63e62b8c1cd40b6a7af9a3afaeaec14
+# a842f98317694de693bddd89381935c1
 #: ../../../source/install/others.txt:34
 msgid "You must get them ready."
-msgstr ""
+msgstr "You must get them ready."
 
-# 243469d2ed8c4dd59fb5bfbadf9f1a83
+# e9cc5ed5b59f4183bd58617924c2c7c6
 #: ../../../source/install/others.txt:36
 msgid ""
 "You can use `CMake <http://www.cmake.org/>`_ instead of shell but this "
 "document doesn't describe about building with CMake."
 msgstr ""
+"You can use `CMake <http://www.cmake.org/>`_ instead of shell but this "
+"document doesn't describe about building with CMake."
 
-# 8a45b03b7bde43c7ab718683780b7e80
+# ec79768e3d094ac59f2c6596b8f942c0
 #: ../../../source/install/others.txt:39
 msgid "Here are optional tools:"
-msgstr ""
+msgstr "Here are optional tools:"
 
-# 8d3ad83ed0cf4faa97f520c2943bc3dc
+# 3405c0c4e1364d97922cfb4ded3ca911
 #: ../../../source/install/others.txt:41
 msgid ""
 "`pkg-config <http://www.freedesktop.org/wiki/Software/pkg-config>`_ for "
 "detecting libraries"
 msgstr ""
+"`pkg-config <http://www.freedesktop.org/wiki/Software/pkg-config>`_ for "
+"detecting libraries"
 
-# ea426239dd3d48a9a20c8c28b51c6203
+# 266beb99f44e4e0e96189f5751cad6c1
 #: ../../../source/install/others.txt:44
 msgid "`sudo <http://www.gratisoft.us/sudo/>`_ for installing built groonga"
-msgstr ""
+msgstr "`sudo <http://www.gratisoft.us/sudo/>`_ for installing built groonga"
 
-# a3ed9677b23641e487dc5297a119f5f9
+# 701fd95e06da4a80ae7e8d3c3fefe877
 #: ../../../source/install/others.txt:47
 msgid "You must get them ready if you want to use optional libraries."
-msgstr ""
+msgstr "You must get them ready if you want to use optional libraries."
 
-# c835f7cc84b749a99368ec3b223d9f6f
+# 99e3c9a1ece844bda1954f88bc36526f
 #: ../../../source/install/others.txt:50
 msgid "Libraries"
-msgstr ""
+msgstr "Libraries"
 
-# 89b300de838946c6a0357ef56c412f76
+# 3818ffe3714c455783103b95786371cc
 #: ../../../source/install/others.txt:52
 msgid "All libraries are optional. Here are optional libraries:"
-msgstr ""
+msgstr "All libraries are optional. Here are optional libraries:"
 
-# ace6b039c928436fa7b7f629b524b54c
+# f339e121e9224c27b66151c06964c44f
 #: ../../../source/install/others.txt:54
 msgid ""
 "`MeCab <http://mecab.sourceforge.net/>`_ for tokenizing full-text search "
 "target document by morphological analysis"
 msgstr ""
+"`MeCab <http://mecab.sourceforge.net/>`_ for tokenizing full-text search "
+"target document by morphological analysis"
 
-# aa0e53be4b95445e82cf0944c06018b8
+# 07e1773e89f64ae1b19b73853d68ef11
 #: ../../../source/install/others.txt:56
 msgid ""
 "`KyTea <http://www.phontron.com/kytea/>`_ for tokenizing full-text search "
 "target document by morphological analysis"
 msgstr ""
+"`KyTea <http://www.phontron.com/kytea/>`_ for tokenizing full-text search "
+"target document by morphological analysis"
 
-# a608d322b3e24d39ab4a78c4fe2d78bf
+# 2829a05ca49a44e3a0de8b3af2adc636
 #: ../../../source/install/others.txt:58
 msgid "`ZeroMQ <http://www.zeromq.org/>`_ for :doc:`/suggest`"
-msgstr ""
+msgstr "`ZeroMQ <http://www.zeromq.org/>`_ for :doc:`/suggest`"
 
-# 9710addbd0944ac0abe19d16e3e9fb46
+# bee922c74866423eb95006fd46a4525e
 #: ../../../source/install/others.txt:59
 msgid "`libevent <http://libevent.org/>`_ for :doc:`/suggest`"
-msgstr ""
+msgstr "`libevent <http://libevent.org/>`_ for :doc:`/suggest`"
 
-# f940cbb604214a638999808135a39bb8
+# cba505dfa0d44490b84f768004c00102
 #: ../../../source/install/others.txt:60
 msgid ""
 "`MessagePack <http://msgpack.org/>`_ for supporting MessagePack output and :"
 "doc:`/suggest`"
 msgstr ""
+"`MessagePack <http://msgpack.org/>`_ for supporting MessagePack output and :"
+"doc:`/suggest`"
 
-# 17092ccad308499bacdce0cb2346fba0
+# ccf01c48bdca47e4a00eabc81b2d044a
 #: ../../../source/install/others.txt:62
 msgid ""
 "`libedit <http://www.thrysoee.dk/editline/>`_ for command line editing in :"
-"doc:`/executables/groonga`"
+"doc:`/reference/executables/groonga`"
 msgstr ""
+"`libedit <http://www.thrysoee.dk/editline/>`_ for command line editing in :"
+"doc:`/reference/executables/groonga`"
 
-# 77763e46c6b64ebab27b0c9d3e1cff7c
+# fcb3b02cbb5046ff81b8e03397058779
 #: ../../../source/install/others.txt:64
 msgid "`zlib <http://zlib.net/>`_ for compressing column value"
-msgstr ""
+msgstr "`zlib <http://zlib.net/>`_ for compressing column value"
 
-# c3b0197a7e8b4424a6332c8edd898dac
+# 37a484f2252348f8b858230769d8cb6c
 #: ../../../source/install/others.txt:65
 msgid ""
 "`LZO <http://www.oberhumer.com/opensource/lzo/>`_ for compressing column "
 "value"
 msgstr ""
+"`LZO <http://www.oberhumer.com/opensource/lzo/>`_ for compressing column "
+"value"
 
-# 0c297d7d9efd42da92cb2f39d78a56f0
+# d437301e684c4a5e8a47c3eb13027281
 #: ../../../source/install/others.txt:68
 msgid ""
 "If you want to use those all or some libraries, you need to install them "
 "before installing groonga."
 msgstr ""
+"If you want to use those all or some libraries, you need to install them "
+"before installing groonga."
 
-# b4f94df51e014b9eb6840f3569944e5e
+# d011cbc73f394fa3af99f30476cde52a
 #: ../../../source/install/others.txt:74
 msgid ""
 "Groonga uses GNU build system. So the following is the simplest build steps::"
 msgstr ""
+"Groonga uses GNU build system. So the following is the simplest build steps::"
 
-# a6088fe2a0864b3795281bb77980d2ae
+# 1e7c5c2dc83644e8a4ecbd84f787b9e7
 #: ../../../source/install/others.txt:84
 msgid ""
-"After the above steps, :doc:`/executables/groonga` is found in ``/usr/local/"
-"bin/groonga``."
+"After the above steps, :doc:`/reference/executables/groonga` is found in ``/"
+"usr/local/bin/groonga``."
 msgstr ""
+"After the above steps, :doc:`/reference/executables/groonga` is found in ``/"
+"usr/local/bin/groonga``."
 
-# 9c6074379c554ae595b61788b3be502b
+# a6d2bc8e98c844678621cfa3f962f4c5
 #: ../../../source/install/others.txt:87
 msgid ""
 "The default build will work well but you can customize groonga at "
 "``configure`` step."
 msgstr ""
+"The default build will work well but you can customize groonga at "
+"``configure`` step."
 
-# 38dead3a7a41486489e22edd99903286
+# 276d51ae33094174ad7ba796692aa360
 #: ../../../source/install/others.txt:90
 msgid "The following describes details about each step."
-msgstr ""
+msgstr "The following describes details about each step."
 
-# 3e5ea9ee80a4412f90b5c8fd44524062
+# 340023d6797b4e039988a4d37e0588b3
 #: ../../../source/install/others.txt:95
 msgid "``configure``"
-msgstr ""
+msgstr "``configure``"
 
-# 7234f11905b2453a9010dc8953bf7826
+# 5ea7da2b611342489ac7cbadb7f02688
 #: ../../../source/install/others.txt:97
 msgid ""
 "First, you need to run ``configure``. Here are important ``configure`` "
 "options:"
 msgstr ""
+"First, you need to run ``configure``. Here are important ``configure`` "
+"options:"
 
-# 4ddc2738f04d45fc965e27570e39922b
+# 499b3692996642b4a60101d87f7be633
 #: ../../../source/install/others.txt:101
 msgid "``--prefix=PATH``"
-msgstr ""
+msgstr "``--prefix=PATH``"
 
-# 1222dc58caab4ab3a9d7537c11ad51ec
+# 1f2a25fc00ae4c77854e9432f89c82bf
 #: ../../../source/install/others.txt:103
 msgid ""
 "Specifies the install base directory. Groonga related files are installed "
 "under ``${PATH}/`` directory."
 msgstr ""
+"Specifies the install base directory. Groonga related files are installed "
+"under ``${PATH}/`` directory."
 
-# b2e8f0686a0e4b719fba599dd9c48a97
+# 9ccaa975959f4a1f9ca5c558c8ec173d
 #: ../../../source/install/others.txt:106
 msgid ""
-"The default is ``/usr/local``. In this case, :doc:`/executables/groonga` is "
-"installed into ``/usr/local/bin/groonga``."
+"The default is ``/usr/local``. In this case, :doc:`/reference/executables/"
+"groonga` is installed into ``/usr/local/bin/groonga``."
 msgstr ""
+"The default is ``/usr/local``. In this case, :doc:`/reference/executables/"
+"groonga` is installed into ``/usr/local/bin/groonga``."
 
-# 83851b6b60114fd99c855b4d8929f7a9
+# 1094f6f30d1c4db680d6a39e6887d5cf
 #: ../../../source/install/others.txt:109
 msgid ""
 "Here is an example that installs groonga into ``~/local`` for an user use "
 "instead of system wide use::"
 msgstr ""
+"Here is an example that installs groonga into ``~/local`` for an user use "
+"instead of system wide use::"
 
-# 2087bc6fd7394924a51e405a40818d9a
+# eb338ffe309a45ba8797b24fa52300ae
 #: ../../../source/install/others.txt:115
 msgid "``--localstatedir=PATH``"
-msgstr ""
+msgstr "``--localstatedir=PATH``"
 
-# a473920a17f442c08c08154c9aab9166
+# 43fdca86e4144246b4e71a06405240a7
 #: ../../../source/install/others.txt:117
 msgid ""
 "Specifies the base directory to place modifiable file such as log file, PID "
 "file and database files. For example, log file is placed at ``${PATH}/log/"
 "groonga.log``."
 msgstr ""
+"Specifies the base directory to place modifiable file such as log file, PID "
+"file and database files. For example, log file is placed at ``${PATH}/log/"
+"groonga.log``."
 
-# 2fdd394621cb47dfab26a3c632785e89
+# 5249986a91cd4e17a9f04dde788d7749
 #: ../../../source/install/others.txt:121
 msgid "The default is ``/usr/local/var``."
-msgstr ""
+msgstr "The default is ``/usr/local/var``."
 
-# 6913947010354e7c8ad0f6114f9926d6
+# 9a291662934b498dab92493f22235c71
 #: ../../../source/install/others.txt:123
 msgid ""
 "Here is an example that system wide ``/var`` is used for modifiable files::"
 msgstr ""
+"Here is an example that system wide ``/var`` is used for modifiable files::"
 
-# 3e58216124384abeb5b7d6d72a671eb2
+# c1cd38ab5c694e5eba2838deb32c2522
 #: ../../../source/install/others.txt:129
 msgid "``--with-log-path=PATH``"
-msgstr ""
+msgstr "``--with-log-path=PATH``"
 
-# 6af3468f0c1f4d839fc3a1d5b3d29257
+# 3d44f00679254e90bd318231c70b4a87
 #: ../../../source/install/others.txt:131
 msgid ""
 "Specifies the default log file path. You can override the default log path "
 "is ``goronga`` command's ``--log-path`` command line option. So this option "
 "is not critical build option. It's just for convenient."
 msgstr ""
+"Specifies the default log file path. You can override the default log path "
+"is ``goronga`` command's ``--log-path`` command line option. So this option "
+"is not critical build option. It's just for convenient."
 
-# be80ba30744d46a5aa1939808e854613
+# fa985d26b880471f8295cea11121cdaf
 #: ../../../source/install/others.txt:135
 msgid ""
 "The default is ``/usr/local/var/log/groonga.log``. The ``/usr/local/var`` "
 "part is changed by ``--localestatedir`` option."
 msgstr ""
+"The default is ``/usr/local/var/log/groonga.log``. The ``/usr/local/var`` "
+"part is changed by ``--localestatedir`` option."
 
-# 842315fdb2084fe48f02d014ce800b2b
+# a2018ca524904602bcba7020a87dff14
 #: ../../../source/install/others.txt:138
 msgid ""
 "Here is an example that log file is placed into shared NFS directory ``/nfs/"
 "log/groonga.log``::"
 msgstr ""
+"Here is an example that log file is placed into shared NFS directory ``/nfs/"
+"log/groonga.log``::"
 
-# a2c7d4ca2e7341e299e145ec0a4c2538
+# ef58333a84c4421f9d30fb621e1aa4aa
 #: ../../../source/install/others.txt:144
 msgid "``--with-default-encoding=ENCODING``"
-msgstr ""
+msgstr "``--with-default-encoding=ENCODING``"
 
-# 42c2e9906df5418e872e148105497086
+# baa9624ea3cb4bb0b074a10cd33c4831
 #: ../../../source/install/others.txt:146
 msgid ""
 "Specifies the default encoding. Available encodings are ``euc_jp``, "
 "``sjis``, ``utf8``, ``latin1``, ``koi8r`` and ``none``."
 msgstr ""
+"Specifies the default encoding. Available encodings are ``euc_jp``, "
+"``sjis``, ``utf8``, ``latin1``, ``koi8r`` and ``none``."
 
-# 30b59ce6200c429b9f1b30f2a015ebd3
+# deb142460782412cae9f388d881023eb
 #: ../../../source/install/others.txt:149
 msgid "The default is ``utf-8``."
-msgstr ""
+msgstr "The default is ``utf-8``."
 
-# 0eab44eac62a4e60b3b331214baaec37
+# a15bda4cff264eec8553b027a3266113
 #: ../../../source/install/others.txt:151
 msgid "Here is an example that Shift_JIS is used as the default encoding::"
-msgstr ""
+msgstr "Here is an example that Shift_JIS is used as the default encoding::"
 
-# 241105141b8e47ffad7432197863bb2f
+# 71836082040a4e4590a806021c3233c9
 #: ../../../source/install/others.txt:156
 msgid "``--with-match-escalation-threshold=NUMBER``"
-msgstr ""
+msgstr "``--with-match-escalation-threshold=NUMBER``"
 
-# 9e3f14234acf4d29b543bde6fcf0edfc
+# f9c2544165fc43ddb7b6db7aa96c5be7
 #: ../../../source/install/others.txt:158
 msgid ""
 "Specifies the default match escalation threshold. See :ref:`match-escalation-"
 "threshold` about match escalation threshold. -1 means that match operation "
 "never escalate."
 msgstr ""
+"Specifies the default match escalation threshold. See :ref:`match-escalation-"
+"threshold` about match escalation threshold. -1 means that match operation "
+"never escalate."
 
-# 487a399a87ca4454a2a21c45f6b78f42
+# 855618eef7ac48c0ae85813ac2734e4e
 #: ../../../source/install/others.txt:162
 msgid "The default is 0."
-msgstr ""
+msgstr "The default is 0."
 
-# 9ef57b538c034177a8b1969621bad942
+# e797f18ad8604abca16d0494321b6d25
 #: ../../../source/install/others.txt:164
 msgid "Here is an example that match escalation isn't used by default::"
-msgstr ""
+msgstr "Here is an example that match escalation isn't used by default::"
 
-# 5837d55859e84071a07c3cd2649b7e26
+# 7c1d61e78b48479abe7385112b05f078
 #: ../../../source/install/others.txt:169
 msgid "``--with-zlib``"
-msgstr ""
+msgstr "``--with-zlib``"
 
-# 5d1ab0c78b954f02bbb82cf0cdf60520
+# a168896021ee407abd805a2a573473ea
 #: ../../../source/install/others.txt:171
 msgid "Enables column value compression by zlib."
-msgstr ""
+msgstr "Enables column value compression by zlib."
 
-# dec28b261f814741a33f3c4c9453403b
-# ae139fa3f8d6408ebf7d1830d5e1f90b
+# f78aa244de6c4621bffd189d809dfb95
+# f78aa244de6c4621bffd189d809dfb95
 #: ../../../source/install/others.txt:173
 #: ../../../source/install/others.txt:184
 msgid "The default is disabled."
-msgstr ""
+msgstr "The default is disabled."
 
-# 008acef0259b4c239ef04bb4f06ac496
+# 484e0f13f9564a8d9e3631d3800fdf48
 #: ../../../source/install/others.txt:175
 msgid "Here is an example that enables column value compression by zlib::"
-msgstr ""
+msgstr "Here is an example that enables column value compression by zlib::"
 
-# 1afe619125294615b2c4a360f501b0e0
+# 702a4bec259e46de8a614240a3e12a8d
 #: ../../../source/install/others.txt:180
 msgid "``--with-lzo``"
-msgstr ""
+msgstr "``--with-lzo``"
 
-# 2bbe8b43c47f479badd0c183de00460f
+# dedc6f6d9c3c4f8ebb12ca1a3c6e7307
 #: ../../../source/install/others.txt:182
 msgid "Enables column value compression by LZO."
-msgstr ""
+msgstr "Enables column value compression by LZO."
 
-# 37b7d4d2ddb8474b87e271cb8f0cd969
+# 4dab26870f6b49b293fbea6f6113d696
 #: ../../../source/install/others.txt:186
 msgid "Here is an example that enables column value compression by LZO::"
-msgstr ""
+msgstr "Here is an example that enables column value compression by LZO::"
 
-# 8ec355f81ae247f4a6456b6ae2321f83
+# d27846de25f64371b4da256393477c6d
 #: ../../../source/install/others.txt:191
 msgid "``--with-message-pack=MESSAGE_PACK_INSTALL_PREFIX``"
-msgstr ""
+msgstr "``--with-message-pack=MESSAGE_PACK_INSTALL_PREFIX``"
 
-# 1ae29574372444af9262cf2ab2a959eb
+# f7d2b806844f4608a706d5263554dc30
 #: ../../../source/install/others.txt:193
 msgid ""
 "Specifies where MessagePack is installed. If MessagePack isn't installed "
 "with ``--prefix=/usr``, you need to specify this option with path that you "
 "use for building MessagePack."
 msgstr ""
+"Specifies where MessagePack is installed. If MessagePack isn't installed "
+"with ``--prefix=/usr``, you need to specify this option with path that you "
+"use for building MessagePack."
 
-# 8f4eb9bb41ee4ae89f6072702db463e0
+# a7651cab195d4fc3bafad4b707dcb781
 #: ../../../source/install/others.txt:197
 msgid ""
 "If you installed MessagePack with ``--prefix=$HOME/local`` option, you "
 "sholud specify ``--with-message-pack=$HOME/local`` to groonga's "
 "``configure``."
 msgstr ""
+"If you installed MessagePack with ``--prefix=$HOME/local`` option, you "
+"sholud specify ``--with-message-pack=$HOME/local`` to groonga's "
+"``configure``."
 
-# 00b9843a793b40a09c9542aa0644e31b
+# 965d4ff5ac6342a6a17269f238cc12e6
 #: ../../../source/install/others.txt:201
 msgid "The default is ``/usr``."
-msgstr ""
+msgstr "The default is ``/usr``."
 
-# 4aad8e1eefe043529c20eebe9603752b
+# 7db3fa8ae9774dbcadf2a3a4dc490b12
 #: ../../../source/install/others.txt:203
 msgid ""
 "Here is an example that uses MessagePack built with ``--prefix=$HOME/local`` "
 "option::"
 msgstr ""
+"Here is an example that uses MessagePack built with ``--prefix=$HOME/local`` "
+"option::"
 
-# c70755550c694146b10016b2359477fb
+# 79db055dd5ab49bf863205807add6f78
 #: ../../../source/install/others.txt:209
 msgid "``--with-munin-plugins``"
-msgstr ""
+msgstr "``--with-munin-plugins``"
 
-# 978b07e0e008453cab965e7e8f49e120
+# 4e4369e6960c40de885a6e8ec8434963
 #: ../../../source/install/others.txt:211
 msgid ""
 "Installs Munin plugins for groonga. They are installed into ``${PREFIX}/"
 "share/groonga/munin/plugins/``."
 msgstr ""
+"Installs Munin plugins for groonga. They are installed into ``${PREFIX}/"
+"share/groonga/munin/plugins/``."
 
-# 1e78b3deca804d5ab1101f10128a49f5
+# cee7fdaca2f74c0eb01c7e54a4a25eaf
 #: ../../../source/install/others.txt:214
 msgid "Those plugins are not installed by default."
-msgstr ""
+msgstr "Those plugins are not installed by default."
 
-# 94f9428dfebd40589e6beba6ab992175
+# bb863636e38a4db5a46f9c2bdde41d75
 #: ../../../source/install/others.txt:216
 msgid "Here is an example that installs Munin plugins for groonga::"
-msgstr ""
+msgstr "Here is an example that installs Munin plugins for groonga::"
 
-# 3256a0a00fb54cf19ddd6d4dc80a2b15
+# c5c4c455c0d4407e86f18b5ea6abca50
 #: ../../../source/install/others.txt:221
 msgid "``--with-package-platform=PLATFORM``"
-msgstr ""
+msgstr "``--with-package-platform=PLATFORM``"
 
-# 4e98fa213ac14f3ca929b9b156577770
+# 2a1ef94a44e645169070e0d6627b5583
 #: ../../../source/install/others.txt:223
 msgid ""
 "Installs platform specific system management files such as init script. "
 "Available platforms are ``redhat`` and ``fedora``. ``redhat`` is for Red Hat "
 "and Red Hat clone distributions such as CentOS. ``fedora`` is for Fedora."
 msgstr ""
+"Installs platform specific system management files such as init script. "
+"Available platforms are ``redhat`` and ``fedora``. ``redhat`` is for Red Hat "
+"and Red Hat clone distributions such as CentOS. ``fedora`` is for Fedora."
 
-# 9ef57b538c034177a8b1969621bad942
+# e2d8a371d3e047299c2ea6a36ce97d99
 #: ../../../source/install/others.txt:228
 msgid "Those system management files are not installed by default."
-msgstr ""
+msgstr "Those system management files are not installed by default."
 
-# 39eed7cfd4c643f2b0dcd8dd24cee599
+# db698039aa0f423f8f26c839e1fcf7ac
 #: ../../../source/install/others.txt:230
 msgid ""
 "Here is an example that installs CentOS specific system management files::"
 msgstr ""
+"Here is an example that installs CentOS specific system management files::"
 
-# 8d5db893df8744c8a3e675066ed8e476
+# e8c7eba377514721a55f87604caec24d
 #: ../../../source/install/others.txt:236
 msgid "``--help``"
-msgstr ""
+msgstr "``--help``"
 
-# a12a72c64e6d442fa9ca106dffc7f2d8
+# 4b427295c97b4b6fb04cf4855d255b85
 #: ../../../source/install/others.txt:238
 msgid "Shows all ``configure`` options."
-msgstr ""
+msgstr "Shows all ``configure`` options."
 
-# fa58e2434155462eaaa62ec8224a4369
+# 89671237a9c34d928bd59092edc23c15
 #: ../../../source/install/others.txt:241
 msgid "``make``"
-msgstr ""
+msgstr "``make``"
 
-# 0dc976c833ff45b58a9ab92932e38ad2
+# 4a7636a3e36b448c9aa9194bc8cc65eb
 #: ../../../source/install/others.txt:243
 msgid "``configure`` is succeeded, you can build groonga by ``make``::"
-msgstr ""
+msgstr "``configure`` is succeeded, you can build groonga by ``make``::"
 
-# aa903c82671d4b46b99642f6366e8986
+# 2a1b9a96dc5f4b52adcf4d4d6532aec5
 #: ../../../source/install/others.txt:247
 msgid ""
 "If you have multi cores CPU, you can make faster by using ``-j`` option. If "
 "you have 4 cores CPU, it's good for using ``-j4`` option::"
 msgstr ""
+"If you have multi cores CPU, you can make faster by using ``-j`` option. If "
+"you have 4 cores CPU, it's good for using ``-j4`` option::"
 
-# c156f99c29834b51b4b5abcfc60c49e3
+# 5b5231ae3c754f0fa5cd77ac437c59f5
 #: ../../../source/install/others.txt:252
 msgid ""
 "If you get some errors by ``make``, please report them to us: :doc:`/"
 "contribution/report`"
 msgstr ""
+"If you get some errors by ``make``, please report them to us: :doc:`/"
+"contribution/report`"
 
-# 0f4bb03d86154477a3eae2f80a60df4c
+# e14b4ffbbaf64092826e4c766262606c
 #: ../../../source/install/others.txt:256
 msgid "``make install``"
-msgstr ""
+msgstr "``make install``"
 
-# b24e1e983e6d4ea89827af0a28a59bc4
+# 568a8858183f4cb5b6c48627fae3f139
 #: ../../../source/install/others.txt:258
 msgid "Now, you can install built groonga!::"
-msgstr ""
+msgstr "Now, you can install built groonga!::"
 
-# da46aa3ac4234722b9063d3f4149b7a7
+# 0cbaa9cf4fbd4d5896df9616a3eebff4
 #: ../../../source/install/others.txt:262
 msgid ""
 "If you have write permission for ``${PREFIX}``, you don't need to use "
 "``sudo``. e.g. ``--prefix=$HOME/local`` case. In this case, use ``make "
 "install``::"
 msgstr ""
+"If you have write permission for ``${PREFIX}``, you don't need to use "
+"``sudo``. e.g. ``--prefix=$HOME/local`` case. In this case, use ``make "
+"install``::"
 
-# 15f23b9a89274aa3a83114829ed7f8a1
+# dbda77c33a9d40f7af06ff3771aa2f71
 #: ../../../source/install/solaris.txt:6
 msgid "Oracle Solaris"
-msgstr ""
+msgstr "Oracle Solaris"
 
-# 610d5ad310b748c1b7ce401cd0c1db8c
+# c0d79686f76d40fcaed903557000d318
 #: ../../../source/install/solaris.txt:8
 msgid ""
 "This section describes how to install groonga from source on Oracle Solaris."
 msgstr ""
+"This section describes how to install groonga from source on Oracle Solaris."
 
-# 81bff1e671264615b59a962ddb147e15
+# 7543a9fa28d24a99b5f47779ae12ad58
 #: ../../../source/install/solaris.txt:12
 msgid "Oracle Solaris 11"
-msgstr ""
+msgstr "Oracle Solaris 11"
 
-# 1211357f59f0453dbb06e15f30df7866
+# 4953483f9bc344a28deead548832a7e9
 #: ../../../source/install/solaris.txt:24
 msgid ""
 "Configure with ``CFLAGS=\"-m64\" CXXFLAGS=\"-m64\"`` variables. They are "
 "needed for building 64-bit version. To build 32-bit version, just remove "
 "those variables. (see :ref:`source-configure` about ``configure`` options)::"
 msgstr ""
+"Configure with ``CFLAGS=\"-m64\" CXXFLAGS=\"-m64\"`` variables. They are "
+"needed for building 64-bit version. To build 32-bit version, just remove "
+"those variables. (see :ref:`source-configure` about ``configure`` options)::"
 
-# 1376d3cf262f439ca9b28e23200588a8
+# 264e055558a24c339ee8a46855dc3352
 #: ../../../source/install/ubuntu.txt:6
 msgid "Ubuntu"
-msgstr ""
+msgstr "Ubuntu"
 
-# 610d5ad310b748c1b7ce401cd0c1db8c
+# ea9dda557c7a4cb8bd0fa193f70e0b8b
 #: ../../../source/install/ubuntu.txt:8
 msgid ""
 "This section describes how to install groonga related deb packages on "
 "Ubuntu. You can install them by ``apt``."
 msgstr ""
+"This section describes how to install groonga related deb packages on "
+"Ubuntu. You can install them by ``apt``."
 
-# 7418443aacf244e7ab6aaf35acef652d
+# ac66f388cfe54f50ae758f8a5cbb18d6
 #: ../../../source/install/ubuntu.txt:18
 msgid "10.04 LTS Lucid Lynx"
-msgstr ""
+msgstr "10.04 LTS Lucid Lynx"
 
-# 1a8d3d8990bb484a9f5d49c65ea17f67
-# c6ca9554922e4f35af5a0a3b9e8fee7d
-# eea4127464154e7cb64ce50f7ddf516c
-# 70b8c0ee81c24c71acef822794193f6e
+# 780e780752a244d9b86414533ea37067
+# 3bbc98ba9cd2405097e8accaf09a7f27
+# e77d8861ceeb42c595fca0fce523d94c
+# 92deb6d4c2f14b0aadfce6463109201f
 #: ../../../source/install/ubuntu.txt:22 ../../../source/install/ubuntu.txt:61
 #: ../../../source/install/ubuntu.txt:100
 #: ../../../source/install/ubuntu.txt:139
 msgid "Enable the universe repository to install groonga::"
-msgstr ""
+msgstr "Enable the universe repository to install groonga::"
 
-# b277c0fcf3804dbe9e8aaed78a75fee7
+# 121204ba0c5a40de829b7577c0c765d7
 #: ../../../source/install/ubuntu.txt:57
 msgid "11.04 Natty Narwhal"
-msgstr ""
+msgstr "11.04 Natty Narwhal"
 
-# 7418443aacf244e7ab6aaf35acef652d
+# 6bc79cdcd0d9485ba50faf1195a43c16
 #: ../../../source/install/ubuntu.txt:96
 msgid "11.10 Oneiric Ocelot"
-msgstr ""
+msgstr "11.10 Oneiric Ocelot"
 
-# 92c876db908a4ccaba4d0b56686559f8
+# ae75e8b3c10e4f7ebd6bcb0f657ecf81
 #: ../../../source/install/ubuntu.txt:135
 msgid "12.04 LTS Precise Pangolin"
-msgstr ""
+msgstr "12.04 LTS Precise Pangolin"
 
-# f751a7dc3ecf4e1381601044a81f7752
+# ec68ab7b5e5148919d89e771d7d29ac2
 #: ../../../source/install/windows.txt:6
 msgid "Windows"
-msgstr ""
+msgstr "Windows"
 
-# 610d5ad310b748c1b7ce401cd0c1db8c
+# 5636ea4b5ea048f19b7ec69d39cd071b
 #: ../../../source/install/windows.txt:8
 msgid ""
 "This section describes how to install groonga on Windows. You can install "
 "groogna by extracting a zip package or running an installer."
 msgstr ""
+"This section describes how to install groonga on Windows. You can install "
+"groogna by extracting a zip package or running an installer."
 
-# ca2415459ea747379e514afafc8caab2
+# cefb88cd7ba34435a9bc48cc25e33b75
 #: ../../../source/install/windows.txt:18
 msgid "Installer"
-msgstr ""
+msgstr "Installer"
 
-# 72a299f3ce1d44a188f84b1d3ddd76c5
+# b105498d4330497c90888cc0be134b82
 #: ../../../source/install/windows.txt:20
 msgid ""
 "For 32-bit environment, download `groonga-2.0.5-x86.exe <http://packages."
 "groonga.org/windows/groonga/groonga-2.0.5-x86.exe>`_ and run it."
 msgstr ""
+"For 32-bit environment, download `groonga-2.0.5-x86.exe <http://packages."
+"groonga.org/windows/groonga/groonga-2.0.5-x86.exe>`_ and run it."
 
-# 72a299f3ce1d44a188f84b1d3ddd76c5
+# 8f8df372b8c14f89baf43db539735a59
 #: ../../../source/install/windows.txt:24
 msgid ""
 "For 64-bit environment, download `groonga-2.0.5-x64.exe <http://packages."
 "groonga.org/windows/groonga/groonga-2.0.5-x64.exe>`_ and run it."
 msgstr ""
+"For 64-bit environment, download `groonga-2.0.5-x64.exe <http://packages."
+"groonga.org/windows/groonga/groonga-2.0.5-x64.exe>`_ and run it."
 
-# 6f713ee759834964a630aacf6ac8807a
+# 1a1a6987d02246789520e645b90d254c
 #: ../../../source/install/windows.txt:28
 msgid ""
-"Use command prompt for :doc:`/executables/groonga` installed in start menu."
+"Use command prompt for :doc:`/reference/executables/groonga` installed in "
+"start menu."
 msgstr ""
+"Use command prompt for :doc:`/reference/executables/groonga` installed in "
+"start menu."
 
-# ee8806fa1d1342c3ab7ea9166afd1d9a
+# dd06b83775b64eee9fd394f9029d5f76
 #: ../../../source/install/windows.txt:31
 msgid "zip"
-msgstr ""
+msgstr "zip"
 
-# 72a299f3ce1d44a188f84b1d3ddd76c5
+# 865357136aca4f238fe592f01d158fed
 #: ../../../source/install/windows.txt:33
 msgid ""
 "For 32-bit environment, download `groonga-2.0.5-x86.zip <http://packages."
 "groonga.org/windows/groonga/groonga-2.0.5-x86.zip>`_ and extract it."
 msgstr ""
+"For 32-bit environment, download `groonga-2.0.5-x86.zip <http://packages."
+"groonga.org/windows/groonga/groonga-2.0.5-x86.zip>`_ and extract it."
 
-# 72a299f3ce1d44a188f84b1d3ddd76c5
+# 59c325c8448e4e8aa23ad96f671e1aa7
 #: ../../../source/install/windows.txt:37
 msgid ""
 "For 64-bit environment, download `groonga-2.0.5-x64.zip <http://packages."
 "groonga.org/windows/groonga/groonga-2.0.5-x64.zip>`_ and extract it."
 msgstr ""
+"For 64-bit environment, download `groonga-2.0.5-x64.zip <http://packages."
+"groonga.org/windows/groonga/groonga-2.0.5-x64.zip>`_ and extract it."
 
-# f319dafec99e42a692500560751d52e5
+# 1a7c217b0fe64a4189130131f8cd80b5
 #: ../../../source/install/windows.txt:41
-msgid ":doc:`/executables/groonga` is in ``bin`` folder."
-msgstr ""
+msgid ":doc:`/reference/executables/groonga` is in ``bin`` folder."
+msgstr ":doc:`/reference/executables/groonga` is in ``bin`` folder."
 
-# f5c2526a24d744f2b95e6735ac28f002
+# 863d4e88ab08469bb3a821ca662493e3
 #: ../../../source/install/windows.txt:46
 msgid ""
 "First, you need to install required tools for building groonga on Windows. "
 "Here are required tools:"
 msgstr ""
+"First, you need to install required tools for building groonga on Windows. "
+"Here are required tools:"
 
-# 0da6c2bea2b34857b1fb98890ae1caf7
+# f8c76b00b6dc4372bb2acf68d952975d
 #: ../../../source/install/windows.txt:49
 msgid ""
 "`Microsoft Visual Studio 2010 Express <http://www.microsoft.com/japan/msdn/"
 "vstudio/express/>`_"
 msgstr ""
+"`Microsoft Visual Studio 2010 Express <http://www.microsoft.com/japan/msdn/"
+"vstudio/express/>`_"
 
-# 9dba2ad9c7b644c7bda6622ea9ed8a64
+# bb30986b623d4cf6b415e7c88bb65e32
 #: ../../../source/install/windows.txt:51
 msgid "`CMake <http://www.cmake.org/>`_"
-msgstr ""
+msgstr "`CMake <http://www.cmake.org/>`_"
 
-# 4310c8b0c4114a6c9ea0f3f5edf2ccbc
+# 1ab5d2cb63704153b4fbcfccb30946f1
 #: ../../../source/install/windows.txt:53
 msgid ""
 "Download zipped source `groonga-2.0.5.zip <http://packages.groonga.org/"
 "source/groonga/groonga-2.0.5.zip>`_ and extract it."
 msgstr ""
+"Download zipped source `groonga-2.0.5.zip <http://packages.groonga.org/"
+"source/groonga/groonga-2.0.5.zip>`_ and extract it."
 
-# 2a75b8795cec4ed78a1b96b7c652945f
+# 53fb3cc4ea6b4d4e963c26a6fad4072b
 #: ../../../source/install/windows.txt:57
 msgid ""
 "Start ``Visual Studio Command Prompt (2010)`` installed by Microsoft Visual "
 "Studio 2010 Express and move to the groonga's source folder::"
 msgstr ""
+"Start ``Visual Studio Command Prompt (2010)`` installed by Microsoft Visual "
+"Studio 2010 Express and move to the groonga's source folder::"
 
-# 7f8f1b5536c24462ba2f65e21bd45bcc
+# d7941dc1d482408e987e000329e56801
 #: ../../../source/install/windows.txt:62
 msgid ""
 "Configure by ``cmake``. The following commnad line is for 64-bit version. To "
 "build 32-bit version, use ``-G \"Visual Studio 10\"`` parameter instead::"
 msgstr ""
+"Configure by ``cmake``. The following commnad line is for 64-bit version. To "
+"build 32-bit version, use ``-G \"Visual Studio 10\"`` parameter instead::"
 
-# 70ff5db6421c46108548b4c93793242b
+# de6c533d58894e3691dd8ae016ca6607
 #: ../../../source/install/windows.txt:68
 msgid "Build by Visual Studio::"
-msgstr ""
+msgstr "Build by Visual Studio::"
 
-# bc29861993fe4f5aad434985ad4f875b
+# 58228c67497644cdbb85e90fb3c8d284
 #: ../../../source/install/windows.txt:76
 msgid ""
-"After the above steps, :doc:`/executables/groonga` is found in ``c:\\groonga"
-"\\bin\\groonga.exe``."
+"After the above steps, :doc:`/reference/executables/groonga` is found in ``c:"
+"\\groonga\\bin\\groonga.exe``."
 msgstr ""
+"After the above steps, :doc:`/reference/executables/groonga` is found in ``c:"
+"\\groonga\\bin\\groonga.exe``."

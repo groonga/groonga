@@ -1,28 +1,28 @@
-# English translations for 2.0.4 package.
+# English translations for groonga package.
 # Copyright (C) 2009-2012, Brazil, Inc
 # This file is distributed under the same license as the groonga package.
 # Kouhei Sutou <kou@clear-code.com>, 2012.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: 2.0.4\n"
+"Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-21 17:55\n"
-"PO-Revision-Date: 2012-06-09 22:02+0900\n"
+"POT-Creation-Date: 2012-07-23 17:56\n"
+"PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
-"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-# ea361969f364486cac7c98c0b72d222e
+# e4b1529814434d149d64d6fd54c470b3
 #: ../../../source/development.txt:6
 msgid "Development"
 msgstr "Development"
 
-# 20edb07caa574da8b708ac7fb3482971
+# 7e2f0106b0bc46228d5d824089c31711
 #: ../../../source/development.txt:8
 msgid ""
 "This section describes about developing with groonga. You may develop an "
@@ -33,12 +33,12 @@ msgstr ""
 "application that uses groonga as its detabase, a library that uses "
 "libgroonga, language bindings of libgroonga and so on."
 
-# 4f73de9530994fc78251fff04fc66aa8
+# f92355c60edf4146a3a587c3c579dda4
 #: ../../../source/development/travis-ci.txt:6
 msgid "Travis CI"
 msgstr "Travis CI"
 
-# 81eeb8d8ecda4b7884577a3ddb96a920
+# 25df3388c3e84f2f9420698df843e947
 #: ../../../source/development/travis-ci.txt:8
 msgid ""
 "This section describes about using groonga on `Travis CI <http://travis-ci."
@@ -49,7 +49,7 @@ msgstr ""
 "org/>`_. Travis CI is a hosted continuous integration service for the open "
 "source community."
 
-# 97d845cf20354e53b1364c0e34cee107
+# 5f1724f322df4a1596e1b980eb69b632
 #: ../../../source/development/travis-ci.txt:12
 msgid ""
 "You can use Travis CI for your open source software. This section only "
@@ -60,12 +60,12 @@ msgstr ""
 "describes about groonga related configuration. See `Travis CI: Documentation "
 "<http://about.travis-ci.org/docs/>`_ about general Travis CI."
 
-# 17a036d7ac0b458b894a9fc3a49a8ab6
+# eca4c0ed9cb649be805c3122ecbfa047
 #: ../../../source/development/travis-ci.txt:18
 msgid "Configuration"
 msgstr "Configuration"
 
-# ec17193e41e24c2a9ee95cbbd78a90e7
+# 3c2876acdfa94e50846d681d3c6cc5d0
 #: ../../../source/development/travis-ci.txt:20
 msgid ""
 "Travis CI is running on 32-bit Ubuntu 11.10. (See `Travis CI: About Travis "
@@ -78,7 +78,7 @@ msgstr ""
 "You can use apt-line for Ubuntu 11.10 provided by groonga project to install "
 "groonga on Travis CI."
 
-# 79e4f730b77045c8b1b9a93cd2474901
+# 8bbd47f3a4b14f4f88fd06001615f178
 #: ../../../source/development/travis-ci.txt:26
 msgid ""
 "You can custom build lifecycle by ``.travis.yml``. (See `Travis CI: "
@@ -95,12 +95,12 @@ msgstr ""
 "a language that is supported by Travis CI such as Ruby. You should use "
 "``install`` otherwise."
 
-# 59f8800890a84fd1963858e3debfbc7a
+# 9c9851b190b1429a9187cfb763ae6895
 #: ../../../source/development/travis-ci.txt:33
 msgid "Add the following ``before_install`` configuration to ``.travisyml``::"
 msgstr "Add the following ``before_install`` configuration to ``.travisyml``::"
 
-# 70a119f7bcf945aeaa767f94e47f17c8
+# c4d9d05b6bc041099821f7b090325508
 #: ../../../source/development/travis-ci.txt:42
 msgid ""
 "If you need to use ``install`` hook instead of ``before_install``, you just "
@@ -109,50 +109,53 @@ msgstr ""
 "If you need to use ``install`` hook instead of ``before_install``, you just "
 "substitute ``before_install:`` with ``install:``."
 
-# 9bd49c9936a943a4928351be9ae63bee
+# 3fbdee4e2e6f4dc7b408b1c8c00462b3
 #: ../../../source/development/travis-ci.txt:45
 msgid "With the above configuration, you can use groonga for your build."
 msgstr "With the above configuration, you can use groonga for your build."
 
-# 27b2900ffa6f4943be014c44a88442d0
+# 92f4cffc16fa44ec962865a1ed860c6b
 #: ../../../source/development/travis-ci.txt:48
 msgid "Examples"
 msgstr "Examples"
 
-# 66fe617ac4d8439d8233e520a183d30f
+# ec42e535eb7e46cebd1e1f3ba0f96078
 #: ../../../source/development/travis-ci.txt:50
 msgid "Here are open source softwares that use groonga on Travis CI:"
 msgstr "Here are open source softwares that use groonga on Travis CI:"
 
-# d3206cb045304d379876bc8b43f31d36
+# e3f6c37f09f74bc48d77a1fb93a4fb40
 #: ../../../source/development/travis-ci.txt:52
 msgid ""
 "`rroonga <http://groonga.rubyforge.org/#about-rroonga>`_ (Ruby bindings)"
 msgstr ""
+"`rroonga <http://groonga.rubyforge.org/#about-rroonga>`_ (Ruby bindings)"
 
-# 58c7e17632b94a468c27d5e0c3dac713
+# 9aa8193a1cb94f43bf94cc8f00b3923c
 #: ../../../source/development/travis-ci.txt:54
 msgid "`rroonga on Travis CI <http://travis-ci.org/#!/ranguba/rroonga>`_"
-msgstr ""
+msgstr "`rroonga on Travis CI <http://travis-ci.org/#!/ranguba/rroonga>`_"
 
-# a79de6415889462586392cd76ef64158
+# 6fba380db8d54b84874e43327f98169c
 #: ../../../source/development/travis-ci.txt:55
 msgid ""
 "`.travis.yml for rroonga <https://github.com/ranguba/rroonga/blob/master/."
 "travis.yml>`_"
 msgstr ""
+"`.travis.yml for rroonga <https://github.com/ranguba/rroonga/blob/master/."
+"travis.yml>`_"
 
-# 30e916cbf7cf4456b53fb6b8ca062ee8
+# f1d45822063b4290bc75a36c078e4c4e
 #: ../../../source/development/travis-ci.txt:57
 msgid "`nroonga <http://nroonga.github.com/>`_ (node.js bindings)"
-msgstr ""
+msgstr "`nroonga <http://nroonga.github.com/>`_ (node.js bindings)"
 
-# a07800e2e44c4c1fa154b44fde6c527b
+# 39c1c9cdc89d4dc6893ccf5fcba7dfc8
 #: ../../../source/development/travis-ci.txt:59
 msgid "`nroonga on Travis CI <http://travis-ci.org/#!/nroonga/nroonga>`_"
-msgstr ""
+msgstr "`nroonga on Travis CI <http://travis-ci.org/#!/nroonga/nroonga>`_"
 
-# e3c4785e76584800918e01ec2d62bc26
+# c462ecb93a604e29a6b7bf71e4432d02
 #: ../../../source/development/travis-ci.txt:60
 msgid ""
 "`.travis.yml for nroonga <https://github.com/nroonga/nroonga/blob/master/."
@@ -160,4 +163,3 @@ msgid ""
 msgstr ""
 "`.travis.yml for nroonga <https://github.com/nroonga/nroonga/blob/master/."
 "travis.yml>`_"
-

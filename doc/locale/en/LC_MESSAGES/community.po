@@ -1,28 +1,28 @@
-# English translations for 2.0.1 package.
+# English translations for groonga package.
 # Copyright (C) 2009-2012, Brazil, Inc
 # This file is distributed under the same license as the groonga package.
 # Kouhei Sutou <kou@clear-code.com>, 2012.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: 2.0.1\n"
+"Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-05-21 14:05\n"
-"PO-Revision-Date: 2012-04-28 11:36+0900\n"
+"POT-Creation-Date: 2012-07-23 17:56\n"
+"PO-Revision-Date: 2012-07-23 17:57+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
-"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-# 9c21dfd4349541629c6c7da1d05276bb
+# 98df3bbf31654e2b98d3862f413f066d
 #: ../../../source/community.txt:6
 msgid "Community"
 msgstr "Community"
 
-# 348129abec7942c3b02b95f57c71c768
+# d945d7b1453f4747b12943ebbd15b4a8
 #: ../../../source/community.txt:8
 msgid ""
 "There are some places for sharing groonga information. We welcome you to "
@@ -31,17 +31,17 @@ msgstr ""
 "There are some places for sharing groonga information. We welcome you to "
 "join our community."
 
-# 064e261c494c400c954f4f0611ed6ac9
+# 5b3632c05b8847dca82be2e4aac6ef21
 #: ../../../source/community.txt:12
 msgid "Mailing List"
 msgstr "Mailing List"
 
-# c25f2c65a6c547e0b33c6ff93498ef86
+# d63b2c210bdc49f5b8e2608df3bc4b49
 #: ../../../source/community.txt:14
 msgid "There are mailing lists for discussion about groonga."
 msgstr "There are mailing lists for discussion about groonga."
 
-# 0887162b2e004a1e848165ac495999ef
+# 09ee087cd5d24a4db848133fe0fcb384
 #: ../../../source/community.txt:17
 msgid ""
 "`groonga-talk@lists.sourceforge.net <http://lists.sourceforge.net/mailman/"
@@ -50,7 +50,7 @@ msgstr ""
 "`groonga-talk@lists.sourceforge.net <http://lists.sourceforge.net/mailman/"
 "listinfo/groonga-talk>`_"
 
-# 0887162b2e004a1e848165ac495999ef
+# 432a3768c7ed4dffa7cf3195b892a906
 #: ../../../source/community.txt:20
 msgid ""
 "`groonga-dev@lists.sourceforge.jp <http://lists.sourceforge.jp/mailman/"

@@ -1,54 +1,57 @@
-# English translations for 2.0.1 package.
+# English translations for groonga package.
 # Copyright (C) 2009-2012, Brazil, Inc
 # This file is distributed under the same license as the groonga package.
 # Kouhei Sutou <kou@clear-code.com>, 2012.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: 2.0.1\n"
+"Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-19 12:57\n"
-"PO-Revision-Date: 2012-04-28 11:38+0900\n"
+"POT-Creation-Date: 2012-07-23 17:56\n"
+"PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
-"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-# 1238ace63b604ecc8ce6715d72a868ed
+# c0ce0fb232284ad7a6ba70ef0c00d8dd
 #: ../../../source/news.txt:6
 msgid "News"
 msgstr "News"
 
-# 9d3982d7f983419aa0e608ae86493802
+# d27fa66c86a54b51b44b70d9284562d8
 #: ../../../source/news.txt:11
 msgid "Release 2.0.5 - 2012/07/29"
-msgstr ""
+msgstr "Release 2.0.5 - 2012/07/29"
 
-# 4663ad5256ff4787aff6c44661745be2
-# 4663ad5256ff4787aff6c44661745be2
-# 4663ad5256ff4787aff6c44661745be2
-# 4663ad5256ff4787aff6c44661745be2
-# f3911f33c1c240279cdd21b4024fb898
-# e6e6f28f3cbc49b5be180fd7dc11e8c7
-# 52bae98fbf034bd28126102ef1de1f3c
-# 000dd9dfed264ec896f09c7dde99a288
-# e1211d4d26254f29a4840be8c4e63218
-# 2beca0c440784a7aa3ba04672f57ac18
-# 462f4eb5a4d9436dbacbbd383a32e9b6
-# 3a7baa8a95a64a52b4a174e740978bdc
-# 2f211ffd5afb40eba68b0d8f7ff42bc0
-# b8eb9c5ad5bf4dab88dd2e2722eed727
-# 5dca905de8684435bb1a0efa915cd609
-# a80eabac82a742eaaa393738bc30f846
-# 04e2a3b228b4474d954fbc4be087f49a
-# 6eb0b448a29c4b7e9690d06c2d57b5b8
-# d7bcf9d757f74865b5eb56dfdd1f3e76
-# d010dd869bdc417ca921a708b688a01c
-# 5588e26f3d4748e9b54c0bc1caf107d8
-# bb1528d0a44a48b7b6557f24eeab023e
+# b9b72ebbcc23490584ac924aaba5fdec
+# b9b72ebbcc23490584ac924aaba5fdec
+# b9b72ebbcc23490584ac924aaba5fdec
+# b9b72ebbcc23490584ac924aaba5fdec
+# b9b72ebbcc23490584ac924aaba5fdec
+# b9b72ebbcc23490584ac924aaba5fdec
+# b9b72ebbcc23490584ac924aaba5fdec
+# 7f2af5e730dc4796bc10d30e8f116556
+# ac74d6cbc36c475086d1862052cc2abb
+# 86363072d3db44b5af869f7b47a4684e
+# b14b58c48b5049369a3dd00c14844d8a
+# 76301e63fd1443a495e1ad179011e239
+# ba3bdc2b5c6f42a2bd45e8f22b655188
+# 069ece8ad2604370acd9c8a189cffa89
+# a85217752cfa4eeeb290c3eae12565cc
+# a8640aba44d945af8e4d88498ebf87b2
+# b21be323217a488495fdb0d7b7256d84
+# 6bcbbefd68c94cd3aa573ad57b31f1bb
+# 3fcdbb77654e4070b17726be181eaea1
+# e93771608cfb4c6090e80f0d6f827f0d
+# 2fca04f784ea4bafb3da8f5592d1539b
+# 57913372b7444ab88a0af5c37c5b27c6
+# 2fd7dac761b9443eb371e68936e9e68f
+# c19abfacdbf441fdb187f9af8951ad5c
+# 565f00f6457a4b6b8c3a2bd9ef2ddc10
 #: ../../../source/news.txt:14 ../../../source/news.txt:60
 #: ../../../source/news.txt:107 ../../../source/news.txt:169
 #: ../../../source/news.txt:223 ../../../source/news.txt:267
@@ -65,74 +68,83 @@ msgstr ""
 msgid "Improvements"
 msgstr "Improvements"
 
-# a13503e7cf93499db51b560f7bde874f
+# 837b339a6f9d4553ad4522703f52df09
 #: ../../../source/news.txt:16
 msgid ""
 "Supported calculating the value of distance with \"rect\" or \"rectangle\" "
 "argument in southern hemisphere. [#1418] [#1419] [#1420] [#1421]"
 msgstr ""
+"Supported calculating the value of distance with \"rect\" or \"rectangle\" "
+"argument in southern hemisphere. [#1418] [#1419] [#1420] [#1421]"
 
-# 11e926d63c8a41ee834a34d234097669
+# b99033b17c7a4902a9a56da071050e29
 #: ../../../source/news.txt:18
 msgid "[doc] Added some literals description in script syntax."
-msgstr ""
+msgstr "[doc] Added some literals description in script syntax."
 
-# 42df54fc701144c5ad7d77a28bbc74c4
+# 24a004e439304be2b3b0a8f2fa360175
 #: ../../../source/news.txt:19
 msgid "Supported other directory build for groonga-suggest and groonga-httpd."
-msgstr ""
+msgstr "Supported other directory build for groonga-suggest and groonga-httpd."
 
-# 0cc4b16a7b2c4048be6f3fc6b771a445
+# fd039149d2724618a738e46fa0899f45
 #: ../../../source/news.txt:20
 msgid ""
 "Supported \";\" as a query parameter separator. [#1406] [Suggested by IWAI, "
 "Masaharu]"
 msgstr ""
+"Supported \";\" as a query parameter separator. [#1406] [Suggested by IWAI, "
+"Masaharu]"
 
-# 1cfc1142079947319ff825e8bb3cb1b1
+# b99033b17c7a4902a9a56da071050e29
 #: ../../../source/news.txt:22
 msgid "[doc] Added descriptions about script syntax."
-msgstr ""
+msgstr "[doc] Added descriptions about script syntax."
 
-# 262b10d18a7d464dac99b4a0a4d804e0
+# 3b2ed01e993b423d85679a1e634a690b
 #: ../../../source/news.txt:23
 msgid ""
 "Supported near search by ``'column *N \"word1 word2 ...\"'`` in script "
 "syntax. [#1423]"
 msgstr ""
+"Supported near search by ``'column *N \"word1 word2 ...\"'`` in script "
+"syntax. [#1423]"
 
-# 1cfc1142079947319ff825e8bb3cb1b1
+# b99033b17c7a4902a9a56da071050e29
 #: ../../../source/news.txt:25
 msgid "[doc] Added a description about limitation of suffix search."
-msgstr ""
+msgstr "[doc] Added a description about limitation of suffix search."
 
-# 6006bb21bbc54aa68c81560fd76e1ed1
+# 9c8f54bc0e774f7aa6f6abe6e7d40f49
 #: ../../../source/news.txt:26
 msgid "Supported near search for _key pseudo column. [GitHub#19]"
-msgstr ""
+msgstr "Supported near search for _key pseudo column. [GitHub#19]"
 
-# c63296e30d874ef792cbb8b228e42770
+# 2bf12fbf09ba4f4aaf7044fa99c8f0d4
 #: ../../../source/news.txt:27
 msgid "[doc] Added basic ECMAScript related syntaxes."
-msgstr ""
+msgstr "[doc] Added basic ECMAScript related syntaxes."
 
-# 1cfc1142079947319ff825e8bb3cb1b1
+# b99033b17c7a4902a9a56da071050e29
 #: ../../../source/news.txt:28
 msgid "[doc] Updated a description about geo_distance."
-msgstr ""
+msgstr "[doc] Updated a description about geo_distance."
 
-# e8f0c3c91e8a4d76bbfa83dcb70d7f90
-# e8f0c3c91e8a4d76bbfa83dcb70d7f90
-# e8f0c3c91e8a4d76bbfa83dcb70d7f90
-# 36c13b6571024969916e097eb181664e
-# 41a5ac13a88c4bb194805f030ff59e07
-# d1482b62f5914d788e28951659551a6a
-# 5a746d570944462e95a808c011bcac23
-# 55cebcf54c134c7fa392ffb7545167aa
-# eb11298d0d0140ed8ac1226cb2223e83
-# c1633ef65c2e4063bd60a4bc743d3b10
-# c18873a242934142ae60c224c6c6e27e
-# 18a9e10d0100455bb18a13652e91c3ef
+# 8dc446a0effc43e6be5f102554f859dd
+# 8dc446a0effc43e6be5f102554f859dd
+# 8dc446a0effc43e6be5f102554f859dd
+# 8dc446a0effc43e6be5f102554f859dd
+# 8dc446a0effc43e6be5f102554f859dd
+# 8dc446a0effc43e6be5f102554f859dd
+# b8e7de4e7cb047ddbfbd962bdf2f73a3
+# b23398749cbf4e99b235e2b7988885b0
+# 7d2133eafdd04c53bfc49d9b963c51f1
+# 6ddef771d52d47968f0c1ba2a2d36a58
+# f0c3323a1cf94e268fe746d654380910
+# b8198c7ab6b74b50bcae3923a77be1cf
+# 36a46b394b0e436cba83b8d0de173b42
+# 61324067e94447b692b9ce625da463c7
+# a489d44d169d49db8dfd20e85452dca9
 #: ../../../source/news.txt:31 ../../../source/news.txt:87
 #: ../../../source/news.txt:131 ../../../source/news.txt:189
 #: ../../../source/news.txt:245 ../../../source/news.txt:291
@@ -144,75 +156,82 @@ msgstr ""
 msgid "Fixes"
 msgstr "Fixes"
 
-# 8f0d8a9923cb43bdb064e23f2f97a6b6
+# a932df07608e44ff9db77226be6d5214
 #: ../../../source/news.txt:33
 msgid ""
 "Fixed a build problem about groonga-httpd on Mac OS X. [Reported by SHIMADA "
 "Koji]"
 msgstr ""
+"Fixed a build problem about groonga-httpd on Mac OS X. [Reported by SHIMADA "
+"Koji]"
 
-# 17c1db26a7aa4832b6c6ce3621ba85df
+# 03787cb584f14039878a313c7ffe5631
 #: ../../../source/news.txt:35
 msgid "Fixed not to use installed groonga's header files for groonga-httpd."
-msgstr ""
+msgstr "Fixed not to use installed groonga's header files for groonga-httpd."
 
-# 221b07c7eca94b07b23ec562cedd0bd6
+# 68ae05761cd54454a6cd823cb1a334ad
 #: ../../../source/news.txt:36
 msgid "Fixed a build problem about groonga on Mac OS X Lion."
-msgstr ""
+msgstr "Fixed a build problem about groonga on Mac OS X Lion."
 
-# 1cfc1142079947319ff825e8bb3cb1b1
+# b99033b17c7a4902a9a56da071050e29
 #: ../../../source/news.txt:37
 msgid "[doc] Fixed a description of table_remove command."
-msgstr ""
+msgstr "[doc] Fixed a description of table_remove command."
 
-# a2c09c93193a4936bf5855e6c5b0d9cc
+# 107c11c3955443eb83ee89279fab05f1
 #: ../../../source/news.txt:38
 msgid ""
 "Fixed infinite loop problem for not implemented operator without index. "
 "[GitHub#20]"
 msgstr ""
+"Fixed infinite loop problem for not implemented operator without index. "
+"[GitHub#20]"
 
-# 736c637aa58643a3a5eb28554cf81097
+# 9164af12a47d4ecbb184ccfbbaa27318
 #: ../../../source/news.txt:40
 msgid "Fixed a wrong error code which causes memory leaks."
-msgstr ""
+msgstr "Fixed a wrong error code which causes memory leaks."
 
-# 8ca42699fd2d49d58da6e3045b91f547
+# 79f86c96419c4611aa199371630151fb
 #: ../../../source/news.txt:41
 msgid "Fixed to return error messages while load command is processing."
-msgstr ""
+msgstr "Fixed to return error messages while load command is processing."
 
-# f0abd4d6d27141c58fee3d90e479b237
+# 0485572646a94754bea9350bf5497b57
 #: ../../../source/news.txt:42
 msgid "Fixed a wrong error code which collapse ja columns."
-msgstr ""
+msgstr "Fixed a wrong error code which collapse ja columns."
 
-# 6007fbbdff1d4157b21562378410c88c
+# 8365ca4f60a546c8863b57eebea6d490
 #: ../../../source/news.txt:43
 msgid "Fixed to exit load command when an uncontinuable error occurred."
-msgstr ""
+msgstr "Fixed to exit load command when an uncontinuable error occurred."
 
-# 6007fbbdff1d4157b21562378410c88c
+# 8365ca4f60a546c8863b57eebea6d490
 #: ../../../source/news.txt:44
 msgid "Fixed to stop load command for invalid --columns value."
-msgstr ""
+msgstr "Fixed to stop load command for invalid --columns value."
 
-# d8fea81427214987ad59d5c8b7f36563
+# 617dd2b9e4b9467c9ca6c9db470e56d2
 #: ../../../source/news.txt:45
 msgid "[admin] Fixed to escape error message."
-msgstr ""
+msgstr "[admin] Fixed to escape error message."
 
-# c6625b9dd048482495d12f34a98403c5
-# c6625b9dd048482495d12f34a98403c5
-# c6625b9dd048482495d12f34a98403c5
-# c6625b9dd048482495d12f34a98403c5
-# ac928c3910434a099536e26fe8813c7b
-# 028728a54d5445a28704eb1c2fbcdf2f
-# 817924b108824d9aad326b6b237dc980
-# 75e2277587b841f3b40c6e123b57b8e5
-# 9ce8c0a632114f269ca48aa22c407740
-# ebbe85dda60940fc98abd1ac70c35c49
+# 787a4243dd6e4b508022aab512c86c8f
+# 787a4243dd6e4b508022aab512c86c8f
+# 787a4243dd6e4b508022aab512c86c8f
+# 787a4243dd6e4b508022aab512c86c8f
+# 787a4243dd6e4b508022aab512c86c8f
+# 787a4243dd6e4b508022aab512c86c8f
+# 787a4243dd6e4b508022aab512c86c8f
+# e1ad7ce7771441e0aa95562c2e5697fc
+# 4d1e36c7b4f74f38a6aff57e2979d5d5
+# e353cb43e0a7468bb9e03a7b39ddb34e
+# cdbdc89143c144cea982080043cf0469
+# bf94700814b443ac94362b8d9af38289
+# 435a5e420dbb434e825d1c07227e94dc
 #: ../../../source/news.txt:48 ../../../source/news.txt:96
 #: ../../../source/news.txt:144 ../../../source/news.txt:211
 #: ../../../source/news.txt:256 ../../../source/news.txt:301
@@ -223,183 +242,215 @@ msgstr ""
 msgid "Thanks"
 msgstr "Thanks"
 
-# d0a1ab72e28a4fe398f15881acfee636
+# f9996d3eca3e44f792e24ca1438ca418
 #: ../../../source/news.txt:50
 msgid "SHIMADA Koji"
-msgstr ""
+msgstr "SHIMADA Koji"
 
-# 4e3a32e828b74c7b9afa0bc423e6fab4
+# 5eb676e32b1240d194e07235f73f983b
+# 5eb676e32b1240d194e07235f73f983b
+# 2d14d535fa12405587b286ba1e5036a7
+# 0e04c49fb71646698a1f83098db1dafe
 #: ../../../source/news.txt:51 ../../../source/news.txt:99
 #: ../../../source/news.txt:146 ../../../source/news.txt:213
 msgid "IWAI, Masaharu"
 msgstr "IWAI, Masaharu"
 
-# 9d3982d7f983419aa0e608ae86493802
+# d27fa66c86a54b51b44b70d9284562d8
 #: ../../../source/news.txt:57
 msgid "Release 2.0.4 - 2012/06/29"
 msgstr "Release 2.0.4 - 2012/06/29"
 
-# 838e3ae2468c4a9184e7d49382477d5f
+# a7b45b36ed5145fd8a5ceb0f255e636b
 #: ../../../source/news.txt:62
 msgid "Supported only KyTea 0.4.2."
-msgstr ""
+msgstr "Supported only KyTea 0.4.2."
 
-# c8a73493619c4382820f44770ad6e669
+# 2b1e03e4c3d74a418bc95d447bd5d09a
 #: ../../../source/news.txt:63
 msgid "Dropped KyTea 0.4.1 or ealier support."
 msgstr "Dropped KyTea 0.4.1 or ealier support."
 
-# 8c00e04f4a674ec093bd948316a22d6f
+# 022f93fb66b646b9854412af006e9abc
 #: ../../../source/news.txt:64
 msgid "[experimental] Supported nginx based groonga HTTP interface."
-msgstr ""
+msgstr "[experimental] Supported nginx based groonga HTTP interface."
 
-# 175896c413a74dac87e39e572c81516b
+# 2320c2f75af646f8812e90acde49b6b7
 #: ../../../source/news.txt:65
 msgid ""
 "Supported calculating the value of distance with \"rect\" or \"rectangle\" "
 "argument in northern hemisphere. [#1386] [#1387] [#1388] [#1389]"
 msgstr ""
+"Supported calculating the value of distance with \"rect\" or \"rectangle\" "
+"argument in northern hemisphere. [#1386] [#1387] [#1388] [#1389]"
 
-# bd0543f7ae9d4be3aae6ea9dc0d9cedb
+# 7613cfb8fff24c159bdbedd15b2c2684
 #: ../../../source/news.txt:67
 msgid "[doc] Added a document about :doc:`/development/travis-ci` integration."
 msgstr ""
+"[doc] Added a document about :doc:`/development/travis-ci` integration."
 
-# 3260b981d4dd4cc1acf41e9471570c90
+# b872747300974749933ea1a8cc8d6cef
 #: ../../../source/news.txt:68
 msgid ""
 "[doc] Added descriptions about full text search and phrase search. See :ref:"
 "`full-text-search-condition` and :ref:`phrase-search-condition` about detail."
 msgstr ""
+"[doc] Added descriptions about full text search and phrase search. See :ref:"
+"`full-text-search-condition` and :ref:`phrase-search-condition` about detail."
 
-# db7e206dbad54b60aa7b6285a8fb2352
+# 7613cfb8fff24c159bdbedd15b2c2684
 #: ../../../source/news.txt:71
 msgid ""
 "[doc] Added descriptions about comparison conditions. See :ref:`conditional-"
 "expression` about detail."
 msgstr ""
+"[doc] Added descriptions about comparison conditions. See :ref:`conditional-"
+"expression` about detail."
 
-# e4927f0a89184a6fadc35c77161e6a21
+# 17ad392e0d6349e4a8d811f144dcb030
 #: ../../../source/news.txt:73
 msgid "[doc] Added examples for :doc:`/reference/grn_expr/query_syntax`."
-msgstr ""
+msgstr "[doc] Added examples for :doc:`/reference/grn_expr/query_syntax`."
 
-# 1cfc1142079947319ff825e8bb3cb1b1
+# b99033b17c7a4902a9a56da071050e29
 #: ../../../source/news.txt:74
 msgid "[doc] Added descriptions about :ref:`combined-expression`."
 msgstr "[doc] Added descriptions about :ref:`combined-expression`."
 
-# ea450e714137450b9ad8f29b387b739b
+# cdc629945353491c963d746057e6fae3
 #: ../../../source/news.txt:75
 msgid ""
 "[doc] Added descriptions about :ref:`prefix-search-condition` and :ref:"
 "`suffix-search-condition`."
 msgstr ""
+"[doc] Added descriptions about :ref:`prefix-search-condition` and :ref:"
+"`suffix-search-condition`."
 
-# 98968d7c7eed4a3eb483dc46a56bfd73
+# fa5e29cee6bc427d89530331204fea2a
 #: ../../../source/news.txt:77
 msgid "Supported suffix search by index."
 msgstr "Supported suffix search by index."
 
-# bd0543f7ae9d4be3aae6ea9dc0d9cedb
+# b99033b17c7a4902a9a56da071050e29
 #: ../../../source/news.txt:78
 msgid "[doc] Added a document about :doc:`/reference/grn_expr`."
-msgstr ""
+msgstr "[doc] Added a document about :doc:`/reference/grn_expr`."
 
-# 713e81dc5f9e467689a4f835353e031a
+# b74a370544d84fa6b93ae3084f2a4e42
 #: ../../../source/news.txt:79
 msgid ""
 "[munin] Supported JSON library installed by RubyGems [GitHub#17] [Patch by "
 "IWAI, Masaharu]"
 msgstr ""
+"[munin] Supported JSON library installed by RubyGems [GitHub#17] [Patch by "
+"IWAI, Masaharu]"
 
-# f732c9ed51a64450850d9d91799bfb63
+# f08d5e31d7dd4f2ea22b3e75a85310a6
 #: ../../../source/news.txt:81
 msgid ""
 "[doc] Updated the description of how to specify a value as Time in tutorial. "
 "[#1405] [Reported by IWAI, Masaharu]"
 msgstr ""
+"[doc] Updated the description of how to specify a value as Time in tutorial. "
+"[#1405] [Reported by IWAI, Masaharu]"
 
-# 0cc4b16a7b2c4048be6f3fc6b771a445
+# fd039149d2724618a738e46fa0899f45
 #: ../../../source/news.txt:83
 msgid ""
 "[rpm] Removed groonga-tokenizer-mecab dependency from groonga package. "
 "[GitHub#18] [Patch by IWAI, Masaharu]"
 msgstr ""
+"[rpm] Removed groonga-tokenizer-mecab dependency from groonga package. "
+"[GitHub#18] [Patch by IWAI, Masaharu]"
 
-# 571c5eb172b745cbb9af795af8179ef9
+# 6990910b6d7041ed85472bf271aae2be
 #: ../../../source/news.txt:89
 msgid ""
 "Fixed a problem that display of command prompt changes to not intended state "
 "by using batch mode on Mac OS X. [Reported by @soundkitchen]"
 msgstr ""
+"Fixed a problem that display of command prompt changes to not intended state "
+"by using batch mode on Mac OS X. [Reported by @soundkitchen]"
 
-# 85b256eafb5143998f43870a732a09c0
+# d15987bcfd94438f9c8f82ffc4907ef1
 #: ../../../source/news.txt:92
 msgid "Fixed not to terminate after an invalid command in client mode. [#1305]"
 msgstr ""
+"Fixed not to terminate after an invalid command in client mode. [#1305]"
 
-# 85b256eafb5143998f43870a732a09c0
+# 7966d4df1ab94ee58c1686e2238a763c
 #: ../../../source/news.txt:93
 msgid ""
 "Fixed a problem that '=R' is treated as 'OR' in ``--query`` syntax. [#1393]"
 msgstr ""
+"Fixed a problem that '=R' is treated as 'OR' in ``--query`` syntax. [#1393]"
 
-# 5494a8197000428b89bafbfcc94f2754
+# f9194922a08f48549e1d31fa43261199
+# 8396dd510179456d93d284da1caf777d
 #: ../../../source/news.txt:98 ../../../source/news/1.2.x.txt:151
 msgid "@soundkitchen"
 msgstr "@soundkitchen"
 
-# 9d3982d7f983419aa0e608ae86493802
+# d27fa66c86a54b51b44b70d9284562d8
 #: ../../../source/news.txt:104
 msgid "Release 2.0.3 - 2012/05/29"
-msgstr ""
+msgstr "Release 2.0.3 - 2012/05/29"
 
 # c6fe9d8461d345a29ebae070243eb871
 #: ../../../source/news.txt:109
 msgid "[doc] Added about release procedure."
-msgstr ""
+msgstr "[doc] Added about release procedure."
 
-# 69f523c37d144ead99cccdc94b6c267d
+# 7a957dc49b224c28b3cbb03966616135
 #: ../../../source/news.txt:110
 msgid "Removed restriction that the max number of opened files is 4096."
-msgstr ""
+msgstr "Removed restriction that the max number of opened files is 4096."
 
 # e1a33a5f7e59499f8734fcbb09e3f4c4
 #: ../../../source/news.txt:111
 msgid "[experimental] Added table plugin."
-msgstr ""
+msgstr "[experimental] Added table plugin."
 
-# 1cfc1142079947319ff825e8bb3cb1b1
+# b99033b17c7a4902a9a56da071050e29
 #: ../../../source/news.txt:112
-msgid "[doc] Added more descriptions about :doc:`/commands/select` command."
-msgstr "[doc] Added more descriptions about :doc:`/commands/select` command."
+msgid ""
+"[doc] Added more descriptions about :doc:`/reference/commands/select` "
+"command."
+msgstr ""
+"[doc] Added more descriptions about :doc:`/reference/commands/select` "
+"command."
 
 # fa443a7adc004700ad9b85f8f58b524b
 #: ../../../source/news.txt:113
 msgid "[doc] Made execution example copy & paste friendly."
-msgstr ""
+msgstr "[doc] Made execution example copy & paste friendly."
 
-# 1dfb0cc722ff4e4e9d743a01605c4b99
+# 056280bfbcf94365afa40c94785b26c7
 #: ../../../source/news.txt:114
 msgid ""
 "[windows] Supported build with Visual Studio 2010 Express and CMake. See :"
 "doc:`/install/windows` about details."
 msgstr ""
+"[windows] Supported build with Visual Studio 2010 Express and CMake. See :"
+"doc:`/install/windows` about details."
 
-# 82da66cac45d4c08a7cf63b93fd1dafd
+# 7613cfb8fff24c159bdbedd15b2c2684
 #: ../../../source/news.txt:116
 msgid ""
 "[doc][solaris] Added a document about building on Solaris. See :doc:`/"
 "install/solaris` about details."
 msgstr ""
+"[doc][solaris] Added a document about building on Solaris. See :doc:`/"
+"install/solaris` about details."
 
 # b74a370544d84fa6b93ae3084f2a4e42
 #: ../../../source/news.txt:118
 msgid ""
 "[doc][yum] Updated epel-release package version. [Reported by IWAI, Masaharu]"
 msgstr ""
+"[doc][yum] Updated epel-release package version. [Reported by IWAI, Masaharu]"
 
 # fd039149d2724618a738e46fa0899f45
 #: ../../../source/news.txt:120
@@ -407,11 +458,13 @@ msgid ""
 "[doc][cenos6] Disabled Repoforge for Munin for CentOS 6. [Reported by IWAI, "
 "Masaharu]"
 msgstr ""
+"[doc][cenos6] Disabled Repoforge for Munin for CentOS 6. [Reported by IWAI, "
+"Masaharu]"
 
 # a806583b50564c9eaa98c8062831fcc9
 #: ../../../source/news.txt:122
 msgid "Started distributing source archive in zip format."
-msgstr ""
+msgstr "Started distributing source archive in zip format."
 
 # 34b42b731fb94ec79cf710762b1b21b8
 #: ../../../source/news.txt:123
@@ -419,63 +472,75 @@ msgid ""
 "[munin] groonga_dist Munin plugin supported an object that has separated "
 "files."
 msgstr ""
+"[munin] groonga_dist Munin plugin supported an object that has separated "
+"files."
 
 # a7b45b36ed5145fd8a5ceb0f255e636b
 #: ../../../source/news.txt:125
 msgid "Started using Travis CI."
-msgstr ""
+msgstr "Started using Travis CI."
 
-# 546543215db2471ab76191d6df759c2f
+# 3003c13807e349e79b3c29ae6f6131ed
 #: ../../../source/news.txt:126
 msgid ""
 "[yum] Changed RPM package name that provides yum repository from groonga-"
 "repository to groonga-release to follow RPM package name convension such as "
 "centos-release and fedora-release."
 msgstr ""
+"[yum] Changed RPM package name that provides yum repository from groonga-"
+"repository to groonga-release to follow RPM package name convension such as "
+"centos-release and fedora-release."
 
-# 0cc4b16a7b2c4048be6f3fc6b771a445
+# fd039149d2724618a738e46fa0899f45
 #: ../../../source/news.txt:133
 msgid ""
 "[doc] Fixed a command to update yum repository. [Suggested by IWAI, Masaharu]"
 msgstr ""
+"[doc] Fixed a command to update yum repository. [Suggested by IWAI, Masaharu]"
 
-# 8a8704f8557d470b88f9632c7dd8db61
+# 8365ca4f60a546c8863b57eebea6d490
 #: ../../../source/news.txt:135
 msgid ""
 "[deb] Fixed a bug that log_repoen command in logrotate uses wrong protocol."
 msgstr ""
+"[deb] Fixed a bug that log_repoen command in logrotate uses wrong protocol."
 
-# 656b1cf2166545b0ba6446a76509e607
+# b74a370544d84fa6b93ae3084f2a4e42
 #: ../../../source/news.txt:136
 msgid ""
 "Fixed broken ERROR tag in XML response. [#1363] [GitHub#13] [Patch by IWAI, "
 "Masaharu]"
 msgstr ""
+"Fixed broken ERROR tag in XML response. [#1363] [GitHub#13] [Patch by IWAI, "
+"Masaharu]"
 
 # d15987bcfd94438f9c8f82ffc4907ef1
 #: ../../../source/news.txt:138
 msgid "Fixed a bug that grn_ctx isn't fully cleared by grn_ctx_fin()."
-msgstr ""
+msgstr "Fixed a bug that grn_ctx isn't fully cleared by grn_ctx_fin()."
 
-# 746adc4343424af2b5f669126916ad7a
+# d15987bcfd94438f9c8f82ffc4907ef1
 #: ../../../source/news.txt:139
 msgid ""
 "Fixed a bug that ``&!`` set operation doesn't work with grouped expression. "
 "[#1372]"
 msgstr ""
+"Fixed a bug that ``&!`` set operation doesn't work with grouped expression. "
+"[#1372]"
 
-# 185d841ac8be4b8484cddbe797fd0991
+# d15987bcfd94438f9c8f82ffc4907ef1
 #: ../../../source/news.txt:141
 msgid ""
 "Fixed a bug that a record key registered via index source isn't normalized."
 msgstr ""
+"Fixed a bug that a record key registered via index source isn't normalized."
 
-# 9d3982d7f983419aa0e608ae86493802
+# d27fa66c86a54b51b44b70d9284562d8
 #: ../../../source/news.txt:151
 msgid "Release 2.0.2 - 2012/04/29"
 msgstr "Release 2.0.2 - 2012/04/29"
 
-# 3085cb3bada24563a15ab7be8d1ba891
+# 38b1a4cb7d3f49418c4ce854c44a72c9
 #: ../../../source/news.txt:155
 msgid ""
 "The package sign key is changed since this release. Import the new package "
@@ -484,32 +549,32 @@ msgstr ""
 "The package sign key is changed since this release. Import the new package "
 "sign key before updating groogna packages."
 
-# ce53c60dc6264603aa0cfaf993bc4f11
+# b241bde0f2bb495d925b6934846eef87
 #: ../../../source/news.txt:158
 msgid "Debian/Ubuntu::"
 msgstr "Debian/Ubuntu::"
 
-# 66433d3ef8b347c0ba803e9d6a5e7838
+# 0eab6f4218b64cf09053839a5ecd11bf
 #: ../../../source/news.txt:163
 msgid "CentOS/Fedora::"
 msgstr "CentOS/Fedora::"
 
-# cb047e307e0a435db4df9ff360c1a9dc
+# aece69068c8f4b25add22cd6d0f81b6c
 #: ../../../source/news.txt:171
 msgid "[pkg-config] Removed needless MessagePack dependency."
 msgstr "[pkg-config] Removed needless MessagePack dependency."
 
-# 0cc4b16a7b2c4048be6f3fc6b771a445
+# fd039149d2724618a738e46fa0899f45
 #: ../../../source/news.txt:172
 msgid "[rpm][fedora] Supported libedit. [#1325] [Suggested by IWAI, Masaharu]"
 msgstr "[rpm][fedora] Supported libedit. [#1325] [Suggested by IWAI, Masaharu]"
 
-# 713e81dc5f9e467689a4f835353e031a
+# 6c763f1e8fe3417ba677cc0859ec46eb
 #: ../../../source/news.txt:173
 msgid "[rpm] Supported zlib and LZO. [#1324] [Patch by IWAI, Masaharu]"
 msgstr "[rpm] Supported zlib and LZO. [#1324] [Patch by IWAI, Masaharu]"
 
-# 81d8faf4a8d143c99a0cdb7cb64fcdf5
+# 4a8cadfc828741769ed5f5f060b7fc56
 #: ../../../source/news.txt:174
 msgid ""
 "[groonga] Improved daemoinzed timing. Groonga server daemonizes after socket "
@@ -520,27 +585,27 @@ msgstr ""
 "is listened. It means that groonga server is ready when groonga server is "
 "daemonized. [#1326]"
 
-# 020227ee7fe344dabf2dfc1ce8afbed2
+# 022f93fb66b646b9854412af006e9abc
 #: ../../../source/news.txt:177
 msgid "[admin] Supported suggest in groonga administration page."
 msgstr "[admin] Supported suggest in groonga administration page."
 
-# e04de74421b24656892c022da6ca8d65
+# fb9aa8b544884aaa87f59aea8c21c9b6
 #: ../../../source/news.txt:178
 msgid "[dump] Ignored MeCab tokenizer load error."
 msgstr "[dump] Ignored MeCab tokenizer load error."
 
-# 4d144f4253a74e2da16b78ea5f5bc655
+# 802f65b423cd46eda8b84ad1355d310e
 #: ../../../source/news.txt:179
 msgid "Supported CMake."
 msgstr "Supported CMake."
 
-# 19b790635c9e474ab3b372ef8eb5f0be
+# 0485572646a94754bea9350bf5497b57
 #: ../../../source/news.txt:180
 msgid "[load] Supported error report when a column value can't be set."
 msgstr "[load] Supported error report when a column value can't be set."
 
-# 942f957761d24c69a909d49d4011f18d
+# 3b2ed01e993b423d85679a1e634a690b
 #: ../../../source/news.txt:181
 msgid ""
 "Supported similar search. ``select --filter \"column *S 'TEXT'\"`` is the "
@@ -549,17 +614,17 @@ msgstr ""
 "Supported similar search. ``select --filter \"column *S 'TEXT'\"`` is the "
 "similar search syntax. [#1342]"
 
-# 7fca201dbc9946ae926927a4128b0df1
+# e8c37a8c4c6840e4bb998c3c29ad16ab
 #: ../../../source/news.txt:183
 msgid "[apt][yum] Changed package sign key."
 msgstr "[apt][yum] Changed package sign key."
 
-# 637b4b27a99e4a1f8a5384ad7ba02fc7
+# a7b45b36ed5145fd8a5ceb0f255e636b
 #: ../../../source/news.txt:184
 msgid "Supported Ubuntu Precise Pangolin."
 msgstr "Supported Ubuntu Precise Pangolin."
 
-# d705f9d6ca5642c6b56d03eaf601fc44
+# 6950295e487c45fc8c1156979e678b4a
 #: ../../../source/news.txt:185
 msgid ""
 "[apt] Added a new groonga-keyring deb package for the groonga's package sign "
@@ -568,7 +633,7 @@ msgstr ""
 "[apt] Added a new groonga-keyring deb package for the groonga's package sign "
 "key."
 
-# 4f74eb09a6f7456891d6b52b055f1c59
+# f08d5e31d7dd4f2ea22b3e75a85310a6
 #: ../../../source/news.txt:191
 msgid ""
 "[deb][rpm] Used ``--bind-address`` option instead of deprecated ``--"
@@ -577,7 +642,7 @@ msgstr ""
 "[deb][rpm] Used ``--bind-address`` option instead of deprecated ``--"
 "address`` option. [#1320] [Patch by IWAI, Masaharu]"
 
-# 7bc617327e9f4c22800ccd752d5b9ee0
+# 49e1b646f7ec4d378f57412aa0efaeb2
 #: ../../../source/news.txt:194
 msgid ""
 "[deb] Renamed groonga-server package's configuration file to /etc/default/"
@@ -586,7 +651,7 @@ msgstr ""
 "[deb] Renamed groonga-server package's configuration file to /etc/default/"
 "groonga-server from /etc/default/groonga."
 
-# 5c67a9e936ac4ab4be5fb2c1d83cd77e
+# 9a0c985252f649588f81dde33e06ac59
 #: ../../../source/news.txt:196
 msgid ""
 "[rpm][fedora] Fixed upgrade condition in %post server. [GitHub#11] [Patch by "
@@ -595,12 +660,12 @@ msgstr ""
 "[rpm][fedora] Fixed upgrade condition in %post server. [GitHub#11] [Patch by "
 "Daiki Ueno]"
 
-# 0cc4b16a7b2c4048be6f3fc6b771a445
+# fd039149d2724618a738e46fa0899f45
 #: ../../../source/news.txt:198
 msgid "[rpm] Removed needless change logs. [#1328] [Patch by IWAI, Masaharu]"
 msgstr "[rpm] Removed needless change logs. [#1328] [Patch by IWAI, Masaharu]"
 
-# 656b1cf2166545b0ba6446a76509e607
+# b74a370544d84fa6b93ae3084f2a4e42
 #: ../../../source/news.txt:199
 msgid ""
 "[deb][rpm] Added missing curl dependency. [GitHub#12] [Patch by IWAI, "
@@ -609,7 +674,7 @@ msgstr ""
 "[deb][rpm] Added missing curl dependency. [GitHub#12] [Patch by IWAI, "
 "Masaharu]"
 
-# 0cc4b16a7b2c4048be6f3fc6b771a445
+# fd039149d2724618a738e46fa0899f45
 #: ../../../source/news.txt:201
 msgid ""
 "[rpm] Removed needleess ruby package dependency from groonga package. "
@@ -618,14 +683,14 @@ msgstr ""
 "[rpm] Removed needleess ruby package dependency from groonga package. "
 "[#1330] [Suggested by IWAI, Masaharu]"
 
-# 662c739d47bb47079796e06257bcec1e
+# 1ac9062608694e87a1f1193899664329
 #: ../../../source/news.txt:203
 msgid ""
 "[deb] Added missing default values to groonga-server's configuration file."
 msgstr ""
 "[deb] Added missing default values to groonga-server's configuration file."
 
-# 19ece71a54d54547996918734829652d
+# 7966d4df1ab94ee58c1686e2238a763c
 #: ../../../source/news.txt:205
 msgid ""
 "Fixed a crash bug that is caused when searching with updaging very large "
@@ -634,7 +699,7 @@ msgstr ""
 "Fixed a crash bug that is caused when searching with updaging very large "
 "inverted index. [#1329]"
 
-# 98dcc169722c463fb4bc610308235eb2
+# a932df07608e44ff9db77226be6d5214
 #: ../../../source/news.txt:207
 msgid ""
 "Fixed a bug that strings are compared as characters instead of byte string. "
@@ -643,56 +708,56 @@ msgstr ""
 "Fixed a bug that strings are compared as characters instead of byte string. "
 "[#1340] [Reported by Shinya Kawaji]"
 
-# 723c65da2730485fb3ba55fcd168a048
-# 723c65da2730485fb3ba55fcd168a048
-# a52c3d625a81442f97c5030f9b954f99
+# 0ea661cd1867446b988e8a1096e5803f
+# 0ea661cd1867446b988e8a1096e5803f
+# 350aadef79e046c7a2951e4984606cb9
 #: ../../../source/news.txt:214 ../../../source/news.txt:304
 #: ../../../source/news/1.2.x.txt:250
 msgid "Daiki Ueno"
 msgstr "Daiki Ueno"
 
-# fc596d5053a44470a2761d10a7cb3413
+# fb9090645ff94907b2c63adb68a9fa4b
 #: ../../../source/news.txt:215
 msgid "Shinya Kawaji"
 msgstr "Shinya Kawaji"
 
-# 9d3982d7f983419aa0e608ae86493802
+# d27fa66c86a54b51b44b70d9284562d8
 #: ../../../source/news.txt:220
 msgid "Release 2.0.1 - 2012/03/29"
 msgstr "Release 2.0.1 - 2012/03/29"
 
-# c5a152b18a2340e78f6bae6081538285
+# f8f2e06a587b4d3690d3806cb0c1a337
 #: ../../../source/news.txt:225
 msgid "Supported build in other directory. [#1298] [Reported by Kazuhiko]"
 msgstr "Supported build in other directory. [#1298] [Reported by Kazuhiko]"
 
-# 7deb5e113b8040c9961985178f049abb
+# d4a5c216aefd410dba73316b45a3f08e
 #: ../../../source/news.txt:227
 msgid "[solaris] Supported build on Solaris 11. [Reported by Kazuhiko]"
 msgstr "[solaris] Supported build on Solaris 11. [Reported by Kazuhiko]"
 
-# 08d385fa713d4ace9075013fc0f98758
+# e1a33a5f7e59499f8734fcbb09e3f4c4
 #: ../../../source/news.txt:228
 msgid "[test] Supported functional test."
 msgstr "[test] Supported functional test."
 
-# 1367990823694504b92107645dc88ed5
+# eb4d71e77edc4ba0a727324326a207b0
 #: ../../../source/news.txt:229
 msgid "[test] Required ``--with-ruby19`` configure option for testing by Ruby."
 msgstr ""
 "[test] Required ``--with-ruby19`` configure option for testing by Ruby."
 
-# eacab9b568e74a91a50344e107a784e3
+# 68b9638c6f654909b3c9b46f2f11960b
 #: ../../../source/news.txt:230
 msgid "[dump] Supported records dump for a table that has default tokenizer."
 msgstr "[dump] Supported records dump for a table that has default tokenizer."
 
-# f1db00d6fcd047429169945fcbe94d87
+# 0847d3861ef743438daf7a79654739ed
 #: ../../../source/news.txt:231
 msgid "[suggest] Added ``similar_search`` option."
 msgstr "[suggest] Added ``similar_search`` option."
 
-# 8fd6ed7bc7f64932acf284e14de56526
+# b16e3428d5cc467aa8837d355c540eb7
 #: ../../../source/news.txt:232
 msgid ""
 "[groonga] Removed deprecated options, ``-a``, ``--address`` and ``--admin-"
@@ -701,50 +766,50 @@ msgstr ""
 "[groonga] Removed deprecated options, ``-a``, ``--address`` and ``--admin-"
 "html-path``."
 
-# cc710de18ec6411c9cb18b14d58ed9e9
+# 1e6dbf176cba4c698e0ca84b68366cec
 #: ../../../source/news.txt:234
 msgid "Added more return value checks. [GitHub#9] [Reported by Markus Elfring]"
 msgstr ""
 "Added more return value checks. [GitHub#9] [Reported by Markus Elfring]"
 
-# 8ab31cfea54c487bb4b57c04210fc897
+# 5550c139ed3a4314aca74e6a33c136a9
 #: ../../../source/news.txt:235
 msgid "[dat] Supported term extract operation."
 msgstr "[dat] Supported term extract operation."
 
-# 7574be8d134842409ec54cf4041af085
+# 68f8fc63decb433bb728bd4deaba59e9
 #: ../../../source/news.txt:236
 msgid "Added `logos <http://groonga.org/logo/>`_ ."
 msgstr "Added `logos <http://groonga.org/logo/>`_ ."
 
-# 596b1531c6bf45859114677a6cceedfd
+# c6c99d1ba1e049d08ff23c94b5be1471
 #: ../../../source/news.txt:237
 msgid "Updated HTML design."
 msgstr "Updated HTML design."
 
-# d78de719f48a4fe78a6f7b072b0d6116
+# 18d43bb2be6a4bfdabdeb49fab6dcd6c
 #: ../../../source/news.txt:238
 msgid "Renamed ``grntest`` to ``groonga-benchmark``."
 msgstr "Renamed ``grntest`` to ``groonga-benchmark``."
 
-# 637b4b27a99e4a1f8a5384ad7ba02fc7
+# a7b45b36ed5145fd8a5ceb0f255e636b
 #: ../../../source/news.txt:239
 msgid "Supported ``autogen.sh`` on CentOS 5."
 msgstr "Supported ``autogen.sh`` on CentOS 5."
 
-# c0526eb9044a41bfb3de0bec76a3eb67
+# dcb693867e5248bb9975604c1c986a3a
 #: ../../../source/news.txt:240
 msgid ""
 "[linux] Added ``vm.overcommit_memory`` kernel parameter value check. [#1289]"
 msgstr ""
 "[linux] Added ``vm.overcommit_memory`` kernel parameter value check. [#1289]"
 
-# 59941ec3a60b470a9103223ab000b74f
+# 136b688e6b454aea80628fa5999fc01c
 #: ../../../source/news.txt:242
 msgid "``grn_snip`` uses ``grn_obj`` mechanism. [#1054]"
 msgstr "``grn_snip`` uses ``grn_obj`` mechanism. [#1054]"
 
-# 722543f8454343cda898af0ce9bf78e7
+# 9f534d6c947c416087af449128462743
 #: ../../../source/news.txt:247
 msgid ""
 "Fixed a bug that uninstall task doesn't uninstall installed Ruby scripts. "
@@ -753,12 +818,12 @@ msgstr ""
 "Fixed a bug that uninstall task doesn't uninstall installed Ruby scripts. "
 "[#1299] [Reported by Kazuhiko]"
 
-# 662c739d47bb47079796e06257bcec1e
+# 1ac9062608694e87a1f1193899664329
 #: ../../../source/news.txt:249
 msgid "Added a missing Gemfile. [#1302] [Reported by Kazuhiko]"
 msgstr "Added a missing Gemfile. [#1302] [Reported by Kazuhiko]"
 
-# 185d841ac8be4b8484cddbe797fd0991
+# d15987bcfd94438f9c8f82ffc4907ef1
 #: ../../../source/news.txt:250
 msgid ""
 "Fixed a bug that some indexed records aren't found. The feature is only used "
@@ -767,38 +832,38 @@ msgstr ""
 "Fixed a bug that some indexed records aren't found. The feature is only used "
 "by mroonga. [#1303]"
 
-# 7fe48ce2aebc450e9e31f901fe27b412
+# 141681a3caf34e62bfc29a187d0294d9
 #: ../../../source/news.txt:252
 msgid "[groonga] Appended missing ``-id`` to ``--server-id`` option name."
 msgstr "[groonga] Appended missing ``-id`` to ``--server-id`` option name."
 
-# 2fcd89baeac24194a2527640e47d9ce3
+# 8365ca4f60a546c8863b57eebea6d490
 #: ../../../source/news.txt:253
 msgid "Fixed a bug that latin1 normalization may access unexpected memory."
 msgstr "Fixed a bug that latin1 normalization may access unexpected memory."
 
-# 70ddf5805528495a942b141fdc1b2824
-# 70ddf5805528495a942b141fdc1b2824
+# 95d1393dcf764787a42096463b41b01d
+# 95d1393dcf764787a42096463b41b01d
 #: ../../../source/news.txt:258 ../../../source/news.txt:306
 msgid "Kazuhiko"
 msgstr "Kazuhiko"
 
-# d58c831d5d4c44c9a83e1095cfa8c862
+# d2f9e4f080924a25a1efabd0e4eb2a1e
 #: ../../../source/news.txt:259
 msgid "Markus Elfring"
 msgstr "Markus Elfring"
 
-# 9d3982d7f983419aa0e608ae86493802
+# d27fa66c86a54b51b44b70d9284562d8
 #: ../../../source/news.txt:264
 msgid "Release 2.0.0 - 2012/02/29"
 msgstr "Release 2.0.0 - 2012/02/29"
 
-# a414a089bbc14a9f82bdaad5f75515af
+# b35a9315cc8a4bbda77c20ada288c3cd
 #: ../../../source/news.txt:269
 msgid "[dat] Added 0 length key check."
 msgstr "[dat] Added 0 length key check."
 
-# 662c739d47bb47079796e06257bcec1e
+# 1ac9062608694e87a1f1193899664329
 #: ../../../source/news.txt:270
 msgid ""
 "[windows] Added missing GCC related DLLs. [groonga-dev,00686] [Reported by "
@@ -807,62 +872,62 @@ msgstr ""
 "[windows] Added missing GCC related DLLs. [groonga-dev,00686] [Reported by "
 "Suzuki]"
 
-# 620c50a90cbd41a8b0e1f55860ea8df7
+# fa5e29cee6bc427d89530331204fea2a
 #: ../../../source/news.txt:272
 msgid "[php] Supported PHP 5.4. [Patch by Daiki Ueno]"
 msgstr "[php] Supported PHP 5.4. [Patch by Daiki Ueno]"
 
-# 41b538a987974fedab114e809555913e
+# 959d186bcd85437892ca9e28f6e0f3a7
 #: ../../../source/news.txt:273
 msgid "Updated FSF address. [Suggested by Daiki Ueno]"
 msgstr "Updated FSF address. [Suggested by Daiki Ueno]"
 
-# 620c50a90cbd41a8b0e1f55860ea8df7
+# 3c247b560350485e911a76e8fbee4ea2
 #: ../../../source/news.txt:274
 msgid "[fedora] Supported systemd. [Patch by Daiki Ueno]"
 msgstr "[fedora] Supported systemd. [Patch by Daiki Ueno]"
 
-# 897ac749ec2c45bfa53271071655e23a
+# 89cd2334cb6949c38a1023cc79742808
 #: ../../../source/news.txt:275
 msgid "[rpm][debian] Changed the default protocol to HTTP from gqtp."
 msgstr "[rpm][debian] Changed the default protocol to HTTP from gqtp."
 
-# 08d385fa713d4ace9075013fc0f98758
+# e1a33a5f7e59499f8734fcbb09e3f4c4
 #: ../../../source/news.txt:276
 msgid "[rpm][centos] Supported status command."
 msgstr "[rpm][centos] Supported status command."
 
-# 2879e0a9b0874633a3f2232fe37fd6e2
+# 7a8d0782bef647bcb1c0826a8dc1ea00
 #: ../../../source/news.txt:277
 msgid "Removed needless ``:`` from log message."
 msgstr "Removed needless ``:`` from log message."
 
-# 99c3b54e362747e4acedc32941cfc389
+# bc1552317bcd4ef693118743381a6bf8
 #: ../../../source/news.txt:278
 msgid "Removed deprecated grn_query. [#1247]"
 msgstr "Removed deprecated grn_query. [#1247]"
 
-# e37379455e02422481fc94888f328fa9
+# 3a63e71abead441cb3b53e54e449a4b9
 #: ../../../source/news.txt:279
 msgid "Reduced needless grn_ctx_at() calls on creating table."
 msgstr "Reduced needless grn_ctx_at() calls on creating table."
 
-# 4d144f4253a74e2da16b78ea5f5bc655
+# 802f65b423cd46eda8b84ad1355d310e
 #: ../../../source/news.txt:280
 msgid "[pat] Supported cache."
 msgstr "[pat] Supported cache."
 
-# 665c59c3ede3486697bbc788bc6a5c8b
+# f0c53a795c1440928344d9a10d629f9f
 #: ../../../source/news.txt:281
 msgid "[tokenizer] Improved tokenizer API."
 msgstr "[tokenizer] Improved tokenizer API."
 
-# 77c9bce481c84580bf9ee22c9404b1a4
+# 5070061eaeca48ed9c0ff90514030581
 #: ../../../source/news.txt:282
 msgid "Accepted ``@`` as a valid name character."
 msgstr "Accepted ``@`` as a valid name character."
 
-# 4a35ea3986b0459f91f631c80863c7b0
+# a0102f9d71ae4a088169a23d7bab4e8a
 #: ../../../source/news.txt:283
 msgid ""
 "[tokenizer] Added a tokenizer based on `KyTea <http://www.phontron.com/kytea/"
@@ -871,12 +936,12 @@ msgstr ""
 "[tokenizer] Added a tokenizer based on `KyTea <http://www.phontron.com/kytea/"
 ">`_."
 
-# c01310b2268a4debace6e4ce13c5289f
+# 835cba90fdf24009a2517f2ecbd613e4
 #: ../../../source/news.txt:285
 msgid "Supported :doc:`offline index construction </indexing>`."
 msgstr "Supported :doc:`offline index construction </indexing>`."
 
-# 7deb5e113b8040c9961985178f049abb
+# d4a5c216aefd410dba73316b45a3f08e
 #: ../../../source/news.txt:286
 msgid ""
 "[tokenizer] Supported MeCab 0.993. [groonga-dev,00703] [Reported by Masaharu "
@@ -885,32 +950,32 @@ msgstr ""
 "[tokenizer] Supported MeCab 0.993. [groonga-dev,00703] [Reported by Masaharu "
 "YOSHIOKA]"
 
-# 6625b92f26f64790b15dfd0975c2aa82
+# 396e918f21a74f63817f65e89c348712
 #: ../../../source/news.txt:288
 msgid "[windows] Supported MessagePack."
 msgstr "[windows] Supported MessagePack."
 
-# 458637911705473dad2cf0bfe038308b
+# c8095b641030471a932be3cce5ec995e
 #: ../../../source/news.txt:293
 msgid "[pat] Fixed a bug that the last node can't be found. [#1258]"
 msgstr "[pat] Fixed a bug that the last node can't be found. [#1258]"
 
-# 39d087748fff43a486e1168e5b13f8a4
+# 2bf12fbf09ba4f4aaf7044fa99c8f0d4
 #: ../../../source/news.txt:294
 msgid "[doc] Fixed links in Japanese page. [Reported by @naoina]"
 msgstr "[doc] Fixed links in Japanese page. [Reported by @naoina]"
 
-# 3b1bde45ac39477985b050c5ebd59073
+# fb86fdef097b4575b56742bc53d0d699
 #: ../../../source/news.txt:295
 msgid "[doc] Fixed wrong the default value. [Reported by @naoina]"
 msgstr "[doc] Fixed wrong the default value. [Reported by @naoina]"
 
-# 620c50a90cbd41a8b0e1f55860ea8df7
+# fca1c7c6ec28428ebad20fa6873b78aa
 #: ../../../source/news.txt:296
 msgid "Fixed a typo. [Reported by Kazuhiko]"
 msgstr "Fixed a typo. [Reported by Kazuhiko]"
 
-# 04c05f4cad1f4caa9c51d3361da694a0
+# 8365ca4f60a546c8863b57eebea6d490
 #: ../../../source/news.txt:297
 msgid ""
 "[http] Fixed a bug that ``load`` command error isn't cleared. [Reported by "
@@ -919,32 +984,32 @@ msgstr ""
 "[http] Fixed a bug that ``load`` command error isn't cleared. [Reported by "
 "@wareohji]"
 
-# 27db0a1a3d3e418db3fb2ee9e1d7f8d5
+# 61511cb2e2d3492284044f7e56db83f3
 #: ../../../source/news.txt:303
 msgid "Suzuki"
 msgstr "Suzuki"
 
-# aaf25fc02efa4af69d9b4c26eaf1ace5
+# 727b856581c84dff8760519119df36e4
 #: ../../../source/news.txt:305
 msgid "@naoina"
 msgstr "@naoina"
 
-# 1df5acca175247d4a5139a30b7adaac9
+# 0c1ad68ceb0940c6996e5f58e2ab2b99
 #: ../../../source/news.txt:307
 msgid "Masaharu YOSHIOKA"
 msgstr "Masaharu YOSHIOKA"
 
-# d6118abed07b476ca65d254ca8009f05
+# 9ff7b090214a488a88aa8a6dad35a37e
 #: ../../../source/news.txt:308
 msgid "@wareohji"
 msgstr "@wareohji"
 
-# 9d3982d7f983419aa0e608ae86493802
+# 51c30fd7fdd44cd296c20f98d9751a5b
 #: ../../../source/news.txt:313
 msgid "Release 1.3.0 - 2012/01/29"
 msgstr "Release 1.3.0 - 2012/01/29"
 
-# 0d154800e3ba475abc99bc20541f9717
+# b3d81b5fc4a54780949bc2129a6e01fa
 #: ../../../source/news.txt:318
 msgid ""
 "Supported dynamic DB key table change by GRN_DB_KEY=pat or GRN_DB_KEY=dat "
@@ -953,7 +1018,7 @@ msgstr ""
 "Supported dynamic DB key table change by GRN_DB_KEY=pat or GRN_DB_KEY=dat "
 "environment variable value."
 
-# 1367990823694504b92107645dc88ed5
+# eb4d71e77edc4ba0a727324326a207b0
 #: ../../../source/news.txt:320
 msgid ""
 "Added ``--with-default-db-key`` configure option that specifies the default "
@@ -962,24 +1027,24 @@ msgstr ""
 "Added ``--with-default-db-key`` configure option that specifies the default "
 "DB key table."
 
-# b4bc681be847489bb927039388ce2972
+# 03c9b4eb45ca4eb18b506646702f7364
 #: ../../../source/news.txt:322
 msgid ""
 "Supported \"\" value for geo point data types. It's interpreted as \"0x0\"."
 msgstr ""
 "Supported \"\" value for geo point data types. It's interpreted as \"0x0\"."
 
-# d8fea81427214987ad59d5c8b7f36563
+# 617dd2b9e4b9467c9ca6c9db470e56d2
 #: ../../../source/news.txt:323
 msgid "Added column name to cast error message."
 msgstr "Added column name to cast error message."
 
-# e10237014eca4e1a8ea32f4b47463c5b
+# 8da3580a260e48c99e7508b2f416dd39
 #: ../../../source/news.txt:324
 msgid "Inhibit file information for stdin on load error."
 msgstr "Inhibit file information for stdin on load error."
 
-# 6b17f468dbda492eacab8d7c86ffce70
+# 356c550e21dc49c88d81d500a99c5d5c
 #: ../../../source/news.txt:325
 msgid ""
 "Enabled write-strings warnings and suppress those warnings. [Suggested by "
@@ -988,32 +1053,32 @@ msgstr ""
 "Enabled write-strings warnings and suppress those warnings. [Suggested by "
 "montywi]"
 
-# a1e85487041d45f6b85e8c960485b95f
+# d33f9d517c0443fca204048ca1bdacbc
 #: ../../../source/news.txt:327
 msgid "Marked MessagePack output format as supported. [#1215]"
 msgstr "Marked MessagePack output format as supported. [#1215]"
 
-# 82878fdccbcd403697f8a46989a06b6d
+# b7eb2eb333134fc6a6233bbb1977a8a4
 #: ../../../source/news.txt:328
 msgid "Added ``const`` to ``void *`` of ``*_set_value()``."
 msgstr "Added ``const`` to ``void *`` of ``*_set_value()``."
 
-# b22ef7cd6f1e420ebe125b23e36cbc0f
+# ad39e6f286b14338b4b3ecf3e3e11338
 #: ../../../source/news.txt:329
 msgid "Enabled warning flags on C and C++."
 msgstr "Enabled warning flags on C and C++."
 
-# 637b4b27a99e4a1f8a5384ad7ba02fc7
+# a7b45b36ed5145fd8a5ceb0f255e636b
 #: ../../../source/news.txt:330
 msgid "Supported ``--with-libevent`` without value configure option."
 msgstr "Supported ``--with-libevent`` without value configure option."
 
-# 9ed92f44748a4ac39eb469997af45df4
+# f753ced5670c46889e453b43b5521633
 #: ../../../source/news.txt:331
 msgid "``grn_table_get()`` supported grn_db. [#1242]"
 msgstr "``grn_table_get()`` supported grn_db. [#1242]"
 
-# 3b02e25790e44f70849488488502442b
+# 048690a337744d0bb7e475d3cad3e6eb
 #: ../../../source/news.txt:332
 msgid ""
 "[rpm] Removed needless groogna-munin-plugins dependency from groonga-server. "
@@ -1022,7 +1087,7 @@ msgstr ""
 "[rpm] Removed needless groogna-munin-plugins dependency from groonga-server. "
 "[#1251] [Suggested by Masaharu IWAI]"
 
-# 0cc4b16a7b2c4048be6f3fc6b771a445
+# fd039149d2724618a738e46fa0899f45
 #: ../../../source/news.txt:334
 msgid ""
 "[rpm] Removed needless groogna-doc dependency from groonga. [#1251] "
@@ -1031,28 +1096,28 @@ msgstr ""
 "[rpm] Removed needless groogna-doc dependency from groonga. [#1251] "
 "[Suggested by Masaharu IWAI]"
 
-# 8ab31cfea54c487bb4b57c04210fc897
+# 5550c139ed3a4314aca74e6a33c136a9
 #: ../../../source/news.txt:336
 msgid "[dat] Supported repair by ``grn_dat_repair()``."
 msgstr "[dat] Supported repair by ``grn_dat_repair()``."
 
-# 3a30ed77cc084eac8d89b2a7ef8bafb9
+# 277f8d4d815b4a1a89e8ce0c500d9535
 #: ../../../source/news.txt:337
 msgid "``grn_table_at()`` supported grn_db."
 msgstr "``grn_table_at()`` supported grn_db."
 
-# 0e9997d96b8e48f09049ce45fcd8b6ca
+# 872767d20dab4a498bdcd12ac57ef687
 #: ../../../source/news.txt:338
 msgid "[suggest] Removed unstable mark."
 msgstr "[suggest] Removed unstable mark."
 
-# 52df7d8f9e3a4b03aff21dd43f9c03b6
+# ac67e2de907d4ef49dc6c440c175d1b6
 #: ../../../source/news.txt:339
 msgid "[suggest][complete] Supported normalized value search in prefix-search."
 msgstr ""
 "[suggest][complete] Supported normalized value search in prefix-search."
 
-# c79bb643354343808b1ae41baeec275b
+# bd95c43b051543f0b100533666b9b6d7
 #: ../../../source/news.txt:340
 msgid ""
 "Added experimental offline index build. It's disabled by default for now. "
@@ -1061,73 +1126,73 @@ msgstr ""
 "Added experimental offline index build. It's disabled by default for now. "
 "You can enable it by USE_OFFLINE_INDEXER=yes environment variable."
 
-# 8ab31cfea54c487bb4b57c04210fc897
+# d86d5132553e46aba4aaf762fec3f146
 #: ../../../source/news.txt:343
 msgid "Added internal API ``grn_obj_path_by_id()`` for mroonga."
 msgstr "Added internal API ``grn_obj_path_by_id()`` for mroonga."
 
-# f1db00d6fcd047429169945fcbe94d87
+# 0847d3861ef743438daf7a79654739ed
 #: ../../../source/news.txt:344
 msgid "[suggest][httpd] Passed unknown parameters to groonga."
 msgstr "[suggest][httpd] Passed unknown parameters to groonga."
 
-# f73fce19828845d88ec0090118be92bc
+# 31bbbc25affd4492bb84e1448ef1acef
 #: ../../../source/news.txt:345
 msgid "[output][xml] Added a newline before ``</RESULT>`` for readability."
 msgstr "[output][xml] Added a newline before ``</RESULT>`` for readability."
 
-# 39d087748fff43a486e1168e5b13f8a4
+# c6fe9d8461d345a29ebae070243eb871
 #: ../../../source/news.txt:346
 msgid "[doc][output] Added documentation about output format type."
 msgstr "[doc][output] Added documentation about output format type."
 
-# 15ccad1cb0384f24bfef1be3dec7691c
+# ec0c4ff1cd1e419e939303655d0f0923
 #: ../../../source/news.txt:347
 msgid "Added ``table_rename``. [#1234]"
 msgstr "Added ``table_rename``. [#1234]"
 
-# 15ccad1cb0384f24bfef1be3dec7691c
+# b96c3176b49e45159fc06cd671b910b2
 #: ../../../source/news.txt:348
 msgid "Added ``column_rename``. [#1234]"
 msgstr "Added ``column_rename``. [#1234]"
 
-# a29d08b6be7649c0bcbaed506881684c
+# cd0d5ab7247b46dfaceddd138da87f33
 #: ../../../source/news.txt:353
 msgid "montywi"
 msgstr "montywi"
 
-# 1df5acca175247d4a5139a30b7adaac9
+# 93760c283a19448fb8c643ddd2d842bd
 #: ../../../source/news.txt:354
 msgid "Masaharu IWAI"
 msgstr "Masaharu IWAI"
 
-# f4d8f86f37704c42abca933174ce9f06
+# 489e4303019747b8971a5504d0c83592
 #: ../../../source/news.txt:357
 msgid "The old releases"
 msgstr "The old releases"
 
-# 3342cde82c2e4ff18b3a47e4533754ac
+# 53b41bd7de95486b8d736e10e936ffed
 #: ../../../source/news/0.x.txt:6
 msgid "バージョン0.xのお知らせ"
 msgstr "バージョン0.xのお知らせ"
 
-# c29856574bd74fe0ac406e64d868bfcc
+# 5ab97cc82c5b44eb982929c5b7a3c484
 #: ../../../source/news/0.x.txt:9
 msgid "0.7.7リリース - 2010/08/25"
 msgstr "0.7.7リリース - 2010/08/25"
 
-# e21c147b213b4681be99e35681169118
-# 72b9fa4a48914e16af1a4eacd497c499
-# d70f7c6f1ffd4e11bf098af32a8326b2
-# eb7238fa8204497f9a7a1a20fab177b8
-# 75b85ec20ac042be8a736bb1347c21dc
-# b89a624469e74117a764aa7411f5cd08
-# fb4bb10d3ea649b4a44454a66f56722d
-# a4e69d0dda09465187ecd4dc894534d6
-# bd52a2d6f47c4f90905f64c2f520603e
-# e2ea805b263541deb14d658ac02292a5
-# c3eebaec66234f389a7b3a1aeeb60653
-# 58c997dc658f4c17b56b58b2629dbbd6
+# 17f13a4078df4ad0a59b9170ac2124b0
+# bcfad57cd271426f9e517c08746ef8d6
+# 54e34f861841484b9d12f0f31f7745d1
+# a25c45c26b0f4255838f84670b969ce3
+# 4d10ce9d2a5d4b68ae809650a1bd3d27
+# f1ec5d2538464f7aafd4759383d19f14
+# 1f6de2a1156343358b9f5ced9e501b9d
+# 1d48932f8e554d86980859d6a5a34194
+# b823e8ecb63d421481104c56e9afb319
+# 6c1b092c4d3e432d8a1c6fad0ac564aa
+# 7178a96bd70443f4a5c5e1d7a9dfa182
+# 863e60cf4d1647668946321048c83791
 #: ../../../source/news/0.x.txt:12 ../../../source/news/0.x.txt:39
 #: ../../../source/news/1.0.x.txt:27 ../../../source/news/1.0.x.txt:75
 #: ../../../source/news/1.0.x.txt:115 ../../../source/news/1.0.x.txt:156
@@ -1137,53 +1202,53 @@ msgstr "0.7.7リリース - 2010/08/25"
 msgid "改良"
 msgstr "改良"
 
-# e7bfdc76a36743f68f02759e328edb04
+# 32a255e84ae6466f80a9b31508211349
 #: ../../../source/news/0.x.txt:14
 msgid ""
-"編集距離（レーベンシュタイン距離）を計算する :doc:`/functions/edit_distance` "
-"()関数の追加。"
+"編集距離（レーベンシュタイン距離）を計算する :doc:`/reference/functions/"
+"edit_distance` ()関数の追加。"
 msgstr ""
-"編集距離（レーベンシュタイン距離）を計算する :doc:`/functions/edit_distance` "
-"()関数の追加。"
+"編集距離（レーベンシュタイン距離）を計算する :doc:`/reference/functions/"
+"edit_distance` ()関数の追加。"
 
-# e538a4936b2c4e4fa0fa2e8e21cce09c
+# 60e25b157df243ac916b0be1a4e10c42
 #: ../../../source/news/0.x.txt:17
 msgid "manを追加。"
 msgstr "manを追加。"
 
-# 51da90c9983842a3aef4878dd59fcbf8
+# 72d6498c5f054319a75d0a4f2a591927
 #: ../../../source/news/0.x.txt:19
 msgid ""
-":doc:`/commands/delete` コマンドでデータの整合性が壊れる場合はエラー を返すよ"
-"うにした。"
+":doc:`/reference/commands/delete` コマンドでデータの整合性が壊れる場合はエ"
+"ラー を返すようにした。"
 msgstr ""
-":doc:`/commands/delete` コマンドでデータの整合性が壊れる場合はエラー を返すよ"
-"うにした。"
+":doc:`/reference/commands/delete` コマンドでデータの整合性が壊れる場合はエ"
+"ラー を返すようにした。"
 
-# e34223a723d84a60af4acbb83b94ba01
+# 30d839b74f114562ab65df04546f0411
 #: ../../../source/news/0.x.txt:22
 msgid "MeCabの辞書のエンコーディング検出処理を改善。"
 msgstr "MeCabの辞書のエンコーディング検出処理を改善。"
 
-# 2144029e4e6c44bc9fedfd6917d639a9
+# 3ad7700f79044fcf9bb3bc1cefc92c3f
 #: ../../../source/news/0.x.txt:24
 msgid "デフォルトの設定ファイルを追加。"
 msgstr "デフォルトの設定ファイルを追加。"
 
-# f041293440934ae88c1dfbd9de3617b3
-# 8096b0b438e44cfcb3c081fa2c78a8e0
-# a189d795ba664b32843aa8fcb950f6e4
-# 5e49a1bcce784d12806e6685ccebd5ea
-# 4f41d84626ea40a0bb3218633cb81206
-# 188879f3a8b74a2e988e04d406bde9b6
-# eadebd7ce7a743179319f8bf923d9d68
-# fd6f94624bc0459ca2ec40aa14abcdc0
-# e655584bfd4a4923a2482919bab23ae2
-# 7824d5b134c84dafaeec744ab7a3d81e
-# c445d8a8756b40a49bc5e75e3e70626f
-# 91bd7446d1e146c5a54a79f9a1d97dce
-# 10c5e58a8c03430b9d71941c29ec4e26
-# 0519389bff384e4baa7a60df7c9bdf5d
+# 27478b490f9e4ccd82e481c800654763
+# 9e6cc0bb3a05462498953c0ceeae6d89
+# c3f55f2b07a2416e8c868af7ea747b1a
+# f81dafda1f594a8fbac2e9ef73bd6049
+# 16662a233961411194834a06111dc5a8
+# 9587b363c14a4777aab3113fc998245e
+# 05dc8284620c4aaabd488086e457b67e
+# d1cef152f76049e38e5e04e81a7b0d49
+# 8831dbbf29a94490afebae9caca404be
+# 8e50a3122e3f4a6783f47e2e1d509e63
+# e571f34924f145249d91f0c8984e4251
+# 168a11208e0d405bae729e957586cae2
+# d51e4e04e2ee469295e3ebc094950d2b
+# 1e7c26208a194e70b2bc0d6a460dc2c5
 #: ../../../source/news/0.x.txt:27 ../../../source/news/0.x.txt:115
 #: ../../../source/news/1.0.x.txt:12 ../../../source/news/1.0.x.txt:41
 #: ../../../source/news/1.0.x.txt:62 ../../../source/news/1.0.x.txt:93
@@ -1194,123 +1259,123 @@ msgstr "デフォルトの設定ファイルを追加。"
 msgid "修正"
 msgstr "修正"
 
-# 4eeefb67d4194b829e08bbb9fb066f92
+# 4ec434afaa624ee1bc3119819787e05c
 #: ../../../source/news/0.x.txt:29
 msgid ""
-":doc:`/functions/geo_in_rectangle` ()関数が引数を「左上」と「右下」で はな"
-"く、「左下」と「右上」と扱っていた問題を修正。"
+":doc:`/reference/functions/geo_in_rectangle` ()関数が引数を「左上」と「右下」"
+"で はなく、「左下」と「右上」と扱っていた問題を修正。"
 msgstr ""
-":doc:`/functions/geo_in_rectangle` ()関数が引数を「左上」と「右下」で はな"
-"く、「左下」と「右上」と扱っていた問題を修正。"
+":doc:`/reference/functions/geo_in_rectangle` ()関数が引数を「左上」と「右下」"
+"で はなく、「左下」と「右上」と扱っていた問題を修正。"
 
-# bf7a744d3d424d4284023e8f3030e2f2
+# 45a2f5d187454efb881579791f64c9af
 #: ../../../source/news/0.x.txt:32
 msgid "前方一致検索がマッチしない問題を修正。"
 msgstr "前方一致検索がマッチしない問題を修正。"
 
-# 9672b3489f4345f08c495e9d333469e3
+# f34a821faae44a05baed07cd20c167a2
 #: ../../../source/news/0.x.txt:36
 msgid "0.7.6リリース - 2010/08/19"
 msgstr "0.7.6リリース - 2010/08/19"
 
-# fd2eafbe8f414d0da963ecb651dfbdec
+# 087ca08348384f269bd940248f6fc0c9
 #: ../../../source/news/0.x.txt:41
 msgid "デーモンになるときは標準出力を閉じるようにした。"
 msgstr "デーモンになるときは標準出力を閉じるようにした。"
 
-# 48f2fd1208804a178ba1c7f574b65c3f
+# 29634ac56dbf41119e1c7fca59fd79e9
 #: ../../../source/news/0.x.txt:43
 msgid "PIDファイルを指定する``--pid-path``オプションを追加。"
 msgstr "PIDファイルを指定する``--pid-path``オプションを追加。"
 
-# e324af7f71254ad1afea59725f8702b7
+# 080f9adeadc240b589a0535ab49f5eaa
 #: ../../../source/news/0.x.txt:45
 msgid "設定ファイルを指定する``--config-path``オプションを追加。"
 msgstr "設定ファイルを指定する``--config-path``オプションを追加。"
 
-# b94b8a9d78a64a8986855ad8cf83af71
+# fbc23de675d342ba9165cc1720ec79ff
 #: ../../../source/news/0.x.txt:47
 msgid "最大キャッシュ数を指定する``--cache-limit``オプションを追加。"
 msgstr "最大キャッシュ数を指定する``--cache-limit``オプションを追加。"
 
-# 12ca22f536f84d66a40cc8caadcfb1aa
+# 50cd16ddeb1146aeab111939b8ec622a
 #: ../../../source/news/0.x.txt:49
 msgid "設定値を表示する``--show-config``オプションを追加。"
 msgstr "設定値を表示する``--show-config``オプションを追加。"
 
-# afef584cca90458dbee7b024dc867158
+# 4379616050cb4ac48856b0d6acc2384d
 #: ../../../source/news/0.x.txt:51
 msgid "指定したファイルからコマンドを読み込む``--file``オプションを追加。"
 msgstr "指定したファイルからコマンドを読み込む``--file``オプションを追加。"
 
-# 5b2ad53587ca45e6a675bc8865832c52
+# 8d9e022a66d649a9897f8683e31dc52e
 #: ../../../source/news/0.x.txt:53
 msgid ""
 "groongaとMeCabの辞書のエンコーディングが同じかどうかを確 認するようにした。"
 msgstr ""
 "groongaとMeCabの辞書のエンコーディングが同じかどうかを確 認するようにした。"
 
-# dcbdf0b869e6491c9b0e4b8264ccf576
+# bfc4c800c1904f17a8ed56a882cb5f5b
 #: ../../../source/news/0.x.txt:56
 msgid "Web管理画面:"
 msgstr "Web管理画面:"
 
-# fe6fe7b99c2945dea7c77623e05e6f3c
+# a09cc0ceb83746d0b29eb3cf784ff1ea
 #: ../../../source/news/0.x.txt:58
 msgid "データロード機能を追加。"
 msgstr "データロード機能を追加。"
 
-# 1684984608804cb1b5d3538f0ad22552
+# 4a1a0255cef94ec6a4e258c8802ef3ee
 #: ../../../source/news/0.x.txt:59
 msgid "uptimeの表示形式を読みやすい形式に変更。"
 msgstr "uptimeの表示形式を読みやすい形式に変更。"
 
-# c184008428ca4e4b81904c8f60681d55
+# 7064bfede10c4b73a95a949c93eb78bb
 #: ../../../source/news/0.x.txt:61
 msgid "Muninプラグインの追加。"
 msgstr "Muninプラグインの追加。"
 
-# e20d850ca33b4bc28c3153a1da589eeb
+# 3708aa8a4255413a97db9c3f29056940
 #: ../../../source/news/0.x.txt:63
 msgid "クエリパフォーマンス計測用"
 msgstr "クエリパフォーマンス計測用"
 
-# cfd1de3a08e64f8b841710681c0754f3
+# dd22041d3bd94a83a1a266274137599d
 #: ../../../source/news/0.x.txt:64
 msgid "ディスク使用量計測用"
 msgstr "ディスク使用量計測用"
 
-# 585b715a565641158c837043f10aabb2
+# 597d30459b4d455cb61fb075f12e88a7
 #: ../../../source/news/0.x.txt:66
 msgid "libedit対応。"
 msgstr "libedit対応。"
 
-# 61e6a7751ab545f59362f2f8e30aef96
+# 86fa3bca0b4c465a9777d72a69f010c3
 #: ../../../source/news/0.x.txt:68
 msgid "存在しないデータベースを指定したときのエラーメッセージを改善。"
 msgstr "存在しないデータベースを指定したときのエラーメッセージを改善。"
 
-# 225c63534f864ab3884c7a18648c97d3
+# 7980f79c08c240ac93b96c76899ea89e
 #: ../../../source/news/0.x.txt:70
 msgid "loadコマンド:"
 msgstr "loadコマンド:"
 
-# c0497a2cafbe40f99d9f3c170d40a7c4
+# f794e28222fb4a1788d93ff7cb7f55ef
 #: ../../../source/news/0.x.txt:72
 msgid "不正な文字を見つけた場合はログに出力。"
 msgstr "不正な文字を見つけた場合はログに出力。"
 
-# 8b586ae24071468dabf39fd5a860c3a3
+# c2ce0c09c9ab46c89a90c59bc405b36f
 #: ../../../source/news/0.x.txt:73
 msgid "必要な項目がない場合はログに出力。"
 msgstr "必要な項目がない場合はログに出力。"
 
-# da54446120eb4ac69d56c87432323d45
+# 371939b0fa42443e9a80b4660860393f
 #: ../../../source/news/0.x.txt:74
 msgid "true/false/nullリテラルをサポート。"
 msgstr "true/false/nullリテラルをサポート。"
 
-# b7edf69bc39446a784b2741e1ae7591b
+# a0bd75bd4e2d48328e9fd9b0776cfd80
 #: ../../../source/news/0.x.txt:75
 msgid ""
 "GeoPointの度での指定をサポート。 （例: "
@@ -1319,27 +1384,27 @@ msgstr ""
 "GeoPointの度での指定をサポート。 （例: "
 "\"35.6954581363924,139.564207350021\"）"
 
-# c92ad2d123e348a29c8f81681114933d
+# 13da86c446d2483cb3b53a8602ec58da
 #: ../../../source/news/0.x.txt:77
 msgid "NO_KEYテーブルを参照しているカラム値をサポート。"
 msgstr "NO_KEYテーブルを参照しているカラム値をサポート。"
 
-# 3296b3fcbeb94fc989a4449f7b331c8e
+# 95b13b5d35d644449c37dcf6c64b3a95
 #: ../../../source/news/0.x.txt:78
 msgid "数値のベクタをサポート。"
 msgstr "数値のベクタをサポート。"
 
-# 06f60ffa9f124e2fb51d60851c2f92cd
+# 81fe7af0ce32484a8832dc0690d2df6e
 #: ../../../source/news/0.x.txt:80
 msgid "selectコマンド"
 msgstr "selectコマンド"
 
-# d778bcad1d5b4782af84a1fa78d94dfb
+# 611304d9368543c59284d665d3642394
 #: ../../../source/news/0.x.txt:82
 msgid "索引を用いた高速なGeoPointの検索機能を追加。"
 msgstr "索引を用いた高速なGeoPointの検索機能を追加。"
 
-# bb211bf5d2b64a63b07928defd09f639
+# aaca328b432b462da660d01191006103
 #: ../../../source/news/0.x.txt:83
 msgid ""
 "索引を用いた高速なGeoPointのソート機能を追加。 （ただし複数のソートキーと一緒"
@@ -1348,119 +1413,119 @@ msgstr ""
 "索引を用いた高速なGeoPointのソート機能を追加。 （ただし複数のソートキーと一緒"
 "に使うことはできない。）"
 
-# c493884e2f4f452d890fb219195532bf
+# 32fc5bb36a02486386c97f73cd68d6cf
 #: ../../../source/news/0.x.txt:85
 msgid "ベクタのGeoPointの出力に対応。"
 msgstr "ベクタのGeoPointの出力に対応。"
 
-# 1aedd37b4c8e49199289d2e45edcfb95
+# dd7966301e004a1da4765dad2a8cd7a5
 #: ../../../source/news/0.x.txt:86
 msgid "不正な入力値に対してエラーを出力するようにした。"
 msgstr "不正な入力値に対してエラーを出力するようにした。"
 
-# 6a786127e8b0495890053e1876004863
+# 77266f90ae984c1f9107facf28f5ec5b
 #: ../../../source/news/0.x.txt:88
 msgid "dumpコマンド:"
 msgstr "dumpコマンド:"
 
-# a7b76c2bdfb840b7bbd08ff2b9136316
+# c036732404e74d9bbbb41730eceb0eb8
 #: ../../../source/news/0.x.txt:90
 msgid "フラグを数値ではなくキーワードで出力するように変更。"
 msgstr "フラグを数値ではなくキーワードで出力するように変更。"
 
-# 5bd09e36f939476290408525ea4c7b97
+# fd9092ac9e3d4813b448bc9f0600e2ac
 #: ../../../source/news/0.x.txt:92
 msgid "column_listコマンド:"
 msgstr "column_listコマンド:"
 
-# 74ebd76ae0154ba5aff21bd50e2acdda
+# 22ea109262b94a089a4187689ddc6172
 #: ../../../source/news/0.x.txt:94
 msgid "_keyカラムの出力に対応。"
 msgstr "_keyカラムの出力に対応。"
 
-# 6fbc744b55be49a2bd199505807c43f9
+# af31b1c89ef04b378fad9542d1c359d7
 #: ../../../source/news/0.x.txt:96
 msgid "deleteコマンド:"
 msgstr "deleteコマンド:"
 
-# c5962279bced4adea1b5fbc88b5c8121
+# de0fb6d2ba454336bf55470ca35e1d1d
 #: ../../../source/news/0.x.txt:98
 msgid "データに不整合が発生する場合はデータを削除しないように変更。"
 msgstr "データに不整合が発生する場合はデータを削除しないように変更。"
 
-# 54c78d1bc2df49379e3bd8b3e12da6e0
+# 9f5292e428e7481a92ac5cd93a5935c9
 #: ../../../source/news/0.x.txt:100
 msgid "statusコマンド:"
 msgstr "statusコマンド:"
 
-# 0c52979419504110a2544bb52ec2f025
+# 967791dd806e47a7814af16e6d653cca
 #: ../../../source/news/0.x.txt:102
 msgid "キャッシュ情報を追加。"
 msgstr "キャッシュ情報を追加。"
 
-# 4d840582bfe746c69a55063f6829bdc2
+# f2c6e66fc326434fa8869ee3f1015e67
 #: ../../../source/news/0.x.txt:104
 msgid "データの整合性を確認するcheckコマンドの追加。"
 msgstr "データの整合性を確認するcheckコマンドの追加。"
 
-# 4d6adabb30c944948be14ba00a266ac7
+# 040d8031ecaa4bae81a987d3d50c7d0e
 #: ../../../source/news/0.x.txt:106
 msgid "強制的にロックを解除するclearlockコマンドの追加。"
 msgstr "強制的にロックを解除するclearlockコマンドの追加。"
 
-# f0f43e2d6445446f856a15bea318e348
+# 5caba65c2e9c475b945ebff330622535
 #: ../../../source/news/0.x.txt:108
 msgid "最大キャッシュ数を指定するcache_limitコマンドの追加。"
 msgstr "最大キャッシュ数を指定するcache_limitコマンドの追加。"
 
-# f8cb43be08694b71904b623ba846b63c
+# 89a0e30d111b473cba0854cf1af57625
 #: ../../../source/news/0.x.txt:110
 msgid "フラグメンテーションを解消するdefragコマンドの追加。"
 msgstr "フラグメンテーションを解消するdefragコマンドの追加。"
 
-# 2322c060ae294d4ebbc273b7455bcd22
+# 897ccabf84dc4f868c871b369a043ff1
 #: ../../../source/news/0.x.txt:112
 msgid "データ投入後のインデックスカラム作成に対応。"
 msgstr "データ投入後のインデックスカラム作成に対応。"
 
-# 91d5146f6de44ca89d5286a4632dfba3
+# 6b3f4e52f1f9426fbf2e1552dab51425
 #: ../../../source/news/0.x.txt:117
 msgid "不正なsortキーを指定された場合はSEGVする問題の修正。"
 msgstr "不正なsortキーを指定された場合はSEGVする問題の修正。"
 
-# 087ae4690d1945238a811bada9a036e4
+# 30c90df7b93241f1ad222392bc8ac720
 #: ../../../source/news/0.x.txt:118
 msgid "selectの出力に不正なカラムを指定された時にSEGVする問題を修正。"
 msgstr "selectの出力に不正なカラムを指定された時にSEGVする問題を修正。"
 
-# c5a18fba499745c9b8cceb43817f58a2
+# 44c6e16f2bd74ded8570af1458865844
 #: ../../../source/news/0.x.txt:119
 msgid "空のベクタをloadするとSEGVする問題の修正。"
 msgstr "空のベクタをloadするとSEGVする問題の修正。"
 
-# a6abd26372764340a220e948d24ba62b
+# a7071963665d4d2d8c4160abde8c5be6
 #: ../../../source/news/0.x.txt:120
 msgid "メモリリークの修正。"
 msgstr "メモリリークの修正。"
 
-# 85cca2cab65d488291fef3d0d1b4e620
+# 0d7cc14481c94fbfac5d966a9c51dfbb
 #: ../../../source/news/0.x.txt:121
 msgid "drilldown時に参照先が存在しない場合にSEGVする問題の修正。"
 msgstr "drilldown時に参照先が存在しない場合にSEGVする問題の修正。"
 
-# 97385c54720a430380bb0ee8f24856f2
-# 39a21970dc474dc389f212fa9a348aec
-# 4cf4753843574e3ab8af55a89a355a14
-# 623d051ae6b2476e9840d397e441aee5
-# 9a04076242334264891648be7afe62a6
-# 0a0af62bfafe4567aed3c978f2c065a8
-# d72aa27d53574f23b3f2d61f873f3395
-# 99c692e50413411ea36dc6fe4c72ece9
-# 10590859a6bf4559b833c57591cab5e9
-# 87216b3d3b2a4485a9ee50ee7d298dd7
-# b498f99da3f54577add38ce243f7b567
-# 4e1c9e3cae4a4747927deeaa4d814c98
-# b09aeaf0beec49f8b419b62e13bb4995
+# 7c8d3a172b5a4710828d3eb2f124732c
+# e2be250322d446bd8f4b8a6724318447
+# 02c18926aed54006a28c574f20dee85c
+# 2df3627c0f1f45729de70b2587e2325e
+# a8cb80aa23d7444b9585bc9eecf27dc9
+# 5a42db8b41e54b8ba0563a7484eb7574
+# 2aa9d21f31bc4d97995da600432d7d26
+# 88a6536de15148c9993cf7b9c318117c
+# 9a143504e0224da8a5ec7717b93e8ed5
+# d716a822a4734917b51de1710df12e76
+# 4b43dca7a4404f99a66c17517f8b4726
+# bf6b3342fafb44d780b2760d379ee0ff
+# 9e3f401149fe448e98530f40b21e14b2
 #: ../../../source/news/0.x.txt:124 ../../../source/news/1.0.x.txt:19
 #: ../../../source/news/1.0.x.txt:53 ../../../source/news/1.0.x.txt:67
 #: ../../../source/news/1.0.x.txt:106 ../../../source/news/1.0.x.txt:146
@@ -1471,22 +1536,22 @@ msgstr "drilldown時に参照先が存在しない場合にSEGVする問題の�
 msgid "感謝"
 msgstr "感謝"
 
-# 54e97e0d49c74f4dbc6fa4ecbb56e5f0
+# b6d628cace3d4fde875851db2cf8ad8f
 #: ../../../source/news/0.x.txt:126
 msgid "おばたさん"
 msgstr "おばたさん"
 
-# 51dfc85673df48c2aa097ced8dafda77
+# cc58cf80a7ca4736b9531cab70bd4ff8
 #: ../../../source/news/1.0.x.txt:6
 msgid "バージョン1.0.xのお知らせ"
 msgstr "バージョン1.0.xのお知らせ"
 
-# 2401c89eca604c1983105ac11c9be127
+# 0a11f2e41d8a420fbb897313de07a01d
 #: ../../../source/news/1.0.x.txt:9
 msgid "1.0.8リリース - 2011/02/02"
 msgstr "1.0.8リリース - 2011/02/02"
 
-# 3d663097f52046d08cf9df6a7adb9a6b
+# a24e2a201ad740998a14bc51e1b70ac9
 #: ../../../source/news/1.0.x.txt:14
 msgid ""
 "ShortText型カラムへデータ追加・削除を繰り返すとデータが壊れ ることがある問題"
@@ -1495,32 +1560,32 @@ msgstr ""
 "ShortText型カラムへデータ追加・削除を繰り返すとデータが壊れ ることがある問題"
 "を修正。 （Mitsuhiro Shibuyaさんが報告）"
 
-# 29af122937c045319da522c75f830404
+# 8174fcae65a04f49ba35869659b6373f
 #: ../../../source/news/1.0.x.txt:21
 msgid "Mitsuhiro Shibuyaさん"
 msgstr "Mitsuhiro Shibuyaさん"
 
-# 151e44f7a5884959b16cffb1be279900
+# 17649bbea89f4624b30c888b1b1936bd
 #: ../../../source/news/1.0.x.txt:24
 msgid "1.0.7リリース - 2011/01/29"
 msgstr "1.0.7リリース - 2011/01/29"
 
-# c87cd5383a174681bffc9fa5ba0364ad
+# 667b2ed5a3b5432abbf9c9b95a404258
 #: ../../../source/news/1.0.x.txt:29
 msgid "automake 1.9.6でも動作するようにした。 #508"
 msgstr "automake 1.9.6でも動作するようにした。 #508"
 
-# 9645909ba15447aca9bb1e6fb2f80783
+# 073fd1115dfa40198939a31958a3a43b
 #: ../../../source/news/1.0.x.txt:30
 msgid "configureの最後に検出したMeCabの情報も表示するようにした。"
 msgstr "configureの最後に検出したMeCabの情報も表示するようにした。"
 
-# 8524888130a4418ba4058967ae5f2d50
+# bf1a78f75d5744a59432056499d61078
 #: ../../../source/news/1.0.x.txt:31
 msgid "エラーメッセージをわかりやすくした。"
 msgstr "エラーメッセージをわかりやすくした。"
 
-# 0dd21022c9fe4312aa1b314da931f844
+# dd67c2da3a204a83a9615cbbc2533fb0
 #: ../../../source/news/1.0.x.txt:32
 msgid ""
 "--enable-memory-debug付きでビルドしたときに終了時に未開放のメモリが 割り当て"
@@ -1529,16 +1594,16 @@ msgstr ""
 "--enable-memory-debug付きでビルドしたときに終了時に未開放のメモリが 割り当て"
 "られた場所を表示するようにした。"
 
-# 000e7f16fe0e4c629e5169ef3942d997
+# ed0592bb433444768deba1bea79caf4e
 #: ../../../source/news/1.0.x.txt:34
 msgid ""
-"ベクタの値を :doc:`/commands/load` するときにキャストに失敗したら、そ のこと"
-"を報告するようにした。"
+"ベクタの値を :doc:`/reference/commands/load` するときにキャストに失敗したら、"
+"そ のことを報告するようにした。"
 msgstr ""
-"ベクタの値を :doc:`/commands/load` するときにキャストに失敗したら、そ のこと"
-"を報告するようにした。"
+"ベクタの値を :doc:`/reference/commands/load` するときにキャストに失敗したら、"
+"そ のことを報告するようにした。"
 
-# 93b278cbe9d047449c109186de993d3e
+# c57907a39dd04b71b715613b8fe7e670
 #: ../../../source/news/1.0.x.txt:36
 msgid ""
 "groongaのメモリリークを検出するユーティリティツール groonga-check-memory-"
@@ -1547,12 +1612,12 @@ msgstr ""
 "groongaのメモリリークを検出するユーティリティツール groonga-check-memory-"
 "leak.rbを追加。（インストールはされない。）"
 
-# 8b7ba90ea2364a66b60e1346632e23a0
+# b8984fead9e241898937f41b23da7bcc
 #: ../../../source/news/1.0.x.txt:38
-msgid ":doc:`/commands/dump` がテーブル単位のダンプに対応。"
-msgstr ":doc:`/commands/dump` がテーブル単位のダンプに対応。"
+msgid ":doc:`/reference/commands/dump` がテーブル単位のダンプに対応。"
+msgstr ":doc:`/reference/commands/dump` がテーブル単位のダンプに対応。"
 
-# 48df58503bb74a65971e3bfebb3f2409
+# 9ea9b1eafdcf4806afa6ae21bc34e493
 #: ../../../source/news/1.0.x.txt:43
 msgid ""
 "Mac OS Xでモジュールの拡張子の検出に失敗する問題を修正。 （ongaeshiさんが報"
@@ -1561,107 +1626,109 @@ msgstr ""
 "Mac OS Xでモジュールの拡張子の検出に失敗する問題を修正。 （ongaeshiさんが報"
 "告）"
 
-# 0aafc5af19f34acdb2ebbf01f025a682
+# 28641277a0cb41aca7f43f1e91deed6a
 #: ../../../source/news/1.0.x.txt:45
 msgid "Mac OS Xではrealloc(ptr, 0)ではなくfree()を使うように修正。"
 msgstr "Mac OS Xではrealloc(ptr, 0)ではなくfree()を使うように修正。"
 
-# d2fafcfe0e154593bd1a3a6eaa4b0f01
+# cc5a0f02bac144fdba7faf6a7089470a
 #: ../../../source/news/1.0.x.txt:46
 msgid "grntestで結果の比較が常に失敗していた問題を修正。"
 msgstr "grntestで結果の比較が常に失敗していた問題を修正。"
 
-# 6473396328fe411ca9da3c782e57efcf
+# b4b107edaad84008b7243789fdf933eb
 #: ../../../source/news/1.0.x.txt:47
 msgid "groonga-suggest-learnerのメモリリークを修正。"
 msgstr "groonga-suggest-learnerのメモリリークを修正。"
 
-# dc32a5fcf174469d901c1f0aac02e4d4
+# 04321ee6a729499ca1767be8ab7b3243
 #: ../../../source/news/1.0.x.txt:48
 msgid ""
-":doc:`/commands/load` 時のメモリリークを修正。 （Kenichi Aramakiさんが報告）"
+":doc:`/reference/commands/load` 時のメモリリークを修正。 （Kenichi Aramakiさ"
+"んが報告）"
 msgstr ""
-":doc:`/commands/load` 時のメモリリークを修正。 （Kenichi Aramakiさんが報告）"
+":doc:`/reference/commands/load` 時のメモリリークを修正。 （Kenichi Aramakiさ"
+"んが報告）"
 
-# f2e5dc6c0d4d4ab990048589c3309fa6
+# 4f0da621d91142219625aa802d9395b3
 #: ../../../source/news/1.0.x.txt:50
 msgid "ベクタの値を出力するときのメモリリークを修正。"
 msgstr "ベクタの値を出力するときのメモリリークを修正。"
 
-# 9baccc16d0f54860ac7b1e975330dd29
+# 7844c123a477486caff1858d3999b015
 #: ../../../source/news/1.0.x.txt:55
 msgid "ongaeshiさん"
 msgstr "ongaeshiさん"
 
-# 5184d679ae80499985cde786df3de801
+# 1b5c1b3559f041b3a3c3ce14722cf1d8
 #: ../../../source/news/1.0.x.txt:56
 msgid "Kenichi Aramakiさん"
 msgstr "Kenichi Aramakiさん"
 
-# 70ce53d4f6644526ab05dc37a9519397
+# f03390fc88b141599407c0b278c95c41
 #: ../../../source/news/1.0.x.txt:59
 msgid "1.0.6リリース - 2010/12/31"
 msgstr "1.0.6リリース - 2010/12/31"
 
-# 2185bd71461c460d929754ee9cac5caa
+# 70df464e329c4160830cf5e904a1ae4a
 #: ../../../source/news/1.0.x.txt:64
 msgid "\\*BSDでビルドできない問題を修正。（OBATA Akioさんが報告）"
 msgstr "\\*BSDでビルドできない問題を修正。（OBATA Akioさんが報告）"
 
-# 6406e6966e4c43fdae8b1aa5b4d212a2
-# b0c347faa6ca44d3ad03eb984cc70934
-# c813898545ea4a019ae882b09dbe87f6
-# e3f6817ef29f4bc18bde1d26be6b84a6
-# 8a9e1b818fde432492337b52a2101cd5
+# b6658d6a0f4e42ba8d69ca4501faeabb
+# b5772b68a5a64995966e46ce62db39f8
+# 2bb3ca02ab8f45c684349e18b2d2e878
+# d90e0a3aaa0b47579488506cf172e05a
+# c99f60337feb43a790df779a3d6481d1
 #: ../../../source/news/1.0.x.txt:69 ../../../source/news/1.0.x.txt:109
 #: ../../../source/news/1.0.x.txt:149 ../../../source/news/1.0.x.txt:239
 #: ../../../source/news/1.0.x.txt:265
 msgid "OBATA Akioさん"
 msgstr "OBATA Akioさん"
 
-# a3c772a304cf4a1da54d863c57decc89
+# a8abf9f9fd654a9d96fbacb5cc56b75e
 #: ../../../source/news/1.0.x.txt:72
 msgid "1.0.5リリース - 2010/12/29"
 msgstr "1.0.5リリース - 2010/12/29"
 
-# eb0ee044baf04d78b21e4d82b37a81a5
+# 4da3d065e301452a986d6e278994c51f
 #: ../../../source/news/1.0.x.txt:77
 msgid "サジェスト機能用の学習プログラムを追加。"
 msgstr "サジェスト機能用の学習プログラムを追加。"
 
-# d2cfa712837f41c6993aa9135a3068a4
+# 7815f95873e74ce0bb85b777447cf099
 #: ../../../source/news/1.0.x.txt:78
 msgid "groongaスクリプト内での行コメントに対応。（「#」以降を無視） #723"
 msgstr "groongaスクリプト内での行コメントに対応。（「#」以降を無視） #723"
 
-# f21c5a3b4fff4151894cbd11bd08a756
+# 5fc134b0eb654eb89e807859260a3034
 #: ../../../source/news/1.0.x.txt:79
-msgid ":doc:`/commands/column_list` のXML出力対応。 #748"
-msgstr ":doc:`/commands/column_list` のXML出力対応。 #748"
+msgid ":doc:`/reference/commands/column_list` のXML出力対応。 #748"
+msgstr ":doc:`/reference/commands/column_list` のXML出力対応。 #748"
 
-# bb2227dbb4cc4e24aaba186951214ffd
+# 0cc1e8fc57a84636aa2d09291eb44fdd
 #: ../../../source/news/1.0.x.txt:80
 msgid "主キーが数値のテーブルを参照しているカラムでの比較演算に対応。 #776"
 msgstr "主キーが数値のテーブルを参照しているカラムでの比較演算に対応。 #776"
 
-# bed1c5263da740a9b6fff125c3b282ee
+# fd5d1c3faad5491ebe2d1e5ecd46ef5e
 #: ../../../source/news/1.0.x.txt:81
 msgid "grntestがmlockの情報出力に対応。"
 msgstr "grntestがmlockの情報出力に対応。"
 
-# 8bac0b6e1e594e69941010d4e29c3daa
+# 343f218aa0364618bfb6be6c013f3a36
 #: ../../../source/news/1.0.x.txt:82
 msgid "NetBSDでのビルドに対応。 （OBATA Akioさんがパッチ作成）"
 msgstr "NetBSDでのビルドに対応。 （OBATA Akioさんがパッチ作成）"
 
-# 476d26c520534d4caa97c32417f35bd9
+# bfdb71fc4ffb4d94bf0d78ab996a36a1
 #: ../../../source/news/1.0.x.txt:83
 msgid ""
 "MeCabトークナイザーが見つからない時のエラーメッセージをより親切にした。 #790"
 msgstr ""
 "MeCabトークナイザーが見つからない時のエラーメッセージをより親切にした。 #790"
 
-# c4049e1bd8dd4124a41af3394c14ccb0
+# 910295f8ba814f00a252bff55ea41095
 #: ../../../source/news/1.0.x.txt:84
 msgid ""
 "開いているファイルディスクリプタが多すぎてacceptできない状態の負荷を低減。 "
@@ -1670,107 +1737,109 @@ msgstr ""
 "開いているファイルディスクリプタが多すぎてacceptできない状態の負荷を低減。 "
 "#802"
 
-# 8f25445e4547467595115d0725cfc613
+# b8386186852743a69fd31be9df150892
 #: ../../../source/news/1.0.x.txt:85
 msgid "DragonFlyでのビルドに対応。 （OBATA Akioさんが報告）"
 msgstr "DragonFlyでのビルドに対応。 （OBATA Akioさんが報告）"
 
-# c5a936c24c49456eb8716e607cfdec61
-# 10c81a9b3b75481293c6050b8976034c
-# 62b2d8580123476182479b0ed866e2dc
-# 1970dd6da1504cb4a0803e3ed2a410f2
+# bf42c40477b643b58ed06a14ee0c4700
+# 6cdd4435bf594a37a27ade118d8b926c
+# 17e143651247436895fff47d79325bbd
+# 66d215bb94ab46efa2866aa514c5b966
 #: ../../../source/news/1.0.x.txt:88 ../../../source/news/1.0.x.txt:133
 #: ../../../source/news/1.0.x.txt:177 ../../../source/news/1.0.x.txt:225
 msgid "変更"
 msgstr "変更"
 
-# 3374fe70931f4a6f930523e92e14091e
+# a69c27b9f119478b853b50db990170e5
 #: ../../../source/news/1.0.x.txt:90
 msgid ""
-":doc:`/commands/table_list` のXML出力のタグ名をより適切な名前に変更。 #757"
+":doc:`/reference/commands/table_list` のXML出力のタグ名をより適切な名前に変"
+"更。 #757"
 msgstr ""
-":doc:`/commands/table_list` のXML出力のタグ名をより適切な名前に変更。 #757"
+":doc:`/reference/commands/table_list` のXML出力のタグ名をより適切な名前に変"
+"更。 #757"
 
-# 77c0753f3fde4840ab29bc0fa06c9888
+# a197ed39e14045c887f49421b5f6a386
 #: ../../../source/news/1.0.x.txt:95
 msgid ""
-":doc:`/commands/load` で存在しないカラムを--columnsで指定するとクラッシュする"
-"問題を修正。 （Masahiro Tomitaさんが報告） #751"
+":doc:`/reference/commands/load` で存在しないカラムを--columnsで指定するとク"
+"ラッシュする問題を修正。 （Masahiro Tomitaさんが報告） #751"
 msgstr ""
-":doc:`/commands/load` で存在しないカラムを--columnsで指定するとクラッシュする"
-"問題を修正。 （Masahiro Tomitaさんが報告） #751"
+":doc:`/reference/commands/load` で存在しないカラムを--columnsで指定するとク"
+"ラッシュする問題を修正。 （Masahiro Tomitaさんが報告） #751"
 
-# 54073726171f4562a04ac1ff1eb50ea6
+# add4a3c74ef04f59877701d776d1d109
 #: ../../../source/news/1.0.x.txt:97
 msgid ""
-":doc:`/commands/load` で配列でTABLE_NO_KEYなテーブルにレコードをロードできな"
-"い問題を修正。 （Masahiro Tomitaさんが報告） #750"
+":doc:`/reference/commands/load` で配列でTABLE_NO_KEYなテーブルにレコードを"
+"ロードできない問題を修正。 （Masahiro Tomitaさんが報告） #750"
 msgstr ""
-":doc:`/commands/load` で配列でTABLE_NO_KEYなテーブルにレコードをロードできな"
-"い問題を修正。 （Masahiro Tomitaさんが報告） #750"
+":doc:`/reference/commands/load` で配列でTABLE_NO_KEYなテーブルにレコードを"
+"ロードできない問題を修正。 （Masahiro Tomitaさんが報告） #750"
 
-# 992147809b854c02b7e1c16d8e15209a
+# 0f535dde34da4802a31c116d0df858cc
 #: ../../../source/news/1.0.x.txt:99
 msgid ""
-":doc:`/commands/delete` でTABLE_NO_KEYなテーブルのレコードを削除するとテーブ"
-"ルが壊れる 問題を修正。 （Masahiro Tomitaさんがパッチ作成） #794"
+":doc:`/reference/commands/delete` でTABLE_NO_KEYなテーブルのレコードを削除す"
+"るとテーブルが壊れる 問題を修正。 （Masahiro Tomitaさんがパッチ作成） #794"
 msgstr ""
-":doc:`/commands/delete` でTABLE_NO_KEYなテーブルのレコードを削除するとテーブ"
-"ルが壊れる 問題を修正。 （Masahiro Tomitaさんがパッチ作成） #794"
+":doc:`/reference/commands/delete` でTABLE_NO_KEYなテーブルのレコードを削除す"
+"るとテーブルが壊れる 問題を修正。 （Masahiro Tomitaさんがパッチ作成） #794"
 
-# 9c7f88db66fc471396952a9d05a4b2b9
+# 6d4a7b2e8ce04642a1a397e17bcbbfd0
 #: ../../../source/news/1.0.x.txt:102
 msgid ""
-":doc:`/commands/load` で不正なJSONを指定した場合にそれ以降コマンドを受け付け"
-"なくなる 問題を修正。 #807"
+":doc:`/reference/commands/load` で不正なJSONを指定した場合にそれ以降コマンド"
+"を受け付けなくなる 問題を修正。 #807"
 msgstr ""
-":doc:`/commands/load` で不正なJSONを指定した場合にそれ以降コマンドを受け付け"
-"なくなる 問題を修正。 #807"
+":doc:`/reference/commands/load` で不正なJSONを指定した場合にそれ以降コマンド"
+"を受け付けなくなる 問題を修正。 #807"
 
-# 88e2128f1d26463a9a83646f98deee30
+# 40067de8df6340bfa9a389926086c40e
 #: ../../../source/news/1.0.x.txt:108
 msgid "Tomita Masahiroさん"
 msgstr "Tomita Masahiroさん"
 
-# 8baabfbfa5974e7a94d62592add7caaa
+# 2e5f846f8862415eb080fe12cacda570
 #: ../../../source/news/1.0.x.txt:112
 msgid "1.0.4リリース - 2010/11/29"
 msgstr "1.0.4リリース - 2010/11/29"
 
-# 527a0ea4112042f2afbf2d0efca79f66
+# 85520a9b7ae64c959680f8fe386c1334
 #: ../../../source/news/1.0.x.txt:117
 msgid "すべてのモジュールで同じ名前の関数をエクスポートするようにした。#624"
 msgstr "すべてのモジュールで同じ名前の関数をエクスポートするようにした。#624"
 
-# 5365469e527949a4b3ba37b9c66fb210
+# efc0cf8342c64180a4fef2460153a801
 #: ../../../source/news/1.0.x.txt:118
 msgid "不正な名前を指定したときに指定された名前も報告するようにした。"
 msgstr "不正な名前を指定したときに指定された名前も報告するようにした。"
 
-# d8997472d05e4fff9f17befddce7d7a4
+# c2687e20f05d4c41b5a1aa90ef11401e
 #: ../../../source/news/1.0.x.txt:119
 msgid ""
-":doc:`/commands/select` の--filter内での数値比較演算をサポート。 （@s3kiさん"
-"が報告）"
+":doc:`/reference/commands/select` の--filter内での数値比較演算をサポート。 "
+"（@s3kiさんが報告）"
 msgstr ""
-":doc:`/commands/select` の--filter内での数値比較演算をサポート。 （@s3kiさん"
-"が報告）"
+":doc:`/reference/commands/select` の--filter内での数値比較演算をサポート。 "
+"（@s3kiさんが報告）"
 
-# 28614e85a7d141448ed51113809535c7
+# b3298bcc4b7c4514ae07bca22c5ed73e
 #: ../../../source/news/1.0.x.txt:120
 msgid ""
-":doc:`/executables/grntest` の一行あたりの最大バイト数の制限を撤廃。 #608, "
-"#690"
+":doc:`/reference/executables/grntest` の一行あたりの最大バイト数の制限を撤"
+"廃。 #608, #690"
 msgstr ""
-":doc:`/executables/grntest` の一行あたりの最大バイト数の制限を撤廃。 #608, "
-"#690"
+":doc:`/reference/executables/grntest` の一行あたりの最大バイト数の制限を撤"
+"廃。 #608, #690"
 
-# 5ca13bf0ccb74de3890fbc70424dbdac
+# 49a7151d51094e81b6fe5c7f2f4d4688
 #: ../../../source/news/1.0.x.txt:121
 msgid "Int8/UInt8/Int16/UInt16の等値比較にC言語の比較演算子を使用。 #660"
 msgstr "Int8/UInt8/Int16/UInt16の等値比較にC言語の比較演算子を使用。 #660"
 
-# 159bd1936c11408a8ef76ae17c2056a0
+# b5ce5f6239074cf299c128c3b31110a3
 #: ../../../source/news/1.0.x.txt:122
 msgid ""
 "HTTP経由で存在しないパスにアクセスした時に存在しないパスを報告するように し"
@@ -1779,79 +1848,79 @@ msgstr ""
 "HTTP経由で存在しないパスにアクセスした時に存在しないパスを報告するように し"
 "た。"
 
-# 0d37c68df46b4cff834ad7e4b5530b3e
+# 1ddbbe16a45346e096cfd039ed9516ca
 #: ../../../source/news/1.0.x.txt:124
 msgid "grn_table_cursor_next()をGRN_CURSOR_COLUMN_INDEX対応にした。"
 msgstr "grn_table_cursor_next()をGRN_CURSOR_COLUMN_INDEX対応にした。"
 
-# fcacfbded8c14077bd42adc6a1ff2799
+# 5f3793183994454298531eeebddd4d99
 #: ../../../source/news/1.0.x.txt:125
 msgid "右辺が式の演算代入演算子をサポート。 #669"
 msgstr "右辺が式の演算代入演算子をサポート。 #669"
 
-# 6d8230c605854e50a842e5f1e3a30298
+# a2397ac0d2e2496a91aa0c858426c74c
 #: ../../../source/news/1.0.x.txt:126
 msgid "zlib/LZOサポート付きでビルドされているかをチェックするAPIを追加。 #686"
 msgstr "zlib/LZOサポート付きでビルドされているかをチェックするAPIを追加。 #686"
 
-# 4d630514fd2b4325a0564295e2601a0b
+# 3dca8a7c25d44298886178eb88ffa80e
 #: ../../../source/news/1.0.x.txt:127
 msgid "grn_table_at()を公開。"
 msgstr "grn_table_at()を公開。"
 
-# 32bec4895dd34981aff52fb99d736fa6
+# b372365831454de5b66b1741261febac
 #: ../../../source/news/1.0.x.txt:128
 msgid "grn_db_touch()を公開。 #703"
 msgstr "grn_db_touch()を公開。 #703"
 
-# f87b3776c5624108951f599fce9149bc
+# 656f36e4574a442d8c99c06dd21c1705
 #: ../../../source/news/1.0.x.txt:129
 msgid "コメント行に対応。 #723"
 msgstr "コメント行に対応。 #723"
 
-# d8b3a083840c4f5baa07191b907c24cb
+# 6eeaaced64e84982b707580d5b4b8019
 #: ../../../source/news/1.0.x.txt:130
 msgid "grn_bool型を追加。 #713"
 msgstr "grn_bool型を追加。 #713"
 
-# 2d5e1b434a56448d9770befc3e5f0e39
+# f73fd907e26d4f2284b36320962ab8cb
 #: ../../../source/news/1.0.x.txt:135
 msgid ""
 "プラグインの置き場所を変更: lib/groonga/modules/ -> lib/groonga/plugins/ #624"
 msgstr ""
 "プラグインの置き場所を変更: lib/groonga/modules/ -> lib/groonga/plugins/ #624"
 
-# 07e28f6853e54cd3b6cfdc33a1f434ee
+# a4150d2e08e2474181a337a5c35dbe23
 #: ../../../source/news/1.0.x.txt:141
 msgid "ドキュメントの誤字を修正。（OBATA Akioさんが報告）"
 msgstr "ドキュメントの誤字を修正。（OBATA Akioさんが報告）"
 
-# ec7dffc30612470e9bf2f41f91e58347
+# e44e9338e1dd479ea180363bdee16d6d
 #: ../../../source/news/1.0.x.txt:142
 msgid "GRN_CURSOR_PREFIXが動作しない問題を修正。"
 msgstr "GRN_CURSOR_PREFIXが動作しない問題を修正。"
 
-# e952fb88345b4e3886a89dbeeafb08de
+# 5a5e0996cfab4bb18072ab9feec7e577
 #: ../../../source/news/1.0.x.txt:143
 msgid "索引が不正に大きくなる問題を修正。（Tomoatsu Shimadaさんが報告） #689"
 msgstr "索引が不正に大きくなる問題を修正。（Tomoatsu Shimadaさんが報告） #689"
 
-# 82b3abb8460041cf8fee92ccf258bc73
+# ce87319989d54c3298ca96c251918aea
 #: ../../../source/news/1.0.x.txt:148
 msgid "@s3kiさん"
 msgstr "@s3kiさん"
 
-# 2f4e05fd8ef546f2af497d4efb37f57c
+# 44d3144ddb8b445f9b84db634d9ece79
 #: ../../../source/news/1.0.x.txt:150
 msgid "Tomoatsu Shimadaさん"
 msgstr "Tomoatsu Shimadaさん"
 
-# 93a3dcace2374755855cd40a7b1efc89
+# bd562317c195400caf5d4ba8bd17fecd
 #: ../../../source/news/1.0.x.txt:153
 msgid "1.0.3リリース - 2010/10/29"
 msgstr "1.0.3リリース - 2010/10/29"
 
-# b9df779a0864420aafc0299836ebd0e9
+# 1faccf422e09429ab4ca057f419f6cdb
 #: ../../../source/news/1.0.x.txt:158
 msgid ""
 "CentOS/Fedora用パッケージをディストリビューションのルールに従うように改良。 "
@@ -1860,57 +1929,57 @@ msgstr ""
 "CentOS/Fedora用パッケージをディストリビューションのルールに従うように改良。 "
 "（上野乃毅さん）"
 
-# b4672d72b9c34352ad0f738efd506842
+# fca30f3516984312b6130e7341966e15
 #: ../../../source/news/1.0.x.txt:160
 msgid "Fedoraのオフィシャルリポジトリに登録。（Daiki Uenoさん）"
 msgstr "Fedoraのオフィシャルリポジトリに登録。（Daiki Uenoさん）"
 
-# 4b931004306f4d5dad43767dd134508e
+# c6736528435b4e61b5df6bc3fceff918
 #: ../../../source/news/1.0.x.txt:161
 msgid "GeoPointのキャストに対応。#515"
 msgstr "GeoPointのキャストに対応。#515"
 
-# fc9e9145cbdc4796ac20e718d99a5931
+# c3b783a5650f4685a48d41b3bfb64155
 #: ../../../source/news/1.0.x.txt:162
 msgid "groongaコマンドに、--defalt-command-versionオプションの追加。"
 msgstr "groongaコマンドに、--defalt-command-versionオプションの追加。"
 
-# 1db280be54ce48669c8f5fefa39af086
+# 94aa00dd80834a309e67bd81a3a9ada2
 #: ../../../source/news/1.0.x.txt:163
 msgid "statusの出力結果にコマンドバージョンを追加。"
 msgstr "statusの出力結果にコマンドバージョンを追加。"
 
-# 50a74b38c26c49978f95c1229420be9e
+# 2b2714150eed45e9acacb4de7b74161b
 #: ../../../source/news/1.0.x.txt:164
 msgid ":doc:`/spec/search` の仕様を追加。"
 msgstr ":doc:`/spec/search` の仕様を追加。"
 
-# 1991fd46aef94b32bcdba0d376ab2119
+# 2360c476e50544ceb034eac7dfd01840
 #: ../../../source/news/1.0.x.txt:165
 msgid ":doc:`/troubleshooting` を追加。"
 msgstr ":doc:`/troubleshooting` を追加。"
 
-# 74ff0650e4234b8aab1c0f2d69dee3d9
+# 9471f7dea0c34e21824383496180ec98
 #: ../../../source/news/1.0.x.txt:166
 msgid "辞書検索のサンプルアプリケーションを追加。"
 msgstr "辞書検索のサンプルアプリケーションを追加。"
 
-# 8e69b1aaf343458abdb29c95bef88caf
+# 74e0492cbf0d4ac1b81501c9db0b8c2e
 #: ../../../source/news/1.0.x.txt:167
 msgid "pkg-configがない場合はlibeditを検出しないようにした。 #540"
 msgstr "pkg-configがない場合はlibeditを検出しないようにした。 #540"
 
-# ca9e8356465b42429f3d47341710b69b
+# dcfcacd4b75a4dd9aed0dee4ec0c0e39
 #: ../../../source/news/1.0.x.txt:168
 msgid "メモリデバッグ用オプション--enable-memory-debugを追加。"
 msgstr "メモリデバッグ用オプション--enable-memory-debugを追加。"
 
-# c6258d2e0ec74929a12e1bbe3ed2a32a
+# 1ca8c090b399408b83039ad9c366bfda
 #: ../../../source/news/1.0.x.txt:169
 msgid "不正な関数呼び出しをチェックするようにした。#596"
 msgstr "不正な関数呼び出しをチェックするようにした。#596"
 
-# 493483b1b1fd4d82a61bbac9e9cb5681
+# 90901fe33d814b0a9ba7e478e1723af7
 #: ../../../source/news/1.0.x.txt:170
 msgid ""
 "テキストから数値へのキャスト処理を強化。#612, #613 （Itagaki Takahiroさんが報"
@@ -1919,12 +1988,12 @@ msgstr ""
 "テキストから数値へのキャスト処理を強化。#612, #613 （Itagaki Takahiroさんが報"
 "告）"
 
-# 0e521c3658504c60ba8a9f2529615b99
+# 2da7070b507d40de8c93ad0a5dbfdccc
 #: ../../../source/news/1.0.x.txt:172
 msgid "クライアントモードでの--fileオプションのサポート。#578"
 msgstr "クライアントモードでの--fileオプションのサポート。#578"
 
-# 3f9ad6e82b004839b3bbe08f253bdd4d
+# bad6508058644ced939d6695b2e8e4b8
 #: ../../../source/news/1.0.x.txt:173
 msgid ""
 ":doc:`/spec/search` の挙動を動的に変更する``--match-escalation-threashold`` "
@@ -1933,17 +2002,17 @@ msgstr ""
 ":doc:`/spec/search` の挙動を動的に変更する``--match-escalation-threashold`` "
 "起動オプションと``--match_escalation_threshold``selectオプションを追加。 #628"
 
-# 6827cf4b76a54a3a8fffc7e6698233d7
+# 2c22bf9b1502486a90464a76f82e0e8e
 #: ../../../source/news/1.0.x.txt:179
 msgid "記号でトークンを区切るTokenBigramSplitSymbolを使用。 #225"
 msgstr "記号でトークンを区切るTokenBigramSplitSymbolを使用。 #225"
 
-# 4c9480a9d4334ce29eb11a5ab0b318e5
+# 27cfff519e8b4fcf94694483182c53c5
 #: ../../../source/news/1.0.x.txt:180
 msgid "時間の解像度をナノ秒に変更。"
 msgstr "時間の解像度をナノ秒に変更。"
 
-# c317ef4a5a314044a3335c464cdc15c2
+# 1b31eee17d4f47269095a741b28974a3
 #: ../../../source/news/1.0.x.txt:181
 msgid ""
 "パッケージを提供するUbuntuのバージョンをHardy, Lucidから Lucid, Marverickに変"
@@ -1952,18 +2021,18 @@ msgstr ""
 "パッケージを提供するUbuntuのバージョンをHardy, Lucidから Lucid, Marverickに変"
 "更。"
 
-# 24e47ed9b5c84d27965111d69c732e07
+# bfe40c75749b449abf556b8b78fd245c
 #: ../../../source/news/1.0.x.txt:187
 msgid "grn_table_cursor_open()のドキュメントを修正。"
 msgstr "grn_table_cursor_open()のドキュメントを修正。"
 
-# 2258d700ab854774b6ae27e3213cf007
-# 4576829696f744708c935cd30399f680
+# 5dcd6d785bd345b4889e0f65489ef78a
+# 611332c1944947f299697edae8955dc6
 #: ../../../source/news/1.0.x.txt:188 ../../../source/news/1.2.x.txt:370
 msgid "メモリリークを修正。"
 msgstr "メモリリークを修正。"
 
-# bb4e233285db4674b74c862087686240
+# eefaa46ad99549e19143517e87f9ea88
 #: ../../../source/news/1.0.x.txt:189
 msgid ""
 "--disable-libeditオプションがヘルプメッセージと違う問題の修正。 （MATSUU "
@@ -1972,19 +2041,19 @@ msgstr ""
 "--disable-libeditオプションがヘルプメッセージと違う問題の修正。 （MATSUU "
 "Takutoさんが報告）"
 
-# 587753513eed434eabfe408ded1f9fd2
+# beb75351b97b44b4ad6d19c3aee60b70
 #: ../../../source/news/1.0.x.txt:191
 msgid "警告を除去。（MATSUU Takutoさんが報告）"
 msgstr "警告を除去。（MATSUU Takutoさんが報告）"
 
-# 30668fa6694349c795851bac6042c8a9
+# bbd3f0223ea24ea4a43923cdd3552efe
 #: ../../../source/news/1.0.x.txt:192
 msgid ""
 "grn_pat_at()でエンコードされたキーが常にGRN_NILになってしまう問題を修正。#514"
 msgstr ""
 "grn_pat_at()でエンコードされたキーが常にGRN_NILになってしまう問題を修正。#514"
 
-# f205ff6f09854fe1840d961c423c98a4
+# 6f0cf77043964d3da6f3e1e9ee315e3f
 #: ../../../source/news/1.0.x.txt:193
 msgid ""
 "固定長カラムにカラム長より短いデータを設定するとゴミが残ってしまう問題を修"
@@ -1993,29 +2062,29 @@ msgstr ""
 "固定長カラムにカラム長より短いデータを設定するとゴミが残ってしまう問題を修"
 "正。"
 
-# fce2fb5310a444be9f73d3af640b7745
+# 8b40c1f1f86d49ec8fa1f61b22bd8964
 #: ../../../source/news/1.0.x.txt:194
 msgid "不正なレコードがあるときにdumpすると落ちてしまう問題を修正。"
 msgstr "不正なレコードがあるときにdumpすると落ちてしまう問題を修正。"
 
-# f5c96d6071a0414daf33ce27cd460ba5
+# 63e51541753a4f93985631428d78e695
 #: ../../../source/news/1.0.x.txt:195
 msgid "geo_in_rectangle()が無限ループする問題を修正。#563"
 msgstr "geo_in_rectangle()が無限ループする問題を修正。#563"
 
-# 44596df4a48045789afec1f0728e1a48
+# a2bb9f77c6cf49819cc71962e393b221
 #: ../../../source/news/1.0.x.txt:196
 msgid ""
 "インデックスがついたカラムでソートすると結果がおかしくなる問題を修正。#571"
 msgstr ""
 "インデックスがついたカラムでソートすると結果がおかしくなる問題を修正。#571"
 
-# 8be8478433c74d719746fc8cb80d5919
+# 9a99015431964725902498869653441c
 #: ../../../source/news/1.0.x.txt:197
 msgid "deleteが常に失敗する問題を修正。#541"
 msgstr "deleteが常に失敗する問題を修正。#541"
 
-# 2a76063174194d2d899f29e0df69f4dc
+# a00d2c3c323e4e6f900872b2edf9393e
 #: ../../../source/news/1.0.x.txt:198
 msgid ""
 "レコードを追加・削除したパトリシアトライからID順に取り出すカーソルが おかしな"
@@ -2024,78 +2093,80 @@ msgstr ""
 "レコードを追加・削除したパトリシアトライからID順に取り出すカーソルが おかしな"
 "結果を返す問題を修正。#538"
 
-# 4c81fda8f88b4812a5e5c3e0d48e8027
+# 52729b5046f046f99fae7e30063f1d8a
 #: ../../../source/news/1.0.x.txt:200
 msgid "値が存在しないレコードがあるカラムでソートすると落ちる問題を修正。"
 msgstr "値が存在しないレコードがあるカラムでソートすると落ちる問題を修正。"
 
-# ae18a42cdfe949a6830b72ad9cc1b9e7
+# d969921e1f8d44368fda00f1bce2544f
 #: ../../../source/news/1.0.x.txt:201
 msgid "モジュールの初期化関数が複数回呼ばれる問題を修正。#567"
 msgstr "モジュールの初期化関数が複数回呼ばれる問題を修正。#567"
 
-# 3fe23fa20f8345a88e462f36743258fd
+# 47e24dfbed6f45889cdc8e6ced770d31
 #: ../../../source/news/1.0.x.txt:202
 msgid "shutdownで終了しない問題を修正。#114"
 msgstr "shutdownで終了しない問題を修正。#114"
 
-# 03f775cbd0da439095cb3f5e3d38a305
+# dcb03e97e0f949a5a07b431d05599a45
 #: ../../../source/news/1.0.x.txt:203
 msgid "全文検索時に削除したレコードが返る問題を修正。#617"
 msgstr "全文検索時に削除したレコードが返る問題を修正。#617"
 
-# 36701aff1def4c00863077ecc34ac100
+# a7be65aa5c5d46d495cc42b6cd06fa12
 #: ../../../source/news/1.0.x.txt:204
 msgid "必要な時以外にMeCabの辞書チェックをしてしまう問題を修正。#555"
 msgstr "必要な時以外にMeCabの辞書チェックをしてしまう問題を修正。#555"
 
-# 83c98dbd146a4510b0ea7ae9aee1cf80
+# 527a7e89df29461e9e95e2cb8b1f0522
 #: ../../../source/news/1.0.x.txt:205
 msgid "存在しないパトリシアトライのレコードを参照すると落ちる問題を修正。#630"
 msgstr "存在しないパトリシアトライのレコードを参照すると落ちる問題を修正。#630"
 
-# 5d294d43737a494199c78e06bd1c1d00
+# f2ba75d4aeb14d2089c32b2644890b74
 #: ../../../source/news/1.0.x.txt:206
 msgid "インストールドキュメントの誤字を修正。（SHIMODA Hiroshiさんが報告）"
 msgstr "インストールドキュメントの誤字を修正。（SHIMODA Hiroshiさんが報告）"
 
-# a7e8b0c7df284cdd88ae88fa61badd23
-# 2c6ec13a49f041a696f9cf8879fd9f7d
-# 2ae5df5492ac413eb73cb34ba3be7911
+# f908cd00176d4947a1fca3c0030b0651
+# 9b0ea10d8ca541338467cb2926641943
+# 3c0de9c627dd487aac33fa7ea8f79c9f
 #: ../../../source/news/1.0.x.txt:211 ../../../source/news/1.0.x.txt:264
 #: ../../../source/news/1.1.x.txt:31
 msgid "Daiki Uenoさん"
 msgstr "Daiki Uenoさん"
 
-# c471cc749e7245c28c831e8c75effb47
+# 4fce9153bcd54b7e940a3e078b99cfdf
 #: ../../../source/news/1.0.x.txt:212
 msgid "MATSUU Takutoさん"
 msgstr "MATSUU Takutoさん"
 
-# af434b08d1bd415599e319bd70a39e17
-# 6419e9a463844d619c6d292c79eea169
+# 3111f1a206f54f45b9d7cf6f246db001
+# 680075d9398142fa84f484de9de5037b
 #: ../../../source/news/1.0.x.txt:213 ../../../source/news/1.0.x.txt:289
 msgid "Itagaki Takahiroさん"
 msgstr "Itagaki Takahiroさん"
 
-# 0ba129f492b2457fbcc701f566dccdda
+# 77f76f7aea984c2cb9da09a8f606ff82
 #: ../../../source/news/1.0.x.txt:214
 msgid "SHIMODA Hiroshiさん"
 msgstr "SHIMODA Hiroshiさん"
 
-# 17a0e53da80641d58c99282d9d142723
+# c55c072ad4a7444c9145fe6589226ba7
 #: ../../../source/news/1.0.x.txt:217
 msgid "1.0.2リリース - 2010/09/09"
 msgstr "1.0.2リリース - 2010/09/09"
 
-# 98ff34d521a94dc3b7eb5bd6db452a3f
+# 11ed8c71104840b48d14e865a81e6f69
 #: ../../../source/news/1.0.x.txt:222
 msgid ""
-":doc:`/commands/suggest` コマンドのサンプルを追加。（examples/dictionary/）"
+":doc:`/reference/commands/suggest` コマンドのサンプルを追加。（examples/"
+"dictionary/）"
 msgstr ""
-":doc:`/commands/suggest` コマンドのサンプルを追加。（examples/dictionary/）"
+":doc:`/reference/commands/suggest` コマンドのサンプルを追加。（examples/"
+"dictionary/）"
 
-# 4b8920dffd5048e28db77075f42cac9e
+# 0757399d92384519b86672a409c772c6
 #: ../../../source/news/1.0.x.txt:227
 msgid ""
 "HTTPで公開するディレクトリを指定する--admin-html-pathを--document-rootに変"
@@ -2104,114 +2175,114 @@ msgstr ""
 "HTTPで公開するディレクトリを指定する--admin-html-pathを--document-rootに変"
 "更。"
 
-# c8a5d791ceb54269b24cfdf7163643f4
+# 2a3b618e791a41db95982e91bd0fe5d0
 #: ../../../source/news/1.0.x.txt:228
 msgid ""
-":doc:`/commands/select` コマンドのデフォルトの--output_columnsから_valueを削"
-"除。"
+":doc:`/reference/commands/select` コマンドのデフォルトの--output_columnsから"
+"_valueを削除。"
 msgstr ""
-":doc:`/commands/select` コマンドのデフォルトの--output_columnsから_valueを削"
-"除。"
+":doc:`/reference/commands/select` コマンドのデフォルトの--output_columnsから"
+"_valueを削除。"
 
-# 2db65313ac3a4f4bb0ff1f68250b51a8
+# 50775a17d297474a93010789d95b01e7
 #: ../../../source/news/1.0.x.txt:233
 msgid "パッケージミスを修正。 （OBATA Akioさんが報告）"
 msgstr "パッケージミスを修正。 （OBATA Akioさんが報告）"
 
-# 86105b002edf4d5ababf3dd89b828175
+# 40e7d334e8624cea8cae6f7cc689931d
 #: ../../../source/news/1.0.x.txt:234
 msgid "GeoPointの度表記の解釈を修正。 #460"
 msgstr "GeoPointの度表記の解釈を修正。 #460"
 
-# 7eb01cd52a2d46c0aa9e61871e3366d8
+# 1e3030adf2f24a99aaa9e18cd53a0880
 #: ../../../source/news/1.0.x.txt:243
 msgid "1.0.1リリース - 2010/09/06"
 msgstr "1.0.1リリース - 2010/09/06"
 
-# ee14af903a974463b5360941048d314d
+# 20001ae2d1b84790abef81db44b6b5e0
 #: ../../../source/news/1.0.x.txt:248
 msgid "CentOS 5/Fedora 13用RPMの提供。（Daiki Uenoさん作成のspecがベース）"
 msgstr "CentOS 5/Fedora 13用RPMの提供。（Daiki Uenoさん作成のspecがベース）"
 
-# 061fdc7c597c4f2288be938172455a1a
+# 513d264727794c6989ecc188c6aebfa0
 #: ../../../source/news/1.0.x.txt:250
 msgid "ログパスのデフォルト値に--localstatedirを使用。（OBATA Akioさんが提案）"
 msgstr ""
 "ログパスのデフォルト値に--localstatedirを使用。（OBATA Akioさんが提案）"
 
-# 5ece3da97480439897c2839ff931685c
+# 2710847cf0d342afbcc9ef1bc2c2b139
 #: ../../../source/news/1.0.x.txt:252
 msgid "BOM付きUTF-8に対応。"
 msgstr "BOM付きUTF-8に対応。"
 
-# 7ebe79f37b024ccdb9150333b6abeec7
+# c031666e2ee0467fa11927f57c6f219d
 #: ../../../source/news/1.0.x.txt:257
 msgid "JSON JQueryプラグインが同梱されていない問題の修正。"
 msgstr "JSON JQueryプラグインが同梱されていない問題の修正。"
 
-# e25a60430f1b4cfc8d8de5a8b0699a29
+# 917fcaf22fab4336a4ae09449e974f1a
 #: ../../../source/news/1.0.x.txt:259
 msgid "テストが失敗する問題の修正。（OBATA Akioさんが報告）"
 msgstr "テストが失敗する問題の修正。（OBATA Akioさんが報告）"
 
-# 241f0b8c19784d0b9e804039ca80c994
+# df9c39755ae543e6b7316da0cfa27a86
 #: ../../../source/news/1.0.x.txt:268
 msgid "1.0.0リリース - 2010/08/29"
 msgstr "1.0.0リリース - 2010/08/29"
 
-# a71b62818dae4e48b74eb37f853f85ec
+# 1b922aec453748dda6b21fc54ae32593
 #: ../../../source/news/1.0.x.txt:273
 msgid ""
-"指定したクエリに対する補完・修正・提案を行う :doc:`/commands/suggest` コマン"
-"ドを追加。"
+"指定したクエリに対する補完・修正・提案を行う :doc:`/reference/commands/"
+"suggest` コマンドを追加。"
 msgstr ""
-"指定したクエリに対する補完・修正・提案を行う :doc:`/commands/suggest` コマン"
-"ドを追加。"
+"指定したクエリに対する補完・修正・提案を行う :doc:`/reference/commands/"
+"suggest` コマンドを追加。"
 
-# 014abaff49e54f0c9cd879b91c583f43
+# fece2bf243c14da79df4a059624e35fc
 #: ../../../source/news/1.0.x.txt:275
 msgid ""
-":doc:`/commands/delete` コマンドが失敗したらfalseを返すように変更。（Itagaki "
-"Takahiroさんが提案）"
+":doc:`/reference/commands/delete` コマンドが失敗したらfalseを返すように変更。"
+"（Itagaki Takahiroさんが提案）"
 msgstr ""
-":doc:`/commands/delete` コマンドが失敗したらfalseを返すように変更。（Itagaki "
-"Takahiroさんが提案）"
+":doc:`/reference/commands/delete` コマンドが失敗したらfalseを返すように変更。"
+"（Itagaki Takahiroさんが提案）"
 
-# 42379c71badd44b892ecb9ab97a9113a
+# bcbf117a53f84d3897e9719b96036fa3
 #: ../../../source/news/1.0.x.txt:280
 msgid "関数もコマンドとして呼び出してしまう問題を修正。#431"
 msgstr "関数もコマンドとして呼び出してしまう問題を修正。#431"
 
-# ee3f7049a7954b46824a997c8466a353
+# d59ca55ff11f44d8996b766c579f660b
 #: ../../../source/news/1.0.x.txt:282
 msgid "索引付きカラムを等価条件で検索できない問題を修正。"
 msgstr "索引付きカラムを等価条件で検索できない問題を修正。"
 
-# 335857fbf8ef4c3a96f34f21abcc290c
+# f3a4a965ad3a40a0883dcfee447c711a
 #: ../../../source/news/1.0.x.txt:284
 msgid ""
-":doc:`/commands/delete` コマンドでキーがShortText以外のレコードを削除できない"
-"問題の修正。（Itagaki Takahiroさんが報告）"
+":doc:`/reference/commands/delete` コマンドでキーがShortText以外のレコードを削"
+"除できない問題の修正。（Itagaki Takahiroさんが報告）"
 msgstr ""
-":doc:`/commands/delete` コマンドでキーがShortText以外のレコードを削除できない"
-"問題の修正。（Itagaki Takahiroさんが報告）"
+":doc:`/reference/commands/delete` コマンドでキーがShortText以外のレコードを削"
+"除できない問題の修正。（Itagaki Takahiroさんが報告）"
 
-# 010b287d21744305a40b659a9b9f1169
+# c1591b0449c14adc9a63ee7c32745169
 #: ../../../source/news/1.1.x.txt:6
 msgid "バージョン1.1.xのお知らせ"
 msgstr "バージョン1.1.xのお知らせ"
 
-# e8bd6a11729341179e7e5e0aa5f79a06
+# e5f041e362344d62a2c62d2291fe6179
 #: ../../../source/news/1.1.x.txt:9
 msgid "1.1.0リリース - 2011/02/09"
 msgstr "1.1.0リリース - 2011/02/09"
 
-# 12fcc60b2fa64e1da9e2539beb8bab17
+# c35735c4d31a4b67857271f2d066cc8c
 #: ../../../source/news/1.1.x.txt:14
 msgid "TokenDelimitNullトークナイザーを追加。"
 msgstr "TokenDelimitNullトークナイザーを追加。"
 
-# 7a6f05a15273428ab31be27138d01d3c
+# c3100dc563e34ef59918e3989d956abf
 #: ../../../source/news/1.1.x.txt:15
 msgid ""
 "プラグイン登録APIの名前を改良。 grn_db_register_by_name() -> "
@@ -2220,16 +2291,16 @@ msgstr ""
 "プラグイン登録APIの名前を改良。 grn_db_register_by_name() -> "
 "grn_plugin_register() #834"
 
-# ed7f8c3b1c194bcf9ca175fa1417fb07
+# 73ca2f2660a942e29ff5ed9fa03019c1
 #: ../../../source/news/1.1.x.txt:17
 msgid ""
-":doc:`/commands/select` の--query内で前方一致検索構文\"キーワード*\"対応。 "
-"#837"
+":doc:`/reference/commands/select` の--query内で前方一致検索構文\"キーワード*"
+"\"対応。 #837"
 msgstr ""
-":doc:`/commands/select` の--query内で前方一致検索構文\"キーワード*\"対応。 "
-"#837"
+":doc:`/reference/commands/select` の--query内で前方一致検索構文\"キーワード*"
+"\"対応。 #837"
 
-# 19c7eba88931443f87debf733d6f387d
+# 2a01ae7491244182bfc23218b34b99f4
 #: ../../../source/news/1.1.x.txt:18
 msgid ""
 "groonga.pcにgroonga-suggest-create-datasetのパスが設定されている "
@@ -2238,12 +2309,12 @@ msgstr ""
 "groonga.pcにgroonga-suggest-create-datasetのパスが設定されている "
 "groonga_suggest_create_dataset変数を追加。"
 
-# 11ee98c4360549898d8a8232b084ddd1
+# 9babc32f22514beeb8b434f20eb9b107
 #: ../../../source/news/1.1.x.txt:24
 msgid "ログにタイムスタンプの秒より小さい値が常に0になる問題を修正。"
 msgstr "ログにタイムスタンプの秒より小さい値が常に0になる問題を修正。"
 
-# 4118788a589843ce86bcf06cefbbfd5d
+# c7f91bf3c2024057acbfcd37363bde7f
 #: ../../../source/news/1.1.x.txt:25
 msgid ""
 "サンプル内のスクリプトに実行属性がつかない問題を修正。 （Daiki Uenoさんが報"
@@ -2252,22 +2323,22 @@ msgstr ""
 "サンプル内のスクリプトに実行属性がつかない問題を修正。 （Daiki Uenoさんが報"
 "告）"
 
-# 391eb30c63fd492092f95d9f0d52ab6f
+# 7cffcaccfa2a435c9adaf1adf3fe704e
 #: ../../../source/news/1.2.x.txt:8
 msgid "Release 1.2.9 - 2011/12/29"
 msgstr "Release 1.2.9 - 2011/12/29"
 
-# a6c71aa1528148099b50271fde808859
+# 3e181623b37246ff898a7c6f7aa5682b
 #: ../../../source/news/1.2.x.txt:13
 msgid "Supported Fedora 16."
 msgstr "Supported Fedora 16."
 
-# c8a73493619c4382820f44770ad6e669
+# 6aa9784d1d9a45139ef5b950dc6feebd
 #: ../../../source/news/1.2.x.txt:14
 msgid "Dropped Fedora 15 support."
 msgstr "Dropped Fedora 15 support."
 
-# b7142abe672c4300837957ffd2d4d071
+# cae1638698e74c038f86c51a6c76c008
 #: ../../../source/news/1.2.x.txt:15
 msgid ""
 "[groonga] Improved the default server ID address to work on unresolved host "
@@ -2276,17 +2347,17 @@ msgstr ""
 "[groonga] Improved the default server ID address to work on unresolved host "
 "name environment. [Reported by @uzulla]"
 
-# 4252a9f7648d4e6da42611bd0877aad4
+# cf7969959719458c8f6b4856513d9d2f
 #: ../../../source/news/1.2.x.txt:17
 msgid "Supported MAP_HUGETLB."
 msgstr "Supported MAP_HUGETLB."
 
-# 0eb33a1384504dbd9b06973ca9bbcfc6
+# cf1a2da6e4ec48069bcf98fa74ada7c2
 #: ../../../source/news/1.2.x.txt:18
 msgid "[admin] Supported throughput chart."
 msgstr "[admin] Supported throughput chart."
 
-# 56fcca6189d74349aee6acb3de0fa706
+# cac21227f8f342c48fac635f0748b7fe
 #: ../../../source/news/1.2.x.txt:19
 msgid ""
 "Stopped adding nul character in ``grn_itoh()``. [#1194] [Reported by SHIDARA "
@@ -2295,45 +2366,45 @@ msgstr ""
 "Stopped adding nul character in ``grn_itoh()``. [#1194] [Reported by SHIDARA "
 "Yoji]"
 
-# 66b971736b1d4110b22bd6774782d810
+# 3c50dfc8e46f4535ac41f37cf8b73fac
 #: ../../../source/news/1.2.x.txt:21
 msgid "Added ``grn_obj_get_values()``."
 msgstr "Added ``grn_obj_get_values()``."
 
-# 63463833de624f8bb5b700caf53441ed
+# e6f1c9b45dde42bca0e01e2b26abb00c
 #: ../../../source/news/1.2.x.txt:22
 msgid "Added ``grn_obj_delete_by_id()``."
 msgstr "Added ``grn_obj_delete_by_id()``."
 
-# a5bf80838b4a405f86e9f5623644d526
+# 71efc6fec52b4d6c9b9f44dc44f724f3
 #: ../../../source/news/1.2.x.txt:23
 msgid "Supported string vector column for query expansion. [#1216]"
 msgstr "Supported string vector column for query expansion. [#1216]"
 
-# 00f56c5dfdad48da81185266979138ac
+# 79f056604c0641229696fcc43103b6ed
 #: ../../../source/news/1.2.x.txt:24
 msgid ""
-"Added ``--filter`` option to :doc:`/commands/delete` to delete many record "
-"at once. [#1225]"
+"Added ``--filter`` option to :doc:`/reference/commands/delete` to delete "
+"many record at once. [#1225]"
 msgstr ""
-"Added ``--filter`` option to :doc:`/commands/delete` to delete many record "
-"at once. [#1225]"
+"Added ``--filter`` option to :doc:`/reference/commands/delete` to delete "
+"many record at once. [#1225]"
 
-# 99c9f470f5ac4ff1814eed9eaf126daa
+# 198bbfd508094f21a5066b75e1bacdf9
 #: ../../../source/news/1.2.x.txt:26
 msgid ""
-"Supported approximate type customization for :doc:`/functions/geo_in_circle` "
-"and :doc:`/functions/geo_distance`. [#1226]"
+"Supported approximate type customization for :doc:`/reference/functions/"
+"geo_in_circle` and :doc:`/reference/functions/geo_distance`. [#1226]"
 msgstr ""
-"Supported approximate type customization for :doc:`/functions/geo_in_circle` "
-"and :doc:`/functions/geo_distance`. [#1226]"
+"Supported approximate type customization for :doc:`/reference/functions/"
+"geo_in_circle` and :doc:`/reference/functions/geo_distance`. [#1226]"
 
-# fbd67377fe7e4376b8a6f1541799993a
+# ea5bd6b92e784fc2a08e2985a6189b8a
 #: ../../../source/news/1.2.x.txt:28
 msgid "Made ``geo_distance2()`` and ``geo_distance3()`` are deprecated."
 msgstr "Made ``geo_distance2()`` and ``geo_distance3()`` are deprecated."
 
-# 8818ff3907384f48bc2dd0dcb847deab
+# 758fddf10fde46bdb26aae57f791346a
 #: ../../../source/news/1.2.x.txt:29
 msgid ""
 "Changed to use ``null`` instead of ``\"\"`` for empty geo point value in "
@@ -2342,37 +2413,37 @@ msgstr ""
 "Changed to use ``null`` instead of ``\"\"`` for empty geo point value in "
 "JSON output."
 
-# dd62ac2c54ba44f9ad3f38382256bc1e
+# 48cac021b31a470183575145f79bbe04
 #: ../../../source/news/1.2.x.txt:31
 msgid "Almost supported MessagePack output. [#1215] [Worked by SHIDARA Yoji]"
 msgstr "Almost supported MessagePack output. [#1215] [Worked by SHIDARA Yoji]"
 
-# 45be9cb8a24441868080632257444811
+# b5fd8ee68cc04b6ea5031d0ab38f37c6
 #: ../../../source/news/1.2.x.txt:32
 msgid "Added missing newlines after drilldown result tags in XML output."
 msgstr "Added missing newlines after drilldown result tags in XML output."
 
-# 2322b1f72c9b408a86cb4a9280f524e1
+# 2a49b1c59d6443b68f261a2c15582d65
 #: ../../../source/news/1.2.x.txt:33
 msgid "Supported truncate for grn_dat."
 msgstr "Supported truncate for grn_dat."
 
-# 98968d7c7eed4a3eb483dc46a56bfd73
+# c87da2d51f874092a337c7a798bfe3dc
 #: ../../../source/news/1.2.x.txt:34
 msgid "Supported longest common prefix search by grn_dat."
 msgstr "Supported longest common prefix search by grn_dat."
 
-# 906f5cba4e8548edaca72627fa783557
+# 4d408153cda74e6aa01c89448d1092aa
 #: ../../../source/news/1.2.x.txt:39
 msgid "[windows] Fixed inverted map type."
 msgstr "[windows] Fixed inverted map type."
 
-# 62976768b42c45969e6370abbff70efb
+# aa707af5fd174e97a80eba7179b6fd82
 #: ../../../source/news/1.2.x.txt:40
 msgid "Fixed -Wno- compiler flag detection. [Patch by Arnaud Fontaine]"
 msgstr "Fixed -Wno- compiler flag detection. [Patch by Arnaud Fontaine]"
 
-# ec23c1d14db344e681d41fb382df3414
+# 265714a0bcd44c419d97af69ecacb547
 #: ../../../source/news/1.2.x.txt:41
 msgid ""
 "Fixed a problem that ``groonga --version`` reports wrongly about MeCab. "
@@ -2381,47 +2452,47 @@ msgstr ""
 "Fixed a problem that ``groonga --version`` reports wrongly about MeCab. "
 "[#1209] [Patch by SHIDARA Yoji]"
 
-# b243e5c7e3ac4e9caaa09430a24c7c36
+# 5e042c2293734770b798126ee22bd58b
 #: ../../../source/news/1.2.x.txt:43
 msgid "Added missing lock into ``grn_obj_remove()``."
 msgstr "Added missing lock into ``grn_obj_remove()``."
 
-# 16a69acff28040b99d9f87fb5ee99314
+# add1ece9730c4571b592640abe3a599d
 #: ../../../source/news/1.2.x.txt:44
 msgid "Fixed Content-Type on error. [#1220] [Patch by SHIDARA Yoji]"
 msgstr "Fixed Content-Type on error. [#1220] [Patch by SHIDARA Yoji]"
 
-# 2c44c68d384046d882beb05767546597
+# a68a8dcb21d2474ea1968e7b1ce7fa78
 #: ../../../source/news/1.2.x.txt:45
 msgid ""
 "Fixed a problem that deleting SIS (Semi Infinite String) may keep a garbage."
 msgstr ""
 "Fixed a problem that deleting SIS (Semi Infinite String) may keep a garbage."
 
-# a01eae1da9474f608e1c46f6abc59d51
+# df32e5eebb284d0eb1a6af03456492f0
 #: ../../../source/news/1.2.x.txt:51
 msgid "@uzulla"
 msgstr "@uzulla"
 
-# 576c1150a66948e58b8deab9bbeca673
+# a57288e8fa744f93b38af45b320ae620
 #: ../../../source/news/1.2.x.txt:52
 msgid "Arnaud Fontaine"
 msgstr "Arnaud Fontaine"
 
-# 9a042829d29743449369a9da272615fa
-# db12adea2f5a4315ad31be4cc92b1c28
-# 630165b2b46c47f0bc0ed60d96d8115f
+# 3f18010638224cb4942a07b2665b2fd5
+# 64752d27928c4d16b1f6330cf76f4c59
+# 766724fed5f74bb78e8c2e3bad178f89
 #: ../../../source/news/1.2.x.txt:53 ../../../source/news/1.2.x.txt:121
 #: ../../../source/news/1.2.x.txt:150
 msgid "SHIDARA Yoji"
 msgstr "SHIDARA Yoji"
 
-# 64a7bd3cdc37450ca9b579356cab33f9
+# 69626c2ed6144bcb8371072eb22e60e7
 #: ../../../source/news/1.2.x.txt:58
 msgid "Release 1.2.8 - 2011/11/29"
 msgstr "Release 1.2.8 - 2011/11/29"
 
-# e8b40536a78c40e6b8c04b5003bdcad3
+# b8ff6aea0f144e1d9616432eb0765bdf
 #: ../../../source/news/1.2.x.txt:60
 msgid ""
 "Object, table and column renamings are supported! These features require "
@@ -2432,7 +2503,7 @@ msgstr ""
 "database re-creation. You can re-create your database by the following "
 "command::"
 
-# 5d3f744817384757a27e9a2ca057b356
+# 7b1edc6aff374aadbc8214f78f2db3cf
 #: ../../../source/news/1.2.x.txt:69
 msgid ""
 "Groonga 1.2.8 can open databases created by groonga 1.2.7 or earlier. But "
@@ -2443,42 +2514,42 @@ msgstr ""
 "groonga 1.2.7 or earlier can't open databases created by groonga 1.2.8 or "
 "later."
 
-# c1f2254ad9064d16a2c58d1b9845feab
+# 140cb1cc990645cda189fa7b93eb46cd
 #: ../../../source/news/1.2.x.txt:76
 msgid "[grntest] Removed the upper limit to the number of bytes in one line."
 msgstr "[grntest] Removed the upper limit to the number of bytes in one line."
 
-# 3ef743ab17374500a4704dc49407ce21
+# 7aefabc245c14c92a2c3513751eafde9
 #: ../../../source/news/1.2.x.txt:77
 msgid "[grntest] Added ``--pid-path`` option."
 msgstr "[grntest] Added ``--pid-path`` option."
 
-# d75f28a806604a94a1b263a434eb7c0f
+# df0ea005961b4b5ebace77699666c369
 #: ../../../source/news/1.2.x.txt:78
 msgid "[deb] Enabled experimental zlib and lzo support."
 msgstr "[deb] Enabled experimental zlib and lzo support."
 
-# e8f0c728a3e245ac9f606e23363c36a7
+# 213d9a7c087e462a9d0506d3065c287b
 #: ../../../source/news/1.2.x.txt:79
 msgid "[rpm] Enabled experimental zlib and lzo support."
 msgstr "[rpm] Enabled experimental zlib and lzo support."
 
-# f38490b95dbb4947a86edb9ddbbca1b8
+# f53f2450f7f94c61a745901d860ab091
 #: ../../../source/news/1.2.x.txt:80
 msgid "Supports truncation. [#892]"
 msgstr "Supports truncation. [#892]"
 
-# d16e9223d7c949ed9b475d0252eedded
+# 330eeda54796480dbf54e67596e8a388
 #: ../../../source/news/1.2.x.txt:81
 msgid "Enabled grn_dat that is a read lock free double array implementation."
 msgstr "Enabled grn_dat that is a read lock free double array implementation."
 
-# d911944b58974f87a4eaf30f56637e28
+# c9d44906f96f40b99f193d52250e948c
 #: ../../../source/news/1.2.x.txt:82
 msgid "[pkg-config] Added groonga_version variable to groonga.pc."
 msgstr "[pkg-config] Added groonga_version variable to groonga.pc."
 
-# 17c10202f2224761a11d00a30bf4dd10
+# 645ef64a55c043778668ab3a3248a17e
 #: ../../../source/news/1.2.x.txt:83
 msgid ""
 "Re-supported ``--disable-static``. [groonga-dev,00612] [Suggested by Kenichi "
@@ -2487,27 +2558,27 @@ msgstr ""
 "Re-supported ``--disable-static``. [groonga-dev,00612] [Suggested by Kenichi "
 "Aramaki]"
 
-# 8905cff1eeb74389b65b409992020855
+# 5f51abb17ba149a088135361d634986d
 #: ../../../source/news/1.2.x.txt:85
 msgid "[munin] Stopped to install Munin plugins by default."
 msgstr "[munin] Stopped to install Munin plugins by default."
 
-# 4834f44770544f42a1684bc5b8c4af3b
+# dcefcdde6ef142b386101aa0ff577889
 #: ../../../source/news/1.2.x.txt:86
 msgid "Stopped to install RedHat platform related files by default."
 msgstr "Stopped to install RedHat platform related files by default."
 
-# 49fddc7e22224c67bd19896d7365703b
+# 817bf3d1f3434d8c8333f5f305bafb96
 #: ../../../source/news/1.2.x.txt:87
 msgid "Supports object renaming. This requires DB re-creation. [#1167]"
 msgstr "Supports object renaming. This requires DB re-creation. [#1167]"
 
-# 4c72b9a8c7ec4f6c9081704bd1e47c20
+# 64add2e130a442d2b4760c12a697bcb0
 #: ../../../source/news/1.2.x.txt:88
 msgid "[munin] Added a Munin plugin that measures throughput. [#1171]"
 msgstr "[munin] Added a Munin plugin that measures throughput. [#1171]"
 
-# 00370453ea55450dacedf1695dc544c5
+# bbb158a2b93a43909d8c55916ec088c7
 #: ../../../source/news/1.2.x.txt:89
 msgid ""
 "[geo] Improved geo_in_rectangle performance. The new implementation will be "
@@ -2516,7 +2587,7 @@ msgstr ""
 "[geo] Improved geo_in_rectangle performance. The new implementation will be "
 "2x faster than the old implementation in many cases. [#1173]"
 
-# f80933e8dd574b6a84b3f86bf497424f
+# c3e565b9b3844355abe8d951b5ec7a16
 #: ../../../source/news/1.2.x.txt:92
 msgid ""
 "[macports] Moved groonga's MacPorts to the official repository. [Imported by "
@@ -2525,7 +2596,7 @@ msgstr ""
 "[macports] Moved groonga's MacPorts to the official repository. [Imported by "
 "Hiroshi Umemoto]"
 
-# cf6cc005b18743d7940c11001b95e02a
+# 98d931dacc83475193a2c6afdd40fe53
 #: ../../../source/news/1.2.x.txt:94
 msgid ""
 "[geo] Changed the geo literal degree-to-msec conversion algorithm to round-"
@@ -2534,7 +2605,7 @@ msgstr ""
 "[geo] Changed the geo literal degree-to-msec conversion algorithm to round-"
 "off from truncation."
 
-# 8773634ddea74b8589e7be5c00c3a94a
+# 85acfb64245c40478ece9fa6507b66ac
 #: ../../../source/news/1.2.x.txt:96
 msgid ""
 "Supports a table defrag. It defrags variable size value columns in the "
@@ -2543,27 +2614,27 @@ msgstr ""
 "Supports a table defrag. It defrags variable size value columns in the "
 "table. [#1175]"
 
-# d3ec77d0125245b18f96d6e9d97526f6
+# 1997ca6bf66740fb91cacd586f4ecef2
 #: ../../../source/news/1.2.x.txt:98
 msgid "Removed associated path on remove. [#1180]"
 msgstr "Removed associated path on remove. [#1180]"
 
-# b3342d4ac950485eb9a9769bc82c6203
+# 07105b5840dd405a9a3b2dc43c0d3d5a
 #: ../../../source/news/1.2.x.txt:99
 msgid "[deb] Supports i386."
 msgstr "[deb] Supports i386."
 
-# 6172fb8bc6644f70a50dd02050646725
+# f3a688b3805c4d088b71c9458fe21a37
 #: ../../../source/news/1.2.x.txt:100
 msgid "[rpm] Supports i386."
 msgstr "[rpm] Supports i386."
 
-# fa85b92c86ff475b874f7b62d222b05d
+# cd00b414d2914b2ea6b025ab1a55e7b0
 #: ../../../source/news/1.2.x.txt:101
 msgid "[windows] Supports x86."
 msgstr "[windows] Supports x86."
 
-# f789a680d4a148e4814f53a9f7326279
+# 6020b22c10d44ee28ccd8f5226dc6153
 #: ../../../source/news/1.2.x.txt:106
 msgid ""
 "Fixed a bug that groonga crashes when accessing a zlib/lzo compressed "
@@ -2576,12 +2647,12 @@ msgstr ""
 "resolve this, we need to improve API. We will do it in the future. [GtiHub#5]"
 "[GtiHub#6] [Reported by Takayuki Yamaguchi]"
 
-# eb3bbec44d62405daab565db4e557985
+# 02c78713f9fd455ba6e70b35e287375a
 #: ../../../source/news/1.2.x.txt:110
 msgid "Fixed a bug that unrelated column values are cleared in deletion."
 msgstr "Fixed a bug that unrelated column values are cleared in deletion."
 
-# fd07d3b510a847ecace6ac7afc35e22e
+# 35cf71dea2d8416f9674af032e34a0cb
 #: ../../../source/news/1.2.x.txt:111
 msgid ""
 "Fixed a bug that a wrong index is used in sorting. [#766] [Reported by "
@@ -2590,7 +2661,7 @@ msgstr ""
 "Fixed a bug that a wrong index is used in sorting. [#766] [Reported by "
 "Horikoshi Yuki]"
 
-# 7c81eceea8d544798ce493cf7e632607
+# ed196ea742554d4ab5c4e08fe97a3887
 #: ../../../source/news/1.2.x.txt:113
 msgid ""
 "[libedit] Fixed a bug that necessary initialization is omitted. [GitHub#7] "
@@ -2599,37 +2670,37 @@ msgstr ""
 "[libedit] Fixed a bug that necessary initialization is omitted. [GitHub#7] "
 "[Patch by SHIDARA Yoji]"
 
-# 7e0d47f560b742f98eaae936504131d7
+# e3007afb264f43d781fe6c22a5a7697c
 #: ../../../source/news/1.2.x.txt:115
 msgid "[doc] Fixed a typo in documentation. [GitHub#8] [Patch by zunda]"
 msgstr "[doc] Fixed a typo in documentation. [GitHub#8] [Patch by zunda]"
 
-# 6a743087d3c0499b880f954f6be145b1
+# 805f136335c549bca2caffebf4afd9c3
 #: ../../../source/news/1.2.x.txt:120
 msgid "Takayuki Yamaguchi"
 msgstr "Takayuki Yamaguchi"
 
-# e07d904bf37943059978cfe69b7a031e
+# 3bf08734f3c14a8d90dffbcc7f1e20ea
 #: ../../../source/news/1.2.x.txt:122
 msgid "Horikoshi Yuki"
 msgstr "Horikoshi Yuki"
 
-# 3d26da4a601d4192b51878a11364f168
+# 758c61fb000947f2ac4941913adcfe39
 #: ../../../source/news/1.2.x.txt:123
 msgid "zunda"
 msgstr "zunda"
 
-# d21c1c5a43514a4495d2fb743f10d44c
+# 46439ebe35d24ab39e16464da117f9ee
 #: ../../../source/news/1.2.x.txt:124
 msgid "Hiroshi Umemoto"
 msgstr "Hiroshi Umemoto"
 
-# 983bf1a4fbad43a8b61a5a9c1bd5058c
+# 8b5fdeb081d1415ea22ec746427cc95f
 #: ../../../source/news/1.2.x.txt:129
 msgid "Release 1.2.7 - 2011/10/29"
 msgstr "Release 1.2.7 - 2011/10/29"
 
-# 678e7b82cbe246929dd710e0bd348b40
+# aa670c25f55f45ac91630f25b333ecdc
 #: ../../../source/news/1.2.x.txt:134
 msgid ""
 "[libedit] Added error check for wide character to multibyte sequence "
@@ -2638,27 +2709,27 @@ msgstr ""
 "[libedit] Added error check for wide character to multibyte sequence "
 "conversion. [Reported by SHIDARA Yoji]"
 
-# 642de85f75fa4e8bb9823a3534c218c2
+# aaf75833312a44098045c1e59a84b3b9
 #: ../../../source/news/1.2.x.txt:136
 msgid "Added grn_geo_estimate_in_rectangle()."
 msgstr "Added grn_geo_estimate_in_rectangle()."
 
-# 06db54d9b32144cf816b892a8e1c95bf
+# f8343cbe614c40ad98024acabd81d6b4
 #: ../../../source/news/1.2.x.txt:137
 msgid "Added cursor API to geo search in rectangle."
 msgstr "Added cursor API to geo search in rectangle."
 
-# 8870e2d1a7c741c283901bb3f307c406
+# 0f80cb1fc057498d82b2bd7e90014d2e
 #: ../../../source/news/1.2.x.txt:138
 msgid "Improved geo search in rectangle speed."
 msgstr "Improved geo search in rectangle speed."
 
-# a0d86f0000df42cc877e9757589a1955
+# a3e34e0cbdd241328dba8180151522db
 #: ../../../source/news/1.2.x.txt:139
 msgid "Added packages for Ubuntu 11.10 Oneiric Ocelot"
 msgstr "Added packages for Ubuntu 11.10 Oneiric Ocelot"
 
-# 21260d7f7f9f4248bbc4d33f2148dccd
+# f2d3930921824064b54cb114d2bfd931
 #: ../../../source/news/1.2.x.txt:140
 msgid ""
 "[experimental] Supported Oracle Solaris 10 8/11. (just buildable with system "
@@ -2667,141 +2738,143 @@ msgstr ""
 "[experimental] Supported Oracle Solaris 10 8/11. (just buildable with system "
 "gcc.)"
 
-# 425e316dfe204d8a8eb00b4c1171c130
+# 5eb6c07cc08540cb8eb745d2195937bf
 #: ../../../source/news/1.2.x.txt:145
 msgid "Fixed a typo in document. [Reported by @soundkitchen]"
 msgstr "Fixed a typo in document. [Reported by @soundkitchen]"
 
-# df51707509c74a70b28a25b96f742b49
+# 8e856f2adecf42e1a598ac6f5567ef2a
 #: ../../../source/news/1.2.x.txt:156
 msgid "Release 1.2.6 - 2011/09/29"
 msgstr "Release 1.2.6 - 2011/09/29"
 
-# 03d0015646fb4835aa4433613a350ebf
+# 6550b7675e9741ae966118677aecb177
 #: ../../../source/news/1.2.x.txt:161
 msgid "Improved error message on type cast."
 msgstr "Improved error message on type cast."
 
-# 2f71cc836ed04d23bada6104e33e5157
+# 3d0b919f01b14e48a6100df0ca0e325e
 #: ../../../source/news/1.2.x.txt:162
 msgid "Added geo point value validation on type cast."
 msgstr "Added geo point value validation on type cast."
 
-# 5da7b0bff7cd479cbdbd059c667bacc5
+# 5970a52a249a4e5eb604982122741219
 #: ../../../source/news/1.2.x.txt:163
 msgid "Supported :doc:`/tutorial/query_expansion`."
 msgstr "Supported :doc:`/tutorial/query_expansion`."
 
-# 1cfc1142079947319ff825e8bb3cb1b1
+# 50d1849e9d8d4b959970ccdf9fffca54
 #: ../../../source/news/1.2.x.txt:164
 msgid ""
-"Added `--query_expansion` option to :doc:`/commands/select` for query "
-"expansion."
+"Added `--query_expansion` option to :doc:`/reference/commands/select` for "
+"query expansion."
 msgstr ""
-"Added `--query_expansion` option to :doc:`/commands/select` for query "
-"expansion."
+"Added `--query_expansion` option to :doc:`/reference/commands/select` for "
+"query expansion."
 
-# d06d1d3a93c04a3d9f7420df18034f02
+# 51e877169cdd419188b3a65cc82fbffa
 #: ../../../source/news/1.2.x.txt:166
 msgid "Added geometry conversion macro between degree and msec."
 msgstr "Added geometry conversion macro between degree and msec."
 
-# 743bdcbd01444a3db98c5293771bde3e
+# 5d6d3aa85c034c30957d23e779183754
 #: ../../../source/news/1.2.x.txt:167
-msgid "Supported type cast in :doc:`/functions/geo_distance` ()."
-msgstr "Supported type cast in :doc:`/functions/geo_distance` ()."
+msgid "Supported type cast in :doc:`/reference/functions/geo_distance` ()."
+msgstr "Supported type cast in :doc:`/reference/functions/geo_distance` ()."
 
-# 2d0b4afa641b4d89a4bd5f15f70c570a
+# a7f10ba7611e4795b06125136e0787ca
 #: ../../../source/news/1.2.x.txt:168
 msgid "Don't split tokens with full width space in command line. #986"
 msgstr "Don't split tokens with full width space in command line. #986"
 
-# 9ca30597d8f44c6c84c3afd47bb2defd
+# cbbd74f5fe9e48fb9d305f26c38c5ac2
 #: ../../../source/news/1.2.x.txt:169
 msgid "Supported conversion between TokyoGeoPoint and WGS84GeoPoint."
 msgstr "Supported conversion between TokyoGeoPoint and WGS84GeoPoint."
 
-# 50491bac67ca43449c671dfc5c63d660
+# 1ecedd399e274de5b1d251447371f971
 #: ../../../source/news/1.2.x.txt:170
 msgid "Exported grn_geo_select_in_circle() and grn_geo_select_in_rectangle()."
 msgstr "Exported grn_geo_select_in_circle() and grn_geo_select_in_rectangle()."
 
-# 5a4b97bf02d8416ba622deec970d01a4
+# 21605e2d750e4c61881c72551bf26ea1
 #: ../../../source/news/1.2.x.txt:171
 msgid "Supported CentOS 6."
 msgstr "Supported CentOS 6."
 
-# 3dfda166eefe4a1c800a6818e490cb17
+# a1eb2c14fd0a4cf8ab35dc69345ce6e1
 #: ../../../source/news/1.2.x.txt:172
 msgid ""
 "Supported the current Debian GNU/Linux sid. Patch by SATOH Fumiyasu. GitHub#3"
 msgstr ""
 "Supported the current Debian GNU/Linux sid. Patch by SATOH Fumiyasu. GitHub#3"
 
-# 8a8704f8557d470b88f9632c7dd8db61
+# e86753ce0ae64a2395b2c1d94ce8bf85
 #: ../../../source/news/1.2.x.txt:178
 msgid "Fixed a bug that geo point is loaded as broken value."
 msgstr "Fixed a bug that geo point is loaded as broken value."
 
-# 67d8a52119c244669e0618fb5c28d89e
+# 1babf882ed294ab59c8b4d7492e1c3b4
 #: ../../../source/news/1.2.x.txt:183
 msgid "SATOH Fumiyasu"
 msgstr "SATOH Fumiyasu"
 
-# db241e97c493426a9c2532c9531eb95d
+# 01842955f0c14f789b7662d4fa9d6bfc
 #: ../../../source/news/1.2.x.txt:188
 msgid "Release 1.2.5 - 2011/08/29"
 msgstr "Release 1.2.5 - 2011/08/29"
 
-# 5fd0e7e19f9743889e9141e9b699fadd
+# f369e4a8af754cf382930229046553b1
 #: ../../../source/news/1.2.x.txt:193
 msgid "Added experimental Windows installer support."
 msgstr "Added experimental Windows installer support."
 
-# ccfbc7f045934c5cb2ce4613dba733fe
+# db34e7a2c338482181db6eeaa3b31d5f
 #: ../../../source/news/1.2.x.txt:194
 msgid "Accepted \"#\" and \"-\" as a valid name characters. #1043"
 msgstr "Accepted \"#\" and \"-\" as a valid name characters. #1043"
 
-# 2c4da2cf02084c34ad9bcf7358a83c7b
+# d60bd695af294f55a231789cea825851
 #: ../../../source/news/1.2.x.txt:195
 msgid ""
 "Accepted all valid characters except \"_\" as the first character. #1043"
 msgstr ""
 "Accepted all valid characters except \"_\" as the first character. #1043"
 
-# 8fa0f03d9b274ffd9a3b596f4f8203f8
+# a36ecf677f0c467596964707549c330c
 #: ../../../source/news/1.2.x.txt:196
-msgid "Supported `--each` for `[...]` form :doc:`/commands/load`. #1044"
-msgstr "Supported `--each` for `[...]` form :doc:`/commands/load`. #1044"
+msgid ""
+"Supported `--each` for `[...]` form :doc:`/reference/commands/load`. #1044"
+msgstr ""
+"Supported `--each` for `[...]` form :doc:`/reference/commands/load`. #1044"
 
-# a630cbb0b39e45e4ba6ff6441b5eb7f9
+# a80d4ec7010d42c78c2b074a4d84467d
 #: ../../../source/news/1.2.x.txt:197
 msgid "Added documentation for :doc:`/suggest`."
 msgstr "Added documentation for :doc:`/suggest`."
 
-# ae97246fb94e4850ba5627ca99ac06f4
+# 99b43d742bad43cfa323c5496d2b16c1
 #: ../../../source/news/1.2.x.txt:198
 msgid ""
 "Supported threshold as `--frequency_threshold` and `--"
-"conditional_probability_threshold` options in all :doc:`/commands/suggest` "
-"types. #1042"
+"conditional_probability_threshold` options in all :doc:`/reference/commands/"
+"suggest` types. #1042"
 msgstr ""
 "Supported threshold as `--frequency_threshold` and `--"
-"conditional_probability_threshold` options in all :doc:`/commands/suggest` "
-"types. #1042"
+"conditional_probability_threshold` options in all :doc:`/reference/commands/"
+"suggest` types. #1042"
 
-# 8b337d52cbf740a389f9b1caefee7273
+# f0d207d6352f4d5799f48a4bb7fd95b6
 #: ../../../source/news/1.2.x.txt:201
 msgid "[groonga-suggest-httpd] Supported log reopen by SIGUSR1. #1048"
 msgstr "[groonga-suggest-httpd] Supported log reopen by SIGUSR1. #1048"
 
-# 2260ba0d64b5459bbcd9845485ec8c04
+# eb4051cf209846b0ba2dc526fcebd568
 #: ../../../source/news/1.2.x.txt:202
 msgid "Supported string input for reference vector column value. #1051"
 msgstr "Supported string input for reference vector column value. #1051"
 
-# 8e4b9b68fd704a99bd1306bc68ba7947
+# 2416577d3fe04c5f94f5d611042edd92
 #: ../../../source/news/1.2.x.txt:203
 msgid ""
 "[groonga-suggest-httpd] Added `--n-lines-per-log-file` option that changes "
@@ -2810,7 +2883,7 @@ msgstr ""
 "[groonga-suggest-httpd] Added `--n-lines-per-log-file` option that changes "
 "log line limitation for a file."
 
-# cc82cbf5e5d646d0836a5d71dc668901
+# a0805a0c20bf409b96446df4898568d1
 #: ../../../source/news/1.2.x.txt:205
 msgid ""
 "[groonga-suggest-httpd] Added `p` parameter for `--"
@@ -2819,207 +2892,209 @@ msgstr ""
 "[groonga-suggest-httpd] Added `p` parameter for `--"
 "conditional_probability_threshold`."
 
-# 8b2264e490824b0c9eb5caeadf04a714
+# 0df6da36e2a046079145136090d60b23
 #: ../../../source/news/1.2.x.txt:207
 msgid "Added GRN_CTX_PER_DB flag for grn_ctx_init() and grn_ctx_open(). #1053"
 msgstr "Added GRN_CTX_PER_DB flag for grn_ctx_init() and grn_ctx_open(). #1053"
 
-# 61d28c5ec45844b89a0bbf294eec29cd
+# 6f997157686c4c9883eccd29f6f1dfe0
 #: ../../../source/news/1.2.x.txt:208
 msgid "Exported grn_ctx_close(). #1035"
 msgstr "Exported grn_ctx_close(). #1035"
 
-# 35ffca22731c4f8ea6616dab6fdfaf9d
+# 59aa70a5093942b9b22e70185529dc47
 #: ../../../source/news/1.2.x.txt:213
 msgid ""
 "Fixed a crash bug that invalid value is passed as match expression argument "
-"in :doc:`/commands/select`. #1047"
+"in :doc:`/reference/commands/select`. #1047"
 msgstr ""
 "Fixed a crash bug that invalid value is passed as match expression argument "
-"in :doc:`/commands/select`. #1047"
+"in :doc:`/reference/commands/select`. #1047"
 
-# 3290472d17394bd493f1409d4d0d3931
+# 7c8499354b9946c8bb0e594b53f5bc8c
 #: ../../../source/news/1.2.x.txt:215
 msgid "Fixed a bug that hash table cursor returns garbage records."
 msgstr "Fixed a bug that hash table cursor returns garbage records."
 
-# 6aaeefe4c1ca40d1952599a53a957726
+# be90312805424ea680b9f4d1861ecb8b
 #: ../../../source/news/1.2.x.txt:220
 msgid "Release 1.2.4 - 2011/07/29"
 msgstr "Release 1.2.4 - 2011/07/29"
 
-# b265dafaa82746da99696f95b3e80ca8
+# 6a15ad84b43e469ca56e0f783de42e51
 #: ../../../source/news/1.2.x.txt:225
 msgid "Re-supported ``*BSD``. (Reported by OBATA Akio)"
 msgstr "Re-supported ``*BSD``. (Reported by OBATA Akio)"
 
-# 1c3f797f9b7d444696d4b736f5ef900c
+# 8caa52100b7449c8982b48f60956a4ca
 #: ../../../source/news/1.2.x.txt:226
 msgid "Improved sed related portability. (Suggested by OBATA Akio)"
 msgstr "Improved sed related portability. (Suggested by OBATA Akio)"
 
-# b127756ec183448d9b5a8f36442aee75
+# 9369669302c7433096a1a75a2bdd0b6f
 #: ../../../source/news/1.2.x.txt:227
 msgid "Re-supported Visual C++ 2008."
 msgstr "Re-supported Visual C++ 2008."
 
-# a7a61733863548de8b70b0154de84edb
+# a00c0d79050144678ef5eb4eaa230ec1
 #: ../../../source/news/1.2.x.txt:228
-msgid "Supported :doc:`/commands/check` for hash table."
-msgstr "Supported :doc:`/commands/check` for hash table."
+msgid "Supported :doc:`/reference/commands/check` for hash table."
+msgstr "Supported :doc:`/reference/commands/check` for hash table."
 
-# 3a6dd15f648949a0abfc89d863daf8f0
+# fce0086bd2b74f50bd41ba9f5d0c7503
 #: ../../../source/news/1.2.x.txt:229
 msgid ""
-"Ignored invalid _score in --sortby of :doc:`/commands/select` for "
+"Ignored invalid _score in --sortby of :doc:`/reference/commands/select` for "
 "convenience. #1030"
 msgstr ""
-"Ignored invalid _score in --sortby of :doc:`/commands/select` for "
+"Ignored invalid _score in --sortby of :doc:`/reference/commands/select` for "
 "convenience. #1030"
 
-# 4609af1ee73c43148e6c61e5925057de
+# f89fbeca7478477a96db016dd51e6795
 #: ../../../source/news/1.2.x.txt:231
 msgid "Added document about :doc:`/log`."
-msgstr ""
+msgstr "Added document about :doc:`/log`."
 
-# bf66e95bf4f1462e9f368fbf1aa762c1
+# 7a97c77a12c24c23881b99eb06553d1e
 #: ../../../source/news/1.2.x.txt:232
 msgid "Supported ~/.editrc."
 msgstr "Supported ~/.editrc."
 
-# 6e1d3d1835c64eae84bc38fcbad46d32
+# e57333675bf1495594170a2ff841ad94
 #: ../../../source/news/1.2.x.txt:233
 msgid "Supported ~/.groonga-history."
 msgstr "Supported ~/.groonga-history."
 
-# d2b8aac6f17045dfb9adaf8a0e8e20ba
+# 030e37eeb08a490d9c0f596ccf716953
 #: ../../../source/news/1.2.x.txt:238
 msgid "Fixed broken libedit support. (Reported by Daiki Ueno)"
 msgstr "Fixed broken libedit support. (Reported by Daiki Ueno)"
 
-# ad24bc40c6f34916974d0f0b3c4a4203
+# 722c1e0631d346e9914a513b266dd933
 #: ../../../source/news/1.2.x.txt:239
 msgid "Fixed source URL in ``*.spec`` (Reported by Daiki Ueno)"
 msgstr "Fixed source URL in ``*.spec`` (Reported by Daiki Ueno)"
 
-# 1e12f10672e742cf9b38952445949d8f
+# d8f73110a5f44e7aaff9feaa53b17b1a
 #: ../../../source/news/1.2.x.txt:240
 msgid "Fixed patricia trie cursor returns wrong records."
 msgstr "Fixed patricia trie cursor returns wrong records."
 
-# fce6447f55c048baa34c71c3e8895771
+# 2ffd41392fb843168d27d3c2a8123254
 #: ../../../source/news/1.2.x.txt:241
 msgid ""
 "Added missing database lock clear for grn_obj_clear_lock() for database."
 msgstr ""
 "Added missing database lock clear for grn_obj_clear_lock() for database."
 
-# fce5693b59da481bb3639fe7723c2e36
+# da77c0e76a71417cbac132827d7f39f3
 #: ../../../source/news/1.2.x.txt:243
 msgid ""
 "Fixed wrong record's column values deletion possible on record deletion."
 msgstr ""
 "Fixed wrong record's column values deletion possible on record deletion."
 
-# 5a8259293b394c4fbf6b7d82bb094539
-# a5c2c87b7d094e20a00310b45a5e6efa
+# c61ac8e62cc243c6a27a239b83e5294e
+# 65f3fb86e4704c61bd118b46afe4a60b
 #: ../../../source/news/1.2.x.txt:249 ../../../source/news/1.2.x.txt:276
 msgid "OBATA Akio"
 msgstr "OBATA Akio"
 
-# ae9ae8025a73473bb32543a58ce4fa55
+# 02f1a2dffbf94774a622a8a5727edf7a
 #: ../../../source/news/1.2.x.txt:255
 msgid "Release 1.2.3 - 2011/06/29"
 msgstr "Release 1.2.3 - 2011/06/29"
 
-# 92ef3377625e417ba79f687269ba7350
+# 53a8e1031be0452d83bffef3fd4dcb65
 #: ../../../source/news/1.2.x.txt:260
 msgid "Added invalid table name check. #912"
 msgstr "Added invalid table name check. #912"
 
-# 26ce0bb4c9c34e70a2cc8fa2211130bf
+# 29f075ab44f2403bbc5ce36a587187a3
 #: ../../../source/news/1.2.x.txt:261
 msgid "Added groonga-query-log-analyzer that analyze query log."
 msgstr "Added groonga-query-log-analyzer that analyze query log."
 
-# 248e7c46a9954578922bc1fde8363cf4
+# 32ef9931f0084eca8380a1346e5b9893
 #: ../../../source/news/1.2.x.txt:262
 msgid "groonga command shows failed command on error."
 msgstr "groonga command shows failed command on error."
 
-# 2d12d5ce99cf49cd9735601725b80edb
+# 19d135b9285c4baf9baf2e5425668667
 #: ../../../source/news/1.2.x.txt:263
 msgid "groonga command shows file name and line no on error."
 msgstr "groonga command shows file name and line no on error."
 
-# 39b4fc325bcc43fb853c115e7827f1f4
+# 0ba3004a43a3418fa39211768b3260c9
 #: ../../../source/news/1.2.x.txt:264
-msgid "Improved error message of :doc:`/commands/column_create`. #952"
-msgstr "Improved error message of :doc:`/commands/column_create`. #952"
+msgid ""
+"Improved error message of :doc:`/reference/commands/column_create`. #952"
+msgstr ""
+"Improved error message of :doc:`/reference/commands/column_create`. #952"
 
-# e0b238a316e0427d914c8c236873cccb
+# 5d06ea1534234c6f966ab3ae9a727d22
 #: ../../../source/news/1.2.x.txt:265
 msgid "Added GRN_OBJ_TABLE_DAT_KEY, double array trie, table. (experimental)"
 msgstr "Added GRN_OBJ_TABLE_DAT_KEY, double array trie, table. (experimental)"
 
-# e1c90aae0baa42eda19a8f3aaab1c2e8
+# ebaf2b6613294c86a6eba24afeb0e1d8
 #: ../../../source/news/1.2.x.txt:270
 msgid "fix get command crash. (Reported by OBATA Akio)"
 msgstr "fix get command crash. (Reported by OBATA Akio)"
 
-# 522bf13295364db99f5ede6333a1181d
+# 14d336ab377f41e881f4a2ab6ce2ad54
 #: ../../../source/news/1.2.x.txt:271
 msgid "fix elapsed time overflow in query log. #944"
 msgstr "fix elapsed time overflow in query log. #944"
 
-# 6c2274769353432f9d9d765086e7fdd4
+# a0514fb68c5d426a8a36b1b15999184c
 #: ../../../source/news/1.2.x.txt:281
 msgid "Release 1.2.2 - 2011/05/29"
 msgstr "Release 1.2.2 - 2011/05/29"
 
-# 346bc5b345ef44f882982e8a4a01498b
+# 6f2bf080dcf145db829243fb57232b95
 #: ../../../source/news/1.2.x.txt:286
 msgid "Added packages for Ubuntu 11.04 Natty Narwhal."
 msgstr "Added packages for Ubuntu 11.04 Natty Narwhal."
 
-# 0ebd4526338848808f84dec40203dd03
+# d77102f2c2674e3fb7e8159981ea0f5f
 #: ../../../source/news/1.2.x.txt:287
 msgid "Removed packages for Ubuntu 10.10 Maverick Meerkat."
 msgstr "Removed packages for Ubuntu 10.10 Maverick Meerkat."
 
-# b8ffd1bf68034702ae85ae732ec6b6e3
+# 93f56dc7009848b9ab0e55e581d278e1
 #: ../../../source/news/1.2.x.txt:288
 msgid "RPM: Split server related packages to groonga-server package."
 msgstr "RPM: Split server related packages to groonga-server package."
 
-# 35e4c80da1f14dd9a0135e6b0fafde81
+# 464be5a3402f42e197081a5ee55ca603
 #: ../../../source/news/1.2.x.txt:289
 msgid "suggest: Added target object name into error messages."
 msgstr "suggest: Added target object name into error messages."
 
-# d67eb9d3f8fa4c829f957e68827bb094
+# ba78ca5b6a244d21898c0cbfbacb8198
 #: ../../../source/news/1.2.x.txt:290
 msgid "document: Started English support. (not completed yet.)"
 msgstr "document: Started English support. (not completed yet.)"
 
-# 1bc3f54b55ac4e8cad80fc1d877a1cd3
+# 4dd5e1a463324378b4c1570d82f21c3f
 #: ../../../source/news/1.2.x.txt:291
 msgid "groonga-suggest-httpd: Added --disable-max-fd-check option."
 msgstr "groonga-suggest-httpd: Added --disable-max-fd-check option."
 
-# 104d32e96a524de38edf04ce2e1b7448
+# 879a5bd6219c455c9f08021ea67096a4
 #: ../../../source/news/1.2.x.txt:292
 msgid ""
 "groonga: Renamed :option:`--address <-a>` option to :option:`--bind-address`."
 msgstr ""
 "groonga: Renamed :option:`--address <-a>` option to :option:`--bind-address`."
 
-# 0201382ccfd244a299bddaec8a1fb783
+# 277a047be7c642038d4cd0614ef945db
 #: ../../../source/news/1.2.x.txt:293
 msgid "groonga-suggest-httpd: Renamed --address option to --bind-address."
 msgstr "groonga-suggest-httpd: Renamed --address option to --bind-address."
 
-# 90634ff90c5b494da267b377f4928a0f
+# ce2da243d9bd460aba94809b912d4dd2
 #: ../../../source/news/1.2.x.txt:294
 msgid ""
 "Changed admin HTML install directory to $PREFIX/share/groonga/html/admin/ "
@@ -3028,7 +3103,7 @@ msgstr ""
 "Changed admin HTML install directory to $PREFIX/share/groonga/html/admin/ "
 "from $PREFIX/share/groonga/admin_html/."
 
-# 0284d2addb4b4f079617a1abc803814c
+# ef48171118924a838fd8006bb1389553
 #: ../../../source/news/1.2.x.txt:297
 msgid ""
 "groonga-suggest-httpd: Used \"application/json\" for JSON response instead "
@@ -3037,24 +3112,24 @@ msgstr ""
 "groonga-suggest-httpd: Used \"application/json\" for JSON response instead "
 "of \"text/javascript\"."
 
-# 71ee39bd1d984be49e60d16bca2df2a8
+# 712ccb3dbd244d80976b3824daf3eacc
 #: ../../../source/news/1.2.x.txt:299
 msgid ""
 "Windows: Used DLL relative path instead of executable file relative path."
 msgstr ""
 "Windows: Used DLL relative path instead of executable file relative path."
 
-# 781345a56d774a1e81398779cd8fa95d
+# c3ddbd8902da4f73aef66fca4386582c
 #: ../../../source/news/1.2.x.txt:301
 msgid "MeCab: Added error message from MeCab on MeCab initialize error."
 msgstr "MeCab: Added error message from MeCab on MeCab initialize error."
 
-# 690fbeebd3ad4cef938cd39644e2474f
+# 6031cb00bed24f679347e5b205bf4b5a
 #: ../../../source/news/1.2.x.txt:302
 msgid "suggest: Added prefix_search parameter to suggest command. #909"
 msgstr "suggest: Added prefix_search parameter to suggest command. #909"
 
-# 744468a59fc248b792155a73dcd35c77
+# 4f213fd748a540e5b88348d97f7ccbc4
 #: ../../../source/news/1.2.x.txt:304
 msgid ""
 "plugin: Added grn_plugin_get_system_plugins_dir() and grn_plugin_get_suffix"
@@ -3063,47 +3138,47 @@ msgstr ""
 "plugin: Added grn_plugin_get_system_plugins_dir() and grn_plugin_get_suffix"
 "() API."
 
-# 0c255ec3bf994668a544d8113b5e4902
+# bbfa963d7c7945f19be18115d77bff57
 #: ../../../source/news/1.2.x.txt:306
 msgid "Added grn_obj_is_builtin() API."
 msgstr "Added grn_obj_is_builtin() API."
 
-# 15f787da05a249c48cf5ec4d16331aed
+# b659be9d0e5241569d74ac0f03e01ca8
 #: ../../../source/news/1.2.x.txt:307
-msgid ":doc:`/commands/load`: Added table name check. #934"
-msgstr ":doc:`/commands/load`: Added table name check. #934"
+msgid ":doc:`/reference/commands/load`: Added table name check. #934"
+msgstr ":doc:`/reference/commands/load`: Added table name check. #934"
 
-# 036bd35aa2384c7a875cdc29a1b8f987
+# def4eb6190e14805a8b098afe7ce18d7
 #: ../../../source/news/1.2.x.txt:308
 msgid "Showed invalid name context in error message. #935"
 msgstr "Showed invalid name context in error message. #935"
 
-# 470f76d9edab41398e7282fd4b6992c4
+# 07a8f1470d434439a6b42003a9e685b2
 #: ../../../source/news/1.2.x.txt:313
 msgid "Fixed a data breaking bug on multi process update. #890"
 msgstr "Fixed a data breaking bug on multi process update. #890"
 
-# fdba5148837d4f47b62f843205bd8697
+# 6e3973020028464caaee9529b096096d
 #: ../../../source/news/1.2.x.txt:316
 msgid "1.2.1リリース - 2011/04/29"
 msgstr "1.2.1リリース - 2011/04/29"
 
-# 0734b7715e32414585144ef8b6ec3ee1
+# 1d6c8786f53e46a6abc56c4de10ab9db
 #: ../../../source/news/1.2.x.txt:321
 msgid "suggestコマンドにthresholdパラメーターを追加。#895"
 msgstr "suggestコマンドにthresholdパラメーターを追加。#895"
 
-# cae0e3fedfa045659893c63d45064fd8
+# ba98bb8f3d834335886b37d9b20dca49
 #: ../../../source/news/1.2.x.txt:322
 msgid "suggestのHTTPサーバにlimitパラメーターを追加。#899"
 msgstr "suggestのHTTPサーバにlimitパラメーターを追加。#899"
 
-# 42e9b6f1c9754a8f812972d521ba8b90
+# 82e399ddbec14bb5b68a0d9f78ad1637
 #: ../../../source/news/1.2.x.txt:323
 msgid "grntest: SIGINTでの中断に対応。"
 msgstr "grntest: SIGINTでの中断に対応。"
 
-# 98b37e2e98ef444f80ad6d24f7ba61b0
+# 1793e30ebd464cfa9691d0d1bbc53a7c
 #: ../../../source/news/1.2.x.txt:328
 msgid ""
 "同時に複数のデータベースを開いているとき、1つでもデータベー スを閉じると関連"
@@ -3112,7 +3187,7 @@ msgstr ""
 "同時に複数のデータベースを開いているとき、1つでもデータベー スを閉じると関連"
 "するプラグインも閉じられてしまう問題を修正。 #894"
 
-# 7a3277999bd743a79a48d7aa79d6ebc6
+# 2b5863a38a8942bc8646eb60ec50f0b1
 #: ../../../source/news/1.2.x.txt:330
 msgid ""
 "configureの--helpで出力される--with-deafult-encodingの値が 間違っていた問題を"
@@ -3121,67 +3196,67 @@ msgstr ""
 "configureの--helpで出力される--with-deafult-encodingの値が 間違っていた問題を"
 "修正。（ICHII Takashiさんが報告）"
 
-# 29e48ea2e35546439d76840a0d66faaa
+# afdfc6fd93a744b9bd1d22d7032cb665
 #: ../../../source/news/1.2.x.txt:332
 msgid "チュートリアル中のtypoを修正。（moozさんが修正）"
 msgstr "チュートリアル中のtypoを修正。（moozさんが修正）"
 
-# 9cb9612ee7a64f9eae00524ea14bdb7a
+# 4793c30cc4cc4387a1ded08ae798adc6
 #: ../../../source/news/1.2.x.txt:337
 msgid "ICHII Takashiさん"
 msgstr "ICHII Takashiさん"
 
-# 84438f6f84924c43a9da469d8800872d
+# bacd477976244f5eacacab4af0f444ff
 #: ../../../source/news/1.2.x.txt:338
 msgid "moozさん"
 msgstr "moozさん"
 
-# d29dfcb3ab114042a5bd4d478a4b0709
+# db57a1609a2c4df383c8cbec8144bde4
 #: ../../../source/news/1.2.x.txt:341
 msgid "1.2.0リリース - 2011/03/29"
 msgstr "1.2.0リリース - 2011/03/29"
 
-# d4f391c522324a5a8d53ff1d1441abd7
+# 982fd31f02b145a39b9940747ca8d7a2
 #: ../../../source/news/1.2.x.txt:346
 msgid "MacPortsでのインストールドキュメントを追加。"
 msgstr "MacPortsでのインストールドキュメントを追加。"
 
-# a701a2cb68a943d8a46ac35686c1b693
+# f4b311e9f7764c06ad2a1c56529451fa
 #: ../../../source/news/1.2.x.txt:347
 msgid "Homebrewでのインストールドキュメントを追加。"
 msgstr "Homebrewでのインストールドキュメントを追加。"
 
-# 5c4d409a36aa42bc874933d56ed1896c
+# 603443c7728a4c7381ff317bc24ebd6f
 #: ../../../source/news/1.2.x.txt:348
 msgid "WindowsではMinGWでもpthreadを使わないようにした。"
 msgstr "WindowsではMinGWでもpthreadを使わないようにした。"
 
-# 41800e8f81064dceb03438fc0cd04801
+# 4a375f8e5b4c47a0afe83a41afda94be
 #: ../../../source/news/1.2.x.txt:349
 msgid "オーバーフローチェックを強化。"
 msgstr "オーバーフローチェックを強化。"
 
-# e84707184e094d74b33c6518073a6667
+# dfddee37fa7f4773ae211b0fe9d09b0c
 #: ../../../source/news/1.2.x.txt:350
 msgid "位置情報の入力値チェックを強化。"
 msgstr "位置情報の入力値チェックを強化。"
 
-# e882bc294a10445a8c613348413a350d
+# 25d37fc1906342bc92a10de4cdc7419f
 #: ../../../source/news/1.2.x.txt:351
 msgid "インデックスを用いたジオサーチの例をチュートリアルに追加。 #438"
 msgstr "インデックスを用いたジオサーチの例をチュートリアルに追加。 #438"
 
-# 57e5c3a72eef43099b93d04851f8c0a8
+# 854e00014d4a4ec4b24ca3ca8fdff8c9
 #: ../../../source/news/1.2.x.txt:352
 msgid "Debian GNU/Linux wheezyのパッケージを追加。"
 msgstr "Debian GNU/Linux wheezyのパッケージを追加。"
 
-# c3a3c777bdea437e8ec970907fe27baa
+# 00f0dfe337b14d09bda74f69377d2641
 #: ../../../source/news/1.2.x.txt:353
 msgid "Debian GNU/Linux lennyのパッケージを削除。"
 msgstr "Debian GNU/Linux lennyのパッケージを削除。"
 
-# 7f9bd9fb3d3142fd926bba0fb85412a2
+# 1811e2938939497a829b3c152f42860c
 #: ../../../source/news/1.2.x.txt:354
 msgid ""
 "Debianパッケージをcdbsベースからdebhelperベースへ移行。 パッケージ名の変更あ"
@@ -3190,7 +3265,7 @@ msgstr ""
 "Debianパッケージをcdbsベースからdebhelperベースへ移行。 パッケージ名の変更あ"
 "り。 #887"
 
-# d4d62d7c906541c693c36c4e6a1644f7
+# 6429c251127b4f55bb67c7589b14e856
 #: ../../../source/news/1.2.x.txt:356
 msgid ""
 "MeCabトークナイザーの読み込みエラーを無視するようにした。た だし、ログには残"
@@ -3199,7 +3274,7 @@ msgstr ""
 "MeCabトークナイザーの読み込みエラーを無視するようにした。た だし、ログには残"
 "る。 #893"
 
-# c97ae63966d04951a425a5b23c11c7f2
+# cccdc886910c4b428bfe6d14db53af07
 #: ../../../source/news/1.2.x.txt:362
 msgid ""
 "autoconf 2.59環境において、ファイルシステムのルート直下に groongaディレクトリ"
@@ -3208,12 +3283,12 @@ msgstr ""
 "autoconf 2.59環境において、ファイルシステムのルート直下に groongaディレクトリ"
 "を作成しようとする問題を修正。 #833"
 
-# 9e11c3a161f04f63935f2de99f4b9cec
+# 9a1d17c2cedd43e8a1e2b035c0e4db2b
 #: ../../../source/news/1.2.x.txt:364
 msgid "JSONPが動作しなくなっていた問題を修正。"
 msgstr "JSONPが動作しなくなっていた問題を修正。"
 
-# 9425476098f941e5b140bce0230215ed
+# 1fc3923f4e4043f78654f76ae47cf589
 #: ../../../source/news/1.2.x.txt:365
 msgid ""
 "MeCabトークナイザーの読み込みに失敗したときにクラッシュする問題を修正。 "
@@ -3222,129 +3297,131 @@ msgstr ""
 "MeCabトークナイザーの読み込みに失敗したときにクラッシュする問題を修正。 "
 "（@tomotaka_itoさんが報告）"
 
-# 1965939907bd46fb9fff4c4844c14060
+# bd8849b8c59845759f6d4035538df72f
 #: ../../../source/news/1.2.x.txt:367
 msgid "[非互換] 位置情報の小数表記からミリ秒への変換誤差が大きい問題を修正。"
 msgstr "[非互換] 位置情報の小数表記からミリ秒への変換誤差が大きい問題を修正。"
 
-# 5842bd0e5d544bb594369626ed5997d4
+# 6bbf55ed3eb04d1b8860be8a7260e3aa
 #: ../../../source/news/1.2.x.txt:368
 msgid ""
-":doc:`/functions/geo_in_rectangle` の ``top_left`` と ``bottom_right`` に同じ"
-"位置を指定するとクラッシュする問題を修正。"
+":doc:`/reference/functions/geo_in_rectangle` の ``top_left`` と "
+"``bottom_right`` に同じ位置を指定するとクラッシュする問題を修正。"
 msgstr ""
-":doc:`/functions/geo_in_rectangle` の ``top_left`` と ``bottom_right`` に同じ"
-"位置を指定するとクラッシュする問題を修正。"
+":doc:`/reference/functions/geo_in_rectangle` の ``top_left`` と "
+"``bottom_right`` に同じ位置を指定するとクラッシュする問題を修正。"
 
-# 32f751b647f946ea8d3a0eb851a7a94a
+# 5e9fcbfba73e4b799e0a3ae2db403246
 #: ../../../source/news/1.2.x.txt:371
 msgid "小数形式のTimeリテラルをロードするとミリ秒情報が落ちる問題を修正。 #880"
 msgstr ""
 "小数形式のTimeリテラルをロードするとミリ秒情報が落ちる問題を修正。 #880"
 
-# b87a595b8a3442ebb4d37bfc87e37f05
+# 3075c85203d845ab83e7502592d332c6
 #: ../../../source/news/1.2.x.txt:372
-msgid ":doc:`/commands/column_list` のドキュメントを修正。 #758"
-msgstr ":doc:`/commands/column_list` のドキュメントを修正。 #758"
+msgid ":doc:`/reference/commands/column_list` のドキュメントを修正。 #758"
+msgstr ":doc:`/reference/commands/column_list` のドキュメントを修正。 #758"
 
-# d69286e17d8445b7b14eec1e4af6171f
+# ee6dc23768504da69076bb6224486455
 #: ../../../source/news/1.2.x.txt:373
-msgid ":doc:`/commands/table_list` のドキュメントを修正。"
-msgstr ":doc:`/commands/table_list` のドキュメントを修正。"
+msgid ":doc:`/reference/commands/table_list` のドキュメントを修正。"
+msgstr ":doc:`/reference/commands/table_list` のドキュメントを修正。"
 
-# 1801bb40237b4b7c8a174c87e86e373f
+# 8d790853c9d14296b0798ccfaea6b933
 #: ../../../source/news/1.2.x.txt:374
 msgid ""
-":doc:`/commands/load` で_valueを指定するとメモリリークする問題を修正。 #878"
+":doc:`/reference/commands/load` で_valueを指定するとメモリリークする問題を修"
+"正。 #878"
 msgstr ""
-":doc:`/commands/load` で_valueを指定するとメモリリークする問題を修正。 #878"
+":doc:`/reference/commands/load` で_valueを指定するとメモリリークする問題を修"
+"正。 #878"
 
-# 49374811f4c148879c0937509fa40532
+# 910ea678d9fd4912a11ca93ee35e9efa
 #: ../../../source/news/1.2.x.txt:375
-msgid ":doc:`/commands/load` でクラッシュする問題を修正。 #661"
-msgstr ":doc:`/commands/load` でクラッシュする問題を修正。 #661"
+msgid ":doc:`/reference/commands/load` でクラッシュする問題を修正。 #661"
+msgstr ":doc:`/reference/commands/load` でクラッシュする問題を修正。 #661"
 
-# 14c6e58898dc41b08372edd01ab22f44
+# ecb86ae60d014b2ba10dcc4a260aee7c
 #: ../../../source/news/1.2.x.txt:378
 msgid "実験的"
 msgstr "実験的"
 
-# 04e394b364e5467aa94f1025dc1f898c
+# 99e76a3d965149ec95e412fa9ef79496
 #: ../../../source/news/1.2.x.txt:380
 msgid "grn_table_truncate()を追加。（実験的。問題あり）"
 msgstr "grn_table_truncate()を追加。（実験的。問題あり）"
 
-# 203045cd610149ceb11aa58c7386b162
+# c9fc6c4701fe437cadf59c8369e0cfc9
 #: ../../../source/news/1.2.x.txt:381
 msgid "truncateコマンドを追加。（実験的。問題あり） #888"
 msgstr "truncateコマンドを追加。（実験的。問題あり） #888"
 
-# 5c4a261964ff40ae88201984663082cf
+# ec7685119e814bf182577cf6bac55d20
 #: ../../../source/news/1.2.x.txt:386
 msgid "@tomotaka_itoさん"
 msgstr "@tomotaka_itoさん"
 
-# 6767e73b24bc4e8596530dbe09fa3554
+# c572ede5846b41a0b41327d7cdb35fcb
 #: ../../../source/news/senna.txt:6
 msgid "News in Senna period"
 msgstr "News in Senna period"
 
-# 020b0d0e3510409d8c458550ba8ac53a
+# 861ba5f19b7f4f028bd8f661b6be63f8
 #: ../../../source/news/senna.txt:9
 msgid "Senna -> groonga - 2009/01/14"
 msgstr "Senna -> groonga - 2009/01/14"
 
-# bdd56dfb40334f22814f9582d860360c
+# 66cc6f93ff6e4e12b27fba7f14062f3e
 #: ../../../source/news/senna.txt:12
 msgid "2006/04/05"
 msgstr "2006/04/05"
 
-# 919e9d9faa44443098e6058db072bfc1
+# f4f860ff1af24d3fba7c58a160c3b4b8
 #: ../../../source/news/senna.txt:17
 msgid "SEN_INDEX_DELIMITED added"
 msgstr "SEN_INDEX_DELIMITED added"
 
-# f9613fc2a62c444da97ad06e6bf0963c
+# 06a39fd7c1fa495cb6f0c6826cd0db7f
 #: ../../../source/news/senna.txt:18
 msgid "sen_sel_term_extract added"
 msgstr "sen_sel_term_extract added"
 
-# d13dee0880d144d59f03336f9b0b11db
+# 8570ce26a2a344ad9d5757762c76f301
 #: ../../../source/news/senna.txt:21
 msgid "2006/03/03"
 msgstr "2006/03/03"
 
-# ef1211e45a8c45389a59735e78d55579
+# d2e62c04cceb4a0e8cf19ae329a6bd3c
 #: ../../../source/news/senna.txt:26
 msgid "snippet function added"
 msgstr "snippet function added"
 
-# 27545ef8b5864e1eaae5cfcf7bb2bab6
+# a1be76c3a8ce4b41bd573cc609528fe5
 #: ../../../source/news/senna.txt:29
 msgid "2006/01/16"
 msgstr "2006/01/16"
 
-# 48d705f01e7746a2a3fc8c7d75a69afe
+# 2b6ba6338b9446e883b31b29039a32f0
 #: ../../../source/news/senna.txt:34
 msgid "io.c bug fix. index format changed"
 msgstr "io.c bug fix. index format changed"
 
-# de5c9df01203460d80c104b53e1ed988
+# 2bf5e0d117c04a879859c0429aa31afd
 #: ../../../source/news/senna.txt:37
 msgid "2006/01/12"
 msgstr "2006/01/12"
 
-# 9d2a14446b4b45098d2929cde82805d9
+# 3596fece56ac4d5e9e43d66ce13bc8c7
 #: ../../../source/news/senna.txt:42
 msgid "windows porting released"
 msgstr "windows porting released"
 
-# 1cbf61e6fcdc4fb6b6723abf8a3cc337
+# 64071f647a4e443fbfb5dd8172f31770
 #: ../../../source/news/senna.txt:45
 msgid "2005/12/22"
 msgstr "2005/12/22"
 
-# 3402f87351c94aacaf53ca244adbd37c
+# 6464b5ddc48643659fffeab78ffa9b16
 #: ../../../source/news/senna.txt:50
 msgid ""
 "support unpatched version of mecab (0.81, 0.82pre, 0.90) no longer depends "
@@ -3353,82 +3430,82 @@ msgstr ""
 "support unpatched version of mecab (0.81, 0.82pre, 0.90) no longer depends "
 "on mecab mte patch."
 
-# 4bec358bdb604b73943ba62035880912
+# 0e45bfc416274a259082bc3072c93800
 #: ../../../source/news/senna.txt:54
 msgid "2005/10/27"
 msgstr "2005/10/27"
 
-# 269c5802dac441d4ab6faaf8f6a32549
+# 5bb070052d62426dbc83d1f3e84c9747
 #: ../../../source/news/senna.txt:59
 msgid "mysql binding updated"
 msgstr "mysql binding updated"
 
-# 08fc38eab61b481d8f7bef3918b0a7d9
+# 83b38bd9f8984064a7e1b6ce4abc7071
 #: ../../../source/news/senna.txt:62
 msgid "2005/09/17"
 msgstr "2005/09/17"
 
-# 632c5aca4cd346c7ba8b6bcba54cce03
+# b5894b8982fe45eea1f6a3ce61c0c05e
 #: ../../../source/news/senna.txt:67
 msgid "mysql-5.0.12-beta binding from <tasuku at hottolink.co.jp>"
 msgstr "mysql-5.0.12-beta binding from <tasuku at hottolink.co.jp>"
 
-# 8727c437f8b94f3cb68ad533a194a64a
+# 99cf21c976df400d863c2d170638af0d
 #: ../../../source/news/senna.txt:70
 msgid "2005/09/08"
 msgstr "2005/09/08"
 
-# 9ba0b2fed7b64d7287097577759892fa
+# ab0ef5283511404ab4858381f8a69413
 #: ../../../source/news/senna.txt:75
 msgid "utf-8 support enhanced. (SEN_INDEX_NORMALIZE become available)"
 msgstr "utf-8 support enhanced. (SEN_INDEX_NORMALIZE become available)"
 
-# 63fc2b6afc744785b8ae4071c5be4206
+# 89e4f7a6203442168bbe5afbec093f71
 #: ../../../source/news/senna.txt:78
 msgid "2005/08/16"
 msgstr "2005/08/16"
 
-# c55214e8546247cda387504ce6143f5c
+# d466a9fbe88b4b29ac6fc6f388f65a14
 #: ../../../source/news/senna.txt:83
 msgid "Ruby binding has rewrited using SWIG and supports advanced API."
 msgstr "Ruby binding has rewrited using SWIG and supports advanced API."
 
-# 881978062cda47f1b4439789f561aa15
+# 225c276aa2d946a69a2c8370520b082b
 #: ../../../source/news/senna.txt:84
 msgid "SJIS support enhanced."
 msgstr "SJIS support enhanced."
 
-# 545df40edb6542709612d3528f0c817b
+# fde3c91e7b0d4574a1980bf667110ccc
 #: ../../../source/news/senna.txt:87
 msgid "2005/07/05"
 msgstr "2005/07/05"
 
-# b048100d2f094ce0bdd7b1abf8ffb11e
+# 3b09aeefe5f248688e31f5c79f55f3a8
 #: ../../../source/news/senna.txt:90
 msgid "Changes"
 msgstr "Changes"
 
-# cb77ca2e427e47e2a2a447c420dab705
+# e49dd994802a4f7db092d8854ea73d29
 #: ../../../source/news/senna.txt:92
 msgid "the license has changed to LGPL from GPL."
 msgstr "the license has changed to LGPL from GPL."
 
-# eb987a9c282049ec9a410629cb427e4a
+# c87201e674834c13811299e34b4173a1
 #: ../../../source/news/senna.txt:95
 msgid "2005/06/23"
 msgstr "2005/06/23"
 
-# 7e9515294e8848868f33d25897376ca7
+# d7b3b0dda1c642dbacca044640f76ffa
 #: ../../../source/news/senna.txt:100
 msgid "advanced API functions implemented"
 msgstr "advanced API functions implemented"
 
-# 47b6be8d9a0a42c3bfb71ffd2929907a
+# ee0998f99a5c491ead5716e162829839
 #: ../../../source/news/senna.txt:103
 msgid "2005/04/12"
 msgstr "2005/04/12"
 
-# f288e5e6b664433280425427c42b53fb
+# eaac2539c2984a59ad743c9881a58249
 #: ../../../source/news/senna.txt:108
 msgid ""
 "applied ftb patch for mysql binding from <ko at yappo.ne.jp> 'IN BOOLEAN "

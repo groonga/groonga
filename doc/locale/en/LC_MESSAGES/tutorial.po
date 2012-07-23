@@ -1,93 +1,158 @@
-# English translations for 2.0.1 package.
+# English translations for groonga package.
 # Copyright (C) 2009-2012, Brazil, Inc
 # This file is distributed under the same license as the groonga package.
 # Kouhei Sutou <kou@clear-code.com>, 2012.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: 2.0.1\n"
+"Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-28 11:41\n"
-"PO-Revision-Date: 2012-04-28 11:38+0900\n"
+"POT-Creation-Date: 2012-07-23 17:56\n"
+"PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
-"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-# 2dd8a2a18d154ae88f7f00d1d7194425
-# f38b0fd8958b4fab900414278bd9e999
-# f38b0fd8958b4fab900414278bd9e999
-# f38b0fd8958b4fab900414278bd9e999
-# f38b0fd8958b4fab900414278bd9e999
-# f38b0fd8958b4fab900414278bd9e999
-# f38b0fd8958b4fab900414278bd9e999
-# f38b0fd8958b4fab900414278bd9e999
-# 04e5b17aef98496eb62ed73c9e7adf2a
-# dcde4d52e877436da9d1cd1480487020
-# 6d43b72838ab4deaa5efb5cd21b96512
-# f61a72f3993b4283aaf82c169039f9f6
-# 3cc5e342bf5342058a809a0be5d2423e
-# d7c2fd75aeaa44e6b6fe28bf2991303e
-# 1a5ba82961fa4e7c94c233b2ac104da1
-# 73c461bb9acc452ba0d7401d2dd50328
-# ea40f40ba16945908e39af16f04f4a1a
-# 161c9edd3c1d4856ae5bf342aec61925
-# 2f6b4895d73f4d3db6b23b465025cb3d
-# c3f0ceff27ea45c0b60c9eb9192ad758
-# 8e4b2c4a73fc49d083c1115244cdf0ea
-# 5a689c04368d44638f19748b559ca137
-# 5a689c04368d44638f19748b559ca137
-# 5a689c04368d44638f19748b559ca137
-# 399de301356b482a92d4fa5ef0fb3ab7
-# 5a689c04368d44638f19748b559ca137
-# 5a689c04368d44638f19748b559ca137
-# 5a689c04368d44638f19748b559ca137
-# 5a689c04368d44638f19748b559ca137
-# 5a689c04368d44638f19748b559ca137
-# 5a689c04368d44638f19748b559ca137
-# 5a689c04368d44638f19748b559ca137
-# 5a689c04368d44638f19748b559ca137
-# 5a689c04368d44638f19748b559ca137
-# 5a689c04368d44638f19748b559ca137
-# 5a689c04368d44638f19748b559ca137
-# 5a689c04368d44638f19748b559ca137
-# 5a689c04368d44638f19748b559ca137
-# 5a689c04368d44638f19748b559ca137
-# 1ba487ca70b04ce880d92ac67ec6e70d
-# a7ec7c5b38ab451d9f008b17e36987cb
-# 0de1c75139884525914aa6841028bc94
-# 257595abbf0844da81d1daabafae4e04
-# 2e99696bf49a46199e0435f45375bdf4
-# 37659c76b83845aea577b39ef46923b1
-# 2708a2c5242e436e9c82cd1cd8e8eea5
-# 4982527545ec4b65a3318d45e62369ad
-# 6c71ff05e348424e86eeab634b2d330d
-# 6d8c5b1ea23646bb82a7fdcd48be4ac0
-# 42329e3c4678411bb7a15ab2fe937f44
-# 4cc4dfb8d3554635b94ab366ed681e3c
-# 68afce50dd9f46a0b4ff823011953e9b
-# 49ad743421774e3596bb85bf96e43677
-# 8b32e5080f9d40b8b43fa0d321e7675d
-# 8b32e5080f9d40b8b43fa0d321e7675d
-# 8b32e5080f9d40b8b43fa0d321e7675d
-# 8b32e5080f9d40b8b43fa0d321e7675d
-# 8b32e5080f9d40b8b43fa0d321e7675d
-# 8b32e5080f9d40b8b43fa0d321e7675d
-# 82b1be9960764a1eac76730e4860c733
-# 805c12650b0b473696502a320bc84782
-# dd3bbe3638b94f0c96d20cd607c1a206
-# a6462ebff5414da895c0fc44a094394e
-# c149cb190e0440cca45a8ff97429efa8
-# 5bc4396cec3c478484a915170b8e57d9
-# ed31f15b7eb0489d87d7184b1bc5125a
-# 4c994a6baa994c8c943fc9ca9207f9e6
-# 539f342595374db5bc4ccb6966c5f2a4
-# fa105bce6f9e43259a9bef661693f1bd
-# e69f548188474a9bb96972793e6aad2f
-# d77ad58c81294046895fa9298d230e0e
+# 6713e747a3044b778255e5fee24f2361
+#: ../../../source/tutorial.txt:6
+msgid "Tutorial"
+msgstr "Tutorial"
+
+# e6f7075c5a1140d5b6ba80cea655923a
+#: ../../../source/tutorial/data.txt:11
+msgid "Various data types"
+msgstr "Various data types"
+
+# 0cba4e68adfb460d93b400ec935f8838
+#: ../../../source/tutorial/data.txt:13
+msgid ""
+"Groonga is a full text search engine but also serves as a column-oriented "
+"data store. Groonga supports various data types, such as numeric types, "
+"string types, date and time type, longitude and latitude types, etc. This "
+"tutorial shows a list of data types and explains how to use them."
+msgstr ""
+"Groonga is a full text search engine but also serves as a column-oriented "
+"data store. Groonga supports various data types, such as numeric types, "
+"string types, date and time type, longitude and latitude types, etc. This "
+"tutorial shows a list of data types and explains how to use them."
+
+# 57107b2887df4b0c81ffcf7138da2bff
+#: ../../../source/tutorial/data.txt:16
+msgid "Overview"
+msgstr "Overview"
+
+# c89f929f49f746b7928b7848614616ad
+#: ../../../source/tutorial/data.txt:18
+msgid ""
+"The basic data types of groonga are roughly divided into 5 groups --- "
+"boolean type, numeric types, string types, date/time type and longitude/"
+"latitude types. The numeric types are further divided according to whether "
+"integer or floating point number, signed or unsigned and the number of bits "
+"allocated to each integer. The string types are further divided according to "
+"the maximum length. The longitude/latitude types are further divided "
+"according to the geographic coordinate system. For more details, see :doc:`/"
+"reference/type`."
+msgstr ""
+"The basic data types of groonga are roughly divided into 5 groups --- "
+"boolean type, numeric types, string types, date/time type and longitude/"
+"latitude types. The numeric types are further divided according to whether "
+"integer or floating point number, signed or unsigned and the number of bits "
+"allocated to each integer. The string types are further divided according to "
+"the maximum length. The longitude/latitude types are further divided "
+"according to the geographic coordinate system. For more details, see :doc:`/"
+"reference/type`."
+
+# 8dfc1c5f6664417b910f508f97933893
+#: ../../../source/tutorial/data.txt:20
+msgid ""
+"In addition, groonga supports reference types and vector types. Reference "
+"types are designed for accessing other tables. Vector types are designed for "
+"storing a variable number of values in one element."
+msgstr ""
+"In addition, groonga supports reference types and vector types. Reference "
+"types are designed for accessing other tables. Vector types are designed for "
+"storing a variable number of values in one element."
+
+# 4542ad4bec654579badbb69e0accc3b0
+#: ../../../source/tutorial/data.txt:22
+msgid "First, let's create a table for this tutorial."
+msgstr "First, let's create a table for this tutorial."
+
+# b7ba20d486f44de997cf0e032a200f5d
+# ec9e03224a1a40c1a922a848be2c74fe
+# b2faf0da0900413a9c628c34725bcb22
+# 559ad9267d864b4684117f8ed9510f67
+# 9a3e37117d9047ac8d7cbf3539a88215
+# 5ae4ac4eff53432b94bd3526f479b445
+# 2e7df41040eb47a69d509791117a0284
+# b870ea85febc4a639cb724dea7f92e85
+# 535d853568514954b57d17ebac64aed5
+# c4d97026d66249d1883b82b8170eda9e
+# 56d3874491c343d1894225072e7fbd47
+# a7d7413abc2e4ad6b72726b683054bf8
+# bac75efc407e4aa5a3d6536768496d64
+# be33c33693504bb8a20a9605cd018adb
+# 5ddf3538cea34c519312ebe0310aa91c
+# 8a19a7e8df1f4c70981564283c87152b
+# 52b9db7ab2e544dd9f1b0b03f15d2067
+# 8f67c482ded94956940d97b417dbb707
+# b02844c2b6724f918a687001eafad5e0
+# d967116176414ca7a0bb01b72d31c485
+# 092b1079bd3b46ec88e11513e928ba30
+# 6cfa4eb004a847d4b30f66cc962da402
+# 6c687ec9254b4f55a48959a6ba5e3162
+# 8304e588793f432cb9d7038a2cd1449e
+# 8304e588793f432cb9d7038a2cd1449e
+# 8304e588793f432cb9d7038a2cd1449e
+# 8304e588793f432cb9d7038a2cd1449e
+# 8304e588793f432cb9d7038a2cd1449e
+# 8304e588793f432cb9d7038a2cd1449e
+# 8304e588793f432cb9d7038a2cd1449e
+# 8304e588793f432cb9d7038a2cd1449e
+# 8304e588793f432cb9d7038a2cd1449e
+# 8304e588793f432cb9d7038a2cd1449e
+# 8304e588793f432cb9d7038a2cd1449e
+# 8304e588793f432cb9d7038a2cd1449e
+# 8304e588793f432cb9d7038a2cd1449e
+# 8304e588793f432cb9d7038a2cd1449e
+# 8304e588793f432cb9d7038a2cd1449e
+# 8304e588793f432cb9d7038a2cd1449e
+# 78c519008cf34bfaa95e328400d0d7da
+# 85e0606dc8f4453d8deea5798482c577
+# b89b962fb9504a66bbd4728c51b15cab
+# 905c5f8303434d7b9c90a44401b7a2e5
+# 6ea0e8bdf7da4e108b6736a50c089ecd
+# bd09cb81d43e4bfebed8d73c54fef3b9
+# 5be40a7e43e8480296a4bc5f09531525
+# 7225013361764d45a2bc55accfafdfd3
+# 45f40517d2c543a2b91ea9c98ee8d215
+# a439f1f98aa24122a704a3ca4e0800c4
+# 123d968b2d30485aa0d59289a8c10d83
+# a29de3e7efa24f918f98567bf514ac4e
+# 5af4b07ac9c74bcca50c14d5c46b3800
+# cb7f7cecb5e2476c962da3ffe3619fff
+# 5e8b248f210a49e894d4498cb21d942b
+# 36e446ebd4f34d9b8ea4ca75a6bd4451
+# af92c4653fd44643bcd350ff44c2f97d
+# 2a5df16e14404475a12be1dfaa41b14f
+# 2a5df16e14404475a12be1dfaa41b14f
+# 2a5df16e14404475a12be1dfaa41b14f
+# c973ca994de84130b8a7437e5840dbb8
+# 54b1c174b46444d9b7ea6adfa7e5ba85
+# 07f53d2d9fbe41eca7eed4b1bd6dc68d
+# 82d3c8f8fdad43378e2095413160f3c7
+# 89227a39ad9d4ea39e478d5ddc5823fe
+# d61c073b6eea4a1c94727b228923d33c
+# 786b8667d78f4e74a5694e36884e1261
+# ef13dbf164274b4f9b1fd7be806110a5
+# 23862c95c1be4882913fb904eac6d99a
+# dcec4198ff9640d18f34e10d2e751e38
+# 3766263e95104e89894057d5cf699ef0
+# 8d30e4095b764a048a857c26aaa633a6
 #: ../../../source/example/tutorial/data-1.log:1
 #: ../../../source/example/tutorial/data-2.log:1
 #: ../../../source/example/tutorial/data-3.log:1
@@ -110,6 +175,14 @@ msgstr ""
 #: ../../../source/example/tutorial/index-6.log:1
 #: ../../../source/example/tutorial/index-7.log:1
 #: ../../../source/example/tutorial/introduction-1.log:1
+#: ../../../source/example/tutorial/introduction-2.log:1
+#: ../../../source/example/tutorial/introduction-3.log:1
+#: ../../../source/example/tutorial/introduction-4.log:1
+#: ../../../source/example/tutorial/introduction-5.log:1
+#: ../../../source/example/tutorial/introduction-6.log:1
+#: ../../../source/example/tutorial/introduction-7.log:1
+#: ../../../source/example/tutorial/introduction-8.log:1
+#: ../../../source/example/tutorial/introduction-9.log:1
 #: ../../../source/example/tutorial/introduction-10.log:1
 #: ../../../source/example/tutorial/introduction-11.log:1
 #: ../../../source/example/tutorial/introduction-12.log:1
@@ -119,20 +192,11 @@ msgstr ""
 #: ../../../source/example/tutorial/introduction-16.log:1
 #: ../../../source/example/tutorial/introduction-17.log:1
 #: ../../../source/example/tutorial/introduction-18.log:1
-#: ../../../source/example/tutorial/introduction-2.log:1
-#: ../../../source/example/tutorial/introduction-3.log:1
-#: ../../../source/example/tutorial/introduction-4.log:1
-#: ../../../source/example/tutorial/introduction-5.log:1
-#: ../../../source/example/tutorial/introduction-6.log:1
-#: ../../../source/example/tutorial/introduction-7.log:1
-#: ../../../source/example/tutorial/introduction-8.log:1
-#: ../../../source/example/tutorial/introduction-9.log:1
 #: ../../../source/example/tutorial/match_columns-1.log:1
 #: ../../../source/example/tutorial/match_columns-2.log:1
 #: ../../../source/example/tutorial/match_columns-3.log:1
 #: ../../../source/example/tutorial/match_columns-4.log:1
 #: ../../../source/example/tutorial/micro_blog-1.log:1
-#: ../../../source/example/tutorial/micro_blog-10.log:1
 #: ../../../source/example/tutorial/micro_blog-2.log:1
 #: ../../../source/example/tutorial/micro_blog-3.log:1
 #: ../../../source/example/tutorial/micro_blog-4.log:1
@@ -141,8 +205,12 @@ msgstr ""
 #: ../../../source/example/tutorial/micro_blog-7.log:1
 #: ../../../source/example/tutorial/micro_blog-8.log:1
 #: ../../../source/example/tutorial/micro_blog-9.log:1
+#: ../../../source/example/tutorial/micro_blog-10.log:1
+#: ../../../source/tutorial/network.txt:31
+#: ../../../source/tutorial/network.txt:48
 #: ../../../source/example/tutorial/network-1.log:1
 #: ../../../source/example/tutorial/network-2.log:1
+#: ../../../source/tutorial/network.txt:112
 #: ../../../source/example/tutorial/network-3.log:1
 #: ../../../source/example/tutorial/patricia_trie-1.log:1
 #: ../../../source/example/tutorial/patricia_trie-2.log:1
@@ -156,94 +224,26 @@ msgstr ""
 #: ../../../source/example/tutorial/search-5.log:1
 #: ../../../source/example/tutorial/search-6.log:1
 #: ../../../source/example/tutorial/search-7.log:1
-#: ../../../source/tutorial/network.txt:31
-#: ../../../source/tutorial/network.txt:48
-#: ../../../source/tutorial/network.txt:112
 msgid "Execution example::"
 msgstr "Execution example::"
 
-# 495cbb696fa348f8b43fff7b96506a81
-#: ../../../source/tutorial.txt:6
-msgid "Tutorial"
-msgstr "Tutorial"
-
-# 55c7c73c33eb43e09e4044bf2efc20c8
-#: ../../../source/tutorial/data.txt:11
-msgid "Various data types"
-msgstr "Various data types"
-
-# 703ec5b7d6e54e329515823f5c71b20d
-#: ../../../source/tutorial/data.txt:13
-msgid ""
-"Groonga is a full text search engine but also serves as a column-oriented "
-"data store. Groonga supports various data types, such as numeric types, "
-"string types, date and time type, longitude and latitude types, etc. This "
-"tutorial shows a list of data types and explains how to use them."
-msgstr ""
-"Groonga is a full text search engine but also serves as a column-oriented "
-"data store. Groonga supports various data types, such as numeric types, "
-"string types, date and time type, longitude and latitude types, etc. This "
-"tutorial shows a list of data types and explains how to use them."
-
-# b901cae2b4ac4f1aa468468278011d8f
-#: ../../../source/tutorial/data.txt:16
-msgid "Overview"
-msgstr "Overview"
-
-# fbe4c75e530942418bc11720b896fd0f
-#: ../../../source/tutorial/data.txt:18
-msgid ""
-"The basic data types of groonga are roughly divided into 5 groups --- "
-"boolean type, numeric types, string types, date/time type and longitude/"
-"latitude types. The numeric types are further divided according to whether "
-"integer or floating point number, signed or unsigned and the number of bits "
-"allocated to each integer. The string types are further divided according to "
-"the maximum length. The longitude/latitude types are further divided "
-"according to the geographic coordinate system. For more details, see :doc:`/"
-"type`."
-msgstr ""
-"The basic data types of groonga are roughly divided into 5 groups --- "
-"boolean type, numeric types, string types, date/time type and longitude/"
-"latitude types. The numeric types are further divided according to whether "
-"integer or floating point number, signed or unsigned and the number of bits "
-"allocated to each integer. The string types are further divided according to "
-"the maximum length. The longitude/latitude types are further divided "
-"according to the geographic coordinate system. For more details, see :doc:`/"
-"type`."
-
-# aad98611515047b1b42597d078f46bff
-#: ../../../source/tutorial/data.txt:20
-msgid ""
-"In addition, groonga supports reference types and vector types. Reference "
-"types are designed for accessing other tables. Vector types are designed for "
-"storing a variable number of values in one element."
-msgstr ""
-"In addition, groonga supports reference types and vector types. Reference "
-"types are designed for accessing other tables. Vector types are designed for "
-"storing a variable number of values in one element."
-
-# d3b90b641c094c498be0dea6ab6e3eb0
-#: ../../../source/tutorial/data.txt:22
-msgid "First, let's create a table for this tutorial."
-msgstr "First, let's create a table for this tutorial."
-
-# 32cabc4acfb44b35af812f9f03329560
+# f0e7ed0282794376802383526419a843
 #: ../../../source/tutorial/data.txt:29
 msgid "Boolean type"
 msgstr "Boolean type"
 
-# 842fb0541f8a415aa8aa3d2ff562bafc
+# e8eed2d57a26423d8be950071033bdee
 #: ../../../source/tutorial/data.txt:31
 msgid ""
 "The boolean type is used to store true or false. To create a boolean type "
-"column, specify Bool to the `type` parameter of :doc:`/commands/"
+"column, specify Bool to the `type` parameter of :doc:`/reference/commands/"
 "column_create` command. The default value of the boolean type is false."
 msgstr ""
 "The boolean type is used to store true or false. To create a boolean type "
-"column, specify Bool to the `type` parameter of :doc:`/commands/"
+"column, specify Bool to the `type` parameter of :doc:`/reference/commands/"
 "column_create` command. The default value of the boolean type is false."
 
-# a850359207b34c97a040592e9f0637a0
+# 1c7fc6c6fdce4817a51450ac83bb71da
 #: ../../../source/tutorial/data.txt:33
 msgid ""
 "The following example creates a boolean type column and adds three records. "
@@ -254,60 +254,62 @@ msgstr ""
 "Note that the third record has the default value because no value is "
 "specified."
 
-# a6f4208d085241d6b368b302b8e32c0a
+# f7796c5b4a9e4efea7ba15a76dbccd29
 #: ../../../source/tutorial/data.txt:47
 msgid "Numeric types"
 msgstr "Numeric types"
 
-# f5a73c544c8a4ea99deac8bd90d9b4e8
+# f4b198e522e14ff99b3f54f5a3261fd6
 #: ../../../source/tutorial/data.txt:49
 msgid ""
 "The numeric types are divided into integer types and a floating point number "
 "type. The integer types are further divided into the signed integer types "
 "and unsigned integer types. In addition, you can choose the number of bits "
-"allocated to each integer. For more details, see :doc:`/type`. The default "
-"value of the numeric types is 0."
+"allocated to each integer. For more details, see :doc:`/reference/type`. The "
+"default value of the numeric types is 0."
 msgstr ""
 "The numeric types are divided into integer types and a floating point number "
 "type. The integer types are further divided into the signed integer types "
 "and unsigned integer types. In addition, you can choose the number of bits "
-"allocated to each integer. For more details, see :doc:`/type`. The default "
-"value of the numeric types is 0."
+"allocated to each integer. For more details, see :doc:`/reference/type`. The "
+"default value of the numeric types is 0."
 
-# 369fa4e9db9f491485684cfdac300dc1
+# 5bfb766b8c984f06bf3c8903889cb9a3
 #: ../../../source/tutorial/data.txt:51
 msgid ""
 "The following example creates an Int8 column and a Float column, and then "
-"updates existing records. The :doc:`/commands/load` command updates the "
-"weight column as expected. On the other hand, the price column values are "
-"different from the specified values because 15.9 is not an integer and 200 "
-"is too large. 15.9 is converted to 15 by removing the fractional part. 200 "
-"causes an overflow and the result becomes -56. Note that the result of an "
-"overflow/underflow is undefined."
+"updates existing records. The :doc:`/reference/commands/load` command "
+"updates the weight column as expected. On the other hand, the price column "
+"values are different from the specified values because 15.9 is not an "
+"integer and 200 is too large. 15.9 is converted to 15 by removing the "
+"fractional part. 200 causes an overflow and the result becomes -56. Note "
+"that the result of an overflow/underflow is undefined."
 msgstr ""
 "The following example creates an Int8 column and a Float column, and then "
-"updates existing records. The :doc:`/commands/load` command updates the "
-"weight column as expected. On the other hand, the price column values are "
-"different from the specified values because 15.9 is not an integer and 200 "
-"is too large. 15.9 is converted to 15 by removing the fractional part. 200 "
-"causes an overflow and the result becomes -56. Note that the result of an "
-"overflow/underflow is undefined."
+"updates existing records. The :doc:`/reference/commands/load` command "
+"updates the weight column as expected. On the other hand, the price column "
+"values are different from the specified values because 15.9 is not an "
+"integer and 200 is too large. 15.9 is converted to 15 by removing the "
+"fractional part. 200 causes an overflow and the result becomes -56. Note "
+"that the result of an overflow/underflow is undefined."
 
-# 51a21012cb2545d4b31943fec8881faa
+# 3415e9c02d624912a4b268bf80969838
 #: ../../../source/tutorial/data.txt:66
 msgid "String types"
 msgstr "String types"
 
-# aa6872d0a60843bb81e2a3b5957b383f
+# 0eb3f40646a347888b0aba2ddf59995d
 #: ../../../source/tutorial/data.txt:68
 msgid ""
 "The string types are divided according to the maximum length. For more "
-"details, see :doc:`/type`. The default value is the zero-length string."
+"details, see :doc:`/reference/type`. The default value is the zero-length "
+"string."
 msgstr ""
 "The string types are divided according to the maximum length. For more "
-"details, see :doc:`/type`. The default value is the zero-length string."
+"details, see :doc:`/reference/type`. The default value is the zero-length "
+"string."
 
-# ce727587359b491abe20b67b980a95f7
+# b1b1f406c0844521b290357cc8daac03
 #: ../../../source/tutorial/data.txt:70
 msgid ""
 "The following example creates a ShortText column and updates existing "
@@ -316,29 +318,31 @@ msgstr ""
 "The following example creates a ShortText column and updates existing "
 "records. The third record has the default value because not updated."
 
-# d6f7815babb747448ef51f3aa483e78f
+# c05bf5242b414d599abd0403026fbf23
 #: ../../../source/tutorial/data.txt:83
 msgid "Date and time type"
 msgstr "Date and time type"
 
-# 6f4d622d29ff49d4a451e91705bdd66a
+# aa9e27d086c84b2b97f6b4fbfb46a10b
 #: ../../../source/tutorial/data.txt:85
 msgid ""
 "The date and time type of groonga is Time. Actually, a Time column stores a "
 "date and time as the number of microseconds since the Epoch, 1970-01-01 "
 "00:00:00. A Time value can represent a date and time before the Epoch "
-"because the actual data type is a signed integer. Note that :doc:`/commands/"
-"load` and :doc:`/commands/select` commands use a decimal number to represent "
-"a data and time in seconds. The default value is 0.0, which means the Epoch."
+"because the actual data type is a signed integer. Note that :doc:`/reference/"
+"commands/load` and :doc:`/reference/commands/select` commands use a decimal "
+"number to represent a data and time in seconds. The default value is 0.0, "
+"which means the Epoch."
 msgstr ""
 "The date and time type of groonga is Time. Actually, a Time column stores a "
 "date and time as the number of microseconds since the Epoch, 1970-01-01 "
 "00:00:00. A Time value can represent a date and time before the Epoch "
-"because the actual data type is a signed integer. Note that :doc:`/commands/"
-"load` and :doc:`/commands/select` commands use a decimal number to represent "
-"a data and time in seconds. The default value is 0.0, which means the Epoch."
+"because the actual data type is a signed integer. Note that :doc:`/reference/"
+"commands/load` and :doc:`/reference/commands/select` commands use a decimal "
+"number to represent a data and time in seconds. The default value is 0.0, "
+"which means the Epoch."
 
-# f6692a7474434b169154b00e811126e2
+# 990cb4bb61d04d8fa4624195fa7ae140
 #: ../../../source/tutorial/data.txt:87
 msgid ""
 "The following example creates a Time column and updates existing records. "
@@ -347,35 +351,37 @@ msgstr ""
 "The following example creates a Time column and updates existing records. "
 "The first record has the default value because not updated."
 
-# 66c63a1b1d704ba78d33cc7b1b6beffa
+# 6942ea8eb68a480fbfb1fe03d7d6dca6
 #: ../../../source/tutorial/data.txt:100
 msgid "Longitude and latitude types"
 msgstr "Longitude and latitude types"
 
-# 0637f470fec844148c44f8f073d8791a
+# cf424440cad94e37b084baea9452792e
 #: ../../../source/tutorial/data.txt:102
 msgid ""
 "The longitude and latitude types are divided according to the geographic "
-"coordinate system. For more details, see :doc:`/type`. To represent a "
-"longitude and latitude, groonga uses a string formatted as follows:"
+"coordinate system. For more details, see :doc:`/reference/type`. To "
+"represent a longitude and latitude, groonga uses a string formatted as "
+"follows:"
 msgstr ""
 "The longitude and latitude types are divided according to the geographic "
-"coordinate system. For more details, see :doc:`/type`. To represent a "
-"longitude and latitude, groonga uses a string formatted as follows:"
+"coordinate system. For more details, see :doc:`/reference/type`. To "
+"represent a longitude and latitude, groonga uses a string formatted as "
+"follows:"
 
-# 415b59cfb77f47959f024e5d18b6bb75
+# 623d65f1bf50493f9faada4b835c28c9
 #: ../../../source/tutorial/data.txt:104
 msgid ""
 "\"longitude x latitude\" in milliseconds (e.g.: \"128452975x503157902\")"
 msgstr ""
 "\"longitude x latitude\" in milliseconds (e.g.: \"128452975x503157902\")"
 
-# e664fb9fa5914a238ac73e5cebdef526
+# 0d60b38cc2424ffcab0a821da66a1a8c
 #: ../../../source/tutorial/data.txt:105
 msgid "\"longitude x latitude\" in degrees (e.g.: \"35.6813819x139.7660839\")"
 msgstr "\"longitude x latitude\" in degrees (e.g.: \"35.6813819x139.7660839\")"
 
-# b31ab6c6670140eda6387f430f83ec17
+# 2e9d50f046eb4ec2b7c83299a6daf114
 #: ../../../source/tutorial/data.txt:107
 msgid ""
 "A number with/without a decimal point represents a longitude or latitude in "
@@ -390,7 +396,7 @@ msgstr ""
 "not be used. A comma (',') is also available as a delimiter. The default "
 "value is \"0x0\"."
 
-# a7286f6aef7340f0b0d28c4c6b33a12f
+# e1bd6278ee6544dc8c72a1e876143b38
 #: ../../../source/tutorial/data.txt:109
 msgid ""
 "The following example creates a WGS84GeoPoint column and updates existing "
@@ -399,12 +405,12 @@ msgstr ""
 "The following example creates a WGS84GeoPoint column and updates existing "
 "records. The second record has the default value because not updated."
 
-# 12e384718a50467481f0ef3a680b412f
+# 24c4f7c7d68d4b2e88180fbd0eac2a43
 #: ../../../source/tutorial/data.txt:122
 msgid "Reference types"
 msgstr "Reference types"
 
-# 58a121f69968414faf7c6e441c0cdcdd
+# cb04956181bf4156800e9301d753b750
 #: ../../../source/tutorial/data.txt:124
 msgid ""
 "Groonga supports a reference column, which stores references to records in "
@@ -415,26 +421,26 @@ msgstr ""
 "its associated table. In practice, a reference column stores the IDs of the "
 "referred records in the associated table and enables access to those records."
 
-# 8e849f9e48b4480087b0eae015461723
+# 9dc7c40efd1c41b0aaa5fa153da74b14
 #: ../../../source/tutorial/data.txt:126
 msgid ""
 "You can specify a column in the associated table to the `output_columns` "
-"parameter of a :doc:`/commands/select` command. The format is \"Src.Dest\" "
-"where Src is the name of the reference column and Dest is the name of the "
-"target column. If only the reference column is specified, it is handled as "
-"\"Src._key\". Note that if a reference does not point to a valid record, a :"
-"doc:`/commands/select` command outputs the default value of the target "
-"column."
+"parameter of a :doc:`/reference/commands/select` command. The format is "
+"\"Src.Dest\" where Src is the name of the reference column and Dest is the "
+"name of the target column. If only the reference column is specified, it is "
+"handled as \"Src._key\". Note that if a reference does not point to a valid "
+"record, a :doc:`/reference/commands/select` command outputs the default "
+"value of the target column."
 msgstr ""
 "You can specify a column in the associated table to the `output_columns` "
-"parameter of a :doc:`/commands/select` command. The format is \"Src.Dest\" "
-"where Src is the name of the reference column and Dest is the name of the "
-"target column. If only the reference column is specified, it is handled as "
-"\"Src._key\". Note that if a reference does not point to a valid record, a :"
-"doc:`/commands/select` command outputs the default value of the target "
-"column."
+"parameter of a :doc:`/reference/commands/select` command. The format is "
+"\"Src.Dest\" where Src is the name of the reference column and Dest is the "
+"name of the target column. If only the reference column is specified, it is "
+"handled as \"Src._key\". Note that if a reference does not point to a valid "
+"record, a :doc:`/reference/commands/select` command outputs the default "
+"value of the target column."
 
-# 6f791cecf7d94128a815c7e416b106e8
+# 180fd207be7a407b8261cd92679f41bc
 #: ../../../source/tutorial/data.txt:128
 msgid ""
 "The following example adds a reference column to the Site table that was "
@@ -445,48 +451,50 @@ msgstr ""
 "created in the previous tutorial. The new column, named link, is designed "
 "for storing links among records in the Site table."
 
-# b016e61aebb64f18a539dd1d7d122bdf
+# 65a919f70e084873ac4d8be6f692fb77
 #: ../../../source/tutorial/data.txt:137
 msgid ""
-"The `type` parameter of the :doc:`/commands/column_create` command specifies "
-"the table to be associated with the reference column. In this example, the "
-"reference column is associated with the own table. Then, the :doc:`/commands/"
-"load` command registers a link from \"http://example.org\" to \"http://"
-"example.net\". Note that a reference column requires the primary key, not "
-"the ID, of the record to be referred to. After that, the link is confirmed "
-"by the :doc:`/commands/select` command. In this case, the primary key and "
-"the title of the referred record are output because link._key and link.title "
-"are specified to the `output_columns` parameter."
+"The `type` parameter of the :doc:`/reference/commands/column_create` command "
+"specifies the table to be associated with the reference column. In this "
+"example, the reference column is associated with the own table. Then, the :"
+"doc:`/reference/commands/load` command registers a link from \"http://"
+"example.org\" to \"http://example.net\". Note that a reference column "
+"requires the primary key, not the ID, of the record to be referred to. After "
+"that, the link is confirmed by the :doc:`/reference/commands/select` "
+"command. In this case, the primary key and the title of the referred record "
+"are output because link._key and link.title are specified to the "
+"`output_columns` parameter."
 msgstr ""
-"The `type` parameter of the :doc:`/commands/column_create` command specifies "
-"the table to be associated with the reference column. In this example, the "
-"reference column is associated with the own table. Then, the :doc:`/commands/"
-"load` command registers a link from \"http://example.org\" to \"http://"
-"example.net\". Note that a reference column requires the primary key, not "
-"the ID, of the record to be referred to. After that, the link is confirmed "
-"by the :doc:`/commands/select` command. In this case, the primary key and "
-"the title of the referred record are output because link._key and link.title "
-"are specified to the `output_columns` parameter."
+"The `type` parameter of the :doc:`/reference/commands/column_create` command "
+"specifies the table to be associated with the reference column. In this "
+"example, the reference column is associated with the own table. Then, the :"
+"doc:`/reference/commands/load` command registers a link from \"http://"
+"example.org\" to \"http://example.net\". Note that a reference column "
+"requires the primary key, not the ID, of the record to be referred to. After "
+"that, the link is confirmed by the :doc:`/reference/commands/select` "
+"command. In this case, the primary key and the title of the referred record "
+"are output because link._key and link.title are specified to the "
+"`output_columns` parameter."
 
-# f38b0fd8958b4fab900414278bd9e999
+# f6a07fc96d34424dbd3d0d08817a878d
 #: ../../../source/tutorial/data.txt:140
 msgid "Vector types"
 msgstr "Vector types"
 
-# 1ca61cd78e6e462aae9cef7af41fd8dc
+# b13537f1bab34346aefe7e24abb9b1ed
 #: ../../../source/tutorial/data.txt:142
 msgid ""
 "Groonga supports a vector column, in which each element can store a variable "
 "number of values. To create a vector column, specify the COLUMN_VECTOR flag "
-"to the `flags` parameter of a :doc:`/commands/column_create` command. A "
-"vector column is useful to represent a many-to-many relationship."
+"to the `flags` parameter of a :doc:`/reference/commands/column_create` "
+"command. A vector column is useful to represent a many-to-many relationship."
 msgstr ""
 "Groonga supports a vector column, in which each element can store a variable "
 "number of values. To create a vector column, specify the COLUMN_VECTOR flag "
-"to the `flags` parameter of a :doc:`/commands/column_create` command. A "
-"vector column is useful to represent a many-to-many relationship."
+"to the `flags` parameter of a :doc:`/reference/commands/column_create` "
+"command. A vector column is useful to represent a many-to-many relationship."
 
-# afd3dd1c626d4106861a7bf3519034d3
+# 0bd04252b8df49d5a6de6946d7d8cccf
 #: ../../../source/tutorial/data.txt:144
 msgid ""
 "The previous example used a regular column, so each record could have at "
@@ -499,35 +507,35 @@ msgstr ""
 "usually has more than one links. To solve this problem, the following "
 "example uses a vector column."
 
-# 92ee0c246b434a199b2b657f74c82c20
+# 705819fcd074421199433ec53d16d1b1
 #: ../../../source/tutorial/data.txt:155
 msgid ""
 "The only difference at the first step is the `flags` parameter that "
 "specifies to create a vector column. The `type` parameter of the :doc:`/"
-"commands/column_create` command is the same as in the previous example. "
-"Then, the :doc:`/commands/load` command registers three links from \"http://"
-"example.org/\" to \"http://example.net/\", \"http://example.org/\" and "
-"\"http://example.com/\". After that, the links are confirmed by the :doc:`/"
-"commands/select` command. In this case, the primary keys and the titles are "
-"output as arrays because links._key and links.title are specified to the "
-"`output_columns` parameter."
+"reference/commands/column_create` command is the same as in the previous "
+"example. Then, the :doc:`/reference/commands/load` command registers three "
+"links from \"http://example.org/\" to \"http://example.net/\", \"http://"
+"example.org/\" and \"http://example.com/\". After that, the links are "
+"confirmed by the :doc:`/reference/commands/select` command. In this case, "
+"the primary keys and the titles are output as arrays because links._key and "
+"links.title are specified to the `output_columns` parameter."
 msgstr ""
 "The only difference at the first step is the `flags` parameter that "
 "specifies to create a vector column. The `type` parameter of the :doc:`/"
-"commands/column_create` command is the same as in the previous example. "
-"Then, the :doc:`/commands/load` command registers three links from \"http://"
-"example.org/\" to \"http://example.net/\", \"http://example.org/\" and "
-"\"http://example.com/\". After that, the links are confirmed by the :doc:`/"
-"commands/select` command. In this case, the primary keys and the titles are "
-"output as arrays because links._key and links.title are specified to the "
-"`output_columns` parameter."
+"reference/commands/column_create` command is the same as in the previous "
+"example. Then, the :doc:`/reference/commands/load` command registers three "
+"links from \"http://example.org/\" to \"http://example.net/\", \"http://"
+"example.org/\" and \"http://example.com/\". After that, the links are "
+"confirmed by the :doc:`/reference/commands/select` command. In this case, "
+"the primary keys and the titles are output as arrays because links._key and "
+"links.title are specified to the `output_columns` parameter."
 
-# 18bf441385f14e26b34f301fb5fbaef5
+# faf75afb9d2d4278b0fe34153d965f84
 #: ../../../source/tutorial/drilldown.txt:11
 msgid "ドリルダウン"
 msgstr "ドリルダウン"
 
-# c67e4c40d3734af19c2789b98fc7d2a8
+# cccf703ed3d6459ab98048a20c592a3a
 #: ../../../source/tutorial/drilldown.txt:13
 msgid ""
 "groongaでは、特定のカラム値で検索結果をグループ化することができます。これをド"
@@ -536,7 +544,7 @@ msgstr ""
 "groongaでは、特定のカラム値で検索結果をグループ化することができます。これをド"
 "リルダウンと呼びます。"
 
-# 9c66e5acb56147a6979ccb7f08a254b4
+# 1b2ea7399ccc4aabbe5c2af93017b3e1
 #: ../../../source/tutorial/drilldown.txt:15
 msgid ""
 "Siteテーブルに２つのカラムを追加します。TLDドメイン名を格納するdomainカラム"
@@ -549,12 +557,12 @@ msgstr ""
 "を主キーとするSiteDomainテーブルと、国名を主キーとするSiteCountryテーブルとし"
 "ます。"
 
-# e4aa43c210dd43c5922fd6847150a318
+# 2c2d5ec457c74758a33ad52580fdb5fa
 #: ../../../source/tutorial/drilldown.txt:36
 msgid "domainカラムとcountryカラムでドリルダウンを行う例を以下に示します。"
 msgstr "domainカラムとcountryカラムでドリルダウンを行う例を以下に示します。"
 
-# 1483919ec03043a6b1cad78b648ad0ed
+# 5e29383a15644677954b77ef47777067
 #: ../../../source/tutorial/drilldown.txt:42
 msgid ""
 "テーブル型を持つカラムに対してドリルダウンを行った場合、参照先のテーブルに存"
@@ -567,7 +575,7 @@ msgstr ""
 "_nsubrecsという仮想的なカラムが追加されます。このカラムには、グループ化された"
 "レコード数が入ります。"
 
-# 5f27805f343f46db935174dca6724d0d
+# b660b9c2e6c1443ea88f6bdff9b35a08
 #: ../../../source/tutorial/drilldown.txt:48
 msgid ""
 "複数のカラムに対してドリルダウンを行うことができます。複数のカラムに対してド"
@@ -578,7 +586,7 @@ msgstr ""
 "リルダウンを行う場合には、drilldownパラメータにカラム名をカンマ区切りで与えま"
 "す。"
 
-# ece2ed69e5a44d0e8d14997a8b5eae68
+# a7a846c92175442eb500190c29944a45
 #: ../../../source/tutorial/drilldown.txt:54
 msgid ""
 "ドリルダウン結果を並びかえることができます。例えば、_nsubrecsパラメータの降順"
@@ -587,7 +595,7 @@ msgstr ""
 "ドリルダウン結果を並びかえることができます。例えば、_nsubrecsパラメータの降順"
 "で並び替えることができます。"
 
-# ffa8d5edbf944614a9133b58081d2efa
+# 25f37a574a2d4d898923c16c0f455744
 #: ../../../source/tutorial/drilldown.txt:60
 msgid ""
 "ドリルダウン結果は、デフォルトでは10件のみ表示されます。drilldown_offsetパラ"
@@ -598,7 +606,7 @@ msgstr ""
 "メータと、drilldown_limitパラメータによって、offsetとlimitを指定することがで"
 "きます。"
 
-# f8485071d77549f190e6b4a72501f745
+# 33e92b42f72e434aa1b5a4061132ffa7
 #: ../../../source/tutorial/drilldown.txt:66
 msgid ""
 "文字列型のカラムに対するドリルダウンは、他の型でのドリルダウンに比べて低速で"
@@ -611,12 +619,12 @@ msgstr ""
 "字列型を主キーとするテーブルを別途作成し、そのテーブルを型とするカラムを作成"
 "します。"
 
-# dc2aa37a9704445a80022e6c5fe83398
+# 23fb64ec8b304e6bbcb458d64f6c2e31
 #: ../../../source/tutorial/index.txt:11
 msgid "タグ検索・参照関係の逆引き"
 msgstr "タグ検索・参照関係の逆引き"
 
-# ee542238bb7a4e628439740b3542c868
+# 50bf408c39a74cf7931da26de2018846
 #: ../../../source/tutorial/index.txt:13
 msgid ""
 "本チュートリアルで、groongaはカラム値として他のテーブルへの参照の配列を持つこ"
@@ -627,19 +635,19 @@ msgstr ""
 "とができることを紹介いたしました。実は、テーブルへの参照の配列データを用いる"
 "ことによって、いわゆるタグ検索を行うことが可能となります。"
 
-# c1971f311b6a47c4b22007594ea2073b
+# f8481e3213644b0689c8ee7a53a391ae
 #: ../../../source/tutorial/index.txt:15
 msgid ""
 "タグ検索はgroongaの転置インデックスというデータ構造を用いて高速に行われます。"
 msgstr ""
 "タグ検索はgroongaの転置インデックスというデータ構造を用いて高速に行われます。"
 
-# d31457fc40ea48dc91d568ed00d2d3e0
+# 210d3c31f70345d9ab7086f49551c9a3
 #: ../../../source/tutorial/index.txt:18
 msgid "タグ検索"
 msgstr "タグ検索"
 
-# 9258eccd5eef4e5a85f4d95764b8b2f0
+# dd67862334d1458a85c5e8d391873227
 #: ../../../source/tutorial/index.txt:20
 msgid ""
 "動画共有サイトの検索エンジンを作ることを想定します。1つの動画には、その動画の"
@@ -650,12 +658,12 @@ msgstr ""
 "特徴を表す、複数の語句が付与されています。「ある語句が付与されている動画の一"
 "覧を取得する」検索を行いたいとします。"
 
-# 3f22850ad48a4bd5b1ca78f2a1b8a912
+# 5d1bff6a27d04a68aad5f7d51dd1d010
 #: ../../../source/tutorial/index.txt:22
 msgid "実際に、動画情報のテーブルを作成し、検索をしてみましょう。"
 msgstr "実際に、動画情報のテーブルを作成し、検索をしてみましょう。"
 
-# f822039f50874bd58b88d507321a99c8
+# 86401ee8509b49cf809abc24ba17250d
 #: ../../../source/tutorial/index.txt:24
 msgid ""
 "動画の情報を保存する、Videoテーブルを作成します。Videoテーブルでは、動画のタ"
@@ -670,7 +678,7 @@ msgstr ""
 "グ文字列を主キーに格納し、Videoテーブルのtagsカラムに対するインデックスを"
 "index_tagsカラムに格納しています。"
 
-# 6f10b3ccdf51480698022fa307f99576
+# 204985b09c7747f2903d58dcd8c2ff83
 #: ../../../source/tutorial/index.txt:46
 msgid ""
 "インデックスカラムを作成すると、全文検索が高速に行えるようになります。イン"
@@ -681,12 +689,12 @@ msgstr ""
 "デックスカラムは、対象のカラムに保存されたデータに更新があったとき、自動的に"
 "更新されます。"
 
-# e937a380dc234ace9d5c26448755d59a
+# 4a38be64f6734f7ba286a780bb511257
 #: ../../../source/tutorial/index.txt:48
 msgid "「ある語句が付与されている動画の一覧を取得する」検索を行いましょう。"
 msgstr "「ある語句が付与されている動画の一覧を取得する」検索を行いましょう。"
 
-# 047abd2f587f410d847327e1fb67358f
+# 351acb4099774e8f8161a69d0b77db10
 #: ../../../source/tutorial/index.txt:56
 msgid ""
 "このように、「Variety」、「Sports」、「Animation」のようなタグで検索を行うこ"
@@ -695,12 +703,12 @@ msgstr ""
 "このように、「Variety」、「Sports」、「Animation」のようなタグで検索を行うこ"
 "とができました。"
 
-# 94338b1e4fda4f8c80cd9e466eb84898
+# 9a28135b4ecd4fa0ace6caffff6914bd
 #: ../../../source/tutorial/index.txt:59
 msgid "参照関係の逆引き"
 msgstr "参照関係の逆引き"
 
-# e15da01e72124fe3812c295e16f7426f
+# bafc6d7e23dc44dfb4f8f48c23516f58
 #: ../../../source/tutorial/index.txt:61
 msgid ""
 "groongaはテーブル間の参照関係の逆引きを高速に行うためのインデックスを付与する"
@@ -709,7 +717,7 @@ msgstr ""
 "groongaはテーブル間の参照関係の逆引きを高速に行うためのインデックスを付与する"
 "ことができます。タグ検索は、その1例にすぎません。"
 
-# 44408c316de846d7b1eac79c90cd814b
+# 1abf50196133460b8e56cb3b5ad416d0
 #: ../../../source/tutorial/index.txt:63
 msgid ""
 "例えば、ソーシャルネットワーキングサイトにおける友人関係を逆引き検索すること"
@@ -718,7 +726,7 @@ msgstr ""
 "例えば、ソーシャルネットワーキングサイトにおける友人関係を逆引き検索すること"
 "ができます。"
 
-# c23e626289824b9cb689868f09e3e185
+# c9dc547a0f8848bc944cdad139a0acb9
 #: ../../../source/tutorial/index.txt:65
 msgid ""
 "以下の例では、ユーザー情報を格納するUserテーブルを作成し、ユーザー名を格納す"
@@ -729,14 +737,14 @@ msgstr ""
 "るusernameカラム、ユーザーの友人一覧を配列で格納するfriendsカラムとそのイン"
 "デックスのindex_friendsカラムを追加しています。"
 
-# 67a91f0ed5f3450593fc531af437ab85
+# 790afa8c84304f11a1efa661e5a0c8f5
 #: ../../../source/tutorial/index.txt:83
 msgid ""
 "指定したユーザーを友人リストに入れているユーザーの一覧を表示してみましょう。"
 msgstr ""
 "指定したユーザーを友人リストに入れているユーザーの一覧を表示してみましょう。"
 
-# 3b73498ee37e4917bd4f569432fe6b7d
+# bc7874066db94448b8fd93159efc9d08
 #: ../../../source/tutorial/index.txt:90
 msgid ""
 "さらに、ドリルダウンを使って、友人リストに入っている数の一覧を表示してみま"
@@ -745,17 +753,17 @@ msgstr ""
 "さらに、ドリルダウンを使って、友人リストに入っている数の一覧を表示してみま"
 "しょう。"
 
-# 138991ad24704cc6bacb22da4fe69b65
+# cd9f56be460341efb646198e7c1ff24d
 #: ../../../source/tutorial/index.txt:96
 msgid "このように、テーブルの参照関係を逆にたどる検索ができました。"
 msgstr "このように、テーブルの参照関係を逆にたどる検索ができました。"
 
-# a24091179e06431aab937a0da8c1fd78
+# 1886e4403d4f40f3855222cf232a03ee
 #: ../../../source/tutorial/index.txt:99
 msgid "インデックス付きジオサーチ"
 msgstr "インデックス付きジオサーチ"
 
-# f69259dc47d4437b85b80812038c25f7
+# ee447dbf85c245908572e03fb5fcfca2
 #: ../../../source/tutorial/index.txt:101
 msgid ""
 "位置情報のカラムに対して、インデックスを付与することが出来ます。大量の位置情"
@@ -764,19 +772,19 @@ msgstr ""
 "位置情報のカラムに対して、インデックスを付与することが出来ます。大量の位置情"
 "報レコードを検索する場合に、検索速度が速くなります。"
 
-# b0a6938e2e2e4f429124189b892eb92b
+# fddd4bbb235a494e8a26906c66a2c84f
 #: ../../../source/tutorial/index.txt:114
 msgid ""
 "同様に、位置情報レコードを用いてソートする場合に、ソート速度が速くなります。"
 msgstr ""
 "同様に、位置情報レコードを用いてソートする場合に、ソート速度が速くなります。"
 
-# c58d4bd0ec9e43a6ad204b46d1a915b1
+# 0a0a874b81a64aafaa953c87de57f655
 #: ../../../source/tutorial/introduction.txt:9
 msgid "Basic operations"
 msgstr "Basic operations"
 
-# 060f5ea69a714baeae1e3d0ad0e881db
+# 4137ca1ca6864f85862b23a807696044
 #: ../../../source/tutorial/introduction.txt:11
 msgid ""
 "A groonga package provides a C library (libgroonga) and a command line tool "
@@ -789,12 +797,12 @@ msgstr ""
 "which you can create/operate databases, start a server, establish a "
 "connection with a server, etc."
 
-# e3480b36678f49aaa1fd1ff30072347d
+# 58a99bde6fca4ce6961fedac87aca880
 #: ../../../source/tutorial/introduction.txt:14
 msgid "Create a database"
 msgstr "Create a database"
 
-# 2d5fbd6571fc4c0fb4ac82f1b67cb6c6
+# b917637c8de947ba8f9a3d9ff692c04c
 #: ../../../source/tutorial/introduction.txt:16
 msgid ""
 "The first step to using groonga is to create a new database. The following "
@@ -803,13 +811,13 @@ msgstr ""
 "The first step to using groonga is to create a new database. The following "
 "shows how to do it."
 
-# a3a1e76f25db46e1a428b99d891bbe84
-# e27a645dce594834b768bf2192e9d38b
-# 70f8b8cd69b04fc0aa4c17b26b3ee921
-# 70f8b8cd69b04fc0aa4c17b26b3ee921
-# 70f8b8cd69b04fc0aa4c17b26b3ee921
-# 70f8b8cd69b04fc0aa4c17b26b3ee921
-# 70f8b8cd69b04fc0aa4c17b26b3ee921
+# b387dfe1c70e4a19836b8bb701e08a18
+# 87b982d1bd9f4a7e87a29af9ebcba4b4
+# 822c2a7ec5b84acd9b3a5dc687aebf9f
+# 11e88e97ba4a4458bdcb3a404994145e
+# e83dae1cd069466da6aee37f99442c98
+# 6c2e8b6216b84a6f88207e1c21f8efef
+# 6c2e8b6216b84a6f88207e1c21f8efef
 #: ../../../source/tutorial/introduction.txt:18
 #: ../../../source/tutorial/introduction.txt:37
 #: ../../../source/tutorial/network.txt:23
@@ -820,7 +828,7 @@ msgstr ""
 msgid "Form::"
 msgstr "Form::"
 
-# 208f62cd081b4f5abe3b5aba759bf3d7
+# 16b078ed1cd8407fb2b0bf2e2dbb8280
 #: ../../../source/tutorial/introduction.txt:22
 msgid ""
 "The `-n` option specifies to create a new database and DB_PATH specifies the "
@@ -835,7 +843,7 @@ msgstr ""
 "database. DB_PATH also specifies the path prefix for other files. Note that "
 "database creation fails if DB_PATH points to an existing file."
 
-# 1f5b22eb5d6140cfb730ab27461b0949
+# 7f911459d0b64ebaa1c9d7b7f8108cd5
 #: ../../../source/tutorial/introduction.txt:24
 msgid ""
 "This command creates a new database and then enters into interactive mode in "
@@ -846,7 +854,7 @@ msgstr ""
 "which groonga prompts you to enter commands for operating that database. You "
 "can terminate this mode with Ctrl-d."
 
-# 4af324234e244ccabbda1b94d76e46f5
+# 472b4dee17ee45f4884ab6dfb95d74a4
 #: ../../../source/tutorial/introduction.txt:30
 msgid ""
 "After this database creation, you can find a series of files in /tmp/groonga-"
@@ -855,17 +863,17 @@ msgstr ""
 "After this database creation, you can find a series of files in /tmp/groonga-"
 "databases."
 
-# f1978506cf5942b987854501f8759116
+# 14150c0078df42a591033d103b6a35e8
 #: ../../../source/tutorial/introduction.txt:33
 msgid "Operate a database"
 msgstr "Operate a database"
 
-# 02aa384d920a42da8503869257ef140f
+# 065c199dff9e44a1bbbb3044209bf5c2
 #: ../../../source/tutorial/introduction.txt:35
 msgid "The following shows how to operate an existing database."
 msgstr "The following shows how to operate an existing database."
 
-# 47972b6889a34716b97ce92a4e2ced2e
+# f74bbe233abe4b4985ade2d0ecd9ee4f
 #: ../../../source/tutorial/introduction.txt:41
 msgid ""
 "DB_PATH specifies the path of a target database. This command fails if the "
@@ -874,7 +882,7 @@ msgstr ""
 "DB_PATH specifies the path of a target database. This command fails if the "
 "specified database does not exist."
 
-# 1bbbfb9349454aa59c582faabc8e48d6
+# 205032e86a44456983e595bf8bde1730
 #: ../../../source/tutorial/introduction.txt:43
 msgid ""
 "If COMMAND is specified, groonga executes COMMAND and returns the result. "
@@ -887,16 +895,16 @@ msgstr ""
 "standard input and executes them one by one. This tutorial focuses on the "
 "interactive mode."
 
-# ea47c6e1f7c2458b8b20a7af7a282ae1
+# b19b32246f6d4807b1082363e719fb84
 #: ../../../source/tutorial/introduction.txt:45
 msgid ""
-"Let's see the status of a groonga process by using a :doc:`/commands/status` "
-"command."
+"Let's see the status of a groonga process by using a :doc:`/reference/"
+"commands/status` command."
 msgstr ""
-"Let's see the status of a groonga process by using a :doc:`/commands/status` "
-"command."
+"Let's see the status of a groonga process by using a :doc:`/reference/"
+"commands/status` command."
 
-# 10081b6b2f7a4553a5b909a4aa1a596f
+# 40cf3219df6044cf8a2aa6eebc8bc953
 #: ../../../source/tutorial/introduction.txt:52
 msgid ""
 "As shown in the above example, a command returns a JSON array. The first "
@@ -907,17 +915,17 @@ msgstr ""
 "element contains an error code, execution time, etc. The second element is "
 "the result of an operation."
 
-# 9a18cba2204246ddbaa6f051f1f98adf
+# 4c9b0191a25c43968267a37154f437f7
 #: ../../../source/tutorial/introduction.txt:55
 msgid "Command format"
 msgstr "Command format"
 
-# b39a59631d9f493e85318fe229d0b386
+# 4172dca81415463f8af3b23f92af997e
 #: ../../../source/tutorial/introduction.txt:57
 msgid "Commands for operating a database accept arguments as follows::"
 msgstr "Commands for operating a database accept arguments as follows::"
 
-# ca5c2f81b2124b618807c59b34aed608
+# c98b67f4e27c44c08287d2eca3f8f9c9
 #: ../../../source/tutorial/introduction.txt:63
 msgid ""
 "In the first form, arguments must be passed in order. This kind of arguments "
@@ -928,7 +936,7 @@ msgstr ""
 "are called positional arguments because the position of each argument "
 "determines its meaning."
 
-# 143c7b1ff185428e9e52da93fa8e7f54
+# 97086a1f0fcf4c50b95ddca15df43fd8
 #: ../../../source/tutorial/introduction.txt:65
 msgid ""
 "In the second form, you can specify a parameter name with its value. So, the "
@@ -939,7 +947,7 @@ msgstr ""
 "order of arguments is not defined. This kind of arguments are known as named "
 "parameters or keyword arguments."
 
-# 7326e25b7065463397e67d40445da7a8
+# 5124c987da7446cd84a496a72503e1d8
 #: ../../../source/tutorial/introduction.txt:67
 msgid ""
 "If you want to specify a value which contains white-spaces or special "
@@ -950,66 +958,66 @@ msgstr ""
 "characters, such as quotes and parentheses, please enclose the value with "
 "single-quotes or double-quotes."
 
-# 251cfe5779b145a5b7653d5822696fdd
+# f722970216d94fea8a945637d1d5f0cc
 #: ../../../source/tutorial/introduction.txt:69
 msgid ""
-"For details, see also the paragraph of \"command\" in :doc:`/executables/"
-"groonga`."
+"For details, see also the paragraph of \"command\" in :doc:`/reference/"
+"executables/groonga`."
 msgstr ""
-"For details, see also the paragraph of \"command\" in :doc:`/executables/"
-"groonga`."
+"For details, see also the paragraph of \"command\" in :doc:`/reference/"
+"executables/groonga`."
 
-# 56e9ded2ce204e99aec5c569573263d7
+# bdeaf1614bd4473b88cb56ce25a3868e
 #: ../../../source/tutorial/introduction.txt:72
 msgid "Basic commands"
 msgstr "Basic commands"
 
-# 1856bfbc6e4a4cf8b6bb4b850d79c344
+# ef2818e6664d402cb3ff68d3ac335ece
 #: ../../../source/tutorial/introduction.txt:75
 msgid "shows status of a groonga process."
 msgstr "shows status of a groonga process."
 
-# 6b9c5dec3f684cffabfbfbd92769f310
+# 9c730529bdca40ebabf1b60c4575f355
 #: ../../../source/tutorial/introduction.txt:77
 msgid "shows a list of tables in a database."
 msgstr "shows a list of tables in a database."
 
-# 3d4afdb9de8a4daebd6b0dcefd2ea033
+# b289d08e588f4afeb3232026cf3ef8ed
 #: ../../../source/tutorial/introduction.txt:79
 msgid "shows a list of columns in a table."
 msgstr "shows a list of columns in a table."
 
-# d9e76d163db7469fb5c9d910f41fbbe3
+# 481ee24f927a4c1ca2ebacedd35f4607
 #: ../../../source/tutorial/introduction.txt:81
 msgid "adds a table to a database."
 msgstr "adds a table to a database."
 
-# 9e27f991fc094500b8c495ab122f4590
+# 7ba6b39c8bed49718f390a0a86bad043
 #: ../../../source/tutorial/introduction.txt:83
 msgid "adds a column to a table."
 msgstr "adds a column to a table."
 
-# ea025dc42359451e8f2e71231c1da7d4
+# fb26a99b01254e6f9aca345821e9ae6a
 #: ../../../source/tutorial/introduction.txt:85
 msgid "searches records from a table and shows the result."
 msgstr "searches records from a table and shows the result."
 
-# 10c220d67e5b407eacd8cd8bd0f5005f
+# e4817aff0b2a4e3bb698655736a13a2f
 #: ../../../source/tutorial/introduction.txt:87
 msgid "inserts records to a table."
 msgstr "inserts records to a table."
 
-# 275b75f89cdf4c2ebaf2616f9babc46b
+# c8b62f04fc904cfd9998323abd94df3a
 #: ../../../source/tutorial/introduction.txt:90
 msgid "Create a table"
 msgstr "Create a table"
 
-# bde7956697d2449f9abfcaa7e4401b6e
+# a296dfd2c7644f52afa892d4183d040a
 #: ../../../source/tutorial/introduction.txt:92
-msgid "A :doc:`/commands/table_create` command creates a new table."
-msgstr "A :doc:`/commands/table_create` command creates a new table."
+msgid "A :doc:`/reference/commands/table_create` command creates a new table."
+msgstr "A :doc:`/reference/commands/table_create` command creates a new table."
 
-# 7efac7b05a6d40e9be69e22d19a2f6a6
+# ecc8372d3767465aa956630293e82b53
 #: ../../../source/tutorial/introduction.txt:94
 msgid ""
 "In most cases, a table has a primary key which must be specified with its "
@@ -1018,18 +1026,20 @@ msgstr ""
 "In most cases, a table has a primary key which must be specified with its "
 "data type and index type."
 
-# 650e63530c43446c8d6d7400e0372a1e
+# 1d778c35935e4965938eccd1d3e7e535
 #: ../../../source/tutorial/introduction.txt:96
 msgid ""
 "There are various data types such as integers, strings, etc. See also :doc:`/"
-"type` for more details. The index type determines the search performance and "
-"the availability of prefix searches. The details will be described later."
+"reference/type` for more details. The index type determines the search "
+"performance and the availability of prefix searches. The details will be "
+"described later."
 msgstr ""
 "There are various data types such as integers, strings, etc. See also :doc:`/"
-"type` for more details. The index type determines the search performance and "
-"the availability of prefix searches. The details will be described later."
+"reference/type` for more details. The index type determines the search "
+"performance and the availability of prefix searches. The details will be "
+"described later."
 
-# e3ef367688a34dfcaee227fd1daac9c1
+# bdc10431535f4d22af04c846ed327d31
 #: ../../../source/tutorial/introduction.txt:98
 msgid ""
 "Let's create a table. The following example creates a table with a primary "
@@ -1042,39 +1052,41 @@ msgstr ""
 "parameter specifies the index type for the primary key. The `key_type` "
 "parameter specifies the data type of the primary key."
 
-# 814a3b8116b446e980be348401d5598e
+# db71a9b875374a6fb1fc2cf9de2f7c86
 #: ../../../source/tutorial/introduction.txt:104
 msgid ""
 "The second element of the result indicates that the operation succeeded."
 msgstr ""
 "The second element of the result indicates that the operation succeeded."
 
-# 63e6d3d806ac45299c5e579577ce58a1
+# 0472aee8824c4a1ab0db921a4162a16e
 #: ../../../source/tutorial/introduction.txt:107
 msgid "View a table"
 msgstr "View a table"
 
-# 617458402243471db410f31540dc1d72
+# 4ab6be0192534a88a5e4e924bf708e6f
 #: ../../../source/tutorial/introduction.txt:109
-msgid "A :doc:`/commands/select` command can enumerate records in a table."
-msgstr "A :doc:`/commands/select` command can enumerate records in a table."
+msgid ""
+"A :doc:`/reference/commands/select` command can enumerate records in a table."
+msgstr ""
+"A :doc:`/reference/commands/select` command can enumerate records in a table."
 
-# 4254317975c54aeba84c1a9bd40ac1d0
+# 8f2e122554704b73ba2bd15f9ba02e28
 #: ../../../source/tutorial/introduction.txt:115
 msgid ""
 "When only a table name is specified with a `table` parameter, a :doc:`/"
-"commands/select` command returns the first (at most) 10 records in the "
-"table. [0] in the result shows the number of records in the table. The next "
-"array is a list of columns. [\"_id\",\"Uint32\"] is a column of UInt32, "
+"reference/commands/select` command returns the first (at most) 10 records in "
+"the table. [0] in the result shows the number of records in the table. The "
+"next array is a list of columns. [\"_id\",\"Uint32\"] is a column of UInt32, "
 "named _id. [\"_key\",\"ShortText\"] is a column of ShortText, named _key."
 msgstr ""
 "When only a table name is specified with a `table` parameter, a :doc:`/"
-"commands/select` command returns the first (at most) 10 records in the "
-"table. [0] in the result shows the number of records in the table. The next "
-"array is a list of columns. [\"_id\",\"Uint32\"] is a column of UInt32, "
+"reference/commands/select` command returns the first (at most) 10 records in "
+"the table. [0] in the result shows the number of records in the table. The "
+"next array is a list of columns. [\"_id\",\"Uint32\"] is a column of UInt32, "
 "named _id. [\"_key\",\"ShortText\"] is a column of ShortText, named _key."
 
-# 92e31771d6a44132b5ea8ef387c12443
+# 4e49b4e64c5445129e354e7fd44c3763
 #: ../../../source/tutorial/introduction.txt:117
 msgid ""
 "The above two columns, _id and _key, are the necessary columns. The _id "
@@ -1087,17 +1099,19 @@ msgstr ""
 "column is associated with the primary key. You are not allowed to rename "
 "these columns."
 
-# 378c20510b7e4901bd3315cc67868897
+# e9df1e5d526b424a807c0064f6e3dc90
 #: ../../../source/tutorial/introduction.txt:120
 msgid "Create a column"
 msgstr "Create a column"
 
-# bde7956697d2449f9abfcaa7e4401b6e
+# bd690b460c0f46dc9b7a1844480c92bf
 #: ../../../source/tutorial/introduction.txt:122
-msgid "A :doc:`/commands/column_create` command creates a new column."
-msgstr "A :doc:`/commands/column_create` command creates a new column."
+msgid ""
+"A :doc:`/reference/commands/column_create` command creates a new column."
+msgstr ""
+"A :doc:`/reference/commands/column_create` command creates a new column."
 
-# 90abff060c4240c19e27b9a7465bf840
+# 80170268e7124e86b21221d92bff78fe
 #: ../../../source/tutorial/introduction.txt:124
 msgid ""
 "Let's add a column. The following example adds a column to the Site table. "
@@ -1110,24 +1124,26 @@ msgstr ""
 "specifies the name of the column. The `type` parameter specifies the data "
 "type of the column."
 
-# 508d2eefd7574fce9686b8db536d4f85
+# c1b9c5f0d4474e00a0fb97cf264efe47
 #: ../../../source/tutorial/introduction.txt:132
 msgid "Load records"
 msgstr "Load records"
 
-# 617458402243471db410f31540dc1d72
+# c0ecd2a2e5db455c9427218e6e4b6235
 #: ../../../source/tutorial/introduction.txt:134
 msgid ""
-"A :doc:`/commands/load` command loads JSON-formatted records into a table."
+"A :doc:`/reference/commands/load` command loads JSON-formatted records into "
+"a table."
 msgstr ""
-"A :doc:`/commands/load` command loads JSON-formatted records into a table."
+"A :doc:`/reference/commands/load` command loads JSON-formatted records into "
+"a table."
 
-# 02aa384d920a42da8503869257ef140f
+# d1c2634788634e789e7a78df127eb733
 #: ../../../source/tutorial/introduction.txt:136
 msgid "The following example loads nine records into the Site table."
 msgstr "The following example loads nine records into the Site table."
 
-# 81b842f22c404d0fb77e877e8eedcb48
+# 63fb54acdcfb47b69f4ad4892aa2a725
 #: ../../../source/tutorial/introduction.txt:153
 msgid ""
 "The second element of the result indicates how many records were "
@@ -1136,33 +1152,35 @@ msgstr ""
 "The second element of the result indicates how many records were "
 "successfully loaded. In this case, all the records are successfully loaded."
 
-# b4959bac64a14dce88a4424131dd56fd
+# 76cca9c92a0743188ed954e946333ac6
 #: ../../../source/tutorial/introduction.txt:155
 msgid "Let's make sure that these records are correctly stored."
 msgstr "Let's make sure that these records are correctly stored."
 
-# 77b551dd29d544f2905608087ff0b8a0
+# 057606e1fe44494296690a9b640afbd3
 #: ../../../source/tutorial/introduction.txt:162
 msgid "Get a record"
 msgstr "Get a record"
 
-# de59c216fd4b4e7b8651338759786d01
+# 946760b02059413eab8d255a43fd5009
 #: ../../../source/tutorial/introduction.txt:164
-msgid "A :doc:`/commands/select` command can search records in a table."
-msgstr "A :doc:`/commands/select` command can search records in a table."
+msgid ""
+"A :doc:`/reference/commands/select` command can search records in a table."
+msgstr ""
+"A :doc:`/reference/commands/select` command can search records in a table."
 
-# 847628c2213a44f9b5e02d4b6a6198c5
+# b8c5c5e01fa84e50b586fb24c795ff93
 #: ../../../source/tutorial/introduction.txt:166
 msgid ""
 "If a search condition is specified with a `query` parameter, a :doc:`/"
-"commands/select` command searches records matching the search condition and "
-"returns the matched records."
+"reference/commands/select` command searches records matching the search "
+"condition and returns the matched records."
 msgstr ""
 "If a search condition is specified with a `query` parameter, a :doc:`/"
-"commands/select` command searches records matching the search condition and "
-"returns the matched records."
+"reference/commands/select` command searches records matching the search "
+"condition and returns the matched records."
 
-# d3920a7df83b4090a914be8e19a7e27c
+# 8acb5421af074bec89cef87b210b4ab8
 #: ../../../source/tutorial/introduction.txt:168
 msgid ""
 "Let's get a record having a specified record ID. The following example gets "
@@ -1173,7 +1191,7 @@ msgstr ""
 "the first record in the Site table. More precisely, the `query` parameter "
 "specifies a record whose _id column stores 1."
 
-# 18673898a2da4d488332919068ffd875
+# eb88490a72934d9abebdcbe57f889c90
 #: ../../../source/tutorial/introduction.txt:174
 msgid ""
 "Next, let's get a record having a specified key. The following example gets "
@@ -1186,17 +1204,17 @@ msgstr ""
 "`query` parameter specifies a record whose _key column stores \"http://"
 "example.org/\"."
 
-# 1c03a99ea4fa46ca9d4e08a8e6155154
+# 7e4877645a4e4ce2842c51467c9cfab4
 #: ../../../source/tutorial/introduction.txt:181
 msgid "Create a lexicon table for full text search"
 msgstr "Create a lexicon table for full text search"
 
-# d5eec0ed8392433fa13ba98d54de9b4b
+# 2b196be7194b4ea0a589b1cb1ea1489e
 #: ../../../source/tutorial/introduction.txt:183
 msgid "Let's go on to how to make full text search."
 msgstr "Let's go on to how to make full text search."
 
-# 04ccbfd27c4248ceba70909b772a4ce1
+# 549371b875424d549221bfe44599ad01
 #: ../../../source/tutorial/introduction.txt:185
 msgid ""
 "Groonga uses an inverted index to provide fast full text search. So, the "
@@ -1211,7 +1229,7 @@ msgstr ""
 "vocabulary made up of index terms and each record stores postings lists for "
 "one index term."
 
-# 988bf5ca93d145558a98ea2069835800
+# 7f87e937c7eb45c2b8471877f88ec251
 #: ../../../source/tutorial/introduction.txt:187
 msgid ""
 "The following shows a command which creates a lexicon table named Terms. The "
@@ -1220,18 +1238,18 @@ msgstr ""
 "The following shows a command which creates a lexicon table named Terms. The "
 "data type of its primary key is ShortText."
 
-# 17fe56c6152f4abdb57636ba70e3d4ef
+# 8eac662c69204489b3afaca45356f96e
 #: ../../../source/tutorial/introduction.txt:193
 msgid ""
-"The :doc:`/commands/table_create` command takes many parameters but you "
-"don't need to understand all of them. Please skip the next paragraph if you "
-"are not interested in how it works."
+"The :doc:`/reference/commands/table_create` command takes many parameters "
+"but you don't need to understand all of them. Please skip the next paragraph "
+"if you are not interested in how it works."
 msgstr ""
-"The :doc:`/commands/table_create` command takes many parameters but you "
-"don't need to understand all of them. Please skip the next paragraph if you "
-"are not interested in how it works."
+"The :doc:`/reference/commands/table_create` command takes many parameters "
+"but you don't need to understand all of them. Please skip the next paragraph "
+"if you are not interested in how it works."
 
-# 7cd18e742ce44defa0f962cdf0e1ff08
+# d5a6616e76534037a94b060c5c6f31f7
 #: ../../../source/tutorial/introduction.txt:195
 msgid ""
 "The TABLE_PAT_KEY flag specifies to store index terms in a patricia trie. "
@@ -1246,12 +1264,12 @@ msgstr ""
 "specifies the method for tokenizing text. This example uses TokenBigram that "
 "is generally called N-gram."
 
-# 2552862558294639a3278b375997553b
+# a8ed706c0719492f8383ed9836d9e451
 #: ../../../source/tutorial/introduction.txt:198
 msgid "Create an index column for full text search"
 msgstr "Create an index column for full text search"
 
-# 81b842f22c404d0fb77e877e8eedcb48
+# 63484a64e25a4cb3b6295d304995415d
 #: ../../../source/tutorial/introduction.txt:200
 msgid ""
 "The second step is to create an index column, which allows you to search "
@@ -1262,7 +1280,7 @@ msgstr ""
 "records from its associated column. That is to say this step specifies which "
 "column needs an index."
 
-# 81b842f22c404d0fb77e877e8eedcb48
+# e4e460363d9a49199c775137015980e3
 #: ../../../source/tutorial/introduction.txt:202
 msgid ""
 "Let's create an index column. The following example creates an index column "
@@ -1271,7 +1289,7 @@ msgstr ""
 "Let's create an index column. The following example creates an index column "
 "for a column in the Site table."
 
-# 3f771fcea41b4a97b21051112d43e2a5
+# 5ce0139485574e71b118856dba965181
 #: ../../../source/tutorial/introduction.txt:208
 msgid ""
 "The `table` parameter specifies the index table and the `name` parameter "
@@ -1290,7 +1308,7 @@ msgstr ""
 "each index term. This combination, COLUMN_INDEX|WITH_POSITION, is "
 "recommended for the general purpose."
 
-# 39c2e6cd292543c6a70ace0dbf002675
+# 89101a82f5154ac9ae46008a2030c0c3
 #: ../../../source/tutorial/introduction.txt:212
 msgid ""
 "You can create a lexicon table and index columns before/during/after loading "
@@ -1303,21 +1321,21 @@ msgstr ""
 "index in a static manner. In contrast, if you load records into an already "
 "indexed column, groonga updates the inverted index in a dynamic manner."
 
-# 15d35b1655e54a1480be31903320442e
+# aa38fedf0441417abb938d6c1a978ea3
 #: ../../../source/tutorial/introduction.txt:215
 msgid "Full text search"
 msgstr "Full text search"
 
-# ea47c6e1f7c2458b8b20a7af7a282ae1
+# eca54da2b0bf4e6085f3dd1b44a80334
 #: ../../../source/tutorial/introduction.txt:217
 msgid ""
-"It's time. You can make full text search with a :doc:`/commands/select` "
-"command."
+"It's time. You can make full text search with a :doc:`/reference/commands/"
+"select` command."
 msgstr ""
-"It's time. You can make full text search with a :doc:`/commands/select` "
-"command."
+"It's time. You can make full text search with a :doc:`/reference/commands/"
+"select` command."
 
-# 2cf824bd561a41dd9cd639abc1ab3472
+# 57f12c3a74e944e6ac77a2e9f0aac162
 #: ../../../source/tutorial/introduction.txt:219
 msgid ""
 "A query for full text search is specified with a `query` parameter. The "
@@ -1332,7 +1350,7 @@ msgstr ""
 "matches upper case and capitalized terms in a record if KEY_NORMALIZE was "
 "specified when creating a lexcon table."
 
-# d4327437c7604ada87cd182c31f9e26b
+# 4437256cbbb34b649f08c8debacc9b88
 #: ../../../source/tutorial/introduction.txt:225
 msgid ""
 "In this example, the first record matches the query because its title "
@@ -1341,18 +1359,18 @@ msgstr ""
 "In this example, the first record matches the query because its title "
 "contains \"This\", that is the capitalized form of the query."
 
-# 045b5d92644a4c92b6188592b8729639
+# ee33ba0aa1d0487da60afc1b46a6bd78
 #: ../../../source/tutorial/introduction.txt:227
 msgid ""
-"A :doc:`/commands/select` command accepts an optional parameter, named "
-"`match_columns`, that specifies the default target columns. This parameter "
-"is used if target columns are not specified in a query. [#]_"
+"A :doc:`/reference/commands/select` command accepts an optional parameter, "
+"named `match_columns`, that specifies the default target columns. This "
+"parameter is used if target columns are not specified in a query. [#]_"
 msgstr ""
-"A :doc:`/commands/select` command accepts an optional parameter, named "
-"`match_columns`, that specifies the default target columns. This parameter "
-"is used if target columns are not specified in a query. [#]_"
+"A :doc:`/reference/commands/select` command accepts an optional parameter, "
+"named `match_columns`, that specifies the default target columns. This "
+"parameter is used if target columns are not specified in a query. [#]_"
 
-# 8d726fab54f04f3fb679c10c25d8af9b
+# d1849533484d44499b508d44727854de
 #: ../../../source/tutorial/introduction.txt:229
 msgid ""
 "The combination of \"`--match_columns` title\" and \"`--query` this\" brings "
@@ -1361,23 +1379,23 @@ msgstr ""
 "The combination of \"`--match_columns` title\" and \"`--query` this\" brings "
 "you the same result that \"`--query` title:@this\" does."
 
-# 378a0e3207bc45cca0c9e0f74f70a0df
+# 78ce1afa384f4011876e3df97a9d31b5
 #: ../../../source/tutorial/introduction.txt:236
 msgid "Specify output columns"
 msgstr "Specify output columns"
 
-# 9798d01896b1453c8915e9f48a3691e4
+# 284b169b4f614da9a341cda08ec0207a
 #: ../../../source/tutorial/introduction.txt:238
 msgid ""
-"An `output_columns` parameter of a :doc:`/commands/select` command specifies "
-"columns to appear in the search result. If you want to specify more than one "
-"columns, please separate column names by commas (',')."
+"An `output_columns` parameter of a :doc:`/reference/commands/select` command "
+"specifies columns to appear in the search result. If you want to specify "
+"more than one columns, please separate column names by commas (',')."
 msgstr ""
-"An `output_columns` parameter of a :doc:`/commands/select` command specifies "
-"columns to appear in the search result. If you want to specify more than one "
-"columns, please separate column names by commas (',')."
+"An `output_columns` parameter of a :doc:`/reference/commands/select` command "
+"specifies columns to appear in the search result. If you want to specify "
+"more than one columns, please separate column names by commas (',')."
 
-# 95267ba1106746e0b14f5a0546ee7c56
+# 22ba120c9635482db13190431b8c7ade
 #: ../../../source/tutorial/introduction.txt:244
 msgid ""
 "This example specifies three output columns including the _score column, "
@@ -1386,25 +1404,25 @@ msgstr ""
 "This example specifies three output columns including the _score column, "
 "which stores the relevance score of each record."
 
-# f299b0bc7fff48bb960a259243dd4cb3
+# 5cbfd0e5389c4596adc7227bf3e53ec8
 #: ../../../source/tutorial/introduction.txt:247
 msgid "Specify output ranges"
 msgstr "Specify output ranges"
 
-# ba5c35b007854a8ba63f3138c6a3f60f
+# 828d823e957b4aef9c9fda658f8a63bb
 #: ../../../source/tutorial/introduction.txt:249
 msgid ""
-"A :doc:`/commands/select` command returns a part of its search result if "
-"`offset` and/or `limit` parameters are specified. These parameters are "
-"useful to paginate a search result, a widely-used interface which shows a "
-"search result on a page by page basis."
+"A :doc:`/reference/commands/select` command returns a part of its search "
+"result if `offset` and/or `limit` parameters are specified. These parameters "
+"are useful to paginate a search result, a widely-used interface which shows "
+"a search result on a page by page basis."
 msgstr ""
-"A :doc:`/commands/select` command returns a part of its search result if "
-"`offset` and/or `limit` parameters are specified. These parameters are "
-"useful to paginate a search result, a widely-used interface which shows a "
-"search result on a page by page basis."
+"A :doc:`/reference/commands/select` command returns a part of its search "
+"result if `offset` and/or `limit` parameters are specified. These parameters "
+"are useful to paginate a search result, a widely-used interface which shows "
+"a search result on a page by page basis."
 
-# 5e0bc6d796e04276a491fc95ce94b286
+# 6065c9af553042329bea9a95a30e49ae
 #: ../../../source/tutorial/introduction.txt:251
 msgid ""
 "An `offset` parameter specifies the starting point and a `limit` parameter "
@@ -1415,21 +1433,21 @@ msgstr ""
 "specifies the maximum number of records to be returned. If you need the "
 "first record in a search result, the offset parameter must be 0 or omitted."
 
-# bfec39be9a704d98a1f3784acaa95e3d
+# def83426259941ccaab485015955c00a
 #: ../../../source/tutorial/introduction.txt:260
 msgid "Sort a search result"
 msgstr "Sort a search result"
 
-# 150e08fab285400687aff6dc258c3546
+# a64a8f601ca9431cab1ef60bb511bd3d
 #: ../../../source/tutorial/introduction.txt:262
 msgid ""
-"A :doc:`/commands/select` command sorts its result when used with a `sortby` "
-"parameter."
+"A :doc:`/reference/commands/select` command sorts its result when used with "
+"a `sortby` parameter."
 msgstr ""
-"A :doc:`/commands/select` command sorts its result when used with a `sortby` "
-"parameter."
+"A :doc:`/reference/commands/select` command sorts its result when used with "
+"a `sortby` parameter."
 
-# 6c4f257587144969a371a0784006ccda
+# b4513c9d6e2845249772bf2803159e0d
 #: ../../../source/tutorial/introduction.txt:264
 msgid ""
 "A `sortby` parameter specifies a column as a sorting creteria. A search "
@@ -1442,13 +1460,13 @@ msgstr ""
 "sort a search result in reverse order, please add a leading hyphen ('-') to "
 "the column name in a parameter."
 
-# 02aa384d920a42da8503869257ef140f
+# 5281651a2cf44047b6c7e8adacedcc16
 #: ../../../source/tutorial/introduction.txt:266
 msgid "The following example shows records in the Site table in reverse order."
 msgstr ""
 "The following example shows records in the Site table in reverse order."
 
-# 5739167025d44a4782900ddd3a1f2736
+# f1a62d243a5449f0a68402d2ec3c6d98
 #: ../../../source/tutorial/introduction.txt:272
 msgid ""
 "The next example uses the _score column as the sorting criteria for ranking "
@@ -1457,7 +1475,7 @@ msgstr ""
 "The next example uses the _score column as the sorting criteria for ranking "
 "the search result. The result is sorted in relevance order."
 
-# 62a7f8f8e9384a42913f9b04951fc404
+# ad8e74d70ac442c886389f0f47701b92
 #: ../../../source/tutorial/introduction.txt:278
 msgid ""
 "If you want to specify more than one columns, please separate column names "
@@ -1470,12 +1488,12 @@ msgstr ""
 "values in the first column, and then records having the same values in the "
 "first column are sorted in order of the second column values."
 
-# e2f6d7ed3f3d4de791d781e3dac49521
+# 4e9177fa6e574313aaf2bca7377522fc
 #: ../../../source/tutorial/introduction.txt:285
 msgid "footnote"
 msgstr "footnote"
 
-# fd91edac47a94a78919d4ef291e8daeb
+# 3322441de6804b8b9d7c05c70fe32155
 #: ../../../source/tutorial/introduction.txt:286
 msgid ""
 "Currently, a `match_columns` parameter is available iff there exists an "
@@ -1486,12 +1504,12 @@ msgstr ""
 "inverted index for full text search. A `match_columns` parameter for a "
 "regular column is not supported."
 
-# 443b9a809b30490d9280db1978fe7e15
+# 415a0cf255ba4c50ad2505fea24e3280
 #: ../../../source/tutorial/lexicon.txt:6
 msgid "全文検索の語彙表に対する追加情報"
 msgstr "全文検索の語彙表に対する追加情報"
 
-# ed77d0b3eabc484e852af3a596d1481d
+# 47a9324420834747a5b3a323f586161d
 #: ../../../source/tutorial/lexicon.txt:8
 msgid ""
 "groongaでは、全文検索に用いるための語意表がテーブルとして扱えます。よって、語"
@@ -1502,22 +1520,22 @@ msgstr ""
 "彙ごとに複数の情報を保持することができます。例えば、語彙の出現数や検索ストッ"
 "プワードのフラグ、単語の重要度などを保持することができます。"
 
-# 7a9565f31e084eddbcacc8cfdd7d3d52
+# 6746635159f94d9daafc2d99126b5f9f
 #: ../../../source/tutorial/lexicon.txt:10
 msgid "この項目については、現在執筆中です。"
 msgstr "この項目については、現在執筆中です。"
 
-# d2d60e8b7b284accb66b41ec2eb20db3
+# ab6efee617084ae78539af763a2fe49d
 #: ../../../source/tutorial/match_columns.txt:9
 msgid "match_columnsパラメータ"
 msgstr "match_columnsパラメータ"
 
-# 8254a51df4394d489a5622f0eb4448e9
+# d66dbeb1d4a84212b3137d15a9922e12
 #: ../../../source/tutorial/match_columns.txt:12
 msgid "複数のカラムを対象とした全文検索"
 msgstr "複数のカラムを対象とした全文検索"
 
-# 6fb68fb7d6da4fd28a257777b599f9f0
+# cc65781ea2c14819a882ff12f4901856
 #: ../../../source/tutorial/match_columns.txt:14
 msgid ""
 "groongaでは、複数のカラムを対象とした全文検索を行うことができます。例えば、ブ"
@@ -1528,7 +1546,7 @@ msgstr ""
 "ログのテーブルで、タイトルと内容とがそれぞれ別のカラムに入ったものがあるとし"
 "ましょう。「タイトルもしくは内容に特定の単語を含む」検索を行いたいとします。"
 
-# 92a3550d86e94cf6a0e280aa5e6ed9ef
+# d0f28cca69204fb4aa14a189ac164a11
 #: ../../../source/tutorial/match_columns.txt:16
 msgid ""
 "この場合、2つのインデックス作成方式があります。1つは、それぞれのカラムに1つず"
@@ -1541,12 +1559,12 @@ msgstr ""
 "デックスを付与する方式です。groongaでは、どちらの形式のインデックスが存在して"
 "いる場合でも、同一の記法で全文検索を行うことができます。"
 
-# 381886522f1e42c788009bbab59ec725
+# 4f870bb8d6d4454894c0c3bc35d3fc5d
 #: ../../../source/tutorial/match_columns.txt:19
 msgid "カラムごとにインデックスを付与する場合"
 msgstr "カラムごとにインデックスを付与する場合"
 
-# 199ab1c3282541de81fd76791b89351b
+# 3729b78ece7d43d4a32ac08d7c1b5faf
 #: ../../../source/tutorial/match_columns.txt:21
 msgid ""
 "Blog1テーブルを作り、タイトル文字列のtitleカラム、本文のmessageカラムを追加し"
@@ -1559,7 +1577,7 @@ msgstr ""
 "ス用にindex_titleカラム、messageカラムのインデック用にindex_messageカラムと、"
 "それぞれ1カラムごとに1つずつ追加しています。"
 
-# 3dec41c0f50c4b2bb61da0a963d2bdc9
+# d429bbcd9a8a4bbd8e2904eef1bc0955
 #: ../../../source/tutorial/match_columns.txt:39
 msgid ""
 "match_columnsオプションで、検索対象のカラムを複数指定することが出来ます。検索"
@@ -1570,17 +1588,17 @@ msgstr ""
 "する文字列はqueryオプションで指定します。これを使うことで、タイトルと本文を全"
 "文検索することができます。"
 
-# 1baeec74d41146a594d64c13e81411ac
+# c40c27bd7e48446ea743175544788506
 #: ../../../source/tutorial/match_columns.txt:41
 msgid "実際に検索してみましょう。"
 msgstr "実際に検索してみましょう。"
 
-# d083fa95215b47579cd5feb2cff6c383
+# a39633207be3465ba5c10007054c53a9
 #: ../../../source/tutorial/match_columns.txt:50
 msgid "複数のカラムにまたがったインデックスを付与する場合"
 msgstr "複数のカラムにまたがったインデックスを付与する場合"
 
-# 7a492a0717644836ac1b79396dc7477a
+# 9fd4eff035b242e491e4a1782790bf52
 #: ../../../source/tutorial/match_columns.txt:52
 msgid ""
 "内容は上の例とほぼ同じですが、titleとmessageの2つのカラムに対するインデックス"
@@ -1589,7 +1607,7 @@ msgstr ""
 "内容は上の例とほぼ同じですが、titleとmessageの2つのカラムに対するインデックス"
 "が共通になっており、インデックスカラムが1つしかありません。"
 
-# 912fda09c3d846d8891bb40a141ad872
+# de81adec321a4d9e937ff3ce4a6745bc
 #: ../../../source/tutorial/match_columns.txt:54
 msgid ""
 "共通のインデックスを用いても、titleカラムのみでの検索、messageカラムのみでの"
@@ -1598,34 +1616,34 @@ msgstr ""
 "共通のインデックスを用いても、titleカラムのみでの検索、messageカラムのみでの"
 "検索、titleもしくはmessageカラムでの検索、全ての検索を行うことができます。"
 
-# b6ecc70cb2194a1986945801f80835a4
+# 7cbb9683535846e4ae6a3c51a6b27d00
 #: ../../../source/tutorial/match_columns.txt:71
 msgid "実際に検索してみましょう。結果は上の例と同じになります。"
 msgstr "実際に検索してみましょう。結果は上の例と同じになります。"
 
-# 563c0e670e61401db4185ed46a969598
+# f6754860a4814da1b5a58353bafa2b7b
 #: ../../../source/tutorial/match_columns.txt:80
 msgid "インデックス名を指定した全文検索"
 msgstr "インデックス名を指定した全文検索"
 
-# 63e8b1256f8d4bf3bcfdddb989aa865c
-# ca3a0024ec544fa1a33332d4a4ad6be1
+# 7026bc5fc11740ada2580bcbb5fdf4f4
+# b11d8defd8b34f29a5742f36c5d99504
 #: ../../../source/tutorial/match_columns.txt:82
 #: ../../../source/tutorial/match_columns.txt:89
 msgid "執筆中です。"
 msgstr "執筆中です。"
 
-# cb345d4c39f941d580bdf4c4f9ae2a38
+# 134cc02862134fd7b615c8e26031984d
 #: ../../../source/tutorial/match_columns.txt:87
 msgid "インデックスの重み"
 msgstr "インデックスの重み"
 
-# 4b1abe3b40164b4daf2e01aee014d132
+# 72f811fa04f9474eb25c5cfbbc40880e
 #: ../../../source/tutorial/micro_blog.txt:9
 msgid "マイクロブログ検索システムの作成"
 msgstr "マイクロブログ検索システムの作成"
 
-# 1e6299aadc6f4f1abdf8c7367a63a412
+# f45f0fca7d8b4bbdaeca915431826f74
 #: ../../../source/tutorial/micro_blog.txt:11
 msgid ""
 "これまで学んだgroongaの機能を用いて、マイクロブログの検索システムを作成してみ"
@@ -1636,22 +1654,22 @@ msgstr ""
 "ましょう。マイクロブログとは、Twitterのような短いメッセージを投稿するブログで"
 "す。"
 
-# 48c4f30652aa411ca54f2d5346b7e3b3
+# 7d98203dccde47e7865902a22157bee6
 #: ../../../source/tutorial/micro_blog.txt:14
 msgid "テーブルの作成"
 msgstr "テーブルの作成"
 
-# b02b04fc0e3545bc81dde6cd6d192002
+# 1bab3b08cc66400db61de82c69d6439d
 #: ../../../source/tutorial/micro_blog.txt:16
 msgid "まずは、テーブルを作成します。"
 msgstr "まずは、テーブルを作成します。"
 
-# 4e6c2805c1754e89bdcbe69424df7b4e
+# 83e4dd69cb2540bc97f9ba3c91f3c2d5
 #: ../../../source/tutorial/micro_blog.txt:48
 msgid "Usersテーブル"
 msgstr "Usersテーブル"
 
-# 379d3cfa1a82428cb65ec2cdf30f9b97
+# f3f7441967a2487a9c66a82f96bd5f67
 #: ../../../source/tutorial/micro_blog.txt:50
 msgid ""
 "ユーザーの名前や自己紹介文、フォローしているユーザー一覧など、ユーザー情報を"
@@ -1660,42 +1678,42 @@ msgstr ""
 "ユーザーの名前や自己紹介文、フォローしているユーザー一覧など、ユーザー情報を"
 "格納するためのテーブルです。"
 
-# e832928c4c40470aa20070ff43573220
+# 189c26fd9d31469688132e5f6f21171d
 #: ../../../source/tutorial/micro_blog.txt:53
 msgid "ユーザーID"
 msgstr "ユーザーID"
 
-# aeb280dc431d4b75be68b1e1be7db03f
+# 601827fb90434d6cb43b58240985e274
 #: ../../../source/tutorial/micro_blog.txt:56
 msgid "ユーザー名"
 msgstr "ユーザー名"
 
-# 629837c83dbc4a2a9cbfa8a7b22b4423
+# 773d90cf2204428283333db212c251a1
 #: ../../../source/tutorial/micro_blog.txt:59
 msgid "フォローしているユーザーの一覧"
 msgstr "フォローしているユーザーの一覧"
 
-# a49dea4367864fd79f3b2acb2695a1c7
+# 9e8fa58ac7454071834b1a4fdfc3600c
 #: ../../../source/tutorial/micro_blog.txt:62
 msgid "お気に入りのコメント一覧"
 msgstr "お気に入りのコメント一覧"
 
-# 42842d4238874cdc80257afee4372c39
+# f9c29c34e71b4cdfb5144cda0175491e
 #: ../../../source/tutorial/micro_blog.txt:65
 msgid "ユーザーの現在地（緯度経度座標）"
 msgstr "ユーザーの現在地（緯度経度座標）"
 
-# 51808ecc9fe54fc884ff17aaa1d654fa
+# a3b2bd0baff242cc9309e20e4b57e091
 #: ../../../source/tutorial/micro_blog.txt:68
 msgid "ユーザーの現在地（文字列）"
 msgstr "ユーザーの現在地（文字列）"
 
-# 0863a380217944e0af75aa9c36c347d6
+# b1366cf9cbef47d896dc3dd0277059d5
 #: ../../../source/tutorial/micro_blog.txt:71
 msgid "ユーザーの自己紹介"
 msgstr "ユーザーの自己紹介"
 
-# 82be8091a92940eca8a5e0d089d373c6
+# c070389400464349898708433e5db1bf
 #: ../../../source/tutorial/micro_blog.txt:74
 msgid ""
 "Usersテーブルのfollowerカラムに対するインデックス。 このインデックスを作るこ"
@@ -1704,12 +1722,12 @@ msgstr ""
 "Usersテーブルのfollowerカラムに対するインデックス。 このインデックスを作るこ"
 "とで、あるユーザーをフォローしているユーザーを検索できるようになります。"
 
-# c0a9869b72924c7c8b27f8397e057067
+# f59104cba2ad433cbccad708a3699149
 #: ../../../source/tutorial/micro_blog.txt:78
 msgid "Commentsテーブル"
 msgstr "Commentsテーブル"
 
-# 8fb4439cc08c442796cb3de3f559d7f9
+# f05c2d1d955e4958945ed64dc9c93f5f
 #: ../../../source/tutorial/micro_blog.txt:80
 msgid ""
 "コメント内容や投稿日時、返信先情報など、コメントに関する内容を格納するテーブ"
@@ -1718,47 +1736,47 @@ msgstr ""
 "コメント内容や投稿日時、返信先情報など、コメントに関する内容を格納するテーブ"
 "ルです。"
 
-# f9264e22883d4532a8f093cc0d736a64
+# 2bec835fd0a846e4b9c931f34531e079
 #: ../../../source/tutorial/micro_blog.txt:83
 msgid "コメントID"
 msgstr "コメントID"
 
-# 74e99716475943b88bb648f755d2f119
+# c4393ab5b4a24661bfc5989c36ed3a46
 #: ../../../source/tutorial/micro_blog.txt:86
 msgid "コメント内容"
 msgstr "コメント内容"
 
-# d06228d7d66244bcb3c6559d74ee3473
+# 08139e0f96e041c0b1a018dd404e4282
 #: ../../../source/tutorial/micro_blog.txt:89
 msgid "投稿日時"
 msgstr "投稿日時"
 
-# 551c38dd77344caf909d14d54c251414
+# fb6160acbfa5452ca423ffad29a39a19
 #: ../../../source/tutorial/micro_blog.txt:92
 msgid "返信元のコメント内容"
 msgstr "返信元のコメント内容"
 
-# e2bcff8515884731bdef854ab73e6ba0
+# 9e07b48f5b9049a7a5abcff6f6819ee2
 #: ../../../source/tutorial/micro_blog.txt:95
 msgid "返信先のユーザーの一覧"
 msgstr "返信先のユーザーの一覧"
 
-# 0f5857f1821c4e898766b48a2dfae058
+# 7344e1c9b13643dd8133e1142f07523b
 #: ../../../source/tutorial/micro_blog.txt:98
 msgid "コメントのハッシュタグの一覧"
 msgstr "コメントのハッシュタグの一覧"
 
-# 0e84470127a64665840942e0a48b4cb4
+# 90d6ebfe15ac45fa9831526269436dc3
 #: ../../../source/tutorial/micro_blog.txt:101
 msgid "投稿場所(緯度経度座標のため)"
 msgstr "投稿場所(緯度経度座標のため)"
 
-# 2affc985f2e448e4a0622dce6f79f642
+# 26228a310a5542ed878c259f9ce989c9
 #: ../../../source/tutorial/micro_blog.txt:104
 msgid "コメントを書いたユーザー"
 msgstr "コメントを書いたユーザー"
 
-# d615ee4c0395457f8e9f86ebee3962f6
+# d54a0323995b434cb7ac44e2a5c029b7
 #: ../../../source/tutorial/micro_blog.txt:107
 msgid ""
 "Usersテーブルのfavoritesカラムに対するインデックス。 このインデックスを作るこ"
@@ -1769,22 +1787,22 @@ msgstr ""
 "とで、指定したコメントを誰がお気に入りに入れているのかを検索できるようになり"
 "ます。"
 
-# 722e586a79db4956abda0b57fd9b765c
+# 9c481dd5d28c4a59812dbb05e4e818b6
 #: ../../../source/tutorial/micro_blog.txt:111
 msgid "HashTagsテーブル"
 msgstr "HashTagsテーブル"
 
-# 66c6d689258e42b5bfa8b5b2ec821c0c
+# 70af0c3668774f1b9b5429d804237088
 #: ../../../source/tutorial/micro_blog.txt:113
 msgid "コメントのハッシュタグを一覧で保存するためのテーブルです。"
 msgstr "コメントのハッシュタグを一覧で保存するためのテーブルです。"
 
-# f8ed1df7c95b4b7b806152b565d18e89
+# ed4c98203cdc4db3ab2174696cbf9eed
 #: ../../../source/tutorial/micro_blog.txt:116
 msgid "ハッシュタグ"
 msgstr "ハッシュタグ"
 
-# dde814b2489e487eb65b0a59ad777428
+# 924ca8953e48479a904d57c216297eaa
 #: ../../../source/tutorial/micro_blog.txt:119
 msgid ""
 "「Comments.hash_tags」のインデックス。 このインデックスを作ることで、指定した"
@@ -1793,12 +1811,12 @@ msgstr ""
 "「Comments.hash_tags」のインデックス。 このインデックスを作ることで、指定した"
 "ハッシュタグのついているコメントの一覧を出すことが出来るようになります。"
 
-# 90494dd001d34e218a203a94bdba38e6
+# d9ba319ca7f24c2da206f18510263bec
 #: ../../../source/tutorial/micro_blog.txt:123
 msgid "Bigramテーブル"
 msgstr "Bigramテーブル"
 
-# 6c8dc2b93dfb48a98c508937cd29be41
+# dc84808c213a4716b6b718588b006732
 #: ../../../source/tutorial/micro_blog.txt:125
 msgid ""
 "ユーザー情報・コメントで全文検索が出来るようにするためのインデックスを格納す"
@@ -1807,12 +1825,12 @@ msgstr ""
 "ユーザー情報・コメントで全文検索が出来るようにするためのインデックスを格納す"
 "るテーブルです。"
 
-# 83af8e6f8f1745d58000038cc4aef363
+# 70799f89ad2444419d3bbcba559e4b29
 #: ../../../source/tutorial/micro_blog.txt:128
 msgid "単語"
 msgstr "単語"
 
-# 420d5975bac541ab97b4826f85389b4c
+# 71763ea4e257480886d215dc008f8dde
 #: ../../../source/tutorial/micro_blog.txt:131
 msgid ""
 "ユーザー情報のインデックス。 このカラムは、ユーザー名「Users.name」、現在地"
@@ -1823,22 +1841,22 @@ msgstr ""
 "「Users.location_str」、自己紹介文「Users.description」のインデックスになって"
 "います。"
 
-# d0bc666d831c4b96926b1ba8f04b7c73
+# 2bd1144747f04233b8aa4c9c1bded659
 #: ../../../source/tutorial/micro_blog.txt:135
 msgid "コメント内容「Comments.comment」のインデックス"
 msgstr "コメント内容「Comments.comment」のインデックス"
 
-# 1ac5720cd4df4744bb86142eb2036283
+# eadddf8f247a4219b123781c678b2943
 #: ../../../source/tutorial/micro_blog.txt:138
 msgid "データのロード"
 msgstr "データのロード"
 
-# d3b00126e86e40b7ac61e8b2f4785f0c
+# c693a84a34c2441396a558ef748bfa0c
 #: ../../../source/tutorial/micro_blog.txt:140
 msgid "つづいて、テスト用データをロードします。"
 msgstr "つづいて、テスト用データをロードします。"
 
-# 54278267c28746efb2f0432d12b2100d
+# 10986feb37fa4e448e601d021f7c1f23
 #: ../../../source/tutorial/micro_blog.txt:238
 msgid ""
 "Usersテーブルのfollowerカラムとfavoritesカラム、そしてCommentsテーブルの"
@@ -1849,7 +1867,7 @@ msgstr ""
 "replied_usersカラムは、ベクターカラムです。そのため、これらのカラムは配列で値"
 "を指定します。"
 
-# 395fb6c2cb224f6bbd13239e52e82d3c
+# 70fc93232b0642c88cd1c65a1c91093d
 #: ../../../source/tutorial/micro_blog.txt:240
 msgid ""
 "Usersテーブルのlocationカラムと、Commentsテーブルのlocationカラムは、GeoPoint"
@@ -1858,7 +1876,7 @@ msgstr ""
 "Usersテーブルのlocationカラムと、Commentsテーブルのlocationカラムは、GeoPoint"
 "型です。この型での値の指定は、\"[緯度]x[経度]\"と記述して指定します。"
 
-# ab3e1aac2df4481c9923ab2baac8390c
+# ed2567abe0674f218741eca48f7ae76d
 #: ../../../source/tutorial/micro_blog.txt:242
 msgid ""
 "Commentsテーブルのlast_modifiedカラムは、Time型です。この型での値を指定する方"
@@ -1869,25 +1887,32 @@ msgid ""
 "す。\"年/月/日 時:分:秒\"というフォーマットで記述することで、データロードの際"
 "に文字列からキャストされ、マイクロ秒数の値が格納されます。"
 msgstr ""
+"Commentsテーブルのlast_modifiedカラムは、Time型です。この型での値を指定する方"
+"法は2つあります。 1つ目の方法は、1970年1月1日0時0分0秒からの経過秒数の値を直"
+"接指定する方法です。このとき、小数部分を指定することでマイクロ秒数での指定が"
+"可能です。指定した値は、データのロードの際にマイクロ秒を単位とする整数値に変"
+"換後、格納されます。 2つ目の方法は、文字列で日時と時刻を指定する方法で"
+"す。\"年/月/日 時:分:秒\"というフォーマットで記述することで、データロードの際"
+"に文字列からキャストされ、マイクロ秒数の値が格納されます。"
 
-# 2e98f1fd30a8423fa68abcfb68bee579
-# 39ea7491c3a74d21a2addb29ebb94000
+# 87e85bc08c46479aac8dfd0938ebd459
+# 54bbec6fe4334ae19ba3b0e678d0202b
 #: ../../../source/tutorial/micro_blog.txt:372
 #: ../../../source/tutorial/query_expansion.txt:46
 msgid "検索"
 msgstr "検索"
 
-# b2d401caa4054d6789e258d2a7e63d9d
+# 48b7dc73e5af4f679e3dc688ddaf90ec
 #: ../../../source/tutorial/micro_blog.txt:374
 msgid "それでは、実際に検索をしてみましょう。"
 msgstr "それでは、実際に検索をしてみましょう。"
 
-# 3d42f41fd96b418dbe49089c9fffd8f1
+# 58bf345566814f109885ad5d17b9d012
 #: ../../../source/tutorial/micro_blog.txt:377
 msgid "キーワードでユーザー検索"
 msgstr "キーワードでユーザー検索"
 
-# 38386581826c4294a14ce92a2cfc85b6
+# a410e08bf60d4d4f86fd0d7e3cfec94e
 #: ../../../source/tutorial/micro_blog.txt:378
 msgid ""
 "ここでは、 :doc:`match_columns` で扱った、複数カラムを対象とした検索を行いま"
@@ -1896,7 +1921,7 @@ msgstr ""
 "ここでは、 :doc:`match_columns` で扱った、複数カラムを対象とした検索を行いま"
 "す。 指定された文字列で、ユーザー名・現在地・自己紹介文を対象に検索をします。"
 
-# 53827863d9aa466b9fb7ff11bf32b2b1
+# 6b4e4410bc6440bd88a9d39a9ca4da01
 #: ../../../source/tutorial/micro_blog.txt:385
 msgid ""
 "「東京」をキーワードにユーザー検索した結果、東京都に住んでいる「グニャラく"
@@ -1905,12 +1930,12 @@ msgstr ""
 "「東京」をキーワードにユーザー検索した結果、東京都に住んでいる「グニャラく"
 "ん」と「OffGao」がヒットしました。"
 
-# 3e0f41018ccb4273976a5165031dad93
+# 5b25240856b5401b8749c93333c09c76
 #: ../../../source/tutorial/micro_blog.txt:388
 msgid "GeoPointでユーザー検索"
 msgstr "GeoPointでユーザー検索"
 
-# b016628e84914d8cb48b02787ff86554
+# d987f234a991490a9b532795796c831e
 #: ../../../source/tutorial/micro_blog.txt:390
 msgid ""
 "ここでは、 :doc:`search` で扱った、GeoPoint型のカラムで検索をします。 以下の"
@@ -1919,7 +1944,7 @@ msgstr ""
 "ここでは、 :doc:`search` で扱った、GeoPoint型のカラムで検索をします。 以下の"
 "例では、指定された位置から5000m以内にいるユーザーを検索しています。"
 
-# 93581c7b65b24f04b6bc3dda092a7b13
+# ed8be698eed54f35b882ae69bea25c38
 #: ../../../source/tutorial/micro_blog.txt:397
 msgid ""
 "新宿駅から5km以内にすんでいるユーザーを検索したところ、「グニャラくん」と"
@@ -1928,12 +1953,12 @@ msgstr ""
 "新宿駅から5km以内にすんでいるユーザーを検索したところ、「グニャラくん」と"
 "「OffGao」がヒットしました。"
 
-# a038e45591624b5492e382cb5bfce5ab
+# 341790b035fd425b936d0e240b201661
 #: ../../../source/tutorial/micro_blog.txt:400
 msgid "あるユーザーをフォローしているユーザーの検索"
 msgstr "あるユーザーをフォローしているユーザーの検索"
 
-# 8f3ed2e89c144cc58440b340a7b52824
+# 97babecfa05b45c295ddf67cbd008f5a
 #: ../../../source/tutorial/micro_blog.txt:402
 msgid ""
 "ここでは、 :doc:`index` で扱った、参照関係の逆引きをします。 以下の例では、"
@@ -1942,7 +1967,7 @@ msgstr ""
 "ここでは、 :doc:`index` で扱った、参照関係の逆引きをします。 以下の例では、"
 "Usersテーブルのfollowerカラムにあるフォローリストを逆引きします。"
 
-# ff4c3bf8f3634d5d929e3807e18639b7
+# 7cc0b4f2bc6148f4b2ab03c0c4036d0d
 #: ../../../source/tutorial/micro_blog.txt:409
 msgid ""
 "「グニャラくん」をフォローしている「hsiomaneki」と「OffGao」がヒットしまし"
@@ -1951,12 +1976,12 @@ msgstr ""
 "「グニャラくん」をフォローしている「hsiomaneki」と「OffGao」がヒットしまし"
 "た。"
 
-# c15e56846d69454a897c4ffec882117e
+# 640394e57d6545688e955b7e7b84966b
 #: ../../../source/tutorial/micro_blog.txt:412
 msgid "GeoPointでコメント検索"
 msgstr "GeoPointでコメント検索"
 
-# 9e425c0a76014971abfa27f77975d0eb
+# 0fe20fa9397b47f78454ce7ea6e9df58
 #: ../../../source/tutorial/micro_blog.txt:413
 msgid ""
 "ある範囲内で書かれたコメントを検索します。 また、 :doc:`drilldown` で扱ったド"
@@ -1967,7 +1992,7 @@ msgstr ""
 "リルダウンも行います。検索結果をハッシュタグとユーザーでドリルダウンし、ユー"
 "ザー別・ハッシュタグ別のカウントを出します。"
 
-# ab81543d18b04f42a8f951f8a02f0aa3
+# a1d1b70012c44bf3a13316407706881a
 #: ../../../source/tutorial/micro_blog.txt:420
 msgid ""
 "範囲を広く指定したため、位置情報のあるすべてのコメントがヒットしました。そし"
@@ -1980,12 +2005,12 @@ msgstr ""
 "グは「#groonga」が2つに「#travel」が1つ、投稿者は「グニャラくん」「OffGao」が"
 "それぞれ2件ずつであることがわかります。"
 
-# 16e1ef02a8f343588dab21ce47e2a5ee
+# b9a00e097a7642f7927a0bf33fc456fa
 #: ../../../source/tutorial/micro_blog.txt:423
 msgid "キーワードでコメント検索"
 msgstr "キーワードでコメント検索"
 
-# edb6b0e121b54d77ac8fc0643784d294
+# e4bd9778d9b145c5a74a41db9637f108
 #: ../../../source/tutorial/micro_blog.txt:424
 msgid ""
 "あるキーワードを含むコメントを検索します。 さらに、 :doc:`search` で扱った、"
@@ -1994,7 +2019,7 @@ msgstr ""
 "あるキーワードを含むコメントを検索します。 さらに、 :doc:`search` で扱った、"
 "スコア値_scoreも出してみましょう。"
 
-# a0a0b5a84cf44c11a4262e9b86c63bd0
+# 8684d4cc361d4dc58db6a23b24e6a52c
 #: ../../../source/tutorial/micro_blog.txt:431
 msgid ""
 "「なう」をキーワードにコメント検索した結果、2件のコメントがヒットしました。ま"
@@ -2005,12 +2030,12 @@ msgstr ""
 "た、_scoreの値も返ってきており、「なう」の数が出力されていることが確認できま"
 "す。"
 
-# ecdfcc45d8f64549b92435434eb86b8b
+# d2f49d8c85ba4774b035c9e8f173a1cd
 #: ../../../source/tutorial/micro_blog.txt:434
 msgid "GeoPointとキーワードでコメント検索"
 msgstr "GeoPointとキーワードでコメント検索"
 
-# 16112d924dc44bfca127e1ba94490240
+# 25c0507fbdd24a9988f71a88386ad363
 #: ../../../source/tutorial/micro_blog.txt:435
 msgid ""
 "今度は、キーワードとGeoPointの両方を条件に検索をしてみます。--queryと--filter"
@@ -2019,7 +2044,7 @@ msgstr ""
 "今度は、キーワードとGeoPointの両方を条件に検索をしてみます。--queryと--filter"
 "の両方を使用した場合、両方の条件に一致するレコードがヒットします。"
 
-# 56a967afca8f4af9991aa11e9b9a1925
+# d5f077e380f54940aa78174fd8f6609a
 #: ../../../source/tutorial/micro_blog.txt:441
 msgid ""
 "両方の条件を満たすコメントが1件ヒットしました。また、ドリルダウンの結果も返っ"
@@ -2028,12 +2053,12 @@ msgstr ""
 "両方の条件を満たすコメントが1件ヒットしました。また、ドリルダウンの結果も返っ"
 "てきており、「グニャラくん」のコメント1件であることがわかります。"
 
-# 9e69eaa907a44dfa8319cb5489fe1f5f
+# c9919fbb2f0741b1abd23a6f2566d1d4
 #: ../../../source/tutorial/micro_blog.txt:444
 msgid "ハッシュタグでコメント検索"
 msgstr "ハッシュタグでコメント検索"
 
-# 925e29f455a94487be72e58b4b3b9f01
+# 696dc364a13a4cf797910adeb485f556
 #: ../../../source/tutorial/micro_blog.txt:445
 msgid ""
 "あるハッシュタグのついているコメントを検索します。 これも、 :doc:`index` で"
@@ -2042,7 +2067,7 @@ msgstr ""
 "あるハッシュタグのついているコメントを検索します。 これも、 :doc:`index` で"
 "扱った、参照関係の逆引きを使います。"
 
-# 3eb9fb70d777421fbcd579d19b2beb8f
+# b416f9ae45eb432ebbd5d0b230883bab
 #: ../../../source/tutorial/micro_blog.txt:452
 msgid ""
 "#groongaタグの付いている2件のコメントがヒットしました。また、投稿者のドリルダ"
@@ -2051,17 +2076,17 @@ msgstr ""
 "#groongaタグの付いている2件のコメントがヒットしました。また、投稿者のドリルダ"
 "ウンも返ってきており、2件とも「グニャラくん」のものであることがわかります。"
 
-# 56c329a46b52495c9d49f2fec6751715
+# 00e44d2c28f040cba236c89a56026507
 #: ../../../source/tutorial/micro_blog.txt:455
 msgid "ユーザーIDでコメント検索"
 msgstr "ユーザーIDでコメント検索"
 
-# c945288059b64d8eb9d56d770f4ce11d
+# 9ac5ffdf2add4e198ca669341290db73
 #: ../../../source/tutorial/micro_blog.txt:456
 msgid "あるユーザーが投稿したコメントを検索します。"
 msgstr "あるユーザーが投稿したコメントを検索します。"
 
-# fb8cf950260b45328179b993e011aba1
+# fda3faee3a394c8eb8fb2ae928d04b10
 #: ../../../source/tutorial/micro_blog.txt:462
 msgid ""
 "「グニャラくん」が書き込んだ4件のコメントがヒットしました。また、ハッシュタグ"
@@ -2072,28 +2097,28 @@ msgstr ""
 "でドリルダウンした結果も返ってきており、ハッシュタグは「#groonga」が2つに"
 "「#travel」が1つあることがわかります。"
 
-# 88e987d953494f1fbbc8cdc3e92a98ae
+# ff1ec53da04940aa8bc014c541f18bf4
 #: ../../../source/tutorial/micro_blog.txt:465
 msgid "ユーザーのお気に入りコメントを検索"
 msgstr "ユーザーのお気に入りコメントを検索"
 
-# b35e955d73f64e23be91729d297bc6d4
+# 7da65f3264c747dc98ba53ff3cd1f73a
 #: ../../../source/tutorial/micro_blog.txt:466
 msgid "あるユーザーがお気に入りに入れているコメントを検索します。"
 msgstr "あるユーザーがお気に入りに入れているコメントを検索します。"
 
-# f5f9c37c22a84a0eabd81ae9ec5805fc
+# 53bd901158c343b7bca9c0ef30a97466
 #: ../../../source/tutorial/micro_blog.txt:472
 msgid "「グニャラくん」がお気に入りに入れている2件のコメントがヒットしました。"
 msgstr ""
 "「グニャラくん」がお気に入りに入れている2件のコメントがヒットしました。"
 
-# 7dd92c42ee2144c2bb317995d29a654f
+# 8bc2d10615be47b99d077267ee18bc56
 #: ../../../source/tutorial/micro_blog.txt:475
 msgid "投稿時間でコメント検索"
 msgstr "投稿時間でコメント検索"
 
-# 4280e652a72c497ca3c76e3fe7b9613e
+# 116c1dba32504055a4ea0571fe485515
 #: ../../../source/tutorial/micro_blog.txt:476
 msgid ""
 "コメントの投稿時間で検索をします。Time型については :doc:`data` で扱っていま"
@@ -2102,7 +2127,7 @@ msgstr ""
 "コメントの投稿時間で検索をします。Time型については :doc:`data` で扱っていま"
 "す。 この例では、指定した時間よりも前に投稿されているコメントを検索します。"
 
-# 34c5dd5de0c74d3793d55e3b52a878d6
+# 05bf4dfafde34d888614ba18511f9966
 #: ../../../source/tutorial/micro_blog.txt:483
 msgid ""
 "2010/03/17 14:00:00以前に書かれたコメント5件がヒットしました。また、ドリルダ"
@@ -2113,12 +2138,12 @@ msgstr ""
 "ウンの結果も返ってきており、「hsiomaneki」が2件、「グニャラくん」が3件ヒット"
 "していることがわかります。"
 
-# 43dc21830df74975ae218691e9e95a40
+# 659db7474c9942f9be3b040f88cd23e5
 #: ../../../source/tutorial/network.txt:11
 msgid "Remote access"
 msgstr "Remote access"
 
-# a7220a7dcfdb4b77a375874edfabcfb6
+# e8e707dcae6241878372a1fbe18994ec
 #: ../../../source/tutorial/network.txt:13
 msgid ""
 "You can use groonga as a server which allows remote access. Groonga supports "
@@ -2127,17 +2152,17 @@ msgstr ""
 "You can use groonga as a server which allows remote access. Groonga supports "
 "the original protocol (gqtp), the memcached binary protocol and HTTP."
 
-# 793bb9e71e7c4dc19ed13f289aaf1d92
+# 4cd0dd5324cc4577b65762a8e9c3d185
 #: ../../../source/tutorial/network.txt:16
 msgid "Groonga query transfer protocol (gqtp)"
 msgstr "Groonga query transfer protocol (gqtp)"
 
-# c183b397d64146d9902abd333adf66a2
+# 9c22ad9858d24339bf756696db6cd27b
 #: ../../../source/tutorial/network.txt:19
 msgid "How to run a gqtp server"
 msgstr "How to run a gqtp server"
 
-# 26db486e32aa4e2397ac582676342a9d
+# 6df4ee5a71104044bf27dbf253bdd36a
 #: ../../../source/tutorial/network.txt:21
 msgid ""
 "Groonga has a special protocol, named groonga query transfer ptorotocl "
@@ -2148,7 +2173,7 @@ msgstr ""
 "(gqtp), for remote access to a database. The following form shows how to run "
 "groonga as a gqtp server."
 
-# 553998a2feb04e7189c495b0b22910c6
+# 11fa4debd58640e8aef1c19cf271109e
 #: ../../../source/tutorial/network.txt:27
 msgid ""
 "The `-s` option specifies to run groonga as a server. DB_PATH specifies the "
@@ -2161,7 +2186,7 @@ msgstr ""
 "argument, PORT_NUMBER, specify the port number of the server. The default "
 "port number is 10041, which is used when you don't specify PORT_NUMBER."
 
-# 7c941a6629f749798e5560e04becd427
+# 87cdcc6014b54f74a06a9b08f78c65e1
 #: ../../../source/tutorial/network.txt:29
 msgid ""
 "The following command runs a server that listens on the default port number. "
@@ -2170,12 +2195,12 @@ msgstr ""
 "The following command runs a server that listens on the default port number. "
 "The server accepts operations to the specified database."
 
-# c183b397d64146d9902abd333adf66a2
+# d1f95c64526a4d8591830f39b3a93f1f
 #: ../../../source/tutorial/network.txt:38
 msgid "How to run a gqtp daemon"
 msgstr "How to run a gqtp daemon"
 
-# a7220a7dcfdb4b77a375874edfabcfb6
+# b55dfa62608d4a9981497456460b291f
 #: ../../../source/tutorial/network.txt:40
 msgid ""
 "You can also run a gqtp server as a daemon by using the `-d` option, instead "
@@ -2184,7 +2209,7 @@ msgstr ""
 "You can also run a gqtp server as a daemon by using the `-d` option, instead "
 "of the `-s` option."
 
-# 813808a07e29491ca49c0cb0366a7951
+# f11b72db2ff7424185465776c5230b6c
 #: ../../../source/tutorial/network.txt:46
 msgid ""
 "A groonga daemon prints its process ID as follows. In this example, the "
@@ -2195,17 +2220,17 @@ msgstr ""
 "process ID is 12345. Then, the daemon opens a specified database and accepts "
 "operations to that database."
 
-# c183b397d64146d9902abd333adf66a2
+# 13d82bf3e0dc438a867e53302c29cc8b
 #: ../../../source/tutorial/network.txt:55
 msgid "How to run a gqtp client"
 msgstr "How to run a gqtp client"
 
-# 8fff3fe5b68b4eacb9a8d0a2f18c31c9
+# f63a03fbb82c41759bc463bd6c6e8324
 #: ../../../source/tutorial/network.txt:57
 msgid "You can run groonga as a gqtp client as follows:"
 msgstr "You can run groonga as a gqtp client as follows:"
 
-# d8e0cfb858c14bf08c93b11dc48d60ab
+# 7b0289e78ff449e889f7161f5e92e858
 #: ../../../source/tutorial/network.txt:63
 msgid ""
 "This command establishes a connection with a gqtp server and then enters "
@@ -2222,7 +2247,7 @@ msgstr ""
 "port number of the server. If not specified, groonga uses the default port "
 "number 10041."
 
-# 794e53eae7cd4ad9ae9ea0e35e2fc396
+# 6e9832216e1049e281642be6ec5e292d
 #: ../../../source/tutorial/network.txt:72
 msgid ""
 "In interactive mode, groonga reads commands from the standard input and "
@@ -2231,24 +2256,26 @@ msgstr ""
 "In interactive mode, groonga reads commands from the standard input and "
 "executes them one by one."
 
-# c183b397d64146d9902abd333adf66a2
+# 6a31d3c240b14ab69239a0d0ed2ace2f
 #: ../../../source/tutorial/network.txt:75
 msgid "How to terminate a gqtp server"
 msgstr "How to terminate a gqtp server"
 
-# 8fff3fe5b68b4eacb9a8d0a2f18c31c9
+# a68da31135e14fa8ae4ad15d4a301986
 #: ../../../source/tutorial/network.txt:77
 msgid ""
-"You can terminate a gqtp server with a :doc:`/commands/shutdown` command."
+"You can terminate a gqtp server with a :doc:`/reference/commands/shutdown` "
+"command."
 msgstr ""
-"You can terminate a gqtp server with a :doc:`/commands/shutdown` command."
+"You can terminate a gqtp server with a :doc:`/reference/commands/shutdown` "
+"command."
 
-# bdda980ee880401bb1b57f3c65310637
+# be704078840241639953791bac8a9796
 #: ../../../source/tutorial/network.txt:86
 msgid "Memcached binary protocol"
 msgstr "Memcached binary protocol"
 
-# 7a0f54f0b6ca4f20b133aca426909079
+# c54bf70fdb384526846411f2ca4767dc
 #: ../../../source/tutorial/network.txt:88
 msgid ""
 "Groonga supports the memcached binary protocol. The following form shows how "
@@ -2257,7 +2284,7 @@ msgstr ""
 "Groonga supports the memcached binary protocol. The following form shows how "
 "to run groonga as a memcached binary protocol server daemon."
 
-# e82a4c4a61ca49749587d1c99db87b82
+# f5c52799b90d457a8d01790760536beb
 #: ../../../source/tutorial/network.txt:94
 msgid ""
 "The `--protocol` option and its argument specify the protocol of the server. "
@@ -2266,17 +2293,17 @@ msgstr ""
 "The `--protocol` option and its argument specify the protocol of the server. "
 "\"memcached\" specifies to use the memcached binary protocol."
 
-# d17a307b833f4e508108517dfa13e398
+# e67f1a5b74ea423fa32afe99b35f7ddf
 #: ../../../source/tutorial/network.txt:97
 msgid "Hypertext transfer protocol (HTTP)"
 msgstr "Hypertext transfer protocol (HTTP)"
 
-# c183b397d64146d9902abd333adf66a2
+# 521d6159282a4579b1f8df692b4e2b41
 #: ../../../source/tutorial/network.txt:100
 msgid "How to run an HTTP server"
 msgstr "How to run an HTTP server"
 
-# 58e16e359beb443f83e655db905ec843
+# 669f57ed4d554bb6a67bb3b046d085da
 #: ../../../source/tutorial/network.txt:102
 msgid ""
 "Groonga supports the hypertext transfer protocol (HTTP). The following form "
@@ -2285,7 +2312,7 @@ msgstr ""
 "Groonga supports the hypertext transfer protocol (HTTP). The following form "
 "shows how to run groonga as an HTTP server daemon."
 
-# 7fed6c735819455ba6a78ce7bcd96f3b
+# 847fcced5ca444739568e1a4af937921
 #: ../../../source/tutorial/network.txt:108
 msgid ""
 "The `--protocol` option and its argument specify the protocol of the server. "
@@ -2294,19 +2321,19 @@ msgstr ""
 "The `--protocol` option and its argument specify the protocol of the server. "
 "\"http\" specifies to use HTTP."
 
-# 6d5d96600e7c4e6ab121acf8e7df352b
+# 1ad64d4efc44465aa4f1eabb8e0fa86f
 #: ../../../source/tutorial/network.txt:110
 msgid ""
 "The following command runs an HTTP server that listens on the port number 80."
 msgstr ""
 "The following command runs an HTTP server that listens on the port number 80."
 
-# 7aaa029bb65b4a88b9b24d96f4af2fe5
+# 4dcf7a93ea614700b3260112d4fd7fc3
 #: ../../../source/tutorial/network.txt:118
 msgid "How to send a command to an HTTP server"
 msgstr "How to send a command to an HTTP server"
 
-# e494660f1aa24be798c353efe1384325
+# b4c21ff5af9543a092f1ee56e5be6329
 #: ../../../source/tutorial/network.txt:120
 msgid ""
 "You can send a command to an HTTP server by sending a GET request to /d/"
@@ -2317,17 +2344,17 @@ msgstr ""
 "COMMAND_NAME. Command parameters can be passed as parameters of the GET "
 "request. The format is \"?NAME_1=VALUE_1&NAME_2=VALUE_2&...\"."
 
-# af850de052774eb8ae6dd4864f52239d
+# 26fe044dd28e43df86fe5a22a142454e
 #: ../../../source/tutorial/network.txt:122
 msgid "The following example shows how to send commands to an HTTP server."
 msgstr "The following example shows how to send commands to an HTTP server."
 
-# 13b4fd755ec948fda21cce7397cfbd57
+# a7fb2ffee5e5469282e014642d6afe47
 #: ../../../source/tutorial/network.txt:135
 msgid "Administration tool (HTTP)"
 msgstr "Administration tool (HTTP)"
 
-# 4b385c1877a0409d8943d9b9cde79bb9
+# 2f2ee28b4cb84b23919c441dc56c8b6b
 #: ../../../source/tutorial/network.txt:137
 msgid ""
 "An HTTP server of groonga provides a browser based administration tool that "
@@ -2342,12 +2369,12 @@ msgstr ""
 "PORT_NUMBER]/. Note that Javascript must be enabled for the tool to work "
 "properly."
 
-# 7958b605338649aab70cfca030c1e72c
+# bd5e8710909c499e939bbd91f69df7f5
 #: ../../../source/tutorial/network.txt:140
 msgid "Security issues"
 msgstr "Security issues"
 
-# cb68d1dac557413e983db38991271819
+# 7e5df68f031342de9342e15396e31672
 #: ../../../source/tutorial/network.txt:142
 msgid ""
 "Groonga servers don't support user authentication. Everyone can view and "
@@ -2360,12 +2387,12 @@ msgstr ""
 "IP addresses that can access groonga servers. You can use iptables or "
 "similar for this purpose."
 
-# 65ae4dee348d4d90a84dab3a0fddf188
+# 19c095bd11054dbb9197ac9deaf9b908
 #: ../../../source/tutorial/patricia_trie.txt:9
 msgid "パトリシア木による前方一致検索"
 msgstr "パトリシア木による前方一致検索"
 
-# 8e0d701151634bee829cda7711505773
+# f53522af22f34b819a3b77844e7426eb
 #: ../../../source/tutorial/patricia_trie.txt:11
 msgid ""
 "groongaのテーブルは、テーブル作成時にパトリシア木オプションを指定すると、前方"
@@ -2376,12 +2403,12 @@ msgstr ""
 "一致検索を行うことができます。また、追加のオプションを指定することにより、主"
 "キーの後方一致検索をも行うことができます。"
 
-# cdfc6c9b2c404d4e8d1935dd310f9b67
+# 3ee45f8cc1ed4fc09f376baa61986d6d
 #: ../../../source/tutorial/patricia_trie.txt:14
 msgid "主キーによる前方一致検索"
 msgstr "主キーによる前方一致検索"
 
-# 0987420ea75744a6bad07dd30876502d
+# 1b61eb3c64734e17b1f68eda0306594f
 #: ../../../source/tutorial/patricia_trie.txt:16
 msgid ""
 "table_createコマンドのflagsオプションにTABLE_PAT_KEYを指定することで、主キー"
@@ -2390,12 +2417,12 @@ msgstr ""
 "table_createコマンドのflagsオプションにTABLE_PAT_KEYを指定することで、主キー"
 "による前方一致検索ができるようになります。"
 
-# fca6ebbdff1442dc86fd8bc4a4b975a2
+# 4c441e593c3e497987b05f0a97e97a2e
 #: ../../../source/tutorial/patricia_trie.txt:32
 msgid "主キーによる後方一致検索"
 msgstr "主キーによる後方一致検索"
 
-# c8fd887aacf74cb7a7cc156d4f0a12b3
+# 31ae2f4f20ef4290b8901bbb4bd58703
 #: ../../../source/tutorial/patricia_trie.txt:34
 msgid ""
 "table_createコマンドのflagsオプションにTABLE_PAT_KEYとKEY_WITH_SISを指定する"
@@ -2404,7 +2431,7 @@ msgstr ""
 "table_createコマンドのflagsオプションにTABLE_PAT_KEYとKEY_WITH_SISを指定する"
 "ことで、主キーによる前方一致検索・後方一致検索の両方が可能となります。"
 
-# b2513bc0dc444681874d9b0e6dc40432
+# 571d737d4b9f47788dea2f13013b8ed0
 #: ../../../source/tutorial/patricia_trie.txt:36
 msgid ""
 "KEY_WITH_SISフラグを付与すると、データを追加する際に後方一致用のレコードも追"
@@ -2417,7 +2444,7 @@ msgstr ""
 "追加されたレコードまでヒットしてしまいます。元のレコードのみ検索するために、"
 "一工夫必要になります。"
 
-# 1acd2faf28fa41d2b3b49786153e53ae
+# 3ef13c8e12a94ca4a057374ad8f898fd
 #: ../../../source/tutorial/patricia_trie.txt:38
 msgid ""
 "例えば、元のレコードと自動的に追加されたレコードとの区別をつけるために、元の"
@@ -2432,21 +2459,23 @@ msgstr ""
 "直感的に指定することができないので ``--filter`` オプションを使っていることに"
 "注意してください。"
 
-# 439a1ea5fb3f484fbcec5ca6f6ce70cd
+# 848da044d7fd485da672e27c9592b555
 #: ../../../source/tutorial/query_expansion.txt:9
 msgid "クエリ拡張"
 msgstr "クエリ拡張"
 
-# d87f0757952545a0b732ca395fafffb1
+# 65708eed06814c8cb4762ebbf2b71099
 #: ../../../source/tutorial/query_expansion.txt:11
 msgid ""
-"groongaでは、 :doc:`/commands/select` コマンドにquery_expansionパラメータを指"
-"定することによって、ユーザが指定した検索文字列を適宜拡張することが可能です。"
+"groongaでは、 :doc:`/reference/commands/select` コマンドにquery_expansionパラ"
+"メータを指定することによって、ユーザが指定した検索文字列を適宜拡張することが"
+"可能です。"
 msgstr ""
-"groongaでは、 :doc:`/commands/select` コマンドにquery_expansionパラメータを指"
-"定することによって、ユーザが指定した検索文字列を適宜拡張することが可能です。"
+"groongaでは、 :doc:`/reference/commands/select` コマンドにquery_expansionパラ"
+"メータを指定することによって、ユーザが指定した検索文字列を適宜拡張することが"
+"可能です。"
 
-# 66bfc024ec984d16a41fd1c6dd80d90a
+# b8e0309c263a484991e40cb94f8d0809
 #: ../../../source/tutorial/query_expansion.txt:13
 msgid ""
 "たとえば、ユーザが'シークヮーサー'という文字列で検索した場合に、'シークヮー"
@@ -2457,12 +2486,12 @@ msgstr ""
 "サー OR シークァーサー'で検索した場合と同一の結果を返すことによって、本来ユー"
 "ザが必要とする結果をよりもれなく検索できるようになります。"
 
-# c48ebdf201f3485f874d36ef0f85051f
+# b9033f84f897438ca71bf89a43649780
 #: ../../../source/tutorial/query_expansion.txt:16
 msgid "準備"
 msgstr "準備"
 
-# 1be15738f27b48c58dcb83646392d303
+# df3aae89434f4d1787a77d4e4cc10662
 #: ../../../source/tutorial/query_expansion.txt:18
 msgid ""
 "クエリ拡張機能を使用するためには、検索対象となる文書を格納するテーブル(ここで"
@@ -2477,7 +2506,7 @@ msgstr ""
 "主キーが置換前の文字列となり、文字列型(ShortText)のカラムの値が置換後の文字列"
 "となります。"
 
-# 29cb0dd2a419440f820194e209af367c
+# 5505372d9ee742bc85819faf99658b82
 #: ../../../source/tutorial/query_expansion.txt:20
 msgid ""
 "TODO: 文字列型のベクターカラムでも可能であり、その場合は各要素をORでつなげた"
@@ -2486,12 +2515,12 @@ msgstr ""
 "TODO: 文字列型のベクターカラムでも可能であり、その場合は各要素をORでつなげた"
 "ものに置換されるということを記述する。"
 
-# 8a5cc89aeed942cfaca06523297b170d
+# 9cbfe07ce8ef4155ae8f1b6f61e2ca8c
 #: ../../../source/tutorial/query_expansion.txt:22
 msgid "実際に文書テーブルと置換テーブルを作成してみましょう。"
 msgstr "実際に文書テーブルと置換テーブルを作成してみましょう。"
 
-# 85c4c8043a6f44fd9da6dca86e418c41
+# 9c80f0e409be415ea68a8d85bd7d62bc
 #: ../../../source/tutorial/query_expansion.txt:43
 msgid ""
 "この例では、ユーザが\"シークァーサー\"と入力しても、\"シークヮーサー\"と入力"
@@ -2502,7 +2531,7 @@ msgstr ""
 "しても、それぞれの異なる表記の文書をもれなく検索するための置換テーブルを作成"
 "しています。"
 
-# d9965c5ce74748988981cde9b68e768e
+# b86bdd8a36cd4568879b7daa136edcbb
 #: ../../../source/tutorial/query_expansion.txt:48
 msgid ""
 "それでは実際に、準備した置換テーブルを使ってみましょう。まずは、"
@@ -2511,7 +2540,7 @@ msgstr ""
 "それでは実際に、準備した置換テーブルを使ってみましょう。まずは、"
 "query_expansionパラメータを指定せずにselectコマンドを使って検索してみます。"
 
-# e188a8d08d5146818a249198e55dc496
+# 273ddfb584184666b573b24ccbbd2c14
 #: ../../../source/tutorial/query_expansion.txt:55
 msgid ""
 "指定された文字列に完全に一致するレコードのみがそれぞれヒットします。次に、"
@@ -2522,7 +2551,7 @@ msgstr ""
 "query_expansionパラメータに、準備したSynonymテーブルのbodyカラムを指定してみ"
 "ましょう。"
 
-# 1a8eb3d5750f4e84bc7562778fd82f3f
+# 7fe6353e4e2f4980be538303cc39de1b
 #: ../../../source/tutorial/query_expansion.txt:62
 msgid ""
 "どちらのクエリ文字列も、\"(シークァーサー OR シークヮーサー)\"という文字列に"
@@ -2533,12 +2562,12 @@ msgstr ""
 "置換されてから検索されるため、表記の揺れを吸収して検索できるようになりまし"
 "た。"
 
-# 425724c9a57e433e9a1d4a6e041d0a55
+# 48857369c01742599be265a3f9a35cda
 #: ../../../source/tutorial/search.txt:11
 msgid "さまざまな検索条件の指定"
 msgstr "さまざまな検索条件の指定"
 
-# 24529f191dd8435c8cbf19317cde005e
+# 1a303cf9bff840b9ab3d0ab20bb2c6e9
 #: ../../../source/tutorial/search.txt:13
 msgid ""
 "groongaは、JavaScriptに似た文法での条件絞込や、計算した値を用いたソートを行う"
@@ -2549,12 +2578,12 @@ msgstr ""
 "ことができます。また、位置情報(緯度・経度)を用いた絞込・ソートを行うことがで"
 "きます。"
 
-# 1855abbd86f54e37b97f680125462874
+# 9701ab1aa7f44fbbabe6801d0ae28059
 #: ../../../source/tutorial/search.txt:16
 msgid "JavaScriptに似た文法での絞込・全文検索"
 msgstr "JavaScriptに似た文法での絞込・全文検索"
 
-# 052d3729946d4b8da5d6ea3de3e696ed
+# 66e81e95270147aca5cb7a52670fe7d7
 #: ../../../source/tutorial/search.txt:18
 msgid ""
 "selectコマンドのfilterパラメータは、queryパラメータと同様に、レコードの検索条"
@@ -2565,17 +2594,17 @@ msgstr ""
 "件を指定します。filterパラメータとqueryパラメータが異なる点は、filterパラメー"
 "タには、JavaScriptの式に似た文法で条件を指定する点です。"
 
-# 080f8ac59a804e38a04242af0f5168cb
+# dc7cabb2d8514c24a33c8b9ed6f4b9f4
 #: ../../../source/tutorial/search.txt:24
 msgid "ここで、filterパラメータには"
 msgstr "ここで、filterパラメータには"
 
-# 237d5f4a97574cf0a5f3d85a0d86f8b9
+# 78d62d8500c0427993ff56e205042a1b
 #: ../../../source/tutorial/search.txt:26
 msgid "_id <= 1"
 msgstr "_id <= 1"
 
-# 33da8e5c51494f16ad55ea2834eb3741
+# 756ae3c339ed4210810a4749c70886ba
 #: ../../../source/tutorial/search.txt:28
 msgid ""
 "という条件を指定しています。この場合は_idの値が1以下のレコードが検索結果とし"
@@ -2584,12 +2613,12 @@ msgstr ""
 "という条件を指定しています。この場合は_idの値が1以下のレコードが検索結果とし"
 "て得られます。"
 
-# eadffbaf06f74f5caf5c7267bb869077
+# 2a9854f0e79042e7ae7a3e7faad54bae
 #: ../../../source/tutorial/search.txt:30
 msgid "また、&& や || を使って、条件のAND・OR指定をすることもできます。"
 msgstr "また、&& や || を使って、条件のAND・OR指定をすることもできます。"
 
-# 29ca47600d28431c9d1a865304bebd9b
+# 2430ec1f0b984128b1e99d8b32ccf371
 #: ../../../source/tutorial/search.txt:37
 msgid ""
 "queryパラメータとfilterパラメータを同時に指定すると、両者の条件をともに満たす"
@@ -2598,12 +2627,12 @@ msgstr ""
 "queryパラメータとfilterパラメータを同時に指定すると、両者の条件をともに満たす"
 "レコードが結果として返ります。"
 
-# 63f2d411fb8642eaa027f35307c9b5f9
+# 9049db4033c043f3a8890ddbe9708131
 #: ../../../source/tutorial/search.txt:40
 msgid "scorerを利用したソート"
 msgstr "scorerを利用したソート"
 
-# 062bdcc43b7047b3a3d0e759c315ce0a
+# 6aeb33513f1b4527a32653c3120b4e62
 #: ../../../source/tutorial/search.txt:42
 msgid ""
 "selectコマンドのscorerパラメータは、 全文検索を行った結果の各レコードに対して"
@@ -2612,7 +2641,7 @@ msgstr ""
 "selectコマンドのscorerパラメータは、 全文検索を行った結果の各レコードに対して"
 "処理を行うためのパラメータです。"
 
-# d8df2c0a84cc4a88bc9e376f73396199
+# f019cfe1ede541f79d3b4df1bb550e6d
 #: ../../../source/tutorial/search.txt:45
 msgid ""
 "filterパラメータと同様に、 JavaScriptの式に似たな文法で様々な条件を指定するこ"
@@ -2621,7 +2650,7 @@ msgstr ""
 "filterパラメータと同様に、 JavaScriptの式に似たな文法で様々な条件を指定するこ"
 "とができます。"
 
-# 5d2bbcad9e0b4cd59a639d4a94e97722
+# 35f2993d68bc4760ac4f18a0ccf10a8f
 #: ../../../source/tutorial/search.txt:53
 msgid ""
 "検索結果には、'_score'という名前の、全文検索のスコアが代入されている仮想的な"
@@ -2630,17 +2659,17 @@ msgstr ""
 "検索結果には、'_score'という名前の、全文検索のスコアが代入されている仮想的な"
 "カラムが付与されることをチュートリアル中ソートの項目で説明しました。"
 
-# 2c756fab3f7949b59bfde89d2caecb8e
+# d1955769b40a461eb326ca05e96dd9d2
 #: ../../../source/tutorial/search.txt:55
 msgid "上記の実行例では、scorerパラメータに"
 msgstr "上記の実行例では、scorerパラメータに"
 
-# a078008afe884f7aa2de655317ea8554
+# 0ae791c63ab14762be81ca5a600329b9
 #: ../../../source/tutorial/search.txt:57
 msgid "_score = rand()"
 msgstr "_score = rand()"
 
-# 6702e53348174361b7ac5f25810bb28a
+# 0dd2a2402c124f008c18edf5c7ad93a7
 #: ../../../source/tutorial/search.txt:59
 msgid ""
 "という条件を指定しています。ここでは、rand()という乱数を返す関数を用いて、全"
@@ -2649,24 +2678,24 @@ msgstr ""
 "という条件を指定しています。ここでは、rand()という乱数を返す関数を用いて、全"
 "文検索のスコアを乱数で上書きしています。"
 
-# f16ae73ae56d47eca76b8df972d9d107
+# 38439562041040378afb16d440062e66
 #: ../../../source/tutorial/search.txt:61
 msgid "sortbyパラメータには、"
 msgstr "sortbyパラメータには、"
 
-# f2c754c4916a42ffa6c7ecc96789b880
+# 1e054cccc65d46ce87145db910024606
 #: ../../../source/tutorial/search.txt:63
 msgid "_score"
 msgstr "_score"
 
-# 3ad56c5aec4745c182b99b42601f2b30
+# 35b860b3d14341cc83c16548f29572c3
 #: ../../../source/tutorial/search.txt:65
 msgid ""
 "を指定しています。これは、スコア順に昇順にソートすることを意味しています。"
 msgstr ""
 "を指定しています。これは、スコア順に昇順にソートすることを意味しています。"
 
-# a60aa57b51d8464695dc8b33401894b2
+# ab920f1deec9487e9d7ced3bae435f35
 #: ../../../source/tutorial/search.txt:67
 msgid ""
 "よって、上記のクエリは実行されるたびに検索結果の並び順がランダムに変わりま"
@@ -2675,12 +2704,12 @@ msgstr ""
 "よって、上記のクエリは実行されるたびに検索結果の並び順がランダムに変わりま"
 "す。"
 
-# aebdca842e6b4193b6ff81ae96996b16
+# 0b41716fcd3645ec9d795ab819db62b1
 #: ../../../source/tutorial/search.txt:70
 msgid "位置情報を用いた絞込・ソート"
 msgstr "位置情報を用いた絞込・ソート"
 
-# 1abb252bf5d840cc84c72f0b00255a4c
+# 1ada8a6a3b484091a62a3deae5ba4eb5
 #: ../../../source/tutorial/search.txt:72
 msgid ""
 "groongaでは、位置情報（経緯度）を保存することができます。また、保存した経緯度"
@@ -2689,7 +2718,7 @@ msgstr ""
 "groongaでは、位置情報（経緯度）を保存することができます。また、保存した経緯度"
 "を用いて絞込やソートができます。"
 
-# 2c3fad09387c46e1b7741e6a79f69f80
+# 60449647b0de4d23ad66c118aa9220c8
 #: ../../../source/tutorial/search.txt:74
 msgid ""
 "位置情報を保存するためのカラムの型として、TokyoGeoPoint/WGS84GeoPointの２つの"
@@ -2700,22 +2729,22 @@ msgstr ""
 "型があります。前者は日本測地系、後者は世界測地系(WGS84相当)の経緯度を保存しま"
 "す。"
 
-# bd9c9f4ec3db4e2a8b4722f4c3f8d955
+# 840ad52d0c6f4ca8b390bcb8d66952c6
 #: ../../../source/tutorial/search.txt:76
 msgid "経緯度は以下のいずれかの形式の文字列として指定します。"
 msgstr "経緯度は以下のいずれかの形式の文字列として指定します。"
 
-# b99bd5b063ff4e9e832e6da2e52ae70b
+# 067035f647da46e8ba3e503027a38921
 #: ../../../source/tutorial/search.txt:78
 msgid "\"[緯度のミリ秒]x[経度のミリ秒]\"（例: \"128452975x503157902\"）"
 msgstr "\"[緯度のミリ秒]x[経度のミリ秒]\"（例: \"128452975x503157902\"）"
 
-# 567a2c2606054dcd889db3cd6fc48452
+# 64ee9de432cc4e8cb3485a48dab45cc5
 #: ../../../source/tutorial/search.txt:79
 msgid "\"[緯度のミリ秒],[経度のミリ秒]\"（例: \"128452975,503157902\"）"
 msgstr "\"[緯度のミリ秒],[経度のミリ秒]\"（例: \"128452975,503157902\"）"
 
-# 65fa2b45f3c448a0b69200d2a6de649f
+# dbd2f0df042640ac9debd3f65276ae57
 #: ../../../source/tutorial/search.txt:80
 msgid ""
 "\"[緯度の小数表記の度数]x[経度の小数表記の度数]\"（例: "
@@ -2724,7 +2753,7 @@ msgstr ""
 "\"[緯度の小数表記の度数]x[経度の小数表記の度数]\"（例: "
 "\"35.6813819x139.7660839\"）"
 
-# 139bcfbbe93147f5904888057206a758
+# 156708548a2c43f4bb2eadab3202a8e2
 #: ../../../source/tutorial/search.txt:81
 msgid ""
 "\"[緯度の小数表記の度数],[経度の小数表記の度数]\"（例: "
@@ -2733,7 +2762,7 @@ msgstr ""
 "\"[緯度の小数表記の度数],[経度の小数表記の度数]\"（例: "
 "\"35.6813819,139.7660839\"）"
 
-# 59d671c9e59547db831afb379929b7aa
+# 4ee0824037d94733b966f5676387e9b5
 #: ../../../source/tutorial/search.txt:83
 msgid ""
 "ここでは、ためしに東京駅と新宿駅とついて、世界測地系での位置情報を保存してみ"
@@ -2750,16 +2779,16 @@ msgstr ""
 "記の場合はそれぞれ\"35.6813819x139.7660839\"/\"35.6909211x139.7002581\"となり"
 "ます。ここではミリ秒表記で登録しましょう。"
 
-# 73515d3883e34b43bf6d8fd438c97665
+# 9ff0e4a592a14e4f855ca924af23e74e
 #: ../../../source/tutorial/search.txt:95
 msgid ""
-"scorerパラメータにおいて、 :doc:`/functions/geo_distance` 関数を用いることに"
-"より、２点間の距離を計算することができます。"
+"scorerパラメータにおいて、 :doc:`/reference/functions/geo_distance` 関数を用"
+"いることにより、２点間の距離を計算することができます。"
 msgstr ""
-"scorerパラメータにおいて、 :doc:`/functions/geo_distance` 関数を用いることに"
-"より、２点間の距離を計算することができます。"
+"scorerパラメータにおいて、 :doc:`/reference/functions/geo_distance` 関数を用"
+"いることにより、２点間の距離を計算することができます。"
 
-# d60247d7063c4ebf92a28f7ea3eb24fd
+# cb225cade2e24dc1b8bbb7a8bbbfb448
 #: ../../../source/tutorial/search.txt:97
 msgid ""
 "ここでは、秋葉原駅からの距離を表示させてみましょう。世界測地系では、秋葉原駅"
@@ -2770,7 +2799,7 @@ msgstr ""
 "の位置は緯度が35度41分55.259秒、経度が139度46分27.188秒です。よって、"
 "geo_distance関数に与える文字列は\"128515259x503187188\"となります。"
 
-# 922640995f1d4cd3b2b53be497349391
+# 7940e8843078481d98ef29038d409b16
 #: ../../../source/tutorial/search.txt:103
 msgid ""
 "この結果を見ると、東京駅と秋葉原駅は2054m、秋葉原駅と新宿駅は6720m離れている"
@@ -2779,35 +2808,37 @@ msgstr ""
 "この結果を見ると、東京駅と秋葉原駅は2054m、秋葉原駅と新宿駅は6720m離れている"
 "ようです。"
 
-# 45a45057454a4b5ebdbf0f76ef37a190
+# 83fdbb3ed74a4791bfefd49ec558fc15
 #: ../../../source/tutorial/search.txt:105
 msgid "geo_distance関数は、_scoreを通じてソートでも用いることができます。"
 msgstr "geo_distance関数は、_scoreを通じてソートでも用いることができます。"
 
-# c674cf227c4e4328bbbcc9e96cca5b96
+# f7810f6211614dc48f569f431642ba8c
 #: ../../../source/tutorial/search.txt:111
 msgid "「ある地点から何m以内に存在する」といった絞込も可能です。"
 msgstr "「ある地点から何m以内に存在する」といった絞込も可能です。"
 
-# a32d8e80f2ec4c39b4af5063cbe2cdf5
+# 49c6566ffc5444f6a6756c41ce645538
 #: ../../../source/tutorial/search.txt:113
 msgid ""
-"filterパラメータにおいて、 :doc:`/functions/geo_in_circle` 関数を用いることに"
-"より、２点間の距離が指定のm以下におさまるかどうかを判定することができます。"
+"filterパラメータにおいて、 :doc:`/reference/functions/geo_in_circle` 関数を用"
+"いることにより、２点間の距離が指定のm以下におさまるかどうかを判定することがで"
+"きます。"
 msgstr ""
-"filterパラメータにおいて、 :doc:`/functions/geo_in_circle` 関数を用いることに"
-"より、２点間の距離が指定のm以下におさまるかどうかを判定することができます。"
+"filterパラメータにおいて、 :doc:`/reference/functions/geo_in_circle` 関数を用"
+"いることにより、２点間の距離が指定のm以下におさまるかどうかを判定することがで"
+"きます。"
 
-# 67d6ebe23d004d37861daad56cf54aa4
+# 3f612a1520bc438fb81e2ca130e91f5f
 #: ../../../source/tutorial/search.txt:115
 msgid "たとえば、秋葉原駅から5000m以内にあるレコードを検索してみましょう。"
 msgstr "たとえば、秋葉原駅から5000m以内にあるレコードを検索してみましょう。"
 
-# c324428d3cd14d75a895ceefdc1fbe4d
+# 5315b2f17cd24fb0ab63e386a42446ad
 #: ../../../source/tutorial/search.txt:121
 msgid ""
-"また、経緯度が指定の矩形領域内であるかどうかを判定する :doc:`../functions/"
-"geo_in_rectangle` 関数も存在します。"
+"また、経緯度が指定の矩形領域内であるかどうかを判定する :doc:`/reference/"
+"functions/geo_in_rectangle` 関数も存在します。"
 msgstr ""
-"また、経緯度が指定の矩形領域内であるかどうかを判定する :doc:`../functions/"
-"geo_in_rectangle` 関数も存在します。"
+"また、経緯度が指定の矩形領域内であるかどうかを判定する :doc:`/reference/"
+"functions/geo_in_rectangle` 関数も存在します。"
