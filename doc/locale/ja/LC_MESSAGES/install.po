@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-29 15:42\n"
-"PO-Revision-Date: 2012-05-25 11:13+0900\n"
+"POT-Creation-Date: 2012-07-23 15:32\n"
+"PO-Revision-Date: 2012-07-23 17:34+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -580,9 +580,10 @@ msgstr ""
 
 # b524ab397f924a3ebb8e05933b35a91e
 #: ../../../source/install/others.txt:62
+#, fuzzy
 msgid ""
 "`libedit <http://www.thrysoee.dk/editline/>`_ for command line editing in :"
-"doc:`/executables/groonga`"
+"doc:`/reference/executables/groonga`"
 msgstr ""
 "`libedit <http://www.thrysoee.dk/editline/>`_ （ :doc:`/executables/groonga` "
 "のコマンドライン編集用）"
@@ -617,9 +618,10 @@ msgstr ""
 
 # 8fa2f56d10904f649ad325bb8fb6dfb7
 #: ../../../source/install/others.txt:84
+#, fuzzy
 msgid ""
-"After the above steps, :doc:`/executables/groonga` is found in ``/usr/local/"
-"bin/groonga``."
+"After the above steps, :doc:`/reference/executables/groonga` is found in ``/"
+"usr/local/bin/groonga``."
 msgstr ""
 "上記の手順を実行すると ``/usr/local/bin/groonga`` に :doc:`/executables/"
 "groonga` がインストールされます。"
@@ -668,9 +670,10 @@ msgstr ""
 
 # e73b963346834f5ab5ec13168e391364
 #: ../../../source/install/others.txt:106
+#, fuzzy
 msgid ""
-"The default is ``/usr/local``. In this case, :doc:`/executables/groonga` is "
-"installed into ``/usr/local/bin/groonga``."
+"The default is ``/usr/local``. In this case, :doc:`/reference/executables/"
+"groonga` is installed into ``/usr/local/bin/groonga``."
 msgstr ""
 "デフォルトは ``/usr/local`` 。デフォルトの場合は :doc:`/executables/groonga` "
 "は ``/usr/local/bin/groonga`` にインストールされます。"
@@ -1101,10 +1104,9 @@ msgstr ""
 # ec57e50c1c624fabb14313a143a0d9fb
 #: ../../../source/install/windows.txt:28
 msgid ""
-"Use command prompt for :doc:`/executables/groonga` installed in start menu."
-msgstr ""
-"スタートメニュー内に :doc:`/executables/groonga` 用のコマンドプロンプトがイン"
-"ストールされるのでそれを使ってください。"
+"Use command prompt for :doc:`/reference/executables/groonga` installed in "
+"start menu."
+msgstr "スタートメニュー内に :doc:`/reference/executables/groonga` 用のコマンドプロンプトがインストールされるのでそれを使ってください。"
 
 # d8c961cd55d94e049fd91093cb591128
 #: ../../../source/install/windows.txt:31
@@ -1129,8 +1131,8 @@ msgstr ""
 
 # 8820fc4404434f5b8b0b1c2d71213e30
 #: ../../../source/install/windows.txt:41
-msgid ":doc:`/executables/groonga` is in ``bin`` folder."
-msgstr ":doc:`/executables/groonga` は ``bin`` フォルダーにあります。"
+msgid ":doc:`/reference/executables/groonga` is in ``bin`` folder."
+msgstr ":doc:`/reference/executables/groonga` は ``bin`` フォルダーにあります。"
 
 # b0c7ac11a34f4e659e2ba5a73c9ce0af
 #: ../../../source/install/windows.txt:46
@@ -1189,8 +1191,8 @@ msgstr "Visual Studioでビルドします::"
 # 607b3624ab724f1eb01bfef59b92d8c9
 #: ../../../source/install/windows.txt:76
 msgid ""
-"After the above steps, :doc:`/executables/groonga` is found in ``c:\\groonga"
-"\\bin\\groonga.exe``."
+"After the above steps, :doc:`/reference/executables/groonga` is found in ``c:"
+"\\groonga\\bin\\groonga.exe``."
 msgstr ""
-"以上の手順で :doc:`/executables/groonga` が ``c:\\groonga\\bin\\groonga."
+"以上の手順で :doc:`/reference/executables/groonga` が ``c:\\groonga\\bin\\groonga."
 "exe`` にインストールされます。"

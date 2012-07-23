@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-19 12:58\n"
-"PO-Revision-Date: 2012-05-28 11:10+0900\n"
+"POT-Creation-Date: 2012-07-23 15:32\n"
+"PO-Revision-Date: 2012-07-23 17:35+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -353,8 +353,10 @@ msgstr "[実験的] tableプラグインを追加。"
 
 # d3be6cfcd52948bebb170b9cbdc3bf3d
 #: ../../../source/news.txt:112
-msgid "[doc] Added more descriptions about :doc:`/commands/select` command."
-msgstr "[doc] :doc:`/commands/select` コマンドの説明を追加。"
+msgid ""
+"[doc] Added more descriptions about :doc:`/reference/commands/select` "
+"command."
+msgstr "[doc] :doc:`/reference/commands/select` コマンドの説明を追加。"
 
 # d17ed455fabc4aa5bc74e78060813f93
 #: ../../../source/news.txt:113
@@ -1115,20 +1117,22 @@ msgstr ""
 msgid "改良"
 msgstr ""
 
+# 8e9dfbfb0a8c4761a6ec082d0c2ef5e0
 #: ../../../source/news/0.x.txt:14
 msgid ""
-"編集距離（レーベンシュタイン距離）を計算する :doc:`/functions/edit_distance` "
-"()関数の追加。"
+"編集距離（レーベンシュタイン距離）を計算する :doc:`/reference/functions/"
+"edit_distance` ()関数の追加。"
 msgstr ""
 
 #: ../../../source/news/0.x.txt:17
 msgid "manを追加。"
 msgstr ""
 
+# ccbd3be9abb740068a035deb631b84ee
 #: ../../../source/news/0.x.txt:19
 msgid ""
-":doc:`/commands/delete` コマンドでデータの整合性が壊れる場合はエラー を返すよ"
-"うにした。"
+":doc:`/reference/commands/delete` コマンドでデータの整合性が壊れる場合はエ"
+"ラー を返すようにした。"
 msgstr ""
 
 #: ../../../source/news/0.x.txt:22
@@ -1149,10 +1153,11 @@ msgstr ""
 msgid "修正"
 msgstr ""
 
+# 036d0357a91949378546e7df2313b079
 #: ../../../source/news/0.x.txt:29
 msgid ""
-":doc:`/functions/geo_in_rectangle` ()関数が引数を「左上」と「右下」で はな"
-"く、「左下」と「右上」と扱っていた問題を修正。"
+":doc:`/reference/functions/geo_in_rectangle` ()関数が引数を「左上」と「右下」"
+"で はなく、「左下」と「右上」と扱っていた問題を修正。"
 msgstr ""
 
 #: ../../../source/news/0.x.txt:32
@@ -1402,10 +1407,11 @@ msgid ""
 "られた場所を表示するようにした。"
 msgstr ""
 
+# 75cf7b868dba4471a2772c4bcfe33a5f
 #: ../../../source/news/1.0.x.txt:34
 msgid ""
-"ベクタの値を :doc:`/commands/load` するときにキャストに失敗したら、そ のこと"
-"を報告するようにした。"
+"ベクタの値を :doc:`/reference/commands/load` するときにキャストに失敗したら、"
+"そ のことを報告するようにした。"
 msgstr ""
 
 #: ../../../source/news/1.0.x.txt:36
@@ -1414,8 +1420,9 @@ msgid ""
 "leak.rbを追加。（インストールはされない。）"
 msgstr ""
 
+# a9870bf8295446d480ca8baffbef53d2
 #: ../../../source/news/1.0.x.txt:38
-msgid ":doc:`/commands/dump` がテーブル単位のダンプに対応。"
+msgid ":doc:`/reference/commands/dump` がテーブル単位のダンプに対応。"
 msgstr ""
 
 #: ../../../source/news/1.0.x.txt:43
@@ -1436,9 +1443,11 @@ msgstr ""
 msgid "groonga-suggest-learnerのメモリリークを修正。"
 msgstr ""
 
+# 4dd9c07302634e2f8bcc12b0f12820b1
 #: ../../../source/news/1.0.x.txt:48
 msgid ""
-":doc:`/commands/load` 時のメモリリークを修正。 （Kenichi Aramakiさんが報告）"
+":doc:`/reference/commands/load` 時のメモリリークを修正。 （Kenichi Aramakiさ"
+"んが報告）"
 msgstr ""
 
 #: ../../../source/news/1.0.x.txt:50
@@ -1479,8 +1488,9 @@ msgstr ""
 msgid "groongaスクリプト内での行コメントに対応。（「#」以降を無視） #723"
 msgstr ""
 
+# 07822e31481f4fafb53d4cee7e58ef2f
 #: ../../../source/news/1.0.x.txt:79
-msgid ":doc:`/commands/column_list` のXML出力対応。 #748"
+msgid ":doc:`/reference/commands/column_list` のXML出力対応。 #748"
 msgstr ""
 
 #: ../../../source/news/1.0.x.txt:80
@@ -1515,33 +1525,39 @@ msgstr ""
 msgid "変更"
 msgstr ""
 
+# eac50bbbcdfa4acfa869c97c9fa9b1b2
 #: ../../../source/news/1.0.x.txt:90
 msgid ""
-":doc:`/commands/table_list` のXML出力のタグ名をより適切な名前に変更。 #757"
+":doc:`/reference/commands/table_list` のXML出力のタグ名をより適切な名前に変"
+"更。 #757"
 msgstr ""
 
+# d227c6c2203341109ad235597112dbb0
 #: ../../../source/news/1.0.x.txt:95
 msgid ""
-":doc:`/commands/load` で存在しないカラムを--columnsで指定するとクラッシュする"
-"問題を修正。 （Masahiro Tomitaさんが報告） #751"
+":doc:`/reference/commands/load` で存在しないカラムを--columnsで指定するとク"
+"ラッシュする問題を修正。 （Masahiro Tomitaさんが報告） #751"
 msgstr ""
 
+# c647fdfa74274fdf9d3bea2a29c9ced8
 #: ../../../source/news/1.0.x.txt:97
 msgid ""
-":doc:`/commands/load` で配列でTABLE_NO_KEYなテーブルにレコードをロードできな"
-"い問題を修正。 （Masahiro Tomitaさんが報告） #750"
+":doc:`/reference/commands/load` で配列でTABLE_NO_KEYなテーブルにレコードを"
+"ロードできない問題を修正。 （Masahiro Tomitaさんが報告） #750"
 msgstr ""
 
+# 19486605a00a49079440388456d71a86
 #: ../../../source/news/1.0.x.txt:99
 msgid ""
-":doc:`/commands/delete` でTABLE_NO_KEYなテーブルのレコードを削除するとテーブ"
-"ルが壊れる 問題を修正。 （Masahiro Tomitaさんがパッチ作成） #794"
+":doc:`/reference/commands/delete` でTABLE_NO_KEYなテーブルのレコードを削除す"
+"るとテーブルが壊れる 問題を修正。 （Masahiro Tomitaさんがパッチ作成） #794"
 msgstr ""
 
+# 2618739195f940bfa058d306c5fee110
 #: ../../../source/news/1.0.x.txt:102
 msgid ""
-":doc:`/commands/load` で不正なJSONを指定した場合にそれ以降コマンドを受け付け"
-"なくなる 問題を修正。 #807"
+":doc:`/reference/commands/load` で不正なJSONを指定した場合にそれ以降コマンド"
+"を受け付けなくなる 問題を修正。 #807"
 msgstr ""
 
 #: ../../../source/news/1.0.x.txt:108
@@ -1560,17 +1576,18 @@ msgstr ""
 msgid "不正な名前を指定したときに指定された名前も報告するようにした。"
 msgstr ""
 
+# 59652d7e068b441ea4859765188f6ec8
 #: ../../../source/news/1.0.x.txt:119
 msgid ""
-":doc:`/commands/select` の--filter内での数値比較演算をサポート。 （@s3kiさん"
-"が報告）"
+":doc:`/reference/commands/select` の--filter内での数値比較演算をサポート。 "
+"（@s3kiさんが報告）"
 msgstr ""
 
-# 76c5a9ea87154be8ac8b1d9227d18742
+# 01501aa1fd214ddbbf2f37910ace8d84
 #: ../../../source/news/1.0.x.txt:120
 msgid ""
-":doc:`/executables/grntest` の一行あたりの最大バイト数の制限を撤廃。 #608, "
-"#690"
+":doc:`/reference/executables/grntest` の一行あたりの最大バイト数の制限を撤"
+"廃。 #608, #690"
 msgstr ""
 
 #: ../../../source/news/1.0.x.txt:121
@@ -1817,9 +1834,11 @@ msgstr ""
 msgid "1.0.2リリース - 2010/09/09"
 msgstr ""
 
+# 6ac3879354bd438aba102429a14f6d8a
 #: ../../../source/news/1.0.x.txt:222
 msgid ""
-":doc:`/commands/suggest` コマンドのサンプルを追加。（examples/dictionary/）"
+":doc:`/reference/commands/suggest` コマンドのサンプルを追加。（examples/"
+"dictionary/）"
 msgstr ""
 
 #: ../../../source/news/1.0.x.txt:227
@@ -1828,10 +1847,11 @@ msgid ""
 "更。"
 msgstr ""
 
+# e2a293df5df642fb8cb4a8bd40ddc9d7
 #: ../../../source/news/1.0.x.txt:228
 msgid ""
-":doc:`/commands/select` コマンドのデフォルトの--output_columnsから_valueを削"
-"除。"
+":doc:`/reference/commands/select` コマンドのデフォルトの--output_columnsから"
+"_valueを削除。"
 msgstr ""
 
 #: ../../../source/news/1.0.x.txt:233
@@ -1870,16 +1890,18 @@ msgstr ""
 msgid "1.0.0リリース - 2010/08/29"
 msgstr ""
 
+# a2ab3e2338a549408fe55aec34eb5397
 #: ../../../source/news/1.0.x.txt:273
 msgid ""
-"指定したクエリに対する補完・修正・提案を行う :doc:`/commands/suggest` コマン"
-"ドを追加。"
+"指定したクエリに対する補完・修正・提案を行う :doc:`/reference/commands/"
+"suggest` コマンドを追加。"
 msgstr ""
 
+# 24a17e4566484c86aee30b2f6ccc7578
 #: ../../../source/news/1.0.x.txt:275
 msgid ""
-":doc:`/commands/delete` コマンドが失敗したらfalseを返すように変更。（Itagaki "
-"Takahiroさんが提案）"
+":doc:`/reference/commands/delete` コマンドが失敗したらfalseを返すように変更。"
+"（Itagaki Takahiroさんが提案）"
 msgstr ""
 
 #: ../../../source/news/1.0.x.txt:280
@@ -1890,10 +1912,11 @@ msgstr ""
 msgid "索引付きカラムを等価条件で検索できない問題を修正。"
 msgstr ""
 
+# 3f0fa4cd61f5475496e4d26e3d3f7999
 #: ../../../source/news/1.0.x.txt:284
 msgid ""
-":doc:`/commands/delete` コマンドでキーがShortText以外のレコードを削除できない"
-"問題の修正。（Itagaki Takahiroさんが報告）"
+":doc:`/reference/commands/delete` コマンドでキーがShortText以外のレコードを削"
+"除できない問題の修正。（Itagaki Takahiroさんが報告）"
 msgstr ""
 
 #: ../../../source/news/1.1.x.txt:6
@@ -1914,10 +1937,11 @@ msgid ""
 "grn_plugin_register() #834"
 msgstr ""
 
+# 7b65b40a1ee64abda329c730d42d21ac
 #: ../../../source/news/1.1.x.txt:17
 msgid ""
-":doc:`/commands/select` の--query内で前方一致検索構文\"キーワード*\"対応。 "
-"#837"
+":doc:`/reference/commands/select` の--query内で前方一致検索構文\"キーワード*"
+"\"対応。 #837"
 msgstr ""
 
 #: ../../../source/news/1.1.x.txt:18
@@ -1992,19 +2016,19 @@ msgstr "クエリ展開で文字列のベクター型のカラムをサポート
 # d3be6cfcd52948bebb170b9cbdc3bf3d
 #: ../../../source/news/1.2.x.txt:24
 msgid ""
-"Added ``--filter`` option to :doc:`/commands/delete` to delete many record "
-"at once. [#1225]"
+"Added ``--filter`` option to :doc:`/reference/commands/delete` to delete "
+"many record at once. [#1225]"
 msgstr ""
-"一度にたくさんのレコードを削除できるように :doc:`/commands/delete` に ``--"
+"一度にたくさんのレコードを削除できるように :doc:`/reference/commands/delete` に ``--"
 "filter`` オプションを追加。 [#1225]"
 
 # 44c83a3db70843b39154d59bb5560c44
 #: ../../../source/news/1.2.x.txt:26
 msgid ""
-"Supported approximate type customization for :doc:`/functions/geo_in_circle` "
-"and :doc:`/functions/geo_distance`. [#1226]"
+"Supported approximate type customization for :doc:`/reference/functions/"
+"geo_in_circle` and :doc:`/reference/functions/geo_distance`. [#1226]"
 msgstr ""
-":doc:`/functions/geo_in_circle` と :doc:`/functions/geo_distance` で近似方法"
+":doc:`/reference/functions/geo_in_circle` と :doc:`/reference/functions/geo_distance` で近似方法"
 "指定をサポート。 [#1226]"
 
 # 48236327c87c42578e5a22f636905ab0
@@ -2368,10 +2392,10 @@ msgstr ":doc:`/tutorial/query_expansion` をサポート。"
 # d3be6cfcd52948bebb170b9cbdc3bf3d
 #: ../../../source/news/1.2.x.txt:164
 msgid ""
-"Added `--query_expansion` option to :doc:`/commands/select` for query "
-"expansion."
+"Added `--query_expansion` option to :doc:`/reference/commands/select` for "
+"query expansion."
 msgstr ""
-"クエリ展開用に :doc:`/commands/select` に `--query_expansion` オプションを追"
+"クエリ展開用に :doc:`/reference/commands/select` に `--query_expansion` オプションを追"
 "加。"
 
 # f03cba9d08fc4f71b510e5199d84b070
@@ -2381,8 +2405,8 @@ msgstr "座標の値の単位を度とミリ秒間で変換するマクロを追
 
 # 56df60af25a9482c8301b23d03385886
 #: ../../../source/news/1.2.x.txt:167
-msgid "Supported type cast in :doc:`/functions/geo_distance` ()."
-msgstr ":doc:`/functions/geo_distance` ()内での型変換をサポート。"
+msgid "Supported type cast in :doc:`/reference/functions/geo_distance` ()."
+msgstr ":doc:`/reference/functions/geo_distance` ()内での型変換をサポート。"
 
 # 3d066ecda9604546a360836ff4e3c665
 #: ../../../source/news/1.2.x.txt:168
@@ -2448,9 +2472,10 @@ msgstr ""
 
 # e6f09978c46747f9b3a418c316cbc903
 #: ../../../source/news/1.2.x.txt:196
-msgid "Supported `--each` for `[...]` form :doc:`/commands/load`. #1044"
+msgid ""
+"Supported `--each` for `[...]` form :doc:`/reference/commands/load`. #1044"
 msgstr ""
-":doc:`/commands/load` の `--each` オプションが `[...]` 形式のデータでも動くよ"
+":doc:`/reference/commands/load` の `--each` オプションが `[...]` 形式のデータでも動くよ"
 "うになった。 #1044"
 
 #: ../../../source/news/1.2.x.txt:197
@@ -2461,10 +2486,10 @@ msgstr ":doc:`/suggest` のドキュメントを追加。"
 #: ../../../source/news/1.2.x.txt:198
 msgid ""
 "Supported threshold as `--frequency_threshold` and `--"
-"conditional_probability_threshold` options in all :doc:`/commands/suggest` "
-"types. #1042"
+"conditional_probability_threshold` options in all :doc:`/reference/commands/"
+"suggest` types. #1042"
 msgstr ""
-"すべての :doc:`/commands/suggest` のタイプで閾値を利用できるようした。閾値を"
+"すべての :doc:`/reference/commands/suggest` のタイプで閾値を利用できるようした。閾値を"
 "利用する場合は `--frequency_threshold` と `--"
 "conditional_probability_threshold` オプションを使う。 #1042"
 
@@ -2513,9 +2538,9 @@ msgstr "grn_ctx_close()を公開。 #1035"
 #: ../../../source/news/1.2.x.txt:213
 msgid ""
 "Fixed a crash bug that invalid value is passed as match expression argument "
-"in :doc:`/commands/select`. #1047"
+"in :doc:`/reference/commands/select`. #1047"
 msgstr ""
-":doc:`/commands/select` でマッチ式の右辺に不正な値を指定するとクラッシュする"
+":doc:`/reference/commands/select` でマッチ式の右辺に不正な値を指定するとクラッシュする"
 "問題を修正。 #1047"
 
 #: ../../../source/news/1.2.x.txt:215
@@ -2539,15 +2564,15 @@ msgid "Re-supported Visual C++ 2008."
 msgstr "Visual C++ 2008を再サポート。"
 
 #: ../../../source/news/1.2.x.txt:228
-msgid "Supported :doc:`/commands/check` for hash table."
-msgstr ":doc:`/commands/check` がハッシュテーブルをサポート。"
+msgid "Supported :doc:`/reference/commands/check` for hash table."
+msgstr ":doc:`/reference/commands/check` がハッシュテーブルをサポート。"
 
 #: ../../../source/news/1.2.x.txt:229
 msgid ""
-"Ignored invalid _score in --sortby of :doc:`/commands/select` for "
+"Ignored invalid _score in --sortby of :doc:`/reference/commands/select` for "
 "convenience. #1030"
 msgstr ""
-":doc:`/commands/select` の--sortby内で_scoreを使えないときに_scoreを指定して"
+":doc:`/reference/commands/select` の--sortby内で_scoreを使えないときに_scoreを指定して"
 "も無視するようにした。 #1030"
 
 #: ../../../source/news/1.2.x.txt:231
@@ -2613,8 +2638,9 @@ msgid "groonga command shows file name and line no on error."
 msgstr "groongaコマンドのエラー時にファイル名と行番号を表示するようになった。"
 
 #: ../../../source/news/1.2.x.txt:264
-msgid "Improved error message of :doc:`/commands/column_create`. #952"
-msgstr ":doc:`/commands/column_create` のエラーメッセージを改善。#952"
+msgid ""
+"Improved error message of :doc:`/reference/commands/column_create`. #952"
+msgstr ":doc:`/reference/commands/column_create` のエラーメッセージを改善。#952"
 
 #: ../../../source/news/1.2.x.txt:265
 msgid "Added GRN_OBJ_TABLE_DAT_KEY, double array trie, table. (experimental)"
@@ -2713,8 +2739,8 @@ msgid "Added grn_obj_is_builtin() API."
 msgstr "grn_obj_is_builtin() APIを追加。"
 
 #: ../../../source/news/1.2.x.txt:307
-msgid ":doc:`/commands/load`: Added table name check. #934"
-msgstr ":doc:`/commands/load`: テーブル名をチェックするようにした。 #934"
+msgid ":doc:`/reference/commands/load`: Added table name check. #934"
+msgstr ":doc:`/reference/commands/load`: テーブル名をチェックするようにした。 #934"
 
 #: ../../../source/news/1.2.x.txt:308
 msgid "Showed invalid name context in error message. #935"
@@ -2836,31 +2862,37 @@ msgstr ""
 msgid "[非互換] 位置情報の小数表記からミリ秒への変換誤差が大きい問題を修正。"
 msgstr ""
 
+# 2036357b8e96401cb6b5c22364929f7a
 #: ../../../source/news/1.2.x.txt:368
 msgid ""
-":doc:`/functions/geo_in_rectangle` の ``top_left`` と ``bottom_right`` に同じ"
-"位置を指定するとクラッシュする問題を修正。"
+":doc:`/reference/functions/geo_in_rectangle` の ``top_left`` と "
+"``bottom_right`` に同じ位置を指定するとクラッシュする問題を修正。"
 msgstr ""
 
 #: ../../../source/news/1.2.x.txt:371
 msgid "小数形式のTimeリテラルをロードするとミリ秒情報が落ちる問題を修正。 #880"
 msgstr ""
 
+# 006f6dc02fb34228b39b4d0262ff5900
 #: ../../../source/news/1.2.x.txt:372
-msgid ":doc:`/commands/column_list` のドキュメントを修正。 #758"
+msgid ":doc:`/reference/commands/column_list` のドキュメントを修正。 #758"
 msgstr ""
 
+# 26c5fdcc3ac443ccad2abc31ae60c765
 #: ../../../source/news/1.2.x.txt:373
-msgid ":doc:`/commands/table_list` のドキュメントを修正。"
+msgid ":doc:`/reference/commands/table_list` のドキュメントを修正。"
 msgstr ""
 
+# 788c79da76be4fe3b2e7171f833edece
 #: ../../../source/news/1.2.x.txt:374
 msgid ""
-":doc:`/commands/load` で_valueを指定するとメモリリークする問題を修正。 #878"
+":doc:`/reference/commands/load` で_valueを指定するとメモリリークする問題を修"
+"正。 #878"
 msgstr ""
 
+# 6b00388665aa48e1906d54dd44feaa1c
 #: ../../../source/news/1.2.x.txt:375
-msgid ":doc:`/commands/load` でクラッシュする問題を修正。 #661"
+msgid ":doc:`/reference/commands/load` でクラッシュする問題を修正。 #661"
 msgstr ""
 
 #: ../../../source/news/1.2.x.txt:378

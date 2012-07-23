@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-29 13:03\n"
-"PO-Revision-Date: 2012-07-19 14:51+0900\n"
+"POT-Creation-Date: 2012-07-23 15:32\n"
+"PO-Revision-Date: 2012-07-23 17:36+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -264,7 +264,7 @@ msgstr ""
 #: ../../../source/suggest/completion.txt:92
 #: ../../../source/suggest/completion.txt:94
 #: ../../../source/suggest/correction.txt:51
-#: ../../../source/suggest/introduction.txt:76
+#: ../../../source/suggest/introduction.txt:78
 #: ../../../source/suggest/suggestion.txt:49
 #: ../../../source/suggest/suggestion.txt:55
 msgid "search"
@@ -431,10 +431,10 @@ msgstr ""
 # 4941066c272e4c8d9fea28523b205609
 #: ../../../source/suggest/completion.txt:156
 msgid ""
-"Groonga provides :doc:`/commands/suggest` command to use completion. `--type "
-"complete` option requests completion."
+"Groonga provides :doc:`/reference/commands/suggest` command to use "
+"completion. `--type complete` option requests completion."
 msgstr ""
-"groongaは補完機能を使うために :doc:`/commands/suggest` コマンドを用意していま"
+"groongaは補完機能を使うために :doc:`/reference/commands/suggest` コマンドを用意していま"
 "す。 `--type complete` オプションを使うと補完機能を利用できます。"
 
 # 5c176e739a484fccb0d12746750fbab9
@@ -634,11 +634,12 @@ msgstr "類似検索"
 
 # 720d221d45ed482d8513886c05d1c5e4
 #: ../../../source/suggest/correction.txt:66
+#, fuzzy
 msgid ""
 "Similar search can find registered words that has one or more the same "
 "tokens as user input. TokenBigram tokenizer is used for tokenization because "
-"suggest dataset schema created by :doc:`/executables/groonga-suggest-create-"
-"dataset` uses TokenBigram tokenizer as the default tokenizer."
+"suggest dataset schema created by :doc:`/reference/executables/groonga-"
+"suggest-create-dataset` uses TokenBigram tokenizer as the default tokenizer."
 msgstr ""
 "類似検索はユーザの入力をトークナイズし、同じトークンを含んだ登録済みの語を検"
 "索します。トークナイズにはTokenBigramトークナイザーを使います。これは :doc:`/"
@@ -682,9 +683,10 @@ msgstr ""
 
 # 4941066c272e4c8d9fea28523b205609
 #: ../../../source/suggest/correction.txt:104
+#, fuzzy
 msgid ""
-"Groonga provides :doc:`/commands/suggest` command to use correction. `--type "
-"correct` option requests corrections."
+"Groonga provides :doc:`/reference/commands/suggest` command to use "
+"correction. `--type correct` option requests corrections."
 msgstr ""
 "groongaは補正機能を使うために :doc:`/commands/suggest` コマンドを用意していま"
 "す。 `--type correct` オプションを使うと補正機能を利用できます。"
@@ -773,7 +775,7 @@ msgstr "groongaのサジェスト機能は以下の機能を提供します。:"
 # be77cbd721bb46df9a1f02102320c232
 # 1282d9dca39d49e487208df06f17f645
 #: ../../../source/suggest/introduction.txt:12
-#: ../../../source/suggest/introduction.txt:62
+#: ../../../source/suggest/introduction.txt:64
 #: ../../../source/suggest/suggestion.txt:10
 msgid "Suggestion"
 msgstr "提案"
@@ -844,7 +846,9 @@ msgstr ""
 msgid ""
 "Correction also helps user input. If user inputs a wrong word, groonga can "
 "return correct words from registered correction pairs."
-msgstr "補正もユーザの入力を支援します。ユーザが間違った語を入力したときに登録済みの補正ペアの中から補正された語を返します。"
+msgstr ""
+"補正もユーザの入力を支援します。ユーザが間違った語を入力したときに登録済みの"
+"補正ペアの中から補正された語を返します。"
 
 # 8c65fa9a8589441dab961625c8b42c00
 #: ../../../source/suggest/introduction.txt:44
@@ -861,18 +865,31 @@ msgstr "正しい語"
 msgid "wrong word"
 msgstr "間違った語"
 
-# 65cb302c209249b8a2fb5c405dcc1e03
+# 90a0ff1a4fdf455e8e6dd9bdb90e5446
 #: ../../../source/suggest/introduction.txt:49
-msgid "groonga groonga groonga"
+#: ../../../source/suggest/introduction.txt:51
+#: ../../../source/suggest/introduction.txt:53
+#: ../../../source/suggest/introduction.txt:76
+msgid "groonga"
 msgstr ""
 
-# 9a988368519547e59bfd15527eb0dcdf
+# 2a72752c7fa844618e0aa0894bcb7ae5
 #: ../../../source/suggest/introduction.txt:49
-msgid "grroonga gronga gronnga"
+msgid "grroonga"
+msgstr ""
+
+# 2a72752c7fa844618e0aa0894bcb7ae5
+#: ../../../source/suggest/introduction.txt:51
+msgid "gronga"
+msgstr ""
+
+# 2a72752c7fa844618e0aa0894bcb7ae5
+#: ../../../source/suggest/introduction.txt:53
+msgid "gronnga"
 msgstr ""
 
 # bd74550b1c174e668121c89636d0a727
-#: ../../../source/suggest/introduction.txt:54
+#: ../../../source/suggest/introduction.txt:56
 msgid ""
 "An user inputs \"gronga\" and groonga returns \"groonga\" because \"gronga\" "
 "is in wrong word and corresponding correct word is \"groonga\"."
@@ -881,7 +898,7 @@ msgstr ""
 "「間違った語」にあり、対応する「正しい語」カラムの値が\"groonga\"だからです。"
 
 # cb3c30eaa7af4518be33221c032908a2
-#: ../../../source/suggest/introduction.txt:58
+#: ../../../source/suggest/introduction.txt:60
 msgid ""
 "An user inputs \"roonga\" and groonga returns nothing because \"roonga\" "
 "isn't in wrong word."
@@ -890,7 +907,7 @@ msgstr ""
 "た語」カラムにないからです。"
 
 # c1cabf207554488abf698c0c78ba1ab9
-#: ../../../source/suggest/introduction.txt:64
+#: ../../../source/suggest/introduction.txt:66
 msgid ""
 "Suggestion helps that user filters many found documents. If user inputs a "
 "query, groonga can return new queries that has more additional keywords from "
@@ -901,47 +918,42 @@ msgstr ""
 "ワードを選び、追加のキーワードを含んだ新しいクエリを返します。"
 
 # bf3fc2efcc2d444ab5b9760b8142bb51
-#: ../../../source/suggest/introduction.txt:69
+#: ../../../source/suggest/introduction.txt:71
 msgid "For example, there are registered related query pairs:"
 msgstr "例えば、以下の関連クエリペアが登録されているとします。:"
 
 # c2d9bf5c91ce42f993d10bc8e1fc293a
-#: ../../../source/suggest/introduction.txt:72
+#: ../../../source/suggest/introduction.txt:74
 msgid "keyword"
 msgstr "キーワード"
 
 # e695a37fc64b4fdca45e945ecca02399
-#: ../../../source/suggest/introduction.txt:72
+#: ../../../source/suggest/introduction.txt:74
 msgid "related query"
 msgstr "関連クエリ"
 
-# 90a0ff1a4fdf455e8e6dd9bdb90e5446
-#: ../../../source/suggest/introduction.txt:74
-msgid "groonga"
-msgstr ""
-
 # bfef9e73f559406ea087add0e360b7f1
-#: ../../../source/suggest/introduction.txt:74
+#: ../../../source/suggest/introduction.txt:76
 msgid "groonga search engine"
 msgstr ""
 
 # 79c89d98b1ef4041845a958e649fb92e
-#: ../../../source/suggest/introduction.txt:76
+#: ../../../source/suggest/introduction.txt:78
 msgid "Google search"
 msgstr ""
 
 # c26c3333fac142668d141df4409bf574
-#: ../../../source/suggest/introduction.txt:78
+#: ../../../source/suggest/introduction.txt:80
 msgid "groonga speed"
 msgstr ""
 
 # 5b7b7b8f16f340c19d6e954c13c10058
-#: ../../../source/suggest/introduction.txt:78
+#: ../../../source/suggest/introduction.txt:80
 msgid "speed"
 msgstr ""
 
 # d971011dcb624919b7d2d43c5ff6d6a6
-#: ../../../source/suggest/introduction.txt:81
+#: ../../../source/suggest/introduction.txt:83
 msgid ""
 "An user inputs \"groonga\" and groonga returns \"groonga search engine\" "
 "because \"groonga\" is in keyword column and related query column is "
@@ -952,7 +964,7 @@ msgstr ""
 "の値が\"groonga search engine\"だからです。"
 
 # 3b899a1984a148cd8c58ebec43944290
-#: ../../../source/suggest/introduction.txt:85
+#: ../../../source/suggest/introduction.txt:87
 msgid ""
 "An user inputs \"MySQL\" and groonga returns nothing because \"MySQL\" isn't "
 "in keyword column values."
@@ -961,12 +973,12 @@ msgstr ""
 "ド」カラムにないからです。"
 
 # 4b8419268f2e47caa934cc63c4b24221
-#: ../../../source/suggest/introduction.txt:89
+#: ../../../source/suggest/introduction.txt:91
 msgid "Learning"
 msgstr "学習"
 
 # 9ab8623463b34b239a0a2e42f19f659c
-#: ../../../source/suggest/introduction.txt:91
+#: ../../../source/suggest/introduction.txt:93
 msgid ""
 "The suggest feature requires registered data before using the feature. Those "
 "data can be registered from user inputs. Gronnga-suggest-httpd and groonga-"
@@ -1068,9 +1080,10 @@ msgstr ""
 
 # 4941066c272e4c8d9fea28523b205609
 #: ../../../source/suggest/suggestion.txt:84
+#, fuzzy
 msgid ""
-"Groonga provides :doc:`/commands/suggest` command to use suggestion. `--type "
-"suggest` option requests suggestion"
+"Groonga provides :doc:`/reference/commands/suggest` command to use "
+"suggestion. `--type suggest` option requests suggestion"
 msgstr ""
 "groongaは提案機能を使うために :doc:`/commands/suggest` コマンドを用意していま"
 "す。 `--type suggest` オプションを使うと提案機能を利用できます。"

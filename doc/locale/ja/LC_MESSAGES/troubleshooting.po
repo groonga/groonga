@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-12 15:03\n"
+"POT-Creation-Date: 2012-07-23 15:32\n"
 "PO-Revision-Date: 2011-05-09 00:37+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -159,12 +159,13 @@ msgid ""
 "せんが、TokenBigramでは完全一致します。"
 msgstr ""
 
+# e07e07f085d84912b450d08983b8f4a7
 #: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:84
 msgid ""
 "このようにN-gram系のトークナイザーを指定することにより再現率をあげることがで"
 "きますが、適合率が下がり検索ノイズが含まれる可能性が高くなります。この度合い"
-"を調整するためには :doc:`/commands/select` のmatch_columnsで使用する索引毎に"
-"重み付けを指定します。"
+"を調整するためには :doc:`/reference/commands/select` のmatch_columnsで使用す"
+"る索引毎に重み付けを指定します。"
 msgstr ""
 
 #: ../../../source/troubleshooting/different_results_with_the_same_keyword.txt:86

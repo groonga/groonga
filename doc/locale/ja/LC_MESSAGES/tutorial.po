@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-29 12:39\n"
-"PO-Revision-Date: 2012-04-27 23:54+0900\n"
+"POT-Creation-Date: 2012-07-23 15:32\n"
+"PO-Revision-Date: 2012-07-23 17:40+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -128,12 +128,12 @@ msgid ""
 "allocated to each integer. The string types are further divided according to "
 "the maximum length. The longitude/latitude types are further divided "
 "according to the geographic coordinate system. For more details, see :doc:`/"
-"type`."
+"reference/type`."
 msgstr ""
 "groongaにおいて利用できる基本型は、真偽値、数値、文字列、日時、経緯度の5種類"
 "に大別できます。基本型において、数値は整数・浮動小数点数の違い、符号の有無と"
 "割り当てるビット数によって細分化できるほか、文字列は長さの上限によって細分化"
-"できます。また、経緯度には測地系による分類があります。詳しくは :doc:`/type` "
+"できます。また、経緯度には測地系による分類があります。詳しくは :doc:`/reference/type` "
 "を参照してください。"
 
 # 3ec01c2c1fbd42978e3a85da79958686
@@ -161,11 +161,11 @@ msgstr "真偽値"
 #: ../../../source/tutorial/data.txt:31
 msgid ""
 "The boolean type is used to store true or false. To create a boolean type "
-"column, specify Bool to the `type` parameter of :doc:`/commands/"
+"column, specify Bool to the `type` parameter of :doc:`/reference/commands/"
 "column_create` command. The default value of the boolean type is false."
 msgstr ""
 "ブール型は真偽値（true/false）を表現するための型です。ブール型のカラムを作成"
-"するには、 :doc:`/commands/column_create` コマンドの `type` 引数に Bool を指"
+"するには、 :doc:`/reference/commands/column_create` コマンドの `type` 引数に Bool を指"
 "定します。ブール型のデフォルト値はfalseです。"
 
 # b0efb64bd2724bcc88a28ff9460b8fa0
@@ -189,25 +189,25 @@ msgid ""
 "The numeric types are divided into integer types and a floating point number "
 "type. The integer types are further divided into the signed integer types "
 "and unsigned integer types. In addition, you can choose the number of bits "
-"allocated to each integer. For more details, see :doc:`/type`. The default "
-"value of the numeric types is 0."
+"allocated to each integer. For more details, see :doc:`/reference/type`. The "
+"default value of the numeric types is 0."
 msgstr ""
 "数値型は、整数と浮動小数点数に分けることができます。整数は、符号付き整数と符"
 "号なし整数に分けることができるだけでなく、割り当てるビット数によっても分ける"
 "ことができます。割り当てるビット数を大きくすると、カラムのサイズは大きくなっ"
 "てしまいますが、表現できる整数の範囲を大きくすることができます。詳しくは :"
-"doc:`/type` を参照してください。数値型のデフォルト値はいずれも0です。"
+"doc:`/reference/type` を参照してください。数値型のデフォルト値はいずれも0です。"
 
 # 92862bee04a048cf97411a6649be1a0f
 #: ../../../source/tutorial/data.txt:51
 msgid ""
 "The following example creates an Int8 column and a Float column, and then "
-"updates existing records. The :doc:`/commands/load` command updates the "
-"weight column as expected. On the other hand, the price column values are "
-"different from the specified values because 15.9 is not an integer and 200 "
-"is too large. 15.9 is converted to 15 by removing the fractional part. 200 "
-"causes an overflow and the result becomes -56. Note that the result of an "
-"overflow/underflow is undefined."
+"updates existing records. The :doc:`/reference/commands/load` command "
+"updates the weight column as expected. On the other hand, the price column "
+"values are different from the specified values because 15.9 is not an "
+"integer and 200 is too large. 15.9 is converted to 15 by removing the "
+"fractional part. 200 causes an overflow and the result becomes -56. Note "
+"that the result of an overflow/underflow is undefined."
 msgstr ""
 "以下の例では、Int8型のカラムとFloat型のカラムを作成し、既存のレコードを更新し"
 "ます。weightカラムについては、指定した値が問題なく格納されています。一方、"
@@ -225,9 +225,10 @@ msgstr "文字列"
 #: ../../../source/tutorial/data.txt:68
 msgid ""
 "The string types are divided according to the maximum length. For more "
-"details, see :doc:`/type`. The default value is the zero-length string."
+"details, see :doc:`/reference/type`. The default value is the zero-length "
+"string."
 msgstr ""
-"文字列型は、長さの上限によって分けることができます。詳しくは :doc:`/type` を"
+"文字列型は、長さの上限によって分けることができます。詳しくは :doc:`/reference/type` を"
 "参照してください。文字列型のデフォルト値は長さ0の文字列です。"
 
 # b0efb64bd2724bcc88a28ff9460b8fa0
@@ -250,14 +251,15 @@ msgid ""
 "The date and time type of groonga is Time. Actually, a Time column stores a "
 "date and time as the number of microseconds since the Epoch, 1970-01-01 "
 "00:00:00. A Time value can represent a date and time before the Epoch "
-"because the actual data type is a signed integer. Note that :doc:`/commands/"
-"load` and :doc:`/commands/select` commands use a decimal number to represent "
-"a data and time in seconds. The default value is 0.0, which means the Epoch."
+"because the actual data type is a signed integer. Note that :doc:`/"
+"reference/commands/load` and :doc:`/reference/commands/select` commands use a decimal "
+"number to represent a data and time in seconds. The default value is 0.0, "
+"which means the Epoch."
 msgstr ""
 "日時を表現するための型はTimeです。内部では1970年1月1日0時0分0秒を基準とする経"
 "過時間をマイクロ秒単位で表現します。符号付きの整数を用いるため、1970年以前の"
-"日時も表現することができます。内部表現はマイクロ秒単位の整数ですが、 :doc:`/"
-"commands/load` コマンドおよび :doc:`/commands/select` コマンドでは、経過秒数"
+"日時も表現することができます。内部表現はマイクロ秒単位の整数ですが、 :doc:`/reference/"
+"commands/load` コマンドおよび :doc:`/reference/commands/select` コマンドでは、経過秒数"
 "による指定・表示となります。デフォルト値は1970年1月1日0時0分0秒のことを表す"
 "0.0です。"
 
@@ -279,11 +281,12 @@ msgstr "経緯度"
 #: ../../../source/tutorial/data.txt:102
 msgid ""
 "The longitude and latitude types are divided according to the geographic "
-"coordinate system. For more details, see :doc:`/type`. To represent a "
-"longitude and latitude, groonga uses a string formatted as follows:"
+"coordinate system. For more details, see :doc:`/reference/type`. To "
+"represent a longitude and latitude, groonga uses a string formatted as "
+"follows:"
 msgstr ""
 "経緯度を表現するための型は、測地系によって分けることができます。詳しくは :"
-"doc:`/type` を参照してください。経緯度の指定・表示には、以下に示す形式の文字"
+"doc:`/reference/type` を参照してください。経緯度の指定・表示には、以下に示す形式の文字"
 "列を使います。"
 
 # bc2afac58e83444099f6a2e282104d04
@@ -340,14 +343,15 @@ msgstr ""
 
 # 5f41c9f3d5bc416590fd143e82eccd53
 #: ../../../source/tutorial/data.txt:126
+#, fuzzy
 msgid ""
 "You can specify a column in the associated table to the `output_columns` "
-"parameter of a :doc:`/commands/select` command. The format is \"Src.Dest\" "
-"where Src is the name of the reference column and Dest is the name of the "
-"target column. If only the reference column is specified, it is handled as "
-"\"Src._key\". Note that if a reference does not point to a valid record, a :"
-"doc:`/commands/select` command outputs the default value of the target "
-"column."
+"parameter of a :doc:`/reference/commands/select` command. The format is "
+"\"Src.Dest\" where Src is the name of the reference column and Dest is the "
+"name of the target column. If only the reference column is specified, it is "
+"handled as \"Src._key\". Note that if a reference does not point to a valid "
+"record, a :doc:`/reference/commands/select` command outputs the default "
+"value of the target column."
 msgstr ""
 "テーブル参照のカラムがあるときは、 `output_columns` 引数に \"参照元カラム.参"
 "照先カラム\" と指定することにより、参照先カラムの値を取り出すことができます。"
@@ -368,16 +372,18 @@ msgstr ""
 
 # fcab1957c86f4f028958b472cf6dda56
 #: ../../../source/tutorial/data.txt:137
+#, fuzzy
 msgid ""
-"The `type` parameter of the :doc:`/commands/column_create` command specifies "
-"the table to be associated with the reference column. In this example, the "
-"reference column is associated with the own table. Then, the :doc:`/commands/"
-"load` command registers a link from \"http://example.org\" to \"http://"
-"example.net\". Note that a reference column requires the primary key, not "
-"the ID, of the record to be referred to. After that, the link is confirmed "
-"by the :doc:`/commands/select` command. In this case, the primary key and "
-"the title of the referred record are output because link._key and link.title "
-"are specified to the `output_columns` parameter."
+"The `type` parameter of the :doc:`/reference/commands/column_create` command "
+"specifies the table to be associated with the reference column. In this "
+"example, the reference column is associated with the own table. Then, the :"
+"doc:`/reference/commands/load` command registers a link from \"http://"
+"example.org\" to \"http://example.net\". Note that a reference column "
+"requires the primary key, not the ID, of the record to be referred to. After "
+"that, the link is confirmed by the :doc:`/reference/commands/select` "
+"command. In this case, the primary key and the title of the referred record "
+"are output because link._key and link.title are specified to the "
+"`output_columns` parameter."
 msgstr ""
 "テーブル参照のカラムを作成するときは、 `type` 引数に参照先テーブルを指定しま"
 "す。この例では、同じテーブルに含まれる別のレコードを参照させたいので、Siteを"
@@ -396,10 +402,10 @@ msgstr "ベクターカラム"
 msgid ""
 "Groonga supports a vector column, in which each element can store a variable "
 "number of values. To create a vector column, specify the COLUMN_VECTOR flag "
-"to the `flags` parameter of a :doc:`/commands/column_create` command. A "
-"vector column is useful to represent a many-to-many relationship."
+"to the `flags` parameter of a :doc:`/reference/commands/column_create` "
+"command. A vector column is useful to represent a many-to-many relationship."
 msgstr ""
-":doc:`/commands/column_create` コマンドでカラムを作成するとき、 `flags` 引数"
+":doc:`/reference/commands/column_create` コマンドでカラムを作成するとき、 `flags` 引数"
 "にCOLUMN_VECTORフラグを指定すると、 `type` 引数に指定した型の配列を格納するカ"
 "ラムになります。このようなカラムのことは、ベクターカラムと呼びます。ベクター"
 "カラムは、各レコードに複数の値を格納できるため、一対多の参照関係を表すのに便"
@@ -423,17 +429,17 @@ msgstr ""
 msgid ""
 "The only difference at the first step is the `flags` parameter that "
 "specifies to create a vector column. The `type` parameter of the :doc:`/"
-"commands/column_create` command is the same as in the previous example. "
-"Then, the :doc:`/commands/load` command registers three links from \"http://"
-"example.org/\" to \"http://example.net/\", \"http://example.org/\" and "
-"\"http://example.com/\". After that, the links are confirmed by the :doc:`/"
-"commands/select` command. In this case, the primary keys and the titles are "
-"output as arrays because links._key and links.title are specified to the "
-"`output_columns` parameter."
+"reference/commands/column_create` command is the same as in the previous "
+"example. Then, the :doc:`/reference/commands/load` command registers three "
+"links from \"http://example.org/\" to \"http://example.net/\", \"http://"
+"example.org/\" and \"http://example.com/\". After that, the links are "
+"confirmed by the :doc:`/reference/commands/select` command. In this case, "
+"the primary keys and the titles are output as arrays because links._key and "
+"links.title are specified to the `output_columns` parameter."
 msgstr ""
 "新たなカラムにはSiteテーブルに対する参照の配列を格納するので、 `type` 引数に"
 "Siteを指定するとともに、 `flags` 引数にCOLUMN_VECTORフラグを指定しています。"
-"次に、 :doc:`/commands/load` による更新では、 \"http://example.org/\" から "
+"次に、 :doc:`/reference/commands/load` による更新では、 \"http://example.org/\" から "
 "\"http://example.net/\" へのリンクに加えて、 \"http://example.org/\" と "
 "\"http://example.com/\" へのリンクも登録しています。そして、最後にリンクの内"
 "容を確認しています。この例では、 `output_columns` 引数に links._key と links."
@@ -720,10 +726,10 @@ msgstr ""
 
 #: ../../../source/tutorial/introduction.txt:45
 msgid ""
-"Let's see the status of a groonga process by using a :doc:`/commands/status` "
-"command."
+"Let's see the status of a groonga process by using a :doc:`/reference/"
+"commands/status` command."
 msgstr ""
-"それでは、 :doc:`/commands/status` コマンドを実行して、groongaの実行状態を確"
+"それでは、 :doc:`/reference/commands/status` コマンドを実行して、groongaの実行状態を確"
 "認してみましょう。"
 
 # f20f73567cf74f89928a062e06b51594
@@ -780,10 +786,10 @@ msgstr ""
 # 8ae549a22ed54274a31717f115927311
 #: ../../../source/tutorial/introduction.txt:69
 msgid ""
-"For details, see also the paragraph of \"command\" in :doc:`/executables/"
-"groonga`."
+"For details, see also the paragraph of \"command\" in :doc:`/reference/"
+"executables/groonga`."
 msgstr ""
-"詳しくは、 :doc:`/executables/groonga` のコマンドの項を参考にしてください。"
+"詳しくは、 :doc:`/reference/executables/groonga` のコマンドの項を参考にしてください。"
 
 # 3da56138e9904419b4dcc5d036e81a07
 #: ../../../source/tutorial/introduction.txt:72
@@ -831,8 +837,8 @@ msgstr "テーブルの作成"
 
 # 1e74fb8068674cafb7c2776d998e7ce8
 #: ../../../source/tutorial/introduction.txt:92
-msgid "A :doc:`/commands/table_create` command creates a new table."
-msgstr ":doc:`/commands/table_create` コマンドを使用してテーブルを作成します。"
+msgid "A :doc:`/reference/commands/table_create` command creates a new table."
+msgstr ":doc:`/reference/commands/table_create` コマンドを使用してテーブルを作成します。"
 
 #: ../../../source/tutorial/introduction.txt:94
 msgid ""
@@ -845,11 +851,12 @@ msgstr ""
 #: ../../../source/tutorial/introduction.txt:96
 msgid ""
 "There are various data types such as integers, strings, etc. See also :doc:`/"
-"type` for more details. The index type determines the search performance and "
-"the availability of prefix searches. The details will be described later."
+"reference/type` for more details. The index type determines the search "
+"performance and the availability of prefix searches. The details will be "
+"described later."
 msgstr ""
 "型には数値や文字列などがあります。ここではデータの種類を表しているものという"
-"程度に考えてください。詳細は :doc:`/type` に記述されています。主キーの格納方"
+"程度に考えてください。詳細は :doc:`/reference/type` に記述されています。主キーの格納方"
 "法は、主キーを条件とする検索にかかる時間や、前方一致検索の可否などを左右しま"
 "す。こちらも後で説明します。"
 
@@ -879,20 +886,21 @@ msgstr "テーブルの表示"
 
 # 8cb3ff01469d48e28b6875b2554741e8
 #: ../../../source/tutorial/introduction.txt:109
-msgid "A :doc:`/commands/select` command can enumerate records in a table."
+msgid ""
+"A :doc:`/reference/commands/select` command can enumerate records in a table."
 msgstr ""
-":doc:`/commands/select` コマンドを用いて、テーブルの中身を表示することができ"
+":doc:`/reference/commands/select` コマンドを用いて、テーブルの中身を表示することができ"
 "ます。"
 
 #: ../../../source/tutorial/introduction.txt:115
 msgid ""
 "When only a table name is specified with a `table` parameter, a :doc:`/"
-"commands/select` command returns the first (at most) 10 records in the "
-"table. [0] in the result shows the number of records in the table. The next "
-"array is a list of columns. [\"_id\",\"Uint32\"] is a column of UInt32, "
+"reference/commands/select` command returns the first (at most) 10 records in "
+"the table. [0] in the result shows the number of records in the table. The "
+"next array is a list of columns. [\"_id\",\"Uint32\"] is a column of UInt32, "
 "named _id. [\"_key\",\"ShortText\"] is a column of ShortText, named _key."
 msgstr ""
-":doc:`/commands/select` にテーブル名のみを指定すると、指定したテーブルの中身"
+":doc:`/reference/commands/select` にテーブル名のみを指定すると、指定したテーブルの中身"
 "を10件まで表示します。実行結果の[0]はテーブルに含まれるレコードの数を示してい"
 "ます。今回は何も登録されていないため0件です。レコード数の次に表示されている配"
 "列はテーブルの構成を示しています。[\"_id\",\"Uint32\"]はUInt32型の値を持つ_id"
@@ -919,9 +927,10 @@ msgstr "カラムの作成"
 
 # 4e5488d852844f238c41dfc94e49fa73
 #: ../../../source/tutorial/introduction.txt:122
-msgid "A :doc:`/commands/column_create` command creates a new column."
+msgid ""
+"A :doc:`/reference/commands/column_create` command creates a new column."
 msgstr ""
-":doc:`/commands/column_create` コマンドを用いて、カラムを作成することができま"
+":doc:`/reference/commands/column_create` コマンドを用いて、カラムを作成することができま"
 "す。"
 
 # f44e8a1aae7145509172f036a73737fd
@@ -945,9 +954,10 @@ msgstr "データのロード"
 # 4e5488d852844f238c41dfc94e49fa73
 #: ../../../source/tutorial/introduction.txt:134
 msgid ""
-"A :doc:`/commands/load` command loads JSON-formatted records into a table."
+"A :doc:`/reference/commands/load` command loads JSON-formatted records into "
+"a table."
 msgstr ""
-":doc:`/commands/load` コマンドは、JSON形式のレコードを受け取り、テーブルに格"
+":doc:`/reference/commands/load` コマンドは、JSON形式のレコードを受け取り、テーブルに格"
 "納します。"
 
 #: ../../../source/tutorial/introduction.txt:136
@@ -975,19 +985,20 @@ msgstr "レコードの取得"
 
 # 8cb3ff01469d48e28b6875b2554741e8
 #: ../../../source/tutorial/introduction.txt:164
-msgid "A :doc:`/commands/select` command can search records in a table."
+msgid ""
+"A :doc:`/reference/commands/select` command can search records in a table."
 msgstr ""
-":doc:`/commands/select` コマンドを用いて、テーブルの中身を表示することができ"
+":doc:`/reference/commands/select` コマンドを用いて、テーブルの中身を表示することができ"
 "ます。"
 
 # e38ea18132744542b958286632ffe6c9
 #: ../../../source/tutorial/introduction.txt:166
 msgid ""
 "If a search condition is specified with a `query` parameter, a :doc:`/"
-"commands/select` command searches records matching the search condition and "
-"returns the matched records."
+"reference/commands/select` command searches records matching the search "
+"condition and returns the matched records."
 msgstr ""
-"`query` 引数を使って検索条件が指定された場合、 :doc:`/commands/select` コマン"
+"`query` 引数を使って検索条件が指定された場合、 :doc:`/reference/commands/select` コマン"
 "ドは検索条件に適合するレコードを検索し、検索結果を出力します。"
 
 # ec50e00750b2498fb6a1cf945b94ef20
@@ -1048,11 +1059,11 @@ msgstr ""
 
 #: ../../../source/tutorial/introduction.txt:193
 msgid ""
-"The :doc:`/commands/table_create` command takes many parameters but you "
-"don't need to understand all of them. Please skip the next paragraph if you "
-"are not interested in how it works."
+"The :doc:`/reference/commands/table_create` command takes many parameters "
+"but you don't need to understand all of them. Please skip the next paragraph "
+"if you are not interested in how it works."
 msgstr ""
-":doc:`/commands/table_create` には多くの引数が指定されているものの、本チュー"
+":doc:`/reference/commands/table_create` には多くの引数が指定されているものの、本チュー"
 "トリアルではすべてを理解する必要はありません。以下に簡単な説明を述べますが、"
 "読み飛ばしてもらってかまいません。"
 
@@ -1137,10 +1148,10 @@ msgstr "全文検索"
 
 #: ../../../source/tutorial/introduction.txt:217
 msgid ""
-"It's time. You can make full text search with a :doc:`/commands/select` "
-"command."
+"It's time. You can make full text search with a :doc:`/reference/commands/"
+"select` command."
 msgstr ""
-"インデックスを作成したことにより、 :doc:`/commands/select` コマンドによる全文"
+"インデックスを作成したことにより、 :doc:`/reference/commands/select` コマンドによる全文"
 "検索が可能になります。"
 
 #: ../../../source/tutorial/introduction.txt:219
@@ -1168,11 +1179,11 @@ msgstr ""
 
 #: ../../../source/tutorial/introduction.txt:227
 msgid ""
-"A :doc:`/commands/select` command accepts an optional parameter, named "
-"`match_columns`, that specifies the default target columns. This parameter "
-"is used if target columns are not specified in a query. [#]_"
+"A :doc:`/reference/commands/select` command accepts an optional parameter, "
+"named `match_columns`, that specifies the default target columns. This "
+"parameter is used if target columns are not specified in a query. [#]_"
 msgstr ""
-":doc:`/commands/select` コマンドには、 `match_columns` という引数が存在しま"
+":doc:`/reference/commands/select` コマンドには、 `match_columns` という引数が存在しま"
 "す。このパラメータはデフォルトで検索対象にするカラムを指定するもので、カラム"
 "名を指定しない検索条件にのみ適用されます。 [1]_"
 
@@ -1193,11 +1204,11 @@ msgstr "出力カラムの指定"
 # cada70fbbe534c64a949a3c07a6b0039
 #: ../../../source/tutorial/introduction.txt:238
 msgid ""
-"An `output_columns` parameter of a :doc:`/commands/select` command specifies "
-"columns to appear in the search result. If you want to specify more than one "
-"columns, please separate column names by commas (',')."
+"An `output_columns` parameter of a :doc:`/reference/commands/select` command "
+"specifies columns to appear in the search result. If you want to specify "
+"more than one columns, please separate column names by commas (',')."
 msgstr ""
-":doc:`/commands/select` コマンドにおいて `output_columns` 引数を用いること"
+":doc:`/reference/commands/select` コマンドにおいて `output_columns` 引数を用いること"
 "で、検索結果に含めるカラムを指定することができます。複数のカラムを指定すると"
 "きは、カンマ（,）区切りでカラムを列挙します。"
 
@@ -1217,12 +1228,12 @@ msgstr "表示範囲指定"
 
 #: ../../../source/tutorial/introduction.txt:249
 msgid ""
-"A :doc:`/commands/select` command returns a part of its search result if "
-"`offset` and/or `limit` parameters are specified. These parameters are "
-"useful to paginate a search result, a widely-used interface which shows a "
-"search result on a page by page basis."
+"A :doc:`/reference/commands/select` command returns a part of its search "
+"result if `offset` and/or `limit` parameters are specified. These parameters "
+"are useful to paginate a search result, a widely-used interface which shows "
+"a search result on a page by page basis."
 msgstr ""
-":doc:`/commands/select` コマンドにおいて `offset` 引数と `limit` 引数を用いる"
+":doc:`/reference/commands/select` コマンドにおいて `offset` 引数と `limit` 引数を用いる"
 "ことで、検索結果の一部のみを表示することができます。大量の検索結果を分割して"
 "ページ単位で表示したい場合などに有用です。"
 
@@ -1244,10 +1255,10 @@ msgstr "検索結果の並べ替え"
 # cada70fbbe534c64a949a3c07a6b0039
 #: ../../../source/tutorial/introduction.txt:262
 msgid ""
-"A :doc:`/commands/select` command sorts its result when used with a `sortby` "
-"parameter."
+"A :doc:`/reference/commands/select` command sorts its result when used with "
+"a `sortby` parameter."
 msgstr ""
-":doc:`/commands/select` コマンドに `sortby` 引数を渡すことにより、検索結果を"
+":doc:`/reference/commands/select` コマンドに `sortby` 引数を渡すことにより、検索結果を"
 "並べ替えることができます。"
 
 # a5a5613c2bf640fabc845b6b549c6c5c
@@ -1877,9 +1888,10 @@ msgstr "gqtpサーバの終了"
 
 #: ../../../source/tutorial/network.txt:77
 msgid ""
-"You can terminate a gqtp server with a :doc:`/commands/shutdown` command."
+"You can terminate a gqtp server with a :doc:`/reference/commands/shutdown` "
+"command."
 msgstr ""
-"gqtpサーバを終了する安全は方法は、クライアントを起動して :doc:`/commands/"
+"gqtpサーバを終了する安全は方法は、クライアントを起動して :doc:`/reference/commands/"
 "shutdown` を発行することです。"
 
 # ca13b09553e6473d9628d6ad2eed0ce7
@@ -2050,10 +2062,12 @@ msgstr ""
 msgid "クエリ拡張"
 msgstr ""
 
+# 873b62fb272c45899fe5ae0ffae894a0
 #: ../../../source/tutorial/query_expansion.txt:11
 msgid ""
-"groongaでは、 :doc:`/commands/select` コマンドにquery_expansionパラメータを指"
-"定することによって、ユーザが指定した検索文字列を適宜拡張することが可能です。"
+"groongaでは、 :doc:`/reference/commands/select` コマンドにquery_expansionパラ"
+"メータを指定することによって、ユーザが指定した検索文字列を適宜拡張することが"
+"可能です。"
 msgstr ""
 
 #: ../../../source/tutorial/query_expansion.txt:13
@@ -2265,10 +2279,11 @@ msgid ""
 "ます。ここではミリ秒表記で登録しましょう。"
 msgstr ""
 
+# 6ca2b63b880b4c9a820e26f990fd77f6
 #: ../../../source/tutorial/search.txt:95
 msgid ""
-"scorerパラメータにおいて、 :doc:`/functions/geo_distance` 関数を用いることに"
-"より、２点間の距離を計算することができます。"
+"scorerパラメータにおいて、 :doc:`/reference/functions/geo_distance` 関数を用"
+"いることにより、２点間の距離を計算することができます。"
 msgstr ""
 
 #: ../../../source/tutorial/search.txt:97
@@ -2292,18 +2307,21 @@ msgstr ""
 msgid "「ある地点から何m以内に存在する」といった絞込も可能です。"
 msgstr ""
 
+# 1597a1064a8c455ea715b89ccd2846a3
 #: ../../../source/tutorial/search.txt:113
 msgid ""
-"filterパラメータにおいて、 :doc:`/functions/geo_in_circle` 関数を用いることに"
-"より、２点間の距離が指定のm以下におさまるかどうかを判定することができます。"
+"filterパラメータにおいて、 :doc:`/reference/functions/geo_in_circle` 関数を用"
+"いることにより、２点間の距離が指定のm以下におさまるかどうかを判定することがで"
+"きます。"
 msgstr ""
 
 #: ../../../source/tutorial/search.txt:115
 msgid "たとえば、秋葉原駅から5000m以内にあるレコードを検索してみましょう。"
 msgstr ""
 
+# 48c9c2938c5a4a57bb94d23a54e8fd28
 #: ../../../source/tutorial/search.txt:121
 msgid ""
-"また、経緯度が指定の矩形領域内であるかどうかを判定する :doc:`../functions/"
-"geo_in_rectangle` 関数も存在します。"
+"また、経緯度が指定の矩形領域内であるかどうかを判定する :doc:`/reference/"
+"functions/geo_in_rectangle` 関数も存在します。"
 msgstr ""

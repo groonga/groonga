@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-18 12:54\n"
+"POT-Creation-Date: 2012-07-23 15:32\n"
 "PO-Revision-Date: 2012-06-18 12:56+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -26,10 +26,11 @@ msgstr "仕様"
 msgid "検索"
 msgstr ""
 
+# 6ddf5060656d438093031c7afee8e8ab
 #: ../../../source/spec/search.txt:8
 msgid ""
-":doc:`/commands/select` コマンドがqueryパラメータを使ってどのように検索するの"
-"かを説明します。"
+":doc:`/reference/commands/select` コマンドがqueryパラメータを使ってどのように"
+"検索するのかを説明します。"
 msgstr ""
 
 #: ../../../source/spec/search.txt:11
