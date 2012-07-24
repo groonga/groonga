@@ -292,6 +292,20 @@ if test "$solaris" = "yes"; then
             [Define to 1 for singal.h with _XPG4_2 if you are on Solaris.])
 fi
 
+# For debug
+AC_ARG_WITH(debug,
+  [AS_HELP_STRING([--with-debug],
+                  [use debug flags (default=no)])],
+  grn_debug="$withval",
+  grn_debug="no")
+if test "x$grn_debug" != "xno"; then
+  grn_debug="yes"
+  if test "$GCC" = "yes"; then
+    CFLAGS="$CFLAGS -O0 -ggdb3"
+    CXXFLAGS="$CXXFLAGS -O0 -ggdb3"
+  fi
+fi
+
 # AIO
 AC_ARG_ENABLE(aio,
   [AS_HELP_STRING([--enable-aio],
