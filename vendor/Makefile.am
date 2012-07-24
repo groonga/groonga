@@ -8,7 +8,6 @@ NGINX_DIR = nginx-1.2.1
 NGINX_MAKEILE = $(NGINX_DIR)/Makefile
 NGINX_MAKEFILE_DEPEND_FILES =			\
 	nginx/configure				\
-	$(NGINX_DIR)/configure			\
 	Makefile.am				\
 	$(top_builddir)/config.status		\
 	$(top_srcdir)/src/nginx-module/config
