@@ -1109,7 +1109,9 @@ typedef enum {
   GRN_OP_GET_REF,
   GRN_OP_GET_VALUE,
   GRN_OP_AND,
-  GRN_OP_BUT,
+  GRN_OP_AND_NOT,
+  /* Deprecated. Just for backward compatibility. */
+#define GRN_OP_BUT GRN_OP_AND_NOT
   GRN_OP_OR,
   GRN_OP_ASSIGN,
   GRN_OP_STAR_ASSIGN,
@@ -1699,7 +1701,7 @@ GRN_API grn_id grn_obj_id(grn_ctx *ctx, grn_obj *obj);
  * @obj: 検索対象のobject
  * @query: 検索クエリ
  * @res: 検索結果を格納するテーブル
- * @op: GRN_OP_OR, GRN_OP_AND, GRN_OP_BUT, GRN_OP_ADJUSTのいずれかを指定する
+ * @op: GRN_OP_OR, GRN_OP_AND, GRN_OP_AND_NOT, GRN_OP_ADJUSTのいずれかを指定する
  * @optarg: 詳細検索条件
  *
  * objを対象としてqueryにマッチするレコードを検索し、
@@ -1931,9 +1933,14 @@ GRN_API grn_posting *grn_geo_cursor_next(grn_ctx *ctx, grn_obj *cursor);
 #ifndef GRN_QUERY_AND
 #define GRN_QUERY_AND '+'
 #endif /* GRN_QUERY_AND */
-#ifndef GRN_QUERY_BUT
-#define GRN_QUERY_BUT '-'
-#endif /* GRN_QUERY_BUT */
+#ifndef GRN_QUERY_AND_NOT
+# ifdef GRN_QUERY_BUT
+   /* Deprecated. Just for backward compatibility. */
+#  define GRN_QUERY_AND_NOT GRN_QUERY_BUT
+# else
+#  define GRN_QUERY_AND_NOT '-'
+# endif /* GRN_QUERY_BUT */
+#endif /* GRN_QUERY_AND_NOT */
 #ifndef GRN_QUERY_ADJ_INC
 #define GRN_QUERY_ADJ_INC '>'
 #endif /* GRN_QUERY_ADJ_POS2 */

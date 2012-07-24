@@ -5480,7 +5480,7 @@ res_add(grn_ctx *ctx, grn_hash *s, grn_rset_posinfo *pi, uint32_t score,
       }
     }
     break;
-  case GRN_OP_BUT :
+  case GRN_OP_AND_NOT :
     {
       grn_id id;
       if ((id = grn_hash_get(ctx, s, pi, s->key_size, (void **)&ri))) {

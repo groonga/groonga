@@ -32,8 +32,8 @@ query ::= query query_element. {
 query ::= query LOGICAL_AND query_element. {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_AND, 2);
 }
-query ::= query LOGICAL_BUT query_element.{
-  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_BUT, 2);
+query ::= query LOGICAL_AND_NOT query_element.{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_AND_NOT, 2);
 }
 query ::= query LOGICAL_OR query_element.{
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_OR, 2);
@@ -118,8 +118,8 @@ logical_and_expression ::= bitwise_or_expression.
 logical_and_expression ::= logical_and_expression LOGICAL_AND bitwise_or_expression. {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_AND, 2);
 }
-logical_and_expression ::= logical_and_expression LOGICAL_BUT bitwise_or_expression. {
-  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_BUT, 2);
+logical_and_expression ::= logical_and_expression LOGICAL_AND_NOT bitwise_or_expression. {
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_AND_NOT, 2);
 }
 
 bitwise_or_expression ::= bitwise_xor_expression.

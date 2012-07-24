@@ -978,7 +978,7 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
       break;
     case GRN_OP_AND :
     case GRN_OP_OR :
-    case GRN_OP_BUT :
+    case GRN_OP_AND_NOT :
       PUSH_CODE(e, op, obj, nargs, code);
       if (nargs != 2) {
         GRN_LOG(ctx, GRN_LOG_WARNING, "nargs(%d) != 2 in relative op", nargs);
@@ -2847,7 +2847,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         }
         code++;
         break;
-      case GRN_OP_BUT :
+      case GRN_OP_AND_NOT :
         {
           grn_obj *x, *y;
           POP2ALLOC1(x, y, res);
@@ -3402,7 +3402,7 @@ res_add(grn_ctx *ctx, grn_hash *s, grn_rset_posinfo *pi, uint32_t score,
       grn_table_add_subrec((grn_obj *)s, ri, score, pi, 1);
     }
     break;
-  case GRN_OP_BUT :
+  case GRN_OP_AND_NOT :
     {
       grn_id id;
       if ((id = grn_hash_get(ctx, s, pi, s->key_size, (void **)&ri))) {
@@ -3481,7 +3481,7 @@ put_logical_op(grn_ctx *ctx, scan_info **sis, int *ip, grn_operator op, int star
         if (!(--nparens)) {
           if (!r) {
             if (ndifops) {
-              if (j && op != GRN_OP_BUT) {
+              if (j && op != GRN_OP_AND_NOT) {
                 nparens = 1;
                 ndifops = 0;
                 r = j;
@@ -3516,7 +3516,7 @@ put_logical_op(grn_ctx *ctx, scan_info **sis, int *ip, grn_operator op, int star
           }
         }
       } else {
-        if ((op == GRN_OP_BUT) || (op != s_->logical_op)) {
+        if ((op == GRN_OP_AND_NOT) || (op != s_->logical_op)) {
           ndifops++;
         }
       }
@@ -3624,7 +3624,7 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
       break;
     case GRN_OP_AND :
     case GRN_OP_OR :
-    case GRN_OP_BUT :
+    case GRN_OP_AND_NOT :
     case GRN_OP_ADJUST :
       if (stat != SCAN_START) { return NULL; }
       o++;
@@ -3735,7 +3735,7 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
       break;
     case GRN_OP_AND :
     case GRN_OP_OR :
-    case GRN_OP_BUT :
+    case GRN_OP_AND_NOT :
     case GRN_OP_ADJUST :
       if (!put_logical_op(ctx, sis, &i, c->op, c - e->codes)) { return NULL; }
       stat = SCAN_START;
@@ -3888,7 +3888,7 @@ grn_table_select_(grn_ctx *ctx, grn_obj *table, grn_obj *expr, grn_obj *v,
       grn_hash_cursor_close(ctx, hc);
     }
     break;
-  case GRN_OP_BUT :
+  case GRN_OP_AND_NOT :
     if ((hc = grn_hash_cursor_open(ctx, s, NULL, 0, NULL, 0, 0, -1, 0))) {
       while (grn_hash_cursor_next(ctx, hc)) {
         grn_hash_cursor_get_key(ctx, hc, (void **) &idp);
@@ -4661,9 +4661,9 @@ get_token(grn_ctx *ctx, efs_info *q, efs_op *op, grn_obj *column, grn_operator m
       q->cur++;
       op->op = GRN_OP_AND;
       break;
-    case GRN_QUERY_BUT :
+    case GRN_QUERY_AND_NOT :
       q->cur++;
-      op->op = GRN_OP_BUT;
+      op->op = GRN_OP_AND_NOT;
       break;
     case GRN_QUERY_ADJ_INC :
       q->cur++;
@@ -4798,8 +4798,8 @@ get_pragma(grn_ctx *ctx, efs_info *q)
         case GRN_QUERY_AND :
           q->default_op = GRN_OP_AND;
           break;
-        case GRN_QUERY_BUT :
-          q->default_op = GRN_OP_BUT;
+        case GRN_QUERY_AND_NOT :
+          q->default_op = GRN_OP_AND_NOT;
           break;
         case GRN_QUERY_ADJ_INC :
           q->default_op = GRN_OP_ADJUST;
@@ -5036,10 +5036,10 @@ parse_query(grn_ctx *ctx, efs_info *q)
         PARSE(GRN_EXPR_TOKEN_LOGICAL_AND);
       }
       break;
-    case GRN_QUERY_BUT :
+    case GRN_QUERY_AND_NOT :
       q->cur++;
-      op->op = GRN_OP_BUT;
-      PARSE(GRN_EXPR_TOKEN_LOGICAL_BUT);
+      op->op = GRN_OP_AND_NOT;
+      PARSE(GRN_EXPR_TOKEN_LOGICAL_AND_NOT);
       break;
     case GRN_QUERY_ADJ_INC :
       q->cur++;
@@ -5494,7 +5494,7 @@ parse_script(grn_ctx *ctx, efs_info *q)
         break;
       case '!' :
         q->cur++;
-        PARSE(GRN_EXPR_TOKEN_LOGICAL_BUT);
+        PARSE(GRN_EXPR_TOKEN_LOGICAL_AND_NOT);
         break;
       default :
         PARSE(GRN_EXPR_TOKEN_BITWISE_AND);
@@ -5747,14 +5747,14 @@ grn_expr_snip(grn_ctx *ctx, grn_obj *expr, int flags,
         si = sis[i];
         if (si->flags & SCAN_POP) {
           nparens++;
-          if (si->logical_op == GRN_OP_BUT) {
+          if (si->logical_op == GRN_OP_AND_NOT) {
             GRN_UINT32_PUT(ctx, &but_stack, npbut);
             npbut = nparens;
             butp = 1 - butp;
           }
         } else {
           if (si->op == GRN_OP_MATCH && si->query) {
-            if (butp == (si->logical_op == GRN_OP_BUT)) {
+            if (butp == (si->logical_op == GRN_OP_AND_NOT)) {
               GRN_PTR_PUT(ctx, &snip_stack, si->query);
             }
           }

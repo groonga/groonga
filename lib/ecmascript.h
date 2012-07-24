@@ -1,5 +1,5 @@
 #define GRN_EXPR_TOKEN_LOGICAL_AND                     1
-#define GRN_EXPR_TOKEN_LOGICAL_BUT                     2
+#define GRN_EXPR_TOKEN_LOGICAL_AND_NOT                 2
 #define GRN_EXPR_TOKEN_LOGICAL_OR                      3
 #define GRN_EXPR_TOKEN_QSTRING                         4
 #define GRN_EXPR_TOKEN_PARENL                          5

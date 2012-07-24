@@ -150,7 +150,7 @@ expand_query(grn_ctx *ctx, grn_obj *table, grn_obj *column, grn_expr_flags flags
     case GRN_QUERY_ADJ_INC :
     case GRN_QUERY_ADJ_DEC :
     case GRN_QUERY_ADJ_NEG :
-    case GRN_QUERY_BUT :
+    case GRN_QUERY_AND_NOT :
     case GRN_QUERY_PARENL :
     case GRN_QUERY_PARENR :
     case GRN_QUERY_PREFIX :

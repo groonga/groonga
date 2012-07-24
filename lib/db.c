@@ -3229,7 +3229,7 @@ grn_table_setoperation(grn_ctx *ctx, grn_obj *table1, grn_obj *table2, grn_obj *
       }
     });
     break;
-  case GRN_OP_BUT :
+  case GRN_OP_AND_NOT :
     GRN_TABLE_EACH(ctx, table2, 0, 0, id, &key, &key_size, &value2, {
       grn_table_delete(ctx, table1, key, key_size);
     });
