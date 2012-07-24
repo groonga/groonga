@@ -23,9 +23,13 @@ Improvements
 * Supported near search by ``'column *N "word1 word2 ..."'`` in script syntax.
   [#1423]
 * [doc] Added a description about limitation of suffix search.
-* Supported near search for _key pseudo column. [GitHub#19]
+* Supported near search for ``_key`` pseudo column. [GitHub#19]
 * [doc] Added basic ECMAScript related syntaxes.
-* [doc] Updated a description about geo_distance.
+* [doc] Updated a description about :doc:`/reference/functions/geo_distance`.
+* [rpm][fedora] Supported Fedora 17.
+* [rpm][fedora] Dropped Fedora 16 support.
+* Supported logical not ``"!"`` operator. [GitHub#22]
+* [httpd] Supported per location groonga database.
 
 Fixes
 ^^^^^
@@ -34,7 +38,7 @@ Fixes
   [Reported by SHIMADA Koji]
 * Fixed not to use installed groonga's header files for groonga-httpd.
 * Fixed a build problem about groonga on Mac OS X Lion.
-* [doc] Fixed a description of table_remove command.
+* [doc] Fixed a description of :doc:`/reference/commands/table_remove` command.
 * Fixed infinite loop problem for not implemented operator without index.
   [GitHub#20]
 * Fixed a wrong error code which causes memory leaks.
@@ -43,6 +47,9 @@ Fixes
 * Fixed to exit load command when an uncontinuable error occurred.
 * Fixed to stop load command for invalid --columns value.
 * [admin] Fixed to escape error message.
+* Fixed to ignore unloadable objects which causes database incompatible.
+  [#1429] [Reported by IWAI, Masaharu]
+* Fixed to support opening locked database. [GitHub#21]
 
 Thanks
 ^^^^^^
