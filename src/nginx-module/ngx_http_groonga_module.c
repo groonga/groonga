@@ -436,11 +436,12 @@ ngx_http_groonga_init_process(ngx_cycle_t *cycle)
   http_conf =
     (ngx_http_conf_ctx_t *)ngx_get_conf(cycle->conf_ctx, ngx_http_module);
   data.log = cycle->log;
+  data.rc = NGX_OK;
   ngx_http_groonga_each_loc_conf(http_conf,
                                  ngx_http_groonga_open_database_callback,
                                  &data);
 
-  return NGX_OK;
+  return data.rc;
 }
 
 static void
