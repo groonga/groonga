@@ -1,2 +1,2 @@
-usr/bin/groonga-httpd
+usr/sbin/groonga-httpd
 etc/groonga/httpd/*
