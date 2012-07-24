@@ -20,6 +20,9 @@ $(NGINX_MAKEILE): $(NGINX_MAKEFILE_DEPEND_FILES)
 all-local: $(NGINX_MAKEILE)
 	(cd $(NGINX_DIR) && $(MAKE) build)
 
+clean-local: $(NGINX_MAKEILE)
+	(cd $(NGINX_DIR) && $(MAKE) clean)
+
 install-exec-local: $(NGINX_MAKEILE)
 	(cd $(NGINX_DIR) && $(MAKE) install)
 endif
