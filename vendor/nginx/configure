@@ -44,3 +44,10 @@ cd "../nginx-${nginx_version}"
   --add-module="${GROONGA_HTTPD_MODULE_PATH}" \
   --without-http_rewrite_module \
   ${configure_args}
+
+if [ "$GROONGA_HTTPD_DEBUG" = "yes" ]; then
+  sed -i'' \
+    -e '/^CFLAGS =/ s/ -O / -O0 /' \
+    -e '/^CFLAGS =/ s/ -g / -ggdb3 /' \
+    objs/Makefile
+fi
