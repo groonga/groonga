@@ -25,8 +25,15 @@
 typedef struct {
   ngx_str_t database;
   char *database_cstr;
-  grn_ctx *global_context;
+  grn_ctx context;
 } ngx_http_groonga_loc_conf_t;
+
+typedef struct {
+  ngx_log_t *log;
+  ngx_int_t rc;
+} ngx_http_groonga_database_callback_data_t;
+
+typedef void (*ngx_http_groonga_loc_conf_callback_pt)(ngx_http_groonga_loc_conf_t *conf, void *user_data);
 
 static char *ngx_http_groonga(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
 
@@ -53,10 +60,9 @@ static char *ngx_http_groonga_merge_loc_conf(ngx_conf_t *cf,
                                              void *parent,
                                              void *child);
 
-static ngx_int_t ngx_http_groonga_pre_configuration(ngx_conf_t *conf);
 
 static ngx_http_module_t ngx_http_groonga_module_ctx = {
-  ngx_http_groonga_pre_configuration, /* preconfiguration */
+  NULL, /* preconfiguration */
   NULL, /* postconfiguration */
 
   NULL, /* create main configuration */
@@ -69,7 +75,8 @@ static ngx_http_module_t ngx_http_groonga_module_ctx = {
   ngx_http_groonga_merge_loc_conf, /* merge location configuration */
 };
 
-static void ngx_http_groonga_exit_master(ngx_cycle_t *cycle);
+static ngx_int_t ngx_http_groonga_init_process(ngx_cycle_t *cycle);
+static void ngx_http_groonga_exit_process(ngx_cycle_t *cycle);
 
 ngx_module_t ngx_http_groonga_module = {
   NGX_MODULE_V1,
@@ -78,11 +85,11 @@ ngx_module_t ngx_http_groonga_module = {
   NGX_HTTP_MODULE, /* module type */
   NULL, /* init master */
   NULL, /* init module */
-  NULL, /* init process */
+  ngx_http_groonga_init_process, /* init process */
   NULL, /* init thread */
   NULL, /* exit thread */
-  NULL, /* exit process */
-  ngx_http_groonga_exit_master, /* exit master */
+  ngx_http_groonga_exit_process, /* exit process */
+  NULL, /* exit master */
   NGX_MODULE_V1_PADDING
 };
 
@@ -188,28 +195,6 @@ ngx_http_groonga_context_receive_handler(grn_ctx *context,
 }
 
 static ngx_int_t
-ngx_http_groonga_open_database(ngx_log_t *log,
-                               ngx_http_groonga_loc_conf_t *loc_conf) {
-  ngx_int_t    rc;
-  grn_ctx *context = malloc(sizeof(grn_ctx));
-
-  grn_ctx_init(context, GRN_NO_FLAGS);
-
-  if (!loc_conf->database_cstr) {
-    loc_conf->database_cstr = ngx_str_null_terminate(&loc_conf->database);
-  }
-
-  grn_db_open(context, loc_conf->database_cstr);
-  rc = ngx_http_groonga_context_check(log, context);
-  if (rc != NGX_OK) {
-    return rc;
-  }
-
-  loc_conf->global_context = context;
-  return NGX_OK;
-}
-
-static ngx_int_t
 ngx_http_groonga_handler(ngx_http_request_t *r)
 {
   ngx_int_t    rc;
@@ -217,22 +202,39 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
   ngx_chain_t  head_chain, body_chain, foot_chain;
 
   grn_ctx *context;
+  grn_obj uri;
+  u_char *unparsed_path;
+  ngx_int_t unparsed_path_length;
 
   ngx_http_groonga_output_t output;
   const char *content_type;
 
-  ngx_http_groonga_loc_conf_t *loc_conf;
-  loc_conf = ngx_http_get_module_loc_conf(r, ngx_http_groonga_module);
+  ngx_http_core_loc_conf_t *http_location_conf;
+  ngx_http_groonga_loc_conf_t *location_conf;
 
-  context = loc_conf->global_context;
+  http_location_conf = ngx_http_get_module_loc_conf(r, ngx_http_core_module);
+  location_conf = ngx_http_get_module_loc_conf(r, ngx_http_groonga_module);
+
+  unparsed_path = r->unparsed_uri.data + http_location_conf->name.len;
+  unparsed_path_length = r->unparsed_uri.len - http_location_conf->name.len;
+  if (unparsed_path_length > 0 && unparsed_path[0] == '/') {
+    unparsed_path += 1;
+    unparsed_path_length -= 1;
+  }
+  if (unparsed_path_length == 0) {
+    return NGX_HTTP_BAD_REQUEST;
+  }
+
+  context = &(location_conf->context);
 
   grn_ctx_recv_handler_set(context,
                            ngx_http_groonga_context_receive_handler,
                            (void *)&output);
-  grn_ctx_send(context,
-               (char *)r->unparsed_uri.data,
-               r->unparsed_uri.len,
-               GRN_NO_FLAGS);
+  GRN_TEXT_INIT(&uri, 0);
+  GRN_TEXT_PUTS(context, &uri, "/d/");
+  GRN_TEXT_PUT(context, &uri, unparsed_path, unparsed_path_length);
+  grn_ctx_send(context, GRN_TEXT_VALUE(&uri), GRN_TEXT_LEN(&uri), GRN_NO_FLAGS);
+  GRN_OBJ_FIN(context, &uri);
 
   /* we response to 'GET' and 'HEAD' requests only */
   if (!(r->method & (NGX_HTTP_GET|NGX_HTTP_HEAD))) {
@@ -323,7 +325,6 @@ ngx_http_groonga_create_loc_conf(ngx_conf_t *cf)
   conf->database.data = NULL;
   conf->database.len = 0;
   conf->database_cstr = NULL;
-  conf->global_context = NULL;
 
   return conf;
 }
@@ -331,49 +332,133 @@ ngx_http_groonga_create_loc_conf(ngx_conf_t *cf)
 static char *
 ngx_http_groonga_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child)
 {
-  ngx_int_t rc;
-  ngx_http_core_loc_conf_t *location_conf;
   ngx_http_groonga_loc_conf_t *prev = parent;
   ngx_http_groonga_loc_conf_t *conf = child;
 
-  ngx_conf_merge_str_value(conf->database, prev->database, NULL);
-
-  location_conf = ngx_http_conf_get_module_loc_conf(cf, ngx_http_core_module);
-  if (location_conf->handler == ngx_http_groonga_handler) {
-    if (conf->database.data == NULL) {
-      ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
-        "\"groonga_database\" must be specified");
-      return NGX_CONF_ERROR;
-    }
-
-    rc = ngx_http_groonga_open_database(cf->log, conf);
-    if (rc != NGX_OK) {
-      ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
-        "failed to open the specified database");
-      return NGX_CONF_ERROR;
-    }
-  }
+  ngx_conf_merge_str_value(prev->database, conf->database, NULL);
 
   return NGX_CONF_OK;
 }
 
+static void
+ngx_http_groonga_each_loc_conf_in_tree(ngx_http_location_tree_node_t *node,
+                                       ngx_http_groonga_loc_conf_callback_pt callback,
+                                       void *user_data)
+{
+  if (!node) {
+    return;
+  }
+
+  if (node->exact && node->exact->handler == ngx_http_groonga_handler) {
+    callback(node->exact->loc_conf[ngx_http_groonga_module.ctx_index],
+             user_data);
+  }
+
+  if (node->inclusive && node->inclusive->handler == ngx_http_groonga_handler) {
+    callback(node->inclusive->loc_conf[ngx_http_groonga_module.ctx_index],
+             user_data);
+  }
+
+  ngx_http_groonga_each_loc_conf_in_tree(node->left, callback, user_data);
+  ngx_http_groonga_each_loc_conf_in_tree(node->right, callback, user_data);
+  ngx_http_groonga_each_loc_conf_in_tree(node->tree, callback, user_data);
+}
+
+static void
+ngx_http_groonga_each_loc_conf(ngx_http_conf_ctx_t *http_conf,
+                               ngx_http_groonga_loc_conf_callback_pt callback,
+                               void *user_data)
+{
+  ngx_http_core_main_conf_t *main_conf;
+  ngx_http_core_srv_conf_t **server_confs;
+  ngx_uint_t i;
+
+  if (!http_conf) {
+    return;
+  }
+
+  main_conf = http_conf->main_conf[ngx_http_core_module.ctx_index];
+  server_confs = main_conf->servers.elts;
+  for (i = 0; i < main_conf->servers.nelts; i++) {
+    ngx_http_core_srv_conf_t *server_conf;
+    ngx_http_core_loc_conf_t *location_conf;
+
+    server_conf = server_confs[i];
+    location_conf = server_conf->ctx->loc_conf[ngx_http_core_module.ctx_index];
+    ngx_http_groonga_each_loc_conf_in_tree(location_conf->static_locations,
+                                           callback,
+                                           user_data);
+  }
+}
+
+static void
+ngx_http_groonga_open_database_callback(ngx_http_groonga_loc_conf_t *location_conf,
+                                        void *user_data)
+{
+  ngx_http_groonga_database_callback_data_t *data = user_data;
+  grn_ctx *context;
+
+  context = &(location_conf->context);
+  grn_ctx_init(context, GRN_NO_FLAGS);
+
+  if (!location_conf->database_cstr) {
+    location_conf->database_cstr = ngx_str_null_terminate(&(location_conf->database));
+  }
+
+  grn_db_open(context, location_conf->database_cstr);
+  data->rc = ngx_http_groonga_context_check(data->log, context);
+}
+
+static void
+ngx_http_groonga_close_database_callback(ngx_http_groonga_loc_conf_t *location_conf,
+                                         void *user_data)
+{
+  ngx_http_groonga_database_callback_data_t *data = user_data;
+  grn_ctx *context;
+
+  context = &(location_conf->context);
+
+  grn_obj_close(context, grn_ctx_db(context));
+  ngx_http_groonga_context_check(data->log, context);
+  grn_ctx_fin(context);
+  ngx_http_groonga_context_check(data->log, context);
+}
+
 static ngx_int_t
-ngx_http_groonga_pre_configuration(ngx_conf_t *conf)
+ngx_http_groonga_init_process(ngx_cycle_t *cycle)
 {
   grn_rc rc;
+  ngx_http_conf_ctx_t *http_conf;
+  ngx_http_groonga_database_callback_data_t data;
 
   rc = grn_init();
   if (rc != GRN_SUCCESS) {
     return NGX_ERROR;
   }
 
+  http_conf =
+    (ngx_http_conf_ctx_t *)ngx_get_conf(cycle->conf_ctx, ngx_http_module);
+  data.log = cycle->log;
+  ngx_http_groonga_each_loc_conf(http_conf,
+                                 ngx_http_groonga_open_database_callback,
+                                 &data);
+
   return NGX_OK;
 }
 
 static void
-ngx_http_groonga_exit_master(ngx_cycle_t *cycle)
+ngx_http_groonga_exit_process(ngx_cycle_t *cycle)
 {
   grn_rc rc;
+  ngx_http_conf_ctx_t *http_conf;
+  ngx_http_groonga_database_callback_data_t data;
+
+  http_conf =
+    (ngx_http_conf_ctx_t *)ngx_get_conf(cycle->conf_ctx, ngx_http_module);
+  data.log = cycle->log;
+  ngx_http_groonga_each_loc_conf(http_conf,
+                                 ngx_http_groonga_close_database_callback,
+                                 &data);
 
   rc = grn_fin();
   if (rc != GRN_SUCCESS) {
