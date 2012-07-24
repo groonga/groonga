@@ -23,8 +23,8 @@
 #include <groonga.h>
 
 typedef struct {
-  ngx_str_t database;
-  char *database_cstr;
+  ngx_str_t database_path;
+  char *database_path_cstr;
   grn_ctx context;
 } ngx_http_groonga_loc_conf_t;
 
@@ -49,7 +49,7 @@ static ngx_command_t ngx_http_groonga_commands[] = {
     NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
     ngx_conf_set_str_slot,
     NGX_HTTP_LOC_CONF_OFFSET,
-    offsetof(ngx_http_groonga_loc_conf_t, database),
+    offsetof(ngx_http_groonga_loc_conf_t, database_path),
     NULL },
 
   ngx_null_command
@@ -319,9 +319,9 @@ ngx_http_groonga_create_loc_conf(ngx_conf_t *cf)
     return NGX_CONF_ERROR;
   }
 
-  conf->database.data = NULL;
-  conf->database.len = 0;
-  conf->database_cstr = NULL;
+  conf->database_path.data = NULL;
+  conf->database_path.len = 0;
+  conf->database_path_cstr = NULL;
 
   return conf;
 }
@@ -332,7 +332,7 @@ ngx_http_groonga_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child)
   ngx_http_groonga_loc_conf_t *prev = parent;
   ngx_http_groonga_loc_conf_t *conf = child;
 
-  ngx_conf_merge_str_value(prev->database, conf->database, NULL);
+  ngx_conf_merge_str_value(prev->database_path, conf->database_path, NULL);
 
   return NGX_CONF_OK;
 }
@@ -398,11 +398,12 @@ ngx_http_groonga_open_database_callback(ngx_http_groonga_loc_conf_t *location_co
   context = &(location_conf->context);
   grn_ctx_init(context, GRN_NO_FLAGS);
 
-  if (!location_conf->database_cstr) {
-    location_conf->database_cstr = ngx_str_null_terminate(&(location_conf->database));
+  if (!location_conf->database_path_cstr) {
+    location_conf->database_path_cstr =
+      ngx_str_null_terminate(&(location_conf->database_path));
   }
 
-  grn_db_open(context, location_conf->database_cstr);
+  grn_db_open(context, location_conf->database_path_cstr);
   data->rc = ngx_http_groonga_context_check(data->log, context);
 }
 
