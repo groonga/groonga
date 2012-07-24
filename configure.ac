@@ -305,6 +305,7 @@ if test "x$grn_debug" != "xno"; then
     CXXFLAGS="$CXXFLAGS -O0 -ggdb3"
   fi
 fi
+AC_SUBST(grn_debug)
 
 # AIO
 AC_ARG_ENABLE(aio,
