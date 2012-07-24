@@ -62,13 +62,13 @@ Obsoletes:	%{name} < 1.2.2-0
 This package contains the groonga server
 
 %package httpd
-Summary:	Groonga httpd server
+Summary:	Groonga HTTP server
 Group:		Applications/Text
 License:	BSD
 Requires:	%{name}-libs = %{version}-%{release}
 
 %description httpd
-This package contains the groonga httpd server
+This package contains the groonga HTTP server
 
 %package doc
 Summary:	Documentation for groonga
