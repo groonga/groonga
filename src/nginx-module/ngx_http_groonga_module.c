@@ -33,6 +33,13 @@ typedef struct {
   ngx_int_t rc;
 } ngx_http_groonga_database_callback_data_t;
 
+typedef struct {
+  grn_ctx context;
+  grn_obj head;
+  grn_obj body;
+  grn_obj foot;
+} ngx_http_groonga_handler_data_t;
+
 typedef void (*ngx_http_groonga_loc_conf_callback_pt)(ngx_http_groonga_loc_conf_t *conf, void *user_data);
 
 static char *ngx_http_groonga(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
@@ -123,71 +130,73 @@ ngx_http_groonga_grn_obj_to_ngx_buf(ngx_pool_t *pool, grn_obj *object)
 
 #define GRN_NO_FLAGS 0
 
-typedef struct {
-  grn_obj head, body, foot;
-} ngx_http_groonga_output_t;
+static void
+ngx_http_groonga_handler_cleanup(void *user_data)
+{
+  ngx_http_groonga_handler_data_t *data = user_data;
+  grn_ctx *context;
+
+  context = &(data->context);
+  GRN_OBJ_FIN(context, &(data->head));
+  GRN_OBJ_FIN(context, &(data->body));
+  GRN_OBJ_FIN(context, &(data->foot));
+  grn_ctx_fin(context);
+}
 
 static void
 ngx_http_groonga_context_receive_handler(grn_ctx *context,
                                          int flags,
                                          void *callback_data)
 {
-  if (context && context->impl && (flags & GRN_CTX_TAIL)) {
-    char *result = NULL;
-    unsigned int result_size = 0;
-    int flags = GRN_NO_FLAGS;
+  ngx_http_groonga_handler_data_t *data = callback_data;
+  char *result = NULL;
+  unsigned int result_size = 0;
+  int recv_flags;
 
-    ngx_http_groonga_output_t *output =
-      (ngx_http_groonga_output_t *)callback_data;
+  if (!(flags & GRN_CTX_TAIL)) {
+    return;
+  }
 
-    GRN_TEXT_INIT(&output->head, GRN_NO_FLAGS);
-    GRN_TEXT_INIT(&output->body, GRN_NO_FLAGS);
-    GRN_TEXT_INIT(&output->foot, GRN_NO_FLAGS);
+  grn_ctx_recv(context, &result, &result_size, &recv_flags);
 
-    grn_ctx_recv(context, &result, &result_size, &flags);
+  if (recv_flags == GRN_CTX_QUIT) {
+    ngx_int_t ngx_rc;
+    ngx_int_t ngx_pid;
 
-    if (flags == GRN_CTX_QUIT) {
-      ngx_int_t ngx_rc;
-      ngx_int_t ngx_pid;
-
-      if (ngx_process == NGX_PROCESS_SINGLE) {
-        ngx_pid = getpid();
-      } else {
-        ngx_pid = getppid();
-      }
-
-      ngx_rc = ngx_os_signal_process((ngx_cycle_t*)ngx_cycle,
-                                     "stop",
-                                     ngx_pid);
-      if (ngx_rc == NGX_OK) {
-        context->stat &= ~GRN_CTX_QUIT;
-        grn_ctx_recv(context, &result, &result_size, &flags);
-        context->stat |= GRN_CTX_QUIT;
-      } else {
-        context->rc = GRN_OPERATION_NOT_PERMITTED;
-        GRN_TEXT_PUTS(context, &output->body, "false");
-        context->stat &= ~GRN_CTX_QUIT;
-      }
+    if (ngx_process == NGX_PROCESS_SINGLE) {
+      ngx_pid = getpid();
+    } else {
+      ngx_pid = getppid();
     }
 
-    if (result_size > 0 ||
-        GRN_TEXT_LEN(&output->body) > 0 ||
-        context->rc != GRN_SUCCESS) {
-      if (GRN_TEXT_LEN(&output->body) == 0) {
-        GRN_TEXT_SET(context,
-                     &output->body,
-                     result,
-                     result_size);
-      }
-
-      grn_output_envelope(context,
-                          context->rc,
-                          &output->head,
-                          &output->body,
-                          &output->foot,
-                          NULL,
-                          0);
+    ngx_rc = ngx_os_signal_process((ngx_cycle_t*)ngx_cycle,
+                                   "stop",
+                                   ngx_pid);
+    if (ngx_rc == NGX_OK) {
+      context->stat &= ~GRN_CTX_QUIT;
+      grn_ctx_recv(context, &result, &result_size, &recv_flags);
+      context->stat |= GRN_CTX_QUIT;
+    } else {
+      context->rc = GRN_OPERATION_NOT_PERMITTED;
+      GRN_TEXT_PUTS(context, &(data->body), "false");
+      context->stat &= ~GRN_CTX_QUIT;
     }
+  }
+
+  if (result_size > 0 ||
+      GRN_TEXT_LEN(&(data->body)) > 0 ||
+      context->rc != GRN_SUCCESS) {
+    if (result_size > 0) {
+      GRN_TEXT_PUT(context, &(data->body), result, result_size);
+    }
+
+    grn_output_envelope(context,
+                        context->rc,
+                        &(data->head),
+                        &(data->body),
+                        &(data->foot),
+                        NULL,
+                        0);
   }
 }
 
@@ -198,13 +207,14 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
   ngx_buf_t   *head_buf, *body_buf, *foot_buf;
   ngx_chain_t  head_chain, body_chain, foot_chain;
 
+  ngx_http_cleanup_t *cleanup;
+  ngx_http_groonga_handler_data_t *data;
+  const char *content_type;
+
   grn_ctx *context;
   grn_obj uri;
   u_char *unparsed_path;
   ngx_int_t unparsed_path_length;
-
-  ngx_http_groonga_output_t output;
-  const char *content_type;
 
   ngx_http_core_loc_conf_t *http_location_conf;
   ngx_http_groonga_loc_conf_t *location_conf;
@@ -222,11 +232,20 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
     return NGX_HTTP_BAD_REQUEST;
   }
 
-  context = &(location_conf->context);
+  cleanup = ngx_http_cleanup_add(r, sizeof(ngx_http_groonga_handler_data_t));
+  cleanup->handler = ngx_http_groonga_handler_cleanup;
+  data = cleanup->data;
+
+  context = &(data->context);
+  grn_ctx_init(context, GRN_NO_FLAGS);
+  grn_ctx_use(context, grn_ctx_db(&(location_conf->context)));
+  GRN_TEXT_INIT(&(data->head), GRN_NO_FLAGS);
+  GRN_TEXT_INIT(&(data->body), GRN_NO_FLAGS);
+  GRN_TEXT_INIT(&(data->foot), GRN_NO_FLAGS);
 
   grn_ctx_recv_handler_set(context,
                            ngx_http_groonga_context_receive_handler,
-                           (void *)&output);
+                           data);
   GRN_TEXT_INIT(&uri, 0);
   GRN_TEXT_PUTS(context, &uri, "/d/");
   GRN_TEXT_PUT(context, &uri, unparsed_path, unparsed_path_length);
@@ -251,17 +270,17 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
   r->headers_out.content_type.data = (u_char *) content_type;
 
   /* allocate buffers for a response body */
-  head_buf = ngx_http_groonga_grn_obj_to_ngx_buf(r->pool, &output.head);
+  head_buf = ngx_http_groonga_grn_obj_to_ngx_buf(r->pool, &(data->head));
   if (head_buf == NULL) {
     return NGX_HTTP_INTERNAL_SERVER_ERROR;
   }
 
-  body_buf = ngx_http_groonga_grn_obj_to_ngx_buf(r->pool, &output.body);
+  body_buf = ngx_http_groonga_grn_obj_to_ngx_buf(r->pool, &(data->body));
   if (body_buf == NULL) {
     return NGX_HTTP_INTERNAL_SERVER_ERROR;
   }
 
-  foot_buf = ngx_http_groonga_grn_obj_to_ngx_buf(r->pool, &output.foot);
+  foot_buf = ngx_http_groonga_grn_obj_to_ngx_buf(r->pool, &(data->foot));
   if (foot_buf == NULL) {
     return NGX_HTTP_INTERNAL_SERVER_ERROR;
   }
@@ -277,9 +296,9 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
 
   /* set the status line */
   r->headers_out.status = NGX_HTTP_OK;
-  r->headers_out.content_length_n = GRN_TEXT_LEN(&output.head) +
-                                    GRN_TEXT_LEN(&output.body) +
-                                    GRN_TEXT_LEN(&output.foot);
+  r->headers_out.content_length_n = GRN_TEXT_LEN(&(data->head)) +
+                                    GRN_TEXT_LEN(&(data->body)) +
+                                    GRN_TEXT_LEN(&(data->foot));
 
   /* send the headers of your response */
   rc = ngx_http_send_header(r);
@@ -290,10 +309,6 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
 
   /* send the buffer chain of your response */
   rc = ngx_http_output_filter(r, &head_chain);
-
-  GRN_OBJ_FIN(context, &output.head);
-  GRN_OBJ_FIN(context, &output.body);
-  GRN_OBJ_FIN(context, &output.foot);
 
   return rc;
 }
