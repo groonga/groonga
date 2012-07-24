@@ -62,7 +62,7 @@ This package contains the groonga server
 %package httpd
 Summary:        Groonga HTTP server
 Group:          Applications/Text
-License:        LGPLv2
+License:        LGPLv2 and BSD
 Requires:       %{name}-libs = %{version}-%{release}
 
 %description httpd
