@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-24 18:03\n"
+"POT-Creation-Date: 2012-07-24 18:41\n"
 "PO-Revision-Date: 2012-07-23 17:35+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -89,8 +89,8 @@ msgstr "[doc] 後方一致検索の制限を追記。"
 
 # dd0c793ac9784d69aa1f3bd605e9c4f6
 #: ../../../source/news.txt:26
-msgid "Supported near search for _key pseudo column. [GitHub#19]"
-msgstr "近傍検索で _key 疑似カラムをサポート。 [GitHub#19]"
+msgid "Supported near search for ``_key`` pseudo column. [GitHub#19]"
+msgstr "近傍検索で ``_key`` 疑似カラムをサポート。 [GitHub#19]"
 
 # 9fa7b082c9df47159dac5c19d8480a19
 #: ../../../source/news.txt:27
@@ -114,7 +114,7 @@ msgstr "[rpm][fedora] Fedora 16サポートを削除。"
 
 # 6db960789eee4a90a998c1fed2c94972
 #: ../../../source/news.txt:31
-msgid "Supported logical not \"!\" operator. [GitHub#22]"
+msgid "Supported logical not ``\"!\"`` operator. [GitHub#22]"
 msgstr "論理演算子 ``\"!\"`` をサポート。 [GitHub#22]"
 
 # 6e6d97492d194a4980fb4af16022151e
@@ -202,8 +202,9 @@ msgstr "[admin] エラーメッセージをエスケープするように修正�
 msgid ""
 "Fixed to ignore unloadable objects which causes database incompatible. "
 "[#1429] [Reported by IWAI, Masaharu]"
-msgstr "データベースの非互換を引き起こす読めないオブジェクトを無視する"
-"ように修正。 [#1429] [岩井さんが報告]"
+msgstr ""
+"データベースの非互換を引き起こす読めないオブジェクトを無視するように修正。 "
+"[#1429] [岩井さんが報告]"
 
 # 6db960789eee4a90a998c1fed2c94972
 #: ../../../source/news.txt:52
