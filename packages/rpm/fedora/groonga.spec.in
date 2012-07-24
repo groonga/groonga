@@ -59,6 +59,15 @@ Requires(postun):	/sbin/service
 %description server
 This package contains the groonga server
 
+%package httpd
+Summary:        Groonga HTTP server
+Group:          Applications/Text
+License:        LGPLv2
+Requires:       %{name}-libs = %{version}-%{release}
+
+%description httpd
+This package contains the groonga HTTP server
+
 %package doc
 Summary:	Documentation for groonga
 Group:		Documentation
@@ -251,7 +260,6 @@ fi
 %{_datadir}/man/*/man1/*
 %{_bindir}/groonga
 %{_bindir}/groonga-benchmark
-%{_bindir}/groonga-httpd
 
 %files libs
 %defattr(-,root,root,-)
@@ -266,12 +274,16 @@ fi
 %files server
 %defattr(-,root,root,-)
 %config(noreplace) %{_sysconfdir}/groonga/
-%config(noreplace) %{_sysconfdir}/groonga/httpd/*
 %config(noreplace) %{_sysconfdir}/sysconfig/groonga
 %dir %{_unitdir}/groonga.service
 %ghost %dir %{_localstatedir}/run/%{name}
 %attr(0750,groonga,groonga) %dir %{_localstatedir}/lib/%{name}
 %attr(0750,groonga,groonga) %dir %{_localstatedir}/lib/%{name}/db
+
+%files httpd
+%defattr(-,root,root,-)
+%config(noreplace) %{_sysconfdir}/groonga/httpd/*
+%{_bindir}/groonga-httpd
 
 %files doc
 %defattr(-,root,root,-)
