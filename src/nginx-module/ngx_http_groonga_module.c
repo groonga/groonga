@@ -122,9 +122,6 @@ ngx_http_groonga_grn_obj_to_ngx_buf(ngx_pool_t *pool, grn_obj *object)
 }
 
 #define GRN_NO_FLAGS 0
-GRN_API void grn_ctx_recv_handler_set(grn_ctx *,
-                                      void (*func)(grn_ctx *, int, void *),
-                                      void *func_arg);
 
 typedef struct {
   grn_obj head, body, foot;

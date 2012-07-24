@@ -2147,6 +2147,9 @@ GRN_API void grn_output_envelope(grn_ctx *ctx, grn_rc rc,
                                  grn_obj *head, grn_obj *body, grn_obj *foot,
                                  const char *file, int line);
 GRN_API const char *grn_ctx_get_mime_type(grn_ctx *ctx);
+GRN_API void grn_ctx_recv_handler_set(grn_ctx *,
+                                      void (*func)(grn_ctx *, int, void *),
+                                      void *func_arg);
 
 /* obsolete */
 GRN_API grn_rc grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj,

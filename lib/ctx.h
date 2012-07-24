@@ -495,9 +495,6 @@ void grn_cache_get_statistics(grn_ctx *ctx, grn_cache_statistics *statistics);
 
 /**** receive handler ****/
 
-GRN_API void grn_ctx_recv_handler_set(grn_ctx *c, void (*func)(grn_ctx *, int, void *),
-                                      void *func_arg);
-
 void grn_ctx_concat_func(grn_ctx *ctx, int flags, void *dummy);
 GRN_API void grn_ctx_stream_out_func(grn_ctx *c, int flags, void *stream);
 
