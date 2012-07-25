@@ -73,7 +73,7 @@ ngx_http_groonga_context_check(ngx_log_t *log, grn_ctx *context)
   if (context->rc == GRN_SUCCESS) {
     return NGX_OK;
   } else {
-    ngx_log_error(NGX_LOG_ERR, log, 0, context->errbuf);
+    ngx_log_error(NGX_LOG_ERR, log, 0, "%s", context->errbuf);
     return NGX_HTTP_INTERNAL_SERVER_ERROR;
   }
 }
