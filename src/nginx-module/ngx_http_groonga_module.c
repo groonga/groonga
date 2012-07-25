@@ -68,7 +68,8 @@ ngx_str_null_terminate(ngx_pool_t *pool, const ngx_str_t *string)
 }
 
 static ngx_int_t
-ngx_http_groonga_context_check(ngx_log_t *log, grn_ctx *context) {
+ngx_http_groonga_context_check(ngx_log_t *log, grn_ctx *context)
+{
   if (context->rc == GRN_SUCCESS) {
     return NGX_OK;
   } else {
