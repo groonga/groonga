@@ -18,9 +18,8 @@ http {
     listen 10041;
     server_name localhost;
 
-    # Don't change the location; currently only /d/ is supported.
     location /d/ {
-      groonga;
+      groonga on;
 
       # Specify an actual database and enable this.
       #groonga_database /path/to/database;
