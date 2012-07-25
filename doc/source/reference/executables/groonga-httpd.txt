@@ -23,7 +23,7 @@ Synopsis
 
 ::
 
- groonga-httpd [nginx options]
+  groonga-httpd [nginx options]
 
 Usage
 -----
