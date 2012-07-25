@@ -419,7 +419,12 @@ ngx_http_groonga_open_database_callback(ngx_http_groonga_loc_conf_t *location_co
   }
 
   grn_db_open(context, location_conf->database_path_cstr);
-  data->rc = ngx_http_groonga_context_check(data->log, context);
+  if (context->rc != GRN_SUCCESS) {
+    ngx_log_error(NGX_LOG_EMERG, data->log, 0,
+                  "failed to open groonga database: %s",
+                  context->errbuf);
+    data->rc = NGX_ERROR;
+  }
 }
 
 static void
