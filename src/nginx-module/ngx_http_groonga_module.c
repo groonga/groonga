@@ -347,7 +347,7 @@ ngx_http_groonga_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child)
   ngx_http_groonga_loc_conf_t *prev = parent;
   ngx_http_groonga_loc_conf_t *conf = child;
 
-  ngx_conf_merge_str_value(prev->database_path, conf->database_path, NULL);
+  ngx_conf_merge_str_value(conf->database_path, prev->database_path, NULL);
 
   return NGX_CONF_OK;
 }
