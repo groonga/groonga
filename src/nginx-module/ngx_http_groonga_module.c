@@ -323,7 +323,7 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
   ngx_int_t rc;
   ngx_http_groonga_handler_data_t *data;
 
-  /* we response to 'GET' and 'HEAD' requests only */
+  /* we respond to 'GET' and 'HEAD' requests only */
   if (!(r->method & (NGX_HTTP_GET|NGX_HTTP_HEAD))) {
     return NGX_HTTP_NOT_ALLOWED;
   }
