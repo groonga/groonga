@@ -54,17 +54,17 @@ ngx_module_t ngx_http_groonga_module;
 static char *
 ngx_str_null_terminate(ngx_pool_t *pool, const ngx_str_t *string)
 {
-  char *null_terminated_string;
+  char *null_terminated_c_string;
 
-  null_terminated_string = ngx_pnalloc(pool, string->len + 1);
-  if (!null_terminated_string) {
+  null_terminated_c_string = ngx_pnalloc(pool, string->len + 1);
+  if (!null_terminated_c_string) {
     return NULL;
   }
 
-  memcpy(null_terminated_string, string->data, string->len);
-  null_terminated_string[string->len] = '\0';
+  memcpy(null_terminated_c_string, string->data, string->len);
+  null_terminated_c_string[string->len] = '\0';
 
-  return null_terminated_string;
+  return null_terminated_c_string;
 }
 
 static ngx_int_t
