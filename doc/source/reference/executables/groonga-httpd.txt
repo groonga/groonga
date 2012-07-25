@@ -132,7 +132,42 @@ Default
 Context
   http, server, location
 
-Specifies the path to a groonga database.
+Specifies the path to a groonga database. This is the required
+directive.
+
+``groonga_base_path``
+"""""""""""""""""""""
+
+Syntax::
+
+  groonga_base_path /d/;
+
+Default
+  The same value as ``location`` name.
+
+Context
+  location
+
+Specifies the base path in URI. groonga-httpd removes the base path
+from the head of request URI and prepend ``/d/`` to the processed
+request URI. Nomally, this directive isn't needed. It is needed for
+per command configuration.
+
+Here is an example configuration to add authorization to
+:doc:`/reference/commands/shutdown` command::
+
+  groonga_database /var/lib/groonga/db/db;
+
+  location /d/shutdown {
+    groonga on;
+    groonga_base_path /d/;
+    auth_basic           "manager is required!";
+    auth_basic_user_file "/etc/managers.htpasswd";
+  }
+
+  location /d/ {
+    groonga on;
+  }
 
 Performance related directives
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
