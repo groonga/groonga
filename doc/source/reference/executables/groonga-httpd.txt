@@ -43,7 +43,7 @@ groonga_database directive like this::
      ...
      # Don't change the location; currently only /d/ is supported.
      location /d/ {
-       groonga; # <= This means to turn on groonga-httpd.
+       groonga on; # <= This means to turn on groonga-httpd.
 
        # Specify an actual database and enable this.
        groonga_database /var/lib/groonga/db/db;
@@ -81,24 +81,60 @@ Finally, to terminate the running groonga-httpd daemon, run this::
 Configuration directives
 ------------------------
 
-There are two kinds of configuration directives. One is provided by nginx, the
-other is by groonga-httpd.
+This section decribes only important directives. They are
+groonga-httpd specific directives and performance related directives.
 
 The following directives can be used in the groonga-httpd configuration file.
 By default, it's located at /etc/groonga/httpd/groonga-httpd.conf.
 
-Groonga-specific directives
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Groonga-httpd specific directives
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The following directives aren't provided by nginx. They are provided by
-groonga-httpd to configure groonga-httpd-specific configurations.
+The following directives aren't provided by nginx. They are provided
+by groonga-httpd to configure groonga-httpd specific configurations.
+
+``groonga``
+"""""""""""
+
+Syntax::
+
+  groonga on | off;
+
+Default
+  ``groonga off;``
+
+Context
+  location
+
+Specifies whether groonga is enabled in the location block. The
+default is ``off``. You need to specify ``on`` to enable groonga.
+
+Examples::
+
+  location /d/ {
+    groonga on;  # Enables groonga under /d/... path
+  }
+
+  location /d/ {
+    groonga off; # Disables groonga under /d/... path
+  }
 
 ``groonga_database``
 """"""""""""""""""""
 
+Syntax::
+
+  groonga_database /path/to/groonga/database;
+
+Default
+  ``groonga off;``
+
+Context
+  location
+
 Specifies the path to a groonga database.
 
-Performance-related directives
+Performance related directives
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The following directives are related to the performance of groonga-httpd.

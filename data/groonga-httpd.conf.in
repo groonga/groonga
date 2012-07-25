@@ -14,15 +14,17 @@ http {
   sendfile on;
   keepalive_timeout 65;
 
+  # The default groonga database path.
+  groonga_database @GROONGA_HTTPD_DEFAULT_DATABASE_PATH@;
+
   server {
     listen 10041;
     server_name localhost;
 
     location /d/ {
       groonga on;
-
-      # Specify an actual database and enable this.
-      #groonga_database /path/to/database;
+      # You can custom database path.
+      # groonga_database /path/to/groonga/db;
     }
 
     location / {

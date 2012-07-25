@@ -1204,7 +1204,10 @@ AC_ARG_ENABLE(nginx,
   [enable_nginx="$enableval"],
   [enable_nginx="yes"])
 if test "x$enable_nginx" != "xno"; then
+  enable_nginx="yes"
   AC_CONFIG_SUBDIRS([vendor/nginx])
+else
+  enable_nginx="no"
 fi
 AM_CONDITIONAL(WITH_NGINX, test "$enable_nginx" = "yes")
 
@@ -1234,6 +1237,12 @@ GROONGA_HTTPD_DOCUMENT_ROOT="`
   eval eval eval echo ${GRN_EXPANDED_DEFAULT_DOCUMENT_ROOT}
 `"
 AC_SUBST(GROONGA_HTTPD_DOCUMENT_ROOT)
+
+GROONGA_HTTPD_DEFAULT_DATABASE_PATH="`
+  test \"$prefix\" = NONE && prefix=/usr/local
+  eval eval eval echo ${localstatedir}/lib/${PACKAGE}/db/db
+`"
+AC_SUBST(GROONGA_HTTPD_DEFAULT_DATABASE_PATH)
 
 AC_OUTPUT([
   packages/rpm/centos/groonga.spec
@@ -1292,6 +1301,13 @@ echo "  MessagePack:           $message_pack_available"
 if test "x$message_pack_available" = "xyes"; then
   echo "    CFLAGS:              ${MESSAGE_PACK_CFLAGS}"
   echo "    LIBS:                ${MESSAGE_PACK_LIBS}"
+fi
+echo
+
+echo "groonga-httpd:"
+echo "  enable:                $enable_nginx"
+if test "$enable_nginx" = "yes"; then
+  echo "  default database path: $GROONGA_HTTPD_DEFAULT_DATABASE_PATH"
 fi
 echo
 
