@@ -432,7 +432,6 @@ ngx_http_groonga_close_database_callback(ngx_http_groonga_loc_conf_t *location_c
   grn_obj_close(context, grn_ctx_db(context));
   ngx_http_groonga_log_context_error(data->log, context);
   grn_ctx_fin(context);
-  ngx_http_groonga_log_context_error(data->log, context);
 }
 
 static ngx_int_t
