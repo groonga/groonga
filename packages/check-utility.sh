@@ -41,7 +41,7 @@ check_packages_repository_address ()
     for dist in $DISTRIBUTIONS; do
 	case $dist in
 	    "fedora")
-		DISTRIBUTIONS_VERSION="16"
+		DISTRIBUTIONS_VERSION="17"
 		;;
 	    "centos")
 		DISTRIBUTIONS_VERSION="5 6"
@@ -90,7 +90,7 @@ EOF
     for dist in $DISTRIBUTIONS; do
 	case $dist in
 	    "fedora")
-		DISTRIBUTIONS_VERSION="16"
+		DISTRIBUTIONS_VERSION="17"
 		;;
 	    "centos")
 		DISTRIBUTIONS_VERSION="5 6"
@@ -182,7 +182,7 @@ EOF
     for dist in $DISTRIBUTIONS; do
 	case $dist in
 	    "fedora")
-		DISTRIBUTIONS_VERSION="16"
+		DISTRIBUTIONS_VERSION="17"
 		;;
 	    "centos")
 		DISTRIBUTIONS_VERSION="5 6"
@@ -197,7 +197,7 @@ EOF
 		    centos-6)
 			INSTALL_SCRIPT=install-centos6-groonga.sh
 			;;
-		    fedora-16)
+		    fedora-17)
 			INSTALL_SCRIPT=install-fedora-groonga.sh
 			;;
 		    *)
@@ -240,7 +240,7 @@ EOF
     for dist in $DISTRIBUTIONS; do
 	case $dist in
 	    "fedora")
-		DISTRIBUTIONS_VERSION="16"
+		DISTRIBUTIONS_VERSION="17"
 		;;
 	    "centos")
 		DISTRIBUTIONS_VERSION="5 6"
@@ -282,7 +282,7 @@ EOF
     for dist in $DISTRIBUTIONS; do
 	case $dist in
 	    "fedora")
-		DISTRIBUTIONS_VERSION="16"
+		DISTRIBUTIONS_VERSION="17"
 		;;
 	    "centos")
 		DISTRIBUTIONS_VERSION="5 6"
@@ -324,7 +324,7 @@ EOF
     for dist in $DISTRIBUTIONS; do
 	case $dist in
 	    "fedora")
-		DISTRIBUTIONS_VERSION="16"
+		DISTRIBUTIONS_VERSION="17"
 		;;
 	    "centos")
 		DISTRIBUTIONS_VERSION="5 6"
