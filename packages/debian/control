@@ -129,6 +129,7 @@ Breaks: groonga (<< 1.2.0-1)
 Depends:
   ${misc:Depends},
   ${shlibs:Depends},
+  groonga (= ${binary:Version}),
   libgroonga0 (= ${binary:Version})
 Description: Groonga HTTP server.
  Groonga is an open-source fulltext search engine and column store.
