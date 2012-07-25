@@ -9,8 +9,8 @@ Summary
 -------
 
 groonga-httpd is a program to communicate with a groonga server using the HTTP
-protocol. It functions as same as :ref:`groonga-server-http`. Although
-:ref:`groonga-server-http` has limited support for HTTP with a minimal built-in
+protocol. It functions as same as :doc:`groonga-server-http`. Although
+:doc:`groonga-server-http` has limited support for HTTP with a minimal built-in
 HTTP server, :ref:`groonga-httpd` has full support for HTTP with an embedded
 nginx. All standards-compliance and features provided by nginx is also available in
 groonga-httpd. For details about nginx, see http://www.nginx.org/
