@@ -1066,6 +1066,22 @@ if test x"$enable_document" != x"no"; then
   fi
 fi
 
+# Check for misc.
+AC_ARG_WITH([cutter-source-path],
+            AS_HELP_STRING([--with-cutter-source-path=PATH],
+                           [Specify Cutter source path for
+			    groonga's release manager.]),
+			   [CUTTER_SOURCE_PATH="$withval"])
+case "$CUTTER_SOURCE_PATH" in
+  ""|/*)
+    : # do nothing
+    ;;
+  *)
+    CUTTER_SOURCE_PATH="\$(top_builddir)/${CUTTER_SOURCE_PATH}"
+    ;;
+esac
+AC_SUBST(CUTTER_SOURCE_PATH)
+
 AM_CONDITIONAL([WITH_HG], [test -n "${HG}"])
 
 AM_CONDITIONAL([DOCUMENT_AVAILABLE],
