@@ -22,6 +22,8 @@
 
 #include <groonga.h>
 
+#define GRN_NO_FLAGS 0
+
 typedef struct {
   ngx_flag_t enabled;
   ngx_str_t database_path;
@@ -47,66 +49,7 @@ typedef struct {
 
 typedef void (*ngx_http_groonga_loc_conf_callback_pt)(ngx_http_groonga_loc_conf_t *conf, void *user_data);
 
-static char *ngx_http_groonga_conf_set_groonga_slot(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
-
-static ngx_command_t ngx_http_groonga_commands[] = {
-  { ngx_string("groonga"),
-    NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
-    ngx_http_groonga_conf_set_groonga_slot,
-    NGX_HTTP_LOC_CONF_OFFSET,
-    offsetof(ngx_http_groonga_loc_conf_t, enabled),
-    NULL },
-
-  { ngx_string("groonga_database"),
-    NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
-    ngx_conf_set_str_slot,
-    NGX_HTTP_LOC_CONF_OFFSET,
-    offsetof(ngx_http_groonga_loc_conf_t, database_path),
-    NULL },
-
-  ngx_null_command
-};
-
-static void *ngx_http_groonga_create_loc_conf(ngx_conf_t *cf);
-static char *ngx_http_groonga_merge_loc_conf(ngx_conf_t *cf,
-                                             void *parent,
-                                             void *child);
-
-
-static ngx_http_module_t ngx_http_groonga_module_ctx = {
-  NULL, /* preconfiguration */
-  NULL, /* postconfiguration */
-
-  NULL, /* create main configuration */
-  NULL, /* init main configuration */
-
-  NULL, /* create server configuration */
-  NULL, /* merge server configuration */
-
-  ngx_http_groonga_create_loc_conf, /* create location configuration */
-  ngx_http_groonga_merge_loc_conf, /* merge location configuration */
-};
-
-static ngx_int_t ngx_http_groonga_init_process(ngx_cycle_t *cycle);
-static void ngx_http_groonga_exit_process(ngx_cycle_t *cycle);
-
-ngx_module_t ngx_http_groonga_module = {
-  NGX_MODULE_V1,
-  &ngx_http_groonga_module_ctx, /* module context */
-  ngx_http_groonga_commands, /* module directives */
-  NGX_HTTP_MODULE, /* module type */
-  NULL, /* init master */
-  NULL, /* init module */
-  ngx_http_groonga_init_process, /* init process */
-  NULL, /* init thread */
-  NULL, /* exit thread */
-  ngx_http_groonga_exit_process, /* exit process */
-  NULL, /* exit master */
-  NGX_MODULE_V1_PADDING
-};
-
-static ngx_int_t ngx_http_groonga_context_check(ngx_log_t *log,
-                                                grn_ctx *context);
+ngx_module_t ngx_http_groonga_module;
 
 static char *
 ngx_str_null_terminate(ngx_pool_t *pool, const ngx_str_t *string)
@@ -122,6 +65,16 @@ ngx_str_null_terminate(ngx_pool_t *pool, const ngx_str_t *string)
   result[string->len] = '\0';
 
   return result;
+}
+
+static ngx_int_t
+ngx_http_groonga_context_check(ngx_log_t *log, grn_ctx *context) {
+  if (context->rc == GRN_SUCCESS) {
+    return NGX_OK;
+  } else {
+    ngx_log_error(NGX_LOG_ERR, log, 0, context->errbuf);
+    return NGX_HTTP_INTERNAL_SERVER_ERROR;
+  }
 }
 
 static ngx_buf_t *
@@ -140,8 +93,6 @@ ngx_http_groonga_grn_obj_to_ngx_buf(ngx_pool_t *pool, grn_obj *object)
 
   return buffer;
 }
-
-#define GRN_NO_FLAGS 0
 
 static void
 ngx_http_groonga_handler_cleanup(void *user_data)
@@ -531,12 +482,50 @@ ngx_http_groonga_exit_process(ngx_cycle_t *cycle)
   return;
 }
 
-static ngx_int_t
-ngx_http_groonga_context_check(ngx_log_t *log, grn_ctx *context) {
-  if (context->rc == GRN_SUCCESS) {
-    return NGX_OK;
-  } else {
-    ngx_log_error(NGX_LOG_ERR, log, 0, context->errbuf);
-    return NGX_HTTP_INTERNAL_SERVER_ERROR;
-  }
-}
+/* entry point */
+static ngx_command_t ngx_http_groonga_commands[] = {
+  { ngx_string("groonga"),
+    NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
+    ngx_http_groonga_conf_set_groonga_slot,
+    NGX_HTTP_LOC_CONF_OFFSET,
+    offsetof(ngx_http_groonga_loc_conf_t, enabled),
+    NULL },
+
+  { ngx_string("groonga_database"),
+    NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
+    ngx_conf_set_str_slot,
+    NGX_HTTP_LOC_CONF_OFFSET,
+    offsetof(ngx_http_groonga_loc_conf_t, database_path),
+    NULL },
+
+  ngx_null_command
+};
+
+static ngx_http_module_t ngx_http_groonga_module_ctx = {
+  NULL, /* preconfiguration */
+  NULL, /* postconfiguration */
+
+  NULL, /* create main configuration */
+  NULL, /* init main configuration */
+
+  NULL, /* create server configuration */
+  NULL, /* merge server configuration */
+
+  ngx_http_groonga_create_loc_conf, /* create location configuration */
+  ngx_http_groonga_merge_loc_conf, /* merge location configuration */
+};
+
+ngx_module_t ngx_http_groonga_module = {
+  NGX_MODULE_V1,
+  &ngx_http_groonga_module_ctx, /* module context */
+  ngx_http_groonga_commands, /* module directives */
+  NGX_HTTP_MODULE, /* module type */
+  NULL, /* init master */
+  NULL, /* init module */
+  ngx_http_groonga_init_process, /* init process */
+  NULL, /* init thread */
+  NULL, /* exit thread */
+  ngx_http_groonga_exit_process, /* exit process */
+  NULL, /* exit master */
+  NGX_MODULE_V1_PADDING
+};
