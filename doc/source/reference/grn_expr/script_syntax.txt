@@ -241,24 +241,13 @@ Basic operators
 
 Groonga supports operators defined in ECMAScript.
 
-Multiplication operator
-^^^^^^^^^^^^^^^^^^^^^^^
+Arithmetic operators
+^^^^^^^^^^^^^^^^^^^^
 
-Its syntax is ``number1 * number2``.
-
-The operator multiplies ``number1`` and ``number2`` and returns the result.
-
-Here is a simple example.
-
-.. groonga-command
-.. include:: ../../example/reference/grn_expr/script_syntax/simple_multiplication_operator.log
-.. select Entries --filter 'n_likes == 3 * 5'
-
-The expression matches records that ``n_likes`` column value is equal
-to ``15`` (= ``3 * 5``).
+Here are arithmetic operators.
 
 Addition operator
-^^^^^^^^^^^^^^^^^
+"""""""""""""""""
 
 Its syntax is ``number1 + number2``.
 
@@ -274,7 +263,7 @@ The expression matches records that ``n_likes`` column value is equal
 to ``15`` (= ``10 + 5``).
 
 Subtraction operator
-^^^^^^^^^^^^^^^^^^^^
+""""""""""""""""""""
 
 Its syntax is ``number1 - number2``.
 
@@ -289,8 +278,24 @@ Here is a simple example.
 The expression matches records that ``n_likes`` column value is equal
 to ``15`` (= ``20 - 5``).
 
+Multiplication operator
+"""""""""""""""""""""""
+
+Its syntax is ``number1 * number2``.
+
+The operator multiplies ``number1`` and ``number2`` and returns the result.
+
+Here is a simple example.
+
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/script_syntax/simple_multiplication_operator.log
+.. select Entries --filter 'n_likes == 3 * 5'
+
+The expression matches records that ``n_likes`` column value is equal
+to ``15`` (= ``3 * 5``).
+
 Division operator
-^^^^^^^^^^^^^^^^^
+"""""""""""""""""
 
 Its syntax is ``number1 / number2`` and ``number1 % number2``.
 
@@ -313,8 +318,13 @@ to ``3`` (= ``26 / 7``).
 The expression matches records that ``n_likes`` column value is equal
 to ``5`` (= ``26 % 7``).
 
+Logical operators
+^^^^^^^^^^^^^^^^^
+
+Here are logical operators.
+
 Logical NOT operator
-^^^^^^^^^^^^^^^^^^^^
+""""""""""""""""""""
 
 Its syntax is ``!condition``.
 
@@ -329,42 +339,8 @@ Here is a simple example.
 The expression matches records that ``n_likes`` column value is not
 equal to ``5``.
 
-Bitwise NOT operator
-^^^^^^^^^^^^^^^^^^^^
-
-Its syntax is ``~number``.
-
-The operator returns bitwise NOT of ``number``.
-
-Here is a simple example.
-
-.. groonga-command
-.. include:: ../../example/reference/grn_expr/script_syntax/simple_bitwise_not_operator.log
-.. select Entries --filter '~n_likes == -6'
-
-The expression matches records that ``n_likes`` column value is equal
-to ``5`` because bitwise NOT of ``5`` is equal to ``-6``.
-
-Bitwise AND operator
-^^^^^^^^^^^^^^^^^^^^
-
-Its syntax is ``number1 & number2``.
-
-The operator returns bitwise AND between ``number1`` and ``number2``.
-
-Here is a simple example.
-
-.. groonga-command
-.. include:: ../../example/reference/grn_expr/script_syntax/simple_bitwise_and_operator.log
-.. select Entries --filter '(n_likes & 1) == 1'
-
-The expression matches records that ``n_likes`` column value is even
-number because bitwise AND between an even number and ``1`` is equal
-to ``1`` and bitwise AND between an odd number and ``1`` is equal to
-``0``.
-
 Logical AND operator
-^^^^^^^^^^^^^^^^^^^^
+""""""""""""""""""""
 
 Its syntax is ``condition1 && condition2``.
 
@@ -381,8 +357,25 @@ The expression matches records that ``content`` column value has the
 word ``fast`` and ``n_likes`` column value is greater or equal to
 ``10``.
 
-Logical BUT operator
-^^^^^^^^^^^^^^^^^^^^
+Logical OR operator
+"""""""""""""""""""
+
+Its syntax is ``condition1 || condition2``.
+
+The operator returns true if either ``condition1`` or ``condition2`` is
+true, false otherwise.
+
+Here is a simple example.
+
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/script_syntax/simple_logical_or_operator.log
+.. select Entries --filter 'n_likes == 5 || n_likes == 10'
+
+The expression matches records that ``n_likes`` column value is equal
+to ``5`` or ``10``.
+
+Logical AND NOT operator
+""""""""""""""""""""""""
 
 Its syntax is ``condition1 &! condition2``.
 
@@ -398,56 +391,44 @@ Here is a simple example.
 The expression matches records that ``content`` column value has the
 word ``fast`` but doesn't have the word ``mroonga``.
 
-Left shift operator
-^^^^^^^^^^^^^^^^^^^
+Bitwise operators
+^^^^^^^^^^^^^^^^^
 
-Its syntax is ``number1 << number2``.
+Here are bitwise operators.
 
-The operator performs a bitwise left shift operation on ``number1`` by
-``number2``.
+Bitwise NOT operator
+""""""""""""""""""""
 
-Here is a simple example.
+Its syntax is ``~number``.
 
-.. groonga-command
-.. include:: ../../example/reference/grn_expr/script_syntax/simple_left_shift_operator.log
-.. select Entries --filter 'n_likes == (5 << 1)'
-
-The expression matches records that ``n_likes`` column value is equal
-to ``10`` (= ``5 << 1``).
-
-Signed right shift operator
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Its syntax is ``number1 >> number2``.
-
-The operator shifts bits of ``number1`` to right by ``number2``. The sign
-of the result is the same as ``number1``.
+The operator returns bitwise NOT of ``number``.
 
 Here is a simple example.
 
 .. groonga-command
-.. include:: ../../example/reference/grn_expr/script_syntax/simple_signed_right_shift_operator.log
-.. select Entries --filter 'n_likes == -(-10 >> 1)'
+.. include:: ../../example/reference/grn_expr/script_syntax/simple_bitwise_not_operator.log
+.. select Entries --filter '~n_likes == -6'
 
 The expression matches records that ``n_likes`` column value is equal
-to ``5`` (= ``-(-10 >> 1)`` = ``-(-5)``).
+to ``5`` because bitwise NOT of ``5`` is equal to ``-6``.
 
-Unsigned right shift operator
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Bitwise AND operator
+""""""""""""""""""""
 
-Its syntax is ``number1 >>> number2``.
+Its syntax is ``number1 & number2``.
 
-The operator shifts bits of ``number1`` to right by ``number2``. The
-leftmost ``number2`` bits are filled by ``0``.
+The operator returns bitwise AND between ``number1`` and ``number2``.
 
 Here is a simple example.
 
 .. groonga-command
-.. include:: ../../example/reference/grn_expr/script_syntax/simple_unsigned_right_shift_operator.log
-.. select Entries --filter 'n_likes == (2147483648 - (-10 >>> 1))'
+.. include:: ../../example/reference/grn_expr/script_syntax/simple_bitwise_and_operator.log
+.. select Entries --filter '(n_likes & 1) == 1'
 
-The expression matches records that ``n_likes`` column value is equal
-to ``5`` (= ``2147483648 - (-10 >>> 1)`` = ``2147483648 - 2147483643``).
+The expression matches records that ``n_likes`` column value is even
+number because bitwise AND between an even number and ``1`` is equal
+to ``1`` and bitwise AND between an odd number and ``1`` is equal to
+``0``.
 
 Bitwise OR operator
 ^^^^^^^^^^^^^^^^^^^
@@ -481,25 +462,69 @@ Here is a simple example.
 The expression matches records that ``n_likes`` column value is equal
 to ``5`` (= ``10 ^ 15``).
 
-Logical OR operator
-^^^^^^^^^^^^^^^^^^^
+Shift operators
+^^^^^^^^^^^^^^^
 
-Its syntax is ``condition1 || condition2``.
+Here are shift operators.
 
-The operator returns true if either ``condition1`` or ``condition2`` is
-true, false otherwise.
+Left shift operator
+"""""""""""""""""""
+
+Its syntax is ``number1 << number2``.
+
+The operator performs a bitwise left shift operation on ``number1`` by
+``number2``.
 
 Here is a simple example.
 
 .. groonga-command
-.. include:: ../../example/reference/grn_expr/script_syntax/simple_logical_or_operator.log
-.. select Entries --filter 'n_likes == 5 || n_likes == 10'
+.. include:: ../../example/reference/grn_expr/script_syntax/simple_left_shift_operator.log
+.. select Entries --filter 'n_likes == (5 << 1)'
 
 The expression matches records that ``n_likes`` column value is equal
-to ``5`` or ``10``.
+to ``10`` (= ``5 << 1``).
+
+Signed right shift operator
+"""""""""""""""""""""""""""
+
+Its syntax is ``number1 >> number2``.
+
+The operator shifts bits of ``number1`` to right by ``number2``. The sign
+of the result is the same as ``number1``.
+
+Here is a simple example.
+
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/script_syntax/simple_signed_right_shift_operator.log
+.. select Entries --filter 'n_likes == -(-10 >> 1)'
+
+The expression matches records that ``n_likes`` column value is equal
+to ``5`` (= ``-(-10 >> 1)`` = ``-(-5)``).
+
+Unsigned right shift operator
+"""""""""""""""""""""""""""""
+
+Its syntax is ``number1 >>> number2``.
+
+The operator shifts bits of ``number1`` to right by ``number2``. The
+leftmost ``number2`` bits are filled by ``0``.
+
+Here is a simple example.
+
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/script_syntax/simple_unsigned_right_shift_operator.log
+.. select Entries --filter 'n_likes == (2147483648 - (-10 >>> 1))'
+
+The expression matches records that ``n_likes`` column value is equal
+to ``5`` (= ``2147483648 - (-10 >>> 1)`` = ``2147483648 - 2147483643``).
+
+Comparison operators
+^^^^^^^^^^^^^^^^^^^^
+
+Here are comparison operators.
 
 Equal operator
-^^^^^^^^^^^^^^
+""""""""""""""
 
 Its syntax is ``object1 == object2``.
 
@@ -516,7 +541,7 @@ The expression matches records that ``n_likes`` column value is equal
 to ``5``.
 
 Not equal operator
-^^^^^^^^^^^^^^^^^^
+""""""""""""""""""
 
 Its syntax is ``object1 != object2``.
 
@@ -531,6 +556,26 @@ Here is a simple example.
 
 The expression matches records that ``n_likes`` column value is not
 equal to ``5``.
+
+Less than operator
+""""""""""""""""""
+
+TODO: ...
+
+Less than or equal to operator
+""""""""""""""""""""""""""""""
+
+TODO: ...
+
+Greater than operator
+"""""""""""""""""""""
+
+TODO: ...
+
+Greater than or equal to operator
+"""""""""""""""""""""""""""""""""
+
+TODO: ...
 
 Assignment operators
 --------------------
