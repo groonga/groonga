@@ -70,8 +70,8 @@ update-latest-release:
 	  exit 1;					\
 	fi
 	cd $(top_srcdir) && test -d "misc" ||					\
-	  svn export --force							\
-	  https://cutter.svn.sourceforge.net/svnroot/cutter/cutter/trunk/misc
+	  git clone 							        \
+	  git://github.com/clear-code/cutter.git; ln -sf cutter/misc misc
 	cd $(top_srcdir) &&					\
 	  misc/update-latest-release.rb				\
 	  $(PACKAGE) $(OLD_RELEASE) $(OLD_RELEASE_DATE)		\
