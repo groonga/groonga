@@ -28,6 +28,7 @@ typedef struct {
   ngx_flag_t enabled;
   ngx_str_t database_path;
   char *database_path_cstr;
+  ngx_str_t base_path;
   char *config_file;
   int config_line;
   char *name;
@@ -178,7 +179,8 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
   grn_ctx *context;
   grn_obj uri;
   u_char *unparsed_path;
-  ngx_int_t unparsed_path_length;
+  size_t unparsed_path_length;
+  size_t base_path_length;
 
   ngx_http_core_loc_conf_t *http_location_conf;
   ngx_http_groonga_loc_conf_t *location_conf;
@@ -186,8 +188,28 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
   http_location_conf = ngx_http_get_module_loc_conf(r, ngx_http_core_module);
   location_conf = ngx_http_get_module_loc_conf(r, ngx_http_groonga_module);
 
-  unparsed_path = r->unparsed_uri.data + http_location_conf->name.len;
-  unparsed_path_length = r->unparsed_uri.len - http_location_conf->name.len;
+  unparsed_path = r->unparsed_uri.data;
+  unparsed_path_length = r->unparsed_uri.len;
+  base_path_length = http_location_conf->name.len;
+  if (location_conf->base_path.len > 0) {
+    if (unparsed_path_length < location_conf->base_path.len) {
+      ngx_log_error(NGX_LOG_WARN, r->connection->log, 0,
+                    "requestd URI is shorter than groonga_base_path: "
+                    "URI: <%V>, groonga_base_path: <%V>",
+                    &(r->unparsed_uri), &(location_conf->base_path));
+    } else if (strncmp((const char *)unparsed_path,
+                       (const char *)(location_conf->base_path.data),
+                       location_conf->base_path.len) < 0) {
+      ngx_log_error(NGX_LOG_WARN, r->connection->log, 0,
+                    "groonga_base_path doesn't match requested URI: "
+                    "URI: <%V>, groonga_base_path: <%V>",
+                    &(r->unparsed_uri), &(location_conf->base_path));
+    } else {
+      base_path_length = location_conf->base_path.len;
+    }
+  }
+  unparsed_path += base_path_length;
+  unparsed_path_length -= base_path_length;
   if (unparsed_path_length > 0 && unparsed_path[0] == '/') {
     unparsed_path += 1;
     unparsed_path_length -= 1;
@@ -318,6 +340,8 @@ ngx_http_groonga_create_loc_conf(ngx_conf_t *cf)
   conf->database_path.data = NULL;
   conf->database_path.len = 0;
   conf->database_path_cstr = NULL;
+  conf->base_path.data = NULL;
+  conf->base_path.len = 0;
   conf->config_file = NULL;
   conf->config_line = 0;
 
@@ -491,6 +515,13 @@ static ngx_command_t ngx_http_groonga_commands[] = {
     ngx_conf_set_str_slot,
     NGX_HTTP_LOC_CONF_OFFSET,
     offsetof(ngx_http_groonga_loc_conf_t, database_path),
+    NULL },
+
+  { ngx_string("groonga_base_path"),
+    NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
+    ngx_conf_set_str_slot,
+    NGX_HTTP_LOC_CONF_OFFSET,
+    offsetof(ngx_http_groonga_loc_conf_t, base_path),
     NULL },
 
   ngx_null_command
