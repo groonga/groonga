@@ -323,14 +323,14 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
   ngx_int_t rc;
   ngx_http_groonga_handler_data_t *data;
 
-  rc = ngx_http_groonga_handler_process_request(r, &data);
-  if (rc != NGX_OK) {
-    return rc;
-  }
-
   /* we response to 'GET' and 'HEAD' requests only */
   if (!(r->method & (NGX_HTTP_GET|NGX_HTTP_HEAD))) {
     return NGX_HTTP_NOT_ALLOWED;
+  }
+
+  rc = ngx_http_groonga_handler_process_request(r, &data);
+  if (rc != NGX_OK) {
+    return rc;
   }
 
   /* discard request body, since we don't need it here */
