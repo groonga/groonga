@@ -23,6 +23,7 @@
 #include <groonga.h>
 
 typedef struct {
+  ngx_flag_t enabled;
   ngx_str_t database_path;
   char *database_path_cstr;
   grn_ctx context;
@@ -42,14 +43,14 @@ typedef struct {
 
 typedef void (*ngx_http_groonga_loc_conf_callback_pt)(ngx_http_groonga_loc_conf_t *conf, void *user_data);
 
-static char *ngx_http_groonga(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
+static char *ngx_http_groonga_conf_set_groonga_slot(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
 
 static ngx_command_t ngx_http_groonga_commands[] = {
   { ngx_string("groonga"),
-    NGX_HTTP_LOC_CONF|NGX_CONF_NOARGS,
-    ngx_http_groonga,
-    0,
-    0,
+    NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
+    ngx_http_groonga_conf_set_groonga_slot,
+    NGX_HTTP_LOC_CONF_OFFSET,
+    offsetof(ngx_http_groonga_loc_conf_t, enabled),
     NULL },
 
   { ngx_string("groonga_database"),
@@ -314,13 +315,24 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
 }
 
 static char *
-ngx_http_groonga(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
+ngx_http_groonga_conf_set_groonga_slot(ngx_conf_t *cf, ngx_command_t *cmd,
+                                       void *conf)
 {
+  char *status;
   ngx_http_core_loc_conf_t *location_conf;
+  ngx_http_groonga_loc_conf_t *groonga_location_conf = conf;
+
+  status = ngx_conf_set_flag_slot(cf, cmd, conf);
+  if (status != NGX_CONF_OK) {
+    return status;
+  }
 
   location_conf = ngx_http_conf_get_module_loc_conf(cf, ngx_http_core_module);
-  /* handler to process the 'groonga' directive */
-  location_conf->handler = ngx_http_groonga_handler;
+  if (groonga_location_conf->enabled) {
+    location_conf->handler = ngx_http_groonga_handler;
+  } else {
+    location_conf->handler = NULL;
+  }
 
   return NGX_CONF_OK;
 }
@@ -334,6 +346,7 @@ ngx_http_groonga_create_loc_conf(ngx_conf_t *cf)
     return NGX_CONF_ERROR;
   }
 
+  conf->enabled = NGX_CONF_UNSET;
   conf->database_path.data = NULL;
   conf->database_path.len = 0;
   conf->database_path_cstr = NULL;
