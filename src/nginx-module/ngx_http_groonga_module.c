@@ -26,11 +26,15 @@ typedef struct {
   ngx_flag_t enabled;
   ngx_str_t database_path;
   char *database_path_cstr;
+  char *config_file;
+  int config_line;
+  char *name;
   grn_ctx context;
 } ngx_http_groonga_loc_conf_t;
 
 typedef struct {
   ngx_log_t *log;
+  ngx_pool_t *pool;
   ngx_int_t rc;
 } ngx_http_groonga_database_callback_data_t;
 
@@ -105,10 +109,18 @@ static ngx_int_t ngx_http_groonga_context_check(ngx_log_t *log,
                                                 grn_ctx *context);
 
 static char *
-ngx_str_null_terminate(const ngx_str_t *string) {
-  char *result = malloc(string->len + 1);
+ngx_str_null_terminate(ngx_pool_t *pool, const ngx_str_t *string)
+{
+  char *result;
+
+  result = ngx_pnalloc(pool, string->len + 1);
+  if (!result) {
+    return NULL;
+  }
+
   memcpy(result, string->data, string->len);
   result[string->len] = '\0';
+
   return result;
 }
 
@@ -330,6 +342,11 @@ ngx_http_groonga_conf_set_groonga_slot(ngx_conf_t *cf, ngx_command_t *cmd,
   location_conf = ngx_http_conf_get_module_loc_conf(cf, ngx_http_core_module);
   if (groonga_location_conf->enabled) {
     location_conf->handler = ngx_http_groonga_handler;
+    groonga_location_conf->name =
+      ngx_str_null_terminate(cf->pool, &(location_conf->name));
+    groonga_location_conf->config_file =
+      ngx_str_null_terminate(cf->pool, &(cf->conf_file->file.name));
+    groonga_location_conf->config_line = cf->conf_file->line;
   } else {
     location_conf->handler = NULL;
   }
@@ -350,6 +367,8 @@ ngx_http_groonga_create_loc_conf(ngx_conf_t *cf)
   conf->database_path.data = NULL;
   conf->database_path.len = 0;
   conf->database_path_cstr = NULL;
+  conf->config_file = NULL;
+  conf->config_line = 0;
 
   return conf;
 }
@@ -426,9 +445,19 @@ ngx_http_groonga_open_database_callback(ngx_http_groonga_loc_conf_t *location_co
   context = &(location_conf->context);
   grn_ctx_init(context, GRN_NO_FLAGS);
 
+  if (!location_conf->database_path.data) {
+    ngx_log_error(NGX_LOG_EMERG, data->log, 0,
+                  "%s: \"groonga_database\" must be specified in block at %s:%d",
+                  location_conf->name,
+                  location_conf->config_file,
+                  location_conf->config_line);
+    data->rc = NGX_ERROR;
+    return;
+  }
+
   if (!location_conf->database_path_cstr) {
     location_conf->database_path_cstr =
-      ngx_str_null_terminate(&(location_conf->database_path));
+      ngx_str_null_terminate(data->pool, &(location_conf->database_path));
   }
 
   grn_db_open(context, location_conf->database_path_cstr);
@@ -470,6 +499,7 @@ ngx_http_groonga_init_process(ngx_cycle_t *cycle)
   http_conf =
     (ngx_http_conf_ctx_t *)ngx_get_conf(cycle->conf_ctx, ngx_http_module);
   data.log = cycle->log;
+  data.pool = cycle->pool;
   data.rc = NGX_OK;
   ngx_http_groonga_each_loc_conf(http_conf,
                                  ngx_http_groonga_open_database_callback,
@@ -488,6 +518,7 @@ ngx_http_groonga_exit_process(ngx_cycle_t *cycle)
   http_conf =
     (ngx_http_conf_ctx_t *)ngx_get_conf(cycle->conf_ctx, ngx_http_module);
   data.log = cycle->log;
+  data.pool = cycle->pool;
   ngx_http_groonga_each_loc_conf(http_conf,
                                  ngx_http_groonga_close_database_callback,
                                  &data);
