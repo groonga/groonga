@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-23 19:07\n"
-"PO-Revision-Date: 2012-07-23 19:07+0900\n"
+"POT-Creation-Date: 2012-07-25 18:41\n"
+"PO-Revision-Date: 2012-07-25 18:47+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -357,7 +357,7 @@ msgstr ""
 # 2744d52a6ed549e0b33ae2ea329d46e3
 # bbc26d9ad28046d2b2619035fee63b62
 #: ../../../source/reference/commands.txt:6
-#: ../../../source/reference/executables/groonga-http.txt:29
+#: ../../../source/reference/executables/groonga-server-http.txt:27
 #: ../../../source/reference/executables/groonga.txt:142
 msgid "コマンド"
 msgstr ""
@@ -435,7 +435,7 @@ msgstr ""
 #: ../../../source/reference/commands_not_implemented/set.txt:9
 #: ../../../source/reference/executables/grnslap.txt:9
 #: ../../../source/reference/executables/grntest.txt:9
-#: ../../../source/reference/executables/groonga-http.txt:11
+#: ../../../source/reference/executables/groonga-server-http.txt:9
 #: ../../../source/reference/executables/groonga.txt:9
 #: ../../../source/reference/functions/edit_distance.txt:9
 #: ../../../source/reference/functions/geo_in_circle.txt:9
@@ -511,7 +511,7 @@ msgstr ""
 #: ../../../source/reference/commands_not_implemented/set.txt:14
 #: ../../../source/reference/executables/grnslap.txt:14
 #: ../../../source/reference/executables/grntest.txt:14
-#: ../../../source/reference/executables/groonga-http.txt:16
+#: ../../../source/reference/executables/groonga-server-http.txt:14
 #: ../../../source/reference/executables/groonga.txt:14
 #: ../../../source/reference/functions/edit_distance.txt:14
 #: ../../../source/reference/functions/geo_in_circle.txt:14
@@ -582,7 +582,7 @@ msgstr ""
 #: ../../../source/reference/commands_not_implemented/set.txt:20
 #: ../../../source/reference/executables/grnslap.txt:21
 #: ../../../source/reference/executables/grntest.txt:21
-#: ../../../source/reference/executables/groonga-http.txt:22
+#: ../../../source/reference/executables/groonga-server-http.txt:20
 #: ../../../source/reference/executables/groonga.txt:21
 #: ../../../source/reference/functions/edit_distance.txt:20
 #: ../../../source/reference/functions/geo_in_circle.txt:20
@@ -732,7 +732,7 @@ msgstr ""
 #: ../../../source/reference/commands/table_list.txt:32
 #: ../../../source/reference/commands/table_remove.txt:33
 #: ../../../source/reference/commands/view_add.txt:38
-#: ../../../source/reference/executables/groonga-http.txt:56
+#: ../../../source/reference/executables/groonga-server-http.txt:54
 #: ../../../source/reference/functions/edit_distance.txt:39
 #: ../../../source/reference/functions/geo_in_circle.txt:68
 #: ../../../source/reference/functions/geo_in_rectangle.txt:42
@@ -5074,105 +5074,6 @@ msgid ""
 "す。"
 msgstr ""
 
-# 6d1dbafe10e049d797a2c017a2013a96
-# 733aee09b45c47b4aa57cc1f8167c212
-# 7c0dd7d48b8b45a6b639205a1e24acfb
-# 7c0dd7d48b8b45a6b639205a1e24acfb
-#: ../../../source/reference/executables/groonga-http.txt:8
-#: ../../../source/reference/executables/groonga-http.txt:13
-msgid "groonga HTTPサーバー"
-msgstr ""
-
-# b47a597213884927af4954fe3df78dfd
-#: ../../../source/reference/executables/groonga-http.txt:24
-msgid ""
-"groongaサーバを起動する時に--protocolオプションにhttpを指定すると、httpで通信"
-"可能になります。また、--document-root によって静的ページのパスを指定すると、"
-"httpリクエストに指定されたURIに対応する、パス配下に置かれたファイルを出力しま"
-"す。"
-msgstr ""
-
-# 9f6f320066ed485896f87635c2272161
-#: ../../../source/reference/executables/groonga-http.txt:26
-msgid ""
-"groongaにはHTML + JavaScriptで実装された管理ツールが標準で付属しています。--"
-"document-rootを指定しない場合は管理ツールがインストールされているパスが指定さ"
-"れたとみなされますので、ウェブブラウザでhttp://hostname:port/にアクセスする"
-"と、管理ツールを利用できます。"
-msgstr ""
-
-# 74b4a7e4a03b48f38a4aea015a79b0d0
-#: ../../../source/reference/executables/groonga-http.txt:31
-msgid ""
-"httpを指定して起動したgroongaサーバに対しても、他のモードで起動したgroongaと"
-"同じコマンドが使用できます。"
-msgstr ""
-
-# 615eefd1d725420e8c6ed3c36cea0ccc
-#: ../../../source/reference/executables/groonga-http.txt:33
-msgid ""
-"コマンドは、複数の引数をとります。引数にはそれぞれ名前があります。また、特殊"
-"な引数である「output_type」と「command_version」があります。"
-msgstr ""
-
-# 4d4f858ec57c460c9e1f45373a4ad832
-#: ../../../source/reference/executables/groonga-http.txt:35
-msgid ""
-"スタンドアロンやクライアントモードでは、コマンドは以下のような形式で指定しま"
-"す。"
-msgstr ""
-
-# 56813920caf44db9a622a413c5d20073
-#: ../../../source/reference/executables/groonga-http.txt:37
-msgid "形式1: コマンド名 値1 値2,.."
-msgstr ""
-
-# 4dcb23904df74557abcb2c48abcb3f49
-#: ../../../source/reference/executables/groonga-http.txt:39
-msgid "形式2: コマンド名 --引数名1 値1 --引数名2 値2,.."
-msgstr ""
-
-# 6fca5705058c4411b19b725649b2ae4c
-#: ../../../source/reference/executables/groonga-http.txt:41
-msgid ""
-"形式1と形式2は混在させることができます。これらの形式では、output_typeという引"
-"数名を用いてoutput_typeを指定します。"
-msgstr ""
-
-# 60b242215b49460fb76726a817e6c050
-#: ../../../source/reference/executables/groonga-http.txt:43
-msgid ""
-"httpでgroongaサーバと通信する際には、以下のような形式でコマンドを指定しま"
-"す。::"
-msgstr ""
-
-# 687fdf0f03c34fb7b8f59194c42b1e16
-#: ../../../source/reference/executables/groonga-http.txt:47
-msgid "ただし、コマンド名、引数名、値はURLエンコードが必要です。"
-msgstr ""
-
-# b77b7dbec8e344a4aa5cb042c63d7592
-#: ../../../source/reference/executables/groonga-http.txt:49
-msgid "GETメソッドのみが使用可能です。"
-msgstr ""
-
-# 77eb69a862f940aab38c29b5bba08ce7
-#: ../../../source/reference/executables/groonga-http.txt:51
-msgid "output_typeにはjson, tsv, xmlが指定可能です。"
-msgstr ""
-
-# 90f040db7cae422d934cead4aabb86b2
-#: ../../../source/reference/executables/groonga-http.txt:53
-msgid ""
-"command_versionはコマンドの仕様の互換性を指定します。詳細は :doc:`/reference/"
-"command_version` を参照してください。"
-msgstr ""
-
-# 13dc17c2318b49c089f7af73475ef3fe
-#: ../../../source/reference/executables/groonga-http.txt:58
-msgid "output_typeの指定に従って、コマンドの実行結果を出力します。"
-msgstr ""
-
 # a64551f75c434f2aa5b91af8e64dffb8
 # 5c02cb6d660c44bb985735e2e37829fc
 #: ../../../source/reference/executables/groonga-httpd.txt:6
@@ -5183,15 +5084,15 @@ msgstr ""
 #: ../../../source/reference/executables/groonga-httpd.txt:11
 msgid ""
 "groonga-httpd is a program to communicate with a groonga server using the "
-"HTTP protocol. It functions as same as :ref:`groonga-server-http`. Although :"
-"ref:`groonga-server-http` has limited support for HTTP with a minimal built-"
+"HTTP protocol. It functions as same as :doc:`groonga-server-http`. Although :"
+"doc:`groonga-server-http` has limited support for HTTP with a minimal built-"
 "in HTTP server, :ref:`groonga-httpd` has full support for HTTP with an "
 "embedded nginx. All standards-compliance and features provided by nginx is "
 "also available in groonga-httpd. For details about nginx, see http://www."
 "nginx.org/"
 msgstr ""
 "groonga-httpdはgroongaサーバーとhttpプロトコルで通信するプログラムです。 機能"
-"的には、 :ref:`groonga-server-http` と同じになっています。 :ref:`groonga-"
+"的には、 :doc:`groonga-server-http` と同じになっています。 :doc:`groonga-"
 "server-http` はHTTPサーバーとしては最小限の機能しか持ちませんが、一方の"
 "groonga-httpdはnginxを組み込むことでnginxが準拠しているHTTPの仕様と機能が全て"
 "利用できます。nginxの詳細については、http://www.nginx.org/を参照してくださ"
@@ -5280,14 +5181,14 @@ msgstr ""
 msgid "Configuration directives"
 msgstr "設定ディレクティブ"
 
-# 127236a789a8448ab5608b5502196c42
+# cb05453e6b654bae89757a540aea8111
 #: ../../../source/reference/executables/groonga-httpd.txt:84
 msgid ""
-"There are two kinds of configuration directives. One is provided by nginx, "
-"the other is by groonga-httpd."
+"This section decribes only important directives. They are groonga-httpd "
+"specific directives and performance related directives."
 msgstr ""
-"ディレクティブには2種類あります。groonga由来のものとnginx由来のものがありま"
-"す。"
+"このセクションでは重要なディレクティブのみ説明します。重要なディレクティブと"
+"はgroonga-http特有のディレクティブと性能に関するディレクティブです。"
 
 # 820597d18d134ab1a109674f09fe06cb
 #: ../../../source/reference/executables/groonga-httpd.txt:87
@@ -5301,47 +5202,158 @@ msgstr ""
 
 # d768083be937419086eeaa43aa178ea3
 #: ../../../source/reference/executables/groonga-httpd.txt:91
-msgid "Groonga-specific directives"
-msgstr "groonga関連のディレクティブ"
+msgid "Groonga-httpd specific directives"
+msgstr "groonga-httpd特有のディレクティブ"
 
 # b7d2d22162664fde81e1ebbff2094e80
 #: ../../../source/reference/executables/groonga-httpd.txt:93
 msgid ""
 "The following directives aren't provided by nginx. They are provided by "
-"groonga-httpd to configure groonga-httpd-specific configurations."
-msgstr ""
-"以下のディレクティブはnginxから提供されているものではなく、groonga-httpd関連"
-"の設定をするためにgroonga-httpdから提供されているディレクティブです。"
+"groonga-httpd to configure groonga-httpd specific configurations."
+msgstr "以下のディレクティブはnginxが提供しているものではなく、groonga-httpd関連の設定をするためにgroonga-httpdが提供しているディレクティブです。"
 
 # ae6fd0bed9f44cef821a1287f3971e34
 #: ../../../source/reference/executables/groonga-httpd.txt:97
+msgid "``groonga``"
+msgstr ""
+
+# d4b690f7a4614baaa6dc658020f511fd
+#: ../../../source/reference/executables/groonga-httpd.txt:99
+#: ../../../source/reference/executables/groonga-httpd.txt:125
+#: ../../../source/reference/executables/groonga-httpd.txt:141
+msgid "Synopsis::"
+msgstr "書式::"
+
+# ae6fd0bed9f44cef821a1287f3971e34
+#: ../../../source/reference/executables/groonga-httpd.txt:104
+msgid "``groonga off;``"
+msgstr ""
+
+# 2b493a9f157e42c79fb981e45da3700b
+# 2b493a9f157e42c79fb981e45da3700b
+#: ../../../source/reference/executables/groonga-httpd.txt:107
+#: ../../../source/reference/executables/groonga-httpd.txt:149
+msgid "``location``"
+msgstr ""
+
+# 84e5794178ca41398059200480d2dc7a
+#: ../../../source/reference/executables/groonga-httpd.txt:109
+msgid ""
+"Specifies whether groonga is enabled in the ``location`` block. The default "
+"is ``off``. You need to specify ``on`` to enable groonga."
+msgstr ""
+"この ``location`` ブロックでgroongaを使うかどうかを指定します。デフォルトは "
+"``off`` です。groongaを使うためには ``on`` を指定してください。"
+
+# 5b7e3a9725304092bc80446f05f14c67
+# d9d1d176bb2043f7862e0ebd6c89eed4
+# 3da949c390874b228fa113ad7f7c58a8
+# 59fa57b3dcd34c44ba22a7a0c101dd6d
+# 2f69d6caf83a4ccc8ea80b5d00544083
+# 97536a90b315475493af7e77c9a44974
+# a7faad5abee943ffa15c270be72143a0
+# 3392b32e511a4f20a46da2e8576073e9
+# 61b6840e2cfb41f09230c9749f993a62
+# 597d3462f6a2410abe487fc1aa3fc3f7
+# 2e19d38532be4727b2b6b0a2544b3c95
+# 1bbd6840ea1b418689ad9aa41fca8bcf
+# ccbba423f0bf48b395557a4fab8b8799
+# f22db1880d5e405e8ebfedf90252d8c4
+# cb4eb1fd1e924afb914e225e6714f75d
+# fa553d9ecb014133abab1153f57a2d5d
+# bd11b63239864329881e23b5ef6b42e5
+# ff578594c5a94003a5d6522524c7f4bd
+# cda6456ff53f4271b26146c23c538afe
+# fadee70a933e4646887eeef59b67e396
+# d5c5bc5a1a89411d856ee6e9c34a4992
+# 5e3715c8e36743e480ed5085e5d6da3f
+# 5a13686b01c941ea820721445bf8f646
+# dd483ba16adc460d81c7eba34584fd74
+# d1095ef4efeb4475b33e435f44da6fb1
+# 30ea10bac07849499bbd2503e9b6c1db
+# 7b8a404a642d45d3a9f5087a8b6b0663
+# 88d7c6252ccb429da20f5339c8f93636
+# c3c3a11dd629453b8ef82804046dcf60
+#: ../../../source/reference/executables/groonga-httpd.txt:112
+msgid "Examples::"
+msgstr "例::"
+
+# ae6fd0bed9f44cef821a1287f3971e34
+#: ../../../source/reference/executables/groonga-httpd.txt:123
 msgid "``groonga_database``"
-msgstr "``groonga_database``"
+msgstr ""
+
+# 6d803fac006e48929208a7d209b1cfa4
+#: ../../../source/reference/executables/groonga-httpd.txt:130
+msgid "``groonga_database /usr/local/var/lib/groonga/db/db;``"
+msgstr ""
+
+# 1ecf5b2d084d4f448328f0e24a654a19
+#: ../../../source/reference/executables/groonga-httpd.txt:133
+msgid "``http``, ``server``, ``location``"
+msgstr ""
 
 # 6fcfa307e73a4d958ab3dce70d1b854e
-#: ../../../source/reference/executables/groonga-httpd.txt:99
-msgid "Specifies the path to a groonga database."
-msgstr "groongaデータベースのパスを指定します。"
+#: ../../../source/reference/executables/groonga-httpd.txt:135
+msgid ""
+"Specifies the path to a groonga database. This is the required directive."
+msgstr "groongaデータベースのパスを指定します。このディレクティブは必須です。"
+
+# ae6fd0bed9f44cef821a1287f3971e34
+#: ../../../source/reference/executables/groonga-httpd.txt:139
+msgid "``groonga_base_path``"
+msgstr ""
+
+# 75c38df430b54c44844526068cb9d03b
+#: ../../../source/reference/executables/groonga-httpd.txt:146
+msgid "The same value as ``location`` name."
+msgstr "``location`` の名前と同じ値。"
+
+# c752e5e56eef45c1a362b9e949053639
+#: ../../../source/reference/executables/groonga-httpd.txt:151
+msgid ""
+"Specifies the base path in URI. groonga uses ``/d/command?"
+"parameter1=value1&...`` path to run ``command``. The form of path in used in "
+"groonga-httpd but groonga-httpd also supports ``/other-prefix/command?"
+"parameter1=value1&...`` form. To support the form, groonga-httpd removes the "
+"base path from the head of request URI and prepend ``/d/`` to the processed "
+"request URI. By the path conversion, users can use custom path prefix and "
+"groonga can always uses ``/d/command?parameter1=value1&...`` form."
+msgstr "URIのベースパスを指定します。groongaは ``command`` を実行するために ``/d/command?parameter1=value1&...`` というパスを使います。groonga-httpdでもこのパスの形式を使いますが、groonga-httpdは  ``/other-prefix/command?parameter1=value1&...`` というように ``/d/`` ではなく別のプレフィックスを使った形式もサポートしています。この別の形式もサポートするために、groonga-httpdはリクエストURIの先頭からベースパスを削除し、先頭に ``/d/`` を追加します。このパスの変換をすることにより、ユーザーはプレフィックスをカスタムできるようになりますが、groongaは常に ``/d/command?parameter1=value1&...`` という形式で処理できます。"
+
+# 0d2844180960454fa14c4e7c5c196c79
+#: ../../../source/reference/executables/groonga-httpd.txt:160
+msgid ""
+"Nomally, this directive isn't needed. It is needed for per command "
+"configuration."
+msgstr "通常、このディレクティブを使う必要はありません。このディレクティブはコマンド毎に設定をしたい場合に使います。"
+
+# b58131dc80f1422aabd04ed4e3d46244
+#: ../../../source/reference/executables/groonga-httpd.txt:163
+msgid ""
+"Here is an example configuration to add authorization to :doc:`/reference/"
+"commands/shutdown` command::"
+msgstr "以下は :doc:`/reference/commands/shutdown` コマンドに認証をかける設定例です。::"
 
 # e071414d35f94a4bbc0b26a58ea9d666
-#: ../../../source/reference/executables/groonga-httpd.txt:102
-msgid "Performance-related directives"
+#: ../../../source/reference/executables/groonga-httpd.txt:186
+msgid "Performance related directives"
 msgstr "性能関連のディレクティブ"
 
 # cd4956eac02746dc8b3ab4dd7282db93
-#: ../../../source/reference/executables/groonga-httpd.txt:104
+#: ../../../source/reference/executables/groonga-httpd.txt:188
 msgid ""
 "The following directives are related to the performance of groonga-httpd."
 msgstr ""
 "以下のディレクティブはgronoga-httpdの性能に関連しているディレクティブです。"
 
 # 4ee50b0026474705abd02b957d01935a
-#: ../../../source/reference/executables/groonga-httpd.txt:107
+#: ../../../source/reference/executables/groonga-httpd.txt:191
 msgid "``worker_processes``"
-msgstr "``worker_processes``"
+msgstr ""
 
 # fe1cf4dcd10b4524891de86128eba10d
-#: ../../../source/reference/executables/groonga-httpd.txt:109
+#: ../../../source/reference/executables/groonga-httpd.txt:193
 msgid ""
 "For optimum performance, set this to be equal to the number of CPUs or "
 "cores. In many cases, groonga queries may be CPU-intensive work, so to fully "
@@ -5353,7 +5365,7 @@ msgstr ""
 "必要があります。"
 
 # 270d574b530641ff92d7e897cffc775f
-#: ../../../source/reference/executables/groonga-httpd.txt:113
+#: ../../../source/reference/executables/groonga-httpd.txt:197
 msgid ""
 "This isn't a groonga-httpd specific directive, but an nginx's one. For "
 "details, see http://wiki.nginx.org/CoreModule#worker_processes."
@@ -5363,17 +5375,17 @@ msgstr ""
 "CoreModule#worker_processes を参照してください。"
 
 # 1c978a3757964495a15bfe4d776e5274
-#: ../../../source/reference/executables/groonga-httpd.txt:116
+#: ../../../source/reference/executables/groonga-httpd.txt:200
 msgid "By default, this is set to 1. It is nginx's default."
 msgstr "デフォルトで、このディレクティブには1が設定されています。"
 
 # e914b6c5fd6143e684506e61b4b424d4
-#: ../../../source/reference/executables/groonga-httpd.txt:119
+#: ../../../source/reference/executables/groonga-httpd.txt:203
 msgid "Available nginx modules"
 msgstr "利用可能なnginxモジュール"
 
 # 177bb78187954c29b18c36cef58b6745
-#: ../../../source/reference/executables/groonga-httpd.txt:121
+#: ../../../source/reference/executables/groonga-httpd.txt:205
 msgid ""
 "All standard HTTP modules except HttpRewriteModule is available. "
 "HttpRewriteModule is disabled to avoid to depend on PCRE (Perl Compatible "
@@ -5384,6 +5396,105 @@ msgstr ""
 "HttpRewriteModuleはPCRE (Perl Compatible Regular Expressions)へ依存しないよう"
 "にするために無効化されています。残りの標準モジュールの一覧は、 http://wiki."
 "nginx.org/Modules を参照してください。"
+
+# 6d1dbafe10e049d797a2c017a2013a96
+# 733aee09b45c47b4aa57cc1f8167c212
+# 7c0dd7d48b8b45a6b639205a1e24acfb
+# 7c0dd7d48b8b45a6b639205a1e24acfb
+#: ../../../source/reference/executables/groonga-server-http.txt:6
+#: ../../../source/reference/executables/groonga-server-http.txt:11
+msgid "groonga HTTPサーバー"
+msgstr ""
+
+# b47a597213884927af4954fe3df78dfd
+#: ../../../source/reference/executables/groonga-server-http.txt:22
+msgid ""
+"groongaサーバを起動する時に--protocolオプションにhttpを指定すると、httpで通信"
+"可能になります。また、--document-root によって静的ページのパスを指定すると、"
+"httpリクエストに指定されたURIに対応する、パス配下に置かれたファイルを出力しま"
+"す。"
+msgstr ""
+
+# 9f6f320066ed485896f87635c2272161
+#: ../../../source/reference/executables/groonga-server-http.txt:24
+msgid ""
+"groongaにはHTML + JavaScriptで実装された管理ツールが標準で付属しています。--"
+"document-rootを指定しない場合は管理ツールがインストールされているパスが指定さ"
+"れたとみなされますので、ウェブブラウザでhttp://hostname:port/にアクセスする"
+"と、管理ツールを利用できます。"
+msgstr ""
+
+# 74b4a7e4a03b48f38a4aea015a79b0d0
+#: ../../../source/reference/executables/groonga-server-http.txt:29
+msgid ""
+"httpを指定して起動したgroongaサーバに対しても、他のモードで起動したgroongaと"
+"同じコマンドが使用できます。"
+msgstr ""
+
+# 615eefd1d725420e8c6ed3c36cea0ccc
+#: ../../../source/reference/executables/groonga-server-http.txt:31
+msgid ""
+"コマンドは、複数の引数をとります。引数にはそれぞれ名前があります。また、特殊"
+"な引数である「output_type」と「command_version」があります。"
+msgstr ""
+
+# 4d4f858ec57c460c9e1f45373a4ad832
+#: ../../../source/reference/executables/groonga-server-http.txt:33
+msgid ""
+"スタンドアロンやクライアントモードでは、コマンドは以下のような形式で指定しま"
+"す。"
+msgstr ""
+
+# 56813920caf44db9a622a413c5d20073
+#: ../../../source/reference/executables/groonga-server-http.txt:35
+msgid "形式1: コマンド名 値1 値2,.."
+msgstr ""
+
+# 4dcb23904df74557abcb2c48abcb3f49
+#: ../../../source/reference/executables/groonga-server-http.txt:37
+msgid "形式2: コマンド名 --引数名1 値1 --引数名2 値2,.."
+msgstr ""
+
+# 6fca5705058c4411b19b725649b2ae4c
+#: ../../../source/reference/executables/groonga-server-http.txt:39
+msgid ""
+"形式1と形式2は混在させることができます。これらの形式では、output_typeという引"
+"数名を用いてoutput_typeを指定します。"
+msgstr ""
+
+# 60b242215b49460fb76726a817e6c050
+#: ../../../source/reference/executables/groonga-server-http.txt:41
+msgid ""
+"httpでgroongaサーバと通信する際には、以下のような形式でコマンドを指定しま"
+"す。::"
+msgstr ""
+
+# 687fdf0f03c34fb7b8f59194c42b1e16
+#: ../../../source/reference/executables/groonga-server-http.txt:45
+msgid "ただし、コマンド名、引数名、値はURLエンコードが必要です。"
+msgstr ""
+
+# b77b7dbec8e344a4aa5cb042c63d7592
+#: ../../../source/reference/executables/groonga-server-http.txt:47
+msgid "GETメソッドのみが使用可能です。"
+msgstr ""
+
+# 77eb69a862f940aab38c29b5bba08ce7
+#: ../../../source/reference/executables/groonga-server-http.txt:49
+msgid "output_typeにはjson, tsv, xmlが指定可能です。"
+msgstr ""
+
+# 90f040db7cae422d934cead4aabb86b2
+#: ../../../source/reference/executables/groonga-server-http.txt:51
+msgid ""
+"command_versionはコマンドの仕様の互換性を指定します。詳細は :doc:`/reference/"
+"command_version` を参照してください。"
+msgstr ""
+
+# 13dc17c2318b49c089f7af73475ef3fe
+#: ../../../source/reference/executables/groonga-server-http.txt:56
+msgid "output_typeの指定に従って、コマンドの実行結果を出力します。"
+msgstr ""
 
 # b9a5612a1ca94450a7db40de342558e2
 # 7d952f6ed5304439a75622c59ec89f01
@@ -9796,53 +9907,3 @@ msgstr ""
 #: ../../../source/reference/type.txt:129
 msgid "Object型はv1.2でサポートされます。"
 msgstr ""
-
-# 7e5b0ddf0d81452badd3a06d064c121a
-#~ msgid ""
-#~ "Here is the most simple usage with the above shema and data. It outputs "
-#~ "all records in ``Entries`` table."
-#~ msgstr ""
-#~ "上記のスキーマとデータを使った一番簡単な使い方を示します。この例では "
-#~ "``Entries`` テーブルのすべてのレコードを出力します。"
-
-# 04bbdbf4bcf54b8389ba699c31612728
-#~ msgid ""
-#~ "The first ``select`` command searches records that contain a word "
-#~ "``groo`` in ``content`` column value from ``Entries`` table. But no "
-#~ "records are matched because the ``TokenBigram`` tokenizer tokenizes "
-#~ "``groonga`` to ``groonga`` not ``gr|ro|oo|on|ng|ga``. (The "
-#~ "``TokenBigramSplitSymbolAlpha`` tokenizer tokenizes ``groonga`` to ``gr|"
-#~ "ro|oo|on|ng|ga``. See :doc:`/tokenizers` for details.) It means that "
-#~ "``groonga`` is indexed but ``groo`` isn't indexed. So no records are "
-#~ "matched against ``groo`` by exact match. In the case, the search "
-#~ "storategy escalation is used because the number of matched records (0) is "
-#~ "equal to ``match_escalation_threshold`` (0). One record is matched "
-#~ "against ``groo`` by unsplit search."
-#~ msgstr ""
-#~ "最初の ``select`` コマンドは ``Entries`` テーブルから ``content`` カラムの"
-#~ "値に ``groo`` という単語を含むレコードを検索します。しかし、 "
-#~ "``TokenBigram`` トークナイザーは ``groonga`` を ``gr|ro|oo|on|ng|ga`` では"
-#~ "なく ``groonga`` とトークナイズするため、1つもマッチしません。"
-#~ "（ ``TokenBigramSplitSymbolAlpha`` トークナイザーは ``groonga`` を ``gr|"
-#~ "ro|oo|on|ng|ga`` とトークナイズします。詳細は :doc:`/tokenizers` を参照し"
-#~ "てください。）これは、 ``groonga`` はインデックスされていますが、 "
-#~ "``groo`` はインデックスされていないということです。この場合、マッチしたレ"
-#~ "コード数（0）が ``match_escalation_threshold`` （0）と等しいので、検索方法"
-#~ "をエスカレーションします。非わかち書き検索を行うと ``groo`` でレコードが1"
-#~ "つマッチします。"
-
-# 470a3d728d73414290550a46e5e67f1a
-#~ msgid ""
-#~ "``*`` is a special value. It means that all columns that are not :doc:`/"
-#~ "pseudo_column`."
-#~ msgstr ""
-#~ "``*`` は特別な値です。 :doc:`/pseudo_column` 以外のすべてのカラムという意"
-#~ "味です。"
-
-# cb3be32e3bed440fbedddd88be69fe9f
-#~ msgid "See :doc:`/type` about GeoPoint."
-#~ msgstr "GeoPoint型については :doc:`/type` を参照してください。"
-
-# 93d1be8ed5cc4f09b686aca96c27caca
-#~ msgid "See :doc:`/type` about GeoPoint and the coordinate."
-#~ msgstr "GeoPoint型や座標の表記については :doc:`/type` を参照してください。"

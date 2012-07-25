@@ -96,7 +96,7 @@ by groonga-httpd to configure groonga-httpd specific configurations.
 ``groonga``
 """""""""""
 
-Syntax::
+Synopsis::
 
   groonga on | off;
 
@@ -104,9 +104,9 @@ Default
   ``groonga off;``
 
 Context
-  location
+  ``location``
 
-Specifies whether groonga is enabled in the location block. The
+Specifies whether groonga is enabled in the ``location`` block. The
 default is ``off``. You need to specify ``on`` to enable groonga.
 
 Examples::
@@ -122,7 +122,7 @@ Examples::
 ``groonga_database``
 """"""""""""""""""""
 
-Syntax::
+Synopsis::
 
   groonga_database /path/to/groonga/database;
 
@@ -130,7 +130,7 @@ Default
   ``groonga_database /usr/local/var/lib/groonga/db/db;``
 
 Context
-  http, server, location
+  ``http``, ``server``, ``location``
 
 Specifies the path to a groonga database. This is the required
 directive.
@@ -138,7 +138,7 @@ directive.
 ``groonga_base_path``
 """""""""""""""""""""
 
-Syntax::
+Synopsis::
 
   groonga_base_path /d/;
 
@@ -146,12 +146,19 @@ Default
   The same value as ``location`` name.
 
 Context
-  location
+  ``location``
 
-Specifies the base path in URI. groonga-httpd removes the base path
-from the head of request URI and prepend ``/d/`` to the processed
-request URI. Nomally, this directive isn't needed. It is needed for
-per command configuration.
+Specifies the base path in URI. groonga uses
+``/d/command?parameter1=value1&...`` path to run ``command``. The form
+of path in used in groonga-httpd but groonga-httpd also supports
+``/other-prefix/command?parameter1=value1&...`` form. To support the
+form, groonga-httpd removes the base path from the head of request URI
+and prepend ``/d/`` to the processed request URI. By the path
+conversion, users can use custom path prefix and groonga can always
+uses ``/d/command?parameter1=value1&...`` form.
+
+Nomally, this directive isn't needed. It is needed for per command
+configuration.
 
 Here is an example configuration to add authorization to
 :doc:`/reference/commands/shutdown` command::
