@@ -56,7 +56,7 @@ tag:
 echo-version:
 	@echo $(VERSION)
 
-update-latest-release:
+update-latest-release: misc
 	@if test -z "$(OLD_RELEASE)"; then	\
 	  echo "\$$(OLD_RELEASE) is missing";	\
 	  exit 1;				\
@@ -145,3 +145,11 @@ update-files:
 	cd doc && $(MAKE) update-files
 	cd data/html && $(MAKE) update-files
 	cd test/function && $(MAKE) update-files
+
+misc:
+	@if test -z "$(CUTTER_SOURCE_PATH)"; then \
+	  echo "\$$(CUTTER_SOURCE_PATH) is missing"; \
+	  exit 1; \
+	fi
+	ln -s "$(CUTTER_SOURCE_PATH)/misc" misc;
+
