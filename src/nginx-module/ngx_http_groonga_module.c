@@ -257,52 +257,35 @@ ngx_http_groonga_handler_process_request(ngx_http_request_t *r,
 }
 
 static ngx_int_t
-ngx_http_groonga_handler(ngx_http_request_t *r)
+ngx_http_groonga_handler_send_response(ngx_http_request_t *r,
+                                       ngx_http_groonga_handler_data_t *data)
 {
-  ngx_int_t    rc;
-  ngx_buf_t   *head_buf, *body_buf, *foot_buf;
-  ngx_chain_t  head_chain, body_chain, foot_chain;
+  ngx_int_t rc;
   grn_ctx *context;
   const char *content_type;
-  ngx_http_groonga_handler_data_t *data;
-
-  rc = ngx_http_groonga_handler_process_request(r, &data);
-  if (rc != NGX_OK) {
-    return rc;
-  }
+  ngx_buf_t *head_buf, *body_buf, *foot_buf;
+  ngx_chain_t  head_chain, body_chain, foot_chain;
 
   context = &(data->context);
-
-  /* we response to 'GET' and 'HEAD' requests only */
-  if (!(r->method & (NGX_HTTP_GET|NGX_HTTP_HEAD))) {
-    return NGX_HTTP_NOT_ALLOWED;
-  }
-
-  /* discard request body, since we don't need it here */
-  rc = ngx_http_discard_request_body(r);
-
-  if (rc != NGX_OK) {
-    return rc;
-  }
 
   /* set the 'Content-type' header */
   content_type = grn_ctx_get_mime_type(context);
   r->headers_out.content_type.len = strlen(content_type);
-  r->headers_out.content_type.data = (u_char *) content_type;
+  r->headers_out.content_type.data = (u_char *)content_type;
 
   /* allocate buffers for a response body */
   head_buf = ngx_http_groonga_grn_obj_to_ngx_buf(r->pool, &(data->head));
-  if (head_buf == NULL) {
+  if (!head_buf) {
     return NGX_HTTP_INTERNAL_SERVER_ERROR;
   }
 
   body_buf = ngx_http_groonga_grn_obj_to_ngx_buf(r->pool, &(data->body));
-  if (body_buf == NULL) {
+  if (!body_buf) {
     return NGX_HTTP_INTERNAL_SERVER_ERROR;
   }
 
   foot_buf = ngx_http_groonga_grn_obj_to_ngx_buf(r->pool, &(data->foot));
-  if (foot_buf == NULL) {
+  if (!foot_buf) {
     return NGX_HTTP_INTERNAL_SERVER_ERROR;
   }
   foot_buf->last_buf = 1;  /* this is the last buffer in the buffer chain */
@@ -330,6 +313,33 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
 
   /* send the buffer chain of your response */
   rc = ngx_http_output_filter(r, &head_chain);
+
+  return rc;
+}
+
+static ngx_int_t
+ngx_http_groonga_handler(ngx_http_request_t *r)
+{
+  ngx_int_t rc;
+  ngx_http_groonga_handler_data_t *data;
+
+  rc = ngx_http_groonga_handler_process_request(r, &data);
+  if (rc != NGX_OK) {
+    return rc;
+  }
+
+  /* we response to 'GET' and 'HEAD' requests only */
+  if (!(r->method & (NGX_HTTP_GET|NGX_HTTP_HEAD))) {
+    return NGX_HTTP_NOT_ALLOWED;
+  }
+
+  /* discard request body, since we don't need it here */
+  rc = ngx_http_discard_request_body(r);
+  if (rc != NGX_OK) {
+    return rc;
+  }
+
+  rc = ngx_http_groonga_handler_send_response(r, data);
 
   return rc;
 }
