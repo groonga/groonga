@@ -461,7 +461,6 @@ ngx_http_groonga_init_process(ngx_cycle_t *cycle)
 static void
 ngx_http_groonga_exit_process(ngx_cycle_t *cycle)
 {
-  grn_rc rc;
   ngx_http_conf_ctx_t *http_conf;
   ngx_http_groonga_database_callback_data_t data;
 
@@ -473,10 +472,7 @@ ngx_http_groonga_exit_process(ngx_cycle_t *cycle)
                                  ngx_http_groonga_close_database_callback,
                                  &data);
 
-  rc = grn_fin();
-  if (rc != GRN_SUCCESS) {
-    /* there is nothing we can at this situation... */
-  }
+  grn_fin();
 
   return;
 }
