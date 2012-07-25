@@ -112,7 +112,7 @@ EOF
 
 install_groonga_packages ()
 {
-    cat > install-debian-groonga.sh <<EOF
+    cat > install-aptitude-groonga.sh <<EOF
 #!/bin/sh
 sudo aptitude clean
 rm -f /var/lib/apt/lists/packages.groonga.org_*
@@ -124,7 +124,7 @@ sudo aptitude -V -D -y install groonga
 sudo aptitude -V -D -y install groonga-tokenizer-mecab
 sudo aptitude -V -D -y install groonga-munin-plugins
 EOF
-    cat > install-ubuntu-groonga.sh <<EOF
+    cat > install-aptget-groonga.sh <<EOF
 #!/bin/sh
 sudo apt-get clean
 rm -f /var/lib/apt/lists/packages.groonga.org_*
@@ -141,11 +141,11 @@ EOF
 	    root_dir=$CHROOT_ROOT/$code-$arch
 	    INSTALL_SCRIPT=""
 	    case $code in
-		squeeze|wheezy|unstable)
-		    INSTALL_SCRIPT=install-debian-groonga.sh
+		squeeze|unstable)
+		    INSTALL_SCRIPT=install-aptitude-groonga.sh
 		    ;;
 		*)
-		    INSTALL_SCRIPT=install-ubuntu-groonga.sh
+		    INSTALL_SCRIPT=install-aptget-groonga.sh
 		    ;;
 	    esac
 	    echo "copy install script $INSTALL_SCRIPT to $root_dir/tmp"
