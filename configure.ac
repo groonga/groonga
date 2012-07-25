@@ -638,7 +638,7 @@ GROONGA="\$(abs_top_builddir)/src/groonga"
 AC_SUBST(GROONGA)
 
 # groonga-httpd binary path
-GROONGA_HTTPD="\$(abs_top_builddir)/src/httpd/groonga-httpd"
+GROONGA_HTTPD="\$(abs_top_builddir)/vendor/nginx-1.2.1/objs/nginx"
 AC_SUBST(GROONGA_HTTPD)
 
 # groonga-benchmark binary path
