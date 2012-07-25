@@ -69,13 +69,24 @@ ngx_str_null_terminate(ngx_pool_t *pool, const ngx_str_t *string)
 }
 
 static void
-ngx_http_groonga_log_context_error(ngx_log_t *log, grn_ctx *context)
+ngx_http_groonga_context_log_error(ngx_log_t *log, grn_ctx *context)
 {
   if (context->rc == GRN_SUCCESS) {
     return;
   }
 
   ngx_log_error(NGX_LOG_ERR, log, 0, "%s", context->errbuf);
+}
+
+static ngx_int_t
+ngx_http_groonga_context_check_error(ngx_log_t *log, grn_ctx *context)
+{
+  if (context->rc == GRN_SUCCESS) {
+    return NGX_OK;
+  } else {
+    ngx_http_groonga_context_log_error(log, context);
+    return NGX_HTTP_INTERNAL_SERVER_ERROR;
+  }
 }
 
 static ngx_buf_t *
@@ -166,15 +177,13 @@ ngx_http_groonga_context_receive_handler(grn_ctx *context,
 }
 
 static ngx_int_t
-ngx_http_groonga_handler(ngx_http_request_t *r)
+ngx_http_groonga_handler_process_request(ngx_http_request_t *r,
+                                         ngx_http_groonga_handler_data_t **data_return)
 {
-  ngx_int_t    rc;
-  ngx_buf_t   *head_buf, *body_buf, *foot_buf;
-  ngx_chain_t  head_chain, body_chain, foot_chain;
+  ngx_int_t rc;
 
   ngx_http_cleanup_t *cleanup;
   ngx_http_groonga_handler_data_t *data;
-  const char *content_type;
 
   grn_ctx *context;
   grn_obj uri;
@@ -221,13 +230,18 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
   cleanup = ngx_http_cleanup_add(r, sizeof(ngx_http_groonga_handler_data_t));
   cleanup->handler = ngx_http_groonga_handler_cleanup;
   data = cleanup->data;
+  *data_return = data;
 
   context = &(data->context);
   grn_ctx_init(context, GRN_NO_FLAGS);
-  grn_ctx_use(context, grn_ctx_db(&(location_conf->context)));
   GRN_TEXT_INIT(&(data->head), GRN_NO_FLAGS);
   GRN_TEXT_INIT(&(data->body), GRN_NO_FLAGS);
   GRN_TEXT_INIT(&(data->foot), GRN_NO_FLAGS);
+  grn_ctx_use(context, grn_ctx_db(&(location_conf->context)));
+  rc = ngx_http_groonga_context_check_error(r->connection->log, context);
+  if (rc != NGX_OK) {
+    return rc;
+  }
 
   grn_ctx_recv_handler_set(context,
                            ngx_http_groonga_context_receive_handler,
@@ -236,7 +250,28 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
   GRN_TEXT_PUTS(context, &uri, "/d/");
   GRN_TEXT_PUT(context, &uri, unparsed_path, unparsed_path_length);
   grn_ctx_send(context, GRN_TEXT_VALUE(&uri), GRN_TEXT_LEN(&uri), GRN_NO_FLAGS);
+  ngx_http_groonga_context_log_error(r->connection->log, context);
   GRN_OBJ_FIN(context, &uri);
+
+  return NGX_OK;
+}
+
+static ngx_int_t
+ngx_http_groonga_handler(ngx_http_request_t *r)
+{
+  ngx_int_t    rc;
+  ngx_buf_t   *head_buf, *body_buf, *foot_buf;
+  ngx_chain_t  head_chain, body_chain, foot_chain;
+  grn_ctx *context;
+  const char *content_type;
+  ngx_http_groonga_handler_data_t *data;
+
+  rc = ngx_http_groonga_handler_process_request(r, &data);
+  if (rc != NGX_OK) {
+    return rc;
+  }
+
+  context = &(data->context);
 
   /* we response to 'GET' and 'HEAD' requests only */
   if (!(r->method & (NGX_HTTP_GET|NGX_HTTP_HEAD))) {
@@ -454,7 +489,7 @@ ngx_http_groonga_close_database_callback(ngx_http_groonga_loc_conf_t *location_c
   context = &(location_conf->context);
 
   grn_obj_close(context, grn_ctx_db(context));
-  ngx_http_groonga_log_context_error(data->log, context);
+  ngx_http_groonga_context_log_error(data->log, context);
   grn_ctx_fin(context);
 }
 
