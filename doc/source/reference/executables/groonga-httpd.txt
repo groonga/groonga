@@ -160,6 +160,10 @@ Here is an example configuration to add authorization to
 
   location /d/shutdown {
     groonga on;
+    # groonga_base_path is needed.
+    # Because /d/shutdown is handled as the base path.
+    # Without this configuration, /d/shutdown/shutdown path is required
+    # to run shutdown command.
     groonga_base_path /d/;
     auth_basic           "manager is required!";
     auth_basic_user_file "/etc/managers.htpasswd";
@@ -167,6 +171,8 @@ Here is an example configuration to add authorization to
 
   location /d/ {
     groonga on;
+    # groonga_base_path doesn't needed.
+    # Because location name is the base path.
   }
 
 Performance related directives
