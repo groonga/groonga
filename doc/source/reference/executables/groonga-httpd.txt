@@ -127,10 +127,10 @@ Syntax::
   groonga_database /path/to/groonga/database;
 
 Default
-  ``groonga off;``
+  ``groonga_database /usr/local/var/lib/groonga/db/db;``
 
 Context
-  location
+  http, server, location
 
 Specifies the path to a groonga database.
 
