@@ -67,15 +67,14 @@ ngx_str_null_terminate(ngx_pool_t *pool, const ngx_str_t *string)
   return null_terminated_c_string;
 }
 
-static ngx_int_t
-ngx_http_groonga_context_check(ngx_log_t *log, grn_ctx *context)
+static void
+ngx_http_groonga_log_context_error(ngx_log_t *log, grn_ctx *context)
 {
   if (context->rc == GRN_SUCCESS) {
-    return NGX_OK;
-  } else {
-    ngx_log_error(NGX_LOG_ERR, log, 0, "%s", context->errbuf);
-    return NGX_HTTP_INTERNAL_SERVER_ERROR;
+    return;
   }
+
+  ngx_log_error(NGX_LOG_ERR, log, 0, "%s", context->errbuf);
 }
 
 static ngx_buf_t *
@@ -431,9 +430,9 @@ ngx_http_groonga_close_database_callback(ngx_http_groonga_loc_conf_t *location_c
   context = &(location_conf->context);
 
   grn_obj_close(context, grn_ctx_db(context));
-  ngx_http_groonga_context_check(data->log, context);
+  ngx_http_groonga_log_context_error(data->log, context);
   grn_ctx_fin(context);
-  ngx_http_groonga_context_check(data->log, context);
+  ngx_http_groonga_log_context_error(data->log, context);
 }
 
 static ngx_int_t
