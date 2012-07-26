@@ -1,0 +1,40 @@
+#! /bin/sh
+
+set -e
+
+prevver="$2"
+
+add_system_user() {
+    if ! getent passwd groonga >/dev/null; then
+        adduser --group --system --home /var/lib/groonga groonga
+    fi
+}
+
+fixperms() {
+    dpkg-statoverride --list /var/run/groonga >/dev/null || \
+        dpkg-statoverride --update --add groonga groonga 0755 /var/run/groonga
+    dpkg-statoverride --list /var/lib/groonga >/dev/null || \
+        dpkg-statoverride --update --add groonga groonga 0755 /var/lib/groonga
+    dpkg-statoverride --list /etc/groonga >/dev/null || \
+        dpkg-statoverride --update --add groonga groonga 0755 /etc/groonga
+    dpkg-statoverride --list /etc/groonga/httpd >/dev/null || \
+        dpkg-statoverride --update --add groonga groonga 0755 /etc/groonga/httpd
+    dpkg-statoverride --list /var/log/groonga >/dev/null || \
+        dpkg-statoverride --update --add groonga groonga 0755 /var/log/groonga
+}
+
+case "$1" in
+    configure)
+        add_system_user
+        fixperms
+        ;;
+    abort-upgrade|abort-deconfigure|abort-remove)
+        :
+        ;;
+    *)
+        echo "Called with unknown argument $1, bailing out."
+        exit 1
+        ;;
+esac
+
+#DEBHELPER#
