@@ -39,19 +39,28 @@ DEFAULT_FILE=/etc/default/groonga-httpd
 
 [ "$ENABLE" = "yes" ] || exit 0
 
+USER_EXIST=0
 if [ -n "${USER}" ]; then
     if ! getent passwd | grep -q "^${USER}:"; then
 	echo "$0: user for running groonga-httpd doesn't exist: ${USER}" >&2
 	exit 1
+    else
+	USER_EXIST=1
     fi
-    START_STOP_DAEMON_ARGS="${START_STOP_DAEMON_ARGS} --user ${USER}"
 fi
+GROUP_EXIST=0
 if [ -n "${GROUP}" ]; then
     if ! getent group | grep -q "^${GROUP}:"; then
 	echo "$0: group for running groonga-httpd doesn't exist: ${GROUP}" >&2
 	exit 1
+    else
+	GROUP_EXIST=1
     fi
-    START_STOP_DAEMON_ARGS="${START_STOP_DAEMON_ARGS} --group ${GROUP}"
+fi
+if [ $USER_EXIST = 1 ]; then
+    if [ $GROUP_EXIST = 1 ]; then
+	START_STOP_DAEMON_ARGS="${START_STOP_DAEMON_ARGS} --chuid ${USER}:${GROUP}"
+    fi
 fi
 DAEMON_ARGS="${DAEMON_ARGS} ${OPTION_ARGS}"
 
