@@ -29,7 +29,7 @@ OPTION_ARGS=""
 START_STOP_DAEMON_ARGS=""
 ENABLE="no"
 
-DEFAULT_FILE=/etc/default/groonga-server
+DEFAULT_FILE=/etc/default/groonga-httpd
 
 # Exit if the package is not installed
 [ -x "$DAEMON" ] || exit 0
