@@ -86,11 +86,14 @@ parse_set_operator_value(grn_ctx *ctx, grn_obj *text)
     if (memcmp("and", GRN_TEXT_VALUE(text), 3) == 0) {
       value = GRN_OP_AND;
     } else if (memcmp("but", GRN_TEXT_VALUE(text), 3) == 0) {
-      value = GRN_OP_BUT;
+      value = GRN_OP_AND_NOT;
     }
   } else if (GRN_TEXT_LEN(text) == 6 &&
              memcmp("adjust", GRN_TEXT_VALUE(text), 6) == 0) {
     value = GRN_OP_ADJUST;
+  } else if (GRN_TEXT_LEN(text) == 7 &&
+             memcmp("and_not", GRN_TEXT_VALUE(text), 7) == 0) {
+    value = GRN_OP_AND_NOT;
   }
   return value;
 }
