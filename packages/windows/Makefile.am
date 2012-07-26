@@ -99,7 +99,8 @@ LICENSE:
 installer: installer-x86 installer-x64
 
 setup-x86.nsi: setup-x64.nsi
-	sed -e 's/64/86/g' setup-x64.nsi > setup-x86.nsi
+	sed -e 's/64/86/g' -e 's/PROGRAMFILES86/PROGRAMFILES32/' \
+	setup-x64.nsi > setup-x86.nsi
 
 installer-x86: LICENSE setup-x86.nsi
 	makensis setup-x86.nsi
