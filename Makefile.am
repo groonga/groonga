@@ -69,9 +69,6 @@ update-latest-release: misc
 	  echo "\$$(NEW_RELEASE_DATE) is missing";	\
 	  exit 1;					\
 	fi
-	cd $(top_srcdir) && test -d "misc" ||					\
-	  git clone 							        \
-	  git://github.com/clear-code/cutter.git; ln -sf cutter/misc misc
 	cd $(top_srcdir) &&					\
 	  misc/update-latest-release.rb				\
 	  $(PACKAGE) $(OLD_RELEASE) $(OLD_RELEASE_DATE)		\
