@@ -283,6 +283,7 @@ fi
 %files httpd
 %defattr(-,root,root,-)
 %config(noreplace) %{_sysconfdir}/groonga/httpd/*
+%dir %{_unitdir}/groonga-httpd.service
 %{_sbindir}/groonga-httpd
 
 %files doc
