@@ -151,5 +151,5 @@ misc:
 	  echo "\$$(CUTTER_SOURCE_PATH) is missing"; \
 	  exit 1; \
 	fi
-	ln -s "$(CUTTER_SOURCE_PATH)/misc" misc;
+	ln -s "$(CUTTER_SOURCE_PATH)/misc" misc
 
