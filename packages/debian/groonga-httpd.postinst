@@ -19,8 +19,12 @@ fixperms() {
         dpkg-statoverride --update --add groonga groonga 0755 /etc/groonga
     dpkg-statoverride --list /etc/groonga/httpd >/dev/null || \
         dpkg-statoverride --update --add groonga groonga 0755 /etc/groonga/httpd
+    dpkg-statoverride --list /etc/groonga/httpd/logs >/dev/null || \
+        dpkg-statoverride --update --add groonga groonga 0755 /etc/groonga/httpd/logs
     dpkg-statoverride --list /var/log/groonga >/dev/null || \
         dpkg-statoverride --update --add groonga groonga 0755 /var/log/groonga
+    dpkg-statoverride --list /var/log/groonga/httpd >/dev/null || \
+        dpkg-statoverride --update --add groonga groonga 0755 /var/log/groonga/httpd
 }
 
 case "$1" in
