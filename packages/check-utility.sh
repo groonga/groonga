@@ -30,6 +30,33 @@ echo_packages_repository_address ()
     fi
 }
 
+setup_distributions ()
+{
+    if [ -z "$DISTRIBUTIONS" ]; then
+	DISTRIBUTIONS="centos fedora"
+    fi
+}
+
+setup_rpm_architectures ()
+{
+    if [ -z "$RPM_ARCHITECTURES" ]; then
+	RPM_ARCHITECTURES="i386 x86_64"
+    fi
+}
+
+setup_codes ()
+{
+    if [ -z "$CODES" ]; then
+	CODES="squeeze wheezy unstable lucid natty oneiric precise"
+    fi
+}
+setup_deb_architectures ()
+{
+    if [ -z "$DEB_ARCHITECTURES" ]; then
+	DEB_ARCHITECTURES="i386 amd64"
+    fi
+}
+
 check_packages_repository_address ()
 {
     for code in $CODES; do
@@ -400,12 +427,11 @@ while [ $# -ne 0 ]; do
     esac
 done
 
-if [ -z "$DEB_ARCHITECTURES" ]; then
-    DEB_ARCHITECTURES="i386 amd64"
-fi
-if [ -z "$RPM_ARCHITECTURES" ]; then
-    RPM_ARCHITECTURES="i386 x86_64"
-fi
+setup_distributions
+setup_rpm_architectures
+
+setup_codes
+setup_deb_architectures
 
 if [ $CHECK_INSTALL -ne 0 ]; then
     check_installed_groonga_packages
