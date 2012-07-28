@@ -24,7 +24,11 @@ SPHINX_BUILD_COMMAND =				\
 if DOCUMENT_BUILDABLE
 sphinx-ensure-updated:
 	if ! $(SPHINX_BUILD_COMMAND) 2>&1 | head -1 | grep 'v1.[2]' -q > /dev/null; then \
-	  (cd $(SPHINX_DIR) && $(HG) pull --update);					 \
+	  if test -d $(SPHINX_DIR); then						 \
+	    (cd $(SPHINX_DIR) && $(HG) pull --update);					 \
+	  else										 \
+	    $(HG) clone https://bitbucket.org/birkenfeld/sphinx $(SPHINX_DIR);		 \
+	  fi;										 \
 	fi
 else
 sphinx-ensure-updated:
