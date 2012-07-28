@@ -42,7 +42,7 @@ for distribution in ${DISTRIBUTIONS}; do
     case $distribution in
 	fedora)
 	    distribution_label=Fedora
-	    distribution_versions="16"
+	    distribution_versions="17"
 	    ;;
 	centos)
 	    distribution_label=CentOS
