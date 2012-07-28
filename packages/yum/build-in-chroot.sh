@@ -76,19 +76,6 @@ build_chroot()
     run_sudo mount ${base_dir}/dev
     run_sudo mount ${base_dir}/dev/pts
     run_sudo mount ${base_dir}/proc
-
-    if [ "$distribution_name-$distribution_version" = "fedora-16" ]; then
-	yes | run_sudo su -c "chroot ${base_dir} rpm --import https://fedoraproject.org/static/A82BA4B7.txt"
-	run_sudo su -c "chroot ${base_dir} yum -y update yum"
-	run_sudo su -c "chroot ${base_dir} yum -y clean all"
-	run_sudo su -c "chroot ${base_dir} yum -y --releasever=16 --disableplugin=presto distro-sync"
-    fi
-    if [ "$distribution_name-$distribution_version" = "fedora-17" ]; then
-	run_sudo su -c "chroot ${base_dir} rpm --import https://fedoraproject.org/static/1ACA3465.txt"
-	run_sudo su -c "chroot ${base_dir} yum -y update yum"
-	run_sudo su -c "chroot ${base_dir} yum -y clean all"
-	run_sudo su -c "chroot ${base_dir} yum -y --releasever=17 --disableplugin=presto distro-sync"
-    fi
 }
 
 build()
