@@ -1,6 +1,8 @@
 SUBDIRS = sysconfig
 
-services = groonga.service
+services =					\
+	groonga.service				\
+	groonga-httpd.service
 
 if FEDORA_PLATFORM
 unitdir = /usr/lib/systemd/system
