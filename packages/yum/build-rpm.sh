@@ -78,8 +78,9 @@ fi
 rpmbuild_options="${BUILD_OPTIONS}"
 
 run yum update ${yum_options} -y
+run yum install ${yum_options} -y rpm-build rpmdevtools tar ${DEPENDED_PACKAGES}
 if ! rpm -q mecab-devel > /dev/null; then
-    run yum install -y rpm-build wget libtool gcc gcc-c++ make tar
+    run yum install -y wget
 
     cat <<EOF > $BUILD_SCRIPT
 #!/bin/sh
@@ -118,7 +119,6 @@ EOF
 	run rpm -Uvh /home/$USER_NAME/rpmbuild/RPMS/*/*.rpm
     done
 fi
-run yum install ${yum_options} -y rpm-build rpmdevtools tar ${DEPENDED_PACKAGES}
 run yum clean ${yum_options} packages
 
 # for debug
