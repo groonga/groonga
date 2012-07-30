@@ -5,22 +5,35 @@
 リリース手順
 ============================================================
 
+前提条件
+------------------------------------------------------------
+
+リリース手順の前提条件は以下の通りです。
+
+* ビルド環境は Ubuntu 12.04 LTS(Precise Pangolin)
+* コマンドラインの実行例はzsh
+
+作業ディレクトリ例は以下を使用します。
+
+* GROONGA_DIR=$HOME/work/groonga
+* GROONGA_CLONE_DIR=$HOME/work/groonga/groonga.clean
+* GROONGA_GITHUB_COM_PATH=$HOME/work/groonga/groonga.github.com
+* CUTTER_DIR=$HOME/work/cutter
+* CUTTER_SOURCE_PATH=$HOME/work/cutter/cutter
+
 ビルド環境の準備
 ------------------------------------------------------------
 
 以下にgroongaのリリース作業を行うために事前にインストール
 しておくべきパッケージを示します。
 
-なお、ビルド環境としては Ubuntu 12.04 LTS(Precise Pangolin)を前提とし
-て説明しています。その他の環境では適宜読み替えて下さい。::
+なお、ビルド環境としては Ubuntu 12.04 LTS(Precise Pangolin)を前提として説明しているため、その他の環境では適宜読み替えて下さい。::
 
     % sudo apt-get install -V debootstrap rinse createrepo rpm
     mercurial python-sphinx ruby1.9.1-full mingw-w64 g++-mingw-w64 mecab libmecab-dev nsis gnupg2
 
-rinseのバージョンが古いとCentOS 5/6パッケージのビルドを行うことができ
-ません。
-別途debパッケージを以下のコマンドを実行して最新版をインストールしま
-す。::
+rinseのバージョンが古いとCentOS 5/6パッケージのビルドを行うことができません。
+別途debパッケージを以下のコマンドを実行して最新版をインストールします。::
 
     % sudo dpkg -i rinse_1.9.2-1_all.deb
 
@@ -28,58 +41,29 @@ rinseのバージョンが古いとCentOS 5/6パッケージのビルドを行�
 
     % sudo gem1.9.1 install rake
 
-
-
-なお、特に明記していない限り本リリース手順でのコマンドラインの
-操作はzshを前提としています。
-
-リリース作業用ディレクトリの作成
-------------------------------------------------------------
-
-groongaのリリース作業ではリリース専用の環境下(コンパイルフラグ)でビルド
-する必要があります。
-
-リリース時と開発時でディレクトリを分けずに作業することもできますが、
-誤ったコンパイルフラグでリリースしてしまう危険があります。
-
-そのため、以降の説明では$(HOME)/work/groonga以下のディレクトリに
-リリース用の作業ディレクトリ(groonga.clean)にソースコードを
-cloneしたものとして説明します。
-
-リリース用のクリーンな状態でソースコードをgroonga.cleanディレ
-クトリに取得するために以下のコマンドを実行します。::
-
-    % git clone git@github.com:groonga/groonga.git groonga.clean
-
-この作業は初回のリリース作業のときに必要です。
-
 パッケージ署名用秘密鍵のインポート
 ------------------------------------------------------------
 
 リリース作業ではRPMパッケージに対する署名を行います。
 その際、パッケージ署名用の鍵が必要です。
 
-groongaプロジェクトでは署名用の鍵をリリース担当者の公開鍵で
-暗号化してリポジトリのpackages/ディレクトリ以下へと登録しています。
+groongaプロジェクトでは署名用の鍵をリリース担当者の公開鍵で暗号化してリポジトリのpackages/ディレクトリ以下へと登録しています。
 
-リリース担当者はリポジトリに登録された秘密鍵を復号した後に
-鍵のインポートを以下のコマンドにて行います。::
+リリース担当者はリポジトリに登録された秘密鍵を復号した後に鍵のインポートを以下のコマンドにて行います。::
 
     % cd packages
     % gpg --decrypt release-key-secret.asc.gpg.(担当者) > (復号した鍵
     ファイル)
     % gpg --import  (復号した鍵ファイル)
 
-鍵のインポートが正常終了すると gpg --list-keys でgroongaの署名用の
-鍵を確認することができます。::
+鍵のインポートが正常終了すると gpg --list-keys でgroongaの署名用の鍵を確認することができます。::
 
     pub   1024R/F10399C0 2012-04-24
     uid                  groonga Key (groonga Official Signing Key)
     <packages@groonga.org>
     sub   1024R/BC009774 2012-04-24
     
-鍵をインポートしただけでは使用することができないため、インポートした鍵
-に対してtrust,signを行う必要があります。
+鍵をインポートしただけでは使用することができないため、インポートした鍵に対してtrust,signを行う必要があります。
 
 以下のコマンドを実行して署名を行います。(途中の選択肢は省略)::
 
@@ -89,18 +73,34 @@ groongaプロジェクトでは署名用の鍵をリリース担当者の公開�
     gpg> save
     gpg> quit
     
+この作業は、新規にリリースを行うことになった担当者やパッケージに署名する鍵に変更があった場合などに行います。
+
+リリース作業用ディレクトリの作成
+------------------------------------------------------------
+
+groongaのリリース作業ではリリース専用の環境下(コンパイルフラグ)でビルドする必要があります。
+
+リリース時と開発時でディレクトリを分けずに作業することもできますが、誤ったコンパイルフラグでリリースしてしまう危険があります。
+
+そのため、以降の説明では$GROONGA_DIR以下のディレクトリにリリース用の作業ディレクトリ(groonga.clean)としてソースコードをcloneしたものとして説明します。
+
+リリース用のクリーンな状態でソースコードを取得するために$GROONGA_DIRにて以下のコマンドを実行します。::
+
+    % git clone git@github.com:groonga/groonga.git groonga.clean
+
+この作業はリリース作業ごとに行います。
+
 変更点のまとめ
 --------------------------
 
-前回リリース時からの変更点をdoc/source/news.txtにまとめます。
+前回リリース時からの変更点を$GROONGA_CLONE_DIR/doc/source/news.txtにまとめます。
 ここでまとめた内容についてはリリースアナウンスにも使用します。
 
 前回リリースからの変更履歴を参照するには以下のコマンドを実行します。::
 
    % git log -p --reverse $(git tag | tail -1)..
 
-ログを^commitで検索しながら、以下の基準を目安として変更点を追記してい
-きます。
+ログを^commitで検索しながら、以下の基準を目安として変更点を追記していきます。
 
 含めるもの
 
@@ -115,25 +115,33 @@ groongaプロジェクトでは署名用の鍵をリリース担当者の公開�
 groongaのウェブサイトの取得
 ------------------------------------------------------------
 
-groongaのウェブサイトのソースはgroonga同様にgithubにリポジトリを置いて
-います。
+groongaのウェブサイトのソースはgroonga同様にgithubにリポジトリを置いています。
 
-リリース作業では後述するコマンド(make update-latest-release)にてトップページのバージョンを
-置き換えることができるようになっています。
+リリース作業では後述するコマンド(make update-latest-release)にてトップページのバージョンを置き換えることができるようになっています。
 
-groongaのウェブサイトのソースコードは以下コマンドにてのように取得します。::
+groongaのウェブサイトのソースコードを$GROONGA_GITHUB_COM_PATHとして取得するためには、$GROONGA_DIRにて以下のコマンドを実行します。::
 
     % git clone git@github.com:groonga/groonga.github.com.git
 
-これで、~/work/groonga/groonga.github.comにソースを取得できます。
+これで、$GROONGA_GITHUB_COM_PATHにgroonga.github.comのソースを取得できます。
+
+cutterのソースコード取得
+------------------------------------------------------------
+
+groongaのリリース作業では、cutterに含まれるスクリプトを使用しています。
+
+そこであらかじめ用意しておいた$HOME/work/cutterディレクトリにてcutterのソースコードを以下のコマンドにて取得します。::
+
+    % git clone git@github.com:clear-code/cutter.git
+
+これで、$CUTTER_SOURCE_PATHディレクトリにcutterのソースを取得できます。
 
 configureスクリプトの生成
 ------------------------------------------------------------
 
-ソースコードをcloneした時点ではconfigureスクリプトが含まれておらず
-そのままmakeコマンドにてビルドすることができません。
+groongaのソースコードをcloneした時点ではconfigureスクリプトが含まれておらず、そのままmakeコマンドにてビルドすることができません。
 
-groongaのリリース作業ディレクトリでautogen.shを以下のように実行します。::
+$GROONGA_CLONE_DIRにてautogen.shを以下のように実行します。::
 
     % sh autogen.sh
 
@@ -144,67 +152,56 @@ configureスクリプトの実行
 
 Makefileを生成するためにconfigureスクリプトを実行します。
 
-リリース用にビルドするためには以下のオプションを指定してconfigureを実行し
-ます。::
+リリース用にビルドするためには以下のオプションを指定してconfigureを実行します。::
 
-    % ./configure CFLAGS="-O0 -ggdb3" CXXFLAGS="-O0 -ggdb3" --prefix=/tmp/local --with-rsync-path="packages@packages.groonga.org:public" --with-groonga-github-com-path=$HOME/work/groonga/groonga.github.com --enable-document --with-ruby19
+    % ./configure CFLAGS="-O0 -ggdb3" CXXFLAGS="-O0 -ggdb3" --prefix=/tmp/local --with-rsync-path="packages@packages.groonga.org:public" --with-groonga-github-com-path=$HOME/work/groonga/groonga.github.com --enable-document --with-ruby19 --with-cutter-source-path=$HOME/work/cutter/cutter 
 
-configureオプションである--with-groonga-github-com-pathにはgroongaのウェ
-ブサイトのリポジトリをcloneした場所を指定します。
+configureオプションである--with-groonga-github-com-pathにはgroongaのウェブサイトのリポジトリをcloneした場所を指定します。
+
+configureオプションである--with-cutter-source-pathにはcutterのソースをcloneした場所を指定します。
 
 以下のようにgroongaのソースコードをcloneした先からの相対パスを指定することもできます。::
 
-    % ./configure CFLAGS="-O0 -ggdb3" CXXFLAGS="-O0 -ggdb3" --prefix=/tmp/local --with-rsync-path="packages@packages.groonga.org:public" --with-groonga-github-com-path=../groonga.github.com --enable-document --with-ruby19
+    % ./configure CFLAGS="-O0 -ggdb3" CXXFLAGS="-O0 -ggdb3" --prefix=/tmp/local --with-rsync-path="packages@packages.groonga.org:public" --with-groonga-github-com-path=../groonga.github.com --enable-document --with-ruby19 --with-cutter-source-path=../../cutter/cutter 
 
-あらかじめpackagesユーザでpackages.groonga.orgにsshログインできることを
-確認しておいてください。
+あらかじめpackagesユーザでpackages.groonga.orgにsshログインできることを確認しておいてください。
 
 ログイン可能であるかの確認は以下のようにコマンドを実行して行います。::
 
     % ssh packages@packages.groonga.org
 
+
 make update-latest-releaseの実行
 ------------------------------------------------------------
 
-make update-latest-releaseコマンドでは、
-OLD_RELEASE_DATEに前回のリリースの日付を、NEW_RELEASE_DATEに次回リリー
-スの日付を指定します。
+make update-latest-releaseコマンドでは、OLD_RELEASE_DATEに前回のリリースの日付を、NEW_RELEASE_DATEに次回リリースの日付を指定します。
 
 2.0.2のリリースを行った際は以下のコマンドを実行しました。::
 ::
 
    % make update-latest-release OLD_RELEASE=2.0.1 OLD_RELEASE_DATE=2012-03-29 NEW_RELEASE_DATE=2012-04-29
 
-これにより、clone済みのgroongaのWebサイトのトップページのソース
-(index.html,ja/index.html)やRPMパッケージのspecファイルのバージョン表記などが更新されます。
-
-.. note::
-    このとき更新されるspecファイルは現在リリースする人の名前が固定となっているのでリリース作業後にカスタマイズ指定可能なように修正を入れる
+これにより、clone済みのgroongaのWebサイトのトップページのソース(index.html,ja/index.html)やRPMパッケージのspecファイルのバージョン表記などが更新されます。
 
 make update-filesの実行
 ------------------------------------------------------------
 
-ロケールメッセージの更新や変更されたファイルのリスト等を更新するために
-以下のコマンドを実行します。(このコマンドを実行するにはあらかじめ
-sphinxのインストールが必要です。)::
+ロケールメッセージの更新や変更されたファイルのリスト等を更新するために以下のコマンドを実行します。::
 
     % make update-files
 
-make update-filesを実行すると新規に追加されたファイルなどが
-各種.amファイルへとリストアップされます。
+make update-filesを実行すると新規に追加されたファイルなどが各種.amファイルへとリストアップされます。
 
 リリースに必要なファイルですので漏れなくコミットします。
 
 make update-poの実行
 ------------------------------------------------------------
 
-ドキュメントの最新版と各国語版の内容を同期するために、
-poファイルの更新を以下のコマンドにて実行します。::
+ドキュメントの最新版と各国語版の内容を同期するために、poファイルの更新を以下のコマンドにて実行します。::
 
     % make update-po
 
-make update-poを実行すると、doc/locale/ja/LC_MESSAGES以下の各種.poファ
-イルが更新されます。
+make update-poを実行すると、doc/locale/ja/LC_MESSAGES以下の各種.poファイルが更新されます。
 
 poファイルの翻訳
 ------------------------------------------------------------
@@ -218,22 +215,26 @@ make update-poコマンドの実行により更新した各種.poファイルを
 
 確認が完了したら、翻訳済みpoファイルをコミットします。
 
+リリースタグの設定
+------------------------------------------------------------
+
+リリース用のタグを打つには以下のコマンドを実行します。::
+
+    % make tag
 
 リリース用アーカイブファイルの作成
 ------------------------------------------------------------
 
-リリース用のソースアーカイブファイルを作成するために
-以下のコマンドをgroonga.clean直下で実行します。::
+リリース用のソースアーカイブファイルを作成するために以下のコマンドを$GROONGA_CLONE_DIRにて実行します。::
 
     % make dist
 
-これによりgroonga.clean/groonga-(バージョン).tar.gzが作成されます。
+これにより$GROONGA_CLONE_DIR/groonga-(バージョン).tar.gzが作成されます。
 
 パッケージのビルド
 ------------------------------------------------------------
 
-リリース用のアーカイブファイルができたので、
-パッケージ化する作業を行います。
+リリース用のアーカイブファイルができたので、パッケージ化する作業を行います。
 
 パッケージ化作業は以下の3種類を対象に行います。
 
@@ -246,35 +247,28 @@ make update-poコマンドの実行により更新した各種.poファイルを
 ビルド用パッケージのダウンロード
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-debパッケージのビルドに必要なパッケージをダウンロードするには
-以下のコマンドを実行します。::
+debパッケージのビルドに必要なパッケージをダウンロードするには以下のコマンドを実行します。::
 
     % cd packages/apt
     % make download
 
-これにより、lucid以降の関連する.debパッケージやソースアーカイブなどがカ
-レントディレクトリ以下へとダウンロードされます。
+これにより、lucid以降の関連する.debパッケージやソースアーカイブなどがカレントディレクトリ以下へとダウンロードされます。
 
-rpmパッケージのビルドに必要なパッケージをダウンロードするには
-以下のコマンドを実行します。::
+rpmパッケージのビルドに必要なパッケージをダウンロードするには以下のコマンドを実行します。::
 
     % cd packages/yum
     % make download
 
-これにより、groongaやMySQLのRPM/SRPMパッケージなどがカレントディレクト
-リ以下へとダウンロードされます。
+これにより、groongaやMySQLのRPM/SRPMパッケージなどがカレントディレクトリ以下へとダウンロードされます。
 
-windowsパッケージのビルドに必要なパッケージをダウンロードするには
-以下のコマンドを実行します。::
+windowsパッケージのビルドに必要なパッケージをダウンロードするには以下のコマンドを実行します。::
 
     % cd packages/windows
     % make download
 
-これにより、groongaのインストーラやzipアーカイブがカレントディレクトリ
-以下へとダウンロードされます。
+これにより、groongaのインストーラやzipアーカイブがカレントディレクトリ以下へとダウンロードされます。
 
-sourceパッケージに必要なものをダウンロードするには以下のコマンドを
-実行します。::
+sourceパッケージに必要なものをダウンロードするには以下のコマンドを実行します。::
 
     % cd packages/source
     % make download
@@ -291,9 +285,7 @@ groongaのpackages/aptサブディレクトリに移動して、以下のコマ�
     % cd packages/apt
     % make build PALALLEL=yes
 
-make build PALALLEL=yesコマンドを実行すると、ディストリビューションの
-リリースとアーキテクチャの組み合わせでビルドを平行して行うことができま
-す。
+make build PALALLEL=yesコマンドを実行すると、ディストリビューションのリリースとアーキテクチャの組み合わせでビルドを平行して行うことができます。
 
 現在サポートされているのは以下の通りです。
 
@@ -305,20 +297,10 @@ make build PALALLEL=yesコマンドを実行すると、ディストリビュー
 * oneiric i386/amd64
 * precise i386/amd64
 
-.. note::
-   unstable i386/amd64はpreciseに構築したchroot環境ではパッケージのビ
-   ルドが行えることを確認できていないことに注意。
+正常にビルドが終了すると$GROONGA_CLONE_DIR/packages/apt/repositories配下に.debパッケージが生成されます。
 
-正常にビルドが終了すると以下のディレクトリへと.debパッケージが生成され
-ます。
-
-* packages/apt/packages/debian/pool/squeeze/main/g/groonga  
-
-make build ですんなりビルドできないこともあります。
-その場合にはbuildのサブタスクであるbuild-package-debと
-build-repository-debを個別に実行して問題が発生している箇所を切り分ける
-必要があります。
-
+make build ではまとめてビルドできないこともあります。
+その場合にはディストリビューションごとやアーキテクチャごとなど、個別にビルドすることで問題が発生している箇所を切り分ける必要があります。
 
 生成したパッケージへの署名を行うには以下のコマンドを実行します。::
 
@@ -341,37 +323,30 @@ groongaのpackages/yumサブディレクトリに移動して、以下のコマ�
     % cd packages/yum
     % make build PALALLES=yes
 
-make build PALALLEL=yesコマンドを実行すると、ディストリビューションの
-リリースとアーキテクチャの組み合わせでビルドを平行して行うことができま
-す。
+make build PALALLEL=yesコマンドを実行すると、ディストリビューションのリリースとアーキテクチャの組み合わせでビルドを平行して行うことができます。
 
 現在サポートされているのは以下の通りです。
 
 * centos-5 i386/x86_64
 * centos-6 i386/x86_64
-* fedora-16 i386/x86_64
+* fedora-17 i386/x86_64
 
-ビルドが正常終了すると以下のディレクトリにRPMが生成されます。
+ビルドが正常終了すると$GROONGA_CLONE_DIR/packages/yum/repositories配下にRPMパッケージが生成されます。
 
-* packages/yum/centos/5/i386/Packages
-* packages/yum/centos/5/x86_64/Packages
-* packages/yum/centos/6/i386/Packages
-* packages/yum/centos/6/x86_64/Packages
-* packages/yum/fedora/16/i386/Packages
-* packages/yum/fedora/16/x86_64/Packages
-
-
-リポジトリを作成するには以下のコマンドを実行します。::
-
-    % make build
+* repositories/yum/centos/5/i386/Packages
+* repositories/yum/centos/5/x86_64/Packages
+* repositories/yum/centos/6/i386/Packages
+* repositories/yum/centos/6/x86_64/Packages
+* repositories/yum/fedora/17/i386/Packages
+* repositories/yum/fedora/17/x86_64/Packages
 
 リリース対象のRPMに署名を行うには以下のコマンドを実行します。::
 
-    % make sign
+    % make sign-packages
 
 リリース対象のファイルをリポジトリに反映するには以下のコマンドを実行します。::
 
-    % make update
+    % make update-repository
 
 
 Windows用パッケージのビルド
@@ -384,28 +359,23 @@ packages/windowsサブディレクトリに移動して、以下のコマンド�
     % make package
     % make installer
 
-make releaseを実行することでbuildからuploadまで一気に実行することがで
-きますが、途中で失敗することもあるので順に実行することをおすすめします。
+make releaseを実行することでbuildからuploadまで一気に実行することができますが、途中で失敗することもあるので順に実行することをおすすめします。
 
 make buildでクロスコンパイルを行います。
 正常に終了するとdist-x64/dist-x86ディレクトリ以下にx64/x86バイナリを作成します。
 
 make packageが正常に終了するとzipアーカイブをfilesディレクトリ以下に作成します。
 
-make installerが正常に終了するとWindowsインストーラをfilesディレクトリ以
-下に作成します。
+make installerが正常に終了するとWindowsインストーラをfilesディレクトリ以下に作成します。
 
 パッケージの動作確認
 ------------------------------------------------------------
 
 ビルドしたパッケージに対しリリース前の動作確認を行います。
 
-Debian系もしくはRed Hat系の場合には本番環境へとアップロードする前に
-ローカルのaptないしyumのリポジトリを参照して正常に更新できることを
-確認します。
+Debian系もしくはRed Hat系の場合には本番環境へとアップロードする前にローカルのaptないしyumのリポジトリを参照して正常に更新できることを確認します。
 
-ここでは以下のようにrubyを利用してリポジトリをwebサーバ経由で
-参照できるようにします。::
+ここでは以下のようにrubyを利用してリポジトリをwebサーバ経由で参照できるようにします。::
 
     % ruby1.9.1 -run -e httpd -- packages/yum/repositories (yumの場合)
     % ruby1.9.1 -run -e httpd -- packages/apt/repositories (aptの場合)
@@ -413,8 +383,7 @@ Debian系もしくはRed Hat系の場合には本番環境へとアップロー�
 grntestの準備
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-grntestを実行するためにはgroongaのテストデータとgrntestのソースが
-必要です。
+grntestを実行するためにはgroongaのテストデータとgrntestのソースが必要です。
 
 まずgroongaのソースを任意のディレクトリへと展開します。::
 
@@ -430,8 +399,7 @@ grntestの実行方法
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 grntestではgroongaコマンドを明示的にしていすることができます。
-後述のパッケージごとのgrntestによる動作確認では以下のようにして
-実行します。::
+後述のパッケージごとのgrntestによる動作確認では以下のようにして実行します。::
 
     % GROONGA=(groongaのパス指定) test/function/run-test.sh
 
@@ -452,7 +420,7 @@ Debian系の場合の動作確認手順は以下の通りとなります。
 * chroot環境の/etc/hostsを書き換えてpackages.groonga.orgがホストを
   参照するように変更する
 * ホストでwebサーバを起動してドキュメントルートをビルド環境のもの
-  (packages/apt/packages)に設定する
+  (repositories/apt/packages)に設定する
 * アップグレード手順を実行する
 * grntestのアーカイブを展開してインストールしたバージョンでテストを実
   行する
@@ -465,13 +433,10 @@ Red Hat系の場合
 Red Hat系の場合の動作確認手順は以下の通りとなります。
 
 * 旧バージョンをchroot環境へとインストール
-* chroot環境の/etc/hostsを書き換えてpackages.groonga.orgがホストを
-  参照するように変更する
-* ホストでwebサーバを起動してドキュメントルートをビルド環境のもの
-  (packages/yum)に設定する
+* chroot環境の/etc/hostsを書き換えてpackages.groonga.orgがホストを参照するように変更する
+* ホストでwebサーバを起動してドキュメントルートをビルド環境のもの(packages/yum/repositories)に設定する
 * アップグレード手順を実行する
-* grntestのアーカイブを展開してインストールしたバージョンでテストを実
-  行する
+* grntestのアーカイブを展開してインストールしたバージョンでテストを実行する
 * grntestの正常終了を確認する
 
 
@@ -479,8 +444,7 @@ Windows向けの場合
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 * 新規インストール/上書きインストールを行う
-* grntestのアーカイブを展開してインストールしたバージョンでテストを実
-  行する
+* grntestのアーカイブを展開してインストールしたバージョンでテストを実行する
 * grntestの正常終了を確認する
 
 zipアーカイブも同様にしてgrntestを実行し動作確認を行います。
@@ -488,11 +452,9 @@ zipアーカイブも同様にしてgrntestを実行し動作確認を行いま�
 リリースアナウンスの作成
 ------------------------------------------------------------
 
-リリースの際にはリリースアナウンスを流して、
-groongaを広く通知します。
+リリースの際にはリリースアナウンスを流して、groongaを広く通知します。
 
-news.txtに変更点をまとめましたが、それを元にリリースアナウンスを
-作成します。
+news.txtに変更点をまとめましたが、それを元にリリースアナウンスを作成します。
 
 リリースアナウンスには以下を含めます。
 
@@ -501,12 +463,9 @@ news.txtに変更点をまとめましたが、それを元にリリースアナ
 * リリース変更点へのリンク
 * リリース変更点(news.txtの内容)
 
-リリースのトピック紹介では、これからgroongaを使う人へアピールする点や
-既存のバージョンを利用している人がアップグレードする際に必要な
-情報を提供します。
+リリースのトピック紹介では、これからgroongaを使う人へアピールする点や既存のバージョンを利用している人がアップグレードする際に必要な情報を提供します。
 
-非互換な変更が含まれるのであれば、回避方法等の案内を載せることも重要で
-す。
+非互換な変更が含まれるのであれば、回避方法等の案内を載せることも重要です。
 
 参考までに過去のリリースアナウンスへのリンクを以下に示します。
 
@@ -522,8 +481,7 @@ news.txtに変更点をまとめましたが、それを元にリリースアナ
 パッケージのアップロード
 ------------------------------------------------------------
 
-動作確認が完了し、Debian系、Red Hat系、Windows向け、ソースコードそ
-れぞれにおいてパッケージやアーカイブのアップロードを行います。
+動作確認が完了し、Debian系、Red Hat系、Windows向け、ソースコードそれぞれにおいてパッケージやアーカイブのアップロードを行います。
 
 Debian系のパッケージのアップロードには以下のコマンドを実行します。::
 
@@ -545,14 +503,12 @@ Windows向けのパッケージのアップロードには以下のコマンド�
     % cd packages/source
     % make upload
 
-アップロードが正常終了すると、リリース対象のリポジトリデータやパッケージ、アーカイブ
-等がpackages.groonga.orgへと反映されます。
+アップロードが正常終了すると、リリース対象のリポジトリデータやパッケージ、アーカイブ等がpackages.groonga.orgへと反映されます。
 
 blogroonga(ブログ)の更新
 ------------------------------------------------------------
 
-http://groonga.org/blog/ および http://groonga.org/blog/ にて
-公開されているリリース案内を作成します。
+http://groonga.org/blog/ および http://groonga.org/blog/ にて公開されているリリース案内を作成します。
 
 基本的にはリリースアナウンスの内容をそのまま記載します。
 
@@ -562,35 +518,39 @@ cloneしたWebサイトのソースに対して以下のファイルを新規追
 * groonga.github.com/ja/_post/(リリース日)-release.textile
 
 
-編集した内容をpushする前に確認したい場合にはjekyllおよび
-RedClothが必要です。
+編集した内容をpushする前に確認したい場合にはjekyllおよびRedClothが必要です。
 インストールするには以下のコマンドを実行します。::
 
     % sudo gem1.9.1 install jekyll RedCloth
 
-jekyllのインストールを行ったら、以下のコマンドでローカルにwebサーバを
-起動します。::
+jekyllのインストールを行ったら、以下のコマンドでローカルにwebサーバを起動します。::
 
     % jekyll --server --auto
 
-あとはブラウザにてhttp://localhost:4000にアクセスして内容に問題がない
-かを確認します。
+あとはブラウザにてhttp://localhost:4000にアクセスして内容に問題がないかを確認します。
+
+.. note::
+   記事を非公開の状態でアップロードするには.textileファイルのpublished:をfalseに設定します。::
+
+    ---
+    layout: post.en
+    title: Groonga 2.0.5 has been released
+    published: false
+    ---
+    
 
 ドキュメントのアップロード
 ------------------------------------------------------------
 
-doc/source以下のドキュメントを更新、翻訳まで完了している状態で、
-ドキュメントのアップロード作業を行います。
+doc/source以下のドキュメントを更新、翻訳まで完了している状態で、ドキュメントのアップロード作業を行います。
 
 そのためにはまず以下のコマンドを実行します。::
 
     % make update-document
 
-これによりcloneしておいたgroonga.github.comのdoc/locale以下に更新した
-ドキュメントがコピーされます。
+これによりcloneしておいたgroonga.github.comのdoc/locale以下に更新したドキュメントがコピーされます。
 
-生成されているドキュメントに問題のないことを確認できたら、
-コミット、pushしてgroonga.orgへと反映します。
+生成されているドキュメントに問題のないことを確認できたら、コミット、pushしてgroonga.orgへと反映します。
 
 リリースアナウンス
 ------------------------------------------------------------
@@ -601,6 +561,28 @@ doc/source以下のドキュメントを更新、翻訳まで完了している�
 * Groonga-talk groonga-talk@lists.sourceforge.net
 
 以上でリリース作業は終了です。
+
+リリース後にやること
+------------------------------------------------------------
+
+リリースアナウンスを流し終えたら、次期バージョンの開発が始まります。
+
+* groonga プロジェクトの新規バージョン追加
+* groonga のbase_versionの更新
+
+groonga プロジェクトの新規バージョン追加
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`groonga プロジェクトの設定ページ <http://redmine.groonga.org/projects/groonga/settings>`_ にて新規バージョンを追加します。(例: release-2.0.6)
+
+groonga バージョン更新
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+$GROONGA_CLONE_DIRにて以下のコマンドを実行します。::
+
+    % make update-version NEW_VERSION=2.0.6
+
+これにより$GROONGA_CLONE_DIR/base_versionが更新されるのでコミットしておきます。
 
 ビルド時のTIPS
 ------------------------------------------------------------
