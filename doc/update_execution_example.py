@@ -110,7 +110,7 @@ def execmd(command, fout):
 
 processed_files = []
 def readfile(fname, outflag):
-  if outflag > 0 and fname in processed_files:
+  if fname in processed_files:
     print "skipped processed file: %s" % fname
     return
   if outflag > 32:
@@ -141,13 +141,12 @@ def readfile(fname, outflag):
           reconnect(database_name)
         elif cmd.startswith('.. include:: '):
           a = rootdir + cmd[13:]
-          if outflag == 0:
-            dir_name = os.path.dirname(a)
-            if not os.path.exists(dir_name):
-              os.makedirs(dir_name)
-            fout = open(a, 'w')
-            print '### write start : ' + a
-            fout.write("Execution example::\n\n")
+          dir_name = os.path.dirname(a)
+          if not os.path.exists(dir_name):
+            os.makedirs(dir_name)
+          fout = open(a, 'w')
+          print '### write start : ' + a
+          fout.write("Execution example::\n\n")
         elif cmd.startswith('.. % '):
           command_line = cmd[5:]
           if fout:
