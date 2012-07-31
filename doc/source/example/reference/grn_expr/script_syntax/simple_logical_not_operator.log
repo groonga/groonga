@@ -10,7 +10,7 @@ Execution example::
   #   [
   #     [
   #       [
-  #         1
+  #         4
   #       ], 
   #       [
   #         [
@@ -31,10 +31,28 @@ Execution example::
   #         ]
   #       ], 
   #       [
-  #         1, 
-  #         "The first post!", 
-  #         "Welcome! This is my first post!", 
-  #         5
+  #         4, 
+  #         "Good-bye Senna", 
+  #         "I migrated all Senna system!", 
+  #         3
+  #       ], 
+  #       [
+  #         5, 
+  #         "Good-bye Tritonn", 
+  #         "I also migrated all Tritonn system!", 
+  #         3
+  #       ], 
+  #       [
+  #         2, 
+  #         "Groonga", 
+  #         "I started to use groonga. It's very fast!", 
+  #         10
+  #       ], 
+  #       [
+  #         3, 
+  #         "Mroonga", 
+  #         "I also started to use mroonga. It's also very fast! Really fast!", 
+  #         15
   #       ]
   #     ]
   #   ]

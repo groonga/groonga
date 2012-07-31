@@ -35,26 +35,58 @@ Execution example::
   #       ]
   #     ], 
   #     [
-  #       256, 
-  #       "Entries", 
-  #       "/tmp/groonga-databases/commands_select.0000100", 
+  #       259, 
+  #       "bigram", 
+  #       "/tmp/groonga-databases/suggest.0000103", 
+  #       "TABLE_PAT_KEY|KEY_NORMALIZE|PERSISTENT", 
+  #       "ShortText", 
+  #       "null"
+  #     ], 
+  #     [
+  #       278, 
+  #       "event_query", 
+  #       "/tmp/groonga-databases/suggest.0000116", 
+  #       "TABLE_NO_KEY|PERSISTENT", 
+  #       "null", 
+  #       "null"
+  #     ], 
+  #     [
+  #       258, 
+  #       "event_type", 
+  #       "/tmp/groonga-databases/suggest.0000102", 
   #       "TABLE_HASH_KEY|PERSISTENT", 
   #       "ShortText", 
   #       "null"
   #     ], 
   #     [
-  #       259, 
-  #       "Terms", 
-  #       "/tmp/groonga-databases/commands_select.0000103", 
+  #       261, 
+  #       "item_query", 
+  #       "/tmp/groonga-databases/suggest.0000105", 
   #       "TABLE_PAT_KEY|KEY_NORMALIZE|PERSISTENT", 
   #       "ShortText", 
   #       "null"
   #     ], 
   #     [
-  #       262, 
-  #       "Thesaurus", 
-  #       "/tmp/groonga-databases/commands_select.0000106", 
+  #       260, 
+  #       "kana", 
+  #       "/tmp/groonga-databases/suggest.0000104", 
   #       "TABLE_PAT_KEY|KEY_NORMALIZE|PERSISTENT", 
+  #       "ShortText", 
+  #       "null"
+  #     ], 
+  #     [
+  #       270, 
+  #       "pair_query", 
+  #       "/tmp/groonga-databases/suggest.000010E", 
+  #       "TABLE_HASH_KEY|PERSISTENT", 
+  #       "UInt64", 
+  #       "null"
+  #     ], 
+  #     [
+  #       277, 
+  #       "sequence_query", 
+  #       "/tmp/groonga-databases/suggest.0000115", 
+  #       "TABLE_HASH_KEY|PERSISTENT", 
   #       "ShortText", 
   #       "null"
   #     ]

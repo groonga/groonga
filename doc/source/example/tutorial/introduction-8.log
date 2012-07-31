@@ -22,26 +22,6 @@ Execution example::
   #           "ShortText"
   #         ], 
   #         [
-  #           "country", 
-  #           "SiteCountry"
-  #         ], 
-  #         [
-  #           "domain", 
-  #           "SiteDomain"
-  #         ], 
-  #         [
-  #           "link", 
-  #           "Site"
-  #         ], 
-  #         [
-  #           "links", 
-  #           "Site"
-  #         ], 
-  #         [
-  #           "location", 
-  #           "WGS84GeoPoint"
-  #         ], 
-  #         [
   #           "title", 
   #           "ShortText"
   #         ]
@@ -49,15 +29,6 @@ Execution example::
   #       [
   #         1, 
   #         "http://example.org/", 
-  #         "japan", 
-  #         ".org", 
-  #         "http://example.net/", 
-  #         [
-  #           "http://example.net/", 
-  #           "http://example.org/", 
-  #           "http://example.com/"
-  #         ], 
-  #         "128452975x503157902", 
   #         "This is test record 1!"
   #       ]
   #     ]

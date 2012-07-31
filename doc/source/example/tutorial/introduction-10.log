@@ -1,11 +1,4 @@
 Execution example::
 
   table_create --name Terms --flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type ShortText --default_tokenizer TokenBigram
-  # [
-  #   [
-  #     0,
-  #	1342584881.91118,
-  #	0.0449278354644775
-  #   ],
-  #   true
-  # ]
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
