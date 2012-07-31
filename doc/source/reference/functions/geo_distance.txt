@@ -2,6 +2,10 @@
 
 .. highlightlang:: none
 
+.. groonga-command
+.. database: geo_distance
+
+
 geo_distance
 ============
 
@@ -56,8 +60,34 @@ Using the column value of location
 
 Here are a schema definition of ``Stations`` table and sample data to show usage.
 
+::
+
+  table_create Stations TABLE_HASH_KEY ShortText
+  column_create Stations location COLUMN_SCALAR WGS84GeoPoint
+  load --table Stations
+  [
+    {
+      "_key", "location"
+    },
+    {
+      "Tokyo", "128452975x503157902"
+    },
+  ]
+
 .. groonga-command
 .. include:: ../../example/reference/functions/geo_distance_setup_location.log
+.. table_create Stations TABLE_HASH_KEY ShortText
+.. column_create Stations location COLUMN_SCALAR WGS84GeoPoint
+.. load --table Stations
+.. [
+..   {
+..      "_key", "location"
+..   },
+..   {
+..      "Tokyo", "128452975x503157902"
+..   },
+.. ]
+
 
 This execution example creates a table named ``Stations`` which has one column named ``location``.
 ``location`` column stores the value of coordinate.
@@ -65,6 +95,7 @@ The coordinate of Tokyo is stored as sample data.
 
 .. groonga-command
 .. include:: ../../example/reference/functions/geo_distance_location_rectangle.log
+.. select Stations --output_columns _score --filter 1 --scorer '_score = geo_distance(location, "155047000x508862800", "rectangle")'
 
 This sample shows that ``geo_distance`` use the value of ``location`` column
 and the value of coordinate to calculate distance.
@@ -78,14 +109,35 @@ Using the explicitly specified value of location
 
 Here are a schema definition of ``Geo`` table and sample data to show usage.
 
+::
+
+ table_create Geo TABLE_HASH_KEY ShortText
+ column_create Geo distance COLUMN_SCALAR Int32
+ load --table Geo
+ [
+   {
+     "_key": "the record for geo_distance() result"
+   }
+ ]
+
+
 .. groonga-command
 .. include:: ../../example/reference/functions/geo_distance_setup_distance.log
+.. table_create Geo TABLE_HASH_KEY ShortText
+.. column_create Geo distance COLUMN_SCALAR Int32
+.. load --table Geo
+.. [
+..   {
+..     "_key": "the record for geo_distance() result"
+..   }
+.. ]
 
 This execution example creates a table named ``Geo`` which has one column named ``distance``.
 ``distance`` column stores the value of distance.
 
 .. groonga-command
 .. include:: ../../example/reference/functions/geo_distance_distance_rectangle.log
+.. select Geo --output_columns distance --scorer 'distance = geo_distance("128452975x503157902", "155047000x508862800", "rectangle")'
 
 This sample shows that ``geo_distance`` use the coordinate of Tokyo
 and the coordinate of Sapporo to calculate distance.
@@ -165,12 +217,10 @@ You can also specify ``rect`` as abbrev expression.
 
 Here is a sample about calculating the value of distance with column value.
 
-.. groonga-command
 .. include:: ../../example/reference/functions/geo_distance_location_rectangle.log
 
 Here is a sample about calculating the value of distance with explicitly specified point.
 
-.. groonga-command
 .. include:: ../../example/reference/functions/geo_distance_distance_rectangle.log
 
 .. note::
@@ -185,7 +235,6 @@ Here is a sample about calculating the value of distance with explicitly specifi
     If you specified the string indicating the coordinate as the value
     of ``point1`` with ``sphere`` or ``ellipsoid``, ``geo_distance``
     returns 0 as the value of distance.
-
 
 
 ``sphere``
@@ -203,6 +252,7 @@ Here is a sample about calculating the value of distance with column value.
 
 .. groonga-command
 .. include:: ../../example/reference/functions/geo_distance_location_sphere.log
+.. select Stations --output_columns _score --filter 1 --scorer '_score = geo_distance(location, "155047000x508862800", "sphere")'
 
 ``ellipsoid``
 ...............
@@ -220,6 +270,7 @@ Here is a sample about calculating the value of distance with column value.
 
 .. groonga-command
 .. include:: ../../example/reference/functions/geo_distance_location_ellipsoid.log
+.. select Stations --output_columns _score --filter 1 --scorer '_score = geo_distance(location, "155047000x508862800", "ellipsoid")'
 
 Return value
 ------------
