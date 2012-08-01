@@ -1,6 +1,6 @@
 Execution example::
 
-  select Stations --output_columns _score --filter 1 --scorer '_score = geo_distance(location, "155047000x508862800", "ellipsoid")'
+  select Cities --output_columns _score --filter 1 --scorer '_score = geo_distance(location, "185428000x-461000", "ellipsoid")'
   # [
   #   [
   #     0, 
@@ -19,7 +19,7 @@ Execution example::
   #         ]
   #       ], 
   #       [
-  #         15400284
+  #         5706263
   #       ]
   #     ]
   #   ]
