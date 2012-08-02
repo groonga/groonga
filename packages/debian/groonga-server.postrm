@@ -3,14 +3,14 @@
 set -e
 
 if [ "$1" = "purge" ]; then
-        rm -f /var/run/groonga/*
-        dpkg-statoverride --remove /var/run/groonga
-        rm -rf /var/lib/groonga/*
-        dpkg-statoverride --remove /var/lib/groonga
-        rm -rf /etc/groonga/*
-        dpkg-statoverride --remove /etc/groonga
-        rm -rf /var/log/groonga/*
-        dpkg-statoverride --remove /var/log/groonga
+    rm -f /var/run/groonga/*
+    dpkg-statoverride --remove /var/run/groonga
+    rm -rf /var/lib/groonga/*
+    dpkg-statoverride --remove /var/lib/groonga
+    rm -rf /etc/groonga/*
+    dpkg-statoverride --remove /etc/groonga
+    rm -rf /var/log/groonga/*
+    dpkg-statoverride --remove /var/log/groonga
 fi
 
 #DEBHELPER#
