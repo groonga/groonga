@@ -8,7 +8,7 @@ Type=forking
 User=groonga
 Group=groonga
 ExecStart=/usr/sbin/groonga-httpd
-ExecStop=/usr/sbin/groonga-httpd -s
+ExecStop=/usr/sbin/groonga-httpd -s stop
 
 [Install]
 WantedBy=multi-user.target
