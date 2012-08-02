@@ -35,7 +35,7 @@
 #define GRN_PLUGINS_DIR      "${GRN_PLUGINS_DIR}"
 #define GRN_PLUGIN_SUFFIX    "${GRN_PLUGIN_SUFFIX}"
 
-#define GRN_DLL_FILENAME     "${GRN_DLL_FILENAME}"
+#define GRN_DLL_FILENAME     L"${GRN_DLL_FILENAME}"
 
 /* build switches */
 #cmakedefine USE_MEMORY_DEBUG
