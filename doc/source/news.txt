@@ -30,6 +30,10 @@ Improvements
 * [rpm][fedora] Dropped Fedora 16 support.
 * Supported logical not ``"!"`` operator. [GitHub#22]
 * [httpd] Supported per location groonga database.
+* Fixed to return error messages while load command is processing.
+* Fixed to exit load command when an uncontinuable error occurred.
+* Fixed to stop load command for invalid --columns value.
+* Fixed to support opening locked database. [GitHub#21]
 
 Fixes
 ^^^^^
@@ -42,14 +46,10 @@ Fixes
 * Fixed infinite loop problem for not implemented operator without index.
   [GitHub#20]
 * Fixed a wrong error code which causes memory leaks.
-* Fixed to return error messages while load command is processing.
 * Fixed a wrong error code which collapse ja columns.
-* Fixed to exit load command when an uncontinuable error occurred.
-* Fixed to stop load command for invalid --columns value.
 * [admin] Fixed to escape error message.
 * Fixed to ignore unloadable objects which causes database incompatible.
   [#1429] [Reported by IWAI, Masaharu]
-* Fixed to support opening locked database. [GitHub#21]
 
 Thanks
 ^^^^^^
