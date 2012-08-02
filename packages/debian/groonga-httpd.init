@@ -64,7 +64,11 @@ DAEMON_ARGS="${DAEMON_ARGS} ${OPTION_ARGS}"
 send_command()
 {
     command=$1
-    $CURL "http://${ADDRESS}:${PORT}/d/${command}"
+    if [ "$command" = "status" ]; then
+	$CURL --max-time $STATUS_TIMEOUT "http://${ADDRESS}:${PORT}/d/${command}"
+    else 
+	$CURL "http://${ADDRESS}:${PORT}/d/${command}"
+    fi
 }
 
 #

@@ -7,6 +7,6 @@
 #LOG_PATH=/var/log/groonga/groonga.log
 #QUERY_LOG_PATH=/var/log/groonga/query.log
 #PROTOCOL=http
-
+STATUS_TIMEOUT=3
 # Comment out this to disable groonga-httpd daemon.
 ENABLE=yes
