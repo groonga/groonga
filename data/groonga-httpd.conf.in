@@ -2,7 +2,7 @@ worker_processes 1;
 
 # Match this to the file owner of groonga database files if groonga-httpd is
 # run as root.
-#user groonga;
+user groonga groonga;
 
 events {
   worker_connections 1024;
