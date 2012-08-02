@@ -1,0 +1,15 @@
+#! /bin/sh
+
+set -e
+
+if [ "$1" = "purge" ]; then
+    rm -f /var/run/groonga/*
+    rm -rf /var/log/groonga/httpd/*
+    dpkg-statoverride --remove /var/log/groonga/httpd
+    rm -rf /etc/groonga/httpd/logs/*
+    dpkg-statoverride --remove /etc/groonga/httpd/logs
+    rm -rf /etc/groonga/httpd/*
+    dpkg-statoverride --remove /etc/groonga/httpd
+fi
+
+#DEBHELPER#
