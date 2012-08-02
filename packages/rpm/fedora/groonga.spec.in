@@ -44,6 +44,16 @@ Requires(postun):	/sbin/ldconfig
 %description libs
 This package contains the libraries for groonga
 
+%package server-common
+Summary:	Common packages for the groonga server and the groonga HTTP server
+Group:		Applications/Text
+License:	LGPLv2
+Requires:	%{name} = %{version}-%{release}
+Requires(pre):	shadow-utils
+
+%description server-common
+This package provides common settings for server use
+
 %package server
 Summary:	Groonga server
 Group:		Applications/Text
@@ -206,7 +216,7 @@ cd %{_builddir}/%{name}-%{version}/bindings/php
 make install INSTALL_ROOT=$RPM_BUILD_ROOT INSTALL="install -p"
 
 
-%pre server
+%pre server-common
 getent group groonga >/dev/null || groupadd -r groonga
 getent passwd groonga >/dev/null || \
        useradd -r -g groonga -d %{_localstatedir}/lib/groonga -s /sbin/nologin \
@@ -217,13 +227,6 @@ exit 0
 if [ $1 = 1 ] ; then
 	/bin/systemctl daemon-reload >/dev/null 2>&1 || :
 fi
-
-%pre httpd
-getent group groonga >/dev/null || groupadd -r groonga
-getent passwd groonga >/dev/null || \
-       useradd -r -g groonga -d %{_localstatedir}/lib/groonga -s /sbin/nologin \
-	-c 'groonga' groonga
-exit 0
 
 %post httpd
 if [ $1 = 1 ] ; then
@@ -294,6 +297,8 @@ fi
 %dir %{_libdir}/groonga/plugins/tokenizers
 %{_libdir}/groonga/plugins/table/table.so
 %{_datadir}/groonga/
+
+%files server-common
 
 %files server
 %defattr(-,root,root,-)

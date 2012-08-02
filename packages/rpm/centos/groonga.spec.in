@@ -45,6 +45,16 @@ Requires(postun):	/sbin/ldconfig
 %description libs
 This package contains the libraries for groonga
 
+%package server-common
+Summary:	Common packages for the groonga server and the groonga HTTP server
+Group:		Applications/Text
+License:	LGPLv2
+Requires:	%{name} = %{version}-%{release}
+Requires(pre):	shadow-utils
+
+%description server-common
+This package provides common settings for server use
+
 %package server
 Summary:	Groonga server
 Group:		Applications/Text
@@ -166,7 +176,7 @@ EOC
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%pre server
+%pre server-common
 getent group groonga >/dev/null || groupadd -r groonga
 getent passwd groonga >/dev/null || \
        useradd -r -g groonga -d %{_localstatedir}/lib/groonga -s /sbin/nologin \
@@ -221,6 +231,8 @@ fi
 %dir %{_libdir}/groonga/plugins/tokenizers
 %{_libdir}/groonga/plugins/table/table.so
 %{_datadir}/groonga/
+
+%files server-common
 
 %files server
 %defattr(-,root,root,-)
