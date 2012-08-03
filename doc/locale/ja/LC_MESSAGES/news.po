@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-24 18:41\n"
+"POT-Creation-Date: 2012-08-03 11:20\n"
 "PO-Revision-Date: 2012-07-23 17:35+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -122,7 +122,28 @@ msgstr "論理演算子 ``\"!\"`` をサポート。 [GitHub#22]"
 msgid "[httpd] Supported per location groonga database."
 msgstr "[httpd] groongaデータベースごとのロケーション指定をサポート。"
 
-#: ../../../source/news.txt:35 ../../../source/news.txt:94
+# e46b53a8c15d4e129bbe08d32c97e028
+#: ../../../source/news.txt:33
+msgid "Improved to return error messages while load command is processing."
+msgstr "loadコマンドを処理中にはエラーメッセージを返すように改善。"
+
+# 7b1f3f7a846d428bbbab56f2907b7bf7
+#: ../../../source/news.txt:34
+msgid "Improved to exit load command when an uncontinuable error occurred."
+msgstr "継続困難なエラーが発生した場合にloadコマンドを中断するように改善。"
+
+# 7b1f3f7a846d428bbbab56f2907b7bf7
+#: ../../../source/news.txt:35
+msgid "Improved to stop load command for invalid --columns value."
+msgstr ""
+"正しくない--columnsの値が渡されたときloadコマンドを中断するように改善。"
+
+# 6db960789eee4a90a998c1fed2c94972
+#: ../../../source/news.txt:36
+msgid "Supported to open locked database. [GitHub#21]"
+msgstr "ロックされたデータベースのオープンをサポート。 [GitHub#21]"
+
+#: ../../../source/news.txt:39 ../../../source/news.txt:94
 #: ../../../source/news.txt:138 ../../../source/news.txt:196
 #: ../../../source/news.txt:252 ../../../source/news.txt:298
 #: ../../../source/news/1.2.x.txt:37 ../../../source/news/1.2.x.txt:104
@@ -134,7 +155,7 @@ msgid "Fixes"
 msgstr "修正"
 
 # 2f7841cd8f1e4ee2a8048c5890fce87a
-#: ../../../source/news.txt:37
+#: ../../../source/news.txt:41
 msgid ""
 "Fixed a build problem about groonga-httpd on Mac OS X. [Reported by SHIMADA "
 "Koji]"
@@ -142,24 +163,24 @@ msgstr ""
 "groonga-httpdが Mac OS Xでビルドできない問題を修正。[島田 浩二さんが報告]"
 
 # 56f6e702bc9c4dbe8c9d941272ddefe0
-#: ../../../source/news.txt:39
+#: ../../../source/news.txt:43
 msgid "Fixed not to use installed groonga's header files for groonga-httpd."
 msgstr ""
 "groonga-httpdがインストール済みのヘッダファイルを使用しないように修正。"
 
 # db5573d71315448faa0125251813e783
-#: ../../../source/news.txt:40
+#: ../../../source/news.txt:44
 msgid "Fixed a build problem about groonga on Mac OS X Lion."
 msgstr "Mac OS X Lionでgroongaがビルドできない問題を修正。"
 
 # d3be6cfcd52948bebb170b9cbdc3bf3d
-#: ../../../source/news.txt:41
+#: ../../../source/news.txt:45
 msgid ""
 "[doc] Fixed a description of :doc:`/reference/commands/table_remove` command."
 msgstr "[doc] :doc:`/reference/commands/table_remove` コマンドの説明を修正。"
 
 # 6db960789eee4a90a998c1fed2c94972
-#: ../../../source/news.txt:42
+#: ../../../source/news.txt:46
 msgid ""
 "Fixed infinite loop problem for not implemented operator without index. "
 "[GitHub#20]"
@@ -168,48 +189,27 @@ msgstr ""
 "[GitHub#20]"
 
 # 3eb12b09336d4784879b5e89ec9e6dd1
-#: ../../../source/news.txt:44
+#: ../../../source/news.txt:48
 msgid "Fixed a wrong error code which causes memory leaks."
 msgstr "メモリリークを引き起すエラーコードの誤りを修正。"
 
-# e46b53a8c15d4e129bbe08d32c97e028
-#: ../../../source/news.txt:45
-msgid "Fixed to return error messages while load command is processing."
-msgstr "loadコマンドを処理中にはエラーメッセージを返すように修正。"
-
 # 2ed9b6ad39d04ff682e13ed4c308893f
-#: ../../../source/news.txt:46
+#: ../../../source/news.txt:49
 msgid "Fixed a wrong error code which collapse ja columns."
 msgstr "カラムの値を壊すことにつながるエラーコードの誤りを修正。"
 
-# 7b1f3f7a846d428bbbab56f2907b7bf7
-#: ../../../source/news.txt:47
-msgid "Fixed to exit load command when an uncontinuable error occurred."
-msgstr "継続困難なエラーが発生した場合にloadコマンドを中断するように修正。"
-
-# 7b1f3f7a846d428bbbab56f2907b7bf7
-#: ../../../source/news.txt:48
-msgid "Fixed to stop load command for invalid --columns value."
-msgstr ""
-"正しくない --columnsの値が渡されたときloadコマンドを中断するように修正。"
-
-#: ../../../source/news.txt:49
+#: ../../../source/news.txt:50
 msgid "[admin] Fixed to escape error message."
 msgstr "[admin] エラーメッセージをエスケープするように修正。"
 
 # 284fc40a2bf34aa8bd62e5c836e38432
-#: ../../../source/news.txt:50
+#: ../../../source/news.txt:51
 msgid ""
 "Fixed to ignore unloadable objects which causes database incompatible. "
 "[#1429] [Reported by IWAI, Masaharu]"
 msgstr ""
 "データベースの非互換を引き起こす読めないオブジェクトを無視するように修正。 "
 "[#1429] [岩井さんが報告]"
-
-# 6db960789eee4a90a998c1fed2c94972
-#: ../../../source/news.txt:52
-msgid "Fixed to support opening locked database. [GitHub#21]"
-msgstr "ロックされたデータベースのオープンをサポート。 [GitHub#21]"
 
 #: ../../../source/news.txt:55 ../../../source/news.txt:103
 #: ../../../source/news.txt:151 ../../../source/news.txt:218
