@@ -30,10 +30,10 @@ Improvements
 * [rpm][fedora] Dropped Fedora 16 support.
 * Supported logical not ``"!"`` operator. [GitHub#22]
 * [httpd] Supported per location groonga database.
-* Fixed to return error messages while load command is processing.
-* Fixed to exit load command when an uncontinuable error occurred.
-* Fixed to stop load command for invalid --columns value.
-* Fixed to support opening locked database. [GitHub#21]
+* Improved to return error messages while load command is processing.
+* Improved to exit load command when an uncontinuable error occurred.
+* Improved to stop load command for invalid --columns value.
+* Supported to open locked database. [GitHub#21]
 
 Fixes
 ^^^^^
