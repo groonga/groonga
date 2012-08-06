@@ -273,7 +273,8 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
   char cache_key[GRN_TABLE_MAX_KEY_SIZE];
   uint32_t cache_key_size = table_len + 1 + match_columns_len + 1 + query_len + 1 +
     filter_len + 1 + scorer_len + 1 + sortby_len + 1 + output_columns_len + 1 +
-    drilldown_len + 1 + drilldown_sortby_len + 1 + drilldown_output_columns_len +
+    drilldown_len + 1 + drilldown_sortby_len + 1 +
+    drilldown_output_columns_len + 1 +
     match_escalation_threshold_len + 1 + query_expansion_len + 1 +
     sizeof(grn_content_type) + sizeof(int) * 4;
   long long int threshold, original_threshold = 0;
