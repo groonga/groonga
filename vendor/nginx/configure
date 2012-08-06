@@ -33,6 +33,16 @@ if [ "$GROONGA_HTTPD_DEBUG" = "yes" ]; then
   configure_args="$configure_args --with-debug"
 fi
 
+if [ "$GROONGA_HTTPD_WITH_PCRE" = "yes" ]; then
+  CFLAGS="$CFLAGS $GROONGA_HTTPD_PCRE_CFLAGS"
+  LIBS="$LIBS $GROONGA_HTTPD_PCRE_LIBS_ONLY_L"
+else
+  configure_args="$configure_args --without-http_rewrite_module"
+fi
+
+export CFLAGS
+export LIBS
+
 cd "../nginx-${nginx_version}"
 
 ./configure \
@@ -42,7 +52,6 @@ cd "../nginx-${nginx_version}"
   --error-log-path="${GROONGA_HTTPD_ERROR_LOG_PATH}" \
   --http-log-path="${GROONGA_HTTPD_HTTP_LOG_PATH}" \
   --add-module="${GROONGA_HTTPD_MODULE_PATH}" \
-  --without-http_rewrite_module \
   ${configure_args}
 
 if [ "$GROONGA_HTTPD_DEBUG" = "yes" ]; then

@@ -1211,6 +1211,29 @@ else
 fi
 AM_CONDITIONAL(WITH_NGINX, test "$enable_nginx" = "yes")
 
+# PCRE
+WITH_PCRE=no
+AC_ARG_WITH(pcre,
+  [AS_HELP_STRING([--without-pcre],
+    [use PCRE for groonga-httpd. [default=auto-detect]])],
+  [with_pcre="$witheval"],
+  [with_pcre="auto"])
+if test "x$with_pcre" != "xno"; then
+  m4_ifdef([PKG_CHECK_MODULES], [
+    PKG_CHECK_MODULES([PCRE], [libpcre],
+      [_PKG_CONFIG(PCRE_LIBS_ONLY_L, [libs-only-L], [libpcre])
+       WITH_PCRE=yes],
+      [WITH_PCRE=no])
+    ],
+    [WITH_PCRE=no])
+  if test "x$with_pcre" = "xyes" -a "$WITH_PCRE" != "yes"; then
+    AC_MSG_ERROR("No PCRE found")
+  fi
+fi
+AC_SUBST(WITH_PCRE)
+AC_SUBST(PCRE_CFLAGS)
+AC_SUBST(PCRE_LIBS_ONLY_L)
+
 # For package
 AC_ARG_WITH(rsync-path,
             [AS_HELP_STRING([--with-rsync-path=PATH],
@@ -1265,7 +1288,6 @@ echo "    buildable:           ${document_buildable}"
 echo "    built:               ${have_built_document}"
 echo "  Munin plugins:         ${install_munin_plugins}"
 echo "  Package platform:      ${package_platform}"
-echo "  groonga-httpd:         ${enable_nginx}"
 echo
 echo "Paths:"
 echo "  Install path prefix:   ${prefix}"
@@ -1308,6 +1330,11 @@ echo "groonga-httpd:"
 echo "  enable:                $enable_nginx"
 if test "$enable_nginx" = "yes"; then
   echo "  default database path: $GROONGA_HTTPD_DEFAULT_DATABASE_PATH"
+  echo "  PCRE:                  $WITH_PCRE"
+  if test "$WITH_PCRE" = "yes"; then
+    echo "    CFLAGS:              $PCRE_CFLAGS"
+    echo "    LIBS only -L:        $PCRE_LIBS_ONLY_L"
+  fi
 fi
 echo
 
