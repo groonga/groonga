@@ -125,3 +125,4 @@ cmake_install.cmake
 /test/unit/Gemfile.lock
 /test/function/grntest
 /*.tar.gz
+/tmp
