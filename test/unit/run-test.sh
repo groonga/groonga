@@ -87,6 +87,12 @@ case `uname` in
 	;;
 esac
 
+tmpfs=/dev/shm
+if test -e $tmpfs; then
+    rm -rf "$BASE_DIR/tmp"
+    ln -s $tmpfs "$BASE_DIR/tmp"
+fi
+
 no_test=1
 
 cutter_result=0
