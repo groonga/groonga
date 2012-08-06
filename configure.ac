@@ -1197,19 +1197,19 @@ AC_ARG_WITH(groonga-github-com-path,
             [GROONGA_GITHUB_COM_PATH=""])
 AC_SUBST(GROONGA_GITHUB_COM_PATH)
 
-# nginx
-AC_ARG_ENABLE(nginx,
-  [AS_HELP_STRING([--enable-nginx],
+# groonga-httpd
+AC_ARG_ENABLE(groonga_httpd,
+  [AS_HELP_STRING([--enable-groonga-httpd],
     [enable nginx used for groonga-httpd. [default=yes]])],
-  [enable_nginx="$enableval"],
-  [enable_nginx="yes"])
-if test "x$enable_nginx" != "xno"; then
-  enable_nginx="yes"
+  [enable_groonga_httpd="$enableval"],
+  [enable_groonga_httpd="yes"])
+if test "x$enable_groonga_httpd" != "xno"; then
+  enable_groonga_httpd="yes"
   AC_CONFIG_SUBDIRS([vendor/nginx])
 else
-  enable_nginx="no"
+  enable_groonga_httpd="no"
 fi
-AM_CONDITIONAL(WITH_NGINX, test "$enable_nginx" = "yes")
+AM_CONDITIONAL(WITH_GROONGA_HTTPD, test "$enable_groonga_httpd" = "yes")
 
 # PCRE
 WITH_PCRE=no
@@ -1327,8 +1327,8 @@ fi
 echo
 
 echo "groonga-httpd:"
-echo "  enable:                $enable_nginx"
-if test "$enable_nginx" = "yes"; then
+echo "  enable:                $enable_groonga_httpd"
+if test "$enable_groonga_httpd" = "yes"; then
   echo "  default database path: $GROONGA_HTTPD_DEFAULT_DATABASE_PATH"
   echo "  PCRE:                  $WITH_PCRE"
   if test "$WITH_PCRE" = "yes"; then
