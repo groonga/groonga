@@ -26,8 +26,8 @@ module GroongaTestUtils
   def setup_database_path
     base_dir = ENV["BUILD_DIR"] || ENV["BASE_DIR"]
     base_dir ||= File.join(File.dirname(__FILE__), "..", "..")
-    @tmp_base_dir = File.join(File.expand_path(base_dir), "tmp")
-    FileUtils.rm_rf(@tmp_base_dir)
+    @tmp_base_dir = File.join(File.expand_path(base_dir), "tmp", "ruby")
+    FileUtils.rm_rf(@tmp_base_dir, :secure => true)
     FileUtils.mkdir_p(@tmp_base_dir)
     @tmp_dir = Dir.mktmpdir("tmp", @tmp_base_dir)
     @database_path = File.join(@tmp_dir, "database")
@@ -35,7 +35,7 @@ module GroongaTestUtils
 
   def teardown_database_path
     @tmp_base_dir ||= nil
-    FileUtils.rm_rf(@tmp_base_dir) if @tmp_base_dir
+    FileUtils.rm_rf(@tmp_base_dir, :secure => true) if @tmp_base_dir
   end
 
   def setup_server(protocol=nil)
