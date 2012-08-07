@@ -40,6 +40,7 @@ Syntax
          [cache=yes]
          [match_escalation_threshold=0]
          [query_expansion=null]
+         [query_flags=ALLOW_PRAGMA|ALLOW_COLUMN]
 
 Usage
 -----
@@ -533,6 +534,41 @@ more liked entries.
 
 The ``select`` command outputs records that ``n_likes`` column value
 is equal to or more than ``10`` from ``Entries`` table.
+
+.. _query-flags:
+
+``query_flags``
+"""""""""""""""
+
+It customs ``query`` parameter syntax. You cannot update column value
+by ``query`` parameter by default. But if you specify
+``ALLOW_COLUMN|ALLOW_UPDATE`` as ``query_flags``, you can update
+column value ``query``.
+
+Here are available values:
+
+* ``ALLOW_PRAGMA``
+* ``ALLOW_COLUMN``
+* ``ALLOW_UPDATE``
+
+``ALLOW_PRAGMA`` enables pragma at the head of ``query``.
+
+``ALLOW_COLUMN`` enables search againt columns that are not included
+in ``match_columns``. To specify column, there are ``COLUMN:...``
+syntaxes.
+
+``ALLOW_UPDATE`` enables column update by ``query`` with
+``COLUMN:=NEW_VALUE`` syntax. ``ALLOW_COLUMN`` is also required to
+update column because the column update syntax specifies column.
+
+They can be combined by separated ``|`` such as
+``ALLOW_COLUMN|ALLOW_UPDATE``.
+
+The default value is ``ALLOW_PRAGMA|ALLOW_COLUMN``.
+
+TODO: example
+
+See also :doc:`/reference/grn_expr/query_syntax`.
 
 Output related parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^
