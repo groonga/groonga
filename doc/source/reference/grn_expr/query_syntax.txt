@@ -564,9 +564,9 @@ Assignment expression
 ---------------------
 
 This section is for advanced users. Because assignment expression is
-disabled in ``--query`` option of :doc:`/reference/commands/select`. You need to
-use groonga as a library instead of server or command line tool for
-assignment expression.
+disabled in ``--query`` option of :doc:`/reference/commands/select` by
+default. You need to specify ``ALLOW_COLUMN|ALLOW_UPDATE`` as
+``--query_flags`` option value to enable assignment expression.
 
 Assignment expression in query syntax has some limitations. So you
 should use :doc:`/reference/grn_expr/script_syntax` instead of query syntax for
