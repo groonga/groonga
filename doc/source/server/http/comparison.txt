@@ -8,20 +8,253 @@ Comparison
 There are many differences between :doc:`groonga` and
 :doc:`groonga-httpd`. Here is a comparison table.
 
-+-----------------------+----------+---------------+
-|                       | groonga  | groonga-httpd |
-+=======================+==========+===============+
-| Performance           | o        | o             |
-+-----------------------+----------+---------------+
-| Configuration file    | optional | required      |
-+-----------------------+----------+---------------+
-|  Custom prefix path   | x        | o             |
-+-----------------------+----------+---------------+
-|    Multi databases    | x        | o             |
-+-----------------------+----------+---------------+
-| Basic authentication  | x        | o             |
-+-----------------------+----------+---------------+
-|   Gzip compression    | x        | o             |
-+-----------------------+----------+---------------+
-|         POST          | x        | x             |
-+-----------------------+----------+---------------+
++------------------------+------------------------+----------------------+
+|                        |        groonga         |    groonga-httpd     |
++========================+========================+======================+
+|      Performance       | o                      | o                    |
++------------------------+------------------------+----------------------+
+| Using multi CPU cores  | o (by multi threading) | o (by multi process) |
++------------------------+------------------------+----------------------+
+|   Configuration file   | optional               | required             |
++------------------------+------------------------+----------------------+
+|   Custom prefix path   | x                      | o                    |
++------------------------+------------------------+----------------------+
+| Custom command version | o                      | x (comming soon)     |
++------------------------+------------------------+----------------------+
+|    Multi databases     | x                      | o                    |
++------------------------+------------------------+----------------------+
+|     Authentication     | x                      | o                    |
++------------------------+------------------------+----------------------+
+|    Gzip compression    | x                      | o                    |
++------------------------+------------------------+----------------------+
+|          POST          | x                      | x (comming soon)     |
++------------------------+------------------------+----------------------+
+|         HTTPS          | x                      | o                    |
++------------------------+------------------------+----------------------+
+|       Access log       | x                      | o                    |
++------------------------+------------------------+----------------------+
+|   Upgrading without    | x                      | o                    |
+|        downtime        |                        |                      |
++------------------------+------------------------+----------------------+
+
+Performance
+-----------
+
+Both :doc:`groonga` and :doc:`groonga-httpd` are very fast. They can
+work with the same throughput.
+
+Using multi CPU cores
+---------------------
+
+Groonga scales on multi CPU cores. :doc:`groonga` scales by multi
+threading. :doc:`groonga-httpd` scales by multi processes.
+
+:doc:`groonga` uses the same number of threads as CPU cores by
+default. If you have 8 CPU cores, 8 threads are used by default.
+
+:doc:`groonga-httpd` uses 1 process by default. You need to set
+`worker_processes
+<http://nginx.org/en/docs/ngx_core_module.html#worker_processes>`_
+directive to use CPU cores. If you have 8 CPU cores, specify
+``worker_processes 8`` in configuration file like the following::
+
+  worker_processes 8;
+
+  http {
+    # ...
+  }
+
+Configuration file
+------------------
+
+:doc:`groonga` can work without configuration file. All configuration
+items such as port number and the max number of threads can be
+specified by command line. Configuration file is also used to specify
+configuration items.
+
+It's very easy to run groonga HTTP server because :doc:`groonga`
+requires just a few options to run. Here is the most simple command
+line to start HTTP server by :doc:`groonga`::
+
+  % groonga --protocol http -d /PATH/TO/DATABASE
+
+:doc:`groonga-httpd` requires configuration file to run. Here is the
+most simple configuration file to start HTTP server by
+:doc:`groonga-httpd`::
+
+  events {
+  }
+
+  http {
+    server {
+      listen 10041;
+
+      location /d/ {
+        groonga on;
+        groonga_database /PATH/TO/DATABASE;
+      }
+    }
+  }
+
+Custom prefix path
+------------------
+
+:doc:`groonga` accepts a path that starts with ``/d/`` as command URL
+such as ``http://localhost:10041/d/status``. You cannot change the
+prefix path ``/d/``.
+
+:doc:`groonga-httpd` can custom prefix path. For example, you can use
+``http://localhost:10041/d/status`` as command URL. Here is a sample
+configuration to use ``/api/`` as prefix path::
+
+  events {
+  }
+
+  http {
+    server {
+      listen 10041;
+
+      location /api/ { # <- change this
+        groonga on;
+        groonga_database /PATH/TO/DATABASE;
+      }
+    }
+  }
+
+Custom command version
+----------------------
+
+Groonga has :doc:`/reference/command_version` mechanism. It is for
+upgrading groonga commands with backward compatibility.
+
+:doc:`groonga` can change the default command veresion by
+``--default-command-version`` option. Here is a sample command line to
+use command version 2 as the default command version::
+
+  % groonga --protocol http --default-command-version 2 -d /PATH/TO/DATABASE
+
+:doc:`groonga-httpd` cannot custom the default command version
+yet. But it will be supported soon. If it is supported, you can
+provides different command version groonga commands in the same
+:doc:`groonga-httpd` process. Here is a sample configuration to
+provide command version 1 commands under ``/api/1/`` and command
+version 2 comamnds under ``/api/2/``::
+
+  events {
+  }
+
+  http {
+    server {
+      listen 10041;
+
+      groonga_database /PATH/TO/DATABASE;
+
+      location /api/1/ {
+        groonga on;
+        groogna_default_command_version 1;
+      }
+
+      location /api/2/ {
+        groonga on;
+        groogna_default_command_version 2;
+      }
+    }
+  }
+
+Multi databases
+---------------
+
+:doc:`groonga` can use only one database in a process.
+
+:doc:`groonga-httpd` can use one or more databases in a process. Here
+is a sample configuration to provide ``/tmp/db1`` database under
+``/db1/`` path and ``/tmp/db2`` database under ``/db2/`` path::
+
+  events {
+  }
+
+  http {
+    server {
+      listen 10041;
+
+      location /db1/ {
+        groonga on;
+        groonga_database /tmp/db1;
+      }
+
+      location /db2/ {
+        groonga on;
+        groonga_database /tmp/db2;
+      }
+    }
+  }
+
+Authentication
+--------------
+
+HTTP supports authentications such as basic authentication and digest
+authentication. It can be used for restricting danger command use such
+as :doc:`/reference/commands/shutdown`.
+
+:doc:`groonga` doesn't support any authentications. To restrict danger
+command use, other tools such as ``iptables`` or reverse proxy are
+needed.
+
+:doc:`groonga-httpd` supports basic authentication. Here is a sample
+configuration to restrict :doc:`/reference/commands/shutdown` command::
+
+  events {
+  }
+
+  http {
+    server {
+      listen 10041;
+
+      groonga_database /PATH/TO/DATABASE;
+
+      location /d/shutdown {
+        groonga on;
+        auth_basic           "manager is required!";
+        auth_basic_user_file "/etc/managers.htpasswd";
+      }
+
+      location /d/ {
+        groonga on;
+      }
+    }
+  }
+
+Gzip compression
+----------------
+
+HTTP supports response compression by gzip with ``Content-Encoding:
+gzip`` response header. It can reduce network bandwidth. It is useful
+for large search response.
+
+:doc:`groonga` doesn't support compression. To support compression,
+reverse proxy is needed.
+
+:doc:`groonga-httpd` supports gzip compression. Here is a sample
+configuration to compress response by gzip::
+
+  TODO
+
+POST
+----
+
+TODO
+
+HTTPS
+-----
+
+TODO
+
+Access log
+----------
+
+TODO
+
+Upgrading without downtime
+--------------------------
+
+TODO
