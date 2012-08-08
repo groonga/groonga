@@ -7,7 +7,7 @@ GQTP
 
 TODO
 
-See :doc:`/reference/executable/groonga`.
+See :doc:`/reference/executables/groonga`.
 
 ..
    .. toctree::

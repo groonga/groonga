@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-07-23 15:32\n"
-"PO-Revision-Date: 2012-07-23 17:34+0900\n"
+"PO-Revision-Date: 2012-08-08 21:54+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -580,12 +580,11 @@ msgstr ""
 
 # b524ab397f924a3ebb8e05933b35a91e
 #: ../../../source/install/others.txt:62
-#, fuzzy
 msgid ""
 "`libedit <http://www.thrysoee.dk/editline/>`_ for command line editing in :"
 "doc:`/reference/executables/groonga`"
 msgstr ""
-"`libedit <http://www.thrysoee.dk/editline/>`_ （ :doc:`/executables/groonga` "
+"`libedit <http://www.thrysoee.dk/editline/>`_ （ :doc:`/reference/executables/groonga` "
 "のコマンドライン編集用）"
 
 # 796e01ca2aa14ef49dc2064e60a4e781
@@ -670,12 +669,11 @@ msgstr ""
 
 # e73b963346834f5ab5ec13168e391364
 #: ../../../source/install/others.txt:106
-#, fuzzy
 msgid ""
 "The default is ``/usr/local``. In this case, :doc:`/reference/executables/"
 "groonga` is installed into ``/usr/local/bin/groonga``."
 msgstr ""
-"デフォルトは ``/usr/local`` 。デフォルトの場合は :doc:`/executables/groonga` "
+"デフォルトは ``/usr/local`` 。デフォルトの場合は :doc:`/reference/executables/groonga` "
 "は ``/usr/local/bin/groonga`` にインストールされます。"
 
 # 176d083a81b04e2995c73971d13f5cd4
@@ -725,13 +723,9 @@ msgstr ""
 #: ../../../source/install/others.txt:131
 msgid ""
 "Specifies the default log file path. You can override the default log path "
-"is ``goronga`` command's ``--log-path`` command line option. So this option "
+"is :doc:`/reference/executables/groonga` command's ``--log-path`` command line option. So this option "
 "is not critical build option. It's just for convenient."
-msgstr ""
-"ログファイルのデフォルトのパスを指定します。ログファイルのデフォルトのパス"
-"は :doc:`/executables/groonga` の ``--log-path`` コマンドラインオプションで変"
-"更できます。そのため、このオプションはそんなに重要なビルドオプションではあり"
-"ません。少し便利にするためのオプションです。"
+msgstr "ログファイルのデフォルトのパスを指定します。ログファイルのデフォルトのパスは :doc:`/reference/executables/groonga` の ``--log-path`` コマンドラインオプションで変更できます。そのため、このオプションはそんなに重要なビルドオプションではありません。少し便利にするためのオプションです。"
 
 # 0dd6627b854f4630bc1a40500d3d71c1
 #: ../../../source/install/others.txt:135
