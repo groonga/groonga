@@ -226,7 +226,8 @@ check_mecab_dictionary_encoding(grn_ctx *ctx)
     }
   } else {
     ERR(GRN_TOKENIZER_ERROR,
-        "mecab_new2 failed in check_mecab_dictionary_encoding");
+        "mecab_new2 failed in check_mecab_dictionary_encoding: %s",
+        mecab_strerror(NULL));
   }
 #endif
 }
