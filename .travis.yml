@@ -12,4 +12,5 @@ before_script:
   - ./configure --with-ruby19
 script:
   - NO_RUBY=yes test/unit/run-test.sh
+  - env
   - test/function/run-test.sh
