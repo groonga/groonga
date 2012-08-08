@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-08-08 13:24\n"
-"PO-Revision-Date: 2012-08-08 13:36+0900\n"
+"PO-Revision-Date: 2012-08-08 16:18+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -64,7 +64,7 @@ msgstr "`@groonga <https://twitter.com/groonga/>`_ がgroonga関連情報をツ�
 # 10109dd7c644437ead44d7dff06e7b11
 #: ../../../source/community.txt:27
 msgid "Please follow the account to get the latest groonga related information!"
-msgstr "このアカウントをフォローして最新のgroonga関連情報をゲットしてください！\n"
+msgstr "このアカウントをフォローして最新のgroonga関連情報をゲットしてください！"
 
 # 047c2e78bf92470fb89d281d034ba1cb
 #: ../../../source/community.txt:30
