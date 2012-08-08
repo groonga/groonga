@@ -11,4 +11,4 @@ before_script:
   - ./autogen.sh
   - ./configure --with-ruby19
 script:
-  - test/unit/run-test.sh
+  - NO_RUBY=yes test/unit/run-test.sh
