@@ -46,7 +46,7 @@ table_list
     [
       256,
       "Shops",
-      "tmp/db.0000100",
+      "tmp/grntest/db.0000100",
       "TABLE_HASH_KEY|PERSISTENT",
       "ShortText",
       "null"
