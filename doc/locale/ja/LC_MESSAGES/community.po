@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-29 13:03\n"
-"PO-Revision-Date: 2011-05-24 18:31+0900\n"
+"POT-Creation-Date: 2012-08-08 13:24\n"
+"PO-Revision-Date: 2012-08-08 13:36+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -50,3 +50,35 @@ msgid ""
 "`groonga-dev@lists.sourceforge.jp <http://lists.sourceforge.jp/mailman/"
 "listinfo/groonga-dev>`_"
 msgstr ""
+
+# fad57b46202447b389efbd5d26627c42
+#: ../../../source/community.txt:23
+msgid "Twitter"
+msgstr ""
+
+# 6dab49c2f7f4482dbf01f8bdc8fb1c6d
+#: ../../../source/community.txt:25
+msgid "`@groonga <https://twitter.com/groonga/>`_ tweets groonga related information."
+msgstr "`@groonga <https://twitter.com/groonga/>`_ がgroonga関連情報をツイートしています。"
+
+# 10109dd7c644437ead44d7dff06e7b11
+#: ../../../source/community.txt:27
+msgid "Please follow the account to get the latest groonga related information!"
+msgstr "このアカウントをフォローして最新のgroonga関連情報をゲットしてください！\n"
+
+# 047c2e78bf92470fb89d281d034ba1cb
+#: ../../../source/community.txt:30
+msgid "Facebook"
+msgstr ""
+
+# 21fcb920369045a2ab9ce38137ad279c
+#: ../../../source/community.txt:32
+msgid ""
+"`groonga page on Facebook <http://www.facebook.com/groonga>`_ shares groonga "
+"related information."
+msgstr "`Facebookのgroongaページ <http://www.facebook.com/groonga>`_ ではgroonga関連情報をシェアしています。"
+
+# 81e44e17bb284daf9739acd6f33e028c
+#: ../../../source/community.txt:35
+msgid "Please like the page to get the latest groonga related information!"
+msgstr "このページをいいね！して最新のgroonga関連情報をゲットしてください！"

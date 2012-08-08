@@ -18,3 +18,20 @@ For English speakers
 
 For Japanese speakers
   `groonga-dev@lists.sourceforge.jp <http://lists.sourceforge.jp/mailman/listinfo/groonga-dev>`_
+
+Twitter
+-------
+
+`@groonga <https://twitter.com/groonga/>`_ tweets groonga related
+information.
+
+Please follow the account to get the latest groonga related
+information!
+
+Facebook
+--------
+
+`groonga page on Facebook <http://www.facebook.com/groonga>`_ shares
+groonga related information.
+
+Please like the page to get the latest groonga related information!
