@@ -20,6 +20,7 @@ groonga documentation
    tutorial
    suggest
    geolocation_search
+   server
    reference
    spec
    limitations

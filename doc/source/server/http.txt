@@ -1,0 +1,29 @@
+.. -*- rst -*-
+
+.. highlightlang:: none
+
+HTTP
+====
+
+Groonga provides two HTTP server implementations.
+
+* :doc:`http/groonga`
+* :doc:`http/groonga-httpd`
+
+:doc:`http/groonga` is a simple implemntation. It is fast but doesn't
+have many HTTP features. It is convenient to try groonga because it
+requires just a few command line options to run.
+
+:doc:`http/groonga-httpd` is a `nginx <http://nginx.org/>`_ based
+implementation. Is is also fast and has full HTTP features.
+
+.. note::
+
+   :doc:`http/groonga-httpd` is still experimental.
+
+.. toctree::
+   :maxdepth: 2
+
+   http/comparison
+   http/groonga
+   http/groonga-httpd

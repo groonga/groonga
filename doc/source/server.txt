@@ -1,0 +1,12 @@
+.. -*- rst -*-
+
+.. highlightlang:: none
+
+Server
+======
+
+.. toctree::
+   :maxdepth: 2
+
+   server/gqtp
+   server/http

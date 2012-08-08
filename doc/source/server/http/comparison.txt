@@ -1,0 +1,27 @@
+.. -*- rst -*-
+
+.. highlightlang:: none
+
+Comparison
+==========
+
+There are many differences between :doc:`groonga` and
+:doc:`groonga-httpd`. Here is a comparison table.
+
++-----------------------+----------+---------------+
+|                       | groonga  | groonga-httpd |
++=======================+==========+===============+
+| Performance           | o        | o             |
++-----------------------+----------+---------------+
+| Configuration file    | optional | required      |
++-----------------------+----------+---------------+
+|  Custom prefix path   | x        | o             |
++-----------------------+----------+---------------+
+|    Multi databases    | x        | o             |
++-----------------------+----------+---------------+
+| Basic authentication  | x        | o             |
++-----------------------+----------+---------------+
+|   Gzip compression    | x        | o             |
++-----------------------+----------+---------------+
+|         POST          | x        | x             |
++-----------------------+----------+---------------+

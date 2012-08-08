@@ -1,0 +1,16 @@
+.. -*- rst -*-
+
+.. highlightlang:: none
+
+GQTP
+====
+
+TODO
+
+See :doc:`/reference/executable/groonga`.
+
+..
+   .. toctree::
+      :maxdepth: 2
+
+      gqtp/groonga
