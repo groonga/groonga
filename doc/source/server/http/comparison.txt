@@ -104,7 +104,7 @@ such as ``http://localhost:10041/d/status``. You cannot change the
 prefix path ``/d/``.
 
 :doc:`groonga-httpd` can custom prefix path. For example, you can use
-``http://localhost:10041/d/status`` as command URL. Here is a sample
+``http://localhost:10041/api/status`` as command URL. Here is a sample
 configuration to use ``/api/`` as prefix path::
 
   events {
@@ -193,15 +193,16 @@ Authentication
 --------------
 
 HTTP supports authentications such as basic authentication and digest
-authentication. It can be used for restricting danger command use such
+authentication. It can be used for restricting use of danger command such
 as :doc:`/reference/commands/shutdown`.
 
-:doc:`groonga` doesn't support any authentications. To restrict danger
-command use, other tools such as ``iptables`` or reverse proxy are
+:doc:`groonga` doesn't support any authentications. To restrict use of
+danger command, other tools such as iptables and reverse proxy are
 needed.
 
 :doc:`groonga-httpd` supports basic authentication. Here is a sample
-configuration to restrict :doc:`/reference/commands/shutdown` command::
+configuration to restrict use of :doc:`/reference/commands/shutdown`
+command::
 
   events {
   }
@@ -228,7 +229,7 @@ Gzip compression
 ----------------
 
 HTTP supports response compression by gzip with ``Content-Encoding:
-gzip`` response header. It can reduce network bandwidth. It is useful
+gzip`` response header. It can reduce network flow. It is useful
 for large search response.
 
 :doc:`groonga` doesn't support compression. To support compression,

@@ -15,7 +15,7 @@ have many HTTP features. It is convenient to try groonga because it
 requires just a few command line options to run.
 
 :doc:`http/groonga-httpd` is a `nginx <http://nginx.org/>`_ based
-implementation. Is is also fast and has full HTTP features.
+implementation. It is also fast and has many HTTP features.
 
 .. note::
 
