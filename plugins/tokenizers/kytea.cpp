@@ -242,7 +242,7 @@ grn_obj *grn_kytea_next(grn_ctx *ctx, int num_args, grn_obj **args,
                              token.c_str(), token.length(), status);
   } else {
     grn_tokenizer_token_push(ctx, &tokenizer->token, "", 0, status);
-  } 
+  }
   return NULL;
 }
 
