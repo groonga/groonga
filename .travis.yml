@@ -1,8 +1,7 @@
 notifications:
   recipients:
     - travis@clear-code.com
-rvm:
-  - 1.9.3
+language: c
 compiler:
   - gcc
   - clang
