@@ -776,16 +776,18 @@ check_overcommit_memory(grn_ctx *ctx)
   value = fgetc(file);
   if (value != '1') {
     GRN_LOG(ctx, GRN_LOG_NOTICE,
-            "vm.overcommit_memory kernel parameter should be 1: <%c>", value);
-    GRN_LOG(ctx, GRN_LOG_NOTICE,
+            "vm.overcommit_memory kernel parameter should be 1: <%c>: "
+            "See INFO level log to resolve this",
+            value);
+    GRN_LOG(ctx, GRN_LOG_INFO,
             "Some processings with vm.overcommit_memory != 1 "
             "may break DB under low memory condition.");
-    GRN_LOG(ctx, GRN_LOG_NOTICE,
+    GRN_LOG(ctx, GRN_LOG_INFO,
             "To set vm.overcommit_memory to 1");
-    GRN_LOG(ctx, GRN_LOG_NOTICE,
+    GRN_LOG(ctx, GRN_LOG_INFO,
             "add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and "
             "restart your system or");
-    GRN_LOG(ctx, GRN_LOG_NOTICE,
+    GRN_LOG(ctx, GRN_LOG_INFO,
             "run 'sudo /sbin/sysctl vm.overcommit_memory=1' command.");
   }
   fclose(file);
