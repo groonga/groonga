@@ -7,3 +7,5 @@ suggest \
   --frequency_threshold 1 \
   --conditional_probability_threshold 0.1 \
   --query 'ｓｔりん'
+
+select --table item_rurema --limit -1
