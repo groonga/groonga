@@ -33,14 +33,17 @@ if [ "$GROONGA_HTTPD_DEBUG" = "yes" ]; then
   configure_args="$configure_args --with-debug"
 fi
 
+NGX_CC_OPT="$CFLAGS"
+unset CFLAGS
+
 if [ "$GROONGA_HTTPD_WITH_PCRE" = "yes" ]; then
-  CFLAGS="$CFLAGS $GROONGA_HTTPD_PCRE_CFLAGS"
+  NGX_CC_OPT="$NGX_CC_OPT $GROONGA_HTTPD_PCRE_CFLAGS"
   LIBS="$LIBS $GROONGA_HTTPD_PCRE_LIBS_ONLY_L"
 else
   configure_args="$configure_args --without-http_rewrite_module"
 fi
 
-export CFLAGS
+export NGX_CC_OPT
 export LIBS
 
 cd "../nginx-${nginx_version}"
