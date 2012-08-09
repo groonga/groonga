@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-25 21:52\n"
-"PO-Revision-Date: 2012-08-08 21:52+0900\n"
+"POT-Creation-Date: 2012-08-09 11:11\n"
+"PO-Revision-Date: 2012-08-09 12:26+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -725,7 +725,7 @@ msgstr ""
 #: ../../../source/reference/commands/log_put.txt:47
 #: ../../../source/reference/commands/log_reopen.txt:34
 #: ../../../source/reference/commands/quit.txt:32
-#: ../../../source/reference/commands/select.txt:728
+#: ../../../source/reference/commands/select.txt:764
 #: ../../../source/reference/commands/shutdown.txt:32
 #: ../../../source/reference/commands/status.txt:34
 #: ../../../source/reference/commands/table_create.txt:92
@@ -1032,7 +1032,7 @@ msgstr ""
 #: ../../../source/reference/commands/define_selector.txt:35
 #: ../../../source/reference/commands/delete.txt:29
 #: ../../../source/reference/commands/load.txt:49
-#: ../../../source/reference/commands/select.txt:207
+#: ../../../source/reference/commands/select.txt:208
 #: ../../../source/reference/commands/view_add.txt:33
 #: ../../../source/reference/commands_not_implemented/add.txt:31
 #: ../../../source/reference/commands_not_implemented/get.txt:29
@@ -1404,7 +1404,7 @@ msgstr ""
 # 8c6985916c3e4bec93b6b745bbf80a77
 # 3cbdf8979a6d44799206ce56457e24e0
 #: ../../../source/reference/commands/define_selector.txt:39
-#: ../../../source/reference/commands/select.txt:230
+#: ../../../source/reference/commands/select.txt:231
 msgid "``match_columns``"
 msgstr ""
 
@@ -1416,7 +1416,7 @@ msgstr ""
 # 8f465d0ee1c541419a98f8b1f05fb573
 # 11adb5281de04fd69ef129a58505d3bb
 #: ../../../source/reference/commands/define_selector.txt:43
-#: ../../../source/reference/commands/select.txt:297
+#: ../../../source/reference/commands/select.txt:298
 msgid "``query``"
 msgstr ""
 
@@ -1430,7 +1430,7 @@ msgstr ""
 # 31a59e604b9145f386874eeddd10c92e
 #: ../../../source/reference/commands/define_selector.txt:47
 #: ../../../source/reference/commands/delete.txt:41
-#: ../../../source/reference/commands/select.txt:356
+#: ../../../source/reference/commands/select.txt:357
 msgid "``filter``"
 msgstr ""
 
@@ -1442,7 +1442,7 @@ msgstr ""
 # c7df6b4068c74f56be90006db6a0b9e6
 # 7c64827d21284905bbdb1da36b8eeb9e
 #: ../../../source/reference/commands/define_selector.txt:51
-#: ../../../source/reference/commands/select.txt:667
+#: ../../../source/reference/commands/select.txt:703
 msgid "``scorer``"
 msgstr ""
 
@@ -1454,7 +1454,7 @@ msgstr ""
 # 69a7aabc054e4c258287bb2f3fde4eb8
 # cceb06c4e46c481abab4e24e609c81f0
 #: ../../../source/reference/commands/define_selector.txt:55
-#: ../../../source/reference/commands/select.txt:571
+#: ../../../source/reference/commands/select.txt:607
 msgid "``sortby``"
 msgstr ""
 
@@ -1469,7 +1469,7 @@ msgstr ""
 # 45b67ae1ca214873bf915f291996553f
 # 6cbb461c2de74b98bfa845a6069fee02
 #: ../../../source/reference/commands/define_selector.txt:59
-#: ../../../source/reference/commands/select.txt:541
+#: ../../../source/reference/commands/select.txt:577
 #: ../../../source/reference/commands_not_implemented/add.txt:57
 #: ../../../source/reference/commands_not_implemented/get.txt:37
 #: ../../../source/reference/commands_not_implemented/set.txt:55
@@ -1485,7 +1485,7 @@ msgstr ""
 # 3267dcb3c2dc4b32a5a8d125d9a50773
 # 4583dc7bb4d741d88a919aad56982d0d
 #: ../../../source/reference/commands/define_selector.txt:63
-#: ../../../source/reference/commands/select.txt:612
+#: ../../../source/reference/commands/select.txt:648
 msgid "``offset``"
 msgstr ""
 
@@ -1497,7 +1497,7 @@ msgstr ""
 # dc25459f0ff4409186f6305f46da8f41
 # 9b1e828d9a2240e8b37bf1951958a1fe
 #: ../../../source/reference/commands/define_selector.txt:67
-#: ../../../source/reference/commands/select.txt:639
+#: ../../../source/reference/commands/select.txt:675
 msgid "``limit``"
 msgstr ""
 
@@ -1509,7 +1509,7 @@ msgstr ""
 # f5745f905dfd4f3e8dde2221527d2d4b
 # 27ee5d320c5549cdae6db36546829e1f
 #: ../../../source/reference/commands/define_selector.txt:71
-#: ../../../source/reference/commands/select.txt:679
+#: ../../../source/reference/commands/select.txt:715
 msgid "``drilldown``"
 msgstr ""
 
@@ -1521,7 +1521,7 @@ msgstr ""
 # 30aa52edb0c0402b921cda639b8291d4
 # 89852d2667614430982ce3292ac80bfa
 #: ../../../source/reference/commands/define_selector.txt:75
-#: ../../../source/reference/commands/select.txt:686
+#: ../../../source/reference/commands/select.txt:722
 msgid "``drilldown_sortby``"
 msgstr ""
 
@@ -1534,7 +1534,7 @@ msgstr ""
 # a7cb2c109afc4cae9b79bb618123a293
 # 42a752bdb1384e899e5b46feec887f20
 #: ../../../source/reference/commands/define_selector.txt:79
-#: ../../../source/reference/commands/select.txt:693
+#: ../../../source/reference/commands/select.txt:729
 msgid "``drilldown_output_columns``"
 msgstr ""
 
@@ -1548,7 +1548,7 @@ msgstr ""
 # 7b042c66e92241f4b63440c41d25de58
 # f40dbf01abbd4559acb72a422d4f278e
 #: ../../../source/reference/commands/define_selector.txt:83
-#: ../../../source/reference/commands/select.txt:700
+#: ../../../source/reference/commands/select.txt:736
 msgid "``drilldown_offset``"
 msgstr ""
 
@@ -1561,7 +1561,7 @@ msgstr ""
 # 729d9efea0604bacba4a4174ee373f0f
 # 83abc013a83f416d9304686b017d88b4
 #: ../../../source/reference/commands/define_selector.txt:87
-#: ../../../source/reference/commands/select.txt:707
+#: ../../../source/reference/commands/select.txt:743
 msgid "``drilldown_limit``"
 msgstr ""
 
@@ -2114,7 +2114,7 @@ msgstr ""
 # bb58728aaf864b5e9f38e3b2ca5f1eea
 #: ../../../source/reference/commands/select.txt:12
 #: ../../../source/reference/executables/groonga-httpd.txt:9
-#: ../../../source/reference/functions/geo_distance.txt:9
+#: ../../../source/reference/functions/geo_distance.txt:13
 msgid "Summary"
 msgstr "概要"
 
@@ -2140,7 +2140,7 @@ msgstr ""
 # eaadf83a10cc4718bfa95e2aca8b7206
 # 22e16b231eb94001863c7769e59e4b47
 #: ../../../source/reference/commands/select.txt:21
-#: ../../../source/reference/functions/geo_distance.txt:14
+#: ../../../source/reference/functions/geo_distance.txt:18
 msgid "Syntax"
 msgstr "構文"
 
@@ -2157,15 +2157,15 @@ msgstr ""
 # 09d40eac91774db29b40ff7e960663da
 # cd5e20dad0b8499894cefbe0dcbef7c8
 # 41271dbb3fa340a8a33cb610678460bb
-#: ../../../source/reference/commands/select.txt:45
+#: ../../../source/reference/commands/select.txt:46
 #: ../../../source/reference/executables/groonga-httpd.txt:29
-#: ../../../source/reference/functions/geo_distance.txt:27
+#: ../../../source/reference/functions/geo_distance.txt:31
 #: ../../../source/reference/output.txt:18
 msgid "Usage"
 msgstr "使い方"
 
 # 9782f8873234427088a9aa28c4981a34
-#: ../../../source/reference/commands/select.txt:47
+#: ../../../source/reference/commands/select.txt:48
 msgid ""
 "Let's learn about ``select`` usage with examples. This section shows many "
 "popular usages."
@@ -2175,7 +2175,7 @@ msgstr ""
 
 # 8f5aa6b4c71346a684b9ec9be85d9d41
 # a9f9574e54ea478b870c3a2372048a11
-#: ../../../source/reference/commands/select.txt:50
+#: ../../../source/reference/commands/select.txt:51
 #: ../../../source/reference/grn_expr/query_syntax.txt:32
 #: ../../../source/reference/grn_expr/script_syntax.txt:28
 msgid "Here are a schema definition and sample data to show usage."
@@ -2183,7 +2183,7 @@ msgstr "使い方を示すために使うスキーマ定義とサンプルデー
 
 # fc1abb5337ca4b508cfab8490c65a053
 # 6cf6adc0a2064db59d4c80c6d7854f78
-#: ../../../source/reference/commands/select.txt:79
+#: ../../../source/reference/commands/select.txt:80
 #: ../../../source/reference/grn_expr/query_syntax.txt:61
 #: ../../../source/reference/grn_expr/script_syntax.txt:57
 msgid ""
@@ -2199,7 +2199,7 @@ msgstr ""
 
 # 90a4877e386e42c18e74b3099cefcf52
 # e675f12376d04a93b6a956b444d1c92a
-#: ../../../source/reference/commands/select.txt:84
+#: ../../../source/reference/commands/select.txt:85
 #: ../../../source/reference/grn_expr/query_syntax.txt:66
 #: ../../../source/reference/grn_expr/script_syntax.txt:62
 msgid ""
@@ -2213,7 +2213,7 @@ msgstr ""
 
 # cf2e2189b4dc49c58208466d8cdd57f1
 # b4c08ca492a64cb0a08bbd496ab74531
-#: ../../../source/reference/commands/select.txt:88
+#: ../../../source/reference/commands/select.txt:89
 #: ../../../source/reference/grn_expr/query_syntax.txt:70
 #: ../../../source/reference/grn_expr/script_syntax.txt:66
 msgid "OK. The schema and data for examples are ready."
@@ -2221,12 +2221,12 @@ msgstr "これで例を示すためのスキーマとデータの準備ができ
 
 # 69f87742861a4aa18eabdb09f719e196
 # 3bcb01944c0b4325a3b97d85c33aec80
-#: ../../../source/reference/commands/select.txt:91
+#: ../../../source/reference/commands/select.txt:92
 msgid "Simple usage"
 msgstr "簡単な使い方"
 
 # 4030985d283545d9ab942b8972cda866
-#: ../../../source/reference/commands/select.txt:93
+#: ../../../source/reference/commands/select.txt:94
 msgid ""
 "Here is the most simple usage with the above schema and data. It outputs all "
 "records in ``Entries`` table."
@@ -2236,7 +2236,7 @@ msgstr ""
 
 # 9326936c94ed4c1ab4f8358da751705d
 # 8ab1430e32644c2e9b276ecf6548ed31
-#: ../../../source/reference/commands/select.txt:100
+#: ../../../source/reference/commands/select.txt:101
 msgid ""
 "Why does the command output all records? There are two reasons. The first "
 "reason is that the command doesn't specify any search conditions. No search "
@@ -2254,13 +2254,13 @@ msgstr ""
 
 # 9ce75f34143f463c86d81ed1fbdf8c4c
 # 11c7128772da489fa224cede43ccfb8e
-#: ../../../source/reference/commands/select.txt:108
+#: ../../../source/reference/commands/select.txt:109
 msgid "Search conditions"
 msgstr "検索条件"
 
 # 58d29294a1b44d16896fbc247bab328b
 # 04f1a06e812943cf9418e4bfcd8d40d0
-#: ../../../source/reference/commands/select.txt:110
+#: ../../../source/reference/commands/select.txt:111
 msgid ""
 "Search conditions are specified by ``query`` or ``filter``. You can also "
 "specify both ``query`` and ``filter``. It means that selected records must "
@@ -2272,13 +2272,13 @@ msgstr ""
 
 # 9ce75f34143f463c86d81ed1fbdf8c4c
 # 68e89afbcfed400884d18afd217646c9
-#: ../../../source/reference/commands/select.txt:115
+#: ../../../source/reference/commands/select.txt:116
 msgid "Search condition: ``query``"
 msgstr "検索条件: ``query``"
 
 # f38d1420f2d14021a292afcfc32c8469
 # 4594145e924d4eeaba889e47a74004d7
-#: ../../../source/reference/commands/select.txt:117
+#: ../../../source/reference/commands/select.txt:118
 msgid ""
 "``query`` is designed for search box in Web page. Imagine a search box in "
 "google.com. You specify search conditions for ``query`` as space separated "
@@ -2291,7 +2291,7 @@ msgstr ""
 "2つのキーワードを含むレコードを検索します。"
 
 # 4a9e672e94ff44dd890b89306e2ca7b3
-#: ../../../source/reference/commands/select.txt:122
+#: ../../../source/reference/commands/select.txt:123
 msgid ""
 "Normally, ``query`` parameter is used for specifying fulltext search "
 "conditions. It can be used for non fulltext search conditions but ``filter`` "
@@ -2301,7 +2301,7 @@ msgstr ""
 "も指定できますが、その用途には ``filter`` 引数の方が向いています。"
 
 # 51855cd50b08498f92669d7e9ead6c7d
-#: ../../../source/reference/commands/select.txt:126
+#: ../../../source/reference/commands/select.txt:127
 msgid ""
 "``query`` parameter is used with ``match_columns`` parameter when ``query`` "
 "parameter is used for specifying fulltext search conditions. "
@@ -2313,12 +2313,12 @@ msgstr ""
 "``query`` を検索するかを指定します。"
 
 # 1ccd84b3f15a4567b23bb0e7d8c66fcd
-#: ../../../source/reference/commands/select.txt:131
+#: ../../../source/reference/commands/select.txt:132
 msgid "Here is a simple ``query`` usage example."
 msgstr "以下は簡単な ``query`` の使用例です。"
 
 # dc8002538e794368b895d463ce15d092
-#: ../../../source/reference/commands/select.txt:137
+#: ../../../source/reference/commands/select.txt:138
 msgid ""
 "The ``select`` command searches records that contain a word ``fast`` in "
 "``content`` column value from ``Entries`` table."
@@ -2327,7 +2327,7 @@ msgstr ""
 "値に ``fast`` を含んでいるレコードを検索します。"
 
 # d492956858a94b749114d1f77b264395
-#: ../../../source/reference/commands/select.txt:140
+#: ../../../source/reference/commands/select.txt:141
 msgid ""
 "``query`` has query syntax but its deatils aren't described here. See :doc:`/"
 "reference/grn_expr/query_syntax` for datails."
@@ -2336,12 +2336,12 @@ msgstr ""
 "細は :doc:`/reference/grn_expr/query_syntax` を参照してください。"
 
 # 3fdd2f2c44104d3c9b77b445bca2477a
-#: ../../../source/reference/commands/select.txt:144
+#: ../../../source/reference/commands/select.txt:145
 msgid "Search condition: ``filter``"
 msgstr "検索条件: ``filter``"
 
 # 22b11fc0254542a49ee9375e29b682b3
-#: ../../../source/reference/commands/select.txt:146
+#: ../../../source/reference/commands/select.txt:147
 msgid ""
 "``filter`` is designed for complex search conditions. You specify search "
 "conditions for ``filter`` as ECMAScript like syntax."
@@ -2350,12 +2350,12 @@ msgstr ""
 "な構文で  ``filter`` に検索条件を指定します。"
 
 # 19c0a971f31d469f940d93c9f303237e
-#: ../../../source/reference/commands/select.txt:149
+#: ../../../source/reference/commands/select.txt:150
 msgid "Here is a simple ``filter`` usage example."
 msgstr "以下は簡単な ``filter`` の使用例です。"
 
 # a66d4191fe364dddb8366f4b0277104c
-#: ../../../source/reference/commands/select.txt:155
+#: ../../../source/reference/commands/select.txt:156
 msgid ""
 "The ``select`` command searches records that contain a word ``fast`` in "
 "``content`` column value and has ``Groonga`` as ``_key`` from ``Entries`` "
@@ -2370,7 +2370,7 @@ msgstr ""
 "と同じ意味です。 ``&&`` が論理積用の演算子で ``==`` が等価演算子です。"
 
 # c9f4049227474068baf439c6ec31e09b
-#: ../../../source/reference/commands/select.txt:162
+#: ../../../source/reference/commands/select.txt:163
 msgid ""
 "``filter`` has more operators and syntax like grouping by ``(...)`` its "
 "deatils aren't described here. See :doc:`/reference/grn_expr/script_syntax` "
@@ -2381,12 +2381,12 @@ msgstr ""
 "reference/grn_expr/script_syntax` を参照してください。"
 
 # 75d9a9918b454209bd41a305d28c9107
-#: ../../../source/reference/commands/select.txt:167
+#: ../../../source/reference/commands/select.txt:168
 msgid "Paging"
 msgstr "ページング"
 
 # 2dd3592b80a64deea52b8c7a6e28bfb9
-#: ../../../source/reference/commands/select.txt:169
+#: ../../../source/reference/commands/select.txt:170
 msgid ""
 "You can specify range of outputted records by ``offset`` and ``limit``. Here "
 "is an example to output only the 2nd record."
@@ -2395,7 +2395,7 @@ msgstr ""
 "す。以下は2番目のレコードだけを出力する例です。"
 
 # b2b34fa4db01477b8b23e3dc58dc88d1
-#: ../../../source/reference/commands/select.txt:176
+#: ../../../source/reference/commands/select.txt:177
 msgid ""
 "``offset`` is zero-origin. ``--offset 1`` means output range is started from "
 "the 2nd record."
@@ -2404,7 +2404,7 @@ msgstr ""
 "意味になります。"
 
 # 24418f72e84544449baae5be89db83c4
-#: ../../../source/reference/commands/select.txt:179
+#: ../../../source/reference/commands/select.txt:180
 msgid ""
 "``limit`` specifies the max number of output records. ``--limit 1`` means "
 "the number of output records is 1 at a maximium. If no records are matched, "
@@ -2415,12 +2415,12 @@ msgstr ""
 "ば ``select`` コマンドはどのレコードも出力しません。"
 
 # 6ce88aa450b3482698872d90de001481
-#: ../../../source/reference/commands/select.txt:184
+#: ../../../source/reference/commands/select.txt:185
 msgid "The total number of records"
 msgstr "全レコード数"
 
 # 7b8113abb1d14e13a47799683af7c624
-#: ../../../source/reference/commands/select.txt:186
+#: ../../../source/reference/commands/select.txt:187
 msgid ""
 "You can use ``--limit 0`` to retrieve the total number of recrods without "
 "any contents of records."
@@ -2429,7 +2429,7 @@ msgstr ""
 "す。"
 
 # 05e9f344caec4fe888c12c65b42d9908
-#: ../../../source/reference/commands/select.txt:193
+#: ../../../source/reference/commands/select.txt:194
 msgid ""
 "``--limit 0`` is also useful for retrieving only the number of matched "
 "records."
@@ -2437,13 +2437,13 @@ msgstr "``--limit 0`` はマッチしたレコード数だけを取得したい�
 
 # 3ed1ed0a3bb349fa8db4eccf86029d9f
 # 18532e03e38c4f96970d5935b7432cba
-#: ../../../source/reference/commands/select.txt:197
-#: ../../../source/reference/functions/geo_distance.txt:94
+#: ../../../source/reference/commands/select.txt:198
+#: ../../../source/reference/functions/geo_distance.txt:146
 msgid "Parameters"
 msgstr "引数"
 
 # e92758beef824130ab42669342c10d50
-#: ../../../source/reference/commands/select.txt:199
+#: ../../../source/reference/commands/select.txt:200
 msgid "This section describes all parameters. Parameters are categorized."
 msgstr ""
 "このセクションではすべての引数について説明します。引数はカテゴリわけしていま"
@@ -2451,34 +2451,34 @@ msgstr ""
 
 # 41a5ec8bf94e4a5a87e2cbcb48e5a10e
 # 852d1057fa6546bc9ab1ff1a04d6f857
-#: ../../../source/reference/commands/select.txt:202
-#: ../../../source/reference/functions/geo_distance.txt:97
+#: ../../../source/reference/commands/select.txt:203
+#: ../../../source/reference/functions/geo_distance.txt:149
 msgid "Required parameter"
 msgstr "必須引数"
 
 # 75c38df430b54c44844526068cb9d03b
-#: ../../../source/reference/commands/select.txt:204
+#: ../../../source/reference/commands/select.txt:205
 msgid "There is a required parameter, ``table``."
 msgstr "``table`` だけが必須の引数です。"
 
 # a9e98af40d8343b2a5aa71a3dc5391fa
-#: ../../../source/reference/commands/select.txt:209
+#: ../../../source/reference/commands/select.txt:210
 msgid "It specifies a table to be searched. ``table`` must be specified."
 msgstr ""
 "検索対象のテーブルを指定します。 ``table`` は必ず指定しなければいけません。"
 
 # 722cc31c611c45b2bc7a8cdb24114a60
-#: ../../../source/reference/commands/select.txt:211
+#: ../../../source/reference/commands/select.txt:212
 msgid "If nonexistent table is specified, an error is returned."
 msgstr "存在しないテーブルを指定するとエラーが返ります。"
 
 # 231e4125b9bb4c3b94a8c6e002898955
-#: ../../../source/reference/commands/select.txt:218
+#: ../../../source/reference/commands/select.txt:219
 msgid "Search related parameters"
 msgstr "検索関係の引数"
 
 # 599e62b292e648e585444a7db8f34a3f
-#: ../../../source/reference/commands/select.txt:220
+#: ../../../source/reference/commands/select.txt:221
 msgid ""
 "There are search related parameters. Typically, ``match_columns`` and "
 "``query`` parameters are used for implementing a search box. ``filter`` "
@@ -2489,7 +2489,7 @@ msgstr ""
 "``filter`` 引数を使います。"
 
 # de32e9e0f01d415cabdcadd2f89a27bb
-#: ../../../source/reference/commands/select.txt:225
+#: ../../../source/reference/commands/select.txt:226
 msgid ""
 "If both ``query`` and ``filter`` are specified, selected records must be "
 "matched against both ``query`` and ``filter``. If both ``query`` and "
@@ -2500,7 +2500,7 @@ msgstr ""
 "合はすべてのレコードが選択されます。"
 
 # 0f29a55419ea49c1addc6ccadd7d1a02
-#: ../../../source/reference/commands/select.txt:232
+#: ../../../source/reference/commands/select.txt:233
 msgid ""
 "It specifies the default target column for fulltext search by ``query`` "
 "parameter value. A target column for fulltext search can be specified in "
@@ -2515,7 +2515,7 @@ msgstr ""
 "``query`` では指定できません。"
 
 # d1618021a6084536aaafcac7ee185cf1
-#: ../../../source/reference/commands/select.txt:238
+#: ../../../source/reference/commands/select.txt:239
 msgid ""
 "Weight is relative importance of target column. A higher weight target "
 "column gets more hit score rather than a lower weight target column when a "
@@ -2526,12 +2526,12 @@ msgstr ""
 "ます。デフォルトの重みは1です。"
 
 # 19c0a971f31d469f940d93c9f303237e
-#: ../../../source/reference/commands/select.txt:242
+#: ../../../source/reference/commands/select.txt:243
 msgid "Here is a simple ``match_columns`` usage example."
 msgstr "以下は簡単な ``match_columns`` の使用例です。"
 
 # fa998f4980b940e5836fe8f55af975aa
-#: ../../../source/reference/commands/select.txt:248
+#: ../../../source/reference/commands/select.txt:249
 msgid ""
 "``--match_columns content`` means the default target column for fulltext "
 "search is ``content`` column and its weight is 1. ``--output_columns '_key, "
@@ -2544,7 +2544,7 @@ msgstr ""
 "``_score`` の値を出力する、ということを指定しています。"
 
 # 478fa7cd0cb24e5c981dea8836b3a8eb
-#: ../../../source/reference/commands/select.txt:254
+#: ../../../source/reference/commands/select.txt:255
 msgid ""
 "Pay attention to ``_score`` value. ``_score`` value is the number of matched "
 "counts against ``query`` parameter value. In the example, ``query`` "
@@ -2559,7 +2559,7 @@ msgstr ""
 "に ``fast`` が2つあるということです。"
 
 # fc20f8f22b524c4fb08c4571a01740a3
-#: ../../../source/reference/commands/select.txt:261
+#: ../../../source/reference/commands/select.txt:262
 msgid ""
 "To specify weight, ``column * weight`` syntax is used. Here is a weight "
 "usage example."
@@ -2568,7 +2568,7 @@ msgstr ""
 "使用例です。"
 
 # f7ec1fcf391c4b779d7b904bb369b19c
-#: ../../../source/reference/commands/select.txt:268
+#: ../../../source/reference/commands/select.txt:269
 msgid ""
 "``--match_columns 'content * 2'`` means the default target column for "
 "fulltext search is ``content`` column and its weight is 2."
@@ -2577,7 +2577,7 @@ msgstr ""
 "``content`` カラムを使い、その重みは2という意味です。"
 
 # ae5b40522e0f4af5af5b9920eb722272
-#: ../../../source/reference/commands/select.txt:271
+#: ../../../source/reference/commands/select.txt:272
 msgid ""
 "Pay attention to ``_score`` value. ``_score`` value is doubled because "
 "weight is 2."
@@ -2586,7 +2586,7 @@ msgstr ""
 "は重みを2にしたからです。"
 
 # 87a89dfff9814a4db1aaff032854a741
-#: ../../../source/reference/commands/select.txt:274
+#: ../../../source/reference/commands/select.txt:275
 msgid ""
 "You can specify one or more columns as the default target columns for "
 "fulltext search. If one or more columns are specified, fulltext search is "
@@ -2599,7 +2599,7 @@ msgstr ""
 "ムにマッチしたら、そのレコードはマッチしたものとして扱われます。"
 
 # 4d11ac6471a0443ebcaa44bd31f406ec
-#: ../../../source/reference/commands/select.txt:280
+#: ../../../source/reference/commands/select.txt:281
 msgid ""
 "To specify one or more columns, ``column1 * weight1 || column2 * weight2 "
 "|| ...`` syntax is used. ``* weight`` can be omitted. If it is omitted, 1 is "
@@ -2610,7 +2610,7 @@ msgstr ""
 "重みが1になります。以下は複数カラムの使用例です。"
 
 # 011c20edcce444fc82f8066a234e85b1
-#: ../../../source/reference/commands/select.txt:289
+#: ../../../source/reference/commands/select.txt:290
 msgid ""
 "``--match_columns '_key * 10 || content'`` means the default target columns "
 "for fulltext search are ``_key`` and ``content`` columns and ``_key`` "
@@ -2626,7 +2626,7 @@ msgstr ""
 "エントリのタイトルはブログエントリの内容よりも重要だということです。"
 
 # a0145a0c4fbf4ab0a1fa14b59db7efb1
-#: ../../../source/reference/commands/select.txt:299
+#: ../../../source/reference/commands/select.txt:300
 msgid ""
 "It specifies the query text. Normally, it is used for fulltext search with "
 "``match_columns`` parameter. ``query`` parameter is designed for a fulltext "
@@ -2647,12 +2647,12 @@ msgstr ""
 "味になります。"
 
 # 19c0a971f31d469f940d93c9f303237e
-#: ../../../source/reference/commands/select.txt:308
+#: ../../../source/reference/commands/select.txt:309
 msgid "Here is a simple logical and search example."
 msgstr "以下は論理積を使った検索の簡単な例です。"
 
 # dc8002538e794368b895d463ce15d092
-#: ../../../source/reference/commands/select.txt:314
+#: ../../../source/reference/commands/select.txt:315
 msgid ""
 "The ``select`` command searches records that contain two words ``fast`` and "
 "``groonga`` in ``content`` column value from ``Entries`` table."
@@ -2661,12 +2661,12 @@ msgstr ""
 "値に ``fast`` と ``groonga`` の2つの単語を含んでいるレコードを検索します。"
 
 # 19c0a971f31d469f940d93c9f303237e
-#: ../../../source/reference/commands/select.txt:318
+#: ../../../source/reference/commands/select.txt:319
 msgid "Here is a simple logical or search example."
 msgstr "以下は論理和を使った検索の簡単な例です。"
 
 # dc8002538e794368b895d463ce15d092
-#: ../../../source/reference/commands/select.txt:324
+#: ../../../source/reference/commands/select.txt:325
 msgid ""
 "The ``select`` command searches records that contain one of two words "
 "``groonga`` or ``mroonga`` in ``content`` column value from ``Entries`` "
@@ -2677,13 +2677,13 @@ msgstr ""
 "ます。"
 
 # 83e77c84e42145d6b459238678f259d9
-#: ../../../source/reference/commands/select.txt:328
+#: ../../../source/reference/commands/select.txt:329
 msgid "See :doc:`/reference/grn_expr/query_syntax` for other syntax."
 msgstr ""
 "他の構文は :doc:`/reference/grn_expr/query_syntax` を参照してください。"
 
 # f48833e9b04d4c9e90bb72c21484c588
-#: ../../../source/reference/commands/select.txt:330
+#: ../../../source/reference/commands/select.txt:331
 msgid ""
 "It can be used for not only fulltext search but also other conditions. For "
 "example, ``column:value`` means the value of ``column`` column is equal to "
@@ -2695,14 +2695,14 @@ msgstr ""
 "<value`` は ``column`` の値が ``value`` より小さいという意味です。"
 
 # 1ccd84b3f15a4567b23bb0e7d8c66fcd
-#: ../../../source/reference/commands/select.txt:335
-#: ../../../source/reference/commands/select.txt:371
+#: ../../../source/reference/commands/select.txt:336
+#: ../../../source/reference/commands/select.txt:372
 msgid "Here is a simple equality operator search example."
 msgstr "以下は等価演算子を使った検索の簡単な例です。"
 
 # dc8002538e794368b895d463ce15d092
-#: ../../../source/reference/commands/select.txt:341
-#: ../../../source/reference/commands/select.txt:377
+#: ../../../source/reference/commands/select.txt:342
+#: ../../../source/reference/commands/select.txt:378
 msgid ""
 "The ``select`` command searches records that ``_key`` column value is "
 "``Groonga`` from ``Entries`` table."
@@ -2711,14 +2711,14 @@ msgstr ""
 "が ``Groonga`` であるレコードを検索します。"
 
 # 19c0a971f31d469f940d93c9f303237e
-#: ../../../source/reference/commands/select.txt:344
-#: ../../../source/reference/commands/select.txt:380
+#: ../../../source/reference/commands/select.txt:345
+#: ../../../source/reference/commands/select.txt:381
 msgid "Here is a simple less than operator search example."
 msgstr "以下は比較演算子を使った検索の簡単な例です。"
 
 # dc8002538e794368b895d463ce15d092
-#: ../../../source/reference/commands/select.txt:350
-#: ../../../source/reference/commands/select.txt:386
+#: ../../../source/reference/commands/select.txt:351
+#: ../../../source/reference/commands/select.txt:387
 msgid ""
 "The ``select`` command searches records that ``n_likes`` column value is "
 "less than ``11`` from ``Entries`` table."
@@ -2727,13 +2727,13 @@ msgstr ""
 "値が ``11`` より小さいレコードを検索します。"
 
 # 83e77c84e42145d6b459238678f259d9
-#: ../../../source/reference/commands/select.txt:353
+#: ../../../source/reference/commands/select.txt:354
 msgid "See :doc:`/reference/grn_expr/query_syntax` for other operations."
 msgstr ""
 "他の演算子は :doc:`/reference/grn_expr/query_syntax` を参照してください。"
 
 # 4fcc714fb0ca4faf9647627092e7821d
-#: ../../../source/reference/commands/select.txt:358
+#: ../../../source/reference/commands/select.txt:359
 msgid ""
 "It specifies the filter text. Normally, it is used for complex search "
 "conditions. ``filter`` can be used with ``query`` parameter. If both "
@@ -2748,7 +2748,7 @@ msgstr ""
 "けないということです。"
 
 # 4f2a3aea1b994d01aecda600df7717d2
-#: ../../../source/reference/commands/select.txt:364
+#: ../../../source/reference/commands/select.txt:365
 msgid ""
 "``filter`` parameter is designed for complex conditions. A filter text "
 "should be formated in :doc:`/reference/grn_expr/script_syntax`. The syntax "
@@ -2763,23 +2763,23 @@ msgstr ""
 "の値が ``value`` よりも小さいという意味です。"
 
 # f5fc8877da7b4638a79feea52c308d37
-#: ../../../source/reference/commands/select.txt:389
+#: ../../../source/reference/commands/select.txt:390
 msgid "See :doc:`/reference/grn_expr/script_syntax` for other operators."
 msgstr ""
 "他の演算子は :doc:`/reference/grn_expr/script_syntax` を参照してください。"
 
 # c5f24b504a224cf684d4e28c65d06f03
-#: ../../../source/reference/commands/select.txt:392
+#: ../../../source/reference/commands/select.txt:393
 msgid "Advanced search parameters"
 msgstr "高度な検索のための引数"
 
 # 8ee0e040672d41198f342fdd8552771a
-#: ../../../source/reference/commands/select.txt:397
+#: ../../../source/reference/commands/select.txt:398
 msgid "``match_escalation_threshold``"
 msgstr ""
 
 # c56587595f4e47df927d37c0ab1de24d
-#: ../../../source/reference/commands/select.txt:399
+#: ../../../source/reference/commands/select.txt:400
 msgid ""
 "It specifies threshold to determine whether search storategy escalation is "
 "used or not. The threshold is compared against the number of matched "
@@ -2793,7 +2793,7 @@ msgstr ""
 "ついては :doc:`/spec/search` を参照してください。"
 
 # 94fcc85c0643425b81cf310f8dcb0baf
-#: ../../../source/reference/commands/select.txt:405
+#: ../../../source/reference/commands/select.txt:406
 msgid ""
 "The default threshold is 0. It means that search storategy escalation is "
 "used only when no records are matched."
@@ -2802,27 +2802,27 @@ msgstr ""
 "法をエスカレーションするということです。"
 
 # 7138f65c5f684072ad8ec9b276b6667d
-#: ../../../source/reference/commands/select.txt:408
+#: ../../../source/reference/commands/select.txt:409
 msgid "The default threshold can be customized by one of the followings."
 msgstr "デフォルトの閾値は以下の方法でカスタマイズできます。"
 
 # 2c2ba162241c4df6b7ab6251248e9b18
-#: ../../../source/reference/commands/select.txt:410
+#: ../../../source/reference/commands/select.txt:411
 msgid "``--with-match-escalation-threshold`` option of configure"
 msgstr "configureの ``--with-match-escalation-threshold`` オプション"
 
 # 016be2770bff43218f2090357e3540e1
-#: ../../../source/reference/commands/select.txt:411
+#: ../../../source/reference/commands/select.txt:412
 msgid "``--match-escalation-threshold`` option of groogna command"
 msgstr "groongaコマンドの ``--match-escalation-threshold`` オプション"
 
 # 5a636f4b765645cfbb10e220f6b97c77
-#: ../../../source/reference/commands/select.txt:412
+#: ../../../source/reference/commands/select.txt:413
 msgid "``match-escalation-threshold`` configuration item in configuration file"
 msgstr "設定ファイルの ``match-escalation-threshold`` 設定項目"
 
 # dbd1e0d2825d472ba21508237b46ebb6
-#: ../../../source/reference/commands/select.txt:415
+#: ../../../source/reference/commands/select.txt:416
 msgid ""
 "Here is a simple ``match_escalation_threshold`` usage example. The first "
 "``select`` doesn't have ``match_escalation_threshold`` parameter. The second "
@@ -2833,7 +2833,7 @@ msgstr ""
 "``match_escalation_threshold`` 引数があります。"
 
 # abdf11d422484bbfa0f7456c07607d82
-#: ../../../source/reference/commands/select.txt:425
+#: ../../../source/reference/commands/select.txt:426
 msgid ""
 "The first ``select`` command searches records that contain a word ``groo`` "
 "in ``content`` column value from ``Entries`` table. But no records are "
@@ -2848,7 +2848,7 @@ msgid ""
 msgstr ""
 
 # c7034c19107347ef9516b239a50096a9
-#: ../../../source/reference/commands/select.txt:437
+#: ../../../source/reference/commands/select.txt:438
 msgid ""
 "The second ``select`` command also searches records that contain a word "
 "``groo`` in ``content`` column value from ``Entries`` table. And it also "
@@ -2865,12 +2865,12 @@ msgstr ""
 
 # fd9432132c4b49bda11a8d2819cd9496
 # 2a6a4e70ad95423fb535430d242aa1b8
-#: ../../../source/reference/commands/select.txt:445
+#: ../../../source/reference/commands/select.txt:446
 msgid "``query_expansion``"
 msgstr ""
 
 # 88363d87f535428b8f392b38402d8866
-#: ../../../source/reference/commands/select.txt:447
+#: ../../../source/reference/commands/select.txt:448
 msgid ""
 "It's for query expansion. Query expansion substitutes specific words to "
 "another words in query. Nomally, it's used for synonym search."
@@ -2879,7 +2879,7 @@ msgstr ""
 "す。通常は類義語検索に使います。"
 
 # f280e295b2054130ae98870936bc954a
-#: ../../../source/reference/commands/select.txt:450
+#: ../../../source/reference/commands/select.txt:451
 msgid ""
 "It specifies a column that is used to substitute ``query`` parameter value. "
 "The format of this parameter value is \"``${TABLE}.${COLUMN}``\". For "
@@ -2891,7 +2891,7 @@ msgstr ""
 "``Terms`` テーブルの ``synonym`` カラムを指定しています。"
 
 # e03df458e596469f80725a4cdff579a2
-#: ../../../source/reference/commands/select.txt:455
+#: ../../../source/reference/commands/select.txt:456
 msgid ""
 "Table for query expansion is called \"substitution table\". Substitution "
 "table's key must be ``ShortText``. So array table (``TABLE_NO_KEY``) can't "
@@ -2903,7 +2903,7 @@ msgstr ""
 "です。"
 
 # b1a8ad353b5446e2835cc912a4a0ba85
-#: ../../../source/reference/commands/select.txt:460
+#: ../../../source/reference/commands/select.txt:461
 msgid ""
 "Column for query expansion is called \"substitution column\". Substitution "
 "column's value type must be ``ShortText``. Column type must be vector "
@@ -2914,7 +2914,7 @@ msgstr ""
 "してください。"
 
 # d88f6b3c049f4504a0069f2fda5f377f
-#: ../../../source/reference/commands/select.txt:464
+#: ../../../source/reference/commands/select.txt:465
 msgid ""
 "Query expansion substitutes key of substitution table in query with values "
 "in substitution column. If a word in ``query`` is a key of substitution "
@@ -2928,7 +2928,7 @@ msgstr ""
 "クエリ内に置換対象の単語があっても置換されないということです。"
 
 # 47f96f142663462cae8b2ede1893edee
-#: ../../../source/reference/commands/select.txt:471
+#: ../../../source/reference/commands/select.txt:472
 msgid ""
 "Here is a sample substitution table to show a simple ``query_expansion`` "
 "usage example."
@@ -2937,7 +2937,7 @@ msgstr ""
 "す。"
 
 # bceccd12fefd43668607b369fb20f2c5
-#: ../../../source/reference/commands/select.txt:484
+#: ../../../source/reference/commands/select.txt:485
 msgid ""
 "``Thesaurus`` substitution table has two synonyms, ``\"mroonga\"`` and ``"
 "\"groonga\"``. If an user searches with ``\"mroonga\"``, groonga searches "
@@ -2956,7 +2956,7 @@ msgstr ""
 "ます。"
 
 # c282e51d992d43678b62c8287eccb484
-#: ../../../source/reference/commands/select.txt:492
+#: ../../../source/reference/commands/select.txt:493
 msgid ""
 "Note that those synonym values include the key value such as ``\"mroonga\"`` "
 "and ``\"groonga\"``. It's recommended that you include the key value. If you "
@@ -2974,12 +2974,12 @@ msgstr ""
 "ター値を指定することで「ストップワード」機能を実現することもできます。"
 
 # 1ccd84b3f15a4567b23bb0e7d8c66fcd
-#: ../../../source/reference/commands/select.txt:501
+#: ../../../source/reference/commands/select.txt:502
 msgid "Here is a simple ``query_expansion`` usage example."
 msgstr "以下は簡単な ``query_expansion`` の使用例です。"
 
 # 6f322ed8d7d940aa98300f8cde469d75
-#: ../../../source/reference/commands/select.txt:509
+#: ../../../source/reference/commands/select.txt:510
 msgid ""
 "The first ``select`` command doesn't use query expansion. So a record that "
 "has ``\"tritonn\"`` isn't found. The second ``select`` command uses query "
@@ -2995,7 +2995,7 @@ msgstr ""
 "``select`` コマンドは展開後のクエリを使っているからです。"
 
 # e2e2eb2e8823445096de1215d64e23a9
-#: ../../../source/reference/commands/select.txt:515
+#: ../../../source/reference/commands/select.txt:516
 msgid ""
 "Each substitute value can contain any :doc:`/reference/grn_expr/"
 "query_syntax` syntax such as ``(...)`` and ``OR``. You can use complex "
@@ -3006,12 +3006,12 @@ msgstr ""
 "ることができます。"
 
 # 4fadcce1df4a4d24b9e055ebcded9dde
-#: ../../../source/reference/commands/select.txt:519
+#: ../../../source/reference/commands/select.txt:520
 msgid "Here is a complex substitution usage example that uses query syntax."
 msgstr "以下はクエリ構文を使った複雑な置換の使用例です。"
 
 # 5db5121077db4548bf4e648482536d4a
-#: ../../../source/reference/commands/select.txt:529
+#: ../../../source/reference/commands/select.txt:530
 msgid ""
 "The ``load`` command registers a new synonym ``\"popular\"``. It is "
 "substituted with ``((popular) OR (n_likes:>=10))``. The substituted query "
@@ -3024,7 +3024,7 @@ msgstr ""
 "数を持つエントリという意味になります。"
 
 # dc8002538e794368b895d463ce15d092
-#: ../../../source/reference/commands/select.txt:534
+#: ../../../source/reference/commands/select.txt:535
 msgid ""
 "The ``select`` command outputs records that ``n_likes`` column value is "
 "equal to or more than ``10`` from ``Entries`` table."
@@ -3032,41 +3032,120 @@ msgstr ""
 "この ``select`` コマンドは ``Entries`` テーブルの中から ``n_likes`` カラムの"
 "値が ``10`` 以上のレコードを出力します。"
 
+# fde62304653b4d78abb1f4d12261d20e
+#: ../../../source/reference/commands/select.txt:541
+msgid "``query_flags``"
+msgstr ""
+
+# 1b461296a83143e290250a7f8d04bd6d
+#: ../../../source/reference/commands/select.txt:543
+msgid ""
+"It customs ``query`` parameter syntax. You cannot update column value by "
+"``query`` parameter by default. But if you specify ``ALLOW_COLUMN|"
+"ALLOW_UPDATE`` as ``query_flags``, you can update column value ``query``."
+msgstr ""
+
+# 77b120c7869549b5855bc906a84570a2
+#: ../../../source/reference/commands/select.txt:548
+#: ../../../source/reference/commands/suggest.txt:132
+#: ../../../source/reference/commands/suggest.txt:151
+msgid "Here are available values:"
+msgstr "指定可能な値は以下の通りです。"
+
+# f3de5e9b9f3b43a9ab923c6068d6957a
+#: ../../../source/reference/commands/select.txt:550
+msgid "``ALLOW_PRAGMA``"
+msgstr ""
+
+# a0c6fc017bf745a09eed325924047890
+#: ../../../source/reference/commands/select.txt:551
+msgid "``ALLOW_COLUMN``"
+msgstr ""
+
+# 08110d48cf704924a8c67585c9507aac
+#: ../../../source/reference/commands/select.txt:552
+msgid "``ALLOW_UPDATE``"
+msgstr ""
+
+# 4f6cb23b3eea4f52967e68bd3e3adaac
+#: ../../../source/reference/commands/select.txt:554
+msgid "``ALLOW_PRAGMA`` enables pragma at the head of ``query``."
+msgstr ""
+
+# 93c16e2661ee47bdb1c3bd8900978aab
+#: ../../../source/reference/commands/select.txt:556
+msgid ""
+"``ALLOW_COLUMN`` enables search againt columns that are not included in "
+"``match_columns``. To specify column, there are ``COLUMN:...`` syntaxes."
+msgstr ""
+
+# 708d1168c81c4f9ca5307666e14f9bea
+#: ../../../source/reference/commands/select.txt:560
+msgid ""
+"``ALLOW_UPDATE`` enables column update by ``query`` with ``COLUMN:"
+"=NEW_VALUE`` syntax. ``ALLOW_COLUMN`` is also required to update column "
+"because the column update syntax specifies column."
+msgstr ""
+
+# 6a3ceb5a01ac41b79a53ea87dc0d936e
+#: ../../../source/reference/commands/select.txt:564
+msgid ""
+"They can be combined by separated ``|`` such as ``ALLOW_COLUMN|"
+"ALLOW_UPDATE``."
+msgstr ""
+
+# 75c38df430b54c44844526068cb9d03b
+#: ../../../source/reference/commands/select.txt:567
+#, fuzzy
+msgid "The default value is ``ALLOW_PRAGMA|ALLOW_COLUMN``."
+msgstr "デフォルト値は ``0`` です。"
+
+# 0df2f4531c744fa2958af7a606c7d0fd
+#: ../../../source/reference/commands/select.txt:569
+msgid "TODO: example"
+msgstr ""
+
+# 0d40d6ee346244419bf47608a9d4fa25
+#: ../../../source/reference/commands/select.txt:571
+#, fuzzy
+msgid "See also :doc:`/reference/grn_expr/query_syntax`."
+msgstr ":doc:`/reference/grn_expr/query_syntax` の文字列をパースする。"
+
 # a92aefff626342b8b2318131b132f569
-#: ../../../source/reference/commands/select.txt:538
+#: ../../../source/reference/commands/select.txt:574
 msgid "Output related parameters"
 msgstr "出力関連の引数"
 
 # 4beb7f0f3d704fd0b3176496d7f55eb9
-#: ../../../source/reference/commands/select.txt:543
+#: ../../../source/reference/commands/select.txt:579
 msgid "It specifies output columns separated by ``,``."
 msgstr "出力するカラムを ``,`` 区切りで指定します。"
 
 # 19c0a971f31d469f940d93c9f303237e
-#: ../../../source/reference/commands/select.txt:545
+#: ../../../source/reference/commands/select.txt:581
 msgid "Here is a simple ``output_columns`` usage example."
 msgstr "以下は簡単な ``output_columns`` の使用例です。"
 
 # dc8002538e794368b895d463ce15d092
-#: ../../../source/reference/commands/select.txt:551
+#: ../../../source/reference/commands/select.txt:587
 msgid "The ``select`` command just outputs ``_id`` and ``_key`` column values."
 msgstr ""
 "この ``select`` コマンドは ``_id`` と ``_key`` カラムの値だけを出力します。"
 
 # b36578f06f984a3186c3c230d6914f51
-#: ../../../source/reference/commands/select.txt:554
+#: ../../../source/reference/commands/select.txt:590
 msgid ""
 "``*`` is a special value. It means that all columns that are not :doc:`/"
 "reference/pseudo_column`."
 msgstr ""
 
 # 1ccd84b3f15a4567b23bb0e7d8c66fcd
-#: ../../../source/reference/commands/select.txt:557
+#: ../../../source/reference/commands/select.txt:593
 msgid "Here is a ``*`` usage example."
 msgstr "以下は ``*`` の使用例です。"
 
 # 43ac02f5486b4de0b8f674844f6266c3
-#: ../../../source/reference/commands/select.txt:563
+#: ../../../source/reference/commands/select.txt:599
 msgid ""
 "The ``select`` command outputs ``_key`` pseudo column, ``content`` column "
 "and ``n_likes`` column values but doesn't output ``_id`` pseudo column value."
@@ -3075,7 +3154,7 @@ msgstr ""
 "``n_likes`` カラムの値を出力しますが、 ``_id`` 擬似カラムの値は出力しません。"
 
 # 94fcc85c0643425b81cf310f8dcb0baf
-#: ../../../source/reference/commands/select.txt:567
+#: ../../../source/reference/commands/select.txt:603
 msgid ""
 "The default value is ``_id, _key, *``. It means that all column values "
 "except ``_score`` are outputted."
@@ -3084,7 +3163,7 @@ msgstr ""
 "出力するという意味です。"
 
 # 5086490961c54103a7f0bdc3cd39f82f
-#: ../../../source/reference/commands/select.txt:573
+#: ../../../source/reference/commands/select.txt:609
 msgid ""
 "It specifies sort keys separated by ``,``. Each sort key is column name."
 msgstr ""
@@ -3092,12 +3171,12 @@ msgstr ""
 "ます。"
 
 # 1ccd84b3f15a4567b23bb0e7d8c66fcd
-#: ../../../source/reference/commands/select.txt:576
+#: ../../../source/reference/commands/select.txt:612
 msgid "Here is a simple ``sortby`` usage example."
 msgstr "以下は簡単な ``sortby`` の使用例です。"
 
 # de273bcc1dec4dc080894f7a313144fa
-#: ../../../source/reference/commands/select.txt:582
+#: ../../../source/reference/commands/select.txt:618
 msgid ""
 "The ``select`` command sorts by ``n_likes`` column value in ascending order. "
 "For records that has the same ``n_likes`` are sorted by ``_id`` in ascending "
@@ -3109,17 +3188,17 @@ msgstr ""
 "でソートしているケースです。"
 
 # aabe26754c7c4a2caea2cace635cde15
-#: ../../../source/reference/commands/select.txt:587
+#: ../../../source/reference/commands/select.txt:623
 msgid "If you want to sort in descending order, add ``-`` before column name."
 msgstr "降順でソートしたい場合はカラム名の前に ``-`` をつけてください。"
 
 # 1ccd84b3f15a4567b23bb0e7d8c66fcd
-#: ../../../source/reference/commands/select.txt:589
+#: ../../../source/reference/commands/select.txt:625
 msgid "Here is a descending order ``sortby`` usage example."
 msgstr "以下は降順の ``sortby`` の使用例です。"
 
 # dcc7b9dc2ec44b85b8d54ad67180b230
-#: ../../../source/reference/commands/select.txt:595
+#: ../../../source/reference/commands/select.txt:631
 msgid ""
 "The ``select`` command sorts by ``n_likes`` column value in descending "
 "order. But ascending order is used for sorting by ``_id``."
@@ -3128,7 +3207,7 @@ msgstr ""
 "し、 ``_id`` でソートするときは昇順でソートします。"
 
 # 836a5759ae764a5eb2fff185217fd627
-#: ../../../source/reference/commands/select.txt:598
+#: ../../../source/reference/commands/select.txt:634
 msgid ""
 "You can use ``_score`` pseudo column in ``sortby`` if you use ``query`` or "
 "``filter`` parameter."
@@ -3137,7 +3216,7 @@ msgstr ""
 "で ``_score`` 擬似カラムを使うことができます。"
 
 # dc8002538e794368b895d463ce15d092
-#: ../../../source/reference/commands/select.txt:605
+#: ../../../source/reference/commands/select.txt:641
 msgid ""
 "The ``select`` command sorts matched records by hit score in descending "
 "order and outputs record key and hit score."
@@ -3146,7 +3225,7 @@ msgstr ""
 "レコードのキーとヒットスコアを出力します。"
 
 # 0e10f4e0e288413ebb6303024b0532b1
-#: ../../../source/reference/commands/select.txt:608
+#: ../../../source/reference/commands/select.txt:644
 msgid ""
 "If you use ``_score`` without ``query`` nor ``filter`` parameters, it's just "
 "ignored but get a warning in log file."
@@ -3155,7 +3234,7 @@ msgstr ""
 "``_score`` を無視して、ログファイルに警告を出力します。"
 
 # b2b34fa4db01477b8b23e3dc58dc88d1
-#: ../../../source/reference/commands/select.txt:614
+#: ../../../source/reference/commands/select.txt:650
 msgid ""
 "It specifies offset to determine output records range. Offset is zero-"
 "origin. ``--offset 1`` means output range is started from the 2nd record."
@@ -3164,12 +3243,12 @@ msgstr ""
 "です。 ``--offset 1`` は2番目以降のレコードを出力するという意味になります。"
 
 # b2b34fa4db01477b8b23e3dc58dc88d1
-#: ../../../source/reference/commands/select.txt:622
+#: ../../../source/reference/commands/select.txt:658
 msgid "The ``select`` command outputs from the 4th record."
 msgstr "この ``select`` コマンドは4番目以降のレコードを出力します。"
 
 # 254e1e0c399c45369f40392207a2525c
-#: ../../../source/reference/commands/select.txt:624
+#: ../../../source/reference/commands/select.txt:660
 msgid ""
 "You can specify negative value. It means that ``the number of matched "
 "records + offset``. If you have 3 matched records and specify ``--offset "
@@ -3181,7 +3260,7 @@ msgstr ""
 "のレコードから3番目のレコードが出力されます。"
 
 # dc8002538e794368b895d463ce15d092
-#: ../../../source/reference/commands/select.txt:633
+#: ../../../source/reference/commands/select.txt:669
 msgid ""
 "The ``select`` command outputs from the 4th record because the total number "
 "of records is ``5``."
@@ -3190,12 +3269,12 @@ msgstr ""
 "ド数が ``5`` だからです。"
 
 # 75c38df430b54c44844526068cb9d03b
-#: ../../../source/reference/commands/select.txt:636
+#: ../../../source/reference/commands/select.txt:672
 msgid "The default value is ``0``."
 msgstr "デフォルト値は ``0`` です。"
 
 # 24418f72e84544449baae5be89db83c4
-#: ../../../source/reference/commands/select.txt:641
+#: ../../../source/reference/commands/select.txt:677
 msgid ""
 "It specifies the max number of output records. If the number of matched "
 "records is less than ``limit``, all records are outputted."
@@ -3204,17 +3283,17 @@ msgstr ""
 "が ``limit`` よりも小さい場合はすべてのレコードが出力されます。"
 
 # 19c0a971f31d469f940d93c9f303237e
-#: ../../../source/reference/commands/select.txt:644
+#: ../../../source/reference/commands/select.txt:680
 msgid "Here is a simple ``limit`` usage example."
 msgstr "以下は簡単な ``limit`` の使用例です。"
 
 # dc8002538e794368b895d463ce15d092
-#: ../../../source/reference/commands/select.txt:650
+#: ../../../source/reference/commands/select.txt:686
 msgid "The ``select`` command outputs the 3rd, the 4th and the 5th records."
 msgstr "この ``select`` コマンドは3番目、4番目、5番目のレコードを出力します。"
 
 # 6a449750ae904238a57325cc2827d37f
-#: ../../../source/reference/commands/select.txt:652
+#: ../../../source/reference/commands/select.txt:688
 msgid ""
 "You can specify negative value. It means that ``the number of matched "
 "records + limit + 1``. For example, ``--limit -1`` outputs all records. It's "
@@ -3226,17 +3305,17 @@ msgstr ""
 "合にとても便利です。"
 
 # 19c0a971f31d469f940d93c9f303237e
-#: ../../../source/reference/commands/select.txt:656
+#: ../../../source/reference/commands/select.txt:692
 msgid "Here is a simple negative ``limit`` value usage example."
 msgstr "以下は負の値を使った ``limit`` の簡単な使用例です。"
 
 # c48e12132c3a4894a59bec8f90aceb10
-#: ../../../source/reference/commands/select.txt:662
+#: ../../../source/reference/commands/select.txt:698
 msgid "The ``select`` command outputs all records."
 msgstr "この ``select`` コマンドはすべてのレコードを出力します。"
 
 # 75c38df430b54c44844526068cb9d03b
-#: ../../../source/reference/commands/select.txt:664
+#: ../../../source/reference/commands/select.txt:700
 msgid "The default value is ``10``."
 msgstr "デフォルト値は ``10`` です。"
 
@@ -3261,26 +3340,26 @@ msgstr "デフォルト値は ``10`` です。"
 # dad2788325c0452fa7706a8a2271f832
 # 9c5db5fa25494bda80437e98cee0bca6
 # 70ff1b1ca08e47118bf50277944e00b2
-#: ../../../source/reference/commands/select.txt:669
-#: ../../../source/reference/commands/select.txt:681
-#: ../../../source/reference/commands/select.txt:688
-#: ../../../source/reference/commands/select.txt:695
-#: ../../../source/reference/commands/select.txt:702
-#: ../../../source/reference/commands/select.txt:709
-#: ../../../source/reference/commands/select.txt:719
-#: ../../../source/reference/commands/select.txt:730
+#: ../../../source/reference/commands/select.txt:705
+#: ../../../source/reference/commands/select.txt:717
+#: ../../../source/reference/commands/select.txt:724
+#: ../../../source/reference/commands/select.txt:731
+#: ../../../source/reference/commands/select.txt:738
+#: ../../../source/reference/commands/select.txt:745
+#: ../../../source/reference/commands/select.txt:755
+#: ../../../source/reference/commands/select.txt:766
 msgid "TODO: write in English and add example."
 msgstr ""
 
 # 3e513de9654a478db8cfe12248e122a7
-#: ../../../source/reference/commands/select.txt:671
+#: ../../../source/reference/commands/select.txt:707
 msgid ""
 "検索条件にマッチする全てのレコードに対して適用するgrn_exprをscript形式で指定"
 "します。"
 msgstr ""
 
 # 84933c0f650c4b58ba0206c9cf45a9fc
-#: ../../../source/reference/commands/select.txt:673
+#: ../../../source/reference/commands/select.txt:709
 msgid ""
 "scorerは、検索処理が完了し、ソート処理が実行される前に呼び出されます。従っ"
 "て、各レコードのスコアを操作する式を指定しておけば、検索結果のソート順序をカ"
@@ -3288,12 +3367,12 @@ msgid ""
 msgstr ""
 
 # a0331841d3074b269115e266c26d6cf2
-#: ../../../source/reference/commands/select.txt:676
+#: ../../../source/reference/commands/select.txt:712
 msgid "Facet related parameters"
 msgstr "ファセット関連の引数"
 
 # fec964d597df4a3688866be6eae73ed8
-#: ../../../source/reference/commands/select.txt:683
+#: ../../../source/reference/commands/select.txt:719
 msgid ""
 "グループ化のキーとなるカラム名のリストをカンマ(',')区切りで指定します。検索条"
 "件にマッチした各レコードを出力したのちに、drilldownに指定されたカラムの値が同"
@@ -3302,7 +3381,7 @@ msgstr ""
 
 # f4dd62a4427f4333951cc98ff190b2df
 # 86b389f3f050487fabe47b7fe801672b
-#: ../../../source/reference/commands/select.txt:690
+#: ../../../source/reference/commands/select.txt:726
 msgid ""
 "drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、ソー"
 "トキーとなるカラム名のリストをカンマ(',')区切りで指定します。sortbyパラメータ"
@@ -3310,14 +3389,14 @@ msgid ""
 msgstr ""
 
 # ca0076329f904a0e8ad93c635ecca078
-#: ../../../source/reference/commands/select.txt:697
+#: ../../../source/reference/commands/select.txt:733
 msgid ""
 "drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、出力"
 "するカラム名のリストをカンマ(',')区切りで指定します。"
 msgstr ""
 
 # 08fd8fca4bf44ccf8a0b314c56365fb9
-#: ../../../source/reference/commands/select.txt:704
+#: ../../../source/reference/commands/select.txt:740
 msgid ""
 "drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、出力"
 "対象となる最初のレコードの番号を0ベースで指定します。デフォルト値は0です。"
@@ -3326,7 +3405,7 @@ msgid ""
 msgstr ""
 
 # a62db06798ba4a55b110d924e490549d
-#: ../../../source/reference/commands/select.txt:711
+#: ../../../source/reference/commands/select.txt:747
 msgid ""
 "drilldown条件に指定されたカラムの値毎にとりまとめられたレコードについて、出力"
 "を行うレコードの件数を指定します。デフォルト値は10です。実際には、"
@@ -3336,28 +3415,28 @@ msgid ""
 msgstr ""
 
 # fa784568ed9745b8ab02cf4d5ebaa4df
-#: ../../../source/reference/commands/select.txt:714
+#: ../../../source/reference/commands/select.txt:750
 msgid "Cache related parameter"
 msgstr "キャッシュ関連の引数"
 
 # dce9ded6cd334bcc907f816ae824f0b9
-#: ../../../source/reference/commands/select.txt:717
+#: ../../../source/reference/commands/select.txt:753
 msgid "``cache``"
 msgstr ""
 
 # a87d4f45058f4727801683a7da65203e
-#: ../../../source/reference/commands/select.txt:721
+#: ../../../source/reference/commands/select.txt:757
 msgid "クエリキャッシュに関する動作を設定します。"
 msgstr ""
 
 # 6dfee24a730d4c1f8935c395f0900494
-#: ../../../source/reference/commands/select.txt:723
+#: ../../../source/reference/commands/select.txt:759
 msgid "``no``"
 msgstr ""
 
 # 0e1d19d599444d6a9ada49cf7de9723f
 # ab8c2fa0516342fa895aba9be0beba85
-#: ../../../source/reference/commands/select.txt:725
+#: ../../../source/reference/commands/select.txt:761
 msgid ""
 "検索結果をクエリキャッシュに残しません。キャッシュして再利用される可能性が低"
 "いクエリに対して用います。キャッシュ容量は有限です。有効なキャッシュが多く"
@@ -3368,7 +3447,7 @@ msgstr ""
 # 3de36b091fd14025b7945d7d1e29f72e
 # aeb3ec63a8684ed59106cc151e75dffc
 # 7b7e7c57e1414f22aec059b9ae387523
-#: ../../../source/reference/commands/select.txt:732
+#: ../../../source/reference/commands/select.txt:768
 #: ../../../source/reference/commands_not_implemented/add.txt:64
 #: ../../../source/reference/commands_not_implemented/get.txt:44
 #: ../../../source/reference/commands_not_implemented/set.txt:66
@@ -3379,7 +3458,7 @@ msgstr ""
 # 197f142c95ea4feb810c62bd39c7cb10
 # 4be53fe4022a4616b86dc8b4cafb8c9d
 # 4b1173ecf8a9452bacbb737d6ebbc771
-#: ../../../source/reference/commands/select.txt:738
+#: ../../../source/reference/commands/select.txt:774
 #: ../../../source/reference/commands_not_implemented/add.txt:70
 #: ../../../source/reference/commands_not_implemented/get.txt:50
 #: ../../../source/reference/commands_not_implemented/set.txt:72
@@ -3390,7 +3469,7 @@ msgstr ""
 # 3000e1e8bbd545d4b3a867686e1c6cc5
 # f6c2664d100f4540b80613d6e157aaef
 # bb753f3870184b62b7b549cdd03c9d23
-#: ../../../source/reference/commands/select.txt:740
+#: ../../../source/reference/commands/select.txt:776
 #: ../../../source/reference/commands_not_implemented/add.txt:72
 #: ../../../source/reference/commands_not_implemented/get.txt:52
 #: ../../../source/reference/commands_not_implemented/set.txt:74
@@ -3403,7 +3482,7 @@ msgstr ""
 # 24cd9b9fd4db4a7ea2538e7d763b1dfd
 # d05e931865da4f0eb3d04c7880d7a6b2
 # 68b149533dfb4f7e801ea9cba947069a
-#: ../../../source/reference/commands/select.txt:743
+#: ../../../source/reference/commands/select.txt:779
 #: ../../../source/reference/commands_not_implemented/add.txt:75
 #: ../../../source/reference/commands_not_implemented/get.txt:55
 #: ../../../source/reference/commands_not_implemented/set.txt:77
@@ -3414,7 +3493,7 @@ msgstr ""
 # 053ecc90702249b7a50da07bba9a0e45
 # 5fccda2552c74537ab0438313b9d0a57
 # 14fcdb51d8964b1ab77ca34cb60f52c7
-#: ../../../source/reference/commands/select.txt:745
+#: ../../../source/reference/commands/select.txt:781
 #: ../../../source/reference/commands_not_implemented/add.txt:77
 #: ../../../source/reference/commands_not_implemented/get.txt:57
 #: ../../../source/reference/commands_not_implemented/set.txt:79
@@ -3427,7 +3506,7 @@ msgstr ""
 # 41bac7f952aa416f9ad1f9c3199cee48
 # bc77b811e9e34db7ba28160d6193b5ab
 # e2926412d9ae41ffaa9947f6e6c9f39c
-#: ../../../source/reference/commands/select.txt:747
+#: ../../../source/reference/commands/select.txt:783
 #: ../../../source/reference/commands_not_implemented/add.txt:79
 #: ../../../source/reference/commands_not_implemented/get.txt:59
 #: ../../../source/reference/commands_not_implemented/set.txt:81
@@ -3438,7 +3517,7 @@ msgstr ""
 # d3a8d5aba0a24efda2ad554e40c0327e
 # e50977024dbe452f8c9db2a59cad8bc2
 # ab25272321a34dbc8df8b5de47101ba6
-#: ../../../source/reference/commands/select.txt:749
+#: ../../../source/reference/commands/select.txt:785
 #: ../../../source/reference/commands_not_implemented/add.txt:81
 #: ../../../source/reference/commands_not_implemented/get.txt:61
 #: ../../../source/reference/commands_not_implemented/set.txt:83
@@ -3446,104 +3525,104 @@ msgid "処理にかかった秒数を返します。"
 msgstr ""
 
 # c80fb94ba7c34e2aa25034186aef32d1
-#: ../../../source/reference/commands/select.txt:751
+#: ../../../source/reference/commands/select.txt:787
 msgid "``検索結果``"
 msgstr ""
 
 # 40df4ce829154356b017bafb58f438d3
-#: ../../../source/reference/commands/select.txt:753
+#: ../../../source/reference/commands/select.txt:789
 msgid "drilldown条件が実行される前の検索結果が以下のように出力されます。::"
 msgstr ""
 
 # 7ee1f3ffdaf14ba0b92ce62a06f8a036
-#: ../../../source/reference/commands/select.txt:757
+#: ../../../source/reference/commands/select.txt:793
 msgid "``検索件数``"
 msgstr ""
 
 # cd1874e6c05b4d2c8cb1d106667452e4
-#: ../../../source/reference/commands/select.txt:759
+#: ../../../source/reference/commands/select.txt:795
 msgid "検索件数が出力されます。"
 msgstr ""
 
 # fb0e8d2705794430a948bca3ec53f647
 # 48c1b0cfc70d4168980c51c2641fcd22
-#: ../../../source/reference/commands/select.txt:761
-#: ../../../source/reference/commands/select.txt:783
+#: ../../../source/reference/commands/select.txt:797
+#: ../../../source/reference/commands/select.txt:819
 msgid "``カラム名n``"
 msgstr ""
 
 # f272e84f4c2a4518bda0e05d7ae4c928
-#: ../../../source/reference/commands/select.txt:763
+#: ../../../source/reference/commands/select.txt:799
 msgid ""
 "output_columnsに指定された条件に従って、対象となるカラム名が出力されます。"
 msgstr ""
 
 # 78aff653f5794a3391d94491d132e2c2
 # e92b114d534441929bb43a1cf1f2d1e4
-#: ../../../source/reference/commands/select.txt:765
-#: ../../../source/reference/commands/select.txt:787
+#: ../../../source/reference/commands/select.txt:801
+#: ../../../source/reference/commands/select.txt:823
 msgid "``カラム型n``"
 msgstr ""
 
 # 7a17357a807a495dae0177424ab0a75e
-#: ../../../source/reference/commands/select.txt:767
+#: ../../../source/reference/commands/select.txt:803
 msgid ""
 "output_columnsに指定された条件に従って、対象となるカラム型が出力されます。"
 msgstr ""
 
 # 6406e2d4ff3f40d5b6038aab2dab4c6e
-#: ../../../source/reference/commands/select.txt:769
+#: ../../../source/reference/commands/select.txt:805
 msgid "``検索結果n``"
 msgstr ""
 
 # 0923d6ccc0e744e796b1b98a4437f292
-#: ../../../source/reference/commands/select.txt:771
+#: ../../../source/reference/commands/select.txt:807
 msgid ""
 "output_columns, offset, limitによって指定された条件に従って各レコードの値が出"
 "力されます。"
 msgstr ""
 
 # 52f219b8f8aa40c78d4dadcea06d1f8b
-#: ../../../source/reference/commands/select.txt:773
+#: ../../../source/reference/commands/select.txt:809
 msgid "``drilldown結果``"
 msgstr ""
 
 # df39679530914201b73806f70775086f
-#: ../../../source/reference/commands/select.txt:775
+#: ../../../source/reference/commands/select.txt:811
 msgid "drilldown処理の結果が以下のように出力されます。::"
 msgstr ""
 
 # f5a193aca7864527b927a501d34eeb8a
-#: ../../../source/reference/commands/select.txt:779
+#: ../../../source/reference/commands/select.txt:815
 msgid "``件数``"
 msgstr ""
 
 # 485d2179827849369ccbcb62c224c32b
-#: ../../../source/reference/commands/select.txt:781
+#: ../../../source/reference/commands/select.txt:817
 msgid "drilldownに指定されたカラムの値の異なり数が出力されます。"
 msgstr ""
 
 # 1e0df2809e394c3f950df6999fc45a21
-#: ../../../source/reference/commands/select.txt:785
+#: ../../../source/reference/commands/select.txt:821
 msgid ""
 "drilldown_output_columnsに指定された条件に従って、対象となるカラム名が出力さ"
 "れます。"
 msgstr ""
 
 # ac98f247d35642279cc715038cce05f1
-#: ../../../source/reference/commands/select.txt:789
+#: ../../../source/reference/commands/select.txt:825
 msgid ""
 "drilldown_output_columnsに指定された条件に従って、対象となるカラム型が出力さ"
 "れます。"
 msgstr ""
 
 # 2bd949834b8440f59285f5e06dd0d74e
-#: ../../../source/reference/commands/select.txt:791
+#: ../../../source/reference/commands/select.txt:827
 msgid "``ドリルダウン結果n``"
 msgstr ""
 
 # 7edae475d60a48c7bd36d3388025959f
-#: ../../../source/reference/commands/select.txt:793
+#: ../../../source/reference/commands/select.txt:829
 msgid ""
 "drilldown_output_columns, drilldown_offset, drilldown_limitによって指定された"
 "条件に従って各レコードの値が出力されます。"
@@ -3551,20 +3630,20 @@ msgstr ""
 
 # 381731021d114e199111358d903c5930
 # 06123d911ca84262ae1775271000e2f4
-#: ../../../source/reference/commands/select.txt:796
+#: ../../../source/reference/commands/select.txt:832
 #: ../../../source/reference/grn_expr.txt:57
 msgid "See also"
 msgstr "参考"
 
 # 0d40d6ee346244419bf47608a9d4fa25
 # bb5b870aa8eb4c93871f837a34e6cb41
-#: ../../../source/reference/commands/select.txt:798
+#: ../../../source/reference/commands/select.txt:834
 msgid ":doc:`/reference/grn_expr/query_syntax`"
 msgstr ""
 
 # 4163ce1de7ac4756b1f856391aa86e46
 # 4c7f959a00c4494ebc92dd9511125bab
-#: ../../../source/reference/commands/select.txt:799
+#: ../../../source/reference/commands/select.txt:835
 msgid ":doc:`/reference/grn_expr/script_syntax`"
 msgstr ""
 
@@ -3833,12 +3912,6 @@ msgstr ""
 msgid ""
 "It specifies whether optional prefix search is used or not in completion."
 msgstr "補完時に前方一致検索を実行するかどうかを指定します。"
-
-# 77b120c7869549b5855bc906a84570a2
-#: ../../../source/reference/commands/suggest.txt:132
-#: ../../../source/reference/commands/suggest.txt:151
-msgid "Here are available values:"
-msgstr "指定可能な値は以下の通りです。"
 
 # 5db279e0f9214776bb9ca618f1fd5dff
 #: ../../../source/reference/commands/suggest.txt:135
@@ -5087,16 +5160,9 @@ msgid ""
 "HTTP protocol. It functions as same as :doc:`groonga-server-http`. Although :"
 "doc:`groonga-server-http` has limited support for HTTP with a minimal built-"
 "in HTTP server, :ref:`groonga-httpd` has full support for HTTP with an "
-"embedded nginx. All standards-compliance and features provided by nginx is "
-"also available in groonga-httpd. For details about nginx, see http://www."
-"nginx.org/"
-msgstr ""
-"groonga-httpdはgroongaサーバーとhttpプロトコルで通信するプログラムです。 機能"
-"的には、 :doc:`groonga-server-http` と同じになっています。 :doc:`groonga-"
-"server-http` はHTTPサーバーとしては最小限の機能しか持ちませんが、一方の"
-"groonga-httpdはnginxを組み込むことでnginxが準拠しているHTTPの仕様と機能が全て"
-"利用できます。nginxの詳細については、http://www.nginx.org/を参照してくださ"
-"い。"
+"embedded nginx. All standards-compliance and features provided by `nginx <http://nginx.org/>`_ is "
+"also available in groonga-httpd."
+msgstr "groonga-httpdはgroongaサーバーとHTTPプロトコルで通信するプログラムです。 機能的には、 :doc:`groonga-server-http` と同じです。 :doc:`groonga-server-http` はHTTPサーバーとしては最小限の機能しか持ちませんが、groonga-httpdは `nginx <http://www.nginx.org/>`_ を組み込むことでnginxが準拠しているHTTPの仕様と機能をすべて利用できます。"
 
 # 8af2985c1c9d4763aa130b6cbe30ef7e
 #: ../../../source/reference/executables/groonga-httpd.txt:18
@@ -5123,20 +5189,15 @@ msgstr "設定をする"
 msgid ""
 "First, you'll need to edit the groonga-httpd configuration file to specify a "
 "database. Edit /etc/groonga/httpd/groonga-httpd.conf to enable the "
-"groonga_database directive like this::"
-msgstr ""
-"まずは、データベースを指定するためにgroonga-httpdの設定ファイルを編集する必要"
-"があります。groonga_databaseディレクティブを有効にするために、次のように/etc/"
-"groonga/httpd/groonga-httpd.confを編集してください。"
+"``groonga_database`` directive like this::"
+msgstr "まずは、データベースを指定するためにgroonga-httpdの設定ファイルを編集する必要があります。次のように/etc/groonga/httpd/groonga-httpd.confを編集して ``groonga_database`` ディレクティブを有効にしてます。"
 
 # 5631da48f9584e939b28c279d8d32407
 #: ../../../source/reference/executables/groonga-httpd.txt:54
 msgid ""
 "Then, run groonga-httpd. Note that the control immediately returns back to "
 "the console because groonga-httpd runs as a daemon process by default.::"
-msgstr ""
-"次に、groonga-httpdを実行してください。すぐにターミナルに制御が戻ってきます"
-"が、groonga-httpdはデフォルトでデーモンプロセスとして実行されるからです。"
+msgstr "次に、groonga-httpdを実行してください。すぐにターミナルに制御が戻ってきます。これはgroonga-httpdはデフォルトでデーモンプロセスになるからです。"
 
 # 2b613ca06fe74267aaaeeb33dd55c941
 #: ../../../source/reference/executables/groonga-httpd.txt:60
@@ -5145,10 +5206,8 @@ msgstr "クエリを実行する"
 
 # 36e989ebd0744bf2a1cfc82b3d88dfa8
 #: ../../../source/reference/executables/groonga-httpd.txt:62
-msgid "To check, request a simple query (:ref:`command-status`)."
-msgstr ""
-"動作を確認するため、簡単なクエリ(:ref:`command-status`)をリクエストしてみま"
-"す。"
+msgid "To check, request a simple query (:doc:`/reference/commands/status`)."
+msgstr "動作を確認するため、簡単なクエリ（ :doc:`/reference/commands/status` ）をリクエストしてみます。"
 
 # 3285b47a935f41deb301e9e1f7a8b237
 #: ../../../source/reference/executables/groonga-httpd.txt:70
@@ -5172,9 +5231,7 @@ msgstr "終了する"
 # 4e059987084c4e96bb539406c0b1e6f3
 #: ../../../source/reference/executables/groonga-httpd.txt:77
 msgid "Finally, to terminate the running groonga-httpd daemon, run this::"
-msgstr ""
-"最後に、動作中のgroonga-httpdデーモンを終了するためには、次のコマンドを実行し"
-"てください。"
+msgstr "最後に、次のコマンドで動作中のgroonga-httpdデーモンを終了できます。"
 
 # 6d9008c42d25420796173456bb7cd912
 #: ../../../source/reference/executables/groonga-httpd.txt:82
@@ -5384,10 +5441,7 @@ msgstr ""
 msgid ""
 "This isn't a groonga-httpd specific directive, but an nginx's one. For "
 "details, see http://wiki.nginx.org/CoreModule#worker_processes."
-msgstr ""
-"このディレクティブはgroonga-httpdのディレクティブではなく、nginxのディレク"
-"ティブです。詳細については、 http://wiki.nginx.org/"
-"CoreModule#worker_processes を参照してください。"
+msgstr "このディレクティブはgroonga-httpdのディレクティブではなく、nginxのディレクティブです。詳細は、 http://wiki.nginx.org/CoreModule#worker_processes を参照してください。"
 
 # 1c978a3757964495a15bfe4d776e5274
 #: ../../../source/reference/executables/groonga-httpd.txt:200
@@ -5402,15 +5456,11 @@ msgstr "利用可能なnginxモジュール"
 # 177bb78187954c29b18c36cef58b6745
 #: ../../../source/reference/executables/groonga-httpd.txt:205
 msgid ""
-"All standard HTTP modules except HttpRewriteModule is available. "
-"HttpRewriteModule is disabled to avoid to depend on PCRE (Perl Compatible "
-"Regular Expressions). For the list of other standard HTTP modules, see "
+"All standard HTTP modules is available. HttpRewriteModule is "
+"disabled when you don't have PCRE (Perl Compatible Regular "
+"Expressions). For the list of standard HTTP modules, see "
 "http://wiki.nginx.org/Modules."
-msgstr ""
-"HttpRewriteModuleを除く全てのHTTPの標準モジュールが利用可能です。"
-"HttpRewriteModuleはPCRE (Perl Compatible Regular Expressions)へ依存しないよう"
-"にするために無効化されています。残りの標準モジュールの一覧は、 http://wiki."
-"nginx.org/Modules を参照してください。"
+msgstr "全てのHTTPの標準モジュールが利用可能です。PCRE（Perl Compatible Regular Expressions）がない場合はHttpRewriteModuleは無効になります。標準モジュールの一覧は、 http://wiki.nginx.org/Modules を参照してください。"
 
 # 6d1dbafe10e049d797a2c017a2013a96
 # 733aee09b45c47b4aa57cc1f8167c212
@@ -5956,19 +6006,19 @@ msgid "指定した2つ文字列の編集距離をUint32型の値として返し
 msgstr ""
 
 # b94ffd74395c4fcead024a85149d7750
-#: ../../../source/reference/functions/geo_distance.txt:6
+#: ../../../source/reference/functions/geo_distance.txt:10
 msgid "geo_distance"
 msgstr ""
 
 # 8e5e3f5601014be79337f1605b1c3e40
-#: ../../../source/reference/functions/geo_distance.txt:11
+#: ../../../source/reference/functions/geo_distance.txt:15
 msgid ""
 "``geo_distance`` calculates the value of distance between specified two "
 "points."
 msgstr "``geo_distance`` は二点間の距離を計算します。"
 
 # 545dacaea59a487e9d00cfaacf9f0ca3
-#: ../../../source/reference/functions/geo_distance.txt:16
+#: ../../../source/reference/functions/geo_distance.txt:20
 msgid ""
 "``geo_distance`` requires two point. The parameter ``approximate_type`` is "
 "optional::"
@@ -5977,7 +6027,7 @@ msgstr ""
 "です。"
 
 # 09f03cbda1dd47ab816d7837212ddce6
-#: ../../../source/reference/functions/geo_distance.txt:22
+#: ../../../source/reference/functions/geo_distance.txt:26
 msgid ""
 "The default value of ``approximate_type`` is ``\"rectangle\"``. If you omit "
 "``approximate_type``, ``geo_distance`` calculates the value of distance as "
@@ -5988,17 +6038,17 @@ msgstr ""
 "\"rectangle\"`` が指定されたものとして計算します。"
 
 # 7b106eaa12f94ffc9d75774e712493df
-#: ../../../source/reference/functions/geo_distance.txt:29
+#: ../../../source/reference/functions/geo_distance.txt:33
 msgid "``geo_distance`` is one of the groonga builtin functions."
 msgstr "``geo_distance`` はgroongaの組み込み関数の一つです。"
 
 # 79447dbd4788452aa475c3251e710d1b
-#: ../../../source/reference/functions/geo_distance.txt:31
+#: ../../../source/reference/functions/geo_distance.txt:35
 msgid "You can call a builtin function in :doc:`/reference/grn_expr`"
 msgstr "組み込み関数を :doc:`/reference/grn_expr` にて使うことができます。"
 
 # 0f305bac688748efa0aa9f3ba6331eda
-#: ../../../source/reference/functions/geo_distance.txt:33
+#: ../../../source/reference/functions/geo_distance.txt:37
 msgid ""
 "``geo_distance`` function calculates the value of distance (approximate "
 "value) between the coordinate of ``point1`` and the coordinate of ``point2``."
@@ -6007,7 +6057,7 @@ msgstr ""
 "似値)を計算します。"
 
 # 0694c768b41341fa930f48546308c147
-#: ../../../source/reference/functions/geo_distance.txt:38
+#: ../../../source/reference/functions/geo_distance.txt:42
 msgid ""
 "groonga provides three built in functions for calculating the value of "
 "distance. There are ``geo_distance()``, ``geo_distance2()`` and "
@@ -6026,7 +6076,7 @@ msgstr ""
 "(point1, point2, \"ellipsoid\")`` を使用してください。"
 
 # e104cc660d534e88a06a49ffa76f81d6
-#: ../../../source/reference/functions/geo_distance.txt:45
+#: ../../../source/reference/functions/geo_distance.txt:49
 msgid ""
 "Lets's learn about ``geo_distance`` usage with examples. This section shows "
 "simple usages."
@@ -6035,56 +6085,60 @@ msgstr ""
 "を示します。"
 
 # 8a4435c84a4f43c7a66558dbde4cce1e
-#: ../../../source/reference/functions/geo_distance.txt:48
+#: ../../../source/reference/functions/geo_distance.txt:52
+#, fuzzy
 msgid ""
 "Here are two schema definition and sample data to show the difference "
 "according to the usage. Those samples show how to calculate the value of "
-"distance between Tokyo and Sapporo."
+"distance between New York City and London."
 msgstr ""
 "使い方による違いがわかるようにスキーマ定義とサンプルデータを用意しました。こ"
 "れらのサンプルは東京と札幌を例に距離の計算方法を示します。"
 
 # 1c96e92f7a3b4a0896351b7de85e2198
-#: ../../../source/reference/functions/geo_distance.txt:51
+#: ../../../source/reference/functions/geo_distance.txt:55
+#, fuzzy
 msgid ""
-"Using the column value of location for calculating the distance "
-"(``Stations`` table)"
+"Using the column value of location for calculating the distance (``Cities`` "
+"table)"
 msgstr "距離の計算にlocationカラムの値を使う ( ``Stations`` テーブル)"
 
 # b7017435ec0b46ea8732d08a9e92997a
-#: ../../../source/reference/functions/geo_distance.txt:52
+#: ../../../source/reference/functions/geo_distance.txt:56
 msgid ""
 "Using the explicitly specified coordinates for calculating the distance "
 "(``Geo`` table)"
 msgstr "距離の計算に明示的に指定した座標値を使う ( ``Geo`` テーブル)"
 
 # 2779b99e1cab45ff90d73b16c14a0077
-#: ../../../source/reference/functions/geo_distance.txt:55
+#: ../../../source/reference/functions/geo_distance.txt:59
 msgid "Using the column value of location"
 msgstr "locationカラムの値を使う"
 
-# 7b117efc374e4423a4cb9e2bfc2afab1
-#: ../../../source/reference/functions/geo_distance.txt:57
+# 9e614385bab349a3bc8059f3422715a9
+#: ../../../source/reference/functions/geo_distance.txt:61
+#, fuzzy
 msgid ""
-"Here are a schema definition of ``Stations`` table and sample data to show "
+"Here are a schema definition of ``Cities`` table and sample data to show "
 "usage."
 msgstr ""
-"使用例を示すための ``Stations`` テーブルのスキーマ定義とサンプルデータは以下"
-"の通りです。"
+"使用例を示すための ``Geo`` テーブルのスキーマ定義とサンプルデータは以下の通り"
+"です。"
 
 # 445849f2af644a9a8de1ae399493aa69
-#: ../../../source/reference/functions/geo_distance.txt:62
+#: ../../../source/reference/functions/geo_distance.txt:92
+#, fuzzy
 msgid ""
-"This execution example creates a table named ``Stations`` which has one "
-"column named ``location``. ``location`` column stores the value of "
-"coordinate. The coordinate of Tokyo is stored as sample data."
+"This execution example creates a table named ``Cities`` which has one column "
+"named ``location``. ``location`` column stores the value of coordinate. The "
+"coordinate of Tokyo is stored as sample data."
 msgstr ""
 "この実行例では ``location`` というカラムを持つ ``Stations`` テーブルを作成し"
 "ます。 ``location`` カラムには座標値を保存します。東京の座標値がサンプルデー"
 "タとして保存されています。"
 
 # 5929faa496bb47b582cde5e008aaec2d
-#: ../../../source/reference/functions/geo_distance.txt:69
+#: ../../../source/reference/functions/geo_distance.txt:100
 msgid ""
 "This sample shows that ``geo_distance`` use the value of ``location`` column "
 "and the value of coordinate to calculate distance."
@@ -6093,21 +6147,22 @@ msgstr ""
 "していることを示します。"
 
 # f1679de09eb344ceb03ba6f9c6685aab
-#: ../../../source/reference/functions/geo_distance.txt:72
+#: ../../../source/reference/functions/geo_distance.txt:103
+#, fuzzy
 msgid ""
-"The value (\"155047000x508862800\") passed to ``geo_distance`` as the second "
-"argument is the coordinate of Sapporo."
+"The value (\"185428000x-461000\") passed to ``geo_distance`` as the second "
+"argument is the coordinate of London."
 msgstr ""
 "``geo_distance`` の第二引数として渡された値 (\"155047000x508862800\") は札幌"
 "の座標値です。"
 
 # 44d6b19124b9469389dd4961713668c3
-#: ../../../source/reference/functions/geo_distance.txt:77
+#: ../../../source/reference/functions/geo_distance.txt:108
 msgid "Using the explicitly specified value of location"
 msgstr "明示的に指定した位置を使う"
 
 # 9e614385bab349a3bc8059f3422715a9
-#: ../../../source/reference/functions/geo_distance.txt:79
+#: ../../../source/reference/functions/geo_distance.txt:110
 msgid ""
 "Here are a schema definition of ``Geo`` table and sample data to show usage."
 msgstr ""
@@ -6115,7 +6170,7 @@ msgstr ""
 "です。"
 
 # 677bb0fe4cc445a085ca76443035995d
-#: ../../../source/reference/functions/geo_distance.txt:84
+#: ../../../source/reference/functions/geo_distance.txt:135
 msgid ""
 "This execution example creates a table named ``Geo`` which has one column "
 "named ``distance``. ``distance`` column stores the value of distance."
@@ -6124,72 +6179,73 @@ msgstr ""
 "``distance`` カラムには距離を保存します。"
 
 # d6a2da1f01a94fcb89dcbc342549db37
-#: ../../../source/reference/functions/geo_distance.txt:90
+#: ../../../source/reference/functions/geo_distance.txt:142
+#, fuzzy
 msgid ""
-"This sample shows that ``geo_distance`` use the coordinate of Tokyo and the "
-"coordinate of Sapporo to calculate distance."
+"This sample shows that ``geo_distance`` use the coordinate of London and the "
+"coordinate of New York to calculate distance."
 msgstr ""
 "このサンプルは ``geo_distance`` が東京の座標と札幌の座標から距離を計算してい"
 "ることを示します。"
 
 # b90bfd8b177440e6b2a2ff7f128303f9
-#: ../../../source/reference/functions/geo_distance.txt:99
+#: ../../../source/reference/functions/geo_distance.txt:151
 msgid "There are two required parameter, ``point1`` and ``point2``."
 msgstr "必須引数は二つあります。 ``point1`` と ``point2`` です。"
 
 # a76206cf7b6d45f496cc8de67d2f79ee
-#: ../../../source/reference/functions/geo_distance.txt:102
+#: ../../../source/reference/functions/geo_distance.txt:154
 msgid "``point1``"
 msgstr ""
 
 # 9b1a2e5d87524b94b57d4cbc0f5b885b
-#: ../../../source/reference/functions/geo_distance.txt:104
+#: ../../../source/reference/functions/geo_distance.txt:156
 msgid ""
 "It specifies the start point that you want to calculate the value of "
 "distance between two points."
 msgstr "計算しようとしている二点間の開始地点を指定します。"
 
 # 08a5d2b440ab42559403a3c7e4903ce1
-#: ../../../source/reference/functions/geo_distance.txt:107
+#: ../../../source/reference/functions/geo_distance.txt:159
 msgid "You can specify the value of GeoPoint type. [#]_"
 msgstr "GeoPoint型の値を指定することができます。 [1]_"
 
 # bde897b0ca22430eb927c3f3d85d70d2
-#: ../../../source/reference/functions/geo_distance.txt:109
+#: ../../../source/reference/functions/geo_distance.txt:161
 msgid "See :doc:`/reference/type` about GeoPoint."
 msgstr "GeoPointについては :doc:`/reference/type` を参照してください。"
 
 # f7da97f129624e1299e5459a8ac8caeb
-#: ../../../source/reference/functions/geo_distance.txt:112
+#: ../../../source/reference/functions/geo_distance.txt:164
 msgid "``point2``"
 msgstr ""
 
 # 471bcd5c71b74618b7a52ada00ecb7eb
-#: ../../../source/reference/functions/geo_distance.txt:114
+#: ../../../source/reference/functions/geo_distance.txt:166
 msgid ""
 "It specifies the end point that you want to calculate the value of distance "
 "between two points."
 msgstr "計算しようとしている二点間の終了地点を指定します。"
 
 # 93d1be8ed5cc4f09b686aca96c27caca
-#: ../../../source/reference/functions/geo_distance.txt:117
+#: ../../../source/reference/functions/geo_distance.txt:169
 msgid ""
 "You can specify the value of GeoPoint type or the string indicating the "
 "coordinate."
 msgstr "GeoPoint型の値か座標を表す文字列を指定することができます。"
 
 # bde897b0ca22430eb927c3f3d85d70d2
-#: ../../../source/reference/functions/geo_distance.txt:120
+#: ../../../source/reference/functions/geo_distance.txt:172
 msgid "See :doc:`/reference/type` about GeoPoint and the coordinate."
 msgstr "GeoPointと座標については :doc:`/reference/type` を参照してください。"
 
 # 063b335227cc45469a645aec28feca86
-#: ../../../source/reference/functions/geo_distance.txt:123
+#: ../../../source/reference/functions/geo_distance.txt:175
 msgid "Optional parameter"
 msgstr "省略可能引数"
 
 # adaf6aea33734076a433a69a89e0b440
-#: ../../../source/reference/functions/geo_distance.txt:125
+#: ../../../source/reference/functions/geo_distance.txt:177
 msgid "There is a optional parameter, ``approximate_type``."
 msgstr "省略可能な引数として ``approximate_type`` があります。"
 
@@ -6197,20 +6253,20 @@ msgstr "省略可能な引数として ``approximate_type`` があります。"
 # d53affcbefb94958b5219b71d13f41ba
 # 717449798dfd48c4b1d4197475ca41a4
 # 3681f9b79a3b45ed96ce85e3429fc9c6
-#: ../../../source/reference/functions/geo_distance.txt:128
+#: ../../../source/reference/functions/geo_distance.txt:180
 #: ../../../source/reference/functions/geo_in_circle.txt:42
 msgid "``approximate_type``"
 msgstr ""
 
 # 33db3c7afa984a5ba02cce4dcf90e9e0
-#: ../../../source/reference/functions/geo_distance.txt:130
+#: ../../../source/reference/functions/geo_distance.txt:182
 msgid ""
 "It specifies how to approximate the geographical features for calculating "
 "the value of distance."
 msgstr "距離を計算するときに地形をどのように近似するかを指定します。"
 
 # 3fe88937ec054b13aecea52df2e77b0b
-#: ../../../source/reference/functions/geo_distance.txt:133
+#: ../../../source/reference/functions/geo_distance.txt:185
 msgid ""
 "You can specify the value of ``approximate_type`` by one of the followings."
 msgstr "``approximate_type`` の値は以下を指定することができます。"
@@ -6219,8 +6275,8 @@ msgstr "``approximate_type`` の値は以下を指定することができます
 # 6f9d1310f2534c98aaa17ca6590f00ea
 # b7c60aca823b476a9b03fc64ce99abae
 # a35c6823701045b8949f767b52a069f3
-#: ../../../source/reference/functions/geo_distance.txt:135
-#: ../../../source/reference/functions/geo_distance.txt:155
+#: ../../../source/reference/functions/geo_distance.txt:187
+#: ../../../source/reference/functions/geo_distance.txt:207
 msgid "``rectangle``"
 msgstr ""
 
@@ -6228,8 +6284,8 @@ msgstr ""
 # 914c41d110004337bda81f30b08c9f22
 # 6f4835ed8f0749a69480bae00c4f84aa
 # fadabcdcd119484db4483cb8213f3eee
-#: ../../../source/reference/functions/geo_distance.txt:136
-#: ../../../source/reference/functions/geo_distance.txt:192
+#: ../../../source/reference/functions/geo_distance.txt:188
+#: ../../../source/reference/functions/geo_distance.txt:241
 msgid "``sphere``"
 msgstr ""
 
@@ -6237,13 +6293,13 @@ msgstr ""
 # 568af7c34fa14945a47c8157ffb22aa8
 # 340afa18921d4a71b747c62774cf844c
 # ae833ce768ec428f8410659999fddbd0
-#: ../../../source/reference/functions/geo_distance.txt:137
-#: ../../../source/reference/functions/geo_distance.txt:208
+#: ../../../source/reference/functions/geo_distance.txt:189
+#: ../../../source/reference/functions/geo_distance.txt:258
 msgid "``ellipsoid``"
 msgstr ""
 
 # 2f22ea4ca0984255b3d0fc55a20538e5
-#: ../../../source/reference/functions/geo_distance.txt:141
+#: ../../../source/reference/functions/geo_distance.txt:193
 msgid ""
 "There is a limitation about ``geo_distance``. ``geo_distance`` can not "
 "calculate the value of distance between two points across meridian, euator "
@@ -6255,7 +6311,7 @@ msgstr ""
 "が、将来的には修正される予定です。"
 
 # cdabfa7ff28a4538949fd09fea604612
-#: ../../../source/reference/functions/geo_distance.txt:149
+#: ../../../source/reference/functions/geo_distance.txt:201
 msgid ""
 "There is a limitation about ``geo_distance`` above notice. But it relaxes "
 "the limitation if you use ``rectangle`` as approximate type. You can "
@@ -6267,14 +6323,14 @@ msgstr ""
 "とも北半球に存在する場合に限って距離を正しく算出することができます。"
 
 # 6060a0e7b2064d03aa51c9da14fd9207
-#: ../../../source/reference/functions/geo_distance.txt:157
+#: ../../../source/reference/functions/geo_distance.txt:209
 msgid ""
 "This parameter require to approximate the geographical features by square "
 "approximation for calculating the distance."
 msgstr "この引数を指定すると地形を方形近似して距離を計算します。"
 
 # ada49c867dea4483b996867e86980020
-#: ../../../source/reference/functions/geo_distance.txt:160
+#: ../../../source/reference/functions/geo_distance.txt:212
 msgid ""
 "Since the value of distance is calculated by simple formula, you can "
 "calculate the value of distance fast. But, the error of distance increases "
@@ -6284,16 +6340,16 @@ msgstr ""
 "は誤差が増大します。"
 
 # 9649a83bf0474bba97cde2107fbd40d4
-#: ../../../source/reference/functions/geo_distance.txt:164
+#: ../../../source/reference/functions/geo_distance.txt:216
 msgid "You can also specify ``rect`` as abbrev expression."
 msgstr "``rect`` を省略表記として指定することができます。"
 
 # 955a1b0b68b4498e9829d716ff0eefc8
 # a24bf00cce7e4d67ab2d52c7f1e482f6
 # a59e253aceca43c4be9cbb1e7a8eca82
-#: ../../../source/reference/functions/geo_distance.txt:166
-#: ../../../source/reference/functions/geo_distance.txt:202
-#: ../../../source/reference/functions/geo_distance.txt:219
+#: ../../../source/reference/functions/geo_distance.txt:218
+#: ../../../source/reference/functions/geo_distance.txt:251
+#: ../../../source/reference/functions/geo_distance.txt:269
 msgid ""
 "Here is a sample about calculating the value of distance with column value."
 msgstr "カラムの値で距離を計算するサンプルは以下の通りです。"
@@ -6301,14 +6357,14 @@ msgstr "カラムの値で距離を計算するサンプルは以下の通りで
 # ceea3a2f9b1d4700b37a56b6f8d25d33
 # ca553b9ff94f4b3994bee2ab8c06620d
 # e4f23df1186f43ba9bec59745646b676
-#: ../../../source/reference/functions/geo_distance.txt:171
+#: ../../../source/reference/functions/geo_distance.txt:222
 msgid ""
 "Here is a sample about calculating the value of distance with explicitly "
 "specified point."
 msgstr "明示的に位置を指定して距離を計算するサンプルは以下の通りです。"
 
 # 09f03cbda1dd47ab816d7837212ddce6
-#: ../../../source/reference/functions/geo_distance.txt:178
+#: ../../../source/reference/functions/geo_distance.txt:228
 msgid ""
 "``geo_distance`` uses square approximation as default. If you omit "
 "``approximate_type``, ``geo_distance`` behaves like ``rectangle`` was "
@@ -6319,7 +6375,7 @@ msgstr ""
 "れたものとして振舞います。"
 
 # 95487e11cab343329d7dde6ce752dc88
-#: ../../../source/reference/functions/geo_distance.txt:182
+#: ../../../source/reference/functions/geo_distance.txt:232
 msgid ""
 "``geo_distance`` accepts the string indicating the coordinate as the value "
 "of ``point1`` when the value of ``approximate_type`` is ``\"rectangle\"``. "
@@ -6333,14 +6389,14 @@ msgstr ""
 "``geo_distance`` は距離の値として0を返します。"
 
 # c2d459e1d5cf421fb810f8c34c9efbb7
-#: ../../../source/reference/functions/geo_distance.txt:194
+#: ../../../source/reference/functions/geo_distance.txt:243
 msgid ""
 "This parameter require to approximate the geographical features by spherical "
 "approximation for calculating the distance."
 msgstr "この引数を指定すると球面近似で地形を近似して距離を計算します。"
 
 # ae430be8c8d24905b3144a03794597ee
-#: ../../../source/reference/functions/geo_distance.txt:197
+#: ../../../source/reference/functions/geo_distance.txt:246
 msgid ""
 "It is slower than ``rectangle``, but the error of distance becomes smaller "
 "than ``rectangle``."
@@ -6349,19 +6405,19 @@ msgstr ""
 "さくなります。"
 
 # 3e5dfacb65514829927cb8f277c89f8b
-#: ../../../source/reference/functions/geo_distance.txt:200
+#: ../../../source/reference/functions/geo_distance.txt:249
 msgid "You can also specify ``sphr`` as abbrev expression."
 msgstr "``sphr`` を省略表記として指定することができます。"
 
 # f5301b5d6bdd4beb8aefc4202b1ebd40
-#: ../../../source/reference/functions/geo_distance.txt:210
+#: ../../../source/reference/functions/geo_distance.txt:260
 msgid ""
 "This parameter require to approximate the geographical features by ellipsoid "
 "approximation for calculating the distance."
 msgstr "この引数を指定すると楕円近似で地形を近似して距離を計算します。"
 
 # 95b3f4b2e8cc4725a608cee269b9e176
-#: ../../../source/reference/functions/geo_distance.txt:213
+#: ../../../source/reference/functions/geo_distance.txt:263
 msgid ""
 "It uses the calculation of distance by the formula of Hubeny. It is slower "
 "than ``sphere``, but the error of distance becomes smaller than ``sphere``."
@@ -6370,17 +6426,17 @@ msgstr ""
 "``sphere`` より誤差は小さくなります。"
 
 # bde1f151c06c4cf388b020696da6c6e2
-#: ../../../source/reference/functions/geo_distance.txt:217
+#: ../../../source/reference/functions/geo_distance.txt:267
 msgid "You can also specify ``ellip`` as abbrev expression."
 msgstr "``ellip`` を省略表記として指定することができます。"
 
 # f18ad5e74b9c45f783d38e24995b3abe
-#: ../../../source/reference/functions/geo_distance.txt:225
+#: ../../../source/reference/functions/geo_distance.txt:276
 msgid "Return value"
 msgstr "返値"
 
 # 594a793a53bd46fc8daf8c2a62b200fd
-#: ../../../source/reference/functions/geo_distance.txt:227
+#: ../../../source/reference/functions/geo_distance.txt:278
 msgid ""
 "``geo_distance`` returns the value of distance in float type. The unit of "
 "return value is meter."
@@ -6388,12 +6444,12 @@ msgstr ""
 "``geo_distance`` はFloat型の値を距離として返します。単位はメートルです。"
 
 # 25a1b8ba25cb4de8a6e6d6a73fb3af6f
-#: ../../../source/reference/functions/geo_distance.txt:231
+#: ../../../source/reference/functions/geo_distance.txt:282
 msgid "Footnote"
 msgstr "脚注"
 
 # 8a736f54a069422ab45d8e0170bfbdda
-#: ../../../source/reference/functions/geo_distance.txt:232
+#: ../../../source/reference/functions/geo_distance.txt:283
 msgid "You can specify whether TokyoGeoPoint or WGS84GeoPoint."
 msgstr "日本測地系座標か世界測地系座標のいずれかを指定することができます。"
 
@@ -6744,8 +6800,8 @@ msgstr ""
 ":doc:`/reference/grn_expr/query_syntax` は一般的なインターネット検索サイトに"
 "ある検索フォーム用の構文です。シンプルで使いやすいですが、制限があります。 :"
 "doc:`/reference/grn_expr/query_syntax` では実行できない条件式や集合演算があり"
-"ます。 :doc:`/reference/grn_expr/query_syntax` は :doc:`/reference/commands/select` の "
-"``query`` オプションで指定する検索条件で使えます。"
+"ます。 :doc:`/reference/grn_expr/query_syntax` は :doc:`/reference/commands/"
+"select` の ``query`` オプションで指定する検索条件で使えます。"
 
 # 1b2b1a4bcb0e4d22940c5021f63a2b50
 #: ../../../source/reference/grn_expr.txt:35
@@ -6758,9 +6814,9 @@ msgid ""
 msgstr ""
 ":doc:`/reference/grn_expr/script_syntax` はECMAScriptに似た構文です。 :doc:`/"
 "reference/grn_expr/script_syntax` ではすべての条件式と集合演算を使えます。 :"
-"doc:`/reference/grn_expr/script_syntax` は :doc:`/reference/commands/select` の "
-"``filter`` オプションで指定する検索条件や ``scorer`` オプションで指定する式で"
-"使えます。"
+"doc:`/reference/grn_expr/script_syntax` は :doc:`/reference/commands/select` "
+"の ``filter`` オプションで指定する検索条件や ``scorer`` オプションで指定する"
+"式で使えます。"
 
 # 08047bc04d47463db4be5290e839e4b4
 #: ../../../source/reference/grn_expr.txt:41
@@ -7685,11 +7741,12 @@ msgstr "代入式"
 
 # bcdcbdaea046466a8ff62b9cf8dafc16
 #: ../../../source/reference/grn_expr/query_syntax.txt:566
+#, fuzzy
 msgid ""
 "This section is for advanced users. Because assignment expression is "
-"disabled in ``--query`` option of :doc:`/reference/commands/select`. You "
-"need to use groonga as a library instead of server or command line tool for "
-"assignment expression."
+"disabled in ``--query`` option of :doc:`/reference/commands/select` by "
+"default. You need to specify ``ALLOW_COLUMN|ALLOW_UPDATE`` as ``--"
+"query_flags`` option value to enable assignment expression."
 msgstr ""
 "このセクションは高度なユーザー向けです。それは、代入式は :doc:`/reference/"
 "commands/select` の ``--query`` オプションでは無効になっているからです。代入"
@@ -9996,3 +10053,11 @@ msgstr ""
 #: ../../../source/reference/type.txt:129
 msgid "Object型はv1.2でサポートされます。"
 msgstr ""
+
+# 7b117efc374e4423a4cb9e2bfc2afab1
+#~ msgid ""
+#~ "Here are a schema definition of ``Stations`` table and sample data to "
+#~ "show usage."
+#~ msgstr ""
+#~ "使用例を示すための ``Stations`` テーブルのスキーマ定義とサンプルデータは以"
+#~ "下の通りです。"

@@ -8,12 +8,13 @@ groonga-httpd
 Summary
 -------
 
-groonga-httpd is a program to communicate with a groonga server using the HTTP
-protocol. It functions as same as :doc:`groonga-server-http`. Although
-:doc:`groonga-server-http` has limited support for HTTP with a minimal built-in
-HTTP server, :ref:`groonga-httpd` has full support for HTTP with an embedded
-nginx. All standards-compliance and features provided by nginx is also available in
-groonga-httpd. For details about nginx, see http://www.nginx.org/
+groonga-httpd is a program to communicate with a groonga server using
+the HTTP protocol. It functions as same as
+:doc:`groonga-server-http`. Although :doc:`groonga-server-http` has
+limited support for HTTP with a minimal built-in HTTP server,
+:ref:`groonga-httpd` has full support for HTTP with an embedded `nginx
+<http://nginx.org/>`_. All standards-compliance and features
+provided by nginx is also available in groonga-httpd.
 
 groonga-httpd has an Web-based administration tool implemented with HTML and
 JavaScript. You can access to it from http://hostname:port/.
@@ -33,7 +34,7 @@ Set up
 
 First, you'll need to edit the groonga-httpd configuration file to specify a
 database. Edit /etc/groonga/httpd/groonga-httpd.conf to enable the
-groonga_database directive like this::
+``groonga_database`` directive like this::
 
    # Match this to the file owner of groonga database files if groonga-httpd is
    # run as root.
@@ -59,7 +60,7 @@ console because groonga-httpd runs as a daemon process by default.::
 Request queries
 ^^^^^^^^^^^^^^^
 
-To check, request a simple query (:ref:`command-status`).
+To check, request a simple query (:doc:`/reference/commands/status`).
 
 .. groonga-command
 .. database: groonga-httpd
@@ -202,7 +203,7 @@ By default, this is set to 1. It is nginx's default.
 Available nginx modules
 -----------------------
 
-All standard HTTP modules except HttpRewriteModule is available.
-HttpRewriteModule is disabled to avoid to depend on PCRE (Perl Compatible
-Regular Expressions). For the list of other standard HTTP modules, see
+All standard HTTP modules is available. HttpRewriteModule is
+disabled when you don't have PCRE (Perl Compatible Regular
+Expressions). For the list of standard HTTP modules, see
 http://wiki.nginx.org/Modules.
