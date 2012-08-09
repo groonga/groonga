@@ -901,7 +901,7 @@ grn_output_obj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
       grn_obj value;
       GRN_VOID_INIT(&value);
       n = grn_vector_size(ctx, obj);
-      grn_output_array_open(ctx, outbuf, output_type, "VECTOR", -1);
+      grn_output_array_open(ctx, outbuf, output_type, "VECTOR", n);
       for (i = 0; i < n; i++) {
         const char *_value;
         unsigned int weight, length;
