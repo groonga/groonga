@@ -5,5 +5,5 @@ suggest \
   --column kana \
   --types complete \
   --frequency_threshold 1 \
-  --conditional_probability_threshold 0.1 \
+  --conditional_probability_threshold 0.09 \
   --query 'ｓｔりん'

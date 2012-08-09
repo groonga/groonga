@@ -1,4 +1,4 @@
-suggest   --table item_rurema   --column kana   --types complete   --frequency_threshold 1   --conditional_probability_threshold 0.1   --query 'ｓｔりん'
+suggest   --table item_rurema   --column kana   --types complete   --frequency_threshold 1   --conditional_probability_threshold 0.01   --query 'ｓｔりん'
 [
   [
     0,
