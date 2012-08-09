@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: groonga 2.0.6\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-08-09 11:11\n"
-"PO-Revision-Date: 2012-08-09 11:53+0900\n"
+"PO-Revision-Date: 2012-08-09 12:10+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "MIME-Version: 1.0\n"
@@ -340,7 +340,7 @@ msgstr ":doc:`groonga-httpd` はプレフィックスパスを変更すること
 msgid ""
 "Groonga has :doc:`/reference/command_version` mechanism. It is for upgrading "
 "groonga commands with backward compatibility."
-msgstr "groongaには :doc:`/reference/command_version` という仕組みがあります。ことは後方互換性を維持したままgroongaのコマンドをアップグレードするための仕組みです。"
+msgstr "groongaには :doc:`/reference/command_version` という仕組みがあります。これは後方互換性を維持したままgroongaコマンドをアップグレードするための仕組みです。"
 
 # 3d0dabefd19e4ca2b79ca4b43c174c99
 #: ../../../source/server/http/comparison.txt:130
@@ -348,7 +348,7 @@ msgid ""
 ":doc:`groonga` can change the default command veresion by ``--default-"
 "command-version`` option. Here is a sample command line to use command "
 "version 2 as the default command version::"
-msgstr ":doc:`groonga` はデフォルトのコマンドバージョンを ``--default-command-version`` オプションで変更できます。以下はデフォルトのコマンドバージョンとしてコマンドバージョン2を使うコマンドライン例です。::"
+msgstr ":doc:`groonga` は ``--default-command-version`` オプションでデフォルトのコマンドバージョンを変更できます。以下はデフォルトのコマンドバージョンとしてコマンドバージョン2を使うコマンドライン例です。::"
 
 # a2d0e9cb91fd4b3ea94745b6ccd03e14
 #: ../../../source/server/http/comparison.txt:136
@@ -386,7 +386,7 @@ msgstr "HTTPではベーシック認証やダイジェスト認証などの認�
 msgid ""
 ":doc:`groonga` doesn't support any authentications. To restrict use of danger "
 "command, other tools such as iptables and reverse proxy are needed."
-msgstr ":doc:`groonga` では認証できません。危険なコマンドの使用を制限するためには、 ``iptables`` やリバースプロキシなど他のツールを使う必要があります。"
+msgstr ":doc:`groonga` では認証できません。危険なコマンドの使用を制限するためには、iptablesやリバースプロキシなど他のツールを使う必要があります。"
 
 # 66e27de22e994e168e048a66cd418368
 #: ../../../source/server/http/comparison.txt:203
