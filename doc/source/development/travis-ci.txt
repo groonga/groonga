@@ -58,3 +58,8 @@ Here are open source softwares that use groonga on Travis CI:
 
     * `nroonga on Travis CI <http://travis-ci.org/#!/nroonga/nroonga>`_
     * `.travis.yml for nroonga <https://github.com/nroonga/nroonga/blob/master/.travis.yml>`_
+
+  * `logaling-command <http://logaling.github.com/>`_ (A glossary management command line tool)
+
+    * `logaling-command on Travis CI <http://travis-ci.org/#!/logaling/logaling-command>`_
+    * `.travis.yml for logaling-command <https://github.com/logaling/logaling-command/blob/master/.travis.yml>`_
