@@ -2033,7 +2033,7 @@ dump_columns(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table,
   columns = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
                             GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY);
   if (!columns) {
-    ERR(GRN_ERROR, "couldn't create a hash to hold columns");
+    ERR(GRN_NO_MEMORY_AVAILABLE, "couldn't create a hash to hold columns");
     return;
   }
 
