@@ -1,7 +1,7 @@
 notifications:
   recipients:
     - travis@clear-code.com
-language: c
+language: cpp
 compiler:
   - gcc
 #  - clang
