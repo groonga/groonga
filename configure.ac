@@ -76,6 +76,12 @@ m4_ifdef([PKG_PROG_PKG_CONFIG],
          [PKG_PROG_PKG_CONFIG([0.19])
           m4_pattern_allow(PKG_CONFIG_LIBDIR)])
 
+if test "$CC" = "clang"; then
+  CLANG=yes
+else
+  CLANG=no
+fi
+
 AC_DEFUN([CHECK_CFLAG], [
   AC_MSG_CHECKING([if gcc supports $1])
   old_CFLAGS=$CFLAGS
@@ -149,7 +155,9 @@ if test "$GCC" = "yes"; then
   CHECK_BUILD_FLAG([-Wpointer-arith])
   CHECK_CFLAG([-Wdeclaration-after-statement])
   CHECK_CFLAG([-Wbad-function-cast])
-  CHECK_BUILD_FLAG([-Wcast-align])
+  if test "$CLANG" = "no"; then
+    CHECK_BUILD_FLAG([-Wcast-align])
+  fi
   CHECK_BUILD_FLAG([-Wredundant-decls])
 #  CHECK_BUILD_FLAG([-Wunsafe-loop-optimizations])
 #  CHECK_BUILD_FLAG([-Wunreachable-code])
@@ -300,7 +308,7 @@ AC_ARG_WITH(debug,
   grn_debug="no")
 if test "x$grn_debug" != "xno"; then
   grn_debug="yes"
-  if test "$CC" = "clang"; then
+  if test "$CLANG" = "yes"; then
     CFLAGS="$CFLAGS -O0 -g"
     CXXFLAGS="$CXXFLAGS -O0 -g"
   elif test "$GCC" = "yes"; then
