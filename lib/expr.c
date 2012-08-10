@@ -25,11 +25,12 @@
 #include "util.h"
 
 static inline int
-function_proc_p(grn_obj *expr)
+function_proc_p(grn_obj *obj)
 {
-  return (expr &&
-          expr->header.type == GRN_PROC &&
-          ((grn_proc *)expr)->type == GRN_PROC_FUNCTION);
+  return (obj &&
+          obj->header.type == GRN_PROC &&
+          ((grn_proc *)obj)->type == GRN_PROC_FUNCTION);
+}
 }
 
 grn_obj *
