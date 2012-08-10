@@ -5,7 +5,7 @@ notifications:
 language: cpp
 compiler:
   - gcc
-#  - clang
+  - clang
 install:
   - echo "deb http://downloads.sourceforge.net/project/cutter/ubuntu/ $(lsb_release --short --codename) main" | sudo tee /etc/apt/sources.list.d/cutter.list
   - sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 1C837F31
