@@ -487,7 +487,6 @@ namespace test_dat_trie
               stack.empty() ? (keyset.size() + 1) : stack.top();
           const std::pair<Keyset::iterator, bool> it_bool_pair =
               keyset.insert(std::make_pair(str, key_id));
-          const Keyset::const_iterator it = it_bool_pair.first;
           const bool to_be_inserted = it_bool_pair.second;
           if (!stack.empty() && to_be_inserted) {
             stack.pop();
@@ -622,7 +621,6 @@ namespace test_dat_trie
               stack.empty() ? (keyset.size() + 1) : stack.top();
           const std::pair<Keyset::iterator, bool> it_bool_pair =
               keyset.insert(std::make_pair(str, key_id));
-          const Keyset::const_iterator it = it_bool_pair.first;
           const bool to_be_inserted = it_bool_pair.second;
           if (!stack.empty() && to_be_inserted) {
             stack.pop();
