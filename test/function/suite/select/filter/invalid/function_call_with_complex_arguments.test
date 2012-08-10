@@ -1,0 +1,3 @@
+table_create Users TABLE_HASH_KEY ShortText
+
+select Users --filter '"invalid function"(_key == "alice" || _key == "bob", _key == "chris" && _id == 1)'

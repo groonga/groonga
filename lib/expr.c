@@ -841,9 +841,26 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
       {
         grn_obj *proc = NULL;
         if (e->codes_curr - nargs > 0) {
-          proc = e->codes[e->codes_curr - nargs - 1].value;
+          int i;
+          grn_expr_code *code;
+          code = &(e->codes[e->codes_curr - 1]);
+          for (i = 0; i < nargs; i++) {
+            int rest_n_codes = 1;
+            while (rest_n_codes > 0) {
+              if (!code->value) {
+                rest_n_codes += code->nargs;
+              }
+              rest_n_codes--;
+              code--;
+            }
+          }
+          proc = code->value;
         }
-        if (proc && !function_proc_p(proc)) {
+        if (!proc) {
+          ERR(GRN_INVALID_ARGUMENT, "invalid function call expression");
+          goto exit;
+        }
+        if (!function_proc_p(proc)) {
           grn_obj buffer;
 
           GRN_TEXT_INIT(&buffer, 0);
