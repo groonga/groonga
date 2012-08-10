@@ -3170,7 +3170,7 @@ grn_table_setoperation(grn_ctx *ctx, grn_obj *table1, grn_obj *table2, grn_obj *
   grn_rc rc = GRN_SUCCESS;
   void *key = NULL, *value1 = NULL, *value2 = NULL;
   uint32_t value_size = 0;
-  uint32_t key_size;
+  uint32_t key_size = 0;
   if (table1 != res) {
     if (table2 == res) {
       grn_obj *t = table1;
