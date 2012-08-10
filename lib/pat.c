@@ -393,7 +393,9 @@ _grn_pat_create(grn_ctx *ctx, grn_pat *pat,
   } else {
     entry_size = value_size;
   }
-  for (w_of_element = 0; (1 << w_of_element) < entry_size; w_of_element++);
+  for (w_of_element = 0; (1 << w_of_element) < entry_size; w_of_element++) {
+    /* nop */
+  }
   {
     grn_io_array_spec array_spec[3];
     array_spec[segment_key].w_of_element = 0;
