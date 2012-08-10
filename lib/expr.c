@@ -31,7 +31,6 @@ function_proc_p(grn_obj *obj)
           obj->header.type == GRN_PROC &&
           ((grn_proc *)obj)->type == GRN_PROC_FUNCTION);
 }
-}
 
 grn_obj *
 grn_expr_alloc(grn_ctx *ctx, grn_obj *expr, grn_id domain, grn_obj_flags flags)
