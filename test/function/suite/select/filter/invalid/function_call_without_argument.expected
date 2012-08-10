@@ -1,0 +1,5 @@
+table_create Users TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+select Users --filter '"invalid function"()'
+[[[-22,0.0,0.0],"invalid function: <\"invalid function\">"],[]]
+#|e| invalid function: <"invalid function">
