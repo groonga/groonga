@@ -2067,7 +2067,7 @@ dump_view(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
     grn_id *table_id;
     int key_size = grn_hash_cursor_get_key(ctx, cursor, ((void **)&table_id));
     if (key_size != 4) {
-      ERR(GRN_ERROR, "corrupted view table");
+      ERR(GRN_INVALID_ARGUMENT, "corrupted view table");
     }
     GRN_TEXT_PUTS(ctx, outbuf, "view_add ");
     dump_obj_name(ctx, outbuf, table);
