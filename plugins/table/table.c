@@ -192,7 +192,7 @@ command_filter(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
         (int)GRN_TEXT_LEN(VAR(1)), GRN_TEXT_VALUE(VAR(1)));
     goto exit;
   }
-  if (TEXT_VALUE_LEN(VAR(2)) == 0) {
+  if (GRN_TEXT_LEN(VAR(2)) == 0) {
     ERR(GRN_INVALID_ARGUMENT, "missing mandatory argument: operator");
     goto exit;
   } else {
