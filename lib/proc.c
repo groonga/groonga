@@ -1877,7 +1877,7 @@ proc_delete(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 
       records = grn_table_select(ctx, table, cond, NULL, GRN_OP_OR);
       if (records) {
-        void *key;
+        void *key = NULL;
         GRN_TABLE_EACH(ctx, records, GRN_ID_NIL, GRN_ID_NIL,
                        result_id, &key, NULL, NULL, {
           grn_id id = *(grn_id *)key;
