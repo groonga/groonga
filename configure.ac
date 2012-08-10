@@ -300,7 +300,10 @@ AC_ARG_WITH(debug,
   grn_debug="no")
 if test "x$grn_debug" != "xno"; then
   grn_debug="yes"
-  if test "$GCC" = "yes"; then
+  if test "$CC" = "clang"; then
+    CFLAGS="$CFLAGS -O0 -g"
+    CXXFLAGS="$CXXFLAGS -O0 -g"
+  elif test "$GCC" = "yes"; then
     CFLAGS="$CFLAGS -O0 -ggdb3"
     CXXFLAGS="$CXXFLAGS -O0 -ggdb3"
   fi
