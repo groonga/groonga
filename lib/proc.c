@@ -2237,7 +2237,9 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
         }
         break;
       default:
-        ERR(GRN_ERROR, "invalid header type %d", column->header.type);
+        ERR(GRN_OPERATION_NOT_SUPPORTED,
+            "unsupported header type %#x",
+            column->header.type);
         break;
       }
     }
