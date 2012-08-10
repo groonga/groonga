@@ -153,6 +153,10 @@ typedef struct {
    (GRN_TABLE_HASH_KEY <= ((grn_db_obj *)obj)->header.type) &&\
    (((grn_db_obj *)obj)->header.type <= GRN_DB))
 
+typedef grn_rc grn_selector_func(grn_ctx *ctx, grn_obj *index,
+                                 int nargs, grn_obj **args,
+                                 grn_obj *res, grn_operator op);
+
 typedef struct _grn_proc_ctx grn_proc_ctx;
 
 struct _grn_proc_ctx {
@@ -177,6 +181,8 @@ struct _grn_proc {
   grn_proc_type type;
   grn_proc_func *funcs[3];
 
+  grn_selector_func *selector;
+
   grn_id module;
   //  uint32_t nargs;
   //  uint32_t nresults;
@@ -195,6 +201,9 @@ GRN_API grn_obj *grn_proc_get_var_by_offset(grn_ctx *ctx, grn_user_data *user_da
 
 GRN_API grn_obj *grn_proc_alloc(grn_ctx *ctx, grn_user_data *user_data,
                                 grn_id domain, grn_obj_flags flags);
+
+grn_rc grn_proc_set_selector(grn_ctx *ctx, grn_obj *proc,
+                             grn_selector_func selector);
 
 grn_obj *grn_expr_get_or_add_var(grn_ctx *ctx, grn_obj *expr,
                                  const char *name, unsigned int name_size);

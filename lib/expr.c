@@ -32,6 +32,12 @@ function_proc_p(grn_obj *obj)
           ((grn_proc *)obj)->type == GRN_PROC_FUNCTION);
 }
 
+static inline int
+selector_proc_p(grn_obj *obj)
+{
+  return (function_proc_p(obj) && ((grn_proc *)obj)->selector);
+}
+
 grn_obj *
 grn_expr_alloc(grn_ctx *ctx, grn_obj *expr, grn_id domain, grn_obj_flags flags)
 {
@@ -139,6 +145,17 @@ grn_proc_alloc(grn_ctx *ctx, grn_user_data *user_data, grn_id domain, grn_obj_fl
 {
   grn_proc_ctx *pctx = (grn_proc_ctx *)user_data;
   return pctx->caller ? grn_expr_alloc(ctx, (grn_obj *)pctx->caller, domain, flags) : NULL;
+}
+
+grn_rc
+grn_proc_set_selector(grn_ctx *ctx, grn_obj *proc, grn_selector_func selector)
+{
+  grn_proc *proc_ = (grn_proc *)proc;
+  if (!function_proc_p(proc)) {
+    return GRN_INVALID_ARGUMENT;
+  }
+  proc_->selector = selector;
+  return GRN_SUCCESS;
 }
 
 /* grn_expr */
@@ -4247,20 +4264,14 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
               break;
             case GRN_OP_CALL :
               if (si->flags & SCAN_ACCESSOR) {
-              } else {
-                char buf[GRN_TABLE_MAX_KEY_SIZE];
-                int len = grn_obj_name(ctx, si->args[0], buf,
-                                       GRN_TABLE_MAX_KEY_SIZE);
-                /* geo_in_circle and geo_in_rectangle only */
-                if (len == 13 && !memcmp(buf, "geo_in_circle", 13)) {
-                  /* TODO: error check */
-                  grn_selector_geo_in_circle(ctx, index, si->args, si->nargs,
-                                             res, si->logical_op);
-                  done++;
-                } else if (len == 16 && !memcmp(buf, "geo_in_rectangle", 16)) {
-                  /* TODO: error check */
-                  grn_selector_geo_in_rectangle(ctx, index, si->args, si->nargs,
-                                                res, si->logical_op);
+              } else if (selector_proc_p(si->args[0])) {
+                grn_rc rc;
+                grn_proc *proc = si->args[0];
+                rc = proc->selector(ctx, index, si->nargs, si->args,
+                                    res, si->logical_op);
+                if (rc) {
+                  /* TODO: report error */
+                } else {
                   done++;
                 }
               }
