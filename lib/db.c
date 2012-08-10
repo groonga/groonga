@@ -6917,8 +6917,9 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
                   break;
                 case GRN_EXPR :
                   {
-                    uint8_t *u = (uint8_t *)p;
+                    uint8_t *u;
                     size = grn_vector_get_element(ctx, &v, 4, &p, NULL, NULL);
+                    u = (uint8_t *)p;
                     vp->ptr = grn_expr_open(ctx, spec, u, u + size);
                   }
                   break;
