@@ -2216,7 +2216,9 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
         case GRN_OBJ_COLUMN_INDEX:
           break;
         default:
-          ERR(GRN_ERROR, "invalid column type");
+          ERR(GRN_OPERATION_NOT_SUPPORTED,
+              "unsupported column type: %#x",
+              column->header.type);
           break;
         }
         break;
