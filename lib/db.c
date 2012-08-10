@@ -8665,7 +8665,7 @@ set_vector(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *vector)
           }
           if (element == &casted_element) { GRN_OBJ_FIN(ctx, element); }
         } else {
-          ERR(GRN_ERROR, "bad syntax.");
+          ERR(GRN_INVALID_ARGUMENT, "bad syntax.");
         }
         v = values_next(ctx, v);
       }
