@@ -3251,7 +3251,7 @@ grn_rc
 grn_table_difference(grn_ctx *ctx, grn_obj *table1, grn_obj *table2,
                      grn_obj *res1, grn_obj *res2)
 {
-  void *key;
+  void *key = NULL;
   uint32_t key_size = 0;
   if (table1 != res1 || table2 != res2) { return GRN_INVALID_ARGUMENT; }
   if (grn_table_size(ctx, table1) > grn_table_size(ctx, table2)) {
