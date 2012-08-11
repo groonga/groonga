@@ -37,7 +37,7 @@ table_list
     [
       256,
       "bookmarks",
-      "tmp/grntest/db.0000100",
+      "db/db.0000100",
       "TABLE_PAT_KEY|PERSISTENT",
       "ShortText",
       "Object"
