@@ -1993,6 +1993,9 @@ show_usage(FILE *output)
           "                           (default: %s)\n"
           "\n"
           "Common options:\n"
+          "      --working-directory <path>:\n"
+          "                       specify working directory path\n"
+          "                       (none)\n"
           "      --config-path <path>:\n"
           "                       specify config file path\n"
           "                       (default: %s)\n"
@@ -2029,7 +2032,8 @@ main(int argc, char **argv)
     *cache_limit_arg = NULL, *document_root_arg = NULL,
     *default_command_version_arg = NULL,
     *default_match_escalation_threshold_arg = NULL,
-    *input_fd_arg = NULL, *output_fd_arg = NULL;
+    *input_fd_arg = NULL, *output_fd_arg = NULL,
+    *working_directory_arg = NULL;
   const char *config_path = NULL;
   int exit_code = EXIT_SUCCESS;
   int i, mode = mode_alone;
@@ -2060,6 +2064,7 @@ main(int argc, char **argv)
     {'\0', "bind-address", NULL, 0, getopt_op_none},
     {'\0', "input-fd", NULL, 0, getopt_op_none},
     {'\0', "output-fd", NULL, 0, getopt_op_none},
+    {'\0', "working-directory", NULL, 0, getopt_op_none},
     {'\0', NULL, NULL, 0, 0}
   };
   opts[0].arg = &port_arg;
@@ -2080,6 +2085,7 @@ main(int argc, char **argv)
   opts[23].arg = &bind_address_arg;
   opts[24].arg = &input_fd_arg;
   opts[25].arg = &output_fd_arg;
+  opts[26].arg = &working_directory_arg;
 
   init_default_settings();
 
@@ -2112,6 +2118,15 @@ main(int argc, char **argv)
       return EXIT_FAILURE;
     }
   }
+
+  if (working_directory_arg) {
+    if (chdir(working_directory_arg) == -1) {
+      fprintf(stderr, "%s: failed to change directory: %s: %s\n",
+              argv[0], working_directory_arg, strerror(errno));
+      return EXIT_FAILURE;
+    }
+  }
+
   /* ignore mode option in config file */
   mode = (mode == mode_error) ? default_mode :
     ((mode & ~MODE_MASK) | default_mode);
