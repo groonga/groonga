@@ -15,5 +15,6 @@ before_script:
   - ./autogen.sh
   - ./configure --with-ruby19
 script:
+  - make -j8
   - NO_RUBY=yes test/unit/run-test.sh
   - test/function/run-test.sh
