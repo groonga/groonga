@@ -105,6 +105,9 @@ grntest_options=("$@")
 if test "$use_gdb" != "true"; then
     grntest_options=("--n-workers" "${n_processors}" "${grntest_options[@]}")
 fi
+if test "$CI" = "true"; then
+    grntest_options=("--reporter" "mark" "${grntest_options[@]}")
+fi
 if test "$have_targets" != "true"; then
     grntest_options=("${grntest_options[@]}" "${BASE_DIR}/suite")
 fi
