@@ -579,9 +579,14 @@ grn_ja_replace(grn_ctx *ctx, grn_ja *ja, grn_id id,
       }
     }
     SEGMENTS_EINFO_ON(ja, i, lseg);
-    *pseg = i;
+    GRN_IO_SEG_REF(ja->io, i, einfo);
+    if (einfo) {
+      *pseg = i;
+      memset(einfo, 0, JA_SEGMENT_SIZE);
+    }
+  } else {
+    GRN_IO_SEG_REF(ja->io, *pseg, einfo);
   }
-  GRN_IO_SEG_REF(ja->io, *pseg, einfo);
   if (!einfo) {
     rc = GRN_NO_MEMORY_AVAILABLE;
     goto exit;
