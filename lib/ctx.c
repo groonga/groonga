@@ -1081,6 +1081,9 @@ grn_get_ctype(grn_obj *var)
 static void
 get_content_mime_type(grn_ctx *ctx, const char *p, const char *pe)
 {
+  ctx->impl->output_type = GRN_CONTENT_NONE;
+  ctx->impl->mime_type = "application/octet-stream";
+
   if (p + 2 <= pe) {
     switch (*p) {
     case 'c' :
