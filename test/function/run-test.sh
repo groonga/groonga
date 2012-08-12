@@ -9,8 +9,25 @@ export BUILD_DIR
 top_dir="$BUILD_DIR/../.."
 top_dir=$(cd -P "$top_dir" 2>/dev/null || cd "$top_dir"; pwd)
 
+n_processors=1
+case `uname` in
+    Linux)
+	n_processors="$(grep '^processor' /proc/cpuinfo | wc -l)"
+	;;
+    Darwin)
+	n_processors="$(/usr/sbin/sysctl -n hw.ncpu)"
+	;;
+    *)
+	:
+	;;
+esac
+
 if test x"$NO_MAKE" != x"yes"; then
-    make -C $top_dir > /dev/null || exit 1
+    MAKE_ARGS=
+    if test $n_processors -gt 1; then
+	MAKE_ARGS="${MAKE_ARGS} -j${n_processors}"
+    fi
+    make -C $top_dir ${MAKE_ARGS} > /dev/null || exit 1
 fi
 
 if test -z "$RUBY"; then
@@ -56,13 +73,18 @@ if ! test -d "$grntest_dir"; then
 fi
 
 have_targets="false"
+use_gdb="false"
 next_argument_is_long_option_value="false"
 for argument in "$@"; do
     case "$argument" in
 	--*=*)
 	    ;;
-	--keep-database|--no-*|--gdb|--version|--help)
+	--keep-database|--no-*|--version|--help)
 	    # no argument options
+	    ;;
+	--gdb)
+	    # no argument options
+	    use_gdb="true"
 	    ;;
 	--*)
 	    next_argument_is_long_option_value="true"
@@ -80,6 +102,9 @@ for argument in "$@"; do
 done
 
 grntest_options=("$@")
+if test "$use_gdb" != "true"; then
+    grntest_options=("--n-workers" "${n_processors}" "${grntest_options[@]}")
+fi
 if test "$have_targets" != "true"; then
     grntest_options=("${grntest_options[@]}" "${BASE_DIR}/suite")
 fi
