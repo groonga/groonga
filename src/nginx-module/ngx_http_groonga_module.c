@@ -256,6 +256,30 @@ ngx_http_groonga_handler_process_request(ngx_http_request_t *r,
   return NGX_OK;
 }
 
+static ngx_chain_t *
+ngx_http_groonga_attach_chain(ngx_chain_t *chain, ngx_chain_t *new_chain)
+{
+  ngx_chain_t *last_chain;
+
+  if (new_chain->buf->last == new_chain->buf->pos) {
+    return chain;
+  }
+
+  new_chain->buf->last_buf = 1;
+  if (!chain) {
+    return new_chain;
+  }
+
+  chain->buf->last_buf = 0;
+  last_chain = chain;
+  while (last_chain->next) {
+    last_chain = last_chain->next;
+  }
+  last_chain->next = new_chain;
+  new_chain->next = NULL;
+  return chain;
+}
+
 static ngx_int_t
 ngx_http_groonga_handler_send_response(ngx_http_request_t *r,
                                        ngx_http_groonga_handler_data_t *data)
@@ -265,6 +289,7 @@ ngx_http_groonga_handler_send_response(ngx_http_request_t *r,
   const char *content_type;
   ngx_buf_t *head_buf, *body_buf, *foot_buf;
   ngx_chain_t  head_chain, body_chain, foot_chain;
+  ngx_chain_t *output_chain = NULL;
 
   context = &(data->context);
 
@@ -288,15 +313,14 @@ ngx_http_groonga_handler_send_response(ngx_http_request_t *r,
   if (!foot_buf) {
     return NGX_HTTP_INTERNAL_SERVER_ERROR;
   }
-  foot_buf->last_buf = 1;  /* this is the last buffer in the buffer chain */
 
   /* attach buffers to the buffer chain */
   head_chain.buf = head_buf;
-  head_chain.next = &body_chain;
+  output_chain = ngx_http_groonga_attach_chain(output_chain, &head_chain);
   body_chain.buf = body_buf;
-  body_chain.next = &foot_chain;
+  output_chain = ngx_http_groonga_attach_chain(output_chain, &body_chain);
   foot_chain.buf = foot_buf;
-  foot_chain.next = NULL;
+  output_chain = ngx_http_groonga_attach_chain(output_chain, &foot_chain);
 
   /* set the status line */
   r->headers_out.status = NGX_HTTP_OK;
@@ -312,7 +336,7 @@ ngx_http_groonga_handler_send_response(ngx_http_request_t *r,
   }
 
   /* send the buffer chain of your response */
-  rc = ngx_http_output_filter(r, &head_chain);
+  rc = ngx_http_output_filter(r, output_chain);
 
   return rc;
 }
