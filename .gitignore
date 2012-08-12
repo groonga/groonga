@@ -123,6 +123,7 @@ cmake_install.cmake
 /src/suggest/groonga-suggest-create-dataset
 /tmp-doc/
 /test/unit/Gemfile.lock
+/test/unit/tmp
 /test/function/grntest
 /*.tar.gz
 /tmp
