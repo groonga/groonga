@@ -9,7 +9,7 @@ case $distribution in
     debian)
 	component=main
 	;;
-    ubunutu)
+    ubuntu)
 	component=universe
 	;;
 esac
