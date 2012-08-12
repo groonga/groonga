@@ -288,7 +288,7 @@ ngx_http_groonga_handler_send_response(ngx_http_request_t *r,
   grn_ctx *context;
   const char *content_type;
   ngx_buf_t *head_buf, *body_buf, *foot_buf;
-  ngx_chain_t  head_chain, body_chain, foot_chain;
+  ngx_chain_t head_chain, body_chain, foot_chain;
   ngx_chain_t *output_chain = NULL;
 
   context = &(data->context);
