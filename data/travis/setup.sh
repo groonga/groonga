@@ -13,9 +13,10 @@ case $distribution in
 	component=universe
 	;;
 esac
+apt_url_base=http://packages.groonga.org
 cat <<EOF | sudo tee /etc/apt/sources.list.d/groonga.list
-deb http://packages.groonga.org/${distribution}/ ${code_name} ${component}
-deb-src http://packages.groonga.org/${distribution}/ ${code_name} ${component}
+deb ${apt_url_base}/${distribution}/ ${code_name} ${component}
+deb-src ${apt_url_base}/${distribution}/ ${code_name} ${component}
 EOF
 
 sudo apt-get update
