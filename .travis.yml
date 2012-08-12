@@ -16,5 +16,5 @@ before_script:
 script:
   - NO_RUBY=yes test/unit/run-test.sh
   - test/function/run-test.sh
-  - test/function/run-test.sh --interface http
-  - test/function/run-test.sh --interface http --testee groonga-httpd
+#  - test/function/run-test.sh --interface http
+#  - test/function/run-test.sh --interface http --testee groonga-httpd
