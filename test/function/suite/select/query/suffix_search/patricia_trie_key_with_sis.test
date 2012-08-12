@@ -7,4 +7,5 @@ load --table Names
 {"_key": "ひろあき", "original": true},
 {"_key": "ゆきひろ", "original": true}
 ]
+select --table Names
 select --table Names --query _key:$ゆき

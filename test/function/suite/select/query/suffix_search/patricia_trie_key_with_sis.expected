@@ -10,6 +10,85 @@ load --table Names
 {"_key": "ゆきひろ", "original": true}
 ]
 [[0,0.0,0.0],4]
+select --table Names
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        12
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "original",
+          "Bool"
+        ]
+      ],
+      [
+        8,
+        "あき",
+        false
+      ],
+      [
+        4,
+        "き",
+        false
+      ],
+      [
+        10,
+        "きひろ",
+        false
+      ],
+      [
+        11,
+        "ひろ",
+        false
+      ],
+      [
+        6,
+        "ひろあき",
+        true
+      ],
+      [
+        1,
+        "ひろゆき",
+        true
+      ],
+      [
+        5,
+        "まろゆき",
+        true
+      ],
+      [
+        3,
+        "ゆき",
+        false
+      ],
+      [
+        9,
+        "ゆきひろ",
+        true
+      ],
+      [
+        12,
+        "ろ",
+        false
+      ]
+    ]
+  ]
+]
 select --table Names --query _key:$ゆき
 [
   [
