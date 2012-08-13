@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 2.0.4\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-06-09 23:15\n"
-"PO-Revision-Date: 2012-06-09 23:16+0900\n"
+"PO-Revision-Date: 2012-08-13 13:47+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -87,7 +87,7 @@ msgstr "``.travis.yml`` でビルド方法を変更することができます�
 
 # 18a966a785e642798568e44c7d0cc3e0
 #: ../../../source/development/travis-ci.txt:33
-msgid "Add the following ``before_install`` configuration to ``.travisyml``::"
+msgid "Add the following ``before_install`` configuration to ``.travis.yml``::"
 msgstr "以下の ``before_install`` の設定を ``.travis.yml`` に加えます::"
 
 # a6b8de9cbf144b01979b948a8a865b2d

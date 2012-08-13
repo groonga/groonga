@@ -30,7 +30,7 @@ can use ``before_install`` hook or ``install`` hook. You should use
 ``before_install`` if your software uses a language that is supported
 by Travis CI such as Ruby. You should use ``install`` otherwise.
 
-Add the following ``before_install`` configuration to ``.travisyml``::
+Add the following ``before_install`` configuration to ``.travis.yml``::
 
   before_install:
     - curl https://raw.github.com/groonga/groonga/master/data/travis/setup.sh | sh
