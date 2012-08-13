@@ -33,11 +33,7 @@ by Travis CI such as Ruby. You should use ``install`` otherwise.
 Add the following ``before_install`` configuration to ``.travisyml``::
 
   before_install:
-    - echo "deb http://packages.groonga.org/ubuntu/ $(lsb_release --short --codename) universe" | sudo tee /etc/apt/sources.list.d/groonga.list
-    - sudo apt-get update
-    - sudo apt-get -y --allow-unauthenticated install groonga-keyring
-    - sudo apt-get update
-    - sudo apt-get -y install libgroonga-dev
+    - curl https://raw.github.com/groonga/groonga/master/data/travis/setup.sh | sh
 
 If you need to use ``install`` hook instead of ``before_install``, you
 just substitute ``before_install:`` with ``install:``.
