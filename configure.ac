@@ -1233,6 +1233,7 @@ if test "x$with_pcre" != "xno"; then
   m4_ifdef([PKG_CHECK_MODULES], [
     PKG_CHECK_MODULES([PCRE], [libpcre],
       [_PKG_CONFIG(PCRE_LIBS_ONLY_L, [libs-only-L], [libpcre])
+       PCRE_LIBS_ONLY_L="$pkg_cv_PCRE_LIBS_ONLY_L"
        WITH_PCRE=yes],
       [WITH_PCRE=no])
     ],
