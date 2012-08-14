@@ -442,14 +442,14 @@ command_get_resolve_parameters(grn_ctx *ctx, grn_user_data *user_data,
   table_text = GRN_TEXT_VALUE(VAR(0));
   table_length = GRN_TEXT_LEN(VAR(0));
   if (table_length == 0) {
-    ERR(GRN_INVALID_ARGUMENT, "table isn't specified");
+    ERR(GRN_INVALID_ARGUMENT, "[table][get] table isn't specified");
     return ctx->rc;
   }
 
   *table = grn_ctx_get(ctx, table_text, table_length);
   if (!*table) {
     ERR(GRN_INVALID_ARGUMENT,
-        "table doesn't exist: <%.*s>", table_length, table_text);
+        "[table][get] table doesn't exist: <%.*s>", table_length, table_text);
     return ctx->rc;
   }
 
@@ -461,7 +461,8 @@ command_get_resolve_parameters(grn_ctx *ctx, grn_user_data *user_data,
   case GRN_TABLE_NO_KEY:
     if (key_length) {
       ERR(GRN_INVALID_ARGUMENT,
-          "should not specify key for NO_KEY table: <%.*s>: table: <%.*s>",
+          "[table][get] should not specify key for NO_KEY table: <%.*s>: "
+          "table: <%.*s>",
           key_length, key_text,
           table_length, table_text);
       return ctx->rc;
@@ -471,13 +472,13 @@ command_get_resolve_parameters(grn_ctx *ctx, grn_user_data *user_data,
       *id = grn_atoi(id_text, id_text + id_length, &rest);
       if (rest == id_text) {
         ERR(GRN_INVALID_ARGUMENT,
-            "ID should be a number: <%.*s>: table: <%.*s>",
+            "[table][get] ID should be a number: <%.*s>: table: <%.*s>",
             id_length, id_text,
             table_length, table_text);
       }
     } else {
       ERR(GRN_INVALID_ARGUMENT,
-          "ID isn't specified: table: <%.*s>",
+          "[table][get] ID isn't specified: table: <%.*s>",
           table_length, table_text);
     }
     break;
@@ -487,7 +488,7 @@ command_get_resolve_parameters(grn_ctx *ctx, grn_user_data *user_data,
   case GRN_TABLE_VIEW:
     if (key_length && id_length) {
       ERR(GRN_INVALID_ARGUMENT,
-          "should not specify both key and ID: "
+          "[table][get] should not specify both key and ID: "
           "key: <%.*s>: ID: <%.*s>: table: <%.*s>",
           key_length, key_text,
           id_length, id_text,
@@ -498,7 +499,7 @@ command_get_resolve_parameters(grn_ctx *ctx, grn_user_data *user_data,
       *id = grn_table_get(ctx, *table, key_text, key_length);
       if (!*id) {
         ERR(GRN_INVALID_ARGUMENT,
-            "nonexistent key: <%.*s>: table: <%.*s>",
+            "[table][get] nonexistent key: <%.*s>: table: <%.*s>",
             key_length, key_text,
             table_length, table_text);
       }
@@ -508,19 +509,20 @@ command_get_resolve_parameters(grn_ctx *ctx, grn_user_data *user_data,
         *id = grn_atoi(id_text, id_text + id_length, &rest);
         if (rest == id_text) {
           ERR(GRN_INVALID_ARGUMENT,
-              "ID should be a number: <%.*s>: table: <%.*s>",
+              "[table][get] ID should be a number: <%.*s>: table: <%.*s>",
               id_length, id_text,
               table_length, table_text);
         }
       } else {
         ERR(GRN_INVALID_ARGUMENT,
-            "key nor ID isn't specified: table: <%.*s>",
+            "[table][get] key nor ID isn't specified: table: <%.*s>",
             table_length, table_text);
       }
     }
     break;
   default:
-    ERR(GRN_INVALID_ARGUMENT, "not a table: <%.*s>", table_length, table_text);
+    ERR(GRN_INVALID_ARGUMENT,
+        "[table][get] not a table: <%.*s>", table_length, table_text);
     break;
   }
 
