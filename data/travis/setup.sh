@@ -23,4 +23,4 @@ sudo apt-get update
 sudo apt-get -y --allow-unauthenticated install groonga-keyring
 sudo apt-get -y purge zeromq
 sudo apt-get update
-sudo apt-get -y install groonga libgroonga-dev
+sudo apt-get -y -V install groonga libgroonga-dev
