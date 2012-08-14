@@ -1521,12 +1521,15 @@ proc_shutdown(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 static grn_obj *
 proc_clearlock(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  int olen;
+  int target_name_len;
+  grn_obj *target_name;
   grn_obj *obj;
-  olen = GRN_TEXT_LEN(VAR(0));
 
-  if (olen) {
-    obj = grn_ctx_get(ctx, GRN_TEXT_VALUE(VAR(0)), olen);
+  target_name = VAR(0);
+  target_name_len = GRN_TEXT_LEN(target_name);
+
+  if (target_name_len) {
+    obj = grn_ctx_get(ctx, GRN_TEXT_VALUE(target_name), target_name_len);
   } else {
     obj = ctx->impl->db;
   }
