@@ -1,0 +1,45 @@
+register table/table
+[[0,0.0,0.0],true]
+table_create Diaries TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Diaries title COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Diaries tags COLUMN_VECTOR ShortText
+[[0,0.0,0.0],true]
+load --table Diaries
+[
+{"_key":"2012-08-14", "title": "'get' command is moved!", "tags": ["groonga", "development"]},
+]
+[[0,0.0,0.0],1]
+get Diaries '2012-08-14' 'title, _key, tags'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        "title",
+        "ShortText"
+      ],
+      [
+        "_key",
+        "ShortText"
+      ],
+      [
+        "tags",
+        "ShortText"
+      ]
+    ],
+    [
+      "'get' command is moved!",
+      "2012-08-14",
+      [
+        "groonga",
+        "development"
+      ]
+    ]
+  ]
+]
