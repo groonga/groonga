@@ -673,7 +673,8 @@ typedef double (*grn_geo_distance_raw_func)(grn_ctx *ctx,
                                             grn_geo_point *point2);
 
 grn_rc
-grn_selector_geo_in_circle(grn_ctx *ctx, grn_obj *obj, grn_obj **args, int nargs,
+grn_selector_geo_in_circle(grn_ctx *ctx, grn_obj *obj,
+                           int nargs, grn_obj **args,
                            grn_obj *res, grn_operator op)
 {
   grn_geo_approximate_type type = GRN_GEO_APPROXIMATE_RECTANGLE;
@@ -884,7 +885,7 @@ exit :
 
 grn_rc
 grn_selector_geo_in_rectangle(grn_ctx *ctx, grn_obj *obj,
-                              grn_obj **args, int nargs,
+                              int nargs, grn_obj **args,
                               grn_obj *res, grn_operator op)
 {
   if (nargs == 4) {
