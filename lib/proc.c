@@ -1537,7 +1537,8 @@ proc_clearlock(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
   if (obj) {
     grn_obj_clear_lock(ctx, obj);
   } else {
-    ERR(GRN_INVALID_ARGUMENT, "clear object not found");
+    ERR(GRN_INVALID_ARGUMENT, "[clearlock] target object not found: <%.*s>",
+        target_name_len, GRN_TEXT_VALUE(target_name));
   }
   GRN_OUTPUT_BOOL(!ctx->rc);
   return NULL;
