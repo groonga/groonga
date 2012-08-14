@@ -550,6 +550,7 @@ grn_proc_create(grn_ctx *ctx, const char *name, unsigned int name_size, grn_proc
     res->funcs[PROC_INIT] = init;
     res->funcs[PROC_NEXT] = next;
     res->funcs[PROC_FIN] = fin;
+    res->selector = NULL;
     GRN_TEXT_INIT(&res->name_buf, 0);
     res->vars = NULL;
     res->nvars = 0;
