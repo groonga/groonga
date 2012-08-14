@@ -1616,119 +1616,6 @@ proc_log_reopen(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
 }
 
 static grn_rc
-proc_get_resolve_parameters(grn_ctx *ctx, grn_user_data *user_data, grn_obj **table, grn_id *id)
-{
-  const char *table_text, *id_text, *key_text;
-  int table_length, id_length, key_length;
-
-  table_text = GRN_TEXT_VALUE(VAR(0));
-  table_length = GRN_TEXT_LEN(VAR(0));
-  if (table_length == 0) {
-    ERR(GRN_INVALID_ARGUMENT, "table isn't specified");
-    return ctx->rc;
-  }
-
-  *table = grn_ctx_get(ctx, table_text, table_length);
-  if (!*table) {
-    ERR(GRN_INVALID_ARGUMENT,
-        "table doesn't exist: <%.*s>", table_length, table_text);
-    return ctx->rc;
-  }
-
-  key_text = GRN_TEXT_VALUE(VAR(1));
-  key_length = GRN_TEXT_LEN(VAR(1));
-  id_text = GRN_TEXT_VALUE(VAR(3));
-  id_length = GRN_TEXT_LEN(VAR(3));
-  switch ((*table)->header.type) {
-  case GRN_TABLE_NO_KEY:
-    if (key_length) {
-      ERR(GRN_INVALID_ARGUMENT,
-          "should not specify key for NO_KEY table: <%.*s>: table: <%.*s>",
-          key_length, key_text,
-          table_length, table_text);
-      return ctx->rc;
-    }
-    if (id_length) {
-      const char *rest = NULL;
-      *id = grn_atoi(id_text, id_text + id_length, &rest);
-      if (rest == id_text) {
-        ERR(GRN_INVALID_ARGUMENT,
-            "ID should be a number: <%.*s>: table: <%.*s>",
-            id_length, id_text,
-            table_length, table_text);
-      }
-    } else {
-      ERR(GRN_INVALID_ARGUMENT,
-          "ID isn't specified: table: <%.*s>",
-          table_length, table_text);
-    }
-    break;
-  case GRN_TABLE_HASH_KEY:
-  case GRN_TABLE_PAT_KEY:
-  case GRN_TABLE_DAT_KEY:
-  case GRN_TABLE_VIEW:
-    if (key_length && id_length) {
-      ERR(GRN_INVALID_ARGUMENT,
-          "should not specify both key and ID: "
-          "key: <%.*s>: ID: <%.*s>: table: <%.*s>",
-          key_length, key_text,
-          id_length, id_text,
-          table_length, table_text);
-      return ctx->rc;
-    }
-    if (key_length) {
-      *id = grn_table_get(ctx, *table, key_text, key_length);
-      if (!*id) {
-        ERR(GRN_INVALID_ARGUMENT,
-            "nonexistent key: <%.*s>: table: <%.*s>",
-            key_length, key_text,
-            table_length, table_text);
-      }
-    } else {
-      if (id_length) {
-        const char *rest = NULL;
-        *id = grn_atoi(id_text, id_text + id_length, &rest);
-        if (rest == id_text) {
-          ERR(GRN_INVALID_ARGUMENT,
-              "ID should be a number: <%.*s>: table: <%.*s>",
-              id_length, id_text,
-              table_length, table_text);
-        }
-      } else {
-        ERR(GRN_INVALID_ARGUMENT,
-            "key nor ID isn't specified: table: <%.*s>",
-            table_length, table_text);
-      }
-    }
-    break;
-  default:
-    ERR(GRN_INVALID_ARGUMENT, "not a table: <%.*s>", table_length, table_text);
-    break;
-  }
-
-  return ctx->rc;
-}
-
-static grn_obj *
-proc_get(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
-{
-  grn_id id = GRN_ID_NIL;
-  grn_obj *table = NULL;
-  if (!proc_get_resolve_parameters(ctx, user_data, &table, &id)) {
-    grn_obj obj;
-    grn_obj_format format;
-    GRN_RECORD_INIT(&obj, 0, ((grn_db_obj *)table)->id);
-    GRN_OBJ_FORMAT_INIT(&format, 1, 0, 1, 0);
-    GRN_RECORD_SET(ctx, &obj, id);
-    grn_obj_columns(ctx, table, GRN_TEXT_VALUE(VAR(2)), GRN_TEXT_LEN(VAR(2)), &format.columns);
-    format.flags = 0 /* GRN_OBJ_FORMAT_WITH_COLUMN_NAMES */;
-    GRN_OUTPUT_OBJ(&obj, &format);
-    GRN_OBJ_FORMAT_FIN(ctx, &format);
-  }
-  return NULL;
-}
-
-static grn_rc
 proc_delete_validate_selector(grn_ctx *ctx, grn_obj *table, grn_obj *table_name,
                               grn_obj *key, grn_obj *id, grn_obj *filter)
 {
@@ -2944,12 +2831,6 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_COMMAND("log_put", proc_log_put, 2, vars);
 
   DEF_COMMAND("log_reopen", proc_log_reopen, 0, vars);
-
-  DEF_VAR(vars[0], "table");
-  DEF_VAR(vars[1], "key");
-  DEF_VAR(vars[2], "output_columns");
-  DEF_VAR(vars[3], "id");
-  DEF_COMMAND("get", proc_get, 4, vars);
 
   DEF_VAR(vars[0], "table");
   DEF_VAR(vars[1], "key");
