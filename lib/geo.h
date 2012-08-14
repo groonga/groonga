@@ -133,10 +133,12 @@ grn_rc grn_geo_select_in_circle(grn_ctx *ctx,
                                 grn_obj *res,
                                 grn_operator op);
 
-grn_rc grn_selector_geo_in_circle(grn_ctx *ctx, grn_obj *obj, grn_obj **args,
-                                  int nargs, grn_obj *res, grn_operator op);
-grn_rc grn_selector_geo_in_rectangle(grn_ctx *ctx, grn_obj *obj, grn_obj **args,
-                                     int nargs, grn_obj *res, grn_operator op);
+grn_rc grn_selector_geo_in_circle(grn_ctx *ctx, grn_obj *obj,
+                                  int nargs, grn_obj **args,
+                                  grn_obj *res, grn_operator op);
+grn_rc grn_selector_geo_in_rectangle(grn_ctx *ctx, grn_obj *obj,
+                                     int nargs, grn_obj **args,
+                                     grn_obj *res, grn_operator op);
 
 GRN_API grn_bool grn_geo_in_circle(grn_ctx *ctx, grn_obj *point, grn_obj *center,
                            grn_obj *radius_or_point,
