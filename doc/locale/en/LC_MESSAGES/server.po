@@ -1,0 +1,481 @@
+# English translations for groonga package.
+# Copyright (C) 2009-2012, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2012.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: groonga 2.0.6\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-08-15 15:24\n"
+"PO-Revision-Date: 2012-08-15 15:24+0900\n"
+"Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
+"Language-Team: English\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+# ed13f02be8cf4e75899c1bdb9c3b0ce0
+#: ../../../source/server.txt:6
+msgid "Server"
+msgstr "Server"
+
+# d9c71a9414424ef3b88c0b524b7f05b1
+#: ../../../source/server/gqtp.txt:6
+msgid "GQTP"
+msgstr "GQTP"
+
+# af9f96008b5341958b2ada7fc7acaedf
+# 1b5579ae32144aa2b70eb8aec273d3e5
+# f804c709dd5043fa9881dc5485e0f8d4
+# 7c8acf73a24c4feb9fb3de1be6fd05af
+# fc7af47d7e9e49b3bbfa44b5be780f99
+# bc3bac6e5b2d4bbabf960fb6c748d13e
+# db09943762d248ccbc5952b0089bfb5b
+#: ../../../source/server/gqtp.txt:8
+#: ../../../source/server/http/comparison.txt:245
+#: ../../../source/server/http/comparison.txt:250
+#: ../../../source/server/http/comparison.txt:255
+#: ../../../source/server/http/comparison.txt:260
+#: ../../../source/server/http/groonga.txt:8
+#: ../../../source/server/http/groonga-httpd.txt:8
+msgid "TODO"
+msgstr "TODO"
+
+# 8f5a4f787e5045bc9271e40e0f9926b4
+#: ../../../source/server/gqtp.txt:10
+msgid "See :doc:`/reference/executables/groonga`."
+msgstr "See :doc:`/reference/executables/groonga`."
+
+# ff0ba1c4e92940a29779b95e7706393d
+#: ../../../source/server/http.txt:6
+msgid "HTTP"
+msgstr "HTTP"
+
+# 4491f93502544b3a9ef75f191d5ba8f8
+#: ../../../source/server/http.txt:8
+msgid "Groonga provides two HTTP server implementations."
+msgstr "Groonga provides two HTTP server implementations."
+
+# ced95a43b96841e495ea4e06b1f84bbe
+#: ../../../source/server/http.txt:10
+msgid ":doc:`http/groonga`"
+msgstr ":doc:`http/groonga`"
+
+# fd4a09baf8414fb0b0ed41c38ccfc915
+#: ../../../source/server/http.txt:11
+msgid ":doc:`http/groonga-httpd`"
+msgstr ":doc:`http/groonga-httpd`"
+
+# 641a66693c6f456b995e32b7a583c9a1
+#: ../../../source/server/http.txt:13
+msgid ""
+":doc:`http/groonga` is a simple implemntation. It is fast but doesn't have "
+"many HTTP features. It is convenient to try groonga because it requires just "
+"a few command line options to run."
+msgstr ""
+":doc:`http/groonga` is a simple implemntation. It is fast but doesn't have "
+"many HTTP features. It is convenient to try groonga because it requires just "
+"a few command line options to run."
+
+# ee2a04daf68b46d196f5f792e83135f9
+#: ../../../source/server/http.txt:17
+msgid ""
+":doc:`http/groonga-httpd` is a `nginx <http://nginx.org/>`_ based "
+"implementation. It is also fast and has many HTTP features."
+msgstr ""
+":doc:`http/groonga-httpd` is a `nginx <http://nginx.org/>`_ based "
+"implementation. It is also fast and has many HTTP features."
+
+# 473b6fff145f41c7a68df81717d852a4
+#: ../../../source/server/http.txt:22
+msgid ":doc:`http/groonga-httpd` is still experimental."
+msgstr ":doc:`http/groonga-httpd` is still experimental."
+
+# 7275e03373ba4d3cae737acfe18441ab
+#: ../../../source/server/http/comparison.txt:6
+msgid "Comparison"
+msgstr "Comparison"
+
+# 37171e5be3eb428da3f745c1b4991309
+#: ../../../source/server/http/comparison.txt:8
+msgid ""
+"There are many differences between :doc:`groonga` and :doc:`groonga-httpd`. "
+"Here is a comparison table."
+msgstr ""
+"There are many differences between :doc:`groonga` and :doc:`groonga-httpd`. "
+"Here is a comparison table."
+
+# 941952f809004fb4abaa772654cf8279
+# 396f547d4f9442eebd07abd4c70a73db
+#: ../../../source/server/http/comparison.txt:12
+#: ../../../source/server/http/groonga.txt:6
+msgid "groonga"
+msgstr "groonga"
+
+# 83dfd6267c6c46f2bd331ffc43befa09
+# 03f919d64f904e0c935a7eb1e0d844e6
+#: ../../../source/server/http/comparison.txt:12
+#: ../../../source/server/http/groonga-httpd.txt:6
+msgid "groonga-httpd"
+msgstr "groonga-httpd"
+
+# 33e0e13c27c24c119bb473a16548b8db
+# f56c89a477c7431d90d0b000347d7399
+#: ../../../source/server/http/comparison.txt:14
+#: ../../../source/server/http/comparison.txt:40
+msgid "Performance"
+msgstr "Performance"
+
+# fe883a6c29fa4e60bbba405a16eec937
+# b1eb69110d7540d296589c5122b9aa4e
+# 48008f420f924297ad2b54418dfa1cc2
+# f017900914fd4a5caee162844f4831f3
+# 5ab338ce8ca34327a7b6526dad336e92
+# 30715ee54c3b4eb5b8297fa455539573
+# 9b6c44aed9ad41d09292e0ca670d4d50
+# 603feca3cf3f4a0b82c7229fe9c033c5
+# 20bd597512d845828d13994f963ff797
+# f7b9fd34b09b4af78a4829b86777bd1e
+#: ../../../source/server/http/comparison.txt:14
+#: ../../../source/server/http/comparison.txt:20
+#: ../../../source/server/http/comparison.txt:22
+#: ../../../source/server/http/comparison.txt:24
+#: ../../../source/server/http/comparison.txt:26
+#: ../../../source/server/http/comparison.txt:28
+#: ../../../source/server/http/comparison.txt:32
+#: ../../../source/server/http/comparison.txt:34
+#: ../../../source/server/http/comparison.txt:36
+msgid "o"
+msgstr "o"
+
+# 9b4b8f609e5d43ed9e761fac2454e07f
+# 9032f5535cdc4afc9f018e81b193e971
+#: ../../../source/server/http/comparison.txt:16
+#: ../../../source/server/http/comparison.txt:46
+msgid "Using multi CPU cores"
+msgstr "Using multi CPU cores"
+
+# 35411a8c2f4746469099969dc793fb6b
+#: ../../../source/server/http/comparison.txt:16
+msgid "o (by multi threading)"
+msgstr "o (by multi threading)"
+
+# 71c3575dab9f4d8eb38028a80b33283e
+#: ../../../source/server/http/comparison.txt:16
+msgid "o (by multi process)"
+msgstr "o (by multi process)"
+
+# 7a205eae058b4fc0ae69c39a19183d14
+# 09a77bd06d29454fa36fa229b26683ab
+#: ../../../source/server/http/comparison.txt:18
+#: ../../../source/server/http/comparison.txt:67
+msgid "Configuration file"
+msgstr "Configuration file"
+
+# f945bc7aabfb4a02b5be39ceb9d9cbb7
+#: ../../../source/server/http/comparison.txt:18
+msgid "optional"
+msgstr "optional"
+
+# 7becb2eab85843d5ad41ad988571b917
+#: ../../../source/server/http/comparison.txt:18
+msgid "required"
+msgstr "required"
+
+# c8bc500295c545aaa87cdf073b6f35b3
+# 4178d301f40d45f0895d1e419211b38a
+#: ../../../source/server/http/comparison.txt:20
+#: ../../../source/server/http/comparison.txt:99
+msgid "Custom prefix path"
+msgstr "Custom prefix path"
+
+# 931bb6cbe57c44d280c269f810e06688
+# c876490e037f488386d20b234921a004
+# a391f63885484fdaa642120aba3ccef3
+# bef1f18a1af74c09902b6ecee0a8699e
+# b5f57ddfcc0f42e6867bc4623727fbc2
+# 29a62b1e94854a14876c02bef882147f
+# 658d2f641efe4756bc13d0260b10b9d4
+# 1ff20bbb7c4b4145b78bc3aec40c256d
+#: ../../../source/server/http/comparison.txt:20
+#: ../../../source/server/http/comparison.txt:24
+#: ../../../source/server/http/comparison.txt:26
+#: ../../../source/server/http/comparison.txt:28
+#: ../../../source/server/http/comparison.txt:30
+#: ../../../source/server/http/comparison.txt:32
+#: ../../../source/server/http/comparison.txt:34
+#: ../../../source/server/http/comparison.txt:36
+msgid "x"
+msgstr "x"
+
+# b880f79ebb794bfba0bb47ce715480ad
+# 6f3ef3bb0b044477aca77b070e5e4ff3
+#: ../../../source/server/http/comparison.txt:22
+#: ../../../source/server/http/comparison.txt:124
+msgid "Custom command version"
+msgstr "Custom command version"
+
+# e76b208ebd454561bdbafbeb6ece5de6
+# 431d9b51db2f4ddc8750ebddaf263b0a
+#: ../../../source/server/http/comparison.txt:22
+#: ../../../source/server/http/comparison.txt:30
+msgid "x (comming soon)"
+msgstr "x (comming soon)"
+
+# 0cb6ad6bc9224228adda25a0b2221f24
+# 802cf469fad54df7b067b7b7d919a125
+#: ../../../source/server/http/comparison.txt:24
+#: ../../../source/server/http/comparison.txt:164
+msgid "Multi databases"
+msgstr "Multi databases"
+
+# 35e8bef3cf0e47f7b32673b211fac087
+# acbd5d64be7c42edbdc66268a1632452
+#: ../../../source/server/http/comparison.txt:26
+#: ../../../source/server/http/comparison.txt:192
+msgid "Authentication"
+msgstr "Authentication"
+
+# c0578e5c521e458d80cde4c54921bc3f
+# 6ad60fb007054b0db09581b7d08609e5
+#: ../../../source/server/http/comparison.txt:28
+#: ../../../source/server/http/comparison.txt:228
+msgid "Gzip compression"
+msgstr "Gzip compression"
+
+# 738f3c2e9fab4114af69a62bcb2d949f
+# cf1df911c7374ccb898992e41ed4e2ab
+#: ../../../source/server/http/comparison.txt:30
+#: ../../../source/server/http/comparison.txt:243
+msgid "POST"
+msgstr "POST"
+
+# d8eadc31f8d147d5bdf8f8fd8823ea8b
+# a113462e651b42f38eb289da1f6b7786
+#: ../../../source/server/http/comparison.txt:32
+#: ../../../source/server/http/comparison.txt:248
+msgid "HTTPS"
+msgstr "HTTPS"
+
+# 203a3a3af84d4728af390bbaf90e84d0
+# b8fe45cb84ba49599fd15fb3a69724e0
+#: ../../../source/server/http/comparison.txt:34
+#: ../../../source/server/http/comparison.txt:253
+msgid "Access log"
+msgstr "Access log"
+
+# 97dc932c2ad845e6875ba6d632e2ab38
+# 97dc932c2ad845e6875ba6d632e2ab38
+#: ../../../source/server/http/comparison.txt:36
+#: ../../../source/server/http/comparison.txt:258
+msgid "Upgrading without downtime"
+msgstr "Upgrading without downtime"
+
+# 46bde559c3cc4dcc8790b3c7eda8df3e
+#: ../../../source/server/http/comparison.txt:42
+msgid ""
+"Both :doc:`groonga` and :doc:`groonga-httpd` are very fast. They can work "
+"with the same throughput."
+msgstr ""
+"Both :doc:`groonga` and :doc:`groonga-httpd` are very fast. They can work "
+"with the same throughput."
+
+# 8906fe4798c14125971c251f4c8660c1
+#: ../../../source/server/http/comparison.txt:48
+msgid ""
+"Groonga scales on multi CPU cores. :doc:`groonga` scales by multi "
+"threading. :doc:`groonga-httpd` scales by multi processes."
+msgstr ""
+"Groonga scales on multi CPU cores. :doc:`groonga` scales by multi "
+"threading. :doc:`groonga-httpd` scales by multi processes."
+
+# 44fd143b2c3b448f81cba9a2ca10db89
+#: ../../../source/server/http/comparison.txt:51
+msgid ""
+":doc:`groonga` uses the same number of threads as CPU cores by default. If "
+"you have 8 CPU cores, 8 threads are used by default."
+msgstr ""
+":doc:`groonga` uses the same number of threads as CPU cores by default. If "
+"you have 8 CPU cores, 8 threads are used by default."
+
+# ebd2b2605ce04593847e90ba438dc7fc
+#: ../../../source/server/http/comparison.txt:54
+msgid ""
+":doc:`groonga-httpd` uses 1 process by default. You need to set "
+"`worker_processes <http://nginx.org/en/docs/ngx_core_module."
+"html#worker_processes>`_ directive to use CPU cores. If you have 8 CPU "
+"cores, specify ``worker_processes 8`` in configuration file like the "
+"following::"
+msgstr ""
+":doc:`groonga-httpd` uses 1 process by default. You need to set "
+"`worker_processes <http://nginx.org/en/docs/ngx_core_module."
+"html#worker_processes>`_ directive to use CPU cores. If you have 8 CPU "
+"cores, specify ``worker_processes 8`` in configuration file like the "
+"following::"
+
+# 21b7aad8e45045db9e4f6e63dbf0cd78
+#: ../../../source/server/http/comparison.txt:69
+msgid ""
+":doc:`groonga` can work without configuration file. All configuration items "
+"such as port number and the max number of threads can be specified by "
+"command line. Configuration file is also used to specify configuration items."
+msgstr ""
+":doc:`groonga` can work without configuration file. All configuration items "
+"such as port number and the max number of threads can be specified by "
+"command line. Configuration file is also used to specify configuration items."
+
+# e325978cd0e94eaf8ca86627c30a3f1a
+#: ../../../source/server/http/comparison.txt:74
+msgid ""
+"It's very easy to run groonga HTTP server because :doc:`groonga` requires "
+"just a few options to run. Here is the most simple command line to start "
+"HTTP server by :doc:`groonga`::"
+msgstr ""
+"It's very easy to run groonga HTTP server because :doc:`groonga` requires "
+"just a few options to run. Here is the most simple command line to start "
+"HTTP server by :doc:`groonga`::"
+
+# 1b42a2bfcb81480098f3e088843c193b
+#: ../../../source/server/http/comparison.txt:80
+msgid ""
+":doc:`groonga-httpd` requires configuration file to run. Here is the most "
+"simple configuration file to start HTTP server by :doc:`groonga-httpd`::"
+msgstr ""
+":doc:`groonga-httpd` requires configuration file to run. Here is the most "
+"simple configuration file to start HTTP server by :doc:`groonga-httpd`::"
+
+# 30bb689e67d84685adf79f0b3e14c4b6
+#: ../../../source/server/http/comparison.txt:101
+msgid ""
+":doc:`groonga` accepts a path that starts with ``/d/`` as command URL such "
+"as ``http://localhost:10041/d/status``. You cannot change the prefix path ``/"
+"d/``."
+msgstr ""
+":doc:`groonga` accepts a path that starts with ``/d/`` as command URL such "
+"as ``http://localhost:10041/d/status``. You cannot change the prefix path ``/"
+"d/``."
+
+# d9eba3a2ebe14eb585c60f99fdf4f46e
+#: ../../../source/server/http/comparison.txt:105
+msgid ""
+":doc:`groonga-httpd` can custom prefix path. For example, you can use "
+"``http://localhost:10041/api/status`` as command URL. Here is a sample "
+"configuration to use ``/api/`` as prefix path::"
+msgstr ""
+":doc:`groonga-httpd` can custom prefix path. For example, you can use "
+"``http://localhost:10041/api/status`` as command URL. Here is a sample "
+"configuration to use ``/api/`` as prefix path::"
+
+# 42601672fe09426d95c78a6336402724
+#: ../../../source/server/http/comparison.txt:126
+msgid ""
+"Groonga has :doc:`/reference/command_version` mechanism. It is for upgrading "
+"groonga commands with backward compatibility."
+msgstr ""
+"Groonga has :doc:`/reference/command_version` mechanism. It is for upgrading "
+"groonga commands with backward compatibility."
+
+# 7605c6584f974a4fa38ab13ef99b1a4d
+#: ../../../source/server/http/comparison.txt:129
+msgid ""
+":doc:`groonga` can change the default command veresion by ``--default-"
+"command-version`` option. Here is a sample command line to use command "
+"version 2 as the default command version::"
+msgstr ""
+":doc:`groonga` can change the default command veresion by ``--default-"
+"command-version`` option. Here is a sample command line to use command "
+"version 2 as the default command version::"
+
+# 45663d14710e48c0a0a54e133cfd3de7
+#: ../../../source/server/http/comparison.txt:135
+msgid ""
+":doc:`groonga-httpd` cannot custom the default command version yet. But it "
+"will be supported soon. If it is supported, you can provides different "
+"command version groonga commands in the same :doc:`groonga-httpd` process. "
+"Here is a sample configuration to provide command version 1 commands under "
+"``/api/1/`` and command version 2 comamnds under ``/api/2/``::"
+msgstr ""
+":doc:`groonga-httpd` cannot custom the default command version yet. But it "
+"will be supported soon. If it is supported, you can provides different "
+"command version groonga commands in the same :doc:`groonga-httpd` process. "
+"Here is a sample configuration to provide command version 1 commands under "
+"``/api/1/`` and command version 2 comamnds under ``/api/2/``::"
+
+# c2b82670d04d48c0b9ba22ecf1e2f931
+#: ../../../source/server/http/comparison.txt:166
+msgid ":doc:`groonga` can use only one database in a process."
+msgstr ":doc:`groonga` can use only one database in a process."
+
+# c434d0cca47e41e7813f72f6f6a78863
+#: ../../../source/server/http/comparison.txt:168
+msgid ""
+":doc:`groonga-httpd` can use one or more databases in a process. Here is a "
+"sample configuration to provide ``/tmp/db1`` database under ``/db1/`` path "
+"and ``/tmp/db2`` database under ``/db2/`` path::"
+msgstr ""
+":doc:`groonga-httpd` can use one or more databases in a process. Here is a "
+"sample configuration to provide ``/tmp/db1`` database under ``/db1/`` path "
+"and ``/tmp/db2`` database under ``/db2/`` path::"
+
+# 6155ed1c0e954a57aabf2674d6150b03
+#: ../../../source/server/http/comparison.txt:194
+msgid ""
+"HTTP supports authentications such as basic authentication and digest "
+"authentication. It can be used for restricting use of danger command such "
+"as :doc:`/reference/commands/shutdown`."
+msgstr ""
+"HTTP supports authentications such as basic authentication and digest "
+"authentication. It can be used for restricting use of danger command such "
+"as :doc:`/reference/commands/shutdown`."
+
+# fdeb2ffa199f4b5cb8b4665eb14e43b1
+#: ../../../source/server/http/comparison.txt:198
+msgid ""
+":doc:`groonga` doesn't support any authentications. To restrict use of "
+"danger command, other tools such as iptables and reverse proxy are needed."
+msgstr ""
+":doc:`groonga` doesn't support any authentications. To restrict use of "
+"danger command, other tools such as iptables and reverse proxy are needed."
+
+# e1ce7a0cb8cb4956a2ba7a602c322065
+#: ../../../source/server/http/comparison.txt:202
+msgid ""
+":doc:`groonga-httpd` supports basic authentication. Here is a sample "
+"configuration to restrict use of :doc:`/reference/commands/shutdown` "
+"command::"
+msgstr ""
+":doc:`groonga-httpd` supports basic authentication. Here is a sample "
+"configuration to restrict use of :doc:`/reference/commands/shutdown` "
+"command::"
+
+# 830441268ded43568ef5dd5c3617325e
+#: ../../../source/server/http/comparison.txt:230
+msgid ""
+"HTTP supports response compression by gzip with ``Content-Encoding: gzip`` "
+"response header. It can reduce network flow. It is useful for large search "
+"response."
+msgstr ""
+"HTTP supports response compression by gzip with ``Content-Encoding: gzip`` "
+"response header. It can reduce network flow. It is useful for large search "
+"response."
+
+# bfa4014c039a47a885eb7fca0598251c
+#: ../../../source/server/http/comparison.txt:234
+msgid ""
+":doc:`groonga` doesn't support compression. To support compression, reverse "
+"proxy is needed."
+msgstr ""
+":doc:`groonga` doesn't support compression. To support compression, reverse "
+"proxy is needed."
+
+# d6ad7a1d41574b768f285517a4297524
+#: ../../../source/server/http/comparison.txt:237
+msgid ""
+":doc:`groonga-httpd` supports gzip compression. Here is a sample "
+"configuration to compress response by gzip::"
+msgstr ""
+":doc:`groonga-httpd` supports gzip compression. Here is a sample "
+"configuration to compress response by gzip::"
