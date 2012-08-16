@@ -40,7 +40,7 @@ Syntax
          [cache=yes]
          [match_escalation_threshold=0]
          [query_expansion=null]
-         [query_flags=ALLOW_PRAGMA|ALLOW_COLUMN]
+         [query_flags=ALLOW_PRAGMA|ALLOW_COLUMN|ALLOW_UPDATE]
 
 Usage
 -----
