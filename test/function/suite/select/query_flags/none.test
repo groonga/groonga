@@ -1,0 +1,17 @@
+table_create Users TABLE_HASH_KEY ShortText
+column_create Users age COLUMN_SCALAR UInt32
+column_create Users description COLUMN_SCALAR ShortText
+
+table_create Terms TABLE_PAT_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenBigramSplitSymbolAlphaDigit
+column_create Terms description_index COLUMN_INDEX|WITH_POSITION Users description
+
+load --table Users
+[
+{"_key": "alice", "age": 18, "description": "brother's age:20"},
+{"_key": "bob",   "age": 20, "description": "sister's age:18"}
+]
+
+select Users \
+  --match_columns "description" \
+  --query "age:18" \
+  --query_flags "NONE"

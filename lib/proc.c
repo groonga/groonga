@@ -264,20 +264,21 @@ grn_parse_query_flags(grn_ctx *ctx, const char *query_flags,
       (!memcmp(query_flags, #name, sizeof(#name) - 1))) {\
     flags |= GRN_EXPR_ ## name;\
     query_flags += sizeof(#name);\
-    break;\
+    continue;\
   }
-    switch (*query_flags) {
-    case 'A' :
-      CHECK_EXPR_FLAG(ALLOW_PRAGMA);
-      CHECK_EXPR_FLAG(ALLOW_COLUMN);
-      CHECK_EXPR_FLAG(ALLOW_UPDATE);
-    default :
-      ERR(GRN_INVALID_ARGUMENT, "invalid query flag: <%.*s>",
-          (int)(query_flags_end - query_flags), query_flags);
-      return 0;
-    }
-#undef CHECK_EXPR_FLAG
 
+    CHECK_EXPR_FLAG(ALLOW_PRAGMA);
+    CHECK_EXPR_FLAG(ALLOW_COLUMN);
+    CHECK_EXPR_FLAG(ALLOW_UPDATE);
+
+#define GRN_EXPR_NONE 0
+    CHECK_EXPR_FLAG(NONE);
+#undef GNR_EXPR_NONE
+
+    ERR(GRN_INVALID_ARGUMENT, "invalid query flag: <%.*s>",
+        (int)(query_flags_end - query_flags), query_flags);
+    return 0;
+#undef CHECK_EXPR_FLAG
   }
 
   return flags;

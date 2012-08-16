@@ -40,7 +40,7 @@ Syntax
          [cache=yes]
          [match_escalation_threshold=0]
          [query_expansion=null]
-         [query_flags=ALLOW_PRAGMA|ALLOW_COLUMN|ALLOW_UPDATE]
+         [query_flags=ALLOW_PRAGMA|ALLOW_COLUMN|ALLOW_UPDATE|NONE]
 
 Usage
 -----
@@ -550,6 +550,7 @@ Here are available values:
 * ``ALLOW_PRAGMA``
 * ``ALLOW_COLUMN``
 * ``ALLOW_UPDATE``
+* ``NONE``
 
 ``ALLOW_PRAGMA`` enables pragma at the head of ``query``.
 
@@ -560,6 +561,8 @@ syntaxes.
 ``ALLOW_UPDATE`` enables column update by ``query`` with
 ``COLUMN:=NEW_VALUE`` syntax. ``ALLOW_COLUMN`` is also required to
 update column because the column update syntax specifies column.
+
+``NONE`` is just ignores. You can use ``NONE`` for specifying no flags.
 
 They can be combined by separated ``|`` such as
 ``ALLOW_COLUMN|ALLOW_UPDATE``.

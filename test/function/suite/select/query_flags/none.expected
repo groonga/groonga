@@ -1,0 +1,55 @@
+table_create Users TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Users age COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+column_create Users description COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenBigramSplitSymbolAlphaDigit
+[[0,0.0,0.0],true]
+column_create Terms description_index COLUMN_INDEX|WITH_POSITION Users description
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"_key": "alice", "age": 18, "description": "brother's age:20"},
+{"_key": "bob",   "age": 20, "description": "sister's age:18"}
+]
+[[0,0.0,0.0],2]
+select Users   --match_columns "description"   --query "age:18"   --query_flags "NONE"
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "age",
+          "UInt32"
+        ],
+        [
+          "description",
+          "ShortText"
+        ]
+      ],
+      [
+        2,
+        "bob",
+        20,
+        "sister's age:18"
+      ]
+    ]
+  ]
+]
