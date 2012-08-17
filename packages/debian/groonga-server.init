@@ -39,7 +39,7 @@ DEFAULT_FILE=/etc/default/groonga-server
 [ -x "$DAEMON" ] || exit 0
 
 # Read configuration variable file if it is present
-[ -r $DEFAEULT_FILE ] && . $DEFAULT_FILE
+[ -r $DEFAULT_FILE ] && . $DEFAULT_FILE
 
 [ "$ENABLE" = "yes" ] || exit 0
 
