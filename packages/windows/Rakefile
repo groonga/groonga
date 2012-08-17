@@ -189,7 +189,7 @@ namespace :build do
                  "--host=#{host}",
                  "--without-cutter",
                  "--disable-benchmark",
-                 "--disable-nginx",
+                 "--disable-groonga-httpd",
                  "--with-message-pack=#{binary_dir}"]
       if mecab_config.exist?
         options << "--with-mecab-config=#{mecab_config}"
