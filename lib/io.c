@@ -42,6 +42,14 @@
 
 /* end VA hack */
 
+#ifndef O_BINARY
+# ifdef _O_BINARY
+#  define O_BINARY _O_BINARY
+# else
+#  define O_BINARY 0
+# endif
+#endif
+
 typedef struct _grn_io_fileinfo {
 #ifdef WIN32
   HANDLE fh;
@@ -381,7 +389,7 @@ grn_io_detect_type(grn_ctx *ctx, const char *path)
 {
   struct _grn_io_header h;
   uint32_t res = 0;
-  int fd = GRN_OPEN(path, O_RDWR);
+  int fd = GRN_OPEN(path, O_RDWR | O_BINARY);
   if (fd != -1) {
     struct stat s;
     if (fstat(fd, &s) != -1 && s.st_size >= sizeof(struct _grn_io_header)) {
@@ -417,7 +425,7 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
   if (!path || !*path || (strlen(path) > PATH_MAX - 4)) { return NULL; }
   {
     struct _grn_io_header h;
-    int fd = GRN_OPEN(path, O_RDWR);
+    int fd = GRN_OPEN(path, O_RDWR | O_BINARY);
     if (fd == -1) { SERR(path); return NULL; }
     if (fstat(fd, &s) != -1 && s.st_size >= sizeof(struct _grn_io_header)) {
       if (read(fd, &h, sizeof(struct _grn_io_header)) == sizeof(struct _grn_io_header)) {
