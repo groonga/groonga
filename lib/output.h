@@ -37,9 +37,9 @@
 extern "C" {
 #endif
 
-void grn_output_array_open(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
+GRN_API void grn_output_array_open(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                            const char *name, int nelements);
-void grn_output_array_close(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type);
+GRN_API void grn_output_array_close(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type);
 GRN_API void grn_output_map_open(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                                  const char *name, int nelements);
 GRN_API void grn_output_map_close(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type);
