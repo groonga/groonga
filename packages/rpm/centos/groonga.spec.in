@@ -59,7 +59,7 @@ This package provides common settings for server use
 Summary:	Groonga server
 Group:		Applications/Text
 License:	LGPLv2 and (MIT or GPLv2)
-Requires:	%{name} = %{version}-%{release}
+Requires:	%{name}-server-common = %{version}-%{release}
 Requires:	curl
 Requires(pre):	shadow-utils
 Requires(post):	/sbin/chkconfig
@@ -67,6 +67,7 @@ Requires(preun):	/sbin/chkconfig
 Requires(preun):	/sbin/service
 Requires(postun):	/sbin/service
 Obsoletes:	%{name} < 1.2.2-0
+Obsoletes:	%{name}-server < 2.0.6-0
 
 %description server
 This package contains the groonga server
@@ -75,7 +76,8 @@ This package contains the groonga server
 Summary:	Groonga HTTP server
 Group:		Applications/Text
 License:	LGPLv2 and BSD
-Requires:	%{name}-libs = %{version}-%{release}
+Requires:	%{name}-server-common = %{version}-%{release}
+Obsoletes:	%{name}-httpd < 2.0.6-0
 
 %description httpd
 This package contains the groonga HTTP server
