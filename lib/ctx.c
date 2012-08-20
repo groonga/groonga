@@ -732,6 +732,18 @@ static grn_logger_info default_logger = {
 static const grn_logger_info *grn_logger = &default_logger;
 
 void
+grn_default_logger_set_max_level(grn_log_level level)
+{
+  default_logger.max_level = level;
+}
+
+grn_log_level
+grn_default_logger_get_max_level(void)
+{
+  return default_logger.max_level;
+}
+
+void
 grn_log_reopen(grn_ctx *ctx)
 {
   if (grn_logger != &default_logger) {
