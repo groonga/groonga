@@ -93,6 +93,9 @@ cat <<EOM > ~/.rpmmacros
 %_topdir \$HOME/rpmbuild
 EOM
 
+cat /usr/lib/rpm/rpmrc > ~/.rpmrc-for-mecab
+sed -i'' -e 's/march=i386/march=i586/' ~/.rpmrc-for-mecab
+
 rm -rf rpmbuild
 mkdir -p rpmbuild/SOURCES
 mkdir -p rpmbuild/SPECS
@@ -115,7 +118,7 @@ mv *.spec ~/rpmbuild/SPECS/
 mv * ~/rpmbuild/SOURCES/
 cd ..
 rm -rf tmp
-rpmbuild -ba rpmbuild/SPECS/*.spec
+rpmbuild -ba rpmbuild/SPECS/*.spec --rcfile ~/.rpmrc-for-mecab
 
 cp -p rpmbuild/RPMS/*/*.rpm dependencies/RPMS/
 cp -p rpmbuild/SRPMS/*.rpm dependencies/SRPMS/
