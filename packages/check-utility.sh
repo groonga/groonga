@@ -105,12 +105,14 @@ EOF
     for code in $CODES; do
 	for arch in $DEB_ARCHITECTURES; do
 	    root_dir=$CHROOT_ROOT/$code-$arch
-	    CHECK_SCRIPT=check-deb-groonga.sh
-	    echo "copy check script $CHECK_SCRIPT to $root_dir/tmp"
-	    sudo rm -f $root_dir/tmp/$CHECK_SCRIPT
-	    cp $CHECK_SCRIPT $root_dir/tmp
-	    sudo chmod 755 $root_dir/tmp/$CHECK_SCRIPT
-	    sudo chname $code-$arch chroot $root_dir /tmp/$CHECK_SCRIPT
+	    if [ -d $root_dir ]; then
+		CHECK_SCRIPT=check-deb-groonga.sh
+		echo "copy check script $CHECK_SCRIPT to $root_dir/tmp"
+		sudo rm -f $root_dir/tmp/$CHECK_SCRIPT
+		cp $CHECK_SCRIPT $root_dir/tmp
+		sudo chmod 755 $root_dir/tmp/$CHECK_SCRIPT
+		sudo chname $code-$arch chroot $root_dir /tmp/$CHECK_SCRIPT
+	    fi
 	done
     done
     for dist in $DISTRIBUTIONS; do
@@ -126,11 +128,13 @@ EOF
 	    for arch in $RPM_ARCHITECTURES; do
 		CHECK_SCRIPT=check-rpm-groonga.sh
 		root_dir=$CHROOT_ROOT/$dist-$ver-$arch
-		echo "copy check script $CHECK_SCRIPT to $root_dir/tmp"
-		sudo rm -f $root_dir/tmp/$CHECK_SCRIPT
-		cp $CHECK_SCRIPT $root_dir/tmp
-		sudo chmod 755 $root_dir/tmp/$CHECK_SCRIPT
-		sudo chname $code-$ver-$arch chroot $root_dir /tmp/$CHECK_SCRIPT
+		if [ -d $root_dir ]; then
+		    echo "copy check script $CHECK_SCRIPT to $root_dir/tmp"
+		    sudo rm -f $root_dir/tmp/$CHECK_SCRIPT
+		    cp $CHECK_SCRIPT $root_dir/tmp
+		    sudo chmod 755 $root_dir/tmp/$CHECK_SCRIPT
+		    sudo chname $code-$ver-$arch chroot $root_dir /tmp/$CHECK_SCRIPT
+		fi
 	    done
 	done
     done
@@ -174,11 +178,13 @@ EOF
 		    INSTALL_SCRIPT=install-aptget-groonga.sh
 		    ;;
 	    esac
-	    echo "copy install script $INSTALL_SCRIPT to $root_dir/tmp"
-	    sudo rm -f $root_dir/tmp/$INSTALL_SCRIPT
-	    cp $INSTALL_SCRIPT $root_dir/tmp
-	    chmod 755 $root_dir/tmp/$INSTALL_SCRIPT
-	    sudo chname $code-$arch chroot $root_dir /tmp/$INSTALL_SCRIPT
+	    if [ -d $root_dir ]; then
+		echo "copy install script $INSTALL_SCRIPT to $root_dir/tmp"
+		sudo rm -f $root_dir/tmp/$INSTALL_SCRIPT
+		cp $INSTALL_SCRIPT $root_dir/tmp
+		chmod 755 $root_dir/tmp/$INSTALL_SCRIPT
+		sudo chname $code-$arch chroot $root_dir /tmp/$INSTALL_SCRIPT
+	    fi
 	done
     done
     cat > install-centos5-groonga.sh <<EOF
@@ -230,11 +236,13 @@ EOF
 			;;
 		esac
 		root_dir=$CHROOT_ROOT/$dist-$ver-$arch
-		echo "copy install script $INSTALL_SCRIPT to $root_dir/tmp"
-		sudo rm -f $root_dir/tmp/$INSTALL_SCRIPT
-		cp $INSTALL_SCRIPT $root_dir/tmp
-		chmod 755 $root_dir/tmp/$INSTALL_SCRIPT
-		sudo chname $code-$ver-$arch chroot $root_dir /tmp/$INSTALL_SCRIPT
+		if [ -d $root_dir ]; then
+		    echo "copy install script $INSTALL_SCRIPT to $root_dir/tmp"
+		    sudo rm -f $root_dir/tmp/$INSTALL_SCRIPT
+		    cp $INSTALL_SCRIPT $root_dir/tmp
+		    chmod 755 $root_dir/tmp/$INSTALL_SCRIPT
+		    sudo chname $code-$ver-$arch chroot $root_dir /tmp/$INSTALL_SCRIPT
+		fi
 	    done
 	done
     done
@@ -251,11 +259,13 @@ EOF
     for code in $CODES; do
 	for arch in $DEB_ARCHITECTURES; do
 	    root_dir=$CHROOT_ROOT/$code-$arch
-	    echo "copy uninstall script $UNINSTALL_SCRIPT to $root_dir/tmp"
-	    sudo rm -f $root_dir/tmp/$UNINSTALL_SCRIPT
-	    cp $UNINSTALL_SCRIPT $root_dir/tmp
-	    chmod 755 $root_dir/tmp/$UNINSTALL_SCRIPT
-	    sudo chname $code-$arch chroot $root_dir /tmp/$UNINSTALL_SCRIPT
+	    if [ -d $root_dir ]; then
+		echo "copy uninstall script $UNINSTALL_SCRIPT to $root_dir/tmp"
+		sudo rm -f $root_dir/tmp/$UNINSTALL_SCRIPT
+		cp $UNINSTALL_SCRIPT $root_dir/tmp
+		chmod 755 $root_dir/tmp/$UNINSTALL_SCRIPT
+		sudo chname $code-$arch chroot $root_dir /tmp/$UNINSTALL_SCRIPT
+	    fi
 	done
     done
     UNINSTALL_SCRIPT=uninstall-rpm-groonga.sh
@@ -275,11 +285,13 @@ EOF
 	for ver in $DISTRIBUTIONS_VERSION; do
 	    for arch in $RPM_ARCHITECTURES; do
 		root_dir=$CHROOT_ROOT/$dist-$ver-$arch
-		echo "copy install script $UNINSTALL_SCRIPT to $root_dir/tmp"
-		sudo rm -f $root_dir/tmp/$UNINSTALL_SCRIPT
-		cp $UNINSTALL_SCRIPT $root_dir/tmp
-		chmod 755 $root_dir/tmp/$UNINSTALL_SCRIPT
-		sudo chname $code-$ver-$arch chroot $root_dir /tmp/$UNINSTALL_SCRIPT
+		if [ -d $root_dir ]; then
+		    echo "copy install script $UNINSTALL_SCRIPT to $root_dir/tmp"
+		    sudo rm -f $root_dir/tmp/$UNINSTALL_SCRIPT
+		    cp $UNINSTALL_SCRIPT $root_dir/tmp
+		    chmod 755 $root_dir/tmp/$UNINSTALL_SCRIPT
+		    sudo chname $code-$ver-$arch chroot $root_dir /tmp/$UNINSTALL_SCRIPT
+		fi
 	    done
 	done
     done
@@ -300,9 +312,11 @@ EOF
 	for arch in $DEB_ARCHITECTURES; do
 	    root_dir=$CHROOT_ROOT/$code-$arch
 	    today=`date '+%Y%m%d.%s'`
-	    sudo cp $root_dir/etc/hosts $root_dir/etc/hosts.$today
-	    sudo cp enable-repository.sh $root_dir/tmp
-	    sudo chname $code-$arch chroot $root_dir /tmp/enable-repository.sh
+	    if [ -d $root_dir ]; then
+		sudo cp $root_dir/etc/hosts $root_dir/etc/hosts.$today
+		sudo cp enable-repository.sh $root_dir/tmp
+		sudo chname $code-$arch chroot $root_dir /tmp/enable-repository.sh
+	    fi
 	done
     done
     for dist in $DISTRIBUTIONS; do
@@ -318,9 +332,11 @@ EOF
 	    for arch in $RPM_ARCHITECTURES; do
 		root_dir=$CHROOT_ROOT/$dist-$ver-$arch
 		today=`date '+%Y%m%d.%s'`
-		sudo cp $root_dir/etc/hosts $root_dir/etc/hosts.$today
-		sudo cp enable-repository.sh $root_dir/tmp
-		sudo chname $code-$arch chroot $root_dir /tmp/enable-repository.sh
+		if [ -d $root_dir ]; then
+		    sudo cp $root_dir/etc/hosts $root_dir/etc/hosts.$today
+		    sudo cp enable-repository.sh $root_dir/tmp
+		    sudo chname $code-$arch chroot $root_dir /tmp/enable-repository.sh
+		fi
 	    done
 	done
     done
@@ -341,10 +357,12 @@ EOF
 	for arch in $DEB_ARCHITECTURES; do
 	    root_dir=$CHROOT_ROOT/$code-$arch
 	    today=`date '+%Y%m%d.%s'`
-	    sudo cp $root_dir/etc/hosts $root_dir/etc/hosts.$today
-	    cp $DISABLE_SCRIPT $root_dir/tmp
-	    chmod 755 $root_dir/tmp/$DISABLE_SCRIPT
-	    sudo chname $code-$arch chroot $root_dir /tmp/$DISABLE_SCRIPT
+	    if [ -d $root_dir ]; then
+		sudo cp $root_dir/etc/hosts $root_dir/etc/hosts.$today
+		cp $DISABLE_SCRIPT $root_dir/tmp
+		chmod 755 $root_dir/tmp/$DISABLE_SCRIPT
+		sudo chname $code-$arch chroot $root_dir /tmp/$DISABLE_SCRIPT
+	    fi
 	done
     done
     for dist in $DISTRIBUTIONS; do
@@ -360,10 +378,12 @@ EOF
 	    for arch in $RPM_ARCHITECTURES; do
 		root_dir=$CHROOT_ROOT/$dist-$ver-$arch
 		today=`date '+%Y%m%d.%s'`
-		sudo cp $root_dir/etc/hosts $root_dir/etc/hosts.$today
-		cp $DISABLE_SCRIPT $root_dir/tmp
-		chmod 755 $root_dir/tmp/$DISABLE_SCRIPT
-		sudo chname $code-$arch chroot $root_dir /tmp/$DISABLE_SCRIPT
+		if [ -d $root_dir ]; then
+		    sudo cp $root_dir/etc/hosts $root_dir/etc/hosts.$today
+		    cp $DISABLE_SCRIPT $root_dir/tmp
+		    chmod 755 $root_dir/tmp/$DISABLE_SCRIPT
+		    sudo chname $code-$arch chroot $root_dir /tmp/$DISABLE_SCRIPT
+		fi
 	    done
 	done
     done
