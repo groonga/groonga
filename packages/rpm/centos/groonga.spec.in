@@ -18,6 +18,7 @@ BuildRequires:	zlib-devel
 %if %{use_lzo}
 BuildRequires:	lzo-devel
 %endif
+BuildRequires:	pcre-devel
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	%{name}-plugin-suggest = %{version}-%{release}
 #BuildRequires:	messagepack-devel
@@ -77,6 +78,7 @@ Summary:	Groonga HTTP server
 Group:		Applications/Text
 License:	LGPLv2 and BSD
 Requires:	%{name}-server-common = %{version}-%{release}
+Requires:	pcre
 Obsoletes:	%{name}-httpd < 2.0.6-0
 
 %description httpd

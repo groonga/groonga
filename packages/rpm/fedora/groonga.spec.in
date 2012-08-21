@@ -19,6 +19,7 @@ BuildRequires:	lzo-devel
 BuildRequires:	python2-devel
 BuildRequires:	php-devel
 BuildRequires:	libedit-devel
+BuildRequires:	pcre-devel
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	%{name}-plugin-suggest = %{version}-%{release}
 Requires(post):	systemd-units
@@ -75,6 +76,7 @@ Summary:        Groonga HTTP server
 Group:          Applications/Text
 License:        LGPLv2 and BSD
 Requires:       %{name}-server-common = %{version}-%{release}
+Requires:       pcre
 Obsoletes:	%{name}-httpd < 2.0.6-0
 
 %description httpd

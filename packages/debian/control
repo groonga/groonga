@@ -10,7 +10,8 @@ Build-Depends:
   libmsgpack-dev,
   libzmq-dev,
   libevent-dev,
-  libmecab-dev
+  libmecab-dev,
+  libpcre3-dev
 Standards-Version: 3.9.1
 Homepage: http://groonga.org/
 
@@ -145,6 +146,7 @@ Depends:
   ${misc:Depends},
   ${shlibs:Depends},
   curl,
+  libpcre3,
   groonga-server-common (= ${binary:Version})
 Description: Groonga HTTP server.
  Groonga is an open-source fulltext search engine and column store.
