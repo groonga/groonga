@@ -11,6 +11,7 @@
 CHROOT_ROOT=/var/lib/chroot
 CHECK_ADDRESS=0
 CHECK_INSTALL=0
+CHECK_INSTALL_PACKAGE=groonga
 ENABLE_REPOSITORY=0
 DISABLE_REPOSITORY=0
 INSTALL_SCRIPT=0
@@ -95,13 +96,11 @@ check_installed_groonga_packages ()
 {
     cat > check-deb-groonga.sh <<EOF
 #!/bin/sh
-dpkg -l | grep roonga
-dpkg -l | grep mysql
+dpkg -l | grep $CHECK_INSTALL_PACKAGE
 EOF
     cat > check-rpm-groonga.sh <<EOF
 #!/bin/sh
-rpm -qa | grep roonga
-rpm -qa | grep mysql
+rpm -qa | grep $CHECK_INSTALL_PACKAGE
 EOF
     for code in $CODES; do
 	for arch in $DEB_ARCHITECTURES; do
@@ -380,6 +379,15 @@ while [ $# -ne 0 ]; do
 	--check-install)
 	    CHECK_INSTALL=1
 	    shift
+	    if [ ! -z "$1" ]; then
+		case $1 in
+		    groonga|mroonga|roonga|mecab)
+			CHECK_INSTALL_PACKAGE=$1
+			;;
+		    *)
+			;;
+		esac
+	    fi
 	    ;;
 	--check-address)
 	    CHECK_ADDRESS=1
