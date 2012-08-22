@@ -5,6 +5,51 @@
 News
 ====
 
+.. _release-2-0-6:
+
+Release 2.0.6 - 2012/08/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [deb][rpm] Added ``groonga-server-common`` meta package. [#1451]
+* Supported ``--query_flags`` option to ``select`` command.
+* Supported PCRE auto detection for groonga-httpd.
+* [doc] Added information about Twitter and Facebook.
+* Improved to show error message from MeCab on ``mecab_new2()`` failure.
+* [doc] Added details about groonga for server use.
+* Improved to log details about ``vm.overcommit_memory``.
+* Supported custom selector definition.
+* Supported ``--working-directory`` option for groonga.
+* Supported ``dump`` command for groonga-httpd.
+* Improved to show not found target name for ``clearlock`` command.
+* Improved error messages about ``get`` command implemented by table plugin.
+* [rpm][centos] Supported MeCab 0.994. [#1455]
+  [Suggested by IWAI, Masaharu]
+
+Fixes
+^^^^^
+
+* [doc] Fixed the execution examples. [#1428]
+  [Reported by IWAI, Masaharu]
+* [deb] Fixed not to force groonga user/group by init script for groonga-httpd.
+* [rpm][fedora] Fixed missing stop parameter for groonga-httpd service.
+* Fixed a bug that the last 1 byte for cache key is ignored by ``select`` command.
+* Fixed detection of the number of arguments in the complex function call.
+* Fixed to suppress a warning by Clang.
+* Fixed backward incompatibility about missing ``add`` command related error
+  by executing ``clearlock`` command.
+* [windows] Fixed database open failure which is related to binary data.
+  [Reported by @yito]
+
+Thanks
+^^^^^^
+
+* IWAI, Masaharu
+* @yito
+
+
 .. _release-2-0-5:
 
 Release 2.0.5 - 2012/07/29
