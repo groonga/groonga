@@ -51,6 +51,7 @@ cd "../nginx-${nginx_version}"
   --error-log-path="${GROONGA_HTTPD_ERROR_LOG_PATH}" \
   --http-log-path="${GROONGA_HTTPD_HTTP_LOG_PATH}" \
   --add-module="${GROONGA_HTTPD_MODULE_PATH}" \
+  --pid-path="${GROONGA_HTTPD_PID_PATH}" \
   --with-cc-opt="${cc_opt}" \
   --with-ld-opt="${ld_opt}" \
   ${configure_args}
