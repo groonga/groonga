@@ -24,6 +24,7 @@ GROUP=groonga
 ADDRESS=127.0.0.1
 PORT=10041
 PIDFILE=/var/run/groonga/$NAME.pid
+OLDPIDFILE=/var/run/groonga/$NAME.pid.oldbin
 SCRIPTNAME=/etc/init.d/$NAME
 OPTION_ARGS=""
 START_STOP_DAEMON_ARGS=""
@@ -137,6 +138,19 @@ do_status() {
     return $?
 }
 
+do_restart() {
+    echo "do_restart"
+    do_start
+    case "$?" in
+	1)
+	    kill -USR2 `cat $PIDFILE`
+	    kill -WINCH `cat $OLDPIDFILE`
+	    kill -QUIT `cat $OLDPIDFILE`
+	    ;;
+    esac
+    return 0
+}
+
 case "$1" in
     start)
 	[ "$VERBOSE" != no ] && log_daemon_msg "Starting $DESC" "$NAME"
@@ -161,21 +175,8 @@ case "$1" in
 	;;
     restart)
 	log_daemon_msg "Restarting $DESC" "$NAME"
-	do_stop
-	case "$?" in
-	    0|1)
-		do_start
-		case "$?" in
-		    0) log_end_msg 0 ;;
-		    1) log_end_msg 1 ;; # Old process is still running
-		    *) log_end_msg 1 ;; # Failed to start
-		esac
-		;;
-	    *)
-	  	# Failed to stop
-		log_end_msg 1
-		;;
-	esac
+	do_restart
+	log_end_msg $?
 	;;
     status)
 	do_status
