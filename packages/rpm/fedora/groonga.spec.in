@@ -356,6 +356,8 @@ fi
 %changelog
 * Wed Aug 29 2012 HAYASHI Kentaro <hayashi@clear-code.com> - 2.0.6-0
 - new upstream release.
+- Split common tasks for server use into groonga-server-common package.
+- groonga-server and groonga-httpd require groonga-server-common package.
 
 * Sun Jul 29 2012 Kouhei Sutou <kou@clear-code.com> - 2.0.5-0
 - new upstream release.

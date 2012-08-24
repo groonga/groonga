@@ -1,6 +1,8 @@
 groonga (2.0.6-1) unstable; urgency=low
 
   * New upstream release.
+  * Split common tasks for server use into groonga-server-common package.
+  * groonga-server and groonga-httpd require groonga-server-common package.
 
  -- HAYASHI Kentaro <hayashi@clear-code.com>  Wed, 29 Aug 2012 00:00:00 +0900
 
