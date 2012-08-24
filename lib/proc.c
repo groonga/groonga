@@ -2724,6 +2724,39 @@ func_edit_distance(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
   return obj;
 }
 
+static grn_obj *
+func_all_records(grn_ctx *ctx, int nargs, grn_obj **args,
+                 grn_user_data *user_data)
+{
+  grn_obj *true_value;
+  if ((true_value = GRN_PROC_ALLOC(GRN_DB_BOOL, 0))) {
+    GRN_BOOL_SET(ctx, true_value, GRN_TRUE);
+  }
+  return true_value;
+}
+
+static grn_rc
+selector_all_records(grn_ctx *ctx, grn_obj *table, grn_obj *index,
+                     int nargs, grn_obj **args,
+                     grn_obj *res, grn_operator op)
+{
+  grn_obj score;
+
+  GRN_UINT32_INIT(&score, 0);
+  GRN_UINT32_SET(ctx, &score, 1);
+
+  GRN_TABLE_EACH(ctx, table, 0, 0, id, NULL, NULL, NULL, {
+    grn_id result_id;
+    result_id = grn_table_add(ctx, res, &id, sizeof(grn_id), NULL);
+    grn_obj_set_value(ctx, res, result_id, &score, GRN_OBJ_SET);
+  });
+
+  GRN_OBJ_FIN(ctx, &score);
+
+  return ctx->rc;
+}
+
+
 #define DEF_VAR(v,name_str) do {\
   (v).name = (name_str);\
   (v).name_size = GRN_STRLEN(name_str);\
@@ -2885,4 +2918,12 @@ grn_db_init_builtin_query(grn_ctx *ctx)
 
   grn_proc_create(ctx, "edit_distance", 13, GRN_PROC_FUNCTION,
                   func_edit_distance, NULL, NULL, 0, NULL);
+
+  {
+    grn_obj *selector_proc;
+
+    selector_proc = grn_proc_create(ctx, "all_records", 11, GRN_PROC_FUNCTION,
+                                    func_all_records, NULL, NULL, 0, NULL);
+    grn_proc_set_selector(ctx, selector_proc, selector_all_records);
+  }
 }
