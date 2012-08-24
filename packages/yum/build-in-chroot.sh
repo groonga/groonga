@@ -153,9 +153,10 @@ for architecture in $ARCHITECTURES; do
 		distribution_versions="17"
 		;;
 	    centos)
-		distribution_versions="5 6"
 		if [ -n "$CENTOS_VERSIONS" ]; then
 		    distribution_versions="$CENTOS_VERSIONS"
+		else
+		    distribution_versions="5 6"
 		fi
 		;;
 	esac
