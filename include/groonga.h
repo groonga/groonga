@@ -2039,6 +2039,9 @@ GRN_API int grn_logger_pass(grn_ctx *ctx, grn_log_level level);
 #define GRN_LOG_DEFAULT_LEVEL GRN_LOG_NOTICE
 #endif /* GRN_LOG_DEFAULT_LEVEL */
 
+GRN_API void grn_default_logger_set_max_level(grn_log_level level);
+GRN_API grn_log_level grn_default_logger_get_max_level();
+
 #define GRN_LOG(ctx,level,...) do {\
   if (grn_logger_pass(ctx, level)) {\
     grn_logger_put(ctx, (level), __FILE__, __LINE__, __FUNCTION__, __VA_ARGS__); \

@@ -2234,6 +2234,20 @@ main(int argc, char **argv)
     grn_qlog_path = query_log_path_arg;
   }
 
+  if (log_level_arg) {
+    const char * const end = log_level_arg + strlen(log_level_arg);
+    const char *rest = NULL;
+    const int value = grn_atoi(log_level_arg, end, &rest);
+    if (end != rest || value < 0 || value > 9) {
+      fprintf(stderr, "invalid log level: <%s>\n", log_level_arg);
+      return EXIT_FAILURE;
+    }
+    log_level = value;
+  } else {
+    log_level = default_log_level;
+  }
+  grn_default_logger_set_max_level(log_level);
+
   if (max_num_threads_arg) {
     const char * const end = max_num_threads_arg + strlen(max_num_threads_arg);
     const char *rest = NULL;
@@ -2366,19 +2380,6 @@ main(int argc, char **argv)
     default_match_escalation_threshold = value;
   } else {
     default_match_escalation_threshold = default_default_match_escalation_threshold;
-  }
-
-  if (log_level_arg) {
-    const char * const end = log_level_arg + strlen(log_level_arg);
-    const char *rest = NULL;
-    const int value = grn_atoi(log_level_arg, end, &rest);
-    if (end != rest || value < 0 || value > 9) {
-      fprintf(stderr, "invalid log level: <%s>\n", log_level_arg);
-      return EXIT_FAILURE;
-    }
-    log_level = value;
-  } else {
-    log_level = default_log_level;
   }
 
   if (cache_limit_arg) {
