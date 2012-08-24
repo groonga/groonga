@@ -154,7 +154,7 @@ for architecture in $ARCHITECTURES; do
 		;;
 	    centos)
 		distribution_versions="5 6"
-		if [ ! -z "$DISTRIBUTION_VERSIONS" ]; then
+		if [ -n "$DISTRIBUTION_VERSIONS" ]; then
 		    distribution_versions=$DISTRIBUTION_VERSIONS
 		fi
 		;;
