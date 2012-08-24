@@ -4267,7 +4267,7 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
               } else if (selector_proc_p(si->args[0])) {
                 grn_rc rc;
                 grn_proc *proc = (grn_obj *)(si->args[0]);
-                rc = proc->selector(ctx, index, si->nargs, si->args,
+                rc = proc->selector(ctx, table, index, si->nargs, si->args,
                                     res, si->logical_op);
                 if (rc) {
                   /* TODO: report error */

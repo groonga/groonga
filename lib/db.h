@@ -153,7 +153,7 @@ typedef struct {
    (GRN_TABLE_HASH_KEY <= ((grn_db_obj *)obj)->header.type) &&\
    (((grn_db_obj *)obj)->header.type <= GRN_DB))
 
-typedef grn_rc grn_selector_func(grn_ctx *ctx, grn_obj *index,
+typedef grn_rc grn_selector_func(grn_ctx *ctx, grn_obj *table, grn_obj *index,
                                  int nargs, grn_obj **args,
                                  grn_obj *res, grn_operator op);
 

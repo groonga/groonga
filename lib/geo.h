@@ -133,10 +133,11 @@ grn_rc grn_geo_select_in_circle(grn_ctx *ctx,
                                 grn_obj *res,
                                 grn_operator op);
 
-grn_rc grn_selector_geo_in_circle(grn_ctx *ctx, grn_obj *obj,
+grn_rc grn_selector_geo_in_circle(grn_ctx *ctx, grn_obj *table, grn_obj *index,
                                   int nargs, grn_obj **args,
                                   grn_obj *res, grn_operator op);
-grn_rc grn_selector_geo_in_rectangle(grn_ctx *ctx, grn_obj *obj,
+grn_rc grn_selector_geo_in_rectangle(grn_ctx *ctx,
+                                     grn_obj *table, grn_obj *index,
                                      int nargs, grn_obj **args,
                                      grn_obj *res, grn_operator op);
 

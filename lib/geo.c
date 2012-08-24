@@ -673,7 +673,7 @@ typedef double (*grn_geo_distance_raw_func)(grn_ctx *ctx,
                                             grn_geo_point *point2);
 
 grn_rc
-grn_selector_geo_in_circle(grn_ctx *ctx, grn_obj *obj,
+grn_selector_geo_in_circle(grn_ctx *ctx, grn_obj *table, grn_obj *index,
                            int nargs, grn_obj **args,
                            grn_obj *res, grn_operator op)
 {
@@ -690,7 +690,7 @@ grn_selector_geo_in_circle(grn_ctx *ctx, grn_obj *obj,
       grn_obj *center_point, *distance;
       center_point = args[2];
       distance = args[3];
-      grn_geo_select_in_circle(ctx, obj, center_point, distance, type, res, op);
+      grn_geo_select_in_circle(ctx, index, center_point, distance, type, res, op);
     }
     break;
   default :
@@ -884,7 +884,7 @@ exit :
 }
 
 grn_rc
-grn_selector_geo_in_rectangle(grn_ctx *ctx, grn_obj *obj,
+grn_selector_geo_in_rectangle(grn_ctx *ctx, grn_obj *table, grn_obj *index,
                               int nargs, grn_obj **args,
                               grn_obj *res, grn_operator op)
 {
@@ -892,7 +892,7 @@ grn_selector_geo_in_rectangle(grn_ctx *ctx, grn_obj *obj,
     grn_obj *top_left_point, *bottom_right_point;
     top_left_point = args[2];
     bottom_right_point = args[3];
-    grn_geo_select_in_rectangle(ctx, obj,
+    grn_geo_select_in_rectangle(ctx, index,
                                 top_left_point, bottom_right_point,
                                 res, op);
   } else {
