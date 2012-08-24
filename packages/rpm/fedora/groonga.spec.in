@@ -72,11 +72,11 @@ Obsoletes:	%{name}-server < 2.0.6-0
 This package contains the groonga server
 
 %package httpd
-Summary:        Groonga HTTP server
-Group:          Applications/Text
-License:        LGPLv2 and BSD
-Requires:       %{name}-server-common = %{version}-%{release}
-Requires:       pcre
+Summary:	Groonga HTTP server
+Group:		Applications/Text
+License:	LGPLv2 and BSD
+Requires:	%{name}-server-common = %{version}-%{release}
+Requires:	pcre
 Obsoletes:	%{name}-httpd < 2.0.6-0
 
 %description httpd
