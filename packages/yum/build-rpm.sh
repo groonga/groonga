@@ -109,9 +109,9 @@ mkdir -p dependencies/SRPMS
 
 mkdir -p tmp
 cd tmp
-wget \$base/\$srpm
+wget \$update/\$srpm
 if [ \$? -ne 0 ]; then
-  wget \$update/\$srpm
+  wget \$base/\$srpm
 fi
 rpm2cpio \$srpm | cpio -id
 rm \$srpm
