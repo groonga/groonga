@@ -94,8 +94,7 @@ cat <<EOM > ~/.rpmmacros
 %_topdir \$HOME/rpmbuild
 EOM
 
-cat /usr/lib/rpm/rpmrc > ~/.rpmrc-for-mecab
-sed -i'' -e 's/march=i386/march=i586/' ~/.rpmrc-for-mecab
+architecture=\$(cut -d '-' -f 1 /etc/rpm/platform)
 
 rm -rf rpmbuild
 mkdir -p rpmbuild/SOURCES
@@ -119,8 +118,11 @@ mv *.spec ~/rpmbuild/SPECS/
 mv * ~/rpmbuild/SOURCES/
 cd ..
 rm -rf tmp
-rpmbuild -ba rpmbuild/SPECS/*.spec --rcfile ~/.rpmrc-for-mecab \
-  --buildroot ~/rpmbuild/BUILDROOT/\${srpm_base}
+mecab_build_options="--buildroot \$HOME/rpmbuild/BUILDROOT/\${srpm_base}"
+if [ \$architecture = "i386" ]; then
+  mecab_build_options="\${mecab_build_options} --target i586"
+fi
+rpmbuild -ba rpmbuild/SPECS/*.spec \${mecab_build_options}
 
 cp -p rpmbuild/RPMS/*/*.rpm dependencies/RPMS/
 cp -p rpmbuild/SRPMS/*.rpm dependencies/SRPMS/
