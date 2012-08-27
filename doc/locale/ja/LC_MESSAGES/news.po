@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-27 16:45\n"
+"POT-Creation-Date: 2012-08-27 18:03\n"
 "PO-Revision-Date: 2012-07-23 17:35+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -113,19 +113,21 @@ msgstr "[rpm][centos] MeCab 0.994をサポートした。 [#1455] [岩井さん�
 
 # 66407764d2e542cd82aa35dda3689c4d
 #: ../../../source/news.txt:30
-msgid "Supported changing default logger's max level before grn_init()"
-msgstr "ログ記録レベルの既定の最大値をgrn_init()を呼ぶ前に変更可能にした。"
+msgid "Supported changing default logger's max level before ``grn_init()``."
+msgstr "ログ記録レベルの既定の最大値を ``grn_init()`` を呼ぶ前に変更可能にした。"
 
 # 00b88a3185cd4965ad0080778be7d1a8
 #: ../../../source/news.txt:31
 msgid ""
-"Added all_records() function which copies all record IDs to the result table."
-msgstr "すべてのレコードIDを結果テーブルへとコピーするための関数"
-"all_records()を追加した。"
+"Added ``all_records()`` function which copies all record IDs to the result "
+"table."
+msgstr ""
+"すべてのレコードIDを結果テーブルへとコピーするための関数 ``all_records()`` を追加し"
+"た。"
 
 # 71ebd83a67e74392a32147ab3fae6a85
 #: ../../../source/news.txt:32
-msgid "Supported '-WORD' in --query of the select command."
+msgid "Supported '-WORD' in ``--query`` of the select command."
 msgstr "``select`` コマンドの ``--query`` で '-WORD' 構文をサポート。"
 
 #: ../../../source/news.txt:35 ../../../source/news.txt:87
@@ -165,7 +167,7 @@ msgid ""
 "Fixed a bug that the last 1 byte for cache key is ignored by ``select`` "
 "command."
 msgstr ""
-" ``select``コマンドでキャッシュされたキーの最後の1バイトが無視される不具合を"
+" ``select`` コマンドでキャッシュされたキーの最後の1バイトが無視される不具合を"
 "修正した。"
 
 # 44a30854bde541ee9f87e1243d1bc663

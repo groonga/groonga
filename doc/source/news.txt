@@ -27,9 +27,9 @@ Improvements
 * Improved error messages about ``get`` command implemented by table plugin.
 * [rpm][centos] Supported MeCab 0.994. [#1455]
   [Suggested by IWAI, Masaharu]
-* Supported changing default logger's max level before grn_init()
-* Added all_records() function which copies all record IDs to the result table.
-* Supported '-WORD' in --query of the select command.
+* Supported changing default logger's max level before ``grn_init()``.
+* Added ``all_records()`` function which copies all record IDs to the result table.
+* Supported '-WORD' in ``--query`` of the select command.
 
 Fixes
 ^^^^^
