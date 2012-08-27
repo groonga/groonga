@@ -1,0 +1,47 @@
+table_create Softwares TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+load --table Softwares
+[
+["_key"],
+["groonga"],
+["mroonga"],
+["rroonga"]
+]
+[[0,0.0,0.0],3]
+select Softwares --filter 'all_records()'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "groonga"
+      ],
+      [
+        2,
+        "mroonga"
+      ],
+      [
+        3,
+        "rroonga"
+      ]
+    ]
+  ]
+]
