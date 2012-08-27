@@ -1,0 +1,21 @@
+table_create Entries TABLE_PAT_KEY ShortText
+column_create Entries content COLUMN_SCALAR Text
+
+table_create Terms TABLE_PAT_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenBigram
+column_create Terms entries_content_index COLUMN_INDEX|WITH_POSITION Entries content
+
+load --table Entries
+[
+{"_key":    "The first post!",
+ "content": "Welcome! This is my first post!"},
+{"_key":    "Groonga",
+ "content": "I started to use groonga. It's very fast!"},
+{"_key":    "Mroonga",
+ "content": "I also started to use mroonga. It's also very fast! Really fast!"},
+{"_key":    "Good-bye Senna",
+ "content": "I migrated all Senna system!"},
+{"_key":    "Good-bye Tritonn",
+ "content": "I also migrated all Tritonn system!"}
+]
+
+select Entries --match_columns content --query '-fast'
