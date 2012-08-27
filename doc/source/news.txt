@@ -337,7 +337,7 @@ Improvements
 * Accepted ``@`` as a valid name character.
 * [tokenizer] Added a tokenizer based on
   `KyTea <http://www.phontron.com/kytea/>`_.
-* Supported :doc:`offline index construction </indexing>`.
+* Supported :doc:`offline index construction </reference/indexing>`.
 * [tokenizer] Supported MeCab 0.993. [groonga-dev,00703]
   [Reported by Masaharu YOSHIOKA]
 * [windows] Supported MessagePack.
