@@ -4266,7 +4266,7 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
               if (si->flags & SCAN_ACCESSOR) {
               } else if (selector_proc_p(si->args[0])) {
                 grn_rc rc;
-                grn_proc *proc = (grn_obj *)(si->args[0]);
+                grn_proc *proc = (grn_proc *)(si->args[0]);
                 rc = proc->selector(ctx, table, index, si->nargs, si->args,
                                     res, si->logical_op);
                 if (rc) {
@@ -4286,7 +4286,7 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
             case GRN_OP_CALL :
               if (selector_proc_p(si->args[0])) {
                 grn_rc rc;
-                grn_proc *proc = (grn_obj *)(si->args[0]);
+                grn_proc *proc = (grn_proc *)(si->args[0]);
                 rc = proc->selector(ctx, table, NULL, si->nargs, si->args,
                                     res, si->logical_op);
                 if (rc) {
