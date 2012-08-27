@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-27 18:03\n"
+"POT-Creation-Date: 2012-08-28 04:11\n"
 "PO-Revision-Date: 2012-07-23 17:35+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -114,7 +114,8 @@ msgstr "[rpm][centos] MeCab 0.994をサポートした。 [#1455] [岩井さん�
 # 66407764d2e542cd82aa35dda3689c4d
 #: ../../../source/news.txt:30
 msgid "Supported changing default logger's max level before ``grn_init()``."
-msgstr "ログ記録レベルの既定の最大値を ``grn_init()`` を呼ぶ前に変更可能にした。"
+msgstr ""
+"ログ記録レベルの既定の最大値を ``grn_init()`` を呼ぶ前に変更可能にした。"
 
 # 00b88a3185cd4965ad0080778be7d1a8
 #: ../../../source/news.txt:31
@@ -122,8 +123,8 @@ msgid ""
 "Added ``all_records()`` function which copies all record IDs to the result "
 "table."
 msgstr ""
-"すべてのレコードIDを結果テーブルへとコピーするための関数 ``all_records()`` を追加し"
-"た。"
+"すべてのレコードIDを結果テーブルへとコピーするための関数 ``all_records()`` を"
+"追加した。"
 
 # 71ebd83a67e74392a32147ab3fae6a85
 #: ../../../source/news.txt:32
@@ -1061,8 +1062,8 @@ msgstr ""
 
 # 89aa3fc8d4f2407d9795bb3c28806fc6
 #: ../../../source/news.txt:340
-msgid "Supported :doc:`offline index construction </indexing>`."
-msgstr ":doc:`静的なインデックス構築方法 </indexing>` をサポートした。"
+msgid "Supported :doc:`offline index construction </reference/indexing>`."
+msgstr ":doc:`静的なインデックス構築方法 </reference/indexing>` をサポートした。"
 
 # 40ced4918f3748c19ad0bb4d48089260
 #: ../../../source/news.txt:341
@@ -2768,8 +2769,8 @@ msgstr ""
 "を指定しても無視するようにした。 #1030"
 
 #: ../../../source/news/1.2.x.txt:231
-msgid "Added document about :doc:`/log`."
-msgstr ":doc:`/log` に関するドキュメントを追加。"
+msgid "Added document about :doc:`/reference/log`."
+msgstr ":doc:`/reference/log` に関するドキュメントを追加。"
 
 #: ../../../source/news/1.2.x.txt:232
 msgid "Supported ~/.editrc."

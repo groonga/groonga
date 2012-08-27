@@ -634,7 +634,6 @@ msgstr "類似検索"
 
 # 720d221d45ed482d8513886c05d1c5e4
 #: ../../../source/suggest/correction.txt:66
-#, fuzzy
 msgid ""
 "Similar search can find registered words that has one or more the same "
 "tokens as user input. TokenBigram tokenizer is used for tokenization because "
@@ -643,7 +642,7 @@ msgid ""
 msgstr ""
 "類似検索はユーザの入力をトークナイズし、同じトークンを含んだ登録済みの語を検"
 "索します。トークナイズにはTokenBigramトークナイザーを使います。これは :doc:`/"
-"executables/groonga-suggest-create-dataset` が作るサジェストデータセットス"
+"reference/executables/groonga-suggest-create-dataset` が作るサジェストデータセットス"
 "キーマではデフォルトトークナイザーとしてTokenBigramトークナイザーを使っている"
 "からです。"
 
@@ -683,12 +682,11 @@ msgstr ""
 
 # 4941066c272e4c8d9fea28523b205609
 #: ../../../source/suggest/correction.txt:104
-#, fuzzy
 msgid ""
 "Groonga provides :doc:`/reference/commands/suggest` command to use "
 "correction. `--type correct` option requests corrections."
 msgstr ""
-"groongaは補正機能を使うために :doc:`/commands/suggest` コマンドを用意していま"
+"groongaは補正機能を使うために :doc:`/reference/commands/suggest` コマンドを用意していま"
 "す。 `--type correct` オプションを使うと補正機能を利用できます。"
 
 # 4039b51af5424222a1a4ceb57340fec8
@@ -1080,12 +1078,11 @@ msgstr ""
 
 # 4941066c272e4c8d9fea28523b205609
 #: ../../../source/suggest/suggestion.txt:84
-#, fuzzy
 msgid ""
 "Groonga provides :doc:`/reference/commands/suggest` command to use "
 "suggestion. `--type suggest` option requests suggestion"
 msgstr ""
-"groongaは提案機能を使うために :doc:`/commands/suggest` コマンドを用意していま"
+"groongaは提案機能を使うために :doc:`/reference/commands/suggest` コマンドを用意していま"
 "す。 `--type suggest` オプションを使うと提案機能を利用できます。"
 
 # f34dff8561634141a09b2334c56879d0

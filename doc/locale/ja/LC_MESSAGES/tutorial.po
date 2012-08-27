@@ -343,7 +343,6 @@ msgstr ""
 
 # 5f41c9f3d5bc416590fd143e82eccd53
 #: ../../../source/tutorial/data.txt:126
-#, fuzzy
 msgid ""
 "You can specify a column in the associated table to the `output_columns` "
 "parameter of a :doc:`/reference/commands/select` command. The format is "
@@ -372,7 +371,6 @@ msgstr ""
 
 # fcab1957c86f4f028958b472cf6dda56
 #: ../../../source/tutorial/data.txt:137
-#, fuzzy
 msgid ""
 "The `type` parameter of the :doc:`/reference/commands/column_create` command "
 "specifies the table to be associated with the reference column. In this "
