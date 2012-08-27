@@ -5,7 +5,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: groonga 2.0.5\n"
+"Project-Id-Version: groonga 2.0.6\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-07-23 17:56\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
@@ -1116,20 +1116,20 @@ msgstr "Installer"
 # b105498d4330497c90888cc0be134b82
 #: ../../../source/install/windows.txt:20
 msgid ""
-"For 32-bit environment, download `groonga-2.0.5-x86.exe <http://packages."
-"groonga.org/windows/groonga/groonga-2.0.5-x86.exe>`_ and run it."
+"For 32-bit environment, download `groonga-2.0.6-x86.exe <http://packages."
+"groonga.org/windows/groonga/groonga-2.0.6-x86.exe>`_ and run it."
 msgstr ""
-"For 32-bit environment, download `groonga-2.0.5-x86.exe <http://packages."
-"groonga.org/windows/groonga/groonga-2.0.5-x86.exe>`_ and run it."
+"For 32-bit environment, download `groonga-2.0.6-x86.exe <http://packages."
+"groonga.org/windows/groonga/groonga-2.0.6-x86.exe>`_ and run it."
 
 # 8f8df372b8c14f89baf43db539735a59
 #: ../../../source/install/windows.txt:24
 msgid ""
-"For 64-bit environment, download `groonga-2.0.5-x64.exe <http://packages."
-"groonga.org/windows/groonga/groonga-2.0.5-x64.exe>`_ and run it."
+"For 64-bit environment, download `groonga-2.0.6-x64.exe <http://packages."
+"groonga.org/windows/groonga/groonga-2.0.6-x64.exe>`_ and run it."
 msgstr ""
-"For 64-bit environment, download `groonga-2.0.5-x64.exe <http://packages."
-"groonga.org/windows/groonga/groonga-2.0.5-x64.exe>`_ and run it."
+"For 64-bit environment, download `groonga-2.0.6-x64.exe <http://packages."
+"groonga.org/windows/groonga/groonga-2.0.6-x64.exe>`_ and run it."
 
 # 1a1a6987d02246789520e645b90d254c
 #: ../../../source/install/windows.txt:28
@@ -1148,20 +1148,20 @@ msgstr "zip"
 # 865357136aca4f238fe592f01d158fed
 #: ../../../source/install/windows.txt:33
 msgid ""
-"For 32-bit environment, download `groonga-2.0.5-x86.zip <http://packages."
-"groonga.org/windows/groonga/groonga-2.0.5-x86.zip>`_ and extract it."
+"For 32-bit environment, download `groonga-2.0.6-x86.zip <http://packages."
+"groonga.org/windows/groonga/groonga-2.0.6-x86.zip>`_ and extract it."
 msgstr ""
-"For 32-bit environment, download `groonga-2.0.5-x86.zip <http://packages."
-"groonga.org/windows/groonga/groonga-2.0.5-x86.zip>`_ and extract it."
+"For 32-bit environment, download `groonga-2.0.6-x86.zip <http://packages."
+"groonga.org/windows/groonga/groonga-2.0.6-x86.zip>`_ and extract it."
 
 # 59c325c8448e4e8aa23ad96f671e1aa7
 #: ../../../source/install/windows.txt:37
 msgid ""
-"For 64-bit environment, download `groonga-2.0.5-x64.zip <http://packages."
-"groonga.org/windows/groonga/groonga-2.0.5-x64.zip>`_ and extract it."
+"For 64-bit environment, download `groonga-2.0.6-x64.zip <http://packages."
+"groonga.org/windows/groonga/groonga-2.0.6-x64.zip>`_ and extract it."
 msgstr ""
-"For 64-bit environment, download `groonga-2.0.5-x64.zip <http://packages."
-"groonga.org/windows/groonga/groonga-2.0.5-x64.zip>`_ and extract it."
+"For 64-bit environment, download `groonga-2.0.6-x64.zip <http://packages."
+"groonga.org/windows/groonga/groonga-2.0.6-x64.zip>`_ and extract it."
 
 # 1a7c217b0fe64a4189130131f8cd80b5
 #: ../../../source/install/windows.txt:41
@@ -1194,11 +1194,11 @@ msgstr "`CMake <http://www.cmake.org/>`_"
 # 1ab5d2cb63704153b4fbcfccb30946f1
 #: ../../../source/install/windows.txt:53
 msgid ""
-"Download zipped source `groonga-2.0.5.zip <http://packages.groonga.org/"
-"source/groonga/groonga-2.0.5.zip>`_ and extract it."
+"Download zipped source `groonga-2.0.6.zip <http://packages.groonga.org/"
+"source/groonga/groonga-2.0.6.zip>`_ and extract it."
 msgstr ""
-"Download zipped source `groonga-2.0.5.zip <http://packages.groonga.org/"
-"source/groonga/groonga-2.0.5.zip>`_ and extract it."
+"Download zipped source `groonga-2.0.6.zip <http://packages.groonga.org/"
+"source/groonga/groonga-2.0.6.zip>`_ and extract it."
 
 # 53fb3cc4ea6b4d4e963c26a6fad4072b
 #: ../../../source/install/windows.txt:57

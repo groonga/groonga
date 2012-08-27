@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-23 15:32\n"
+"POT-Creation-Date: 2012-08-22 16:06\n"
 "PO-Revision-Date: 2012-08-08 21:54+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -584,8 +584,8 @@ msgid ""
 "`libedit <http://www.thrysoee.dk/editline/>`_ for command line editing in :"
 "doc:`/reference/executables/groonga`"
 msgstr ""
-"`libedit <http://www.thrysoee.dk/editline/>`_ （ :doc:`/reference/executables/groonga` "
-"のコマンドライン編集用）"
+"`libedit <http://www.thrysoee.dk/editline/>`_ （ :doc:`/reference/"
+"executables/groonga` のコマンドライン編集用）"
 
 # 796e01ca2aa14ef49dc2064e60a4e781
 #: ../../../source/install/others.txt:64
@@ -673,8 +673,8 @@ msgid ""
 "The default is ``/usr/local``. In this case, :doc:`/reference/executables/"
 "groonga` is installed into ``/usr/local/bin/groonga``."
 msgstr ""
-"デフォルトは ``/usr/local`` 。デフォルトの場合は :doc:`/reference/executables/groonga` "
-"は ``/usr/local/bin/groonga`` にインストールされます。"
+"デフォルトは ``/usr/local`` 。デフォルトの場合は :doc:`/reference/"
+"executables/groonga` は ``/usr/local/bin/groonga`` にインストールされます。"
 
 # 176d083a81b04e2995c73971d13f5cd4
 #: ../../../source/install/others.txt:109
@@ -723,12 +723,17 @@ msgstr ""
 #: ../../../source/install/others.txt:131
 msgid ""
 "Specifies the default log file path. You can override the default log path "
-"is :doc:`/reference/executables/groonga` command's ``--log-path`` command line option. So this option "
-"is not critical build option. It's just for convenient."
-msgstr "ログファイルのデフォルトのパスを指定します。ログファイルのデフォルトのパスは :doc:`/reference/executables/groonga` の ``--log-path`` コマンドラインオプションで変更できます。そのため、このオプションはそんなに重要なビルドオプションではありません。少し便利にするためのオプションです。"
+"is :doc:`/reference/executables/groonga` command's ``--log-path`` command "
+"line option. So this option is not critical build option. It's just for "
+"convenient."
+msgstr ""
+"ログファイルのデフォルトのパスを指定します。ログファイルのデフォルトのパス"
+"は :doc:`/reference/executables/groonga` の ``--log-path`` コマンドラインオプ"
+"ションで変更できます。そのため、このオプションはそんなに重要なビルドオプショ"
+"ンではありません。少し便利にするためのオプションです。"
 
 # 0dd6627b854f4630bc1a40500d3d71c1
-#: ../../../source/install/others.txt:135
+#: ../../../source/install/others.txt:136
 msgid ""
 "The default is ``/usr/local/var/log/groonga.log``. The ``/usr/local/var`` "
 "part is changed by ``--localestatedir`` option."
@@ -737,7 +742,7 @@ msgstr ""
 "部分は ``--localestatedir`` オプションで変更できます。"
 
 # c610867a04844cb7ad2d7f0bf4c18ec8
-#: ../../../source/install/others.txt:138
+#: ../../../source/install/others.txt:139
 msgid ""
 "Here is an example that log file is placed into shared NFS directory ``/nfs/"
 "log/groonga.log``::"
@@ -746,12 +751,12 @@ msgstr ""
 "く例です::"
 
 # 9a35ac35a19f40fdb278403858d7c376
-#: ../../../source/install/others.txt:144
+#: ../../../source/install/others.txt:145
 msgid "``--with-default-encoding=ENCODING``"
 msgstr ""
 
 # 1b20c5e232c748379d9fb0d69518fab1
-#: ../../../source/install/others.txt:146
+#: ../../../source/install/others.txt:147
 msgid ""
 "Specifies the default encoding. Available encodings are ``euc_jp``, "
 "``sjis``, ``utf8``, ``latin1``, ``koi8r`` and ``none``."
@@ -761,22 +766,22 @@ msgstr ""
 "す。"
 
 # 7e9908ce06bb4eaf982913ba78fa0e3b
-#: ../../../source/install/others.txt:149
+#: ../../../source/install/others.txt:150
 msgid "The default is ``utf-8``."
 msgstr "デフォルトは ``utf-8`` です。"
 
 # 1856207106934dbc9fc5c06948ae2ee5
-#: ../../../source/install/others.txt:151
+#: ../../../source/install/others.txt:152
 msgid "Here is an example that Shift_JIS is used as the default encoding::"
 msgstr "以下はデフォルトのエンコーディングとしてShift_JISを使う例です::"
 
 # 3ecfd479a077473497518d2546cc1f04
-#: ../../../source/install/others.txt:156
+#: ../../../source/install/others.txt:157
 msgid "``--with-match-escalation-threshold=NUMBER``"
 msgstr ""
 
 # 0358fbf5b4bd491b8b9f47c0d1ea55e5
-#: ../../../source/install/others.txt:158
+#: ../../../source/install/others.txt:159
 msgid ""
 "Specifies the default match escalation threshold. See :ref:`match-escalation-"
 "threshold` about match escalation threshold. -1 means that match operation "
@@ -787,59 +792,59 @@ msgstr ""
 "マッチ演算でエスカレーションしないという意味です。"
 
 # 718003b153b8472ab631bb7841df65b9
-#: ../../../source/install/others.txt:162
+#: ../../../source/install/others.txt:163
 msgid "The default is 0."
 msgstr "デフォルトは0です。"
 
 # c98b1b0d41e54317885f7ffb56d9746c
-#: ../../../source/install/others.txt:164
+#: ../../../source/install/others.txt:165
 msgid "Here is an example that match escalation isn't used by default::"
 msgstr "以下はデフォルトではマッチエスカレーションをしないという例です::"
 
 # 28699343bf30443c8a909006069b9a18
-#: ../../../source/install/others.txt:169
+#: ../../../source/install/others.txt:170
 msgid "``--with-zlib``"
 msgstr ""
 
 # 4af8185da85a464485ca4de327945fa8
-#: ../../../source/install/others.txt:171
+#: ../../../source/install/others.txt:172
 msgid "Enables column value compression by zlib."
 msgstr "zlibを使ってカラム値を圧縮する機能を有効にします。"
 
 # 57556a2dbc4f4e429ec2514f5b6ca5b6
 # 0a24899a6c98417d965d932d71f78727
-#: ../../../source/install/others.txt:173
-#: ../../../source/install/others.txt:184
+#: ../../../source/install/others.txt:174
+#: ../../../source/install/others.txt:185
 msgid "The default is disabled."
 msgstr "デフォルトでは無効です。"
 
 # 59870ea67a0c47e79460d9c15dceb456
-#: ../../../source/install/others.txt:175
+#: ../../../source/install/others.txt:176
 msgid "Here is an example that enables column value compression by zlib::"
 msgstr "以下はzlibを使ってカラム値を圧縮する機能を有効にする例です::"
 
 # bfdc5fa9f86041bfa8b673142dc66c9a
-#: ../../../source/install/others.txt:180
+#: ../../../source/install/others.txt:181
 msgid "``--with-lzo``"
 msgstr ""
 
 # be3380808bbd4344bdf6001333301f68
-#: ../../../source/install/others.txt:182
+#: ../../../source/install/others.txt:183
 msgid "Enables column value compression by LZO."
 msgstr "LZOを使ってカラム値を圧縮する機能を有効にします。"
 
 # 9acae393caa447c1bb9fb820ec2a41eb
-#: ../../../source/install/others.txt:186
+#: ../../../source/install/others.txt:187
 msgid "Here is an example that enables column value compression by LZO::"
 msgstr "以下はLZOを使ってカラム値を圧縮する機能を有効にする例です::"
 
 # bdca8f0b3e5847a4989772a201d0d813
-#: ../../../source/install/others.txt:191
+#: ../../../source/install/others.txt:192
 msgid "``--with-message-pack=MESSAGE_PACK_INSTALL_PREFIX``"
 msgstr ""
 
 # d2181e7152bd43f1bd82f17c59efdeff
-#: ../../../source/install/others.txt:193
+#: ../../../source/install/others.txt:194
 msgid ""
 "Specifies where MessagePack is installed. If MessagePack isn't installed "
 "with ``--prefix=/usr``, you need to specify this option with path that you "
@@ -850,7 +855,7 @@ msgstr ""
 "MessagePackをビルドするときに指定したパスをこのオプションで指定してください。"
 
 # d67cbcb778af4f41aef5366b0b203438
-#: ../../../source/install/others.txt:197
+#: ../../../source/install/others.txt:198
 msgid ""
 "If you installed MessagePack with ``--prefix=$HOME/local`` option, you "
 "sholud specify ``--with-message-pack=$HOME/local`` to groonga's "
@@ -861,12 +866,12 @@ msgstr ""
 "$HOME/local`` と指定してください。"
 
 # 7acfab88eaf04c9ea99d205ebfb40e61
-#: ../../../source/install/others.txt:201
+#: ../../../source/install/others.txt:202
 msgid "The default is ``/usr``."
 msgstr "デフォルトは ``/usr`` です。"
 
 # e7804f95bc574cf2acc25d280a8f0536
-#: ../../../source/install/others.txt:203
+#: ../../../source/install/others.txt:204
 msgid ""
 "Here is an example that uses MessagePack built with ``--prefix=$HOME/local`` "
 "option::"
@@ -875,12 +880,12 @@ msgstr ""
 "でインストールされている場合の例です::"
 
 # 206843aeb29845c0907e0477435e576e
-#: ../../../source/install/others.txt:209
+#: ../../../source/install/others.txt:210
 msgid "``--with-munin-plugins``"
 msgstr ""
 
 # 1aa15578cbfa4bebb34ec27673e4ef3e
-#: ../../../source/install/others.txt:211
+#: ../../../source/install/others.txt:212
 msgid ""
 "Installs Munin plugins for groonga. They are installed into ``${PREFIX}/"
 "share/groonga/munin/plugins/``."
@@ -890,22 +895,22 @@ msgstr ""
 
 # caf44b2f903748b8991cf84c2c177a9f
 # add2e5642cfe4e3a83ac17e91ddbd6ce
-#: ../../../source/install/others.txt:214
+#: ../../../source/install/others.txt:215
 msgid "Those plugins are not installed by default."
 msgstr "デフォルトではプラグインはインストールされません。"
 
 # 43e0e10730b24e0f9f2869aab377cfb1
-#: ../../../source/install/others.txt:216
+#: ../../../source/install/others.txt:217
 msgid "Here is an example that installs Munin plugins for groonga::"
 msgstr "以下はgroonga用のMuninプラグインをインストールする例です::"
 
 # 5c45044affbf41a8848fe14246583e1f
-#: ../../../source/install/others.txt:221
+#: ../../../source/install/others.txt:222
 msgid "``--with-package-platform=PLATFORM``"
 msgstr ""
 
 # ed8c55297cd54e9d95df6654e846de0f
-#: ../../../source/install/others.txt:223
+#: ../../../source/install/others.txt:224
 msgid ""
 "Installs platform specific system management files such as init script. "
 "Available platforms are ``redhat`` and ``fedora``. ``redhat`` is for Red Hat "
@@ -918,38 +923,38 @@ msgstr ""
 
 # caf44b2f903748b8991cf84c2c177a9f
 # add2e5642cfe4e3a83ac17e91ddbd6ce
-#: ../../../source/install/others.txt:228
+#: ../../../source/install/others.txt:229
 msgid "Those system management files are not installed by default."
 msgstr "デフォルトではシステム管理ファイルはインストールされません。"
 
 # d8d224952a5e40668c64bf6aed70c52c
-#: ../../../source/install/others.txt:230
+#: ../../../source/install/others.txt:231
 msgid ""
 "Here is an example that installs CentOS specific system management files::"
 msgstr "以下はCentOS用のシステム管理ファイルをインストールする例です::"
 
 # 73ce9a1e58ae487883e2cd13e15efecb
-#: ../../../source/install/others.txt:236
+#: ../../../source/install/others.txt:237
 msgid "``--help``"
 msgstr ""
 
 # 4eb9c8a0156848e192bd849c4016051b
-#: ../../../source/install/others.txt:238
+#: ../../../source/install/others.txt:239
 msgid "Shows all ``configure`` options."
 msgstr "すべての ``configure`` オプションを表示します。"
 
 # 3ccc49c4e940422490eb17e6434d8cce
-#: ../../../source/install/others.txt:241
+#: ../../../source/install/others.txt:242
 msgid "``make``"
 msgstr ""
 
 # f6547787aee44f09865d72c73ae7334c
-#: ../../../source/install/others.txt:243
+#: ../../../source/install/others.txt:244
 msgid "``configure`` is succeeded, you can build groonga by ``make``::"
 msgstr "``configure`` が成功したら ``make`` でgroongaをビルドします::"
 
 # 5ce9a2ae5dc546e98e9be192052b9c57
-#: ../../../source/install/others.txt:247
+#: ../../../source/install/others.txt:248
 msgid ""
 "If you have multi cores CPU, you can make faster by using ``-j`` option. If "
 "you have 4 cores CPU, it's good for using ``-j4`` option::"
@@ -959,7 +964,7 @@ msgstr ""
 "速くビルドできます::"
 
 # 0722f0e621ae45a6abf6cc6324fbe5b3
-#: ../../../source/install/others.txt:252
+#: ../../../source/install/others.txt:253
 msgid ""
 "If you get some errors by ``make``, please report them to us: :doc:`/"
 "contribution/report`"
@@ -968,17 +973,17 @@ msgstr ""
 "doc:`/contribution/report`"
 
 # aa8898373a0a49658c7fc85618e00bc9
-#: ../../../source/install/others.txt:256
+#: ../../../source/install/others.txt:257
 msgid "``make install``"
 msgstr ""
 
 # 8c1d42a847964a629f8ebeff72f93110
-#: ../../../source/install/others.txt:258
+#: ../../../source/install/others.txt:259
 msgid "Now, you can install built groonga!::"
 msgstr "これでビルドしたgroongaをインストールできます！::"
 
 # 714ab1fb1c3240458fa00571dfde7b07
-#: ../../../source/install/others.txt:262
+#: ../../../source/install/others.txt:263
 msgid ""
 "If you have write permission for ``${PREFIX}``, you don't need to use "
 "``sudo``. e.g. ``--prefix=$HOME/local`` case. In this case, use ``make "
@@ -1081,26 +1086,28 @@ msgstr "インストーラー"
 
 #: ../../../source/install/windows.txt:20
 msgid ""
-"For 32-bit environment, download `groonga-2.0.5-x86.exe <http://packages."
-"groonga.org/windows/groonga/groonga-2.0.5-x86.exe>`_ and run it."
+"For 32-bit environment, download `groonga-2.0.6-x86.exe <http://packages."
+"groonga.org/windows/groonga/groonga-2.0.6-x86.exe>`_ and run it."
 msgstr ""
-"32-bit環境の場合は `groonga-2.0.5-x86.exe <http://packages.groonga.org/"
-"windows/groonga/groonga-2.0.5-x86.exe>`_ をダウンロードして実行してください。"
+"32-bit環境の場合は `groonga-2.0.6-x86.exe <http://packages.groonga.org/"
+"windows/groonga/groonga-2.0.6-x86.exe>`_ をダウンロードして実行してください。"
 
 #: ../../../source/install/windows.txt:24
 msgid ""
-"For 64-bit environment, download `groonga-2.0.5-x64.exe <http://packages."
-"groonga.org/windows/groonga/groonga-2.0.5-x64.exe>`_ and run it."
+"For 64-bit environment, download `groonga-2.0.6-x64.exe <http://packages."
+"groonga.org/windows/groonga/groonga-2.0.6-x64.exe>`_ and run it."
 msgstr ""
-"64-bit環境の場合は `groonga-2.0.5-x64.exe <http://packages.groonga.org/"
-"windows/groonga/groonga-2.0.5-x64.exe>`_ をダウンロードして実行してください。"
+"64-bit環境の場合は `groonga-2.0.6-x64.exe <http://packages.groonga.org/"
+"windows/groonga/groonga-2.0.6-x64.exe>`_ をダウンロードして実行してください。"
 
 # ec57e50c1c624fabb14313a143a0d9fb
 #: ../../../source/install/windows.txt:28
 msgid ""
 "Use command prompt for :doc:`/reference/executables/groonga` installed in "
 "start menu."
-msgstr "スタートメニュー内に :doc:`/reference/executables/groonga` 用のコマンドプロンプトがインストールされるのでそれを使ってください。"
+msgstr ""
+"スタートメニュー内に :doc:`/reference/executables/groonga` 用のコマンドプロン"
+"プトがインストールされるのでそれを使ってください。"
 
 # d8c961cd55d94e049fd91093cb591128
 #: ../../../source/install/windows.txt:31
@@ -1109,24 +1116,25 @@ msgstr ""
 
 #: ../../../source/install/windows.txt:33
 msgid ""
-"For 32-bit environment, download `groonga-2.0.5-x86.zip <http://packages."
-"groonga.org/windows/groonga/groonga-2.0.5-x86.zip>`_ and extract it."
+"For 32-bit environment, download `groonga-2.0.6-x86.zip <http://packages."
+"groonga.org/windows/groonga/groonga-2.0.6-x86.zip>`_ and extract it."
 msgstr ""
-"32-bit環境の場合は `groonga-2.0.5-x86.zip <http://packages.groonga.org/"
-"windows/groonga/groonga-2.0.5-x86.zip>`_ をダウンロードして展開してください。"
+"32-bit環境の場合は `groonga-2.0.6-x86.zip <http://packages.groonga.org/"
+"windows/groonga/groonga-2.0.6-x86.zip>`_ をダウンロードして展開してください。"
 
 #: ../../../source/install/windows.txt:37
 msgid ""
-"For 64-bit environment, download `groonga-2.0.5-x64.zip <http://packages."
-"groonga.org/windows/groonga/groonga-2.0.5-x64.zip>`_ and extract it."
+"For 64-bit environment, download `groonga-2.0.6-x64.zip <http://packages."
+"groonga.org/windows/groonga/groonga-2.0.6-x64.zip>`_ and extract it."
 msgstr ""
-"64-bit環境の場合は `groonga-2.0.5-x64.zip <http://packages.groonga.org/"
-"windows/groonga/groonga-2.0.5-x64.zip>`_ をダウンロードして展開してください。"
+"64-bit環境の場合は `groonga-2.0.6-x64.zip <http://packages.groonga.org/"
+"windows/groonga/groonga-2.0.6-x64.zip>`_ をダウンロードして展開してください。"
 
 # 8820fc4404434f5b8b0b1c2d71213e30
 #: ../../../source/install/windows.txt:41
 msgid ":doc:`/reference/executables/groonga` is in ``bin`` folder."
-msgstr ":doc:`/reference/executables/groonga` は ``bin`` フォルダーにあります。"
+msgstr ""
+":doc:`/reference/executables/groonga` は ``bin`` フォルダーにあります。"
 
 # b0c7ac11a34f4e659e2ba5a73c9ce0af
 #: ../../../source/install/windows.txt:46
@@ -1151,11 +1159,11 @@ msgstr ""
 
 #: ../../../source/install/windows.txt:53
 msgid ""
-"Download zipped source `groonga-2.0.5.zip <http://packages.groonga.org/"
-"source/groonga/groonga-2.0.5.zip>`_ and extract it."
+"Download zipped source `groonga-2.0.6.zip <http://packages.groonga.org/"
+"source/groonga/groonga-2.0.6.zip>`_ and extract it."
 msgstr ""
-"zipでアーカイブされたソース `groonga-2.0.5.zip <http://packages.groonga.org/"
-"source/groonga/groonga-2.0.5.zip>`_ をダウンロードして展開します。"
+"zipでアーカイブされたソース `groonga-2.0.6.zip <http://packages.groonga.org/"
+"source/groonga/groonga-2.0.6.zip>`_ をダウンロードして展開します。"
 
 # 49a6d04509ea401db47310ba67cc6116
 #: ../../../source/install/windows.txt:57
@@ -1188,5 +1196,5 @@ msgid ""
 "After the above steps, :doc:`/reference/executables/groonga` is found in ``c:"
 "\\groonga\\bin\\groonga.exe``."
 msgstr ""
-"以上の手順で :doc:`/reference/executables/groonga` が ``c:\\groonga\\bin\\groonga."
-"exe`` にインストールされます。"
+"以上の手順で :doc:`/reference/executables/groonga` が ``c:\\groonga\\bin"
+"\\groonga.exe`` にインストールされます。"
