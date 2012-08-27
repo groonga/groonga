@@ -4281,6 +4281,23 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
               /* todo : handle SCAN_PRE_CONST */
               break;
             }
+          } else {
+            switch (si->op) {
+            case GRN_OP_CALL :
+              if (selector_proc_p(si->args[0])) {
+                grn_rc rc;
+                grn_proc *proc = (grn_obj *)(si->args[0]);
+                rc = proc->selector(ctx, table, NULL, si->nargs, si->args,
+                                    res, si->logical_op);
+                if (rc) {
+                  /* TODO: report error */
+                } else {
+                  done++;
+                }
+              }
+            default :
+              break;
+            }
           }
           if (!done) {
             e->codes = codes + si->start;

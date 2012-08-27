@@ -1,0 +1,11 @@
+table_create Softwares TABLE_HASH_KEY ShortText
+
+load --table Softwares
+[
+["_key"],
+["groonga"],
+["mroonga"],
+["rroonga"]
+]
+
+select Softwares --filter 'all_records()'
