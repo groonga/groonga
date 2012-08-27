@@ -120,9 +120,11 @@ cd ..
 rm -rf tmp
 mecab_build_options="--buildroot \$HOME/rpmbuild/BUILDROOT/\${srpm_base}"
 if [ \$architecture = "i386" ]; then
-  mecab_build_options="\${mecab_build_options} --target i586"
+  rpmbuild -ba rpmbuild/SPECS/*.spec \${mecab_build_options} \
+    --define "optflags -O2 -g -march=i586"
+else
+  rpmbuild -ba rpmbuild/SPECS/*.spec \${mecab_build_options}
 fi
-rpmbuild -ba rpmbuild/SPECS/*.spec \${mecab_build_options}
 
 cp -p rpmbuild/RPMS/*/*.rpm dependencies/RPMS/
 cp -p rpmbuild/SRPMS/*.rpm dependencies/SRPMS/
