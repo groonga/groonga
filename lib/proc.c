@@ -270,6 +270,7 @@ grn_parse_query_flags(grn_ctx *ctx, const char *query_flags,
     CHECK_EXPR_FLAG(ALLOW_PRAGMA);
     CHECK_EXPR_FLAG(ALLOW_COLUMN);
     CHECK_EXPR_FLAG(ALLOW_UPDATE);
+    CHECK_EXPR_FLAG(ALLOW_LEADING_NOT);
 
 #define GRN_EXPR_NONE 0
     CHECK_EXPR_FLAG(NONE);

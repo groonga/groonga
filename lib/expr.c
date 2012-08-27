@@ -5083,6 +5083,15 @@ parse_query(grn_ctx *ctx, efs_info *q)
       break;
     case GRN_QUERY_AND_NOT :
       q->cur++;
+      if (first_token && (q->flags & GRN_EXPR_ALLOW_LEADING_NOT)) {
+        grn_obj *all_records = grn_ctx_get(ctx, "all_records", 11);
+        if (all_records) {
+          /* dummy token */
+          PARSE(GRN_EXPR_TOKEN_QSTRING);
+          grn_expr_append_obj(ctx, q->e, all_records, GRN_OP_PUSH, 1);
+          grn_expr_append_op(ctx, q->e, GRN_OP_CALL, 0);
+        }
+      }
       op->op = GRN_OP_AND_NOT;
       PARSE(GRN_EXPR_TOKEN_LOGICAL_AND_NOT);
       break;

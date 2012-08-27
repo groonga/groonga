@@ -2579,6 +2579,7 @@ typedef unsigned int grn_expr_flags;
 #define GRN_EXPR_ALLOW_PRAGMA          (0x02)
 #define GRN_EXPR_ALLOW_COLUMN          (0x04)
 #define GRN_EXPR_ALLOW_UPDATE          (0x08)
+#define GRN_EXPR_ALLOW_LEADING_NOT     (0x10)
 
 GRN_API grn_rc grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
                               const char *str, unsigned int str_size,
