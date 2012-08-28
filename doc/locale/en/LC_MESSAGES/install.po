@@ -7,14 +7,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-23 17:56\n"
+"POT-Creation-Date: 2012-08-28 18:32\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
+"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 # ce5a1582048f4f51ac69236aa73d7696
@@ -758,15 +758,13 @@ msgstr "``--with-log-path=PATH``"
 #: ../../../source/install/others.txt:131
 msgid ""
 "Specifies the default log file path. You can override the default log path "
-"is ``goronga`` command's ``--log-path`` command line option. So this option "
-"is not critical build option. It's just for convenient."
+"is :doc:`/reference/executables/groonga` command's ``--log-path`` command "
+"line option. So this option is not critical build option. It's just for "
+"convenient."
 msgstr ""
-"Specifies the default log file path. You can override the default log path "
-"is ``goronga`` command's ``--log-path`` command line option. So this option "
-"is not critical build option. It's just for convenient."
 
 # fa985d26b880471f8295cea11121cdaf
-#: ../../../source/install/others.txt:135
+#: ../../../source/install/others.txt:136
 msgid ""
 "The default is ``/usr/local/var/log/groonga.log``. The ``/usr/local/var`` "
 "part is changed by ``--localestatedir`` option."
@@ -775,7 +773,7 @@ msgstr ""
 "part is changed by ``--localestatedir`` option."
 
 # a2018ca524904602bcba7020a87dff14
-#: ../../../source/install/others.txt:138
+#: ../../../source/install/others.txt:139
 msgid ""
 "Here is an example that log file is placed into shared NFS directory ``/nfs/"
 "log/groonga.log``::"
@@ -784,12 +782,12 @@ msgstr ""
 "log/groonga.log``::"
 
 # ef58333a84c4421f9d30fb621e1aa4aa
-#: ../../../source/install/others.txt:144
+#: ../../../source/install/others.txt:145
 msgid "``--with-default-encoding=ENCODING``"
 msgstr "``--with-default-encoding=ENCODING``"
 
 # baa9624ea3cb4bb0b074a10cd33c4831
-#: ../../../source/install/others.txt:146
+#: ../../../source/install/others.txt:147
 msgid ""
 "Specifies the default encoding. Available encodings are ``euc_jp``, "
 "``sjis``, ``utf8``, ``latin1``, ``koi8r`` and ``none``."
@@ -798,22 +796,22 @@ msgstr ""
 "``sjis``, ``utf8``, ``latin1``, ``koi8r`` and ``none``."
 
 # deb142460782412cae9f388d881023eb
-#: ../../../source/install/others.txt:149
+#: ../../../source/install/others.txt:150
 msgid "The default is ``utf-8``."
 msgstr "The default is ``utf-8``."
 
 # a15bda4cff264eec8553b027a3266113
-#: ../../../source/install/others.txt:151
+#: ../../../source/install/others.txt:152
 msgid "Here is an example that Shift_JIS is used as the default encoding::"
 msgstr "Here is an example that Shift_JIS is used as the default encoding::"
 
 # 71836082040a4e4590a806021c3233c9
-#: ../../../source/install/others.txt:156
+#: ../../../source/install/others.txt:157
 msgid "``--with-match-escalation-threshold=NUMBER``"
 msgstr "``--with-match-escalation-threshold=NUMBER``"
 
 # f9c2544165fc43ddb7b6db7aa96c5be7
-#: ../../../source/install/others.txt:158
+#: ../../../source/install/others.txt:159
 msgid ""
 "Specifies the default match escalation threshold. See :ref:`match-escalation-"
 "threshold` about match escalation threshold. -1 means that match operation "
@@ -824,59 +822,59 @@ msgstr ""
 "never escalate."
 
 # 855618eef7ac48c0ae85813ac2734e4e
-#: ../../../source/install/others.txt:162
+#: ../../../source/install/others.txt:163
 msgid "The default is 0."
 msgstr "The default is 0."
 
 # e797f18ad8604abca16d0494321b6d25
-#: ../../../source/install/others.txt:164
+#: ../../../source/install/others.txt:165
 msgid "Here is an example that match escalation isn't used by default::"
 msgstr "Here is an example that match escalation isn't used by default::"
 
 # 7c1d61e78b48479abe7385112b05f078
-#: ../../../source/install/others.txt:169
+#: ../../../source/install/others.txt:170
 msgid "``--with-zlib``"
 msgstr "``--with-zlib``"
 
 # a168896021ee407abd805a2a573473ea
-#: ../../../source/install/others.txt:171
+#: ../../../source/install/others.txt:172
 msgid "Enables column value compression by zlib."
 msgstr "Enables column value compression by zlib."
 
 # f78aa244de6c4621bffd189d809dfb95
 # f78aa244de6c4621bffd189d809dfb95
-#: ../../../source/install/others.txt:173
-#: ../../../source/install/others.txt:184
+#: ../../../source/install/others.txt:174
+#: ../../../source/install/others.txt:185
 msgid "The default is disabled."
 msgstr "The default is disabled."
 
 # 484e0f13f9564a8d9e3631d3800fdf48
-#: ../../../source/install/others.txt:175
+#: ../../../source/install/others.txt:176
 msgid "Here is an example that enables column value compression by zlib::"
 msgstr "Here is an example that enables column value compression by zlib::"
 
 # 702a4bec259e46de8a614240a3e12a8d
-#: ../../../source/install/others.txt:180
+#: ../../../source/install/others.txt:181
 msgid "``--with-lzo``"
 msgstr "``--with-lzo``"
 
 # dedc6f6d9c3c4f8ebb12ca1a3c6e7307
-#: ../../../source/install/others.txt:182
+#: ../../../source/install/others.txt:183
 msgid "Enables column value compression by LZO."
 msgstr "Enables column value compression by LZO."
 
 # 4dab26870f6b49b293fbea6f6113d696
-#: ../../../source/install/others.txt:186
+#: ../../../source/install/others.txt:187
 msgid "Here is an example that enables column value compression by LZO::"
 msgstr "Here is an example that enables column value compression by LZO::"
 
 # d27846de25f64371b4da256393477c6d
-#: ../../../source/install/others.txt:191
+#: ../../../source/install/others.txt:192
 msgid "``--with-message-pack=MESSAGE_PACK_INSTALL_PREFIX``"
 msgstr "``--with-message-pack=MESSAGE_PACK_INSTALL_PREFIX``"
 
 # f7d2b806844f4608a706d5263554dc30
-#: ../../../source/install/others.txt:193
+#: ../../../source/install/others.txt:194
 msgid ""
 "Specifies where MessagePack is installed. If MessagePack isn't installed "
 "with ``--prefix=/usr``, you need to specify this option with path that you "
@@ -887,7 +885,7 @@ msgstr ""
 "use for building MessagePack."
 
 # a7651cab195d4fc3bafad4b707dcb781
-#: ../../../source/install/others.txt:197
+#: ../../../source/install/others.txt:198
 msgid ""
 "If you installed MessagePack with ``--prefix=$HOME/local`` option, you "
 "sholud specify ``--with-message-pack=$HOME/local`` to groonga's "
@@ -898,12 +896,12 @@ msgstr ""
 "``configure``."
 
 # 965d4ff5ac6342a6a17269f238cc12e6
-#: ../../../source/install/others.txt:201
+#: ../../../source/install/others.txt:202
 msgid "The default is ``/usr``."
 msgstr "The default is ``/usr``."
 
 # 7db3fa8ae9774dbcadf2a3a4dc490b12
-#: ../../../source/install/others.txt:203
+#: ../../../source/install/others.txt:204
 msgid ""
 "Here is an example that uses MessagePack built with ``--prefix=$HOME/local`` "
 "option::"
@@ -912,12 +910,12 @@ msgstr ""
 "option::"
 
 # 79db055dd5ab49bf863205807add6f78
-#: ../../../source/install/others.txt:209
+#: ../../../source/install/others.txt:210
 msgid "``--with-munin-plugins``"
 msgstr "``--with-munin-plugins``"
 
 # 4e4369e6960c40de885a6e8ec8434963
-#: ../../../source/install/others.txt:211
+#: ../../../source/install/others.txt:212
 msgid ""
 "Installs Munin plugins for groonga. They are installed into ``${PREFIX}/"
 "share/groonga/munin/plugins/``."
@@ -926,22 +924,22 @@ msgstr ""
 "share/groonga/munin/plugins/``."
 
 # cee7fdaca2f74c0eb01c7e54a4a25eaf
-#: ../../../source/install/others.txt:214
+#: ../../../source/install/others.txt:215
 msgid "Those plugins are not installed by default."
 msgstr "Those plugins are not installed by default."
 
 # bb863636e38a4db5a46f9c2bdde41d75
-#: ../../../source/install/others.txt:216
+#: ../../../source/install/others.txt:217
 msgid "Here is an example that installs Munin plugins for groonga::"
 msgstr "Here is an example that installs Munin plugins for groonga::"
 
 # c5c4c455c0d4407e86f18b5ea6abca50
-#: ../../../source/install/others.txt:221
+#: ../../../source/install/others.txt:222
 msgid "``--with-package-platform=PLATFORM``"
 msgstr "``--with-package-platform=PLATFORM``"
 
 # 2a1ef94a44e645169070e0d6627b5583
-#: ../../../source/install/others.txt:223
+#: ../../../source/install/others.txt:224
 msgid ""
 "Installs platform specific system management files such as init script. "
 "Available platforms are ``redhat`` and ``fedora``. ``redhat`` is for Red Hat "
@@ -952,39 +950,39 @@ msgstr ""
 "and Red Hat clone distributions such as CentOS. ``fedora`` is for Fedora."
 
 # e2d8a371d3e047299c2ea6a36ce97d99
-#: ../../../source/install/others.txt:228
+#: ../../../source/install/others.txt:229
 msgid "Those system management files are not installed by default."
 msgstr "Those system management files are not installed by default."
 
 # db698039aa0f423f8f26c839e1fcf7ac
-#: ../../../source/install/others.txt:230
+#: ../../../source/install/others.txt:231
 msgid ""
 "Here is an example that installs CentOS specific system management files::"
 msgstr ""
 "Here is an example that installs CentOS specific system management files::"
 
 # e8c7eba377514721a55f87604caec24d
-#: ../../../source/install/others.txt:236
+#: ../../../source/install/others.txt:237
 msgid "``--help``"
 msgstr "``--help``"
 
 # 4b427295c97b4b6fb04cf4855d255b85
-#: ../../../source/install/others.txt:238
+#: ../../../source/install/others.txt:239
 msgid "Shows all ``configure`` options."
 msgstr "Shows all ``configure`` options."
 
 # 89671237a9c34d928bd59092edc23c15
-#: ../../../source/install/others.txt:241
+#: ../../../source/install/others.txt:242
 msgid "``make``"
 msgstr "``make``"
 
 # 4a7636a3e36b448c9aa9194bc8cc65eb
-#: ../../../source/install/others.txt:243
+#: ../../../source/install/others.txt:244
 msgid "``configure`` is succeeded, you can build groonga by ``make``::"
 msgstr "``configure`` is succeeded, you can build groonga by ``make``::"
 
 # 2a1b9a96dc5f4b52adcf4d4d6532aec5
-#: ../../../source/install/others.txt:247
+#: ../../../source/install/others.txt:248
 msgid ""
 "If you have multi cores CPU, you can make faster by using ``-j`` option. If "
 "you have 4 cores CPU, it's good for using ``-j4`` option::"
@@ -993,7 +991,7 @@ msgstr ""
 "you have 4 cores CPU, it's good for using ``-j4`` option::"
 
 # 5b5231ae3c754f0fa5cd77ac437c59f5
-#: ../../../source/install/others.txt:252
+#: ../../../source/install/others.txt:253
 msgid ""
 "If you get some errors by ``make``, please report them to us: :doc:`/"
 "contribution/report`"
@@ -1002,17 +1000,17 @@ msgstr ""
 "contribution/report`"
 
 # e14b4ffbbaf64092826e4c766262606c
-#: ../../../source/install/others.txt:256
+#: ../../../source/install/others.txt:257
 msgid "``make install``"
 msgstr "``make install``"
 
 # 568a8858183f4cb5b6c48627fae3f139
-#: ../../../source/install/others.txt:258
+#: ../../../source/install/others.txt:259
 msgid "Now, you can install built groonga!::"
 msgstr "Now, you can install built groonga!::"
 
 # 0cbaa9cf4fbd4d5896df9616a3eebff4
-#: ../../../source/install/others.txt:262
+#: ../../../source/install/others.txt:263
 msgid ""
 "If you have write permission for ``${PREFIX}``, you don't need to use "
 "``sudo``. e.g. ``--prefix=$HOME/local`` case. In this case, use ``make "
