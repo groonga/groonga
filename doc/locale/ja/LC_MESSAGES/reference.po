@@ -7769,17 +7769,12 @@ msgstr "代入式"
 
 # bcdcbdaea046466a8ff62b9cf8dafc16
 #: ../../../source/reference/grn_expr/query_syntax.txt:566
-#, fuzzy
 msgid ""
 "This section is for advanced users. Because assignment expression is "
 "disabled in ``--query`` option of :doc:`/reference/commands/select` by "
 "default. You need to specify ``ALLOW_COLUMN|ALLOW_UPDATE`` as ``--"
 "query_flags`` option value to enable assignment expression."
-msgstr ""
-"このセクションは高度なユーザー向けです。それは、代入式は :doc:`/reference/"
-"commands/select` の ``--query`` オプションでは無効になっているからです。代入"
-"演算子を使うには、groongaをサーバーやコマンドラインツールとして使うのではなく"
-"ライブラリと使わなければいけません。"
+msgstr "このセクションは高度なユーザー向けです。それは、代入式は :doc:`/reference/commands/select` の ``--query`` オプションではデフォルトでは無効になっているからです。代入式を有効にするには ``--query_flags`` オプションに ``ALLOW_COLUMN|ALLOW_UPDATE`` を指定してください。"
 
 # 543a1b2465314a25bec6978a227ae9e9
 #: ../../../source/reference/grn_expr/query_syntax.txt:571
