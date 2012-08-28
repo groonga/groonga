@@ -1,0 +1,90 @@
+Execution example::
+
+  table_create Users TABLE_HASH_KEY ShortText
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  column_create Users age COLUMN_SCALAR UInt32
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  load --table Users
+  [
+  {"_key": "alice", "age": 18},
+  {"_key": "bob",   "age": 20}
+  ]
+  # [[0, 1337566253.89858, 0.000355720520019531], 2]
+  select Users --query age:=19 --query_flags ALLOW_COLUMN|ALLOW_UPDATE
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         2
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "age", 
+  #           "UInt32"
+  #         ]
+  #       ], 
+  #       [
+  #         1, 
+  #         "alice", 
+  #         19
+  #       ], 
+  #       [
+  #         2, 
+  #         "bob", 
+  #         19
+  #       ]
+  #     ]
+  #   ]
+  # ]
+  select Users
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         2
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "age", 
+  #           "UInt32"
+  #         ]
+  #       ], 
+  #       [
+  #         1, 
+  #         "alice", 
+  #         19
+  #       ], 
+  #       [
+  #         2, 
+  #         "bob", 
+  #         19
+  #       ]
+  #     ]
+  #   ]
+  # ]

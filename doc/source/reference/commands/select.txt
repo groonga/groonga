@@ -40,7 +40,7 @@ Syntax
          [cache=yes]
          [match_escalation_threshold=0]
          [query_expansion=null]
-         [query_flags=ALLOW_PRAGMA|ALLOW_COLUMN|ALLOW_UPDATE|NONE]
+         [query_flags=ALLOW_PRAGMA|ALLOW_COLUMN|ALLOW_UPDATE|ALLOW_LEADING_NOT|NONE]
 
 Usage
 -----
@@ -550,9 +550,11 @@ Here are available values:
 * ``ALLOW_PRAGMA``
 * ``ALLOW_COLUMN``
 * ``ALLOW_UPDATE``
+* ``ALLOW_LEADING_NOT``
 * ``NONE``
 
-``ALLOW_PRAGMA`` enables pragma at the head of ``query``.
+``ALLOW_PRAGMA`` enables pragma at the head of ``query``. This is not
+implemented yet.
 
 ``ALLOW_COLUMN`` enables search againt columns that are not included
 in ``match_columns``. To specify column, there are ``COLUMN:...``
@@ -562,6 +564,12 @@ syntaxes.
 ``COLUMN:=NEW_VALUE`` syntax. ``ALLOW_COLUMN`` is also required to
 update column because the column update syntax specifies column.
 
+``ALLOW_LEADING_NOT`` enables leading NOT condition with ``-WORD``
+syntax. The query searches records that doesn't match
+``WORD``. Leading NOT condition query is heavy query in many cases
+because it matches many records. So this flag is disabled by
+default. Be careful about it when you use the flag.
+
 ``NONE`` is just ignores. You can use ``NONE`` for specifying no flags.
 
 They can be combined by separated ``|`` such as
@@ -569,7 +577,53 @@ They can be combined by separated ``|`` such as
 
 The default value is ``ALLOW_PRAGMA|ALLOW_COLUMN``.
 
-TODO: example
+Here is a usage example of ``ALLOW_COLUMN``.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/query_flags_allow_column.log
+.. select Entries --query content:@mroonga --query_flags ALLOW_COLUMN
+
+The ``select`` command searches records that contain ``mroonga`` in
+``content`` column value from ``Entries`` table.
+
+Here is a usage example of ``ALLOW_UPDATE``.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/query_flags_allow_update.log
+.. table_create Users TABLE_HASH_KEY ShortText
+.. column_create Users age COLUMN_SCALAR UInt32
+.. load --table Users
+.. [
+.. {"_key": "alice", "age": 18},
+.. {"_key": "bob",   "age": 20}
+.. ]
+.. select Users --query age:=19 --query_flags ALLOW_COLUMN|ALLOW_UPDATE
+.. select Users
+
+The first ``select`` command sets ``age`` column value of all records
+to ``19``. The second ``select`` command outputs updated ``age``
+column values.
+
+Here is a usage example of ``ALLOW_LEADING_NOT``.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/query_flags_allow_leading_not.log
+.. select Entries --match_columns content --query -mroonga --query_flags ALLOW_LEADING_NOT
+
+The ``select`` command searches records that don't contain ``mroonga``
+in ``content`` column value from ``Entries`` table.
+
+Here is a usage example of ``NONE``.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/query_flags_none.log
+.. select Entries --match_columns content --query 'mroonga OR _key:Groonga' --query_flags NONE
+
+The ``select`` command searches records that contain one of two words
+``mroonga`` or ``_key:Groonga`` in ``content`` from ``Entries`` table.
+Note that ``_key:Groonga`` doesn't mean that the value of ``_key``
+column is equal to ``Groonga``. Because ``ALLOW_COLUMN`` flag is not
+specified.
 
 See also :doc:`/reference/grn_expr/query_syntax`.
 
