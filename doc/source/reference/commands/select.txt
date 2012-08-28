@@ -428,7 +428,7 @@ The first ``select`` command searches records that contain a word
 records are matched because the ``TokenBigram`` tokenizer tokenizes
 ``groonga`` to ``groonga`` not ``gr|ro|oo|on|ng|ga``. (The
 ``TokenBigramSplitSymbolAlpha`` tokenizer tokenizes ``groonga`` to
-``gr|ro|oo|on|ng|ga``. See :doc:`/reference//tokenizers` for details.)
+``gr|ro|oo|on|ng|ga``. See :doc:`/reference/tokenizers` for details.)
 It means that ``groonga`` is indexed but ``groo`` isn't indexed. So no
 records are matched against ``groo`` by exact match. In the case, the
 search storategy escalation is used because the number of matched
@@ -543,7 +543,7 @@ is equal to or more than ``10`` from ``Entries`` table.
 It customs ``query`` parameter syntax. You cannot update column value
 by ``query`` parameter by default. But if you specify
 ``ALLOW_COLUMN|ALLOW_UPDATE`` as ``query_flags``, you can update
-column value ``query``.
+column value by ``query``.
 
 Here are available values:
 

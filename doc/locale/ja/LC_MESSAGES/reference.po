@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-28 10:23\n"
-"PO-Revision-Date: 2012-08-28 09:39+0900\n"
+"POT-Creation-Date: 2012-08-28 11:27\n"
+"PO-Revision-Date: 2012-08-28 11:27+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -2844,12 +2844,24 @@ msgid ""
 "matched because the ``TokenBigram`` tokenizer tokenizes ``groonga`` to "
 "``groonga`` not ``gr|ro|oo|on|ng|ga``. (The ``TokenBigramSplitSymbolAlpha`` "
 "tokenizer tokenizes ``groonga`` to ``gr|ro|oo|on|ng|ga``. See :doc:`/"
-"reference//tokenizers` for details.) It means that ``groonga`` is indexed "
-"but ``groo`` isn't indexed. So no records are matched against ``groo`` by "
-"exact match. In the case, the search storategy escalation is used because "
-"the number of matched records (0) is equal to ``match_escalation_threshold`` "
+"reference/tokenizers` for details.) It means that ``groonga`` is indexed but "
+"``groo`` isn't indexed. So no records are matched against ``groo`` by exact "
+"match. In the case, the search storategy escalation is used because the "
+"number of matched records (0) is equal to ``match_escalation_threshold`` "
 "(0). One record is matched against ``groo`` by unsplit search."
 msgstr ""
+"最初の ``select`` コマンドは ``Entries`` テーブルから ``content`` カラムの値"
+"に ``groo`` という単語を含むレコードを検索します。しかし、この検索ではどのレ"
+"コードにもマッチしません。これは、 ``TokenBigram`` トークナイザーは "
+"``groonga`` を ``gr|ro|oo|on|ng|ga`` ではなく ``groonga`` にトークナイズする"
+"からです。（ ``TokenBigramSplitSymbolAlpha`` は ``groonga`` を ``gr|ro|oo|on|"
+"ng|ga`` にトークナイズします。詳細は :doc:`/reference/tokenizers` を見てくだ"
+"さい。）つまり、 ``groonga`` はインデックスに登録されていますが、 ``groo`` は"
+"インデックスに登録されていないということです。インデックスに登録されていない"
+"ので完全一致検索では ``groo`` はどのレコードにもマッチしません。このケースで"
+"は検索方法のエスカレーションが行われています。なぜならばマッチしたレコード数"
+"（0）が ``match_escalation_threshold`` （0）の値と等しいからです。非分かち書"
+"き検索では ``groo`` で1つのレコードがマッチします。"
 
 # c7034c19107347ef9516b239a50096a9
 #: ../../../source/reference/commands/select.txt:438
@@ -3046,8 +3058,12 @@ msgstr ""
 msgid ""
 "It customs ``query`` parameter syntax. You cannot update column value by "
 "``query`` parameter by default. But if you specify ``ALLOW_COLUMN|"
-"ALLOW_UPDATE`` as ``query_flags``, you can update column value ``query``."
+"ALLOW_UPDATE`` as ``query_flags``, you can update column value by ``query``."
 msgstr ""
+"``query`` パラメーターの構文をカスタマイズします。デフォルトでは ``query`` パ"
+"ラメーターでカラムの値を更新することはできません。しかし、 ``query_flags`` "
+"に ``ALLOW_COLUMN|ALLOW_UPDATE`` を指定することで ``query`` でカラムの値を更"
+"新することができます。"
 
 # 77b120c7869549b5855bc906a84570a2
 #: ../../../source/reference/commands/select.txt:548
@@ -3087,6 +3103,8 @@ msgid ""
 "``ALLOW_PRAGMA`` enables pragma at the head of ``query``. This is not "
 "implemented yet."
 msgstr ""
+"``ALLOW_PRAGMA`` を指定すると ``query`` の先頭でプラグマを指定することができ"
+"ます。この機能はまだ実装されていません。"
 
 # 93c16e2661ee47bdb1c3bd8900978aab
 #: ../../../source/reference/commands/select.txt:559
@@ -3094,6 +3112,9 @@ msgid ""
 "``ALLOW_COLUMN`` enables search againt columns that are not included in "
 "``match_columns``. To specify column, there are ``COLUMN:...`` syntaxes."
 msgstr ""
+"``ALLOW_COLUMN`` を指定すると ``match_columns`` で指定していないカラムでも検"
+"索できるように成ります。カラムを指定するには ``COLUMN:...`` というような構文"
+"を使います。"
 
 # 708d1168c81c4f9ca5307666e14f9bea
 #: ../../../source/reference/commands/select.txt:563
@@ -3102,6 +3123,9 @@ msgid ""
 "=NEW_VALUE`` syntax. ``ALLOW_COLUMN`` is also required to update column "
 "because the column update syntax specifies column."
 msgstr ""
+"``ALLOW_UPDATE`` を指定すると ``COLUMN:=NEW_VALUE`` という構文を使って "
+"``query`` でカラムの値を更新できます。カラム更新用の構文ではカラムを指定する"
+"必要があるため、 ``ALLOW_COLUMN`` も一緒に指定する必要があります。"
 
 # 20981ce268af4472b2c61f4eab47f2e0
 #: ../../../source/reference/commands/select.txt:567
@@ -3112,11 +3136,18 @@ msgid ""
 "records. So this flag is disabled by default. Be careful about it when you "
 "use the flag."
 msgstr ""
+"``ALLOW_LEADING_NOT`` を指定すると ``-WORD`` という構文を使って最初の条件とし"
+"て否定条件を指定できます。このクエリは ``WORD`` にマッチしないレコードを検索"
+"します。最初の条件に否定条件を使ったクエリは多くの場合重いクエリになります。"
+"これは多くのレコードにマッチするからです。そのため、このフラグはデフォルトで"
+"は無効になっています。もし、このフラグを使う場合は重いクエリとなるということ"
+"を十分気をつけてください。"
 
 # 262a9db65f254caab9f9fd25c771f4e0
 #: ../../../source/reference/commands/select.txt:573
 msgid "``NONE`` is just ignores. You can use ``NONE`` for specifying no flags."
 msgstr ""
+"``NONE`` は単に無視されます。フラグを指定しないときに ``NONE`` を使えます。"
 
 # 6a3ceb5a01ac41b79a53ea87dc0d936e
 #: ../../../source/reference/commands/select.txt:575
@@ -3124,34 +3155,32 @@ msgid ""
 "They can be combined by separated ``|`` such as ``ALLOW_COLUMN|"
 "ALLOW_UPDATE``."
 msgstr ""
+"これらのフラグは ``ALLOW_COLUMN|ALLOW_UPDATE`` のように ``|`` で区切って同時"
+"に指定することができます。"
 
 # 75c38df430b54c44844526068cb9d03b
 #: ../../../source/reference/commands/select.txt:578
-#, fuzzy
 msgid "The default value is ``ALLOW_PRAGMA|ALLOW_COLUMN``."
-msgstr "デフォルト値は ``0`` です。"
+msgstr "デフォルト値は ``ALLOW_PRAGMA|ALLOW_COLUMN`` です。"
 
 # 1ccd84b3f15a4567b23bb0e7d8c66fcd
 #: ../../../source/reference/commands/select.txt:580
-#, fuzzy
 msgid "Here is a usage example of ``ALLOW_COLUMN``."
-msgstr "以下は ``*`` の使用例です。"
+msgstr "以下は ``ALLOW_COLUMN`` の使用例です。"
 
 # dc8002538e794368b895d463ce15d092
 #: ../../../source/reference/commands/select.txt:586
-#, fuzzy
 msgid ""
 "The ``select`` command searches records that contain ``mroonga`` in "
 "``content`` column value from ``Entries`` table."
 msgstr ""
 "この ``select`` コマンドは ``Entries`` テーブルの中から ``content`` カラムの"
-"値に ``fast`` を含んでいるレコードを検索します。"
+"値に ``mroonga`` を含んでいるレコードを検索します。"
 
 # 1ccd84b3f15a4567b23bb0e7d8c66fcd
 #: ../../../source/reference/commands/select.txt:589
-#, fuzzy
 msgid "Here is a usage example of ``ALLOW_UPDATE``."
-msgstr "以下は ``*`` の使用例です。"
+msgstr "以下は ``ALLOW_UPDATE`` の使用例です。"
 
 # 5edc4ed30ff14f6b949cd04e8938b9cb
 #: ../../../source/reference/commands/select.txt:603
@@ -3159,32 +3188,30 @@ msgid ""
 "The first ``select`` command sets ``age`` column value of all records to "
 "``19``. The second ``select`` command outputs updated ``age`` column values."
 msgstr ""
+"最初の ``select`` コマンドは全てのレコードの ``age`` カラムの値を ``19`` にし"
+"ます。二番目の ``select`` コマンドは ``age`` カラムの値を出力します。"
 
 # 1ccd84b3f15a4567b23bb0e7d8c66fcd
 #: ../../../source/reference/commands/select.txt:607
-#, fuzzy
 msgid "Here is a usage example of ``ALLOW_LEADING_NOT``."
-msgstr "以下は ``*`` の使用例です。"
+msgstr "以下は ``ALLOW_LEADING_NOT`` の使用例です。"
 
 # dc8002538e794368b895d463ce15d092
 #: ../../../source/reference/commands/select.txt:613
-#, fuzzy
 msgid ""
 "The ``select`` command searches records that don't contain ``mroonga`` in "
 "``content`` column value from ``Entries`` table."
 msgstr ""
 "この ``select`` コマンドは ``Entries`` テーブルの中から ``content`` カラムの"
-"値に ``fast`` を含んでいるレコードを検索します。"
+"値に ``mroonga`` を含んでいないレコードを検索します。"
 
 # 1ccd84b3f15a4567b23bb0e7d8c66fcd
 #: ../../../source/reference/commands/select.txt:616
-#, fuzzy
 msgid "Here is a usage example of ``NONE``."
-msgstr "以下は ``*`` の使用例です。"
+msgstr "以下は ``NONE`` の使用例です。"
 
 # dc8002538e794368b895d463ce15d092
 #: ../../../source/reference/commands/select.txt:622
-#, fuzzy
 msgid ""
 "The ``select`` command searches records that contain one of two words "
 "``mroonga`` or ``_key:Groonga`` in ``content`` from ``Entries`` table. Note "
@@ -3192,14 +3219,15 @@ msgid ""
 "equal to ``Groonga``. Because ``ALLOW_COLUMN`` flag is not specified."
 msgstr ""
 "この ``select`` コマンドは ``Entries`` テーブルの中から ``content`` カラムの"
-"値に ``fast`` または ``groonga`` のどちらかの単語を含んでいるレコードを検索し"
-"ます。"
+"値に ``mroonga`` または ``_key:Groonga`` のどちらかの単語を含んでいるレコード"
+"を検索します。 ``_key:Groonga`` が ``_key`` カラムの値が ``Groonga`` という条"
+"件にはならないことに注意してください。これは ``ALLOW_COLUMN`` フラグが指定さ"
+"れていないからです。"
 
 # 0d40d6ee346244419bf47608a9d4fa25
 #: ../../../source/reference/commands/select.txt:628
-#, fuzzy
 msgid "See also :doc:`/reference/grn_expr/query_syntax`."
-msgstr ":doc:`/reference/grn_expr/query_syntax` の文字列をパースする。"
+msgstr ":doc:`/reference/grn_expr/query_syntax` も見てください。"
 
 # a92aefff626342b8b2318131b132f569
 #: ../../../source/reference/commands/select.txt:631
@@ -5245,7 +5273,6 @@ msgstr ""
 
 # 29f8fdc647b946d5974de3fba91f88df
 #: ../../../source/reference/executables/groonga-httpd.txt:11
-#, fuzzy
 msgid ""
 "groonga-httpd is a program to communicate with a groonga server using the "
 "HTTP protocol. It functions as same as :doc:`groonga-server-http`. Although :"
