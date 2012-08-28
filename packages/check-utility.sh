@@ -431,22 +431,38 @@ while [ $# -ne 0 ]; do
 	    ;;
 	--code)
 	    shift
-	    CODES=$1
+	    if [ "$1" = "all" ]; then
+		setup_codes
+	    else
+		CODES=$1
+	    fi
 	    shift
 	    ;;
 	--code-arch)
 	    shift
-	    DEB_ARCHITECTURES=$1
+	    if [ "$1" = "all" ]; then
+		setup_deb_architectures
+	    else 
+		DEB_ARCHITECTURES=$1
+	    fi
 	    shift
 	    ;;
 	--dist)
 	    shift
-	    DISTRIBUTIONS=$1
+	    if [ "$1" = "all" ]; then
+		setup_distributions
+	    else
+		DISTRIBUTIONS=$1
+	    fi
 	    shift
 	    ;;
 	--dist-arch)
 	    shift
-	    RPM_ARCHITECTURES=$1
+	    if [ "$1" = "all" ]; then
+		setup_rpm_architectures
+	    else
+		RPM_ARCHITECTURES=$1
+	    fi
 	    shift
 	    ;;
 	*)
@@ -455,11 +471,8 @@ while [ $# -ne 0 ]; do
     esac
 done
 
-setup_distributions
-setup_rpm_architectures
-
-setup_codes
 setup_deb_architectures
+setup_rpm_architectures
 
 if [ $CHECK_INSTALL -ne 0 ]; then
     check_installed_groonga_packages
