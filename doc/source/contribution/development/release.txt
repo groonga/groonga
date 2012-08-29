@@ -611,28 +611,24 @@ make build PALALLES=yesを指定するとchroot環境で並列にビルドを
 特定の環境向けのみビルドしたい
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Debian系の場合、CODES,ARCHITECTURESオプションを明示的に指定することで、
-特定のリリース、アーキテクチャのみビルドすることができます。
+Debian系の場合、CODES,ARCHITECTURESオプションを明示的に指定することで、特定のリリース、アーキテクチャのみビルドすることができます。
 
 squeezeのi386のみビルドしたい場合には以下のコマンドを実行します。::
 
     % make build ARCHITECTURES=i386 CODES=squeeze
 
-buildコマンド以外でも build-package-deb build-repository-debなどの
-サブタスクでもARCHITECTURES,CODES指定は有効です。
+buildコマンド以外でも build-package-deb build-repository-debなどのサブタスクでもARCHITECTURES,CODES指定は有効です。
 
-Red Hat系の場合、ARCHITECTURES,DISTRIBUTIONSオプションを明示的に指定す
-ることで、特定のリリース、アーキテクチャのみビルドすることができます。
+Red Hat系の場合、ARCHITECTURES,DISTRIBUTIONSオプションを明示的に指定することで、特定のリリース、アーキテクチャのみビルドすることができます。
 
 fedoraのi386のみビルドしたい場合には以下のコマンドを実行します。::
 
     % make build ARCHITECTURES=i386 DISTRIBUTIONS=fedora
 
-buildコマンド以外でも build-in-chroot build-repository-rpmなどの
-サブタスクでもARCHITECTURES,DISTRIBUTIONSの指定は有効です。
+buildコマンド以外でも build-in-chroot build-repository-rpmなどのサブタスクでもARCHITECTURES,DISTRIBUTIONSの指定は有効です。
 
-ただし、centosの場合 バージョンまで明示して5のみビルドや6のみビルド
-することはできません。まとめてcentosとしてビルドされます。
+centosの場合、CENTOS_VERSIONSを指定することで特定のバージョンのみビルドすることができます。
+
 
 パッケージの署名用のパスフレーズを知りたい
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
