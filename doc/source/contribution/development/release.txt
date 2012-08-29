@@ -560,6 +560,20 @@ doc/source以下のドキュメントを更新、翻訳まで完了している�
 * groonga-dev groonga-dev@lists.sourceforge.jp
 * Groonga-talk groonga-talk@lists.sourceforge.net
 
+freecode.comへリリース情報を登録
+------------------------------------------------------------
+
+groongaプロジェクトではfreecode.comでもリリース情報を発信しています。
+
+freecode.comのプロジェクトページは以下の通りです。
+
+  https://freecode.com/projects/groonga
+
+プロジェクトの管理メニューから「Submit a release」をクリックし、
+新規リリース情報を登録します。
+
+  https://freecode.com/projects/groonga/releases/new
+
 以上でリリース作業は終了です。
 
 リリース後にやること
