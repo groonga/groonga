@@ -6221,22 +6221,20 @@ msgstr ""
 
 # 8a4435c84a4f43c7a66558dbde4cce1e
 #: ../../../source/reference/functions/geo_distance.txt:52
-#, fuzzy
 msgid ""
 "Here are two schema definition and sample data to show the difference "
 "according to the usage. Those samples show how to calculate the value of "
 "distance between New York City and London."
 msgstr ""
 "使い方による違いがわかるようにスキーマ定義とサンプルデータを用意しました。こ"
-"れらのサンプルは東京と札幌を例に距離の計算方法を示します。"
+"れらのサンプルはニューヨークとロンドンを例に距離の計算方法を示します。"
 
 # 1c96e92f7a3b4a0896351b7de85e2198
 #: ../../../source/reference/functions/geo_distance.txt:55
-#, fuzzy
 msgid ""
 "Using the column value of location for calculating the distance (``Cities`` "
 "table)"
-msgstr "距離の計算にlocationカラムの値を使う ( ``Stations`` テーブル)"
+msgstr "距離の計算にlocationカラムの値を使う ( ``Cities`` テーブル)"
 
 # b7017435ec0b46ea8732d08a9e92997a
 #: ../../../source/reference/functions/geo_distance.txt:56
@@ -6252,23 +6250,21 @@ msgstr "locationカラムの値を使う"
 
 # 9e614385bab349a3bc8059f3422715a9
 #: ../../../source/reference/functions/geo_distance.txt:61
-#, fuzzy
 msgid ""
 "Here are a schema definition of ``Cities`` table and sample data to show "
 "usage."
 msgstr ""
-"使用例を示すための ``Geo`` テーブルのスキーマ定義とサンプルデータは以下の通り"
+"使用例を示すための ``Cities`` テーブルのスキーマ定義とサンプルデータは以下の通り"
 "です。"
 
 # 445849f2af644a9a8de1ae399493aa69
 #: ../../../source/reference/functions/geo_distance.txt:92
-#, fuzzy
 msgid ""
 "This execution example creates a table named ``Cities`` which has one column "
 "named ``location``. ``location`` column stores the value of coordinate. The "
 "coordinate of Tokyo is stored as sample data."
 msgstr ""
-"この実行例では ``location`` というカラムを持つ ``Stations`` テーブルを作成し"
+"この実行例では ``location`` というカラムを持つ ``Cities`` テーブルを作成し"
 "ます。 ``location`` カラムには座標値を保存します。東京の座標値がサンプルデー"
 "タとして保存されています。"
 
@@ -6283,12 +6279,11 @@ msgstr ""
 
 # f1679de09eb344ceb03ba6f9c6685aab
 #: ../../../source/reference/functions/geo_distance.txt:103
-#, fuzzy
 msgid ""
 "The value (\"185428000x-461000\") passed to ``geo_distance`` as the second "
 "argument is the coordinate of London."
 msgstr ""
-"``geo_distance`` の第二引数として渡された値 (\"155047000x508862800\") は札幌"
+"``geo_distance`` の第二引数として渡された値 (\"185428000x-461000\")はロンドン"
 "の座標値です。"
 
 # 44d6b19124b9469389dd4961713668c3
@@ -6315,12 +6310,11 @@ msgstr ""
 
 # d6a2da1f01a94fcb89dcbc342549db37
 #: ../../../source/reference/functions/geo_distance.txt:142
-#, fuzzy
 msgid ""
 "This sample shows that ``geo_distance`` use the coordinate of London and the "
 "coordinate of New York to calculate distance."
 msgstr ""
-"このサンプルは ``geo_distance`` が東京の座標と札幌の座標から距離を計算してい"
+"このサンプルは ``geo_distance`` がロンドンの座標とニューヨークの座標から距離を計算してい"
 "ることを示します。"
 
 # b90bfd8b177440e6b2a2ff7f128303f9

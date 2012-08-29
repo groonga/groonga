@@ -617,13 +617,12 @@ msgstr ""
 
 # 8fa2f56d10904f649ad325bb8fb6dfb7
 #: ../../../source/install/others.txt:84
-#, fuzzy
 msgid ""
 "After the above steps, :doc:`/reference/executables/groonga` is found in ``/"
 "usr/local/bin/groonga``."
 msgstr ""
-"上記の手順を実行すると ``/usr/local/bin/groonga`` に :doc:`/executables/"
-"groonga` がインストールされます。"
+"上記の手順を実行すると ``/usr/local/bin/groonga`` に :doc:`/reference/executables/groonga` "
+"がインストールされます。"
 
 # f7e57b86a72b417486bbf6e2928e03d4
 #: ../../../source/install/others.txt:87
