@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-22 16:06\n"
+"POT-Creation-Date: 2012-08-29 15:32\n"
 "PO-Revision-Date: 2012-08-08 21:54+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -370,9 +370,9 @@ msgstr ""
 "ジトリの方は数日後に提供されます。つまり、ほとんど差はないということで"
 "す。 :-)"
 
-# 0d0fb398fef7408aac0f0967a6403899
+# 15c919a01f9444b895e0ea44cbbbab27
 #: ../../../source/install/fedora.txt:26
-msgid "Fedora 16"
+msgid "Fedora 17"
 msgstr ""
 
 # 65bbef01a2a14d579cb2264a926d1ab7
@@ -621,8 +621,8 @@ msgid ""
 "After the above steps, :doc:`/reference/executables/groonga` is found in ``/"
 "usr/local/bin/groonga``."
 msgstr ""
-"上記の手順を実行すると ``/usr/local/bin/groonga`` に :doc:`/reference/executables/groonga` "
-"がインストールされます。"
+"上記の手順を実行すると ``/usr/local/bin/groonga`` に :doc:`/reference/"
+"executables/groonga` がインストールされます。"
 
 # f7e57b86a72b417486bbf6e2928e03d4
 #: ../../../source/install/others.txt:87
