@@ -31,7 +31,7 @@ class GRN_DAT_API CursorFactory {
                       const void *min_ptr, UInt32 min_length,
                       const void *max_ptr, UInt32 max_length,
                       UInt32 offset = 0,
-                      UInt32 limit = UINT32_MAX,
+                      UInt32 limit = MAX_UINT32,
                       UInt32 flags = 0);
 
  private:

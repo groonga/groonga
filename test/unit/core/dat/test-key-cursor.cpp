@@ -155,7 +155,7 @@ namespace test_dat_key_cursor
     grn::dat::KeyCursor cursor;
 
     cursor.open(trie, grn::dat::String("Gnome"), grn::dat::String("Werdna"),
-                0, grn::dat::UINT32_MAX);
+                0, grn::dat::MAX_UINT32);
     cppcut_assert_equal(grn::dat::UInt32(6), cursor.next().id());
     cppcut_assert_equal(grn::dat::UInt32(7), cursor.next().id());
     cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
@@ -187,7 +187,7 @@ namespace test_dat_key_cursor
     grn::dat::KeyCursor cursor;
 
     cursor.open(trie, grn::dat::String(), grn::dat::String(),
-                0, grn::dat::UINT32_MAX, grn::dat::ASCENDING_CURSOR);
+                0, grn::dat::MAX_UINT32, grn::dat::ASCENDING_CURSOR);
     cppcut_assert_equal(grn::dat::UInt32(5), cursor.next().id());
     cppcut_assert_equal(grn::dat::UInt32(4), cursor.next().id());
     cppcut_assert_equal(grn::dat::UInt32(6), cursor.next().id());
@@ -198,7 +198,7 @@ namespace test_dat_key_cursor
     cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("Elf"), grn::dat::String("Human"),
-                0, grn::dat::UINT32_MAX, grn::dat::ASCENDING_CURSOR);
+                0, grn::dat::MAX_UINT32, grn::dat::ASCENDING_CURSOR);
     cppcut_assert_equal(grn::dat::UInt32(4), cursor.next().id());
     cppcut_assert_equal(grn::dat::UInt32(6), cursor.next().id());
     cppcut_assert_equal(grn::dat::UInt32(7), cursor.next().id());
@@ -220,7 +220,7 @@ namespace test_dat_key_cursor
     grn::dat::KeyCursor cursor;
 
     cursor.open(trie, grn::dat::String(), grn::dat::String(),
-                0, grn::dat::UINT32_MAX, grn::dat::DESCENDING_CURSOR);
+                0, grn::dat::MAX_UINT32, grn::dat::DESCENDING_CURSOR);
     cppcut_assert_equal(grn::dat::UInt32(1), cursor.next().id());
     cppcut_assert_equal(grn::dat::UInt32(2), cursor.next().id());
     cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
@@ -231,7 +231,7 @@ namespace test_dat_key_cursor
     cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("Elf"), grn::dat::String("Human"),
-                0, grn::dat::UINT32_MAX, grn::dat::DESCENDING_CURSOR);
+                0, grn::dat::MAX_UINT32, grn::dat::DESCENDING_CURSOR);
     cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
     cppcut_assert_equal(grn::dat::UInt32(7), cursor.next().id());
     cppcut_assert_equal(grn::dat::UInt32(6), cursor.next().id());
@@ -253,7 +253,7 @@ namespace test_dat_key_cursor
     grn::dat::KeyCursor cursor;
 
     cursor.open(trie, grn::dat::String(), grn::dat::String(),
-                0, grn::dat::UINT32_MAX,
+                0, grn::dat::MAX_UINT32,
                 grn::dat::EXCEPT_LOWER_BOUND | grn::dat::EXCEPT_UPPER_BOUND);
     cppcut_assert_equal(grn::dat::UInt32(5), cursor.next().id());
     cppcut_assert_equal(grn::dat::UInt32(4), cursor.next().id());
@@ -265,7 +265,7 @@ namespace test_dat_key_cursor
     cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("Dwarf"), grn::dat::String("Werdna"),
-                0, grn::dat::UINT32_MAX,
+                0, grn::dat::MAX_UINT32,
                 grn::dat::EXCEPT_LOWER_BOUND | grn::dat::EXCEPT_UPPER_BOUND);
     cppcut_assert_equal(grn::dat::UInt32(4), cursor.next().id());
     cppcut_assert_equal(grn::dat::UInt32(6), cursor.next().id());
@@ -287,7 +287,7 @@ namespace test_dat_key_cursor
     cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("Fighter"), grn::dat::String("Samurai"),
-                0, grn::dat::UINT32_MAX,
+                0, grn::dat::MAX_UINT32,
                 grn::dat::EXCEPT_LOWER_BOUND | grn::dat::EXCEPT_UPPER_BOUND);
     cppcut_assert_equal(grn::dat::UInt32(6), cursor.next().id());
     cppcut_assert_equal(grn::dat::UInt32(7), cursor.next().id());

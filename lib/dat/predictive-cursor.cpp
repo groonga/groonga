@@ -28,7 +28,7 @@ namespace dat {
 PredictiveCursor::PredictiveCursor()
     : trie_(NULL),
       offset_(0),
-      limit_(UINT32_MAX),
+      limit_(MAX_UINT32),
       flags_(PREDICTIVE_CURSOR),
       buf_(),
       cur_(0),
@@ -107,7 +107,7 @@ void PredictiveCursor::init(const String &str) {
   if ((flags_ & EXCEPT_EXACT_MATCH) == EXCEPT_EXACT_MATCH) {
     ++min_length_;
   }
-  end_ = (offset_ > (UINT32_MAX - limit_)) ? UINT32_MAX : (offset_ + limit_);
+  end_ = (offset_ > (MAX_UINT32 - limit_)) ? MAX_UINT32 : (offset_ + limit_);
 
   UInt32 node_id = ROOT_NODE_ID;
   for (UInt32 i = 0; i < str.length(); ++i) {

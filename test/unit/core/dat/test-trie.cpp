@@ -20,10 +20,6 @@
 #include <glib/gstdio.h>
 #include <cppcutter.h>
 
-#ifdef UINT32_MAX
- #undef UINT32_MAX
-#endif  // UINT32_MAX
-
 #include <grn-assertions.h>
 #include <dat/trie.hpp>
 
@@ -282,10 +278,10 @@ namespace test_dat_trie
     cppcut_assert_equal(true, trie.lcp_search("0123", 4));
     cppcut_assert_equal(false, trie.lcp_search("12345", 5));
 
-    grn::dat::UInt32 key_pos = grn::dat::UINT32_MAX;
+    grn::dat::UInt32 key_pos = grn::dat::MAX_UINT32;
 
     cppcut_assert_equal(false, trie.lcp_search("01", 2, &key_pos));
-    cppcut_assert_equal(grn::dat::UINT32_MAX, key_pos);
+    cppcut_assert_equal(grn::dat::MAX_UINT32, key_pos);
 
     cppcut_assert_equal(true, trie.lcp_search("012", 3, &key_pos));
     cppcut_assert_equal(true, trie.get_key(key_pos).is_valid());

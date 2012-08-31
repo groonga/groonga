@@ -28,7 +28,7 @@ namespace dat {
 KeyCursor::KeyCursor()
     : trie_(NULL),
       offset_(0),
-      limit_(UINT32_MAX),
+      limit_(MAX_UINT32),
       flags_(KEY_RANGE_CURSOR),
       buf_(),
       count_(0),
@@ -112,8 +112,8 @@ UInt32 KeyCursor::fix_flags(UInt32 flags) const {
 }
 
 void KeyCursor::init(const String &min_str, const String &max_str) {
-  if (offset_ > (UINT32_MAX - limit_)) {
-    max_count_ = UINT32_MAX;
+  if (offset_ > (MAX_UINT32 - limit_)) {
+    max_count_ = MAX_UINT32;
   } else {
     max_count_ = offset_ + limit_;
   }

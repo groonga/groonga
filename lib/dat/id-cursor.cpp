@@ -27,7 +27,7 @@ namespace dat {
 IdCursor::IdCursor()
     : trie_(NULL),
       offset_(0),
-      limit_(UINT32_MAX),
+      limit_(MAX_UINT32),
       flags_(ID_RANGE_CURSOR),
       cur_(INVALID_KEY_ID),
       end_(INVALID_KEY_ID) {}

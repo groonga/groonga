@@ -133,7 +133,7 @@ namespace test_dat_predictive_cursor
 
     grn::dat::PredictiveCursor cursor;
 
-    cursor.open(trie, grn::dat::String(), 0, grn::dat::UINT32_MAX);
+    cursor.open(trie, grn::dat::String(), 0, grn::dat::MAX_UINT32);
     cppcut_assert_equal(grn::dat::UInt32(6), cursor.next().id());
     cppcut_assert_equal(grn::dat::UInt32(1), cursor.next().id());
     cppcut_assert_equal(grn::dat::UInt32(2), cursor.next().id());
@@ -180,7 +180,7 @@ namespace test_dat_predictive_cursor
 
     grn::dat::PredictiveCursor cursor;
 
-    cursor.open(trie, grn::dat::String(), 0, grn::dat::UINT32_MAX,
+    cursor.open(trie, grn::dat::String(), 0, grn::dat::MAX_UINT32,
                 grn::dat::ASCENDING_CURSOR);
     cppcut_assert_equal(grn::dat::UInt32(6), cursor.next().id());
     cppcut_assert_equal(grn::dat::UInt32(1), cursor.next().id());
@@ -190,7 +190,7 @@ namespace test_dat_predictive_cursor
     cppcut_assert_equal(grn::dat::UInt32(4), cursor.next().id());
     cppcut_assert_equal(false, cursor.next().is_valid());
 
-    cursor.open(trie, grn::dat::String(), 3, grn::dat::UINT32_MAX,
+    cursor.open(trie, grn::dat::String(), 3, grn::dat::MAX_UINT32,
                 grn::dat::ASCENDING_CURSOR);
     cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
     cppcut_assert_equal(grn::dat::UInt32(5), cursor.next().id());
@@ -203,7 +203,7 @@ namespace test_dat_predictive_cursor
     cppcut_assert_equal(grn::dat::UInt32(5), cursor.next().id());
     cppcut_assert_equal(false, cursor.next().is_valid());
 
-    cursor.open(trie, grn::dat::String("北斗"), 0, grn::dat::UINT32_MAX,
+    cursor.open(trie, grn::dat::String("北斗"), 0, grn::dat::MAX_UINT32,
                 grn::dat::ASCENDING_CURSOR);
     cppcut_assert_equal(grn::dat::UInt32(1), cursor.next().id());
     cppcut_assert_equal(grn::dat::UInt32(2), cursor.next().id());
@@ -218,7 +218,7 @@ namespace test_dat_predictive_cursor
 
     grn::dat::PredictiveCursor cursor;
 
-    cursor.open(trie, grn::dat::String(), 0, grn::dat::UINT32_MAX,
+    cursor.open(trie, grn::dat::String(), 0, grn::dat::MAX_UINT32,
                 grn::dat::DESCENDING_CURSOR);
     cppcut_assert_equal(grn::dat::UInt32(4), cursor.next().id());
     cppcut_assert_equal(grn::dat::UInt32(5), cursor.next().id());
@@ -228,7 +228,7 @@ namespace test_dat_predictive_cursor
     cppcut_assert_equal(grn::dat::UInt32(6), cursor.next().id());
     cppcut_assert_equal(false, cursor.next().is_valid());
 
-    cursor.open(trie, grn::dat::String(), 3, grn::dat::UINT32_MAX,
+    cursor.open(trie, grn::dat::String(), 3, grn::dat::MAX_UINT32,
                 grn::dat::DESCENDING_CURSOR);
     cppcut_assert_equal(grn::dat::UInt32(2), cursor.next().id());
     cppcut_assert_equal(grn::dat::UInt32(1), cursor.next().id());
@@ -241,14 +241,14 @@ namespace test_dat_predictive_cursor
     cppcut_assert_equal(grn::dat::UInt32(1), cursor.next().id());
     cppcut_assert_equal(false, cursor.next().is_valid());
 
-    cursor.open(trie, grn::dat::String("北斗"), 0, grn::dat::UINT32_MAX,
+    cursor.open(trie, grn::dat::String("北斗"), 0, grn::dat::MAX_UINT32,
                 grn::dat::DESCENDING_CURSOR);
     cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
     cppcut_assert_equal(grn::dat::UInt32(2), cursor.next().id());
     cppcut_assert_equal(grn::dat::UInt32(1), cursor.next().id());
     cppcut_assert_equal(false, cursor.next().is_valid());
 
-    cursor.open(trie, grn::dat::String("北斗"), 2, grn::dat::UINT32_MAX,
+    cursor.open(trie, grn::dat::String("北斗"), 2, grn::dat::MAX_UINT32,
                 grn::dat::DESCENDING_CURSOR);
     cppcut_assert_equal(grn::dat::UInt32(1), cursor.next().id());
     cppcut_assert_equal(false, cursor.next().is_valid());
@@ -258,7 +258,7 @@ namespace test_dat_predictive_cursor
     cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
     cppcut_assert_equal(false, cursor.next().is_valid());
 
-    cursor.open(trie, grn::dat::String("北斗"), 3, grn::dat::UINT32_MAX,
+    cursor.open(trie, grn::dat::String("北斗"), 3, grn::dat::MAX_UINT32,
                 grn::dat::DESCENDING_CURSOR);
     cppcut_assert_equal(false, cursor.next().is_valid());
 
@@ -274,7 +274,7 @@ namespace test_dat_predictive_cursor
 
     grn::dat::PredictiveCursor cursor;
 
-    cursor.open(trie, grn::dat::String(), 0, grn::dat::UINT32_MAX,
+    cursor.open(trie, grn::dat::String(), 0, grn::dat::MAX_UINT32,
                 grn::dat::EXCEPT_EXACT_MATCH);
     cppcut_assert_equal(grn::dat::UInt32(6), cursor.next().id());
     cppcut_assert_equal(grn::dat::UInt32(1), cursor.next().id());
@@ -284,40 +284,40 @@ namespace test_dat_predictive_cursor
     cppcut_assert_equal(grn::dat::UInt32(4), cursor.next().id());
     cppcut_assert_equal(false, cursor.next().is_valid());
 
-    cursor.open(trie, grn::dat::String("北"), 0, grn::dat::UINT32_MAX,
+    cursor.open(trie, grn::dat::String("北"), 0, grn::dat::MAX_UINT32,
                 grn::dat::EXCEPT_EXACT_MATCH);
     cppcut_assert_equal(grn::dat::UInt32(1), cursor.next().id());
     cppcut_assert_equal(grn::dat::UInt32(2), cursor.next().id());
     cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
     cppcut_assert_equal(false, cursor.next().is_valid());
 
-    cursor.open(trie, grn::dat::String("北斗"), 0, grn::dat::UINT32_MAX,
+    cursor.open(trie, grn::dat::String("北斗"), 0, grn::dat::MAX_UINT32,
                 grn::dat::EXCEPT_EXACT_MATCH);
     cppcut_assert_equal(grn::dat::UInt32(2), cursor.next().id());
     cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
     cppcut_assert_equal(false, cursor.next().is_valid());
 
-    cursor.open(trie, grn::dat::String("北斗神"), 0, grn::dat::UINT32_MAX,
+    cursor.open(trie, grn::dat::String("北斗神"), 0, grn::dat::MAX_UINT32,
                 grn::dat::EXCEPT_EXACT_MATCH);
     cppcut_assert_equal(grn::dat::UInt32(2), cursor.next().id());
     cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
     cppcut_assert_equal(false, cursor.next().is_valid());
 
-    cursor.open(trie, grn::dat::String("北斗神拳"), 0, grn::dat::UINT32_MAX,
+    cursor.open(trie, grn::dat::String("北斗神拳"), 0, grn::dat::MAX_UINT32,
                 grn::dat::EXCEPT_EXACT_MATCH);
     cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
     cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("北斗神拳伝承"), 0,
-                grn::dat::UINT32_MAX, grn::dat::EXCEPT_EXACT_MATCH);
+                grn::dat::MAX_UINT32, grn::dat::EXCEPT_EXACT_MATCH);
     cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
     cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, grn::dat::String("北斗神拳伝承者"), 0,
-                grn::dat::UINT32_MAX, grn::dat::EXCEPT_EXACT_MATCH);
+                grn::dat::MAX_UINT32, grn::dat::EXCEPT_EXACT_MATCH);
     cppcut_assert_equal(false, cursor.next().is_valid());
 
-    cursor.open(trie, grn::dat::String("北斗"), 1, grn::dat::UINT32_MAX,
+    cursor.open(trie, grn::dat::String("北斗"), 1, grn::dat::MAX_UINT32,
                 grn::dat::EXCEPT_EXACT_MATCH);
     cppcut_assert_equal(grn::dat::UInt32(3), cursor.next().id());
     cppcut_assert_equal(false, cursor.next().is_valid());

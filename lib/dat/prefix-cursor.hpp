@@ -35,7 +35,7 @@ class GRN_DAT_API PrefixCursor : public Cursor {
             const String &str,
             UInt32 min_length = 0,
             UInt32 offset = 0,
-            UInt32 limit = UINT32_MAX,
+            UInt32 limit = MAX_UINT32,
             UInt32 flags = 0);
 
   void close();

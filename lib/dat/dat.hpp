@@ -57,21 +57,10 @@ typedef ::uint32_t UInt32;
 typedef ::uint64_t UInt64;
 #endif  // _MSC_VER
 
-#ifndef UINT8_MAX
-const UInt8 UINT8_MAX = static_cast<UInt8>(0xFFU);
-#endif  // UINT8_MAX
-
-#ifndef UINT16_MAX
-const UInt16 UINT16_MAX = static_cast<UInt16>(0xFFFFU);
-#endif  // UINT16_MAX
-
-#ifndef UINT32_MAX
-const UInt32 UINT32_MAX = static_cast<UInt32>(0xFFFFFFFFU);
-#endif  // UINT32_MAX
-
-#ifndef UINT64_MAX
-const UInt64 UINT64_MAX = static_cast<UInt64>(0xFFFFFFFFFFFFFFFFULL);
-#endif  // UINT64_MAX
+const UInt8  MAX_UINT8  = static_cast<UInt8>(0xFFU);
+const UInt16 MAX_UINT16 = static_cast<UInt16>(0xFFFFU);
+const UInt32 MAX_UINT32 = static_cast<UInt32>(0xFFFFFFFFU);
+const UInt64 MAX_UINT64 = static_cast<UInt64>(0xFFFFFFFFFFFFFFFFULL);
 
 // If a key is a prefix of another key, such a key is associated with a special
 // terminal node which has TERMINAL_LABEL.

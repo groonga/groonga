@@ -34,14 +34,14 @@ class GRN_DAT_API IdCursor : public Cursor {
             const String &min_str,
             const String &max_str,
             UInt32 offset = 0,
-            UInt32 limit = UINT32_MAX,
+            UInt32 limit = MAX_UINT32,
             UInt32 flags = 0);
 
   void open(const Trie &trie,
             UInt32 min_id,
             UInt32 max_id,
             UInt32 offset = 0,
-            UInt32 limit = UINT32_MAX,
+            UInt32 limit = MAX_UINT32,
             UInt32 flags = 0);
 
   void close();

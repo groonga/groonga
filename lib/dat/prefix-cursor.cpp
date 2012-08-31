@@ -27,7 +27,7 @@ namespace dat {
 PrefixCursor::PrefixCursor()
     : trie_(NULL),
       offset_(0),
-      limit_(UINT32_MAX),
+      limit_(MAX_UINT32),
       flags_(PREFIX_CURSOR),
       buf_(),
       cur_(0),

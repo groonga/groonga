@@ -242,7 +242,7 @@ namespace test_dat_id_cursor
 
     grn::dat::IdCursor cursor;
 
-    cursor.open(trie, 3, 6, 0, grn::dat::UINT32_MAX);
+    cursor.open(trie, 3, 6, 0, grn::dat::MAX_UINT32);
     for (grn::dat::UInt32 i = 3; i <= 6; ++i) {
       const grn::dat::Key &key = cursor.next();
       cppcut_assert_equal(true, key.is_valid());
@@ -280,7 +280,7 @@ namespace test_dat_id_cursor
     grn::dat::IdCursor cursor;
 
     cursor.open(trie, grn::dat::INVALID_KEY_ID, grn::dat::INVALID_KEY_ID,
-                0, grn::dat::UINT32_MAX, grn::dat::ASCENDING_CURSOR);
+                0, grn::dat::MAX_UINT32, grn::dat::ASCENDING_CURSOR);
     for (grn::dat::UInt32 i = trie.min_key_id(); i <= trie.max_key_id(); ++i) {
       const grn::dat::Key &key = cursor.next();
       cppcut_assert_equal(true, key.is_valid());
@@ -288,7 +288,7 @@ namespace test_dat_id_cursor
     }
     cppcut_assert_equal(false, cursor.next().is_valid());
 
-    cursor.open(trie, 2, 7, 0, grn::dat::UINT32_MAX,
+    cursor.open(trie, 2, 7, 0, grn::dat::MAX_UINT32,
                 grn::dat::ASCENDING_CURSOR);
     for (grn::dat::UInt32 i = 2; i <= 7; ++i) {
       const grn::dat::Key &key = cursor.next();
@@ -314,7 +314,7 @@ namespace test_dat_id_cursor
     grn::dat::IdCursor cursor;
 
     cursor.open(trie, grn::dat::INVALID_KEY_ID, grn::dat::INVALID_KEY_ID,
-                0, grn::dat::UINT32_MAX, grn::dat::DESCENDING_CURSOR);
+                0, grn::dat::MAX_UINT32, grn::dat::DESCENDING_CURSOR);
     for (grn::dat::UInt32 i = trie.max_key_id(); i >= trie.min_key_id(); --i) {
       const grn::dat::Key &key = cursor.next();
       cppcut_assert_equal(true, key.is_valid());
@@ -322,7 +322,7 @@ namespace test_dat_id_cursor
     }
     cppcut_assert_equal(false, cursor.next().is_valid());
 
-    cursor.open(trie, 2, 7, 0, grn::dat::UINT32_MAX,
+    cursor.open(trie, 2, 7, 0, grn::dat::MAX_UINT32,
                 grn::dat::DESCENDING_CURSOR);
     for (grn::dat::UInt32 i = 7; i >= 2; --i) {
       const grn::dat::Key &key = cursor.next();
@@ -348,7 +348,7 @@ namespace test_dat_id_cursor
     grn::dat::IdCursor cursor;
 
     cursor.open(trie, grn::dat::INVALID_KEY_ID, grn::dat::INVALID_KEY_ID,
-                0, grn::dat::UINT32_MAX,
+                0, grn::dat::MAX_UINT32,
                 grn::dat::EXCEPT_LOWER_BOUND | grn::dat::EXCEPT_UPPER_BOUND);
     for (grn::dat::UInt32 i = trie.min_key_id(); i <= trie.max_key_id(); ++i) {
       const grn::dat::Key &key = cursor.next();
@@ -358,7 +358,7 @@ namespace test_dat_id_cursor
     cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, trie.min_key_id(), trie.max_key_id(),
-                0, grn::dat::UINT32_MAX,
+                0, grn::dat::MAX_UINT32,
                 grn::dat::EXCEPT_LOWER_BOUND | grn::dat::EXCEPT_UPPER_BOUND);
     for (grn::dat::UInt32 i = trie.min_key_id() + 1;
          i <= (trie.max_key_id() - 1); ++i) {

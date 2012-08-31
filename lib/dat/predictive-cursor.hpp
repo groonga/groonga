@@ -34,7 +34,7 @@ class GRN_DAT_API PredictiveCursor : public Cursor {
   void open(const Trie &trie,
             const String &str,
             UInt32 offset = 0,
-            UInt32 limit = UINT32_MAX,
+            UInt32 limit = MAX_UINT32,
             UInt32 flags = 0);
 
   void close();

@@ -128,10 +128,10 @@ class Vector {
     if (new_capacity <= capacity()) {
       return;
     } else if ((new_capacity / 2) < capacity()) {
-      if (capacity() < (UINT32_MAX / 2)) {
+      if (capacity() < (MAX_UINT32 / 2)) {
         new_capacity = capacity() * 2;
       } else {
-        new_capacity = UINT32_MAX;
+        new_capacity = MAX_UINT32;
       }
     }
 
