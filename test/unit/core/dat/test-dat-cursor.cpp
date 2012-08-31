@@ -16,8 +16,6 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#define __STDC_LIMIT_MACROS
-
 #include <gcutter.h>
 #include <glib/gstdio.h>
 #include <cppcutter.h>
