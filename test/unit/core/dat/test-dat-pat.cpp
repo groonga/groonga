@@ -16,13 +16,14 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+#include <dat.h>
+#include <pat.h>
+
 #include <gcutter.h>
 #include <glib/gstdio.h>
 #include <cppcutter.h>
 
 #include <grn-assertions.h>
-#include <dat.h>
-#include <pat.h>
 
 #include <algorithm>
 #include <cstdio>
