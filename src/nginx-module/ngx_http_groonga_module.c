@@ -266,6 +266,7 @@ ngx_http_groonga_attach_chain(ngx_chain_t *chain, ngx_chain_t *new_chain)
   }
 
   new_chain->buf->last_buf = 1;
+  new_chain->next = NULL;
   if (!chain) {
     return new_chain;
   }
@@ -276,7 +277,6 @@ ngx_http_groonga_attach_chain(ngx_chain_t *chain, ngx_chain_t *new_chain)
     last_chain = last_chain->next;
   }
   last_chain->next = new_chain;
-  new_chain->next = NULL;
   return chain;
 }
 
