@@ -176,16 +176,8 @@ do_restart() {
     fi
 
     # Stop old master process.
-    start-stop-daemon --stop --signal QUIT --quiet --pidfile $OLD_PIDFILE --name $NAME
-    [ -f "$OLD_PIDFILE" ] && sleep 5
-    if [ -f "$OLD_PIDFILE" ]; then
-	echo "Suceeded to switch new groonga-httpd master."
-	echo "But failed to stop old groonga-httpd master immediately."
-	echo "Wait until old worker process is finished."
-	return 3
-    fi
-
-    return 0
+    start-stop-daemon --stop --retry QUIT/$TIMEOUT --quiet --pidfile $OLD_PIDFILE --name $NAME
+    return $?
 }
 
 case "$1" in
@@ -215,8 +207,6 @@ case "$1" in
 	do_restart
 	case "$?" in
 	    0) log_end_msg 0 ;;
-	    1|2) log_end_msg 1 ;;
-	    3) log_end_msg 255 ;;
 	    *) log_end_msg 1 ;;
 	esac
 	;;
