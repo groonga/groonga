@@ -141,15 +141,50 @@ do_status() {
 }
 
 do_restart() {
-    echo "do_restart"
-    do_start
-    case "$?" in
-	1)
-	    kill -USR2 `cat $PIDFILE`
-	    kill -WINCH `cat $OLDPIDFILE`
-	    kill -QUIT `cat $OLDPIDFILE`
-	    ;;
-    esac
+
+    # Return
+    #  0 if daemon has restarted.
+    #  1 if daemon has failed to start new master process.
+    #  2 if daemon has failed to stop old worker process. (Rollback)
+    #  3 if daemon has failed to stop old master process immediately.
+
+    # Starting duplicated master and worker process.
+    start-stop-daemon --stop --signal USR2 --quiet --pidfile $PIDFILE --name $NAME
+
+    [ ! -f "$OLDPIDFILE" ] && sleep 5
+    if [ ! -f "$OLDPIDFILE" ]; then
+	echo "Failed to start new groonga-httpd master."
+	return 1
+    fi
+
+    OLDPID=`cat $OLDPIDFILE`
+
+    # Switch worker process.
+    kill -WINCH `cat $OLDPIDFILE`
+
+    [ ! -f "$PIDFILE" ] && sleep 5
+    PID=`cat $PIDFILE`
+
+    OLD_WORKER_PROCESS=`pgrep -P $OLDPID | grep -v $PID` 
+    [ -n "$OLD_WORKER_PROCESS" ] && sleep 5
+    OLD_WORKER_PROCESS=`pgrep -P $OLDPID | grep -v $PID` 
+    if [ -n "$OLD_WORKER_PROCESS" ]; then
+	echo "Failed to stop old groonga-httpd worker process."
+	start-stop-daemon --stop --signal QUIT --quiet --pidfile $PIDFILE --name $NAME
+	echo "Rollback to old groonga-httpd master."
+	return 2
+    fi
+
+    # Stop old master process.
+    start-stop-daemon --stop --signal QUIT --quiet --pidfile $OLDPIDFILE --name $NAME
+    [ -f "$OLDPIDFILE" ] && sleep 5
+    if [ -f "$OLDPIDFILE" ]; then
+	echo "Suceeded to switch new groonga-httpd master."
+	echo "But failed to stop old groonga-httpd master immediately."
+	echo "Wait until old worker process is finished."
+	return 3
+    fi
+
     return 0
 }
 
@@ -177,20 +212,12 @@ case "$1" in
 	;;
     restart)
 	log_daemon_msg "Restarting $DESC" "$NAME"
-	do_stop
+	do_restart
 	case "$?" in
-	    0|1)
-		do_start
-		case "$?" in
-		    0) log_end_msg 0 ;;
-		    1) log_end_msg 1 ;; # Old process is still running
-		    *) log_end_msg 1 ;; # Failed to start
-		esac
-		;;
-	    *)
-		# Failed to stop
-		log_end_msg 1
-		;;
+	    0) log_end_msg 0 ;;
+	    1|2) log_end_msg 1 ;;
+	    3) log_end_msg 255 ;;
+	    *) log_end_msg 1 ;;
 	esac
 	;;
     status)
