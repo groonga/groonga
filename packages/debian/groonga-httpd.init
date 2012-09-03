@@ -29,6 +29,7 @@ SCRIPTNAME=/etc/init.d/$NAME
 OPTION_ARGS=""
 START_STOP_DAEMON_ARGS=""
 ENABLE="no"
+TIMEOUT=5
 
 DEFAULT_FILE=/etc/default/groonga-httpd
 
@@ -146,12 +147,11 @@ do_restart() {
     #  0 if daemon has restarted.
     #  1 if daemon has failed to start new master process.
     #  2 if daemon has failed to stop old worker process. (Rollback)
-    #  3 if daemon has failed to stop old master process immediately.
 
     # Starting duplicated master and worker process.
     start-stop-daemon --stop --signal USR2 --quiet --pidfile $PIDFILE --name $NAME
 
-    [ ! -f "$OLD_PIDFILE" ] && sleep 5
+    [ ! -f "$OLD_PIDFILE" ] && sleep $TIMEOUT
     if [ ! -f "$OLD_PIDFILE" ]; then
 	echo "Failed to start new groonga-httpd master."
 	return 1
@@ -162,11 +162,11 @@ do_restart() {
     # Switch worker process.
     kill -WINCH `cat $OLD_PIDFILE`
 
-    [ ! -f "$PIDFILE" ] && sleep 5
+    [ ! -f "$PIDFILE" ] && sleep $TIMEOUT
     PID=`cat $PIDFILE`
 
     OLD_WORKER_PROCESS=`pgrep -P $OLDPID | grep -v $PID` 
-    [ -n "$OLD_WORKER_PROCESS" ] && sleep 5
+    [ -n "$OLD_WORKER_PROCESS" ] && sleep $TIMEOUT
     OLD_WORKER_PROCESS=`pgrep -P $OLDPID | grep -v $PID` 
     if [ -n "$OLD_WORKER_PROCESS" ]; then
 	echo "Failed to stop old groonga-httpd worker process."
