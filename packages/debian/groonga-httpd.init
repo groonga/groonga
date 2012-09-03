@@ -40,6 +40,8 @@ DEFAULT_FILE=/etc/default/groonga-httpd
 
 [ "$ENABLE" = "yes" ] || exit 0
 
+mkdir -p $(dirname ${PIDFILE})
+
 if [ -n "${USER}" ]; then
     if ! getent passwd | grep -q "^${USER}:"; then
 	echo "$0: user for running groonga-httpd doesn't exist: ${USER}" >&2
