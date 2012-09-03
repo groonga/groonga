@@ -24,7 +24,7 @@ GROUP=groonga
 ADDRESS=127.0.0.1
 PORT=10041
 PIDFILE=/var/run/groonga/$NAME.pid
-OLDPIDFILE=/var/run/groonga/$NAME.pid.oldbin
+OLD_PIDFILE=/var/run/groonga/$NAME.pid.oldbin
 SCRIPTNAME=/etc/init.d/$NAME
 OPTION_ARGS=""
 START_STOP_DAEMON_ARGS=""
@@ -151,16 +151,16 @@ do_restart() {
     # Starting duplicated master and worker process.
     start-stop-daemon --stop --signal USR2 --quiet --pidfile $PIDFILE --name $NAME
 
-    [ ! -f "$OLDPIDFILE" ] && sleep 5
-    if [ ! -f "$OLDPIDFILE" ]; then
+    [ ! -f "$OLD_PIDFILE" ] && sleep 5
+    if [ ! -f "$OLD_PIDFILE" ]; then
 	echo "Failed to start new groonga-httpd master."
 	return 1
     fi
 
-    OLDPID=`cat $OLDPIDFILE`
+    OLDPID=`cat $OLD_PIDFILE`
 
     # Switch worker process.
-    kill -WINCH `cat $OLDPIDFILE`
+    kill -WINCH `cat $OLD_PIDFILE`
 
     [ ! -f "$PIDFILE" ] && sleep 5
     PID=`cat $PIDFILE`
@@ -176,9 +176,9 @@ do_restart() {
     fi
 
     # Stop old master process.
-    start-stop-daemon --stop --signal QUIT --quiet --pidfile $OLDPIDFILE --name $NAME
-    [ -f "$OLDPIDFILE" ] && sleep 5
-    if [ -f "$OLDPIDFILE" ]; then
+    start-stop-daemon --stop --signal QUIT --quiet --pidfile $OLD_PIDFILE --name $NAME
+    [ -f "$OLD_PIDFILE" ] && sleep 5
+    if [ -f "$OLD_PIDFILE" ]; then
 	echo "Suceeded to switch new groonga-httpd master."
 	echo "But failed to stop old groonga-httpd master immediately."
 	echo "Wait until old worker process is finished."
