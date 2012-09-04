@@ -1,0 +1,8 @@
+# Default
+#USER=groonga
+#GROUP=groonga
+#ADDRESS=127.0.0.1
+#PORT=10041
+#DATABASE=/var/lib/groonga/db/db
+#LOG_PATH=/var/log/groonga/httpd/access.log
+#QUERY_LOG_PATH=/var/log/groonga/httpd/access.log

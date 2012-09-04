@@ -1,6 +1,6 @@
 SUBDIRS = sysconfig
 
-scripts = groonga
+scripts = groonga groonga-httpd
 
 if REDHAT_PLATFORM
 initdir = $(sysconfdir)/init.d

@@ -1,0 +1,170 @@
+#!/bin/bash
+#
+# /etc/rc.d/init.d/groonga-httpd
+#
+# chkconfig: - 80 20
+# description: A full-text search engine and column store.
+# processname: groonga-httpd
+# config: /etc/sysconfig/groonga-httpd
+# pidfile: /var/run/groonga/groonga-httpd.pid
+#
+### BEGIN INIT INFO
+# Provides:          groonga-httpd
+# Default-Stop:      0 1 6
+# Required-Start:    $remote_fs
+# Required-Stop:     $remote_fs
+# Short-Description: groonga-httpd's init script
+# Description:       groonga-httpd is a HTTP server for groonga.
+### END INIT INFO
+
+# Source function library.
+. /etc/init.d/functions
+
+name="groonga-httpd"
+prog="groonga-httpd"
+GROONGA_HTTPD=/usr/sbin/$prog
+CURL=/usr/bin/curl
+USER=groonga
+GROUP=groonga
+DATABASE=/var/lib/groonga/db/db
+ADDRESS=127.0.0.1
+PORT=10041
+PIDFILE=/var/run/groonga/$prog.pid
+OLD_PIDFILE=/var/run/groonga/$name.pid.oldbin
+PROTOCOL=http
+ERROR_LOG_PATH=/var/log/groonga/httpd/error.log
+QUERY_LOG_PATH=/var/log/groonga/httpd/access.log
+OPTION_ARGS=""
+TIMEOUT=3
+
+if [ -f /etc/sysconfig/$name ]; then
+	. /etc/sysconfig/$name
+fi
+
+DAEMON_ARGS=""
+GROONGA_ARGS=""
+
+if [ -n "${USER}" ]; then
+	if ! getent passwd | grep -q "^${USER}:"; then
+		echo "$0: user for running $prog doesn't exist: ${USER}" >&2
+		exit 1
+	fi
+	if [ -n "${PIDFILE}" ]; then
+		mkdir -p `dirname ${PIDFILE}`
+		chown -R ${USER} `dirname ${PIDFILE}`
+	fi
+fi
+
+if [ -n "${PIDFILE}" ]; then
+	mkdir -p $(dirname ${PIDFILE})
+	if [ -n "${USER}" ]; then
+		chown -R ${USER} $(dirname ${PIDFILE})
+	fi
+fi
+
+if [ -z "${DATABASE}" ]; then
+	echo "$0: DATABASE should not be empty" >&2
+	exit 1
+fi
+
+if [ ! -f "${DATABASE}" ]; then
+	mkdir -p $(dirname ${DATABASE})
+	if [ -n "${USER}" ]; then
+		chown -R ${USER} $(dirname ${DATABASE})
+	fi
+	if [ -n "${GROUP}" ]; then
+		chgrp -R ${GROUP} $(dirname ${DATABASE})
+	fi
+fi
+
+RETVAL=0
+
+send_command() {
+	command=$1
+	if [ "$command" = "status" ]; then
+		$CURL --max-time $TIMEOUT "http://${ADDRESS}:${PORT}/d/${command}"
+	else
+		$CURL "http://${ADDRESS}:${PORT}/d/${command}"
+	fi
+}
+
+start() {
+	echo -n "Starting $name: "
+	daemon $DAEMON_ARGS ${GROONGA_HTTPD} "$GROONGA_ARGS"
+	RETVAL=$?
+	echo
+	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/$prog
+	return $RETVAL
+}
+
+stop() {
+	echo -n "Shutting down $name: "
+	send_command shutdown
+	${GROONGA_HTTPD} -s stop
+	RETVAL=$?
+	echo
+	[ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/$prog
+	return $RETVAL
+}
+
+restart() {
+	killproc -p $PIDFILE ${GROONGA_HTTPD} -USR2
+	
+	[ ! -f "$OLD_PIDFILE" ] && sleep $TIMEOUT
+	if [ ! -f "$OLD_PIDFILE" ]; then
+		echo "Failed to start new groonga-httpd master."
+		return 1
+	fi
+
+	OLDPID=`cat $OLD_PIDFILE`
+
+	# Switch worker process.
+	kill -WINCH `cat $OLD_PIDFILE`
+
+	[ ! -f "$PIDFILE" ] && sleep $TIMEOUT
+	PID=`cat $PIDFILE`
+
+	OLD_WORKER_PROCESS=`pgrep -P $OLDPID | grep -v $PID` 
+	[ -n "$OLD_WORKER_PROCESS" ] && sleep $TIMEOUT
+	OLD_WORKER_PROCESS=`pgrep -P $OLDPID | grep -v $PID` 
+	if [ -n "$OLD_WORKER_PROCESS" ]; then
+	    echo "Failed to stop old groonga-httpd worker process."
+	    killproc -p $PIDFILE ${GROONGA_HTTPD} -QUIT
+	    echo "Rollback to old groonga-httpd master."
+	    return 2
+	fi
+
+	# Stop old master process.
+	killproc -p $OLD_PIDFILE ${GROONGA_HTTPD} -QUIT
+	return $?
+}
+
+status() {
+	send_command status
+}
+
+case "$1" in
+	start)
+		start
+		;;
+	stop)
+		stop
+		;;
+	restart)
+		restart
+		;;
+	reload)
+		killproc $groonga -HUP
+		;;
+	condrestart)
+		[ -f /var/lock/subsys/$prog ] && restart || :
+		;;
+	status)
+		status
+		;;
+	*)
+		echo "Usage: $prog {start|stop|reload|restart|condrestart|status}"
+		exit 1
+		;;
+esac
+exit $?
