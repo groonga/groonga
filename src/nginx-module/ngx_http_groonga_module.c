@@ -16,6 +16,10 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
 #include <ngx_config.h>
 #include <ngx_core.h>
 #include <ngx_http.h>
@@ -28,6 +32,7 @@ typedef struct {
   ngx_flag_t enabled;
   ngx_str_t database_path;
   char *database_path_cstr;
+  ngx_flag_t database_auto_create;
   ngx_str_t base_path;
   char *config_file;
   int config_line;
@@ -410,6 +415,7 @@ ngx_http_groonga_create_loc_conf(ngx_conf_t *cf)
   conf->database_path.data = NULL;
   conf->database_path.len = 0;
   conf->database_path_cstr = NULL;
+  conf->database_auto_create = NGX_CONF_UNSET;
   conf->base_path.data = NULL;
   conf->base_path.len = 0;
   conf->config_file = NULL;
@@ -480,6 +486,66 @@ ngx_http_groonga_each_loc_conf(ngx_http_conf_ctx_t *http_conf,
   }
 }
 
+static ngx_int_t
+ngx_http_groonga_mkdir_p(ngx_log_t *log, const char *dir_name)
+{
+  char sub_path[PATH_MAX];
+  size_t i, dir_name_length;
+
+  dir_name_length = strlen(dir_name);
+  sub_path[0] = dir_name[0];
+  for (i = 1; i < dir_name_length + 1; i++) {
+    if (dir_name[i] == '/' || dir_name[i] == '\0') {
+      struct stat stat_buffer;
+      sub_path[i] = '\0';
+      if (stat(sub_path, &stat_buffer) == -1) {
+        if (ngx_create_dir(sub_path, 0700) == -1) {
+          ngx_log_error(NGX_LOG_EMERG, log, 0,
+                        "failed to create directory: %s (%s): %s",
+                        sub_path, dir_name,
+                        strerror(errno));
+          return NGX_ERROR;
+        }
+      }
+    }
+    sub_path[i] = dir_name[i];
+  }
+
+  return NGX_OK;
+}
+
+static void
+ngx_http_groonga_create_database(ngx_http_groonga_loc_conf_t *location_conf,
+                                 ngx_http_groonga_database_callback_data_t *data)
+{
+  const char *database_base_name;
+  grn_ctx *context;
+
+  database_base_name = strrchr(location_conf->database_path_cstr, '/');
+  if (database_base_name) {
+    char database_dir[PATH_MAX];
+    database_dir[0] = '\0';
+    strncat(database_dir,
+            location_conf->database_path_cstr,
+            database_base_name - location_conf->database_path_cstr);
+    data->rc = ngx_http_groonga_mkdir_p(data->log, database_dir);
+    if (data->rc != NGX_OK) {
+      return;
+    }
+  }
+
+  context = &(location_conf->context);
+  grn_db_create(context, location_conf->database_path_cstr, NULL);
+  if (context->rc == GRN_SUCCESS) {
+    return;
+  }
+
+  ngx_log_error(NGX_LOG_EMERG, data->log, 0,
+                "failed to create groonga database: %s",
+                context->errbuf);
+  data->rc = NGX_ERROR;
+}
+
 static void
 ngx_http_groonga_open_database_callback(ngx_http_groonga_loc_conf_t *location_conf,
                                         void *user_data)
@@ -506,7 +572,13 @@ ngx_http_groonga_open_database_callback(ngx_http_groonga_loc_conf_t *location_co
   }
 
   grn_db_open(context, location_conf->database_path_cstr);
-  if (context->rc != GRN_SUCCESS) {
+  if (context->rc == GRN_SUCCESS) {
+    return;
+  }
+
+  if (location_conf->database_auto_create) {
+    ngx_http_groonga_create_database(location_conf, data);
+  } else {
     ngx_log_error(NGX_LOG_EMERG, data->log, 0,
                   "failed to open groonga database: %s",
                   context->errbuf);
@@ -585,6 +657,13 @@ static ngx_command_t ngx_http_groonga_commands[] = {
     ngx_conf_set_str_slot,
     NGX_HTTP_LOC_CONF_OFFSET,
     offsetof(ngx_http_groonga_loc_conf_t, database_path),
+    NULL },
+
+  { ngx_string("groonga_database_auto_create"),
+    NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
+    ngx_conf_set_flag_slot,
+    NGX_HTTP_LOC_CONF_OFFSET,
+    offsetof(ngx_http_groonga_loc_conf_t, database_auto_create),
     NULL },
 
   { ngx_string("groonga_base_path"),

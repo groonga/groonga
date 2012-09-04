@@ -17,6 +17,15 @@ http {
   # The default groonga database path.
   groonga_database @GROONGA_HTTPD_DEFAULT_DATABASE_PATH@;
 
+  # Create a groonga database automatically if the groonga database doesn't
+  # exist.
+  #
+  # Note that this option is danger when worker_processes is greater than 1.
+  # Because one or more worker processes may create the same groonga database
+  # at the same time. If you can create a groonga database before running
+  # groonga-httpd, you should do it.
+  groonga_database_auto_create on;
+
   server {
     listen 10041;
     server_name localhost;
