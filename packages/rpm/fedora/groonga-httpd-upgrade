@@ -13,7 +13,7 @@ killproc -p $PIDFILE ${GROONGA_HTTPD} -USR2
 [ ! -f "$OLD_PIDFILE" ] && sleep $TIMEOUT
 if [ ! -f "$OLD_PIDFILE" ]; then
 	echo "Failed to start new groonga-httpd master."
-	return 1
+	exit 1
 fi
 
 OLD_PID=`cat $OLD_PIDFILE`
@@ -31,10 +31,10 @@ if [ -n "$OLD_WORKER_PROCESS" ]; then
 	echo "Failed to stop old groonga-httpd worker process."
 	killproc -p $PIDFILE ${GROONGA_HTTPD} -QUIT
 	echo "Rollback to old groonga-httpd master."
-	return 2
+	exit 2
 fi
 
 # Stop old master process.
 killproc -p $OLD_PIDFILE ${GROONGA_HTTPD} -QUIT
-return $?
+exit $?
 
