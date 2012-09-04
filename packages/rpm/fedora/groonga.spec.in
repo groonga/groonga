@@ -233,8 +233,9 @@ if [ $1 = 1 ] ; then
 fi
 
 %post httpd
-/bin/systemctl daemon-reload >/dev/null 2>&1 || :
-if [ $1 = 2 ] ; then
+if [ $1 = 1 ] ; then
+	/bin/systemctl daemon-reload >/dev/null 2>&1 || :
+elif [ $1 = 2 ]; then
 	%{_sbindir}/groonga-httpd-upgrade
 fi
 
