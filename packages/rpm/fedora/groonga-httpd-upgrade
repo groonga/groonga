@@ -28,10 +28,10 @@ OLD_WORKER_PROCESS=`pgrep -P $OLD_PID | grep -v $PID`
 [ -n "$OLD_WORKER_PROCESS" ] && sleep $TIMEOUT
 OLD_WORKER_PROCESS=`pgrep -P $OLD_PID | grep -v $PID`
 if [ -n "$OLD_WORKER_PROCESS" ]; then
-    echo "Failed to stop old groonga-httpd worker process."
-    killproc -p $PIDFILE ${GROONGA_HTTPD} -QUIT
-    echo "Rollback to old groonga-httpd master."
-    return 2
+	echo "Failed to stop old groonga-httpd worker process."
+	killproc -p $PIDFILE ${GROONGA_HTTPD} -QUIT
+	echo "Rollback to old groonga-httpd master."
+	return 2
 fi
 
 # Stop old master process.
