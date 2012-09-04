@@ -21,9 +21,19 @@ fixperms() {
         dpkg-statoverride --update --add groonga groonga 0755 /var/log/groonga
 }
 
+create_database() {
+    if ! -d /var/lib/groonga/db ; then
+        mkdir -p /var/lib/groonga/db
+        TEMP_FILE=`tempfile`
+        groonga -n /var/lib/groonga/db/db < $TEMP_FILE
+        rm -f $TEMP_FILE
+    fi
+}
+
 case "$1" in
     configure)
         add_system_user
+        create_database
         fixperms
         ;;
     abort-upgrade|abort-deconfigure|abort-remove)
