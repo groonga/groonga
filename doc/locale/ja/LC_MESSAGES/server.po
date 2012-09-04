@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-22 16:06\n"
+"POT-Creation-Date: 2012-09-04 12:29\n"
 "PO-Revision-Date: 2012-08-09 12:10+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -35,10 +35,10 @@ msgstr ""
 # bd6242b5399945fc8046bf4280e08cfc
 # 38b2d9272ebd410184692728ac0d7a8f
 #: ../../../source/server/gqtp.txt:8
-#: ../../../source/server/http/comparison.txt:245
-#: ../../../source/server/http/comparison.txt:250
-#: ../../../source/server/http/comparison.txt:255
-#: ../../../source/server/http/comparison.txt:260
+#: ../../../source/server/http/comparison.txt:267
+#: ../../../source/server/http/comparison.txt:272
+#: ../../../source/server/http/comparison.txt:277
+#: ../../../source/server/http/comparison.txt:282
 #: ../../../source/server/http/groonga-httpd.txt:8
 #: ../../../source/server/http/groonga.txt:8
 msgid "TODO"
@@ -250,27 +250,27 @@ msgstr "gzip圧縮"
 # a33fb266ef0949b6a9d94d4e69fd547f
 # a33fb266ef0949b6a9d94d4e69fd547f
 #: ../../../source/server/http/comparison.txt:30
-#: ../../../source/server/http/comparison.txt:243
+#: ../../../source/server/http/comparison.txt:265
 msgid "POST"
 msgstr ""
 
 # c3cb22dd5b5541808093b16711b9388f
 # 34c078f412394246b89e9d89440ac71e
 #: ../../../source/server/http/comparison.txt:32
-#: ../../../source/server/http/comparison.txt:248
+#: ../../../source/server/http/comparison.txt:270
 msgid "HTTPS"
 msgstr ""
 
 # 13346d87ebe14d0994b20faf8fd40fe6
 # 6fbb32a9075249e7b9a0952df5226e40
 #: ../../../source/server/http/comparison.txt:34
-#: ../../../source/server/http/comparison.txt:253
+#: ../../../source/server/http/comparison.txt:275
 msgid "Access log"
 msgstr "アクセスログ"
 
 # f5a82d512d3148199b6bc5f12823e640
 #: ../../../source/server/http/comparison.txt:36
-#: ../../../source/server/http/comparison.txt:258
+#: ../../../source/server/http/comparison.txt:280
 msgid "Upgrading without downtime"
 msgstr "ダウンタイムなしでのアップグレード"
 
@@ -480,3 +480,13 @@ msgid ""
 msgstr ""
 ":doc:`groonga-httpd` はgzip圧縮をサポートしています。以下はレスポンスをgzipで"
 "圧縮する設定例です。::"
+
+# b19e64310f714cebb91c45ecc6b32996
+#: ../../../source/server/http/comparison.txt:257
+msgid ""
+"Note that `gzip_types *` is specified. It's one of the important "
+"configuration because the default value of `gzip_types` is `text/html`. :doc:"
+"`groonga-httpd` returns one of JSON, XML or MessagePack format data. They "
+"aren't included in the default `gzip_types`. So you need specify `gzip_types "
+"*` explicitly to mark those data as gzip target data."
+msgstr ""
