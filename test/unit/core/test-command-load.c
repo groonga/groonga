@@ -41,6 +41,7 @@ void test_invalid_table_name(void);
 void data_each(void);
 void test_each(gconstpointer data);
 void test_vector_reference_column(void);
+void test_vector_domain(void);
 
 static gchar *tmp_directory;
 static const gchar *database_path;
@@ -458,4 +459,34 @@ test_vector_reference_column(void)
       "[\"tags\",\"Tags\"]],"
      "[1,\"mori\",[\"groonga\",\"search\",\"engine\"]]]]",
     send_command("select Users"));
+}
+
+void
+test_vector_domain(void)
+{
+  assert_send_command("table_create Posts TABLE_NO_KEY");
+  assert_send_command("column_create Posts tags COLUMN_VECTOR ShortText");
+  cut_assert_equal_string(
+    "1",
+    send_command(
+      "load "
+      "--table Posts "
+      "--values '[{\"tags\": [\"groonga\", \"search engine\"]}]'"));
+
+  {
+    grn_obj *tags_column;
+    grn_obj tags;
+    const char *tag;
+    grn_id domain;
+
+    tags_column = grn_ctx_get(context, "Posts.tags", strlen("Posts.tags"));
+    GRN_SHORT_TEXT_INIT(&tags, GRN_OBJ_VECTOR);
+    grn_obj_get_value(context, tags_column, 1, &tags);
+    cut_assert_equal_int(2, grn_vector_size(context, &tags));
+    grn_vector_get_element(context, &tags, 0, &tag, NULL, &domain);
+    GRN_OBJ_FIN(context, &tags);
+    grn_obj_unlink(context, tags_column);
+
+    grn_test_assert_equal_id(context, GRN_DB_SHORT_TEXT, domain);
+  }
 }
