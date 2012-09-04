@@ -190,6 +190,11 @@ exit 0
 %post server
 /sbin/chkconfig --add groonga
 
+%post httpd
+if [ $1 = 2 ] ; then
+	/sbin/service groonga-httpd restart >/dev/null 2>&1 || :
+fi
+
 %post libs -p /sbin/ldconfig
 
 %post munin-plugins
