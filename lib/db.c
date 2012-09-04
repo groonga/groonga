@@ -8666,7 +8666,8 @@ set_vector(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *vector)
           if (!cast_failed) {
             grn_vector_add_element(ctx, &buf,
                                    GRN_TEXT_VALUE(element),
-                                   GRN_TEXT_LEN(element), 0, GRN_ID_NIL);
+                                   GRN_TEXT_LEN(element), 0,
+                                   element->header.domain);
           }
           if (element == &casted_element) { GRN_OBJ_FIN(ctx, element); }
         } else {
