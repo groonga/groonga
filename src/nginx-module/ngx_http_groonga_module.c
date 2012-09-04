@@ -297,6 +297,7 @@ ngx_http_groonga_handler_send_response(ngx_http_request_t *r,
   content_type = grn_ctx_get_mime_type(context);
   r->headers_out.content_type.len = strlen(content_type);
   r->headers_out.content_type.data = (u_char *)content_type;
+  r->headers_out.content_type_len = r->headers_out.content_type.len;
 
   /* allocate buffers for a response body */
   head_buf = ngx_http_groonga_grn_obj_to_ngx_buf(r->pool, &(data->head));
