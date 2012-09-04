@@ -16,7 +16,7 @@ if [ ! -f "$OLD_PIDFILE" ]; then
 	return 1
 fi
 
-OLDPID=`cat $OLD_PIDFILE`
+OLD_PID=`cat $OLD_PIDFILE`
 
 # Switch worker process.
 kill -WINCH `cat $OLD_PIDFILE`
@@ -24,9 +24,9 @@ kill -WINCH `cat $OLD_PIDFILE`
 [ ! -f "$PIDFILE" ] && sleep $TIMEOUT
 PID=`cat $PIDFILE`
 
-OLD_WORKER_PROCESS=`pgrep -P $OLDPID | grep -v $PID`
+OLD_WORKER_PROCESS=`pgrep -P $OLD_PID | grep -v $PID`
 [ -n "$OLD_WORKER_PROCESS" ] && sleep $TIMEOUT
-OLD_WORKER_PROCESS=`pgrep -P $OLDPID | grep -v $PID`
+OLD_WORKER_PROCESS=`pgrep -P $OLD_PID | grep -v $PID`
 if [ -n "$OLD_WORKER_PROCESS" ]; then
     echo "Failed to stop old groonga-httpd worker process."
     killproc -p $PIDFILE ${GROONGA_HTTPD} -QUIT
