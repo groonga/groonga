@@ -5,8 +5,8 @@ Conflicts=groonga.service
 
 [Service]
 Type=forking
-User=groonga
-Group=groonga
+User=root
+Group=root
 ExecStart=/usr/sbin/groonga-httpd
 ExecStop=/usr/sbin/groonga-httpd -s stop
 
