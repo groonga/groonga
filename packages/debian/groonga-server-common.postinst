@@ -25,6 +25,8 @@ create_database() {
     if [ ! -d /var/lib/groonga/db ]; then
         mkdir -p /var/lib/groonga/db
         groonga -n /var/lib/groonga/db/db shutdown > /dev/null
+        chown -R groonga /var/lib/groonga
+        chgrp -R groonga /var/lib/groonga
     fi
 }
 
