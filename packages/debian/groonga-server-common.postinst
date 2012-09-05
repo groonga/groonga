@@ -24,9 +24,7 @@ fixperms() {
 create_database() {
     if [ ! -d /var/lib/groonga/db ]; then
         mkdir -p /var/lib/groonga/db
-        TEMP_FILE=`tempfile`
-        groonga -n /var/lib/groonga/db/db < $TEMP_FILE
-        rm -f $TEMP_FILE
+        groonga -n /var/lib/groonga/db/db shutdown > /dev/null
     fi
 }
 
