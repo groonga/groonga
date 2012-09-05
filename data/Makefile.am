@@ -3,6 +3,7 @@ SUBDIRS =			\
 	html			\
 	munin			\
 	init.d			\
+	logrotate.d		\
 	systemd
 
 pkgsysconfdir = $(sysconfdir)/$(PACKAGE)

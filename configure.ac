@@ -247,6 +247,8 @@ AC_CONFIG_FILES([
   data/init.d/Makefile
   data/init.d/redhat/Makefile
   data/init.d/redhat/sysconfig/Makefile
+  data/logrotate.d/Makefile
+  data/logrotate.d/redhat/Makefile
   data/systemd/Makefile
   data/systemd/fedora/Makefile
   data/systemd/fedora/sysconfig/Makefile
