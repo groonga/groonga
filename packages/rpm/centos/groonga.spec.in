@@ -247,6 +247,7 @@ fi
 %defattr(-,root,root,-)
 %config(noreplace) %{_sysconfdir}/groonga/
 %config(noreplace) %{_sysconfdir}/sysconfig/groonga
+%config(noreplace) %{_sysconfdir}/logrotate.d/groonga-server
 %{_initddir}/*
 %ghost %dir %{_localstatedir}/run/%{name}
 %attr(0750,groonga,groonga) %dir %{_localstatedir}/lib/%{name}
@@ -255,6 +256,8 @@ fi
 %files httpd
 %defattr(-,root,root,-)
 %config(noreplace) %{_sysconfdir}/groonga/httpd/*
+%config(noreplace) %{_sysconfdir}/sysconfig/groonga-httpd
+%config(noreplace) %{_sysconfdir}/logrotate.d/groonga-httpd
 %{_sbindir}/groonga-httpd
 
 %files doc
