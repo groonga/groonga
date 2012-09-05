@@ -1,6 +1,6 @@
-EXTRA_DIST = groonga.spec.in groonga-httpd-upgrade
+EXTRA_DIST = groonga.spec.in
 noinst_DATA = groonga.spec
 
 if FEDORA_PLATFORM
-sbin_SCRIPTS = groonga-httpd-upgrade
+dist_sbin_SCRIPTS = groonga-httpd-upgrade
 endif
