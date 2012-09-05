@@ -320,6 +320,7 @@ fi
 %config(noreplace) %{_sysconfdir}/groonga/httpd/*
 %dir %{_unitdir}/groonga-httpd.service
 %{_sbindir}/groonga-httpd
+%{_sbindir}/groonga-httpd-upgrade
 
 %files doc
 %defattr(-,root,root,-)
