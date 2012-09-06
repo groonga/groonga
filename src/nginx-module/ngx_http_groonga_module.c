@@ -371,16 +371,11 @@ ngx_http_groonga_handler_send_response(ngx_http_request_t *r,
 }
 
 static ngx_int_t
-ngx_http_groonga_handler(ngx_http_request_t *r)
+ngx_http_groonga_handler_get(ngx_http_request_t *r)
 {
   ngx_int_t rc;
   ngx_str_t command_path;
   ngx_http_groonga_handler_data_t *data;
-
-  /* we respond to 'GET' and 'HEAD' requests only */
-  if (!(r->method & (NGX_HTTP_GET|NGX_HTTP_HEAD))) {
-    return NGX_HTTP_NOT_ALLOWED;
-  }
 
   rc = ngx_http_groonga_extract_command_path(r, &command_path);
   if (rc != NGX_OK) {
@@ -404,6 +399,24 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
   }
 
   rc = ngx_http_groonga_handler_send_response(r, data);
+
+  return rc;
+}
+
+static ngx_int_t
+ngx_http_groonga_handler(ngx_http_request_t *r)
+{
+  ngx_int_t rc;
+
+  switch (r->method) {
+  case NGX_HTTP_GET:
+  case NGX_HTTP_HEAD:
+    rc = ngx_http_groonga_handler_get(r);
+    break;
+  default:
+    rc = NGX_HTTP_NOT_ALLOWED;
+    break;
+  }
 
   return rc;
 }
