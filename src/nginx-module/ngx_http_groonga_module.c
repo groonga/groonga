@@ -182,17 +182,9 @@ ngx_http_groonga_context_receive_handler(grn_ctx *context,
 }
 
 static ngx_int_t
-ngx_http_groonga_handler_process_request(ngx_http_request_t *r,
-                                         ngx_http_groonga_handler_data_t **data_return)
+ngx_http_groonga_extract_command_path(ngx_http_request_t *r,
+                                      ngx_str_t *command_path)
 {
-  ngx_int_t rc;
-
-  ngx_http_cleanup_t *cleanup;
-  ngx_http_groonga_handler_data_t *data;
-
-  grn_ctx *context;
-  grn_obj uri;
-  ngx_str_t unparsed_path;
   size_t base_path_length;
 
   ngx_http_core_loc_conf_t *http_location_conf;
@@ -201,16 +193,16 @@ ngx_http_groonga_handler_process_request(ngx_http_request_t *r,
   http_location_conf = ngx_http_get_module_loc_conf(r, ngx_http_core_module);
   location_conf = ngx_http_get_module_loc_conf(r, ngx_http_groonga_module);
 
-  unparsed_path.data = r->unparsed_uri.data;
-  unparsed_path.len = r->unparsed_uri.len;
+  command_path->data = r->unparsed_uri.data;
+  command_path->len = r->unparsed_uri.len;
   base_path_length = http_location_conf->name.len;
   if (location_conf->base_path.len > 0) {
-    if (unparsed_path.len < location_conf->base_path.len) {
+    if (command_path->len < location_conf->base_path.len) {
       ngx_log_error(NGX_LOG_WARN, r->connection->log, 0,
                     "requestd URI is shorter than groonga_base_path: "
                     "URI: <%V>, groonga_base_path: <%V>",
                     &(r->unparsed_uri), &(location_conf->base_path));
-    } else if (strncmp((const char *)unparsed_path.data,
+    } else if (strncmp((const char *)command_path->data,
                        (const char *)(location_conf->base_path.data),
                        location_conf->base_path.len) < 0) {
       ngx_log_error(NGX_LOG_WARN, r->connection->log, 0,
@@ -221,15 +213,35 @@ ngx_http_groonga_handler_process_request(ngx_http_request_t *r,
       base_path_length = location_conf->base_path.len;
     }
   }
-  unparsed_path.data += base_path_length;
-  unparsed_path.len -= base_path_length;
-  if (unparsed_path.len > 0 && unparsed_path.data[0] == '/') {
-    unparsed_path.data += 1;
-    unparsed_path.len -= 1;
+  command_path->data += base_path_length;
+  command_path->len -= base_path_length;
+  if (command_path->len > 0 && command_path->data[0] == '/') {
+    command_path->data += 1;
+    command_path->len -= 1;
   }
-  if (unparsed_path.len == 0) {
+  if (command_path->len == 0) {
     return NGX_HTTP_BAD_REQUEST;
   }
+
+  return NGX_OK;
+}
+
+static ngx_int_t
+ngx_http_groonga_handler_process_request(ngx_http_request_t *r,
+                                         ngx_str_t *command_path,
+                                         ngx_http_groonga_handler_data_t **data_return)
+{
+  ngx_int_t rc;
+
+  ngx_http_groonga_loc_conf_t *location_conf;
+
+  ngx_http_cleanup_t *cleanup;
+  ngx_http_groonga_handler_data_t *data;
+
+  grn_ctx *context;
+  grn_obj uri;
+
+  location_conf = ngx_http_get_module_loc_conf(r, ngx_http_groonga_module);
 
   cleanup = ngx_http_cleanup_add(r, sizeof(ngx_http_groonga_handler_data_t));
   cleanup->handler = ngx_http_groonga_handler_cleanup;
@@ -252,7 +264,7 @@ ngx_http_groonga_handler_process_request(ngx_http_request_t *r,
                            data);
   GRN_TEXT_INIT(&uri, 0);
   GRN_TEXT_PUTS(context, &uri, "/d/");
-  GRN_TEXT_PUT(context, &uri, unparsed_path.data, unparsed_path.len);
+  GRN_TEXT_PUT(context, &uri, command_path->data, command_path->len);
   grn_ctx_send(context, GRN_TEXT_VALUE(&uri), GRN_TEXT_LEN(&uri),
                GRN_NO_FLAGS);
   ngx_http_groonga_context_log_error(r->connection->log, context);
@@ -351,6 +363,7 @@ static ngx_int_t
 ngx_http_groonga_handler(ngx_http_request_t *r)
 {
   ngx_int_t rc;
+  ngx_str_t command_path;
   ngx_http_groonga_handler_data_t *data;
 
   /* we respond to 'GET' and 'HEAD' requests only */
@@ -358,7 +371,12 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
     return NGX_HTTP_NOT_ALLOWED;
   }
 
-  rc = ngx_http_groonga_handler_process_request(r, &data);
+  rc = ngx_http_groonga_extract_command_path(r, &command_path);
+  if (rc != NGX_OK) {
+    return rc;
+  }
+
+  rc = ngx_http_groonga_handler_process_request(r, &command_path, &data);
   if (rc != NGX_OK) {
     return rc;
   }
