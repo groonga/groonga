@@ -108,38 +108,6 @@ stop() {
 	return $RETVAL
 }
 
-restart() {
-	killproc -p $PIDFILE ${GROONGA_HTTPD} -USR2
-	
-	[ ! -f "$OLD_PIDFILE" ] && sleep $TIMEOUT
-	if [ ! -f "$OLD_PIDFILE" ]; then
-		echo "Failed to start new groonga-httpd master."
-		return 1
-	fi
-
-	OLDPID=`cat $OLD_PIDFILE`
-
-	# Switch worker process.
-	kill -WINCH `cat $OLD_PIDFILE`
-
-	[ ! -f "$PIDFILE" ] && sleep $TIMEOUT
-	PID=`cat $PIDFILE`
-
-	OLD_WORKER_PROCESS=`pgrep -P $OLDPID | grep -v $PID` 
-	[ -n "$OLD_WORKER_PROCESS" ] && sleep $TIMEOUT
-	OLD_WORKER_PROCESS=`pgrep -P $OLDPID | grep -v $PID` 
-	if [ -n "$OLD_WORKER_PROCESS" ]; then
-	    echo "Failed to stop old groonga-httpd worker process."
-	    killproc -p $PIDFILE ${GROONGA_HTTPD} -QUIT
-	    echo "Rollback to old groonga-httpd master."
-	    return 2
-	fi
-
-	# Stop old master process.
-	killproc -p $OLD_PIDFILE ${GROONGA_HTTPD} -QUIT
-	return $?
-}
-
 status() {
 	send_command status
 }

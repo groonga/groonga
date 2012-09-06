@@ -142,51 +142,6 @@ do_status() {
     return $?
 }
 
-do_restart() {
-
-    # Return
-    #  0 if daemon has restarted.
-    #  1 if daemon has failed to start new master process.
-    #  2 if daemon has failed to switch worker process.
-    #  3 if daemon has failed to stop old worker process. (Rollback)
-
-    # Starting duplicated master and worker process.
-    start-stop-daemon --stop --signal USR2 --quiet --pidfile $PIDFILE --name $NAME
-
-    inotifywait --quiet --event create --timeout 1 $OLD_PIDFILE
-    if [ ! -f "$OLD_PIDFILE" ]; then
-	echo "Failed to start new groonga-httpd master."
-	return 1
-    fi
-
-    OLD_PID=`cat $OLD_PIDFILE`
-
-    # Switch worker process.
-    kill -WINCH `cat $OLD_PIDFILE`
-
-    inotifywait --quiet --event create --timeout 1 $PIDFILE
-    if [ ! -f "$PIDFILE" ]; then
-	echo "Failed to switch worker process."
-	return 2
-    fi
-
-    PID=`cat $PIDFILE`
-
-    OLD_WORKER_PROCESS=`pgrep -P $OLD_PID | grep -v $PID` 
-    [ -n "$OLD_WORKER_PROCESS" ] && sleep $TIMEOUT
-    OLD_WORKER_PROCESS=`pgrep -P $OLD_PID | grep -v $PID` 
-    if [ -n "$OLD_WORKER_PROCESS" ]; then
-	echo "Failed to stop old groonga-httpd worker process."
-	start-stop-daemon --stop --signal QUIT --quiet --pidfile $PIDFILE --name $NAME
-	echo "Rollback to old groonga-httpd master."
-	return 3
-    fi
-
-    # Stop old master process.
-    start-stop-daemon --stop --retry QUIT/$TIMEOUT --quiet --pidfile $OLD_PIDFILE --name $NAME
-    return $?
-}
-
 case "$1" in
     start)
 	[ "$VERBOSE" != no ] && log_daemon_msg "Starting $DESC" "$NAME"
