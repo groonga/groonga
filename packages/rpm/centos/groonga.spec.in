@@ -265,6 +265,7 @@ fi
 %config(noreplace) %{_sysconfdir}/logrotate.d/groonga-httpd
 %{_initddir}/groonga-httpd
 %{_sbindir}/groonga-httpd
+%{_sbindir}/groonga-httpd-restart
 
 %files doc
 %defattr(-,root,root,-)

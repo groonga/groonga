@@ -23,6 +23,7 @@
 name="groonga-httpd"
 prog="groonga-httpd"
 GROONGA_HTTPD=/usr/sbin/$prog
+GROONGA_HTTPD_RESTART=/usr/sbin/$prog-restart
 CURL=/usr/bin/curl
 USER=groonga
 GROUP=groonga
@@ -151,7 +152,7 @@ case "$1" in
 		stop
 		;;
 	restart)
-		restart
+		${GROONGA_HTTPD_RESTART}
 		;;
 	reload)
 		killproc $groonga -HUP

@@ -4,7 +4,8 @@ SUBDIRS =			\
 	munin			\
 	init.d			\
 	logrotate.d		\
-	systemd
+	systemd			\
+	scripts
 
 pkgsysconfdir = $(sysconfdir)/$(PACKAGE)
 dist_pkgsysconf_DATA =		\

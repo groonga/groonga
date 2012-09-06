@@ -252,6 +252,7 @@ AC_CONFIG_FILES([
   data/systemd/Makefile
   data/systemd/fedora/Makefile
   data/systemd/fedora/sysconfig/Makefile
+  data/scripts/Makefile
   tools/Makefile
   doc/Makefile
   doc/locale/Makefile
