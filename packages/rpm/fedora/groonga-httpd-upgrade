@@ -6,7 +6,11 @@ OLD_PIDFILE=$PIDFILE.oldbin
 TIMEOUT=3
 
 # Source function library.
-. /etc/init.d/functions
+if [ -f /lib/lsb/init-functions ]; then
+    . /lib/lsb/init-functions
+elif [ -f /etc/init.d/functions ]; then
+    . /etc/init.d/functions
+fi
 
 killproc -p $PIDFILE ${GROONGA_HTTPD} -USR2
 
