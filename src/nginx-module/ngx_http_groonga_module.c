@@ -73,6 +73,16 @@ ngx_str_null_terminate(ngx_pool_t *pool, const ngx_str_t *string)
   return null_terminated_c_string;
 }
 
+static grn_bool
+ngx_str_equal_c_string(ngx_str_t *string, const char *c_string)
+{
+  if (string->len != strlen(c_string)) {
+    return GRN_FALSE;
+  }
+
+  return memcmp(c_string, string->data, string->len) == 0;
+}
+
 static void
 ngx_http_groonga_context_log_error(ngx_log_t *log, grn_ctx *context)
 {
@@ -90,7 +100,7 @@ ngx_http_groonga_context_check_error(ngx_log_t *log, grn_ctx *context)
     return NGX_OK;
   } else {
     ngx_http_groonga_context_log_error(log, context);
-    return NGX_HTTP_INTERNAL_SERVER_ERROR;
+    return NGX_HTTP_BAD_REQUEST;
   }
 }
 
@@ -226,6 +236,15 @@ ngx_http_groonga_extract_command_path(ngx_http_request_t *r,
   return NGX_OK;
 }
 
+static void
+ngx_http_groonga_handler_set_content_type(ngx_http_request_t *r,
+                                          const char *content_type)
+{
+  r->headers_out.content_type.len = strlen(content_type);
+  r->headers_out.content_type.data = (u_char *)content_type;
+  r->headers_out.content_type_len = r->headers_out.content_type.len;
+}
+
 static ngx_int_t
 ngx_http_groonga_handler_create_data(ngx_http_request_t *r,
                                      ngx_http_groonga_handler_data_t **data_return)
@@ -284,6 +303,104 @@ ngx_http_groonga_handler_process_command_path(ngx_http_request_t *r,
   return NGX_OK;
 }
 
+static ngx_int_t
+ngx_http_groonga_handler_validate_post_command(ngx_http_request_t *r,
+                                               ngx_str_t *command_path,
+                                               ngx_http_groonga_handler_data_t *data)
+{
+  grn_ctx *context;
+  ngx_str_t command;
+
+  command.data = command_path->data;
+  if (r->args.len == 0) {
+    command.len = command_path->len;
+  } else {
+    command.len = command_path->len - r->args.len - strlen("?");
+  }
+  if (ngx_str_equal_c_string(&command, "load")) {
+    return NGX_OK;
+  }
+
+  context = &(data->context);
+  ngx_http_groonga_handler_set_content_type(r, "text/plain");
+  GRN_TEXT_PUTS(context, &(data->body), "command for POST must be <load>: <");
+  GRN_TEXT_PUT(context, &(data->body), command.data, command.len);
+  GRN_TEXT_PUTS(context, &(data->body), ">");
+
+  return NGX_HTTP_BAD_REQUEST;
+}
+
+static ngx_int_t
+ngx_http_groonga_handler_process_body(ngx_http_request_t *r,
+                                      ngx_http_groonga_handler_data_t *data)
+{
+  ngx_int_t rc;
+
+  grn_ctx *context;
+
+  ngx_buf_t *body;
+  u_char *line_start, *current;
+
+  context = &(data->context);
+
+  body = r->request_body->buf;
+  if (!body) {
+    ngx_http_groonga_handler_set_content_type(r, "text/plain");
+    GRN_TEXT_PUTS(context, &(data->body), "must send load data as body");
+    return NGX_HTTP_BAD_REQUEST;
+  }
+
+  for (line_start = current = body->pos; current < body->last; current++) {
+    if (*current != '\n') {
+      continue;
+    }
+
+    grn_ctx_send(context, (const char *)line_start, current - line_start,
+                 GRN_NO_FLAGS);
+    rc = ngx_http_groonga_context_check_error(r->connection->log, context);
+    if (rc != NGX_OK) {
+      return rc;
+    }
+    line_start = current + 1;
+  }
+  if (line_start < current) {
+    grn_ctx_send(context, (const char *)line_start, current - line_start,
+                 GRN_NO_FLAGS);
+    rc = ngx_http_groonga_context_check_error(r->connection->log, context);
+    if (rc != NGX_OK) {
+      return rc;
+    }
+  }
+
+  return NGX_OK;
+}
+
+
+static ngx_int_t
+ngx_http_groonga_handler_process_load(ngx_http_request_t *r,
+                                      ngx_str_t *command_path,
+                                      ngx_http_groonga_handler_data_t *data)
+{
+  ngx_int_t rc;
+
+  rc = ngx_http_groonga_handler_validate_post_command(r, command_path, data);
+  if (rc != NGX_OK) {
+    return rc;
+  }
+
+  rc = ngx_http_groonga_handler_process_command_path(r, command_path, data);
+  if (rc != NGX_OK) {
+    return rc;
+  }
+
+  rc = ngx_http_groonga_handler_process_body(r, data);
+  if (rc != NGX_OK) {
+    return rc;
+  }
+
+  return NGX_OK;
+}
+
 static ngx_chain_t *
 ngx_http_groonga_attach_chain(ngx_chain_t *chain, ngx_chain_t *new_chain)
 {
@@ -322,10 +439,10 @@ ngx_http_groonga_handler_send_response(ngx_http_request_t *r,
   context = &(data->context);
 
   /* set the 'Content-type' header */
-  content_type = grn_ctx_get_mime_type(context);
-  r->headers_out.content_type.len = strlen(content_type);
-  r->headers_out.content_type.data = (u_char *)content_type;
-  r->headers_out.content_type_len = r->headers_out.content_type.len;
+  if (r->headers_out.content_type.len == 0) {
+    content_type = grn_ctx_get_mime_type(context);
+    ngx_http_groonga_handler_set_content_type(r, content_type);
+  }
 
   /* allocate buffers for a response body */
   head_buf = ngx_http_groonga_grn_obj_to_ngx_buf(r->pool, &(data->head));
@@ -403,6 +520,25 @@ ngx_http_groonga_handler_get(ngx_http_request_t *r)
   return rc;
 }
 
+static void
+ngx_http_groonga_handler_post(ngx_http_request_t *r)
+{
+  ngx_int_t rc;
+  ngx_str_t command_path;
+  ngx_http_groonga_handler_data_t *data;
+
+  rc = ngx_http_groonga_extract_command_path(r, &command_path);
+  if (rc == NGX_OK) {
+    rc = ngx_http_groonga_handler_create_data(r, &data);
+  }
+  if (rc == NGX_OK) {
+    rc = ngx_http_groonga_handler_process_load(r, &command_path, data);
+  }
+
+  ngx_http_groonga_handler_send_response(r, data);
+  ngx_http_finalize_request(r, rc);
+}
+
 static ngx_int_t
 ngx_http_groonga_handler(ngx_http_request_t *r)
 {
@@ -412,6 +548,12 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
   case NGX_HTTP_GET:
   case NGX_HTTP_HEAD:
     rc = ngx_http_groonga_handler_get(r);
+    break;
+  case NGX_HTTP_POST:
+    rc = ngx_http_read_client_request_body(r, ngx_http_groonga_handler_post);
+    if (rc < NGX_HTTP_SPECIAL_RESPONSE) {
+      rc = NGX_DONE;
+    }
     break;
   default:
     rc = NGX_HTTP_NOT_ALLOWED;
