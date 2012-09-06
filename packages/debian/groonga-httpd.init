@@ -146,7 +146,8 @@ do_restart() {
     # Return
     #  0 if daemon has restarted.
     #  1 if daemon has failed to start new master process.
-    #  2 if daemon has failed to stop old worker process. (Rollback)
+    #  2 if daemon has failed to switch worker process.
+    #  3 if daemon has failed to stop old worker process. (Rollback)
 
     # Starting duplicated master and worker process.
     start-stop-daemon --stop --signal USR2 --quiet --pidfile $PIDFILE --name $NAME
@@ -177,7 +178,7 @@ do_restart() {
 	echo "Failed to stop old groonga-httpd worker process."
 	start-stop-daemon --stop --signal QUIT --quiet --pidfile $PIDFILE --name $NAME
 	echo "Rollback to old groonga-httpd master."
-	return 2
+	return 3
     fi
 
     # Stop old master process.
