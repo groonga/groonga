@@ -157,7 +157,7 @@ do_restart() {
 	return 1
     fi
 
-    OLDPID=`cat $OLD_PIDFILE`
+    OLD_PID=`cat $OLD_PIDFILE`
 
     # Switch worker process.
     kill -WINCH `cat $OLD_PIDFILE`
@@ -170,9 +170,9 @@ do_restart() {
 
     PID=`cat $PIDFILE`
 
-    OLD_WORKER_PROCESS=`pgrep -P $OLDPID | grep -v $PID` 
+    OLD_WORKER_PROCESS=`pgrep -P $OLD_PID | grep -v $PID` 
     [ -n "$OLD_WORKER_PROCESS" ] && sleep $TIMEOUT
-    OLD_WORKER_PROCESS=`pgrep -P $OLDPID | grep -v $PID` 
+    OLD_WORKER_PROCESS=`pgrep -P $OLD_PID | grep -v $PID` 
     if [ -n "$OLD_WORKER_PROCESS" ]; then
 	echo "Failed to stop old groonga-httpd worker process."
 	start-stop-daemon --stop --signal QUIT --quiet --pidfile $PIDFILE --name $NAME
