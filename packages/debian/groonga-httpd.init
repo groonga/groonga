@@ -151,7 +151,7 @@ do_restart() {
     # Starting duplicated master and worker process.
     start-stop-daemon --stop --signal USR2 --quiet --pidfile $PIDFILE --name $NAME
 
-    [ ! -f "$OLD_PIDFILE" ] && sleep $TIMEOUT
+    inotifywait --quiet --event create --timeout 1 $OLD_PIDFILE
     if [ ! -f "$OLD_PIDFILE" ]; then
 	echo "Failed to start new groonga-httpd master."
 	return 1
@@ -162,7 +162,12 @@ do_restart() {
     # Switch worker process.
     kill -WINCH `cat $OLD_PIDFILE`
 
-    [ ! -f "$PIDFILE" ] && sleep $TIMEOUT
+    inotifywait --quiet --event create --timeout 1 $PIDFILE
+    if [ ! -f "$PIDFILE" ]; then
+	echo "Failed to switch worker process."
+	return 2
+    fi
+
     PID=`cat $PIDFILE`
 
     OLD_WORKER_PROCESS=`pgrep -P $OLDPID | grep -v $PID` 
