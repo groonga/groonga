@@ -3172,6 +3172,7 @@ grn_table_setoperation(grn_ctx *ctx, grn_obj *table1, grn_obj *table2, grn_obj *
   void *key = NULL, *value1 = NULL, *value2 = NULL;
   uint32_t value_size = 0;
   uint32_t key_size = 0;
+  grn_bool have_subrec;
   if (table1 != res) {
     if (table2 == res) {
       grn_obj *t = table1;
@@ -3181,6 +3182,8 @@ grn_table_setoperation(grn_ctx *ctx, grn_obj *table1, grn_obj *table2, grn_obj *
       return GRN_INVALID_ARGUMENT;
     }
   }
+  have_subrec = ((DB_OBJ(table1)->header.flags & GRN_OBJ_WITH_SUBREC) &&
+                 (DB_OBJ(table2)->header.flags & GRN_OBJ_WITH_SUBREC));
   switch (table1->header.type) {
   case GRN_TABLE_HASH_KEY :
     value_size = ((grn_hash *)table1)->value_size;
@@ -3217,18 +3220,45 @@ grn_table_setoperation(grn_ctx *ctx, grn_obj *table1, grn_obj *table2, grn_obj *
   }
   switch (op) {
   case GRN_OP_OR :
-    GRN_TABLE_EACH(ctx, table2, 0, 0, id, &key, &key_size, &value2, {
-      if (grn_table_add_v_inline(ctx, table1, key, key_size, &value1, NULL)) {
-        memcpy(value1, value2, value_size);
-      }
-    });
+    if (have_subrec) {
+      int added;
+      GRN_TABLE_EACH(ctx, table2, 0, 0, id, &key, &key_size, &value2, {
+        if (grn_table_add_v_inline(ctx, table1, key, key_size, &value1, &added)) {
+          if (added) {
+            memcpy(value1, value2, value_size);
+          } else {
+            grn_rset_recinfo *ri1 = value1;
+            grn_rset_recinfo *ri2 = value2;
+            grn_table_add_subrec_inline(table1, ri1, ri2->score, NULL, 0);
+          }
+        }
+      });
+    } else {
+      GRN_TABLE_EACH(ctx, table2, 0, 0, id, &key, &key_size, &value2, {
+        if (grn_table_add_v_inline(ctx, table1, key, key_size, &value1, NULL)) {
+          memcpy(value1, value2, value_size);
+        }
+      });
+    }
     break;
   case GRN_OP_AND :
-    GRN_TABLE_EACH(ctx, table1, 0, 0, id, &key, &key_size, &value1, {
-      if (!grn_table_get_v(ctx, table2, key, key_size, &value2)) {
-        _grn_table_delete_by_id(ctx, table1, id, NULL);
-      }
-    });
+    if (have_subrec) {
+      GRN_TABLE_EACH(ctx, table1, 0, 0, id, &key, &key_size, &value1, {
+        if (grn_table_get_v(ctx, table2, key, key_size, &value2)) {
+          grn_rset_recinfo *ri1 = value1;
+          grn_rset_recinfo *ri2 = value2;
+          ri1->score += ri2->score;
+        } else {
+          _grn_table_delete_by_id(ctx, table1, id, NULL);
+        }
+      });
+    } else {
+      GRN_TABLE_EACH(ctx, table1, 0, 0, id, &key, &key_size, &value1, {
+        if (!grn_table_get_v(ctx, table2, key, key_size, &value2)) {
+          _grn_table_delete_by_id(ctx, table1, id, NULL);
+        }
+      });
+    }
     break;
   case GRN_OP_AND_NOT :
     GRN_TABLE_EACH(ctx, table2, 0, 0, id, &key, &key_size, &value2, {
