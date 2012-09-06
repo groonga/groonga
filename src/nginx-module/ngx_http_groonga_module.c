@@ -227,9 +227,8 @@ ngx_http_groonga_extract_command_path(ngx_http_request_t *r,
 }
 
 static ngx_int_t
-ngx_http_groonga_handler_process_request(ngx_http_request_t *r,
-                                         ngx_str_t *command_path,
-                                         ngx_http_groonga_handler_data_t **data_return)
+ngx_http_groonga_handler_create_data(ngx_http_request_t *r,
+                                     ngx_http_groonga_handler_data_t **data_return)
 {
   ngx_int_t rc;
 
@@ -239,7 +238,6 @@ ngx_http_groonga_handler_process_request(ngx_http_request_t *r,
   ngx_http_groonga_handler_data_t *data;
 
   grn_ctx *context;
-  grn_obj uri;
 
   location_conf = ngx_http_get_module_loc_conf(r, ngx_http_groonga_module);
 
@@ -262,6 +260,19 @@ ngx_http_groonga_handler_process_request(ngx_http_request_t *r,
   grn_ctx_recv_handler_set(context,
                            ngx_http_groonga_context_receive_handler,
                            data);
+
+  return NGX_OK;
+}
+
+static ngx_int_t
+ngx_http_groonga_handler_process_request(ngx_http_request_t *r,
+                                         ngx_str_t *command_path,
+                                         ngx_http_groonga_handler_data_t *data)
+{
+  grn_ctx *context;
+  grn_obj uri;
+
+  context = &(data->context);
   GRN_TEXT_INIT(&uri, 0);
   GRN_TEXT_PUTS(context, &uri, "/d/");
   GRN_TEXT_PUT(context, &uri, command_path->data, command_path->len);
@@ -376,7 +387,12 @@ ngx_http_groonga_handler(ngx_http_request_t *r)
     return rc;
   }
 
-  rc = ngx_http_groonga_handler_process_request(r, &command_path, &data);
+  rc = ngx_http_groonga_handler_create_data(r, &data);
+  if (rc != NGX_OK) {
+    return rc;
+  }
+
+  rc = ngx_http_groonga_handler_process_request(r, &command_path, data);
   if (rc != NGX_OK) {
     return rc;
   }
