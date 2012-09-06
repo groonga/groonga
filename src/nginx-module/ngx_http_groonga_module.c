@@ -192,8 +192,7 @@ ngx_http_groonga_handler_process_request(ngx_http_request_t *r,
 
   grn_ctx *context;
   grn_obj uri;
-  u_char *unparsed_path;
-  size_t unparsed_path_length;
+  ngx_str_t unparsed_path;
   size_t base_path_length;
 
   ngx_http_core_loc_conf_t *http_location_conf;
@@ -202,16 +201,16 @@ ngx_http_groonga_handler_process_request(ngx_http_request_t *r,
   http_location_conf = ngx_http_get_module_loc_conf(r, ngx_http_core_module);
   location_conf = ngx_http_get_module_loc_conf(r, ngx_http_groonga_module);
 
-  unparsed_path = r->unparsed_uri.data;
-  unparsed_path_length = r->unparsed_uri.len;
+  unparsed_path.data = r->unparsed_uri.data;
+  unparsed_path.len = r->unparsed_uri.len;
   base_path_length = http_location_conf->name.len;
   if (location_conf->base_path.len > 0) {
-    if (unparsed_path_length < location_conf->base_path.len) {
+    if (unparsed_path.len < location_conf->base_path.len) {
       ngx_log_error(NGX_LOG_WARN, r->connection->log, 0,
                     "requestd URI is shorter than groonga_base_path: "
                     "URI: <%V>, groonga_base_path: <%V>",
                     &(r->unparsed_uri), &(location_conf->base_path));
-    } else if (strncmp((const char *)unparsed_path,
+    } else if (strncmp((const char *)unparsed_path.data,
                        (const char *)(location_conf->base_path.data),
                        location_conf->base_path.len) < 0) {
       ngx_log_error(NGX_LOG_WARN, r->connection->log, 0,
@@ -222,13 +221,13 @@ ngx_http_groonga_handler_process_request(ngx_http_request_t *r,
       base_path_length = location_conf->base_path.len;
     }
   }
-  unparsed_path += base_path_length;
-  unparsed_path_length -= base_path_length;
-  if (unparsed_path_length > 0 && unparsed_path[0] == '/') {
-    unparsed_path += 1;
-    unparsed_path_length -= 1;
+  unparsed_path.data += base_path_length;
+  unparsed_path.len -= base_path_length;
+  if (unparsed_path.len > 0 && unparsed_path.data[0] == '/') {
+    unparsed_path.data += 1;
+    unparsed_path.len -= 1;
   }
-  if (unparsed_path_length == 0) {
+  if (unparsed_path.len == 0) {
     return NGX_HTTP_BAD_REQUEST;
   }
 
@@ -253,8 +252,9 @@ ngx_http_groonga_handler_process_request(ngx_http_request_t *r,
                            data);
   GRN_TEXT_INIT(&uri, 0);
   GRN_TEXT_PUTS(context, &uri, "/d/");
-  GRN_TEXT_PUT(context, &uri, unparsed_path, unparsed_path_length);
-  grn_ctx_send(context, GRN_TEXT_VALUE(&uri), GRN_TEXT_LEN(&uri), GRN_NO_FLAGS);
+  GRN_TEXT_PUT(context, &uri, unparsed_path.data, unparsed_path.len);
+  grn_ctx_send(context, GRN_TEXT_VALUE(&uri), GRN_TEXT_LEN(&uri),
+               GRN_NO_FLAGS);
   ngx_http_groonga_context_log_error(r->connection->log, context);
   GRN_OBJ_FIN(context, &uri);
 
