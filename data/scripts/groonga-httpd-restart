@@ -42,7 +42,7 @@ PID=`cat $PIDFILE`
 
 OLD_WORKER_PROCESS=`pgrep -P $OLD_PID | grep -v $PID`
 for pid in $OLD_WORKER_PROCESS; do
-    until_process_is_finished $pid
+	until_process_is_finished $pid
 done
 OLD_WORKER_PROCESS=`pgrep -P $OLD_PID | grep -v $PID`
 if [ -n "$OLD_WORKER_PROCESS" ]; then
