@@ -20,6 +20,13 @@ until_process_is_finished () {
 	timeout $TIMEOUT tail -F /dev/null --pid=$1
 }
 
+if [ "$1" = "try-restart" ]; then
+	WORKING=`pidofproc groonga-httpd`
+	if [ -z "$WORKING" ]; then
+		exit 0
+	fi
+fi
+
 killproc -p $PIDFILE ${GROONGA_HTTPD} -USR2
 
 until_file_is_created $OLD_PIDFILE
