@@ -198,7 +198,10 @@ exit 0
 /sbin/chkconfig --add groonga
 
 %post httpd
-if [ $1 = 2 ] ; then
+if [ $1 = 1 ] ; then
+	mkdir -p %{_localstatedir}/log/groonga/httpd
+	chown -R groonga:groonga %{_localstatedir}/log/groonga/httpd
+elif [ $1 = 2 ] ; then
 	/sbin/service groonga-httpd restart >/dev/null 2>&1 || :
 fi
 

@@ -239,7 +239,10 @@ exit 0
 
 %post httpd
 /bin/systemctl daemon-reload >/dev/null 2>&1 || :
-if [ $1 = 2 ]; then
+if [ $1 = 1 ]; then
+	mkdir -p %{_localstatedir}/log/groonga/httpd
+	chown -R groonga:groonga %{_localstatedir}/log/groonga/httpd
+elif [ $1 = 2 ]; then
 	%{_sbindir}/groonga-httpd-restart
 fi
 
