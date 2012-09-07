@@ -275,7 +275,7 @@ fi
 %postun httpd
 /bin/systemctl daemon-reload >/dev/null 2>&1 || :
 if [ $1 -ge 1 ] ; then
-	/bin/systemctl try-restart groonga-httpd.service >/dev/null 2>&1 || :
+	%{_sbindir}/groonga-httpd-restart try-restart >/dev/null 2>&1 || :
 fi
 
 %triggerun -- groonga < 1.3.0-1
