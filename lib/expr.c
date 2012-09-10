@@ -4289,7 +4289,6 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
       uint32_t codes_curr = e->codes_curr;
       GRN_PTR_INIT(&res_stack, GRN_OBJ_VECTOR, GRN_ID_NIL);
       for (i = 0; i < n; i++) {
-        grn_bool processed = GRN_FALSE;
         scan_info *si = sis[i];
         if (si->flags & SCAN_POP) {
           grn_obj *res_;
@@ -4298,6 +4297,7 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
           grn_obj_close(ctx, res);
           res = res_;
         } else {
+          grn_bool processed = GRN_FALSE;
           if (si->flags & SCAN_PUSH) {
             grn_obj *res_;
             res_ = grn_table_create(ctx, NULL, 0, NULL,
