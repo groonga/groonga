@@ -1,0 +1,15 @@
+select Shops   --output_columns 'name'   --limit 0   --filter 'geo_in_rectangle(location, "128429532x-503148672", "128429532x503148672") &&             (area == \"area0005\" || area == \"area0014\") &&             (tags @ \"天然\" || tags @ \"和菓子\")'
+[
+  [
+    [
+      -38,
+      0.0,
+      0.0
+    ],
+    "geo_in_rectangle(): negative coordinate is not implemented."
+  ],
+  [
+
+  ]
+]
+#|e| geo_in_rectangle(): negative coordinate is not implemented.
