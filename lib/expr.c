@@ -4008,248 +4008,248 @@ static inline grn_bool
 grn_table_select_select_by_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
                                  grn_obj *res)
 {
-        int done = 0;
-          if (GRN_BULK_VSIZE(&si->index)) {
-            grn_obj *index = GRN_PTR_VALUE(&si->index);
-            switch (si->op) {
-            case GRN_OP_EQUAL :
-              if (si->flags & SCAN_ACCESSOR) {
-                if (index->header.type == GRN_ACCESSOR &&
-                    !((grn_accessor *)index)->next) {
-                  grn_obj dest;
-                  grn_accessor *a = (grn_accessor *)index;
-                  grn_rset_posinfo pi;
-                  switch (a->action) {
-                  case GRN_ACCESSOR_GET_ID :
-                    GRN_UINT32_INIT(&dest, 0);
-                    if (!grn_obj_cast(ctx, si->query, &dest, 0)) {
-                      memcpy(&pi, GRN_BULK_HEAD(&dest), GRN_BULK_VSIZE(&dest));
-                      if (pi.rid) {
-                        if (pi.rid == grn_table_at(ctx, table, pi.rid)) {
-                          res_add(ctx, (grn_hash *)res, &pi, 1, si->logical_op);
-                        }
-                      }
-                      done++;
-                    }
-                    grn_ii_resolve_sel_and(ctx, (grn_hash *)res, si->logical_op);
-                    GRN_OBJ_FIN(ctx, &dest);
-                    break;
-                  case GRN_ACCESSOR_GET_KEY :
-                    GRN_OBJ_INIT(&dest, GRN_BULK, 0, table->header.domain);
-                    if (!grn_obj_cast(ctx, si->query, &dest, 0)) {
-                      if ((pi.rid = grn_table_get(ctx, table,
-                                                  GRN_BULK_HEAD(&dest),
-                                                  GRN_BULK_VSIZE(&dest)))) {
-                        res_add(ctx, (grn_hash *)res, &pi, 1, si->logical_op);
-                      }
-                      done++;
-                    }
-                    grn_ii_resolve_sel_and(ctx, (grn_hash *)res, si->logical_op);
-                    GRN_OBJ_FIN(ctx, &dest);
-                    break;
-                  }
+  int done = 0;
+  if (GRN_BULK_VSIZE(&si->index)) {
+    grn_obj *index = GRN_PTR_VALUE(&si->index);
+    switch (si->op) {
+    case GRN_OP_EQUAL :
+      if (si->flags & SCAN_ACCESSOR) {
+        if (index->header.type == GRN_ACCESSOR &&
+            !((grn_accessor *)index)->next) {
+          grn_obj dest;
+          grn_accessor *a = (grn_accessor *)index;
+          grn_rset_posinfo pi;
+          switch (a->action) {
+          case GRN_ACCESSOR_GET_ID :
+            GRN_UINT32_INIT(&dest, 0);
+            if (!grn_obj_cast(ctx, si->query, &dest, 0)) {
+              memcpy(&pi, GRN_BULK_HEAD(&dest), GRN_BULK_VSIZE(&dest));
+              if (pi.rid) {
+                if (pi.rid == grn_table_at(ctx, table, pi.rid)) {
+                  res_add(ctx, (grn_hash *)res, &pi, 1, si->logical_op);
                 }
-              } else {
-                grn_obj *domain = grn_ctx_at(ctx, index->header.domain);
-                if (domain) {
-                  grn_id tid;
-                  if (GRN_OBJ_GET_DOMAIN(si->query) == DB_OBJ(domain)->id) {
-                    tid = GRN_RECORD_VALUE(si->query);
-                  } else {
-                    tid = grn_table_get(ctx, domain,
-                                        GRN_BULK_HEAD(si->query),
-                                        GRN_BULK_VSIZE(si->query));
-                  }
-                  grn_ii_at(ctx, (grn_ii *)index, tid, (grn_hash *)res, si->logical_op);
-                }
-                grn_ii_resolve_sel_and(ctx, (grn_hash *)res, si->logical_op);
-                done++;
-              }
-              break;
-            case GRN_OP_SUFFIX :
-              {
-                grn_obj *domain;
-                if (si->flags & SCAN_ACCESSOR) {
-                  domain = table;
-                } else {
-                  domain = grn_ctx_at(ctx, index->header.domain);
-                }
-                if (domain->header.type != GRN_TABLE_PAT_KEY) {
-                  break;
-                }
-                if (!(domain->header.flags & GRN_OBJ_KEY_WITH_SIS)) {
-                  break;
-                }
-              }
-              /* fallthru */
-            case GRN_OP_PREFIX :
-              if (si->flags & SCAN_ACCESSOR) {
-                if (index->header.type == GRN_ACCESSOR &&
-                    !((grn_accessor *)index)->next) {
-                  grn_obj dest;
-                  grn_accessor *a = (grn_accessor *)index;
-                  grn_rset_posinfo pi;
-                  switch (a->action) {
-                  case GRN_ACCESSOR_GET_ID :
-                    /* todo */
-                    break;
-                  case GRN_ACCESSOR_GET_KEY :
-                    GRN_OBJ_INIT(&dest, GRN_BULK, 0, table->header.domain);
-                    if (!grn_obj_cast(ctx, si->query, &dest, 0)) {
-                      grn_hash *pres;
-                      if ((pres = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
-                                                  GRN_OBJ_TABLE_HASH_KEY))) {
-                        grn_id *key;
-                        grn_table_search(ctx, table,
-                                         GRN_BULK_HEAD(&dest), GRN_BULK_VSIZE(&dest),
-                                         si->op, (grn_obj *)pres, GRN_OP_OR);
-                        GRN_HASH_EACH(ctx, pres, id, &key, NULL, NULL, {
-                          pi.rid = *key;
-                          res_add(ctx, (grn_hash *)res, &pi, 1, si->logical_op);
-                        });
-                        grn_hash_close(ctx, pres);
-                      }
-                      done++;
-                    }
-                    grn_ii_resolve_sel_and(ctx, (grn_hash *)res, si->logical_op);
-                    GRN_OBJ_FIN(ctx, &dest);
-                    break;
-                  }
-                }
-              } else {
-                grn_obj *i = GRN_PTR_VALUE(&si->index);
-                grn_obj *domain = grn_ctx_at(ctx, i->header.domain);
-                if (domain) {
-                  grn_hash *pres;
-                  if ((pres = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
-                                              GRN_OBJ_TABLE_HASH_KEY))) {
-                    grn_id *key;
-                    grn_table_search(ctx, domain,
-                                     GRN_BULK_HEAD(si->query),
-                                     GRN_BULK_VSIZE(si->query),
-                                     si->op, (grn_obj *)pres, GRN_OP_OR);
-                    grn_obj_unlink(ctx, domain);
-                    GRN_HASH_EACH(ctx, pres, id, &key, NULL, NULL, {
-                        grn_ii_at(ctx, (grn_ii *)index, *key, (grn_hash *)res, si->logical_op);
-                      });
-                    grn_hash_close(ctx, pres);
-                  }
-                  grn_obj_unlink(ctx, domain);
-                }
-                grn_ii_resolve_sel_and(ctx, (grn_hash *)res, si->logical_op);
-                done++;
-              }
-              break;
-            case GRN_OP_MATCH :
-            case GRN_OP_NEAR :
-            case GRN_OP_NEAR2 :
-            case GRN_OP_SIMILAR :
-              {
-                grn_obj wv, **ip = &GRN_PTR_VALUE(&si->index);
-                int j = GRN_BULK_VSIZE(&si->index)/sizeof(grn_obj *);
-                int32_t *wp = &GRN_INT32_VALUE(&si->wv);
-                grn_search_optarg optarg;
-                GRN_INT32_INIT(&wv, GRN_OBJ_VECTOR);
-                if (si->op == GRN_OP_MATCH) {
-                  optarg.mode = GRN_OP_EXACT;
-                } else {
-                  optarg.mode = si->op;
-                }
-                optarg.similarity_threshold = 0;
-                switch (si->op) {
-                case GRN_OP_NEAR :
-                case GRN_OP_NEAR2 :
-#define DEFAULT_NEAR_MAX_INTERVAL 10
-                  optarg.max_interval = DEFAULT_NEAR_MAX_INTERVAL;
-#undef DEFAULT_NEAR_MAX_INTERVAL
-                  break;
-                default :
-                  optarg.max_interval = 0;
-                  break;
-                }
-                optarg.weight_vector = (int *)GRN_BULK_HEAD(&wv);
-                /* optarg.vector_size = GRN_BULK_VSIZE(&si->wv); */
-                optarg.vector_size = 1;
-                optarg.proc = NULL;
-                optarg.max_size = 0;
-                ctx->flags |= GRN_CTX_TEMPORARY_DISABLE_II_RESOLVE_SEL_AND;
-                for (; j--; ip++, wp += 2) {
-                  uint32_t sid = (uint32_t) wp[0];
-                  int32_t weight = wp[1];
-                  if (sid) {
-                    GRN_INT32_SET_AT(ctx, &wv, sid - 1, weight);
-                    optarg.weight_vector = &GRN_INT32_VALUE(&wv);
-                    optarg.vector_size = GRN_BULK_VSIZE(&wv)/sizeof(int32_t);
-                  } else {
-                    optarg.weight_vector = NULL;
-                    optarg.vector_size = weight;
-                  }
-                  if (j) {
-                    if (sid && ip[0] == ip[1]) { continue; }
-                  } else {
-                    ctx->flags &= ~GRN_CTX_TEMPORARY_DISABLE_II_RESOLVE_SEL_AND;
-                  }
-                  grn_obj_search(ctx, ip[0], si->query, res, si->logical_op, &optarg);
-                  GRN_BULK_REWIND(&wv);
-                }
-                GRN_OBJ_FIN(ctx, &wv);
               }
               done++;
-              break;
-            case GRN_OP_TERM_EXTRACT :
-              if (si->flags & SCAN_ACCESSOR) {
-                if (index->header.type == GRN_ACCESSOR &&
-                    !((grn_accessor *)index)->next) {
-                  grn_accessor *a = (grn_accessor *)index;
-                  switch (a->action) {
-                  case GRN_ACCESSOR_GET_KEY :
-                    grn_table_search(ctx, table,
-                                     GRN_TEXT_VALUE(si->query), GRN_TEXT_LEN(si->query),
-                                     GRN_OP_TERM_EXTRACT, res, si->logical_op);
-                    done++;
-                    break;
-                  }
-                }
-              }
-              break;
-            case GRN_OP_CALL :
-              if (si->flags & SCAN_ACCESSOR) {
-              } else if (selector_proc_p(si->args[0])) {
-                grn_rc rc;
-                grn_proc *proc = (grn_proc *)(si->args[0]);
-                rc = proc->selector(ctx, table, index, si->nargs, si->args,
-                                    res, si->logical_op);
-                if (rc) {
-                  /* TODO: report error */
-                } else {
-                  done++;
-                }
-              }
-              break;
-            default :
-              /* todo : implement */
-              /* todo : handle SCAN_PRE_CONST */
-              break;
             }
-          } else {
-            switch (si->op) {
-            case GRN_OP_CALL :
-              if (selector_proc_p(si->args[0])) {
-                grn_rc rc;
-                grn_proc *proc = (grn_proc *)(si->args[0]);
-                rc = proc->selector(ctx, table, NULL, si->nargs, si->args,
-                                    res, si->logical_op);
-                if (rc) {
-                  /* TODO: report error */
-                } else {
-                  done++;
-                }
+            grn_ii_resolve_sel_and(ctx, (grn_hash *)res, si->logical_op);
+            GRN_OBJ_FIN(ctx, &dest);
+            break;
+          case GRN_ACCESSOR_GET_KEY :
+            GRN_OBJ_INIT(&dest, GRN_BULK, 0, table->header.domain);
+            if (!grn_obj_cast(ctx, si->query, &dest, 0)) {
+              if ((pi.rid = grn_table_get(ctx, table,
+                                          GRN_BULK_HEAD(&dest),
+                                          GRN_BULK_VSIZE(&dest)))) {
+                res_add(ctx, (grn_hash *)res, &pi, 1, si->logical_op);
               }
-            default :
-              break;
+              done++;
             }
+            grn_ii_resolve_sel_and(ctx, (grn_hash *)res, si->logical_op);
+            GRN_OBJ_FIN(ctx, &dest);
+            break;
           }
-          return done;
+        }
+      } else {
+        grn_obj *domain = grn_ctx_at(ctx, index->header.domain);
+        if (domain) {
+          grn_id tid;
+          if (GRN_OBJ_GET_DOMAIN(si->query) == DB_OBJ(domain)->id) {
+            tid = GRN_RECORD_VALUE(si->query);
+          } else {
+            tid = grn_table_get(ctx, domain,
+                                GRN_BULK_HEAD(si->query),
+                                GRN_BULK_VSIZE(si->query));
+          }
+          grn_ii_at(ctx, (grn_ii *)index, tid, (grn_hash *)res, si->logical_op);
+        }
+        grn_ii_resolve_sel_and(ctx, (grn_hash *)res, si->logical_op);
+        done++;
+      }
+      break;
+    case GRN_OP_SUFFIX :
+    {
+      grn_obj *domain;
+      if (si->flags & SCAN_ACCESSOR) {
+        domain = table;
+      } else {
+        domain = grn_ctx_at(ctx, index->header.domain);
+      }
+      if (domain->header.type != GRN_TABLE_PAT_KEY) {
+        break;
+      }
+      if (!(domain->header.flags & GRN_OBJ_KEY_WITH_SIS)) {
+        break;
+      }
+    }
+    /* fallthru */
+    case GRN_OP_PREFIX :
+      if (si->flags & SCAN_ACCESSOR) {
+        if (index->header.type == GRN_ACCESSOR &&
+            !((grn_accessor *)index)->next) {
+          grn_obj dest;
+          grn_accessor *a = (grn_accessor *)index;
+          grn_rset_posinfo pi;
+          switch (a->action) {
+          case GRN_ACCESSOR_GET_ID :
+            /* todo */
+            break;
+          case GRN_ACCESSOR_GET_KEY :
+            GRN_OBJ_INIT(&dest, GRN_BULK, 0, table->header.domain);
+            if (!grn_obj_cast(ctx, si->query, &dest, 0)) {
+              grn_hash *pres;
+              if ((pres = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
+                                          GRN_OBJ_TABLE_HASH_KEY))) {
+                grn_id *key;
+                grn_table_search(ctx, table,
+                                 GRN_BULK_HEAD(&dest), GRN_BULK_VSIZE(&dest),
+                                 si->op, (grn_obj *)pres, GRN_OP_OR);
+                GRN_HASH_EACH(ctx, pres, id, &key, NULL, NULL, {
+                    pi.rid = *key;
+                    res_add(ctx, (grn_hash *)res, &pi, 1, si->logical_op);
+                  });
+                grn_hash_close(ctx, pres);
+              }
+              done++;
+            }
+            grn_ii_resolve_sel_and(ctx, (grn_hash *)res, si->logical_op);
+            GRN_OBJ_FIN(ctx, &dest);
+            break;
+          }
+        }
+      } else {
+        grn_obj *i = GRN_PTR_VALUE(&si->index);
+        grn_obj *domain = grn_ctx_at(ctx, i->header.domain);
+        if (domain) {
+          grn_hash *pres;
+          if ((pres = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
+                                      GRN_OBJ_TABLE_HASH_KEY))) {
+            grn_id *key;
+            grn_table_search(ctx, domain,
+                             GRN_BULK_HEAD(si->query),
+                             GRN_BULK_VSIZE(si->query),
+                             si->op, (grn_obj *)pres, GRN_OP_OR);
+            grn_obj_unlink(ctx, domain);
+            GRN_HASH_EACH(ctx, pres, id, &key, NULL, NULL, {
+                grn_ii_at(ctx, (grn_ii *)index, *key, (grn_hash *)res, si->logical_op);
+              });
+            grn_hash_close(ctx, pres);
+          }
+          grn_obj_unlink(ctx, domain);
+        }
+        grn_ii_resolve_sel_and(ctx, (grn_hash *)res, si->logical_op);
+        done++;
+      }
+      break;
+    case GRN_OP_MATCH :
+    case GRN_OP_NEAR :
+    case GRN_OP_NEAR2 :
+    case GRN_OP_SIMILAR :
+    {
+      grn_obj wv, **ip = &GRN_PTR_VALUE(&si->index);
+      int j = GRN_BULK_VSIZE(&si->index)/sizeof(grn_obj *);
+      int32_t *wp = &GRN_INT32_VALUE(&si->wv);
+      grn_search_optarg optarg;
+      GRN_INT32_INIT(&wv, GRN_OBJ_VECTOR);
+      if (si->op == GRN_OP_MATCH) {
+        optarg.mode = GRN_OP_EXACT;
+      } else {
+        optarg.mode = si->op;
+      }
+      optarg.similarity_threshold = 0;
+      switch (si->op) {
+      case GRN_OP_NEAR :
+      case GRN_OP_NEAR2 :
+#define DEFAULT_NEAR_MAX_INTERVAL 10
+        optarg.max_interval = DEFAULT_NEAR_MAX_INTERVAL;
+#undef DEFAULT_NEAR_MAX_INTERVAL
+        break;
+      default :
+        optarg.max_interval = 0;
+        break;
+      }
+      optarg.weight_vector = (int *)GRN_BULK_HEAD(&wv);
+      /* optarg.vector_size = GRN_BULK_VSIZE(&si->wv); */
+      optarg.vector_size = 1;
+      optarg.proc = NULL;
+      optarg.max_size = 0;
+      ctx->flags |= GRN_CTX_TEMPORARY_DISABLE_II_RESOLVE_SEL_AND;
+      for (; j--; ip++, wp += 2) {
+        uint32_t sid = (uint32_t) wp[0];
+        int32_t weight = wp[1];
+        if (sid) {
+          GRN_INT32_SET_AT(ctx, &wv, sid - 1, weight);
+          optarg.weight_vector = &GRN_INT32_VALUE(&wv);
+          optarg.vector_size = GRN_BULK_VSIZE(&wv)/sizeof(int32_t);
+        } else {
+          optarg.weight_vector = NULL;
+          optarg.vector_size = weight;
+        }
+        if (j) {
+          if (sid && ip[0] == ip[1]) { continue; }
+        } else {
+          ctx->flags &= ~GRN_CTX_TEMPORARY_DISABLE_II_RESOLVE_SEL_AND;
+        }
+        grn_obj_search(ctx, ip[0], si->query, res, si->logical_op, &optarg);
+        GRN_BULK_REWIND(&wv);
+      }
+      GRN_OBJ_FIN(ctx, &wv);
+    }
+    done++;
+    break;
+    case GRN_OP_TERM_EXTRACT :
+      if (si->flags & SCAN_ACCESSOR) {
+        if (index->header.type == GRN_ACCESSOR &&
+            !((grn_accessor *)index)->next) {
+          grn_accessor *a = (grn_accessor *)index;
+          switch (a->action) {
+          case GRN_ACCESSOR_GET_KEY :
+            grn_table_search(ctx, table,
+                             GRN_TEXT_VALUE(si->query), GRN_TEXT_LEN(si->query),
+                             GRN_OP_TERM_EXTRACT, res, si->logical_op);
+            done++;
+            break;
+          }
+        }
+      }
+      break;
+    case GRN_OP_CALL :
+      if (si->flags & SCAN_ACCESSOR) {
+      } else if (selector_proc_p(si->args[0])) {
+        grn_rc rc;
+        grn_proc *proc = (grn_proc *)(si->args[0]);
+        rc = proc->selector(ctx, table, index, si->nargs, si->args,
+                            res, si->logical_op);
+        if (rc) {
+          /* TODO: report error */
+        } else {
+          done++;
+        }
+      }
+      break;
+    default :
+      /* todo : implement */
+      /* todo : handle SCAN_PRE_CONST */
+      break;
+    }
+  } else {
+    switch (si->op) {
+    case GRN_OP_CALL :
+      if (selector_proc_p(si->args[0])) {
+        grn_rc rc;
+        grn_proc *proc = (grn_proc *)(si->args[0]);
+        rc = proc->selector(ctx, table, NULL, si->nargs, si->args,
+                            res, si->logical_op);
+        if (rc) {
+          /* TODO: report error */
+        } else {
+          done++;
+        }
+      }
+    default :
+      break;
+    }
+  }
+  return done;
 }
 
 grn_obj *
