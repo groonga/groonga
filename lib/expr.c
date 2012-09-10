@@ -4008,7 +4008,7 @@ static inline grn_bool
 grn_table_select_select_by_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
                                  grn_obj *res)
 {
-  int done = 0;
+  grn_bool processed = GRN_FALSE;
   if (GRN_BULK_VSIZE(&si->index)) {
     grn_obj *index = GRN_PTR_VALUE(&si->index);
     switch (si->op) {
@@ -4029,7 +4029,7 @@ grn_table_select_select_by_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
                   res_add(ctx, (grn_hash *)res, &pi, 1, si->logical_op);
                 }
               }
-              done++;
+              processed = GRN_TRUE;
             }
             grn_ii_resolve_sel_and(ctx, (grn_hash *)res, si->logical_op);
             GRN_OBJ_FIN(ctx, &dest);
@@ -4042,7 +4042,7 @@ grn_table_select_select_by_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
                                           GRN_BULK_VSIZE(&dest)))) {
                 res_add(ctx, (grn_hash *)res, &pi, 1, si->logical_op);
               }
-              done++;
+              processed = GRN_TRUE;
             }
             grn_ii_resolve_sel_and(ctx, (grn_hash *)res, si->logical_op);
             GRN_OBJ_FIN(ctx, &dest);
@@ -4063,7 +4063,7 @@ grn_table_select_select_by_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
           grn_ii_at(ctx, (grn_ii *)index, tid, (grn_hash *)res, si->logical_op);
         }
         grn_ii_resolve_sel_and(ctx, (grn_hash *)res, si->logical_op);
-        done++;
+        processed = GRN_TRUE;
       }
       break;
     case GRN_OP_SUFFIX :
@@ -4109,7 +4109,7 @@ grn_table_select_select_by_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
                   });
                 grn_hash_close(ctx, pres);
               }
-              done++;
+              processed = GRN_TRUE;
             }
             grn_ii_resolve_sel_and(ctx, (grn_hash *)res, si->logical_op);
             GRN_OBJ_FIN(ctx, &dest);
@@ -4137,7 +4137,7 @@ grn_table_select_select_by_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
           grn_obj_unlink(ctx, domain);
         }
         grn_ii_resolve_sel_and(ctx, (grn_hash *)res, si->logical_op);
-        done++;
+        processed = GRN_TRUE;
       }
       break;
     case GRN_OP_MATCH :
@@ -4194,7 +4194,7 @@ grn_table_select_select_by_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
       }
       GRN_OBJ_FIN(ctx, &wv);
     }
-    done++;
+    processed = GRN_TRUE;
     break;
     case GRN_OP_TERM_EXTRACT :
       if (si->flags & SCAN_ACCESSOR) {
@@ -4206,7 +4206,7 @@ grn_table_select_select_by_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
             grn_table_search(ctx, table,
                              GRN_TEXT_VALUE(si->query), GRN_TEXT_LEN(si->query),
                              GRN_OP_TERM_EXTRACT, res, si->logical_op);
-            done++;
+            processed = GRN_TRUE;
             break;
           }
         }
@@ -4222,7 +4222,7 @@ grn_table_select_select_by_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
         if (rc) {
           /* TODO: report error */
         } else {
-          done++;
+          processed = GRN_TRUE;
         }
       }
       break;
@@ -4242,14 +4242,14 @@ grn_table_select_select_by_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
         if (rc) {
           /* TODO: report error */
         } else {
-          done++;
+          processed = GRN_TRUE;
         }
       }
     default :
       break;
     }
   }
-  return done;
+  return processed;
 }
 
 grn_obj *
@@ -4289,7 +4289,7 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
       uint32_t codes_curr = e->codes_curr;
       GRN_PTR_INIT(&res_stack, GRN_OBJ_VECTOR, GRN_ID_NIL);
       for (i = 0; i < n; i++) {
-        int done = 0;
+        grn_bool processed = GRN_FALSE;
         scan_info *si = sis[i];
         if (si->flags & SCAN_POP) {
           grn_obj *res_;
@@ -4307,8 +4307,8 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
               res = res_;
             }
           }
-          done = grn_table_select_select_by_index(ctx, table, si, res);
-          if (!done) {
+          processed = grn_table_select_select_by_index(ctx, table, si, res);
+          if (!processed) {
             e->codes = codes + si->start;
             e->codes_curr = si->end - si->start + 1;
             grn_table_select_(ctx, table, expr, v, res, si->logical_op);
