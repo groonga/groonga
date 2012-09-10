@@ -4004,61 +4004,11 @@ grn_view_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
   return res;
 }
 
-grn_obj *
-grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
-                 grn_obj *res, grn_operator op)
+static inline grn_bool
+grn_table_select_select_by_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
+                                 grn_obj *res)
 {
-  grn_obj *v;
-  unsigned int res_size;
-  if (table->header.type == GRN_TABLE_VIEW) {
-    return grn_view_select(ctx, table, expr, res, op);
-  }
-  if (res) {
-    if (res->header.type != GRN_TABLE_HASH_KEY ||
-        (res->header.domain != DB_OBJ(table)->id)) {
-      ERR(GRN_INVALID_ARGUMENT, "hash table required");
-      return NULL;
-    }
-  } else {
-    if (!(res = grn_table_create(ctx, NULL, 0, NULL,
-                                 GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, table, NULL))) {
-      return NULL;
-    }
-  }
-  if (!(v = grn_expr_get_var_by_offset(ctx, expr, 0))) {
-    ERR(GRN_INVALID_ARGUMENT, "at least one variable must be defined");
-    return NULL;
-  }
-  GRN_API_ENTER;
-  res_size = GRN_HASH_SIZE((grn_hash *)res);
-  if (op == GRN_OP_OR || res_size) {
-    int i, n;
-    scan_info **sis;
-    if ((sis = scan_info_build(ctx, expr, &n, op, res_size))) {
-      grn_obj res_stack;
-      grn_expr *e = (grn_expr *)expr;
-      grn_expr_code *codes = e->codes;
-      uint32_t codes_curr = e->codes_curr;
-      GRN_PTR_INIT(&res_stack, GRN_OBJ_VECTOR, GRN_ID_NIL);
-      for (i = 0; i < n; i++) {
         int done = 0;
-        scan_info *si = sis[i];
-        if (si->flags & SCAN_POP) {
-          grn_obj *res_;
-          GRN_PTR_POP(&res_stack, res_);
-          grn_table_setoperation(ctx, res_, res, res_, si->logical_op);
-          grn_obj_close(ctx, res);
-          res = res_;
-        } else {
-          if (si->flags & SCAN_PUSH) {
-            grn_obj *res_;
-            res_ = grn_table_create(ctx, NULL, 0, NULL,
-                                    GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, table, NULL);
-            if (res_) {
-              GRN_PTR_PUT(ctx, &res_stack, res);
-              res = res_;
-            }
-          }
           if (GRN_BULK_VSIZE(&si->index)) {
             grn_obj *index = GRN_PTR_VALUE(&si->index);
             switch (si->op) {
@@ -4299,6 +4249,65 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
               break;
             }
           }
+          return done;
+}
+
+grn_obj *
+grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
+                 grn_obj *res, grn_operator op)
+{
+  grn_obj *v;
+  unsigned int res_size;
+  if (table->header.type == GRN_TABLE_VIEW) {
+    return grn_view_select(ctx, table, expr, res, op);
+  }
+  if (res) {
+    if (res->header.type != GRN_TABLE_HASH_KEY ||
+        (res->header.domain != DB_OBJ(table)->id)) {
+      ERR(GRN_INVALID_ARGUMENT, "hash table required");
+      return NULL;
+    }
+  } else {
+    if (!(res = grn_table_create(ctx, NULL, 0, NULL,
+                                 GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, table, NULL))) {
+      return NULL;
+    }
+  }
+  if (!(v = grn_expr_get_var_by_offset(ctx, expr, 0))) {
+    ERR(GRN_INVALID_ARGUMENT, "at least one variable must be defined");
+    return NULL;
+  }
+  GRN_API_ENTER;
+  res_size = GRN_HASH_SIZE((grn_hash *)res);
+  if (op == GRN_OP_OR || res_size) {
+    int i, n;
+    scan_info **sis;
+    if ((sis = scan_info_build(ctx, expr, &n, op, res_size))) {
+      grn_obj res_stack;
+      grn_expr *e = (grn_expr *)expr;
+      grn_expr_code *codes = e->codes;
+      uint32_t codes_curr = e->codes_curr;
+      GRN_PTR_INIT(&res_stack, GRN_OBJ_VECTOR, GRN_ID_NIL);
+      for (i = 0; i < n; i++) {
+        int done = 0;
+        scan_info *si = sis[i];
+        if (si->flags & SCAN_POP) {
+          grn_obj *res_;
+          GRN_PTR_POP(&res_stack, res_);
+          grn_table_setoperation(ctx, res_, res, res_, si->logical_op);
+          grn_obj_close(ctx, res);
+          res = res_;
+        } else {
+          if (si->flags & SCAN_PUSH) {
+            grn_obj *res_;
+            res_ = grn_table_create(ctx, NULL, 0, NULL,
+                                    GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, table, NULL);
+            if (res_) {
+              GRN_PTR_PUT(ctx, &res_stack, res);
+              res = res_;
+            }
+          }
+          done = grn_table_select_select_by_index(ctx, table, si, res);
           if (!done) {
             e->codes = codes + si->start;
             e->codes_curr = si->end - si->start + 1;
