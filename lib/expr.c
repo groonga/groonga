@@ -4309,13 +4309,17 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
           }
           processed = grn_table_select_select_by_index(ctx, table, si, res);
           if (!processed) {
+            if (ctx->rc) { break; }
             e->codes = codes + si->start;
             e->codes_curr = si->end - si->start + 1;
             grn_table_select_(ctx, table, expr, v, res, si->logical_op);
           }
         }
-        SI_FREE(si);
         LAP(":", "filter(%d)", grn_table_size(ctx, res));
+      }
+      for (i = 0; i < n; i++) {
+        scan_info *si = sis[i];
+        SI_FREE(si);
       }
       GRN_OBJ_FIN(ctx, &res_stack);
       GRN_FREE(sis);
