@@ -21,8 +21,7 @@ wait_until_process_is_finished () {
 }
 
 if [ "$1" = "try-restart" ]; then
-	WORKING=`pidofproc groonga-httpd`
-	if [ -z "$WORKING" ]; then
+	if [ ! -f "$PIDFILE" ]; then
 		exit 0
 	fi
 fi
