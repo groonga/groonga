@@ -2,9 +2,21 @@ table_create Names TABLE_PAT_KEY|KEY_WITH_SIS ShortText
 column_create Names original COLUMN_SCALAR Bool
 load --table Names
 [
-{"_key": "ひろゆき", "original": true},
-{"_key": "まろゆき", "original": true},
-{"_key": "ひろあき", "original": true},
+{"_key": "ひろゆき", "original": true}
+]
+select --table Names
+load --table Names
+[
+{"_key": "まろゆき", "original": true}
+]
+select --table Names
+load --table Names
+[
+{"_key": "ひろあき", "original": true}
+]
+select --table Names
+load --table Names
+[
 {"_key": "ゆきひろ", "original": true}
 ]
 select --table Names

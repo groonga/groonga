@@ -4,12 +4,196 @@ column_create Names original COLUMN_SCALAR Bool
 [[0,0.0,0.0],true]
 load --table Names
 [
-{"_key": "ひろゆき", "original": true},
-{"_key": "まろゆき", "original": true},
-{"_key": "ひろあき", "original": true},
+{"_key": "ひろゆき", "original": true}
+]
+[[0,0.0,0.0],1]
+select --table Names
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        4
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "original",
+          "Bool"
+        ]
+      ],
+      [
+        4,
+        "き",
+        false
+      ],
+      [
+        1,
+        "ひろゆき",
+        true
+      ],
+      [
+        3,
+        "ゆき",
+        false
+      ],
+      [
+        2,
+        "ろゆき",
+        false
+      ]
+    ]
+  ]
+]
+load --table Names
+[
+{"_key": "まろゆき", "original": true}
+]
+[[0,0.0,0.0],1]
+select --table Names
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        5
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "original",
+          "Bool"
+        ]
+      ],
+      [
+        4,
+        "き",
+        false
+      ],
+      [
+        1,
+        "ひろゆき",
+        true
+      ],
+      [
+        5,
+        "まろゆき",
+        true
+      ],
+      [
+        3,
+        "ゆき",
+        false
+      ],
+      [
+        2,
+        "ろゆき",
+        false
+      ]
+    ]
+  ]
+]
+load --table Names
+[
+{"_key": "ひろあき", "original": true}
+]
+[[0,0.0,0.0],1]
+select --table Names
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        8
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "original",
+          "Bool"
+        ]
+      ],
+      [
+        8,
+        "あき",
+        false
+      ],
+      [
+        4,
+        "き",
+        false
+      ],
+      [
+        6,
+        "ひろあき",
+        true
+      ],
+      [
+        1,
+        "ひろゆき",
+        true
+      ],
+      [
+        5,
+        "まろゆき",
+        true
+      ],
+      [
+        3,
+        "ゆき",
+        false
+      ],
+      [
+        7,
+        "ろあき",
+        false
+      ],
+      [
+        2,
+        "ろゆき",
+        false
+      ]
+    ]
+  ]
+]
+load --table Names
+[
 {"_key": "ゆきひろ", "original": true}
 ]
-[[0,0.0,0.0],4]
+[[0,0.0,0.0],1]
 select --table Names
 [
   [
