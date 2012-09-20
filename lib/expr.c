@@ -4258,6 +4258,7 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
 {
   grn_obj *v;
   unsigned int res_size;
+  grn_bool res_created = GRN_FALSE;
   if (table->header.type == GRN_TABLE_VIEW) {
     return grn_view_select(ctx, table, expr, res, op);
   }
@@ -4272,6 +4273,7 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
                                  GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, table, NULL))) {
       return NULL;
     }
+    res_created = GRN_TRUE;
   }
   if (!(v = grn_expr_get_var_by_offset(ctx, expr, 0))) {
     ERR(GRN_INVALID_ARGUMENT, "at least one variable must be defined");
@@ -4299,13 +4301,21 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
         } else {
           grn_bool processed = GRN_FALSE;
           if (si->flags & SCAN_PUSH) {
-            grn_obj *res_;
+            grn_obj *res_ = NULL;
             res_ = grn_table_create(ctx, NULL, 0, NULL,
                                     GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, table, NULL);
-            if (res_) {
-              GRN_PTR_PUT(ctx, &res_stack, res);
-              res = res_;
+            if (!res_) {
+              int i = 0;
+              if (!res_created) { i++; }
+              for (; i < GRN_BULK_VSIZE(&res_stack) / sizeof(grn_obj *); i++) {
+                grn_obj *stacked_res;
+                stacked_res = *((grn_obj **)GRN_BULK_HEAD(&res_stack) + i);
+                grn_obj_close(ctx, stacked_res);
+              }
+              break;
             }
+            GRN_PTR_PUT(ctx, &res_stack, res);
+            res = res_;
           }
           processed = grn_table_select_select_by_index(ctx, table, si, res);
           if (!processed) {
