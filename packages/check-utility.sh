@@ -12,11 +12,42 @@ CHROOT_ROOT=/var/lib/chroot
 CHECK_ADDRESS=0
 CHECK_INSTALL=0
 CHECK_INSTALL_PACKAGE=groonga
+CHECK_BUILD=0
 ENABLE_REPOSITORY=0
 DISABLE_REPOSITORY=0
 INSTALL_SCRIPT=0
 INSTALL_GROONGA=0
 UNINSTALL_GROONGA=0
+
+common_deb_procedure ()
+{
+    for code in $CODES; do
+	for arch in $DEB_ARCHITECTURES; do
+	    root_dir=$CHROOT_ROOT/$code-$arch
+	    eval $1 $code $arch "" $root_dir
+	done
+    done
+}
+
+common_rpm_procedure ()
+{
+    for dist in $DISTRIBUTIONS; do
+	case $dist in
+	    "fedora")
+		DISTRIBUTIONS_VERSION="17"
+		;;
+	    "centos")
+		DISTRIBUTIONS_VERSION="5 6"
+		;;
+	esac
+	for ver in $DISTRIBUTIONS_VERSION; do
+	    for arch in $RPM_ARCHITECTURES; do
+		root_dir=$CHROOT_ROOT/$dist-$ver-$arch
+		eval $1 $dist $arch $ver $root_dir
+	    done
+	done
+    done
+}
 
 echo_packages_repository_address ()
 {
@@ -90,6 +121,41 @@ host_address ()
     inet_addr=`echo "$ifconfig_result" | grep "inet addr:192"`
     address=`echo $inet_addr | ruby -ne '/inet addr:(.+?)\s/ =~ $_ && puts($1)'`
     HOST_ADDRESS=$address
+}
+
+check_build_packages ()
+{
+    common_deb_procedure "check_build_deb_packages"
+    common_rpm_procedure "check_build_rpm_packages"
+}
+
+check_build_deb_packages ()
+{
+    code=$1
+    arch=$2
+    BASE_VERSION=`cat ../base_version`
+    RESULT_SET=`find apt/repositories -name "*$BASE_VERSION*" | grep $code | grep $arch`
+    if [ -z "$RESULT_SET" ]; then
+	printf "%8s %5s %s =>  0 deb\n" $code $arch $BASE_VERSION
+    else
+	PACKAGE_COUNT=`find apt/repositories -name "*$BASE_VERSION*" | grep $code | grep $arch | wc | awk '{print \$1}'`
+	printf "%8s %5s %s => %2d debs\n" $code $arch $BASE_VERSION $PACKAGE_COUNT
+    fi
+}
+
+check_build_rpm_packages ()
+{
+    dist=$1
+    arch=$2
+    ver=$3
+    BASE_VERSION=`cat ../base_version`
+    RESULT_SET=`find yum/repositories -name "*$BASE_VERSION*" | grep $dist | grep $arch`
+    if [ -z "$RESULT_SET" ]; then
+	printf "%8s %6s %s =>  0 deb\n" $dist$ver $arch $BASE_VERSION
+    else
+	PACKAGE_COUNT=`find yum/repositories -name "*$BASE_VERSION*" | grep $dist | grep $arch | wc | awk '{print \$1}'`
+	printf "%8s %6s %s => %2d debs\n" $dist$ver $arch $BASE_VERSION $PACKAGE_COUNT
+    fi
 }
 
 check_installed_groonga_packages ()
@@ -413,6 +479,10 @@ while [ $# -ne 0 ]; do
 	    CHECK_ADDRESS=1
 	    shift
 	    ;;
+	--check-build)
+	    CHECK_BUILD=1
+	    shift
+	    ;;
 	--enable-repository)
 	    ENABLE_REPOSITORY=1
 	    shift
@@ -479,6 +549,9 @@ if [ $CHECK_INSTALL -ne 0 ]; then
 fi
 if [ $CHECK_ADDRESS -ne 0 ]; then
     check_packages_repository_address
+fi
+if [ $CHECK_BUILD -ne 0 ]; then
+    check_build_packages
 fi
 if [ $ENABLE_REPOSITORY -ne 0 ]; then
     enable_temporaly_groonga_repository
