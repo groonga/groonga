@@ -299,6 +299,9 @@ fi
 %config(noreplace) %{_sysconfdir}/munin/plugin-conf.d/*
 
 %changelog
+* Sat Sep 29 2012 HAYASHI Kentaro <hayashi@clear-code.com> - 2.0.7-0
+- new upstream release.
+
 * Wed Aug 29 2012 HAYASHI Kentaro <hayashi@clear-code.com> - 2.0.6-0
 - new upstream release.
 - Split common tasks for server use into groonga-server-common package.
