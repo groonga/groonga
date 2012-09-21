@@ -6,8 +6,8 @@ set -x
 ./autogen.sh
 
 configure_args=""
-if [ "$CC" = "clang" ]; then
+#if [ "$CC" = "clang" ]; then
     configure_args="${configure_args} --with-debug"
-fi
+#fi
 
 ./configure --with-ruby19 ${configure_args}
