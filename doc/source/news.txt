@@ -5,6 +5,38 @@
 News
 ====
 
+.. _release-2-0-７:
+
+Release 2.0.7 - 2012/09/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [doc] Added more descriptions about ``--query_flags``.
+* [doc][httpd] Added sample configuration for gzip compression.
+* [httpd][rpm][centos] Added groonga-httpd init script.
+* [rpm] Added logrotate config files.
+* Supported creating database during install process.
+* [httpd] Supported ``groonga_database_auto_create`` directive.
+* Supported score respected merge by set operation. [GitHub#31]
+* [httpd] Supported ``load`` command by POST.
+* Added error check for creating temporary result set. [GitHub#33]
+
+Fixes
+^^^^^
+
+* Fixed to set domain to vector elements to ``load`` command. [GitHub#30]
+* [httpd] Fixed missing NULL initialization. [Reported by @Kiske]
+* [httpd] Fixed missing size about ``content_type_len``.
+* [rpm][fedora] Fixed to use ``--bind-address`` in ``groonga.service``.
+* Fixed crash by invalid argument filter. [GitHub#32]
+
+Thanks
+^^^^^^
+
+* @Kiske
+
 .. _release-2-0-6:
 
 Release 2.0.6 - 2012/08/29
