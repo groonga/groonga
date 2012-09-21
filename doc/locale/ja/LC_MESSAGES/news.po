@@ -22,9 +22,8 @@ msgid "News"
 msgstr "お知らせ"
 
 #: ../../../source/news.txt:11
-#, fuzzy
 msgid "Release 2.0.7 - 2012/09/29"
-msgstr "2.0.6リリース - 2012/08/29"
+msgstr "2.0.7リリース - 2012/09/29"
 
 #: ../../../source/news.txt:14 ../../../source/news.txt:46
 #: ../../../source/news.txt:94 ../../../source/news.txt:147
@@ -45,51 +44,48 @@ msgstr "改良"
 
 # d3be6cfcd52948bebb170b9cbdc3bf3d
 #: ../../../source/news.txt:16
-#, fuzzy
 msgid "[doc] Added more descriptions about ``--query_flags``."
-msgstr "[doc] スクリプト構文の説明を追加。"
+msgstr "[doc] ``--query_flags`` の説明を追加。"
 
 # d61cf78e4bd9478cbac6c4b56306722e
 #: ../../../source/news.txt:17
 msgid "[doc][httpd] Added sample configuration for gzip compression."
-msgstr ""
+msgstr "[doc][httpd] gzip圧縮についての設定サンプルを追加。"
 
 # 8cc2ec7486d14dfcaec56e85c0c899a8
 #: ../../../source/news.txt:18
 msgid "[httpd][rpm][centos] Added groonga-httpd init script."
-msgstr ""
+msgstr "[httpd][rpm][centos] groonga-httpd initスクリプトを追加。"
 
 # 96b234b538854eb5834541e61b446ea1
 #: ../../../source/news.txt:19
 msgid "[rpm] Added logrotate config files."
-msgstr ""
+msgstr "[rpm] logrotateの設定ファイルを追加。"
 
 # 1a4379dfad874cce8e8df4127d857244
 #: ../../../source/news.txt:20
 msgid "Supported creating database during install process."
-msgstr ""
+msgstr "インストール中のデータベース作成をサポート。"
 
 # 6e6d97492d194a4980fb4af16022151e
 #: ../../../source/news.txt:21
-#, fuzzy
 msgid "[httpd] Supported ``groonga_database_auto_create`` directive."
-msgstr "[httpd] groongaデータベースごとのロケーション指定をサポート。"
+msgstr "[httpd] ``groonga_database_auto_create`` ディレクティブをサポート。"
 
 # 6db960789eee4a90a998c1fed2c94972
 #: ../../../source/news.txt:22
-#, fuzzy
 msgid "Supported score respected merge by set operation. [GitHub#31]"
-msgstr "ロックされたデータベースのオープンをサポート。 [GitHub#21]"
+msgstr "集合演算でのスコアのマージをサポート。 [GitHub#31]"
 
 # af71f5ccb3624f72b583a449e5e420fa
 #: ../../../source/news.txt:23
 msgid "[httpd] Supported ``load`` command by POST."
-msgstr ""
+msgstr "[httpd] POSTによる ``load`` コマンドをサポート。"
 
 # 1384bd993061437f8ed66fbb9d90deb1
 #: ../../../source/news.txt:24
 msgid "Added error check for creating temporary result set. [GitHub#33]"
-msgstr ""
+msgstr "一時結果テーブルを作成する際のエラーチェックを追加。 [GitHub#33]"
 
 #: ../../../source/news.txt:27 ../../../source/news.txt:67
 #: ../../../source/news.txt:119 ../../../source/news.txt:174
@@ -106,30 +102,27 @@ msgstr "修正"
 # da9ee26db8864458a524ecdf7cba6a95
 #: ../../../source/news.txt:29
 msgid "Fixed to set domain to vector elements to ``load`` command. [GitHub#30]"
-msgstr ""
+msgstr "``load`` コマンド実行時にベクタ要素へ主キー値の属する型情報を設定するように修正した。 [GitHub#30]"
 
 # 30b5bfea9cc44012b8047a175961bdae
 #: ../../../source/news.txt:30
-#, fuzzy
 msgid "[httpd] Fixed missing NULL initialization. [Reported by @Kiske]"
-msgstr "[doc] 日本語ページ内のリンクを修正した。 [@naoinaさんが報告]"
+msgstr "[httpd] NULLでの初期化漏れを修正した。 [@Kiskeさんが報告]"
 
 # 5621485a8dbf4a8190c7579af018a098
 #: ../../../source/news.txt:31
 msgid "[httpd] Fixed missing size about ``content_type_len``."
-msgstr ""
+msgstr "[httpd] ``content_type_len`` のサイズ設定漏れを修正した。"
 
 # 353e744dd148475e81ed81c147fe8fd3
 #: ../../../source/news.txt:32
-#, fuzzy
 msgid "[rpm][fedora] Fixed to use ``--bind-address`` in ``groonga.service``."
-msgstr ""
-"[rpm][fedora] groonga-httpdサービスでstopパラメータの指定漏れを修正した。"
+msgstr "[rpm][fedora] ``groonga.service`` で ``--bind-address`` を使うように修正した。"
 
 # bce9dce8a62f49bb906135eae845f20e
 #: ../../../source/news.txt:33
 msgid "Fixed crash by invalid argument filter. [GitHub#32]"
-msgstr ""
+msgstr "不適切なフィルタの引数によリクラッシュする問題を修正した。 [GitHub#32]"
 
 #: ../../../source/news.txt:36 ../../../source/news.txt:82
 #: ../../../source/news.txt:135 ../../../source/news.txt:183
@@ -145,7 +138,7 @@ msgstr "感謝"
 # 4bde41ad9cb3474187f8c33b27b6b53a
 #: ../../../source/news.txt:38
 msgid "@Kiske"
-msgstr ""
+msgstr "@Kiskeさん"
 
 #: ../../../source/news.txt:43
 msgid "Release 2.0.6 - 2012/08/29"
