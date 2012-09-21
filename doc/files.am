@@ -37,6 +37,10 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/select/query_expansion_complex.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/query_expansion_substitute.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/query_expansion_substitution_table.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/query_flags_allow_column.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/query_flags_allow_leading_not.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/query_flags_allow_update.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/query_flags_none.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/query_less_than.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/query_or.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/simple_filter.log \
@@ -421,6 +425,10 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/select/query_expansion_complex.log \
 	source/example/reference/commands/select/query_expansion_substitute.log \
 	source/example/reference/commands/select/query_expansion_substitution_table.log \
+	source/example/reference/commands/select/query_flags_allow_column.log \
+	source/example/reference/commands/select/query_flags_allow_leading_not.log \
+	source/example/reference/commands/select/query_flags_allow_update.log \
+	source/example/reference/commands/select/query_flags_none.log \
 	source/example/reference/commands/select/query_less_than.log \
 	source/example/reference/commands/select/query_or.log \
 	source/example/reference/commands/select/simple_filter.log \
