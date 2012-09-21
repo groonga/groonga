@@ -24,9 +24,8 @@ msgstr "News"
 
 # d27fa66c86a54b51b44b70d9284562d8
 #: ../../../source/news.txt:11
-#, fuzzy
 msgid "Release 2.0.7 - 2012/09/29"
-msgstr "Release 2.0.6 - 2012/08/29"
+msgstr ""
 
 # b9b72ebbcc23490584ac924aaba5fdec
 # b9b72ebbcc23490584ac924aaba5fdec
@@ -72,9 +71,8 @@ msgstr "Improvements"
 
 # b99033b17c7a4902a9a56da071050e29
 #: ../../../source/news.txt:16
-#, fuzzy
 msgid "[doc] Added more descriptions about ``--query_flags``."
-msgstr "[doc] Added descriptions about script syntax."
+msgstr ""
 
 # b8d8dcd2d1d34779bdae034236d1a364
 #: ../../../source/news.txt:17
@@ -150,9 +148,8 @@ msgstr ""
 
 # 2bf12fbf09ba4f4aaf7044fa99c8f0d4
 #: ../../../source/news.txt:30
-#, fuzzy
 msgid "[httpd] Fixed missing NULL initialization. [Reported by @Kiske]"
-msgstr "[doc] Fixed links in Japanese page. [Reported by @naoina]"
+msgstr ""
 
 # d03c3e18fc2248cbaf369fe40c4e9cfd
 #: ../../../source/news.txt:31
