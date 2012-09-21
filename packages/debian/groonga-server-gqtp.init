@@ -1,6 +1,6 @@
 #! /bin/sh
 ### BEGIN INIT INFO
-# Provides:          groonga
+# Provides:          groonga-server-gqtp
 # Required-Start:    $remote_fs $network
 # Required-Stop:     $remote_fs $network
 # Default-Start:     2 3 4 5
@@ -23,17 +23,17 @@ USER=groonga
 GROUP=groonga
 DATABASE=/var/lib/groonga/db/db
 ADDRESS=127.0.0.1
-PORT=10041
-PROTOCOL=http
-LOG_PATH=/var/log/groonga/groonga.log
-QUERY_LOG_PATH=/var/log/groonga/query.log
-PIDFILE=/var/run/groonga/$NAME.pid
-SCRIPTNAME=/etc/init.d/$NAME
+PORT=10043
+PROTOCOL=gqtp
+LOG_PATH=/var/log/groonga/groonga-$PROTOCOL.log
+QUERY_LOG_PATH=/var/log/groonga/query-$PROTOCOL.log
+PIDFILE=/var/run/groonga/$NAME-$PROTOCOL.pid
+SCRIPTNAME=/etc/init.d/$NAME-server-$PROTOCOL
 OPTION_ARGS=""
 START_STOP_DAEMON_ARGS=""
 ENABLE="no"
 
-DEFAULT_FILE=/etc/default/groonga-server
+DEFAULT_FILE=/etc/default/groonga-server-gqtp
 
 # Exit if the package is not installed
 [ -x "$DAEMON" ] || exit 0

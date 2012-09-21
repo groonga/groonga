@@ -46,22 +46,41 @@ Description: Fulltext search engine. (meta-package for server use)
  .
  This package provides common settings for server use.
 
-Package: groonga-server
+Package: groonga-server-http
 Section: database
 Architecture: any
-Replaces: groonga (<< 1.2.0-1)
-Breaks: groonga (<< 1.2.0-1)
+Replaces: groonga-server (<< 2.0.7-1)
+Breaks: groonga-server (<< 2.0.7-1)
+Conflicts: groonga-httpd
 Depends:
   ${misc:Depends},
   ${shlibs:Depends},
   adduser,
   curl,
   groonga-server-common (= ${binary:Version})
-Description: Fulltext search engine. (meta-package for server use)
+Description: Fulltext search engine. (meta-package for HTTP server use)
  Groonga is an open-source fulltext search engine and column store.
  It lets you write high-performance applications that requires fulltext search.
  .
  This package depends all groonga related package for server use.
+
+Package: groonga-server-gqtp
+Section: database
+Architecture: any
+Replaces: groonga-server (<< 2.0.7-1)
+Breaks: groonga-server (<< 2.0.7-1)
+Depends:
+  ${misc:Depends},
+  ${shlibs:Depends},
+  adduser,
+  curl,
+  groonga-server-common (= ${binary:Version})
+Description: Fulltext search engine. (meta-package for GQTP server use)
+ Groonga is an open-source fulltext search engine and column store.
+ It lets you write high-performance applications that requires fulltext search.
+ .
+ This package depends all groonga related package for server use.
+
 
 Package: libgroonga-dev
 Section: libdevel
@@ -142,6 +161,7 @@ Section: database
 Architecture: any
 Replaces: groonga (<< 1.2.0-1)
 Breaks: groonga (<< 1.2.0-1)
+Conflicts: groonga-server-http
 Depends:
   ${misc:Depends},
   ${shlibs:Depends},

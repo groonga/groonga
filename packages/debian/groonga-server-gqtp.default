@@ -1,0 +1,12 @@
+# Default
+#USER=groonga
+#GROUP=groonga
+#ADDRESS=127.0.0.1
+#PORT=10043
+#DATABASE=/var/lib/groonga/db/db
+#LOG_PATH=/var/log/groonga/groonga-gqtp.log
+#QUERY_LOG_PATH=/var/log/groonga/query-gqtp.log
+#PROTOCOL=gqtp
+
+# Comment out this to disable groonga daemon.
+ENABLE=yes
