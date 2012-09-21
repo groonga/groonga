@@ -7,14 +7,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-15 15:24\n"
+"POT-Creation-Date: 2012-09-21 13:32\n"
 "PO-Revision-Date: 2012-08-15 15:24+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
+"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 # ed13f02be8cf4e75899c1bdb9c3b0ce0
@@ -35,12 +35,12 @@ msgstr "GQTP"
 # bc3bac6e5b2d4bbabf960fb6c748d13e
 # db09943762d248ccbc5952b0089bfb5b
 #: ../../../source/server/gqtp.txt:8
-#: ../../../source/server/http/comparison.txt:245
-#: ../../../source/server/http/comparison.txt:250
-#: ../../../source/server/http/comparison.txt:255
-#: ../../../source/server/http/comparison.txt:260
-#: ../../../source/server/http/groonga.txt:8
+#: ../../../source/server/http/comparison.txt:273
+#: ../../../source/server/http/comparison.txt:278
+#: ../../../source/server/http/comparison.txt:283
+#: ../../../source/server/http/comparison.txt:288
 #: ../../../source/server/http/groonga-httpd.txt:8
+#: ../../../source/server/http/groonga.txt:8
 msgid "TODO"
 msgstr "TODO"
 
@@ -158,15 +158,15 @@ msgstr "o"
 msgid "Using multi CPU cores"
 msgstr "Using multi CPU cores"
 
-# 35411a8c2f4746469099969dc793fb6b
-#: ../../../source/server/http/comparison.txt:16
-msgid "o (by multi threading)"
-msgstr "o (by multi threading)"
-
 # 71c3575dab9f4d8eb38028a80b33283e
 #: ../../../source/server/http/comparison.txt:16
 msgid "o (by multi process)"
 msgstr "o (by multi process)"
+
+# 35411a8c2f4746469099969dc793fb6b
+#: ../../../source/server/http/comparison.txt:16
+msgid "o (by multi threading)"
+msgstr "o (by multi threading)"
 
 # 7a205eae058b4fc0ae69c39a19183d14
 # 09a77bd06d29454fa36fa229b26683ab
@@ -249,28 +249,28 @@ msgstr "Gzip compression"
 # 738f3c2e9fab4114af69a62bcb2d949f
 # cf1df911c7374ccb898992e41ed4e2ab
 #: ../../../source/server/http/comparison.txt:30
-#: ../../../source/server/http/comparison.txt:243
+#: ../../../source/server/http/comparison.txt:271
 msgid "POST"
 msgstr "POST"
 
 # d8eadc31f8d147d5bdf8f8fd8823ea8b
 # a113462e651b42f38eb289da1f6b7786
 #: ../../../source/server/http/comparison.txt:32
-#: ../../../source/server/http/comparison.txt:248
+#: ../../../source/server/http/comparison.txt:276
 msgid "HTTPS"
 msgstr "HTTPS"
 
 # 203a3a3af84d4728af390bbaf90e84d0
 # b8fe45cb84ba49599fd15fb3a69724e0
 #: ../../../source/server/http/comparison.txt:34
-#: ../../../source/server/http/comparison.txt:253
+#: ../../../source/server/http/comparison.txt:281
 msgid "Access log"
 msgstr "Access log"
 
 # 97dc932c2ad845e6875ba6d632e2ab38
 # 97dc932c2ad845e6875ba6d632e2ab38
 #: ../../../source/server/http/comparison.txt:36
-#: ../../../source/server/http/comparison.txt:258
+#: ../../../source/server/http/comparison.txt:286
 msgid "Upgrading without downtime"
 msgstr "Upgrading without downtime"
 
@@ -479,3 +479,24 @@ msgid ""
 msgstr ""
 ":doc:`groonga-httpd` supports gzip compression. Here is a sample "
 "configuration to compress response by gzip::"
+
+# 2b04113fce604de1b757839cf3e23aa3
+#: ../../../source/server/http/comparison.txt:257
+msgid ""
+"Note that `gzip_types *` is specified. It's one of the important "
+"configuration. `gzip_types` specifies gzip target data formats by MIME "
+"types. :doc:`groonga-httpd` returns one of JSON, XML or MessagePack format "
+"data. But those formats aren't included in the default value of "
+"`gzip_types`. The default value of `gzip_types` is `text/html`."
+msgstr ""
+
+# 0dabd3179e04486da7d465381bb2bd51
+#: ../../../source/server/http/comparison.txt:263
+msgid ""
+"To compress response data from :doc:`groonga-httpd` by gzip, you need to "
+"specify `gzip_types *` or `gzip_types application/json text/xml application/"
+"x-msgpack` explicitly. `gzip_types *` is recommended. There are two reasons "
+"for it. The first, groonga may support more formats in the future. The "
+"second, all requests for the `location` are processed by groonga. You don't "
+"need to consider about other modules."
+msgstr ""
