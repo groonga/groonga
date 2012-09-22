@@ -4569,6 +4569,8 @@ grn_obj_is_persistent(grn_ctx *ctx, grn_obj *obj)
 
 #define NUM2TIME(ctx, dest, value)\
   GRN_TIME_SET(ctx, dest, (long long int)(value) * GRN_TIME_USEC_PER_SEC);
+#define TIME2TIME(ctx, dest, value)\
+  GRN_TIME_SET(ctx, dest, value);
 #define FLOAT2TIME(ctx, dest, value)\
   GRN_TIME_SET(ctx, dest, (long long int)(value * GRN_TIME_USEC_PER_SEC));
 
@@ -4599,7 +4601,7 @@ grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, int addp)
     NUM2DEST(GRN_INT64_VALUE, grn_text_lltoa, NUM2BOOL, NUM2TIME);
     break;
   case GRN_DB_TIME :
-    NUM2DEST(GRN_TIME_VALUE, grn_text_lltoa, NUM2BOOL, NUM2TIME);
+    NUM2DEST(GRN_TIME_VALUE, grn_text_lltoa, NUM2BOOL, TIME2TIME);
     break;
   case GRN_DB_UINT64 :
     NUM2DEST(GRN_UINT64_VALUE, grn_text_lltoa, NUM2BOOL, NUM2TIME);
