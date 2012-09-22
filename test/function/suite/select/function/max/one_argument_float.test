@@ -1,0 +1,13 @@
+table_create Values TABLE_NO_KEY
+column_create Values value COLUMN_SCALAR Float
+column_create Values output COLUMN_SCALAR Float
+
+load --table Values
+[
+{"value":-1.1}
+]
+
+select Values \
+  --filter true \
+  --output_columns '_id,output' \
+  --scorer 'output = max(value)'

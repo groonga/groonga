@@ -1,0 +1,11 @@
+table_create Values TABLE_NO_KEY
+
+load --table Values
+[
+[]
+]
+
+select Values \
+  --filter true \
+  --output_columns '_id,_score' \
+  --scorer '_score = max()'

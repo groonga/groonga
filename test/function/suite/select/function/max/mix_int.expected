@@ -1,0 +1,25 @@
+table_create Values TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Values int8_value COLUMN_SCALAR Int8
+[[0,0.0,0.0],true]
+column_create Values uint8_value COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create Values int16_value COLUMN_SCALAR Int16
+[[0,0.0,0.0],true]
+column_create Values uint16_value COLUMN_SCALAR UInt16
+[[0,0.0,0.0],true]
+column_create Values int32_value COLUMN_SCALAR Int32
+[[0,0.0,0.0],true]
+column_create Values uint32_value COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+column_create Values int64_value COLUMN_SCALAR Int64
+[[0,0.0,0.0],true]
+column_create Values uint64_value COLUMN_SCALAR UInt64
+[[0,0.0,0.0],true]
+load --table Values
+[
+{"int8_value":-8, "uint8_value": 8, "int16_value":-16, "uint16_value": 16, "int32_value":-32, "uint32_value": 32, "int64_value":-64, "uint64_value": 64}
+]
+[[0,0.0,0.0],1]
+select Values   --filter true   --output_columns '_id,_score'   --scorer '_score = max(int8_value, uint8_value, int16_value, uint16_value, int32_value, uint32_value, int64_value, uint64_value)'
+[[0,0.0,0.0],[[[1],[["_id","UInt32"],["_score","Int32"]],[1,64]]]]

@@ -1,0 +1,12 @@
+table_create Values TABLE_NO_KEY
+column_create Values output COLUMN_SCALAR Float
+
+load --table Values
+[
+[]
+]
+
+select Values \
+  --filter true \
+  --output_columns '_id,output' \
+  --scorer 'output = max(-29.29, 2929.29, 29.29)'

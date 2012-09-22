@@ -2592,6 +2592,208 @@ func_now(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   return obj;
 }
 
+static inline grn_bool
+is_comparable_number_type(grn_id type)
+{
+  return GRN_DB_INT8 <= type && type <= GRN_DB_TIME;
+}
+
+static inline grn_id
+larger_number_type(grn_id type1, grn_id type2)
+{
+  switch (type1) {
+  case GRN_DB_TIME :
+    return type1;
+  case GRN_DB_FLOAT :
+    if (type2 == GRN_DB_TIME) {
+      return type2;
+    } else {
+      return type1;
+    }
+  default :
+    if (type2 > type1) {
+      return type2;
+    } else {
+      return type1;
+    }
+  }
+}
+
+static inline grn_bool
+is_negative_value(grn_obj *number)
+{
+  switch (number->header.domain) {
+  case GRN_DB_INT8 :
+    return GRN_INT8_VALUE(number) < 0;
+  case GRN_DB_INT16 :
+    return GRN_INT16_VALUE(number) < 0;
+  case GRN_DB_INT32 :
+    return GRN_INT32_VALUE(number) < 0;
+  case GRN_DB_INT64 :
+    return GRN_INT64_VALUE(number) < 0;
+  case GRN_DB_TIME :
+    return GRN_TIME_VALUE(number) < 0;
+  case GRN_DB_FLOAT :
+    return GRN_FLOAT_VALUE(number) < 0;
+  default :
+    return GRN_FALSE;
+  }
+}
+
+static inline grn_bool
+number_safe_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, grn_id type)
+{
+  grn_obj_reinit(ctx, dest, type, 0);
+  if (src->header.domain == type) {
+    GRN_TEXT_SET(ctx, dest, GRN_TEXT_VALUE(src), GRN_TEXT_LEN(src));
+    return GRN_TRUE;
+  }
+
+  switch (type) {
+  case GRN_DB_UINT8 :
+    if (is_negative_value(src)) {
+      GRN_UINT8_SET(ctx, dest, 0);
+      return GRN_TRUE;
+    }
+  case GRN_DB_UINT16 :
+    if (is_negative_value(src)) {
+      GRN_UINT16_SET(ctx, dest, 0);
+      return GRN_TRUE;
+    }
+  case GRN_DB_UINT32 :
+    if (is_negative_value(src)) {
+      GRN_UINT32_SET(ctx, dest, 0);
+      return GRN_TRUE;
+    }
+  case GRN_DB_UINT64 :
+    if (is_negative_value(src)) {
+      GRN_UINT64_SET(ctx, dest, 0);
+      return GRN_TRUE;
+    }
+  default :
+    return grn_obj_cast(ctx, src, dest, GRN_FALSE) == GRN_SUCCESS;
+  }
+}
+
+static inline int
+compare_number(grn_ctx *ctx, grn_obj *number1, grn_obj *number2, grn_id type)
+{
+#define COMPARE_AND_RETURN(type, value1, value2)\
+  {\
+    type computed_value1 = value1;\
+    type computed_value2 = value2;\
+    if (computed_value1 > computed_value2) {\
+      return 1;\
+    } else if (computed_value1 < computed_value2) {\
+      return -1;\
+    } else {\
+      return 0;\
+    }\
+  }
+
+  switch (type) {
+  case GRN_DB_INT8 :
+    COMPARE_AND_RETURN(int8_t,
+                       GRN_INT8_VALUE(number1),
+                       GRN_INT8_VALUE(number2));
+  case GRN_DB_UINT8 :
+    COMPARE_AND_RETURN(uint8_t,
+                       GRN_UINT8_VALUE(number1),
+                       GRN_UINT8_VALUE(number2));
+  case GRN_DB_INT16 :
+    COMPARE_AND_RETURN(int16_t,
+                       GRN_INT16_VALUE(number1),
+                       GRN_INT16_VALUE(number2));
+  case GRN_DB_UINT16 :
+    COMPARE_AND_RETURN(uint16_t,
+                       GRN_UINT16_VALUE(number1),
+                       GRN_UINT16_VALUE(number2));
+  case GRN_DB_INT32 :
+    COMPARE_AND_RETURN(int32_t,
+                       GRN_INT32_VALUE(number1),
+                       GRN_INT32_VALUE(number2));
+  case GRN_DB_UINT32 :
+    COMPARE_AND_RETURN(uint32_t,
+                       GRN_UINT32_VALUE(number1),
+                       GRN_UINT32_VALUE(number2));
+  case GRN_DB_INT64 :
+    COMPARE_AND_RETURN(int64_t,
+                       GRN_INT64_VALUE(number1),
+                       GRN_INT64_VALUE(number2));
+  case GRN_DB_UINT64 :
+    COMPARE_AND_RETURN(uint64_t,
+                       GRN_UINT64_VALUE(number1),
+                       GRN_UINT64_VALUE(number2));
+  case GRN_DB_FLOAT :
+    COMPARE_AND_RETURN(double,
+                       GRN_FLOAT_VALUE(number1),
+                       GRN_FLOAT_VALUE(number2));
+  case GRN_DB_TIME :
+    COMPARE_AND_RETURN(int64_t,
+                       GRN_TIME_VALUE(number1),
+                       GRN_TIME_VALUE(number2));
+  default :
+    return 0;
+  }
+
+#undef COMPARE_AND_RETURN
+}
+
+static grn_obj *
+func_max(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  grn_obj *max;
+  grn_id cast_type = GRN_DB_INT8;
+  grn_obj casted_max, casted_number;
+  int i;
+
+  max = GRN_PROC_ALLOC(GRN_DB_VOID, 0);
+  if (!max) {
+    return max;
+  }
+
+  GRN_VOID_INIT(&casted_max);
+  GRN_VOID_INIT(&casted_number);
+  for (i = 0; i < nargs; i++) {
+    grn_obj *number = args[i];
+    grn_id domain = number->header.domain;
+    if (!is_comparable_number_type(domain)) {
+      continue;
+    }
+    cast_type = larger_number_type(cast_type, domain);
+    if (!number_safe_cast(ctx, number, &casted_number, cast_type)) {
+      continue;
+    }
+    if (max->header.domain == GRN_DB_VOID) {
+      grn_obj_reinit(ctx, max, cast_type, 0);
+      GRN_TEXT_SET(ctx, max,
+                   GRN_TEXT_VALUE(&casted_number),
+                   GRN_TEXT_LEN(&casted_number));
+      continue;
+    }
+
+    if (max->header.domain != cast_type) {
+      if (!number_safe_cast(ctx, max, &casted_max, cast_type)) {
+        continue;
+      }
+      grn_obj_reinit(ctx, max, cast_type, 0);
+      GRN_TEXT_SET(ctx, max,
+                   GRN_TEXT_VALUE(&casted_max),
+                   GRN_TEXT_LEN(&casted_max));
+    }
+    if (compare_number(ctx, &casted_number, max, cast_type) > 0) {
+      grn_obj_reinit(ctx, max, cast_type, 0);
+      GRN_TEXT_SET(ctx, max,
+                   GRN_TEXT_VALUE(&casted_number),
+                   GRN_TEXT_LEN(&casted_number));
+    }
+  }
+  GRN_OBJ_FIN(ctx, &casted_max);
+  GRN_OBJ_FIN(ctx, &casted_number);
+
+  return max;
+}
+
 static grn_obj *
 func_geo_in_circle(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
@@ -2892,6 +3094,8 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   grn_proc_create(ctx, "rand", 4, GRN_PROC_FUNCTION, func_rand, NULL, NULL, 0, vars);
 
   grn_proc_create(ctx, "now", 3, GRN_PROC_FUNCTION, func_now, NULL, NULL, 0, vars);
+
+  grn_proc_create(ctx, "max", 3, GRN_PROC_FUNCTION, func_max, NULL, NULL, 0, vars);
 
   {
     grn_obj *selector_proc;

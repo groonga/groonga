@@ -1,0 +1,13 @@
+table_create Values TABLE_NO_KEY
+column_create Values value COLUMN_SCALAR Time
+column_create Values output COLUMN_SCALAR Time
+
+load --table Values
+[
+{"value":1348322135.12666}
+]
+
+select Values \
+  --filter true \
+  --output_columns '_id,output' \
+  --scorer 'output = max(value)'
