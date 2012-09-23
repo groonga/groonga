@@ -1,0 +1,15 @@
+table_create Values TABLE_NO_KEY
+column_create Values past COLUMN_SCALAR Time
+column_create Values now COLUMN_SCALAR Time
+column_create Values feature COLUMN_SCALAR Time
+column_create Values output COLUMN_SCALAR Time
+
+load --table Values
+[
+{"past":-1348322135.12666, "now":1348322135.12666, "feature":1848322135.12666}
+]
+
+select Values \
+  --filter true \
+  --output_columns '_id,output' \
+  --scorer 'output = min(now, past, feature)'

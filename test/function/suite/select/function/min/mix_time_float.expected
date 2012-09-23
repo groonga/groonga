@@ -9,7 +9,7 @@ load --table Values
 {"time_value":-1348322135.12666}
 ]
 [[0,0.0,0.0],1]
-select Values   --filter true   --output_columns '_id,output'   --scorer 'output = min(29, time_value, 29.29)'
+select Values   --filter true   --output_columns '_id,output'   --scorer 'output = min(-29, time_value, 29.29)'
 [
   [
     0,
