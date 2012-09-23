@@ -3091,11 +3091,14 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_COMMAND("truncate", proc_truncate, 1, vars);
 
   DEF_VAR(vars[0], "seed");
-  grn_proc_create(ctx, "rand", 4, GRN_PROC_FUNCTION, func_rand, NULL, NULL, 0, vars);
+  grn_proc_create(ctx, "rand", 4, GRN_PROC_FUNCTION, func_rand,
+                  NULL, NULL, 0, vars);
 
-  grn_proc_create(ctx, "now", 3, GRN_PROC_FUNCTION, func_now, NULL, NULL, 0, vars);
+  grn_proc_create(ctx, "now", 3, GRN_PROC_FUNCTION, func_now,
+                  NULL, NULL, 0, vars);
 
-  grn_proc_create(ctx, "max", 3, GRN_PROC_FUNCTION, func_max, NULL, NULL, 0, vars);
+  grn_proc_create(ctx, "max", 3, GRN_PROC_FUNCTION, func_max,
+                  NULL, NULL, 0, vars);
 
   {
     grn_obj *selector_proc;
