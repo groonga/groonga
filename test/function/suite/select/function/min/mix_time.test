@@ -1,0 +1,13 @@
+table_create Values TABLE_NO_KEY
+column_create Values time_value COLUMN_SCALAR Time
+column_create Values output COLUMN_SCALAR Time
+
+load --table Values
+[
+{"time_value":-1348322135.12666}
+]
+
+select Values \
+  --filter true \
+  --output_columns '_id,output' \
+  --scorer 'output = min(29, time_value, 29.29)'

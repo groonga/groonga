@@ -1,0 +1,12 @@
+table_create Values TABLE_NO_KEY
+column_create Values value COLUMN_SCALAR UInt16
+
+load --table Values
+[
+{"value":1}
+]
+
+select Values \
+  --filter true \
+  --output_columns '_id,_score' \
+  --scorer '_score = min(value)'

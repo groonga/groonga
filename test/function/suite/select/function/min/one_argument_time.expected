@@ -1,0 +1,13 @@
+table_create Values TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Values value COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Values output COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+load --table Values
+[
+{"value":1348322135.12666}
+]
+[[0,0.0,0.0],1]
+select Values   --filter true   --output_columns '_id,output'   --scorer 'output = min(value)'
+[[0,0.0,0.0],[[[1],[["_id","UInt32"],["output","Time"]],[1,1348322135.12666]]]]
