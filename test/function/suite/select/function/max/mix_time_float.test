@@ -10,4 +10,4 @@ load --table Values
 select Values \
   --filter true \
   --output_columns '_id,output' \
-  --scorer 'output = max(29, time_value, 29.29)'
+  --scorer 'output = max(-29, time_value, 29.29)'

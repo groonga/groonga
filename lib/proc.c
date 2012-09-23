@@ -2606,10 +2606,10 @@ larger_number_type(grn_id type1, grn_id type2)
   }
 
   switch (type1) {
-  case GRN_DB_TIME :
-    return type1;
   case GRN_DB_FLOAT :
-    if (type2 == GRN_DB_TIME) {
+    return type1;
+  case GRN_DB_TIME :
+    if (type2 == GRN_DB_FLOAT) {
       return type2;
     } else {
       return type1;
