@@ -1,5 +1,5 @@
 
-logrotate_conf = groonga-server groonga-httpd
+logrotate_conf = groonga-server-gqtp groonga-server-http groonga-httpd
 
 if REDHAT_PLATFORM
 logrotatedir = $(sysconfdir)/logrotate.d
