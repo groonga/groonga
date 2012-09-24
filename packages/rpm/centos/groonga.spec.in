@@ -211,8 +211,11 @@ if [ $1 = 1 ]; then
 fi
 exit 0
 
-%post server
-/sbin/chkconfig --add groonga
+%post server-gqtp
+/sbin/chkconfig --add groonga-server-gqtp
+
+%post server-http
+/sbin/chkconfig --add groonga-server-http
 
 %post httpd
 if [ $1 = 1 ] ; then
@@ -230,15 +233,26 @@ fi
 	/sbin/service munin-node restart > /dev/null 2>&1
 :
 
-%preun server
+%preun server-http
 if [ $1 = 0 ] ; then
-	/sbin/service groonga stop >/dev/null 2>&1 || :
-	/sbin/chkconfig --del groonga
+	/sbin/service groonga-server-http stop >/dev/null 2>&1 || :
+	/sbin/chkconfig --del groonga-server-http
 fi
 
-%postun server
+%postun server-http
 if [ $1 -ge 1 ] ; then
-	/sbin/service groonga condrestart >/dev/null 2>&1 || :
+	/sbin/service groonga-server-http condrestart >/dev/null 2>&1 || :
+fi
+
+%preun server-gqtp
+if [ $1 = 0 ] ; then
+	/sbin/service groonga-server-http stop >/dev/null 2>&1 || :
+	/sbin/chkconfig --del groonga-server-gqtp
+fi
+
+%postun server-gqtp
+if [ $1 -ge 1 ] ; then
+	/sbin/service groonga-server-gqtp condrestart >/dev/null 2>&1 || :
 fi
 
 %postun libs -p /sbin/ldconfig
@@ -270,12 +284,22 @@ fi
 
 %files server-common
 
-%files server
+%files server-gqtp
 %defattr(-,root,root,-)
 %config(noreplace) %{_sysconfdir}/groonga/
-%config(noreplace) %{_sysconfdir}/sysconfig/groonga
-%config(noreplace) %{_sysconfdir}/logrotate.d/groonga-server
-%{_initddir}/groonga
+%config(noreplace) %{_sysconfdir}/sysconfig/groonga-server-gqtp
+%config(noreplace) %{_sysconfdir}/logrotate.d/groonga-server-gqtp
+%{_initddir}/groonga-server-gqtp
+%ghost %dir %{_localstatedir}/run/%{name}
+%attr(0750,groonga,groonga) %dir %{_localstatedir}/lib/%{name}
+%attr(0750,groonga,groonga) %dir %{_localstatedir}/lib/%{name}/db
+
+%files server-http
+%defattr(-,root,root,-)
+%config(noreplace) %{_sysconfdir}/groonga/
+%config(noreplace) %{_sysconfdir}/sysconfig/groonga-server-http
+%config(noreplace) %{_sysconfdir}/logrotate.d/groonga-server-http
+%{_initddir}/groonga-server-http
 %ghost %dir %{_localstatedir}/run/%{name}
 %attr(0750,groonga,groonga) %dir %{_localstatedir}/lib/%{name}
 %attr(0750,groonga,groonga) %dir %{_localstatedir}/lib/%{name}/db
@@ -318,6 +342,8 @@ fi
 %changelog
 * Sat Sep 29 2012 HAYASHI Kentaro <hayashi@clear-code.com> - 2.0.7-0
 - new upstream release.
+- Split groonga-server package into groonga-server-gqtp and
+  groonga-server-http package.
 
 * Wed Aug 29 2012 HAYASHI Kentaro <hayashi@clear-code.com> - 2.0.6-0
 - new upstream release.

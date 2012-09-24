@@ -250,7 +250,10 @@ if [ $1 = 1 ] ; then
 fi
 exit 0
 
-%post server
+%post server-http
+/bin/systemctl daemon-reload >/dev/null 2>&1 || :
+
+%post server-gqtp
 /bin/systemctl daemon-reload >/dev/null 2>&1 || :
 
 %post httpd
@@ -270,13 +273,13 @@ fi
 	/sbin/service munin-node restart > /dev/null 2>&1
 :
 
-%preun server
+%preun server-http
 if [ $1 = 0 ] ; then
 	/bin/systemctl --no-reload disable groonga.service > /dev/null 2>&1 || :
 	/bin/systemctl stop groonga.service > /dev/null 2>&1 || :
 fi
 
-%postun server
+%postun server-http
 /bin/systemctl daemon-reload >/dev/null 2>&1 || :
 if [ $1 -ge 1 ] ; then
 	/bin/systemctl try-restart groonga.service >/dev/null 2>&1 || :
@@ -329,11 +332,20 @@ fi
 
 %files server-common
 
-%files server
+%files server-http
 %defattr(-,root,root,-)
 %config(noreplace) %{_sysconfdir}/groonga/
-%config(noreplace) %{_sysconfdir}/sysconfig/groonga
-%dir %{_unitdir}/groonga.service
+%config(noreplace) %{_sysconfdir}/sysconfig/groonga-server-http
+%dir %{_unitdir}/groonga-server-http.service
+%ghost %dir %{_localstatedir}/run/%{name}
+%attr(0750,groonga,groonga) %dir %{_localstatedir}/lib/%{name}
+%attr(0750,groonga,groonga) %dir %{_localstatedir}/lib/%{name}/db
+
+%files server-gqtp
+%defattr(-,root,root,-)
+%config(noreplace) %{_sysconfdir}/groonga/
+%config(noreplace) %{_sysconfdir}/sysconfig/groonga-server-gqtp
+%dir %{_unitdir}/groonga-server-gqtp.service
 %ghost %dir %{_localstatedir}/run/%{name}
 %attr(0750,groonga,groonga) %dir %{_localstatedir}/lib/%{name}
 %attr(0750,groonga,groonga) %dir %{_localstatedir}/lib/%{name}/db
@@ -382,6 +394,8 @@ fi
 %changelog
 * Sat Sep 29 2012 HAYASHI Kentaro <hayashi@clear-code.com> - 2.0.7-0
 - new upstream release.
+- Split groonga-server package into groonga-server-gqtp and
+  groonga-server-http package.
 
 * Wed Aug 29 2012 HAYASHI Kentaro <hayashi@clear-code.com> - 2.0.6-0
 - new upstream release.
