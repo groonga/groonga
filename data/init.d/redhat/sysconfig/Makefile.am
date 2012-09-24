@@ -1,4 +1,4 @@
-data = groonga groonga-httpd
+data = groonga-server-gqtp groonga-server-http groonga-httpd
 
 if REDHAT_PLATFORM
 sysconfigdir = $(sysconfdir)/sysconfig
