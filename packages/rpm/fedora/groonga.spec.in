@@ -93,7 +93,6 @@ Group:		Applications/Text
 License:	LGPLv2 and BSD
 Requires:	%{name}-server-common = %{version}-%{release}
 Requires:	pcre
-Obsoletes:	%{name}-httpd < 2.0.7-0
 Conflicts:	%{name}-server-http
 
 %description httpd
