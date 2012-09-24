@@ -11,7 +11,7 @@
         . /etc/sysconfig/groonga-server-http
         if x"$ENABLE" = x"yes"; then
             /usr/bin/curl --silent --output /dev/null \
-                "http://127.0.0.1:10041/d/log_reopen"
+                "http://127.0.0.1:${PORT:-10041}/d/log_reopen"
         fi
     endscript
 }
