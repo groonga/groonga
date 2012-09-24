@@ -1,7 +1,8 @@
 SUBDIRS = sysconfig
 
 services =					\
-	groonga.service				\
+	groonga-server-http.service		\
+	groonga-server-gqtp.service		\
 	groonga-httpd.service
 
 if FEDORA_PLATFORM
