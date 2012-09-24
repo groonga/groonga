@@ -22,6 +22,9 @@ Improvements
 * Supported score respected merge by set operation. [GitHub#31]
 * [httpd] Supported ``load`` command by POST.
 * Added error check for creating temporary result set. [GitHub#33]
+* Added GQTP server package.
+* Added ``max()`` function.
+* Added ``min()`` function.
 
 Fixes
 ^^^^^
@@ -31,6 +34,8 @@ Fixes
 * [httpd] Fixed missing size about ``content_type_len``.
 * [rpm][fedora] Fixed to use ``--bind-address`` in ``groonga.service``.
 * Fixed crash by invalid argument filter. [GitHub#32]
+* Fixed a bug that Time -> Time cast breaks value.
+* Fixed a bug that Time -> Float cast breaks value.
 
 Thanks
 ^^^^^^
