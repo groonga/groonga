@@ -55,8 +55,23 @@ Requires(pre):	shadow-utils
 %description server-common
 This package provides common settings for server use
 
-%package server
-Summary:	Groonga server
+%package server-gqtp
+Summary:	Groonga GQTP server
+Group:		Applications/Text
+License:	LGPLv2 and (MIT or GPLv2)
+Requires:	%{name}-server-common = %{version}-%{release}
+Requires(pre):	shadow-utils
+Requires(post):	/sbin/chkconfig
+Requires(preun):	/sbin/chkconfig
+Requires(preun):	/sbin/service
+Requires(postun):	/sbin/service
+Obsoletes:	%{name}-server < 2.0.7-0
+
+%description server-gqtp
+This package contains the groonga GQTP server
+
+%package server-http
+Summary:	Groonga HTTP server
 Group:		Applications/Text
 License:	LGPLv2 and (MIT or GPLv2)
 Requires:	%{name}-server-common = %{version}-%{release}
@@ -66,10 +81,11 @@ Requires(post):	/sbin/chkconfig
 Requires(preun):	/sbin/chkconfig
 Requires(preun):	/sbin/service
 Requires(postun):	/sbin/service
-Obsoletes:	%{name}-server < 2.0.6-0
+Obsoletes:	%{name}-server < 2.0.7-0
+Conflicts:	%{name}-httpd
 
-%description server
-This package contains the groonga server
+%description server-http
+This package contains the groonga HTTP server
 
 %package httpd
 Summary:	Groonga HTTP server
@@ -77,7 +93,8 @@ Group:		Applications/Text
 License:	LGPLv2 and BSD
 Requires:	%{name}-server-common = %{version}-%{release}
 Requires:	pcre
-Obsoletes:	%{name}-httpd < 2.0.6-0
+Obsoletes:	%{name}-httpd < 2.0.7-0
+Conflicts:	%{name}-server-http
 
 %description httpd
 This package contains the groonga HTTP server
