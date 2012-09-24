@@ -1,15 +1,15 @@
 #!/bin/bash
 #
-# /etc/rc.d/init.d/groonga
+# /etc/rc.d/init.d/groonga-server-http
 #
 # chkconfig: - 80 20
 # description: A full-text search engine and column store.
 # processname: groonga
-# config: /etc/sysconfig/groonga
-# pidfile: /var/run/groonga/groonga.pid
+# config: /etc/sysconfig/groonga-server-http
+# pidfile: /var/run/groonga/groonga-http.pid
 #
 ### BEGIN INIT INFO
-# Provides:          groonga
+# Provides:          groonga-server-http
 # Default-Stop:      0 1 6
 # Required-Start:    $remote_fs
 # Required-Stop:     $remote_fs
@@ -20,7 +20,7 @@
 # Source function library.
 . /etc/init.d/functions
 
-name="groonga"
+name="groonga-server-http"
 prog="groonga"
 groonga=/usr/bin/$prog
 curl=/usr/bin/curl
@@ -29,10 +29,10 @@ GROUP=groonga
 DATABASE=/var/lib/groonga/db/db
 ADDRESS=127.0.0.1
 PORT=10041
-PIDFILE=/var/run/groonga/$prog.pid
+PIDFILE=/var/run/groonga/$prog-http.pid
 PROTOCOL=http
-LOG_PATH=/var/log/groonga/groonga.log
-QUERY_LOG_PATH=/var/log/groonga/query.log
+LOG_PATH=/var/log/groonga/groonga-http.log
+QUERY_LOG_PATH=/var/log/groonga/query-http.log
 OPTION_ARGS=""
 
 if [ -f /etc/sysconfig/$name ]; then
@@ -108,11 +108,7 @@ RETVAL=0
 
 send_command() {
 	command=$1
-	if [ "${PROTOCOL}" = "http" ]; then
-		$curl "http://${ADDRESS}:${PORT}/d/${command}"
-	else
-		$groonga --port $PORT -c $ADDRESS ${command}
-	fi
+	$curl "http://${ADDRESS}:${PORT}/d/${command}"
 }
 
 start() {
@@ -120,7 +116,7 @@ start() {
 	daemon $DAEMON_ARGS $groonga "$GROONGA_ARGS"
 	RETVAL=$?
 	echo
-	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/$prog
+	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/$name
 	return $RETVAL
 }
 
@@ -130,7 +126,7 @@ stop() {
 	killproc $prog
 	RETVAL=$?
 	echo
-	[ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/$prog
+	[ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/$name
 	return $RETVAL
 }
 
@@ -157,7 +153,7 @@ case "$1" in
 	killproc $groonga -HUP
 	;;
     condrestart)
-	[ -f /var/lock/subsys/$prog ] && restart || :
+	[ -f /var/lock/subsys/$name ] && restart || :
 	;;
     status)
 	status
