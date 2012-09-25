@@ -1,4 +1,4 @@
-data = groonga
+data = groonga-server-http groonga-server-gqtp
 
 if FEDORA_PLATFORM
 sysconfigdir = $(sysconfdir)/sysconfig

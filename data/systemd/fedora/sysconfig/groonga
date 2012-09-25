@@ -1,6 +1,0 @@
-# Default
-ADDRESS=127.0.0.1
-DATABASE=/var/lib/groonga/db/db
-LOG_PATH=/var/log/groonga/groonga.log
-QUERY_LOG_PATH=/var/log/groonga/query.log
-PROTOCOL=http
