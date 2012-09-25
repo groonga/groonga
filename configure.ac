@@ -304,11 +304,11 @@ if test "$solaris" = "yes"; then
 fi
 
 # For debug
-AC_ARG_WITH(debug,
-  [AS_HELP_STRING([--with-debug],
+AC_ARG_ENABLE(debug,
+  [AS_HELP_STRING([--enable-debug],
                   [use debug flags (default=no)])],
-  grn_debug="$withval",
-  grn_debug="no")
+  [grn_debug="$enableval"],
+  [grn_debug="no"])
 if test "x$grn_debug" != "xno"; then
   grn_debug="yes"
   if test "$CLANG" = "yes"; then
