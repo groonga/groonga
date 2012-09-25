@@ -581,12 +581,12 @@ grn_token_close(grn_ctx *ctx, grn_token *token)
       ((grn_proc *)token->tokenizer)->funcs[PROC_FIN](ctx, 1, &token->table,
                                                       &token->pctx.user_data);
     }
-    GRN_FREE(token);
-    return GRN_SUCCESS;
-  } else {
     if (token->nstr) {
       grn_obj_close(ctx, token->nstr);
     }
+    GRN_FREE(token);
+    return GRN_SUCCESS;
+  } else {
     return GRN_INVALID_ARGUMENT;
   }
 }
