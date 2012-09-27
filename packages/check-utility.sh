@@ -24,7 +24,7 @@ common_deb_procedure ()
     for code in $CODES; do
 	for arch in $DEB_ARCHITECTURES; do
 	    root_dir=$CHROOT_ROOT/$code-$arch
-	    eval $1 $code $arch "" $root_dir
+	    eval $1 $code $arch $root_dir
 	done
     done
 }
@@ -47,6 +47,20 @@ common_rpm_procedure ()
 	    done
 	done
     done
+}
+
+copy_and_exec_script ()
+{
+    chroot_host=$1
+    root_dir=$2
+    script=$3
+    if [ -d $root_dir ]; then
+	echo "copy script $script to $root_dir/tmp"
+	sudo rm -f $root_dir/tmp/$script
+	cp tmp/$script $root_dir/tmp
+	sudo chmod 755 $root_dir/tmp/$script
+	sudo chname $chroot_host chroot $root_dir /tmp/$script
+    fi
 }
 
 echo_packages_repository_address ()
@@ -91,29 +105,31 @@ setup_deb_architectures ()
 
 check_packages_repository_address ()
 {
-    for code in $CODES; do
-	for arch in $DEB_ARCHITECTURES; do
-	    root_dir=$CHROOT_ROOT/$code-$arch
-	    echo_packages_repository_address "$root_dir" "$code" "$arch"
-	done
-    done
-    for dist in $DISTRIBUTIONS; do
-	case $dist in
-	    "fedora")
-		DISTRIBUTIONS_VERSION="17"
-		;;
-	    "centos")
-		DISTRIBUTIONS_VERSION="5 6"
-		;;
-	esac
-	for ver in $DISTRIBUTIONS_VERSION; do
-	    for arch in $RPM_ARCHITECTURES; do
-		root_dir=$CHROOT_ROOT/$dist-$ver-$arch
-		echo_packages_repository_address "$root_dir" "$dist-$ver" "$arch"
-	    done
-	done
-    done
+    common_deb_procedure "check_packages_deb_repository_address"
+    common_rpm_procedure "check_packages_rpm_repository_address"
 }
+
+check_packages_deb_repository_address ()
+{
+    code=$1
+    arch=$2
+    root_dir=$3
+    if [ -d "$root_dir" ]; then
+	echo_packages_repository_address "$root_dir" "$code" "$arch"
+    fi
+}
+
+check_packages_rpm_repository_address ()
+{
+    dist=$1
+    arch=$2
+    ver=$3
+    root_dir=$4
+    if [ -d "$root_dir" ]; then
+	echo_packages_repository_address "$root_dir" "$dist-$ver" "$arch"
+    fi
+}
+
 
 host_address ()
 {
@@ -160,55 +176,50 @@ check_build_rpm_packages ()
 
 check_installed_groonga_packages ()
 {
-    cat > check-deb-groonga.sh <<EOF
+    common_deb_procedure "check_installed_groonga_deb_packages"
+    common_rpm_procedure "check_installed_groonga_rpm_packages"
+}
+
+check_installed_groonga_deb_packages ()
+{
+    code=$1
+    arch=$2
+    root_dir=$3
+    CHECK_SCRIPT=check-deb-groonga.sh
+    cat > tmp/$CHECK_SCRIPT <<EOF
 #!/bin/sh
 dpkg -l | grep $CHECK_INSTALL_PACKAGE
 EOF
-    cat > check-rpm-groonga.sh <<EOF
+    copy_and_exec_script $code-$arch $root_dir $CHECK_SCRIPT
+}    
+
+
+check_installed_groonga_rpm_packages ()
+{
+    dist=$1
+    arch=$2
+    ver=$3
+    root_dir=$4
+    CHECK_SCRIPT=check-rpm-groonga.sh
+    cat > tmp/$CHECK_SCRIPT <<EOF
 #!/bin/sh
 rpm -qa | grep $CHECK_INSTALL_PACKAGE
 EOF
-    for code in $CODES; do
-	for arch in $DEB_ARCHITECTURES; do
-	    root_dir=$CHROOT_ROOT/$code-$arch
-	    if [ -d $root_dir ]; then
-		CHECK_SCRIPT=check-deb-groonga.sh
-		echo "copy check script $CHECK_SCRIPT to $root_dir/tmp"
-		sudo rm -f $root_dir/tmp/$CHECK_SCRIPT
-		cp $CHECK_SCRIPT $root_dir/tmp
-		sudo chmod 755 $root_dir/tmp/$CHECK_SCRIPT
-		sudo chname $code-$arch chroot $root_dir /tmp/$CHECK_SCRIPT
-	    fi
-	done
-    done
-    for dist in $DISTRIBUTIONS; do
-	case $dist in
-	    "fedora")
-		DISTRIBUTIONS_VERSION="17"
-		;;
-	    "centos")
-		DISTRIBUTIONS_VERSION="5 6"
-		;;
-	esac
-	for ver in $DISTRIBUTIONS_VERSION; do
-	    for arch in $RPM_ARCHITECTURES; do
-		CHECK_SCRIPT=check-rpm-groonga.sh
-		root_dir=$CHROOT_ROOT/$dist-$ver-$arch
-		if [ -d $root_dir ]; then
-		    echo "copy check script $CHECK_SCRIPT to $root_dir/tmp"
-		    sudo rm -f $root_dir/tmp/$CHECK_SCRIPT
-		    cp $CHECK_SCRIPT $root_dir/tmp
-		    sudo chmod 755 $root_dir/tmp/$CHECK_SCRIPT
-		    sudo chname $code-$ver-$arch chroot $root_dir /tmp/$CHECK_SCRIPT
-		fi
-	    done
-	done
-    done
+    copy_and_exec_script $code-$ver-$arch $root_dir $CHECK_SCRIPT 
 }
 
 install_groonga_packages ()
 {
-    cat > install-aptitude-groonga.sh <<EOF
+    common_deb_procedure "install_groonga_deb_packages"
+    common_rpm_procedure "install_groonga_rpm_packages"
+}
+
+install_groonga_deb_packages ()
+{
+    code=$1
+    arch=$2
+    root_dir=$3
+    cat > tmp/install-aptitude-groonga.sh <<EOF
 #!/bin/sh
 sudo aptitude clean
 rm -f /var/lib/apt/lists/packages.groonga.org_*
@@ -220,7 +231,7 @@ sudo aptitude -V -D -y install groonga
 sudo aptitude -V -D -y install groonga-tokenizer-mecab
 sudo aptitude -V -D -y install groonga-munin-plugins
 EOF
-    cat > install-aptget-groonga.sh <<EOF
+    cat > tmp/install-aptget-groonga.sh <<EOF
 #!/bin/sh
 sudo apt-get clean
 rm -f /var/lib/apt/lists/packages.groonga.org_*
@@ -232,28 +243,25 @@ sudo apt-get -y install groonga
 sudo apt-get -y install groonga-tokenizer-mecab
 sudo apt-get -y install groonga-munin-plugins
 EOF
-    for code in $CODES; do
-	for arch in $DEB_ARCHITECTURES; do
-	    root_dir=$CHROOT_ROOT/$code-$arch
-	    INSTALL_SCRIPT=""
-	    case $code in
-		squeeze|unstable)
-		    INSTALL_SCRIPT=install-aptitude-groonga.sh
-		    ;;
-		*)
-		    INSTALL_SCRIPT=install-aptget-groonga.sh
-		    ;;
-	    esac
-	    if [ -d $root_dir ]; then
-		echo "copy install script $INSTALL_SCRIPT to $root_dir/tmp"
-		sudo rm -f $root_dir/tmp/$INSTALL_SCRIPT
-		cp $INSTALL_SCRIPT $root_dir/tmp
-		chmod 755 $root_dir/tmp/$INSTALL_SCRIPT
-		sudo chname $code-$arch chroot $root_dir /tmp/$INSTALL_SCRIPT
-	    fi
-	done
-    done
-    cat > install-centos5-groonga.sh <<EOF
+    INSTALL_SCRIPT=""
+    case $code in
+	squeeze|unstable)
+	    INSTALL_SCRIPT=install-aptitude-groonga.sh
+	    ;;
+	*)
+	    INSTALL_SCRIPT=install-aptget-groonga.sh
+	    ;;
+    esac
+    copy_and_exec_script $code-$arch $root_dir $INSTALL_SCRIPT
+}
+
+install_groonga_rpm_packages ()
+{
+    dist=$1
+    arch=$2
+    ver=$3
+    root_dir=$4
+    cat > tmp/install-centos5-groonga.sh <<EOF
 sudo rpm -ivh http://packages.groonga.org/centos/groonga-release-1.1.0-0.noarch.rpm
 sudo yum makecache
 sudo yum install -y groonga
@@ -262,7 +270,7 @@ wget http://download.fedoraproject.org/pub/epel/5/i386/epel-release-5-4.noarch.r
 sudo rpm -ivh epel-release-5-4.noarch.rpm
 sudo yum install -y groonga-munin-plugins
 EOF
-    cat > install-centos6-groonga.sh <<EOF
+    cat > tmp/install-centos6-groonga.sh <<EOF
 sudo rpm -ivh http://packages.groonga.org/centos/groonga-release-1.1.0-0.noarch.rpm
 sudo yum makecache
 sudo yum install -y groonga
@@ -270,50 +278,28 @@ sudo yum install -y groonga-tokenizer-mecab
 sudo rpm -ivh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-7.noarch.rpm
 sudo yum install -y groonga-munin-plugins
 EOF
-    cat > install-fedora-groonga.sh <<EOF
+    cat > tmp/install-fedora-groonga.sh <<EOF
 sudo rpm -ivh http://packages.groonga.org/fedora/groonga-release-1.1.0-0.noarch.rpm
 sudo yum makecache
 sudo yum install -y groonga
 sudo yum install -y groonga-tokenizer-mecab
 sudo yum install -y groonga-munin-plugins
 EOF
-    for dist in $DISTRIBUTIONS; do
-	case $dist in
-	    "fedora")
-		DISTRIBUTIONS_VERSION="17"
-		;;
-	    "centos")
-		DISTRIBUTIONS_VERSION="5 6"
-		;;
-	esac
-	for ver in $DISTRIBUTIONS_VERSION; do
-	    for arch in $RPM_ARCHITECTURES; do
-		case "$dist-$ver" in
-		    centos-5)
-			INSTALL_SCRIPT=install-centos5-groonga.sh
-			;;
-		    centos-6)
-			INSTALL_SCRIPT=install-centos6-groonga.sh
-			;;
-		    fedora-17)
-			INSTALL_SCRIPT=install-fedora-groonga.sh
-			;;
-		    *)
-			;;
-		esac
-		root_dir=$CHROOT_ROOT/$dist-$ver-$arch
-		if [ -d $root_dir ]; then
-		    echo "copy install script $INSTALL_SCRIPT to $root_dir/tmp"
-		    sudo rm -f $root_dir/tmp/$INSTALL_SCRIPT
-		    cp $INSTALL_SCRIPT $root_dir/tmp
-		    chmod 755 $root_dir/tmp/$INSTALL_SCRIPT
-		    sudo chname $code-$ver-$arch chroot $root_dir /tmp/$INSTALL_SCRIPT
-		fi
-	    done
-	done
-    done
+    case "$dist-$ver" in
+	centos-5)
+	    INSTALL_SCRIPT=install-centos5-groonga.sh
+	    ;;
+	centos-6)
+	    INSTALL_SCRIPT=install-centos6-groonga.sh
+	    ;;
+	fedora-17)
+	    INSTALL_SCRIPT=install-fedora-groonga.sh
+	    ;;
+	*)
+	    ;;
+    esac
+    copy_and_exec_script $dist-$ver-$arch $root_dir $INSTALL_SCRIPT
 }
-
 
 uninstall_groonga_packages ()
 {
@@ -365,96 +351,70 @@ EOF
 
 
 
-enable_temporaly_groonga_repository ()
+enable_temporary_groonga_repository ()
 {
-    cat > enable-repository.sh <<EOF
+    common_deb_procedure "enable_temporary_groonga_deb_repository"
+    common_rpm_procedure "enable_temporary_groonga_rpm_repository"
+    check_packages_repository_address
+}
+
+enable_temporary_groonga_deb_repository ()
+{
+    code=$1
+    arch=$2
+    root_dir=$3
+    SCRIPT=enable-repository.sh
+    cat > tmp/$SCRIPT <<EOF
 #!/bin/sh
 
 grep -v "packages.groonga.org" /etc/hosts > /tmp/hosts
 echo "$HOST_ADDRESS packages.groonga.org" >> /tmp/hosts
 cp -f /tmp/hosts /etc/hosts
 EOF
-    for code in $CODES; do
-	for arch in $DEB_ARCHITECTURES; do
-	    root_dir=$CHROOT_ROOT/$code-$arch
-	    today=`date '+%Y%m%d.%s'`
-	    if [ -d $root_dir ]; then
-		sudo cp $root_dir/etc/hosts $root_dir/etc/hosts.$today
-		sudo cp enable-repository.sh $root_dir/tmp
-		sudo chname $code-$arch chroot $root_dir /tmp/enable-repository.sh
-	    fi
-	done
-    done
-    for dist in $DISTRIBUTIONS; do
-	case $dist in
-	    "fedora")
-		DISTRIBUTIONS_VERSION="17"
-		;;
-	    "centos")
-		DISTRIBUTIONS_VERSION="5 6"
-		;;
-	esac
-	for ver in $DISTRIBUTIONS_VERSION; do
-	    for arch in $RPM_ARCHITECTURES; do
-		root_dir=$CHROOT_ROOT/$dist-$ver-$arch
-		today=`date '+%Y%m%d.%s'`
-		if [ -d $root_dir ]; then
-		    sudo cp $root_dir/etc/hosts $root_dir/etc/hosts.$today
-		    sudo cp enable-repository.sh $root_dir/tmp
-		    sudo chname $code-$arch chroot $root_dir /tmp/enable-repository.sh
-		fi
-	    done
-	done
-    done
-
-    check_packages_repository_address
+    today=`date '+%Y%m%d.%s'`
+    copy_and_exec_script $code-$arch $root_dir $SCRIPT
 }
 
-disable_temporaly_groonga_repository ()
+enable_temporary_groonga_rpm_repository ()
 {
-    cat > disable-repository.sh <<EOF
+    dist=$1
+    arch=$2
+    ver=$3
+    root_dir=$4
+    SCRIPT=enable-repository.sh
+    today=`date '+%Y%m%d.%s'`
+    copy_and_exec_script $dist-$ver-$arch $root_dir $SCRIPT
+}
+
+disable_temporary_groonga_repository ()
+{
+    SCRIPT=disable-repository.sh
+    cat > tmp/$SCRIPT <<EOF
 #!/bin/sh
 
 grep -v "packages.groonga.org" /etc/hosts > /tmp/hosts
 cp -f /tmp/hosts /etc/hosts
 EOF
-    DISABLE_SCRIPT=disable-repository.sh
-    for code in $CODES; do
-	for arch in $DEB_ARCHITECTURES; do
-	    root_dir=$CHROOT_ROOT/$code-$arch
-	    today=`date '+%Y%m%d.%s'`
-	    if [ -d $root_dir ]; then
-		sudo cp $root_dir/etc/hosts $root_dir/etc/hosts.$today
-		cp $DISABLE_SCRIPT $root_dir/tmp
-		chmod 755 $root_dir/tmp/$DISABLE_SCRIPT
-		sudo chname $code-$arch chroot $root_dir /tmp/$DISABLE_SCRIPT
-	    fi
-	done
-    done
-    for dist in $DISTRIBUTIONS; do
-	case $dist in
-	    "fedora")
-		DISTRIBUTIONS_VERSION="17"
-		;;
-	    "centos")
-		DISTRIBUTIONS_VERSION="5 6"
-		;;
-	esac
-	for ver in $DISTRIBUTIONS_VERSION; do
-	    for arch in $RPM_ARCHITECTURES; do
-		root_dir=$CHROOT_ROOT/$dist-$ver-$arch
-		today=`date '+%Y%m%d.%s'`
-		if [ -d $root_dir ]; then
-		    sudo cp $root_dir/etc/hosts $root_dir/etc/hosts.$today
-		    cp $DISABLE_SCRIPT $root_dir/tmp
-		    chmod 755 $root_dir/tmp/$DISABLE_SCRIPT
-		    sudo chname $code-$arch chroot $root_dir /tmp/$DISABLE_SCRIPT
-		fi
-	    done
-	done
-    done
-
+    common_deb_procedure "disable_temporary_groonga_deb_repository"
+    common_rpm_procedure "disable_temporary_groonga_rpm_repository"
     check_packages_repository_address
+}
+
+disable_temporary_groonga_deb_repository ()
+{
+    code=$1
+    arch=$2
+    root_dir=$3
+    copy_and_exec_script $code-$arch $root_dir $SCRIPT
+}
+
+disable_temporary_groonga_rpm_repository ()
+{
+    dist=$1
+    arch=$2
+    ver=$3
+    root_dir=$4
+    copy_and_exec_script $code-$arch $root_dir $SCRIPT
 }
 
 host_address
@@ -541,6 +501,7 @@ while [ $# -ne 0 ]; do
     esac
 done
 
+mkdir -p tmp
 setup_deb_architectures
 setup_rpm_architectures
 
