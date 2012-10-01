@@ -71,7 +71,7 @@ This package contains the groonga GQTP server
 %package server-http
 Summary:	Groonga HTTP server
 Group:		Applications/Text
-License:	LGPLv2 and (MIT or GPLv2)
+License:	LGPLv2
 Requires:	%{name}-server-common = %{version}-%{release}
 Requires:	curl
 Requires(pre):	shadow-utils
@@ -336,6 +336,7 @@ fi
 - Remove needless "Requires". They will be added by rpmbuild automatically.
   Reported by by Daiki Ueno. Thanks!!!
 - Fix license of server-gqtp.
+- Fix license of server-http.
 
 * Sat Sep 29 2012 HAYASHI Kentaro <hayashi@clear-code.com> - 2.0.7-0
 - new upstream release.
