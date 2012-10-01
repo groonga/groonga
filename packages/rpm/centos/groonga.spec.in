@@ -340,6 +340,9 @@ fi
 %config(noreplace) %{_sysconfdir}/munin/plugin-conf.d/*
 
 %changelog
+* Mon Oct 29 2012 Kouhei Sutou <kou@clear-code.com> - 2.0.8-0
+- new upstream release.
+
 * Sat Sep 29 2012 HAYASHI Kentaro <hayashi@clear-code.com> - 2.0.7-0
 - new upstream release.
 - Split groonga-server package into groonga-server-gqtp and
