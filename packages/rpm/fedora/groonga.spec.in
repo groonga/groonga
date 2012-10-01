@@ -37,8 +37,6 @@ on relational data model.
 Summary:	Runtime libraries for groonga
 Group:		System Environment/Libraries
 License:	LGPLv2 and (MIT or GPLv2)
-Requires:	zlib
-Requires:	lzo
 Requires(post):	/sbin/ldconfig
 Requires(postun):	/sbin/ldconfig
 
@@ -92,7 +90,6 @@ Summary:	Groonga HTTP server
 Group:		Applications/Text
 License:	LGPLv2 and BSD
 Requires:	%{name}-server-common = %{version}-%{release}
-Requires:	pcre
 Conflicts:	%{name}-server-http
 
 %description httpd
@@ -118,7 +115,6 @@ Libraries and header files for groonga
 Summary:	MeCab tokenizer for groonga
 Group:		Applications/Text
 Requires:	%{name}-libs = %{version}-%{release}
-Requires:	mecab
 
 %description tokenizer-mecab
 MeCab tokenizer for groonga
@@ -127,9 +123,6 @@ MeCab tokenizer for groonga
 Summary:	Suggest plugin for groonga
 Group:		Applications/Text
 Requires:	%{name}-libs = %{version}-%{release}
-#Requires:	messagepack
-#Requires:	zeromq
-#Requires:	libevent
 
 %description plugin-suggest
 Sugget plugin for groonga
@@ -394,6 +387,8 @@ fi
 %changelog
 * Mon Oct 29 2012 Kouhei Sutou <kou@clear-code.com> - 2.0.8-0
 - new upstream release.
+- Remove needless "Requires". They will be added by rpmbuild automatically.
+  Reported by by Daiki Ueno. Thanks!!!
 
 * Sat Sep 29 2012 HAYASHI Kentaro <hayashi@clear-code.com> - 2.0.7-0
 - new upstream release.
