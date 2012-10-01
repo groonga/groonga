@@ -69,7 +69,7 @@ Obsoletes:	%{name}-server < 2.0.7-0
 This package contains the groonga GQTP server
 
 %package server-http
-Summary:	Groonga HTTP server
+Summary:	Groonga HTTP server (stable)
 Group:		Applications/Text
 License:	LGPLv2
 Requires:	%{name}-server-common = %{version}-%{release}
@@ -84,17 +84,20 @@ Obsoletes:	%{name}-server < 2.0.7-0
 Conflicts:	%{name}-httpd
 
 %description server-http
-This package contains the groonga HTTP server
+This package contains the groonga HTTP server. It is stable but
+has only requisite minimum features.
 
 %package httpd
-Summary:	Groonga HTTP server
+Summary:	Groonga HTTP server (experimental)
 Group:		Applications/Text
 License:	LGPLv2 and BSD
 Requires:	%{name}-server-common = %{version}-%{release}
 Conflicts:	%{name}-server-http
 
 %description httpd
-This package contains the groonga HTTP server
+This package contains the groonga HTTP server. It is experimental
+but has many features. Because it is based on nginx HTTP server.
+It will obsolete groonga-server-http when it is stable.
 
 %package doc
 Summary:	Documentation for groonga
@@ -337,6 +340,7 @@ fi
   Reported by by Daiki Ueno. Thanks!!!
 - Fix license of server-gqtp.
 - Fix license of server-http.
+- Add more description to server-http and httpd.
 
 * Sat Sep 29 2012 HAYASHI Kentaro <hayashi@clear-code.com> - 2.0.7-0
 - new upstream release.
