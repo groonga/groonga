@@ -231,6 +231,11 @@ make update-poコマンドの実行により更新した各種.poファイルを
 
 これにより$GROONGA_CLONE_DIR/groonga-(バージョン).tar.gzが作成されます。
 
+.. note::
+   タグを打つ前にmake distを行うとversionが古いままになることがあります。
+   するとgroonga --versionで表示されるバージョン表記が更新されないので注意が必要です。
+   make distで生成したtar.gzのversionおよびversion.shがタグと一致することを確認するのが望ましいです。
+
 パッケージのビルド
 ------------------------------------------------------------
 
@@ -597,6 +602,10 @@ $GROONGA_CLONE_DIRにて以下のコマンドを実行します。::
     % make update-version NEW_VERSION=2.0.6
 
 これにより$GROONGA_CLONE_DIR/base_versionが更新されるのでコミットしておきます。
+
+.. note::
+   base_versionはtar.gzなどのリリース用のファイル名で使用します。
+
 
 ビルド時のTIPS
 ------------------------------------------------------------
