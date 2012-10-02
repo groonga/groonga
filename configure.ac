@@ -280,7 +280,7 @@ AC_CONFIG_FILES([
   test/unit/gqtp/Makefile
   test/unit/story/Makefile
   test/unit/groonga-benchmark/Makefile
-  test/function/Makefile
+  test/command/Makefile
   test/benchmark/Makefile
   test/benchmark/fixtures/Makefile
   test/benchmark/fixtures/geo-select/Makefile
@@ -763,7 +763,7 @@ AM_CONDITIONAL([WITH_UNIT_TEST],
                [test "$cutter_use_cutter" = "yes" -o \
                      "$ac_cv_ruby_available" = "yes"])
 
-AM_CONDITIONAL([WITH_FUNCTION_TEST],
+AM_CONDITIONAL([WITH_COMMAND_TEST],
                [test "$ac_cv_ruby_available" = "yes"])
 
 # check Inkscape for generating PNG images

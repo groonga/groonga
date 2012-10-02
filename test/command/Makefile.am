@@ -1,4 +1,4 @@
-if WITH_FUNCTION_TEST
+if WITH_COMMAND_TEST
 TESTS = run-test.sh
 endif
 TESTS_ENVIRONMENT =								\
@@ -11,7 +11,7 @@ TESTS_ENVIRONMENT =								\
 update-files:
 	cd $(srcdir) && ./update-files.sh > files.am
 
-include $(top_srcdir)/test/function/files.am
+include $(top_srcdir)/test/command/files.am
 
 EXTRA_DIST =					\
 	run-test.sh				\
