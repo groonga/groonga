@@ -1,10 +1,9 @@
 #!/bin/sh
 
 set -e
-set -x
 
 if [ "$GROONGA_MASTER" = "yes" ]; then
-    sudo apt-get -y -V install autotools-dev pkg-config libmecab-dev \
+    sudo apt-get install -qq -y -V autotools-dev pkg-config libmecab-dev \
 	libmsgpack-dev libevent-dev
     git clone https://github.com/groonga/groonga.git
     cd groonga
@@ -30,9 +29,9 @@ deb ${apt_url_base}/${distribution}/ ${code_name} ${component}
 deb-src ${apt_url_base}/${distribution}/ ${code_name} ${component}
 EOF
 
-    sudo apt-get update
-    sudo apt-get -y --allow-unauthenticated install groonga-keyring
-    sudo apt-get -y purge zeromq
-    sudo apt-get update
-    sudo apt-get -y -V install groonga libgroonga-dev
+    sudo apt-get update -qq
+    sudo apt-get install -qq -y --allow-unauthenticated groonga-keyring
+    sudo apt-get purge -qq -y zeromq
+    sudo apt-get update -qq
+    sudo apt-get install -qq -y -V groonga libgroonga-dev
 fi
