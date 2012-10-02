@@ -23,8 +23,6 @@
 
 #include "../lib/grn-assertions.h"
 
-void data_expand_word_with_space(void);
-void test_expand_word_with_space(gconstpointer data);
 void data_not_expand_recursively(void);
 void test_not_expand_recursively(gconstpointer data);
 void data_expand_OR_quoted(void);
@@ -193,30 +191,6 @@ data_scalar_and_vector(void)
   ADD_DATA("vector", "words_vector");
 
 #undef ADD_DATA
-}
-
-void
-data_expand_word_with_space(void)
-{
-  data_scalar_and_vector();
-}
-
-void
-test_expand_word_with_space(gconstpointer data)
-{
-  cut_assert_equal_string(
-    "[[[2],"
-     "[[\"_id\",\"UInt32\"],"
-      "[\"_key\",\"Time\"],"
-      "[\"content\",\"Text\"]],"
-     "[2,1315753200.0,\"Start mroonga!\"],"
-     "[6,1316098800.0,\"Setup groonga storage engine!\"]]]",
-    send_command(
-      cut_take_printf(
-        "select Diaries --sortby _id "
-        "--match_columns content --query '\"groonga storage engine\"' "
-        "--query_expansion Synonyms.%s",
-        gcut_data_get_string(data, "column-name"))));
 }
 
 void
