@@ -23,8 +23,6 @@
 
 #include "../lib/grn-assertions.h"
 
-void data_not_expand_recursively(void);
-void test_not_expand_recursively(gconstpointer data);
 void data_expand_OR_quoted(void);
 void test_expand_OR_quoted(gconstpointer data);
 void data_expand_column_value(void);
@@ -191,33 +189,6 @@ data_scalar_and_vector(void)
   ADD_DATA("vector", "words_vector");
 
 #undef ADD_DATA
-}
-
-void
-data_not_expand_recursively(void)
-{
-  data_scalar_and_vector();
-}
-
-void
-test_not_expand_recursively(gconstpointer data)
-{
-  cut_assert_equal_string(
-    "[[[6],"
-     "[[\"_id\",\"UInt32\"],"
-      "[\"_key\",\"Time\"],"
-      "[\"content\",\"Text\"]],"
-     "[1,1315666800.0,\"Start groonga!\"],"
-     "[2,1315753200.0,\"Start mroonga!\"],"
-     "[3,1315839600.0,\"Start rroonga!\"],"
-     "[6,1316098800.0,\"Setup groonga storage engine!\"],"
-     "[8,1316271600.0,\"Learning MySQL and groonga...\"],"
-     "[9,1316358000.0,\"Learning Ruby and groonga...\"]]]",
-    send_command(
-      cut_take_printf("select Diaries --sortby _id "
-                      "--match_columns content --query groonga "
-                      "--query_expansion Synonyms.%s",
-                      gcut_data_get_string(data, "column-name"))));
 }
 
 void
