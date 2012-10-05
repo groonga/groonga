@@ -186,28 +186,6 @@ data_scalar_and_vector(void)
 }
 
 void
-data_expand_prefix(void)
-{
-  data_scalar_and_vector();
-}
-
-void
-test_expand_prefix(gconstpointer data)
-{
-  cut_assert_equal_string(
-    "[[[1],"
-     "[[\"_id\",\"UInt32\"],"
-      "[\"_key\",\"Time\"],"
-      "[\"content\",\"Text\"]],"
-      "[10,1316444400.0,\"明日は日本語あるいは中国語を勉強します。\"]]]",
-    send_command(
-      cut_take_printf("select Diaries --sortby _id "
-                      "--match_columns content --query 'Japan*' "
-                      "--query_expansion Synonyms.%s",
-                      gcut_data_get_string(data, "column-name"))));
-}
-
-void
 data_not_expand_OR(void)
 {
   data_scalar_and_vector();
