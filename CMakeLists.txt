@@ -131,6 +131,7 @@ if(WIN32)
 endif()
 
 option(WITH_NFKC "use NFKC based UTF8 normalization." ON)
+option(WITH_STATIC "build static library." OFF)
 
 if(WIN32)
   ac_check_headers(winsock2.h)
