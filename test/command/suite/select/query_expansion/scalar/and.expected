@@ -17,7 +17,7 @@ load --table Memos
 ["Start mroonga!"],
 ["Start rroonga!"],
 ["Start Ruby!"],
-["Learning Ruby and groonga..."],
+["Learning Ruby and groonga..."]
 ]
 [[0,0.0,0.0],5]
 load --table Synonyms
