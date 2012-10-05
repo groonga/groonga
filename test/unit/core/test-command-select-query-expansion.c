@@ -186,29 +186,6 @@ data_scalar_and_vector(void)
 }
 
 void
-data_expand_equal(void)
-{
-  data_scalar_and_vector();
-}
-
-void
-test_expand_equal(gconstpointer data)
-{
-  cut_assert_equal_string(
-    "[[[1],"
-     "[[\"_id\",\"UInt32\"],"
-      "[\"_key\",\"Time\"],"
-      "[\"content\",\"Text\"]],"
-      "[3,1315839600.0,\"Start rroonga!\"]]]",
-    send_command(
-      cut_take_printf(
-        "select Diaries --sortby _id "
-        "--match_columns content --query 'content:=start-rroonga' "
-        "--query_expansion Synonyms.%s",
-        gcut_data_get_string(data, "column-name"))));
-}
-
-void
 data_expand_prefix(void)
 {
   data_scalar_and_vector();
