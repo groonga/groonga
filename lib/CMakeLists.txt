@@ -27,7 +27,9 @@ string(REGEX REPLACE "([^;]+)" "dat/\\1"
   LIBGRNDAT_SOURCES "${LIBGRNDAT_SOURCES}")
 
 add_library(libgroonga SHARED ${LIBGROONGA_SOURCES} ${LIBGRNDAT_SOURCES})
+add_library(libgroonga_static STATIC ${LIBGROONGA_SOURCES} ${LIBGRNDAT_SOURCES})
 set_target_properties(libgroonga PROPERTIES OUTPUT_NAME "groonga")
+set_target_properties(libgroonga_static PROPERTIES OUTPUT_NAME "groonga")
 target_link_libraries(libgroonga
   ${PTHREAD_LIBS}
   ${Z_LIBS}
@@ -41,3 +43,4 @@ else()
   set(LIBGROONGA_INSTALL_DIR "${LIB_DIR}")
 endif()
 install(TARGETS libgroonga DESTINATION "${LIBGROONGA_INSTALL_DIR}")
+install(TARGETS libgroonga_static DESTINATION "${LIBGROONGA_INSTALL_DIR}")
