@@ -13,8 +13,8 @@ column_create Synonyms words COLUMN_VECTOR ShortText
 load --table Memos
 [
 ["content"],
-["Start groonga or mroonga!"]
-["Start groonga! Or mroonga!"]
+["Start groonga or mroonga!"],
+["Start groonga! Or mroonga!"],
 ["Start groonga! OR! mroonga!"]
 ]
 [[0,0.0,0.0],3]
