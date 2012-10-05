@@ -23,8 +23,6 @@
 
 #include "../lib/grn-assertions.h"
 
-void data_expand_column_value(void);
-void test_expand_column_value(gconstpointer data);
 void data_expand_column_value_with_space(void);
 void test_expand_column_value_with_space(gconstpointer data);
 void data_expand_equal(void);
@@ -187,29 +185,6 @@ data_scalar_and_vector(void)
   ADD_DATA("vector", "words_vector");
 
 #undef ADD_DATA
-}
-
-void
-data_expand_column_value(void)
-{
-  data_scalar_and_vector();
-}
-
-void
-test_expand_column_value(gconstpointer data)
-{
-  cut_assert_equal_string(
-    "[[[2],"
-     "[[\"_id\",\"UInt32\"],"
-      "[\"_key\",\"Time\"],"
-      "[\"content\",\"Text\"]],"
-      "[3,1315839600.0,\"Start rroonga!\"],"
-      "[9,1316358000.0,\"Learning Ruby and groonga...\"]]]",
-    send_command(
-      cut_take_printf("select Diaries --sortby _id "
-                      "--match_columns content --query 'content:@rroonga' "
-                      "--query_expansion Synonyms.%s",
-                      gcut_data_get_string(data, "column-name"))));
 }
 
 void
