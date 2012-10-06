@@ -559,8 +559,10 @@ jQuery.extend(GroongaAdmin.prototype, {
               td.append($('<input/>')
                         .attr("type", "button")
                         .attr("value", "詳細")
+                        .attr("data-table-name", line[1])
                         .click(function () {
-                          $("#side-menu-tablelist-link-" + line[1]).click();
+                          var tableName = $(this).attr("data-table-name");
+                          $("#side-menu-tablelist-link-" + tableName).click();
                         }));
               break;
             }
