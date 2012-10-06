@@ -548,8 +548,9 @@ jQuery.extend(GroongaAdmin.prototype, {
               td.append($('<input/>')
                         .attr("type", "button")
                         .attr("value", "編集")
+                        .attr("data-record-id", line[0])
                         .click(function () {
-                          that.show_edit_record(line[0]);
+                          that.show_edit_record($(this).attr("data-record-id"));
                         }));
               break;
             case 2: // Table
