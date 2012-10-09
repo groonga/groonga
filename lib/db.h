@@ -245,7 +245,7 @@ enum {
 
 #define DB_OBJ(obj) ((grn_db_obj *)obj)
 
-const char *grn_obj_get_value_(grn_ctx *ctx, grn_obj *obj, grn_id id, uint32_t *size);
+GRN_API const char *grn_obj_get_value_(grn_ctx *ctx, grn_obj *obj, grn_id id, uint32_t *size);
 
 /* vector */
 
