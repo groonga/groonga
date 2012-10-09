@@ -186,32 +186,6 @@ data_scalar_and_vector(void)
 }
 
 void
-data_not_expand_OR(void)
-{
-  data_scalar_and_vector();
-}
-
-void
-test_not_expand_OR(gconstpointer data)
-{
-  cut_assert_equal_string(
-    "[[[5],"
-     "[[\"_id\",\"UInt32\"],"
-      "[\"_key\",\"Time\"],"
-      "[\"content\",\"Text\"]],"
-     "[4,1315926000.0,\"Start Ruby!\"],"
-     "[5,1316012400.0,\"Start MySQL!\"],"
-     "[7,1316185200.0,\"Learning MySQL...\"],"
-     "[8,1316271600.0,\"Learning MySQL and groonga...\"],"
-     "[9,1316358000.0,\"Learning Ruby and groonga...\"]]]",
-    send_command(
-      cut_take_printf("select Diaries --sortby _id "
-                      "--match_columns content --query 'Ruby OR MySQL' "
-                      "--query_expansion Synonyms.%s",
-                      gcut_data_get_string(data, "column-name"))));
-}
-
-void
 data_not_expand_OR_at_the_end(void)
 {
   data_scalar_and_vector();
