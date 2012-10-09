@@ -186,27 +186,6 @@ data_scalar_and_vector(void)
 }
 
 void
-data_not_expand_OR_with_leading_space(void)
-{
-  data_scalar_and_vector();
-}
-
-void
-test_not_expand_OR_with_leading_space(gconstpointer data)
-{
-  cut_assert_equal_string(
-    "[[[0],"
-     "[[\"_id\",\"UInt32\"],"
-      "[\"_key\",\"Time\"],"
-      "[\"content\",\"Text\"]]]]",
-    send_command(
-      cut_take_printf("select Diaries --sortby _id "
-                      "--match_columns content --query '\"OR \"' "
-                      "--query_expansion Synonyms.%s",
-                      gcut_data_get_string(data, "column-name"))));
-}
-
-void
 data_not_expand_and(void)
 {
   data_scalar_and_vector();
