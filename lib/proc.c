@@ -92,8 +92,8 @@ exit :
 /**** query expander ****/
 
 static grn_rc
-substitute_query(grn_ctx *ctx, grn_obj *table, grn_obj *column,
-                 const char *key, size_t key_size, grn_obj *dest)
+substitute_term(grn_ctx *ctx, grn_obj *table, grn_obj *column,
+                const char *key, size_t key_size, grn_obj *dest)
 {
   grn_id id;
   grn_rc rc = GRN_END_OF_DATA;
@@ -173,7 +173,7 @@ expand_query(grn_ctx *ctx, grn_obj *table, grn_obj *column, grn_expr_flags flags
         }
         GRN_TEXT_PUT(ctx, &buf, cur, len);
       }
-      if (substitute_query(ctx, table, column, GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf), dest)) {
+      if (substitute_term(ctx, table, column, GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf), dest)) {
         GRN_TEXT_PUT(ctx, dest, start, cur - start);
       }
       break;
@@ -226,7 +226,7 @@ expand_query(grn_ctx *ctx, grn_obj *table, grn_obj *column, grn_expr_flags flags
         }
       }
       if (start < cur) {
-        if (substitute_query(ctx, table, column, start, cur - start, dest)) {
+        if (substitute_term(ctx, table, column, start, cur - start, dest)) {
           GRN_TEXT_PUT(ctx, dest, start, cur - start);
         }
       }
