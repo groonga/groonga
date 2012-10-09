@@ -129,7 +129,7 @@ substitute_term(grn_ctx *ctx, grn_obj *table, grn_obj *column,
 
 static grn_rc
 expand_query(grn_ctx *ctx, grn_obj *table, grn_obj *column, grn_expr_flags flags,
-             const char *str, unsigned int str_len, grn_obj *dest)
+             const char *str, unsigned int str_len, grn_obj *expanded_query)
 {
   grn_obj buf;
   unsigned int len;
@@ -138,7 +138,7 @@ expand_query(grn_ctx *ctx, grn_obj *table, grn_obj *column, grn_expr_flags flags
   for (;;) {
     while (cur < str_end && grn_isspace(cur, ctx->encoding)) {
       if (!(len = grn_charlen(ctx, cur, str_end))) { goto exit; }
-      GRN_TEXT_PUT(ctx, dest, cur, len);
+      GRN_TEXT_PUT(ctx, expanded_query, cur, len);
       cur += len;
     }
     if (str_end <= cur) { break; }
@@ -154,7 +154,7 @@ expand_query(grn_ctx *ctx, grn_obj *table, grn_obj *column, grn_expr_flags flags
     case GRN_QUERY_PARENL :
     case GRN_QUERY_PARENR :
     case GRN_QUERY_PREFIX :
-      GRN_TEXT_PUTC(ctx, dest, *cur);
+      GRN_TEXT_PUTC(ctx, expanded_query, *cur);
       cur++;
       break;
     case GRN_QUERY_QUOTEL :
@@ -173,14 +173,14 @@ expand_query(grn_ctx *ctx, grn_obj *table, grn_obj *column, grn_expr_flags flags
         }
         GRN_TEXT_PUT(ctx, &buf, cur, len);
       }
-      if (substitute_term(ctx, table, column, GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf), dest)) {
-        GRN_TEXT_PUT(ctx, dest, start, cur - start);
+      if (substitute_term(ctx, table, column, GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf), expanded_query)) {
+        GRN_TEXT_PUT(ctx, expanded_query, start, cur - start);
       }
       break;
     case 'O' :
       if (cur + 2 <= str_end && cur[1] == 'R' &&
           (cur + 2 == str_end || grn_isspace(cur + 2, ctx->encoding))) {
-        GRN_TEXT_PUT(ctx, dest, cur, 2);
+        GRN_TEXT_PUT(ctx, expanded_query, cur, 2);
         cur += 2;
         break;
       }
@@ -219,15 +219,16 @@ expand_query(grn_ctx *ctx, grn_obj *table, grn_obj *column, grn_expr_flags flags
             } else {
               cur += 1;
             }
-            GRN_TEXT_PUT(ctx, dest, start, cur - start);
+            GRN_TEXT_PUT(ctx, expanded_query, start, cur - start);
             start = cur;
             break;
           }
         }
       }
       if (start < cur) {
-        if (substitute_term(ctx, table, column, start, cur - start, dest)) {
-          GRN_TEXT_PUT(ctx, dest, start, cur - start);
+        if (substitute_term(ctx, table, column, start, cur - start,
+                            expanded_query)) {
+          GRN_TEXT_PUT(ctx, expanded_query, start, cur - start);
         }
       }
       break;
