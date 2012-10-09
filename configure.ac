@@ -1152,8 +1152,8 @@ AC_SUBST(relative_pluginsdir)
 pluginsdir="\${libdir}/\$(relative_pluginsdir)"
 AC_SUBST(pluginsdir)
 
-tokenizer_pluginsdir="\${pluginsdir}/tokenizers"
-AC_SUBST(tokenizer_pluginsdir)
+tokenizers_pluginsdir="\${pluginsdir}/tokenizers"
+AC_SUBST(tokenizers_pluginsdir)
 
 suggest_pluginsdir="\${pluginsdir}/suggest"
 AC_SUBST(suggest_pluginsdir)
