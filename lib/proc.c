@@ -93,7 +93,7 @@ exit :
 
 static grn_rc
 substitute_term(grn_ctx *ctx, grn_obj *table, grn_obj *column,
-                const char *term, size_t term_size, grn_obj *dest)
+                const char *term, size_t term_size, grn_obj *expanded_term)
 {
   grn_id id;
   grn_rc rc = GRN_END_OF_DATA;
@@ -105,22 +105,22 @@ substitute_term(grn_ctx *ctx, grn_obj *table, grn_obj *column,
       GRN_TEXT_INIT(&values, GRN_OBJ_VECTOR);
       grn_obj_get_value(ctx, column, id, &values);
       n = grn_vector_size(ctx, &values);
-      if (n > 1) { GRN_TEXT_PUTC(ctx, dest, '('); }
+      if (n > 1) { GRN_TEXT_PUTC(ctx, expanded_term, '('); }
       for (i = 0; i < n; i++) {
         const char *value;
         unsigned int length;
         if (i > 0) {
-          GRN_TEXT_PUTS(ctx, dest, " OR ");
+          GRN_TEXT_PUTS(ctx, expanded_term, " OR ");
         }
-        if (n > 1) { GRN_TEXT_PUTC(ctx, dest, '('); }
+        if (n > 1) { GRN_TEXT_PUTC(ctx, expanded_term, '('); }
         length = grn_vector_get_element(ctx, &values, i, &value, NULL, NULL);
-        GRN_TEXT_PUT(ctx, dest, value, length);
-        if (n > 1) { GRN_TEXT_PUTC(ctx, dest, ')'); }
+        GRN_TEXT_PUT(ctx, expanded_term, value, length);
+        if (n > 1) { GRN_TEXT_PUTC(ctx, expanded_term, ')'); }
       }
-      if (n > 1) { GRN_TEXT_PUTC(ctx, dest, ')'); }
+      if (n > 1) { GRN_TEXT_PUTC(ctx, expanded_term, ')'); }
       GRN_OBJ_FIN(ctx, &values);
     } else {
-      grn_obj_get_value(ctx, column, id, dest);
+      grn_obj_get_value(ctx, column, id, expanded_term);
     }
     rc = GRN_SUCCESS;
   }
