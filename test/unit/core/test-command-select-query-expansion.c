@@ -186,28 +186,6 @@ data_scalar_and_vector(void)
 }
 
 void
-data_no_expand_word_with_space(void)
-{
-  data_scalar_and_vector();
-}
-
-void
-test_no_expand_word_with_space(gconstpointer data)
-{
-  cut_assert_equal_string(
-    "[[[1],"
-     "[[\"_id\",\"UInt32\"],"
-      "[\"_key\",\"Time\"],"
-      "[\"content\",\"Text\"]],"
-     "[9,1316358000.0,\"Learning Ruby and groonga...\"]]]",
-    send_command(
-      cut_take_printf("select Diaries "
-                      "--match_columns content --query '\"Ruby and groonga\"' "
-                      "--query_expansion Synonyms.%s",
-                      gcut_data_get_string(data, "column-name"))));
-}
-
-void
 data_nonexistent_expansion_column(void)
 {
   data_scalar_and_vector();
