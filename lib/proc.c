@@ -93,11 +93,11 @@ exit :
 
 static grn_rc
 substitute_term(grn_ctx *ctx, grn_obj *table, grn_obj *column,
-                const char *key, size_t key_size, grn_obj *dest)
+                const char *term, size_t term_size, grn_obj *dest)
 {
   grn_id id;
   grn_rc rc = GRN_END_OF_DATA;
-  if ((id = grn_table_get(ctx, table, (const void *)key, (unsigned int)key_size))) {
+  if ((id = grn_table_get(ctx, table, (const void *)term, (unsigned int)term_size))) {
     if ((column->header.type == GRN_COLUMN_VAR_SIZE) &&
         ((column->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) == GRN_OBJ_COLUMN_VECTOR)) {
       unsigned int i, n;
