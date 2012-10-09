@@ -1,0 +1,26 @@
+table_create Memos TABLE_NO_KEY
+column_create Memos content COLUMN_SCALAR ShortText
+
+table_create Lexicon TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram
+column_create Lexicon diary_content COLUMN_INDEX|WITH_POSITION Memos content
+
+table_create Synonyms TABLE_PAT_KEY ShortText
+column_create Synonyms words COLUMN_VECTOR ShortText
+
+load --table Memos
+[
+["content"],
+["Start groonga!"],
+["Start Ruby!"],
+["Learning Ruby but groonga is not leaned yet..."],
+["Learning Ruby BUT groonga is not leaned yet..."]
+]
+
+load --table Synonyms
+[
+["_key", "words"],
+["-", ["BUT"]]
+]
+
+select --table Memos --query_expansion Synonyms.words \
+  --match_columns content --query 'Ruby - groonga'
