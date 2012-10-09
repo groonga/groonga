@@ -192,17 +192,6 @@ data_nonexistent_expansion_column(void)
 }
 
 void
-test_nonexistent_expansion_column(gconstpointer data)
-{
-  grn_test_assert_send_command_error(
-    context,
-    GRN_INVALID_ARGUMENT,
-    "nonexistent query expansion column: <Synonyms.nonexistent>",
-    "select Diaries --match_columns content --query groonga "
-    "--query_expansion Synonyms.nonexistent");
-}
-
-void
 data_key_normalize(void)
 {
   data_scalar_and_vector();
