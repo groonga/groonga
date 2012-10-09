@@ -129,19 +129,19 @@ substitute_term(grn_ctx *ctx, grn_obj *table, grn_obj *column,
 
 static grn_rc
 expand_query(grn_ctx *ctx, grn_obj *table, grn_obj *column, grn_expr_flags flags,
-             const char *str, unsigned int str_len, grn_obj *expanded_query)
+             const char *query, unsigned int query_len, grn_obj *expanded_query)
 {
   grn_obj buf;
   unsigned int len;
-  const char *start, *cur = str, *str_end = str + (size_t)str_len;
+  const char *start, *cur = query, *query_end = query + (size_t)query_len;
   GRN_TEXT_INIT(&buf, 0);
   for (;;) {
-    while (cur < str_end && grn_isspace(cur, ctx->encoding)) {
-      if (!(len = grn_charlen(ctx, cur, str_end))) { goto exit; }
+    while (cur < query_end && grn_isspace(cur, ctx->encoding)) {
+      if (!(len = grn_charlen(ctx, cur, query_end))) { goto exit; }
       GRN_TEXT_PUT(ctx, expanded_query, cur, len);
       cur += len;
     }
-    if (str_end <= cur) { break; }
+    if (query_end <= cur) { break; }
     switch (*cur) {
     case '\0' :
       goto exit;
@@ -159,16 +159,16 @@ expand_query(grn_ctx *ctx, grn_obj *table, grn_obj *column, grn_expr_flags flags
       break;
     case GRN_QUERY_QUOTEL :
       GRN_BULK_REWIND(&buf);
-      for (start = cur++; cur < str_end; cur += len) {
-        if (!(len = grn_charlen(ctx, cur, str_end))) {
+      for (start = cur++; cur < query_end; cur += len) {
+        if (!(len = grn_charlen(ctx, cur, query_end))) {
           goto exit;
         } else if (len == 1) {
           if (*cur == GRN_QUERY_QUOTER) {
             cur++;
             break;
-          } else if (cur + 1 < str_end && *cur == GRN_QUERY_ESCAPE) {
+          } else if (cur + 1 < query_end && *cur == GRN_QUERY_ESCAPE) {
             cur++;
-            len = grn_charlen(ctx, cur, str_end);
+            len = grn_charlen(ctx, cur, query_end);
           }
         }
         GRN_TEXT_PUT(ctx, &buf, cur, len);
@@ -178,16 +178,16 @@ expand_query(grn_ctx *ctx, grn_obj *table, grn_obj *column, grn_expr_flags flags
       }
       break;
     case 'O' :
-      if (cur + 2 <= str_end && cur[1] == 'R' &&
-          (cur + 2 == str_end || grn_isspace(cur + 2, ctx->encoding))) {
+      if (cur + 2 <= query_end && cur[1] == 'R' &&
+          (cur + 2 == query_end || grn_isspace(cur + 2, ctx->encoding))) {
         GRN_TEXT_PUT(ctx, expanded_query, cur, 2);
         cur += 2;
         break;
       }
       /* fallthru */
     default :
-      for (start = cur; cur < str_end; cur += len) {
-        if (!(len = grn_charlen(ctx, cur, str_end))) {
+      for (start = cur; cur < query_end; cur += len) {
+        if (!(len = grn_charlen(ctx, cur, query_end))) {
           goto exit;
         } else if (grn_isspace(cur, ctx->encoding)) {
           break;
@@ -197,7 +197,7 @@ expand_query(grn_ctx *ctx, grn_obj *table, grn_obj *column, grn_expr_flags flags
               *cur == GRN_QUERY_PREFIX) {
             break;
           } else if (flags & GRN_EXPR_ALLOW_COLUMN && *cur == GRN_QUERY_COLUMN) {
-            if (cur + 1 < str_end) {
+            if (cur + 1 < query_end) {
               switch (cur[1]) {
               case '!' :
               case '@' :
@@ -210,7 +210,7 @@ expand_query(grn_ctx *ctx, grn_obj *table, grn_obj *column, grn_expr_flags flags
                 break;
               case '<' :
               case '>' :
-                cur += (cur + 2 < str_end && cur[2] == '=') ? 3 : 2;
+                cur += (cur + 2 < query_end && cur[2] == '=') ? 3 : 2;
                 break;
               default :
                 cur += 1;
