@@ -1148,9 +1148,13 @@ AM_CONDITIONAL([FEDORA_PLATFORM],
 # plugins check
 relative_pluginsdir="\$(PACKAGE)/plugins"
 AC_SUBST(relative_pluginsdir)
+expanded_relative_pluginsdir="${PACKAGE}/plugins"
+AC_SUBST(expanded_relative_pluginsdir)
 
 pluginsdir="\${libdir}/\$(relative_pluginsdir)"
 AC_SUBST(pluginsdir)
+expanded_pluginsdir="\${libdir}/${expanded_relative_pluginsdir}"
+AC_SUBST(expanded_pluginsdir)
 
 tokenizers_pluginsdir="\${pluginsdir}/tokenizers"
 AC_SUBST(tokenizers_pluginsdir)
