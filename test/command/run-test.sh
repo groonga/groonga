@@ -53,7 +53,7 @@ export GROONGA_SUGGEST_CREATE_DATASET
 GRN_PLUGINS_DIR="$top_dir/plugins"
 export GRN_PLUGINS_DIR
 
-GRN_QUERY_EXPANDER_TSV_SYNONYMS_FILE="$top_dir/test/command/fixture/query_expander/tsv/synonyms.tsv"
+GRN_QUERY_EXPANDER_TSV_SYNONYMS_FILE="$top_dir/test/command/tmp/synonyms.tsv"
 export GRN_QUERY_EXPANDER_TSV_SYNONYMS_FILE
 
 case `uname` in

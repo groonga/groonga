@@ -1,3 +1,4 @@
+#@copy-path fixture/query_expander/tsv/expand.tsv tmp/synonyms.tsv
 register "query_expanders/tsv"
 
 table_create Memos TABLE_NO_KEY
