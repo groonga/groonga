@@ -67,6 +67,63 @@ is_comment_mark(char character)
   return character == '#';
 }
 
+static inline grn_encoding
+detect_coding_part(grn_ctx *ctx, const char *line, size_t line_length)
+{
+  grn_encoding encoding;
+  grn_obj null_terminated_line_buffer;
+  const char *c_line;
+  const char *encoding_name;
+
+  GRN_TEXT_INIT(&null_terminated_line_buffer, 0);
+  GRN_TEXT_PUT(ctx, &null_terminated_line_buffer, line, line_length);
+  GRN_TEXT_PUTC(ctx, &null_terminated_line_buffer, '\0');
+
+  c_line = GRN_TEXT_VALUE(&null_terminated_line_buffer);
+  encoding_name = strstr(c_line, "coding: ");
+  if (encoding_name) {
+    if (strncasecmp(encoding_name, "utf-8", strlen("utf-8")) == 0 ||
+        strncasecmp(encoding_name, "utf8", strlen("utf8")) == 0) {
+      encoding = GRN_ENC_UTF8;
+    } else if (strncasecmp(encoding_name, "sjis", strlen("sjis")) == 0 ||
+               strncasecmp(encoding_name, "Shift_JIS", strlen("Shift_JIS")) == 0) {
+      encoding = GRN_ENC_SJIS;
+    } else if (strncasecmp(encoding_name, "EUC-JP", strlen("EUC-JP")) == 0 ||
+               strncasecmp(encoding_name, "euc_jp", strlen("euc_jp")) == 0) {
+      encoding = GRN_ENC_EUC_JP;
+    } else if (strncasecmp(encoding_name, "latin1", strlen("latin1")) == 0) {
+      encoding = GRN_ENC_LATIN1;
+    } else if (strncasecmp(encoding_name, "KOI8-R", strlen("KOI8-R")) == 0 ||
+               strncasecmp(encoding_name, "koi8r", strlen("koi8r")) == 0) {
+      encoding = GRN_ENC_KOI8R;
+    }
+  } else {
+    encoding = ctx->encoding;
+  }
+  GRN_OBJ_FIN(ctx, &null_terminated_line_buffer);
+
+  return encoding;
+}
+
+static inline grn_encoding
+guess_encoding(grn_ctx *ctx, const char **line, size_t *line_length)
+{
+  const char bom[] = {0xef, 0xbb, 0xbf};
+  size_t bom_length = sizeof(bom);
+
+  if (*line_length >= bom_length && memcmp(*line, bom, bom_length) == 0) {
+    *line += bom_length;
+    *line_length -= bom_length;
+    return GRN_ENC_UTF8;
+  }
+
+  if (!is_comment_mark((*line)[0])) {
+    return ctx->encoding;
+  }
+
+  return detect_coding_part(ctx, (*line) + 1, (*line_length) - 1);
+}
+
 static void
 parse_synonyms_file_line(grn_ctx *ctx, const char *line, int line_length,
                          grn_obj *key, grn_obj *value)
@@ -127,6 +184,8 @@ load_synonyms(grn_ctx *ctx)
 {
   const char *path;
   FILE *file;
+  int number_of_lines;
+  grn_encoding encoding;
   grn_obj line, key, value;
 
   path = getenv("GRN_QUERY_EXPANDER_TSV_SYNONYMS_FILE");
@@ -146,12 +205,18 @@ load_synonyms(grn_ctx *ctx)
   GRN_TEXT_INIT(&key, 0);
   GRN_TEXT_INIT(&value, 0);
   grn_bulk_reserve(ctx, &value, MAX_SYNONYM_BYTES);
+  number_of_lines = 0;
   while (grn_text_fgets(ctx, &line, file) == GRN_SUCCESS) {
+    const char *line_value = GRN_TEXT_VALUE(&line);
+    size_t line_length = GRN_TEXT_LEN(&line);
+
+    number_of_lines++;
+    if (number_of_lines == 1) {
+      encoding = guess_encoding(ctx, &line_value, &line_length);
+    }
     GRN_BULK_REWIND(&key);
     GRN_BULK_REWIND(&value);
-    parse_synonyms_file_line(ctx,
-                             GRN_TEXT_VALUE(&line), GRN_TEXT_LEN(&line),
-                             &key, &value);
+    parse_synonyms_file_line(ctx, line_value, line_length, &key, &value);
     GRN_BULK_REWIND(&line);
   }
   GRN_OBJ_FIN(ctx, &line);
