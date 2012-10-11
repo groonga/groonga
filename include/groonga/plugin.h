@@ -151,6 +151,14 @@ void grn_plugin_mutex_lock(grn_ctx *ctx, grn_plugin_mutex *mutex);
  */
 void grn_plugin_mutex_unlock(grn_ctx *ctx, grn_plugin_mutex *mutex);
 
+/*
+  grn_plugin_proc_alloc() allocates a `grn_obj` object.
+  You can use it in function that is registered as GRN_PROC_FUNCTION.
+ */
+grn_obj *grn_plugin_proc_alloc(grn_ctx *ctx, grn_user_data *user_data,
+                               grn_id domain, grn_obj_flags flags);
+
+
 #ifdef __cplusplus
 }
 #endif

@@ -20,8 +20,6 @@
 /* groonga's internal headers: They should be removed. */
 /* for grn_text_fgets() */
 #include <str.h>
-/* for GRN_PROC_ALLOC() */
-#include <db.h>
 /* for grn_win32_base_dir() */
 #include <util.h>
 
@@ -185,7 +183,7 @@ func_query_expander_tsv(grn_ctx *ctx, int nargs, grn_obj **args,
     rc = GRN_SUCCESS;
   }
 
-  rc_object = GRN_PROC_ALLOC(GRN_DB_INT32, 0);
+  rc_object = grn_plugin_proc_alloc(ctx, user_data, GRN_DB_INT32, 0);
   if (rc_object) {
     GRN_INT32_SET(ctx, rc_object, rc);
   }

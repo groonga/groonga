@@ -523,3 +523,10 @@ grn_plugin_mutex_unlock(grn_ctx *ctx, grn_plugin_mutex *mutex)
     CRITICAL_SECTION_LEAVE(mutex->critical_section);
   }
 }
+
+grn_obj *
+grn_plugin_proc_alloc(grn_ctx *ctx, grn_user_data *user_data,
+                      grn_id domain, grn_obj_flags flags)
+{
+  return grn_proc_alloc(ctx, user_data, domain, flags);
+}
