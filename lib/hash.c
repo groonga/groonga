@@ -680,7 +680,7 @@ grn_array_set_value_inline(grn_ctx *ctx, grn_array *array, grn_id id,
     return GRN_SUCCESS;
   case GRN_OBJ_INCR :
     switch (array->value_size) {
-  case sizeof(int32_t) :
+    case sizeof(int32_t) :
       *((int32_t *)entry) += *((int32_t *)value);
       return GRN_SUCCESS;
     case sizeof(int64_t) :
