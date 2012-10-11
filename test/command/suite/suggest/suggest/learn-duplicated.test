@@ -1,6 +1,6 @@
-# disable-logging
-# suggest-create-dataset query
-# enable-logging
+#@disable-logging
+#@suggest-create-dataset query
+#@enable-logging
 
 load --table event_query --each 'suggest_preparer(_id, type, item, sequence, time, pair_query)'
 [

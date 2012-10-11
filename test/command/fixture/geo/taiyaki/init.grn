@@ -1,7 +1,7 @@
-# disable-logging
-# include fixture/geo/taiyaki/ddl.grn
-# include fixture/geo/taiyaki/areas.grn
-# include fixture/geo/taiyaki/categories.grn
-# include fixture/geo/taiyaki/shops.grn
-# include fixture/geo/taiyaki/synonyms.grn
-# enable-logging
+#@disable-logging
+#@include fixture/geo/taiyaki/ddl.grn
+#@include fixture/geo/taiyaki/areas.grn
+#@include fixture/geo/taiyaki/categories.grn
+#@include fixture/geo/taiyaki/shops.grn
+#@include fixture/geo/taiyaki/synonyms.grn
+#@enable-logging

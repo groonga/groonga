@@ -1,4 +1,4 @@
-# include fixture/suggest/rurema/init.grn
+#@include fixture/suggest/rurema/init.grn
 
 suggest \
   --table item_rurema \

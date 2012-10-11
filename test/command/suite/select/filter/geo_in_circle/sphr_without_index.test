@@ -1,4 +1,4 @@
-# include fixture/geo/taiyaki/init.grn
+#@include fixture/geo/taiyaki/init.grn
 
 select Shops --sortby '+_score, +name' \
   --output_columns 'name, _score, location' \

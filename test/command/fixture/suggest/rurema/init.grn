@@ -1,5 +1,5 @@
-# disable-logging
-# suggest-create-dataset rurema
-# include fixture/suggest/rurema/items.grn
-# include fixture/suggest/rurema/learn.grn
-# enable-logging
+#@disable-logging
+#@suggest-create-dataset rurema
+#@include fixture/suggest/rurema/items.grn
+#@include fixture/suggest/rurema/learn.grn
+#@enable-logging

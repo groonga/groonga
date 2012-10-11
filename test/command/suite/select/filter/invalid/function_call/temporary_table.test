@@ -1,4 +1,4 @@
-# include fixture/geo/taiyaki/init.grn
+#@include fixture/geo/taiyaki/init.grn
 
 select Shops \
   --output_columns 'name' \
