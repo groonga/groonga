@@ -222,6 +222,7 @@ AC_CONFIG_FILES([
   plugins/tokenizers/Makefile
   plugins/suggest/Makefile
   plugins/table/Makefile
+  plugins/query_expanders/Makefile
   examples/Makefile
   examples/dictionary/Makefile
   examples/dictionary/edict/Makefile
@@ -1159,6 +1160,9 @@ AC_SUBST(expanded_pluginsdir)
 tokenizers_pluginsdir="\${pluginsdir}/tokenizers"
 AC_SUBST(tokenizers_pluginsdir)
 
+query_expanders_pluginsdir="\${pluginsdir}/query_expanders"
+AC_SUBST(query_expanders_pluginsdir)
+
 suggest_pluginsdir="\${pluginsdir}/suggest"
 AC_SUBST(suggest_pluginsdir)
 
@@ -1174,6 +1178,16 @@ if test -z "$suffix"; then
   AC_MSG_ERROR([can't detect plugin suffix])
 fi
 AC_DEFINE_UNQUOTED(GRN_PLUGIN_SUFFIX, ["$suffix"], "plugin suffix")
+
+# for query expanders
+GRN_QUERY_EXPANDER_TSV_RELATIVE_SYNONYMS_FILE="synonyms.tsv"
+AC_DEFINE_UNQUOTED(GRN_QUERY_EXPANDER_TSV_RELATIVE_SYNONYMS_FILE,
+                   ["$GRN_QUERY_EXPANDER_TSV_RELATIVE_SYNONYMS_FILE"],
+                   "The relative synonyms file for TSV query expander")
+GRN_QUERY_EXPANDER_TSV_SYNONYMS_FILE="${pkgdatadir}/${GRN_QUERY_EXPANDER_TSV_RELATIVE_SYNONYMS_FILE}"
+AC_DEFINE_UNQUOTED(GRN_QUERY_EXPANDER_TSV_SYNONYMS_FILE,
+                   ["$GRN_QUERY_EXPANDER_TSV_SYNONYMS_FILE"],
+                   "The default synonyms file for TSV query expander")
 
 # for examples
 examplesdir="\$(pkgdatadir)/examples"

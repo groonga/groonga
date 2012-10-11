@@ -13,7 +13,15 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-add_subdirectory(suggest)
-add_subdirectory(tokenizers)
-add_subdirectory(table)
-add_subdirectory(query_expanders)
+include_directories(
+  ${CMAKE_SOURCE_DIR}/lib
+  )
+
+set(QUERY_EXPANDERS_DIR "${GRN_PLUGINS_DIR}/query_expanders")
+read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/tsv_sources.am TSV_SOURCES)
+add_library(tsv_query_expander MODULE ${TSV_SOURCES})
+set_target_properties(tsv_query_expander PROPERTIES
+  PREFIX ""
+  OUTPUT_NAME "tsv")
+target_link_libraries(tsv_query_expander libgroonga)
+install(TARGETS tsv_query_expander DESTINATION "${QUERY_EXPANDERS_DIR}")
