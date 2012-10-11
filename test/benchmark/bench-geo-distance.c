@@ -56,7 +56,6 @@
 
 #define GET(context, name) (grn_ctx_get(context, name, strlen(name)))
 
-grn_rc grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller);
 grn_obj *grn_expr_get_value(grn_ctx *ctx, grn_obj *expr, int offset);
 
 typedef struct _BenchmarkData
