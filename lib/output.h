@@ -57,7 +57,7 @@ GRN_API void grn_output_str(grn_ctx *ctx, grn_obj *outbuf,
                             const char *value, size_t value_len);
 GRN_API void grn_output_bool(grn_ctx *ctx, grn_obj *outbuf,
                              grn_content_type output_type,
-                             char value);
+                             grn_bool value);
 
 #define GRN_OUTPUT_ARRAY_OPEN(name,nelements) \
   (grn_output_array_open(ctx, ctx->impl->outbuf, ctx->impl->output_type, name, nelements))
