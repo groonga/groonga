@@ -73,6 +73,8 @@ detect_coding_part(grn_ctx *ctx, const char *line, size_t line_length)
   grn_encoding encoding;
   grn_obj null_terminated_line_buffer;
   const char *c_line;
+  const char *coding_part_keyword = "coding: ";
+  const char *coding_part;
   const char *encoding_name;
 
   GRN_TEXT_INIT(&null_terminated_line_buffer, 0);
@@ -80,8 +82,9 @@ detect_coding_part(grn_ctx *ctx, const char *line, size_t line_length)
   GRN_TEXT_PUTC(ctx, &null_terminated_line_buffer, '\0');
 
   c_line = GRN_TEXT_VALUE(&null_terminated_line_buffer);
-  encoding_name = strstr(c_line, "coding: ");
-  if (encoding_name) {
+  coding_part = strstr(c_line, coding_part_keyword);
+  if (coding_part) {
+    encoding_name = coding_part + strlen(coding_part_keyword);
     if (strncasecmp(encoding_name, "utf-8", strlen("utf-8")) == 0 ||
         strncasecmp(encoding_name, "utf8", strlen("utf8")) == 0) {
       encoding = GRN_ENC_UTF8;
