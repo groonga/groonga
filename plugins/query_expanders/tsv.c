@@ -20,8 +20,6 @@
 /* groonga's internal headers: They should be removed. */
 /* for grn_text_fgets() */
 #include <str.h>
-/* for grn_win32_base_dir() */
-#include <util.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -42,7 +40,7 @@ get_system_synonyms_file(void)
     char *path;
     size_t base_dir_length;
 
-    base_dir = grn_win32_base_dir();
+    base_dir = grn_plugin_win32_base_dir();
     base_dir_length = strlen(base_dir);
     synonyms_file =
       malloc(base_dir_length + strlen("/") + strlen(relative_path) + 1);

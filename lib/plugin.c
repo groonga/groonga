@@ -530,3 +530,13 @@ grn_plugin_proc_alloc(grn_ctx *ctx, grn_user_data *user_data,
 {
   return grn_proc_alloc(ctx, user_data, domain, flags);
 }
+
+const char *
+grn_plugin_win32_base_dir(void)
+{
+#ifdef WIN32
+  return grn_win32_base_dir();
+#else /* WIN32 */
+  return NULL;
+#endif /* WIN32 */
+}

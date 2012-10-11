@@ -158,6 +158,16 @@ void grn_plugin_mutex_unlock(grn_ctx *ctx, grn_plugin_mutex *mutex);
 grn_obj *grn_plugin_proc_alloc(grn_ctx *ctx, grn_user_data *user_data,
                                grn_id domain, grn_obj_flags flags);
 
+/*
+  grn_plugin_win32_base_dir() returns the groonga install directory.
+  The install directory is computed from the directory that has
+  `groonga.dll`. You can use the directory to generate install
+  directory aware path.
+
+  It only works on Windows. It returns `NULL` on other platforms.
+ */
+const char *grn_plugin_win32_base_dir(void);
+
 
 #ifdef __cplusplus
 }
