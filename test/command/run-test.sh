@@ -72,7 +72,7 @@ fi
 
 grntest_dir="$BASE_DIR/grntest"
 if ! test -d "$grntest_dir"; then
-    git clone git://github.com/groonga/grntest.git "$grntest_dir"
+    git clone --depth 1 git://github.com/groonga/grntest.git "$grntest_dir"
     (cd "$grntest_dir" && bundle install)
 fi
 
