@@ -23,6 +23,7 @@
 #include "pat.h"
 #include "plugin_in.h"
 #include "snip.h"
+#include "output.h"
 #include <stdio.h>
 #include <stdarg.h>
 #include <time.h>
@@ -2531,4 +2532,74 @@ grn_set_term_handler(void)
   }
 #endif
   return rc;
+}
+
+void
+grn_ctx_output_array_open(grn_ctx *ctx, const char *name, int nelements)
+{
+  grn_output_array_open(ctx, ctx->impl->outbuf, ctx->impl->output_type,
+                        name, nelements);
+}
+
+void
+grn_ctx_output_array_close(grn_ctx *ctx)
+{
+  grn_output_array_close(ctx, ctx->impl->outbuf, ctx->impl->output_type);
+}
+
+void
+grn_ctx_output_map_open(grn_ctx *ctx, const char *name, int nelements)
+{
+  grn_output_map_open(ctx, ctx->impl->outbuf, ctx->impl->output_type,
+                      name, nelements);
+}
+
+void
+grn_ctx_output_map_close(grn_ctx *ctx)
+{
+  grn_output_map_close(ctx, ctx->impl->outbuf, ctx->impl->output_type);
+}
+
+void
+grn_ctx_output_int32(grn_ctx *ctx, int value)
+{
+  grn_output_int32(ctx, ctx->impl->outbuf, ctx->impl->output_type, value);
+}
+
+void
+grn_ctx_output_int64(grn_ctx *ctx, long long int value)
+{
+  grn_output_int64(ctx, ctx->impl->outbuf, ctx->impl->output_type, value);
+}
+
+void
+grn_ctx_output_float(grn_ctx *ctx, double value)
+{
+  grn_output_float(ctx, ctx->impl->outbuf, ctx->impl->output_type, value);
+}
+
+void
+grn_ctx_output_cstr(grn_ctx *ctx, const char *value)
+{
+  grn_output_cstr(ctx, ctx->impl->outbuf, ctx->impl->output_type, value);
+}
+
+void
+grn_ctx_output_str(grn_ctx *ctx, const char *value, unsigned int value_len)
+{
+  grn_output_str(ctx, ctx->impl->outbuf, ctx->impl->output_type,
+                 value, value_len);
+}
+
+void
+grn_ctx_output_bool(grn_ctx *ctx, grn_bool value)
+{
+  grn_output_bool(ctx, ctx->impl->outbuf, ctx->impl->output_type, value);
+}
+
+void
+grn_ctx_output_obj(grn_ctx *ctx, grn_obj *value, grn_obj_format *format)
+{
+  grn_output_obj(ctx, ctx->impl->outbuf, ctx->impl->output_type,
+                 value, format);
 }

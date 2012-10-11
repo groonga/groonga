@@ -2156,6 +2156,24 @@ GRN_API void grn_output_obj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type outp
 GRN_API void grn_output_envelope(grn_ctx *ctx, grn_rc rc,
                                  grn_obj *head, grn_obj *body, grn_obj *foot,
                                  const char *file, int line);
+
+GRN_API void grn_ctx_output_array_open(grn_ctx *ctx,
+                                       const char *name, int nelements);
+GRN_API void grn_ctx_output_array_close(grn_ctx *ctx);
+GRN_API void grn_ctx_output_map_open(grn_ctx *ctx,
+                                     const char *name, int nelements);
+GRN_API void grn_ctx_output_map_close(grn_ctx *ctx);
+GRN_API void grn_ctx_output_int32(grn_ctx *ctx, int value);
+GRN_API void grn_ctx_output_int64(grn_ctx *ctx, long long int value);
+GRN_API void grn_ctx_output_float(grn_ctx *ctx, double value);
+GRN_API void grn_ctx_output_cstr(grn_ctx *ctx, const char *value);
+GRN_API void grn_ctx_output_str(grn_ctx *ctx,
+                                const char *value, unsigned int value_len);
+GRN_API void grn_ctx_output_bool(grn_ctx *ctx, grn_bool value);
+GRN_API void grn_ctx_output_obj(grn_ctx *ctx,
+                                grn_obj *value, grn_obj_format *format);
+
+
 GRN_API const char *grn_ctx_get_mime_type(grn_ctx *ctx);
 GRN_API void grn_ctx_recv_handler_set(grn_ctx *,
                                       void (*func)(grn_ctx *, int, void *),

@@ -60,27 +60,27 @@ GRN_API void grn_output_bool(grn_ctx *ctx, grn_obj *outbuf,
                              grn_bool value);
 
 #define GRN_OUTPUT_ARRAY_OPEN(name,nelements) \
-  (grn_output_array_open(ctx, ctx->impl->outbuf, ctx->impl->output_type, name, nelements))
+  (grn_ctx_output_array_open(ctx, name, nelements))
 #define GRN_OUTPUT_ARRAY_CLOSE() \
-  (grn_output_array_close(ctx, ctx->impl->outbuf, ctx->impl->output_type))
+  (grn_ctx_output_array_close(ctx))
 #define GRN_OUTPUT_MAP_OPEN(name,nelements) \
-  (grn_output_map_open(ctx, ctx->impl->outbuf, ctx->impl->output_type, name, nelements))
+  (grn_ctx_output_map_open(ctx, name, nelements))
 #define GRN_OUTPUT_MAP_CLOSE() \
-  (grn_output_map_close(ctx, ctx->impl->outbuf, ctx->impl->output_type))
+  (grn_ctx_output_map_close(ctx))
 #define GRN_OUTPUT_INT32(value) \
-  (grn_output_int32(ctx, ctx->impl->outbuf, ctx->impl->output_type, value))
+  (grn_ctx_output_int32(ctx, value))
 #define GRN_OUTPUT_INT64(value) \
-  (grn_output_int64(ctx, ctx->impl->outbuf, ctx->impl->output_type, value))
+  (grn_ctx_output_int64(ctx, value))
 #define GRN_OUTPUT_FLOAT(value) \
-  (grn_output_float(ctx, ctx->impl->outbuf, ctx->impl->output_type, value))
+  (grn_ctx_output_float(ctx, value))
 #define GRN_OUTPUT_CSTR(value)\
-  (grn_output_cstr(ctx, ctx->impl->outbuf, ctx->impl->output_type, value))
+  (grn_ctx_output_cstr(ctx, value))
 #define GRN_OUTPUT_STR(value,value_len)\
-  (grn_output_str(ctx, ctx->impl->outbuf, ctx->impl->output_type, value, value_len))
+  (grn_ctx_output_str(ctx, value, value_len))
 #define GRN_OUTPUT_BOOL(value)\
-  (grn_output_bool(ctx, ctx->impl->outbuf, ctx->impl->output_type, value))
+  (grn_ctx_output_bool(ctx, value))
 #define GRN_OUTPUT_OBJ(obj,format)\
-  (grn_output_obj(ctx, ctx->impl->outbuf, ctx->impl->output_type, obj, format))
+  (grn_ctx_output_obj(ctx, obj, format))
 
 #ifdef __cplusplus
 }
