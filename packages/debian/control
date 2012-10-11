@@ -164,7 +164,6 @@ Depends:
   ${misc:Depends},
   ${shlibs:Depends},
   curl,
-  libpcre3,
   groonga-server-common (= ${binary:Version})
 Description: Groonga HTTP server.
  Groonga is an open-source fulltext search engine and column store.
