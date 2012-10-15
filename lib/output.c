@@ -658,6 +658,42 @@ grn_output_obj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, grn_
 #else /* USE_GRN_TEXT_OTOJ */
 
 static inline void
+grn_output_vector(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
+                  grn_obj *vector, grn_obj_format *format)
+{
+  if (vector->header.domain == GRN_DB_VOID) {
+    ERR(GRN_INVALID_ARGUMENT, "invalid obj->header.domain");
+  }
+  if (format) {
+    ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+        "cannot print GRN_VECTOR using grn_obj_format");
+  } else {
+    unsigned int i, n;
+    grn_obj value;
+    GRN_VOID_INIT(&value);
+    n = grn_vector_size(ctx, vector);
+    grn_output_array_open(ctx, outbuf, output_type, "VECTOR", n);
+    for (i = 0; i < n; i++) {
+      const char *_value;
+      unsigned int weight, length;
+      grn_id domain;
+
+      length = grn_vector_get_element(ctx, vector, i,
+                                      &_value, &weight, &domain);
+      if (domain != GRN_DB_VOID) {
+        grn_obj_reinit(ctx, &value, domain, 0);
+      } else {
+        grn_obj_reinit(ctx, &value, vector->header.domain, 0);
+      }
+      grn_bulk_write(ctx, &value, _value, length);
+      grn_output_obj(ctx, outbuf, output_type, &value, NULL);
+    }
+    grn_output_array_close(ctx, outbuf, output_type);
+    GRN_OBJ_FIN(ctx, &value);
+  }
+}
+
+static inline void
 grn_output_pvector(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                    grn_obj *pvector, grn_obj_format *format)
 {
@@ -1009,36 +1045,7 @@ grn_output_obj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     }
     break;
   case GRN_VECTOR :
-    if (obj->header.domain == GRN_DB_VOID) {
-      ERR(GRN_INVALID_ARGUMENT, "invalid obj->header.domain");
-    }
-    if (format) {
-      ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
-          "cannot print GRN_VECTOR using grn_obj_format");
-    } else {
-      unsigned int i, n;
-      grn_obj value;
-      GRN_VOID_INIT(&value);
-      n = grn_vector_size(ctx, obj);
-      grn_output_array_open(ctx, outbuf, output_type, "VECTOR", n);
-      for (i = 0; i < n; i++) {
-        const char *_value;
-        unsigned int weight, length;
-        grn_id domain;
-
-        length = grn_vector_get_element(ctx, obj, i,
-                                        &_value, &weight, &domain);
-        if (domain != GRN_DB_VOID) {
-          grn_obj_reinit(ctx, &value, domain, 0);
-        } else {
-          grn_obj_reinit(ctx, &value, obj->header.domain, 0);
-        }
-        grn_bulk_write(ctx, &value, _value, length);
-        grn_output_obj(ctx, outbuf, output_type, &value, NULL);
-      }
-      grn_output_array_close(ctx, outbuf, output_type);
-      GRN_OBJ_FIN(ctx, &value);
-    }
+    grn_output_vector(ctx, outbuf, output_type, obj, format);
     break;
   case GRN_PVECTOR :
     grn_output_pvector(ctx, outbuf, output_type, obj, format);
