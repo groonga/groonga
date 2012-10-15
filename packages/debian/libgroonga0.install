@@ -1,1 +1,2 @@
 usr/lib/libgroonga*.so.*
+usr/lib/groonga/plugins/table/*
