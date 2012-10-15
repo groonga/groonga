@@ -968,13 +968,11 @@ grn_output_table(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                                                  GRN_CURSOR_ASCENDING);
     int resultset_size = -1;
     if (!tc) { ERRCLR(ctx); }
-#ifdef WITH_MESSAGE_PACK
     resultset_size = 1; /* [NHITS, (COLUMNS), (HITS)] */
     if (format->flags & GRN_OBJ_FORMAT_WITH_COLUMN_NAMES) {
       resultset_size++;
     }
     resultset_size += format->limit;
-#endif
     grn_output_array_open(ctx, outbuf, output_type, "RESULTSET", resultset_size);
     grn_output_array_open(ctx, outbuf, output_type, "NHITS", 1);
     if (output_type == GRN_CONTENT_XML) {
