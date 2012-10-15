@@ -658,6 +658,127 @@ grn_output_obj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, grn_
 #else /* USE_GRN_TEXT_OTOJ */
 
 static inline void
+grn_output_bulk(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
+                grn_obj *bulk, grn_obj_format *format)
+{
+  grn_obj buf;
+  GRN_TEXT_INIT(&buf, 0);
+  switch (bulk->header.domain) {
+  case GRN_DB_VOID :
+    grn_output_void(ctx, outbuf, output_type, GRN_BULK_HEAD(bulk), GRN_BULK_VSIZE(bulk));
+    break;
+  case GRN_DB_SHORT_TEXT :
+  case GRN_DB_TEXT :
+  case GRN_DB_LONG_TEXT :
+    grn_output_str(ctx, outbuf, output_type, GRN_BULK_HEAD(bulk), GRN_BULK_VSIZE(bulk));
+    break;
+  case GRN_DB_BOOL :
+    grn_output_bool(ctx, outbuf, output_type,
+                    GRN_BULK_VSIZE(bulk) ? GRN_UINT8_VALUE(bulk) : 0);
+    break;
+  case GRN_DB_INT8 :
+    grn_output_int32(ctx, outbuf, output_type,
+                     GRN_BULK_VSIZE(bulk) ? GRN_INT8_VALUE(bulk) : 0);
+    break;
+  case GRN_DB_UINT8 :
+    grn_output_int32(ctx, outbuf, output_type,
+                     GRN_BULK_VSIZE(bulk) ? GRN_UINT8_VALUE(bulk) : 0);
+    break;
+  case GRN_DB_INT16 :
+    grn_output_int32(ctx, outbuf, output_type,
+                     GRN_BULK_VSIZE(bulk) ? GRN_INT16_VALUE(bulk) : 0);
+    break;
+  case GRN_DB_UINT16 :
+    grn_output_int32(ctx, outbuf, output_type,
+                     GRN_BULK_VSIZE(bulk) ? GRN_UINT16_VALUE(bulk) : 0);
+    break;
+  case GRN_DB_INT32 :
+    grn_output_int32(ctx, outbuf, output_type,
+                     GRN_BULK_VSIZE(bulk) ? GRN_INT32_VALUE(bulk) : 0);
+    break;
+  case GRN_DB_UINT32 :
+    grn_output_int64(ctx, outbuf, output_type,
+                     GRN_BULK_VSIZE(bulk) ? GRN_UINT32_VALUE(bulk) : 0);
+    break;
+  case GRN_DB_INT64 :
+    grn_output_int64(ctx, outbuf, output_type,
+                     GRN_BULK_VSIZE(bulk) ? GRN_INT64_VALUE(bulk) : 0);
+    break;
+  case GRN_DB_UINT64 :
+    grn_output_uint64(ctx, outbuf, output_type,
+                      GRN_BULK_VSIZE(bulk) ? GRN_UINT64_VALUE(bulk) : 0);
+    break;
+  case GRN_DB_FLOAT :
+    grn_output_float(ctx, outbuf, output_type,
+                     GRN_BULK_VSIZE(bulk) ? GRN_FLOAT_VALUE(bulk) : 0);
+    break;
+  case GRN_DB_TIME :
+    grn_output_time(ctx, outbuf, output_type,
+                    GRN_BULK_VSIZE(bulk) ? GRN_INT64_VALUE(bulk) : 0);
+    break;
+  case GRN_DB_TOKYO_GEO_POINT :
+  case GRN_DB_WGS84_GEO_POINT :
+    grn_output_geo_point(ctx, outbuf, output_type,
+                         GRN_BULK_VSIZE(bulk) ? (grn_geo_point *)GRN_BULK_HEAD(bulk) : NULL);
+    break;
+  default :
+    if (format) {
+      int j;
+      int ncolumns = GRN_BULK_VSIZE(&format->columns)/sizeof(grn_obj *);
+      grn_obj **columns = (grn_obj **)GRN_BULK_HEAD(&format->columns);
+      if (format->flags & GRN_OBJ_FORMAT_WITH_COLUMN_NAMES) {
+        grn_output_array_open(ctx, outbuf, output_type, "COLUMNS", ncolumns);
+        for (j = 0; j < ncolumns; j++) {
+          grn_id range_id;
+          grn_output_array_open(ctx, outbuf, output_type, "COLUMN", 2);
+          GRN_BULK_REWIND(&buf);
+          grn_column_name_(ctx, columns[j], &buf);
+          grn_output_obj(ctx, outbuf, output_type, &buf, NULL);
+          /* column range */
+          range_id = grn_obj_get_range(ctx, columns[j]);
+          if (range_id == GRN_ID_NIL) {
+            GRN_TEXT_PUTS(ctx, outbuf, "null");
+          } else {
+            int name_len;
+            grn_obj *range_obj;
+            char name_buf[GRN_TABLE_MAX_KEY_SIZE];
+
+            range_obj = grn_ctx_at(ctx, range_id);
+            name_len = grn_obj_name(ctx, range_obj, name_buf,
+                                    GRN_TABLE_MAX_KEY_SIZE);
+            GRN_BULK_REWIND(&buf);
+            GRN_TEXT_PUT(ctx, &buf, name_buf, name_len);
+            grn_output_obj(ctx, outbuf, output_type, &buf, NULL);
+          }
+          grn_output_array_close(ctx, outbuf, output_type);
+        }
+        grn_output_array_close(ctx, outbuf, output_type);
+      }
+      grn_output_array_open(ctx, outbuf, output_type, "HIT", ncolumns);
+      for (j = 0; j < ncolumns; j++) {
+        grn_text_atoj_o(ctx, outbuf, output_type, columns[j], bulk);
+      }
+      grn_output_array_close(ctx, outbuf, output_type);
+    } else {
+      grn_obj *table = grn_ctx_at(ctx, bulk->header.domain);
+      grn_id id = *((grn_id *)GRN_BULK_HEAD(bulk));
+      if (table && table->header.type != GRN_TABLE_NO_KEY) {
+        grn_obj *accessor = grn_obj_column(ctx, table, "_key", 4);
+        if (accessor) {
+          grn_obj_get_value(ctx, accessor, id, &buf);
+          grn_obj_unlink(ctx, accessor);
+        }
+        grn_output_obj(ctx, outbuf, output_type, &buf, format);
+      } else {
+        grn_output_int64(ctx, outbuf, output_type, id);
+      }
+    }
+    break;
+  }
+  GRN_OBJ_FIN(ctx, &buf);
+}
+
+static inline void
 grn_output_uvector(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                    grn_obj *uvector, grn_obj_format *format)
 {
@@ -938,118 +1059,7 @@ grn_output_obj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
   GRN_TEXT_INIT(&buf, 0);
   switch (obj->header.type) {
   case GRN_BULK :
-    switch (obj->header.domain) {
-    case GRN_DB_VOID :
-      grn_output_void(ctx, outbuf, output_type, GRN_BULK_HEAD(obj), GRN_BULK_VSIZE(obj));
-      break;
-    case GRN_DB_SHORT_TEXT :
-    case GRN_DB_TEXT :
-    case GRN_DB_LONG_TEXT :
-      grn_output_str(ctx, outbuf, output_type, GRN_BULK_HEAD(obj), GRN_BULK_VSIZE(obj));
-      break;
-    case GRN_DB_BOOL :
-      grn_output_bool(ctx, outbuf, output_type,
-                       GRN_BULK_VSIZE(obj) ? GRN_UINT8_VALUE(obj) : 0);
-      break;
-    case GRN_DB_INT8 :
-      grn_output_int32(ctx, outbuf, output_type,
-                       GRN_BULK_VSIZE(obj) ? GRN_INT8_VALUE(obj) : 0);
-      break;
-    case GRN_DB_UINT8 :
-      grn_output_int32(ctx, outbuf, output_type,
-                       GRN_BULK_VSIZE(obj) ? GRN_UINT8_VALUE(obj) : 0);
-      break;
-    case GRN_DB_INT16 :
-      grn_output_int32(ctx, outbuf, output_type,
-                       GRN_BULK_VSIZE(obj) ? GRN_INT16_VALUE(obj) : 0);
-      break;
-    case GRN_DB_UINT16 :
-      grn_output_int32(ctx, outbuf, output_type,
-                       GRN_BULK_VSIZE(obj) ? GRN_UINT16_VALUE(obj) : 0);
-      break;
-    case GRN_DB_INT32 :
-      grn_output_int32(ctx, outbuf, output_type,
-                       GRN_BULK_VSIZE(obj) ? GRN_INT32_VALUE(obj) : 0);
-      break;
-    case GRN_DB_UINT32 :
-      grn_output_int64(ctx, outbuf, output_type,
-                       GRN_BULK_VSIZE(obj) ? GRN_UINT32_VALUE(obj) : 0);
-      break;
-    case GRN_DB_INT64 :
-      grn_output_int64(ctx, outbuf, output_type,
-                       GRN_BULK_VSIZE(obj) ? GRN_INT64_VALUE(obj) : 0);
-      break;
-    case GRN_DB_UINT64 :
-      grn_output_uint64(ctx, outbuf, output_type,
-                        GRN_BULK_VSIZE(obj) ? GRN_UINT64_VALUE(obj) : 0);
-      break;
-    case GRN_DB_FLOAT :
-      grn_output_float(ctx, outbuf, output_type,
-                       GRN_BULK_VSIZE(obj) ? GRN_FLOAT_VALUE(obj) : 0);
-      break;
-    case GRN_DB_TIME :
-      grn_output_time(ctx, outbuf, output_type,
-                      GRN_BULK_VSIZE(obj) ? GRN_INT64_VALUE(obj) : 0);
-      break;
-    case GRN_DB_TOKYO_GEO_POINT :
-    case GRN_DB_WGS84_GEO_POINT :
-      grn_output_geo_point(ctx, outbuf, output_type,
-                           GRN_BULK_VSIZE(obj) ? (grn_geo_point *)GRN_BULK_HEAD(obj) : NULL);
-      break;
-    default :
-      if (format) {
-        int j;
-        int ncolumns = GRN_BULK_VSIZE(&format->columns)/sizeof(grn_obj *);
-        grn_obj **columns = (grn_obj **)GRN_BULK_HEAD(&format->columns);
-        if (format->flags & GRN_OBJ_FORMAT_WITH_COLUMN_NAMES) {
-          grn_output_array_open(ctx, outbuf, output_type, "COLUMNS", ncolumns);
-          for (j = 0; j < ncolumns; j++) {
-            grn_id range_id;
-            grn_output_array_open(ctx, outbuf, output_type, "COLUMN", 2);
-            GRN_BULK_REWIND(&buf);
-            grn_column_name_(ctx, columns[j], &buf);
-            grn_output_obj(ctx, outbuf, output_type, &buf, NULL);
-            /* column range */
-            range_id = grn_obj_get_range(ctx, columns[j]);
-            if (range_id == GRN_ID_NIL) {
-              GRN_TEXT_PUTS(ctx, outbuf, "null");
-            } else {
-              int name_len;
-              grn_obj *range_obj;
-              char name_buf[GRN_TABLE_MAX_KEY_SIZE];
-
-              range_obj = grn_ctx_at(ctx, range_id);
-              name_len = grn_obj_name(ctx, range_obj, name_buf,
-                                      GRN_TABLE_MAX_KEY_SIZE);
-              GRN_BULK_REWIND(&buf);
-              GRN_TEXT_PUT(ctx, &buf, name_buf, name_len);
-              grn_output_obj(ctx, outbuf, output_type, &buf, NULL);
-            }
-            grn_output_array_close(ctx, outbuf, output_type);
-          }
-          grn_output_array_close(ctx, outbuf, output_type);
-        }
-        grn_output_array_open(ctx, outbuf, output_type, "HIT", ncolumns);
-        for (j = 0; j < ncolumns; j++) {
-          grn_text_atoj_o(ctx, outbuf, output_type, columns[j], obj);
-        }
-        grn_output_array_close(ctx, outbuf, output_type);
-      } else {
-        grn_obj *table = grn_ctx_at(ctx, obj->header.domain);
-        grn_id id = *((grn_id *)GRN_BULK_HEAD(obj));
-        if (table && table->header.type != GRN_TABLE_NO_KEY) {
-          grn_obj *accessor = grn_obj_column(ctx, table, "_key", 4);
-          if (accessor) {
-            grn_obj_get_value(ctx, accessor, id, &buf);
-            grn_obj_unlink(ctx, accessor);
-          }
-          grn_output_obj(ctx, outbuf, output_type, &buf, format);
-        } else {
-          grn_output_int64(ctx, outbuf, output_type, id);
-        }
-      }
-      break;
-    }
+    grn_output_bulk(ctx, outbuf, output_type, obj, format);
     break;
   case GRN_UVECTOR :
     grn_output_uvector(ctx, outbuf, output_type, obj, format);
