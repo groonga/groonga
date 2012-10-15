@@ -658,6 +658,27 @@ grn_output_obj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, grn_
 #else /* USE_GRN_TEXT_OTOJ */
 
 static inline void
+grn_output_pvector(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
+                   grn_obj *pvector, grn_obj_format *format)
+{
+  if (format) {
+    ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+        "cannot print GRN_PVECTOR using grn_obj_format");
+  } else {
+    unsigned int i, n;
+    grn_output_array_open(ctx, outbuf, output_type, "VECTOR", -1);
+    n = GRN_BULK_VSIZE(pvector) / sizeof(grn_obj *);
+    for (i = 0; i < n; i++) {
+      grn_obj *value;
+
+      value = GRN_PTR_VALUE_AT(pvector, i);
+      grn_output_obj(ctx, outbuf, output_type, value, NULL);
+    }
+    grn_output_array_close(ctx, outbuf, output_type);
+  }
+}
+
+static inline void
 grn_output_table(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                  grn_obj *table, grn_obj_format *format)
 {
@@ -1020,21 +1041,7 @@ grn_output_obj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     }
     break;
   case GRN_PVECTOR :
-    if (format) {
-      ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
-          "cannot print GRN_PVECTOR using grn_obj_format");
-    } else {
-      unsigned int i, n;
-      grn_output_array_open(ctx, outbuf, output_type, "VECTOR", -1);
-      n = GRN_BULK_VSIZE(obj) / sizeof(grn_obj *);
-      for (i = 0; i < n; i++) {
-        grn_obj *value;
-
-        value = GRN_PTR_VALUE_AT(obj, i);
-        grn_output_obj(ctx, outbuf, output_type, value, NULL);
-      }
-      grn_output_array_close(ctx, outbuf, output_type);
-    }
+    grn_output_pvector(ctx, outbuf, output_type, obj, format);
     break;
   case GRN_TABLE_HASH_KEY :
   case GRN_TABLE_PAT_KEY :
