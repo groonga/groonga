@@ -25,6 +25,10 @@
 #include <stdio.h>
 #include <string.h>
 
+#if defined(WIN32)
+#  define strncasecmp _strnicmp
+#endif
+
 #define MAX_SYNONYM_BYTES 4096
 
 static grn_hash *synonyms = NULL;
