@@ -1018,13 +1018,13 @@ grn_output_table_records(grn_ctx *ctx, grn_obj *outbuf,
                                                format->offset, format->limit,
                                                GRN_CURSOR_ASCENDING);
   if (tc) {
-    int i, j;
+    int i;
     grn_obj id;
     GRN_TEXT_INIT(&id, 0);
-    for (i = 0; !grn_table_cursor_next_o(ctx, tc, &id); i++) {
+    while (!grn_table_cursor_next_o(ctx, tc, &id)) {
       grn_output_array_open(ctx, outbuf, output_type, "HIT", ncolumns);
-      for (j = 0; j < ncolumns; j++) {
-        grn_text_atoj_o(ctx, outbuf, output_type, columns[j], &id);
+      for (i = 0; i < ncolumns; i++) {
+        grn_text_atoj_o(ctx, outbuf, output_type, columns[i], &id);
       }
       grn_output_array_close(ctx, outbuf, output_type);
     }
