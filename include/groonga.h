@@ -2134,6 +2134,7 @@ struct _grn_obj_format {
   int limit;
   int hits_offset;
   int flags;
+  grn_obj *expression;
 };
 
 #define GRN_OBJ_FORMAT_INIT(format,format_nhits,format_offset,format_limit,format_hits_offset) do { \
@@ -2142,6 +2143,7 @@ struct _grn_obj_format {
   (format)->offset = (format_offset);\
   (format)->limit = (format_limit);\
   (format)->hits_offset = (format_hits_offset);\
+  (format)->expression = NULL;\
 } while (0)
 
 #define GRN_OBJ_FORMAT_FIN(ctx,format) do {\
@@ -2149,6 +2151,7 @@ struct _grn_obj_format {
   grn_obj **columns = (grn_obj **)GRN_BULK_HEAD(&(format)->columns);\
   while (ncolumns--) { grn_obj_unlink((ctx), *columns++); }\
   GRN_OBJ_FIN((ctx), &(format)->columns);\
+  if ((format)->expression) { GRN_OBJ_FIN((ctx), (format)->expression); } \
 } while (0)
 
 GRN_API void grn_output_obj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,

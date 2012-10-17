@@ -1,0 +1,9 @@
+table_create Users TABLE_HASH_KEY ShortText
+column_create Users name COLUMN_SCALAR ShortText
+
+load --table Users
+[
+{"_key": "alice", "name": "Alice"}
+]
+
+select Users --output_columns '_key, name, edit_distance(name, "alice")'

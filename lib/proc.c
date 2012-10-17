@@ -408,6 +408,34 @@ grn_parse_query_flags(grn_ctx *ctx, const char *query_flags,
   return flags;
 }
 
+static inline grn_bool
+is_output_columns_format_v1(const char *output_columns,
+                            unsigned int output_columns_len)
+{
+  unsigned int i;
+
+  /* TODO: We should support "_id, _key, *" as new output coumns format. */
+  for (i = 0; i < output_columns_len; i++) {
+    switch (output_columns[i]) {
+    case '*' :
+      return GRN_TRUE;
+      break;
+    }
+  }
+
+  for (i = 0; i < output_columns_len; i++) {
+    switch (output_columns[i]) {
+    case ',' :
+    case '(' :
+      return GRN_FALSE;
+    default :
+      break;
+    }
+  }
+
+  return GRN_TRUE;
+}
+
 grn_rc
 grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
            const char *match_columns, unsigned int match_columns_len,
@@ -616,7 +644,17 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
           format.flags =
             GRN_OBJ_FORMAT_WITH_COLUMN_NAMES|
             GRN_OBJ_FORMAT_XML_ELEMENT_RESULTSET;
-          grn_obj_columns(ctx, sorted, output_columns, output_columns_len, &format.columns);
+          if (is_output_columns_format_v1(output_columns, output_columns_len)) {
+            grn_obj_columns(ctx, sorted, output_columns, output_columns_len,
+                            &format.columns);
+          } else {
+            grn_obj *v;
+            GRN_EXPR_CREATE_FOR_QUERY(ctx, sorted, format.expression, v);
+            grn_expr_parse(ctx, format.expression,
+                           output_columns, output_columns_len, NULL,
+                           GRN_OP_MATCH, GRN_OP_AND,
+                           GRN_EXPR_SYNTAX_SCRIPT);
+          }
           GRN_OUTPUT_OBJ(sorted, &format);
           GRN_OBJ_FORMAT_FIN(ctx, &format);
           grn_obj_unlink(ctx, sorted);
@@ -628,7 +666,17 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
           format.flags =
             GRN_OBJ_FORMAT_WITH_COLUMN_NAMES|
             GRN_OBJ_FORMAT_XML_ELEMENT_RESULTSET;
-          grn_obj_columns(ctx, res, output_columns, output_columns_len, &format.columns);
+          if (is_output_columns_format_v1(output_columns, output_columns_len)) {
+            grn_obj_columns(ctx, res, output_columns, output_columns_len,
+                            &format.columns);
+          } else {
+            grn_obj *v;
+            GRN_EXPR_CREATE_FOR_QUERY(ctx, res, format.expression, v);
+            grn_expr_parse(ctx, format.expression,
+                           output_columns, output_columns_len, NULL,
+                           GRN_OP_MATCH, GRN_OP_AND,
+                           GRN_EXPR_SYNTAX_SCRIPT);
+          }
           GRN_OUTPUT_OBJ(res, &format);
           GRN_OBJ_FORMAT_FIN(ctx, &format);
         }

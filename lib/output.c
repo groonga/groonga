@@ -967,28 +967,52 @@ grn_output_table_header(grn_ctx *ctx, grn_obj *outbuf,
     grn_output_array_close(ctx, outbuf, output_type);
 }
 
-static inline void
-grn_output_table_columns(grn_ctx *ctx, grn_obj *outbuf,
-                         grn_content_type output_type,
-                         grn_obj *table, grn_obj_format *format)
+static inline int
+count_n_elements_in_expression(grn_ctx *ctx, grn_obj *expression)
 {
-  int i;
-  int ncolumns = GRN_BULK_VSIZE(&format->columns)/sizeof(grn_obj *);
-  grn_obj **columns = (grn_obj **)GRN_BULK_HEAD(&format->columns);
-  grn_obj buf;
+  int n_elements = 0;
+  grn_bool is_first_comma = GRN_TRUE;
+  grn_expr *expr = (grn_expr *)expression;
+  grn_expr_code *code;
+  grn_expr_code *code_end = expr->codes + expr->codes_curr;
 
-  GRN_TEXT_INIT(&buf, 0);
-  grn_output_array_open(ctx, outbuf, output_type, "COLUMNS", ncolumns);
-  for (i = 0; i < ncolumns; i++) {
+  for (code = expr->codes; code < code_end; code++) {
+    if (code->op == GRN_OP_COMMA) {
+      n_elements++;
+      if (is_first_comma) {
+        n_elements++;
+        is_first_comma = GRN_FALSE;
+      }
+    }
+  }
+
+  return n_elements;
+}
+
+static inline int
+count_n_argments_in_expr_code(grn_ctx *ctx, grn_expr_code *code)
+{
+  if (code->op == GRN_OP_CALL && !code->value) {
+    return code->nargs + 1;
+  } else {
+    return code->nargs;
+  }
+}
+
+static inline void
+grn_output_table_column(grn_ctx *ctx, grn_obj *outbuf,
+                        grn_content_type output_type,
+                        grn_obj *column, grn_obj *buf)
+{
+  grn_output_array_open(ctx, outbuf, output_type, "COLUMN", 2);
+  if (column) {
     grn_id range_id;
-    grn_output_array_open(ctx, outbuf, output_type, "COLUMN", 2);
-    GRN_BULK_REWIND(&buf);
-    grn_column_name_(ctx, columns[i], &buf);
-    grn_output_obj(ctx, outbuf, output_type, &buf, NULL);
-    /* column range */
-    range_id = grn_obj_get_range(ctx, columns[i]);
+    GRN_BULK_REWIND(buf);
+    grn_column_name_(ctx, column, buf);
+    grn_output_obj(ctx, outbuf, output_type, buf, NULL);
+    range_id = grn_obj_get_range(ctx, column);
     if (range_id == GRN_ID_NIL) {
-      GRN_TEXT_PUTS(ctx, outbuf, "null");
+      grn_output_cstr(ctx, outbuf, output_type, "null");
     } else {
       int name_len;
       grn_obj *range_obj;
@@ -997,14 +1021,181 @@ grn_output_table_columns(grn_ctx *ctx, grn_obj *outbuf,
       range_obj = grn_ctx_at(ctx, range_id);
       name_len = grn_obj_name(ctx, range_obj, name_buf,
                               GRN_TABLE_MAX_KEY_SIZE);
-      GRN_BULK_REWIND(&buf);
-      GRN_TEXT_PUT(ctx, &buf, name_buf, name_len);
-      grn_output_obj(ctx, outbuf, output_type, &buf, NULL);
+      GRN_BULK_REWIND(buf);
+      GRN_TEXT_PUT(ctx, buf, name_buf, name_len);
+      grn_output_obj(ctx, outbuf, output_type, buf, NULL);
+    }
+  } else {
+    grn_output_cstr(ctx, outbuf, output_type, "");
+    grn_output_cstr(ctx, outbuf, output_type, "");
+  }
+  grn_output_array_close(ctx, outbuf, output_type);
+}
+
+static inline void
+grn_output_table_columns_by_expression(grn_ctx *ctx, grn_obj *outbuf,
+                                       grn_content_type output_type,
+                                       grn_obj *table, grn_obj_format *format,
+                                       grn_obj *buf)
+{
+  int n_elements;
+  int previous_comma_offset = -1;
+  grn_bool is_first_comma = GRN_TRUE;
+  grn_expr *expr = (grn_expr *)format->expression;
+  grn_expr_code *code;
+  grn_expr_code *code_end = expr->codes + expr->codes_curr;
+
+  n_elements = count_n_elements_in_expression(ctx, format->expression);
+
+  grn_output_array_open(ctx, outbuf, output_type, "COLUMNS", n_elements);
+  for (code = expr->codes; code < code_end; code++) {
+    int code_start_offset;
+
+    if (code->op != GRN_OP_COMMA) {
+      continue;
+    }
+
+    code_start_offset = previous_comma_offset + 1;
+    if (is_first_comma) {
+      int code_end_offset;
+      int next_start_offset;
+
+      grn_output_table_column(ctx, outbuf, output_type,
+                              expr->codes[0].value, buf);
+
+      code_end_offset = code - expr->codes - code_start_offset;
+      next_start_offset = code_end_offset - 1;
+      while (next_start_offset > previous_comma_offset) {
+        int n_args;
+        grn_expr_code *next_code = expr->codes + next_start_offset;
+        n_args = count_n_argments_in_expr_code(ctx, next_code);
+        if (n_args == 1) {
+          break;
+        } else {
+          next_start_offset -= n_args;
+        }
+      }
+      code_start_offset = next_start_offset;
+      is_first_comma = GRN_FALSE;
+    }
+
+    grn_output_table_column(ctx, outbuf, output_type,
+                            expr->codes[code_start_offset].value, buf);
+    previous_comma_offset = code - expr->codes;
+  }
+  grn_output_array_close(ctx, outbuf, output_type);
+}
+
+static inline void
+grn_output_table_columns_by_columns(grn_ctx *ctx, grn_obj *outbuf,
+                                    grn_content_type output_type,
+                                    grn_obj *table, grn_obj_format *format,
+                                    grn_obj *buf)
+{
+  int i;
+  int ncolumns = GRN_BULK_VSIZE(&format->columns)/sizeof(grn_obj *);
+  grn_obj **columns = (grn_obj **)GRN_BULK_HEAD(&format->columns);
+
+  grn_output_array_open(ctx, outbuf, output_type, "COLUMNS", ncolumns);
+  for (i = 0; i < ncolumns; i++) {
+    grn_output_table_column(ctx, outbuf, output_type, columns[i], buf);
+  }
+  grn_output_array_close(ctx, outbuf, output_type);
+}
+
+static inline void
+grn_output_table_columns(grn_ctx *ctx, grn_obj *outbuf,
+                         grn_content_type output_type,
+                         grn_obj *table, grn_obj_format *format)
+{
+  grn_obj buf;
+
+  GRN_TEXT_INIT(&buf, 0);
+  if (format->expression) {
+    grn_output_table_columns_by_expression(ctx, outbuf, output_type,
+                                           table, format, &buf);
+  } else {
+    grn_output_table_columns_by_columns(ctx, outbuf, output_type,
+                                        table, format, &buf);
+  }
+  GRN_OBJ_FIN(ctx, &buf);
+}
+
+static inline void
+grn_output_table_records_by_expression(grn_ctx *ctx, grn_obj *outbuf,
+                                       grn_content_type output_type,
+                                       grn_table_cursor *tc,
+                                       grn_obj_format *format)
+{
+  int n_elements = 0;
+  grn_obj *record;
+  grn_expr *expr = (grn_expr *)format->expression;
+  grn_expr_code *code;
+  grn_expr_code *code_end = expr->codes + expr->codes_curr;
+
+  n_elements = count_n_elements_in_expression(ctx, format->expression);
+  record = grn_expr_get_var_by_offset(ctx, format->expression, 0);
+  while (!grn_table_cursor_next_o(ctx, tc, record)) {
+    int previous_comma_offset = -1;
+    grn_bool is_first_comma = GRN_TRUE;
+    grn_output_array_open(ctx, outbuf, output_type, "HIT", n_elements);
+    for (code = expr->codes; code < code_end; code++) {
+      if (code->op == GRN_OP_COMMA) {
+        grn_obj *res;
+        int code_start_offset = previous_comma_offset + 1;
+        int code_end_offset = code - expr->codes - code_start_offset;
+        int original_codes_curr = expr->codes_curr;
+        if (is_first_comma) {
+          expr->codes_curr = code_end_offset - 1;
+          while (expr->codes_curr > previous_comma_offset) {
+            int n_args;
+            grn_expr_code *first_code = expr->codes + expr->codes_curr;
+            n_args = count_n_argments_in_expr_code(ctx, first_code);
+            if (n_args == 1) {
+              break;
+            } else {
+              expr->codes_curr -= n_args;
+            }
+          }
+          res = grn_expr_exec(ctx, format->expression, 0);
+          grn_output_obj(ctx, outbuf, output_type, res, NULL);
+          code_start_offset = expr->codes_curr;
+          code_end_offset -= expr->codes_curr;
+          is_first_comma = GRN_FALSE;
+        }
+        expr->codes += code_start_offset;
+        expr->codes_curr = code_end_offset;
+        res = grn_expr_exec(ctx, format->expression, 0);
+        grn_output_obj(ctx, outbuf, output_type, res, NULL);
+        expr->codes -= code_start_offset;
+        expr->codes_curr = original_codes_curr;
+        previous_comma_offset = code - expr->codes;
+      }
+    }
+    grn_output_array_close(ctx, outbuf, output_type);
+    GRN_BULK_REWIND(record);
+  }
+}
+
+static inline void
+grn_output_table_records_by_columns(grn_ctx *ctx, grn_obj *outbuf,
+                                    grn_content_type output_type,
+                                    grn_table_cursor *tc,
+                                    grn_obj_format *format)
+{
+  int i;
+  grn_obj id;
+  int ncolumns = GRN_BULK_VSIZE(&format->columns)/sizeof(grn_obj *);
+  grn_obj **columns = (grn_obj **)GRN_BULK_HEAD(&format->columns);
+  GRN_TEXT_INIT(&id, 0);
+  while (!grn_table_cursor_next_o(ctx, tc, &id)) {
+    grn_output_array_open(ctx, outbuf, output_type, "HIT", ncolumns);
+    for (i = 0; i < ncolumns; i++) {
+      grn_text_atoj_o(ctx, outbuf, output_type, columns[i], &id);
     }
     grn_output_array_close(ctx, outbuf, output_type);
   }
-  grn_output_array_close(ctx, outbuf, output_type);
-  GRN_OBJ_FIN(ctx, &buf);
+  GRN_OBJ_FIN(ctx, &id);
 }
 
 static inline void
@@ -1012,23 +1203,17 @@ grn_output_table_records(grn_ctx *ctx, grn_obj *outbuf,
                          grn_content_type output_type,
                          grn_obj *table, grn_obj_format *format)
 {
-  int ncolumns = GRN_BULK_VSIZE(&format->columns)/sizeof(grn_obj *);
-  grn_obj **columns = (grn_obj **)GRN_BULK_HEAD(&format->columns);
   grn_table_cursor *tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0,
                                                format->offset, format->limit,
                                                GRN_CURSOR_ASCENDING);
   if (tc) {
-    int i;
-    grn_obj id;
-    GRN_TEXT_INIT(&id, 0);
-    while (!grn_table_cursor_next_o(ctx, tc, &id)) {
-      grn_output_array_open(ctx, outbuf, output_type, "HIT", ncolumns);
-      for (i = 0; i < ncolumns; i++) {
-        grn_text_atoj_o(ctx, outbuf, output_type, columns[i], &id);
-      }
-      grn_output_array_close(ctx, outbuf, output_type);
+    if (format->expression) {
+      grn_output_table_records_by_expression(ctx, outbuf, output_type,
+                                             tc, format);
+    } else {
+      grn_output_table_records_by_columns(ctx, outbuf, output_type,
+                                          tc, format);
     }
-    GRN_OBJ_FIN(ctx, &id);
     grn_table_cursor_close(ctx, tc);
   } else {
     ERRCLR(ctx);

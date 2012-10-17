@@ -1190,6 +1190,9 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
       DFI_POP(e, dfi);
       PUSH_CODE(e, op, obj, nargs, code);
       break;
+    case GRN_OP_COMMA :
+      PUSH_CODE(e, op, obj, nargs, code);
+      break;
     default :
       break;
     }
