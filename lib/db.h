@@ -270,6 +270,8 @@ unsigned int grn_vector_pop_element(grn_ctx *ctx, grn_obj *vector,
                                     const char **str, unsigned int *weight, grn_id *domain);
 
 grn_rc grn_vector_delimit(grn_ctx *ctx, grn_obj *v, unsigned int weight, grn_id domain);
+grn_rc grn_vector_decode(grn_ctx *ctx, grn_obj *v, const char *data, uint32_t data_size);
+
 
 grn_rc grn_db_init_builtin_types(grn_ctx *ctx);
 
