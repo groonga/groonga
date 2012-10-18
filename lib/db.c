@@ -7358,6 +7358,27 @@ grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, unsigned char flags)
   return ctx->rc;
 }
 
+grn_rc
+grn_obj_reinit_for(grn_ctx *ctx, grn_obj *obj, grn_obj *domain_obj)
+{
+  grn_id domain = GRN_ID_NIL;
+  grn_obj_flags flags = 0;
+
+  if (!GRN_DB_OBJP(domain_obj) && domain_obj->header.type != GRN_ACCESSOR) {
+    grn_obj inspected;
+    GRN_TEXT_INIT(&inspected, 0);
+    limited_size_inspect(ctx, &inspected, domain_obj);
+    ERR(GRN_INVALID_ARGUMENT,
+        "[reinit] invalid domain object: <%.*s>",
+        (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+    return ctx->rc;
+  }
+
+  grn_obj_get_range_info(ctx, domain_obj, &domain, &flags);
+  return grn_obj_reinit(ctx, obj, domain, flags);
+}
+
 const char *
 grn_obj_path(grn_ctx *ctx, grn_obj *obj)
 {

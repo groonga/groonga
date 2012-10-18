@@ -2687,6 +2687,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
               col = grn_obj_column(ctx, table, GRN_BULK_HEAD(col), GRN_BULK_VSIZE(col));
               if (col) { GRN_PTR_PUT(ctx, &e->objs, col); }
             }
+            grn_obj_reinit_for(ctx, res, col);
             if (col) {
               value = grn_obj_get_value_(ctx, col, GRN_RECORD_VALUE(rec), &size);
             } else {
@@ -2696,9 +2697,12 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
             if (size == GRN_OBJ_GET_VALUE_IMD) {
               GRN_RECORD_SET(ctx, res, (uintptr_t)value);
             } else {
-              grn_bulk_write_from(ctx, res, value, 0, size);
+              if (res->header.type == GRN_VECTOR) {
+                grn_vector_decode(ctx, res, value, size);
+              } else {
+                grn_bulk_write_from(ctx, res, value, 0, size);
+              }
             }
-            res->header.domain = grn_obj_get_range(ctx, col);
             code++;
           } while (code < ce && code->op == GRN_OP_GET_VALUE);
         }

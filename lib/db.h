@@ -422,6 +422,8 @@ grn_id grn_obj_register(grn_ctx *ctx, grn_obj *db, const char *name, unsigned in
 int grn_obj_is_persistent(grn_ctx *ctx, grn_obj *obj);
 void grn_obj_spec_save(grn_ctx *ctx, grn_db_obj *obj);
 
+grn_rc grn_obj_reinit_for(grn_ctx *ctx, grn_obj *obj, grn_obj *domain_obj);
+
 #define GRN_UINT32_POP(obj,value) do {\
   if (GRN_BULK_VSIZE(obj) >= sizeof(uint32_t)) {\
     GRN_BULK_INCR_LEN((obj), -(sizeof(uint32_t)));\
