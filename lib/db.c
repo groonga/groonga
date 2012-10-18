@@ -4395,39 +4395,70 @@ grn_view_group(grn_ctx *ctx, grn_obj *table,
   return GRN_SUCCESS;
 }
 
-grn_id
-grn_obj_get_range(grn_ctx *ctx, grn_obj *obj)
+inline static grn_bool
+grn_column_is_vector(grn_ctx *ctx, grn_obj *column)
 {
-  grn_id range = GRN_ID_NIL;
+  grn_obj_flags type;
+
+  if (column->header.type != GRN_COLUMN_VAR_SIZE) {
+    return GRN_FALSE;
+  }
+
+  type = column->header.flags & GRN_OBJ_COLUMN_TYPE_MASK;
+  return type == GRN_OBJ_COLUMN_VECTOR;
+}
+
+inline static void
+grn_obj_get_range_info(grn_ctx *ctx, grn_obj *obj,
+                       grn_id *range_id, grn_obj_flags *range_flags)
+{
   if (GRN_DB_OBJP(obj)) {
-    range = DB_OBJ(obj)->range;
+    *range_id = DB_OBJ(obj)->range;
+    if (grn_column_is_vector(ctx, obj)) {
+      *range_flags = GRN_OBJ_VECTOR;
+    }
   } else if (obj->header.type == GRN_ACCESSOR) {
     grn_accessor *a;
     for (a = (grn_accessor *)obj; a; a = a->next) {
       switch (a->action) {
       case GRN_ACCESSOR_GET_ID :
-        range = GRN_DB_UINT32;
+        *range_id = GRN_DB_UINT32;
         break;
       case GRN_ACCESSOR_GET_VALUE :/* fix me */
       case GRN_ACCESSOR_GET_SCORE :
       case GRN_ACCESSOR_GET_NSUBRECS :
-        range = GRN_DB_INT32;
+        *range_id = GRN_DB_INT32;
         break;
       case GRN_ACCESSOR_GET_COLUMN_VALUE :
-        if (GRN_DB_OBJP(a->obj)) { range = DB_OBJ(a->obj)->range; }
+        if (GRN_DB_OBJP(a->obj)) {
+          *range_id = DB_OBJ(a->obj)->range;
+          if (grn_column_is_vector(ctx, a->obj)) {
+            *range_flags = GRN_OBJ_VECTOR;
+          }
+        }
         break;
       case GRN_ACCESSOR_GET_KEY :
-        if (GRN_DB_OBJP(a->obj)) { range = DB_OBJ(a->obj)->header.domain; }
+        if (GRN_DB_OBJP(a->obj)) { *range_id = DB_OBJ(a->obj)->header.domain; }
         break;
       default :
-        if (GRN_DB_OBJP(a->obj)) { range = DB_OBJ(a->obj)->range; }
+        if (GRN_DB_OBJP(a->obj)) { *range_id = DB_OBJ(a->obj)->range; }
         break;
       }
     }
   } else if (obj->header.type == GRN_ACCESSOR_VIEW) {
-    range = GRN_DB_OBJECT;
+    *range_id = GRN_DB_OBJECT;
   }
-  return range;
+}
+
+grn_id
+grn_obj_get_range(grn_ctx *ctx, grn_obj *obj)
+{
+  grn_id range_id = GRN_ID_NIL;
+  grn_obj_flags range_flags = 0;
+
+  grn_obj_get_range_info(ctx, obj, &range_id, &range_flags);
+
+  return range_id;
 }
 
 int
