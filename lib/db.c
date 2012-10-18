@@ -7322,6 +7322,7 @@ grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, unsigned char flags)
       if (flags & GRN_OBJ_VECTOR) {
         if (obj->header.type != GRN_VECTOR) { grn_bulk_fin(ctx, obj); }
         obj->header.type = GRN_VECTOR;
+        obj->u.v.sections = NULL;
       } else {
         if (obj->header.type == GRN_VECTOR) { VECTOR_CLEAR(ctx,obj); }
         obj->header.type = GRN_BULK;
