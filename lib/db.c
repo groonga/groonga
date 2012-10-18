@@ -93,6 +93,47 @@ gen_pathname(const char *path, char *buffer, int fno)
   }
 }
 
+static grn_bool
+is_text_object(grn_obj *object)
+{
+  if (!object) {
+    return GRN_FALSE;
+  }
+
+  if (object->header.type != GRN_BULK) {
+    return GRN_FALSE;
+  }
+
+  switch (object->header.domain) {
+  case GRN_DB_SHORT_TEXT:
+  case GRN_DB_TEXT:
+  case GRN_DB_LONG_TEXT:
+    return GRN_TRUE;
+  default:
+    return GRN_FALSE;
+  }
+}
+
+static void
+limited_size_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *object)
+{
+  unsigned int original_size = 0;
+  unsigned int max_size = GRN_CTX_MSGSIZE / 2;
+
+  if (object) {
+    original_size = GRN_BULK_VSIZE(object);
+  }
+
+  if (original_size > max_size && is_text_object(object)) {
+    grn_text_esc(ctx, buffer, GRN_TEXT_VALUE(object), max_size);
+    GRN_TEXT_PUTS(ctx, buffer, "...(");
+    grn_text_lltoa(ctx, buffer, original_size);
+    GRN_TEXT_PUTS(ctx, buffer, ")");
+  } else {
+    grn_inspect(ctx, buffer, object);
+  }
+}
+
 typedef struct {
   grn_obj *ptr;
   uint32_t lock;
@@ -8778,47 +8819,6 @@ name_equal(const char *p, unsigned int size, const char *name)
   if (strlen(name) != size) { return 0; }
   if (*p != GRN_DB_PSEUDO_COLUMN_PREFIX) { return 0; }
   return !memcmp(p + 1, name + 1, size - 1);
-}
-
-static grn_bool
-is_text_object(grn_obj *object)
-{
-  if (!object) {
-    return GRN_FALSE;
-  }
-
-  if (object->header.type != GRN_BULK) {
-    return GRN_FALSE;
-  }
-
-  switch (object->header.domain) {
-  case GRN_DB_SHORT_TEXT:
-  case GRN_DB_TEXT:
-  case GRN_DB_LONG_TEXT:
-    return GRN_TRUE;
-  default:
-    return GRN_FALSE;
-  }
-}
-
-static void
-limited_size_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *object)
-{
-  unsigned int original_size = 0;
-  unsigned int max_size = GRN_CTX_MSGSIZE / 2;
-
-  if (object) {
-    original_size = GRN_BULK_VSIZE(object);
-  }
-
-  if (original_size > max_size && is_text_object(object)) {
-    grn_text_esc(ctx, buffer, GRN_TEXT_VALUE(object), max_size);
-    GRN_TEXT_PUTS(ctx, buffer, "...(");
-    grn_text_lltoa(ctx, buffer, original_size);
-    GRN_TEXT_PUTS(ctx, buffer, ")");
-  } else {
-    grn_inspect(ctx, buffer, object);
-  }
 }
 
 static void
