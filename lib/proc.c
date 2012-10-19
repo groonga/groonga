@@ -414,19 +414,6 @@ is_output_columns_format_v1(const char *output_columns,
 {
   unsigned int i;
 
-  /* TODO: We should enable function support in output_columns again.
-     We always treat all output_columns as old style for now. */
-  return GRN_TRUE;
-
-  /* TODO: We should support "_id, _key, *" as new output coumns format. */
-  for (i = 0; i < output_columns_len; i++) {
-    switch (output_columns[i]) {
-    case '*' :
-      return GRN_TRUE;
-      break;
-    }
-  }
-
   for (i = 0; i < output_columns_len; i++) {
     switch (output_columns[i]) {
     case ',' :
@@ -657,7 +644,7 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
             grn_expr_parse(ctx, format.expression,
                            output_columns, output_columns_len, NULL,
                            GRN_OP_MATCH, GRN_OP_AND,
-                           GRN_EXPR_SYNTAX_SCRIPT);
+                           GRN_EXPR_SYNTAX_OUTPUT_COLUMNS);
           }
           GRN_OUTPUT_OBJ(sorted, &format);
           GRN_OBJ_FORMAT_FIN(ctx, &format);
@@ -679,7 +666,7 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
             grn_expr_parse(ctx, format.expression,
                            output_columns, output_columns_len, NULL,
                            GRN_OP_MATCH, GRN_OP_AND,
-                           GRN_EXPR_SYNTAX_SCRIPT);
+                           GRN_EXPR_SYNTAX_OUTPUT_COLUMNS);
           }
           GRN_OUTPUT_OBJ(res, &format);
           GRN_OBJ_FORMAT_FIN(ctx, &format);

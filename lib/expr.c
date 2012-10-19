@@ -236,7 +236,8 @@ static const char *opstrs[] = {
   "TABLE_SELECT",
   "TABLE_SORT",
   "TABLE_GROUP",
-  "JSON_PUT"
+  "JSON_PUT",
+  "ALL_COLUMNS"
 };
 
 static void
@@ -1192,6 +1193,44 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
       break;
     case GRN_OP_COMMA :
       PUSH_CODE(e, op, obj, nargs, code);
+      break;
+    case GRN_OP_ALL_COLUMNS :
+      if (nargs == 0) {
+        grn_obj *variable = grn_expr_get_var_by_offset(ctx, expr, 0);
+        if (variable) {
+          grn_id table_id = GRN_OBJ_GET_DOMAIN(variable);
+          grn_obj *table = grn_ctx_at(ctx, table_id);
+          grn_obj columns_buffer;
+          grn_obj **columns;
+          int i, n_columns;
+
+          GRN_PTR_INIT(&columns_buffer, GRN_OBJ_VECTOR, GRN_ID_NIL);
+          grn_obj_columns(ctx, table, "*", strlen("*"), &columns_buffer);
+          n_columns = GRN_BULK_VSIZE(&columns_buffer) / sizeof(grn_obj *);
+          columns = (grn_obj **)GRN_BULK_HEAD(&columns_buffer);
+
+          if (n_columns == 0) {
+            if (e->codes_curr > 0 &&
+                e->codes[e->codes_curr - 1].op == GRN_OP_COMMA) {
+              e->codes_curr--;
+            }
+          } else {
+            for (i = 0; i < n_columns; i++) {
+              if (i > 0) {
+                grn_expr_append_op(ctx, expr, GRN_OP_COMMA, 2);
+              }
+              grn_expr_append_const(ctx, expr, columns[i], GRN_OP_GET_VALUE, 1);
+              GRN_PTR_PUT(ctx, &e->objs, columns[i]);
+            }
+          }
+
+          GRN_OBJ_FIN(ctx, &columns_buffer);
+        } else {
+          /* TODO: report error */
+        }
+      } else {
+        /* TODO: report error */
+      }
       break;
     default :
       break;
@@ -5760,7 +5799,11 @@ grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
     efsi.opt.weight_vector = NULL;
     efsi.weight_set = NULL;
 
-    if (flags & GRN_EXPR_SYNTAX_SCRIPT) {
+    if (flags & (GRN_EXPR_SYNTAX_SCRIPT | GRN_EXPR_SYNTAX_OUTPUT_COLUMNS)) {
+      if (flags & GRN_EXPR_SYNTAX_OUTPUT_COLUMNS) {
+        efs_info *q = &efsi;
+        PARSE(GRN_EXPR_TOKEN_START_OUTPUT_COLUMNS);
+      }
       parse_script(ctx, &efsi);
     } else {
       parse_query(ctx, &efsi);
