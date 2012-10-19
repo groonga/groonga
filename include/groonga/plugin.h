@@ -155,8 +155,8 @@ void grn_plugin_mutex_unlock(grn_ctx *ctx, grn_plugin_mutex *mutex);
   grn_plugin_proc_alloc() allocates a `grn_obj` object.
   You can use it in function that is registered as GRN_PROC_FUNCTION.
  */
-grn_obj *grn_plugin_proc_alloc(grn_ctx *ctx, grn_user_data *user_data,
-                               grn_id domain, grn_obj_flags flags);
+GRN_PLUGIN_EXPORT grn_obj *grn_plugin_proc_alloc(grn_ctx *ctx, grn_user_data *user_data,
+                                                 grn_id domain, grn_obj_flags flags);
 
 /*
   grn_plugin_win32_base_dir() returns the groonga install directory.
@@ -166,7 +166,7 @@ grn_obj *grn_plugin_proc_alloc(grn_ctx *ctx, grn_user_data *user_data,
 
   It only works on Windows. It returns `NULL` on other platforms.
  */
-const char *grn_plugin_win32_base_dir(void);
+GRN_PLUGIN_EXPORT const char *grn_plugin_win32_base_dir(void);
 
 
 #ifdef __cplusplus
