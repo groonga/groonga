@@ -1,0 +1,38 @@
+table_create Characters TABLE_HASH_KEY|KEY_NORMALIZE ShortText
+[[0,0.0,0.0],true]
+column_create Characters unicode COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Characters
+[
+{"_key": "𝐀", "unicode": "U+1D400 MATHEMATICAL BOLD CAPITAL A"}
+]
+[[0,0.0,0.0],1]
+select Characters --filter '_key == "A"' --output_columns _key,unicode
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "unicode",
+          "ShortText"
+        ]
+      ],
+      [
+        "a",
+        "U+1D400 MATHEMATICAL BOLD CAPITAL A"
+      ]
+    ]
+  ]
+]

@@ -1,0 +1,9 @@
+table_create Characters TABLE_HASH_KEY ShortText
+column_create Characters unicode COLUMN_SCALAR ShortText
+
+load --table Characters
+[
+{"_key": "𝐀", "unicode": "U+1D400 MATHEMATICAL BOLD CAPITAL A"}
+]
+
+select Characters --output_columns _key,unicode
