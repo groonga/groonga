@@ -274,6 +274,7 @@ fi
 %dir %{_libdir}/groonga/plugins
 %dir %{_libdir}/groonga/plugins/tokenizers
 %{_libdir}/groonga/plugins/table/table.so
+%{_libdir}/groonga/plugins/query_expanders/tsv.so
 %{_datadir}/groonga/
 
 %files server-common
