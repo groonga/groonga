@@ -165,11 +165,12 @@ check_build_rpm_packages ()
     arch=$2
     ver=$3
     BASE_VERSION=`cat ../base_version`
-    RESULT_SET=`find yum/repositories -name "*$BASE_VERSION*" | grep $dist | grep $arch`
+    FIND_PATH=yum/repositories/$dist/$ver/$arch
+    RESULT_SET=`find $FIND_PATH -name "*$BASE_VERSION*"`
     if [ -z "$RESULT_SET" ]; then
 	printf "%8s %6s %s =>  0 rpm\n" $dist$ver $arch $BASE_VERSION
     else
-	PACKAGE_COUNT=`find yum/repositories -name "*$BASE_VERSION*" | grep $dist | grep $arch | wc | awk '{print \$1}'`
+	PACKAGE_COUNT=`find $FIND_PATH -name "*$BASE_VERSION*" | wc -l`
 	printf "%8s %6s %s => %2d rpms\n" $dist$ver $arch $BASE_VERSION $PACKAGE_COUNT
     fi
 }
