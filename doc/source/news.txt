@@ -5,7 +5,37 @@
 News
 ====
 
-.. _release-2-0-７:
+.. _release-2-0-8:
+
+Release 2.0.8 - 2012/10/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [rpm] Improved the description of server-http and httpd packages.
+  [Suggested by Daiki Ueno]
+* Supported ``--query_expansion``.
+* Added query expander ``QueryExpanderTSV``.
+* Supported function call in ``select --output_columns``.
+
+Fixes
+^^^^^
+
+* [rpm] Fixed to remove needless "Requires" from spec file.
+  [Reported by Daiki Ueno]
+* [rpm] Fixed inaccurate description about license of groonga-server-gqtp.
+* [admin] Fixed record edit button shows wrong record. [GitHub#34]
+  [Reported by firewood]
+* [deb] Fixed to remove needless dependency to pcre.
+* [deb] Fixed to bundle missing table plugin.
+
+Thanks
+^^^^^^
+
+* Daiki Ueno
+
+.. _release-2-0-7:
 
 Release 2.0.7 - 2012/09/29
 --------------------------
