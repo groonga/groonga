@@ -17,12 +17,12 @@ size data.
 Installer
 ---------
 
-For 32-bit environment, download `groonga-2.0.7-x86.exe
-<http://packages.groonga.org/windows/groonga/groonga-2.0.7-x86.exe>`_
+For 32-bit environment, download `groonga-2.0.8-x86.exe
+<http://packages.groonga.org/windows/groonga/groonga-2.0.8-x86.exe>`_
 and run it.
 
-For 64-bit environment, download `groonga-2.0.7-x64.exe
-<http://packages.groonga.org/windows/groonga/groonga-2.0.7-x64.exe>`_
+For 64-bit environment, download `groonga-2.0.8-x64.exe
+<http://packages.groonga.org/windows/groonga/groonga-2.0.8-x64.exe>`_
 and run it.
 
 Use command prompt for :doc:`/reference/executables/groonga` installed in start menu.
@@ -30,12 +30,12 @@ Use command prompt for :doc:`/reference/executables/groonga` installed in start 
 zip
 ---
 
-For 32-bit environment, download `groonga-2.0.7-x86.zip
-<http://packages.groonga.org/windows/groonga/groonga-2.0.7-x86.zip>`_
+For 32-bit environment, download `groonga-2.0.8-x86.zip
+<http://packages.groonga.org/windows/groonga/groonga-2.0.8-x86.zip>`_
 and extract it.
 
-For 64-bit environment, download `groonga-2.0.7-x64.zip
-<http://packages.groonga.org/windows/groonga/groonga-2.0.7-x64.zip>`_
+For 64-bit environment, download `groonga-2.0.8-x64.zip
+<http://packages.groonga.org/windows/groonga/groonga-2.0.8-x64.zip>`_
 and extract it.
 
 :doc:`/reference/executables/groonga` is in ``bin`` folder.
@@ -50,28 +50,28 @@ Windows. Here are required tools:
     <http://www.microsoft.com/japan/msdn/vstudio/express/>`_
   * `CMake <http://www.cmake.org/>`_
 
-Download zipped source `groonga-2.0.7.zip
-<http://packages.groonga.org/source/groonga/groonga-2.0.7.zip>`_
+Download zipped source `groonga-2.0.8.zip
+<http://packages.groonga.org/source/groonga/groonga-2.0.8.zip>`_
 and extract it.
 
 Start ``Visual Studio Command Prompt (2010)`` installed by Microsoft
 Visual Studio 2010 Express and move to the groonga's source folder::
 
-  > cd c:\Users\%USERNAME%\Downloads\groonga-2.0.7
+  > cd c:\Users\%USERNAME%\Downloads\groonga-2.0.8
 
 Configure by ``cmake``. The following commnad line is for 64-bit
 version. To build 32-bit version, use ``-G "Visual Studio 10"``
 parameter instead::
 
-  groonga-2.0.7> cmake . -G "Visual Studio 10 Win64" -DCMAKE_INSTALL_PREFIX=C:\groonga
+  groonga-2.0.8> cmake . -G "Visual Studio 10 Win64" -DCMAKE_INSTALL_PREFIX=C:\groonga
 
 Build by Visual Studio::
 
-  groonga-2.0.7> devenv groonga.sln /Build Release
+  groonga-2.0.8> devenv groonga.sln /Build Release
 
 Install::
 
-  groonga-2.0.7> devenv groonga.sln /Build Release /Project Install
+  groonga-2.0.8> devenv groonga.sln /Build Release /Project Install
 
 After the above steps, :doc:`/reference/executables/groonga` is found in
 ``c:\groonga\bin\groonga.exe``.
