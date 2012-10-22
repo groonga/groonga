@@ -515,10 +515,10 @@ if [ $CHECK_BUILD -ne 0 ]; then
     check_build_packages
 fi
 if [ $ENABLE_REPOSITORY -ne 0 ]; then
-    enable_temporaly_groonga_repository
+    enable_temporary_groonga_repository
 fi
 if [ $DISABLE_REPOSITORY -ne 0 ]; then
-    disable_temporaly_groonga_repository
+    disable_temporary_groonga_repository
 fi
 if [ $INSTALL_GROONGA -ne 0 ]; then
     install_groonga_packages
