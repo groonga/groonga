@@ -6,3 +6,4 @@
 #DATABASE=/var/lib/groonga/db/db
 #LOG_PATH=/var/log/groonga/httpd/access.log
 #QUERY_LOG_PATH=/var/log/groonga/httpd/access.log
+#GRN_QUERY_EXPANDER_TSV_SYNONYMS_FILE=/usr/share/groonga/synonyms.tsv

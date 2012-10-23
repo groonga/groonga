@@ -37,6 +37,7 @@ ERROR_LOG_PATH=/var/log/groonga/httpd/error.log
 QUERY_LOG_PATH=/var/log/groonga/httpd/access.log
 OPTION_ARGS=""
 TIMEOUT=3
+GRN_QUERY_EXPANDER_TSV_SYNONYMS_FILE=/usr/share/groonga/synonyms.tsv
 
 if [ -f /etc/sysconfig/$name ]; then
 	. /etc/sysconfig/$name
