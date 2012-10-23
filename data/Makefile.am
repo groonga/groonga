@@ -7,6 +7,8 @@ SUBDIRS =			\
 	systemd			\
 	scripts
 
+dist_pkgdata_DATA = synonyms.tsv
+
 pkgsysconfdir = $(sysconfdir)/$(PACKAGE)
 dist_pkgsysconf_DATA =		\
 	groonga.conf
