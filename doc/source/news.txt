@@ -17,7 +17,6 @@ Improvements
   [Suggested by Daiki Ueno]
 * [experimental] Supported custom query expansion by plugin.
 * Added query expander ``QueryExpanderTSV``.
-* Supported function call in ``select --output_columns``.
 
 Fixes
 ^^^^^
