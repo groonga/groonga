@@ -15,7 +15,7 @@ Improvements
 
 * [rpm] Improved the description of server-http and httpd packages.
   [Suggested by Daiki Ueno]
-* Supported custom query expansion by plugin.
+* [experimental] Supported custom query expansion by plugin.
 * Added query expander ``QueryExpanderTSV``.
 * Supported function call in ``select --output_columns``.
 
