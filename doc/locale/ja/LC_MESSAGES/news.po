@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-23 15:22\n"
+"POT-Creation-Date: 2012-10-23 16:44\n"
 "PO-Revision-Date: 2012-08-28 10:30+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -52,8 +52,8 @@ msgstr ""
 
 # 4c960ccdbc674e70ad67492038d02acb
 #: ../../../source/news.txt:18
-msgid "[experimental] Supported custom query expansion by plugin."
-msgstr "[実験的] プラグインによるクエリ展開のカスタマイズをサポート。"
+msgid "Supported custom query expansion by plugin."
+msgstr "プラグインによるクエリ展開のカスタマイズをサポート。"
 
 # d3a2f1bed2ea4c1ba00ffa32fc94b0c5
 #: ../../../source/news.txt:19
