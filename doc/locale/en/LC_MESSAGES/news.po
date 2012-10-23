@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-22 11:49\n"
+"POT-Creation-Date: 2012-10-23 14:11\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -76,9 +76,9 @@ msgid ""
 "by Daiki Ueno]"
 msgstr ""
 
-# 5970a52a249a4e5eb604982122741219
+# e1a33a5f7e59499f8734fcbb09e3f4c4
 #: ../../../source/news.txt:18
-msgid "Supported custom query expansion by plugin."
+msgid "[experimental] Supported custom query expansion by plugin."
 msgstr ""
 
 # c325e1f1a67040d681837cc7a295e634

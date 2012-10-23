@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-22 11:42\n"
+"POT-Creation-Date: 2012-10-23 14:36\n"
 "PO-Revision-Date: 2012-08-28 10:30+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -47,12 +47,13 @@ msgstr "改良"
 msgid ""
 "[rpm] Improved the description of server-http and httpd packages. [Suggested "
 "by Daiki Ueno]"
-msgstr "[rpm] server-httpとhttpdパッケージの説明を改善した。 [Daiki Uenoさんが提案]"
+msgstr ""
+"[rpm] server-httpとhttpdパッケージの説明を改善した。 [Daiki Uenoさんが提案]"
 
 # 4c960ccdbc674e70ad67492038d02acb
 #: ../../../source/news.txt:18
-msgid "Supported custom query expansion by plugin."
-msgstr "プラグインによるクエリ展開のカスタマイズをサポート。"
+msgid "[experimental] Supported custom query expansion by plugin."
+msgstr "[実験的] プラグインによるクエリ展開のカスタマイズをサポート。"
 
 # d3a2f1bed2ea4c1ba00ffa32fc94b0c5
 #: ../../../source/news.txt:19
@@ -81,8 +82,9 @@ msgstr "修正"
 msgid ""
 "[rpm] Fixed to remove needless \"Requires\" from spec file. [Reported by "
 "Daiki Ueno]"
-msgstr "[rpm] 不要な\"Requires\"をspecファイルから削除するようにした。"
-"[Daiki Uenoさんが報告]"
+msgstr ""
+"[rpm] 不要な\"Requires\"をspecファイルから削除するようにした。[Daiki Uenoさん"
+"が報告]"
 
 # 025ebf1fb842441aa3fe45852f257a1f
 #: ../../../source/news.txt:27
@@ -95,8 +97,9 @@ msgstr "groonga-server-gqtpパッケージのライセンス表記が不正確�
 msgid ""
 "[admin] Fixed record edit button shows wrong record. [GitHub#34] [Reported "
 "by firewood]"
-msgstr "[admin] レコードの編集ボタンで誤ったレコードが表示されるのを修正した。"
-" [GitHub#34] [firewoodさんが報告]"
+msgstr ""
+"[admin] レコードの編集ボタンで誤ったレコードが表示されるのを修正した。 "
+"[GitHub#34] [firewoodさんが報告]"
 
 # 49b60d06f6b64550ab566f705f6e1f18
 #: ../../../source/news.txt:30
@@ -106,7 +109,8 @@ msgstr "[deb] 不要なpcreパッケージへの依存を削除した。"
 # 453b0fcb00074294bac60b2a070dd4bb
 #: ../../../source/news.txt:31
 msgid "[deb] Fixed to bundle missing table plugin."
-msgstr "[deb] パッケージに入っていなかったテーブルプラグインを添付するようにした。"
+msgstr ""
+"[deb] パッケージに入っていなかったテーブルプラグインを添付するようにした。"
 
 #: ../../../source/news.txt:34 ../../../source/news.txt:72
 #: ../../../source/news.txt:118 ../../../source/news.txt:171
