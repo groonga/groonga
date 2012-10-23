@@ -276,6 +276,7 @@ fi
 %{_libdir}/groonga/plugins/table/table.so
 %{_libdir}/groonga/plugins/query_expanders/tsv.so
 %{_datadir}/groonga/
+%{_datadir}/groonga/synonyms.tsv
 
 %files server-common
 

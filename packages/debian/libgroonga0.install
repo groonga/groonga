@@ -1,3 +1,4 @@
 usr/lib/libgroonga*.so.*
 usr/lib/groonga/plugins/table/*
 usr/lib/groonga/plugins/query_expanders/*
+usr/share/groonga/synonyms.tsv
