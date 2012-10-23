@@ -414,6 +414,10 @@ is_output_columns_format_v1(const char *output_columns,
 {
   unsigned int i;
 
+  /* TODO: We should enable function support in output_columns again.
+     We always treat all output_columns as old style for now. */
+  return GRN_TRUE;
+
   /* TODO: We should support "_id, _key, *" as new output coumns format. */
   for (i = 0; i < output_columns_len; i++) {
     switch (output_columns[i]) {
