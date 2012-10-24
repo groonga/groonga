@@ -17,6 +17,7 @@ Improvements
   [Suggested by Daiki Ueno]
 * Supported custom query expansion by plugin.
 * [experimental] Added query expander ``QueryExpanderTSV`` plugin.
+* Supported Ubuntu 12.10 Quantal Quetzal
 
 Fixes
 ^^^^^
