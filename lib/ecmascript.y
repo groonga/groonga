@@ -363,12 +363,68 @@ argument_list(A) ::= . { A = 0; }
 argument_list(A) ::= assignment_expression. { A = 1; }
 argument_list(A) ::= argument_list(B) COMMA assignment_expression. { A = B + 1; }
 
-output_columns ::= output_column.
-output_columns ::= output_columns COMMA output_column. {
-  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_COMMA, 2);
+output_columns(N_STACKED_COLUMNS) ::= . {
+  N_STACKED_COLUMNS = 0;
+}
+output_columns(N_STACKED_COLUMNS) ::= output_column(IGNORED). {
+  if (IGNORED) {
+    N_STACKED_COLUMNS = 0;
+  } else {
+    N_STACKED_COLUMNS = 1;
+  }
+}
+output_columns(N_STACKED_COLUMNS) ::=
+   output_columns(SUB_N_STACKED_COLUMNS) COMMA output_column(IGNORED). {
+  if (IGNORED) {
+    N_STACKED_COLUMNS = SUB_N_STACKED_COLUMNS;
+  } else {
+    if (SUB_N_STACKED_COLUMNS == 1) {
+      grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_COMMA, 2);
+    }
+    N_STACKED_COLUMNS = 1;
+  }
 }
 
-output_column ::= STAR. {
-  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_ALL_COLUMNS, 0);
+output_column(IGNORED) ::= STAR. {
+  grn_ctx *ctx = efsi->ctx;
+  grn_obj *expr = efsi->e;
+  grn_expr *e = (grn_expr *)expr;
+  grn_obj *variable = grn_expr_get_var_by_offset(ctx, expr, 0);
+  if (variable) {
+    grn_id table_id = GRN_OBJ_GET_DOMAIN(variable);
+    grn_obj *table = grn_ctx_at(ctx, table_id);
+    grn_obj columns_buffer;
+    grn_obj **columns;
+    int i, n_columns;
+
+    GRN_PTR_INIT(&columns_buffer, GRN_OBJ_VECTOR, GRN_ID_NIL);
+    grn_obj_columns(ctx, table, "*", strlen("*"), &columns_buffer);
+    n_columns = GRN_BULK_VSIZE(&columns_buffer) / sizeof(grn_obj *);
+    columns = (grn_obj **)GRN_BULK_HEAD(&columns_buffer);
+
+    for (i = 0; i < n_columns; i++) {
+      if (i > 0) {
+        grn_expr_append_op(ctx, expr, GRN_OP_COMMA, 2);
+      }
+      grn_expr_append_const(ctx, expr, columns[i], GRN_OP_GET_VALUE, 1);
+      GRN_PTR_PUT(ctx, &e->objs, columns[i]);
+    }
+
+    GRN_OBJ_FIN(ctx, &columns_buffer);
+
+    if (n_columns > 0) {
+      IGNORED = GRN_FALSE;
+    } else {
+      IGNORED = GRN_TRUE;
+    }
+  } else {
+    /* TODO: report error */
+    IGNORED = GRN_TRUE;
+  }
 }
-output_column ::= assignment_expression.
+output_column(IGNORED) ::= NONEXISTENT_COLUMN. {
+  IGNORED = GRN_TRUE;
+}
+output_column(IGNORED) ::= assignment_expression. {
+  IGNORED = GRN_FALSE;
+}
