@@ -5344,6 +5344,8 @@ static grn_rc
 parse_script(grn_ctx *ctx, efs_info *q)
 {
   grn_rc rc = GRN_SUCCESS;
+  grn_bool ignore_unknown_identifier = GRN_FALSE;
+  grn_bool skip_next_comma = GRN_FALSE;
   for (;;) {
     skip_space(ctx, q);
     if (q->cur >= q->str_end) { rc = GRN_END_OF_DATA; goto exit; }
@@ -5378,7 +5380,9 @@ parse_script(grn_ctx *ctx, efs_info *q)
       break;
     case ',' :
       q->cur++;
-      PARSE(GRN_EXPR_TOKEN_COMMA);
+      if (!skip_next_comma) {
+        PARSE(GRN_EXPR_TOKEN_COMMA);
+      }
       break;
     case '.' :
       q->cur++;
@@ -5756,10 +5760,25 @@ parse_script(grn_ctx *ctx, efs_info *q)
       }
       break;
     default :
-      if ((rc = get_identifier(ctx, q))) { goto exit; }
+      if ((rc = get_identifier(ctx, q))) {
+        if (rc == GRN_SYNTAX_ERROR &&
+            q->flags & GRN_EXPR_SYNTAX_OUTPUT_COLUMNS) {
+          ignore_unknown_identifier = GRN_TRUE;
+          rc = GRN_SUCCESS;
+        } else {
+          goto exit;
+        }
+      }
       break;
     }
     if (ctx->rc) { rc = ctx->rc; break; }
+
+    if (ignore_unknown_identifier) {
+      skip_next_comma = GRN_TRUE;
+      ignore_unknown_identifier = GRN_FALSE;
+    } else {
+      skip_next_comma = GRN_FALSE;
+    }
   }
 exit :
   PARSE(0);
