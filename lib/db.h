@@ -270,6 +270,8 @@ unsigned int grn_vector_pop_element(grn_ctx *ctx, grn_obj *vector,
                                     const char **str, unsigned int *weight, grn_id *domain);
 
 grn_rc grn_vector_delimit(grn_ctx *ctx, grn_obj *v, unsigned int weight, grn_id domain);
+grn_rc grn_vector_decode(grn_ctx *ctx, grn_obj *v, const char *data, uint32_t data_size);
+
 
 grn_rc grn_db_init_builtin_types(grn_ctx *ctx);
 
@@ -419,6 +421,8 @@ grn_rc grn_db_obj_init(grn_ctx *ctx, grn_obj *db, grn_id id, grn_db_obj *obj);
 grn_id grn_obj_register(grn_ctx *ctx, grn_obj *db, const char *name, unsigned int name_size);
 int grn_obj_is_persistent(grn_ctx *ctx, grn_obj *obj);
 void grn_obj_spec_save(grn_ctx *ctx, grn_db_obj *obj);
+
+grn_rc grn_obj_reinit_for(grn_ctx *ctx, grn_obj *obj, grn_obj *domain_obj);
 
 #define GRN_UINT32_POP(obj,value) do {\
   if (GRN_BULK_VSIZE(obj) >= sizeof(uint32_t)) {\
