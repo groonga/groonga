@@ -170,6 +170,45 @@ Install groonga-munin-plugins package::
 
   % sudo apt-get -y install groonga-munin-plugins
 
+12.10 Quantal Quetzal
+---------------------
+
+.. note::
+
+   Enable the universe repository to install groonga::
+
+     % sudo cp /etc/apt/sources.list /etc/apt/sources.list.d/universe.list
+     % sudo sed -i'' -e 's/main/universe/' /etc/apt/sources.list.d/universe.list
+
+Add the groonga apt repository.
+
+/etc/apt/sources.list.d/groonga.list::
+
+  deb http://packages.groonga.org/ubuntu/ quantal universe
+  deb-src http://packages.groonga.org/ubuntu/ quantal universe
+
+Install::
+
+  % sudo apt-get update
+  % sudo apt-get -y --allow-unauthenticated install groonga-keyring
+  % sudo apt-get update
+  % sudo apt-get -y install groonga
+
+If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a
+tokenizer, install groonga-tokenizer-mecab package.
+
+Install groonga-tokenizer-mecab package::
+
+  % sudo apt-get -y install groonga-tokenizer-mecab
+
+There is a package that provides `Munin
+<http://munin-monitoring.org/>`_ plugins. If you want to monitor
+groonga status by Munin, install groonga-munin-plugins package.
+
+Install groonga-munin-plugins package::
+
+  % sudo apt-get -y install groonga-munin-plugins
+
 Build from source
 -----------------
 

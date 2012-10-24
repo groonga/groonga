@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-29 15:32\n"
+"POT-Creation-Date: 2012-10-24 16:27\n"
 "PO-Revision-Date: 2012-08-08 21:54+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -82,7 +82,8 @@ msgstr ""
 #: ../../../source/install/ubuntu.txt:34 ../../../source/install/ubuntu.txt:73
 #: ../../../source/install/ubuntu.txt:112
 #: ../../../source/install/ubuntu.txt:151
-#: ../../../source/install/ubuntu.txt:194
+#: ../../../source/install/ubuntu.txt:190
+#: ../../../source/install/ubuntu.txt:233
 #: ../../../source/install/windows.txt:72
 msgid "Install::"
 msgstr "インストール::"
@@ -102,6 +103,7 @@ msgstr "インストール::"
 #: ../../../source/install/ubuntu.txt:41 ../../../source/install/ubuntu.txt:80
 #: ../../../source/install/ubuntu.txt:119
 #: ../../../source/install/ubuntu.txt:158
+#: ../../../source/install/ubuntu.txt:197
 msgid ""
 "If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a tokenizer, "
 "install groonga-tokenizer-mecab package."
@@ -125,6 +127,7 @@ msgstr ""
 #: ../../../source/install/ubuntu.txt:83
 #: ../../../source/install/ubuntu.txt:122
 #: ../../../source/install/ubuntu.txt:161
+#: ../../../source/install/ubuntu.txt:200
 msgid "Install groonga-tokenizer-mecab package::"
 msgstr "groonga-tokenizer-mecabパッケージのインストール::"
 
@@ -139,6 +142,7 @@ msgstr "groonga-tokenizer-mecabパッケージのインストール::"
 #: ../../../source/install/ubuntu.txt:87
 #: ../../../source/install/ubuntu.txt:126
 #: ../../../source/install/ubuntu.txt:165
+#: ../../../source/install/ubuntu.txt:204
 msgid ""
 "There is a package that provides `Munin <http://munin-monitoring.org/>`_ "
 "plugins. If you want to monitor groonga status by Munin, install groonga-"
@@ -196,6 +200,7 @@ msgstr "EPELリポジトリを有効にする（環境非依存）::"
 #: ../../../source/install/ubuntu.txt:91
 #: ../../../source/install/ubuntu.txt:130
 #: ../../../source/install/ubuntu.txt:169
+#: ../../../source/install/ubuntu.txt:208
 msgid "Install groonga-munin-plugins package::"
 msgstr "groonga-munin-pluginsパッケージのインストール::"
 
@@ -229,7 +234,7 @@ msgstr ""
 #: ../../../source/install/fedora.txt:50
 #: ../../../source/install/mac_os_x.txt:33
 #: ../../../source/install/others.txt:72
-#: ../../../source/install/ubuntu.txt:174
+#: ../../../source/install/ubuntu.txt:213
 #: ../../../source/install/windows.txt:44
 msgid "Build from source"
 msgstr "ソースからビルド"
@@ -242,7 +247,7 @@ msgstr "ソースからビルド"
 #: ../../../source/install/debian.txt:116
 #: ../../../source/install/fedora.txt:52
 #: ../../../source/install/solaris.txt:14
-#: ../../../source/install/ubuntu.txt:176
+#: ../../../source/install/ubuntu.txt:215
 msgid "Install required packages to build groonga::"
 msgstr "groongaをビルドするために必要なパッケージをインストールします::"
 
@@ -256,7 +261,7 @@ msgstr "groongaをビルドするために必要なパッケージをインス�
 #: ../../../source/install/fedora.txt:56
 #: ../../../source/install/mac_os_x.txt:37
 #: ../../../source/install/solaris.txt:18
-#: ../../../source/install/ubuntu.txt:180
+#: ../../../source/install/ubuntu.txt:219
 msgid "Download source::"
 msgstr "ソースをダウンロードします::"
 
@@ -269,7 +274,7 @@ msgstr "ソースをダウンロードします::"
 #: ../../../source/install/debian.txt:126
 #: ../../../source/install/fedora.txt:62
 #: ../../../source/install/mac_os_x.txt:43
-#: ../../../source/install/ubuntu.txt:186
+#: ../../../source/install/ubuntu.txt:225
 msgid "Configure (see :ref:`source-configure` about ``configure`` options)::"
 msgstr ""
 "configureを実行します（ ``configure`` のオプションについては :ref:`source-"
@@ -285,7 +290,7 @@ msgstr ""
 #: ../../../source/install/fedora.txt:66
 #: ../../../source/install/mac_os_x.txt:47
 #: ../../../source/install/solaris.txt:31
-#: ../../../source/install/ubuntu.txt:190
+#: ../../../source/install/ubuntu.txt:229
 msgid "Build::"
 msgstr "ビルド::"
 
@@ -319,6 +324,7 @@ msgstr ""
 #: ../../../source/install/ubuntu.txt:66
 #: ../../../source/install/ubuntu.txt:105
 #: ../../../source/install/ubuntu.txt:144
+#: ../../../source/install/ubuntu.txt:183
 msgid "Add the groonga apt repository."
 msgstr "groongaのaptリポジトリを追加します。"
 
@@ -327,6 +333,7 @@ msgstr "groongaのaptリポジトリを追加します。"
 #: ../../../source/install/ubuntu.txt:68
 #: ../../../source/install/ubuntu.txt:107
 #: ../../../source/install/ubuntu.txt:146
+#: ../../../source/install/ubuntu.txt:185
 msgid "/etc/apt/sources.list.d/groonga.list::"
 msgstr ""
 
@@ -1046,6 +1053,7 @@ msgstr ""
 #: ../../../source/install/ubuntu.txt:22 ../../../source/install/ubuntu.txt:61
 #: ../../../source/install/ubuntu.txt:100
 #: ../../../source/install/ubuntu.txt:139
+#: ../../../source/install/ubuntu.txt:178
 msgid "Enable the universe repository to install groonga::"
 msgstr ""
 "groongaをインストールするためにuniverseリポジトリを有効にしてください::"
@@ -1063,6 +1071,11 @@ msgstr ""
 # e965ab7beab74a84af33efbafac719a1
 #: ../../../source/install/ubuntu.txt:135
 msgid "12.04 LTS Precise Pangolin"
+msgstr ""
+
+# b4dbf30424aa404090cc145aae930f99
+#: ../../../source/install/ubuntu.txt:174
+msgid "12.10 Quantal Quetzal"
 msgstr ""
 
 # 006df75ef60e44d5a293e79addc40daa
