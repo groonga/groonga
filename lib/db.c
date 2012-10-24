@@ -93,6 +93,47 @@ gen_pathname(const char *path, char *buffer, int fno)
   }
 }
 
+static grn_bool
+is_text_object(grn_obj *object)
+{
+  if (!object) {
+    return GRN_FALSE;
+  }
+
+  if (object->header.type != GRN_BULK) {
+    return GRN_FALSE;
+  }
+
+  switch (object->header.domain) {
+  case GRN_DB_SHORT_TEXT:
+  case GRN_DB_TEXT:
+  case GRN_DB_LONG_TEXT:
+    return GRN_TRUE;
+  default:
+    return GRN_FALSE;
+  }
+}
+
+static void
+limited_size_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *object)
+{
+  unsigned int original_size = 0;
+  unsigned int max_size = GRN_CTX_MSGSIZE / 2;
+
+  if (object) {
+    original_size = GRN_BULK_VSIZE(object);
+  }
+
+  if (original_size > max_size && is_text_object(object)) {
+    grn_text_esc(ctx, buffer, GRN_TEXT_VALUE(object), max_size);
+    GRN_TEXT_PUTS(ctx, buffer, "...(");
+    grn_text_lltoa(ctx, buffer, original_size);
+    GRN_TEXT_PUTS(ctx, buffer, ")");
+  } else {
+    grn_inspect(ctx, buffer, object);
+  }
+}
+
 typedef struct {
   grn_obj *ptr;
   uint32_t lock;
@@ -4395,39 +4436,70 @@ grn_view_group(grn_ctx *ctx, grn_obj *table,
   return GRN_SUCCESS;
 }
 
-grn_id
-grn_obj_get_range(grn_ctx *ctx, grn_obj *obj)
+inline static grn_bool
+grn_column_is_vector(grn_ctx *ctx, grn_obj *column)
 {
-  grn_id range = GRN_ID_NIL;
+  grn_obj_flags type;
+
+  if (column->header.type != GRN_COLUMN_VAR_SIZE) {
+    return GRN_FALSE;
+  }
+
+  type = column->header.flags & GRN_OBJ_COLUMN_TYPE_MASK;
+  return type == GRN_OBJ_COLUMN_VECTOR;
+}
+
+inline static void
+grn_obj_get_range_info(grn_ctx *ctx, grn_obj *obj,
+                       grn_id *range_id, grn_obj_flags *range_flags)
+{
   if (GRN_DB_OBJP(obj)) {
-    range = DB_OBJ(obj)->range;
+    *range_id = DB_OBJ(obj)->range;
+    if (grn_column_is_vector(ctx, obj)) {
+      *range_flags = GRN_OBJ_VECTOR;
+    }
   } else if (obj->header.type == GRN_ACCESSOR) {
     grn_accessor *a;
     for (a = (grn_accessor *)obj; a; a = a->next) {
       switch (a->action) {
       case GRN_ACCESSOR_GET_ID :
-        range = GRN_DB_UINT32;
+        *range_id = GRN_DB_UINT32;
         break;
       case GRN_ACCESSOR_GET_VALUE :/* fix me */
       case GRN_ACCESSOR_GET_SCORE :
       case GRN_ACCESSOR_GET_NSUBRECS :
-        range = GRN_DB_INT32;
+        *range_id = GRN_DB_INT32;
         break;
       case GRN_ACCESSOR_GET_COLUMN_VALUE :
-        if (GRN_DB_OBJP(a->obj)) { range = DB_OBJ(a->obj)->range; }
+        if (GRN_DB_OBJP(a->obj)) {
+          *range_id = DB_OBJ(a->obj)->range;
+          if (grn_column_is_vector(ctx, a->obj)) {
+            *range_flags = GRN_OBJ_VECTOR;
+          }
+        }
         break;
       case GRN_ACCESSOR_GET_KEY :
-        if (GRN_DB_OBJP(a->obj)) { range = DB_OBJ(a->obj)->header.domain; }
+        if (GRN_DB_OBJP(a->obj)) { *range_id = DB_OBJ(a->obj)->header.domain; }
         break;
       default :
-        if (GRN_DB_OBJP(a->obj)) { range = DB_OBJ(a->obj)->range; }
+        if (GRN_DB_OBJP(a->obj)) { *range_id = DB_OBJ(a->obj)->range; }
         break;
       }
     }
   } else if (obj->header.type == GRN_ACCESSOR_VIEW) {
-    range = GRN_DB_OBJECT;
+    *range_id = GRN_DB_OBJECT;
   }
-  return range;
+}
+
+grn_id
+grn_obj_get_range(grn_ctx *ctx, grn_obj *obj)
+{
+  grn_id range_id = GRN_ID_NIL;
+  grn_obj_flags range_flags = 0;
+
+  grn_obj_get_range_info(ctx, obj, &range_id, &range_flags);
+
+  return range_id;
 }
 
 int
@@ -7250,6 +7322,7 @@ grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, unsigned char flags)
       if (flags & GRN_OBJ_VECTOR) {
         if (obj->header.type != GRN_VECTOR) { grn_bulk_fin(ctx, obj); }
         obj->header.type = GRN_VECTOR;
+        obj->u.v.sections = NULL;
       } else {
         if (obj->header.type == GRN_VECTOR) { VECTOR_CLEAR(ctx,obj); }
         obj->header.type = GRN_BULK;
@@ -7283,6 +7356,27 @@ grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, unsigned char flags)
     }
   }
   return ctx->rc;
+}
+
+grn_rc
+grn_obj_reinit_for(grn_ctx *ctx, grn_obj *obj, grn_obj *domain_obj)
+{
+  grn_id domain = GRN_ID_NIL;
+  grn_obj_flags flags = 0;
+
+  if (!GRN_DB_OBJP(domain_obj) && domain_obj->header.type != GRN_ACCESSOR) {
+    grn_obj inspected;
+    GRN_TEXT_INIT(&inspected, 0);
+    limited_size_inspect(ctx, &inspected, domain_obj);
+    ERR(GRN_INVALID_ARGUMENT,
+        "[reinit] invalid domain object: <%.*s>",
+        (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+    return ctx->rc;
+  }
+
+  grn_obj_get_range_info(ctx, domain_obj, &domain, &flags);
+  return grn_obj_reinit(ctx, obj, domain, flags);
 }
 
 const char *
@@ -8747,47 +8841,6 @@ name_equal(const char *p, unsigned int size, const char *name)
   if (strlen(name) != size) { return 0; }
   if (*p != GRN_DB_PSEUDO_COLUMN_PREFIX) { return 0; }
   return !memcmp(p + 1, name + 1, size - 1);
-}
-
-static grn_bool
-is_text_object(grn_obj *object)
-{
-  if (!object) {
-    return GRN_FALSE;
-  }
-
-  if (object->header.type != GRN_BULK) {
-    return GRN_FALSE;
-  }
-
-  switch (object->header.domain) {
-  case GRN_DB_SHORT_TEXT:
-  case GRN_DB_TEXT:
-  case GRN_DB_LONG_TEXT:
-    return GRN_TRUE;
-  default:
-    return GRN_FALSE;
-  }
-}
-
-static void
-limited_size_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *object)
-{
-  unsigned int original_size = 0;
-  unsigned int max_size = GRN_CTX_MSGSIZE / 2;
-
-  if (object) {
-    original_size = GRN_BULK_VSIZE(object);
-  }
-
-  if (original_size > max_size && is_text_object(object)) {
-    grn_text_esc(ctx, buffer, GRN_TEXT_VALUE(object), max_size);
-    GRN_TEXT_PUTS(ctx, buffer, "...(");
-    grn_text_lltoa(ctx, buffer, original_size);
-    GRN_TEXT_PUTS(ctx, buffer, ")");
-  } else {
-    grn_inspect(ctx, buffer, object);
-  }
 }
 
 static void
