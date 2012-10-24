@@ -1178,7 +1178,8 @@ typedef enum {
   GRN_OP_TABLE_SELECT,
   GRN_OP_TABLE_SORT,
   GRN_OP_TABLE_GROUP,
-  GRN_OP_JSON_PUT
+  GRN_OP_JSON_PUT,
+  GRN_OP_ALL_COLUMNS
 } grn_operator;
 
 struct _grn_table_group_result {
@@ -2597,6 +2598,7 @@ typedef unsigned int grn_expr_flags;
 
 #define GRN_EXPR_SYNTAX_QUERY          (0x00)
 #define GRN_EXPR_SYNTAX_SCRIPT         (0x01)
+#define GRN_EXPR_SYNTAX_OUTPUT_COLUMNS (0x20)
 #define GRN_EXPR_ALLOW_PRAGMA          (0x02)
 #define GRN_EXPR_ALLOW_COLUMN          (0x04)
 #define GRN_EXPR_ALLOW_UPDATE          (0x08)

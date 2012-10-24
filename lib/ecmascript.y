@@ -24,6 +24,7 @@
 
 input ::= query.
 input ::= expression.
+input ::= START_OUTPUT_COLUMNS output_columns.
 
 query ::= query_element.
 query ::= query query_element. {
@@ -361,3 +362,13 @@ arguments(A) ::= PARENL argument_list(B) PARENR. { A = B; }
 argument_list(A) ::= . { A = 0; }
 argument_list(A) ::= assignment_expression. { A = 1; }
 argument_list(A) ::= argument_list(B) COMMA assignment_expression. { A = B + 1; }
+
+output_columns ::= output_column.
+output_columns ::= output_columns COMMA output_column. {
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_COMMA, 2);
+}
+
+output_column ::= STAR. {
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_ALL_COLUMNS, 0);
+}
+output_column ::= assignment_expression.
