@@ -7,6 +7,16 @@ Limitations
 
 Groonga has some limitations.
 
+Limitations of table
+--------------------
+
+A table has the following limitations.
+
+* The maximum one key size: 4096Bytes
+* The maximum total size of keys: 4GBytes
+
+Keep in mind that these limitations may vary depending on conditions.
+
 Limitations of indexing
 -----------------------
 
