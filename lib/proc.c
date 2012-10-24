@@ -409,10 +409,17 @@ grn_parse_query_flags(grn_ctx *ctx, const char *query_flags,
 }
 
 static inline grn_bool
-is_output_columns_format_v1(const char *output_columns,
+is_output_columns_format_v1(grn_ctx *ctx,
+                            const char *output_columns,
                             unsigned int output_columns_len)
 {
   unsigned int i;
+
+  /* TODO: REMOVE ME. If new output_columns handler is marked as stable,
+     this check is removed. We need more error checks. */
+  if (grn_ctx_get_command_version(ctx) == GRN_COMMAND_VERSION_1) {
+    return GRN_TRUE;
+  }
 
   for (i = 0; i < output_columns_len; i++) {
     switch (output_columns[i]) {
@@ -635,7 +642,7 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
           format.flags =
             GRN_OBJ_FORMAT_WITH_COLUMN_NAMES|
             GRN_OBJ_FORMAT_XML_ELEMENT_RESULTSET;
-          if (is_output_columns_format_v1(output_columns, output_columns_len)) {
+          if (is_output_columns_format_v1(ctx, output_columns, output_columns_len)) {
             grn_obj_columns(ctx, sorted, output_columns, output_columns_len,
                             &format.columns);
           } else {
@@ -657,7 +664,7 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
           format.flags =
             GRN_OBJ_FORMAT_WITH_COLUMN_NAMES|
             GRN_OBJ_FORMAT_XML_ELEMENT_RESULTSET;
-          if (is_output_columns_format_v1(output_columns, output_columns_len)) {
+          if (is_output_columns_format_v1(ctx, output_columns, output_columns_len)) {
             grn_obj_columns(ctx, res, output_columns, output_columns_len,
                             &format.columns);
           } else {

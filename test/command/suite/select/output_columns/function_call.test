@@ -6,4 +6,6 @@ load --table Users
 {"_key": "alice", "name": "Alice"}
 ]
 
-select Users --output_columns '_key, name, edit_distance(name, "alice")'
+select Users \
+  --output_columns '_key, name, edit_distance(name, "alice")' \
+  --command_version 2
