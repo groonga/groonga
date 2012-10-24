@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.8\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-24 16:25\n"
+"POT-Creation-Date: 2012-10-24 17:06\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -111,7 +111,6 @@ msgstr "CentOS 5"
 #: ../../../source/install/ubuntu.txt:151
 #: ../../../source/install/ubuntu.txt:190
 #: ../../../source/install/ubuntu.txt:233
-#: ../../../source/install/windows.txt:72
 msgid "Install::"
 msgstr "Install::"
 
@@ -1231,11 +1230,31 @@ msgstr ""
 
 # de6c533d58894e3691dd8ae016ca6607
 #: ../../../source/install/windows.txt:68
-msgid "Build by Visual Studio::"
-msgstr "Build by Visual Studio::"
+msgid "Build by Visual C++ 2010 Express::"
+msgstr ""
+
+# 909d6ceebe2c403f899d21e7d8b0618c
+#: ../../../source/install/windows.txt:72
+msgid "Install by Visual C++ 2010 Express::"
+msgstr ""
+
+# 2575312e031142c2a7017eb93ee5be6f
+#: ../../../source/install/windows.txt:76
+msgid "If you installed Visual Studio 2010, use can use devenv instead."
+msgstr ""
+
+# de6c533d58894e3691dd8ae016ca6607
+#: ../../../source/install/windows.txt:78
+msgid "Build by Visual Studio 2010::"
+msgstr ""
+
+# de6c533d58894e3691dd8ae016ca6607
+#: ../../../source/install/windows.txt:82
+msgid "Install by Visual Studio 2010::"
+msgstr ""
 
 # 58228c67497644cdbb85e90fb3c8d284
-#: ../../../source/install/windows.txt:76
+#: ../../../source/install/windows.txt:86
 msgid ""
 "After the above steps, :doc:`/reference/executables/groonga` is found in ``c:"
 "\\groonga\\bin\\groonga.exe``."

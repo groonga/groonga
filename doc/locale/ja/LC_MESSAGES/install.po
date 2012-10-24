@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-24 16:27\n"
+"POT-Creation-Date: 2012-10-24 17:13\n"
 "PO-Revision-Date: 2012-08-08 21:54+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -84,7 +84,6 @@ msgstr ""
 #: ../../../source/install/ubuntu.txt:151
 #: ../../../source/install/ubuntu.txt:190
 #: ../../../source/install/ubuntu.txt:233
-#: ../../../source/install/windows.txt:72
 msgid "Install::"
 msgstr "インストール::"
 
@@ -1199,11 +1198,32 @@ msgstr ""
 
 # 28bc8ed2cf2c4f4bb92811c864540a6f
 #: ../../../source/install/windows.txt:68
-msgid "Build by Visual Studio::"
-msgstr "Visual Studioでビルドします::"
+msgid "Build by Visual C++ 2010 Express::"
+msgstr "Visual C++ 2010 Expressでビルドします::"
+
+# 28bc8ed2cf2c4f4bb92811c864540a6f
+#: ../../../source/install/windows.txt:72
+msgid "Install by Visual C++ 2010 Express::"
+msgstr "Visual C++ 2010 Expressでビルドします::"
+
+# 0c057d1a82a043a6bd3a4a35dca18301
+#: ../../../source/install/windows.txt:76
+msgid "If you installed Visual Studio 2010, use can use devenv instead."
+msgstr ""
+"Visual Studio 2010をインストールした場合、devenvを使うことができます。"
+
+# 28bc8ed2cf2c4f4bb92811c864540a6f
+#: ../../../source/install/windows.txt:78
+msgid "Build by Visual Studio 2010::"
+msgstr "Visual Studio 2010でビルドします::"
+
+# 28bc8ed2cf2c4f4bb92811c864540a6f
+#: ../../../source/install/windows.txt:82
+msgid "Install by Visual Studio 2010::"
+msgstr "Visual Studio 2010でインストールします::"
 
 # 607b3624ab724f1eb01bfef59b92d8c9
-#: ../../../source/install/windows.txt:76
+#: ../../../source/install/windows.txt:86
 msgid ""
 "After the above steps, :doc:`/reference/executables/groonga` is found in ``c:"
 "\\groonga\\bin\\groonga.exe``."

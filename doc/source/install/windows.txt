@@ -65,11 +65,21 @@ parameter instead::
 
   groonga-2.0.8> cmake . -G "Visual Studio 10 Win64" -DCMAKE_INSTALL_PREFIX=C:\groonga
 
-Build by Visual Studio::
+Build by Visual C++ 2010 Express::
+
+  groonga-2.0.8> msbuild groonga.sln /p:Configuration=Release
+
+Install by Visual C++ 2010 Express::
+
+  groonga-2.0.8> msbuild groonga.sln /p:Configuration=Release /t:Install
+
+If you installed Visual Studio 2010, use can use devenv instead.
+
+Build by Visual Studio 2010::
 
   groonga-2.0.8> devenv groonga.sln /Build Release
 
-Install::
+Install by Visual Studio 2010::
 
   groonga-2.0.8> devenv groonga.sln /Build Release /Project Install
 
