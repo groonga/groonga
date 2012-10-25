@@ -124,7 +124,7 @@ start() {
 stop() {
 	echo -n "Shutting down $name: "
 	send_command shutdown
-	killproc $prog
+	killproc -p $PIDFILE $prog
 	RETVAL=$?
 	echo
 	[ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/$name
@@ -151,7 +151,7 @@ case "$1" in
 	restart
 	;;
     reload)
-	killproc $groonga -HUP
+	killproc -p $PIDFILE $groonga -HUP
 	;;
     condrestart)
 	[ -f /var/lock/subsys/$name ] && restart || :
