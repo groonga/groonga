@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-11-29 15:18\n"
+"POT-Creation-Date: 2012-10-25 16:04\n"
 "PO-Revision-Date: 2011-05-09 00:36+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -26,26 +26,42 @@ msgid "Groonga has some limitations."
 msgstr "groongaにはいくつか制限事項があります。"
 
 #: ../../../source/limitations.txt:11
+msgid "Limitations of table"
+msgstr "テーブルの制限"
+
+#: ../../../source/limitations.txt:13
+msgid "A table has the following limitations."
+msgstr "テーブルには以下の制限があります。"
+
+#: ../../../source/limitations.txt:15
+msgid "The maximum one key size: 4096Bytes"
+msgstr "1つのキーの最大サイズ: 4096Bytes"
+
+#: ../../../source/limitations.txt:16
+msgid "The maximum total size of keys: 4GBytes"
+msgstr "キーのサイズを合計した上限値: 4GByte"
+
+#: ../../../source/limitations.txt:18 ../../../source/limitations.txt:29
+msgid "Keep in mind that these limitations may vary depending on conditions."
+msgstr "実際には他の諸条件の制約により上記の値まで到達しない場合もあります。"
+
+#: ../../../source/limitations.txt:21
 msgid "Limitations of indexing"
 msgstr "インデックス上限値"
 
-#: ../../../source/limitations.txt:13
+#: ../../../source/limitations.txt:23
 msgid "A full-text index has the following limitations."
 msgstr "1つのインデックスにおける論理上の上限値は以下のとおりです。"
 
-#: ../../../source/limitations.txt:15
+#: ../../../source/limitations.txt:25
 msgid "The maximum number of records: 268,435,455 (more than 26 million)"
 msgstr "最大レコード数: 268,435,455 (約2億6千万)"
 
-#: ../../../source/limitations.txt:16
+#: ../../../source/limitations.txt:26
 msgid ""
 "The maximum number of distinct terms: 268,435,455 (more than 26 million)"
 msgstr "最大語彙数: 268,435,455 (約2億6千万)"
 
-#: ../../../source/limitations.txt:17
+#: ../../../source/limitations.txt:27
 msgid "The maximum index size: 256GBytes"
 msgstr "最大インデックスサイズ: 256GByte"
-
-#: ../../../source/limitations.txt:19
-msgid "Keep in mind that these limitations may vary depending on conditions."
-msgstr "実際には他の諸条件の制約により上記の値まで到達しない場合もあります。"
