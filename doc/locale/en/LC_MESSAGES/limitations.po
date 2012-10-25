@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-25 15:50\n"
+"POT-Creation-Date: 2012-10-25 17:30\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -64,15 +64,14 @@ msgstr "A full-text index has the following limitations."
 
 # 4180343b95ac49a5b1e0e8e14cbd8f0a
 #: ../../../source/limitations.txt:25
-msgid "The maximum number of records: 268,435,455 (more than 26 million)"
-msgstr "The maximum number of records: 268,435,455 (more than 26 million)"
+msgid "The maximum number of records: 268,435,455 (more than 268 million)"
+msgstr ""
 
 # cfad6fa84201470795d5ef1e01539205
 #: ../../../source/limitations.txt:26
 msgid ""
-"The maximum number of distinct terms: 268,435,455 (more than 26 million)"
+"The maximum number of distinct terms: 268,435,455 (more than 268 million)"
 msgstr ""
-"The maximum number of distinct terms: 268,435,455 (more than 26 million)"
 
 # 52672378218c4bf08259165d689f3984
 #: ../../../source/limitations.txt:27

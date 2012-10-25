@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-25 16:04\n"
+"POT-Creation-Date: 2012-10-25 17:32\n"
 "PO-Revision-Date: 2011-05-09 00:36+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -54,12 +54,12 @@ msgid "A full-text index has the following limitations."
 msgstr "1つのインデックスにおける論理上の上限値は以下のとおりです。"
 
 #: ../../../source/limitations.txt:25
-msgid "The maximum number of records: 268,435,455 (more than 26 million)"
+msgid "The maximum number of records: 268,435,455 (more than 268 million)"
 msgstr "最大レコード数: 268,435,455 (約2億6千万)"
 
 #: ../../../source/limitations.txt:26
 msgid ""
-"The maximum number of distinct terms: 268,435,455 (more than 26 million)"
+"The maximum number of distinct terms: 268,435,455 (more than 268 million)"
 msgstr "最大語彙数: 268,435,455 (約2億6千万)"
 
 #: ../../../source/limitations.txt:27
