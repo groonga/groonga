@@ -22,8 +22,8 @@ Limitations of indexing
 
 A full-text index has the following limitations.
 
-* The maximum number of records: 268,435,455 (more than 26 million)
-* The maximum number of distinct terms: 268,435,455 (more than 26 million)
+* The maximum number of records: 268,435,455 (more than 268 million)
+* The maximum number of distinct terms: 268,435,455 (more than 268 million)
 * The maximum index size: 256GBytes
 
 Keep in mind that these limitations may vary depending on conditions.
