@@ -18,6 +18,8 @@ Improvements
 * Supported custom query expansion by plugin.
 * [experimental] Added query expander ``QueryExpanderTSV`` plugin.
 * Supported Ubuntu 12.10 Quantal Quetzal
+* [experimental] Supported function call in ``output_columns``.
+* Supported * in ``output_columns``.
 
 Fixes
 ^^^^^
