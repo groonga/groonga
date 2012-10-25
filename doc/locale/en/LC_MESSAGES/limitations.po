@@ -7,14 +7,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-23 17:56\n"
+"POT-Creation-Date: 2012-10-25 15:50\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
+"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 # c41a2a725b7241e8a6670bcba083f2a2
@@ -29,32 +29,52 @@ msgstr "Groonga has some limitations."
 
 # 0fd4eb74e2624ab19cab63ffe14d78f4
 #: ../../../source/limitations.txt:11
+msgid "Limitations of table"
+msgstr ""
+
+# af2dd3ee474744eaa6c6fdb5a9d1dc40
+#: ../../../source/limitations.txt:13
+msgid "A table has the following limitations."
+msgstr ""
+
+# 52672378218c4bf08259165d689f3984
+#: ../../../source/limitations.txt:15
+msgid "The maximum one key size: 4096Bytes"
+msgstr ""
+
+# 52672378218c4bf08259165d689f3984
+#: ../../../source/limitations.txt:16
+msgid "The maximum total size of keys: 4GBytes"
+msgstr ""
+
+# 118adb85d55046c2a5e90e60a4bbc640
+#: ../../../source/limitations.txt:18 ../../../source/limitations.txt:29
+msgid "Keep in mind that these limitations may vary depending on conditions."
+msgstr "Keep in mind that these limitations may vary depending on conditions."
+
+# 0fd4eb74e2624ab19cab63ffe14d78f4
+#: ../../../source/limitations.txt:21
 msgid "Limitations of indexing"
 msgstr "Limitations of indexing"
 
 # af2dd3ee474744eaa6c6fdb5a9d1dc40
-#: ../../../source/limitations.txt:13
+#: ../../../source/limitations.txt:23
 msgid "A full-text index has the following limitations."
 msgstr "A full-text index has the following limitations."
 
 # 4180343b95ac49a5b1e0e8e14cbd8f0a
-#: ../../../source/limitations.txt:15
+#: ../../../source/limitations.txt:25
 msgid "The maximum number of records: 268,435,455 (more than 26 million)"
 msgstr "The maximum number of records: 268,435,455 (more than 26 million)"
 
 # cfad6fa84201470795d5ef1e01539205
-#: ../../../source/limitations.txt:16
+#: ../../../source/limitations.txt:26
 msgid ""
 "The maximum number of distinct terms: 268,435,455 (more than 26 million)"
 msgstr ""
 "The maximum number of distinct terms: 268,435,455 (more than 26 million)"
 
 # 52672378218c4bf08259165d689f3984
-#: ../../../source/limitations.txt:17
+#: ../../../source/limitations.txt:27
 msgid "The maximum index size: 256GBytes"
 msgstr "The maximum index size: 256GBytes"
-
-# 118adb85d55046c2a5e90e60a4bbc640
-#: ../../../source/limitations.txt:19
-msgid "Keep in mind that these limitations may vary depending on conditions."
-msgstr "Keep in mind that these limitations may vary depending on conditions."
