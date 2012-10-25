@@ -22,7 +22,6 @@ Depends:
   ${misc:Depends},
   ${shlibs:Depends},
   groonga-bin (= ${binary:Version}),
-  groonga-tokenizer-mecab (= ${binary:Version}),
   groonga-plugin-suggest (= ${binary:Version}),
   groonga-doc (= ${source:Version})
 Description: Fulltext search engine. (meta-package for library use)
