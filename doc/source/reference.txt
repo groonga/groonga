@@ -14,6 +14,7 @@
    reference/commands
    reference/type
    reference/tokenizers
+   reference/query_expanders
    reference/pseudo_column
    reference/grn_expr
    reference/functions

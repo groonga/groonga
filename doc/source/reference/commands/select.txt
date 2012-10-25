@@ -442,6 +442,8 @@ storategy escalation is not used because the number of matched
 records (0) is larger than ``match_escalation_threshold`` (-1). So no
 more searches aren't executed. And no records are matched.
 
+.. _query-expansion:
+
 ``query_expansion``
 """""""""""""""""""
 
