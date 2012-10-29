@@ -1178,8 +1178,7 @@ typedef enum {
   GRN_OP_TABLE_SELECT,
   GRN_OP_TABLE_SORT,
   GRN_OP_TABLE_GROUP,
-  GRN_OP_JSON_PUT,
-  GRN_OP_ALL_COLUMNS
+  GRN_OP_JSON_PUT
 } grn_operator;
 
 struct _grn_table_group_result {

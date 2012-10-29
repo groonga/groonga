@@ -236,8 +236,7 @@ static const char *opstrs[] = {
   "TABLE_SELECT",
   "TABLE_SORT",
   "TABLE_GROUP",
-  "JSON_PUT",
-  "ALL_COLUMNS"
+  "JSON_PUT"
 };
 
 static void
@@ -1193,44 +1192,6 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
       break;
     case GRN_OP_COMMA :
       PUSH_CODE(e, op, obj, nargs, code);
-      break;
-    case GRN_OP_ALL_COLUMNS :
-      if (nargs == 0) {
-        grn_obj *variable = grn_expr_get_var_by_offset(ctx, expr, 0);
-        if (variable) {
-          grn_id table_id = GRN_OBJ_GET_DOMAIN(variable);
-          grn_obj *table = grn_ctx_at(ctx, table_id);
-          grn_obj columns_buffer;
-          grn_obj **columns;
-          int i, n_columns;
-
-          GRN_PTR_INIT(&columns_buffer, GRN_OBJ_VECTOR, GRN_ID_NIL);
-          grn_obj_columns(ctx, table, "*", strlen("*"), &columns_buffer);
-          n_columns = GRN_BULK_VSIZE(&columns_buffer) / sizeof(grn_obj *);
-          columns = (grn_obj **)GRN_BULK_HEAD(&columns_buffer);
-
-          if (n_columns == 0) {
-            if (e->codes_curr > 0 &&
-                e->codes[e->codes_curr - 1].op == GRN_OP_COMMA) {
-              e->codes_curr--;
-            }
-          } else {
-            for (i = 0; i < n_columns; i++) {
-              if (i > 0) {
-                grn_expr_append_op(ctx, expr, GRN_OP_COMMA, 2);
-              }
-              grn_expr_append_const(ctx, expr, columns[i], GRN_OP_GET_VALUE, 1);
-              GRN_PTR_PUT(ctx, &e->objs, columns[i]);
-            }
-          }
-
-          GRN_OBJ_FIN(ctx, &columns_buffer);
-        } else {
-          /* TODO: report error */
-        }
-      } else {
-        /* TODO: report error */
-      }
       break;
     default :
       break;
@@ -5325,7 +5286,11 @@ done :
       grn_expr_append_obj(ctx, q->e, obj, GRN_OP_PUSH, 1);
       goto exit;
     }
-    rc = GRN_SYNTAX_ERROR;
+    if (q->flags & GRN_EXPR_SYNTAX_OUTPUT_COLUMNS) {
+      PARSE(GRN_EXPR_TOKEN_NONEXISTENT_COLUMN);
+    } else {
+      rc = GRN_SYNTAX_ERROR;
+    }
   }
 exit :
   q->cur = s;
@@ -5344,8 +5309,6 @@ static grn_rc
 parse_script(grn_ctx *ctx, efs_info *q)
 {
   grn_rc rc = GRN_SUCCESS;
-  grn_bool ignore_unknown_identifier = GRN_FALSE;
-  grn_bool skip_next_comma = GRN_FALSE;
   for (;;) {
     skip_space(ctx, q);
     if (q->cur >= q->str_end) { rc = GRN_END_OF_DATA; goto exit; }
@@ -5380,9 +5343,7 @@ parse_script(grn_ctx *ctx, efs_info *q)
       break;
     case ',' :
       q->cur++;
-      if (!skip_next_comma) {
-        PARSE(GRN_EXPR_TOKEN_COMMA);
-      }
+      PARSE(GRN_EXPR_TOKEN_COMMA);
       break;
     case '.' :
       q->cur++;
@@ -5760,25 +5721,10 @@ parse_script(grn_ctx *ctx, efs_info *q)
       }
       break;
     default :
-      if ((rc = get_identifier(ctx, q))) {
-        if (rc == GRN_SYNTAX_ERROR &&
-            q->flags & GRN_EXPR_SYNTAX_OUTPUT_COLUMNS) {
-          ignore_unknown_identifier = GRN_TRUE;
-          rc = GRN_SUCCESS;
-        } else {
-          goto exit;
-        }
-      }
+      if ((rc = get_identifier(ctx, q))) { goto exit; }
       break;
     }
     if (ctx->rc) { rc = ctx->rc; break; }
-
-    if (ignore_unknown_identifier) {
-      skip_next_comma = GRN_TRUE;
-      ignore_unknown_identifier = GRN_FALSE;
-    } else {
-      skip_next_comma = GRN_FALSE;
-    }
   }
 exit :
   PARSE(0);

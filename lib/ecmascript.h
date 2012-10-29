@@ -68,3 +68,4 @@
 #define GRN_EXPR_TOKEN_BRACKETL                       68
 #define GRN_EXPR_TOKEN_BRACKETR                       69
 #define GRN_EXPR_TOKEN_DOT                            70
+#define GRN_EXPR_TOKEN_NONEXISTENT_COLUMN             71

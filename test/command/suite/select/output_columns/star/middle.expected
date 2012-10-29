@@ -1,0 +1,50 @@
+table_create Sites TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Sites uri COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Sites
+[
+["_key","uri"],
+["groonga","http://groonga.org/"],
+["razil","http://razil.jp/"]
+]
+[[0,0.0,0.0],2]
+select Sites --output_columns '_id, *, _key'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "uri",
+          "ShortText"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "http://groonga.org/",
+        "groonga"
+      ],
+      [
+        2,
+        "http://razil.jp/",
+        "razil"
+      ]
+    ]
+  ]
+]

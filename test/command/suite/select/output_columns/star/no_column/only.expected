@@ -1,0 +1,11 @@
+table_create Sites TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+load --table Sites
+[
+["_key"],
+["groonga"],
+["razil"]
+]
+[[0,0.0,0.0],2]
+select Sites --output_columns '*'
+[[0,0.0,0.0],[[[2],[],[],[]]]]
