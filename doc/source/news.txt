@@ -19,7 +19,6 @@ Improvements
 * [experimental] Added query expander ``QueryExpanderTSV`` plugin.
 * Supported Ubuntu 12.10 Quantal Quetzal
 * [experimental] Supported function call in ``output_columns``.
-* Supported * in ``output_columns``.
 * [doc][rpm] Add missing description about installing MeCab dictionary.
   [Reported by serihiro]
 
