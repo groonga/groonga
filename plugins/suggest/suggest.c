@@ -246,7 +246,8 @@ output(grn_ctx *ctx, grn_obj *table, grn_obj *res, grn_id tid,
     }
     if ((keys = grn_table_sort_key_from_str(ctx, sortby_val, sortby_len, res, &nkeys))) {
       grn_table_sort(ctx, res, offset, limit, sorted, keys, nkeys);
-      LAP(":", "sort(%d)", limit);
+      GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
+                    ":", "sort(%d)", limit);
       GRN_OBJ_FORMAT_INIT(&format, grn_table_size(ctx, res), 0, limit, offset);
       format.flags =
         GRN_OBJ_FORMAT_WITH_COLUMN_NAMES|
@@ -380,7 +381,8 @@ correct(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost,
     max_score = cooccurrence_search(ctx, items, items_boost, tid, res, CORRECT,
                                     frequency_threshold,
                                     conditional_probability_threshold);
-    LAP(":", "cooccur(%d)", max_score);
+    GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SCORE,
+                  ":", "cooccur(%d)", max_score);
     if (GRN_TEXT_LEN(query) &&
         ((similar_search_mode == GRN_SUGGEST_SEARCH_YES) ||
          (similar_search_mode == GRN_SUGGEST_SEARCH_AUTO &&
@@ -396,7 +398,8 @@ correct(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost,
           grn_ii_select(ctx, (grn_ii *)index, TEXT_VALUE_LEN(query),
                         (grn_hash *)res, GRN_OP_OR, &optarg);
           grn_obj_unlink(ctx, index);
-          LAP(":", "similar(%d)", grn_table_size(ctx, res));
+          GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
+                        ":", "similar(%d)", grn_table_size(ctx, res));
           {
             grn_hash_cursor *hc = grn_hash_cursor_open(ctx, (grn_hash *)res, NULL,
                                                        0, NULL, 0, 0, -1, 0);
@@ -427,7 +430,8 @@ correct(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost,
               grn_hash_cursor_close(ctx, hc);
             }
           }
-          LAP(":", "filter(%d)", grn_table_size(ctx, res));
+          GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
+                        ":", "filter(%d)", grn_table_size(ctx, res));
           {
             /* exec _score -= edit_distance(_key, "query string") for all records */
             grn_obj *var;

@@ -404,16 +404,6 @@ extern grn_timeval grn_starttime;
 #define GRN_TIME_NSEC_TO_USEC(nsec) ((nsec) / GRN_TIME_NSEC_PER_USEC)
 #define GRN_TIME_USEC_TO_NSEC(usec) ((usec) * GRN_TIME_NSEC_PER_USEC)
 
-#define LAP(prefix,format,...) do {\
-  uint64_t et;\
-  grn_timeval tv;\
-  grn_timeval_now(ctx, &tv);\
-  et = (uint64_t)(tv.tv_sec - ctx->impl->tv.tv_sec) * GRN_TIME_NSEC_PER_SEC\
-    + (tv.tv_nsec - ctx->impl->tv.tv_nsec);\
-  GRN_LOG(ctx, GRN_LOG_NONE, "%p|" prefix "%015" GRN_FMT_INT64U " " format,\
-          ctx, et, __VA_ARGS__);\
-} while (0)
-
 GRN_API grn_rc grn_timeval_now(grn_ctx *ctx, grn_timeval *tv);
 GRN_API grn_rc grn_timeval2str(grn_ctx *ctx, grn_timeval *tv, char *buf);
 grn_rc grn_str2timeval(const char *str, uint32_t str_len, grn_timeval *tv);
@@ -422,6 +412,9 @@ GRN_API void grn_ctx_log(grn_ctx *ctx, const char *fmt, ...) GRN_ATTRIBUTE_PRINT
 void grn_ctx_qe_fin(grn_ctx *ctx);
 void grn_ctx_loader_clear(grn_ctx *ctx);
 void grn_log_reopen(grn_ctx *ctx);
+
+void grn_logger_fin(void);
+void grn_query_logger_fin(grn_ctx *ctx);
 
 GRN_API grn_rc grn_ctx_sendv(grn_ctx *ctx, int argc, char **argv, int flags);
 GRN_API void grn_ctx_set_next_expr(grn_ctx *ctx, grn_obj *expr);

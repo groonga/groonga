@@ -151,6 +151,23 @@ typedef enum {
   GRN_LOG_DUMP
 } grn_log_level;
 
+/* query log flags */
+#define GRN_QUERY_LOG_NONE        (0x00)
+#define GRN_QUERY_LOG_COMMAND     (0x01<<0)
+#define GRN_QUERY_LOG_RESULT_CODE (0x01<<1)
+#define GRN_QUERY_LOG_DESTINATION (0x01<<2)
+#define GRN_QUERY_LOG_CACHE       (0x01<<3)
+#define GRN_QUERY_LOG_SIZE        (0x01<<4)
+#define GRN_QUERY_LOG_SCORE       (0x01<<5)
+#define GRN_QUERY_LOG_ALL\
+  (GRN_QUERY_LOG_COMMAND |\
+   GRN_QUERY_LOG_RESULT_CODE |\
+   GRN_QUERY_LOG_DESTINATION |\
+   GRN_QUERY_LOG_CACHE |\
+   GRN_QUERY_LOG_SIZE |\
+   GRN_QUERY_LOG_SCORE)
+#define GRN_QUERY_LOG_DEFAULT     GRN_QUERY_LOG_ALL
+
 typedef enum {
   GRN_CONTENT_NONE = 0,
   GRN_CONTENT_TSV,
@@ -2045,6 +2062,35 @@ GRN_API grn_log_level grn_default_logger_get_max_level();
 #define GRN_LOG(ctx,level,...) do {\
   if (grn_logger_pass(ctx, level)) {\
     grn_logger_put(ctx, (level), __FILE__, __LINE__, __FUNCTION__, __VA_ARGS__); \
+  }\
+} while (0)
+
+typedef struct _grn_query_logger_info grn_query_logger_info;
+
+struct _grn_query_logger_info {
+  unsigned int flags;
+  grn_user_data *user_data;
+  void (*log)(grn_ctx *ctx, unsigned int flag,
+              const char *timestamp, const char *info, const char *message,
+              grn_user_data *user_data);
+  void (*reopen)(grn_ctx *ctx, grn_user_data *user_data);
+  void (*fin)(grn_ctx *ctx, grn_user_data *user_data);
+};
+
+GRN_API grn_rc grn_query_logger_info_set(grn_ctx *ctx, const grn_query_logger_info *info);
+
+GRN_API void grn_query_logger_put(grn_ctx *ctx, unsigned int flag,
+                                  const char *mark,
+                                  const char *format, ...) GRN_ATTRIBUTE_PRINTF(4);
+
+GRN_API grn_bool grn_query_logger_pass(grn_ctx *ctx, unsigned int flag);
+
+GRN_API void grn_default_query_logger_set_flags(unsigned int flags);
+GRN_API unsigned int grn_default_query_logger_get_flags(void);
+
+#define GRN_QUERY_LOG(ctx, flag, mark, format, ...) do {\
+  if (grn_query_logger_pass(ctx, flag)) {\
+    grn_query_logger_put(ctx, (flag), (mark), format, __VA_ARGS__);\
   }\
 } while (0)
 

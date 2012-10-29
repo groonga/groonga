@@ -77,8 +77,6 @@ grn_id grn_btoi(char *b);
 
 grn_rc grn_substring(grn_ctx *ctx, char **str, char **str_end, int start, int end, grn_encoding encoding);
 
-void grn_logger_fin(void);
-
 GRN_API int grn_charlen_(grn_ctx *ctx, const char *str, const char *end, grn_encoding encoding);
 GRN_API grn_str *grn_str_open_(grn_ctx *ctx, const char *str, unsigned int str_len, int flags, grn_encoding encoding);
 
