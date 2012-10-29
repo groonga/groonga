@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-25 18:14\n"
+"POT-Creation-Date: 2012-10-29 12:40\n"
 "PO-Revision-Date: 2012-10-25 18:57+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -606,9 +606,9 @@ msgid ""
 "リクエストを送信することによって実行します。"
 msgstr ""
 
-# c93fbe07287341bdbae5c3e48ebf7cd2
+# 9583802f1f0a466899704ba5753891ca
 #: ../../../source/reference/commands/cache_limit.txt:24
-msgid "cache_limitは、クエリーキャッシュの最大件数を取得したり設定したりします。"
+msgid "cache_limitは、クエリキャッシュの最大件数を取得したり設定したりします。"
 msgstr ""
 
 # 0a7b009afbd840df8bdc441f6a5f7dbe
@@ -683,11 +683,11 @@ msgstr ""
 msgid "``max``"
 msgstr ""
 
-# 97412363fd0c42c2a9dba6142916f741
+# ecd2c438beac4aa9980100d31223a04c
 #: ../../../source/reference/commands/cache_limit.txt:31
 msgid ""
-"クエリーキャッシュの最大件数を整数で指定します。 maxが指定されなかった場合に"
-"は、クエリーキャッシュの最大件数は変更せず、 現在の設定値のみが返されます。"
+"クエリキャッシュの最大件数を整数で指定します。 maxが指定されなかった場合に"
+"は、クエリキャッシュの最大件数は変更せず、 現在の設定値のみが返されます。"
 msgstr ""
 
 # 5ea2136836c3490f8e40a01812c0b823
@@ -2338,8 +2338,8 @@ msgid ""
 "``query`` has query syntax but its deatils aren't described here. See :doc:`/"
 "reference/grn_expr/query_syntax` for datails."
 msgstr ""
-"``query`` はクエリー構文という構文を使いますが、詳細はここでは説明しません。詳"
-"細は :doc:`/reference/grn_expr/query_syntax` を参照してください。"
+"``query`` はクエリー構文という構文を使いますが、詳細はここでは説明しません。"
+"詳細は :doc:`/reference/grn_expr/query_syntax` を参照してください。"
 
 # 3fdd2f2c44104d3c9b77b445bca2477a
 #: ../../../source/reference/commands/select.txt:145
@@ -2643,9 +2643,9 @@ msgid ""
 "OR word2`` means that groogna searches records that contain either ``word1`` "
 "or ``word2``."
 msgstr ""
-"クエリーテキストを指定します。通常、全文検索をするために ``match_columns`` 引数"
-"と一緒に使います。 ``query`` 引数はWebページにある全文検索フォームで使いやす"
-"いように設計されています。クエリーテキストは :doc:`/reference/grn_expr/"
+"クエリーテキストを指定します。通常、全文検索をするために ``match_columns`` 引"
+"数と一緒に使います。 ``query`` 引数はWebページにある全文検索フォームで使いや"
+"すいように設計されています。クエリーテキストは :doc:`/reference/grn_expr/"
 "query_syntax` という書式を使います。この書式はGoogleの検索フォームのように一"
 "般的な検索フォームと似ています。例えば、 ``word1 word2`` は ``word1`` と "
 "``word2`` を含んでいるレコードを検索するという意味になります。 ``word1 OR "
@@ -2893,8 +2893,8 @@ msgid ""
 "It's for query expansion. Query expansion substitutes specific words to "
 "another words in query. Nomally, it's used for synonym search."
 msgstr ""
-"クエリー展開用の引数です。クエリー展開はクエリー中の特定の単語を別の単語に置換しま"
-"す。通常は類義語検索に使います。"
+"クエリー展開用の引数です。クエリー展開はクエリー中の特定の単語を別の単語に置"
+"換します。通常は類義語検索に使います。"
 
 # f280e295b2054130ae98870936bc954a
 #: ../../../source/reference/commands/select.txt:453
@@ -2940,10 +2940,10 @@ msgid ""
 "associated with the key. Substition isn't performed recursively. It means "
 "that substitution target words in substituted query aren't substituted."
 msgstr ""
-"クエリー展開はクエリーの中にある置換テーブルのキーを置換カラムの値で置換します。 "
-"``query`` の中にある単語が置換テーブルのキーだったら、キーに対応する置換カラ"
-"ムの値でその単語を置換します。置換は再帰的に実行しません。これは、置換された"
-"クエリー内に置換対象の単語があっても置換されないということです。"
+"クエリー展開はクエリーの中にある置換テーブルのキーを置換カラムの値で置換しま"
+"す。 ``query`` の中にある単語が置換テーブルのキーだったら、キーに対応する置換"
+"カラムの値でその単語を置換します。置換は再帰的に実行しません。これは、置換さ"
+"れたクエリー内に置換対象の単語があっても置換されないということです。"
 
 # 47f96f142663462cae8b2ede1893edee
 #: ../../../source/reference/commands/select.txt:474
@@ -3007,10 +3007,10 @@ msgid ""
 msgstr ""
 "最初の ``select`` コマンドはクエリー展開を使いません。そのため、 ``\"tritonn"
 "\"`` という単語を含んでいるレコードは見つかりません。2番目の ``select`` コマ"
-"ンドはクエリー展開を使っています。そのため、 ``\"tritonn\"`` という単語を含んで"
-"いるレコードが見つかります。3番目の ``select`` コマンドはクエリー展開を使ってい"
-"ませんが、2番目の ``select`` コマンドと同じ結果になります。これは、3番目の "
-"``select`` コマンドは展開後のクエリーを使っているからです。"
+"ンドはクエリー展開を使っています。そのため、 ``\"tritonn\"`` という単語を含ん"
+"でいるレコードが見つかります。3番目の ``select`` コマンドはクエリー展開を使っ"
+"ていませんが、2番目の ``select`` コマンドと同じ結果になります。これは、3番目"
+"の ``select`` コマンドは展開後のクエリーを使っているからです。"
 
 # e2e2eb2e8823445096de1215d64e23a9
 #: ../../../source/reference/commands/select.txt:518
@@ -3037,9 +3037,9 @@ msgid ""
 "liked entries."
 msgstr ""
 "この ``load`` コマンドは新しく ``\"popular\"`` という類義語を登録しています。"
-"これは ``((popular) OR (n_likes:>=10))`` に置換されます。置換されたクエリーは、"
-"「popular」というのは「popular」という単語を含んでいるか10以上の「いいね！」"
-"数を持つエントリという意味になります。"
+"これは ``((popular) OR (n_likes:>=10))`` に置換されます。置換されたクエリー"
+"は、「popular」というのは「popular」という単語を含んでいるか10以上の「いい"
+"ね！」数を持つエントリという意味になります。"
 
 # dc8002538e794368b895d463ce15d092
 #: ../../../source/reference/commands/select.txt:537
@@ -3139,11 +3139,11 @@ msgid ""
 "use the flag."
 msgstr ""
 "``ALLOW_LEADING_NOT`` を指定すると ``-WORD`` という構文を使って最初の条件とし"
-"て否定条件を指定できます。このクエリーは ``WORD`` にマッチしないレコードを検索"
-"します。最初の条件に否定条件を使ったクエリーは多くの場合重いクエリーになります。"
-"これは多くのレコードにマッチするからです。そのため、このフラグはデフォルトで"
-"は無効になっています。もし、このフラグを使う場合は重いクエリーとなるということ"
-"を十分気をつけてください。"
+"て否定条件を指定できます。このクエリーは ``WORD`` にマッチしないレコードを検"
+"索します。最初の条件に否定条件を使ったクエリーは多くの場合重いクエリーになり"
+"ます。これは多くのレコードにマッチするからです。そのため、このフラグはデフォ"
+"ルトでは無効になっています。もし、このフラグを使う場合は重いクエリーとなると"
+"いうことを十分気をつけてください。"
 
 # 262a9db65f254caab9f9fd25c771f4e0
 #: ../../../source/reference/commands/select.txt:575
@@ -3544,9 +3544,9 @@ msgstr "キャッシュ関連の引数"
 msgid "``cache``"
 msgstr ""
 
-# a87d4f45058f4727801683a7da65203e
+# 8778854397ab440fbdf1846a2670bc1c
 #: ../../../source/reference/commands/select.txt:816
-msgid "クエリーキャッシュに関する動作を設定します。"
+msgid "クエリキャッシュに関する動作を設定します。"
 msgstr ""
 
 # 6dfee24a730d4c1f8935c395f0900494
@@ -3554,12 +3554,11 @@ msgstr ""
 msgid "``no``"
 msgstr ""
 
-# 0e1d19d599444d6a9ada49cf7de9723f
-# ab8c2fa0516342fa895aba9be0beba85
+# 7dbb9ef4f21e4acab5f4d8079436d24e
 #: ../../../source/reference/commands/select.txt:820
 msgid ""
-"検索結果をクエリーキャッシュに残しません。キャッシュして再利用される可能性が低"
-"いクエリーに対して用います。キャッシュ容量は有限です。有効なキャッシュが多く"
+"検索結果をクエリキャッシュに残しません。キャッシュして再利用される可能性が低"
+"いクエリに対して用います。キャッシュ容量は有限です。有効なキャッシュが多く"
 "ヒットするために、このパラメータは有効です。"
 msgstr ""
 
@@ -4772,11 +4771,11 @@ msgid ""
 "できます。また、リクエストの多重度を指定することができます。"
 msgstr ""
 
-# fe9a3c38b8a843e7b3751f6aa7b0febe
+# 8de6262a190b4f2499fe3dc79d19c994
 #: ../../../source/reference/executables/grnslap.txt:27
 msgid ""
-"クエリーの内容を標準入力から与えることができます。実稼動環境でのクエリーパタンに"
-"近いクエリーを標準入力に与えることによって、実稼動環境に近い状態での検証を行う"
+"クエリの内容を標準入力から与えることができます。実稼動環境でのクエリパタンに"
+"近いクエリを標準入力に与えることによって、実稼動環境に近い状態での検証を行う"
 "ことができます。"
 msgstr ""
 
@@ -5339,8 +5338,8 @@ msgstr "クエリーを実行する"
 #: ../../../source/reference/executables/groonga-httpd.txt:63
 msgid "To check, request a simple query (:doc:`/reference/commands/status`)."
 msgstr ""
-"動作を確認するため、簡単なクエリー（ :doc:`/reference/commands/status` ）をリク"
-"エストしてみます。"
+"動作を確認するため、簡単なクエリー（ :doc:`/reference/commands/status` ）をリ"
+"クエストしてみます。"
 
 # 3285b47a935f41deb301e9e1f7a8b237
 #: ../../../source/reference/executables/groonga-httpd.txt:71
@@ -5565,9 +5564,9 @@ msgid ""
 "utilize multi-CPU/core systems, it's essential to set this accordingly."
 msgstr ""
 "最適なパフォーマンスを得るためには、CPU数あるいはコア数と同じ数になるようにこ"
-"のディレクティブを設定してください。大抵の場合、groongaのクエリーはCPU負荷が高"
-"いものとなり、複数のCPU/コアを使い切るためには、このディレクティブを設定する"
-"必要があります。"
+"のディレクティブを設定してください。大抵の場合、groongaのクエリーはCPU負荷が"
+"高いものとなり、複数のCPU/コアを使い切るためには、このディレクティブを設定す"
+"る必要があります。"
 
 # 270d574b530641ff92d7e897cffc775f
 #: ../../../source/reference/executables/groonga-httpd.txt:198
@@ -7001,11 +7000,11 @@ msgid ""
 "of :doc:`/reference/commands/select`. You can use it if you use groonga as "
 "library and customize query syntax parser options."
 msgstr ""
-"クエリー構文は ``条件式`` と ``結合式`` と ``代入式`` から成ります。通常、 ``代"
-"入式`` は考えなくてよいです。なぜなら、 ``代入式`` は :doc:`/reference/"
+"クエリー構文は ``条件式`` と ``結合式`` と ``代入式`` から成ります。通常、 ``"
+"代入式`` は考えなくてよいです。なぜなら、 ``代入式`` は :doc:`/reference/"
 "commands/select` の ``--query`` オプションでは無効になっているからです。"
-"groongaをライブラリとして使ったときは、クエリー構文のパーサーのオプションをカス"
-"タマイズすることで ``代入式`` を有効にすることができます。"
+"groongaをライブラリとして使ったときは、クエリー構文のパーサーのオプションをカ"
+"スタマイズすることで ``代入式`` を有効にすることができます。"
 
 # f23c41dac8994a2e82f76df831354e96
 #: ../../../source/reference/grn_expr/query_syntax.txt:24
@@ -7036,9 +7035,9 @@ msgid ""
 "itself, it should be escaped by prepending ``\\``. For example, ``\"`` is a "
 "special character. It is escaped as ``\\\"``."
 msgstr ""
-"クエリー構文には特別な文字があります。特別な文字それ自体を使うためには文字の前"
-"に ``\\`` をつけてエスケープしなければいけません。例えば、 ``\"`` は特別な文"
-"字です。これは ``\\\"`` というようにエスケープします。"
+"クエリー構文には特別な文字があります。特別な文字それ自体を使うためには文字の"
+"前に ``\\`` をつけてエスケープしなければいけません。例えば、 ``\"`` は特別な"
+"文字です。これは ``\\\"`` というようにエスケープします。"
 
 # b7ad6340acde466e9b4d1006f2f4bac3
 #: ../../../source/reference/grn_expr/query_syntax.txt:79
@@ -7891,8 +7890,8 @@ msgid ""
 "use :doc:`/reference/grn_expr/script_syntax` instead of query syntax for "
 "assignment."
 msgstr ""
-"クエリー構文における代入式にはいくつか制限があります。代入にはクエリー構文の代り"
-"に :doc:`/reference/grn_expr/script_syntax` を使ってください。"
+"クエリー構文における代入式にはいくつか制限があります。代入にはクエリー構文の"
+"代りに :doc:`/reference/grn_expr/script_syntax` を使ってください。"
 
 # a37cee15bcd849088f435a86376466c3
 #: ../../../source/reference/grn_expr/query_syntax.txt:575
@@ -7910,8 +7909,8 @@ msgid ""
 "need to use empty string for ``false`` but query syntax doesn't support "
 "``column:=`` syntax."
 msgstr ""
-"``value`` は ``column`` に代入されます。 ``value`` は常にクエリー構文では文字列"
-"として扱われます。 ``value`` は ``column`` の型へと自動的にキャストされま"
+"``value`` は ``column`` に代入されます。 ``value`` は常にクエリー構文では文字"
+"列として扱われます。 ``value`` は ``column`` の型へと自動的にキャストされま"
 "す。 キャストにはいくつか制限があります。例えば ``true`` や ``false`` といっ"
 "た真偽値のリテラルを ``Bool`` 型のカラムに使用することができません。 "
 "``false`` については空文字列を使う必要がありますが、クエリー構文は ``column:"
@@ -9635,10 +9634,10 @@ msgid ""
 "-c``. Those groonga commands shows ``> `` prompt. In this query interface, "
 "you can specify output format type by ``output_type`` option."
 msgstr ""
-"``groonga DB_PATH`` または ``groonga -c`` でコマンドラインクエリーインターフェ"
-"イスを使うことができます。これらのgroongaコマンドでは ``> `` というプロンプト"
-"が表示されます。クエリーインターフェイスでは ``output_type`` オプションで出力形"
-"式を指定できます。"
+"``groonga DB_PATH`` または ``groonga -c`` でコマンドラインクエリーインター"
+"フェイスを使うことができます。これらのgroongaコマンドでは ``> `` というプロン"
+"プトが表示されます。クエリーインターフェイスでは ``output_type`` オプションで"
+"出力形式を指定できます。"
 
 # b3cc762945db426bbf717fac0448df60
 #: ../../../source/reference/output.txt:35
@@ -9686,9 +9685,9 @@ msgid ""
 "Groonga HTTP server starts on port 10041 by default. In this query "
 "interface, you can specify output format type by extension."
 msgstr ""
-"``groonga --protocol http -s DB_PATH`` でHTTPクエリーインターフェイスを使うこと"
-"ができます。groonga HTTPサーバーはデフォルトで10041番ポートで起動します。この"
-"クエリーインターフェイスでは拡張子で出力形式を指定します。"
+"``groonga --protocol http -s DB_PATH`` でHTTPクエリーインターフェイスを使うこ"
+"とができます。groonga HTTPサーバーはデフォルトで10041番ポートで起動します。こ"
+"のクエリーインターフェイスでは拡張子で出力形式を指定します。"
 
 # 9ad55233d2824921aa9b8ac38bf14d88
 #: ../../../source/reference/output.txt:105
@@ -9833,10 +9832,17 @@ msgid ""
 "(Tab Separated Values) file. This plugin provides poor feature than the "
 "embedded query expansion feature. For example, it doesn't support word "
 "normalization. But it may be easy to use because you can manage your "
-"synonyms by TSV file. You can edit your synonyms by spreadsheet application such "
-"as Excel. With the embedded query expansion feature, you manage your "
+"synonyms by TSV file. You can edit your synonyms by spreadsheet application "
+"such as Excel. With the embedded query expansion feature, you manage your "
 "synonyms by groonga's table."
-msgstr "``QueryExpanderTSV`` はクエリー展開プラグインです。同義語はTSV（データをタブで区切るファイルフォーマット）ファイルから読み込みます。このプラグインは組み込みのクエリー展開機能よりも機能が少ないです。例えば、単語の正規化をサポートしていません。しかし、TSVファイルで同義語を管理できるためこちらの方が使いやすいかもしれません。TSVファイルなのでExcelなどの表計算ソフトで同義語を編集できます。組み込みのクエリー展開機能では、groongaのテーブルとして同義語を管理します。"
+msgstr ""
+"``QueryExpanderTSV`` はクエリー展開プラグインです。同義語はTSV（データをタブ"
+"で区切るファイルフォーマット）ファイルから読み込みます。このプラグインは組み"
+"込みのクエリー展開機能よりも機能が少ないです。例えば、単語の正規化をサポート"
+"していません。しかし、TSVファイルで同義語を管理できるためこちらの方が使いやす"
+"いかもしれません。TSVファイルなのでExcelなどの表計算ソフトで同義語を編集でき"
+"ます。組み込みのクエリー展開機能では、groongaのテーブルとして同義語を管理しま"
+"す。"
 
 # 01ec82312cde4290be35342755245649
 #: ../../../source/reference/query_expanders/tsv.txt:20
@@ -9848,21 +9854,27 @@ msgstr "インストール"
 msgid ""
 "You need to register ``query_expanders/tsv`` as a plugin before you use "
 "``QueryExpanderTSV``::"
-msgstr "``QueryExpanderTSV`` を使う前に ``query_expanders/tsv`` をプラグインとして登録します::"
+msgstr ""
+"``QueryExpanderTSV`` を使う前に ``query_expanders/tsv`` をプラグインとして登"
+"録します::"
 
 # 9854e273a6944107a38098325fba5c89
 #: ../../../source/reference/query_expanders/tsv.txt:30
 msgid ""
 "You just add ``--query_expansion QueryExpanderTSV`` parameter to ``select`` "
 "command::"
-msgstr "``select`` コマンドに ``--query_expansion QueryExpanderTSV`` パラメーターを追加します::"
+msgstr ""
+"``select`` コマンドに ``--query_expansion QueryExpanderTSV`` パラメーターを追"
+"加します::"
 
 # e525bcfe2a24457e9c1ac799ae6c2018
 #: ../../../source/reference/query_expanders/tsv.txt:35
 msgid ""
 "If ``QUERY`` has registered synonyms, they are expanded. For example, there "
 "are the following synonyms."
-msgstr "``QUERY`` 内に登録済みの同義語がある場合はそれらが展開されます。例えば、以下の同義語があるとします。"
+msgstr ""
+"``QUERY`` 内に登録済みの同義語がある場合はそれらが展開されます。例えば、以下"
+"の同義語があるとします。"
 
 # 8fb114b064b54aeda05f592edd9432ec
 #: ../../../source/reference/query_expanders/tsv.txt:39
@@ -9910,7 +9922,10 @@ msgid ""
 "``word``. For example, ``groonga`` and ``Senna`` are synonyms of "
 "``groonga``. And ``mroonga`` and ``groonga MySQL`` are synonyms of "
 "``mroonga``."
-msgstr "この表は、 ``単語`` の同義語は ``同義語1`` と ``同義語2`` という意味です。例えば、 ``groonga`` の同義語は ``groonga`` と ``Senna`` です。また、 ``mroonga`` の同義語は ``mroonga`` と ``groonga MySQL`` です。"
+msgstr ""
+"この表は、 ``単語`` の同義語は ``同義語1`` と ``同義語2`` という意味です。例"
+"えば、 ``groonga`` の同義語は ``groonga`` と ``Senna`` です。また、 "
+"``mroonga`` の同義語は ``mroonga`` と ``groonga MySQL`` です。"
 
 # b993c6521463466f8f42d9a4e7e5107f
 #: ../../../source/reference/query_expanders/tsv.txt:51
@@ -9941,7 +9956,12 @@ msgid ""
 "Query expansion isn't occurred recursively. ``groonga`` is appeared in ``"
 "(mroonga OR (groonga MySQL))`` as query expansion result but it isn't "
 "expanded."
-msgstr "登録されている単語だけ（ここでは ``groonga`` と ``mroonga`` ）クエリー展開されて、登録されていない単語（ここでは ``search`` ）はクエリー展開されていないことが大事なポイントです。また、再帰的にクエリー展開しません。クエリー展開した結果の ``(mroonga OR (groonga MySQL))`` の中に ``groonga`` がありますが、これは展開されません。"
+msgstr ""
+"登録されている単語だけ（ここでは ``groonga`` と ``mroonga`` ）クエリー展開さ"
+"れて、登録されていない単語（ここでは ``search`` ）はクエリー展開されていない"
+"ことが大事なポイントです。また、再帰的にクエリー展開しません。クエリー展開し"
+"た結果の ``(mroonga OR (groonga MySQL))`` の中に ``groonga`` がありますが、こ"
+"れは展開されません。"
 
 # a14766415e514745987bf8e4d68d7f7e
 #: ../../../source/reference/query_expanders/tsv.txt:74
@@ -9951,7 +9971,11 @@ msgid ""
 "want to ignore ``word`` itself, you don't include ``word`` itself into "
 "synonyms. For example, if you want to use query expansion as spelling "
 "correction, you should use the following synonyms."
-msgstr "通常、同義語の中に ``単語`` 自身も含める必要があります。例えば、 ``groonga`` と ``mroonga`` が同義語の中に含まれています。もし、 ``単語`` 自身を無視したい場合は同義語の中に ``単語`` を含めないでください。例えば、クエリー展開機能をスペル訂正機能として使う場合は、以下のような同義語を使ってください。"
+msgstr ""
+"通常、同義語の中に ``単語`` 自身も含める必要があります。例えば、 ``groonga`` "
+"と ``mroonga`` が同義語の中に含まれています。もし、 ``単語`` 自身を無視したい"
+"場合は同義語の中に ``単語`` を含めないでください。例えば、クエリー展開機能を"
+"スペル訂正機能として使う場合は、以下のような同義語を使ってください。"
 
 # bc1b679d696f4c3aab14d8f7eddd3cc6
 #: ../../../source/reference/query_expanders/tsv.txt:82
@@ -9968,7 +9992,9 @@ msgstr ""
 msgid ""
 "``gronga`` in ``word`` has a typo. A ``o`` is missing. ``groonga`` in "
 "``synonym`` is the correct word."
-msgstr "``単語`` の ``gronga`` には誤字があります。 ``o`` がひとつ足りません。 ``同義語`` の ``groonga`` が正しい単語です。"
+msgstr ""
+"``単語`` の ``gronga`` には誤字があります。 ``o`` がひとつ足りません。 ``同義"
+"語`` の ``groonga`` が正しい単語です。"
 
 # ffe0438db8bc4467b15ff5e572d5b8c4
 #: ../../../source/reference/query_expanders/tsv.txt:90
@@ -9980,7 +10006,9 @@ msgstr "スペル訂正機能としてクエリー展開機能を使う例です
 msgid ""
 "The former command has a typo in ``--query`` value but the latter command "
 "doesn't have any typos."
-msgstr "前者のコマンドは ``--query`` の値に誤字がありますが、後者のコマンドは誤字がありません。"
+msgstr ""
+"前者のコマンドは ``--query`` の値に誤字がありますが、後者のコマンドは誤字があ"
+"りません。"
 
 # 593301b548c544a59047c1b3e6bb01f8
 #: ../../../source/reference/query_expanders/tsv.txt:102
@@ -9991,7 +10019,9 @@ msgstr "TSVファイル"
 #: ../../../source/reference/query_expanders/tsv.txt:104
 msgid ""
 "Synonyms are defined in TSV format file. This section describes about it."
-msgstr "同義語はTSVフォーマットのファイルで定義します。このセクションでは定義方法について説明します。"
+msgstr ""
+"同義語はTSVフォーマットのファイルで定義します。このセクションでは定義方法につ"
+"いて説明します。"
 
 # c2656146980c4e7581c8aeb0973bb40b
 #: ../../../source/reference/query_expanders/tsv.txt:108
@@ -10004,14 +10034,19 @@ msgid ""
 "The file name should be ``synonyms.tsv`` and it is located at configuration "
 "directory. For example, ``/etc/groonga/synonyms.tsv`` is a TSV file "
 "location. The location is decided at build time."
-msgstr "TSVファイルのファイル名は ``synonyms.tsv`` で、設定ディレクトリに置かなければいけません。例えば、 ``/etc/groonga/synonyms.tsv`` がTSVファイルの場所になります。場所はビルド時に決まります。"
+msgstr ""
+"TSVファイルのファイル名は ``synonyms.tsv`` で、設定ディレクトリに置かなければ"
+"いけません。例えば、 ``/etc/groonga/synonyms.tsv`` がTSVファイルの場所になり"
+"ます。場所はビルド時に決まります。"
 
 # 953b9ba92400443882a408f1fbdd63b7
 #: ../../../source/reference/query_expanders/tsv.txt:114
 msgid ""
 "You can change the location by environment variable "
 "``GRN_QUERY_EXPANDER_TSV_SYNONYMS_FILE`` at run time::"
-msgstr "環境変数 ``GRN_QUERY_EXPANDER_TSV_SYNONYMS_FILE`` を指定することで実行時に場所を変更することもできます::"
+msgstr ""
+"環境変数 ``GRN_QUERY_EXPANDER_TSV_SYNONYMS_FILE`` を指定することで実行時に場"
+"所を変更することもできます::"
 
 # e306ab0d084d4003896d89e70b4ba288
 #: ../../../source/reference/query_expanders/tsv.txt:119
@@ -10025,7 +10060,12 @@ msgid ""
 "and ``synonyms`` pair by a line. ``word`` is expanded to ``synonyms`` in ``--"
 "query`` value. ``Synonyms`` are combined by ``OR``. For example, ``groonga`` "
 "and ``Senna`` synonyms are expanded as ``groonga OR Senna``."
-msgstr "TSVファイル内に0個以上の同義語を定義することができます。1行につき ``単語`` と ``同義語リスト`` のペアを定義します。 ``--query`` の値の中にでてきた ``単語`` は ``同義語リスト`` に展開されます。 ``同義語リスト`` は ``OR`` でまとめます。例えば、同義語リスト ``groonga`` と ``Senna`` は ``groonga OR Senna`` と展開されます。"
+msgstr ""
+"TSVファイル内に0個以上の同義語を定義することができます。1行につき ``単語`` "
+"と ``同義語リスト`` のペアを定義します。 ``--query`` の値の中にでてきた ``単"
+"語`` は ``同義語リスト`` に展開されます。 ``同義語リスト`` は ``OR`` でまとめ"
+"ます。例えば、同義語リスト ``groonga`` と ``Senna`` は ``groonga OR Senna`` "
+"と展開されます。"
 
 # 26f49b01e6e54031a97864a3549bbc3d
 #: ../../../source/reference/query_expanders/tsv.txt:130
@@ -10033,14 +10073,20 @@ msgid ""
 "The first column is ``word`` and the rest columns are ``synonyms`` of the "
 "``word``. Here is a sample line for ``word`` is ``groonga`` and ``synonyms`` "
 "are ``groonga`` and ``Senna``. ``(TAB)`` means a tab character (``U+0009``)::"
-msgstr "最初のカラムが ``単語`` で、残りのカラムが ``単語`` の ``同義語リスト`` になります。以下は、 ``単語`` が ``groonga`` で、 ``同義語リスト`` が ``groonga`` と ``synonyms`` の例です。 ``(TAB)`` はタブ文字（ ``U+0009`` ）という意味です::"
+msgstr ""
+"最初のカラムが ``単語`` で、残りのカラムが ``単語`` の ``同義語リスト`` にな"
+"ります。以下は、 ``単語`` が ``groonga`` で、 ``同義語リスト`` が "
+"``groonga`` と ``synonyms`` の例です。 ``(TAB)`` はタブ文字（ ``U+0009`` ）と"
+"いう意味です::"
 
 # 6f54fb57626e4371a9739aeeccd8cf94
 #: ../../../source/reference/query_expanders/tsv.txt:137
 msgid ""
 "Comment line is supported. Lines that start with ``#`` are ignored. Here is "
 "an example for comment line. ``groonga`` line is ignored as comment line::"
-msgstr "コメント行をサポートしています。 ``#`` から始まる行は無視します。以下はコメント行の例です。 ``groonga`` とある行はコメント行として無視されます::"
+msgstr ""
+"コメント行をサポートしています。 ``#`` から始まる行は無視します。以下はコメン"
+"ト行の例です。 ``groonga`` とある行はコメント行として無視されます::"
 
 # 63608d939d5646d0a1aa20ddaa1f60a8
 #: ../../../source/reference/query_expanders/tsv.txt:145
@@ -10052,7 +10098,9 @@ msgstr "制限"
 msgid ""
 "You need to restart groonga to reload your synonyms. TSV file is loaded only "
 "at the plugin load time."
-msgstr "同義語を再読み込みするにはgroongaを再起動する必要があります。TSVファイルはプラグイン読み込み時に一度だけ読み込みます。"
+msgstr ""
+"同義語を再読み込みするにはgroongaを再起動する必要があります。TSVファイルはプ"
+"ラグイン読み込み時に一度だけ読み込みます。"
 
 # 5099bed133e348bd9e10273be46b8cc1
 #: ../../../source/reference/query_expanders/tsv.txt:153
