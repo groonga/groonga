@@ -4332,7 +4332,8 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
             grn_table_select_(ctx, table, expr, v, res, si->logical_op);
           }
         }
-        LAP(":", "filter(%d)", grn_table_size(ctx, res));
+        GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
+                      ":", "filter(%d)", grn_table_size(ctx, res));
       }
       for (i = 0; i < n; i++) {
         scan_info *si = sis[i];

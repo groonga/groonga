@@ -504,7 +504,9 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
     if ((cache = grn_cache_fetch(ctx, cache_key, cache_key_size))) {
       GRN_TEXT_PUT(ctx, outbuf, GRN_TEXT_VALUE(cache), GRN_TEXT_LEN(cache));
       grn_cache_unref(cache_key, cache_key_size);
-      LAP(":", "cache(%" GRN_FMT_LLD ")", (long long int)GRN_TEXT_LEN(cache));
+      GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_CACHE,
+                    ":", "cache(%" GRN_FMT_LLD ")",
+                    (long long int)GRN_TEXT_LEN(cache));
       return ctx->rc;
     }
   }
@@ -594,7 +596,8 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
       res = table_;
     }
     nhits = res ? grn_table_size(ctx, res) : 0;
-    LAP(":", "select(%d)", nhits);
+    GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
+                  ":", "select(%d)", nhits);
 
     if (res) {
       uint32_t ngkeys;
@@ -627,7 +630,8 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
           }
           grn_obj_unlink(ctx, scorer_);
         }
-        LAP(":", "score(%d)", nhits);
+        GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
+                      ":", "score(%d)", nhits);
       }
 
       grn_normalize_offset_and_limit(ctx, nhits, &offset, &limit);
@@ -637,7 +641,8 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
         if ((sorted = grn_table_create(ctx, NULL, 0, NULL,
                                        GRN_OBJ_TABLE_NO_KEY, NULL, res))) {
           grn_table_sort(ctx, res, offset, limit, sorted, keys, nkeys);
-          LAP(":", "sort(%d)", limit);
+          GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
+                        ":", "sort(%d)", limit);
           GRN_OBJ_FORMAT_INIT(&format, nhits, 0, limit, offset);
           format.flags =
             GRN_OBJ_FORMAT_WITH_COLUMN_NAMES|
@@ -679,7 +684,8 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
           GRN_OBJ_FORMAT_FIN(ctx, &format);
         }
       }
-      LAP(":", "output(%d)", limit);
+      GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
+                    ":", "output(%d)", limit);
       if (!ctx->rc && drilldown_len) {
         uint32_t i;
         grn_table_group_result g = {NULL, 0, 0, 1, GRN_TABLE_GROUP_CALC_COUNT, 0};
@@ -732,7 +738,8 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
               }
               grn_obj_unlink(ctx, g.table);
             }
-            LAP(":", "drilldown(%d)", nhits);
+            GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
+                          ":", "drilldown(%d)", nhits);
           }
           grn_table_sort_key_close(ctx, gkeys, ngkeys);
         }
