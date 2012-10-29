@@ -1,0 +1,60 @@
+table_create Users TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Users name COLUMN_VECTOR ShortText
+[[0,0.0,0.0],true]
+table_create Words TABLE_PAT_KEY --key_type ShortText   --default_tokenizer TokenBigramSplitSymbolAlpha
+[[0,0.0,0.0],true]
+column_create Words users_name COLUMN_INDEX Users name
+[[0,0.0,0.0],true]
+load --table Users
+[
+["name"],
+["Alice"],
+["Bob"]
+]
+[[0,0.0,0.0],2]
+select Words --output_columns _key
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        8
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ]
+      ],
+      [
+        "Al"
+      ],
+      [
+        "Bo"
+      ],
+      [
+        "b"
+      ],
+      [
+        "ce"
+      ],
+      [
+        "e"
+      ],
+      [
+        "ic"
+      ],
+      [
+        "li"
+      ],
+      [
+        "ob"
+      ]
+    ]
+  ]
+]

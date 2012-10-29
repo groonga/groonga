@@ -1,0 +1,15 @@
+table_create Users TABLE_NO_KEY
+column_create Users name COLUMN_SCALAR ShortText
+
+table_create Words TABLE_PAT_KEY --key_type ShortText \
+  --default_tokenizer TokenBigramSplitSymbolAlpha
+column_create Words users_name COLUMN_INDEX Users name
+
+load --table Users
+[
+["name"],
+["Alice"],
+["Bob"]
+]
+
+select Words --output_columns _key
