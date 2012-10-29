@@ -31,6 +31,7 @@ void test_exec_with_empty_string(void);
 void test_exec_with_invalid_argument(void);
 void data_proper_tag_insertion(void);
 void test_proper_tag_insertion(gconstpointer data);
+void test_exec_composed_decomposed_normalize_utf8(void);
 void test_exec_with_normalize(void);
 void test_exec_with_many_results(void);
 void test_customized_tag(void);
@@ -439,6 +440,35 @@ test_exec_with_invalid_argument(void)
   grn_test_assert_equal_rc(GRN_INVALID_ARGUMENT,
                            grn_snip_exec(&context, snip, text, strlen(text),
                                          &n_results, NULL));
+}
+
+void
+test_exec_composed_decomposed_normalize_utf8(void)
+{
+  unsigned int n_results;
+  unsigned int max_tagged_len;
+  unsigned int result_len;
+  const gchar text[] = "Ⅶ¨abcde";
+  const gchar keyword[] = "ab";
+
+  default_encoding = GRN_ENC_UTF8;
+  default_flags = GRN_SNIP_NORMALIZE;
+
+  cut_assert_open_snip();
+  grn_test_assert(grn_snip_add_cond(&context, snip, keyword, strlen(keyword),
+                                    NULL, 0, NULL, 0));
+
+  grn_test_assert(grn_snip_exec(&context, snip,
+                                text, strlen(text),
+                                &n_results, &max_tagged_len));
+  cut_assert_equal_uint(1, n_results);
+  cut_assert_equal_uint(15, max_tagged_len);
+  result = g_new(gchar, max_tagged_len);
+
+  grn_test_assert(grn_snip_get_result(&context, snip, 0, result, &result_len));
+  cut_assert_equal_string("Ⅶ¨[[ab]]cde",
+                          result);
+  cut_assert_equal_uint(14, result_len);
 }
 
 void

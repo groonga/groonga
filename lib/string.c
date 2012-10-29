@@ -602,7 +602,9 @@ utf8_normalize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
       if (cp) { cp--; }
       if (ch) {
         ch -= (d - d_);
-        s_ = s__;
+        if (ch[0] >= 0) {
+          s_ = s__;
+        }
       }
       d = d_;
       length--;
