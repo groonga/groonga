@@ -864,7 +864,7 @@ grn_win32_base_dir(void)
         win32_base_dir = ".";
       } else {
         char *path;
-        win32_base_dir = malloc(ansi_dll_filename_size);
+        win32_base_dir = malloc(ansi_dll_filename_size + 1);
         WideCharToMultiByte(CP_ACP, 0,
                             absolute_dll_filename, absolute_dll_filename_size,
                             win32_base_dir, ansi_dll_filename_size,
