@@ -569,6 +569,31 @@ class GrnTestData
                                              @longitude_end.to_i,
                                              @latitude_end.to_i)
           (east_distance + west_distance).floor
+        when "1st_to_4th"
+          longitude_delta = @longitude_end_degree - @longitude_start_degree
+          latitude_delta = @latitude_end_degree - @latitude_start_degree
+          if longitude_delta.to_f == 0
+            north_distance = calculate_distance(@longitude_start.to_i,
+                                                @latitude_start.to_i,
+                                                @longitude_start.to_i,
+                                                0)
+            south_distance = calculate_distance(@longitude_end.to_i,
+                                                0,
+                                                @longitude_end.to_i,
+                                                @latitude_end.to_i)
+          else
+            slope = latitude_delta / longitude_delta.to_f
+            intercept = -latitude_delta / slope
+            north_distance = calculate_distance(intercept * GRN_GEO_RESOLUTION,
+                                                0,
+                                                @longitude_start.to_i,
+                                                @latitude_start.to_i)
+            south_distance = calculate_distance(intercept * GRN_GEO_RESOLUTION,
+                                                0,
+                                                @longitude_end.to_i,
+                                                @latitude_end.to_i)
+          end
+          (north_distance + south_distance).floor
         when "equator"
           if point_or_line == "point"
             0
