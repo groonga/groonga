@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-07-23 15:32\n"
-"PO-Revision-Date: 2012-08-08 21:52+0900\n"
+"PO-Revision-Date: 2012-10-30 16:27+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -343,7 +343,6 @@ msgstr ""
 
 # 5f41c9f3d5bc416590fd143e82eccd53
 #: ../../../source/tutorial/data.txt:126
-#, fuzzy
 msgid ""
 "You can specify a column in the associated table to the `output_columns` "
 "parameter of a :doc:`/reference/commands/select` command. The format is "
@@ -352,13 +351,7 @@ msgid ""
 "handled as \"Src._key\". Note that if a reference does not point to a valid "
 "record, a :doc:`/reference/commands/select` command outputs the default "
 "value of the target column."
-msgstr ""
-"テーブル参照のカラムがあるときは、 `output_columns` 引数に \"参照元カラム.参"
-"照先カラム\" と指定することにより、参照先カラムの値を取り出すことができます。"
-"参照元カラムのみを指定したときは、 \"参照元カラム名._key\" と同様の扱いとな"
-"り、参照先レコードの主キーが取り出されます。テーブル参照が有効なレコードを指"
-"していないときは、参照先カラムのデフォルト値が取り出されるようになっていま"
-"す。"
+msgstr "テーブル参照のカラムがあるときは、 :doc:`reference/command/select` コマンドの `output_columns` 引数に \"参照元カラム.参照先カラム\" と指定することにより、参照先カラムの値を取り出すことができます。参照元カラムのみを指定したときは、 \"参照元カラム名._key\" と同様の扱いとなり、参照先レコードの主キーが取り出されます。テーブル参照が有効なレコードを指していないときは、参照先カラムのデフォルト値が取り出されるようになっています。"
 
 # c3a7a7cea377485d81cd4ec552c15694
 #: ../../../source/tutorial/data.txt:128
@@ -372,7 +365,6 @@ msgstr ""
 
 # fcab1957c86f4f028958b472cf6dda56
 #: ../../../source/tutorial/data.txt:137
-#, fuzzy
 msgid ""
 "The `type` parameter of the :doc:`/reference/commands/column_create` command "
 "specifies the table to be associated with the reference column. In this "
@@ -384,14 +376,7 @@ msgid ""
 "command. In this case, the primary key and the title of the referred record "
 "are output because link._key and link.title are specified to the "
 "`output_columns` parameter."
-msgstr ""
-"テーブル参照のカラムを作成するときは、 `type` 引数に参照先テーブルを指定しま"
-"す。この例では、同じテーブルに含まれる別のレコードを参照させたいので、Siteを"
-"指定することになります。次に、 \"http://example.org/\" から \"http://example."
-"net/\" へのリンクを登録しています。テーブル参照を作成するときは、IDではなく主"
-"キーを指定することに注意してください。最後に、リンクの内容を確認しています。"
-"この例では、  `output_columns` 引数に link._key と link.title を指定している"
-"ので、参照先の主キーとタイトルが表示されています。"
+msgstr "テーブル参照のカラムを作成するときは、 :doc:`/reference/commands/column_create` コマンドの `type` 引数に参照先テーブルを指定します。この例では、同じテーブルに含まれる別のレコードを参照させたいので、Siteを指定することになります。次に、 \"http://example.org/\" から \"http://example.net/\" へのリンクを登録しています。テーブル参照を作成するときは、IDではなく主キーを指定することに注意してください。最後に、リンクの内容を確認しています。この例では、  `output_columns` 引数に link._key と link.title を指定しているので、参照先の主キーとタイトルが表示されています。"
 
 #: ../../../source/tutorial/data.txt:140
 msgid "Vector types"
