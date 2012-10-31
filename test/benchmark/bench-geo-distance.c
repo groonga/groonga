@@ -180,6 +180,19 @@ bench_setup_rectangular_wgs84_2nd_to_1st_quadrant_short(gpointer user_data)
 }
 
 static void
+bench_setup_rectangular_wgs84_1st_to_4th_quadrant_long(gpointer user_data)
+{
+  BenchmarkData *data = user_data;
+
+  bench_setup_common(user_data);
+  bench_setup_points(user_data,
+                     "128452975x503157902",
+                     "-122100000x66300000",
+                     GRN_DB_WGS84_GEO_POINT);
+  data->geo_distance_proc = GET(data->context, "geo_distance");
+}
+
+static void
 bench_setup_rectangular_wgs84_1st_to_2nd_quadrant_long(gpointer user_data)
 {
   BenchmarkData *data = user_data;
@@ -361,6 +374,8 @@ main(int argc, gchar **argv)
             rectangular_wgs84_3rd_to_4th_quadrant_long);
   REGISTER("rectangular (WGS84 Sydney to Brasplia)",
             rectangular_wgs84_4th_to_3rd_quadrant_long);
+  REGISTER("rectangular (WGS84 Tokyo to Brasplia)",
+            rectangular_wgs84_1st_to_4th_quadrant_short);
   REGISTER("spherical (WGS84)", spherical_wgs84);
   REGISTER("spherical (TOKYO)", spherical_tgs);
   REGISTER("hubeny (WGS84)", hubeny_wgs84);
