@@ -569,7 +569,7 @@ class GrnTestData
                                              @longitude_end.to_i,
                                              @latitude_end.to_i)
           (east_distance + west_distance).floor
-        when "1st_to_4th"
+        when "1st_to_4th", "4th_to_1st"
           longitude_delta = @longitude_end_degree - @longitude_start_degree
           latitude_delta = @latitude_end_degree - @latitude_start_degree
           if longitude_delta.to_f == 0
