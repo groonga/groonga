@@ -1,0 +1,11 @@
+table_create Geo TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Geo distance COLUMN_SCALAR Int32
+[[0,0.0,0.0],true]
+load --table Geo
+[
+{"_key": "the record for geo_distance() result"}
+]
+[[0,0.0,0.0],1]
+select Geo --output_columns distance --scorer 'distance = geo_distance("-324000000x644400000", "324000000x3600000", "rectangle")'
+[[0,0.0,0.0],[[[1],[["distance","Int32"]],[24370415]]]]
