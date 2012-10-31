@@ -1906,6 +1906,9 @@ geo_quadrant_type(grn_geo_point *point1, grn_geo_point *point2)
     } else if (point1->longitude >= 0 && point2->longitude >= 0 &&
                point1->latitude > 0 && point2->latitude < 0) {
       return QUADRANT_1ST_TO_4TH;
+    } else if (point1->longitude >= 0 && point2->longitude >= 0 &&
+               point1->latitude < 0 && point2->latitude > 0) {
+      return QUADRANT_4TH_TO_1ST;
     } else {
       /* FIXME */
       return QUADRANT_1ST;
@@ -1961,7 +1964,8 @@ grn_geo_distance_rectangle_raw(grn_ctx *ctx,
       latitude_delta = lat2 - lat1;
       slope = latitude_delta / longitude_delta;
       intercept = lat1 - slope * lng1;
-      if (quad_type == QUADRANT_1ST_TO_4TH) {
+      if (quad_type == QUADRANT_1ST_TO_4TH ||
+          quad_type == QUADRANT_4TH_TO_1ST) {
         if (longitude_delta == 0) {
           north_distance = geo_distance_rectangle_square_root(lng1,
                                                               lat1,
