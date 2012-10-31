@@ -583,12 +583,13 @@ class GrnTestData
                                                 @latitude_end.to_i)
           else
             slope = latitude_delta / longitude_delta.to_f
-            intercept = -latitude_delta / slope
-            north_distance = calculate_distance(intercept * GRN_GEO_RESOLUTION,
+            intercept = @latitude_start_degree - slope * @longitude_start_degree
+            longitude_on_equator = -intercept / slope * GRN_GEO_RESOLUTION
+            north_distance = calculate_distance(longitude_on_equator,
                                                 0,
                                                 @longitude_start.to_i,
                                                 @latitude_start.to_i)
-            south_distance = calculate_distance(intercept * GRN_GEO_RESOLUTION,
+            south_distance = calculate_distance(longitude_on_equator,
                                                 0,
                                                 @longitude_end.to_i,
                                                 @latitude_end.to_i)
