@@ -180,7 +180,7 @@ bench_setup_rectangular_wgs84_2nd_to_1st_quadrant_short(gpointer user_data)
 }
 
 static void
-bench_setup_rectangular_wgs84_1st_to_4th_quadrant_long(gpointer user_data)
+bench_setup_rectangular_wgs84_1st_to_4th_quadrant_short(gpointer user_data)
 {
   BenchmarkData *data = user_data;
 
@@ -193,7 +193,7 @@ bench_setup_rectangular_wgs84_1st_to_4th_quadrant_long(gpointer user_data)
 }
 
 static void
-bench_setup_rectangular_wgs84_4th_to_1st_quadrant_long(gpointer user_data)
+bench_setup_rectangular_wgs84_4th_to_1st_quadrant_short(gpointer user_data)
 {
   BenchmarkData *data = user_data;
 
