@@ -1962,8 +1962,6 @@ grn_geo_distance_rectangle_raw(grn_ctx *ctx,
     if (dist_type == LONGITUDE_SHORT) {
       longitude_delta = lng2 - lng1;
       latitude_delta = lat2 - lat1;
-      slope = latitude_delta / longitude_delta;
-      intercept = lat1 - slope * lng1;
       if (quad_type == QUADRANT_1ST_TO_4TH ||
           quad_type == QUADRANT_4TH_TO_1ST) {
         if (longitude_delta == 0) {
@@ -1976,17 +1974,22 @@ grn_geo_distance_rectangle_raw(grn_ctx *ctx,
                                                               lng2,
                                                               lat2);
         } else {
+          slope = latitude_delta / longitude_delta;
+          intercept = lat1 - slope * lng1;
+          intercept_edge = -intercept / slope;
           north_distance = geo_distance_rectangle_square_root(lng1,
                                                               lat1,
-                                                              -intercept/slope,
+                                                              intercept_edge,
                                                               0);
-          south_distance = geo_distance_rectangle_square_root(-intercept/slope,
+          south_distance = geo_distance_rectangle_square_root(intercept_edge,
                                                               0,
                                                               lng2,
                                                               lat2);
         }
         distance = (north_distance + south_distance) * GRN_GEO_RADIUS;
       } else {
+        slope = latitude_delta / longitude_delta;
+        intercept = lat1 - slope * lng1;
         east_distance = geo_distance_rectangle_square_root(lng1,
                                                            lat1,
                                                            0,
