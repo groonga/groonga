@@ -1912,6 +1912,9 @@ geo_quadrant_type(grn_geo_point *point1, grn_geo_point *point2)
     } else if (point1->longitude <= 0 && point2->longitude <= 0 &&
                point1->latitude > 0 && point2->latitude < 0) {
       return QUADRANT_2ND_TO_3RD;
+    } else if (point1->longitude <= 0 && point2->longitude <= 0 &&
+               point1->latitude < 0 && point2->latitude > 0) {
+      return QUADRANT_3RD_TO_2ND;
     } else {
       /* FIXME */
       return QUADRANT_1ST;
@@ -1967,7 +1970,8 @@ grn_geo_distance_rectangle_raw(grn_ctx *ctx,
       latitude_delta = lat2 - lat1;
       if (quad_type == QUADRANT_1ST_TO_4TH ||
           quad_type == QUADRANT_4TH_TO_1ST ||
-          quad_type == QUADRANT_2ND_TO_3RD) {
+          quad_type == QUADRANT_2ND_TO_3RD ||
+          quad_type == QUADRANT_3RD_TO_2ND) {
         if (longitude_delta == 0) {
           north_distance = geo_distance_rectangle_square_root(lng1,
                                                               lat1,
