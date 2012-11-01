@@ -595,6 +595,51 @@ class GrnTestData
                                                 @latitude_end.to_i)
           end
           (north_distance + south_distance).floor
+        when "1st_to_3rd"
+          longitude_delta = @longitude_end_degree - @longitude_start_degree
+          latitude_delta = @latitude_end_degree - @latitude_start_degree
+          slope = latitude_delta / longitude_delta.to_f
+          intercept = @latitude_start_degree - slope * @longitude_start_degree
+          longitude_on_equator = -intercept / slope * GRN_GEO_RESOLUTION
+          if longitude_on_equator > 0
+            first_distance = calculate_distance(@longitude_start.to_i,
+                                                @latitude_start.to_i,
+                                                longitude_on_equator,
+                                                0)
+            intermediate_distance = calculate_distance(longitude_on_equator,
+                                                       0,
+                                                       0,
+                                                       intercept)
+            third_distance = calculate_distance(0,
+                                                intercept,
+                                                @longitude_end.to_i,
+                                                @latitude_end.to_i)
+            (first_distance + intermediate_distance + third_distance).floor
+          elsif longitude_on_equator < 0
+            first_distance = calculate_distance(@longitude_start.to_i,
+                                                @latitude_start.to_i,
+                                                0,
+                                                intercept)
+            intermediate_distance = calculate_distance(0,
+                                                       intercept,
+                                                       longitude_on_equator,
+                                                       0)
+            third_distance = calculate_distance(longitude_on_equator,
+                                                0,
+                                                @longitude_end.to_i,
+                                                @latitude_end.to_i)
+            (first_distance + intermediate_distance + third_distance).floor
+          else
+            first_distance = calculate_distance(@longitude_start.to_i,
+                                                @latitude_start.to_i,
+                                                0,
+                                                0)
+            third_distance = calculate_distance(0,
+                                                0,
+                                                @longitude_end.to_i,
+                                                @latitude_end.to_i)
+            (first_distance + third_distance).floor
+          end
         when "equator"
           if point_or_line == "point"
             0
@@ -631,7 +676,7 @@ class GrnTestData
           (east_distance + west_distance).floor
         else
           case quadrant
-          when "1st_to_2nd", "4th_to_3rd"
+          when "1st_to_2nd", "4th_to_3rd", "1st_to_3rd"
             rounded_longitude = @longitude_end_degree + 360
             rounded_latitude = @latitude_end_degree
             longitude_delta = rounded_longitude - @longitude_start_degree
