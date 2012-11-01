@@ -3677,6 +3677,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
   buffer_rec *br = NULL;
   buffer_term *bt;
   uint32_t pseg = 0, pos = 0, size, *a;
+  if (!tid) { return rc; }
   if (!u->tf || !u->sid) { return grn_ii_delete_one(ctx, ii, tid, u, h); }
   if (u->sid > ii->header->smax) { ii->header->smax = u->sid; }
   if (!(a = array_get(ctx, ii, tid))) { return GRN_NO_MEMORY_AVAILABLE; }
@@ -3823,6 +3824,7 @@ grn_ii_delete_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
   buffer_rec *br;
   buffer_term *bt;
   uint32_t pseg, size, *a;
+  if (!tid) { return rc; }
   if (!(a = array_at(ctx, ii, tid))) { return GRN_INVALID_ARGUMENT; }
   for (;;) {
     if (!a[0]) { goto exit; }
