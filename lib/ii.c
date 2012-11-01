@@ -2966,6 +2966,8 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t seg)
   int nterms_void = 0;
   int size_in_buffer = 0;
   grn_obj buf;
+  size_t lower_bound;
+  int64_t nloops = 0, nviolations = 0;
   if (ii->header->binfo[seg] == NOT_ASSIGNED) {
     GRN_OUTPUT_BOOL(GRN_FALSE);
     return;
@@ -2975,6 +2977,9 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t seg)
     GRN_OUTPUT_BOOL(GRN_FALSE);
     return;
   }
+  lower_bound =
+    (sb->header.buffer_free + sizeof(buffer_term) * sb->header.nterms)
+    / sizeof(buffer_rec);
   datavec_init(ctx, rdv, ii->n_elements, 0, 0);
   if ((ii->header->flags & GRN_OBJ_WITH_POSITION)) {
     rdv[ii->n_elements - 1].flags = ODD;
@@ -3009,7 +3014,7 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t seg)
     docinfo bid = {0, 0};
     uint32_t sdf = 0, snn = 0;
     uint32_t *srp = NULL, *ssp = NULL, *stp = NULL, *sop = NULL, *snp = NULL;
-    if (!bt->tid) {
+    if (!bt->tid && !bt->pos_in_buffer && !bt->size_in_buffer) {
       nterms_void++;
       continue;
     }
@@ -3068,6 +3073,30 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t seg)
         nterm_with_chunk++;
       }
     }
+    {
+      uint16_t pos;
+      grn_id rid, sid, rid_ = 0, sid_ = 0;
+      uint8_t *p;
+      buffer_rec *r;
+      for (pos = bt->pos_in_buffer; pos; pos = r->step) {
+        if (pos < lower_bound) {
+          nviolations++;
+        }
+        r = BUFFER_REC_AT(sb, pos);
+        p = NEXT_ADDR(r);
+        GRN_B_DEC(rid, p);
+        if ((ii->header->flags & GRN_OBJ_WITH_SECTION)) {
+          GRN_B_DEC(sid, p);
+        } else {
+          sid = 1;
+        }
+        if (rid < rid_ || (rid == rid_ && sid < sid_)) {
+          nloops++;
+        }
+        rid_ = rid;
+        sid_ = sid;
+      }
+    }
     GRN_OUTPUT_ARRAY_CLOSE();
     if (cinfo) { GRN_FREE(cinfo); }
   }
@@ -3093,6 +3122,14 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t seg)
   if (ndeleted_terms_with_value) {
     GRN_OUTPUT_CSTR("number of deleted terms with value");
     GRN_OUTPUT_INT64(ndeleted_terms_with_value);
+  }
+  if (nloops) {
+    GRN_OUTPUT_CSTR("number of loops");
+    GRN_OUTPUT_INT64(nloops);
+  }
+  if (nviolations) {
+    GRN_OUTPUT_CSTR("number of violations");
+    GRN_OUTPUT_INT64(nviolations);
   }
   GRN_OUTPUT_MAP_CLOSE();
   datavec_fin(ctx, rdv);
