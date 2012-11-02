@@ -609,9 +609,9 @@ class GrnTestData
             intermediate_distance = calculate_distance(longitude_on_equator,
                                                        0,
                                                        0,
-                                                       intercept)
+                                                       intercept * GRN_GEO_RESOLUTION)
             third_distance = calculate_distance(0,
-                                                intercept,
+                                                intercept * GRN_GEO_RESOLUTION,
                                                 @longitude_end.to_i,
                                                 @latitude_end.to_i)
             (first_distance + intermediate_distance + third_distance).floor
@@ -619,9 +619,9 @@ class GrnTestData
             first_distance = calculate_distance(@longitude_start.to_i,
                                                 @latitude_start.to_i,
                                                 0,
-                                                intercept)
+                                                intercept * GRN_GEO_RESOLUTION)
             intermediate_distance = calculate_distance(0,
-                                                       intercept,
+                                                       intercept * GRN_GEO_RESOLUTION,
                                                        longitude_on_equator,
                                                        0)
             third_distance = calculate_distance(longitude_on_equator,
