@@ -1,0 +1,15 @@
+table_create Names TABLE_PAT_KEY ShortText
+
+table_create Users TABLE_NO_KEY
+column_create Users name COLUMN_SCALAR Names
+
+column_create Names users_name COLUMN_INDEX Users name
+
+load --table Users
+[
+["name"],
+["Alice"],
+["Bob"]
+]
+
+select Users --output_columns name --filter 'name @ "Alice"'

@@ -1,0 +1,17 @@
+table_create Names TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Users TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Users name COLUMN_SCALAR Names
+[[0,0.0,0.0],true]
+column_create Names users_name COLUMN_INDEX Users name
+[[0,0.0,0.0],true]
+load --table Users
+[
+["name"],
+["Alice"],
+["Bob"]
+]
+[[0,0.0,0.0],2]
+select Users --output_columns name --filter 'name @ "Alice"'
+[[0,0.0,0.0],[[[1],[["name","Names"]],["Alice"]]]]
