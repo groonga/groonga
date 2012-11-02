@@ -208,7 +208,7 @@ grn_msg_send(grn_ctx *ctx, grn_obj *msg, int flags)
         header->keylen = 0;
         header->level = 0;
         header->flags = flags;
-        header->status = (uint16_t) ctx->rc;
+        header->status = htons((uint16_t)ctx->rc);
         header->opaque = 0;
         header->cas = 0;
         //todo : MSG_DONTWAIT
