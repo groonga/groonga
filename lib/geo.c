@@ -2082,7 +2082,7 @@ grn_geo_distance_rectangle_raw(grn_ctx *ctx,
                                                            M_PI,
                                                            intercept_edge);
         distance = (east_distance + west_distance) * GRN_GEO_RADIUS;
-      } else if (quad_type == QUADRANT_2ND_TO_1ST || 
+      } else if (quad_type == QUADRANT_2ND_TO_1ST ||
                  quad_type == QUADRANT_3RD_TO_4TH) {
         longitude_delta = lng1 + M_2PI - lng2;
         latitude_delta = lat1 - lat2;
