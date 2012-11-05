@@ -1779,26 +1779,24 @@ static void
 init_default_hostname(void)
 {
   static char hostname[HOST_NAME_MAX + 1];
+  int error_code;
+  struct addrinfo hints, *result;
+
   hostname[HOST_NAME_MAX] = '\0';
-  if (gethostname(hostname, HOST_NAME_MAX)) {
-    fprintf(stderr, "gethostname failed: %s\n", strerror(errno));
-  } else {
-    int error_code;
-    struct addrinfo hints, *result;
-    memset(&hints, 0, sizeof(hints));
-    hints.ai_family = AF_UNSPEC;
-    hints.ai_socktype = SOCK_STREAM;
-    hints.ai_addr = NULL;
-    hints.ai_canonname = NULL;
-    hints.ai_next = NULL;
-    error_code = getaddrinfo(hostname, NULL, &hints, &result);
-    if (error_code) {
-      fprintf(stderr, "getaddrinfo failed: %s\n", gai_strerror(error_code));
-    } else {
-      freeaddrinfo(result);
-      default_hostname = hostname;
-    }
-  }
+  if (gethostname(hostname, HOST_NAME_MAX) == -1)
+    return;
+
+  memset(&hints, 0, sizeof(hints));
+  hints.ai_family = AF_UNSPEC;
+  hints.ai_socktype = SOCK_STREAM;
+  hints.ai_addr = NULL;
+  hints.ai_canonname = NULL;
+  hints.ai_next = NULL;
+  if (getaddrinfo(hostname, NULL, &hints, &result) != 0)
+    return;
+  freeaddrinfo(result);
+
+  default_hostname = hostname;
 }
 
 static void
