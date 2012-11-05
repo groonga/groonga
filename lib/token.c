@@ -506,8 +506,6 @@ grn_token_next(grn_ctx *ctx, grn_token *token)
       }
     } else {
       token->status = grn_token_done;
-      token->curr = token->orig;
-      token->curr_size = token->orig_blen;
     }
     if (token->mode == grn_token_add) {
       switch (table->header.type) {
