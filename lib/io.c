@@ -1526,9 +1526,15 @@ inline static grn_rc
 grn_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags, size_t maxsize)
 {
   if ((flags & O_CREAT)) {
+    DWORD dwCreationDisposition;
+    if (flags & O_EXCL) {
+      dwCreationDisposition = CREATE_NEW;
+    } else {
+      dwCreationDisposition = OPEN_ALWAYS;
+    }
     fi->fh = CreateFile(path, GENERIC_READ | GENERIC_WRITE,
                         FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
-                        CREATE_NEW, FILE_ATTRIBUTE_NORMAL, 0);
+                        dwCreationDisposition, FILE_ATTRIBUTE_NORMAL, 0);
     if (fi->fh == INVALID_HANDLE_VALUE) {
       SERR("CreateFile");
       return ctx->rc;
@@ -1629,9 +1635,15 @@ grn_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags, size_t maxsize
 {
   /* may be wrong if flags is just only O_RDWR */
   if ((flags & O_CREAT)) {
+    DWORD dwCreationDisposition;
+    if (flags & O_EXCL) {
+      dwCreationDisposition = CREATE_NEW;
+    } else {
+      dwCreationDisposition = OPEN_ALWAYS;
+    }
     fi->fh = CreateFile(path, GENERIC_READ | GENERIC_WRITE,
                         FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
-                        CREATE_NEW, FILE_ATTRIBUTE_NORMAL, 0);
+                        dwCreationDisposition, FILE_ATTRIBUTE_NORMAL, 0);
     if (fi->fh == INVALID_HANDLE_VALUE) {
       SERR("CreateFile");
       return ctx->rc;
