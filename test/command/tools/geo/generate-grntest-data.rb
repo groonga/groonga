@@ -597,7 +597,7 @@ class GrnTestData
                                                 @latitude_end.to_i)
           end
           (north_distance + south_distance).floor
-        when "1st_to_3rd", "3rd_to_1st"
+        when "1st_to_3rd", "3rd_to_1st", "2nd_to_4th"
           longitude_delta = @longitude_end_degree - @longitude_start_degree
           latitude_delta = @latitude_end_degree - @latitude_start_degree
           slope = latitude_delta / longitude_delta.to_f
@@ -723,7 +723,7 @@ class GrnTestData
                                                180 * GRN_GEO_RESOLUTION,
                                                latitude_on_180 * GRN_GEO_RESOLUTION)
             (east_distance + west_distance).floor
-          when "1st_to_3rd", "3rd_to_1st"
+          when "1st_to_3rd", "3rd_to_1st", "2nd_to_4th"
             if @longitude_start_degree > @longitude_end_degree
               rounded_longitude_degree = @longitude_end_degree + 360
               rounded_latitude_degree = @latitude_end_degree
