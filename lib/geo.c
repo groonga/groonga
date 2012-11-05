@@ -1979,16 +1979,7 @@ grn_geo_distance_rectangle_raw(grn_ctx *ctx,
           quad_type == QUADRANT_4TH_TO_1ST ||
           quad_type == QUADRANT_2ND_TO_3RD ||
           quad_type == QUADRANT_3RD_TO_2ND) {
-        if (longitude_delta == 0) {
-          north_distance = geo_distance_rectangle_square_root(lng1,
-                                                              lat1,
-                                                              lng2,
-                                                              0);
-          south_distance = geo_distance_rectangle_square_root(lng1,
-                                                              0,
-                                                              lng2,
-                                                              lat2);
-        } else {
+        if (longitude_delta > 0 || longitude_delta < 0) {
           slope = latitude_delta / longitude_delta;
           intercept = lat1 - slope * lng1;
           intercept_edge = -intercept / slope;
@@ -1997,6 +1988,15 @@ grn_geo_distance_rectangle_raw(grn_ctx *ctx,
                                                               intercept_edge,
                                                               0);
           south_distance = geo_distance_rectangle_square_root(intercept_edge,
+                                                              0,
+                                                              lng2,
+                                                              lat2);
+        } else {
+          north_distance = geo_distance_rectangle_square_root(lng1,
+                                                              lat1,
+                                                              lng2,
+                                                              0);
+          south_distance = geo_distance_rectangle_square_root(lng1,
                                                               0,
                                                               lng2,
                                                               lat2);
