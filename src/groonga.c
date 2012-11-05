@@ -1776,20 +1776,8 @@ static int64_t default_default_match_escalation_threshold = 0;
 static const char * const default_bind_address = "0.0.0.0";
 
 static void
-init_default_settings(void)
+init_default_hostname(void)
 {
-  output = stdout;
-
-  default_encoding = grn_strtoenc(GRN_DEFAULT_ENCODING);
-
-  {
-    const uint32_t num_cores = get_core_number();
-    if (num_cores != 0) {
-      default_max_num_threads = num_cores;
-    }
-  }
-
-  {
     static char hostname[HOST_NAME_MAX + 1];
     hostname[HOST_NAME_MAX] = '\0';
     if (gethostname(hostname, HOST_NAME_MAX)) {
@@ -1811,7 +1799,23 @@ init_default_settings(void)
         default_hostname = hostname;
       }
     }
+}
+
+static void
+init_default_settings(void)
+{
+  output = stdout;
+
+  default_encoding = grn_strtoenc(GRN_DEFAULT_ENCODING);
+
+  {
+    const uint32_t num_cores = get_core_number();
+    if (num_cores != 0) {
+      default_max_num_threads = num_cores;
+    }
   }
+
+  init_default_hostname();
 
   if (grn_log_path) {
     default_log_path = grn_log_path;
