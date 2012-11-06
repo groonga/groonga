@@ -2081,7 +2081,7 @@ geo_distance_rectangle_long_dist_type(quadrant_type quad_type,
 
   double distance;
   double slope, intercept, longitude_delta, latitude_delta;
-  double east_distance, west_distance, intercept_edge;
+  double intercept_edge;
   double north_distance, south_distance, intermediate_distance;
   double first_longitude, first_latitude, third_longitude, third_latitude;
   double middle1_longitude, middle1_latitude, middle2_longitude, middle2_latitude;
@@ -2094,15 +2094,12 @@ geo_distance_rectangle_long_dist_type(quadrant_type quad_type,
     slope = latitude_delta / longitude_delta;
     intercept = lat1 - slope * lng1;
     intercept_edge = slope * M_PI + intercept;
-    east_distance = geo_distance_rectangle_square_root(lng1,
-                                                       lat1,
-                                                       M_PI,
-                                                       intercept_edge);
-    west_distance = geo_distance_rectangle_square_root(-lng2,
-                                                       lat2,
-                                                       M_PI,
-                                                       intercept_edge);
-    distance = (east_distance + west_distance) * GRN_GEO_RADIUS;
+    distance = geo_distance_rectangle_twin_quadrant(lng1,
+                                                    lat1,
+                                                    M_PI,
+                                                    intercept_edge,
+                                                    -lng2,
+                                                    lat2);
   } else if (quad_type == QUADRANT_2ND_TO_1ST ||
              quad_type == QUADRANT_3RD_TO_4TH) {
     longitude_delta = lng1 + M_2PI - lng2;
@@ -2110,15 +2107,12 @@ geo_distance_rectangle_long_dist_type(quadrant_type quad_type,
     slope = latitude_delta / longitude_delta;
     intercept = lat2 - slope * lng2;
     intercept_edge = slope * M_PI + intercept;
-    east_distance = geo_distance_rectangle_square_root(lng2,
-                                                       lat2,
-                                                       M_PI,
-                                                       intercept_edge);
-    west_distance = geo_distance_rectangle_square_root(-lng1,
-                                                       lat1,
-                                                       M_PI,
-                                                       intercept_edge);
-    distance = (east_distance + west_distance) * GRN_GEO_RADIUS;
+    distance = geo_distance_rectangle_twin_quadrant(lng2,
+                                                    lat2,
+                                                    M_PI,
+                                                    intercept_edge,
+                                                    -lng1,
+                                                    lat1);
   } else if (quad_type == QUADRANT_1ST_TO_3RD ||
              quad_type == QUADRANT_3RD_TO_1ST) {
     first_longitude = quad_type == QUADRANT_1ST_TO_3RD ? lng1 : lng2;
