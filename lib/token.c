@@ -471,7 +471,7 @@ grn_token_open(grn_ctx *ctx, grn_obj *table, const char *str, size_t str_len,
     }
   }
   if (ctx->rc) {
-    GRN_FREE(token);
+    grn_token_close(ctx, token);
     token = NULL;
   }
   return token;
