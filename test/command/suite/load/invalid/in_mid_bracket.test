@@ -1,0 +1,16 @@
+table_create Tags TABLE_HASH_KEY ShortText --default_tokenizer TokenDelimit
+
+table_create Users TABLE_HASH_KEY ShortText
+column_create Users name COLUMN_SCALAR ShortText
+column_create Users birthday COLUMN_SCALAR Time
+column_create Users tags COLUMN_VECTOR Tags
+
+column_create Tags usrs_tags COLUMN_INDEX Users tags
+
+load --table Users
+[
+["_key", "name", "birthday", "tags"],
+["alice", "Alice", "2012-02-29 GARBAGE", "girl wonder"]
+]
+
+select Users

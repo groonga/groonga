@@ -8996,6 +8996,7 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
               report_set_column_value_failure(ctx, key_value,
                                               column_name, column_name_size,
                                               value);
+              ERRCLR(ctx);
             }
           }
           value = values_next(ctx, value);
@@ -9099,6 +9100,7 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
               if (rc != GRN_SUCCESS) {
                 report_set_column_value_failure(ctx, key_value,
                                                 name, name_size, value);
+                ERRCLR(ctx);
               }
             }
             grn_obj_unlink(ctx, col);

@@ -1,0 +1,66 @@
+table_create Tags TABLE_HASH_KEY ShortText --default_tokenizer TokenDelimit
+[[0,0.0,0.0],true]
+table_create Users TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Users name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Users birthday COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Users tags COLUMN_VECTOR Tags
+[[0,0.0,0.0],true]
+column_create Tags usrs_tags COLUMN_INDEX Users tags
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"_key": "alice", "name": "Alice", "birthday": "2012-02-29 GARBAGE", "tags": "girl wonder"}
+]
+[[0,0.0,0.0],1]
+#|e| <Users.birthday>: failed to cast to <Time>: <"2012-02-29 GARBAGE">
+#|e| [table][load] failed to set column value: <Users.birthday>: failed to cast to <Time>: <"2012-02-29 GARBAGE">: key: <"alice">, column: <birthday>, value: <"2012-02-29 GARBAGE">
+select Users
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "birthday",
+          "Time"
+        ],
+        [
+          "name",
+          "ShortText"
+        ],
+        [
+          "tags",
+          "Tags"
+        ]
+      ],
+      [
+        1,
+        "alice",
+        0.0,
+        "Alice",
+        [
+          "girl",
+          "wonder"
+        ]
+      ]
+    ]
+  ]
+]
