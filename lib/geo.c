@@ -2262,9 +2262,13 @@ grn_geo_distance_rectangle_raw(grn_ctx *ctx,
     dist_type = geo_longitude_distance_type(point1->longitude,
                                             point2->longitude);
     if (dist_type == LONGITUDE_SHORT) {
-      distance = geo_distance_rectangle_short_dist_type(quad_type, lng1, lat1, lng2, lat2);
+      distance = geo_distance_rectangle_short_dist_type(quad_type,
+                                                        lng1, lat1,
+                                                        lng2, lat2);
     } else {
-      distance = geo_distance_rectangle_long_dist_type(quad_type, lng1, lat1, lng2, lat2);
+      distance = geo_distance_rectangle_long_dist_type(quad_type,
+                                                       lng1, lat1,
+                                                       lng2, lat2);
     }
   }
   return distance;
