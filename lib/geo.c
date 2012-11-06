@@ -1951,6 +1951,121 @@ geo_distance_rectangle_square_root(double start_longitude, double start_latitude
   return sqrt((x * x) + (y * y));
 }
 
+static inline double
+geo_distance_rectangle_short_dist_type(quadrant_type quad_type,
+                                       double lng1, double lat1,
+                                       double lng2, double lat2)
+{
+  double distance;
+  double slope, intercept, longitude_delta, latitude_delta;
+  double east_distance, west_distance, intercept_edge;
+  double north_distance, south_distance, intermediate_distance;
+  double first_longitude, first_latitude, third_longitude, third_latitude;
+
+  longitude_delta = lng2 - lng1;
+  latitude_delta = lat2 - lat1;
+  if (quad_type == QUADRANT_1ST_TO_4TH ||
+      quad_type == QUADRANT_4TH_TO_1ST ||
+      quad_type == QUADRANT_2ND_TO_3RD ||
+      quad_type == QUADRANT_3RD_TO_2ND) {
+    if (longitude_delta > 0 || longitude_delta < 0) {
+      slope = latitude_delta / longitude_delta;
+      intercept = lat1 - slope * lng1;
+      intercept_edge = -intercept / slope;
+      north_distance = geo_distance_rectangle_square_root(lng1,
+                                                          lat1,
+                                                          intercept_edge,
+                                                          0);
+      south_distance = geo_distance_rectangle_square_root(intercept_edge,
+                                                          0,
+                                                          lng2,
+                                                          lat2);
+    } else {
+      north_distance = geo_distance_rectangle_square_root(lng1,
+                                                          lat1,
+                                                          lng2,
+                                                          0);
+      south_distance = geo_distance_rectangle_square_root(lng1,
+                                                          0,
+                                                          lng2,
+                                                          lat2);
+    }
+    distance = (north_distance + south_distance) * GRN_GEO_RADIUS;
+  } else if (quad_type == QUADRANT_1ST_TO_3RD ||
+             quad_type == QUADRANT_3RD_TO_1ST ||
+             quad_type == QUADRANT_2ND_TO_4TH ||
+             quad_type == QUADRANT_4TH_TO_2ND) {
+    slope = latitude_delta / longitude_delta;
+    intercept = lat1 - slope * lng1;
+    intercept_edge = -intercept / slope;
+    if (lng1 > lng2) {
+      first_longitude = lng1;
+      first_latitude = lat1;
+      third_longitude = lng2;
+      third_latitude = lat2;
+    } else {
+      first_longitude = lng2;
+      first_latitude = lat2;
+      third_longitude = lng1;
+      third_latitude = lat1;
+    }
+    if (intercept_edge > 0) {
+      north_distance = geo_distance_rectangle_square_root(first_longitude,
+                                                          first_latitude,
+                                                          intercept_edge,
+                                                          0);
+      intermediate_distance = geo_distance_rectangle_square_root(intercept_edge,
+                                                                 0,
+                                                                 0,
+                                                                 intercept);
+      south_distance = geo_distance_rectangle_square_root(0,
+                                                          intercept,
+                                                          third_longitude,
+                                                          third_latitude);
+      distance = (north_distance + intermediate_distance +
+                  south_distance) * GRN_GEO_RADIUS;
+    } else if (intercept_edge < 0) {
+      north_distance = geo_distance_rectangle_square_root(first_longitude,
+                                                          first_latitude,
+                                                          0,
+                                                          intercept);
+      intermediate_distance = geo_distance_rectangle_square_root(0,
+                                                                 intercept,
+                                                                 intercept_edge,
+                                                                 0);
+      south_distance = geo_distance_rectangle_square_root(intercept_edge,
+                                                          0,
+                                                          third_longitude,
+                                                          third_latitude);
+      distance = (north_distance + intermediate_distance +
+                  south_distance) * GRN_GEO_RADIUS;
+    } else {
+      north_distance = geo_distance_rectangle_square_root(first_longitude,
+                                                          first_latitude,
+                                                          intercept_edge,
+                                                          0);
+      south_distance = geo_distance_rectangle_square_root(intercept_edge,
+                                                          0,
+                                                          third_longitude,
+                                                          third_latitude);
+      distance = (north_distance + south_distance) * GRN_GEO_RADIUS;
+    }
+  } else {
+    slope = latitude_delta / longitude_delta;
+    intercept = lat1 - slope * lng1;
+    east_distance = geo_distance_rectangle_square_root(lng1,
+                                                       lat1,
+                                                       0,
+                                                       intercept);
+    west_distance = geo_distance_rectangle_square_root(0,
+                                                       intercept,
+                                                       lng2,
+                                                       lat2);
+    distance = (east_distance + west_distance) * GRN_GEO_RADIUS;
+  }
+  return distance;
+}
+
 double
 grn_geo_distance_rectangle_raw(grn_ctx *ctx,
                                grn_geo_point *point1, grn_geo_point *point2)
@@ -1980,107 +2095,7 @@ grn_geo_distance_rectangle_raw(grn_ctx *ctx,
     dist_type = geo_longitude_distance_type(point1->longitude,
                                             point2->longitude);
     if (dist_type == LONGITUDE_SHORT) {
-      longitude_delta = lng2 - lng1;
-      latitude_delta = lat2 - lat1;
-      if (quad_type == QUADRANT_1ST_TO_4TH ||
-          quad_type == QUADRANT_4TH_TO_1ST ||
-          quad_type == QUADRANT_2ND_TO_3RD ||
-          quad_type == QUADRANT_3RD_TO_2ND) {
-        if (longitude_delta > 0 || longitude_delta < 0) {
-          slope = latitude_delta / longitude_delta;
-          intercept = lat1 - slope * lng1;
-          intercept_edge = -intercept / slope;
-          north_distance = geo_distance_rectangle_square_root(lng1,
-                                                              lat1,
-                                                              intercept_edge,
-                                                              0);
-          south_distance = geo_distance_rectangle_square_root(intercept_edge,
-                                                              0,
-                                                              lng2,
-                                                              lat2);
-        } else {
-          north_distance = geo_distance_rectangle_square_root(lng1,
-                                                              lat1,
-                                                              lng2,
-                                                              0);
-          south_distance = geo_distance_rectangle_square_root(lng1,
-                                                              0,
-                                                              lng2,
-                                                              lat2);
-        }
-        distance = (north_distance + south_distance) * GRN_GEO_RADIUS;
-      } else if (quad_type == QUADRANT_1ST_TO_3RD ||
-                 quad_type == QUADRANT_3RD_TO_1ST ||
-                 quad_type == QUADRANT_2ND_TO_4TH ||
-                 quad_type == QUADRANT_4TH_TO_2ND) {
-        slope = latitude_delta / longitude_delta;
-        intercept = lat1 - slope * lng1;
-        intercept_edge = -intercept / slope;
-        if (lng1 > lng2) {
-          first_longitude = lng1;
-          first_latitude = lat1;
-          third_longitude = lng2;
-          third_latitude = lat2;
-        } else {
-          first_longitude = lng2;
-          first_latitude = lat2;
-          third_longitude = lng1;
-          third_latitude = lat1;
-        }
-        if (intercept_edge > 0) {
-          north_distance = geo_distance_rectangle_square_root(first_longitude,
-                                                              first_latitude,
-                                                              intercept_edge,
-                                                              0);
-          intermediate_distance = geo_distance_rectangle_square_root(intercept_edge,
-                                                                     0,
-                                                                     0,
-                                                                     intercept);
-          south_distance = geo_distance_rectangle_square_root(0,
-                                                              intercept,
-                                                              third_longitude,
-                                                              third_latitude);
-          distance = (north_distance + intermediate_distance +
-                      south_distance) * GRN_GEO_RADIUS;
-        } else if (intercept_edge < 0) {
-          north_distance = geo_distance_rectangle_square_root(first_longitude,
-                                                              first_latitude,
-                                                              0,
-                                                              intercept);
-          intermediate_distance = geo_distance_rectangle_square_root(0,
-                                                                     intercept,
-                                                                     intercept_edge,
-                                                                     0);
-          south_distance = geo_distance_rectangle_square_root(intercept_edge,
-                                                              0,
-                                                              third_longitude,
-                                                              third_latitude);
-          distance = (north_distance + intermediate_distance +
-                      south_distance) * GRN_GEO_RADIUS;
-        } else {
-          north_distance = geo_distance_rectangle_square_root(first_longitude,
-                                                              first_latitude,
-                                                              intercept_edge,
-                                                              0);
-          south_distance = geo_distance_rectangle_square_root(intercept_edge,
-                                                              0,
-                                                              third_longitude,
-                                                              third_latitude);
-          distance = (north_distance + south_distance) * GRN_GEO_RADIUS;
-        }
-      } else {
-        slope = latitude_delta / longitude_delta;
-        intercept = lat1 - slope * lng1;
-        east_distance = geo_distance_rectangle_square_root(lng1,
-                                                           lat1,
-                                                           0,
-                                                           intercept);
-        west_distance = geo_distance_rectangle_square_root(0,
-                                                           intercept,
-                                                           lng2,
-                                                           lat2);
-        distance = (east_distance + west_distance) * GRN_GEO_RADIUS;
-      }
+      distance = geo_distance_rectangle_short_dist_type(quad_type, lng1, lat1, lng2, lat2);
     } else {
       if (quad_type == QUADRANT_1ST_TO_2ND ||
           quad_type == QUADRANT_4TH_TO_3RD) {
