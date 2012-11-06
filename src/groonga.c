@@ -1779,7 +1779,6 @@ static void
 init_default_hostname(void)
 {
   static char hostname[HOST_NAME_MAX + 1];
-  int error_code;
   struct addrinfo hints, *result;
 
   hostname[HOST_NAME_MAX] = '\0';
