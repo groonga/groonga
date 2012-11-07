@@ -1994,7 +1994,6 @@ geo_distance_rectangle_short_dist_type(quadrant_type quad_type,
   double distance;
   double slope, intercept, longitude_delta, latitude_delta;
   double intercept_edge;
-  double north_distance, south_distance, intermediate_distance;
   double first_longitude, first_latitude, third_longitude, third_latitude;
 
   longitude_delta = lng2 - lng1;
