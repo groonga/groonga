@@ -1130,6 +1130,16 @@ grn_output_table_columns(grn_ctx *ctx, grn_obj *outbuf,
 }
 
 static inline void
+grn_output_table_record_by_expression(grn_ctx *ctx, grn_obj *outbuf,
+                                      grn_content_type output_type,
+                                      grn_obj *expression)
+{
+  grn_obj *result;
+  result = grn_expr_exec(ctx, expression, 0);
+  grn_output_obj(ctx, outbuf, output_type, result, NULL);
+}
+
+static inline void
 grn_output_table_records_by_expression(grn_ctx *ctx, grn_obj *outbuf,
                                        grn_content_type output_type,
                                        grn_table_cursor *tc,
@@ -1150,7 +1160,6 @@ grn_output_table_records_by_expression(grn_ctx *ctx, grn_obj *outbuf,
     grn_output_array_open(ctx, outbuf, output_type, "HIT", n_elements);
     for (code = expr->codes; code < code_end; code++) {
       if (code->op == GRN_OP_COMMA) {
-        grn_obj *res;
         int code_start_offset = previous_comma_offset + 1;
         int code_end_offset = code - expr->codes - code_start_offset;
         int original_codes_curr = expr->codes_curr;
@@ -1168,16 +1177,16 @@ grn_output_table_records_by_expression(grn_ctx *ctx, grn_obj *outbuf,
               expr->codes_curr -= n_args;
             }
           }
-          res = grn_expr_exec(ctx, format->expression, 0);
-          grn_output_obj(ctx, outbuf, output_type, res, NULL);
+          grn_output_table_record_by_expression(ctx, outbuf, output_type,
+                                                format->expression);
           code_start_offset = expr->codes_curr;
           code_end_offset -= expr->codes_curr;
           is_first_comma = GRN_FALSE;
         }
         expr->codes += code_start_offset;
         expr->codes_curr = code_end_offset;
-        res = grn_expr_exec(ctx, format->expression, 0);
-        grn_output_obj(ctx, outbuf, output_type, res, NULL);
+        grn_output_table_record_by_expression(ctx, outbuf, output_type,
+                                              format->expression);
         expr->codes -= code_start_offset;
         expr->codes_curr = original_codes_curr;
         previous_comma_offset = code - expr->codes;
@@ -1185,9 +1194,8 @@ grn_output_table_records_by_expression(grn_ctx *ctx, grn_obj *outbuf,
     }
 
     if (!have_comma && expr->codes_curr > 0) {
-      grn_obj *res;
-      res = grn_expr_exec(ctx, format->expression, 0);
-      grn_output_obj(ctx, outbuf, output_type, res, NULL);
+      grn_output_table_record_by_expression(ctx, outbuf, output_type,
+                                            format->expression);
     }
 
     grn_output_array_close(ctx, outbuf, output_type);
