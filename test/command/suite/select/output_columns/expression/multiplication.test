@@ -1,0 +1,8 @@
+table_create Users TABLE_HASH_KEY ShortText
+
+load --table Users
+[
+{"_key": "alice"}
+]
+
+select Users --output_columns "_key, 10 * _id * 5" --command_version 2
