@@ -2013,14 +2013,8 @@ geo_distance_rectangle_short_dist_type(quadrant_type quad_type,
                                                       lng2,
                                                       lat2);
     } else {
-      distance = (geo_distance_rectangle_square_root(lng1,
-                                                     lat1,
-                                                     lng2,
-                                                     0) +
-                  geo_distance_rectangle_square_root(lng1,
-                                                     0,
-                                                     lng2,
-                                                     lat2)) * GRN_GEO_RADIUS;
+      latitude_delta = fabs(lat1) + fabs(lat2);
+      distance = sqrt(latitude_delta * latitude_delta) * GRN_GEO_RADIUS;
     }
   } else if (quad_type == QUADRANT_1ST_TO_3RD ||
              quad_type == QUADRANT_3RD_TO_1ST ||
