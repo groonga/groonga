@@ -2002,6 +2002,8 @@ struct _grn_snip_mapping {
 #define GRN_SNIP_COPY_TAG              (0x01<<1)
 #define GRN_SNIP_SKIP_LEADING_SPACES   (0x01<<2)
 
+#define GRN_SNIP_MAPPING_HTML_ESCAPE   ((grn_snip_mapping *)-1)
+
 /* grn_snip_open() should return grn_obj * instead.
  * TODO: 3.0 */
 GRN_API grn_snip *grn_snip_open(grn_ctx *ctx, int flags, unsigned int width,

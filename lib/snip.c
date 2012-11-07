@@ -756,7 +756,7 @@ grn_snip_get_result(grn_ctx *ctx, grn_snip *snip, const unsigned int index, char
       p += snip->tag_result[j].cond->opentag_len;
     }
 
-    if (snip->mapping == (grn_snip_mapping *) -1) {
+    if (snip->mapping == GRN_SNIP_MAPPING_HTML_ESCAPE) {
       switch (snip->string[i]) {
       case '<':
         *p++ = '&';
