@@ -191,6 +191,7 @@ struct _grn_proc {
 
 #define GRN_PROC_GET_VAR(name) (grn_proc_get_var(ctx, user_data, name, strlen(name)))
 #define GRN_PROC_GET_VAR_BY_OFFSET(offset) (grn_proc_get_var_by_offset(ctx, user_data, offset))
+#define GRN_PROC_GET_OR_ADD_VAR(name) (grn_proc_get_or_add_var(ctx, user_data, name, strlen(name)))
 #define GRN_PROC_ALLOC(domain, flags) (grn_proc_alloc(ctx, user_data, domain, flags))
 
 grn_obj *grn_proc_get_var(grn_ctx *ctx, grn_user_data *user_data,
@@ -198,6 +199,8 @@ grn_obj *grn_proc_get_var(grn_ctx *ctx, grn_user_data *user_data,
 
 GRN_API grn_obj *grn_proc_get_var_by_offset(grn_ctx *ctx, grn_user_data *user_data,
                                             unsigned int offset);
+  GRN_API grn_obj *grn_proc_get_or_add_var(grn_ctx *ctx, grn_user_data *user_data,
+                                         const char *name, unsigned int name_size);
 
 GRN_API grn_obj *grn_proc_alloc(grn_ctx *ctx, grn_user_data *user_data,
                                 grn_id domain, grn_obj_flags flags);

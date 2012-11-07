@@ -141,6 +141,14 @@ grn_proc_get_var_by_offset(grn_ctx *ctx, grn_user_data *user_data, unsigned int 
 }
 
 grn_obj *
+grn_proc_get_or_add_var(grn_ctx *ctx, grn_user_data *user_data,
+                        const char *name, unsigned int name_size)
+{
+  grn_proc_ctx *pctx = (grn_proc_ctx *)user_data;
+  return pctx->proc ? grn_expr_get_or_add_var(ctx, (grn_obj *)pctx->proc, name, name_size) : NULL;
+}
+
+grn_obj *
 grn_proc_alloc(grn_ctx *ctx, grn_user_data *user_data, grn_id domain, grn_obj_flags flags)
 {
   grn_proc_ctx *pctx = (grn_proc_ctx *)user_data;
