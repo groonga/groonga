@@ -1158,7 +1158,7 @@ grn_output_table_records_by_expression(grn_ctx *ctx, grn_obj *outbuf,
         have_comma = GRN_TRUE;
         if (is_first_comma) {
           expr->codes_curr = code_end_offset - 1;
-          while (expr->codes_curr > previous_comma_offset) {
+          while (expr->codes_curr > 0) {
             int n_args;
             grn_expr_code *first_code = expr->codes + expr->codes_curr;
             n_args = count_n_argments_in_expr_code(ctx, first_code);
