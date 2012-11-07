@@ -1136,7 +1136,11 @@ grn_output_table_record_by_expression(grn_ctx *ctx, grn_obj *outbuf,
 {
   grn_obj *result;
   result = grn_expr_exec(ctx, expression, 0);
-  grn_output_obj(ctx, outbuf, output_type, result, NULL);
+  if (result) {
+    grn_output_obj(ctx, outbuf, output_type, result, NULL);
+  } else {
+    grn_output_cstr(ctx, outbuf, output_type, ctx->errbuf);
+  }
 }
 
 static inline void
