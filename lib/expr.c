@@ -372,6 +372,12 @@ grn_obj_unpack(grn_ctx *ctx, const uint8_t *p, const uint8_t *pe, uint8_t type, 
   return p + vs;
 }
 
+typedef enum {
+  GRN_EXPR_PACK_TYPE_NULL     = 0,
+  GRN_EXPR_PACK_TYPE_VARIABLE = 1,
+  GRN_EXPR_PACK_TYPE_OTHERS   = 2
+} grn_expr_pack_type;
+
 void
 grn_expr_pack(grn_ctx *ctx, grn_obj *buf, grn_obj *expr)
 {
@@ -391,17 +397,17 @@ grn_expr_pack(grn_ctx *ctx, grn_obj *buf, grn_obj *expr)
     grn_text_benc(ctx, buf, c->op);
     grn_text_benc(ctx, buf, c->nargs);
     if (!c->value) {
-      grn_text_benc(ctx, buf, 0); /* NULL */
+      grn_text_benc(ctx, buf, GRN_EXPR_PACK_TYPE_NULL);
     } else {
       for (j = 0, v = e->vars; j < e->nvars; j++, v++) {
         if (&v->value == c->value) {
-          grn_text_benc(ctx, buf, 1); /* variable */
+          grn_text_benc(ctx, buf, GRN_EXPR_PACK_TYPE_VARIABLE);
           grn_text_benc(ctx, buf, j);
           break;
         }
       }
       if (j == e->nvars) {
-        grn_text_benc(ctx, buf, 2); /* others */
+        grn_text_benc(ctx, buf, GRN_EXPR_PACK_TYPE_OTHERS);
         grn_obj_pack(ctx, buf, c->value);
       }
     }
@@ -412,7 +418,7 @@ const uint8_t *
 grn_expr_unpack(grn_ctx *ctx, const uint8_t *p, const uint8_t *pe, grn_obj *expr)
 {
   grn_obj *v;
-  uint8_t type;
+  grn_expr_pack_type type;
   uint32_t i, n, ns;
   grn_expr_code *code;
   grn_expr *e = (grn_expr *)expr;
@@ -437,17 +443,17 @@ grn_expr_unpack(grn_ctx *ctx, const uint8_t *p, const uint8_t *pe, grn_obj *expr
     GRN_B_DEC(code->nargs, p);
     GRN_B_DEC(type, p);
     switch (type) {
-    case 0 : /* NULL */
+    case GRN_EXPR_PACK_TYPE_NULL :
       code->value = NULL;
       break;
-    case 1 : /* variable */
+    case GRN_EXPR_PACK_TYPE_VARIABLE :
       {
         uint32_t offset;
         GRN_B_DEC(offset, p);
         code->value = &e->vars[i].value;
       }
       break;
-    case 2 : /* others */
+    case GRN_EXPR_PACK_TYPE_OTHERS :
       GRN_B_DEC(type, p);
       if (GRN_TYPE <= type && type <= GRN_COLUMN_INDEX) {
         grn_id id;
