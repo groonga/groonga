@@ -31,33 +31,33 @@ GQTP header
 
 GQTP header consists of the following unsigned integer values:
 
-+----------------+--------+----------------------------+
-|      Name      |  Size  |        Description         |
-+================+========+============================+
-|  ``protocol``  | 8byte  | Protocol type.             |
-+----------------+--------+----------------------------+
-| ``query_type`` | 8byte  | Content type of body.      |
-+----------------+--------+----------------------------+
-| ``key_length`` | 16byte | Not used.                  |
-+----------------+--------+----------------------------+
-|   ``level``    | 8byte  | Not used.                  |
-+----------------+--------+----------------------------+
-|   ``flags``    | 8byte  | Flags.                     |
-+----------------+--------+----------------------------+
-|   ``status``   | 16byte | Return code.               |
-+----------------+--------+----------------------------+
-|    ``size``    | 32byte | Body size.                 |
-+----------------+--------+----------------------------+
-|   ``opaque``   | 32byte | Not used.                  |
-+----------------+--------+----------------------------+
-|    ``cas``     | 64byte | Not used.                  |
-+----------------+--------+----------------------------+
++----------------+-------+----------------------------+
+|      Name      |  Size |        Description         |
++================+=======+============================+
+|  ``protocol``  | 1byte | Protocol type.             |
++----------------+-------+----------------------------+
+| ``query_type`` | 1byte | Content type of body.      |
++----------------+-------+----------------------------+
+| ``key_length`` | 2byte | Not used.                  |
++----------------+-------+----------------------------+
+|   ``level``    | 1byte | Not used.                  |
++----------------+-------+----------------------------+
+|   ``flags``    | 1byte | Flags.                     |
++----------------+-------+----------------------------+
+|   ``status``   | 2byte | Return code.               |
++----------------+-------+----------------------------+
+|    ``size``    | 4byte | Body size.                 |
++----------------+-------+----------------------------+
+|   ``opaque``   | 4byte | Not used.                  |
++----------------+-------+----------------------------+
+|    ``cas``     | 8byte | Not used.                  |
++----------------+-------+----------------------------+
 
 All header values are encoded by network byte order.
 
 The following sections describes available values of each key.
 
-The total size of GQTP header is 192byte.
+The total size of GQTP header is 24byte.
 
 ``protocol``
 """"""""""""
@@ -198,7 +198,7 @@ future.
 """"""""
 
 The size of body. The maximum body size is 4GB because ``size`` is
-32byte unsinged integer. If you want to send 4GB or more larger data,
+4byte unsinged integer. If you want to send 4GB or more larger data,
 use ``MORE`` flag.
 
 Example
