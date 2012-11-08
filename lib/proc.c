@@ -3255,7 +3255,7 @@ func_snippet(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     grn_obj *command = ctx->impl->curr_expr;
     grn_obj *condition_ptr = NULL;
     grn_obj *condition = NULL;
-    grn_snip *snip;
+    grn_snip *snip = NULL;
     int flags = GRN_SNIP_NORMALIZE | GRN_SNIP_SKIP_LEADING_SPACES;
     unsigned int width = 200;
     unsigned int max_n_results = 3;
@@ -3276,11 +3276,14 @@ func_snippet(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       condition = GRN_PTR_VALUE(condition_ptr);
     }
 
-    snip = grn_expr_snip(ctx, condition, flags,
-                         width, max_n_results, n_tags,
-                         open_tags, open_tag_lengths,
-                         close_tags, close_tag_lengths,
-                         mapping);
+    if (condition) {
+      snip = grn_expr_snip(ctx, condition, flags,
+                           width, max_n_results, n_tags,
+                           open_tags, open_tag_lengths,
+                           close_tags, close_tag_lengths,
+                           mapping);
+    }
+
     if (snip) {
       grn_rc rc;
       unsigned int i, n_results, max_tagged_length;
