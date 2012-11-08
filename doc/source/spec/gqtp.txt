@@ -24,7 +24,7 @@ You can do zero or more processing units in a session.
 
 Both request and response consist of GQTP header and body. GQTP header
 is fixed size data. Body is variable size data and its size is stored
-in GQTP header. The conent of body isn't defined in GQTP.
+in GQTP header. The content of body isn't defined in GQTP.
 
 GQTP header
 ^^^^^^^^^^^
@@ -198,7 +198,7 @@ future.
 """"""""
 
 The size of body. The maximum body size is 4GB because ``size`` is
-4byte unsinged integer. If you want to send 4GB or more larger data,
+4byte unsigned integer. If you want to send 4GB or more larger data,
 use ``MORE`` flag.
 
 Example
