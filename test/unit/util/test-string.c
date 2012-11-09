@@ -750,7 +750,7 @@ data_str_len(void)
             expected, input, GRN_ENC_EUC_JP);           \
   ADD_DATUM(label " (UTF-8) <" input ">",               \
             expected, input, GRN_ENC_UTF8);             \
-  ADD_DATUM(label " (Shift_JIS-8) <" input ">",         \
+  ADD_DATUM(label " (Shift_JIS) <" input ">",           \
             expected, input, GRN_ENC_SJIS);             \
   ADD_DATUM(label " (Latin1) <" input ">",              \
             expected, input, GRN_ENC_LATIN1);           \
