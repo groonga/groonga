@@ -41,6 +41,7 @@ typedef struct {
   char *end;
   grn_encoding encoding;
   grn_tokenizer_token token;
+  grn_bool have_tokenized_delimiter;
 } grn_mecab_tokenizer;
 
 static grn_encoding
@@ -128,7 +129,17 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     ERR(GRN_TOKENIZER_ERROR, "grn_str_open failed at grn_token_open");
     return NULL;
   }
+
   len = tokenizer->nstr->norm_blen;
+  tokenizer->have_tokenized_delimiter =
+    grn_tokenizer_have_tokenized_delimiter(ctx,
+                                           tokenizer->nstr->norm, len,
+                                           tokenizer->encoding);
+  if (tokenizer->have_tokenized_delimiter) {
+    tokenizer->buf = NULL;
+    tokenizer->next = tokenizer->nstr->norm;
+    tokenizer->end = tokenizer->next + len;
+  } else {
   CRITICAL_SECTION_ENTER(sole_mecab_lock);
   s = mecab_sparse_tostr2(tokenizer->mecab, tokenizer->nstr->norm, len);
   if (!s) {
@@ -152,10 +163,11 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   for (p = buf + bufsize - 2;
        buf <= p && isspace(*(unsigned char *)p);
        p--) { *p = '\0'; }
-  user_data->ptr = tokenizer;
   tokenizer->buf = buf;
   tokenizer->next = buf;
   tokenizer->end = p + 1;
+  }
+  user_data->ptr = tokenizer;
 
   grn_tokenizer_token_init(ctx, &(tokenizer->token));
 
@@ -173,18 +185,35 @@ mecab_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_mecab_tokenizer *tokenizer = user_data->ptr;
   char *p = tokenizer->next, *r;
   char *e = tokenizer->end;
+  grn_encoding encoding = tokenizer->encoding;
   grn_tokenizer_status status;
+
+  if (tokenizer->have_tokenized_delimiter) {
+    for (r = p; r < e; r += cl) {
+      cl = grn_charlen_(ctx, r, e, encoding);
+      if (cl > 0) {
+        if (grn_tokenizer_is_tokenized_delimiter(ctx, r, cl, encoding)) {
+          tokenizer->next = r + cl;
+          break;
+        }
+      } else {
+        tokenizer->next = e;
+        break;
+      }
+    }
+  } else {
   for (r = p; r < e; r += cl) {
-    if (!(cl = grn_charlen_(ctx, r, e, tokenizer->encoding))) {
+    if (!(cl = grn_charlen_(ctx, r, e, encoding))) {
       tokenizer->next = e;
       break;
     }
-    if (grn_isspace(r, tokenizer->encoding)) {
+    if (grn_isspace(r, encoding)) {
       char *q = r;
-      while ((cl = grn_isspace(q, tokenizer->encoding))) { q += cl; }
+      while ((cl = grn_isspace(q, encoding))) { q += cl; }
       tokenizer->next = q;
       break;
     }
+  }
   }
 
   if (r == e) {
@@ -205,7 +234,9 @@ mecab_fin(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_mecab_tokenizer *tokenizer = user_data->ptr;
   grn_tokenizer_token_fin(ctx, &(tokenizer->token));
   grn_str_close(ctx, tokenizer->nstr);
-  GRN_FREE(tokenizer->buf);
+  if (tokenizer->buf) {
+    GRN_FREE(tokenizer->buf);
+  }
   GRN_FREE(tokenizer);
   return NULL;
 }
