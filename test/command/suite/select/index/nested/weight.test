@@ -1,0 +1,33 @@
+table_create Comments TABLE_HASH_KEY UInt32
+column_create Comments content COLUMN_SCALAR ShortText
+
+table_create Articles TABLE_NO_KEY
+column_create Articles content COLUMN_SCALAR Text
+column_create Articles comment COLUMN_SCALAR Comments
+
+table_create Lexicon TABLE_PAT_KEY|KEY_NORMALIZE ShortText \
+  --default_tokenizer TokenBigram
+column_create Lexicon articles_content COLUMN_INDEX|WITH_POSITION \
+  Articles content
+column_create Lexicon comments_content COLUMN_INDEX|WITH_POSITION \
+  Comments content
+
+column_create Comments article COLUMN_INDEX Articles comment
+
+load --table Comments
+[
+{"_key": 1, "content": "I'm using groonga too!"},
+{"_key": 2, "content": "I'm using groonga and mroonga!"},
+{"_key": 3, "content": "I'm using mroonga too!"}
+]
+
+load --table Articles
+[
+{"content": "Groonga is fast!", "comment": 1},
+{"content": "Groonga is useful!"},
+{"content": "Mroonga is fast!", "comment": 3}
+]
+
+select Articles \
+  --match_columns 'comment.content * 10' --query groonga \
+  --output_columns "_id, _score, *"
