@@ -1,0 +1,74 @@
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY|KEY_NORMALIZE ShortText   --default_tokenizer TokenBigram
+[[0,0.0,0.0],true]
+column_create Terms memos_content COLUMN_INDEX Memos content
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"content": "Th\uFFFEis is a p\uFFFEen."},
+{"content": "これは\uFFFEペン\uFFFEです。"}
+]
+[[0,0.0,0.0],2]
+select Terms --output_columns _key --limit -1
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        13
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ]
+      ],
+      [
+        "."
+      ],
+      [
+        "a"
+      ],
+      [
+        "is"
+      ],
+      [
+        "pen"
+      ],
+      [
+        "this"
+      ],
+      [
+        "。"
+      ],
+      [
+        "これ"
+      ],
+      [
+        "す"
+      ],
+      [
+        "です"
+      ],
+      [
+        "はペ"
+      ],
+      [
+        "れは"
+      ],
+      [
+        "ペン"
+      ],
+      [
+        "ンで"
+      ]
+    ]
+  ]
+]
