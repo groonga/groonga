@@ -22,7 +22,7 @@
 #include <token.h>
 
 #include <groonga.h>
-#include <groonga/plugin.h>
+#include <groonga/tokenizer.h>
 
 #include <mecab.h>
 
@@ -40,8 +40,7 @@ typedef struct {
   char *next;
   char *end;
   grn_encoding encoding;
-  grn_obj curr_;
-  grn_obj stat_;
+  grn_tokenizer_token token;
 } grn_mecab_tokenizer;
 
 static grn_encoding
@@ -156,8 +155,9 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   tokenizer->buf = buf;
   tokenizer->next = buf;
   tokenizer->end = p + 1;
-  GRN_TEXT_INIT(&tokenizer->curr_, GRN_OBJ_DO_SHALLOW_COPY);
-  GRN_UINT32_INIT(&tokenizer->stat_, 0);
+
+  grn_tokenizer_token_init(ctx, &(tokenizer->token));
+
   return NULL;
 }
 
@@ -172,6 +172,7 @@ mecab_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_mecab_tokenizer *tokenizer = user_data->ptr;
   char *p = tokenizer->next, *r;
   char *e = tokenizer->end;
+  grn_tokenizer_status status;
   for (r = p; r < e; r += cl) {
     if (!(cl = grn_charlen_(ctx, r, e, tokenizer->encoding))) {
       tokenizer->next = e;
@@ -184,10 +185,13 @@ mecab_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       break;
     }
   }
-  GRN_TEXT_SET_REF(&tokenizer->curr_, p, r - p);
-  GRN_UINT32_SET(ctx, &tokenizer->stat_, r == e ? GRN_TOKEN_LAST : 0);
-  grn_ctx_push(ctx, &tokenizer->curr_);
-  grn_ctx_push(ctx, &tokenizer->stat_);
+
+  if (r == e) {
+    status = GRN_TOKENIZER_LAST;
+  } else {
+    status = GRN_TOKENIZER_CONTINUE;
+  }
+  grn_tokenizer_token_push(ctx, &(tokenizer->token), p, r - p, status);
   return NULL;
 }
 
@@ -198,6 +202,7 @@ static grn_obj *
 mecab_fin(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_mecab_tokenizer *tokenizer = user_data->ptr;
+  grn_tokenizer_token_fin(ctx, &(tokenizer->token));
   grn_str_close(ctx, tokenizer->nstr);
   GRN_FREE(tokenizer->buf);
   GRN_FREE(tokenizer);
