@@ -31,6 +31,8 @@ void data_normalize(void);
 void test_normalize(gconstpointer data);
 void data_normalize_broken(void);
 void test_normalize_broken(gconstpointer data);
+void data_remove_tokenizer_delimiter(void);
+void test_remove_tokenizer_delimiter(gconstpointer data);
 void data_charlen_broken(void);
 void test_charlen_broken(gconstpointer data);
 void data_urlenc(void);
@@ -258,6 +260,69 @@ test_normalize_broken(gconstpointer data)
   cut_assert_equal_string("", string->norm);
   cut_assert_equal_int(0, string->norm_blen);
   grn_test_assert(grn_str_close(&context, string));
+}
+
+void
+data_remove_tokenizer_delimiter(void)
+{
+#define ADD_DATUM(label, expected, input, flags)                        \
+  gcut_add_datum(label,                                                 \
+                 "expected", G_TYPE_STRING, expected,                   \
+                 "input", G_TYPE_STRING, input,                         \
+                 "flags", G_TYPE_INT, flags,                            \
+                 NULL)
+
+#define UFFFE_IN_UTF8 "\xef\xbf\xbe"
+
+  ADD_DATUM("normalize",
+            "abあい",
+            UFFFE_IN_UTF8 "A"
+            UFFFE_IN_UTF8 "B"
+            UFFFE_IN_UTF8 "あ"
+            UFFFE_IN_UTF8 "い"
+            UFFFE_IN_UTF8,
+            GRN_OBJ_KEY_NORMALIZE);
+  ADD_DATUM("not normalize",
+            "ABあい",
+            UFFFE_IN_UTF8 "A"
+            UFFFE_IN_UTF8 "B"
+            UFFFE_IN_UTF8 "あ"
+            UFFFE_IN_UTF8 "い"
+            UFFFE_IN_UTF8,
+            0);
+
+#undef UFFFE_IN_UTF8
+
+#undef ADD_DATUM
+}
+
+void
+test_remove_tokenizer_delimiter(gconstpointer data)
+{
+  grn_obj *string;
+  grn_obj *normalizer = NULL;
+  const gchar *expected;
+  const gchar *input;
+  const gchar *normalized;
+  unsigned int length_in_bytes;
+  int flags = GRN_STRING_REMOVE_TOKENIZER_DELIMITER;
+
+  GRN_CTX_SET_ENCODING(&context, GRN_ENC_UTF8);
+
+  input = gcut_data_get_string(data, "input");
+  flags |= gcut_data_get_int(data, "flags");
+  if (flags & GRN_OBJ_KEY_NORMALIZE) {
+    normalizer = GRN_NORMALIZER_AUTO;
+  }
+
+  string = grn_string_open(&context, input, strlen(input), normalizer, flags);
+  grn_string_get_normalized(&context, string,
+                            &normalized, &length_in_bytes, NULL);
+  normalized = cut_take_strndup(normalized, length_in_bytes);
+  grn_obj_unlink(&context, string);
+
+  expected = gcut_data_get_string(data, "expected");
+  cut_assert_equal_string(expected, normalized);
 }
 
 void

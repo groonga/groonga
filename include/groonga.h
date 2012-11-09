@@ -2547,9 +2547,10 @@ GRN_API grn_rc grn_str_close(grn_ctx *ctx, grn_str *nstr);
 
 /* grn_string */
 
-#define GRN_STRING_REMOVE_BLANK (0x01<<0)
-#define GRN_STRING_WITH_TYPES   (0x01<<1)
-#define GRN_STRING_WITH_CHECKS  (0x01<<2)
+#define GRN_STRING_REMOVE_BLANK               (0x01<<0)
+#define GRN_STRING_WITH_TYPES                 (0x01<<1)
+#define GRN_STRING_WITH_CHECKS                (0x01<<2)
+#define GRN_STRING_REMOVE_TOKENIZER_DELIMITER (0x01<<3)
 
 #define GRN_NORMALIZER_AUTO ((grn_obj *)1)
 

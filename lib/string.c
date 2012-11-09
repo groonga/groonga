@@ -21,6 +21,8 @@
 #include "string_in.h"
 #include "str.h"
 
+#include <groonga/tokenizer.h>
+
 static unsigned char symbol[] = {
   ',', '.', 0, ':', ';', '?', '!', 0, 0, 0, '`', 0, '^', '~', '_', 0, 0, 0,
   0, 0, 0, 0, 0, 0, 0, '-', '-', '/', '\\', 0, 0, '|', 0, 0, 0, '\'', 0,
@@ -557,6 +559,8 @@ utf8_normalize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
   grn_string *nstr = (grn_string *)args[0];
   size_t length = 0, ls, lp, size = nstr->original_length_in_bytes, ds = size * 3;
   int removeblankp = nstr->flags & GRN_STRING_REMOVE_BLANK;
+  grn_bool remove_tokenizer_delimiter_p =
+    nstr->flags & GRN_STRING_REMOVE_TOKENIZER_DELIMITER;
   if (!(nstr->normalized = GRN_MALLOC(ds + 1))) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
         "[strinig][utf8] failed to allocate normalized text space");
@@ -589,6 +593,10 @@ utf8_normalize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
   for (s = s_ = (unsigned char *)nstr->original; ; s += ls) {
     if (!(ls = grn_str_charlen_utf8(ctx, s, e))) {
       break;
+    }
+    if (remove_tokenizer_delimiter_p &&
+        grn_tokenizer_is_delimiter(ctx, s, ls, GRN_ENC_UTF8)) {
+      continue;
     }
     if ((p = (unsigned char *)grn_nfkc_map1(s))) {
       pe = p + strlen((char *)p);
@@ -1068,9 +1076,30 @@ grn_fake_string_open(grn_ctx *ctx, grn_string *string)
     return NULL;
   }
 
-  memcpy(nstr->normalized, str, str_len);
-  nstr->normalized[str_len] = '\0';
-  nstr->normalized_length_in_bytes = str_len;
+  if (nstr->flags & GRN_STRING_REMOVE_TOKENIZER_DELIMITER &&
+      ctx->encoding == GRN_ENC_UTF8) {
+    int char_length;
+    const char *source_current = str;
+    const char *source_end = str + str_len;
+    char *destination = nstr->normalized;
+    unsigned int destination_length = 0;
+    while ((char_length = grn_charlen(ctx, source_current, source_end)) > 0) {
+      if (!grn_tokenizer_is_delimiter(ctx,
+                                      source_current, char_length,
+                                      ctx->encoding)) {
+        memcpy(destination, source_current, char_length);
+        destination += char_length;
+        destination_length += char_length;
+      }
+      source_current += char_length;
+    }
+    destination[destination_length] = '\0';
+    nstr->normalized_length_in_bytes = destination_length;
+  } else {
+    memcpy(nstr->normalized, str, str_len);
+    nstr->normalized[str_len] = '\0';
+    nstr->normalized_length_in_bytes = str_len;
+  }
 
   if (nstr->flags & GRN_STRING_WITH_CHECKS) {
     int16_t f = 0;
