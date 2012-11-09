@@ -1093,7 +1093,7 @@ grn_fake_string_open(grn_ctx *ctx, grn_string *string)
       }
       source_current += char_length;
     }
-    destination[destination_length] = '\0';
+    nstr->normalized[destination_length] = '\0';
     nstr->normalized_length_in_bytes = destination_length;
   } else {
     memcpy(nstr->normalized, str, str_len);
