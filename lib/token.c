@@ -88,6 +88,7 @@ typedef struct {
   const unsigned char *next;
   const unsigned char *end;
   grn_tokenizer_token token;
+  grn_bool have_tokenized_delimiter;
 } grn_delimited_tokenizer;
 
 static grn_obj *
@@ -109,9 +110,21 @@ delimited_init(grn_ctx *ctx, grn_obj *table, grn_user_data *user_data,
     return NULL;
   }
   user_data->ptr = tokenizer;
-  tokenizer->delimiter = delimiter;
-  tokenizer->delimiter_len = delimiter_len;
+
   grn_table_get_info(ctx, table, &table_flags, &tokenizer->encoding, NULL);
+
+  tokenizer->have_tokenized_delimiter =
+    grn_tokenizer_have_delimiter(ctx,
+                                 GRN_TEXT_VALUE(str), GRN_TEXT_LEN(str),
+                                 tokenizer->encoding);
+  if (tokenizer->have_tokenized_delimiter) {
+    tokenizer->delimiter = GRN_TOKENIZER_TOKENIZED_DELIMITER_UTF8;
+    tokenizer->delimiter_len = strlen(tokenizer->delimiter);
+  } else {
+    tokenizer->delimiter = delimiter;
+    tokenizer->delimiter_len = delimiter_len;
+  }
+
   if (table_flags & GRN_OBJ_KEY_NORMALIZE) {
     normalizer = GRN_NORMALIZER_AUTO;
   }
