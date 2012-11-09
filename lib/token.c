@@ -88,7 +88,6 @@ typedef struct {
   const unsigned char *next;
   const unsigned char *end;
   int32_t len;
-  uint32_t tail;
   grn_tokenizer_token token;
 } grn_delimited_tokenizer;
 
