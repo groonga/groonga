@@ -573,79 +573,29 @@ class GrnTestData
           (east_distance + west_distance).floor
         when "1st_to_4th", "4th_to_1st", "2nd_to_3rd", "3rd_to_2nd"
           longitude_delta = @longitude_end_degree - @longitude_start_degree
-          if longitude_delta.zero?
-            latitude_delta = geo_int2rad(@latitude_end.abs + @latitude_start.abs)
-            sqrt(latitude_delta * latitude_delta) * GRN_GEO_RADIUS
+          latitude_delta = @latitude_end_degree - @latitude_start_degree
+          if @latitude_end_degree > @latitude_start_degree
+            calculate_distance(@longitude_start.to_i,
+                               @latitude_start.to_i,
+                               @longitude_end.to_i,
+                               @latitude_end.to_i).floor
           else
-            latitude_delta = @latitude_end_degree - @latitude_start_degree
-            slope = latitude_delta / longitude_delta.to_f
-            intercept = @latitude_start_degree - slope * @longitude_start_degree
-            longitude_on_equator = -intercept / slope * GRN_GEO_RESOLUTION
-            north_distance = calculate_distance(longitude_on_equator,
-                                                0,
-                                                @longitude_start.to_i,
-                                                @latitude_start.to_i)
-            south_distance = calculate_distance(longitude_on_equator,
-                                                0,
-                                                @longitude_end.to_i,
-                                                @latitude_end.to_i)
-            (north_distance + south_distance).floor
+            calculate_distance(@longitude_end.to_i,
+                               @latitude_end.to_i,
+                               @longitude_start.to_i,
+                               @latitude_start.to_i).floor
           end
         when "1st_to_3rd", "3rd_to_1st", "2nd_to_4th", "4th_to_2nd"
-          longitude_delta = @longitude_end_degree - @longitude_start_degree
-          latitude_delta = @latitude_end_degree - @latitude_start_degree
-          slope = latitude_delta / longitude_delta.to_f
-          intercept = @latitude_start_degree - slope * @longitude_start_degree
-          longitude_on_equator = -intercept / slope * GRN_GEO_RESOLUTION
-          if @longitude_start_degree > @longitude_end_degree
-            first_longitude = @longitude_start.to_i
-            first_latitude = @latitude_start.to_i
-            third_longitude = @longitude_end.to_i
-            third_latitude = @latitude_end.to_i
+          if @latitude_start_degree > @latitude_end_degree
+            calculate_distance(@longitude_start.to_i,
+                               @latitude_start.to_i,
+                               @longitude_end.to_i,
+                               @latitude_end.to_i).floor
           else
-            first_longitude = @longitude_end.to_i
-            first_latitude = @latitude_end.to_i
-            third_longitude = @longitude_start.to_i
-            third_latitude = @latitude_start.to_i
-          end
-          if longitude_on_equator > 0
-            first_distance = calculate_distance(first_longitude,
-                                                first_latitude,
-                                                longitude_on_equator,
-                                                0)
-            intermediate_distance = calculate_distance(longitude_on_equator,
-                                                       0,
-                                                       0,
-                                                       intercept * GRN_GEO_RESOLUTION)
-            third_distance = calculate_distance(0,
-                                                intercept * GRN_GEO_RESOLUTION,
-                                                third_longitude,
-                                                third_latitude)
-            (first_distance + intermediate_distance + third_distance).floor
-          elsif longitude_on_equator < 0
-            first_distance = calculate_distance(first_longitude,
-                                                first_latitude,
-                                                0,
-                                                intercept * GRN_GEO_RESOLUTION)
-            intermediate_distance = calculate_distance(0,
-                                                       intercept * GRN_GEO_RESOLUTION,
-                                                       longitude_on_equator,
-                                                       0)
-            third_distance = calculate_distance(longitude_on_equator,
-                                                0,
-                                                third_longitude,
-                                                third_latitude)
-            (first_distance + intermediate_distance + third_distance).floor
-          else
-            first_distance = calculate_distance(first_longitude,
-                                                first_latitude,
-                                                0,
-                                                0)
-            third_distance = calculate_distance(0,
-                                                0,
-                                                third_longitude,
-                                                third_latitude)
-            (first_distance + third_distance).floor
+            calculate_distance(@longitude_end.to_i,
+                               @latitude_end.to_i,
+                               @longitude_start.to_i,
+                               @latitude_start.to_i).floor
           end
         when "equator"
           if point_or_line == "point"
