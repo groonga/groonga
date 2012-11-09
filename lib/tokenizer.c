@@ -81,6 +81,25 @@ grn_tokenizer_isspace(grn_ctx *ctx, const char *str_ptr,
   return 0;
 }
 
+grn_bool
+grn_tokenizer_is_delimiter(grn_ctx *ctx, const char *str_ptr,
+                           unsigned int str_length, grn_encoding encoding)
+{
+  const unsigned char *binary_string = str_ptr;
+
+  if (encoding != GRN_ENC_UTF8) {
+    return GRN_FALSE;
+  }
+
+  if (str_length != 3) {
+    return GRN_FALSE;
+  }
+
+  return binary_string[0] == 0xEF &&
+    binary_string[1] == 0xBF &&
+    binary_string[2] == 0xBE;
+}
+
 grn_tokenizer_query *
 grn_tokenizer_query_create(grn_ctx *ctx, int num_args, grn_obj **args)
 {

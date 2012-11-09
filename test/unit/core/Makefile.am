@@ -66,7 +66,8 @@ noinst_LTLIBRARIES =				\
 	test-geo-in-rectangle-border.la		\
 	test-accessor.la			\
 	test-object.la				\
-	test-rename.la
+	test-rename.la				\
+	test-tokenizer.la
 endif
 
 INCLUDES =			\
@@ -158,3 +159,4 @@ test_geo_in_rectangle_border_la_SOURCES	= test-geo-in-rectangle-border.c
 test_accessor_la_SOURCES		= test-accessor.c
 test_object_la_SOURCES			= test-object.c
 test_rename_la_SOURCES			= test-rename.c
+test_tokenizer_la_SOURCES		= test-tokenizer.c
