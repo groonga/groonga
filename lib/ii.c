@@ -7279,23 +7279,25 @@ grn_ii_buffer_commit(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
       grn_table_cursor *tc;
       tc = grn_table_cursor_open(ctx, ii_buffer->lexicon,
                                  NULL, 0, NULL, 0, 0, -1, II_BUFFER_ORDER);
-      while ((tid = grn_table_cursor_next(ctx, tc)) != GRN_ID_NIL) {
-        int nrests = 0;
-        int nhits = 0;
-        uint32_t i;
-        for (i = 0; i < ii_buffer->nblocks; i++) {
-          if (ii_buffer->blocks[i].tid == tid) {
-            hits[nhits++] = &ii_buffer->blocks[i];
+      if (tc) {
+        while ((tid = grn_table_cursor_next(ctx, tc)) != GRN_ID_NIL) {
+          int nrests = 0;
+          int nhits = 0;
+          uint32_t i;
+          for (i = 0; i < ii_buffer->nblocks; i++) {
+            if (ii_buffer->blocks[i].tid == tid) {
+              hits[nhits++] = &ii_buffer->blocks[i];
+            }
+            if (ii_buffer->blocks[i].tid) { nrests++; }
           }
-          if (ii_buffer->blocks[i].tid) { nrests++; }
+          if (nhits) { grn_ii_buffer_merge(ctx, ii_buffer, tid, hits, nhits); }
+          if (!nrests) { break; }
         }
-        if (nhits) { grn_ii_buffer_merge(ctx, ii_buffer, tid, hits, nhits); }
-        if (!nrests) { break; }
+        if (ii_buffer->packed_len) {
+          grn_ii_buffer_chunk_flush(ctx, ii_buffer);
+        }
+        grn_table_cursor_close(ctx, tc);
       }
-      if (ii_buffer->packed_len) {
-        grn_ii_buffer_chunk_flush(ctx, ii_buffer);
-      }
-      grn_table_cursor_close(ctx, tc);
       GRN_FREE(hits);
     }
   }
