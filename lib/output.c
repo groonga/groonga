@@ -765,7 +765,11 @@ grn_output_bulk(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
       if (table && table->header.type != GRN_TABLE_NO_KEY) {
         grn_obj *accessor = grn_obj_column(ctx, table, "_key", 4);
         if (accessor) {
-          grn_obj_get_value(ctx, accessor, id, &buf);
+          if (id == GRN_ID_NIL) {
+            grn_obj_reinit_for(ctx, &buf, accessor);
+          } else {
+            grn_obj_get_value(ctx, accessor, id, &buf);
+          }
           grn_obj_unlink(ctx, accessor);
         }
         grn_output_obj(ctx, outbuf, output_type, &buf, format);

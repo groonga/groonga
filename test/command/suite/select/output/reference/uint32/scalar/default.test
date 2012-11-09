@@ -1,0 +1,13 @@
+table_create Ages TABLE_PAT_KEY UInt32
+
+table_create Users TABLE_PAT_KEY ShortText
+column_create Users age COLUMN_SCALAR Ages
+
+load --table Users
+[
+["_key"],
+["alice"],
+["bob"]
+]
+
+select Users
