@@ -40,12 +40,12 @@ select Users
       [
         1,
         "alice",
-        ""
+        0
       ],
       [
         2,
         "bob",
-        ""
+        0
       ]
     ]
   ]
