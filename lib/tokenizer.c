@@ -31,16 +31,20 @@
 /*
   grn_tokenizer_charlen() takes the length of a string, unlike grn_charlen_().
  */
-int grn_tokenizer_charlen(grn_ctx *ctx, const char *str_ptr,
-                          unsigned int str_length, grn_encoding encoding) {
+int
+grn_tokenizer_charlen(grn_ctx *ctx, const char *str_ptr,
+                      unsigned int str_length, grn_encoding encoding)
+{
   return grn_charlen_(ctx, str_ptr, str_ptr + str_length, encoding);
 }
 
 /*
   grn_tokenizer_isspace() takes the length of a string, unlike grn_isspace().
  */
-int grn_tokenizer_isspace(grn_ctx *ctx, const char *str_ptr,
-                          unsigned int str_length, grn_encoding encoding) {
+int
+grn_tokenizer_isspace(grn_ctx *ctx, const char *str_ptr,
+                      unsigned int str_length, grn_encoding encoding)
+{
   if ((str_ptr == NULL) || (str_length == 0)) {
     return 0;
   }
@@ -81,8 +85,9 @@ int grn_tokenizer_isspace(grn_ctx *ctx, const char *str_ptr,
   return 0;
 }
 
-grn_tokenizer_query *grn_tokenizer_query_create(grn_ctx *ctx,
-                                                int num_args, grn_obj **args) {
+grn_tokenizer_query *
+grn_tokenizer_query_create(grn_ctx *ctx, int num_args, grn_obj **args)
+{
   grn_obj *query_str = grn_ctx_pop(ctx);
   if (query_str == NULL) {
     GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT, "missing argument");
@@ -146,7 +151,9 @@ grn_tokenizer_query *grn_tokenizer_query_create(grn_ctx *ctx,
   }
 }
 
-void grn_tokenizer_query_destroy(grn_ctx *ctx, grn_tokenizer_query *query) {
+void
+grn_tokenizer_query_destroy(grn_ctx *ctx, grn_tokenizer_query *query)
+{
   if (query != NULL) {
     if (query->normalized_query != NULL) {
       grn_obj_unlink(ctx, query->normalized_query);
@@ -158,17 +165,23 @@ void grn_tokenizer_query_destroy(grn_ctx *ctx, grn_tokenizer_query *query) {
   }
 }
 
-void grn_tokenizer_token_init(grn_ctx *ctx, grn_tokenizer_token *token) {
+void
+grn_tokenizer_token_init(grn_ctx *ctx, grn_tokenizer_token *token)
+{
   GRN_TEXT_INIT(&token->str, GRN_OBJ_DO_SHALLOW_COPY);
   GRN_UINT32_INIT(&token->status, 0);
 }
 
-void grn_tokenizer_token_fin(grn_ctx *ctx, grn_tokenizer_token *token) {
+void
+grn_tokenizer_token_fin(grn_ctx *ctx, grn_tokenizer_token *token)
+{
 }
 
-void grn_tokenizer_token_push(grn_ctx *ctx, grn_tokenizer_token *token,
-                              const char *str_ptr, unsigned int str_length,
-                              grn_tokenizer_status status) {
+void
+grn_tokenizer_token_push(grn_ctx *ctx, grn_tokenizer_token *token,
+                         const char *str_ptr, unsigned int str_length,
+                         grn_tokenizer_status status)
+{
   GRN_TEXT_SET_REF(&token->str, str_ptr, str_length);
   switch (status) {
     case GRN_TOKENIZER_CONTINUE: {
@@ -185,10 +198,12 @@ void grn_tokenizer_token_push(grn_ctx *ctx, grn_tokenizer_token *token,
   grn_ctx_push(ctx, &token->status);
 }
 
-grn_rc grn_tokenizer_register(grn_ctx *ctx, const char *plugin_name_ptr,
-                              unsigned int plugin_name_length,
-                              grn_proc_func *init, grn_proc_func *next,
-                              grn_proc_func *fin) {
+grn_rc
+grn_tokenizer_register(grn_ctx *ctx, const char *plugin_name_ptr,
+                       unsigned int plugin_name_length,
+                       grn_proc_func *init, grn_proc_func *next,
+                       grn_proc_func *fin)
+{
   grn_expr_var vars[] = {
     { NULL, 0 },
     { NULL, 0 },
