@@ -26,6 +26,9 @@
 extern "C" {
 #endif  /* __cplusplus */
 
+#define GRN_TOKENIZER_TOKENIZED_DELIMITER_UTF8     "\xEF\xBF\xBE"
+#define GRN_TOKENIZER_TOKENIZED_DELIMITER_UTF8_LEN 3
+
 /*
   grn_tokenizer_charlen() returns the length (#bytes) of the first character
   in the string specified by `str_ptr' and `str_length'. If the starting bytes

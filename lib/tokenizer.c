@@ -91,13 +91,13 @@ grn_tokenizer_is_delimiter(grn_ctx *ctx, const char *str_ptr,
     return GRN_FALSE;
   }
 
-  if (str_length != 3) {
+  if (str_length != GRN_TOKENIZER_TOKENIZED_DELIMITER_UTF8_LEN) {
     return GRN_FALSE;
   }
 
-  return binary_string[0] == 0xEF &&
-    binary_string[1] == 0xBF &&
-    binary_string[2] == 0xBE;
+  return memcmp(binary_string,
+                GRN_TOKENIZER_TOKENIZED_DELIMITER_UTF8,
+                GRN_TOKENIZER_TOKENIZED_DELIMITER_UTF8_LEN) == 0;
 }
 
 grn_bool
