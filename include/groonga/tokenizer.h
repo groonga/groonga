@@ -54,6 +54,16 @@ grn_bool grn_tokenizer_is_delimiter(grn_ctx *ctx,
                                     grn_encoding encoding);
 
 /*
+  grn_tokenizer_have_delimiter() returns whether is there the special
+  delimiter character in the string specified by `str_ptr' and
+  `str_length' the special delimiter character or not.
+ */
+grn_bool grn_tokenizer_have_delimiter(grn_ctx *ctx,
+                                      const char *str_ptr,
+                                      unsigned int str_length,
+                                      grn_encoding encoding);
+
+/*
   grn_tokenizer_query is a structure for storing a query. See the following
   functions.
  */

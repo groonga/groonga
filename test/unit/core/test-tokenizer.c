@@ -25,6 +25,8 @@
 
 void data_is_delimiter(void);
 void test_is_delimiter(gconstpointer data);
+void data_have_delimiter(void);
+void test_have_delimiter(gconstpointer data);
 
 static grn_ctx context;
 static grn_obj *db;
@@ -83,5 +85,41 @@ test_is_delimiter(gconstpointer data)
   } else {
     cut_assert_false(grn_tokenizer_is_delimiter(&context, input, strlen(input),
                                                 encoding));
+  }
+}
+
+void
+data_have_delimiter(void)
+{
+#define ADD_DATUM(label, expected, input)                               \
+  gcut_add_datum(label,                                                 \
+                 "expected", G_TYPE_BOOLEAN, expected,                  \
+                 "input",    G_TYPE_STRING,  input,                     \
+                 NULL)
+
+#define UFFFE_IN_UTF8 "\xef\xbf\xbe"
+
+  ADD_DATUM("have",     GRN_TRUE,  "a" UFFFE_IN_UTF8 "b");
+  ADD_DATUM("not have", GRN_FALSE, "ab");
+
+#undef UFFFE_IN_UTF8
+
+#undef ADD_DATUM
+}
+
+void
+test_have_delimiter(gconstpointer data)
+{
+  const gchar *input;
+  grn_encoding encoding = GRN_ENC_UTF8;
+
+  GRN_CTX_SET_ENCODING(&context, encoding);
+  input = gcut_data_get_string(data, "input");
+  if (gcut_data_get_boolean(data, "expected")) {
+    cut_assert_true(grn_tokenizer_have_delimiter(&context, input, strlen(input),
+                                                 encoding));
+  } else {
+    cut_assert_false(grn_tokenizer_have_delimiter(&context, input, strlen(input),
+                                                  encoding));
   }
 }

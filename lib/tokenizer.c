@@ -100,6 +100,31 @@ grn_tokenizer_is_delimiter(grn_ctx *ctx, const char *str_ptr,
     binary_string[2] == 0xBE;
 }
 
+grn_bool
+grn_tokenizer_have_delimiter(grn_ctx *ctx, const char *str_ptr,
+                             unsigned int str_length, grn_encoding encoding)
+{
+  int char_length;
+  const char *current = str_ptr;
+  const char *end = str_ptr + str_length;
+
+  if (encoding != GRN_ENC_UTF8) {
+    return GRN_FALSE;
+  }
+
+  if (str_length == 0) {
+    return GRN_FALSE;
+  }
+
+  while ((char_length = grn_charlen_(ctx, current, end, encoding)) > 0) {
+    if (grn_tokenizer_is_delimiter(ctx, current, char_length, encoding)) {
+      return GRN_TRUE;
+    }
+    current += char_length;
+  }
+  return GRN_FALSE;
+}
+
 grn_tokenizer_query *
 grn_tokenizer_query_create(grn_ctx *ctx, int num_args, grn_obj **args)
 {
