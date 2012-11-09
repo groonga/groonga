@@ -30,20 +30,17 @@ void test_have_delimiter(gconstpointer data);
 
 static grn_ctx context;
 static grn_obj *db;
-static grn_obj buffer;
 
 void
 setup (void)
 {
   grn_ctx_init(&context, GRN_CTX_USE_QL);
   db = grn_db_create(&context, NULL, NULL);
-  GRN_VOID_INIT(&buffer);
 }
 
 void
 teardown (void)
 {
-  GRN_OBJ_FIN(&context, &buffer);
   grn_obj_unlink(&context, db);
   grn_ctx_fin(&context);
 }
