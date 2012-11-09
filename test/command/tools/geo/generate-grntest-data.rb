@@ -542,10 +542,10 @@ class GrnTestData
 
   def calculate_distance(longitude_start, latitude_start,
                          longitude_end, latitude_end)
-    start_latitude = geo_int2rad(latitude_start.abs)
-    start_longitude = geo_int2rad(longitude_start.abs)
-    end_latitude = geo_int2rad(latitude_end.abs)
-    end_longitude = geo_int2rad(longitude_end.abs)
+    start_latitude = geo_int2rad(latitude_start)
+    start_longitude = geo_int2rad(longitude_start)
+    end_latitude = geo_int2rad(latitude_end)
+    end_longitude = geo_int2rad(longitude_end)
     longitude_diff = (end_longitude - start_longitude)
     x = longitude_diff * Math.cos((start_latitude + end_latitude) * 0.5)
     y = (end_latitude - start_latitude)
