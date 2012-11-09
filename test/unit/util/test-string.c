@@ -746,7 +746,7 @@ data_str_len(void)
 #define ADD_DATUM_ALL_ENCODING(label, expected, input)  \
   ADD_DATUM(label " (none) <" input ">",                \
             expected, input, GRN_ENC_NONE);             \
-  ADD_DATUM(label " (eucjP) <" input ">",               \
+  ADD_DATUM(label " (EUC-JP) <" input ">",              \
             expected, input, GRN_ENC_EUC_JP);           \
   ADD_DATUM(label " (UTF-8) <" input ">",               \
             expected, input, GRN_ENC_UTF8);             \
@@ -758,7 +758,7 @@ data_str_len(void)
             expected, input, GRN_ENC_KOI8R);
 
 #define ADD_DATUM_JAPANESE(label, expected, input)                      \
-  ADD_DATUM("Japanese: " label " (eucjP) <" input ">",                  \
+  ADD_DATUM("Japanese: " label " (EUC-JP) <" input ">",                 \
             expected, cut_take_convert(input, "eucJP", "UTF-8"),        \
             GRN_ENC_EUC_JP);                                            \
   ADD_DATUM("Japanese: " label " (UTF-8) <" input ">",                  \
