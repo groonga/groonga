@@ -82,8 +82,10 @@ grn_tokenizer_isspace(grn_ctx *ctx, const char *str_ptr,
 }
 
 grn_bool
-grn_tokenizer_is_delimiter(grn_ctx *ctx, const char *str_ptr,
-                           unsigned int str_length, grn_encoding encoding)
+grn_tokenizer_is_tokenized_delimiter(grn_ctx *ctx,
+                                     const char *str_ptr,
+                                     unsigned int str_length,
+                                     grn_encoding encoding)
 {
   const unsigned char *binary_string = str_ptr;
 
@@ -101,8 +103,10 @@ grn_tokenizer_is_delimiter(grn_ctx *ctx, const char *str_ptr,
 }
 
 grn_bool
-grn_tokenizer_have_delimiter(grn_ctx *ctx, const char *str_ptr,
-                             unsigned int str_length, grn_encoding encoding)
+grn_tokenizer_have_tokenized_delimiter(grn_ctx *ctx,
+                                       const char *str_ptr,
+                                       unsigned int str_length,
+                                       grn_encoding encoding)
 {
   int char_length;
   const char *current = str_ptr;
@@ -117,7 +121,9 @@ grn_tokenizer_have_delimiter(grn_ctx *ctx, const char *str_ptr,
   }
 
   while ((char_length = grn_charlen_(ctx, current, end, encoding)) > 0) {
-    if (grn_tokenizer_is_delimiter(ctx, current, char_length, encoding)) {
+    if (grn_tokenizer_is_tokenized_delimiter(ctx,
+                                             current, char_length,
+                                             encoding)) {
       return GRN_TRUE;
     }
     current += char_length;

@@ -114,9 +114,10 @@ delimited_init(grn_ctx *ctx, grn_obj *table, grn_user_data *user_data,
   grn_table_get_info(ctx, table, &table_flags, &tokenizer->encoding, NULL);
 
   tokenizer->have_tokenized_delimiter =
-    grn_tokenizer_have_delimiter(ctx,
-                                 GRN_TEXT_VALUE(str), GRN_TEXT_LEN(str),
-                                 tokenizer->encoding);
+    grn_tokenizer_have_tokenized_delimiter(ctx,
+                                           GRN_TEXT_VALUE(str),
+                                           GRN_TEXT_LEN(str),
+                                           tokenizer->encoding);
   if (tokenizer->have_tokenized_delimiter) {
     tokenizer->delimiter = GRN_TOKENIZER_TOKENIZED_DELIMITER_UTF8;
     tokenizer->delimiter_len = strlen(tokenizer->delimiter);

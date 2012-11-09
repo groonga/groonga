@@ -595,7 +595,7 @@ utf8_normalize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
       break;
     }
     if (remove_tokenizer_delimiter_p &&
-        grn_tokenizer_is_delimiter(ctx, s, ls, GRN_ENC_UTF8)) {
+        grn_tokenizer_is_tokenized_delimiter(ctx, s, ls, GRN_ENC_UTF8)) {
       continue;
     }
     if ((p = (unsigned char *)grn_nfkc_map1(s))) {
@@ -1084,9 +1084,9 @@ grn_fake_string_open(grn_ctx *ctx, grn_string *string)
     char *destination = nstr->normalized;
     unsigned int destination_length = 0;
     while ((char_length = grn_charlen(ctx, source_current, source_end)) > 0) {
-      if (!grn_tokenizer_is_delimiter(ctx,
-                                      source_current, char_length,
-                                      ctx->encoding)) {
+      if (!grn_tokenizer_is_tokenized_delimiter(ctx,
+                                                source_current, char_length,
+                                                ctx->encoding)) {
         memcpy(destination, source_current, char_length);
         destination += char_length;
         destination_length += char_length;

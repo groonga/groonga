@@ -23,10 +23,10 @@
 
 #include "../lib/grn-assertions.h"
 
-void data_is_delimiter(void);
-void test_is_delimiter(gconstpointer data);
-void data_have_delimiter(void);
-void test_have_delimiter(gconstpointer data);
+void data_is_tokenized_delimiter(void);
+void test_is_tokenized_delimiter(gconstpointer data);
+void data_have_tokenized_delimiter(void);
+void test_have_tokenized_delimiter(gconstpointer data);
 
 static grn_ctx context;
 static grn_obj *db;
@@ -46,7 +46,7 @@ teardown (void)
 }
 
 void
-data_is_delimiter(void)
+data_is_tokenized_delimiter(void)
 {
 #define ADD_DATUM(label, expected, input, encoding)                     \
   gcut_add_datum(label,                                                 \
@@ -68,7 +68,7 @@ data_is_delimiter(void)
 }
 
 void
-test_is_delimiter(gconstpointer data)
+test_is_tokenized_delimiter(gconstpointer data)
 {
   const gchar *input;
   grn_encoding encoding;
@@ -77,16 +77,18 @@ test_is_delimiter(gconstpointer data)
   GRN_CTX_SET_ENCODING(&context, encoding);
   input = gcut_data_get_string(data, "input");
   if (gcut_data_get_boolean(data, "expected")) {
-    cut_assert_true(grn_tokenizer_is_delimiter(&context, input, strlen(input),
-                                               encoding));
+    cut_assert_true(grn_tokenizer_is_tokenized_delimiter(&context,
+                                                         input, strlen(input),
+                                                         encoding));
   } else {
-    cut_assert_false(grn_tokenizer_is_delimiter(&context, input, strlen(input),
-                                                encoding));
+    cut_assert_false(grn_tokenizer_is_tokenized_delimiter(&context,
+                                                          input, strlen(input),
+                                                          encoding));
   }
 }
 
 void
-data_have_delimiter(void)
+data_have_tokenized_delimiter(void)
 {
 #define ADD_DATUM(label, expected, input)                               \
   gcut_add_datum(label,                                                 \
@@ -105,7 +107,7 @@ data_have_delimiter(void)
 }
 
 void
-test_have_delimiter(gconstpointer data)
+test_have_tokenized_delimiter(gconstpointer data)
 {
   const gchar *input;
   grn_encoding encoding = GRN_ENC_UTF8;
@@ -113,10 +115,12 @@ test_have_delimiter(gconstpointer data)
   GRN_CTX_SET_ENCODING(&context, encoding);
   input = gcut_data_get_string(data, "input");
   if (gcut_data_get_boolean(data, "expected")) {
-    cut_assert_true(grn_tokenizer_have_delimiter(&context, input, strlen(input),
-                                                 encoding));
+    cut_assert_true(grn_tokenizer_have_tokenized_delimiter(&context,
+                                                           input, strlen(input),
+                                                           encoding));
   } else {
-    cut_assert_false(grn_tokenizer_have_delimiter(&context, input, strlen(input),
-                                                  encoding));
+    cut_assert_false(grn_tokenizer_have_tokenized_delimiter(&context,
+                                                            input, strlen(input),
+                                                            encoding));
   }
 }
