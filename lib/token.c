@@ -24,6 +24,7 @@
 #include "dat.h"
 #include "hash.h"
 #include "string_in.h"
+#include <groonga/tokenizer.h>
 
 grn_obj *grn_uvector_tokenizer = NULL;
 
@@ -89,8 +90,7 @@ typedef struct {
   const unsigned char *end;
   int32_t len;
   uint32_t tail;
-  grn_obj curr_;
-  grn_obj stat_;
+  grn_tokenizer_token token;
 } grn_delimited_tokenizer;
 
 static grn_obj *
@@ -129,8 +129,7 @@ delimited_init(grn_ctx *ctx, grn_obj *table, grn_user_data *user_data,
                             &(token->len));
   token->next = (const unsigned char *)normalized;
   token->end = token->next + normalized_length_in_bytes;
-  GRN_TEXT_INIT(&token->curr_, GRN_OBJ_DO_SHALLOW_COPY);
-  GRN_UINT32_INIT(&token->stat_, 0);
+  grn_tokenizer_token_init(ctx, &(token->token));
   return NULL;
 }
 
@@ -141,6 +140,7 @@ delimited_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
   grn_delimited_tokenizer *token = user_data->ptr;
   const unsigned char *p = token->next, *r;
   const unsigned char *e = token->end;
+  grn_tokenizer_status status;
   for (r = p; r < e; r += cl) {
     if (!(cl = grn_charlen_(ctx, (char *)r, (char *)e, token->encoding))) {
       token->next = (unsigned char *)e;
@@ -152,10 +152,12 @@ delimited_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
       break;
     }
   }
-  GRN_TEXT_SET_REF(&token->curr_, p, r - p);
-  GRN_UINT32_SET(ctx, &token->stat_, r == e ? GRN_TOKEN_LAST : 0);
-  grn_ctx_push(ctx, &token->curr_);
-  grn_ctx_push(ctx, &token->stat_);
+  if (r == e) {
+    status = GRN_TOKENIZER_LAST;
+  } else {
+    status = GRN_TOKENIZER_CONTINUE;
+  }
+  grn_tokenizer_token_push(ctx, &(token->token), p, r - p, status);
   return NULL;
 }
 
@@ -164,6 +166,7 @@ delimited_fin(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_delimited_tokenizer *token = user_data->ptr;
   grn_obj_close(ctx, token->nstr);
+  grn_tokenizer_token_fin(ctx, &(token->token));
   GRN_FREE(token);
   return NULL;
 }
