@@ -128,7 +128,9 @@ delimited_init(grn_ctx *ctx, grn_obj *table, grn_user_data *user_data,
                             NULL);
   tokenizer->next = (const unsigned char *)normalized;
   tokenizer->end = tokenizer->next + normalized_length_in_bytes;
+
   grn_tokenizer_token_init(ctx, &(tokenizer->token));
+
   return NULL;
 }
 
