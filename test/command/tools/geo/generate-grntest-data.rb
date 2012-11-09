@@ -573,17 +573,11 @@ class GrnTestData
           (east_distance + west_distance).floor
         when "1st_to_4th", "4th_to_1st", "2nd_to_3rd", "3rd_to_2nd"
           longitude_delta = @longitude_end_degree - @longitude_start_degree
-          latitude_delta = @latitude_end_degree - @latitude_start_degree
           if longitude_delta.zero?
-            north_distance = calculate_distance(@longitude_start.to_i,
-                                                @latitude_start.to_i,
-                                                @longitude_start.to_i,
-                                                0)
-            south_distance = calculate_distance(@longitude_end.to_i,
-                                                0,
-                                                @longitude_end.to_i,
-                                                @latitude_end.to_i)
+            latitude_delta = geo_int2rad(@latitude_end.abs + @latitude_start.abs)
+            sqrt(latitude_delta * latitude_delta) * GRN_GEO_RADIUS
           else
+            latitude_delta = @latitude_end_degree - @latitude_start_degree
             slope = latitude_delta / longitude_delta.to_f
             intercept = @latitude_start_degree - slope * @longitude_start_degree
             longitude_on_equator = -intercept / slope * GRN_GEO_RESOLUTION
@@ -595,8 +589,8 @@ class GrnTestData
                                                 0,
                                                 @longitude_end.to_i,
                                                 @latitude_end.to_i)
+            (north_distance + south_distance).floor
           end
-          (north_distance + south_distance).floor
         when "1st_to_3rd", "3rd_to_1st", "2nd_to_4th", "4th_to_2nd"
           longitude_delta = @longitude_end_degree - @longitude_start_degree
           latitude_delta = @latitude_end_degree - @latitude_start_degree
