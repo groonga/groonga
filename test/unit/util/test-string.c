@@ -31,8 +31,8 @@ void data_normalize(void);
 void test_normalize(gconstpointer data);
 void data_normalize_broken(void);
 void test_normalize_broken(gconstpointer data);
-void data_remove_tokenizer_delimiter(void);
-void test_remove_tokenizer_delimiter(gconstpointer data);
+void data_remove_tokenized_delimiter(void);
+void test_remove_tokenized_delimiter(gconstpointer data);
 void data_charlen_broken(void);
 void test_charlen_broken(gconstpointer data);
 void data_urlenc(void);
@@ -263,7 +263,7 @@ test_normalize_broken(gconstpointer data)
 }
 
 void
-data_remove_tokenizer_delimiter(void)
+data_remove_tokenized_delimiter(void)
 {
 #define ADD_DATUM(label, expected, input, flags)                        \
   gcut_add_datum(label,                                                 \
@@ -297,7 +297,7 @@ data_remove_tokenizer_delimiter(void)
 }
 
 void
-test_remove_tokenizer_delimiter(gconstpointer data)
+test_remove_tokenized_delimiter(gconstpointer data)
 {
   grn_obj *string;
   grn_obj *normalizer = NULL;
@@ -305,7 +305,7 @@ test_remove_tokenizer_delimiter(gconstpointer data)
   const gchar *input;
   const gchar *normalized;
   unsigned int length_in_bytes;
-  int flags = GRN_STRING_REMOVE_TOKENIZER_DELIMITER;
+  int flags = GRN_STRING_REMOVE_TOKENIZED_DELIMITER;
 
   GRN_CTX_SET_ENCODING(&context, GRN_ENC_UTF8);
 

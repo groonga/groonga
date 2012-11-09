@@ -233,7 +233,7 @@ ngram_init(grn_ctx *ctx, grn_obj *table, grn_user_data *user_data, uint8_t ngram
   int nflags =
     GRN_STRING_REMOVE_BLANK |
     GRN_STRING_WITH_TYPES |
-    GRN_STRING_REMOVE_TOKENIZER_DELIMITER;
+    GRN_STRING_REMOVE_TOKENIZED_DELIMITER;
   const char *normalized;
   unsigned int normalized_length_in_bytes;
   grn_ngram_tokenizer *token;

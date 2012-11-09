@@ -559,8 +559,8 @@ utf8_normalize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
   grn_string *nstr = (grn_string *)args[0];
   size_t length = 0, ls, lp, size = nstr->original_length_in_bytes, ds = size * 3;
   int removeblankp = nstr->flags & GRN_STRING_REMOVE_BLANK;
-  grn_bool remove_tokenizer_delimiter_p =
-    nstr->flags & GRN_STRING_REMOVE_TOKENIZER_DELIMITER;
+  grn_bool remove_tokenized_delimiter_p =
+    nstr->flags & GRN_STRING_REMOVE_TOKENIZED_DELIMITER;
   if (!(nstr->normalized = GRN_MALLOC(ds + 1))) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
         "[strinig][utf8] failed to allocate normalized text space");
@@ -594,7 +594,7 @@ utf8_normalize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
     if (!(ls = grn_str_charlen_utf8(ctx, s, e))) {
       break;
     }
-    if (remove_tokenizer_delimiter_p &&
+    if (remove_tokenized_delimiter_p &&
         grn_tokenizer_is_tokenized_delimiter(ctx, s, ls, GRN_ENC_UTF8)) {
       continue;
     }
@@ -1076,7 +1076,7 @@ grn_fake_string_open(grn_ctx *ctx, grn_string *string)
     return NULL;
   }
 
-  if (nstr->flags & GRN_STRING_REMOVE_TOKENIZER_DELIMITER &&
+  if (nstr->flags & GRN_STRING_REMOVE_TOKENIZED_DELIMITER &&
       ctx->encoding == GRN_ENC_UTF8) {
     int char_length;
     const char *source_current = str;
