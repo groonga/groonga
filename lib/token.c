@@ -87,7 +87,6 @@ typedef struct {
   grn_encoding encoding;
   const unsigned char *next;
   const unsigned char *end;
-  int32_t len;
   grn_tokenizer_token token;
 } grn_delimited_tokenizer;
 
@@ -126,7 +125,7 @@ delimited_init(grn_ctx *ctx, grn_obj *table, grn_user_data *user_data,
   }
   grn_string_get_normalized(ctx, tokenizer->nstr,
                             &normalized, &normalized_length_in_bytes,
-                            &(tokenizer->len));
+                            NULL);
   tokenizer->next = (const unsigned char *)normalized;
   tokenizer->end = tokenizer->next + normalized_length_in_bytes;
   grn_tokenizer_token_init(ctx, &(tokenizer->token));
