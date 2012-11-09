@@ -140,32 +140,32 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     tokenizer->next = tokenizer->nstr->norm;
     tokenizer->end = tokenizer->next + len;
   } else {
-  CRITICAL_SECTION_ENTER(sole_mecab_lock);
-  s = mecab_sparse_tostr2(tokenizer->mecab, tokenizer->nstr->norm, len);
-  if (!s) {
-    ERR(GRN_TOKENIZER_ERROR, "mecab_sparse_tostr failed len=%d err=%s",
-        len, mecab_strerror(tokenizer->mecab));
-  } else {
-    bufsize = strlen(s) + 1;
-    if (!(buf = GRN_MALLOC(bufsize))) {
-      GRN_LOG(ctx, GRN_LOG_ALERT, "buffer allocation on mecab_init failed !");
+    CRITICAL_SECTION_ENTER(sole_mecab_lock);
+    s = mecab_sparse_tostr2(tokenizer->mecab, tokenizer->nstr->norm, len);
+    if (!s) {
+      ERR(GRN_TOKENIZER_ERROR, "mecab_sparse_tostr failed len=%d err=%s",
+          len, mecab_strerror(tokenizer->mecab));
     } else {
-      memcpy(buf, s, bufsize);
+      bufsize = strlen(s) + 1;
+      if (!(buf = GRN_MALLOC(bufsize))) {
+        GRN_LOG(ctx, GRN_LOG_ALERT, "buffer allocation on mecab_init failed !");
+      } else {
+        memcpy(buf, s, bufsize);
+      }
     }
-  }
-  CRITICAL_SECTION_LEAVE(sole_mecab_lock);
-  if (!s || !buf) {
-    grn_str_close(ctx, tokenizer->nstr);
-    GRN_FREE(tokenizer);
-    return NULL;
-  }
-  /* A certain version of mecab returns trailing lf or spaces. */
-  for (p = buf + bufsize - 2;
-       buf <= p && isspace(*(unsigned char *)p);
-       p--) { *p = '\0'; }
-  tokenizer->buf = buf;
-  tokenizer->next = buf;
-  tokenizer->end = p + 1;
+    CRITICAL_SECTION_LEAVE(sole_mecab_lock);
+    if (!s || !buf) {
+      grn_str_close(ctx, tokenizer->nstr);
+      GRN_FREE(tokenizer);
+      return NULL;
+    }
+    /* A certain version of mecab returns trailing lf or spaces. */
+    for (p = buf + bufsize - 2;
+         buf <= p && isspace(*(unsigned char *)p);
+         p--) { *p = '\0'; }
+    tokenizer->buf = buf;
+    tokenizer->next = buf;
+    tokenizer->end = p + 1;
   }
   user_data->ptr = tokenizer;
 
@@ -202,18 +202,18 @@ mecab_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       }
     }
   } else {
-  for (r = p; r < e; r += cl) {
-    if (!(cl = grn_charlen_(ctx, r, e, encoding))) {
-      tokenizer->next = e;
-      break;
+    for (r = p; r < e; r += cl) {
+      if (!(cl = grn_charlen_(ctx, r, e, encoding))) {
+        tokenizer->next = e;
+        break;
+      }
+      if (grn_isspace(r, encoding)) {
+        char *q = r;
+        while ((cl = grn_isspace(q, encoding))) { q += cl; }
+        tokenizer->next = q;
+        break;
+      }
     }
-    if (grn_isspace(r, encoding)) {
-      char *q = r;
-      while ((cl = grn_isspace(q, encoding))) { q += cl; }
-      tokenizer->next = q;
-      break;
-    }
-  }
   }
 
   if (r == e) {
