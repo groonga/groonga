@@ -7379,6 +7379,10 @@ grn_obj_reinit_for(grn_ctx *ctx, grn_obj *obj, grn_obj *domain_obj)
   }
 
   grn_obj_get_range_info(ctx, domain_obj, &domain, &flags);
+  if (GRN_OBJ_TABLEP(domain_obj) &&
+      domain_obj->header.type != GRN_TABLE_NO_KEY) {
+    domain = domain_obj->header.domain;
+  }
   return grn_obj_reinit(ctx, obj, domain, flags);
 }
 
