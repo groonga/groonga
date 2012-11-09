@@ -102,34 +102,37 @@ delimited_init(grn_ctx *ctx, grn_obj *table, grn_user_data *user_data,
   int nflags = 0;
   const char *normalized;
   unsigned int normalized_length_in_bytes;
-  grn_delimited_tokenizer *token;
+  grn_delimited_tokenizer *tokenizer;
   grn_obj_flags table_flags;
   if (!(str = grn_ctx_pop(ctx))) {
     ERR(GRN_INVALID_ARGUMENT, "missing argument");
     return NULL;
   }
-  if (!(token = GRN_MALLOC(sizeof(grn_delimited_tokenizer)))) { return NULL; }
-  user_data->ptr = token;
-  token->delimiter = delimiter;
-  token->delimiter_len = delimiter_len;
-  token->pos = 0;
-  grn_table_get_info(ctx, table, &table_flags, &token->encoding, NULL);
+  if (!(tokenizer = GRN_MALLOC(sizeof(grn_delimited_tokenizer)))) {
+    return NULL;
+  }
+  user_data->ptr = tokenizer;
+  tokenizer->delimiter = delimiter;
+  tokenizer->delimiter_len = delimiter_len;
+  tokenizer->pos = 0;
+  grn_table_get_info(ctx, table, &table_flags, &tokenizer->encoding, NULL);
   if (table_flags & GRN_OBJ_KEY_NORMALIZE) {
     normalizer = GRN_NORMALIZER_AUTO;
   }
-  if (!(token->nstr = grn_string_open_(ctx,
-                                       GRN_TEXT_VALUE(str), GRN_TEXT_LEN(str),
-                                       normalizer, nflags, token->encoding))) {
-    GRN_FREE(token);
+  tokenizer->nstr = grn_string_open_(ctx,
+                                     GRN_TEXT_VALUE(str), GRN_TEXT_LEN(str),
+                                     normalizer, nflags, tokenizer->encoding);
+  if (!tokenizer->nstr) {
+    GRN_FREE(tokenizer);
     ERR(GRN_TOKENIZER_ERROR, "grn_string_open failed at grn_token_open");
     return NULL;
   }
-  grn_string_get_normalized(ctx, token->nstr,
+  grn_string_get_normalized(ctx, tokenizer->nstr,
                             &normalized, &normalized_length_in_bytes,
-                            &(token->len));
-  token->next = (const unsigned char *)normalized;
-  token->end = token->next + normalized_length_in_bytes;
-  grn_tokenizer_token_init(ctx, &(token->token));
+                            &(tokenizer->len));
+  tokenizer->next = (const unsigned char *)normalized;
+  tokenizer->end = tokenizer->next + normalized_length_in_bytes;
+  grn_tokenizer_token_init(ctx, &(tokenizer->token));
   return NULL;
 }
 
@@ -137,18 +140,18 @@ static grn_obj *
 delimited_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   size_t cl;
-  grn_delimited_tokenizer *token = user_data->ptr;
-  const unsigned char *p = token->next, *r;
-  const unsigned char *e = token->end;
+  grn_delimited_tokenizer *tokenizer = user_data->ptr;
+  const unsigned char *p = tokenizer->next, *r;
+  const unsigned char *e = tokenizer->end;
   grn_tokenizer_status status;
   for (r = p; r < e; r += cl) {
-    if (!(cl = grn_charlen_(ctx, (char *)r, (char *)e, token->encoding))) {
-      token->next = (unsigned char *)e;
+    if (!(cl = grn_charlen_(ctx, (char *)r, (char *)e, tokenizer->encoding))) {
+      tokenizer->next = (unsigned char *)e;
       break;
     }
-    if (r + token->delimiter_len <= e &&
-        !memcmp(r, token->delimiter, token->delimiter_len)) {
-      token->next = r + token->delimiter_len;
+    if (r + tokenizer->delimiter_len <= e &&
+        !memcmp(r, tokenizer->delimiter, tokenizer->delimiter_len)) {
+      tokenizer->next = r + tokenizer->delimiter_len;
       break;
     }
   }
@@ -157,17 +160,17 @@ delimited_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
   } else {
     status = GRN_TOKENIZER_CONTINUE;
   }
-  grn_tokenizer_token_push(ctx, &(token->token), p, r - p, status);
+  grn_tokenizer_token_push(ctx, &(tokenizer->token), p, r - p, status);
   return NULL;
 }
 
 static grn_obj *
 delimited_fin(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  grn_delimited_tokenizer *token = user_data->ptr;
-  grn_obj_close(ctx, token->nstr);
-  grn_tokenizer_token_fin(ctx, &(token->token));
-  GRN_FREE(token);
+  grn_delimited_tokenizer *tokenizer = user_data->ptr;
+  grn_obj_close(ctx, tokenizer->nstr);
+  grn_tokenizer_token_fin(ctx, &(tokenizer->token));
+  GRN_FREE(tokenizer);
   return NULL;
 }
 
