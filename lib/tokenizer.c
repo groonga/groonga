@@ -49,38 +49,34 @@ grn_tokenizer_isspace(grn_ctx *ctx, const char *str_ptr,
     return 0;
   }
   switch ((unsigned char)str_ptr[0]) {
-    case ' ':
-    case '\f':
-    case '\n':
-    case '\r':
-    case '\t':
-    case '\v': {
-      return 1;
+  case ' ' :
+  case '\f' :
+  case '\n' :
+  case '\r' :
+  case '\t' :
+  case '\v' :
+    return 1;
+  case 0x81 :
+    if ((encoding == GRN_ENC_SJIS) && (str_length >= 2) &&
+        ((unsigned char)str_ptr[1] == 0x40)) {
+      return 2;
     }
-    case 0x81: {
-      if ((encoding == GRN_ENC_SJIS) && (str_length >= 2) &&
-          ((unsigned char)str_ptr[1] == 0x40)) {
-        return 2;
-      }
-      break;
+    break;
+  case 0xA1 :
+    if ((encoding == GRN_ENC_EUC_JP) && (str_length >= 2) &&
+        ((unsigned char)str_ptr[1] == 0xA1)) {
+      return 2;
     }
-    case 0xA1: {
-      if ((encoding == GRN_ENC_EUC_JP) && (str_length >= 2) &&
-          ((unsigned char)str_ptr[1] == 0xA1)) {
-        return 2;
-      }
-      break;
+    break;
+  case 0xE3 :
+    if ((encoding == GRN_ENC_UTF8) && (str_length >= 3) &&
+        ((unsigned char)str_ptr[1] == 0x80) &&
+        ((unsigned char)str_ptr[2] == 0x80)) {
+      return 3;
     }
-    case 0xE3: {
-      if ((encoding == GRN_ENC_UTF8) && (str_length >= 3) &&
-          ((unsigned char)str_ptr[1] == 0x80) &&
-          ((unsigned char)str_ptr[2] == 0x80)) {
-        return 3;
-      }
-      break;
-    }
-    default:
-      break;
+    break;
+  default :
+    break;
   }
   return 0;
 }
@@ -184,15 +180,13 @@ grn_tokenizer_token_push(grn_ctx *ctx, grn_tokenizer_token *token,
 {
   GRN_TEXT_SET_REF(&token->str, str_ptr, str_length);
   switch (status) {
-    case GRN_TOKENIZER_CONTINUE: {
-      GRN_UINT32_SET(ctx, &token->status, 0);
-      break;
-    }
-    case GRN_TOKENIZER_LAST:
-    default: {
-      GRN_UINT32_SET(ctx, &token->status, GRN_TOKEN_LAST);
-      break;
-    }
+  case GRN_TOKENIZER_CONTINUE :
+    GRN_UINT32_SET(ctx, &token->status, 0);
+    break;
+  case GRN_TOKENIZER_LAST :
+  default :
+    GRN_UINT32_SET(ctx, &token->status, GRN_TOKEN_LAST);
+    break;
   }
   grn_ctx_push(ctx, &token->str);
   grn_ctx_push(ctx, &token->status);
