@@ -84,7 +84,6 @@ typedef struct {
   grn_obj *nstr;
   const uint8_t *delimiter;
   uint32_t delimiter_len;
-  int32_t pos;
   grn_encoding encoding;
   const unsigned char *next;
   const unsigned char *end;
@@ -114,7 +113,6 @@ delimited_init(grn_ctx *ctx, grn_obj *table, grn_user_data *user_data,
   user_data->ptr = tokenizer;
   tokenizer->delimiter = delimiter;
   tokenizer->delimiter_len = delimiter_len;
-  tokenizer->pos = 0;
   grn_table_get_info(ctx, table, &table_flags, &tokenizer->encoding, NULL);
   if (table_flags & GRN_OBJ_KEY_NORMALIZE) {
     normalizer = GRN_NORMALIZER_AUTO;
