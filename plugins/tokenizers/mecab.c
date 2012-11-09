@@ -121,8 +121,9 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   tokenizer->mecab = sole_mecab;
   tokenizer->encoding = table_encoding;
   nflags |= (table_flags & GRN_OBJ_KEY_NORMALIZE);
-  if (!(tokenizer->nstr = grn_str_open_(ctx, GRN_TEXT_VALUE(str), GRN_TEXT_LEN(str),
-                                    nflags, tokenizer->encoding))) {
+  if (!(tokenizer->nstr = grn_str_open_(ctx,
+                                        GRN_TEXT_VALUE(str), GRN_TEXT_LEN(str),
+                                        nflags, tokenizer->encoding))) {
     GRN_FREE(tokenizer);
     ERR(GRN_TOKENIZER_ERROR, "grn_str_open failed at grn_token_open");
     return NULL;
