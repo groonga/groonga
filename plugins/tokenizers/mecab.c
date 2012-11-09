@@ -89,7 +89,7 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_obj *table = args[0];
   grn_obj_flags table_flags;
   grn_encoding table_encoding;
-  grn_mecab_tokenizer *token;
+  grn_mecab_tokenizer *tokenizer;
   unsigned int bufsize, len;
   if (!(str = grn_ctx_pop(ctx))) {
     ERR(GRN_INVALID_ARGUMENT, "missing argument");
@@ -118,22 +118,22 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
         grn_enctostr(sole_mecab_encoding), grn_enctostr(table_encoding));
     return NULL;
   }
-  if (!(token = GRN_MALLOC(sizeof(grn_mecab_tokenizer)))) { return NULL; }
-  token->mecab = sole_mecab;
-  token->encoding = table_encoding;
+  if (!(tokenizer = GRN_MALLOC(sizeof(grn_mecab_tokenizer)))) { return NULL; }
+  tokenizer->mecab = sole_mecab;
+  tokenizer->encoding = table_encoding;
   nflags |= (table_flags & GRN_OBJ_KEY_NORMALIZE);
-  if (!(token->nstr = grn_str_open_(ctx, GRN_TEXT_VALUE(str), GRN_TEXT_LEN(str),
-                                    nflags, token->encoding))) {
-    GRN_FREE(token);
+  if (!(tokenizer->nstr = grn_str_open_(ctx, GRN_TEXT_VALUE(str), GRN_TEXT_LEN(str),
+                                    nflags, tokenizer->encoding))) {
+    GRN_FREE(tokenizer);
     ERR(GRN_TOKENIZER_ERROR, "grn_str_open failed at grn_token_open");
     return NULL;
   }
-  len = token->nstr->norm_blen;
+  len = tokenizer->nstr->norm_blen;
   CRITICAL_SECTION_ENTER(sole_mecab_lock);
-  s = mecab_sparse_tostr2(token->mecab, token->nstr->norm, len);
+  s = mecab_sparse_tostr2(tokenizer->mecab, tokenizer->nstr->norm, len);
   if (!s) {
     ERR(GRN_TOKENIZER_ERROR, "mecab_sparse_tostr failed len=%d err=%s",
-        len, mecab_strerror(token->mecab));
+        len, mecab_strerror(tokenizer->mecab));
   } else {
     bufsize = strlen(s) + 1;
     if (!(buf = GRN_MALLOC(bufsize))) {
@@ -144,20 +144,20 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   }
   CRITICAL_SECTION_LEAVE(sole_mecab_lock);
   if (!s || !buf) {
-    grn_str_close(ctx, token->nstr);
-    GRN_FREE(token);
+    grn_str_close(ctx, tokenizer->nstr);
+    GRN_FREE(tokenizer);
     return NULL;
   }
   /* A certain version of mecab returns trailing lf or spaces. */
   for (p = buf + bufsize - 2;
        buf <= p && isspace(*(unsigned char *)p);
        p--) { *p = '\0'; }
-  user_data->ptr = token;
-  token->buf = buf;
-  token->next = buf;
-  token->end = p + 1;
-  GRN_TEXT_INIT(&token->curr_, GRN_OBJ_DO_SHALLOW_COPY);
-  GRN_UINT32_INIT(&token->stat_, 0);
+  user_data->ptr = tokenizer;
+  tokenizer->buf = buf;
+  tokenizer->next = buf;
+  tokenizer->end = p + 1;
+  GRN_TEXT_INIT(&tokenizer->curr_, GRN_OBJ_DO_SHALLOW_COPY);
+  GRN_UINT32_INIT(&tokenizer->stat_, 0);
   return NULL;
 }
 
@@ -169,25 +169,25 @@ mecab_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   size_t cl;
   /* grn_obj *table = args[0]; */
-  grn_mecab_tokenizer *token = user_data->ptr;
-  char *p = token->next, *r;
-  char *e = token->end;
+  grn_mecab_tokenizer *tokenizer = user_data->ptr;
+  char *p = tokenizer->next, *r;
+  char *e = tokenizer->end;
   for (r = p; r < e; r += cl) {
-    if (!(cl = grn_charlen_(ctx, r, e, token->encoding))) {
-      token->next = e;
+    if (!(cl = grn_charlen_(ctx, r, e, tokenizer->encoding))) {
+      tokenizer->next = e;
       break;
     }
-    if (grn_isspace(r, token->encoding)) {
+    if (grn_isspace(r, tokenizer->encoding)) {
       char *q = r;
-      while ((cl = grn_isspace(q, token->encoding))) { q += cl; }
-      token->next = q;
+      while ((cl = grn_isspace(q, tokenizer->encoding))) { q += cl; }
+      tokenizer->next = q;
       break;
     }
   }
-  GRN_TEXT_SET_REF(&token->curr_, p, r - p);
-  GRN_UINT32_SET(ctx, &token->stat_, r == e ? GRN_TOKEN_LAST : 0);
-  grn_ctx_push(ctx, &token->curr_);
-  grn_ctx_push(ctx, &token->stat_);
+  GRN_TEXT_SET_REF(&tokenizer->curr_, p, r - p);
+  GRN_UINT32_SET(ctx, &tokenizer->stat_, r == e ? GRN_TOKEN_LAST : 0);
+  grn_ctx_push(ctx, &tokenizer->curr_);
+  grn_ctx_push(ctx, &tokenizer->stat_);
   return NULL;
 }
 
@@ -197,10 +197,10 @@ mecab_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 static grn_obj *
 mecab_fin(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  grn_mecab_tokenizer *token = user_data->ptr;
-  grn_str_close(ctx, token->nstr);
-  GRN_FREE(token->buf);
-  GRN_FREE(token);
+  grn_mecab_tokenizer *tokenizer = user_data->ptr;
+  grn_str_close(ctx, tokenizer->nstr);
+  GRN_FREE(tokenizer->buf);
+  GRN_FREE(tokenizer);
   return NULL;
 }
 
