@@ -27,6 +27,7 @@ GRN_GEO_RADIUS = 6357303
 GEO_DISTANCE_1LONGITUDE = 111263
 
 GRN_GEO_180DEGREE_RESOLUTION = 180 * GRN_GEO_RESOLUTION
+GRN_GEO_360DEGREE_RESOLUTION = 360 * GRN_GEO_RESOLUTION
 
 class GrnTestData
   attr_accessor :csv_file
@@ -626,182 +627,66 @@ class GrnTestData
       if type_of_diff_in_longitude == "short"
         geo_distance_short_type
       else
-        if @latitude_start_degree == @latitude_end_degree
-          east_distance = calculate_to_180_degree(@longitude_start.to_i.abs,
-                                                  @latitude_start.to_i.abs)
-          west_distance = calculate_to_180_degree(@longitude_end.to_i.abs,
-                                                  @latitude_end.to_i.abs)
-          (east_distance + west_distance).floor
+        case quadrant
+        when "1st_to_2nd", "4th_to_3rd"
+          if @latitude_start_degree > @latitude_end_degree
+            calculate_distance(@longitude_end.to_i + GRN_GEO_360DEGREE_RESOLUTION,
+                               @latitude_end.to_i,
+                               @longitude_start.to_i,
+                               @latitude_start.to_i).floor
+          else
+            calculate_distance(@longitude_start.to_i,
+                               @latitude_start.to_i,
+                               @longitude_end.to_i + GRN_GEO_360DEGREE_RESOLUTION,
+                               @latitude_end.to_i).floor
+          end
+        when "2nd_to_1st", "3rd_to_4th"
+          if @latitude_start_degree > @latitude_end_degree
+            calculate_distance(@longitude_end.to_i,
+                                @latitude_end.to_i,
+                                @longitude_start.to_i + GRN_GEO_360DEGREE_RESOLUTION,
+                                @latitude_start.to_i).floor
+          else
+            calculate_distance(@longitude_start.to_i + GRN_GEO_360DEGREE_RESOLUTION,
+                                @latitude_start.to_i,
+                                @longitude_end.to_i,
+                                @latitude_end.to_i).floor
+          end
+        when "1st_to_3rd", "3rd_to_1st"
+          if @longitude_start_degree > @longitude_end_degree
+            calculate_distance(@longitude_end.to_i + GRN_GEO_360DEGREE_RESOLUTION,
+                               @latitude_end.to_i,
+                               @longitude_start.to_i,
+                               @latitude_start.to_i).floor
+          else
+            calculate_distance(@longitude_start.to_i + GRN_GEO_360DEGREE_RESOLUTION,
+                               @latitude_start.to_i,
+                               @longitude_end.to_i,
+                               @latitude_end.to_i).floor
+          end
+        when "2nd_to_4th", "4th_to_2nd"
+          if @longitude_start_degree > @longitude_end_degree
+            calculate_distance(@longitude_start.to_i,
+                               @latitude_start.to_i,
+                               @longitude_end.to_i + GRN_GEO_360DEGREE_RESOLUTION,
+                               @latitude_end.to_i).floor
+          else
+            calculate_distance(@longitude_end.to_i,
+                               @latitude_end.to_i,
+                               @longitude_start.to_i + GRN_GEO_360DEGREE_RESOLUTION,
+                               @latitude_start.to_i).floor
+          end
         else
-          case quadrant
-          when "1st_to_2nd", "4th_to_3rd"
-            rounded_longitude = @longitude_end_degree + 360
-            rounded_latitude = @latitude_end_degree
-            longitude_delta = rounded_longitude - @longitude_start_degree
-            latitude_delta = rounded_latitude - @latitude_start_degree
-            slope = latitude_delta / longitude_delta.to_f
-            intercept = @latitude_start_degree - slope * @longitude_start_degree
-            latitude_on_180 = slope * 180 + intercept
-            east_distance = calculate_distance(@longitude_start.to_i,
-                                               @latitude_start.to_i,
-                                               180 * GRN_GEO_RESOLUTION,
-                                               latitude_on_180 * GRN_GEO_RESOLUTION)
-            west_distance = calculate_distance(@longitude_end.to_i,
-                                               @latitude_end.to_i,
-                                               180 * GRN_GEO_RESOLUTION,
-                                               latitude_on_180 * GRN_GEO_RESOLUTION)
-            (east_distance + west_distance).floor
-          when "2nd_to_1st", "3rd_to_4th"
-            rounded_longitude = @longitude_start_degree + 360
-            rounded_latitude = @latitude_start_degree
-            longitude_delta = @longitude_end_degree - rounded_longitude
-            latitude_delta = @latitude_end_degree - rounded_latitude
-            slope = latitude_delta / longitude_delta.to_f
-            intercept = @latitude_end_degree - slope * @longitude_end_degree
-            latitude_on_180 = slope * 180 + intercept
-            east_distance = calculate_distance(@longitude_end.to_i,
-                                               @latitude_end.to_i,
-                                               180 * GRN_GEO_RESOLUTION,
-                                               latitude_on_180 * GRN_GEO_RESOLUTION)
-            west_distance = calculate_distance(@longitude_start.to_i,
-                                               @latitude_start.to_i,
-                                               180 * GRN_GEO_RESOLUTION,
-                                               latitude_on_180 * GRN_GEO_RESOLUTION)
-            (east_distance + west_distance).floor
-          when "1st_to_3rd", "3rd_to_1st"
-            if @longitude_start_degree > @longitude_end_degree
-              rounded_longitude_degree = @longitude_end_degree + 360
-              rounded_latitude_degree = @latitude_end_degree
-              base_longitude_degree = @longitude_start_degree
-              base_latitude_degree = @latitude_start_degree
-              base_longitude = @longitude_start.to_i
-              base_latitude = @latitude_start.to_i
-              third_longitude = @longitude_end.to_i
-              third_latitude = @latitude_end.to_i
-            else
-              rounded_longitude_degree = @longitude_start_degree + 360
-              rounded_latitude_degree = @latitude_start_degree
-              base_longitude_degree = @longitude_end_degree
-              base_latitude_degree = @latitude_end_degree
-              base_longitude = @longitude_end.to_i
-              base_latitude = @latitude_end.to_i
-              third_longitude = @longitude_start.to_i
-              third_latitude = @latitude_start.to_i
-            end
-            longitude_delta = rounded_longitude_degree - base_longitude_degree
-            latitude_delta = rounded_latitude_degree - base_latitude_degree
-            slope = latitude_delta / longitude_delta.to_f
-            intercept = base_latitude_degree - slope * base_longitude_degree
-            latitude_on_180 = (slope * 180 + intercept) * GRN_GEO_RESOLUTION
-            longitude_on_equator = (-intercept / slope)
-            inverted_longitude = (360 - longitude_on_equator) * GRN_GEO_RESOLUTION
-            longitude_on_equator *= GRN_GEO_RESOLUTION
-            if latitude_on_180 > 0
-              first_distance = calculate_distance(base_longitude,
-                                                  base_latitude,
-                                                  GRN_GEO_180DEGREE_RESOLUTION,
-                                                  latitude_on_180)
-              intermediate_distance = calculate_distance(GRN_GEO_180DEGREE_RESOLUTION,
-                                                         latitude_on_180,
-                                                         inverted_longitude,
-                                                         0)
-              third_distance = calculate_distance(-third_longitude,
-                                                  third_latitude,
-                                                  inverted_longitude,
-                                                  0)
-              (first_distance + intermediate_distance + third_distance).floor
-            elsif latitude_on_180 < 0
-              first_distance = calculate_distance(base_longitude,
-                                                  base_latitude,
-                                                  longitude_on_equator,
-                                                  0)
-              intermediate_distance = calculate_distance(longitude_on_equator,
-                                                         0,
-                                                         GRN_GEO_180DEGREE_RESOLUTION,
-                                                         latitude_on_180)
-              third_distance = calculate_distance(-GRN_GEO_180DEGREE_RESOLUTION,
-                                                  latitude_on_180,
-                                                  third_longitude,
-                                                  third_latitude)
-              (first_distance + intermediate_distance + third_distance).floor
-            else
-              first_distance = calculate_distance(base_longitude,
-                                                  base_latitude,
-                                                  GRN_GEO_180DEGREE_RESOLUTION,
-                                                  0)
-              third_distance = calculate_distance(-GRN_GEO_180DEGREE_RESOLUTION,
-                                                  0,
-                                                  third_longitude,
-                                                  third_latitude)
-              (first_distance + third_distance).floor
-            end
-          when "2nd_to_4th", "4th_to_2nd"
-            if @longitude_start_degree > @longitude_end_degree
-              rounded_longitude_degree = @longitude_end_degree + 360
-              rounded_latitude_degree = @latitude_end_degree
-              base_longitude_degree = @longitude_start_degree
-              base_latitude_degree = @latitude_start_degree
-              base_longitude = @longitude_start.to_i
-              base_latitude = @latitude_start.to_i
-              third_longitude = @longitude_end.to_i
-              third_latitude = @latitude_end.to_i
-            else
-              rounded_longitude_degree = @longitude_start_degree + 360
-              rounded_latitude_degree = @latitude_start_degree
-              base_longitude_degree = @longitude_end_degree
-              base_latitude_degree = @latitude_end_degree
-              base_longitude = @longitude_end.to_i
-              base_latitude = @latitude_end.to_i
-              third_longitude = @longitude_start.to_i
-              third_latitude = @latitude_start.to_i
-            end
-            longitude_delta = rounded_longitude_degree - base_longitude_degree
-            latitude_delta = rounded_latitude_degree - base_latitude_degree
-            slope = latitude_delta / longitude_delta.to_f
-            intercept = base_latitude_degree - slope * base_longitude_degree
-            latitude_on_180 = (slope * 180 + intercept) * GRN_GEO_RESOLUTION
-            longitude_on_equator = (-intercept / slope)
-            inverted_longitude = (360 - longitude_on_equator) * GRN_GEO_RESOLUTION
-            longitude_on_equator *= GRN_GEO_RESOLUTION
-            if latitude_on_180 > 0
-              first_distance = calculate_distance(base_longitude,
-                                                  base_latitude,
-                                                  inverted_longitude,
-                                                  0)
-              intermediate_distance = calculate_distance(inverted_longitude,
-                                                         0,
-                                                         GRN_GEO_180DEGREE_RESOLUTION,
-                                                         latitude_on_180)
-              third_distance = calculate_distance(GRN_GEO_180DEGREE_RESOLUTION,
-                                                  latitude_on_180,
-                                                  -third_longitude,
-                                                  third_latitude)
-              (first_distance + intermediate_distance + third_distance).floor
-            elsif latitude_on_180 < 0
-              first_distance = calculate_distance(base_longitude,
-                                                  base_latitude,
-                                                  GRN_GEO_180DEGREE_RESOLUTION,
-                                                  latitude_on_180)
-              intermediate_distance = calculate_distance(GRN_GEO_180DEGREE_RESOLUTION,
-                                                         latitude_on_180,
-                                                         inverted_longitude,
-                                                         0)
-              third_distance = calculate_distance(inverted_longitude,
-                                                  0,
-                                                  -third_longitude,
-                                                  third_latitude)
-              (first_distance + intermediate_distance + third_distance).floor
-            else
-              first_distance = calculate_distance(base_longitude,
-                                                  base_latitude,
-                                                  GRN_GEO_180DEGREE_RESOLUTION,
-                                                  0)
-              third_distance = calculate_distance(-GRN_GEO_180DEGREE_RESOLUTION,
-                                                  0,
-                                                  third_longitude,
-                                                  third_latitude)
-              (first_distance + third_distance).floor
-            end
+          if @longitude_start_degree > @longitude_end_degree
+            calculate_distance(@longitude_start.to_i,
+                               @latitude_start.to_i,
+                               @longitude_end.to_i + GRN_GEO_360DEGREE_RESOLUTION,
+                               @latitude_end.to_i).floor
+          else
+            calculate_distance(@longitude_end.to_i,
+                               @latitude_end.to_i,
+                               @longitude_start.to_i + GRN_GEO_360DEGREE_RESOLUTION,
+                               @latitude_start.to_i).floor
           end
         end
       end
