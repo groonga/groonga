@@ -555,19 +555,17 @@ class GrnTestData
   def geo_distance_short_type
     case quadrant
     when "1st_to_2nd", "2nd_to_1st", "3rd_to_4th", "4th_to_3rd"
-      longitude_delta = @longitude_end_degree - @longitude_start_degree
-      latitude_delta = @latitude_end_degree - @latitude_start_degree
-      slope = latitude_delta / longitude_delta.to_f
-      intercept = @latitude_start_degree - slope * @longitude_start_degree
-      east_distance = calculate_distance(@longitude_start.to_i,
-                                         @latitude_start.to_i,
-                                         0,
-                                         intercept * GRN_GEO_RESOLUTION)
-      west_distance = calculate_distance(0,
-                                         intercept * GRN_GEO_RESOLUTION,
-                                         @longitude_end.to_i,
-                                         @latitude_end.to_i)
-      (east_distance + west_distance).floor
+      if @latitude_end_degree > @latitude_start_degree
+        calculate_distance(@longitude_start.to_i,
+                           @latitude_start.to_i,
+                           @longitude_end.to_i,
+                           @latitude_end.to_i).floor
+      else
+        calculate_distance(@longitude_end.to_i,
+                           @latitude_end.to_i,
+                           @longitude_start.to_i,
+                           @latitude_start.to_i).floor
+      end
     when "1st_to_4th", "4th_to_1st", "2nd_to_3rd", "3rd_to_2nd"
       if @latitude_end_degree > @latitude_start_degree
         calculate_distance(@longitude_start.to_i,
