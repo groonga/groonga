@@ -552,76 +552,80 @@ class GrnTestData
     Math.sqrt((x * x) + (y * y)) * GRN_GEO_RADIUS
   end
 
+  def geo_distance_short_type
+    case quadrant
+    when "1st_to_2nd", "2nd_to_1st", "3rd_to_4th", "4th_to_3rd"
+      longitude_delta = @longitude_end_degree - @longitude_start_degree
+      latitude_delta = @latitude_end_degree - @latitude_start_degree
+      slope = latitude_delta / longitude_delta.to_f
+      intercept = @latitude_start_degree - slope * @longitude_start_degree
+      east_distance = calculate_distance(@longitude_start.to_i,
+                                @latitude_start.to_i,
+                                0,
+                                intercept * GRN_GEO_RESOLUTION)
+      west_distance = calculate_distance(0,
+                                intercept * GRN_GEO_RESOLUTION,
+                                @longitude_end.to_i,
+                                @latitude_end.to_i)
+      (east_distance + west_distance).floor
+    when "1st_to_4th", "4th_to_1st", "2nd_to_3rd", "3rd_to_2nd"
+      if @latitude_end_degree > @latitude_start_degree
+        calculate_distance(@longitude_start.to_i,
+                  @latitude_start.to_i,
+                  @longitude_end.to_i,
+                  @latitude_end.to_i).floor
+      else
+        calculate_distance(@longitude_end.to_i,
+                  @latitude_end.to_i,
+                  @longitude_start.to_i,
+                  @latitude_start.to_i).floor
+      end
+    when "1st_to_3rd", "3rd_to_1st", "2nd_to_4th", "4th_to_2nd"
+      if @latitude_start_degree > @latitude_end_degree
+        calculate_distance(@longitude_start.to_i,
+                  @latitude_start.to_i,
+                  @longitude_end.to_i,
+                  @latitude_end.to_i).floor
+      else
+        calculate_distance(@longitude_end.to_i,
+                  @latitude_end.to_i,
+                  @longitude_start.to_i,
+                  @latitude_start.to_i).floor
+      end
+    when "equator"
+      if point_or_line == "point"
+        0
+      else
+        if east_axis_to_west_axis? or west_axis_to_east_axis?
+          east_distance = calculate_distance(@longitude_start.to_i,
+                                    @latitude_start.to_i,
+                                    0,
+                                    @latitude_start.to_i)
+          west_distance = calculate_distance(0,
+                                    @latitude_end.to_i,
+                                    @longitude_end.to_i,
+                                    @latitude_end.to_i)
+          (east_distance + west_distance).floor
+        else
+          calculate_distance(@longitude_start.to_i,
+                    @latitude_start.to_i,
+                    @longitude_end.to_i,
+                    @latitude_end.to_i).floor
+        end
+      end
+    else
+      calculate_distance(@longitude_start.to_i,
+                @latitude_start.to_i,
+                @longitude_end.to_i,
+                @latitude_end.to_i).floor
+    end
+  end
+
   def geo_distance(app_type)
     case app_type
     when "", "rect", "rectangle"
       if type_of_diff_in_longitude == "short"
-        case quadrant
-        when "1st_to_2nd", "2nd_to_1st", "3rd_to_4th", "4th_to_3rd"
-          longitude_delta = @longitude_end_degree - @longitude_start_degree
-          latitude_delta = @latitude_end_degree - @latitude_start_degree
-          slope = latitude_delta / longitude_delta.to_f
-          intercept = @latitude_start_degree - slope * @longitude_start_degree
-          east_distance = calculate_distance(@longitude_start.to_i,
-                                             @latitude_start.to_i,
-                                             0,
-                                             intercept * GRN_GEO_RESOLUTION)
-          west_distance = calculate_distance(0,
-                                             intercept * GRN_GEO_RESOLUTION,
-                                             @longitude_end.to_i,
-                                             @latitude_end.to_i)
-          (east_distance + west_distance).floor
-        when "1st_to_4th", "4th_to_1st", "2nd_to_3rd", "3rd_to_2nd"
-          if @latitude_end_degree > @latitude_start_degree
-            calculate_distance(@longitude_start.to_i,
-                               @latitude_start.to_i,
-                               @longitude_end.to_i,
-                               @latitude_end.to_i).floor
-          else
-            calculate_distance(@longitude_end.to_i,
-                               @latitude_end.to_i,
-                               @longitude_start.to_i,
-                               @latitude_start.to_i).floor
-          end
-        when "1st_to_3rd", "3rd_to_1st", "2nd_to_4th", "4th_to_2nd"
-          if @latitude_start_degree > @latitude_end_degree
-            calculate_distance(@longitude_start.to_i,
-                               @latitude_start.to_i,
-                               @longitude_end.to_i,
-                               @latitude_end.to_i).floor
-          else
-            calculate_distance(@longitude_end.to_i,
-                               @latitude_end.to_i,
-                               @longitude_start.to_i,
-                               @latitude_start.to_i).floor
-          end
-        when "equator"
-          if point_or_line == "point"
-            0
-          else
-            if east_axis_to_west_axis? or west_axis_to_east_axis?
-              east_distance = calculate_distance(@longitude_start.to_i,
-                                                 @latitude_start.to_i,
-                                                 0,
-                                                 @latitude_start.to_i)
-              west_distance = calculate_distance(0,
-                                                 @latitude_end.to_i,
-                                                 @longitude_end.to_i,
-                                                 @latitude_end.to_i)
-              (east_distance + west_distance).floor
-            else
-              calculate_distance(@longitude_start.to_i,
-                                 @latitude_start.to_i,
-                                 @longitude_end.to_i,
-                                 @latitude_end.to_i).floor
-            end
-          end
-        else
-          calculate_distance(@longitude_start.to_i,
-                             @latitude_start.to_i,
-                             @longitude_end.to_i,
-                             @latitude_end.to_i).floor
-        end
+        geo_distance_short_type
       else
         if @latitude_start_degree == @latitude_end_degree
           east_distance = calculate_to_180_degree(@longitude_start.to_i.abs,
