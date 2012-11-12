@@ -3756,8 +3756,13 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
                 case GRN_ACCESSOR :
                 case GRN_ACCESSOR_VIEW :
                   if (grn_column_index(ctx, ec->value, c->op, &index, 1, &sid)) {
+                    int32_t weight = get_weight(ctx, ec);
                     si->flags |= SCAN_ACCESSOR;
-                    scan_info_put_index(ctx, si, index, sid, get_weight(ctx, ec));
+                    if (((grn_accessor *)ec->value)->next) {
+                      scan_info_put_index(ctx, si, ec->value, sid, weight);
+                    } else {
+                      scan_info_put_index(ctx, si, index, sid, weight);
+                    }
                   }
                   break;
                 case GRN_COLUMN_FIX_SIZE :
