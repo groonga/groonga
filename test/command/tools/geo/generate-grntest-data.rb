@@ -3,6 +3,7 @@
 
 require 'fileutils'
 require 'optparse'
+require 'geokit'
 
 TABLE_CREATE = "table_create Geo TABLE_HASH_KEY ShortText\n"
 COLUMN_CREATE = "column_create Geo distance COLUMN_SCALAR Int32\n"
