@@ -178,13 +178,14 @@ grn_obj *grn_kytea_init(grn_ctx *ctx, int num_args, grn_obj **args,
 
   try {
     grn_tokenizer_kytea_init(ctx, tokenizer);
-    tokenizer->query = query;
   } catch (...) {
     grn_tokenizer_query_destroy(ctx, query);
     GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
                      "[tokenizer] tokenizer initialization failed");
     return NULL;
   }
+
+  tokenizer->query = query;
 
   grn_plugin_mutex_lock(ctx, kytea_mutex);
   try {
