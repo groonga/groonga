@@ -1959,11 +1959,11 @@ geo_distance_rectangle_short_dist_type(quadrant_type quad_type,
   double distance;
   double longitude_delta, latitude_delta;
 
-  longitude_delta = lng2 - lng1;
   if (quad_type == QUADRANT_1ST_TO_4TH ||
       quad_type == QUADRANT_4TH_TO_1ST ||
       quad_type == QUADRANT_2ND_TO_3RD ||
       quad_type == QUADRANT_3RD_TO_2ND) {
+    longitude_delta = lng2 - lng1;
     if (longitude_delta > 0 || longitude_delta < 0) {
       if (lat2 > lat1) {
         distance = geo_distance_rectangle_square_root(lng1,
@@ -2007,6 +2007,7 @@ geo_distance_rectangle_short_dist_type(quadrant_type quad_type,
                                                     lng1,
                                                     lat1) * GRN_GEO_RADIUS;
     } else {
+      longitude_delta = lng2 - lng1;
       distance = longitude_delta * cos(lat1);
       distance = sqrt(distance * distance) * GRN_GEO_RADIUS;
     }
