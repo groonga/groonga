@@ -1193,7 +1193,7 @@ grn_table_get_by_key(grn_ctx *ctx, grn_obj *table, grn_obj *key)
     grn_rc rc;
     grn_obj buf;
     GRN_OBJ_INIT(&buf, GRN_BULK, 0, table->header.domain);
-    if ((rc = grn_obj_cast(ctx, key, &buf, 1))) {
+    if ((rc = grn_obj_cast(ctx, key, &buf, GRN_TRUE))) {
       ERR(rc, "cast failed");
     } else {
       id = grn_table_get(ctx, table, GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf));
@@ -1213,7 +1213,7 @@ grn_table_add_by_key(grn_ctx *ctx, grn_obj *table, grn_obj *key, int *added)
     grn_rc rc;
     grn_obj buf;
     GRN_OBJ_INIT(&buf, GRN_BULK, 0, table->header.domain);
-    if ((rc = grn_obj_cast(ctx, key, &buf, 1))) {
+    if ((rc = grn_obj_cast(ctx, key, &buf, GRN_TRUE))) {
       ERR(rc, "cast failed");
     } else {
       id = grn_table_add(ctx, table, GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf), added);
@@ -4677,7 +4677,7 @@ grn_obj_is_persistent(grn_ctx *ctx, grn_obj *obj)
       grn_obj key;\
       GRN_OBJ_INIT(&key, GRN_BULK, 0, table->header.domain);\
       if (src->header.domain != table->header.domain) {\
-        grn_obj_cast(ctx, src, &key, 1);\
+        grn_obj_cast(ctx, src, &key, GRN_TRUE);\
         p_key = &key;\
       }\
       if (GRN_BULK_VSIZE(p_key)) {\
@@ -4691,7 +4691,7 @@ grn_obj_is_persistent(grn_ctx *ctx, grn_obj *obj)
     } else {\
       grn_obj record_id;\
       GRN_UINT32_INIT(&record_id, 0);\
-      grn_obj_cast(ctx, src, &record_id, 1);\
+      grn_obj_cast(ctx, src, &record_id, GRN_TRUE);\
       id = GRN_UINT32_VALUE(&record_id);\
       if (id) { GRN_RECORD_SET(ctx, dest, id); }\
     }\
@@ -5475,7 +5475,7 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
         if (call_hook(ctx, obj, id, value, flags)) { goto exit; }
         if (range != value->header.domain) {
           GRN_OBJ_INIT(&buf, GRN_BULK, 0, range);
-          if (grn_obj_cast(ctx, value, &buf, 1) == GRN_SUCCESS) {
+          if (grn_obj_cast(ctx, value, &buf, GRN_TRUE) == GRN_SUCCESS) {
             v = GRN_BULK_HEAD(&buf);
           }
         }
@@ -5494,7 +5494,7 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
         if (call_hook(ctx, obj, id, value, flags)) { goto exit; }
         if (range != value->header.domain) {
           GRN_OBJ_INIT(&buf, GRN_BULK, 0, range);
-          if (grn_obj_cast(ctx, value, &buf, 1) == GRN_SUCCESS) {
+          if (grn_obj_cast(ctx, value, &buf, GRN_TRUE) == GRN_SUCCESS) {
             v = GRN_BULK_HEAD(&buf);
           }
         }
@@ -5510,7 +5510,7 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
         if (call_hook(ctx, obj, id, value, flags)) { goto exit; }
         if (range != value->header.domain) {
           GRN_OBJ_INIT(&buf, GRN_BULK, 0, range);
-          if (grn_obj_cast(ctx, value, &buf, 1) == GRN_SUCCESS) {
+          if (grn_obj_cast(ctx, value, &buf, GRN_TRUE) == GRN_SUCCESS) {
             v = GRN_BULK_HEAD(&buf);
           }
         }
@@ -8957,7 +8957,7 @@ set_vector(grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *vector)
           grn_obj casted_element, *element = v;
           if (range_id != element->header.domain) {
             GRN_OBJ_INIT(&casted_element, GRN_BULK, 0, range_id);
-            if (grn_obj_cast(ctx, element, &casted_element, 1)) {
+            if (grn_obj_cast(ctx, element, &casted_element, GRN_TRUE)) {
               cast_failed = GRN_TRUE;
               REPORT_CAST_ERROR(column, range, element);
             }
