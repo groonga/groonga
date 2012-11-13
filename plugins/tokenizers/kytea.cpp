@@ -187,9 +187,18 @@ grn_obj *grn_kytea_init(grn_ctx *ctx, int num_args, grn_obj **args,
 
   tokenizer->query = query;
 
+  grn_obj *normalized_query = query->normalized_query;
+  const char *normalized_string;
+  unsigned int normalized_string_length;
+  grn_string_get_normalized(ctx,
+                            normalized_query,
+                            &normalized_string,
+                            &normalized_string_length,
+                            NULL);
+
   grn_plugin_mutex_lock(ctx, kytea_mutex);
   try {
-    const std::string str(query->ptr, query->length);
+    const std::string str(normalized_string, normalized_string_length);
     const kytea::KyteaString &surface_str = kytea_util->mapString(str);
     const kytea::KyteaString &normalized_str = kytea_util->normalize(surface_str);
     tokenizer->sentence = kytea::KyteaSentence(surface_str, normalized_str);
