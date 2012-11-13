@@ -45,8 +45,8 @@ module Geokit
         from = Geokit::LatLng.normalize(from)
         to = Geokit::LatLng.normalize(to)
         return 0.0 if from == to # fixes a "zero-distance" bug
-        units = options[:units] || Geokit::default_units
-        formula = options[:formula] || Geokit::default_formula
+        units = options[:units] || Geokit.default_units
+        formula = options[:formula] || Geokit.default_formula
         case formula
         when :sphere
           error_classes = [Errno::EDOM]
@@ -873,7 +873,7 @@ class GrnTestData
   end
 
   def check_distance_by_geokit(distance)
-    Geokit::default_formula = :flat
+    Geokit.default_formula = :flat
     latlng_start = Geokit::LatLng.new(@latitude_start_degree, @longitude_start_degree)
     latlng_end = Geokit::LatLng.new(@latitude_end_degree, @longitude_end_degree)
     geokit_distance = latlng_end.distance_from(latlng_start) * 1609.344
