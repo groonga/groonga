@@ -146,6 +146,19 @@ void grn_tokenizer_token_push(grn_ctx *ctx, grn_tokenizer_token *token,
                               grn_tokenizer_status status);
 
 /*
+  grn_tokenizer_tokenized_delimiter_next() extracts the next token
+  from the string specified by `str_ptr' and `str_length' and pushes
+  the next token into `token'. It returns the string after the next
+  token. The returned string may be `NULL' when all tokens are
+  extracted.
+ */
+const char *grn_tokenizer_tokenized_delimiter_next(grn_ctx *ctx,
+                                                   grn_tokenizer_token *token,
+                                                   const char *str_ptr,
+                                                   unsigned int str_length,
+                                                   grn_encoding encoding);
+
+/*
   grn_tokenizer_register() registers a plugin to the database which is
   associated with `ctx'. `plugin_name_ptr' and `plugin_name_length' specify the
   plugin name. Alphabetic letters ('A'-'Z' and 'a'-'z'), digits ('0'-'9') and
