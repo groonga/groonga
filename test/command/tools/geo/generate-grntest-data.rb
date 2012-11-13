@@ -25,9 +25,61 @@ GRN_GEO_RESOLUTION = 3600000
 GRN_GEO_RADIUS = 6357303
 
 GEO_DISTANCE_1LONGITUDE = 111263
+GEO_DISTANCE_DELTA = 20000
 
 GRN_GEO_180DEGREE_RESOLUTION = 180 * GRN_GEO_RESOLUTION
 GRN_GEO_360DEGREE_RESOLUTION = 360 * GRN_GEO_RESOLUTION
+
+module Geokit
+  module Mappable
+    # EARTH_RADIUS_IN_MILES = 3950.24494452398
+    EARTH_RADIUS_IN_MILES = GRN_GEO_RADIUS / 1609.344
+    # MILES_PER_LATITUDE_DEGREE = 68.9447805422042
+    MILES_PER_LATITUDE_DEGREE = GRN_GEO_RADIUS * Math::PI / 180 / 1609.344
+    LATITUDE_DEGREES = EARTH_RADIUS_IN_MILES / MILES_PER_LATITUDE_DEGREE
+    module ClassMethods
+
+      def distance_between(from, to, options={})
+        from = Geokit::LatLng.normalize(from)
+        to = Geokit::LatLng.normalize(to)
+        return 0.0 if from == to # fixes a "zero-distance" bug
+        units = options[:units] || Geokit::default_units
+        formula = options[:formula] || Geokit::default_formula
+        case formula
+        when :sphere
+          error_classes = [Errno::EDOM]
+
+          # Ruby 1.9 raises {Math::DomainError}, but it is not defined in Ruby
+          # 1.8. Backwards-compatibly rescue both errors.
+          error_classes << Math::DomainError if defined?(Math::DomainError)
+
+          begin
+            units_sphere_multiplier(units) *
+              Math.acos(Math.sin(deg2rad(from.lat)) * Math.sin(deg2rad(to.lat)) +
+              Math.cos(deg2rad(from.lat)) * Math.cos(deg2rad(to.lat)) *
+              Math.cos(deg2rad(to.lng) - deg2rad(from.lng)))
+          rescue *error_classes
+            0.0
+          end
+        when :flat
+          Math.sqrt((units_per_latitude_degree(units) * (from.lat - to.lat)) ** 2 +
+            (units_per_longitude_degree(from.lat, to.lat, units) *
+            (from.lng - to.lng)) ** 2)
+        end
+      end
+
+      def units_per_longitude_degree(lat, lat2, units)
+        miles_per_longitude_degree = (LATITUDE_DEGREES * Math.cos((lat + lat2) *
+                                      PI_DIV_RAD * 0.5)).abs
+        case units
+          when :kms; miles_per_longitude_degree * KMS_PER_MILE
+          when :nms; miles_per_longitude_degree * NMS_PER_MILE
+          else miles_per_longitude_degree
+        end
+      end
+    end
+  end
+end
 
 class GrnTestData
   attr_accessor :csv_file
