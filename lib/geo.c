@@ -1960,7 +1960,6 @@ geo_distance_rectangle_short_dist_type(quadrant_type quad_type,
   double longitude_delta, latitude_delta;
 
   longitude_delta = lng2 - lng1;
-  latitude_delta = lat2 - lat1;
   if (quad_type == QUADRANT_1ST_TO_4TH ||
       quad_type == QUADRANT_4TH_TO_1ST ||
       quad_type == QUADRANT_2ND_TO_3RD ||
