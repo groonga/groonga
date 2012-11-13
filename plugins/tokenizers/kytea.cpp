@@ -282,7 +282,7 @@ grn_obj *grn_kytea_next(grn_ctx *ctx, int num_args, grn_obj **args,
                                              tokenizer->query->encoding);
     if (rest_query_string) {
       tokenizer->rest_query_string_length -=
-        rerest_query_string - tokenizer->rest_query_string;
+        rest_query_string - tokenizer->rest_query_string;
     }
     tokenizer->rest_query_string = rest_query_string;
   } else {
