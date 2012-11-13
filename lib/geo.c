@@ -1957,7 +1957,7 @@ geo_distance_rectangle_short_dist_type(quadrant_type quad_type,
                                        double lng2, double lat2)
 {
   double distance;
-  double slope, intercept, longitude_delta, latitude_delta;
+  double longitude_delta, latitude_delta;
 
   longitude_delta = lng2 - lng1;
   latitude_delta = lat2 - lat1;
