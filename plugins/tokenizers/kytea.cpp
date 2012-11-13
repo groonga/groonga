@@ -141,8 +141,20 @@ struct grn_tokenizer_kytea {
   std::vector<std::string> tokens;
   std::size_t id;
   grn_tokenizer_token token;
+  bool have_tokenized_delimiter;
+  const char *rest_query_string;
+  unsigned int rest_query_string_length;
 
-  grn_tokenizer_kytea() : query(NULL), sentence(), tokens(), id(0), token() {}
+  grn_tokenizer_kytea() :
+    query(NULL),
+    sentence(),
+    tokens(),
+    id(0),
+    token(),
+    have_tokenized_delimiter(false),
+    rest_query_string(NULL)
+  {
+  }
   ~grn_tokenizer_kytea() {}
 };
 
@@ -195,7 +207,16 @@ grn_obj *grn_kytea_init(grn_ctx *ctx, int num_args, grn_obj **args,
                             &normalized_string,
                             &normalized_string_length,
                             NULL);
+  tokenizer->have_tokenized_delimiter =
+    grn_tokenizer_have_tokenized_delimiter(ctx,
+                                           normalized_string,
+                                           normalized_string_length,
+                                           query->encoding);
 
+  if (tokenizer->have_tokenized_delimiter) {
+    tokenizer->rest_query_string = normalized_string;
+    tokenizer->rest_query_string_length = normalized_string_length;
+  } else {
   grn_plugin_mutex_lock(ctx, kytea_mutex);
   try {
     const std::string str(normalized_string, normalized_string_length);
@@ -236,6 +257,7 @@ grn_obj *grn_kytea_init(grn_ctx *ctx, int num_args, grn_obj **args,
                      "[tokenizer] adjustment failed");
     return NULL;
   }
+  }
 
   user_data->ptr = tokenizer;
   return NULL;
@@ -245,6 +267,22 @@ grn_obj *grn_kytea_next(grn_ctx *ctx, int num_args, grn_obj **args,
                         grn_user_data *user_data) {
   grn_tokenizer_kytea * const tokenizer =
       static_cast<grn_tokenizer_kytea *>(user_data->ptr);
+
+  if (tokenizer->have_tokenized_delimiter) {
+    unsigned int rest_query_string_length =
+      tokenizer->rest_query_string_length;
+    const char *rest_query_string =
+      grn_tokenizer_tokenized_delimiter_next(ctx,
+                                             &(tokenizer->token),
+                                             tokenizer->rest_query_string,
+                                             rest_query_string_length,
+                                             tokenizer->query->encoding);
+    if (rest_query_string) {
+      tokenizer->rest_query_string_length -=
+        rerest_query_string - tokenizer->rest_query_string;
+    }
+    tokenizer->rest_query_string = rest_query_string;
+  } else {
   const grn_tokenizer_status status =
       ((tokenizer->id + 1) < tokenizer->tokens.size()) ?
           GRN_TOKENIZER_CONTINUE : GRN_TOKENIZER_LAST;
@@ -255,6 +293,8 @@ grn_obj *grn_kytea_next(grn_ctx *ctx, int num_args, grn_obj **args,
   } else {
     grn_tokenizer_token_push(ctx, &tokenizer->token, "", 0, status);
   }
+  }
+
   return NULL;
 }
 
