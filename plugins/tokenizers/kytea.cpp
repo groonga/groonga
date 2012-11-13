@@ -42,7 +42,7 @@ void kytea_init(grn_ctx *ctx) {
   }
 
   kytea_mutex = grn_plugin_mutex_create(ctx);
-  if (kytea_mutex == NULL) {
+  if (!kytea_mutex) {
     kytea_fin(ctx);
     GRN_PLUGIN_ERROR(ctx, GRN_NO_MEMORY_AVAILABLE,
                      "[tokenizer] grn_plugin_mutex_create() failed");
@@ -178,7 +178,7 @@ grn_obj *grn_kytea_init(grn_ctx *ctx, int num_args, grn_obj **args,
                         grn_user_data *user_data) {
   grn_tokenizer_query * const query =
       grn_tokenizer_query_create(ctx, num_args, args);
-  if (query == NULL) {
+  if (!query) {
     return NULL;
   }
 
