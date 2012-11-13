@@ -1,0 +1,14 @@
+table_create Users TABLE_HASH_KEY ShortText
+column_create Users age COLUMN_SCALAR Int8
+
+table_create Ages TABLE_PAT_KEY Int8
+column_create Ages users_age COLUMN_INDEX Users age
+
+load --table Users
+[
+{"_key": "Alice", "age": 20},
+{"_key": "Bob",   "age": 18}
+]
+
+select Users --filter 'age @ 20'
+

@@ -2970,9 +2970,38 @@ grn_obj_search(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
             }
             return GRN_SUCCESS;
           } else {
-            const char *str = GRN_BULK_HEAD(query);
-            unsigned int str_len = GRN_BULK_VSIZE(query);
-            rc = grn_ii_sel(ctx, (grn_ii *)obj, str, str_len, (grn_hash *)res, op, optarg);
+            unsigned int key_type = GRN_ID_NIL;
+            const char *key;
+            unsigned int key_len;
+            grn_obj *table;
+            grn_obj casted_query;
+            grn_bool need_cast = GRN_FALSE;
+
+            table = grn_ctx_at(ctx, obj->header.domain);
+            if (table) {
+              key_type = table->header.domain;
+              need_cast = (query->header.domain != key_type);
+              grn_obj_unlink(ctx, table);
+            }
+            if (need_cast) {
+              GRN_OBJ_INIT(&casted_query, GRN_BULK, 0, key_type);
+              rc = grn_obj_cast(ctx, query, &casted_query, 0);
+              if (rc == GRN_SUCCESS) {
+                key = GRN_BULK_HEAD(&casted_query);
+                key_len = GRN_BULK_VSIZE(&casted_query);
+              }
+            } else {
+              rc = GRN_SUCCESS;
+              key = GRN_BULK_HEAD(query);
+              key_len = GRN_BULK_VSIZE(query);
+            }
+            if (rc == GRN_SUCCESS) {
+              rc = grn_ii_sel(ctx, (grn_ii *)obj, key, key_len,
+                              (grn_hash *)res, op, optarg);
+            }
+            if (need_cast) {
+              GRN_OBJ_FIN(ctx, &casted_query);
+            }
           }
           break;
         case GRN_QUERY :
