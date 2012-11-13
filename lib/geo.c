@@ -1952,41 +1952,6 @@ geo_distance_rectangle_square_root(double start_longitude, double start_latitude
 }
 
 static inline double
-geo_distance_rectangle_twin_quadrant(double lng1, double lat1,
-                                     double lng2, double lat2,
-                                     double lng3, double lat3)
-{
-  return (geo_distance_rectangle_square_root(lng1,
-                                             lat1,
-                                             lng2,
-                                             lat2) +
-          geo_distance_rectangle_square_root(lng2,
-                                             lat2,
-                                             lng3,
-                                             lat3)) * GRN_GEO_RADIUS;
-}
-
-static inline double
-geo_distance_rectangle_tri_quadrant(double lng1, double lat1,
-                                    double lng2, double lat2,
-                                    double lng3, double lat3,
-                                    double lng4, double lat4)
-{
-  return (geo_distance_rectangle_square_root(lng1,
-                                             lat1,
-                                             lng2,
-                                             lat2) +
-          geo_distance_rectangle_square_root(lng2,
-                                             lat2,
-                                             lng3,
-                                             lat3) +
-          geo_distance_rectangle_square_root(lng3,
-                                             lat3,
-                                             lng4,
-                                             lat4)) * GRN_GEO_RADIUS;
-}
-
-static inline double
 geo_distance_rectangle_short_dist_type(quadrant_type quad_type,
                                        double lng1, double lat1,
                                        double lng2, double lat2)
