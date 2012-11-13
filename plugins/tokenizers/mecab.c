@@ -37,8 +37,8 @@ typedef struct {
   grn_str *nstr;
   mecab_t *mecab;
   char *buf;
-  char *next;
-  char *end;
+  const char *next;
+  const char *end;
   grn_encoding encoding;
   grn_tokenizer_token token;
   grn_bool have_tokenized_delimiter;
@@ -180,48 +180,44 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 static grn_obj *
 mecab_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  size_t cl;
   /* grn_obj *table = args[0]; */
   grn_mecab_tokenizer *tokenizer = user_data->ptr;
-  char *p = tokenizer->next, *r;
-  char *e = tokenizer->end;
   grn_encoding encoding = tokenizer->encoding;
-  grn_tokenizer_status status;
 
   if (tokenizer->have_tokenized_delimiter) {
-    for (r = p; r < e; r += cl) {
-      cl = grn_charlen_(ctx, r, e, encoding);
-      if (cl > 0) {
-        if (grn_tokenizer_is_tokenized_delimiter(ctx, r, cl, encoding)) {
-          tokenizer->next = r + cl;
-          break;
-        }
-      } else {
-        tokenizer->next = e;
-        break;
-      }
-    }
+    tokenizer->next =
+      grn_tokenizer_tokenized_delimiter_next(ctx,
+                                             &(tokenizer->token),
+                                             tokenizer->next,
+                                             tokenizer->end - tokenizer->next,
+                                             encoding);
   } else {
+    size_t cl;
+    const char *p = tokenizer->next, *r;
+    const char *e = tokenizer->end;
+    grn_tokenizer_status status;
+
     for (r = p; r < e; r += cl) {
       if (!(cl = grn_charlen_(ctx, r, e, encoding))) {
         tokenizer->next = e;
         break;
       }
       if (grn_isspace(r, encoding)) {
-        char *q = r;
+        const char *q = r;
         while ((cl = grn_isspace(q, encoding))) { q += cl; }
         tokenizer->next = q;
         break;
       }
     }
+
+    if (r == e) {
+      status = GRN_TOKENIZER_LAST;
+    } else {
+      status = GRN_TOKENIZER_CONTINUE;
+    }
+    grn_tokenizer_token_push(ctx, &(tokenizer->token), p, r - p, status);
   }
 
-  if (r == e) {
-    status = GRN_TOKENIZER_LAST;
-  } else {
-    status = GRN_TOKENIZER_CONTINUE;
-  }
-  grn_tokenizer_token_push(ctx, &(tokenizer->token), p, r - p, status);
   return NULL;
 }
 
