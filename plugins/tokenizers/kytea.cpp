@@ -35,8 +35,7 @@ void kytea_init(grn_ctx *ctx);
 void kytea_fin(grn_ctx *ctx);
 
 void kytea_init(grn_ctx *ctx) {
-  if ((kytea_mutex != NULL) || (kytea_config != NULL) ||
-      (kytea_tagger != NULL) || (kytea_util != NULL)) {
+  if (kytea_mutex || kytea_config || kytea_tagger || kytea_util) {
     GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
                      "[tokenizer] TokenKytea is already initialized");
     return;
@@ -52,7 +51,7 @@ void kytea_init(grn_ctx *ctx) {
 
   kytea::KyteaConfig * const config = static_cast<kytea::KyteaConfig *>(
       GRN_PLUGIN_MALLOC(ctx, sizeof(kytea::KyteaConfig)));
-  if (config != NULL) try {
+  if (config) try {
     new (config) kytea::KyteaConfig;
     kytea_config = config;
     try {
@@ -80,7 +79,7 @@ void kytea_init(grn_ctx *ctx) {
 
   kytea::Kytea * const tagger = static_cast<kytea::Kytea *>(
       GRN_PLUGIN_MALLOC(ctx, sizeof(kytea::Kytea)));
-  if (tagger != NULL) try {
+  if (tagger) try {
     new (tagger) kytea::Kytea;
     kytea_tagger = tagger;
     try {
@@ -117,19 +116,19 @@ void kytea_init(grn_ctx *ctx) {
 void kytea_fin(grn_ctx *ctx) {
   kytea_util = NULL;
 
-  if (kytea_tagger != NULL) {
+  if (kytea_tagger) {
     kytea_tagger->~Kytea();
     GRN_PLUGIN_FREE(ctx, kytea_tagger);
     kytea_tagger = NULL;
   }
 
-  if (kytea_config != NULL) {
+  if (kytea_config) {
     kytea_config->~KyteaConfig();
     GRN_PLUGIN_FREE(ctx, kytea_config);
     kytea_config = NULL;
   }
 
-  if (kytea_mutex != NULL) {
+  if (kytea_mutex) {
     grn_plugin_mutex_destroy(ctx, kytea_mutex);
     kytea_mutex = NULL;
   }
@@ -165,7 +164,7 @@ void grn_tokenizer_kytea_init(grn_ctx *ctx, grn_tokenizer_kytea *tokenizer) {
 
 void grn_tokenizer_kytea_fin(grn_ctx *ctx, grn_tokenizer_kytea *tokenizer) {
   grn_tokenizer_token_fin(ctx, &tokenizer->token);
-  if (tokenizer->query != NULL) {
+  if (tokenizer->query) {
     grn_tokenizer_query_destroy(ctx, tokenizer->query);
   }
   tokenizer->~grn_tokenizer_kytea();
@@ -302,7 +301,7 @@ grn_obj *grn_kytea_fin(grn_ctx *ctx, int num_args, grn_obj **args,
                        grn_user_data *user_data) {
   grn_tokenizer_kytea * const tokenizer =
       static_cast<grn_tokenizer_kytea *>(user_data->ptr);
-  if (tokenizer != NULL) {
+  if (tokenizer) {
     grn_tokenizer_kytea_fin(ctx, tokenizer);
     GRN_PLUGIN_FREE(ctx, tokenizer);
   }
