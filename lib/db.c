@@ -4789,7 +4789,7 @@ grn_obj_is_persistent(grn_ctx *ctx, grn_obj *obj)
   GRN_FLOAT_SET(ctx, dest, value);
 
 grn_rc
-grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, int addp)
+grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, grn_bool addp)
 {
   grn_rc rc = GRN_SUCCESS;
   switch (src->header.domain) {
