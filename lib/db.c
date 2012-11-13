@@ -2924,6 +2924,78 @@ grn_obj_search_accessor(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
   return rc;
 }
 
+static grn_rc
+grn_obj_search_column_index(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
+                            grn_obj *res, grn_operator op,
+                            grn_search_optarg *optarg)
+{
+  grn_rc rc = GRN_INVALID_ARGUMENT;
+
+  if (DB_OBJ(obj)->range == res->header.domain) {
+    switch (query->header.type) {
+    case GRN_BULK :
+      if (query->header.domain == obj->header.domain &&
+          GRN_BULK_VSIZE(query) == sizeof(grn_id)) {
+        grn_id tid = *((grn_id *)GRN_BULK_HEAD(query));
+        grn_ii_cursor *c = grn_ii_cursor_open(ctx, (grn_ii *)obj, tid,
+                                              GRN_ID_NIL, GRN_ID_MAX, 1, 0);
+        if (c) {
+          grn_ii_posting *pos;
+          grn_hash *s = (grn_hash *)res;
+          while ((pos = grn_ii_cursor_next(ctx, c))) {
+            /* todo: support orgarg(op)
+               res_add(ctx, s, (grn_rset_posinfo *) pos,
+               get_weight(ctx, s, pos->rid, pos->sid, wvm, optarg), op);
+            */
+            grn_hash_add(ctx, s, pos, s->key_size, NULL, NULL);
+          }
+          grn_ii_cursor_close(ctx, c);
+        }
+        return GRN_SUCCESS;
+      } else {
+        unsigned int key_type = GRN_ID_NIL;
+        const char *key;
+        unsigned int key_len;
+        grn_obj *table;
+        grn_obj casted_query;
+        grn_bool need_cast = GRN_FALSE;
+
+        table = grn_ctx_at(ctx, obj->header.domain);
+        if (table) {
+          key_type = table->header.domain;
+          need_cast = (query->header.domain != key_type);
+          grn_obj_unlink(ctx, table);
+        }
+        if (need_cast) {
+          GRN_OBJ_INIT(&casted_query, GRN_BULK, 0, key_type);
+          rc = grn_obj_cast(ctx, query, &casted_query, 0);
+          if (rc == GRN_SUCCESS) {
+            key = GRN_BULK_HEAD(&casted_query);
+            key_len = GRN_BULK_VSIZE(&casted_query);
+          }
+        } else {
+          rc = GRN_SUCCESS;
+          key = GRN_BULK_HEAD(query);
+          key_len = GRN_BULK_VSIZE(query);
+        }
+        if (rc == GRN_SUCCESS) {
+          rc = grn_ii_sel(ctx, (grn_ii *)obj, key, key_len,
+                          (grn_hash *)res, op, optarg);
+        }
+        if (need_cast) {
+          GRN_OBJ_FIN(ctx, &casted_query);
+        }
+      }
+      break;
+    case GRN_QUERY :
+      rc = GRN_FUNCTION_NOT_IMPLEMENTED;
+      break;
+    }
+  }
+
+  return rc;
+}
+
 grn_rc
 grn_obj_search(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
                grn_obj *res, grn_operator op, grn_search_optarg *optarg)
@@ -2948,67 +3020,7 @@ grn_obj_search(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
       }
       break;
     case GRN_COLUMN_INDEX :
-      if (DB_OBJ(obj)->range == res->header.domain) {
-        switch (query->header.type) {
-        case GRN_BULK :
-          if (query->header.domain == obj->header.domain &&
-              GRN_BULK_VSIZE(query) == sizeof(grn_id)) {
-            grn_id tid = *((grn_id *)GRN_BULK_HEAD(query));
-            grn_ii_cursor *c = grn_ii_cursor_open(ctx, (grn_ii *)obj, tid,
-                                                  GRN_ID_NIL, GRN_ID_MAX, 1, 0);
-            if (c) {
-              grn_ii_posting *pos;
-              grn_hash *s = (grn_hash *)res;
-              while ((pos = grn_ii_cursor_next(ctx, c))) {
-                /* todo: support orgarg(op)
-                res_add(ctx, s, (grn_rset_posinfo *) pos,
-                        get_weight(ctx, s, pos->rid, pos->sid, wvm, optarg), op);
-                */
-                grn_hash_add(ctx, s, pos, s->key_size, NULL, NULL);
-              }
-              grn_ii_cursor_close(ctx, c);
-            }
-            return GRN_SUCCESS;
-          } else {
-            unsigned int key_type = GRN_ID_NIL;
-            const char *key;
-            unsigned int key_len;
-            grn_obj *table;
-            grn_obj casted_query;
-            grn_bool need_cast = GRN_FALSE;
-
-            table = grn_ctx_at(ctx, obj->header.domain);
-            if (table) {
-              key_type = table->header.domain;
-              need_cast = (query->header.domain != key_type);
-              grn_obj_unlink(ctx, table);
-            }
-            if (need_cast) {
-              GRN_OBJ_INIT(&casted_query, GRN_BULK, 0, key_type);
-              rc = grn_obj_cast(ctx, query, &casted_query, 0);
-              if (rc == GRN_SUCCESS) {
-                key = GRN_BULK_HEAD(&casted_query);
-                key_len = GRN_BULK_VSIZE(&casted_query);
-              }
-            } else {
-              rc = GRN_SUCCESS;
-              key = GRN_BULK_HEAD(query);
-              key_len = GRN_BULK_VSIZE(query);
-            }
-            if (rc == GRN_SUCCESS) {
-              rc = grn_ii_sel(ctx, (grn_ii *)obj, key, key_len,
-                              (grn_hash *)res, op, optarg);
-            }
-            if (need_cast) {
-              GRN_OBJ_FIN(ctx, &casted_query);
-            }
-          }
-          break;
-        case GRN_QUERY :
-          rc = GRN_FUNCTION_NOT_IMPLEMENTED;
-          break;
-        }
-      }
+      rc = grn_obj_search_column_index(ctx, obj, query, res, op, optarg);
       break;
     }
   }
