@@ -118,13 +118,8 @@ delimited_init(grn_ctx *ctx, grn_obj *table, grn_user_data *user_data,
                                            GRN_TEXT_VALUE(str),
                                            GRN_TEXT_LEN(str),
                                            tokenizer->encoding);
-  if (tokenizer->have_tokenized_delimiter) {
-    tokenizer->delimiter = GRN_TOKENIZER_TOKENIZED_DELIMITER_UTF8;
-    tokenizer->delimiter_len = strlen(tokenizer->delimiter);
-  } else {
-    tokenizer->delimiter = delimiter;
-    tokenizer->delimiter_len = delimiter_len;
-  }
+  tokenizer->delimiter = delimiter;
+  tokenizer->delimiter_len = delimiter_len;
 
   if (table_flags & GRN_OBJ_KEY_NORMALIZE) {
     normalizer = GRN_NORMALIZER_AUTO;
@@ -151,28 +146,41 @@ delimited_init(grn_ctx *ctx, grn_obj *table, grn_user_data *user_data,
 static grn_obj *
 delimited_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  size_t cl;
   grn_delimited_tokenizer *tokenizer = user_data->ptr;
-  const unsigned char *p = tokenizer->next, *r;
-  const unsigned char *e = tokenizer->end;
-  grn_tokenizer_status status;
-  for (r = p; r < e; r += cl) {
-    if (!(cl = grn_charlen_(ctx, (char *)r, (char *)e, tokenizer->encoding))) {
-      tokenizer->next = (unsigned char *)e;
-      break;
-    }
-    if (r + tokenizer->delimiter_len <= e &&
-        !memcmp(r, tokenizer->delimiter, tokenizer->delimiter_len)) {
-      tokenizer->next = r + tokenizer->delimiter_len;
-      break;
-    }
-  }
-  if (r == e) {
-    status = GRN_TOKENIZER_LAST;
+
+  if (tokenizer->have_tokenized_delimiter) {
+    unsigned int rest_length;
+    rest_length = tokenizer->end - tokenizer->next;
+    tokenizer->next =
+      grn_tokenizer_tokenized_delimiter_next(ctx,
+                                             &(tokenizer->token),
+                                             tokenizer->next,
+                                             rest_length,
+                                             tokenizer->encoding);
   } else {
-    status = GRN_TOKENIZER_CONTINUE;
+    size_t cl;
+    const unsigned char *p = tokenizer->next, *r;
+    const unsigned char *e = tokenizer->end;
+    grn_tokenizer_status status;
+    for (r = p; r < e; r += cl) {
+      if (!(cl = grn_charlen_(ctx, (char *)r, (char *)e, tokenizer->encoding))) {
+        tokenizer->next = (unsigned char *)e;
+        break;
+      }
+      if (r + tokenizer->delimiter_len <= e &&
+          !memcmp(r, tokenizer->delimiter, tokenizer->delimiter_len)) {
+        tokenizer->next = r + tokenizer->delimiter_len;
+        break;
+      }
+    }
+    if (r == e) {
+      status = GRN_TOKENIZER_LAST;
+    } else {
+      status = GRN_TOKENIZER_CONTINUE;
+    }
+    grn_tokenizer_token_push(ctx, &(tokenizer->token), p, r - p, status);
   }
-  grn_tokenizer_token_push(ctx, &(tokenizer->token), p, r - p, status);
+
   return NULL;
 }
 
