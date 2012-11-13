@@ -51,7 +51,14 @@ void kytea_init(grn_ctx *ctx) {
 
   kytea::KyteaConfig * const config = static_cast<kytea::KyteaConfig *>(
       GRN_PLUGIN_MALLOC(ctx, sizeof(kytea::KyteaConfig)));
-  if (config) try {
+  if (!config) {
+    kytea_fin(ctx);
+    GRN_PLUGIN_ERROR(ctx, GRN_NO_MEMORY_AVAILABLE,
+                     "[tokenizer] memory allocation to kytea::KyteaConfig failed");
+    return;
+  }
+
+  try {
     new (config) kytea::KyteaConfig;
     kytea_config = config;
     try {
@@ -70,16 +77,18 @@ void kytea_init(grn_ctx *ctx) {
     GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
                      "[tokenizer] kytea::KyteaConfig initialization failed");
     return;
-  } else {
-    kytea_fin(ctx);
-    GRN_PLUGIN_ERROR(ctx, GRN_NO_MEMORY_AVAILABLE,
-                     "[tokenizer] memory allocation to kytea::KyteaConfig failed");
-    return;
   }
 
   kytea::Kytea * const tagger = static_cast<kytea::Kytea *>(
       GRN_PLUGIN_MALLOC(ctx, sizeof(kytea::Kytea)));
-  if (tagger) try {
+  if (!tagger) {
+    kytea_fin(ctx);
+    GRN_PLUGIN_ERROR(ctx, GRN_NO_MEMORY_AVAILABLE,
+                     "[tokenizer] memory allocation to kytea::Kytea failed");
+    return;
+  }
+
+  try {
     new (tagger) kytea::Kytea;
     kytea_tagger = tagger;
     try {
@@ -95,11 +104,6 @@ void kytea_init(grn_ctx *ctx) {
     kytea_fin(ctx);
     GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
                      "[tokenizer] kytea::Kytea initialization failed");
-    return;
-  } else {
-    kytea_fin(ctx);
-    GRN_PLUGIN_ERROR(ctx, GRN_NO_MEMORY_AVAILABLE,
-                     "[tokenizer] memory allocation to kytea::Kytea failed");
     return;
   }
 
