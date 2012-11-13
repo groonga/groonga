@@ -30,6 +30,8 @@ GEO_DISTANCE_DELTA = 20000
 GRN_GEO_180DEGREE_RESOLUTION = 180 * GRN_GEO_RESOLUTION
 GRN_GEO_360DEGREE_RESOLUTION = 360 * GRN_GEO_RESOLUTION
 
+GEOKIT_CHECK_LOG = "check.log"
+
 module Geokit
   module Mappable
     # EARTH_RADIUS_IN_MILES = 3950.24494452398
@@ -760,6 +762,11 @@ class GrnTestData
     else
       distance = geo_distance(app_type)
     end
+
+    if type_of_diff_in_longitude == "short"
+      check_distance_by_geokit(distance)
+    end
+
     [
       TABLE_CREATE,
       CREATE_RESULT,
@@ -861,6 +868,32 @@ class GrnTestData
                          distance_diff)
           puts(data)
         end
+      end
+    end
+  end
+
+  def check_distance_by_geokit(distance)
+    Geokit::default_formula = :flat
+    latlng_start = Geokit::LatLng.new(@latitude_start_degree, @longitude_start_degree)
+    latlng_end = Geokit::LatLng.new(@latitude_end_degree, @longitude_end_degree)
+    geokit_distance = latlng_end.distance_from(latlng_start) * 1609.344
+    distance_diff = geokit_distance - distance.to_f
+    if @longitude_start_degree > @longitude_end_degree
+      delta = (@longitude_end_degree - @longitude_start_degree).abs * GEO_DISTANCE_DELTA
+    elsif @longitude_start_degree < @longitude_end_degree
+      delta = (@longitude_start_degree - @longitude_end_degree).abs * GEO_DISTANCE_DELTA
+    else
+      delta = GEO_DISTANCE_DELTA
+    end
+    if distance_diff.abs > delta
+      File.open(GEOKIT_CHECK_LOG, "a+") do |file|
+        msg = sprintf("NG,%f,%s,%s", distance_diff, latlng_start.ll, latlng_end.ll)
+        file.puts(msg)
+      end
+    else
+      File.open(GEOKIT_CHECK_LOG, "a+") do |file|
+        msg = sprintf("OK,%f,%s,%s\n", distance_diff, latlng_start.ll, latlng_end.ll)
+        file.puts(msg)
       end
     end
   end
