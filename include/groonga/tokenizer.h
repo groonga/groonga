@@ -134,7 +134,7 @@ typedef enum {
 } grn_tokenizer_status;
 
 /*
-  grn_tokenizer_token_push() pushes the next token in `token'. Note that
+  grn_tokenizer_token_push() pushes the next token into `token'. Note that
   grn_tokenizer_token_push() does not make a copy of the given string. This
   means that you have to maintain a memory space allocated to the string.
   Also note that the grn_tokenizer_token object must be maintained until the
