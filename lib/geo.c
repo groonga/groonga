@@ -2054,32 +2054,26 @@ geo_distance_rectangle_long_dist_type(quadrant_type quad_type,
                                                     lng2,
                                                     lat2) * GRN_GEO_RADIUS;
     }
-  } else if (quad_type == QUADRANT_1ST_TO_3RD ||
-             quad_type == QUADRANT_3RD_TO_1ST) {
-    if (lng1 > lng2) {
-      distance = geo_distance_rectangle_square_root(lng2 + M_2PI,
-                                                    lat2,
-                                                    lng1,
-                                                    lat1) * GRN_GEO_RADIUS;
-    } else {
-      distance = geo_distance_rectangle_square_root(lng1 + M_2PI,
-                                                    lat1,
-                                                    lng2,
-                                                    lat2) * GRN_GEO_RADIUS;
-    }
-  } else if (quad_type == QUADRANT_2ND_TO_4TH ||
-             quad_type == QUADRANT_4TH_TO_2ND) {
-    if (lng1 > lng2) {
-      distance = geo_distance_rectangle_square_root(lng1,
-                                                    lat1,
-                                                    lng2 + M_2PI,
-                                                    lat2) * GRN_GEO_RADIUS;
-    } else {
-      distance = geo_distance_rectangle_square_root(lng2,
-                                                    lat2,
-                                                    lng1 + M_2PI,
-                                                    lat1) * GRN_GEO_RADIUS;
-    }
+  } else if (quad_type == QUADRANT_1ST_TO_3RD) {
+    distance = geo_distance_rectangle_square_root(lng2 + M_2PI,
+                                                  lat2,
+                                                  lng1,
+                                                  lat1) * GRN_GEO_RADIUS;
+  } else if (quad_type == QUADRANT_3RD_TO_1ST) {
+    distance = geo_distance_rectangle_square_root(lng1 + M_2PI,
+                                                  lat1,
+                                                  lng2,
+                                                  lat2) * GRN_GEO_RADIUS;
+  } else if (quad_type == QUADRANT_2ND_TO_4TH) {
+    distance = geo_distance_rectangle_square_root(lng2,
+                                                  lat2,
+                                                  lng1 + M_2PI,
+                                                  lat1) * GRN_GEO_RADIUS;
+  } else if (quad_type == QUADRANT_4TH_TO_2ND) {
+    distance = geo_distance_rectangle_square_root(lng1,
+                                                  lat1,
+                                                  lng2 + M_2PI,
+                                                  lat2) * GRN_GEO_RADIUS;
   } else {
     if (lng1 > lng2) {
       distance = geo_distance_rectangle_square_root(lng1,
