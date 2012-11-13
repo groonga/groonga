@@ -766,7 +766,7 @@ grn_geo_select_in_circle(grn_ctx *ctx, grn_obj *index,
 
   if (center_point->header.domain != domain) {
     GRN_OBJ_INIT(&center_point_, GRN_BULK, 0, domain);
-    if (grn_obj_cast(ctx, center_point, &center_point_, 0)) { goto exit; }
+    if (grn_obj_cast(ctx, center_point, &center_point_, GRN_FALSE)) { goto exit; }
     center_point = &center_point_;
   }
   center = GRN_GEO_POINT_VALUE_RAW(center_point);
@@ -812,7 +812,7 @@ grn_geo_select_in_circle(grn_ctx *ctx, grn_obj *index,
   case GRN_DB_TEXT :
   case GRN_DB_LONG_TEXT :
     GRN_OBJ_INIT(&point_on_circle_, GRN_BULK, 0, domain);
-    if (grn_obj_cast(ctx, point_on_circle, &point_on_circle_, 0)) { goto exit; }
+    if (grn_obj_cast(ctx, point_on_circle, &point_on_circle_, GRN_FALSE)) { goto exit; }
     point_on_circle = &point_on_circle_;
     /* fallthru */
   case GRN_DB_TOKYO_GEO_POINT :
@@ -1730,7 +1730,7 @@ grn_geo_in_circle(grn_ctx *ctx, grn_obj *point, grn_obj *center,
     double d;
     if (center->header.domain != domain) {
       GRN_OBJ_INIT(&center_, GRN_BULK, 0, domain);
-      if (grn_obj_cast(ctx, center, &center_, 0)) { goto exit; }
+      if (grn_obj_cast(ctx, center, &center_, GRN_FALSE)) { goto exit; }
       center = &center_;
     }
 
@@ -1765,7 +1765,7 @@ grn_geo_in_circle(grn_ctx *ctx, grn_obj *point, grn_obj *center,
     case GRN_DB_TEXT :
     case GRN_DB_LONG_TEXT :
       GRN_OBJ_INIT(&radius_or_point_, GRN_BULK, 0, domain);
-      if (grn_obj_cast(ctx, radius_or_point, &radius_or_point_, 0)) { goto exit; }
+      if (grn_obj_cast(ctx, radius_or_point, &radius_or_point_, GRN_FALSE)) { goto exit; }
       radius_or_point = &radius_or_point_;
       /* fallthru */
     case GRN_DB_TOKYO_GEO_POINT :
@@ -1805,12 +1805,12 @@ grn_geo_in_rectangle(grn_ctx *ctx, grn_obj *point,
   if (domain == GRN_DB_TOKYO_GEO_POINT || domain == GRN_DB_WGS84_GEO_POINT) {
     if (top_left->header.domain != domain) {
       GRN_OBJ_INIT(&top_left_, GRN_BULK, 0, domain);
-      if (grn_obj_cast(ctx, top_left, &top_left_, 0)) { goto exit; }
+      if (grn_obj_cast(ctx, top_left, &top_left_, GRN_FALSE)) { goto exit; }
       top_left = &top_left_;
     }
     if (bottom_right->header.domain != domain) {
       GRN_OBJ_INIT(&bottom_right_, GRN_BULK, 0, domain);
-      if (grn_obj_cast(ctx, bottom_right, &bottom_right_, 0)) { goto exit; }
+      if (grn_obj_cast(ctx, bottom_right, &bottom_right_, GRN_FALSE)) { goto exit; }
       bottom_right = &bottom_right_;
     }
     r = grn_geo_in_rectangle_raw(ctx,
@@ -2221,25 +2221,25 @@ grn_geo_distance_rectangle(grn_ctx *ctx, grn_obj *point1, grn_obj *point2)
     if (domain1 != domain2) {
       GRN_OBJ_INIT(&point2_, GRN_BULK, 0, domain1);
       point2_initialized = GRN_TRUE;
-      if (grn_obj_cast(ctx, point2, &point2_, 0)) { goto exit; }
+      if (grn_obj_cast(ctx, point2, &point2_, GRN_FALSE)) { goto exit; }
       point2 = &point2_;
     }
   } else if (domain2 == GRN_DB_TOKYO_GEO_POINT ||
              domain2 == GRN_DB_WGS84_GEO_POINT) {
     GRN_OBJ_INIT(&point1_, GRN_BULK, 0, domain2);
     point1_initialized = GRN_TRUE;
-    if (grn_obj_cast(ctx, point1, &point1_, 0)) { goto exit; }
+    if (grn_obj_cast(ctx, point1, &point1_, GRN_FALSE)) { goto exit; }
     point1 = &point1_;
   } else if ((GRN_DB_SHORT_TEXT <= domain1 && domain1 <= GRN_DB_LONG_TEXT) &&
              (GRN_DB_SHORT_TEXT <= domain2 && domain2 <= GRN_DB_LONG_TEXT)) {
     GRN_OBJ_INIT(&point1_, GRN_BULK, 0, GRN_DB_WGS84_GEO_POINT);
     point1_initialized = GRN_TRUE;
-    if (grn_obj_cast(ctx, point1, &point1_, 0)) { goto exit; }
+    if (grn_obj_cast(ctx, point1, &point1_, GRN_FALSE)) { goto exit; }
     point1 = &point1_;
 
     GRN_OBJ_INIT(&point2_, GRN_BULK, 0, GRN_DB_WGS84_GEO_POINT);
     point2_initialized = GRN_TRUE;
-    if (grn_obj_cast(ctx, point2, &point2_, 0)) { goto exit; }
+    if (grn_obj_cast(ctx, point2, &point2_, GRN_FALSE)) { goto exit; }
     point2 = &point2_;
   } else {
     goto exit;
@@ -2268,7 +2268,7 @@ grn_geo_distance_sphere(grn_ctx *ctx, grn_obj *point1, grn_obj *point2)
     if (point2->header.domain != domain) {
       GRN_OBJ_INIT(&point2_, GRN_BULK, 0, domain);
       point2_initialized = GRN_TRUE;
-      if (grn_obj_cast(ctx, point2, &point2_, 0)) { goto exit; }
+      if (grn_obj_cast(ctx, point2, &point2_, GRN_FALSE)) { goto exit; }
       point2 = &point2_;
     }
     d = grn_geo_distance_sphere_raw(ctx,
@@ -2295,7 +2295,7 @@ grn_geo_distance_ellipsoid(grn_ctx *ctx, grn_obj *point1, grn_obj *point2)
     if (point2->header.domain != domain) {
       GRN_OBJ_INIT(&point2_, GRN_BULK, 0, domain);
       point2_initialized = GRN_TRUE;
-      if (grn_obj_cast(ctx, point2, &point2_, 0)) { goto exit; }
+      if (grn_obj_cast(ctx, point2, &point2_, GRN_FALSE)) { goto exit; }
       point2 = &point2_;
     }
     if (domain == GRN_DB_TOKYO_GEO_POINT) {

@@ -2968,7 +2968,7 @@ grn_obj_search_column_index(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
         }
         if (need_cast) {
           GRN_OBJ_INIT(&casted_query, GRN_BULK, 0, key_type);
-          rc = grn_obj_cast(ctx, query, &casted_query, 0);
+          rc = grn_obj_cast(ctx, query, &casted_query, GRN_FALSE);
           if (rc == GRN_SUCCESS) {
             key = GRN_BULK_HEAD(&casted_query);
             key_len = GRN_BULK_VSIZE(&casted_query);
@@ -5213,7 +5213,7 @@ grn_accessor_set_value(grn_ctx *ctx, grn_accessor *a, grn_id id,
               } else {
                 grn_obj buf;
                 GRN_INT32_INIT(&buf, 0);
-                grn_obj_cast(ctx, value, &buf, 0);
+                grn_obj_cast(ctx, value, &buf, GRN_FALSE);
                 memcpy(vp, GRN_BULK_HEAD(&buf), sizeof(int));
                 GRN_OBJ_FIN(ctx, &buf);
               }
@@ -8770,7 +8770,7 @@ grn_table_sort_key_from_str_geo(grn_ctx *ctx, const char *str, unsigned int str_
             GRN_TEXT_INIT(&buf, GRN_OBJ_DO_SHALLOW_COPY);
             GRN_TEXT_SET(ctx, &buf, p + 1, r - p - 2); /* should be quoted */
             k->key = grn_obj_open(ctx, GRN_BULK, 0, domain);
-            grn_obj_cast(ctx, &buf, k->key, 0);
+            grn_obj_cast(ctx, &buf, k->key, GRN_FALSE);
             GRN_OBJ_FIN(ctx, &buf);
           }
           k->flags |= GRN_TABLE_SORT_GEO;

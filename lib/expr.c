@@ -965,7 +965,7 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
             grn_obj dest;
             if (xd != yd) {
               GRN_OBJ_INIT(&dest, GRN_BULK, 0, yd);
-              if (!grn_obj_cast(ctx, x, &dest, 0)) {
+              if (!grn_obj_cast(ctx, x, &dest, GRN_FALSE)) {
                 grn_obj_reinit(ctx, x, yd, 0);
                 grn_bulk_write(ctx, x, GRN_BULK_HEAD(&dest), GRN_BULK_VSIZE(&dest));
               }
@@ -977,7 +977,7 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
             grn_obj dest;
             if (xd != yd) {
               GRN_OBJ_INIT(&dest, GRN_BULK, 0, xd);
-              if (!grn_obj_cast(ctx, y, &dest, 0)) {
+              if (!grn_obj_cast(ctx, y, &dest, GRN_FALSE)) {
                 grn_obj_reinit(ctx, y, xd, 0);
                 grn_bulk_write(ctx, y, GRN_BULK_HEAD(&dest), GRN_BULK_VSIZE(&dest));
               }
@@ -1363,7 +1363,7 @@ grn_expr_compile(grn_ctx *ctx, grn_obj *expr)
     {\
       grn_obj y_;\
       GRN_OBJ_INIT(&y_, GRN_BULK, 0, x->header.domain);\
-      if (grn_obj_cast(ctx, y, &y_, 0)) {\
+      if (grn_obj_cast(ctx, y, &y_, GRN_FALSE)) {\
         r = 0;\
       } else {\
         DO_COMPARE_SUB_NUMERIC(&y_, op);\
@@ -1719,13 +1719,13 @@ grn_expr_compile(grn_ctx *ctx, grn_obj *expr)
       grn_obj dest;\
       if (x->header.domain < y->header.domain) {\
         GRN_OBJ_INIT(&dest, GRN_BULK, 0, y->header.domain);\
-        if (!grn_obj_cast(ctx, x, &dest, 0)) {\
+        if (!grn_obj_cast(ctx, x, &dest, GRN_FALSE)) {\
           r = (GRN_BULK_VSIZE(&dest) == GRN_BULK_VSIZE(y) &&\
                !memcmp(GRN_BULK_HEAD(&dest), GRN_BULK_HEAD(y), GRN_BULK_VSIZE(y))); \
         }\
       } else {\
         GRN_OBJ_INIT(&dest, GRN_BULK, 0, x->header.domain);\
-        if (!grn_obj_cast(ctx, y, &dest, 0)) {\
+        if (!grn_obj_cast(ctx, y, &dest, GRN_FALSE)) {\
           r = (GRN_BULK_VSIZE(&dest) == GRN_BULK_VSIZE(x) &&\
                !memcmp(GRN_BULK_HEAD(&dest), GRN_BULK_HEAD(x), GRN_BULK_VSIZE(x))); \
         }\
@@ -3633,7 +3633,7 @@ get_weight(grn_ctx *ctx, grn_expr_code *ec)
       int32_t weight = 1;
       grn_obj weight_buffer;
       GRN_INT32_INIT(&weight_buffer, 0);
-      if (!grn_obj_cast(ctx, ec[1].value, &weight_buffer, 0)) {
+      if (!grn_obj_cast(ctx, ec[1].value, &weight_buffer, GRN_FALSE)) {
         weight = GRN_INT32_VALUE(&weight_buffer);
       }
       grn_obj_unlink(ctx, &weight_buffer);
@@ -4048,7 +4048,7 @@ grn_table_select_select_by_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
           switch (a->action) {
           case GRN_ACCESSOR_GET_ID :
             GRN_UINT32_INIT(&dest, 0);
-            if (!grn_obj_cast(ctx, si->query, &dest, 0)) {
+            if (!grn_obj_cast(ctx, si->query, &dest, GRN_FALSE)) {
               memcpy(&pi, GRN_BULK_HEAD(&dest), GRN_BULK_VSIZE(&dest));
               if (pi.rid) {
                 if (pi.rid == grn_table_at(ctx, table, pi.rid)) {
@@ -4062,7 +4062,7 @@ grn_table_select_select_by_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
             break;
           case GRN_ACCESSOR_GET_KEY :
             GRN_OBJ_INIT(&dest, GRN_BULK, 0, table->header.domain);
-            if (!grn_obj_cast(ctx, si->query, &dest, 0)) {
+            if (!grn_obj_cast(ctx, si->query, &dest, GRN_FALSE)) {
               if ((pi.rid = grn_table_get(ctx, table,
                                           GRN_BULK_HEAD(&dest),
                                           GRN_BULK_VSIZE(&dest)))) {
@@ -4121,7 +4121,7 @@ grn_table_select_select_by_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
             break;
           case GRN_ACCESSOR_GET_KEY :
             GRN_OBJ_INIT(&dest, GRN_BULK, 0, table->header.domain);
-            if (!grn_obj_cast(ctx, si->query, &dest, 0)) {
+            if (!grn_obj_cast(ctx, si->query, &dest, GRN_FALSE)) {
               grn_hash *pres;
               if ((pres = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
                                           GRN_OBJ_TABLE_HASH_KEY))) {
