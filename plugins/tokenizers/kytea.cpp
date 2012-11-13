@@ -217,46 +217,46 @@ grn_obj *grn_kytea_init(grn_ctx *ctx, int num_args, grn_obj **args,
     tokenizer->rest_query_string = normalized_string;
     tokenizer->rest_query_string_length = normalized_string_length;
   } else {
-  grn_plugin_mutex_lock(ctx, kytea_mutex);
-  try {
-    const std::string str(normalized_string, normalized_string_length);
-    const kytea::KyteaString &surface_str = kytea_util->mapString(str);
-    const kytea::KyteaString &normalized_str = kytea_util->normalize(surface_str);
-    tokenizer->sentence = kytea::KyteaSentence(surface_str, normalized_str);
-    kytea_tagger->calculateWS(tokenizer->sentence);
-  } catch (...) {
-    grn_plugin_mutex_unlock(ctx, kytea_mutex);
-    GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
-                     "[tokenizer] tokenization failed");
-    return NULL;
-  }
-  grn_plugin_mutex_unlock(ctx, kytea_mutex);
-
-  try {
-    for (std::size_t i = 0; i < tokenizer->sentence.words.size(); ++i) {
-      const std::string &token =
-          kytea_util->showString(tokenizer->sentence.words[i].surface);
-      const char *ptr = token.c_str();
-      unsigned int left = static_cast<unsigned int>(token.length());
-      while (left > 0) {
-        const int char_length =
-            grn_tokenizer_charlen(ctx, ptr, left, query->encoding);
-        if ((char_length == 0) ||
-            (grn_tokenizer_isspace(ctx, ptr, left, query->encoding) != 0)) {
-          break;
-        }
-        ptr += char_length;
-        left -= char_length;
-      }
-      if (left == 0) {
-        tokenizer->tokens.push_back(token);
-      }
+    grn_plugin_mutex_lock(ctx, kytea_mutex);
+    try {
+      const std::string str(normalized_string, normalized_string_length);
+      const kytea::KyteaString &surface_str = kytea_util->mapString(str);
+      const kytea::KyteaString &normalized_str = kytea_util->normalize(surface_str);
+      tokenizer->sentence = kytea::KyteaSentence(surface_str, normalized_str);
+      kytea_tagger->calculateWS(tokenizer->sentence);
+    } catch (...) {
+      grn_plugin_mutex_unlock(ctx, kytea_mutex);
+      GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
+                       "[tokenizer] tokenization failed");
+      return NULL;
     }
-  } catch (...) {
-    GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
-                     "[tokenizer] adjustment failed");
-    return NULL;
-  }
+    grn_plugin_mutex_unlock(ctx, kytea_mutex);
+
+    try {
+      for (std::size_t i = 0; i < tokenizer->sentence.words.size(); ++i) {
+        const std::string &token =
+            kytea_util->showString(tokenizer->sentence.words[i].surface);
+        const char *ptr = token.c_str();
+        unsigned int left = static_cast<unsigned int>(token.length());
+        while (left > 0) {
+          const int char_length =
+              grn_tokenizer_charlen(ctx, ptr, left, query->encoding);
+          if ((char_length == 0) ||
+              (grn_tokenizer_isspace(ctx, ptr, left, query->encoding) != 0)) {
+            break;
+          }
+          ptr += char_length;
+          left -= char_length;
+        }
+        if (left == 0) {
+          tokenizer->tokens.push_back(token);
+        }
+      }
+    } catch (...) {
+      GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
+                       "[tokenizer] adjustment failed");
+      return NULL;
+    }
   }
 
   user_data->ptr = tokenizer;
@@ -283,16 +283,16 @@ grn_obj *grn_kytea_next(grn_ctx *ctx, int num_args, grn_obj **args,
     }
     tokenizer->rest_query_string = rest_query_string;
   } else {
-  const grn_tokenizer_status status =
-      ((tokenizer->id + 1) < tokenizer->tokens.size()) ?
-          GRN_TOKENIZER_CONTINUE : GRN_TOKENIZER_LAST;
-  if (tokenizer->id < tokenizer->tokens.size()) {
-    const std::string &token = tokenizer->tokens[tokenizer->id++];
-    grn_tokenizer_token_push(ctx, &tokenizer->token,
-                             token.c_str(), token.length(), status);
-  } else {
-    grn_tokenizer_token_push(ctx, &tokenizer->token, "", 0, status);
-  }
+    const grn_tokenizer_status status =
+        ((tokenizer->id + 1) < tokenizer->tokens.size()) ?
+            GRN_TOKENIZER_CONTINUE : GRN_TOKENIZER_LAST;
+    if (tokenizer->id < tokenizer->tokens.size()) {
+      const std::string &token = tokenizer->tokens[tokenizer->id++];
+      grn_tokenizer_token_push(ctx, &tokenizer->token,
+                               token.c_str(), token.length(), status);
+    } else {
+      grn_tokenizer_token_push(ctx, &tokenizer->token, "", 0, status);
+    }
   }
 
   return NULL;
