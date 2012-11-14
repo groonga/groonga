@@ -192,16 +192,10 @@ You can specify the value of ``approximate_type`` by one of the followings.
 
     There is a limitation about ``geo_distance``. ``geo_distance`` can not
     calculate the value of distance between two points across meridian,
-    euator or the date line.
+    euator or the date line if you use ``shere`` or ``ellipsoid`` as
+    approximate type.
     This is temporary limitation according to the implementation of groonga,
     but it will be fixed in the future release.
-
-.. note::
-
-    There is a limitation about ``geo_distance`` above notice.
-    But it relaxes the limitation if you use ``rectangle`` as approximate type.
-    You can calculate the correct distance if two point are placed at northern
-    hemisphere or southern hemisphere.
 
 ``rectangle``
 ...............
