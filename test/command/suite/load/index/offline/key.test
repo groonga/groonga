@@ -1,0 +1,14 @@
+table_create Users TABLE_HASH_KEY ShortText
+
+load --table Users
+[
+["_key"],
+["Alice"],
+["Bob"]
+]
+
+table_create Names TABLE_PAT_KEY --key_type ShortText \
+  --default_tokenizer TokenBigramSplitSymbolAlpha
+column_create Names users_name COLUMN_INDEX|WITH_POSITION Users _key
+
+select Names --output_columns _key
