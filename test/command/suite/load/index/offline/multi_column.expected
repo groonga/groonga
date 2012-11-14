@@ -1,0 +1,68 @@
+table_create Users TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Users name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Users address COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Users
+[
+["name", "address"],
+["Alice", "France"],
+["Bob", "England"]
+]
+[[0,0.0,0.0],2]
+table_create Words TABLE_PAT_KEY|KEY_NORMALIZE --key_type ShortText   --default_tokenizer TokenBigramSplitSymbolAlpha
+[[0,0.0,0.0],true]
+column_create Words users_all COLUMN_INDEX|WITH_POSITION|WITH_SECTION   Users name,address
+[[0,0.0,0.0],true]
+select Words --output_columns _key
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        18
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ]
+      ],
+      [
+        "al"
+      ],
+      [
+        "an"
+      ],
+      [
+        "b"
+      ],
+      [
+        "bo"
+      ],
+      [
+        "ce"
+      ],
+      [
+        "d"
+      ],
+      [
+        "e"
+      ],
+      [
+        "en"
+      ],
+      [
+        "fr"
+      ],
+      [
+        "gl"
+      ]
+    ]
+  ]
+]
