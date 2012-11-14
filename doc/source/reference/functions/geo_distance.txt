@@ -217,6 +217,17 @@ Here is a sample about calculating the value of distance with explicitly specifi
 
 .. include:: ../../example/reference/functions/geo_distance_distance_rectangle.log
 
+Here are samples about calculating the value of distance with explicitly specified point across meridian, equator, the date line.
+
+.. groonga-command
+.. include:: ../../example/reference/functions/geo_distance_distance_rectangle_across.log
+.. # Calculate the value of distance from Sydney,Australia to New York,The United States (across the date line).
+.. select Geo --output_columns distance --scorer 'distance = geo_distance("-121926000x544351000", "146566000x-266422000", "rectangle")'
+.. # Calculate the value of distance from Paris,Flance to Madrid,Spain (across meridian).
+.. select Geo --output_columns distance --scorer 'distance = geo_distance("175904000x8464000", "145508000x-13291000", "rectangle")'
+.. # Calculate the value of distance from New York,The United Status to Brasillia,Brasil (across equator).
+.. select Geo --output_columns distance --scorer 'distance = geo_distance("146566000x-266422000", "-56880000x-172310000", "rectangle")'
+
 .. note::
 
     ``geo_distance`` uses square approximation as default. If you omit ``approximate_type``, ``geo_distance`` behaves like ``rectangle`` was specified.
