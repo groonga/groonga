@@ -101,6 +101,12 @@ class GrnTestData
   attr_accessor :distance
   attr_accessor :output_filename
 
+  attr_accessor :quadrant
+  attr_accessor :type_of_longitude
+  attr_accessor :point_or_line
+  attr_accessor :direction
+  attr_accessor :formula
+
   def initialize(options={})
     @csv_file = options[:csv]
     @options = options
@@ -111,7 +117,9 @@ class GrnTestData
       @longitude_end_degree, @latitude_end_degree,
       @longitude_start, @latitude_start,
       @longitude_end, @latitude_end,
-      @distance, @output_filename = data.chomp.split(",")
+      @distance, @output_filename,
+      @quadrant, @type_of_longitude,
+      @point_or_line, @direction, @formula = data.chomp.split(",")
 
     @longitude_start_degree = @longitude_start_degree.to_i
     @latitude_start_degree = @latitude_start_degree.to_i
