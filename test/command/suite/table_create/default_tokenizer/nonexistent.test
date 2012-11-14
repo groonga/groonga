@@ -1,0 +1,17 @@
+table_create Tags TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenNonexistent
+
+table_create Movies TABLE_HASH_KEY ShortText
+column_create Movies tags COLUMN_VECTOR Tags
+
+column_create Tags movies_tags COLUMN_INDEX Movies tags
+
+load --table Movies
+[
+{"_key": "Seven Samurai", tags: "Samurai Japanese Japan"},
+{"_key": "The Last Samurai", tags: "English Samurai Japanese US Japan"}
+]
+
+select Tags --output_columns _key --limit -1
+
+select Movies --match_columns tags --query Samurai
