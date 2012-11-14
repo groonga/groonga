@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-14 12:58\n"
+"POT-Creation-Date: 2012-11-14 13:08\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -6865,7 +6865,6 @@ msgstr "``ellipsoid``"
 
 # e7562438f72a4dcca5c09cd9cbacbe68
 #: ../../../source/reference/functions/geo_distance.txt:193
-#, fuzzy
 msgid ""
 "There is a limitation about ``geo_distance``. ``geo_distance`` can not "
 "calculate the value of distance between two points across meridian, euator "
@@ -6873,10 +6872,6 @@ msgid ""
 "This is temporary limitation according to the implementation of groonga, but "
 "it will be fixed in the future release."
 msgstr ""
-"There is a limitation about ``geo_distance``. ``geo_distance`` can not "
-"calculate the value of distance between two points across meridian, euator "
-"or the date line. This is temporary limitation according to the "
-"implementation of groonga, but it will be fixed in the future release."
 
 # 38daeb6dc3124f30a57cdcbf136800de
 #: ../../../source/reference/functions/geo_distance.txt:203
@@ -10324,9 +10319,8 @@ msgstr ""
 # 4890c35327b3439090ef08d70e318f08
 #: ../../../source/reference/query_expanders/tsv.txt:41
 #: ../../../source/reference/query_expanders/tsv.txt:84
-#, fuzzy
 msgid "groonga"
-msgstr "groonga-httpd"
+msgstr ""
 
 # dc617292a0c340ea9f042ee371972717
 #: ../../../source/reference/query_expanders/tsv.txt:43
@@ -10335,9 +10329,8 @@ msgstr ""
 
 # 4890c35327b3439090ef08d70e318f08
 #: ../../../source/reference/query_expanders/tsv.txt:43
-#, fuzzy
 msgid "mroonga"
-msgstr "groonga-httpd"
+msgstr ""
 
 # b80938800d2a44e29368e3952cf32d99
 #: ../../../source/reference/query_expanders/tsv.txt:46
@@ -10357,9 +10350,8 @@ msgstr ""
 #: ../../../source/reference/query_expanders/tsv.txt:55
 #: ../../../source/reference/query_expanders/tsv.txt:64
 #: ../../../source/reference/query_expanders/tsv.txt:94
-#, fuzzy
 msgid "The above command equals to the following command::"
-msgstr "Process log uses the following format::"
+msgstr ""
 
 # aedb3167e46442498e680a8aff025cc0
 #: ../../../source/reference/query_expanders/tsv.txt:59
@@ -10395,9 +10387,8 @@ msgstr ""
 
 # 4890c35327b3439090ef08d70e318f08
 #: ../../../source/reference/query_expanders/tsv.txt:84
-#, fuzzy
 msgid "gronga"
-msgstr "groonga-httpd"
+msgstr ""
 
 # dcc6dcbe18e941a38ff814c7de99ab37
 #: ../../../source/reference/query_expanders/tsv.txt:87
@@ -10431,9 +10422,8 @@ msgstr ""
 
 # 42dc578c7b1641c39d59b7551160592e
 #: ../../../source/reference/query_expanders/tsv.txt:108
-#, fuzzy
 msgid "Location"
-msgstr "Notification"
+msgstr ""
 
 # df9702c478d04755907f64b1cea1f35b
 #: ../../../source/reference/query_expanders/tsv.txt:110
@@ -10481,9 +10471,8 @@ msgstr ""
 
 # 42dc578c7b1641c39d59b7551160592e
 #: ../../../source/reference/query_expanders/tsv.txt:145
-#, fuzzy
 msgid "Limitation"
-msgstr "Notification"
+msgstr ""
 
 # 83133a6f8b354702b5e08ed09e48cceb
 #: ../../../source/reference/query_expanders/tsv.txt:147
@@ -10494,9 +10483,8 @@ msgstr ""
 
 # 72217ef1d842418ab8c29d7974f9168e
 #: ../../../source/reference/query_expanders/tsv.txt:153
-#, fuzzy
 msgid ":ref:`query-expansion`"
-msgstr "``query_expansion``"
+msgstr ""
 
 # 380d55e2098f4466bc73bd08c1ea4256
 #: ../../../source/reference/tokenizers.txt:6
@@ -10900,13 +10888,9 @@ msgstr ""
 msgid "Object型はv1.2でサポートされます。"
 msgstr "Object型はv1.2でサポートされます。"
 
-# 0564c043c0b34205bd052d24b03d5300
-#~ msgid ""
-#~ "There are two kinds of configuration directives. One is provided by "
-#~ "nginx, the other is by groonga-httpd."
-#~ msgstr ""
-#~ "There are two kinds of configuration directives. One is provided by "
-#~ "nginx, the other is by groonga-httpd."
+# 02cd8833aa484433bdd35711b7e635eb
+#~ msgid "Logical BUT operator"
+#~ msgstr "Logical BUT operator"
 
 # a301a6cb3377423baec73201e8bd6806
 #~ msgid ""
@@ -10916,7 +10900,10 @@ msgstr "Object型はv1.2でサポートされます。"
 #~ "Here are a schema definition of ``Stations`` table and sample data to "
 #~ "show usage."
 
-# 02cd8833aa484433bdd35711b7e635eb
-#~ msgid "Logical BUT operator"
-#~ msgstr "Logical BUT operator"
-
+# 0564c043c0b34205bd052d24b03d5300
+#~ msgid ""
+#~ "There are two kinds of configuration directives. One is provided by "
+#~ "nginx, the other is by groonga-httpd."
+#~ msgstr ""
+#~ "There are two kinds of configuration directives. One is provided by "
+#~ "nginx, the other is by groonga-httpd."
