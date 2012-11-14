@@ -8,4 +8,4 @@ load --table Geo
 ]
 [[0,0.0,0.0],1]
 select Geo --output_columns distance --scorer 'distance = geo_distance("-324000000x-320400000", "3600000x3600000")'
-[[0,0.0,0.0],[[[1],[["distance","Int32"]],[12341595]]]]
+[[0,0.0,0.0],[[[1],[["distance","Int32"]],[12356360]]]]
