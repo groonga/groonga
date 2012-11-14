@@ -1,3 +1,4 @@
+longitude start(degree),latitude start(degree),longitude end(degree),latitude end(degree),longitude start,latitude start,longitude end,latitude end,distance,output filename,quadrant,type longitude,type,direction,position,formula
 -180,-90,-180,-90,-648000000,-324000000,-648000000,-324000000,,3rd/south_pole.test
 -180,-89,-180,-90,-648000000,-320400000,-648000000,-324000000,,3rd/near_south_pole_to_south_pole.test
 -180,-1,-180,-90,-648000000,-3600000,-648000000,-324000000,,3rd/near_equator_to_south_pole.test
