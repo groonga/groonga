@@ -942,6 +942,10 @@ if __FILE__ == $0
             "update csv field") do |update_csv_field|
     OPTS[:update_csv_field] = update_csv_field
   end
+  parser.on("--evaluate-formula",
+            "check with evaluated formula") do |evaluate_formula|
+    OPTS[:evaluate_formula] = evaluate_formula
+  end
 
   parser.parse!(ARGV)
 
@@ -1081,6 +1085,20 @@ if __FILE__ == $0
                                   File.basename(test_name, ".test"))
           grndata.output_file(:expected, expected_name, dot_expected, i, line)
         end
+
+        if OPTS.has_key?(:evaluate_formula)
+          if grndata.formula
+            evaluated = (eval grndata.formula).floor
+            if evaluated != grndata.distance
+              description = "calculated distance does not match"
+              message = sprintf("%s: manual:%d[m] calculated:%d[m] at %s line:%d",
+                                description, evaluated, grndata.distance,
+                                OPTS[:csv], i+1)
+              raise Exception, message
+            end
+          end
+        end
+
       end
     end
   end
