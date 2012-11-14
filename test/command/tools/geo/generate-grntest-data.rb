@@ -766,14 +766,12 @@ class GrnTestData
     else
       select_postfix = ", \"#{app_type}\")'\n"
     end
-    if @distance != ""
-      distance = @distance
-    else
-      distance = geo_distance(app_type)
+    if @distance == ""
+      @distance = geo_distance(app_type)
     end
 
     if type_of_diff_in_longitude == "short"
-      check_distance_by_geokit(distance)
+      check_distance_by_geokit(@distance)
     end
 
     [
@@ -787,7 +785,7 @@ class GrnTestData
       scorer,
       select_postfix,
       SELECT_PRE,
-      distance,
+      @distance,
       SELECT_POST
     ].join
   end
