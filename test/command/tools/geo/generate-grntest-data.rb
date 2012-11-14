@@ -969,7 +969,6 @@ if __FILE__ == $0
             "type longitude",
             "type",
             "direction",
-            "position",
             "formula"
           ]
         end
