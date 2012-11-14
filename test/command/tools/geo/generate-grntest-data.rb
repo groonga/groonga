@@ -4,6 +4,7 @@
 require 'fileutils'
 require 'optparse'
 require 'geokit'
+require 'csv'
 
 TABLE_CREATE = "table_create Geo TABLE_HASH_KEY ShortText\n"
 COLUMN_CREATE = "column_create Geo distance COLUMN_SCALAR Int32\n"
@@ -931,6 +932,10 @@ if __FILE__ == $0
             "check .reject and .expected in detail") do |directory|
     OPTS[:check_reject] = directory
   end
+  parser.on("--update-csv-field",
+            "update csv field") do |update_csv_field|
+    OPTS[:update_csv_field] = update_csv_field
+  end
 
   parser.parse!(ARGV)
 
@@ -940,13 +945,36 @@ if __FILE__ == $0
 
   grndata.check_rejected if OPTS.has_key?(:check_reject)
 
+  updated_file = CSV.open("updated.csv", "w+") if OPTS.has_key?(:update_csv_field)
+
   File.open(OPTS[:csv], "r") do |csv_file|
     lines = csv_file.readlines
 
     lines.each_with_index do |line, i|
       is_header = i.zero?
-      next if is_header
-
+      if is_header
+        if OPTS.has_key?(:update_csv_field)
+          updated_file << [
+            "longitude start(degree)",
+            "latitude start(degree)",
+            "longitude end(degree)",
+            "latitude end(degree)",
+            "longitude start",
+            "latitude start",
+            "longitude end",
+            "latitude end",
+            "distance",
+            "output filename",
+            "quadrant",
+            "type longitude",
+            "type",
+            "direction",
+            "position",
+            "formula"
+          ]
+        end
+        next
+      end
       #puts "line No #{i}"
 
       grndata.parse_line_data(line)
@@ -968,6 +996,25 @@ if __FILE__ == $0
       longitude_position = grndata.longitude_position
 
       filename = grndata.generate_filename
+
+      if OPTS.has_key?(:update_csv_field)
+        updated_file << [
+          grndata.longitude_start_degree,
+          grndata.latitude_start_degree,
+          grndata.longitude_end_degree,
+          grndata.latitude_end_degree,
+          grndata.longitude_start,
+          grndata.latitude_start,
+          grndata.longitude_end,
+          grndata.latitude_end,
+          grndata.distance.empty? ? nil : grndata.distance,
+          grndata.output_filename,
+          quadrant,
+          type_longitude,
+          type,
+          direction.empty? ? nil : direction,
+        ]
+      end
 
       if OPTS.has_key?(:file_name)
 
@@ -1032,4 +1079,5 @@ if __FILE__ == $0
       end
     end
   end
+  updated_file.close if OPTS.has_key?(:update_csv_field)
 end
