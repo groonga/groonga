@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-14 18:49\n"
+"POT-Creation-Date: 2012-11-15 11:56\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -160,7 +160,9 @@ msgstr ""
 #: ../../../source/example/reference/commands/table_list.log:1
 #: ../../../source/example/reference/executables/groonga-httpd.log:1
 #: ../../../source/example/reference/functions/geo_distance_distance_rectangle.log:1
-#: ../../../source/example/reference/functions/geo_distance_distance_rectangle_across.log:1
+#: ../../../source/example/reference/functions/geo_distance_distance_rectangle_across_equator.log:1
+#: ../../../source/example/reference/functions/geo_distance_distance_rectangle_across_meridian.log:1
+#: ../../../source/example/reference/functions/geo_distance_distance_rectangle_across_the_date_line.log:1
 #: ../../../source/example/reference/functions/geo_distance_location_ellipsoid.log:1
 #: ../../../source/example/reference/functions/geo_distance_location_rectangle.log:1
 #: ../../../source/example/reference/functions/geo_distance_location_sphere.log:1
@@ -6853,14 +6855,14 @@ msgstr "``rectangle``"
 # 79d9bff38f3a48e0ad05b2f8e4782660
 # cf7d015020e9412988ea521ca618bda9
 #: ../../../source/reference/functions/geo_distance.txt:188
-#: ../../../source/reference/functions/geo_distance.txt:246
+#: ../../../source/reference/functions/geo_distance.txt:259
 msgid "``sphere``"
 msgstr "``sphere``"
 
 # eecc540f59514a40aa2ed22538e26be9
 # e47066aee34645d19f85394a475c737a
 #: ../../../source/reference/functions/geo_distance.txt:189
-#: ../../../source/reference/functions/geo_distance.txt:263
+#: ../../../source/reference/functions/geo_distance.txt:276
 msgid "``ellipsoid``"
 msgstr "``ellipsoid``"
 
@@ -6904,8 +6906,8 @@ msgstr "You can also specify ``rect`` as abbrev expression."
 # ec5924b983394892a875751fff19689c
 # 7483f21bdbbc4b7cb4861bfaff9b4e6a
 #: ../../../source/reference/functions/geo_distance.txt:212
-#: ../../../source/reference/functions/geo_distance.txt:256
-#: ../../../source/reference/functions/geo_distance.txt:274
+#: ../../../source/reference/functions/geo_distance.txt:269
+#: ../../../source/reference/functions/geo_distance.txt:287
 msgid ""
 "Here is a sample about calculating the value of distance with column value."
 msgstr ""
@@ -6927,8 +6929,34 @@ msgid ""
 "specified point across meridian, equator, the date line."
 msgstr ""
 
-# 32f234e7cf7a453b8a7d5d4dd11c16c4
+# 40d47f18a47c4ce28c53c42e2b04b7c0
+#: ../../../source/reference/functions/geo_distance.txt:226
+msgid ""
+"This sample shows the value of distance across meridian. The return value of "
+"``geo_distance(\"175904000x8464000\", \"145508000x-13291000\", \"rectangle\")"
+"`` is the value of distance from Paris, Flance to Madrid, Spain."
+msgstr ""
+
+# bd6c8c7ac29640a391b6c69cb74b0b1b
 #: ../../../source/reference/functions/geo_distance.txt:233
+msgid ""
+"This sample shows the value of distance across equator. The return value of "
+"``geo_distance(\"146566000x-266422000\", \"-56880000x-172310000\", "
+"\"rectangle\")`` is the value of distance from New York, The United Status "
+"to Brasillia, Brasil."
+msgstr ""
+
+# 9a639b60f27a4c46961f8289c8c3e425
+#: ../../../source/reference/functions/geo_distance.txt:240
+msgid ""
+"This sample shows the value of distance across the date line. The return "
+"value of ``geo_distance(\"143660000x419009000\", \"135960000x-440760000\", "
+"\"rectangle\")`` is the value of distance from Beijin, China to San "
+"Francisco, The United States."
+msgstr ""
+
+# 32f234e7cf7a453b8a7d5d4dd11c16c4
+#: ../../../source/reference/functions/geo_distance.txt:246
 msgid ""
 "``geo_distance`` uses square approximation as default. If you omit "
 "``approximate_type``, ``geo_distance`` behaves like ``rectangle`` was "
@@ -6939,7 +6967,7 @@ msgstr ""
 "specified."
 
 # 3db6e83b55814c5e90515b51ee9187e3
-#: ../../../source/reference/functions/geo_distance.txt:237
+#: ../../../source/reference/functions/geo_distance.txt:250
 msgid ""
 "``geo_distance`` accepts the string indicating the coordinate as the value "
 "of ``point1`` when the value of ``approximate_type`` is ``\"rectangle\"``. "
@@ -6954,7 +6982,7 @@ msgstr ""
 "the value of distance."
 
 # d19835de509f4b829b24e3fd531f39b4
-#: ../../../source/reference/functions/geo_distance.txt:248
+#: ../../../source/reference/functions/geo_distance.txt:261
 msgid ""
 "This parameter require to approximate the geographical features by spherical "
 "approximation for calculating the distance."
@@ -6963,7 +6991,7 @@ msgstr ""
 "approximation for calculating the distance."
 
 # 11149249defb4e95a3bb78c49be24aa7
-#: ../../../source/reference/functions/geo_distance.txt:251
+#: ../../../source/reference/functions/geo_distance.txt:264
 msgid ""
 "It is slower than ``rectangle``, but the error of distance becomes smaller "
 "than ``rectangle``."
@@ -6972,12 +7000,12 @@ msgstr ""
 "than ``rectangle``."
 
 # 409e559ad2864b0cb5491b0e609a5db7
-#: ../../../source/reference/functions/geo_distance.txt:254
+#: ../../../source/reference/functions/geo_distance.txt:267
 msgid "You can also specify ``sphr`` as abbrev expression."
 msgstr "You can also specify ``sphr`` as abbrev expression."
 
 # bda4e11d552f4c44a0ae824ceb1c401a
-#: ../../../source/reference/functions/geo_distance.txt:265
+#: ../../../source/reference/functions/geo_distance.txt:278
 msgid ""
 "This parameter require to approximate the geographical features by ellipsoid "
 "approximation for calculating the distance."
@@ -6986,7 +7014,7 @@ msgstr ""
 "approximation for calculating the distance."
 
 # 3b6b1a463935424b8bca213143c79ecf
-#: ../../../source/reference/functions/geo_distance.txt:268
+#: ../../../source/reference/functions/geo_distance.txt:281
 msgid ""
 "It uses the calculation of distance by the formula of Hubeny. It is slower "
 "than ``sphere``, but the error of distance becomes smaller than ``sphere``."
@@ -6995,17 +7023,17 @@ msgstr ""
 "than ``sphere``, but the error of distance becomes smaller than ``sphere``."
 
 # 091dcad8b44f42bfa6bdea55df6554b1
-#: ../../../source/reference/functions/geo_distance.txt:272
+#: ../../../source/reference/functions/geo_distance.txt:285
 msgid "You can also specify ``ellip`` as abbrev expression."
 msgstr "You can also specify ``ellip`` as abbrev expression."
 
 # b28391d763334d68a7b2c6a1731c878c
-#: ../../../source/reference/functions/geo_distance.txt:281
+#: ../../../source/reference/functions/geo_distance.txt:294
 msgid "Return value"
 msgstr "Return value"
 
 # cc0505f2cb4647a5a9c0623a3fa9008d
-#: ../../../source/reference/functions/geo_distance.txt:283
+#: ../../../source/reference/functions/geo_distance.txt:296
 msgid ""
 "``geo_distance`` returns the value of distance in float type. The unit of "
 "return value is meter."
@@ -7014,12 +7042,12 @@ msgstr ""
 "return value is meter."
 
 # 3bb2466b476446d6aed34789437f907c
-#: ../../../source/reference/functions/geo_distance.txt:287
+#: ../../../source/reference/functions/geo_distance.txt:300
 msgid "Footnote"
 msgstr "Footnote"
 
 # 980538abb363453d8badd5e2d6067cd7
-#: ../../../source/reference/functions/geo_distance.txt:288
+#: ../../../source/reference/functions/geo_distance.txt:301
 msgid "You can specify whether TokyoGeoPoint or WGS84GeoPoint."
 msgstr "You can specify whether TokyoGeoPoint or WGS84GeoPoint."
 
@@ -10896,4 +10924,3 @@ msgstr ""
 #: ../../../source/reference/type.txt:129
 msgid "Object型はv1.2でサポートされます。"
 msgstr "Object型はv1.2でサポートされます。"
-
