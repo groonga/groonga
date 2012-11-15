@@ -418,6 +418,12 @@ is_output_columns_format_v1(grn_ctx *ctx,
 {
   unsigned int i;
 
+  /* TODO: REMOVE ME. If new output_columns handler is marked as stable,
+     this check is removed. We need more error checks. */
+  if (grn_ctx_get_command_version(ctx) == GRN_COMMAND_VERSION_1) {
+    return GRN_TRUE;
+  }
+
   for (i = 0; i < output_columns_len; i++) {
     switch (output_columns[i]) {
     case ',' :
