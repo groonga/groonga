@@ -7,8 +7,8 @@ nginx_version=1.2.1
 export GROONGA_HTTPD_IN_TREE=yes
 . "../../groonga-httpd-conf.sh"
 
-eval "`../../libtool --config | grep sys_lib_search_path_spec=`"
-eval "`../../libtool --config | grep sys_lib_dlsearch_path_spec=`"
+eval "`../../libtool --config`"
+
 found_libdir_in_search_path="no"
 for search_path in $sys_lib_search_path_spec $sys_lib_dlsearch_path_spec; do
   if [ "$search_path" = "$libdir" ]; then
