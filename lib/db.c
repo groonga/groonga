@@ -1528,10 +1528,7 @@ grn_obj_clear_value(grn_ctx *ctx, grn_obj *obj, grn_id id)
     GRN_OBJ_INIT(&buf, GRN_BULK, 0, range);
     switch (obj->header.type) {
     case GRN_COLUMN_VAR_SIZE :
-      rc = grn_obj_set_value(ctx, obj, id, &buf, GRN_OBJ_SET);
-      break;
     case GRN_COLUMN_FIX_SIZE :
-      grn_bulk_truncate(ctx, &buf, ((grn_ra *)obj)->header->element_size);
       rc = grn_obj_set_value(ctx, obj, id, &buf, GRN_OBJ_SET);
       break;
     }
