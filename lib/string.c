@@ -804,7 +804,7 @@ latin1_normalize(grn_ctx *ctx, int nargs, grn_obj **args,
   const unsigned char *s, *s_, *e;
   unsigned char *d, *d0, *d_;
   uint_least8_t *cp, *ctypes, ctype;
-  size_t size = strlen(nstr->original), length = 0;
+  size_t size = nstr->original_length_in_bytes, length = 0;
   int removeblankp = nstr->flags & GRN_STRING_REMOVE_BLANK;
   if (!(nstr->normalized = GRN_MALLOC(size + 1))) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
@@ -941,7 +941,7 @@ koi8r_normalize(grn_ctx *ctx, int nargs, grn_obj **args,
   const unsigned char *s, *s_, *e;
   unsigned char *d, *d0, *d_;
   uint_least8_t *cp, *ctypes, ctype;
-  size_t size = strlen(nstr->original), length = 0;
+  size_t size = nstr->original_length_in_bytes, length = 0;
   int removeblankp = nstr->flags & GRN_STRING_REMOVE_BLANK;
   if (!(nstr->normalized = GRN_MALLOC(size + 1))) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
