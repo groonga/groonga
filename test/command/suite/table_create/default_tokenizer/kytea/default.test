@@ -1,3 +1,4 @@
+#@on-error omit
 register tokenizers/kytea
 
 table_create Memos TABLE_NO_KEY
