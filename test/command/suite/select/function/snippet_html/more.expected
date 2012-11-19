@@ -1,9 +1,11 @@
 table_create Documents TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
 column_create Documents content COLUMN_SCALAR Text
-
+[[0,0.0,0.0],true]
 table_create Terms TABLE_PAT_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenBigram
+[[0,0.0,0.0],true]
 column_create Terms document_index COLUMN_INDEX|WITH_POSITION Documents content
-
+[[0,0.0,0.0],true]
 load --table Documents
 [
 ["_key", "content"],
@@ -17,8 +19,90 @@ load --table Documents
 ["groonga サーバ", "groonga にはサーバ機能があるため、レンタルサーバなどの新しいライブラリをインストールできない環境においても利用できます。対応しているのは HTTP, memcached binary プロトコル、およびに groonga の独自プロトコルである gqtp です。サーバとして利用するときはクエリのキャッシュ機能が有効になるため、同じクエリを受け取ったときは応答時間が短くなるという特徴があります。"],
 ["groonga ストレージエンジン", "groonga は独自のカラムストアを持つ列指向のデータベースとしての側面を持っていますが、既存の RDBMS のストレージエンジンとして利用することもできます。たとえば、groonga をベースとする MySQL のストレージエンジンとして mroonga が開発されています。mroonga は MySQL のプラグインとして動的にロードすることが可能であり、groonga のカラムストアをストレージとして利用したり、全文検索エンジンとして groonga を MyISAM や InnoDB と連携させたりすることができます。groonga 単体での利用、およびに MyISAM, InnoDB との連携には一長一短があるので、用途に応じて適切な組み合わせを選ぶことが大切です。詳しくは 関連プロジェクト を参照してください。"]
 ]
-
-select Documents \
-  --match_columns content --query 'groonga' \
-  --output_columns '_key, snippet(content)' \
-  --command_version 2
+[[0,0.0,0.0],9]
+select Documents   --match_columns content --query 'groonga'   --output_columns '_key, snippet_html(content)'   --command_version 2
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        9
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "snippet_html",
+          "null"
+        ]
+      ],
+      [
+        "groonga の概要",
+        [
+          "<span class=\"keyword\">groonga</span> は転置索引を用いた高速・高精度な全文検索エンジンであり、登録された文書をすぐに検索結果に反映できます。また、参照をブロックせずに",
+          "おいても高い性能を発揮します。\n\n全文検索エンジンとして開発された <span class=\"keyword\">groonga</span> ですが、独自のカラムストアを持つ列指向のデータベースとしての側面",
+          "徴があり、組み合わせによって弱点を補うような使い方もできます。\n\n<span class=\"keyword\">groonga</span> の基本機能は C ライブラリとして提供されていますが、MySQL や PostgreSQL "
+        ]
+      ],
+      [
+        "全文検索と即時更新",
+        [
+          "ん。\n\nこれに対し、転置索引を用いた全文検索エンジンでありながら、<span class=\"keyword\">groonga</span> は文書を短時間で追加・削除することができます。その上、更新しなが"
+        ]
+      ],
+      [
+        "カラムストアと集計クエリ",
+        [
+          "・集計できることは、膨大な情報を扱う上でとても重要になります。\n\n<span class=\"keyword\">groonga</span> が集計クエリを高速に処理できる理由は、データベースの論理構造にカ"
+        ]
+      ],
+      [
+        "転置索引とトークナイザ",
+        [
+          "状況によって適した方式を選択することが望ましいとされています。\n\n<span class=\"keyword\">groonga</span> は形態素方式と N-gram 方式の両方に対応しています。初期状態で利用で"
+        ]
+      ],
+      [
+        "共有可能なストレージと参照ロックフリー",
+        [
+          "スレッドで実行したりすることの重要性はますます高まっています。\n\n<span class=\"keyword\">groonga</span> のストレージは、複数のスレッド・プロセスで共有することができます",
+          "しています。さらには、MySQL を介して更新クエリを実行している最中に <span class=\"keyword\">groonga</span> の HTTP サーバを介して参照クエリを実行するなど、多彩な運用が可能"
+        ]
+      ],
+      [
+        "位置情報（緯度・経度）検索",
+        [
+          "ため、位置情報検索を高速に実現できることが重要になっています。\n\n<span class=\"keyword\">groonga</span> では転置索引を応用して高速な位置情報検索を実現しています。矩形・"
+        ]
+      ],
+      [
+        "groonga ライブラリ",
+        [
+          "<span class=\"keyword\">Groonga</span> の基本機能は C ライブラリとして提供されているので、任意のアプリケーションに組み込んで利用することができます。C/C++ 以外については、",
+          "Ruby から <span class=\"keyword\">groonga</span> を利用するライブラリなどが関連プロジェクトにおいて提供されています。詳しくは 関連プロジェクト を参照してください。"
+        ]
+      ],
+      [
+        "groonga サーバ",
+        [
+          "<span class=\"keyword\">groonga</span> にはサーバ機能があるため、レンタルサーバなどの新しいライブラリをインストールできない環境においても利用できます。対応しているのは",
+          " HTTP, memcached binary プロトコル、およびに <span class=\"keyword\">groonga</span> の独自プロトコルである gqtp です。サーバとして利用するときはクエリのキャッシュ機能が有効にな"
+        ]
+      ],
+      [
+        "groonga ストレージエンジン",
+        [
+          "<span class=\"keyword\">groonga</span> は独自のカラムストアを持つ列指向のデータベースとしての側面を持っていますが、既存の RDBMS のストレージエンジンとして利用することも",
+          "できます。たとえば、<span class=\"keyword\">groonga</span> をベースとする MySQL のストレージエンジンとして mroonga が開発されています。mroonga は MySQL のプラグインとして動的に",
+          "<span class=\"keyword\">groonga</span> のカラムストアをストレージとして利用したり、全文検索エンジンとして <span class=\"keyword\">groonga</span> を MyISAM や InnoDB と連携させたりすることができます。<span class=\"keyword\">groonga</span> 単"
+        ]
+      ]
+    ]
+  ]
+]

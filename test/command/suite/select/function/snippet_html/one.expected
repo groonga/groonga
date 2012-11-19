@@ -20,7 +20,7 @@ load --table Documents
 ["groonga ストレージエンジン", "groonga は独自のカラムストアを持つ列指向のデータベースとしての側面を持っていますが、既存の RDBMS のストレージエンジンとして利用することもできます。たとえば、groonga をベースとする MySQL のストレージエンジンとして mroonga が開発されています。mroonga は MySQL のプラグインとして動的にロードすることが可能であり、groonga のカラムストアをストレージとして利用したり、全文検索エンジンとして groonga を MyISAM や InnoDB と連携させたりすることができます。groonga 単体での利用、およびに MyISAM, InnoDB との連携には一長一短があるので、用途に応じて適切な組み合わせを選ぶことが大切です。詳しくは 関連プロジェクト を参照してください。"]
 ]
 [[0,0.0,0.0],9]
-select Documents   --match_columns content --query 'mroonga MySQL'   --output_columns '_key, snippet(content)'   --command_version 2
+select Documents   --match_columns content --query 'mroonga MySQL'   --output_columns '_key, snippet_html(content)'   --command_version 2
 [
   [
     0,
@@ -38,7 +38,7 @@ select Documents   --match_columns content --query 'mroonga MySQL'   --output_co
           "ShortText"
         ],
         [
-          "snippet",
+          "snippet_html",
           "null"
         ]
       ],

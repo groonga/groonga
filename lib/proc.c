@@ -3240,7 +3240,8 @@ selector_all_records(grn_ctx *ctx, grn_obj *table, grn_obj *index,
 }
 
 static grn_obj *
-func_snippet(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+func_snippet_html(grn_ctx *ctx, int nargs, grn_obj **args,
+                  grn_user_data *user_data)
 {
   grn_obj *snippets;
 
@@ -3492,6 +3493,6 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   }
 
   /* experimental */
-  grn_proc_create(ctx, "snippet", 7, GRN_PROC_FUNCTION,
-                  func_snippet, NULL, NULL, 0, NULL);
+  grn_proc_create(ctx, "snippet_html", 12, GRN_PROC_FUNCTION,
+                  func_snippet_html, NULL, NULL, 0, NULL);
 }

@@ -20,5 +20,5 @@ load --table Documents
 
 select Documents \
   --match_columns content --query 'mroonga MySQL' \
-  --output_columns '_key, snippet(content)' \
+  --output_columns '_key, snippet_html(content)' \
   --command_version 2
