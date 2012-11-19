@@ -532,7 +532,7 @@ grn_type_open(grn_ctx *ctx, grn_obj_spec *spec)
 }
 
 grn_obj *
-grn_proc_create(grn_ctx *ctx, const char *name, unsigned int name_size, grn_proc_type type,
+grn_proc_create(grn_ctx *ctx, const char *name, int name_size, grn_proc_type type,
                 grn_proc_func *init, grn_proc_func *next, grn_proc_func *fin,
                 unsigned int nvars, grn_expr_var *vars)
 {
@@ -548,6 +548,9 @@ grn_proc_create(grn_ctx *ctx, const char *name, unsigned int name_size, grn_proc
   }
   GRN_API_ENTER;
   range = path ? grn_plugin_get(ctx, path) : GRN_ID_NIL;
+  if (name && name_size == -1) {
+    name_size = strlen(name);
+  }
   if (grn_db_check_name(ctx, name, name_size)) {
     GRN_DB_CHECK_NAME_ERR("[proc][create]", name, name_size);
     GRN_API_RETURN(NULL);

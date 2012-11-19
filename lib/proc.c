@@ -3446,53 +3446,53 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_COMMAND("truncate", proc_truncate, 1, vars);
 
   DEF_VAR(vars[0], "seed");
-  grn_proc_create(ctx, "rand", 4, GRN_PROC_FUNCTION, func_rand,
+  grn_proc_create(ctx, "rand", -1, GRN_PROC_FUNCTION, func_rand,
                   NULL, NULL, 0, vars);
 
-  grn_proc_create(ctx, "now", 3, GRN_PROC_FUNCTION, func_now,
+  grn_proc_create(ctx, "now", -1, GRN_PROC_FUNCTION, func_now,
                   NULL, NULL, 0, vars);
 
-  grn_proc_create(ctx, "max", 3, GRN_PROC_FUNCTION, func_max,
+  grn_proc_create(ctx, "max", -1, GRN_PROC_FUNCTION, func_max,
                   NULL, NULL, 0, vars);
-  grn_proc_create(ctx, "min", 3, GRN_PROC_FUNCTION, func_min,
+  grn_proc_create(ctx, "min", -1, GRN_PROC_FUNCTION, func_min,
                   NULL, NULL, 0, vars);
 
   {
     grn_obj *selector_proc;
 
-    selector_proc = grn_proc_create(ctx, "geo_in_circle", 13, GRN_PROC_FUNCTION,
+    selector_proc = grn_proc_create(ctx, "geo_in_circle", -1, GRN_PROC_FUNCTION,
                                     func_geo_in_circle, NULL, NULL, 0, NULL);
     grn_proc_set_selector(ctx, selector_proc, grn_selector_geo_in_circle);
 
-    selector_proc = grn_proc_create(ctx, "geo_in_rectangle", 16,
+    selector_proc = grn_proc_create(ctx, "geo_in_rectangle", -1,
                                     GRN_PROC_FUNCTION,
                                     func_geo_in_rectangle, NULL, NULL, 0, NULL);
     grn_proc_set_selector(ctx, selector_proc, grn_selector_geo_in_rectangle);
   }
 
-  grn_proc_create(ctx, "geo_distance", 12, GRN_PROC_FUNCTION,
+  grn_proc_create(ctx, "geo_distance", -1, GRN_PROC_FUNCTION,
                   func_geo_distance, NULL, NULL, 0, NULL);
 
   /* deprecated. */
-  grn_proc_create(ctx, "geo_distance2", 13, GRN_PROC_FUNCTION,
+  grn_proc_create(ctx, "geo_distance2", -1, GRN_PROC_FUNCTION,
                   func_geo_distance2, NULL, NULL, 0, NULL);
 
   /* deprecated. */
-  grn_proc_create(ctx, "geo_distance3", 13, GRN_PROC_FUNCTION,
+  grn_proc_create(ctx, "geo_distance3", -1, GRN_PROC_FUNCTION,
                   func_geo_distance3, NULL, NULL, 0, NULL);
 
-  grn_proc_create(ctx, "edit_distance", 13, GRN_PROC_FUNCTION,
+  grn_proc_create(ctx, "edit_distance", -1, GRN_PROC_FUNCTION,
                   func_edit_distance, NULL, NULL, 0, NULL);
 
   {
     grn_obj *selector_proc;
 
-    selector_proc = grn_proc_create(ctx, "all_records", 11, GRN_PROC_FUNCTION,
+    selector_proc = grn_proc_create(ctx, "all_records", -1, GRN_PROC_FUNCTION,
                                     func_all_records, NULL, NULL, 0, NULL);
     grn_proc_set_selector(ctx, selector_proc, selector_all_records);
   }
 
   /* experimental */
-  grn_proc_create(ctx, "snippet_html", 12, GRN_PROC_FUNCTION,
+  grn_proc_create(ctx, "snippet_html", -1, GRN_PROC_FUNCTION,
                   func_snippet_html, NULL, NULL, 0, NULL);
 }

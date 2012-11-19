@@ -632,6 +632,8 @@ GRN_API const char *grn_plugin_get_suffix(void);
 /**
  * grn_proc_create:
  * @name: 作成するprocの名前。
+ * @name_size: The number of bytes of @name. If -1 is specified, @name
+ *             is handled as a NULL terminated string.
  * @type: procの種類。
  * @init: 初期化関数のポインタ
  * @next: 実処理関数のポインタ
@@ -658,7 +660,7 @@ typedef enum {
 } grn_proc_type;
 
 GRN_API grn_obj *grn_proc_create(grn_ctx *ctx,
-                                 const char *name, unsigned int name_size, grn_proc_type type,
+                                 const char *name, int name_size, grn_proc_type type,
                                  grn_proc_func *init, grn_proc_func *next, grn_proc_func *fin,
                                  unsigned int nvars, grn_expr_var *vars);
 /**
