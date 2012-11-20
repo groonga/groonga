@@ -37,7 +37,8 @@ void kytea_fin(grn_ctx *ctx);
 void kytea_init(grn_ctx *ctx) {
   if (kytea_mutex || kytea_config || kytea_tagger || kytea_util) {
     GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
-                     "[tokenizer] TokenKytea is already initialized");
+                     "[tokenizer][kytea] "
+                     "TokenKytea is already initialized");
     return;
   }
 
@@ -45,7 +46,8 @@ void kytea_init(grn_ctx *ctx) {
   if (!kytea_mutex) {
     kytea_fin(ctx);
     GRN_PLUGIN_ERROR(ctx, GRN_NO_MEMORY_AVAILABLE,
-                     "[tokenizer] grn_plugin_mutex_open() failed");
+                     "[tokenizer][kytea] "
+                     "grn_plugin_mutex_open() failed");
     return;
   }
 
@@ -54,7 +56,8 @@ void kytea_init(grn_ctx *ctx) {
   if (!config) {
     kytea_fin(ctx);
     GRN_PLUGIN_ERROR(ctx, GRN_NO_MEMORY_AVAILABLE,
-                     "[tokenizer] memory allocation to kytea::KyteaConfig failed");
+                     "[tokenizer][kytea] "
+                     "memory allocation to kytea::KyteaConfig failed");
     return;
   }
 
@@ -68,14 +71,16 @@ void kytea_init(grn_ctx *ctx) {
     } catch (...) {
       kytea_fin(ctx);
       GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
-                       "[tokenizer] kytea::KyteaConfig settings failed");
+                       "[tokenizer][kytea] "
+                       "kytea::KyteaConfig settings failed");
       return;
     }
   } catch (...) {
     GRN_PLUGIN_FREE(ctx, config);
     kytea_fin(ctx);
     GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
-                     "[tokenizer] kytea::KyteaConfig initialization failed");
+                     "[tokenizer][kytea] "
+                     "kytea::KyteaConfig initialization failed");
     return;
   }
 
@@ -84,7 +89,8 @@ void kytea_init(grn_ctx *ctx) {
   if (!tagger) {
     kytea_fin(ctx);
     GRN_PLUGIN_ERROR(ctx, GRN_NO_MEMORY_AVAILABLE,
-                     "[tokenizer] memory allocation to kytea::Kytea failed");
+                     "[tokenizer][kytea] "
+                     "memory allocation to kytea::Kytea failed");
     return;
   }
 
@@ -96,14 +102,16 @@ void kytea_init(grn_ctx *ctx) {
     } catch (...) {
       kytea_fin(ctx);
       GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
-                       "[tokenizer] kytea::Kytea::readModel() failed");
+                       "[tokenizer][kytea] "
+                       "kytea::Kytea::readModel() failed");
       return;
     }
   } catch (...) {
     GRN_PLUGIN_FREE(ctx, tagger);
     kytea_fin(ctx);
     GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
-                     "[tokenizer] kytea::Kytea initialization failed");
+                     "[tokenizer][kytea] "
+                     "kytea::Kytea initialization failed");
     return;
   }
 
@@ -112,7 +120,8 @@ void kytea_init(grn_ctx *ctx) {
   } catch (...) {
     kytea_fin(ctx);
     GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
-                     "[tokenizer] kytea::Kytea::getStringUtil() failed");
+                     "[tokenizer][kytea] "
+                     "kytea::Kytea::getStringUtil() failed");
     return;
   }
 }
@@ -187,7 +196,8 @@ grn_obj *grn_kytea_init(grn_ctx *ctx, int num_args, grn_obj **args,
   if (!tokenizer) {
     grn_tokenizer_query_close(ctx, query);
     GRN_PLUGIN_ERROR(ctx, GRN_NO_MEMORY_AVAILABLE,
-                     "[tokenizer] memory allocation to grn_tokenizer_kytea failed");
+                     "[tokenizer][kytea] "
+                     "memory allocation to grn_tokenizer_kytea failed");
     return NULL;
   }
 
@@ -196,7 +206,8 @@ grn_obj *grn_kytea_init(grn_ctx *ctx, int num_args, grn_obj **args,
   } catch (...) {
     grn_tokenizer_query_close(ctx, query);
     GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
-                     "[tokenizer] tokenizer initialization failed");
+                     "[tokenizer][kytea] "
+                     "tokenizer initialization failed");
     return NULL;
   }
 
@@ -230,7 +241,8 @@ grn_obj *grn_kytea_init(grn_ctx *ctx, int num_args, grn_obj **args,
     } catch (...) {
       grn_plugin_mutex_unlock(ctx, kytea_mutex);
       GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
-                       "[tokenizer] tokenization failed");
+                       "[tokenizer][kytea] "
+                       "tokenization failed");
       return NULL;
     }
     grn_plugin_mutex_unlock(ctx, kytea_mutex);
@@ -257,7 +269,8 @@ grn_obj *grn_kytea_init(grn_ctx *ctx, int num_args, grn_obj **args,
       }
     } catch (...) {
       GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
-                       "[tokenizer] adjustment failed");
+                       "[tokenizer][kytea] "
+                       "adjustment failed");
       return NULL;
     }
   }
