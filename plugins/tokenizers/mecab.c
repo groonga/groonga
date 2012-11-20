@@ -119,7 +119,7 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
                      "[tokenizer][mecab] "
                      "MeCab dictionary charset (%s) does not match "
-                     "the context encoding: <%s>",
+                     "the table encoding: <%s>",
                      grn_enctostr(sole_mecab_encoding),
                      grn_enctostr(query->encoding));
     return NULL;
