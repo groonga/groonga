@@ -15,8 +15,6 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include <ctx.h>
-
 #include <str.h>
 
 #include <groonga.h>
@@ -123,7 +121,7 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     return NULL;
   }
 
-  if (!(tokenizer = GRN_MALLOC(sizeof(grn_mecab_tokenizer)))) {
+  if (!(tokenizer = GRN_PLUGIN_MALLOC(ctx, sizeof(grn_mecab_tokenizer)))) {
     grn_tokenizer_query_destroy(ctx, query);
     GRN_PLUGIN_ERROR(ctx, GRN_NO_MEMORY_AVAILABLE,
                      "[tokenizer][mecab] "
@@ -162,7 +160,7 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                        mecab_strerror(tokenizer->mecab));
     } else {
       bufsize = strlen(s) + 1;
-      if (!(buf = GRN_MALLOC(bufsize))) {
+      if (!(buf = GRN_PLUGIN_MALLOC(ctx, bufsize))) {
         GRN_PLUGIN_LOG(ctx, GRN_LOG_ALERT,
                        "[tokenizer][mecab] "
                        "buffer allocation on mecab_init failed !");
@@ -173,7 +171,7 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     CRITICAL_SECTION_LEAVE(sole_mecab_lock);
     if (!s || !buf) {
       grn_tokenizer_query_destroy(ctx, tokenizer->query);
-      GRN_FREE(tokenizer);
+      GRN_PLUGIN_FREE(ctx, tokenizer);
       return NULL;
     }
     /* A certain version of mecab returns trailing lf or spaces. */
@@ -248,9 +246,9 @@ mecab_fin(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_tokenizer_token_fin(ctx, &(tokenizer->token));
   grn_tokenizer_query_destroy(ctx, tokenizer->query);
   if (tokenizer->buf) {
-    GRN_FREE(tokenizer->buf);
+    GRN_PLUGIN_FREE(ctx, tokenizer->buf);
   }
-  GRN_FREE(tokenizer);
+  GRN_PLUGIN_FREE(ctx, tokenizer);
   return NULL;
 }
 
