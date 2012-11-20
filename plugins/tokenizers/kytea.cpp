@@ -133,7 +133,7 @@ void kytea_fin(grn_ctx *ctx) {
   }
 
   if (kytea_mutex) {
-    grn_plugin_mutex_destroy(ctx, kytea_mutex);
+    grn_plugin_mutex_close(ctx, kytea_mutex);
     kytea_mutex = NULL;
   }
 }
