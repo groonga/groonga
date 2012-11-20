@@ -285,25 +285,20 @@ GRN_PLUGIN_INIT(grn_ctx *ctx)
 grn_rc
 GRN_PLUGIN_REGISTER(grn_ctx *ctx)
 {
-  grn_obj *obj;
-  grn_expr_var vars[] = {
-    {NULL, 0},
-    {NULL, 0},
-    {NULL, 0}
-  };
-  GRN_TEXT_INIT(&vars[0].value, 0);
-  GRN_TEXT_INIT(&vars[1].value, 0);
-  GRN_UINT32_INIT(&vars[2].value, 0);
+  grn_rc rc;
 
-  /*
-    grn_proc_create() registers a plugin to a database which is associated
-    with `ctx'. A returned object must not be finalized here.
-   */
-  obj = grn_proc_create(ctx, "TokenMecab", 10, GRN_PROC_TOKENIZER,
-                        mecab_init, mecab_next, mecab_fin, 3, vars);
-  if (!obj || ((grn_db_obj *)obj)->id != GRN_DB_MECAB) { return GRN_FILE_CORRUPT; }
+  rc = grn_tokenizer_register(ctx, "TokenMecab", 10,
+                              mecab_init, mecab_next, mecab_fin);
+  if (rc == GRN_SUCCESS) {
+    grn_obj *token_mecab;
+    token_mecab = grn_ctx_get(ctx, "TokenMecab", 10);
+    /* Just for backward compatibility. TokenMecab was built-in not plugin. */
+    if (token_mecab && grn_obj_id(ctx, token_mecab) != GRN_DB_MECAB) {
+      rc = GRN_FILE_CORRUPT;
+    }
+  }
 
-  return GRN_SUCCESS;
+  return rc;
 }
 
 /*
