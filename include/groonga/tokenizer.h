@@ -81,19 +81,33 @@ struct _grn_tokenizer_query {
 };
 
 /*
-  grn_tokenizer_query_create() parses `args' and returns a new object of
+  grn_tokenizer_query_open() parses `args' and returns a new object of
   grn_tokenizer_query. The new object stores information of the query.
   grn_tokenizer_query_create() normalizes the query if the target table
   requires normalization. grn_tokenizer_query_create() returns NULL if
   something goes wrong. Note that grn_tokenizer_query_create() must be called
   just once in the function that initializes a tokenizer.
  */
+grn_tokenizer_query *grn_tokenizer_query_open(grn_ctx *ctx,
+                                              int num_args, grn_obj **args);
+
+/*
+  grn_tokenizer_query_create() is deprecated. Use grn_tokenizer_query_open()
+  instead.
+*/
+
 grn_tokenizer_query *grn_tokenizer_query_create(grn_ctx *ctx,
                                                 int num_args, grn_obj **args);
 
 /*
-  grn_tokenizer_mutex_destroy() finalizes an object of grn_tokenizer_mutex
+  grn_tokenizer_query_close() finalizes an object of grn_tokenizer_query
   and then frees memory allocated for that object.
+ */
+void grn_tokenizer_query_close(grn_ctx *ctx, grn_tokenizer_query *query);
+
+/*
+  grn_tokenizer_query_destroy() is deprecated. Use grn_tokenizer_query_close()
+  instead.
  */
 void grn_tokenizer_query_destroy(grn_ctx *ctx, grn_tokenizer_query *query);
 

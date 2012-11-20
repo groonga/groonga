@@ -132,7 +132,7 @@ grn_tokenizer_have_tokenized_delimiter(grn_ctx *ctx,
 }
 
 grn_tokenizer_query *
-grn_tokenizer_query_create(grn_ctx *ctx, int num_args, grn_obj **args)
+grn_tokenizer_query_open(grn_ctx *ctx, int num_args, grn_obj **args)
 {
   grn_obj *query_str = grn_ctx_pop(ctx);
   if (query_str == NULL) {
@@ -197,8 +197,14 @@ grn_tokenizer_query_create(grn_ctx *ctx, int num_args, grn_obj **args)
   }
 }
 
+grn_tokenizer_query *
+grn_tokenizer_query_create(grn_ctx *ctx, int num_args, grn_obj **args)
+{
+  return grn_tokenizer_query_open(ctx, num_args, args);
+}
+
 void
-grn_tokenizer_query_destroy(grn_ctx *ctx, grn_tokenizer_query *query)
+grn_tokenizer_query_close(grn_ctx *ctx, grn_tokenizer_query *query)
 {
   if (query != NULL) {
     if (query->normalized_query != NULL) {
@@ -209,6 +215,12 @@ grn_tokenizer_query_destroy(grn_ctx *ctx, grn_tokenizer_query *query)
     }
     GRN_PLUGIN_FREE(ctx, query);
   }
+}
+
+void
+grn_tokenizer_query_destroy(grn_ctx *ctx, grn_tokenizer_query *query)
+{
+  grn_tokenizer_query_close(ctx, query);
 }
 
 void
