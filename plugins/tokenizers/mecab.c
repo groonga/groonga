@@ -16,10 +16,8 @@
 */
 
 #include <ctx.h>
-#include <db.h>
 
 #include <str.h>
-#include <token.h>
 
 #include <groonga.h>
 #include <groonga/tokenizer.h>
