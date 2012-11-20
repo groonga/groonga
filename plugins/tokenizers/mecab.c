@@ -92,7 +92,7 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_mecab_tokenizer *tokenizer;
   unsigned int bufsize, len;
   if (!(str = grn_ctx_pop(ctx))) {
-    ERR(GRN_INVALID_ARGUMENT, "missing argument");
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT, "missing argument");
     return NULL;
   }
   if (!sole_mecab) {
@@ -100,8 +100,9 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     if (!sole_mecab) {
       sole_mecab = mecab_new2("-Owakati");
       if (!sole_mecab) {
-        ERR(GRN_TOKENIZER_ERROR, "mecab_new2 failed on grn_mecab_init: %s",
-            mecab_strerror(NULL));
+        GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
+                         "mecab_new2 failed on grn_mecab_init: %s",
+                         mecab_strerror(NULL));
       } else {
         sole_mecab_encoding = get_mecab_encoding(sole_mecab);
       }
@@ -113,9 +114,11 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   }
   grn_table_get_info(ctx, table, &table_flags, &table_encoding, NULL);
   if (table_encoding != sole_mecab_encoding) {
-    ERR(GRN_TOKENIZER_ERROR,
-        "MeCab dictionary charset (%s) does not match the context encoding: <%s>",
-        grn_enctostr(sole_mecab_encoding), grn_enctostr(table_encoding));
+    GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
+                     "MeCab dictionary charset (%s) does not match "
+                     "the context encoding: <%s>",
+                     grn_enctostr(sole_mecab_encoding),
+                     grn_enctostr(table_encoding));
     return NULL;
   }
   if (!(tokenizer = GRN_MALLOC(sizeof(grn_mecab_tokenizer)))) { return NULL; }
@@ -126,7 +129,8 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                                         GRN_TEXT_VALUE(str), GRN_TEXT_LEN(str),
                                         nflags, tokenizer->encoding))) {
     GRN_FREE(tokenizer);
-    ERR(GRN_TOKENIZER_ERROR, "grn_str_open failed at grn_token_open");
+    GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
+                     "grn_str_open failed at grn_token_open");
     return NULL;
   }
 
@@ -143,8 +147,9 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     CRITICAL_SECTION_ENTER(sole_mecab_lock);
     s = mecab_sparse_tostr2(tokenizer->mecab, tokenizer->nstr->norm, len);
     if (!s) {
-      ERR(GRN_TOKENIZER_ERROR, "mecab_sparse_tostr failed len=%d err=%s",
-          len, mecab_strerror(tokenizer->mecab));
+      GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
+                       "mecab_sparse_tostr failed len=%d err=%s",
+                       len, mecab_strerror(tokenizer->mecab));
     } else {
       bufsize = strlen(s) + 1;
       if (!(buf = GRN_MALLOC(bufsize))) {
@@ -253,14 +258,15 @@ check_mecab_dictionary_encoding(grn_ctx *ctx)
     mecab_destroy(mecab);
 
     if (!have_same_encoding_dictionary) {
-      ERR(GRN_TOKENIZER_ERROR,
-          "MeCab has no dictionary that uses the context encoding: <%s>",
-          grn_enctostr(encoding));
+      GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
+                       "MeCab has no dictionary that uses the context encoding"
+                       ": <%s>",
+                       grn_enctostr(encoding));
     }
   } else {
-    ERR(GRN_TOKENIZER_ERROR,
-        "mecab_new2 failed in check_mecab_dictionary_encoding: %s",
-        mecab_strerror(NULL));
+    GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
+                     "mecab_new2 failed in check_mecab_dictionary_encoding: %s",
+                     mecab_strerror(NULL));
   }
 #endif
 }
