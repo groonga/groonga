@@ -101,7 +101,7 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       if (!sole_mecab) {
         GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
                          "[tokenizer][mecab] "
-                         "mecab_new2 failed on mecab_init: %s",
+                         "mecab_new2() failed on mecab_init(): %s",
                          mecab_strerror(NULL));
       } else {
         sole_mecab_encoding = get_mecab_encoding(sole_mecab);
@@ -159,7 +159,7 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     if (!s) {
       GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
                        "[tokenizer][mecab] "
-                       "mecab_sparse_tostr failed len=%d err=%s",
+                       "mecab_sparse_tostr() failed len=%d err=%s",
                        normalized_string_length,
                        mecab_strerror(tokenizer->mecab));
     } else {
