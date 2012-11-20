@@ -489,7 +489,7 @@ struct _grn_plugin_mutex {
 };
 
 grn_plugin_mutex *
-grn_plugin_mutex_create(grn_ctx *ctx)
+grn_plugin_mutex_open(grn_ctx *ctx)
 {
   grn_plugin_mutex * const mutex =
       GRN_PLUGIN_MALLOC(ctx, sizeof(grn_plugin_mutex));
@@ -499,13 +499,25 @@ grn_plugin_mutex_create(grn_ctx *ctx)
   return mutex;
 }
 
+grn_plugin_mutex *
+grn_plugin_mutex_create(grn_ctx *ctx)
+{
+  return grn_plugin_mutex_open(ctx);
+}
+
 void
-grn_plugin_mutex_destroy(grn_ctx *ctx, grn_plugin_mutex *mutex)
+grn_plugin_mutex_close(grn_ctx *ctx, grn_plugin_mutex *mutex)
 {
   if (mutex != NULL) {
     CRITICAL_SECTION_FIN(mutex->critical_section);
     GRN_PLUGIN_FREE(ctx, mutex);
   }
+}
+
+void
+grn_plugin_mutex_destroy(grn_ctx *ctx, grn_plugin_mutex *mutex)
+{
+  grn_plugin_mutex_close(ctx, mutex);
 }
 
 void

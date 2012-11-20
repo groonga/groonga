@@ -126,17 +126,29 @@ void grn_plugin_logtrace(grn_ctx *ctx, grn_log_level level);
 typedef struct _grn_plugin_mutex grn_plugin_mutex;
 
 /*
-  grn_plugin_mutex_create() returns a pointer to a new object of
+  grn_plugin_mutex_open() returns a pointer to a new object of
   grn_plugin_mutex. Memory for the new object is obtained with
-  GRN_PLUGIN_MALLOC(). grn_plugin_mutex_create() returns NULL if sufficient
+  GRN_PLUGIN_MALLOC(). grn_plugin_mutex_open() returns NULL if sufficient
   memory is not available.
  */
+grn_plugin_mutex *grn_plugin_mutex_open(grn_ctx *ctx);
+
+/*
+  grn_plugin_mutex_create() is deprecated. Use grn_plugin_mutex_open()
+  instead.
+*/
 grn_plugin_mutex *grn_plugin_mutex_create(grn_ctx *ctx);
 
 /*
-  grn_plugin_mutex_destroy() finalizes an object of grn_plugin_mutex and then
+  grn_plugin_mutex_close() finalizes an object of grn_plugin_mutex and then
   frees memory allocated for that object.
  */
+void grn_plugin_mutex_close(grn_ctx *ctx, grn_plugin_mutex *mutex);
+
+/*
+  grn_plugin_mutex_destroy() is deprecated. Use grn_plugin_mutex_close()
+  instead.
+*/
 void grn_plugin_mutex_destroy(grn_ctx *ctx, grn_plugin_mutex *mutex);
 
 /*
