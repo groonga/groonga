@@ -41,11 +41,11 @@ void kytea_init(grn_ctx *ctx) {
     return;
   }
 
-  kytea_mutex = grn_plugin_mutex_create(ctx);
+  kytea_mutex = grn_plugin_mutex_open(ctx);
   if (!kytea_mutex) {
     kytea_fin(ctx);
     GRN_PLUGIN_ERROR(ctx, GRN_NO_MEMORY_AVAILABLE,
-                     "[tokenizer] grn_plugin_mutex_create() failed");
+                     "[tokenizer] grn_plugin_mutex_open() failed");
     return;
   }
 
