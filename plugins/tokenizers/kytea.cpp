@@ -169,7 +169,7 @@ void grn_tokenizer_kytea_init(grn_ctx *ctx, grn_tokenizer_kytea *tokenizer) {
 void grn_tokenizer_kytea_fin(grn_ctx *ctx, grn_tokenizer_kytea *tokenizer) {
   grn_tokenizer_token_fin(ctx, &tokenizer->token);
   if (tokenizer->query) {
-    grn_tokenizer_query_destroy(ctx, tokenizer->query);
+    grn_tokenizer_query_close(ctx, tokenizer->query);
   }
   tokenizer->~grn_tokenizer_kytea();
 }
@@ -177,7 +177,7 @@ void grn_tokenizer_kytea_fin(grn_ctx *ctx, grn_tokenizer_kytea *tokenizer) {
 grn_obj *grn_kytea_init(grn_ctx *ctx, int num_args, grn_obj **args,
                         grn_user_data *user_data) {
   grn_tokenizer_query * const query =
-      grn_tokenizer_query_create(ctx, num_args, args);
+      grn_tokenizer_query_open(ctx, num_args, args);
   if (!query) {
     return NULL;
   }
@@ -185,7 +185,7 @@ grn_obj *grn_kytea_init(grn_ctx *ctx, int num_args, grn_obj **args,
   grn_tokenizer_kytea * const tokenizer = static_cast<grn_tokenizer_kytea *>(
       GRN_PLUGIN_MALLOC(ctx, sizeof(grn_tokenizer_kytea)));
   if (!tokenizer) {
-    grn_tokenizer_query_destroy(ctx, query);
+    grn_tokenizer_query_close(ctx, query);
     GRN_PLUGIN_ERROR(ctx, GRN_NO_MEMORY_AVAILABLE,
                      "[tokenizer] memory allocation to grn_tokenizer_kytea failed");
     return NULL;
@@ -194,7 +194,7 @@ grn_obj *grn_kytea_init(grn_ctx *ctx, int num_args, grn_obj **args,
   try {
     grn_tokenizer_kytea_init(ctx, tokenizer);
   } catch (...) {
-    grn_tokenizer_query_destroy(ctx, query);
+    grn_tokenizer_query_close(ctx, query);
     GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
                      "[tokenizer] tokenizer initialization failed");
     return NULL;

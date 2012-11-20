@@ -86,7 +86,7 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   const char *normalized_string;
   unsigned int normalized_string_length;
 
-  query = grn_tokenizer_query_create(ctx, nargs, args);
+  query = grn_tokenizer_query_open(ctx, nargs, args);
   if (!query) {
     return NULL;
   }
@@ -106,12 +106,12 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     CRITICAL_SECTION_LEAVE(sole_mecab_lock);
   }
   if (!sole_mecab) {
-    grn_tokenizer_query_destroy(ctx, query);
+    grn_tokenizer_query_close(ctx, query);
     return NULL;
   }
 
   if (query->encoding != sole_mecab_encoding) {
-    grn_tokenizer_query_destroy(ctx, query);
+    grn_tokenizer_query_close(ctx, query);
     GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
                      "[tokenizer][mecab] "
                      "MeCab dictionary charset (%s) does not match "
@@ -122,7 +122,7 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   }
 
   if (!(tokenizer = GRN_PLUGIN_MALLOC(ctx, sizeof(grn_mecab_tokenizer)))) {
-    grn_tokenizer_query_destroy(ctx, query);
+    grn_tokenizer_query_close(ctx, query);
     GRN_PLUGIN_ERROR(ctx, GRN_NO_MEMORY_AVAILABLE,
                      "[tokenizer][mecab] "
                      "memory allocation to grn_mecab_tokenizer failed");
@@ -170,7 +170,7 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     }
     CRITICAL_SECTION_LEAVE(sole_mecab_lock);
     if (!s || !buf) {
-      grn_tokenizer_query_destroy(ctx, tokenizer->query);
+      grn_tokenizer_query_close(ctx, tokenizer->query);
       GRN_PLUGIN_FREE(ctx, tokenizer);
       return NULL;
     }
@@ -244,7 +244,7 @@ mecab_fin(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_mecab_tokenizer *tokenizer = user_data->ptr;
   grn_tokenizer_token_fin(ctx, &(tokenizer->token));
-  grn_tokenizer_query_destroy(ctx, tokenizer->query);
+  grn_tokenizer_query_close(ctx, tokenizer->query);
   if (tokenizer->buf) {
     GRN_PLUGIN_FREE(ctx, tokenizer->buf);
   }
