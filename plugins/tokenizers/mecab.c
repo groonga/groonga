@@ -26,7 +26,7 @@
 #include <ctype.h>
 
 static mecab_t *sole_mecab = NULL;
-static grn_critical_section sole_mecab_lock;
+static grn_plugin_mutex *sole_mecab_mutex = NULL;
 static grn_encoding sole_mecab_encoding = GRN_ENC_NONE;
 
 typedef struct {
@@ -91,7 +91,7 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     return NULL;
   }
   if (!sole_mecab) {
-    CRITICAL_SECTION_ENTER(sole_mecab_lock);
+    grn_plugin_mutex_lock(ctx, sole_mecab_mutex);
     if (!sole_mecab) {
       sole_mecab = mecab_new2("-Owakati");
       if (!sole_mecab) {
@@ -103,7 +103,7 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
         sole_mecab_encoding = get_mecab_encoding(sole_mecab);
       }
     }
-    CRITICAL_SECTION_LEAVE(sole_mecab_lock);
+    grn_plugin_mutex_unlock(ctx, sole_mecab_mutex);
   }
   if (!sole_mecab) {
     grn_tokenizer_query_close(ctx, query);
@@ -148,7 +148,7 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     tokenizer->next = normalized_string;
     tokenizer->end = tokenizer->next + normalized_string_length;
   } else {
-    CRITICAL_SECTION_ENTER(sole_mecab_lock);
+    grn_plugin_mutex_lock(ctx, sole_mecab_mutex);
     s = mecab_sparse_tostr2(tokenizer->mecab,
                             normalized_string,
                             normalized_string_length);
@@ -168,7 +168,7 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
         memcpy(buf, s, bufsize);
       }
     }
-    CRITICAL_SECTION_LEAVE(sole_mecab_lock);
+    grn_plugin_mutex_unlock(ctx, sole_mecab_mutex);
     if (!s || !buf) {
       grn_tokenizer_query_close(ctx, tokenizer->query);
       GRN_PLUGIN_FREE(ctx, tokenizer);
@@ -291,7 +291,12 @@ grn_rc
 GRN_PLUGIN_INIT(grn_ctx *ctx)
 {
   sole_mecab = NULL;
-  CRITICAL_SECTION_INIT(sole_mecab_lock);
+  sole_mecab_mutex = grn_plugin_mutex_open(ctx);
+  if (!sole_mecab_mutex) {
+    GRN_PLUGIN_ERROR(ctx, GRN_NO_MEMORY_AVAILABLE,
+                     "[tokenizer][mecab] grn_plugin_mutex_open() failed");
+    return ctx->rc;
+  }
 
   check_mecab_dictionary_encoding(ctx);
   return ctx->rc;
@@ -329,7 +334,10 @@ GRN_PLUGIN_FIN(grn_ctx *ctx)
     mecab_destroy(sole_mecab);
     sole_mecab = NULL;
   }
-  CRITICAL_SECTION_FIN(sole_mecab_lock);
+  if (sole_mecab_mutex) {
+    grn_plugin_mutex_close(ctx, sole_mecab_mutex);
+    sole_mecab_mutex = NULL;
+  }
 
   return GRN_SUCCESS;
 }
