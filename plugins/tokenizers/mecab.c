@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009-2011 Brazil
+/* Copyright(C) 2009-2012 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -101,6 +101,7 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       sole_mecab = mecab_new2("-Owakati");
       if (!sole_mecab) {
         GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
+                         "[tokenizer][mecab] "
                          "mecab_new2 failed on grn_mecab_init: %s",
                          mecab_strerror(NULL));
       } else {
@@ -115,6 +116,7 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_table_get_info(ctx, table, &table_flags, &table_encoding, NULL);
   if (table_encoding != sole_mecab_encoding) {
     GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
+                     "[tokenizer][mecab] "
                      "MeCab dictionary charset (%s) does not match "
                      "the context encoding: <%s>",
                      grn_enctostr(sole_mecab_encoding),
@@ -130,6 +132,7 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                                         nflags, tokenizer->encoding))) {
     GRN_FREE(tokenizer);
     GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
+                     "[tokenizer][mecab] "
                      "grn_str_open failed at grn_token_open");
     return NULL;
   }
@@ -148,12 +151,14 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     s = mecab_sparse_tostr2(tokenizer->mecab, tokenizer->nstr->norm, len);
     if (!s) {
       GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
+                       "[tokenizer][mecab] "
                        "mecab_sparse_tostr failed len=%d err=%s",
                        len, mecab_strerror(tokenizer->mecab));
     } else {
       bufsize = strlen(s) + 1;
       if (!(buf = GRN_MALLOC(bufsize))) {
         GRN_PLUGIN_LOG(ctx, GRN_LOG_ALERT,
+                       "[tokenizer][mecab] "
                        "buffer allocation on mecab_init failed !");
       } else {
         memcpy(buf, s, bufsize);
@@ -260,12 +265,14 @@ check_mecab_dictionary_encoding(grn_ctx *ctx)
 
     if (!have_same_encoding_dictionary) {
       GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
+                       "[tokenizer][mecab] "
                        "MeCab has no dictionary that uses the context encoding"
                        ": <%s>",
                        grn_enctostr(encoding));
     }
   } else {
     GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
+                     "[tokenizer][mecab] "
                      "mecab_new2 failed in check_mecab_dictionary_encoding: %s",
                      mecab_strerror(NULL));
   }
