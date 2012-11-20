@@ -34,12 +34,11 @@ static grn_critical_section sole_mecab_lock;
 static grn_encoding sole_mecab_encoding = GRN_ENC_NONE;
 
 typedef struct {
-  grn_str *nstr;
   mecab_t *mecab;
   char *buf;
   const char *next;
   const char *end;
-  grn_encoding encoding;
+  grn_tokenizer_query *query;
   grn_tokenizer_token token;
   grn_bool have_tokenized_delimiter;
 } grn_mecab_tokenizer;
@@ -82,17 +81,17 @@ get_mecab_encoding(mecab_t *mecab)
 static grn_obj *
 mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  grn_obj *str;
-  int nflags = 0;
   char *buf, *p;
   const char *s;
-  grn_obj *table = args[0];
-  grn_obj_flags table_flags;
-  grn_encoding table_encoding;
   grn_mecab_tokenizer *tokenizer;
-  unsigned int bufsize, len;
-  if (!(str = grn_ctx_pop(ctx))) {
-    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT, "missing argument");
+  unsigned int bufsize;
+  grn_tokenizer_query *query;
+  grn_obj *normalized_query;
+  const char *normalized_string;
+  unsigned int normalized_string_length;
+
+  query = grn_tokenizer_query_create(ctx, nargs, args);
+  if (!query) {
     return NULL;
   }
   if (!sole_mecab) {
@@ -111,49 +110,58 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     CRITICAL_SECTION_LEAVE(sole_mecab_lock);
   }
   if (!sole_mecab) {
+    grn_tokenizer_query_destroy(ctx, query);
     return NULL;
   }
-  grn_table_get_info(ctx, table, &table_flags, &table_encoding, NULL);
-  if (table_encoding != sole_mecab_encoding) {
+
+  if (query->encoding != sole_mecab_encoding) {
+    grn_tokenizer_query_destroy(ctx, query);
     GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
                      "[tokenizer][mecab] "
                      "MeCab dictionary charset (%s) does not match "
                      "the context encoding: <%s>",
                      grn_enctostr(sole_mecab_encoding),
-                     grn_enctostr(table_encoding));
-    return NULL;
-  }
-  if (!(tokenizer = GRN_MALLOC(sizeof(grn_mecab_tokenizer)))) { return NULL; }
-  tokenizer->mecab = sole_mecab;
-  tokenizer->encoding = table_encoding;
-  nflags |= (table_flags & GRN_OBJ_KEY_NORMALIZE);
-  if (!(tokenizer->nstr = grn_str_open_(ctx,
-                                        GRN_TEXT_VALUE(str), GRN_TEXT_LEN(str),
-                                        nflags, tokenizer->encoding))) {
-    GRN_FREE(tokenizer);
-    GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
-                     "[tokenizer][mecab] "
-                     "grn_str_open failed at grn_token_open");
+                     grn_enctostr(query->encoding));
     return NULL;
   }
 
-  len = tokenizer->nstr->norm_blen;
+  if (!(tokenizer = GRN_MALLOC(sizeof(grn_mecab_tokenizer)))) {
+    grn_tokenizer_query_destroy(ctx, query);
+    GRN_PLUGIN_ERROR(ctx, GRN_NO_MEMORY_AVAILABLE,
+                     "[tokenizer][mecab] "
+                     "memory allocation to grn_mecab_tokenizer failed");
+    return NULL;
+  }
+  tokenizer->mecab = sole_mecab;
+  tokenizer->query = query;
+
+  normalized_query = query->normalized_query;
+  grn_string_get_normalized(ctx,
+                            normalized_query,
+                            &normalized_string,
+                            &normalized_string_length,
+                            NULL);
   tokenizer->have_tokenized_delimiter =
     grn_tokenizer_have_tokenized_delimiter(ctx,
-                                           tokenizer->nstr->norm, len,
-                                           tokenizer->encoding);
+                                           normalized_string,
+                                           normalized_string_length,
+                                           query->encoding);
+
   if (tokenizer->have_tokenized_delimiter) {
     tokenizer->buf = NULL;
-    tokenizer->next = tokenizer->nstr->norm;
-    tokenizer->end = tokenizer->next + len;
+    tokenizer->next = normalized_string;
+    tokenizer->end = tokenizer->next + normalized_string_length;
   } else {
     CRITICAL_SECTION_ENTER(sole_mecab_lock);
-    s = mecab_sparse_tostr2(tokenizer->mecab, tokenizer->nstr->norm, len);
+    s = mecab_sparse_tostr2(tokenizer->mecab,
+                            normalized_string,
+                            normalized_string_length);
     if (!s) {
       GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
                        "[tokenizer][mecab] "
                        "mecab_sparse_tostr failed len=%d err=%s",
-                       len, mecab_strerror(tokenizer->mecab));
+                       normalized_string_length,
+                       mecab_strerror(tokenizer->mecab));
     } else {
       bufsize = strlen(s) + 1;
       if (!(buf = GRN_MALLOC(bufsize))) {
@@ -166,7 +174,7 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     }
     CRITICAL_SECTION_LEAVE(sole_mecab_lock);
     if (!s || !buf) {
-      grn_str_close(ctx, tokenizer->nstr);
+      grn_tokenizer_query_destroy(ctx, tokenizer->query);
       GRN_FREE(tokenizer);
       return NULL;
     }
@@ -193,7 +201,7 @@ mecab_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   /* grn_obj *table = args[0]; */
   grn_mecab_tokenizer *tokenizer = user_data->ptr;
-  grn_encoding encoding = tokenizer->encoding;
+  grn_encoding encoding = tokenizer->query->encoding;
 
   if (tokenizer->have_tokenized_delimiter) {
     tokenizer->next =
@@ -240,7 +248,7 @@ mecab_fin(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_mecab_tokenizer *tokenizer = user_data->ptr;
   grn_tokenizer_token_fin(ctx, &(tokenizer->token));
-  grn_str_close(ctx, tokenizer->nstr);
+  grn_tokenizer_query_destroy(ctx, tokenizer->query);
   if (tokenizer->buf) {
     GRN_FREE(tokenizer->buf);
   }
