@@ -153,7 +153,8 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     } else {
       bufsize = strlen(s) + 1;
       if (!(buf = GRN_MALLOC(bufsize))) {
-        GRN_LOG(ctx, GRN_LOG_ALERT, "buffer allocation on mecab_init failed !");
+        GRN_PLUGIN_LOG(ctx, GRN_LOG_ALERT,
+                       "buffer allocation on mecab_init failed !");
       } else {
         memcpy(buf, s, bufsize);
       }
