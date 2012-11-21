@@ -10,7 +10,7 @@
 
    reference/executables
    reference/output
-   reference/commands
+   reference/command
    reference/type
    reference/tokenizers
    reference/query_expanders
