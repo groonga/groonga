@@ -26,6 +26,8 @@ Both request and response consist of GQTP header and body. GQTP header
 is fixed size data. Body is variable size data and its size is stored
 in GQTP header. The content of body isn't defined in GQTP.
 
+.. _gqtp-header-spec:
+
 GQTP header
 ^^^^^^^^^^^
 
