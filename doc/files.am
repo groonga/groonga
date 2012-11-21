@@ -18,6 +18,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/development/travis-ci.txt \
 	$(top_srcdir)/doc/source/example/completion-1.log \
 	$(top_srcdir)/doc/source/example/correction-1.log \
+	$(top_srcdir)/doc/source/example/reference/commands/register/query_expanders_tsv.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/filter_equal.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/filter_less_than.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/limit_negative.log \
@@ -295,8 +296,9 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/api.txt \
 	$(top_srcdir)/doc/source/reference/api/grn_expr.txt \
 	$(top_srcdir)/doc/source/reference/cast.txt \
-	$(top_srcdir)/doc/source/reference/command_version.txt \
-	$(top_srcdir)/doc/source/reference/commands.txt \
+	$(top_srcdir)/doc/source/reference/command.txt \
+	$(top_srcdir)/doc/source/reference/command/command_version.txt \
+	$(top_srcdir)/doc/source/reference/command/output_format.txt \
 	$(top_srcdir)/doc/source/reference/commands/cache_limit.txt \
 	$(top_srcdir)/doc/source/reference/commands/check.txt \
 	$(top_srcdir)/doc/source/reference/commands/clearlock.txt \
@@ -312,6 +314,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/commands/log_put.txt \
 	$(top_srcdir)/doc/source/reference/commands/log_reopen.txt \
 	$(top_srcdir)/doc/source/reference/commands/quit.txt \
+	$(top_srcdir)/doc/source/reference/commands/register.txt \
 	$(top_srcdir)/doc/source/reference/commands/select.txt \
 	$(top_srcdir)/doc/source/reference/commands/shutdown.txt \
 	$(top_srcdir)/doc/source/reference/commands/status.txt \
@@ -412,6 +415,7 @@ source_files_relative_from_doc_dir = \
 	source/development/travis-ci.txt \
 	source/example/completion-1.log \
 	source/example/correction-1.log \
+	source/example/reference/commands/register/query_expanders_tsv.log \
 	source/example/reference/commands/select/filter_equal.log \
 	source/example/reference/commands/select/filter_less_than.log \
 	source/example/reference/commands/select/limit_negative.log \
@@ -689,8 +693,9 @@ source_files_relative_from_doc_dir = \
 	source/reference/api.txt \
 	source/reference/api/grn_expr.txt \
 	source/reference/cast.txt \
-	source/reference/command_version.txt \
-	source/reference/commands.txt \
+	source/reference/command.txt \
+	source/reference/command/command_version.txt \
+	source/reference/command/output_format.txt \
 	source/reference/commands/cache_limit.txt \
 	source/reference/commands/check.txt \
 	source/reference/commands/clearlock.txt \
@@ -706,6 +711,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/commands/log_put.txt \
 	source/reference/commands/log_reopen.txt \
 	source/reference/commands/quit.txt \
+	source/reference/commands/register.txt \
 	source/reference/commands/select.txt \
 	source/reference/commands/shutdown.txt \
 	source/reference/commands/status.txt \
@@ -902,8 +908,9 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/api.txt \
 	html/_sources/reference/api/grn_expr.txt \
 	html/_sources/reference/cast.txt \
-	html/_sources/reference/command_version.txt \
-	html/_sources/reference/commands.txt \
+	html/_sources/reference/command.txt \
+	html/_sources/reference/command/command_version.txt \
+	html/_sources/reference/command/output_format.txt \
 	html/_sources/reference/commands/cache_limit.txt \
 	html/_sources/reference/commands/check.txt \
 	html/_sources/reference/commands/clearlock.txt \
@@ -919,6 +926,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/commands/log_put.txt \
 	html/_sources/reference/commands/log_reopen.txt \
 	html/_sources/reference/commands/quit.txt \
+	html/_sources/reference/commands/register.txt \
 	html/_sources/reference/commands/select.txt \
 	html/_sources/reference/commands/shutdown.txt \
 	html/_sources/reference/commands/status.txt \
@@ -1048,8 +1056,9 @@ html_files_relative_from_locale_dir = \
 	html/reference/api.html \
 	html/reference/api/grn_expr.html \
 	html/reference/cast.html \
-	html/reference/command_version.html \
-	html/reference/commands.html \
+	html/reference/command.html \
+	html/reference/command/command_version.html \
+	html/reference/command/output_format.html \
 	html/reference/commands/cache_limit.html \
 	html/reference/commands/check.html \
 	html/reference/commands/clearlock.html \
@@ -1065,6 +1074,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/commands/log_put.html \
 	html/reference/commands/log_reopen.html \
 	html/reference/commands/quit.html \
+	html/reference/commands/register.html \
 	html/reference/commands/select.html \
 	html/reference/commands/shutdown.html \
 	html/reference/commands/status.html \
