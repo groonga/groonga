@@ -112,6 +112,11 @@ grn_tokenizer_have_tokenized_delimiter(grn_ctx *ctx,
   const char *current = str_ptr;
   const char *end = str_ptr + str_length;
 
+  /* TODO: disabled tokenized delimiter for now.
+     We should handle it just on query expander -> tokenizer phase not
+     all phases. */
+  return GRN_FALSE;
+
   if (encoding != GRN_ENC_UTF8) {
     return GRN_FALSE;
   }

@@ -1,3 +1,5 @@
+#@omit "tokenized delimiter is disabled for now."
+
 table_create Tags TABLE_PAT_KEY|KEY_NORMALIZE ShortText \
   --default_tokenizer TokenDelimit
 
