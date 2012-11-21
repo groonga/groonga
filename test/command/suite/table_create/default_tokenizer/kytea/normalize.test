@@ -1,5 +1,6 @@
 #@on-error omit
 register tokenizers/kytea
+#@on-error default
 
 table_create Memos TABLE_NO_KEY
 column_create Memos content COLUMN_SCALAR Text
