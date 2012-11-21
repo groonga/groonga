@@ -7,15 +7,24 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-23 17:56\n"
+"POT-Creation-Date: 2012-11-21 13:15\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
+"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+# 18ccb939e32a4e2cbe6b1cb1f7b03311
+# f764b75178a9489b8988553a2f5b9382
+# 73d5d1dd7b4b49d49c5dfd397bea0c29
+#: ../../../source/example/completion-1.log:1
+#: ../../../source/example/correction-1.log:1
+#: ../../../source/example/suggestion-1.log:1
+msgid "Execution example::"
+msgstr "Execution example::"
 
 # dc17a543dc134a95886ce1f76bdea098
 #: ../../../source/suggest.txt:6
@@ -178,13 +187,6 @@ msgstr "input"
 msgid "submit"
 msgstr "submit"
 
-# ee2da7fbfd4344f797a73de63c01bff9
-# c80c62ffb5ce40d0b7cd1a20251b6356
-#: ../../../source/suggest/completion.txt:52
-#: ../../../source/suggest/completion.txt:86
-msgid "s"
-msgstr "s"
-
 # 1e4aebbc3a914c08a4e1eecd92db93d3
 # 29412b818e474c7c8dc1c498c850105d
 # d2daa42889e8461ea0eedb746503dd08
@@ -209,6 +211,13 @@ msgstr "s"
 #: ../../../source/suggest/completion.txt:74
 msgid "no"
 msgstr "no"
+
+# ee2da7fbfd4344f797a73de63c01bff9
+# c80c62ffb5ce40d0b7cd1a20251b6356
+#: ../../../source/suggest/completion.txt:52
+#: ../../../source/suggest/completion.txt:86
+msgid "s"
+msgstr "s"
 
 # 6f8fe003aecb4da69c930c6ff77e6169
 # f0ca1b37415b42cb9f4b5c92d82c8025
@@ -432,15 +441,6 @@ msgstr ""
 msgid "For example, here is an command to get completion results by \"en\":"
 msgstr "For example, here is an command to get completion results by \"en\":"
 
-# 18ccb939e32a4e2cbe6b1cb1f7b03311
-# f764b75178a9489b8988553a2f5b9382
-# 73d5d1dd7b4b49d49c5dfd397bea0c29
-#: ../../../source/example/completion-1.log:1
-#: ../../../source/example/correction-1.log:1
-#: ../../../source/example/suggestion-1.log:1
-msgid "Execution example::"
-msgstr "Execution example::"
-
 # 2ae87c2080374de795eb86993cadb098
 # 3f3480cdbb774e019f27883d430daebb
 # c4caa156c83b4fb69cc93b3de46c15f0
@@ -567,25 +567,25 @@ msgstr "query"
 msgid "time"
 msgstr "time"
 
-# 35f777525d5f405d88f73887e6c7ca2a
-#: ../../../source/suggest/correction.txt:40
-msgid "serach (typo!)"
-msgstr "serach (typo!)"
-
 # ce06d5720c9943c399ccc8d0c7ddeb96
 #: ../../../source/suggest/correction.txt:40
 msgid "2011-08-10T22:20:50+09:00"
 msgstr "2011-08-10T22:20:50+09:00"
 
-# d9ae8826fd9a4789b40f5cb25d4e0560
-#: ../../../source/suggest/correction.txt:42
-msgid "search (fixed!)"
-msgstr "search (fixed!)"
+# 35f777525d5f405d88f73887e6c7ca2a
+#: ../../../source/suggest/correction.txt:40
+msgid "serach (typo!)"
+msgstr "serach (typo!)"
 
 # b9a259ba8a2d435d91f9b5a2f5628ee5
 #: ../../../source/suggest/correction.txt:42
 msgid "2011-08-10T22:20:52+09:00"
 msgstr "2011-08-10T22:20:52+09:00"
+
+# d9ae8826fd9a4789b40f5cb25d4e0560
+#: ../../../source/suggest/correction.txt:42
+msgid "search (fixed!)"
+msgstr "search (fixed!)"
 
 # 5f077216cf62441994e8eae85864e7e4
 #: ../../../source/suggest/correction.txt:45
@@ -850,20 +850,15 @@ msgstr ""
 msgid "For example, there are registered correction pairs:"
 msgstr "For example, there are registered correction pairs:"
 
-# c13a9bf4807443608ca5c1b94e4327eb
-#: ../../../source/suggest/introduction.txt:47
-msgid "wrong word"
-msgstr "wrong word"
-
 # 07c96256386a44b29d3974f79e45c106
 #: ../../../source/suggest/introduction.txt:47
 msgid "correct word"
 msgstr "correct word"
 
-# 1b674d08b9c04dffb661284c6c10fed6
-#: ../../../source/suggest/introduction.txt:49
-msgid "grroonga"
-msgstr "grroonga"
+# c13a9bf4807443608ca5c1b94e4327eb
+#: ../../../source/suggest/introduction.txt:47
+msgid "wrong word"
+msgstr "wrong word"
 
 # 1b674d08b9c04dffb661284c6c10fed6
 # 1b674d08b9c04dffb661284c6c10fed6
@@ -875,6 +870,11 @@ msgstr "grroonga"
 #: ../../../source/suggest/introduction.txt:76
 msgid "groonga"
 msgstr "groonga"
+
+# 1b674d08b9c04dffb661284c6c10fed6
+#: ../../../source/suggest/introduction.txt:49
+msgid "grroonga"
+msgstr "grroonga"
 
 # 1b674d08b9c04dffb661284c6c10fed6
 #: ../../../source/suggest/introduction.txt:51
@@ -940,15 +940,15 @@ msgstr "groonga search engine"
 msgid "Google search"
 msgstr "Google search"
 
-# 866c476f13d64c8e8028e0e5183fd207
-#: ../../../source/suggest/introduction.txt:80
-msgid "speed"
-msgstr "speed"
-
 # 16f77f24b0d842d39933c94ab89e20fe
 #: ../../../source/suggest/introduction.txt:80
 msgid "groonga speed"
 msgstr "groonga speed"
+
+# 866c476f13d64c8e8028e0e5183fd207
+#: ../../../source/suggest/introduction.txt:80
+msgid "speed"
+msgstr "speed"
 
 # a03c057b5bdc4abd91a39a897f58dce8
 #: ../../../source/suggest/introduction.txt:83
