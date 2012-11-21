@@ -5,6 +5,54 @@
 News
 ====
 
+.. _release-2-0-9:
+
+Release 2.0.9 - 2012/11/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* Splitted query logger from normal logger.
+* Supported nonexistent column in ``output columns``.
+* Supported vector in offline index construction.
+* Supported to calculate the value of distance accross border
+  in ``geo_distance`` [#1534]
+* Supported network byte order for GQTP Header.
+* [doc] Added the GQTP specification.
+* Supported 1 token with normalization.
+* Improved to ignore non critical ``getaddrinfo()`` error.
+* [experimental] Added ``snippet_html()`` function.
+* Supported to report error reason when reading table record error occured.
+* Added ``TokenDelimit`` tokenizer.
+* Supported tokenized delimiter for ``TokenMecab``, ``TokenKyTea``.
+* Supported correct type output for nonexistent reference by ``select`` command.
+* Supported nested index search.
+* Supported to log "[tokenizer][mecab]" tag by ``TokenMecab``.
+* Supported to log "[tokenizer][kytea]" tag by ``TokenKyTea``.
+
+Fixes
+^^^^^
+
+* Fixed a bug that UTF-8 normalization computes wrong offset.
+  [#1531] [Reported by Tomoatsu Shimada]
+* [windows] Fixed over allocated memory access. [#1532] [Patch by Akio Tajima]
+* [windows] Fixed a bug that over 128MB column value can't be read.
+  [groonga-dev,01088] [Reported by ongaeshi]
+* Fixed offline index construction for index of ``_key``.
+* Fixed a bug that index search for ``Int*`` and ``UInt*`` 
+  except ``Int32/Uint32`` is broken.
+* Fixed a bug that deleting record can be found.
+* Fixed a bug that latin1 and koi8r normalizations require NULL terminated string.
+
+Thanks
+^^^^^^
+
+* Tomoatsu Shimada
+* Akio Tajima
+* ongaeshi
+
+
 .. _release-2-0-8:
 
 Release 2.0.8 - 2012/10/29
