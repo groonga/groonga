@@ -7,80 +7,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-23 17:56\n"
+"POT-Creation-Date: 2012-11-21 13:15\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
+"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-
-# 6713e747a3044b778255e5fee24f2361
-#: ../../../source/tutorial.txt:6
-msgid "Tutorial"
-msgstr "Tutorial"
-
-# e6f7075c5a1140d5b6ba80cea655923a
-#: ../../../source/tutorial/data.txt:11
-msgid "Various data types"
-msgstr "Various data types"
-
-# 0cba4e68adfb460d93b400ec935f8838
-#: ../../../source/tutorial/data.txt:13
-msgid ""
-"Groonga is a full text search engine but also serves as a column-oriented "
-"data store. Groonga supports various data types, such as numeric types, "
-"string types, date and time type, longitude and latitude types, etc. This "
-"tutorial shows a list of data types and explains how to use them."
-msgstr ""
-"Groonga is a full text search engine but also serves as a column-oriented "
-"data store. Groonga supports various data types, such as numeric types, "
-"string types, date and time type, longitude and latitude types, etc. This "
-"tutorial shows a list of data types and explains how to use them."
-
-# 57107b2887df4b0c81ffcf7138da2bff
-#: ../../../source/tutorial/data.txt:16
-msgid "Overview"
-msgstr "Overview"
-
-# c89f929f49f746b7928b7848614616ad
-#: ../../../source/tutorial/data.txt:18
-msgid ""
-"The basic data types of groonga are roughly divided into 5 groups --- "
-"boolean type, numeric types, string types, date/time type and longitude/"
-"latitude types. The numeric types are further divided according to whether "
-"integer or floating point number, signed or unsigned and the number of bits "
-"allocated to each integer. The string types are further divided according to "
-"the maximum length. The longitude/latitude types are further divided "
-"according to the geographic coordinate system. For more details, see :doc:`/"
-"reference/type`."
-msgstr ""
-"The basic data types of groonga are roughly divided into 5 groups --- "
-"boolean type, numeric types, string types, date/time type and longitude/"
-"latitude types. The numeric types are further divided according to whether "
-"integer or floating point number, signed or unsigned and the number of bits "
-"allocated to each integer. The string types are further divided according to "
-"the maximum length. The longitude/latitude types are further divided "
-"according to the geographic coordinate system. For more details, see :doc:`/"
-"reference/type`."
-
-# 8dfc1c5f6664417b910f508f97933893
-#: ../../../source/tutorial/data.txt:20
-msgid ""
-"In addition, groonga supports reference types and vector types. Reference "
-"types are designed for accessing other tables. Vector types are designed for "
-"storing a variable number of values in one element."
-msgstr ""
-"In addition, groonga supports reference types and vector types. Reference "
-"types are designed for accessing other tables. Vector types are designed for "
-"storing a variable number of values in one element."
-
-# 4542ad4bec654579badbb69e0accc3b0
-#: ../../../source/tutorial/data.txt:22
-msgid "First, let's create a table for this tutorial."
-msgstr "First, let's create a table for this tutorial."
 
 # b7ba20d486f44de997cf0e032a200f5d
 # ec9e03224a1a40c1a922a848be2c74fe
@@ -175,14 +110,6 @@ msgstr "First, let's create a table for this tutorial."
 #: ../../../source/example/tutorial/index-6.log:1
 #: ../../../source/example/tutorial/index-7.log:1
 #: ../../../source/example/tutorial/introduction-1.log:1
-#: ../../../source/example/tutorial/introduction-2.log:1
-#: ../../../source/example/tutorial/introduction-3.log:1
-#: ../../../source/example/tutorial/introduction-4.log:1
-#: ../../../source/example/tutorial/introduction-5.log:1
-#: ../../../source/example/tutorial/introduction-6.log:1
-#: ../../../source/example/tutorial/introduction-7.log:1
-#: ../../../source/example/tutorial/introduction-8.log:1
-#: ../../../source/example/tutorial/introduction-9.log:1
 #: ../../../source/example/tutorial/introduction-10.log:1
 #: ../../../source/example/tutorial/introduction-11.log:1
 #: ../../../source/example/tutorial/introduction-12.log:1
@@ -192,11 +119,20 @@ msgstr "First, let's create a table for this tutorial."
 #: ../../../source/example/tutorial/introduction-16.log:1
 #: ../../../source/example/tutorial/introduction-17.log:1
 #: ../../../source/example/tutorial/introduction-18.log:1
+#: ../../../source/example/tutorial/introduction-2.log:1
+#: ../../../source/example/tutorial/introduction-3.log:1
+#: ../../../source/example/tutorial/introduction-4.log:1
+#: ../../../source/example/tutorial/introduction-5.log:1
+#: ../../../source/example/tutorial/introduction-6.log:1
+#: ../../../source/example/tutorial/introduction-7.log:1
+#: ../../../source/example/tutorial/introduction-8.log:1
+#: ../../../source/example/tutorial/introduction-9.log:1
 #: ../../../source/example/tutorial/match_columns-1.log:1
 #: ../../../source/example/tutorial/match_columns-2.log:1
 #: ../../../source/example/tutorial/match_columns-3.log:1
 #: ../../../source/example/tutorial/match_columns-4.log:1
 #: ../../../source/example/tutorial/micro_blog-1.log:1
+#: ../../../source/example/tutorial/micro_blog-10.log:1
 #: ../../../source/example/tutorial/micro_blog-2.log:1
 #: ../../../source/example/tutorial/micro_blog-3.log:1
 #: ../../../source/example/tutorial/micro_blog-4.log:1
@@ -205,12 +141,8 @@ msgstr "First, let's create a table for this tutorial."
 #: ../../../source/example/tutorial/micro_blog-7.log:1
 #: ../../../source/example/tutorial/micro_blog-8.log:1
 #: ../../../source/example/tutorial/micro_blog-9.log:1
-#: ../../../source/example/tutorial/micro_blog-10.log:1
-#: ../../../source/tutorial/network.txt:31
-#: ../../../source/tutorial/network.txt:48
 #: ../../../source/example/tutorial/network-1.log:1
 #: ../../../source/example/tutorial/network-2.log:1
-#: ../../../source/tutorial/network.txt:112
 #: ../../../source/example/tutorial/network-3.log:1
 #: ../../../source/example/tutorial/patricia_trie-1.log:1
 #: ../../../source/example/tutorial/patricia_trie-2.log:1
@@ -224,8 +156,76 @@ msgstr "First, let's create a table for this tutorial."
 #: ../../../source/example/tutorial/search-5.log:1
 #: ../../../source/example/tutorial/search-6.log:1
 #: ../../../source/example/tutorial/search-7.log:1
+#: ../../../source/tutorial/network.txt:31
+#: ../../../source/tutorial/network.txt:48
+#: ../../../source/tutorial/network.txt:112
 msgid "Execution example::"
 msgstr "Execution example::"
+
+# 6713e747a3044b778255e5fee24f2361
+#: ../../../source/tutorial.txt:6
+msgid "Tutorial"
+msgstr "Tutorial"
+
+# e6f7075c5a1140d5b6ba80cea655923a
+#: ../../../source/tutorial/data.txt:11
+msgid "Various data types"
+msgstr "Various data types"
+
+# 0cba4e68adfb460d93b400ec935f8838
+#: ../../../source/tutorial/data.txt:13
+msgid ""
+"Groonga is a full text search engine but also serves as a column-oriented "
+"data store. Groonga supports various data types, such as numeric types, "
+"string types, date and time type, longitude and latitude types, etc. This "
+"tutorial shows a list of data types and explains how to use them."
+msgstr ""
+"Groonga is a full text search engine but also serves as a column-oriented "
+"data store. Groonga supports various data types, such as numeric types, "
+"string types, date and time type, longitude and latitude types, etc. This "
+"tutorial shows a list of data types and explains how to use them."
+
+# 57107b2887df4b0c81ffcf7138da2bff
+#: ../../../source/tutorial/data.txt:16
+msgid "Overview"
+msgstr "Overview"
+
+# c89f929f49f746b7928b7848614616ad
+#: ../../../source/tutorial/data.txt:18
+msgid ""
+"The basic data types of groonga are roughly divided into 5 groups --- "
+"boolean type, numeric types, string types, date/time type and longitude/"
+"latitude types. The numeric types are further divided according to whether "
+"integer or floating point number, signed or unsigned and the number of bits "
+"allocated to each integer. The string types are further divided according to "
+"the maximum length. The longitude/latitude types are further divided "
+"according to the geographic coordinate system. For more details, see :doc:`/"
+"reference/type`."
+msgstr ""
+"The basic data types of groonga are roughly divided into 5 groups --- "
+"boolean type, numeric types, string types, date/time type and longitude/"
+"latitude types. The numeric types are further divided according to whether "
+"integer or floating point number, signed or unsigned and the number of bits "
+"allocated to each integer. The string types are further divided according to "
+"the maximum length. The longitude/latitude types are further divided "
+"according to the geographic coordinate system. For more details, see :doc:`/"
+"reference/type`."
+
+# 8dfc1c5f6664417b910f508f97933893
+#: ../../../source/tutorial/data.txt:20
+msgid ""
+"In addition, groonga supports reference types and vector types. Reference "
+"types are designed for accessing other tables. Vector types are designed for "
+"storing a variable number of values in one element."
+msgstr ""
+"In addition, groonga supports reference types and vector types. Reference "
+"types are designed for accessing other tables. Vector types are designed for "
+"storing a variable number of values in one element."
+
+# 4542ad4bec654579badbb69e0accc3b0
+#: ../../../source/tutorial/data.txt:22
+msgid "First, let's create a table for this tutorial."
+msgstr "First, let's create a table for this tutorial."
 
 # f0e7ed0282794376802383526419a843
 #: ../../../source/tutorial/data.txt:29
@@ -972,25 +972,55 @@ msgstr ""
 msgid "Basic commands"
 msgstr "Basic commands"
 
+# 38faaca0f0b042de9dc31522c3590099
+#: ../../../source/tutorial/introduction.txt:73
+msgid ":doc:`/reference/commands/status`"
+msgstr ""
+
+# a296dfd2c7644f52afa892d4183d040a
+#: ../../../source/tutorial/introduction.txt:75
+msgid ":doc:`/reference/commands/table_list`"
+msgstr ""
+
 # ef2818e6664d402cb3ff68d3ac335ece
 #: ../../../source/tutorial/introduction.txt:75
 msgid "shows status of a groonga process."
 msgstr "shows status of a groonga process."
+
+# bd690b460c0f46dc9b7a1844480c92bf
+#: ../../../source/tutorial/introduction.txt:77
+msgid ":doc:`/reference/commands/column_list`"
+msgstr ""
 
 # 9c730529bdca40ebabf1b60c4575f355
 #: ../../../source/tutorial/introduction.txt:77
 msgid "shows a list of tables in a database."
 msgstr "shows a list of tables in a database."
 
+# a296dfd2c7644f52afa892d4183d040a
+#: ../../../source/tutorial/introduction.txt:79
+msgid ":doc:`/reference/commands/table_create`"
+msgstr ""
+
 # b289d08e588f4afeb3232026cf3ef8ed
 #: ../../../source/tutorial/introduction.txt:79
 msgid "shows a list of columns in a table."
 msgstr "shows a list of columns in a table."
 
+# bd690b460c0f46dc9b7a1844480c92bf
+#: ../../../source/tutorial/introduction.txt:81
+msgid ":doc:`/reference/commands/column_create`"
+msgstr ""
+
 # 481ee24f927a4c1ca2ebacedd35f4607
 #: ../../../source/tutorial/introduction.txt:81
 msgid "adds a table to a database."
 msgstr "adds a table to a database."
+
+# 946760b02059413eab8d255a43fd5009
+#: ../../../source/tutorial/introduction.txt:83
+msgid ":doc:`/reference/commands/select`"
+msgstr ""
 
 # 7ba6b39c8bed49718f390a0a86bad043
 #: ../../../source/tutorial/introduction.txt:83
@@ -1001,6 +1031,11 @@ msgstr "adds a column to a table."
 #: ../../../source/tutorial/introduction.txt:85
 msgid "searches records from a table and shows the result."
 msgstr "searches records from a table and shows the result."
+
+# cea0e3083f8d4da7b8937d07989e238c
+#: ../../../source/tutorial/introduction.txt:86
+msgid ":doc:`/reference/commands/load`"
+msgstr ""
 
 # e4817aff0b2a4e3bb698655736a13a2f
 #: ../../../source/tutorial/introduction.txt:87
@@ -1678,35 +1713,78 @@ msgstr ""
 "ユーザーの名前や自己紹介文、フォローしているユーザー一覧など、ユーザー情報を"
 "格納するためのテーブルです。"
 
+# b8b0e4ce52344505b9c662fe98888945
+# a47511f549514db4a8b193e27a899004
+# 792191d5bea748d7a3ffd7aea9e630ca
+# f82bb1482b0c43368ffb1d097f68425f
+#: ../../../source/tutorial/micro_blog.txt:52
+#: ../../../source/tutorial/micro_blog.txt:82
+#: ../../../source/tutorial/micro_blog.txt:115
+#: ../../../source/tutorial/micro_blog.txt:127
+msgid "``_key``"
+msgstr ""
+
 # 189c26fd9d31469688132e5f6f21171d
 #: ../../../source/tutorial/micro_blog.txt:53
 msgid "ユーザーID"
 msgstr "ユーザーID"
+
+# 5bdae7d53f8e4d60aa5057c390834a39
+#: ../../../source/tutorial/micro_blog.txt:55
+msgid "``name``"
+msgstr ""
 
 # 601827fb90434d6cb43b58240985e274
 #: ../../../source/tutorial/micro_blog.txt:56
 msgid "ユーザー名"
 msgstr "ユーザー名"
 
+# caebe8f2a2004ecd88d3a504167d2d3b
+#: ../../../source/tutorial/micro_blog.txt:58
+msgid "``follower``"
+msgstr ""
+
 # 773d90cf2204428283333db212c251a1
 #: ../../../source/tutorial/micro_blog.txt:59
 msgid "フォローしているユーザーの一覧"
 msgstr "フォローしているユーザーの一覧"
+
+# 534291d9c77844c78ac3e7c6d2abfb22
+#: ../../../source/tutorial/micro_blog.txt:61
+msgid "``favorites``"
+msgstr ""
 
 # 9e8fa58ac7454071834b1a4fdfc3600c
 #: ../../../source/tutorial/micro_blog.txt:62
 msgid "お気に入りのコメント一覧"
 msgstr "お気に入りのコメント一覧"
 
+# 281d6e66c9f841aa96c09f6740cff51f
+# 1bb5c0dfb66f4421ba656000a1627829
+#: ../../../source/tutorial/micro_blog.txt:64
+#: ../../../source/tutorial/micro_blog.txt:100
+msgid "``location``"
+msgstr ""
+
 # f9c29c34e71b4cdfb5144cda0175491e
 #: ../../../source/tutorial/micro_blog.txt:65
 msgid "ユーザーの現在地（緯度経度座標）"
 msgstr "ユーザーの現在地（緯度経度座標）"
 
+# 830faeeb68404a7caefb54975d34499e
+#: ../../../source/tutorial/micro_blog.txt:67
+msgid "``location_str``"
+msgstr ""
+
 # a3b2bd0baff242cc9309e20e4b57e091
 #: ../../../source/tutorial/micro_blog.txt:68
 msgid "ユーザーの現在地（文字列）"
 msgstr "ユーザーの現在地（文字列）"
+
+# b24110485f904782bfff9ecb73d31c77
+#: ../../../source/tutorial/micro_blog.txt:70
+msgid "``description``"
+msgstr ""
 
 # b1366cf9cbef47d896dc3dd0277059d5
 #: ../../../source/tutorial/micro_blog.txt:71
@@ -1721,6 +1799,11 @@ msgid ""
 msgstr ""
 "Usersテーブルのfollowerカラムに対するインデックス。 このインデックスを作るこ"
 "とで、あるユーザーをフォローしているユーザーを検索できるようになります。"
+
+# 5841d64947d84305b35f27663672e766
+#: ../../../source/tutorial/micro_blog.txt:74
+msgid "``followee``"
+msgstr ""
 
 # f59104cba2ad433cbccad708a3699149
 #: ../../../source/tutorial/micro_blog.txt:78
@@ -1741,25 +1824,50 @@ msgstr ""
 msgid "コメントID"
 msgstr "コメントID"
 
+# 6ed888f1178346aaa0a3869114554a90
+#: ../../../source/tutorial/micro_blog.txt:85
+msgid "``comment``"
+msgstr ""
+
 # c4393ab5b4a24661bfc5989c36ed3a46
 #: ../../../source/tutorial/micro_blog.txt:86
 msgid "コメント内容"
 msgstr "コメント内容"
+
+# 363b1b4d772746cea185250df2380792
+#: ../../../source/tutorial/micro_blog.txt:88
+msgid "``last_modified``"
+msgstr ""
 
 # 08139e0f96e041c0b1a018dd404e4282
 #: ../../../source/tutorial/micro_blog.txt:89
 msgid "投稿日時"
 msgstr "投稿日時"
 
+# babc8a9bdb314a96b41764b511b61387
+#: ../../../source/tutorial/micro_blog.txt:91
+msgid "``replied_to``"
+msgstr ""
+
 # fb6160acbfa5452ca423ffad29a39a19
 #: ../../../source/tutorial/micro_blog.txt:92
 msgid "返信元のコメント内容"
 msgstr "返信元のコメント内容"
 
+# 2f3b8752f5e9455493e9a1690d95800e
+#: ../../../source/tutorial/micro_blog.txt:94
+msgid "``replied_users``"
+msgstr ""
+
 # 9e07b48f5b9049a7a5abcff6f6819ee2
 #: ../../../source/tutorial/micro_blog.txt:95
 msgid "返信先のユーザーの一覧"
 msgstr "返信先のユーザーの一覧"
+
+# 60de5abeff0e4dacbca7ffa487610584
+#: ../../../source/tutorial/micro_blog.txt:97
+msgid "``hash_tags``"
+msgstr ""
 
 # 7344e1c9b13643dd8133e1142f07523b
 #: ../../../source/tutorial/micro_blog.txt:98
@@ -1770,6 +1878,11 @@ msgstr "コメントのハッシュタグの一覧"
 #: ../../../source/tutorial/micro_blog.txt:101
 msgid "投稿場所(緯度経度座標のため)"
 msgstr "投稿場所(緯度経度座標のため)"
+
+# 2869a974442c42c0a9682dbed5eba4bd
+#: ../../../source/tutorial/micro_blog.txt:103
+msgid "``posted_by``"
+msgstr ""
 
 # 26228a310a5542ed878c259f9ce989c9
 #: ../../../source/tutorial/micro_blog.txt:104
@@ -1787,6 +1900,11 @@ msgstr ""
 "とで、指定したコメントを誰がお気に入りに入れているのかを検索できるようになり"
 "ます。"
 
+# c72b045c0150486d9c86e68abf6f84b6
+#: ../../../source/tutorial/micro_blog.txt:107
+msgid "``favorited_by``"
+msgstr ""
+
 # 9c481dd5d28c4a59812dbb05e4e818b6
 #: ../../../source/tutorial/micro_blog.txt:111
 msgid "HashTagsテーブル"
@@ -1801,6 +1919,11 @@ msgstr "コメントのハッシュタグを一覧で保存するためのテー
 #: ../../../source/tutorial/micro_blog.txt:116
 msgid "ハッシュタグ"
 msgstr "ハッシュタグ"
+
+# 4b863204554c4e0bb54b8d91ef8dd9a6
+#: ../../../source/tutorial/micro_blog.txt:119
+msgid "``hash_index``"
+msgstr ""
 
 # 924ca8953e48479a904d57c216297eaa
 #: ../../../source/tutorial/micro_blog.txt:119
@@ -1830,6 +1953,11 @@ msgstr ""
 msgid "単語"
 msgstr "単語"
 
+# c5a79f2ff1934e76ae89c0f5563b4e20
+#: ../../../source/tutorial/micro_blog.txt:131
+msgid "``users_index``"
+msgstr ""
+
 # 71763ea4e257480886d215dc008f8dde
 #: ../../../source/tutorial/micro_blog.txt:131
 msgid ""
@@ -1840,6 +1968,11 @@ msgstr ""
 "ユーザー情報のインデックス。 このカラムは、ユーザー名「Users.name」、現在地"
 "「Users.location_str」、自己紹介文「Users.description」のインデックスになって"
 "います。"
+
+# ed13f7ff2c9c4462ac0c377227210702
+#: ../../../source/tutorial/micro_blog.txt:134
+msgid "``comment_index``"
+msgstr ""
 
 # 2bd1144747f04233b8aa4c9c1bded659
 #: ../../../source/tutorial/micro_blog.txt:135

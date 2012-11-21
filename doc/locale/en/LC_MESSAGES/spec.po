@@ -7,20 +7,829 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-23 17:56\n"
+"POT-Creation-Date: 2012-11-21 13:15\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
+"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 # 70c14b5b5578438f9fca2b77aa53d2c7
 #: ../../../source/spec.txt:6
 msgid "Specification"
 msgstr "Specification"
+
+# 2a5183f5c81f4eeeb4b332ed5dbecc11
+#: ../../../source/spec/gqtp.txt:6
+msgid "GQTP"
+msgstr ""
+
+# 394dab59612b42699b8b41e0b3636f3b
+#: ../../../source/spec/gqtp.txt:8
+msgid ""
+"GQTP is the acronym of Groonga Query Transfer Protocol. GQTP is the original "
+"protocol for groonga."
+msgstr ""
+
+# 8cb0ef8809624a07ba4b3c1a8d933cb4
+#: ../../../source/spec/gqtp.txt:12
+msgid "Protocol"
+msgstr ""
+
+# 13e6eba29b584b67b2f41c0986aa37dc
+#: ../../../source/spec/gqtp.txt:14
+msgid ""
+"GQTP is stateful client server model protocol. The following sequence is one "
+"processing unit:"
+msgstr ""
+
+# e8db1aa0c01f4c66b97911c5c253e675
+#: ../../../source/spec/gqtp.txt:17
+msgid "Client sends a request"
+msgstr ""
+
+# d9f44580fe2f42bab088b43a7aecd25c
+#: ../../../source/spec/gqtp.txt:18
+msgid "Server receives the request"
+msgstr ""
+
+# a077db385fb04f3b83b222b3313eadad
+#: ../../../source/spec/gqtp.txt:19
+msgid "Server processes the request"
+msgstr ""
+
+# 1207484d5aa44e3a933f0ff1d5cd75f4
+#: ../../../source/spec/gqtp.txt:20
+msgid "Server sends a response"
+msgstr ""
+
+# 856ebe99884e4757b3047c15781fbb65
+#: ../../../source/spec/gqtp.txt:21
+msgid "Client receives the response"
+msgstr ""
+
+# 2209f5d761f24ed0b9aab41f7b22e422
+#: ../../../source/spec/gqtp.txt:23
+msgid "You can do zero or more processing units in a session."
+msgstr ""
+
+# b4a8e0ea6e024f30b77f86545766d9a2
+#: ../../../source/spec/gqtp.txt:25
+msgid ""
+"Both request and response consist of GQTP header and body. GQTP header is "
+"fixed size data. Body is variable size data and its size is stored in GQTP "
+"header. The content of body isn't defined in GQTP."
+msgstr ""
+
+# 5378260b3169470082902e95e7a7e95d
+#: ../../../source/spec/gqtp.txt:30
+msgid "GQTP header"
+msgstr ""
+
+# 9c24d1116bdf4f35849679320fcdd88d
+#: ../../../source/spec/gqtp.txt:32
+msgid "GQTP header consists of the following unsigned integer values:"
+msgstr ""
+
+# 6a7ae2d5bf3b4fe381bca081bed4c19b
+# ace06ba6366943f18e21b24370c5d266
+# 30ee75a6100e415c89d5f2888daa4cb0
+#: ../../../source/spec/gqtp.txt:35 ../../../source/spec/gqtp.txt:73
+#: ../../../source/spec/gqtp.txt:97
+msgid "Description"
+msgstr ""
+
+# 821966376a574dd4a3cb4e4541306370
+# c2212d9f1d6844189f16c14db5b1b188
+# b9565f96cc1646e2a2a30aee6bfb626a
+#: ../../../source/spec/gqtp.txt:35 ../../../source/spec/gqtp.txt:73
+#: ../../../source/spec/gqtp.txt:97
+msgid "Name"
+msgstr ""
+
+# 264a8e19d7564c49bcdbc341d4e5661c
+#: ../../../source/spec/gqtp.txt:35
+msgid "Size"
+msgstr ""
+
+# 5c34a7e3855b49efb3ac177dd7117240
+# e9168c5043144fba9918ea9e43e187fd
+# eb9700974a4449b29483bf588db64dfe
+# 716cb2b9846f476a8b908d94f482df85
+#: ../../../source/spec/gqtp.txt:37 ../../../source/spec/gqtp.txt:39
+#: ../../../source/spec/gqtp.txt:43 ../../../source/spec/gqtp.txt:45
+msgid "1byte"
+msgstr ""
+
+# 1a8f406b1d3a4f1ca41acf09d86a874d
+#: ../../../source/spec/gqtp.txt:37
+msgid "Protocol type."
+msgstr ""
+
+# 835e1669290e469784edbf4b758b2dd6
+# 2f06e72aa9a5409898230e5a6a13c6f1
+#: ../../../source/spec/gqtp.txt:37 ../../../source/spec/gqtp.txt:63
+msgid "``protocol``"
+msgstr ""
+
+# 43e7687f387a46e8ae289dfa5d677afe
+#: ../../../source/spec/gqtp.txt:39
+msgid "Content type of body."
+msgstr ""
+
+# 0a02a730e2fd4a9aa26e8354fc0cfea2
+# 8b35b0e05b184fc18a2598355d701409
+#: ../../../source/spec/gqtp.txt:39 ../../../source/spec/gqtp.txt:68
+msgid "``query_type``"
+msgstr ""
+
+# e4041fb1efab44e2a9e1b7b619126e35
+# 18846385bafa4919871c80c0f61d3393
+#: ../../../source/spec/gqtp.txt:41 ../../../source/spec/gqtp.txt:47
+msgid "2byte"
+msgstr ""
+
+# 7d4a3bf02171498dbfe478354cc91e20
+# f76e99ea6ceb4834baa7f0b1758a82f9
+# 17cd5787691f4c5d9a200995a9e3b060
+# bc12cf4269bc4312b6ff4eccba809ee9
+# 93db3d00f32b44febbb6db999b4ba56d
+#: ../../../source/spec/gqtp.txt:41 ../../../source/spec/gqtp.txt:43
+#: ../../../source/spec/gqtp.txt:51 ../../../source/spec/gqtp.txt:53
+#: ../../../source/spec/gqtp.txt:103
+msgid "Not used."
+msgstr ""
+
+# 1b17e113282144a58952cbb250344707
+#: ../../../source/spec/gqtp.txt:41
+msgid "``key_length``"
+msgstr ""
+
+# b6ae6f84d3684050a01d955ad4d0006a
+#: ../../../source/spec/gqtp.txt:43
+msgid "``level``"
+msgstr ""
+
+# 6c932a42dea543ecbe663985aa766faf
+#: ../../../source/spec/gqtp.txt:45
+msgid "Flags."
+msgstr ""
+
+# 56c932b541fa4e1dab925f672f148dff
+# e103151ccd0045fb9bccd5098d08064b
+#: ../../../source/spec/gqtp.txt:45 ../../../source/spec/gqtp.txt:92
+msgid "``flags``"
+msgstr ""
+
+# cca264682eb046a69c60f6698c19776b
+#: ../../../source/spec/gqtp.txt:47
+msgid "Return code."
+msgstr ""
+
+# e2c5e27a0af84b7899a18189d51e0e7d
+# 05ed17794fdd4785b591dca5903bdf5b
+#: ../../../source/spec/gqtp.txt:47 ../../../source/spec/gqtp.txt:118
+msgid "``status``"
+msgstr ""
+
+# 95e0dcce4aa34edd9c7044ad474cdf40
+# df81427697f14dbc97b5acb25106b0c8
+#: ../../../source/spec/gqtp.txt:49 ../../../source/spec/gqtp.txt:51
+msgid "4byte"
+msgstr ""
+
+# 497788499e074001975e817eef408c0b
+#: ../../../source/spec/gqtp.txt:49
+msgid "Body size."
+msgstr ""
+
+# fc9b8748fdd742cb8b31680531d60a3a
+# 30632f83b3c4446ca643b6ed9bd9ec28
+#: ../../../source/spec/gqtp.txt:49 ../../../source/spec/gqtp.txt:198
+msgid "``size``"
+msgstr ""
+
+# 4a67799371fa41f588e9576923606c70
+#: ../../../source/spec/gqtp.txt:51
+msgid "``opaque``"
+msgstr ""
+
+# 1cd52e519a744469836f90bcf041fd90
+#: ../../../source/spec/gqtp.txt:53
+msgid "8byte"
+msgstr ""
+
+# c161045220a043f493b88e5fe50e4c14
+#: ../../../source/spec/gqtp.txt:53
+msgid "``cas``"
+msgstr ""
+
+# 667e1a7ea4e94d848468ea1366f5a04e
+#: ../../../source/spec/gqtp.txt:56
+msgid "All header values are encoded by network byte order."
+msgstr ""
+
+# 8629b11b961f4d7ebf3ab43b4c004943
+#: ../../../source/spec/gqtp.txt:58
+msgid "The following sections describes available values of each key."
+msgstr ""
+
+# ec9a4b15b8de4df5bb9b340b436504c9
+#: ../../../source/spec/gqtp.txt:60
+msgid "The total size of GQTP header is 24byte."
+msgstr ""
+
+# 6dc74e8a2c57468b8a1c2dbc424bd038
+#: ../../../source/spec/gqtp.txt:65
+msgid "The value is always ``0xc7`` in both request and response GQTP header."
+msgstr ""
+
+# 1c1597c6eeeb402f8bbbe452ff88c3eb
+#: ../../../source/spec/gqtp.txt:70
+msgid "The value is one of the following values:"
+msgstr ""
+
+# d4dd27c2e2f14f61ada5ccfeee4e5e18
+# a4ca3df8a4d74983a671d1379fe4d3ba
+#: ../../../source/spec/gqtp.txt:73 ../../../source/spec/gqtp.txt:97
+msgid "Value"
+msgstr ""
+
+# 5713008b6664468588c21eeb64252a46
+#: ../../../source/spec/gqtp.txt:75
+msgid "0"
+msgstr ""
+
+# 9a853d2aca5d44a4b99368f0bea4c6f3
+#: ../../../source/spec/gqtp.txt:75
+msgid "Free format."
+msgstr ""
+
+# 4d1a44b2080c4ef58d1c4f5d8ea76d22
+#: ../../../source/spec/gqtp.txt:75
+msgid "``NONE``"
+msgstr ""
+
+# 5013c3b28877412d876d135673f5905e
+#: ../../../source/spec/gqtp.txt:77
+msgid "1"
+msgstr ""
+
+# c60fccae9cae4fc09435bd257d867eb2
+#: ../../../source/spec/gqtp.txt:77
+msgid "Tab Separated Values."
+msgstr ""
+
+# 5efecabf5ed94730bf4ef258fb3949be
+#: ../../../source/spec/gqtp.txt:77
+msgid "``TSV``"
+msgstr ""
+
+# 70f34e8fc6064babbf535d0ed4d624a7
+#: ../../../source/spec/gqtp.txt:79
+msgid "2"
+msgstr ""
+
+# c04f79a5de2e4577bedfc48298d52b75
+#: ../../../source/spec/gqtp.txt:79
+msgid "JSON."
+msgstr ""
+
+# 7d117baade3a43dd85952eb36757e1fe
+#: ../../../source/spec/gqtp.txt:79
+msgid "``JSON``"
+msgstr ""
+
+# 6d9994c69e87420fb7c35da41b2ec2cf
+#: ../../../source/spec/gqtp.txt:81
+msgid "3"
+msgstr ""
+
+# 2fb645ad661b456a86abbf97d927c81e
+#: ../../../source/spec/gqtp.txt:81
+msgid "XML."
+msgstr ""
+
+# f387e73cca9e4955a45f4bb850ac0680
+#: ../../../source/spec/gqtp.txt:81
+msgid "``XML``"
+msgstr ""
+
+# ad168999dcf845afba44a5e892913b60
+#: ../../../source/spec/gqtp.txt:83
+msgid "4"
+msgstr ""
+
+# 0808d6880109467f86fe652fbd284731
+#: ../../../source/spec/gqtp.txt:83
+msgid "Message Pack."
+msgstr ""
+
+# 81baaa5d64c040dfa65c8e9446ecc178
+#: ../../../source/spec/gqtp.txt:83
+msgid "``MSGPACK``"
+msgstr ""
+
+# 2d7b95e6a449473fac9cdb2bb261b371
+#: ../../../source/spec/gqtp.txt:86
+msgid "This is not used in request GQTP header."
+msgstr ""
+
+# 3ca8e23598454eec9c76e7467f6a6c99
+#: ../../../source/spec/gqtp.txt:88
+msgid ""
+"This is used in response GQTP header. Body is formatted as specified type."
+msgstr ""
+
+# 3f840330700742c2b1d13fd9300e96fa
+#: ../../../source/spec/gqtp.txt:94
+msgid "The value is bitwise OR of the following values:"
+msgstr ""
+
+# f54fa0a23e184f6aa0a3ffc2446284a5
+#: ../../../source/spec/gqtp.txt:99
+msgid "0x01"
+msgstr ""
+
+# 2905d1b4fe30465f8b460d9ef0fea840
+#: ../../../source/spec/gqtp.txt:99
+msgid "There are more data."
+msgstr ""
+
+# fe75e7c5d68548b8ae3d32bf402f1eab
+#: ../../../source/spec/gqtp.txt:99
+msgid "``MORE``"
+msgstr ""
+
+# 0e8ca553654a448cb51db131812c3f82
+#: ../../../source/spec/gqtp.txt:101
+msgid "0x02"
+msgstr ""
+
+# fc713d7cc5704e4e8fa6a0efbc44c8ac
+#: ../../../source/spec/gqtp.txt:101
+msgid "There are no more data."
+msgstr ""
+
+# aa84c4b74ed946d983137ffe8a875522
+#: ../../../source/spec/gqtp.txt:101
+msgid "``TAIL``"
+msgstr ""
+
+# 79225cf175234c40b54791a923e2fd74
+#: ../../../source/spec/gqtp.txt:103
+msgid "0x04"
+msgstr ""
+
+# 72fc2b48d88c452b9accd1374460a969
+#: ../../../source/spec/gqtp.txt:103
+msgid "``HEAD``"
+msgstr ""
+
+# a18f9b9bf1214c1daefae18f2deb6c63
+#: ../../../source/spec/gqtp.txt:105
+msgid "0x08"
+msgstr ""
+
+# 66693fbea32c47089f05c6de2ae7ffbb
+#: ../../../source/spec/gqtp.txt:105
+msgid "Be quiet."
+msgstr ""
+
+# 9f1a192974794f6cb95b7a7e7defd22e
+#: ../../../source/spec/gqtp.txt:105
+msgid "``QUIET``"
+msgstr ""
+
+# d8dc20049ca940bba71e068a78eabcad
+#: ../../../source/spec/gqtp.txt:107
+msgid "0x10"
+msgstr ""
+
+# 332111caeb4b4cd4af384214c7ac7742
+#: ../../../source/spec/gqtp.txt:107
+msgid "Be quit."
+msgstr ""
+
+# df5c90af9e744cd0a19ea1cb00a19baa
+#: ../../../source/spec/gqtp.txt:107
+msgid "``QUIT``"
+msgstr ""
+
+# abae9a40cdf9438aa415761fce83e296
+#: ../../../source/spec/gqtp.txt:110
+msgid "You must specify ``MORE`` or ``TAIL`` flag."
+msgstr ""
+
+# b0ee06152b44409daf33458ecdda6c9f
+#: ../../../source/spec/gqtp.txt:112
+msgid ""
+"If you use ``MORE`` flag, you should also use ``QUIET`` flag. Because you "
+"don't need to get a response for your partial request."
+msgstr ""
+
+# 6a63449624274627ad19739f2c116ce1
+#: ../../../source/spec/gqtp.txt:115
+msgid "Use ``QUIT`` flag to quit this session."
+msgstr ""
+
+# 258b8396f5e4409cbe9e58b677c4c106
+#: ../../../source/spec/gqtp.txt:120
+msgid ""
+"Here are available values. The new statuses will be added in the future."
+msgstr ""
+
+# 7cca57bad1434bb3b9551ed7daa9a1b3
+#: ../../../source/spec/gqtp.txt:123
+msgid "0: SUCCESS"
+msgstr ""
+
+# 3d2b3f1d589a4b2ebc4c380234ab391b
+#: ../../../source/spec/gqtp.txt:124
+msgid "1: END_OF_DATA"
+msgstr ""
+
+# c584e0438ae04ac79ccc20acac9577a7
+#: ../../../source/spec/gqtp.txt:125
+msgid "65535: UNKNOWN_ERROR"
+msgstr ""
+
+# 221849f7b14542379cc92c5141683702
+#: ../../../source/spec/gqtp.txt:126
+msgid "65534: OPERATION_NOT_PERMITTED"
+msgstr ""
+
+# 6a8b6d431d084e04a978babe1d18d39c
+#: ../../../source/spec/gqtp.txt:127
+msgid "65533: NO_SUCH_FILE_OR_DIRECTORY"
+msgstr ""
+
+# 41b7130b74ab47eeaac4974b1ca72ef8
+#: ../../../source/spec/gqtp.txt:128
+msgid "65532: NO_SUCH_PROCESS"
+msgstr ""
+
+# b7bafea0b0f44d47b28851210fd22749
+#: ../../../source/spec/gqtp.txt:129
+msgid "65531: INTERRUPTED_FUNCTION_CALL"
+msgstr ""
+
+# c9a5bae02115493caf8b270166f01ded
+#: ../../../source/spec/gqtp.txt:130
+msgid "65530: INPUT_OUTPUT_ERROR"
+msgstr ""
+
+# a2c5a894000144c5866ea0c05b01b68d
+#: ../../../source/spec/gqtp.txt:131
+msgid "65529: NO_SUCH_DEVICE_OR_ADDRESS"
+msgstr ""
+
+# 34351ef089884ccc9ca53ef387bc16ad
+#: ../../../source/spec/gqtp.txt:132
+msgid "65528: ARG_LIST_TOO_LONG"
+msgstr ""
+
+# f3c4d0e794d44d82b738b9684500c9e7
+#: ../../../source/spec/gqtp.txt:133
+msgid "65527: EXEC_FORMAT_ERROR"
+msgstr ""
+
+# ce2d5e70a94740b388a1c9340d82b7ce
+#: ../../../source/spec/gqtp.txt:134
+msgid "65526: BAD_FILE_DESCRIPTOR"
+msgstr ""
+
+# 67e8dd6d84cf4f9f8f270cf641267b0c
+#: ../../../source/spec/gqtp.txt:135
+msgid "65525: NO_CHILD_PROCESSES"
+msgstr ""
+
+# 6247d82177b24e5b8d0dc90f89e207d2
+#: ../../../source/spec/gqtp.txt:136
+msgid "65524: RESOURCE_TEMPORARILY_UNAVAILABLE"
+msgstr ""
+
+# 6ff5d7d3695440308cb8d003e466f1f3
+#: ../../../source/spec/gqtp.txt:137
+msgid "65523: NOT_ENOUGH_SPACE"
+msgstr ""
+
+# d327997e8095419c8eb7e2da2be59ce4
+#: ../../../source/spec/gqtp.txt:138
+msgid "65522: PERMISSION_DENIED"
+msgstr ""
+
+# c862dca61fd14ca8ae2ec416490eb592
+#: ../../../source/spec/gqtp.txt:139
+msgid "65521: BAD_ADDRESS"
+msgstr ""
+
+# f764663999974f5daaa00a91a4b06c08
+#: ../../../source/spec/gqtp.txt:140
+msgid "65520: RESOURCE_BUSY"
+msgstr ""
+
+# a86591fce7d24d6bb648aedb762dc2f2
+#: ../../../source/spec/gqtp.txt:141
+msgid "65519: FILE_EXISTS"
+msgstr ""
+
+# a8e842172a0545579244aa7d22f7f2a7
+#: ../../../source/spec/gqtp.txt:142
+msgid "65518: IMPROPER_LINK"
+msgstr ""
+
+# cdf6fe5555c845dbbac2c258bb0aadaf
+#: ../../../source/spec/gqtp.txt:143
+msgid "65517: NO_SUCH_DEVICE"
+msgstr ""
+
+# c468d2507afe412dbe8c8a2980fa4c5c
+#: ../../../source/spec/gqtp.txt:144
+msgid "65516: NOT_A_DIRECTORY"
+msgstr ""
+
+# 92d0086477b54216bdf9b7902324139e
+#: ../../../source/spec/gqtp.txt:145
+msgid "65515: IS_A_DIRECTORY"
+msgstr ""
+
+# 9edeb9267efc4793b541b54421417e58
+#: ../../../source/spec/gqtp.txt:146
+msgid "65514: INVALID_ARGUMENT"
+msgstr ""
+
+# 35c914997d2e4e75ad4c7d2123ab9eb1
+#: ../../../source/spec/gqtp.txt:147
+msgid "65513: TOO_MANY_OPEN_FILES_IN_SYSTEM"
+msgstr ""
+
+# c7904d5259764dc48829cbdde3c92f83
+#: ../../../source/spec/gqtp.txt:148
+msgid "65512: TOO_MANY_OPEN_FILES"
+msgstr ""
+
+# 85c55e562e7249e0af5884dddfae0989
+#: ../../../source/spec/gqtp.txt:149
+msgid "65511: INAPPROPRIATE_I_O_CONTROL_OPERATION"
+msgstr ""
+
+# ec8fba2822bd4510a5b04947f07ab18c
+#: ../../../source/spec/gqtp.txt:150
+msgid "65510: FILE_TOO_LARGE"
+msgstr ""
+
+# ce6ef94bdebd47e79b4378ad48c28f74
+#: ../../../source/spec/gqtp.txt:151
+msgid "65509: NO_SPACE_LEFT_ON_DEVICE"
+msgstr ""
+
+# 73dfb94ace7747f5bb98af6f0cadf3c0
+#: ../../../source/spec/gqtp.txt:152
+msgid "65508: INVALID_SEEK"
+msgstr ""
+
+# 2bac53ac0f434e59bb75f8c150ed1e8f
+#: ../../../source/spec/gqtp.txt:153
+msgid "65507: READ_ONLY_FILE_SYSTEM"
+msgstr ""
+
+# 384e3c418f2545129245f6b57f313af3
+#: ../../../source/spec/gqtp.txt:154
+msgid "65506: TOO_MANY_LINKS"
+msgstr ""
+
+# d8708abd5db5408d8fcebcf53e41b489
+#: ../../../source/spec/gqtp.txt:155
+msgid "65505: BROKEN_PIPE"
+msgstr ""
+
+# be1c0ec012764c50bb311334248025de
+#: ../../../source/spec/gqtp.txt:156
+msgid "65504: DOMAIN_ERROR"
+msgstr ""
+
+# 5e68b8eb3a1845d2a40b2f8d86b7c1ea
+#: ../../../source/spec/gqtp.txt:157
+msgid "65503: RESULT_TOO_LARGE"
+msgstr ""
+
+# b042fc3089cc4d01bf5b7116716c9872
+#: ../../../source/spec/gqtp.txt:158
+msgid "65502: RESOURCE_DEADLOCK_AVOIDED"
+msgstr ""
+
+# 2cde10adff0146d8969eb1f4ae8dcc72
+#: ../../../source/spec/gqtp.txt:159
+msgid "65501: NO_MEMORY_AVAILABLE"
+msgstr ""
+
+# 4454c8c7c2fc4a29bbee57bf5e56c1b3
+#: ../../../source/spec/gqtp.txt:160
+msgid "65500: FILENAME_TOO_LONG"
+msgstr ""
+
+# d039cf8762664538bc7096a3fd4d0288
+#: ../../../source/spec/gqtp.txt:161
+msgid "65499: NO_LOCKS_AVAILABLE"
+msgstr ""
+
+# 34fe3c9713e747d3981621fc6275b494
+#: ../../../source/spec/gqtp.txt:162
+msgid "65498: FUNCTION_NOT_IMPLEMENTED"
+msgstr ""
+
+# c338643421624201ac74a7b43cf993c7
+#: ../../../source/spec/gqtp.txt:163
+msgid "65497: DIRECTORY_NOT_EMPTY"
+msgstr ""
+
+# c1f94f4f5c2745eca995a7e97bd41f28
+#: ../../../source/spec/gqtp.txt:164
+msgid "65496: ILLEGAL_BYTE_SEQUENCE"
+msgstr ""
+
+# 7ecf2fa850494bdbbffccb395b8bc9e5
+#: ../../../source/spec/gqtp.txt:165
+msgid "65495: SOCKET_NOT_INITIALIZED"
+msgstr ""
+
+# 8e47860bec784e7cb13975c88428b813
+#: ../../../source/spec/gqtp.txt:166
+msgid "65494: OPERATION_WOULD_BLOCK"
+msgstr ""
+
+# 1cd9f50785824a4f8a4e0d5ddb5e0f5c
+#: ../../../source/spec/gqtp.txt:167
+msgid "65493: ADDRESS_IS_NOT_AVAILABLE"
+msgstr ""
+
+# 13f37c4ddf9945648a8b96bfca721d70
+#: ../../../source/spec/gqtp.txt:168
+msgid "65492: NETWORK_IS_DOWN"
+msgstr ""
+
+# 4dceaefc4b574f54a7ead914b20f9f53
+#: ../../../source/spec/gqtp.txt:169
+msgid "65491: NO_BUFFER"
+msgstr ""
+
+# ccbd349c948948b68131a58d1d7a431a
+#: ../../../source/spec/gqtp.txt:170
+msgid "65490: SOCKET_IS_ALREADY_CONNECTED"
+msgstr ""
+
+# 76b17bcdf2f745dcaa296b60e7930063
+#: ../../../source/spec/gqtp.txt:171
+msgid "65489: SOCKET_IS_NOT_CONNECTED"
+msgstr ""
+
+# 742c4c7a5e95491bbd18252e0509335c
+#: ../../../source/spec/gqtp.txt:172
+msgid "65488: SOCKET_IS_ALREADY_SHUTDOWNED"
+msgstr ""
+
+# e5ae6849962447afab12069a4abd2001
+#: ../../../source/spec/gqtp.txt:173
+msgid "65487: OPERATION_TIMEOUT"
+msgstr ""
+
+# 343248a965724576943c0a30113e9ce2
+#: ../../../source/spec/gqtp.txt:174
+msgid "65486: CONNECTION_REFUSED"
+msgstr ""
+
+# e9a9d37b4a2d4d43b0ffd491460a487e
+#: ../../../source/spec/gqtp.txt:175
+msgid "65485: RANGE_ERROR"
+msgstr ""
+
+# 4b70e159c9804529a8874f09dfaeaebc
+#: ../../../source/spec/gqtp.txt:176
+msgid "65484: TOKENIZER_ERROR"
+msgstr ""
+
+# 1567bc6e0e3448e3981e31b2b1872bc9
+#: ../../../source/spec/gqtp.txt:177
+msgid "65483: FILE_CORRUPT"
+msgstr ""
+
+# 721f9ab87468441d9d5f9aaf8203a6af
+#: ../../../source/spec/gqtp.txt:178
+msgid "65482: INVALID_FORMAT"
+msgstr ""
+
+# 0f9179c671814fc48c9d4c6fbd37586e
+#: ../../../source/spec/gqtp.txt:179
+msgid "65481: OBJECT_CORRUPT"
+msgstr ""
+
+# fae8471565d14ca4a14a4dd52c70879e
+#: ../../../source/spec/gqtp.txt:180
+msgid "65480: TOO_MANY_SYMBOLIC_LINKS"
+msgstr ""
+
+# 8ed6e3f6384944c3ae1dcc51620cd024
+#: ../../../source/spec/gqtp.txt:181
+msgid "65479: NOT_SOCKET"
+msgstr ""
+
+# 302fa28c38734543afadd812a29aae61
+#: ../../../source/spec/gqtp.txt:182
+msgid "65478: OPERATION_NOT_SUPPORTED"
+msgstr ""
+
+# ff0d1707e9024b22ba3c202ae15eaef1
+#: ../../../source/spec/gqtp.txt:183
+msgid "65477: ADDRESS_IS_IN_USE"
+msgstr ""
+
+# a5f4b255eb034367a925516afb833fe9
+#: ../../../source/spec/gqtp.txt:184
+msgid "65476: ZLIB_ERROR"
+msgstr ""
+
+# c6d9fd44a4f446df99f08ba628745c05
+#: ../../../source/spec/gqtp.txt:185
+msgid "65475: LZO_ERROR"
+msgstr ""
+
+# 5ea89f1b8fd149ff9010c5982e20e99d
+#: ../../../source/spec/gqtp.txt:186
+msgid "65474: STACK_OVER_FLOW"
+msgstr ""
+
+# 36c4817fcc764ec3b76d341b4083f393
+#: ../../../source/spec/gqtp.txt:187
+msgid "65473: SYNTAX_ERROR"
+msgstr ""
+
+# 2c8fa701d9d6491db99ed62820b0b679
+#: ../../../source/spec/gqtp.txt:188
+msgid "65472: RETRY_MAX"
+msgstr ""
+
+# ec8a409cf09d4fb2a4d7aefffa6734ea
+#: ../../../source/spec/gqtp.txt:189
+msgid "65471: INCOMPATIBLE_FILE_FORMAT"
+msgstr ""
+
+# e7f105a7dd8e4683af412c3f71c1cd71
+#: ../../../source/spec/gqtp.txt:190
+msgid "65470: UPDATE_NOT_ALLOWED"
+msgstr ""
+
+# 6f852dbad2b641559aa676b205b13519
+#: ../../../source/spec/gqtp.txt:191
+msgid "65469: TOO_SMALL_OFFSET"
+msgstr ""
+
+# fa7dff1ae291420e933948e4b8bc4f18
+#: ../../../source/spec/gqtp.txt:192
+msgid "65468: TOO_LARGE_OFFSET"
+msgstr ""
+
+# 8e528e61050e4327b1c26d2e103f2bd6
+#: ../../../source/spec/gqtp.txt:193
+msgid "65467: TOO_SMALL_LIMIT"
+msgstr ""
+
+# 931cd00768e34f37b54dd4f72e7f00d8
+#: ../../../source/spec/gqtp.txt:194
+msgid "65466: CAS_ERROR"
+msgstr ""
+
+# d7f00413ea104bf8a43ef56b692a8058
+#: ../../../source/spec/gqtp.txt:195
+msgid "65465: UNSUPPORTED_COMMAND_VERSION"
+msgstr ""
+
+# 34643f82a2bf49feb59a5cc5ac76c377
+#: ../../../source/spec/gqtp.txt:200
+msgid ""
+"The size of body. The maximum body size is 4GB because ``size`` is 4byte "
+"unsigned integer. If you want to send 4GB or more larger data, use ``MORE`` "
+"flag."
+msgstr ""
+
+# 34eb2a6c1f1c46e889cc8b6101ad3c67
+#: ../../../source/spec/gqtp.txt:205
+msgid "Example"
+msgstr ""
+
+# 9228e2bbfbbc49a2ade9cbb587cd5c4c
+# 91062dab1bb449e4b01dd02e0ae8696f
+#: ../../../source/spec/gqtp.txt:207 ../../../source/spec/gqtp.txt:212
+msgid "TODO"
+msgstr ""
+
+# f43548e504324e9e837240a59af5c943
+#: ../../../source/spec/gqtp.txt:210
+msgid "See also"
+msgstr ""
 
 # 728d32d9dce9424c91a0fd9016cf48a8
 #: ../../../source/spec/search.txt:6
