@@ -1644,15 +1644,17 @@ grn_output_envelope(grn_ctx *ctx,
         grn_text_esc(ctx, head, ctx->errfile, strlen(ctx->errfile));
         GRN_TEXT_PUTC(ctx, head, ',');
         grn_text_itoa(ctx, head, ctx->errline);
+        GRN_TEXT_PUTS(ctx, head, "]");
         if (file && (command = GRN_CTX_USER_DATA(ctx)->ptr)) {
-          GRN_TEXT_PUTC(ctx, head, ',');
+          GRN_TEXT_PUTS(ctx, head, ",[");
           grn_text_esc(ctx, head, file, strlen(file));
           GRN_TEXT_PUTC(ctx, head, ',');
           grn_text_itoa(ctx, head, line);
           GRN_TEXT_PUTC(ctx, head, ',');
           grn_text_esc(ctx, head, GRN_TEXT_VALUE(command), GRN_TEXT_LEN(command));
+          GRN_TEXT_PUTS(ctx, head, "]");
         }
-        GRN_TEXT_PUTS(ctx, head, "]]");
+        GRN_TEXT_PUTS(ctx, head, "]");
       }
     }
     GRN_TEXT_PUTC(ctx, head, ']');
