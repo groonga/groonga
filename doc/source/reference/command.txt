@@ -12,5 +12,6 @@
    :glob:
 
    command/command_version
+   command/output_format
    command/return_code
    commands/*
