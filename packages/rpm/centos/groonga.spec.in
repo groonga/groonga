@@ -336,6 +336,9 @@ fi
 %config(noreplace) %{_sysconfdir}/munin/plugin-conf.d/*
 
 %changelog
+* Thu Nov 29 2012 HAYASHI Kentaro <hayashi@clear-code.com> - 2.0.9-0
+- new upstream release.
+
 * Mon Oct 29 2012 Kouhei Sutou <kou@clear-code.com> - 2.0.8-0
 - new upstream release.
 - Remove needless "Requires". They will be added by rpmbuild automatically.
