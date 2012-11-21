@@ -11,5 +11,6 @@
    :maxdepth: 1
    :glob:
 
-   command_version
+   command/command_version
+   command/return_code
    commands/*
