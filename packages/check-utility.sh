@@ -307,7 +307,7 @@ uninstall_groonga_packages ()
     UNINSTALL_SCRIPT=uninstall-deb-groonga.sh
     cat > $UNINSTALL_SCRIPT <<EOF
 #!/bin/sh
-sudo apt-get purge groonga-* mysql-*
+sudo apt-get purge -y groonga-* mysql-*
 EOF
     for code in $CODES; do
 	for arch in $DEB_ARCHITECTURES; do
@@ -324,7 +324,7 @@ EOF
     UNINSTALL_SCRIPT=uninstall-rpm-groonga.sh
     cat > $UNINSTALL_SCRIPT <<EOF
 #!/bin/sh
-sudo yum remove groonga-* mysql-*
+sudo yum remove -y groonga-* mysql-*
 EOF
     for dist in $DISTRIBUTIONS; do
 	case $dist in
