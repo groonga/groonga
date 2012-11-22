@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-22 11:23\n"
+"POT-Creation-Date: 2012-11-22 17:51\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -169,6 +169,9 @@ msgstr ""
 #: ../../../source/example/reference/functions/geo_distance_location_sphere.log:1
 #: ../../../source/example/reference/functions/geo_distance_setup_distance.log:1
 #: ../../../source/example/reference/functions/geo_distance_setup_location.log:1
+#: ../../../source/example/reference/functions/snippet_html/usage_basic.log:1
+#: ../../../source/example/reference/functions/snippet_html/usage_setup.log:1
+#: ../../../source/example/reference/functions/snippet_html/usage_string_literal.log:1
 #: ../../../source/example/reference/grn_expr/query_syntax/setup.log:1
 #: ../../../source/example/reference/grn_expr/query_syntax/simple_equal.log:1
 #: ../../../source/example/reference/grn_expr/query_syntax/simple_full_text_search.log:1
@@ -530,6 +533,7 @@ msgstr ""
 #: ../../../source/reference/commands/select.txt:12
 #: ../../../source/reference/executables/groonga-httpd.txt:9
 #: ../../../source/reference/functions/geo_distance.txt:13
+#: ../../../source/reference/functions/snippet_html.txt:16
 #: ../../../source/reference/query_expanders/tsv.txt:9
 msgid "Summary"
 msgstr "Summary"
@@ -762,6 +766,7 @@ msgstr ""
 #: ../../../source/reference/executables/groonga-suggest-create-dataset.txt:33
 #: ../../../source/reference/executables/groonga-suggest-create-dataset.txt:38
 #: ../../../source/reference/executables/groonga-suggest-create-dataset.txt:43
+#: ../../../source/reference/functions/snippet_html.txt:108
 msgid "TODO"
 msgstr "TODO"
 
@@ -1174,6 +1179,7 @@ msgstr ""
 # 2c4b346efda24fabbe7822b6e2fdafcf
 #: ../../../source/reference/command/return_code.txt:102
 #: ../../../source/reference/commands/select.txt:891
+#: ../../../source/reference/functions/snippet_html.txt:118
 #: ../../../source/reference/grn_expr.txt:57
 #: ../../../source/reference/query_expanders/tsv.txt:151
 msgid "See also"
@@ -3151,6 +3157,7 @@ msgstr ""
 #: ../../../source/reference/commands/register.txt:27
 #: ../../../source/reference/commands/select.txt:21
 #: ../../../source/reference/functions/geo_distance.txt:18
+#: ../../../source/reference/functions/snippet_html.txt:27
 msgid "Syntax"
 msgstr "Syntax"
 
@@ -3167,6 +3174,7 @@ msgstr ""
 #: ../../../source/reference/commands/select.txt:46
 #: ../../../source/reference/executables/groonga-httpd.txt:30
 #: ../../../source/reference/functions/geo_distance.txt:31
+#: ../../../source/reference/functions/snippet_html.txt:37
 #: ../../../source/reference/output.txt:18
 #: ../../../source/reference/query_expanders/tsv.txt:28
 msgid "Usage"
@@ -3196,6 +3204,7 @@ msgstr ""
 # b28391d763334d68a7b2c6a1731c878c
 #: ../../../source/reference/commands/register.txt:51
 #: ../../../source/reference/functions/geo_distance.txt:293
+#: ../../../source/reference/functions/snippet_html.txt:93
 msgid "Return value"
 msgstr "Return value"
 
@@ -3259,6 +3268,7 @@ msgstr ""
 # dbd7ce67af4b4096b4caa3111a1a9d90
 # 16c671e139ff4fdb986ae5142c5aa3d8
 #: ../../../source/reference/commands/select.txt:51
+#: ../../../source/reference/functions/snippet_html.txt:39
 #: ../../../source/reference/grn_expr/query_syntax.txt:32
 #: ../../../source/reference/grn_expr/script_syntax.txt:28
 msgid "Here are a schema definition and sample data to show usage."
@@ -8458,6 +8468,166 @@ msgstr ""
 msgid "0 と max の間の数を表すInt32型の値を返します。"
 msgstr "0 と max の間の数を表すInt32型の値を返します。"
 
+# 311c5a84894244dbb8f0e7b32af659e9
+#: ../../../source/reference/functions/snippet_html.txt:9
+msgid "snippet_html"
+msgstr ""
+
+# 0447de5710004f64b2a4f579795937ad
+#: ../../../source/reference/functions/snippet_html.txt:13
+msgid "This feature is experimental. API will be changed."
+msgstr ""
+
+# 0e26f3a3027648d7b196594f9cd2e0c7
+#: ../../../source/reference/functions/snippet_html.txt:18
+msgid ""
+"``snippet_html`` generates snippets (``KWIC``. ``KeyWord In Context``) of "
+"search keywords. The snippets are prepared for embedding HTML. Special "
+"characters such as ``<`` and ``>`` are escapsed as ``&lt;`` and ``&gt;``. "
+"Keyword is surrounded with ``<span class=\"keyword\">`` and ``</span>``. For "
+"example, a snippet of ``I am a groonga user. <3`` for keyword ``groonga`` is "
+"``I am a <span class=\"keyword\">groonga</span> user. &lt;3``."
+msgstr ""
+
+# 8aff2c6c38d741958a359d14864aa18b
+#: ../../../source/reference/functions/snippet_html.txt:29
+msgid "``snippet_html`` has only one parameter::"
+msgstr ""
+
+# 6c6cef3120874516a91cf96a84eb15dd
+#: ../../../source/reference/functions/snippet_html.txt:33
+msgid ""
+"``snippet_html`` has many parameters internally but they can't be specified "
+"for now. You will be able to custom those parameters soon."
+msgstr ""
+
+# e69485a4441244be9c634bee7f664546
+#: ../../../source/reference/functions/snippet_html.txt:54
+#, fuzzy
+msgid ""
+"``snippet_html`` can be used in only ``--output_columns`` in :doc:`/"
+"reference/commands/select`."
+msgstr ""
+"See description of ``--match_columns`` option of :doc:`/reference/commands/"
+"select` about them."
+
+# 3d5fc8b83f3a4b4fb50002c8794e6ea7
+#: ../../../source/reference/functions/snippet_html.txt:57
+msgid ""
+"You need to specify ``--command_version 2`` argument explicitly because "
+"function call in ``--output_columns`` is experimental feature in groonga "
+"2.0.9. It will be enabled by default soon."
+msgstr ""
+
+# 4fa881e8d87c4e74b12be5aaf93a4cc4
+#: ../../../source/reference/functions/snippet_html.txt:61
+msgid ""
+"You als oneed to specify ``--query`` and/or ``--filter``. Keywords are "
+"extracted from ``--query`` and ``--filter`` arguments."
+msgstr ""
+
+# a66fc233723d4ec0902928f8d145fee2
+#: ../../../source/reference/functions/snippet_html.txt:64
+msgid ""
+"The following example uses ``--query \"fast performance\"``. In this case, "
+"``fast`` and ``performance`` are used as keywords."
+msgstr ""
+
+# f68ef8116c4a40ac80882774f2494773
+#: ../../../source/reference/functions/snippet_html.txt:71
+msgid ""
+"``--query \"fast performance\"`` matches to only the first record's content. "
+"``snippet_html(content)`` extracts two text parts that include the keywords "
+"``fast`` or ``performance`` and surronds the keywords with ``<span class="
+"\"keyword\">`` and ``</span>``."
+msgstr ""
+
+# 46107ff06cd3488195f8d64cfe9803eb
+#: ../../../source/reference/functions/snippet_html.txt:76
+msgid ""
+"The max number of text parts is 3. If there are 4 or more text parts that "
+"include the keywords, only the leading 3 parts are only used."
+msgstr ""
+
+# d0310584655a43daa5dd47af2e2ce613
+#: ../../../source/reference/functions/snippet_html.txt:79
+msgid ""
+"The max size of a text part is 200 bytes. The unit is bytes not chracters. "
+"The size doesn't include inserted ``<span keyword=\"span\">`` and ``</"
+"span>``."
+msgstr ""
+
+# bcc615edce22436195c01f18e52d1baa
+#: ../../../source/reference/functions/snippet_html.txt:83
+msgid ""
+"Both the max number of text parts and the max size of a text part aren't "
+"customizable."
+msgstr ""
+
+# 392504417bca4f09998f50de3c8c73a8
+#: ../../../source/reference/functions/snippet_html.txt:86
+msgid "You can specify string literal instead of column."
+msgstr ""
+
+# ffb32b374d9343adbca66adfb175f422
+#: ../../../source/reference/functions/snippet_html.txt:95
+msgid ""
+"``snippet_html`` returns an array of string. An element of array is a "
+"snippet::"
+msgstr ""
+
+# 26e4411e681d4cea9e8c585d936a1937
+#: ../../../source/reference/functions/snippet_html.txt:100
+msgid ""
+"A snippet includes one or more keywords. The max byte size of a snippet "
+"except ``<span keyword=\"span\">`` and ``</span>`` is 200 byte. The unit "
+"isn't the number of chracters."
+msgstr ""
+
+# e8e0b475b3b14268aef4b4baaff6c88a
+#: ../../../source/reference/functions/snippet_html.txt:104
+msgid ""
+"The array size is larger than or equal to 1 and less than or equal to 3. The "
+"max size 3 will be customizable soon."
+msgstr ""
+
+# ccc411ab185e4ec1b884cc913dc015c7
+#: ../../../source/reference/functions/snippet_html.txt:110
+msgid "Make the max number of text parts customizable."
+msgstr ""
+
+# 5cc482b577924a829ea040b9e8cf00fa
+#: ../../../source/reference/functions/snippet_html.txt:111
+msgid "Make the max size of a text part customizable."
+msgstr ""
+
+# 59c4f6a582c74ca3b2bc3cbd3779d380
+#: ../../../source/reference/functions/snippet_html.txt:112
+msgid "Make keywords customizable."
+msgstr ""
+
+# 1386be0cc95f4e5fa0d8c3a7aeba7b63
+#: ../../../source/reference/functions/snippet_html.txt:113
+msgid "Make tag that surrounds a keyword customizable."
+msgstr ""
+
+# 43cf20b961e14962bef76798c8c1411a
+#: ../../../source/reference/functions/snippet_html.txt:114
+msgid "Make normalization customizable."
+msgstr ""
+
+# 76f138a3a1594f8e9366bda6adf8b568
+#: ../../../source/reference/functions/snippet_html.txt:115
+msgid "Support options by object literal."
+msgstr ""
+
+# 257a8b1e0a424cf3807162e2534d2837
+# 73ec2c3dc21241d5b0b795816605eeb2
+#: ../../../source/reference/functions/snippet_html.txt:120
+#, fuzzy
+msgid ":doc:`/reference/commands/select`"
+msgstr ":doc:`/reference/grn_expr`"
+
 # 7f8eea1a258e46249d8d77bf964675ab
 #: ../../../source/reference/grn_expr.txt:8
 msgid ""
@@ -10780,12 +10950,12 @@ msgstr ""
 "searchable and keep searchable while indexing."
 
 # 0e68ed2d15674d9ca49f89401b7ea226
-#: ../../../source/reference/indexing.txt:29
+#: ../../../source/reference/indexing.txt:31
 msgid "Offline index construction"
 msgstr "Offline index construction"
 
 # 625990818a6f4c70967be50459999bed
-#: ../../../source/reference/indexing.txt:31
+#: ../../../source/reference/indexing.txt:33
 msgid ""
 "In offline index construction, indexing cost is less than indexing cost by "
 "online index construction. Indexing time will be shorter. Index will be "
@@ -10798,7 +10968,7 @@ msgstr ""
 "document cannot be searchable until all registered documents are indexed."
 
 # ddf7a797ab31477ea1f558e79bc42574
-#: ../../../source/reference/indexing.txt:38
+#: ../../../source/reference/indexing.txt:40
 msgid ""
 "Offline index construction is suitable for a search system that values less "
 "required resources. If a search system doesn't value freshness, offline "
@@ -10813,12 +10983,12 @@ msgstr ""
 "only at a release."
 
 # ca99931b759c44d98ff777781b88ced4
-#: ../../../source/reference/indexing.txt:46
+#: ../../../source/reference/indexing.txt:48
 msgid "How to use"
 msgstr "How to use"
 
 # 2c15c7aa1ec745ca974ea35e1a7c844d
-#: ../../../source/reference/indexing.txt:48
+#: ../../../source/reference/indexing.txt:50
 msgid ""
 "Groonga uses online index construction by default. We register a document, "
 "we can search it quickly."
@@ -10827,7 +10997,7 @@ msgstr ""
 "we can search it quickly."
 
 # e38d943057214917b3df80c8495ca608
-#: ../../../source/reference/indexing.txt:51
+#: ../../../source/reference/indexing.txt:53
 msgid ""
 "Groonga uses offline index construction by adding an index to a column that "
 "already has data."
@@ -10836,22 +11006,22 @@ msgstr ""
 "already has data."
 
 # 6904d09ebfc443aa9ab369bf3776a4ea
-#: ../../../source/reference/indexing.txt:54
+#: ../../../source/reference/indexing.txt:56
 msgid "We define a schema:"
 msgstr "We define a schema:"
 
 # 47bd452bd8bf455888fb08205cf93a6b
-#: ../../../source/reference/indexing.txt:62
+#: ../../../source/reference/indexing.txt:64
 msgid "We register data:"
 msgstr "We register data:"
 
 # f4d3f1a0be66461db983f3da4d5d1c0b
-#: ../../../source/reference/indexing.txt:73
+#: ../../../source/reference/indexing.txt:75
 msgid "We search without index. We get no result:"
 msgstr "We search without index. We get no result:"
 
 # 0a0f3298434f42cb818b86996473dc4f
-#: ../../../source/reference/indexing.txt:79
+#: ../../../source/reference/indexing.txt:81
 msgid ""
 "We create index for ``Tweets.content``. Already registered data in ``Tweets."
 "content`` are indexed by offline index construction:"
@@ -10860,17 +11030,17 @@ msgstr ""
 "content`` are indexed by offline index construction:"
 
 # 06e84dbb21414dde8cb324a5b2d71208
-#: ../../../source/reference/indexing.txt:87
+#: ../../../source/reference/indexing.txt:89
 msgid "We search with index. We get a matched record:"
 msgstr "We search with index. We get a matched record:"
 
 # 6601379fc494471d9c08d5a6c2636dd0
-#: ../../../source/reference/indexing.txt:93
+#: ../../../source/reference/indexing.txt:95
 msgid "We register data again. They are indexed by online index construction:"
 msgstr "We register data again. They are indexed by online index construction:"
 
 # 5b52a5d53e5a4d92a84ff578a6867c71
-#: ../../../source/reference/indexing.txt:104
+#: ../../../source/reference/indexing.txt:106
 msgid "We can also get newly registered records by searching:"
 msgstr "We can also get newly registered records by searching:"
 
@@ -12173,10 +12343,6 @@ msgstr ""
 msgid "Object型はv1.2でサポートされます。"
 msgstr "Object型はv1.2でサポートされます。"
 
-# 38fcbd4036c9474ca17cbf94c00b5aef
-#~ msgid "組み込み関数一覧"
-#~ msgstr "組み込み関数一覧"
-
 # 67a94ca4d3a3474da17378bc44881469
 #~ msgid ""
 #~ "まず、すべてのコマンドに関係するコマンドバージョンについて説明します。その"
@@ -12184,3 +12350,7 @@ msgstr "Object型はv1.2でサポートされます。"
 #~ msgstr ""
 #~ "まず、すべてのコマンドに関係するコマンドバージョンについて説明します。その"
 #~ "後、組み込みのコマンドを順に説明します。"
+
+# 38fcbd4036c9474ca17cbf94c00b5aef
+#~ msgid "組み込み関数一覧"
+#~ msgstr "組み込み関数一覧"
