@@ -16,36 +16,38 @@ Improvements
 * Supported to calculate the value of distance accross border
   in ``geo_distance`` with ``rectangle`` as approximate type. [#1534]
 * [doc] Added the :doc:`/spec/gqtp` specification.
-* Supported normalization even if 1 token was passed to tokenizer.
 * Improved to ignore non critical ``getaddrinfo()`` error which groonga command emits on startup.
 * [experimental] Added ``snippet_html()`` function which extract keyword and surrounding text.
+  See :doc:`/reference/functions/snippet_html` about details.
 * Supported to report error reason when error occured during reading table record.
-* Supported nested index search which enables you to search keyword from multiple table column 
-  by concatinate multiple indexed column name with dot character.
+* Supported to search with keyword by nested index notation ( concatinate multiple 
+  indexed column name with dot character ) if there is a relationship between
+  multiple table with index.
 * Supported to log "[tokenizer][mecab]" tag by ``TokenMecab``.
 * Supported to log "[tokenizer][kytea]" tag by ``TokenKyTea``.
 
 Fixes
 ^^^^^
 
-* Fixed to use network byte order for status code of :ref:`gqtp-header-spec` header.
-  This change affects that groonga <= 2.0.8 client can not connect to groonga 2.0.9 or later.
-* Fixed a bug that UTF-8 normalization computes wrong offset which affects.
+* Fixed to use network byte order for status code of :ref:`gqtp-header-spec`.
+  This change affects that groonga <= 2.0.8 client which connects to groonga server 2.0.9
+  or later can not show status code properly when command failed.
+* Fixed a bug that UTF-8 normalization computes wrong offset which affects to return value
+  of ``snippet_html()``. This change not to insert tag of snippet into invalid location.
   [#1531] [Reported by Tomoatsu Shimada]
 * [windows] Fixed over allocated memory access which cause segmentation fault
   on startup by groonga command. [#1532] [Patch by Akio Tajima]
 * [windows] Fixed a bug that column value couldn't be read when total amount of column data 
   exceeds 128MB. [groonga-dev,01088] [Reported by ongaeshi]
-* Fixed offline index construction for index of ``_key``.
 * Fixed a bug that searching with indexed column for ``Int*`` and ``UInt*`` 
-  except ``Int32/Uint32`` is broken.
+  except ``Int32/Uint32`` returns invalid results.
 * Fixed a bug that deleting record can be found.
 * Fixed a bug that latin1 and koi8r normalizations could not process all string data
   if given string contains NULL character on the way.
 * Fixed to return the correct default value of type when nonexistent reference
   was executed by ``select`` command.
-* Fixed to exclude the value of vector column metadata in offline index construction
-  which affects search results.
+* Fixed to exclude the value of vector column metadata in :ref:``offline-index-construction``.
+  This change not to contain such a metadata as search results.
 
 Thanks
 ^^^^^^

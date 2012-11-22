@@ -25,6 +25,8 @@ tweets, news, blog posts and so on will value
 freshness. Online index construction can make fresh
 documents searchable and keep searchable while indexing.
 
+.. offline-index-construction::
+
 Offline index construction
 --------------------------
 
