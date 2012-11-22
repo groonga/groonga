@@ -4170,58 +4170,58 @@ grn_table_select_select_by_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
     case GRN_OP_NEAR :
     case GRN_OP_NEAR2 :
     case GRN_OP_SIMILAR :
-    {
-      grn_obj wv, **ip = &GRN_PTR_VALUE(&si->index);
-      int j = GRN_BULK_VSIZE(&si->index)/sizeof(grn_obj *);
-      int32_t *wp = &GRN_INT32_VALUE(&si->wv);
-      grn_search_optarg optarg;
-      GRN_INT32_INIT(&wv, GRN_OBJ_VECTOR);
-      if (si->op == GRN_OP_MATCH) {
-        optarg.mode = GRN_OP_EXACT;
-      } else {
-        optarg.mode = si->op;
-      }
-      optarg.similarity_threshold = 0;
-      switch (si->op) {
-      case GRN_OP_NEAR :
-      case GRN_OP_NEAR2 :
-#define DEFAULT_NEAR_MAX_INTERVAL 10
-        optarg.max_interval = DEFAULT_NEAR_MAX_INTERVAL;
-#undef DEFAULT_NEAR_MAX_INTERVAL
-        break;
-      default :
-        optarg.max_interval = 0;
-        break;
-      }
-      optarg.weight_vector = (int *)GRN_BULK_HEAD(&wv);
-      /* optarg.vector_size = GRN_BULK_VSIZE(&si->wv); */
-      optarg.vector_size = 1;
-      optarg.proc = NULL;
-      optarg.max_size = 0;
-      ctx->flags |= GRN_CTX_TEMPORARY_DISABLE_II_RESOLVE_SEL_AND;
-      for (; j--; ip++, wp += 2) {
-        uint32_t sid = (uint32_t) wp[0];
-        int32_t weight = wp[1];
-        if (sid) {
-          GRN_INT32_SET_AT(ctx, &wv, sid - 1, weight);
-          optarg.weight_vector = &GRN_INT32_VALUE(&wv);
-          optarg.vector_size = GRN_BULK_VSIZE(&wv)/sizeof(int32_t);
+      {
+        grn_obj wv, **ip = &GRN_PTR_VALUE(&si->index);
+        int j = GRN_BULK_VSIZE(&si->index)/sizeof(grn_obj *);
+        int32_t *wp = &GRN_INT32_VALUE(&si->wv);
+        grn_search_optarg optarg;
+        GRN_INT32_INIT(&wv, GRN_OBJ_VECTOR);
+        if (si->op == GRN_OP_MATCH) {
+          optarg.mode = GRN_OP_EXACT;
         } else {
-          optarg.weight_vector = NULL;
-          optarg.vector_size = weight;
+          optarg.mode = si->op;
         }
-        if (j) {
-          if (sid && ip[0] == ip[1]) { continue; }
-        } else {
-          ctx->flags &= ~GRN_CTX_TEMPORARY_DISABLE_II_RESOLVE_SEL_AND;
+        optarg.similarity_threshold = 0;
+        switch (si->op) {
+        case GRN_OP_NEAR :
+        case GRN_OP_NEAR2 :
+  #define DEFAULT_NEAR_MAX_INTERVAL 10
+          optarg.max_interval = DEFAULT_NEAR_MAX_INTERVAL;
+  #undef DEFAULT_NEAR_MAX_INTERVAL
+          break;
+        default :
+          optarg.max_interval = 0;
+          break;
         }
-        grn_obj_search(ctx, ip[0], si->query, res, si->logical_op, &optarg);
-        GRN_BULK_REWIND(&wv);
+        optarg.weight_vector = (int *)GRN_BULK_HEAD(&wv);
+        /* optarg.vector_size = GRN_BULK_VSIZE(&si->wv); */
+        optarg.vector_size = 1;
+        optarg.proc = NULL;
+        optarg.max_size = 0;
+        ctx->flags |= GRN_CTX_TEMPORARY_DISABLE_II_RESOLVE_SEL_AND;
+        for (; j--; ip++, wp += 2) {
+          uint32_t sid = (uint32_t) wp[0];
+          int32_t weight = wp[1];
+          if (sid) {
+            GRN_INT32_SET_AT(ctx, &wv, sid - 1, weight);
+            optarg.weight_vector = &GRN_INT32_VALUE(&wv);
+            optarg.vector_size = GRN_BULK_VSIZE(&wv)/sizeof(int32_t);
+          } else {
+            optarg.weight_vector = NULL;
+            optarg.vector_size = weight;
+          }
+          if (j) {
+            if (sid && ip[0] == ip[1]) { continue; }
+          } else {
+            ctx->flags &= ~GRN_CTX_TEMPORARY_DISABLE_II_RESOLVE_SEL_AND;
+          }
+          grn_obj_search(ctx, ip[0], si->query, res, si->logical_op, &optarg);
+          GRN_BULK_REWIND(&wv);
+        }
+        GRN_OBJ_FIN(ctx, &wv);
       }
-      GRN_OBJ_FIN(ctx, &wv);
-    }
-    processed = GRN_TRUE;
-    break;
+      processed = GRN_TRUE;
+      break;
     case GRN_OP_TERM_EXTRACT :
       if (si->flags & SCAN_ACCESSOR) {
         if (index->header.type == GRN_ACCESSOR &&
