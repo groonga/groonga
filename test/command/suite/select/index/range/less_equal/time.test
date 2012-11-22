@@ -1,0 +1,14 @@
+table_create Users TABLE_HASH_KEY ShortText
+column_create Users birthday COLUMN_SCALAR Time
+
+table_create Birthdays TABLE_PAT_KEY Time
+column_create Birthdays users_birthday COLUMN_INDEX Users birthday
+
+load --table Users
+[
+{"_key": "Alice",  "birthday": "1992-02-09 00:00:00"},
+{"_key": "Bob",    "birthday": "1988-01-04 00:00:00"},
+{"_key": "Carlos", "birthday": "1982-12-29 00:00:00"}
+]
+
+select Users --filter 'birthday <= "1988-01-04 00:00:00"'
