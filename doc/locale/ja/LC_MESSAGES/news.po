@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-22 14:34\n"
+"POT-Creation-Date: 2012-11-22 15:31\n"
 "PO-Revision-Date: 2012-08-28 10:30+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -200,8 +200,8 @@ msgid ""
 "Fixed to exclude the value of vector column metadata in :ref:`offline-index-"
 "construction`. This change not to contain such a metadata as search results."
 msgstr ""
-" :ref:`offline-index-construction` によるベクタ型のカラムのメタデータが含ま"
-"れないように修正した。この変更で検索結果にメタデータが混入しないようになりま"
+" :ref:`offline-index-construction` によるベクタ型のカラムのメタデータが含まれ"
+"ないように修正した。この変更で検索結果にメタデータが混入しないようになりま"
 "す。"
 
 #: ../../../source/news.txt:53 ../../../source/news.txt:89
@@ -3621,42 +3621,3 @@ msgid ""
 "MODE' supported"
 msgstr ""
 
-# 4f0018be946c4d3ba3f15ae6135844ff
-#~ msgid "Splitted query logger from normal logger."
-#~ msgstr "クエリのログを通常のログと分けるようにした。"
-
-#~ msgid "Supported nonexistent column in ``output columns``."
-#~ msgstr "存在しないカラム名を ``output_columns`` で指定できるようにした。"
-
-# 89aa3fc8d4f2407d9795bb3c28806fc6
-#~ msgid "Supported vector in offline index construction."
-#~ msgstr ""
-#~ ":doc:`静的なインデックス構築方法 </reference/indexing>` をベクタカラムでも"
-#~ "サポートした。"
-
-# a130932b711444aba9df6c0dfc057715
-#~ msgid "Supported network byte order for GQTP Header."
-#~ msgstr "GQTPヘッダでネットワークバイトオーダーを使うようにした。"
-
-#~ msgid "Supported 1 token with normalization."
-#~ msgstr "1トークンでも正規化できるようにした。"
-
-# b0fabacd60ac4a0991497fa87de75992
-#~ msgid "Added ``TokenDelimit`` tokenizer."
-#~ msgstr "``TokenDelimit`` トークナイザを追加した。"
-
-# 8b42a0354e234969b3dcb56907ad8207
-#~ msgid "Supported tokenized delimiter for ``TokenMecab``, ``TokenKyTea``."
-#~ msgstr ""
-#~ "トークナイザの区切り(デリミタ)文字を ``TokenMecab`` や ``TokenKyTea`` でサ"
-#~ "ポートした。"
-
-# 418185a376724109bfb81a6b2b906336
-#~ msgid "Supported nested index search."
-#~ msgstr "ネストしたインデックスの検索をサポート。"
-
-# 89aa3fc8d4f2407d9795bb3c28806fc6
-#~ msgid "Fixed offline index construction for index of ``_key``."
-#~ msgstr ""
-#~ ":doc:`静的なインデックス構築方法 </reference/indexing>` を ``_key`` に対し"
-#~ "てもサポートした。"
