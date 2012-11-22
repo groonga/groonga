@@ -4088,11 +4088,12 @@ grn_table_select_index_range(grn_ctx *ctx, grn_obj *table, grn_obj *index,
       grn_table_cursor_close(ctx, cursor);
       processed = GRN_TRUE;
     }
-    grn_obj_unlink(ctx, index_table);
 
     grn_ii_resolve_sel_and(ctx, (grn_hash *)res, si->logical_op);
   }
   GRN_OBJ_FIN(ctx, &range);
+
+  grn_obj_unlink(ctx, index_table);
 
   return processed;
 }
