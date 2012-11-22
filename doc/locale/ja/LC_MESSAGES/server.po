@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: groonga 2.0.6\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-11-22 16:05\n"
-"PO-Revision-Date: 2012-09-04 13:11+0900\n"
+"PO-Revision-Date: 2012-11-22 16:11+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -516,28 +516,28 @@ msgstr ""
 # 1829dfc59fbf4978b44017e97797e95d
 #: ../../../source/server/http/comparison.txt:273
 msgid ""
-"You can load your data by POST JSON data. You need follow the rules to use "
+"You can load your data by POST JSON data. You need follow the following rules to use "
 "loading by POST."
-msgstr ""
+msgstr "JSONデータをPOSTすることでデータをロードすることができます。POSTでロードする場合は以下のルールに従ってください。"
 
 # d13cdf7dc6874a3bbb262257acb36f53
 #: ../../../source/server/http/comparison.txt:276
 msgid "`Content-Type` header value must be `application/json`."
-msgstr ""
+msgstr "`Content-Type` ヘッダーの値を `application/json` にする。"
 
 # 6282600bb9e24a70ba5b25d0165efc74
 #: ../../../source/server/http/comparison.txt:277
-msgid "JSON data is body."
-msgstr ""
+msgid "JSON data is sent as body."
+msgstr "JSONデータはbodyとして送る。"
 
 # 823e64393d8648299001e5fb95439647
 #: ../../../source/server/http/comparison.txt:278
 msgid "Table name is specified by query parameter such as ``table=NAME``."
-msgstr ""
+msgstr "テーブル名は ``table=名前`` というようにクエリーパラメーターで指定する。"
 
 # 43ce7034d6f44f29b48cb26ac09a4227
 #: ../../../source/server/http/comparison.txt:280
 msgid ""
 "Here is an example curl command line that loads two users `alice` and `bob` "
 "to `Users` table::"
-msgstr ""
+msgstr "以下はcurlを使って `alice` と `bob` という2人のユーザーを `Users` テーブルにロードするコマンドラインの例です::"

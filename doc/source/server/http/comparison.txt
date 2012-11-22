@@ -270,11 +270,11 @@ processed by groonga. You don't need to consider about other modules.
 POST
 ----
 
-You can load your data by POST JSON data. You need follow the rules to
-use loading by POST.
+You can load your data by POST JSON data. You need follow the
+following rules to use loading by POST.
 
 * `Content-Type` header value must be `application/json`.
-* JSON data is body.
+* JSON data is sent as body.
 * Table name is specified by query parameter such as ``table=NAME``.
 
 Here is an example curl command line that loads two users `alice` and
