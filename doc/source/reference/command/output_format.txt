@@ -206,4 +206,16 @@ is occurred.
 ``BODY``
 ^^^^^^^^
 
+``BODY`` content depends on the executed command. It may be omitted.
+
+``BODY`` may be an error message on error case.
+
+XML
+---
+
+TODO
+
+TSV
+---
+
 TODO
