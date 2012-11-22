@@ -73,6 +73,10 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/functions/geo_distance_location_sphere.log \
 	$(top_srcdir)/doc/source/example/reference/functions/geo_distance_setup_distance.log \
 	$(top_srcdir)/doc/source/example/reference/functions/geo_distance_setup_location.log \
+	$(top_srcdir)/doc/source/example/reference/functions/snippet_html/usage.log \
+	$(top_srcdir)/doc/source/example/reference/functions/snippet_html/usage_basic.log \
+	$(top_srcdir)/doc/source/example/reference/functions/snippet_html/usage_setup.log \
+	$(top_srcdir)/doc/source/example/reference/functions/snippet_html/usage_string_literal.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/setup.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/simple_equal.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/simple_full_text_search.log \
@@ -341,6 +345,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/functions/geo_in_rectangle.txt \
 	$(top_srcdir)/doc/source/reference/functions/now.txt \
 	$(top_srcdir)/doc/source/reference/functions/rand.txt \
+	$(top_srcdir)/doc/source/reference/functions/snippet_html.txt \
 	$(top_srcdir)/doc/source/reference/grn_expr.txt \
 	$(top_srcdir)/doc/source/reference/grn_expr/query_syntax.txt \
 	$(top_srcdir)/doc/source/reference/grn_expr/script_syntax.txt \
@@ -471,6 +476,10 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/functions/geo_distance_location_sphere.log \
 	source/example/reference/functions/geo_distance_setup_distance.log \
 	source/example/reference/functions/geo_distance_setup_location.log \
+	source/example/reference/functions/snippet_html/usage.log \
+	source/example/reference/functions/snippet_html/usage_basic.log \
+	source/example/reference/functions/snippet_html/usage_setup.log \
+	source/example/reference/functions/snippet_html/usage_string_literal.log \
 	source/example/reference/grn_expr/query_syntax/setup.log \
 	source/example/reference/grn_expr/query_syntax/simple_equal.log \
 	source/example/reference/grn_expr/query_syntax/simple_full_text_search.log \
@@ -739,6 +748,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/functions/geo_in_rectangle.txt \
 	source/reference/functions/now.txt \
 	source/reference/functions/rand.txt \
+	source/reference/functions/snippet_html.txt \
 	source/reference/grn_expr.txt \
 	source/reference/grn_expr/query_syntax.txt \
 	source/reference/grn_expr/script_syntax.txt \
@@ -955,6 +965,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/functions/geo_in_rectangle.txt \
 	html/_sources/reference/functions/now.txt \
 	html/_sources/reference/functions/rand.txt \
+	html/_sources/reference/functions/snippet_html.txt \
 	html/_sources/reference/grn_expr.txt \
 	html/_sources/reference/grn_expr/query_syntax.txt \
 	html/_sources/reference/grn_expr/script_syntax.txt \
@@ -1104,6 +1115,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/functions/geo_in_rectangle.html \
 	html/reference/functions/now.html \
 	html/reference/functions/rand.html \
+	html/reference/functions/snippet_html.html \
 	html/reference/grn_expr.html \
 	html/reference/grn_expr/query_syntax.html \
 	html/reference/grn_expr/script_syntax.html \
