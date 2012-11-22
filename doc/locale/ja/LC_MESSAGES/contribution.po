@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-22 10:52\n"
+"POT-Creation-Date: 2012-11-22 15:01\n"
 "PO-Revision-Date: 2012-02-06 22:18+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -35,19 +35,19 @@ msgstr ""
 "加することもコントリビュートです。プログラムではなく、ドキュメントでのコント"
 "リビュートも歓迎します！"
 
-# 2dd63438676b48d3aa77c7226de04102
+# 6f5c5091870541e489531bfc933e6196
 #: ../../../source/contribution.txt:13
-msgid "Use:"
-msgstr "使うには:"
+msgid "As a user:"
+msgstr "ユーザーの立場で:"
+
+# 98e45ec9a24745e2bb749f364d4b5b82
+#: ../../../source/contribution.txt:15
+msgid "As a spokesman:"
+msgstr "布教する立場で:"
 
 #: ../../../source/contribution.txt:15
 msgid "If you are interested in groonga, please read this document and try it."
 msgstr "このドキュメントを読んでください。"
-
-# 7d33474fa9e742e1bf8c26a4252ee71f
-#: ../../../source/contribution.txt:15
-msgid "Introduction:"
-msgstr "はじめに:"
 
 #: ../../../source/contribution.txt:17
 msgid "Please introduce groonga to your friends and colleagues."
@@ -55,8 +55,8 @@ msgstr "groongaについてまわりの人に話してください。"
 
 # 2d16a62eebd34fa68b33b44197342be9
 #: ../../../source/contribution.txt:18
-msgid "Bug report, development and documentation:"
-msgstr "不具合報告や開発、ドキュメント:"
+msgid "As a developer: Bug report, development and documentation"
+msgstr "開発者の立場で: 不具合報告や開発、ドキュメント"
 
 #: ../../../source/contribution.txt:19
 msgid "This section describes the details."

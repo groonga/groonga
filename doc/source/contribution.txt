@@ -11,11 +11,11 @@ For example, if you find a bug when using groonga, you are welcome to
 report the bug. Coding and documentation are also welcome for groonga and
 its related projects.
 
-Use:
+As a user:
   If you are interested in groonga, please read this document and try it.
-Introduction:
+As a spokesman:
   Please introduce groonga to your friends and colleagues.
-Bug report, development and documentation:
+As a developer: Bug report, development and documentation
   This section describes the details.
 
 .. toctree::

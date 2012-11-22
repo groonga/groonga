@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-21 14:15\n"
+"POT-Creation-Date: 2012-11-22 15:01\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -37,9 +37,14 @@ msgstr ""
 "Coding and documentation are also welcome for groonga and its related "
 "projects."
 
-# 3c9834dcd6f043a790fc16d53e61b5dc
+# 7f35526bb683452ea9e4fb3cd8149e17
 #: ../../../source/contribution.txt:13
-msgid "Use:"
+msgid "As a user:"
+msgstr ""
+
+# 444ed91249a94068b945c2a1a36a3228
+#: ../../../source/contribution.txt:15
+msgid "As a spokesman:"
 msgstr ""
 
 # 6d182801f1e44dfd9041b516643550cd
@@ -48,11 +53,6 @@ msgid "If you are interested in groonga, please read this document and try it."
 msgstr ""
 "If you are interested in groonga, please read this document and try it."
 
-# c4a7289b31a146e2aede87cf40b053ae
-#: ../../../source/contribution.txt:15
-msgid "Introduction:"
-msgstr ""
-
 # 70327910e5d6460da01bc9353c25497e
 #: ../../../source/contribution.txt:17
 msgid "Please introduce groonga to your friends and colleagues."
@@ -60,7 +60,7 @@ msgstr "Please introduce groonga to your friends and colleagues."
 
 # 8c9cadbb55a0434f913434d9aa471f68
 #: ../../../source/contribution.txt:18
-msgid "Bug report, development and documentation:"
+msgid "As a developer: Bug report, development and documentation"
 msgstr ""
 
 # ffd5f6258f9046ff8469062adc07c5d4
@@ -2649,4 +2649,3 @@ msgid ""
 msgstr ""
 "Groonga project has :doc:`/community` for discussing about groonga. Please "
 "send a mail that describes a bug."
-
