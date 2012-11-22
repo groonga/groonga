@@ -299,6 +299,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/command.txt \
 	$(top_srcdir)/doc/source/reference/command/command_version.txt \
 	$(top_srcdir)/doc/source/reference/command/output_format.txt \
+	$(top_srcdir)/doc/source/reference/command/return_code.txt \
 	$(top_srcdir)/doc/source/reference/commands/cache_limit.txt \
 	$(top_srcdir)/doc/source/reference/commands/check.txt \
 	$(top_srcdir)/doc/source/reference/commands/clearlock.txt \
@@ -333,7 +334,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/executables/groonga-server-http.txt \
 	$(top_srcdir)/doc/source/reference/executables/groonga-suggest-create-dataset.txt \
 	$(top_srcdir)/doc/source/reference/executables/groonga.txt \
-	$(top_srcdir)/doc/source/reference/functions.txt \
+	$(top_srcdir)/doc/source/reference/function.txt \
 	$(top_srcdir)/doc/source/reference/functions/edit_distance.txt \
 	$(top_srcdir)/doc/source/reference/functions/geo_distance.txt \
 	$(top_srcdir)/doc/source/reference/functions/geo_in_circle.txt \
@@ -696,6 +697,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/command.txt \
 	source/reference/command/command_version.txt \
 	source/reference/command/output_format.txt \
+	source/reference/command/return_code.txt \
 	source/reference/commands/cache_limit.txt \
 	source/reference/commands/check.txt \
 	source/reference/commands/clearlock.txt \
@@ -730,7 +732,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/executables/groonga-server-http.txt \
 	source/reference/executables/groonga-suggest-create-dataset.txt \
 	source/reference/executables/groonga.txt \
-	source/reference/functions.txt \
+	source/reference/function.txt \
 	source/reference/functions/edit_distance.txt \
 	source/reference/functions/geo_distance.txt \
 	source/reference/functions/geo_in_circle.txt \
@@ -911,6 +913,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/command.txt \
 	html/_sources/reference/command/command_version.txt \
 	html/_sources/reference/command/output_format.txt \
+	html/_sources/reference/command/return_code.txt \
 	html/_sources/reference/commands/cache_limit.txt \
 	html/_sources/reference/commands/check.txt \
 	html/_sources/reference/commands/clearlock.txt \
@@ -945,7 +948,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/executables/groonga-server-http.txt \
 	html/_sources/reference/executables/groonga-suggest-create-dataset.txt \
 	html/_sources/reference/executables/groonga.txt \
-	html/_sources/reference/functions.txt \
+	html/_sources/reference/function.txt \
 	html/_sources/reference/functions/edit_distance.txt \
 	html/_sources/reference/functions/geo_distance.txt \
 	html/_sources/reference/functions/geo_in_circle.txt \
@@ -1059,6 +1062,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/command.html \
 	html/reference/command/command_version.html \
 	html/reference/command/output_format.html \
+	html/reference/command/return_code.html \
 	html/reference/commands/cache_limit.html \
 	html/reference/commands/check.html \
 	html/reference/commands/clearlock.html \
@@ -1093,7 +1097,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/executables/groonga-server-http.html \
 	html/reference/executables/groonga-suggest-create-dataset.html \
 	html/reference/executables/groonga.html \
-	html/reference/functions.html \
+	html/reference/function.html \
 	html/reference/functions/edit_distance.html \
 	html/reference/functions/geo_distance.html \
 	html/reference/functions/geo_in_circle.html \
