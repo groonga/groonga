@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-22 14:14\n"
+"POT-Creation-Date: 2012-11-22 14:34\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -208,8 +208,8 @@ msgstr ""
 # 4691e642f9ff499cad2175a73245e665
 #: ../../../source/news.txt:49
 msgid ""
-"Fixed to exclude the value of vector column metadata in :ref:``offline-index-"
-"construction``. This change not to contain such a metadata as search results."
+"Fixed to exclude the value of vector column metadata in :ref:`offline-index-"
+"construction`. This change not to contain such a metadata as search results."
 msgstr ""
 
 # 787a4243dd6e4b508022aab512c86c8f
