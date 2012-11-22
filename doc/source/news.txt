@@ -46,7 +46,7 @@ Fixes
   if given string contains NULL character on the way.
 * Fixed to return the correct default value of type when nonexistent reference
   was executed by ``select`` command.
-* Fixed to exclude the value of vector column metadata in :ref:``offline-index-construction``.
+* Fixed to exclude the value of vector column metadata in :ref:`offline-index-construction`.
   This change not to contain such a metadata as search results.
 
 Thanks
