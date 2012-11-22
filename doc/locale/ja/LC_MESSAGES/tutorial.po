@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-23 15:32\n"
+"POT-Creation-Date: 2012-11-22 15:57\n"
 "PO-Revision-Date: 2012-10-30 16:27+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -133,8 +133,8 @@ msgstr ""
 "groongaにおいて利用できる基本型は、真偽値、数値、文字列、日時、経緯度の5種類"
 "に大別できます。基本型において、数値は整数・浮動小数点数の違い、符号の有無と"
 "割り当てるビット数によって細分化できるほか、文字列は長さの上限によって細分化"
-"できます。また、経緯度には測地系による分類があります。詳しくは :doc:`/reference/type` "
-"を参照してください。"
+"できます。また、経緯度には測地系による分類があります。詳しくは :doc:`/"
+"reference/type` を参照してください。"
 
 # 3ec01c2c1fbd42978e3a85da79958686
 #: ../../../source/tutorial/data.txt:20
@@ -165,8 +165,8 @@ msgid ""
 "column_create` command. The default value of the boolean type is false."
 msgstr ""
 "ブール型は真偽値（true/false）を表現するための型です。ブール型のカラムを作成"
-"するには、 :doc:`/reference/commands/column_create` コマンドの `type` 引数に Bool を指"
-"定します。ブール型のデフォルト値はfalseです。"
+"するには、 :doc:`/reference/commands/column_create` コマンドの `type` 引数に "
+"Bool を指定します。ブール型のデフォルト値はfalseです。"
 
 # b0efb64bd2724bcc88a28ff9460b8fa0
 #: ../../../source/tutorial/data.txt:33
@@ -196,7 +196,8 @@ msgstr ""
 "号なし整数に分けることができるだけでなく、割り当てるビット数によっても分ける"
 "ことができます。割り当てるビット数を大きくすると、カラムのサイズは大きくなっ"
 "てしまいますが、表現できる整数の範囲を大きくすることができます。詳しくは :"
-"doc:`/reference/type` を参照してください。数値型のデフォルト値はいずれも0です。"
+"doc:`/reference/type` を参照してください。数値型のデフォルト値はいずれも0で"
+"す。"
 
 # 92862bee04a048cf97411a6649be1a0f
 #: ../../../source/tutorial/data.txt:51
@@ -228,8 +229,9 @@ msgid ""
 "details, see :doc:`/reference/type`. The default value is the zero-length "
 "string."
 msgstr ""
-"文字列型は、長さの上限によって分けることができます。詳しくは :doc:`/reference/type` を"
-"参照してください。文字列型のデフォルト値は長さ0の文字列です。"
+"文字列型は、長さの上限によって分けることができます。詳しくは :doc:`/"
+"reference/type` を参照してください。文字列型のデフォルト値は長さ0の文字列で"
+"す。"
 
 # b0efb64bd2724bcc88a28ff9460b8fa0
 #: ../../../source/tutorial/data.txt:70
@@ -251,17 +253,17 @@ msgid ""
 "The date and time type of groonga is Time. Actually, a Time column stores a "
 "date and time as the number of microseconds since the Epoch, 1970-01-01 "
 "00:00:00. A Time value can represent a date and time before the Epoch "
-"because the actual data type is a signed integer. Note that :doc:`/"
-"reference/commands/load` and :doc:`/reference/commands/select` commands use a decimal "
+"because the actual data type is a signed integer. Note that :doc:`/reference/"
+"commands/load` and :doc:`/reference/commands/select` commands use a decimal "
 "number to represent a data and time in seconds. The default value is 0.0, "
 "which means the Epoch."
 msgstr ""
 "日時を表現するための型はTimeです。内部では1970年1月1日0時0分0秒を基準とする経"
 "過時間をマイクロ秒単位で表現します。符号付きの整数を用いるため、1970年以前の"
-"日時も表現することができます。内部表現はマイクロ秒単位の整数ですが、 :doc:`/reference/"
-"commands/load` コマンドおよび :doc:`/reference/commands/select` コマンドでは、経過秒数"
-"による指定・表示となります。デフォルト値は1970年1月1日0時0分0秒のことを表す"
-"0.0です。"
+"日時も表現することができます。内部表現はマイクロ秒単位の整数ですが、 :doc:`/"
+"reference/commands/load` コマンドおよび :doc:`/reference/commands/select` コ"
+"マンドでは、経過秒数による指定・表示となります。デフォルト値は1970年1月1日0時"
+"0分0秒のことを表す0.0です。"
 
 # b0efb64bd2724bcc88a28ff9460b8fa0
 #: ../../../source/tutorial/data.txt:87
@@ -286,8 +288,8 @@ msgid ""
 "follows:"
 msgstr ""
 "経緯度を表現するための型は、測地系によって分けることができます。詳しくは :"
-"doc:`/reference/type` を参照してください。経緯度の指定・表示には、以下に示す形式の文字"
-"列を使います。"
+"doc:`/reference/type` を参照してください。経緯度の指定・表示には、以下に示す"
+"形式の文字列を使います。"
 
 # bc2afac58e83444099f6a2e282104d04
 #: ../../../source/tutorial/data.txt:104
@@ -351,7 +353,13 @@ msgid ""
 "handled as \"Src._key\". Note that if a reference does not point to a valid "
 "record, a :doc:`/reference/commands/select` command outputs the default "
 "value of the target column."
-msgstr "テーブル参照のカラムがあるときは、 :doc:`reference/command/select` コマンドの `output_columns` 引数に \"参照元カラム.参照先カラム\" と指定することにより、参照先カラムの値を取り出すことができます。参照元カラムのみを指定したときは、 \"参照元カラム名._key\" と同様の扱いとなり、参照先レコードの主キーが取り出されます。テーブル参照が有効なレコードを指していないときは、参照先カラムのデフォルト値が取り出されるようになっています。"
+msgstr ""
+"テーブル参照のカラムがあるときは、 :doc:`reference/command/select` コマンド"
+"の `output_columns` 引数に \"参照元カラム.参照先カラム\" と指定することによ"
+"り、参照先カラムの値を取り出すことができます。参照元カラムのみを指定したとき"
+"は、 \"参照元カラム名._key\" と同様の扱いとなり、参照先レコードの主キーが取り"
+"出されます。テーブル参照が有効なレコードを指していないときは、参照先カラムの"
+"デフォルト値が取り出されるようになっています。"
 
 # c3a7a7cea377485d81cd4ec552c15694
 #: ../../../source/tutorial/data.txt:128
@@ -376,7 +384,15 @@ msgid ""
 "command. In this case, the primary key and the title of the referred record "
 "are output because link._key and link.title are specified to the "
 "`output_columns` parameter."
-msgstr "テーブル参照のカラムを作成するときは、 :doc:`/reference/commands/column_create` コマンドの `type` 引数に参照先テーブルを指定します。この例では、同じテーブルに含まれる別のレコードを参照させたいので、Siteを指定することになります。次に、 \"http://example.org/\" から \"http://example.net/\" へのリンクを登録しています。テーブル参照を作成するときは、IDではなく主キーを指定することに注意してください。最後に、リンクの内容を確認しています。この例では、  `output_columns` 引数に link._key と link.title を指定しているので、参照先の主キーとタイトルが表示されています。"
+msgstr ""
+"テーブル参照のカラムを作成するときは、 :doc:`/reference/commands/"
+"column_create` コマンドの `type` 引数に参照先テーブルを指定します。この例で"
+"は、同じテーブルに含まれる別のレコードを参照させたいので、Siteを指定すること"
+"になります。次に、 \"http://example.org/\" から \"http://example.net/\" への"
+"リンクを登録しています。テーブル参照を作成するときは、IDではなく主キーを指定"
+"することに注意してください。最後に、リンクの内容を確認しています。この例で"
+"は、  `output_columns` 引数に link._key と link.title を指定しているので、参"
+"照先の主キーとタイトルが表示されています。"
 
 #: ../../../source/tutorial/data.txt:140
 msgid "Vector types"
@@ -390,11 +406,11 @@ msgid ""
 "to the `flags` parameter of a :doc:`/reference/commands/column_create` "
 "command. A vector column is useful to represent a many-to-many relationship."
 msgstr ""
-":doc:`/reference/commands/column_create` コマンドでカラムを作成するとき、 `flags` 引数"
-"にCOLUMN_VECTORフラグを指定すると、 `type` 引数に指定した型の配列を格納するカ"
-"ラムになります。このようなカラムのことは、ベクターカラムと呼びます。ベクター"
-"カラムは、各レコードに複数の値を格納できるため、一対多の参照関係を表すのに便"
-"利です。"
+":doc:`/reference/commands/column_create` コマンドでカラムを作成するとき、 "
+"`flags` 引数にCOLUMN_VECTORフラグを指定すると、 `type` 引数に指定した型の配列"
+"を格納するカラムになります。このようなカラムのことは、ベクターカラムと呼びま"
+"す。ベクターカラムは、各レコードに複数の値を格納できるため、一対多の参照関係"
+"を表すのに便利です。"
 
 # 11d030f09d2f467baa42c4a27ff06b7e
 #: ../../../source/tutorial/data.txt:144
@@ -424,12 +440,12 @@ msgid ""
 msgstr ""
 "新たなカラムにはSiteテーブルに対する参照の配列を格納するので、 `type` 引数に"
 "Siteを指定するとともに、 `flags` 引数にCOLUMN_VECTORフラグを指定しています。"
-"次に、 :doc:`/reference/commands/load` による更新では、 \"http://example.org/\" から "
-"\"http://example.net/\" へのリンクに加えて、 \"http://example.org/\" と "
-"\"http://example.com/\" へのリンクも登録しています。そして、最後にリンクの内"
-"容を確認しています。この例では、 `output_columns` 引数に links._key と links."
-"title を指定しているので、参照先の主キーとタイトルをそれぞれ配列にしたものが"
-"表示されています。"
+"次に、 :doc:`/reference/commands/load` による更新では、 \"http://example.org/"
+"\" から \"http://example.net/\" へのリンクに加えて、 \"http://example.org/\" "
+"と \"http://example.com/\" へのリンクも登録しています。そして、最後にリンクの"
+"内容を確認しています。この例では、 `output_columns` 引数に links._key と "
+"links.title を指定しているので、参照先の主キーとタイトルをそれぞれ配列にした"
+"ものが表示されています。"
 
 #: ../../../source/tutorial/drilldown.txt:11
 msgid "ドリルダウン"
@@ -714,8 +730,8 @@ msgid ""
 "Let's see the status of a groonga process by using a :doc:`/reference/"
 "commands/status` command."
 msgstr ""
-"それでは、 :doc:`/reference/commands/status` コマンドを実行して、groongaの実行状態を確"
-"認してみましょう。"
+"それでは、 :doc:`/reference/commands/status` コマンドを実行して、groongaの実"
+"行状態を確認してみましょう。"
 
 # f20f73567cf74f89928a062e06b51594
 #: ../../../source/tutorial/introduction.txt:52
@@ -774,32 +790,78 @@ msgid ""
 "For details, see also the paragraph of \"command\" in :doc:`/reference/"
 "executables/groonga`."
 msgstr ""
-"詳しくは、 :doc:`/reference/executables/groonga` のコマンドの項を参考にしてください。"
+"詳しくは、 :doc:`/reference/executables/groonga` のコマンドの項を参考にしてく"
+"ださい。"
 
 # 3da56138e9904419b4dcc5d036e81a07
 #: ../../../source/tutorial/introduction.txt:72
 msgid "Basic commands"
 msgstr "主なコマンド"
 
+# 10881436a2754b049191709023275136
+#: ../../../source/tutorial/introduction.txt:73
+msgid ":doc:`/reference/commands/status`"
+msgstr ""
+
+# 1e74fb8068674cafb7c2776d998e7ce8
+#: ../../../source/tutorial/introduction.txt:75
+#, fuzzy
+msgid ":doc:`/reference/commands/table_list`"
+msgstr ""
+":doc:`/reference/commands/table_create` コマンドを使用してテーブルを作成しま"
+"す。"
+
 # 602f9e43757345a1b0bc3a57a5b595ea
 #: ../../../source/tutorial/introduction.txt:75
 msgid "shows status of a groonga process."
 msgstr "groongaプロセスの状態を表示します。"
+
+# 4e5488d852844f238c41dfc94e49fa73
+#: ../../../source/tutorial/introduction.txt:77
+#, fuzzy
+msgid ":doc:`/reference/commands/column_list`"
+msgstr ""
+":doc:`/reference/commands/column_create` コマンドを用いて、カラムを作成するこ"
+"とができます。"
 
 # f35fc92dd787414ebd0561453131adb4
 #: ../../../source/tutorial/introduction.txt:77
 msgid "shows a list of tables in a database."
 msgstr "データベースに定義されているテーブルのリストを表示します。"
 
+# 1e74fb8068674cafb7c2776d998e7ce8
+#: ../../../source/tutorial/introduction.txt:79
+#, fuzzy
+msgid ":doc:`/reference/commands/table_create`"
+msgstr ""
+":doc:`/reference/commands/table_create` コマンドを使用してテーブルを作成しま"
+"す。"
+
 # e18aeb6cbc8b4c28b0cb38508c6c8b00
 #: ../../../source/tutorial/introduction.txt:79
 msgid "shows a list of columns in a table."
 msgstr "テーブルに定義されているカラムのリストを表示します。"
 
+# 4e5488d852844f238c41dfc94e49fa73
+#: ../../../source/tutorial/introduction.txt:81
+#, fuzzy
+msgid ":doc:`/reference/commands/column_create`"
+msgstr ""
+":doc:`/reference/commands/column_create` コマンドを用いて、カラムを作成するこ"
+"とができます。"
+
 # 0d2bb03bc0114bbb8ad3a1b9670c865d
 #: ../../../source/tutorial/introduction.txt:81
 msgid "adds a table to a database."
 msgstr "データベースにテーブルを追加します。"
+
+# 8cb3ff01469d48e28b6875b2554741e8
+#: ../../../source/tutorial/introduction.txt:83
+#, fuzzy
+msgid ":doc:`/reference/commands/select`"
+msgstr ""
+":doc:`/reference/commands/select` コマンドを用いて、テーブルの中身を表示する"
+"ことができます。"
 
 # 714cfb440b37481d81291c5386fce6b1
 #: ../../../source/tutorial/introduction.txt:83
@@ -809,6 +871,11 @@ msgstr "テーブルにカラムを追加します。"
 #: ../../../source/tutorial/introduction.txt:85
 msgid "searches records from a table and shows the result."
 msgstr "テーブルに含まれるレコードを検索して表示します。"
+
+# f908b90d86ec43d8885d86d0e7965874
+#: ../../../source/tutorial/introduction.txt:86
+msgid ":doc:`/reference/commands/load`"
+msgstr ""
 
 # 1e5193b6ca864ba3b773170879f49631
 #: ../../../source/tutorial/introduction.txt:87
@@ -823,7 +890,9 @@ msgstr "テーブルの作成"
 # 1e74fb8068674cafb7c2776d998e7ce8
 #: ../../../source/tutorial/introduction.txt:92
 msgid "A :doc:`/reference/commands/table_create` command creates a new table."
-msgstr ":doc:`/reference/commands/table_create` コマンドを使用してテーブルを作成します。"
+msgstr ""
+":doc:`/reference/commands/table_create` コマンドを使用してテーブルを作成しま"
+"す。"
 
 #: ../../../source/tutorial/introduction.txt:94
 msgid ""
@@ -841,9 +910,9 @@ msgid ""
 "described later."
 msgstr ""
 "型には数値や文字列などがあります。ここではデータの種類を表しているものという"
-"程度に考えてください。詳細は :doc:`/reference/type` に記述されています。主キーの格納方"
-"法は、主キーを条件とする検索にかかる時間や、前方一致検索の可否などを左右しま"
-"す。こちらも後で説明します。"
+"程度に考えてください。詳細は :doc:`/reference/type` に記述されています。主"
+"キーの格納方法は、主キーを条件とする検索にかかる時間や、前方一致検索の可否な"
+"どを左右します。こちらも後で説明します。"
 
 # d31322b60f8545a581404b1d2838bd5f
 #: ../../../source/tutorial/introduction.txt:98
@@ -874,8 +943,8 @@ msgstr "テーブルの表示"
 msgid ""
 "A :doc:`/reference/commands/select` command can enumerate records in a table."
 msgstr ""
-":doc:`/reference/commands/select` コマンドを用いて、テーブルの中身を表示することができ"
-"ます。"
+":doc:`/reference/commands/select` コマンドを用いて、テーブルの中身を表示する"
+"ことができます。"
 
 #: ../../../source/tutorial/introduction.txt:115
 msgid ""
@@ -885,12 +954,12 @@ msgid ""
 "next array is a list of columns. [\"_id\",\"Uint32\"] is a column of UInt32, "
 "named _id. [\"_key\",\"ShortText\"] is a column of ShortText, named _key."
 msgstr ""
-":doc:`/reference/commands/select` にテーブル名のみを指定すると、指定したテーブルの中身"
-"を10件まで表示します。実行結果の[0]はテーブルに含まれるレコードの数を示してい"
-"ます。今回は何も登録されていないため0件です。レコード数の次に表示されている配"
-"列はテーブルの構成を示しています。[\"_id\",\"Uint32\"]はUInt32型の値を持つ_id"
-"という名前のカラム、[\"_key\",\"ShortText\"]はShortText型の値を持つ_keyという"
-"名前のカラムをそれぞれ表しています。"
+":doc:`/reference/commands/select` にテーブル名のみを指定すると、指定したテー"
+"ブルの中身を10件まで表示します。実行結果の[0]はテーブルに含まれるレコードの数"
+"を示しています。今回は何も登録されていないため0件です。レコード数の次に表示さ"
+"れている配列はテーブルの構成を示しています。[\"_id\",\"Uint32\"]はUInt32型の"
+"値を持つ_idという名前のカラム、[\"_key\",\"ShortText\"]はShortText型の値を持"
+"つ_keyという名前のカラムをそれぞれ表しています。"
 
 # 1a57023af4614d00a11b2a36f650aa4b
 #: ../../../source/tutorial/introduction.txt:117
@@ -899,7 +968,10 @@ msgid ""
 "column stores IDs those are automatically allocated by groonga. The _key "
 "column is associated with the primary key. You are not allowed to rename "
 "these columns."
-msgstr "上記の_idカラムと_keyカラムの2つのカラムは必須のカラムです。_idカラムはgroongaが自動的に割り当てるIDを格納します。_keyカラムは主キーを格納します。これらのカラム名を変更することはできません。"
+msgstr ""
+"上記の_idカラムと_keyカラムの2つのカラムは必須のカラムです。_idカラムは"
+"groongaが自動的に割り当てるIDを格納します。_keyカラムは主キーを格納します。こ"
+"れらのカラム名を変更することはできません。"
 
 # bb371206793e407ab12db2864ee8d152
 #: ../../../source/tutorial/introduction.txt:120
@@ -911,8 +983,8 @@ msgstr "カラムの作成"
 msgid ""
 "A :doc:`/reference/commands/column_create` command creates a new column."
 msgstr ""
-":doc:`/reference/commands/column_create` コマンドを用いて、カラムを作成することができま"
-"す。"
+":doc:`/reference/commands/column_create` コマンドを用いて、カラムを作成するこ"
+"とができます。"
 
 # f44e8a1aae7145509172f036a73737fd
 #: ../../../source/tutorial/introduction.txt:124
@@ -938,8 +1010,8 @@ msgid ""
 "A :doc:`/reference/commands/load` command loads JSON-formatted records into "
 "a table."
 msgstr ""
-":doc:`/reference/commands/load` コマンドは、JSON形式のレコードを受け取り、テーブルに格"
-"納します。"
+":doc:`/reference/commands/load` コマンドは、JSON形式のレコードを受け取り、"
+"テーブルに格納します。"
 
 #: ../../../source/tutorial/introduction.txt:136
 msgid "The following example loads nine records into the Site table."
@@ -969,8 +1041,8 @@ msgstr "レコードの取得"
 msgid ""
 "A :doc:`/reference/commands/select` command can search records in a table."
 msgstr ""
-":doc:`/reference/commands/select` コマンドを用いて、テーブルの中身を表示することができ"
-"ます。"
+":doc:`/reference/commands/select` コマンドを用いて、テーブルの中身を表示する"
+"ことができます。"
 
 # e38ea18132744542b958286632ffe6c9
 #: ../../../source/tutorial/introduction.txt:166
@@ -979,8 +1051,8 @@ msgid ""
 "reference/commands/select` command searches records matching the search "
 "condition and returns the matched records."
 msgstr ""
-"`query` 引数を使って検索条件が指定された場合、 :doc:`/reference/commands/select` コマン"
-"ドは検索条件に適合するレコードを検索し、検索結果を出力します。"
+"`query` 引数を使って検索条件が指定された場合、 :doc:`/reference/commands/"
+"select` コマンドは検索条件に適合するレコードを検索し、検索結果を出力します。"
 
 # ec50e00750b2498fb6a1cf945b94ef20
 #: ../../../source/tutorial/introduction.txt:168
@@ -1044,9 +1116,9 @@ msgid ""
 "but you don't need to understand all of them. Please skip the next paragraph "
 "if you are not interested in how it works."
 msgstr ""
-":doc:`/reference/commands/table_create` には多くの引数が指定されているものの、本チュー"
-"トリアルではすべてを理解する必要はありません。以下に簡単な説明を述べますが、"
-"読み飛ばしてもらってかまいません。"
+":doc:`/reference/commands/table_create` には多くの引数が指定されているもの"
+"の、本チュートリアルではすべてを理解する必要はありません。以下に簡単な説明を"
+"述べますが、読み飛ばしてもらってかまいません。"
 
 # 7cded565e72b46869c9d7e759dfcddb6
 #: ../../../source/tutorial/introduction.txt:195
@@ -1132,8 +1204,8 @@ msgid ""
 "It's time. You can make full text search with a :doc:`/reference/commands/"
 "select` command."
 msgstr ""
-"インデックスを作成したことにより、 :doc:`/reference/commands/select` コマンドによる全文"
-"検索が可能になります。"
+"インデックスを作成したことにより、 :doc:`/reference/commands/select` コマンド"
+"による全文検索が可能になります。"
 
 #: ../../../source/tutorial/introduction.txt:219
 msgid ""
@@ -1164,9 +1236,9 @@ msgid ""
 "named `match_columns`, that specifies the default target columns. This "
 "parameter is used if target columns are not specified in a query. [#]_"
 msgstr ""
-":doc:`/reference/commands/select` コマンドには、 `match_columns` という引数が存在しま"
-"す。このパラメータはデフォルトで検索対象にするカラムを指定するもので、カラム"
-"名を指定しない検索条件にのみ適用されます。 [1]_"
+":doc:`/reference/commands/select` コマンドには、 `match_columns` という引数が"
+"存在します。このパラメータはデフォルトで検索対象にするカラムを指定するもの"
+"で、カラム名を指定しない検索条件にのみ適用されます。 [1]_"
 
 # fe9bfc13759d46b4a0b76f729a7d6c77
 #: ../../../source/tutorial/introduction.txt:229
@@ -1189,9 +1261,9 @@ msgid ""
 "specifies columns to appear in the search result. If you want to specify "
 "more than one columns, please separate column names by commas (',')."
 msgstr ""
-":doc:`/reference/commands/select` コマンドにおいて `output_columns` 引数を用いること"
-"で、検索結果に含めるカラムを指定することができます。複数のカラムを指定すると"
-"きは、カンマ（,）区切りでカラムを列挙します。"
+":doc:`/reference/commands/select` コマンドにおいて `output_columns` 引数を用"
+"いることで、検索結果に含めるカラムを指定することができます。複数のカラムを指"
+"定するときは、カンマ（,）区切りでカラムを列挙します。"
 
 #: ../../../source/tutorial/introduction.txt:244
 msgid ""
@@ -1214,9 +1286,9 @@ msgid ""
 "are useful to paginate a search result, a widely-used interface which shows "
 "a search result on a page by page basis."
 msgstr ""
-":doc:`/reference/commands/select` コマンドにおいて `offset` 引数と `limit` 引数を用いる"
-"ことで、検索結果の一部のみを表示することができます。大量の検索結果を分割して"
-"ページ単位で表示したい場合などに有用です。"
+":doc:`/reference/commands/select` コマンドにおいて `offset` 引数と `limit` 引"
+"数を用いることで、検索結果の一部のみを表示することができます。大量の検索結果"
+"を分割してページ単位で表示したい場合などに有用です。"
 
 #: ../../../source/tutorial/introduction.txt:251
 msgid ""
@@ -1239,8 +1311,8 @@ msgid ""
 "A :doc:`/reference/commands/select` command sorts its result when used with "
 "a `sortby` parameter."
 msgstr ""
-":doc:`/reference/commands/select` コマンドに `sortby` 引数を渡すことにより、検索結果を"
-"並べ替えることができます。"
+":doc:`/reference/commands/select` コマンドに `sortby` 引数を渡すことにより、"
+"検索結果を並べ替えることができます。"
 
 # a5a5613c2bf640fabc845b6b549c6c5c
 #: ../../../source/tutorial/introduction.txt:264
@@ -1417,28 +1489,71 @@ msgid ""
 "格納するためのテーブルです。"
 msgstr ""
 
+# 4fb72f74f49b40329c3978bcd9006672
+# e9d00623b2614b16b3a2fa041b59ba64
+# e62dc91528bf4f539d679d0b07d46d4a
+# bd904851aebc4c63acb8eea013c236cf
+#: ../../../source/tutorial/micro_blog.txt:52
+#: ../../../source/tutorial/micro_blog.txt:82
+#: ../../../source/tutorial/micro_blog.txt:115
+#: ../../../source/tutorial/micro_blog.txt:127
+msgid "``_key``"
+msgstr ""
+
 #: ../../../source/tutorial/micro_blog.txt:53
 msgid "ユーザーID"
+msgstr ""
+
+# e136832d91a944e68f8e08b218d10012
+#: ../../../source/tutorial/micro_blog.txt:55
+msgid "``name``"
 msgstr ""
 
 #: ../../../source/tutorial/micro_blog.txt:56
 msgid "ユーザー名"
 msgstr ""
 
+# bb65f10f639c49a7811210e960c7c930
+#: ../../../source/tutorial/micro_blog.txt:58
+msgid "``follower``"
+msgstr ""
+
 #: ../../../source/tutorial/micro_blog.txt:59
 msgid "フォローしているユーザーの一覧"
+msgstr ""
+
+# 9203a37b57f84bd580fa13051ea5cdba
+#: ../../../source/tutorial/micro_blog.txt:61
+msgid "``favorites``"
 msgstr ""
 
 #: ../../../source/tutorial/micro_blog.txt:62
 msgid "お気に入りのコメント一覧"
 msgstr ""
 
+# 11df9202207d4977ad6fec28f9ff9783
+# 3bb76a5eeb404bc7a73d3ed879981064
+#: ../../../source/tutorial/micro_blog.txt:64
+#: ../../../source/tutorial/micro_blog.txt:100
+msgid "``location``"
+msgstr ""
+
 #: ../../../source/tutorial/micro_blog.txt:65
 msgid "ユーザーの現在地（緯度経度座標）"
 msgstr ""
 
+# efb082a21873494faf0c0a3ac7605614
+#: ../../../source/tutorial/micro_blog.txt:67
+msgid "``location_str``"
+msgstr ""
+
 #: ../../../source/tutorial/micro_blog.txt:68
 msgid "ユーザーの現在地（文字列）"
+msgstr ""
+
+# 0e94f3b1566b4680b678cedd1bfa0bc2
+#: ../../../source/tutorial/micro_blog.txt:70
+msgid "``description``"
 msgstr ""
 
 #: ../../../source/tutorial/micro_blog.txt:71
@@ -1449,6 +1564,11 @@ msgstr ""
 msgid ""
 "Usersテーブルのfollowerカラムに対するインデックス。 このインデックスを作るこ"
 "とで、あるユーザーをフォローしているユーザーを検索できるようになります。"
+msgstr ""
+
+# 8e0b44b9cb794f03a4286c9a316b7ba6
+#: ../../../source/tutorial/micro_blog.txt:74
+msgid "``followee``"
 msgstr ""
 
 #: ../../../source/tutorial/micro_blog.txt:78
@@ -1465,20 +1585,45 @@ msgstr ""
 msgid "コメントID"
 msgstr ""
 
+# 6d5c1ced6a41481f862054601e7da56d
+#: ../../../source/tutorial/micro_blog.txt:85
+msgid "``comment``"
+msgstr ""
+
 #: ../../../source/tutorial/micro_blog.txt:86
 msgid "コメント内容"
+msgstr ""
+
+# 2f6786c053524a22aa0f29395ae94b8f
+#: ../../../source/tutorial/micro_blog.txt:88
+msgid "``last_modified``"
 msgstr ""
 
 #: ../../../source/tutorial/micro_blog.txt:89
 msgid "投稿日時"
 msgstr ""
 
+# 1ae7eb9d5ac44b178a2f746891505bb0
+#: ../../../source/tutorial/micro_blog.txt:91
+msgid "``replied_to``"
+msgstr ""
+
 #: ../../../source/tutorial/micro_blog.txt:92
 msgid "返信元のコメント内容"
 msgstr ""
 
+# fc3ac6a2a2054ab1a50cb94fc6cf71ef
+#: ../../../source/tutorial/micro_blog.txt:94
+msgid "``replied_users``"
+msgstr ""
+
 #: ../../../source/tutorial/micro_blog.txt:95
 msgid "返信先のユーザーの一覧"
+msgstr ""
+
+# 5fe5b6ba7bc240498a40863dc9d5298e
+#: ../../../source/tutorial/micro_blog.txt:97
+msgid "``hash_tags``"
 msgstr ""
 
 #: ../../../source/tutorial/micro_blog.txt:98
@@ -1487,6 +1632,11 @@ msgstr ""
 
 #: ../../../source/tutorial/micro_blog.txt:101
 msgid "投稿場所(緯度経度座標のため)"
+msgstr ""
+
+# 5538160167b34634a5f9e12d84c34a53
+#: ../../../source/tutorial/micro_blog.txt:103
+msgid "``posted_by``"
 msgstr ""
 
 #: ../../../source/tutorial/micro_blog.txt:104
@@ -1500,6 +1650,11 @@ msgid ""
 "ます。"
 msgstr ""
 
+# 01cae5d7fe484b1f9f5d812052c05827
+#: ../../../source/tutorial/micro_blog.txt:107
+msgid "``favorited_by``"
+msgstr ""
+
 #: ../../../source/tutorial/micro_blog.txt:111
 msgid "HashTagsテーブル"
 msgstr ""
@@ -1510,6 +1665,11 @@ msgstr ""
 
 #: ../../../source/tutorial/micro_blog.txt:116
 msgid "ハッシュタグ"
+msgstr ""
+
+# d3c55eb0d8db454d8a4fd3b1b652a879
+#: ../../../source/tutorial/micro_blog.txt:119
+msgid "``hash_index``"
 msgstr ""
 
 # 5e188c51bec24646954e58a55b1d5ec5
@@ -1534,11 +1694,21 @@ msgstr ""
 msgid "単語"
 msgstr ""
 
+# 2cb1972156164a5b9c50543d53e22cc0
+#: ../../../source/tutorial/micro_blog.txt:131
+msgid "``users_index``"
+msgstr ""
+
 #: ../../../source/tutorial/micro_blog.txt:131
 msgid ""
 "ユーザー情報のインデックス。 このカラムは、ユーザー名「Users.name」、現在地"
 "「Users.location_str」、自己紹介文「Users.description」のインデックスになって"
 "います。"
+msgstr ""
+
+# 325efced20a64be28eeb4b809dff9a50
+#: ../../../source/tutorial/micro_blog.txt:134
+msgid "``comment_index``"
 msgstr ""
 
 #: ../../../source/tutorial/micro_blog.txt:135
@@ -1872,8 +2042,8 @@ msgid ""
 "You can terminate a gqtp server with a :doc:`/reference/commands/shutdown` "
 "command."
 msgstr ""
-"gqtpサーバを終了する安全は方法は、クライアントを起動して :doc:`/reference/commands/"
-"shutdown` を発行することです。"
+"gqtpサーバを終了する安全は方法は、クライアントを起動して :doc:`/reference/"
+"commands/shutdown` を発行することです。"
 
 # ca13b09553e6473d9628d6ad2eed0ce7
 #: ../../../source/tutorial/network.txt:86

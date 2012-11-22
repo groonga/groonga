@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-04 13:09\n"
+"POT-Creation-Date: 2012-11-22 16:05\n"
 "PO-Revision-Date: 2012-09-04 13:11+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -35,10 +35,9 @@ msgstr ""
 # bd6242b5399945fc8046bf4280e08cfc
 # 38b2d9272ebd410184692728ac0d7a8f
 #: ../../../source/server/gqtp.txt:8
-#: ../../../source/server/http/comparison.txt:273
-#: ../../../source/server/http/comparison.txt:278
-#: ../../../source/server/http/comparison.txt:283
 #: ../../../source/server/http/comparison.txt:288
+#: ../../../source/server/http/comparison.txt:293
+#: ../../../source/server/http/comparison.txt:298
 #: ../../../source/server/http/groonga-httpd.txt:8
 #: ../../../source/server/http/groonga.txt:8
 msgid "TODO"
@@ -146,6 +145,7 @@ msgstr "性能"
 #: ../../../source/server/http/comparison.txt:24
 #: ../../../source/server/http/comparison.txt:26
 #: ../../../source/server/http/comparison.txt:28
+#: ../../../source/server/http/comparison.txt:30
 #: ../../../source/server/http/comparison.txt:32
 #: ../../../source/server/http/comparison.txt:34
 #: ../../../source/server/http/comparison.txt:36
@@ -222,7 +222,6 @@ msgstr "コマンドバージョンの変更"
 # 88e801b5210c417ba32f5f1b7cfbd098
 # d1838ae98a684a2085432f41eb613620
 #: ../../../source/server/http/comparison.txt:22
-#: ../../../source/server/http/comparison.txt:30
 msgid "x (comming soon)"
 msgstr "×（まもなく実装予定）"
 
@@ -257,20 +256,20 @@ msgstr ""
 # c3cb22dd5b5541808093b16711b9388f
 # 34c078f412394246b89e9d89440ac71e
 #: ../../../source/server/http/comparison.txt:32
-#: ../../../source/server/http/comparison.txt:276
+#: ../../../source/server/http/comparison.txt:286
 msgid "HTTPS"
 msgstr ""
 
 # 13346d87ebe14d0994b20faf8fd40fe6
 # 6fbb32a9075249e7b9a0952df5226e40
 #: ../../../source/server/http/comparison.txt:34
-#: ../../../source/server/http/comparison.txt:281
+#: ../../../source/server/http/comparison.txt:291
 msgid "Access log"
 msgstr "アクセスログ"
 
 # f5a82d512d3148199b6bc5f12823e640
 #: ../../../source/server/http/comparison.txt:36
-#: ../../../source/server/http/comparison.txt:286
+#: ../../../source/server/http/comparison.txt:296
 msgid "Upgrading without downtime"
 msgstr "ダウンタイムなしでのアップグレード"
 
@@ -505,4 +504,40 @@ msgid ""
 "for it. The first, groonga may support more formats in the future. The "
 "second, all requests for the `location` are processed by groonga. You don't "
 "need to consider about other modules."
-msgstr ":doc:`groonga-httpd` のレスポンスデータをgzip圧縮するには、明示的に `gzip_types *` または `gzip_types application/json text/xml application/x-msgpack` と指定する必要があります。 `gzip_types *` の方がおすすめです。理由は2つあります。1つは、groongaが、将来、他のフォーマットもサポートする可能性もあるからという理由です。2つめは、この `location` のすべてのリクエストはgroongaが処理するので、他のモジュールのことについて考えなくてもよいからという理由です。"
+msgstr ""
+":doc:`groonga-httpd` のレスポンスデータをgzip圧縮するには、明示的に "
+"`gzip_types *` または `gzip_types application/json text/xml application/x-"
+"msgpack` と指定する必要があります。 `gzip_types *` の方がおすすめです。理由は"
+"2つあります。1つは、groongaが、将来、他のフォーマットもサポートする可能性もあ"
+"るからという理由です。2つめは、この `location` のすべてのリクエストはgroonga"
+"が処理するので、他のモジュールのことについて考えなくてもよいからという理由で"
+"す。"
+
+# 1829dfc59fbf4978b44017e97797e95d
+#: ../../../source/server/http/comparison.txt:273
+msgid ""
+"You can load your data by POST JSON data. You need follow the rules to use "
+"loading by POST."
+msgstr ""
+
+# d13cdf7dc6874a3bbb262257acb36f53
+#: ../../../source/server/http/comparison.txt:276
+msgid "`Content-Type` header value must be `application/json`."
+msgstr ""
+
+# 6282600bb9e24a70ba5b25d0165efc74
+#: ../../../source/server/http/comparison.txt:277
+msgid "JSON data is body."
+msgstr ""
+
+# 823e64393d8648299001e5fb95439647
+#: ../../../source/server/http/comparison.txt:278
+msgid "Table name is specified by query parameter such as ``table=NAME``."
+msgstr ""
+
+# 43ce7034d6f44f29b48cb26ac09a4227
+#: ../../../source/server/http/comparison.txt:280
+msgid ""
+"Here is an example curl command line that loads two users `alice` and `bob` "
+"to `Users` table::"
+msgstr ""
