@@ -4031,8 +4031,8 @@ grn_view_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
 }
 
 static inline grn_bool
-grn_table_select_select_by_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
-                                 grn_obj *res)
+grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
+                       grn_obj *res)
 {
   grn_bool processed = GRN_FALSE;
   if (GRN_BULK_VSIZE(&si->index)) {
@@ -4343,7 +4343,7 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
             GRN_PTR_PUT(ctx, &res_stack, res);
             res = res_;
           }
-          processed = grn_table_select_select_by_index(ctx, table, si, res);
+          processed = grn_table_select_index(ctx, table, si, res);
           if (!processed) {
             if (ctx->rc) { break; }
             e->codes = codes + si->start;
