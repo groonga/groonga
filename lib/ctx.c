@@ -1536,8 +1536,8 @@ grn_ctx_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags)
         ctx->rc = (int16_t)ntohs(header.status);
         ctx->errbuf[0] = '\0';
         ctx->errline = 0;
-        ctx->errfile = "";
-        ctx->errfunc = "";
+        ctx->errfile = NULL;
+        ctx->errfunc = NULL;
       }
       goto exit;
     } else {
