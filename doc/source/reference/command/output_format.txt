@@ -148,7 +148,8 @@ Error case
 ``ERROR_LOCATION`` may not be included in ``HEADER`` but other four
 elements are always included.
 
-``RETURN_CODE`` is non 0 value. TODO: Write list of return code.
+``RETURN_CODE`` is non 0 value. See :doc:`return_code` about available
+return codes.
 
 ``UNIX_TIME_WHEN_COMMAND_IS_STARTED`` and ``ELAPSED_TIME`` are the
 same as success case.
