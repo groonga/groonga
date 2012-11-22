@@ -1428,6 +1428,9 @@ g_output(grn_ctx *ctx, int flags, void *arg)
   msg->edge_id = req->edge_id;
   msg->header.proto = req->header.proto == GRN_COM_PROTO_MBREQ
     ? GRN_COM_PROTO_MBRES : req->header.proto;
+  if (ctx->rc != GRN_SUCCESS && GRN_BULK_VSIZE(ctx->impl->outbuf) == 0) {
+    grn_ctx_output_cstr(ctx, ctx->errbuf);
+  }
   if (grn_msg_send(ctx, (grn_obj *)msg,
                    (flags & GRN_CTX_MORE) ? GRN_CTX_MORE : GRN_CTX_TAIL)) {
     edge->stat = EDGE_ABORT;
