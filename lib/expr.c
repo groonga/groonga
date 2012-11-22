@@ -4093,21 +4093,21 @@ grn_table_select_select_by_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
       }
       break;
     case GRN_OP_SUFFIX :
-    {
-      grn_obj *domain;
-      if (si->flags & SCAN_ACCESSOR) {
-        domain = table;
-      } else {
-        domain = grn_ctx_at(ctx, index->header.domain);
+      {
+        grn_obj *domain;
+        if (si->flags & SCAN_ACCESSOR) {
+          domain = table;
+        } else {
+          domain = grn_ctx_at(ctx, index->header.domain);
+        }
+        if (domain->header.type != GRN_TABLE_PAT_KEY) {
+          break;
+        }
+        if (!(domain->header.flags & GRN_OBJ_KEY_WITH_SIS)) {
+          break;
+        }
       }
-      if (domain->header.type != GRN_TABLE_PAT_KEY) {
-        break;
-      }
-      if (!(domain->header.flags & GRN_OBJ_KEY_WITH_SIS)) {
-        break;
-      }
-    }
-    /* fallthru */
+      /* fallthru */
     case GRN_OP_PREFIX :
       if (si->flags & SCAN_ACCESSOR) {
         if (index->header.type == GRN_ACCESSOR &&
