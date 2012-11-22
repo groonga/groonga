@@ -4031,6 +4031,73 @@ grn_view_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
 }
 
 static inline grn_bool
+grn_table_select_index_range(grn_ctx *ctx, grn_obj *table, grn_obj *index,
+                             scan_info *si, grn_obj *res)
+{
+  grn_bool processed = GRN_FALSE;
+  grn_obj *index_table;
+  grn_obj range;
+
+  index_table = grn_ctx_at(ctx, index->header.domain);
+  if (!index_table) {
+    return GRN_FALSE;
+  }
+
+  GRN_OBJ_INIT(&range, GRN_BULK, 0, index_table->header.domain);
+  if (grn_obj_cast(ctx, si->query, &range, GRN_FALSE) == GRN_SUCCESS) {
+    grn_table_cursor *cursor;
+    const void *min = NULL, *max = NULL;
+    unsigned int min_size = 0, max_size = 0;
+    int offset = 0;
+    int limit = -1;
+    int flags = GRN_CURSOR_ASCENDING;
+
+    switch (si->op) {
+    case GRN_OP_LESS :
+      flags |= GRN_CURSOR_LT;
+      max = GRN_BULK_HEAD(&range);
+      max_size = GRN_BULK_VSIZE(&range);
+      break;
+    case GRN_OP_GREATER :
+      flags |= GRN_CURSOR_GT;
+      min = GRN_BULK_HEAD(&range);
+      min_size = GRN_BULK_VSIZE(&range);
+      break;
+    case GRN_OP_LESS_EQUAL :
+      flags |= GRN_CURSOR_LE;
+      max = GRN_BULK_HEAD(&range);
+      max_size = GRN_BULK_VSIZE(&range);
+      break;
+    case GRN_OP_GREATER_EQUAL :
+      flags |= GRN_CURSOR_GE;
+      min = GRN_BULK_HEAD(&range);
+      min_size = GRN_BULK_VSIZE(&range);
+      break;
+    default :
+      break;
+    }
+    cursor = grn_table_cursor_open(ctx, index_table,
+                                   min, min_size, max, max_size,
+                                   offset, limit, flags);
+    if (cursor) {
+      grn_id index_id;
+      while ((index_id = grn_table_cursor_next(ctx, cursor))) {
+        grn_ii_at(ctx, (grn_ii *)index, index_id,
+                  (grn_hash *)res, si->logical_op);
+      }
+      grn_table_cursor_close(ctx, cursor);
+      processed = GRN_TRUE;
+    }
+    grn_obj_unlink(ctx, index_table);
+
+    grn_ii_resolve_sel_and(ctx, (grn_hash *)res, si->logical_op);
+  }
+  GRN_OBJ_FIN(ctx, &range);
+
+  return processed;
+}
+
+static inline grn_bool
 grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
                        grn_obj *res)
 {
@@ -4251,6 +4318,12 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
           processed = GRN_TRUE;
         }
       }
+      break;
+    case GRN_OP_LESS :
+    case GRN_OP_GREATER :
+    case GRN_OP_LESS_EQUAL :
+    case GRN_OP_GREATER_EQUAL :
+      processed = grn_table_select_index_range(ctx, table, index, si, res);
       break;
     default :
       /* todo : implement */

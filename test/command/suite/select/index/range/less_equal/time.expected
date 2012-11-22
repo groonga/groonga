@@ -1,0 +1,54 @@
+table_create Users TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Users birthday COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+table_create Birthdays TABLE_PAT_KEY Time
+[[0,0.0,0.0],true]
+column_create Birthdays users_birthday COLUMN_INDEX Users birthday
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"_key": "Alice",  "birthday": "1992-02-09 00:00:00"},
+{"_key": "Bob",    "birthday": "1988-01-04 00:00:00"},
+{"_key": "Carlos", "birthday": "1982-12-29 00:00:00"}
+]
+[[0,0.0,0.0],3]
+select Users --filter 'birthday <= "1988-01-04 00:00:00"'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "birthday",
+          "Time"
+        ]
+      ],
+      [
+        3,
+        "Carlos",
+        409935600.0
+      ],
+      [
+        2,
+        "Bob",
+        568220400.0
+      ]
+    ]
+  ]
+]
