@@ -4185,9 +4185,9 @@ grn_table_select_select_by_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
         switch (si->op) {
         case GRN_OP_NEAR :
         case GRN_OP_NEAR2 :
-  #define DEFAULT_NEAR_MAX_INTERVAL 10
+#define DEFAULT_NEAR_MAX_INTERVAL 10
           optarg.max_interval = DEFAULT_NEAR_MAX_INTERVAL;
-  #undef DEFAULT_NEAR_MAX_INTERVAL
+#undef DEFAULT_NEAR_MAX_INTERVAL
           break;
         default :
           optarg.max_interval = 0;
