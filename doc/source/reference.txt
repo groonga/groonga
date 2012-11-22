@@ -16,7 +16,7 @@
    reference/query_expanders
    reference/pseudo_column
    reference/grn_expr
-   reference/functions
+   reference/function
    reference/indexing
    reference/log
    reference/api
