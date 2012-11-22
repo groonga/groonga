@@ -2,10 +2,13 @@
 
 .. highlightlang:: none
 
-コマンド
-========
+Command
+=======
 
-まず、すべてのコマンドに関係するコマンドバージョンについて説明します。その後、組み込みのコマンドを順に説明します。
+Command is the most important processing unit in query API. You
+request a processing to groonga by a command.
+
+This section describes about command and built-in command list.
 
 .. toctree::
    :maxdepth: 1
