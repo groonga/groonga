@@ -27,7 +27,7 @@ There are many differences between :doc:`groonga` and
 +----------------------------+------------------------+----------------------+
 |      Gzip compression      | x                      | o                    |
 +----------------------------+------------------------+----------------------+
-|            POST            | x                      | x (comming soon)     |
+|            POST            | x                      | o                    |
 +----------------------------+------------------------+----------------------+
 |           HTTPS            | x                      | o                    |
 +----------------------------+------------------------+----------------------+
@@ -270,7 +270,17 @@ processed by groonga. You don't need to consider about other modules.
 POST
 ----
 
-TODO
+You can load your data by POST JSON data. You need follow the rules to
+use loading by POST.
+
+* `Content-Type` header value must be `application/json`.
+* JSON data is body.
+* Table name is specified by query parameter such as ``table=NAME``.
+
+Here is an example curl command line that loads two users `alice` and
+`bob` to `Users` table::
+
+  % curl --data-binary '[{"_key": "alice"}, {"_key": "bob"}]' -H "Content-Type: application/json" "http://localhost:10041/d/load?table=Users"
 
 HTTPS
 -----
