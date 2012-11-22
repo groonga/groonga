@@ -52,8 +52,8 @@ Return value
 
 ``register`` returns ``true`` as body on success such as::
 
-  [${COMMON_HEADER}, true]
+  [HEADER, true]
 
-If ``register`` fails, error details are in ``COMMON_HEADER``.
+If ``register`` fails, error details are in ``HEADER``.
 
-See XXX for ``COMMON_HEADER``.
+See :doc:`/reference/command/output_format` for ``HEADER``.
