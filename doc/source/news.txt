@@ -17,19 +17,22 @@ Improvements
   in ``geo_distance`` with ``rectangle`` as approximate type. [#1534]
 * [doc] Added the :doc:`/spec/gqtp` specification.
 * Improved to ignore non critical ``getaddrinfo()`` error which groonga command emits on startup.
+  This change does not affects nomal use of groonga because it just checked whether default hostname
+  is resolved in previous version.
 * [experimental] Added ``snippet_html()`` function which extract keyword and surrounding text.
   See :doc:`/reference/functions/snippet_html` about details.
 * Supported to report error reason when error occured during reading table record.
 * Supported to search with keyword by nested index notation ( concatinate multiple 
   indexed column name with dot character ) if there is a relationship between
   multiple table with index.
-* Supported to log "[tokenizer][mecab]" tag by ``TokenMecab``.
-* Supported to log "[tokenizer][kytea]" tag by ``TokenKyTea``.
+* Supported to log "[tokenizer][mecab]" tag when using ``TokenMecab`` tokenizer.
+* Supported to log "[tokenizer][kytea]" tag when using ``TokenKyTea`` tokenizer.
 
 Fixes
 ^^^^^
 
-* Fixed to use network byte order for status code of :ref:`gqtp-header-spec`.
+* Fixed to use network byte order for status code of :ref:`gqtp-header-spec` to follow
+  the normal network protocol convention.
   This change affects that groonga <= 2.0.8 client which connects to groonga server 2.0.9
   or later can not show status code properly when command failed.
 * Fixed a bug that UTF-8 normalization computes wrong offset which affects to return value
@@ -37,15 +40,15 @@ Fixes
   [#1531] [Reported by Tomoatsu Shimada]
 * [windows] Fixed over allocated memory access which cause segmentation fault
   on startup by groonga command. [#1532] [Patch by Akio Tajima]
-* [windows] Fixed a bug that column value couldn't be read when total amount of column data 
-  exceeds 128MB. [groonga-dev,01088] [Reported by ongaeshi]
+* [windows] Fixed a bug that data stored in column couldn't be read when total amount of data
+  stored in column exceeds 128MB. [groonga-dev,01088] [Reported by ongaeshi]
 * Fixed a bug that searching with indexed column for ``Int*`` and ``UInt*`` 
   except ``Int32/Uint32`` returns invalid results.
 * Fixed a bug that deleting record can be found.
 * Fixed a bug that latin1 and koi8r normalizations could not process all string data
   if given string contains NULL character on the way.
-* Fixed to return the correct default value of type when nonexistent reference
-  was executed by ``select`` command.
+* Fixed to return the correct default value of type when no data stored in column is
+  referenced by ``select`` command.
 * Fixed to exclude the value of vector column metadata in :ref:`offline-index-construction`.
   This change not to contain such a metadata as search results.
 
