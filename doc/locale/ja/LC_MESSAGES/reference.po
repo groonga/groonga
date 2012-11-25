@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-11-22 15:57\n"
-"PO-Revision-Date: 2012-11-07 18:57+0900\n"
+"PO-Revision-Date: 2012-11-26 08:26+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -194,21 +194,20 @@ msgstr ""
 
 # d36a6d61fd5a4c5c88138108b1b234c8
 #: ../../../source/reference/command.txt:6
-#, fuzzy
 msgid "Command"
-msgstr "コマンドライン"
+msgstr "コマンド"
 
 # 2382182445f246e5898cea2474b8895f
 #: ../../../source/reference/command.txt:8
 msgid ""
 "Command is the most important processing unit in query API. You request a "
 "processing to groonga by a command."
-msgstr ""
+msgstr "コマンドはクエリーAPIでもっとも重要な処理単位です。コマンドでgroongaに処理をリクエストします。"
 
 # 760446ef50754013ae7ccded10368cb0
 #: ../../../source/reference/command.txt:11
 msgid "This section describes about command and built-in command list."
-msgstr ""
+msgstr "このセクションではコマンドについての説明と組み込みのコマンドについて説明します。"
 
 # 03f293a927214d0eb762002b8d618953
 #: ../../../source/reference/command/command_version.txt:6
@@ -399,9 +398,8 @@ msgstr ""
 
 # 087e0df0505742cbb57a12e069347eee
 #: ../../../source/reference/command/output_format.txt:6
-#, fuzzy
 msgid "Output format"
-msgstr "JSON形式"
+msgstr "出力形式"
 
 # 74adee8c09fc46bd8d72994ab949faca
 # 909fc52b77cf4244b8ee8f95ca993b33
@@ -420,26 +418,26 @@ msgstr "概要"
 # 2ced4ba5985245e5895a3acea3c2208c
 #: ../../../source/reference/command/output_format.txt:11
 msgid "Commands output their result as JSON, MessagePack, XML or TSV format."
-msgstr ""
+msgstr "コマンドは実行結果をJSONまたはMessagePack、XML、TSVのどれかで出力します。"
 
 # 3e8621fe9a7f4bf3a2966835058d0368
 #: ../../../source/reference/command/output_format.txt:13
 msgid ""
 "JSON and MessagePack output have the same structure. XML and TSV are their "
 "original structure."
-msgstr ""
+msgstr "JSONとMessagePackの出力は同じ構造になっています。XMLとTSVはそれぞれ独自の構造になっています。"
 
 # dc30e28c692f43a19ea841ec6e531faa
 #: ../../../source/reference/command/output_format.txt:16
 msgid ""
 "JSON or MessagePack is recommend format. XML is useful for visual result "
 "check. TSV is just for special use. Normally you doesn't need to use TSV."
-msgstr ""
+msgstr "JSONまたはMessagePackの利用を推奨します。XMLは目視で結果を確認する時に便利です。TSVは特殊な用途では有用です。通常はTSVを使う必要はありません。"
 
 # bac7f8e284f24468b9c2ee63b06cf67a
 #: ../../../source/reference/command/output_format.txt:21
 msgid "JSON and MessagePack"
-msgstr ""
+msgstr "JSONとMessagePack"
 
 # 1f66c82173764c109ae2109db6396496
 #: ../../../source/reference/command/output_format.txt:23
@@ -447,12 +445,12 @@ msgid ""
 "This secsion describes the structure of command result on JSON and "
 "MessagePack format. JSON is used to show structure because MessagePack is "
 "binary format. Binary format isn't proper for documenataion."
-msgstr ""
+msgstr "このセクションではJSONとMessagePack形式を使った時のコマンド実行結果の構造を説明します。MessagePackはバイナリー形式なのでここでは構造を示すためにJSONを使います。バイナリー形式はドキュメントには向いていません。"
 
 # f476c24944b6416da533ff0823a11dc4
 #: ../../../source/reference/command/output_format.txt:27
 msgid "JSON and MessagePack uses the following structure::"
-msgstr ""
+msgstr "JSON形式、MessagePack形式のときは以下のような構造になります::"
 
 # 5b7e3a9725304092bc80446f05f14c67
 # d9d1d176bb2043f7862e0ebd6c89eed4
@@ -484,19 +482,18 @@ msgstr ""
 # 88d7c6252ccb429da20f5339c8f93636
 # c3c3a11dd629453b8ef82804046dcf60
 #: ../../../source/reference/command/output_format.txt:31
-#, fuzzy
 msgid "For example::"
 msgstr "実行例::"
 
 # 7c8a0967dca4475ba2fbb83c83632bc4
 #: ../../../source/reference/command/output_format.txt:72
 msgid "In the example, the following part is ``HEADER``::"
-msgstr ""
+msgstr "この例では、以下の部分が ``HEADER`` に相当します::"
 
 # a340a9a7774d4a05b77d523a4e93f318
 #: ../../../source/reference/command/output_format.txt:80
 msgid "The following part is ``BODY``::"
-msgstr ""
+msgstr "``BODY`` に相当する部分は以下です::"
 
 # d66e98ee02154150a140c5db404e7419
 #: ../../../source/reference/command/output_format.txt:115
@@ -506,23 +503,22 @@ msgstr ""
 # 7ae033bc60e9478eb0b8b06d39c3c69f
 #: ../../../source/reference/command/output_format.txt:117
 msgid "``HEADER`` is an array. The content of ``HEADER`` has some patterns."
-msgstr ""
+msgstr "``HEADER`` は配列です。 ``HEADER`` の内容にはいくつかのパターンがあります。"
 
 # 1e9d2810d3154022a965dfac64420122
 #: ../../../source/reference/command/output_format.txt:120
 msgid "Success case"
-msgstr ""
+msgstr "成功した場合"
 
 # de35d13a50f340b4bcbc3eaffa67cf3c
 #: ../../../source/reference/command/output_format.txt:122
 msgid "``HEADER`` has three elements on success::"
-msgstr ""
+msgstr "コマンドが成功した場合は ``HEADER`` には3つの要素があります::"
 
 # 75c38df430b54c44844526068cb9d03b
 #: ../../../source/reference/command/output_format.txt:126
-#, fuzzy
 msgid "The first element is always ``0``."
-msgstr "デフォルト値は ``0`` です。"
+msgstr "最初の値は常に ``0`` です。"
 
 # 63be02bb696841e8a983b5a7abcfca9f
 #: ../../../source/reference/command/output_format.txt:128
@@ -532,43 +528,43 @@ msgid ""
 "``ELAPSED_TIME`` is the elapsed time for processing the command in seconds. "
 "Both ``UNIX_TIME_WHEN_COMMAND_IS_STARTED`` and ``ELAPSED_TIME`` are float "
 "value. The precision of them are nanosecond."
-msgstr ""
+msgstr "``UNIX_TIME_WHEN_COMMAND_IS_STARTED`` はコマンドの実行が始まったときの時刻です。時刻は1970-01-01 00:00:00から経過した秒数で表現されています。 ``ELAPSED_TIME`` はコマンドの実行にかかった時間です。単位は秒です。 ``UNIX_TIME_WHEN_COMMAND_IS_STARTED`` も ``ELAPSED_TIME`` も浮動小数点数です。小数部分はナノ秒を表します。"
 
 # b95f54a3273749e3aa7e338220d20b53
 #: ../../../source/reference/command/output_format.txt:136
 msgid "Error case"
-msgstr ""
+msgstr "エラーの場合"
 
 # fb4ea4e8b4dd401f8786c8eeb92126ba
 #: ../../../source/reference/command/output_format.txt:138
 msgid "``HEADER`` has four or five elements on error::"
-msgstr ""
+msgstr "エラーの場合、 ``HEADER`` には4個または5個の要素があります::"
 
 # ac1211d2b2ca4e30a965820661808752
 #: ../../../source/reference/command/output_format.txt:148
 msgid ""
 "``ERROR_LOCATION`` may not be included in ``HEADER`` but other four elements "
 "are always included."
-msgstr ""
+msgstr "``ERROR_LOCATION`` は ``HEADER`` には含まれないかもしれませんが、他の4個の要素は常に含まれます。"
 
 # 7db537253d44495eb280b6c7bf7911e5
 #: ../../../source/reference/command/output_format.txt:151
 msgid ""
 "``RETURN_CODE`` is non 0 value. See :doc:`return_code` about available "
 "return codes."
-msgstr ""
+msgstr "``RETURN_CODE`` は0ではない値です。リターンコードの詳細は :doc:`return_code` を見てください。"
 
 # 609bf5810e9a4e8493b770de151ff81a
 #: ../../../source/reference/command/output_format.txt:154
 msgid ""
 "``UNIX_TIME_WHEN_COMMAND_IS_STARTED`` and ``ELAPSED_TIME`` are the same as "
 "success case."
-msgstr ""
+msgstr "``UNIX_TIME_WHEN_COMMAND_IS_STARTED`` と ``ELAPSED_TIME`` は成功した時と同じです。"
 
 # 3c37be0fe7a24dc6b3f96a925cd99558
 #: ../../../source/reference/command/output_format.txt:157
-msgid "``ERROR_MESSAGE`` is a error message in string."
-msgstr ""
+msgid "``ERROR_MESSAGE`` is an error message in string."
+msgstr "``ERROR_MESSAGE`` はエラーメッセージです。文字列です。"
 
 # d6d80250fd7d48b3b85b8b5649f35364
 #: ../../../source/reference/command/output_format.txt:159
@@ -576,7 +572,7 @@ msgid ""
 "``ERROR_LOCATION`` is optional. If error location is collected, "
 "``ERROR_LOCATION`` is included. ``ERROR_LOCATION`` is an array. "
 "``ERROR_LOCATION`` has one ore two elements::"
-msgstr ""
+msgstr "``ERROR_LOCATION`` は存在しないことがあります。もし、エラーが発生した場所の情報を収集できていた場合は ``ERROR_LOCATION`` が含まれます。 ``ERROR_LOCATION`` は配列です。 ``ERROR_LOCATION`` は1個または2個の要素を含みます::"
 
 # 167601bc19d74f2ebac0c492ed7d3c47
 #: ../../../source/reference/command/output_format.txt:168
@@ -585,26 +581,26 @@ msgid ""
 "groonga. It is useful for groonga developers but not useful for users. "
 "``LOCATION_IN_GROONGA`` is an array. ``LOCATION_IN_GROONGA`` has three "
 "elements::"
-msgstr ""
+msgstr "``LOCATION_IN_GROONGA`` はgroonga内でエラーが発生したソースコードの場所です。この情報はgroonga開発者には役に立ちますが、ユーザーの役には立ちません。 ``LOCATION_IN_GROONGA`` は配列です。 ``LOCATION_IN_GROONGA`` には3個の要素があります::"
 
 # 86be0097b78f42d5afc021435d9d3250
 #: ../../../source/reference/command/output_format.txt:179
-msgid "``FUNCTION_NAME`` is the function that error is occurred."
-msgstr ""
+msgid "``FUNCTION_NAME`` is the name of function that error is occurred."
+msgstr "``FUNCTION_NAME`` はエラーが発生した関数の名前です。"
 
 # 0eb7bd67f30c48bba87a0c55475f28a0
 #: ../../../source/reference/command/output_format.txt:181
 msgid ""
-"``SOURCE_FILE_NAME`` is the groonga's source file name that error is "
+"``SOURCE_FILE_NAME`` is the name of groonga's source file that error is "
 "occurred."
-msgstr ""
+msgstr "``SOURCE_FILE_NAME`` はエラーが発生した箇所を含んだgroongaのソースコードのファイル名です。"
 
 # 69e92361b1154ef9bd5197d80a572487
 #: ../../../source/reference/command/output_format.txt:184
 msgid ""
 "``LINE_NUMBER`` is the line number of ``SOURCE_FILE_NAME`` that error is "
 "occurred."
-msgstr ""
+msgstr "``LINE_NUMBER`` はエラーが発生した箇所の ``SOURCE_FILE_NAME`` での行番号です。"
 
 # 2bc94b570c084191b492be2e24e650b2
 #: ../../../source/reference/command/output_format.txt:187
@@ -614,25 +610,25 @@ msgid ""
 "can be specified by ``--file`` command line option for ``groonga`` command. "
 "``LOCATION_IN_GROONGA`` is an array. ``LOCATION_IN_GROONGA`` has three "
 "elements::"
-msgstr ""
+msgstr "``LOCATION_IN_INPUT`` は存在しないことがあります。 ``LOCATION_IN_INPUT`` は入力ファイルでエラーが発生した場所の情報を収集できたときに含まれます。入力ファイルは ``groonga`` コマンドのコマンドラインオプション ``--file`` で指定できます。 ``LOCATION_IN_GROONGA`` は配列です。 ``LOCATION_IN_GROONGA`` には3個の要素があります::"
 
 # 47351bdc932643d2aa3a03fadfd12be0
 #: ../../../source/reference/command/output_format.txt:199
 msgid "``INPUT_FILE_NAME`` is the input file name that error is occurred."
-msgstr ""
+msgstr "``INPUT_FILE_NAME`` はエラーが発生した入力ファイルのファイル名です。"
 
 # 602af4f3c2934797bb504d3f6ec66922
 #: ../../../source/reference/command/output_format.txt:201
 msgid ""
 "``LINE_NUMBER`` is the line number of ``INPUT_FILE_NAME`` that error is "
 "occurred."
-msgstr ""
+msgstr "``LINE_NUMBER`` はエラーが発生した箇所の ``INPUT_FILE_NAME`` での行番号です。"
 
 # fbe233663c7949e2b5b08330557c8811
 #: ../../../source/reference/command/output_format.txt:204
 msgid ""
 "``LINE_CONTENT`` is the content at ``LINE_NUMBER`` in ``INPUT_FILE_NAME``."
-msgstr ""
+msgstr "``LINE_CONTENT`` は ``INPUT_FILE_NAME`` 内の ``LINE_NUMBER`` 行目の内容です。"
 
 # c0c25249cfec4c0fba751079ea7068b0
 #: ../../../source/reference/command/output_format.txt:208
@@ -642,18 +638,17 @@ msgstr ""
 # ffbf7b0ac4254875836aee41c7fa7109
 #: ../../../source/reference/command/output_format.txt:210
 msgid "``BODY`` content depends on the executed command. It may be omitted."
-msgstr ""
+msgstr "``BODY`` の内容は実行したコマンドに依存します。 ``BODY`` がないこともあります。"
 
 # 8a81ee0acf634e13940e7db3a2b1be12
 #: ../../../source/reference/command/output_format.txt:212
 msgid "``BODY`` may be an error message on error case."
-msgstr ""
+msgstr "エラーが発生した時に、 ``BODY`` にエラーメッセージが入っていることもあります。"
 
 # b6413e09d91345aeacffb24f7f75ac87
 #: ../../../source/reference/command/output_format.txt:215
-#, fuzzy
 msgid "XML"
-msgstr "例"
+msgstr "XML"
 
 # fef71dc75701438eb72c02906517b8a5
 # ebfe78f174934adaa6d161d27180315a
@@ -677,16 +672,15 @@ msgstr ""
 
 # f18ad5e74b9c45f783d38e24995b3abe
 #: ../../../source/reference/command/return_code.txt:6
-#, fuzzy
 msgid "Return code"
-msgstr "返値"
+msgstr "リターンコード"
 
 # 36373a5c6cb94a6c9a4ab511e6baedf0
 #: ../../../source/reference/command/return_code.txt:11
 msgid ""
 "Return code is used to show whether a processing is succeeded or not. If the "
 "processing is not succeeded, return code shows error type."
-msgstr ""
+msgstr "リターンコードは処理が成功したかどうかを示すために使われます。もし、処理が成功していなければリターンコードはエラーの種類を示します。"
 
 # eb3822d69ddb441da15a6e30e591a766
 #: ../../../source/reference/command/return_code.txt:14
@@ -695,12 +689,12 @@ msgid ""
 "``grn_ctx_t::rc`` in C API. You can check return code by looking the header "
 "element in query API. See :doc:`output_format` about the header element in "
 "query API."
-msgstr ""
+msgstr "リターンコードはCのAPIでもクエリーAPIでも使われます。CのAPIでは ``grn_ctx_t::rc`` でリターンコードを確認できます。クエリーAPIではヘッダー要素を見るとリターンコードを確認できます。クエリーAPIでのヘッダー要素については :doc:`output_format` を参照してください。"
 
 # 842c4b1d5e0e475fb12dae97d8c8ea7d
 #: ../../../source/reference/command/return_code.txt:20
 msgid "List"
-msgstr ""
+msgstr "一覧"
 
 # 284b007ee1b74f52b0f37a9a64d48f6b
 #: ../../../source/reference/command/return_code.txt:22
@@ -709,7 +703,7 @@ msgid ""
 "processing is succeeded. Return codes that have negative value show error "
 "type. ``GRN_END_OF_DATA`` is a special return code. It is used only C API. "
 "It is not showen in query API."
-msgstr ""
+msgstr "以下はリターンコードの一覧です。 ``GRN_SUCCESS`` (= 0) は処理が成功したことを示しています。負の値のリターンコードはエラーの種類を表しています。 ``GRN_END_OF_DATA`` は特別なリターンコードです。このリターンコードはCのAPIでだけ使われていて、クエリーAPIにはでてきません。"
 
 # 578b140b37fb4cca89feaef5ab485b11
 #: ../../../source/reference/command/return_code.txt:27
@@ -1091,16 +1085,16 @@ msgstr "参考"
 msgid ""
 ":doc:`output_format` shows where return code is appeared in query API "
 "response."
-msgstr ""
+msgstr ":doc:`output_format` はクエリーAPIでのレスポンスの中でどこにリターンコードがあるかを説明しています。"
 
 # 3603ade61f5d44ae9dd51b97fa072163
 #: ../../../source/reference/command/return_code.txt:106
 msgid ""
 ":doc:`/spec/gqtp`: GQTP protocol also uses return code as status but it uses "
-"2byte unsigned integer. So return values that have negative value are "
+"2byte unsigned integer. So return codes that have negative value are "
 "statuses that have positive value in GQTP protocol. You can convert status "
-"value in GQTP protocol to return code by handling it as 2byte integer."
-msgstr ""
+"value in GQTP protocol to return code by handling it as 2byte signed integer."
+msgstr ":doc:`/spec/gqtp`: GQTPプロトコルもステータスとしてリターンコードを使っていますが、ステータスは2バイトの符号なし整数です。そのため、GQTPプロトコルでは、負の値のリターンコードは正の値のステータスになります。GQTPプロトコルのステータスの値を2バイトの符号付き整数として扱うとステータスをリターンコードに変換できます。"
 
 # 2cfd446ae9894054b67105eb41b6e545
 #: ../../../source/reference/commands/cache_limit.txt:6
@@ -11032,9 +11026,8 @@ msgstr ""
 
 # d0742adf4f42420b9247bde497ec24cc
 #: ../../../source/reference/log.txt:205
-#, fuzzy
 msgid "RETURN_CODE"
-msgstr "返値"
+msgstr "RETURN_CODE"
 
 # 5bd255e1d73f40cdb044e52bab2d154d
 #: ../../../source/reference/output.txt:6

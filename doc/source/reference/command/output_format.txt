@@ -154,7 +154,7 @@ return codes.
 ``UNIX_TIME_WHEN_COMMAND_IS_STARTED`` and ``ELAPSED_TIME`` are the
 same as success case.
 
-``ERROR_MESSAGE`` is a error message in string.
+``ERROR_MESSAGE`` is an error message in string.
 
 ``ERROR_LOCATION`` is optional. If error location is collected,
 ``ERROR_LOCATION`` is included. ``ERROR_LOCATION`` is an
@@ -176,9 +176,9 @@ three elements::
     LINE_NUMBER
   ]
 
-``FUNCTION_NAME`` is the function that error is occurred.
+``FUNCTION_NAME`` is the name of function that error is occurred.
 
-``SOURCE_FILE_NAME`` is the groonga's source file name that error is
+``SOURCE_FILE_NAME`` is the name of groonga's source file that error is
 occurred.
 
 ``LINE_NUMBER`` is the line number of ``SOURCE_FILE_NAME`` that error
@@ -220,3 +220,9 @@ TSV
 ---
 
 TODO
+
+See also
+--------
+
+* :doc:`return_code` describes about return code.
+

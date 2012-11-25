@@ -104,7 +104,7 @@ See also
 * :doc:`output_format` shows where return code is appeared in query
   API response.
 * :doc:`/spec/gqtp`: GQTP protocol also uses return code as status but
-  it uses 2byte unsigned integer. So return values that have negative
+  it uses 2byte unsigned integer. So return codes that have negative
   value are statuses that have positive value in GQTP protocol. You
   can convert status value in GQTP protocol to return code by
-  handling it as 2byte integer.
+  handling it as 2byte signed integer.
