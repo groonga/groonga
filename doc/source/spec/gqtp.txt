@@ -57,7 +57,7 @@ GQTP header consists of the following unsigned integer values:
 
 All header values are encoded by network byte order.
 
-The following sections describes available values of each key.
+The following sections describes available values of each header value.
 
 The total size of GQTP header is 24byte.
 
@@ -82,7 +82,7 @@ The value is one of the following values:
 +-------------+--------+----------------------------+
 |   ``XML``   |   3    | XML.                       |
 +-------------+--------+----------------------------+
-| ``MSGPACK`` |   4    | Message Pack.              |
+| ``MSGPACK`` |   4    | MessagePack.               |
 +-------------+--------+----------------------------+
 
 This is not used in request GQTP header.
@@ -106,13 +106,13 @@ The value is bitwise OR of the following values:
 +-----------+--------+----------------------------+
 | ``QUIET`` |  0x08  | Be quiet.                  |
 +-----------+--------+----------------------------+
-| ``QUIT``  |  0x10  | Be quit.                   |
+| ``QUIT``  |  0x10  | Quit.                      |
 +-----------+--------+----------------------------+
 
 You must specify ``MORE`` or ``TAIL`` flag.
 
 If you use ``MORE`` flag, you should also use ``QUIET`` flag. Because
-you don't need to get a response for your partial request.
+you don't need to show a response for your partial request.
 
 Use ``QUIT`` flag to quit this session.
 
@@ -199,8 +199,8 @@ future.
 ``size``
 """"""""
 
-The size of body. The maximum body size is 4GB because ``size`` is
-4byte unsigned integer. If you want to send 4GB or more larger data,
+The size of body. The maximum body size is 4GiB because ``size`` is
+4byte unsigned integer. If you want to send 4GiB or more larger data,
 use ``MORE`` flag.
 
 Example
