@@ -44,12 +44,12 @@ GRN_PLUGIN_EXPORT grn_rc GRN_PLUGIN_FIN(grn_ctx *ctx);
   Don't call these functions directly. Use GRN_PLUGIN_MALLOC(),
   GRN_PLUGIN_REALLOC() and GRN_PLUGIN_FREE() instead.
  */
-void *grn_plugin_malloc(grn_ctx *ctx, size_t size, const char *file,
-                        int line, const char *func);
+GRN_PLUGIN_EXPORT void *grn_plugin_malloc(grn_ctx *ctx, size_t size, const char *file,
+                                          int line, const char *func);
 void *grn_plugin_realloc(grn_ctx *ctx, void *ptr, size_t size,
                          const char *file, int line, const char *func);
-void grn_plugin_free(grn_ctx *ctx, void *ptr, const char *file,
-                     int line, const char *func);
+GRN_PLUGIN_EXPORT void grn_plugin_free(grn_ctx *ctx, void *ptr, const char *file,
+                                       int line, const char *func);
 
 /*
   GRN_PLUGIN_MALLOC() allocates `size' bytes and returns a pointer to the
@@ -86,17 +86,17 @@ void grn_plugin_free(grn_ctx *ctx, void *ptr, const char *file,
   Don't call grn_plugin_set_error() directly. This function is used in
   GRN_PLUGIN_SET_ERROR().
  */
-void grn_plugin_set_error(grn_ctx *ctx, grn_log_level level,
-                          grn_rc error_code,
-                          const char *file, int line, const char *func,
-                          const char *format, ...) GRN_ATTRIBUTE_PRINTF(7);
+GRN_PLUGIN_EXPORT void grn_plugin_set_error(grn_ctx *ctx, grn_log_level level,
+                                            grn_rc error_code,
+                                            const char *file, int line, const char *func,
+                                            const char *format, ...) GRN_ATTRIBUTE_PRINTF(7);
 
 /*
   Don't call these functions directly. grn_plugin_backtrace() and
   grn_plugin_logtrace() are used in GRN_PLUGIN_SET_ERROR().
  */
-void grn_plugin_backtrace(grn_ctx *ctx);
-void grn_plugin_logtrace(grn_ctx *ctx, grn_log_level level);
+GRN_PLUGIN_EXPORT void grn_plugin_backtrace(grn_ctx *ctx);
+GRN_PLUGIN_EXPORT void grn_plugin_logtrace(grn_ctx *ctx, grn_log_level level);
 
 /*
   Don't use GRN_PLUGIN_SET_ERROR() directly. This macro is used in
@@ -155,13 +155,13 @@ void grn_plugin_mutex_destroy(grn_ctx *ctx, grn_plugin_mutex *mutex);
   grn_plugin_mutex_lock() locks a mutex object. If the object is already
   locked, the calling thread waits until the object will be unlocked.
  */
-void grn_plugin_mutex_lock(grn_ctx *ctx, grn_plugin_mutex *mutex);
+GRN_PLUGIN_EXPORT void grn_plugin_mutex_lock(grn_ctx *ctx, grn_plugin_mutex *mutex);
 
 /*
   grn_plugin_mutex_unlock() unlocks a mutex object. grn_plugin_mutex_unlock()
   should not be called for an unlocked object.
  */
-void grn_plugin_mutex_unlock(grn_ctx *ctx, grn_plugin_mutex *mutex);
+GRN_PLUGIN_EXPORT void grn_plugin_mutex_unlock(grn_ctx *ctx, grn_plugin_mutex *mutex);
 
 /*
   grn_plugin_proc_alloc() allocates a `grn_obj` object.

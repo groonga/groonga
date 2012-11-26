@@ -88,8 +88,8 @@ struct _grn_tokenizer_query {
   something goes wrong. Note that grn_tokenizer_query_create() must be called
   just once in the function that initializes a tokenizer.
  */
-grn_tokenizer_query *grn_tokenizer_query_open(grn_ctx *ctx,
-                                              int num_args, grn_obj **args);
+GRN_PLUGIN_EXPORT grn_tokenizer_query *grn_tokenizer_query_open(grn_ctx *ctx,
+                                                                int num_args, grn_obj **args);
 
 /*
   grn_tokenizer_query_create() is deprecated. Use grn_tokenizer_query_open()
@@ -103,7 +103,7 @@ grn_tokenizer_query *grn_tokenizer_query_create(grn_ctx *ctx,
   grn_tokenizer_query_close() finalizes an object of grn_tokenizer_query
   and then frees memory allocated for that object.
  */
-void grn_tokenizer_query_close(grn_ctx *ctx, grn_tokenizer_query *query);
+GRN_PLUGIN_EXPORT void grn_tokenizer_query_close(grn_ctx *ctx, grn_tokenizer_query *query);
 
 /*
   grn_tokenizer_query_destroy() is deprecated. Use grn_tokenizer_query_close()
@@ -127,13 +127,13 @@ struct _grn_tokenizer_token {
   grn_tokenizer_token_init() initializes `token'. Note that an initialized
   object must be finalized by grn_tokenizer_token_fin().
  */
-void grn_tokenizer_token_init(grn_ctx *ctx, grn_tokenizer_token *token);
+GRN_PLUGIN_EXPORT void grn_tokenizer_token_init(grn_ctx *ctx, grn_tokenizer_token *token);
 
 /*
   grn_tokenizer_token_fin() finalizes `token' that has been initialized by
   grn_tokenizer_token_init().
  */
-void grn_tokenizer_token_fin(grn_ctx *ctx, grn_tokenizer_token *token);
+GRN_PLUGIN_EXPORT void grn_tokenizer_token_fin(grn_ctx *ctx, grn_tokenizer_token *token);
 
 /*
   grn_tokenizer_status provides a list of tokenizer status codes.
@@ -155,9 +155,9 @@ typedef enum {
   request for the next token or finalization comes. See grn_tokenizer_status in
   this header for more details of `status'.
  */
-void grn_tokenizer_token_push(grn_ctx *ctx, grn_tokenizer_token *token,
-                              const char *str_ptr, unsigned int str_length,
-                              grn_tokenizer_status status);
+GRN_PLUGIN_EXPORT void grn_tokenizer_token_push(grn_ctx *ctx, grn_tokenizer_token *token,
+                                                const char *str_ptr, unsigned int str_length,
+                                                grn_tokenizer_status status);
 
 /*
   grn_tokenizer_tokenized_delimiter_next() extracts the next token
@@ -166,11 +166,11 @@ void grn_tokenizer_token_push(grn_ctx *ctx, grn_tokenizer_token *token,
   token. The returned string may be `NULL' when all tokens are
   extracted.
  */
-const char *grn_tokenizer_tokenized_delimiter_next(grn_ctx *ctx,
-                                                   grn_tokenizer_token *token,
-                                                   const char *str_ptr,
-                                                   unsigned int str_length,
-                                                   grn_encoding encoding);
+GRN_PLUGIN_EXPORT const char *grn_tokenizer_tokenized_delimiter_next(grn_ctx *ctx,
+                                                                     grn_tokenizer_token *token,
+                                                                     const char *str_ptr,
+                                                                     unsigned int str_length,
+                                                                     grn_encoding encoding);
 
 /*
   grn_tokenizer_register() registers a plugin to the database which is
@@ -184,10 +184,10 @@ const char *grn_tokenizer_tokenized_delimiter_next(grn_ctx *ctx,
   details of grn_proc_func and grn_user_data, that is used as an argument of
   grn_proc_func.
  */
-grn_rc grn_tokenizer_register(grn_ctx *ctx, const char *plugin_name_ptr,
-                              unsigned int plugin_name_length,
-                              grn_proc_func *init, grn_proc_func *next,
-                              grn_proc_func *fin);
+GRN_PLUGIN_EXPORT grn_rc grn_tokenizer_register(grn_ctx *ctx, const char *plugin_name_ptr,
+                                                unsigned int plugin_name_length,
+                                                grn_proc_func *init, grn_proc_func *next,
+                                                grn_proc_func *fin);
 
 #ifdef __cplusplus
 }  /* extern "C" */
