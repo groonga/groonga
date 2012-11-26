@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-26 09:34\n"
-"PO-Revision-Date: 2012-11-26 09:36+0900\n"
+"POT-Creation-Date: 2012-11-26 10:09\n"
+"PO-Revision-Date: 2012-11-26 10:11+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -7290,12 +7290,15 @@ msgid ""
 "Function can be used in some commands. For example, you can use function in "
 "``--filter``, ``--scorer`` and ``output_columns`` options of :doc:`commands/"
 "select`."
-msgstr "関数はいくつかのコマンドの中で使えます。 :doc:`commands/select` コマンドの ``--filter`` 、 ``--scorer`` 、 ``output_columns`` オプションで使えます。"
+msgstr ""
+"関数はいくつかのコマンドの中で使えます。 :doc:`commands/select` コマンドの "
+"``--filter`` 、 ``--scorer`` 、 ``output_columns`` オプションで使えます。"
 
 # e4d86a2e9fb24ce385804a0b48eaa87c
 #: ../../../source/reference/function.txt:12
 msgid "This section describes about function and built-in functions."
-msgstr "このセクションでは関数についての説明と組み込みの関数について説明します。"
+msgstr ""
+"このセクションでは関数についての説明と組み込みの関数について説明します。"
 
 # 7c0322fbe6654144bc127e81461da24e
 #: ../../../source/reference/function.txt:14
@@ -8118,23 +8121,32 @@ msgstr ""
 # 3870c66430f149d0a54e11c0650670ce
 #: ../../../source/reference/functions/snippet_html.txt:13
 msgid "This feature is experimental. API will be changed."
-msgstr ""
+msgstr "この機能は実験的です。APIが変わる可能性があります。"
 
 # 836bd97369a74aa594872c384cab6ca2
 #: ../../../source/reference/functions/snippet_html.txt:18
 msgid ""
-"``snippet_html`` generates snippets (``KWIC``. ``KeyWord In Context``) of "
-"search keywords. The snippets are prepared for embedding HTML. Special "
-"characters such as ``<`` and ``>`` are escapsed as ``&lt;`` and ``&gt;``. "
-"Keyword is surrounded with ``<span class=\"keyword\">`` and ``</span>``. For "
-"example, a snippet of ``I am a groonga user. <3`` for keyword ``groonga`` is "
-"``I am a <span class=\"keyword\">groonga</span> user. &lt;3``."
+"``snippet_html`` extracts snippets of target text around search keywords "
+"(``KWIC``. ``KeyWord In Context``). The snippets are prepared for embedding "
+"HTML. Special characters such as ``<`` and ``>`` are escapsed as ``&lt;`` "
+"and ``&gt;``. Keyword is surrounded with ``<span class=\"keyword\">`` and "
+"``</span>``. For example, a snippet of ``I am a groonga user. <3`` for "
+"keyword ``groonga`` is ``I am a <span class=\"keyword\">groonga</span> user. "
+"&lt;3``."
 msgstr ""
+"``snippet_html`` は対象テキスト中から検索キーワード周辺のテキスト"
+"（ ``KWIC`` 。 ``KeyWord In Context`` ）を抽出します。抽出されたテキストのこ"
+"とをスニペットと呼びます。スニペットはHTML中に埋め込みやすいように処理されて"
+"います。 ``<`` や ``>`` などの特殊文字は ``&lt;`` や ``&gt;`` にエスケープさ"
+"れています。キーワードは ``<span class=\"keyword\">`` と ``</span>`` で囲まれ"
+"ています。たとえば、 ``I am a groonga user. <3`` という対象テキストのキーワー"
+"ド ``groonga`` でのスニペットは ``I am a <span class=\"keyword\">groonga</"
+"span> user. &lt;3`` となります。"
 
 # 1ce42bdc29594a019e7d0db71d6a3135
 #: ../../../source/reference/functions/snippet_html.txt:29
 msgid "``snippet_html`` has only one parameter::"
-msgstr ""
+msgstr "``snippet_html`` の引数は1つだけです::"
 
 # d1c6f772015240fbbcb6bdd09d1b071a
 #: ../../../source/reference/functions/snippet_html.txt:33
@@ -8142,16 +8154,17 @@ msgid ""
 "``snippet_html`` has many parameters internally but they can't be specified "
 "for now. You will be able to custom those parameters soon."
 msgstr ""
+"``snippet_html`` は内部にはたくさんのオプションがありますが、今はまだ指定でき"
+"ません。じきに指定できるようになる予定です。"
 
 # bbc4ba5a3444421aaf1048616acc13b3
 #: ../../../source/reference/functions/snippet_html.txt:54
-#, fuzzy
 msgid ""
 "``snippet_html`` can be used in only ``--output_columns`` in :doc:`/"
 "reference/commands/select`."
 msgstr ""
-"これらについては :doc:`/reference/commands/select` の ``--match_columns`` オ"
-"プションを参照してください。"
+"``snippet_html`` は :doc:`/reference/commands/select` コマンドの ``--"
+"output_columns`` 内でのみ指定できます。"
 
 # f8ffa4ccb55548599cdd6845d2053360
 #: ../../../source/reference/functions/snippet_html.txt:57
@@ -8160,13 +8173,19 @@ msgid ""
 "function call in ``--output_columns`` is experimental feature in groonga "
 "2.0.9. It will be enabled by default soon."
 msgstr ""
+"groonga 2.0.9では ``output_columns`` 内での関数呼び出しはまだ実験的な機能なの"
+"で、明示的に ``--command_version 2`` オプションを指定する必要があります。この"
+"機能はじきに有効になる予定です。"
 
 # 86e24e03bfac46f793e6017e403413b1
 #: ../../../source/reference/functions/snippet_html.txt:61
 msgid ""
-"You als oneed to specify ``--query`` and/or ``--filter``. Keywords are "
+"You also need to specify ``--query`` and/or ``--filter``. Keywords are "
 "extracted from ``--query`` and ``--filter`` arguments."
 msgstr ""
+"また、 ``--query`` と ``--filter`` オプションも指定する必要があります。（どち"
+"らか一方でも構いません。）これは、 ``--query`` と ``--filter`` オプションから"
+"キーワードを抽出しているためです。"
 
 # ff9d382e8e2d48f68910c724d2e4d68d
 #: ../../../source/reference/functions/snippet_html.txt:64
@@ -8174,6 +8193,8 @@ msgid ""
 "The following example uses ``--query \"fast performance\"``. In this case, "
 "``fast`` and ``performance`` are used as keywords."
 msgstr ""
+"以下の例は ``--query \"fast performance\"`` を使っています。この場合は、キー"
+"ワードとして ``fast`` と ``performance`` を使います。"
 
 # e5eeff8261344801a41d926212017647
 #: ../../../source/reference/functions/snippet_html.txt:71
@@ -8183,6 +8204,11 @@ msgid ""
 "``fast`` or ``performance`` and surronds the keywords with ``<span class="
 "\"keyword\">`` and ``</span>``."
 msgstr ""
+"``--query \"fast performance\"`` は最初のレコードの内容にだけマッチします。 "
+"``snippet_html(content)`` は、テキスト中からキーワード ``fast`` と "
+"``performance`` の少なくともどちらか一方を含んでいるテキストの断片を抽出しま"
+"す。今回は2箇所抽出しています。そして、抽出したテキストの断片内にあるキーワー"
+"ドを ``<span class=\"keyword\">`` と ``</span>`` で囲みます。"
 
 # cb632a1ad63d4e5d8832033c11c3aeeb
 #: ../../../source/reference/functions/snippet_html.txt:76
@@ -8190,14 +8216,18 @@ msgid ""
 "The max number of text parts is 3. If there are 4 or more text parts that "
 "include the keywords, only the leading 3 parts are only used."
 msgstr ""
+"テキストの断片数は多くても3です。4つ以上のテキストの断片が抽出できるときは、"
+"最初の3つだけを使います。"
 
 # 211007e2302146e7aff499243e93092a
 #: ../../../source/reference/functions/snippet_html.txt:79
 msgid ""
-"The max size of a text part is 200 bytes. The unit is bytes not chracters. "
-"The size doesn't include inserted ``<span keyword=\"span\">`` and ``</"
-"span>``."
+"The max size of a text part is 200byte. The unit is bytes not chracters. The "
+"size doesn't include inserted ``<span keyword=\"keyword\">`` and ``</span>``."
 msgstr ""
+"テキストの断片の最大サイズは200バイトです。単位は文字数ではなくバイトです。挿"
+"入される ``<span keyword=\"keyword\">`` と ``</span>`` のバイト数はこのサイズ"
+"の中には含まれません。"
 
 # 871bf61a6e954225af36cf76cdec806b
 #: ../../../source/reference/functions/snippet_html.txt:83
@@ -8205,11 +8235,12 @@ msgid ""
 "Both the max number of text parts and the max size of a text part aren't "
 "customizable."
 msgstr ""
+"テキストの断片の最大数とテキストの断片の最大サイズはカスタマイズできません。"
 
 # 4545fba625fe44dd9e56a0b5ff4c7a4d
 #: ../../../source/reference/functions/snippet_html.txt:86
 msgid "You can specify string literal instead of column."
-msgstr ""
+msgstr "カラムの代わりに文字列リテラルを指定することもできます。"
 
 # 2f3869cf7d7c4d018589a31e22f345f1
 #: ../../../source/reference/functions/snippet_html.txt:95
@@ -8217,57 +8248,61 @@ msgid ""
 "``snippet_html`` returns an array of string. An element of array is a "
 "snippet::"
 msgstr ""
+"``snippet_html`` は文字列の配列を返します。それぞれの要素がスニペットになりま"
+"す::"
 
 # 64e8fe7101bb4819b634fab2d97517c9
 #: ../../../source/reference/functions/snippet_html.txt:100
 msgid ""
 "A snippet includes one or more keywords. The max byte size of a snippet "
-"except ``<span keyword=\"span\">`` and ``</span>`` is 200 byte. The unit "
+"except ``<span keyword=\"keyword\">`` and ``</span>`` is 200byte. The unit "
 "isn't the number of chracters."
 msgstr ""
+"スニペットには1つ以上のキーワードが含まれています。 ``<span keyword=\"keyword"
+"\">`` と ``</span>`` を除いたスニペットの最大サイズは200byteです。単位は文字"
+"数ではなくてバイトです。"
 
 # d50d5eaffce34f468c75af2339b47e84
 #: ../../../source/reference/functions/snippet_html.txt:104
 msgid ""
-"The array size is larger than or equal to 1 and less than or equal to 3. The "
+"The array size is larger than or equal to 0 and less than or equal to 3. The "
 "max size 3 will be customizable soon."
-msgstr ""
+msgstr "配列のサイズは0以上3以下です。最大サイズの3は、じきにカスタマイズできるようになる予定です。"
 
 # 6ed636c740c54ef6bbdf783d0dbb05fc
 #: ../../../source/reference/functions/snippet_html.txt:110
 msgid "Make the max number of text parts customizable."
-msgstr ""
+msgstr "テキストの断片の最大数をカスタマイズできるようにする。"
 
 # ea6739108fc844bd990f82ad31111b8b
 #: ../../../source/reference/functions/snippet_html.txt:111
 msgid "Make the max size of a text part customizable."
-msgstr ""
+msgstr "テキストの断片最大サイズをカスタマイズできるようにする。"
 
 # dcce7c56d19147e394e9d56135023eeb
 #: ../../../source/reference/functions/snippet_html.txt:112
 msgid "Make keywords customizable."
-msgstr ""
+msgstr "キーワードをカスタマイズできるようにする。"
 
 # 9cc9ef1f38d048f9aa526466f46e7c2a
 #: ../../../source/reference/functions/snippet_html.txt:113
 msgid "Make tag that surrounds a keyword customizable."
-msgstr ""
+msgstr "キーワードを囲むタグをカスタマイズできるようにする。"
 
 # b06c3d314d1d4190a395d23c7aef81ec
 #: ../../../source/reference/functions/snippet_html.txt:114
 msgid "Make normalization customizable."
-msgstr ""
+msgstr "正規化の方法をカスタマイズできるようにする。"
 
 # 9d1b7d1dccae4281a1fb5651c1bfab44
 #: ../../../source/reference/functions/snippet_html.txt:115
 msgid "Support options by object literal."
-msgstr ""
+msgstr "オブジェクトリテラル形式でのオプション指定をサポートする。"
 
 # bde897b0ca22430eb927c3f3d85d70d2
 #: ../../../source/reference/functions/snippet_html.txt:120
-#, fuzzy
 msgid ":doc:`/reference/commands/select`"
-msgstr "キャストについては :doc:`/reference/cast` を参照してください。"
+msgstr ""
 
 # 746285e8bd6c4ef5926a1b7f90f14da9
 #: ../../../source/reference/grn_expr.txt:8
