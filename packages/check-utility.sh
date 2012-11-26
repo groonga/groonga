@@ -263,7 +263,7 @@ install_groonga_rpm_packages ()
     ver=$3
     root_dir=$4
     cat > tmp/install-centos5-groonga.sh <<EOF
-sudo rpm -ivh http://packages.groonga.org/centos/groonga-release-1.1.0-0.noarch.rpm
+sudo rpm -ivh http://packages.groonga.org/centos/groonga-release-1.1.0-1.noarch.rpm
 sudo yum makecache
 sudo yum install -y groonga
 sudo yum install -y groonga-tokenizer-mecab
@@ -272,7 +272,7 @@ sudo rpm -ivh epel-release-5-4.noarch.rpm
 sudo yum install -y groonga-munin-plugins
 EOF
     cat > tmp/install-centos6-groonga.sh <<EOF
-sudo rpm -ivh http://packages.groonga.org/centos/groonga-release-1.1.0-0.noarch.rpm
+sudo rpm -ivh http://packages.groonga.org/centos/groonga-release-1.1.0-1.noarch.rpm
 sudo yum makecache
 sudo yum install -y groonga
 sudo yum install -y groonga-tokenizer-mecab
@@ -280,7 +280,7 @@ sudo rpm -ivh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-7
 sudo yum install -y groonga-munin-plugins
 EOF
     cat > tmp/install-fedora-groonga.sh <<EOF
-sudo rpm -ivh http://packages.groonga.org/fedora/groonga-release-1.1.0-0.noarch.rpm
+sudo rpm -ivh http://packages.groonga.org/fedora/groonga-release-1.1.0-1.noarch.rpm
 sudo yum makecache
 sudo yum install -y groonga
 sudo yum install -y groonga-tokenizer-mecab
