@@ -25,7 +25,7 @@ load --table Articles
 [
 {"content": "Groonga is fast!", "comment": 1},
 {"content": "Groonga is useful!"},
-{"content": "Mroonga is fast!", "comments": 3}
+{"content": "Mroonga is fast!", "comment": 3}
 ]
 
 select Articles --match_columns comment.content --query groonga \
