@@ -8,7 +8,7 @@ Command
 Command is the most important processing unit in query API. You
 request a processing to groonga by a command.
 
-This section describes about command and built-in command list.
+This section describes about command and built-in commands.
 
 .. toctree::
    :maxdepth: 1

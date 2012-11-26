@@ -11,13 +11,13 @@ register
 Summary
 -------
 
-``register`` registers a plugin. You need to register a plugin before
-you use a plugin.
+``register`` command registers a plugin. You need to register a plugin
+before you use a plugin.
 
-You need just one ``register`` for a plugin in the same database
-because registered plugin information is written into the database.
-When you restart your ``groonga`` process, ``groonga`` process loads
-all registered plugins without ``register`` command.
+You need just one ``register`` command for a plugin in the same
+database because registered plugin information is written into the
+database.  When you restart your ``groonga`` process, ``groonga``
+process loads all registered plugins without ``register`` command.
 
 .. note::
 

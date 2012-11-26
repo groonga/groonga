@@ -9,7 +9,7 @@ Function can be used in some commands. For example, you can use
 function in ``--filter``, ``--scorer`` and ``output_columns``
 options of :doc:`commands/select`.
 
-This section describes about function and built-in function list.
+This section describes about function and built-in functions.
 
 TODO: Add documentations about function.
 
