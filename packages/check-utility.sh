@@ -269,7 +269,7 @@ sudo yum install -y groonga
 sudo yum install -y groonga-tokenizer-mecab
 wget http://download.fedoraproject.org/pub/epel/5/i386/epel-release-5-4.noarch.rpm
 sudo rpm -ivh epel-release-5-4.noarch.rpm
-sudo yum install -y groonga-munin-plugins
+#sudo yum install -y groonga-munin-plugins
 EOF
     cat > tmp/install-centos6-groonga.sh <<EOF
 sudo rpm -ivh http://packages.groonga.org/centos/groonga-release-1.1.0-1.noarch.rpm
@@ -277,14 +277,14 @@ sudo yum makecache
 sudo yum install -y groonga
 sudo yum install -y groonga-tokenizer-mecab
 sudo rpm -ivh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-7.noarch.rpm
-sudo yum install -y groonga-munin-plugins
+#sudo yum install -y groonga-munin-plugins
 EOF
     cat > tmp/install-fedora-groonga.sh <<EOF
 sudo rpm -ivh http://packages.groonga.org/fedora/groonga-release-1.1.0-1.noarch.rpm
 sudo yum makecache
 sudo yum install -y groonga
 sudo yum install -y groonga-tokenizer-mecab
-sudo yum install -y groonga-munin-plugins
+#sudo yum install -y groonga-munin-plugins
 EOF
     case "$dist-$ver" in
 	centos-5)
