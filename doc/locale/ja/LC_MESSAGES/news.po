@@ -65,6 +65,9 @@ msgid ""
 "because it just checked whether default hostname is resolved in previous "
 "version."
 msgstr ""
+"groongaコマンドの起動時に致命的でない ``getaddrinfo()`` 関数のエラーは無視"
+"するようにした。この変更はgroongaを通常使用する場合には影響しません。"
+"その理由はデフォルトのホスト名が解決できるかチェックするのに使っていただけだからです。"
 
 # 5d78ead32ce44f6bac631b8187162e91
 #: ../../../source/news.txt:22
@@ -3631,10 +3634,3 @@ msgid ""
 "MODE' supported"
 msgstr ""
 
-# 88f7b488d6cc486983d1f54653ee5d0c
-#~ msgid ""
-#~ "Improved to ignore non critical ``getaddrinfo()`` error which groonga "
-#~ "command emits on startup."
-#~ msgstr ""
-#~ "groongaコマンドの起動時に致命的でない ``getaddrinfo()`` 関数のエラーは無視"
-#~ "するようにした。"
