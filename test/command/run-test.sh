@@ -128,7 +128,9 @@ if test -e $tmpfs; then
     ln -s $tmpfs "tmp"
 fi
 
-$RUBY -I "$grntest_dir/lib" \
+$RUBY \
+    -I "$groonga_command_dir/lib" \
+    -I "$grntest_dir/lib" \
     "$grntest_dir/bin/grntest" \
     --groonga "$GROONGA" \
     --groonga-httpd "$GROONGA_HTTPD" \
