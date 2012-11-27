@@ -125,5 +125,6 @@ cmake_install.cmake
 /test/unit/Gemfile.lock
 /test/unit/tmp
 /test/command/grntest
+/test/command/groonga-command
 /*.tar.gz
 /tmp
