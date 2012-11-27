@@ -70,6 +70,12 @@ if test -z "$RUBY"; then
     exit 1
 fi
 
+groonga_command_dir="$BASE_DIR/groonga-command"
+if ! test -d "$groonga_command_dir"; then
+    git clone --depth 1 git://github.com/groonga/groonga-command.git "$groonga_command_dir"
+    (cd "$groonga_command_dir" && bundle install && rake install)
+fi
+
 grntest_dir="$BASE_DIR/grntest"
 if ! test -d "$grntest_dir"; then
     git clone --depth 1 git://github.com/groonga/grntest.git "$grntest_dir"
