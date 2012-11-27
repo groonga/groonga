@@ -5,6 +5,6 @@ column_create Diaries tags COLUMN_VECTOR ShortText
 
 load --table Diaries
 [
-{"_key":"2012-08-14", "title": "'get' command is moved!", "tags": ["groonga", "development"]},
+{"_key":"2012-08-14", "title": "'get' command is moved!", "tags": ["groonga", "development"]}
 ]
 get Diaries 'nonexistent'

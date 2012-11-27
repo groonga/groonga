@@ -8,7 +8,7 @@ column_create Diaries tags COLUMN_VECTOR ShortText
 [[0,0.0,0.0],true]
 load --table Diaries
 [
-{"_key":"2012-08-14", "title": "'get' command is moved!", "tags": ["groonga", "development"]},
+{"_key":"2012-08-14", "title": "'get' command is moved!", "tags": ["groonga", "development"]}
 ]
 [[0,0.0,0.0],1]
 get Diaries '2012-08-14' 'title, _key, tags'
