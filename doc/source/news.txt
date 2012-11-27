@@ -27,6 +27,10 @@ Improvements
   multiple table with index.
 * Supported to log "[tokenizer][mecab]" tag when using ``TokenMecab`` tokenizer.
 * Supported to log "[tokenizer][kytea]" tag when using ``TokenKyTea`` tokenizer.
+* Improved to use separated array for command error location as output results.
+  This change is incompatibility change, but does not affects existing program.
+* Added documentation for :doc:`/reference/command/output_format`.
+* Added documentation for :doc:`/reference/command/return_code` of output results.
 
 Fixes
 ^^^^^
