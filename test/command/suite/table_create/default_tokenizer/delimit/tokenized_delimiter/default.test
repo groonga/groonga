@@ -10,8 +10,8 @@ column_create Tags movies_tags COLUMN_INDEX Movies tags
 
 load --table Movies
 [
-{"_key": "Seven Samurai", tags: "Samurai\uFFFEJapanese\uFFFEJapan\uFFFEKurosawa Akira"},
-{"_key": "The Last Samurai", tags: "Samurai\uFFFEEnglish\uFFFEJapanese\uFFFEUS\uFFFEJapan\uFFFETom Cruise"}
+{"_key": "Seven Samurai", "tags": "Samurai\uFFFEJapanese\uFFFEJapan\uFFFEKurosawa Akira"},
+{"_key": "The Last Samurai", "tags": "Samurai\uFFFEEnglish\uFFFEJapanese\uFFFEUS\uFFFEJapan\uFFFETom Cruise"}
 ]
 
 select Tags --output_columns _key --limit -1

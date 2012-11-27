@@ -8,8 +8,8 @@ column_create Tags movies_tags COLUMN_INDEX Movies tags
 [[0,0.0,0.0],true]
 load --table Movies
 [
-{"_key": "Seven Samurai", tags: "Samurai Japanese Japan"},
-{"_key": "The Last Samurai", tags: "Samurai English Japanese US Japan"}
+{"_key": "Seven Samurai", "tags": "Samurai Japanese Japan"},
+{"_key": "The Last Samurai", "tags": "Samurai English Japanese US Japan"}
 ]
 [[0,0.0,0.0],2]
 select Tags --output_columns _key --limit -1
