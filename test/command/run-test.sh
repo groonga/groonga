@@ -73,7 +73,16 @@ fi
 groonga_command_dir="$BASE_DIR/groonga-command"
 if ! test -d "$groonga_command_dir"; then
     git clone --depth 1 git://github.com/groonga/groonga-command.git "$groonga_command_dir"
-    (cd "$groonga_command_dir" && bundle install && rake install)
+fi
+if ! type bundle > /dev/null; then
+    $RUBY -S gem install bundler
+fi
+
+BUNDLE_GEMFILE="$groonga_command_dir/Gemfile"
+export BUNDLE_GEMFILE
+if [ ! -e "$BUNDLE_GEMFILE.lock" -o \
+    "$BUNDLE_GEMFILE" -nt "$BUNDLE_GEMFILE.lock" ]; then
+    $RUBY -S bundle install
 fi
 
 grntest_dir="$BASE_DIR/grntest"
