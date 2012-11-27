@@ -21,7 +21,7 @@ load --table Memos
 load --table Synonyms
 [
 ["_key", "words"],
-["(", ["open"]]
+["(", ["open"]],
 [")", ["close"]]
 ]
 [[0,0.0,0.0],2]
