@@ -31,6 +31,7 @@ Improvements
   This change is incompatibility change, but does not affects existing program.
 * Added documentation for :doc:`/reference/command/output_format`.
 * Added documentation for :doc:`/reference/command/return_code` of output results.
+* Supported range search by using index.
 
 Fixes
 ^^^^^
