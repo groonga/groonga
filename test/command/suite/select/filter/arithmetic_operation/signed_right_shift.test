@@ -5,7 +5,7 @@ load --table Users
 [
 {"_key": "Alice",  "score": -100},
 {"_key": "Bob",    "score":  100},
-{"_key": "Carlos", "score":  -50},
+{"_key": "Carlos", "score":  -50}
 ]
 
 select Users --filter 'true' --scorer '_score = score >> 1' \
