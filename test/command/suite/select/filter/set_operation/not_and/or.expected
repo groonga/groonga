@@ -8,10 +8,10 @@ column_create Tags index COLUMN_INDEX Movies tags
 [[0,0.0,0.0],true]
 load --table Movies
 [
-{"_key": "Seven Samurai", tags: ["Samurai", "Japanese", "Kurosawa Akira"]},
-{"_key": "The Last Samurai", tags: ["Samurai", "English", "Tom Cruise"]},
-{"_key": "The Matrix", tags: ["Keanu Reeves", "SF", "English"]},
-{"_key": "Star Wars", tags: ["George Lucas", "SF", "English"]}
+{"_key": "Seven Samurai", "tags": ["Samurai", "Japanese", "Kurosawa Akira"]},
+{"_key": "The Last Samurai", "tags": ["Samurai", "English", "Tom Cruise"]},
+{"_key": "The Matrix", "tags": ["Keanu Reeves", "SF", "English"]},
+{"_key": "Star Wars", "tags": ["George Lucas", "SF", "English"]}
 ]
 [[0,0.0,0.0],4]
 select Movies   --filter 'tags @ "English" &! (tags @ "Keanu Reeves" || tags @ "George Lucas")'
