@@ -79,7 +79,12 @@ if ! test -d "$grntest_dir"; then
     git clone --depth 1 git://github.com/groonga/grntest.git "$grntest_dir"
     (cd "$grntest_dir" && bundle install)
 else
-    (cd "$grntest_dir" && git pull && bundle update)
+    (cd "$grntest_dir" && git pull)
+    BUNDLE_GEMFILE="$grntest_dir/Gemfile"
+    export BUNDLE_GEMFILE
+    if [ "$BUNDLE_GEMFILE" -nt "$BUNDLE_GEMFILE.lock" ]; then
+	$RUBY -S bundle update
+    fi
 fi
 
 have_targets="false"
