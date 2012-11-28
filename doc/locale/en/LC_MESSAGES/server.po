@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-21 13:32\n"
+"POT-Creation-Date: 2012-11-28 07:23\n"
 "PO-Revision-Date: 2012-08-15 15:24+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -35,10 +35,9 @@ msgstr "GQTP"
 # bc3bac6e5b2d4bbabf960fb6c748d13e
 # db09943762d248ccbc5952b0089bfb5b
 #: ../../../source/server/gqtp.txt:8
-#: ../../../source/server/http/comparison.txt:273
-#: ../../../source/server/http/comparison.txt:278
-#: ../../../source/server/http/comparison.txt:283
 #: ../../../source/server/http/comparison.txt:288
+#: ../../../source/server/http/comparison.txt:293
+#: ../../../source/server/http/comparison.txt:298
 #: ../../../source/server/http/groonga-httpd.txt:8
 #: ../../../source/server/http/groonga.txt:8
 msgid "TODO"
@@ -145,6 +144,7 @@ msgstr "Performance"
 #: ../../../source/server/http/comparison.txt:24
 #: ../../../source/server/http/comparison.txt:26
 #: ../../../source/server/http/comparison.txt:28
+#: ../../../source/server/http/comparison.txt:30
 #: ../../../source/server/http/comparison.txt:32
 #: ../../../source/server/http/comparison.txt:34
 #: ../../../source/server/http/comparison.txt:36
@@ -221,7 +221,6 @@ msgstr "Custom command version"
 # e76b208ebd454561bdbafbeb6ece5de6
 # 431d9b51db2f4ddc8750ebddaf263b0a
 #: ../../../source/server/http/comparison.txt:22
-#: ../../../source/server/http/comparison.txt:30
 msgid "x (comming soon)"
 msgstr "x (comming soon)"
 
@@ -256,21 +255,21 @@ msgstr "POST"
 # d8eadc31f8d147d5bdf8f8fd8823ea8b
 # a113462e651b42f38eb289da1f6b7786
 #: ../../../source/server/http/comparison.txt:32
-#: ../../../source/server/http/comparison.txt:276
+#: ../../../source/server/http/comparison.txt:286
 msgid "HTTPS"
 msgstr "HTTPS"
 
 # 203a3a3af84d4728af390bbaf90e84d0
 # b8fe45cb84ba49599fd15fb3a69724e0
 #: ../../../source/server/http/comparison.txt:34
-#: ../../../source/server/http/comparison.txt:281
+#: ../../../source/server/http/comparison.txt:291
 msgid "Access log"
 msgstr "Access log"
 
 # 97dc932c2ad845e6875ba6d632e2ab38
 # 97dc932c2ad845e6875ba6d632e2ab38
 #: ../../../source/server/http/comparison.txt:36
-#: ../../../source/server/http/comparison.txt:286
+#: ../../../source/server/http/comparison.txt:296
 msgid "Upgrading without downtime"
 msgstr "Upgrading without downtime"
 
@@ -499,4 +498,33 @@ msgid ""
 "for it. The first, groonga may support more formats in the future. The "
 "second, all requests for the `location` are processed by groonga. You don't "
 "need to consider about other modules."
+msgstr ""
+
+# bd2f52743ccf4d48bea1c55ca855118d
+#: ../../../source/server/http/comparison.txt:273
+msgid ""
+"You can load your data by POST JSON data. You need follow the following "
+"rules to use loading by POST."
+msgstr ""
+
+# 5fa70ed9e2194383af88f4d6aff6178d
+#: ../../../source/server/http/comparison.txt:276
+msgid "`Content-Type` header value must be `application/json`."
+msgstr ""
+
+# 096cfd1a0ca740c0b25aad9868296cee
+#: ../../../source/server/http/comparison.txt:277
+msgid "JSON data is sent as body."
+msgstr ""
+
+# 14f31041c40e4a698356c54b036f717e
+#: ../../../source/server/http/comparison.txt:278
+msgid "Table name is specified by query parameter such as ``table=NAME``."
+msgstr ""
+
+# d4b841d3698a45aa8ed02356941dc066
+#: ../../../source/server/http/comparison.txt:280
+msgid ""
+"Here is an example curl command line that loads two users `alice` and `bob` "
+"to `Users` table::"
 msgstr ""

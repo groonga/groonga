@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-22 11:23\n"
+"POT-Creation-Date: 2012-11-28 07:23\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -234,7 +234,7 @@ msgstr ""
 
 # 8629b11b961f4d7ebf3ab43b4c004943
 #: ../../../source/spec/gqtp.txt:60
-msgid "The following sections describes available values of each key."
+msgid "The following sections describes available values of each header value."
 msgstr ""
 
 # ec9a4b15b8de4df5bb9b340b436504c9
@@ -325,7 +325,7 @@ msgstr ""
 
 # 0808d6880109467f86fe652fbd284731
 #: ../../../source/spec/gqtp.txt:85
-msgid "Message Pack."
+msgid "MessagePack."
 msgstr ""
 
 # 81baaa5d64c040dfa65c8e9446ecc178
@@ -411,7 +411,7 @@ msgstr ""
 
 # 332111caeb4b4cd4af384214c7ac7742
 #: ../../../source/spec/gqtp.txt:109
-msgid "Be quit."
+msgid "Quit."
 msgstr ""
 
 # df5c90af9e744cd0a19ea1cb00a19baa
@@ -428,7 +428,7 @@ msgstr ""
 #: ../../../source/spec/gqtp.txt:114
 msgid ""
 "If you use ``MORE`` flag, you should also use ``QUIET`` flag. Because you "
-"don't need to get a response for your partial request."
+"don't need to show a response for your partial request."
 msgstr ""
 
 # 6a63449624274627ad19739f2c116ce1
@@ -810,8 +810,8 @@ msgstr ""
 # 34643f82a2bf49feb59a5cc5ac76c377
 #: ../../../source/spec/gqtp.txt:202
 msgid ""
-"The size of body. The maximum body size is 4GB because ``size`` is 4byte "
-"unsigned integer. If you want to send 4GB or more larger data, use ``MORE`` "
+"The size of body. The maximum body size is 4GiB because ``size`` is 4byte "
+"unsigned integer. If you want to send 4GiB or more larger data, use ``MORE`` "
 "flag."
 msgstr ""
 

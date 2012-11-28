@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-22 17:51\n"
+"POT-Creation-Date: 2012-11-28 07:36\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -271,7 +271,7 @@ msgstr ""
 
 # cde41cadfeb944569c3c2c8f47c08f7a
 #: ../../../source/reference/command.txt:11
-msgid "This section describes about command and built-in command list."
+msgid "This section describes about command and built-in commands."
 msgstr ""
 
 # 2f708619212b40e2af7fa4600521e295
@@ -670,7 +670,7 @@ msgstr ""
 
 # 87ade3200f7b4b628c472193383ebde4
 #: ../../../source/reference/command/output_format.txt:157
-msgid "``ERROR_MESSAGE`` is a error message in string."
+msgid "``ERROR_MESSAGE`` is an error message in string."
 msgstr ""
 
 # 554292513226475a94e505550edc9cf2
@@ -692,13 +692,13 @@ msgstr ""
 
 # f79783d37dbc4d42b1e1910684385b7c
 #: ../../../source/reference/command/output_format.txt:179
-msgid "``FUNCTION_NAME`` is the function that error is occurred."
+msgid "``FUNCTION_NAME`` is the name of function that error is occurred."
 msgstr ""
 
 # b69e1ef277d347d78e8edaffb2e86125
 #: ../../../source/reference/command/output_format.txt:181
 msgid ""
-"``SOURCE_FILE_NAME`` is the groonga's source file name that error is "
+"``SOURCE_FILE_NAME`` is the name of groonga's source file that error is "
 "occurred."
 msgstr ""
 
@@ -773,6 +773,22 @@ msgstr "TODO"
 # 835794d8cbcc4f44b07f350b2fd83107
 #: ../../../source/reference/command/output_format.txt:220
 msgid "TSV"
+msgstr ""
+
+# decbced8a1d347288ff921104be3fadb
+# 2c4b346efda24fabbe7822b6e2fdafcf
+#: ../../../source/reference/command/output_format.txt:225
+#: ../../../source/reference/command/return_code.txt:102
+#: ../../../source/reference/commands/select.txt:891
+#: ../../../source/reference/functions/snippet_html.txt:118
+#: ../../../source/reference/grn_expr.txt:57
+#: ../../../source/reference/query_expanders/tsv.txt:151
+msgid "See also"
+msgstr "See also"
+
+# a28291bd5a264dd78ec551fc4a9abe01
+#: ../../../source/reference/command/output_format.txt:227
+msgid ":doc:`return_code` describes about return code."
 msgstr ""
 
 # b28391d763334d68a7b2c6a1731c878c
@@ -1175,16 +1191,6 @@ msgstr ""
 msgid "-71: ``GRN_UNSUPPORTED_COMMAND_VERSION``"
 msgstr ""
 
-# decbced8a1d347288ff921104be3fadb
-# 2c4b346efda24fabbe7822b6e2fdafcf
-#: ../../../source/reference/command/return_code.txt:102
-#: ../../../source/reference/commands/select.txt:891
-#: ../../../source/reference/functions/snippet_html.txt:118
-#: ../../../source/reference/grn_expr.txt:57
-#: ../../../source/reference/query_expanders/tsv.txt:151
-msgid "See also"
-msgstr "See also"
-
 # cd1d0aa1f9ec42ba94762de04acb3ca6
 #: ../../../source/reference/command/return_code.txt:104
 msgid ""
@@ -1196,9 +1202,9 @@ msgstr ""
 #: ../../../source/reference/command/return_code.txt:106
 msgid ""
 ":doc:`/spec/gqtp`: GQTP protocol also uses return code as status but it uses "
-"2byte unsigned integer. So return values that have negative value are "
+"2byte unsigned integer. So return codes that have negative value are "
 "statuses that have positive value in GQTP protocol. You can convert status "
-"value in GQTP protocol to return code by handling it as 2byte integer."
+"value in GQTP protocol to return code by handling it as 2byte signed integer."
 msgstr ""
 
 # c3035d8da7e748579353efbe88b43ef4
@@ -3134,17 +3140,17 @@ msgstr ""
 # 25ac89023c9c40309a4ddace3904b682
 #: ../../../source/reference/commands/register.txt:14
 msgid ""
-"``register`` registers a plugin. You need to register a plugin before you "
-"use a plugin."
+"``register`` command registers a plugin. You need to register a plugin "
+"before you use a plugin."
 msgstr ""
 
 # 5a388fcc2d274e6d871b056562a17946
 #: ../../../source/reference/commands/register.txt:17
 msgid ""
-"You need just one ``register`` for a plugin in the same database because "
-"registered plugin information is written into the database. When you restart "
-"your ``groonga`` process, ``groonga`` process loads all registered plugins "
-"without ``register`` command."
+"You need just one ``register`` command for a plugin in the same database "
+"because registered plugin information is written into the database.  When "
+"you restart your ``groonga`` process, ``groonga`` process loads all "
+"registered plugins without ``register`` command."
 msgstr ""
 
 # 27afd1ff1c9c43f8b59b110b08df3b45
@@ -7644,7 +7650,7 @@ msgstr ""
 
 # d72c1f083ec6463a8bcaca1ac746b88a
 #: ../../../source/reference/function.txt:12
-msgid "This section describes about function and built-in function list."
+msgid "This section describes about function and built-in functions."
 msgstr ""
 
 # 9821eb41f4264a1791dba22de4d9b400
@@ -8481,12 +8487,13 @@ msgstr ""
 # 0e26f3a3027648d7b196594f9cd2e0c7
 #: ../../../source/reference/functions/snippet_html.txt:18
 msgid ""
-"``snippet_html`` generates snippets (``KWIC``. ``KeyWord In Context``) of "
-"search keywords. The snippets are prepared for embedding HTML. Special "
-"characters such as ``<`` and ``>`` are escapsed as ``&lt;`` and ``&gt;``. "
-"Keyword is surrounded with ``<span class=\"keyword\">`` and ``</span>``. For "
-"example, a snippet of ``I am a groonga user. <3`` for keyword ``groonga`` is "
-"``I am a <span class=\"keyword\">groonga</span> user. &lt;3``."
+"``snippet_html`` extracts snippets of target text around search keywords "
+"(``KWIC``. ``KeyWord In Context``). The snippets are prepared for embedding "
+"HTML. Special characters such as ``<`` and ``>`` are escapsed as ``&lt;`` "
+"and ``&gt;``. Keyword is surrounded with ``<span class=\"keyword\">`` and "
+"``</span>``. For example, a snippet of ``I am a groonga user. <3`` for "
+"keyword ``groonga`` is ``I am a <span class=\"keyword\">groonga</span> user. "
+"&lt;3``."
 msgstr ""
 
 # 8aff2c6c38d741958a359d14864aa18b
@@ -8522,7 +8529,7 @@ msgstr ""
 # 4fa881e8d87c4e74b12be5aaf93a4cc4
 #: ../../../source/reference/functions/snippet_html.txt:61
 msgid ""
-"You als oneed to specify ``--query`` and/or ``--filter``. Keywords are "
+"You also need to specify ``--query`` and/or ``--filter``. Keywords are "
 "extracted from ``--query`` and ``--filter`` arguments."
 msgstr ""
 
@@ -8552,9 +8559,8 @@ msgstr ""
 # d0310584655a43daa5dd47af2e2ce613
 #: ../../../source/reference/functions/snippet_html.txt:79
 msgid ""
-"The max size of a text part is 200 bytes. The unit is bytes not chracters. "
-"The size doesn't include inserted ``<span keyword=\"span\">`` and ``</"
-"span>``."
+"The max size of a text part is 200byte. The unit is bytes not chracters. The "
+"size doesn't include inserted ``<span keyword=\"keyword\">`` and ``</span>``."
 msgstr ""
 
 # bcc615edce22436195c01f18e52d1baa
@@ -8580,14 +8586,14 @@ msgstr ""
 #: ../../../source/reference/functions/snippet_html.txt:100
 msgid ""
 "A snippet includes one or more keywords. The max byte size of a snippet "
-"except ``<span keyword=\"span\">`` and ``</span>`` is 200 byte. The unit "
+"except ``<span keyword=\"keyword\">`` and ``</span>`` is 200byte. The unit "
 "isn't the number of chracters."
 msgstr ""
 
 # e8e0b475b3b14268aef4b4baaff6c88a
 #: ../../../source/reference/functions/snippet_html.txt:104
 msgid ""
-"The array size is larger than or equal to 1 and less than or equal to 3. The "
+"The array size is larger than or equal to 0 and less than or equal to 3. The "
 "max size 3 will be customizable soon."
 msgstr ""
 
