@@ -86,6 +86,8 @@ else
     fi
 fi
 
+groonga_command_dir="$BASE_DIR/groonga_command"
+
 have_targets="false"
 use_gdb="false"
 next_argument_is_long_option_value="false"
@@ -134,6 +136,7 @@ fi
 
 $RUBY \
     -I "$grntest_dir/lib" \
+    -I "$groonga_command_dir/lib" \
     "$grntest_dir/bin/grntest" \
     --groonga "$GROONGA" \
     --groonga-httpd "$GROONGA_HTTPD" \
