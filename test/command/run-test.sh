@@ -70,19 +70,13 @@ if test -z "$RUBY"; then
     exit 1
 fi
 
-groonga_command_dir="$BASE_DIR/groonga-command"
-if ! test -d "$groonga_command_dir"; then
-    git clone --depth 1 git://github.com/groonga/groonga-command.git "$groonga_command_dir"
-fi
-if ! type bundle > /dev/null; then
-    $RUBY -S gem install bundler
+groonga_command_path=`gem which groonga-command &> /dev/null`
+if [ -n $groonga_command_path ]; then
+    $RUBY -S gem install groonga-command
 fi
 
-BUNDLE_GEMFILE="$groonga_command_dir/Gemfile"
-export BUNDLE_GEMFILE
-if [ ! -e "$BUNDLE_GEMFILE.lock" -o \
-    "$BUNDLE_GEMFILE" -nt "$BUNDLE_GEMFILE.lock" ]; then
-    $RUBY -S bundle install
+if ! type bundle > /dev/null; then
+    $RUBY -S gem install bundler
 fi
 
 grntest_dir="$BASE_DIR/grntest"
@@ -138,7 +132,6 @@ if test -e $tmpfs; then
 fi
 
 $RUBY \
-    -I "$groonga_command_dir/lib" \
     -I "$grntest_dir/lib" \
     "$grntest_dir/bin/grntest" \
     --groonga "$GROONGA" \
