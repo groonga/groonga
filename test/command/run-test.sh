@@ -70,11 +70,6 @@ if test -z "$RUBY"; then
     exit 1
 fi
 
-groonga_command_path=`gem which groonga-command &> /dev/null`
-if [ -n $groonga_command_path ]; then
-    $RUBY -S gem install groonga-command
-fi
-
 if ! type bundle > /dev/null; then
     $RUBY -S gem install bundler
 fi
@@ -83,6 +78,8 @@ grntest_dir="$BASE_DIR/grntest"
 if ! test -d "$grntest_dir"; then
     git clone --depth 1 git://github.com/groonga/grntest.git "$grntest_dir"
     (cd "$grntest_dir" && bundle install)
+else
+    (cd "$grntest_dir" && git pull && bundle update)
 fi
 
 have_targets="false"
