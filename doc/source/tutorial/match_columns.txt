@@ -155,7 +155,7 @@ The feature of nested index search is not limited to the relationship between tw
 Here is the sample schema similar to previous one. The difference is added table which express 'Reply' and relationship is extended to three tables.
 
 .. groonga-command
-.. include:: ../example/tutorial/match_columns-nested-index-schema2.log
+.. include:: ../example/tutorial/match_columns-nested-index-schema-with-three-relationship.log
 .. table_create Replies2 TABLE_HASH_KEY UInt32
 .. column_create Replies2 content COLUMN_SCALAR ShortText
 .. table_create Comments2 TABLE_HASH_KEY UInt32
@@ -174,7 +174,7 @@ Here is the sample schema similar to previous one. The difference is added table
 Here is the sample data.
 
 .. groonga-command
-.. include:: ../example/tutorial/match_columns-nested-index-data2.log
+.. include:: ../example/tutorial/match_columns-nested-index-data-with-three-relationship.log
 .. load --table Replies2
 .. [
 .. {"_key": 1, "content": "I'm using rroonga too!"},
@@ -202,7 +202,7 @@ Query for searching the records described above::
 The first query searches 'mroonga' from Comments2 table, the second one searches 'mroonga' from Replies2 and Comment2 table by using reference column index.
 
 .. groonga-command
-.. include:: ../example/tutorial/match_columns-nested-index-select2.log
+.. include:: ../example/tutorial/match_columns-nested-index-select-with-three-relationship.log
 .. select Articles2 --match_columns comment.content --query mroonga --output_columns "_id, _score, *" 
 .. select Articles2 --match_columns comment.comment.content --query mroonga --output_columns "_id, _score, *" 
 
