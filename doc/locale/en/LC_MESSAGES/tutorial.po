@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-30 13:50\n"
+"POT-Creation-Date: 2012-11-30 16:15\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -136,6 +136,7 @@ msgstr ""
 #: ../../../source/example/tutorial/match_columns-nested-index-schema.log:1
 #: ../../../source/example/tutorial/match_columns-nested-index-schema2.log:1
 #: ../../../source/example/tutorial/match_columns-nested-index-select.log:1
+#: ../../../source/example/tutorial/match_columns-nested-index-select2.log:1
 #: ../../../source/example/tutorial/micro_blog-1.log:1
 #: ../../../source/example/tutorial/micro_blog-10.log:1
 #: ../../../source/example/tutorial/micro_blog-2.log:1
@@ -1783,16 +1784,6 @@ msgid ""
 "The first query searches 'mroonga' from Comments2 table, the second one "
 "searches 'mroonga' from Replies2 and Comment2 table by using reference "
 "column index."
-msgstr ""
-
-# 436317c686534af09ab96465f4ba654b
-#: ../../../source/tutorial/match_columns.txt:204
-msgid ""
-"First .. groonga-command .. include:: ../example/tutorial/match_columns-"
-"nested-index-select2.log .. select Articles2 --match_columns comment.content "
-"--query mroonga --output_columns \"_id, _score, *\" .. select Articles2 --"
-"match_columns comment.comment.content --query mroonga --output_columns "
-"\"_id, _score, *\""
 msgstr ""
 
 # f1ca7a8f0e9145b8b218475e8076933a
