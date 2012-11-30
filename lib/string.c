@@ -531,14 +531,36 @@ grn_str_charlen_utf8(grn_ctx *ctx, const unsigned char *str, const unsigned char
   if (*p & 0x80) {
     int b, w;
     int size;
+    int i;
     for (b = 0x40, w = 0; b && (*p & b); b >>= 1, w++);
     if (!w) {
-      GRN_LOG(ctx, GRN_LOG_WARNING, "invalid utf8 string(1) on grn_str_charlen_utf8");
+      GRN_LOG(ctx, GRN_LOG_WARNING,
+              "invalid utf8 string: the first bit is 0x80: <%.*s>: <%.*s>",
+              (int)(end - p), p,
+              (int)(end - str), str);
       return 0;
     }
-    for (size = 1; w--; size++) {
-      if (++p >= end || !*p || (*p & 0xc0) != 0x80) {
-        GRN_LOG(ctx, GRN_LOG_WARNING, "invalid utf8 string(2) on grn_str_charlen_utf8");
+    size = w + 1;
+    for (i = 1; i < size; i++) {
+      if (++p >= end) {
+        GRN_LOG(ctx, GRN_LOG_WARNING,
+                "invalid utf8 string: too short: "
+                "%d byte is required but %d byte is given: <%.*s>",
+                size, i,
+                (int)(end - str), str);
+        return 0;
+      }
+      if (!*p) {
+        GRN_LOG(ctx, GRN_LOG_WARNING,
+                "invalid utf8 string: NULL character is found: <%.*s>",
+                (int)(end - str), str);
+        return 0;
+      }
+      if ((*p & 0xc0) != 0x80) {
+        GRN_LOG(ctx, GRN_LOG_WARNING,
+                "invalid utf8 string: 0x80 is not allowed: <%.*s>: <%.*s>",
+                (int)(end - p), p,
+                (int)(end - str), str);
         return 0;
       }
     }
