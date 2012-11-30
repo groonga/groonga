@@ -201,7 +201,7 @@ Query for searching the records described above::
 
 The first query searches 'mroonga' from Comments2 table, the second one searches 'mroonga' from Replies2 and Comment2 table by using reference column index.
 
-First .. groonga-command
+.. groonga-command
 .. include:: ../example/tutorial/match_columns-nested-index-select2.log
 .. select Articles2 --match_columns comment.content --query mroonga --output_columns "_id, _score, *" 
 .. select Articles2 --match_columns comment.comment.content --query mroonga --output_columns "_id, _score, *" 
