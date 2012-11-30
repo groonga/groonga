@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-30 16:30\n"
+"POT-Creation-Date: 2012-11-30 17:21\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -131,12 +131,12 @@ msgstr ""
 #: ../../../source/example/tutorial/match_columns-2.log:1
 #: ../../../source/example/tutorial/match_columns-3.log:1
 #: ../../../source/example/tutorial/match_columns-4.log:1
+#: ../../../source/example/tutorial/match_columns-nested-index-data-with-three-relationship.log:1
 #: ../../../source/example/tutorial/match_columns-nested-index-data.log:1
-#: ../../../source/example/tutorial/match_columns-nested-index-data2.log:1
+#: ../../../source/example/tutorial/match_columns-nested-index-schema-with-three-relationship.log:1
 #: ../../../source/example/tutorial/match_columns-nested-index-schema.log:1
-#: ../../../source/example/tutorial/match_columns-nested-index-schema2.log:1
+#: ../../../source/example/tutorial/match_columns-nested-index-select-with-three-relationship.log:1
 #: ../../../source/example/tutorial/match_columns-nested-index-select.log:1
-#: ../../../source/example/tutorial/match_columns-nested-index-select2.log:1
 #: ../../../source/example/tutorial/micro_blog-1.log:1
 #: ../../../source/example/tutorial/micro_blog-10.log:1
 #: ../../../source/example/tutorial/micro_blog-2.log:1
@@ -1670,7 +1670,7 @@ msgstr "インデックス名を指定した全文検索"
 # 7026bc5fc11740ada2580bcbb5fdf4f4
 # b11d8defd8b34f29a5742f36c5d99504
 #: ../../../source/tutorial/match_columns.txt:82
-#: ../../../source/tutorial/match_columns.txt:214
+#: ../../../source/tutorial/match_columns.txt:216
 msgid "執筆中です。"
 msgstr "執筆中です。"
 
@@ -1789,12 +1789,20 @@ msgstr ""
 # f1ca7a8f0e9145b8b218475e8076933a
 #: ../../../source/tutorial/match_columns.txt:209
 msgid ""
-"As a result, the first query matches two article, but the second one matches "
-"one article only."
+"As a result, the first query matches two article because of Comments2 table "
+"has two records which contains 'mroonga' as keyword."
+msgstr ""
+
+# 9d0f6ed0ce5d43d5971ec972769b086b
+#: ../../../source/tutorial/match_columns.txt:211
+msgid ""
+"On the other hand, the second one matches one article only because of "
+"Replies2 table has only one record which contains 'mroonga' as keyword, and "
+"there is one record which contains same keyword in Comments2 table."
 msgstr ""
 
 # 134cc02862134fd7b615c8e26031984d
-#: ../../../source/tutorial/match_columns.txt:212
+#: ../../../source/tutorial/match_columns.txt:214
 msgid "インデックスの重み"
 msgstr "インデックスの重み"
 

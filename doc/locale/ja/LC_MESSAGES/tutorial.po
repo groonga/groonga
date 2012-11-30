@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-30 16:31\n"
+"POT-Creation-Date: 2012-11-30 17:31\n"
 "PO-Revision-Date: 2012-10-30 16:27+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -60,12 +60,12 @@ msgstr ""
 #: ../../../source/example/tutorial/match_columns-2.log:1
 #: ../../../source/example/tutorial/match_columns-3.log:1
 #: ../../../source/example/tutorial/match_columns-4.log:1
+#: ../../../source/example/tutorial/match_columns-nested-index-data-with-three-relationship.log:1
 #: ../../../source/example/tutorial/match_columns-nested-index-data.log:1
-#: ../../../source/example/tutorial/match_columns-nested-index-data2.log:1
+#: ../../../source/example/tutorial/match_columns-nested-index-schema-with-three-relationship.log:1
 #: ../../../source/example/tutorial/match_columns-nested-index-schema.log:1
-#: ../../../source/example/tutorial/match_columns-nested-index-schema2.log:1
+#: ../../../source/example/tutorial/match_columns-nested-index-select-with-three-relationship.log:1
 #: ../../../source/example/tutorial/match_columns-nested-index-select.log:1
-#: ../../../source/example/tutorial/match_columns-nested-index-select2.log:1
 #: ../../../source/example/tutorial/micro_blog-1.log:1
 #: ../../../source/example/tutorial/micro_blog-10.log:1
 #: ../../../source/example/tutorial/micro_blog-2.log:1
@@ -1458,7 +1458,7 @@ msgid "インデックス名を指定した全文検索"
 msgstr ""
 
 #: ../../../source/tutorial/match_columns.txt:82
-#: ../../../source/tutorial/match_columns.txt:214
+#: ../../../source/tutorial/match_columns.txt:216
 msgid "執筆中です。"
 msgstr ""
 
@@ -1602,13 +1602,25 @@ msgstr ""
 # 5ba3f540f2a94408aac518d891ae66c8
 #: ../../../source/tutorial/match_columns.txt:209
 msgid ""
-"As a result, the first query matches two article, but the second one matches "
-"one article only."
+"As a result, the first query matches two article because of Comments2 table "
+"has two records which contains 'mroonga' as keyword."
 msgstr ""
-"結果として、最初のクエリは該当する記事2つにマッチしますが、2つめのクエリは該"
-"当記事1つだけにマッチします。"
+"結果として、最初のクエリはComments2テーブルに'mroonga'をキーワードとして含む"
+"レコードが2つあるので、該当する記事2つにマッチします。"
 
-#: ../../../source/tutorial/match_columns.txt:212
+# 1619ff8d5bc343c2879ceec89bcb8087
+#: ../../../source/tutorial/match_columns.txt:211
+msgid ""
+"On the other hand, the second one matches one article only because of "
+"Replies2 table has only one record which contains 'mroonga' as keyword, and "
+"there is one record which contains same keyword and refers to the record in "
+"Comments2 table."
+msgstr ""
+"一方、2つめのクエリはReplies2テーブルに'mroonga'というキーワードにマッチす"
+"るレコードが1つしかなく、Comments2テーブルでそのキーワードを含むレコード"
+"を参照するコメントが1つなので、該当する記事は1つだけとなります。"
+
+#: ../../../source/tutorial/match_columns.txt:214
 msgid "インデックスの重み"
 msgstr ""
 
