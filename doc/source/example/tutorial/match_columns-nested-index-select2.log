@@ -1,0 +1,86 @@
+Execution example::
+
+  select Articles2 --match_columns comment.content --query mroonga --output_columns "_id, _score, *" 
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         2
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "_score", 
+  #           "Int32"
+  #         ], 
+  #         [
+  #           "comment", 
+  #           "Comments2"
+  #         ], 
+  #         [
+  #           "content", 
+  #           "Text"
+  #         ]
+  #       ], 
+  #       [
+  #         2, 
+  #         1, 
+  #         2, 
+  #         "Groonga is useful!"
+  #       ], 
+  #       [
+  #         3, 
+  #         1, 
+  #         3, 
+  #         "Mroonga is fast!"
+  #       ]
+  #     ]
+  #   ]
+  # ]
+  select Articles2 --match_columns comment.comment.content --query mroonga --output_columns "_id, _score, *" 
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         1
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "_score", 
+  #           "Int32"
+  #         ], 
+  #         [
+  #           "comment", 
+  #           "Comments2"
+  #         ], 
+  #         [
+  #           "content", 
+  #           "Text"
+  #         ]
+  #       ], 
+  #       [
+  #         2, 
+  #         1, 
+  #         2, 
+  #         "Groonga is useful!"
+  #       ]
+  #     ]
+  #   ]
+  # ]

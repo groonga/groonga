@@ -1,0 +1,23 @@
+Execution example::
+
+  load --table Replies2
+  [
+  {"_key": 1, "content": "I'm using rroonga too!"},
+  {"_key": 2, "content": "I'm using groonga and mroonga and rroonga!"},
+  {"_key": 3, "content": "I'm using nroonga too!"}
+  ]
+  # [[0, 1337566253.89858, 0.000355720520019531], 3]
+  load --table Comments2
+  [
+  {"_key": 1, "content": "I'm using groonga too!", "comment": 1},
+  {"_key": 2, "content": "I'm using groonga and mroonga!", "comment": 2},
+  {"_key": 3, "content": "I'm using mroonga too!"}
+  ]
+  # [[0, 1337566253.89858, 0.000355720520019531], 3]
+  load --table Articles2
+  [
+  {"content": "Groonga is fast!", "comment": 1},
+  {"content": "Groonga is useful!", "comment": 2},
+  {"content": "Mroonga is fast!", "comment": 3}
+  ]
+  # [[0, 1337566253.89858, 0.000355720520019531], 3]
