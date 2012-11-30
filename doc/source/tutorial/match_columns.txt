@@ -100,7 +100,7 @@ The table which stores comments has columns for comment and column index to arti
 if you want to search the articles which contain specified keyword in comment,
 you need to execute fulltext search for table of comment, then search the records which contains fulltext search results.
 
-Now, you can search the records by specifying the reference column index at once.
+But, you can search the records by specifying the reference column index at once.
 
 Here is the sample schema.
 
