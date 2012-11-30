@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-30 16:15\n"
+"POT-Creation-Date: 2012-11-30 16:30\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -1711,7 +1711,7 @@ msgstr ""
 # e05deb6742a44977b29d04bb7fe636a9
 #: ../../../source/tutorial/match_columns.txt:103
 msgid ""
-"Now, you can search the records by specifying the reference column index at "
+"But, you can search the records by specifying the reference column index at "
 "once."
 msgstr ""
 

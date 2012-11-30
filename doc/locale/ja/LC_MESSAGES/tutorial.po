@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-30 16:05\n"
+"POT-Creation-Date: 2012-11-30 16:31\n"
 "PO-Revision-Date: 2012-10-30 16:27+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -1507,10 +1507,10 @@ msgstr ""
 # d706c5de7ea9451eb30998a02101e583
 #: ../../../source/tutorial/match_columns.txt:103
 msgid ""
-"Now, you can search the records by specifying the reference column index at "
+"But, you can search the records by specifying the reference column index at "
 "once."
 msgstr ""
-"これで、カラムインデックスを指定することで一度にレコードを検索することができ"
+"しかし、カラムインデックスを指定することで一度にレコードを検索することができ"
 "ます。"
 
 # af08271eff8749f28d7327ea73e92bf6
@@ -1605,8 +1605,8 @@ msgid ""
 "As a result, the first query matches two article, but the second one matches "
 "one article only."
 msgstr ""
-"結果として、最初のクエリは該当する記事2つにマッチしますが、2つめのクエリは"
-"該当記事1つだけにマッチします。"
+"結果として、最初のクエリは該当する記事2つにマッチしますが、2つめのクエリは該"
+"当記事1つだけにマッチします。"
 
 #: ../../../source/tutorial/match_columns.txt:212
 msgid "インデックスの重み"
