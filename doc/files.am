@@ -173,6 +173,12 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/tutorial/match_columns-2.log \
 	$(top_srcdir)/doc/source/example/tutorial/match_columns-3.log \
 	$(top_srcdir)/doc/source/example/tutorial/match_columns-4.log \
+	$(top_srcdir)/doc/source/example/tutorial/match_columns-nested-index-data.log \
+	$(top_srcdir)/doc/source/example/tutorial/match_columns-nested-index-data2.log \
+	$(top_srcdir)/doc/source/example/tutorial/match_columns-nested-index-schema.log \
+	$(top_srcdir)/doc/source/example/tutorial/match_columns-nested-index-schema2.log \
+	$(top_srcdir)/doc/source/example/tutorial/match_columns-nested-index-select.log \
+	$(top_srcdir)/doc/source/example/tutorial/match_columns-nested-index-select2.log \
 	$(top_srcdir)/doc/source/example/tutorial/micro_blog-1.log \
 	$(top_srcdir)/doc/source/example/tutorial/micro_blog-10.log \
 	$(top_srcdir)/doc/source/example/tutorial/micro_blog-2.log \
@@ -576,6 +582,12 @@ source_files_relative_from_doc_dir = \
 	source/example/tutorial/match_columns-2.log \
 	source/example/tutorial/match_columns-3.log \
 	source/example/tutorial/match_columns-4.log \
+	source/example/tutorial/match_columns-nested-index-data.log \
+	source/example/tutorial/match_columns-nested-index-data2.log \
+	source/example/tutorial/match_columns-nested-index-schema.log \
+	source/example/tutorial/match_columns-nested-index-schema2.log \
+	source/example/tutorial/match_columns-nested-index-select.log \
+	source/example/tutorial/match_columns-nested-index-select2.log \
 	source/example/tutorial/micro_blog-1.log \
 	source/example/tutorial/micro_blog-10.log \
 	source/example/tutorial/micro_blog-2.log \
