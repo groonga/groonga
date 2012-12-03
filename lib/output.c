@@ -994,13 +994,54 @@ count_n_elements_in_expression(grn_ctx *ctx, grn_obj *expression)
 }
 
 static inline int
-count_n_arguments_in_expr_code(grn_ctx *ctx, grn_expr_code *code)
+count_used_n_codes(grn_ctx *ctx, grn_expr_code *start, grn_expr_code *target)
 {
-  if (code->op == GRN_OP_CALL && !code->value) {
-    return code->nargs + 1;
-  } else {
-    return code->nargs;
+  int n_codes;
+  int i, n_args;
+  grn_bool have_proc_push_code = GRN_FALSE;
+  grn_expr_code *sub_code;
+
+  if (start == target) {
+    return 0;
   }
+
+  n_args = target->nargs;
+  if (target->op == GRN_OP_CALL) {
+    if (!target->value) {
+      have_proc_push_code = GRN_TRUE;
+    }
+  } else {
+    if (target->value) {
+      n_args--;
+      if (n_args == 0) {
+        return 1;
+      }
+    }
+  }
+
+  n_codes = 1;
+  sub_code = target - 1;
+  for (i = 0; i < n_args; i++) {
+    int sub_n_codes;
+    sub_n_codes = count_used_n_codes(ctx, start, sub_code);
+    n_codes += sub_n_codes;
+    sub_code -= sub_n_codes;
+    if (sub_code < start) {
+      /* TODO: report error */
+      return 0;
+    }
+  }
+
+  if (have_proc_push_code) {
+    n_codes++;
+    sub_code--;
+    if (sub_code < start) {
+      /* TODO: report error */
+      return 0;
+    }
+  }
+
+  return n_codes;
 }
 
 static inline void
@@ -1064,24 +1105,16 @@ grn_output_table_columns_by_expression(grn_ctx *ctx, grn_obj *outbuf,
     code_start_offset = previous_comma_offset + 1;
     if (is_first_comma) {
       int code_end_offset;
-      int next_start_offset;
+      int n_used_code;
 
       grn_output_table_column(ctx, outbuf, output_type,
                               expr->codes[0].value, buf);
 
-      code_end_offset = code - expr->codes - code_start_offset;
-      next_start_offset = code_end_offset - 1;
-      while (next_start_offset > previous_comma_offset) {
-        int n_args;
-        grn_expr_code *next_code = expr->codes + next_start_offset;
-        n_args = count_n_arguments_in_expr_code(ctx, next_code);
-        if (n_args == 1) {
-          break;
-        } else {
-          next_start_offset -= n_args;
-        }
-      }
-      code_start_offset = next_start_offset;
+      code_end_offset = code - expr->codes - code_start_offset - 1;
+      n_used_code = count_used_n_codes(ctx,
+                                       expr->codes,
+                                       expr->codes + code_end_offset);
+      code_start_offset = code_end_offset - n_used_code + 1;
       is_first_comma = GRN_FALSE;
     }
 
@@ -1174,17 +1207,9 @@ grn_output_table_records_by_expression(grn_ctx *ctx, grn_obj *outbuf,
 
         have_comma = GRN_TRUE;
         if (is_first_comma) {
-          expr->codes_curr = code_end_offset - 1;
-          while (expr->codes_curr > 0) {
-            int n_args;
-            grn_expr_code *first_code = expr->codes + expr->codes_curr;
-            n_args = count_n_arguments_in_expr_code(ctx, first_code);
-            if (n_args == 1) {
-              break;
-            } else {
-              expr->codes_curr -= n_args;
-            }
-          }
+          expr->codes_curr = count_used_n_codes(ctx,
+                                                expr->codes,
+                                                expr->codes + expr->codes_curr);
           grn_output_table_record_by_expression(ctx, outbuf, output_type,
                                                 format->expression);
           code_start_offset = expr->codes_curr;
