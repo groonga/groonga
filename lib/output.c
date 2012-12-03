@@ -994,7 +994,7 @@ count_n_elements_in_expression(grn_ctx *ctx, grn_obj *expression)
 }
 
 static inline int
-count_n_argments_in_expr_code(grn_ctx *ctx, grn_expr_code *code)
+count_n_arguments_in_expr_code(grn_ctx *ctx, grn_expr_code *code)
 {
   if (code->op == GRN_OP_CALL && !code->value) {
     return code->nargs + 1;
@@ -1074,7 +1074,7 @@ grn_output_table_columns_by_expression(grn_ctx *ctx, grn_obj *outbuf,
       while (next_start_offset > previous_comma_offset) {
         int n_args;
         grn_expr_code *next_code = expr->codes + next_start_offset;
-        n_args = count_n_argments_in_expr_code(ctx, next_code);
+        n_args = count_n_arguments_in_expr_code(ctx, next_code);
         if (n_args == 1) {
           break;
         } else {
@@ -1178,7 +1178,7 @@ grn_output_table_records_by_expression(grn_ctx *ctx, grn_obj *outbuf,
           while (expr->codes_curr > 0) {
             int n_args;
             grn_expr_code *first_code = expr->codes + expr->codes_curr;
-            n_args = count_n_argments_in_expr_code(ctx, first_code);
+            n_args = count_n_arguments_in_expr_code(ctx, first_code);
             if (n_args == 1) {
               break;
             } else {
