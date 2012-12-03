@@ -3218,9 +3218,13 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           ARITHMETIC_OPERATION_NO_CHECK,
           ARITHMETIC_OPERATION_NO_CHECK,
           {
-            GRN_BULK_REWIND(res);
-            grn_obj_cast(ctx, x, res, GRN_FALSE);
-            grn_obj_cast(ctx, y, res, GRN_FALSE);
+            if (x == res) {
+              grn_obj_cast(ctx, y, res, GRN_FALSE);
+            } else {
+              GRN_BULK_REWIND(res);
+              grn_obj_cast(ctx, x, res, GRN_FALSE);
+              grn_obj_cast(ctx, y, res, GRN_FALSE);
+            }
           }
           ,);
         break;

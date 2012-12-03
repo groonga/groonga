@@ -1,0 +1,23 @@
+table_create Documents TABLE_NO_KEY
+column_create Documents title COLUMN_SCALAR ShortText
+column_create Documents content COLUMN_SCALAR Text
+
+table_create Terms TABLE_PAT_KEY|KEY_NORMALIZE ShortText \
+  --default_tokenizer TokenBigram
+column_create Terms document_title_index COLUMN_INDEX|WITH_POSITION \
+  Documents title
+column_create Terms document_content_index COLUMN_INDEX|WITH_POSITION \
+  Documents content
+
+load --table Documents
+[
+["title", "content"],
+["Groonga overview", "Groonga is a fast and accurate full text search engine based on inverted index."],
+["Full text search and Instant update", "In widely used DBMSs, updates are immediately processed, for example, a newly registered record appears in the result of the next query."],
+["Column store and aggregate query", "People can collect more than enough data in the Internet era."]
+]
+
+select Documents \
+  --match_columns title||content --query 'groonga' \
+  --output_columns '_id, snippet_html(title + " " + content)' \
+  --command_version 2
