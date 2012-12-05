@@ -2667,7 +2667,17 @@ grn_index_cursor_next(grn_ctx *ctx, grn_obj *c, grn_id *tid)
   grn_ii_posting *ip = NULL;
   grn_index_cursor *ic = (grn_index_cursor *)c;
   GRN_API_ENTER;
-  if (ic->iic) { ip = grn_ii_cursor_next(ctx, ic->iic); }
+  if (ic->iic) {
+    if (ic->flags & GRN_OBJ_WITH_POSITION) {
+      ip = grn_ii_cursor_next_pos(ctx, ic->iic);
+      while (!ip && grn_ii_cursor_next(ctx, ic->iic)) {
+        ip = grn_ii_cursor_next_pos(ctx, ic->iic);
+        break;
+      }
+    } else {
+      ip = grn_ii_cursor_next(ctx, ic->iic);
+    }
+  }
   if (!ip) {
     while ((ic->tid = grn_table_cursor_next_inline(ctx, ic->tc))) {
       grn_ii *ii = (grn_ii *)ic->index;
@@ -2676,6 +2686,9 @@ grn_index_cursor_next(grn_ctx *ctx, grn_obj *c, grn_id *tid)
                                         ic->rid_min, ic->rid_max,
                                         ii->n_elements, ic->flags))) {
         ip = grn_ii_cursor_next(ctx, ic->iic);
+        if (ip && ic->flags & GRN_OBJ_WITH_POSITION) {
+          ip = grn_ii_cursor_next_pos(ctx, ic->iic);
+        }
         break;
       }
     }
