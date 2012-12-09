@@ -33,6 +33,10 @@
 #define O_NOFOLLOW 0
 #endif
 
+#ifndef O_BINARY
+#define O_BINARY 0
+#endif
+
 typedef grn_rc (*grn_substitute_term_func) (grn_ctx *ctx,
                                             const char *term,
                                             unsigned int term_len,
@@ -58,7 +62,7 @@ grn_bulk_put_from_file(grn_ctx *ctx, grn_obj *bulk, const char *path)
   /* FIXME: implement more smartly with grn_bulk */
   int fd, ret = 0;
   struct stat stat;
-  if ((fd = GRN_OPEN(path, O_RDONLY|O_NOFOLLOW)) == -1) {
+  if ((fd = GRN_OPEN(path, O_RDONLY|O_NOFOLLOW|O_BINARY)) == -1) {
     switch (errno) {
     case EACCES :
       ERR(GRN_OPERATION_NOT_PERMITTED, "request is not allowed: <%s>", path);
