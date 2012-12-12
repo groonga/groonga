@@ -551,7 +551,7 @@ grn_proc_create(grn_ctx *ctx, const char *name, int name_size, grn_proc_type typ
   }
   GRN_API_ENTER;
   range = path ? grn_plugin_get(ctx, path) : GRN_ID_NIL;
-  if (name && name_size == -1) {
+  if (name && name_size < 0) {
     name_size = strlen(name);
   }
   if (grn_db_check_name(ctx, name, name_size)) {
