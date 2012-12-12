@@ -563,7 +563,7 @@ GRN_API grn_obj *grn_ctx_db(grn_ctx *ctx);
 /**
  * grn_ctx_get:
  * @name: 検索しようとするオブジェクトの名前。
- * @name_size: The byte size of @name. If @name_size is negative,
+ * @name_size: The number of bytes of @name. If negative value is specified,
  *   @name is assumed that NULL-terminated string.
  *
  * ctxが使用するdbからnameに対応するオブジェクトを検索して返す。
@@ -633,8 +633,8 @@ GRN_API const char *grn_plugin_get_suffix(void);
 /**
  * grn_proc_create:
  * @name: 作成するprocの名前。
- * @name_size: The number of bytes of @name. If -1 is specified, @name
- *             is handled as a NULL terminated string.
+ * @name_size: The number of bytes of @name. If negative value is specified,
+ *   @name is assumed that NULL-terminated string.
  * @type: procの種類。
  * @init: 初期化関数のポインタ
  * @next: 実処理関数のポインタ
