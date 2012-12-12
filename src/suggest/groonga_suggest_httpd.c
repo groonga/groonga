@@ -727,18 +727,18 @@ main(int argc, char **argv)
   /* parse options */
   {
     static grn_str_getopt_opt opts[] = {
-      {'c', NULL, NULL, 0, getopt_op_none}, /* deprecated */
-      {'t', "n-threads", NULL, 0, getopt_op_none},
-      {'h', "help", NULL, run_mode_usage, getopt_op_update},
-      {'p', "port", NULL, 0, getopt_op_none},
-      {'\0', "bind-address", NULL, 0, getopt_op_none}, /* not supported yet */
-      {'s', "send-endpoint", NULL, 0, getopt_op_none},
-      {'r', "receive-endpoint", NULL, 0, getopt_op_none},
-      {'l', "log-base-path", NULL, 0, getopt_op_none},
-      {'\0', "n-lines-per-log-file", NULL, 0, getopt_op_none},
-      {'d', "daemon", NULL, run_mode_daemon, getopt_op_update},
+      {'c', NULL, NULL, 0, GETOPT_OP_NONE}, /* deprecated */
+      {'t', "n-threads", NULL, 0, GETOPT_OP_NONE},
+      {'h', "help", NULL, run_mode_usage, GETOPT_OP_UPDATE},
+      {'p', "port", NULL, 0, GETOPT_OP_NONE},
+      {'\0', "bind-address", NULL, 0, GETOPT_OP_NONE}, /* not supported yet */
+      {'s', "send-endpoint", NULL, 0, GETOPT_OP_NONE},
+      {'r', "receive-endpoint", NULL, 0, GETOPT_OP_NONE},
+      {'l', "log-base-path", NULL, 0, GETOPT_OP_NONE},
+      {'\0', "n-lines-per-log-file", NULL, 0, GETOPT_OP_NONE},
+      {'d', "daemon", NULL, run_mode_daemon, GETOPT_OP_UPDATE},
       {'\0', "disable-max-fd-check", NULL, RUN_MODE_ENABLE_MAX_FD_CHECK,
-       getopt_op_off},
+       GETOPT_OP_OFF},
       {'\0', NULL, NULL, 0, 0}
     };
     opts[0].arg = &max_threads_string;

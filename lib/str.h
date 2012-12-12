@@ -30,10 +30,10 @@ extern "C" {
 #endif
 
 typedef enum {
-  getopt_op_none = 0,
-  getopt_op_on,
-  getopt_op_off,
-  getopt_op_update
+  GETOPT_OP_NONE = 0,
+  GETOPT_OP_ON,
+  GETOPT_OP_OFF,
+  GETOPT_OP_UPDATE
 } grn_str_getopt_op;
 
 typedef struct {

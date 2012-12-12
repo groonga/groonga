@@ -1864,24 +1864,24 @@ show_config(FILE *out, const grn_str_getopt_opt *opts, int flags)
 
   for (o = opts; o->opt || o->longopt; o++) {
     switch (o->op) {
-    case getopt_op_none:
+    case GETOPT_OP_NONE:
       if (o->arg && *o->arg) {
         if (o->longopt && strcmp(o->longopt, "config-path")) {
           fprintf(out, "%s=%s\n", o->longopt, *o->arg);
         }
       }
       break;
-    case getopt_op_on:
+    case GETOPT_OP_ON:
       if (flags & o->flag) {
         goto no_arg;
       }
       break;
-    case getopt_op_off:
+    case GETOPT_OP_OFF:
       if (!(flags & o->flag)) {
         goto no_arg;
       }
       break;
-    case getopt_op_update:
+    case GETOPT_OP_UPDATE:
       if (flags == o->flag) {
       no_arg:
         if (o->longopt) {
@@ -2042,33 +2042,33 @@ main(int argc, char **argv)
   int exit_code = EXIT_SUCCESS;
   int i, mode = mode_alone;
   static grn_str_getopt_opt opts[] = {
-    {'p', "port", NULL, 0, getopt_op_none},
-    {'e', "encoding", NULL, 0, getopt_op_none},
-    {'t', "max-threads", NULL, 0, getopt_op_none},
-    {'h', "help", NULL, mode_usage, getopt_op_update},
-    {'c', NULL, NULL, mode_client, getopt_op_update},
-    {'d', NULL, NULL, mode_daemon, getopt_op_update},
-    {'s', NULL, NULL, mode_server, getopt_op_update},
-    {'l', "log-level", NULL, 0, getopt_op_none},
-    {'i', "server-id", NULL, 0, getopt_op_none},
-    {'q', NULL, NULL, MODE_USE_QL, getopt_op_on},
-    {'n', NULL, NULL, MODE_NEW_DB, getopt_op_on},
-    {'\0', "protocol", NULL, 0, getopt_op_none},
-    {'\0', "version", NULL, mode_version, getopt_op_update},
-    {'\0', "log-path", NULL, 0, getopt_op_none},
-    {'\0', "query-log-path", NULL, 0, getopt_op_none},
-    {'\0', "pid-path", NULL, 0, getopt_op_none},
-    {'\0', "config-path", NULL, 0, getopt_op_none},
-    {'\0', "show-config", NULL, mode_config, getopt_op_update},
-    {'\0', "cache-limit", NULL, 0, getopt_op_none},
-    {'\0', "file", NULL, 0, getopt_op_none},
-    {'\0', "document-root", NULL, 0, getopt_op_none},
-    {'\0', "default-command-version", NULL, 0, getopt_op_none},
-    {'\0', "default-match-escalation-threshold", NULL, 0, getopt_op_none},
-    {'\0', "bind-address", NULL, 0, getopt_op_none},
-    {'\0', "input-fd", NULL, 0, getopt_op_none},
-    {'\0', "output-fd", NULL, 0, getopt_op_none},
-    {'\0', "working-directory", NULL, 0, getopt_op_none},
+    {'p', "port", NULL, 0, GETOPT_OP_NONE},
+    {'e', "encoding", NULL, 0, GETOPT_OP_NONE},
+    {'t', "max-threads", NULL, 0, GETOPT_OP_NONE},
+    {'h', "help", NULL, mode_usage, GETOPT_OP_UPDATE},
+    {'c', NULL, NULL, mode_client, GETOPT_OP_UPDATE},
+    {'d', NULL, NULL, mode_daemon, GETOPT_OP_UPDATE},
+    {'s', NULL, NULL, mode_server, GETOPT_OP_UPDATE},
+    {'l', "log-level", NULL, 0, GETOPT_OP_NONE},
+    {'i', "server-id", NULL, 0, GETOPT_OP_NONE},
+    {'q', NULL, NULL, MODE_USE_QL, GETOPT_OP_ON},
+    {'n', NULL, NULL, MODE_NEW_DB, GETOPT_OP_ON},
+    {'\0', "protocol", NULL, 0, GETOPT_OP_NONE},
+    {'\0', "version", NULL, mode_version, GETOPT_OP_UPDATE},
+    {'\0', "log-path", NULL, 0, GETOPT_OP_NONE},
+    {'\0', "query-log-path", NULL, 0, GETOPT_OP_NONE},
+    {'\0', "pid-path", NULL, 0, GETOPT_OP_NONE},
+    {'\0', "config-path", NULL, 0, GETOPT_OP_NONE},
+    {'\0', "show-config", NULL, mode_config, GETOPT_OP_UPDATE},
+    {'\0', "cache-limit", NULL, 0, GETOPT_OP_NONE},
+    {'\0', "file", NULL, 0, GETOPT_OP_NONE},
+    {'\0', "document-root", NULL, 0, GETOPT_OP_NONE},
+    {'\0', "default-command-version", NULL, 0, GETOPT_OP_NONE},
+    {'\0', "default-match-escalation-threshold", NULL, 0, GETOPT_OP_NONE},
+    {'\0', "bind-address", NULL, 0, GETOPT_OP_NONE},
+    {'\0', "input-fd", NULL, 0, GETOPT_OP_NONE},
+    {'\0', "output-fd", NULL, 0, GETOPT_OP_NONE},
+    {'\0', "working-directory", NULL, 0, GETOPT_OP_NONE},
     {'\0', NULL, NULL, 0, 0}
   };
   opts[0].arg = &port_arg;

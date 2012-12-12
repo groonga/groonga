@@ -1791,15 +1791,15 @@ op_getopt_flag(int *flags, const grn_str_getopt_opt *o,
                int argc, char * const argv[], int i, const char *optvalue)
 {
   switch (o->op) {
-    case getopt_op_none:
+    case GETOPT_OP_NONE:
       break;
-    case getopt_op_on:
+    case GETOPT_OP_ON:
       *flags |= o->flag;
       break;
-    case getopt_op_off:
+    case GETOPT_OP_OFF:
       *flags &= ~o->flag;
       break;
-    case getopt_op_update:
+    case GETOPT_OP_UPDATE:
       *flags = o->flag;
       break;
     default:

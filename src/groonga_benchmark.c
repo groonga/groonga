@@ -2951,20 +2951,20 @@ main(int argc, char **argv)
   time_t sec;
 
   static grn_str_getopt_opt opts[] = {
-    {'i', "host", NULL, 0, getopt_op_none},
-    {'p', "port", NULL, 0, getopt_op_none},
-    {'\0', "log-output-dir", NULL, 0, getopt_op_none},
-    {'\0', "output-type", NULL, 0, getopt_op_none},
-    {'\0', "dir", NULL, mode_list, getopt_op_update},
-    {'\0', "ftp", NULL, MODE_FTP, getopt_op_on},
-    {'h', "help", NULL, mode_usage, getopt_op_update},
-    {'\0', "localonly", NULL, MODE_LOCALONLY, getopt_op_on},
-    {'\0', "onmemory", NULL, MODE_ONMEMORY, getopt_op_on},
-    {'\0', "owndb", NULL, MODE_OWNDB, getopt_op_on},
-    {'\0', "groonga", NULL, 0, getopt_op_none},
-    {'\0', "protocol", NULL, 0, getopt_op_none},
-    {'\0', "log-path", NULL, 0, getopt_op_none},
-    {'\0', "pid-path", NULL, 0, getopt_op_none},
+    {'i', "host", NULL, 0, GETOPT_OP_NONE},
+    {'p', "port", NULL, 0, GETOPT_OP_NONE},
+    {'\0', "log-output-dir", NULL, 0, GETOPT_OP_NONE},
+    {'\0', "output-type", NULL, 0, GETOPT_OP_NONE},
+    {'\0', "dir", NULL, mode_list, GETOPT_OP_UPDATE},
+    {'\0', "ftp", NULL, MODE_FTP, GETOPT_OP_ON},
+    {'h', "help", NULL, mode_usage, GETOPT_OP_UPDATE},
+    {'\0', "localonly", NULL, MODE_LOCALONLY, GETOPT_OP_ON},
+    {'\0', "onmemory", NULL, MODE_ONMEMORY, GETOPT_OP_ON},
+    {'\0', "owndb", NULL, MODE_OWNDB, GETOPT_OP_ON},
+    {'\0', "groonga", NULL, 0, GETOPT_OP_NONE},
+    {'\0', "protocol", NULL, 0, GETOPT_OP_NONE},
+    {'\0', "log-path", NULL, 0, GETOPT_OP_NONE},
+    {'\0', "pid-path", NULL, 0, GETOPT_OP_NONE},
     {'\0', NULL, NULL, 0, 0}
   };
 

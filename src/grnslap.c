@@ -329,11 +329,11 @@ main(int argc, char **argv)
   const char *protostr = NULL, *maxconstr = NULL, *maxtpstr = NULL;
   int r, i, flags = 0;
   static grn_str_getopt_opt opts[] = {
-    {'P', NULL, NULL, 0, getopt_op_none},
-    {'m', NULL, NULL, 0, getopt_op_none},
-    {'t', NULL, NULL, 0, getopt_op_none},
-    {'h', NULL, NULL, flag_usage, getopt_op_on},
-    {'v', NULL, NULL, flag_verbose, getopt_op_on},
+    {'P', NULL, NULL, 0, GETOPT_OP_NONE},
+    {'m', NULL, NULL, 0, GETOPT_OP_NONE},
+    {'t', NULL, NULL, 0, GETOPT_OP_NONE},
+    {'h', NULL, NULL, flag_usage, GETOPT_OP_ON},
+    {'v', NULL, NULL, flag_verbose, GETOPT_OP_ON},
     {'\0', NULL, NULL, 0, 0}
   };
   opts[0].arg = &protostr;
