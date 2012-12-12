@@ -346,7 +346,7 @@ grn_db_close(grn_ctx *ctx, grn_obj *db)
 }
 
 grn_obj *
-grn_ctx_get(grn_ctx *ctx, const char *name, unsigned int name_size)
+grn_ctx_get(grn_ctx *ctx, const char *name, int name_size)
 {
   grn_id id;
   grn_obj *obj = NULL;
@@ -357,6 +357,9 @@ grn_ctx_get(grn_ctx *ctx, const char *name, unsigned int name_size)
   GRN_API_ENTER;
   if (GRN_DB_P(db)) {
     grn_db *s = (grn_db *)db;
+    if (name_size < 0) {
+      name_size = strlen(name);
+    }
     if ((id = grn_table_get(ctx, s->keys, name, name_size))) {
       obj = grn_ctx_at(ctx, id);
     }

@@ -563,12 +563,13 @@ GRN_API grn_obj *grn_ctx_db(grn_ctx *ctx);
 /**
  * grn_ctx_get:
  * @name: 検索しようとするオブジェクトの名前。
- * @name_size: @nameのbyte長。
+ * @name_size: The byte size of @name. If @name_size is negative,
+ *   @name is assumed that NULL-terminated string.
  *
  * ctxが使用するdbからnameに対応するオブジェクトを検索して返す。
  * nameに一致するオブジェクトが存在しなければNULLを返す。
  **/
-GRN_API grn_obj *grn_ctx_get(grn_ctx *ctx, const char *name, unsigned int name_size);
+GRN_API grn_obj *grn_ctx_get(grn_ctx *ctx, const char *name, int name_size);
 
 /**
  * grn_ctx_at:
