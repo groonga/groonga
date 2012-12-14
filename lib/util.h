@@ -33,6 +33,7 @@ GRN_API grn_rc grn_normalize_offset_and_limit(grn_ctx *ctx, int size, int *offse
 
 GRN_API grn_obj *grn_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj);
 GRN_API grn_obj *grn_inspect_name(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj);
+GRN_API grn_obj *grn_inspect_encoding(grn_ctx *ctx, grn_obj *buffer, grn_encoding encoding);
 GRN_API grn_obj *grn_inspect_type(grn_ctx *ctx, grn_obj *buffer, unsigned char type);
 void grn_p(grn_ctx *ctx, grn_obj *obj);
 void grn_p_geo_point(grn_ctx *ctx, grn_geo_point *point);

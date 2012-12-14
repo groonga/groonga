@@ -1405,6 +1405,59 @@ grn_string_get_encoding(grn_ctx *ctx, grn_obj *string)
 }
 
 grn_rc
+grn_string_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *string)
+{
+  grn_string *string_ = (grn_string *)string;
+
+  GRN_TEXT_PUTS(ctx, buffer, "#<string:");
+
+  GRN_TEXT_PUTS(ctx, buffer, " original:<");
+  GRN_TEXT_PUT(ctx, buffer,
+               string_->original,
+               string_->original_length_in_bytes);
+  GRN_TEXT_PUTS(ctx, buffer, ">");
+  GRN_TEXT_PUTS(ctx, buffer, "(");
+  grn_text_itoa(ctx, buffer, string_->original_length_in_bytes);
+  GRN_TEXT_PUTS(ctx, buffer, ")");
+
+  GRN_TEXT_PUTS(ctx, buffer, " normalized:<");
+  GRN_TEXT_PUT(ctx, buffer,
+               string_->normalized,
+               string_->normalized_length_in_bytes);
+  GRN_TEXT_PUTS(ctx, buffer, ">");
+  GRN_TEXT_PUTS(ctx, buffer, "(");
+  grn_text_itoa(ctx, buffer, string_->normalized_length_in_bytes);
+  GRN_TEXT_PUTS(ctx, buffer, ")");
+
+  GRN_TEXT_PUTS(ctx, buffer, " n_characters:");
+  grn_text_itoa(ctx, buffer, string_->n_characters);
+
+  GRN_TEXT_PUTS(ctx, buffer, " encoding:");
+  grn_inspect_encoding(ctx, buffer, string_->encoding);
+
+  GRN_TEXT_PUTS(ctx, buffer, " flags:");
+  if (string_->flags & GRN_STRING_REMOVE_BLANK) {
+  GRN_TEXT_PUTS(ctx, buffer, "REMOVE_BLANK|");
+  }
+  if (string_->flags & GRN_STRING_WITH_TYPES) {
+    GRN_TEXT_PUTS(ctx, buffer, "WITH_TYPES|");
+  }
+  if (string_->flags & GRN_STRING_WITH_CHECKS) {
+    GRN_TEXT_PUTS(ctx, buffer, "WITH_CHECKS|");
+  }
+  if (string_->flags & GRN_STRING_REMOVE_TOKENIZED_DELIMITER) {
+    GRN_TEXT_PUTS(ctx, buffer, "REMOVE_TOKENIZED_DELIMITER|");
+  }
+  if (GRN_TEXT_VALUE(buffer)[GRN_TEXT_LEN(buffer) - 1] == '|') {
+    grn_bulk_truncate(ctx, buffer, GRN_TEXT_LEN(buffer) - 1);
+  }
+
+  GRN_TEXT_PUTS(ctx, buffer, ">");
+
+  return GRN_SUCCESS;
+}
+
+grn_rc
 grn_string_close(grn_ctx *ctx, grn_obj *string)
 {
   grn_rc rc;

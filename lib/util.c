@@ -19,6 +19,7 @@
 #include "pat.h"
 #include "ii.h"
 #include "util.h"
+#include "string_in.h"
 
 #include <string.h>
 #include <stdio.h>
@@ -81,6 +82,43 @@ grn_inspect_name(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 }
 
 grn_obj *
+grn_inspect_encoding(grn_ctx *ctx, grn_obj *buf, grn_encoding encoding)
+{
+  switch (encoding) {
+  case GRN_ENC_DEFAULT :
+    GRN_TEXT_PUTS(ctx, buf, "default(");
+    grn_inspect_encoding(ctx, buf, grn_get_default_encoding());
+    GRN_TEXT_PUTS(ctx, buf, ")");
+    break;
+  case GRN_ENC_NONE :
+    GRN_TEXT_PUTS(ctx, buf, "none");
+    break;
+  case GRN_ENC_EUC_JP :
+    GRN_TEXT_PUTS(ctx, buf, "EUC-JP");
+    break;
+  case GRN_ENC_UTF8 :
+    GRN_TEXT_PUTS(ctx, buf, "UTF-8");
+    break;
+  case GRN_ENC_SJIS :
+    GRN_TEXT_PUTS(ctx, buf, "Shift_JIS");
+    break;
+  case GRN_ENC_LATIN1 :
+    GRN_TEXT_PUTS(ctx, buf, "Latin-1");
+    break;
+  case GRN_ENC_KOI8R :
+    GRN_TEXT_PUTS(ctx, buf, "KOI8-R");
+    break;
+  default :
+    GRN_TEXT_PUTS(ctx, buf, "unknown(");
+    grn_text_itoa(ctx, buf, encoding);
+    GRN_TEXT_PUTS(ctx, buf, ")");
+    break;
+  }
+
+  return buf;
+}
+
+grn_obj *
 grn_inspect_type(grn_ctx *ctx, grn_obj *buf, unsigned char type)
 {
   switch (type) {
@@ -119,6 +157,9 @@ grn_inspect_type(grn_ctx *ctx, grn_obj *buf, unsigned char type)
     break;
   case GRN_PATSNIP :
     GRN_TEXT_PUTS(ctx, buf, "GRN_PATSNIP");
+    break;
+  case GRN_STRING :
+    GRN_TEXT_PUTS(ctx, buf, "GRN_STRING");
     break;
   case GRN_CURSOR_TABLE_HASH_KEY :
     GRN_TEXT_PUTS(ctx, buf, "GRN_CURSOR_TABLE_HASH_KEY");
@@ -766,6 +807,9 @@ grn_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj)
   case GRN_SNIP :
   case GRN_PATSNIP :
     /* TODO */
+    break;
+  case GRN_STRING :
+    grn_string_inspect(ctx, buffer, obj);
     break;
   case GRN_CURSOR_TABLE_HASH_KEY :
     /* TODO */
