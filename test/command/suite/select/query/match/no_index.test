@@ -1,0 +1,11 @@
+table_create Users TABLE_NO_KEY
+column_create Users name COLUMN_SCALAR ShortText
+
+load --table Users
+[
+{"name": "Alice"},
+{"name": "Bob"},
+{"name": "Carlos"}
+]
+
+select Users --query name:@a
