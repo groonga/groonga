@@ -2298,14 +2298,16 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
 void
 pseudo_query_scan(grn_ctx *ctx, grn_obj *x, grn_obj *y, grn_obj *res)
 {
+  grn_obj *normalizer;
   grn_obj *a = NULL, *b = NULL;
 
+  normalizer = grn_ctx_at(ctx, GRN_DB_NORMALIZER_AUTO);
   switch (x->header.domain) {
   case GRN_DB_SHORT_TEXT:
   case GRN_DB_TEXT:
   case GRN_DB_LONG_TEXT:
     a = grn_string_open(ctx, GRN_TEXT_VALUE(x), GRN_TEXT_LEN(x),
-                        GRN_NORMALIZER_AUTO, 0);
+                        normalizer, 0);
     break;
   default:
     break;
@@ -2316,7 +2318,7 @@ pseudo_query_scan(grn_ctx *ctx, grn_obj *x, grn_obj *y, grn_obj *res)
   case GRN_DB_TEXT:
   case GRN_DB_LONG_TEXT:
     b = grn_string_open(ctx, GRN_TEXT_VALUE(y), GRN_TEXT_LEN(y),
-                        GRN_NORMALIZER_AUTO, 0);
+                        normalizer, 0);
     break;
   default:
     break;
@@ -2336,6 +2338,8 @@ pseudo_query_scan(grn_ctx *ctx, grn_obj *x, grn_obj *y, grn_obj *res)
 
   if (a) { grn_obj_close(ctx, a); }
   if (b) { grn_obj_close(ctx, b); }
+
+  if (normalizer) { grn_obj_unlink(ctx, normalizer); }
 }
 
 grn_obj *
@@ -2926,7 +2930,9 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         {
           grn_obj *x, *y;
           POP2ALLOC1(x, y, res);
-          pseudo_query_scan(ctx, x, y, res);
+          WITH_SPSAVE({
+            pseudo_query_scan(ctx, x, y, res);
+          });
         }
         code++;
         break;

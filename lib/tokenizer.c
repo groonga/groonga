@@ -165,15 +165,17 @@ grn_tokenizer_query_open(grn_ctx *ctx, int num_args, grn_obj **args)
       grn_encoding table_encoding;
       unsigned int query_length = GRN_TEXT_LEN(query_str);
       char *query_buf = (char *)GRN_PLUGIN_MALLOC(ctx, query_length + 1);
+      grn_obj *normalizer = NULL;
+
       if (query_buf == NULL) {
         GRN_PLUGIN_FREE(ctx, query);
         GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
                          "[tokenizer] failed to duplicate query");
         return NULL;
       }
-      grn_table_get_info(ctx, table, &table_flags, &table_encoding, NULL);
+      grn_table_get_info(ctx, table, &table_flags, &table_encoding, NULL,
+                         &normalizer);
       {
-        grn_obj *normalizer = NULL;
         int flags = 0;
         grn_obj *normalized_string;
         if (table_flags & GRN_OBJ_KEY_NORMALIZE) {

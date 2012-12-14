@@ -55,6 +55,7 @@ void data_itoh(void);
 void test_itoh(gconstpointer data);
 
 static grn_ctx context;
+static grn_obj *database;
 static grn_obj buffer;
 
 static const gchar text_ja_utf8[] =
@@ -76,7 +77,8 @@ static const gchar normalized_text_ja_utf8[] =
 void
 setup (void)
 {
-  grn_ctx_init(&context, GRN_CTX_USE_QL);
+  grn_ctx_init(&context, 0);
+  database = grn_db_create(&context, NULL, NULL);
   GRN_VOID_INIT(&buffer);
 }
 
@@ -84,6 +86,7 @@ void
 teardown (void)
 {
   GRN_OBJ_FIN(&context, &buffer);
+  grn_obj_close(&context, database);
   grn_ctx_fin(&context);
 }
 

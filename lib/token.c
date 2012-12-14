@@ -111,7 +111,8 @@ delimited_init(grn_ctx *ctx, grn_obj *table, grn_user_data *user_data,
   }
   user_data->ptr = tokenizer;
 
-  grn_table_get_info(ctx, table, &table_flags, &tokenizer->encoding, NULL);
+  grn_table_get_info(ctx, table, &table_flags, &tokenizer->encoding, NULL,
+                     &normalizer);
 
   tokenizer->have_tokenized_delimiter =
     grn_tokenizer_have_tokenized_delimiter(ctx,
@@ -120,10 +121,6 @@ delimited_init(grn_ctx *ctx, grn_obj *table, grn_user_data *user_data,
                                            tokenizer->encoding);
   tokenizer->delimiter = delimiter;
   tokenizer->delimiter_len = delimiter_len;
-
-  if (table_flags & GRN_OBJ_KEY_NORMALIZE) {
-    normalizer = GRN_NORMALIZER_AUTO;
-  }
   tokenizer->nstr = grn_string_open_(ctx,
                                      GRN_TEXT_VALUE(str), GRN_TEXT_LEN(str),
                                      normalizer, nflags, tokenizer->encoding);
@@ -260,10 +257,8 @@ ngram_init(grn_ctx *ctx, grn_obj *table, grn_user_data *user_data, uint8_t ngram
   token->overlap = 0;
   token->pos = 0;
   token->skip = 0;
-  grn_table_get_info(ctx, table, &table_flags, &token->encoding, NULL);
-  if (table_flags & GRN_OBJ_KEY_NORMALIZE) {
-    normalizer = GRN_NORMALIZER_AUTO;
-  }
+  grn_table_get_info(ctx, table, &table_flags, &token->encoding, NULL,
+                     &normalizer);
   if (!(token->nstr = grn_string_open_(ctx,
                                        GRN_TEXT_VALUE(str), GRN_TEXT_LEN(str),
                                        normalizer, nflags, token->encoding))) {
@@ -452,8 +447,10 @@ grn_token_open(grn_ctx *ctx, grn_obj *table, const char *str, size_t str_len,
   grn_token *token;
   grn_encoding encoding;
   grn_obj *tokenizer;
+  grn_obj *normalizer;
   grn_obj_flags table_flags;
-  if (grn_table_get_info(ctx, table, &table_flags, &encoding, &tokenizer)) {
+  if (grn_table_get_info(ctx, table, &table_flags, &encoding, &tokenizer,
+                         &normalizer)) {
     return NULL;
   }
   if (!(token = GRN_MALLOC(sizeof(grn_token)))) { return NULL; }
@@ -483,11 +480,7 @@ grn_token_open(grn_ctx *ctx, grn_obj *table, const char *str, size_t str_len,
     ((grn_proc *)tokenizer)->funcs[PROC_INIT](ctx, 1, &table, &token->pctx.user_data);
     grn_obj_close(ctx, &str_);
   } else {
-    grn_obj *normalizer = NULL;
     int nflags = 0;
-    if (table_flags & GRN_OBJ_KEY_NORMALIZE) {
-      normalizer = GRN_NORMALIZER_AUTO;
-    }
     token->nstr = grn_string_open_(ctx, str, str_len,
                                    normalizer, nflags, token->encoding);
     if (token->nstr) {

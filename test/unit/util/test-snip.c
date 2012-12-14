@@ -46,6 +46,7 @@ void test_add_cond_with_too_large_keyword(void);
 void test_add_cond_with_copy_tag_flag(void);
 
 static grn_ctx context;
+static grn_obj *database;
 static grn_snip *snip;
 static gchar *keyword;
 static gchar *result;
@@ -197,7 +198,8 @@ cut_shutdown(void)
 void
 cut_setup(void)
 {
-  grn_ctx_init(&context, GRN_CTX_USE_QL);
+  grn_ctx_init(&context, 0);
+  database = grn_db_create(&context, NULL, NULL);
 
   snip = NULL;
   keyword = NULL;
@@ -234,6 +236,7 @@ cut_teardown(void)
     g_free(default_close_tag);
   }
 
+  grn_obj_close(&context, database);
   grn_ctx_fin(&context);
 }
 

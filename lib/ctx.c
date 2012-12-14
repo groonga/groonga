@@ -24,6 +24,7 @@
 #include "plugin_in.h"
 #include "snip.h"
 #include "output.h"
+#include "normalizer_in.h"
 #include <stdio.h>
 #include <stdarg.h>
 #include <time.h>
@@ -944,6 +945,10 @@ grn_init(void)
     GRN_LOG(ctx, GRN_LOG_ALERT, "plugins initialize failed (%d)", rc);
     return rc;
   }
+  if ((rc = grn_normalizer_init())) {
+    GRN_LOG(ctx, GRN_LOG_ALERT, "grn_normalizer_init failed (%d)", rc);
+    return rc;
+  }
   if ((rc = grn_token_init())) {
     GRN_LOG(ctx, GRN_LOG_ALERT, "grn_token_init failed (%d)", rc);
     return rc;
@@ -1029,6 +1034,7 @@ grn_fin(void)
   grn_query_logger_fin(ctx);
   grn_cache_fin();
   grn_token_fin();
+  grn_normalizer_fin();
   grn_plugins_fin();
   grn_io_fin();
   grn_ctx_fin(ctx);

@@ -112,7 +112,8 @@ typedef enum {
   GRN_TOO_LARGE_OFFSET = -68,
   GRN_TOO_SMALL_LIMIT = -69,
   GRN_CAS_ERROR = -70,
-  GRN_UNSUPPORTED_COMMAND_VERSION = -71
+  GRN_UNSUPPORTED_COMMAND_VERSION = -71,
+  GRN_NORMALIZER_ERROR = -72,
 } grn_rc;
 
 GRN_API grn_rc grn_init(void);
@@ -609,6 +610,12 @@ typedef enum {
   GRN_DB_TRIGRAM
 } grn_builtin_tokenizer;
 
+typedef enum {
+  GRN_DB_NORMALIZER_AUTO = 96,
+  GRN_DB_NORMALIZER_NFKC51,          /* Normalization Form KC for Unicode 5.1 */
+  GRN_DB_NORMALIZER_UCA              /* Unicode Collation Algorithm */
+} grn_builtin_normalizer;
+
 GRN_API grn_obj *grn_ctx_at(grn_ctx *ctx, grn_id id);
 
 /**
@@ -657,7 +664,8 @@ typedef enum {
   GRN_PROC_TOKENIZER = 1,
   GRN_PROC_COMMAND,
   GRN_PROC_FUNCTION,
-  GRN_PROC_HOOK
+  GRN_PROC_HOOK,
+  GRN_PROC_NORMALIZER
 } grn_proc_type;
 
 GRN_API grn_obj *grn_proc_create(grn_ctx *ctx,
@@ -1374,7 +1382,8 @@ typedef enum {
   GRN_INFO_PARTIAL_MATCH_THRESHOLD,
   GRN_INFO_II_SPLIT_THRESHOLD,
   GRN_INFO_SUPPORT_ZLIB,
-  GRN_INFO_SUPPORT_LZO
+  GRN_INFO_SUPPORT_LZO,
+  GRN_INFO_NORMALIZER
 } grn_info_type;
 
 /**

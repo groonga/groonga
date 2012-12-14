@@ -252,6 +252,9 @@ grn_proc_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
   case GRN_PROC_HOOK :
     GRN_TEXT_PUTS(ctx, buf, "hook");
     break;
+  case GRN_PROC_NORMALIZER :
+    GRN_TEXT_PUTS(ctx, buf, "normalizer");
+    break;
   }
   GRN_TEXT_PUTS(ctx, buf, " ");
 

@@ -302,6 +302,14 @@ grn_dat_create(grn_ctx *ctx, const char *path, uint32_t,
   dat->header->encoding = encoding;
   dat->header->tokenizer = GRN_ID_NIL;
   dat->header->file_id = 0;
+  if (dat->header->flags & GRN_OBJ_KEY_NORMALIZE) {
+    dat->header->flags &= ~GRN_OBJ_KEY_NORMALIZE;
+    dat->header->normalizer = GRN_DB_NORMALIZER_AUTO;
+    dat->normalizer = grn_ctx_at(ctx, dat->header->normalizer);
+  } else {
+    dat->header->normalizer = GRN_ID_NIL;
+    dat->normalizer = NULL;
+  }
   dat->encoding = encoding;
   dat->tokenizer = NULL;
   return dat;
@@ -337,6 +345,11 @@ grn_dat_open(grn_ctx *ctx, const char *path)
   dat->encoding = dat->header->encoding;
   dat->obj.header.flags = dat->header->flags;
   dat->tokenizer = grn_ctx_at(ctx, dat->header->tokenizer);
+  if (dat->header->flags & GRN_OBJ_KEY_NORMALIZE) {
+    dat->header->flags &= ~GRN_OBJ_KEY_NORMALIZE;
+    dat->header->normalizer = GRN_DB_NORMALIZER_AUTO;
+  }
+  dat->normalizer = grn_ctx_at(ctx, dat->header->normalizer);
   return dat;
 }
 
@@ -672,11 +685,10 @@ grn_dat_scan(grn_ctx *ctx, grn_dat *dat, const char *str,
 
   int num_scan_hits = 0;
   try {
-    if (dat->obj.header.flags & GRN_OBJ_KEY_NORMALIZE) {
-      grn_obj *normalizer = GRN_NORMALIZER_AUTO;
+    if (dat->normalizer) {
       int flags = GRN_STRING_WITH_CHECKS;
       grn_obj * const normalized_string = grn_string_open(ctx, str, str_size,
-                                                          normalizer,
+                                                          dat->normalizer,
                                                           flags);
       if (!normalized_string) {
         fprintf(stderr, "error: grn_string_open() failed!\n");

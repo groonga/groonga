@@ -1482,9 +1482,17 @@ grn_io_hash_init(grn_ctx *ctx, grn_hash *hash, const char *path,
   header->n_entries = 0;
   header->n_garbages = 0;
   header->tokenizer = GRN_ID_NIL;
+  if (header->flags & GRN_OBJ_KEY_NORMALIZE) {
+    header->flags &= ~GRN_OBJ_KEY_NORMALIZE;
+    header->normalizer = GRN_DB_NORMALIZER_AUTO;
+    hash->normalizer = grn_ctx_at(ctx, header->normalizer);
+  } else {
+    header->normalizer = GRN_ID_NIL;
+    hash->normalizer = NULL;
+  }
   grn_table_queue_init(ctx, &header->queue);
 
-  hash->obj.header.flags = flags;
+  hash->obj.header.flags = header->flags;
   hash->ctx = ctx;
   hash->key_size = key_size;
   hash->encoding = encoding;
@@ -1555,6 +1563,7 @@ grn_tiny_hash_init(grn_ctx *ctx, grn_hash *hash, const char *path,
   hash->n_entries_ = 0;
   hash->garbages = GRN_ID_NIL;
   hash->tokenizer = NULL;
+  hash->normalizer = NULL;
   grn_tiny_array_init(ctx, &hash->a, entry_size, GRN_TINY_ARRAY_CLEAR);
   grn_tiny_bitmap_init(ctx, &hash->bitmap);
   return GRN_SUCCESS;
@@ -1621,6 +1630,11 @@ grn_hash_open(grn_ctx *ctx, const char *path)
             hash->header = header;
             hash->lock = &header->lock;
             hash->tokenizer = grn_ctx_at(ctx, header->tokenizer);
+            if (header->flags & GRN_OBJ_KEY_NORMALIZE) {
+              header->flags &= ~GRN_OBJ_KEY_NORMALIZE;
+              header->normalizer = GRN_DB_NORMALIZER_AUTO;
+            }
+            hash->normalizer = grn_ctx_at(ctx, header->normalizer);
             return hash;
           } else {
             GRN_LOG(ctx, GRN_LOG_NOTICE,
@@ -2922,7 +2936,7 @@ grn_hash_check(grn_ctx *ctx, grn_hash *hash)
   char buf[8];
   struct grn_hash_header *h = hash->header;
   GRN_OUTPUT_ARRAY_OPEN("RESULT", 1);
-  GRN_OUTPUT_MAP_OPEN("SUMMARY", 24);
+  GRN_OUTPUT_MAP_OPEN("SUMMARY", 25);
   GRN_OUTPUT_CSTR("flags");
   grn_itoh(h->flags, buf, 8);
   GRN_OUTPUT_STR(buf, 8);
@@ -2932,6 +2946,8 @@ grn_hash_check(grn_ctx *ctx, grn_hash *hash)
   GRN_OUTPUT_INT64(hash->value_size);
   GRN_OUTPUT_CSTR("tokenizer");
   GRN_OUTPUT_INT64(h->tokenizer);
+  GRN_OUTPUT_CSTR("normalizer");
+  GRN_OUTPUT_INT64(h->normalizer);
   GRN_OUTPUT_CSTR("curr_rec");
   GRN_OUTPUT_INT64(h->curr_rec);
   GRN_OUTPUT_CSTR("curr_key");
