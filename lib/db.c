@@ -935,7 +935,6 @@ grn_table_create(grn_ctx *ctx, const char *name, unsigned int name_size,
     break;
   }
   if (res) {
-    DB_OBJ(res)->header.flags = flags;
     DB_OBJ(res)->header.impl_flags = 0;
     DB_OBJ(res)->header.domain = domain;
     DB_OBJ(res)->range = range;
