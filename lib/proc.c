@@ -1104,6 +1104,11 @@ proc_table_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
                        GRN_INFO_DEFAULT_TOKENIZER,
                        grn_ctx_get(ctx, GRN_TEXT_VALUE(VAR(4)),
                                    GRN_TEXT_LEN(VAR(4))));
+      grn_obj_set_info(ctx, table,
+                       GRN_INFO_NORMALIZER,
+                       grn_ctx_get(ctx,
+                                   GRN_TEXT_VALUE(VAR(5)),
+                                   GRN_TEXT_LEN(VAR(5))));
       grn_obj_unlink(ctx, table);
     }
   } else {
@@ -2344,6 +2349,7 @@ dump_table(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table,
   grn_obj *domain = NULL, *range = NULL;
   grn_obj_flags default_flags = GRN_OBJ_PERSISTENT;
   grn_obj *default_tokenizer;
+  grn_obj *normalizer;
   grn_obj buf;
 
   switch (table->header.type) {
@@ -2389,6 +2395,11 @@ dump_table(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table,
   if (default_tokenizer) {
     GRN_TEXT_PUTS(ctx, outbuf, " --default_tokenizer ");
     dump_obj_name(ctx, outbuf, default_tokenizer);
+  }
+  normalizer = grn_obj_get_info(ctx, table, GRN_INFO_NORMALIZER, NULL);
+  if (normalizer) {
+    GRN_TEXT_PUTS(ctx, outbuf, " --normalizer ");
+    dump_obj_name(ctx, outbuf, normalizer);
   }
 
   GRN_TEXT_PUTC(ctx, outbuf, '\n');
@@ -3376,7 +3387,8 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[2], "key_type");
   DEF_VAR(vars[3], "value_type");
   DEF_VAR(vars[4], "default_tokenizer");
-  DEF_COMMAND("table_create", proc_table_create, 5, vars);
+  DEF_VAR(vars[5], "normalizer");
+  DEF_COMMAND("table_create", proc_table_create, 6, vars);
 
   DEF_VAR(vars[0], "name");
   DEF_COMMAND("table_remove", proc_table_remove, 1, vars);

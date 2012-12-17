@@ -1,0 +1,19 @@
+table_create Terms TABLE_PAT_KEY ShortText \
+  --normalizer NormalizerNonexistent
+
+table_create Movies TABLE_NO_KEY
+column_create Movies name COLUMN_SCALAR ShortText
+
+column_create Terms movies_name COLUMN_INDEX Movies name
+
+load --table Movies
+[
+{"name": "Seven Samurai"},
+{"name": "The Last Samurai"}
+]
+
+select Terms --output_columns _key --limit -1
+
+select Movies --match_columns name --query seven
+
+dump
