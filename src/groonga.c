@@ -2376,7 +2376,7 @@ main(int argc, char **argv)
         + strlen(default_match_escalation_threshold_arg);
     const char *rest = NULL;
     const int64_t value = grn_atoll(default_match_escalation_threshold_arg, end, &rest);
-    if (end != rest || value < 0) {
+    if (end != rest) {
       fprintf(stderr, "invalid match escalation threshold: <%s>\n",
               default_match_escalation_threshold_arg);
       return EXIT_FAILURE;
