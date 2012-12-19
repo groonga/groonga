@@ -824,6 +824,12 @@ grn_log_reopen(grn_ctx *ctx)
         "grn_log_reopen() is not implemented with a custom grn_logger.");
   }
 
+  grn_query_logger_reopen(ctx);
+}
+
+void
+grn_query_logger_reopen(grn_ctx *ctx)
+{
   if (grn_query_logger->reopen) {
     grn_query_logger->reopen(ctx, grn_query_logger->user_data);
   }

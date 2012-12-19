@@ -2096,6 +2096,7 @@ GRN_API grn_rc grn_query_logger_info_set(grn_ctx *ctx, const grn_query_logger_in
 GRN_API void grn_query_logger_put(grn_ctx *ctx, unsigned int flag,
                                   const char *mark,
                                   const char *format, ...) GRN_ATTRIBUTE_PRINTF(4);
+GRN_API void grn_query_logger_reopen(grn_ctx *ctx);
 
 GRN_API grn_bool grn_query_logger_pass(grn_ctx *ctx, unsigned int flag);
 
