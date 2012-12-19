@@ -2478,7 +2478,7 @@ grn_query_logger_fin(grn_ctx *ctx)
 }
 
 grn_rc
-grn_qury_logger_info_set(grn_ctx *ctx, const grn_query_logger_info *info)
+grn_query_logger_info_set(grn_ctx *ctx, const grn_query_logger_info *info)
 {
   if (info) {
     grn_query_logger = info;
