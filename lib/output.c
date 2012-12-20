@@ -371,29 +371,35 @@ grn_output_bool(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, grn
 }
 
 static inline void
+grn_output_null(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type)
+{
+  put_delimiter(ctx, outbuf, output_type);
+  switch (output_type) {
+  case GRN_CONTENT_JSON:
+    GRN_TEXT_PUTS(ctx, outbuf, "null");
+    break;
+  case GRN_CONTENT_TSV:
+    break;
+  case GRN_CONTENT_XML:
+    GRN_TEXT_PUTS(ctx, outbuf, "<NULL/>");
+    break;
+  case GRN_CONTENT_MSGPACK :
+#ifdef WITH_MESSAGE_PACK
+    msgpack_pack_nil(&ctx->impl->msgpacker);
+#endif
+    break;
+  case GRN_CONTENT_NONE:
+    break;
+  }
+  INCR_LENGTH;
+}
+
+static inline void
 grn_output_bulk_void(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                      const char *value, size_t value_len)
 {
   if (value_len == sizeof(grn_id) && *(grn_id *)value == GRN_ID_NIL) {
-    put_delimiter(ctx, outbuf, output_type);
-    switch (output_type) {
-    case GRN_CONTENT_JSON:
-      GRN_TEXT_PUTS(ctx, outbuf, "null");
-      break;
-    case GRN_CONTENT_TSV:
-      break;
-    case GRN_CONTENT_XML:
-      GRN_TEXT_PUTS(ctx, outbuf, "<NULL/>");
-      break;
-    case GRN_CONTENT_MSGPACK :
-#ifdef WITH_MESSAGE_PACK
-      msgpack_pack_nil(&ctx->impl->msgpacker);
-#endif
-      break;
-    case GRN_CONTENT_NONE:
-      break;
-    }
-    INCR_LENGTH;
+    grn_output_null(ctx, outbuf, output_type);
   } else {
     grn_output_str(ctx, outbuf, output_type, value, value_len);
   }
@@ -628,6 +634,13 @@ grn_text_atoj_o(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     }
   }
   grn_text_atoj(ctx, outbuf, output_type, obj, *idp);
+}
+
+static inline void
+grn_output_void(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
+                grn_obj *bulk, grn_obj_format *format)
+{
+  grn_output_null(ctx, outbuf, output_type);
 }
 
 static inline void
@@ -1305,6 +1318,9 @@ grn_output_obj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
   grn_obj buf;
   GRN_TEXT_INIT(&buf, 0);
   switch (obj->header.type) {
+  case GRN_VOID :
+    grn_output_void(ctx, outbuf, output_type, obj, format);
+    break;
   case GRN_BULK :
     grn_output_bulk(ctx, outbuf, output_type, obj, format);
     break;
