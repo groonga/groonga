@@ -38,9 +38,10 @@ table_list
       256,
       "bookmarks",
       "db/db.0000100",
-      "TABLE_PAT_KEY|KEY_NORMALIZE|PERSISTENT",
+      "TABLE_PAT_KEY|PERSISTENT",
       "null",
-      "null"
+      "null",
+      "NormalizerAuto"
     ]
   ]
 ]

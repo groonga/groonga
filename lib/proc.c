@@ -1373,6 +1373,25 @@ column2name(grn_ctx *ctx, grn_obj *obj, grn_obj *bulk)
   GRN_TEXT_PUT(ctx, bulk, name_buf, name_len);
 }
 
+static void
+output_object_name(grn_ctx *ctx, grn_obj *obj)
+{
+  grn_obj bulk;
+  int name_len;
+  char name[GRN_TABLE_MAX_KEY_SIZE];
+
+  if (obj) {
+    GRN_TEXT_INIT(&bulk, GRN_OBJ_DO_SHALLOW_COPY);
+    name_len = grn_obj_name(ctx, obj, name, GRN_TABLE_MAX_KEY_SIZE);
+    GRN_TEXT_SET(ctx, &bulk, name, name_len);
+  } else {
+    GRN_VOID_INIT(&bulk);
+  }
+
+  GRN_OUTPUT_OBJ(&bulk, NULL);
+  GRN_OBJ_FIN(ctx, &bulk);
+}
+
 static int
 print_columninfo(grn_ctx *ctx, grn_obj *column)
 {
@@ -1553,11 +1572,13 @@ print_table_info(grn_ctx *ctx, grn_obj *table)
   grn_id id;
   grn_obj o;
   const char *path;
+  grn_obj *default_tokenizer;
+  grn_obj *normalizer;
 
   id = grn_obj_id(ctx, table);
   path = grn_obj_path(ctx, table);
   GRN_TEXT_INIT(&o, 0);
-  GRN_OUTPUT_ARRAY_OPEN("TABLE", 6);
+  GRN_OUTPUT_ARRAY_OPEN("TABLE", 8);
   GRN_OUTPUT_INT64(id);
   objid2name(ctx, id, &o);
   GRN_OUTPUT_OBJ(&o, NULL);
@@ -1568,6 +1589,12 @@ print_table_info(grn_ctx *ctx, grn_obj *table)
   GRN_OUTPUT_OBJ(&o, NULL);
   objid2name(ctx, grn_obj_get_range(ctx, table), &o);
   GRN_OUTPUT_OBJ(&o, NULL);
+  default_tokenizer = grn_obj_get_info(ctx, table, GRN_INFO_DEFAULT_TOKENIZER,
+                                       NULL);
+  output_object_name(ctx, default_tokenizer);
+  normalizer = grn_obj_get_info(ctx, table, GRN_INFO_NORMALIZER, NULL);
+  output_object_name(ctx, normalizer);
+  grn_obj_unlink(ctx, normalizer);
   GRN_OUTPUT_ARRAY_CLOSE();
   GRN_OBJ_FIN(ctx, &o);
   return 1;
