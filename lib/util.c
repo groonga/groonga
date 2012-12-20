@@ -553,12 +553,23 @@ grn_table_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
   } else {
     grn_table_cursor *tc;
     grn_obj *default_tokenizer;
+    grn_obj *normalizer;
 
     GRN_TEXT_PUTS(ctx, buf, " default_tokenizer:");
     default_tokenizer = grn_obj_get_info(ctx, obj,
                                          GRN_INFO_DEFAULT_TOKENIZER, NULL);
     if (default_tokenizer) {
       grn_inspect_name(ctx, buf, default_tokenizer);
+      grn_obj_unlink(ctx, default_tokenizer);
+    } else {
+      GRN_TEXT_PUTS(ctx, buf, "(nil)");
+    }
+
+    GRN_TEXT_PUTS(ctx, buf, " normalizer:");
+    normalizer = grn_obj_get_info(ctx, obj, GRN_INFO_NORMALIZER, NULL);
+    if (normalizer) {
+      grn_inspect_name(ctx, buf, normalizer);
+      grn_obj_unlink(ctx, normalizer);
     } else {
       GRN_TEXT_PUTS(ctx, buf, "(nil)");
     }
