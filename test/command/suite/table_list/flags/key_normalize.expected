@@ -41,6 +41,7 @@ table_list
       "TABLE_PAT_KEY|PERSISTENT",
       "null",
       "null",
+      null,
       "NormalizerAuto"
     ]
   ]
