@@ -14,16 +14,16 @@ Improvements
 ^^^^^^^^^^^^
 
 * [doc] Added documentation about :ref:`nested-index-search`.
-* Supported to customize snippet tag with literal expression as
-  :doc:`/reference/functions/snippet_html` arguments.
-  This change enable you to use ``snippet_html("STRING" + "STRING")`` syntax.
+* Supported to customize output results by specifying concatenated column name
+  and literal as :doc:`/reference/functions/snippet_html` arguments.
+  This change enables you to use ``snippet_html("STRING" + "STRING")`` syntax.
   [Reported by Tomoatsu Shimada]
 * Supported to create own normalizer as a plugin.
-* Changed to provide ``groonga-query-log-analyzer`` as
-  `groonga-query-log <http://rubygems.org/gems/groonga-query-log>`_ ruby gem.
-  It is enable you to analyze query logs without installing groonga package.
+* Moved ``groonga-query-log-analyzer`` as
+  `groonga-query-log <http://rubygems.org/gems/groonga-query-log>`_ rubygems.
+  It enables you to analyze query logs without installing groonga package.
 * Supported ``--normalizer`` option for :doc:`/reference/commands/table_create` command.
-  This change enable you to specify normalizer plugin.
+  This change enables you to specify normalizer plugin.
 
 Fixes
 ^^^^^
