@@ -732,7 +732,7 @@ grn_default_logger_get_max_level(void)
 
 
 static FILE *default_query_logger_file = NULL;
-static grn_critical_section grn_query_logger_lock;
+static grn_critical_section default_query_logger_lock;
 
 static void
 default_query_logger_log(grn_ctx *ctx, unsigned int flag,
@@ -740,7 +740,7 @@ default_query_logger_log(grn_ctx *ctx, unsigned int flag,
                          const char *message, void *user_data)
 {
   if (grn_qlog_path) {
-    CRITICAL_SECTION_ENTER(grn_query_logger_lock);
+    CRITICAL_SECTION_ENTER(default_query_logger_lock);
     if (!default_query_logger_file) {
       default_query_logger_file = fopen(grn_qlog_path, "a");
     }
@@ -748,7 +748,7 @@ default_query_logger_log(grn_ctx *ctx, unsigned int flag,
       fprintf(default_query_logger_file, "%s|%s%s\n", timestamp, info, message);
       fflush(default_query_logger_file);
     }
-    CRITICAL_SECTION_LEAVE(grn_query_logger_lock);
+    CRITICAL_SECTION_LEAVE(default_query_logger_lock);
   }
 }
 
@@ -757,12 +757,12 @@ default_query_logger_close(grn_ctx *ctx, void *user_data)
 {
   GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_DESTINATION, " ",
                 "query log will be closed: <%s>", grn_qlog_path);
-  CRITICAL_SECTION_ENTER(grn_query_logger_lock);
+  CRITICAL_SECTION_ENTER(default_query_logger_lock);
   if (default_query_logger_file) {
     fclose(default_query_logger_file);
     default_query_logger_file = NULL;
   }
-  CRITICAL_SECTION_LEAVE(grn_query_logger_lock);
+  CRITICAL_SECTION_LEAVE(default_query_logger_lock);
 }
 
 static void
@@ -883,7 +883,7 @@ grn_init(void)
   memcpy(&current_query_logger, &default_query_logger, sizeof(grn_query_logger));
   CRITICAL_SECTION_INIT(grn_glock);
   CRITICAL_SECTION_INIT(grn_logger_lock);
-  CRITICAL_SECTION_INIT(grn_query_logger_lock);
+  CRITICAL_SECTION_INIT(default_query_logger_lock);
   grn_gtick = 0;
   ctx->next = ctx;
   ctx->prev = ctx;
@@ -1056,7 +1056,7 @@ grn_fin(void)
   grn_com_fin();
   GRN_LOG(ctx, GRN_LOG_NOTICE, "grn_fin (%d)", alloc_count);
   grn_logger_fin();
-  CRITICAL_SECTION_FIN(grn_query_logger_lock);
+  CRITICAL_SECTION_FIN(default_query_logger_lock);
   CRITICAL_SECTION_FIN(grn_logger_lock);
   CRITICAL_SECTION_FIN(grn_glock);
   return GRN_SUCCESS;
