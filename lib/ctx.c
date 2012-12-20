@@ -783,7 +783,7 @@ default_query_logger_fin(grn_ctx *ctx, void *user_data)
   }
 }
 
-static grn_query_logger_info default_query_logger = {
+static grn_query_logger default_query_logger = {
   GRN_QUERY_LOG_DEFAULT,
   NULL,
   default_query_logger_log,
@@ -791,7 +791,7 @@ static grn_query_logger_info default_query_logger = {
   default_query_logger_fin
 };
 
-static grn_query_logger_info grn_query_logger = {
+static grn_query_logger current_query_logger = {
   GRN_QUERY_LOG_DEFAULT,
   NULL,
   NULL,
@@ -803,8 +803,8 @@ void
 grn_default_query_logger_set_flags(unsigned int flags)
 {
   default_query_logger.flags = flags;
-  if (grn_query_logger.log == default_query_logger_log) {
-    grn_query_logger.flags = flags;
+  if (current_query_logger.log == default_query_logger_log) {
+    current_query_logger.flags = flags;
   }
 }
 
@@ -839,8 +839,8 @@ grn_log_reopen(grn_ctx *ctx)
 void
 grn_query_logger_reopen(grn_ctx *ctx)
 {
-  if (grn_query_logger.reopen) {
-    grn_query_logger.reopen(ctx, grn_query_logger.user_data);
+  if (current_query_logger.reopen) {
+    current_query_logger.reopen(ctx, current_query_logger.user_data);
   }
 }
 
@@ -880,8 +880,7 @@ grn_init(void)
   grn_rc rc;
   grn_ctx *ctx = &grn_gctx;
   grn_logger = &default_logger;
-  memcpy(&grn_query_logger, &default_query_logger,
-         sizeof(grn_query_logger_info));
+  memcpy(&current_query_logger, &default_query_logger, sizeof(grn_query_logger));
   CRITICAL_SECTION_INIT(grn_glock);
   CRITICAL_SECTION_INIT(grn_logger_lock);
   CRITICAL_SECTION_INIT(grn_query_logger_lock);
@@ -2482,19 +2481,19 @@ grn_logger_put(grn_ctx *ctx, grn_log_level level,
 void
 grn_query_logger_fin(grn_ctx *ctx)
 {
-  if (grn_query_logger.fin) {
-    grn_query_logger.fin(ctx, grn_query_logger.user_data);
+  if (current_query_logger.fin) {
+    current_query_logger.fin(ctx, current_query_logger.user_data);
   }
 }
 
 grn_rc
-grn_query_logger_info_set(grn_ctx *ctx, const grn_query_logger_info *info)
+grn_query_logger_set(grn_ctx *ctx, const grn_query_logger *logger)
 {
   grn_query_logger_fin(ctx);
-  if (info) {
-    grn_query_logger = *info;
+  if (logger) {
+    current_query_logger = *logger;
   } else {
-    grn_query_logger = default_query_logger;
+    current_query_logger = default_query_logger;
   }
   return GRN_SUCCESS;
 }
@@ -2502,7 +2501,7 @@ grn_query_logger_info_set(grn_ctx *ctx, const grn_query_logger_info *info)
 grn_bool
 grn_query_logger_pass(grn_ctx *ctx, unsigned int flag)
 {
-  return grn_query_logger.flags & flag;
+  return current_query_logger.flags & flag;
 }
 
 #define TIMESTAMP_BUFFER_SIZE    TBUFSIZE
@@ -2518,7 +2517,7 @@ grn_query_logger_put(grn_ctx *ctx, unsigned int flag, const char *mark,
   char info[INFO_BUFFER_SIZE];
   char message[MESSAGE_BUFFER_SIZE];
 
-  if (!grn_query_logger.log) {
+  if (!current_query_logger.log) {
     return;
   }
 
@@ -2553,8 +2552,8 @@ grn_query_logger_put(grn_ctx *ctx, unsigned int flag, const char *mark,
     message[MESSAGE_BUFFER_SIZE - 1] = '\0';
   }
 
-  grn_query_logger.log(ctx, flag, timestamp, info, message,
-                       grn_query_logger.user_data);
+  current_query_logger.log(ctx, flag, timestamp, info, message,
+                           current_query_logger.user_data);
 }
 
 void

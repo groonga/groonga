@@ -2079,9 +2079,9 @@ GRN_API grn_log_level grn_default_logger_get_max_level();
   }\
 } while (0)
 
-typedef struct _grn_query_logger_info grn_query_logger_info;
+typedef struct _grn_query_logger grn_query_logger;
 
-struct _grn_query_logger_info {
+struct _grn_query_logger {
   unsigned int flags;
   void *user_data;
   void (*log)(grn_ctx *ctx, unsigned int flag,
@@ -2091,7 +2091,7 @@ struct _grn_query_logger_info {
   void (*fin)(grn_ctx *ctx, void *user_data);
 };
 
-GRN_API grn_rc grn_query_logger_info_set(grn_ctx *ctx, const grn_query_logger_info *info);
+GRN_API grn_rc grn_query_logger_set(grn_ctx *ctx, const grn_query_logger *logger);
 
 GRN_API void grn_query_logger_put(grn_ctx *ctx, unsigned int flag,
                                   const char *mark,
