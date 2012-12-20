@@ -1100,15 +1100,19 @@ proc_table_create(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
                              key_type,
                              value_type);
     if (table) {
+      grn_obj *normalizer_name;
       grn_obj_set_info(ctx, table,
                        GRN_INFO_DEFAULT_TOKENIZER,
                        grn_ctx_get(ctx, GRN_TEXT_VALUE(VAR(4)),
                                    GRN_TEXT_LEN(VAR(4))));
-      grn_obj_set_info(ctx, table,
-                       GRN_INFO_NORMALIZER,
-                       grn_ctx_get(ctx,
-                                   GRN_TEXT_VALUE(VAR(5)),
-                                   GRN_TEXT_LEN(VAR(5))));
+      normalizer_name = VAR(5);
+      if (GRN_TEXT_LEN(normalizer_name) > 0) {
+        grn_obj_set_info(ctx, table,
+                         GRN_INFO_NORMALIZER,
+                         grn_ctx_get(ctx,
+                                     GRN_TEXT_VALUE(normalizer_name),
+                                     GRN_TEXT_LEN(normalizer_name)));
+      }
       grn_obj_unlink(ctx, table);
     }
   } else {
