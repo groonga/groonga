@@ -371,8 +371,8 @@ grn_output_bool(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, grn
 }
 
 void
-grn_output_void(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
-                const char *value, size_t value_len)
+grn_output_bulk_void(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
+                     const char *value, size_t value_len)
 {
   if (value_len == sizeof(grn_id) && *(grn_id *)value == GRN_ID_NIL) {
     put_delimiter(ctx, outbuf, output_type);
@@ -665,7 +665,7 @@ grn_output_bulk(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
   GRN_TEXT_INIT(&buf, 0);
   switch (bulk->header.domain) {
   case GRN_DB_VOID :
-    grn_output_void(ctx, outbuf, output_type, GRN_BULK_HEAD(bulk), GRN_BULK_VSIZE(bulk));
+    grn_output_bulk_void(ctx, outbuf, output_type, GRN_BULK_HEAD(bulk), GRN_BULK_VSIZE(bulk));
     break;
   case GRN_DB_SHORT_TEXT :
   case GRN_DB_TEXT :
