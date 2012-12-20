@@ -630,33 +630,6 @@ grn_text_atoj_o(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
   grn_text_atoj(ctx, outbuf, output_type, obj, *idp);
 }
 
-#ifdef USE_GRN_TEXT_OTOJ
-
-void
-grn_output_obj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, grn_obj *obj, grn_obj_format *format)
-{
-  put_delimiter(ctx, outbuf, output_type);
-  switch (output_type) {
-  case GRN_CONTENT_JSON:
-    grn_text_otoj(ctx, outbuf, obj, format);
-    break;
-  case GRN_CONTENT_TSV:
-    grn_text_otoj(ctx, outbuf, obj, format);
-    break;
-  case GRN_CONTENT_XML:
-    grn_text_otoxml(ctx, outbuf, obj, format);
-    break;
-  case GRN_CONTENT_MSGPACK :
-    // todo
-    break;
-  case GRN_CONTENT_NONE:
-    break;
-  }
-  INCR_LENGTH;
-}
-
-#else /* USE_GRN_TEXT_OTOJ */
-
 static inline void
 grn_output_bulk(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                 grn_obj *bulk, grn_obj_format *format)
@@ -1353,8 +1326,6 @@ grn_output_obj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
   }
   GRN_OBJ_FIN(ctx, &buf);
 }
-
-#endif /* USE_GRN_TEXT_OTOJ */
 
 typedef enum {
   XML_START,
