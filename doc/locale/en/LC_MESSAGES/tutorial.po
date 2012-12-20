@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-30 17:21\n"
+"POT-Creation-Date: 2012-12-20 11:21\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -1793,12 +1793,13 @@ msgid ""
 "has two records which contains 'mroonga' as keyword."
 msgstr ""
 
-# 9d0f6ed0ce5d43d5971ec972769b086b
+# 5c54d47aab8e4cd6a09e021fa7b2448c
 #: ../../../source/tutorial/match_columns.txt:211
 msgid ""
 "On the other hand, the second one matches one article only because of "
 "Replies2 table has only one record which contains 'mroonga' as keyword, and "
-"there is one record which contains same keyword in Comments2 table."
+"there is one record which contains same keyword and refers to the record in "
+"Comments2 table."
 msgstr ""
 
 # 134cc02862134fd7b615c8e26031984d
