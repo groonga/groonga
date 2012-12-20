@@ -2083,12 +2083,12 @@ typedef struct _grn_query_logger_info grn_query_logger_info;
 
 struct _grn_query_logger_info {
   unsigned int flags;
-  grn_user_data *user_data;
+  void *user_data;
   void (*log)(grn_ctx *ctx, unsigned int flag,
               const char *timestamp, const char *info, const char *message,
-              grn_user_data *user_data);
-  void (*reopen)(grn_ctx *ctx, grn_user_data *user_data);
-  void (*fin)(grn_ctx *ctx, grn_user_data *user_data);
+              void *user_data);
+  void (*reopen)(grn_ctx *ctx, void *user_data);
+  void (*fin)(grn_ctx *ctx, void *user_data);
 };
 
 GRN_API grn_rc grn_query_logger_info_set(grn_ctx *ctx, const grn_query_logger_info *info);
