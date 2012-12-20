@@ -1548,7 +1548,7 @@ is_table(grn_obj *obj)
 }
 
 static int
-print_tableinfo(grn_ctx *ctx, grn_obj *table)
+print_table_info(grn_ctx *ctx, grn_obj *table)
 {
   grn_id id;
   grn_obj o;
@@ -1637,7 +1637,7 @@ proc_table_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
 
   for (i = 0; i < n_tables; i++) {
     grn_obj *table = ((grn_obj **)GRN_BULK_HEAD(&tables))[i];
-    print_tableinfo(ctx, table);
+    print_table_info(ctx, table);
     grn_obj_unlink(ctx, table);
   }
   GRN_OBJ_FIN(ctx, &tables);
