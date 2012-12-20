@@ -5,6 +5,43 @@
 News
 ====
 
+.. _release-2-1-0:
+
+Release 2.1.0 - 2012/12/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [doc] Added documentation about :ref:`nested-index-search`.
+* Supported to customize snippet tag with literal expression as
+  :doc:`/reference/functions/snippet_html` arguments.
+  This change enable you to use ``snippet_html("STRING" + "STRING")`` syntax.
+  [Reported by Tomoatsu Shimada]
+* Supported to create own normalizer as a plugin.
+* Changed to provide ``groonga-query-log-analyzer`` as
+  `groonga-query-log <http://rubygems.org/gems/groonga-query-log>`_ ruby gem.
+  It is enable you to analyze query logs without installing groonga package.
+* Supported ``--normalizer`` option for :doc:`/reference/commands/table_create` command.
+  This change enable you to specify normalizer plugin.
+
+Fixes
+^^^^^
+
+* [windows] Added missing ``O_BINARY`` flag to open file correctly.
+  This change fixes the infinite loop problem about groonga HTTP server.
+  [GitHub#47] [Patch by Shimomura Tatsuya]
+* Fixed a bug that ``--default-match-escalation-threshold`` doesn't accept
+  negative value to disable functionality.
+  This fix enable you to disable search escalation.
+  see :option:`--default-match-escalation-threshold` about details.
+
+Thanks
+^^^^^^
+
+* Tomoatsu Shimada
+* Shimomura Tatsuya
+
 .. _release-2-0-9:
 
 Release 2.0.9 - 2012/11/29

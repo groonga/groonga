@@ -84,6 +84,8 @@ match_columnsオプションで、検索対象のカラムを複数指定する�
 .. TODO: match_columnsにインデックス名を指定しての検索についても触れる。
 
 
+.. _nested-index-search:
+
 Nested index search among related table by column index
 --------------------------------------------------------
 
