@@ -370,7 +370,7 @@ grn_output_bool(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, grn
   INCR_LENGTH;
 }
 
-void
+static inline void
 grn_output_bulk_void(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                      const char *value, size_t value_len)
 {
