@@ -1,0 +1,5 @@
+table_create Tags TABLE_DAT_KEY ShortText --normalizer NormalizerNFKC51
+dump
+
+truncate Tags
+dump

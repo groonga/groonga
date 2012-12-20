@@ -1,0 +1,5 @@
+table_create Tags TABLE_PAT_KEY|KEY_NORMALIZE ShortText
+dump
+
+truncate Tags
+dump

@@ -1,0 +1,10 @@
+table_create Tags TABLE_PAT_KEY|KEY_NORMALIZE ShortText
+[[0,0.0,0.0],true]
+dump
+table_create Tags TABLE_PAT_KEY ShortText --normalizer NormalizerAuto
+
+truncate Tags
+[[0,0.0,0.0],true]
+dump
+table_create Tags TABLE_PAT_KEY ShortText --normalizer NormalizerAuto
+
