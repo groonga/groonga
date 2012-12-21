@@ -137,7 +137,8 @@ grn_tokenizer_have_tokenized_delimiter(grn_ctx *ctx,
 }
 
 grn_tokenizer_query *
-grn_tokenizer_query_open(grn_ctx *ctx, int num_args, grn_obj **args)
+grn_tokenizer_query_open(grn_ctx *ctx, int num_args, grn_obj **args,
+                         unsigned int normalize_flags)
 {
   grn_obj *query_str = grn_ctx_pop(ctx);
   if (query_str == NULL) {
@@ -176,7 +177,6 @@ grn_tokenizer_query_open(grn_ctx *ctx, int num_args, grn_obj **args)
       grn_table_get_info(ctx, table, &table_flags, &table_encoding, NULL,
                          &normalizer);
       {
-        int flags = 0;
         grn_obj *normalized_string;
         if (table_flags & GRN_OBJ_KEY_NORMALIZE) {
           normalizer = GRN_NORMALIZER_AUTO;
@@ -185,7 +185,7 @@ grn_tokenizer_query_open(grn_ctx *ctx, int num_args, grn_obj **args)
                                              GRN_TEXT_VALUE(query_str),
                                              GRN_TEXT_LEN(query_str),
                                              normalizer,
-                                             flags,
+                                             normalize_flags,
                                              table_encoding);
         if (!normalized_string) {
           GRN_PLUGIN_FREE(ctx, query);
@@ -207,7 +207,7 @@ grn_tokenizer_query_open(grn_ctx *ctx, int num_args, grn_obj **args)
 grn_tokenizer_query *
 grn_tokenizer_query_create(grn_ctx *ctx, int num_args, grn_obj **args)
 {
-  return grn_tokenizer_query_open(ctx, num_args, args);
+  return grn_tokenizer_query_open(ctx, num_args, args, 0);
 }
 
 void

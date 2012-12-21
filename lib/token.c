@@ -96,11 +96,12 @@ delimited_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
                const uint8_t *delimiter, uint32_t delimiter_len)
 {
   grn_tokenizer_query *query;
+  unsigned int normalize_flags = 0;
   const char *normalized;
   unsigned int normalized_length_in_bytes;
   grn_delimited_tokenizer *tokenizer;
 
-  query = grn_tokenizer_query_open(ctx, nargs, args);
+  query = grn_tokenizer_query_open(ctx, nargs, args, normalize_flags);
   if (!query) {
     return NULL;
   }
@@ -201,6 +202,7 @@ delimit_null_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
 
 typedef struct {
   grn_tokenizer_token token;
+  grn_tokenizer_query *query;
   grn_obj *nstr;
   uint8_t uni_alpha;
   uint8_t uni_digit;

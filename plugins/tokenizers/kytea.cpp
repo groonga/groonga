@@ -185,8 +185,9 @@ void grn_tokenizer_kytea_fin(grn_ctx *ctx, grn_tokenizer_kytea *tokenizer) {
 
 grn_obj *grn_kytea_init(grn_ctx *ctx, int num_args, grn_obj **args,
                         grn_user_data *user_data) {
+  unsigned int normalizer_flags = 0;
   grn_tokenizer_query * const query =
-      grn_tokenizer_query_open(ctx, num_args, args);
+      grn_tokenizer_query_open(ctx, num_args, args, normalizer_flags);
   if (!query) {
     return NULL;
   }

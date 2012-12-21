@@ -81,12 +81,13 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   const char *s;
   grn_mecab_tokenizer *tokenizer;
   unsigned int bufsize;
+  unsigned int normalizer_flags = 0;
   grn_tokenizer_query *query;
   grn_obj *normalized_query;
   const char *normalized_string;
   unsigned int normalized_string_length;
 
-  query = grn_tokenizer_query_open(ctx, nargs, args);
+  query = grn_tokenizer_query_open(ctx, nargs, args, normalizer_flags);
   if (!query) {
     return NULL;
   }

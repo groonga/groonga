@@ -89,7 +89,8 @@ struct _grn_tokenizer_query {
   just once in the function that initializes a tokenizer.
  */
 GRN_PLUGIN_EXPORT grn_tokenizer_query *grn_tokenizer_query_open(grn_ctx *ctx,
-                                                                int num_args, grn_obj **args);
+                                                                int num_args, grn_obj **args,
+                                                                unsigned int normalize_flags);
 
 /*
   grn_tokenizer_query_create() is deprecated. Use grn_tokenizer_query_open()
