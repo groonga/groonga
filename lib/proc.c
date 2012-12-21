@@ -1635,7 +1635,7 @@ proc_table_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
   n_top_level_elements = n_elements_for_header + n_tables;
   GRN_OUTPUT_ARRAY_OPEN("TABLE_LIST", n_top_level_elements);
 
-  GRN_OUTPUT_ARRAY_OPEN("HEADER", 6);
+  GRN_OUTPUT_ARRAY_OPEN("HEADER", 8);
   GRN_OUTPUT_ARRAY_OPEN("PROPERTY", 2);
   GRN_OUTPUT_CSTR("id");
   GRN_OUTPUT_CSTR("UInt32");
@@ -1658,6 +1658,14 @@ proc_table_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
   GRN_OUTPUT_ARRAY_CLOSE();
   GRN_OUTPUT_ARRAY_OPEN("PROPERTY", 2);
   GRN_OUTPUT_CSTR("range");
+  GRN_OUTPUT_CSTR("ShortText");
+  GRN_OUTPUT_ARRAY_CLOSE();
+  GRN_OUTPUT_ARRAY_OPEN("PROPERTY", 2);
+  GRN_OUTPUT_CSTR("default_tokenizer");
+  GRN_OUTPUT_CSTR("ShortText");
+  GRN_OUTPUT_ARRAY_CLOSE();
+  GRN_OUTPUT_ARRAY_OPEN("PROPERTY", 2);
+  GRN_OUTPUT_CSTR("normalizer");
   GRN_OUTPUT_CSTR("ShortText");
   GRN_OUTPUT_ARRAY_CLOSE();
   GRN_OUTPUT_ARRAY_CLOSE();

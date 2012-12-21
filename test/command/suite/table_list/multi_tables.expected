@@ -34,6 +34,14 @@ table_list
       [
         "range",
         "ShortText"
+      ],
+      [
+        "default_tokenizer",
+        "ShortText"
+      ],
+      [
+        "normalizer",
+        "ShortText"
       ]
     ],
     [
