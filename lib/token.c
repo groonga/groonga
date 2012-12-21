@@ -81,55 +81,45 @@ uvector_fin(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 }
 
 typedef struct {
-  grn_obj *nstr;
   const uint8_t *delimiter;
   uint32_t delimiter_len;
-  grn_encoding encoding;
   const unsigned char *next;
   const unsigned char *end;
   grn_tokenizer_token token;
+  grn_tokenizer_query *query;
   grn_bool have_tokenized_delimiter;
 } grn_delimited_tokenizer;
 
 static grn_obj *
-delimited_init(grn_ctx *ctx, grn_obj *table, grn_user_data *user_data,
+delimited_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data,
                const uint8_t *delimiter, uint32_t delimiter_len)
 {
-  grn_obj *str;
-  grn_obj *normalizer = NULL;
-  int nflags = 0;
+  grn_tokenizer_query *query;
   const char *normalized;
   unsigned int normalized_length_in_bytes;
   grn_delimited_tokenizer *tokenizer;
-  grn_obj_flags table_flags;
-  if (!(str = grn_ctx_pop(ctx))) {
-    ERR(GRN_INVALID_ARGUMENT, "missing argument");
+
+  query = grn_tokenizer_query_open(ctx, nargs, args);
+  if (!query) {
     return NULL;
   }
+
   if (!(tokenizer = GRN_MALLOC(sizeof(grn_delimited_tokenizer)))) {
+    grn_tokenizer_query_close(ctx, query);
     return NULL;
   }
   user_data->ptr = tokenizer;
 
-  grn_table_get_info(ctx, table, &table_flags, &tokenizer->encoding, NULL,
-                     &normalizer);
+  tokenizer->query = query;
 
   tokenizer->have_tokenized_delimiter =
     grn_tokenizer_have_tokenized_delimiter(ctx,
-                                           GRN_TEXT_VALUE(str),
-                                           GRN_TEXT_LEN(str),
-                                           tokenizer->encoding);
+                                           tokenizer->query->ptr,
+                                           tokenizer->query->length,
+                                           tokenizer->query->encoding);
   tokenizer->delimiter = delimiter;
   tokenizer->delimiter_len = delimiter_len;
-  tokenizer->nstr = grn_string_open_(ctx,
-                                     GRN_TEXT_VALUE(str), GRN_TEXT_LEN(str),
-                                     normalizer, nflags, tokenizer->encoding);
-  if (!tokenizer->nstr) {
-    GRN_FREE(tokenizer);
-    ERR(GRN_TOKENIZER_ERROR, "grn_string_open failed at grn_token_open");
-    return NULL;
-  }
-  grn_string_get_normalized(ctx, tokenizer->nstr,
+  grn_string_get_normalized(ctx, tokenizer->query->normalized_query,
                             &normalized, &normalized_length_in_bytes,
                             NULL);
   tokenizer->next = (const unsigned char *)normalized;
@@ -153,14 +143,15 @@ delimited_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
                                              &(tokenizer->token),
                                              tokenizer->next,
                                              rest_length,
-                                             tokenizer->encoding);
+                                             tokenizer->query->encoding);
   } else {
     size_t cl;
     const unsigned char *p = tokenizer->next, *r;
     const unsigned char *e = tokenizer->end;
     grn_tokenizer_status status;
     for (r = p; r < e; r += cl) {
-      if (!(cl = grn_charlen_(ctx, (char *)r, (char *)e, tokenizer->encoding))) {
+      if (!(cl = grn_charlen_(ctx, (char *)r, (char *)e,
+                              tokenizer->query->encoding))) {
         tokenizer->next = (unsigned char *)e;
         break;
       }
@@ -185,7 +176,7 @@ static grn_obj *
 delimited_fin(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_delimited_tokenizer *tokenizer = user_data->ptr;
-  grn_obj_close(ctx, tokenizer->nstr);
+  grn_tokenizer_query_close(ctx, tokenizer->query);
   grn_tokenizer_token_fin(ctx, &(tokenizer->token));
   GRN_FREE(tokenizer);
   return NULL;
@@ -195,16 +186,14 @@ static grn_obj *
 delimit_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   static const uint8_t delimiter[1] = {' '};
-  grn_obj *table = args[0];
-  return delimited_init(ctx, table, user_data, delimiter, 1);
+  return delimited_init(ctx, nargs, args, user_data, delimiter, 1);
 }
 
 static grn_obj *
 delimit_null_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   static const uint8_t delimiter[1] = {'\0'};
-  grn_obj *table = args[0];
-  return delimited_init(ctx, table, user_data, delimiter, 1);
+  return delimited_init(ctx, nargs, args, user_data, delimiter, 1);
 }
 
 /* ngram tokenizer */
