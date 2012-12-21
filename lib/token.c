@@ -46,7 +46,12 @@ uvector_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     ERR(GRN_INVALID_ARGUMENT, "missing argument");
     return NULL;
   }
-  if (!(tokenizer = GRN_MALLOC(sizeof(grn_uvector_tokenizer)))) { return NULL; }
+  if (!(tokenizer = GRN_MALLOC(sizeof(grn_uvector_tokenizer)))) {
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "[tokenizer][uvector] "
+        "memory allocation to grn_uvector_tokenizer failed");
+    return NULL;
+  }
   user_data->ptr = tokenizer;
   tokenizer->curr = GRN_TEXT_VALUE(str);
   tokenizer->tail = tokenizer->curr + GRN_TEXT_LEN(str);
