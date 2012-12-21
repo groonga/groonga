@@ -83,9 +83,9 @@ struct _grn_tokenizer_query {
 /*
   grn_tokenizer_query_open() parses `args' and returns a new object of
   grn_tokenizer_query. The new object stores information of the query.
-  grn_tokenizer_query_create() normalizes the query if the target table
-  requires normalization. grn_tokenizer_query_create() returns NULL if
-  something goes wrong. Note that grn_tokenizer_query_create() must be called
+  grn_tokenizer_query_open() normalizes the query if the target table
+  requires normalization. grn_tokenizer_query_open() returns NULL if
+  something goes wrong. Note that grn_tokenizer_query_open() must be called
   just once in the function that initializes a tokenizer.
  */
 GRN_PLUGIN_EXPORT grn_tokenizer_query *grn_tokenizer_query_open(grn_ctx *ctx,
