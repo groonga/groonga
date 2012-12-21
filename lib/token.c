@@ -248,6 +248,7 @@ ngram_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data, ui
   }
   user_data->ptr = token;
 
+  grn_tokenizer_token_init(ctx, &(token->token));
   token->query = query;
 
   token->uni_alpha = uni_alpha;
@@ -265,7 +266,6 @@ ngram_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data, ui
   token->next = (const unsigned char *)normalized;
   token->end = token->next + normalized_length_in_bytes;
   token->ctypes = grn_string_get_types(ctx, token->query->normalized_query);
-  grn_tokenizer_token_init(ctx, &(token->token));
   return NULL;
 }
 
