@@ -40,37 +40,37 @@ static grn_obj *
 uvector_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_obj *str;
-  grn_uvector_tokenizer_info *token;
+  grn_uvector_tokenizer_info *tokenizer;
   if (!(str = grn_ctx_pop(ctx))) {
     ERR(GRN_INVALID_ARGUMENT, "missing argument");
     return NULL;
   }
-  if (!(token = GRN_MALLOC(sizeof(grn_uvector_tokenizer_info)))) { return NULL; }
-  user_data->ptr = token;
-  token->curr = GRN_TEXT_VALUE(str);
-  token->tail = token->curr + GRN_TEXT_LEN(str);
-  token->unit = sizeof(grn_id);
-  GRN_TEXT_INIT(&token->curr_, GRN_OBJ_DO_SHALLOW_COPY);
-  GRN_UINT32_INIT(&token->stat_, 0);
+  if (!(tokenizer = GRN_MALLOC(sizeof(grn_uvector_tokenizer_info)))) { return NULL; }
+  user_data->ptr = tokenizer;
+  tokenizer->curr = GRN_TEXT_VALUE(str);
+  tokenizer->tail = tokenizer->curr + GRN_TEXT_LEN(str);
+  tokenizer->unit = sizeof(grn_id);
+  GRN_TEXT_INIT(&tokenizer->curr_, GRN_OBJ_DO_SHALLOW_COPY);
+  GRN_UINT32_INIT(&tokenizer->stat_, 0);
   return NULL;
 }
 
 static grn_obj *
 uvector_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  grn_uvector_tokenizer_info *token = user_data->ptr;
-  byte *p = token->curr + token->unit;
-  if (token->tail < p) {
-    GRN_TEXT_SET_REF(&token->curr_, token->curr, 0);
-    GRN_UINT32_SET(ctx, &token->stat_, GRN_TOKENIZER_TOKEN_LAST);
+  grn_uvector_tokenizer_info *tokenizer = user_data->ptr;
+  byte *p = tokenizer->curr + tokenizer->unit;
+  if (tokenizer->tail < p) {
+    GRN_TEXT_SET_REF(&tokenizer->curr_, tokenizer->curr, 0);
+    GRN_UINT32_SET(ctx, &tokenizer->stat_, GRN_TOKENIZER_TOKEN_LAST);
   } else {
-    GRN_TEXT_SET_REF(&token->curr_, token->curr, token->unit);
-    token->curr = p;
-    GRN_UINT32_SET(ctx, &token->stat_,
-                   token->tail == p ? GRN_TOKENIZER_TOKEN_LAST : 0);
+    GRN_TEXT_SET_REF(&tokenizer->curr_, tokenizer->curr, tokenizer->unit);
+    tokenizer->curr = p;
+    GRN_UINT32_SET(ctx, &tokenizer->stat_,
+                   tokenizer->tail == p ? GRN_TOKENIZER_TOKEN_LAST : 0);
   }
-  grn_ctx_push(ctx, &token->curr_);
-  grn_ctx_push(ctx, &token->stat_);
+  grn_ctx_push(ctx, &tokenizer->curr_);
+  grn_ctx_push(ctx, &tokenizer->stat_);
   return NULL;
 }
 
