@@ -43,6 +43,12 @@ typedef enum {
   GRN_TOKEN_DEL
 } grn_token_mode;
 
+typedef enum {
+  GRN_TOKEN_DOING = 0,
+  GRN_TOKEN_DONE,
+  GRN_TOKEN_NOT_FOUND
+} grn_token_status;
+
 typedef struct {
   grn_obj *table;
   const unsigned char *orig;
@@ -51,7 +57,7 @@ typedef struct {
   uint32_t curr_size;
   int32_t pos;
   grn_token_mode mode;
-  uint8_t status;
+  grn_token_status status;
   uint8_t force_prefix;
   grn_obj_flags table_flags;
   grn_encoding encoding;
@@ -60,12 +66,6 @@ typedef struct {
   uint32_t variant;
   grn_obj *nstr;
 } grn_token;
-
-typedef enum {
-  GRN_TOKEN_DOING = 0,
-  GRN_TOKEN_DONE,
-  GRN_TOKEN_NOT_FOUND
-} grn_token_status;
 
 #define GRN_TOKEN_LAST      (0x01L<<0)
 #define GRN_TOKEN_OVERLAP   (0x01L<<1)
