@@ -1347,23 +1347,6 @@ exit:
 #define GRN_STRLEN(s) ((s) ? strlen(s) : 0)
 
 static void
-objid2name(grn_ctx *ctx, grn_id id, grn_obj *bulk)
-{
-  GRN_BULK_REWIND(bulk);
-  if (id == GRN_ID_NIL) {
-    GRN_TEXT_PUTS(ctx, bulk, "null");
-  } else {
-    grn_obj *obj;
-    int name_len;
-    char name_buf[GRN_TABLE_MAX_KEY_SIZE];
-
-    obj = grn_ctx_at(ctx, id);
-    name_len = grn_obj_name(ctx, obj, name_buf, GRN_TABLE_MAX_KEY_SIZE);
-    GRN_TEXT_PUT(ctx, bulk, name_buf, name_len);
-  }
-}
-
-static void
 column2name(grn_ctx *ctx, grn_obj *obj, grn_obj *bulk)
 {
   int name_len;
@@ -1437,18 +1420,15 @@ print_column_info(grn_ctx *ctx, grn_obj *column)
   GRN_OUTPUT_CSTR(type);
   grn_column_create_flags_to_text(ctx, &o, column->header.flags);
   GRN_OUTPUT_OBJ(&o, NULL);
-  objid2name(ctx, column->header.domain, &o);
-  GRN_OUTPUT_OBJ(&o, NULL);
-  objid2name(ctx, grn_obj_get_range(ctx, column), &o);
-  GRN_OUTPUT_OBJ(&o, NULL);
+  output_object_id_name(ctx, column->header.domain);
+  output_object_id_name(ctx, grn_obj_get_range(ctx, column));
   {
     grn_db_obj *obj = (grn_db_obj *)column;
     grn_id *s = obj->source;
     int i = 0, n = obj->source_size / sizeof(grn_id);
     GRN_OUTPUT_ARRAY_OPEN("SOURCES", n);
     for (i = 0; i < n; i++, s++) {
-      objid2name(ctx, *s, &o);
-      GRN_OUTPUT_OBJ(&o, NULL);
+      output_object_id_name(ctx, *s);
     }
     GRN_OUTPUT_ARRAY_CLOSE();
 
@@ -1534,8 +1514,7 @@ proc_column_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
         GRN_OUTPUT_OBJ(&buf, NULL);
         name_len = grn_obj_name(ctx, table, name_buf, GRN_TABLE_MAX_KEY_SIZE);
         GRN_OUTPUT_STR(name_buf, name_len);
-        objid2name(ctx, table->header.domain, &buf);
-        GRN_OUTPUT_OBJ(&buf, NULL);
+        output_object_id_name(ctx, table->header.domain);
         GRN_OUTPUT_ARRAY_OPEN("SOURCES", 0);
         GRN_OUTPUT_ARRAY_CLOSE();
         GRN_OUTPUT_ARRAY_CLOSE();
