@@ -1,0 +1,76 @@
+table_create Users TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Users name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Lexicon TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigramSplitSymbolAlphaDigit
+[[0,0.0,0.0],true]
+column_create Lexicon users_name COLUMN_INDEX|WITH_POSITION Users name
+[[0,0.0,0.0],true]
+column_list Lexicon
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        "id",
+        "UInt32"
+      ],
+      [
+        "name",
+        "ShortText"
+      ],
+      [
+        "path",
+        "ShortText"
+      ],
+      [
+        "type",
+        "ShortText"
+      ],
+      [
+        "flags",
+        "ShortText"
+      ],
+      [
+        "domain",
+        "ShortText"
+      ],
+      [
+        "range",
+        "ShortText"
+      ],
+      [
+        "source",
+        "ShortText"
+      ]
+    ],
+    [
+      258,
+      "_key",
+      "",
+      "",
+      "COLUMN_SCALAR",
+      "Lexicon",
+      "ShortText",
+      [
+
+      ]
+    ],
+    [
+      259,
+      "users_name",
+      "db/db.0000103",
+      "index",
+      "COLUMN_INDEX|WITH_POSITION|PERSISTENT",
+      "Lexicon",
+      "Users",
+      [
+        "Users.name"
+      ]
+    ]
+  ]
+]

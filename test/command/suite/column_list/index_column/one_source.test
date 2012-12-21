@@ -1,0 +1,8 @@
+table_create Users TABLE_HASH_KEY ShortText
+column_create Users name COLUMN_SCALAR ShortText
+
+table_create Lexicon TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigramSplitSymbolAlphaDigit
+column_create Lexicon users_name COLUMN_INDEX|WITH_POSITION Users name
+
+column_list Lexicon
