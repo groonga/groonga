@@ -60,7 +60,7 @@ table_list
       "db/db.0000100",
       "TABLE_HASH_KEY|PERSISTENT",
       "ShortText",
-      "null",
+      null,
       null,
       null
     ]

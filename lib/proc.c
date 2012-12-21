@@ -1392,6 +1392,18 @@ output_object_name(grn_ctx *ctx, grn_obj *obj)
   GRN_OBJ_FIN(ctx, &bulk);
 }
 
+static void
+output_object_id_name(grn_ctx *ctx, grn_id id)
+{
+  grn_obj *obj = NULL;
+
+  if (id != GRN_ID_NIL) {
+    obj = grn_ctx_at(ctx, id);
+  }
+
+  output_object_name(ctx, obj);
+}
+
 static int
 print_column_info(grn_ctx *ctx, grn_obj *column)
 {
@@ -1580,15 +1592,12 @@ print_table_info(grn_ctx *ctx, grn_obj *table)
   GRN_TEXT_INIT(&o, 0);
   GRN_OUTPUT_ARRAY_OPEN("TABLE", 8);
   GRN_OUTPUT_INT64(id);
-  objid2name(ctx, id, &o);
-  GRN_OUTPUT_OBJ(&o, NULL);
+  output_object_id_name(ctx, id);
   GRN_OUTPUT_CSTR(path);
   grn_table_create_flags_to_text(ctx, &o, table->header.flags);
   GRN_OUTPUT_OBJ(&o, NULL);
-  objid2name(ctx, table->header.domain, &o);
-  GRN_OUTPUT_OBJ(&o, NULL);
-  objid2name(ctx, grn_obj_get_range(ctx, table), &o);
-  GRN_OUTPUT_OBJ(&o, NULL);
+  output_object_id_name(ctx, table->header.domain);
+  output_object_id_name(ctx, grn_obj_get_range(ctx, table));
   default_tokenizer = grn_obj_get_info(ctx, table, GRN_INFO_DEFAULT_TOKENIZER,
                                        NULL);
   output_object_name(ctx, default_tokenizer);
