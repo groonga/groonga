@@ -38,9 +38,9 @@ extern "C" {
 #endif
 
 typedef enum {
-  grn_token_get = 0,
-  grn_token_add,
-  grn_token_del
+  GRN_TOKEN_GET = 0,
+  GRN_TOKEN_ADD,
+  GRN_TOKEN_DEL
 } grn_token_mode;
 
 typedef struct {

@@ -367,7 +367,7 @@ ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     if (tid && (len > 1 || r == p)) {
       if (r != p && pos + len - 1 <= token->tail) { continue; }
       p += strlen(key);
-      if (!*p && token->mode == grn_token_get) { token->status = grn_token_done; }
+      if (!*p && token->mode == GRN_TOKEN_GET) { token->status = grn_token_done; }
     }
 #endif /* PRE_DEFINED_UNSPLIT_WORDS */
     if ((cl = grn_charlen_(ctx, (char *)r, (char *)e, token->encoding))) {
@@ -516,12 +516,12 @@ grn_token_next(grn_ctx *ctx, grn_token *token)
       token->curr_size = GRN_TEXT_LEN(curr_);
       status = GRN_UINT32_VALUE(stat_);
       token->status = ((status & GRN_TOKEN_LAST) ||
-                       (token->mode == grn_token_get && (status & GRN_TOKEN_REACH_END)))
+                       (token->mode == GRN_TOKEN_GET && (status & GRN_TOKEN_REACH_END)))
         ? grn_token_done : grn_token_doing;
       token->force_prefix = 0;
       if (status & GRN_TOKEN_UNMATURED) {
         if (status & GRN_TOKEN_OVERLAP) {
-          if (token->mode == grn_token_get) { token->pos++; continue; }
+          if (token->mode == GRN_TOKEN_GET) { token->pos++; continue; }
         } else {
           if (status & GRN_TOKEN_LAST) { token->force_prefix = 1; }
         }
@@ -529,7 +529,7 @@ grn_token_next(grn_ctx *ctx, grn_token *token)
     } else {
       token->status = grn_token_done;
     }
-    if (token->mode == grn_token_add) {
+    if (token->mode == GRN_TOKEN_ADD) {
       switch (table->header.type) {
       case GRN_TABLE_PAT_KEY :
         if (grn_io_lock(ctx, ((grn_pat *)table)->io, 10000000)) {

@@ -4714,7 +4714,7 @@ index_add(grn_ctx *ctx, grn_id rid, grn_obj *lexicon, grn_ii *ii, grn_vgram *vgr
   grn_rc r, rc = GRN_SUCCESS;
   grn_vgram_buf *sbuf = NULL;
   if (!rid) { return GRN_INVALID_ARGUMENT; }
-  if (!(token = grn_token_open(ctx, lexicon, value, value_len, grn_token_add))) {
+  if (!(token = grn_token_open(ctx, lexicon, value, value_len, GRN_TOKEN_ADD))) {
     return GRN_NO_MEMORY_AVAILABLE;
   }
   if (vgram) { sbuf = grn_vgram_buf_open(value_len); }
@@ -4768,7 +4768,7 @@ index_del(grn_ctx *ctx, grn_id rid, grn_obj *lexicon, grn_ii *ii, grn_vgram *vgr
   grn_ii_updspec **u;
   grn_id tid, *tp;
   if (!rid) { return GRN_INVALID_ARGUMENT; }
-  if (!(token = grn_token_open(ctx, lexicon, value, value_len, grn_token_del))) {
+  if (!(token = grn_token_open(ctx, lexicon, value, value_len, GRN_TOKEN_DEL))) {
     return GRN_NO_MEMORY_AVAILABLE;
   }
   h = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(grn_ii_updspec *), GRN_HASH_TINY);
@@ -4846,7 +4846,7 @@ grn_ii_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, grn_vgram *vgram, unsigned i
       goto exit;
     }
     for (j = newvalues->n_values, v = newvalues->values; j; j--, v++) {
-      if ((token = grn_token_open(ctx, lexicon, v->str, v->str_len, grn_token_add))) {
+      if ((token = grn_token_open(ctx, lexicon, v->str, v->str_len, GRN_TOKEN_ADD))) {
         while (!token->status) {
           if ((tid = grn_token_next(ctx, token))) {
             if (!grn_hash_add(ctx, new, &tid, sizeof(grn_id), (void **) &u, NULL)) {
@@ -4889,7 +4889,7 @@ grn_ii_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, grn_vgram *vgram, unsigned i
       goto exit;
     }
     for (j = oldvalues->n_values, v = oldvalues->values; j; j--, v++) {
-      if ((token = grn_token_open(ctx, lexicon, v->str, v->str_len, grn_token_del))) {
+      if ((token = grn_token_open(ctx, lexicon, v->str, v->str_len, GRN_TOKEN_DEL))) {
         while (!token->status) {
           if ((tid = grn_token_next(ctx, token))) {
             if (!grn_hash_add(ctx, old, &tid, sizeof(grn_id), (void **) &u, NULL)) {
@@ -5064,7 +5064,7 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
         GRN_LOG(ctx, GRN_LOG_ALERT, "grn_hash_create on grn_ii_update failed !");
         rc = GRN_NO_MEMORY_AVAILABLE;
       } else {
-        rc = grn_vector2updspecs(ctx, ii, rid, section, new_, new, grn_token_add, post);
+        rc = grn_vector2updspecs(ctx, ii, rid, section, new_, new, GRN_TOKEN_ADD, post);
       }
       if (new_ != newvalue) { grn_obj_close(ctx, new_); }
       if (rc) { goto exit; }
@@ -5146,7 +5146,7 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
         GRN_LOG(ctx, GRN_LOG_ALERT, "grn_hash_create(ctx, NULL, old) on grn_ii_update failed!");
         rc = GRN_NO_MEMORY_AVAILABLE;
       } else {
-        rc = grn_vector2updspecs(ctx, ii, rid, section, old_, old, grn_token_del, NULL);
+        rc = grn_vector2updspecs(ctx, ii, rid, section, old_, old, GRN_TOKEN_DEL, NULL);
       }
       if (old_ != oldvalue) { grn_obj_close(ctx, old_); }
       if (rc) { goto exit; }
@@ -5415,7 +5415,7 @@ token_info_build(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii, const char *string,
   const char *key;
   uint32_t size;
   grn_rc rc = GRN_END_OF_DATA;
-  grn_token *token = grn_token_open(ctx, lexicon, string, string_len, grn_token_get);
+  grn_token *token = grn_token_open(ctx, lexicon, string, string_len, GRN_TOKEN_GET);
   if (!token) { return GRN_NO_MEMORY_AVAILABLE; }
   if (mode == GRN_OP_UNSPLIT) {
     if ((ti = token_info_open(ctx, lexicon, ii, (char *)token->orig, token->orig_blen, 0, EX_BOTH))) {
@@ -5704,7 +5704,7 @@ grn_ii_similar_search(grn_ctx *ctx, grn_ii *ii,
   if (!(h = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(int), 0))) {
     return GRN_NO_MEMORY_AVAILABLE;
   }
-  if (!(token = grn_token_open(ctx, lexicon, string, string_len, grn_token_get))) {
+  if (!(token = grn_token_open(ctx, lexicon, string, string_len, GRN_TOKEN_GET))) {
     grn_hash_close(ctx, h);
     return GRN_NO_MEMORY_AVAILABLE;
   }
@@ -6818,7 +6818,7 @@ grn_ii_buffer_tokenize(grn_ctx *ctx, grn_ii_buffer *ii_buffer, grn_id rid,
         buffer[block_pos++] = weight + II_BUFFER_WEIGHT_FLAG;
       }
       if ((token = grn_token_open(ctx, tmp_lexicon, value,
-                                  value_len, grn_token_add))) {
+                                  value_len, GRN_TOKEN_ADD))) {
         uint32_t pos;
         for (pos = 0; !token->status; pos++) {
           grn_id tid;
