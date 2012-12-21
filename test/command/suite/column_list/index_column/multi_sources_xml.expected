@@ -1,0 +1,59 @@
+table_create Users TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Users name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Lexicon TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigramSplitSymbolAlphaDigit
+[[0,0.0,0.0],true]
+column_create Lexicon users_name COLUMN_INDEX|WITH_POSITION|WITH_SECTION   Users _key,name
+[[0,0.0,0.0],true]
+column_list Lexicon --output_type xml
+<?xml version="1.0" encoding="utf-8"?>
+<RESULT CODE="0" UP="0.0" ELAPSED="0.0">
+<COLUMN_LIST>
+<HEADER>
+<PROPERTY>
+<TEXT>id</TEXT>
+<TEXT>UInt32</TEXT></PROPERTY>
+<PROPERTY>
+<TEXT>name</TEXT>
+<TEXT>ShortText</TEXT></PROPERTY>
+<PROPERTY>
+<TEXT>path</TEXT>
+<TEXT>ShortText</TEXT></PROPERTY>
+<PROPERTY>
+<TEXT>type</TEXT>
+<TEXT>ShortText</TEXT></PROPERTY>
+<PROPERTY>
+<TEXT>flags</TEXT>
+<TEXT>ShortText</TEXT></PROPERTY>
+<PROPERTY>
+<TEXT>domain</TEXT>
+<TEXT>ShortText</TEXT></PROPERTY>
+<PROPERTY>
+<TEXT>range</TEXT>
+<TEXT>ShortText</TEXT></PROPERTY>
+<PROPERTY>
+<TEXT>source</TEXT>
+<TEXT>ShortText</TEXT></PROPERTY></HEADER>
+<COLUMN>
+<INT>258</INT>
+<TEXT>_key</TEXT>
+<TEXT></TEXT>
+<TEXT></TEXT>
+<TEXT>COLUMN_SCALAR</TEXT>
+<TEXT>Lexicon</TEXT>
+<TEXT>ShortText</TEXT>
+<SOURCES></SOURCES></COLUMN>
+<COLUMN>
+<INT>259</INT>
+<TEXT>users_name</TEXT>
+<TEXT>db/db.0000103</TEXT>
+<TEXT>index</TEXT>
+<TEXT>COLUMN_INDEX|WITH_SECTION|WITH_POSITION|PERSISTENT</TEXT>
+<TEXT>Lexicon</TEXT>
+<TEXT>Users</TEXT>
+<SOURCES>
+<TEXT>Users</TEXT>
+<TEXT>Users.name</TEXT></SOURCES></COLUMN></COLUMN_LIST>
+</RESULT>
+

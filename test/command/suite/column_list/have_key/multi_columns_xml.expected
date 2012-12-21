@@ -1,0 +1,64 @@
+table_create Users TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Users name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Users age COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_list Users --output_type xml
+<?xml version="1.0" encoding="utf-8"?>
+<RESULT CODE="0" UP="0.0" ELAPSED="0.0">
+<COLUMN_LIST>
+<HEADER>
+<PROPERTY>
+<TEXT>id</TEXT>
+<TEXT>UInt32</TEXT></PROPERTY>
+<PROPERTY>
+<TEXT>name</TEXT>
+<TEXT>ShortText</TEXT></PROPERTY>
+<PROPERTY>
+<TEXT>path</TEXT>
+<TEXT>ShortText</TEXT></PROPERTY>
+<PROPERTY>
+<TEXT>type</TEXT>
+<TEXT>ShortText</TEXT></PROPERTY>
+<PROPERTY>
+<TEXT>flags</TEXT>
+<TEXT>ShortText</TEXT></PROPERTY>
+<PROPERTY>
+<TEXT>domain</TEXT>
+<TEXT>ShortText</TEXT></PROPERTY>
+<PROPERTY>
+<TEXT>range</TEXT>
+<TEXT>ShortText</TEXT></PROPERTY>
+<PROPERTY>
+<TEXT>source</TEXT>
+<TEXT>ShortText</TEXT></PROPERTY></HEADER>
+<COLUMN>
+<INT>256</INT>
+<TEXT>_key</TEXT>
+<TEXT></TEXT>
+<TEXT></TEXT>
+<TEXT>COLUMN_SCALAR</TEXT>
+<TEXT>Users</TEXT>
+<TEXT>ShortText</TEXT>
+<SOURCES></SOURCES></COLUMN>
+<COLUMN>
+<INT>258</INT>
+<TEXT>age</TEXT>
+<TEXT>db/db.0000102</TEXT>
+<TEXT>fix</TEXT>
+<TEXT>COLUMN_SCALAR|PERSISTENT</TEXT>
+<TEXT>Users</TEXT>
+<TEXT>UInt8</TEXT>
+<SOURCES></SOURCES></COLUMN>
+<COLUMN>
+<INT>257</INT>
+<TEXT>name</TEXT>
+<TEXT>db/db.0000101</TEXT>
+<TEXT>var</TEXT>
+<TEXT>COLUMN_SCALAR|PERSISTENT</TEXT>
+<TEXT>Users</TEXT>
+<TEXT>ShortText</TEXT>
+<SOURCES></SOURCES></COLUMN></COLUMN_LIST>
+</RESULT>
+

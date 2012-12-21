@@ -1,0 +1,5 @@
+table_create Users TABLE_HASH_KEY ShortText
+column_create Users name COLUMN_SCALAR ShortText
+column_create Users age COLUMN_SCALAR UInt8
+
+column_list Users --output_type xml
