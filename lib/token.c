@@ -358,7 +358,7 @@ ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     // todo : grn_pat_lcp_search
     if ((tid = grn_sym_common_prefix_search(sym, p))) {
       if (!(key = _grn_sym_key(sym, tid))) {
-        token->status = grn_token_not_found;
+        token->status = GRN_TOKEN_NOT_FOUND;
         return NULL;
       }
       len = grn_str_len(key, token->encoding, NULL);
@@ -367,7 +367,7 @@ ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     if (tid && (len > 1 || r == p)) {
       if (r != p && pos + len - 1 <= token->tail) { continue; }
       p += strlen(key);
-      if (!*p && token->mode == GRN_TOKEN_GET) { token->status = grn_token_done; }
+      if (!*p && token->mode == GRN_TOKEN_GET) { token->status = GRN_TOKEN_DONE; }
     }
 #endif /* PRE_DEFINED_UNSPLIT_WORDS */
     if ((cl = grn_charlen_(ctx, (char *)r, (char *)e, token->encoding))) {
@@ -464,7 +464,7 @@ grn_token_open(grn_ctx *ctx, grn_obj *table, const char *str, size_t str_len,
   token->nstr = NULL;
   token->curr_size = 0;
   token->pos = -1;
-  token->status = grn_token_doing;
+  token->status = GRN_TOKEN_DOING;
   token->force_prefix = 0;
   if (tokenizer) {
     grn_obj str_;
@@ -506,7 +506,7 @@ grn_token_next(grn_ctx *ctx, grn_token *token)
   grn_id tid = GRN_ID_NIL;
   grn_obj *table = token->table;
   grn_obj *tokenizer = token->tokenizer;
-  while (token->status != grn_token_done) {
+  while (token->status != GRN_TOKEN_DONE) {
     if (tokenizer) {
       grn_obj *curr_, *stat_;
       ((grn_proc *)tokenizer)->funcs[PROC_NEXT](ctx, 1, &table, &token->pctx.user_data);
@@ -517,7 +517,7 @@ grn_token_next(grn_ctx *ctx, grn_token *token)
       status = GRN_UINT32_VALUE(stat_);
       token->status = ((status & GRN_TOKEN_LAST) ||
                        (token->mode == GRN_TOKEN_GET && (status & GRN_TOKEN_REACH_END)))
-        ? grn_token_done : grn_token_doing;
+        ? GRN_TOKEN_DONE : GRN_TOKEN_DOING;
       token->force_prefix = 0;
       if (status & GRN_TOKEN_UNMATURED) {
         if (status & GRN_TOKEN_OVERLAP) {
@@ -527,7 +527,7 @@ grn_token_next(grn_ctx *ctx, grn_token *token)
         }
       }
     } else {
-      token->status = grn_token_done;
+      token->status = GRN_TOKEN_DONE;
     }
     if (token->mode == GRN_TOKEN_ADD) {
       switch (table->header.type) {
@@ -586,8 +586,8 @@ grn_token_next(grn_ctx *ctx, grn_token *token)
         break;
       }
     }
-    if (tid == GRN_ID_NIL && token->status != grn_token_done) {
-      token->status = grn_token_not_found;
+    if (tid == GRN_ID_NIL && token->status != GRN_TOKEN_DONE) {
+      token->status = GRN_TOKEN_NOT_FOUND;
     }
     token->pos++;
     break;

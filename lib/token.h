@@ -62,9 +62,9 @@ typedef struct {
 } grn_token;
 
 typedef enum {
-  grn_token_doing = 0,
-  grn_token_done,
-  grn_token_not_found
+  GRN_TOKEN_DOING = 0,
+  GRN_TOKEN_DONE,
+  GRN_TOKEN_NOT_FOUND
 } grn_token_status;
 
 #define GRN_TOKEN_LAST      (0x01L<<0)

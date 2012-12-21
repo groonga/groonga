@@ -5442,11 +5442,11 @@ token_info_build(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii, const char *string,
     tid = grn_token_next(ctx, token);
     if (token->force_prefix) { ef |= EX_PREFIX; }
     switch (token->status) {
-    case grn_token_doing :
+    case GRN_TOKEN_DOING :
       key = _grn_table_key(ctx, lexicon, tid, &size);
       ti = token_info_open(ctx, lexicon, ii, key, size, token->pos, ef & EX_SUFFIX);
       break;
-    case grn_token_done :
+    case GRN_TOKEN_DONE :
       ti = token_info_open(ctx, lexicon, ii, (const char *)token->curr,
                            token->curr_size, 0, ef);
       /*
@@ -5456,7 +5456,7 @@ token_info_build(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii, const char *string,
                            token->orig_blen, token->pos, ef);
       */
       break;
-    case grn_token_not_found :
+    case GRN_TOKEN_NOT_FOUND :
       ti = token_info_open(ctx, lexicon, ii, (char *)token->orig,
                            token->orig_blen, 0, ef);
       break;
@@ -5465,14 +5465,14 @@ token_info_build(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii, const char *string,
     }
     if (!ti) { goto exit ; }
     tis[(*n)++] = ti;
-    while (token->status == grn_token_doing) {
+    while (token->status == GRN_TOKEN_DOING) {
       tid = grn_token_next(ctx, token);
       switch (token->status) {
-      case grn_token_doing :
+      case GRN_TOKEN_DOING :
         key = _grn_table_key(ctx, lexicon, tid, &size);
         ti = token_info_open(ctx, lexicon, ii, key, size, token->pos, EX_NONE);
         break;
-      case grn_token_done :
+      case GRN_TOKEN_DONE :
         if (tid) {
           key = _grn_table_key(ctx, lexicon, tid, &size);
           ti = token_info_open(ctx, lexicon, ii, key, size, token->pos, ef & EX_PREFIX);
@@ -5709,7 +5709,7 @@ grn_ii_similar_search(grn_ctx *ctx, grn_ii *ii,
     return GRN_NO_MEMORY_AVAILABLE;
   }
   if (!(max_size = optarg->max_size)) { max_size = 1048576; }
-  while (token->status != grn_token_done) {
+  while (token->status != GRN_TOKEN_DONE) {
     if ((tid = grn_token_next(ctx, token))) {
       if (grn_hash_add(ctx, h, &tid, sizeof(grn_id), (void **)&w1, NULL)) { (*w1)++; }
     }
