@@ -1393,7 +1393,7 @@ output_object_id_name(grn_ctx *ctx, grn_id id)
 }
 
 static int
-print_column_info(grn_ctx *ctx, grn_obj *column)
+output_column_info(grn_ctx *ctx, grn_obj *column)
 {
   grn_obj o;
   grn_id id;
@@ -1437,7 +1437,7 @@ print_column_info(grn_ctx *ctx, grn_obj *column)
     GRN_OUTPUT_ARRAY_CLOSE();
 
   }
-  //  print_obj_source(ctx, (grn_db_obj *)column);
+  //  output_obj_source(ctx, (grn_db_obj *)column);
   GRN_OUTPUT_ARRAY_CLOSE();
   GRN_OBJ_FIN(ctx, &o);
   return 1;
@@ -1529,7 +1529,7 @@ proc_column_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
         grn_id *key;
         GRN_HASH_EACH(ctx, cols, id, &key, NULL, NULL, {
           if ((col = grn_ctx_at(ctx, *key))) {
-            print_column_info(ctx, col);
+            output_column_info(ctx, col);
             grn_obj_unlink(ctx, col);
           }
         });
@@ -1562,7 +1562,7 @@ is_table(grn_obj *obj)
 }
 
 static int
-print_table_info(grn_ctx *ctx, grn_obj *table)
+output_table_info(grn_ctx *ctx, grn_obj *table)
 {
   grn_id id;
   grn_obj o;
@@ -1664,7 +1664,7 @@ proc_table_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
 
   for (i = 0; i < n_tables; i++) {
     grn_obj *table = ((grn_obj **)GRN_BULK_HEAD(&tables))[i];
-    print_table_info(ctx, table);
+    output_table_info(ctx, table);
     grn_obj_unlink(ctx, table);
   }
   GRN_OBJ_FIN(ctx, &tables);
