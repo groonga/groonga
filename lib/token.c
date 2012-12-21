@@ -62,11 +62,12 @@ uvector_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   byte *p = token->curr + token->unit;
   if (token->tail < p) {
     GRN_TEXT_SET_REF(&token->curr_, token->curr, 0);
-    GRN_UINT32_SET(ctx, &token->stat_, GRN_TOKEN_LAST);
+    GRN_UINT32_SET(ctx, &token->stat_, GRN_TOKENIZER_TOKEN_LAST);
   } else {
     GRN_TEXT_SET_REF(&token->curr_, token->curr, token->unit);
     token->curr = p;
-    GRN_UINT32_SET(ctx, &token->stat_, token->tail == p ? GRN_TOKEN_LAST : 0);
+    GRN_UINT32_SET(ctx, &token->stat_,
+                   token->tail == p ? GRN_TOKENIZER_TOKEN_LAST : 0);
   }
   grn_ctx_push(ctx, &token->curr_);
   grn_ctx_push(ctx, &token->stat_);
@@ -375,8 +376,8 @@ ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
         len++;
         r += cl;
       }
-      if (token->overlap) { status |= GRN_TOKEN_OVERLAP; }
-      if (len < token->ngram_unit) { status |= GRN_TOKEN_UNMATURED; }
+      if (token->overlap) { status |= GRN_TOKENIZER_TOKEN_OVERLAP; }
+      if (len < token->ngram_unit) { status |= GRN_TOKENIZER_TOKEN_UNMATURED; }
       token->overlap = (len > 1) ? 1 : 0;
     }
   }
@@ -385,11 +386,11 @@ ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   token->tail = pos + len - 1;
   if (p == r || token->next == e) {
     token->skip = 0;
-    status |= GRN_TOKEN_LAST;
+    status |= GRN_TOKENIZER_TOKEN_LAST;
   } else {
     token->skip = token->overlap ? 1 : len;
   }
-  if (r == e) { status |= GRN_TOKEN_REACH_END; }
+  if (r == e) { status |= GRN_TOKENIZER_TOKEN_REACH_END; }
   GRN_TEXT_SET_REF(&token->curr_, p, r - p);
   GRN_UINT32_SET(ctx, &token->stat_, status);
   grn_ctx_push(ctx, &token->curr_);
@@ -504,15 +505,16 @@ grn_token_next(grn_ctx *ctx, grn_token *token)
       token->curr = GRN_TEXT_VALUE(curr_);
       token->curr_size = GRN_TEXT_LEN(curr_);
       status = GRN_UINT32_VALUE(stat_);
-      token->status = ((status & GRN_TOKEN_LAST) ||
-                       (token->mode == GRN_TOKEN_GET && (status & GRN_TOKEN_REACH_END)))
+      token->status = ((status & GRN_TOKENIZER_TOKEN_LAST) ||
+                       (token->mode == GRN_TOKEN_GET &&
+                        (status & GRN_TOKENIZER_TOKEN_REACH_END)))
         ? GRN_TOKEN_DONE : GRN_TOKEN_DOING;
       token->force_prefix = 0;
-      if (status & GRN_TOKEN_UNMATURED) {
-        if (status & GRN_TOKEN_OVERLAP) {
+      if (status & GRN_TOKENIZER_TOKEN_UNMATURED) {
+        if (status & GRN_TOKENIZER_TOKEN_OVERLAP) {
           if (token->mode == GRN_TOKEN_GET) { token->pos++; continue; }
         } else {
-          if (status & GRN_TOKEN_LAST) { token->force_prefix = 1; }
+          if (status & GRN_TOKENIZER_TOKEN_LAST) { token->force_prefix = 1; }
         }
       }
     } else {

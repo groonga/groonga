@@ -136,16 +136,31 @@ GRN_PLUGIN_EXPORT void grn_tokenizer_token_init(grn_ctx *ctx, grn_tokenizer_toke
 GRN_PLUGIN_EXPORT void grn_tokenizer_token_fin(grn_ctx *ctx, grn_tokenizer_token *token);
 
 /*
-  grn_tokenizer_status provides a list of tokenizer status codes.
-  GRN_TOKENIZER_CONTINUE means that the next token is not the last one and
-  GRN_TOKENIZER_LAST means that the next token is the last one. If a document
-  or query contains no tokens, please push an empty string with
-  GRN_TOKENIZER_LAST as a token.
+ * grn_tokenizer_status is a flag set for tokenizer status codes.
+ * If a document or query contains no tokens, push an empty string with
+ * GRN_TOKENIZER_TOKEN_LAST as a token.
  */
-typedef enum {
-  GRN_TOKENIZER_CONTINUE = 0,
-  GRN_TOKENIZER_LAST     = 1
-} grn_tokenizer_status;
+typedef unsigned int grn_tokenizer_status;
+
+/* GRN_TOKENIZER_TOKEN_CONTINUE means that the next token is not the last one. */
+#define GRN_TOKENIZER_TOKEN_CONTINUE  (0)
+/* GRN_TOKENIZER_TOKEN_LAST means that the next token is the last one. */
+#define GRN_TOKENIZER_TOKEN_LAST      (0x01L<<0)
+/* GRN_TOKENIZER_TOKEN_OVERLAP means that ... */
+#define GRN_TOKENIZER_TOKEN_OVERLAP   (0x01L<<1)
+/* GRN_TOKENIZER_TOKEN_UNMATURED means that ... */
+#define GRN_TOKENIZER_TOKEN_UNMATURED (0x01L<<2)
+/* GRN_TOKENIZER_TOKEN_REACH_END means that ... */
+#define GRN_TOKENIZER_TOKEN_REACH_END (0x01L<<3)
+
+/*
+ * GRN_TOKENIZER_CONTINUE and GRN_TOKENIZER_LAST are deprecated. They
+ * are just for backward compatibility. Use
+ * GRN_TOKENIZER_TOKEN_CONTINUE and GRN_TOKENIZER_TOKEN_LAST
+ * instead.
+ */
+#define GRN_TOKENIZER_CONTINUE GRN_TOKENIZER_TOKEN_CONTINUE
+#define GRN_TOKENIZER_LAST     GRN_TOKENIZER_TOKEN_LAST
 
 /*
   grn_tokenizer_token_push() pushes the next token into `token'. Note that

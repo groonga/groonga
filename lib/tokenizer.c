@@ -250,15 +250,7 @@ grn_tokenizer_token_push(grn_ctx *ctx, grn_tokenizer_token *token,
                          grn_tokenizer_status status)
 {
   GRN_TEXT_SET_REF(&token->str, str_ptr, str_length);
-  switch (status) {
-  case GRN_TOKENIZER_CONTINUE :
-    GRN_UINT32_SET(ctx, &token->status, 0);
-    break;
-  case GRN_TOKENIZER_LAST :
-  default :
-    GRN_UINT32_SET(ctx, &token->status, GRN_TOKEN_LAST);
-    break;
-  }
+  GRN_UINT32_SET(ctx, &token->status, status);
   grn_ctx_push(ctx, &token->str);
   grn_ctx_push(ctx, &token->status);
 }

@@ -67,11 +67,6 @@ typedef struct {
   grn_obj *nstr;
 } grn_token;
 
-#define GRN_TOKEN_LAST      (0x01L<<0)
-#define GRN_TOKEN_OVERLAP   (0x01L<<1)
-#define GRN_TOKEN_UNMATURED (0x01L<<2)
-#define GRN_TOKEN_REACH_END (0x01L<<3)
-
 extern grn_obj *grn_uvector_tokenizer;
 
 grn_rc grn_token_init(void);
