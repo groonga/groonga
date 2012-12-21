@@ -35,18 +35,18 @@ typedef struct {
   uint32_t unit;
   grn_obj curr_;
   grn_obj stat_;
-} grn_uvector_tokenizer_info;
+} grn_uvector_tokenizer;
 
 static grn_obj *
 uvector_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_obj *str;
-  grn_uvector_tokenizer_info *tokenizer;
+  grn_uvector_tokenizer *tokenizer;
   if (!(str = grn_ctx_pop(ctx))) {
     ERR(GRN_INVALID_ARGUMENT, "missing argument");
     return NULL;
   }
-  if (!(tokenizer = GRN_MALLOC(sizeof(grn_uvector_tokenizer_info)))) { return NULL; }
+  if (!(tokenizer = GRN_MALLOC(sizeof(grn_uvector_tokenizer)))) { return NULL; }
   user_data->ptr = tokenizer;
   tokenizer->curr = GRN_TEXT_VALUE(str);
   tokenizer->tail = tokenizer->curr + GRN_TEXT_LEN(str);
@@ -59,7 +59,7 @@ uvector_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 static grn_obj *
 uvector_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  grn_uvector_tokenizer_info *tokenizer = user_data->ptr;
+  grn_uvector_tokenizer *tokenizer = user_data->ptr;
   byte *p = tokenizer->curr + tokenizer->unit;
   if (tokenizer->tail < p) {
     GRN_TEXT_SET_REF(&tokenizer->curr_, tokenizer->curr, 0);
