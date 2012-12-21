@@ -240,6 +240,8 @@ grn_tokenizer_token_init(grn_ctx *ctx, grn_tokenizer_token *token)
 void
 grn_tokenizer_token_fin(grn_ctx *ctx, grn_tokenizer_token *token)
 {
+  GRN_OBJ_FIN(ctx, &(token->str));
+  GRN_OBJ_FIN(ctx, &(token->status));
 }
 
 void
