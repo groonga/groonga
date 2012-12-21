@@ -200,6 +200,7 @@ delimit_null_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
 /* ngram tokenizer */
 
 typedef struct {
+  grn_tokenizer_token token;
   grn_obj *nstr;
   uint8_t uni_alpha;
   uint8_t uni_digit;
@@ -215,8 +216,6 @@ typedef struct {
   const uint_least8_t *ctypes;
   int32_t len;
   uint32_t tail;
-  grn_obj curr_;
-  grn_obj stat_;
 } grn_ngram_tokenizer;
 
 static grn_obj *
@@ -262,8 +261,7 @@ ngram_init(grn_ctx *ctx, grn_obj *table, grn_user_data *user_data, uint8_t ngram
   token->next = (const unsigned char *)normalized;
   token->end = token->next + normalized_length_in_bytes;
   token->ctypes = grn_string_get_types(ctx, token->nstr);
-  GRN_TEXT_INIT(&token->curr_, GRN_OBJ_DO_SHALLOW_COPY);
-  GRN_UINT32_INIT(&token->stat_, 0);
+  grn_tokenizer_token_init(ctx, &(token->token));
   return NULL;
 }
 
@@ -391,10 +389,7 @@ ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     token->skip = token->overlap ? 1 : len;
   }
   if (r == e) { status |= GRN_TOKENIZER_TOKEN_REACH_END; }
-  GRN_TEXT_SET_REF(&token->curr_, p, r - p);
-  GRN_UINT32_SET(ctx, &token->stat_, status);
-  grn_ctx_push(ctx, &token->curr_);
-  grn_ctx_push(ctx, &token->stat_);
+  grn_tokenizer_token_push(ctx, &(token->token), p, r - p, status);
   return NULL;
 }
 
@@ -402,6 +397,7 @@ static grn_obj *
 ngram_fin(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_ngram_tokenizer *token = user_data->ptr;
+  grn_tokenizer_token_fin(ctx, &(token->token));
   grn_obj_close(ctx, token->nstr);
   GRN_FREE(token);
   return NULL;
