@@ -40,7 +40,9 @@ table_list
       "db/db.0000100",
       "TABLE_PAT_KEY|KEY_WITH_SIS|PERSISTENT",
       "null",
-      "null"
+      "null",
+      null,
+      null
     ]
   ]
 ]

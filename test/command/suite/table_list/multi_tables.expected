@@ -42,7 +42,9 @@ table_list
       "db/db.0000101",
       "TABLE_PAT_KEY|PERSISTENT",
       "ShortText",
-      "Object"
+      "Object",
+      null,
+      null
     ],
     [
       256,
@@ -50,7 +52,9 @@ table_list
       "db/db.0000100",
       "TABLE_HASH_KEY|PERSISTENT",
       "ShortText",
-      "null"
+      "null",
+      null,
+      null
     ]
   ]
 ]
