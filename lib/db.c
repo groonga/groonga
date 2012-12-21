@@ -1888,7 +1888,7 @@ grn_table_get_info(grn_ctx *ctx, grn_obj *table, grn_obj_flags *flags,
     case GRN_TABLE_NO_KEY :
       if (flags) { *flags = 0; }
       if (encoding) { *encoding = GRN_ENC_NONE; }
-      if (tokenizer) { *tokenizer = grn_uvector_tokenizer; }
+      if (tokenizer) { *tokenizer = grn_token_uvector; }
       if (normalizer) { *normalizer = NULL; }
       rc = GRN_SUCCESS;
       break;

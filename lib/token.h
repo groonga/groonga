@@ -67,7 +67,7 @@ typedef struct {
   grn_obj *nstr;
 } grn_token;
 
-extern grn_obj *grn_uvector_tokenizer;
+extern grn_obj *grn_token_uvector;
 
 grn_rc grn_token_init(void);
 grn_rc grn_token_fin(void);

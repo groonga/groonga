@@ -26,9 +26,10 @@
 #include "string_in.h"
 #include <groonga/tokenizer.h>
 
-grn_obj *grn_uvector_tokenizer = NULL;
+grn_obj *grn_token_uvector = NULL;
 
 typedef struct {
+  grn_tokenizer_token token;
   byte *curr;
   byte *tail;
   uint32_t unit;
@@ -430,15 +431,15 @@ ngram_fin(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 grn_rc
 grn_token_init(void)
 {
-  static grn_proc _grn_uvector_tokenizer;
-  _grn_uvector_tokenizer.obj.db = NULL;
-  _grn_uvector_tokenizer.obj.id = GRN_ID_NIL;
-  _grn_uvector_tokenizer.obj.header.domain = GRN_ID_NIL;
-  _grn_uvector_tokenizer.obj.range = GRN_ID_NIL;
-  _grn_uvector_tokenizer.funcs[PROC_INIT] = uvector_init;
-  _grn_uvector_tokenizer.funcs[PROC_NEXT] = uvector_next;
-  _grn_uvector_tokenizer.funcs[PROC_FIN] = uvector_fin;
-  grn_uvector_tokenizer = (grn_obj *)&_grn_uvector_tokenizer;
+  static grn_proc _grn_token_uvector;
+  _grn_token_uvector.obj.db = NULL;
+  _grn_token_uvector.obj.id = GRN_ID_NIL;
+  _grn_token_uvector.obj.header.domain = GRN_ID_NIL;
+  _grn_token_uvector.obj.range = GRN_ID_NIL;
+  _grn_token_uvector.funcs[PROC_INIT] = uvector_init;
+  _grn_token_uvector.funcs[PROC_NEXT] = uvector_next;
+  _grn_token_uvector.funcs[PROC_FIN] = uvector_fin;
+  grn_token_uvector = (grn_obj *)&_grn_token_uvector;
   return GRN_SUCCESS;
 }
 
