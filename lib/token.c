@@ -33,8 +33,6 @@ typedef struct {
   byte *curr;
   byte *tail;
   uint32_t unit;
-  grn_obj curr_;
-  grn_obj stat_;
 } grn_uvector_tokenizer;
 
 static grn_obj *
@@ -53,11 +51,11 @@ uvector_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     return NULL;
   }
   user_data->ptr = tokenizer;
+
+  grn_tokenizer_token_init(ctx, &(tokenizer->token));
   tokenizer->curr = GRN_TEXT_VALUE(str);
   tokenizer->tail = tokenizer->curr + GRN_TEXT_LEN(str);
   tokenizer->unit = sizeof(grn_id);
-  GRN_TEXT_INIT(&tokenizer->curr_, GRN_OBJ_DO_SHALLOW_COPY);
-  GRN_UINT32_INIT(&tokenizer->stat_, 0);
   return NULL;
 }
 
@@ -67,23 +65,30 @@ uvector_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_uvector_tokenizer *tokenizer = user_data->ptr;
   byte *p = tokenizer->curr + tokenizer->unit;
   if (tokenizer->tail < p) {
-    GRN_TEXT_SET_REF(&tokenizer->curr_, tokenizer->curr, 0);
-    GRN_UINT32_SET(ctx, &tokenizer->stat_, GRN_TOKENIZER_TOKEN_LAST);
+    grn_tokenizer_token_push(ctx, &(tokenizer->token),
+                             tokenizer->curr, 0,
+                             GRN_TOKENIZER_TOKEN_LAST);
   } else {
-    GRN_TEXT_SET_REF(&tokenizer->curr_, tokenizer->curr, tokenizer->unit);
+    grn_tokenizer_status status;
+    if (tokenizer->tail == p) {
+      status = GRN_TOKENIZER_TOKEN_LAST;
+    } else {
+      status = GRN_TOKENIZER_TOKEN_CONTINUE;
+    }
+    grn_tokenizer_token_push(ctx, &(tokenizer->token),
+                             tokenizer->curr, tokenizer->unit,
+                             status);
     tokenizer->curr = p;
-    GRN_UINT32_SET(ctx, &tokenizer->stat_,
-                   tokenizer->tail == p ? GRN_TOKENIZER_TOKEN_LAST : 0);
   }
-  grn_ctx_push(ctx, &tokenizer->curr_);
-  grn_ctx_push(ctx, &tokenizer->stat_);
   return NULL;
 }
 
 static grn_obj *
 uvector_fin(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  GRN_FREE(user_data->ptr);
+  grn_uvector_tokenizer *tokenizer = user_data->ptr;
+  grn_tokenizer_token_fin(ctx, &(tokenizer->token));
+  GRN_FREE(tokenizer);
   return NULL;
 }
 
