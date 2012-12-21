@@ -206,7 +206,6 @@ delimit_null_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
 typedef struct {
   grn_tokenizer_token token;
   grn_tokenizer_query *query;
-  grn_obj *nstr;
   uint8_t uni_alpha;
   uint8_t uni_digit;
   uint8_t uni_symbol;
@@ -215,7 +214,6 @@ typedef struct {
   uint8_t overlap;
   int32_t pos;
   uint32_t skip;
-  grn_encoding encoding;
   const unsigned char *next;
   const unsigned char *end;
   const uint_least8_t *ctypes;
@@ -224,25 +222,34 @@ typedef struct {
 } grn_ngram_tokenizer;
 
 static grn_obj *
-ngram_init(grn_ctx *ctx, grn_obj *table, grn_user_data *user_data, uint8_t ngram_unit,
+ngram_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data, uint8_t ngram_unit,
            uint8_t uni_alpha, uint8_t uni_digit, uint8_t uni_symbol, uint8_t ignore_blank)
 {
-  grn_obj *str;
-  grn_obj *normalizer = NULL;
-  int nflags =
+  unsigned int normalize_flags =
     GRN_STRING_REMOVE_BLANK |
     GRN_STRING_WITH_TYPES |
     GRN_STRING_REMOVE_TOKENIZED_DELIMITER;
+  grn_tokenizer_query *query;
   const char *normalized;
   unsigned int normalized_length_in_bytes;
   grn_ngram_tokenizer *token;
-  grn_obj_flags table_flags;
-  if (!(str = grn_ctx_pop(ctx))) {
-    ERR(GRN_INVALID_ARGUMENT, "missing argument");
+
+  query = grn_tokenizer_query_open(ctx, nargs, args, normalize_flags);
+  if (!query) {
     return NULL;
   }
-  if (!(token = GRN_MALLOC(sizeof(grn_ngram_tokenizer)))) { return NULL; }
+
+  if (!(token = GRN_MALLOC(sizeof(grn_ngram_tokenizer)))) {
+    grn_tokenizer_query_close(ctx, query);
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "[tokenizer][ngram] "
+        "memory allocation to grn_ngram_tokenizer failed");
+    return NULL;
+  }
   user_data->ptr = token;
+
+  token->query = query;
+
   token->uni_alpha = uni_alpha;
   token->uni_digit = uni_digit;
   token->uni_symbol = uni_symbol;
@@ -251,64 +258,56 @@ ngram_init(grn_ctx *ctx, grn_obj *table, grn_user_data *user_data, uint8_t ngram
   token->overlap = 0;
   token->pos = 0;
   token->skip = 0;
-  grn_table_get_info(ctx, table, &table_flags, &token->encoding, NULL,
-                     &normalizer);
-  if (!(token->nstr = grn_string_open_(ctx,
-                                       GRN_TEXT_VALUE(str), GRN_TEXT_LEN(str),
-                                       normalizer, nflags, token->encoding))) {
-    GRN_FREE(token);
-    ERR(GRN_TOKENIZER_ERROR, "grn_string_open failed at grn_token_open");
-    return NULL;
-  }
-  grn_string_get_normalized(ctx, token->nstr,
+
+  grn_string_get_normalized(ctx, token->query->normalized_query,
                             &normalized, &normalized_length_in_bytes,
                             &(token->len));
   token->next = (const unsigned char *)normalized;
   token->end = token->next + normalized_length_in_bytes;
-  token->ctypes = grn_string_get_types(ctx, token->nstr);
+  token->ctypes = grn_string_get_types(ctx, token->query->normalized_query);
   grn_tokenizer_token_init(ctx, &(token->token));
   return NULL;
 }
 
 static grn_obj *
 unigram_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
-{ return ngram_init(ctx, args[0], user_data, 1, 1, 1, 1, 0); }
+{ return ngram_init(ctx, nargs, args, user_data, 1, 1, 1, 1, 0); }
 
 static grn_obj *
 bigram_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
-{ return ngram_init(ctx, args[0], user_data, 2, 1, 1, 1, 0); }
+{ return ngram_init(ctx, nargs, args, user_data, 2, 1, 1, 1, 0); }
 
 static grn_obj *
 trigram_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
-{ return ngram_init(ctx, args[0], user_data, 3, 1, 1, 1, 0); }
+{ return ngram_init(ctx, nargs, args, user_data, 3, 1, 1, 1, 0); }
 
 static grn_obj *
 bigrams_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
-{ return ngram_init(ctx, args[0], user_data, 2, 1, 1, 0, 0); }
+{ return ngram_init(ctx, nargs, args, user_data, 2, 1, 1, 0, 0); }
 
 static grn_obj *
 bigramsa_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
-{ return ngram_init(ctx, args[0], user_data, 2, 0, 1, 0, 0); }
+{ return ngram_init(ctx, nargs, args, user_data, 2, 0, 1, 0, 0); }
 
 static grn_obj *
 bigramsad_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
-{ return ngram_init(ctx, args[0], user_data, 2, 0, 0, 0, 0); }
+{ return ngram_init(ctx, nargs, args, user_data, 2, 0, 0, 0, 0); }
 
 static grn_obj *
 bigrami_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
-{ return ngram_init(ctx, args[0], user_data, 2, 1, 1, 1, 1); }
+{ return ngram_init(ctx, nargs, args, user_data, 2, 1, 1, 1, 1); }
 
 static grn_obj *
 bigramis_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
-{ return ngram_init(ctx, args[0], user_data, 2, 1, 1, 0, 1); }
+{ return ngram_init(ctx, nargs, args, user_data, 2, 1, 1, 0, 1); }
 
 static grn_obj *
 bigramisa_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
-{ return ngram_init(ctx, args[0], user_data, 2, 0, 1, 0, 1); }
+{ return ngram_init(ctx, nargs, args, user_data, 2, 0, 1, 0, 1); }
 
 static grn_obj *
 bigramisad_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
-{ return ngram_init(ctx, args[0], user_data, 2, 0, 0, 0, 1); }
+{ return ngram_init(ctx, nargs, args, user_data, 2, 0, 0, 0, 1); }
 
 static grn_obj *
 ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
@@ -319,7 +318,8 @@ ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   int32_t len = 0, pos = token->pos + token->skip, status = 0;
   const uint_least8_t *cp = token->ctypes ? token->ctypes + pos : NULL;
   if (cp && token->uni_alpha && GRN_STR_CTYPE(*cp) == grn_str_alpha) {
-    while ((cl = grn_charlen_(ctx, (char *)r, (char *)e, token->encoding))) {
+    while ((cl = grn_charlen_(ctx, (char *)r, (char *)e,
+                              token->query->encoding))) {
       len++;
       r += cl;
       if (/* !token->ignore_blank && */ GRN_STR_ISBLANK(*cp)) { break; }
@@ -328,7 +328,8 @@ ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     token->next = r;
     token->overlap = 0;
   } else if (cp && token->uni_digit && GRN_STR_CTYPE(*cp) == grn_str_digit) {
-    while ((cl = grn_charlen_(ctx, (char *)r, (char *)e, token->encoding))) {
+    while ((cl = grn_charlen_(ctx, (char *)r, (char *)e,
+                              token->query->encoding))) {
       len++;
       r += cl;
       if (/* !token->ignore_blank && */ GRN_STR_ISBLANK(*cp)) { break; }
@@ -337,7 +338,8 @@ ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     token->next = r;
     token->overlap = 0;
   } else if (cp && token->uni_symbol && GRN_STR_CTYPE(*cp) == grn_str_symbol) {
-    while ((cl = grn_charlen_(ctx, (char *)r, (char *)e, token->encoding))) {
+    while ((cl = grn_charlen_(ctx, (char *)r, (char *)e,
+                              token->query->encoding))) {
       len++;
       r += cl;
       if (!token->ignore_blank && GRN_STR_ISBLANK(*cp)) { break; }
@@ -354,21 +356,22 @@ ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
         token->status = GRN_TOKEN_NOT_FOUND;
         return NULL;
       }
-      len = grn_str_len(key, token->encoding, NULL);
+      len = grn_str_len(key, token->query->encoding, NULL);
     }
-    r = p + grn_charlen_(ctx, p, e, token->encoding);
+    r = p + grn_charlen_(ctx, p, e, token->query->encoding);
     if (tid && (len > 1 || r == p)) {
       if (r != p && pos + len - 1 <= token->tail) { continue; }
       p += strlen(key);
       if (!*p && token->mode == GRN_TOKEN_GET) { token->status = GRN_TOKEN_DONE; }
     }
 #endif /* PRE_DEFINED_UNSPLIT_WORDS */
-    if ((cl = grn_charlen_(ctx, (char *)r, (char *)e, token->encoding))) {
+    if ((cl = grn_charlen_(ctx, (char *)r, (char *)e, token->query->encoding))) {
       len++;
       r += cl;
       token->next = r;
       while (len < token->ngram_unit &&
-             (cl = grn_charlen_(ctx, (char *)r, (char *)e, token->encoding))) {
+             (cl = grn_charlen_(ctx, (char *)r, (char *)e,
+                                token->query->encoding))) {
         if (cp) {
           if (!token->ignore_blank && GRN_STR_ISBLANK(*cp)) { break; }
           cp++;
@@ -403,7 +406,7 @@ ngram_fin(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_ngram_tokenizer *token = user_data->ptr;
   grn_tokenizer_token_fin(ctx, &(token->token));
-  grn_obj_close(ctx, token->nstr);
+  grn_tokenizer_query_close(ctx, token->query);
   GRN_FREE(token);
   return NULL;
 }
