@@ -1393,7 +1393,7 @@ output_object_name(grn_ctx *ctx, grn_obj *obj)
 }
 
 static int
-print_columninfo(grn_ctx *ctx, grn_obj *column)
+print_column_info(grn_ctx *ctx, grn_obj *column)
 {
   grn_obj o;
   grn_id id;
@@ -1534,7 +1534,7 @@ proc_column_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
         grn_id *key;
         GRN_HASH_EACH(ctx, cols, id, &key, NULL, NULL, {
           if ((col = grn_ctx_at(ctx, *key))) {
-            print_columninfo(ctx, col);
+            print_column_info(ctx, col);
             grn_obj_unlink(ctx, col);
           }
         });
