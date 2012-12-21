@@ -1,0 +1,64 @@
+table_create Sites TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Bookmarks TABLE_PAT_KEY ShortText Object
+[[0,0.0,0.0],true]
+table_create Tweets TABLE_NO_KEY
+[[0,0.0,0.0],true]
+table_list --output_type xml
+<?xml version="1.0" encoding="utf-8"?>
+<RESULT CODE="0" UP="0.0" ELAPSED="0.0">
+<TABLE_LIST>
+<HEADER>
+<PROPERTY>
+<TEXT>id</TEXT>
+<TEXT>UInt32</TEXT></PROPERTY>
+<PROPERTY>
+<TEXT>name</TEXT>
+<TEXT>ShortText</TEXT></PROPERTY>
+<PROPERTY>
+<TEXT>path</TEXT>
+<TEXT>ShortText</TEXT></PROPERTY>
+<PROPERTY>
+<TEXT>flags</TEXT>
+<TEXT>ShortText</TEXT></PROPERTY>
+<PROPERTY>
+<TEXT>domain</TEXT>
+<TEXT>ShortText</TEXT></PROPERTY>
+<PROPERTY>
+<TEXT>range</TEXT>
+<TEXT>ShortText</TEXT></PROPERTY>
+<PROPERTY>
+<TEXT>default_tokenizer</TEXT>
+<TEXT>ShortText</TEXT></PROPERTY>
+<PROPERTY>
+<TEXT>normalizer</TEXT>
+<TEXT>ShortText</TEXT></PROPERTY></HEADER>
+<TABLE>
+<INT>257</INT>
+<TEXT>Bookmarks</TEXT>
+<TEXT>db/db.0000101</TEXT>
+<TEXT>TABLE_PAT_KEY|PERSISTENT</TEXT>
+<TEXT>ShortText</TEXT>
+<TEXT>Object</TEXT>
+<NULL/>
+<NULL/></TABLE>
+<TABLE>
+<INT>256</INT>
+<TEXT>Sites</TEXT>
+<TEXT>db/db.0000100</TEXT>
+<TEXT>TABLE_HASH_KEY|PERSISTENT</TEXT>
+<TEXT>ShortText</TEXT>
+<NULL/>
+<NULL/>
+<NULL/></TABLE>
+<TABLE>
+<INT>258</INT>
+<TEXT>Tweets</TEXT>
+<TEXT>db/db.0000102</TEXT>
+<TEXT>TABLE_NO_KEY|PERSISTENT</TEXT>
+<NULL/>
+<NULL/>
+<NULL/>
+<NULL/></TABLE></TABLE_LIST>
+</RESULT>
+

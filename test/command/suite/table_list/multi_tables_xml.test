@@ -1,0 +1,5 @@
+table_create Sites TABLE_HASH_KEY ShortText
+table_create Bookmarks TABLE_PAT_KEY ShortText Object
+table_create Tweets TABLE_NO_KEY
+
+table_list --output_type xml
