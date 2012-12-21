@@ -61,11 +61,11 @@ typedef struct {
   grn_obj *nstr;
 } grn_token;
 
-enum {
+typedef enum {
   grn_token_doing = 0,
   grn_token_done,
   grn_token_not_found
-};
+} grn_token_status;
 
 #define GRN_TOKEN_LAST      (0x01L<<0)
 #define GRN_TOKEN_OVERLAP   (0x01L<<1)
