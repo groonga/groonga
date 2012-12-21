@@ -1,0 +1,72 @@
+table_create Users TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Users name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_list Users
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        "id",
+        "UInt32"
+      ],
+      [
+        "name",
+        "ShortText"
+      ],
+      [
+        "path",
+        "ShortText"
+      ],
+      [
+        "type",
+        "ShortText"
+      ],
+      [
+        "flags",
+        "ShortText"
+      ],
+      [
+        "domain",
+        "ShortText"
+      ],
+      [
+        "range",
+        "ShortText"
+      ],
+      [
+        "source",
+        "ShortText"
+      ]
+    ],
+    [
+      256,
+      "_key",
+      "",
+      "",
+      "COLUMN_SCALAR",
+      "Users",
+      "ShortText",
+      [
+
+      ]
+    ],
+    [
+      257,
+      "name",
+      "db/db.0000101",
+      "var",
+      "COLUMN_SCALAR|PERSISTENT",
+      "Users",
+      "ShortText",
+      [
+
+      ]
+    ]
+  ]
+]
