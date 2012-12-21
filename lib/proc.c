@@ -1347,13 +1347,18 @@ exit:
 #define GRN_STRLEN(s) ((s) ? strlen(s) : 0)
 
 static void
-column2name(grn_ctx *ctx, grn_obj *obj, grn_obj *bulk)
+output_column_name(grn_ctx *ctx, grn_obj *column)
 {
+  grn_obj bulk;
   int name_len;
-  char name_buf[GRN_TABLE_MAX_KEY_SIZE];
+  char name[GRN_TABLE_MAX_KEY_SIZE];
 
-  name_len = grn_column_name(ctx, obj, name_buf, GRN_TABLE_MAX_KEY_SIZE);
-  GRN_TEXT_PUT(ctx, bulk, name_buf, name_len);
+  GRN_TEXT_INIT(&bulk, GRN_OBJ_DO_SHALLOW_COPY);
+  name_len = grn_column_name(ctx, column, name, GRN_TABLE_MAX_KEY_SIZE);
+  GRN_TEXT_SET(ctx, &bulk, name, name_len);
+
+  GRN_OUTPUT_OBJ(&bulk, NULL);
+  GRN_OBJ_FIN(ctx, &bulk);
 }
 
 static void
@@ -1414,8 +1419,7 @@ print_column_info(grn_ctx *ctx, grn_obj *column)
   GRN_TEXT_INIT(&o, 0);
   GRN_OUTPUT_ARRAY_OPEN("COLUMN", 8);
   GRN_OUTPUT_INT64(id);
-  column2name(ctx, column, &o);
-  GRN_OUTPUT_OBJ(&o, NULL);
+  output_column_name(ctx, column);
   GRN_OUTPUT_CSTR(path);
   GRN_OUTPUT_CSTR(type);
   grn_column_create_flags_to_text(ctx, &o, column->header.flags);
