@@ -376,13 +376,17 @@ test_invalid_start_with_symbol(void)
                      "[\"path\",\"ShortText\"],"
                      "[\"flags\",\"ShortText\"],"
                      "[\"domain\",\"ShortText\"],"
-                     "[\"range\",\"ShortText\"]],"
+                     "[\"range\",\"ShortText\"],"
+                     "[\"default_tokenizer\",\"ShortText\"],"
+                     "[\"normalizer\",\"ShortText\"]],"
                     "[256,"
                      "\"Authors\","
                      "\"%s.0000100\","
                      "\"TABLE_PAT_KEY|PERSISTENT\","
                      "\"ShortText\","
-                     "\"null\"]]",
+                     "null,"
+                     "null,"
+                     "null]]",
                     database_path);
 
   assert_send_command("table_create Authors TABLE_PAT_KEY ShortText");
