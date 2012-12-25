@@ -422,6 +422,7 @@ test_hash_empty(void)
                           "size:0 "
                           "columns:[] "
                           "default_tokenizer:(nil) "
+                          "normalizer:(nil) "
                           "keys:[]"
                           ">",
                           inspected_string());
@@ -447,6 +448,7 @@ test_hash_with_records(void)
                           "size:2 "
                           "columns:[name] "
                           "default_tokenizer:(nil) "
+                          "normalizer:(nil) "
                           "keys:[\"groonga.org\", \"razil.jp\"]"
                           ">",
                           inspected_string());
@@ -464,6 +466,7 @@ test_patricia_trie_empty(void)
                           "size:0 "
                           "columns:[] "
                           "default_tokenizer:(nil) "
+                          "normalizer:(nil) "
                           "keys:[] "
                           "nodes:{}"
                           ">",
@@ -491,6 +494,7 @@ test_patricia_trie_with_records(void)
     "size:2 "
     "columns:[name] "
     "default_tokenizer:(nil) "
+    "normalizer:(nil) "
     "keys:[\"groonga.org\", \"razil.jp\"] "
     "nodes:{\n"
     "2(\"razil.jp\"){0,3,0}[01110010 01100001 01111010 01101001 "
