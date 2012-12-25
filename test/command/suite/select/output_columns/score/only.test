@@ -1,0 +1,11 @@
+table_create Sites TABLE_HASH_KEY ShortText
+column_create Sites uri COLUMN_SCALAR ShortText
+
+load --table Sites
+[
+["_key","uri"],
+["groonga","http://groonga.org/"],
+["razil","http://razil.jp/"]
+]
+
+select Sites --filter true --output_columns _score

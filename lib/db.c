@@ -8754,8 +8754,12 @@ grn_obj_columns(grn_ctx *ctx, grn_obj *table,
                   if (cols) {
                     grn_id *key;
                     grn_accessor *a, *ac;
-                    for (a = (grn_accessor *)ai; a; a = a->next) { table = a->obj; }
-                    grn_table_columns(ctx, table, p, r - p - 1, (grn_obj *)cols);
+                    grn_obj *target_table = table;
+                    for (a = (grn_accessor *)ai; a; a = a->next) {
+                      target_table = a->obj;
+                    }
+                    grn_table_columns(ctx, target_table,
+                                      p, r - p - 1, (grn_obj *)cols);
                     GRN_HASH_EACH(ctx, cols, id, &key, NULL, NULL, {
                       if ((col = grn_ctx_at(ctx, *key))) {
                         ac = accessor_new(ctx);
