@@ -10,6 +10,16 @@ News
 Release 2.1.0 - 2012/12/29
 --------------------------
 
+.. Caution::
+
+   This release has backward incompatible changes against ``table_list`` and
+   ``column_list`` commands. If you use own program which depends on the output
+   results above commands, you need to support null instead of "null" string.
+
+   There is also another backward incompatible change agaist plugin API for
+   tokenizer. The argument of ``grn_tokenizer_query_open`` API has changed.
+   This API change affects developer of tokenizer plugin.
+
 Improvements
 ^^^^^^^^^^^^
 
@@ -24,6 +34,11 @@ Improvements
   It enables you to analyze query logs without installing groonga package.
 * Supported ``--normalizer`` option for :doc:`/reference/commands/table_create` command.
   This change enables you to specify normalizer plugin.
+* Changed "null" string to null value as meaning for "No Object".
+  This is backward incompatible change and affects output results of introspection
+  related commands such as ``table_list`` and ``column_list``.
+* Added a flag which controls behavior about normalizer as the last argument
+  of ``grn_tokenizer_query_open`` API.
 
 Fixes
 ^^^^^
