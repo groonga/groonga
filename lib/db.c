@@ -2905,7 +2905,7 @@ grn_obj_search_accessor(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
         break;
       }
     } else {
-      grn_obj *tid;
+      grn_id *tid;
       grn_obj *domain;
       grn_obj *next_res;
       grn_operator next_op;
@@ -2936,7 +2936,7 @@ grn_obj_search_accessor(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
         } else {
           char key[GRN_TABLE_MAX_KEY_SIZE];
           int key_len;
-          key_len = grn_table_get_key(ctx, domain, id,
+          key_len = grn_table_get_key(ctx, domain, *tid,
                                       key, GRN_TABLE_MAX_KEY_SIZE);
           rc = grn_ii_sel(ctx, (grn_ii *)index, key, key_len,
                           (grn_hash *)next_res, next_op, &next_optarg);

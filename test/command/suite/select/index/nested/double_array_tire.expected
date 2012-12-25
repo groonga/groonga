@@ -20,17 +20,19 @@ load --table Comments
 [
 {"_key": "1-1", "content": "I'm using groonga too!"},
 {"_key": "2-1", "content": "I'm using groonga and mroonga!"},
-{"_key": "1-2", "content": "I'm using mroonga too!"}
+{"_key": "3-1", "content": "I'm using mroonga too!"},
+{"_key": "4-1", "content": "I'm using groonga and rroonga too!"}
 ]
-[[0,0.0,0.0],3]
+[[0,0.0,0.0],4]
 load --table Articles
 [
 ["_key",              "content",          "comment"],
 ["groonga-is-fast",   "Groonga is fast!", "1-1"],
 ["groonga-is-useful", "Groonga is useful!"],
-["mroonga-is-fast",   "Mroonga is fast!", "1-2"]
+["mroonga-is-fast",   "Mroonga is fast!", "3-1"],
+["rroonga-is-fast",   "Rroonga is fast!", "4-1"]
 ]
-[[0,0.0,0.0],2]
+[[0,0.0,0.0],3]
 select Articles --match_columns comment.content --query groonga   --output_columns "_id, _score, *"
 [
   [
@@ -41,7 +43,7 @@ select Articles --match_columns comment.content --query groonga   --output_colum
   [
     [
       [
-        1
+        2
       ],
       [
         [
@@ -66,6 +68,12 @@ select Articles --match_columns comment.content --query groonga   --output_colum
         1,
         "1-1",
         "Groonga is fast!"
+      ],
+      [
+        3,
+        1,
+        "4-1",
+        "Rroonga is fast!"
       ]
     ]
   ]
