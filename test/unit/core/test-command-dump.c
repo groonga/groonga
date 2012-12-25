@@ -159,13 +159,13 @@ data_hash_table_create(void)
            NULL,
            NULL);
   ADD_DATA("hash - key normalize",
-           "table_create Blog TABLE_HASH_KEY|KEY_NORMALIZE ShortText",
+           "table_create Blog TABLE_HASH_KEY ShortText --normalizer NormalizerAuto",
            "Blog",
            GRN_OBJ_TABLE_HASH_KEY | GRN_OBJ_KEY_NORMALIZE,
            "ShortText",
            NULL);
   ADD_DATA("hash - key normalize - value",
-           "table_create Blog TABLE_HASH_KEY|KEY_NORMALIZE ShortText Int32",
+           "table_create Blog TABLE_HASH_KEY ShortText Int32 --normalizer NormalizerAuto",
            "Blog",
            GRN_OBJ_TABLE_HASH_KEY | GRN_OBJ_KEY_NORMALIZE,
            "ShortText",
