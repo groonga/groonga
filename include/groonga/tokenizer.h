@@ -87,6 +87,8 @@ struct _grn_tokenizer_query {
   requires normalization. grn_tokenizer_query_open() returns NULL if
   something goes wrong. Note that grn_tokenizer_query_open() must be called
   just once in the function that initializes a tokenizer.
+
+  See `GRN_STRING_*' flags for `normalize_flags'.
  */
 GRN_PLUGIN_EXPORT grn_tokenizer_query *grn_tokenizer_query_open(grn_ctx *ctx,
                                                                 int num_args, grn_obj **args,
