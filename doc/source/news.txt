@@ -24,10 +24,9 @@ Improvements
 ^^^^^^^^^^^^
 
 * [doc] Added documentation about :ref:`nested-index-search`.
-* Supported to get multiple snippets all at once by specifying concatenated column name
-  and literal as :doc:`/reference/functions/snippet_html` arguments.
-  This change enables you to use ``snippet_html("STRING" + "STRING")`` syntax.
-  [Reported by Tomoatsu Shimada]
+* Supported the expression as :doc:`/reference/functions/snippet_html` arguments.
+  This change enables you to use ``snippet_html("STRING" + "STRING")`` for example.
+  You can specify column name or literal for "STRING". [Reported by Tomoatsu Shimada]
 * Supported to create own normalizer as a plugin.
 * Moved ``groonga-query-log-analyzer`` as
   `groonga-query-log <http://rubygems.org/gems/groonga-query-log>`_ RubyGems.
@@ -39,6 +38,7 @@ Improvements
   related commands such as ``table_list`` and ``column_list``.
 * Added a flag which controls behavior about normalizer as the last argument
   of ``grn_tokenizer_query_open`` API.
+* Supported continuous line in command list.
 
 Fixes
 ^^^^^
