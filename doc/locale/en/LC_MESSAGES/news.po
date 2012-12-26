@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-25 16:27\n"
+"POT-Creation-Date: 2012-12-26 16:03\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -94,10 +94,10 @@ msgstr ""
 # a5f0494c4cf347f59b7d57dcfe33d417
 #: ../../../source/news.txt:27
 msgid ""
-"Supported to customize output results by specifying concatenated column name "
-"and literal as :doc:`/reference/functions/snippet_html` arguments. This "
-"change enables you to use ``snippet_html(\"STRING\" + \"STRING\")`` syntax. "
-"[Reported by Tomoatsu Shimada]"
+"Supported to get multiple snippets all at once by specifying concatenated "
+"column name and literal as :doc:`/reference/functions/snippet_html` "
+"arguments. This change enables you to use ``snippet_html(\"STRING\" + "
+"\"STRING\")`` syntax. [Reported by Tomoatsu Shimada]"
 msgstr ""
 
 # 8aa7f4cdba6b4ad283698e85413311b9
@@ -109,7 +109,7 @@ msgstr ""
 #: ../../../source/news.txt:32
 msgid ""
 "Moved ``groonga-query-log-analyzer`` as `groonga-query-log <http://rubygems."
-"org/gems/groonga-query-log>`_ rubygems. It enables you to analyze query logs "
+"org/gems/groonga-query-log>`_ RubyGems. It enables you to analyze query logs "
 "without installing groonga package."
 msgstr ""
 

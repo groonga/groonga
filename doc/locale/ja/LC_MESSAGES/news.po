@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-25 16:30\n"
+"POT-Creation-Date: 2012-12-26 15:40\n"
 "PO-Revision-Date: 2012-08-28 10:30+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -32,10 +32,10 @@ msgid ""
 "``column_list`` commands. If you use own program which depends on the output "
 "results above commands, you need to support null instead of \"null\" string."
 msgstr ""
-"このリリースでは ``table_list`` や ``column_list`` コマンドに関する非"
-"互換な変更があります。もしご自身で作成したプログラム等でこれらコマンド"
-"の出力結果に依存しているものがあるなら、\"null\"文字列ではなくnullを"
-"サポートする必要があります。"
+"このリリースでは ``table_list`` や ``column_list`` コマンドに関する非互換な変"
+"更があります。もしご自身で作成したプログラム等でこれらコマンドの出力結果に依"
+"存しているものがあるなら、\"null\"文字列ではなくnullをサポートする必要があり"
+"ます。"
 
 # 62d618ed012347c0b8c108c2389ea568
 #: ../../../source/news.txt:19
@@ -44,9 +44,9 @@ msgid ""
 "tokenizer. The argument of ``grn_tokenizer_query_open`` API has changed. "
 "This API change affects developer of tokenizer plugin."
 msgstr ""
-"もうひとつトークナイザプラグインAPIに関する非互換な変更があります。"
-" ``grn_tokenizer_query_open`` APIの引数が変更されました。"
-"このAPIの変更はトークナイザプラグインの開発者に影響があります。"
+"もうひとつトークナイザプラグインAPIに関する非互換な変更があります。 "
+"``grn_tokenizer_query_open`` APIの引数が変更されました。このAPIの変更はトーク"
+"ナイザプラグインの開発者に影響があります。"
 
 #: ../../../source/news.txt:24 ../../../source/news.txt:66
 #: ../../../source/news.txt:126 ../../../source/news.txt:161
@@ -73,13 +73,13 @@ msgstr "[doc] :ref:`nested-index-search` に関するドキュメントを追加
 # 60e1ef051ab147dcb8f03b9d2c53e26c
 #: ../../../source/news.txt:27
 msgid ""
-"Supported to customize output results by specifying concatenated column name "
-"and literal as :doc:`/reference/functions/snippet_html` arguments. This "
-"change enables you to use ``snippet_html(\"STRING\" + \"STRING\")`` syntax. "
-"[Reported by Tomoatsu Shimada]"
+"Supported to get multiple snippets all at once by specifying concatenated "
+"column name and literal as :doc:`/reference/functions/snippet_html` "
+"arguments. This change enables you to use ``snippet_html(\"STRING\" + "
+"\"STRING\")`` syntax. [Reported by Tomoatsu Shimada]"
 msgstr ""
 ":doc:`/reference/functions/snippet_html` の引数としてカラム名と連結した文字列"
-"を指定することでスニペットの出力結果をカスタマイズできるようにした。この変更"
+"を指定することでスニペットをまとめて取得できるようにした。この変更"
 "で、 ``snippet_html(\"STRING\" + \"STRING\")`` と書けるようになります。[嶋田 "
 "大貴さんが報告]"
 
@@ -92,11 +92,11 @@ msgstr "正規化を行うプラグインを作成できるようにした。"
 #: ../../../source/news.txt:32
 msgid ""
 "Moved ``groonga-query-log-analyzer`` as `groonga-query-log <http://rubygems."
-"org/gems/groonga-query-log>`_ rubygems. It enables you to analyze query logs "
+"org/gems/groonga-query-log>`_ RubyGems. It enables you to analyze query logs "
 "without installing groonga package."
 msgstr ""
 "``groonga-query-log-analyzer`` を `groonga-query-log <http://rubygems.org/"
-"gems/groonga-query-log>`_ というrubygemsにして移動しました。これによりgroonga"
+"gems/groonga-query-log>`_ というRubyGemsにして移動しました。これによりgroonga"
 "のパッケージをインストールせずにクエリログの解析を行えるようになります。"
 
 # 544c2091341e4a968dcb72a08034c79a
@@ -116,9 +116,9 @@ msgid ""
 "backward incompatible change and affects output results of introspection "
 "related commands such as ``table_list`` and ``column_list``."
 msgstr ""
-"\"No Object\"を表現するのに\"null\"文字列ではなくnull値を使うように変更しました。"
-"これは非互換な変更で ``table_list`` や ``column_list`` といったコマンドの出力結果"
-"に影響します。"
+"\"No Object\"を表現するのに\"null\"文字列ではなくnull値を使うように変更しまし"
+"た。これは非互換な変更で ``table_list`` や ``column_list`` といったコマンドの"
+"出力結果に影響します。"
 
 # 98e4fe0181a241eabaf1221efb25eef9
 #: ../../../source/news.txt:40
@@ -126,8 +126,8 @@ msgid ""
 "Added a flag which controls behavior about normalizer as the last argument "
 "of ``grn_tokenizer_query_open`` API."
 msgstr ""
-"正規化の振舞いを制御するためのフラグを ``grn_tokenizer_query_open`` APIの最"
-"後の引数として追加した。"
+"正規化の振舞いを制御するためのフラグを ``grn_tokenizer_query_open`` APIの最後"
+"の引数として追加した。"
 
 #: ../../../source/news.txt:44 ../../../source/news.txt:89
 #: ../../../source/news.txt:138 ../../../source/news.txt:177
