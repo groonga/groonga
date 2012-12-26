@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-26 15:40\n"
+"POT-Creation-Date: 2012-12-26 18:30\n"
 "PO-Revision-Date: 2012-08-28 10:30+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -73,23 +73,22 @@ msgstr "[doc] :ref:`nested-index-search` に関するドキュメントを追加
 # 60e1ef051ab147dcb8f03b9d2c53e26c
 #: ../../../source/news.txt:27
 msgid ""
-"Supported to get multiple snippets all at once by specifying concatenated "
-"column name and literal as :doc:`/reference/functions/snippet_html` "
+"Supported the expression as :doc:`/reference/functions/snippet_html` "
 "arguments. This change enables you to use ``snippet_html(\"STRING\" + "
-"\"STRING\")`` syntax. [Reported by Tomoatsu Shimada]"
+"\"STRING\")`` for example. You can specify column name or literal for "
+"\"STRING\". [Reported by Tomoatsu Shimada]"
 msgstr ""
-":doc:`/reference/functions/snippet_html` の引数としてカラム名と連結した文字列"
-"を指定することでスニペットをまとめて取得できるようにした。この変更"
-"で、 ``snippet_html(\"STRING\" + \"STRING\")`` と書けるようになります。[嶋田 "
-"大貴さんが報告]"
+":doc:`/reference/functions/snippet_html` の引数として式を指定できるようにし"
+"た。この変更で、 ``snippet_html(\"STRING\" + \"STRING\")`` と書けるようになり"
+"ます。 \"STRING\"にはカラム名や文字列を指定できます。 [嶋田 大貴さんが報告]"
 
 # 4c960ccdbc674e70ad67492038d02acb
-#: ../../../source/news.txt:31
+#: ../../../source/news.txt:30
 msgid "Supported to create own normalizer as a plugin."
 msgstr "正規化を行うプラグインを作成できるようにした。"
 
 # d26aec4a703c4bc6af65ba76099ad8d3
-#: ../../../source/news.txt:32
+#: ../../../source/news.txt:31
 msgid ""
 "Moved ``groonga-query-log-analyzer`` as `groonga-query-log <http://rubygems."
 "org/gems/groonga-query-log>`_ RubyGems. It enables you to analyze query logs "
@@ -100,7 +99,7 @@ msgstr ""
 "のパッケージをインストールせずにクエリログの解析を行えるようになります。"
 
 # 544c2091341e4a968dcb72a08034c79a
-#: ../../../source/news.txt:35
+#: ../../../source/news.txt:34
 msgid ""
 "Supported ``--normalizer`` option for :doc:`/reference/commands/"
 "table_create` command. This change enables you to specify normalizer plugin."
@@ -110,7 +109,7 @@ msgstr ""
 "ります。"
 
 # 86f26bb00b22400c8f1c777bd4f21a41
-#: ../../../source/news.txt:37
+#: ../../../source/news.txt:36
 msgid ""
 "Changed \"null\" string to null value as meaning for \"No Object\". This is "
 "backward incompatible change and affects output results of introspection "
@@ -121,13 +120,18 @@ msgstr ""
 "出力結果に影響します。"
 
 # 98e4fe0181a241eabaf1221efb25eef9
-#: ../../../source/news.txt:40
+#: ../../../source/news.txt:39
 msgid ""
 "Added a flag which controls behavior about normalizer as the last argument "
 "of ``grn_tokenizer_query_open`` API."
 msgstr ""
 "正規化の振舞いを制御するためのフラグを ``grn_tokenizer_query_open`` APIの最後"
 "の引数として追加した。"
+
+# 95de110a64864b2f990048ad323fda4b
+#: ../../../source/news.txt:41
+msgid "Supported continuous line in command list."
+msgstr "コマンドリストに書かれた継続行のサポート。"
 
 #: ../../../source/news.txt:44 ../../../source/news.txt:89
 #: ../../../source/news.txt:138 ../../../source/news.txt:177

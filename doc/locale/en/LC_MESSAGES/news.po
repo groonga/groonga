@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-26 16:03\n"
+"POT-Creation-Date: 2012-12-26 18:34\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -94,19 +94,19 @@ msgstr ""
 # a5f0494c4cf347f59b7d57dcfe33d417
 #: ../../../source/news.txt:27
 msgid ""
-"Supported to get multiple snippets all at once by specifying concatenated "
-"column name and literal as :doc:`/reference/functions/snippet_html` "
+"Supported the expression as :doc:`/reference/functions/snippet_html` "
 "arguments. This change enables you to use ``snippet_html(\"STRING\" + "
-"\"STRING\")`` syntax. [Reported by Tomoatsu Shimada]"
+"\"STRING\")`` for example. You can specify column name or literal for "
+"\"STRING\". [Reported by Tomoatsu Shimada]"
 msgstr ""
 
 # 8aa7f4cdba6b4ad283698e85413311b9
-#: ../../../source/news.txt:31
+#: ../../../source/news.txt:30
 msgid "Supported to create own normalizer as a plugin."
 msgstr ""
 
 # 7b46d53d9baf4554a3cd756e899c24fc
-#: ../../../source/news.txt:32
+#: ../../../source/news.txt:31
 msgid ""
 "Moved ``groonga-query-log-analyzer`` as `groonga-query-log <http://rubygems."
 "org/gems/groonga-query-log>`_ RubyGems. It enables you to analyze query logs "
@@ -114,14 +114,14 @@ msgid ""
 msgstr ""
 
 # 081dbee3c68a4564ab81aebb15f41f76
-#: ../../../source/news.txt:35
+#: ../../../source/news.txt:34
 msgid ""
 "Supported ``--normalizer`` option for :doc:`/reference/commands/"
 "table_create` command. This change enables you to specify normalizer plugin."
 msgstr ""
 
 # e15983309ae748369ff074cbe8a979b3
-#: ../../../source/news.txt:37
+#: ../../../source/news.txt:36
 msgid ""
 "Changed \"null\" string to null value as meaning for \"No Object\". This is "
 "backward incompatible change and affects output results of introspection "
@@ -129,10 +129,15 @@ msgid ""
 msgstr ""
 
 # 2a510d9fbd9849fc86a32b019ed3a40f
-#: ../../../source/news.txt:40
+#: ../../../source/news.txt:39
 msgid ""
 "Added a flag which controls behavior about normalizer as the last argument "
 "of ``grn_tokenizer_query_open`` API."
+msgstr ""
+
+# 31603005817d4ddf93d2fa155ab7c3cb
+#: ../../../source/news.txt:41
+msgid "Supported continuous line in command list."
 msgstr ""
 
 # 8dc446a0effc43e6be5f102554f859dd
