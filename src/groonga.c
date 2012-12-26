@@ -195,11 +195,10 @@ line_editor_fgets(grn_ctx *ctx, grn_obj *buf)
 #endif /* WITH_LIBEDIT */
 
 inline static grn_rc
-prompt(grn_ctx *ctx, grn_obj *buf)
+read_next_line(grn_ctx *ctx, grn_obj *buf)
 {
   static int the_first_read = GRN_TRUE;
   grn_rc rc = GRN_SUCCESS;
-  GRN_BULK_REWIND(buf);
   if (!batchmode) {
 #ifdef WITH_LIBEDIT
     rc = line_editor_fgets(ctx, buf);
@@ -235,6 +234,26 @@ prompt(grn_ctx *ctx, grn_obj *buf)
   if (GRN_TEXT_LEN(buf) > 0 &&
       GRN_TEXT_VALUE(buf)[GRN_TEXT_LEN(buf) - 1] == '\r') {
     grn_bulk_truncate(ctx, buf, GRN_TEXT_LEN(buf) - 1);
+  }
+  return rc;
+}
+
+inline static grn_rc
+prompt(grn_ctx *ctx, grn_obj *buf)
+{
+  grn_rc rc = GRN_SUCCESS;
+  grn_bool need_next_line = GRN_TRUE;
+  GRN_BULK_REWIND(buf);
+  while (need_next_line) {
+    rc = read_next_line(ctx, buf);
+    if (rc == GRN_SUCCESS &&
+        GRN_TEXT_LEN(buf) > 0 &&
+        GRN_TEXT_VALUE(buf)[GRN_TEXT_LEN(buf) - 1] == '\\') {
+      grn_bulk_truncate(ctx, buf, GRN_TEXT_LEN(buf) - 1);
+      need_next_line = GRN_TRUE;
+    } else {
+      need_next_line = GRN_FALSE;
+    }
   }
   return rc;
 }
