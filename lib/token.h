@@ -72,8 +72,11 @@ extern grn_obj *grn_token_uvector;
 grn_rc grn_token_init(void);
 grn_rc grn_token_fin(void);
 
+#define GRN_TOKEN_ENABLE_TOKENIZED_DELIMITER (0x01L<<0)
+
 GRN_API grn_token *grn_token_open(grn_ctx *ctx, grn_obj *table, const char *str,
-                                  size_t str_len, grn_token_mode mode);
+                                  size_t str_len, grn_token_mode mode,
+                                  unsigned int flags);
 
 GRN_API grn_id grn_token_next(grn_ctx *ctx, grn_token *ng);
 GRN_API grn_rc grn_token_close(grn_ctx *ctx, grn_token *ng);

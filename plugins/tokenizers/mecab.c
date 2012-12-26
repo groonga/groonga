@@ -36,7 +36,6 @@ typedef struct {
   const char *end;
   grn_tokenizer_query *query;
   grn_tokenizer_token token;
-  grn_bool have_tokenized_delimiter;
 } grn_mecab_tokenizer;
 
 static grn_encoding
@@ -138,13 +137,7 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                             &normalized_string,
                             &normalized_string_length,
                             NULL);
-  tokenizer->have_tokenized_delimiter =
-    grn_tokenizer_have_tokenized_delimiter(ctx,
-                                           normalized_string,
-                                           normalized_string_length,
-                                           query->encoding);
-
-  if (tokenizer->have_tokenized_delimiter) {
+  if (query->have_tokenized_delimiter) {
     tokenizer->buf = NULL;
     tokenizer->next = normalized_string;
     tokenizer->end = tokenizer->next + normalized_string_length;
@@ -200,7 +193,7 @@ mecab_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_mecab_tokenizer *tokenizer = user_data->ptr;
   grn_encoding encoding = tokenizer->query->encoding;
 
-  if (tokenizer->have_tokenized_delimiter) {
+  if (tokenizer->query->have_tokenized_delimiter) {
     tokenizer->next =
       grn_tokenizer_tokenized_delimiter_next(ctx,
                                              &(tokenizer->token),

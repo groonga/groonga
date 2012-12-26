@@ -810,7 +810,9 @@ learner_learn_for_suggest(grn_ctx *ctx, grn_suggest_learner *learner)
   char keybuf[GRN_TABLE_MAX_KEY_SIZE];
   int keylen = grn_table_get_key(ctx, learner->items, learner->post_item_id,
                                  keybuf, GRN_TABLE_MAX_KEY_SIZE);
-  grn_token *token = grn_token_open(ctx, learner->items, keybuf, keylen, 1);
+  unsigned int token_flags = 0;
+  grn_token *token = grn_token_open(ctx, learner->items, keybuf, keylen,
+                                    GRN_TOKEN_ADD, token_flags);
   if (token) {
     grn_id tid;
     grn_obj *pre_item = &(learner->pre_item);

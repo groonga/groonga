@@ -112,11 +112,6 @@ grn_tokenizer_have_tokenized_delimiter(grn_ctx *ctx,
   const char *current = str_ptr;
   const char *end = str_ptr + str_length;
 
-  /* TODO: disabled tokenized delimiter for now.
-     We should handle it just on query expander -> tokenizer phase not
-     all phases. */
-  return GRN_FALSE;
-
   if (encoding != GRN_ENC_UTF8) {
     return GRN_FALSE;
   }
@@ -140,7 +135,9 @@ grn_tokenizer_query *
 grn_tokenizer_query_open(grn_ctx *ctx, int num_args, grn_obj **args,
                          unsigned int normalize_flags)
 {
+  grn_obj *flags = grn_ctx_pop(ctx);
   grn_obj *query_str = grn_ctx_pop(ctx);
+
   if (query_str == NULL) {
     GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT, "missing argument");
     return NULL;
@@ -159,6 +156,11 @@ grn_tokenizer_query_open(grn_ctx *ctx, int num_args, grn_obj **args,
     }
     query->normalized_query = NULL;
     query->query_buf = NULL;
+    if (flags) {
+      query->flags = GRN_UINT32_VALUE(flags);
+    } else {
+      query->flags = 0;
+    }
 
     {
       grn_obj * const table = args[0];
@@ -177,21 +179,21 @@ grn_tokenizer_query_open(grn_ctx *ctx, int num_args, grn_obj **args,
       grn_table_get_info(ctx, table, &table_flags, &table_encoding, NULL,
                          &normalizer);
       {
-        grn_obj *normalized_string;
+        grn_obj *normalized_query;
         if (table_flags & GRN_OBJ_KEY_NORMALIZE) {
           normalizer = GRN_NORMALIZER_AUTO;
         }
-        normalized_string = grn_string_open_(ctx,
-                                             GRN_TEXT_VALUE(query_str),
-                                             GRN_TEXT_LEN(query_str),
-                                             normalizer,
-                                             normalize_flags,
-                                             table_encoding);
-        if (!normalized_string) {
+        normalized_query = grn_string_open_(ctx,
+                                            GRN_TEXT_VALUE(query_str),
+                                            GRN_TEXT_LEN(query_str),
+                                            normalizer,
+                                            normalize_flags,
+                                            table_encoding);
+        if (!normalized_query) {
           GRN_PLUGIN_FREE(ctx, query);
           return NULL;
         }
-        query->normalized_query = normalized_string;
+        query->normalized_query = normalized_query;
         memcpy(query_buf, GRN_TEXT_VALUE(query_str), query_length);
         query_buf[query_length] = '\0';
         query->query_buf = query_buf;
@@ -199,6 +201,24 @@ grn_tokenizer_query_open(grn_ctx *ctx, int num_args, grn_obj **args,
         query->length = query_length;
       }
       query->encoding = table_encoding;
+
+      if (query->flags & GRN_TOKEN_ENABLE_TOKENIZED_DELIMITER) {
+        const char *normalized_string;
+        unsigned int normalized_string_length;
+
+        grn_string_get_normalized(ctx,
+                                  query->normalized_query,
+                                  &normalized_string,
+                                  &normalized_string_length,
+                                  NULL);
+        query->have_tokenized_delimiter =
+          grn_tokenizer_have_tokenized_delimiter(ctx,
+                                                 normalized_string,
+                                                 normalized_string_length,
+                                                 query->encoding);
+      } else {
+        query->have_tokenized_delimiter = GRN_FALSE;
+      }
     }
     return query;
   }

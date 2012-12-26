@@ -5572,9 +5572,11 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
             switch (value->header.type) {
             case GRN_BULK :
               {
+                unsigned int token_flags = 0;
                 grn_token *token;
                 if (v && s &&
-                    (token = grn_token_open(ctx, lexicon, v, s, GRN_TOKEN_ADD))) {
+                    (token = grn_token_open(ctx, lexicon, v, s,
+                                            GRN_TOKEN_ADD, token_flags))) {
                   while (!token->status) {
                     grn_id tid = grn_token_next(ctx, token);
                     grn_bulk_write(ctx, &buf, (char *)&tid, sizeof(grn_id));

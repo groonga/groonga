@@ -78,6 +78,8 @@ struct _grn_tokenizer_query {
   const char *ptr;
   unsigned int length;
   grn_encoding encoding;
+  unsigned int flags;
+  grn_bool have_tokenized_delimiter;
 };
 
 /*
