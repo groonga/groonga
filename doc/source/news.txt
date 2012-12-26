@@ -30,7 +30,7 @@ Improvements
   [Reported by Tomoatsu Shimada]
 * Supported to create own normalizer as a plugin.
 * Moved ``groonga-query-log-analyzer`` as
-  `groonga-query-log <http://rubygems.org/gems/groonga-query-log>`_ rubygems.
+  `groonga-query-log <http://rubygems.org/gems/groonga-query-log>`_ RubyGems.
   It enables you to analyze query logs without installing groonga package.
 * Supported ``--normalizer`` option for :doc:`/reference/commands/table_create` command.
   This change enables you to specify normalizer plugin.
