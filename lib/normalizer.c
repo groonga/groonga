@@ -107,7 +107,7 @@ eucjp_normalize(grn_ctx *ctx, grn_string *nstr)
   int removeblankp = nstr->flags & GRN_STRING_REMOVE_BLANK;
   if (!(nstr->normalized = GRN_MALLOC(size * 2 + 1))) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
-        "[strinig][eucjp] failed to allocate normalized text space");
+        "[string][eucjp] failed to allocate normalized text space");
     return NULL;
   }
   d0 = (unsigned char *) nstr->normalized;
@@ -116,7 +116,7 @@ eucjp_normalize(grn_ctx *ctx, grn_string *nstr)
       GRN_FREE(nstr->normalized);
       nstr->normalized = NULL;
       ERR(GRN_NO_MEMORY_AVAILABLE,
-          "[strinig][eucjp] failed to allocate checks space");
+          "[string][eucjp] failed to allocate checks space");
       return NULL;
     }
   }
@@ -128,7 +128,7 @@ eucjp_normalize(grn_ctx *ctx, grn_string *nstr)
       nstr->checks = NULL;
       nstr->normalized = NULL;
       ERR(GRN_NO_MEMORY_AVAILABLE,
-          "[strinig][eucjp] failed to allocate character types space");
+          "[string][eucjp] failed to allocate character types space");
       return NULL;
     }
   }
@@ -352,7 +352,7 @@ sjis_normalize(grn_ctx *ctx, grn_string *nstr)
   int removeblankp = nstr->flags & GRN_STRING_REMOVE_BLANK;
   if (!(nstr->normalized = GRN_MALLOC(size * 2 + 1))) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
-        "[strinig][sjis] failed to allocate normalized text space");
+        "[string][sjis] failed to allocate normalized text space");
     return NULL;
   }
   d0 = (unsigned char *) nstr->normalized;
@@ -361,7 +361,7 @@ sjis_normalize(grn_ctx *ctx, grn_string *nstr)
       GRN_FREE(nstr->normalized);
       nstr->normalized = NULL;
       ERR(GRN_NO_MEMORY_AVAILABLE,
-          "[strinig][sjis] failed to allocate checks space");
+          "[string][sjis] failed to allocate checks space");
       return NULL;
     }
   }
@@ -373,7 +373,7 @@ sjis_normalize(grn_ctx *ctx, grn_string *nstr)
       nstr->checks = NULL;
       nstr->normalized = NULL;
       ERR(GRN_NO_MEMORY_AVAILABLE,
-          "[strinig][sjis] failed to allocate character types space");
+          "[string][sjis] failed to allocate character types space");
       return NULL;
     }
   }
@@ -626,7 +626,7 @@ utf8_normalize(grn_ctx *ctx, grn_string *nstr)
     nstr->flags & GRN_STRING_REMOVE_TOKENIZED_DELIMITER;
   if (!(nstr->normalized = GRN_MALLOC(ds + 1))) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
-        "[strinig][utf8] failed to allocate normalized text space");
+        "[string][utf8] failed to allocate normalized text space");
     return NULL;
   }
   if (nstr->flags & GRN_STRING_WITH_CHECKS) {
@@ -634,7 +634,7 @@ utf8_normalize(grn_ctx *ctx, grn_string *nstr)
       GRN_FREE(nstr->normalized);
       nstr->normalized = NULL;
       ERR(GRN_NO_MEMORY_AVAILABLE,
-          "[strinig][utf8] failed to allocate checks space");
+          "[string][utf8] failed to allocate checks space");
       return NULL;
     }
   }
@@ -644,7 +644,7 @@ utf8_normalize(grn_ctx *ctx, grn_string *nstr)
       if (nstr->checks) { GRN_FREE(nstr->checks); nstr->checks = NULL; }
       GRN_FREE(nstr->normalized); nstr->normalized = NULL;
       ERR(GRN_NO_MEMORY_AVAILABLE,
-          "[strinig][utf8] failed to allocate character types space");
+          "[string][utf8] failed to allocate character types space");
       return NULL;
     }
   }
@@ -695,7 +695,7 @@ utf8_normalize(grn_ctx *ctx, grn_string *nstr)
             if (nstr->checks) { GRN_FREE(nstr->checks); nstr->checks = NULL; }
             GRN_FREE(nstr->normalized); nstr->normalized = NULL;
             ERR(GRN_NO_MEMORY_AVAILABLE,
-                "[strinig][utf8] failed to expand normalized text space");
+                "[string][utf8] failed to expand normalized text space");
             return NULL;
           }
           de = normalized + ds;
@@ -708,7 +708,7 @@ utf8_normalize(grn_ctx *ctx, grn_string *nstr)
               GRN_FREE(nstr->checks); nstr->checks = NULL;
               GRN_FREE(nstr->normalized); nstr->normalized = NULL;
               ERR(GRN_NO_MEMORY_AVAILABLE,
-                  "[strinig][utf8] failed to expand checks space");
+                  "[string][utf8] failed to expand checks space");
               return NULL;
             }
             ch = checks + (ch - nstr->checks);
@@ -721,7 +721,7 @@ utf8_normalize(grn_ctx *ctx, grn_string *nstr)
               if (nstr->checks) { GRN_FREE(nstr->checks); nstr->checks = NULL; }
               GRN_FREE(nstr->normalized); nstr->normalized = NULL;
               ERR(GRN_NO_MEMORY_AVAILABLE,
-                  "[strinig][utf8] failed to expand character types space");
+                  "[string][utf8] failed to expand character types space");
               return NULL;
             }
             cp = ctypes + (cp - nstr->ctypes);
@@ -766,7 +766,7 @@ ascii_normalize(grn_ctx *ctx, grn_string *nstr)
   int removeblankp = nstr->flags & GRN_STRING_REMOVE_BLANK;
   if (!(nstr->normalized = GRN_MALLOC(size + 1))) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
-        "[strinig][ascii] failed to allocate normalized text space");
+        "[string][ascii] failed to allocate normalized text space");
     return NULL;
   }
   d0 = (unsigned char *) nstr->normalized;
@@ -775,7 +775,7 @@ ascii_normalize(grn_ctx *ctx, grn_string *nstr)
       GRN_FREE(nstr->normalized);
       nstr->normalized = NULL;
       ERR(GRN_NO_MEMORY_AVAILABLE,
-          "[strinig][ascii] failed to allocate checks space");
+          "[string][ascii] failed to allocate checks space");
       return NULL;
     }
   }
@@ -787,7 +787,7 @@ ascii_normalize(grn_ctx *ctx, grn_string *nstr)
       nstr->checks = NULL;
       nstr->normalized = NULL;
       ERR(GRN_NO_MEMORY_AVAILABLE,
-          "[strinig][ascii] failed to allocate character types space");
+          "[string][ascii] failed to allocate character types space");
       return NULL;
     }
   }
@@ -868,7 +868,7 @@ latin1_normalize(grn_ctx *ctx, grn_string *nstr)
   int removeblankp = nstr->flags & GRN_STRING_REMOVE_BLANK;
   if (!(nstr->normalized = GRN_MALLOC(size + 1))) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
-        "[strinig][latin1] failed to allocate normalized text space");
+        "[string][latin1] failed to allocate normalized text space");
     return NULL;
   }
   d0 = (unsigned char *) nstr->normalized;
@@ -877,7 +877,7 @@ latin1_normalize(grn_ctx *ctx, grn_string *nstr)
       GRN_FREE(nstr->normalized);
       nstr->normalized = NULL;
       ERR(GRN_NO_MEMORY_AVAILABLE,
-          "[strinig][latin1] failed to allocate checks space");
+          "[string][latin1] failed to allocate checks space");
       return NULL;
     }
   }
@@ -1003,7 +1003,7 @@ koi8r_normalize(grn_ctx *ctx, grn_string *nstr)
   int removeblankp = nstr->flags & GRN_STRING_REMOVE_BLANK;
   if (!(nstr->normalized = GRN_MALLOC(size + 1))) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
-        "[strinig][koi8r] failed to allocate normalized text space");
+        "[string][koi8r] failed to allocate normalized text space");
     return NULL;
   }
   d0 = (unsigned char *) nstr->normalized;
@@ -1012,7 +1012,7 @@ koi8r_normalize(grn_ctx *ctx, grn_string *nstr)
       GRN_FREE(nstr->normalized);
       nstr->normalized = NULL;
       ERR(GRN_NO_MEMORY_AVAILABLE,
-          "[strinig][koi8r] failed to allocate checks space");
+          "[string][koi8r] failed to allocate checks space");
       return NULL;
     }
   }
@@ -1024,7 +1024,7 @@ koi8r_normalize(grn_ctx *ctx, grn_string *nstr)
       nstr->checks = NULL;
       nstr->normalized = NULL;
       ERR(GRN_NO_MEMORY_AVAILABLE,
-          "[strinig][koi8r] failed to allocate character types space");
+          "[string][koi8r] failed to allocate character types space");
       return NULL;
     }
   }
