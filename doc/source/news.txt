@@ -24,7 +24,7 @@ Improvements
 ^^^^^^^^^^^^
 
 * [doc] Added documentation about :ref:`nested-index-search`.
-* Supported to customize output results by specifying concatenated column name
+* Supported to get multiple snippets all at once by specifying concatenated column name
   and literal as :doc:`/reference/functions/snippet_html` arguments.
   This change enables you to use ``snippet_html("STRING" + "STRING")`` syntax.
   [Reported by Tomoatsu Shimada]
