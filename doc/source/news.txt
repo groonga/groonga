@@ -16,6 +16,10 @@ Release 2.1.0 - 2012/12/29
    ``column_list`` commands. If you use own program which depends on the output
    results above commands, you need to support null instead of "null" string.
 
+   This release has supported ``--normalizer`` option, but there is side effect for
+   this feature. If you open old version of groonga database at least once, 
+   you can not open its database by old version of groonga.
+
    There is also another backward incompatible change agaist plugin API for
    tokenizer. The argument of ``grn_tokenizer_query_open`` API has changed.
    This API change affects developer of tokenizer plugin.
