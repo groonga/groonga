@@ -43,6 +43,8 @@ Improvements
 * Added a flag which controls behavior about normalizer as the last argument
   of ``grn_tokenizer_query_open`` API.
 * Supported continuous line in command list.
+* Improved to support not only no key table, but also hash table, patricia trie
+  and double array trie for :ref:`nested-index-search`.
 
 Fixes
 ^^^^^
@@ -54,6 +56,7 @@ Fixes
   negative value to disable functionality.
   This fix enable you to disable search escalation.
   see :option:`--default-match-escalation-threshold` about details.
+* Fixed a bug that ``_score`` after "*" is ignored in ``--output_columns``.
 
 Thanks
 ^^^^^^
