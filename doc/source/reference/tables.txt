@@ -8,11 +8,14 @@ Tables
 Summary
 -------
 
-Table in groonga manages relation between ID and key. Table provides
-both fast ID search by key and fast key search by ID.
+Table in groonga manages relation between ID and key. Groonga provides
+four table types. They are ``TABLE_NO_KEY``, ``TABLE_HASH_KEY``,
+``TABLE_PAT_KEY`` and ``TABLE_DAT_KEY``.
 
-Groonga provides four table types. They are ``TABLE_NO_KEY``,
-``TABLE_HASH_KEY``, ``TABLE_PAT_KEY`` and ``TABLE_DAT_KEY``.
+All table except ``TABLE_NO_KEY`` provides both fast ID search by key
+and fast key search by ID. ``TABLE_NO_KEY`` doesn't support
+key. ``TABLE_NO_KEY`` only manages ID. So ``TABLE_NO_KEY`` doesn't
+provides ID search and key search.
 
 Characteristics
 ---------------
@@ -101,6 +104,25 @@ table names to object ID. And groonga database needs to rename object
 name. Those features are implemented by ``TABLE_DAT_KEY``. The number
 of objects is small. So large data size demerit of ``TABLE_DAT_KEY``
 can be ignored.
+
+Limitations
+-----------
+
+Valid ID range is between 1 and 268435455. (1 and 268435455 are valid
+IDs.)
+
+The max number of records is 268435455. You cannot add 268435456 or
+more records in a table.
+
+The max number of a key size is 4096byte. You cannot use 4097byte or
+larger key. You can use column instead of key for 4097byte or larger
+size data. ``Text`` and ``LargeText`` types supports 4097byte or
+larger size data.
+
+The max number of total key size is 4GiB. You need to split a table,
+split a database (sharding) or reduce each key size to handle 4GiB or
+more larger total key size.
+
 
 See also
 --------
