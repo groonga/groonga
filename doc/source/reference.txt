@@ -12,6 +12,7 @@
    reference/output
    reference/command
    reference/type
+   reference/tables
    reference/tokenizers
    reference/query_expanders
    reference/pseudo_column

@@ -1,0 +1,108 @@
+.. -*- rst -*-
+
+.. highlightlang:: none
+
+Tables
+======
+
+Summary
+-------
+
+Table in groonga manages relation between ID and key. Table provides
+both fast ID search by key and fast key search by ID.
+
+Groonga provides four table types. They are ``TABLE_NO_KEY``,
+``TABLE_HASH_KEY``, ``TABLE_PAT_KEY`` and ``TABLE_DAT_KEY``.
+
+Characteristics
+---------------
+
+Here is a chracteristic table of all tables in groonga. (``TABLE_``
+prefix is omitted in the table.)
+
++--------------+------------+--------------+-------------+-------------+
+|              | ``NO_KEY`` | ``HASH_KEY`` | ``PAT_KEY`` | ``DAT_KEY`` |
++--------------+------------+--------------+-------------+-------------+
+| Data         | Array      | Hash table   | Patricia    | Double      |
+| structure    |            |              | trie        | array       |
+|              |            |              |             | trie        |
++--------------+------------+--------------+-------------+-------------+
+| ID           | o          | o            | o           | o           |
+| support      |            |              |             |             |
++--------------+------------+--------------+-------------+-------------+
+| Key          | x          | o            | o           | o           |
+| support      |            |              |             |             |
++--------------+------------+--------------+-------------+-------------+
+| Value        | o          | o            | o           | x           |
+| support      |            |              |             |             |
++--------------+------------+--------------+-------------+-------------+
+| Key -> ID    | -          | oo           | x           | o           |
+| speed        |            |              |             |             |
+| (o -> fast)  |            |              |             |             |
+| (x -> slow)  |            |              |             |             |
++--------------+------------+--------------+-------------+-------------+
+| Update       | ooo        | o            | o           | x           |
+| speed        |            |              |             |             |
+| (o -> fast)  |            |              |             |             |
+| (x -> slow)  |            |              |             |             |
++--------------+------------+--------------+-------------+-------------+
+| Size         | ooo        | o            | oo          | x           |
+| (o -> small) |            |              |             |             |
+| (x -> large) |            |              |             |             |
++--------------+------------+--------------+-------------+-------------+
+| Key          | -          | x            | x           | o           |
+| update       |            |              |             |             |
++--------------+------------+--------------+-------------+-------------+
+| Common       | -          | x            | o           | o           |
+| prefix       |            |              |             |             |
+| search       |            |              |             |             |
++--------------+------------+--------------+-------------+-------------+
+| Predictive   | -          | x            | o           | o           |
+| search       |            |              |             |             |
++--------------+------------+--------------+-------------+-------------+
+
+``TABLE_NO_KEY``
+^^^^^^^^^^^^^^^^
+
+``TABLE_NO_KEY`` is very fast and very small but it doesn't support
+key. ``TABLE_NO_KEY`` is a only table that doesn't support key.
+
+You cannot use ``TABLE_NO_KEY`` for lexicon for fulltext search
+because lexicon stores tokens as key. ``TABLE_NO_KEY`` is useful for
+no key records such as log.
+
+``TABLE_HASH_KEY``
+^^^^^^^^^^^^^^^^
+
+``TABLE_HASH_KEY`` is fast but it doesn't support advanced search
+functions such as common prefix search and predictive search.
+
+``TABLE_HASH_KEY`` is useful for index for exact search such as tag
+search.
+
+``TABLE_PAT_KEY``
+^^^^^^^^^^^^^^^^
+
+``TABLE_PAT_KEY`` is small and supports advanced search functions.
+
+``TABLE_PAT_KEY`` is useful for lexicon for fulltext search and
+index for range search.
+
+``TABLE_DAT_KEY``
+^^^^^^^^^^^^^^^^
+
+``TABLE_DAT_KEY`` is fast and supports key update but it is large. It
+is not suitable for storing many records. ``TABLE_DAT_KEY`` is a only
+table that supports key update.
+
+``TABLE_DAT_KEY`` is used in groonga database. Groonga database needs
+to convert object name such as ``ShortText``, ``TokenBigram`` and
+table names to object ID. And groonga database needs to rename object
+name. Those features are implemented by ``TABLE_DAT_KEY``. The number
+of objects is small. So large data size demerit of ``TABLE_DAT_KEY``
+can be ignored.
+
+See also
+--------
+
+* :doc:`/reference/commands/table_create`
