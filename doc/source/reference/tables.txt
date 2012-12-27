@@ -105,11 +105,42 @@ name. Those features are implemented by ``TABLE_DAT_KEY``. The number
 of objects is small. So large data size demerit of ``TABLE_DAT_KEY``
 can be ignored.
 
+Record ID
+---------
+
+Record ID is assigned automatically. You cannot assign record ID.
+
+Record ID of deleted record may be reused.
+
+Valid record ID range is between 1 and 268435455. (1 and 268435455 are
+valid IDs.)
+
+Persistent table and temporary table
+------------------------------------
+
+Table is persistent table or temporary table.
+
+Persistent table
+^^^^^^^^^^^^^^^^
+
+Persistent table is named and registered to database. Records in
+persistent table aren't deleted after closing table or
+database.
+
+Persistent table can be created by
+:doc:`/reference/commands/table_create` command.
+
+Temporary table
+^^^^^^^^^^^^^^^
+
+Temporary table is anonymous. Records in temporary table are deleted
+after closing table. Temporary table is used to store search result,
+sort result, group (drilldown) result and so on. ``TABLE_HASH_KEY`` is
+used for search result and group result. ``TABLE_NO_KEY`` is used for
+sort result.
+
 Limitations
 -----------
-
-Valid ID range is between 1 and 268435455. (1 and 268435455 are valid
-IDs.)
 
 The max number of records is 268435455. You cannot add 268435456 or
 more records in a table.
@@ -122,7 +153,6 @@ larger size data.
 The max number of total key size is 4GiB. You need to split a table,
 split a database (sharding) or reduce each key size to handle 4GiB or
 more larger total key size.
-
 
 See also
 --------
