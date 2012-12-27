@@ -13,6 +13,7 @@
    reference/command
    reference/type
    reference/tables
+   reference/normalizers
    reference/tokenizers
    reference/query_expanders
    reference/pseudo_column
