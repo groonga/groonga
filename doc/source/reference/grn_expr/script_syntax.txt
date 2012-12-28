@@ -221,7 +221,7 @@ Its syntax is ``name(arugment1, argument2, ...)``.
 ``name(argument1, argument2, ...)`` calls a function that is named
 ``name`` with arguments ``argument1``, ``argument2`` and ``...``.
 
-See :doc:`/reference/functions/` for available functin list.
+See :doc:`/reference/function` for available functin list.
 
 Here is a simple exmaple.
 

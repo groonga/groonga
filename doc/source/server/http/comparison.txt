@@ -123,7 +123,7 @@ configuration to use ``/api/`` as prefix path::
 Custom command version
 ----------------------
 
-Groonga has :doc:`/reference/command_version` mechanism. It is for
+Groonga has :doc:`/reference/command/command_version` mechanism. It is for
 upgrading groonga commands with backward compatibility.
 
 :doc:`groonga` can change the default command veresion by
