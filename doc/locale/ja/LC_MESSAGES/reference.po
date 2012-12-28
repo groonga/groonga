@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-28 15:08\n"
+"POT-Creation-Date: 2012-12-28 15:49\n"
 "PO-Revision-Date: 2012-11-26 10:13+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -6501,12 +6501,12 @@ msgstr ""
 msgid "コマンドファイル"
 msgstr ""
 
-# 1696d005131340edb76fed4b19106035
+# 3e44324098614d55ac19dbe94fb1ef96
 #: ../../../source/reference/executables/grntest.txt:137
 msgid ""
 "コマンドファイルは、groonga組み込みコマンドを1行に1つずつ記述したテキストファ"
 "イルです。拡張子に制限はありません。groonga組み込みコマンドに関しては :doc:`/"
-"reference/commands` を参照してください。"
+"reference/command` を参照してください。"
 msgstr ""
 
 # 3c59742b841d4a6b9265cf02db5e268a
@@ -7148,11 +7148,11 @@ msgstr ""
 msgid "output_typeにはjson, tsv, xmlが指定可能です。"
 msgstr ""
 
-# 90f040db7cae422d934cead4aabb86b2
+# 3dab239adcaa43b380b70c676eae7135
 #: ../../../source/reference/executables/groonga-server-http.txt:51
 msgid ""
 "command_versionはコマンドの仕様の互換性を指定します。詳細は :doc:`/reference/"
-"command_version` を参照してください。"
+"command/command_version` を参照してください。"
 msgstr ""
 
 # 13dc17c2318b49c089f7af73475ef3fe
@@ -7423,188 +7423,196 @@ msgid ""
 "を指定します。"
 msgstr ""
 
+# 5d07b6aeb93e42c198a0e3bc4cf86749
+#: ../../../source/reference/executables/groonga.txt:157
+msgid ""
+"You can write command list with continuous line which is represented by '\\"
+"\\' character.::"
+msgstr ""
+"'\\\\'文字で継続行であることを明示してコマンドリストを記述することができます。"
+
 # 9a03066fc9bc487ab2760c191eaf75bd
-#: ../../../source/reference/executables/groonga.txt:158
+#: ../../../source/reference/executables/groonga.txt:165
 msgid "組み込みコマンド"
 msgstr ""
 
 # 25df7361384a4c7fa990f1d012be8c2b
-#: ../../../source/reference/executables/groonga.txt:160
+#: ../../../source/reference/executables/groonga.txt:167
 msgid "以下のコマンドは組み込みコマンドとして予め定義されています。"
 msgstr ""
 
 # 183ef3302d6642dd814efc4e09d8227b
-#: ../../../source/reference/executables/groonga.txt:162
+#: ../../../source/reference/executables/groonga.txt:169
 msgid "``status``"
 msgstr ""
 
 # 07c66547844f46d882015a2a27479f5e
-#: ../../../source/reference/executables/groonga.txt:163
+#: ../../../source/reference/executables/groonga.txt:170
 msgid "groongaプロセスの状態を表示します。"
 msgstr ""
 
 # 609ce72b00dd4ab3b5ebf05b87481814
-#: ../../../source/reference/executables/groonga.txt:165
+#: ../../../source/reference/executables/groonga.txt:172
 msgid "``table_list``"
 msgstr ""
 
 # 0b4594a8cd92413a8033c412e7e0642c
-#: ../../../source/reference/executables/groonga.txt:166
+#: ../../../source/reference/executables/groonga.txt:173
 msgid "DBに定義されているテーブルのリストを表示します。"
 msgstr ""
 
 # 37f1f09fd7b849788ae7383256a2e2bb
-#: ../../../source/reference/executables/groonga.txt:168
+#: ../../../source/reference/executables/groonga.txt:175
 msgid "``column_list``"
 msgstr ""
 
 # b928989ffb65490aac18a80bf375ff95
-#: ../../../source/reference/executables/groonga.txt:169
+#: ../../../source/reference/executables/groonga.txt:176
 msgid "テーブルに定義されているカラムのリストを表示します。"
 msgstr ""
 
 # ec0ec14de7024e13a277d637d27d8dcd
-#: ../../../source/reference/executables/groonga.txt:172
+#: ../../../source/reference/executables/groonga.txt:179
 msgid "DBにテーブルを追加します。"
 msgstr ""
 
 # 9c80808ad62d48409033004ef7a23ea6
-#: ../../../source/reference/executables/groonga.txt:174
+#: ../../../source/reference/executables/groonga.txt:181
 msgid "``column_create``"
 msgstr ""
 
 # 2bee51ae73e9432cbda7e577a13ea334
-#: ../../../source/reference/executables/groonga.txt:175
+#: ../../../source/reference/executables/groonga.txt:182
 msgid "テーブルにカラムを追加します。"
 msgstr ""
 
 # 15e0aa0995144e3fa447e233cf171049
-#: ../../../source/reference/executables/groonga.txt:177
+#: ../../../source/reference/executables/groonga.txt:184
 msgid "``table_remove``"
 msgstr ""
 
 # b825e1da34fa42e6be1eb1a320b4c011
-#: ../../../source/reference/executables/groonga.txt:178
+#: ../../../source/reference/executables/groonga.txt:185
 msgid "DBに定義されているテーブルを削除します。"
 msgstr ""
 
 # 4fc5f0073ee14209b81c4314e193d763
-#: ../../../source/reference/executables/groonga.txt:180
+#: ../../../source/reference/executables/groonga.txt:187
 msgid "``column_remove``"
 msgstr ""
 
 # e689add8bcc24094abf485db34648763
-#: ../../../source/reference/executables/groonga.txt:181
+#: ../../../source/reference/executables/groonga.txt:188
 msgid "テーブルに定義されているカラムを削除します。"
 msgstr ""
 
 # f6b5ce493bd245628116df39f4546e98
-#: ../../../source/reference/executables/groonga.txt:183
+#: ../../../source/reference/executables/groonga.txt:190
 msgid "``view_add``"
 msgstr ""
 
 # e190153bb37e4d2184b76656f6adfe51
-#: ../../../source/reference/executables/groonga.txt:184
+#: ../../../source/reference/executables/groonga.txt:191
 msgid "VIEW型のテーブルに要素となるテーブルを定義します。"
 msgstr ""
 
 # c4ef53521aa74d0e804ccd440321b2c5
-#: ../../../source/reference/executables/groonga.txt:186
+#: ../../../source/reference/executables/groonga.txt:193
 msgid "``load``"
 msgstr ""
 
 # 411c946f0be94778b817f9be372129bd
-#: ../../../source/reference/executables/groonga.txt:187
+#: ../../../source/reference/executables/groonga.txt:194
 msgid "テーブルにレコードを挿入します。"
 msgstr ""
 
 # 706fa164d49d4466a161bb283f63d13c
-#: ../../../source/reference/executables/groonga.txt:190
+#: ../../../source/reference/executables/groonga.txt:197
 msgid "テーブルに含まれるレコードを検索して表示します。"
 msgstr ""
 
 # cdd902a03b304d2c833322d00abb623d
-#: ../../../source/reference/executables/groonga.txt:192
+#: ../../../source/reference/executables/groonga.txt:199
 msgid "``define_selector``"
 msgstr ""
 
 # 4718b7c8e1e544c99f67a7cad2770262
-#: ../../../source/reference/executables/groonga.txt:193
+#: ../../../source/reference/executables/groonga.txt:200
 msgid "検索条件をカスタマイズした新たな検索コマンドを定義します。"
 msgstr ""
 
 # 5dafe59394484572812e1fb2f5520b52
-#: ../../../source/reference/executables/groonga.txt:195
+#: ../../../source/reference/executables/groonga.txt:202
 msgid "``quit``"
 msgstr ""
 
 # 72bc9c29a9724633b7fe829cf11ad4d0
-#: ../../../source/reference/executables/groonga.txt:196
+#: ../../../source/reference/executables/groonga.txt:203
 msgid "データベースとのセッションを終了します。"
 msgstr ""
 
 # e762fdaa976844d99174991e15d79eea
-#: ../../../source/reference/executables/groonga.txt:198
+#: ../../../source/reference/executables/groonga.txt:205
 msgid "``shutdown``"
 msgstr ""
 
 # b41457d84ff74e448918c588a3b16357
-#: ../../../source/reference/executables/groonga.txt:199
+#: ../../../source/reference/executables/groonga.txt:206
 msgid "サーバ(デーモン)プロセスを停止します。"
 msgstr ""
 
 # 95a64dab455740f99ea4b34cb8041acc
-#: ../../../source/reference/executables/groonga.txt:201
+#: ../../../source/reference/executables/groonga.txt:208
 msgid "``log_level``"
 msgstr ""
 
 # 363fc05bdb094880bc97d0ea827022ec
-#: ../../../source/reference/executables/groonga.txt:202
+#: ../../../source/reference/executables/groonga.txt:209
 msgid "ログ出力レベルを設定します。"
 msgstr ""
 
 # b34bd800ce73496fa78e7ae32f6873c5
-#: ../../../source/reference/executables/groonga.txt:204
+#: ../../../source/reference/executables/groonga.txt:211
 msgid "``log_put``"
 msgstr ""
 
 # 305f24ddaddd4d55a594801a6a877310
-#: ../../../source/reference/executables/groonga.txt:205
+#: ../../../source/reference/executables/groonga.txt:212
 msgid "ログ出力を行います。"
 msgstr ""
 
 # 65ed7729797341a3a814345d71d70367
-#: ../../../source/reference/executables/groonga.txt:208
+#: ../../../source/reference/executables/groonga.txt:215
 msgid "``clearlock``"
 msgstr ""
 
 # cbb234a59df94393b473d409c8044244
-#: ../../../source/reference/executables/groonga.txt:208
+#: ../../../source/reference/executables/groonga.txt:215
 msgid "ロックを解除します。"
 msgstr ""
 
 # bc4b67998f6344c8bef819afa6fb59cf
-#: ../../../source/reference/executables/groonga.txt:214
+#: ../../../source/reference/executables/groonga.txt:221
 msgid "新しいデータベースを作成します。::"
 msgstr ""
 
 # 742ed4d07d9145cdbafd756de32aa195
-#: ../../../source/reference/executables/groonga.txt:219
+#: ../../../source/reference/executables/groonga.txt:226
 msgid "作成済みのデータベースにテーブルを定義します。::"
 msgstr ""
 
 # d2c98e3a1203440ea3400d045bf6d99f
-#: ../../../source/reference/executables/groonga.txt:225
+#: ../../../source/reference/executables/groonga.txt:232
 msgid "サーバを起動します。::"
 msgstr ""
 
 # 8b17e697f28a475e80c4e0fc4985c7d6
-#: ../../../source/reference/executables/groonga.txt:230
+#: ../../../source/reference/executables/groonga.txt:237
 msgid "httpサーバとして起動します。::"
 msgstr ""
 
 # baba0d372d6f47008f59dc8786df686f
-#: ../../../source/reference/executables/groonga.txt:235
+#: ../../../source/reference/executables/groonga.txt:242
 msgid "サーバに接続し、テーブル一覧を表示します。::"
 msgstr ""
 
@@ -10053,9 +10061,9 @@ msgstr ""
 
 # bde897b0ca22430eb927c3f3d85d70d2
 #: ../../../source/reference/grn_expr/script_syntax.txt:224
-msgid "See :doc:`/reference/functions/` for available functin list."
+msgid "See :doc:`/reference/function` for available functin list."
 msgstr ""
-"利用可能な関数の一覧は :doc:`/reference/functions/` を参照してください。"
+"利用可能な関数の一覧は :doc:`/reference/function` を参照してください。"
 
 # 9578eff043bd4d21b54d81d83f7684dd
 #: ../../../source/reference/grn_expr/script_syntax.txt:232

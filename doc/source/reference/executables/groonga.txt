@@ -154,6 +154,13 @@ groongaコマンドを通してデータベースを操作する命令をコマ�
 
 標準入力からコマンド文字列を与える場合は、コマンド名と引数名と値は、空白( )で区切ります。空白や、記号「"'()\」のうちいずれかを含む値を指定したい場合は、シングルクォート(')かダブルクォート(")で値を囲みます。値として指定する文字列の中では、改行文字は'\n'に置き換えて指定します。また、引用符に使用した文字を値の中で指定する場合には、その文字の前にバックスラッシュ('\') を指定します。バックスラッシュ文字自身を値として指定する場合には、その前にバックスラッシュを指定します。
 
+You can write command list with continuous line which is represented by '\\' character.::
+
+  table_create --name Terms \
+               --flags TABLE_PAT_KEY \
+               --key_type ShortText \
+               --default_tokenizer TokenBigram
+
 組み込みコマンド
 ----------------
 
