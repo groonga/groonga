@@ -357,12 +357,14 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/grn_expr/script_syntax.txt \
 	$(top_srcdir)/doc/source/reference/indexing.txt \
 	$(top_srcdir)/doc/source/reference/log.txt \
+	$(top_srcdir)/doc/source/reference/normalizers.txt \
 	$(top_srcdir)/doc/source/reference/output.txt \
 	$(top_srcdir)/doc/source/reference/pseudo_column.txt \
 	$(top_srcdir)/doc/source/reference/query_expanders.txt \
 	$(top_srcdir)/doc/source/reference/query_expanders/tsv.txt \
+	$(top_srcdir)/doc/source/reference/tables.txt \
 	$(top_srcdir)/doc/source/reference/tokenizers.txt \
-	$(top_srcdir)/doc/source/reference/type.txt \
+	$(top_srcdir)/doc/source/reference/types.txt \
 	$(top_srcdir)/doc/source/server.txt \
 	$(top_srcdir)/doc/source/server/gqtp.txt \
 	$(top_srcdir)/doc/source/server/http.txt \
@@ -766,12 +768,14 @@ source_files_relative_from_doc_dir = \
 	source/reference/grn_expr/script_syntax.txt \
 	source/reference/indexing.txt \
 	source/reference/log.txt \
+	source/reference/normalizers.txt \
 	source/reference/output.txt \
 	source/reference/pseudo_column.txt \
 	source/reference/query_expanders.txt \
 	source/reference/query_expanders/tsv.txt \
+	source/reference/tables.txt \
 	source/reference/tokenizers.txt \
-	source/reference/type.txt \
+	source/reference/types.txt \
 	source/server.txt \
 	source/server/gqtp.txt \
 	source/server/http.txt \
@@ -983,12 +987,14 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/grn_expr/script_syntax.txt \
 	html/_sources/reference/indexing.txt \
 	html/_sources/reference/log.txt \
+	html/_sources/reference/normalizers.txt \
 	html/_sources/reference/output.txt \
 	html/_sources/reference/pseudo_column.txt \
 	html/_sources/reference/query_expanders.txt \
 	html/_sources/reference/query_expanders/tsv.txt \
+	html/_sources/reference/tables.txt \
 	html/_sources/reference/tokenizers.txt \
-	html/_sources/reference/type.txt \
+	html/_sources/reference/types.txt \
 	html/_sources/server.txt \
 	html/_sources/server/gqtp.txt \
 	html/_sources/server/http.txt \
@@ -1133,12 +1139,14 @@ html_files_relative_from_locale_dir = \
 	html/reference/grn_expr/script_syntax.html \
 	html/reference/indexing.html \
 	html/reference/log.html \
+	html/reference/normalizers.html \
 	html/reference/output.html \
 	html/reference/pseudo_column.html \
 	html/reference/query_expanders.html \
 	html/reference/query_expanders/tsv.html \
+	html/reference/tables.html \
 	html/reference/tokenizers.html \
-	html/reference/type.html \
+	html/reference/types.html \
 	html/search.html \
 	html/searchindex.js \
 	html/server.html \
