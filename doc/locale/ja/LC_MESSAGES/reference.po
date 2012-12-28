@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-28 15:49\n"
-"PO-Revision-Date: 2012-11-26 10:13+0900\n"
+"POT-Creation-Date: 2012-12-28 15:08\n"
+"PO-Revision-Date: 2012-12-28 17:49+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -5202,54 +5202,50 @@ msgstr ""
 msgid ""
 "``table_create`` creates a new table in the current database. You need to "
 "create one or more tables to store and search data."
-msgstr ""
+msgstr "``table_create`` は現在のデータベースに新しいテーブルを作成します。データを保存したり検索したりするために、1つ以上のテーブルを作成する必要があります。"
 
 # 11735dbadce24d1a8e2288562b95c236
 #: ../../../source/reference/commands/table_create.txt:20
-#, fuzzy
 msgid ""
 "``table_create`` has many parameters. The required parameter is only "
 "``name`` and otehrs are optional::"
-msgstr ""
-"``select`` には多くの引数があります。必須の引数は ``table`` だけで、残りは省"
-"略できます。::"
+msgstr "``table_create`` には多くの引数があります。必須の引数は ``name`` だけで、残りは省略できます。::"
 
 # 310fd59774fe4adcbd1980250fcfe9d3
 #: ../../../source/reference/commands/table_create.txt:33
 msgid ""
 "``table_create`` command creates a new persistent table. See :doc:`/"
 "reference/tables` for table details."
-msgstr ""
+msgstr "``table_create`` コマンドは新しく永続テーブルを作成します。テーブルの詳細については :doc:`/reference/tables` を参照してください。"
 
 # 4aa9a27449614eebb3dc4d217602e9a1
 #: ../../../source/reference/commands/table_create.txt:37
 msgid "Create data store table"
-msgstr ""
+msgstr "データ保存用テーブルの作成"
 
 # af382ec5606e4772a25a65de24331d28
 #: ../../../source/reference/commands/table_create.txt:39
 msgid ""
 "You can use all table types for data store table. See :doc:`/reference/"
 "tables` for all table types."
-msgstr ""
+msgstr "データ保存用のテーブルにはどの種類のテーブルでも使えます。テーブルの種類については :doc:`/reference/tables` を参照してください。"
 
 # 682a494a76f9436a88dfa5f11a29eb55
 #: ../../../source/reference/commands/table_create.txt:42
 msgid "Table type is specified as ``TABLE_${TYPE}`` to ``flags`` parameter."
-msgstr ""
+msgstr "テーブルの型は ``TABLE_${TYPE}`` を ``flags`` 引数に指定します。"
 
 # 1ccd84b3f15a4567b23bb0e7d8c66fcd
 #: ../../../source/reference/commands/table_create.txt:44
-#, fuzzy
 msgid "Here is an example to create ``TABLE_NO_KEY`` table:"
-msgstr "以下は ``NONE`` の使用例です。"
+msgstr "以下は ``TABLE_NO_KEY`` テーブルを使う例です。"
 
 # 71a4c4097ae04f5db2610a2bef89687e
 #: ../../../source/reference/commands/table_create.txt:50
 msgid ""
 "The ``table_create`` command creates a table that is named ``Logs`` and is "
 "``TABLE_NO_KEY`` type."
-msgstr ""
+msgstr "この ``table_create`` コマンドは ``Logs`` という名前で ``TABLE_NO_KEY`` 型のテーブルを作成します。"
 
 # be55ed80d1c94b7199c9dbefbba7aced
 #: ../../../source/reference/commands/table_create.txt:53
@@ -5257,137 +5253,135 @@ msgid ""
 "If your records aren't searched by key, ``TABLE_NO_KEY`` type table is "
 "suitable. Because ``TABLE_NO_KEY`` doesn't support key but it is fast and "
 "small table. Storing logs into groonga database is the case."
-msgstr ""
+msgstr "キーでレコードを検索しないのであれば、 ``TABLE_NO_KEY`` 型のテーブルが適切です。なぜなら、 ``TABLE_NO_KEY`` はキーをサポートしていませんが、速くて小さいサイズのテーブルだからです。ログをgroongaのデータベースに保存するという使い方はこのケースです。"
 
 # 3ea1c7974adf4235b10b25c3690c161a
 #: ../../../source/reference/commands/table_create.txt:57
 msgid ""
-"If your records are search by key or referenced by one or more columns, "
+"If your records are searched by key or referenced by one or more columns, "
 "``TABLE_NO_KEY`` type isn't suitable. Lexicon for fulltext search is the "
 "case."
-msgstr ""
+msgstr "キーでレコードを検索したり、カラムからレコードを参照したりする場合は、 ``TABLE_NO_KEY`` 型は適していません。全文検索用の語彙表として使うケースはこのケースです。"
 
 # 242da2784cfd4b4d8284353c9acb349b
 #: ../../../source/reference/commands/table_create.txt:62
 msgid "Create lexicon table"
-msgstr ""
+msgstr "語彙表テーブルの作成"
 
 # b0bbb453f4c94f87ac6344cc3e38f72e
 #: ../../../source/reference/commands/table_create.txt:64
 msgid ""
 "You can use all table types except ``TABLE_NO_KEY`` for lexicon table. "
 "Lexicon table needs key support but ``TABLE_NO_KEY`` doesn't support key."
-msgstr ""
+msgstr "語彙表テーブル用のテーブルには ``TABLE_NO_KEY`` 以外の型のテーブルを使います。語彙表テーブルはキーをサポートしていないといけませんが、 ``TABLE_NO_KEY`` はキーをサポートしていません。"
 
 # 1ccd84b3f15a4567b23bb0e7d8c66fcd
 #: ../../../source/reference/commands/table_create.txt:68
-#, fuzzy
 msgid "Here is an example to create ``TABLE_PAT_KEY`` table:"
-msgstr "以下は ``ALLOW_UPDATE`` の使用例です。"
+msgstr "以下は ``TABLE_PAT_KEY`` テーブルを作る例です。"
 
 # 7964741b9a784d0da57a6b72403ce53a
 # 2b8aadcf3ebb4a5c91dd55759e28a525
 # 350c8712dd04444d911b31ae592ba01c
 #: ../../../source/reference/commands/table_create.txt:74
-#, fuzzy
 msgid "The ``table_create`` command creates the following table:"
-msgstr "上記のコマンドは以下のコマンドと同じ意味です::"
+msgstr "この ``table_create`` コマンドは以下のテーブルを作成します。"
 
 # cbef51235eab490d995f0b52950e6930
 #: ../../../source/reference/commands/table_create.txt:76
 msgid "The table is named ``Lexicon``."
-msgstr ""
+msgstr "このテーブルは ``Lexicon`` という名前です。"
 
 # be060d77b0864a939da585853705b2c4
 #: ../../../source/reference/commands/table_create.txt:77
 msgid "The table is ``TABLE_PAT_KEY`` type table."
-msgstr ""
+msgstr "このテーブルは ``TABLE_PAT_KEY`` 型のテーブルです。"
 
 # 62a96fa1337344e484bdbc576de2d4aa
 #: ../../../source/reference/commands/table_create.txt:78
 msgid "The table's key is ``ShortText`` type."
-msgstr ""
+msgstr "このテーブルのキーは ``ShortText`` 型です。"
 
 # 1a53ee9abd8248328d574cfc0be05ed4
 #: ../../../source/reference/commands/table_create.txt:79
 msgid ""
 "The table uses ``TokenBigram`` tokenizer to extract tokens from a normalized "
 "text."
-msgstr ""
+msgstr "このテーブルは正規化されたテキストからトークンを抽出するために ``TokenBigram`` トークナイザーを使います。"
 
 # 775268a22a024076ac2546f5b9fe9e4f
 #: ../../../source/reference/commands/table_create.txt:81
 msgid "The table uses ``NormalizerAuto`` normalizer to normalize a text."
-msgstr ""
+msgstr "このテーブルはテキストを正規化するために ``NormalizerAuto`` ノーマライザーを使います。"
 
 # 606ad03182b944949d6a9ff81d2e47d0
 #: ../../../source/reference/commands/table_create.txt:83
 msgid ""
 "``TABLE_PAT_KEY`` is suitable table type for lexicon table. Lexicon table is "
 "used for fulltext search."
-msgstr ""
+msgstr "語彙表テーブルには ``TABLE_PAT_KEY`` が適切なテーブルの型です。語彙表テーブルは全文検索に使われます。"
 
 # 47a226cd1d0d46d691f1567fb1dce67f
 #: ../../../source/reference/commands/table_create.txt:86
 msgid ""
 "In fulltext search, predictive search may be used for fuzzy search. "
-"Predictive search is supported by ``TABLE_PAT_KEY`` and ``TABLE_DAT_KEY``. "
-"Lexicon table has many keys because a fulltext target text has many tokens."
-msgstr ""
+"Predictive search is supported by ``TABLE_PAT_KEY`` and ``TABLE_DAT_KEY``."
+msgstr "全文検索では、あいまい検索をするために前方一致検索を使っています。前方一致検索は ``TABLE_PAT_KEY`` と ``TABLE_DAT_KEY`` がサポートしています。"
 
 # 305b59ad3adb40fd9627a673d1a3a80d
 #: ../../../source/reference/commands/table_create.txt:91
 msgid ""
+"Lexicon table has many keys because a fulltext target text has many tokens. "
 "Table that has many keys should consider table size because large table "
 "requires large memory. Requiring large memory causes disk I/O. It blocks "
 "fast search. So table size is important for a table that has many keys. "
 "``TABLE_PAT_KEY`` is less table size than ``TABLE_DAT_KEY``."
-msgstr ""
+msgstr "全文検索対象のテキストには大量のトークンが含まれるので、語彙表テーブルのキーも大量になります。大量のキーを格納するテーブルの場合はテーブルのサイズを意識する必要があります。これは、大きなテーブルはそれだけ多くのメモリーを必要とするからです。多くのメモリーが必要になると、ディスクI/Oが発生することもあります。ディスクI/Oが発生すると高速に検索できなくなります。そのため、大量のキーがあるテーブルの場合はテーブルのサイズが重要になります。``TABLE_PAT_KEY`` は ``TABLE_DAT_KEY`` よりもテーブルのサイズが小さいです。"
 
 # 817ab6dc2af5416199b18a3bcfcfa48d
 #: ../../../source/reference/commands/table_create.txt:97
 msgid ""
 "Because of the above reasons, ``TABLE_PAT_KEY`` is suitable table type for "
 "lexicon table."
-msgstr ""
+msgstr "上記の理由から、 ``TABLE_PAT_KEY`` が語彙表テーブルに適したテーブルの型です。"
 
 # d63c7815788f435abe531c85072637c7
 #: ../../../source/reference/commands/table_create.txt:101
 msgid "Create tag index table"
-msgstr ""
+msgstr "タグインデックス用テーブルの作成"
 
 # a60f07fe2fb7450c87cf99986fcfd9a0
 #: ../../../source/reference/commands/table_create.txt:103
 msgid ""
 "You can use all table types except ``TABLE_NO_KEY`` for tag index table. Tag "
 "index table needs key support but ``TABLE_NO_KEY`` doesn't support key."
-msgstr ""
+msgstr "タグインデックス用のテーブルには ``TABLE_NO_KEY`` 以外の型のテーブルを使えます。タグインデックス用のテーブルはキーのサポートが必要ですが、 ``TABLE_NO_KEY`` はキーをサポートしていません。"
 
 # cb796a036b344d53b351a21cbf35f352
 #: ../../../source/reference/commands/table_create.txt:107
 msgid "Here is an example to create ``TABLE_HASH_KEY`` table:"
-msgstr ""
+msgstr "以下は ``TABLE_HASH_KEY`` 型のテーブルを作る例です。"
 
 # d7fc0b17d6004f1cb3b9b972722c655d
 #: ../../../source/reference/commands/table_create.txt:113
 msgid ""
 "The ``table_create`` command creates a table that is named ``Tags``, is "
 "``TABLE_HASH_KEY`` type and has ``ShortText`` type key."
-msgstr ""
+msgstr "この ``table_create`` コマンドは ``Tags`` という名前で ``TABLE_HASH_KEY`` 型のテーブルを作ります。このテーブルのキーは ``ShortText`` 型です。"
 
 # 804637179acd4dfebee7eaef819dbe22
 #: ../../../source/reference/commands/table_create.txt:116
 msgid ""
 "``TABLE_HASH_KEY`` or ``TABLE_DAT_KEY`` are suitable table types for tag "
 "index table."
-msgstr ""
+msgstr "タグインデックス用のテーブルには ``TABLE_HASH_KEY`` あるいは ``TABLE_DAT_KEY`` が適切なテーブルの型です。"
 
 # c90a9d5cdfd6437681a69bb254ba486d
 #: ../../../source/reference/commands/table_create.txt:119
 msgid ""
 "If you need only exact match tag search feature, ``TABLE_HASH_KEY`` is "
 "suitable. It is the common case."
-msgstr ""
+msgstr "完全一致でタグを検索する機能だけが必要なら、 ``TABLE_HASH_KEY`` が適切です。多くの場合はこのケースです。"
 
 # f7e794fa938f4ce3a5dc3028a4fb878a
 #: ../../../source/reference/commands/table_create.txt:122
@@ -5396,12 +5390,12 @@ msgid ""
 "\"groonga\"`` by ``\"gr\"`` keyword.), ``TABLE_DAT_KEY`` is suitable. "
 "``TABLE_DAT_KEY`` is large table size but it is not important because the "
 "number of tags will not be large."
-msgstr ""
+msgstr "もし、前方一致検索機能も必要な場合（例えば、 ``\"gr\"`` というキーワードで ``\"groonga\"`` を検索する場合）は、 ``TABLE_DAT_KEY`` が適切です。 ``TABLE_DAT_KEY`` はサイズの大きなテーブルですが、タグの数はそれほど多くならないので、サイズは重要ではありません。"
 
 # ff0f74c90fcb4f52b80e6ae6b9c0ab8a
 #: ../../../source/reference/commands/table_create.txt:128
 msgid "Create range index table"
-msgstr ""
+msgstr "範囲検索用のインデックステーブルの作成"
 
 # 67ce3437f5a04c2c88094336715c5661
 #: ../../../source/reference/commands/table_create.txt:130
@@ -5409,27 +5403,26 @@ msgid ""
 "You can use ``TABLE_PAT_KEY`` and ``TABLE_DAT_KEY`` table types for range "
 "index table. Range index table needs range search support but "
 "``TABLE_NO_KEY`` and ``TABLE_HASH_KEY`` don't support it."
-msgstr ""
+msgstr "範囲検索用のインデックステーブルには ``TABLE_PAT_KEY`` 型と ``TABLE_DAT_KEY`` 型を使えます。範囲検索用のインデックステーブルは範囲検索をサポートしている必要がありますが、 ``TABLE_NO_KEY`` 型と ``TABLE_HASH_KEY`` 型はサポートしていません。"
 
 # 1ccd84b3f15a4567b23bb0e7d8c66fcd
 #: ../../../source/reference/commands/table_create.txt:134
-#, fuzzy
 msgid "Here is an example to create ``TABLE_DAT_KEY`` table:"
-msgstr "以下は ``ALLOW_UPDATE`` の使用例です。"
+msgstr "以下は ``TABLE_DAT_KEY`` テーブルを作成する例です。"
 
 # a65e610706b04823b503596c44994cbd
 #: ../../../source/reference/commands/table_create.txt:140
 msgid ""
 "The ``table_create`` command creates a table that is named ``Ages``, is "
 "``TABLE_DAT_KEY`` type and has ``UInt32`` type key."
-msgstr ""
+msgstr "この ``table_create`` コマンドは ``Ages`` という名前で ``TABLE_DAT_KEY`` 型のテーブルを作成します。このテーブルのキーの型は ``UInt32`` です。"
 
 # 38f43eac3b934381a2bb081743b3b005
 #: ../../../source/reference/commands/table_create.txt:143
 msgid ""
-"``TABLE_PAT_KEY`` or ``TABLE_DAT_KEY`` are suitable table types for range "
+"``TABLE_PAT_KEY`` and ``TABLE_DAT_KEY`` are suitable table types for range "
 "index table."
-msgstr ""
+msgstr "範囲検索用のインデックステーブルには ``TABLE_PAT_KEY`` 型と ``TABLE_DAT_KEY`` 型が適切なテーブルの型です。"
 
 # 6995363f4997492fa4df770342578b50
 #: ../../../source/reference/commands/table_create.txt:146
@@ -5437,106 +5430,97 @@ msgid ""
 "If you don't have many indexed items, ``TABLE_DAT_KEY`` is suitable. Index "
 "for age is the case in the above example. Index for age will have only 0-100 "
 "items because human doesn't live so long."
-msgstr ""
+msgstr "インデックス対象の項目が少なければ、 ``TABLE_DAT_KEY`` 型が適切です。前述の例では、年齢（age）用のインデックスがこのケースになります。年齢のインデックスはせいぜい0から100項目くらいにしかなりません。これは、人はそんなに長生きできないからです。"
 
 # 7b2ab1e60acf4c1a93e4808490703d7b
 #: ../../../source/reference/commands/table_create.txt:150
 msgid ""
 "If you have many indexed items, ``TABLE_PAT_KEY`` is suitable. Because "
 "``TABLE_PAT_KEY`` is smaller than ``TABLE_DAT_KEY``."
-msgstr ""
+msgstr "インデックス対象が大量にある場合は、 ``TABLE_PAT_KEY`` 型が適切です。なぜなら、 ``TABLE_PAT_KEY`` 型は ``TABLE_DAT_KEY`` 型よりもサイズが小さいからです。"
 
 # e92758beef824130ab42669342c10d50
 #: ../../../source/reference/commands/table_create.txt:156
-#, fuzzy
 msgid "This section describes all parameters."
-msgstr ""
-"このセクションではすべての引数について説明します。引数はカテゴリわけしていま"
-"す。"
+msgstr "このセクションではすべての引数について説明します。"
 
 # a9e98af40d8343b2a5aa71a3dc5391fa
 #: ../../../source/reference/commands/table_create.txt:161
-#, fuzzy
 msgid "It specifies a table name to be created. ``name`` must be specified."
-msgstr ""
-"検索対象のテーブルを指定します。 ``table`` は必ず指定しなければいけません。"
+msgstr "作成するテーブル名を指定します。 ``name`` は必ず指定しなければいけません。"
 
 # 40c028a45fb64c6091aed8fac22298d1
 #: ../../../source/reference/commands/table_create.txt:163
-#, fuzzy
 msgid "Here are available characters:"
-msgstr "指定できる種類は以下の通りです。"
+msgstr "利用可能な文字は以下の通りです。"
 
 # 44ab11362da14d44a67429cbea325539
 #: ../../../source/reference/commands/table_create.txt:165
 msgid "``0`` .. ``9`` (digit)"
-msgstr ""
+msgstr "``0`` .. ``9`` （数字）"
 
 # 40cd822d15c04064abe383d6ec880b03
 #: ../../../source/reference/commands/table_create.txt:166
 msgid "``a`` .. ``z`` (alphabet, lower case)"
-msgstr ""
+msgstr "``a`` .. ``z`` （アルファベット。小文字）"
 
 # e6158e4b13df4754976d7439ea9fae62
 #: ../../../source/reference/commands/table_create.txt:167
 msgid "``A`` .. ``Z`` (alphabet, upper case)"
-msgstr ""
+msgstr "``A`` .. ``Z`` （アルファベット。大文字）"
 
 # 029e42adc4704a82b030c2e51732350a
 #: ../../../source/reference/commands/table_create.txt:168
 msgid "``#`` (hash)"
-msgstr ""
+msgstr "``#`` （シャープ）"
 
 # 5c857141b9134c16982a791a0f4e96cc
 #: ../../../source/reference/commands/table_create.txt:169
 msgid "``@`` (at mark)"
-msgstr ""
+msgstr "``@`` （アットマーク）"
 
 # 4423643b3dd74fd79f47856300759464
 #: ../../../source/reference/commands/table_create.txt:170
 msgid "``-`` (hyphen)"
-msgstr ""
+msgstr "``-`` （ハイフン）"
 
 # 06312e2f16d8467299169f967f54deda
 #: ../../../source/reference/commands/table_create.txt:171
 msgid ""
 "``_`` (underscore) (NOTE: Underscore can't be used as the first character.)"
-msgstr ""
+msgstr "``_`` （アンダースコア）（注: 最初の文字としてアンダースコアを使うことはできません。）"
 
 # 91ae801c9dc149f3a5406f1de7e2a214
 #: ../../../source/reference/commands/table_create.txt:174
 msgid ""
-"You need to create a name with one ore more the above chracters. Note that "
+"You need to create a name with one or more the above chracters. Note that "
 "you cannot use ``_`` as the first charcter such as ``_name``."
-msgstr ""
+msgstr "上記の文字を1つ以上使って名前を決めます。 ``_name`` というように、最初の文字に ``_`` を使えないことに注意してください。"
 
 # a9e98af40d8343b2a5aa71a3dc5391fa
 #: ../../../source/reference/commands/table_create.txt:181
-#, fuzzy
 msgid "It specifies a table type and table customize options."
-msgstr ""
-"検索対象のテーブルを指定します。 ``table`` は必ず指定しなければいけません。"
+msgstr "テーブルの型とテーブルをカスタマイズするオプションを指定します。"
 
 # 77b120c7869549b5855bc906a84570a2
 #: ../../../source/reference/commands/table_create.txt:183
-#, fuzzy
 msgid "Here are available flags:"
-msgstr "指定可能な値は以下の通りです。"
+msgstr "指定可能なフラグは以下の通りです。"
 
 # 071bf66b5e09468dbeb9affc7997a57f
 #: ../../../source/reference/commands/table_create.txt:186
 msgid "description"
-msgstr ""
+msgstr "説明"
 
 # 04a06127c710444ca25c5dd4880b54c9
 #: ../../../source/reference/commands/table_create.txt:186
 msgid "flags"
-msgstr ""
+msgstr "フラグ"
 
 # 3b614bc71a7f40b6bf1228c16b47be26
 #: ../../../source/reference/commands/table_create.txt:188
 msgid "Array table."
-msgstr ""
+msgstr "配列テーブル。"
 
 # a698d16c5784444c8f63b2cd9d11d961
 # 59522fa18e7b4805a794cefd07dee927
@@ -5548,7 +5532,7 @@ msgstr ""
 # e3818a647dab428cb205bd555963a693
 #: ../../../source/reference/commands/table_create.txt:190
 msgid "Hash table."
-msgstr ""
+msgstr "ハッシュテーブル。"
 
 # 6b08289ec57640f4bd9a6d8cc92e89c8
 #: ../../../source/reference/commands/table_create.txt:190
@@ -5558,7 +5542,7 @@ msgstr ""
 # 6d1728d20da543e1b84af98a361e410d
 #: ../../../source/reference/commands/table_create.txt:192
 msgid "Patricia trie."
-msgstr ""
+msgstr "パトリシアトライ。"
 
 # 03fcfb651f8e4dc8a44ea3fd97f6b497
 # af2d93db65eb41ac8c8eff9deb32fb18
@@ -5570,7 +5554,7 @@ msgstr ""
 # b74fa78f34f2489ebb3069c70cec68f7
 #: ../../../source/reference/commands/table_create.txt:194
 msgid "Double Array trie."
-msgstr ""
+msgstr "ダブル配列トライ。"
 
 # 933b2f4920e04e1288d1a9124145ad22
 # be55a1d16aef497888a86f6a5535d411
@@ -5582,7 +5566,7 @@ msgstr ""
 # 6170cf7740b54a028034da133d53bf67
 #: ../../../source/reference/commands/table_create.txt:196
 msgid "Enable Semi Infinite String. Require ``TABLE_PAT_KEY``."
-msgstr ""
+msgstr "半無限文字列を有効にします。 ``TABLE_PAT_KEY`` を使う必要があります。"
 
 # 419f737a000c4938a12a7f9ba9274f65
 #: ../../../source/reference/commands/table_create.txt:196
@@ -5594,34 +5578,32 @@ msgstr ""
 msgid ""
 "Since groonga 2.1.0 ``KEY_NORMALIZE`` flag is deprecated. Use ``normalizer`` "
 "option with ``NormalizerAuto`` instead."
-msgstr ""
+msgstr "groonga 2.1.0から ``KEY_NORMALIZE`` フラグは非推奨になりました。代わりに、 ``normalizer`` オプションに ``NormalizerAuto`` を指定してください。"
 
 # e40b5e47c7f642799da5f4abccaeced1
 #: ../../../source/reference/commands/table_create.txt:204
 msgid ""
-"You must specify one of ``TABLE_${TYPE}`` flag. You cannot specify two or "
+"You must specify one of ``TABLE_${TYPE}`` flags. You cannot specify two or "
 "more ``TABLE_${TYPE}`` flags. For example, ``TABLE_NO_KEY|TABLE_HASH_KEY`` "
 "is invalid."
-msgstr ""
+msgstr "``TABLE_${TYPE}`` フラグのどれか1つを指定します。 ``TABLE_${TYPE}`` フラグを2つ以上指定することはできません。例えば、 ``TABLE_NO_KEY|TABLE_HASH_KEY`` は不正な指定方法です。"
 
 # e096e1d83a0e43f9a7fdefe8505cebc3
 #: ../../../source/reference/commands/table_create.txt:208
 msgid ""
 "You can combine flags with ``|`` (vertical bar) such as ``TABLE_PAT_KEY|"
 "KEY_WITH_SIS``."
-msgstr ""
+msgstr "``TABLE_PAT_KEY|KEY_WITH_SIS`` というように、 ``|`` （縦棒）で複数のフラグを組み合わせることができます。"
 
 # bde897b0ca22430eb927c3f3d85d70d2
 #: ../../../source/reference/commands/table_create.txt:211
-#, fuzzy
 msgid "See :doc:`/reference/tables` for difference between table types."
-msgstr ""
-"利用可能な関数の一覧は :doc:`/reference/functions/` を参照してください。"
+msgstr "それぞれのテーブルの型の違いは :doc:`/reference/tables` を参照してください。"
 
 # 9e866ac805284825bac904958d5d6f72
 #: ../../../source/reference/commands/table_create.txt:213
 msgid "The default flags are ``TABLE_HASH_KEY``."
-msgstr ""
+msgstr "デフォルトのフラグは ``TABLE_HASH_KEY`` です。"
 
 # 4c836a2f85224b14ad3c5d3441a6a1c7
 #: ../../../source/reference/commands/table_create.txt:216
@@ -5630,31 +5612,28 @@ msgstr ""
 
 # ffa8ab8997a74ec381047804746e748d
 #: ../../../source/reference/commands/table_create.txt:218
-#, fuzzy
 msgid "It specifies key type."
-msgstr "ソートキーを指定します。"
+msgstr "キーの型を指定します。"
 
 # 61632d8e563e4d46978e52ab69751880
 #: ../../../source/reference/commands/table_create.txt:220
 msgid ""
 "If you specify ``TABLE_HASH_KEY``, ``TABLE_PAT_KEY`` or ``TABLE_DAT_KEY`` as "
 "``flags`` parameter, you need to specify ``key_type`` option."
-msgstr ""
+msgstr "``flags`` パラメーターに ``TABLE_HASH_KEY`` 、 ``TABLE_PAT_KEY`` または ``TABLE_DAT_KEY`` を指定した場合は、 ``key_type`` オプションを指定する必要があります。"
 
 # bde897b0ca22430eb927c3f3d85d70d2
 #: ../../../source/reference/commands/table_create.txt:224
-#, fuzzy
 msgid "See :doc:`/reference/types` for all types."
-msgstr "GeoPointについては :doc:`/reference/type` を参照してください。"
+msgstr "型の一覧は :doc:`/reference/types` にあります。"
 
 # 75c38df430b54c44844526068cb9d03b
 #: ../../../source/reference/commands/table_create.txt:226
 #: ../../../source/reference/commands/table_create.txt:238
 #: ../../../source/reference/commands/table_create.txt:254
 #: ../../../source/reference/commands/table_create.txt:266
-#, fuzzy
 msgid "The default value is none."
-msgstr "デフォルト値は ``0`` です。"
+msgstr "デフォルト値はありません。"
 
 # 9284d5f803da4794b576d175191d8508
 #: ../../../source/reference/commands/table_create.txt:229
@@ -5663,18 +5642,17 @@ msgstr ""
 
 # ffa8ab8997a74ec381047804746e748d
 #: ../../../source/reference/commands/table_create.txt:231
-#, fuzzy
 msgid "It specifies value type."
-msgstr "ソートキーを指定します。"
+msgstr "値の型を指定します。"
 
 # 5c3fa928b46144bc847ba1f4e4ce604d
 #: ../../../source/reference/commands/table_create.txt:233
 msgid ""
 "You can use value when you specify ``TABLE_NO_KEY``, ``TABLE_HASH_KEY`` or "
-"``TABLE_PAT_KEY``. Value type must be a fixed size type. For example, "
+"``TABLE_PAT_KEY`` as ``flags`` parameter. Value type must be a fixed size type. For example, "
 "``UInt32`` can be used but ``ShortText`` cannot be used. Use columns instead "
 "of value."
-msgstr ""
+msgstr "``flags`` パラメーターに ``TABLE_NO_KEY`` 、 ``TABLE_HASH_KEY`` または ``TABLE_PAT_KEY`` を指定した場合は「値」を使うことができます。「値」の型は固定長でなければいけません。例えば、 ``UInt32`` は使えますが、 ``ShortText`` は使えません。この場合は値ではなく、カラムを使ってください。"
 
 # 174eea025b11421ca59cbddd373abcc8
 #: ../../../source/reference/commands/table_create.txt:241
@@ -5686,28 +5664,26 @@ msgstr ""
 msgid ""
 "It specifies the default tokenizer that is used on searching and data "
 "loading."
-msgstr ""
+msgstr "デフォルトトークナイザーを指定します。これは、検索時とデータロード時に使われます。"
 
 # 8c632fc8d46645839bf6ff9bbcdf6336
 #: ../../../source/reference/commands/table_create.txt:246
 msgid ""
 "You cannot use ``default_tokenizer`` with ``TABLE_NO_KEY`` because "
 "``TABLE_NO_KEY`` cannot be used for index."
-msgstr ""
+msgstr "``TABLE_NO_KEY`` と一緒に ``default_tokenizer`` を使うことはできません。これは、 ``TABLE_NO_KEY`` をインデックスに使うことができないからです。"
 
 # 79185910d8db4f10947f9f12c28559b5
 #: ../../../source/reference/commands/table_create.txt:249
 msgid ""
 "You must specify ``default_tokenizer`` for a table that is used for fulltext "
 "search index."
-msgstr ""
+msgstr "全文検索用のインデックスとして使う場合には ``default_tokenizer`` を必ず指定しなければいけません。"
 
 # bde897b0ca22430eb927c3f3d85d70d2
 #: ../../../source/reference/commands/table_create.txt:252
-#, fuzzy
 msgid "See :doc:`/reference/tokenizers` for all tokenizers"
-msgstr ""
-"利用可能な関数の一覧は :doc:`/reference/functions/` を参照してください。"
+msgstr "トークナイザーの一覧は :doc:`/reference/tokenizers` にあります。"
 
 # 6b1754c3e5be4f51a74d6a2bb467702d
 #: ../../../source/reference/commands/table_create.txt:257
@@ -5717,54 +5693,44 @@ msgstr ""
 # b0b25f3e15764cb184fbc1aad1979089
 #: ../../../source/reference/commands/table_create.txt:259
 msgid "It specifies a normalizer that is used to normalize key."
-msgstr ""
+msgstr "キーを正規化するために使うノーマライザーを指定します。"
 
 # 7da6bd6eb24a48aabd58a8af7b87ef81
 #: ../../../source/reference/commands/table_create.txt:261
 msgid ""
 "You cannot use ``normalizer`` with ``TABLE_NO_KEY`` because ``TABLE_NO_KEY`` "
 "doesn't support key."
-msgstr ""
+msgstr "``TABLE_NO_KEY`` はキーをサポートしていないので、 ``TABLE_NO_KEY`` と ``normalizer`` を一緒に指定することはできません。"
 
 # bde897b0ca22430eb927c3f3d85d70d2
 #: ../../../source/reference/commands/table_create.txt:264
-#, fuzzy
 msgid "See :doc:`/reference/normalizers` for all normalizsers."
-msgstr ""
-"利用可能な関数の一覧は :doc:`/reference/functions/` を参照してください。"
+msgstr "ノーマライザーの一覧は :doc:`/reference/normalizers` にあります。"
 
 # 4166fbe3d07440088e3da578beb52f4f
 #: ../../../source/reference/commands/table_create.txt:271
-#, fuzzy
 msgid "``table_create`` returns ``true`` as body on success such as::"
-msgstr ""
-"``register`` が成功したときは以下のようにボディは ``true`` になります::"
+msgstr "``table_create`` が成功したときは以下のようにボディは ``true`` になります::"
 
 # fabf2f644394421cac6739719bcc8b73
 #: ../../../source/reference/commands/table_create.txt:275
-#, fuzzy
 msgid "If ``table_create`` fails, error details are in ``HEADER``."
-msgstr "``register`` が失敗すると、エラーの詳細は ``HEADER`` に含まれます。"
+msgstr "``table_create`` が失敗すると、エラーの詳細は ``HEADER`` に含まれます。"
 
 # bde897b0ca22430eb927c3f3d85d70d2
 #: ../../../source/reference/commands/table_create.txt:282
-#, fuzzy
 msgid ":doc:`/reference/tables`"
-msgstr "キャストについては :doc:`/reference/cast` を参照してください。"
+msgstr ""
 
 # 7076e42ec8ef4557b5a1a22d51cab92d
 #: ../../../source/reference/commands/table_create.txt:283
-#, fuzzy
 msgid ":doc:`/reference/commands/column_create`"
 msgstr ""
-"``HEADER`` については :doc:`/reference/command/output_format` を参照してくだ"
-"さい。"
 
 # bde897b0ca22430eb927c3f3d85d70d2
 #: ../../../source/reference/commands/table_create.txt:284
-#, fuzzy
 msgid ":doc:`/reference/tokenizers`"
-msgstr "キャストについては :doc:`/reference/cast` を参照してください。"
+msgstr ""
 
 # c1eec2803b574b0bbe9bde8177d0c14c
 #: ../../../source/reference/commands/table_create.txt:285
@@ -5773,11 +5739,8 @@ msgstr ""
 
 # 7076e42ec8ef4557b5a1a22d51cab92d
 #: ../../../source/reference/commands/table_create.txt:286
-#, fuzzy
 msgid ":doc:`/reference/command/output_format`"
 msgstr ""
-"``HEADER`` については :doc:`/reference/command/output_format` を参照してくだ"
-"さい。"
 
 # c48099d5af72490381f4e366c1ea1c69
 #: ../../../source/reference/commands/table_list.txt:6
@@ -7892,9 +7855,8 @@ msgstr "GeoPoint型の値を指定することができます。 [1]_"
 
 # bde897b0ca22430eb927c3f3d85d70d2
 #: ../../../source/reference/functions/geo_distance.txt:161
-#, fuzzy
 msgid "See :doc:`/reference/types` about GeoPoint."
-msgstr "GeoPointについては :doc:`/reference/type` を参照してください。"
+msgstr "GeoPointについては :doc:`/reference/types` を参照してください。"
 
 # f7da97f129624e1299e5459a8ac8caeb
 #: ../../../source/reference/functions/geo_distance.txt:164
@@ -7917,9 +7879,8 @@ msgstr "GeoPoint型の値か座標を表す文字列を指定することがで�
 
 # bde897b0ca22430eb927c3f3d85d70d2
 #: ../../../source/reference/functions/geo_distance.txt:172
-#, fuzzy
 msgid "See :doc:`/reference/types` about GeoPoint and the coordinate."
-msgstr "GeoPointと座標については :doc:`/reference/type` を参照してください。"
+msgstr "GeoPointと座標については :doc:`/reference/types` を参照してください。"
 
 # 063b335227cc45469a645aec28feca86
 #: ../../../source/reference/functions/geo_distance.txt:175
@@ -11517,11 +11478,10 @@ msgstr ""
 
 # b993c6521463466f8f42d9a4e7e5107f
 #: ../../../source/reference/normalizers.txt:26
-#, fuzzy
 msgid ""
 "Here is an example ``table_create`` that uses ``NormalizerAuto`` normalizer "
 "module:"
-msgstr "クエリーが ``groonga`` のときのクエリー展開の例です::"
+msgstr ""
 
 # 797c5fdfb9104375b79d5c876c37bc74
 #: ../../../source/reference/normalizers.txt:35
@@ -11617,9 +11577,8 @@ msgstr ""
 
 # b993c6521463466f8f42d9a4e7e5107f
 #: ../../../source/reference/normalizers.txt:97
-#, fuzzy
 msgid "Here is an example that uses ``NormalizerAuto`` normalizer:"
-msgstr "クエリーが ``groonga`` のときのクエリー展開の例です::"
+msgstr ""
 
 # 838253a4edf7408ab4698e23e81b31b0
 #: ../../../source/reference/normalizers.txt:106
@@ -11638,16 +11597,14 @@ msgstr ""
 
 # b993c6521463466f8f42d9a4e7e5107f
 #: ../../../source/reference/normalizers.txt:113
-#, fuzzy
 msgid "Here is an example that uses ``NormalizerNFKC51`` normalizer:"
-msgstr "クエリーが ``groonga`` のときのクエリー展開の例です::"
+msgstr ""
 
 # bde897b0ca22430eb927c3f3d85d70d2
 #: ../../../source/reference/normalizers.txt:122
 #: ../../../source/reference/tables.txt:163
-#, fuzzy
 msgid ":doc:`/reference/commands/table_create`"
-msgstr "キャストについては :doc:`/reference/cast` を参照してください。"
+msgstr ""
 
 # 5bd255e1d73f40cdb044e52bab2d154d
 #: ../../../source/reference/output.txt:6
@@ -12382,9 +12339,8 @@ msgstr ""
 
 # 5f1a4a1c092b4593bf1cb9d6d423bccf
 #: ../../../source/reference/tables.txt:66
-#, fuzzy
 msgid "Range search"
-msgstr "類似文書検索"
+msgstr "範囲検索"
 
 # ad17263d28b249259cb029c23827ee7a
 #: ../../../source/reference/tables.txt:73
@@ -12495,13 +12451,10 @@ msgstr ""
 
 # b58131dc80f1422aabd04ed4e3d46244
 #: ../../../source/reference/tables.txt:133
-#, fuzzy
 msgid ""
 "Persistent table can be created by :doc:`/reference/commands/table_create` "
 "command."
 msgstr ""
-"以下は :doc:`/reference/commands/shutdown` コマンドに認証をかける設定例で"
-"す。::"
 
 # e86806d8e1d1481092c32a1af036cc02
 #: ../../../source/reference/tables.txt:137
@@ -12519,7 +12472,6 @@ msgstr ""
 
 # 63608d939d5646d0a1aa20ddaa1f60a8
 #: ../../../source/reference/tables.txt:146
-#, fuzzy
 msgid "Limitations"
 msgstr "制限"
 

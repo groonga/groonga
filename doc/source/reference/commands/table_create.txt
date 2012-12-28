@@ -54,7 +54,7 @@ If your records aren't searched by key, ``TABLE_NO_KEY`` type table is
 suitable. Because ``TABLE_NO_KEY`` doesn't support key but it is fast
 and small table. Storing logs into groonga database is the case.
 
-If your records are search by key or referenced by one or more
+If your records are searched by key or referenced by one or more
 columns, ``TABLE_NO_KEY`` type isn't suitable. Lexicon for fulltext
 search is the case.
 
@@ -85,11 +85,11 @@ table is used for fulltext search.
 
 In fulltext search, predictive search may be used for fuzzy
 search. Predictive search is supported by ``TABLE_PAT_KEY`` and
-``TABLE_DAT_KEY``. Lexicon table has many keys because a fulltext
-target text has many tokens.
+``TABLE_DAT_KEY``.
 
-Table that has many keys should consider table size because large
-table requires large memory. Requiring large memory causes disk
+Lexicon table has many keys because a fulltext target text has many
+tokens. Table that has many keys should consider table size because
+large table requires large memory. Requiring large memory causes disk
 I/O. It blocks fast search. So table size is important for a table
 that has many keys. ``TABLE_PAT_KEY`` is less table size than
 ``TABLE_DAT_KEY``.
@@ -140,7 +140,7 @@ Here is an example to create ``TABLE_DAT_KEY`` table:
 The ``table_create`` command creates a table that is named ``Ages``,
 is ``TABLE_DAT_KEY`` type and has ``UInt32`` type key.
 
-``TABLE_PAT_KEY`` or ``TABLE_DAT_KEY`` are suitable table types for
+``TABLE_PAT_KEY`` and ``TABLE_DAT_KEY`` are suitable table types for
 range index table.
 
 If you don't have many indexed items, ``TABLE_DAT_KEY`` is
@@ -171,7 +171,7 @@ Here are available characters:
 * ``_`` (underscore) (NOTE: Underscore can't be used as the first
   character.)
 
-You need to create a name with one ore more the above chracters. Note
+You need to create a name with one or more the above chracters. Note
 that you cannot use ``_`` as the first charcter such as
 ``_name``.
 
@@ -201,7 +201,7 @@ Here are available flags:
    Since groonga 2.1.0 ``KEY_NORMALIZE`` flag is deprecated. Use
    ``normalizer`` option with ``NormalizerAuto`` instead.
 
-You must specify one of ``TABLE_${TYPE}`` flag. You cannot specify two
+You must specify one of ``TABLE_${TYPE}`` flags. You cannot specify two
 or more ``TABLE_${TYPE}`` flags. For example,
 ``TABLE_NO_KEY|TABLE_HASH_KEY`` is invalid.
 
@@ -231,9 +231,9 @@ The default value is none.
 It specifies value type.
 
 You can use value when you specify ``TABLE_NO_KEY``,
-``TABLE_HASH_KEY`` or ``TABLE_PAT_KEY``. Value type must be a fixed
-size type. For example, ``UInt32`` can be used but ``ShortText``
-cannot be used. Use columns instead of value.
+``TABLE_HASH_KEY`` or ``TABLE_PAT_KEY`` as ``flags`` parameter. Value
+type must be a fixed size type. For example, ``UInt32`` can be used
+but ``ShortText`` cannot be used. Use columns instead of value.
 
 The default value is none.
 
