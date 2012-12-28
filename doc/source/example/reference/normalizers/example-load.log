@@ -31,7 +31,7 @@ Execution example::
   #       ], 
   #       [
   #         1, 
-  #         "Apple"
+  #         "apple"
   #       ], 
   #       [
   #         2, 
@@ -39,7 +39,7 @@ Execution example::
   #       ], 
   #       [
   #         3, 
-  #         "COLOR"
+  #         "color"
   #       ]
   #     ]
   #   ]
