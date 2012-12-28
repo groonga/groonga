@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-28 07:23\n"
+"POT-Creation-Date: 2012-12-28 15:19\n"
 "PO-Revision-Date: 2012-08-15 15:24+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -371,11 +371,9 @@ msgstr ""
 # 42601672fe09426d95c78a6336402724
 #: ../../../source/server/http/comparison.txt:126
 msgid ""
-"Groonga has :doc:`/reference/command_version` mechanism. It is for upgrading "
-"groonga commands with backward compatibility."
+"Groonga has :doc:`/reference/command/command_version` mechanism. It is for "
+"upgrading groonga commands with backward compatibility."
 msgstr ""
-"Groonga has :doc:`/reference/command_version` mechanism. It is for upgrading "
-"groonga commands with backward compatibility."
 
 # 7605c6584f974a4fa38ab13ef99b1a4d
 #: ../../../source/server/http/comparison.txt:129

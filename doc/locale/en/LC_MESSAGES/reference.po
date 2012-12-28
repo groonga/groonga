@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-28 15:07\n"
+"POT-Creation-Date: 2012-12-28 15:19\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -6753,7 +6753,7 @@ msgstr "コマンドファイル"
 msgid ""
 "コマンドファイルは、groonga組み込みコマンドを1行に1つずつ記述したテキストファ"
 "イルです。拡張子に制限はありません。groonga組み込みコマンドに関しては :doc:`/"
-"reference/commands` を参照してください。"
+"reference/command` を参照してください。"
 msgstr ""
 "コマンドファイルは、groonga組み込みコマンドを1行に1つずつ記述したテキストファ"
 "イルです。拡張子に制限はありません。groonga組み込みコマンドに関しては :doc:`/"
@@ -7401,10 +7401,10 @@ msgstr "output_typeにはjson, tsv, xmlが指定可能です。"
 #: ../../../source/reference/executables/groonga-server-http.txt:51
 msgid ""
 "command_versionはコマンドの仕様の互換性を指定します。詳細は :doc:`/reference/"
-"command_version` を参照してください。"
+"command/command_version` を参照してください。"
 msgstr ""
 "command_versionはコマンドの仕様の互換性を指定します。詳細は :doc:`/reference/"
-"command_version` を参照してください。"
+"command/command_version` を参照してください。"
 
 # 20ebdb37c19846ac957b83b79fd15561
 #: ../../../source/reference/executables/groonga-server-http.txt:56
@@ -10348,8 +10348,8 @@ msgstr ""
 
 # 6bfed24fa3ff45cbbfb8b3585c9855b5
 #: ../../../source/reference/grn_expr/script_syntax.txt:224
-msgid "See :doc:`/reference/functions/` for available functin list."
-msgstr "See :doc:`/reference/functions/` for available functin list."
+msgid "See :doc:`/reference/function` for available functin list."
+msgstr "See :doc:`/reference/function` for available functin list."
 
 # bb065470a7294393a91978519976f039
 #: ../../../source/reference/grn_expr/script_syntax.txt:232
