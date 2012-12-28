@@ -114,7 +114,7 @@ Here is an example that uses ``NormalizerNFKC51`` normalizer:
 
 .. groonga-command
 .. include:: ../example/reference/normalizers/normalizer-nfkc51.log
-.. table_create NormalLexicon TABLE_HASH_KEY ShortText --normalizer NormalizerNFKC51
+.. table_create NFKC51Lexicon TABLE_HASH_KEY ShortText --normalizer NormalizerNFKC51
 
 See also
 --------
