@@ -78,7 +78,7 @@ because lexicon stores tokens as key. ``TABLE_NO_KEY`` is useful for
 no key records such as log.
 
 ``TABLE_HASH_KEY``
-^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^
 
 ``TABLE_HASH_KEY`` is fast but it doesn't support advanced search
 functions such as common prefix search and predictive search.
@@ -87,7 +87,7 @@ functions such as common prefix search and predictive search.
 search.
 
 ``TABLE_PAT_KEY``
-^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^
 
 ``TABLE_PAT_KEY`` is small and supports advanced search functions.
 
@@ -95,7 +95,7 @@ search.
 index for range search.
 
 ``TABLE_DAT_KEY``
-^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^
 
 ``TABLE_DAT_KEY`` is fast and supports key update but it is large. It
 is not suitable for storing many records. ``TABLE_DAT_KEY`` is a only
