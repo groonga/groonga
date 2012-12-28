@@ -69,10 +69,16 @@ Here is an example to create ``TABLE_PAT_KEY`` table:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/table_create/lexicon_table_pat_key.log
-.. table_create Lexicon TABLE_PAT_KEY ShortText
+.. table_create Lexicon TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
 
-The ``table_create`` command creates a table that is named
-``Lexicon``, is ``TABLE_PAT_KEY`` type and has ``ShortText`` type key.
+The ``table_create`` command creates the following table:
+
+* The table is named ``Lexicon``.
+* The table is ``TABLE_PAT_KEY`` type table.
+* The table's key is ``ShortText`` type.
+* The table uses ``TokenBigram`` tokenizer to extract tokens from a
+  normalized text.
+* The table uses ``NormalizerAuto`` normalizer to normalize a text.
 
 ``TABLE_PAT_KEY`` is suitable table type for lexicon table. Lexicon
 table is used for fulltext search.
