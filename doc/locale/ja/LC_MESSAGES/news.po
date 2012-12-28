@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-27 11:13\n"
+"POT-Creation-Date: 2012-12-28 17:14\n"
 "PO-Revision-Date: 2012-08-28 10:30+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -141,8 +141,10 @@ msgstr ""
 
 # 95de110a64864b2f990048ad323fda4b
 #: ../../../source/news.txt:45
-msgid "Supported continuous line in command list."
-msgstr "コマンドリストに書かれた継続行のサポート。"
+msgid ""
+"Supported continuous line in :ref:`command-list-with-continuous-line` list."
+msgstr ""
+":ref:`command-list-with-continuous-line` リストに書かれた継続行のサポート。"
 
 # a1f3f10273df4232a5a739a59c21a5c7
 #: ../../../source/news.txt:46
@@ -195,8 +197,8 @@ msgstr ""
 msgid ""
 "Fixed a bug that ``_score`` after \"*\" is ignored in ``--output_columns``."
 msgstr ""
-"``--output_columns`` で\"*\"のあとに ``_score`` を指定しても無視される不具合を修"
-"正した。"
+"``--output_columns`` で\"*\"のあとに ``_score`` を指定しても無視される不具合"
+"を修正した。"
 
 #: ../../../source/news.txt:62 ../../../source/news.txt:120
 #: ../../../source/news.txt:156 ../../../source/news.txt:195

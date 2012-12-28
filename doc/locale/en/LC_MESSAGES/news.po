@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-27 11:11\n"
+"POT-Creation-Date: 2012-12-28 17:10\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -143,9 +143,10 @@ msgid ""
 "of ``grn_tokenizer_query_open`` API."
 msgstr ""
 
-# 31603005817d4ddf93d2fa155ab7c3cb
+# f3b233753a5a4accb97226fa7882691e
 #: ../../../source/news.txt:45
-msgid "Supported continuous line in command list."
+msgid ""
+"Supported continuous line in :ref:`command-list-with-continuous-line` list."
 msgstr ""
 
 # 00ec1e504ef64d9e806c2480ccf62761

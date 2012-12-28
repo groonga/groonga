@@ -42,7 +42,7 @@ Improvements
   related commands such as ``table_list`` and ``column_list``.
 * Added a flag which controls behavior about normalizer as the last argument
   of ``grn_tokenizer_query_open`` API.
-* Supported continuous line in command list.
+* Supported continuous line in :ref:`command-list-with-continuous-line` list.
 * Improved to support not only no key table, but also hash table, patricia trie
   and double array trie for :ref:`nested-index-search`.
 
