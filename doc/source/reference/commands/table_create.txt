@@ -2,115 +2,279 @@
 
 .. highlightlang:: none
 
-table_create
-============
+.. groonga-command
+.. database: commands_table_create
 
-名前
-----
+``table_create``
+================
 
-table_create - テーブルの追加
+Summary
+-------
 
-書式
-----
-::
+``table_create`` creates a new table in the current database. You need
+to create one or more tables to store and search data.
 
- table_create name [flags [key_type [value_type [default_tokenizer]]]]
+Syntax
+------
 
-説明
-----
+``table_create`` has many parameters. The required parameter is only
+``name`` and otehrs are optional::
 
-groonga組込コマンドの一つであるtable_createについて説明します。組込コマンドは、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。
+  table_create name
+               [flags=TABLE_HASH_KEY]
+               [key_type=null]
+               [value_type=null]
+               [default_tokenizer=null]
+               [normalizer=null]
 
-table_createコマンドは、使用しているデータベースに対してテーブルを追加します。groongaには名前付きテーブルと名前なしテーブル、永続テーブルと一時テーブルがありますが、table_createコマンドでは、名前付きの永続テーブルのみが作成できます。テーブルはレコードの集合であり、全てのレコードは一意なIDを持ちます。IDはレコードを追加した順序に従って自動的に付与されます。
+Usage
+-----
 
-テーブルにカラムを追加する時にはcolumn_createコマンドを使用します。また、テーブルを作成した時点でいくつかの疑似カラムが使用可能になっています。
+``table_create`` command creates a new persistent table. See
+:doc:`/reference/tables` for table details.
 
-引数
-----
+Create data store table
+^^^^^^^^^^^^^^^^^^^^^^^
+
+You can use all table types for data store table. See
+:doc:`/reference/tables` for all table types.
+
+Table type is specified as ``TABLE_${TYPE}`` to ``flags`` parameter.
+
+Here is an example to create ``TABLE_NO_KEY`` table:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/table_create/data_store_table_no_key.log
+.. table_create Logs TABLE_NO_KEY
+
+The ``table_create`` command creates a table that is named ``Logs``
+and is ``TABLE_NO_KEY`` type.
+
+If your records aren't searched by key, ``TABLE_NO_KEY`` type table is
+suitable. Because ``TABLE_NO_KEY`` doesn't support key but it is fast
+and small table. Storing logs into groonga database is the case.
+
+If your records are search by key or referenced by one or more
+columns, ``TABLE_NO_KEY`` type isn't suitable. Lexicon for fulltext
+search is the case.
+
+Create lexicon table
+^^^^^^^^^^^^^^^^^^^^
+
+You can use all table types except ``TABLE_NO_KEY`` for lexicon table.
+Lexicon table needs key support but ``TABLE_NO_KEY`` doesn't support
+key.
+
+Here is an example to create ``TABLE_PAT_KEY`` table:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/table_create/lexicon_table_pat_key.log
+.. table_create Lexicon TABLE_PAT_KEY ShortText
+
+The ``table_create`` command creates a table that is named
+``Lexicon``, is ``TABLE_PAT_KEY`` type and has ``ShortText`` type key.
+
+``TABLE_PAT_KEY`` is suitable table type for lexicon table. Lexicon
+table is used for fulltext search.
+
+In fulltext search, predictive search may be used for fuzzy
+search. Predictive search is supported by ``TABLE_PAT_KEY`` and
+``TABLE_DAT_KEY``. Lexicon table has many keys because a fulltext
+target text has many tokens.
+
+Table that has many keys should consider table size because large
+table requires large memory. Requiring large memory causes disk
+I/O. It blocks fast search. So table size is important for a table
+that has many keys. ``TABLE_PAT_KEY`` is less table size than
+``TABLE_DAT_KEY``.
+
+Because of the above reasons, ``TABLE_PAT_KEY`` is suitable table type
+for lexicon table.
+
+Create tag index table
+^^^^^^^^^^^^^^^^^^^^^^
+
+You can use all table types except ``TABLE_NO_KEY`` for tag index
+table. Tag index table needs key support but ``TABLE_NO_KEY`` doesn't
+support key.
+
+Here is an example to create ``TABLE_HASH_KEY`` table:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/table_create/tag_index_table_hash_key.log
+.. table_create Tags TABLE_HASH_KEY ShortText
+
+The ``table_create`` command creates a table that is named ``Tags``,
+is ``TABLE_HASH_KEY`` type and has ``ShortText`` type key.
+
+``TABLE_HASH_KEY`` or ``TABLE_DAT_KEY`` are suitable table types for
+tag index table.
+
+If you need only exact match tag search feature, ``TABLE_HASH_KEY`` is
+suitable. It is the common case.
+
+If you also need predictive tag search feature (for example, searching
+``"groonga"`` by ``"gr"`` keyword.), ``TABLE_DAT_KEY`` is suitable.
+``TABLE_DAT_KEY`` is large table size but it is not important because
+the number of tags will not be large.
+
+Create range index table
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+You can use ``TABLE_PAT_KEY`` and ``TABLE_DAT_KEY`` table types for
+range index table. Range index table needs range search support but
+``TABLE_NO_KEY`` and ``TABLE_HASH_KEY`` don't support it.
+
+Here is an example to create ``TABLE_DAT_KEY`` table:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/table_create/tag_index_table_hash_key.log
+.. table_create Ages TABLE_DAT_KEY UInt32
+
+The ``table_create`` command creates a table that is named ``Ages``,
+is ``TABLE_DAT_KEY`` type and has ``UInt32`` type key.
+
+``TABLE_PAT_KEY`` or ``TABLE_DAT_KEY`` are suitable table types for
+range index table.
+
+If you don't have many indexed items, ``TABLE_DAT_KEY`` is
+suitable. Index for age is the case in the above example. Index for
+age will have only 0-100 items because human doesn't live so long.
+
+If you have many indexed items, ``TABLE_PAT_KEY`` is suitable. Because
+``TABLE_PAT_KEY`` is smaller than ``TABLE_DAT_KEY``.
+
+Parameters
+----------
+
+This section describes all parameters.
 
 ``name``
-
-  作成するテーブルの名前を指定します。nameはデータベース内で一意な、未定義の名前でなければなりません。組込型名・組込コマンド名・組込関数名は予約済みであり、テーブル名には 使用できません。また、ピリオド('.'), コロン(':')を含む名前のテーブルは作成できません。
-
-``flags``
-
-  作成するテーブルの属性を示す数値か、パイプ('|')で組み合わせたシンボル名を指定します。(デフォルト値は0(="TABLE_HASH_KEY"))
-
-   0, ``TABLE_HASH_KEY``
-     主キー値をハッシュ表で管理するテーブルを作成します。ハッシュ表を使用したテーブルでは、主キー値に完全一致するレコードを非常に高速に検索することができます。
-
-   1, ``TABLE_PAT_KEY``
-     主キー値をパトリシア木で管理するテーブルを作成します。パトリシア木を使用したテーブルでは、主キー値に完全一致するレコードを検索することができるとともに、前方一致するレコード、および最長共通接頭辞となるレコードを高速に検索することができます。また、キー値の昇降順でレコードを取り出したり、キー値の範囲での検索を行うことができます。また、flagsの値に64を加えることによって、後方一致検索も可能となります。
-
-   2, ``TABLE_DAT_KEY``
-     主キー値をダブル配列で管理するテーブルを作成します。ダブル配列を使用したテーブルでは、主キー値に完全一致するレコードを高速に検索することができるとともに、前方一致するレコード、および最長共通接頭辞となるレコードを検索することができます。また、キー値の昇降順でレコードを取り出したり、キー値の範囲での検索を行うことができます。
-
-   3, ``TABLE_NO_KEY``
-     主キーを持たないテーブルを作成します。各レコードはIDのみによって特定することができます。
-
-   4, ``TABLE_VIEW``
-     複数のテーブルをまとめて操作するための仮想的なテーブル(view)を作成します。
-
-   64, ``KEY_WITH_SIS``
-     語彙表となるパトリシア木型のテーブルにおいて、後方一致検索を可能とします。
-
-   128, ``KEY_NORMALIZE``
-     ハッシュ表型か、パトリシア木型のテーブルにおいて、主キー値を正規化した上で登録します。この値が指定されたテーブルではたとえば、主キー値'abc'と'ABC' は同一のレコードに対応するものとみなされます。
-
-``key_type``
-
-  主キー値の型を指定します。主キー値を持つテーブルに限り有効です。型にはgroongaの組込型か、同一データベースに定義済みのユーザ定義型、定義済みのテーブルを指定することができます。
-
-``value_type``
-
-  値の型を指定します。tableの値には固定長の型のみが指定できます。(可変長の値が必要な場合は別途カラムを作成します) 型にはgroongaの組込型か、同一データベースに定義済みのユーザ定義型、またはテーブルを指定することができます。(デフォルトはvalueなし)
-
-``default_tokenizer``
-
-  作成するテーブルを語彙表として使用する場合、文字列を分割するトークナイザを指定します。
-
-  組込のトークナイザとして、以下が準備されています。
-
-  ``TokenDelimit``
-    空白で区切られた文字列をトークンとする
-
-  ``TokenUnigram``
-    unigram(1文字を1トークンとする)
-
-  ``TokenBigram``
-    bigram(2文字の文字列要素をトークンとする)
-
-  ``TokenTrigram``
-    trigram(3文字の文字列要素をトークンとする)
-
-  ``TokenMecab``
-    形態素解析器mecabで解析した形態素をトークンとする。(mecabを組み込んだ場合のみ有効)
-
-  トークナイザが指定されなかった場合は、対象の文字列を分割せずに語彙表に登録します。
-
-返値
-----
-
-json形式
 ^^^^^^^^
 
-::
+It specifies a table name to be created. ``name`` must be specified.
 
- [成功かどうかのフラグ]
+Here are available characters:
 
- ``成功かどうかのフラグ``
+* ``0`` .. ``9`` (digit)
+* ``a`` .. ``z`` (alphabet, lower case)
+* ``A`` .. ``Z`` (alphabet, upper case)
+* ``#`` (hash)
+* ``@`` (at mark)
+* ``-`` (hyphen)
+* ``_`` (underscore) (NOTE: Underscore can't be used as the first
+  character.)
 
-   エラーが生じなかった場合にはtrue、エラーが生じた場合にはfalseを返す。
+You need to create a name with one ore more the above chracters. Note
+that you cannot use ``_`` as the first charcter such as
+``_name``.
 
-例
---
+``flags``
+^^^^^^^^^
 
-ShortText型の主キーを持つハッシュ表型のテーブル、Entryを作成します。::
+It specifies a table type and table customize options.
 
-  table_create Entry --key_type ShortText
-  [true]
+Here are available flags:
 
-ShortText型の主キーを持つパトリシア木型のテーブル、Termを作成します。主キー値は正規化して管理します。また、このテーブルを語彙表とする転置索引を作成する場合には、バイグラムの索引を作成します。::
++--------------------+------------------------------+
+|      flags         | description                  |
++--------------------+------------------------------+
+| ``TABLE_NO_KEY``   | Array table.                 |
++--------------------+------------------------------+
+| ``TABLE_HASH_HEY`` | Hash table.                  |
++--------------------+------------------------------+
+| ``TABLE_PAT_KEY``  | Patricia trie.               |
++--------------------+------------------------------+
+| ``TABLE_DAT_KEY``  | Double Array trie.           |
++--------------------+------------------------------+
+| ``KEY_WITH_SIS``   | Enable Semi Infinite String. |
+|                    | Require ``TABLE_PAT_KEY``.   |
++--------------------+------------------------------+
 
-  table_create Term --flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type ShortText --default_tokenizer TokenBigram
-  [true]
+.. note::
+   Since groonga 2.1.0 ``KEY_NORMALIZE`` flag is deprecated. Use
+   ``normalizer`` option with ``NormalizerAuto`` instead.
+
+You must specify one of ``TABLE_${TYPE}`` flag. You cannot specify two
+or more ``TABLE_${TYPE}`` flags. For example,
+``TABLE_NO_KEY|TABLE_HASH_KEY`` is invalid.
+
+You can combine flags with ``|`` (vertical bar) such as
+``TABLE_PAT_KEY|KEY_WITH_SIS``.
+
+See :doc:`/reference/tables` for difference between table types.
+
+The default flags are ``TABLE_HASH_KEY``.
+
+``key_type``
+^^^^^^^^^^^^
+
+It specifies key type.
+
+If you specify ``TABLE_HASH_KEY``, ``TABLE_PAT_KEY`` or
+``TABLE_DAT_KEY`` as ``flags`` parameter, you need to specify
+``key_type`` option.
+
+See :doc:`/reference/types` for all types.
+
+The default value is none.
+
+``value_type``
+^^^^^^^^^^^^^^
+
+It specifies value type.
+
+You can use value when you specify ``TABLE_NO_KEY``,
+``TABLE_HASH_KEY`` or ``TABLE_PAT_KEY``. Value type must be a fixed
+size type. For example, ``UInt32`` can be used but ``ShortText``
+cannot be used. Use columns instead of value.
+
+The default value is none.
+
+``default_tokenizer``
+^^^^^^^^^^^^^^^^^^^^^
+
+It specifies the default tokenizer that is used on searching and data
+loading.
+
+You cannot use ``default_tokenizer`` with ``TABLE_NO_KEY`` because
+``TABLE_NO_KEY`` cannot be used for index.
+
+You must specify ``default_tokenizer`` for a table that is used for
+fulltext search index.
+
+See :doc:`/reference/tokenizers` for all tokenizers
+
+The default value is none.
+
+``normalizer``
+^^^^^^^^^^^^^^
+
+It specifies a normalizer that is used to normalize key.
+
+You cannot use ``normalizer`` with ``TABLE_NO_KEY`` because
+``TABLE_NO_KEY`` doesn't support key.
+
+See :doc:`/reference/normalizers` for all normalizsers.
+
+The default value is none.
+
+Return value
+------------
+
+``table_create`` returns ``true`` as body on success such as::
+
+  [HEADER, true]
+
+If ``table_create`` fails, error details are in ``HEADER``.
+
+See :doc:`/reference/command/output_format` for ``HEADER``.
+
+See also
+--------
+
+* :doc:`/reference/tables`
+* :doc:`/reference/commands/column_create`
+* :doc:`/reference/tokenizers`
+* :doc:`/reference/normalizers`
+* :doc:`/reference/command/output_format`
