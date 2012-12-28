@@ -32,63 +32,55 @@ Execution example::
   #       [
   #         "range", 
   #         "ShortText"
+  #       ], 
+  #       [
+  #         "default_tokenizer", 
+  #         "ShortText"
+  #       ], 
+  #       [
+  #         "normalizer", 
+  #         "ShortText"
   #       ]
   #     ], 
   #     [
   #       259, 
-  #       "bigram", 
-  #       "/tmp/groonga-databases/suggest.0000103", 
-  #       "TABLE_PAT_KEY|KEY_NORMALIZE|PERSISTENT", 
-  #       "ShortText", 
-  #       "null"
+  #       "Ages", 
+  #       "/tmp/groonga-databases/commands_table_create.0000103", 
+  #       "TABLE_DAT_KEY|PERSISTENT", 
+  #       "UInt32", 
+  #       null, 
+  #       null, 
+  #       null
   #     ], 
   #     [
-  #       278, 
-  #       "event_query", 
-  #       "/tmp/groonga-databases/suggest.0000116", 
+  #       257, 
+  #       "Lexicon", 
+  #       "/tmp/groonga-databases/commands_table_create.0000101", 
+  #       "TABLE_PAT_KEY|PERSISTENT", 
+  #       "ShortText", 
+  #       null, 
+  #       "TokenBigram", 
+  #       "NormalizerAuto"
+  #     ], 
+  #     [
+  #       256, 
+  #       "Logs", 
+  #       "/tmp/groonga-databases/commands_table_create.0000100", 
   #       "TABLE_NO_KEY|PERSISTENT", 
-  #       "null", 
-  #       "null"
+  #       null, 
+  #       null, 
+  #       null, 
+  #       null
   #     ], 
   #     [
   #       258, 
-  #       "event_type", 
-  #       "/tmp/groonga-databases/suggest.0000102", 
+  #       "Tags", 
+  #       "/tmp/groonga-databases/commands_table_create.0000102", 
   #       "TABLE_HASH_KEY|PERSISTENT", 
   #       "ShortText", 
-  #       "null"
-  #     ], 
-  #     [
-  #       261, 
-  #       "item_query", 
-  #       "/tmp/groonga-databases/suggest.0000105", 
-  #       "TABLE_PAT_KEY|KEY_NORMALIZE|PERSISTENT", 
-  #       "ShortText", 
-  #       "null"
-  #     ], 
-  #     [
-  #       260, 
-  #       "kana", 
-  #       "/tmp/groonga-databases/suggest.0000104", 
-  #       "TABLE_PAT_KEY|KEY_NORMALIZE|PERSISTENT", 
-  #       "ShortText", 
-  #       "null"
-  #     ], 
-  #     [
-  #       270, 
-  #       "pair_query", 
-  #       "/tmp/groonga-databases/suggest.000010E", 
-  #       "TABLE_HASH_KEY|PERSISTENT", 
-  #       "UInt64", 
-  #       "null"
-  #     ], 
-  #     [
-  #       277, 
-  #       "sequence_query", 
-  #       "/tmp/groonga-databases/suggest.0000115", 
-  #       "TABLE_HASH_KEY|PERSISTENT", 
-  #       "ShortText", 
-  #       "null"
+  #       null, 
+  #       null, 
+  #       null
   #     ]
   #   ]
   # ]
