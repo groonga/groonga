@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-22 16:05\n"
+"POT-Creation-Date: 2012-12-28 17:14\n"
 "PO-Revision-Date: 2012-11-22 16:11+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -372,10 +372,10 @@ msgstr ""
 # a706571ddf514fb280f1bb14666659b0
 #: ../../../source/server/http/comparison.txt:126
 msgid ""
-"Groonga has :doc:`/reference/command_version` mechanism. It is for upgrading "
-"groonga commands with backward compatibility."
+"Groonga has :doc:`/reference/command/command_version` mechanism. It is for "
+"upgrading groonga commands with backward compatibility."
 msgstr ""
-"groongaには :doc:`/reference/command_version` という仕組みがあります。これは"
+"groongaには :doc:`/reference/command/command_version` という仕組みがあります。これは"
 "後方互換性を維持したままgroongaコマンドをアップグレードするための仕組みです。"
 
 # 3d0dabefd19e4ca2b79ca4b43c174c99
@@ -516,9 +516,11 @@ msgstr ""
 # 1829dfc59fbf4978b44017e97797e95d
 #: ../../../source/server/http/comparison.txt:273
 msgid ""
-"You can load your data by POST JSON data. You need follow the following rules to use "
-"loading by POST."
-msgstr "JSONデータをPOSTすることでデータをロードすることができます。POSTでロードする場合は以下のルールに従ってください。"
+"You can load your data by POST JSON data. You need follow the following "
+"rules to use loading by POST."
+msgstr ""
+"JSONデータをPOSTすることでデータをロードすることができます。POSTでロードする"
+"場合は以下のルールに従ってください。"
 
 # d13cdf7dc6874a3bbb262257acb36f53
 #: ../../../source/server/http/comparison.txt:276
@@ -533,11 +535,14 @@ msgstr "JSONデータはbodyとして送る。"
 # 823e64393d8648299001e5fb95439647
 #: ../../../source/server/http/comparison.txt:278
 msgid "Table name is specified by query parameter such as ``table=NAME``."
-msgstr "テーブル名は ``table=名前`` というようにクエリーパラメーターで指定する。"
+msgstr ""
+"テーブル名は ``table=名前`` というようにクエリーパラメーターで指定する。"
 
 # 43ce7034d6f44f29b48cb26ac09a4227
 #: ../../../source/server/http/comparison.txt:280
 msgid ""
 "Here is an example curl command line that loads two users `alice` and `bob` "
 "to `Users` table::"
-msgstr "以下はcurlを使って `alice` と `bob` という2人のユーザーを `Users` テーブルにロードするコマンドラインの例です::"
+msgstr ""
+"以下はcurlを使って `alice` と `bob` という2人のユーザーを `Users` テーブルに"
+"ロードするコマンドラインの例です::"
