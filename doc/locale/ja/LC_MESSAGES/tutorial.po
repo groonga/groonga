@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-30 17:31\n"
+"POT-Creation-Date: 2012-12-28 15:08\n"
 "PO-Revision-Date: 2012-10-30 16:27+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -126,6 +126,7 @@ msgstr "データの種類"
 
 # 19e12e7217a54c47a4cbc3ab8081e1a7
 #: ../../../source/tutorial/data.txt:18
+#, fuzzy
 msgid ""
 "The basic data types of groonga are roughly divided into 5 groups --- "
 "boolean type, numeric types, string types, date/time type and longitude/"
@@ -134,7 +135,7 @@ msgid ""
 "allocated to each integer. The string types are further divided according to "
 "the maximum length. The longitude/latitude types are further divided "
 "according to the geographic coordinate system. For more details, see :doc:`/"
-"reference/type`."
+"reference/types`."
 msgstr ""
 "groongaにおいて利用できる基本型は、真偽値、数値、文字列、日時、経緯度の5種類"
 "に大別できます。基本型において、数値は整数・浮動小数点数の違い、符号の有無と"
@@ -191,12 +192,13 @@ msgstr "数値"
 
 # 14cc63c41f094d08aac73106b134640b
 #: ../../../source/tutorial/data.txt:49
+#, fuzzy
 msgid ""
 "The numeric types are divided into integer types and a floating point number "
 "type. The integer types are further divided into the signed integer types "
 "and unsigned integer types. In addition, you can choose the number of bits "
-"allocated to each integer. For more details, see :doc:`/reference/type`. The "
-"default value of the numeric types is 0."
+"allocated to each integer. For more details, see :doc:`/reference/types`. "
+"The default value of the numeric types is 0."
 msgstr ""
 "数値型は、整数と浮動小数点数に分けることができます。整数は、符号付き整数と符"
 "号なし整数に分けることができるだけでなく、割り当てるビット数によっても分ける"
@@ -230,9 +232,10 @@ msgstr "文字列"
 
 # 6f9b195b9b494b518887da51ea243c5b
 #: ../../../source/tutorial/data.txt:68
+#, fuzzy
 msgid ""
 "The string types are divided according to the maximum length. For more "
-"details, see :doc:`/reference/type`. The default value is the zero-length "
+"details, see :doc:`/reference/types`. The default value is the zero-length "
 "string."
 msgstr ""
 "文字列型は、長さの上限によって分けることができます。詳しくは :doc:`/"
@@ -287,9 +290,10 @@ msgstr "経緯度"
 
 # 6f9b195b9b494b518887da51ea243c5b
 #: ../../../source/tutorial/data.txt:102
+#, fuzzy
 msgid ""
 "The longitude and latitude types are divided according to the geographic "
-"coordinate system. For more details, see :doc:`/reference/type`. To "
+"coordinate system. For more details, see :doc:`/reference/types`. To "
 "represent a longitude and latitude, groonga uses a string formatted as "
 "follows:"
 msgstr ""
@@ -909,9 +913,10 @@ msgstr ""
 "格納方法も併せて指定する必要があります。"
 
 #: ../../../source/tutorial/introduction.txt:96
+#, fuzzy
 msgid ""
 "There are various data types such as integers, strings, etc. See also :doc:`/"
-"reference/type` for more details. The index type determines the search "
+"reference/types` for more details. The index type determines the search "
 "performance and the availability of prefix searches. The details will be "
 "described later."
 msgstr ""
@@ -1458,17 +1463,17 @@ msgid "インデックス名を指定した全文検索"
 msgstr ""
 
 #: ../../../source/tutorial/match_columns.txt:82
-#: ../../../source/tutorial/match_columns.txt:216
+#: ../../../source/tutorial/match_columns.txt:218
 msgid "執筆中です。"
 msgstr ""
 
 # 4da5c716f8d64beaab327bbc1ffba50f
-#: ../../../source/tutorial/match_columns.txt:88
+#: ../../../source/tutorial/match_columns.txt:90
 msgid "Nested index search among related table by column index"
 msgstr "カラムインデックスによる関連テーブルをまたぐ検索"
 
 # 7bced8fbc8cd4f219fb6b102f84fc5fa
-#: ../../../source/tutorial/match_columns.txt:90
+#: ../../../source/tutorial/match_columns.txt:92
 msgid ""
 "If there are relationships among multiple table with column index, you can "
 "search multiple table by specifying reference column name."
@@ -1477,12 +1482,12 @@ msgstr ""
 "定して複数のテーブルにまたがって検索することができます。"
 
 # e405f76fd24a4e7f847ddb62b6b94316
-#: ../../../source/tutorial/match_columns.txt:93
+#: ../../../source/tutorial/match_columns.txt:95
 msgid "Here is the concrete example."
 msgstr "具体的な例を示します。"
 
 # 6bf0db0e541048c8ab646ff029a51e37
-#: ../../../source/tutorial/match_columns.txt:95
+#: ../../../source/tutorial/match_columns.txt:97
 msgid ""
 "There are tables which store blog articles, comments for articles. The table "
 "which stores articles has columns for article and comment. And the comment "
@@ -1495,7 +1500,7 @@ msgstr ""
 "事テーブルに対するカラムインデックスが設定されています。"
 
 # 3ed9c4432a0c4fc88278e81ee05a6ffb
-#: ../../../source/tutorial/match_columns.txt:100
+#: ../../../source/tutorial/match_columns.txt:102
 msgid ""
 "if you want to search the articles which contain specified keyword in "
 "comment, you need to execute fulltext search for table of comment, then "
@@ -1505,7 +1510,7 @@ msgstr ""
 "る必要があり、全文検索結果を含むレコードをさらに検索する必要があります。"
 
 # d706c5de7ea9451eb30998a02101e583
-#: ../../../source/tutorial/match_columns.txt:103
+#: ../../../source/tutorial/match_columns.txt:105
 msgid ""
 "But, you can search the records by specifying the reference column index at "
 "once."
@@ -1514,19 +1519,19 @@ msgstr ""
 "ます。"
 
 # af08271eff8749f28d7327ea73e92bf6
-#: ../../../source/tutorial/match_columns.txt:105
+#: ../../../source/tutorial/match_columns.txt:107
 msgid "Here is the sample schema."
 msgstr "サンプルのスキーマ定義はこちらです。"
 
 # db81d2adc91d4c04bcf315cfdcda138a
 # 6980dd1b2928452790e163f1c40239c0
-#: ../../../source/tutorial/match_columns.txt:119
-#: ../../../source/tutorial/match_columns.txt:174
+#: ../../../source/tutorial/match_columns.txt:121
+#: ../../../source/tutorial/match_columns.txt:176
 msgid "Here is the sample data."
 msgstr "サンプルデータはこちらです。"
 
 # 6f3aebf07960425c8f7fd639a5cac4ee
-#: ../../../source/tutorial/match_columns.txt:136
+#: ../../../source/tutorial/match_columns.txt:138
 msgid ""
 "You can write the query that search the records which contains specified "
 "keyword as a comment, then fetch the articles which refers to it."
@@ -1536,13 +1541,13 @@ msgstr ""
 
 # ccaec950af944b2f9eda01b0495a1e58
 # 361bca53d8fd44c49dfb57f0e0a72457
-#: ../../../source/tutorial/match_columns.txt:138
-#: ../../../source/tutorial/match_columns.txt:197
+#: ../../../source/tutorial/match_columns.txt:140
+#: ../../../source/tutorial/match_columns.txt:199
 msgid "Query for searching the records described above::"
 msgstr "これまでに記述したレコードを検索するクエリ::"
 
 # 224fa73233d14d0d9e0094cd1aac2938
-#: ../../../source/tutorial/match_columns.txt:142
+#: ../../../source/tutorial/match_columns.txt:144
 msgid ""
 "You need to concatenate comment column of Articles table and content column "
 "of Comments table with period(.) as --match_columns arguments."
@@ -1551,7 +1556,7 @@ msgstr ""
 "で連結し ``--match_columns`` の引数とする必要があります。"
 
 # edfe46cbd9b346b29e3c7da2c5bc9066
-#: ../../../source/tutorial/match_columns.txt:144
+#: ../../../source/tutorial/match_columns.txt:146
 msgid ""
 "At first, this query execute fulltext search from content of Comments table, "
 "then fetch the records of Articles table which refers to already searched "
@@ -1565,13 +1570,13 @@ msgstr ""
 "コメントアウトすると、意図した検索結果が得られません。)"
 
 # 0ac728a05da94dc794d12d99b38ed5dd
-#: ../../../source/tutorial/match_columns.txt:151
+#: ../../../source/tutorial/match_columns.txt:153
 msgid ""
 "Now, you can search articles which contains specific keywords as a comment."
 msgstr "これで、特定のキーワードをコメントとして含む記事を検索できます。"
 
 # 1e5ff72886ba4f099a8ff658e079570b
-#: ../../../source/tutorial/match_columns.txt:153
+#: ../../../source/tutorial/match_columns.txt:155
 msgid ""
 "The feature of nested index search is not limited to the relationship "
 "between two table only."
@@ -1580,7 +1585,7 @@ msgstr ""
 "されません。"
 
 # 2915df73547147a8a0244afdf11067c4
-#: ../../../source/tutorial/match_columns.txt:155
+#: ../../../source/tutorial/match_columns.txt:157
 msgid ""
 "Here is the sample schema similar to previous one. The difference is added "
 "table which express 'Reply' and relationship is extended to three tables."
@@ -1589,7 +1594,7 @@ msgstr ""
 "加と関連するテーブルが3つに増えたことです。"
 
 # 1b348cc0bb0b4ac3bb99975d8dab5491
-#: ../../../source/tutorial/match_columns.txt:202
+#: ../../../source/tutorial/match_columns.txt:204
 msgid ""
 "The first query searches 'mroonga' from Comments2 table, the second one "
 "searches 'mroonga' from Replies2 and Comment2 table by using reference "
@@ -1600,7 +1605,7 @@ msgstr ""
 "て'mroonga'を検索します。"
 
 # 5ba3f540f2a94408aac518d891ae66c8
-#: ../../../source/tutorial/match_columns.txt:209
+#: ../../../source/tutorial/match_columns.txt:211
 msgid ""
 "As a result, the first query matches two article because of Comments2 table "
 "has two records which contains 'mroonga' as keyword."
@@ -1609,18 +1614,18 @@ msgstr ""
 "レコードが2つあるので、該当する記事2つにマッチします。"
 
 # 1619ff8d5bc343c2879ceec89bcb8087
-#: ../../../source/tutorial/match_columns.txt:211
+#: ../../../source/tutorial/match_columns.txt:213
 msgid ""
 "On the other hand, the second one matches one article only because of "
 "Replies2 table has only one record which contains 'mroonga' as keyword, and "
 "there is one record which contains same keyword and refers to the record in "
 "Comments2 table."
 msgstr ""
-"一方、2つめのクエリはReplies2テーブルに'mroonga'というキーワードにマッチす"
-"るレコードが1つしかなく、Comments2テーブルでそのキーワードを含むレコード"
-"を参照するコメントが1つなので、該当する記事は1つだけとなります。"
+"一方、2つめのクエリはReplies2テーブルに'mroonga'というキーワードにマッチする"
+"レコードが1つしかなく、Comments2テーブルでそのキーワードを含むレコードを参照"
+"するコメントが1つなので、該当する記事は1つだけとなります。"
 
-#: ../../../source/tutorial/match_columns.txt:214
+#: ../../../source/tutorial/match_columns.txt:216
 msgid "インデックスの重み"
 msgstr ""
 
