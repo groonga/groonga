@@ -11,7 +11,7 @@
    reference/executables
    reference/output
    reference/command
-   reference/type
+   reference/types
    reference/tables
    reference/normalizers
    reference/tokenizers
