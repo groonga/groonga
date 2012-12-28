@@ -93,7 +93,7 @@ A :doc:`/reference/commands/table_create` command creates a new table.
 
 In most cases, a table has a primary key which must be specified with its data type and index type. 
 
-There are various data types such as integers, strings, etc. See also :doc:`/reference/type` for more details. The index type determines the search performance and the availability of prefix searches. The details will be described later.
+There are various data types such as integers, strings, etc. See also :doc:`/reference/types` for more details. The index type determines the search performance and the availability of prefix searches. The details will be described later.
 
 Let's create a table. The following example creates a table with a primary key. The `name` parameter specifies the name of the table. The `flags` parameter specifies the index type for the primary key. The `key_type` parameter specifies the data type of the primary key.
 
