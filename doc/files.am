@@ -60,6 +60,9 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/suggest-learn-suggestion.log \
 	$(top_srcdir)/doc/source/example/reference/commands/suggest-mixed.log \
 	$(top_srcdir)/doc/source/example/reference/commands/suggest-suggestion.log \
+	$(top_srcdir)/doc/source/example/reference/commands/table_create/data_store_table_no_key.log \
+	$(top_srcdir)/doc/source/example/reference/commands/table_create/lexicon_table_pat_key.log \
+	$(top_srcdir)/doc/source/example/reference/commands/table_create/tag_index_table_hash_key.log \
 	$(top_srcdir)/doc/source/example/reference/commands/table_list.log \
 	$(top_srcdir)/doc/source/example/reference/executables/groonga-httpd.log \
 	$(top_srcdir)/doc/source/example/reference/functions/geo_distance_distance_ellipsoid.log \
@@ -129,6 +132,10 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/indexing-search-after-offline-index-construction.log \
 	$(top_srcdir)/doc/source/example/reference/indexing-search-after-online-index-construction.log \
 	$(top_srcdir)/doc/source/example/reference/indexing-search-without-index.log \
+	$(top_srcdir)/doc/source/example/reference/normalizers/example-load.log \
+	$(top_srcdir)/doc/source/example/reference/normalizers/example-table-create.log \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-auto.log \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc51.log \
 	$(top_srcdir)/doc/source/example/suggestion-1.log \
 	$(top_srcdir)/doc/source/example/tutorial/data-1.log \
 	$(top_srcdir)/doc/source/example/tutorial/data-2.log \
@@ -471,6 +478,9 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/suggest-learn-suggestion.log \
 	source/example/reference/commands/suggest-mixed.log \
 	source/example/reference/commands/suggest-suggestion.log \
+	source/example/reference/commands/table_create/data_store_table_no_key.log \
+	source/example/reference/commands/table_create/lexicon_table_pat_key.log \
+	source/example/reference/commands/table_create/tag_index_table_hash_key.log \
 	source/example/reference/commands/table_list.log \
 	source/example/reference/executables/groonga-httpd.log \
 	source/example/reference/functions/geo_distance_distance_ellipsoid.log \
@@ -540,6 +550,10 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/indexing-search-after-offline-index-construction.log \
 	source/example/reference/indexing-search-after-online-index-construction.log \
 	source/example/reference/indexing-search-without-index.log \
+	source/example/reference/normalizers/example-load.log \
+	source/example/reference/normalizers/example-table-create.log \
+	source/example/reference/normalizers/normalizer-auto.log \
+	source/example/reference/normalizers/normalizer-nfkc51.log \
 	source/example/suggestion-1.log \
 	source/example/tutorial/data-1.log \
 	source/example/tutorial/data-2.log \
