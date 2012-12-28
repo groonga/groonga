@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-12-28 15:08\n"
-"PO-Revision-Date: 2012-10-30 16:27+0900\n"
+"PO-Revision-Date: 2012-12-28 15:15+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -126,7 +126,6 @@ msgstr "データの種類"
 
 # 19e12e7217a54c47a4cbc3ab8081e1a7
 #: ../../../source/tutorial/data.txt:18
-#, fuzzy
 msgid ""
 "The basic data types of groonga are roughly divided into 5 groups --- "
 "boolean type, numeric types, string types, date/time type and longitude/"
@@ -141,7 +140,7 @@ msgstr ""
 "に大別できます。基本型において、数値は整数・浮動小数点数の違い、符号の有無と"
 "割り当てるビット数によって細分化できるほか、文字列は長さの上限によって細分化"
 "できます。また、経緯度には測地系による分類があります。詳しくは :doc:`/"
-"reference/type` を参照してください。"
+"reference/types` を参照してください。"
 
 # 3ec01c2c1fbd42978e3a85da79958686
 #: ../../../source/tutorial/data.txt:20
@@ -192,7 +191,6 @@ msgstr "数値"
 
 # 14cc63c41f094d08aac73106b134640b
 #: ../../../source/tutorial/data.txt:49
-#, fuzzy
 msgid ""
 "The numeric types are divided into integer types and a floating point number "
 "type. The integer types are further divided into the signed integer types "
@@ -204,7 +202,7 @@ msgstr ""
 "号なし整数に分けることができるだけでなく、割り当てるビット数によっても分ける"
 "ことができます。割り当てるビット数を大きくすると、カラムのサイズは大きくなっ"
 "てしまいますが、表現できる整数の範囲を大きくすることができます。詳しくは :"
-"doc:`/reference/type` を参照してください。数値型のデフォルト値はいずれも0で"
+"doc:`/reference/types` を参照してください。数値型のデフォルト値はいずれも0で"
 "す。"
 
 # 92862bee04a048cf97411a6649be1a0f
@@ -232,14 +230,13 @@ msgstr "文字列"
 
 # 6f9b195b9b494b518887da51ea243c5b
 #: ../../../source/tutorial/data.txt:68
-#, fuzzy
 msgid ""
 "The string types are divided according to the maximum length. For more "
 "details, see :doc:`/reference/types`. The default value is the zero-length "
 "string."
 msgstr ""
 "文字列型は、長さの上限によって分けることができます。詳しくは :doc:`/"
-"reference/type` を参照してください。文字列型のデフォルト値は長さ0の文字列で"
+"reference/types` を参照してください。文字列型のデフォルト値は長さ0の文字列で"
 "す。"
 
 # b0efb64bd2724bcc88a28ff9460b8fa0
@@ -290,7 +287,6 @@ msgstr "経緯度"
 
 # 6f9b195b9b494b518887da51ea243c5b
 #: ../../../source/tutorial/data.txt:102
-#, fuzzy
 msgid ""
 "The longitude and latitude types are divided according to the geographic "
 "coordinate system. For more details, see :doc:`/reference/types`. To "
@@ -298,7 +294,7 @@ msgid ""
 "follows:"
 msgstr ""
 "経緯度を表現するための型は、測地系によって分けることができます。詳しくは :"
-"doc:`/reference/type` を参照してください。経緯度の指定・表示には、以下に示す"
+"doc:`/reference/types` を参照してください。経緯度の指定・表示には、以下に示す"
 "形式の文字列を使います。"
 
 # bc2afac58e83444099f6a2e282104d04
@@ -815,11 +811,8 @@ msgstr ""
 
 # 1e74fb8068674cafb7c2776d998e7ce8
 #: ../../../source/tutorial/introduction.txt:75
-#, fuzzy
 msgid ":doc:`/reference/commands/table_list`"
 msgstr ""
-":doc:`/reference/commands/table_create` コマンドを使用してテーブルを作成しま"
-"す。"
 
 # 602f9e43757345a1b0bc3a57a5b595ea
 #: ../../../source/tutorial/introduction.txt:75
@@ -828,11 +821,8 @@ msgstr "groongaプロセスの状態を表示します。"
 
 # 4e5488d852844f238c41dfc94e49fa73
 #: ../../../source/tutorial/introduction.txt:77
-#, fuzzy
 msgid ":doc:`/reference/commands/column_list`"
 msgstr ""
-":doc:`/reference/commands/column_create` コマンドを用いて、カラムを作成するこ"
-"とができます。"
 
 # f35fc92dd787414ebd0561453131adb4
 #: ../../../source/tutorial/introduction.txt:77
@@ -841,11 +831,8 @@ msgstr "データベースに定義されているテーブルのリストを表
 
 # 1e74fb8068674cafb7c2776d998e7ce8
 #: ../../../source/tutorial/introduction.txt:79
-#, fuzzy
 msgid ":doc:`/reference/commands/table_create`"
 msgstr ""
-":doc:`/reference/commands/table_create` コマンドを使用してテーブルを作成しま"
-"す。"
 
 # e18aeb6cbc8b4c28b0cb38508c6c8b00
 #: ../../../source/tutorial/introduction.txt:79
@@ -854,11 +841,8 @@ msgstr "テーブルに定義されているカラムのリストを表示しま
 
 # 4e5488d852844f238c41dfc94e49fa73
 #: ../../../source/tutorial/introduction.txt:81
-#, fuzzy
 msgid ":doc:`/reference/commands/column_create`"
 msgstr ""
-":doc:`/reference/commands/column_create` コマンドを用いて、カラムを作成するこ"
-"とができます。"
 
 # 0d2bb03bc0114bbb8ad3a1b9670c865d
 #: ../../../source/tutorial/introduction.txt:81
@@ -867,11 +851,8 @@ msgstr "データベースにテーブルを追加します。"
 
 # 8cb3ff01469d48e28b6875b2554741e8
 #: ../../../source/tutorial/introduction.txt:83
-#, fuzzy
 msgid ":doc:`/reference/commands/select`"
 msgstr ""
-":doc:`/reference/commands/select` コマンドを用いて、テーブルの中身を表示する"
-"ことができます。"
 
 # 714cfb440b37481d81291c5386fce6b1
 #: ../../../source/tutorial/introduction.txt:83
@@ -913,7 +894,6 @@ msgstr ""
 "格納方法も併せて指定する必要があります。"
 
 #: ../../../source/tutorial/introduction.txt:96
-#, fuzzy
 msgid ""
 "There are various data types such as integers, strings, etc. See also :doc:`/"
 "reference/types` for more details. The index type determines the search "
@@ -921,7 +901,7 @@ msgid ""
 "described later."
 msgstr ""
 "型には数値や文字列などがあります。ここではデータの種類を表しているものという"
-"程度に考えてください。詳細は :doc:`/reference/type` に記述されています。主"
+"程度に考えてください。詳細は :doc:`/reference/types` に記述されています。主"
 "キーの格納方法は、主キーを条件とする検索にかかる時間や、前方一致検索の可否な"
 "どを左右します。こちらも後で説明します。"
 
