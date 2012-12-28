@@ -5,8 +5,8 @@
 .. groonga-command
 .. database: commands_select
 
-select
-======
+``select``
+==========
 
 Summary
 -------
