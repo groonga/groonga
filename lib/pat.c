@@ -429,8 +429,8 @@ _grn_pat_create(grn_ctx *ctx, grn_pat *pat,
     pat->normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
     header->normalizer = grn_obj_id(ctx, pat->normalizer);
   } else {
-    header->normalizer = GRN_ID_NIL;
     pat->normalizer = NULL;
+    header->normalizer = GRN_ID_NIL;
   }
   pat->io = io;
   pat->header = header;

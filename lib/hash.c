@@ -1488,8 +1488,8 @@ grn_io_hash_init(grn_ctx *ctx, grn_hash *hash, const char *path,
     hash->normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
     header->normalizer = grn_obj_id(ctx, hash->normalizer);
   } else {
-    header->normalizer = GRN_ID_NIL;
     hash->normalizer = NULL;
+    header->normalizer = GRN_ID_NIL;
   }
   grn_table_queue_init(ctx, &header->queue);
 

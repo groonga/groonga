@@ -307,8 +307,8 @@ grn_dat_create(grn_ctx *ctx, const char *path, uint32_t,
     dat->normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
     dat->header->normalizer = grn_obj_id(ctx, dat->normalizer);
   } else {
-    dat->header->normalizer = GRN_ID_NIL;
     dat->normalizer = NULL;
+    dat->header->normalizer = GRN_ID_NIL;
   }
   dat->encoding = encoding;
   dat->tokenizer = NULL;
