@@ -525,7 +525,6 @@ grn_pat_open(grn_ctx *ctx, const char *path)
   pat->key_size = header->key_size;
   pat->value_size = header->value_size;
   pat->encoding = header->encoding;
-  pat->obj.header.flags = header->flags;
   pat->tokenizer = grn_ctx_at(ctx, header->tokenizer);
   if (header->flags & GRN_OBJ_KEY_NORMALIZE) {
     header->flags &= ~GRN_OBJ_KEY_NORMALIZE;
@@ -534,6 +533,7 @@ grn_pat_open(grn_ctx *ctx, const char *path)
   } else {
     pat->normalizer = grn_ctx_at(ctx, header->normalizer);
   }
+  pat->obj.header.flags = header->flags;
   PAT_AT(pat, 0, node0);
   if (!node0) {
     grn_io_close(ctx, io);

@@ -1618,7 +1618,6 @@ grn_hash_open(grn_ctx *ctx, const char *path)
         if (hash) {
           if (!(header->flags & GRN_HASH_TINY)) {
             GRN_DB_OBJ_SET_TYPE(hash, GRN_TABLE_HASH_KEY);
-            hash->obj.header.flags = header->flags;
             hash->ctx = ctx;
             hash->key_size = header->key_size;
             hash->encoding = header->encoding;
@@ -1638,6 +1637,7 @@ grn_hash_open(grn_ctx *ctx, const char *path)
             } else {
               hash->normalizer = grn_ctx_at(ctx, header->normalizer);
             }
+            hash->obj.header.flags = header->flags;
             return hash;
           } else {
             GRN_LOG(ctx, GRN_LOG_NOTICE,

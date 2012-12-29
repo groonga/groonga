@@ -346,7 +346,6 @@ grn_dat_open(grn_ctx *ctx, const char *path)
   }
   dat->file_id = dat->header->file_id;
   dat->encoding = dat->header->encoding;
-  dat->obj.header.flags = dat->header->flags;
   dat->tokenizer = grn_ctx_at(ctx, dat->header->tokenizer);
   if (dat->header->flags & GRN_OBJ_KEY_NORMALIZE) {
     dat->header->flags &= ~GRN_OBJ_KEY_NORMALIZE;
@@ -355,6 +354,7 @@ grn_dat_open(grn_ctx *ctx, const char *path)
   } else {
     dat->normalizer = grn_ctx_at(ctx, dat->header->normalizer);
   }
+  dat->obj.header.flags = dat->header->flags;
   return dat;
 }
 

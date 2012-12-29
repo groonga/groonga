@@ -7193,17 +7193,29 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
                 case GRN_TABLE_HASH_KEY :
                   GET_PATH(spec, buffer, s, id);
                   vp->ptr = (grn_obj *)grn_hash_open(ctx, buffer);
-                  UNPACK_INFO();
+                  if (vp->ptr) {
+                    grn_obj_flags flags = vp->ptr->header.flags;
+                    UNPACK_INFO();
+                    vp->ptr->header.flags = flags;
+                  }
                   break;
                 case GRN_TABLE_PAT_KEY :
                   GET_PATH(spec, buffer, s, id);
                   vp->ptr = (grn_obj *)grn_pat_open(ctx, buffer);
-                  UNPACK_INFO();
+                  if (vp->ptr) {
+                    grn_obj_flags flags = vp->ptr->header.flags;
+                    UNPACK_INFO();
+                    vp->ptr->header.flags = flags;
+                  }
                   break;
                 case GRN_TABLE_DAT_KEY :
                   GET_PATH(spec, buffer, s, id);
                   vp->ptr = (grn_obj *)grn_dat_open(ctx, buffer);
-                  UNPACK_INFO();
+                  if (vp->ptr) {
+                    grn_obj_flags flags = vp->ptr->header.flags;
+                    UNPACK_INFO();
+                    vp->ptr->header.flags = flags;
+                  }
                   break;
                 case GRN_TABLE_NO_KEY :
                   GET_PATH(spec, buffer, s, id);
