@@ -610,12 +610,6 @@ typedef enum {
   GRN_DB_TRIGRAM
 } grn_builtin_tokenizer;
 
-typedef enum {
-  GRN_DB_NORMALIZER_AUTO = 96,
-  GRN_DB_NORMALIZER_NFKC51,          /* Normalization Form KC for Unicode 5.1 */
-  GRN_DB_NORMALIZER_UCA              /* Unicode Collation Algorithm */
-} grn_builtin_normalizer;
-
 GRN_API grn_obj *grn_ctx_at(grn_ctx *ctx, grn_id id);
 
 /**

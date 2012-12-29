@@ -8504,10 +8504,6 @@ grn_db_init_builtin_types(grn_ctx *ctx)
   }
 #endif
   grn_db_init_builtin_tokenizers(ctx);
-  for (id = grn_db_curr_id(ctx, db) + 1; id < GRN_DB_NORMALIZER_AUTO; id++) {
-    grn_itoh(id, buf + 3, 2);
-    grn_obj_register(ctx, db, buf, 5);
-  }
   grn_db_init_builtin_normalizers(ctx);
   for (id = grn_db_curr_id(ctx, db) + 1; id < 128; id++) {
     grn_itoh(id, buf + 3, 2);

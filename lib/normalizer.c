@@ -1174,18 +1174,10 @@ grn_normalizer_normalize(grn_ctx *ctx, grn_obj *normalizer, grn_obj *string)
 grn_rc
 grn_db_init_builtin_normalizers(grn_ctx *ctx)
 {
-  grn_rc rc;
   const char *normalizer_nfkc51_name = "NormalizerNFKC51";
 
-  rc = grn_normalizer_register(ctx, GRN_NORMALIZER_AUTO_NAME, -1,
-                               NULL, auto_next, NULL);
-  if (rc == GRN_SUCCESS) {
-    grn_obj *obj;
-    obj = grn_ctx_get(ctx, normalizer_auto_name, -1);
-    if (!obj || ((grn_db_obj *)obj)->id != GRN_DB_NORMALIZER_AUTO) {
-      return GRN_FILE_CORRUPT;
-    }
-  }
+  grn_normalizer_register(ctx, GRN_NORMALIZER_AUTO_NAME, -1,
+                          NULL, auto_next, NULL);
 
 #ifdef WITH_NFKC
   grn_normalizer_register(ctx, normalizer_nfkc51_name, -1,
