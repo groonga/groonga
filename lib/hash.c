@@ -21,6 +21,7 @@
 #include <limits.h>
 
 #include "store.h"
+#include "normalizer_in.h"
 
 /* grn_tiny_array */
 
@@ -1484,8 +1485,8 @@ grn_io_hash_init(grn_ctx *ctx, grn_hash *hash, const char *path,
   header->tokenizer = GRN_ID_NIL;
   if (header->flags & GRN_OBJ_KEY_NORMALIZE) {
     header->flags &= ~GRN_OBJ_KEY_NORMALIZE;
-    header->normalizer = GRN_DB_NORMALIZER_AUTO;
-    hash->normalizer = grn_ctx_at(ctx, header->normalizer);
+    hash->normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
+    header->normalizer = grn_obj_id(ctx, hash->normalizer);
   } else {
     header->normalizer = GRN_ID_NIL;
     hash->normalizer = NULL;
@@ -1632,9 +1633,11 @@ grn_hash_open(grn_ctx *ctx, const char *path)
             hash->tokenizer = grn_ctx_at(ctx, header->tokenizer);
             if (header->flags & GRN_OBJ_KEY_NORMALIZE) {
               header->flags &= ~GRN_OBJ_KEY_NORMALIZE;
-              header->normalizer = GRN_DB_NORMALIZER_AUTO;
+              hash->normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
+              header->normalizer = grn_obj_id(ctx, hash->normalizer);
+            } else {
+              hash->normalizer = grn_ctx_at(ctx, header->normalizer);
             }
-            hash->normalizer = grn_ctx_at(ctx, header->normalizer);
             return hash;
           } else {
             GRN_LOG(ctx, GRN_LOG_NOTICE,

@@ -23,6 +23,7 @@
 #include "io.h"
 #include "dat.h"
 #include "util.h"
+#include "normalizer_in.h"
 
 #include "dat/trie.hpp"
 #include "dat/cursor-factory.hpp"
@@ -303,8 +304,8 @@ grn_dat_create(grn_ctx *ctx, const char *path, uint32_t,
   dat->header->file_id = 0;
   if (dat->header->flags & GRN_OBJ_KEY_NORMALIZE) {
     dat->header->flags &= ~GRN_OBJ_KEY_NORMALIZE;
-    dat->header->normalizer = GRN_DB_NORMALIZER_AUTO;
-    dat->normalizer = grn_ctx_at(ctx, dat->header->normalizer);
+    dat->normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
+    dat->header->normalizer = grn_obj_id(ctx, dat->normalizer);
   } else {
     dat->header->normalizer = GRN_ID_NIL;
     dat->normalizer = NULL;
@@ -349,9 +350,11 @@ grn_dat_open(grn_ctx *ctx, const char *path)
   dat->tokenizer = grn_ctx_at(ctx, dat->header->tokenizer);
   if (dat->header->flags & GRN_OBJ_KEY_NORMALIZE) {
     dat->header->flags &= ~GRN_OBJ_KEY_NORMALIZE;
-    dat->header->normalizer = GRN_DB_NORMALIZER_AUTO;
+    dat->normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
+    dat->header->normalizer = grn_obj_id(ctx, dat->normalizer);
+  } else {
+    dat->normalizer = grn_ctx_at(ctx, dat->header->normalizer);
   }
-  dat->normalizer = grn_ctx_at(ctx, dat->header->normalizer);
   return dat;
 }
 

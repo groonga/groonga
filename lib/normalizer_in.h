@@ -34,6 +34,8 @@
 extern "C" {
 #endif
 
+#define GRN_NORMALIZER_AUTO_NAME "NormalizerAuto"
+
 grn_rc grn_normalizer_init(void);
 grn_rc grn_normalizer_fin(void);
 

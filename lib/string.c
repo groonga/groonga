@@ -165,7 +165,7 @@ grn_string_open_(grn_ctx *ctx, const char *str, unsigned int str_len,
 
   is_normalizer_auto = (normalizer == GRN_NORMALIZER_AUTO);
   if (is_normalizer_auto) {
-    normalizer = grn_ctx_at(ctx, GRN_DB_NORMALIZER_AUTO);
+    normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
   }
 
   /* TODO: check rc */

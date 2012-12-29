@@ -1175,11 +1175,10 @@ grn_rc
 grn_db_init_builtin_normalizers(grn_ctx *ctx)
 {
   grn_rc rc;
-  const char *normalizer_auto_name = "NormalizerAuto";
   const char *normalizer_nfkc51_name = "NormalizerNFKC51";
 
-  rc = grn_normalizer_register(ctx, normalizer_auto_name, -1,
-                                NULL, auto_next, NULL);
+  rc = grn_normalizer_register(ctx, GRN_NORMALIZER_AUTO_NAME, -1,
+                               NULL, auto_next, NULL);
   if (rc == GRN_SUCCESS) {
     grn_obj *obj;
     obj = grn_ctx_get(ctx, normalizer_auto_name, -1);

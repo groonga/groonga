@@ -20,6 +20,7 @@
 #include "pat.h"
 #include "output.h"
 #include "util.h"
+#include "normalizer_in.h"
 
 #define GRN_PAT_DELETED (GRN_ID_MAX + 1)
 
@@ -425,8 +426,8 @@ _grn_pat_create(grn_ctx *ctx, grn_pat *pat,
   header->tokenizer = GRN_ID_NIL;
   if (header->flags & GRN_OBJ_KEY_NORMALIZE) {
     header->flags &= ~GRN_OBJ_KEY_NORMALIZE;
-    header->normalizer = GRN_DB_NORMALIZER_AUTO;
-    pat->normalizer = grn_ctx_at(ctx, header->normalizer);
+    pat->normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
+    header->normalizer = grn_obj_id(ctx, pat->normalizer);
   } else {
     header->normalizer = GRN_ID_NIL;
     pat->normalizer = NULL;
@@ -528,9 +529,11 @@ grn_pat_open(grn_ctx *ctx, const char *path)
   pat->tokenizer = grn_ctx_at(ctx, header->tokenizer);
   if (header->flags & GRN_OBJ_KEY_NORMALIZE) {
     header->flags &= ~GRN_OBJ_KEY_NORMALIZE;
-    header->normalizer = GRN_DB_NORMALIZER_AUTO;
+    pat->normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
+    header->normalizer = grn_obj_id(ctx, pat->normalizer);
+  } else {
+    pat->normalizer = grn_ctx_at(ctx, header->normalizer);
   }
-  pat->normalizer = grn_ctx_at(ctx, header->normalizer);
   PAT_AT(pat, 0, node0);
   if (!node0) {
     grn_io_close(ctx, io);

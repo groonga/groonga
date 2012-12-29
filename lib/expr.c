@@ -23,6 +23,7 @@
 #include "ii.h"
 #include "geo.h"
 #include "util.h"
+#include "normalizer_in.h"
 
 static inline int
 function_proc_p(grn_obj *obj)
@@ -2301,7 +2302,7 @@ pseudo_query_scan(grn_ctx *ctx, grn_obj *x, grn_obj *y, grn_obj *res)
   grn_obj *normalizer;
   grn_obj *a = NULL, *b = NULL;
 
-  normalizer = grn_ctx_at(ctx, GRN_DB_NORMALIZER_AUTO);
+  normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
   switch (x->header.domain) {
   case GRN_DB_SHORT_TEXT:
   case GRN_DB_TEXT:
