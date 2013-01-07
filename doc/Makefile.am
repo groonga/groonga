@@ -36,16 +36,14 @@ init-locale:
 EXTRA_DIST =					\
 	$(theme_files_relative_from_doc_dir)	\
 	images.mk				\
-	update_execution_example.py
+	update_execution_example.py		\
+	$(source_files_relative_from_doc_dir)
 
 $(source_files_relative_from_doc_dir): html
 
 update-images:
 	cd $(srcdir)/source/_static/images && \
 	  $(MAKE) -f $(abs_srcdir)/images.mk update-images
-
-nobase_dist_doc_DATA =				\
-	$(source_files_relative_from_doc_dir)
 
 if DOCUMENT_BUILDABLE
 dist-hook: html man
