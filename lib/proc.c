@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2012 Brazil
+  Copyright(C) 2009-2013 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -3360,6 +3360,150 @@ func_snippet_html(grn_ctx *ctx, int nargs, grn_obj **args,
   return snippets;
 }
 
+static grn_rc
+run_query(grn_ctx *ctx, grn_obj *table,
+          int nargs, grn_obj **args,
+          grn_obj *res, grn_operator op)
+{
+  grn_obj *match_columns_string;
+  grn_obj *query_string;
+  grn_obj *match_columns = NULL;
+  grn_obj *condition = NULL;
+  grn_obj *dummy_variable;
+
+  /* TODO: support expansion and flags by parameters */
+  if (nargs != 2) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "wrong number of arguments (%d for 2)", nargs);
+    goto exit;
+  }
+
+  match_columns_string = args[0];
+  query_string = args[1];
+
+  if (match_columns_string->header.domain == GRN_DB_TEXT &&
+      GRN_TEXT_LEN(match_columns_string) > 0) {
+    GRN_EXPR_CREATE_FOR_QUERY(ctx, table, match_columns, dummy_variable);
+    if (!match_columns) {
+      goto exit;
+    }
+
+    grn_expr_parse(ctx, match_columns,
+                   GRN_TEXT_VALUE(match_columns_string),
+                   GRN_TEXT_LEN(match_columns_string),
+                   NULL, GRN_OP_MATCH, GRN_OP_AND,
+                   GRN_EXPR_SYNTAX_SCRIPT);
+    if (ctx->rc != GRN_SUCCESS) {
+      goto exit;
+    }
+  }
+
+  if (query_string->header.domain == GRN_DB_TEXT &&
+      GRN_TEXT_LEN(query_string) > 0) {
+    grn_expr_flags flags =
+      GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_PRAGMA|GRN_EXPR_ALLOW_COLUMN;
+
+    GRN_EXPR_CREATE_FOR_QUERY(ctx, table, condition, dummy_variable);
+    if (!condition) {
+      goto exit;
+    }
+    grn_expr_parse(ctx, condition,
+                   GRN_TEXT_VALUE(query_string),
+                   GRN_TEXT_LEN(query_string),
+                   match_columns, GRN_OP_MATCH, GRN_OP_AND, flags);
+    if (ctx->rc != GRN_SUCCESS) {
+      goto exit;
+    }
+    grn_table_select(ctx, table, condition, res, op);
+  }
+
+exit:
+  if (match_columns) {
+    grn_obj_unlink(ctx, match_columns);
+  }
+  if (condition) {
+    grn_obj_unlink(ctx, condition);
+  }
+
+  return ctx->rc;
+}
+
+static grn_obj *
+func_query(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  grn_obj *found;
+  grn_obj *command = ctx->impl->curr_expr;
+  grn_obj *condition_ptr = NULL;
+  grn_obj *condition = NULL;
+  grn_obj *variable;
+  grn_obj *table = NULL;
+  grn_obj *res = NULL;
+
+  found = GRN_PROC_ALLOC(GRN_DB_BOOL, 0);
+  if (!found) {
+    goto exit;
+  }
+  GRN_BOOL_SET(ctx, found, GRN_FALSE);
+
+  condition_ptr = grn_expr_get_var(ctx, command,
+                                   GRN_SELECT_INTERNAL_VAR_CONDITION,
+                                   strlen(GRN_SELECT_INTERNAL_VAR_CONDITION));
+  if (!condition_ptr) {
+    goto exit;
+  }
+
+  condition = GRN_PTR_VALUE(condition_ptr);
+  if (!condition) {
+    goto exit;
+  }
+
+  variable = grn_expr_get_var_by_offset(ctx, condition, 0);
+  if (!variable) {
+    goto exit;
+  }
+
+  table = grn_ctx_at(ctx, variable->header.domain);
+  if (!table) {
+    goto exit;
+  }
+
+  res = grn_table_create(ctx, NULL, 0, NULL,
+                         GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, table, NULL);
+  if (!res) {
+    goto exit;
+  }
+  {
+    grn_rset_posinfo pi;
+    unsigned int key_size;
+    memset(&pi, 0, sizeof(grn_rset_posinfo));
+    pi.rid = GRN_RECORD_VALUE(variable);
+    key_size = ((grn_hash *)res)->key_size;
+    if (grn_table_add(ctx, res, &pi, key_size, NULL) == GRN_ID_NIL) {
+      goto exit;
+    }
+  }
+  if (run_query(ctx, table, nargs, args, res, GRN_OP_AND) == GRN_SUCCESS) {
+    GRN_BOOL_SET(ctx, found, grn_table_size(ctx, res) > 0);
+  }
+
+exit:
+  if (res) {
+    grn_obj_unlink(ctx, res);
+  }
+  if (table) {
+    grn_obj_unlink(ctx, table);
+  }
+
+  return found;
+}
+
+static grn_rc
+selector_query(grn_ctx *ctx, grn_obj *table, grn_obj *index,
+               int nargs, grn_obj **args,
+               grn_obj *res, grn_operator op)
+{
+  return run_query(ctx, table, nargs - 1, args + 1, res, op);
+}
 
 #define DEF_VAR(v,name_str) do {\
   (v).name = (name_str);\
@@ -3542,4 +3686,12 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   /* experimental */
   grn_proc_create(ctx, "snippet_html", -1, GRN_PROC_FUNCTION,
                   func_snippet_html, NULL, NULL, 0, NULL);
+
+  {
+    grn_obj *selector_proc;
+
+    selector_proc = grn_proc_create(ctx, "query", -1, GRN_PROC_FUNCTION,
+                                    func_query, NULL, NULL, 0, NULL);
+    grn_proc_set_selector(ctx, selector_proc, selector_query);
+  }
 }
