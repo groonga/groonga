@@ -2,7 +2,7 @@
 /*
   Copyright (C) 2010 Brazil
   Copyright (C) 2009  Ryo Onodera <onodera@clear-code.com>
-  Copyright (C) 2009-2012  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2009-2013  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -211,17 +211,6 @@ data_array_create(void)
            "Int32");
 }
 
-static void
-data_view_create(void)
-{
-  ADD_DATA("view",
-           "table_create Blog TABLE_VIEW",
-           "Blog",
-           GRN_OBJ_TABLE_VIEW,
-           NULL,
-           NULL);
-}
-
 void
 data_table_create(void)
 {
@@ -229,7 +218,6 @@ data_table_create(void)
   data_patricia_trie_create();
   data_double_array_trie_create();
   data_array_create();
-  data_view_create();
 }
 #undef ADD_DATA
 

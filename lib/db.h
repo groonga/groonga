@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009-2012 Brazil
+/* Copyright(C) 2009-2013 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -112,13 +112,8 @@ void grn_table_add_subrec(grn_obj *table, grn_rset_recinfo *ri, int score,
 
 grn_obj *grn_obj_graft(grn_ctx *ctx, grn_obj *obj);
 
-GRN_API grn_id grn_view_add(grn_ctx *ctx, grn_obj *view, grn_obj *table);
-
 grn_rc grn_column_name_(grn_ctx *ctx, grn_obj *obj, grn_obj *buf);
 
-GRN_API grn_rc grn_table_cursor_next_o(grn_ctx *ctx, grn_table_cursor *tc, grn_obj *id);
-GRN_API grn_obj *grn_obj_get_value_o(grn_ctx *ctx, grn_obj *obj, grn_obj *id, grn_obj *value);
-grn_rc grn_obj_set_value_o(grn_ctx *ctx, grn_obj *obj, grn_obj *id, grn_obj *value, int flags);
 
 typedef enum {
   PROC_INIT = 0,
@@ -129,15 +124,6 @@ typedef enum {
 struct _grn_type {
   grn_db_obj obj;
 };
-
-typedef struct {
-  grn_db_obj obj;
-  grn_hash *hash;
-  grn_table_sort_key *keys;
-  int n_keys;
-  int offset;
-  int limit;
-} grn_view;
 
 #define GRN_TABLE_SORT_GEO            (0x02<<0)
 
@@ -215,15 +201,6 @@ GRN_API grn_rc grn_proc_call(grn_ctx *ctx, grn_obj *proc,
 grn_obj *grn_expr_get_or_add_var(grn_ctx *ctx, grn_obj *expr,
                                  const char *name, unsigned int name_size);
 
-typedef struct _grn_accessor_view grn_accessor_view;
-
-struct _grn_accessor_view {
-  grn_obj_header header;
-  grn_id range;
-  /* -- compatible with grn_db_obj -- */
-  uint32_t naccessors;
-  grn_obj **accessors;
-};
 
 typedef struct _grn_accessor grn_accessor;
 
@@ -382,8 +359,7 @@ grn_rc grn_db_check_name(grn_ctx *ctx, const char *name, unsigned int name_size)
 grn_rc grn_db_obj_init(grn_ctx *ctx, grn_obj *db, grn_id id, grn_db_obj *obj);
 
 #define GRN_ACCESSORP(obj) \
-  ((obj) && (((grn_obj *)(obj))->header.type == GRN_ACCESSOR ||\
-             ((grn_obj *)(obj))->header.type == GRN_ACCESSOR_VIEW))
+  ((obj) && (((grn_obj *)(obj))->header.type == GRN_ACCESSOR))
 
 #define GRN_TRUEP(ctx, v, result) do {\
   switch (v->header.type) {                             \

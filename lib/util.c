@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2010-2011 Brazil
+/* Copyright(C) 2010-2013 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -149,9 +149,6 @@ grn_inspect_type(grn_ctx *ctx, grn_obj *buf, unsigned char type)
   case GRN_ACCESSOR :
     GRN_TEXT_PUTS(ctx, buf, "GRN_ACCESSOR");
     break;
-  case GRN_ACCESSOR_VIEW :
-    GRN_TEXT_PUTS(ctx, buf, "GRN_ACCESSOR_VIEW");
-    break;
   case GRN_SNIP :
     GRN_TEXT_PUTS(ctx, buf, "GRN_SNIP");
     break;
@@ -172,9 +169,6 @@ grn_inspect_type(grn_ctx *ctx, grn_obj *buf, unsigned char type)
     break;
   case GRN_CURSOR_TABLE_NO_KEY :
     GRN_TEXT_PUTS(ctx, buf, "GRN_CURSOR_TABLE_NO_KEY");
-    break;
-  case GRN_CURSOR_TABLE_VIEW :
-    GRN_TEXT_PUTS(ctx, buf, "GRN_CURSOR_TABLE_VIEW");
     break;
   case GRN_CURSOR_COLUMN_INDEX :
     GRN_TEXT_PUTS(ctx, buf, "GRN_CURSOR_COLUMN_INDEX");
@@ -202,9 +196,6 @@ grn_inspect_type(grn_ctx *ctx, grn_obj *buf, unsigned char type)
     break;
   case GRN_TABLE_NO_KEY :
     GRN_TEXT_PUTS(ctx, buf, "GRN_TABLE_NO_KEY");
-    break;
-  case GRN_TABLE_VIEW :
-    GRN_TEXT_PUTS(ctx, buf, "GRN_TABLE_VIEW");
     break;
   case GRN_DB :
     GRN_TEXT_PUTS(ctx, buf, "GRN_DB");
@@ -815,7 +806,6 @@ grn_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj)
     /* TODO */
     break;
   case GRN_ACCESSOR :
-  case GRN_ACCESSOR_VIEW :
     grn_accessor_inspect(ctx, buffer, obj);
     return buffer;
   case GRN_SNIP :
@@ -833,7 +823,6 @@ grn_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj)
     return buffer;
   case GRN_CURSOR_TABLE_DAT_KEY :
   case GRN_CURSOR_TABLE_NO_KEY :
-  case GRN_CURSOR_TABLE_VIEW :
   case GRN_CURSOR_COLUMN_INDEX :
   case GRN_CURSOR_COLUMN_GEO_INDEX :
     /* TODO */
@@ -853,7 +842,6 @@ grn_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj)
   case GRN_TABLE_NO_KEY :
     grn_table_inspect(ctx, buffer, obj);
     return buffer;
-  case GRN_TABLE_VIEW :
   case GRN_DB :
     /* TODO */
     break;

@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2010-2012 Brazil
+  Copyright(C) 2010-2013 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -3765,7 +3765,6 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
               if (ec->value) {
                 switch (ec->value->header.type) {
                 case GRN_ACCESSOR :
-                case GRN_ACCESSOR_VIEW :
                   if (grn_column_index(ctx, ec->value, c->op, &index, 1, &sid)) {
                     int32_t weight = get_weight(ctx, ec);
                     si->flags |= SCAN_ACCESSOR;
@@ -3990,55 +3989,6 @@ grn_table_select_(grn_ctx *ctx, grn_obj *table, grn_obj *expr, grn_obj *v,
   default :
     break;
   }
-}
-
-grn_obj *
-grn_view_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
-                grn_obj *res, grn_operator op)
-{
-  if (res) {
-    if (res->header.type != GRN_TABLE_VIEW ||
-        (res->header.domain != DB_OBJ(table)->id)) {
-      ERR(GRN_INVALID_ARGUMENT, "view table required");
-      return NULL;
-    }
-  } else {
-    if (!(res = grn_table_create(ctx, NULL, 0, NULL,
-                                 GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, table, NULL))) {
-      return NULL;
-    }
-  }
-  {
-    grn_obj *t, *r;
-    grn_id *tp, rid;
-    grn_view *tv = (grn_view *)table;
-    grn_view *rv = (grn_view *)res;
-    grn_hash *th = tv->hash;
-    grn_hash *rh = rv->hash;
-    grn_expr *e = (grn_expr *)expr;
-    grn_expr_code *cs, *cd, *c0 = e->codes, *ce = e->codes + e->codes_curr;
-    if ((e->codes = GRN_MALLOCN(grn_expr_code, e->codes_curr))) {
-      memcpy(e->codes, c0, sizeof(grn_expr_code) * e->codes_curr);
-      GRN_HASH_EACH(ctx, th, id, &tp, NULL, NULL, {
-        grn_hash_get_key(ctx, rh, id, &rid, sizeof(grn_id));
-        t = grn_ctx_at(ctx, *tp);
-        r = grn_ctx_at(ctx, rid);
-        for (cs = c0, cd = e->codes; cs < ce; cs++, cd++) {
-          if (cs->value && cs->value->header.type == GRN_ACCESSOR_VIEW) {
-            grn_accessor_view *a = (grn_accessor_view *)cs->value;
-            if (!(cd->value = a->accessors[id - 1])) {
-              cd->value = grn_null;
-            }
-          }
-        }
-        grn_table_select(ctx, t, expr, r, op);
-      });
-
-      GRN_FREE(e->codes);
-    }
-    e->codes = c0;
-  }
-  return res;
 }
 
 static inline grn_bool
@@ -4370,9 +4320,6 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
   grn_obj *v;
   unsigned int res_size;
   grn_bool res_created = GRN_FALSE;
-  if (table->header.type == GRN_TABLE_VIEW) {
-    return grn_view_select(ctx, table, expr, res, op);
-  }
   if (res) {
     if (res->header.type != GRN_TABLE_HASH_KEY ||
         (res->header.domain != DB_OBJ(table)->id)) {

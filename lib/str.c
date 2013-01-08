@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009-2011 Brazil
+/* Copyright(C) 2009-2013 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -2591,35 +2591,6 @@ exit :
   grn_obj_close(ctx, &buf);
 }
 
-static grn_rc
-grn_text_atoj_o(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj *id)
-{
-  grn_id *idp = (grn_id *)GRN_BULK_HEAD(id);
-  uint32_t ids = GRN_BULK_VSIZE(id);
-  for (;;) {
-    if (ids < sizeof(grn_id)) {
-      ERR(GRN_INVALID_ARGUMENT, "invalid id.");
-      return ctx->rc;
-    }
-    if (obj->header.type == GRN_ACCESSOR_VIEW) {
-      uint32_t n;
-      grn_accessor_view *v = (grn_accessor_view *)obj;
-      n = *idp;
-      if (n >= v->naccessors) {
-        ERR(GRN_INVALID_ARGUMENT, "invalid id");
-        return ctx->rc;
-      }
-      if (!(obj = v->accessors[n])) { return ctx->rc; }
-      idp++;
-      ids -= sizeof(grn_id);
-    } else {
-      break;
-    }
-  }
-  grn_text_atoj(ctx, bulk, obj, *idp);
-  return ctx->rc;
-}
-
 grn_rc
 grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
 {
@@ -2692,6 +2663,7 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
       if (format) {
         int j;
         int ncolumns = GRN_BULK_VSIZE(&format->columns)/sizeof(grn_obj *);
+        grn_id id = GRN_RECORD_VALUE(obj);
         grn_obj **columns = (grn_obj **)GRN_BULK_HEAD(&format->columns);
         if (format->flags & GRN_OBJ_FORMAT_WITH_COLUMN_NAMES) {
           GRN_TEXT_PUTS(ctx, bulk, "[");
@@ -2726,12 +2698,12 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
         GRN_TEXT_PUTC(ctx, bulk, '[');
         for (j = 0; j < ncolumns; j++) {
           if (j) { GRN_TEXT_PUTC(ctx, bulk, ','); }
-          grn_text_atoj_o(ctx, bulk, columns[j], obj);
+          grn_text_atoj(ctx, bulk, columns[j], id);
         }
         GRN_TEXT_PUTC(ctx, bulk, ']');
       } else {
         grn_obj *table = grn_ctx_at(ctx, obj->header.domain);
-        grn_id id = *((grn_id *)GRN_BULK_HEAD(obj));
+        grn_id id = GRN_RECORD_VALUE(obj);
         if (table && table->header.type != GRN_TABLE_NO_KEY) {
           /* todo : temporal patch. grn_table_at() is kinda costful... */
           if (grn_table_at(ctx, table, id)) {
@@ -2908,11 +2880,10 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
   case GRN_TABLE_HASH_KEY :
   case GRN_TABLE_PAT_KEY :
   case GRN_TABLE_NO_KEY :
-  case GRN_TABLE_VIEW :
     if (format) {
       int i, j;
       int ncolumns = GRN_BULK_VSIZE(&format->columns)/sizeof(grn_obj *);
-      grn_obj id, **columns = (grn_obj **)GRN_BULK_HEAD(&format->columns);
+      grn_obj **columns = (grn_obj **)GRN_BULK_HEAD(&format->columns);
       grn_table_cursor *tc = grn_table_cursor_open(ctx, obj, NULL, 0, NULL, 0,
                                                    format->offset, format->limit,
                                                    GRN_CURSOR_ASCENDING);
@@ -2950,13 +2921,13 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
         }
         GRN_TEXT_PUTC(ctx, bulk, ']');
       }
-      GRN_TEXT_INIT(&id, 0);
       if (tc) {
-        for (i = 0; !grn_table_cursor_next_o(ctx, tc, &id); i++) {
+        grn_id id;
+        for (i = 0; (id = grn_table_cursor_next(ctx, tc)) != GRN_ID_NIL; i++) {
           GRN_TEXT_PUTS(ctx, bulk, ",[");
           for (j = 0; j < ncolumns; j++) {
             if (j) { GRN_TEXT_PUTC(ctx, bulk, ','); }
-            grn_text_atoj_o(ctx, bulk, columns[j], &id);
+            grn_text_atoj(ctx, bulk, columns[j], id);
           }
           GRN_TEXT_PUTC(ctx, bulk, ']');
         }
@@ -2965,19 +2936,16 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
       GRN_TEXT_PUTC(ctx, bulk, ']');
     } else {
       int i;
-      grn_obj id, *column = grn_obj_column(ctx, obj, "_key", 4);
+      grn_id id;
+      grn_obj *column = grn_obj_column(ctx, obj, "_key", 4);
       grn_table_cursor *tc = grn_table_cursor_open(ctx, obj, NULL, 0, NULL, 0,
                                                    0, -1, GRN_CURSOR_ASCENDING);
       GRN_TEXT_PUTC(ctx, bulk, '[');
       if (tc) {
-        GRN_TEXT_INIT(&id, 0);
-        for (i = 0; !grn_table_cursor_next_o(ctx, tc, &id); i++) {
+        for (i = 0; (id = grn_table_cursor_next(ctx, tc)) != GRN_ID_NIL; i++) {
           if (i) { GRN_TEXT_PUTC(ctx, bulk, ','); }
-          /* todo:
-          grn_text_atoj_o(ctx, bulk, column, &id);
-          */
           GRN_BULK_REWIND(&buf);
-          grn_obj_get_value_o(ctx, column, &id, &buf);
+          grn_obj_get_value(ctx, column, id, &buf);
           grn_text_esc(ctx, bulk, GRN_BULK_HEAD(&buf), GRN_BULK_VSIZE(&buf));
         }
         grn_table_cursor_close(ctx, tc);
@@ -3065,11 +3033,10 @@ grn_text_otoxml(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *forma
   case GRN_TABLE_HASH_KEY :
   case GRN_TABLE_PAT_KEY :
   case GRN_TABLE_NO_KEY :
-  case GRN_TABLE_VIEW :
     {
       int i, j;
       int ncolumns = GRN_BULK_VSIZE(&format->columns)/sizeof(grn_obj *);
-      grn_obj id, **columns = (grn_obj **)GRN_BULK_HEAD(&format->columns);
+      grn_obj **columns = (grn_obj **)GRN_BULK_HEAD(&format->columns);
       grn_table_cursor *tc = grn_table_cursor_open(ctx, obj, NULL, 0, NULL, 0,
                                                    format->offset, format->limit,
                                                    GRN_CURSOR_ASCENDING);
@@ -3095,9 +3062,10 @@ grn_text_otoxml(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *forma
       /* TODO: add TIME attribute to RESULTSET element. */
       if (tc) {
         int hit_no;
-        GRN_TEXT_INIT(&id, 0);
+        grn_id id;
         for (i = format->offset + 1, hit_no = format->hits_offset + 1;
-             !grn_table_cursor_next_o(ctx, tc, &id); i++, hit_no++) {
+             (id = grn_table_cursor_next(ctx, tc)) != GRN_ID_NIL;
+             i++, hit_no++) {
           switch (format->flags & GRN_OBJ_FORMAT_XML_ELEMENT_MASK) {
           case GRN_OBJ_FORMAT_XML_ELEMENT_RESULTSET:
             GRN_TEXT_PUTS(ctx, bulk, "<HIT NO=\"");
@@ -3111,7 +3079,7 @@ grn_text_otoxml(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *forma
               GRN_TEXT_PUTS(ctx, bulk, "\">");
 
               GRN_BULK_REWIND(&buf);
-              grn_obj_get_value_o(ctx, columns[j], &id, &buf);
+              grn_obj_get_value(ctx, columns[j], id, &buf);
               grn_text_otoxml(ctx, bulk, &buf, NULL);
 
               GRN_TEXT_PUTS(ctx, bulk, "</FIELD>\n");
@@ -3126,7 +3094,7 @@ grn_text_otoxml(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *forma
               grn_text_escape_xml(ctx, bulk, GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf));
               GRN_TEXT_PUTS(ctx, bulk, "=\"");
               GRN_BULK_REWIND(&buf);
-              grn_obj_get_value_o(ctx, columns[j], &id, &buf);
+              grn_obj_get_value(ctx, columns[j], id, &buf);
               grn_text_otoxml(ctx, bulk, &buf, NULL);
               GRN_TEXT_PUTS(ctx, bulk, "\" ");
             }
