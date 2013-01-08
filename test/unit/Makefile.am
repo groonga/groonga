@@ -5,7 +5,6 @@ SUBDIRS =		\
 	core		\
 	memcached	\
 	http		\
-	gqtp		\
 	story		\
 	groonga-benchmark
 
