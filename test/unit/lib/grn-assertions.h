@@ -149,17 +149,6 @@
       __VA_ARGS__),                                                     \
     grn_test_assert_equal_table(context, expected, table))
 
-#define grn_test_assert_equal_view(context, expected, view,             \
-                                   text_column_name, ...)               \
-  cut_trace_with_info_expression(                                       \
-    cut_test_with_user_message(                                         \
-      grn_test_assert_equal_view_helper((context), (expected), (view),  \
-                                        (text_column_name),             \
-                                        #expected, #view,               \
-                                        #text_column_name),             \
-      __VA_ARGS__),                                                     \
-    grn_test_assert_equal_view(context, expected, view, text_column_name))
-
 #define grn_test_assert_send_command_error(context, expected_rc,        \
                                            expected_message, command,   \
                                            ...)                         \
@@ -248,14 +237,6 @@ void     grn_test_assert_equal_table_helper
                                          const gchar *text_column_name,
                                          const gchar *expected_expression,
                                          const gchar *select_result_expression,
-                                         const gchar *text_column_name_expression);
-void     grn_test_assert_equal_view_helper
-                                        (grn_ctx     *context,
-                                         const GList *expected,
-                                         grn_obj     *view,
-                                         const gchar *text_column_name,
-                                         const gchar *expected_expression,
-                                         const gchar *view_expression,
                                          const gchar *text_column_name_expression);
 void     grn_test_assert_send_command_error_helper
                                         (grn_ctx     *context,

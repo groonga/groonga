@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2009-2012 Brazil
+/* Copyright(C) 2009-2013 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -607,35 +607,6 @@ exit :
   grn_obj_close(ctx, &buf);
 }
 
-static void
-grn_text_atoj_o(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
-                grn_obj *obj, grn_obj *id)
-{
-  grn_id *idp = (grn_id *)GRN_BULK_HEAD(id);
-  uint32_t ids = GRN_BULK_VSIZE(id);
-  for (;;) {
-    if (ids < sizeof(grn_id)) {
-      ERR(GRN_INVALID_ARGUMENT, "invalid id.");
-      return;
-    }
-    if (obj->header.type == GRN_ACCESSOR_VIEW) {
-      uint32_t n;
-      grn_accessor_view *v = (grn_accessor_view *)obj;
-      n = *idp;
-      if (n >= v->naccessors) {
-        ERR(GRN_INVALID_ARGUMENT, "invalid id");
-        return;
-      }
-      if (!(obj = v->accessors[n])) { return ; }
-      idp++;
-      ids -= sizeof(grn_id);
-    } else {
-      break;
-    }
-  }
-  grn_text_atoj(ctx, outbuf, output_type, obj, *idp);
-}
-
 static inline void
 grn_output_void(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                 grn_obj *bulk, grn_obj_format *format)
@@ -711,6 +682,7 @@ grn_output_bulk(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     if (format) {
       int j;
       int ncolumns = GRN_BULK_VSIZE(&format->columns)/sizeof(grn_obj *);
+      grn_id id = GRN_RECORD_VALUE(bulk);
       grn_obj **columns = (grn_obj **)GRN_BULK_HEAD(&format->columns);
       if (format->flags & GRN_OBJ_FORMAT_WITH_COLUMN_NAMES) {
         grn_output_array_open(ctx, outbuf, output_type, "COLUMNS", ncolumns);
@@ -742,12 +714,12 @@ grn_output_bulk(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
       }
       grn_output_array_open(ctx, outbuf, output_type, "HIT", ncolumns);
       for (j = 0; j < ncolumns; j++) {
-        grn_text_atoj_o(ctx, outbuf, output_type, columns[j], bulk);
+        grn_text_atoj(ctx, outbuf, output_type, columns[j], id);
       }
       grn_output_array_close(ctx, outbuf, output_type);
     } else {
       grn_obj *table = grn_ctx_at(ctx, bulk->header.domain);
-      grn_id id = *((grn_id *)GRN_BULK_HEAD(bulk));
+      grn_id id = GRN_RECORD_VALUE(bulk);
       if (table && table->header.type != GRN_TABLE_NO_KEY) {
         grn_obj *accessor = grn_obj_column(ctx, table, "_key", 4);
         if (accessor) {
@@ -1173,6 +1145,7 @@ grn_output_table_records_by_expression(grn_ctx *ctx, grn_obj *outbuf,
                                        grn_obj_format *format)
 {
   int n_elements = 0;
+  grn_id id;
   grn_obj *record;
   grn_expr *expr = (grn_expr *)format->expression;
   grn_expr_code *code;
@@ -1180,10 +1153,11 @@ grn_output_table_records_by_expression(grn_ctx *ctx, grn_obj *outbuf,
 
   n_elements = count_n_elements_in_expression(ctx, format->expression);
   record = grn_expr_get_var_by_offset(ctx, format->expression, 0);
-  while (!grn_table_cursor_next_o(ctx, tc, record)) {
+  while ((id = grn_table_cursor_next(ctx, tc)) != GRN_ID_NIL) {
     int previous_comma_offset = -1;
     grn_bool is_first_comma = GRN_TRUE;
     grn_bool have_comma = GRN_FALSE;
+    GRN_RECORD_SET(ctx, record, id);
     grn_output_array_open(ctx, outbuf, output_type, "HIT", n_elements);
     for (code = expr->codes; code < code_end; code++) {
       if (code->op == GRN_OP_COMMA) {
@@ -1218,7 +1192,6 @@ grn_output_table_records_by_expression(grn_ctx *ctx, grn_obj *outbuf,
     }
 
     grn_output_array_close(ctx, outbuf, output_type);
-    GRN_BULK_REWIND(record);
   }
 }
 
@@ -1229,18 +1202,16 @@ grn_output_table_records_by_columns(grn_ctx *ctx, grn_obj *outbuf,
                                     grn_obj_format *format)
 {
   int i;
-  grn_obj id;
+  grn_id id;
   int ncolumns = GRN_BULK_VSIZE(&format->columns)/sizeof(grn_obj *);
   grn_obj **columns = (grn_obj **)GRN_BULK_HEAD(&format->columns);
-  GRN_TEXT_INIT(&id, 0);
-  while (!grn_table_cursor_next_o(ctx, tc, &id)) {
+  while ((id = grn_table_cursor_next(ctx, tc)) != GRN_ID_NIL) {
     grn_output_array_open(ctx, outbuf, output_type, "HIT", ncolumns);
     for (i = 0; i < ncolumns; i++) {
-      grn_text_atoj_o(ctx, outbuf, output_type, columns[i], &id);
+      grn_text_atoj(ctx, outbuf, output_type, columns[i], id);
     }
     grn_output_array_close(ctx, outbuf, output_type);
   }
-  GRN_OBJ_FIN(ctx, &id);
 }
 
 static inline void
@@ -1292,17 +1263,12 @@ grn_output_table(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                                                  0, -1, GRN_CURSOR_ASCENDING);
     grn_output_array_open(ctx, outbuf, output_type, "HIT", -1);
     if (tc) {
-      grn_obj id;
-      GRN_TEXT_INIT(&id, 0);
-      for (i = 0; !grn_table_cursor_next_o(ctx, tc, &id); i++) {
-        /* todo:
-           grn_text_atoj_o(ctx, outbuf, output_type, column, &id);
-        */
+      grn_id id;
+      for (i = 0; (id = grn_table_cursor_next(ctx, tc)) != GRN_ID_NIL; i++) {
         GRN_BULK_REWIND(&buf);
-        grn_obj_get_value_o(ctx, column, &id, &buf);
+        grn_obj_get_value(ctx, column, id, &buf);
         grn_text_esc(ctx, outbuf, GRN_BULK_HEAD(&buf), GRN_BULK_VSIZE(&buf));
       }
-      GRN_OBJ_FIN(ctx, &id);
       grn_table_cursor_close(ctx, tc);
     }
     grn_output_array_close(ctx, outbuf, output_type);
@@ -1336,7 +1302,6 @@ grn_output_obj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
   case GRN_TABLE_HASH_KEY :
   case GRN_TABLE_PAT_KEY :
   case GRN_TABLE_NO_KEY :
-  case GRN_TABLE_VIEW :
     grn_output_table(ctx, outbuf, output_type, obj, format);
     break;
   }

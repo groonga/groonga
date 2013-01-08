@@ -359,7 +359,9 @@ command_each(grn_ctx *ctx, int nargs, grn_obj **args,
                      GRN_EXPR_SYNTAX_SCRIPT|GRN_EXPR_ALLOW_UPDATE);
       if ((tc = grn_table_cursor_open(ctx, table_, NULL, 0,
                                       NULL, 0, 0, -1, 0))) {
-        while (!grn_table_cursor_next_o(ctx, tc, v)) {
+        grn_id id;
+        while ((id = grn_table_cursor_next(ctx, tc)) != GRN_ID_NIL) {
+          GRN_RECORD_SET(ctx, v, id);
           grn_expr_exec(ctx, expr_, 0);
         }
         grn_table_cursor_close(ctx, tc);
@@ -485,7 +487,6 @@ command_get_resolve_parameters(grn_ctx *ctx, grn_user_data *user_data,
   case GRN_TABLE_HASH_KEY:
   case GRN_TABLE_PAT_KEY:
   case GRN_TABLE_DAT_KEY:
-  case GRN_TABLE_VIEW:
     if (key_length && id_length) {
       ERR(GRN_INVALID_ARGUMENT,
           "[table][get] should not specify both key and ID: "
