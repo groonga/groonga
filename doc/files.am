@@ -758,7 +758,6 @@ source_files_relative_from_doc_dir = \
 	source/reference/commands/table_create.txt \
 	source/reference/commands/table_list.txt \
 	source/reference/commands/table_remove.txt \
-	source/reference/commands/view_add.txt \
 	source/reference/commands_not_implemented/add.txt \
 	source/reference/commands_not_implemented/get.txt \
 	source/reference/commands_not_implemented/set.txt \
@@ -977,7 +976,6 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/commands/table_create.txt \
 	html/_sources/reference/commands/table_list.txt \
 	html/_sources/reference/commands/table_remove.txt \
-	html/_sources/reference/commands/view_add.txt \
 	html/_sources/reference/commands_not_implemented/add.txt \
 	html/_sources/reference/commands_not_implemented/get.txt \
 	html/_sources/reference/commands_not_implemented/set.txt \
@@ -1129,7 +1127,6 @@ html_files_relative_from_locale_dir = \
 	html/reference/commands/table_create.html \
 	html/reference/commands/table_list.html \
 	html/reference/commands/table_remove.html \
-	html/reference/commands/view_add.html \
 	html/reference/commands_not_implemented/add.html \
 	html/reference/commands_not_implemented/get.html \
 	html/reference/commands_not_implemented/set.html \
