@@ -629,7 +629,9 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
           cacheable *= ((grn_expr *)scorer_)->cacheable;
           taintable += ((grn_expr *)scorer_)->taintable;
           if ((tc = grn_table_cursor_open(ctx, res, NULL, 0, NULL, 0, 0, -1, 0))) {
-            while (!grn_table_cursor_next_o(ctx, tc, v)) {
+            grn_id id;
+            while ((id = grn_table_cursor_next(ctx, tc)) != GRN_ID_NIL) {
+              GRN_RECORD_SET(ctx, v, id);
               grn_expr_exec(ctx, scorer_, 0);
             }
             grn_table_cursor_close(ctx, tc);
@@ -928,9 +930,6 @@ grn_parse_table_create_flags(grn_ctx *ctx, const char *nptr, const char *end)
     } else if (!memcmp(nptr, "TABLE_NO_KEY", 12)) {
       flags |= GRN_OBJ_TABLE_NO_KEY;
       nptr += 12;
-    } else if (!memcmp(nptr, "TABLE_VIEW", 10)) {
-      flags |= GRN_OBJ_TABLE_VIEW;
-      nptr += 10;
     } else if (!memcmp(nptr, "KEY_NORMALIZE", 13)) {
       flags |= GRN_OBJ_KEY_NORMALIZE;
       nptr += 13;
@@ -1001,9 +1000,6 @@ grn_table_create_flags_to_text(grn_ctx *ctx, grn_obj *buf, grn_obj_flags flags)
     break;
   case GRN_OBJ_TABLE_NO_KEY:
     GRN_TEXT_PUTS(ctx, buf, "TABLE_NO_KEY");
-    break;
-  case GRN_OBJ_TABLE_VIEW:
-    GRN_TEXT_PUTS(ctx, buf, "TABLE_VIEW");
     break;
   }
   if (flags & GRN_OBJ_KEY_WITH_SIS) {
@@ -1554,7 +1550,6 @@ is_table(grn_obj *obj)
   case GRN_TABLE_PAT_KEY:
   case GRN_TABLE_DAT_KEY:
   case GRN_TABLE_NO_KEY:
-  case GRN_TABLE_VIEW:
     return GRN_TRUE;
   default:
     return GRN_FALSE;
@@ -1707,20 +1702,6 @@ proc_missing(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
         abbrlen < plen ? abbrlen : plen, GRN_TEXT_VALUE(VAR(0)),
         plen + grn_document_root_len, PATH_MAX);
   }
-  return NULL;
-}
-
-static grn_obj *
-proc_view_add(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
-{
-  grn_obj *view = grn_ctx_get(ctx,
-                              GRN_TEXT_VALUE(VAR(0)),
-                              GRN_TEXT_LEN(VAR(0)));
-  grn_obj *table = grn_ctx_get(ctx,
-                              GRN_TEXT_VALUE(VAR(1)),
-                              GRN_TEXT_LEN(VAR(1)));
-  grn_view_add(ctx, view, table);
-  GRN_OUTPUT_BOOL(!ctx->rc);
   return NULL;
 }
 
@@ -2069,7 +2050,6 @@ dump_index_column_sources(grn_ctx *ctx, grn_obj *outbuf, grn_obj *column)
       case GRN_TABLE_PAT_KEY:
       case GRN_TABLE_DAT_KEY:
       case GRN_TABLE_HASH_KEY:
-      case GRN_TABLE_VIEW:
         GRN_TEXT_PUTS(ctx, outbuf, "_key");
         break;
       default:
@@ -2132,7 +2112,6 @@ reference_column_p(grn_ctx *ctx, grn_obj *column)
   case GRN_TABLE_PAT_KEY:
   case GRN_TABLE_DAT_KEY:
   case GRN_TABLE_NO_KEY:
-  case GRN_TABLE_VIEW:
     return GRN_TRUE;
   default:
     return GRN_FALSE;
@@ -2170,29 +2149,6 @@ dump_columns(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table,
 }
 
 static void
-dump_view(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
-{
-  grn_view *view = (grn_view *)table;
-  grn_id id;
-  grn_hash_cursor *cursor;
-
-  cursor = grn_hash_cursor_open(ctx, view->hash, NULL, 0, NULL, 0, 0, -1, 0);
-  while ((id = grn_hash_cursor_next(ctx, cursor)) != GRN_ID_NIL) {
-    grn_id *table_id;
-    int key_size = grn_hash_cursor_get_key(ctx, cursor, ((void **)&table_id));
-    if (key_size != 4) {
-      ERR(GRN_INVALID_ARGUMENT, "corrupted view table");
-    }
-    GRN_TEXT_PUTS(ctx, outbuf, "view_add ");
-    dump_obj_name(ctx, outbuf, table);
-    GRN_TEXT_PUTC(ctx, outbuf, ' ');
-    dump_obj_name(ctx, outbuf, grn_ctx_at(ctx, *table_id));
-    GRN_TEXT_PUTC(ctx, outbuf, '\n');
-  }
-  grn_hash_cursor_close(ctx, cursor);
-}
-
-static void
 dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
 {
   grn_obj **columns;
@@ -2207,9 +2163,6 @@ dump_records(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table)
   case GRN_TABLE_DAT_KEY:
   case GRN_TABLE_NO_KEY:
     break;
-  case GRN_TABLE_VIEW:
-    dump_view(ctx, outbuf, table);
-    return;
   default:
     return;
   }
@@ -2472,7 +2425,6 @@ dump_schema(grn_ctx *ctx, grn_obj *outbuf)
         case GRN_TABLE_PAT_KEY:
         case GRN_TABLE_DAT_KEY:
         case GRN_TABLE_NO_KEY:
-        case GRN_TABLE_VIEW:
           dump_table(ctx, outbuf, object, &pending_columns);
           break;
         default:
@@ -3590,10 +3542,6 @@ grn_db_init_builtin_query(grn_ctx *ctx)
 
   DEF_VAR(vars[0], "path");
   DEF_COMMAND(GRN_EXPR_MISSING_NAME, proc_missing, 1, vars);
-
-  DEF_VAR(vars[0], "view");
-  DEF_VAR(vars[1], "table");
-  DEF_COMMAND("view_add", proc_view_add, 2, vars);
 
   DEF_COMMAND("quit", proc_quit, 0, vars);
 

@@ -361,21 +361,6 @@ grn_test_assert_equal_table_helper (grn_ctx *context,
 }
 
 void
-grn_test_assert_equal_view_helper (grn_ctx *context,
-                                   const GList *expected,
-                                   grn_obj *view,
-                                   const gchar *text_column_name,
-                                   const gchar *expected_expression,
-                                   const gchar *view_expression,
-                                   const gchar *text_column_name_expression)
-{
-  const GList *records;
-
-  records = grn_test_view_collect_string(context, view, text_column_name);
-  gcut_assert_equal_list_string(expected, records);
-}
-
-void
 grn_test_assert_send_command_error_helper (grn_ctx     *context,
                                            grn_rc       expected_rc,
                                            const gchar *expected_message,

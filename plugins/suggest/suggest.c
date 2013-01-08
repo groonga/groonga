@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2; indent-tabs-mode: nil -*- */
-/* Copyright(C) 2010-2012 Brazil
+/* Copyright(C) 2010-2013 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -456,13 +456,14 @@ correct(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost,
               grn_expr_append_op(ctx, expr, GRN_OP_MINUS_ASSIGN, 2);
 
               if ((tc = grn_table_cursor_open(ctx, res, NULL, 0, NULL, 0, 0, -1, 0))) {
+                grn_id id;
                 grn_obj score_value;
                 GRN_INT32_INIT(&score_value, 0);
-                while (!grn_table_cursor_next_o(ctx, tc, var)) {
+                while ((id = grn_table_cursor_next(ctx, tc)) != GRN_ID_NIL) {
+                  GRN_RECORD_SET(ctx, var, id);
                   grn_expr_exec(ctx, expr, 0);
                   GRN_BULK_REWIND(&score_value);
-                  grn_obj_get_value(ctx, score, GRN_RECORD_VALUE(var),
-                                    &score_value);
+                  grn_obj_get_value(ctx, score, id, &score_value);
                   if (GRN_INT32_VALUE(&score_value) < frequency_threshold) {
                     grn_table_cursor_delete(ctx, tc);
                   }

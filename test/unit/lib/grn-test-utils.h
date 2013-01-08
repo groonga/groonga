@@ -91,9 +91,6 @@ void         grn_test_send_commands        (grn_ctx          *context,
 const GList *grn_test_table_collect_string (grn_ctx          *context,
                                             grn_obj          *table,
                                             const gchar      *text_column_name);
-const GList *grn_test_view_collect_string  (grn_ctx          *context,
-                                            grn_obj          *view,
-                                            const gchar      *text_column_name);
 
 gint         grn_test_coordinate_in_milliseconds
                                            (gdouble           coordinate_in_degree);
