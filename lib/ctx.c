@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2012 Brazil
+  Copyright(C) 2009-2013 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -684,15 +684,16 @@ const char *grn_log_path = GRN_LOG_PATH;
 const char *grn_qlog_path = NULL;
 
 static FILE *default_logger_fp = NULL;
-static grn_critical_section grn_logger_lock;
+static grn_critical_section default_logger_lock;
 
 static void
-default_logger_func(int level, const char *time, const char *title,
-                    const char *msg, const char *location, void *func_arg)
+default_logger_log(grn_ctx *ctx, grn_log_level level,
+                   const char *time, const char *title,
+                   const char *msg, const char *location, void *user_data)
 {
   const char slev[] = " EACewnid-";
   if (grn_log_path) {
-    CRITICAL_SECTION_ENTER(grn_logger_lock);
+    CRITICAL_SECTION_ENTER(default_logger_lock);
     if (!default_logger_fp) {
       default_logger_fp = fopen(grn_log_path, "a");
     }
@@ -705,23 +706,61 @@ default_logger_func(int level, const char *time, const char *title,
       }
       fflush(default_logger_fp);
     }
-    CRITICAL_SECTION_LEAVE(grn_logger_lock);
+    CRITICAL_SECTION_LEAVE(default_logger_lock);
   }
 }
 
-static grn_logger_info default_logger = {
+static void
+default_logger_reopen(grn_ctx *ctx, void *user_data)
+{
+  if (grn_log_path) {
+    GRN_LOG(ctx, GRN_LOG_NOTICE, "log will be closed.");
+    CRITICAL_SECTION_ENTER(default_logger_lock);
+    if (default_logger_fp) {
+      fclose(default_logger_fp);
+      default_logger_fp = NULL;
+    }
+    CRITICAL_SECTION_LEAVE(default_logger_lock);
+    GRN_LOG(ctx, GRN_LOG_NOTICE, "log opened.");
+  }
+}
+
+static void
+default_logger_fin(grn_ctx *ctx, void *user_data)
+{
+  CRITICAL_SECTION_ENTER(default_logger_lock);
+  if (default_logger_fp) {
+    fclose(default_logger_fp);
+    default_logger_fp = NULL;
+  }
+  CRITICAL_SECTION_LEAVE(default_logger_lock);
+}
+
+static grn_logger default_logger = {
   GRN_LOG_DEFAULT_LEVEL,
   GRN_LOG_TIME|GRN_LOG_MESSAGE,
-  default_logger_func,
+  NULL,
+  default_logger_log,
+  default_logger_reopen,
+  default_logger_fin
+};
+
+static grn_logger current_logger = {
+  GRN_LOG_DEFAULT_LEVEL,
+  GRN_LOG_TIME|GRN_LOG_MESSAGE,
+  NULL,
+  NULL,
+  NULL,
   NULL
 };
 
-static const grn_logger_info *grn_logger = &default_logger;
-
 void
-grn_default_logger_set_max_level(grn_log_level level)
+grn_default_logger_set_max_level(grn_log_level max_level)
 {
-  default_logger.max_level = level;
+  default_logger.max_level = max_level;
+  if (current_logger.log == default_logger_log) {
+    current_logger.max_level = max_level;
+  }
 }
 
 grn_log_level
@@ -730,6 +769,13 @@ grn_default_logger_get_max_level(void)
   return default_logger.max_level;
 }
 
+void
+grn_logger_reopen(grn_ctx *ctx)
+{
+  if (current_logger.reopen) {
+    current_logger.reopen(ctx, current_logger.user_data);
+  }
+}
 
 static FILE *default_query_logger_file = NULL;
 static grn_critical_section default_query_logger_lock;
@@ -817,22 +863,7 @@ grn_default_query_logger_get_flags(void)
 void
 grn_log_reopen(grn_ctx *ctx)
 {
-  if (grn_logger == &default_logger) {
-    if (grn_log_path) {
-      GRN_LOG(ctx, GRN_LOG_NOTICE, "log will be closed.");
-      CRITICAL_SECTION_ENTER(grn_logger_lock);
-      if (default_logger_fp) {
-        fclose(default_logger_fp);
-        default_logger_fp = NULL;
-      }
-      CRITICAL_SECTION_LEAVE(grn_logger_lock);
-      GRN_LOG(ctx, GRN_LOG_NOTICE, "log opened.");
-    }
-  } else {
-    ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
-        "grn_log_reopen() is not implemented with a custom grn_logger.");
-  }
-
+  grn_logger_reopen(ctx);
   grn_query_logger_reopen(ctx);
 }
 
@@ -879,10 +910,10 @@ grn_init(void)
 {
   grn_rc rc;
   grn_ctx *ctx = &grn_gctx;
-  grn_logger = &default_logger;
+  memcpy(&current_logger, &default_logger, sizeof(grn_logger));
   memcpy(&current_query_logger, &default_query_logger, sizeof(grn_query_logger));
   CRITICAL_SECTION_INIT(grn_glock);
-  CRITICAL_SECTION_INIT(grn_logger_lock);
+  CRITICAL_SECTION_INIT(default_logger_lock);
   CRITICAL_SECTION_INIT(default_query_logger_lock);
   grn_gtick = 0;
   ctx->next = ctx;
@@ -1055,9 +1086,9 @@ grn_fin(void)
   grn_ctx_fin(ctx);
   grn_com_fin();
   GRN_LOG(ctx, GRN_LOG_NOTICE, "grn_fin (%d)", alloc_count);
-  grn_logger_fin();
+  grn_logger_fin(ctx);
   CRITICAL_SECTION_FIN(default_query_logger_lock);
-  CRITICAL_SECTION_FIN(grn_logger_lock);
+  CRITICAL_SECTION_FIN(default_logger_lock);
   CRITICAL_SECTION_FIN(grn_glock);
   return GRN_SUCCESS;
 }
@@ -2410,23 +2441,54 @@ grn_ctx_log(grn_ctx *ctx, const char *fmt, ...)
 }
 
 void
-grn_logger_fin(void)
+grn_logger_fin(grn_ctx *ctx)
 {
-  CRITICAL_SECTION_ENTER(grn_logger_lock);
-  if (default_logger_fp) {
-    fclose(default_logger_fp);
-    default_logger_fp = NULL;
+  if (current_logger.fin) {
+    current_logger.fin(ctx, current_logger.user_data);
   }
-  CRITICAL_SECTION_LEAVE(grn_logger_lock);
+}
+
+static void
+logger_info_func_wrapper(grn_ctx *ctx, grn_log_level level,
+                         const char *time, const char *title,
+                         const char *message, const char *location,
+                         void *user_data)
+{
+  grn_logger_info *info = user_data;
+  info->func(level, time, title, message, location, info->func_arg);
 }
 
 grn_rc
 grn_logger_info_set(grn_ctx *ctx, const grn_logger_info *info)
 {
   if (info) {
-    grn_logger = info;
+    grn_logger logger;
+
+    memset(&logger, 0, sizeof(grn_logger));
+    logger.max_level = info->max_level;
+    logger.flags = info->flags;
+    if (info->func) {
+      logger.log       = logger_info_func_wrapper;
+      logger.user_data = (grn_logger_info *)info;
+    } else {
+      logger.log    = default_logger_log;
+      logger.reopen = default_logger_reopen;
+      logger.fin    = default_logger_fin;
+    }
+    return grn_logger_set(ctx, &logger);
   } else {
-    grn_logger = &default_logger;
+    return grn_logger_set(ctx, NULL);
+  }
+}
+
+grn_rc
+grn_logger_set(grn_ctx *ctx, const grn_logger *logger)
+{
+  grn_logger_fin(ctx);
+  if (logger) {
+    current_logger = *logger;
+  } else {
+    current_logger = default_logger;
   }
   return GRN_SUCCESS;
 }
@@ -2434,7 +2496,7 @@ grn_logger_info_set(grn_ctx *ctx, const grn_logger_info *info)
 int
 grn_logger_pass(grn_ctx *ctx, grn_log_level level)
 {
-  return level <= grn_logger->max_level;
+  return level <= current_logger.max_level;
 }
 
 #define TBUFSIZE GRN_TIMEVAL_STR_SIZE
@@ -2445,17 +2507,17 @@ void
 grn_logger_put(grn_ctx *ctx, grn_log_level level,
                const char *file, int line, const char *func, const char *fmt, ...)
 {
-  if (level <= grn_logger->max_level) {
+  if (level <= current_logger.max_level && current_logger.log) {
     char tbuf[TBUFSIZE];
     char mbuf[MBUFSIZE];
     char lbuf[LBUFSIZE];
     tbuf[0] = '\0';
-    if (grn_logger->flags & GRN_LOG_TIME) {
+    if (current_logger.flags & GRN_LOG_TIME) {
       grn_timeval tv;
       grn_timeval_now(ctx, &tv);
       grn_timeval2str(ctx, &tv, tbuf);
     }
-    if (grn_logger->flags & GRN_LOG_MESSAGE) {
+    if (current_logger.flags & GRN_LOG_MESSAGE) {
       va_list argp;
       va_start(argp, fmt);
       vsnprintf(mbuf, MBUFSIZE - 1, fmt, argp);
@@ -2464,17 +2526,14 @@ grn_logger_put(grn_ctx *ctx, grn_log_level level,
     } else {
       mbuf[0] = '\0';
     }
-    if (grn_logger->flags & GRN_LOG_LOCATION) {
+    if (current_logger.flags & GRN_LOG_LOCATION) {
       snprintf(lbuf, LBUFSIZE - 1, "%d %s:%d %s()", getpid(), file, line, func);
       lbuf[LBUFSIZE - 1] = '\0';
     } else {
       lbuf[0] = '\0';
     }
-    if (grn_logger->func) {
-      grn_logger->func(level, tbuf, "", mbuf, lbuf, grn_logger->func_arg);
-    } else {
-      default_logger_func(level, tbuf, "", mbuf, lbuf, grn_logger->func_arg);
-    }
+    current_logger.log(ctx, level, tbuf, "", mbuf, lbuf,
+                       current_logger.user_data);
   }
 }
 

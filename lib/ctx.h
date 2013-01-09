@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2012 Brazil
+  Copyright(C) 2009-2013 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -413,7 +413,7 @@ void grn_ctx_qe_fin(grn_ctx *ctx);
 void grn_ctx_loader_clear(grn_ctx *ctx);
 void grn_log_reopen(grn_ctx *ctx);
 
-void grn_logger_fin(void);
+void grn_logger_fin(grn_ctx *ctx);
 void grn_query_logger_fin(grn_ctx *ctx);
 
 GRN_API grn_rc grn_ctx_sendv(grn_ctx *ctx, int argc, char **argv, int flags);

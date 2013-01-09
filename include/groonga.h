@@ -2033,8 +2033,10 @@ GRN_API grn_rc grn_snip_get_result(grn_ctx *ctx, grn_snip *snip, const unsigned 
 #define GRN_LOG_MESSAGE                (0x01<<2)
 #define GRN_LOG_LOCATION               (0x01<<3)
 
+/* Deprecated since 2.1.2. Use grn_logger instead. */
 typedef struct _grn_logger_info grn_logger_info;
 
+/* Deprecated since 2.1.2. Use grn_logger instead. */
 struct _grn_logger_info {
   grn_log_level max_level;
   int flags;
@@ -2042,7 +2044,23 @@ struct _grn_logger_info {
   void *func_arg;
 };
 
+/* Deprecated since 2.1.2. Use grn_logger_set() instead. */
 GRN_API grn_rc grn_logger_info_set(grn_ctx *ctx, const grn_logger_info *info);
+
+typedef struct _grn_logger grn_logger;
+
+struct _grn_logger {
+  grn_log_level max_level;
+  int flags;
+  void *user_data;
+  void (*log)(grn_ctx *ctx, grn_log_level level,
+              const char *time, const char *title, const char *message,
+              const char *location, void *user_data);
+  void (*reopen)(grn_ctx *ctx, void *user_data);
+  void (*fin)(grn_ctx *ctx, void *user_data);
+};
+
+GRN_API grn_rc grn_logger_set(grn_ctx *ctx, const grn_logger *logger);
 
 #ifdef __GNUC__
 #define GRN_ATTRIBUTE_PRINTF(fmt_pos) \
@@ -2053,6 +2071,7 @@ GRN_API grn_rc grn_logger_info_set(grn_ctx *ctx, const grn_logger_info *info);
 
 GRN_API void grn_logger_put(grn_ctx *ctx, grn_log_level level,
                             const char *file, int line, const char *func, const char *fmt, ...) GRN_ATTRIBUTE_PRINTF(6);
+GRN_API void grn_logger_reopen(grn_ctx *ctx);
 
 GRN_API int grn_logger_pass(grn_ctx *ctx, grn_log_level level);
 
