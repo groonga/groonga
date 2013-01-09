@@ -2435,15 +2435,6 @@ main(int argc, char **argv)
     grn_set_default_match_escalation_threshold(default_match_escalation_threshold);
   }
 
-  if (log_level_arg) {
-    static grn_logger_info logger_info;
-    logger_info.max_level = log_level;
-    logger_info.flags = GRN_LOG_TIME | GRN_LOG_MESSAGE;
-    logger_info.func = NULL;
-    logger_info.func_arg = NULL;
-    grn_logger_info_set(&grn_gctx, &logger_info);
-  }
-
   grn_set_segv_handler();
   grn_set_int_handler();
   grn_set_term_handler();
