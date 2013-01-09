@@ -340,7 +340,6 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/commands/table_create.txt \
 	$(top_srcdir)/doc/source/reference/commands/table_list.txt \
 	$(top_srcdir)/doc/source/reference/commands/table_remove.txt \
-	$(top_srcdir)/doc/source/reference/commands/view_add.txt \
 	$(top_srcdir)/doc/source/reference/commands_not_implemented/add.txt \
 	$(top_srcdir)/doc/source/reference/commands_not_implemented/get.txt \
 	$(top_srcdir)/doc/source/reference/commands_not_implemented/set.txt \
