@@ -507,6 +507,10 @@ grn_ctx_impl_init(grn_ctx *ctx)
 #ifdef WITH_MESSAGE_PACK
   msgpack_packer_init(&ctx->impl->msgpacker, ctx, grn_msgpack_buffer_write);
 #endif
+
+#ifdef WITH_MRUBY
+  ctx->impl->mrb = mrb_open();
+#endif
 }
 
 void
@@ -592,6 +596,9 @@ grn_ctx_fin(grn_ctx *ctx)
     if (ctx->impl->finalizer) {
       ctx->impl->finalizer(ctx, 0, NULL, &(ctx->user_data));
     }
+#ifdef WITH_MRUBY
+    mrb_close(ctx->impl->mrb);
+#endif
     grn_ctx_loader_clear(ctx);
     if (ctx->impl->parser) {
       grn_expr_parser_close(ctx);

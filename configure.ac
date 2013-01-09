@@ -71,6 +71,7 @@ AC_MSG_RESULT([$solaris])
 AC_C_BIGENDIAN
 AC_PROG_CXX
 AC_PROG_CC
+AC_PROG_YACC
 AM_PROG_CC_C_O
 m4_ifdef([PKG_PROG_PKG_CONFIG],
          [PKG_PROG_PKG_CONFIG([0.19])
@@ -286,6 +287,7 @@ AC_CONFIG_FILES([
   test/benchmark/fixtures/geo-select/Makefile
   test/benchmark/lib/Makefile
   vendor/Makefile
+  vendor/mruby/Makefile
 ])
 
 if test "$GCC" = "yes"; then
@@ -1244,6 +1246,45 @@ else
 fi
 AM_CONDITIONAL(WITH_GROONGA_HTTPD, test "$enable_groonga_httpd" = "yes")
 
+# mruby
+AC_ARG_ENABLE(mruby,
+  [AS_HELP_STRING([--enable-mruby],
+    [enable mruby. [default=auto]])],
+  [enable_mruby="$enableval"],
+  [enable_mruby="auto"])
+
+if test "x$enable_mruby" = "xyes"; then
+  if test "x$ac_cv_ruby_available" != "xyes"; then
+    AC_MSG_ERROR([Ruby is required for mruby support.])
+  fi
+elif test "x$enable_mruby" = "xauto"; then
+  AC_MSG_CHECKING([whether enable mruby])
+  if test "$ac_cv_ruby_available" = "yes"; then
+    enable_mruby="yes"
+  else
+    enable_mruby="no"
+  fi
+  AC_MSG_RESULT($enable_mruby)
+else
+  enable_mruby="no"
+fi
+
+m4_define([mruby_version], m4_include(mruby_version))
+MRUBY_VERSION=mruby_version
+AC_SUBST(MRUBY_VERSION)
+
+if test "$enable_mruby" = "yes"; then
+  AC_DEFINE(WITH_MRUBY, [1], [Define to 1 if mruby is enabled.])
+  MRUBY_CFLAGS="-I\$(top_srcdir)/vendor/mruby-${MRUBY_VERSION}/include"
+  MRUBY_LIBS="\$(top_builddir)/vendor/mruby/libmruby.la"
+else
+  MRUBY_CFLAGS=
+  MRUBY_LIBS=
+fi
+AC_SUBST(MRUBY_CFLAGS)
+AC_SUBST(MRUBY_LIBS)
+AM_CONDITIONAL(WITH_MRUBY, test "$enable_mruby" = "yes")
+
 # PCRE
 WITH_PCRE=no
 AC_ARG_WITH(pcre,
@@ -1358,6 +1399,7 @@ if test "x$message_pack_available" = "xyes"; then
   echo "    CFLAGS:              ${MESSAGE_PACK_CFLAGS}"
   echo "    LIBS:                ${MESSAGE_PACK_LIBS}"
 fi
+echo "  mruby:                 $enable_mruby"
 echo
 
 echo "groonga-httpd:"
@@ -1374,6 +1416,7 @@ echo
 
 echo "Tools:"
 # echo "  Sphinx:                ${enable_sphinx}"
+echo "  yacc:                  ${YACC}"
 echo "  hg:                    ${HG}"
 echo "  Ruby:                  ${RUBY}"
 echo "  Cutter:                ${CUTTER}"
