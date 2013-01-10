@@ -1019,18 +1019,89 @@ grn_default_query_logger_get_path(void)
 }
 
 void
-grn_log_reopen(grn_ctx *ctx)
-{
-  grn_logger_reopen(ctx);
-  grn_query_logger_reopen(ctx);
-}
-
-void
 grn_query_logger_reopen(grn_ctx *ctx)
 {
   if (current_query_logger.reopen) {
     current_query_logger.reopen(ctx, current_query_logger.user_data);
   }
+}
+
+void
+grn_query_logger_fin(grn_ctx *ctx)
+{
+  if (current_query_logger.fin) {
+    current_query_logger.fin(ctx, current_query_logger.user_data);
+  }
+}
+
+grn_rc
+grn_query_logger_set(grn_ctx *ctx, const grn_query_logger *logger)
+{
+  grn_query_logger_fin(ctx);
+  if (logger) {
+    current_query_logger = *logger;
+  } else {
+    current_query_logger = default_query_logger;
+  }
+  return GRN_SUCCESS;
+}
+
+grn_bool
+grn_query_logger_pass(grn_ctx *ctx, unsigned int flag)
+{
+  return current_query_logger.flags & flag;
+}
+
+#define TIMESTAMP_BUFFER_SIZE    TBUFSIZE
+/* 8+a(%p) + 1(|) + 1(mark) + 15(elapsed time) = 25+a */
+#define INFO_BUFFER_SIZE         40
+#define MESSAGE_BUFFER_SIZE      MBUFSIZE
+
+void
+grn_query_logger_put(grn_ctx *ctx, unsigned int flag, const char *mark,
+                     const char *format, ...)
+{
+  char timestamp[TIMESTAMP_BUFFER_SIZE];
+  char info[INFO_BUFFER_SIZE];
+  char message[MESSAGE_BUFFER_SIZE];
+
+  if (!current_query_logger.log) {
+    return;
+  }
+
+  {
+    grn_timeval tv;
+    timestamp[0] = '\0';
+    grn_timeval_now(ctx, &tv);
+    grn_timeval2str(ctx, &tv, timestamp);
+  }
+
+  if (flag & (GRN_QUERY_LOG_COMMAND | GRN_QUERY_LOG_DESTINATION)) {
+    snprintf(info, INFO_BUFFER_SIZE - 1, "%p|%s", ctx, mark);
+    info[INFO_BUFFER_SIZE - 1] = '\0';
+  } else {
+    grn_timeval tv;
+    uint64_t elapsed_time;
+    grn_timeval_now(ctx, &tv);
+    elapsed_time =
+      (uint64_t)(tv.tv_sec - ctx->impl->tv.tv_sec) * GRN_TIME_NSEC_PER_SEC +
+      (tv.tv_nsec - ctx->impl->tv.tv_nsec);
+
+    snprintf(info, INFO_BUFFER_SIZE - 1,
+             "%p|%s%015" GRN_FMT_INT64U " ", ctx, mark, elapsed_time);
+    info[INFO_BUFFER_SIZE - 1] = '\0';
+  }
+
+  {
+    va_list args;
+    va_start(args, format);
+    vsnprintf(message, MESSAGE_BUFFER_SIZE - 1, format, args);
+    va_end(args);
+    message[MESSAGE_BUFFER_SIZE - 1] = '\0';
+  }
+
+  current_query_logger.log(ctx, flag, timestamp, info, message,
+                           current_query_logger.user_data);
 }
 
 static void
@@ -1049,6 +1120,14 @@ query_logger_fin(grn_ctx *ctx)
   }
   CRITICAL_SECTION_FIN(default_query_logger_lock);
 }
+
+void
+grn_log_reopen(grn_ctx *ctx)
+{
+  grn_logger_reopen(ctx);
+  grn_query_logger_reopen(ctx);
+}
+
 
 static grn_obj grn_true_, grn_false_, grn_null_;
 grn_obj *grn_true, *grn_false, *grn_null;
@@ -2609,84 +2688,6 @@ grn_ctx_log(grn_ctx *ctx, const char *fmt, ...)
   va_start(argp, fmt);
   vsnprintf(ctx->errbuf, GRN_CTX_MSGSIZE, fmt, argp);
   va_end(argp);
-}
-
-void
-grn_query_logger_fin(grn_ctx *ctx)
-{
-  if (current_query_logger.fin) {
-    current_query_logger.fin(ctx, current_query_logger.user_data);
-  }
-}
-
-grn_rc
-grn_query_logger_set(grn_ctx *ctx, const grn_query_logger *logger)
-{
-  grn_query_logger_fin(ctx);
-  if (logger) {
-    current_query_logger = *logger;
-  } else {
-    current_query_logger = default_query_logger;
-  }
-  return GRN_SUCCESS;
-}
-
-grn_bool
-grn_query_logger_pass(grn_ctx *ctx, unsigned int flag)
-{
-  return current_query_logger.flags & flag;
-}
-
-#define TIMESTAMP_BUFFER_SIZE    TBUFSIZE
-/* 8+a(%p) + 1(|) + 1(mark) + 15(elapsed time) = 25+a */
-#define INFO_BUFFER_SIZE         40
-#define MESSAGE_BUFFER_SIZE      MBUFSIZE
-
-void
-grn_query_logger_put(grn_ctx *ctx, unsigned int flag, const char *mark,
-                     const char *format, ...)
-{
-  char timestamp[TIMESTAMP_BUFFER_SIZE];
-  char info[INFO_BUFFER_SIZE];
-  char message[MESSAGE_BUFFER_SIZE];
-
-  if (!current_query_logger.log) {
-    return;
-  }
-
-  {
-    grn_timeval tv;
-    timestamp[0] = '\0';
-    grn_timeval_now(ctx, &tv);
-    grn_timeval2str(ctx, &tv, timestamp);
-  }
-
-  if (flag & (GRN_QUERY_LOG_COMMAND | GRN_QUERY_LOG_DESTINATION)) {
-    snprintf(info, INFO_BUFFER_SIZE - 1, "%p|%s", ctx, mark);
-    info[INFO_BUFFER_SIZE - 1] = '\0';
-  } else {
-    grn_timeval tv;
-    uint64_t elapsed_time;
-    grn_timeval_now(ctx, &tv);
-    elapsed_time =
-      (uint64_t)(tv.tv_sec - ctx->impl->tv.tv_sec) * GRN_TIME_NSEC_PER_SEC +
-      (tv.tv_nsec - ctx->impl->tv.tv_nsec);
-
-    snprintf(info, INFO_BUFFER_SIZE - 1,
-             "%p|%s%015" GRN_FMT_INT64U " ", ctx, mark, elapsed_time);
-    info[INFO_BUFFER_SIZE - 1] = '\0';
-  }
-
-  {
-    va_list args;
-    va_start(args, format);
-    vsnprintf(message, MESSAGE_BUFFER_SIZE - 1, format, args);
-    va_end(args);
-    message[MESSAGE_BUFFER_SIZE - 1] = '\0';
-  }
-
-  current_query_logger.log(ctx, flag, timestamp, info, message,
-                           current_query_logger.user_data);
 }
 
 void
