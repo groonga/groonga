@@ -796,7 +796,7 @@ grn_logger_reopen(grn_ctx *ctx)
   }
 }
 
-void
+static void
 grn_logger_fin(grn_ctx *ctx)
 {
   if (current_logger.fin) {

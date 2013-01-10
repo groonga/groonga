@@ -412,7 +412,6 @@ void grn_ctx_qe_fin(grn_ctx *ctx);
 void grn_ctx_loader_clear(grn_ctx *ctx);
 void grn_log_reopen(grn_ctx *ctx);
 
-void grn_logger_fin(grn_ctx *ctx);
 void grn_query_logger_fin(grn_ctx *ctx);
 
 GRN_API grn_rc grn_ctx_sendv(grn_ctx *ctx, int argc, char **argv, int flags);
