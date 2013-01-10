@@ -11,9 +11,9 @@ Normalizers
 Summary
 -------
 
-Groonga has normalizer module. It is used when tokenizing text and
-storing table key. For example, ``A`` and ``a`` are processed as the
-same character after normalization.
+Groonga has normalizer module that normalizes text. It is used when
+tokenizing text and storing table key. For example, ``A`` and ``a``
+are processed as the same character after normalization.
 
 Normalizer module can be added as a plugin. You can customize text
 normalization by registering your normalizer plugins to groonga.
@@ -68,7 +68,7 @@ normalized as described above.
 Built-in normalizers
 --------------------
 
-Here is a list of built-in-normalizers:
+Here is a list of built-in normalizers:
 
   * ``NormalizerAuto``
   * ``NormalizerNFKC51``
@@ -80,7 +80,7 @@ Normally you should use ``NormalizerAuto``
 normalizer. ``NormalizerAuto`` was the normalizer for groonga 2.0.9 or
 earlier. ``KEY_NORMALIZE`` flag in ``table_create`` on groonga 2.0.9
 or earlier equals to ``--normalizer NormalizerAuto`` option in
-``table`` on groonga 2.1.0 or later.
+``table_create`` on groonga 2.1.0 or later.
 
 ``NormalizerAuto`` supports all encoding. It uses Unicode NFKC
 (Normalization Form Compatibility Composition) for UTF-8 encoding

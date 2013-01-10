@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-01-10 16:34\n"
-"PO-Revision-Date: 2013-01-10 17:02+0900\n"
+"PO-Revision-Date: 2013-01-10 17:40+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -11494,22 +11494,22 @@ msgstr "RETURN_CODE"
 # a2f5fdf4c9754afa8095b1729265d517
 #: ../../../source/reference/normalizers.txt:9
 msgid "Normalizers"
-msgstr ""
+msgstr "ノーマライザー"
 
 # ec6312a93d9c4f8b9f2668f797413c9b
 #: ../../../source/reference/normalizers.txt:14
 msgid ""
-"Groonga has normalizer module. It is used when tokenizing text and storing "
+"Groonga has normalizer module that normalizes text. It is used when tokenizing text and storing "
 "table key. For example, ``A`` and ``a`` are processed as the same character "
 "after normalization."
-msgstr ""
+msgstr "groongaには正規化をするノーマライザーモジュールがあります。これはテキストをトークナイズするときとテーブルのキーを保存するときに使われます。例えば、正規化をした後は ``A`` と ``a`` は同じ文字として扱われます。"
 
 # 0d46426edd624c41a9ee6f8b80230593
 #: ../../../source/reference/normalizers.txt:18
 msgid ""
 "Normalizer module can be added as a plugin. You can customize text "
 "normalization by registering your normalizer plugins to groonga."
-msgstr ""
+msgstr "ノーマライザーモジュールはプラグインとして追加できます。ノーマライザープラグインをgroongaに追加することでテキストの正規化方法をカスタマイズできます。"
 
 # 32bffefed1c14db0bf504c7ccc3806f2
 #: ../../../source/reference/normalizers.txt:21
@@ -11517,21 +11517,21 @@ msgid ""
 "A normalizer module is attached to a table. A table can have zero or one "
 "normalizer module. You can attach a normalizer module to a table by :ref:"
 "`table-create-normalizer` option in :doc:`/reference/commands/table_create`."
-msgstr ""
+msgstr "ノーマライザーモジュールはテーブルに関連付いています。テーブルは0個か1個のノーマライザーモジュールを持つことができます。 :doc:`/reference/commands/table_create` の :ref:`table-create-normalizer` オプションでテーブルにノーマライザーオプションを関連付けることができます。"
 
 # b993c6521463466f8f42d9a4e7e5107f
 #: ../../../source/reference/normalizers.txt:26
 msgid ""
 "Here is an example ``table_create`` that uses ``NormalizerAuto`` normalizer "
 "module:"
-msgstr ""
+msgstr "以下は ``NormalizerAuto`` ノーマライザーモジュールを使う ``table_create`` の例です。"
 
 # 797c5fdfb9104375b79d5c876c37bc74
 #: ../../../source/reference/normalizers.txt:35
 msgid ""
 "Groonga 2.0.9 or earlier doesn't have ``--normalizer`` option in "
 "``table_create``. ``KEY_NORMALIZE`` flag was used instead."
-msgstr ""
+msgstr "groonga 2.0.9以前には ``table_create`` に ``--normalizer`` オプションはありません。代わりに ``KEY_NORMALIZE`` フラグを使っていました。"
 
 # cd43333676c14bf38f71eb30c078439f
 #: ../../../source/reference/normalizers.txt:38
@@ -11543,12 +11543,12 @@ msgid ""
 "information in the old database is converted to normalizer information. So "
 "groogna 2.0.9 or earlier cannot find ``KEY_NORMALIZE`` flag information in "
 "the opened old database."
-msgstr ""
+msgstr "groonga 2.1.0以降で古いデータベースを開くことができます。ここでいう古いデータベースとはgroonga 2.0.9以前で作ったデータベースということです。しかし、一度新しいgroongaで開いたデータベースを2.0.9以前のgroongaで開くことはできません。一度 groonga 2.1.0以降のgroongaでデータベースを開くと、 ``KEY_NORMALIZE`` フラグ情報がノーマライザー情報に変換されます。そのため、2.0.9以前のgroongaは、一度groonga 2.1.0以降で開いたデータベース内から ``KEY_NROMALIZE`` フラグの情報を見つけることができません。"
 
 # d5f62c0a5f594ad597a83ebb631fa23d
 #: ../../../source/reference/normalizers.txt:47
 msgid "Keys of a table that has a normalizer module are normalized:"
-msgstr ""
+msgstr "ノーマライザーモジュールを持っているテーブルのキーは正規化されます。"
 
 # c38cc74315ce4aecbdbdeaf3ef7b5ff1
 #: ../../../source/reference/normalizers.txt:59
@@ -11556,7 +11556,7 @@ msgid ""
 "``NormalizerAuto`` normalizer normalizes a text as a downcased text. For "
 "example, ``\"Apple\"`` is normalized to ``\"apple\"``, ``\"black\"`` is "
 "normalized to ``\"blank\"`` and ``\"COLOR\"`` is normalized to ``\"color\"``."
-msgstr ""
+msgstr "``NormalizerAuto`` ノーマライザーはテキストを小文字に正規化します。例えば、 ``\"Apple\"`` は ``\"apple\"`` に正規化され、 ``\"black\"`` は ``\"blank\"`` に正規化され、 ``\"COLOR\"`` は ``\"color\"`` に正規化されます。"
 
 # f3f9aa0fec1142c7aa83ea142544789e
 #: ../../../source/reference/normalizers.txt:64
@@ -11564,17 +11564,17 @@ msgid ""
 "If a table is a lexicon for fulltext search, tokenized tokens are "
 "normalized. Because tokens are stored as table keys. Table keys are "
 "normalized as described above."
-msgstr ""
+msgstr "テーブルが全文検索用の語彙表の場合、トークナイズされたトークンは正規化されます。なぜなら、トークンはテーブルのキーとして保存されるからです。テーブルのキーは前述のように正規化されます。"
 
 # 973f421f733643958b7a169f7f113229
 #: ../../../source/reference/normalizers.txt:69
 msgid "Built-in normalizers"
-msgstr ""
+msgstr "組み込みノーマライザー"
 
 # c106f475dbfe4969832e83838689d0db
 #: ../../../source/reference/normalizers.txt:71
-msgid "Here is a list of built-in-normalizers:"
-msgstr ""
+msgid "Here is a list of built-in normalizers:"
+msgstr "以下は組み込みのノーマライザーのリストです。"
 
 # 77a5f5806dc645cfbc5e0b65f4759162
 # 1fb3f197574847b783a38007c0cfaac0
@@ -11596,8 +11596,8 @@ msgid ""
 "Normally you should use ``NormalizerAuto`` normalizer. ``NormalizerAuto`` "
 "was the normalizer for groonga 2.0.9 or earlier. ``KEY_NORMALIZE`` flag in "
 "``table_create`` on groonga 2.0.9 or earlier equals to ``--normalizer "
-"NormalizerAuto`` option in ``table`` on groonga 2.1.0 or later."
-msgstr ""
+"NormalizerAuto`` option in ``table_create`` on groonga 2.1.0 or later."
+msgstr "通常は ``NormalizerAuto`` ノーマライザーを使うべきです。 ``NormalizerAuto`` はgroonga 2.0.9以前で使っていたノーマライザーと同じものです。2.0.9以前のgroongaの ``table_create`` の ``KEY_NORMALIZE`` フラグは、2.1.0以降のgroongaの ``table_create`` の ``--normalizer NormalizerAuto`` と同じです。"
 
 # f6c17caa96484b199dadf6ca0dca9add
 #: ../../../source/reference/normalizers.txt:85
@@ -11606,7 +11606,7 @@ msgid ""
 "(Normalization Form Compatibility Composition) for UTF-8 encoding text. It "
 "uses encoding specific original normalization for other encodings. The "
 "results of those original normalization are similar to NFKC."
-msgstr ""
+msgstr "``NormalizerAuto`` はすべてのエンコーディングに対応しています。UTF-8でエンコードされたテキストにはUnicodeのNFKC（Normalization Form Compatibility Composition）を使います。他のエンコーディング用にはエンコーディング毎に独自の正規化をします。これらの独自の正規化の結果はNFKCでの結果と似たものになります。"
 
 # 57d2e15ede344b5db280e34ed0fc9275
 #: ../../../source/reference/normalizers.txt:91
@@ -11616,12 +11616,12 @@ msgid ""
 "VOICED SOUND MARK) is normalized to full-width katakana with voiced sound "
 "mark (U+30AC KATAKANA LETTER GA). The former is two chracters but the latter "
 "is one character."
-msgstr ""
+msgstr "例えば、半角カタカナ（例えば「ｶ」: U+FF76 HALFWIDTH KATAKANA LETTER KA） + 半角カタカナの濁点（「ﾞ」: U+FF9E HALFWIDTH KATAKANA VOICED SOUND MARK）は濁点付きの全角カタカナ（「ガ」: U+30AC KATAKANA LETTER GA）に正規化されます。前者は2文字ですが、後者は1文字です。"
 
 # b993c6521463466f8f42d9a4e7e5107f
 #: ../../../source/reference/normalizers.txt:97
 msgid "Here is an example that uses ``NormalizerAuto`` normalizer:"
-msgstr ""
+msgstr "以下は ``NormalizerAuto`` ノーマライザーを使う例です。"
 
 # 838253a4edf7408ab4698e23e81b31b0
 #: ../../../source/reference/normalizers.txt:106
@@ -11629,19 +11629,19 @@ msgid ""
 "``NormalizerNFKC51`` normalizes texts by Unicode NFKC (Normalization Form "
 "Compatibility Composition) for Unicode version 5.1. It supports only UTF-8 "
 "encoding."
-msgstr ""
+msgstr "``NormalizerNFKC51`` はUnicode 5.1用のUnicode NFKC（Normalization Form Compatibility Composition）を使ってテキストを正規化します。UTF-8エンコーディングのみをサポートしています。"
 
 # 291c73edc19a4fdbb9dedec3130d2e22
 #: ../../../source/reference/normalizers.txt:110
 msgid ""
 "Normally you don't need to use ``NormalizerNFKC51`` explicitly. You can use "
 "``NormalizerAuto`` instead."
-msgstr ""
+msgstr "通常、 ``NormalizerNFKC51`` を明示的に使う必要はありません。代わりに ``NormalizerAuto`` を使ってください。"
 
 # b993c6521463466f8f42d9a4e7e5107f
 #: ../../../source/reference/normalizers.txt:113
 msgid "Here is an example that uses ``NormalizerNFKC51`` normalizer:"
-msgstr ""
+msgstr "以下は ``NormalizerNFKC51`` ノーマライザーを使う例です。"
 
 # bde897b0ca22430eb927c3f3d85d70d2
 #: ../../../source/reference/normalizers.txt:122
