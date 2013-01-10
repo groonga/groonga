@@ -2113,6 +2113,8 @@ GRN_API grn_bool grn_query_logger_pass(grn_ctx *ctx, unsigned int flag);
 
 GRN_API void grn_default_query_logger_set_flags(unsigned int flags);
 GRN_API unsigned int grn_default_query_logger_get_flags(void);
+GRN_API void grn_default_query_logger_set_path(const char *path);
+GRN_API const char *grn_default_query_logger_get_path(void);
 
 #define GRN_QUERY_LOG(ctx, flag, mark, format, ...) do {\
   if (grn_query_logger_pass(ctx, flag)) {\

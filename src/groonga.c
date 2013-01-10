@@ -1837,9 +1837,7 @@ init_default_settings(void)
   init_default_hostname();
 
   default_log_path = grn_default_logger_get_path();
-  if (grn_qlog_path) {
-    default_query_log_path = grn_qlog_path;
-  }
+  default_query_log_path = grn_default_query_logger_get_path();
 
   default_config_path = getenv("GRN_CONFIG_PATH");
   if (!default_config_path) {
@@ -2252,7 +2250,7 @@ main(int argc, char **argv)
   }
 
   if (query_log_path_arg) {
-    grn_qlog_path = query_log_path_arg;
+    grn_default_query_logger_set_path(query_log_path_arg);
   }
 
   if (log_level_arg) {
