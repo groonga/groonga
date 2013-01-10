@@ -789,6 +789,111 @@ grn_default_logger_get_path(void)
 }
 
 static void
+logger_info_func_wrapper(grn_ctx *ctx, grn_log_level level,
+                         const char *timestamp, const char *title,
+                         const char *message, const char *location,
+                         void *user_data)
+{
+  grn_logger_info *info = user_data;
+  info->func(level, timestamp, title, message, location, info->func_arg);
+}
+
+grn_rc
+grn_logger_info_set(grn_ctx *ctx, const grn_logger_info *info)
+{
+  if (info) {
+    grn_logger logger;
+
+    memset(&logger, 0, sizeof(grn_logger));
+    logger.max_level = info->max_level;
+    logger.flags = info->flags;
+    if (info->func) {
+      logger.log       = logger_info_func_wrapper;
+      logger.user_data = (grn_logger_info *)info;
+    } else {
+      logger.log    = default_logger_log;
+      logger.reopen = default_logger_reopen;
+      logger.fin    = default_logger_fin;
+    }
+    return grn_logger_set(ctx, &logger);
+  } else {
+    return grn_logger_set(ctx, NULL);
+  }
+}
+
+grn_rc
+grn_logger_set(grn_ctx *ctx, const grn_logger *logger)
+{
+  grn_logger_fin(ctx);
+  if (logger) {
+    current_logger = *logger;
+  } else {
+    current_logger = default_logger;
+  }
+  return GRN_SUCCESS;
+}
+
+int
+grn_logger_pass(grn_ctx *ctx, grn_log_level level)
+{
+  return level <= current_logger.max_level;
+}
+
+#define TBUFSIZE GRN_TIMEVAL_STR_SIZE
+#define MBUFSIZE 0x1000
+#define LBUFSIZE 0x400
+
+void
+grn_logger_put(grn_ctx *ctx, grn_log_level level,
+               const char *file, int line, const char *func, const char *fmt, ...)
+{
+  if (level <= current_logger.max_level && current_logger.log) {
+    char tbuf[TBUFSIZE];
+    char mbuf[MBUFSIZE];
+    char lbuf[LBUFSIZE];
+    tbuf[0] = '\0';
+    if (current_logger.flags & GRN_LOG_TIME) {
+      grn_timeval tv;
+      grn_timeval_now(ctx, &tv);
+      grn_timeval2str(ctx, &tv, tbuf);
+    }
+    if (current_logger.flags & GRN_LOG_MESSAGE) {
+      va_list argp;
+      va_start(argp, fmt);
+      vsnprintf(mbuf, MBUFSIZE - 1, fmt, argp);
+      va_end(argp);
+      mbuf[MBUFSIZE - 1] = '\0';
+    } else {
+      mbuf[0] = '\0';
+    }
+    if (current_logger.flags & GRN_LOG_LOCATION) {
+      snprintf(lbuf, LBUFSIZE - 1, "%d %s:%d %s()", getpid(), file, line, func);
+      lbuf[LBUFSIZE - 1] = '\0';
+    } else {
+      lbuf[0] = '\0';
+    }
+    current_logger.log(ctx, level, tbuf, "", mbuf, lbuf,
+                       current_logger.user_data);
+  }
+}
+
+void
+grn_logger_reopen(grn_ctx *ctx)
+{
+  if (current_logger.reopen) {
+    current_logger.reopen(ctx, current_logger.user_data);
+  }
+}
+
+void
+grn_logger_fin(grn_ctx *ctx)
+{
+  if (current_logger.fin) {
+    current_logger.fin(ctx, current_logger.user_data);
+  }
+}
+
+static void
 logger_init(void)
 {
   if (!default_logger_path) {
@@ -808,13 +913,6 @@ logger_fin(grn_ctx *ctx)
   CRITICAL_SECTION_FIN(default_logger_lock);
 }
 
-void
-grn_logger_reopen(grn_ctx *ctx)
-{
-  if (current_logger.reopen) {
-    current_logger.reopen(ctx, current_logger.user_data);
-  }
-}
 
 static FILE *default_query_logger_file = NULL;
 static grn_critical_section default_query_logger_lock;
@@ -2475,103 +2573,6 @@ grn_ctx_log(grn_ctx *ctx, const char *fmt, ...)
   va_start(argp, fmt);
   vsnprintf(ctx->errbuf, GRN_CTX_MSGSIZE, fmt, argp);
   va_end(argp);
-}
-
-void
-grn_logger_fin(grn_ctx *ctx)
-{
-  if (current_logger.fin) {
-    current_logger.fin(ctx, current_logger.user_data);
-  }
-}
-
-static void
-logger_info_func_wrapper(grn_ctx *ctx, grn_log_level level,
-                         const char *timestamp, const char *title,
-                         const char *message, const char *location,
-                         void *user_data)
-{
-  grn_logger_info *info = user_data;
-  info->func(level, timestamp, title, message, location, info->func_arg);
-}
-
-grn_rc
-grn_logger_info_set(grn_ctx *ctx, const grn_logger_info *info)
-{
-  if (info) {
-    grn_logger logger;
-
-    memset(&logger, 0, sizeof(grn_logger));
-    logger.max_level = info->max_level;
-    logger.flags = info->flags;
-    if (info->func) {
-      logger.log       = logger_info_func_wrapper;
-      logger.user_data = (grn_logger_info *)info;
-    } else {
-      logger.log    = default_logger_log;
-      logger.reopen = default_logger_reopen;
-      logger.fin    = default_logger_fin;
-    }
-    return grn_logger_set(ctx, &logger);
-  } else {
-    return grn_logger_set(ctx, NULL);
-  }
-}
-
-grn_rc
-grn_logger_set(grn_ctx *ctx, const grn_logger *logger)
-{
-  grn_logger_fin(ctx);
-  if (logger) {
-    current_logger = *logger;
-  } else {
-    current_logger = default_logger;
-  }
-  return GRN_SUCCESS;
-}
-
-int
-grn_logger_pass(grn_ctx *ctx, grn_log_level level)
-{
-  return level <= current_logger.max_level;
-}
-
-#define TBUFSIZE GRN_TIMEVAL_STR_SIZE
-#define MBUFSIZE 0x1000
-#define LBUFSIZE 0x400
-
-void
-grn_logger_put(grn_ctx *ctx, grn_log_level level,
-               const char *file, int line, const char *func, const char *fmt, ...)
-{
-  if (level <= current_logger.max_level && current_logger.log) {
-    char tbuf[TBUFSIZE];
-    char mbuf[MBUFSIZE];
-    char lbuf[LBUFSIZE];
-    tbuf[0] = '\0';
-    if (current_logger.flags & GRN_LOG_TIME) {
-      grn_timeval tv;
-      grn_timeval_now(ctx, &tv);
-      grn_timeval2str(ctx, &tv, tbuf);
-    }
-    if (current_logger.flags & GRN_LOG_MESSAGE) {
-      va_list argp;
-      va_start(argp, fmt);
-      vsnprintf(mbuf, MBUFSIZE - 1, fmt, argp);
-      va_end(argp);
-      mbuf[MBUFSIZE - 1] = '\0';
-    } else {
-      mbuf[0] = '\0';
-    }
-    if (current_logger.flags & GRN_LOG_LOCATION) {
-      snprintf(lbuf, LBUFSIZE - 1, "%d %s:%d %s()", getpid(), file, line, func);
-      lbuf[LBUFSIZE - 1] = '\0';
-    } else {
-      lbuf[0] = '\0';
-    }
-    current_logger.log(ctx, level, tbuf, "", mbuf, lbuf,
-                       current_logger.user_data);
-  }
 }
 
 void
