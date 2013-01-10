@@ -12,7 +12,7 @@ Table in groonga manages relation between ID and key. Groonga provides
 four table types. They are ``TABLE_NO_KEY``, ``TABLE_HASH_KEY``,
 ``TABLE_PAT_KEY`` and ``TABLE_DAT_KEY``.
 
-All table except ``TABLE_NO_KEY`` provides both fast ID search by key
+All tables except ``TABLE_NO_KEY`` provides both fast ID search by key
 and fast key search by ID. ``TABLE_NO_KEY`` doesn't support
 key. ``TABLE_NO_KEY`` only manages ID. So ``TABLE_NO_KEY`` doesn't
 provides ID search and key search.

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-10 16:10\n"
-"PO-Revision-Date: 2012-12-28 17:49+0900\n"
+"POT-Creation-Date: 2013-01-10 16:34\n"
+"PO-Revision-Date: 2013-01-10 17:02+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -737,7 +737,7 @@ msgstr ""
 #: ../../../source/reference/grn_expr.txt:57
 #: ../../../source/reference/normalizers.txt:120
 #: ../../../source/reference/query_expanders/tsv.txt:151
-#: ../../../source/reference/tables.txt:161
+#: ../../../source/reference/tables.txt:163
 msgid "See also"
 msgstr "参考"
 
@@ -5586,7 +5586,7 @@ msgstr "配列テーブル。"
 # a698d16c5784444c8f63b2cd9d11d961
 # 59522fa18e7b4805a794cefd07dee927
 #: ../../../source/reference/commands/table_create.txt:188
-#: ../../../source/reference/tables.txt:71
+#: ../../../source/reference/tables.txt:73
 msgid "``TABLE_NO_KEY``"
 msgstr ""
 
@@ -5608,7 +5608,7 @@ msgstr "パトリシアトライ。"
 # 03fcfb651f8e4dc8a44ea3fd97f6b497
 # af2d93db65eb41ac8c8eff9deb32fb18
 #: ../../../source/reference/commands/table_create.txt:192
-#: ../../../source/reference/tables.txt:90
+#: ../../../source/reference/tables.txt:92
 msgid "``TABLE_PAT_KEY``"
 msgstr ""
 
@@ -5620,7 +5620,7 @@ msgstr "ダブル配列トライ。"
 # 933b2f4920e04e1288d1a9124145ad22
 # be55a1d16aef497888a86f6a5535d411
 #: ../../../source/reference/commands/table_create.txt:194
-#: ../../../source/reference/tables.txt:98
+#: ../../../source/reference/tables.txt:100
 msgid "``TABLE_DAT_KEY``"
 msgstr ""
 
@@ -11347,6 +11347,11 @@ msgstr ""
 
 # 330383ca6e1e4e33bb2cad62f6a99202
 #: ../../../source/reference/log.txt:86
+#: ../../../source/reference/tables.txt:42
+#: ../../../source/reference/tables.txt:58
+#: ../../../source/reference/tables.txt:61
+#: ../../../source/reference/tables.txt:65
+#: ../../../source/reference/tables.txt:68
 msgid "\\-"
 msgstr ""
 
@@ -11640,7 +11645,7 @@ msgstr ""
 
 # bde897b0ca22430eb927c3f3d85d70d2
 #: ../../../source/reference/normalizers.txt:122
-#: ../../../source/reference/tables.txt:163
+#: ../../../source/reference/tables.txt:165
 msgid ":doc:`/reference/commands/table_create`"
 msgstr ""
 
@@ -12189,7 +12194,7 @@ msgstr ""
 # a92f900163c14cb9bf87ef370aef3a91
 #: ../../../source/reference/tables.txt:6
 msgid "Tables"
-msgstr ""
+msgstr "テーブル"
 
 # ce0f6b93acb9495997e1d896f8fa7a07
 #: ../../../source/reference/tables.txt:11
@@ -12198,20 +12203,27 @@ msgid ""
 "table types. They are ``TABLE_NO_KEY``, ``TABLE_HASH_KEY``, "
 "``TABLE_PAT_KEY`` and ``TABLE_DAT_KEY``."
 msgstr ""
+"groongaのテーブルはIDとキーの対応を管理します。groongaは4つの種類のテーブルを"
+"提供しています。 ``TABLE_NO_KEY`` 、 ``TABLE_HASH_KEY`` 、 "
+"``TABLE_PAT_KEY`` 、 ``TABLE_DAT_KEY`` です。"
 
 # c9579b0a2d054fe3b61b3eb3ee4c32a1
 #: ../../../source/reference/tables.txt:15
 msgid ""
-"All table except ``TABLE_NO_KEY`` provides both fast ID search by key and "
+"All tables except ``TABLE_NO_KEY`` provides both fast ID search by key and "
 "fast key search by ID. ``TABLE_NO_KEY`` doesn't support key. "
 "``TABLE_NO_KEY`` only manages ID. So ``TABLE_NO_KEY`` doesn't provides ID "
 "search and key search."
 msgstr ""
+"``TABLE_NO_KEY`` 以外のすべてのテーブルは高速なキー→ID検索とID→キー検索の両方"
+"をサポートしています。 ``TABLE_NO_KEY`` はキーをサポートしていません。 "
+"``TABLE_NO_KEY`` はIDだけを管理します。そのため、 ``TABLE_NO_KEY`` はID検索も"
+"キー検索もサポートしていません。"
 
 # 520f269f90d340b8bf059df2c376a20d
 #: ../../../source/reference/tables.txt:21
 msgid "Characteristics"
-msgstr ""
+msgstr "特徴"
 
 # 3fb208bb1eac4e039f3af9f22cf2789c
 #: ../../../source/reference/tables.txt:23
@@ -12219,6 +12231,8 @@ msgid ""
 "Here is a chracteristic table of all tables in groonga. (``TABLE_`` prefix "
 "is omitted in the table.)"
 msgstr ""
+"以下はgroongaにあるすべてのテーブルの特性表です。（この表の中では ``TABLE_`` "
+"プレフィックスは省略しています。）"
 
 # c705e142b1fa4c6f9a58a0b01725a35e
 #: ../../../source/reference/tables.txt:27
@@ -12243,27 +12257,27 @@ msgstr ""
 # ae51970e363c44409acd7fbb9368e8a0
 #: ../../../source/reference/tables.txt:29
 msgid "Data structure"
-msgstr ""
+msgstr "データ構造"
 
 # 008efb24c0334f3e92eab2f5316799d4
 #: ../../../source/reference/tables.txt:29
 msgid "Double array trie"
-msgstr ""
+msgstr "ダブル配列トライ"
 
 # 3c85e26e592041f0a69086cf06454c90
 #: ../../../source/reference/tables.txt:29
 msgid "Hash table"
-msgstr ""
+msgstr "ハッシュテーブル"
 
 # 06a2d3137c3249b79448f2375ddcdaec
 #: ../../../source/reference/tables.txt:29
 msgid "Patricia trie"
-msgstr ""
+msgstr "パトリシアトライ"
 
 # 141c51582908476dacb208accf95fad0
 #: ../../../source/reference/tables.txt:33
 msgid "ID support"
-msgstr ""
+msgstr "IDサポート"
 
 # 964af54f6dfb4c7d94ddb2e6f3e74e7b
 # 7c682397c0af4158808cb01d893639a7
@@ -12290,19 +12304,19 @@ msgstr ""
 #: ../../../source/reference/tables.txt:36
 #: ../../../source/reference/tables.txt:39
 #: ../../../source/reference/tables.txt:42
-#: ../../../source/reference/tables.txt:47
-#: ../../../source/reference/tables.txt:52
-#: ../../../source/reference/tables.txt:56
-#: ../../../source/reference/tables.txt:59
-#: ../../../source/reference/tables.txt:63
-#: ../../../source/reference/tables.txt:66
+#: ../../../source/reference/tables.txt:48
+#: ../../../source/reference/tables.txt:53
+#: ../../../source/reference/tables.txt:58
+#: ../../../source/reference/tables.txt:61
+#: ../../../source/reference/tables.txt:65
+#: ../../../source/reference/tables.txt:68
 msgid "o"
 msgstr ""
 
 # 6172db9855304d14bd1d9a2ec1c448b6
 #: ../../../source/reference/tables.txt:36
 msgid "Key support"
-msgstr ""
+msgstr "キーサポート"
 
 # 8579cc5b50654438a9acb44f56fd7f2c
 # c65e7b90eb1b447b8fcb1dd3ba22d5ef
@@ -12317,224 +12331,248 @@ msgstr ""
 #: ../../../source/reference/tables.txt:36
 #: ../../../source/reference/tables.txt:39
 #: ../../../source/reference/tables.txt:42
-#: ../../../source/reference/tables.txt:47
-#: ../../../source/reference/tables.txt:52
-#: ../../../source/reference/tables.txt:56
-#: ../../../source/reference/tables.txt:59
-#: ../../../source/reference/tables.txt:63
-#: ../../../source/reference/tables.txt:66
+#: ../../../source/reference/tables.txt:48
+#: ../../../source/reference/tables.txt:53
+#: ../../../source/reference/tables.txt:58
+#: ../../../source/reference/tables.txt:61
+#: ../../../source/reference/tables.txt:65
+#: ../../../source/reference/tables.txt:68
 msgid "x"
 msgstr ""
 
 # 5b5c2ecfcf5443a888981a39aac09711
 #: ../../../source/reference/tables.txt:39
 msgid "Value support"
-msgstr ""
+msgstr "バリューサポート"
 
 # 5a133f7d381b49028594a2d7c7025374
 #: ../../../source/reference/tables.txt:42
-msgid "Key -> ID speed (o -> fast) (x -> slow)"
-msgstr ""
+msgid "Key -> ID speed"
+msgstr "キー→ID検索速度"
 
 # 7a90aaa6063c460491360b074230e1bf
 # 1fbdef80b9b446fca9287f7b7ffc1f2a
 #: ../../../source/reference/tables.txt:42
-#: ../../../source/reference/tables.txt:52
+#: ../../../source/reference/tables.txt:53
 msgid "oo"
 msgstr ""
 
-# ea14e9bfe21a44b98ed9ae2c292b9d67
-#: ../../../source/reference/tables.txt:47
-msgid "Update speed (o -> fast) (x -> slow)"
-msgstr ""
+# 80f02bccf70842fe96184bd6e7f67a02
+# 1ea7e71c411b4f2cadfb4db502f50d3f
+#: ../../../source/reference/tables.txt:45
+#: ../../../source/reference/tables.txt:50
+msgid "o: fast"
+msgstr "o: 速い"
+
+# dbadfba453b2481aae5066fb54b2219f
+# acbae313a1f9489db57d5d17cc3d5a5a
+#: ../../../source/reference/tables.txt:46
+#: ../../../source/reference/tables.txt:51
+msgid "x: slow"
+msgstr "x: 遅い"
+
+# 0d43d0a89f054865993a1adc9dd51b3b
+#: ../../../source/reference/tables.txt:48
+msgid "Update speed"
+msgstr "更新速度"
 
 # cd503511e1034060839486ec8fbcefa0
 # 2cd6d501c2bf4b7b9c6e2dff08855521
-#: ../../../source/reference/tables.txt:47
-#: ../../../source/reference/tables.txt:52
+#: ../../../source/reference/tables.txt:48
+#: ../../../source/reference/tables.txt:53
 msgid "ooo"
 msgstr ""
 
-# 65eba1304e2c4e8bac86c5d84658f455
-#: ../../../source/reference/tables.txt:52
-msgid "Size (o -> small) (x -> large)"
-msgstr ""
+# 4187fec81f7f4dd6be95922c996835fd
+#: ../../../source/reference/tables.txt:53
+msgid "Size"
+msgstr "サイズ"
+
+# a5ea80e92efc4b6f90ef19dfc3b9d9b9
+#: ../../../source/reference/tables.txt:55
+msgid "o: small"
+msgstr "o: 小さい"
+
+# 4a70168ad6974d189e2def61eb89ec1c
+#: ../../../source/reference/tables.txt:56
+msgid "x: large"
+msgstr "x: 大きい"
 
 # 77e947f49d444b8f95d7095c378129fe
-#: ../../../source/reference/tables.txt:56
+#: ../../../source/reference/tables.txt:58
 msgid "Key update"
-msgstr ""
+msgstr "キー変更"
 
 # 66c32028a4424069b61bc2a974c72206
-#: ../../../source/reference/tables.txt:59
+#: ../../../source/reference/tables.txt:61
 msgid "Common prefix search"
-msgstr ""
+msgstr "共通接頭辞検索"
 
 # 628cbf028069456dae934b01fa3b3627
-#: ../../../source/reference/tables.txt:63
+#: ../../../source/reference/tables.txt:65
 msgid "Predictive search"
-msgstr ""
+msgstr "前方一致検索"
 
 # 5f1a4a1c092b4593bf1cb9d6d423bccf
-#: ../../../source/reference/tables.txt:66
+#: ../../../source/reference/tables.txt:68
 msgid "Range search"
 msgstr "範囲検索"
 
 # ad17263d28b249259cb029c23827ee7a
-#: ../../../source/reference/tables.txt:73
+#: ../../../source/reference/tables.txt:75
 msgid ""
 "``TABLE_NO_KEY`` is very fast and very small but it doesn't support key. "
 "``TABLE_NO_KEY`` is a only table that doesn't support key."
-msgstr ""
+msgstr "``TABLE_NO_KEY`` はとても高速でとても小さいのですが、キーをサポートしていません。キーをサポートしていないテーブルは ``TABLE_NO_KEY`` だけです。"
 
 # bbe7af9626a645e09bb701c336cd34e2
-#: ../../../source/reference/tables.txt:76
+#: ../../../source/reference/tables.txt:78
 msgid ""
 "You cannot use ``TABLE_NO_KEY`` for lexicon for fulltext search because "
 "lexicon stores tokens as key. ``TABLE_NO_KEY`` is useful for no key records "
 "such as log."
-msgstr ""
+msgstr "``TABLE_NO_KEY`` を全文検索用の語彙表として使うことはできません。これは、語彙表はトークンをキーとして保存する必要があるからです。 ``TABLE_NO_KEY`` はログのようにキーのないレコードを管理するテーブルとして有用です。"
 
 # 1dc495af88a048b894ba72455c9b3982
-#: ../../../source/reference/tables.txt:81
+#: ../../../source/reference/tables.txt:83
 msgid "``TABLE_HASH_KEY``"
 msgstr ""
 
 # c1c06ece33aa461c869747504a2c0a44
-#: ../../../source/reference/tables.txt:83
+#: ../../../source/reference/tables.txt:85
 msgid ""
 "``TABLE_HASH_KEY`` is fast but it doesn't support advanced search functions "
 "such as common prefix search and predictive search."
-msgstr ""
+msgstr "``TABLE_HASH_KEY`` は高速ですが、共通接頭辞検索や前方一致検索といった高度な検索機能をサポートしていません。"
 
 # 5227ecec361c426483029ecebd6bf4aa
-#: ../../../source/reference/tables.txt:86
+#: ../../../source/reference/tables.txt:88
 msgid ""
 "``TABLE_HASH_KEY`` is useful for index for exact search such as tag search."
-msgstr ""
+msgstr "``TABLE_HASH_KEY`` はタグ検索のように完全一致検索用のインデックスとして有用です。"
 
 # 1fc054480df44a7d9c7b82a85cb82ef8
-#: ../../../source/reference/tables.txt:92
+#: ../../../source/reference/tables.txt:94
 msgid "``TABLE_PAT_KEY`` is small and supports advanced search functions."
-msgstr ""
+msgstr "``TABLE_PAT_KEY`` は、小さく、高度な検索機能もサポートしています。"
 
 # 3d432007318c4dc08c3da90604f7b74d
-#: ../../../source/reference/tables.txt:94
+#: ../../../source/reference/tables.txt:96
 msgid ""
 "``TABLE_PAT_KEY`` is useful for lexicon for fulltext search and index for "
 "range search."
-msgstr ""
+msgstr "``TABLE_PAT_KEY`` は全文検索用の語彙表としても有用ですし、範囲検索用のインデックスとしても有用です。"
 
 # 1ef025c921d641f3829aa9972d3b4b68
-#: ../../../source/reference/tables.txt:100
+#: ../../../source/reference/tables.txt:102
 msgid ""
 "``TABLE_DAT_KEY`` is fast and supports key update but it is large. It is not "
 "suitable for storing many records. ``TABLE_DAT_KEY`` is a only table that "
 "supports key update."
-msgstr ""
+msgstr "``TABLE_DAT_KEY`` は高速でキーの更新もサポートしていますが、サイズが大きいです。大量のレコードを保存する用途には向いていません。キーの更新をサポートしているテーブルは ``TABLE_DAT_KEY`` だけです。"
 
 # 6836b1c00ae3456e97196bf3e0209339
-#: ../../../source/reference/tables.txt:104
+#: ../../../source/reference/tables.txt:106
 msgid ""
 "``TABLE_DAT_KEY`` is used in groonga database. Groonga database needs to "
 "convert object name such as ``ShortText``, ``TokenBigram`` and table names "
 "to object ID. And groonga database needs to rename object name. Those "
 "features are implemented by ``TABLE_DAT_KEY``. The number of objects is "
 "small. So large data size demerit of ``TABLE_DAT_KEY`` can be ignored."
-msgstr ""
+msgstr "``TABLE_DAT_KEY`` はgroongaのデータベース内で使われています。groongaのデータベースは ``ShortText`` や ``TokenBigram`` 、テーブル名などオブジェクトの名前をオブジェクトのIDに変換する必要があります。さらに、groongaのデータベースはオブジェクト名の変更もサポートする必要があります。これらの機能は ``TABLE_DAT_KEY`` で実現されています。オブジェクト数は小さいので ``TABLE_DAT_KEY`` のサイズが大きいというデメリットは無視できます。"
 
 # bbfb8ef0c616493884e1ec1847806704
-#: ../../../source/reference/tables.txt:112
+#: ../../../source/reference/tables.txt:114
 msgid "Record ID"
-msgstr ""
+msgstr "レコードID"
 
 # 924b3e9ba9ab466e8ef308384efbf9e0
-#: ../../../source/reference/tables.txt:114
+#: ../../../source/reference/tables.txt:116
 msgid "Record ID is assigned automatically. You cannot assign record ID."
-msgstr ""
+msgstr "レコードIDは自動的に割り当てられます。明示的に割り当てるレコードIDを指定することはできません。"
 
 # a349788a2b63457a9880e30b5d1e6a61
-#: ../../../source/reference/tables.txt:116
+#: ../../../source/reference/tables.txt:118
 msgid "Record ID of deleted record may be reused."
-msgstr ""
+msgstr "削除されたレコードのレコードIDは再利用される可能性があります。"
 
 # 4c11ba7e761449ba83161b0214383408
-#: ../../../source/reference/tables.txt:118
+#: ../../../source/reference/tables.txt:120
 msgid ""
 "Valid record ID range is between 1 and 268435455. (1 and 268435455 are valid "
 "IDs.)"
-msgstr ""
+msgstr "妥当なレコードIDの範囲は1から268435455までです。（1も268435455も妥当なIDです。）"
 
 # 38b14defa5204e57a845e3fb9fc855de
-#: ../../../source/reference/tables.txt:122
+#: ../../../source/reference/tables.txt:124
 msgid "Persistent table and temporary table"
-msgstr ""
+msgstr "永続テーブルと一時テーブル"
 
 # 3d9c33bc0e0e44859c06fe04f6e4b2be
-#: ../../../source/reference/tables.txt:124
+#: ../../../source/reference/tables.txt:126
 msgid "Table is persistent table or temporary table."
-msgstr ""
+msgstr "テーブルは永続テーブルまたは一時テーブルです。"
 
 # dee5737617904d6a9ee69e20c78a4ecf
-#: ../../../source/reference/tables.txt:127
+#: ../../../source/reference/tables.txt:129
 msgid "Persistent table"
-msgstr ""
+msgstr "永続テーブル"
 
 # 690bade111964467a502a0b28eafa275
-#: ../../../source/reference/tables.txt:129
+#: ../../../source/reference/tables.txt:131
 msgid ""
 "Persistent table is named and registered to database. Records in persistent "
 "table aren't deleted after closing table or database."
-msgstr ""
+msgstr "永続テーブルは名前がついていてデータベースに登録されています。永続テーブルの中のレコードはテーブルやデータベースを閉じた後でも消えません。"
 
 # b58131dc80f1422aabd04ed4e3d46244
-#: ../../../source/reference/tables.txt:133
+#: ../../../source/reference/tables.txt:135
 msgid ""
 "Persistent table can be created by :doc:`/reference/commands/table_create` "
 "command."
-msgstr ""
+msgstr "永続テーブルは :doc:`/reference/commands/table_create` コマンドで作成します。"
 
 # e86806d8e1d1481092c32a1af036cc02
-#: ../../../source/reference/tables.txt:137
+#: ../../../source/reference/tables.txt:139
 msgid "Temporary table"
-msgstr ""
+msgstr "一時テーブル"
 
 # a734a22a06264bb4b865409a4291eea5
-#: ../../../source/reference/tables.txt:139
+#: ../../../source/reference/tables.txt:141
 msgid ""
 "Temporary table is anonymous. Records in temporary table are deleted after "
 "closing table. Temporary table is used to store search result, sort result, "
 "group (drilldown) result and so on. ``TABLE_HASH_KEY`` is used for search "
 "result and group result. ``TABLE_NO_KEY`` is used for sort result."
-msgstr ""
+msgstr "一時テーブルには名前がありません。一時テーブルのレコードはテーブルを閉じると削除されます。一時テーブルは検索結果やソート結果、グループ（ドリルダウン）結果などを格納するために使われています。検索結果とグループ結果には ``TABLE_HASH_KEY`` が使われています。ソート結果には ``TABLE_NO_KEY`` が使われています。"
 
 # 63608d939d5646d0a1aa20ddaa1f60a8
-#: ../../../source/reference/tables.txt:146
+#: ../../../source/reference/tables.txt:148
 msgid "Limitations"
 msgstr "制限"
 
 # 149d7249bb1a4adc86422d7841ae1979
-#: ../../../source/reference/tables.txt:148
+#: ../../../source/reference/tables.txt:150
 msgid ""
 "The max number of records is 268435455. You cannot add 268435456 or more "
 "records in a table."
-msgstr ""
+msgstr "最大レコード数は268435455です。1つのテーブルに268435456以上のレコードを追加できません。"
 
 # 57e494ca213043249676c58ede66cc46
-#: ../../../source/reference/tables.txt:151
+#: ../../../source/reference/tables.txt:153
 msgid ""
 "The max number of a key size is 4096byte. You cannot use 4097byte or larger "
 "key. You can use column instead of key for 4097byte or larger size data. "
 "``Text`` and ``LargeText`` types supports 4097byte or larger size data."
-msgstr ""
+msgstr "最大キーサイズは4096バイトです。4097バイト以上の大きいキーは使うことができません。4097バイト以上の大きなサイズのデータはキーではなくカラムに保存してください。 ``Text`` と ``LargeText`` 型は4097バイト以上の大きさのサイズのデータをサポートしています。"
 
 # 08e4556a01b047639cfc2ca7c5251184
-#: ../../../source/reference/tables.txt:156
+#: ../../../source/reference/tables.txt:158
 msgid ""
 "The max number of total key size is 4GiB. You need to split a table, split a "
 "database (sharding) or reduce each key size to handle 4GiB or more larger "
 "total key size."
-msgstr ""
+msgstr "キーサイズの合計の最大値は4GiBです。キーサイズの合計が4GiBを超える場合は、テーブルを分割したり、データベースを分割したり（シャーディング）、それぞれのキーのサイズを減らしてください。"
 
 # 52860811c55d481c9a64733cb5e745a2
 # 1ba27ee2d49d4c16a7979aa7d4175a73
