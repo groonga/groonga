@@ -689,7 +689,7 @@ static grn_critical_section default_logger_lock;
 static void
 default_logger_log(grn_ctx *ctx, grn_log_level level,
                    const char *timestamp, const char *title,
-                   const char *msg, const char *location, void *user_data)
+                   const char *message, const char *location, void *user_data)
 {
   const char slev[] = " EACewnid-";
   if (grn_log_path) {
@@ -700,10 +700,10 @@ default_logger_log(grn_ctx *ctx, grn_log_level level,
     if (default_logger_fp) {
       if (location && *location) {
         fprintf(default_logger_fp, "%s|%c|%s %s %s\n",
-                timestamp, *(slev + level), title, msg, location);
+                timestamp, *(slev + level), title, message, location);
       } else {
         fprintf(default_logger_fp, "%s|%c|%s %s\n", timestamp,
-                *(slev + level), title, msg);
+                *(slev + level), title, message);
       }
       fflush(default_logger_fp);
     }
