@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2012 Brazil
+  Copyright(C) 2009-2013 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1836,9 +1836,7 @@ init_default_settings(void)
 
   init_default_hostname();
 
-  if (grn_log_path) {
-    default_log_path = grn_log_path;
-  }
+  default_log_path = grn_default_logger_get_path();
   if (grn_qlog_path) {
     default_query_log_path = grn_qlog_path;
   }
@@ -2250,7 +2248,7 @@ main(int argc, char **argv)
   }
 
   if (log_path_arg) {
-    grn_log_path = log_path_arg;
+    grn_default_logger_set_path(log_path_arg);
   }
 
   if (query_log_path_arg) {
