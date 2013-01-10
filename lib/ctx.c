@@ -788,6 +788,22 @@ grn_default_logger_get_path(void)
   return default_logger_path;
 }
 
+void
+grn_logger_reopen(grn_ctx *ctx)
+{
+  if (current_logger.reopen) {
+    current_logger.reopen(ctx, current_logger.user_data);
+  }
+}
+
+void
+grn_logger_fin(grn_ctx *ctx)
+{
+  if (current_logger.fin) {
+    current_logger.fin(ctx, current_logger.user_data);
+  }
+}
+
 static void
 logger_info_func_wrapper(grn_ctx *ctx, grn_log_level level,
                          const char *timestamp, const char *title,
@@ -875,22 +891,6 @@ grn_logger_put(grn_ctx *ctx, grn_log_level level,
     }
     current_logger.log(ctx, level, tbuf, "", mbuf, lbuf,
                        current_logger.user_data);
-  }
-}
-
-void
-grn_logger_reopen(grn_ctx *ctx)
-{
-  if (current_logger.reopen) {
-    current_logger.reopen(ctx, current_logger.user_data);
-  }
-}
-
-void
-grn_logger_fin(grn_ctx *ctx)
-{
-  if (current_logger.fin) {
-    current_logger.fin(ctx, current_logger.user_data);
   }
 }
 
