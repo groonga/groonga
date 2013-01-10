@@ -2080,7 +2080,7 @@ GRN_API int grn_logger_pass(grn_ctx *ctx, grn_log_level level);
 #endif /* GRN_LOG_DEFAULT_LEVEL */
 
 GRN_API void grn_default_logger_set_max_level(grn_log_level level);
-GRN_API grn_log_level grn_default_logger_get_max_level();
+GRN_API grn_log_level grn_default_logger_get_max_level(void);
 
 #define GRN_LOG(ctx,level,...) do {\
   if (grn_logger_pass(ctx, level)) {\
