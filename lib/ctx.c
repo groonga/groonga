@@ -798,6 +798,7 @@ logger_info_func_wrapper(grn_ctx *ctx, grn_log_level level,
   info->func(level, timestamp, title, message, location, info->func_arg);
 }
 
+/* Deprecated since 2.1.2. */
 grn_rc
 grn_logger_info_set(grn_ctx *ctx, const grn_logger_info *info)
 {
