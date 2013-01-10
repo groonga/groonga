@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-28 15:08\n"
+"POT-Creation-Date: 2013-01-10 16:10\n"
 "PO-Revision-Date: 2012-12-28 17:49+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -1238,7 +1238,6 @@ msgstr ""
 #: ../../../source/reference/commands/status.txt:11
 #: ../../../source/reference/commands/table_list.txt:9
 #: ../../../source/reference/commands/table_remove.txt:9
-#: ../../../source/reference/commands/view_add.txt:9
 #: ../../../source/reference/commands_not_implemented/add.txt:9
 #: ../../../source/reference/commands_not_implemented/get.txt:9
 #: ../../../source/reference/commands_not_implemented/set.txt:9
@@ -1313,7 +1312,6 @@ msgstr ""
 #: ../../../source/reference/commands/status.txt:16
 #: ../../../source/reference/commands/table_list.txt:14
 #: ../../../source/reference/commands/table_remove.txt:14
-#: ../../../source/reference/commands/view_add.txt:14
 #: ../../../source/reference/commands_not_implemented/add.txt:14
 #: ../../../source/reference/commands_not_implemented/get.txt:14
 #: ../../../source/reference/commands_not_implemented/set.txt:14
@@ -1383,7 +1381,6 @@ msgstr ""
 #: ../../../source/reference/commands/status.txt:22
 #: ../../../source/reference/commands/table_list.txt:20
 #: ../../../source/reference/commands/table_remove.txt:20
-#: ../../../source/reference/commands/view_add.txt:20
 #: ../../../source/reference/commands_not_implemented/add.txt:20
 #: ../../../source/reference/commands_not_implemented/get.txt:20
 #: ../../../source/reference/commands_not_implemented/set.txt:20
@@ -1464,7 +1461,6 @@ msgstr ""
 #: ../../../source/reference/commands/status.txt:29
 #: ../../../source/reference/commands/table_list.txt:27
 #: ../../../source/reference/commands/table_remove.txt:27
-#: ../../../source/reference/commands/view_add.txt:27
 #: ../../../source/reference/commands_not_implemented/add.txt:29
 #: ../../../source/reference/commands_not_implemented/get.txt:27
 #: ../../../source/reference/commands_not_implemented/set.txt:27
@@ -1536,7 +1532,6 @@ msgstr ""
 #: ../../../source/reference/commands/status.txt:34
 #: ../../../source/reference/commands/table_list.txt:32
 #: ../../../source/reference/commands/table_remove.txt:33
-#: ../../../source/reference/commands/view_add.txt:38
 #: ../../../source/reference/executables/groonga-server-http.txt:54
 #: ../../../source/reference/functions/edit_distance.txt:39
 #: ../../../source/reference/functions/geo_in_circle.txt:68
@@ -1598,11 +1593,10 @@ msgstr ""
 #: ../../../source/reference/commands/shutdown.txt:37
 #: ../../../source/reference/commands/status.txt:56
 #: ../../../source/reference/commands/table_remove.txt:47
-#: ../../../source/reference/commands/view_add.txt:52
 #: ../../../source/reference/commands_not_implemented/add.txt:92
 #: ../../../source/reference/commands_not_implemented/get.txt:68
 #: ../../../source/reference/commands_not_implemented/set.txt:94
-#: ../../../source/reference/executables/groonga.txt:212
+#: ../../../source/reference/executables/groonga.txt:221
 #: ../../../source/reference/functions/edit_distance.txt:44
 #: ../../../source/reference/functions/geo_in_circle.txt:73
 #: ../../../source/reference/functions/geo_in_rectangle.txt:47
@@ -1678,7 +1672,6 @@ msgstr ""
 #: ../../../source/reference/commands/status.txt:37
 #: ../../../source/reference/commands/table_list.txt:35
 #: ../../../source/reference/commands/table_remove.txt:36
-#: ../../../source/reference/commands/view_add.txt:41
 msgid "json形式"
 msgstr ""
 
@@ -1839,7 +1832,6 @@ msgstr ""
 #: ../../../source/reference/commands/load.txt:49
 #: ../../../source/reference/commands/select.txt:208
 #: ../../../source/reference/commands/suggest.txt:74
-#: ../../../source/reference/commands/view_add.txt:33
 #: ../../../source/reference/commands_not_implemented/add.txt:31
 #: ../../../source/reference/commands_not_implemented/get.txt:29
 #: ../../../source/reference/commands_not_implemented/set.txt:29
@@ -3084,7 +3076,7 @@ msgstr ""
 
 # e9574c3225e149989e5c56875a3bf7a7
 #: ../../../source/reference/commands/select.txt:9
-#: ../../../source/reference/executables/groonga.txt:189
+#: ../../../source/reference/executables/groonga.txt:198
 msgid "``select``"
 msgstr ""
 
@@ -5193,7 +5185,7 @@ msgstr ""
 
 # d827d2fda1df4a8c889e4b3639316a94
 #: ../../../source/reference/commands/table_create.txt:9
-#: ../../../source/reference/executables/groonga.txt:171
+#: ../../../source/reference/executables/groonga.txt:180
 msgid "``table_create``"
 msgstr ""
 
@@ -5202,21 +5194,27 @@ msgstr ""
 msgid ""
 "``table_create`` creates a new table in the current database. You need to "
 "create one or more tables to store and search data."
-msgstr "``table_create`` は現在のデータベースに新しいテーブルを作成します。データを保存したり検索したりするために、1つ以上のテーブルを作成する必要があります。"
+msgstr ""
+"``table_create`` は現在のデータベースに新しいテーブルを作成します。データを保"
+"存したり検索したりするために、1つ以上のテーブルを作成する必要があります。"
 
 # 11735dbadce24d1a8e2288562b95c236
 #: ../../../source/reference/commands/table_create.txt:20
 msgid ""
 "``table_create`` has many parameters. The required parameter is only "
 "``name`` and otehrs are optional::"
-msgstr "``table_create`` には多くの引数があります。必須の引数は ``name`` だけで、残りは省略できます。::"
+msgstr ""
+"``table_create`` には多くの引数があります。必須の引数は ``name`` だけで、残り"
+"は省略できます。::"
 
 # 310fd59774fe4adcbd1980250fcfe9d3
 #: ../../../source/reference/commands/table_create.txt:33
 msgid ""
 "``table_create`` command creates a new persistent table. See :doc:`/"
 "reference/tables` for table details."
-msgstr "``table_create`` コマンドは新しく永続テーブルを作成します。テーブルの詳細については :doc:`/reference/tables` を参照してください。"
+msgstr ""
+"``table_create`` コマンドは新しく永続テーブルを作成します。テーブルの詳細につ"
+"いては :doc:`/reference/tables` を参照してください。"
 
 # 4aa9a27449614eebb3dc4d217602e9a1
 #: ../../../source/reference/commands/table_create.txt:37
@@ -5228,7 +5226,9 @@ msgstr "データ保存用テーブルの作成"
 msgid ""
 "You can use all table types for data store table. See :doc:`/reference/"
 "tables` for all table types."
-msgstr "データ保存用のテーブルにはどの種類のテーブルでも使えます。テーブルの種類については :doc:`/reference/tables` を参照してください。"
+msgstr ""
+"データ保存用のテーブルにはどの種類のテーブルでも使えます。テーブルの種類につ"
+"いては :doc:`/reference/tables` を参照してください。"
 
 # 682a494a76f9436a88dfa5f11a29eb55
 #: ../../../source/reference/commands/table_create.txt:42
@@ -5245,7 +5245,9 @@ msgstr "以下は ``TABLE_NO_KEY`` テーブルを使う例です。"
 msgid ""
 "The ``table_create`` command creates a table that is named ``Logs`` and is "
 "``TABLE_NO_KEY`` type."
-msgstr "この ``table_create`` コマンドは ``Logs`` という名前で ``TABLE_NO_KEY`` 型のテーブルを作成します。"
+msgstr ""
+"この ``table_create`` コマンドは ``Logs`` という名前で ``TABLE_NO_KEY`` 型の"
+"テーブルを作成します。"
 
 # be55ed80d1c94b7199c9dbefbba7aced
 #: ../../../source/reference/commands/table_create.txt:53
@@ -5253,7 +5255,11 @@ msgid ""
 "If your records aren't searched by key, ``TABLE_NO_KEY`` type table is "
 "suitable. Because ``TABLE_NO_KEY`` doesn't support key but it is fast and "
 "small table. Storing logs into groonga database is the case."
-msgstr "キーでレコードを検索しないのであれば、 ``TABLE_NO_KEY`` 型のテーブルが適切です。なぜなら、 ``TABLE_NO_KEY`` はキーをサポートしていませんが、速くて小さいサイズのテーブルだからです。ログをgroongaのデータベースに保存するという使い方はこのケースです。"
+msgstr ""
+"キーでレコードを検索しないのであれば、 ``TABLE_NO_KEY`` 型のテーブルが適切で"
+"す。なぜなら、 ``TABLE_NO_KEY`` はキーをサポートしていませんが、速くて小さい"
+"サイズのテーブルだからです。ログをgroongaのデータベースに保存するという使い方"
+"はこのケースです。"
 
 # 3ea1c7974adf4235b10b25c3690c161a
 #: ../../../source/reference/commands/table_create.txt:57
@@ -5261,7 +5267,10 @@ msgid ""
 "If your records are searched by key or referenced by one or more columns, "
 "``TABLE_NO_KEY`` type isn't suitable. Lexicon for fulltext search is the "
 "case."
-msgstr "キーでレコードを検索したり、カラムからレコードを参照したりする場合は、 ``TABLE_NO_KEY`` 型は適していません。全文検索用の語彙表として使うケースはこのケースです。"
+msgstr ""
+"キーでレコードを検索したり、カラムからレコードを参照したりする場合は、 "
+"``TABLE_NO_KEY`` 型は適していません。全文検索用の語彙表として使うケースはこの"
+"ケースです。"
 
 # 242da2784cfd4b4d8284353c9acb349b
 #: ../../../source/reference/commands/table_create.txt:62
@@ -5273,7 +5282,10 @@ msgstr "語彙表テーブルの作成"
 msgid ""
 "You can use all table types except ``TABLE_NO_KEY`` for lexicon table. "
 "Lexicon table needs key support but ``TABLE_NO_KEY`` doesn't support key."
-msgstr "語彙表テーブル用のテーブルには ``TABLE_NO_KEY`` 以外の型のテーブルを使います。語彙表テーブルはキーをサポートしていないといけませんが、 ``TABLE_NO_KEY`` はキーをサポートしていません。"
+msgstr ""
+"語彙表テーブル用のテーブルには ``TABLE_NO_KEY`` 以外の型のテーブルを使いま"
+"す。語彙表テーブルはキーをサポートしていないといけませんが、 "
+"``TABLE_NO_KEY`` はキーをサポートしていません。"
 
 # 1ccd84b3f15a4567b23bb0e7d8c66fcd
 #: ../../../source/reference/commands/table_create.txt:68
@@ -5307,43 +5319,59 @@ msgstr "このテーブルのキーは ``ShortText`` 型です。"
 msgid ""
 "The table uses ``TokenBigram`` tokenizer to extract tokens from a normalized "
 "text."
-msgstr "このテーブルは正規化されたテキストからトークンを抽出するために ``TokenBigram`` トークナイザーを使います。"
+msgstr ""
+"このテーブルは正規化されたテキストからトークンを抽出するために "
+"``TokenBigram`` トークナイザーを使います。"
 
 # 775268a22a024076ac2546f5b9fe9e4f
 #: ../../../source/reference/commands/table_create.txt:81
 msgid "The table uses ``NormalizerAuto`` normalizer to normalize a text."
-msgstr "このテーブルはテキストを正規化するために ``NormalizerAuto`` ノーマライザーを使います。"
+msgstr ""
+"このテーブルはテキストを正規化するために ``NormalizerAuto`` ノーマライザーを"
+"使います。"
 
 # 606ad03182b944949d6a9ff81d2e47d0
 #: ../../../source/reference/commands/table_create.txt:83
 msgid ""
 "``TABLE_PAT_KEY`` is suitable table type for lexicon table. Lexicon table is "
 "used for fulltext search."
-msgstr "語彙表テーブルには ``TABLE_PAT_KEY`` が適切なテーブルの型です。語彙表テーブルは全文検索に使われます。"
+msgstr ""
+"語彙表テーブルには ``TABLE_PAT_KEY`` が適切なテーブルの型です。語彙表テーブル"
+"は全文検索に使われます。"
 
 # 47a226cd1d0d46d691f1567fb1dce67f
 #: ../../../source/reference/commands/table_create.txt:86
 msgid ""
 "In fulltext search, predictive search may be used for fuzzy search. "
 "Predictive search is supported by ``TABLE_PAT_KEY`` and ``TABLE_DAT_KEY``."
-msgstr "全文検索では、あいまい検索をするために前方一致検索を使っています。前方一致検索は ``TABLE_PAT_KEY`` と ``TABLE_DAT_KEY`` がサポートしています。"
+msgstr ""
+"全文検索では、あいまい検索をするために前方一致検索を使っています。前方一致検"
+"索は ``TABLE_PAT_KEY`` と ``TABLE_DAT_KEY`` がサポートしています。"
 
 # 305b59ad3adb40fd9627a673d1a3a80d
-#: ../../../source/reference/commands/table_create.txt:91
+#: ../../../source/reference/commands/table_create.txt:90
 msgid ""
 "Lexicon table has many keys because a fulltext target text has many tokens. "
 "Table that has many keys should consider table size because large table "
 "requires large memory. Requiring large memory causes disk I/O. It blocks "
 "fast search. So table size is important for a table that has many keys. "
 "``TABLE_PAT_KEY`` is less table size than ``TABLE_DAT_KEY``."
-msgstr "全文検索対象のテキストには大量のトークンが含まれるので、語彙表テーブルのキーも大量になります。大量のキーを格納するテーブルの場合はテーブルのサイズを意識する必要があります。これは、大きなテーブルはそれだけ多くのメモリーを必要とするからです。多くのメモリーが必要になると、ディスクI/Oが発生することもあります。ディスクI/Oが発生すると高速に検索できなくなります。そのため、大量のキーがあるテーブルの場合はテーブルのサイズが重要になります。``TABLE_PAT_KEY`` は ``TABLE_DAT_KEY`` よりもテーブルのサイズが小さいです。"
+msgstr ""
+"全文検索対象のテキストには大量のトークンが含まれるので、語彙表テーブルのキー"
+"も大量になります。大量のキーを格納するテーブルの場合はテーブルのサイズを意識"
+"する必要があります。これは、大きなテーブルはそれだけ多くのメモリーを必要とす"
+"るからです。多くのメモリーが必要になると、ディスクI/Oが発生することもありま"
+"す。ディスクI/Oが発生すると高速に検索できなくなります。そのため、大量のキーが"
+"あるテーブルの場合はテーブルのサイズが重要になります。``TABLE_PAT_KEY`` は "
+"``TABLE_DAT_KEY`` よりもテーブルのサイズが小さいです。"
 
 # 817ab6dc2af5416199b18a3bcfcfa48d
 #: ../../../source/reference/commands/table_create.txt:97
 msgid ""
 "Because of the above reasons, ``TABLE_PAT_KEY`` is suitable table type for "
 "lexicon table."
-msgstr "上記の理由から、 ``TABLE_PAT_KEY`` が語彙表テーブルに適したテーブルの型です。"
+msgstr ""
+"上記の理由から、 ``TABLE_PAT_KEY`` が語彙表テーブルに適したテーブルの型です。"
 
 # d63c7815788f435abe531c85072637c7
 #: ../../../source/reference/commands/table_create.txt:101
@@ -5355,7 +5383,10 @@ msgstr "タグインデックス用テーブルの作成"
 msgid ""
 "You can use all table types except ``TABLE_NO_KEY`` for tag index table. Tag "
 "index table needs key support but ``TABLE_NO_KEY`` doesn't support key."
-msgstr "タグインデックス用のテーブルには ``TABLE_NO_KEY`` 以外の型のテーブルを使えます。タグインデックス用のテーブルはキーのサポートが必要ですが、 ``TABLE_NO_KEY`` はキーをサポートしていません。"
+msgstr ""
+"タグインデックス用のテーブルには ``TABLE_NO_KEY`` 以外の型のテーブルを使えま"
+"す。タグインデックス用のテーブルはキーのサポートが必要ですが、 "
+"``TABLE_NO_KEY`` はキーをサポートしていません。"
 
 # cb796a036b344d53b351a21cbf35f352
 #: ../../../source/reference/commands/table_create.txt:107
@@ -5367,21 +5398,27 @@ msgstr "以下は ``TABLE_HASH_KEY`` 型のテーブルを作る例です。"
 msgid ""
 "The ``table_create`` command creates a table that is named ``Tags``, is "
 "``TABLE_HASH_KEY`` type and has ``ShortText`` type key."
-msgstr "この ``table_create`` コマンドは ``Tags`` という名前で ``TABLE_HASH_KEY`` 型のテーブルを作ります。このテーブルのキーは ``ShortText`` 型です。"
+msgstr ""
+"この ``table_create`` コマンドは ``Tags`` という名前で ``TABLE_HASH_KEY`` 型"
+"のテーブルを作ります。このテーブルのキーは ``ShortText`` 型です。"
 
 # 804637179acd4dfebee7eaef819dbe22
 #: ../../../source/reference/commands/table_create.txt:116
 msgid ""
 "``TABLE_HASH_KEY`` or ``TABLE_DAT_KEY`` are suitable table types for tag "
 "index table."
-msgstr "タグインデックス用のテーブルには ``TABLE_HASH_KEY`` あるいは ``TABLE_DAT_KEY`` が適切なテーブルの型です。"
+msgstr ""
+"タグインデックス用のテーブルには ``TABLE_HASH_KEY`` あるいは "
+"``TABLE_DAT_KEY`` が適切なテーブルの型です。"
 
 # c90a9d5cdfd6437681a69bb254ba486d
 #: ../../../source/reference/commands/table_create.txt:119
 msgid ""
 "If you need only exact match tag search feature, ``TABLE_HASH_KEY`` is "
 "suitable. It is the common case."
-msgstr "完全一致でタグを検索する機能だけが必要なら、 ``TABLE_HASH_KEY`` が適切です。多くの場合はこのケースです。"
+msgstr ""
+"完全一致でタグを検索する機能だけが必要なら、 ``TABLE_HASH_KEY`` が適切です。"
+"多くの場合はこのケースです。"
 
 # f7e794fa938f4ce3a5dc3028a4fb878a
 #: ../../../source/reference/commands/table_create.txt:122
@@ -5390,7 +5427,11 @@ msgid ""
 "\"groonga\"`` by ``\"gr\"`` keyword.), ``TABLE_DAT_KEY`` is suitable. "
 "``TABLE_DAT_KEY`` is large table size but it is not important because the "
 "number of tags will not be large."
-msgstr "もし、前方一致検索機能も必要な場合（例えば、 ``\"gr\"`` というキーワードで ``\"groonga\"`` を検索する場合）は、 ``TABLE_DAT_KEY`` が適切です。 ``TABLE_DAT_KEY`` はサイズの大きなテーブルですが、タグの数はそれほど多くならないので、サイズは重要ではありません。"
+msgstr ""
+"もし、前方一致検索機能も必要な場合（例えば、 ``\"gr\"`` というキーワードで ``"
+"\"groonga\"`` を検索する場合）は、 ``TABLE_DAT_KEY`` が適切です。 "
+"``TABLE_DAT_KEY`` はサイズの大きなテーブルですが、タグの数はそれほど多くなら"
+"ないので、サイズは重要ではありません。"
 
 # ff0f74c90fcb4f52b80e6ae6b9c0ab8a
 #: ../../../source/reference/commands/table_create.txt:128
@@ -5403,7 +5444,11 @@ msgid ""
 "You can use ``TABLE_PAT_KEY`` and ``TABLE_DAT_KEY`` table types for range "
 "index table. Range index table needs range search support but "
 "``TABLE_NO_KEY`` and ``TABLE_HASH_KEY`` don't support it."
-msgstr "範囲検索用のインデックステーブルには ``TABLE_PAT_KEY`` 型と ``TABLE_DAT_KEY`` 型を使えます。範囲検索用のインデックステーブルは範囲検索をサポートしている必要がありますが、 ``TABLE_NO_KEY`` 型と ``TABLE_HASH_KEY`` 型はサポートしていません。"
+msgstr ""
+"範囲検索用のインデックステーブルには ``TABLE_PAT_KEY`` 型と "
+"``TABLE_DAT_KEY`` 型を使えます。範囲検索用のインデックステーブルは範囲検索を"
+"サポートしている必要がありますが、 ``TABLE_NO_KEY`` 型と ``TABLE_HASH_KEY`` "
+"型はサポートしていません。"
 
 # 1ccd84b3f15a4567b23bb0e7d8c66fcd
 #: ../../../source/reference/commands/table_create.txt:134
@@ -5415,14 +5460,18 @@ msgstr "以下は ``TABLE_DAT_KEY`` テーブルを作成する例です。"
 msgid ""
 "The ``table_create`` command creates a table that is named ``Ages``, is "
 "``TABLE_DAT_KEY`` type and has ``UInt32`` type key."
-msgstr "この ``table_create`` コマンドは ``Ages`` という名前で ``TABLE_DAT_KEY`` 型のテーブルを作成します。このテーブルのキーの型は ``UInt32`` です。"
+msgstr ""
+"この ``table_create`` コマンドは ``Ages`` という名前で ``TABLE_DAT_KEY`` 型の"
+"テーブルを作成します。このテーブルのキーの型は ``UInt32`` です。"
 
 # 38f43eac3b934381a2bb081743b3b005
 #: ../../../source/reference/commands/table_create.txt:143
 msgid ""
 "``TABLE_PAT_KEY`` and ``TABLE_DAT_KEY`` are suitable table types for range "
 "index table."
-msgstr "範囲検索用のインデックステーブルには ``TABLE_PAT_KEY`` 型と ``TABLE_DAT_KEY`` 型が適切なテーブルの型です。"
+msgstr ""
+"範囲検索用のインデックステーブルには ``TABLE_PAT_KEY`` 型と "
+"``TABLE_DAT_KEY`` 型が適切なテーブルの型です。"
 
 # 6995363f4997492fa4df770342578b50
 #: ../../../source/reference/commands/table_create.txt:146
@@ -5430,14 +5479,21 @@ msgid ""
 "If you don't have many indexed items, ``TABLE_DAT_KEY`` is suitable. Index "
 "for age is the case in the above example. Index for age will have only 0-100 "
 "items because human doesn't live so long."
-msgstr "インデックス対象の項目が少なければ、 ``TABLE_DAT_KEY`` 型が適切です。前述の例では、年齢（age）用のインデックスがこのケースになります。年齢のインデックスはせいぜい0から100項目くらいにしかなりません。これは、人はそんなに長生きできないからです。"
+msgstr ""
+"インデックス対象の項目が少なければ、 ``TABLE_DAT_KEY`` 型が適切です。前述の例"
+"では、年齢（age）用のインデックスがこのケースになります。年齢のインデックスは"
+"せいぜい0から100項目くらいにしかなりません。これは、人はそんなに長生きできな"
+"いからです。"
 
 # 7b2ab1e60acf4c1a93e4808490703d7b
 #: ../../../source/reference/commands/table_create.txt:150
 msgid ""
 "If you have many indexed items, ``TABLE_PAT_KEY`` is suitable. Because "
 "``TABLE_PAT_KEY`` is smaller than ``TABLE_DAT_KEY``."
-msgstr "インデックス対象が大量にある場合は、 ``TABLE_PAT_KEY`` 型が適切です。なぜなら、 ``TABLE_PAT_KEY`` 型は ``TABLE_DAT_KEY`` 型よりもサイズが小さいからです。"
+msgstr ""
+"インデックス対象が大量にある場合は、 ``TABLE_PAT_KEY`` 型が適切です。なぜな"
+"ら、 ``TABLE_PAT_KEY`` 型は ``TABLE_DAT_KEY`` 型よりもサイズが小さいからで"
+"す。"
 
 # e92758beef824130ab42669342c10d50
 #: ../../../source/reference/commands/table_create.txt:156
@@ -5447,7 +5503,8 @@ msgstr "このセクションではすべての引数について説明します
 # a9e98af40d8343b2a5aa71a3dc5391fa
 #: ../../../source/reference/commands/table_create.txt:161
 msgid "It specifies a table name to be created. ``name`` must be specified."
-msgstr "作成するテーブル名を指定します。 ``name`` は必ず指定しなければいけません。"
+msgstr ""
+"作成するテーブル名を指定します。 ``name`` は必ず指定しなければいけません。"
 
 # 40c028a45fb64c6091aed8fac22298d1
 #: ../../../source/reference/commands/table_create.txt:163
@@ -5488,14 +5545,18 @@ msgstr "``-`` （ハイフン）"
 #: ../../../source/reference/commands/table_create.txt:171
 msgid ""
 "``_`` (underscore) (NOTE: Underscore can't be used as the first character.)"
-msgstr "``_`` （アンダースコア）（注: 最初の文字としてアンダースコアを使うことはできません。）"
+msgstr ""
+"``_`` （アンダースコア）（注: 最初の文字としてアンダースコアを使うことはでき"
+"ません。）"
 
 # 91ae801c9dc149f3a5406f1de7e2a214
 #: ../../../source/reference/commands/table_create.txt:174
 msgid ""
 "You need to create a name with one or more the above chracters. Note that "
 "you cannot use ``_`` as the first charcter such as ``_name``."
-msgstr "上記の文字を1つ以上使って名前を決めます。 ``_name`` というように、最初の文字に ``_`` を使えないことに注意してください。"
+msgstr ""
+"上記の文字を1つ以上使って名前を決めます。 ``_name`` というように、最初の文字"
+"に ``_`` を使えないことに注意してください。"
 
 # a9e98af40d8343b2a5aa71a3dc5391fa
 #: ../../../source/reference/commands/table_create.txt:181
@@ -5578,7 +5639,9 @@ msgstr ""
 msgid ""
 "Since groonga 2.1.0 ``KEY_NORMALIZE`` flag is deprecated. Use ``normalizer`` "
 "option with ``NormalizerAuto`` instead."
-msgstr "groonga 2.1.0から ``KEY_NORMALIZE`` フラグは非推奨になりました。代わりに、 ``normalizer`` オプションに ``NormalizerAuto`` を指定してください。"
+msgstr ""
+"groonga 2.1.0から ``KEY_NORMALIZE`` フラグは非推奨になりました。代わりに、 "
+"``normalizer`` オプションに ``NormalizerAuto`` を指定してください。"
 
 # e40b5e47c7f642799da5f4abccaeced1
 #: ../../../source/reference/commands/table_create.txt:204
@@ -5586,19 +5649,25 @@ msgid ""
 "You must specify one of ``TABLE_${TYPE}`` flags. You cannot specify two or "
 "more ``TABLE_${TYPE}`` flags. For example, ``TABLE_NO_KEY|TABLE_HASH_KEY`` "
 "is invalid."
-msgstr "``TABLE_${TYPE}`` フラグのどれか1つを指定します。 ``TABLE_${TYPE}`` フラグを2つ以上指定することはできません。例えば、 ``TABLE_NO_KEY|TABLE_HASH_KEY`` は不正な指定方法です。"
+msgstr ""
+"``TABLE_${TYPE}`` フラグのどれか1つを指定します。 ``TABLE_${TYPE}`` フラグを2"
+"つ以上指定することはできません。例えば、 ``TABLE_NO_KEY|TABLE_HASH_KEY`` は不"
+"正な指定方法です。"
 
 # e096e1d83a0e43f9a7fdefe8505cebc3
 #: ../../../source/reference/commands/table_create.txt:208
 msgid ""
 "You can combine flags with ``|`` (vertical bar) such as ``TABLE_PAT_KEY|"
 "KEY_WITH_SIS``."
-msgstr "``TABLE_PAT_KEY|KEY_WITH_SIS`` というように、 ``|`` （縦棒）で複数のフラグを組み合わせることができます。"
+msgstr ""
+"``TABLE_PAT_KEY|KEY_WITH_SIS`` というように、 ``|`` （縦棒）で複数のフラグを"
+"組み合わせることができます。"
 
 # bde897b0ca22430eb927c3f3d85d70d2
 #: ../../../source/reference/commands/table_create.txt:211
 msgid "See :doc:`/reference/tables` for difference between table types."
-msgstr "それぞれのテーブルの型の違いは :doc:`/reference/tables` を参照してください。"
+msgstr ""
+"それぞれのテーブルの型の違いは :doc:`/reference/tables` を参照してください。"
 
 # 9e866ac805284825bac904958d5d6f72
 #: ../../../source/reference/commands/table_create.txt:213
@@ -5620,7 +5689,10 @@ msgstr "キーの型を指定します。"
 msgid ""
 "If you specify ``TABLE_HASH_KEY``, ``TABLE_PAT_KEY`` or ``TABLE_DAT_KEY`` as "
 "``flags`` parameter, you need to specify ``key_type`` option."
-msgstr "``flags`` パラメーターに ``TABLE_HASH_KEY`` 、 ``TABLE_PAT_KEY`` または ``TABLE_DAT_KEY`` を指定した場合は、 ``key_type`` オプションを指定する必要があります。"
+msgstr ""
+"``flags`` パラメーターに ``TABLE_HASH_KEY`` 、 ``TABLE_PAT_KEY`` または "
+"``TABLE_DAT_KEY`` を指定した場合は、 ``key_type`` オプションを指定する必要が"
+"あります。"
 
 # bde897b0ca22430eb927c3f3d85d70d2
 #: ../../../source/reference/commands/table_create.txt:224
@@ -5649,10 +5721,14 @@ msgstr "値の型を指定します。"
 #: ../../../source/reference/commands/table_create.txt:233
 msgid ""
 "You can use value when you specify ``TABLE_NO_KEY``, ``TABLE_HASH_KEY`` or "
-"``TABLE_PAT_KEY`` as ``flags`` parameter. Value type must be a fixed size type. For example, "
-"``UInt32`` can be used but ``ShortText`` cannot be used. Use columns instead "
-"of value."
-msgstr "``flags`` パラメーターに ``TABLE_NO_KEY`` 、 ``TABLE_HASH_KEY`` または ``TABLE_PAT_KEY`` を指定した場合は「値」を使うことができます。「値」の型は固定長でなければいけません。例えば、 ``UInt32`` は使えますが、 ``ShortText`` は使えません。この場合は値ではなく、カラムを使ってください。"
+"``TABLE_PAT_KEY`` as ``flags`` parameter. Value type must be a fixed size "
+"type. For example, ``UInt32`` can be used but ``ShortText`` cannot be used. "
+"Use columns instead of value."
+msgstr ""
+"``flags`` パラメーターに ``TABLE_NO_KEY`` 、 ``TABLE_HASH_KEY`` または "
+"``TABLE_PAT_KEY`` を指定した場合は「値」を使うことができます。「値」の型は固"
+"定長でなければいけません。例えば、 ``UInt32`` は使えますが、 ``ShortText`` は"
+"使えません。この場合は値ではなく、カラムを使ってください。"
 
 # 174eea025b11421ca59cbddd373abcc8
 #: ../../../source/reference/commands/table_create.txt:241
@@ -5664,21 +5740,27 @@ msgstr ""
 msgid ""
 "It specifies the default tokenizer that is used on searching and data "
 "loading."
-msgstr "デフォルトトークナイザーを指定します。これは、検索時とデータロード時に使われます。"
+msgstr ""
+"デフォルトトークナイザーを指定します。これは、検索時とデータロード時に使われ"
+"ます。"
 
 # 8c632fc8d46645839bf6ff9bbcdf6336
 #: ../../../source/reference/commands/table_create.txt:246
 msgid ""
 "You cannot use ``default_tokenizer`` with ``TABLE_NO_KEY`` because "
 "``TABLE_NO_KEY`` cannot be used for index."
-msgstr "``TABLE_NO_KEY`` と一緒に ``default_tokenizer`` を使うことはできません。これは、 ``TABLE_NO_KEY`` をインデックスに使うことができないからです。"
+msgstr ""
+"``TABLE_NO_KEY`` と一緒に ``default_tokenizer`` を使うことはできません。これ"
+"は、 ``TABLE_NO_KEY`` をインデックスに使うことができないからです。"
 
 # 79185910d8db4f10947f9f12c28559b5
 #: ../../../source/reference/commands/table_create.txt:249
 msgid ""
 "You must specify ``default_tokenizer`` for a table that is used for fulltext "
 "search index."
-msgstr "全文検索用のインデックスとして使う場合には ``default_tokenizer`` を必ず指定しなければいけません。"
+msgstr ""
+"全文検索用のインデックスとして使う場合には ``default_tokenizer`` を必ず指定し"
+"なければいけません。"
 
 # bde897b0ca22430eb927c3f3d85d70d2
 #: ../../../source/reference/commands/table_create.txt:252
@@ -5700,7 +5782,9 @@ msgstr "キーを正規化するために使うノーマライザーを指定し
 msgid ""
 "You cannot use ``normalizer`` with ``TABLE_NO_KEY`` because ``TABLE_NO_KEY`` "
 "doesn't support key."
-msgstr "``TABLE_NO_KEY`` はキーをサポートしていないので、 ``TABLE_NO_KEY`` と ``normalizer`` を一緒に指定することはできません。"
+msgstr ""
+"``TABLE_NO_KEY`` はキーをサポートしていないので、 ``TABLE_NO_KEY`` と "
+"``normalizer`` を一緒に指定することはできません。"
 
 # bde897b0ca22430eb927c3f3d85d70d2
 #: ../../../source/reference/commands/table_create.txt:264
@@ -5710,12 +5794,14 @@ msgstr "ノーマライザーの一覧は :doc:`/reference/normalizers` にあ�
 # 4166fbe3d07440088e3da578beb52f4f
 #: ../../../source/reference/commands/table_create.txt:271
 msgid "``table_create`` returns ``true`` as body on success such as::"
-msgstr "``table_create`` が成功したときは以下のようにボディは ``true`` になります::"
+msgstr ""
+"``table_create`` が成功したときは以下のようにボディは ``true`` になります::"
 
 # fabf2f644394421cac6739719bcc8b73
 #: ../../../source/reference/commands/table_create.txt:275
 msgid "If ``table_create`` fails, error details are in ``HEADER``."
-msgstr "``table_create`` が失敗すると、エラーの詳細は ``HEADER`` に含まれます。"
+msgstr ""
+"``table_create`` が失敗すると、エラーの詳細は ``HEADER`` に含まれます。"
 
 # bde897b0ca22430eb927c3f3d85d70d2
 #: ../../../source/reference/commands/table_create.txt:282
@@ -5857,54 +5943,6 @@ msgstr ""
 msgid ""
 "table_removeはテーブルと定義されているカラムを削除します。カラムに付随するイ"
 "ンデックスも再帰的に削除されます。"
-msgstr ""
-
-# c9adc9c53bc844beb41bfb90506005c4
-#: ../../../source/reference/commands/view_add.txt:6
-msgid "view_add"
-msgstr ""
-
-# 4e846cb7e751462bbf4e7ec9ddceee6b
-#: ../../../source/reference/commands/view_add.txt:11
-msgid "view_add - view型のテーブルに要素となるテーブルを追加"
-msgstr ""
-
-# 2b5f799585ab40189bc6b35935a2ed41
-#: ../../../source/reference/commands/view_add.txt:22
-msgid ""
-"groonga組込コマンドの一つであるview_addについて説明します。組込コマンドは、"
-"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
-"エストを送信することによって実行します。"
-msgstr ""
-
-# 52261ebeeb874ba5bbbf971d0cf05885
-#: ../../../source/reference/commands/view_add.txt:24
-msgid "view_addは、view型のテーブルに要素となるテーブルを定義します。"
-msgstr ""
-
-# dcee2edaaba248dabd6e8a87ac218882
-#: ../../../source/reference/commands/view_add.txt:29
-msgid "``view``"
-msgstr ""
-
-# abf000e418f745079bed25683685f755
-#: ../../../source/reference/commands/view_add.txt:31
-msgid "テーブルを追加するview型のテーブルの名前を指定します。"
-msgstr ""
-
-# dec6da778b654b6d9eecbb808f5514e4
-#: ../../../source/reference/commands/view_add.txt:35
-msgid "view型のテーブルに追加されるテーブルの名前を指定します。"
-msgstr ""
-
-# 846897a67fa340558eb0c8b127302285
-#: ../../../source/reference/commands/view_add.txt:53
-msgid "::"
-msgstr ""
-
-# 5fadd0a105224b68ba31bcf05137a483
-#: ../../../source/reference/commands/view_add.txt:54
-msgid "view_add Ventry Entry [true]"
 msgstr ""
 
 # 686dead318d94bf58e0dd6aed0aed390
@@ -7047,7 +7085,7 @@ msgstr ""
 # 2744d52a6ed549e0b33ae2ea329d46e3
 # bbc26d9ad28046d2b2619035fee63b62
 #: ../../../source/reference/executables/groonga-server-http.txt:27
-#: ../../../source/reference/executables/groonga.txt:142
+#: ../../../source/reference/executables/groonga.txt:144
 msgid "コマンド"
 msgstr ""
 
@@ -7353,7 +7391,7 @@ msgstr ""
 
 # 457b2c74bd8a4ac78223e729fd9c906e
 # 8c6abaaae0b044a2b67f915722b1cef1
-#: ../../../source/reference/executables/groonga.txt:144
+#: ../../../source/reference/executables/groonga.txt:146
 msgid ""
 "groongaコマンドを通してデータベースを操作する命令をコマンドと呼びます。コマン"
 "ドは主にC言語で記述され、groongaプロセスにロードすることによって使用できるよ"
@@ -7361,12 +7399,12 @@ msgid ""
 msgstr ""
 
 # bff993fdcb8e45fbb434d68cee49a350
-#: ../../../source/reference/executables/groonga.txt:147
+#: ../../../source/reference/executables/groonga.txt:149
 msgid "引数は以下の2種類の方法のいずれかで指定することができます。::"
 msgstr ""
 
 # 26909376c58942ad9e7fc36a198989fa
-#: ../../../source/reference/executables/groonga.txt:153
+#: ../../../source/reference/executables/groonga.txt:155
 msgid ""
 "形式1でコマンドを実行する場合は、定義された順番で値を指定しなければならず、途"
 "中の引数の値を省略することはできません。形式2でコマンドを実行する場合は、「--"
@@ -7375,7 +7413,7 @@ msgid ""
 msgstr ""
 
 # 3af9364c03e9414cab4c5496f6905340
-#: ../../../source/reference/executables/groonga.txt:155
+#: ../../../source/reference/executables/groonga.txt:157
 msgid ""
 "標準入力からコマンド文字列を与える場合は、コマンド名と引数名と値は、空白( )で"
 "区切ります。空白や、記号「\"'()\\」のうちいずれかを含む値を指定したい場合は、"
@@ -7387,195 +7425,196 @@ msgid ""
 msgstr ""
 
 # 5d07b6aeb93e42c198a0e3bc4cf86749
-#: ../../../source/reference/executables/groonga.txt:157
+#: ../../../source/reference/executables/groonga.txt:159
 msgid ""
 "You can write command list with continuous line which is represented by '\\"
 "\\' character.::"
 msgstr ""
-"'\\\\'文字で継続行であることを明示してコマンドリストを記述することができます。"
+"'\\\\'文字で継続行であることを明示してコマンドリストを記述することができま"
+"す。"
 
 # 9a03066fc9bc487ab2760c191eaf75bd
-#: ../../../source/reference/executables/groonga.txt:165
+#: ../../../source/reference/executables/groonga.txt:167
 msgid "組み込みコマンド"
 msgstr ""
 
 # 25df7361384a4c7fa990f1d012be8c2b
-#: ../../../source/reference/executables/groonga.txt:167
+#: ../../../source/reference/executables/groonga.txt:169
 msgid "以下のコマンドは組み込みコマンドとして予め定義されています。"
 msgstr ""
 
 # 183ef3302d6642dd814efc4e09d8227b
-#: ../../../source/reference/executables/groonga.txt:169
+#: ../../../source/reference/executables/groonga.txt:171
 msgid "``status``"
 msgstr ""
 
 # 07c66547844f46d882015a2a27479f5e
-#: ../../../source/reference/executables/groonga.txt:170
+#: ../../../source/reference/executables/groonga.txt:172
 msgid "groongaプロセスの状態を表示します。"
 msgstr ""
 
 # 609ce72b00dd4ab3b5ebf05b87481814
-#: ../../../source/reference/executables/groonga.txt:172
+#: ../../../source/reference/executables/groonga.txt:174
 msgid "``table_list``"
 msgstr ""
 
 # 0b4594a8cd92413a8033c412e7e0642c
-#: ../../../source/reference/executables/groonga.txt:173
+#: ../../../source/reference/executables/groonga.txt:175
 msgid "DBに定義されているテーブルのリストを表示します。"
 msgstr ""
 
 # 37f1f09fd7b849788ae7383256a2e2bb
-#: ../../../source/reference/executables/groonga.txt:175
+#: ../../../source/reference/executables/groonga.txt:177
 msgid "``column_list``"
 msgstr ""
 
 # b928989ffb65490aac18a80bf375ff95
-#: ../../../source/reference/executables/groonga.txt:176
+#: ../../../source/reference/executables/groonga.txt:178
 msgid "テーブルに定義されているカラムのリストを表示します。"
 msgstr ""
 
 # ec0ec14de7024e13a277d637d27d8dcd
-#: ../../../source/reference/executables/groonga.txt:179
+#: ../../../source/reference/executables/groonga.txt:181
 msgid "DBにテーブルを追加します。"
 msgstr ""
 
 # 9c80808ad62d48409033004ef7a23ea6
-#: ../../../source/reference/executables/groonga.txt:181
+#: ../../../source/reference/executables/groonga.txt:183
 msgid "``column_create``"
 msgstr ""
 
 # 2bee51ae73e9432cbda7e577a13ea334
-#: ../../../source/reference/executables/groonga.txt:182
+#: ../../../source/reference/executables/groonga.txt:184
 msgid "テーブルにカラムを追加します。"
 msgstr ""
 
 # 15e0aa0995144e3fa447e233cf171049
-#: ../../../source/reference/executables/groonga.txt:184
+#: ../../../source/reference/executables/groonga.txt:186
 msgid "``table_remove``"
 msgstr ""
 
 # b825e1da34fa42e6be1eb1a320b4c011
-#: ../../../source/reference/executables/groonga.txt:185
+#: ../../../source/reference/executables/groonga.txt:187
 msgid "DBに定義されているテーブルを削除します。"
 msgstr ""
 
 # 4fc5f0073ee14209b81c4314e193d763
-#: ../../../source/reference/executables/groonga.txt:187
+#: ../../../source/reference/executables/groonga.txt:189
 msgid "``column_remove``"
 msgstr ""
 
 # e689add8bcc24094abf485db34648763
-#: ../../../source/reference/executables/groonga.txt:188
+#: ../../../source/reference/executables/groonga.txt:190
 msgid "テーブルに定義されているカラムを削除します。"
 msgstr ""
 
 # f6b5ce493bd245628116df39f4546e98
-#: ../../../source/reference/executables/groonga.txt:190
+#: ../../../source/reference/executables/groonga.txt:192
 msgid "``view_add``"
 msgstr ""
 
 # e190153bb37e4d2184b76656f6adfe51
-#: ../../../source/reference/executables/groonga.txt:191
+#: ../../../source/reference/executables/groonga.txt:193
 msgid "VIEW型のテーブルに要素となるテーブルを定義します。"
 msgstr ""
 
 # c4ef53521aa74d0e804ccd440321b2c5
-#: ../../../source/reference/executables/groonga.txt:193
+#: ../../../source/reference/executables/groonga.txt:195
 msgid "``load``"
 msgstr ""
 
 # 411c946f0be94778b817f9be372129bd
-#: ../../../source/reference/executables/groonga.txt:194
+#: ../../../source/reference/executables/groonga.txt:196
 msgid "テーブルにレコードを挿入します。"
 msgstr ""
 
 # 706fa164d49d4466a161bb283f63d13c
-#: ../../../source/reference/executables/groonga.txt:197
+#: ../../../source/reference/executables/groonga.txt:199
 msgid "テーブルに含まれるレコードを検索して表示します。"
 msgstr ""
 
 # cdd902a03b304d2c833322d00abb623d
-#: ../../../source/reference/executables/groonga.txt:199
+#: ../../../source/reference/executables/groonga.txt:201
 msgid "``define_selector``"
 msgstr ""
 
 # 4718b7c8e1e544c99f67a7cad2770262
-#: ../../../source/reference/executables/groonga.txt:200
+#: ../../../source/reference/executables/groonga.txt:202
 msgid "検索条件をカスタマイズした新たな検索コマンドを定義します。"
 msgstr ""
 
 # 5dafe59394484572812e1fb2f5520b52
-#: ../../../source/reference/executables/groonga.txt:202
+#: ../../../source/reference/executables/groonga.txt:204
 msgid "``quit``"
 msgstr ""
 
 # 72bc9c29a9724633b7fe829cf11ad4d0
-#: ../../../source/reference/executables/groonga.txt:203
+#: ../../../source/reference/executables/groonga.txt:205
 msgid "データベースとのセッションを終了します。"
 msgstr ""
 
 # e762fdaa976844d99174991e15d79eea
-#: ../../../source/reference/executables/groonga.txt:205
+#: ../../../source/reference/executables/groonga.txt:207
 msgid "``shutdown``"
 msgstr ""
 
 # b41457d84ff74e448918c588a3b16357
-#: ../../../source/reference/executables/groonga.txt:206
+#: ../../../source/reference/executables/groonga.txt:208
 msgid "サーバ(デーモン)プロセスを停止します。"
 msgstr ""
 
 # 95a64dab455740f99ea4b34cb8041acc
-#: ../../../source/reference/executables/groonga.txt:208
+#: ../../../source/reference/executables/groonga.txt:210
 msgid "``log_level``"
 msgstr ""
 
 # 363fc05bdb094880bc97d0ea827022ec
-#: ../../../source/reference/executables/groonga.txt:209
+#: ../../../source/reference/executables/groonga.txt:211
 msgid "ログ出力レベルを設定します。"
 msgstr ""
 
 # b34bd800ce73496fa78e7ae32f6873c5
-#: ../../../source/reference/executables/groonga.txt:211
+#: ../../../source/reference/executables/groonga.txt:213
 msgid "``log_put``"
 msgstr ""
 
 # 305f24ddaddd4d55a594801a6a877310
-#: ../../../source/reference/executables/groonga.txt:212
+#: ../../../source/reference/executables/groonga.txt:214
 msgid "ログ出力を行います。"
 msgstr ""
 
 # 65ed7729797341a3a814345d71d70367
-#: ../../../source/reference/executables/groonga.txt:215
+#: ../../../source/reference/executables/groonga.txt:217
 msgid "``clearlock``"
 msgstr ""
 
 # cbb234a59df94393b473d409c8044244
-#: ../../../source/reference/executables/groonga.txt:215
+#: ../../../source/reference/executables/groonga.txt:217
 msgid "ロックを解除します。"
 msgstr ""
 
 # bc4b67998f6344c8bef819afa6fb59cf
-#: ../../../source/reference/executables/groonga.txt:221
+#: ../../../source/reference/executables/groonga.txt:223
 msgid "新しいデータベースを作成します。::"
 msgstr ""
 
 # 742ed4d07d9145cdbafd756de32aa195
-#: ../../../source/reference/executables/groonga.txt:226
+#: ../../../source/reference/executables/groonga.txt:228
 msgid "作成済みのデータベースにテーブルを定義します。::"
 msgstr ""
 
 # d2c98e3a1203440ea3400d045bf6d99f
-#: ../../../source/reference/executables/groonga.txt:232
+#: ../../../source/reference/executables/groonga.txt:234
 msgid "サーバを起動します。::"
 msgstr ""
 
 # 8b17e697f28a475e80c4e0fc4985c7d6
-#: ../../../source/reference/executables/groonga.txt:237
+#: ../../../source/reference/executables/groonga.txt:239
 msgid "httpサーバとして起動します。::"
 msgstr ""
 
 # baba0d372d6f47008f59dc8786df686f
-#: ../../../source/reference/executables/groonga.txt:242
+#: ../../../source/reference/executables/groonga.txt:244
 msgid "サーバに接続し、テーブル一覧を表示します。::"
 msgstr ""
 
@@ -10023,8 +10062,7 @@ msgstr ""
 # bde897b0ca22430eb927c3f3d85d70d2
 #: ../../../source/reference/grn_expr/script_syntax.txt:224
 msgid "See :doc:`/reference/function` for available functin list."
-msgstr ""
-"利用可能な関数の一覧は :doc:`/reference/function` を参照してください。"
+msgstr "利用可能な関数の一覧は :doc:`/reference/function` を参照してください。"
 
 # 9578eff043bd4d21b54d81d83f7684dd
 #: ../../../source/reference/grn_expr/script_syntax.txt:232
