@@ -683,7 +683,7 @@ grn_timeval grn_starttime;
 const char *grn_log_path = GRN_LOG_PATH;
 const char *grn_qlog_path = NULL;
 
-static FILE *default_logger_fp = NULL;
+static FILE *default_logger_file = NULL;
 static grn_critical_section default_logger_lock;
 
 static void
@@ -694,18 +694,18 @@ default_logger_log(grn_ctx *ctx, grn_log_level level,
   const char slev[] = " EACewnid-";
   if (grn_log_path) {
     CRITICAL_SECTION_ENTER(default_logger_lock);
-    if (!default_logger_fp) {
-      default_logger_fp = fopen(grn_log_path, "a");
+    if (!default_logger_file) {
+      default_logger_file = fopen(grn_log_path, "a");
     }
-    if (default_logger_fp) {
+    if (default_logger_file) {
       if (location && *location) {
-        fprintf(default_logger_fp, "%s|%c|%s %s %s\n",
+        fprintf(default_logger_file, "%s|%c|%s %s %s\n",
                 timestamp, *(slev + level), title, message, location);
       } else {
-        fprintf(default_logger_fp, "%s|%c|%s %s\n", timestamp,
+        fprintf(default_logger_file, "%s|%c|%s %s\n", timestamp,
                 *(slev + level), title, message);
       }
-      fflush(default_logger_fp);
+      fflush(default_logger_file);
     }
     CRITICAL_SECTION_LEAVE(default_logger_lock);
   }
@@ -717,9 +717,9 @@ default_logger_reopen(grn_ctx *ctx, void *user_data)
   if (grn_log_path) {
     GRN_LOG(ctx, GRN_LOG_NOTICE, "log will be closed.");
     CRITICAL_SECTION_ENTER(default_logger_lock);
-    if (default_logger_fp) {
-      fclose(default_logger_fp);
-      default_logger_fp = NULL;
+    if (default_logger_file) {
+      fclose(default_logger_file);
+      default_logger_file = NULL;
     }
     CRITICAL_SECTION_LEAVE(default_logger_lock);
     GRN_LOG(ctx, GRN_LOG_NOTICE, "log opened.");
@@ -730,9 +730,9 @@ static void
 default_logger_fin(grn_ctx *ctx, void *user_data)
 {
   CRITICAL_SECTION_ENTER(default_logger_lock);
-  if (default_logger_fp) {
-    fclose(default_logger_fp);
-    default_logger_fp = NULL;
+  if (default_logger_file) {
+    fclose(default_logger_file);
+    default_logger_file = NULL;
   }
   CRITICAL_SECTION_LEAVE(default_logger_lock);
 }
