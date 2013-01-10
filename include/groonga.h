@@ -2054,7 +2054,7 @@ struct _grn_logger {
   int flags;
   void *user_data;
   void (*log)(grn_ctx *ctx, grn_log_level level,
-              const char *time, const char *title, const char *message,
+              const char *timestamp, const char *title, const char *message,
               const char *location, void *user_data);
   void (*reopen)(grn_ctx *ctx, void *user_data);
   void (*fin)(grn_ctx *ctx, void *user_data);
