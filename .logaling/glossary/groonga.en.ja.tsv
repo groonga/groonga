@@ -10,3 +10,6 @@ return code	リターンコード
 return value	戻り値
 body   ボディ
 query expander	クエリー展開オブジェクト
+value	バリュー	「keyとvalue」という関係で出てくるとき。column valueとかは「カラムの値」というように「値」にする。
+predictive search	前方一致検索
+table	テーブル	「tableとcolumn」という関係で出てくるとき。hash tableとかは「ハッシュ表」というように「表」にする。
