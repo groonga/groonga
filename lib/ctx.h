@@ -378,7 +378,6 @@ GRN_VAR grn_ctx grn_gctx;
 extern int grn_pagesize;
 extern grn_critical_section grn_glock;
 extern uint32_t grn_gtick;
-extern grn_obj *grn_true, *grn_false, *grn_null;
 GRN_VAR const char *grn_qlog_path;
 
 #define GRN_CTX_ALLOCATED                            (0x80)

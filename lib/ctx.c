@@ -1129,9 +1129,6 @@ grn_log_reopen(grn_ctx *ctx)
 }
 
 
-static grn_obj grn_true_, grn_false_, grn_null_;
-grn_obj *grn_true, *grn_false, *grn_null;
-
 static void
 check_overcommit_memory(grn_ctx *ctx)
 {
@@ -1172,12 +1169,6 @@ grn_init(void)
   ctx->prev = ctx;
   grn_ctx_init(ctx, 0);
   ctx->encoding = grn_strtoenc(GRN_DEFAULT_ENCODING);
-  grn_true = &grn_true_;
-  grn_false = &grn_false_;
-  grn_null = &grn_null_;
-  GRN_VOID_INIT(grn_true);
-  GRN_VOID_INIT(grn_false);
-  GRN_VOID_INIT(grn_null);
   grn_timeval_now(ctx, &grn_starttime);
 #ifdef WIN32
   {
