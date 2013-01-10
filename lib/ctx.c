@@ -1026,7 +1026,7 @@ grn_query_logger_reopen(grn_ctx *ctx)
   }
 }
 
-void
+static void
 grn_query_logger_fin(grn_ctx *ctx)
 {
   if (current_query_logger.fin) {
