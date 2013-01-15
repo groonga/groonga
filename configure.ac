@@ -1251,23 +1251,13 @@ AC_ARG_ENABLE(mruby,
   [AS_HELP_STRING([--enable-mruby],
     [enable mruby. [default=auto]])],
   [enable_mruby="$enableval"],
-  [enable_mruby="auto"])
+  [enable_mruby="yes"])
 
-if test "x$enable_mruby" = "xyes"; then
-  if test "x$ac_cv_ruby_available" != "xyes"; then
-    AC_MSG_ERROR([Ruby is required for mruby support.])
-  fi
-elif test "x$enable_mruby" = "xauto"; then
-  AC_MSG_CHECKING([whether enable mruby])
-  if test "$ac_cv_ruby_available" = "yes"; then
-    enable_mruby="yes"
-  else
-    enable_mruby="no"
-  fi
-  AC_MSG_RESULT($enable_mruby)
-else
+AC_MSG_CHECKING([whether enable mruby])
+if test "x$enable_mruby" != "xyes"; then
   enable_mruby="no"
 fi
+AC_MSG_RESULT($enable_mruby)
 
 m4_define([mruby_version], m4_include(mruby_version))
 MRUBY_VERSION=mruby_version
