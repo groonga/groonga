@@ -442,6 +442,7 @@ grn_plugin_register(grn_ctx *ctx, const char *name)
           "cannot find plugin file: <%s%s%s%s>",
           prefix, prefix_separator, name, suffix);
     }
+    rc = ctx->rc;
   }
   GRN_API_RETURN(rc);
 }
