@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2012 Brazil
+  Copyright(C) 2012-2013 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -272,69 +272,8 @@ grn_plugin_register_by_path(grn_ctx *ctx, const char *path)
   }
   GRN_API_ENTER;
   if (GRN_DB_P(db)) {
-    grn_id id = GRN_ID_NIL;
-    FILE *plugin_file;
-    char complemented_path[PATH_MAX], complemented_libs_path[PATH_MAX];
-    size_t path_len;
-
-    if ((path_len = strlen(path)) >= PATH_MAX) {
-      ERR(GRN_FILENAME_TOO_LONG, "too long plugin path: <%s>", path);
-      goto exit;
-    }
-    plugin_file = fopen(path, "r");
-    if (plugin_file) {
-      fclose(plugin_file);
-      id = grn_plugin_open(ctx, path);
-    } else {
-      if ((path_len += strlen(grn_plugin_get_suffix())) >= PATH_MAX) {
-        ERR(GRN_FILENAME_TOO_LONG,
-            "too long plugin path: <%s%s>",
-            path, grn_plugin_get_suffix());
-        goto exit;
-      }
-      strcpy(complemented_path, path);
-      strcat(complemented_path, grn_plugin_get_suffix());
-      plugin_file = fopen(complemented_path, "r");
-      if (plugin_file) {
-        fclose(plugin_file);
-        id = grn_plugin_open(ctx, complemented_path);
-        if (id) {
-          path = complemented_path;
-        }
-      } else {
-        const char *base_name;
-
-        base_name = strrchr(path, '/');
-        if (base_name) {
-          path_len = base_name - path + strlen("/.libs") + strlen(base_name);
-          if ((path_len += strlen(grn_plugin_get_suffix())) >= PATH_MAX) {
-            ERR(GRN_FILENAME_TOO_LONG,
-                "too long plugin path: <%.*s/.libs%s%s>",
-                (int)(base_name - path), path, base_name, grn_plugin_get_suffix());
-            goto exit;
-          }
-          complemented_libs_path[0] = '\0';
-          strncat(complemented_libs_path, path, base_name - path);
-          strcat(complemented_libs_path, "/.libs");
-          strcat(complemented_libs_path, base_name);
-          strcat(complemented_libs_path, grn_plugin_get_suffix());
-          plugin_file = fopen(complemented_libs_path, "r");
-          if (plugin_file) {
-            fclose(plugin_file);
-            id = grn_plugin_open(ctx, complemented_libs_path);
-            if (id) {
-              path = complemented_libs_path;
-            }
-          } else {
-            ERR(GRN_NO_SUCH_FILE_OR_DIRECTORY,
-                "cannot open shared object file: "
-                "No such file or directory: <%s> and <%s>",
-                complemented_path, complemented_libs_path);
-          }
-        }
-      }
-    }
-
+    grn_id id;
+    id = grn_plugin_open(ctx, path);
     if (id) {
       ctx->impl->plugin_path = path;
       ctx->rc = grn_plugin_call_register(ctx, id);
@@ -346,7 +285,6 @@ grn_plugin_register_by_path(grn_ctx *ctx, const char *path)
   } else {
     ERR(GRN_INVALID_ARGUMENT, "invalid db assigned");
   }
-exit :
   GRN_API_RETURN(ctx->rc);
 }
 
@@ -381,14 +319,19 @@ grn_plugin_get_system_plugins_dir(void)
 }
 #endif /* WIN32 */
 
-grn_rc
-grn_plugin_register(grn_ctx *ctx, const char *name)
+char *
+grn_plugin_find_path(grn_ctx *ctx, const char *name)
 {
   const char *plugins_dir;
   char dir_last_char;
   char path[PATH_MAX];
   int name_length, max_name_length;
+  FILE *plugin_file;
+  char complemented_path[PATH_MAX], complemented_libs_path[PATH_MAX];
+  char *found_path = NULL;
+  size_t path_len;
 
+  GRN_API_ENTER;
   if (name[0] == '/') {
     path[0] = '\0';
   } else {
@@ -411,12 +354,96 @@ grn_plugin_register(grn_ctx *ctx, const char *name)
         "plugin name is too long: %d (max: %d) <%s%s>",
         name_length, max_name_length,
         path, name);
-    return ctx->rc;
+    goto exit;
   }
-
   strcat(path, name);
 
-  return grn_plugin_register_by_path(ctx, path);
+  plugin_file = fopen(path, "r");
+  if (plugin_file) {
+    fclose(plugin_file);
+    found_path = GRN_STRDUP(path);
+  } else {
+    path_len = strlen(path);
+    path_len += strlen(grn_plugin_get_suffix());
+    if (path_len >= PATH_MAX) {
+      ERR(GRN_FILENAME_TOO_LONG,
+          "too long plugin path: <%s%s>",
+          path, grn_plugin_get_suffix());
+      goto exit;
+    }
+    strcpy(complemented_path, path);
+    strcat(complemented_path, grn_plugin_get_suffix());
+    plugin_file = fopen(complemented_path, "r");
+    if (plugin_file) {
+      fclose(plugin_file);
+      found_path = GRN_STRDUP(complemented_path);
+    } else {
+      const char *base_name;
+
+      base_name = strrchr(path, '/');
+      if (base_name) {
+        path_len = base_name - path + strlen("/.libs") + strlen(base_name);
+        path_len += strlen(grn_plugin_get_suffix());
+        if (path_len >= PATH_MAX) {
+          ERR(GRN_FILENAME_TOO_LONG,
+              "too long plugin path: <%.*s/.libs%s%s>",
+              (int)(base_name - path), path, base_name, grn_plugin_get_suffix());
+          goto exit;
+        }
+        complemented_libs_path[0] = '\0';
+        strncat(complemented_libs_path, path, base_name - path);
+        strcat(complemented_libs_path, "/.libs");
+        strcat(complemented_libs_path, base_name);
+        strcat(complemented_libs_path, grn_plugin_get_suffix());
+        plugin_file = fopen(complemented_libs_path, "r");
+        if (plugin_file) {
+          fclose(plugin_file);
+          found_path = GRN_STRDUP(complemented_libs_path);
+        }
+      }
+    }
+  }
+
+exit :
+  GRN_API_RETURN(found_path);
+}
+
+grn_rc
+grn_plugin_register(grn_ctx *ctx, const char *name)
+{
+  grn_rc rc;
+  char *path;
+
+  GRN_API_ENTER;
+  path = grn_plugin_find_path(ctx, name);
+  if (path) {
+    rc = grn_plugin_register_by_path(ctx, path);
+    GRN_FREE(path);
+  } else {
+    if (ctx->rc == GRN_SUCCESS) {
+      const char *prefix, *prefix_separator, *suffix;
+      if (name[0] == '/') {
+        prefix = "";
+        prefix_separator = "";
+        suffix = "";
+      } else {
+        prefix = getenv("GRN_PLUGINS_DIR");
+        if (!prefix) {
+          prefix = grn_plugin_get_system_plugins_dir();
+        }
+        if (prefix[strlen(prefix) - 1] != '/') {
+          prefix_separator = "/";
+        } else {
+          prefix_separator = "";
+        }
+        suffix = grn_plugin_get_suffix();
+      }
+      ERR(GRN_NO_SUCH_FILE_OR_DIRECTORY,
+          "cannot find plugin file: <%s%s%s%s>",
+          prefix, prefix_separator, name, suffix);
+    }
+  }
+  GRN_API_RETURN(rc);
 }
 
 void *

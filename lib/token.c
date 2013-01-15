@@ -24,6 +24,7 @@
 #include "dat.h"
 #include "hash.h"
 #include "string_in.h"
+#include "plugin_in.h"
 #include <groonga/tokenizer.h>
 
 grn_obj *grn_token_uvector = NULL;
@@ -648,7 +649,18 @@ grn_db_init_mecab_tokenizer(grn_ctx *ctx)
   case GRN_ENC_EUC_JP :
   case GRN_ENC_UTF8 :
   case GRN_ENC_SJIS :
-    return grn_plugin_register(ctx, "tokenizers/mecab");
+    {
+      const char *mecab_plugin_name = "tokenizers/mecab";
+      char *path;
+      path = grn_plugin_find_path(ctx, mecab_plugin_name);
+      if (path) {
+        GRN_FREE(path);
+        return grn_plugin_register(ctx, mecab_plugin_name);
+      } else {
+        return GRN_NO_SUCH_FILE_OR_DIRECTORY;
+      }
+    }
+    break;
   default :
     return GRN_OPERATION_NOT_SUPPORTED;
   }

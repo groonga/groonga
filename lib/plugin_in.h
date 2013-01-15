@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2010-2011 Brazil
+/* Copyright(C) 2010-2013 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -59,6 +59,7 @@ grn_id grn_plugin_open(grn_ctx *ctx, const char *filename);
 grn_rc grn_plugin_close(grn_ctx *ctx, grn_id id);
 grn_id grn_plugin_get(grn_ctx *ctx, const char *filename);
 const char *grn_plugin_path(grn_ctx *ctx, grn_id id);
+char *grn_plugin_find_path(grn_ctx *ctx, const char *name);
 
 #ifdef __cplusplus
 }
