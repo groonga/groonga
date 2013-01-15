@@ -6,7 +6,7 @@ bin_PROGRAMS = groonga groonga-benchmark
 noinst_PROGRAMS = grnslap
 
 EXTRA_DIST =					\
-	CMakeLists.txt 				\
+	CMakeLists.txt				\
 	nginx-module
 
 AM_CFLAGS =					\
