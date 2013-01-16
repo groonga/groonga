@@ -32,8 +32,6 @@
 
 #ifdef WITH_MRUBY
 # include <mruby.h>
-# include <mruby/proc.h>
-# include <mruby/compile.h>
 #endif
 
 #ifdef __cplusplus
