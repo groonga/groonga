@@ -28,13 +28,22 @@
 void
 grn_ctx_impl_mrb_init(grn_ctx *ctx)
 {
-  ctx->impl->mrb = mrb_open();
+  const char *grn_mrb_enabled;
+  grn_mrb_enabled = getenv("GRN_MRB_ENABLED");
+  if (!grn_mrb_enabled || strcmp(grn_mrb_enabled, "yes") == 0) {
+    ctx->impl->mrb = mrb_open();
+  } else {
+    ctx->impl->mrb = NULL;
+  }
 }
 
 void
 grn_ctx_impl_mrb_fin(grn_ctx *ctx)
 {
+  if (ctx->impl->mrb) {
     mrb_close(ctx->impl->mrb);
+    ctx->impl->mrb = NULL;
+  }
 }
 #else
 void
