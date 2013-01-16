@@ -128,6 +128,7 @@ build()
     run cp ${script_base_dir}/${PACKAGE}-build-options \
 	${CHROOT_BASE}/$target/tmp/build-options
     run cp ${script_base_dir}/build-rpm.sh ${CHROOT_BASE}/$target/tmp/
+    run_sudo cp patches/*.diff ${CHROOT_BASE}/$target/tmp/
     run_sudo rm -rf $rpm_dir $srpm_dir
     run_sudo su -c "chroot ${CHROOT_BASE}/$target /tmp/build-rpm.sh"
     run mkdir -p $binary_pool_dir

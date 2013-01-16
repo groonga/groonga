@@ -119,6 +119,7 @@ Libraries and header files for groonga
 Summary:	MeCab tokenizer for groonga
 Group:		Applications/Text
 Requires:	%{name}-libs = %{version}-%{release}
+Requires:       mecab-dic
 
 %description tokenizer-mecab
 MeCab tokenizer for groonga

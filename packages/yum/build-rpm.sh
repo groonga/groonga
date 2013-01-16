@@ -114,6 +114,14 @@ if [ \$? -ne 0 ]; then
 fi
 rpm2cpio \$srpm | cpio -id
 rm \$srpm
+case \$srpm in
+  mecab-ipadic*)
+    patch -p0 < /tmp/mecab-ipadic-provides-mecab-dic.diff
+    ;;
+  mecab-jumandic-*)
+    patch -p0 < /tmp/mecab-jumandic-provides-mecab-dic.diff
+    ;;
+esac
 mv *.spec ~/rpmbuild/SPECS/
 mv * ~/rpmbuild/SOURCES/
 cd ..
