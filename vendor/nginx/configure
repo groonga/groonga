@@ -41,6 +41,10 @@ if [ "$GROONGA_HTTPD_WITH_PCRE" = "yes" ]; then
 else
   configure_args="$configure_args --without-http_rewrite_module"
 fi
+if [ "$GROONGA_HTTPD_WITH_ZLIB" != "yes" ]; then
+  configure_args="$configure_args --without-http_gzip_module"
+fi
+
 
 cd "../nginx-${nginx_version}"
 

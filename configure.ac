@@ -829,10 +829,14 @@ AC_ARG_WITH(zlib,
     [use zlib for data compression. [default=no]])],
   [with_zlib="$withval"],
   [with_zlib="no"])
+WITH_ZLIB=no
 if test "x$with_zlib" = "xyes"; then
   AC_DEFINE(WITH_ZLIB, [1], [with zlib])
-  AC_SEARCH_LIBS(compress, z, [], [AC_MSG_ERROR("No libz found")])
+  AC_SEARCH_LIBS(compress, z, [WITH_ZLIB=yes], [AC_MSG_ERROR("No libz found")])
+else
+  AC_SEARCH_LIBS(compress, z, [WITH_ZLIB=yes], [])
 fi
+AC_SUBST(WITH_ZLIB)
 
 # LZO
 AC_ARG_WITH(lzo,
