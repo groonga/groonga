@@ -30,6 +30,10 @@
 #include <msgpack.h>
 #endif
 
+#ifdef WITH_MRUBY
+# include <mruby.h>
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -167,6 +171,9 @@ struct _grn_ctx_impl {
 
 #ifdef WITH_MESSAGE_PACK
   msgpack_packer msgpacker;
+#endif
+#ifdef WITH_MRUBY
+  mrb_state *mrb;
 #endif
 };
 

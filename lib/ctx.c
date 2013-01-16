@@ -25,6 +25,7 @@
 #include "snip.h"
 #include "output.h"
 #include "normalizer_in.h"
+#include "mrb.h"
 #include <stdio.h>
 #include <stdarg.h>
 #include <time.h>
@@ -507,6 +508,8 @@ grn_ctx_impl_init(grn_ctx *ctx)
 #ifdef WITH_MESSAGE_PACK
   msgpack_packer_init(&ctx->impl->msgpacker, ctx, grn_msgpack_buffer_write);
 #endif
+
+  grn_ctx_impl_mrb_init(ctx);
 }
 
 void
@@ -592,6 +595,7 @@ grn_ctx_fin(grn_ctx *ctx)
     if (ctx->impl->finalizer) {
       ctx->impl->finalizer(ctx, 0, NULL, &(ctx->user_data));
     }
+    grn_ctx_impl_mrb_fin(ctx);
     grn_ctx_loader_clear(ctx);
     if (ctx->impl->parser) {
       grn_expr_parser_close(ctx);

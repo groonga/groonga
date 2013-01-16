@@ -34,6 +34,7 @@
 /groonga-httpd-conf.sh
 /data/groonga-httpd.conf
 /vendor/nginx-1.2.1/objs
+/vendor/mruby/parse.c
 /groonga.spec
 /stamp-h1
 /CMakeCache.txt

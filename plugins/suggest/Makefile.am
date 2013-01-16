@@ -1,11 +1,14 @@
 EXTRA_DIST =					\
 	CMakeLists.txt
 
+AM_CFLAGS =					\
+	$(MESSAGE_PACK_CFLAGS)			\
+	$(MRUBY_CFLAGS)
+
 INCLUDES =			\
 	-I$(top_builddir)	\
 	-I$(top_srcdir)/include	\
-	-I$(top_srcdir)/lib	\
-	$(MESSAGE_PACK_CFLAGS)
+	-I$(top_srcdir)/lib
 
 AM_LDFLAGS =					\
 	-avoid-version				\
