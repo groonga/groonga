@@ -13,6 +13,6 @@ list_paths()
 }
 
 mruby_dir=$1
-find "${mruby_dir}/src" -type f -name '*.[chy]' | \
+find "${mruby_dir}/src" -type f -name '*.[ch]' | \
 	sed -e 's,^,$(srcdir)/,g' | \
 	list_paths "libmruby_la_SOURCES"

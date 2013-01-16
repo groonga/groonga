@@ -30,6 +30,8 @@ relative_mrblib_c=build/host/mrblib/mrblib.c
 (cd ${new_mruby_clone_dir} && ${RUBY} ./minirake > /dev/null)
 find ${new_mruby_clone_dir}/build/host -name mrblib.c \
     -exec mv '{}' ${new_mruby_dir}/src/ ';'
+find ${new_mruby_clone_dir}/build/host -name y.tab.c \
+    -exec mv '{}' ${new_mruby_dir}/src/parse.c ';'
 
 rm -rf ${new_mruby_clone_dir}
 
