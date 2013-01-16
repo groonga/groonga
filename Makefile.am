@@ -142,6 +142,9 @@ update-files:
 	cd doc && $(MAKE) update-files
 	cd data/html && $(MAKE) update-files
 
+update-mruby:
+	cd $(top_srcdir)/vendor/mruby && make update
+
 misc:
 	@if test -z "$(CUTTER_SOURCE_PATH)"; then \
 	  echo "\$$(CUTTER_SOURCE_PATH) is missing"; \

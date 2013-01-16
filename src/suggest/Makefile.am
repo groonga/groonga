@@ -21,7 +21,10 @@ EXTRA_DIST =					\
 AM_CFLAGS =					\
 	$(NO_STRICT_ALIASING_CFLAGS)		\
 	$(COVERAGE_CFLAGS)			\
-	$(GRN_CFLAGS)
+	$(GRN_CFLAGS)				\
+	$(MESSAGE_PACK_CFLAGS)			\
+	$(MRUBY_CFLAGS)
+
 DEFS += $(GRN_DEFS)
 
 AM_LDFLAGS = -no-undefined
