@@ -1,4 +1,6 @@
-SUBDIRS = suggest
+SUBDIRS =					\
+	suggest					\
+	httpd
 
 NONEXISTENT_CXX_SOURCE = nonexistent.cpp
 

@@ -1,0 +1,72 @@
+#!/bin/sh
+
+set -x
+set -e
+set -u
+
+nginx_version=$(cat "${top_srcdir}/nginx_version")
+relative_nginx_directory="vendor/nginx-${nginx_version}"
+nginx_directory="${top_srcdir}/${relative_nginx_directory}"
+
+export GROONGA_HTTPD_IN_TREE=yes
+. "${top_builddir}/groonga-httpd-conf.sh"
+
+eval "$(${top_builddir}/libtool --config)"
+
+found_libdir_in_search_path="no"
+for search_path in "${sys_lib_search_path_spec}" "${sys_lib_dlsearch_path_spec}"; do
+  if [ "${search_path}" = "${libdir}" ]; then
+    found_libdir_in_search_path="yes"
+    break
+  fi
+done
+if [ "${found_libdir_in_search_path}" = "no" ]; then
+  export GROONGA_HTTPD_RPATH="${libdir}"
+fi
+
+if [ "${abs_top_srcdir}/src/httpd" != "$(pwd)" ]; then
+  nginx_directory_in_build_directory="${abs_top_builddir}/${nginx_directory}"
+  rm -rf "${nginx_directory_in_build_directory}"
+  cp -rp \
+      "${absolute_source_directory}/${relative_nginx_directory}" \
+      "${nginx_directory_in_build_directory}"
+fi
+
+configure_args=""
+if [ "${GROONGA_HTTPD_DEBUG}" = "yes" ]; then
+  configure_args="${configure_args} --with-debug"
+fi
+
+cc_opt=""
+ld_opt=""
+if [ "${GROONGA_HTTPD_WITH_PCRE}" = "yes" ]; then
+  cc_opt="${cc_opt} ${GROONGA_HTTPD_PCRE_CFLAGS}"
+  ld_opt="${ld_opt} ${GROONGA_HTTPD_PCRE_LIBS_ONLY_L}"
+else
+  configure_args="${configure_args} --without-http_rewrite_module"
+fi
+if [ "${GROONGA_HTTPD_WITH_ZLIB}" != "yes" ]; then
+  configure_args="${configure_args} --without-http_gzip_module"
+fi
+
+
+cd "${nginx_directory}"
+
+./configure \
+  --prefix="${GROONGA_HTTPD_PREFIX}" \
+  --sbin-path="${GROONGA_HTTPD_BIN_PATH}" \
+  --conf-path="${GROONGA_HTTPD_CONF_PATH}" \
+  --error-log-path="${GROONGA_HTTPD_ERROR_LOG_PATH}" \
+  --http-log-path="${GROONGA_HTTPD_HTTP_LOG_PATH}" \
+  --add-module="${GROONGA_HTTPD_MODULE_PATH}" \
+  --pid-path="${GROONGA_HTTPD_PID_PATH}" \
+  --with-cc-opt="${cc_opt}" \
+  --with-ld-opt="${ld_opt}" \
+  ${configure_args}
+
+if [ "${GROONGA_HTTPD_DEBUG}" = "yes" ]; then
+  sed -i'' \
+    -e '/^CFLAGS =/ s/ -O / -O0 /' \
+    -e '/^CFLAGS =/ s/ -g / -ggdb3 /' \
+    objs/Makefile
+fi

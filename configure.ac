@@ -215,6 +215,7 @@ AC_CONFIG_FILES([
   build/cmake_modules/Makefile
   src/Makefile
   src/suggest/Makefile
+  src/httpd/Makefile
   lib/Makefile
   lib/dat/Makefile
   include/Makefile
@@ -1237,6 +1238,10 @@ AC_ARG_WITH(groonga-github-com-path,
 AC_SUBST(GROONGA_GITHUB_COM_PATH)
 
 # groonga-httpd
+m4_define([nginx_version], m4_include(nginx_version))
+NGINX_VERSION=nginx_version
+AC_SUBST(NGINX_VERSION)
+
 AC_ARG_ENABLE(groonga_httpd,
   [AS_HELP_STRING([--enable-groonga-httpd],
     [enable nginx used for groonga-httpd. [default=yes]])],
@@ -1244,7 +1249,7 @@ AC_ARG_ENABLE(groonga_httpd,
   [enable_groonga_httpd="yes"])
 if test "x$enable_groonga_httpd" != "xno"; then
   enable_groonga_httpd="yes"
-  AC_CONFIG_SUBDIRS([vendor/nginx])
+  AC_CONFIG_SUBDIRS([src/httpd])
 else
   enable_groonga_httpd="no"
 fi
