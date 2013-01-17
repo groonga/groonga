@@ -1,4 +1,4 @@
-NGINX_DIR = nginx-1.2.1
+NGINX_DIR = nginx-$(NGINX_VERSION)
 MRUBY_DIR = mruby-$(MRUBY_VERSION)
 
 SUBDIRS = mruby
