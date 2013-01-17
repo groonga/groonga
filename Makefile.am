@@ -7,10 +7,10 @@ AUTOMAKE_OPTIONS = 1.9.6
 SUBDIRS =					\
 	build					\
 	include					\
+	vendor					\
 	lib					\
 	plugins					\
 	src					\
-	vendor					\
 	examples				\
 	test					\
 	packages				\
