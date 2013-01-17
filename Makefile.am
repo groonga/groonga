@@ -145,6 +145,9 @@ update-files:
 update-mruby:
 	cd $(top_srcdir)/vendor/mruby && make update
 
+update-nginx:
+	cd $(top_srcdir)/vendor && ./update_nginx.sh
+
 misc:
 	@if test -z "$(CUTTER_SOURCE_PATH)"; then \
 	  echo "\$$(CUTTER_SOURCE_PATH) is missing"; \
