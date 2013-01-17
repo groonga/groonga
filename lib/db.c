@@ -7777,6 +7777,34 @@ grn_db_init_builtin_types(grn_ctx *ctx)
 #define MULTI_COLUMN_INDEXP(i) (DB_OBJ(i)->source_size > sizeof(grn_id))
 
 static inline int
+grn_column_index_column_equal(grn_ctx *ctx, grn_obj *obj, grn_operator op,
+                              grn_obj **indexbuf, int buf_size, int *section)
+{
+  int n = 0;
+  grn_obj **ip = indexbuf;
+  grn_hook *hooks;
+
+  for (hooks = DB_OBJ(obj)->hooks[GRN_HOOK_SET]; hooks; hooks = hooks->next) {
+    default_set_value_hook_data *data = (void *)NEXT_ADDR(hooks);
+    grn_obj *target = grn_ctx_at(ctx, data->target);
+    if (target->header.type != GRN_COLUMN_INDEX) { continue; }
+    if (section) { *section = (MULTI_COLUMN_INDEXP(target)) ? data->section : 0; }
+    if (obj->header.type != GRN_COLUMN_FIX_SIZE) {
+      grn_obj *tokenizer, *lexicon = grn_ctx_at(ctx, target->header.domain);
+      if (!lexicon) { continue; }
+      grn_table_get_info(ctx, lexicon, NULL, NULL, &tokenizer, NULL);
+      if (tokenizer) { continue; }
+    }
+    if (n < buf_size) {
+      *ip++ = target;
+    }
+    n++;
+  }
+
+  return n;
+}
+
+static inline int
 grn_column_index_accessor_match(grn_ctx *ctx, grn_obj *obj, grn_operator op,
                                 grn_obj **indexbuf, int buf_size, int *section)
 {
@@ -7836,22 +7864,8 @@ grn_column_index(grn_ctx *ctx, grn_obj *obj, grn_operator op,
   if (GRN_DB_OBJP(obj)) {
     switch (op) {
     case GRN_OP_EQUAL :
-      for (hooks = DB_OBJ(obj)->hooks[GRN_HOOK_SET]; hooks; hooks = hooks->next) {
-        default_set_value_hook_data *data = (void *)NEXT_ADDR(hooks);
-        grn_obj *target = grn_ctx_at(ctx, data->target);
-        if (target->header.type != GRN_COLUMN_INDEX) { continue; }
-        if (section) { *section = (MULTI_COLUMN_INDEXP(target)) ? data->section : 0; }
-        if (obj->header.type != GRN_COLUMN_FIX_SIZE) {
-          grn_obj *tokenizer, *lexicon = grn_ctx_at(ctx, target->header.domain);
-          if (!lexicon) { continue; }
-          grn_table_get_info(ctx, lexicon, NULL, NULL, &tokenizer, NULL);
-          if (tokenizer) { continue; }
-        }
-        if (n < buf_size) {
-          *ip++ = target;
-        }
-        n++;
-      }
+      n = grn_column_index_column_equal(ctx, obj, op,
+                                        indexbuf, buf_size, section);
       break;
     case GRN_OP_PREFIX :
     case GRN_OP_SUFFIX :
