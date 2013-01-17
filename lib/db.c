@@ -7776,6 +7776,55 @@ grn_db_init_builtin_types(grn_ctx *ctx)
 
 #define MULTI_COLUMN_INDEXP(i) (DB_OBJ(i)->source_size > sizeof(grn_id))
 
+static inline int
+grn_column_index_accessor_match(grn_ctx *ctx, grn_obj *obj, grn_operator op,
+                                grn_obj **indexbuf, int buf_size, int *section)
+{
+  int n = 0;
+  grn_obj **ip = indexbuf;
+  grn_accessor *a = (grn_accessor *)obj;
+
+  while (a) {
+    grn_hook *hooks;
+    grn_bool found = GRN_FALSE;
+    grn_hook_entry entry = -1;
+
+    switch (a->action) {
+    case GRN_ACCESSOR_GET_KEY :
+      entry = GRN_HOOK_INSERT;
+      break;
+    case GRN_ACCESSOR_GET_COLUMN_VALUE :
+      entry = GRN_HOOK_SET;
+      break;
+    default :
+      break;
+    }
+
+    for (hooks = DB_OBJ(a->obj)->hooks[entry]; hooks; hooks = hooks->next) {
+      default_set_value_hook_data *data = (void *)NEXT_ADDR(hooks);
+      grn_obj *target = grn_ctx_at(ctx, data->target);
+      if (target->header.type != GRN_COLUMN_INDEX) { continue; }
+      found = GRN_TRUE;
+      if (!a->next) {
+        if (section) {
+          *section = (MULTI_COLUMN_INDEXP(target)) ? data->section : 0;
+        }
+        if (n < buf_size) {
+          *ip++ = target;
+        }
+        n++;
+      }
+    }
+
+    if (!found) {
+      break;
+    }
+    a = a->next;
+  }
+
+  return n;
+}
+
 int
 grn_column_index(grn_ctx *ctx, grn_obj *obj, grn_operator op,
                  grn_obj **indexbuf, int buf_size, int *section)
@@ -7880,46 +7929,8 @@ grn_column_index(grn_ctx *ctx, grn_obj *obj, grn_operator op,
     case GRN_OP_NEAR :
     case GRN_OP_NEAR2 :
     case GRN_OP_SIMILAR :
-      {
-        grn_accessor *a = (grn_accessor *)obj;
-        while (a) {
-          grn_bool found = GRN_FALSE;
-          grn_hook_entry entry = -1;
-
-          switch (a->action) {
-          case GRN_ACCESSOR_GET_KEY :
-            entry = GRN_HOOK_INSERT;
-            break;
-          case GRN_ACCESSOR_GET_COLUMN_VALUE :
-            entry = GRN_HOOK_SET;
-            break;
-          default :
-            break;
-          }
-
-          obj = a->obj;
-          for (hooks = DB_OBJ(obj)->hooks[entry]; hooks; hooks = hooks->next) {
-            default_set_value_hook_data *data = (void *)NEXT_ADDR(hooks);
-            grn_obj *target = grn_ctx_at(ctx, data->target);
-            if (target->header.type != GRN_COLUMN_INDEX) { continue; }
-            found = GRN_TRUE;
-            if (!a->next) {
-              if (section) {
-                *section = (MULTI_COLUMN_INDEXP(target)) ? data->section : 0;
-              }
-              if (n < buf_size) {
-                *ip++ = target;
-              }
-              n++;
-            }
-          }
-
-          if (!found) {
-            break;
-          }
-          a = a->next;
-        }
-      }
+      n = grn_column_index_accessor_match(ctx, obj, op,
+                                          indexbuf, buf_size, section);
       break;
     case GRN_OP_LESS :
     case GRN_OP_GREATER :
