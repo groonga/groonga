@@ -7905,13 +7905,49 @@ grn_column_index_accessor_match(grn_ctx *ctx, grn_obj *obj, grn_operator op,
   return n;
 }
 
+static inline int
+grn_column_index_accessor_range(grn_ctx *ctx, grn_obj *obj, grn_operator op,
+                                grn_obj **indexbuf, int buf_size, int *section)
+{
+  int n = 0;
+  grn_obj **ip = indexbuf;
+  grn_accessor *a = (grn_accessor *)obj;
+
+  if (a->action == GRN_ACCESSOR_GET_KEY &&
+      a->next &&
+      a->next->action == GRN_ACCESSOR_GET_COLUMN_VALUE &&
+      a->next->obj) {
+    grn_hook *hooks;
+
+    obj = a->next->obj;
+    for (hooks = DB_OBJ(obj)->hooks[GRN_HOOK_SET]; hooks; hooks = hooks->next) {
+      default_set_value_hook_data *data = (void *)NEXT_ADDR(hooks);
+      grn_obj *target = grn_ctx_at(ctx, data->target);
+      if (target->header.type != GRN_COLUMN_INDEX) { continue; }
+      if (section) { *section = (MULTI_COLUMN_INDEXP(target)) ? data->section : 0; }
+      {
+        grn_obj *tokenizer, *lexicon = grn_ctx_at(ctx, target->header.domain);
+        if (!lexicon) { continue; }
+        if (lexicon->header.type != GRN_TABLE_PAT_KEY) { continue; }
+        /* FIXME: GRN_TABLE_DAT_KEY should be supported */
+        grn_table_get_info(ctx, lexicon, NULL, NULL, &tokenizer, NULL);
+        if (tokenizer) { continue; }
+      }
+      if (n < buf_size) {
+        *ip++ = target;
+      }
+      n++;
+    }
+  }
+
+  return n;
+}
+
 int
 grn_column_index(grn_ctx *ctx, grn_obj *obj, grn_operator op,
                  grn_obj **indexbuf, int buf_size, int *section)
 {
   int n = 0;
-  grn_hook *hooks;
-  grn_obj **ip = indexbuf;
   GRN_API_ENTER;
   if (GRN_DB_OBJP(obj)) {
     switch (op) {
@@ -7978,33 +8014,8 @@ grn_column_index(grn_ctx *ctx, grn_obj *obj, grn_operator op,
     case GRN_OP_GREATER :
     case GRN_OP_LESS_EQUAL :
     case GRN_OP_GREATER_EQUAL :
-      {
-        grn_accessor *a = (grn_accessor *)obj;
-        if (a->action == GRN_ACCESSOR_GET_KEY &&
-            a->next &&
-            a->next->action == GRN_ACCESSOR_GET_COLUMN_VALUE &&
-            a->next->obj) {
-          obj = a->next->obj;
-          for (hooks = DB_OBJ(obj)->hooks[GRN_HOOK_SET]; hooks; hooks = hooks->next) {
-            default_set_value_hook_data *data = (void *)NEXT_ADDR(hooks);
-            grn_obj *target = grn_ctx_at(ctx, data->target);
-            if (target->header.type != GRN_COLUMN_INDEX) { continue; }
-            if (section) { *section = (MULTI_COLUMN_INDEXP(target)) ? data->section : 0; }
-            {
-              grn_obj *tokenizer, *lexicon = grn_ctx_at(ctx, target->header.domain);
-              if (!lexicon) { continue; }
-              if (lexicon->header.type != GRN_TABLE_PAT_KEY) { continue; }
-              /* FIXME: GRN_TABLE_DAT_KEY should be supported */
-              grn_table_get_info(ctx, lexicon, NULL, NULL, &tokenizer, NULL);
-              if (tokenizer) { continue; }
-            }
-            if (n < buf_size) {
-              *ip++ = target;
-            }
-            n++;
-          }
-        }
-      }
+      n = grn_column_index_accessor_range(ctx, obj, op,
+                                          indexbuf, buf_size, section);
       break;
     default :
       break;
