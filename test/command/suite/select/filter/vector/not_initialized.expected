@@ -1,0 +1,54 @@
+table_create Sites TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Sites tags COLUMN_VECTOR ShortText
+[[0,0.0,0.0],true]
+load --table Sites
+[
+["_key"],
+["groonga.org"],
+["razil.jp"]
+]
+[[0,0.0,0.0],2]
+select Sites --filter 'tags == ""'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "tags",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "groonga.org",
+        [
+
+        ]
+      ],
+      [
+        2,
+        "razil.jp",
+        [
+
+        ]
+      ]
+    ]
+  ]
+]

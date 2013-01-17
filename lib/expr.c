@@ -2716,10 +2716,12 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
             if (size == GRN_OBJ_GET_VALUE_IMD) {
               GRN_RECORD_SET(ctx, res, (uintptr_t)value);
             } else {
-              if (res->header.type == GRN_VECTOR) {
-                grn_vector_decode(ctx, res, value, size);
-              } else {
-                grn_bulk_write_from(ctx, res, value, 0, size);
+              if (value) {
+                if (res->header.type == GRN_VECTOR) {
+                  grn_vector_decode(ctx, res, value, size);
+                } else {
+                  grn_bulk_write_from(ctx, res, value, 0, size);
+                }
               }
             }
             code++;
