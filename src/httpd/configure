@@ -4,6 +4,22 @@ set -x
 set -e
 set -u
 
+srcdir="."
+builddir="."
+for argument in "$@"; do
+    case "$argument" in
+	--srcdir=*)
+	    srcdir="$(echo "${argument}" | sed -e 's/--srcdir=//')"
+	    ;;
+    esac
+done
+
+top_srcdir="${srcdir}/../.."
+top_builddir="${builddir}/../.."
+
+abs_top_srcdir="$(cd "${top_srcdir}" && pwd)"
+abs_top_builddir="$(cd "${top_builddir}" && pwd)"
+
 nginx_version=$(cat "${top_srcdir}/nginx_version")
 relative_nginx_directory="vendor/nginx-${nginx_version}"
 nginx_directory="${top_srcdir}/${relative_nginx_directory}"
@@ -24,7 +40,7 @@ if [ "${found_libdir_in_search_path}" = "no" ]; then
   export GROONGA_HTTPD_RPATH="${libdir}"
 fi
 
-if [ -n "${abs_top_srcdir}" -a "${abs_top_srcdir}/src/httpd" != "$(pwd)" ]; then
+if [ "${abs_top_srcdir}/src/httpd" != "$(pwd)" ]; then
   nginx_directory_in_build_directory="${abs_top_builddir}/${nginx_directory}"
   rm -rf "${nginx_directory_in_build_directory}"
   cp -rp \
