@@ -146,7 +146,11 @@ update-mruby:
 	cd $(top_srcdir)/vendor/mruby && make update
 
 update-nginx:
-	cd $(top_srcdir)/vendor && ./update_nginx.sh
+	@if test -z "$(NEW_NGINX_VERSION)"; then	\
+	  echo "\$$(NEW_NGINX_VERSION) is missing";	\
+	  exit 1;					\
+	fi
+	cd $(top_srcdir)/vendor && ./update_nginx.sh $(NEW_NGINX_VERSION)
 
 misc:
 	@if test -z "$(CUTTER_SOURCE_PATH)"; then \
