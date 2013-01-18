@@ -7856,58 +7856,36 @@ grn_column_index_column_range(grn_ctx *ctx, grn_obj *obj, grn_operator op,
   return n;
 }
 
-static inline int
-grn_column_index_accessor_match(grn_ctx *ctx, grn_obj *obj, grn_operator op,
-                                grn_obj **indexbuf, int buf_size, int *section)
+static inline grn_bool
+is_valid_match_index(grn_ctx *ctx, grn_obj *index_column)
 {
-  int n = 0;
-  grn_obj **ip = indexbuf;
-  grn_accessor *a = (grn_accessor *)obj;
+  return GRN_TRUE;
+}
 
-  while (a) {
-    grn_hook *hooks;
-    grn_bool found = GRN_FALSE;
-    grn_hook_entry entry = -1;
+static inline grn_bool
+is_valid_range_index(grn_ctx *ctx, grn_obj *index_column)
+{
+  grn_obj *tokenizer;
+  grn_obj *lexicon;
 
-    switch (a->action) {
-    case GRN_ACCESSOR_GET_KEY :
-      entry = GRN_HOOK_INSERT;
-      break;
-    case GRN_ACCESSOR_GET_COLUMN_VALUE :
-      entry = GRN_HOOK_SET;
-      break;
-    default :
-      break;
-    }
-
-    for (hooks = DB_OBJ(a->obj)->hooks[entry]; hooks; hooks = hooks->next) {
-      default_set_value_hook_data *data = (void *)NEXT_ADDR(hooks);
-      grn_obj *target = grn_ctx_at(ctx, data->target);
-      if (target->header.type != GRN_COLUMN_INDEX) { continue; }
-      found = GRN_TRUE;
-      if (!a->next) {
-        if (section) {
-          *section = (MULTI_COLUMN_INDEXP(target)) ? data->section : 0;
-        }
-        if (n < buf_size) {
-          *ip++ = target;
-        }
-        n++;
-      }
-    }
-
-    if (!found) {
-      break;
-    }
-    a = a->next;
+  lexicon = grn_ctx_at(ctx, index_column->header.domain);
+  if (!lexicon) { return GRN_FALSE; }
+  /* FIXME: GRN_TABLE_DAT_KEY should be supported */
+  if (lexicon->header.type != GRN_TABLE_PAT_KEY) {
+    grn_obj_unlink(ctx, lexicon);
+    return GRN_FALSE;
   }
 
-  return n;
+  grn_table_get_info(ctx, lexicon, NULL, NULL, &tokenizer, NULL);
+  grn_obj_unlink(ctx, lexicon);
+  if (tokenizer) { return GRN_FALSE; }
+
+  return GRN_TRUE;
 }
 
 static inline int
-grn_column_index_accessor_range(grn_ctx *ctx, grn_obj *obj, grn_operator op,
-                                grn_obj **indexbuf, int buf_size, int *section)
+grn_column_index_accessor(grn_ctx *ctx, grn_obj *obj, grn_operator op,
+                          grn_obj **indexbuf, int buf_size, int *section)
 {
   int n = 0;
   grn_obj **ip = indexbuf;
@@ -7937,16 +7915,27 @@ grn_column_index_accessor_range(grn_ctx *ctx, grn_obj *obj, grn_operator op,
 
       found = GRN_TRUE;
       if (!a->next) {
-        grn_obj *tokenizer;
-        grn_obj *lexicon;
+        grn_bool is_valid_index = GRN_FALSE;
+        switch (op) {
+        case GRN_OP_MATCH :
+        case GRN_OP_NEAR :
+        case GRN_OP_NEAR2 :
+        case GRN_OP_SIMILAR :
+          is_valid_index = is_valid_match_index(ctx, target);
+          break;
+        case GRN_OP_LESS :
+        case GRN_OP_GREATER :
+        case GRN_OP_LESS_EQUAL :
+        case GRN_OP_GREATER_EQUAL :
+          is_valid_index = is_valid_range_index(ctx, target);
+          break;
+        default :
+          break;
+        }
 
-        lexicon = grn_ctx_at(ctx, target->header.domain);
-        if (!lexicon) { continue; }
-        /* FIXME: GRN_TABLE_DAT_KEY should be supported */
-        if (lexicon->header.type != GRN_TABLE_PAT_KEY) { continue; }
-
-        grn_table_get_info(ctx, lexicon, NULL, NULL, &tokenizer, NULL);
-        if (tokenizer) { continue; }
+        if (!is_valid_index) {
+          continue;
+        }
 
         if (section) {
           *section = (MULTI_COLUMN_INDEXP(target)) ? data->section : 0;
@@ -8031,15 +8020,11 @@ grn_column_index(grn_ctx *ctx, grn_obj *obj, grn_operator op,
     case GRN_OP_NEAR :
     case GRN_OP_NEAR2 :
     case GRN_OP_SIMILAR :
-      n = grn_column_index_accessor_match(ctx, obj, op,
-                                          indexbuf, buf_size, section);
-      break;
     case GRN_OP_LESS :
     case GRN_OP_GREATER :
     case GRN_OP_LESS_EQUAL :
     case GRN_OP_GREATER_EQUAL :
-      n = grn_column_index_accessor_range(ctx, obj, op,
-                                          indexbuf, buf_size, section);
+      n = grn_column_index_accessor(ctx, obj, op, indexbuf, buf_size, section);
       break;
     default :
       break;
