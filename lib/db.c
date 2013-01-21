@@ -7907,6 +7907,10 @@ grn_column_index_accessor(grn_ctx *ctx, grn_obj *obj, grn_operator op,
       break;
     }
 
+    if (entry == -1) {
+      break;
+    }
+
     for (hooks = DB_OBJ(a->obj)->hooks[entry]; hooks; hooks = hooks->next) {
       default_set_value_hook_data *data = (void *)NEXT_ADDR(hooks);
       grn_obj *target = grn_ctx_at(ctx, data->target);
