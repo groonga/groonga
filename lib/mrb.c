@@ -28,9 +28,9 @@
 void
 grn_ctx_impl_mrb_init(grn_ctx *ctx)
 {
-  const char *grn_mrb_enabled;
-  grn_mrb_enabled = getenv("GRN_MRB_ENABLED");
-  if (grn_mrb_enabled && strcmp(grn_mrb_enabled, "yes") == 0) {
+  const char *grn_mruby_enabled;
+  grn_mruby_enabled = getenv("GRN_MRUBY_ENABLED");
+  if (grn_mruby_enabled && strcmp(grn_mruby_enabled, "yes") == 0) {
     ctx->impl->mrb = mrb_open();
   } else {
     ctx->impl->mrb = NULL;
