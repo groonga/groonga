@@ -1259,7 +1259,7 @@ AC_ARG_ENABLE(mruby,
   [AS_HELP_STRING([--enable-mruby],
     [enable mruby. [default=auto]])],
   [enable_mruby="$enableval"],
-  [enable_mruby="yes"])
+  [enable_mruby="no"])
 
 AC_MSG_CHECKING([whether enable mruby])
 if test "x$enable_mruby" != "xyes"; then
