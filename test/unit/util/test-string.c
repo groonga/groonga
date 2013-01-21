@@ -190,26 +190,36 @@ test_normalize(gconstpointer data)
 {
   const gchar *utf8_expected, *encoded_expected;
   const gchar *utf8_input, *encoded_input;
-  grn_str *string;
+  grn_obj *string;
   const gchar *normalized_text;
-  guint normalized_text_len;
+  guint normalized_text_length;
+  guint normalized_text_n_characters;
   int flags;
   grn_encoding encoding;
 
   encoding = gcut_data_get_int(data, "encoding");
   GRN_CTX_SET_ENCODING(&context, encoding);
-  flags = GRN_STR_NORMALIZE | GRN_STR_WITH_CHECKS | GRN_STR_WITH_CTYPES;
+  flags = GRN_STRING_WITH_CHECKS | GRN_STRING_WITH_TYPES;
   utf8_input = gcut_data_get_string(data, "input");
   encoded_input = convert_encoding(utf8_input, encoding);
-  string = grn_str_open(&context, encoded_input, strlen(encoded_input), flags);
-  normalized_text = cut_take_strndup(string->norm, string->norm_blen);
-  normalized_text_len = string->norm_blen;
-  grn_test_assert(grn_str_close(&context, string));
+  string = grn_string_open(&context,
+                           encoded_input,
+                           strlen(encoded_input),
+                           GRN_NORMALIZER_AUTO,
+                           flags);
+  grn_string_get_normalized(&context, string,
+                            &normalized_text,
+                            &normalized_text_length,
+                            &normalized_text_n_characters);
+  normalized_text = cut_take_strndup(normalized_text, normalized_text_length);
+  grn_obj_unlink(&context, string);
 
   utf8_expected = gcut_data_get_string(data, "expected");
   encoded_expected = convert_encoding(utf8_expected, encoding);
   cut_assert_equal_string(encoded_expected, normalized_text);
-  cut_assert_equal_int(strlen(encoded_expected), normalized_text_len);
+  cut_assert_equal_uint(strlen(encoded_expected), normalized_text_length);
+  cut_assert_equal_uint(g_utf8_strlen(utf8_expected, -1),
+                        normalized_text_n_characters);
 }
 
 void
@@ -243,11 +253,13 @@ data_normalize_broken(void)
 void
 test_normalize_broken(gconstpointer data)
 {
-  grn_str *string;
+  grn_obj *string;
   const gchar *input, *encoded_input;
+  const gchar *normalized_text;
   grn_encoding input_encoding, context_encoding;
   gint input_length;
-  int flags = GRN_STR_NORMALIZE | GRN_STR_WITH_CHECKS | GRN_STR_WITH_CTYPES;
+  guint normalized_text_length, normalized_text_n_characters;
+  int flags = GRN_STRING_WITH_CHECKS | GRN_STRING_WITH_TYPES;
 
   context_encoding = gcut_data_get_int(data, "context-encoding");
   GRN_CTX_SET_ENCODING(&context, context_encoding);
@@ -259,10 +271,18 @@ test_normalize_broken(gconstpointer data)
   if (input_length < 0) {
     input_length = strlen(encoded_input);
   }
-  string = grn_str_open(&context, encoded_input, input_length, flags);
-  cut_assert_equal_string("", string->norm);
-  cut_assert_equal_int(0, string->norm_blen);
-  grn_test_assert(grn_str_close(&context, string));
+  string = grn_string_open(&context, encoded_input, input_length,
+                           GRN_NORMALIZER_AUTO, flags);
+  grn_string_get_normalized(&context, string,
+                            &normalized_text,
+                            &normalized_text_length,
+                            &normalized_text_n_characters);
+  normalized_text = cut_take_strndup(normalized_text, normalized_text_length);
+  grn_obj_unlink(&context, string);
+
+  cut_assert_equal_string("", normalized_text);
+  cut_assert_equal_int(0, normalized_text_length);
+  cut_assert_equal_int(0, normalized_text_n_characters);
 }
 
 void
