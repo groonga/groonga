@@ -1056,7 +1056,7 @@ msgstr ""
 #: ../../../source/install/server-use.inc:12
 msgid "groonga-httpd (nginx and HTTP protocol based server package)"
 msgstr ""
-"groonga-httpd (nginxを元にしたHTTPサーバー"
+"groonga-httpd (nginxを元にしたHTTPサーバー)"
 
 # f92ab1c8e37441d0b5ed85d4bf89b534
 # 6d4fe6f91da146e980fa66394d8eb5d2
