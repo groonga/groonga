@@ -8,8 +8,7 @@ bin_PROGRAMS = groonga groonga-benchmark
 noinst_PROGRAMS = grnslap
 
 EXTRA_DIST =					\
-	CMakeLists.txt				\
-	nginx-module
+	CMakeLists.txt
 
 AM_CFLAGS =					\
 	$(NO_STRICT_ALIASING_CFLAGS)		\
