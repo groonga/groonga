@@ -14,6 +14,9 @@ Improvements
 ^^^^^^^^^^^^
 
 * Supported multiple ``query()`` in a select command.
+  For example, you can specify the keyword which has different weight such as
+  'query("column * weight1", keyword1) || query("column * weight2", keyword2) || ...'
+  for ``--filter``.
 * Dropped experimental view feature.
 * Added ``grn_logger_reopen`` API for custom logger.
   Note that ``grn_logger_info`` API is deprecated, use ``grn_logger`` API instead.
@@ -22,10 +25,12 @@ Improvements
 * Added ``grn_default_query_logger_set_path()`` and
   ``grn_default_query_logger_get_path()`` API.
   Note that global ``grn_qlog_path`` variable was removed. Use above API.
-* Added translated documentation about normalizer.
+* Added translated documentation about :doc:`/reference/tables` and :doc:`/reference/normalizer`.
 * [deb][rpm] Improved to install with missing dictionary when
   ``groonga-tokenizer-mecab`` package is installed.
 * Supported :ref:`nested-index-search` with range search.
+  For example, you can specify 'column1.column2...columnN <= "1988-01-04 00:00:00"'
+  in ``--filter``.
 
 Fixes
 ^^^^^
