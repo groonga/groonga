@@ -2608,7 +2608,7 @@ GRN_API grn_rc grn_string_get_normalized(grn_ctx *ctx, grn_obj *string,
                                          unsigned int *length_in_bytes,
                                          unsigned int *n_characters);
 GRN_API grn_rc grn_string_set_normalized(grn_ctx *ctx, grn_obj *string,
-                                         char *original,
+                                         char *normalized,
                                          unsigned int length_in_bytes,
                                          unsigned int n_characters);
 GRN_API const short *grn_string_get_checks(grn_ctx *ctx, grn_obj *string);
