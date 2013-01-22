@@ -5,6 +5,43 @@
 News
 ====
 
+.. _release-2-1-2:
+
+Release 2.1.2 - 2013/01/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* Supported multiple ``query()`` in a select command.
+* Dropped experimental view feature.
+* Added ``grn_logger_reopen`` API for custom logger.
+  Note that ``grn_logger_info`` API is deprecated, use ``grn_logger`` API instead.
+* Added ``grn_default_logger_set_path()`` and ``grn_default_logger_get_path()`` API.
+  Note that global ``grn_log_path`` variable was removed. Use above API.
+* Added ``grn_default_query_logger_set_path()`` and
+  ``grn_default_query_logger_get_path()`` API.
+  Note that global ``grn_qlog_path`` variable was removed. Use above API.
+* Added translated documentation about normalizer.
+* [deb][rpm] Improved to install with missing dictionary when
+  ``groonga-tokenizer-mecab`` package is installed.
+* Supported :ref:`nested-index-search` with range search.
+
+Fixes
+^^^^^
+
+* Fixed not to report an error even though MeCab tokenizer shared object
+  isn't found. [groonga-dev,01174] [Reported by wing]
+* [httpd] Fixed not to fail configure on CentOS 5.4 by setting
+  ``SED`` variable explicitly.
+* Fixed a crash bug that not initialized vector column value is accessed
+  by select command.
+
+Thanks
+^^^^^^
+
+* wing
+
 .. _release-2-1-1:
 
 Release 2.1.1 - 2012/12/29
