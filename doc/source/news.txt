@@ -25,7 +25,7 @@ Improvements
 * Added ``grn_default_query_logger_set_path()`` and
   ``grn_default_query_logger_get_path()`` API.
   Note that global ``grn_qlog_path`` variable was removed. Use above API.
-* Added translated documentation about :doc:`/reference/tables` and :doc:`/reference/normalizer`.
+* Added translated documentation about :doc:`/reference/tables` and :doc:`/reference/normalizers`.
 * [deb][rpm] Improved to install with missing dictionary when
   ``groonga-tokenizer-mecab`` package is installed.
 * Supported :ref:`nested-index-search` with range search.
