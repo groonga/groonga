@@ -1,5 +1,9 @@
 NGINX_DIR = $(top_srcdir)/vendor/nginx-$(NGINX_VERSION)
 
+EXTRA_DIST = 					\
+	nginx-module				\
+	configure
+
 if WITH_GROONGA_HTTPD
 NGINX_MAKEILE = $(NGINX_DIR)/Makefile
 NGINX_MAKEFILE_DEPEND_FILES =			\
