@@ -567,13 +567,40 @@ grn_geo_table_sort_collect_points(grn_ctx *ctx, grn_obj *table, grn_obj *index,
   return n_entries;
 }
 
+static inline grn_obj *
+find_geo_sort_index(grn_ctx *ctx, grn_obj *key)
+{
+  grn_obj *index = NULL;
+
+  if (GRN_ACCESSORP(key)) {
+    grn_accessor *accessor = (grn_accessor *)key;
+    if (accessor->action != GRN_ACCESSOR_GET_KEY) {
+      return NULL;
+    }
+    if (!(DB_OBJ(accessor->obj)->id & GRN_OBJ_TMP_OBJECT)) {
+      return NULL;
+    }
+    if (accessor->obj->header.type != GRN_TABLE_HASH_KEY) {
+      return NULL;
+    }
+    if (!accessor->next) {
+      return NULL;
+    }
+    grn_column_index(ctx, accessor->next->obj, GRN_OP_LESS, &index, 1, NULL);
+  } else {
+    grn_column_index(ctx, key, GRN_OP_LESS, &index, 1, NULL);
+  }
+
+  return index;
+}
+
 int
 grn_geo_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
                    grn_obj *result, grn_table_sort_key *keys, int n_keys)
 {
   grn_obj *index;
-  int i = 0, e = offset + limit, sid, accessorp = GRN_ACCESSORP(keys->key);
-  if (n_keys == 2 && grn_column_index(ctx, keys->key, GRN_OP_LESS, &index, 1, &sid)) {
+  int i = 0, e = offset + limit, accessorp = GRN_ACCESSORP(keys->key);
+  if (n_keys == 2 && (index = find_geo_sort_index(ctx, keys->key))) {
     grn_id tid;
     grn_obj *arg = keys[1].key;
     grn_pat *pat = (grn_pat *)grn_ctx_at(ctx, index->header.domain);
