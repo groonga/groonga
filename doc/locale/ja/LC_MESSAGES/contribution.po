@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-22 15:01\n"
+"POT-Creation-Date: 2013-01-22 13:39\n"
 "PO-Revision-Date: 2012-02-06 22:18+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -2249,6 +2249,10 @@ msgstr ""
 "これでGitHub上でpull requestを送る準備ができました。あとは、GitHub上の自分の"
 "リポジトリのページへアクセスして `Pull Request` ボタンを押すだけです。"
 
+#: ../../../source/contribution/documentation/i18n.txt:157
+msgid "`Help.GitHub - Sending pull requests`_."
+msgstr "pull requestの送り方"
+
 #: ../../../source/contribution/documentation/i18n.txt:162
 msgid "How to send patch"
 msgstr "パッチの送り方"
@@ -2290,6 +2294,11 @@ msgstr "新しい翻訳対象の言語を追加するコマンドライン::"
 #: ../../../source/contribution/documentation/i18n.txt:193
 msgid "Please substitute `${LANGUAGE}` with your language code such as 'ja'."
 msgstr "`${LANGUAGE}` は'ja'などの自分の言語の言語コードに置き換えてください。"
+
+# 1bafa2ae99414aa6823d96b21050764a
+#: ../../../source/contribution/documentation/i18n.txt:196
+msgid "`Codes for the Representation of Names of Languages`_."
+msgstr "言語名を表記するためのコード"
 
 #: ../../../source/contribution/report.txt:6
 msgid "How to report a bug"
