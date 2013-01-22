@@ -242,7 +242,8 @@ inspect_cursor_entry_targets(grn_ctx *ctx, grn_geo_cursor_entry *entry,
 static int
 grn_geo_table_sort_detect_far_point(grn_ctx *ctx, grn_obj *table, grn_obj *index,
                                     grn_pat *pat, geo_entry *entries,
-                                    grn_pat_cursor *pc, int n, int accessorp,
+                                    grn_pat_cursor *pc, int n,
+                                    grn_bool accessorp,
                                     grn_geo_point *base_point,
                                     double *d_far, int *diff_bit)
 {
@@ -510,7 +511,7 @@ static int
 grn_geo_table_sort_collect_points(grn_ctx *ctx, grn_obj *table, grn_obj *index,
                                   grn_pat *pat,
                                   geo_entry *entries, int n_entries,
-                                  int n, int accessorp,
+                                  int n, grn_bool accessorp,
                                   grn_geo_point *base_point,
                                   double d_far, int diff_bit)
 {
@@ -599,7 +600,8 @@ grn_geo_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
                    grn_obj *result, grn_table_sort_key *keys, int n_keys)
 {
   grn_obj *index;
-  int i = 0, e = offset + limit, accessorp = GRN_ACCESSORP(keys->key);
+  int i = 0, e = offset + limit;
+  grn_bool accessorp = GRN_ACCESSORP(keys->key);
   if (n_keys == 2 && (index = find_geo_sort_index(ctx, keys->key))) {
     grn_id tid;
     grn_obj *arg = keys[1].key;
