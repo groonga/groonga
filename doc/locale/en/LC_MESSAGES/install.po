@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-10 16:53\n"
+"POT-Creation-Date: 2013-01-22 13:37\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -73,7 +73,7 @@ msgstr ""
 "CentOS. You can install them by ``yum``."
 
 # b7e4b91c595146d0a7112249d319793b
-#: ../../../source/install/centos.txt:18
+#: ../../../source/install/centos.txt:20
 msgid "CentOS 5"
 msgstr "CentOS 5"
 
@@ -96,20 +96,20 @@ msgstr "CentOS 5"
 # 5e49f7613072461cbf7cec607fb23e77
 # faa86f15967d4eaeb8a59605d382560d
 # 3435714dfd5e4d38a9bb58457ae42bf9
-#: ../../../source/install/centos.txt:20 ../../../source/install/centos.txt:78
-#: ../../../source/install/centos.txt:150
-#: ../../../source/install/debian.txt:27 ../../../source/install/debian.txt:59
-#: ../../../source/install/debian.txt:91
-#: ../../../source/install/debian.txt:134
-#: ../../../source/install/fedora.txt:28 ../../../source/install/fedora.txt:80
+#: ../../../source/install/centos.txt:22 ../../../source/install/centos.txt:80
+#: ../../../source/install/centos.txt:152
+#: ../../../source/install/debian.txt:29 ../../../source/install/debian.txt:61
+#: ../../../source/install/debian.txt:93
+#: ../../../source/install/debian.txt:136
+#: ../../../source/install/fedora.txt:30 ../../../source/install/fedora.txt:82
 #: ../../../source/install/mac_os_x.txt:21
 #: ../../../source/install/mac_os_x.txt:28
 #: ../../../source/install/mac_os_x.txt:51
 #: ../../../source/install/solaris.txt:41
-#: ../../../source/install/ubuntu.txt:34 ../../../source/install/ubuntu.txt:73
-#: ../../../source/install/ubuntu.txt:112
-#: ../../../source/install/ubuntu.txt:151
-#: ../../../source/install/ubuntu.txt:194
+#: ../../../source/install/ubuntu.txt:36 ../../../source/install/ubuntu.txt:75
+#: ../../../source/install/ubuntu.txt:114
+#: ../../../source/install/ubuntu.txt:153
+#: ../../../source/install/ubuntu.txt:196
 msgid "Install::"
 msgstr "Install::"
 
@@ -123,12 +123,13 @@ msgstr "Install::"
 # ba5804921057426fae906eab3342c78a
 # 2a8c06e784af43e4bee68f39d365e851
 # 385abfe0e4484587915e778b3800712d
-#: ../../../source/install/centos.txt:26 ../../../source/install/centos.txt:84
-#: ../../../source/install/debian.txt:34 ../../../source/install/debian.txt:66
-#: ../../../source/install/debian.txt:98 ../../../source/install/fedora.txt:34
-#: ../../../source/install/ubuntu.txt:41 ../../../source/install/ubuntu.txt:80
-#: ../../../source/install/ubuntu.txt:119
-#: ../../../source/install/ubuntu.txt:158
+#: ../../../source/install/centos.txt:28 ../../../source/install/centos.txt:86
+#: ../../../source/install/debian.txt:36 ../../../source/install/debian.txt:68
+#: ../../../source/install/debian.txt:100
+#: ../../../source/install/fedora.txt:36 ../../../source/install/ubuntu.txt:43
+#: ../../../source/install/ubuntu.txt:82
+#: ../../../source/install/ubuntu.txt:121
+#: ../../../source/install/ubuntu.txt:160
 msgid ""
 "If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a tokenizer, "
 "install groonga-tokenizer-mecab package."
@@ -146,37 +147,37 @@ msgstr ""
 # c663300f123f4443b4cdb39e0ded6163
 # 95b8f06adfc2445e904aaa382c9fbe80
 # 9fa39341dae24920a8904be4e859dd5f
-#: ../../../source/install/centos.txt:29 ../../../source/install/centos.txt:87
-#: ../../../source/install/debian.txt:37 ../../../source/install/debian.txt:69
-#: ../../../source/install/debian.txt:101
-#: ../../../source/install/fedora.txt:37 ../../../source/install/ubuntu.txt:44
-#: ../../../source/install/ubuntu.txt:83
-#: ../../../source/install/ubuntu.txt:122
-#: ../../../source/install/ubuntu.txt:161
+#: ../../../source/install/centos.txt:31 ../../../source/install/centos.txt:89
+#: ../../../source/install/debian.txt:39 ../../../source/install/debian.txt:71
+#: ../../../source/install/debian.txt:103
+#: ../../../source/install/fedora.txt:39 ../../../source/install/ubuntu.txt:46
+#: ../../../source/install/ubuntu.txt:85
+#: ../../../source/install/ubuntu.txt:124
+#: ../../../source/install/ubuntu.txt:163
 msgid "Install groonga-tokenizer-mecab package::"
 msgstr "Install groonga-tokenizer-mecab package::"
 
 # 165f32e7ea4f4d2abfa0c131ad20f7bb
 # f3ef7e2edec24ab282711924bcab7c67
 # d2b6a5c640d94b67ac54df52f8f8394a
-#: ../../../source/install/centos.txt:33 ../../../source/install/centos.txt:91
-#: ../../../source/install/fedora.txt:41
+#: ../../../source/install/centos.txt:35 ../../../source/install/centos.txt:93
+#: ../../../source/install/fedora.txt:43
 msgid "Then install MeCab dictionary. (mecab-ipadic or mecab-jumandic)"
 msgstr ""
 
 # 44a519b91c9542bda1bd2738b3d773eb
 # f55e71a7eeca40378731edf25f13e8a6
 # 288792b7c236488caeb4b34d19e71f67
-#: ../../../source/install/centos.txt:35 ../../../source/install/centos.txt:93
-#: ../../../source/install/fedora.txt:43
+#: ../../../source/install/centos.txt:37 ../../../source/install/centos.txt:95
+#: ../../../source/install/fedora.txt:45
 msgid "Install IPA dictionary::"
 msgstr ""
 
 # 497453ef75be43e3a0e4ada887231d22
 # 62682399770a49e89b6953d106546a94
 # f3bfd9523e44447a962f921c0fd2ee0e
-#: ../../../source/install/centos.txt:39 ../../../source/install/centos.txt:97
-#: ../../../source/install/fedora.txt:47
+#: ../../../source/install/centos.txt:41 ../../../source/install/centos.txt:99
+#: ../../../source/install/fedora.txt:49
 msgid "Or install Juman dictionary::"
 msgstr ""
 
@@ -190,14 +191,14 @@ msgstr ""
 # 11c53a90fbad4f8ba3b8e0682384643a
 # d9b7ac32948b4de0b83f219b19bb4fac
 # e66af84810354698a6644ff338210539
-#: ../../../source/install/centos.txt:44
-#: ../../../source/install/centos.txt:101
-#: ../../../source/install/debian.txt:41 ../../../source/install/debian.txt:73
-#: ../../../source/install/debian.txt:105
-#: ../../../source/install/fedora.txt:51 ../../../source/install/ubuntu.txt:48
-#: ../../../source/install/ubuntu.txt:87
-#: ../../../source/install/ubuntu.txt:126
-#: ../../../source/install/ubuntu.txt:165
+#: ../../../source/install/centos.txt:46
+#: ../../../source/install/centos.txt:103
+#: ../../../source/install/debian.txt:43 ../../../source/install/debian.txt:75
+#: ../../../source/install/debian.txt:107
+#: ../../../source/install/fedora.txt:53 ../../../source/install/ubuntu.txt:50
+#: ../../../source/install/ubuntu.txt:89
+#: ../../../source/install/ubuntu.txt:128
+#: ../../../source/install/ubuntu.txt:167
 msgid ""
 "There is a package that provides `Munin <http://munin-monitoring.org/>`_ "
 "plugins. If you want to monitor groonga status by Munin, install groonga-"
@@ -208,7 +209,7 @@ msgstr ""
 "munin-plugins package."
 
 # 037127012750439fbef51ef7b76815f7
-#: ../../../source/install/centos.txt:50
+#: ../../../source/install/centos.txt:52
 msgid ""
 "Groonga-munin-plugins package requires munin-node package that isn't "
 "included in the official CentOS repository. You need to enable `Repoforge "
@@ -221,19 +222,19 @@ msgstr ""
 "fedoraproject.org/wiki/EPEL>`_ repository to install it by ``yum``."
 
 # e221ed33239a4d7daba1b73851506a10
-#: ../../../source/install/centos.txt:56
+#: ../../../source/install/centos.txt:58
 msgid "Enable Repoforge (RPMforge) repository on i386 environment::"
 msgstr "Enable Repoforge (RPMforge) repository on i386 environment::"
 
 # 86cb8e2ab2f44493a84ce4868083f310
-#: ../../../source/install/centos.txt:61
+#: ../../../source/install/centos.txt:63
 msgid "Enable Repoforge (RPMforge) repository on x86_64 environment::"
 msgstr "Enable Repoforge (RPMforge) repository on x86_64 environment::"
 
 # d3ac8966909a42e7b7529f565900806d
 # 0dce5cb16732407a8f744070319f3b84
-#: ../../../source/install/centos.txt:66
-#: ../../../source/install/centos.txt:121
+#: ../../../source/install/centos.txt:68
+#: ../../../source/install/centos.txt:123
 msgid "Enable EPEL repository on any environment::"
 msgstr "Enable EPEL repository on any environment::"
 
@@ -247,24 +248,24 @@ msgstr "Enable EPEL repository on any environment::"
 # 9736aa2d003f4bb4b4698df783504c65
 # 72d180993fa44a5c9975ee28b59bb850
 # 088540eb40474b34a88bb12ea391e6c6
-#: ../../../source/install/centos.txt:71
-#: ../../../source/install/centos.txt:125
-#: ../../../source/install/debian.txt:45 ../../../source/install/debian.txt:77
-#: ../../../source/install/debian.txt:109
-#: ../../../source/install/fedora.txt:55 ../../../source/install/ubuntu.txt:52
-#: ../../../source/install/ubuntu.txt:91
-#: ../../../source/install/ubuntu.txt:130
-#: ../../../source/install/ubuntu.txt:169
+#: ../../../source/install/centos.txt:73
+#: ../../../source/install/centos.txt:127
+#: ../../../source/install/debian.txt:47 ../../../source/install/debian.txt:79
+#: ../../../source/install/debian.txt:111
+#: ../../../source/install/fedora.txt:57 ../../../source/install/ubuntu.txt:54
+#: ../../../source/install/ubuntu.txt:93
+#: ../../../source/install/ubuntu.txt:132
+#: ../../../source/install/ubuntu.txt:171
 msgid "Install groonga-munin-plugins package::"
 msgstr "Install groonga-munin-plugins package::"
 
 # 6b342329b45840a68bc861aaf7d49b0a
-#: ../../../source/install/centos.txt:76
+#: ../../../source/install/centos.txt:78
 msgid "CentOS 6"
 msgstr "CentOS 6"
 
 # 7e5a331cd41c4a0991a52c090b6a4dcc
-#: ../../../source/install/centos.txt:107
+#: ../../../source/install/centos.txt:109
 msgid ""
 "Groonga-munin-plugins package requires munin-node package that isn't "
 "included in the official CentOS repository. You need to enable `EPEL <http://"
@@ -281,12 +282,12 @@ msgstr ""
 # 45e677df4dd2400d8f057b35e3161604
 # 81d520b6f6304f3089b1f8525030dc82
 # 6dbe6580cf604af38351363b378f6d40
-#: ../../../source/install/centos.txt:130
-#: ../../../source/install/debian.txt:114
-#: ../../../source/install/fedora.txt:60
+#: ../../../source/install/centos.txt:132
+#: ../../../source/install/debian.txt:116
+#: ../../../source/install/fedora.txt:62
 #: ../../../source/install/mac_os_x.txt:33
 #: ../../../source/install/others.txt:72
-#: ../../../source/install/ubuntu.txt:174
+#: ../../../source/install/ubuntu.txt:176
 #: ../../../source/install/windows.txt:65
 msgid "Build from source"
 msgstr "Build from source"
@@ -296,11 +297,11 @@ msgstr "Build from source"
 # d6160ce7ff6a4f1a98ee9cda9559def0
 # 85948f2410a645d1b75e38b7ccdd87fb
 # 133fbfb38d284e48887b4275f4ae3de6
-#: ../../../source/install/centos.txt:132
-#: ../../../source/install/debian.txt:116
-#: ../../../source/install/fedora.txt:62
+#: ../../../source/install/centos.txt:134
+#: ../../../source/install/debian.txt:118
+#: ../../../source/install/fedora.txt:64
 #: ../../../source/install/solaris.txt:14
-#: ../../../source/install/ubuntu.txt:176
+#: ../../../source/install/ubuntu.txt:178
 msgid "Install required packages to build groonga::"
 msgstr "Install required packages to build groonga::"
 
@@ -310,12 +311,12 @@ msgstr "Install required packages to build groonga::"
 # d85fabdee74a4e0682a5febc3f6ecb56
 # 2e8ca4ff722a4ea3a87ab7d747236fec
 # 7d18e6ca13674a5691f9e161f70f494b
-#: ../../../source/install/centos.txt:136
-#: ../../../source/install/debian.txt:120
-#: ../../../source/install/fedora.txt:66
+#: ../../../source/install/centos.txt:138
+#: ../../../source/install/debian.txt:122
+#: ../../../source/install/fedora.txt:68
 #: ../../../source/install/mac_os_x.txt:37
 #: ../../../source/install/solaris.txt:18
-#: ../../../source/install/ubuntu.txt:180
+#: ../../../source/install/ubuntu.txt:182
 msgid "Download source::"
 msgstr "Download source::"
 
@@ -324,11 +325,11 @@ msgstr "Download source::"
 # 5164750331874b8d9dab3c1a501c0f22
 # b7aa9c07577e45dd9fa6614b522dc4d6
 # d14e1922ad544ade9efe5a17578cfa6b
-#: ../../../source/install/centos.txt:142
-#: ../../../source/install/debian.txt:126
-#: ../../../source/install/fedora.txt:72
+#: ../../../source/install/centos.txt:144
+#: ../../../source/install/debian.txt:128
+#: ../../../source/install/fedora.txt:74
 #: ../../../source/install/mac_os_x.txt:43
-#: ../../../source/install/ubuntu.txt:186
+#: ../../../source/install/ubuntu.txt:188
 msgid "Configure (see :ref:`source-configure` about ``configure`` options)::"
 msgstr "Configure (see :ref:`source-configure` about ``configure`` options)::"
 
@@ -338,12 +339,12 @@ msgstr "Configure (see :ref:`source-configure` about ``configure`` options)::"
 # d0515d547d334445b868f8e302144dbd
 # 96d76e9f1400419ba107717d28d3d54b
 # 6a6b260a72724a1282902e93f3acc1c8
-#: ../../../source/install/centos.txt:146
-#: ../../../source/install/debian.txt:130
-#: ../../../source/install/fedora.txt:76
+#: ../../../source/install/centos.txt:148
+#: ../../../source/install/debian.txt:132
+#: ../../../source/install/fedora.txt:78
 #: ../../../source/install/mac_os_x.txt:47
 #: ../../../source/install/solaris.txt:31
-#: ../../../source/install/ubuntu.txt:190
+#: ../../../source/install/ubuntu.txt:192
 msgid "Build::"
 msgstr "Build::"
 
@@ -362,7 +363,7 @@ msgstr ""
 "GNU/Linux. You can install them by ``apt``."
 
 # 759f4dece0294edcbc12124ced54fb74
-#: ../../../source/install/debian.txt:18
+#: ../../../source/install/debian.txt:20
 msgid "squeeze"
 msgstr "squeeze"
 
@@ -373,11 +374,11 @@ msgstr "squeeze"
 # 73eca8c3d130407893bb314a2816c342
 # 7c4b2a2fadd84f0c9446823ac8e51dcd
 # bb4153c41f7e4f25abcf5b4aa7865dbd
-#: ../../../source/install/debian.txt:20 ../../../source/install/debian.txt:52
-#: ../../../source/install/debian.txt:84 ../../../source/install/ubuntu.txt:27
-#: ../../../source/install/ubuntu.txt:66
-#: ../../../source/install/ubuntu.txt:105
-#: ../../../source/install/ubuntu.txt:144
+#: ../../../source/install/debian.txt:22 ../../../source/install/debian.txt:54
+#: ../../../source/install/debian.txt:86 ../../../source/install/ubuntu.txt:29
+#: ../../../source/install/ubuntu.txt:68
+#: ../../../source/install/ubuntu.txt:107
+#: ../../../source/install/ubuntu.txt:146
 msgid "Add the groonga apt repository."
 msgstr "Add the groonga apt repository."
 
@@ -388,21 +389,21 @@ msgstr "Add the groonga apt repository."
 # 9f68655dcf904963a0eaaf3d242603b0
 # 8bd96b92b308450fa8d711b63d5cb0dd
 # 0f61ea1f32f64d49bce1e94af192a598
-#: ../../../source/install/debian.txt:22 ../../../source/install/debian.txt:54
-#: ../../../source/install/debian.txt:86 ../../../source/install/ubuntu.txt:29
-#: ../../../source/install/ubuntu.txt:68
-#: ../../../source/install/ubuntu.txt:107
-#: ../../../source/install/ubuntu.txt:146
+#: ../../../source/install/debian.txt:24 ../../../source/install/debian.txt:56
+#: ../../../source/install/debian.txt:88 ../../../source/install/ubuntu.txt:31
+#: ../../../source/install/ubuntu.txt:70
+#: ../../../source/install/ubuntu.txt:109
+#: ../../../source/install/ubuntu.txt:148
 msgid "/etc/apt/sources.list.d/groonga.list::"
 msgstr "/etc/apt/sources.list.d/groonga.list::"
 
 # 2ef83626aca84b7b9e5bedb95cbd86d2
-#: ../../../source/install/debian.txt:50
+#: ../../../source/install/debian.txt:52
 msgid "wheezy"
 msgstr "wheezy"
 
 # 74877f0da12340938457eb4f52cbf90a
-#: ../../../source/install/debian.txt:82
+#: ../../../source/install/debian.txt:84
 msgid "sid"
 msgstr "sid"
 
@@ -438,7 +439,7 @@ msgstr ""
 "days later. That is, the different is very small. :-)"
 
 # 42ad06b8b53147088e9622d861e034e1
-#: ../../../source/install/fedora.txt:26
+#: ../../../source/install/fedora.txt:28
 msgid "Fedora 17"
 msgstr "Fedora 17"
 
@@ -1044,6 +1045,57 @@ msgstr ""
 "``sudo``. e.g. ``--prefix=$HOME/local`` case. In this case, use ``make "
 "install``::"
 
+# 62f3d446d403403092b4d0e62b3fbde9
+# 3e4765adefb94b42a95c2f0216576225
+# 2d13bf4cd5894638afa1320f90111443
+# 83b8a501220a41f7bb6c53c08ec82902
+#: ../../../source/install/server-use.inc:5
+msgid ""
+"The package 'groonga' is the mininum set of fulltext search engine. If you "
+"want to use groonga for server use, you can install additional preconfigured "
+"packages."
+msgstr ""
+
+# e430272bbc10437ea2f8178b79a45e26
+# de1423a8f60045cdbdce252c54130d43
+# bb9fc8553848427a9db8bc0b866647c2
+# c1c11c581d304317839494861dea3f5e
+#: ../../../source/install/server-use.inc:9
+msgid "There are three packages for server use."
+msgstr ""
+
+# 84c58a64ea604835a05f81307bf64c93
+# e583d072a6a94127bfc67a348d643fca
+# 225e11c6dc524e979acab4231ab0adf1
+# 8169f81f28cb4055a3cd1434ba1614e5
+#: ../../../source/install/server-use.inc:11
+msgid "groonga-server-http (simple HTTP protocol based server package)"
+msgstr ""
+
+# 4a6cbb8522204b18a2b80cf67e33708e
+# 3a6a14cdbdbf4e909c2185687e2bba5f
+# 8efe356ea29f4c3d953c47a68b4586c3
+# 44ae46e2ea154b68ba8776c221381ffc
+#: ../../../source/install/server-use.inc:12
+msgid "groonga-httpd (nginx and HTTP protocol based server package)"
+msgstr ""
+
+# f281f7c236e44a52a0cfd4f0f7c37cbb
+# 74ae5ed4e86143bebf13e0cf73a0bb4a
+# ae5460562f0b467fb237d2b8e239ac78
+# 7efafab5ce7c4499bea1c81d7427e64d
+#: ../../../source/install/server-use.inc:13
+msgid "groonga-server-gqtp (GQTP protocol based server package)"
+msgstr ""
+
+# e14d701124dc43429b967cfe434e1fb1
+# 1c609165b9814bfdb5a61f782f5a8082
+# ff19e65f61e84774ab9fa08301343dcd
+# 7132345429df47aabc2d084ed7325aab
+#: ../../../source/install/server-use.inc:15
+msgid "See :doc:`/server` section about details."
+msgstr ""
+
 # dbda77c33a9d40f7af06ff3771aa2f71
 #: ../../../source/install/solaris.txt:6
 msgid "Oracle Solaris"
@@ -1087,7 +1139,7 @@ msgstr ""
 "Ubuntu. You can install them by ``apt``."
 
 # ac66f388cfe54f50ae758f8a5cbb18d6
-#: ../../../source/install/ubuntu.txt:18
+#: ../../../source/install/ubuntu.txt:20
 msgid "10.04 LTS Lucid Lynx"
 msgstr "10.04 LTS Lucid Lynx"
 
@@ -1095,24 +1147,24 @@ msgstr "10.04 LTS Lucid Lynx"
 # 3bbc98ba9cd2405097e8accaf09a7f27
 # e77d8861ceeb42c595fca0fce523d94c
 # 92deb6d4c2f14b0aadfce6463109201f
-#: ../../../source/install/ubuntu.txt:22 ../../../source/install/ubuntu.txt:61
-#: ../../../source/install/ubuntu.txt:100
-#: ../../../source/install/ubuntu.txt:139
+#: ../../../source/install/ubuntu.txt:24 ../../../source/install/ubuntu.txt:63
+#: ../../../source/install/ubuntu.txt:102
+#: ../../../source/install/ubuntu.txt:141
 msgid "Enable the universe repository to install groonga::"
 msgstr "Enable the universe repository to install groonga::"
 
 # 6bc79cdcd0d9485ba50faf1195a43c16
-#: ../../../source/install/ubuntu.txt:57
+#: ../../../source/install/ubuntu.txt:59
 msgid "11.10 Oneiric Ocelot"
 msgstr "11.10 Oneiric Ocelot"
 
 # ae75e8b3c10e4f7ebd6bcb0f657ecf81
-#: ../../../source/install/ubuntu.txt:96
+#: ../../../source/install/ubuntu.txt:98
 msgid "12.04 LTS Precise Pangolin"
 msgstr "12.04 LTS Precise Pangolin"
 
 # 1c37af31a79b45b4ba1ca501877b7de6
-#: ../../../source/install/ubuntu.txt:135
+#: ../../../source/install/ubuntu.txt:137
 msgid "12.10 Quantal Quetzal"
 msgstr ""
 

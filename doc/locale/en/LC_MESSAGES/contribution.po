@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-22 15:01\n"
+"POT-Creation-Date: 2013-01-22 13:37\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -2549,6 +2549,11 @@ msgstr ""
 "Now you can send pull request on GitHub. You just access your repository "
 "page on GitHub and press `Pull Request` button."
 
+# 349904977a4f42269edbd56151d93e65
+#: ../../../source/contribution/documentation/i18n.txt:157
+msgid "`Help.GitHub - Sending pull requests`_."
+msgstr ""
+
 # c24814c76c004a41b86f5c67217b02b5
 #: ../../../source/contribution/documentation/i18n.txt:162
 msgid "How to send patch"
@@ -2598,6 +2603,11 @@ msgstr "Here are command lines to add new translation language::"
 #: ../../../source/contribution/documentation/i18n.txt:193
 msgid "Please substitute `${LANGUAGE}` with your language code such as 'ja'."
 msgstr "Please substitute `${LANGUAGE}` with your language code such as 'ja'."
+
+# e462c8ac202a495bacac5254ba5919fd
+#: ../../../source/contribution/documentation/i18n.txt:196
+msgid "`Codes for the Representation of Names of Languages`_."
+msgstr ""
 
 # 8bd09434d0ff4572b7b7ab7d96350725
 #: ../../../source/contribution/report.txt:6
