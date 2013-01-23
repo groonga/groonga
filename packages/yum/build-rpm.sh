@@ -85,8 +85,8 @@ if ! rpm -q mecab-devel > /dev/null; then
     cat <<EOF > $BUILD_SCRIPT
 #!/bin/sh
 
-base=http://download.fedoraproject.org/pub/fedora/linux/releases/17/Everything/source/SRPMS/m
-update=http://download.fedoraproject.org/pub/fedora/linux/updates/17/SRPMS
+base=http://download.fedoraproject.org/pub/fedora/linux/releases/18/Everything/source/SRPMS/m
+update=http://download.fedoraproject.org/pub/fedora/linux/updates/18/SRPMS
 srpm=\$1
 srpm_base=\$2
 
@@ -142,10 +142,10 @@ cp -p rpmbuild/SRPMS/*.rpm dependencies/SRPMS/
 EOF
 
     run chmod +x $BUILD_SCRIPT
-    for rpm in mecab-0.994-1.fc17.src.rpm \
-               mecab-ipadic-2.7.0.20070801-5.fc17.1.src.rpm \
-               mecab-jumandic-5.1.20070304-6.fc17.src.rpm; do
-	srpm_base=`echo $rpm | sed -e 's/\.fc17.*//g'`
+    for rpm in mecab-0.994-2.fc18.src.rpm \
+               mecab-ipadic-2.7.0.20070801-6.fc18.1.src.rpm \
+               mecab-jumandic-5.1.20070304-7.fc18.src.rpm; do
+	srpm_base=`echo $rpm | sed -e 's/\.fc18.*//g'`
 	run su - $USER_NAME $BUILD_SCRIPT $rpm $srpm_base
 	run rpm -Uvh /home/$USER_NAME/rpmbuild/RPMS/*/*.rpm
     done
