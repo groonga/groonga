@@ -151,7 +151,7 @@ for architecture in $ARCHITECTURES; do
     for distribution in $DISTRIBUTIONS; do
 	case $distribution in
 	    fedora)
-		distribution_versions="17"
+		distribution_versions="18"
 		;;
 	    centos)
 		if [ -n "$CENTOS_VERSIONS" ]; then
