@@ -31,6 +31,8 @@ Improvements
 * Supported :ref:`nested-index-search` with range search.
   For example, you can specify 'column1.column2...columnN <= "1988-01-04 00:00:00"'
   in ``--filter``.
+* [rpm][fedora] Supported Fedora 18.
+* [rpm][fedora] Dropped Fedora 17 support.
 
 Fixes
 ^^^^^

@@ -24,7 +24,7 @@ size data.
 
 .. include:: server-use.inc
 
-Fedora 17
+Fedora 18
 ---------
 
 Install::
