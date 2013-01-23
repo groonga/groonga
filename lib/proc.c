@@ -2745,6 +2745,59 @@ proc_truncate(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 }
 
 static grn_obj *
+proc_normalize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  grn_obj *normalizer_name;
+  grn_obj *string;
+
+  normalizer_name = VAR(0);
+  string = VAR(1);
+  if (GRN_TEXT_LEN(normalizer_name) == 0) {
+    ERR(GRN_INVALID_ARGUMENT, "normalizer name is missing");
+    GRN_OUTPUT_CSTR("");
+    return NULL;
+  }
+
+  {
+    grn_obj *normalizer;
+    grn_obj *grn_string;
+    int flags = 0; /* TODO */
+
+    normalizer = grn_ctx_get(ctx,
+                             GRN_TEXT_VALUE(normalizer_name),
+                             GRN_TEXT_LEN(normalizer_name));
+    if (!normalizer) {
+      ERR(GRN_INVALID_ARGUMENT,
+          "unknown normalizer: <%.*s>",
+          (int)GRN_TEXT_LEN(normalizer_name),
+          GRN_TEXT_VALUE(normalizer_name));
+      GRN_OUTPUT_CSTR("");
+      return NULL;
+    }
+
+    grn_string = grn_string_open(ctx,
+                                 GRN_TEXT_VALUE(string), GRN_TEXT_LEN(string),
+                                 normalizer, flags);
+    grn_obj_unlink(ctx, normalizer);
+
+    {
+      const char *normalized;
+      unsigned int normalized_length_in_bytes;
+
+      grn_string_get_normalized(ctx, grn_string,
+                                &normalized,
+                                &normalized_length_in_bytes,
+                                NULL);
+      GRN_OUTPUT_STR(normalized, normalized_length_in_bytes);
+    }
+
+    grn_obj_unlink(ctx, grn_string);
+  }
+
+  return NULL;
+}
+
+static grn_obj *
 func_rand(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   int val;
@@ -3583,6 +3636,10 @@ grn_db_init_builtin_query(grn_ctx *ctx)
 
   DEF_VAR(vars[0], "table");
   DEF_COMMAND("truncate", proc_truncate, 1, vars);
+
+  DEF_VAR(vars[0], "normalizer");
+  DEF_VAR(vars[1], "string");
+  DEF_COMMAND("normalize", proc_normalize, 2, vars);
 
   DEF_VAR(vars[0], "seed");
   grn_proc_create(ctx, "rand", -1, GRN_PROC_FUNCTION, func_rand,
