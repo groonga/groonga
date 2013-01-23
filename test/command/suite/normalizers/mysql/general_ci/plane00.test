@@ -1,0 +1,3 @@
+register normalizers/mysql
+
+normalize NormalizerMySQLGeneralCI "aBc"

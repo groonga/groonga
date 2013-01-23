@@ -1,0 +1,2 @@
+mysql_la_SOURCES =				\
+	mysql.c
