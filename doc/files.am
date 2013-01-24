@@ -298,6 +298,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/install/fedora.txt \
 	$(top_srcdir)/doc/source/install/mac_os_x.txt \
 	$(top_srcdir)/doc/source/install/others.txt \
+	$(top_srcdir)/doc/source/install/server-use.inc \
 	$(top_srcdir)/doc/source/install/solaris.txt \
 	$(top_srcdir)/doc/source/install/ubuntu.txt \
 	$(top_srcdir)/doc/source/install/windows.txt \
@@ -377,6 +378,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/server/http/comparison.txt \
 	$(top_srcdir)/doc/source/server/http/groonga-httpd.txt \
 	$(top_srcdir)/doc/source/server/http/groonga.txt \
+	$(top_srcdir)/doc/source/server/package.txt \
 	$(top_srcdir)/doc/source/spec.txt \
 	$(top_srcdir)/doc/source/spec/gqtp.txt \
 	$(top_srcdir)/doc/source/spec/search.txt \
@@ -715,6 +717,7 @@ source_files_relative_from_doc_dir = \
 	source/install/fedora.txt \
 	source/install/mac_os_x.txt \
 	source/install/others.txt \
+	source/install/server-use.inc \
 	source/install/solaris.txt \
 	source/install/ubuntu.txt \
 	source/install/windows.txt \
@@ -794,6 +797,7 @@ source_files_relative_from_doc_dir = \
 	source/server/http/comparison.txt \
 	source/server/http/groonga-httpd.txt \
 	source/server/http/groonga.txt \
+	source/server/package.txt \
 	source/spec.txt \
 	source/spec/gqtp.txt \
 	source/spec/search.txt \
@@ -1012,6 +1016,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/server/http/comparison.txt \
 	html/_sources/server/http/groonga-httpd.txt \
 	html/_sources/server/http/groonga.txt \
+	html/_sources/server/package.txt \
 	html/_sources/spec.txt \
 	html/_sources/spec/gqtp.txt \
 	html/_sources/spec/search.txt \
@@ -1165,6 +1170,7 @@ html_files_relative_from_locale_dir = \
 	html/server/http/comparison.html \
 	html/server/http/groonga-httpd.html \
 	html/server/http/groonga.html \
+	html/server/package.html \
 	html/spec.html \
 	html/spec/gqtp.html \
 	html/spec/search.html \
