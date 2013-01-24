@@ -1,0 +1,28 @@
+table_create Users TABLE_PAT_KEY ShortText
+column_create Users birthday COLUMN_SCALAR Time
+
+table_create Files TABLE_PAT_KEY ShortText
+column_create Files owner COLUMN_SCALAR Users
+
+column_create Users files_owner_index COLUMN_INDEX Files owner
+
+table_create Birthdays TABLE_PAT_KEY Time
+column_create Birthdays users_birthday COLUMN_INDEX Users birthday
+
+load --table Users
+[
+{"_key": "Alice",  "birthday": "1992-02-09 00:00:00"},
+{"_key": "Bob",    "birthday": "1988-01-04 00:00:00"},
+{"_key": "Carlos", "birthday": "1982-12-29 00:00:00"}
+]
+
+load --table Files
+[
+{"_key": "/home/alice/.zshrc",                  "owner": "Alice"},
+{"_key": "/home/bob/.bashrc",                   "owner": "Bob"},
+{"_key": "/home/calros/public_html/index.html", "owner": "Carlos"}
+]
+
+select Files \
+  --filter 'owner.birthday <= "1988-01-04 00:00:00"' \
+  --output_columns '_key, owner, owner.birthday'
