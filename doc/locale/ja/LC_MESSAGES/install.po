@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-22 13:39\n"
+"POT-Creation-Date: 2013-01-24 15:52\n"
 "PO-Revision-Date: 2012-08-08 21:54+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -396,9 +396,9 @@ msgstr ""
 "ジトリの方は数日後に提供されます。つまり、ほとんど差はないということで"
 "す。 :-)"
 
-# 15c919a01f9444b895e0ea44cbbbab27
+# 427ca358ad3943ca9c5e8e1c31238b15
 #: ../../../source/install/fedora.txt:28
-msgid "Fedora 17"
+msgid "Fedora 18"
 msgstr ""
 
 # 65bbef01a2a14d579cb2264a926d1ab7
@@ -1028,8 +1028,9 @@ msgid ""
 "want to use groonga for server use, you can install additional preconfigured "
 "packages."
 msgstr ""
-"'groonga'パッケージは全文検索のための最小構成パッケージです。"
-"groongaをサーバー用途で使うなら、設定済みの追加パッケージをインストールすることができます。"
+"'groonga'パッケージは全文検索のための最小構成パッケージです。groongaをサー"
+"バー用途で使うなら、設定済みの追加パッケージをインストールすることができま"
+"す。"
 
 # e9fa9f8dc60946689ad2961598a26c85
 # eb22530955ac4f41a141eacbf09856e5
@@ -1037,8 +1038,7 @@ msgstr ""
 # f4cc8c7819d54721ba7e3c43c902c69c
 #: ../../../source/install/server-use.inc:9
 msgid "There are three packages for server use."
-msgstr ""
-"サーバー用途のための3つのパッケージがあります。"
+msgstr "サーバー用途のための3つのパッケージがあります。"
 
 # 166775d8e680487e96bcb63fe461211f
 # eb7729461c51493f831031f5ced83cc6
@@ -1046,8 +1046,7 @@ msgstr ""
 # d8571b808e6f4e8385a7f739bc3cb29a
 #: ../../../source/install/server-use.inc:11
 msgid "groonga-server-http (simple HTTP protocol based server package)"
-msgstr ""
-"groonga-server-http (簡易HTTPサーバー)"
+msgstr "groonga-server-http (簡易HTTPサーバー)"
 
 # 73a9d7b3545c4a09bc5f7f7537474aac
 # 8db4f806406e40649dbc1d8e04d54a65
@@ -1055,8 +1054,7 @@ msgstr ""
 # d5a597938d894c6c808845df0a1ec845
 #: ../../../source/install/server-use.inc:12
 msgid "groonga-httpd (nginx and HTTP protocol based server package)"
-msgstr ""
-"groonga-httpd (nginxを元にしたHTTPサーバー)"
+msgstr "groonga-httpd (nginxを元にしたHTTPサーバー)"
 
 # f92ab1c8e37441d0b5ed85d4bf89b534
 # 6d4fe6f91da146e980fa66394d8eb5d2
@@ -1064,8 +1062,7 @@ msgstr ""
 # 276929fa88114095b7bdf530bb9773c4
 #: ../../../source/install/server-use.inc:13
 msgid "groonga-server-gqtp (GQTP protocol based server package)"
-msgstr ""
-"groonga-server-gqtp (GQTPサーバー)"
+msgstr "groonga-server-gqtp (GQTPサーバー)"
 
 # c71db706bd8c478494539e40e5e83e93
 # 234b316daee8400683f23512d268b629
@@ -1073,8 +1070,7 @@ msgstr ""
 # fd4892641e3346938b579a6fbc8d2ac2
 #: ../../../source/install/server-use.inc:15
 msgid "See :doc:`/server` section about details."
-msgstr ""
-"詳細は :doc:`/server` を参照してください。"
+msgstr "詳細は :doc:`/server` を参照してください。"
 
 # c33eafb679d148ab88d9450ace4e9f4d
 #: ../../../source/install/solaris.txt:6
