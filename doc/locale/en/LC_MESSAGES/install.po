@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-22 13:37\n"
+"POT-Creation-Date: 2013-01-24 15:48\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -440,8 +440,8 @@ msgstr ""
 
 # 42ad06b8b53147088e9622d861e034e1
 #: ../../../source/install/fedora.txt:28
-msgid "Fedora 17"
-msgstr "Fedora 17"
+msgid "Fedora 18"
+msgstr ""
 
 # 802a7c53c7f24630bb3d666c9e423d15
 #: ../../../source/install/mac_os_x.txt:6

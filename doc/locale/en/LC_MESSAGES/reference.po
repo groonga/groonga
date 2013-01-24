@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-22 13:37\n"
+"POT-Creation-Date: 2013-01-24 18:18\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -11289,12 +11289,12 @@ msgstr ""
 "processing."
 
 # d68d2019af4d4314b97d646aff93ed09
-#: ../../../source/reference/log.txt:13
+#: ../../../source/reference/log.txt:15
 msgid "Process log"
 msgstr "Process log"
 
 # e294e361f1a647fc82c0acba8da71f1a
-#: ../../../source/reference/log.txt:15
+#: ../../../source/reference/log.txt:17
 msgid ""
 "Process log is enabled by default. Log path can be customized by :option:`--"
 "log-path` option.  Each log has its log level. If a log is smaller than "
@@ -11308,103 +11308,103 @@ msgstr ""
 
 # 511192979a4d484484ec9801326cb266
 # 6216da4d10cb431c9867b3c6dcea772a
-#: ../../../source/reference/log.txt:22 ../../../source/reference/log.txt:112
+#: ../../../source/reference/log.txt:24 ../../../source/reference/log.txt:116
 #: ../../../source/reference/query_expanders/tsv.txt:122
 msgid "Format"
 msgstr "Format"
 
 # ba439c327bde4b39be432639bdfb46aa
-#: ../../../source/reference/log.txt:24
+#: ../../../source/reference/log.txt:26
 msgid "Process log uses the following format::"
 msgstr "Process log uses the following format::"
 
 # 4f79c1a1225a4cac86489cb6d85810fb
 # b27a7d696c0742dc965417fa263fb33b
-#: ../../../source/reference/log.txt:29 ../../../source/reference/log.txt:122
+#: ../../../source/reference/log.txt:31 ../../../source/reference/log.txt:126
 msgid "It's time stamp uses the following format::"
 msgstr "It's time stamp uses the following format::"
 
 # ab20c8364c2b4886bf0ea603a84a3e8a
 # c4a7cd4d25e7440aa4b035b99ae33066
-#: ../../../source/reference/log.txt:33 ../../../source/reference/log.txt:126
+#: ../../../source/reference/log.txt:35 ../../../source/reference/log.txt:130
 msgid "YYYY"
 msgstr ""
 
 # d9ae4386b9d744acbaf476ca222a0358
 # 569d6b61ae504836a3a2d53eb582ac50
-#: ../../../source/reference/log.txt:34 ../../../source/reference/log.txt:127
+#: ../../../source/reference/log.txt:36 ../../../source/reference/log.txt:131
 msgid "Year with four digits."
 msgstr "Year with four digits."
 
 # 3f0822c111574fbf87504173dc8d43ff
 # ac2afb0feb184dc7b9c371c6f907fee5
-#: ../../../source/reference/log.txt:36 ../../../source/reference/log.txt:129
+#: ../../../source/reference/log.txt:38 ../../../source/reference/log.txt:133
 msgid "MM"
 msgstr ""
 
 # d94bddc0b6c644ab8506da7aab7ced37
 # 6fee816701c244fe99ac7ea2427816c7
-#: ../../../source/reference/log.txt:37 ../../../source/reference/log.txt:130
+#: ../../../source/reference/log.txt:39 ../../../source/reference/log.txt:134
 msgid "Month with two digits."
 msgstr "Month with two digits."
 
 # 03f8dbb2cbba464bb205f5759c9b36f6
 # 65f07c14427a429a93febd527754210e
-#: ../../../source/reference/log.txt:39 ../../../source/reference/log.txt:132
+#: ../../../source/reference/log.txt:41 ../../../source/reference/log.txt:136
 msgid "DD"
 msgstr ""
 
 # bef4fac76c154437a53c407ab73aab8d
 # cfded4516d074a62842f9fd1c450e031
-#: ../../../source/reference/log.txt:40 ../../../source/reference/log.txt:133
+#: ../../../source/reference/log.txt:42 ../../../source/reference/log.txt:137
 msgid "Day with two digits."
 msgstr "Day with two digits."
 
 # 6352ff736d1e469fb29508e659346ed3
 # e9579eb291624d26a6375fe401c7da3c
-#: ../../../source/reference/log.txt:42 ../../../source/reference/log.txt:135
+#: ../../../source/reference/log.txt:44 ../../../source/reference/log.txt:139
 msgid "hh"
 msgstr ""
 
 # 9d5bc459dc98448eb1cd195542bdbd82
 # 9fb724ce5ba14136b90ba45f29ae223f
-#: ../../../source/reference/log.txt:43 ../../../source/reference/log.txt:136
+#: ../../../source/reference/log.txt:45 ../../../source/reference/log.txt:140
 msgid "Hour with two digits."
 msgstr "Hour with two digits."
 
 # d17a1a84842e4700bd166cd7f8847c03
 # 5b354c9d17344d09943cf91b11c3264c
-#: ../../../source/reference/log.txt:45 ../../../source/reference/log.txt:138
+#: ../../../source/reference/log.txt:47 ../../../source/reference/log.txt:142
 msgid "mm"
 msgstr ""
 
 # 27504e820b6342b99698c3c6fe2f6eda
 # f9e59e789ecd41019e7c8efc971581ab
-#: ../../../source/reference/log.txt:46 ../../../source/reference/log.txt:139
+#: ../../../source/reference/log.txt:48 ../../../source/reference/log.txt:143
 msgid "Minute with two digits."
 msgstr "Minute with two digits."
 
 # 99864a840d01447fb50bbd212802e04b
 # 6a7b72df94884ab7a02f6a3b1c809431
-#: ../../../source/reference/log.txt:48 ../../../source/reference/log.txt:141
+#: ../../../source/reference/log.txt:50 ../../../source/reference/log.txt:145
 msgid "ss"
 msgstr ""
 
 # 24495716f8d44e64bda2b10849d0db5f
 # 821a8a96422e4db2aede10cc7dbcf576
-#: ../../../source/reference/log.txt:49 ../../../source/reference/log.txt:142
+#: ../../../source/reference/log.txt:51 ../../../source/reference/log.txt:146
 msgid "Second with two digits."
 msgstr "Second with two digits."
 
 # f3bcddf59a324ee6b0aa8fa377d1eb35
 # 3e3b39dbb28f4d11adc7c7906ddf28fd
-#: ../../../source/reference/log.txt:51 ../../../source/reference/log.txt:144
+#: ../../../source/reference/log.txt:53 ../../../source/reference/log.txt:148
 msgid "SSSSSS"
 msgstr ""
 
 # 5d0682eea1a84d25b37674827965fdd5
 # da97d33d8f5f4d258f328950188c3a31
-#: ../../../source/reference/log.txt:52 ../../../source/reference/log.txt:145
+#: ../../../source/reference/log.txt:54 ../../../source/reference/log.txt:149
 msgid "Microsecond with six digits."
 msgstr "Microsecond with six digits."
 
@@ -11420,108 +11420,108 @@ msgstr "Microsecond with six digits."
 # 63706a8aa5aa4123ba3331add4d09cea
 # 08d03411c4b5418b8db31591c1d7b59d
 # f6b8093f5a4f4cd89e30878bedd1c37f
-#: ../../../source/reference/log.txt:54 ../../../source/reference/log.txt:89
-#: ../../../source/reference/log.txt:96 ../../../source/reference/log.txt:100
-#: ../../../source/reference/log.txt:147 ../../../source/reference/log.txt:157
-#: ../../../source/reference/log.txt:173 ../../../source/reference/log.txt:180
-#: ../../../source/reference/log.txt:187 ../../../source/reference/log.txt:195
-#: ../../../source/reference/log.txt:203 ../../../source/reference/log.txt:208
+#: ../../../source/reference/log.txt:56 ../../../source/reference/log.txt:91
+#: ../../../source/reference/log.txt:98 ../../../source/reference/log.txt:102
+#: ../../../source/reference/log.txt:151 ../../../source/reference/log.txt:161
+#: ../../../source/reference/log.txt:177 ../../../source/reference/log.txt:184
+#: ../../../source/reference/log.txt:191 ../../../source/reference/log.txt:199
+#: ../../../source/reference/log.txt:207 ../../../source/reference/log.txt:212
 msgid "Example::"
 msgstr "Example::"
 
 # 5a29c14894204f0592bf35b1ae607a75
 # 930be159325c4c68aa6e262d33721781
-#: ../../../source/reference/log.txt:55 ../../../source/reference/log.txt:148
+#: ../../../source/reference/log.txt:57 ../../../source/reference/log.txt:152
 msgid "TIME_STAMP"
 msgstr ""
 
 # cd197dd5bf9b4dac88846a1157ff6ba9
-#: ../../../source/reference/log.txt:59
+#: ../../../source/reference/log.txt:61
 msgid "Log level with a character. Here is a character and log level map."
 msgstr "Log level with a character. Here is a character and log level map."
 
 # 154c9c380cee49eca27652b06439d8d3
-#: ../../../source/reference/log.txt:62
+#: ../../../source/reference/log.txt:64
 msgid "E"
 msgstr ""
 
 # 32f259d5294f479b87931b59b49dd2e0
-#: ../../../source/reference/log.txt:63
+#: ../../../source/reference/log.txt:65
 msgid "Emergency"
 msgstr "Emergency"
 
 # ef3491a21744489daf8ed3b367cb0b86
-#: ../../../source/reference/log.txt:65
+#: ../../../source/reference/log.txt:67
 msgid "A"
 msgstr ""
 
 # bc869963287341d4addb80e76d09126e
-#: ../../../source/reference/log.txt:66
+#: ../../../source/reference/log.txt:68
 msgid "Alert"
 msgstr "Alert"
 
 # fc5de7c5ee3848ea9ed4fdec069354cd
-#: ../../../source/reference/log.txt:68
+#: ../../../source/reference/log.txt:70
 msgid "C"
 msgstr ""
 
 # aad9649c07184d1193803cae61335efe
-#: ../../../source/reference/log.txt:69
+#: ../../../source/reference/log.txt:71
 msgid "Critical"
 msgstr "Critical"
 
 # f9850217e62d4fe48be3925464543d41
-#: ../../../source/reference/log.txt:71
+#: ../../../source/reference/log.txt:73
 msgid "e"
 msgstr ""
 
 # 1c9188dfe2c54589b8e6264d7b4923be
-#: ../../../source/reference/log.txt:72
+#: ../../../source/reference/log.txt:74
 msgid "Error"
 msgstr "Error"
 
 # 07c0e11c6e344f838f49839cce58b84a
-#: ../../../source/reference/log.txt:74
+#: ../../../source/reference/log.txt:76
 msgid "w"
 msgstr ""
 
 # 98e5b8ea0d354ce6bfba6f954e99f82f
-#: ../../../source/reference/log.txt:75
+#: ../../../source/reference/log.txt:77
 msgid "Warning"
 msgstr "Warning"
 
 # 45395e8dddb44037b01d96e2e33881cd
-#: ../../../source/reference/log.txt:77
+#: ../../../source/reference/log.txt:79
 msgid "n"
 msgstr ""
 
 # 42dc578c7b1641c39d59b7551160592e
-#: ../../../source/reference/log.txt:78
+#: ../../../source/reference/log.txt:80
 msgid "Notification"
 msgstr "Notification"
 
 # f651e10ac6fa4096bd1a450012f60a60
-#: ../../../source/reference/log.txt:80
+#: ../../../source/reference/log.txt:82
 msgid "i"
 msgstr ""
 
 # 6213e846b33c45a18f52912176cd11de
-#: ../../../source/reference/log.txt:81
+#: ../../../source/reference/log.txt:83
 msgid "Information"
 msgstr "Information"
 
 # 6cf8377a141e490c885cf64c4e7e7443
-#: ../../../source/reference/log.txt:83
+#: ../../../source/reference/log.txt:85
 msgid "d"
 msgstr ""
 
 # cede500510ac487183f096fa76b4319c
-#: ../../../source/reference/log.txt:84
+#: ../../../source/reference/log.txt:86
 msgid "Debug"
 msgstr "Debug"
 
 # c7bb51c783ad4c158b981e26d0c3fa8c
-#: ../../../source/reference/log.txt:86
+#: ../../../source/reference/log.txt:88
 #: ../../../source/reference/tables.txt:42
 #: ../../../source/reference/tables.txt:58
 #: ../../../source/reference/tables.txt:61
@@ -11531,34 +11531,34 @@ msgid "\\-"
 msgstr ""
 
 # ba2c891de53b4749a3ae5aa642586db1
-#: ../../../source/reference/log.txt:87
+#: ../../../source/reference/log.txt:89
 msgid "Dump"
 msgstr "Dump"
 
 # 5e7a9bad91bd46f0a7a0a9e057df2122
-#: ../../../source/reference/log.txt:90
+#: ../../../source/reference/log.txt:92
 msgid "L"
 msgstr ""
 
 # 29dc15e599584f86af5476b6632dcae6
 # a794ba94666645a6ab7a5e268004962a
-#: ../../../source/reference/log.txt:94 ../../../source/reference/log.txt:171
+#: ../../../source/reference/log.txt:96 ../../../source/reference/log.txt:175
 msgid "Details about the log with free format."
 msgstr "Details about the log with free format."
 
 # b1167fbc42644d4192cef25a01cc8d31
 # 580c7829326f45d2bb21e3074224058d
-#: ../../../source/reference/log.txt:97 ../../../source/reference/log.txt:174
+#: ../../../source/reference/log.txt:99 ../../../source/reference/log.txt:178
 msgid "MESSAGE"
 msgstr ""
 
 # 72ed68e80cdb4eb8a528ef6423f52a4f
-#: ../../../source/reference/log.txt:106
+#: ../../../source/reference/log.txt:110
 msgid "Query log"
 msgstr "Query log"
 
 # b86a74ab6c024107a5ba69440e23d54f
-#: ../../../source/reference/log.txt:108
+#: ../../../source/reference/log.txt:112
 msgid ""
 "Query log is disabled by default. It can be enabled by :option:`--query-log-"
 "path` option."
@@ -11567,12 +11567,12 @@ msgstr ""
 "path` option."
 
 # 89c4cd351226489a879d044e7cb9e982
-#: ../../../source/reference/log.txt:114
+#: ../../../source/reference/log.txt:118
 msgid "Query log uses the following formats::"
 msgstr "Query log uses the following formats::"
 
 # 8a682dd2a43a47eaaf1a0a6ee4816299
-#: ../../../source/reference/log.txt:152
+#: ../../../source/reference/log.txt:156
 msgid ""
 "ID of a thread. Groonga process creates threads to process requests "
 "concurrently. Each thread outputs some logs for a request. This ID can be "
@@ -11583,77 +11583,77 @@ msgstr ""
 "used to extract a log sequence by a thread."
 
 # b12ae2cea3a64917980ca3200e3fe96c
-#: ../../../source/reference/log.txt:158
+#: ../../../source/reference/log.txt:162
 msgid "ID"
 msgstr ""
 
 # f0750cbdcc8e44d59a6e354a9eaf42dc
-#: ../../../source/reference/log.txt:161
+#: ../../../source/reference/log.txt:165
 msgid ">"
 msgstr ""
 
 # 91078709bbe84f3ca7f3f19775fdfb9e
-#: ../../../source/reference/log.txt:162
+#: ../../../source/reference/log.txt:166
 msgid "A character that indicates query is started."
 msgstr "A character that indicates query is started."
 
 # cf1b63583cf14124b024a6dc6731d267
-#: ../../../source/reference/log.txt:164
+#: ../../../source/reference/log.txt:168
 msgid ":"
 msgstr ""
 
 # 97feb5e9fb334d0fb695aa289e8abb32
-#: ../../../source/reference/log.txt:165
+#: ../../../source/reference/log.txt:169
 msgid "A character that indicates query is processing."
 msgstr "A character that indicates query is processing."
 
 # 0754b84c2dc24d289d4d1b999c8eb6a0
-#: ../../../source/reference/log.txt:167
+#: ../../../source/reference/log.txt:171
 msgid "<"
 msgstr ""
 
 # 90f8f4f78f7948ceb04955f3ed4ebc3f
-#: ../../../source/reference/log.txt:168
+#: ../../../source/reference/log.txt:172
 msgid "A character that indicates query is finished."
 msgstr "A character that indicates query is finished."
 
 # aeb06af9a9a04264bb5dc038624b5274
-#: ../../../source/reference/log.txt:178
+#: ../../../source/reference/log.txt:182
 msgid "A query to be processed."
 msgstr "A query to be processed."
 
 # 7291ab3d61854ffc80c2f55e9e783e3e
-#: ../../../source/reference/log.txt:181
+#: ../../../source/reference/log.txt:185
 msgid "QUERY"
 msgstr ""
 
 # 81bb7d9140374278b058595bb41a6d77
-#: ../../../source/reference/log.txt:185
+#: ../../../source/reference/log.txt:189
 msgid "Elapsed time in nanoseconds since query is started."
 msgstr "Elapsed time in nanoseconds since query is started."
 
 # 6c7a5110a4c14feeac7b98d75ba0ee2d
-#: ../../../source/reference/log.txt:189
+#: ../../../source/reference/log.txt:193
 msgid "ELAPSED_TIME"
 msgstr ""
 
 # 44ea97634f334129adf64fe6d720aa66
-#: ../../../source/reference/log.txt:193
+#: ../../../source/reference/log.txt:197
 msgid "A processed work at the time."
 msgstr "A processed work at the time."
 
 # b4bb6dd8a2224f4d9a86a15b95bb6216
-#: ../../../source/reference/log.txt:197
+#: ../../../source/reference/log.txt:201
 msgid "PROGRESS"
 msgstr ""
 
 # 1a8b395a56c7493081c1015bbdea45af
-#: ../../../source/reference/log.txt:201
+#: ../../../source/reference/log.txt:205
 msgid "A return code for the query."
 msgstr "A return code for the query."
 
 # dd6a15d484e74bf7855f248920351414
-#: ../../../source/reference/log.txt:205
+#: ../../../source/reference/log.txt:209
 msgid "RETURN_CODE"
 msgstr ""
 
