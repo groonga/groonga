@@ -9,6 +9,8 @@ Groonga has two log files. They are process log and query
 log. Process log is for all of :doc:`executables/groonga`
 works. Query log is just for query processing.
 
+.. _process-log:
+
 Process log
 -----------
 
@@ -101,6 +103,8 @@ Example::
 
   2011-07-05 08:35:09.276421|n| grn_init
   2011-07-05 08:35:09.276553|n| RLIMIT_NOFILE(4096,4096)
+
+.. _query-log:
 
 Query log
 ---------
