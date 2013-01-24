@@ -224,7 +224,6 @@ AC_CONFIG_FILES([
   plugins/suggest/Makefile
   plugins/table/Makefile
   plugins/query_expanders/Makefile
-  plugins/normalizers/Makefile
   examples/Makefile
   examples/dictionary/Makefile
   examples/dictionary/edict/Makefile
@@ -1168,9 +1167,6 @@ AC_SUBST(tokenizers_pluginsdir)
 
 query_expanders_pluginsdir="\${pluginsdir}/query_expanders"
 AC_SUBST(query_expanders_pluginsdir)
-
-normalizers_pluginsdir="\${pluginsdir}/normalizers"
-AC_SUBST(normalizers_pluginsdir)
 
 suggest_pluginsdir="\${pluginsdir}/suggest"
 AC_SUBST(suggest_pluginsdir)

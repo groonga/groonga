@@ -1,6 +1,0 @@
-Groonga is licensed under LGPLv2.1 only.
-
-Exceptions:
-
-* plugins/normalizers/mysql.c is licensed under LGPLv2 only. Because it
-  is based on MySQL's strings/ctype-utf8.c.

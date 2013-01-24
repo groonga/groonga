@@ -1,4 +1,0 @@
-register normalizers/mysql
-[[0,0.0,0.0],true]
-normalize NormalizerMySQLGeneralCI "aBc"
-[[0,0.0,0.0],"ABC"]
