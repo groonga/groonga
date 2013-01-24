@@ -8,6 +8,7 @@ datadir=@datadir@
 document_root=@GRN_EXPANDED_DEFAULT_DOCUMENT_ROOT@
 pluginsdir=@expanded_pluginsdir@
 groonga=${bindir}/groonga@EXEEXT@
+groonga_httpd=${sbindir}/groonga-httpd@EXEEXT@
 groonga_suggest_create_dataset=${bindir}/groonga-suggest-create-dataset@EXEEXT@
 groonga_version=@GRN_VERSION@
 
