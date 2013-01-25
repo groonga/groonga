@@ -227,6 +227,8 @@ If both ``query`` and ``filter`` are specified, selected records must
 be matched against both ``query`` and ``filter``. If both ``query``
 and ``filter`` aren't specified, all records are selected.
 
+.. _select-match-columns:
+
 ``match_columns``
 """""""""""""""""
 
@@ -293,6 +295,8 @@ columns for fulltext search are ``_key`` and ``content`` columns and
 is 1. This weight allocation means ``_key`` column value is more
 important rather than ``content`` column value. In this example, title
 of blog entry is more important rather thatn content of blog entry.
+
+.. _select-query:
 
 ``query``
 """""""""
