@@ -1,0 +1,12 @@
+Execution example::
+
+  load --table Users
+  [
+  {"name": "Alice", "memo": "groonga user"},
+  {"name": "Alisa", "memo": "mroonga user"},
+  {"name": "Bob",   "memo": "rroonga user"},
+  {"name": "Tom",   "memo": "nroonga user"},
+  {"name": "Tobby", "memo": "groonga and mroonga user. mroonga is ..."},
+  ]
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  # [[0, 1337566253.89858, 0.000355720520019531], 5]

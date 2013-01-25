@@ -1,0 +1,135 @@
+.. -*- rst -*-
+
+.. highlightlang:: none
+
+.. groonga-command
+.. database: functions_query
+
+query
+=====
+
+Summary
+-------
+
+``query`` enables you to specify ``--match_columns`` and ``--query`` parameters as
+function arguments.
+
+``query`` is one of the groonga builtin functions, so you can specify
+multiple ``query`` function as parameters of ``--filter`` option.
+
+Because of such flexibility, you can control full text search behavior
+by combination of multiple ``query`` function.
+
+``query`` can be used in only ``--filter`` in :doc:`/reference/commands/select`.
+
+Syntax
+------
+
+``query`` requires two arguments - ``match_column`` and ``query_string``.
+
+::
+
+  query(match_column, query_string)
+
+
+Usage
+-----
+
+Here are a schema definition and sample data to show usage.
+
+Sample schema:
+
+.. groonga-command
+.. include:: ../../example/reference/functions/query/usage_setup_schema.log
+.. table_create Documents TABLE_NO_KEY
+.. column_create Documents content COLUMN_SCALAR Text
+.. table_create Terms TABLE_PAT_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenBigram
+.. column_create Terms documents_content_index COLUMN_INDEX|WITH_POSITION Documents content
+.. table_create Users TABLE_NO_KEY
+.. column_create Users name COLUMN_SCALAR ShortText
+.. column_create Users memo COLUMN_SCALAR ShortText
+.. table_create Lexicon TABLE_HASH_KEY ShortText \
+..   --default_tokenizer TokenBigramSplitSymbolAlphaDigit \
+..   --normalizer NormalizerAuto
+.. column_create Lexicon users_name COLUMN_INDEX|WITH_POSITION Users name
+.. column_create Lexicon users_memo COLUMN_INDEX|WITH_POSITION Users memo
+
+Sample data:
+
+.. groonga-command
+.. include:: ../../example/reference/functions/query/usage_setup_data.log
+.. load --table Users
+.. [
+.. {"name": "Alice", "memo": "groonga user"},
+.. {"name": "Alisa", "memo": "mroonga user"},
+.. {"name": "Bob",   "memo": "rroonga user"},
+.. {"name": "Tom",   "memo": "nroonga user"},
+.. {"name": "Tobby", "memo": "groonga and mroonga user. mroonga is ..."},
+.. ]
+
+Here is the simple usage of ``query`` function which execute full text
+search by keyword 'alice' without using ``--match_column`` and
+``--query`` arguments in ``--filter``.
+
+.. groonga-command
+.. include:: ../../example/reference/functions/query/usage_basic.log
+.. select Users --output_columns name,_score --filter 'query("name * 10", "alice")'
+
+When executing above query, the keyword 'alice' is weighted to the value -
+'10'.
+
+Here are the contrasting examples with/without ``query``.
+
+.. groonga-command
+.. include:: ../../example/reference/functions/query/usage_without_query.log
+.. select Users --output_columns name,memo,_score --match_columns "memo * 10" --query "memo:@groonga OR memo:@mroonga OR memo:@user" --sortby -_score
+
+In this case, the keywords 'groonga' and 'mroonga' and 'user' are
+given same weight value.
+You can't pass different weight value to each keyword in this way.
+
+
+.. groonga-command
+.. include:: ../../example/reference/functions/query/usage_with_query.log
+.. select Users --output_columns name,memo,_score --filter 'query("memo * 10", "groonga") || query("memo * 20", "mroonga") || query("memo * 1", "user")' --sortby -_score
+
+On the other hand, by specifying multiple ``query``, the keywords
+'groonga' and 'mroonga' and 'user' are given different value of weight.
+
+As a result, you can control full text search result by giving different weight to the
+keywords on your purpose.
+
+Parameters
+----------
+
+There are two required parameter, ``match_column`` and ``query_string``.
+
+``match_column``
+^^^^^^^^^^^^^^^^
+
+  It specifies ``match_column`` equivalent parameter.
+
+See :ref:`select-match-columns` about match_column.
+
+``query_string``
+^^^^^^^^^^^^^^^^
+
+  It specifies ``query`` equivalent parameter.
+
+See :ref:`select-query` about query string.
+
+Return value
+------------
+
+``query`` returns a value of boolean (true or false).
+
+TODO
+----
+
+* Support query_expansion
+* Support query_flags
+
+See also
+--------
+
+* :doc:`/reference/commands/select`
