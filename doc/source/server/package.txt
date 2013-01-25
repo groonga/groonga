@@ -118,7 +118,7 @@ Stopping groonga HTTP server(Debian/Ubuntu/CentOS)::
 
  sudo service groonga-server-http stop
  
-Starting groonga HTTP server(Fedora)::
+Stopping groonga HTTP server(Fedora)::
 
  sudo systemctl stop groonga-server-http
 
