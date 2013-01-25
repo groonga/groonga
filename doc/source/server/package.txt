@@ -5,7 +5,7 @@
 Server packages
 ===============
 
-The package 'groonga' is the mininum set of fulltext search engine.
+The package ``groonga`` is the mininum set of fulltext search engine.
 If you want to use groonga for server use, you can install
 additional preconfigured packages.
 
@@ -17,7 +17,7 @@ There are three packages for server use.
 
 Note that there is a conflict between ``groonga-httpd`` and ``groonga-server-http``
 package because of port number.
-See :doc:``/server/http/comparison`` if you want to know which package meets your demands.
+See :doc:`/server/http/comparison` if you want to know which package meets your demands.
 
 groonga-httpd
 -------------
