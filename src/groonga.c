@@ -2032,7 +2032,8 @@ show_usage(FILE *output)
           "  <db pathname> [<commands>]: in standalone mode\n"
           "  <db pathname>: in server/daemon mode\n"
           "  <dest hostname> [<commands>]: in client mode (default: %s)\n",
-          grn_enctostr(default_encoding), default_port, default_bind_address,
+          grn_encoding_to_string(default_encoding),
+          default_port, default_bind_address,
           default_port, default_hostname, default_protocol,
           default_document_root, default_cache_limit, default_max_num_threads,
           default_log_level, default_log_path, default_query_log_path,

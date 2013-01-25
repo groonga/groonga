@@ -116,8 +116,8 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                      "[tokenizer][mecab] "
                      "MeCab dictionary charset (%s) does not match "
                      "the table encoding: <%s>",
-                     grn_enctostr(sole_mecab_encoding),
-                     grn_enctostr(query->encoding));
+                     grn_encoding_to_string(sole_mecab_encoding),
+                     grn_encoding_to_string(query->encoding));
     return NULL;
   }
 
@@ -266,7 +266,7 @@ check_mecab_dictionary_encoding(grn_ctx *ctx)
                        "[tokenizer][mecab] "
                        "MeCab has no dictionary that uses the context encoding"
                        ": <%s>",
-                       grn_enctostr(encoding));
+                       grn_encoding_to_string(encoding));
     }
   } else {
     GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,

@@ -340,8 +340,8 @@ grn_test_assert_equal_encoding_helper (grn_encoding expected,
                                   " but was: <%s>",
                                   expression_expected,
                                   expression_actual,
-                                  grn_enctostr(expected),
-                                  grn_enctostr(actual)));
+                                  grn_encoding_to_string(expected),
+                                  grn_encoding_to_string(actual)));
   }
 }
 

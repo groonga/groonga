@@ -1284,7 +1284,7 @@ static const char *grn_enc_string[] = {
 };
 
 const char *
-grn_enctostr(grn_encoding enc)
+grn_encoding_to_string(grn_encoding enc)
 {
   if (enc < (sizeof(grn_enc_string) / sizeof(char *))) {
     return grn_enc_string[enc];

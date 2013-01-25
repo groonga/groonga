@@ -363,6 +363,17 @@ GRN_API long long int grn_get_default_match_escalation_threshold(void);
  **/
 GRN_API grn_rc grn_set_default_match_escalation_threshold(long long int threshold);
 
+/* grn_encoding */
+/**
+ * grn_encoding_to_string:
+ * @encoding: The encoding.
+ *
+ * Returns string representation for the encoding. For example,
+ * 'grn_encoding_to_string(GRN_ENC_UTF8)' returns '"utf8"'.
+ *
+ * "unknown" is returned for invalid encoding.
+ **/
+GRN_API const char *grn_encoding_to_string(grn_encoding encoding);
 
 /* obj */
 
