@@ -45,33 +45,33 @@ Start HTTP server
 
 Starting groonga HTTP server(Debian/Ubuntu/CentOS)::
 
- sudo service groonga-httpd start
+  % sudo service groonga-httpd start
  
 Starting groonga HTTP server(Fedora)::
 
- sudo systemctl start groonga-httpd
+  % sudo systemctl start groonga-httpd
  
 Stop HTTP server
 ^^^^^^^^^^^^^^^^
 
 Stopping groonga HTTP server(Debian/Ubuntu/CentOS)::
 
- sudo service groonga-httpd stop
+  % sudo service groonga-httpd stop
  
 Starting groonga HTTP server(Fedora)::
 
- sudo systemctl stop groonga-httpd
+  % sudo systemctl stop groonga-httpd
 
 Restart HTTP server
 ^^^^^^^^^^^^^^^^^^^
 
 Restarting groonga HTTP server(Debian/Ubuntu/CentOS)::
 
- sudo service groonga-httpd restart
+  % sudo service groonga-httpd restart
  
 Restarting groonga HTTP server(Fedora)::
 
- sudo systemctl restart groonga-httpd
+  % sudo systemctl restart groonga-httpd
 
 groonga-server-http
 -------------------
@@ -94,44 +94,44 @@ Preconfigured setting:
 
 Configuration file for server setting (Debian/Ubuntu)::
 
- /etc/default/groonga/groonga-server-http
+  /etc/default/groonga/groonga-server-http
 
 Configuration file for server setting (CentOS)::
 
- /etc/sysconfig/groonga-server-http
+  /etc/sysconfig/groonga-server-http
 
 Start HTTP server
 ^^^^^^^^^^^^^^^^^
 
 Starting groonga HTTP server(Debian/Ubuntu/CentOS)::
 
- sudo service groonga-server-http start
+  % sudo service groonga-server-http start
  
 Starting groonga HTTP server(Fedora)::
 
- sudo systemctl start groonga-server-http
+  % sudo systemctl start groonga-server-http
  
 Stop HTTP server
 ^^^^^^^^^^^^^^^^
 
 Stopping groonga HTTP server(Debian/Ubuntu/CentOS)::
 
- sudo service groonga-server-http stop
+  % sudo service groonga-server-http stop
  
 Stopping groonga HTTP server(Fedora)::
 
- sudo systemctl stop groonga-server-http
+  % sudo systemctl stop groonga-server-http
 
 Restart HTTP server
 ^^^^^^^^^^^^^^^^^^^
 
 Restarting groonga HTTP server(Debian/Ubuntu/CentOS)::
 
- sudo service groonga-server-http restart
+  % sudo service groonga-server-http restart
  
 Restarting groonga HTTP server(Fedora)::
 
- sudo systemctl restart groonga-server-http
+  % sudo systemctl restart groonga-server-http
 
 groonga-server-gqtp
 -------------------
@@ -152,41 +152,41 @@ groonga-server-gqtp
 
 Configuration file for server setting (Debian/Ubuntu)::
 
- /etc/default/groonga/groonga-server-gqtp
+  /etc/default/groonga/groonga-server-gqtp
 
 Configuration file for server setting (CentOS)::
 
- /etc/sysconfig/groonga-server-gqtp
+  /etc/sysconfig/groonga-server-gqtp
 
 Start GQTP server
 ^^^^^^^^^^^^^^^^^
 
 Starting groonga GQTP server(Debian/Ubuntu/CentOS)::
 
- sudo service groonga-server-gqtp start
+  % sudo service groonga-server-gqtp start
  
 Starting groonga GQTP server(Fedora)::
 
- sudo systemctl start groonga-server-gqtp
+  % sudo systemctl start groonga-server-gqtp
 
 Stop GQTP server
 ^^^^^^^^^^^^^^^^
 
 Stopping groonga GQTP server(Debian/Ubuntu/CentOS)::
 
- sudo service groonga-server-http stop
+  % sudo service groonga-server-http stop
  
 Stopping groonga GQTP server(Fedora)::
 
- sudo systemctl stop groonga-server-gqtp
+  % sudo systemctl stop groonga-server-gqtp
 
 Restart GQTP server
 ^^^^^^^^^^^^^^^^^^^
 
 Restarting groonga HTTP server(Debian/Ubuntu/CentOS)::
 
- sudo service groonga-server-gqtp restart
+  % sudo service groonga-server-gqtp restart
  
 Restarting groonga HTTP server(Fedora)::
 
- sudo systemctl restart groonga-server-gqtp
+  % sudo systemctl restart groonga-server-gqtp
