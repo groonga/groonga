@@ -110,11 +110,10 @@ msgstr ""
 
 # b99033b17c7a4902a9a56da071050e29
 #: ../../../source/news.txt:28
-#, fuzzy
 msgid ""
 "Added translated documentation about :doc:`/reference/tables` and :doc:`/"
 "reference/normalizers`."
-msgstr "[doc] Added a document about :doc:`/reference/grn_expr`."
+msgstr ""
 
 # a393eb3ad7e14880b9533941c27e840c
 #: ../../../source/news.txt:29
