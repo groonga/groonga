@@ -27,6 +27,8 @@ groonga-httpd
 Preconfigured setting:
 
 +--------------------+---------------------------------------+
+| Item               | Default value                         |
++====================+=======================================+
 | Port number        | 10041                                 |
 +--------------------+---------------------------------------+
 | Access log path    | /var/log/groonga/httpd/acccess.log    |
@@ -79,6 +81,8 @@ groonga-server-http
 Preconfigured setting:
 
 +--------------------+---------------------------------------+
+| Item               | Default value                         |
++====================+=======================================+
 | Port number        | 10041                                 |
 +--------------------+---------------------------------------+
 | :ref:`process-log` | /var/log/groonga/groonga-http.log     |
@@ -135,6 +139,8 @@ groonga-server-gqtp
 ``groonga-server-gqtp`` is a GQTP protocol based server package.
 
 +--------------------+---------------------------------------+
+| Item               | Default value                         |
++====================+=======================================+
 | Port number        | 10043                                 |
 +--------------------+---------------------------------------+
 | :ref:`process-log` | /var/log/groonga/groonga-gqtp.log     |
