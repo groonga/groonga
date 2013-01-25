@@ -913,6 +913,7 @@ logger_fin(grn_ctx *ctx)
   grn_logger_fin(ctx);
   if (default_logger_path) {
     free(default_logger_path);
+    default_logger_path = NULL;
   }
   CRITICAL_SECTION_FIN(default_logger_lock);
 }
