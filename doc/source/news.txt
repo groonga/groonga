@@ -33,6 +33,8 @@ Improvements
   in ``--filter``.
 * [rpm][fedora] Supported Fedora 18.
 * [rpm][fedora] Dropped Fedora 17 support.
+* [doc] Added documentation for :doc:`/server/package`.
+* [doc] Added documentation for :doc:`/reference/functions/query`.
 
 Fixes
 ^^^^^
