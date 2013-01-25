@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-24 18:18\n"
+"POT-Creation-Date: 2013-01-25 11:47\n"
 "PO-Revision-Date: 2012-08-15 15:24+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -173,7 +173,7 @@ msgstr "o (by multi threading)"
 # 09a77bd06d29454fa36fa229b26683ab
 #: ../../../source/server/http/comparison.txt:18
 #: ../../../source/server/http/comparison.txt:67
-#: ../../../source/server/package.txt:38
+#: ../../../source/server/package.txt:40
 msgid "Configuration file"
 msgstr "Configuration file"
 
@@ -537,7 +537,7 @@ msgstr ""
 # 4b9e5a6d80d74f868f880b9d778cfa3b
 #: ../../../source/server/package.txt:8
 msgid ""
-"The package 'groonga' is the mininum set of fulltext search engine. If you "
+"The package ``groonga`` is the mininum set of fulltext search engine. If you "
 "want to use groonga for server use, you can install additional preconfigured "
 "packages."
 msgstr ""
@@ -566,8 +566,8 @@ msgstr ""
 #: ../../../source/server/package.txt:18
 msgid ""
 "Note that there is a conflict between ``groonga-httpd`` and ``groonga-server-"
-"http`` package because of port number. See :doc:``/server/http/comparison`` "
-"if you want to know which package meets your demands."
+"http`` package because of port number. See :doc:`/server/http/comparison` if "
+"you want to know which package meets your demands."
 msgstr ""
 
 # 0531d5aea7d94951a7dc8fe937ee2269
@@ -577,80 +577,96 @@ msgstr ""
 
 # 4be1f7bc57db4d49b2691586fbfc0636
 # 6fa103e953e2464f94f66cfe36e33f1b
-#: ../../../source/server/package.txt:27 ../../../source/server/package.txt:79
+#: ../../../source/server/package.txt:27 ../../../source/server/package.txt:81
 msgid "Preconfigured setting:"
+msgstr ""
+
+# 765a80c5aec6487db6bc5577ae7ad978
+# ead890d4891a48499a7b142c41d27a40
+# 574e91a38e8749bd9fd580ffa292fe2e
+#: ../../../source/server/package.txt:30 ../../../source/server/package.txt:84
+#: ../../../source/server/package.txt:142
+msgid "Default value"
+msgstr ""
+
+# cf3af42034a3455abaafd6a5b016112a
+# 9944a6c3914445788ee5d06e6fd1cbee
+# 828a75323e23412999639421c4145405
+#: ../../../source/server/package.txt:30 ../../../source/server/package.txt:84
+#: ../../../source/server/package.txt:142
+msgid "Item"
 msgstr ""
 
 # f429752ec6b640348bf2aed4849827a9
 # b2fb59430da4452f8fd0b5a151cb92e9
-#: ../../../source/server/package.txt:30 ../../../source/server/package.txt:82
+#: ../../../source/server/package.txt:32 ../../../source/server/package.txt:86
 msgid "10041"
 msgstr ""
 
 # 302fd27da26b42e49d7b60df0d33b9f0
 # 7bb08e7f7d7a4b1aa792f13b430a36b7
 # 7f919c8b7f4b4c32b994def19f5b35d7
-#: ../../../source/server/package.txt:30 ../../../source/server/package.txt:82
-#: ../../../source/server/package.txt:138
+#: ../../../source/server/package.txt:32 ../../../source/server/package.txt:86
+#: ../../../source/server/package.txt:144
 msgid "Port number"
 msgstr ""
 
 # 93d4625a49d54f20ade10df30b344775
-#: ../../../source/server/package.txt:32
+#: ../../../source/server/package.txt:34
 msgid "/var/log/groonga/httpd/acccess.log"
 msgstr ""
 
 # 203a3a3af84d4728af390bbaf90e84d0
 # b8fe45cb84ba49599fd15fb3a69724e0
-#: ../../../source/server/package.txt:32
+#: ../../../source/server/package.txt:34
 #, fuzzy
 msgid "Access log path"
 msgstr "Access log"
 
 # 444935818eb640b586745f25797d4ffd
 # 86ef9e9ff93a48e7b1e45b211e1229e8
-#: ../../../source/server/package.txt:34 ../../../source/server/package.txt:86
+#: ../../../source/server/package.txt:36 ../../../source/server/package.txt:90
 msgid "/var/log/groonga/http-query.log"
 msgstr ""
 
 # 65d14f23815b4749af35c8ff2682256f
-#: ../../../source/server/package.txt:34
+#: ../../../source/server/package.txt:36
 msgid "Error log path"
 msgstr ""
 
 # 208583eedfaa4948954743585e12a987
 # 81e7dbccc72c4b84a8b378617226193a
 # e9d5e73140af49d386b2f7dc64fe50a9
-#: ../../../source/server/package.txt:36 ../../../source/server/package.txt:88
-#: ../../../source/server/package.txt:144
+#: ../../../source/server/package.txt:38 ../../../source/server/package.txt:92
+#: ../../../source/server/package.txt:150
 msgid "/var/lib/groonga/db/*"
 msgstr ""
 
 # 0cb6ad6bc9224228adda25a0b2221f24
 # 802cf469fad54df7b067b7b7d919a125
-#: ../../../source/server/package.txt:36 ../../../source/server/package.txt:88
-#: ../../../source/server/package.txt:144
+#: ../../../source/server/package.txt:38 ../../../source/server/package.txt:92
+#: ../../../source/server/package.txt:150
 #, fuzzy
 msgid "Database"
 msgstr "Multi databases"
 
 # fd4a09baf8414fb0b0ed41c38ccfc915
-#: ../../../source/server/package.txt:38
+#: ../../../source/server/package.txt:40
 #, fuzzy
 msgid "/etc/groonga/httpd/groonga-httpd.conf"
 msgstr ":doc:`http/groonga-httpd`"
 
 # 3dd040d7bc414b65a06de360498c6cee
 # 3dd040d7bc414b65a06de360498c6cee
-#: ../../../source/server/package.txt:42
-#: ../../../source/server/package.txt:100
+#: ../../../source/server/package.txt:44
+#: ../../../source/server/package.txt:104
 msgid "Start HTTP server"
 msgstr ""
 
 # 6b55acdfe3284958a62d6eb2f86820ee
 # 6b55acdfe3284958a62d6eb2f86820ee
-#: ../../../source/server/package.txt:44
-#: ../../../source/server/package.txt:102
+#: ../../../source/server/package.txt:46
+#: ../../../source/server/package.txt:106
 msgid "Starting groonga HTTP server(Debian/Ubuntu/CentOS)::"
 msgstr ""
 
@@ -658,154 +674,158 @@ msgstr ""
 # af9a018d494147e8a9416c30ced7f091
 # af9a018d494147e8a9416c30ced7f091
 # af9a018d494147e8a9416c30ced7f091
-#: ../../../source/server/package.txt:48 ../../../source/server/package.txt:59
-#: ../../../source/server/package.txt:106
-#: ../../../source/server/package.txt:117
+#: ../../../source/server/package.txt:50 ../../../source/server/package.txt:61
+#: ../../../source/server/package.txt:110
 msgid "Starting groonga HTTP server(Fedora)::"
 msgstr ""
 
 # 3dd040d7bc414b65a06de360498c6cee
 # 3dd040d7bc414b65a06de360498c6cee
-#: ../../../source/server/package.txt:53
-#: ../../../source/server/package.txt:111
+#: ../../../source/server/package.txt:55
+#: ../../../source/server/package.txt:115
 msgid "Stop HTTP server"
 msgstr ""
 
 # 6b55acdfe3284958a62d6eb2f86820ee
 # 6b55acdfe3284958a62d6eb2f86820ee
-#: ../../../source/server/package.txt:55
-#: ../../../source/server/package.txt:113
+#: ../../../source/server/package.txt:57
+#: ../../../source/server/package.txt:117
 msgid "Stopping groonga HTTP server(Debian/Ubuntu/CentOS)::"
 msgstr ""
 
 # 3dd040d7bc414b65a06de360498c6cee
 # 3dd040d7bc414b65a06de360498c6cee
-#: ../../../source/server/package.txt:64
-#: ../../../source/server/package.txt:122
+#: ../../../source/server/package.txt:66
+#: ../../../source/server/package.txt:126
 msgid "Restart HTTP server"
 msgstr ""
 
 # 6b55acdfe3284958a62d6eb2f86820ee
 # 6b55acdfe3284958a62d6eb2f86820ee
 # 6b55acdfe3284958a62d6eb2f86820ee
-#: ../../../source/server/package.txt:66
-#: ../../../source/server/package.txt:124
-#: ../../../source/server/package.txt:180
+#: ../../../source/server/package.txt:68
+#: ../../../source/server/package.txt:128
+#: ../../../source/server/package.txt:186
 msgid "Restarting groonga HTTP server(Debian/Ubuntu/CentOS)::"
 msgstr ""
 
 # af9a018d494147e8a9416c30ced7f091
 # af9a018d494147e8a9416c30ced7f091
 # af9a018d494147e8a9416c30ced7f091
-#: ../../../source/server/package.txt:70
-#: ../../../source/server/package.txt:128
-#: ../../../source/server/package.txt:184
+#: ../../../source/server/package.txt:72
+#: ../../../source/server/package.txt:132
+#: ../../../source/server/package.txt:190
 msgid "Restarting groonga HTTP server(Fedora)::"
 msgstr ""
 
 # 83dfd6267c6c46f2bd331ffc43befa09
 # 03f919d64f904e0c935a7eb1e0d844e6
-#: ../../../source/server/package.txt:75
+#: ../../../source/server/package.txt:77
 #, fuzzy
 msgid "groonga-server-http"
 msgstr "groonga-httpd"
 
 # 2ad0f8b094304b9d894e7af72faa1ef1
-#: ../../../source/server/package.txt:77
+#: ../../../source/server/package.txt:79
 msgid "``groonga-server-http`` is a simple HTTP protocol based server package."
 msgstr ""
 
 # d6296771835d4aaa983dce3137526e27
-#: ../../../source/server/package.txt:84
+#: ../../../source/server/package.txt:88
 msgid "/var/log/groonga/groonga-http.log"
 msgstr ""
 
 # b981db6631054af5a01ab27fe448a228
 # b1b7559d8c824a75b5b94bc0a4563588
-#: ../../../source/server/package.txt:84
-#: ../../../source/server/package.txt:140
+#: ../../../source/server/package.txt:88
+#: ../../../source/server/package.txt:146
 msgid ":ref:`process-log`"
 msgstr ""
 
 # a73cd1de36b14521965a7961b2774bae
 # 80aca61b2ef54270b13afacf1dcc13f8
-#: ../../../source/server/package.txt:86
-#: ../../../source/server/package.txt:142
+#: ../../../source/server/package.txt:90
+#: ../../../source/server/package.txt:148
 msgid ":ref:`query-log`"
 msgstr ""
 
 # dff80176a41c424db256230c6ecc88e5
 # 4137de97fb004827a28c4adbfa5c15ea
-#: ../../../source/server/package.txt:91
-#: ../../../source/server/package.txt:147
+#: ../../../source/server/package.txt:95
+#: ../../../source/server/package.txt:153
 msgid "Configuration file for server setting (Debian/Ubuntu)::"
 msgstr ""
 
 # f873009381d14976bbc660eec0552412
 # 6751cca06d6c4e0c89f3897cfdfd49d6
-#: ../../../source/server/package.txt:95
-#: ../../../source/server/package.txt:151
+#: ../../../source/server/package.txt:99
+#: ../../../source/server/package.txt:157
 msgid "Configuration file for server setting (CentOS)::"
+msgstr ""
+
+# af9a018d494147e8a9416c30ced7f091
+#: ../../../source/server/package.txt:121
+msgid "Stopping groonga HTTP server(Fedora)::"
 msgstr ""
 
 # 83dfd6267c6c46f2bd331ffc43befa09
 # 03f919d64f904e0c935a7eb1e0d844e6
-#: ../../../source/server/package.txt:133
+#: ../../../source/server/package.txt:137
 #, fuzzy
 msgid "groonga-server-gqtp"
 msgstr "groonga-httpd"
 
 # 6a94a2aae23d4b2db8c34986fc9e5de7
-#: ../../../source/server/package.txt:135
+#: ../../../source/server/package.txt:139
 msgid "``groonga-server-gqtp`` is a GQTP protocol based server package."
 msgstr ""
 
 # b901e2cfbb16473c82f725943589aeed
-#: ../../../source/server/package.txt:138
+#: ../../../source/server/package.txt:144
 msgid "10043"
 msgstr ""
 
 # 01f436b74761468a8ec8aeedb77eca19
-#: ../../../source/server/package.txt:140
+#: ../../../source/server/package.txt:146
 msgid "/var/log/groonga/groonga-gqtp.log"
 msgstr ""
 
 # 2c716883efd94e4b87d09f476e2b3f06
-#: ../../../source/server/package.txt:142
+#: ../../../source/server/package.txt:148
 msgid "/var/log/groonga/gqtp-query.log"
 msgstr ""
 
 # 3dd040d7bc414b65a06de360498c6cee
-#: ../../../source/server/package.txt:156
+#: ../../../source/server/package.txt:162
 msgid "Start GQTP server"
 msgstr ""
 
 # 6b55acdfe3284958a62d6eb2f86820ee
-#: ../../../source/server/package.txt:158
+#: ../../../source/server/package.txt:164
 msgid "Starting groonga GQTP server(Debian/Ubuntu/CentOS)::"
 msgstr ""
 
 # af9a018d494147e8a9416c30ced7f091
-#: ../../../source/server/package.txt:162
+#: ../../../source/server/package.txt:168
 msgid "Starting groonga GQTP server(Fedora)::"
 msgstr ""
 
 # 3dd040d7bc414b65a06de360498c6cee
-#: ../../../source/server/package.txt:167
+#: ../../../source/server/package.txt:173
 msgid "Stop GQTP server"
 msgstr ""
 
 # 6b55acdfe3284958a62d6eb2f86820ee
-#: ../../../source/server/package.txt:169
+#: ../../../source/server/package.txt:175
 msgid "Stopping groonga GQTP server(Debian/Ubuntu/CentOS)::"
 msgstr ""
 
 # af9a018d494147e8a9416c30ced7f091
-#: ../../../source/server/package.txt:173
+#: ../../../source/server/package.txt:179
 msgid "Stopping groonga GQTP server(Fedora)::"
 msgstr ""
 
 # 3dd040d7bc414b65a06de360498c6cee
-#: ../../../source/server/package.txt:178
+#: ../../../source/server/package.txt:184
 msgid "Restart GQTP server"
 msgstr ""
