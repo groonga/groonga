@@ -1825,7 +1825,7 @@ init_default_settings(void)
 {
   output = stdout;
 
-  default_encoding = grn_strtoenc(GRN_DEFAULT_ENCODING);
+  default_encoding = grn_encoding_parse(GRN_DEFAULT_ENCODING);
 
   {
     const uint32_t num_cores = get_core_number();

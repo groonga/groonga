@@ -1294,7 +1294,7 @@ grn_encoding_to_string(grn_encoding enc)
 }
 
 grn_encoding
-grn_strtoenc(const char *str)
+grn_encoding_parse(const char *str)
 {
   grn_encoding e = GRN_ENC_UTF8;
   int i = sizeof(grn_enc_string) / sizeof(grn_enc_string[0]);

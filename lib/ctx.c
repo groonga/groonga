@@ -1172,7 +1172,7 @@ grn_init(void)
   ctx->next = ctx;
   ctx->prev = ctx;
   grn_ctx_init(ctx, 0);
-  ctx->encoding = grn_strtoenc(GRN_DEFAULT_ENCODING);
+  ctx->encoding = grn_encoding_parse(GRN_DEFAULT_ENCODING);
   grn_timeval_now(ctx, &grn_starttime);
 #ifdef WIN32
   {
@@ -1269,7 +1269,7 @@ grn_set_default_encoding(grn_encoding encoding)
 {
   switch (encoding) {
   case GRN_ENC_DEFAULT :
-    grn_gctx.encoding = grn_strtoenc(GRN_DEFAULT_ENCODING);
+    grn_gctx.encoding = grn_encoding_parse(GRN_DEFAULT_ENCODING);
     return GRN_SUCCESS;
   case GRN_ENC_NONE :
   case GRN_ENC_EUC_JP :

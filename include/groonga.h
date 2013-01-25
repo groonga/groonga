@@ -375,6 +375,17 @@ GRN_API grn_rc grn_set_default_match_escalation_threshold(long long int threshol
  **/
 GRN_API const char *grn_encoding_to_string(grn_encoding encoding);
 
+/**
+ * grn_encoding_parse:
+ * @name: The encoding name.
+ *
+ * Parses encoding name and returns grn_encoding.
+ * For example, 'grn_encoding_to_string("UTF8")' returns 'GRN_ENC_UTF8'.
+ *
+ * 'GRN_ENC_UTF8' is returned for invalid encoding name.
+ **/
+GRN_API grn_encoding grn_encoding_parse(const char *name);
+
 /* obj */
 
 typedef unsigned short int grn_obj_flags;
