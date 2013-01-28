@@ -40,15 +40,15 @@ json形式
 
   下記の項目がハッシュ形式で出力されます。
 
-  ``alloc_count``
+``alloc_count``
 
-    groongaプロセスの内部でアロケートされ、まだ解放されてないメモリブロックの数を示します。groongaをbuildする際に、configureオプションで --enable-exact-alloc-countが指定されていたならば、正確な値を返します。それ以外の場合は不正確な値を返す場合があります。
+  groongaプロセスの内部でアロケートされ、まだ解放されてないメモリブロックの数を示します。groongaをbuildする際に、configureオプションで --enable-exact-alloc-countが指定されていたならば、正確な値を返します。それ以外の場合は不正確な値を返す場合があります。
 
-  ``starttime``
+``starttime``
 
-    groongaプロセスが起動した時刻のtvsec値を返します。
+  groongaプロセスが起動した時刻のtvsec値を返します。
 
-  ``uptime``
+``uptime``
 
     groongaプロセスが起動してから経過した秒数を返します。
 
