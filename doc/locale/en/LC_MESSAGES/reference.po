@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-28 16:57\n"
+"POT-Creation-Date: 2013-01-28 18:07\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -116,6 +116,7 @@ msgstr ""
 # 5941cc215b36491b921321e40257d039
 # 560546aa132c40bcbe7f39ecacaad414
 # b7d6effd757d44c2961ac412a77bac40
+#: ../../../source/example/reference/commands/normalize/normalizer_auto_ascii.log:1
 #: ../../../source/example/reference/commands/register/query_expanders_tsv.log:1
 #: ../../../source/example/reference/commands/select/filter_equal.log:1
 #: ../../../source/example/reference/commands/select/filter_less_than.log:1
@@ -541,7 +542,7 @@ msgstr ""
 # 6113f4f60edf40d785b4df6daec7db75
 #: ../../../source/reference/command/output_format.txt:9
 #: ../../../source/reference/command/return_code.txt:9
-#: ../../../source/reference/commands/normalize.txt:25
+#: ../../../source/reference/commands/normalize.txt:17
 #: ../../../source/reference/commands/register.txt:12
 #: ../../../source/reference/commands/select.txt:12
 #: ../../../source/reference/commands/table_create.txt:12
@@ -621,7 +622,7 @@ msgstr ""
 
 # 1bb58676a6024b1ea200d6d95cdc5005
 #: ../../../source/reference/command/output_format.txt:115
-#: ../../../source/reference/commands/normalize.txt:52
+#: ../../../source/reference/commands/normalize.txt:73
 msgid "``HEADER``"
 msgstr ""
 
@@ -798,7 +799,7 @@ msgstr ""
 # 2c4b346efda24fabbe7822b6e2fdafcf
 #: ../../../source/reference/command/output_format.txt:225
 #: ../../../source/reference/command/return_code.txt:102
-#: ../../../source/reference/commands/normalize.txt:70
+#: ../../../source/reference/commands/normalize.txt:83
 #: ../../../source/reference/commands/select.txt:895
 #: ../../../source/reference/commands/table_create.txt:280
 #: ../../../source/reference/functions/query.txt:133
@@ -3381,31 +3382,33 @@ msgstr ""
 msgid ":doc:`log_level` :doc:`log_put`"
 msgstr ":doc:`log_level` :doc:`log_put`"
 
-# 6213e846b33c45a18f52912176cd11de
-#: ../../../source/reference/commands/normalize.txt:6
-msgid "normalize"
+# a3f805f043d84720b77614098cf4fbd6
+#: ../../../source/reference/commands/normalize.txt:9
+msgid "``normalize``"
 msgstr ""
 
 # 933383eb7a954024b117032a06584714
-#: ../../../source/reference/commands/normalize.txt:10
+#: ../../../source/reference/commands/normalize.txt:13
 msgid ""
 "``normalize`` command is the experimental feature. This command may be "
 "changed in the future."
 msgstr ""
 
-# e5a56466ef504ab8b96b053aa8d1f559
-#: ../../../source/reference/commands/normalize.txt:14
-msgid "Name"
+# f9d5af25b10a4f2ea4b3f0dc4d2b4006
+#: ../../../source/reference/commands/normalize.txt:19
+msgid "``normalize`` command normalizes text by the specified normalizer."
 msgstr ""
 
-# 14ed9047e7dd4b1188364a72077f3765
-#: ../../../source/reference/commands/normalize.txt:16
-msgid "normalize - normalizes the given string by the specified normalizer"
+# 0b8265a738994be0a64b1b7ae5a24a7f
+#: ../../../source/reference/commands/normalize.txt:21
+msgid ""
+"There is no need to create table to use ``normalize`` command. It is usefull "
+"for you to check the results of normalizer."
 msgstr ""
 
 # 5cbbff425bb64b799046e859afe82e40
 # c0a4e0d8ea844f4baf64feb8bcf7fc8b
-#: ../../../source/reference/commands/normalize.txt:19
+#: ../../../source/reference/commands/normalize.txt:25
 #: ../../../source/reference/commands/register.txt:27
 #: ../../../source/reference/commands/select.txt:21
 #: ../../../source/reference/commands/table_create.txt:18
@@ -3415,86 +3418,18 @@ msgstr ""
 msgid "Syntax"
 msgstr "Syntax"
 
-# 6697886e570641789241aae12b56390b
+# 8d9c0ef79f864b71aa6c0145a7e0cf43
 #: ../../../source/reference/commands/normalize.txt:27
-msgid "``normalize`` command normalizes text."
-msgstr ""
-
-# 0b8265a738994be0a64b1b7ae5a24a7f
-#: ../../../source/reference/commands/normalize.txt:29
 msgid ""
-"There is no need to create table to use ``normalize`` command. It is usefull "
-"for you to check the results of normalizer."
-msgstr ""
-
-# 91088f986b41452d882d125e6ed028e7
-# 64c1379301424498b45f520d7bab67bd
-#: ../../../source/reference/commands/normalize.txt:33
-#: ../../../source/reference/commands/select.txt:198
-#: ../../../source/reference/commands/table_create.txt:154
-#: ../../../source/reference/functions/geo_distance.txt:146
-#: ../../../source/reference/functions/query.txt:103
-msgid "Parameters"
-msgstr "Parameters"
-
-# 175c7864061e407c9df325dc092b9cc8
-# 90f038de403f4643a37099d043a59cd0
-#: ../../../source/reference/commands/normalize.txt:35
-#: ../../../source/reference/commands/table_create.txt:257
-msgid "``normalizer``"
-msgstr ""
-
-# 6916a8eaf03144b59f58648332a3dbf6
-#: ../../../source/reference/commands/normalize.txt:37
-msgid ""
-"It specifies the name of normalizer. Currently, ``normalize`` command "
-"accepts ``NormalizerAuto`` or ``NormalizerNFKC51`` as built-in normalizer. "
-"If you want to try another normalizer, you need to regist additional "
-"normalizer plugin by ``register`` command."
-msgstr ""
-
-# ffdbd88d1ffd4804bac6c8fa88900a94
-#: ../../../source/reference/commands/normalize.txt:41
-msgid "``string``"
-msgstr ""
-
-# 1470dbeede2a43149fd621e6540b7f7f
-#: ../../../source/reference/commands/normalize.txt:43
-msgid "It specifies any string which you want to normalize."
-msgstr ""
-
-# b28391d763334d68a7b2c6a1731c878c
-#: ../../../source/reference/commands/normalize.txt:46
-#: ../../../source/reference/commands/register.txt:51
-#: ../../../source/reference/commands/table_create.txt:269
-#: ../../../source/reference/functions/geo_distance.txt:293
-#: ../../../source/reference/functions/query.txt:122
-#: ../../../source/reference/functions/snippet_html.txt:93
-msgid "Return value"
-msgstr "Return value"
-
-# 1db91fbbb08d4b97b9a35033e3dd178d
-#: ../../../source/reference/commands/normalize.txt:54
-msgid ""
-"The format of HEADER is [0, UNIX_TIME_WHEN_COMMAND_IS_STARTED, "
-"ELAPSED_TIME]. See :doc:`/reference/command/output_format` about HEADER."
-msgstr ""
-
-# a3f805f043d84720b77614098cf4fbd6
-#: ../../../source/reference/commands/normalize.txt:57
-msgid "``normalized``"
-msgstr ""
-
-# f9d5af25b10a4f2ea4b3f0dc4d2b4006
-#: ../../../source/reference/commands/normalize.txt:59
-msgid "normalized is the normalized text by the specified normalizer."
+"``normalize`` commands takes two parameters - ``normalizer`` and ``string``. "
+"Both of them are required."
 msgstr ""
 
 # 01b0b039140f48fba5d8399e45b7e55b
 # bb5ff6008bb34d7a92afba885c915628
 # faedf5338e484fc0a97463c0bff0f56b
 # 9bad6106d7164a318df4447c81e7a85c
-#: ../../../source/reference/commands/normalize.txt:62
+#: ../../../source/reference/commands/normalize.txt:36
 #: ../../../source/reference/commands/register.txt:34
 #: ../../../source/reference/commands/select.txt:46
 #: ../../../source/reference/commands/table_create.txt:31
@@ -3507,9 +3442,110 @@ msgstr ""
 msgid "Usage"
 msgstr "Usage"
 
+# bf1e94eb0b5a4d81b818a2a97c5a39ad
+# bf1e94eb0b5a4d81b818a2a97c5a39ad
+# bf1e94eb0b5a4d81b818a2a97c5a39ad
+# c4ee6bd61d594fc8ac99ddceb034dcbd
+# 3799cd7cb7b84a4c923af81156c9d3d3
+# bf1e94eb0b5a4d81b818a2a97c5a39ad
+# 491ce5c048964c97a3901465a634f285
+# 3799cd7cb7b84a4c923af81156c9d3d3
+# 491ce5c048964c97a3901465a634f285
+# e13a2895bf5b45d694a5ccd36dbfd75a
+# 491ce5c048964c97a3901465a634f285
+# c4ee6bd61d594fc8ac99ddceb034dcbd
+# 4deda05fde8248d9b4f92a8a8bcea9da
+# c4ee6bd61d594fc8ac99ddceb034dcbd
+# e13a2895bf5b45d694a5ccd36dbfd75a
+# bf1e94eb0b5a4d81b818a2a97c5a39ad
+#: ../../../source/reference/commands/normalize.txt:38
+msgid "Here is a simple example of ``normalize`` command."
+msgstr ""
+
+# 91088f986b41452d882d125e6ed028e7
+# 64c1379301424498b45f520d7bab67bd
+#: ../../../source/reference/commands/normalize.txt:45
+#: ../../../source/reference/commands/select.txt:198
+#: ../../../source/reference/commands/table_create.txt:154
+#: ../../../source/reference/functions/geo_distance.txt:146
+#: ../../../source/reference/functions/query.txt:103
+msgid "Parameters"
+msgstr "Parameters"
+
+# aa6c5a1abc844a978f87b2dd33b26dc6
+#: ../../../source/reference/commands/normalize.txt:47
+msgid "This section describes parameters of ``normalizer``."
+msgstr ""
+
+# f18f26cee4134faa9072c6b02abe4cb1
+# e658f1960e3e490fad2505f2477dd390
+#: ../../../source/reference/commands/normalize.txt:50
+#: ../../../source/reference/commands/select.txt:203
+#: ../../../source/reference/functions/geo_distance.txt:149
+msgid "Required parameter"
+msgstr "Required parameter"
+
+# 8294898fb52244968e09f77b9ccf5c7d
+#: ../../../source/reference/commands/normalize.txt:52
+msgid "There are required parameters, ``normalizer`` and ``string``."
+msgstr ""
+
+# 175c7864061e407c9df325dc092b9cc8
+# 90f038de403f4643a37099d043a59cd0
+#: ../../../source/reference/commands/normalize.txt:55
+#: ../../../source/reference/commands/table_create.txt:257
+msgid "``normalizer``"
+msgstr ""
+
+# 6916a8eaf03144b59f58648332a3dbf6
+#: ../../../source/reference/commands/normalize.txt:57
+msgid ""
+"It specifies the name of normalizer. Currently, ``normalize`` command "
+"accepts ``NormalizerAuto`` or ``NormalizerNFKC51`` as built-in normalizer. "
+"If you want to try another normalizer, you need to register additional "
+"normalizer plugin by ``register`` command."
+msgstr ""
+
+# ffdbd88d1ffd4804bac6c8fa88900a94
+#: ../../../source/reference/commands/normalize.txt:62
+msgid "``string``"
+msgstr ""
+
+# 1470dbeede2a43149fd621e6540b7f7f
+#: ../../../source/reference/commands/normalize.txt:64
+msgid "It specifies any string which you want to normalize."
+msgstr ""
+
+# b28391d763334d68a7b2c6a1731c878c
+#: ../../../source/reference/commands/normalize.txt:67
+#: ../../../source/reference/commands/register.txt:51
+#: ../../../source/reference/commands/table_create.txt:269
+#: ../../../source/reference/functions/geo_distance.txt:293
+#: ../../../source/reference/functions/query.txt:122
+#: ../../../source/reference/functions/snippet_html.txt:93
+msgid "Return value"
+msgstr "Return value"
+
+# 1db91fbbb08d4b97b9a35033e3dd178d
+#: ../../../source/reference/commands/normalize.txt:75
+msgid ""
+"The format of HEADER is [0, UNIX_TIME_WHEN_COMMAND_IS_STARTED, "
+"ELAPSED_TIME]. See :doc:`/reference/command/output_format` about HEADER."
+msgstr ""
+
+# a3f805f043d84720b77614098cf4fbd6
+#: ../../../source/reference/commands/normalize.txt:78
+msgid "``normalized``"
+msgstr ""
+
+# f9d5af25b10a4f2ea4b3f0dc4d2b4006
+#: ../../../source/reference/commands/normalize.txt:80
+msgid "normalized is the normalized text by the specified normalizer."
+msgstr ""
+
 # 257a8b1e0a424cf3807162e2534d2837
 # 73ec2c3dc21241d5b0b795816605eeb2
-#: ../../../source/reference/commands/normalize.txt:72
+#: ../../../source/reference/commands/normalize.txt:85
 #: ../../../source/reference/commands/table_create.txt:285
 msgid ":doc:`/reference/normalizers`"
 msgstr ""
@@ -3924,13 +3960,6 @@ msgstr ""
 #: ../../../source/reference/commands/select.txt:200
 msgid "This section describes all parameters. Parameters are categorized."
 msgstr "This section describes all parameters. Parameters are categorized."
-
-# f18f26cee4134faa9072c6b02abe4cb1
-# e658f1960e3e490fad2505f2477dd390
-#: ../../../source/reference/commands/select.txt:203
-#: ../../../source/reference/functions/geo_distance.txt:149
-msgid "Required parameter"
-msgstr "Required parameter"
 
 # 1eb1184cdea4464ca9cc8a73c9deecf7
 #: ../../../source/reference/commands/select.txt:205
