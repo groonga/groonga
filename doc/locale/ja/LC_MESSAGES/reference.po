@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-28 16:58\n"
+"POT-Creation-Date: 2013-01-28 18:20\n"
 "PO-Revision-Date: 2013-01-24 11:36+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -55,6 +55,7 @@ msgstr ""
 # 86f813158fb74ecf98b92a40683e0847
 # bc81190a751d435b80a6d307500c72c0
 # cc0208c9593d41c3af00a5444aa4f394
+#: ../../../source/example/reference/commands/normalize/normalizer_auto_ascii.log:1
 #: ../../../source/example/reference/commands/register/query_expanders_tsv.log:1
 #: ../../../source/example/reference/commands/select/filter_equal.log:1
 #: ../../../source/example/reference/commands/select/filter_less_than.log:1
@@ -422,7 +423,7 @@ msgstr "出力形式"
 # bb58728aaf864b5e9f38e3b2ca5f1eea
 #: ../../../source/reference/command/output_format.txt:9
 #: ../../../source/reference/command/return_code.txt:9
-#: ../../../source/reference/commands/normalize.txt:25
+#: ../../../source/reference/commands/normalize.txt:17
 #: ../../../source/reference/commands/register.txt:12
 #: ../../../source/reference/commands/select.txt:12
 #: ../../../source/reference/commands/table_create.txt:12
@@ -526,7 +527,7 @@ msgstr "``BODY`` に相当する部分は以下です::"
 
 # d66e98ee02154150a140c5db404e7419
 #: ../../../source/reference/command/output_format.txt:115
-#: ../../../source/reference/commands/normalize.txt:52
+#: ../../../source/reference/commands/normalize.txt:73
 msgid "``HEADER``"
 msgstr ""
 
@@ -740,7 +741,7 @@ msgstr ""
 # 06123d911ca84262ae1775271000e2f4
 #: ../../../source/reference/command/output_format.txt:225
 #: ../../../source/reference/command/return_code.txt:102
-#: ../../../source/reference/commands/normalize.txt:70
+#: ../../../source/reference/commands/normalize.txt:83
 #: ../../../source/reference/commands/select.txt:895
 #: ../../../source/reference/commands/table_create.txt:280
 #: ../../../source/reference/functions/query.txt:133
@@ -3210,12 +3211,12 @@ msgid ":doc:`log_level` :doc:`log_put`"
 msgstr ""
 
 # a2f5fdf4c9754afa8095b1729265d517
-#: ../../../source/reference/commands/normalize.txt:6
-msgid "normalize"
+#: ../../../source/reference/commands/normalize.txt:9
+msgid "``normalize``"
 msgstr ""
 
 # 50d4a5927b81445f840f51e9605db852
-#: ../../../source/reference/commands/normalize.txt:10
+#: ../../../source/reference/commands/normalize.txt:13
 msgid ""
 "``normalize`` command is the experimental feature. This command may be "
 "changed in the future."
@@ -3223,20 +3224,25 @@ msgstr ""
 "``normalize`` コマンドは実験的な機能です。このコマンドは将来的に変更されるか"
 "も知れません。"
 
-# 574e91b1dc174d8b815c280ec0da3e14
-#: ../../../source/reference/commands/normalize.txt:14
-msgid "Name"
-msgstr "名前"
+# f21982b8504d499fa39e4e6c4be6923e
+#: ../../../source/reference/commands/normalize.txt:19
+msgid "``normalize`` command normalizes text by the specified normalizer."
+msgstr ""
+"``normalize`` コマンドは指定したノーマライザーでテキストを正規化します。"
 
-# 34d3da1333d24e26a324cce884293711
-#: ../../../source/reference/commands/normalize.txt:16
-msgid "normalize - normalizes the given string by the specified normalizer"
-msgstr "normalize - 指定したノーマライザーで文字列を正規化する"
+# c91014bfde6f49d88b266f07400015cb
+#: ../../../source/reference/commands/normalize.txt:21
+msgid ""
+"There is no need to create table to use ``normalize`` command. It is usefull "
+"for you to check the results of normalizer."
+msgstr ""
+"``normalize`` コマンドを使うのにテーブルを作成する必要はありません。このコマ"
+"ンドは、ノーマライザーの結果を確認するのに便利です。"
 
 # 47dc2b34beb1410495604199c7f24873
 # eaadf83a10cc4718bfa95e2aca8b7206
 # 22e16b231eb94001863c7769e59e4b47
-#: ../../../source/reference/commands/normalize.txt:19
+#: ../../../source/reference/commands/normalize.txt:25
 #: ../../../source/reference/commands/register.txt:27
 #: ../../../source/reference/commands/select.txt:21
 #: ../../../source/reference/commands/table_create.txt:18
@@ -3246,95 +3252,20 @@ msgstr "normalize - 指定したノーマライザーで文字列を正規化す
 msgid "Syntax"
 msgstr "構文"
 
-# 775268a22a024076ac2546f5b9fe9e4f
+# 175ddfb1298649878c537595a2683fc5
 #: ../../../source/reference/commands/normalize.txt:27
-msgid "``normalize`` command normalizes text."
-msgstr "``normalize`` コマンドはテキストを正規化します。"
-
-# c91014bfde6f49d88b266f07400015cb
-#: ../../../source/reference/commands/normalize.txt:29
 msgid ""
-"There is no need to create table to use ``normalize`` command. It is usefull "
-"for you to check the results of normalizer."
+"``normalize`` commands takes two parameters - ``normalizer`` and ``string``. "
+"Both of them are required."
 msgstr ""
-"``normalize`` コマンドを使うのにテーブルを作成する必要はありません。このコマ"
-"ンドは、ノーマライザーの結果を確認するのに便利です。"
-
-# 3ed1ed0a3bb349fa8db4eccf86029d9f
-# 18532e03e38c4f96970d5935b7432cba
-#: ../../../source/reference/commands/normalize.txt:33
-#: ../../../source/reference/commands/select.txt:198
-#: ../../../source/reference/commands/table_create.txt:154
-#: ../../../source/reference/functions/geo_distance.txt:146
-#: ../../../source/reference/functions/query.txt:103
-msgid "Parameters"
-msgstr "引数"
-
-# 6b1754c3e5be4f51a74d6a2bb467702d
-#: ../../../source/reference/commands/normalize.txt:35
-#: ../../../source/reference/commands/table_create.txt:257
-msgid "``normalizer``"
-msgstr ""
-
-# 448c01bf71e445e4b8cf64f75eb74821
-#: ../../../source/reference/commands/normalize.txt:37
-msgid ""
-"It specifies the name of normalizer. Currently, ``normalize`` command "
-"accepts ``NormalizerAuto`` or ``NormalizerNFKC51`` as built-in normalizer. "
-"If you want to try another normalizer, you need to regist additional "
-"normalizer plugin by ``register`` command."
-msgstr ""
-"ノーマライザーの名前を指定します。今のところ ``normalize`` コマンドは "
-"``NormalizerAuto`` もしくは ``NormalizerNFKC51`` を組み込みノーマライザーとし"
-"て受けつけます。もし他のノーマライザーを使いたい場合には、追加したいノーマラ"
-"イザーを :doc:`/reference/commands/register` コマンドで登録する必要がありま"
-"す。"
-
-# cb0a853b357a4c649782dcd24af78d02
-#: ../../../source/reference/commands/normalize.txt:41
-msgid "``string``"
-msgstr ""
-
-# b0b25f3e15764cb184fbc1aad1979089
-#: ../../../source/reference/commands/normalize.txt:43
-msgid "It specifies any string which you want to normalize."
-msgstr "正規化したい文字列を指定します。"
-
-# f18ad5e74b9c45f783d38e24995b3abe
-#: ../../../source/reference/commands/normalize.txt:46
-#: ../../../source/reference/commands/register.txt:51
-#: ../../../source/reference/commands/table_create.txt:269
-#: ../../../source/reference/functions/geo_distance.txt:293
-#: ../../../source/reference/functions/query.txt:122
-#: ../../../source/reference/functions/snippet_html.txt:93
-msgid "Return value"
-msgstr "戻り値"
-
-# cdd462ed19424427982fabc0de88064d
-#: ../../../source/reference/commands/normalize.txt:54
-msgid ""
-"The format of HEADER is [0, UNIX_TIME_WHEN_COMMAND_IS_STARTED, "
-"ELAPSED_TIME]. See :doc:`/reference/command/output_format` about HEADER."
-msgstr ""
-"HEADERのフォーマットは  [0, UNIX_TIME_WHEN_COMMAND_IS_STARTED, ELAPSED_TIME] "
-"です。HEADERについては :doc:`/reference/command/output_format` を参照してくだ"
-"さい。"
-
-# a2f5fdf4c9754afa8095b1729265d517
-#: ../../../source/reference/commands/normalize.txt:57
-msgid "``normalized``"
-msgstr ""
-
-# f21982b8504d499fa39e4e6c4be6923e
-#: ../../../source/reference/commands/normalize.txt:59
-msgid "normalized is the normalized text by the specified normalizer."
-msgstr "normalizedは指定したノーマライザーによる正規化されたテキストです。"
+"``normalize`` コマンドは ``normalizer`` と ``string`` という二つの引数をとります。"
+"これらの引数はどちらも必須です。"
 
 # 2874da1d881b448992bb7c4fd1cf7e34
 # 09d40eac91774db29b40ff7e960663da
 # cd5e20dad0b8499894cefbe0dcbef7c8
 # 41271dbb3fa340a8a33cb610678460bb
-#: ../../../source/reference/commands/normalize.txt:62
+#: ../../../source/reference/commands/normalize.txt:36
 #: ../../../source/reference/commands/register.txt:34
 #: ../../../source/reference/commands/select.txt:46
 #: ../../../source/reference/commands/table_create.txt:31
@@ -3347,8 +3278,101 @@ msgstr "normalizedは指定したノーマライザーによる正規化され�
 msgid "Usage"
 msgstr "使い方"
 
+# 1ccd84b3f15a4567b23bb0e7d8c66fcd
+#: ../../../source/reference/commands/normalize.txt:38
+msgid "Here is a simple example of ``normalize`` command."
+msgstr "以下は ``normalize`` コマンドの簡単な使用例です。"
+
+# 3ed1ed0a3bb349fa8db4eccf86029d9f
+# 18532e03e38c4f96970d5935b7432cba
+#: ../../../source/reference/commands/normalize.txt:45
+#: ../../../source/reference/commands/select.txt:198
+#: ../../../source/reference/commands/table_create.txt:154
+#: ../../../source/reference/functions/geo_distance.txt:146
+#: ../../../source/reference/functions/query.txt:103
+msgid "Parameters"
+msgstr "引数"
+
+# e92758beef824130ab42669342c10d50
+#: ../../../source/reference/commands/normalize.txt:47
+msgid "This section describes parameters of ``normalizer``."
+msgstr "このセクションでは ``normalizer`` の引数について説明します。"
+
+# 41a5ec8bf94e4a5a87e2cbcb48e5a10e
+# 852d1057fa6546bc9ab1ff1a04d6f857
+#: ../../../source/reference/commands/normalize.txt:50
+#: ../../../source/reference/commands/select.txt:203
+#: ../../../source/reference/functions/geo_distance.txt:149
+msgid "Required parameter"
+msgstr "必須引数"
+
+# b90bfd8b177440e6b2a2ff7f128303f9
+#: ../../../source/reference/commands/normalize.txt:52
+msgid "There are required parameters, ``normalizer`` and ``string``."
+msgstr "必須引数は二つあります。 ``normalizer`` と ``string`` です。"
+
+# 6b1754c3e5be4f51a74d6a2bb467702d
+#: ../../../source/reference/commands/normalize.txt:55
+#: ../../../source/reference/commands/table_create.txt:257
+msgid "``normalizer``"
+msgstr ""
+
+# 448c01bf71e445e4b8cf64f75eb74821
+#: ../../../source/reference/commands/normalize.txt:57
+msgid ""
+"It specifies the name of normalizer. Currently, ``normalize`` command "
+"accepts ``NormalizerAuto`` or ``NormalizerNFKC51`` as built-in normalizer. "
+"If you want to try another normalizer, you need to register additional "
+"normalizer plugin by ``register`` command."
+msgstr ""
+"ノーマライザーの名前を指定します。今のところ ``normalize`` コマンドは "
+"``NormalizerAuto`` もしくは ``NormalizerNFKC51`` を組み込みノーマライザーとし"
+"て受けつけます。もし他のノーマライザーを使いたい場合には、追加したいノーマラ"
+"イザーを :doc:`/reference/commands/register` コマンドで登録する必要がありま"
+"す。"
+
+# cb0a853b357a4c649782dcd24af78d02
+#: ../../../source/reference/commands/normalize.txt:62
+msgid "``string``"
+msgstr ""
+
+# b0b25f3e15764cb184fbc1aad1979089
+#: ../../../source/reference/commands/normalize.txt:64
+msgid "It specifies any string which you want to normalize."
+msgstr "正規化したい文字列を指定します。"
+
+# f18ad5e74b9c45f783d38e24995b3abe
+#: ../../../source/reference/commands/normalize.txt:67
+#: ../../../source/reference/commands/register.txt:51
+#: ../../../source/reference/commands/table_create.txt:269
+#: ../../../source/reference/functions/geo_distance.txt:293
+#: ../../../source/reference/functions/query.txt:122
+#: ../../../source/reference/functions/snippet_html.txt:93
+msgid "Return value"
+msgstr "戻り値"
+
+# cdd462ed19424427982fabc0de88064d
+#: ../../../source/reference/commands/normalize.txt:75
+msgid ""
+"The format of HEADER is [0, UNIX_TIME_WHEN_COMMAND_IS_STARTED, "
+"ELAPSED_TIME]. See :doc:`/reference/command/output_format` about HEADER."
+msgstr ""
+"HEADERのフォーマットは  [0, UNIX_TIME_WHEN_COMMAND_IS_STARTED, ELAPSED_TIME] "
+"です。HEADERについては :doc:`/reference/command/output_format` を参照してくだ"
+"さい。"
+
+# a2f5fdf4c9754afa8095b1729265d517
+#: ../../../source/reference/commands/normalize.txt:78
+msgid "``normalized``"
+msgstr ""
+
+# f21982b8504d499fa39e4e6c4be6923e
+#: ../../../source/reference/commands/normalize.txt:80
+msgid "normalized is the normalized text by the specified normalizer."
+msgstr "normalizedは指定したノーマライザーによる正規化されたテキストです。"
+
 # c1eec2803b574b0bbe9bde8177d0c14c
-#: ../../../source/reference/commands/normalize.txt:72
+#: ../../../source/reference/commands/normalize.txt:85
 #: ../../../source/reference/commands/table_create.txt:285
 msgid ":doc:`/reference/normalizers`"
 msgstr ""
@@ -3773,13 +3797,6 @@ msgid "This section describes all parameters. Parameters are categorized."
 msgstr ""
 "このセクションではすべての引数について説明します。引数はカテゴリわけしていま"
 "す。"
-
-# 41a5ec8bf94e4a5a87e2cbcb48e5a10e
-# 852d1057fa6546bc9ab1ff1a04d6f857
-#: ../../../source/reference/commands/select.txt:203
-#: ../../../source/reference/functions/geo_distance.txt:149
-msgid "Required parameter"
-msgstr "必須引数"
 
 # 75c38df430b54c44844526068cb9d03b
 #: ../../../source/reference/commands/select.txt:205
