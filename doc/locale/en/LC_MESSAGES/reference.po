@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-25 16:42\n"
+"POT-Creation-Date: 2013-01-28 16:29\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -541,6 +541,7 @@ msgstr ""
 # 6113f4f60edf40d785b4df6daec7db75
 #: ../../../source/reference/command/output_format.txt:9
 #: ../../../source/reference/command/return_code.txt:9
+#: ../../../source/reference/commands/normalize.txt:25
 #: ../../../source/reference/commands/register.txt:12
 #: ../../../source/reference/commands/select.txt:12
 #: ../../../source/reference/commands/table_create.txt:12
@@ -620,6 +621,7 @@ msgstr ""
 
 # 1bb58676a6024b1ea200d6d95cdc5005
 #: ../../../source/reference/command/output_format.txt:115
+#: ../../../source/reference/commands/normalize.txt:52
 msgid "``HEADER``"
 msgstr ""
 
@@ -796,6 +798,7 @@ msgstr ""
 # 2c4b346efda24fabbe7822b6e2fdafcf
 #: ../../../source/reference/command/output_format.txt:225
 #: ../../../source/reference/command/return_code.txt:102
+#: ../../../source/reference/commands/normalize.txt:70
 #: ../../../source/reference/commands/select.txt:895
 #: ../../../source/reference/commands/table_create.txt:280
 #: ../../../source/reference/functions/query.txt:133
@@ -1602,6 +1605,16 @@ msgstr "返値"
 msgid "json"
 msgstr "json"
 
+# 267d2aeaa619407cbab30c23fdbeb15a
+#: ../../../source/reference/commands/cache_limit.txt:45
+msgid "``以前の設定値``"
+msgstr ""
+
+# 98f34a1c516e48528cd2a026a6305528
+#: ../../../source/reference/commands/cache_limit.txt:47
+msgid "すでに設定されていたクエリキャッシュの最大件数を返す。"
+msgstr ""
+
 # 7ca49eb251834eaaafc54ffbe0ebbba0
 # 08325622a48540e9ac1f4b44f2c86c4e
 # 31182730a9724ee095a568199e05971e
@@ -1748,6 +1761,225 @@ msgstr "チェックするオブジェクトにより返される値が変わり
 msgid "インデックスカラムの場合::"
 msgstr "インデックスカラムの場合::"
 
+# 05fa57b8e2a043eb81eea56e89dd467f
+#: ../../../source/reference/commands/check.txt:47
+msgid "``インデックスの状態`` には下記の項目がハッシュ形式で出力されます。"
+msgstr ""
+
+# 7ce6ba435e3641b8a4d89e74b3fb249b
+# b5983df39f7d46faa0a27c4f9cbf4552
+# 3663a61eb37a45a7b35671577635e5f0
+# 0df8e7d57bb640bf9e19e7678fc45333
+#: ../../../source/reference/commands/check.txt:49
+#: ../../../source/reference/commands/column_create.txt:39
+#: ../../../source/reference/commands/column_list.txt:63
+#: ../../../source/reference/commands/table_create.txt:179
+#: ../../../source/reference/commands/table_list.txt:58
+msgid "``flags``"
+msgstr "``flags``"
+
+# dbfab6b41b8c410cb65c747402b8ec67
+#: ../../../source/reference/commands/check.txt:51
+msgid "指定されているフラグ値です。16進数で表現されています。"
+msgstr ""
+
+# b0f263ad3e6b42e08486047890401704
+# 0440c20bd123498889aba1be24af580c
+#: ../../../source/reference/commands/check.txt:53
+msgid "``max sid``"
+msgstr ""
+
+# 7cea329242374ad68d5225c61a8ac8ce
+#: ../../../source/reference/commands/check.txt:55
+msgid "セグメントのうち最も大きなIDです。"
+msgstr ""
+
+# c16322446ac2427e8b4c24f47803775e
+#: ../../../source/reference/commands/check.txt:57
+msgid "``number of garbage segments``"
+msgstr ""
+
+# 392081ef38b947578491e7496b58ac57
+#: ../../../source/reference/commands/check.txt:59
+msgid "ゴミセグメントの数です。"
+msgstr ""
+
+# af58e3fddc3d49fa8fdb76f1ed39c2b7
+#: ../../../source/reference/commands/check.txt:61
+msgid "``number of array segments``"
+msgstr ""
+
+# 11d1559bba4a443f92d0ee0f58c446f7
+#: ../../../source/reference/commands/check.txt:63
+msgid "配列セグメントの数です。"
+msgstr ""
+
+# 04e414fefc454c9d8951b64380311274
+#: ../../../source/reference/commands/check.txt:65
+msgid "``max id of array segment``"
+msgstr ""
+
+# 3344e6f5a7ee4674a4781ae53dea2249
+#: ../../../source/reference/commands/check.txt:67
+msgid "配列セグメントのうち最も大きなIDです。"
+msgstr ""
+
+# 12185cb4ecbe4ac382ad3e3a84ae94f7
+#: ../../../source/reference/commands/check.txt:69
+msgid "``number of buffer segments``"
+msgstr ""
+
+# 67182535880e410b9388658a7d90c771
+#: ../../../source/reference/commands/check.txt:71
+msgid "バッファセグメントの数です。"
+msgstr ""
+
+# c8e65d80b52d41489c86b84110624090
+#: ../../../source/reference/commands/check.txt:73
+msgid "``max id of buffer segment``"
+msgstr ""
+
+# c5f699ffdf864de699663608942aca75
+#: ../../../source/reference/commands/check.txt:75
+msgid "バッファセグメントのうち最も大きなIDです。"
+msgstr ""
+
+# 200dbee6946847218e6efcc335ba21d8
+#: ../../../source/reference/commands/check.txt:77
+msgid "``max id of physical segment in use``"
+msgstr ""
+
+# 6ddbfe00cf6c4f23b5418e35e05f19ae
+#: ../../../source/reference/commands/check.txt:79
+msgid "使用中の論理セグメントのうち最も大きなIDです。"
+msgstr ""
+
+# 97eb022a8e0644b4a04621d235b44ad5
+#: ../../../source/reference/commands/check.txt:81
+msgid "``number of unmanaged segments``"
+msgstr ""
+
+# 5dc93de550d942adb68af536c0d54228
+#: ../../../source/reference/commands/check.txt:83
+msgid "管理されていないセグメントの数です。"
+msgstr ""
+
+# 858d16c6868f49c897b1332140a19da5
+#: ../../../source/reference/commands/check.txt:85
+msgid "``total chunk size``"
+msgstr ""
+
+# b083062a6deb43718b9fb1071ec11e38
+#: ../../../source/reference/commands/check.txt:87
+msgid "チャンクサイズの合計です。"
+msgstr ""
+
+# 37769073ef8b4aa6be1878c214c64633
+#: ../../../source/reference/commands/check.txt:89
+msgid "``max id of chunk segments in use``"
+msgstr ""
+
+# 083e18cfb3e545d796bd4d988aba4fd9
+#: ../../../source/reference/commands/check.txt:91
+msgid "使用中のチャンクセグメントのうち最も大きなIDです。"
+msgstr ""
+
+# 9fd42dfb5eb84f6c8e33f0782d57b730
+#: ../../../source/reference/commands/check.txt:93
+msgid "``number of garbage chunk``"
+msgstr ""
+
+# 332053901e6548dc922dae59efbb0c7b
+#: ../../../source/reference/commands/check.txt:95
+msgid "各チャンク毎のゴミの数です。"
+msgstr ""
+
+# a07c24b74a0949f9bb825cdfc3c3a47f
+#: ../../../source/reference/commands/check.txt:97
+msgid "``バッファの状態`` には下記の項目がハッシュ形式で出力されます。"
+msgstr ""
+
+# 7777b32dd78747a48d2b6ab561bbf5dc
+# f24e7ea44302434ebf68d896fe26c32b
+# 09ee6652100f41b0a72514a7bef7eb56
+# 401e9097289b49128ee3a12e432d2e40
+#: ../../../source/reference/commands/check.txt:99
+msgid "``buffer id``"
+msgstr ""
+
+# d8a6b2a581c540129108fe6785271e5d
+#: ../../../source/reference/commands/check.txt:101
+msgid "バッファIDです。"
+msgstr ""
+
+# 9b294bff61a74d0689af921532910d69
+#: ../../../source/reference/commands/check.txt:103
+msgid "``chunk size``"
+msgstr ""
+
+# 619e7842edb946b8bc00763b8cf551ac
+#: ../../../source/reference/commands/check.txt:105
+msgid "チャンクのサイズです。"
+msgstr ""
+
+# 7ade414e8ea14d70a5687e42a70bab0c
+#: ../../../source/reference/commands/check.txt:107
+msgid "``buffer term``"
+msgstr ""
+
+# 34dd273902634fecb6588d3f3bd3ff12
+#: ../../../source/reference/commands/check.txt:109
+msgid ""
+"バッファ内にある語の一覧です。各語の状態は以下のような配列となっています。"
+msgstr ""
+
+# 67624f9ebd88486e8c7de31e9fb78de1
+#: ../../../source/reference/commands/check.txt:111
+msgid ""
+"[語, バッファに登録されている語のID, 用語集に登録されている語のID, バッファ内"
+"でのサイズ, チャンク内でのサイズ]"
+msgstr ""
+
+# 6e1e4422b01e4a0caf4826b28e8c2d32
+#: ../../../source/reference/commands/check.txt:113
+msgid "``buffer free``"
+msgstr ""
+
+# 5c30fbd9092f46919a278072a41321a7
+#: ../../../source/reference/commands/check.txt:115
+msgid "バッファの空き容量です。"
+msgstr ""
+
+# 8acf99491d804780a9023b19f54e24b0
+#: ../../../source/reference/commands/check.txt:117
+msgid "``size in buffer``"
+msgstr ""
+
+# 6899474300c6425fb54602dae1c9f756
+#: ../../../source/reference/commands/check.txt:119
+msgid "バッファの使用量です。"
+msgstr ""
+
+# f39321953f394e7fb1e821f4dd642690
+#: ../../../source/reference/commands/check.txt:121
+msgid "``nterms``"
+msgstr ""
+
+# 780aa1cfa3344bda86f036036d7bdb81
+#: ../../../source/reference/commands/check.txt:123
+msgid "バッファ内にある語の数です。"
+msgstr ""
+
+# 5280950aaa6d463e9c784f52bdd89e99
+#: ../../../source/reference/commands/check.txt:125
+msgid "``nterms with chunk``"
+msgstr ""
+
+# c46120984b9846d5bfac7bef90e2fae0
+#: ../../../source/reference/commands/check.txt:127
+msgid "バッファ内にある語のうち、チャンクを使っている語の数です。"
+msgstr ""
+
 # a4ea4a614ad04aac8f6276a29d47a7f5
 #: ../../../source/reference/commands/check.txt:132
 msgid "テーブルTermsのインデックスカラムnameの状態を表示します。::"
@@ -1800,6 +2032,48 @@ msgid ""
 msgstr ""
 "対象となるオブジェクト名を指定します。空の場合、開いているdbオブジェクトが対"
 "象となります。"
+
+# f1eb27fd83e2459f9d4a7a35f212edc7
+# 4e87a949874740d4baac448962542ec6
+# a627bafd33624a80b4fb8db09597663c
+# 770a350f338e43409adf5d590ef45626
+# 696b2072053146bfb94583bbfd6ba2c5
+# 6671c60c1f844853986e37a00f31582f
+# 8159e11a41454f8383472df037ac2a86
+# 0abaaa35b02a4fc0a0b6c8a4e79798c3
+# 4a4057ba5fcf443a9e6002149dffe9f5
+#: ../../../source/reference/commands/clearlock.txt:43
+#: ../../../source/reference/commands/column_create.txt:80
+#: ../../../source/reference/commands/column_remove.txt:46
+#: ../../../source/reference/commands/define_selector.txt:101
+#: ../../../source/reference/commands/delete.txt:55
+#: ../../../source/reference/commands/log_level.txt:52
+#: ../../../source/reference/commands/log_put.txt:56
+#: ../../../source/reference/commands/log_reopen.txt:43
+#: ../../../source/reference/commands/table_remove.txt:42
+msgid "``成功かどうかのフラグ``"
+msgstr ""
+
+# 4fa1cf91248c44e49bca7f71c6e5f486
+# 1e84a5a4c03f4c149396ee3c0d6da8bb
+# 10b7f1c130d3432d85d704de4a9d2120
+# 0ed3506ddbcc4652902e6c324ad6e3b5
+# 0dfce8f411fe48d798754d28c20ec65c
+# 40d7ce0e04cd4921b5d264a4b3bec871
+# 79c570f53d234fa4941069c94a4dcb44
+# 8f2c7090bca247f1b9f4ea23c51a7e8b
+# 7fc39b6f4a3e484bb3f73f3706b42ecf
+#: ../../../source/reference/commands/clearlock.txt:45
+#: ../../../source/reference/commands/column_create.txt:82
+#: ../../../source/reference/commands/column_remove.txt:48
+#: ../../../source/reference/commands/define_selector.txt:103
+#: ../../../source/reference/commands/delete.txt:57
+#: ../../../source/reference/commands/log_level.txt:54
+#: ../../../source/reference/commands/log_put.txt:58
+#: ../../../source/reference/commands/log_reopen.txt:45
+#: ../../../source/reference/commands/table_remove.txt:44
+msgid "エラーが生じなかった場合にはtrue、エラーが生じた場合にはfalseを返す。"
+msgstr ""
 
 # 97839c30c8d44455967884597543b348
 #: ../../../source/reference/commands/clearlock.txt:50
@@ -1937,17 +2211,6 @@ msgid ""
 msgstr ""
 "ピリオド('.'), コロン(':')を含む名前のカラムは作成できません。また、アンダー"
 "スコア('_')で始まる名前は予約済みであり、使用できません。"
-
-# 7ce6ba435e3641b8a4d89e74b3fb249b
-# b5983df39f7d46faa0a27c4f9cbf4552
-# 3663a61eb37a45a7b35671577635e5f0
-# 0df8e7d57bb640bf9e19e7678fc45333
-#: ../../../source/reference/commands/column_create.txt:39
-#: ../../../source/reference/commands/column_list.txt:63
-#: ../../../source/reference/commands/table_create.txt:179
-#: ../../../source/reference/commands/table_list.txt:58
-msgid "``flags``"
-msgstr "``flags``"
 
 # 7102c865571d4aa082866a971a8740dc
 #: ../../../source/reference/commands/column_create.txt:41
@@ -2552,6 +2815,16 @@ msgstr ""
 "defragは、対象となるオブジェクト(データベースか可変長サイズカラム)を指定し、"
 "オブジェクトのフラグメンテーションを解消します。"
 
+# f4f18111cbd742b4a3776e53c8367a8d
+#: ../../../source/reference/commands/defrag.txt:43
+msgid "``フラグメンテーション解消を実行したセグメントの数``"
+msgstr ""
+
+# 38c0ef5598a14e89bc33bde29400771e
+#: ../../../source/reference/commands/defrag.txt:45
+msgid "フラグメンテーション解消を実行したセグメントの数を返す。"
+msgstr ""
+
 # dca00c2bf42a48c580b461196f6a9e35
 #: ../../../source/reference/commands/defrag.txt:50
 msgid "開いているデータベースのフラグメンテーションを解消する::"
@@ -3108,6 +3381,139 @@ msgstr ""
 msgid ":doc:`log_level` :doc:`log_put`"
 msgstr ":doc:`log_level` :doc:`log_put`"
 
+# 6213e846b33c45a18f52912176cd11de
+#: ../../../source/reference/commands/normalize.txt:6
+msgid "normalize"
+msgstr ""
+
+# 933383eb7a954024b117032a06584714
+#: ../../../source/reference/commands/normalize.txt:10
+msgid ""
+"``normalize`` command is the experimental feature. This command may be "
+"changed in the future."
+msgstr ""
+
+# e5a56466ef504ab8b96b053aa8d1f559
+#: ../../../source/reference/commands/normalize.txt:14
+msgid "Name"
+msgstr ""
+
+# 14ed9047e7dd4b1188364a72077f3765
+#: ../../../source/reference/commands/normalize.txt:16
+msgid "normalize - normalizes the given string by the specified normalizer"
+msgstr ""
+
+# 5cbbff425bb64b799046e859afe82e40
+# c0a4e0d8ea844f4baf64feb8bcf7fc8b
+#: ../../../source/reference/commands/normalize.txt:19
+#: ../../../source/reference/commands/register.txt:27
+#: ../../../source/reference/commands/select.txt:21
+#: ../../../source/reference/commands/table_create.txt:18
+#: ../../../source/reference/functions/geo_distance.txt:18
+#: ../../../source/reference/functions/query.txt:26
+#: ../../../source/reference/functions/snippet_html.txt:27
+msgid "Syntax"
+msgstr "Syntax"
+
+# 6697886e570641789241aae12b56390b
+#: ../../../source/reference/commands/normalize.txt:27
+msgid "``normalize`` command normalizes text."
+msgstr ""
+
+# 0b8265a738994be0a64b1b7ae5a24a7f
+#: ../../../source/reference/commands/normalize.txt:29
+msgid ""
+"There is no need to create table to use ``normalize`` command. It is usefull "
+"for you to check the results of normalizer."
+msgstr ""
+
+# 91088f986b41452d882d125e6ed028e7
+# 64c1379301424498b45f520d7bab67bd
+#: ../../../source/reference/commands/normalize.txt:33
+#: ../../../source/reference/commands/select.txt:198
+#: ../../../source/reference/commands/table_create.txt:154
+#: ../../../source/reference/functions/geo_distance.txt:146
+#: ../../../source/reference/functions/query.txt:103
+msgid "Parameters"
+msgstr "Parameters"
+
+# 175c7864061e407c9df325dc092b9cc8
+# 90f038de403f4643a37099d043a59cd0
+#: ../../../source/reference/commands/normalize.txt:35
+#: ../../../source/reference/commands/table_create.txt:257
+msgid "``normalizer``"
+msgstr ""
+
+# 6916a8eaf03144b59f58648332a3dbf6
+#: ../../../source/reference/commands/normalize.txt:37
+msgid ""
+"It specifies the name of normalizer. Currently, ``normalize`` command "
+"accepts ``NormalizerAuto`` or ``NormalizerNFC`` as built-in normalizer. If "
+"you want to try another normalizer, you need to regist additional normalizer "
+"plugin by ``register`` command."
+msgstr ""
+
+# ffdbd88d1ffd4804bac6c8fa88900a94
+#: ../../../source/reference/commands/normalize.txt:41
+msgid "``string``"
+msgstr ""
+
+# 1470dbeede2a43149fd621e6540b7f7f
+#: ../../../source/reference/commands/normalize.txt:43
+msgid "It specifies any string which you want to normalize."
+msgstr ""
+
+# b28391d763334d68a7b2c6a1731c878c
+#: ../../../source/reference/commands/normalize.txt:46
+#: ../../../source/reference/commands/register.txt:51
+#: ../../../source/reference/commands/table_create.txt:269
+#: ../../../source/reference/functions/geo_distance.txt:293
+#: ../../../source/reference/functions/query.txt:122
+#: ../../../source/reference/functions/snippet_html.txt:93
+msgid "Return value"
+msgstr "Return value"
+
+# 1db91fbbb08d4b97b9a35033e3dd178d
+#: ../../../source/reference/commands/normalize.txt:54
+msgid ""
+"The format of HEADER is [0, UNIX_TIME_WHEN_COMMAND_IS_STARTED, "
+"ELAPSED_TIME]. See :doc:`/reference/command/output_format` about HEADER."
+msgstr ""
+
+# a3f805f043d84720b77614098cf4fbd6
+#: ../../../source/reference/commands/normalize.txt:57
+msgid "``normalized``"
+msgstr ""
+
+# f9d5af25b10a4f2ea4b3f0dc4d2b4006
+#: ../../../source/reference/commands/normalize.txt:59
+msgid "normalized is the normalized text by the specified normalizer."
+msgstr ""
+
+# 01b0b039140f48fba5d8399e45b7e55b
+# bb5ff6008bb34d7a92afba885c915628
+# faedf5338e484fc0a97463c0bff0f56b
+# 9bad6106d7164a318df4447c81e7a85c
+#: ../../../source/reference/commands/normalize.txt:62
+#: ../../../source/reference/commands/register.txt:34
+#: ../../../source/reference/commands/select.txt:46
+#: ../../../source/reference/commands/table_create.txt:31
+#: ../../../source/reference/executables/groonga-httpd.txt:30
+#: ../../../source/reference/functions/geo_distance.txt:31
+#: ../../../source/reference/functions/query.txt:36
+#: ../../../source/reference/functions/snippet_html.txt:37
+#: ../../../source/reference/output.txt:18
+#: ../../../source/reference/query_expanders/tsv.txt:28
+msgid "Usage"
+msgstr "Usage"
+
+# 257a8b1e0a424cf3807162e2534d2837
+# 73ec2c3dc21241d5b0b795816605eeb2
+#: ../../../source/reference/commands/normalize.txt:72
+#: ../../../source/reference/commands/table_create.txt:285
+msgid ":doc:`/reference/normalizers`"
+msgstr ""
+
 # 3cc5fb44121d477bbb02ec3f792a3f13
 #: ../../../source/reference/commands/quit.txt:6
 msgid "quit"
@@ -3164,37 +3570,10 @@ msgstr ""
 msgid "Registered plugins can't be removed for now."
 msgstr ""
 
-# 5cbbff425bb64b799046e859afe82e40
-# c0a4e0d8ea844f4baf64feb8bcf7fc8b
-#: ../../../source/reference/commands/register.txt:27
-#: ../../../source/reference/commands/select.txt:21
-#: ../../../source/reference/commands/table_create.txt:18
-#: ../../../source/reference/functions/geo_distance.txt:18
-#: ../../../source/reference/functions/query.txt:26
-#: ../../../source/reference/functions/snippet_html.txt:27
-msgid "Syntax"
-msgstr "Syntax"
-
 # 8e507f6f8ef6452b8212aab0dd286116
 #: ../../../source/reference/commands/register.txt:29
 msgid "``register`` has a parameter ``path``. It is required parameter::"
 msgstr ""
-
-# 01b0b039140f48fba5d8399e45b7e55b
-# bb5ff6008bb34d7a92afba885c915628
-# faedf5338e484fc0a97463c0bff0f56b
-# 9bad6106d7164a318df4447c81e7a85c
-#: ../../../source/reference/commands/register.txt:34
-#: ../../../source/reference/commands/select.txt:46
-#: ../../../source/reference/commands/table_create.txt:31
-#: ../../../source/reference/executables/groonga-httpd.txt:30
-#: ../../../source/reference/functions/geo_distance.txt:31
-#: ../../../source/reference/functions/query.txt:36
-#: ../../../source/reference/functions/snippet_html.txt:37
-#: ../../../source/reference/output.txt:18
-#: ../../../source/reference/query_expanders/tsv.txt:28
-msgid "Usage"
-msgstr "Usage"
 
 # d1358c28920641c796cce26c6b2e80f6
 #: ../../../source/reference/commands/register.txt:36
@@ -3216,15 +3595,6 @@ msgid ""
 "You can specify absolute path such as ``register /usr/lib/groonga/plugins/"
 "query_expanders/tsv.so``."
 msgstr ""
-
-# b28391d763334d68a7b2c6a1731c878c
-#: ../../../source/reference/commands/register.txt:51
-#: ../../../source/reference/commands/table_create.txt:269
-#: ../../../source/reference/functions/geo_distance.txt:293
-#: ../../../source/reference/functions/query.txt:122
-#: ../../../source/reference/functions/snippet_html.txt:93
-msgid "Return value"
-msgstr "Return value"
 
 # a06ca9118fff485c9f38596febb85ffe
 #: ../../../source/reference/commands/register.txt:53
@@ -3549,15 +3919,6 @@ msgid ""
 msgstr ""
 "``--limit 0`` is also useful for retrieving only the number of matched "
 "records."
-
-# 91088f986b41452d882d125e6ed028e7
-# 64c1379301424498b45f520d7bab67bd
-#: ../../../source/reference/commands/select.txt:198
-#: ../../../source/reference/commands/table_create.txt:154
-#: ../../../source/reference/functions/geo_distance.txt:146
-#: ../../../source/reference/functions/query.txt:103
-msgid "Parameters"
-msgstr "Parameters"
 
 # aa6c5a1abc844a978f87b2dd33b26dc6
 #: ../../../source/reference/commands/select.txt:200
@@ -4912,6 +5273,40 @@ msgstr ""
 "statusコマンドは、groongaプロセスの状態を表示します。主にgroongaサーバプロセ"
 "スに対して使用することを想定しています。"
 
+# 7d3601a185b44246a578f3624f4477e8
+#: ../../../source/reference/commands/status.txt:43
+msgid "``alloc_count``"
+msgstr ""
+
+# 0d914d8ed8934a9b87e8d9ae9ec27da2
+#: ../../../source/reference/commands/status.txt:45
+msgid ""
+"groongaプロセスの内部でアロケートされ、まだ解放されてないメモリブロックの数を"
+"示します。groongaをbuildする際に、configureオプションで --enable-exact-alloc-"
+"countが指定されていたならば、正確な値を返します。それ以外の場合は不正確な値を"
+"返す場合があります。"
+msgstr ""
+
+# cc23913e493940d6a9e3537b602e46db
+#: ../../../source/reference/commands/status.txt:47
+msgid "``starttime``"
+msgstr ""
+
+# ae5489c6783a4e28852f7534326b81cc
+#: ../../../source/reference/commands/status.txt:49
+msgid "groongaプロセスが起動した時刻のtvsec値を返します。"
+msgstr ""
+
+# cc23913e493940d6a9e3537b602e46db
+#: ../../../source/reference/commands/status.txt:51
+msgid "``uptime``"
+msgstr ""
+
+# ae5489c6783a4e28852f7534326b81cc
+#: ../../../source/reference/commands/status.txt:53
+msgid "groongaプロセスが起動してから経過した秒数を返します。"
+msgstr ""
+
 # a07eabb71f184ea0a02597671abd87f8
 #: ../../../source/reference/commands/suggest.txt:10
 msgid "suggest"
@@ -5844,12 +6239,6 @@ msgstr ""
 msgid "See :doc:`/reference/tokenizers` for all tokenizers"
 msgstr ""
 
-# 175c7864061e407c9df325dc092b9cc8
-# 90f038de403f4643a37099d043a59cd0
-#: ../../../source/reference/commands/table_create.txt:257
-msgid "``normalizer``"
-msgstr ""
-
 # cf33c7a9b5c248cc86f4c8a3077c65ff
 #: ../../../source/reference/commands/table_create.txt:259
 msgid "It specifies a normalizer that is used to normalize key."
@@ -5893,12 +6282,6 @@ msgstr ""
 # 73ec2c3dc21241d5b0b795816605eeb2
 #: ../../../source/reference/commands/table_create.txt:284
 msgid ":doc:`/reference/tokenizers`"
-msgstr ""
-
-# 257a8b1e0a424cf3807162e2534d2837
-# 73ec2c3dc21241d5b0b795816605eeb2
-#: ../../../source/reference/commands/table_create.txt:285
-msgid ":doc:`/reference/normalizers`"
 msgstr ""
 
 # 257a8b1e0a424cf3807162e2534d2837
