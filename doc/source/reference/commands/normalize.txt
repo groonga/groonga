@@ -1,0 +1,72 @@
+.. -*- rst -*-
+
+.. highlightlang:: none
+
+normalize
+=========
+
+.. Caution::
+
+  ``normalize`` command is the experimental feature.
+  This command may be changed in the future.
+
+Name
+----
+
+normalize - normalizes the given string by the specified normalizer
+
+Syntax
+--------
+::
+
+ normalize normalizer string
+
+Summary
+-------
+
+``normalize`` command normalizes text.
+
+There is no need to create table to use ``normalize`` command.
+It is usefull for you to check the results of normalizer.
+
+Parameters
+----------
+
+``normalizer``
+
+  It specifies the name of normalizer.
+  Currently, ``normalize`` command accepts ``NormalizerAuto`` or ``NormalizerNFC`` as built-in normalizer.
+  If you want to try another normalizer, you need to regist additional normalizer plugin by ``register`` command.
+
+``string``
+
+  It specifies any string which you want to normalize.
+
+Return value
+------------
+
+::
+
+ [HEADER, normalized]
+
+``HEADER``
+
+  The format of HEADER is [0, UNIX_TIME_WHEN_COMMAND_IS_STARTED, ELAPSED_TIME].
+  See :doc:`/reference/command/output_format` about HEADER.
+
+``normalized``
+
+  normalized is the normalized text by the specified normalizer.
+
+Usage
+-----
+
+::
+
+ normalize NormalizerAuto "aBcDe 123"
+ [[0,1359354969.61772,0.000174522399902344],"abcde 123"]
+
+See also
+--------
+
+* :doc:`/reference/normalizers`
