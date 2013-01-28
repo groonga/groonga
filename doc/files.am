@@ -337,6 +337,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/commands/log_level.txt \
 	$(top_srcdir)/doc/source/reference/commands/log_put.txt \
 	$(top_srcdir)/doc/source/reference/commands/log_reopen.txt \
+	$(top_srcdir)/doc/source/reference/commands/normalize.txt \
 	$(top_srcdir)/doc/source/reference/commands/quit.txt \
 	$(top_srcdir)/doc/source/reference/commands/register.txt \
 	$(top_srcdir)/doc/source/reference/commands/select.txt \
@@ -762,6 +763,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/commands/log_level.txt \
 	source/reference/commands/log_put.txt \
 	source/reference/commands/log_reopen.txt \
+	source/reference/commands/normalize.txt \
 	source/reference/commands/quit.txt \
 	source/reference/commands/register.txt \
 	source/reference/commands/select.txt \
@@ -982,6 +984,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/commands/log_level.txt \
 	html/_sources/reference/commands/log_put.txt \
 	html/_sources/reference/commands/log_reopen.txt \
+	html/_sources/reference/commands/normalize.txt \
 	html/_sources/reference/commands/quit.txt \
 	html/_sources/reference/commands/register.txt \
 	html/_sources/reference/commands/select.txt \
@@ -1135,6 +1138,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/commands/log_level.html \
 	html/reference/commands/log_put.html \
 	html/reference/commands/log_reopen.html \
+	html/reference/commands/normalize.html \
 	html/reference/commands/quit.html \
 	html/reference/commands/register.html \
 	html/reference/commands/select.html \
