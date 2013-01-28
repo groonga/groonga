@@ -2,45 +2,66 @@
 
 .. highlightlang:: none
 
-normalize
-=========
+.. groonga-command
+.. database: commands_normalize
+
+``normalize``
+=============
 
 .. Caution::
 
   ``normalize`` command is the experimental feature.
   This command may be changed in the future.
 
-Name
-----
-
-normalize - normalizes the given string by the specified normalizer
-
-Syntax
---------
-::
-
- normalize normalizer string
-
 Summary
 -------
 
-``normalize`` command normalizes text.
+``normalize`` command normalizes text by the specified normalizer.
 
 There is no need to create table to use ``normalize`` command.
 It is usefull for you to check the results of normalizer.
 
+Syntax
+--------
+
+``normalize`` commands takes two parameters - ``normalizer`` and ``string``.
+Both of them are required.
+
+::
+
+ normalize normalizer string
+
+
+Usage
+-----
+
+Here is a simple example of ``normalize`` command.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/normalize/normalizer_auto_ascii.log
+.. normalize NormalizerAuto "aBcDe 123"
+
 Parameters
 ----------
 
-``normalizer``
+This section describes parameters of ``normalizer``.
 
-  It specifies the name of normalizer.
-  Currently, ``normalize`` command accepts ``NormalizerAuto`` or ``NormalizerNFKC51`` as built-in normalizer.
-  If you want to try another normalizer, you need to regist additional normalizer plugin by ``register`` command.
+Required parameter
+^^^^^^^^^^^^^^^^^^
+
+There are required parameters, ``normalizer`` and ``string``.
+
+``normalizer``
+""""""""""""""
+
+It specifies the name of normalizer.
+Currently, ``normalize`` command accepts ``NormalizerAuto`` or ``NormalizerNFKC51`` as built-in normalizer.
+If you want to try another normalizer, you need to register additional normalizer plugin by ``register`` command.
 
 ``string``
+""""""""""
 
-  It specifies any string which you want to normalize.
+It specifies any string which you want to normalize.
 
 Return value
 ------------
@@ -57,14 +78,6 @@ Return value
 ``normalized``
 
   normalized is the normalized text by the specified normalizer.
-
-Usage
------
-
-::
-
- normalize NormalizerAuto "aBcDe 123"
- [[0,1359354969.61772,0.000174522399902344],"abcde 123"]
 
 See also
 --------
