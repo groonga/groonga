@@ -35,7 +35,7 @@ Parameters
 ``normalizer``
 
   It specifies the name of normalizer.
-  Currently, ``normalize`` command accepts ``NormalizerAuto`` or ``NormalizerNFC`` as built-in normalizer.
+  Currently, ``normalize`` command accepts ``NormalizerAuto`` or ``NormalizerNFKC51`` as built-in normalizer.
   If you want to try another normalizer, you need to regist additional normalizer plugin by ``register`` command.
 
 ``string``
