@@ -31,7 +31,6 @@ EOF
 
     sudo apt-get update -qq
     sudo apt-get install -qq -y --allow-unauthenticated groonga-keyring
-    sudo apt-get purge -qq -y zeromq
     sudo apt-get update -qq
     sudo apt-get install -qq -y -V groonga libgroonga-dev
 fi
