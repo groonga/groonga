@@ -6804,7 +6804,9 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
         }
         GRN_REALLOC(p->vars, 0);
         grn_obj_close(ctx, &p->name_buf);
-        grn_plugin_close(ctx, p->obj.range);
+        if (p->obj.range != GRN_ID_NIL) {
+          grn_plugin_close(ctx, p->obj.range);
+        }
         GRN_FREE(obj);
         rc = GRN_SUCCESS;
       }

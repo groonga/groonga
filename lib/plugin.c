@@ -204,6 +204,10 @@ grn_plugin_close(grn_ctx *ctx, grn_id id)
 {
   grn_plugin *plugin;
 
+  if (id == GRN_ID_NIL) {
+    return GRN_INVALID_ARGUMENT;
+  }
+
   if (!grn_hash_get_value(ctx, grn_plugins, id, &plugin)) {
     return GRN_INVALID_ARGUMENT;
   }
@@ -223,6 +227,10 @@ grn_plugin_sym(grn_ctx *ctx, grn_id id, const char *symbol)
 {
   grn_plugin *plugin;
   grn_dl_symbol func;
+
+  if (id == GRN_ID_NIL) {
+    return GRN_INVALID_ARGUMENT;
+  }
 
   if (!grn_hash_get_value(ctx, grn_plugins, id, &plugin)) {
     return NULL;
