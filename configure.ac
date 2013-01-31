@@ -4,6 +4,7 @@ AC_INIT([groonga], groonga_version, [groonga@razil.jp])
 AM_CONFIG_HEADER(config.h)
 
 AM_INIT_AUTOMAKE(tar-pax)
+m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 # for Autoconf 2.60 or earlier.
 if test -z "${datarootdir}"; then
