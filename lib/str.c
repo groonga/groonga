@@ -519,7 +519,7 @@ normalize_utf8(grn_ctx *ctx, grn_str *nstr)
         d_ = d;
         d += lp;
         length++;
-        if (cp) { *cp++ = grn_nfkc_ctype(p); }
+        if (cp) { *cp++ = grn_nfkc_char_type(p); }
         if (ch) {
           size_t i;
           if (s_ == s + ls) {

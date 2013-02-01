@@ -26,7 +26,7 @@ don't edit this file by hand. it generated automatically by nfkc.rb
 #ifdef WITH_NFKC
 
 grn_char_type
-grn_nfkc_ctype(const unsigned char *str)
+grn_nfkc_char_type(const unsigned char *str)
 {
 switch (str[0]) {
 case 0x01 :

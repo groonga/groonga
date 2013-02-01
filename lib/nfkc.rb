@@ -81,7 +81,7 @@ def gen_bc(file, hash, level)
   end
 end
 
-def generate_blockcode_ctype(file, option)
+def generate_blockcode_char_type(file, option)
   bc = {}
   open("|./icudump --#{option}").each{|l|
     src,_,code = l.chomp.split("\t")
@@ -352,7 +352,7 @@ don't edit this file by hand. it generated automatically by nfkc.rb
 #ifdef WITH_NFKC
 
 unsigned char
-grn_nfkc_ctype(const unsigned char *str)
+grn_nfkc_char_type(const unsigned char *str)
 {
 %  return -1;
 }
@@ -399,11 +399,11 @@ tmps = template.split(/%/)
 
 #STDERR.puts('generating block code..')
 #outf.print(tmps.shift)
-#generate_blockcode_ctype(outf, 'bc')
+#generate_blockcode_char_type(outf, 'bc')
 
-STDERR.puts('generating ctype code..')
+STDERR.puts('generating char type code..')
 outf.print(tmps.shift)
-generate_blockcode_ctype(outf, 'gc')
+generate_blockcode_char_type(outf, 'gc')
 
 STDERR.puts('generating map1 code..')
 outf.print(tmps.shift)
