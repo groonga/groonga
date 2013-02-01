@@ -167,15 +167,15 @@ eucjp_normalize(grn_ctx *ctx, grn_string *nstr)
               *d++ = c >> 8; *d = c & 0xff;
               break;
             }
-            ctype = grn_char_katakana;
+            ctype = GRN_CHAR_KATAKANA;
           } else {
             *d++ = c1; *d = c2;
-            ctype = grn_char_others;
+            ctype = GRN_CHAR_OTHERS;
           }
           break;
         case 0x09 :
           *d++ = c1; *d = c2;
-          ctype = grn_char_others;
+          ctype = GRN_CHAR_OTHERS;
           break;
         case 0x0a :
           switch (c1 & 0x0f) {
@@ -183,11 +183,11 @@ eucjp_normalize(grn_ctx *ctx, grn_string *nstr)
             switch (c2) {
             case 0xbc :
               *d++ = c1; *d = c2;
-              ctype = grn_char_katakana;
+              ctype = GRN_CHAR_KATAKANA;
               break;
             case 0xb9 :
               *d++ = c1; *d = c2;
-              ctype = grn_char_kanji;
+              ctype = GRN_CHAR_KANJI;
               break;
             case 0xa1 :
               if (removeblankp) {
@@ -195,63 +195,63 @@ eucjp_normalize(grn_ctx *ctx, grn_string *nstr)
                 continue;
               } else {
                 *d = ' ';
-                ctype = GRN_CHAR_BLANK|grn_char_symbol;
+                ctype = GRN_CHAR_BLANK|GRN_CHAR_SYMBOL;
               }
               break;
             default :
               if (c2 >= 0xa4 && (c3 = symbol[c2 - 0xa4])) {
                 *d = c3;
-                ctype = grn_char_symbol;
+                ctype = GRN_CHAR_SYMBOL;
               } else {
                 *d++ = c1; *d = c2;
-                ctype = grn_char_others;
+                ctype = GRN_CHAR_OTHERS;
               }
               break;
             }
             break;
           case 2 :
             *d++ = c1; *d = c2;
-            ctype = grn_char_symbol;
+            ctype = GRN_CHAR_SYMBOL;
             break;
           case 3 :
             c3 = c2 - 0x80;
             if ('a' <= c3 && c3 <= 'z') {
-              ctype = grn_char_alpha;
+              ctype = GRN_CHAR_ALPHA;
               *d = c3;
             } else if ('A' <= c3 && c3 <= 'Z') {
-              ctype = grn_char_alpha;
+              ctype = GRN_CHAR_ALPHA;
               *d = c3 + 0x20;
             } else if ('0' <= c3 && c3 <= '9') {
-              ctype = grn_char_digit;
+              ctype = GRN_CHAR_DIGIT;
               *d = c3;
             } else {
-              ctype = grn_char_others;
+              ctype = GRN_CHAR_OTHERS;
               *d++ = c1; *d = c2;
             }
             break;
           case 4 :
             *d++ = c1; *d = c2;
-            ctype = grn_char_hiragana;
+            ctype = GRN_CHAR_HIRAGANA;
             break;
           case 5 :
             *d++ = c1; *d = c2;
-            ctype = grn_char_katakana;
+            ctype = GRN_CHAR_KATAKANA;
             break;
           case 6 :
           case 7 :
           case 8 :
             *d++ = c1; *d = c2;
-            ctype = grn_char_symbol;
+            ctype = GRN_CHAR_SYMBOL;
             break;
           default :
             *d++ = c1; *d = c2;
-            ctype = grn_char_others;
+            ctype = GRN_CHAR_OTHERS;
             break;
           }
           break;
         default :
           *d++ = c1; *d = c2;
-          ctype = grn_char_kanji;
+          ctype = GRN_CHAR_KANJI;
           break;
         }
       } else {
@@ -273,36 +273,36 @@ eucjp_normalize(grn_ctx *ctx, grn_string *nstr)
             continue;
           } else {
             *d = ' ';
-            ctype = GRN_CHAR_BLANK|grn_char_symbol;
+            ctype = GRN_CHAR_BLANK|GRN_CHAR_SYMBOL;
           }
         } else {
           *d = c;
-          ctype = grn_char_symbol;
+          ctype = GRN_CHAR_SYMBOL;
         }
         break;
       case 3 :
         *d = c;
-        ctype = (c <= 0x39) ? grn_char_digit : grn_char_symbol;
+        ctype = (c <= 0x39) ? GRN_CHAR_DIGIT : GRN_CHAR_SYMBOL;
         break;
       case 4 :
         *d = ('A' <= c) ? c + 0x20 : c;
-        ctype = (c == 0x40) ? grn_char_symbol : grn_char_alpha;
+        ctype = (c == 0x40) ? GRN_CHAR_SYMBOL : GRN_CHAR_ALPHA;
         break;
       case 5 :
         *d = (c <= 'Z') ? c + 0x20 : c;
-        ctype = (c <= 0x5a) ? grn_char_alpha : grn_char_symbol;
+        ctype = (c <= 0x5a) ? GRN_CHAR_ALPHA : GRN_CHAR_SYMBOL;
         break;
       case 6 :
         *d = c;
-        ctype = (c == 0x60) ? grn_char_symbol : grn_char_alpha;
+        ctype = (c == 0x60) ? GRN_CHAR_SYMBOL : GRN_CHAR_ALPHA;
         break;
       case 7 :
         *d = c;
-        ctype = (c <= 0x7a) ? grn_char_alpha : (c == 0x7f ? grn_char_others : grn_char_symbol);
+        ctype = (c <= 0x7a) ? GRN_CHAR_ALPHA : (c == 0x7f ? GRN_CHAR_OTHERS : GRN_CHAR_SYMBOL);
         break;
       default :
         *d = c;
-        ctype = grn_char_others;
+        ctype = GRN_CHAR_OTHERS;
         break;
       }
     }
@@ -315,7 +315,7 @@ eucjp_normalize(grn_ctx *ctx, grn_string *nstr)
       while (++d_ < d) { *ch++ = 0; }
     }
   }
-  if (cp) { *cp = grn_char_null; }
+  if (cp) { *cp = GRN_CHAR_NULL; }
   *d = '\0';
   nstr->n_characters = length;
   nstr->normalized_length_in_bytes = (size_t)(d - (unsigned char *)nstr->normalized);
@@ -408,7 +408,7 @@ sjis_normalize(grn_ctx *ctx, grn_string *nstr)
           *d++ = c >> 8; *d = c & 0xff;
           break;
         }
-        ctype = grn_char_katakana;
+        ctype = GRN_CHAR_KATAKANA;
       } else {
         if ((s + 1) < e && 0x40 <= *(s + 1) && *(s + 1) <= 0xfc) {
           unsigned char c1 = *s++, c2 = *s, c3 = 0;
@@ -418,11 +418,11 @@ sjis_normalize(grn_ctx *ctx, grn_string *nstr)
               switch (c2) {
               case 0x5b :
                 *d++ = c1; *d = c2;
-                ctype = grn_char_katakana;
+                ctype = GRN_CHAR_KATAKANA;
                 break;
               case 0x58 :
                 *d++ = c1; *d = c2;
-                ctype = grn_char_kanji;
+                ctype = GRN_CHAR_KANJI;
                 break;
               case 0x40 :
                 if (removeblankp) {
@@ -430,19 +430,19 @@ sjis_normalize(grn_ctx *ctx, grn_string *nstr)
                   continue;
                 } else {
                   *d = ' ';
-                  ctype = GRN_CHAR_BLANK|grn_char_symbol;
+                  ctype = GRN_CHAR_BLANK|GRN_CHAR_SYMBOL;
                 }
                 break;
               default :
                 if (0x43 <= c2 && c2 <= 0x7e && (c3 = symbol[c2 - 0x43])) {
                   *d = c3;
-                  ctype = grn_char_symbol;
+                  ctype = GRN_CHAR_SYMBOL;
                 } else if (0x7f <= c2 && c2 <= 0x97 && (c3 = symbol[c2 - 0x44])) {
                   *d = c3;
-                  ctype = grn_char_symbol;
+                  ctype = GRN_CHAR_SYMBOL;
                 } else {
                   *d++ = c1; *d = c2;
-                  ctype = grn_char_others;
+                  ctype = GRN_CHAR_OTHERS;
                 }
                 break;
               }
@@ -450,44 +450,44 @@ sjis_normalize(grn_ctx *ctx, grn_string *nstr)
             case 2 :
               c3 = c2 - 0x1f;
               if (0x4f <= c2 && c2 <= 0x58) {
-                ctype = grn_char_digit;
+                ctype = GRN_CHAR_DIGIT;
                 *d = c2 - 0x1f;
               } else if (0x60 <= c2 && c2 <= 0x79) {
-                ctype = grn_char_alpha;
+                ctype = GRN_CHAR_ALPHA;
                 *d = c2 + 0x01;
               } else if (0x81 <= c2 && c2 <= 0x9a) {
-                ctype = grn_char_alpha;
+                ctype = GRN_CHAR_ALPHA;
                 *d = c2 - 0x20;
               } else if (0x9f <= c2 && c2 <= 0xf1) {
                 *d++ = c1; *d = c2;
-                ctype = grn_char_hiragana;
+                ctype = GRN_CHAR_HIRAGANA;
               } else {
                 *d++ = c1; *d = c2;
-                ctype = grn_char_others;
+                ctype = GRN_CHAR_OTHERS;
               }
               break;
             case 3 :
               if (0x40 <= c2 && c2 <= 0x96) {
                 *d++ = c1; *d = c2;
-                ctype = grn_char_katakana;
+                ctype = GRN_CHAR_KATAKANA;
               } else {
                 *d++ = c1; *d = c2;
-                ctype = grn_char_symbol;
+                ctype = GRN_CHAR_SYMBOL;
               }
               break;
             case 4 :
             case 7 :
               *d++ = c1; *d = c2;
-              ctype = grn_char_symbol;
+              ctype = GRN_CHAR_SYMBOL;
               break;
             default :
               *d++ = c1; *d = c2;
-              ctype = grn_char_others;
+              ctype = GRN_CHAR_OTHERS;
               break;
             }
           } else {
             *d++ = c1; *d = c2;
-            ctype = grn_char_kanji;
+            ctype = GRN_CHAR_KANJI;
           }
         } else {
           /* skip invalid character */
@@ -509,36 +509,36 @@ sjis_normalize(grn_ctx *ctx, grn_string *nstr)
             continue;
           } else {
             *d = ' ';
-            ctype = GRN_CHAR_BLANK|grn_char_symbol;
+            ctype = GRN_CHAR_BLANK|GRN_CHAR_SYMBOL;
           }
         } else {
           *d = c;
-          ctype = grn_char_symbol;
+          ctype = GRN_CHAR_SYMBOL;
         }
         break;
       case 3 :
         *d = c;
-        ctype = (c <= 0x39) ? grn_char_digit : grn_char_symbol;
+        ctype = (c <= 0x39) ? GRN_CHAR_DIGIT : GRN_CHAR_SYMBOL;
         break;
       case 4 :
         *d = ('A' <= c) ? c + 0x20 : c;
-        ctype = (c == 0x40) ? grn_char_symbol : grn_char_alpha;
+        ctype = (c == 0x40) ? GRN_CHAR_SYMBOL : GRN_CHAR_ALPHA;
         break;
       case 5 :
         *d = (c <= 'Z') ? c + 0x20 : c;
-        ctype = (c <= 0x5a) ? grn_char_alpha : grn_char_symbol;
+        ctype = (c <= 0x5a) ? GRN_CHAR_ALPHA : GRN_CHAR_SYMBOL;
         break;
       case 6 :
         *d = c;
-        ctype = (c == 0x60) ? grn_char_symbol : grn_char_alpha;
+        ctype = (c == 0x60) ? GRN_CHAR_SYMBOL : GRN_CHAR_ALPHA;
         break;
       case 7 :
         *d = c;
-        ctype = (c <= 0x7a) ? grn_char_alpha : (c == 0x7f ? grn_char_others : grn_char_symbol);
+        ctype = (c <= 0x7a) ? GRN_CHAR_ALPHA : (c == 0x7f ? GRN_CHAR_OTHERS : GRN_CHAR_SYMBOL);
         break;
       default :
         *d = c;
-        ctype = grn_char_others;
+        ctype = GRN_CHAR_OTHERS;
         break;
       }
     }
@@ -551,7 +551,7 @@ sjis_normalize(grn_ctx *ctx, grn_string *nstr)
       while (++d_ < d) { *ch++ = 0; }
     }
   }
-  if (cp) { *cp = grn_char_null; }
+  if (cp) { *cp = GRN_CHAR_NULL; }
   *d = '\0';
   nstr->n_characters = length;
   nstr->normalized_length_in_bytes = (size_t)(d - (unsigned char *)nstr->normalized);
@@ -808,36 +808,36 @@ ascii_normalize(grn_ctx *ctx, grn_string *nstr)
           continue;
         } else {
           *d = ' ';
-          ctype = GRN_CHAR_BLANK|grn_char_symbol;
+          ctype = GRN_CHAR_BLANK|GRN_CHAR_SYMBOL;
         }
       } else {
         *d = c;
-        ctype = grn_char_symbol;
+        ctype = GRN_CHAR_SYMBOL;
       }
       break;
     case 3 :
       *d = c;
-      ctype = (c <= 0x39) ? grn_char_digit : grn_char_symbol;
+      ctype = (c <= 0x39) ? GRN_CHAR_DIGIT : GRN_CHAR_SYMBOL;
       break;
     case 4 :
       *d = ('A' <= c) ? c + 0x20 : c;
-      ctype = (c == 0x40) ? grn_char_symbol : grn_char_alpha;
+      ctype = (c == 0x40) ? GRN_CHAR_SYMBOL : GRN_CHAR_ALPHA;
       break;
     case 5 :
       *d = (c <= 'Z') ? c + 0x20 : c;
-      ctype = (c <= 0x5a) ? grn_char_alpha : grn_char_symbol;
+      ctype = (c <= 0x5a) ? GRN_CHAR_ALPHA : GRN_CHAR_SYMBOL;
       break;
     case 6 :
       *d = c;
-      ctype = (c == 0x60) ? grn_char_symbol : grn_char_alpha;
+      ctype = (c == 0x60) ? GRN_CHAR_SYMBOL : GRN_CHAR_ALPHA;
       break;
     case 7 :
       *d = c;
-      ctype = (c <= 0x7a) ? grn_char_alpha : (c == 0x7f ? grn_char_others : grn_char_symbol);
+      ctype = (c <= 0x7a) ? GRN_CHAR_ALPHA : (c == 0x7f ? GRN_CHAR_OTHERS : GRN_CHAR_SYMBOL);
       break;
     default :
       *d = c;
-      ctype = grn_char_others;
+      ctype = GRN_CHAR_OTHERS;
       break;
     }
     d++;
@@ -849,7 +849,7 @@ ascii_normalize(grn_ctx *ctx, grn_string *nstr)
       while (++d_ < d) { *ch++ = 0; }
     }
   }
-  if (cp) { *cp = grn_char_null; }
+  if (cp) { *cp = GRN_CHAR_NULL; }
   *d = '\0';
   nstr->n_characters = length;
   nstr->normalized_length_in_bytes = (size_t)(d - (unsigned char *)nstr->normalized);
@@ -910,70 +910,70 @@ latin1_normalize(grn_ctx *ctx, grn_string *nstr)
           continue;
         } else {
           *d = ' ';
-          ctype = GRN_CHAR_BLANK|grn_char_symbol;
+          ctype = GRN_CHAR_BLANK|GRN_CHAR_SYMBOL;
         }
       } else {
         *d = c;
-        ctype = grn_char_symbol;
+        ctype = GRN_CHAR_SYMBOL;
       }
       break;
     case 3 :
       *d = c;
-      ctype = (c <= 0x39) ? grn_char_digit : grn_char_symbol;
+      ctype = (c <= 0x39) ? GRN_CHAR_DIGIT : GRN_CHAR_SYMBOL;
       break;
     case 4 :
       *d = ('A' <= c) ? c + 0x20 : c;
-      ctype = (c == 0x40) ? grn_char_symbol : grn_char_alpha;
+      ctype = (c == 0x40) ? GRN_CHAR_SYMBOL : GRN_CHAR_ALPHA;
       break;
     case 5 :
       *d = (c <= 'Z') ? c + 0x20 : c;
-      ctype = (c <= 0x5a) ? grn_char_alpha : grn_char_symbol;
+      ctype = (c <= 0x5a) ? GRN_CHAR_ALPHA : GRN_CHAR_SYMBOL;
       break;
     case 6 :
       *d = c;
-      ctype = (c == 0x60) ? grn_char_symbol : grn_char_alpha;
+      ctype = (c == 0x60) ? GRN_CHAR_SYMBOL : GRN_CHAR_ALPHA;
       break;
     case 7 :
       *d = c;
-      ctype = (c <= 0x7a) ? grn_char_alpha : (c == 0x7f ? grn_char_others : grn_char_symbol);
+      ctype = (c <= 0x7a) ? GRN_CHAR_ALPHA : (c == 0x7f ? GRN_CHAR_OTHERS : GRN_CHAR_SYMBOL);
       break;
     case 8 :
       if (c == 0x8a || c == 0x8c || c == 0x8e) {
         *d = c + 0x10;
-        ctype = grn_char_alpha;
+        ctype = GRN_CHAR_ALPHA;
       } else {
         *d = c;
-        ctype = grn_char_symbol;
+        ctype = GRN_CHAR_SYMBOL;
       }
       break;
     case 9 :
       if (c == 0x9a || c == 0x9c || c == 0x9e || c == 0x9f) {
         *d = (c == 0x9f) ? c + 0x60 : c;
-        ctype = grn_char_alpha;
+        ctype = GRN_CHAR_ALPHA;
       } else {
         *d = c;
-        ctype = grn_char_symbol;
+        ctype = GRN_CHAR_SYMBOL;
       }
       break;
     case 0x0c :
       *d = c + 0x20;
-      ctype = grn_char_alpha;
+      ctype = GRN_CHAR_ALPHA;
       break;
     case 0x0d :
       *d = (c == 0xd7 || c == 0xdf) ? c : c + 0x20;
-      ctype = (c == 0xd7) ? grn_char_symbol : grn_char_alpha;
+      ctype = (c == 0xd7) ? GRN_CHAR_SYMBOL : GRN_CHAR_ALPHA;
       break;
     case 0x0e :
       *d = c;
-      ctype = grn_char_alpha;
+      ctype = GRN_CHAR_ALPHA;
       break;
     case 0x0f :
       *d = c;
-      ctype = (c == 0xf7) ? grn_char_symbol : grn_char_alpha;
+      ctype = (c == 0xf7) ? GRN_CHAR_SYMBOL : GRN_CHAR_ALPHA;
       break;
     default :
       *d = c;
-      ctype = grn_char_others;
+      ctype = GRN_CHAR_OTHERS;
       break;
     }
     d++;
@@ -985,7 +985,7 @@ latin1_normalize(grn_ctx *ctx, grn_string *nstr)
       while (++d_ < d) { *ch++ = 0; }
     }
   }
-  if (cp) { *cp = grn_char_null; }
+  if (cp) { *cp = GRN_CHAR_NULL; }
   *d = '\0';
   nstr->n_characters = length;
   nstr->normalized_length_in_bytes = (size_t)(d - (unsigned char *)nstr->normalized);
@@ -1045,59 +1045,59 @@ koi8r_normalize(grn_ctx *ctx, grn_string *nstr)
           continue;
         } else {
           *d = ' ';
-          ctype = GRN_CHAR_BLANK|grn_char_symbol;
+          ctype = GRN_CHAR_BLANK|GRN_CHAR_SYMBOL;
         }
       } else {
         *d = c;
-        ctype = grn_char_symbol;
+        ctype = GRN_CHAR_SYMBOL;
       }
       break;
     case 3 :
       *d = c;
-      ctype = (c <= 0x39) ? grn_char_digit : grn_char_symbol;
+      ctype = (c <= 0x39) ? GRN_CHAR_DIGIT : GRN_CHAR_SYMBOL;
       break;
     case 4 :
       *d = ('A' <= c) ? c + 0x20 : c;
-      ctype = (c == 0x40) ? grn_char_symbol : grn_char_alpha;
+      ctype = (c == 0x40) ? GRN_CHAR_SYMBOL : GRN_CHAR_ALPHA;
       break;
     case 5 :
       *d = (c <= 'Z') ? c + 0x20 : c;
-      ctype = (c <= 0x5a) ? grn_char_alpha : grn_char_symbol;
+      ctype = (c <= 0x5a) ? GRN_CHAR_ALPHA : GRN_CHAR_SYMBOL;
       break;
     case 6 :
       *d = c;
-      ctype = (c == 0x60) ? grn_char_symbol : grn_char_alpha;
+      ctype = (c == 0x60) ? GRN_CHAR_SYMBOL : GRN_CHAR_ALPHA;
       break;
     case 7 :
       *d = c;
-      ctype = (c <= 0x7a) ? grn_char_alpha : (c == 0x7f ? grn_char_others : grn_char_symbol);
+      ctype = (c <= 0x7a) ? GRN_CHAR_ALPHA : (c == 0x7f ? GRN_CHAR_OTHERS : GRN_CHAR_SYMBOL);
       break;
     case 0x0a :
       *d = c;
-      ctype = (c == 0xa3) ? grn_char_alpha : grn_char_others;
+      ctype = (c == 0xa3) ? GRN_CHAR_ALPHA : GRN_CHAR_OTHERS;
       break;
     case 0x0b :
       if (c == 0xb3) {
         *d = c - 0x10;
-        ctype = grn_char_alpha;
+        ctype = GRN_CHAR_ALPHA;
       } else {
         *d = c;
-        ctype = grn_char_others;
+        ctype = GRN_CHAR_OTHERS;
       }
       break;
     case 0x0c :
     case 0x0d :
       *d = c;
-      ctype = grn_char_alpha;
+      ctype = GRN_CHAR_ALPHA;
       break;
     case 0x0e :
     case 0x0f :
       *d = c - 0x20;
-      ctype = grn_char_alpha;
+      ctype = GRN_CHAR_ALPHA;
       break;
     default :
       *d = c;
-      ctype = grn_char_others;
+      ctype = GRN_CHAR_OTHERS;
       break;
     }
     d++;
@@ -1109,7 +1109,7 @@ koi8r_normalize(grn_ctx *ctx, grn_string *nstr)
       while (++d_ < d) { *ch++ = 0; }
     }
   }
-  if (cp) { *cp = grn_char_null; }
+  if (cp) { *cp = GRN_CHAR_NULL; }
   *d = '\0';
   nstr->n_characters = length;
   nstr->normalized_length_in_bytes = (size_t)(d - (unsigned char *)nstr->normalized);

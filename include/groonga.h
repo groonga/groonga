@@ -2607,14 +2607,14 @@ GRN_API grn_rc grn_str_close(grn_ctx *ctx, grn_str *nstr);
 #define GRN_CHAR_TYPE(c) ((c) & 0x7f)
 
 typedef enum {
-  grn_char_null = 0,
-  grn_char_alpha,
-  grn_char_digit,
-  grn_char_symbol,
-  grn_char_hiragana,
-  grn_char_katakana,
-  grn_char_kanji,
-  grn_char_others
+  GRN_CHAR_NULL = 0,
+  GRN_CHAR_ALPHA,
+  GRN_CHAR_DIGIT,
+  GRN_CHAR_SYMBOL,
+  GRN_CHAR_HIRAGANA,
+  GRN_CHAR_KATAKANA,
+  GRN_CHAR_KANJI,
+  GRN_CHAR_OTHERS
 } grn_char_type;
 
 GRN_API grn_obj *grn_string_open(grn_ctx *ctx,
