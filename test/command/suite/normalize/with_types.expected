@@ -1,0 +1,21 @@
+normalize NormalizerAuto "a1!あア亜💕 " WITH_TYPES
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "normalized": "a1!あア亜💕 ",
+    "types": [
+      "alpha",
+      "digit",
+      "symbol",
+      "hiragana",
+      "katakana",
+      "kanji",
+      "others",
+      "others"
+    ]
+  }
+]

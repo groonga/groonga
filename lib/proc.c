@@ -2786,6 +2786,41 @@ parse_normalize_flags(grn_ctx *ctx, grn_obj *flag_names)
   return flags;
 }
 
+static const char *
+char_type_name(grn_char_type type)
+{
+  const char *name = "unknown";
+
+  switch (type) {
+  case GRN_CHAR_NULL :
+    name = "null";
+    break;
+  case GRN_CHAR_ALPHA :
+    name = "alpha";
+    break;
+  case GRN_CHAR_DIGIT :
+    name = "digit";
+    break;
+  case GRN_CHAR_SYMBOL :
+    name = "symbol";
+    break;
+  case GRN_CHAR_HIRAGANA :
+    name = "hiragana";
+    break;
+  case GRN_CHAR_KATAKANA :
+    name = "katakana";
+    break;
+  case GRN_CHAR_KANJI :
+    name = "kanji";
+    break;
+  case GRN_CHAR_OTHERS :
+    name = "others";
+    break;
+  }
+
+  return name;
+}
+
 static grn_obj *
 proc_normalize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
@@ -2806,6 +2841,7 @@ proc_normalize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
     grn_obj *normalizer;
     grn_obj *grn_string;
     int flags;
+    unsigned int normalized_n_characters;
 
     flags = parse_normalize_flags(ctx, flag_names);
     normalizer = grn_ctx_get(ctx,
@@ -2825,6 +2861,7 @@ proc_normalize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
                                  normalizer, flags);
     grn_obj_unlink(ctx, normalizer);
 
+    GRN_OUTPUT_MAP_OPEN("RESULT", 2);
     {
       const char *normalized;
       unsigned int normalized_length_in_bytes;
@@ -2832,9 +2869,28 @@ proc_normalize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
       grn_string_get_normalized(ctx, grn_string,
                                 &normalized,
                                 &normalized_length_in_bytes,
-                                NULL);
+                                &normalized_n_characters);
+      GRN_OUTPUT_CSTR("normalized");
       GRN_OUTPUT_STR(normalized, normalized_length_in_bytes);
     }
+    {
+      const unsigned char *types;
+
+      types = grn_string_get_types(ctx, grn_string);
+      GRN_OUTPUT_CSTR("types");
+      if (types) {
+        unsigned int i;
+        GRN_OUTPUT_ARRAY_OPEN("types", normalized_n_characters);
+        for (i = 0; i < normalized_n_characters; i++) {
+          GRN_OUTPUT_CSTR(char_type_name(types[i]));
+        }
+        GRN_OUTPUT_ARRAY_CLOSE();
+      } else {
+        GRN_OUTPUT_ARRAY_OPEN("types", 0);
+        GRN_OUTPUT_ARRAY_CLOSE();
+      }
+    }
+    GRN_OUTPUT_MAP_CLOSE();
 
     grn_obj_unlink(ctx, grn_string);
   }
