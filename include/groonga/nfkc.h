@@ -17,9 +17,13 @@
 #ifndef GRN_NFKC_H
 #define GRN_NFKC_H
 
+#include <groonga.h>
+
 #ifdef	__cplusplus
 extern "C" {
 #endif
+
+GRN_API grn_char_type grn_nfkc_ctype(const unsigned char *str);
 
 #ifdef __cplusplus
 }

@@ -21,12 +21,11 @@ don't edit this file by hand. it generated automatically by nfkc.rb
 #include "config.h"
 #endif /* HAVE_CONFIG_H */
 
-#include <groonga.h>
 #include <groonga/nfkc.h>
 
 #ifdef WITH_NFKC
 
-unsigned char
+grn_char_type
 grn_nfkc_ctype(const unsigned char *str)
 {
 switch (str[0]) {

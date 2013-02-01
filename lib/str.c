@@ -418,7 +418,6 @@ normalize_euc(grn_ctx *ctx, grn_str *nstr)
 }
 
 #ifdef WITH_NFKC
-uint_least8_t grn_nfkc_ctype(const unsigned char *str);
 const char *grn_nfkc_map1(const unsigned char *str);
 const char *grn_nfkc_map2(const unsigned char *prefix, const unsigned char *suffix);
 
