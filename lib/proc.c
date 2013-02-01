@@ -2744,14 +2744,58 @@ proc_truncate(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   return NULL;
 }
 
+static int
+parse_normalize_flags(grn_ctx *ctx, grn_obj *flag_names)
+{
+  int flags = 0;
+  const char *names, *names_end;
+  int length;
+
+  names = GRN_TEXT_VALUE(flag_names);
+  length = GRN_TEXT_LEN(flag_names);
+  names_end = names + length;
+  while (names < names_end) {
+    if (*names == '|' || *names == ' ') {
+      names += 1;
+      continue;
+    }
+
+#define CHECK_FLAG(name)\
+    if (((names_end - names) >= (sizeof(#name) - 1)) &&\
+        (!memcmp(names, #name, sizeof(#name) - 1))) {\
+      flags |= GRN_STRING_ ## name;\
+      names += sizeof(#name);\
+      continue;\
+    }
+
+    CHECK_FLAG(REMOVE_BLANK);
+    CHECK_FLAG(WITH_TYPES);
+    CHECK_FLAG(WITH_CHECKS);
+    CHECK_FLAG(REMOVE_TOKENIZED_DELIMITER);
+
+#define GRN_STRING_NONE 0
+    CHECK_FLAG(NONE);
+#undef GRN_STRING_NONE
+
+    ERR(GRN_INVALID_ARGUMENT, "[normalize] invalid flag: <%.*s>",
+        (int)(names_end - names), names);
+    return 0;
+#undef CHECK_EXPR_FLAG
+  }
+
+  return flags;
+}
+
 static grn_obj *
 proc_normalize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_obj *normalizer_name;
   grn_obj *string;
+  grn_obj *flag_names;
 
   normalizer_name = VAR(0);
   string = VAR(1);
+  flag_names = VAR(2);
   if (GRN_TEXT_LEN(normalizer_name) == 0) {
     ERR(GRN_INVALID_ARGUMENT, "normalizer name is missing");
     GRN_OUTPUT_CSTR("");
@@ -2761,8 +2805,9 @@ proc_normalize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
   {
     grn_obj *normalizer;
     grn_obj *grn_string;
-    int flags = 0; /* TODO */
+    int flags;
 
+    flags = parse_normalize_flags(ctx, flag_names);
     normalizer = grn_ctx_get(ctx,
                              GRN_TEXT_VALUE(normalizer_name),
                              GRN_TEXT_LEN(normalizer_name));
@@ -3639,7 +3684,8 @@ grn_db_init_builtin_query(grn_ctx *ctx)
 
   DEF_VAR(vars[0], "normalizer");
   DEF_VAR(vars[1], "string");
-  DEF_COMMAND("normalize", proc_normalize, 2, vars);
+  DEF_VAR(vars[2], "flags");
+  DEF_COMMAND("normalize", proc_normalize, 3, vars);
 
   DEF_VAR(vars[0], "seed");
   grn_proc_create(ctx, "rand", -1, GRN_PROC_FUNCTION, func_rand,

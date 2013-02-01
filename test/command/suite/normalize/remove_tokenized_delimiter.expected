@@ -1,0 +1,2 @@
+normalize NormalizerAuto "a￾b￾c" REMOVE_TOKENIZED_DELIMITER
+[[0,0.0,0.0],"abc"]
