@@ -685,7 +685,7 @@ utf8_normalize(grn_ctx *ctx, grn_string *nstr)
         break;
       }
       if ((*p == ' ' && removeblankp) || *p < 0x20  /* skip unprintable ascii */ ) {
-        if (cp > nstr->ctypes) { *(cp - 1) |= GRN_STR_BLANK; }
+        if (cp > nstr->ctypes) { *(cp - 1) |= GRN_CHAR_BLANK; }
       } else {
         if (de <= d + lp) {
           unsigned char *normalized;
