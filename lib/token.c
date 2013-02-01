@@ -334,37 +334,37 @@ ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   const unsigned char *p = tokenizer->next, *r = p, *e = tokenizer->end;
   int32_t len = 0, pos = tokenizer->pos + tokenizer->skip, status = 0;
   const uint_least8_t *cp = tokenizer->ctypes ? tokenizer->ctypes + pos : NULL;
-  if (cp && tokenizer->uni_alpha && GRN_STR_CTYPE(*cp) == grn_str_alpha) {
+  if (cp && tokenizer->uni_alpha && GRN_STR_CTYPE(*cp) == GRN_CHAR_ALPHA) {
     while ((cl = grn_charlen_(ctx, (char *)r, (char *)e,
                               tokenizer->query->encoding))) {
       len++;
       r += cl;
       if (/* !tokenizer->ignore_blank && */ GRN_STR_ISBLANK(*cp)) { break; }
-      if (GRN_STR_CTYPE(*++cp) != grn_str_alpha) { break; }
+      if (GRN_STR_CTYPE(*++cp) != GRN_CHAR_ALPHA) { break; }
     }
     tokenizer->next = r;
     tokenizer->overlap = 0;
   } else if (cp &&
              tokenizer->uni_digit &&
-             GRN_STR_CTYPE(*cp) == grn_str_digit) {
+             GRN_STR_CTYPE(*cp) == GRN_CHAR_DIGIT) {
     while ((cl = grn_charlen_(ctx, (char *)r, (char *)e,
                               tokenizer->query->encoding))) {
       len++;
       r += cl;
       if (/* !tokenizer->ignore_blank && */ GRN_STR_ISBLANK(*cp)) { break; }
-      if (GRN_STR_CTYPE(*++cp) != grn_str_digit) { break; }
+      if (GRN_STR_CTYPE(*++cp) != GRN_CHAR_DIGIT) { break; }
     }
     tokenizer->next = r;
     tokenizer->overlap = 0;
   } else if (cp &&
              tokenizer->uni_symbol &&
-             GRN_STR_CTYPE(*cp) == grn_str_symbol) {
+             GRN_STR_CTYPE(*cp) == GRN_CHAR_SYMBOL) {
     while ((cl = grn_charlen_(ctx, (char *)r, (char *)e,
                               tokenizer->query->encoding))) {
       len++;
       r += cl;
       if (!tokenizer->ignore_blank && GRN_STR_ISBLANK(*cp)) { break; }
-      if (GRN_STR_CTYPE(*++cp) != grn_str_symbol) { break; }
+      if (GRN_STR_CTYPE(*++cp) != GRN_CHAR_SYMBOL) { break; }
     }
     tokenizer->next = r;
     tokenizer->overlap = 0;
@@ -399,9 +399,9 @@ ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
         if (cp) {
           if (!tokenizer->ignore_blank && GRN_STR_ISBLANK(*cp)) { break; }
           cp++;
-          if ((tokenizer->uni_alpha && GRN_STR_CTYPE(*cp) == grn_str_alpha) ||
-              (tokenizer->uni_digit && GRN_STR_CTYPE(*cp) == grn_str_digit) ||
-              (tokenizer->uni_symbol && GRN_STR_CTYPE(*cp) == grn_str_symbol)) {
+          if ((tokenizer->uni_alpha && GRN_STR_CTYPE(*cp) == GRN_CHAR_ALPHA) ||
+              (tokenizer->uni_digit && GRN_STR_CTYPE(*cp) == GRN_CHAR_DIGIT) ||
+              (tokenizer->uni_symbol && GRN_STR_CTYPE(*cp) == GRN_CHAR_SYMBOL)) {
             break;
           }
         }

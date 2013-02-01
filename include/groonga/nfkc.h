@@ -21,17 +21,6 @@
 extern "C" {
 #endif
 
-enum {
-  grn_str_null = 0,
-  grn_str_alpha,
-  grn_str_digit,
-  grn_str_symbol,
-  grn_str_hiragana,
-  grn_str_katakana,
-  grn_str_kanji,
-  grn_str_others
-};
-
 #ifdef __cplusplus
 }
 #endif

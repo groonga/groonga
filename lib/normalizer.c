@@ -747,7 +747,7 @@ utf8_normalize(grn_ctx *ctx, grn_string *nstr)
       }
     }
   }
-  if (cp) { *cp = grn_str_null; }
+  if (cp) { *cp = GRN_CHAR_NULL; }
   *d = '\0';
   nstr->n_characters = length;
   nstr->normalized_length_in_bytes = (size_t)(d - (unsigned char *)nstr->normalized);
