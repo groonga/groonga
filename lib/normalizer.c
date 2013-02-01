@@ -703,7 +703,7 @@ utf8_normalize(grn_ctx *ctx, grn_string *nstr)
           nstr->normalized = normalized;
           if (ch) {
             int16_t *checks;
-            if (!(checks = GRN_REALLOC(nstr->checks, ds * sizeof(int16_t)+ 1))) {
+            if (!(checks = GRN_REALLOC(nstr->checks, ds * sizeof(int16_t) + 1))) {
               if (nstr->ctypes) { GRN_FREE(nstr->ctypes); nstr->ctypes = NULL; }
               GRN_FREE(nstr->checks); nstr->checks = NULL;
               GRN_FREE(nstr->normalized); nstr->normalized = NULL;
