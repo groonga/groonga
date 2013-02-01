@@ -21,7 +21,6 @@ libgroonga_la_SOURCES =				\
 	mrb.c					\
 	mrb.h					\
 	nfkc.c					\
-	nfkc.h					\
 	normalizer.c				\
 	normalizer_in.h				\
 	output.c				\

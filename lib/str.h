@@ -22,7 +22,7 @@
 #endif /* GROONGA_IN_H */
 
 #ifndef GRN_NFKC_H
-#include "nfkc.h"
+#include <groonga/nfkc.h>
 #endif /* GRN_NFKC_H */
 
 #ifdef __cplusplus

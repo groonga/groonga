@@ -21,7 +21,7 @@ don't edit this file by hand. it generated automatically by nfkc.rb
 #include "config.h"
 #endif /* HAVE_CONFIG_H */
 
-#include "nfkc.h"
+#include <groonga/nfkc.h>
 
 #ifdef WITH_NFKC
 
