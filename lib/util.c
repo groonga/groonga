@@ -686,7 +686,7 @@ grn_record_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
                                 GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY))) {
       if (grn_table_columns(ctx, table, "", 0, (grn_obj *)cols)) {
         grn_id *key;
-        GRN_HASH_EACH(ctx, cols, id, &key, NULL, NULL, {
+        GRN_HASH_EACH(ctx, cols, column_id, &key, NULL, NULL, {
             grn_obj *col = grn_ctx_at(ctx, *key);
             if (col) {
               grn_obj value;
