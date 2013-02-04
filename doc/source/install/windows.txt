@@ -23,7 +23,7 @@ You can download such a binary by command line operation.
 
 Start command prompt ``cmd.exe`` and download x86 executable binary by default browser::
 
-  > "c:\\Program Files\\Internet Explorer\\iexplore.exe" http://packages.groonga.org/windows/groonga/groonga-2.1.2-x86.exe
+  > "c:\\Program Files\\Internet Explorer\\iexplore.exe" http://packages.groonga.org/windows/groonga/groonga-3.0.0-x86.exe
 
 Then run it.
 
@@ -32,7 +32,7 @@ For 64-bit environment, download x64 executable binary from packages.groonga.org
 
 Start command prompt ``cmd.exe`` and download x64 executable binary by default browser::
 
-  > "c:\\Program Files\\Internet Explorer\\iexplore.exe" http://packages.groonga.org/windows/groonga/groonga-2.1.2-x64.exe
+  > "c:\\Program Files\\Internet Explorer\\iexplore.exe" http://packages.groonga.org/windows/groonga/groonga-3.0.0-x64.exe
 
 Then run it.
 
@@ -47,7 +47,7 @@ You can download such a binary by command line operation.
 
 Start command prompt ``cmd.exe`` and download x86 zip archive by default browser::
 
-  > "c:\\Program Files\\Internet Explorer\\iexplore.exe" http://packages.groonga.org/windows/groonga/groonga-2.1.2-x86.zip
+  > "c:\\Program Files\\Internet Explorer\\iexplore.exe" http://packages.groonga.org/windows/groonga/groonga-3.0.0-x86.zip
 
 Then extract it.
 
@@ -55,7 +55,7 @@ For 64-bit environment, download x64 zip archive from packages.groonga.org.
 
 Start command prompt ``cmd.exe`` and download x64 zip archive by default browser::
 
-  > "c:\\Program Files\\Internet Explorer\\iexplore.exe" http://packages.groonga.org/windows/groonga/groonga-2.1.2-x64.zip
+  > "c:\\Program Files\\Internet Explorer\\iexplore.exe" http://packages.groonga.org/windows/groonga/groonga-3.0.0-x64.zip
 
 Then extract it.
 
@@ -79,37 +79,37 @@ Start ``Visual Studio Command Prompt (2010)`` installed by Microsoft
 Visual Studio 2010 Express and download it by default browser::
 
   > cd c:\Users\%USERNAME%\Downloads
-  > "c:\\Program Files\\Internet Explorer\\iexplore.exe" http://packages.groonga.org/source/groonga/groonga-2.1.2.zip
+  > "c:\\Program Files\\Internet Explorer\\iexplore.exe" http://packages.groonga.org/source/groonga/groonga-3.0.0.zip
 
 Then extract it.
 
 Move to the groonga's source folder::
 
-  > cd c:\Users\%USERNAME%\Downloads\groonga-2.1.2
+  > cd c:\Users\%USERNAME%\Downloads\groonga-3.0.0
 
 Configure by ``cmake``. The following commnad line is for 64-bit
 version. To build 32-bit version, use ``-G "Visual Studio 10"``
 parameter instead::
 
-  groonga-2.1.2> cmake . -G "Visual Studio 10 Win64" -DCMAKE_INSTALL_PREFIX=C:\groonga
+  groonga-3.0.0> cmake . -G "Visual Studio 10 Win64" -DCMAKE_INSTALL_PREFIX=C:\groonga
 
 Build by Visual C++ 2010 Express::
 
-  groonga-2.1.2> msbuild groonga.sln /p:Configuration=Release
+  groonga-3.0.0> msbuild groonga.sln /p:Configuration=Release
 
 Install by Visual C++ 2010 Express::
 
-  groonga-2.1.2> msbuild groonga.sln /p:Configuration=Release /t:Install
+  groonga-3.0.0> msbuild groonga.sln /p:Configuration=Release /t:Install
 
 If you installed Visual Studio 2010, use can use devenv instead.
 
 Build by Visual Studio 2010::
 
-  groonga-2.1.2> devenv groonga.sln /Build Release
+  groonga-3.0.0> devenv groonga.sln /Build Release
 
 Install by Visual Studio 2010::
 
-  groonga-2.1.2> devenv groonga.sln /Build Release /Project Install
+  groonga-3.0.0> devenv groonga.sln /Build Release /Project Install
 
 After the above steps, :doc:`/reference/executables/groonga` is found in
 ``c:\groonga\bin\groonga.exe``.
