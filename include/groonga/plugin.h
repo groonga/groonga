@@ -180,6 +180,24 @@ GRN_API grn_obj *grn_plugin_proc_alloc(grn_ctx *ctx, grn_user_data *user_data,
  */
 GRN_API const char *grn_plugin_win32_base_dir(void);
 
+/*
+  grn_plugin_charlen() returns the length (#bytes) of the first character
+  in the string specified by `str_ptr' and `str_length'. If the starting bytes
+  are invalid as a character, grn_plugin_charlen() returns 0. See
+  grn_encoding in "groonga.h" for more details of `encoding'
+ */
+int grn_plugin_charlen(grn_ctx *ctx, const char *str_ptr,
+                       unsigned int str_length, grn_encoding encoding);
+
+/*
+  grn_plugin_isspace() returns the length (#bytes) of the first character
+  in the string specified by `str_ptr' and `str_length' if it is a space
+  character. Otherwise, grn_plugin_isspace() returns 0.
+ */
+int grn_plugin_isspace(grn_ctx *ctx, const char *str_ptr,
+                       unsigned int str_length, grn_encoding encoding);
+
+
 
 #ifdef __cplusplus
 }

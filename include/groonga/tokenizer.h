@@ -34,6 +34,8 @@ extern "C" {
   in the string specified by `str_ptr' and `str_length'. If the starting bytes
   are invalid as a character, grn_tokenizer_charlen() returns 0. See
   grn_encoding in "groonga.h" for more details of `encoding'
+
+  Deprecated. Use grn_plugin_charlen() instead.
  */
 int grn_tokenizer_charlen(grn_ctx *ctx, const char *str_ptr,
                           unsigned int str_length, grn_encoding encoding);
@@ -42,6 +44,8 @@ int grn_tokenizer_charlen(grn_ctx *ctx, const char *str_ptr,
   grn_tokenizer_isspace() returns the length (#bytes) of the first character
   in the string specified by `str_ptr' and `str_length' if it is a space
   character. Otherwise, grn_tokenizer_isspace() returns 0.
+
+  Deprecated. Use grn_plugin_isspace() instead.
  */
 int grn_tokenizer_isspace(grn_ctx *ctx, const char *str_ptr,
                           unsigned int str_length, grn_encoding encoding);

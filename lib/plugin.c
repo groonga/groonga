@@ -588,3 +588,56 @@ grn_plugin_win32_base_dir(void)
   return NULL;
 #endif /* WIN32 */
 }
+
+/*
+  grn_plugin_charlen() takes the length of a string, unlike grn_charlen_().
+ */
+int
+grn_plugin_charlen(grn_ctx *ctx, const char *str_ptr,
+                   unsigned int str_length, grn_encoding encoding)
+{
+  return grn_charlen_(ctx, str_ptr, str_ptr + str_length, encoding);
+}
+
+/*
+  grn_plugin_isspace() takes the length of a string, unlike grn_isspace().
+ */
+int
+grn_plugin_isspace(grn_ctx *ctx, const char *str_ptr,
+                   unsigned int str_length, grn_encoding encoding)
+{
+  if ((str_ptr == NULL) || (str_length == 0)) {
+    return 0;
+  }
+  switch ((unsigned char)str_ptr[0]) {
+  case ' ' :
+  case '\f' :
+  case '\n' :
+  case '\r' :
+  case '\t' :
+  case '\v' :
+    return 1;
+  case 0x81 :
+    if ((encoding == GRN_ENC_SJIS) && (str_length >= 2) &&
+        ((unsigned char)str_ptr[1] == 0x40)) {
+      return 2;
+    }
+    break;
+  case 0xA1 :
+    if ((encoding == GRN_ENC_EUC_JP) && (str_length >= 2) &&
+        ((unsigned char)str_ptr[1] == 0xA1)) {
+      return 2;
+    }
+    break;
+  case 0xE3 :
+    if ((encoding == GRN_ENC_UTF8) && (str_length >= 3) &&
+        ((unsigned char)str_ptr[1] == 0x80) &&
+        ((unsigned char)str_ptr[2] == 0x80)) {
+      return 3;
+    }
+    break;
+  default :
+    break;
+  }
+  return 0;
+}

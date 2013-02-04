@@ -29,56 +29,23 @@
 #include "token.h"
 
 /*
-  grn_tokenizer_charlen() takes the length of a string, unlike grn_charlen_().
+  Just for backward compatibility. See grn_plugin_charlen() instead.
  */
 int
 grn_tokenizer_charlen(grn_ctx *ctx, const char *str_ptr,
                       unsigned int str_length, grn_encoding encoding)
 {
-  return grn_charlen_(ctx, str_ptr, str_ptr + str_length, encoding);
+  return grn_plugin_charlen(ctx, str_ptr, str_length, encoding);
 }
 
 /*
-  grn_tokenizer_isspace() takes the length of a string, unlike grn_isspace().
+  Just for backward compatibility. See grn_plugin_isspace() instead.
  */
 int
 grn_tokenizer_isspace(grn_ctx *ctx, const char *str_ptr,
                       unsigned int str_length, grn_encoding encoding)
 {
-  if ((str_ptr == NULL) || (str_length == 0)) {
-    return 0;
-  }
-  switch ((unsigned char)str_ptr[0]) {
-  case ' ' :
-  case '\f' :
-  case '\n' :
-  case '\r' :
-  case '\t' :
-  case '\v' :
-    return 1;
-  case 0x81 :
-    if ((encoding == GRN_ENC_SJIS) && (str_length >= 2) &&
-        ((unsigned char)str_ptr[1] == 0x40)) {
-      return 2;
-    }
-    break;
-  case 0xA1 :
-    if ((encoding == GRN_ENC_EUC_JP) && (str_length >= 2) &&
-        ((unsigned char)str_ptr[1] == 0xA1)) {
-      return 2;
-    }
-    break;
-  case 0xE3 :
-    if ((encoding == GRN_ENC_UTF8) && (str_length >= 3) &&
-        ((unsigned char)str_ptr[1] == 0x80) &&
-        ((unsigned char)str_ptr[2] == 0x80)) {
-      return 3;
-    }
-    break;
-  default :
-    break;
-  }
-  return 0;
+  return grn_plugin_isspace(ctx, str_ptr, str_length, encoding);
 }
 
 grn_bool
