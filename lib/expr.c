@@ -5905,7 +5905,8 @@ parse_script(grn_ctx *ctx, efs_info *q)
           const char *rest64 = rest;
           unsigned int uint32 = grn_atoui(q->cur, q->str_end, &rest);
           // checks to see grn_atoi failed (see above NOTE)
-          if (q->str_end != rest && *rest >= '0' && *rest <= '9') {
+          if ((int64 > UINT32_MAX) ||
+              (q->str_end != rest && *rest >= '0' && *rest <= '9')) {
             grn_obj int64buf;
             GRN_INT64_INIT(&int64buf, 0);
             GRN_INT64_SET(ctx, &int64buf, int64);

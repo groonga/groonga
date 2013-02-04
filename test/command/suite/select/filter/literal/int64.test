@@ -1,0 +1,12 @@
+table_create Output TABLE_HASH_KEY ShortText
+column_create Output int64 COLUMN_SCALAR Int64
+
+load --table Output
+[
+{"_key": "output"}
+]
+
+select Output \
+  --filter "true" \
+  --scorer "int64 = 20130204150" \
+  --output_columns int64

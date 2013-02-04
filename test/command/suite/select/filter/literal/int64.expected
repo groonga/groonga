@@ -1,0 +1,11 @@
+table_create Output TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Output int64 COLUMN_SCALAR Int64
+[[0,0.0,0.0],true]
+load --table Output
+[
+{"_key": "output"}
+]
+[[0,0.0,0.0],1]
+select Output   --filter "true"   --scorer "int64 = 20130204150"   --output_columns int64
+[[0,0.0,0.0],[[[1],[["int64","Int64"]],[20130204150]]]]
