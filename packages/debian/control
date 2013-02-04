@@ -117,7 +117,7 @@ Depends:
   ${misc:Depends},
   ${shlibs:Depends},
   libgroonga0 (= ${binary:Version}),
-  mecab
+  mecab-ipadic-utf8 | mecab-jumandic-utf8
 Description: MeCab tokenizer for groonga.
  Groonga is an open-source fulltext search engine and column store.
  It lets you write high-performance applications that requires fulltext search.
