@@ -44,12 +44,12 @@ GRN_PLUGIN_EXPORT grn_rc GRN_PLUGIN_FIN(grn_ctx *ctx);
   Don't call these functions directly. Use GRN_PLUGIN_MALLOC(),
   GRN_PLUGIN_REALLOC() and GRN_PLUGIN_FREE() instead.
  */
-GRN_PLUGIN_EXPORT void *grn_plugin_malloc(grn_ctx *ctx, size_t size, const char *file,
-                                          int line, const char *func);
+GRN_API void *grn_plugin_malloc(grn_ctx *ctx, size_t size, const char *file,
+                                int line, const char *func);
 void *grn_plugin_realloc(grn_ctx *ctx, void *ptr, size_t size,
                          const char *file, int line, const char *func);
-GRN_PLUGIN_EXPORT void grn_plugin_free(grn_ctx *ctx, void *ptr, const char *file,
-                                       int line, const char *func);
+GRN_API void grn_plugin_free(grn_ctx *ctx, void *ptr, const char *file,
+                             int line, const char *func);
 
 /*
   GRN_PLUGIN_MALLOC() allocates `size' bytes and returns a pointer to the
@@ -86,17 +86,17 @@ GRN_PLUGIN_EXPORT void grn_plugin_free(grn_ctx *ctx, void *ptr, const char *file
   Don't call grn_plugin_set_error() directly. This function is used in
   GRN_PLUGIN_SET_ERROR().
  */
-GRN_PLUGIN_EXPORT void grn_plugin_set_error(grn_ctx *ctx, grn_log_level level,
-                                            grn_rc error_code,
-                                            const char *file, int line, const char *func,
-                                            const char *format, ...) GRN_ATTRIBUTE_PRINTF(7);
+GRN_API void grn_plugin_set_error(grn_ctx *ctx, grn_log_level level,
+                                  grn_rc error_code,
+                                  const char *file, int line, const char *func,
+                                  const char *format, ...) GRN_ATTRIBUTE_PRINTF(7);
 
 /*
   Don't call these functions directly. grn_plugin_backtrace() and
   grn_plugin_logtrace() are used in GRN_PLUGIN_SET_ERROR().
  */
-GRN_PLUGIN_EXPORT void grn_plugin_backtrace(grn_ctx *ctx);
-GRN_PLUGIN_EXPORT void grn_plugin_logtrace(grn_ctx *ctx, grn_log_level level);
+GRN_API void grn_plugin_backtrace(grn_ctx *ctx);
+GRN_API void grn_plugin_logtrace(grn_ctx *ctx, grn_log_level level);
 
 /*
   Don't use GRN_PLUGIN_SET_ERROR() directly. This macro is used in
@@ -131,7 +131,7 @@ typedef struct _grn_plugin_mutex grn_plugin_mutex;
   GRN_PLUGIN_MALLOC(). grn_plugin_mutex_open() returns NULL if sufficient
   memory is not available.
  */
-GRN_PLUGIN_EXPORT grn_plugin_mutex *grn_plugin_mutex_open(grn_ctx *ctx);
+GRN_API grn_plugin_mutex *grn_plugin_mutex_open(grn_ctx *ctx);
 
 /*
   grn_plugin_mutex_create() is deprecated. Use grn_plugin_mutex_open()
@@ -143,7 +143,7 @@ grn_plugin_mutex *grn_plugin_mutex_create(grn_ctx *ctx);
   grn_plugin_mutex_close() finalizes an object of grn_plugin_mutex and then
   frees memory allocated for that object.
  */
-GRN_PLUGIN_EXPORT void grn_plugin_mutex_close(grn_ctx *ctx, grn_plugin_mutex *mutex);
+GRN_API void grn_plugin_mutex_close(grn_ctx *ctx, grn_plugin_mutex *mutex);
 
 /*
   grn_plugin_mutex_destroy() is deprecated. Use grn_plugin_mutex_close()
@@ -155,20 +155,20 @@ void grn_plugin_mutex_destroy(grn_ctx *ctx, grn_plugin_mutex *mutex);
   grn_plugin_mutex_lock() locks a mutex object. If the object is already
   locked, the calling thread waits until the object will be unlocked.
  */
-GRN_PLUGIN_EXPORT void grn_plugin_mutex_lock(grn_ctx *ctx, grn_plugin_mutex *mutex);
+GRN_API void grn_plugin_mutex_lock(grn_ctx *ctx, grn_plugin_mutex *mutex);
 
 /*
   grn_plugin_mutex_unlock() unlocks a mutex object. grn_plugin_mutex_unlock()
   should not be called for an unlocked object.
  */
-GRN_PLUGIN_EXPORT void grn_plugin_mutex_unlock(grn_ctx *ctx, grn_plugin_mutex *mutex);
+GRN_API void grn_plugin_mutex_unlock(grn_ctx *ctx, grn_plugin_mutex *mutex);
 
 /*
   grn_plugin_proc_alloc() allocates a `grn_obj` object.
   You can use it in function that is registered as GRN_PROC_FUNCTION.
  */
-GRN_PLUGIN_EXPORT grn_obj *grn_plugin_proc_alloc(grn_ctx *ctx, grn_user_data *user_data,
-                                                 grn_id domain, grn_obj_flags flags);
+GRN_API grn_obj *grn_plugin_proc_alloc(grn_ctx *ctx, grn_user_data *user_data,
+                                       grn_id domain, grn_obj_flags flags);
 
 /*
   grn_plugin_win32_base_dir() returns the groonga install directory.
@@ -178,7 +178,7 @@ GRN_PLUGIN_EXPORT grn_obj *grn_plugin_proc_alloc(grn_ctx *ctx, grn_user_data *us
 
   It only works on Windows. It returns `NULL` on other platforms.
  */
-GRN_PLUGIN_EXPORT const char *grn_plugin_win32_base_dir(void);
+GRN_API const char *grn_plugin_win32_base_dir(void);
 
 
 #ifdef __cplusplus
