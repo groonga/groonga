@@ -12,7 +12,7 @@ Release 3.0.0 - 2013/02/09
 
 * Bump version to 3.0.0!
 
-Fixed
+Fixes
 ^^^^^
 
 * [deb] Fixed to install missing not EUC-JP, but UTF-8 encoding dictionary
