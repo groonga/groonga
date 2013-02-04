@@ -46,8 +46,8 @@ GRN_PLUGIN_EXPORT grn_rc GRN_PLUGIN_FIN(grn_ctx *ctx);
  */
 GRN_API void *grn_plugin_malloc(grn_ctx *ctx, size_t size, const char *file,
                                 int line, const char *func);
-void *grn_plugin_realloc(grn_ctx *ctx, void *ptr, size_t size,
-                         const char *file, int line, const char *func);
+GRN_API void *grn_plugin_realloc(grn_ctx *ctx, void *ptr, size_t size,
+                                 const char *file, int line, const char *func);
 GRN_API void grn_plugin_free(grn_ctx *ctx, void *ptr, const char *file,
                              int line, const char *func);
 
@@ -137,7 +137,7 @@ GRN_API grn_plugin_mutex *grn_plugin_mutex_open(grn_ctx *ctx);
   grn_plugin_mutex_create() is deprecated. Use grn_plugin_mutex_open()
   instead.
 */
-grn_plugin_mutex *grn_plugin_mutex_create(grn_ctx *ctx);
+GRN_API grn_plugin_mutex *grn_plugin_mutex_create(grn_ctx *ctx);
 
 /*
   grn_plugin_mutex_close() finalizes an object of grn_plugin_mutex and then
@@ -149,7 +149,7 @@ GRN_API void grn_plugin_mutex_close(grn_ctx *ctx, grn_plugin_mutex *mutex);
   grn_plugin_mutex_destroy() is deprecated. Use grn_plugin_mutex_close()
   instead.
 */
-void grn_plugin_mutex_destroy(grn_ctx *ctx, grn_plugin_mutex *mutex);
+GRN_API void grn_plugin_mutex_destroy(grn_ctx *ctx, grn_plugin_mutex *mutex);
 
 /*
   grn_plugin_mutex_lock() locks a mutex object. If the object is already
