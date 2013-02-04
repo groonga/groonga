@@ -5,6 +5,19 @@
 News
 ====
 
+.. _release-3-0-0:
+
+Release 3.0.0 - 2013/02/09
+--------------------------
+
+* Bump version to 3.0.0!
+
+Fixed
+^^^^^
+
+* [deb] Fixed to install missing not EUC-JP, but UTF-8 encoding dictionary
+  when ``groonga-tokenizer-mecab`` package is installed.
+
 .. _release-2-1-2:
 
 Release 2.1.2 - 2013/01/29
