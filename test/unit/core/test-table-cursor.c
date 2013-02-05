@@ -119,14 +119,23 @@ test_table(gconstpointer data)
 void
 data_normalize(void)
 {
-#define ADD_DATA(label, key)                    \
-  gcut_add_datum(label,                         \
-                 "key", G_TYPE_STRING, key,     \
+#define ADD_DATA(label, table_type, key)                        \
+  gcut_add_datum(label,                                         \
+                 "table_type", G_TYPE_STRING, table_type,       \
+                 "key", G_TYPE_STRING, key,                     \
                  NULL)
 
-  ADD_DATA("lower", "alice");
-  ADD_DATA("upper", "ALICE");
-  ADD_DATA("mixed", "AlIcE");
+  ADD_DATA("hash table - lower",        "TABLE_HASH_KEY", "alice");
+  ADD_DATA("hash table - upper",        "TABLE_HASH_KEY", "ALICE");
+  ADD_DATA("hash table - mixed",        "TABLE_HASH_KEY", "AlIcE");
+
+  ADD_DATA("patricia trie - lower",     "TABLE_PAT_KEY",  "alice");
+  ADD_DATA("patricia trie - upper",     "TABLE_PAT_KEY",  "ALICE");
+  ADD_DATA("patricia trie - mixed",     "TABLE_PAT_KEY",  "AlIcE");
+
+  ADD_DATA("double array trie - lower", "TABLE_DAT_KEY",  "alice");
+  ADD_DATA("double array trie - upper", "TABLE_DAT_KEY",  "ALICE");
+  ADD_DATA("double array trie - mixed", "TABLE_DAT_KEY",  "AlIcE");
 
 #undef ADD_DATA
 }
@@ -139,8 +148,10 @@ test_normalize(gconstpointer data)
   GList *actual_keys = NULL;
   grn_table_cursor *cursor;
 
-  assert_send_command("table_create Users TABLE_HASH_KEY ShortText "
-                      "--normalizer NormalizerAuto");
+  assert_send_command(
+    cut_take_printf("table_create Users %s ShortText "
+                      "--normalizer NormalizerAuto",
+                    gcut_data_get_string(data, "table_type")));
   cut_assert_equal_string(
     "2",
     send_command("load --table Users --columns _key\n"
