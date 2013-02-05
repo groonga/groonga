@@ -48,6 +48,14 @@ Install groonga-munin-plugins package::
 
   % sudo aptitude -V -D -y install groonga-munin-plugins
 
+There is a package that provides MySQL compatible normalizer as
+groonga plugins.
+If you want to use that one, install groonga-normalizer-mysql package.
+
+Install groonga-normalizer-mysql package::
+
+  % sudo aptitude -V -D -y install groonga-normalizer-mysql
+
 wheezy
 ------
 
@@ -80,6 +88,14 @@ Install groonga-munin-plugins package::
 
   % sudo aptitude -V -D -y install groonga-munin-plugins
 
+There is a package that provides MySQL compatible normalizer as
+groonga plugins.
+If you want to use that one, install groonga-normalizer-mysql package.
+
+Install groonga-normalizer-mysql package::
+
+  % sudo aptitude -V -D -y install groonga-normalizer-mysql
+
 sid
 ---
 
@@ -111,6 +127,14 @@ groonga status by Munin, install groonga-munin-plugins package.
 Install groonga-munin-plugins package::
 
   % sudo aptitude -V -D -y install groonga-munin-plugins
+
+There is a package that provides MySQL compatible normalizer as
+groonga plugins.
+If you want to use that one, install groonga-normalizer-mysql package.
+
+Install groonga-normalizer-mysql package::
+
+  % sudo aptitude -V -D -y install groonga-normalizer-mysql
 
 Build from source
 -----------------

@@ -55,6 +55,14 @@ Install groonga-munin-plugins package::
 
   % sudo apt-get -y install groonga-munin-plugins
 
+There is a package that provides MySQL compatible normalizer as
+groonga plugins.
+If you want to use that one, install groonga-normalizer-mysql package.
+
+Install groonga-normalizer-mysql package::
+
+  % sudo apt-get -y install groonga-normalizer-mysql
+
 11.10 Oneiric Ocelot
 --------------------
 
@@ -93,6 +101,14 @@ groonga status by Munin, install groonga-munin-plugins package.
 Install groonga-munin-plugins package::
 
   % sudo apt-get -y install groonga-munin-plugins
+
+There is a package that provides MySQL compatible normalizer as
+groonga plugins.
+If you want to use that one, install groonga-normalizer-mysql package.
+
+Install groonga-normalizer-mysql package::
+
+  % sudo apt-get -y install groonga-normalizer-mysql
 
 12.04 LTS Precise Pangolin
 --------------------------
@@ -133,6 +149,14 @@ Install groonga-munin-plugins package::
 
   % sudo apt-get -y install groonga-munin-plugins
 
+There is a package that provides MySQL compatible normalizer as
+groonga plugins.
+If you want to use that one, install groonga-normalizer-mysql package.
+
+Install groonga-normalizer-mysql package::
+
+  % sudo apt-get -y install groonga-normalizer-mysql
+
 12.10 Quantal Quetzal
 ---------------------
 
@@ -171,6 +195,14 @@ groonga status by Munin, install groonga-munin-plugins package.
 Install groonga-munin-plugins package::
 
   % sudo apt-get -y install groonga-munin-plugins
+
+There is a package that provides MySQL compatible normalizer as
+groonga plugins.
+If you want to use that one, install groonga-normalizer-mysql package.
+
+Install groonga-normalizer-mysql package::
+
+  % sudo apt-get -y install groonga-normalizer-mysql
 
 Build from source
 -----------------
