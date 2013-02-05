@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-28 18:20\n"
+"POT-Creation-Date: 2013-02-05 17:54\n"
 "PO-Revision-Date: 2013-01-24 11:36+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -174,6 +174,8 @@ msgstr ""
 #: ../../../source/example/reference/normalizers/example-load.log:1
 #: ../../../source/example/reference/normalizers/example-table-create.log:1
 #: ../../../source/example/reference/normalizers/normalizer-auto.log:1
+#: ../../../source/example/reference/normalizers/normalizer-mysql-genral-ci.log:1
+#: ../../../source/example/reference/normalizers/normalizer-mysql-register.log:1
 #: ../../../source/example/reference/normalizers/normalizer-nfkc51.log:1
 msgid "Execution example::"
 msgstr "実行例::"
@@ -747,7 +749,7 @@ msgstr ""
 #: ../../../source/reference/functions/query.txt:133
 #: ../../../source/reference/functions/snippet_html.txt:118
 #: ../../../source/reference/grn_expr.txt:57
-#: ../../../source/reference/normalizers.txt:120
+#: ../../../source/reference/normalizers.txt:144
 #: ../../../source/reference/query_expanders/tsv.txt:151
 #: ../../../source/reference/tables.txt:163
 msgid "See also"
@@ -3258,8 +3260,8 @@ msgid ""
 "``normalize`` commands takes two parameters - ``normalizer`` and ``string``. "
 "Both of them are required."
 msgstr ""
-"``normalize`` コマンドは ``normalizer`` と ``string`` という二つの引数をとります。"
-"これらの引数はどちらも必須です。"
+"``normalize`` コマンドは ``normalizer`` と ``string`` という二つの引数をとり"
+"ます。これらの引数はどちらも必須です。"
 
 # 2874da1d881b448992bb7c4fd1cf7e34
 # 09d40eac91774db29b40ff7e960663da
@@ -12271,8 +12273,49 @@ msgstr ""
 msgid "Here is an example that uses ``NormalizerNFKC51`` normalizer:"
 msgstr "以下は ``NormalizerNFKC51`` ノーマライザーを使う例です。"
 
-# bde897b0ca22430eb927c3f3d85d70d2
+# 973f421f733643958b7a169f7f113229
+#: ../../../source/reference/normalizers.txt:120
+msgid "Additional normalizers"
+msgstr "追加のノーマライザー"
+
+# e246a1ae68b34b84905b25f3080dc354
 #: ../../../source/reference/normalizers.txt:122
+msgid ""
+"Here is a list of additional normalizers provided by ``groonga-normalizer-"
+"mysql`` plugins:"
+msgstr ""
+"``groonga-normalizer-mysql`` パッケージで提供される追加のノーマライザー"
+"のリストです。"
+
+# cc6d40332dd94b6fb1aa8621f07efb5a
+#: ../../../source/reference/normalizers.txt:124
+msgid "``NormalizerMySQLGeneralCI``"
+msgstr ""
+
+# d2c072ab7418466a92acafab279039b6
+#: ../../../source/reference/normalizers.txt:126
+msgid ""
+"``groonga-normalizer-mysql`` is a groonga plugin. It provides MySQL "
+"compatible normalizers to groonga. ``NormalizerMySQLGeneralCI`` corresponds "
+"to ``utf8mb4_general_ci``."
+msgstr ""
+"``groonga-normalizer-mysql`` はgroongaのプラグインです。"
+"MySQL互換のノーマライザーを提供します。ノーマライザー ``NormalizerMySQLGeneralCI`` "
+"に対応するのは ``utf8mb4_general_ci`` です。"
+
+# f75625d10e4c41d29d11e9dbfd742e6c
+#: ../../../source/reference/normalizers.txt:130
+msgid "You need to register ``normalizers/mysql`` plugin in advance."
+msgstr ""
+"事前に ``normalizers/mysql`` プラグインを登録する必要があります。"
+
+# b993c6521463466f8f42d9a4e7e5107f
+#: ../../../source/reference/normalizers.txt:136
+msgid "Here is an example that uses ``NormalizerMySQLGeneralCI`` normalizer:"
+msgstr "以下は ``NormalizerMySQLGeneralCI`` ノーマライザーを使う例です。"
+
+# bde897b0ca22430eb927c3f3d85d70d2
+#: ../../../source/reference/normalizers.txt:146
 #: ../../../source/reference/tables.txt:165
 msgid ":doc:`/reference/commands/table_create`"
 msgstr ""
