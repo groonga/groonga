@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2010-2011  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2010-2013  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -25,14 +25,43 @@
 
 void data_table(void);
 void test_table(gpointer data);
+void data_normalize(void);
+void test_normalize(gconstpointer data);
 
 static grn_logger_info *logger;
+
+static gchar *tmp_directory;
+static const gchar *database_path;
+
 static grn_ctx *context;
 static grn_obj *database;
 
 void
+cut_startup(void)
+{
+  tmp_directory = g_build_filename(grn_test_get_tmp_dir(),
+                                   "table-cursor",
+                                   NULL);
+}
+
+void
+cut_shutdown(void)
+{
+  g_free(tmp_directory);
+}
+
+static void
+remove_tmp_directory(void)
+{
+  cut_remove_path(tmp_directory, NULL);
+}
+
+void
 cut_setup(void)
 {
+  remove_tmp_directory();
+  g_mkdir_with_parents(tmp_directory, 0700);
+
   context = NULL;
 
   logger = setup_grn_logger();
@@ -40,7 +69,8 @@ cut_setup(void)
   context = g_new0(grn_ctx, 1);
   grn_ctx_init(context, 0);
 
-  database = grn_db_create(context, NULL, NULL);
+  database_path = cut_build_path(tmp_directory, "database.groonga", NULL);
+  database = grn_db_create(context, database_path, NULL);
 }
 
 void
@@ -51,6 +81,8 @@ cut_teardown(void)
   g_free(context);
 
   teardown_grn_logger(logger);
+
+  remove_tmp_directory();
 }
 
 void
@@ -81,3 +113,55 @@ test_table(gpointer data)
   /* FIXME: grn_test_assert_equal_object() */
   cut_assert_equal_pointer(table, grn_table_cursor_table(context, cursor));
 }
+
+void
+data_normalize(void)
+{
+#define ADD_DATA(label, key)                    \
+  gcut_add_datum(label,                         \
+                 "key", G_TYPE_STRING, key,     \
+                 NULL)
+
+  ADD_DATA("lower", "alice");
+  ADD_DATA("upper", "ALICE");
+  ADD_DATA("mixed", "AlIcE");
+
+#undef ADD_DATA
+}
+
+void
+test_normalize(gconstpointer data)
+{
+  grn_obj *table;
+  const gchar *search_key = gcut_data_get_string(data, "key");
+  GList *actual_keys = NULL;
+  grn_table_cursor *cursor;
+
+  assert_send_command("table_create Users TABLE_HASH_KEY ShortText "
+                      "--normalizer NormalizerAuto");
+  cut_assert_equal_string(
+    "2",
+    send_command("load --table Users --columns _key\n"
+                 "[\n"
+                 "  [\"Alice\"],\n"
+                 "  [\"Bob\"]\n"
+                 "]"));
+
+  table = grn_ctx_get(context, "Users", -1);
+  cursor = grn_table_cursor_open(context, table,
+                                 search_key, strlen(search_key),
+                                 search_key, strlen(search_key),
+                                 0, -1, 0);
+  while (grn_table_cursor_next(context, cursor) != GRN_ID_NIL) {
+    void *key;
+    int key_length;
+    key_length = grn_table_cursor_get_key(context, cursor, &key);
+    actual_keys = g_list_append(actual_keys, g_strndup(key, key_length));
+  }
+  grn_table_cursor_close(context, cursor);
+  gcut_take_list(actual_keys, g_free);
+
+  gcut_assert_equal_list_string(gcut_take_new_list_string("alice", NULL),
+                                actual_keys);
+}
+

@@ -35,7 +35,7 @@
 #define NEXT_ADDR(p) (((byte *)(p)) + sizeof *(p))
 
 #define WITH_NORMALIZE(table,key,key_size,block) do {\
-  if ((table)->normalizer) {\
+  if ((table)->normalizer && key && key_size > 0) {\
     grn_obj *nstr;\
     if ((nstr = grn_string_open(ctx, key, key_size,\
                                 (table)->normalizer, 0))) {\
@@ -1892,19 +1892,49 @@ grn_table_cursor_open(grn_ctx *ctx, grn_obj *table,
     if (table->header.type == GRN_DB) { table = ((grn_db *)table)->keys; }
     switch (table->header.type) {
     case GRN_TABLE_PAT_KEY :
-      tc = (grn_table_cursor *)grn_pat_cursor_open(ctx, (grn_pat *)table,
-                                                   min, min_size,
-                                                   max, max_size, offset, limit, flags);
+      {
+        grn_pat *pat = (grn_pat *)table;
+        WITH_NORMALIZE(pat, min, min_size, {
+          WITH_NORMALIZE(pat, max, max_size, {
+            grn_pat_cursor *pat_cursor;
+            pat_cursor = grn_pat_cursor_open(ctx, pat,
+                                             min, min_size,
+                                             max, max_size,
+                                             offset, limit, flags);
+            tc = (grn_table_cursor *)pat_cursor;
+          });
+        });
+      }
       break;
     case GRN_TABLE_DAT_KEY :
-      tc = (grn_table_cursor *)grn_dat_cursor_open(ctx, (grn_dat *)table,
-                                                   min, min_size,
-                                                   max, max_size, offset, limit, flags);
+      {
+        grn_dat *dat = (grn_dat *)table;
+        WITH_NORMALIZE(dat, min, min_size, {
+          WITH_NORMALIZE(dat, max, max_size, {
+            grn_dat_cursor *dat_cursor;
+            dat_cursor = grn_dat_cursor_open(ctx, dat,
+                                             min, min_size,
+                                             max, max_size,
+                                             offset, limit, flags);
+            tc = (grn_table_cursor *)dat_cursor;
+          });
+        });
+      }
       break;
     case GRN_TABLE_HASH_KEY :
-      tc = (grn_table_cursor *)grn_hash_cursor_open(ctx, (grn_hash *)table,
-                                                    min, min_size,
-                                                    max, max_size, offset, limit, flags);
+      {
+        grn_hash *hash = (grn_hash *)table;
+        WITH_NORMALIZE(hash, min, min_size, {
+          WITH_NORMALIZE(hash, max, max_size, {
+            grn_hash_cursor *hash_cursor;
+            hash_cursor = grn_hash_cursor_open(ctx, hash,
+                                               min, min_size,
+                                               max, max_size,
+                                               offset, limit, flags);
+            tc = (grn_table_cursor *)hash_cursor;
+          });
+        });
+      }
       break;
     case GRN_TABLE_NO_KEY :
       tc = (grn_table_cursor *)grn_array_cursor_open(ctx, (grn_array *)table,
