@@ -141,6 +141,8 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/normalizers/example-load.log \
 	$(top_srcdir)/doc/source/example/reference/normalizers/example-table-create.log \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-auto.log \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-mysql-genral-ci.log \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-mysql-register.log \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc51.log \
 	$(top_srcdir)/doc/source/example/suggestion-1.log \
 	$(top_srcdir)/doc/source/example/tutorial/data-1.log \
@@ -568,6 +570,8 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/normalizers/example-load.log \
 	source/example/reference/normalizers/example-table-create.log \
 	source/example/reference/normalizers/normalizer-auto.log \
+	source/example/reference/normalizers/normalizer-mysql-genral-ci.log \
+	source/example/reference/normalizers/normalizer-mysql-register.log \
 	source/example/reference/normalizers/normalizer-nfkc51.log \
 	source/example/suggestion-1.log \
 	source/example/tutorial/data-1.log \
