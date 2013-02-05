@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-28 18:07\n"
+"POT-Creation-Date: 2013-02-05 17:54\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -235,6 +235,8 @@ msgstr ""
 #: ../../../source/example/reference/normalizers/example-load.log:1
 #: ../../../source/example/reference/normalizers/example-table-create.log:1
 #: ../../../source/example/reference/normalizers/normalizer-auto.log:1
+#: ../../../source/example/reference/normalizers/normalizer-mysql-genral-ci.log:1
+#: ../../../source/example/reference/normalizers/normalizer-mysql-register.log:1
 #: ../../../source/example/reference/normalizers/normalizer-nfkc51.log:1
 msgid "Execution example::"
 msgstr "Execution example::"
@@ -805,7 +807,7 @@ msgstr ""
 #: ../../../source/reference/functions/query.txt:133
 #: ../../../source/reference/functions/snippet_html.txt:118
 #: ../../../source/reference/grn_expr.txt:57
-#: ../../../source/reference/normalizers.txt:120
+#: ../../../source/reference/normalizers.txt:144
 #: ../../../source/reference/query_expanders/tsv.txt:151
 #: ../../../source/reference/tables.txt:163
 msgid "See also"
@@ -12353,9 +12355,44 @@ msgstr ""
 msgid "Here is an example that uses ``NormalizerNFKC51`` normalizer:"
 msgstr ""
 
+# 8e6f472e6ec740d093ec0fae58d66002
+#: ../../../source/reference/normalizers.txt:120
+msgid "Additional normalizers"
+msgstr ""
+
+# c6a3d16f4935455198f04132c609f79d
+#: ../../../source/reference/normalizers.txt:122
+msgid ""
+"Here is a list of additional normalizers provided by ``groonga-normalizer-"
+"mysql`` plugins:"
+msgstr ""
+
+# 67691b36d0d346898ef0fbd589abc971
+#: ../../../source/reference/normalizers.txt:124
+msgid "``NormalizerMySQLGeneralCI``"
+msgstr ""
+
+# 9ce604d359144806bcabe062c3e87053
+#: ../../../source/reference/normalizers.txt:126
+msgid ""
+"``groonga-normalizer-mysql`` is a groonga plugin. It provides MySQL "
+"compatible normalizers to groonga. ``NormalizerMySQLGeneralCI`` corresponds "
+"to ``utf8mb4_general_ci``."
+msgstr ""
+
+# f635555465884cfea2faffac15a2e744
+#: ../../../source/reference/normalizers.txt:130
+msgid "You need to register ``normalizers/mysql`` plugin in advance."
+msgstr ""
+
+# 6656e3e7cecf483e857e67760b07d7c0
+#: ../../../source/reference/normalizers.txt:136
+msgid "Here is an example that uses ``NormalizerMySQLGeneralCI`` normalizer:"
+msgstr ""
+
 # 257a8b1e0a424cf3807162e2534d2837
 # 73ec2c3dc21241d5b0b795816605eeb2
-#: ../../../source/reference/normalizers.txt:122
+#: ../../../source/reference/normalizers.txt:146
 #: ../../../source/reference/tables.txt:165
 msgid ":doc:`/reference/commands/table_create`"
 msgstr ""
