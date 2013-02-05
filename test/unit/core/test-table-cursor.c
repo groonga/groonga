@@ -24,7 +24,7 @@
 #include "../lib/grn-assertions.h"
 
 void data_table(void);
-void test_table(gpointer data);
+void test_table(gconstpointer data);
 void data_normalize(void);
 void test_normalize(gconstpointer data);
 
@@ -101,7 +101,7 @@ data_table(void)
 }
 
 void
-test_table(gpointer data)
+test_table(gconstpointer data)
 {
   grn_obj *table;
   grn_obj_flags flags = gcut_data_get_int(data, "flags");
