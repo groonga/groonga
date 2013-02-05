@@ -88,8 +88,10 @@ cut_teardown(void)
 void
 data_table(void)
 {
-#define ADD_DATA(label, flags)                                          \
-  cut_add_data(label, GINT_TO_POINTER(flags), NULL, NULL)
+#define ADD_DATA(label, flags)                  \
+  gcut_add_datum(label,                         \
+                 "flags", G_TYPE_INT, flags,    \
+                 NULL)
 
   ADD_DATA("no-key", GRN_OBJ_TABLE_NO_KEY);
   ADD_DATA("hash", GRN_OBJ_TABLE_HASH_KEY);
@@ -102,7 +104,7 @@ void
 test_table(gpointer data)
 {
   grn_obj *table;
-  grn_obj_flags flags = GPOINTER_TO_INT(data);
+  grn_obj_flags flags = gcut_data_get_int(data, "flags");
   grn_table_cursor *cursor;
 
   table = grn_table_create(context, NULL, 0, NULL,
