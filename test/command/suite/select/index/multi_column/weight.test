@@ -1,0 +1,35 @@
+table_create Bigram TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigramSplitSymbolAlpha \
+  --normalizer NormalizerAuto
+
+table_create Diaries TABLE_HASH_KEY ShortText
+column_create Diaries title COLUMN_SCALAR ShortText
+column_create Diaries content COLUMN_SCALAR Text
+
+column_create Bigram diaries \
+  COLUMN_INDEX|WITH_POSITION|WITH_SECTION \
+  Diaries title,content
+
+load --table Diaries
+[
+  {
+    "_key": "2013-02-06",
+    "title": "groonga",
+    "content": "I found groonga that is a fast fulltext search engine!"
+  },
+  {
+    "_key": "2013-02-07",
+    "title": "mroonga",
+    "content": "I found mroonga that is a MySQL storage engine to use groonga!"
+  },
+  {
+    "_key": "2013-02-08",
+    "title": "rroonga",
+    "content": "I found rroonga that is Ruby bindings for groonga!"
+  }
+]
+
+select Diaries \
+  --match_columns 'Bigram.diaries * 10' \
+  --query 'engine OR mroonga' \
+  --output_columns 'title,_score'
