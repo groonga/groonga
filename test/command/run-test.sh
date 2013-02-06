@@ -134,6 +134,8 @@ if test -e $tmpfs; then
     ln -s $tmpfs "tmp"
 fi
 
+export TZ=Asia/Tokyo
+
 $RUBY \
     -I "$grntest_dir/lib" \
     -I "$groonga_command_dir/lib" \
