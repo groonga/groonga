@@ -8,7 +8,7 @@ if [ "$GROONGA_MASTER" = "yes" ]; then
     git clone --depth 1 https://github.com/groonga/groonga.git
     cd groonga
     ./autogen.sh
-    ./configure --prefix=/usr --localstatedir=/var --with-debug
+    ./configure --prefix=/usr --localstatedir=/var --enable-debug
     make -j$(grep '^processor' /proc/cpuinfo | wc -l) > /dev/null
     sudo make install > /dev/null
     cd ..
