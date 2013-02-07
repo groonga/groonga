@@ -182,6 +182,11 @@ struct _grn_table_queue {
 GRN_API void grn_array_queue_lock_clear(grn_ctx *ctx, grn_array *array);
 GRN_API void grn_array_clear_curr_rec(grn_ctx *ctx, grn_array *array);
 GRN_API grn_table_queue *grn_array_queue(grn_ctx *ctx, grn_array *array);
+GRN_API uint32_t grn_table_queue_size(grn_table_queue *queue);
+GRN_API void grn_table_queue_head_increment(grn_table_queue *queue);
+GRN_API void grn_table_queue_tail_increment(grn_table_queue *queue);
+GRN_API grn_id grn_table_queue_head(grn_table_queue *queue);
+GRN_API grn_id grn_table_queue_tail(grn_table_queue *queue);
 
 /**** grn_hash ****/
 

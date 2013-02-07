@@ -405,31 +405,38 @@ command_add(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 static grn_obj *
 command_set(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  /* TODO: implement */
-  grn_obj *table = grn_ctx_get(ctx, GRN_TEXT_VALUE(VAR(0)), GRN_TEXT_LEN(VAR(0)));
+  int table_name_len = GRN_TEXT_LEN(VAR(0));
+  const char *table_name = GRN_TEXT_VALUE(VAR(0));
+  grn_obj *table = grn_ctx_get(ctx, table_name, table_name_len);
   if (table) {
-    grn_id id;
-    if (GRN_TEXT_LEN(VAR(1))) {
-      if ((id = grn_table_get(ctx, table, GRN_TEXT_VALUE(VAR(1)), GRN_TEXT_LEN(VAR(1))))) {
-        grn_obj obj;
-        grn_obj_format format;
-        GRN_RECORD_INIT(&obj, 0, ((grn_db_obj *)table)->id);
-        GRN_OBJ_FORMAT_INIT(&format, 1, 0, 1, 0);
-        GRN_RECORD_SET(ctx, &obj, id);
-        grn_obj_columns(ctx, table,
-                        GRN_TEXT_VALUE(VAR(4)),
-                        GRN_TEXT_LEN(VAR(4)), &format.columns);
-        format.flags = 0 /* GRN_OBJ_FORMAT_WITH_COLUMN_NAMES */;
-        GRN_OUTPUT_OBJ(&obj, &format);
-        GRN_OBJ_FORMAT_FIN(ctx, &format);
-      } else {
-        /* todo : error handling */
-      }
+    grn_id id = GRN_ID_NIL;
+    int key_len = GRN_TEXT_LEN(VAR(2));
+    int id_len = GRN_TEXT_LEN(VAR(5));
+    if (key_len) {
+      const char *key = GRN_TEXT_VALUE(VAR(2));
+      id = grn_table_get(ctx, table, key, key_len);
     } else {
-      /* todo : get_by_id */
+      if (id_len) {
+        id = grn_atoui(GRN_TEXT_VALUE(VAR(5)), GRN_BULK_CURR(VAR(5)), NULL);
+      }
+      id = grn_table_at(ctx, table, id);
+    }
+    if (id) {
+      grn_obj obj;
+      grn_obj_format format;
+      GRN_RECORD_INIT(&obj, 0, ((grn_db_obj *)table)->id);
+      GRN_OBJ_FORMAT_INIT(&format, 1, 0, 1, 0);
+      GRN_RECORD_SET(ctx, &obj, id);
+      grn_obj_columns(ctx, table,
+                      GRN_TEXT_VALUE(VAR(4)),
+                      GRN_TEXT_LEN(VAR(4)), &format.columns);
+      format.flags = 0 /* GRN_OBJ_FORMAT_WITH_COLUMN_NAMES */;
+      GRN_OUTPUT_OBJ(&obj, &format);
+      GRN_OBJ_FORMAT_FIN(ctx, &format);
     }
   } else {
-    /* todo : error handling */
+    ERR(GRN_INVALID_ARGUMENT,
+        "nonexistent table name: <%.*s>", table_name_len, table_name);
   }
   return NULL;
 }
@@ -552,50 +559,6 @@ command_get(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     GRN_OUTPUT_ARRAY_CLOSE();
   }
   return NULL;
-}
-
-uint32_t
-grn_table_queue_size(grn_table_queue *queue)
-{
-  return (queue->head < queue->tail)
-    ? 2 * queue->cap + queue->head - queue->tail
-    : queue->head - queue->tail;
-}
-
-void
-grn_table_queue_head_increment(grn_table_queue *queue)
-{
-  if (queue->head == 2 * queue->cap) {
-    queue->head = 1;
-  } else {
-    queue->head++;
-  }
-}
-
-void
-grn_table_queue_tail_increment(grn_table_queue *queue)
-{
-  if (queue->tail == 2 * queue->cap) {
-    queue->tail = 1;
-  } else {
-    queue->tail++;
-  }
-}
-
-grn_id
-grn_table_queue_head(grn_table_queue *queue)
-{
-  return queue->head > queue->cap
-    ? queue->head - queue->cap
-    : queue->head;
-}
-
-grn_id
-grn_table_queue_tail(grn_table_queue *queue)
-{
-  return queue->tail > queue->cap
-    ? queue->tail - queue->cap
-    : queue->tail;
 }
 
 static grn_obj *
