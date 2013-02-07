@@ -1,0 +1,15 @@
+table_create Tags TABLE_HASH_KEY ShortText
+
+table_create Users TABLE_HASH_KEY ShortText
+column_create Users name COLUMN_SCALAR ShortText
+column_create Users cards COLUMN_VECTOR UInt8
+column_create Users tags COLUMN_VECTOR Tags
+
+column_create Tags usrs_tags COLUMN_INDEX Users tags
+
+load --table Users
+[
+{"_key": "alice", "name": "Alice", "cards": [1, "GARBAGE", 3], "tags": ["girl", "wonder"]}
+]
+
+select Users
