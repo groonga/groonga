@@ -19,6 +19,13 @@ Fixes
   when ``groonga-tokenizer-mecab`` package is installed.
 * Fixed a bug that int64 literal is truncated to uint32 value.
   If you use string literal for int64, this bug does not affects.
+* [rpm][centos] Fixed a bug that stopping ``groonga-server-http`` service
+  by init script is failed. [GitHub#53] [Patch by IWAI, Masaharu]
+
+Thanks
+^^^^^^
+
+* IWAI, Masaharu
 
 .. _release-2-1-2:
 
