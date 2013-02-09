@@ -2282,7 +2282,9 @@ grn_index_cursor_next(grn_ctx *ctx, grn_obj *c, grn_id *tid)
         if (ip && ic->flags & GRN_OBJ_WITH_POSITION) {
           ip = grn_ii_cursor_next_pos(ctx, ic->iic);
         }
-        break;
+        if (ip) {
+          break;
+        }
       }
     }
   }
