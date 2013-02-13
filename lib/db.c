@@ -4304,6 +4304,7 @@ grn_obj_cast_bool(grn_ctx *ctx, grn_obj *src, grn_obj *dest, grn_bool addp)
     break;\
   default :\
     SRC2RECORD();\
+    break;\
   }
 
 #define TEXT2DEST(type,tonum,setvalue) do {\
