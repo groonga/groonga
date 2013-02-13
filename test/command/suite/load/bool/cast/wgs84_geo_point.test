@@ -1,0 +1,10 @@
+table_create  Entries          TABLE_HASH_KEY ShortText
+column_create Entries location COLUMN_SCALAR  WGS84GeoPoint
+
+load --table Entries
+[
+{"_key": "Special news!",  "location": true},
+{"_key": "Surprise news!", "location": false}
+]
+
+select Entries

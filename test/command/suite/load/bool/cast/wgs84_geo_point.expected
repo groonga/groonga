@@ -1,0 +1,53 @@
+table_create  Entries          TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Entries location COLUMN_SCALAR  WGS84GeoPoint
+[[0,0.0,0.0],true]
+load --table Entries
+[
+{"_key": "Special news!",  "location": true},
+{"_key": "Surprise news!", "location": false}
+]
+[[0,0.0,0.0],2]
+#|e| <Entries.location>: failed to cast to <WGS84GeoPoint>: <true>
+#|e| [table][load] failed to set column value: <Entries.location>: failed to cast to <WGS84GeoPoint>: <true>: key: <"Special news!">, column: <location>, value: <true>
+#|e| <Entries.location>: failed to cast to <WGS84GeoPoint>: <false>
+#|e| [table][load] failed to set column value: <Entries.location>: failed to cast to <WGS84GeoPoint>: <false>: key: <"Surprise news!">, column: <location>, value: <false>
+select Entries
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "location",
+          "WGS84GeoPoint"
+        ]
+      ],
+      [
+        1,
+        "Special news!",
+        "0x0"
+      ],
+      [
+        2,
+        "Surprise news!",
+        "0x0"
+      ]
+    ]
+  ]
+]
