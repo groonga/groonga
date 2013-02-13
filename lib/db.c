@@ -4251,6 +4251,9 @@ grn_obj_cast_bool(grn_ctx *ctx, grn_obj *src, grn_obj *dest, grn_bool addp)
       GRN_TEXT_PUTS(ctx, dest, bool_text);
     }
     break;
+  case GRN_DB_TOKYO_GEO_POINT :
+    rc = GRN_INVALID_ARGUMENT;
+    break;
   default :
     SRC2RECORD();
     break;
