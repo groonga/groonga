@@ -5075,7 +5075,20 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
       if (call_hook(ctx, obj, id, value, flags)) { goto exit; }
       switch (obj->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) {
       case GRN_OBJ_COLUMN_SCALAR :
-        rc = grn_ja_put(ctx, (grn_ja *)obj, id, v, s, flags, NULL);
+        {
+          grn_obj buf;
+          if (range != value->header.domain) {
+            GRN_OBJ_INIT(&buf, GRN_BULK, 0, range);
+            if (grn_obj_cast(ctx, value, &buf, GRN_TRUE) == GRN_SUCCESS) {
+              v = GRN_BULK_HEAD(&buf);
+              s = GRN_BULK_VSIZE(&buf);
+            }
+          }
+          rc = grn_ja_put(ctx, (grn_ja *)obj, id, v, s, flags, NULL);
+          if (range != value->header.domain) {
+            grn_obj_close(ctx, &buf);
+          }
+        }
         break;
       case GRN_OBJ_COLUMN_VECTOR :
         {
