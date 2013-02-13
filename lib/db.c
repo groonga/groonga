@@ -4203,6 +4203,18 @@ grn_obj_is_persistent(grn_ctx *ctx, grn_obj *obj)
   }\
 } while (0)
 
+inline static grn_rc
+grn_obj_cast_bool(grn_ctx *ctx, grn_obj *src, grn_obj *dest, grn_bool addp)
+{
+  grn_rc rc = GRN_SUCCESS;
+
+  switch (dest->header.domain) {
+  default :
+    SRC2RECORD();
+  }
+  return rc;
+}
+
 #define NUM2DEST(getvalue,totext,tobool,totime,tofloat)\
   switch (dest->header.domain) {\
   case GRN_DB_BOOL :\
@@ -4296,6 +4308,9 @@ grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest, grn_bool addp)
 {
   grn_rc rc = GRN_SUCCESS;
   switch (src->header.domain) {
+  case GRN_DB_BOOL :
+    rc = grn_obj_cast_bool(ctx, src, dest, addp);
+    break;
   case GRN_DB_INT8 :
     NUM2DEST(GRN_INT8_VALUE, grn_text_itoa, NUM2BOOL, NUM2TIME, NUM2FLOAT);
     break;

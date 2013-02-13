@@ -1,0 +1,12 @@
+table_create Bools TABLE_HASH_KEY Bool
+
+table_create  Entries           TABLE_HASH_KEY ShortText
+column_create Entries published COLUMN_SCALAR  Bools
+
+load --table Entries
+[
+{"_key": "Special news!",  "published": true},
+{"_key": "Supprise news!", "published": false}
+]
+
+select Entries
