@@ -4230,6 +4230,9 @@ grn_obj_cast_bool(grn_ctx *ctx, grn_obj *src, grn_obj *dest, grn_bool addp)
   case GRN_DB_UINT32 :
     GRN_UINT32_SET(ctx, dest, GRN_BOOL_VALUE(src));
     break;
+  case GRN_DB_INT64 :
+    GRN_INT64_SET(ctx, dest, GRN_BOOL_VALUE(src));
+    break;
   default :
     SRC2RECORD();
   }
