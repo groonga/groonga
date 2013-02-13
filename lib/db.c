@@ -4209,6 +4209,9 @@ grn_obj_cast_bool(grn_ctx *ctx, grn_obj *src, grn_obj *dest, grn_bool addp)
   grn_rc rc = GRN_SUCCESS;
 
   switch (dest->header.domain) {
+  case GRN_DB_BOOL :
+    GRN_BOOL_SET(ctx, dest, GRN_BOOL_VALUE(src));
+    break;
   default :
     SRC2RECORD();
   }

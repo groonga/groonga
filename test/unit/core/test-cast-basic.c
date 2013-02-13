@@ -50,6 +50,8 @@ void test_text_to_geo_point_mixed_invalid(void);
 void data_text_error(void);
 void test_text_error(gconstpointer data);
 
+void test_bool_to_bool(void);
+
 void data_int32_to_bool(void);
 void test_int32_to_bool(gconstpointer data);
 void test_int32_to_int8(void);
@@ -408,6 +410,28 @@ test_text_error(gconstpointer data)
   GRN_TEXT_PUTS(&context, &src, gcut_data_get_string(data, "text"));
   grn_test_assert_equal_rc(gcut_data_get_uint(data, "expected"),
                            grn_obj_cast(&context, &src, &dest, GRN_FALSE));
+}
+
+static void
+set_bool(gboolean boolean)
+{
+  grn_obj_reinit(&context, &src, GRN_DB_BOOL, 0);
+  GRN_BOOL_SET(&context, &src, boolean);
+}
+
+static void
+cast_bool(gboolean boolean)
+{
+  set_bool(boolean);
+  grn_test_assert(grn_obj_cast(&context, &src, &dest, GRN_FALSE));
+}
+
+void
+test_bool_to_bool(void)
+{
+  grn_obj_reinit(&context, &dest, GRN_DB_BOOL, 0);
+  cast_bool(TRUE);
+  cut_assert_true(GRN_BOOL_VALUE(&dest));
 }
 
 static void
