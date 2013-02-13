@@ -1,0 +1,10 @@
+table_create  Entries            TABLE_HASH_KEY ShortText
+column_create Entries created_at COLUMN_SCALAR  Time
+
+load --table Entries
+[
+{"_key": "Special news!",  "created_at": true},
+{"_key": "Surprise news!", "created_at": false}
+]
+
+select Entries
