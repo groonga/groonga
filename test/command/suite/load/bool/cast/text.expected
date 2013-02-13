@@ -1,0 +1,49 @@
+table_create  Entries           TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Entries published COLUMN_SCALAR  Text
+[[0,0.0,0.0],true]
+load --table Entries
+[
+{"_key": "Special news!",  "published": true},
+{"_key": "Surprise news!", "published": false}
+]
+[[0,0.0,0.0],2]
+select Entries
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "published",
+          "Text"
+        ]
+      ],
+      [
+        1,
+        "Special news!",
+        "true"
+      ],
+      [
+        2,
+        "Surprise news!",
+        "false"
+      ]
+    ]
+  ]
+]
