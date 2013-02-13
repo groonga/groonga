@@ -1,0 +1,10 @@
+table_create  Entries           TABLE_HASH_KEY ShortText
+column_create Entries published COLUMN_SCALAR  LongText
+
+load --table Entries
+[
+{"_key": "Special news!",  "published": true},
+{"_key": "Surprise news!", "published": false}
+]
+
+select Entries

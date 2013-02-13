@@ -4244,6 +4244,7 @@ grn_obj_cast_bool(grn_ctx *ctx, grn_obj *src, grn_obj *dest, grn_bool addp)
     break;
   case GRN_DB_SHORT_TEXT :
   case GRN_DB_TEXT :
+  case GRN_DB_LONG_TEXT :
     {
       const char *bool_text;
       bool_text = GRN_BOOL_VALUE(src) ? "true" : "false";
