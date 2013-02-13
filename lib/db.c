@@ -4239,6 +4239,9 @@ grn_obj_cast_bool(grn_ctx *ctx, grn_obj *src, grn_obj *dest, grn_bool addp)
   case GRN_DB_TIME :
     GRN_TIME_SET(ctx, dest, GRN_BOOL_VALUE(src));
     break;
+  case GRN_DB_FLOAT :
+    GRN_FLOAT_SET(ctx, dest, GRN_BOOL_VALUE(src));
+    break;
   default :
     SRC2RECORD();
   }
