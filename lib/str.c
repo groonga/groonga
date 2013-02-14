@@ -2058,8 +2058,13 @@ grn_text_ulltoa(grn_ctx *ctx, grn_obj *buf, unsigned long long int i)
 inline static void
 ftoa_(grn_ctx *ctx, grn_obj *buf, double d)
 {
-  char *curr = GRN_BULK_CURR(buf);
-  size_t len = sprintf(curr, "%#.15g", d);
+  char *curr;
+  size_t len;
+#define DIGIT_NUMBER 15
+  grn_bulk_reserve(ctx, buf, DIGIT_NUMBER + 1);
+  curr = GRN_BULK_CURR(buf);
+  len = sprintf(curr, "%#.*g", DIGIT_NUMBER, d);
+#undef DIGIT_NUMBER
   if (curr[len - 1] == '.') {
     GRN_BULK_INCR_LEN(buf, len);
     GRN_TEXT_PUTC(ctx, buf, '0');
