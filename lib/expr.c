@@ -4000,7 +4000,8 @@ grn_table_select_(grn_ctx *ctx, grn_obj *table, grn_obj *expr, grn_obj *v,
 static inline grn_bool
 grn_table_select_index_range_column(grn_ctx *ctx, grn_obj *table,
                                     grn_obj *index,
-                                    scan_info *si, grn_obj *res)
+                                    scan_info *si, grn_operator logical_op,
+                                    grn_obj *res)
 {
   grn_bool processed = GRN_FALSE;
   grn_obj *index_table;
@@ -4051,13 +4052,13 @@ grn_table_select_index_range_column(grn_ctx *ctx, grn_obj *table,
       grn_id index_id;
       while ((index_id = grn_table_cursor_next(ctx, cursor))) {
         grn_ii_at(ctx, (grn_ii *)index, index_id,
-                  (grn_hash *)res, si->logical_op);
+                  (grn_hash *)res, logical_op);
       }
       grn_table_cursor_close(ctx, cursor);
       processed = GRN_TRUE;
     }
 
-    grn_ii_resolve_sel_and(ctx, (grn_hash *)res, si->logical_op);
+    grn_ii_resolve_sel_and(ctx, (grn_hash *)res, logical_op);
   }
   GRN_OBJ_FIN(ctx, &range);
 
@@ -4098,7 +4099,7 @@ grn_table_select_index_range_accessor(grn_ctx *ctx, grn_obj *table,
     if (!current_res) {
       return GRN_FALSE;
     }
-    if (!grn_table_select_index_range_column(ctx, table, index, si,
+    if (!grn_table_select_index_range_column(ctx, table, index, si, GRN_OP_OR,
                                              current_res)) {
       grn_obj_unlink(ctx, current_res);
       return GRN_FALSE;
@@ -4126,10 +4127,7 @@ grn_table_select_index_range_accessor(grn_ctx *ctx, grn_obj *table,
         break;
       }
 
-      if (i == 1) {
-        next_res = res;
-        next_op = si->logical_op;
-      } else {
+      {
         grn_obj *range;
         range = grn_ctx_at(ctx, DB_OBJ(index)->range);
         next_res = grn_table_create(ctx, NULL, 0, NULL,
@@ -4167,14 +4165,21 @@ grn_table_select_index_range_accessor(grn_ctx *ctx, grn_obj *table,
       grn_obj_unlink(ctx, domain);
       grn_obj_unlink(ctx, current_res);
 
-      if (rc != GRN_SUCCESS) {
+      if (rc == GRN_SUCCESS) {
+        if (i == 1) {
+          grn_table_setoperation(ctx, res, next_res, res, si->logical_op);
+          grn_obj_unlink(ctx, next_res);
+          current_res = res;
+        } else {
+          current_res = next_res;
+        }
+      } else {
         if (res != next_res) {
           grn_obj_unlink(ctx, next_res);
         }
         current_res = NULL;
         break;
       }
-      current_res = next_res;
     }
   }
 
@@ -4205,7 +4210,8 @@ grn_table_select_index_range(grn_ctx *ctx, grn_obj *table, grn_obj *index,
     GRN_OBJ_FIN(ctx, &accessor_stack);
     return processed;
   } else {
-    return grn_table_select_index_range_column(ctx, table, index, si, res);
+    return grn_table_select_index_range_column(ctx, table, index, si,
+                                               si->logical_op, res);
   }
 }
 
