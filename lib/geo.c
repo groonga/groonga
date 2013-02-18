@@ -595,6 +595,80 @@ find_geo_sort_index(grn_ctx *ctx, grn_obj *key)
   return index;
 }
 
+static inline int
+grn_geo_table_sort_by_distance(grn_ctx *ctx,
+                               grn_obj *table,
+                               grn_obj *index,
+                               grn_pat *pat,
+                               grn_pat_cursor *pc,
+                               grn_bool accessorp,
+                               grn_geo_point *base_point,
+                               int offset,
+                               int limit,
+                               grn_obj *result)
+{
+  int i = 0, e = offset + limit;
+  geo_entry *entries;
+
+  if ((entries = GRN_MALLOC(sizeof(geo_entry) * (e + 1)))) {
+    int n, diff_bit;
+    double d_far;
+    grn_id *v;
+    geo_entry *ep;
+    grn_bool need_non_indexed_entries;
+    grn_hash *indexed_entries = NULL;
+
+    n = grn_geo_table_sort_detect_far_point(ctx, table, index, pat,
+                                            entries, pc, e, accessorp,
+                                            base_point,
+                                            &d_far, &diff_bit);
+    grn_pat_cursor_close(ctx, pc);
+    if (diff_bit > 0) {
+      n = grn_geo_table_sort_collect_points(ctx, table, index, pat,
+                                            entries, n, e, accessorp,
+                                            base_point, d_far, diff_bit);
+    }
+    need_non_indexed_entries = offset + limit > n;
+    if (need_non_indexed_entries) {
+      indexed_entries = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
+                                        GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY);
+    }
+    for (i = 0, ep = entries + offset; i < limit && ep < entries + n; i++, ep++) {
+      if (!grn_array_add(ctx, (grn_array *)result, (void **)&v)) {
+        if (indexed_entries) {
+          grn_hash_close(ctx, indexed_entries);
+          indexed_entries = NULL;
+        }
+        need_non_indexed_entries = GRN_FALSE;
+        break;
+      }
+      *v = ep->id;
+      if (indexed_entries) {
+        grn_hash_add(ctx, indexed_entries, &(ep->id), sizeof(grn_id),
+                     NULL, NULL);
+      }
+    }
+    GRN_FREE(entries);
+    if (indexed_entries) {
+      GRN_TABLE_EACH(ctx, table, GRN_ID_NIL, GRN_ID_MAX, id, NULL, NULL, NULL, {
+        if (!grn_hash_get(ctx, indexed_entries, &id, sizeof(grn_id), NULL)) {
+          grn_id *sorted_id;
+          if (grn_array_add(ctx, (grn_array *)result, (void **)&sorted_id)) {
+            *sorted_id = id;
+          }
+          i++;
+          if (i == limit) {
+            break;
+          }
+        };
+      });
+      grn_hash_close(ctx, indexed_entries);
+    }
+  }
+
+  return i;
+}
+
 int
 grn_geo_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
                    grn_obj *result, grn_table_sort_key *keys, int n_keys)
@@ -629,65 +703,10 @@ grn_geo_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
         }
         grn_pat_cursor_close(ctx, pc);
       } else {
-        geo_entry *entries;
-
-        if ((entries = GRN_MALLOC(sizeof(geo_entry) * (e + 1)))) {
-          int n, diff_bit;
-          double d_far;
-          grn_id *v;
-          grn_geo_point *base_point;
-          geo_entry *ep;
-          grn_bool need_non_indexed_entries;
-          grn_hash *indexed_entries = NULL;
-
-          base_point = (grn_geo_point *)GRN_BULK_HEAD(arg);
-          n = grn_geo_table_sort_detect_far_point(ctx, table, index, pat,
-                                                  entries, pc, e, accessorp,
-                                                  base_point,
-                                                  &d_far, &diff_bit);
-          grn_pat_cursor_close(ctx, pc);
-          if (diff_bit > 0) {
-            n = grn_geo_table_sort_collect_points(ctx, table, index, pat,
-                                                  entries, n, e, accessorp,
-                                                  base_point, d_far, diff_bit);
-          }
-          need_non_indexed_entries = offset + limit > n;
-          if (need_non_indexed_entries) {
-            indexed_entries = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
-                                              GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY);
-          }
-          for (i = 0, ep = entries + offset; i < limit && ep < entries + n; i++, ep++) {
-            if (!grn_array_add(ctx, (grn_array *)result, (void **)&v)) {
-              if (indexed_entries) {
-                grn_hash_close(ctx, indexed_entries);
-                indexed_entries = NULL;
-              }
-              need_non_indexed_entries = GRN_FALSE;
-              break;
-            }
-            *v = ep->id;
-            if (indexed_entries) {
-              grn_hash_add(ctx, indexed_entries, &(ep->id), sizeof(grn_id),
-                           NULL, NULL);
-            }
-          }
-          GRN_FREE(entries);
-          if (indexed_entries) {
-            GRN_TABLE_EACH(ctx, table, GRN_ID_NIL, GRN_ID_MAX, id, NULL, NULL, NULL, {
-              if (!grn_hash_get(ctx, indexed_entries, &id, sizeof(grn_id), NULL)) {
-                grn_id *sorted_id;
-                if (grn_array_add(ctx, (grn_array *)result, (void **)&sorted_id)) {
-                  *sorted_id = id;
-                }
-                i++;
-                if (i == limit) {
-                  break;
-                }
-              };
-            });
-            grn_hash_close(ctx, indexed_entries);
-          }
-        }
+        grn_geo_point *base_point = (grn_geo_point *)GRN_BULK_HEAD(arg);
+        i = grn_geo_table_sort_by_distance(ctx, table, index, pat,
+                                           pc, accessorp, base_point,
+                                           offset, limit, result);
       }
     }
   }
