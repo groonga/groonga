@@ -648,8 +648,8 @@ grn_geo_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
           grn_pat_cursor_close(ctx, pc);
           if (diff_bit > 0) {
             n = grn_geo_table_sort_collect_points(ctx, table, index, pat,
-                                                   entries, n, e, accessorp,
-                                                   base_point, d_far, diff_bit);
+                                                  entries, n, e, accessorp,
+                                                  base_point, d_far, diff_bit);
           }
           for (i = 0, ep = entries + offset; i < limit && ep < entries + n; i++, ep++) {
             if (ep->id == GRN_ID_NIL) {
