@@ -640,7 +640,6 @@ grn_geo_table_sort_by_distance(grn_ctx *ctx,
           grn_hash_close(ctx, indexed_entries);
           indexed_entries = NULL;
         }
-        need_non_indexed_entries = GRN_FALSE;
         break;
       }
       *sorted_id = ep->id;
