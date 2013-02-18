@@ -647,7 +647,7 @@ grn_geo_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
                                                   &d_far, &diff_bit);
           grn_pat_cursor_close(ctx, pc);
           if (diff_bit > 0) {
-            n += grn_geo_table_sort_collect_points(ctx, table, index, pat,
+            n = grn_geo_table_sort_collect_points(ctx, table, index, pat,
                                                    entries, n, e, accessorp,
                                                    base_point, d_far, diff_bit);
           }
