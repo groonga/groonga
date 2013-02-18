@@ -632,7 +632,7 @@ grn_geo_table_sort_by_distance(grn_ctx *ctx,
       indexed_entries = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
                                         GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY);
     }
-    for (n_entries = 0, ep = entries + offset; n_entries < limit && ep < entries + n; n_entries++, ep++) {
+    for (ep = entries + offset; n_entries < limit && ep < entries + n; n_entries++, ep++) {
       if (!grn_array_add(ctx, (grn_array *)result, (void **)&v)) {
         if (indexed_entries) {
           grn_hash_close(ctx, indexed_entries);
