@@ -614,7 +614,7 @@ grn_geo_table_sort_by_distance(grn_ctx *ctx,
     int n, diff_bit;
     double d_far;
     geo_entry *ep;
-    grn_bool need_non_indexed_entries;
+    grn_bool need_not_indexed_entries;
     grn_hash *indexed_entries = NULL;
 
     n = grn_geo_table_sort_detect_far_point(ctx, table, index, pat,
@@ -626,8 +626,8 @@ grn_geo_table_sort_by_distance(grn_ctx *ctx,
                                             entries, n, e, accessorp,
                                             base_point, d_far, diff_bit);
     }
-    need_non_indexed_entries = offset + limit > n;
-    if (need_non_indexed_entries) {
+    need_not_indexed_entries = offset + limit > n;
+    if (need_not_indexed_entries) {
       indexed_entries = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
                                         GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY);
     }
