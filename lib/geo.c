@@ -607,7 +607,7 @@ grn_geo_table_sort_by_distance(grn_ctx *ctx,
                                int limit,
                                grn_obj *result)
 {
-  int i = 0, e = offset + limit;
+  int n_entries = 0, e = offset + limit;
   geo_entry *entries;
 
   if ((entries = GRN_MALLOC(sizeof(geo_entry) * (e + 1)))) {
@@ -632,7 +632,7 @@ grn_geo_table_sort_by_distance(grn_ctx *ctx,
       indexed_entries = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
                                         GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY);
     }
-    for (i = 0, ep = entries + offset; i < limit && ep < entries + n; i++, ep++) {
+    for (n_entries = 0, ep = entries + offset; n_entries < limit && ep < entries + n; n_entries++, ep++) {
       if (!grn_array_add(ctx, (grn_array *)result, (void **)&v)) {
         if (indexed_entries) {
           grn_hash_close(ctx, indexed_entries);
@@ -655,8 +655,8 @@ grn_geo_table_sort_by_distance(grn_ctx *ctx,
           if (grn_array_add(ctx, (grn_array *)result, (void **)&sorted_id)) {
             *sorted_id = id;
           }
-          i++;
-          if (i == limit) {
+          n_entries++;
+          if (n_entries == limit) {
             break;
           }
         };
@@ -665,7 +665,7 @@ grn_geo_table_sort_by_distance(grn_ctx *ctx,
     }
   }
 
-  return i;
+  return n_entries;
 }
 
 int
