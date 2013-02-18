@@ -638,8 +638,6 @@ grn_geo_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
           grn_geo_point *base_point;
           geo_entry *ep;
 
-          memset(entries, 0, sizeof(geo_entry) * (e + 1));
-
           base_point = (grn_geo_point *)GRN_BULK_HEAD(arg);
           n = grn_geo_table_sort_detect_far_point(ctx, table, index, pat,
                                                   entries, pc, e, accessorp,
@@ -652,9 +650,6 @@ grn_geo_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
                                                   base_point, d_far, diff_bit);
           }
           for (i = 0, ep = entries + offset; i < limit && ep < entries + n; i++, ep++) {
-            if (ep->id == GRN_ID_NIL) {
-              break;
-            }
             if (!grn_array_add(ctx, (grn_array *)result, (void **)&v)) { break; }
             *v = ep->id;
           }
