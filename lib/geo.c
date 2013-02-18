@@ -622,7 +622,6 @@ grn_geo_table_sort_by_distance(grn_ctx *ctx,
                                             entries, pc, e, accessorp,
                                             base_point,
                                             &d_far, &diff_bit);
-    grn_pat_cursor_close(ctx, pc);
     if (diff_bit > 0) {
       n = grn_geo_table_sort_collect_points(ctx, table, index, pat,
                                             entries, n, e, accessorp,
@@ -701,13 +700,13 @@ grn_geo_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
             grn_ii_cursor_close(ctx, ic);
           }
         }
-        grn_pat_cursor_close(ctx, pc);
       } else {
         grn_geo_point *base_point = (grn_geo_point *)GRN_BULK_HEAD(arg);
         i = grn_geo_table_sort_by_distance(ctx, table, index, pat,
                                            pc, accessorp, base_point,
                                            offset, limit, result);
       }
+      grn_pat_cursor_close(ctx, pc);
     }
   }
   return i;
