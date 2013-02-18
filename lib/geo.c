@@ -634,8 +634,8 @@ grn_geo_table_sort_by_distance(grn_ctx *ctx,
     for (ep = entries + offset;
          n_entries < limit && ep < entries + n;
          n_entries++, ep++) {
-      grn_id *v;
-      if (!grn_array_add(ctx, (grn_array *)result, (void **)&v)) {
+      grn_id *sorted_id;
+      if (!grn_array_add(ctx, (grn_array *)result, (void **)&sorted_id)) {
         if (indexed_entries) {
           grn_hash_close(ctx, indexed_entries);
           indexed_entries = NULL;
@@ -643,7 +643,7 @@ grn_geo_table_sort_by_distance(grn_ctx *ctx,
         need_non_indexed_entries = GRN_FALSE;
         break;
       }
-      *v = ep->id;
+      *sorted_id = ep->id;
       if (indexed_entries) {
         grn_hash_add(ctx, indexed_entries, &(ep->id), sizeof(grn_id),
                      NULL, NULL);
