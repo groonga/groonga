@@ -5026,16 +5026,39 @@ grn_obj_set_value_var_size_scalar(grn_ctx *ctx, grn_obj *obj, grn_id id,
   void *v = GRN_BULK_HEAD(value);
   unsigned int s = grn_obj_size(ctx, value);
   grn_obj buf;
+  grn_id buf_domain = GRN_DB_VOID;
 
-  if (range != value->header.domain) {
-    GRN_OBJ_INIT(&buf, GRN_BULK, 0, range);
+  switch (flags & GRN_OBJ_SET_MASK) {
+  case GRN_OBJ_INCR :
+  case GRN_OBJ_DECR :
+    if (value->header.domain == GRN_DB_INT32 ||
+        value->header.domain == GRN_DB_INT64) {
+      /* do nothing */
+    } else if (GRN_DB_INT8 <= value->header.domain &&
+               value->header.domain < GRN_DB_INT32) {
+      buf_domain = GRN_DB_INT32;
+    } else {
+      buf_domain = GRN_DB_INT64;
+    }
+    break;
+  default :
+    if (range != value->header.domain) {
+      buf_domain = range;
+    }
+    break;
+  }
+
+  if (buf_domain != GRN_DB_VOID) {
+    GRN_OBJ_INIT(&buf, GRN_BULK, 0, buf_domain);
     if (grn_obj_cast(ctx, value, &buf, GRN_TRUE) == GRN_SUCCESS) {
       v = GRN_BULK_HEAD(&buf);
       s = GRN_BULK_VSIZE(&buf);
     }
   }
+
   rc = grn_ja_put(ctx, (grn_ja *)obj, id, v, s, flags, NULL);
-  if (range != value->header.domain) {
+
+  if (buf_domain != GRN_DB_VOID) {
     grn_obj_close(ctx, &buf);
   }
 
