@@ -86,7 +86,7 @@ else
     fi
 fi
 
-groonga_command_dir="$BASE_DIR/groonga_command"
+groonga_command_dir="$BASE_DIR/groonga-command"
 
 have_targets="false"
 use_gdb="false"
