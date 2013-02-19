@@ -614,8 +614,8 @@ grn_geo_table_sort_by_distance(grn_ctx *ctx,
     int n, diff_bit;
     double d_far;
     geo_entry *ep;
-    grn_bool need_not_indexed_entries;
-    grn_hash *indexed_entries = NULL;
+    grn_bool need_not_indexed_records;
+    grn_hash *indexed_records = NULL;
 
     n = grn_geo_table_sort_detect_far_point(ctx, table, index, pat,
                                             entries, pc, e, accessorp,
@@ -626,9 +626,9 @@ grn_geo_table_sort_by_distance(grn_ctx *ctx,
                                             entries, n, e, accessorp,
                                             base_point, d_far, diff_bit);
     }
-    need_not_indexed_entries = offset + limit > n;
-    if (need_not_indexed_entries) {
-      indexed_entries = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
+    need_not_indexed_records = offset + limit > n;
+    if (need_not_indexed_records) {
+      indexed_records = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
                                         GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY);
     }
     for (ep = entries + offset;
@@ -636,22 +636,22 @@ grn_geo_table_sort_by_distance(grn_ctx *ctx,
          n_entries++, ep++) {
       grn_id *sorted_id;
       if (!grn_array_add(ctx, (grn_array *)result, (void **)&sorted_id)) {
-        if (indexed_entries) {
-          grn_hash_close(ctx, indexed_entries);
-          indexed_entries = NULL;
+        if (indexed_records) {
+          grn_hash_close(ctx, indexed_records);
+          indexed_records = NULL;
         }
         break;
       }
       *sorted_id = ep->id;
-      if (indexed_entries) {
-        grn_hash_add(ctx, indexed_entries, &(ep->id), sizeof(grn_id),
+      if (indexed_records) {
+        grn_hash_add(ctx, indexed_records, &(ep->id), sizeof(grn_id),
                      NULL, NULL);
       }
     }
     GRN_FREE(entries);
-    if (indexed_entries) {
+    if (indexed_records) {
       GRN_TABLE_EACH(ctx, table, GRN_ID_NIL, GRN_ID_MAX, id, NULL, NULL, NULL, {
-        if (!grn_hash_get(ctx, indexed_entries, &id, sizeof(grn_id), NULL)) {
+        if (!grn_hash_get(ctx, indexed_records, &id, sizeof(grn_id), NULL)) {
           grn_id *sorted_id;
           if (grn_array_add(ctx, (grn_array *)result, (void **)&sorted_id)) {
             *sorted_id = id;
@@ -662,7 +662,7 @@ grn_geo_table_sort_by_distance(grn_ctx *ctx,
           }
         };
       });
-      grn_hash_close(ctx, indexed_entries);
+      grn_hash_close(ctx, indexed_records);
     }
   }
 
