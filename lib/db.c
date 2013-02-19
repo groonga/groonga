@@ -5017,6 +5017,30 @@ call_hook_for_build(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value, int f
   return 0;
 }
 
+inline static grn_rc
+grn_obj_set_value_var_size_scalar(grn_ctx *ctx, grn_obj *obj, grn_id id,
+                                  grn_obj *value, int flags)
+{
+  grn_rc rc = GRN_INVALID_ARGUMENT;
+  grn_id range = DB_OBJ(obj)->range;
+  void *v = GRN_BULK_HEAD(value);
+  unsigned int s = grn_obj_size(ctx, value);
+  grn_obj buf;
+
+  if (range != value->header.domain) {
+    GRN_OBJ_INIT(&buf, GRN_BULK, 0, range);
+    if (grn_obj_cast(ctx, value, &buf, GRN_TRUE) == GRN_SUCCESS) {
+      v = GRN_BULK_HEAD(&buf);
+      s = GRN_BULK_VSIZE(&buf);
+    }
+  }
+  rc = grn_ja_put(ctx, (grn_ja *)obj, id, v, s, flags, NULL);
+  if (range != value->header.domain) {
+    grn_obj_close(ctx, &buf);
+  }
+
+  return rc;
+}
 
 grn_rc
 grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
@@ -5090,20 +5114,7 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
       if (call_hook(ctx, obj, id, value, flags)) { goto exit; }
       switch (obj->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) {
       case GRN_OBJ_COLUMN_SCALAR :
-        {
-          grn_obj buf;
-          if (range != value->header.domain) {
-            GRN_OBJ_INIT(&buf, GRN_BULK, 0, range);
-            if (grn_obj_cast(ctx, value, &buf, GRN_TRUE) == GRN_SUCCESS) {
-              v = GRN_BULK_HEAD(&buf);
-              s = GRN_BULK_VSIZE(&buf);
-            }
-          }
-          rc = grn_ja_put(ctx, (grn_ja *)obj, id, v, s, flags, NULL);
-          if (range != value->header.domain) {
-            grn_obj_close(ctx, &buf);
-          }
-        }
+        rc = grn_obj_set_value_var_size_scalar(ctx, obj, id, value, flags);
         break;
       case GRN_OBJ_COLUMN_VECTOR :
         {
