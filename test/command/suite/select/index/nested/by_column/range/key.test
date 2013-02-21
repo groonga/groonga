@@ -1,0 +1,21 @@
+table_create Int8Table TABLE_PAT_KEY Int8
+
+table_create Int8Tables TABLE_PAT_KEY Int8
+column_create Int8Tables index COLUMN_INDEX Int8Table _key
+
+table_create Users TABLE_PAT_KEY ShortText
+column_create Users score COLUMN_SCALAR Int8Table
+
+table_create Scores TABLE_PAT_KEY Int8Table
+column_create Scores users_score COLUMN_INDEX Users score
+
+load --table Users
+[
+{"_key": "Alice",  "score": 2},
+{"_key": "Bob",    "score": 0},
+{"_key": "Carlos", "score": -1}
+]
+
+select Users \
+  --filter 'score._key < 2 && score._key >= -1' \
+  --output_columns '_key, score'

@@ -7976,9 +7976,22 @@ grn_column_index_column_range(grn_ctx *ctx, grn_obj *obj, grn_operator op,
 {
   int n = 0;
   grn_obj **ip = indexbuf;
+  grn_hook_entry hook_entry;
   grn_hook *hooks;
 
-  for (hooks = DB_OBJ(obj)->hooks[GRN_HOOK_SET]; hooks; hooks = hooks->next) {
+  switch (obj->header.type) {
+  case GRN_TABLE_HASH_KEY :
+  case GRN_TABLE_PAT_KEY :
+  case GRN_TABLE_DAT_KEY :
+  case GRN_TABLE_NO_KEY :
+    hook_entry = GRN_HOOK_INSERT;
+    break;
+  default :
+    hook_entry = GRN_HOOK_SET;
+    break;
+  }
+
+  for (hooks = DB_OBJ(obj)->hooks[hook_entry]; hooks; hooks = hooks->next) {
     default_set_value_hook_data *data = (void *)NEXT_ADDR(hooks);
     grn_obj *target = grn_ctx_at(ctx, data->target);
     if (target->header.type != GRN_COLUMN_INDEX) { continue; }
