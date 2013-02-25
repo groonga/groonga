@@ -1,0 +1,11 @@
+table_create UInt64Values TABLE_PAT_KEY UInt64
+[[0,0.0,0.0],true]
+load --table UInt64Values
+[
+{"_key": 29},
+{"_key": 2929},
+{"_key": 292929}
+]
+[[0,0.0,0.0],3]
+select UInt64Values --query _key:!2929
+[[0,0.0,0.0],[[[2],[["_id","UInt32"],["_key","UInt64"]],[1,29],[3,292929]]]]

@@ -1,0 +1,10 @@
+table_create UInt64Values TABLE_HASH_KEY UInt64
+
+load --table UInt64Values
+[
+{"_key": 29},
+{"_key": 2929},
+{"_key": 292929}
+]
+
+select UInt64Values --query _key:!2929
