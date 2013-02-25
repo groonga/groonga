@@ -13,7 +13,7 @@ Release 3.0.1 - 2013/02/28
 Improvements
 ^^^^^^^^^^^^
 
-* Supported Bool as a built-in type.
+* Supported Bool as the value of reference column.
 * Supported AND operation for nested index.
   In this change, the expression "COLUMN1.COLUMN2 >= 1 && COLUMN1.COLUMN2 <=3" works.
   Note that the order is important for this expression.
