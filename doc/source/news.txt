@@ -5,6 +5,38 @@
 News
 ====
 
+.. _release-3-0-1:
+
+Release 3.0.1 - 2013/02/28
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* Supported Bool as a built-in type.
+* Supported AND operation for nested index.
+  In this change, the expression "COLUMN1.COLUMN2 >= 1 && COLUMN1.COLUMN2 <=3" works.
+  Note that the order is important for this expression.
+  "1 <= COLUMN1.COLUMN2" is not supported yet. It is regarded as "COLUMN1.COLUMN2 <= 1".
+* Supported sorting not indexed entries.
+  This change affects the case such as ``--sortby geo_distance(...)`` drops not indexed
+  entries.
+
+Fixes
+^^^^^
+
+* Fixed a bug that ``grn_index_cursor_next()`` returns NULL unexpectedly.
+  It causes that invalid index entry is returned after deleting entries.
+  This bug affects mroonga in storage mode. [groonga-dev,01192] [Reported by b senboku]
+* Fixed a crash bug that ``geo_distance()`` sort by index.
+  This bug occurs by wrong the number of found records.
+
+Thanks
+^^^^^^
+
+* b senboku
+
+
 .. _release-3-0-0:
 
 Release 3.0.0 - 2013/02/09
