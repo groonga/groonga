@@ -21,6 +21,9 @@ Improvements
 * Supported sorting not indexed entries.
   This change affects the case such as ``--sortby geo_distance(...)`` drops not indexed
   entries.
+* Supported range search for reference column by index.
+  This change enable you to search range by index which is TABLE_PAT_KEY or TABLE_DAT_KEY
+  based nested index of _key.
 
 Fixes
 ^^^^^
