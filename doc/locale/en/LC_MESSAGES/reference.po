@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-05 17:54\n"
+"POT-Creation-Date: 2013-02-25 17:14\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -116,6 +116,7 @@ msgstr ""
 # 5941cc215b36491b921321e40257d039
 # 560546aa132c40bcbe7f39ecacaad414
 # b7d6effd757d44c2961ac412a77bac40
+#: ../../../source/example/reference/commands/column_rename/column_rename.log:1
 #: ../../../source/example/reference/commands/normalize/normalizer_auto_ascii.log:1
 #: ../../../source/example/reference/commands/register/query_expanders_tsv.log:1
 #: ../../../source/example/reference/commands/select/filter_equal.log:1
@@ -163,6 +164,7 @@ msgstr ""
 #: ../../../source/example/reference/commands/table_create/lexicon_table_pat_key.log:1
 #: ../../../source/example/reference/commands/table_create/tag_index_table_hash_key.log:1
 #: ../../../source/example/reference/commands/table_list.log:1
+#: ../../../source/example/reference/commands/truncate/truncate.log:1
 #: ../../../source/example/reference/executables/groonga-httpd.log:1
 #: ../../../source/example/reference/functions/geo_distance_distance_rectangle.log:1
 #: ../../../source/example/reference/functions/geo_distance_distance_rectangle_across_equator.log:1
@@ -544,10 +546,12 @@ msgstr ""
 # 6113f4f60edf40d785b4df6daec7db75
 #: ../../../source/reference/command/output_format.txt:9
 #: ../../../source/reference/command/return_code.txt:9
+#: ../../../source/reference/commands/column_rename.txt:12
 #: ../../../source/reference/commands/normalize.txt:17
 #: ../../../source/reference/commands/register.txt:12
 #: ../../../source/reference/commands/select.txt:12
 #: ../../../source/reference/commands/table_create.txt:12
+#: ../../../source/reference/commands/truncate.txt:12
 #: ../../../source/reference/executables/groonga-httpd.txt:9
 #: ../../../source/reference/functions/geo_distance.txt:13
 #: ../../../source/reference/functions/query.txt:12
@@ -624,7 +628,9 @@ msgstr ""
 
 # 1bb58676a6024b1ea200d6d95cdc5005
 #: ../../../source/reference/command/output_format.txt:115
+#: ../../../source/reference/commands/column_rename.txt:71
 #: ../../../source/reference/commands/normalize.txt:73
+#: ../../../source/reference/commands/truncate.txt:65
 msgid "``HEADER``"
 msgstr ""
 
@@ -2552,6 +2558,178 @@ msgid ""
 msgstr ""
 "マルチセクションインデックスの一部である場合も、インデックスが削除されます。"
 
+# 284c221b3e194c38888ad9b7e9aea113
+#: ../../../source/reference/commands/column_rename.txt:9
+msgid "``column_rename``"
+msgstr ""
+
+# 2d24b03fa7ef4096b9d5ce7a50c95969
+#: ../../../source/reference/commands/column_rename.txt:14
+msgid "``column_rename`` command renames specified column name of table."
+msgstr ""
+
+# 5cbbff425bb64b799046e859afe82e40
+# c0a4e0d8ea844f4baf64feb8bcf7fc8b
+#: ../../../source/reference/commands/column_rename.txt:17
+#: ../../../source/reference/commands/normalize.txt:25
+#: ../../../source/reference/commands/register.txt:27
+#: ../../../source/reference/commands/select.txt:21
+#: ../../../source/reference/commands/table_create.txt:18
+#: ../../../source/reference/commands/truncate.txt:17
+#: ../../../source/reference/functions/geo_distance.txt:18
+#: ../../../source/reference/functions/query.txt:26
+#: ../../../source/reference/functions/snippet_html.txt:27
+msgid "Syntax"
+msgstr "Syntax"
+
+# 432e1247681b4bfb965d443c28e91369
+#: ../../../source/reference/commands/column_rename.txt:19
+msgid "``column_rename`` command takes two parameters."
+msgstr ""
+
+# 1eb1184cdea4464ca9cc8a73c9deecf7
+#: ../../../source/reference/commands/column_rename.txt:21
+msgid "The required parameter is ``table`` and ``column_name``::"
+msgstr ""
+
+# 01b0b039140f48fba5d8399e45b7e55b
+# bb5ff6008bb34d7a92afba885c915628
+# faedf5338e484fc0a97463c0bff0f56b
+# 9bad6106d7164a318df4447c81e7a85c
+#: ../../../source/reference/commands/column_rename.txt:26
+#: ../../../source/reference/commands/normalize.txt:36
+#: ../../../source/reference/commands/register.txt:34
+#: ../../../source/reference/commands/select.txt:46
+#: ../../../source/reference/commands/table_create.txt:31
+#: ../../../source/reference/commands/truncate.txt:26
+#: ../../../source/reference/executables/groonga-httpd.txt:30
+#: ../../../source/reference/functions/geo_distance.txt:31
+#: ../../../source/reference/functions/query.txt:36
+#: ../../../source/reference/functions/snippet_html.txt:37
+#: ../../../source/reference/output.txt:18
+#: ../../../source/reference/query_expanders/tsv.txt:28
+msgid "Usage"
+msgstr "Usage"
+
+# bf1e94eb0b5a4d81b818a2a97c5a39ad
+# bf1e94eb0b5a4d81b818a2a97c5a39ad
+# bf1e94eb0b5a4d81b818a2a97c5a39ad
+# c4ee6bd61d594fc8ac99ddceb034dcbd
+# 3799cd7cb7b84a4c923af81156c9d3d3
+# bf1e94eb0b5a4d81b818a2a97c5a39ad
+# 491ce5c048964c97a3901465a634f285
+# 3799cd7cb7b84a4c923af81156c9d3d3
+# 491ce5c048964c97a3901465a634f285
+# e13a2895bf5b45d694a5ccd36dbfd75a
+# 491ce5c048964c97a3901465a634f285
+# c4ee6bd61d594fc8ac99ddceb034dcbd
+# 4deda05fde8248d9b4f92a8a8bcea9da
+# c4ee6bd61d594fc8ac99ddceb034dcbd
+# e13a2895bf5b45d694a5ccd36dbfd75a
+# bf1e94eb0b5a4d81b818a2a97c5a39ad
+#: ../../../source/reference/commands/column_rename.txt:28
+msgid "Here is a simple example of ``column_rename`` command."
+msgstr ""
+
+# 91088f986b41452d882d125e6ed028e7
+# 64c1379301424498b45f520d7bab67bd
+#: ../../../source/reference/commands/column_rename.txt:45
+#: ../../../source/reference/commands/normalize.txt:45
+#: ../../../source/reference/commands/select.txt:198
+#: ../../../source/reference/commands/table_create.txt:154
+#: ../../../source/reference/commands/truncate.txt:44
+#: ../../../source/reference/functions/geo_distance.txt:146
+#: ../../../source/reference/functions/query.txt:103
+msgid "Parameters"
+msgstr "Parameters"
+
+# aa6c5a1abc844a978f87b2dd33b26dc6
+#: ../../../source/reference/commands/column_rename.txt:47
+msgid "This section describes parameters of ``column_rename``."
+msgstr ""
+
+# f18f26cee4134faa9072c6b02abe4cb1
+# e658f1960e3e490fad2505f2477dd390
+#: ../../../source/reference/commands/column_rename.txt:50
+#: ../../../source/reference/commands/normalize.txt:50
+#: ../../../source/reference/commands/select.txt:203
+#: ../../../source/reference/commands/truncate.txt:49
+#: ../../../source/reference/functions/geo_distance.txt:149
+msgid "Required parameter"
+msgstr "Required parameter"
+
+# 8294898fb52244968e09f77b9ccf5c7d
+#: ../../../source/reference/commands/column_rename.txt:52
+msgid "There are required parameters, ``table_name`` and ``column_name``."
+msgstr ""
+
+# 4c822f633bee43819cb7a8fcd50a5781
+# 3047f898526246e289d6a57de93684b3
+# 754d54236fdb4088a118a22ee51b3fcb
+# c441c763e6b34295ad4132e547bfb663
+# 4860cc9deba14ddb9acfff8579c37ac4
+# 36abefa544074d338ad5a91444128ec7
+# 015920903ac547129ca05cbe4721009e
+# 56b6b4f8187e4a2aa23f98bf54d5b690
+# 707fa8edf67c4a4aa4ae507ba918ea66
+#: ../../../source/reference/commands/column_rename.txt:55
+#: ../../../source/reference/commands/truncate.txt:54
+msgid "``table_name``"
+msgstr ""
+
+# 062998fef3444f42a3e16bb386caaefa
+#: ../../../source/reference/commands/column_rename.txt:57
+#: ../../../source/reference/commands/truncate.txt:56
+msgid "It specifies the name of table."
+msgstr ""
+
+# 1bb85c12ead941fc9337f692e1d0a405
+# fc658bcbdc244395a315bc123ec1f1ff
+# 4614e1fa49044fae9d94d0979334d9f1
+#: ../../../source/reference/commands/column_rename.txt:60
+msgid "``column_name``"
+msgstr ""
+
+# 4cbd35ee174e45658e8becbb0e0a5ade
+#: ../../../source/reference/commands/column_rename.txt:62
+msgid "It specifies the name of column."
+msgstr ""
+
+# b28391d763334d68a7b2c6a1731c878c
+#: ../../../source/reference/commands/column_rename.txt:65
+#: ../../../source/reference/commands/normalize.txt:67
+#: ../../../source/reference/commands/register.txt:51
+#: ../../../source/reference/commands/table_create.txt:269
+#: ../../../source/reference/commands/truncate.txt:59
+#: ../../../source/reference/functions/geo_distance.txt:293
+#: ../../../source/reference/functions/query.txt:122
+#: ../../../source/reference/functions/snippet_html.txt:93
+msgid "Return value"
+msgstr "Return value"
+
+# 1db91fbbb08d4b97b9a35033e3dd178d
+#: ../../../source/reference/commands/column_rename.txt:73
+#: ../../../source/reference/commands/normalize.txt:75
+#: ../../../source/reference/commands/truncate.txt:67
+msgid ""
+"The format of HEADER is [0, UNIX_TIME_WHEN_COMMAND_IS_STARTED, "
+"ELAPSED_TIME]. See :doc:`/reference/command/output_format` about HEADER."
+msgstr ""
+
+# 9e065ab6ae2a4351b5fe8a91405db992
+#: ../../../source/reference/commands/column_rename.txt:76
+#: ../../../source/reference/commands/truncate.txt:70
+msgid "``SUCCEEDED_OR_NOT``"
+msgstr ""
+
+# cee6106c2e224d8a9c44ca891f248412
+# c925c7988a154d209f47e78df40f1857
+#: ../../../source/reference/commands/column_rename.txt:78
+#: ../../../source/reference/commands/truncate.txt:72
+msgid ""
+"If command succeeded, it returns true, otherwise it returns false on error."
+msgstr ""
+
 # 831ad9cf738f4b558a741bd467fc4067
 #: ../../../source/reference/commands/define_selector.txt:6
 msgid "define_selector"
@@ -3408,41 +3586,12 @@ msgid ""
 "for you to check the results of normalizer."
 msgstr ""
 
-# 5cbbff425bb64b799046e859afe82e40
-# c0a4e0d8ea844f4baf64feb8bcf7fc8b
-#: ../../../source/reference/commands/normalize.txt:25
-#: ../../../source/reference/commands/register.txt:27
-#: ../../../source/reference/commands/select.txt:21
-#: ../../../source/reference/commands/table_create.txt:18
-#: ../../../source/reference/functions/geo_distance.txt:18
-#: ../../../source/reference/functions/query.txt:26
-#: ../../../source/reference/functions/snippet_html.txt:27
-msgid "Syntax"
-msgstr "Syntax"
-
 # 8d9c0ef79f864b71aa6c0145a7e0cf43
 #: ../../../source/reference/commands/normalize.txt:27
 msgid ""
 "``normalize`` commands takes two parameters - ``normalizer`` and ``string``. "
 "Both of them are required."
 msgstr ""
-
-# 01b0b039140f48fba5d8399e45b7e55b
-# bb5ff6008bb34d7a92afba885c915628
-# faedf5338e484fc0a97463c0bff0f56b
-# 9bad6106d7164a318df4447c81e7a85c
-#: ../../../source/reference/commands/normalize.txt:36
-#: ../../../source/reference/commands/register.txt:34
-#: ../../../source/reference/commands/select.txt:46
-#: ../../../source/reference/commands/table_create.txt:31
-#: ../../../source/reference/executables/groonga-httpd.txt:30
-#: ../../../source/reference/functions/geo_distance.txt:31
-#: ../../../source/reference/functions/query.txt:36
-#: ../../../source/reference/functions/snippet_html.txt:37
-#: ../../../source/reference/output.txt:18
-#: ../../../source/reference/query_expanders/tsv.txt:28
-msgid "Usage"
-msgstr "Usage"
 
 # bf1e94eb0b5a4d81b818a2a97c5a39ad
 # bf1e94eb0b5a4d81b818a2a97c5a39ad
@@ -3464,28 +3613,10 @@ msgstr "Usage"
 msgid "Here is a simple example of ``normalize`` command."
 msgstr ""
 
-# 91088f986b41452d882d125e6ed028e7
-# 64c1379301424498b45f520d7bab67bd
-#: ../../../source/reference/commands/normalize.txt:45
-#: ../../../source/reference/commands/select.txt:198
-#: ../../../source/reference/commands/table_create.txt:154
-#: ../../../source/reference/functions/geo_distance.txt:146
-#: ../../../source/reference/functions/query.txt:103
-msgid "Parameters"
-msgstr "Parameters"
-
 # aa6c5a1abc844a978f87b2dd33b26dc6
 #: ../../../source/reference/commands/normalize.txt:47
 msgid "This section describes parameters of ``normalizer``."
 msgstr ""
-
-# f18f26cee4134faa9072c6b02abe4cb1
-# e658f1960e3e490fad2505f2477dd390
-#: ../../../source/reference/commands/normalize.txt:50
-#: ../../../source/reference/commands/select.txt:203
-#: ../../../source/reference/functions/geo_distance.txt:149
-msgid "Required parameter"
-msgstr "Required parameter"
 
 # 8294898fb52244968e09f77b9ccf5c7d
 #: ../../../source/reference/commands/normalize.txt:52
@@ -3516,23 +3647,6 @@ msgstr ""
 # 1470dbeede2a43149fd621e6540b7f7f
 #: ../../../source/reference/commands/normalize.txt:64
 msgid "It specifies any string which you want to normalize."
-msgstr ""
-
-# b28391d763334d68a7b2c6a1731c878c
-#: ../../../source/reference/commands/normalize.txt:67
-#: ../../../source/reference/commands/register.txt:51
-#: ../../../source/reference/commands/table_create.txt:269
-#: ../../../source/reference/functions/geo_distance.txt:293
-#: ../../../source/reference/functions/query.txt:122
-#: ../../../source/reference/functions/snippet_html.txt:93
-msgid "Return value"
-msgstr "Return value"
-
-# 1db91fbbb08d4b97b9a35033e3dd178d
-#: ../../../source/reference/commands/normalize.txt:75
-msgid ""
-"The format of HEADER is [0, UNIX_TIME_WHEN_COMMAND_IS_STARTED, "
-"ELAPSED_TIME]. See :doc:`/reference/command/output_format` about HEADER."
 msgstr ""
 
 # a3f805f043d84720b77614098cf4fbd6
@@ -6449,6 +6563,56 @@ msgid ""
 msgstr ""
 "table_removeはテーブルと定義されているカラムを削除します。カラムに付随するイ"
 "ンデックスも再帰的に削除されます。"
+
+# d480bdf9f09c47eb8c093076288a601a
+#: ../../../source/reference/commands/truncate.txt:9
+msgid "``truncate``"
+msgstr ""
+
+# c86967810f834f33aca4a1619f2108ad
+#: ../../../source/reference/commands/truncate.txt:14
+msgid "``truncate`` command deletes all records from specified table."
+msgstr ""
+
+# 2ba7134945c64d3e9383adf137839a0a
+#: ../../../source/reference/commands/truncate.txt:19
+msgid "``truncate`` command takes only one parameter."
+msgstr ""
+
+# 1eb1184cdea4464ca9cc8a73c9deecf7
+#: ../../../source/reference/commands/truncate.txt:21
+msgid "The required parameter is only ``table``::"
+msgstr ""
+
+# bf1e94eb0b5a4d81b818a2a97c5a39ad
+# bf1e94eb0b5a4d81b818a2a97c5a39ad
+# bf1e94eb0b5a4d81b818a2a97c5a39ad
+# c4ee6bd61d594fc8ac99ddceb034dcbd
+# 3799cd7cb7b84a4c923af81156c9d3d3
+# bf1e94eb0b5a4d81b818a2a97c5a39ad
+# 491ce5c048964c97a3901465a634f285
+# 3799cd7cb7b84a4c923af81156c9d3d3
+# 491ce5c048964c97a3901465a634f285
+# e13a2895bf5b45d694a5ccd36dbfd75a
+# 491ce5c048964c97a3901465a634f285
+# c4ee6bd61d594fc8ac99ddceb034dcbd
+# 4deda05fde8248d9b4f92a8a8bcea9da
+# c4ee6bd61d594fc8ac99ddceb034dcbd
+# e13a2895bf5b45d694a5ccd36dbfd75a
+# bf1e94eb0b5a4d81b818a2a97c5a39ad
+#: ../../../source/reference/commands/truncate.txt:28
+msgid "Here is a simple example of ``truncate`` command."
+msgstr ""
+
+# aa6c5a1abc844a978f87b2dd33b26dc6
+#: ../../../source/reference/commands/truncate.txt:46
+msgid "This section describes parameters of ``truncate``."
+msgstr ""
+
+# 1eb1184cdea4464ca9cc8a73c9deecf7
+#: ../../../source/reference/commands/truncate.txt:51
+msgid "There is required parameter, ``table_name``."
+msgstr ""
 
 # de469539300f4bf0b511954095852e88
 #: ../../../source/reference/commands_not_implemented/add.txt:6
