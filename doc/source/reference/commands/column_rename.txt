@@ -66,14 +66,14 @@ Return value
 
 ::
 
- [HEADER, column_renamed]
+ [HEADER, SUCCEEDED_OR_NOT]
 
 ``HEADER``
 
   The format of HEADER is [0, UNIX_TIME_WHEN_COMMAND_IS_STARTED, ELAPSED_TIME].
   See :doc:`/reference/command/output_format` about HEADER.
 
-``column_renamed``
+``SUCCEEDED_OR_NOT``
 
   If command succeeded, it returns true, otherwise it returns false on error.
 
