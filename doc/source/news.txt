@@ -24,6 +24,7 @@ Improvements
 * Supported range search for reference column by index.
   This change enable you to search range by index which is TABLE_PAT_KEY or TABLE_DAT_KEY
   based nested index of _key.
+* [rpm][centos] Supported MeCab 0.995.
 
 Fixes
 ^^^^^
@@ -33,6 +34,7 @@ Fixes
   This bug affects mroonga in storage mode. [groonga-dev,01192] [Reported by b senboku]
 * Fixed a crash bug that ``geo_distance()`` sort by index.
   This bug occurs by wrong the number of found records.
+* [httpd] Enabled default owner/group of database setting as groonga/groonga.
 
 Thanks
 ^^^^^^
