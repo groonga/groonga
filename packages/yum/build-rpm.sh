@@ -142,7 +142,7 @@ cp -p rpmbuild/SRPMS/*.rpm dependencies/SRPMS/
 EOF
 
     run chmod +x $BUILD_SCRIPT
-    for rpm in mecab-0.994-2.fc18.src.rpm \
+    for rpm in mecab-0.995-1.fc18.src.rpm \
                mecab-ipadic-2.7.0.20070801-6.fc18.1.src.rpm \
                mecab-jumandic-5.1.20070304-7.fc18.src.rpm; do
 	srpm_base=`echo $rpm | sed -e 's/\.fc18.*//g'`
