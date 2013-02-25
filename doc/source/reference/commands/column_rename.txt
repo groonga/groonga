@@ -1,0 +1,79 @@
+.. -*- rst -*-
+
+.. highlightlang:: none
+
+.. groonga-command
+.. database: commands_column_rename
+
+``column_rename``
+=================
+
+Summary
+-------
+
+``column_rename`` command renames specified column name of table.
+
+Syntax
+------
+
+``column_rename`` command takes two parameters.
+
+The required parameter is ``table`` and ``column_name``::
+
+  column_rename table column
+
+Usage
+-----
+
+Here is a simple example of ``column_rename`` command.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/column_rename/column_rename.log
+.. table_create Users TABLE_PAT_KEY ShortText
+.. column_create Users score COLUMN_SCALAR Int32
+.. load --table Users
+.. [
+.. {"_key": "Alice",  "score": 2},
+.. {"_key": "Bob",    "score": 0},
+.. {"_key": "Carlos", "score": -1}
+.. ]
+.. column_rename Users score point
+.. column_list Users
+.. select Users
+
+Parameters
+----------
+
+This section describes parameters of ``column_rename``.
+
+Required parameter
+^^^^^^^^^^^^^^^^^^
+
+There are required parameters, ``table_name`` and ``column_name``.
+
+``table_name``
+""""""""""""""
+
+It specifies the name of table.
+
+``column_name``
+""""""""""""""
+
+It specifies the name of column.
+
+Return value
+------------
+
+::
+
+ [HEADER, column_renamed]
+
+``HEADER``
+
+  The format of HEADER is [0, UNIX_TIME_WHEN_COMMAND_IS_STARTED, ELAPSED_TIME].
+  See :doc:`/reference/command/output_format` about HEADER.
+
+``column_renamed``
+
+  If command succeeded, it returns true, otherwise it returns false on error.
+
