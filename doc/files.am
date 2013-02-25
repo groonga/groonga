@@ -18,6 +18,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/development/travis-ci.txt \
 	$(top_srcdir)/doc/source/example/completion-1.log \
 	$(top_srcdir)/doc/source/example/correction-1.log \
+	$(top_srcdir)/doc/source/example/reference/commands/column_rename/column_rename.log \
 	$(top_srcdir)/doc/source/example/reference/commands/normalize/normalizer_auto_ascii.log \
 	$(top_srcdir)/doc/source/example/reference/commands/register/query_expanders_tsv.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/filter_equal.log \
@@ -65,6 +66,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/table_create/lexicon_table_pat_key.log \
 	$(top_srcdir)/doc/source/example/reference/commands/table_create/tag_index_table_hash_key.log \
 	$(top_srcdir)/doc/source/example/reference/commands/table_list.log \
+	$(top_srcdir)/doc/source/example/reference/commands/truncate/truncate.log \
 	$(top_srcdir)/doc/source/example/reference/executables/groonga-httpd.log \
 	$(top_srcdir)/doc/source/example/reference/functions/geo_distance_distance_ellipsoid.log \
 	$(top_srcdir)/doc/source/example/reference/functions/geo_distance_distance_rectangle.log \
@@ -332,6 +334,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/commands/column_create.txt \
 	$(top_srcdir)/doc/source/reference/commands/column_list.txt \
 	$(top_srcdir)/doc/source/reference/commands/column_remove.txt \
+	$(top_srcdir)/doc/source/reference/commands/column_rename.txt \
 	$(top_srcdir)/doc/source/reference/commands/define_selector.txt \
 	$(top_srcdir)/doc/source/reference/commands/defrag.txt \
 	$(top_srcdir)/doc/source/reference/commands/delete.txt \
@@ -448,6 +451,7 @@ source_files_relative_from_doc_dir = \
 	source/development/travis-ci.txt \
 	source/example/completion-1.log \
 	source/example/correction-1.log \
+	source/example/reference/commands/column_rename/column_rename.log \
 	source/example/reference/commands/normalize/normalizer_auto_ascii.log \
 	source/example/reference/commands/register/query_expanders_tsv.log \
 	source/example/reference/commands/select/filter_equal.log \
@@ -495,6 +499,7 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/table_create/lexicon_table_pat_key.log \
 	source/example/reference/commands/table_create/tag_index_table_hash_key.log \
 	source/example/reference/commands/table_list.log \
+	source/example/reference/commands/truncate/truncate.log \
 	source/example/reference/executables/groonga-httpd.log \
 	source/example/reference/functions/geo_distance_distance_ellipsoid.log \
 	source/example/reference/functions/geo_distance_distance_rectangle.log \
@@ -762,6 +767,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/commands/column_create.txt \
 	source/reference/commands/column_list.txt \
 	source/reference/commands/column_remove.txt \
+	source/reference/commands/column_rename.txt \
 	source/reference/commands/define_selector.txt \
 	source/reference/commands/defrag.txt \
 	source/reference/commands/delete.txt \
@@ -984,6 +990,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/commands/column_create.txt \
 	html/_sources/reference/commands/column_list.txt \
 	html/_sources/reference/commands/column_remove.txt \
+	html/_sources/reference/commands/column_rename.txt \
 	html/_sources/reference/commands/define_selector.txt \
 	html/_sources/reference/commands/defrag.txt \
 	html/_sources/reference/commands/delete.txt \
@@ -1139,6 +1146,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/commands/column_create.html \
 	html/reference/commands/column_list.html \
 	html/reference/commands/column_remove.html \
+	html/reference/commands/column_rename.html \
 	html/reference/commands/define_selector.html \
 	html/reference/commands/defrag.html \
 	html/reference/commands/delete.html \
