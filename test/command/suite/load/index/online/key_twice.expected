@@ -1,0 +1,19 @@
+table_create Users TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Index1 TABLE_PAT_KEY --key_type ShortText   --default_tokenizer TokenBigramSplitSymbolAlpha
+[[0,0.0,0.0],true]
+column_create Index1 users_key COLUMN_INDEX Users _key
+[[0,0.0,0.0],true]
+table_create Index2 TABLE_PAT_KEY --key_type ShortText   --default_tokenizer TokenBigramSplitSymbolAlpha
+[[0,0.0,0.0],true]
+column_create Index2 users_key COLUMN_INDEX Users _key
+[[0,0.0,0.0],true]
+load --table Users
+[
+["_key"],
+["Alice"],
+["Bob"]
+]
+[[0,0.0,0.0],2]
+select Users   --match_columns "Index1.users_key * 10 || Index2.users_key * 5"   --query "li"   --output_columns _key,_score
+[[0,0.0,0.0],[[[1],[["_key","ShortText"],["_score","Int32"]],["Alice",15]]]]
