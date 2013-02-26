@@ -1108,11 +1108,11 @@ grn_table_add(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key_si
         GRN_TEXT_SET_REF(&value_, key, key_size);
         GRN_UINT32_SET(ctx, &id_, id);
         GRN_UINT32_SET(ctx, &flags_, GRN_OBJ_SET);
-        grn_ctx_push(ctx, &id_);
-        grn_ctx_push(ctx, &oldvalue_);
-        grn_ctx_push(ctx, &value_);
-        grn_ctx_push(ctx, &flags_);
         while (hooks) {
+          grn_ctx_push(ctx, &id_);
+          grn_ctx_push(ctx, &oldvalue_);
+          grn_ctx_push(ctx, &value_);
+          grn_ctx_push(ctx, &flags_);
           pctx.caller = NULL;
           pctx.currh = hooks;
           if (hooks->proc) {
