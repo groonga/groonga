@@ -57,7 +57,7 @@ There are required parameters, ``table_name`` and ``column_name``.
 It specifies the name of table.
 
 ``column_name``
-""""""""""""""
+"""""""""""""""
 
 It specifies the name of column.
 
