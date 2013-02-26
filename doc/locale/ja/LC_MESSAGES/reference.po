@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-05 17:54\n"
+"POT-Creation-Date: 2013-02-26 15:34\n"
 "PO-Revision-Date: 2013-01-24 11:36+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -55,6 +55,7 @@ msgstr ""
 # 86f813158fb74ecf98b92a40683e0847
 # bc81190a751d435b80a6d307500c72c0
 # cc0208c9593d41c3af00a5444aa4f394
+#: ../../../source/example/reference/commands/column_rename/column_rename.log:1
 #: ../../../source/example/reference/commands/normalize/normalizer_auto_ascii.log:1
 #: ../../../source/example/reference/commands/register/query_expanders_tsv.log:1
 #: ../../../source/example/reference/commands/select/filter_equal.log:1
@@ -102,6 +103,7 @@ msgstr ""
 #: ../../../source/example/reference/commands/table_create/lexicon_table_pat_key.log:1
 #: ../../../source/example/reference/commands/table_create/tag_index_table_hash_key.log:1
 #: ../../../source/example/reference/commands/table_list.log:1
+#: ../../../source/example/reference/commands/truncate/truncate.log:1
 #: ../../../source/example/reference/executables/groonga-httpd.log:1
 #: ../../../source/example/reference/functions/geo_distance_distance_rectangle.log:1
 #: ../../../source/example/reference/functions/geo_distance_distance_rectangle_across_equator.log:1
@@ -425,10 +427,12 @@ msgstr "出力形式"
 # bb58728aaf864b5e9f38e3b2ca5f1eea
 #: ../../../source/reference/command/output_format.txt:9
 #: ../../../source/reference/command/return_code.txt:9
+#: ../../../source/reference/commands/column_rename.txt:12
 #: ../../../source/reference/commands/normalize.txt:17
 #: ../../../source/reference/commands/register.txt:12
 #: ../../../source/reference/commands/select.txt:12
 #: ../../../source/reference/commands/table_create.txt:12
+#: ../../../source/reference/commands/truncate.txt:12
 #: ../../../source/reference/executables/groonga-httpd.txt:9
 #: ../../../source/reference/functions/geo_distance.txt:13
 #: ../../../source/reference/functions/query.txt:12
@@ -529,7 +533,9 @@ msgstr "``BODY`` に相当する部分は以下です::"
 
 # d66e98ee02154150a140c5db404e7419
 #: ../../../source/reference/command/output_format.txt:115
+#: ../../../source/reference/commands/column_rename.txt:71
 #: ../../../source/reference/commands/normalize.txt:73
+#: ../../../source/reference/commands/truncate.txt:65
 msgid "``HEADER``"
 msgstr ""
 
@@ -2455,6 +2461,160 @@ msgid ""
 "マルチセクションインデックスの一部である場合も、インデックスが削除されます。"
 msgstr ""
 
+# ccb1b9c739fc4e71bdd051859d41f7aa
+#: ../../../source/reference/commands/column_rename.txt:9
+msgid "``column_rename``"
+msgstr ""
+
+# e8e779bcb974490195fc71a1f760789e
+#: ../../../source/reference/commands/column_rename.txt:14
+msgid "``column_rename`` command renames specified column name of table."
+msgstr "``column_rename`` コマンドは指定したテーブルのカラム名を変更します。"
+
+# 47dc2b34beb1410495604199c7f24873
+# eaadf83a10cc4718bfa95e2aca8b7206
+# 22e16b231eb94001863c7769e59e4b47
+#: ../../../source/reference/commands/column_rename.txt:17
+#: ../../../source/reference/commands/normalize.txt:25
+#: ../../../source/reference/commands/register.txt:27
+#: ../../../source/reference/commands/select.txt:21
+#: ../../../source/reference/commands/table_create.txt:18
+#: ../../../source/reference/commands/truncate.txt:17
+#: ../../../source/reference/functions/geo_distance.txt:18
+#: ../../../source/reference/functions/query.txt:26
+#: ../../../source/reference/functions/snippet_html.txt:27
+msgid "Syntax"
+msgstr "構文"
+
+# 157b42b5e6e3444c88ba3b9318df306c
+#: ../../../source/reference/commands/column_rename.txt:19
+msgid "``column_rename`` command takes two parameters."
+msgstr "``column_rename`` コマンドは引数を二つとります。"
+
+# 75c38df430b54c44844526068cb9d03b
+#: ../../../source/reference/commands/column_rename.txt:21
+msgid "The required parameter is ``table`` and ``column_name``::"
+msgstr "``table`` と ``column_name`` が必須の引数です。"
+
+# 2874da1d881b448992bb7c4fd1cf7e34
+# 09d40eac91774db29b40ff7e960663da
+# cd5e20dad0b8499894cefbe0dcbef7c8
+# 41271dbb3fa340a8a33cb610678460bb
+#: ../../../source/reference/commands/column_rename.txt:26
+#: ../../../source/reference/commands/normalize.txt:36
+#: ../../../source/reference/commands/register.txt:34
+#: ../../../source/reference/commands/select.txt:46
+#: ../../../source/reference/commands/table_create.txt:31
+#: ../../../source/reference/commands/truncate.txt:26
+#: ../../../source/reference/executables/groonga-httpd.txt:30
+#: ../../../source/reference/functions/geo_distance.txt:31
+#: ../../../source/reference/functions/query.txt:36
+#: ../../../source/reference/functions/snippet_html.txt:37
+#: ../../../source/reference/output.txt:18
+#: ../../../source/reference/query_expanders/tsv.txt:28
+msgid "Usage"
+msgstr "使い方"
+
+# 1ccd84b3f15a4567b23bb0e7d8c66fcd
+#: ../../../source/reference/commands/column_rename.txt:28
+msgid "Here is a simple example of ``column_rename`` command."
+msgstr "以下は ``column_rename`` コマンドの簡単な使用例です。"
+
+# 3ed1ed0a3bb349fa8db4eccf86029d9f
+# 18532e03e38c4f96970d5935b7432cba
+#: ../../../source/reference/commands/column_rename.txt:45
+#: ../../../source/reference/commands/normalize.txt:45
+#: ../../../source/reference/commands/select.txt:198
+#: ../../../source/reference/commands/table_create.txt:154
+#: ../../../source/reference/commands/truncate.txt:44
+#: ../../../source/reference/functions/geo_distance.txt:146
+#: ../../../source/reference/functions/query.txt:103
+msgid "Parameters"
+msgstr "引数"
+
+# e92758beef824130ab42669342c10d50
+#: ../../../source/reference/commands/column_rename.txt:47
+msgid "This section describes parameters of ``column_rename``."
+msgstr "このセクションでは ``column_rename`` の引数について説明します。"
+
+# 41a5ec8bf94e4a5a87e2cbcb48e5a10e
+# 852d1057fa6546bc9ab1ff1a04d6f857
+#: ../../../source/reference/commands/column_rename.txt:50
+#: ../../../source/reference/commands/normalize.txt:50
+#: ../../../source/reference/commands/select.txt:203
+#: ../../../source/reference/commands/truncate.txt:49
+#: ../../../source/reference/functions/geo_distance.txt:149
+msgid "Required parameter"
+msgstr "必須引数"
+
+# b90bfd8b177440e6b2a2ff7f128303f9
+#: ../../../source/reference/commands/column_rename.txt:52
+msgid "There are required parameters, ``table_name`` and ``column_name``."
+msgstr "必須引数は二つあります。 ``table_name`` と ``column_name`` です。"
+
+# 9508b375c8b348c18b13a830152cbec7
+# 079cb966eb1b4462933724d0998a6a32
+#: ../../../source/reference/commands/column_rename.txt:55
+#: ../../../source/reference/commands/truncate.txt:54
+msgid "``table_name``"
+msgstr ""
+
+# ffa8ab8997a74ec381047804746e748d
+#: ../../../source/reference/commands/column_rename.txt:57
+#: ../../../source/reference/commands/truncate.txt:56
+msgid "It specifies the name of table."
+msgstr "テーブルの名前を指定します。"
+
+# 21fee5dde2aa4f258108d76a1823abfe
+#: ../../../source/reference/commands/column_rename.txt:60
+msgid "``column_name``"
+msgstr ""
+
+# 4beb7f0f3d704fd0b3176496d7f55eb9
+#: ../../../source/reference/commands/column_rename.txt:62
+msgid "It specifies the name of column."
+msgstr "カラムの名前を指定します。"
+
+# f18ad5e74b9c45f783d38e24995b3abe
+#: ../../../source/reference/commands/column_rename.txt:65
+#: ../../../source/reference/commands/normalize.txt:67
+#: ../../../source/reference/commands/register.txt:51
+#: ../../../source/reference/commands/table_create.txt:269
+#: ../../../source/reference/commands/truncate.txt:59
+#: ../../../source/reference/functions/geo_distance.txt:293
+#: ../../../source/reference/functions/query.txt:122
+#: ../../../source/reference/functions/snippet_html.txt:93
+msgid "Return value"
+msgstr "戻り値"
+
+# cdd462ed19424427982fabc0de88064d
+#: ../../../source/reference/commands/column_rename.txt:73
+#: ../../../source/reference/commands/normalize.txt:75
+#: ../../../source/reference/commands/truncate.txt:67
+msgid ""
+"The format of HEADER is [0, UNIX_TIME_WHEN_COMMAND_IS_STARTED, "
+"ELAPSED_TIME]. See :doc:`/reference/command/output_format` about HEADER."
+msgstr ""
+"HEADERのフォーマットは  [0, UNIX_TIME_WHEN_COMMAND_IS_STARTED, ELAPSED_TIME] "
+"です。HEADERについては :doc:`/reference/command/output_format` を参照してくだ"
+"さい。"
+
+# 7d108ca6104e420496ebfc993cf97944
+# e81cb9040a3b46088211ff1a1bf0dc21
+#: ../../../source/reference/commands/column_rename.txt:76
+#: ../../../source/reference/commands/truncate.txt:70
+msgid "``SUCCEEDED_OR_NOT``"
+msgstr ""
+
+# b4c2d2eac3a8464994477107d6cd11eb
+# 30c269e4bd054949b890b77cc0df99cd
+#: ../../../source/reference/commands/column_rename.txt:78
+#: ../../../source/reference/commands/truncate.txt:72
+msgid ""
+"If command succeeded, it returns true, otherwise it returns false on error."
+msgstr ""
+"コマンドの実行が成功するとtrueを返します。失敗するとエラーとしてfalseを返します。"
+
 # 0bbda24b30b44d908164f73361d7e844
 #: ../../../source/reference/commands/define_selector.txt:6
 msgid "define_selector"
@@ -3241,19 +3401,6 @@ msgstr ""
 "``normalize`` コマンドを使うのにテーブルを作成する必要はありません。このコマ"
 "ンドは、ノーマライザーの結果を確認するのに便利です。"
 
-# 47dc2b34beb1410495604199c7f24873
-# eaadf83a10cc4718bfa95e2aca8b7206
-# 22e16b231eb94001863c7769e59e4b47
-#: ../../../source/reference/commands/normalize.txt:25
-#: ../../../source/reference/commands/register.txt:27
-#: ../../../source/reference/commands/select.txt:21
-#: ../../../source/reference/commands/table_create.txt:18
-#: ../../../source/reference/functions/geo_distance.txt:18
-#: ../../../source/reference/functions/query.txt:26
-#: ../../../source/reference/functions/snippet_html.txt:27
-msgid "Syntax"
-msgstr "構文"
-
 # 175ddfb1298649878c537595a2683fc5
 #: ../../../source/reference/commands/normalize.txt:27
 msgid ""
@@ -3263,50 +3410,15 @@ msgstr ""
 "``normalize`` コマンドは ``normalizer`` と ``string`` という二つの引数をとり"
 "ます。これらの引数はどちらも必須です。"
 
-# 2874da1d881b448992bb7c4fd1cf7e34
-# 09d40eac91774db29b40ff7e960663da
-# cd5e20dad0b8499894cefbe0dcbef7c8
-# 41271dbb3fa340a8a33cb610678460bb
-#: ../../../source/reference/commands/normalize.txt:36
-#: ../../../source/reference/commands/register.txt:34
-#: ../../../source/reference/commands/select.txt:46
-#: ../../../source/reference/commands/table_create.txt:31
-#: ../../../source/reference/executables/groonga-httpd.txt:30
-#: ../../../source/reference/functions/geo_distance.txt:31
-#: ../../../source/reference/functions/query.txt:36
-#: ../../../source/reference/functions/snippet_html.txt:37
-#: ../../../source/reference/output.txt:18
-#: ../../../source/reference/query_expanders/tsv.txt:28
-msgid "Usage"
-msgstr "使い方"
-
 # 1ccd84b3f15a4567b23bb0e7d8c66fcd
 #: ../../../source/reference/commands/normalize.txt:38
 msgid "Here is a simple example of ``normalize`` command."
 msgstr "以下は ``normalize`` コマンドの簡単な使用例です。"
 
-# 3ed1ed0a3bb349fa8db4eccf86029d9f
-# 18532e03e38c4f96970d5935b7432cba
-#: ../../../source/reference/commands/normalize.txt:45
-#: ../../../source/reference/commands/select.txt:198
-#: ../../../source/reference/commands/table_create.txt:154
-#: ../../../source/reference/functions/geo_distance.txt:146
-#: ../../../source/reference/functions/query.txt:103
-msgid "Parameters"
-msgstr "引数"
-
 # e92758beef824130ab42669342c10d50
 #: ../../../source/reference/commands/normalize.txt:47
 msgid "This section describes parameters of ``normalizer``."
 msgstr "このセクションでは ``normalizer`` の引数について説明します。"
-
-# 41a5ec8bf94e4a5a87e2cbcb48e5a10e
-# 852d1057fa6546bc9ab1ff1a04d6f857
-#: ../../../source/reference/commands/normalize.txt:50
-#: ../../../source/reference/commands/select.txt:203
-#: ../../../source/reference/functions/geo_distance.txt:149
-msgid "Required parameter"
-msgstr "必須引数"
 
 # b90bfd8b177440e6b2a2ff7f128303f9
 #: ../../../source/reference/commands/normalize.txt:52
@@ -3342,26 +3454,6 @@ msgstr ""
 #: ../../../source/reference/commands/normalize.txt:64
 msgid "It specifies any string which you want to normalize."
 msgstr "正規化したい文字列を指定します。"
-
-# f18ad5e74b9c45f783d38e24995b3abe
-#: ../../../source/reference/commands/normalize.txt:67
-#: ../../../source/reference/commands/register.txt:51
-#: ../../../source/reference/commands/table_create.txt:269
-#: ../../../source/reference/functions/geo_distance.txt:293
-#: ../../../source/reference/functions/query.txt:122
-#: ../../../source/reference/functions/snippet_html.txt:93
-msgid "Return value"
-msgstr "戻り値"
-
-# cdd462ed19424427982fabc0de88064d
-#: ../../../source/reference/commands/normalize.txt:75
-msgid ""
-"The format of HEADER is [0, UNIX_TIME_WHEN_COMMAND_IS_STARTED, "
-"ELAPSED_TIME]. See :doc:`/reference/command/output_format` about HEADER."
-msgstr ""
-"HEADERのフォーマットは  [0, UNIX_TIME_WHEN_COMMAND_IS_STARTED, ELAPSED_TIME] "
-"です。HEADERについては :doc:`/reference/command/output_format` を参照してくだ"
-"さい。"
 
 # a2f5fdf4c9754afa8095b1729265d517
 #: ../../../source/reference/commands/normalize.txt:78
@@ -6367,6 +6459,41 @@ msgid ""
 "table_removeはテーブルと定義されているカラムを削除します。カラムに付随するイ"
 "ンデックスも再帰的に削除されます。"
 msgstr ""
+
+# 02dd86874f7d4d838d7fe8eb4688be7f
+#: ../../../source/reference/commands/truncate.txt:9
+msgid "``truncate``"
+msgstr ""
+
+# 8c150238f1e348b9a2045d96e8ed5742
+#: ../../../source/reference/commands/truncate.txt:14
+msgid "``truncate`` command deletes all records from specified table."
+msgstr "``truncate`` コマンドは指定したテーブルのレコードをすべて削除します。"
+
+# 1ce42bdc29594a019e7d0db71d6a3135
+#: ../../../source/reference/commands/truncate.txt:19
+msgid "``truncate`` command takes only one parameter."
+msgstr "``truncate`` コマンドの引数は1つだけです::"
+
+# 75c38df430b54c44844526068cb9d03b
+#: ../../../source/reference/commands/truncate.txt:21
+msgid "The required parameter is only ``table``::"
+msgstr "``table`` だけが必須の引数です。"
+
+# 1ccd84b3f15a4567b23bb0e7d8c66fcd
+#: ../../../source/reference/commands/truncate.txt:28
+msgid "Here is a simple example of ``truncate`` command."
+msgstr "以下は ``truncate`` コマンドの簡単な使用例です。"
+
+# e92758beef824130ab42669342c10d50
+#: ../../../source/reference/commands/truncate.txt:46
+msgid "This section describes parameters of ``truncate``."
+msgstr "このセクションでは ``truncate`` の引数について説明します。"
+
+# 75c38df430b54c44844526068cb9d03b
+#: ../../../source/reference/commands/truncate.txt:51
+msgid "There is required parameter, ``table_name``."
+msgstr "``table_name`` だけが必須の引数です。"
 
 # 686dead318d94bf58e0dd6aed0aed390
 #: ../../../source/reference/commands_not_implemented/add.txt:6
@@ -12284,8 +12411,8 @@ msgid ""
 "Here is a list of additional normalizers provided by ``groonga-normalizer-"
 "mysql`` plugins:"
 msgstr ""
-"``groonga-normalizer-mysql`` パッケージで提供される追加のノーマライザー"
-"のリストです。"
+"``groonga-normalizer-mysql`` パッケージで提供される追加のノーマライザーのリス"
+"トです。"
 
 # cc6d40332dd94b6fb1aa8621f07efb5a
 #: ../../../source/reference/normalizers.txt:124
@@ -12299,15 +12426,14 @@ msgid ""
 "compatible normalizers to groonga. ``NormalizerMySQLGeneralCI`` corresponds "
 "to ``utf8mb4_general_ci``."
 msgstr ""
-"``groonga-normalizer-mysql`` はgroongaのプラグインです。"
-"MySQL互換のノーマライザーを提供します。ノーマライザー ``NormalizerMySQLGeneralCI`` "
-"に対応するのは ``utf8mb4_general_ci`` です。"
+"``groonga-normalizer-mysql`` はgroongaのプラグインです。MySQL互換のノーマライ"
+"ザーを提供します。ノーマライザー ``NormalizerMySQLGeneralCI`` に対応するのは "
+"``utf8mb4_general_ci`` です。"
 
 # f75625d10e4c41d29d11e9dbfd742e6c
 #: ../../../source/reference/normalizers.txt:130
 msgid "You need to register ``normalizers/mysql`` plugin in advance."
-msgstr ""
-"事前に ``normalizers/mysql`` プラグインを登録する必要があります。"
+msgstr "事前に ``normalizers/mysql`` プラグインを登録する必要があります。"
 
 # b993c6521463466f8f42d9a4e7e5107f
 #: ../../../source/reference/normalizers.txt:136
@@ -13655,3 +13781,4 @@ msgstr ""
 #: ../../../source/reference/types.txt:129
 msgid "Object型はv1.2でサポートされます。"
 msgstr ""
+
