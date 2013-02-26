@@ -2682,9 +2682,12 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
       case GRN_OP_GET_VALUE :
         {
           grn_obj *col, *rec;
-          grn_obj value;
-          GRN_TEXT_INIT(&value, 0);
+          grn_obj pat_value;
+          GRN_TEXT_INIT(&pat_value, 0);
           do {
+            uint32_t size;
+            const char *value;
+            grn_bool is_pat_key_accessor = GRN_FALSE;
             if (code->nargs == 1) {
               rec = v0;
               if (code->value) {
@@ -2708,35 +2711,37 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
             }
             grn_obj_reinit_for(ctx, res, col);
             if (col) {
-              GRN_BULK_REWIND(&value);
-              grn_obj_get_value(ctx, col, GRN_RECORD_VALUE(rec), &value);
+              if (col->header.type == GRN_ACCESSOR &&
+                  ((grn_accessor *)col)->action == GRN_ACCESSOR_GET_KEY &&
+                  ((grn_accessor *)col)->obj->header.type == GRN_TABLE_PAT_KEY) {
+                is_pat_key_accessor = GRN_TRUE;
+                GRN_BULK_REWIND(&pat_value);
+                grn_obj_get_value(ctx, col, GRN_RECORD_VALUE(rec), &pat_value);
+                value = GRN_BULK_HEAD(&pat_value);
+                size = GRN_BULK_VSIZE(&pat_value);
+              } else {
+                value = grn_obj_get_value_(ctx, col, GRN_RECORD_VALUE(rec),
+                                           &size);
+              }
             } else {
               ERR(GRN_INVALID_ARGUMENT, "col resolve failed");
-              GRN_OBJ_FIN(ctx, &value);
+              GRN_OBJ_FIN(ctx, &pat_value);
               goto exit;
             }
-            switch (res->header.type) {
-            case GRN_VECTOR :
-              grn_vector_decode(ctx, res,
-                                GRN_BULK_HEAD(&value), GRN_BULK_VSIZE(&value));
-              break;
-            case GRN_TABLE_NO_KEY :
-            case GRN_TABLE_HASH_KEY :
-            case GRN_TABLE_PAT_KEY :
-            case GRN_TABLE_DAT_KEY :
-              GRN_RECORD_SET(ctx, res, GRN_RECORD_VALUE(&value));
-              break;
-            default :
-              grn_bulk_write_from(ctx,
-                                  res,
-                                  GRN_BULK_HEAD(&value),
-                                  0,
-                                  GRN_BULK_VSIZE(&value));
-              break;
+            if (!is_pat_key_accessor && size == GRN_OBJ_GET_VALUE_IMD) {
+              GRN_RECORD_SET(ctx, res, (uintptr_t)value);
+            } else {
+              if (value) {
+                if (res->header.type == GRN_VECTOR) {
+                  grn_vector_decode(ctx, res, value, size);
+                } else {
+                  grn_bulk_write_from(ctx, res, value, 0, size);
+                }
+              }
             }
             code++;
           } while (code < ce && code->op == GRN_OP_GET_VALUE);
-          GRN_OBJ_FIN(ctx, &value);
+          GRN_OBJ_FIN(ctx, &pat_value);
         }
         break;
       case GRN_OP_OBJ_SEARCH :
