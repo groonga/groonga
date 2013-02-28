@@ -43,9 +43,9 @@ This section describes all parameters.
   When a target table contains primary key, you must specify ``_key`` column (pseudo column associated primary key) as the one of ``COLUMN_NAME``.
 
   If ``values`` isn't specified any values, they are read from the standard input until all opened parenthes match their closed ones.
-You don't have to enclose them with single-quotes or double-quotes, but if you specified values with ``values`` parameter, you should do.
+  You don't have to enclose them with single-quotes or double-quotes, but if you specified values with ``values`` parameter, you should do.
 
-In following values, you also don't have to enclose any spaces (' ') with single-quotes or double-quotes.
+  In following values, you also don't have to enclose any spaces (' ') with single-quotes or double-quotes.
 
 ``table``
 
