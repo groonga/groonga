@@ -2,6 +2,9 @@
 
 .. highlightlang:: none
 
+.. groonga-command
+.. database: commands_load
+
 load
 ====
 
