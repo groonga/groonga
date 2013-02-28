@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-25 17:14\n"
+"POT-Creation-Date: 2013-02-28 18:07\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -547,6 +547,7 @@ msgstr ""
 #: ../../../source/reference/command/output_format.txt:9
 #: ../../../source/reference/command/return_code.txt:9
 #: ../../../source/reference/commands/column_rename.txt:12
+#: ../../../source/reference/commands/load.txt:12
 #: ../../../source/reference/commands/normalize.txt:17
 #: ../../../source/reference/commands/register.txt:12
 #: ../../../source/reference/commands/select.txt:12
@@ -807,6 +808,7 @@ msgstr ""
 # 2c4b346efda24fabbe7822b6e2fdafcf
 #: ../../../source/reference/command/output_format.txt:225
 #: ../../../source/reference/command/return_code.txt:102
+#: ../../../source/reference/commands/load.txt:99
 #: ../../../source/reference/commands/normalize.txt:83
 #: ../../../source/reference/commands/select.txt:895
 #: ../../../source/reference/commands/table_create.txt:280
@@ -1290,7 +1292,6 @@ msgstr "cache_limit"
 #: ../../../source/reference/commands/defrag.txt:9
 #: ../../../source/reference/commands/delete.txt:9
 #: ../../../source/reference/commands/dump.txt:9
-#: ../../../source/reference/commands/load.txt:9
 #: ../../../source/reference/commands/log_level.txt:9
 #: ../../../source/reference/commands/log_put.txt:9
 #: ../../../source/reference/commands/log_reopen.txt:9
@@ -1364,7 +1365,6 @@ msgstr "cache_limit - cacheサイズの設定・取得"
 #: ../../../source/reference/commands/defrag.txt:14
 #: ../../../source/reference/commands/delete.txt:14
 #: ../../../source/reference/commands/dump.txt:14
-#: ../../../source/reference/commands/load.txt:14
 #: ../../../source/reference/commands/log_level.txt:14
 #: ../../../source/reference/commands/log_put.txt:14
 #: ../../../source/reference/commands/log_reopen.txt:14
@@ -1433,7 +1433,6 @@ msgstr "書式"
 #: ../../../source/reference/commands/defrag.txt:20
 #: ../../../source/reference/commands/delete.txt:20
 #: ../../../source/reference/commands/dump.txt:20
-#: ../../../source/reference/commands/load.txt:20
 #: ../../../source/reference/commands/log_level.txt:20
 #: ../../../source/reference/commands/log_put.txt:20
 #: ../../../source/reference/commands/log_reopen.txt:20
@@ -1517,7 +1516,6 @@ msgstr ""
 #: ../../../source/reference/commands/defrag.txt:27
 #: ../../../source/reference/commands/delete.txt:27
 #: ../../../source/reference/commands/dump.txt:33
-#: ../../../source/reference/commands/load.txt:27
 #: ../../../source/reference/commands/log_level.txt:27
 #: ../../../source/reference/commands/log_put.txt:27
 #: ../../../source/reference/commands/log_reopen.txt:29
@@ -1590,7 +1588,6 @@ msgstr ""
 #: ../../../source/reference/commands/define_selector.txt:92
 #: ../../../source/reference/commands/defrag.txt:34
 #: ../../../source/reference/commands/dump.txt:40
-#: ../../../source/reference/commands/load.txt:66
 #: ../../../source/reference/commands/log_level.txt:43
 #: ../../../source/reference/commands/log_put.txt:47
 #: ../../../source/reference/commands/log_reopen.txt:34
@@ -1663,7 +1660,6 @@ msgstr ""
 #: ../../../source/reference/commands/defrag.txt:48
 #: ../../../source/reference/commands/delete.txt:60
 #: ../../../source/reference/commands/dump.txt:45
-#: ../../../source/reference/commands/load.txt:80
 #: ../../../source/reference/commands/log_level.txt:57
 #: ../../../source/reference/commands/log_put.txt:61
 #: ../../../source/reference/commands/log_reopen.txt:48
@@ -2107,7 +2103,6 @@ msgstr "テーブル名 Entry のカラム body のロックを解除する::"
 #: ../../../source/reference/commands/clearlock.txt:61
 #: ../../../source/reference/commands/define_selector.txt:114
 #: ../../../source/reference/commands/delete.txt:69
-#: ../../../source/reference/commands/load.txt:98
 #: ../../../source/reference/commands/log_level.txt:64
 #: ../../../source/reference/commands/log_put.txt:68
 #: ../../../source/reference/commands/log_reopen.txt:65
@@ -2174,7 +2169,7 @@ msgstr ""
 #: ../../../source/reference/commands/column_remove.txt:30
 #: ../../../source/reference/commands/define_selector.txt:35
 #: ../../../source/reference/commands/delete.txt:29
-#: ../../../source/reference/commands/load.txt:49
+#: ../../../source/reference/commands/load.txt:50
 #: ../../../source/reference/commands/select.txt:208
 #: ../../../source/reference/commands/suggest.txt:74
 #: ../../../source/reference/commands_not_implemented/add.txt:31
@@ -2571,6 +2566,7 @@ msgstr ""
 # 5cbbff425bb64b799046e859afe82e40
 # c0a4e0d8ea844f4baf64feb8bcf7fc8b
 #: ../../../source/reference/commands/column_rename.txt:17
+#: ../../../source/reference/commands/load.txt:18
 #: ../../../source/reference/commands/normalize.txt:25
 #: ../../../source/reference/commands/register.txt:27
 #: ../../../source/reference/commands/select.txt:21
@@ -2597,6 +2593,7 @@ msgstr ""
 # faedf5338e484fc0a97463c0bff0f56b
 # 9bad6106d7164a318df4447c81e7a85c
 #: ../../../source/reference/commands/column_rename.txt:26
+#: ../../../source/reference/commands/load.txt:71
 #: ../../../source/reference/commands/normalize.txt:36
 #: ../../../source/reference/commands/register.txt:34
 #: ../../../source/reference/commands/select.txt:46
@@ -2634,6 +2631,7 @@ msgstr ""
 # 91088f986b41452d882d125e6ed028e7
 # 64c1379301424498b45f520d7bab67bd
 #: ../../../source/reference/commands/column_rename.txt:45
+#: ../../../source/reference/commands/load.txt:24
 #: ../../../source/reference/commands/normalize.txt:45
 #: ../../../source/reference/commands/select.txt:198
 #: ../../../source/reference/commands/table_create.txt:154
@@ -2697,6 +2695,7 @@ msgstr ""
 
 # b28391d763334d68a7b2c6a1731c878c
 #: ../../../source/reference/commands/column_rename.txt:65
+#: ../../../source/reference/commands/load.txt:89
 #: ../../../source/reference/commands/normalize.txt:67
 #: ../../../source/reference/commands/register.txt:51
 #: ../../../source/reference/commands/table_create.txt:269
@@ -2962,7 +2961,7 @@ msgstr ""
 # 257a8b1e0a424cf3807162e2534d2837
 # 73ec2c3dc21241d5b0b795816605eeb2
 #: ../../../source/reference/commands/define_selector.txt:116
-#: ../../../source/reference/commands/load.txt:100
+#: ../../../source/reference/commands/load.txt:101
 msgid ":doc:`/reference/grn_expr`"
 msgstr ":doc:`/reference/grn_expr`"
 
@@ -3181,34 +3180,22 @@ msgid "データベース内のスキーマと特定のテーブルのデータ�
 msgstr "データベース内のスキーマと特定のテーブルのデータのみ出力::"
 
 # 5a03e18bb7ba4ff9aceef940bc7fa33f
-#: ../../../source/reference/commands/load.txt:6
+#: ../../../source/reference/commands/load.txt:9
 msgid "load"
 msgstr "load"
 
-# 4feb34bd37c744358b8aea8febe0ca86
-#: ../../../source/reference/commands/load.txt:11
-msgid "load - データのロード"
-msgstr "load - データのロード"
-
-# 262623a3a62f4326ae17df5cf7001bd0
-#: ../../../source/reference/commands/load.txt:22
+# 6c0f2b8a8aac4c318d3de2b413aa0698
+#: ../../../source/reference/commands/load.txt:15
 msgid ""
-"groonga組込コマンドの一つであるloadについて説明します。組込コマンドは、"
-"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
-"エストを送信することによって実行します。"
+"``load`` loads data as records in the current database and update values of "
+"each columns."
 msgstr ""
-"groonga組込コマンドの一つであるloadについて説明します。組込コマンドは、"
-"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
-"エストを送信することによって実行します。"
 
-# 88caeac1cb264403b8942b4bdf57cbfb
-#: ../../../source/reference/commands/load.txt:24
-msgid ""
-"loadは、使用しているデータベースのテーブルにレコードを登録し、カラムの値を更"
-"新します。"
+# aa6c5a1abc844a978f87b2dd33b26dc6
+#: ../../../source/reference/commands/load.txt:26
+#: ../../../source/reference/commands/table_create.txt:156
+msgid "This section describes all parameters."
 msgstr ""
-"loadは、使用しているデータベースのテーブルにレコードを登録し、カラムの値を更"
-"新します。"
 
 # e61662d3ce254a80b8f07959d48c7b17
 # 78fe8de5167543f9ad1a5a7993c6fa35
@@ -3219,174 +3206,142 @@ msgstr ""
 msgid "``values``"
 msgstr "``values``"
 
-# fcf85eca3bb344d39753cbddb4d56fb7
+# eca64733570a40a18761d0dbbf5cde26
 #: ../../../source/reference/commands/load.txt:31
 msgid ""
-"input_typeに指定する形式で登録するレコードの値を表現した文字列を渡します。"
+"It specifies values loaded to records. Values should satisfy ``input_type`` "
+"format. If you specify \"json\" as ``input_type``, you can choose a format "
+"from below:"
 msgstr ""
-"input_typeに指定する形式で登録するレコードの値を表現した文字列を渡します。"
 
-# 457b29502e19450e873886b373a51e96
-#: ../../../source/reference/commands/load.txt:33
-msgid "input_typeがjsonである場合には、以下のいずれかの形式が使用できます。"
-msgstr "input_typeがjsonである場合には、以下のいずれかの形式が使用できます。"
-
-# 9bd79debf5ac4b3d8e61bf21b2b749cf
-# 0aa1178996eb48a3aaca303a571e2202
-# b5196a77ec3f4f5bbbf0e513ea91a020
+# 511192979a4d484484ec9801326cb266
+# 6216da4d10cb431c9867b3c6dcea772a
 #: ../../../source/reference/commands/load.txt:35
-#: ../../../source/reference/commands_not_implemented/add.txt:49
-#: ../../../source/reference/commands_not_implemented/set.txt:47
-msgid "``形式1``"
-msgstr ""
+#, fuzzy
+msgid "``Format 1:``"
+msgstr "Format"
 
-# 3f6ac833374349ad8bc96bc6694ea7a3
+# 2322334ddac1454fb8aad537ac649fe0
 #: ../../../source/reference/commands/load.txt:36
 msgid ""
-"[[カラム名1, カラム名2,..], [カラム値1, カラム値2,..], [カラム値1, カラム値"
-"2,..],..]"
+"[[COLUMN_NAME1, COLUMN_NAME2,..], [VALUE1, VALUE2,..], [VALUE1, "
+"VALUE2,..],..]"
 msgstr ""
-"[[カラム名1, カラム名2,..], [カラム値1, カラム値2,..], [カラム値1, カラム値"
-"2,..],..]"
 
-# 62a00d86e8b1442fb4fd46b63fe786bf
-# c6eae66c91cb426db9a5bba9351937c4
-# 77b19f924d7542378035e9785e8f5f08
+# 511192979a4d484484ec9801326cb266
+# 6216da4d10cb431c9867b3c6dcea772a
 #: ../../../source/reference/commands/load.txt:38
-#: ../../../source/reference/commands_not_implemented/add.txt:52
-#: ../../../source/reference/commands_not_implemented/set.txt:50
-msgid "``形式2``"
-msgstr ""
+#, fuzzy
+msgid "``Format 2:``"
+msgstr "Format"
 
-# 65c3dae3688648a58c30e60a9f683d78
+# d73cf6d120ef4535bed77071c606dc9c
 #: ../../../source/reference/commands/load.txt:39
 msgid ""
-"[{カラム名1: カラム値1, カラム名2: カラム値2}, {カラム名1: カラム値1, カラム"
-"名2: カラム値2},..]"
+"[{COLUMN_NAME1: VALUE1, COLUMN_NAME2: VALUE2}, {COLUMN_NAME1: VALUE1, "
+"COLUMN_NAME2: VALUE2},..]"
 msgstr ""
-"[{カラム名1: カラム値1, カラム名2: カラム値2}, {カラム名1: カラム値1, カラム"
-"名2: カラム値2},..]"
 
-# 9c193efae23044d5a9dec6c12aa8bc2a
-# 942065cef86c458abc04354c4166b412
-# 05f59e7784d645bba6a00d528b96a5e6
+# fd4862a39c6443dcb30cd50503c8f8bd
 #: ../../../source/reference/commands/load.txt:41
-#: ../../../source/reference/commands_not_implemented/add.txt:55
-#: ../../../source/reference/commands_not_implemented/set.txt:53
 msgid ""
-"形式1の[カラム名1, カラム名2,..]の要素はcolumns引数が省略された場合のみ有効で"
-"す。"
+"``[COLUMN_NAME1, COLUMN_NAME2,..]`` format in ``Format 1`` is effective only "
+"when ``column`` parameter isn't specified."
 msgstr ""
-"形式1の[カラム名1, カラム名2,..]の要素はcolumns引数が省略された場合のみ有効で"
-"す。"
 
-# d7f6100ff5dc4e2d97aa0c992c5bac98
+# 143d469955154c17a9c18ab8d6954ea9
 #: ../../../source/reference/commands/load.txt:43
 msgid ""
-"対象のテーブルが主キーを持つテーブルであった場合は、カラム名の中に'_key'(主"
-"キーを示す疑似カラム名)が含まれていなければなりません。"
+"When a target table contains primary key, you must specify ``_key`` column "
+"(pseudo column associated primary key) as the one of ``COLUMN_NAME``."
 msgstr ""
-"対象のテーブルが主キーを持つテーブルであった場合は、カラム名の中に'_key'(主"
-"キーを示す疑似カラム名)が含まれていなければなりません。"
 
-# 9509097567fb44eca4e05beb92eb2963
+# 5bbdd27fbc2a460c80f370063c583e5c
 #: ../../../source/reference/commands/load.txt:45
 msgid ""
-"values引数が省略された場合には、括弧の対応が取れるまで標準入力からvaluesの値"
-"を読み取ります。引数として値を指定する場合は、文字列のエスケープが必要です"
-"が、標準入力から与える文字列はエスケープする必要がありません。"
+"If ``values`` isn't specified any values, they are read from the standard "
+"input until all opened parenthes match their closed ones."
 msgstr ""
-"values引数が省略された場合には、括弧の対応が取れるまで標準入力からvaluesの値"
-"を読み取ります。引数として値を指定する場合は、文字列のエスケープが必要です"
-"が、標準入力から与える文字列はエスケープする必要がありません。"
 
-# b1c95e8641214ad9ac99787b513db299
-#: ../../../source/reference/commands/load.txt:47
-msgid "続きの文字列については、空白文字(' ')をエスケープする必要はありません。"
+# a0725680c12641fd85261c8cbdac23af
+#: ../../../source/reference/commands/load.txt:46
+msgid ""
+"You don't have to enclose them with single-quotes or double-quotes, but if "
+"you specified values with ``values`` parameter, you should do."
 msgstr ""
-"続きの文字列については、空白文字(' ')をエスケープする必要はありません。"
 
-# 3966ea7c3b75482cb5b8079635359011
-# beda75c5d1474f5db4c72caacbb44ef8
-#: ../../../source/reference/commands/load.txt:51
-#: ../../../source/reference/commands_not_implemented/add.txt:33
-msgid "レコードを追加しようとするテーブルの名前を指定します。"
-msgstr "レコードを追加しようとするテーブルの名前を指定します。"
+# be90ace8a03844afb23ea68814911ac0
+#: ../../../source/reference/commands/load.txt:48
+msgid ""
+"In following values, you also don't have to enclose any spaces (' ') with "
+"single-quotes or double-quotes."
+msgstr ""
+
+# 062998fef3444f42a3e16bb386caaefa
+#: ../../../source/reference/commands/load.txt:52
+#, fuzzy
+msgid "It specifies a table name you want to add records."
+msgstr "It specifies number of returned records."
 
 # 1bb85c12ead941fc9337f692e1d0a405
 # fc658bcbdc244395a315bc123ec1f1ff
 # 4614e1fa49044fae9d94d0979334d9f1
-#: ../../../source/reference/commands/load.txt:53
+#: ../../../source/reference/commands/load.txt:54
 #: ../../../source/reference/commands_not_implemented/add.txt:39
 #: ../../../source/reference/commands_not_implemented/set.txt:37
 msgid "``columns``"
 msgstr "``columns``"
 
-# 1ee3152b1d2b46938425ec3f730d47dc
-#: ../../../source/reference/commands/load.txt:55
-msgid ""
-"テーブルに登録するレコードに値を設定するカラム名のリストを、カンマ区切りで指"
-"定します。"
-msgstr ""
-"テーブルに登録するレコードに値を設定するカラム名のリストを、カンマ区切りで指"
-"定します。"
+# a60f41b5061543ec8f0afeb20eb49b76
+#: ../../../source/reference/commands/load.txt:56
+#, fuzzy
+msgid "It specifies column names in added records with comma separations."
+msgstr "It specifies returned records offset."
 
 # c6f61cf684fb409292e1500f737c16b0
-#: ../../../source/reference/commands/load.txt:57
+#: ../../../source/reference/commands/load.txt:58
 msgid "``ifexists``"
 msgstr "``ifexists``"
 
-# 143bceb6b3644b14b5ee656665fe4096
-#: ../../../source/reference/commands/load.txt:59
+# beed836a85ee4744a9c90df48858a7dc
+#: ../../../source/reference/commands/load.txt:60
 msgid ""
-"指定した主キーに対応するレコードが既にテーブルに登録済みであった場合に実行す"
-"るscript形式のgrn_expr文字列を指定します。ifexistsにgrn_exprが指定された場合"
-"は、式の値が真である場合に限り、その他のカラムの値が更新されます。(デフォルト"
-"はtrue)"
+"It specifies executed ``grn_expr`` string when the same primary key as added "
+"records already exists in your table. If ``ifexists`` specifies ``grn_expr`` "
+"string (default: true) and its value is true, values in other (all columns "
+"excluding ``_key`` column) columns is updated."
 msgstr ""
-"指定した主キーに対応するレコードが既にテーブルに登録済みであった場合に実行す"
-"るscript形式のgrn_expr文字列を指定します。ifexistsにgrn_exprが指定された場合"
-"は、式の値が真である場合に限り、その他のカラムの値が更新されます。(デフォルト"
-"はtrue)"
 
 # 9a510519a24246099b3aa76c38714a80
-#: ../../../source/reference/commands/load.txt:61
+#: ../../../source/reference/commands/load.txt:66
 msgid "``input_type``"
 msgstr "``input_type``"
 
-# f01d217fdf0e40f1b6c009e481f16e5c
-#: ../../../source/reference/commands/load.txt:63
-msgid "入力形式を指定します。JSONのみに対応しています。"
-msgstr "入力形式を指定します。JSONのみに対応しています。"
+# 9a0ac94297204926aee87c342cd63ef4
+#: ../../../source/reference/commands/load.txt:68
+msgid "It specifies an input format for ``values``. It supports JSON only."
+msgstr ""
 
-# aa37bc0e7be445dfb78ba089fcf47158
-#: ../../../source/reference/commands/load.txt:69
-msgid "JSON形式"
-msgstr "JSON形式"
+# 7a36ab15dd10409aa28e0b0975604248
+#: ../../../source/reference/commands/load.txt:73
+msgid "Here is an example to add records to \"Entry\" table. ::"
+msgstr ""
 
-# 7b5694cdb6634833aed042ae5341fed1
-#: ../../../source/reference/commands/load.txt:75
-msgid "``登録件数``"
-msgstr "``登録件数``"
+# bdd4bd67ec4c460caed6531de8b95f43
+#: ../../../source/reference/commands/load.txt:79
+msgid "This example shows how to add values from standard input. ::"
+msgstr ""
 
-# 807623b048b54850baef5a69665a0cf7
-#: ../../../source/reference/commands/load.txt:77
-msgid "テーブルに登録されたレコードの件数が返されます。"
-msgstr "テーブルに登録されたレコードの件数が返されます。"
+# cd2d8d72e2b94331b4fbf01cd38ccd00
+#: ../../../source/reference/commands/load.txt:92
+#: ../../../source/reference/commands/suggest.txt:170
+msgid "JSON format"
+msgstr "JSON format"
 
-# ac9d4301198e433fa181ede5f26ba8e5
-# 926eb3e3863f40549c1676e7acf97152
-# 9683888ad67a47e3ae2adda4614a0185
-#: ../../../source/reference/commands/load.txt:82
-#: ../../../source/reference/commands_not_implemented/add.txt:94
-#: ../../../source/reference/commands_not_implemented/set.txt:96
-msgid "テーブルEntryにレコードを登録します。::"
-msgstr "テーブルEntryにレコードを登録します。::"
-
-# 5a0ae705225441a48877f76b9280572e
-#: ../../../source/reference/commands/load.txt:88
-msgid "標準入力からvaluesの値を与えます。::"
-msgstr "標準入力からvaluesの値を与えます。::"
+# 026be9e22a80400ea26018f7f6fea853
+#: ../../../source/reference/commands/load.txt:94
+msgid "``load`` returns the number of added records such as ::"
+msgstr ""
 
 # 03bdf580c7c642ed8411d22ad1675059
 #: ../../../source/reference/commands/log_level.txt:6
@@ -5788,11 +5743,6 @@ msgstr ""
 msgid "RETURN VALUE"
 msgstr "RETURN VALUE"
 
-# cd2d8d72e2b94331b4fbf01cd38ccd00
-#: ../../../source/reference/commands/suggest.txt:170
-msgid "JSON format"
-msgstr "JSON format"
-
 # a3cc841967a34a779030f75ed949133e
 #: ../../../source/reference/commands/suggest.txt:172
 msgid "Here is a returned JSON format::"
@@ -6132,11 +6082,6 @@ msgstr ""
 msgid ""
 "If you have many indexed items, ``TABLE_PAT_KEY`` is suitable. Because "
 "``TABLE_PAT_KEY`` is smaller than ``TABLE_DAT_KEY``."
-msgstr ""
-
-# aa6c5a1abc844a978f87b2dd33b26dc6
-#: ../../../source/reference/commands/table_create.txt:156
-msgid "This section describes all parameters."
 msgstr ""
 
 # d434e8c4ccac4f8593891e54f2a1a151
@@ -6649,6 +6594,12 @@ msgstr ""
 "addは、使用しているデータベースのテーブルに１件のレコードを登録し、カラムの値"
 "を更新し、更新したカラムの値を返却します。"
 
+# 3966ea7c3b75482cb5b8079635359011
+# beda75c5d1474f5db4c72caacbb44ef8
+#: ../../../source/reference/commands_not_implemented/add.txt:33
+msgid "レコードを追加しようとするテーブルの名前を指定します。"
+msgstr "レコードを追加しようとするテーブルの名前を指定します。"
+
 # a27b157f2eb44c509aec45939960e7f4
 #: ../../../source/reference/commands_not_implemented/add.txt:37
 msgid ""
@@ -6679,6 +6630,14 @@ msgstr "登録するレコードの値を表現した文字列を渡します。
 msgid "以下のいずれかの形式が使用できます。"
 msgstr "以下のいずれかの形式が使用できます。"
 
+# 9bd79debf5ac4b3d8e61bf21b2b749cf
+# 0aa1178996eb48a3aaca303a571e2202
+# b5196a77ec3f4f5bbbf0e513ea91a020
+#: ../../../source/reference/commands_not_implemented/add.txt:49
+#: ../../../source/reference/commands_not_implemented/set.txt:47
+msgid "``形式1``"
+msgstr ""
+
 # cc38cd1424864f23a97a86569feeae3e
 # 1e373a3c961242b6b0c186b5b7d12aba
 #: ../../../source/reference/commands_not_implemented/add.txt:50
@@ -6686,12 +6645,32 @@ msgstr "以下のいずれかの形式が使用できます。"
 msgid "[カラム値1, カラム値2,..]"
 msgstr "[カラム値1, カラム値2,..]"
 
+# 62a00d86e8b1442fb4fd46b63fe786bf
+# c6eae66c91cb426db9a5bba9351937c4
+# 77b19f924d7542378035e9785e8f5f08
+#: ../../../source/reference/commands_not_implemented/add.txt:52
+#: ../../../source/reference/commands_not_implemented/set.txt:50
+msgid "``形式2``"
+msgstr ""
+
 # 1d401165678d4f7d820f9deae8001d3c
 # 0bf3a29c11ce4d88833edb6cbd40c20f
 #: ../../../source/reference/commands_not_implemented/add.txt:53
 #: ../../../source/reference/commands_not_implemented/set.txt:51
 msgid "{カラム名1: カラム値1, カラム名2: カラム値2}"
 msgstr "{カラム名1: カラム値1, カラム名2: カラム値2}"
+
+# 9c193efae23044d5a9dec6c12aa8bc2a
+# 942065cef86c458abc04354c4166b412
+# 05f59e7784d645bba6a00d528b96a5e6
+#: ../../../source/reference/commands_not_implemented/add.txt:55
+#: ../../../source/reference/commands_not_implemented/set.txt:53
+msgid ""
+"形式1の[カラム名1, カラム名2,..]の要素はcolumns引数が省略された場合のみ有効で"
+"す。"
+msgstr ""
+"形式1の[カラム名1, カラム名2,..]の要素はcolumns引数が省略された場合のみ有効で"
+"す。"
 
 # 77e1fad18bf543f6b8b65ad12779261c
 # ef78f3fb566a459b9452957f6af19037
@@ -6733,6 +6712,14 @@ msgstr "``カラム値n``"
 #: ../../../source/reference/commands_not_implemented/set.txt:91
 msgid "output_columnsで指定されたカラムの値。"
 msgstr "output_columnsで指定されたカラムの値。"
+
+# ac9d4301198e433fa181ede5f26ba8e5
+# 926eb3e3863f40549c1676e7acf97152
+# 9683888ad67a47e3ae2adda4614a0185
+#: ../../../source/reference/commands_not_implemented/add.txt:94
+#: ../../../source/reference/commands_not_implemented/set.txt:96
+msgid "テーブルEntryにレコードを登録します。::"
+msgstr "テーブルEntryにレコードを登録します。::"
 
 # f694f65c48b846eaa46b6ae428ae79a2
 #: ../../../source/reference/commands_not_implemented/get.txt:6
@@ -13853,3 +13840,116 @@ msgstr ""
 #: ../../../source/reference/types.txt:129
 msgid "Object型はv1.2でサポートされます。"
 msgstr "Object型はv1.2でサポートされます。"
+
+# 5a0ae705225441a48877f76b9280572e
+#~ msgid "標準入力からvaluesの値を与えます。::"
+#~ msgstr "標準入力からvaluesの値を与えます。::"
+
+# 807623b048b54850baef5a69665a0cf7
+#~ msgid "テーブルに登録されたレコードの件数が返されます。"
+#~ msgstr "テーブルに登録されたレコードの件数が返されます。"
+
+# 7b5694cdb6634833aed042ae5341fed1
+#~ msgid "``登録件数``"
+#~ msgstr "``登録件数``"
+
+# aa37bc0e7be445dfb78ba089fcf47158
+#~ msgid "JSON形式"
+#~ msgstr "JSON形式"
+
+# f01d217fdf0e40f1b6c009e481f16e5c
+#~ msgid "入力形式を指定します。JSONのみに対応しています。"
+#~ msgstr "入力形式を指定します。JSONのみに対応しています。"
+
+# 143bceb6b3644b14b5ee656665fe4096
+#~ msgid ""
+#~ "指定した主キーに対応するレコードが既にテーブルに登録済みであった場合に実行"
+#~ "するscript形式のgrn_expr文字列を指定します。ifexistsにgrn_exprが指定された"
+#~ "場合は、式の値が真である場合に限り、その他のカラムの値が更新されます。(デ"
+#~ "フォルトはtrue)"
+#~ msgstr ""
+#~ "指定した主キーに対応するレコードが既にテーブルに登録済みであった場合に実行"
+#~ "するscript形式のgrn_expr文字列を指定します。ifexistsにgrn_exprが指定された"
+#~ "場合は、式の値が真である場合に限り、その他のカラムの値が更新されます。(デ"
+#~ "フォルトはtrue)"
+
+# 1ee3152b1d2b46938425ec3f730d47dc
+#~ msgid ""
+#~ "テーブルに登録するレコードに値を設定するカラム名のリストを、カンマ区切りで"
+#~ "指定します。"
+#~ msgstr ""
+#~ "テーブルに登録するレコードに値を設定するカラム名のリストを、カンマ区切りで"
+#~ "指定します。"
+
+# b1c95e8641214ad9ac99787b513db299
+#~ msgid ""
+#~ "続きの文字列については、空白文字(' ')をエスケープする必要はありません。"
+#~ msgstr ""
+#~ "続きの文字列については、空白文字(' ')をエスケープする必要はありません。"
+
+# 9509097567fb44eca4e05beb92eb2963
+#~ msgid ""
+#~ "values引数が省略された場合には、括弧の対応が取れるまで標準入力からvaluesの"
+#~ "値を読み取ります。引数として値を指定する場合は、文字列のエスケープが必要で"
+#~ "すが、標準入力から与える文字列はエスケープする必要がありません。"
+#~ msgstr ""
+#~ "values引数が省略された場合には、括弧の対応が取れるまで標準入力からvaluesの"
+#~ "値を読み取ります。引数として値を指定する場合は、文字列のエスケープが必要で"
+#~ "すが、標準入力から与える文字列はエスケープする必要がありません。"
+
+# d7f6100ff5dc4e2d97aa0c992c5bac98
+#~ msgid ""
+#~ "対象のテーブルが主キーを持つテーブルであった場合は、カラム名の中"
+#~ "に'_key'(主キーを示す疑似カラム名)が含まれていなければなりません。"
+#~ msgstr ""
+#~ "対象のテーブルが主キーを持つテーブルであった場合は、カラム名の中"
+#~ "に'_key'(主キーを示す疑似カラム名)が含まれていなければなりません。"
+
+# 65c3dae3688648a58c30e60a9f683d78
+#~ msgid ""
+#~ "[{カラム名1: カラム値1, カラム名2: カラム値2}, {カラム名1: カラム値1, カラ"
+#~ "ム名2: カラム値2},..]"
+#~ msgstr ""
+#~ "[{カラム名1: カラム値1, カラム名2: カラム値2}, {カラム名1: カラム値1, カラ"
+#~ "ム名2: カラム値2},..]"
+
+# 3f6ac833374349ad8bc96bc6694ea7a3
+#~ msgid ""
+#~ "[[カラム名1, カラム名2,..], [カラム値1, カラム値2,..], [カラム値1, カラム"
+#~ "値2,..],..]"
+#~ msgstr ""
+#~ "[[カラム名1, カラム名2,..], [カラム値1, カラム値2,..], [カラム値1, カラム"
+#~ "値2,..],..]"
+
+# 457b29502e19450e873886b373a51e96
+#~ msgid "input_typeがjsonである場合には、以下のいずれかの形式が使用できます。"
+#~ msgstr ""
+#~ "input_typeがjsonである場合には、以下のいずれかの形式が使用できます。"
+
+# fcf85eca3bb344d39753cbddb4d56fb7
+#~ msgid ""
+#~ "input_typeに指定する形式で登録するレコードの値を表現した文字列を渡します。"
+#~ msgstr ""
+#~ "input_typeに指定する形式で登録するレコードの値を表現した文字列を渡します。"
+
+# 88caeac1cb264403b8942b4bdf57cbfb
+#~ msgid ""
+#~ "loadは、使用しているデータベースのテーブルにレコードを登録し、カラムの値を"
+#~ "更新します。"
+#~ msgstr ""
+#~ "loadは、使用しているデータベースのテーブルにレコードを登録し、カラムの値を"
+#~ "更新します。"
+
+# 262623a3a62f4326ae17df5cf7001bd0
+#~ msgid ""
+#~ "groonga組込コマンドの一つであるloadについて説明します。組込コマンドは、"
+#~ "groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリ"
+#~ "クエストを送信することによって実行します。"
+#~ msgstr ""
+#~ "groonga組込コマンドの一つであるloadについて説明します。組込コマンドは、"
+#~ "groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリ"
+#~ "クエストを送信することによって実行します。"
+
+# 4feb34bd37c744358b8aea8febe0ca86
+#~ msgid "load - データのロード"
+#~ msgstr "load - データのロード"
