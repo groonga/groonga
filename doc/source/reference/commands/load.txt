@@ -26,7 +26,6 @@ Parameters
 This section describes all parameters.
 
 ``values``
-^^^^^^^^^^
 
   It specifies values loaded to records.
   Values should satisfy ``input_type`` format.
