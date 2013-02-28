@@ -8,7 +8,8 @@ load
 Summary
 -------
 
-loadは、使用しているデータベースのテーブルにレコードを登録し、カラムの値を更新します。
+
+``load`` loads data as records in the current database and update values of each columns.
 
 Syntax
 ------
@@ -19,56 +20,64 @@ Syntax
 Parameters
 ----------
 
+This section describes all parameters.
+
 ``values``
+^^^^^^^^^^
 
-  input_typeに指定する形式で登録するレコードの値を表現した文字列を渡します。
+  It specifies values loaded to records.
+  Values should satisfy ``input_type`` format.
+  If you specify "json" as ``input_type``, you can choose a format from below:
 
-  input_typeがjsonである場合には、以下のいずれかの形式が使用できます。
+  ``Format 1:``
+    [[COLUMN_NAME1, COLUMN_NAME2,..], [VALUE1, VALUE2,..], [VALUE1, VALUE2,..],..]
 
-  ``形式1``
-    [[カラム名1, カラム名2,..], [カラム値1, カラム値2,..], [カラム値1, カラム値2,..],..]
+  ``Format 2:``
+    [{COLUMN_NAME1: VALUE1, COLUMN_NAME2: VALUE2}, {COLUMN_NAME1: VALUE1, COLUMN_NAME2: VALUE2},..]
 
-  ``形式2``
-    [{カラム名1: カラム値1, カラム名2: カラム値2}, {カラム名1: カラム値1, カラム名2: カラム値2},..]
+  ``[COLUMN_NAME1, COLUMN_NAME2,..]`` format in ``Format 1`` is effective only when ``column`` parameter isn't specified.
 
-  形式1の[カラム名1, カラム名2,..]の要素はcolumns引数が省略された場合のみ有効です。
+  When a target table contains primary key, you must specify ``_key`` column (pseudo column associated primary key) as the one of ``COLUMN_NAME``.
 
-  対象のテーブルが主キーを持つテーブルであった場合は、カラム名の中に'_key'(主キーを示す疑似カラム名)が含まれていなければなりません。
+  If ``values`` isn't specified any values, they are read from the standard input until all opened parenthes match their closed ones.
+You don't have to enclose them with single-quotes or double-quotes, but if you specified values with ``values`` parameter, you should do.
 
-  values引数が省略された場合には、括弧の対応が取れるまで標準入力からvaluesの値を読み取ります。引数として値を指定する場合は、文字列のエスケープが必要ですが、標準入力から与える文字列はエスケープする必要がありません。
-
-  続きの文字列については、空白文字(' ')をエスケープする必要はありません。
+In following values, you also don't have to enclose any spaces (' ') with single-quotes or double-quotes.
 
 ``table``
 
-  レコードを追加しようとするテーブルの名前を指定します。
+  It specifies a table name you want to add records.
 
 ``columns``
 
-  テーブルに登録するレコードに値を設定するカラム名のリストを、カンマ区切りで指定します。
+  It specifies column names in added records with comma separations.
 
 ``ifexists``
 
-  指定した主キーに対応するレコードが既にテーブルに登録済みであった場合に実行するscript形式のgrn_expr文字列を指定します。ifexistsにgrn_exprが指定された場合は、式の値が真である場合に限り、その他のカラムの値が更新されます。(デフォルトはtrue)
+  It specifies executed ``grn_expr`` string when the same primary key
+  as added records already exists in your table.
+  If ``ifexists`` specifies ``grn_expr`` string (default: true) and
+  its value is true, values in other (all columns excluding ``_key``
+  column) columns is updated.
 
 ``input_type``
 
-  入力形式を指定します。JSONのみに対応しています。
+  It specifies an input format for ``values``. It supports JSON only.
 
 Usage
 -----
 
-テーブルEntryにレコードを登録します。::
+Here is an example to add records to "Entry" table. ::
 
- load --table Entry --input_type json --values [{\"_key\":\"abandon\",\"body\":\"放棄する\"}]
+ load --table Entry --input_type json --values [{\"_key\":\"Groonga\",\"body\":\"It's very fast!!\"}]
 
  [1]
 
-標準入力からvaluesの値を与えます。::
+This example shows how to add values from standard input. ::
 
  load --table Entry --input_type json
  [
- {"_key": "abbreviate", "body": "短縮する"}
+ {"_key": "Groonga", "body": "It's very fast!!"}
  ]
 
  [1]
@@ -76,16 +85,12 @@ Usage
 Return value
 ------------
 
-JSON形式
-^^^^^^^^
+JSON format
+^^^^^^^^^^^
 
-::
+ ``load`` returns the number of added records such as ::
 
- [登録件数]
-
-``登録件数``
-
-  テーブルに登録されたレコードの件数が返されます。
+   [NUMBER]
 
 See also
 --------
