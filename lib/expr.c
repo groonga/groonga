@@ -2145,6 +2145,14 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
   POP1ALLOC1(x, res);                                                   \
   res->header.domain = x->header.domain;                                \
   switch (x->header.domain) {                                           \
+  case GRN_DB_INT8 :                                                    \
+    {                                                                   \
+      int8_t x_;                                                        \
+      x_ = GRN_INT8_VALUE(x);                                           \
+      left_expression_check(x_);                                        \
+      GRN_INT8_SET(ctx, res, integer_operation(x_));                    \
+    }                                                                   \
+    break;                                                              \
   case GRN_DB_INT32 :                                                   \
     {                                                                   \
       int x_;                                                           \
