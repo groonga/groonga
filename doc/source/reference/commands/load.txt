@@ -12,7 +12,7 @@ Summary
 -------
 
 
-``load`` loads data as records in the current database and update values of each columns.
+``load`` loads data as records in the current database and updates values of each columns.
 
 Syntax
 ------
