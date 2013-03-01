@@ -1,0 +1,13 @@
+table_create Values TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Values value COLUMN_SCALAR Int8
+[[0,0.0,0.0],true]
+column_create Values output COLUMN_SCALAR Int8
+[[0,0.0,0.0],true]
+load --table Values
+[
+{"value": 7, "output": -126}
+]
+[[0,0.0,0.0],1]
+select Values   --filter true   --scorer 'output ^= value'   --output_columns 'value, output'
+[[0,0.0,0.0],[[[1],[["value","Int8"],["output","Int8"]],[7,-123]]]]
