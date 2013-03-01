@@ -1924,6 +1924,14 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
       set(ctx, res, integer_operation(x_, y_));                         \
     }                                                                   \
     break;                                                              \
+  case GRN_DB_UINT8 :                                                   \
+    {                                                                   \
+      uint8_t y_;                                                       \
+      y_ = GRN_UINT8_VALUE(y);                                          \
+      right_expression_check(y_);                                       \
+      set(ctx, res, integer_operation(x_, y_));                         \
+    }                                                                   \
+    break;                                                              \
   case GRN_DB_INT32 :                                                   \
     {                                                                   \
       int y_;                                                           \
@@ -2009,6 +2017,20 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
       left_expression_check(x_);                                        \
       NUMERIC_ARITHMETIC_OPERATION_DISPATCH(GRN_INT8_SET,               \
                                             GRN_INT8_VALUE,             \
+                                            x_, y, res,                 \
+                                            integer8_operation,         \
+                                            float_operation,            \
+                                            right_expression_check,     \
+                                            invalid_type_error);        \
+    }                                                                   \
+    break;                                                              \
+  case GRN_DB_UINT8 :                                                   \
+    {                                                                   \
+      uint8_t x_;                                                       \
+      x_ = GRN_UINT8_VALUE(x);                                          \
+      left_expression_check(x_);                                        \
+      NUMERIC_ARITHMETIC_OPERATION_DISPATCH(GRN_UINT8_SET,              \
+                                            GRN_UINT8_VALUE,            \
                                             x_, y, res,                 \
                                             integer8_operation,         \
                                             float_operation,            \
