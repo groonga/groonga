@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-28 18:47\n"
+"POT-Creation-Date: 2013-03-01 10:06\n"
 "PO-Revision-Date: 2013-03-01 10:00+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -750,7 +750,7 @@ msgstr ""
 # 06123d911ca84262ae1775271000e2f4
 #: ../../../source/reference/command/output_format.txt:225
 #: ../../../source/reference/command/return_code.txt:102
-#: ../../../source/reference/commands/load.txt:99
+#: ../../../source/reference/commands/load.txt:98
 #: ../../../source/reference/commands/normalize.txt:83
 #: ../../../source/reference/commands/select.txt:895
 #: ../../../source/reference/commands/table_create.txt:280
@@ -2099,7 +2099,7 @@ msgstr ""
 #: ../../../source/reference/commands/column_remove.txt:30
 #: ../../../source/reference/commands/define_selector.txt:35
 #: ../../../source/reference/commands/delete.txt:29
-#: ../../../source/reference/commands/load.txt:50
+#: ../../../source/reference/commands/load.txt:49
 #: ../../../source/reference/commands/select.txt:208
 #: ../../../source/reference/commands/suggest.txt:74
 #: ../../../source/reference/commands_not_implemented/add.txt:31
@@ -2497,7 +2497,7 @@ msgstr "``table`` と ``column_name`` が必須の引数です。"
 # cd5e20dad0b8499894cefbe0dcbef7c8
 # 41271dbb3fa340a8a33cb610678460bb
 #: ../../../source/reference/commands/column_rename.txt:26
-#: ../../../source/reference/commands/load.txt:71
+#: ../../../source/reference/commands/load.txt:70
 #: ../../../source/reference/commands/normalize.txt:36
 #: ../../../source/reference/commands/register.txt:34
 #: ../../../source/reference/commands/select.txt:46
@@ -2575,7 +2575,7 @@ msgstr "カラムの名前を指定します。"
 
 # f18ad5e74b9c45f783d38e24995b3abe
 #: ../../../source/reference/commands/column_rename.txt:65
-#: ../../../source/reference/commands/load.txt:89
+#: ../../../source/reference/commands/load.txt:88
 #: ../../../source/reference/commands/normalize.txt:67
 #: ../../../source/reference/commands/register.txt:51
 #: ../../../source/reference/commands/table_create.txt:269
@@ -2835,7 +2835,7 @@ msgstr ""
 # 82b3e17186914f92af7f341c6ece0ad2
 # 7f1ecf8eccdc4fff809128a7daff1ef6
 #: ../../../source/reference/commands/define_selector.txt:116
-#: ../../../source/reference/commands/load.txt:101
+#: ../../../source/reference/commands/load.txt:100
 msgid ":doc:`/reference/grn_expr`"
 msgstr ""
 
@@ -3027,9 +3027,10 @@ msgstr ""
 msgid "データベース内のスキーマと特定のテーブルのデータのみ出力::"
 msgstr ""
 
-# 42110c566a92455a9c2245d8192cae7c
+# c4ef53521aa74d0e804ccd440321b2c5
 #: ../../../source/reference/commands/load.txt:9
-msgid "load"
+#: ../../../source/reference/executables/groonga.txt:195
+msgid "``load``"
 msgstr ""
 
 # 1b9e9ebb700f4ceb9d0aadf4a54c575d
@@ -3038,8 +3039,8 @@ msgid ""
 "``load`` loads data as records in the current database and updates values of "
 "each columns."
 msgstr ""
-"``load`` は、使用しているデータベースのテーブルにレコードを登録し、カラムの値を更"
-"新します。"
+"``load`` は、使用しているデータベースのテーブルにレコードを登録し、カラムの値"
+"を更新します。"
 
 # e92758beef824130ab42669342c10d50
 #: ../../../source/reference/commands/load.txt:26
@@ -3050,14 +3051,14 @@ msgstr "このセクションではすべての引数について説明します
 # 64eaec645840410faaec815c06bed677
 # ccd32b1aef0c48dda190b4c22cce4e1e
 # 81ac80e40d984badb91f59818829666a
-#: ../../../source/reference/commands/load.txt:29
+#: ../../../source/reference/commands/load.txt:28
 #: ../../../source/reference/commands_not_implemented/add.txt:43
 #: ../../../source/reference/commands_not_implemented/set.txt:41
 msgid "``values``"
 msgstr ""
 
 # efff9d1930de4331b7f3cde9a7bfc820
-#: ../../../source/reference/commands/load.txt:31
+#: ../../../source/reference/commands/load.txt:30
 msgid ""
 "It specifies values loaded to records. Values should satisfy ``input_type`` "
 "format. If you specify \"json\" as ``input_type``, you can choose a format "
@@ -3070,12 +3071,12 @@ msgstr ""
 # aba8bb75c32749a49bfc68c2f91f9830
 # d09b1e9287994e71adeff900ee81cda2
 # 2b9dc857e851450197d6991dc06598fa
-#: ../../../source/reference/commands/load.txt:35
+#: ../../../source/reference/commands/load.txt:34
 msgid "``Format 1:``"
 msgstr "``形式1:``"
 
 # 707b4c0412dd42aa8cec68d97ab50c23
-#: ../../../source/reference/commands/load.txt:36
+#: ../../../source/reference/commands/load.txt:35
 msgid ""
 "[[COLUMN_NAME1, COLUMN_NAME2,..], [VALUE1, VALUE2,..], [VALUE1, "
 "VALUE2,..],..]"
@@ -3087,12 +3088,12 @@ msgstr ""
 # aba8bb75c32749a49bfc68c2f91f9830
 # d09b1e9287994e71adeff900ee81cda2
 # 2b9dc857e851450197d6991dc06598fa
-#: ../../../source/reference/commands/load.txt:38
+#: ../../../source/reference/commands/load.txt:37
 msgid "``Format 2:``"
 msgstr "``形式2:``"
 
 # 9ca2e3e33ea2476c82dc82dc81e52d25
-#: ../../../source/reference/commands/load.txt:39
+#: ../../../source/reference/commands/load.txt:38
 msgid ""
 "[{COLUMN_NAME1: VALUE1, COLUMN_NAME2: VALUE2}, {COLUMN_NAME1: VALUE1, "
 "COLUMN_NAME2: VALUE2},..]"
@@ -3101,14 +3102,16 @@ msgstr ""
 "名2: カラム値2},..]"
 
 # 00dbb758af8044809f86f61f5407af99
-#: ../../../source/reference/commands/load.txt:41
+#: ../../../source/reference/commands/load.txt:40
 msgid ""
 "``[COLUMN_NAME1, COLUMN_NAME2,..]`` format in ``Format 1`` is effective only "
 "when ``column`` parameter isn't specified."
-msgstr "形式1の[カラム名1, カラム名2,..]の要素は ``columns`` 引数が省略された場合のみ有効です。"
+msgstr ""
+"形式1の[カラム名1, カラム名2,..]の要素は ``columns`` 引数が省略された場合のみ"
+"有効です。"
 
 # 946aa2d7dbe74b01b458621cae6a57f6
-#: ../../../source/reference/commands/load.txt:43
+#: ../../../source/reference/commands/load.txt:42
 msgid ""
 "When a target table contains primary key, you must specify ``_key`` column "
 "(pseudo column associated primary key) as the one of ``COLUMN_NAME``."
@@ -3117,16 +3120,19 @@ msgstr ""
 "(主キーを示す疑似カラム名)が含まれていなければなりません。"
 
 # 7028d657395d485b8f0fa6d26749312d
-#: ../../../source/reference/commands/load.txt:45
+#: ../../../source/reference/commands/load.txt:44
 msgid ""
 "If ``values`` isn't specified any values, they are read from the standard "
 "input until all opened parenthes match their closed ones. You don't have to "
 "enclose them with single-quotes or double-quotes, but if you specified "
 "values with ``values`` parameter, you should do."
-msgstr "``values`` 引数が省略された場合には、括弧の対応が取れるまで標準入力から ``values`` の値を読み取ります。引数として値を指定する場合は、文字列のエスケープが必要ですが、標準入力から与える文字列はエスケープする必要がありません。"
+msgstr ""
+"``values`` 引数が省略された場合には、括弧の対応が取れるまで標準入力から "
+"``values`` の値を読み取ります。引数として値を指定する場合は、文字列のエスケー"
+"プが必要ですが、標準入力から与える文字列はエスケープする必要がありません。"
 
 # c6352497a1be4d58a2bf15e070d0c7e2
-#: ../../../source/reference/commands/load.txt:48
+#: ../../../source/reference/commands/load.txt:47
 msgid ""
 "In following values, you also don't have to enclose any spaces (' ') with "
 "single-quotes or double-quotes."
@@ -3134,33 +3140,33 @@ msgstr ""
 "続きの文字列については、空白文字(' ')をエスケープする必要はありません。"
 
 # ffa8ab8997a74ec381047804746e748d
-#: ../../../source/reference/commands/load.txt:52
+#: ../../../source/reference/commands/load.txt:51
 msgid "It specifies a table name you want to add records."
 msgstr "レコードを追加しようとするテーブルの名前を指定します。"
 
 # cfc5fae856664156bb7b054cfb449cfc
 # a2288ebf79c74e8eac41e0fcace20a89
 # 9eade1ef1fb04501a6fbe1514a2d824a
-#: ../../../source/reference/commands/load.txt:54
+#: ../../../source/reference/commands/load.txt:53
 #: ../../../source/reference/commands_not_implemented/add.txt:39
 #: ../../../source/reference/commands_not_implemented/set.txt:37
 msgid "``columns``"
 msgstr ""
 
 # a65cc4912be144a69b5abc1169f897cc
-#: ../../../source/reference/commands/load.txt:56
+#: ../../../source/reference/commands/load.txt:55
 msgid "It specifies column names in added records with comma separations."
 msgstr ""
 "テーブルに登録するレコードに値を設定するカラム名のリストを、カンマ区切りで指"
 "定します。"
 
 # 19bac2ca542a4940aa251f9c0190033e
-#: ../../../source/reference/commands/load.txt:58
+#: ../../../source/reference/commands/load.txt:57
 msgid "``ifexists``"
 msgstr ""
 
 # 1b36a771447146398b201448402479e0
-#: ../../../source/reference/commands/load.txt:60
+#: ../../../source/reference/commands/load.txt:59
 msgid ""
 "It specifies executed ``grn_expr`` string when the same primary key as added "
 "records already exists in your table. If ``ifexists`` specifies ``grn_expr`` "
@@ -3173,33 +3179,33 @@ msgstr ""
 "値が更新されます。(デフォルトはtrue)"
 
 # ab5dc4aaa7bf48c1b723db231315d6f0
-#: ../../../source/reference/commands/load.txt:66
+#: ../../../source/reference/commands/load.txt:65
 msgid "``input_type``"
 msgstr ""
 
 # 82009b381f324b49916806c842de88f1
-#: ../../../source/reference/commands/load.txt:68
+#: ../../../source/reference/commands/load.txt:67
 msgid "It specifies an input format for ``values``. It supports JSON only."
 msgstr "入力形式を指定します。JSONのみに対応しています。"
 
 # 1ccd84b3f15a4567b23bb0e7d8c66fcd
-#: ../../../source/reference/commands/load.txt:73
+#: ../../../source/reference/commands/load.txt:72
 msgid "Here is an example to add records to \"Entry\" table. ::"
 msgstr "テーブルEntryにレコードを登録します。::"
 
 # 9a192db097f2402f94bab0e63f9d3100
-#: ../../../source/reference/commands/load.txt:79
+#: ../../../source/reference/commands/load.txt:78
 msgid "This example shows how to add values from standard input. ::"
 msgstr "標準入力からvaluesの値を与えます。::"
 
 # 087e0df0505742cbb57a12e069347eee
-#: ../../../source/reference/commands/load.txt:92
+#: ../../../source/reference/commands/load.txt:91
 #: ../../../source/reference/commands/suggest.txt:170
 msgid "JSON format"
 msgstr "JSON形式"
 
 # e898463d067e4c77840e17507901be9f
-#: ../../../source/reference/commands/load.txt:94
+#: ../../../source/reference/commands/load.txt:93
 msgid "``load`` returns the number of added records such as ::"
 msgstr "テーブルに登録されたレコードの件数が返されます。"
 
@@ -8088,11 +8094,6 @@ msgstr ""
 # e190153bb37e4d2184b76656f6adfe51
 #: ../../../source/reference/executables/groonga.txt:193
 msgid "VIEW型のテーブルに要素となるテーブルを定義します。"
-msgstr ""
-
-# c4ef53521aa74d0e804ccd440321b2c5
-#: ../../../source/reference/executables/groonga.txt:195
-msgid "``load``"
 msgstr ""
 
 # 411c946f0be94778b817f9be372129bd
