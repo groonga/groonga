@@ -5,8 +5,8 @@
 .. groonga-command
 .. database: commands_load
 
-load
-====
+``load``
+========
 
 Summary
 -------
