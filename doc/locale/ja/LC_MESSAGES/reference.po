@@ -3038,7 +3038,7 @@ msgid ""
 "``load`` loads data as records in the current database and updates values of "
 "each columns."
 msgstr ""
-"loadは、使用しているデータベースのテーブルにレコードを登録し、カラムの値を更"
+"``load`` は、使用しているデータベースのテーブルにレコードを登録し、カラムの値を更"
 "新します。"
 
 # e92758beef824130ab42669342c10d50
