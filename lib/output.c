@@ -1162,20 +1162,25 @@ grn_output_table_records_by_expression(grn_ctx *ctx, grn_obj *outbuf,
     for (code = expr->codes; code < code_end; code++) {
       if (code->op == GRN_OP_COMMA) {
         int code_start_offset = previous_comma_offset + 1;
-        int code_end_offset = code - expr->codes - code_start_offset;
+        int code_end_offset;
         int original_codes_curr = expr->codes_curr;
 
         have_comma = GRN_TRUE;
         if (is_first_comma) {
-          expr->codes_curr = count_used_n_codes(ctx,
-                                                expr->codes,
-                                                expr->codes + expr->codes_curr);
+          int second_code_offset;
+          int second_code_n_used_code;
+          second_code_offset = code - expr->codes - 1;
+          second_code_n_used_code =
+            count_used_n_codes(ctx,
+                               expr->codes,
+                               expr->codes + second_code_offset);
+          expr->codes_curr = second_code_offset - second_code_n_used_code + 1;
           grn_output_table_record_by_expression(ctx, outbuf, output_type,
                                                 format->expression);
           code_start_offset = expr->codes_curr;
-          code_end_offset -= expr->codes_curr;
           is_first_comma = GRN_FALSE;
         }
+        code_end_offset = code - expr->codes - code_start_offset;
         expr->codes += code_start_offset;
         expr->codes_curr = code_end_offset;
         grn_output_table_record_by_expression(ctx, outbuf, output_type,

@@ -1,0 +1,53 @@
+table_create Entries TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Entries title COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Entries content COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Tokens TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram
+[[0,0.0,0.0],true]
+column_create Tokens entries_title COLUMN_INDEX|WITH_POSITION Entries title
+[[0,0.0,0.0],true]
+column_create Tokens entries_content COLUMN_INDEX|WITH_POSITION Entries content
+[[0,0.0,0.0],true]
+load --table Entries
+[
+{"title": "groonga and MySQL", "content": "groonga + MySQL = mroonga."}
+]
+[[0,0.0,0.0],1]
+select Entries   --output_columns 'title, content, snippet_html(title)'   --command_version 2   --match_columns 'title'   --query groonga
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "title",
+          "ShortText"
+        ],
+        [
+          "content",
+          "ShortText"
+        ],
+        [
+          "snippet_html",
+          "null"
+        ]
+      ],
+      [
+        "groonga and MySQL",
+        "groonga + MySQL = mroonga.",
+        [
+          "<span class=\"keyword\">groonga</span> and MySQL"
+        ]
+      ]
+    ]
+  ]
+]
