@@ -3326,6 +3326,14 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           {
             if (x == res) {
               grn_obj_cast(ctx, y, res, GRN_FALSE);
+            } else if (y == res) {
+              grn_obj buffer;
+              GRN_TEXT_INIT(&buffer, 0);
+              grn_obj_cast(ctx, x, &buffer, GRN_FALSE);
+              grn_obj_cast(ctx, y, &buffer, GRN_FALSE);
+              GRN_BULK_REWIND(res);
+              grn_obj_cast(ctx, &buffer, res, GRN_FALSE);
+              GRN_OBJ_FIN(ctx, &buffer);
             } else {
               GRN_BULK_REWIND(res);
               grn_obj_cast(ctx, x, res, GRN_FALSE);
