@@ -2242,6 +2242,16 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
       GRN_INT16_SET(ctx, res, integer_operation(x_));                   \
     }                                                                   \
     break;                                                              \
+  case GRN_DB_UINT16 :                                                  \
+    {                                                                   \
+      uint16_t x_;                                                      \
+      x_ = GRN_UINT16_VALUE(x);                                         \
+      left_expression_check(x_);                                        \
+      GRN_INT32_SET(ctx, res, integer_operation(x_));                   \
+      res->header.type = GRN_BULK;                                      \
+      res->header.domain = GRN_DB_INT32;                                \
+    }                                                                   \
+    break;                                                              \
   case GRN_DB_INT32 :                                                   \
     {                                                                   \
       int x_;                                                           \
