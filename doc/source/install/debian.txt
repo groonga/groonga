@@ -159,4 +159,4 @@ Build::
 
 Install::
 
-  % sudo make intall
+  % sudo make install
