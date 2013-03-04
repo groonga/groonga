@@ -2263,7 +2263,8 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
       unsigned int x_;                                                  \
       x_ = GRN_UINT32_VALUE(x);                                         \
       left_expression_check(x_);                                        \
-      GRN_UINT32_SET(ctx, res, integer_operation(x_));                  \
+      GRN_INT64_SET(ctx, res, integer_operation(x_));                   \
+      res->header.domain = GRN_DB_INT64;                                \
     }                                                                   \
     break;                                                              \
   case GRN_DB_INT64 :                                                   \
