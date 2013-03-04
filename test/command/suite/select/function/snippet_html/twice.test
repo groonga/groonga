@@ -1,0 +1,18 @@
+table_create Entries TABLE_NO_KEY
+column_create Entries title COLUMN_SCALAR ShortText
+column_create Entries content COLUMN_SCALAR ShortText
+
+table_create Tokens TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram
+column_create Tokens entries_title COLUMN_INDEX|WITH_POSITION Entries title
+column_create Tokens entries_content COLUMN_INDEX|WITH_POSITION Entries content
+
+load --table Entries
+[
+{"title": "groonga and MySQL", "content": "groonga + MySQL = mroonga."}
+]
+
+select Entries \
+  --output_columns 'snippet_html(title), snippet_html(content), title, content' \
+  --command_version 2 \
+  --match_columns 'title' \
+  --query groonga
