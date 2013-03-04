@@ -2060,7 +2060,7 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
   case GRN_DB_INT16 :                                                   \
     {                                                                   \
       int16_t x_;                                                       \
-      x_ = GRN_INT8_VALUE(x);                                           \
+      x_ = GRN_INT16_VALUE(x);                                          \
       left_expression_check(x_);                                        \
       NUMERIC_ARITHMETIC_OPERATION_DISPATCH(GRN_INT16_SET,              \
                                             GRN_INT16_VALUE,            \
