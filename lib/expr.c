@@ -1849,6 +1849,8 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
   ((long long int)(x) >> (long long int)(y))
 #define INTEGER8_ARITHMETIC_OPERATION_SHIFTRR(x, y)             \
   ((uint8_t)(x) >> (y))
+#define INTEGER16_ARITHMETIC_OPERATION_SHIFTRR(x, y)            \
+  ((uint16_t)(x) >> (y))
 #define INTEGER32_ARITHMETIC_OPERATION_SHIFTRR(x, y)            \
   ((unsigned int)(x) >> (y))
 #define INTEGER64_ARITHMETIC_OPERATION_SHIFTRR(x, y)            \
@@ -1932,6 +1934,14 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
       set(ctx, res, integer_operation(x_, y_));                         \
     }                                                                   \
     break;                                                              \
+  case GRN_DB_INT16 :                                                   \
+    {                                                                   \
+      int16_t y_;                                                       \
+      y_ = GRN_INT16_VALUE(y);                                          \
+      right_expression_check(y_);                                       \
+      set(ctx, res, integer_operation(x_, y_));                         \
+    }                                                                   \
+    break;                                                              \
   case GRN_DB_INT32 :                                                   \
     {                                                                   \
       int y_;                                                           \
@@ -2002,6 +2012,7 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
 
 #define ARITHMETIC_OPERATION_DISPATCH(x, y, res,                        \
                                       integer8_operation,               \
+                                      integer16_operation,              \
                                       integer32_operation,              \
                                       integer64_operation,              \
                                       float_operation,                  \
@@ -2033,6 +2044,20 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
                                             GRN_UINT8_VALUE,            \
                                             x_, y, res,                 \
                                             integer8_operation,         \
+                                            float_operation,            \
+                                            right_expression_check,     \
+                                            invalid_type_error);        \
+    }                                                                   \
+    break;                                                              \
+  case GRN_DB_INT16 :                                                   \
+    {                                                                   \
+      int16_t x_;                                                       \
+      x_ = GRN_INT8_VALUE(x);                                           \
+      left_expression_check(x_);                                        \
+      NUMERIC_ARITHMETIC_OPERATION_DISPATCH(GRN_INT16_SET,              \
+                                            GRN_INT16_VALUE,            \
+                                            x_, y, res,                 \
+                                            integer16_operation,        \
                                             float_operation,            \
                                             right_expression_check,     \
                                             invalid_type_error);        \
@@ -2135,6 +2160,7 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
 } while (0)
 
 #define ARITHMETIC_BINARY_OPERATION_DISPATCH(integer8_operation,        \
+                                             integer16_operation,       \
                                              integer32_operation,       \
                                              integer64_operation,       \
                                              float_operation,           \
@@ -2148,6 +2174,7 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
   res->header.domain = x->header.domain;                                \
   ARITHMETIC_OPERATION_DISPATCH(x, y, res,                              \
                                 integer8_operation,                     \
+                                integer16_operation,                    \
                                 integer32_operation,                    \
                                 integer64_operation,                    \
                                 float_operation,                        \
@@ -2312,6 +2339,7 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
 } while (0)
 
 #define ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(integer8_operation,    \
+                                                 integer16_operation,   \
                                                  integer32_operation,   \
                                                  integer64_operation,   \
                                                  float_operation,       \
@@ -2350,6 +2378,7 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
     ARITHMETIC_OPERATION_DISPATCH((&variable_value), (&casted_value),   \
                                   res,                                  \
                                   integer8_operation,                   \
+                                  integer16_operation,                  \
                                   integer32_operation,                  \
                                   integer64_operation,                  \
                                   float_operation,                      \
@@ -2607,6 +2636,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           INTEGER_ARITHMETIC_OPERATION_STAR,
           INTEGER_ARITHMETIC_OPERATION_STAR,
           INTEGER_ARITHMETIC_OPERATION_STAR,
+          INTEGER_ARITHMETIC_OPERATION_STAR,
           FLOAT_ARITHMETIC_OPERATION_STAR,
           ARITHMETIC_OPERATION_NO_CHECK,
           ARITHMETIC_OPERATION_NO_CHECK,
@@ -2617,6 +2647,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_SLASH_ASSIGN :
         ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(
+          INTEGER_ARITHMETIC_OPERATION_SLASH,
           INTEGER_ARITHMETIC_OPERATION_SLASH,
           INTEGER_ARITHMETIC_OPERATION_SLASH,
           INTEGER_ARITHMETIC_OPERATION_SLASH,
@@ -2633,6 +2664,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           INTEGER_ARITHMETIC_OPERATION_MOD,
           INTEGER_ARITHMETIC_OPERATION_MOD,
           INTEGER_ARITHMETIC_OPERATION_MOD,
+          INTEGER_ARITHMETIC_OPERATION_MOD,
           FLOAT_ARITHMETIC_OPERATION_MOD,
           ARITHMETIC_OPERATION_NO_CHECK,
           ARITHMETIC_OPERATION_NO_CHECK,
@@ -2643,6 +2675,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_PLUS_ASSIGN :
         ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(
+          INTEGER_ARITHMETIC_OPERATION_PLUS,
           INTEGER_ARITHMETIC_OPERATION_PLUS,
           INTEGER_ARITHMETIC_OPERATION_PLUS,
           INTEGER_ARITHMETIC_OPERATION_PLUS,
@@ -2659,6 +2692,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           INTEGER_ARITHMETIC_OPERATION_MINUS,
           INTEGER_ARITHMETIC_OPERATION_MINUS,
           INTEGER_ARITHMETIC_OPERATION_MINUS,
+          INTEGER_ARITHMETIC_OPERATION_MINUS,
           FLOAT_ARITHMETIC_OPERATION_MINUS,
           ARITHMETIC_OPERATION_NO_CHECK,
           ARITHMETIC_OPERATION_NO_CHECK,
@@ -2669,6 +2703,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_SHIFTL_ASSIGN :
         ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(
+          INTEGER_ARITHMETIC_OPERATION_SHIFTL,
           INTEGER_ARITHMETIC_OPERATION_SHIFTL,
           INTEGER_ARITHMETIC_OPERATION_SHIFTL,
           INTEGER_ARITHMETIC_OPERATION_SHIFTL,
@@ -2685,6 +2720,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           INTEGER_ARITHMETIC_OPERATION_SHIFTR,
           INTEGER_ARITHMETIC_OPERATION_SHIFTR,
           INTEGER_ARITHMETIC_OPERATION_SHIFTR,
+          INTEGER_ARITHMETIC_OPERATION_SHIFTR,
           FLOAT_ARITHMETIC_OPERATION_SHIFTR,
           ARITHMETIC_OPERATION_NO_CHECK,
           ARITHMETIC_OPERATION_NO_CHECK,
@@ -2696,6 +2732,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
       case GRN_OP_SHIFTRR_ASSIGN :
         ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(
           INTEGER8_ARITHMETIC_OPERATION_SHIFTRR,
+          INTEGER16_ARITHMETIC_OPERATION_SHIFTRR,
           INTEGER32_ARITHMETIC_OPERATION_SHIFTRR,
           INTEGER64_ARITHMETIC_OPERATION_SHIFTRR,
           FLOAT_ARITHMETIC_OPERATION_SHIFTRR,
@@ -2712,6 +2749,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           INTEGER_ARITHMETIC_OPERATION_BITWISE_AND,
           INTEGER_ARITHMETIC_OPERATION_BITWISE_AND,
           INTEGER_ARITHMETIC_OPERATION_BITWISE_AND,
+          INTEGER_ARITHMETIC_OPERATION_BITWISE_AND,
           FLOAT_ARITHMETIC_OPERATION_BITWISE_AND,
           ARITHMETIC_OPERATION_NO_CHECK,
           ARITHMETIC_OPERATION_NO_CHECK,
@@ -2725,6 +2763,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           INTEGER_ARITHMETIC_OPERATION_BITWISE_OR,
           INTEGER_ARITHMETIC_OPERATION_BITWISE_OR,
           INTEGER_ARITHMETIC_OPERATION_BITWISE_OR,
+          INTEGER_ARITHMETIC_OPERATION_BITWISE_OR,
           FLOAT_ARITHMETIC_OPERATION_BITWISE_OR,
           ARITHMETIC_OPERATION_NO_CHECK,
           ARITHMETIC_OPERATION_NO_CHECK,
@@ -2735,6 +2774,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_XOR_ASSIGN :
         ARITHMETIC_OPERATION_AND_ASSIGN_DISPATCH(
+          INTEGER_ARITHMETIC_OPERATION_BITWISE_XOR,
           INTEGER_ARITHMETIC_OPERATION_BITWISE_XOR,
           INTEGER_ARITHMETIC_OPERATION_BITWISE_XOR,
           INTEGER_ARITHMETIC_OPERATION_BITWISE_XOR,
@@ -3320,6 +3360,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           INTEGER_ARITHMETIC_OPERATION_PLUS,
           INTEGER_ARITHMETIC_OPERATION_PLUS,
           INTEGER_ARITHMETIC_OPERATION_PLUS,
+          INTEGER_ARITHMETIC_OPERATION_PLUS,
           FLOAT_ARITHMETIC_OPERATION_PLUS,
           ARITHMETIC_OPERATION_NO_CHECK,
           ARITHMETIC_OPERATION_NO_CHECK,
@@ -3367,6 +3408,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
             INTEGER_ARITHMETIC_OPERATION_MINUS,
             INTEGER_ARITHMETIC_OPERATION_MINUS,
             INTEGER_ARITHMETIC_OPERATION_MINUS,
+            INTEGER_ARITHMETIC_OPERATION_MINUS,
             FLOAT_ARITHMETIC_OPERATION_MINUS,
             ARITHMETIC_OPERATION_NO_CHECK,
             ARITHMETIC_OPERATION_NO_CHECK,
@@ -3381,6 +3423,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_STAR :
         ARITHMETIC_BINARY_OPERATION_DISPATCH(
+          INTEGER_ARITHMETIC_OPERATION_STAR,
           INTEGER_ARITHMETIC_OPERATION_STAR,
           INTEGER_ARITHMETIC_OPERATION_STAR,
           INTEGER_ARITHMETIC_OPERATION_STAR,
@@ -3400,6 +3443,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           INTEGER_ARITHMETIC_OPERATION_SLASH,
           INTEGER_ARITHMETIC_OPERATION_SLASH,
           INTEGER_ARITHMETIC_OPERATION_SLASH,
+          INTEGER_ARITHMETIC_OPERATION_SLASH,
           FLOAT_ARITHMETIC_OPERATION_SLASH,
           ARITHMETIC_OPERATION_NO_CHECK,
           ARITHMETIC_OPERATION_ZERO_DIVISION_CHECK,
@@ -3413,6 +3457,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_MOD :
         ARITHMETIC_BINARY_OPERATION_DISPATCH(
+          INTEGER_ARITHMETIC_OPERATION_MOD,
           INTEGER_ARITHMETIC_OPERATION_MOD,
           INTEGER_ARITHMETIC_OPERATION_MOD,
           INTEGER_ARITHMETIC_OPERATION_MOD,
@@ -3440,6 +3485,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           INTEGER_ARITHMETIC_OPERATION_BITWISE_OR,
           INTEGER_ARITHMETIC_OPERATION_BITWISE_OR,
           INTEGER_ARITHMETIC_OPERATION_BITWISE_OR,
+          INTEGER_ARITHMETIC_OPERATION_BITWISE_OR,
           FLOAT_ARITHMETIC_OPERATION_BITWISE_OR,
           ARITHMETIC_OPERATION_NO_CHECK,
           ARITHMETIC_OPERATION_NO_CHECK,
@@ -3447,6 +3493,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_BITWISE_XOR :
         ARITHMETIC_BINARY_OPERATION_DISPATCH(
+          INTEGER_ARITHMETIC_OPERATION_BITWISE_XOR,
           INTEGER_ARITHMETIC_OPERATION_BITWISE_XOR,
           INTEGER_ARITHMETIC_OPERATION_BITWISE_XOR,
           INTEGER_ARITHMETIC_OPERATION_BITWISE_XOR,
@@ -3460,6 +3507,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           INTEGER_ARITHMETIC_OPERATION_BITWISE_AND,
           INTEGER_ARITHMETIC_OPERATION_BITWISE_AND,
           INTEGER_ARITHMETIC_OPERATION_BITWISE_AND,
+          INTEGER_ARITHMETIC_OPERATION_BITWISE_AND,
           FLOAT_ARITHMETIC_OPERATION_BITWISE_AND,
           ARITHMETIC_OPERATION_NO_CHECK,
           ARITHMETIC_OPERATION_NO_CHECK,
@@ -3467,6 +3515,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         break;
       case GRN_OP_SHIFTL :
         ARITHMETIC_BINARY_OPERATION_DISPATCH(
+          INTEGER_ARITHMETIC_OPERATION_SHIFTL,
           INTEGER_ARITHMETIC_OPERATION_SHIFTL,
           INTEGER_ARITHMETIC_OPERATION_SHIFTL,
           INTEGER_ARITHMETIC_OPERATION_SHIFTL,
@@ -3480,6 +3529,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           INTEGER_ARITHMETIC_OPERATION_SHIFTR,
           INTEGER_ARITHMETIC_OPERATION_SHIFTR,
           INTEGER_ARITHMETIC_OPERATION_SHIFTR,
+          INTEGER_ARITHMETIC_OPERATION_SHIFTR,
           FLOAT_ARITHMETIC_OPERATION_SHIFTR,
           ARITHMETIC_OPERATION_NO_CHECK,
           ARITHMETIC_OPERATION_NO_CHECK,
@@ -3488,6 +3538,7 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
       case GRN_OP_SHIFTRR :
         ARITHMETIC_BINARY_OPERATION_DISPATCH(
           INTEGER8_ARITHMETIC_OPERATION_SHIFTRR,
+          INTEGER16_ARITHMETIC_OPERATION_SHIFTRR,
           INTEGER32_ARITHMETIC_OPERATION_SHIFTRR,
           INTEGER64_ARITHMETIC_OPERATION_SHIFTRR,
           FLOAT_ARITHMETIC_OPERATION_SHIFTRR,
