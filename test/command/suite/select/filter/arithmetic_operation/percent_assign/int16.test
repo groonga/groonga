@@ -1,0 +1,13 @@
+table_create Values TABLE_NO_KEY
+column_create Values value COLUMN_SCALAR Int16
+column_create Values output COLUMN_SCALAR Int16
+
+load --table Values
+[
+{"value": 2, "output": 7}
+]
+
+select Values \
+  --filter true \
+  --scorer 'output %= value' \
+  --output_columns 'value, output'
