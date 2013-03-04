@@ -1942,6 +1942,14 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
       set(ctx, res, integer_operation(x_, y_));                         \
     }                                                                   \
     break;                                                              \
+  case GRN_DB_UINT16 :                                                  \
+    {                                                                   \
+      uint16_t y_;                                                      \
+      y_ = GRN_UINT16_VALUE(y);                                         \
+      right_expression_check(y_);                                       \
+      set(ctx, res, integer_operation(x_, y_));                         \
+    }                                                                   \
+    break;                                                              \
   case GRN_DB_INT32 :                                                   \
     {                                                                   \
       int y_;                                                           \
@@ -2056,6 +2064,20 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
       left_expression_check(x_);                                        \
       NUMERIC_ARITHMETIC_OPERATION_DISPATCH(GRN_INT16_SET,              \
                                             GRN_INT16_VALUE,            \
+                                            x_, y, res,                 \
+                                            integer16_operation,        \
+                                            float_operation,            \
+                                            right_expression_check,     \
+                                            invalid_type_error);        \
+    }                                                                   \
+    break;                                                              \
+  case GRN_DB_UINT16 :                                                  \
+    {                                                                   \
+      uint16_t x_;                                                      \
+      x_ = GRN_UINT16_VALUE(x);                                         \
+      left_expression_check(x_);                                        \
+      NUMERIC_ARITHMETIC_OPERATION_DISPATCH(GRN_UINT16_SET,             \
+                                            GRN_UINT16_VALUE,           \
                                             x_, y, res,                 \
                                             integer16_operation,        \
                                             float_operation,            \
