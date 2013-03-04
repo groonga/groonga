@@ -1,0 +1,13 @@
+table_create Values TABLE_NO_KEY
+column_create Values value COLUMN_SCALAR UInt16
+column_create Values output COLUMN_SCALAR UInt16
+
+load --table Values
+[
+{"value": 4, "output": 128}
+]
+
+select Values \
+  --filter true \
+  --scorer 'output |= value' \
+  --output_columns 'value, output'
