@@ -240,9 +240,9 @@ grn_db_open(grn_ctx *ctx, const char *path)
         break;
       }
       if (s->keys) {
-        char buffer[PATH_MAX];
-        gen_pathname(path, buffer, 0);
-        if ((s->specs = grn_ja_open(ctx, buffer))) {
+        char specs_path[PATH_MAX];
+        gen_pathname(path, specs_path, 0);
+        if ((s->specs = grn_ja_open(ctx, specs_path))) {
           CRITICAL_SECTION_INIT(s->lock);
           GRN_DB_OBJ_SET_TYPE(s, GRN_DB);
           s->obj.db = (grn_obj *)s;
