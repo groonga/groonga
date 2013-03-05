@@ -237,6 +237,7 @@ grn_db_open(grn_ctx *ctx, const char *path)
         break;
       default :
         s->keys = NULL;
+        break;
       }
       if (s->keys) {
         char buffer[PATH_MAX];
