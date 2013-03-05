@@ -187,7 +187,8 @@ grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg)
             grn_db_init_builtin_types(ctx);
             GRN_API_RETURN((grn_obj *)s);
           } else {
-            ERR(GRN_NO_MEMORY_AVAILABLE, "ja create failed");
+            ERR(GRN_NO_MEMORY_AVAILABLE,
+                "failed to create specs: <%s>", specs_path);
           }
         } else {
           s->specs = NULL;
