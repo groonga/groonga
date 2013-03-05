@@ -31,27 +31,35 @@ grn_str_charlen_utf8(grn_ctx *ctx, const unsigned char *str, const unsigned char
 {
   /* MEMO: This function allows non-null-terminated string as str. */
   /*       But requires the end of string. */
-  const unsigned char *p = str;
-  if (end <= p || !*p) { return 0; }
-  if (*p & 0x80) {
-    int b, w;
-    int size;
-    for (b = 0x40, w = 0; b && (*p & b); b >>= 1, w++);
-    if (!w) {
+  if (end <= str || !*str) {
+    return 0;
+  }
+  if (*str & 0x80) {
+    int i;
+    int len;
+    GRN_BIT_SCAN_REV(~(*str << 24), len);
+    len = 31 - len;
+    if ((unsigned int)(len - 2) >= 3) {  /* (len == 1 || len >= 5) */
+      /* Error: invalid first byte. */
       GRN_LOG(ctx, GRN_LOG_WARNING, "invalid utf8 string(1) on grn_str_charlen_utf8");
       return 0;
     }
-    for (size = 1; w--; size++) {
-      if (++p >= end || !*p || (*p & 0xc0) != 0x80) {
-        GRN_LOG(ctx, GRN_LOG_WARNING, "invalid utf8 string(2) on grn_str_charlen_utf8");
+    if (str + len > end) {
+      /* Error: the character is incomplete. */
+      GRN_LOG(ctx, GRN_LOG_WARNING, "invalid utf8 string(2) on grn_str_charlen_utf8");
+      return 0;
+    }
+    for (i = 1; i < len; ++i) {
+      if ((str[i] & 0xc0) != 0x80) {
+        /* Error: the (i+1)-th byte is invalid. */
+        GRN_LOG(ctx, GRN_LOG_WARNING, "invalid utf8 string(3) on grn_str_charlen_utf8");
         return 0;
       }
     }
-    return size;
+    return len;
   } else {
     return 1;
   }
-  return 0;
 }
 
 unsigned int
