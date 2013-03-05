@@ -180,9 +180,9 @@ grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg)
         DB_OBJ(&s->obj)->range = GRN_ID_NIL;
         // prepare builtin classes and load builtin plugins.
         if (path) {
-          char buffer[PATH_MAX];
-          gen_pathname(path, buffer, 0);
-          if ((s->specs = grn_ja_create(ctx, buffer, 65536, 0))) {
+          char specs_path[PATH_MAX];
+          gen_pathname(path, specs_path, 0);
+          if ((s->specs = grn_ja_create(ctx, specs_path, 65536, 0))) {
             grn_ctx_use(ctx, (grn_obj *)s);
             grn_db_init_builtin_types(ctx);
             GRN_API_RETURN((grn_obj *)s);
