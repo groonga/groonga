@@ -2260,7 +2260,7 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
     break;                                                              \
   case GRN_DB_UINT32 :                                                  \
     {                                                                   \
-      unsigned int x_;                                                  \
+      long long int x_;                                                 \
       x_ = GRN_UINT32_VALUE(x);                                         \
       left_expression_check(x_);                                        \
       GRN_INT64_SET(ctx, res, integer_operation(x_));                   \
