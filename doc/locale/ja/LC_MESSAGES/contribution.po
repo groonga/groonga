@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-06 16:41\n"
-"PO-Revision-Date: 2013-03-06 17:49+0900\n"
+"POT-Creation-Date: 2013-03-06 18:13\n"
+"PO-Revision-Date: 2013-03-06 18:18+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -1859,16 +1859,18 @@ msgstr "リポジトリ"
 # e61b0a31df134640acb2e7b639ca6395
 #: ../../../source/contribution/development/repository.txt:8
 msgid ""
-"There is the repository of groonga. If you want to check-out groonga, type "
-"below command. ::"
-msgstr "groongaのリポジトリはGitHub上にあります。次のコマンドでcloneできます。"
+"There is `the repository of groonga on GitHub <https://github.com/groonga/"
+"groonga>`_. If you want to check-out groonga, type the below command::"
+msgstr ""
+"groongaのリポジトリは `GitHub <https://github.com/groonga/groonga>`_ 上にあり"
+"ます。次のコマンドでcloneできます。"
 
 # 601f58fb68ef47d49ff13d5cdc1bed26
 #: ../../../source/contribution/development/repository.txt:12
 msgid ""
-"https://github.com/groonga is the list of related projects of groonga "
-"(grntest, fluent-plugin-groonga, and so on)."
-msgstr "groonga関係のプロジェクト（grntest, fluent-plugin-groongaなど）は https://github.com/groonga からたどることができます。"
+"There is `the list of related projects of groonga <https://github.com/"
+"groonga>`_ (grntest, fluent-plugin-groonga and so on)."
+msgstr "`groonga関係のプロジェクト（grntest, fluent-plugin-groongaなど） <https://github.com/groonga>`_ のリストはリンク先をごらんください。"
 
 #: ../../../source/contribution/development/test.txt:6
 msgid "テスト方法"
