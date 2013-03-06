@@ -5,7 +5,7 @@
 Repository
 ==========
 
-There is the repository of groonga. If you want to check-out groonga, type below command::
+There is the repository of groonga. If you want to check-out groonga, type the below command::
 
   % git clone git://github.com/groonga/groonga.git
 
