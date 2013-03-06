@@ -2,10 +2,12 @@ table_create Values TABLE_NO_KEY
 [[0,0.0,0.0],true]
 column_create Values value COLUMN_SCALAR UInt8
 [[0,0.0,0.0],true]
+column_create Values output COLUMN_SCALAR Int16
+[[0,0.0,0.0],true]
 load --table Values
 [
-{"value": 1}
+{"value": 255}
 ]
 [[0,0.0,0.0],1]
-select Values   --filter true   --scorer '_score = -value'   --output_columns 'value, _score'
-[[0,0.0,0.0],[[[1],[["value","UInt8"],["_score","Int32"]],[1,-1]]]]
+select Values   --scorer 'output = -value'   --output_columns 'value, output'
+[[0,0.0,0.0],[[[1],[["value","UInt8"],["output","Int16"]],[255,-255]]]]
