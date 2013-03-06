@@ -1,12 +1,12 @@
 table_create Values TABLE_NO_KEY
 column_create Values value COLUMN_SCALAR UInt16
+column_create Values output COLUMN_SCALAR Int32
 
 load --table Values
 [
-{"value": 1}
+{"value": 65535}
 ]
 
 select Values \
-  --filter true \
-  --scorer '_score = -value' \
-  --output_columns 'value, _score'
+  --scorer 'output = -value' \
+  --output_columns 'value, output'
