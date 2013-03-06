@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-03-06 16:41\n"
-"PO-Revision-Date: 2013-03-06 16:45+0900\n"
+"PO-Revision-Date: 2013-03-06 17:49+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -1868,7 +1868,7 @@ msgstr "groongaのリポジトリはGithub上にあります。次のコマン�
 msgid ""
 "https://github.com/groonga is the list of related projects of groonga "
 "(grntest, fluent-plugin-groonga, and so on)."
-msgstr "groonga関係のプロジェクト（grntest, fluent-plugin-groongaなど）はhttps://github.com/groongaからたどることができます。"
+msgstr "groonga関係のプロジェクト（grntest, fluent-plugin-groongaなど）は https://github.com/groonga からたどることができます。"
 
 #: ../../../source/contribution/development/test.txt:6
 msgid "テスト方法"
