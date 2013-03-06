@@ -9,6 +9,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/contribution/development/document.txt \
 	$(top_srcdir)/doc/source/contribution/development/query.txt \
 	$(top_srcdir)/doc/source/contribution/development/release.txt \
+	$(top_srcdir)/doc/source/contribution/development/repository.txt \
 	$(top_srcdir)/doc/source/contribution/development/test.txt \
 	$(top_srcdir)/doc/source/contribution/documentation.txt \
 	$(top_srcdir)/doc/source/contribution/documentation/c-api.txt \
@@ -442,6 +443,7 @@ source_files_relative_from_doc_dir = \
 	source/contribution/development/document.txt \
 	source/contribution/development/query.txt \
 	source/contribution/development/release.txt \
+	source/contribution/development/repository.txt \
 	source/contribution/development/test.txt \
 	source/contribution/documentation.txt \
 	source/contribution/documentation/c-api.txt \
@@ -951,6 +953,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/contribution/development/document.txt \
 	html/_sources/contribution/development/query.txt \
 	html/_sources/contribution/development/release.txt \
+	html/_sources/contribution/development/repository.txt \
 	html/_sources/contribution/development/test.txt \
 	html/_sources/contribution/documentation.txt \
 	html/_sources/contribution/documentation/c-api.txt \
@@ -1105,6 +1108,7 @@ html_files_relative_from_locale_dir = \
 	html/contribution/development/document.html \
 	html/contribution/development/query.html \
 	html/contribution/development/release.html \
+	html/contribution/development/repository.html \
 	html/contribution/development/test.html \
 	html/contribution/documentation.html \
 	html/contribution/documentation/c-api.html \
