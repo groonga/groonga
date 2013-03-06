@@ -9,4 +9,4 @@ There is `the repository of groonga on GitHub <https://github.com/groonga/groong
 
   % git clone git://github.com/groonga/groonga.git
 
-https://github.com/groonga is the list of related projects of groonga (grntest, fluent-plugin-groonga and so on).
+There is `the list of related projects of groonga <https://github.com/groonga>`_ (grntest, fluent-plugin-groonga and so on).
