@@ -2226,7 +2226,7 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
     break;                                                              \
   case GRN_DB_UINT8 :                                                   \
     {                                                                   \
-      uint8_t x_;                                                       \
+      int16_t x_;                                                       \
       x_ = GRN_UINT8_VALUE(x);                                          \
       left_expression_check(x_);                                        \
       GRN_INT16_SET(ctx, res, integer_operation(x_));                   \
