@@ -1861,7 +1861,7 @@ msgstr "リポジトリ"
 msgid ""
 "There is the repository of groonga. If you want to check-out groonga, type "
 "below command. ::"
-msgstr "groongaのリポジトリはGithub上にあります。次のコマンドでcloneできます。"
+msgstr "groongaのリポジトリはGitHub上にあります。次のコマンドでcloneできます。"
 
 # 601f58fb68ef47d49ff13d5cdc1bed26
 #: ../../../source/contribution/development/repository.txt:12
