@@ -1,0 +1,12 @@
+.. -*- rst -*-
+
+.. highlightlang:: none
+
+Repository
+==========
+
+There is the repository of groonga. If you want to check-out groonga, type below command. ::
+
+ # git clone git://github.com/groonga/groonga.git
+
+https://github.com/groonga is the list of related projects of groonga (grntest, fluent-plugin-groonga, and so on).
