@@ -6,35 +6,21 @@ column_create Values output COLUMN_SCALAR Int64
 [[0,0.0,0.0],true]
 load --table Values
 [
-{"value": 9223372036854775807}
+{"value": 9223372036854775808, "output": 0}
 ]
 [[0,0.0,0.0],1]
 select Values   --scorer 'output = -value'   --output_columns 'value, output'
 [
   [
-    0,
-    0.0,
-    0.0
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "too large UInt64 value to inverse sign: <9223372036854775808>"
   ],
   [
-    [
-      [
-        1
-      ],
-      [
-        [
-          "value",
-          "UInt64"
-        ],
-        [
-          "output",
-          "Int64"
-        ]
-      ],
-      [
-        9223372036854775807,
-        -9223372036854775807
-      ]
-    ]
+
   ]
 ]
+#|e| too large UInt64 value to inverse sign: <9223372036854775808>

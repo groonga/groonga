@@ -4,7 +4,7 @@ column_create Values output COLUMN_SCALAR Int64
 
 load --table Values
 [
-{"value": 9223372036854775807}
+{"value": 9223372036854775808, "output": 0}
 ]
 
 select Values \

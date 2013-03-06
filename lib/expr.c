@@ -2288,8 +2288,18 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
       long long unsigned int x_;                                        \
       x_ = GRN_UINT64_VALUE(x);                                         \
       left_expression_check(x_);                                        \
-      GRN_INT64_SET(ctx, res, integer_operation(x_));                   \
-      res->header.domain = GRN_DB_INT64;                                \
+      if (x_ > (long long unsigned int)INT64_MAX) {                      \
+        ERR(GRN_INVALID_ARGUMENT,                                       \
+            "too large UInt64 value to inverse sign: "                  \
+            "<%" GRN_FMT_LLU ">",                                       \
+            x_);                                                        \
+        goto exit;                                                      \
+      } else {                                                          \
+        long long int signed_x_;                                        \
+        signed_x_ = x_;                                                 \
+        GRN_INT64_SET(ctx, res, integer_operation(signed_x_));          \
+        res->header.domain = GRN_DB_INT64;                              \
+      }                                                                 \
     }                                                                   \
     break;                                                              \
   case GRN_DB_FLOAT :                                                   \
