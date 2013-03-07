@@ -1,0 +1,144 @@
+table_create Files TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Files revision COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+table_create Packages TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Packages files COLUMN_VECTOR Files
+[[0,0.0,0.0],true]
+column_create Files packages_files_index COLUMN_INDEX Packages files
+[[0,0.0,0.0],true]
+table_create Revisions TABLE_PAT_KEY UInt32
+[[0,0.0,0.0],true]
+column_create Revisions files_revision COLUMN_INDEX Files revision
+[[0,0.0,0.0],true]
+load --table Files
+[
+{"_key": "include/groonga.h", "revision": 100},
+{"_key": "src/groonga.c",     "revision": 29},
+{"_key": "lib/groonga.rb",    "revision": 12},
+{"_key": "README.textile",    "revision": 24},
+{"_key": "ha_mroonga.cc",     "revision": 40},
+{"_key": "ha_mroonga.hpp",    "revision": 6}
+]
+[[0,0.0,0.0],6]
+load --table Packages
+[
+{"_key": "groonga", "files": ["include/groonga.h", "src/groonga.c"]},
+{"_key": "rroonga", "files": ["lib/groonga.rb", "README.textile"]},
+{"_key": "mroonga", "files": ["ha_mroonga.cc", "ha_mroonga.hpp"]}
+]
+[[0,0.0,0.0],3]
+select Packages   --filter 'sub_filter(files, "revision >= 10 && revision < 40")'   --output_columns '_key, files, files.revision'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "files",
+          "Files"
+        ],
+        [
+          "files.revision",
+          "UInt32"
+        ]
+      ],
+      [
+        "rroonga",
+        [
+          "lib/groonga.rb",
+          "README.textile"
+        ],
+        [
+          12,
+          24
+        ]
+      ],
+      [
+        "groonga",
+        [
+          "include/groonga.h",
+          "src/groonga.c"
+        ],
+        [
+          100,
+          29
+        ]
+      ]
+    ]
+  ]
+]
+select Packages   --filter 'files.revision >= 10 && files.revision < 40'   --output_columns '_key, files, files.revision'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "files",
+          "Files"
+        ],
+        [
+          "files.revision",
+          "UInt32"
+        ]
+      ],
+      [
+        "rroonga",
+        [
+          "lib/groonga.rb",
+          "README.textile"
+        ],
+        [
+          12,
+          24
+        ]
+      ],
+      [
+        "groonga",
+        [
+          "include/groonga.h",
+          "src/groonga.c"
+        ],
+        [
+          100,
+          29
+        ]
+      ],
+      [
+        "mroonga",
+        [
+          "ha_mroonga.cc",
+          "ha_mroonga.hpp"
+        ],
+        [
+          40,
+          6
+        ]
+      ]
+    ]
+  ]
+]
