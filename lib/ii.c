@@ -5037,6 +5037,7 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
                      grn_obj *oldvalue, grn_obj *newvalue, grn_obj *posting)
 {
   grn_id *tp;
+  grn_bool do_grn_ii_updspec_cmp = GRN_TRUE;
   grn_rc rc = GRN_SUCCESS;
   grn_ii_updspec **u, **un;
   grn_obj *old_, *old = oldvalue, *new_, *new = newvalue, oldv, newv, buf, *post = NULL;
@@ -5056,6 +5057,14 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
     switch (type) {
     case GRN_BULK :
       {
+        byte *v = GRN_BULK_HEAD(new);
+        unsigned int s = GRN_BULK_VSIZE(new);
+        for (; s; s--, v++) {
+          if (*v) { break; }
+        }
+        if (!s) {
+          do_grn_ii_updspec_cmp = GRN_FALSE;
+        }
         new_ = new;
         GRN_OBJ_INIT(&newv, GRN_VECTOR, GRN_OBJ_DO_SHALLOW_COPY, GRN_DB_TEXT);
         newv.u.v.body = new;
@@ -5188,7 +5197,7 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
     grn_hash *n = (grn_hash *)new;
     GRN_HASH_EACH(ctx, o, id, &tp, NULL, &u, {
       if (n && (eid = grn_hash_get(ctx, n, tp, sizeof(grn_id), (void **) &un))) {
-        if (!grn_ii_updspec_cmp(*u, *un)) {
+        if (do_grn_ii_updspec_cmp && !grn_ii_updspec_cmp(*u, *un)) {
           grn_ii_updspec_close(ctx, *un);
           grn_hash_delete_by_id(ctx, n, eid, NULL);
         }

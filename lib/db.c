@@ -4924,6 +4924,17 @@ grn_obj_size(grn_ctx *ctx, grn_obj *obj)
   }
 }
 
+static grn_bool
+obj_zero(grn_obj *obj)
+{
+  byte *v = GRN_BULK_HEAD(obj);
+  unsigned int s = GRN_BULK_VSIZE(obj);
+  for (; s; s--, v++) {
+    if (*v) { return GRN_FALSE; }
+  }
+  return GRN_TRUE;
+}
+
 inline static int
 call_hook(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value, int flags)
 {
@@ -4939,7 +4950,9 @@ call_hook(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value, int flags)
       unsigned int os;
       ov = GRN_BULK_HEAD(oldvalue);
       os = grn_obj_size(ctx, oldvalue);
-      if (ov && v && os == s && !memcmp(ov, v, s)) {
+      if ((ov && v && os == s && !memcmp(ov, v, s)) &&
+          !(obj->header.type == GRN_COLUMN_FIX_SIZE &&
+            obj_zero(value))) {
         grn_bulk_fin(ctx, oldvalue);
         return 0;
       }
