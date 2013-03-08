@@ -3611,6 +3611,183 @@ selector_query(grn_ctx *ctx, grn_obj *table, grn_obj *index,
   return run_query(ctx, table, nargs - 1, args + 1, res, op);
 }
 
+static grn_rc
+run_sub_filter(grn_ctx *ctx, grn_obj *table,
+               int nargs, grn_obj **args,
+               grn_obj *res, grn_operator op)
+{
+  grn_rc rc = GRN_SUCCESS;
+  grn_obj *scope;
+  grn_obj *sub_filter_string;
+  grn_obj *scope_domain = NULL;
+  grn_obj *sub_filter = NULL;
+  grn_obj *dummy_variable = NULL;
+
+  if (nargs != 2) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "sub_filter(): wrong number of arguments (%d for 2)", nargs);
+    rc = ctx->rc;
+    goto exit;
+  }
+
+  scope = args[0];
+  sub_filter_string = args[1];
+
+  switch (scope->header.type) {
+  case GRN_ACCESSOR :
+  case GRN_COLUMN_FIX_SIZE :
+  case GRN_COLUMN_VAR_SIZE :
+    break;
+  default :
+    /* TODO: put inspected the 1nd argument to message */
+    ERR(GRN_INVALID_ARGUMENT,
+        "sub_filter(): the 1nd argument must be column or accessor");
+    rc = ctx->rc;
+    goto exit;
+    break;
+  }
+
+  scope_domain = grn_ctx_at(ctx, grn_obj_get_range(ctx, scope));
+
+  if (sub_filter_string->header.domain != GRN_DB_TEXT) {
+    /* TODO: put inspected the 2nd argument to message */
+    ERR(GRN_INVALID_ARGUMENT,
+        "sub_filter(): the 2nd argument must be String");
+    rc = ctx->rc;
+    goto exit;
+  }
+  if (GRN_TEXT_LEN(sub_filter_string) == 0) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "sub_filter(): the 2nd argument must not be empty String");
+    rc = ctx->rc;
+    goto exit;
+  }
+
+  GRN_EXPR_CREATE_FOR_QUERY(ctx, scope_domain, sub_filter, dummy_variable);
+  if (!sub_filter) {
+    rc = ctx->rc;
+    goto exit;
+  }
+
+  grn_expr_parse(ctx, sub_filter,
+                 GRN_TEXT_VALUE(sub_filter_string),
+                 GRN_TEXT_LEN(sub_filter_string),
+                 NULL, GRN_OP_MATCH, GRN_OP_AND,
+                 GRN_EXPR_SYNTAX_SCRIPT);
+  if (ctx->rc != GRN_SUCCESS) {
+    rc = ctx->rc;
+    goto exit;
+  }
+
+  {
+    grn_obj *base_res = NULL;
+
+    base_res = grn_table_create(ctx, NULL, 0, NULL,
+                                GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
+                                scope_domain, NULL);
+    grn_table_select(ctx, scope_domain, sub_filter, base_res, GRN_OP_OR);
+    if (scope->header.type == GRN_ACCESSOR) {
+      rc = grn_accessor_resolve(ctx, scope, -1, base_res, res, op, NULL);
+    } else {
+      grn_accessor accessor;
+      accessor.header.type = GRN_ACCESSOR;
+      accessor.obj = scope;
+      accessor.action = GRN_ACCESSOR_GET_COLUMN_VALUE;
+      accessor.next = NULL;
+      rc = grn_accessor_resolve(ctx, (grn_obj *)&accessor, -1, base_res,
+                                res, op, NULL);
+    }
+    grn_obj_unlink(ctx, base_res);
+  }
+
+exit:
+  if (scope_domain) {
+    grn_obj_unlink(ctx, scope_domain);
+  }
+  if (sub_filter) {
+    grn_obj_unlink(ctx, sub_filter);
+  }
+
+  return rc;
+}
+
+static grn_obj *
+func_sub_filter(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  grn_obj *found;
+  grn_obj *command = ctx->impl->curr_expr;
+  grn_obj *condition_ptr = NULL;
+  grn_obj *condition = NULL;
+  grn_obj *variable;
+  grn_obj *table = NULL;
+  grn_obj *res = NULL;
+
+  found = GRN_PROC_ALLOC(GRN_DB_BOOL, 0);
+  if (!found) {
+    goto exit;
+  }
+  GRN_BOOL_SET(ctx, found, GRN_FALSE);
+
+  condition_ptr = grn_expr_get_var(ctx, command,
+                                   GRN_SELECT_INTERNAL_VAR_CONDITION,
+                                   strlen(GRN_SELECT_INTERNAL_VAR_CONDITION));
+  if (!condition_ptr) {
+    goto exit;
+  }
+
+  condition = GRN_PTR_VALUE(condition_ptr);
+  if (!condition) {
+    goto exit;
+  }
+
+  variable = grn_expr_get_var_by_offset(ctx, condition, 0);
+  if (!variable) {
+    goto exit;
+  }
+
+  table = grn_ctx_at(ctx, variable->header.domain);
+  if (!table) {
+    goto exit;
+  }
+
+  res = grn_table_create(ctx, NULL, 0, NULL,
+                         GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, table, NULL);
+  if (!res) {
+    goto exit;
+  }
+  {
+    grn_rset_posinfo pi;
+    unsigned int key_size;
+    memset(&pi, 0, sizeof(grn_rset_posinfo));
+    pi.rid = GRN_RECORD_VALUE(variable);
+    key_size = ((grn_hash *)res)->key_size;
+    if (grn_table_add(ctx, res, &pi, key_size, NULL) == GRN_ID_NIL) {
+      goto exit;
+    }
+  }
+  if (run_sub_filter(ctx, table, nargs, args, res, GRN_OP_AND) == GRN_SUCCESS) {
+    GRN_BOOL_SET(ctx, found, grn_table_size(ctx, res) > 0);
+  }
+
+exit:
+  if (res) {
+    grn_obj_unlink(ctx, res);
+  }
+  if (table) {
+    grn_obj_unlink(ctx, table);
+  }
+
+  return found;
+}
+
+static grn_rc
+selector_sub_filter(grn_ctx *ctx, grn_obj *table, grn_obj *index,
+                    int nargs, grn_obj **args,
+                    grn_obj *res, grn_operator op)
+{
+  return run_sub_filter(ctx, table, nargs - 1, args + 1, res, op);
+}
+
 #define DEF_VAR(v,name_str) do {\
   (v).name = (name_str);\
   (v).name_size = GRN_STRLEN(name_str);\
@@ -3800,5 +3977,13 @@ grn_db_init_builtin_query(grn_ctx *ctx)
     selector_proc = grn_proc_create(ctx, "query", -1, GRN_PROC_FUNCTION,
                                     func_query, NULL, NULL, 0, NULL);
     grn_proc_set_selector(ctx, selector_proc, selector_query);
+  }
+
+  {
+    grn_obj *selector_proc;
+
+    selector_proc = grn_proc_create(ctx, "sub_filter", -1, GRN_PROC_FUNCTION,
+                                    func_sub_filter, NULL, NULL, 0, NULL);
+    grn_proc_set_selector(ctx, selector_proc, selector_sub_filter);
   }
 }
