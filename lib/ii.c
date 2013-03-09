@@ -5057,12 +5057,7 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
     switch (type) {
     case GRN_BULK :
       {
-        byte *v = GRN_BULK_HEAD(new);
-        unsigned int s = GRN_BULK_VSIZE(new);
-        for (; s; s--, v++) {
-          if (*v) { break; }
-        }
-        if (!s) {
+        if (grn_bulk_is_zero(ctx, new)) {
           do_grn_ii_updspec_cmp = GRN_FALSE;
         }
         new_ = new;
