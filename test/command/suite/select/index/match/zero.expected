@@ -8,11 +8,11 @@ column_create Ages users_age COLUMN_INDEX Users age
 [[0,0.0,0.0],true]
 load --table Users
 [
-{"_key": "Alice", "age": 20},
+{"_key": "Alice", "age": 0},
 {"_key": "Bob",   "age": 18}
 ]
 [[0,0.0,0.0],2]
-select Users --filter 'age @ 20'
+select Users --filter 'age @ 0'
 [
   [
     0,
