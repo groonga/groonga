@@ -2479,9 +2479,12 @@ grn_accessor_resolve(grn_ctx *ctx, grn_obj *accessor, int deep,
       grn_obj *next_res;
       grn_operator next_op;
       grn_search_optarg next_optarg;
+      grn_rset_recinfo *recinfo;
       if (optarg) {
         next_optarg = *optarg;
         next_optarg.mode = GRN_OP_EXACT;
+      } else {
+        memset(&next_optarg, 0, sizeof(grn_search_optarg));
       }
       if (i == 1) {
         next_res = res;
@@ -2502,12 +2505,14 @@ grn_accessor_resolve(grn_ctx *ctx, grn_obj *accessor, int deep,
         next_op = GRN_OP_OR;
       }
       domain = grn_ctx_at(ctx, index->header.domain);
-      GRN_HASH_EACH(ctx, (grn_hash *)current_res, id, &tid, NULL, NULL, {
+      GRN_HASH_EACH(ctx, (grn_hash *)current_res, id, &tid, NULL, &recinfo, {
+        next_optarg.weight_vector = NULL;
+        next_optarg.vector_size = recinfo->score;
         if (domain->header.type == GRN_TABLE_NO_KEY) {
           rc = grn_ii_sel(ctx, (grn_ii *)index,
                           (const char *)tid, sizeof(grn_id),
                           (grn_hash *)next_res, next_op,
-                          optarg ? &next_optarg : NULL);
+                          &next_optarg);
         } else {
           char key[GRN_TABLE_MAX_KEY_SIZE];
           int key_len;
@@ -2515,7 +2520,7 @@ grn_accessor_resolve(grn_ctx *ctx, grn_obj *accessor, int deep,
                                       key, GRN_TABLE_MAX_KEY_SIZE);
           rc = grn_ii_sel(ctx, (grn_ii *)index, key, key_len,
                           (grn_hash *)next_res, next_op,
-                          optarg ? &next_optarg : NULL);
+                          &next_optarg);
         }
         if (rc != GRN_SUCCESS) {
           break;

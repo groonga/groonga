@@ -1,0 +1,96 @@
+table_create Entries TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Entries content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create Blogs TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Blogs entries COLUMN_VECTOR Entries
+[[0,0.0,0.0],true]
+table_create Users TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Users blogs COLUMN_VECTOR Blogs
+[[0,0.0,0.0],true]
+column_create Blogs users COLUMN_INDEX Users blogs
+[[0,0.0,0.0],true]
+column_create Entries blogs COLUMN_INDEX Blogs entries
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Terms entries_content_index COLUMN_INDEX|WITH_POSITION   Entries content
+[[0,0.0,0.0],true]
+table_create LooseTerms TABLE_PAT_KEY|KEY_NORMALIZE ShortText   --default_tokenizer TokenBigramIgnoreBlankSplitSymbolAlphaDigit   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create LooseTerms entries_content_index COLUMN_INDEX|WITH_POSITION   Entries content
+[[0,0.0,0.0],true]
+load --table Entries
+[
+{"_key": "alice:2013-03-12",
+ "content": "Welcome! This is my first post!"},
+{"_key": "bob:2013-03-12",
+ "content": "I started to use groonga. It's very fast!"},
+{"_key": "carlos:2013-03-12",
+ "content": "I also started to use mroonga. It's also very fast! Really fast!"},
+{"_key": "alice:2013-03-13",
+ "content": "I also started to use mroonga. It's also very very fast!"},
+{"_key": "bob:2013-03-13",
+ "content": "I migrated all Senna system!"},
+{"_key": "carlos:2013-03-13",
+ "content": "I also migrated all Tritonn system!"}
+]
+[[0,0.0,0.0],6]
+load --table Blogs
+[
+{"_key": "Alice's Adventures in Wonderland",
+ "entries": ["alice:2013-03-12", "alice:2013-03-13"]},
+{"_key": "Bob memo",
+ "entries": ["bob:2013-03-12", "bob:2013-03-13"]},
+{"_key": "Carlog",
+ "entries": ["calros:2013-03-12", "calros:2013-03-13"]}
+]
+[[0,0.0,0.0],3]
+load --table Users
+[
+{"_key": "alice",  "blogs": ["Alice's Adventures in Wonderland"]},
+{"_key": "bob",    "blogs": ["Bob memo"]},
+{"_key": "calros", "blogs": ["Carlog"]}
+]
+[[0,0.0,0.0],3]
+select Users   --filter 'sub_filter(blogs.entries, "query(\\"Terms.entries_content_index * 20 || LooseTerms.entries_content_index * 5\\", \\"groonga\\")")'   --output_columns '_key, blogs.entries.content, _score'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "blogs.entries.content",
+          "Text"
+        ],
+        [
+          "_score",
+          "Int32"
+        ]
+      ],
+      [
+        "bob",
+        [
+          [
+            "I started to use groonga. It's very fast!",
+            "I migrated all Senna system!"
+          ]
+        ],
+        25
+      ]
+    ]
+  ]
+]
