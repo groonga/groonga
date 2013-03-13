@@ -44,6 +44,7 @@ deb ${apt_url_base}/${distribution}/ ${code_name} ${component}
 deb-src ${apt_url_base}/${distribution}/ ${code_name} ${component}
 EOF
 
+    sudo apt-get purge libzmq3
     sudo apt-get update -qq
     sudo apt-get install -qq -y --allow-unauthenticated groonga-keyring
     sudo apt-get update -qq
