@@ -1,0 +1,11 @@
+table_create Tags TABLE_HASH_KEY ShortText
+
+table_create Users TABLE_HASH_KEY ShortText
+column_create Users tags COLUMN_VECTOR Tags
+
+load --table Users
+[
+{"_key": "alice",  "tags": ["long (24byte > 0 is long)"]}
+]
+
+dump

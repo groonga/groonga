@@ -2820,11 +2820,12 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
         GRN_TEXT_PUTC(ctx, bulk, '[');
         if (v < ve) {
           for (;;) {
-            grn_obj key;
             if (range->header.type != GRN_TABLE_NO_KEY) {
+              grn_obj key;
               GRN_OBJ_INIT(&key, GRN_BULK, 0, range->header.domain);
               grn_table_get_key2(ctx, range, *v, &key);
               grn_text_otoj(ctx, bulk, &key, NULL);
+              GRN_OBJ_FIN(ctx, &key);
             } else {
               grn_text_lltoa(ctx, bulk, *v);
             }
