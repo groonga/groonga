@@ -3858,6 +3858,10 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
       break;
     }
   }
+  if (!obj) {
+    res = NULL;
+    goto exit;
+  }
   {
     size_t len;
     const char *sp, *se = name + name_size;
