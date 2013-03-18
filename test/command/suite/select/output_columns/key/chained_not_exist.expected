@@ -6,5 +6,5 @@ load --table Sites
 ["http://groonga.org/"]
 ]
 [[0,0.0,0.0],1]
-select Sites --filter true --output_columns '_score.garbage'
+select Sites --filter true --output_columns '_key.garbage'
 [[0,0.0,0.0],[[[1],[],[]]]]

@@ -3832,9 +3832,11 @@ static grn_obj *
 grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int name_size)
 {
   grn_accessor *res = NULL, **rp = NULL, **rp0 = NULL;
+  grn_bool is_chained = GRN_FALSE;
   if (!obj) { return NULL; }
   GRN_API_ENTER;
   if (obj->header.type == GRN_ACCESSOR) {
+    is_chained = GRN_TRUE;
     for (rp0 = (grn_accessor **)&obj; *rp0; rp0 = &(*rp0)->next) {
       res = *rp0;
     }
@@ -4095,7 +4097,9 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
         } else {
           if (!obj->header.domain) {
             // ERR(GRN_INVALID_ARGUMENT, "no such column: <%s>", name);
-            grn_obj_close(ctx, (grn_obj *)res);
+            if (!is_chained) {
+              grn_obj_close(ctx, (grn_obj *)res);
+            }
             res = NULL;
             goto exit;
           }
@@ -4122,7 +4126,15 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
         }
       }
     }
-    if (sp != se) { grn_obj_get_accessor(ctx, (grn_obj *)res, sp, se - sp); }
+    if (sp != se) {
+      if (!grn_obj_get_accessor(ctx, (grn_obj *)res, sp, se - sp)) {
+        if (!is_chained) {
+          grn_obj_close(ctx, (grn_obj *)res);
+          res = NULL;
+          goto exit;
+        }
+      }
+    }
   }
   if (rp0) { *rp0 = res; }
  exit :

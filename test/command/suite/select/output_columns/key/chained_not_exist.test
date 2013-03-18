@@ -1,0 +1,9 @@
+table_create Sites TABLE_HASH_KEY ShortText
+
+load --table Sites
+[
+["_key"],
+["http://groonga.org/"]
+]
+
+select Sites --filter true --output_columns '_key.garbage'
