@@ -3471,26 +3471,33 @@ run_query(grn_ctx *ctx, grn_obj *table,
           int nargs, grn_obj **args,
           grn_obj *res, grn_operator op)
 {
+  grn_rc rc = GRN_SUCCESS;
   grn_obj *match_columns_string;
-  grn_obj *query_string;
+  grn_obj *query;
+  grn_obj *query_expander_name = NULL;
   grn_obj *match_columns = NULL;
   grn_obj *condition = NULL;
   grn_obj *dummy_variable;
 
-  /* TODO: support expansion and flags by parameters */
-  if (nargs != 2) {
+  /* TODO: support flags by parameters */
+  if (!(2 <= nargs && nargs <= 3)) {
     ERR(GRN_INVALID_ARGUMENT,
-        "wrong number of arguments (%d for 2)", nargs);
+        "wrong number of arguments (%d for 2..3)", nargs);
+    rc = ctx->rc;
     goto exit;
   }
 
   match_columns_string = args[0];
-  query_string = args[1];
+  query = args[1];
+  if (nargs > 2) {
+    query_expander_name = args[2];
+  }
 
   if (match_columns_string->header.domain == GRN_DB_TEXT &&
       GRN_TEXT_LEN(match_columns_string) > 0) {
     GRN_EXPR_CREATE_FOR_QUERY(ctx, table, match_columns, dummy_variable);
     if (!match_columns) {
+      rc = ctx->rc;
       goto exit;
     }
 
@@ -3500,27 +3507,53 @@ run_query(grn_ctx *ctx, grn_obj *table,
                    NULL, GRN_OP_MATCH, GRN_OP_AND,
                    GRN_EXPR_SYNTAX_SCRIPT);
     if (ctx->rc != GRN_SUCCESS) {
+      rc = ctx->rc;
       goto exit;
     }
   }
 
-  if (query_string->header.domain == GRN_DB_TEXT &&
-      GRN_TEXT_LEN(query_string) > 0) {
+  if (query->header.domain == GRN_DB_TEXT && GRN_TEXT_LEN(query) > 0) {
+    const char *query_string;
+    unsigned int query_string_len;
+    grn_obj expanded_query;
     grn_expr_flags flags =
       GRN_EXPR_SYNTAX_QUERY|GRN_EXPR_ALLOW_PRAGMA|GRN_EXPR_ALLOW_COLUMN;
 
     GRN_EXPR_CREATE_FOR_QUERY(ctx, table, condition, dummy_variable);
     if (!condition) {
+      rc = ctx->rc;
       goto exit;
     }
+
+    query_string = GRN_TEXT_VALUE(query);
+    query_string_len = GRN_TEXT_LEN(query);
+
+    GRN_TEXT_INIT(&expanded_query, 0);
+    if (query_expander_name &&
+        query_expander_name->header.domain == GRN_DB_TEXT &&
+        GRN_TEXT_LEN(query_expander_name) > 0) {
+      rc = expand_query(ctx, query_string, query_string_len, flags,
+                        GRN_TEXT_VALUE(query_expander_name),
+                        GRN_TEXT_LEN(query_expander_name),
+                        &expanded_query);
+      if (rc != GRN_SUCCESS) {
+        GRN_OBJ_FIN(ctx, &expanded_query);
+        goto exit;
+      }
+      query_string = GRN_TEXT_VALUE(&expanded_query);
+      query_string_len = GRN_TEXT_LEN(&expanded_query);
+    }
     grn_expr_parse(ctx, condition,
-                   GRN_TEXT_VALUE(query_string),
-                   GRN_TEXT_LEN(query_string),
+                   query_string,
+                   query_string_len,
                    match_columns, GRN_OP_MATCH, GRN_OP_AND, flags);
-    if (ctx->rc != GRN_SUCCESS) {
+    rc = ctx->rc;
+    GRN_OBJ_FIN(ctx, &expanded_query);
+    if (rc != GRN_SUCCESS) {
       goto exit;
     }
     grn_table_select(ctx, table, condition, res, op);
+    rc = ctx->rc;
   }
 
 exit:
@@ -3531,7 +3564,7 @@ exit:
     grn_obj_unlink(ctx, condition);
   }
 
-  return ctx->rc;
+  return rc;
 }
 
 static grn_obj *
