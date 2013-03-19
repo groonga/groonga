@@ -258,6 +258,8 @@ grn_tiny_bitmap_put_and_set(grn_tiny_bitmap *bitmap, grn_id bit_id,
 
 /* grn_io_array */
 
+#define GRN_ARRAY_MAX (GRN_ID_MAX - 8)
+
 inline static void *
 grn_io_array_at_inline(grn_ctx *ctx, grn_io *io, uint32_t segment_id,
                        uint32_t offset, int flags)
@@ -333,7 +335,7 @@ grn_table_queue_init(grn_ctx *ctx, grn_table_queue *queue)
 {
   queue->head = 0;
   queue->tail = 0;
-  queue->cap = GRN_ID_MAX;
+  queue->cap = GRN_ARRAY_MAX;
   grn_table_queue_lock_init(ctx, queue);
 }
 
@@ -930,7 +932,7 @@ grn_array_cursor_open(grn_ctx *ctx, grn_array *array, grn_id min, grn_id max,
   } else {
     cursor->curr_rec += cursor->dir * offset;
   }
-  cursor->rest = (limit < 0) ? GRN_ID_MAX : limit;
+  cursor->rest = (limit < 0) ? GRN_ARRAY_MAX : limit;
   return cursor;
 }
 
@@ -1054,6 +1056,7 @@ grn_array_add_to_io_array(grn_ctx *ctx, grn_array *array, void **value)
       return GRN_ID_NIL;
     }
   } else {
+    if (header->curr_rec >= GRN_ARRAY_MAX) { return GRN_ID_NIL; }
     id = header->curr_rec + 1;
     if (!grn_io_array_bit_on(ctx, array->io, GRN_ARRAY_BITMAP_SEGMENT, id)) {
       return GRN_ID_NIL;
@@ -2582,7 +2585,7 @@ grn_hash_cursor_open(grn_ctx *ctx, grn_hash *hash,
     c->curr_rec += c->dir * offset;
   }
 exit :
-  c->rest = (limit < 0) ? GRN_ID_MAX : limit;
+  c->rest = (limit < 0) ? GRN_ARRAY_MAX : limit;
   return c;
 }
 
