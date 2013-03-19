@@ -39,7 +39,7 @@ Execution example::
   #     ]
   #   ]
   # ]
-  select Entries --match_columns content --query "mroonga" --query_expansion Thesaurus.synonym
+  select Entries --match_columns content --query "mroonga" --query_expander Thesaurus.synonym
   # [
   #   [
   #     0, 
