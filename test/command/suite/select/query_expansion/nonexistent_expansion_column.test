@@ -1,8 +1,0 @@
-table_create Memos TABLE_NO_KEY
-column_create Memos content COLUMN_SCALAR ShortText
-
-table_create Lexicon TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram
-column_create Lexicon diary_content COLUMN_INDEX|WITH_POSITION Memos content
-
-select --table Memos --query_expansion Nonexistent.nonexistent \
-  --match_columns content --query rroonga

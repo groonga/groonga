@@ -456,7 +456,7 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
            int drilldown_offset, int drilldown_limit,
            const char *cache, unsigned int cache_len,
            const char *match_escalation_threshold, unsigned int match_escalation_threshold_len,
-           const char *query_expansion, unsigned int query_expansion_len,
+           const char *query_expander, unsigned int query_expander_len,
            const char *query_flags, unsigned int query_flags_len,
            grn_obj *condition_ptr, grn_obj *match_columns_ptr)
 {
@@ -472,7 +472,7 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
     filter_len + 1 + scorer_len + 1 + sortby_len + 1 + output_columns_len + 1 +
     drilldown_len + 1 + drilldown_sortby_len + 1 +
     drilldown_output_columns_len + 1 + match_escalation_threshold_len + 1 +
-    query_expansion_len + 1 + query_flags_len + 1 +
+    query_expander_len + 1 + query_flags_len + 1 +
     sizeof(grn_content_type) + sizeof(int) * 4;
   long long int threshold, original_threshold = 0;
   if (cache_key_size <= GRN_TABLE_MAX_KEY_SIZE) {
@@ -500,8 +500,8 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
     cp += drilldown_output_columns_len; *cp++ = '\0';
     memcpy(cp, match_escalation_threshold, match_escalation_threshold_len);
     cp += match_escalation_threshold_len; *cp++ = '\0';
-    memcpy(cp, query_expansion, query_expansion_len);
-    cp += query_expansion_len; *cp++ = '\0';
+    memcpy(cp, query_expander, query_expander_len);
+    cp += query_expander_len; *cp++ = '\0';
     memcpy(cp, query_flags, query_flags_len);
     cp += query_flags_len; *cp++ = '\0';
     memcpy(cp, &output_type, sizeof(grn_content_type)); cp += sizeof(grn_content_type);
@@ -547,8 +547,8 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
         }
         if (query_len) {
           grn_expr_flags flags;
-          grn_obj query_expansion_buf;
-          GRN_TEXT_INIT(&query_expansion_buf, 0);
+          grn_obj query_expander_buf;
+          GRN_TEXT_INIT(&query_expander_buf, 0);
           flags = GRN_EXPR_SYNTAX_QUERY;
           if (query_flags_len) {
             flags |= grn_parse_query_flags(ctx, query_flags, query_flags_len);
@@ -558,20 +558,20 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
               goto exit;
             }
           }
-          if (query_expansion_len) {
+          if (query_expander_len) {
             if (expand_query(ctx, query, query_len, flags,
-                             query_expansion, query_expansion_len,
-                             &query_expansion_buf) == GRN_SUCCESS) {
-              query = GRN_TEXT_VALUE(&query_expansion_buf);
-              query_len = GRN_TEXT_LEN(&query_expansion_buf);
+                             query_expander, query_expander_len,
+                             &query_expander_buf) == GRN_SUCCESS) {
+              query = GRN_TEXT_VALUE(&query_expander_buf);
+              query_len = GRN_TEXT_LEN(&query_expander_buf);
             } else {
-              GRN_OBJ_FIN(ctx, &query_expansion_buf);
+              GRN_OBJ_FIN(ctx, &query_expander_buf);
               goto exit;
             }
           }
           grn_expr_parse(ctx, cond, query, query_len,
                          match_columns_, GRN_OP_MATCH, GRN_OP_AND, flags);
-          GRN_OBJ_FIN(ctx, &query_expansion_buf);
+          GRN_OBJ_FIN(ctx, &query_expander_buf);
           if (!ctx->rc && filter_len) {
             grn_expr_parse(ctx, cond, filter, filter_len,
                            match_columns_, GRN_OP_MATCH, GRN_OP_AND,
@@ -794,6 +794,11 @@ proc_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     ? grn_atoi(GRN_TEXT_VALUE(VAR(13)), GRN_BULK_CURR(VAR(13)), NULL)
     : DEFAULT_DRILLDOWN_LIMIT;
   grn_obj *condition_ptr, *match_columns_ptr;
+  grn_obj *query_expansion = VAR(16);
+  grn_obj *query_expander = VAR(18);
+  if (GRN_TEXT_LEN(query_expander) == 0 && GRN_TEXT_LEN(query_expansion) > 0) {
+    query_expander = query_expansion;
+  }
   if (!output_columns_len) {
     output_columns = DEFAULT_OUTPUT_COLUMNS;
     output_columns_len = strlen(DEFAULT_OUTPUT_COLUMNS);
@@ -820,7 +825,7 @@ proc_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                  drilldown_offset, drilldown_limit,
                  GRN_TEXT_VALUE(VAR(14)), GRN_TEXT_LEN(VAR(14)),
                  GRN_TEXT_VALUE(VAR(15)), GRN_TEXT_LEN(VAR(15)),
-                 GRN_TEXT_VALUE(VAR(16)), GRN_TEXT_LEN(VAR(16)),
+                 GRN_TEXT_VALUE(query_expander), GRN_TEXT_LEN(query_expander),
                  GRN_TEXT_VALUE(VAR(17)), GRN_TEXT_LEN(VAR(17)),
                  condition_ptr, match_columns_ptr)) {
   }
@@ -3834,7 +3839,7 @@ selector_sub_filter(grn_ctx *ctx, grn_obj *table, grn_obj *index,
 void
 grn_db_init_builtin_query(grn_ctx *ctx)
 {
-  grn_expr_var vars[19];
+  grn_expr_var vars[20];
 
   DEF_VAR(vars[0], "name");
   DEF_VAR(vars[1], "table");
@@ -3853,10 +3858,12 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[14], "drilldown_limit");
   DEF_VAR(vars[15], "cache");
   DEF_VAR(vars[16], "match_escalation_threshold");
+  /* Deprecated. Use query_expander instead. */
   DEF_VAR(vars[17], "query_expansion");
   DEF_VAR(vars[18], "query_flags");
-  DEF_COMMAND("define_selector", proc_define_selector, 19, vars);
-  DEF_COMMAND("select", proc_select, 18, vars + 1);
+  DEF_VAR(vars[19], "query_expander");
+  DEF_COMMAND("define_selector", proc_define_selector, 20, vars);
+  DEF_COMMAND("select", proc_select, 19, vars + 1);
 
   DEF_VAR(vars[0], "values");
   DEF_VAR(vars[1], "table");
