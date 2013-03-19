@@ -41,7 +41,6 @@ Syntax
          [match_escalation_threshold=0]
          [query_expansion=null]
          [query_flags=ALLOW_PRAGMA|ALLOW_COLUMN|ALLOW_UPDATE|ALLOW_LEADING_NOT|NONE]
-         [query_expander=null]
 
 Usage
 -----
@@ -452,7 +451,95 @@ more searches aren't executed. And no records are matched.
 ``query_expansion``
 """""""""""""""""""
 
-Deprecated. Use :ref:`query-expander` instead.
+It's for query expansion. Query expansion substitutes specific words
+to another words in query. Nomally, it's used for synonym search.
+
+It specifies a column that is used to substitute ``query`` parameter
+value. The format of this parameter value is
+"``${TABLE}.${COLUMN}``". For example, "``Terms.synonym``" specifies
+``synonym`` column in ``Terms`` table.
+
+Table for query expansion is called "substitution table". Substitution
+table's key must be ``ShortText``. So array table (``TABLE_NO_KEY``)
+can't be used for query expansion. Because array table doesn't have
+key.
+
+Column for query expansion is called "substitution
+column". Substitution column's value type must be
+``ShortText``. Column type must be vector (``COLUMN_VECTOR``).
+
+Query expansion substitutes key of substitution table in query with
+values in substitution column. If a word in ``query`` is a key of
+substitution table, the word is substituted with substitution column
+value that is associated with the key. Substition isn't performed
+recursively. It means that substitution target words in substituted
+query aren't substituted.
+
+Here is a sample substitution table to show a simple
+``query_expansion`` usage example.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/query_expansion_substitution_table.log
+.. table_create Thesaurus TABLE_PAT_KEY|KEY_NORMALIZE ShortText
+.. column_create Thesaurus synonym COLUMN_VECTOR ShortText
+.. load --table Thesaurus
+.. [
+.. {"_key": "mroonga", "synonym": ["mroonga", "tritonn", "groonga mysql"]},
+.. {"_key": "groonga", "synonym": ["groonga", "senna"]}
+.. ]
+
+``Thesaurus`` substitution table has two synonyms, ``"mroonga"`` and
+``"groonga"``. If an user searches with ``"mroonga"``, groonga
+searches with ``"((mroonga) OR (tritonn) OR (groonga mysql))"``. If an
+user searches with ``"groonga"``, groonga searchs with ``"((groonga)
+OR (senna))"``. Nomrally, it's good idea that substitution table has
+``KEY_NORMALIZE`` flag. If the flag is used, substitute target word is
+matched in case insensitive manner.
+
+Note that those synonym values include the key value such as
+``"mroonga"`` and ``"groonga"``. It's recommended that you include the
+key value. If you don't include key value, substituted value doesn't
+include the original substitute target value. Normally, including the
+original value is better search result. If you have a word that you
+don't want to be searched, you should not include the original
+word. For example, you can implement "stop words" by an empty vector
+value.
+
+Here is a simple ``query_expansion`` usage example.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/query_expansion_substitute.log
+.. select Entries --match_columns content --query "mroonga"
+.. select Entries --match_columns content --query "mroonga" --query_expansion Thesaurus.synonym
+.. select Entries --match_columns content --query "((mroonga) OR (tritonn) OR (groonga mysql))"
+
+The first ``select`` command doesn't use query expansion. So a record
+that has ``"tritonn"`` isn't found. The second ``select`` command uses
+query expansion. So a record that has ``"tritonn"`` is found. The
+third ``select`` command doesn't use query expansion but it is same as
+the second ``select`` command. The third one uses expanded query.
+
+Each substitute value can contain any :doc:`/reference/grn_expr/query_syntax` syntax
+such as ``(...)`` and ``OR``. You can use complex substitution by
+using those syntax.
+
+Here is a complex substitution usage example that uses query syntax.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/query_expansion_complex.log
+.. load --table Thesaurus
+.. [
+.. {"_key": "popular", "synonym": ["popular", "n_likes:>=10"]}
+.. ]
+.. select Entries --match_columns content --query "popular" --query_expansion Thesaurus.synonym
+
+The ``load`` command registers a new synonym ``"popular"``. It is
+substituted with ``((popular) OR (n_likes:>=10))``. The substituted
+query means that "popular" is containing the word "popular" or 10 or
+more liked entries.
+
+The ``select`` command outputs records that ``n_likes`` column value
+is equal to or more than ``10`` from ``Entries`` table.
 
 .. _query-flags:
 
@@ -545,102 +632,6 @@ column is equal to ``Groonga``. Because ``ALLOW_COLUMN`` flag is not
 specified.
 
 See also :doc:`/reference/grn_expr/query_syntax`.
-
-.. _query-expander:
-
-``query_expander``
-""""""""""""""""""
-
-It's for query expansion. Query expansion substitutes specific words
-to another words in query. Nomally, it's used for synonym search.
-
-It specifies a column that is used to substitute ``query`` parameter
-value. The format of this parameter value is
-"``${TABLE}.${COLUMN}``". For example, "``Terms.synonym``" specifies
-``synonym`` column in ``Terms`` table.
-
-Table for query expansion is called "substitution table". Substitution
-table's key must be ``ShortText``. So array table (``TABLE_NO_KEY``)
-can't be used for query expansion. Because array table doesn't have
-key.
-
-Column for query expansion is called "substitution
-column". Substitution column's value type must be
-``ShortText``. Column type must be vector (``COLUMN_VECTOR``).
-
-Query expansion substitutes key of substitution table in query with
-values in substitution column. If a word in ``query`` is a key of
-substitution table, the word is substituted with substitution column
-value that is associated with the key. Substition isn't performed
-recursively. It means that substitution target words in substituted
-query aren't substituted.
-
-Here is a sample substitution table to show a simple
-``query_expander`` usage example.
-
-.. groonga-command
-.. include:: ../../example/reference/commands/select/query_expander_substitution_table.log
-.. table_create Thesaurus TABLE_PAT_KEY|KEY_NORMALIZE ShortText
-.. column_create Thesaurus synonym COLUMN_VECTOR ShortText
-.. load --table Thesaurus
-.. [
-.. {"_key": "mroonga", "synonym": ["mroonga", "tritonn", "groonga mysql"]},
-.. {"_key": "groonga", "synonym": ["groonga", "senna"]}
-.. ]
-
-``Thesaurus`` substitution table has two synonyms, ``"mroonga"`` and
-``"groonga"``. If an user searches with ``"mroonga"``, groonga
-searches with ``"((mroonga) OR (tritonn) OR (groonga mysql))"``. If an
-user searches with ``"groonga"``, groonga searchs with ``"((groonga)
-OR (senna))"``. Nomrally, it's good idea that substitution table has
-``KEY_NORMALIZE`` flag. If the flag is used, substitute target word is
-matched in case insensitive manner.
-
-Note that those synonym values include the key value such as
-``"mroonga"`` and ``"groonga"``. It's recommended that you include the
-key value. If you don't include key value, substituted value doesn't
-include the original substitute target value. Normally, including the
-original value is better search result. If you have a word that you
-don't want to be searched, you should not include the original
-word. For example, you can implement "stop words" by an empty vector
-value.
-
-Here is a simple ``query_expander`` usage example.
-
-.. groonga-command
-.. include:: ../../example/reference/commands/select/query_expander_substitute.log
-.. select Entries --match_columns content --query "mroonga"
-.. select Entries --match_columns content --query "mroonga" --query_expander Thesaurus.synonym
-.. select Entries --match_columns content --query "((mroonga) OR (tritonn) OR (groonga mysql))"
-
-The first ``select`` command doesn't use query expansion. So a record
-that has ``"tritonn"`` isn't found. The second ``select`` command uses
-query expansion. So a record that has ``"tritonn"`` is found. The
-third ``select`` command doesn't use query expansion but it is same as
-the second ``select`` command. The third one uses expanded query.
-
-Each substitute value can contain any :doc:`/reference/grn_expr/query_syntax` syntax
-such as ``(...)`` and ``OR``. You can use complex substitution by
-using those syntax.
-
-Here is a complex substitution usage example that uses query syntax.
-
-.. groonga-command
-.. include:: ../../example/reference/commands/select/query_expander_complex.log
-.. load --table Thesaurus
-.. [
-.. {"_key": "popular", "synonym": ["popular", "n_likes:>=10"]}
-.. ]
-.. select Entries --match_columns content --query "popular" --query_expander Thesaurus.synonym
-
-The ``load`` command registers a new synonym ``"popular"``. It is
-substituted with ``((popular) OR (n_likes:>=10))``. The substituted
-query means that "popular" is containing the word "popular" or 10 or
-more liked entries.
-
-The ``select`` command outputs records that ``n_likes`` column value
-is equal to or more than ``10`` from ``Entries`` table.
-
 
 Output related parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^

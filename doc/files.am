@@ -38,9 +38,9 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/select/paging.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/query_and.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/query_equal.log \
-	$(top_srcdir)/doc/source/example/reference/commands/select/query_expander_complex.log \
-	$(top_srcdir)/doc/source/example/reference/commands/select/query_expander_substitute.log \
-	$(top_srcdir)/doc/source/example/reference/commands/select/query_expander_substitution_table.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/query_expansion_complex.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/query_expansion_substitute.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/query_expansion_substitution_table.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/query_flags_allow_column.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/query_flags_allow_leading_not.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/query_flags_allow_update.log \
@@ -472,9 +472,9 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/select/paging.log \
 	source/example/reference/commands/select/query_and.log \
 	source/example/reference/commands/select/query_equal.log \
-	source/example/reference/commands/select/query_expander_complex.log \
-	source/example/reference/commands/select/query_expander_substitute.log \
-	source/example/reference/commands/select/query_expander_substitution_table.log \
+	source/example/reference/commands/select/query_expansion_complex.log \
+	source/example/reference/commands/select/query_expansion_substitute.log \
+	source/example/reference/commands/select/query_expansion_substitution_table.log \
 	source/example/reference/commands/select/query_flags_allow_column.log \
 	source/example/reference/commands/select/query_flags_allow_leading_not.log \
 	source/example/reference/commands/select/query_flags_allow_update.log \
