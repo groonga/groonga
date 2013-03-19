@@ -1,6 +1,6 @@
 Execution example::
 
-  select Doc --match_columns body --query "シークァーサー" --query_expansion Synonym.body
+  select Doc --match_columns body --query "シークァーサー" --query_expander Synonym.body
   # [
   #   [
   #     0, 
@@ -39,7 +39,7 @@ Execution example::
   #     ]
   #   ]
   # ]
-  select Doc --match_columns body --query "シークヮーサー" --query_expansion Synonym.body
+  select Doc --match_columns body --query "シークヮーサー" --query_expander Synonym.body
   # [
   #   [
   #     0, 
