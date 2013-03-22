@@ -5,6 +5,57 @@
 News
 ====
 
+.. _release-3-0-2:
+
+Release 3.0.2 - 2013/03/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* Supported two or more indexes for a table key.
+  This change affects to eliminate potential crash case when loading a new key
+  to two or more indexed key.
+* Supported binary operations such as ``X + Y``, ``X - Y``, ``X * Y``, ``X / Y``,
+  ``X % Y``, ``X >> Y``, ``X << Y``, ``X | Y``, ``X ^ Y``, ``X & Y`` and ``X >>> Y``.
+* Added english documentation for ``load`` command.
+* Supported binary assign operations such as ``X += Y``, ``X -= Y``, ``X *= Y``,
+  ``X /= Y``, ``X %= Y``, ``X <<= Y``, ``X >>= Y``, ``X >>>= Y``, ``X &= Y``,
+  ``X |= Y`` and ``X ^= Y``.
+* Supported unary operations such as ``-X``.
+* Supported complex string concatination in ``--output_columns``.
+  For example, you can use a query such as ``--output_columns '"<" + title + ">"'``.
+* Added the information of the repository of groonga to development page.
+* Added ``sub_filter()`` function.
+* Supported query expander in ``query()`` function.
+  This change supports the query such as
+  ``query("MATCH_COLUMNS", "QUERY", "QueryExpanderTSV")``.
+* Renamed ``--query_expansion`` to ``--query_expander``.
+  ``--query_expansion`` is regarded as deprecated.
+
+Fixes
+^^^^^
+
+* Fixed a bug that ``snippet_html(XXX), XXX`` fails with "stack error".
+  This bug affects a query such as ``--output_columns 'snippet_html(title), content'``.
+  [Groonga-talk (no subject)] [Reported by Hendro Wibowo]
+* Fixed a typo about install documentation. [Reported by hino]
+* Fixed a bug that Travis-CI setup script fails.
+  [groonga-dev,01248] [Reported by ongaeshi]
+* Fixed a memory leak.
+  This bug affects the case which satisfy following three conditions.
+  Column is a reference column, Column is a vector column and
+  Reference key size is 25 byte or lager.
+* Fixed a crash bug by ``--output_columns _score.GARBAGE``.
+  This affects the case if GARBAGE does not exist.
+
+Thanks
+^^^^^^
+
+* Hendro Wibowo
+* hino
+* ongaeshi
+
 .. _release-3-0-1:
 
 Release 3.0.1 - 2013/02/28
