@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-22 13:37\n"
+"POT-Creation-Date: 2013-03-22 10:52\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -2023,6 +2023,45 @@ msgid ""
 msgstr ""
 "パッケージの署名に必要な秘密鍵のパスフレーズについては リリース担当者向けの秘"
 "密鍵を復号したテキストの1行目に記載してあります。"
+
+# 072a48c84af14f499ed0a991c740dac7
+#: ../../../source/contribution/development/release.txt:664
+msgid "バージョンを明示的に指定してドキュメントを生成したい"
+msgstr ""
+
+# aa45cd5e3f004f8e9726918967b16cce
+#: ../../../source/contribution/development/release.txt:666
+msgid ""
+"リリース後にドキュメントの一部を差し替えたい場合、特に何も指定しないと生成し"
+"たHTMLに埋め込まれるバージョンが「v3.0.1-xxxxxドキュメント」となってしまうこ"
+"とがあります。gitでのコミット時ハッシュの一部が使われるためです。"
+msgstr ""
+
+# 4ad9208c77ae424ab0ca79abab0f341b
+#: ../../../source/contribution/development/release.txt:668
+msgid ""
+"これを回避するには、以下のようにDOCUMENT_VERSIONやDOCUMENT_VERSION_FULLを明示"
+"的に指定します。::"
+msgstr ""
+
+# e7cad227571246439ec899d8bed75819
+#: ../../../source/contribution/development/repository.txt:6
+msgid "Repository"
+msgstr ""
+
+# d1273affb1324f02a8a6700bf18eab13
+#: ../../../source/contribution/development/repository.txt:8
+msgid ""
+"There is `the repository of groonga on GitHub <https://github.com/groonga/"
+"groonga>`_. If you want to check-out groonga, type the below command::"
+msgstr ""
+
+# 2cdf2f634a8d4666a98718840a700eb5
+#: ../../../source/contribution/development/repository.txt:12
+msgid ""
+"There is `the list of related projects of groonga <https://github.com/"
+"groonga>`_ (grntest, fluent-plugin-groonga and so on)."
+msgstr ""
 
 # 4b083450fc7e4d48988c29b8ba6ca536
 #: ../../../source/contribution/development/test.txt:6

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-28 14:48\n"
+"POT-Creation-Date: 2013-03-22 10:52\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -2739,7 +2739,7 @@ msgstr "クエリ拡張"
 # 65708eed06814c8cb4762ebbf2b71099
 #: ../../../source/tutorial/query_expansion.txt:11
 msgid ""
-"groongaでは、 :doc:`/reference/commands/select` コマンドにquery_expansionパラ"
+"groongaでは、 :doc:`/reference/commands/select` コマンドにquery_expanderパラ"
 "メータを指定することによって、ユーザが指定した検索文字列を適宜拡張することが"
 "可能です。"
 msgstr ""
@@ -2807,21 +2807,16 @@ msgstr ""
 #: ../../../source/tutorial/query_expansion.txt:48
 msgid ""
 "それでは実際に、準備した置換テーブルを使ってみましょう。まずは、"
-"query_expansionパラメータを指定せずにselectコマンドを使って検索してみます。"
+"query_expanderパラメータを指定せずにselectコマンドを使って検索してみます。"
 msgstr ""
-"それでは実際に、準備した置換テーブルを使ってみましょう。まずは、"
-"query_expansionパラメータを指定せずにselectコマンドを使って検索してみます。"
 
 # 273ddfb584184666b573b24ccbbd2c14
 #: ../../../source/tutorial/query_expansion.txt:55
 msgid ""
 "指定された文字列に完全に一致するレコードのみがそれぞれヒットします。次に、"
-"query_expansionパラメータに、準備したSynonymテーブルのbodyカラムを指定してみ"
-"ましょう。"
+"query_expanderパラメータに、準備したSynonymテーブルのbodyカラムを指定してみま"
+"しょう。"
 msgstr ""
-"指定された文字列に完全に一致するレコードのみがそれぞれヒットします。次に、"
-"query_expansionパラメータに、準備したSynonymテーブルのbodyカラムを指定してみ"
-"ましょう。"
 
 # 7fe6353e4e2f4980be538303cc39de1b
 #: ../../../source/tutorial/query_expansion.txt:62
