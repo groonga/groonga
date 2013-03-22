@@ -1,0 +1,68 @@
+.. -*- rst -*-
+
+.. highlightlang:: none
+
+.. groonga-command
+.. database: functions_sub_filter
+
+sub_filter
+==========
+
+Summary
+-------
+
+TODO
+
+``sub_filter`` can be used in only ``--filter`` in :doc:`/reference/commands/select`.
+
+Syntax
+------
+
+``sub_filter`` requires two arguments - ``match_column`` and ``query_string``.
+
+::
+
+  sub_filter(match_column, query_string)
+
+
+Usage
+-----
+
+Here are a schema definition and sample data to show usage.
+
+Sample schema:
+
+TODO:
+
+Sample data:
+
+TODO:
+
+Parameters
+----------
+
+There are two required parameter, ``match_column`` and ``query_string``.
+
+``match_column``
+^^^^^^^^^^^^^^^^
+
+  It specifies ``match_column`` equivalent parameter.
+
+See :ref:`select-match-columns` about match_column.
+
+``query_string``
+^^^^^^^^^^^^^^^^
+
+  It specifies ``query`` equivalent parameter.
+
+See :ref:`select-query` about query string.
+
+Return value
+------------
+
+``sub_filter`` returns a value of boolean (true or false).
+
+See also
+--------
+
+* :doc:`/reference/commands/select`
