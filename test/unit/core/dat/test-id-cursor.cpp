@@ -235,6 +235,34 @@ namespace test_dat_id_cursor
     cppcut_assert_equal(false, cursor.next().is_valid());
   }
 
+  void test_offset_after_delete(void) {
+    grn::dat::Trie trie;
+    create_trie(&trie);
+
+    for (grn::dat::UInt32 i = 1; i <= trie.max_key_id(); i += 2) {
+      trie.remove(i);
+    }
+
+    grn::dat::IdCursor cursor;
+
+    cursor.open(trie, 0, 0, 1);
+    for (grn::dat::UInt32 i = 4; i <= trie.max_key_id(); i += 2) {
+      const grn::dat::Key &key = cursor.next();
+      cppcut_assert_equal(true, key.is_valid());
+    }
+    cppcut_assert_equal(false, cursor.next().is_valid());
+
+    cursor.open(trie, 0, 0, 2);
+    for (grn::dat::UInt32 i = 6; i <= trie.max_key_id(); i += 2) {
+      const grn::dat::Key &key = cursor.next();
+      cppcut_assert_equal(true, key.is_valid());
+    }
+    cppcut_assert_equal(false, cursor.next().is_valid());
+
+    cursor.open(trie, 0, 0, trie.max_key_id() / 2);
+    cppcut_assert_equal(false, cursor.next().is_valid());
+  }
+
   void test_limit(void)
   {
     grn::dat::Trie trie;
@@ -269,6 +297,38 @@ namespace test_dat_id_cursor
     cppcut_assert_equal(false, cursor.next().is_valid());
 
     cursor.open(trie, 2, 5, 0, 0);
+    cppcut_assert_equal(false, cursor.next().is_valid());
+  }
+
+  void test_limit_after_delete(void) {
+    grn::dat::Trie trie;
+    create_trie(&trie);
+
+    for (grn::dat::UInt32 i = 1; i <= trie.max_key_id(); i += 2) {
+      trie.remove(i);
+    }
+
+    grn::dat::IdCursor cursor;
+
+    cursor.open(trie, 0, 0, 0, trie.max_key_id() / 2);
+    for (grn::dat::UInt32 i = 2; i <= trie.max_key_id(); i += 2) {
+      const grn::dat::Key &key = cursor.next();
+      cppcut_assert_equal(true, key.is_valid());
+    }
+    cppcut_assert_equal(false, cursor.next().is_valid());
+
+    cursor.open(trie, 0, 0, 0, 1);
+    for (grn::dat::UInt32 i = 2; i <= 2; i += 2) {
+      const grn::dat::Key &key = cursor.next();
+      cppcut_assert_equal(true, key.is_valid());
+    }
+    cppcut_assert_equal(false, cursor.next().is_valid());
+
+    cursor.open(trie, 0, 0, 0, 3);
+    for (grn::dat::UInt32 i = 2; i <= (2 + 4); i += 2) {
+      const grn::dat::Key &key = cursor.next();
+      cppcut_assert_equal(true, key.is_valid());
+    }
     cppcut_assert_equal(false, cursor.next().is_valid());
   }
 

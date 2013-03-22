@@ -66,6 +66,7 @@ class GRN_DAT_API IdCursor : public Cursor {
 
   UInt32 cur_;
   UInt32 end_;
+  UInt32 count_;
 
   IdCursor(const Trie &trie, UInt32 offset, UInt32 limit, UInt32 flags);
 

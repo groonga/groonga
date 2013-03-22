@@ -30,7 +30,8 @@ IdCursor::IdCursor()
       limit_(MAX_UINT32),
       flags_(ID_RANGE_CURSOR),
       cur_(INVALID_KEY_ID),
-      end_(INVALID_KEY_ID) {}
+      end_(INVALID_KEY_ID),
+      count_(0) {}
 
 IdCursor::~IdCursor() {}
 
@@ -78,6 +79,9 @@ void IdCursor::close() {
 }
 
 const Key &IdCursor::next() {
+  if (count_ >= limit_) {
+    return Key::invalid_key();
+  }
   while (cur_ != end_) {
     const Key &key = trie_->ith_key(cur_);
     if ((flags_ & ASCENDING_CURSOR) == ASCENDING_CURSOR) {
@@ -86,6 +90,7 @@ const Key &IdCursor::next() {
       --cur_;
     }
     if (key.is_valid()) {
+      ++count_;
       return key;
     }
   }
@@ -93,13 +98,16 @@ const Key &IdCursor::next() {
 }
 
 IdCursor::IdCursor(const Trie &trie,
-                   UInt32 offset, UInt32 limit, UInt32 flags)
+                   UInt32 offset,
+                   UInt32 limit,
+                   UInt32 flags)
     : trie_(&trie),
       offset_(offset),
       limit_(limit),
       flags_(flags),
       cur_(INVALID_KEY_ID),
-      end_(INVALID_KEY_ID) {}
+      end_(INVALID_KEY_ID),
+      count_(0) {}
 
 UInt32 IdCursor::fix_flags(UInt32 flags) const {
   const UInt32 cursor_type = flags & CURSOR_TYPE_MASK;
@@ -135,30 +143,29 @@ void IdCursor::init(UInt32 min_id, UInt32 max_id) {
     --max_id;
   }
 
-  if (max_id < min_id) {
+  if ((max_id < min_id) || ((max_id - min_id) < offset_)) {
     return;
   }
 
-  UInt32 diff = max_id - min_id;
-  if (diff < offset_) {
-    return;
-  }
-  diff -= offset_;
-
-  const UInt32 temp_limit = (limit_ > diff) ? (diff + 1) : limit_;
   if ((flags_ & ASCENDING_CURSOR) == ASCENDING_CURSOR) {
-    min_id += offset_;
-    max_id = min_id + temp_limit;
-    if (min_id < max_id) {
-      cur_ = min_id;
-      end_ = max_id;
+    cur_ = min_id;
+    end_ = max_id + 1;
+    for (UInt32 i = 0; (i < offset_) && (cur_ != end_); ++i) {
+      while (cur_ != end_) {
+        if (trie_->ith_key(cur_++).is_valid()) {
+          break;
+        }
+      }
     }
   } else {
-    max_id -= offset_;
-    min_id = max_id - temp_limit;
-    if (min_id < max_id) {
-      cur_ = max_id;
-      end_ = min_id;
+    cur_ = max_id;
+    end_ = min_id - 1;
+    for (UInt32 i = 0; (i < offset_) && (cur_ != end_); ++i) {
+      while (cur_ != end_) {
+        if (trie_->ith_key(cur_--).is_valid()) {
+          break;
+        }
+      }
     }
   }
 }
@@ -170,6 +177,7 @@ void IdCursor::swap(IdCursor *cursor) {
   std::swap(flags_, cursor->flags_);
   std::swap(cur_, cursor->cur_);
   std::swap(end_, cursor->end_);
+  std::swap(count_, cursor->count_);
 }
 
 }  // namespace dat
