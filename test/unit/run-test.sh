@@ -88,7 +88,7 @@ case `uname` in
 esac
 
 tmpfs=/run/shm
-if test -e $tmpfs; then
+if test -d $tmpfs -a -w $tmpfs; then
     rm -rf "$BASE_DIR/tmp"
     ln -s $tmpfs "$BASE_DIR/tmp"
 fi
