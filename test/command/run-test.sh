@@ -128,7 +128,7 @@ if test "$have_targets" != "true"; then
     grntest_options=("${grntest_options[@]}" "${BASE_DIR}/suite")
 fi
 
-tmpfs=/dev/shm
+tmpfs=/run/shm
 if test -e $tmpfs; then
     rm -rf "tmp"
     ln -s $tmpfs "tmp"
