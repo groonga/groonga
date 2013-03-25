@@ -17,12 +17,13 @@ Improvements
   This change affects to eliminate potential crash case when loading a new key
   to two or more indexed key.
 * Supported binary operations such as ``X + Y``, ``X - Y``, ``X * Y``, ``X / Y``,
-  ``X % Y``, ``X >> Y``, ``X << Y``, ``X | Y``, ``X ^ Y``, ``X & Y`` and ``X >>> Y``.
+  ``X % Y``, ``X >> Y``, ``X << Y``, ``X | Y``, ``X ^ Y``, ``X & Y`` and ``X >>> Y``
+  for Int8, UInt8, Int16, UInt16 and UInt64.
 * Added english documentation for ``load`` command.
 * Supported binary assign operations such as ``X += Y``, ``X -= Y``, ``X *= Y``,
   ``X /= Y``, ``X %= Y``, ``X <<= Y``, ``X >>= Y``, ``X >>>= Y``, ``X &= Y``,
-  ``X |= Y`` and ``X ^= Y``.
-* Supported unary operations such as ``-X``.
+  ``X |= Y`` and ``X ^= Y`` for Int8, UInt8, Int16, UInt16 and UInt64.
+* Supported unary operations such as ``-X`` for Int8, UInt8, Int16, UInt16 and UInt64.
 * Supported complex string concatination in ``--output_columns``.
   For example, you can use a query such as ``--output_columns '"<" + title + ">"'``.
 * Added the information of the repository of groonga to development page.
