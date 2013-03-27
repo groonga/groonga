@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-22 13:25\n"
+"POT-Creation-Date: 2013-03-27 19:20\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -183,6 +183,10 @@ msgstr ""
 #: ../../../source/example/reference/functions/snippet_html/usage_basic.log:1
 #: ../../../source/example/reference/functions/snippet_html/usage_setup.log:1
 #: ../../../source/example/reference/functions/snippet_html/usage_string_literal.log:1
+#: ../../../source/example/reference/functions/sub_filter/usage_setup_data.log:1
+#: ../../../source/example/reference/functions/sub_filter/usage_setup_schema.log:1
+#: ../../../source/example/reference/functions/sub_filter/usage_with_sub_filter.log:1
+#: ../../../source/example/reference/functions/sub_filter/usage_without_sub_filter.log:1
 #: ../../../source/example/reference/grn_expr/query_syntax/setup.log:1
 #: ../../../source/example/reference/grn_expr/query_syntax/simple_equal.log:1
 #: ../../../source/example/reference/grn_expr/query_syntax/simple_full_text_search.log:1
@@ -557,6 +561,7 @@ msgstr ""
 #: ../../../source/reference/functions/geo_distance.txt:13
 #: ../../../source/reference/functions/query.txt:12
 #: ../../../source/reference/functions/snippet_html.txt:16
+#: ../../../source/reference/functions/sub_filter.txt:12
 #: ../../../source/reference/normalizers.txt:12
 #: ../../../source/reference/query_expanders/tsv.txt:9
 #: ../../../source/reference/tables.txt:9
@@ -814,6 +819,7 @@ msgstr ""
 #: ../../../source/reference/commands/table_create.txt:280
 #: ../../../source/reference/functions/query.txt:133
 #: ../../../source/reference/functions/snippet_html.txt:118
+#: ../../../source/reference/functions/sub_filter.txt:122
 #: ../../../source/reference/grn_expr.txt:57
 #: ../../../source/reference/normalizers.txt:144
 #: ../../../source/reference/query_expanders/tsv.txt:151
@@ -2575,6 +2581,7 @@ msgstr ""
 #: ../../../source/reference/functions/geo_distance.txt:18
 #: ../../../source/reference/functions/query.txt:26
 #: ../../../source/reference/functions/snippet_html.txt:27
+#: ../../../source/reference/functions/sub_filter.txt:19
 msgid "Syntax"
 msgstr "Syntax"
 
@@ -2603,6 +2610,7 @@ msgstr ""
 #: ../../../source/reference/functions/geo_distance.txt:31
 #: ../../../source/reference/functions/query.txt:36
 #: ../../../source/reference/functions/snippet_html.txt:37
+#: ../../../source/reference/functions/sub_filter.txt:29
 #: ../../../source/reference/output.txt:18
 #: ../../../source/reference/query_expanders/tsv.txt:28
 msgid "Usage"
@@ -2638,6 +2646,7 @@ msgstr ""
 #: ../../../source/reference/commands/truncate.txt:44
 #: ../../../source/reference/functions/geo_distance.txt:146
 #: ../../../source/reference/functions/query.txt:103
+#: ../../../source/reference/functions/sub_filter.txt:98
 msgid "Parameters"
 msgstr "Parameters"
 
@@ -2703,6 +2712,7 @@ msgstr ""
 #: ../../../source/reference/functions/geo_distance.txt:293
 #: ../../../source/reference/functions/query.txt:122
 #: ../../../source/reference/functions/snippet_html.txt:93
+#: ../../../source/reference/functions/sub_filter.txt:117
 msgid "Return value"
 msgstr "Return value"
 
@@ -3759,6 +3769,7 @@ msgstr ""
 #: ../../../source/reference/commands/select.txt:52
 #: ../../../source/reference/functions/query.txt:38
 #: ../../../source/reference/functions/snippet_html.txt:39
+#: ../../../source/reference/functions/sub_filter.txt:31
 #: ../../../source/reference/grn_expr/query_syntax.txt:32
 #: ../../../source/reference/grn_expr/script_syntax.txt:28
 msgid "Here are a schema definition and sample data to show usage."
@@ -9254,12 +9265,14 @@ msgstr ""
 # 3a8233a365154ae693896a4c5becc3e3
 # cb222ca16b7545e580558c441d3e9349
 #: ../../../source/reference/functions/query.txt:40
+#: ../../../source/reference/functions/sub_filter.txt:33
 msgid "Sample schema:"
 msgstr ""
 
 # 3a8233a365154ae693896a4c5becc3e3
 # cb222ca16b7545e580558c441d3e9349
 #: ../../../source/reference/functions/query.txt:57
+#: ../../../source/reference/functions/sub_filter.txt:50
 msgid "Sample data:"
 msgstr ""
 
@@ -9307,6 +9320,7 @@ msgstr ""
 
 # 8294898fb52244968e09f77b9ccf5c7d
 #: ../../../source/reference/functions/query.txt:105
+#: ../../../source/reference/functions/sub_filter.txt:100
 msgid ""
 "There are two required parameter, ``match_column`` and ``query_string``."
 msgstr ""
@@ -9314,31 +9328,37 @@ msgstr ""
 # 2b63fc4bbf0b42ffb8aeea95677d334d
 # ebd40d159c0a44e29915935d1ef42b74
 #: ../../../source/reference/functions/query.txt:108
+#: ../../../source/reference/functions/sub_filter.txt:103
 msgid "``match_column``"
 msgstr ""
 
 # 4f898cad7c974baa8a5ae1ceefcb9319
 #: ../../../source/reference/functions/query.txt:110
+#: ../../../source/reference/functions/sub_filter.txt:105
 msgid "It specifies ``match_column`` equivalent parameter."
 msgstr ""
 
 # 55b2aa7325224c6784752c6b80b775d7
 #: ../../../source/reference/functions/query.txt:112
+#: ../../../source/reference/functions/sub_filter.txt:107
 msgid "See :ref:`select-match-columns` about match_column."
 msgstr ""
 
 # 72217ef1d842418ab8c29d7974f9168e
 #: ../../../source/reference/functions/query.txt:115
+#: ../../../source/reference/functions/sub_filter.txt:110
 msgid "``query_string``"
 msgstr ""
 
 # e65d717fd4e048b9aa59953679feeef6
 #: ../../../source/reference/functions/query.txt:117
+#: ../../../source/reference/functions/sub_filter.txt:112
 msgid "It specifies ``query`` equivalent parameter."
 msgstr ""
 
 # 537bc2aba7a94f3bb6d19cdb8144ddb3
 #: ../../../source/reference/functions/query.txt:119
+#: ../../../source/reference/functions/sub_filter.txt:114
 msgid "See :ref:`select-query` about query string."
 msgstr ""
 
@@ -9361,6 +9381,7 @@ msgstr ""
 # 73ec2c3dc21241d5b0b795816605eeb2
 #: ../../../source/reference/functions/query.txt:135
 #: ../../../source/reference/functions/snippet_html.txt:120
+#: ../../../source/reference/functions/sub_filter.txt:124
 msgid ":doc:`/reference/commands/select`"
 msgstr ""
 
@@ -9550,6 +9571,90 @@ msgstr ""
 # 76f138a3a1594f8e9366bda6adf8b568
 #: ../../../source/reference/functions/snippet_html.txt:115
 msgid "Support options by object literal."
+msgstr ""
+
+# 6414bcd1b5094eda9c2fe22f83183755
+# e8d4d9add48b4cbd941c6eb1f6377566
+# ceeb45cb2b5042b998a38d790093fd65
+#: ../../../source/reference/functions/sub_filter.txt:9
+msgid "sub_filter"
+msgstr ""
+
+# 23a8895f3c50420288733270b88adcd7
+#: ../../../source/reference/functions/sub_filter.txt:14
+msgid "``sub_filter`` evaluates ``query_string`` in ``match_column`` context."
+msgstr ""
+
+# e69485a4441244be9c634bee7f664546
+#: ../../../source/reference/functions/sub_filter.txt:16
+msgid ""
+"``sub_filter`` can be used in only ``--filter`` in :doc:`/reference/commands/"
+"select`."
+msgstr ""
+
+# 23a8895f3c50420288733270b88adcd7
+#: ../../../source/reference/functions/sub_filter.txt:21
+msgid ""
+"``sub_filter`` requires two arguments - ``match_column`` and "
+"``query_string``."
+msgstr ""
+
+# f87bfbc6e5d7463fa8828d4408a9aeb0
+#: ../../../source/reference/functions/sub_filter.txt:68
+msgid ""
+"Here is the simple usage of ``sub_filter`` function which extracts the blog "
+"entry"
+msgstr ""
+
+# 7e6ebdb56fac42d5a5825e3666ae0470
+#: ../../../source/reference/functions/sub_filter.txt:69
+msgid "user 'A' commented out."
+msgstr ""
+
+# a7a0328448a1429aab0e3f0bfa12dc6c
+#: ../../../source/reference/functions/sub_filter.txt:76
+msgid ""
+"When executing above query, not only \"groonga's blog\", but also "
+"\"mroonga's blog\". This is not what you want because user \"A\" does not "
+"mention \"groonga\" to \"mroonga's blog\"."
+msgstr ""
+
+# bbcf3a45eada478590831b7e2b697abb
+#: ../../../source/reference/functions/sub_filter.txt:79
+msgid "Without sub_filter, it means that following conditions are met."
+msgstr ""
+
+# 50736f47032443399f17a8ca0b70c64e
+#: ../../../source/reference/functions/sub_filter.txt:81
+msgid "There is at least one record that user \"A\" commented out."
+msgstr ""
+
+# 610356ca3cfd47529f560101b3f8ec80
+#: ../../../source/reference/functions/sub_filter.txt:82
+msgid "There is at least one record that mentioned about \"groonga\"."
+msgstr ""
+
+# 1a5f16329b6b4456b80ee9d81110bee7
+#: ../../../source/reference/functions/sub_filter.txt:89
+msgid ""
+"On the other hand, executing above query returns the intended result. "
+"Because the arguments of sub_filter is evaluated in comments column's "
+"context."
+msgstr ""
+
+# 5402d137c07a4dffad0d34be21399caf
+#: ../../../source/reference/functions/sub_filter.txt:92
+msgid "It means that sub_filter requires following condition is met."
+msgstr ""
+
+# 5f74c1b631c943809e3d57e274d6be93
+#: ../../../source/reference/functions/sub_filter.txt:94
+msgid "There are the records that user \"A\" mentions about \"groonga\"."
+msgstr ""
+
+# fcbf78cf17f3499d9ec9b2f577c32991
+#: ../../../source/reference/functions/sub_filter.txt:119
+msgid "``sub_filter`` returns a value of boolean (true or false)."
 msgstr ""
 
 # 7f8eea1a258e46249d8d77bf964675ab
@@ -13840,4 +13945,3 @@ msgstr ""
 #: ../../../source/reference/types.txt:129
 msgid "Object型はv1.2でサポートされます。"
 msgstr "Object型はv1.2でサポートされます。"
-
