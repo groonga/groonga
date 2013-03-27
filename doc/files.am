@@ -374,6 +374,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/functions/query.txt \
 	$(top_srcdir)/doc/source/reference/functions/rand.txt \
 	$(top_srcdir)/doc/source/reference/functions/snippet_html.txt \
+	$(top_srcdir)/doc/source/reference/functions/sub_filter.txt \
 	$(top_srcdir)/doc/source/reference/grn_expr.txt \
 	$(top_srcdir)/doc/source/reference/grn_expr/query_syntax.txt \
 	$(top_srcdir)/doc/source/reference/grn_expr/script_syntax.txt \
@@ -808,6 +809,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/functions/query.txt \
 	source/reference/functions/rand.txt \
 	source/reference/functions/snippet_html.txt \
+	source/reference/functions/sub_filter.txt \
 	source/reference/grn_expr.txt \
 	source/reference/grn_expr/query_syntax.txt \
 	source/reference/grn_expr/script_syntax.txt \
@@ -1032,6 +1034,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/functions/query.txt \
 	html/_sources/reference/functions/rand.txt \
 	html/_sources/reference/functions/snippet_html.txt \
+	html/_sources/reference/functions/sub_filter.txt \
 	html/_sources/reference/grn_expr.txt \
 	html/_sources/reference/grn_expr/query_syntax.txt \
 	html/_sources/reference/grn_expr/script_syntax.txt \
@@ -1189,6 +1192,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/functions/query.html \
 	html/reference/functions/rand.html \
 	html/reference/functions/snippet_html.html \
+	html/reference/functions/sub_filter.html \
 	html/reference/grn_expr.html \
 	html/reference/grn_expr/query_syntax.html \
 	html/reference/grn_expr/script_syntax.html \
