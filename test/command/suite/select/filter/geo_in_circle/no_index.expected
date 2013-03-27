@@ -1,0 +1,5 @@
+column_remove Locations shop
+[[0,0.0,0.0],true]
+select Shops --sortby '+_score, +name'   --output_columns 'name, _score, location'   --filter 'geo_in_circle(location, "128429532x503148672", 3000)'   --scorer '_score = geo_distance(location, "128429532x503148672") * 1000 * 1000'
+[[[-22,0.0,0.0],"geo_in_circle(): index for <Shops.location> is missing"],[]]
+#|e| geo_in_circle(): index for <Shops.location> is missing

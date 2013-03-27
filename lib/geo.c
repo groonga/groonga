@@ -760,25 +760,37 @@ grn_selector_geo_in_circle(grn_ctx *ctx, grn_obj *table, grn_obj *index,
 {
   grn_geo_approximate_type type = GRN_GEO_APPROXIMATE_RECTANGLE;
 
-  switch (nargs) {
-  case 5 :
-    if (grn_geo_resolve_approximate_type(ctx, args[4], &type) != GRN_SUCCESS) {
-      break;
-    }
-    /* fallthru */
-  case 4 :
-    {
-      grn_obj *center_point, *distance;
-      center_point = args[2];
-      distance = args[3];
-      grn_geo_select_in_circle(ctx, index, center_point, distance, type, res, op);
-    }
-    break;
-  default :
+  if (!(nargs == 4 || nargs == 5)) {
     ERR(GRN_INVALID_ARGUMENT,
         "geo_in_circle(): requires 3 or 4 arguments but was <%d> arguments",
         nargs - 1);
-    break;
+    return ctx->rc;
+  }
+
+  if (!index) {
+    grn_obj *point_column;
+    char column_name[GRN_TABLE_MAX_KEY_SIZE];
+    int column_name_size;
+    point_column = args[1];
+    column_name_size = grn_obj_name(ctx, point_column,
+                                    column_name, GRN_TABLE_MAX_KEY_SIZE);
+    ERR(GRN_INVALID_ARGUMENT,
+        "geo_in_circle(): index for <%.*s> is missing",
+        column_name_size, column_name);
+    return ctx->rc;
+  }
+
+  if (nargs == 5) {
+    if (grn_geo_resolve_approximate_type(ctx, args[4], &type) != GRN_SUCCESS) {
+      return ctx->rc;
+    }
+  }
+
+  {
+    grn_obj *center_point, *distance;
+    center_point = args[2];
+    distance = args[3];
+    grn_geo_select_in_circle(ctx, index, center_point, distance, type, res, op);
   }
 
   return ctx->rc;
