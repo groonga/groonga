@@ -89,6 +89,10 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/functions/snippet_html/usage_basic.log \
 	$(top_srcdir)/doc/source/example/reference/functions/snippet_html/usage_setup.log \
 	$(top_srcdir)/doc/source/example/reference/functions/snippet_html/usage_string_literal.log \
+	$(top_srcdir)/doc/source/example/reference/functions/sub_filter/usage_setup_data.log \
+	$(top_srcdir)/doc/source/example/reference/functions/sub_filter/usage_setup_schema.log \
+	$(top_srcdir)/doc/source/example/reference/functions/sub_filter/usage_with_sub_filter.log \
+	$(top_srcdir)/doc/source/example/reference/functions/sub_filter/usage_without_sub_filter.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/setup.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/simple_equal.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/simple_full_text_search.log \
@@ -524,6 +528,10 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/functions/snippet_html/usage_basic.log \
 	source/example/reference/functions/snippet_html/usage_setup.log \
 	source/example/reference/functions/snippet_html/usage_string_literal.log \
+	source/example/reference/functions/sub_filter/usage_setup_data.log \
+	source/example/reference/functions/sub_filter/usage_setup_schema.log \
+	source/example/reference/functions/sub_filter/usage_with_sub_filter.log \
+	source/example/reference/functions/sub_filter/usage_without_sub_filter.log \
 	source/example/reference/grn_expr/query_syntax/setup.log \
 	source/example/reference/grn_expr/query_syntax/simple_equal.log \
 	source/example/reference/grn_expr/query_syntax/simple_full_text_search.log \

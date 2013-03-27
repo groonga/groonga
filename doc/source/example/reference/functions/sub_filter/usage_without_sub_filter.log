@@ -1,0 +1,4 @@
+Execution example::
+
+  select Blog --output_columns _key \
+    --filter "comments.name @ \"A\" && comments.content @ \"groonga\""
