@@ -1,6 +1,6 @@
 Execution example::
 
-  select Blog --output_columns _key \
+  select Blog --output_columns _key --filter 'sub_filter(comments, "name @ \\"A\\" && content @ \\"groonga\\"")'
   # [
   #   [
   #     0, 
@@ -10,7 +10,7 @@ Execution example::
   #   [
   #     [
   #       [
-  #         2
+  #         1
   #       ], 
   #       [
   #         [
@@ -20,11 +20,7 @@ Execution example::
   #       ], 
   #       [
   #         "groonga's blog"
-  #       ], 
-  #       [
-  #         "mroonga's blog"
   #       ]
   #     ]
   #   ]
   # ]
-    --filter 'sub_filter(comments, "name @ \\"A\\" && content @ \\"groonga\\"")'
