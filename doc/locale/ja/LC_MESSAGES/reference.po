@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-29 14:01\n"
+"POT-Creation-Date: 2013-03-29 18:10\n"
 "PO-Revision-Date: 2013-03-01 10:00+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -143,33 +143,42 @@ msgstr ""
 #: ../../../source/example/reference/grn_expr/query_syntax/simple_phrase_search_with_explicit_match_column.log:1
 #: ../../../source/example/reference/grn_expr/query_syntax/simple_prefix_search.log:1
 #: ../../../source/example/reference/grn_expr/query_syntax/simple_suffix_search.log:1
+#: ../../../source/example/reference/grn_expr/script_syntax/simple_addition_assignment_operator.log:1
 #: ../../../source/example/reference/grn_expr/script_syntax/simple_addition_operator.log:1
+#: ../../../source/example/reference/grn_expr/script_syntax/simple_and_assignment_operator.log:1
 #: ../../../source/example/reference/grn_expr/script_syntax/simple_bitwise_and_operator.log:1
 #: ../../../source/example/reference/grn_expr/script_syntax/simple_bitwise_not_operator.log:1
 #: ../../../source/example/reference/grn_expr/script_syntax/simple_bitwise_or_operator.log:1
 #: ../../../source/example/reference/grn_expr/script_syntax/simple_bitwise_xor_operator.log:1
 #: ../../../source/example/reference/grn_expr/script_syntax/simple_control_syntax_ternary_operator.log:1
+#: ../../../source/example/reference/grn_expr/script_syntax/simple_division_assignment_operator.log:1
 #: ../../../source/example/reference/grn_expr/script_syntax/simple_division_operator_quotient.log:1
 #: ../../../source/example/reference/grn_expr/script_syntax/simple_division_operator_remainder.log:1
 #: ../../../source/example/reference/grn_expr/script_syntax/simple_equal_operator.log:1
 #: ../../../source/example/reference/grn_expr/script_syntax/simple_function.log:1
 #: ../../../source/example/reference/grn_expr/script_syntax/simple_grouping.log:1
+#: ../../../source/example/reference/grn_expr/script_syntax/simple_left_shift_assignment_operator.log:1
 #: ../../../source/example/reference/grn_expr/script_syntax/simple_left_shift_operator.log:1
 #: ../../../source/example/reference/grn_expr/script_syntax/simple_logical_and_operator.log:1
 #: ../../../source/example/reference/grn_expr/script_syntax/simple_logical_but_operator.log:1
 #: ../../../source/example/reference/grn_expr/script_syntax/simple_logical_not_operator.log:1
 #: ../../../source/example/reference/grn_expr/script_syntax/simple_logical_or_operator.log:1
 #: ../../../source/example/reference/grn_expr/script_syntax/simple_match_operator.log:1
+#: ../../../source/example/reference/grn_expr/script_syntax/simple_modulo_assignment_operator.log:1
+#: ../../../source/example/reference/grn_expr/script_syntax/simple_multiplication_assignment_operator.log:1
 #: ../../../source/example/reference/grn_expr/script_syntax/simple_multiplication_operator.log:1
 #: ../../../source/example/reference/grn_expr/script_syntax/simple_near_search_operator.log:1
 #: ../../../source/example/reference/grn_expr/script_syntax/simple_not_equal_operator.log:1
+#: ../../../source/example/reference/grn_expr/script_syntax/simple_or_assignment_operator.log:1
 #: ../../../source/example/reference/grn_expr/script_syntax/simple_prefix_search_operator.log:1
 #: ../../../source/example/reference/grn_expr/script_syntax/simple_signed_right_shift_operator.log:1
 #: ../../../source/example/reference/grn_expr/script_syntax/simple_similar_search_operator.log:1
+#: ../../../source/example/reference/grn_expr/script_syntax/simple_subtraction_assignment_operator.log:1
 #: ../../../source/example/reference/grn_expr/script_syntax/simple_subtraction_operator.log:1
 #: ../../../source/example/reference/grn_expr/script_syntax/simple_suffix_search_operator.log:1
 #: ../../../source/example/reference/grn_expr/script_syntax/simple_term_extract_operator.log:1
 #: ../../../source/example/reference/grn_expr/script_syntax/simple_unsigned_right_shift_operator.log:1
+#: ../../../source/example/reference/grn_expr/script_syntax/simple_xor_assignment_operator.log:1
 #: ../../../source/example/reference/indexing-data.log:1
 #: ../../../source/example/reference/indexing-offline-index-construction.log:1
 #: ../../../source/example/reference/indexing-online-index-construction.log:1
@@ -9093,8 +9102,8 @@ msgid ""
 "search by keyword 'alice' without using ``--match_column`` and ``--query`` "
 "arguments in ``--filter``."
 msgstr ""
-"``--match_columns`` と ``--query`` 引数を使わずにキーワード'alice'を"
-" ``query`` 関数を使って検索する簡単な使用例です。"
+"``--match_columns`` と ``--query`` 引数を使わずにキーワード'alice'を "
+"``query`` 関数を使って検索する簡単な使用例です。"
 
 # 32b12c050af74edea32f741089c51954
 #: ../../../source/reference/functions/query.txt:82
@@ -9193,12 +9202,14 @@ msgid ""
 "There is one plugin bundled in official release - :doc:`/reference/"
 "query_expanders/tsv`."
 msgstr ""
-":doc:`/reference/query_expanders/tsv` は公式リリースに含まれているプラグインの1つです。"
+":doc:`/reference/query_expanders/tsv` は公式リリースに含まれているプラグイン"
+"の1つです。"
 
 # bde897b0ca22430eb927c3f3d85d70d2
 #: ../../../source/reference/functions/query.txt:140
 msgid "See :doc:`/reference/query_expanders/tsv` about details."
-msgstr "詳細については :doc:`/reference/query_expanders/tsv` を参照してください。"
+msgstr ""
+"詳細については :doc:`/reference/query_expanders/tsv` を参照してください。"
 
 # e65822292e9740be92577d8d7dd0ea6a
 #: ../../../source/reference/functions/query.txt:144
@@ -9211,7 +9222,8 @@ msgid ""
 "It specifies the substitution table and substitution column name by "
 "following format such as ``${TABLE}.${COLUMN}`` for query expansion."
 msgstr ""
-"置換テーブルとカラム名を ``${TABLE}.${COLUMN}`` という書式でクエリ展開のために指定します。"
+"置換テーブルとカラム名を ``${TABLE}.${COLUMN}`` という書式でクエリ展開のため"
+"に指定します。"
 
 # 39447ee4e33c494fbf94bbc90a69e720
 #: ../../../source/reference/functions/query.txt:149
@@ -9871,11 +9883,11 @@ msgstr ""
 #: ../../../source/reference/grn_expr/script_syntax.txt:181
 #: ../../../source/reference/grn_expr/script_syntax.txt:201
 #: ../../../source/reference/grn_expr/script_syntax.txt:226
-#: ../../../source/reference/grn_expr/script_syntax.txt:605
-#: ../../../source/reference/grn_expr/script_syntax.txt:635
-#: ../../../source/reference/grn_expr/script_syntax.txt:721
-#: ../../../source/reference/grn_expr/script_syntax.txt:761
-#: ../../../source/reference/grn_expr/script_syntax.txt:787
+#: ../../../source/reference/grn_expr/script_syntax.txt:789
+#: ../../../source/reference/grn_expr/script_syntax.txt:819
+#: ../../../source/reference/grn_expr/script_syntax.txt:905
+#: ../../../source/reference/grn_expr/script_syntax.txt:945
+#: ../../../source/reference/grn_expr/script_syntax.txt:971
 msgid "Here is a simple exmaple."
 msgstr "以下は簡単な使用例です。"
 
@@ -9883,7 +9895,7 @@ msgstr "以下は簡単な使用例です。"
 # 466caa2be8f748eea022f947f2561c05
 #: ../../../source/reference/grn_expr/query_syntax.txt:132
 #: ../../../source/reference/grn_expr/query_syntax.txt:207
-#: ../../../source/reference/grn_expr/script_syntax.txt:611
+#: ../../../source/reference/grn_expr/script_syntax.txt:795
 msgid ""
 "The expression matches records that contain a word ``fast`` in ``content`` "
 "column value."
@@ -10079,7 +10091,7 @@ msgstr ""
 
 # a23c11e916ea47c1a6b4166fe5ae80ba
 #: ../../../source/reference/grn_expr/query_syntax.txt:248
-#: ../../../source/reference/grn_expr/script_syntax.txt:624
+#: ../../../source/reference/grn_expr/script_syntax.txt:808
 msgid ""
 "You can use fast prefix search against a column. The column must be indexed "
 "and index table must be patricia trie table (``TABLE_PAT_KEY``) or double "
@@ -10095,7 +10107,7 @@ msgstr ""
 
 # f351c7f537da419fb4aa896b6f4af069
 #: ../../../source/reference/grn_expr/query_syntax.txt:255
-#: ../../../source/reference/grn_expr/script_syntax.txt:631
+#: ../../../source/reference/grn_expr/script_syntax.txt:815
 msgid ""
 "Prefix search can be used with other table types but it causes all records "
 "scan. It's not problem for small records but it spends more time for large "
@@ -10129,7 +10141,7 @@ msgstr ""
 # a3ee4c7c60684f028e00cfc4d6d5412d
 # f5388f9835bf43e282ebdcdf81150910
 #: ../../../source/reference/grn_expr/query_syntax.txt:268
-#: ../../../source/reference/grn_expr/script_syntax.txt:641
+#: ../../../source/reference/grn_expr/script_syntax.txt:825
 msgid ""
 "The expression matches records that contain a word that starts with ``Goo`` "
 "in ``_key`` pseudo column value. ``Good-bye Senna`` and ``Good-bye Tritonn`` "
@@ -10160,7 +10172,7 @@ msgstr ""
 # 86c722c48213495c9d6d62d3329c5baf
 # abf09e113195417db92968f6e14794a2
 #: ../../../source/reference/grn_expr/query_syntax.txt:282
-#: ../../../source/reference/grn_expr/script_syntax.txt:655
+#: ../../../source/reference/grn_expr/script_syntax.txt:839
 msgid ""
 "You can use fast suffix search against a column. The column must be indexed "
 "and index table must be patricia trie table (``TABLE_PAT_KEY``) with "
@@ -10185,7 +10197,7 @@ msgstr ""
 # a4136b5c86504b8cbc0a6be9f704a081
 # be23eea770094e29ae208b035921ab24
 #: ../../../source/reference/grn_expr/query_syntax.txt:295
-#: ../../../source/reference/grn_expr/script_syntax.txt:668
+#: ../../../source/reference/grn_expr/script_syntax.txt:852
 msgid ""
 "Fast suffix search can be used only for non-ASCII characters such as "
 "hiragana in Japanese. You cannot use fast suffix search for ASCII character."
@@ -10195,7 +10207,7 @@ msgstr ""
 
 # 01c733b4c53a418c895b92b88fa5fd52
 #: ../../../source/reference/grn_expr/query_syntax.txt:299
-#: ../../../source/reference/grn_expr/script_syntax.txt:672
+#: ../../../source/reference/grn_expr/script_syntax.txt:856
 msgid ""
 "Suffix search can be used with other table types or patricia trie table "
 "without ``KEY_WITH_SIS`` flag but it causes all records scan. It's not "
@@ -10209,7 +10221,7 @@ msgstr ""
 # bceb3484d0be4a08ba97613f02f8372d
 # 676d1d1f1b9e4ab887d7d01a09c68d75
 #: ../../../source/reference/grn_expr/query_syntax.txt:307
-#: ../../../source/reference/grn_expr/script_syntax.txt:677
+#: ../../../source/reference/grn_expr/script_syntax.txt:861
 msgid ""
 "Here is a simple exmaple. It uses fast suffix search for hiragana in "
 "Japanese that is one of non-ASCII characters."
@@ -10220,7 +10232,7 @@ msgstr ""
 # a3ee4c7c60684f028e00cfc4d6d5412d
 # f5388f9835bf43e282ebdcdf81150910
 #: ../../../source/reference/grn_expr/query_syntax.txt:325
-#: ../../../source/reference/grn_expr/script_syntax.txt:695
+#: ../../../source/reference/grn_expr/script_syntax.txt:879
 msgid ""
 "The expression matches records that have value that ends with ``んが`` in "
 "``content`` column value. ``ぐるんが`` and ``むるんが`` are matched with the "
@@ -11553,7 +11565,6 @@ msgstr "小なり演算子"
 #: ../../../source/reference/grn_expr/script_syntax.txt:568
 #: ../../../source/reference/grn_expr/script_syntax.txt:573
 #: ../../../source/reference/grn_expr/script_syntax.txt:578
-#: ../../../source/reference/grn_expr/script_syntax.txt:583
 msgid "TODO: ..."
 msgstr ""
 
@@ -11577,13 +11588,405 @@ msgstr "以上演算子"
 msgid "Assignment operators"
 msgstr "代入演算子"
 
+# 137139f09a1f436e8f13e7c75841306e
+#: ../../../source/reference/grn_expr/script_syntax.txt:585
+msgid "Addition assignment operator"
+msgstr "加算代入演算子"
+
+# 61fab56d6e9c4f4d8756ed4c9af116dd
+#: ../../../source/reference/grn_expr/script_syntax.txt:587
+msgid "Its syntax is ``column1 += column2``."
+msgstr "構文は ``column += value`` です。"
+
+# f7c296f2c9c0431ba3a34a67cd2faa5e
+#: ../../../source/reference/grn_expr/script_syntax.txt:589
+msgid ""
+"The operator performs addition assginment operation on column1 by column2."
+msgstr "この演算子は ``column1`` に ``column2`` を加算代入します。"
+
+# 1be95f4f4bfa439db8988b125e857135
+#: ../../../source/reference/grn_expr/script_syntax.txt:595
+msgid ""
+"The value of ``_score`` by ``--filter`` is always 1 in this case, then "
+"performs addition assignment operation such as '_score = _score + n_likes' "
+"for each records."
+msgstr ""
+"``--filter`` による ``_score`` の値はこの場合は常に1です。その後、'_score = "
+"_score + n_likes' という加算代入演算をそれぞれのレコードへ適用します。"
+
+# c7dfc1a8f72e48159dbc1b15ef4429e6
+# 2cc4692fc9ec4eeb94c9a1bfe03396ae
+# 55ed64a52d4f4125aad2446947c174f9
+# d860d97d5c9c42298f9f2de40ba0b788
+# 6147c48e06074c0abd2712a55b6632bc
+# 70dcd94a7685405ba315ea71d6c79942
+# 368188ed04724c4c9175b38ee3350c70
+#: ../../../source/reference/grn_expr/script_syntax.txt:598
+#: ../../../source/reference/grn_expr/script_syntax.txt:617
+#: ../../../source/reference/grn_expr/script_syntax.txt:636
+#: ../../../source/reference/grn_expr/script_syntax.txt:655
+#: ../../../source/reference/grn_expr/script_syntax.txt:674
+#: ../../../source/reference/grn_expr/script_syntax.txt:693
+#: ../../../source/reference/grn_expr/script_syntax.txt:764
+msgid ""
+"For example, the value of ``_score`` about the record which stores \"Good-"
+"bye Senna\" as the ``_key`` is 3."
+msgstr ""
+"例えば、 ``_key`` として\"Good-bye Senna\"を格納しているレコードの "
+"``_score`` の値は3です。"
+
+# e350ad20dcae4e2a9c9c885eba68a050
+#: ../../../source/reference/grn_expr/script_syntax.txt:601
+msgid ""
+"So the expression ``1 + 3`` is evaluated and stored to ``_score`` column as "
+"the execution result."
+msgstr ""
+"そのため、 ``1 + 3`` という式が評価されてから ``_score`` カラムへと演算結果が"
+"保存されます。"
+
+# e102dd0b372c4d5f96aa392320b45b97
+#: ../../../source/reference/grn_expr/script_syntax.txt:604
+msgid "Subtraction assignment operator"
+msgstr "減算代入演算子"
+
+# 61fab56d6e9c4f4d8756ed4c9af116dd
+#: ../../../source/reference/grn_expr/script_syntax.txt:606
+msgid "Its syntax is ``column1 -= column2``."
+msgstr "構文は ``column1 -= column2`` です。"
+
+# f7c296f2c9c0431ba3a34a67cd2faa5e
+#: ../../../source/reference/grn_expr/script_syntax.txt:608
+msgid ""
+"The operator performs subtraction assginment operation on column1 by column2."
+msgstr "この演算子は ``column1`` から ``column2`` を減算代入します。"
+
+# 594c6902fd5f4528bdb599518e109cef
+#: ../../../source/reference/grn_expr/script_syntax.txt:614
+msgid ""
+"The value of ``_score`` by ``--filter`` is always 1 in this case, then "
+"performs subtraction assignment operation such as '_score = _score - "
+"n_likes' for each records."
+msgstr ""
+"``--filter`` による ``_score`` の値はこの場合は常に1です。その後、'_score = "
+"_score - n_likes' という減算代入演算をそれぞれのレコードへ適用します。"
+
+# 9df24de3201e4d6399e58255df01b779
+#: ../../../source/reference/grn_expr/script_syntax.txt:620
+msgid ""
+"So the expression ``1 - 3`` is evaluated and stored to ``_score`` column as "
+"the execution result."
+msgstr ""
+"そのため、 ``1 - 3`` という式が評価されてから ``_score`` カラムへと演算結果が"
+"保存されます。"
+
+# dbabae34f68848a19acc1ec3319bfc20
+#: ../../../source/reference/grn_expr/script_syntax.txt:623
+msgid "Multiplication assignment operator"
+msgstr "乗算代入演算子"
+
+# 61fab56d6e9c4f4d8756ed4c9af116dd
+#: ../../../source/reference/grn_expr/script_syntax.txt:625
+msgid "Its syntax is ``column1 *= column2``."
+msgstr "構文は ``column1 *= column2`` です。"
+
+# f7c296f2c9c0431ba3a34a67cd2faa5e
+#: ../../../source/reference/grn_expr/script_syntax.txt:627
+msgid ""
+"The operator performs multiplication assginment operation on column1 by "
+"column2."
+msgstr "この演算子は ``column1`` に ``column2`` を乗算演算する。"
+
+# b1ecc50c2d9e4a0cb8c6fd2591d1d66c
+#: ../../../source/reference/grn_expr/script_syntax.txt:633
+msgid ""
+"The value of ``_score`` by ``--filter`` is always 1 in this case, then "
+"performs subtraction assignment operation such as '_score = _score * "
+"n_likes' for each records."
+msgstr ""
+"``--filter`` による ``_score`` の値はこの場合は常に1です。その後、'_score = "
+"_score * n_likes' という乗算代入演算をそれぞれのレコードへ適用します。"
+
+# 35453f8dc0db4f9295e0565d85fe63bd
+#: ../../../source/reference/grn_expr/script_syntax.txt:639
+msgid ""
+"So the expression ``1 * 3`` is evaluated and stored to ``_score`` column as "
+"the execution result."
+msgstr ""
+"そのため、 ``1 * 3`` という式が評価されてから ``_score`` カラムへと演算結果が"
+"保存されます。"
+
+# d49d0245974c48398cf33d4381840c80
+#: ../../../source/reference/grn_expr/script_syntax.txt:642
+msgid "Division assignment operator"
+msgstr "除算代入演算子"
+
+# 61fab56d6e9c4f4d8756ed4c9af116dd
+#: ../../../source/reference/grn_expr/script_syntax.txt:644
+msgid "Its syntax is ``column1 /= column2``."
+msgstr "構文は ``column1 /= column2`` です。"
+
+# f7c296f2c9c0431ba3a34a67cd2faa5e
+#: ../../../source/reference/grn_expr/script_syntax.txt:646
+msgid ""
+"The operator performs division assginment operation on column1 by column2."
+msgstr "この演算子は ``column1`` に ``column2`` を除算代入します。"
+
+# ae1a4409077c4828833d27fe867af614
+#: ../../../source/reference/grn_expr/script_syntax.txt:652
+msgid ""
+"The value of ``_score`` by ``--filter`` is always 1 in this case, then "
+"performs subtraction assignment operation such as '_score = _score / "
+"n_likes' for each records."
+msgstr ""
+"``--filter`` による ``_score`` の値はこの場合は常に1です。その後、'_score = "
+"_score / n_likes' という除算代入演算をそれぞれのレコードへ適用します。"
+
+# 15911f644e704401824ace11f67b7ecd
+#: ../../../source/reference/grn_expr/script_syntax.txt:658
+msgid ""
+"So the expression ``1 / 3`` is evaluated and stored to ``_score`` column as "
+"the execution result."
+msgstr ""
+"そのため、 ``1 / 3`` という式が評価されてから ``_score`` カラムへと演算結果が"
+"保存されます。"
+
+# 137139f09a1f436e8f13e7c75841306e
+#: ../../../source/reference/grn_expr/script_syntax.txt:661
+msgid "Modulo assignment operator"
+msgstr "剰余代入演算子"
+
+# 61fab56d6e9c4f4d8756ed4c9af116dd
+#: ../../../source/reference/grn_expr/script_syntax.txt:663
+msgid "Its syntax is ``column1 %= column2``."
+msgstr "構文は ``column1 %= column2`` です。"
+
+# f7c296f2c9c0431ba3a34a67cd2faa5e
+#: ../../../source/reference/grn_expr/script_syntax.txt:665
+msgid ""
+"The operator performs modulo assginment operation on column1 by column2."
+msgstr "この演算子は ``column1`` に ``column2`` を剰余代入します。"
+
+# 9214a453156b4a5da8d5bcd535d3691e
+#: ../../../source/reference/grn_expr/script_syntax.txt:671
+msgid ""
+"The value of ``_score`` by ``--filter`` is always 1 in this case, then "
+"performs subtraction assignment operation such as '_score = _score % "
+"n_likes' for each records."
+msgstr ""
+"``--filter`` による ``_score`` の値はこの場合は常に1です。その後、'_score = "
+"_score % n_likes' という除算代入演算をそれぞれのレコードへ適用します。"
+
+# a0ae48221f374dd7be0af237fe08a167
+#: ../../../source/reference/grn_expr/script_syntax.txt:677
+msgid ""
+"So the expression ``1 % 3`` is evaluated and stored to ``_score`` column as "
+"the execution result."
+msgstr ""
+"そのため、 ``1 % 3`` という式が評価されてから ``_score`` カラムへと演算結果が"
+"保存されます。"
+
+# f0d4d6ad876a4068bf24ff8740091b7f
+#: ../../../source/reference/grn_expr/script_syntax.txt:680
+msgid "Bitwise left shift assignment operator"
+msgstr "左シフト代入演算子"
+
+# 52dd3f0b517e4d1c937cbb1bcffdcbbc
+#: ../../../source/reference/grn_expr/script_syntax.txt:682
+msgid "Its syntax is ``column1 <<= column2``."
+msgstr "構文は ``column1 << column2`` です。"
+
+# f7c296f2c9c0431ba3a34a67cd2faa5e
+#: ../../../source/reference/grn_expr/script_syntax.txt:684
+msgid ""
+"The operator performs left shift assginment operation on column1 by column2."
+msgstr ""
+"この演算子は ``column1`` のビットを左に ``column2`` 左ビットシフト代入演算し"
+"ます。"
+
+# 3e2266e877ba4ab0a053021d05b53573
+#: ../../../source/reference/grn_expr/script_syntax.txt:690
+msgid ""
+"The value of ``_score`` by ``--filter`` is always 1 in this case, then "
+"performs subtraction assignment operation such as '_score = _score << "
+"n_likes' for each records."
+msgstr ""
+"``--filter`` による ``_score`` の値はこの場合は常に1です。その後、'_score = "
+"_score << n_likes' という左ビットシフト代入演算をそれぞれのレコードへ適用しま"
+"す。"
+
+# e42fae74e3944659be109becc6a0e19c
+#: ../../../source/reference/grn_expr/script_syntax.txt:696
+msgid ""
+"So the expression ``1 << 3`` is evaluated and stored to ``_score`` column as "
+"the execution result."
+msgstr ""
+"そのため、 ``1 << 3`` という式が評価されてから ``_score`` カラムへと演算結果"
+"が保存されます。"
+
+# 6be4d84131ee47c79878cd836d12b592
+#: ../../../source/reference/grn_expr/script_syntax.txt:699
+msgid "Bitwise signed right shift assignment operator"
+msgstr "符号あり右シフト代入演算子"
+
+# 6253cad863bc4ea1a2ab326645e7a2b4
+#: ../../../source/reference/grn_expr/script_syntax.txt:701
+msgid "Its syntax is ``column2 >>= column2``."
+msgstr "構文は ``column1 >>= column2`` です。"
+
+# f7c296f2c9c0431ba3a34a67cd2faa5e
+#: ../../../source/reference/grn_expr/script_syntax.txt:703
+msgid ""
+"The operator performs signed right shift assginment operation on column1 by "
+"column2."
+msgstr ""
+"この演算子は ``column1`` のビットを ``column2`` 右ビットシフト代入演算しま"
+"す。"
+
+# 6be4d84131ee47c79878cd836d12b592
+#: ../../../source/reference/grn_expr/script_syntax.txt:706
+msgid "Bitwise unsigned right shift assignment operator"
+msgstr "符号なし右シフト代入演算子"
+
+# 6253cad863bc4ea1a2ab326645e7a2b4
+#: ../../../source/reference/grn_expr/script_syntax.txt:708
+msgid "Its syntax is ``column1 >>>= column2``."
+msgstr "構文は ``column1 >>>= column2`` です。"
+
+# f7c296f2c9c0431ba3a34a67cd2faa5e
+#: ../../../source/reference/grn_expr/script_syntax.txt:710
+msgid ""
+"The operator performs unsigned right shift assginment operation on column1 "
+"by column2."
+msgstr ""
+"この演算子は ``column1`` のビットを ``column2`` 符号なし右ビットシフト代入演"
+"算します。"
+
+# 38cc6f429af342498061adcf215c3347
+#: ../../../source/reference/grn_expr/script_syntax.txt:713
+msgid "Bitwise AND assignment operator"
+msgstr "ビット論理積代入演算子"
+
+# 61fab56d6e9c4f4d8756ed4c9af116dd
+#: ../../../source/reference/grn_expr/script_syntax.txt:715
+msgid "Its syntax is ``column1 &= column2``."
+msgstr "構文は ``column1 &= column2`` です。"
+
+# f7c296f2c9c0431ba3a34a67cd2faa5e
+#: ../../../source/reference/grn_expr/script_syntax.txt:717
+msgid ""
+"The operator performs bitwise AND assignment operation on column1 by column2."
+msgstr "この演算子は ``column1`` に ``column2`` をビット論理積代入演算します。"
+
+# ec04736d47a146b797980ac03df80866
+#: ../../../source/reference/grn_expr/script_syntax.txt:723
+msgid ""
+"The value of ``_score`` by ``--filter`` is always 1 in this case, then "
+"performs subtraction assignment operation such as '_score = _score & "
+"n_likes' for each records."
+msgstr ""
+"``--filter`` による ``_score`` の値はこの場合は常に1です。その後、'_score = "
+"_score & n_likes' というビット論理積代入演算をそれぞれのレコードへ適用しま"
+"す。"
+
+# 5381dea5d3e748f38636795959a53d93
+# 8db7c6ca356948a68ce8662132c51d6c
+#: ../../../source/reference/grn_expr/script_syntax.txt:726
+#: ../../../source/reference/grn_expr/script_syntax.txt:745
+msgid ""
+"For example, the value of ``_score`` about the record which stores \"Groonga"
+"\" as the ``_key`` is 10."
+msgstr ""
+"例えば、 ``_key`` として\"Groonga\"を格納しているレコードの値は10です。"
+
+# 0124849962394b0e820a1279cc20c445
+#: ../../../source/reference/grn_expr/script_syntax.txt:729
+msgid ""
+"So the expression ``1 & 10`` is evaluated and stored to ``_score`` column as "
+"the execution result."
+msgstr ""
+"そのため、 ``1 & 10`` という式が評価されてから ``_score`` カラムへと演算結果"
+"が保存されます。"
+
+# d92066aafa5d47c88e80e52d9245a917
+#: ../../../source/reference/grn_expr/script_syntax.txt:732
+msgid "Bitwise OR assignment operator"
+msgstr "ビット論理和代入演算子"
+
+# 61fab56d6e9c4f4d8756ed4c9af116dd
+#: ../../../source/reference/grn_expr/script_syntax.txt:734
+msgid "Its syntax is ``column1 |= column2``."
+msgstr "構文は ``column1 |= column2`` です。"
+
+# f7c296f2c9c0431ba3a34a67cd2faa5e
+#: ../../../source/reference/grn_expr/script_syntax.txt:736
+msgid ""
+"The operator performs bitwise OR assignment operation on column1 by column2."
+msgstr "この演算子は ``column1`` に ``column2`` をビット論理和代入演算する。"
+
+# 58276d77363e44b89ccd09a8b696f5e2
+# 19c36a384ec54451b53b3e4ba0559de6
+#: ../../../source/reference/grn_expr/script_syntax.txt:742
+msgid ""
+"The value of ``_score`` by ``--filter`` is always 1 in this case, then "
+"performs subtraction assignment operation such as '_score = _score | "
+"n_likes' for each records."
+msgstr ""
+"``--filter`` による ``_score`` の値はこの場合は常に1です。その後、'_score = "
+"_score | n_likes' というビット論理和代入演算をそれぞれのレコードへ適用しま"
+"す。"
+
+# ee319b4042924f01ad07ab62eb4608e2
+#: ../../../source/reference/grn_expr/script_syntax.txt:748
+msgid ""
+"So the expression ``1 | 10`` is evaluated and stored to ``_score`` column as "
+"the execution result."
+msgstr ""
+"そのため、 ``1 | 10`` という式が評価されてから ``_score`` カラムへと演算結果"
+"が保存されます。"
+
+# 253b80a2015b468e8f51294cae583779
+#: ../../../source/reference/grn_expr/script_syntax.txt:751
+msgid "Bitwise XOR assignment operator"
+msgstr "ビット排他的論理和代入演算子"
+
+# 61fab56d6e9c4f4d8756ed4c9af116dd
+#: ../../../source/reference/grn_expr/script_syntax.txt:753
+msgid "Its syntax is ``column1 ^= column2``."
+msgstr "構文は ``column1 ^= column2`` です。"
+
+# f7c296f2c9c0431ba3a34a67cd2faa5e
+#: ../../../source/reference/grn_expr/script_syntax.txt:755
+msgid ""
+"The operator performs bitwise XOR assginment operation on column1 by column2."
+msgstr ""
+"この演算子は ``column1`` に ``column2`` をビット排他的論理和代入演算します。"
+
+# 594c6902fd5f4528bdb599518e109cef
+#: ../../../source/reference/grn_expr/script_syntax.txt:761
+msgid ""
+"The value of ``_score`` by ``--filter`` is always 1 in this case, then "
+"performs subtraction assignment operation such as '_score = _score ^ "
+"n_likes' for each records."
+msgstr ""
+"``--filter`` による ``_score`` の値はこの場合は常に1です。その後、'_score = "
+"_score ^ n_likes' という減算代入演算をそれぞれのレコードへ適用します。"
+
+# 2190d38de2d24fe1aae0fd8140e4b31e
+#: ../../../source/reference/grn_expr/script_syntax.txt:767
+msgid ""
+"So the expression ``1 ^ 3`` is evaluated and stored to ``_score`` column as "
+"the execution result."
+msgstr ""
+"そのため、 ``1 ^ 3`` という式が評価されてから ``_score`` カラムへと演算結果が"
+"保存されます。"
+
 # 550e5bd76e56437fab6d69889c15e8b0
-#: ../../../source/reference/grn_expr/script_syntax.txt:586
+#: ../../../source/reference/grn_expr/script_syntax.txt:770
 msgid "Original operators"
 msgstr "独自の演算子"
 
 # cad4d82e3c604bb584f7fb8d4d8e98ec
-#: ../../../source/reference/grn_expr/script_syntax.txt:588
+#: ../../../source/reference/grn_expr/script_syntax.txt:772
 msgid ""
 "Script syntax adds the original binary opearators to ECMAScript syntax. They "
 "operate search specific operations. They are starts with ``@`` or ``*``."
@@ -11592,17 +11995,17 @@ msgstr ""
 "検索に特化した操作をします。演算子の最初の文字は ``@`` または ``*`` です。"
 
 # 6aa4182a97114fa5b0180d5a7a0ba48c
-#: ../../../source/reference/grn_expr/script_syntax.txt:595
+#: ../../../source/reference/grn_expr/script_syntax.txt:779
 msgid "Match operator"
 msgstr "マッチ演算子"
 
 # 61fab56d6e9c4f4d8756ed4c9af116dd
-#: ../../../source/reference/grn_expr/script_syntax.txt:597
+#: ../../../source/reference/grn_expr/script_syntax.txt:781
 msgid "Its syntax is ``column @ value``."
 msgstr "構文は ``column @ value`` です。"
 
 # 3a042474e261417b98d2fa90e31d7d58
-#: ../../../source/reference/grn_expr/script_syntax.txt:599
+#: ../../../source/reference/grn_expr/script_syntax.txt:783
 msgid ""
 "The operator searches ``value`` by inverted index of ``column``. Normally, "
 "full text search is operated but tag search can be operated. Because tag "
@@ -11613,22 +12016,22 @@ msgstr ""
 "スを使って実現しているからです。"
 
 # bbf2fc7ec5194da6a3c0819a818d32e5
-#: ../../../source/reference/grn_expr/script_syntax.txt:603
+#: ../../../source/reference/grn_expr/script_syntax.txt:787
 msgid ":doc:`query_syntax` uses this operator by default."
 msgstr ":doc:`query_syntax` はデフォルトでこの演算子を使っています。"
 
 # 3ed9557e11644100834e055fb607f7f3
-#: ../../../source/reference/grn_expr/script_syntax.txt:617
+#: ../../../source/reference/grn_expr/script_syntax.txt:801
 msgid "Prefix search operator"
 msgstr "前方一致検索演算子"
 
 # 61fab56d6e9c4f4d8756ed4c9af116dd
-#: ../../../source/reference/grn_expr/script_syntax.txt:619
+#: ../../../source/reference/grn_expr/script_syntax.txt:803
 msgid "Its syntax is ``column @^ value``."
 msgstr "構文は ``column @^ value`` です。"
 
 # 4e443cf589384fcaa91307f35fea24b4
-#: ../../../source/reference/grn_expr/script_syntax.txt:621
+#: ../../../source/reference/grn_expr/script_syntax.txt:805
 msgid ""
 "The operator does prefix search with ``value``. Prefix search searches "
 "records that contain a word that starts with ``value``."
@@ -11637,17 +12040,17 @@ msgstr ""
 "る単語を含むレコードを検索します。"
 
 # 9ce75f34143f463c86d81ed1fbdf8c4c
-#: ../../../source/reference/grn_expr/script_syntax.txt:648
+#: ../../../source/reference/grn_expr/script_syntax.txt:832
 msgid "Suffix search operator"
 msgstr "後方一致検索演算子"
 
 # 61fab56d6e9c4f4d8756ed4c9af116dd
-#: ../../../source/reference/grn_expr/script_syntax.txt:650
+#: ../../../source/reference/grn_expr/script_syntax.txt:834
 msgid "Its syntax is ``column @$ value``."
 msgstr "構文は ``column @$ value`` です。"
 
 # 4e443cf589384fcaa91307f35fea24b4
-#: ../../../source/reference/grn_expr/script_syntax.txt:652
+#: ../../../source/reference/grn_expr/script_syntax.txt:836
 msgid ""
 "This operator does suffix search with ``value``. Suffix search searches "
 "records that contain a word that ends with ``value``."
@@ -11656,17 +12059,17 @@ msgstr ""
 "る単語を含むレコードを検索します。"
 
 # 7897b58f2edb49489e7d0da5394fa952
-#: ../../../source/reference/grn_expr/script_syntax.txt:702
+#: ../../../source/reference/grn_expr/script_syntax.txt:886
 msgid "Near search operator"
 msgstr "近傍検索演算子"
 
 # fd1cbe95dcc649f8a14965af3367fcff
-#: ../../../source/reference/grn_expr/script_syntax.txt:704
+#: ../../../source/reference/grn_expr/script_syntax.txt:888
 msgid "Its syntax is ``column *N \"word1 word2 ...\"``."
 msgstr "構文は ``column *N \"word1 word2 ...\"`` です。"
 
 # 59dd7dc5612c4af788f65f35125b618b
-#: ../../../source/reference/grn_expr/script_syntax.txt:706
+#: ../../../source/reference/grn_expr/script_syntax.txt:890
 msgid ""
 "The operator does near search with words ``word1 word2 ...``. Near search "
 "searches records that contain the words and the words are appeared in the "
@@ -11681,7 +12084,7 @@ msgstr ""
 "トークナイザーでは単語数です。"
 
 # 0347107e89994e7487fad346417bdfae
-#: ../../../source/reference/grn_expr/script_syntax.txt:713
+#: ../../../source/reference/grn_expr/script_syntax.txt:897
 msgid ""
 "(TODO: Add a description about ``TokenBigram`` doesn't split ASCII only word "
 "into tokens. So the unit for ASCII words with ``TokenBigram`` is the number "
@@ -11693,8 +12096,8 @@ msgstr ""
 
 # 6a1e25cdda234cee83c208ad08d84cdd
 # 0c824dc6893c4d4786c8aaaa2b106564
-#: ../../../source/reference/grn_expr/script_syntax.txt:718
-#: ../../../source/reference/grn_expr/script_syntax.txt:758
+#: ../../../source/reference/grn_expr/script_syntax.txt:902
+#: ../../../source/reference/grn_expr/script_syntax.txt:942
 msgid ""
 "Note that an index column for full text search must be defined for "
 "``column``."
@@ -11703,7 +12106,7 @@ msgstr ""
 "してください。"
 
 # 3f03e4eb2ae840818b012268522169a2
-#: ../../../source/reference/grn_expr/script_syntax.txt:729
+#: ../../../source/reference/grn_expr/script_syntax.txt:913
 msgid ""
 "The first expression matches records that contain ``I`` and ``fast`` and the "
 "near distance of those words are in 10 words. So the record that its content "
@@ -11716,7 +12119,7 @@ msgstr ""
 "ちょうど10です。"
 
 # 8e211fc763c640a9afb34eb5b0cb4016
-#: ../../../source/reference/grn_expr/script_syntax.txt:735
+#: ../../../source/reference/grn_expr/script_syntax.txt:919
 msgid ""
 "The second expression matches records that contain ``I`` and ``Really`` and "
 "the near distance of those words are in 10 words. So the record that its "
@@ -11729,7 +12132,7 @@ msgstr ""
 "``Really`` の間の単語数は11です。"
 
 # 0b412282519d4ce5bc1b047c054108aa
-#: ../../../source/reference/grn_expr/script_syntax.txt:741
+#: ../../../source/reference/grn_expr/script_syntax.txt:925
 msgid ""
 "The third expression matches records that contain ``also`` and ``Really`` "
 "and the near distance of those words are in 10 words. So the record that its "
@@ -11743,17 +12146,17 @@ msgstr ""
 "``Really`` の間の単語数は10です。"
 
 # 5f1a4a1c092b4593bf1cb9d6d423bccf
-#: ../../../source/reference/grn_expr/script_syntax.txt:750
+#: ../../../source/reference/grn_expr/script_syntax.txt:934
 msgid "Similar search"
 msgstr "類似文書検索"
 
 # 61fab56d6e9c4f4d8756ed4c9af116dd
-#: ../../../source/reference/grn_expr/script_syntax.txt:752
+#: ../../../source/reference/grn_expr/script_syntax.txt:936
 msgid "Its syntax is ``column *S \"document\"``."
 msgstr "構文は ``column *S \"document\"`` です。"
 
 # 4e443cf589384fcaa91307f35fea24b4
-#: ../../../source/reference/grn_expr/script_syntax.txt:754
+#: ../../../source/reference/grn_expr/script_syntax.txt:938
 msgid ""
 "The operator does similar search with document ``document``. Similar search "
 "searches records that have similar content to ``document``."
@@ -11762,7 +12165,7 @@ msgstr ""
 "``document`` と似た内容を持つレコードを検索します。"
 
 # 46ec1f0cad234e398d10aa54061caaac
-#: ../../../source/reference/grn_expr/script_syntax.txt:767
+#: ../../../source/reference/grn_expr/script_syntax.txt:951
 msgid ""
 "The expression matches records that have similar content to ``I migrated all "
 "Solr system!``. In this case, records that have ``I migrated all XXX system!"
@@ -11773,17 +12176,17 @@ msgstr ""
 "します。"
 
 # 58fb46fc36094d50a413708380e4924d
-#: ../../../source/reference/grn_expr/script_syntax.txt:774
+#: ../../../source/reference/grn_expr/script_syntax.txt:958
 msgid "Term extract operator"
 msgstr "単語抽出演算子"
 
 # 406f4fe2dee64f5cbc5d47fa9b83e123
-#: ../../../source/reference/grn_expr/script_syntax.txt:776
+#: ../../../source/reference/grn_expr/script_syntax.txt:960
 msgid "Its syntax is ``_key *T \"document\"``."
 msgstr "構文は ``_key *T \"document\"`` です。"
 
 # 3c4f51de316e4cc684aa6f6282009946
-#: ../../../source/reference/grn_expr/script_syntax.txt:778
+#: ../../../source/reference/grn_expr/script_syntax.txt:962
 msgid ""
 "The operator extracts terms from ``document``. Terms must be registered as "
 "keys of the table of ``_key``."
@@ -11792,7 +12195,7 @@ msgstr ""
 "キーとして登録されていなければいけません。"
 
 # 239ed5957a604f59be7df2c4d01190b9
-#: ../../../source/reference/grn_expr/script_syntax.txt:781
+#: ../../../source/reference/grn_expr/script_syntax.txt:965
 msgid ""
 "Note that the table must be patricia trie (``TABLE_PAT_KEY``) or double "
 "array trie (``TABLE_DAT_KEY``). You can't use hash table "
@@ -11807,7 +12210,7 @@ msgstr ""
 "接頭辞検索を使っています。"
 
 # 3c9684c10ce64bebb97d61aaa9dc62c2
-#: ../../../source/reference/grn_expr/script_syntax.txt:801
+#: ../../../source/reference/grn_expr/script_syntax.txt:985
 msgid ""
 "The expression extrcts terms that included in document ``Groonga is the "
 "successor project to Senna.``. In this case, ``KEY_NORMALIZE`` flag is "
@@ -13973,15 +14376,3 @@ msgstr ""
 #: ../../../source/reference/types.txt:129
 msgid "Object型はv1.2でサポートされます。"
 msgstr ""
-
-# 5b46346467334872854dca3aa48d5e6e
-#~ msgid "Support query_expansion"
-#~ msgstr "query_expansionのサポート"
-
-# ccfe3f19af2246af8bd599efb1dcc8f7
-#~ msgid ""
-#~ "If ``values`` isn't specified any values, they are read from the standard "
-#~ "input until all opened parenthes match their closed ones."
-#~ msgstr ""
-#~ "values引数が省略された場合には、括弧の対応が取れるまで標準入力からvaluesの"
-#~ "値を読み取ります。"
