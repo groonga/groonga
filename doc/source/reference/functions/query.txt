@@ -27,9 +27,13 @@ Syntax
 
 ``query`` requires two arguments - ``match_column`` and ``query_string``.
 
+The parameter ``query_expander`` or ``substitution_table`` is optional.
+
 ::
 
   query(match_column, query_string)
+  query(match_column, query_string, query_expander)
+  query(match_column, query_string, substitution_table)
 
 
 Usage
@@ -102,21 +106,47 @@ keywords on your purpose.
 Parameters
 ----------
 
+Required parameter
+^^^^^^^^^^^^^^^^^^
+
 There are two required parameter, ``match_column`` and ``query_string``.
 
 ``match_column``
-^^^^^^^^^^^^^^^^
+""""""""""""""""
 
   It specifies ``match_column`` equivalent parameter.
 
 See :ref:`select-match-columns` about match_column.
 
 ``query_string``
-^^^^^^^^^^^^^^^^
+""""""""""""""""
 
   It specifies ``query`` equivalent parameter.
 
 See :ref:`select-query` about query string.
+
+Optional parameter
+^^^^^^^^^^^^^^^^^^
+
+There is a optional parameter, ``approximate_type``.
+
+``query_expander``
+""""""""""""""""""
+
+It specifies the plugin name for query expansion.
+
+There is one plugin bundled in official release - :doc:`/reference/query_expanders/tsv`.
+
+See :doc:`/reference/query_expanders/tsv` about details.
+
+
+``substitution_table``
+""""""""""""""""""""""
+
+It specifies the substitution table and substitution column name
+by following format such as ``${TABLE}.${COLUMN}`` for query expansion.
+
+See :ref:`query-expander` about details.
 
 Return value
 ------------
@@ -126,7 +156,6 @@ Return value
 TODO
 ----
 
-* Support query_expansion
 * Support query_flags
 
 See also
