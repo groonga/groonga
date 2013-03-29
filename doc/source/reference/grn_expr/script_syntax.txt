@@ -759,7 +759,7 @@ The operator performs bitwise XOR assginment operation on column1 by column2.
 .. select Entries --output_columns _key,n_likes,_score --filter true --scorer '_score ^= n_likes'
 
 The value of ``_score`` by ``--filter`` is always 1 in this case,
-then performs subtraction assignment operation such as '_score = _score | n_likes' for each records.
+then performs subtraction assignment operation such as '_score = _score ^ n_likes' for each records.
 
 For example, the value of ``_score`` about the record which stores "Good-bye Senna" as the ``_key``
 is 3.
