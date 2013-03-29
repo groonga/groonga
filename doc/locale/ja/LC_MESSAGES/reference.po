@@ -9094,7 +9094,7 @@ msgid ""
 "arguments in ``--filter``."
 msgstr ""
 "``--match_columns`` と ``--query`` 引数を使わずにキーワード'alice'を"
-"``query`` 関数を使って検索する簡単な使用例です。"
+" ``query`` 関数を使って検索する簡単な使用例です。"
 
 # 32b12c050af74edea32f741089c51954
 #: ../../../source/reference/functions/query.txt:82
