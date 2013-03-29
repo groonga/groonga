@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-27 19:21\n"
+"POT-Creation-Date: 2013-03-29 14:01\n"
 "PO-Revision-Date: 2013-03-01 10:00+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -741,7 +741,7 @@ msgstr "XML"
 #: ../../../source/reference/executables/groonga-suggest-create-dataset.txt:33
 #: ../../../source/reference/executables/groonga-suggest-create-dataset.txt:38
 #: ../../../source/reference/executables/groonga-suggest-create-dataset.txt:43
-#: ../../../source/reference/functions/query.txt:127
+#: ../../../source/reference/functions/query.txt:157
 #: ../../../source/reference/functions/snippet_html.txt:108
 msgid "TODO"
 msgstr ""
@@ -759,9 +759,9 @@ msgstr ""
 #: ../../../source/reference/commands/normalize.txt:83
 #: ../../../source/reference/commands/select.txt:904
 #: ../../../source/reference/commands/table_create.txt:280
-#: ../../../source/reference/functions/query.txt:133
+#: ../../../source/reference/functions/query.txt:162
 #: ../../../source/reference/functions/snippet_html.txt:118
-#: ../../../source/reference/functions/sub_filter.txt:122
+#: ../../../source/reference/functions/sub_filter.txt:120
 #: ../../../source/reference/grn_expr.txt:57
 #: ../../../source/reference/normalizers.txt:144
 #: ../../../source/reference/query_expanders/tsv.txt:151
@@ -2512,7 +2512,7 @@ msgstr "``table`` と ``column_name`` が必須の引数です。"
 #: ../../../source/reference/commands/truncate.txt:26
 #: ../../../source/reference/executables/groonga-httpd.txt:30
 #: ../../../source/reference/functions/geo_distance.txt:31
-#: ../../../source/reference/functions/query.txt:36
+#: ../../../source/reference/functions/query.txt:40
 #: ../../../source/reference/functions/snippet_html.txt:37
 #: ../../../source/reference/functions/sub_filter.txt:29
 #: ../../../source/reference/output.txt:18
@@ -2534,8 +2534,8 @@ msgstr "以下は ``column_rename`` コマンドの簡単な使用例です。"
 #: ../../../source/reference/commands/table_create.txt:154
 #: ../../../source/reference/commands/truncate.txt:44
 #: ../../../source/reference/functions/geo_distance.txt:146
-#: ../../../source/reference/functions/query.txt:103
-#: ../../../source/reference/functions/sub_filter.txt:98
+#: ../../../source/reference/functions/query.txt:107
+#: ../../../source/reference/functions/sub_filter.txt:96
 msgid "Parameters"
 msgstr "引数"
 
@@ -2551,6 +2551,7 @@ msgstr "このセクションでは ``column_rename`` の引数について説�
 #: ../../../source/reference/commands/select.txt:204
 #: ../../../source/reference/commands/truncate.txt:49
 #: ../../../source/reference/functions/geo_distance.txt:149
+#: ../../../source/reference/functions/query.txt:110
 msgid "Required parameter"
 msgstr "必須引数"
 
@@ -2590,9 +2591,9 @@ msgstr "カラムの名前を指定します。"
 #: ../../../source/reference/commands/table_create.txt:269
 #: ../../../source/reference/commands/truncate.txt:59
 #: ../../../source/reference/functions/geo_distance.txt:293
-#: ../../../source/reference/functions/query.txt:122
+#: ../../../source/reference/functions/query.txt:152
 #: ../../../source/reference/functions/snippet_html.txt:93
-#: ../../../source/reference/functions/sub_filter.txt:117
+#: ../../../source/reference/functions/sub_filter.txt:115
 msgid "Return value"
 msgstr "戻り値"
 
@@ -3632,7 +3633,7 @@ msgstr ""
 # 8f5aa6b4c71346a684b9ec9be85d9d41
 # a9f9574e54ea478b870c3a2372048a11
 #: ../../../source/reference/commands/select.txt:52
-#: ../../../source/reference/functions/query.txt:38
+#: ../../../source/reference/functions/query.txt:42
 #: ../../../source/reference/functions/snippet_html.txt:39
 #: ../../../source/reference/functions/sub_filter.txt:31
 #: ../../../source/reference/grn_expr/query_syntax.txt:32
@@ -4514,6 +4515,7 @@ msgstr ":doc:`/reference/grn_expr/query_syntax` も見てください。"
 
 # 8f1c2a65616e4af7ad52a4d83386d102
 #: ../../../source/reference/commands/select.txt:552
+#: ../../../source/reference/functions/query.txt:134
 msgid "``query_expander``"
 msgstr "クエリー展開オブジェクト一覧"
 
@@ -8522,11 +8524,13 @@ msgstr "GeoPointと座標については :doc:`/reference/types` を参照して
 
 # 063b335227cc45469a645aec28feca86
 #: ../../../source/reference/functions/geo_distance.txt:175
+#: ../../../source/reference/functions/query.txt:129
 msgid "Optional parameter"
 msgstr "省略可能引数"
 
 # adaf6aea33734076a433a69a89e0b440
 #: ../../../source/reference/functions/geo_distance.txt:177
+#: ../../../source/reference/functions/query.txt:131
 msgid "There is a optional parameter, ``approximate_type``."
 msgstr "省略可能な引数として ``approximate_type`` があります。"
 
@@ -9065,20 +9069,25 @@ msgid ""
 msgstr ""
 "``query`` は2つの引数が必要です。 ``match_column`` と ``query_string`` です。"
 
+# d57cd698860542ed8c3a71905b169b9c
+#: ../../../source/reference/functions/query.txt:30
+msgid "The parameter ``query_expander`` or ``substitution_table`` is optional."
+msgstr "引数の ``query_expander`` や ``substitution_table`` は省略可能です。"
+
 # 69f87742861a4aa18eabdb09f719e196
-#: ../../../source/reference/functions/query.txt:40
+#: ../../../source/reference/functions/query.txt:44
 #: ../../../source/reference/functions/sub_filter.txt:33
 msgid "Sample schema:"
 msgstr "サンプルスキーマ:"
 
 # 69f87742861a4aa18eabdb09f719e196
-#: ../../../source/reference/functions/query.txt:57
+#: ../../../source/reference/functions/query.txt:61
 #: ../../../source/reference/functions/sub_filter.txt:50
 msgid "Sample data:"
 msgstr "サンプルデータ:"
 
 # 05a23ef7180f4d96b9c2619a9aa19d05
-#: ../../../source/reference/functions/query.txt:70
+#: ../../../source/reference/functions/query.txt:74
 msgid ""
 "Here is the simple usage of ``query`` function which execute full text "
 "search by keyword 'alice' without using ``--match_column`` and ``--query`` "
@@ -9088,7 +9097,7 @@ msgstr ""
 "``query`` 関数を使って検索する簡単な使用例です。"
 
 # 32b12c050af74edea32f741089c51954
-#: ../../../source/reference/functions/query.txt:78
+#: ../../../source/reference/functions/query.txt:82
 msgid ""
 "When executing above query, the keyword 'alice' is weighted to the value - "
 "'10'."
@@ -9097,12 +9106,12 @@ msgstr ""
 "します。"
 
 # eb995ba864f14c87965df5deb632607b
-#: ../../../source/reference/functions/query.txt:81
+#: ../../../source/reference/functions/query.txt:85
 msgid "Here are the contrasting examples with/without ``query``."
 msgstr "``query`` あり/なしで対照的な例がこちらです。"
 
 # 050f7449689042fc8888ef3a5ea05c7a
-#: ../../../source/reference/functions/query.txt:87
+#: ../../../source/reference/functions/query.txt:91
 msgid ""
 "In this case, the keywords 'groonga' and 'mroonga' and 'user' are given same "
 "weight value. You can't pass different weight value to each keyword in this "
@@ -9112,7 +9121,7 @@ msgstr ""
 "います。この方法ではキーワードごとに異なる重みづけを行うことはできません。"
 
 # ea05abcb5980493f848c051907eb0500
-#: ../../../source/reference/functions/query.txt:96
+#: ../../../source/reference/functions/query.txt:100
 msgid ""
 "On the other hand, by specifying multiple ``query``, the keywords 'groonga' "
 "and 'mroonga' and 'user' are given different value of weight."
@@ -9121,7 +9130,7 @@ msgstr ""
 "のキーワードに対し異なる重みづけを行えます。"
 
 # 26c02b94d87e432788a0d0c3aa33c437
-#: ../../../source/reference/functions/query.txt:99
+#: ../../../source/reference/functions/query.txt:103
 msgid ""
 "As a result, you can control full text search result by giving different "
 "weight to the keywords on your purpose."
@@ -9130,68 +9139,99 @@ msgstr ""
 "とができます。"
 
 # b90bfd8b177440e6b2a2ff7f128303f9
-#: ../../../source/reference/functions/query.txt:105
-#: ../../../source/reference/functions/sub_filter.txt:100
+#: ../../../source/reference/functions/query.txt:112
+#: ../../../source/reference/functions/sub_filter.txt:98
 msgid ""
 "There are two required parameter, ``match_column`` and ``query_string``."
 msgstr "必須引数は二つあります。 ``match_column`` と ``query_string`` です。"
 
 # 2e1f48eaa31d4367bf2a5d5978c0c8c6
-#: ../../../source/reference/functions/query.txt:108
-#: ../../../source/reference/functions/sub_filter.txt:103
+#: ../../../source/reference/functions/query.txt:115
+#: ../../../source/reference/functions/sub_filter.txt:101
 msgid "``match_column``"
 msgstr ""
 
 # 19c0a971f31d469f940d93c9f303237e
-#: ../../../source/reference/functions/query.txt:110
-#: ../../../source/reference/functions/sub_filter.txt:105
+#: ../../../source/reference/functions/query.txt:117
+#: ../../../source/reference/functions/sub_filter.txt:103
 msgid "It specifies ``match_column`` equivalent parameter."
 msgstr "``match_columns`` と同様のパラメータを指定します。"
 
 # 91d037f3751d4a1a8714c5c9ae532295
-#: ../../../source/reference/functions/query.txt:112
-#: ../../../source/reference/functions/sub_filter.txt:107
+#: ../../../source/reference/functions/query.txt:119
+#: ../../../source/reference/functions/sub_filter.txt:105
 msgid "See :ref:`select-match-columns` about match_column."
 msgstr ""
 "match_columnについては :ref:`select-match-columns` を参照してください。"
 
 # 73d40a44eaa6442c92c17a0cd09231b0
-#: ../../../source/reference/functions/query.txt:115
-#: ../../../source/reference/functions/sub_filter.txt:110
+#: ../../../source/reference/functions/query.txt:122
+#: ../../../source/reference/functions/sub_filter.txt:108
 msgid "``query_string``"
 msgstr ""
 
 # ffa8ab8997a74ec381047804746e748d
-#: ../../../source/reference/functions/query.txt:117
-#: ../../../source/reference/functions/sub_filter.txt:112
+#: ../../../source/reference/functions/query.txt:124
+#: ../../../source/reference/functions/sub_filter.txt:110
 msgid "It specifies ``query`` equivalent parameter."
 msgstr "``query`` と同様のパラメータを指定します。"
 
 # 39447ee4e33c494fbf94bbc90a69e720
-#: ../../../source/reference/functions/query.txt:119
-#: ../../../source/reference/functions/sub_filter.txt:114
+#: ../../../source/reference/functions/query.txt:126
+#: ../../../source/reference/functions/sub_filter.txt:112
 msgid "See :ref:`select-query` about query string."
 msgstr "query stringについては :ref:`select-query` を参照してください。"
 
+# 4beb7f0f3d704fd0b3176496d7f55eb9
+#: ../../../source/reference/functions/query.txt:136
+msgid "It specifies the plugin name for query expansion."
+msgstr "クエリ展開に使うプラグイン名を指定します。"
+
+# de117b0972ad4ca8beb2f1709b5b4ec3
+#: ../../../source/reference/functions/query.txt:138
+msgid ""
+"There is one plugin bundled in official release - :doc:`/reference/"
+"query_expanders/tsv`."
+msgstr ""
+":doc:`/reference/query_expanders/tsv` は公式リリースに含まれているプラグインの1つです。"
+
+# bde897b0ca22430eb927c3f3d85d70d2
+#: ../../../source/reference/functions/query.txt:140
+msgid "See :doc:`/reference/query_expanders/tsv` about details."
+msgstr "詳細については :doc:`/reference/query_expanders/tsv` を参照してください。"
+
+# e65822292e9740be92577d8d7dd0ea6a
+#: ../../../source/reference/functions/query.txt:144
+msgid "``substitution_table``"
+msgstr "``置換テーブル``"
+
+# 49f110ee87b442b59e72a5443b9cd432
+#: ../../../source/reference/functions/query.txt:146
+msgid ""
+"It specifies the substitution table and substitution column name by "
+"following format such as ``${TABLE}.${COLUMN}`` for query expansion."
+msgstr ""
+"置換テーブルとカラム名を ``${TABLE}.${COLUMN}`` という書式でクエリ展開のために指定します。"
+
+# 39447ee4e33c494fbf94bbc90a69e720
+#: ../../../source/reference/functions/query.txt:149
+msgid "See :ref:`query-expander` about details."
+msgstr "詳細については :ref:`query-expander` を参照してください。"
+
 # 9f61dde9a9fe411f896b48d0d1ff6740
-#: ../../../source/reference/functions/query.txt:124
+#: ../../../source/reference/functions/query.txt:154
 msgid "``query`` returns a value of boolean (true or false)."
 msgstr "``query`` は真偽値(trueもしくはfalse)を返します。"
 
-# 5b46346467334872854dca3aa48d5e6e
-#: ../../../source/reference/functions/query.txt:129
-msgid "Support query_expansion"
-msgstr "query_expansionのサポート"
-
 # fc38f35efffc48f694b32f31b56efcfe
-#: ../../../source/reference/functions/query.txt:130
+#: ../../../source/reference/functions/query.txt:159
 msgid "Support query_flags"
 msgstr "query_flagsのサポート"
 
 # bde897b0ca22430eb927c3f3d85d70d2
-#: ../../../source/reference/functions/query.txt:135
+#: ../../../source/reference/functions/query.txt:164
 #: ../../../source/reference/functions/snippet_html.txt:120
-#: ../../../source/reference/functions/sub_filter.txt:124
+#: ../../../source/reference/functions/sub_filter.txt:122
 msgid ":doc:`/reference/commands/select`"
 msgstr ""
 
@@ -9425,7 +9465,9 @@ msgstr ""
 # 4756d0cccf284dc184c3f79bcdec3666
 #: ../../../source/reference/functions/sub_filter.txt:14
 msgid "``sub_filter`` evaluates ``query_string`` in ``match_column`` context."
-msgstr "``sub_filter`` は ``query_string`` を ``match_column`` のコンテキストで評価します。"
+msgstr ""
+"``sub_filter`` は ``query_string`` を ``match_column`` のコンテキストで評価し"
+"ます。"
 
 # bbc4ba5a3444421aaf1048616acc13b3
 #: ../../../source/reference/functions/sub_filter.txt:16
@@ -9433,8 +9475,8 @@ msgid ""
 "``sub_filter`` can be used in only ``--filter`` in :doc:`/reference/commands/"
 "select`."
 msgstr ""
-"``sub_filter`` は :doc:`/reference/commands/select` コマンドの ``--filter`` 内での"
-"み指定できます。"
+"``sub_filter`` は :doc:`/reference/commands/select` コマンドの ``--filter`` "
+"内でのみ指定できます。"
 
 # 7a239964b6e644b69f1959938a1996e3
 #: ../../../source/reference/functions/sub_filter.txt:21
@@ -9442,15 +9484,15 @@ msgid ""
 "``sub_filter`` requires two arguments - ``match_column`` and "
 "``query_string``."
 msgstr ""
-"``sub_filter`` は2つの引数が必要です。 ``match_column`` と ``query_string`` です。"
+"``sub_filter`` は2つの引数が必要です。 ``match_column`` と ``query_string`` "
+"です。"
 
 # 7d814fc88d7a41bb85aea541094f0f4f
 #: ../../../source/reference/functions/sub_filter.txt:68
 msgid ""
 "Here is the simple usage of ``sub_filter`` function which extracts the blog "
 "entry"
-msgstr ""
-"ブログのエントリを抽出する ``sub_filter`` 関数の使用例です。"
+msgstr "ブログのエントリを抽出する ``sub_filter`` 関数の使用例です。"
 
 # b6872aa66be34dffb814e43687a574e5
 #: ../../../source/reference/functions/sub_filter.txt:69
@@ -9458,56 +9500,53 @@ msgid "user 'A' commented out."
 msgstr "ユーザー'A'のコメント"
 
 # 6d6b484672474ad79a6722d917a75a1f
-#: ../../../source/reference/functions/sub_filter.txt:76
+#: ../../../source/reference/functions/sub_filter.txt:75
 msgid ""
 "When executing above query, not only \"groonga's blog\", but also "
 "\"mroonga's blog\". This is not what you want because user \"A\" does not "
 "mention \"groonga\" to \"mroonga's blog\"."
 msgstr ""
-"上記のクエリを実行すると、\"groonga's blog\"だけでなく、"
-"\"mroonga's blog\"もマッチします。"
-"ユーザー\"A\"は\"mroonga's blog\"に対しては\"groonga\"に言及していないので、"
-"これは意図していない結果です。"
+"上記のクエリを実行すると、\"groonga's blog\"だけでなく、\"mroonga's blog\"も"
+"マッチします。ユーザー\"A\"は\"mroonga's blog\"に対しては\"groonga\"に言及し"
+"ていないので、これは意図していない結果です。"
 
 # 3776d3af75244535864c0fc77d8f9af2
-#: ../../../source/reference/functions/sub_filter.txt:79
+#: ../../../source/reference/functions/sub_filter.txt:78
 msgid "Without sub_filter, it means that following conditions are met."
 msgstr "sub_filterなしでは、以下の条件が満たされます。"
 
 # 3170cfa6329a4de09b93517d4928abbe
-#: ../../../source/reference/functions/sub_filter.txt:81
+#: ../../../source/reference/functions/sub_filter.txt:80
 msgid "There is at least one record that user \"A\" commented out."
 msgstr "すくなくとも一つはユーザー\"A\"がコメントしたレコードがある。"
 
 # dd0e48693ab74e9a962b5667bf520a68
-#: ../../../source/reference/functions/sub_filter.txt:82
+#: ../../../source/reference/functions/sub_filter.txt:81
 msgid "There is at least one record that mentioned about \"groonga\"."
 msgstr "すくなくとも一つは\"groonga\"について言及したレコードがある。"
 
 # 1a0e32674b504baabb968fa677fe9fe5
-#: ../../../source/reference/functions/sub_filter.txt:89
+#: ../../../source/reference/functions/sub_filter.txt:87
 msgid ""
 "On the other hand, executing above query returns the intended result. "
 "Because the arguments of sub_filter is evaluated in comments column's "
 "context."
 msgstr ""
-"一方、上記のクエリは意図した結果を返します。"
-"これは、sub_filterの引数がcommentsカラムのコンテキストで評価されるからです。"
+"一方、上記のクエリは意図した結果を返します。これは、sub_filterの引数が"
+"commentsカラムのコンテキストで評価されるからです。"
 
 # a933d3f62fcb402aafd8663cfe28bd3f
-#: ../../../source/reference/functions/sub_filter.txt:92
+#: ../../../source/reference/functions/sub_filter.txt:90
 msgid "It means that sub_filter requires following condition is met."
-msgstr ""
-"sub_filterは以下の条件が満たされていることを要求します。"
+msgstr "sub_filterは以下の条件が満たされていることを要求します。"
 
 # 810ce2f6abc34a209c8d3416aa716761
-#: ../../../source/reference/functions/sub_filter.txt:94
+#: ../../../source/reference/functions/sub_filter.txt:92
 msgid "There are the records that user \"A\" mentions about \"groonga\"."
-msgstr ""
-"ユーザー\"A\"が\"groonga\"について言及しているレコードがある。"
+msgstr "ユーザー\"A\"が\"groonga\"について言及しているレコードがある。"
 
 # 9f61dde9a9fe411f896b48d0d1ff6740
-#: ../../../source/reference/functions/sub_filter.txt:119
+#: ../../../source/reference/functions/sub_filter.txt:117
 msgid "``sub_filter`` returns a value of boolean (true or false)."
 msgstr "``sub_filter`` は真偽値(trueもしくはfalse)を返します。"
 
@@ -13934,6 +13973,10 @@ msgstr ""
 #: ../../../source/reference/types.txt:129
 msgid "Object型はv1.2でサポートされます。"
 msgstr ""
+
+# 5b46346467334872854dca3aa48d5e6e
+#~ msgid "Support query_expansion"
+#~ msgstr "query_expansionのサポート"
 
 # ccfe3f19af2246af8bd599efb1dcc8f7
 #~ msgid ""
