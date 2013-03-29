@@ -580,7 +580,191 @@ TODO: ...
 Assignment operators
 --------------------
 
-TODO: ...
+
+Addition assignment operator
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Its syntax is ``column1 += column2``.
+
+The operator performs addition assginment operation on column1 by column2.
+
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/script_syntax/simple_addition_assignment_operator.log
+.. select Entries --output_columns _key,n_likes,_score --filter true --scorer '_score += n_likes'
+
+The value of ``_score`` by ``--filter`` is always 1 in this case,
+then performs addition assignment operation such as '_score = _score + n_likes' for each records.
+
+For example, the value of ``_score`` about the record which stores "Good-bye Senna" as the ``_key``
+is 3.
+
+So the expression ``1 + 3`` is evaluated and stored to ``_score`` column as the execution result.
+
+Subtraction assignment operator
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Its syntax is ``column1 -= column2``.
+
+The operator performs subtraction assginment operation on column1 by column2.
+
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/script_syntax/simple_subtraction_assignment_operator.log
+.. select Entries --output_columns _key,n_likes,_score --filter true --scorer '_score -= n_likes'
+
+The value of ``_score`` by ``--filter`` is always 1 in this case,
+then performs subtraction assignment operation such as '_score = _score - n_likes' for each records.
+
+For example, the value of ``_score`` about the record which stores "Good-bye Senna" as the ``_key``
+is 3.
+
+So the expression ``1 - 3`` is evaluated and stored to ``_score`` column as the execution result.
+
+Multiplication assignment operator
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Its syntax is ``column1 *= column2``.
+
+The operator performs multiplication assginment operation on column1 by column2.
+
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/script_syntax/simple_multiplication_assignment_operator.log
+.. select Entries --output_columns _key,n_likes,_score --filter true --scorer '_score *= n_likes'
+
+The value of ``_score`` by ``--filter`` is always 1 in this case,
+then performs subtraction assignment operation such as '_score = _score * n_likes' for each records.
+
+For example, the value of ``_score`` about the record which stores "Good-bye Senna" as the ``_key``
+is 3.
+
+So the expression ``1 * 3`` is evaluated and stored to ``_score`` column as the execution result.
+
+Division assignment operator
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Its syntax is ``column1 /= column2``.
+
+The operator performs division assginment operation on column1 by column2.
+
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/script_syntax/simple_division_assignment_operator.log
+.. select Entries --output_columns _key,n_likes,_score --filter true --scorer '_score /= n_likes'
+
+The value of ``_score`` by ``--filter`` is always 1 in this case,
+then performs subtraction assignment operation such as '_score = _score / n_likes' for each records.
+
+For example, the value of ``_score`` about the record which stores "Good-bye Senna" as the ``_key``
+is 3.
+
+So the expression ``1 / 3`` is evaluated and stored to ``_score`` column as the execution result.
+
+Modulo assignment operator
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Its syntax is ``column1 %= column2``.
+
+The operator performs modulo assginment operation on column1 by column2.
+
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/script_syntax/simple_modulo_assignment_operator.log
+.. select Entries --output_columns _key,n_likes,_score --filter true --scorer '_score %= n_likes'
+
+The value of ``_score`` by ``--filter`` is always 1 in this case,
+then performs subtraction assignment operation such as '_score = _score % n_likes' for each records.
+
+For example, the value of ``_score`` about the record which stores "Good-bye Senna" as the ``_key``
+is 3.
+
+So the expression ``1 % 3`` is evaluated and stored to ``_score`` column as the execution result.
+
+Bitwise left shift assignment operator
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Its syntax is ``column1 <<= column2``.
+
+The operator performs left shift assginment operation on column1 by column2.
+
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/script_syntax/simple_left_shift_assignment_operator.log
+.. select Entries --output_columns _key,n_likes,_score --filter true --scorer '_score <<= n_likes'
+
+The value of ``_score`` by ``--filter`` is always 1 in this case,
+then performs subtraction assignment operation such as '_score = _score << n_likes' for each records.
+
+For example, the value of ``_score`` about the record which stores "Good-bye Senna" as the ``_key``
+is 3.
+
+So the expression ``1 << 3`` is evaluated and stored to ``_score`` column as the execution result.
+
+Bitwise signed right shift assignment operator
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Its syntax is ``column2 >>= column2``.
+
+The operator performs signed right shift assginment operation on column1 by column2.
+
+Bitwise unsigned right shift assignment operator
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Its syntax is ``column1 >>>= column2``.
+
+The operator performs unsigned right shift assginment operation on column1 by column2.
+
+Bitwise AND assignment operator
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Its syntax is ``column1 &= column2``.
+
+The operator performs bitwise AND assignment operation on column1 by column2.
+
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/script_syntax/simple_and_assignment_operator.log
+.. select Entries --output_columns _key,n_likes,_score --filter true --scorer '_score &= n_likes'
+
+The value of ``_score`` by ``--filter`` is always 1 in this case,
+then performs subtraction assignment operation such as '_score = _score & n_likes' for each records.
+
+For example, the value of ``_score`` about the record which stores "Groonga" as the ``_key``
+is 10.
+
+So the expression ``1 & 10`` is evaluated and stored to ``_score`` column as the execution result.
+
+Bitwise OR assignment operator
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Its syntax is ``column1 |= column2``.
+
+The operator performs bitwise OR assignment operation on column1 by column2.
+
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/script_syntax/simple_or_assignment_operator.log
+.. select Entries --output_columns _key,n_likes,_score --filter true --scorer '_score |= n_likes'
+
+The value of ``_score`` by ``--filter`` is always 1 in this case,
+then performs subtraction assignment operation such as '_score = _score | n_likes' for each records.
+
+For example, the value of ``_score`` about the record which stores "Groonga" as the ``_key``
+is 10.
+
+So the expression ``1 | 10`` is evaluated and stored to ``_score`` column as the execution result.
+
+Bitwise XOR assignment operator
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Its syntax is ``column1 ^= column2``.
+
+The operator performs bitwise XOR assginment operation on column1 by column2.
+
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/script_syntax/simple_xor_assignment_operator.log
+.. select Entries --output_columns _key,n_likes,_score --filter true --scorer '_score ^= n_likes'
+
+The value of ``_score`` by ``--filter`` is always 1 in this case,
+then performs subtraction assignment operation such as '_score = _score | n_likes' for each records.
+
+For example, the value of ``_score`` about the record which stores "Good-bye Senna" as the ``_key``
+is 3.
+
+So the expression ``1 ^ 3`` is evaluated and stored to ``_score`` column as the execution result.
 
 Original operators
 ------------------
