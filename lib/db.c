@@ -1851,7 +1851,8 @@ grn_table_add_subrec_inline(grn_obj *table, grn_rset_recinfo *ri, int score,
 
 void
 grn_table_add_subrec(grn_obj *table, grn_rset_recinfo *ri, int score,
-                     grn_rset_posinfo *pi, int dir) {
+                     grn_rset_posinfo *pi, int dir)
+{
   grn_table_add_subrec_inline(table, ri, score, pi, dir);
 }
 
