@@ -110,34 +110,43 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/simple_phrase_search_with_explicit_match_column.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/simple_prefix_search.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/simple_suffix_search.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_addition_assignment_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_addition_operator.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_and_assignment_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_bitwise_and_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_bitwise_not_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_bitwise_or_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_bitwise_xor_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_control_syntax_ternary_operator.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_division_assignment_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_division_operator_quotient.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_division_operator_remainder.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_equal_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_function.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_grouping.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_left_shift_assignment_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_left_shift_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_logical_and_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_logical_but_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_logical_not_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_logical_or_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_match_operator.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_modulo_assignment_operator.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_multiplication_assignment_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_multiplication_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_near_search_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_not_equal_operator.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_or_assignment_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_prefix_search_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_right_shift_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_signed_right_shift_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_similar_search_operator.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_subtraction_assignment_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_subtraction_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_suffix_search_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_term_extract_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_unsigned_right_shift_operator.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_xor_assignment_operator.log \
 	$(top_srcdir)/doc/source/example/reference/indexing-data.log \
 	$(top_srcdir)/doc/source/example/reference/indexing-offline-index-construction.log \
 	$(top_srcdir)/doc/source/example/reference/indexing-online-index-construction.log \
@@ -549,34 +558,43 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/grn_expr/query_syntax/simple_phrase_search_with_explicit_match_column.log \
 	source/example/reference/grn_expr/query_syntax/simple_prefix_search.log \
 	source/example/reference/grn_expr/query_syntax/simple_suffix_search.log \
+	source/example/reference/grn_expr/script_syntax/simple_addition_assignment_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_addition_operator.log \
+	source/example/reference/grn_expr/script_syntax/simple_and_assignment_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_bitwise_and_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_bitwise_not_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_bitwise_or_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_bitwise_xor_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_control_syntax_ternary_operator.log \
+	source/example/reference/grn_expr/script_syntax/simple_division_assignment_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_division_operator_quotient.log \
 	source/example/reference/grn_expr/script_syntax/simple_division_operator_remainder.log \
 	source/example/reference/grn_expr/script_syntax/simple_equal_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_function.log \
 	source/example/reference/grn_expr/script_syntax/simple_grouping.log \
+	source/example/reference/grn_expr/script_syntax/simple_left_shift_assignment_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_left_shift_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_logical_and_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_logical_but_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_logical_not_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_logical_or_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_match_operator.log \
+	source/example/reference/grn_expr/script_syntax/simple_modulo_assignment_operator.log \
+	source/example/reference/grn_expr/script_syntax/simple_multiplication_assignment_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_multiplication_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_near_search_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_not_equal_operator.log \
+	source/example/reference/grn_expr/script_syntax/simple_or_assignment_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_prefix_search_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_right_shift_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_signed_right_shift_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_similar_search_operator.log \
+	source/example/reference/grn_expr/script_syntax/simple_subtraction_assignment_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_subtraction_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_suffix_search_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_term_extract_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_unsigned_right_shift_operator.log \
+	source/example/reference/grn_expr/script_syntax/simple_xor_assignment_operator.log \
 	source/example/reference/indexing-data.log \
 	source/example/reference/indexing-offline-index-construction.log \
 	source/example/reference/indexing-online-index-construction.log \
