@@ -1,0 +1,8 @@
+#@include fixture/geo/taiyaki/init.grn
+
+column_remove Locations shop
+
+select Shops --sortby '+_score, +name' \
+  --output_columns 'name, _score, location' \
+  --filter 'geo_in_rectangle(location, "128500000x502800000", "128300000x503000000")' \
+  --scorer '_score = geo_distance(location, "128450000x502900000")'
