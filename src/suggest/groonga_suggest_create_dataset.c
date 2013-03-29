@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2010- Brazil
+/* Copyright(C) 2010-2013 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -144,6 +144,13 @@ main(int argc, char **argv)
     SEND("column_create event_${DATASET} item COLUMN_SCALAR item_${DATASET}");
     SEND("column_create event_${DATASET} sequence COLUMN_SCALAR "
          "sequence_${DATASET}");
+
+    SEND("table_create configuration TABLE_HASH_KEY ShortText");
+    SEND("column_create configuration weight COLUMN_SCALAR UInt32");
+    SEND("load --table configuration");
+    SEND("[");
+    SEND("{\"_key\": \"${DATASET}\", \"weight\": 1}");
+    SEND("]");
 #undef SEND
     success = ctx->rc == GRN_SUCCESS;
     GRN_OBJ_FIN(ctx, &text);
