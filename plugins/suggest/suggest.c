@@ -78,7 +78,11 @@ typedef struct {
   grn_obj *pairs_freq1;
   grn_obj *pairs_freq2;
 
-  grn_obj v1;
+  grn_obj dataset_name;
+
+  grn_obj *configuration;
+
+  grn_obj weight;
   grn_obj pre_events;
 
   uint64_t key_prefix;
@@ -698,18 +702,85 @@ learner_fin_columns(grn_ctx *ctx, grn_suggest_learner *learner)
 }
 
 static void
+learner_init_weight(grn_ctx *ctx, grn_suggest_learner *learner)
+{
+  grn_obj *weight_column = NULL;
+  unsigned int weight = 1;
+
+  if (learner->configuration) {
+    weight_column = grn_obj_column(ctx,
+                                   learner->configuration,
+                                   CONST_STR_LEN("weight"));
+  }
+  if (weight_column) {
+    grn_id id;
+    id = grn_table_get(ctx, learner->configuration,
+                       GRN_TEXT_VALUE(&(learner->dataset_name)),
+                       GRN_TEXT_LEN(&(learner->dataset_name)));
+    if (id != GRN_ID_NIL) {
+      grn_obj weight_value;
+      GRN_UINT32_INIT(&weight_value, 0);
+      grn_obj_get_value(ctx, weight_column, id, &weight_value);
+      weight = GRN_UINT32_VALUE(&weight_value);
+      GRN_OBJ_FIN(ctx, &weight_value);
+    }
+    grn_obj_unlink(ctx, weight_column);
+  }
+
+  GRN_UINT32_INIT(&(learner->weight), 0);
+  GRN_UINT32_SET(ctx, &(learner->weight), weight);
+}
+
+static void
+learner_init_dataset_name(grn_ctx *ctx, grn_suggest_learner *learner)
+{
+  char events_name[GRN_TABLE_MAX_KEY_SIZE];
+  unsigned int events_name_size;
+  unsigned int events_name_prefix_size;
+
+  events_name_size = grn_obj_name(ctx, learner->events,
+                                  events_name, GRN_TABLE_MAX_KEY_SIZE);
+  GRN_TEXT_INIT(&(learner->dataset_name), 0);
+  events_name_prefix_size = strlen("event_");
+  if (events_name_size > events_name_prefix_size) {
+    GRN_TEXT_PUT(ctx,
+                 &(learner->dataset_name),
+                 events_name + events_name_prefix_size,
+                 events_name_size - events_name_prefix_size);
+  }
+}
+
+static void
+learner_fin_dataset_name(grn_ctx *ctx, grn_suggest_learner *learner)
+{
+  GRN_OBJ_FIN(ctx, &(learner->dataset_name));
+}
+
+static void
+learner_init_configuration(grn_ctx *ctx, grn_suggest_learner *learner)
+{
+  learner->configuration = grn_ctx_get(ctx, "configuration", -1);
+}
+
+static void
+learner_fin_configuration(grn_ctx *ctx, grn_suggest_learner *learner)
+{
+  if (learner->configuration) {
+    grn_obj_unlink(ctx, learner->configuration);
+  }
+}
+
+static void
 learner_init_buffers(grn_ctx *ctx, grn_suggest_learner *learner)
 {
-  GRN_UINT32_INIT(&(learner->v1), 0);
-  GRN_UINT32_SET(ctx, &(learner->v1), 1);
-
+  learner_init_weight(ctx, learner);
   GRN_RECORD_INIT(&(learner->pre_events), 0, grn_obj_id(ctx, learner->events));
 }
 
 static void
 learner_fin_buffers(grn_ctx *ctx, grn_suggest_learner *learner)
 {
-  grn_obj_unlink(ctx, &(learner->v1));
+  grn_obj_unlink(ctx, &(learner->weight));
   grn_obj_unlink(ctx, &(learner->pre_events));
 }
 
@@ -744,7 +815,7 @@ static void
 learner_increment(grn_ctx *ctx, grn_suggest_learner *learner,
                   grn_obj *column, grn_id record_id)
 {
-  grn_obj_set_value(ctx, column, record_id, &(learner->v1), GRN_OBJ_INCR);
+  grn_obj_set_value(ctx, column, record_id, &(learner->weight), GRN_OBJ_INCR);
 }
 
 static void
@@ -876,6 +947,8 @@ learner_learn(grn_ctx *ctx, grn_suggest_learner *learner)
 {
   if (learner_is_valid_input(ctx, learner)) {
     learner_init_columns(ctx, learner);
+    learner_init_dataset_name(ctx, learner);
+    learner_init_configuration(ctx, learner);
     learner_init_buffers(ctx, learner);
     learner_increment_item_freq(ctx, learner, learner->items_freq);
     learner_set_last_post_time(ctx, learner);
@@ -888,6 +961,8 @@ learner_learn(grn_ctx *ctx, grn_suggest_learner *learner)
     }
     learner_append_post_event(ctx, learner);
     learner_fin_buffers(ctx, learner);
+    learner_fin_configuration(ctx, learner);
+    learner_fin_dataset_name(ctx, learner);
     learner_fin_columns(ctx, learner);
   }
 }
