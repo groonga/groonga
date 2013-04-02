@@ -186,16 +186,16 @@ GRN_API const char *grn_plugin_win32_base_dir(void);
   are invalid as a character, grn_plugin_charlen() returns 0. See
   grn_encoding in "groonga.h" for more details of `encoding'
  */
-int grn_plugin_charlen(grn_ctx *ctx, const char *str_ptr,
-                       unsigned int str_length, grn_encoding encoding);
+GRN_API int grn_plugin_charlen(grn_ctx *ctx, const char *str_ptr,
+                               unsigned int str_length, grn_encoding encoding);
 
 /*
   grn_plugin_isspace() returns the length (#bytes) of the first character
   in the string specified by `str_ptr' and `str_length' if it is a space
   character. Otherwise, grn_plugin_isspace() returns 0.
  */
-int grn_plugin_isspace(grn_ctx *ctx, const char *str_ptr,
-                       unsigned int str_length, grn_encoding encoding);
+GRN_API int grn_plugin_isspace(grn_ctx *ctx, const char *str_ptr,
+                               unsigned int str_length, grn_encoding encoding);
 
 
 
