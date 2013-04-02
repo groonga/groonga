@@ -39,12 +39,14 @@ target_link_libraries(libgroonga
   ${DL_LIBS}
   ${WS2_32_LIBS})
 
-if(WIN32)
-  set(LIBGROONGA_INSTALL_DIR "${BIN_DIR}")
-else()
-  set(LIBGROONGA_INSTALL_DIR "${LIB_DIR}")
-endif()
-install(TARGETS libgroonga DESTINATION "${LIBGROONGA_INSTALL_DIR}")
+install(TARGETS libgroonga
+  ARCHIVE DESTINATION "${LIB_DIR}"
+  LIBRARY DESTINATION "${LIB_DIR}"
+  RUNTIME DESTINATION "${BIN_DIR}")
 if(WITH_STATIC)
-  install(TARGETS libgroonga_static DESTINATION "${LIBGROONGA_INSTALL_DIR}")
+  install(TARGETS
+    libgroonga_static
+    ARCHIVE DESTINATION "${LIB_DIR}"
+    LIBRARY DESTINATION "${LIB_DIR}"
+    RUNTIME DESTINATION "${BIN_DIR}")
 endif()
