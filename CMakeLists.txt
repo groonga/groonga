@@ -342,4 +342,6 @@ set(GRN_EXPANDED_DEFAULT_DOCUMENT_ROOT "${GRN_DEFAULT_DOCUMENT_ROOT}")
 set(EXEEXT "${CMAKE_EXECUTABLE_SUFFIX}")
 configure_file(groonga.pc.in "${CMAKE_CURRENT_BINARY_DIR}/groonga.pc" @ONLY)
 
-install(FILES groonga.pc DESTINATION "${LIB_DIR}/pkgconfig/")
+install(
+  FILES "${CMAKE_CURRENT_BINARY_DIR}/groonga.pc"
+  DESTINATION "${LIB_DIR}/pkgconfig/")
