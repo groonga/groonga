@@ -310,9 +310,11 @@ grn_plugin_get_system_plugins_dir(void)
 
     base_dir = grn_win32_base_dir();
     base_dir_length = strlen(base_dir);
-    plugins_dir = malloc(base_dir_length + strlen("/") + strlen(relative_path));
+    plugins_dir = malloc(base_dir_length +
+                         strlen("/lib/") +
+                         strlen(relative_path));
     strcpy(plugins_dir, base_dir);
-    strcat(plugins_dir, "/");
+    strcat(plugins_dir, "/lib/");
     strcat(plugins_dir, relative_path);
     win32_plugins_dir = plugins_dir;
   }
