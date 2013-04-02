@@ -603,39 +603,72 @@ grn_str_greater(const uint8_t *ap, uint32_t as, const uint8_t *bp, uint32_t bs)
 #endif /* WORDS_BIGENDIAN */
 #define grn_ntoh(buf,key,size) grn_hton(buf,key,size)
 
+#ifdef _MSC_VER
+# define grn_bswap_uint64(in, out) ((out) = _byteswap_uint64(in))
+#else /* _MSC_VER */
+# ifdef __GNUC__
+#  define grn_bswap_uint64(in, out) ((out) = __builtin_bswap64(in))
+# else /* __GNUC__ */
+#  define grn_bswap_uint64(in, out) do {\
+  uint64_t temp_ = (in);\
+  (out) = (temp_ << 56) |\
+          ((temp_ & (0xFFULL << 8)) << 40) |\
+          ((temp_ & (0xFFULL << 16)) << 24) |\
+          ((temp_ & (0xFFULL << 24)) << 8) |\
+          ((temp_ & (0xFFULL << 32)) >> 8) |\
+          ((temp_ & (0xFFULL << 40)) >> 24) |\
+          ((temp_ & (0xFFULL << 48)) >> 40) |\
+          (temp_ >> 56);\
+} while (0)
+# endif /* __GNUC__ */
+#endif /* _MSC_VER */
+
+#ifdef WORDS_BIGENDIAN
+# define grn_hton_uint64(in, out) ((out) = (in))
+#else /* WORDS_BIGENDIAN */
+# define grn_hton_uint64(in, out) grn_bswap_uint64(in, out)
+#endif /* WORDS_BIGENDIAN */
+#define grn_ntoh_uint64(in, out) grn_hton_uint64(in, out)
+
 #define grn_gton(keybuf,key,size) do {\
-  uint8_t *keybuf_ = keybuf;\
-  const void *key_ = key;\
-  int la = ((grn_geo_point *)key_)->latitude;\
-  int lo = ((grn_geo_point *)key_)->longitude;\
-  uint8_t *p = keybuf_;\
-  int i = 32;\
-  while (i) {\
-    i -= 4;\
-    *p++ = ((((la >> i) & 8) << 4) + (((lo >> i) & 8) << 3) +\
-            (((la >> i) & 4) << 3) + (((lo >> i) & 4) << 2) +\
-            (((la >> i) & 2) << 2) + (((lo >> i) & 2) << 1) +\
-            (((la >> i) & 1) << 1) + (((lo >> i) & 1) << 0));\
-  }\
+  const grn_geo_point *point_ = (const grn_geo_point *)key;\
+  uint64_t la_ = (uint32_t)point_->latitude;\
+  uint64_t lo_ = (uint32_t)point_->longitude;\
+  uint64_t result_;\
+  la_ = (la_ | (la_ << 16)) & 0x0000FFFF0000FFFFULL;\
+  la_ = (la_ | (la_ <<  8)) & 0x00FF00FF00FF00FFULL;\
+  la_ = (la_ | (la_ <<  4)) & 0x0F0F0F0F0F0F0F0FULL;\
+  la_ = (la_ | (la_ <<  2)) & 0x3333333333333333ULL;\
+  la_ = (la_ | (la_ <<  1)) & 0x5555555555555555ULL;\
+  lo_ = (lo_ | (lo_ << 16)) & 0x0000FFFF0000FFFFULL;\
+  lo_ = (lo_ | (lo_ <<  8)) & 0x00FF00FF00FF00FFULL;\
+  lo_ = (lo_ | (lo_ <<  4)) & 0x0F0F0F0F0F0F0F0FULL;\
+  lo_ = (lo_ | (lo_ <<  2)) & 0x3333333333333333ULL;\
+  lo_ = (lo_ | (lo_ <<  1)) & 0x5555555555555555ULL;\
+  result_ = (la_ << 1) | lo_;\
+  grn_hton_uint64(result_, result_);\
+  memcpy(keybuf, &result_, sizeof(result_));\
 } while (0)
 
 #define grn_ntog(keybuf,key,size) do {\
-  uint8_t *keybuf_ = keybuf;\
-  uint8_t *key_ = key;\
-  uint32_t size_ = size;\
-  int la = 0, lo = 0;\
-  uint8_t v, *p = key_;\
-  int i = 32;\
-  while (size_--) {\
-    i -= 4;\
-    v = *p++;\
-    la += (((v & 128) >> 4) + ((v &  32) >> 3) +\
-           ((v &   8) >> 2) + ((v &   2) >> 1)) << i;\
-    lo += (((v &  64) >> 3) + ((v &  16) >> 2) +\
-           ((v &   4) >> 1) + ((v &   1) >> 0)) << i;\
-  }\
-  ((grn_geo_point *)keybuf_)->latitude = la;\
-  ((grn_geo_point *)keybuf_)->longitude = lo;\
+  grn_geo_point *point_ = (grn_geo_point *)keybuf;\
+  uint64_t key_ = *(const uint64_t *)key;\
+  uint64_t la_, lo_;\
+  grn_ntoh_uint64(key_, key_);\
+  la_ = (key_ >> 1) & 0x5555555555555555ULL;\
+  lo_ = key_ & 0x5555555555555555ULL;\
+  la_ = (la_ | (la_ >>  1)) & 0x3333333333333333ULL;\
+  la_ = (la_ | (la_ >>  2)) & 0x0F0F0F0F0F0F0F0FULL;\
+  la_ = (la_ | (la_ >>  4)) & 0x00FF00FF00FF00FFULL;\
+  la_ = (la_ | (la_ >>  8)) & 0x0000FFFF0000FFFFULL;\
+  la_ = (la_ | (la_ >> 16)) & 0x00000000FFFFFFFFULL;\
+  lo_ = (lo_ | (lo_ >>  1)) & 0x3333333333333333ULL;\
+  lo_ = (lo_ | (lo_ >>  2)) & 0x0F0F0F0F0F0F0F0FULL;\
+  lo_ = (lo_ | (lo_ >>  4)) & 0x00FF00FF00FF00FFULL;\
+  lo_ = (lo_ | (lo_ >>  8)) & 0x0000FFFF0000FFFFULL;\
+  lo_ = (lo_ | (lo_ >> 16)) & 0x00000000FFFFFFFFULL;\
+  point_->latitude = la_;\
+  point_->longitude = lo_;\
 } while (0)
 
 #ifndef HAVE_STRTOULL
