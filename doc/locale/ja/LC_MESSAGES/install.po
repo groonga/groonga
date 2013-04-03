@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-02-05 17:36\n"
-"PO-Revision-Date: 2012-08-08 21:54+0900\n"
+"PO-Revision-Date: 2013-04-03 13:30+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -1385,7 +1385,7 @@ msgstr "Visual C++ 2010 Expressでビルドします::"
 # 28bc8ed2cf2c4f4bb92811c864540a6f
 #: ../../../source/install/windows.txt:100
 msgid "Install by Visual C++ 2010 Express::"
-msgstr "Visual C++ 2010 Expressでビルドします::"
+msgstr "Visual C++ 2010 Expressでインストールします::"
 
 # 0c057d1a82a043a6bd3a4a35dca18301
 #: ../../../source/install/windows.txt:104
