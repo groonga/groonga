@@ -2813,7 +2813,7 @@ grn_set_term_handler(void)
   action.sa_sigaction = term_handler;
   action.sa_flags = SA_SIGINFO;
 
-  if (sigaction(SIGINT, &action, &old_term_handler)) {
+  if (sigaction(SIGTERM, &action, &old_term_handler)) {
     SERR("failed to set SIGTERM action");
     rc = ctx->rc;
   }
