@@ -606,9 +606,9 @@ grn_str_greater(const uint8_t *ap, uint32_t as, const uint8_t *bp, uint32_t bs)
 #ifdef _MSC_VER
 # define grn_bswap_uint64(in, out) ((out) = _byteswap_uint64(in))
 #else /* _MSC_VER */
-# ifdef __GNUC__
+# if defined(__GNUC__) && __GNUC_PREREQ(4, 3)
 #  define grn_bswap_uint64(in, out) ((out) = __builtin_bswap64(in))
-# else /* __GNUC__ */
+# else /* defined(__GNUC__) && __GNUC_PREREQ(4, 3) */
 #  define grn_bswap_uint64(in, out) do {\
   uint64_t temp_ = (in);\
   (out) = (temp_ << 56) |\
