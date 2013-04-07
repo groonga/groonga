@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-03-29 18:10\n"
-"PO-Revision-Date: 2013-03-01 10:00+0900\n"
+"PO-Revision-Date: 2013-04-07 11:38+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -4526,7 +4526,7 @@ msgstr ":doc:`/reference/grn_expr/query_syntax` も見てください。"
 #: ../../../source/reference/commands/select.txt:552
 #: ../../../source/reference/functions/query.txt:134
 msgid "``query_expander``"
-msgstr "クエリー展開オブジェクト一覧"
+msgstr ""
 
 # 88363d87f535428b8f392b38402d8866
 #: ../../../source/reference/commands/select.txt:554
