@@ -853,6 +853,18 @@ grn_logger_set(grn_ctx *ctx, const grn_logger *logger)
   return GRN_SUCCESS;
 }
 
+void
+grn_logger_set_max_level(grn_ctx *ctx, grn_log_level max_level)
+{
+  current_logger.max_level = max_level;
+}
+
+grn_log_level
+grn_logger_get_max_level(grn_ctx *ctx)
+{
+  return current_logger.max_level;
+}
+
 int
 grn_logger_pass(grn_ctx *ctx, grn_log_level level)
 {

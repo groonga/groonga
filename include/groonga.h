@@ -2084,6 +2084,9 @@ struct _grn_logger {
 
 GRN_API grn_rc grn_logger_set(grn_ctx *ctx, const grn_logger *logger);
 
+GRN_API void grn_logger_set_max_level(grn_ctx *ctx, grn_log_level max_level);
+GRN_API grn_log_level grn_logger_get_max_level(grn_ctx *ctx);
+
 #ifdef __GNUC__
 #define GRN_ATTRIBUTE_PRINTF(fmt_pos) \
   __attribute__ ((format(printf, fmt_pos, fmt_pos + 1)))
