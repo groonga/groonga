@@ -1781,19 +1781,14 @@ proc_defrag(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 
 static char slev[] = " EACewnid-";
 
-static grn_logger_info info;
-
 static grn_obj *
 proc_log_level(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   char *p;
   if (GRN_TEXT_LEN(VAR(0)) &&
       (p = strchr(slev, GRN_TEXT_VALUE(VAR(0))[0]))) {
-    info.max_level = (int)(p - slev);
-    info.flags = GRN_LOG_TIME|GRN_LOG_MESSAGE;
-    info.func = NULL;
-    info.func_arg = NULL;
-    grn_logger_info_set(ctx, &info);
+    grn_log_level max_level = (grn_log_level)(p - slev);
+    grn_logger_set_max_level(ctx, max_level);
   } else {
     ERR(GRN_INVALID_ARGUMENT, "invalid log level.");
   }
