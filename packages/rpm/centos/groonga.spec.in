@@ -1,4 +1,6 @@
 %{!?use_lzo:%define use_lzo 0}
+%{?additional_configure_options:%define use_additional_configure_options 1}
+%{!?additional_configure_options:%define use_additional_configure_options 0}
 
 %global _initddir %{_sysconfdir}/init.d/
 
@@ -157,7 +159,11 @@ Munin plugins for groonga
 %if %{use_lzo}
   --with-lzo \
 %endif
-  --with-munin-plugins
+  --with-munin-plugins \
+%if %{use_additional_configure_options}
+  %{additional_configure_options}
+%endif
+
 sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool
 sed -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool
 make %{?_smp_mflags}
@@ -337,6 +343,9 @@ fi
 %config(noreplace) %{_sysconfdir}/munin/plugin-conf.d/*
 
 %changelog
+* Mon Apr 29 2013 HAYASHI Kentaro <hayashi@clear-code.com> - 3.0.3-0
+- Add additional_configure_options parameter.
+
 * Fri Mar 29 2013 HAYASHI Kentaro <hayashi@clear-code.com> - 3.0.2-0
 - new upstream release.
 
