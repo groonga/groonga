@@ -1,4 +1,5 @@
 %{!?use_lzo:%define use_lzo 0}
+%{!?use_mecab:%define use_mecab 1}
 %{?additional_configure_options:%define use_additional_configure_options 1}
 %{!?additional_configure_options:%define use_additional_configure_options 0}
 
@@ -15,7 +16,9 @@ URL:		http://groonga.org/
 Source0:	http://packages.groonga.org/source/groonga/groonga-%{version}.tar.gz
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-%(%{__id_u} -n)
+%if %{use_mecab}
 BuildRequires:	mecab-devel
+%endif
 BuildRequires:	zlib-devel
 %if %{use_lzo}
 BuildRequires:	lzo-devel
@@ -117,6 +120,7 @@ Requires:	%{name}-libs = %{version}-%{release}
 %description devel
 Libraries and header files for groonga
 
+%if %{use_mecab}
 %package tokenizer-mecab
 Summary:	MeCab tokenizer for groonga
 Group:		Applications/Text
@@ -125,6 +129,7 @@ Requires:       mecab-dic
 
 %description tokenizer-mecab
 MeCab tokenizer for groonga
+%endif
 
 %package plugin-suggest
 Summary:	Suggest plugin for groonga
@@ -158,6 +163,11 @@ Munin plugins for groonga
   --with-zlib \
 %if %{use_lzo}
   --with-lzo \
+%endif
+%if %{use_mecab}
+  --with-mecab \
+%else
+  --without-mecab \
 %endif
   --with-munin-plugins \
 %if %{use_additional_configure_options}
@@ -333,9 +343,11 @@ fi
 %dir %{_libdir}/groonga/plugins
 %{_libdir}/groonga/plugins/suggest/suggest.so
 
+%if %{use_mecab}
 %files tokenizer-mecab
 %defattr(-,root,root,-)
 %{_libdir}/groonga/plugins/tokenizers/mecab.so
+%endif
 
 %files munin-plugins
 %defattr(-,root,root,-)
@@ -345,6 +357,7 @@ fi
 %changelog
 * Mon Apr 29 2013 HAYASHI Kentaro <hayashi@clear-code.com> - 3.0.3-0
 - Add additional_configure_options parameter.
+- Make MeCab optional. Use use_mecab parameter for it.
 
 * Fri Mar 29 2013 HAYASHI Kentaro <hayashi@clear-code.com> - 3.0.2-0
 - new upstream release.
