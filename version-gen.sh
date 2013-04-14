@@ -14,6 +14,10 @@ then
 elif test -d .git -o -f .git
 then
     GRN_VN=`git describe --abbrev=7 HEAD 2>/dev/null`
+    if [ $? -ne 0 ]
+    then
+	GRN_VN=`cat base_version`
+    fi
 fi
 
 GRN_VN=`expr "$GRN_VN" : v*'\(.*\)'`
