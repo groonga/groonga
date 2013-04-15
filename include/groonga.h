@@ -2152,10 +2152,22 @@ GRN_API const char *grn_default_query_logger_get_path(void);
 #define GRN_BULK_BUFSIZE (sizeof(grn_obj) - sizeof(grn_obj_header))
 #define GRN_BULK_OUTP(bulk) ((bulk)->header.impl_flags & GRN_OBJ_OUTPLACE)
 #define GRN_BULK_REWIND(bulk) do {\
-  if (GRN_BULK_OUTP(bulk)) {\
-    (bulk)->u.b.curr = (bulk)->u.b.head;\
+  if ((bulk)->header.type == GRN_VECTOR) {\
+    grn_obj *body = (bulk)->u.v.body;\
+    if (body) {\
+      if (GRN_BULK_OUTP(body)) {\
+        (body)->u.b.curr = (body)->u.b.head;\
+      } else {\
+        (body)->header.flags = 0;\
+      }\
+    }\
+    (bulk)->u.v.n_sections = 0;\
   } else {\
-    (bulk)->header.flags = 0;\
+    if (GRN_BULK_OUTP(bulk)) {\
+      (bulk)->u.b.curr = (bulk)->u.b.head;\
+    } else {\
+      (bulk)->header.flags = 0;\
+    }\
   }\
 } while (0)
 #define GRN_BULK_WSIZE(bulk) \
