@@ -80,6 +80,9 @@ grn_table_cursor_next_inline(grn_ctx *ctx, grn_table_cursor *tc);
 inline static int
 grn_table_cursor_get_value_inline(grn_ctx *ctx, grn_table_cursor *tc, void **value);
 
+static void grn_obj_ensure_bulk(grn_ctx *ctx, grn_obj *obj);
+static void grn_obj_ensure_vector(grn_ctx *ctx, grn_obj *obj);
+
 inline static void
 gen_pathname(const char *path, char *buffer, int fno)
 {
@@ -5447,6 +5450,7 @@ grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
   }
   switch (obj->header.type) {
   case GRN_ACCESSOR :
+    grn_obj_ensure_bulk(ctx, value);
     value = grn_accessor_get_value(ctx, (grn_accessor *)obj, id, value);
     value->header.domain = grn_obj_get_range(ctx, obj);
     break;
@@ -5454,6 +5458,7 @@ grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
     {
       grn_pat *pat = (grn_pat *)obj;
       uint32_t size = pat->value_size;
+      grn_obj_ensure_bulk(ctx, value);
       if (grn_bulk_space(ctx, value, size)) {
         MERR("grn_bulk_space failed");
         goto exit;
@@ -5473,6 +5478,7 @@ grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
     {
       grn_hash *hash = (grn_hash *)obj;
       uint32_t size = hash->value_size;
+      grn_obj_ensure_bulk(ctx, value);
       if (grn_bulk_space(ctx, value, size)) {
         MERR("grn_bulk_space failed");
         goto exit;
@@ -5489,6 +5495,7 @@ grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
     {
       grn_array *array = (grn_array *)obj;
       uint32_t size = array->value_size;
+      grn_obj_ensure_bulk(ctx, value);
       if (grn_bulk_space(ctx, value, size)) {
         MERR("grn_bulk_space failed");
         goto exit;
@@ -5506,32 +5513,23 @@ grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
     case GRN_OBJ_COLUMN_VECTOR :
       {
         grn_obj *lexicon = grn_ctx_at(ctx, DB_OBJ(obj)->range);
-        if (GRN_OBJ_TABLEP(lexicon)) {
+        if (!GRN_OBJ_TABLEP(lexicon) &&
+            (lexicon->header.flags & GRN_OBJ_KEY_VAR_SIZE)) {
+          grn_obj v_;
+          grn_obj_ensure_vector(ctx, value);
+          GRN_TEXT_INIT(&v_, 0);
+          grn_ja_get_value(ctx, (grn_ja *)obj, id, &v_);
+          grn_vector_decode(ctx, value, GRN_TEXT_VALUE(&v_), GRN_TEXT_LEN(&v_));
+          GRN_OBJ_FIN(ctx, &v_);
+        } else {
+          grn_obj_ensure_bulk(ctx, value);
           grn_ja_get_value(ctx, (grn_ja *)obj, id, value);
           value->header.type = GRN_UVECTOR;
-        } else {
-          switch (value->header.type) {
-          case GRN_VECTOR :
-            {
-              grn_obj v_;
-              GRN_TEXT_INIT(&v_, 0);
-              grn_ja_get_value(ctx, (grn_ja *)obj, id, &v_);
-              grn_vector_decode(ctx, value, GRN_TEXT_VALUE(&v_), GRN_TEXT_LEN(&v_));
-              GRN_OBJ_FIN(ctx, &v_);
-            }
-            break;
-          case GRN_UVECTOR :
-          case GRN_BULK :
-            grn_ja_get_value(ctx, (grn_ja *)obj, id, value);
-            break;
-          default :
-            ERR(GRN_INVALID_ARGUMENT, "vector or bulk required");
-            break;
-          }
         }
       }
       break;
     case GRN_OBJ_COLUMN_SCALAR :
+      grn_obj_ensure_bulk(ctx, value);
       grn_ja_get_value(ctx, (grn_ja *)obj, id, value);
       value->header.type = GRN_BULK;
       break;
@@ -5545,6 +5543,7 @@ grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
     {
       unsigned int element_size;
       void *v = grn_ra_ref(ctx, (grn_ra *)obj, id);
+      grn_obj_ensure_bulk(ctx, value);
       value->header.type = GRN_BULK;
       value->header.domain = grn_obj_get_range(ctx, obj);
       if (v) {
@@ -5555,6 +5554,7 @@ grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
     }
     break;
   case GRN_COLUMN_INDEX :
+    grn_obj_ensure_bulk(ctx, value);
     GRN_UINT32_SET(ctx, value, grn_ii_estimate_size(ctx, (grn_ii *)obj, id));
     value->header.domain = GRN_DB_UINT32;
     break;
@@ -7088,6 +7088,20 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
   (obj)->u.b.curr = NULL;\
   (obj)->u.b.tail = NULL;\
 } while (0)
+
+static void
+grn_obj_ensure_vector(grn_ctx *ctx, grn_obj *obj)
+{
+  if (obj->header.type != GRN_VECTOR) { grn_bulk_fin(ctx, obj); }
+  obj->header.type = GRN_VECTOR;
+}
+
+static void
+grn_obj_ensure_bulk(grn_ctx *ctx, grn_obj *obj)
+{
+  if (obj->header.type == GRN_VECTOR) { VECTOR_CLEAR(ctx,obj); }
+  obj->header.type =  GRN_BULK;
+}
 
 grn_rc
 grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, unsigned char flags)
