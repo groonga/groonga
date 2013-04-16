@@ -2472,6 +2472,7 @@ grn_bulk_fin(grn_ctx *ctx, grn_obj *buf)
       GRN_REALLOC(buf->u.b.head - grn_bulk_margin_size, 0);
     }
   }
+  buf->header.flags = 0;
   buf->header.impl_flags &= ~GRN_OBJ_DO_SHALLOW_COPY;
   buf->u.b.head = NULL;
   buf->u.b.curr = NULL;
