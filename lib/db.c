@@ -5758,6 +5758,9 @@ build_index(grn_ctx *ctx, grn_obj *obj)
       default :
         use_grn_ii_build = GRN_FALSE;
       }
+      if ((ii->header->flags & GRN_OBJ_WITH_WEIGHT)) {
+        use_grn_ii_build = GRN_FALSE;
+      }
       if ((col = GRN_MALLOC(ncol * sizeof(grn_obj *)))) {
         for (cp = col, i = ncol; i; s++, cp++, i--) {
           if (!(*cp = grn_ctx_at(ctx, *s))) {
