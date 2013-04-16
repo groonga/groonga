@@ -18,6 +18,7 @@
 #include <groonga/tokenizer.h>
 
 #include <kytea/kytea.h>
+#include <kytea/string-util.h>
 
 #include <string.h>
 
