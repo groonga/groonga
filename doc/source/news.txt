@@ -5,6 +5,23 @@
 News
 ====
 
+.. _release-3-0-3:
+
+Release 3.0.3 - 2013/04/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [windows] Improved cmake build process with MariaDB 10.0. [#1691]
+* [suggest] Supported to learn with the value of customized weight
+  by using ``configuration.weight`` configuration.
+* Improved performance of geo-location search. For example,
+  ``geo_in_rectangle`` is executed about 10% faster than ever.
+* [rpm][centos] Added ``additional_configure_options`` parameter
+  for building customized groonga without changing spec file.
+* Supported KyTea 0.4.5.
+
 .. _release-3-0-2:
 
 Release 3.0.2 - 2013/03/29
