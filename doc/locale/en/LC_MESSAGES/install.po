@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-05 17:32\n"
+"POT-Creation-Date: 2013-04-19 15:45\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -43,7 +43,7 @@ msgstr ""
 # f2441b177ffc4ec2b628862c2868fbdb
 # 95d9b289ae314ee5915f51994ced7d7c
 #: ../../../source/install.txt:13 ../../../source/install/centos.txt:11
-#: ../../../source/install/debian.txt:11 ../../../source/install/fedora.txt:19
+#: ../../../source/install/debian.txt:11 ../../../source/install/fedora.txt:21
 #: ../../../source/install/mac_os_x.txt:12
 #: ../../../source/install/ubuntu.txt:11
 #: ../../../source/install/windows.txt:11
@@ -101,10 +101,10 @@ msgstr "CentOS 5"
 #: ../../../source/install/debian.txt:29 ../../../source/install/debian.txt:69
 #: ../../../source/install/debian.txt:109
 #: ../../../source/install/debian.txt:160
-#: ../../../source/install/fedora.txt:30 ../../../source/install/fedora.txt:90
-#: ../../../source/install/mac_os_x.txt:21
-#: ../../../source/install/mac_os_x.txt:28
-#: ../../../source/install/mac_os_x.txt:51
+#: ../../../source/install/fedora.txt:32 ../../../source/install/fedora.txt:97
+#: ../../../source/install/mac_os_x.txt:23
+#: ../../../source/install/mac_os_x.txt:32
+#: ../../../source/install/mac_os_x.txt:55
 #: ../../../source/install/solaris.txt:41
 #: ../../../source/install/ubuntu.txt:36 ../../../source/install/ubuntu.txt:83
 #: ../../../source/install/ubuntu.txt:130
@@ -126,7 +126,7 @@ msgstr "Install::"
 #: ../../../source/install/centos.txt:28 ../../../source/install/centos.txt:94
 #: ../../../source/install/debian.txt:36 ../../../source/install/debian.txt:76
 #: ../../../source/install/debian.txt:116
-#: ../../../source/install/fedora.txt:36 ../../../source/install/ubuntu.txt:43
+#: ../../../source/install/fedora.txt:43 ../../../source/install/ubuntu.txt:43
 #: ../../../source/install/ubuntu.txt:90
 #: ../../../source/install/ubuntu.txt:137
 #: ../../../source/install/ubuntu.txt:184
@@ -150,7 +150,7 @@ msgstr ""
 #: ../../../source/install/centos.txt:31 ../../../source/install/centos.txt:97
 #: ../../../source/install/debian.txt:39 ../../../source/install/debian.txt:79
 #: ../../../source/install/debian.txt:119
-#: ../../../source/install/fedora.txt:39 ../../../source/install/ubuntu.txt:46
+#: ../../../source/install/fedora.txt:46 ../../../source/install/ubuntu.txt:46
 #: ../../../source/install/ubuntu.txt:93
 #: ../../../source/install/ubuntu.txt:140
 #: ../../../source/install/ubuntu.txt:187
@@ -162,7 +162,7 @@ msgstr "Install groonga-tokenizer-mecab package::"
 # d2b6a5c640d94b67ac54df52f8f8394a
 #: ../../../source/install/centos.txt:35
 #: ../../../source/install/centos.txt:101
-#: ../../../source/install/fedora.txt:43
+#: ../../../source/install/fedora.txt:50
 msgid "Then install MeCab dictionary. (mecab-ipadic or mecab-jumandic)"
 msgstr ""
 
@@ -171,7 +171,7 @@ msgstr ""
 # 288792b7c236488caeb4b34d19e71f67
 #: ../../../source/install/centos.txt:37
 #: ../../../source/install/centos.txt:103
-#: ../../../source/install/fedora.txt:45
+#: ../../../source/install/fedora.txt:52
 msgid "Install IPA dictionary::"
 msgstr ""
 
@@ -180,7 +180,7 @@ msgstr ""
 # f3bfd9523e44447a962f921c0fd2ee0e
 #: ../../../source/install/centos.txt:41
 #: ../../../source/install/centos.txt:107
-#: ../../../source/install/fedora.txt:49
+#: ../../../source/install/fedora.txt:56
 msgid "Or install Juman dictionary::"
 msgstr ""
 
@@ -198,7 +198,7 @@ msgstr ""
 #: ../../../source/install/centos.txt:111
 #: ../../../source/install/debian.txt:43 ../../../source/install/debian.txt:83
 #: ../../../source/install/debian.txt:123
-#: ../../../source/install/fedora.txt:53 ../../../source/install/ubuntu.txt:50
+#: ../../../source/install/fedora.txt:60 ../../../source/install/ubuntu.txt:50
 #: ../../../source/install/ubuntu.txt:97
 #: ../../../source/install/ubuntu.txt:144
 #: ../../../source/install/ubuntu.txt:191
@@ -255,7 +255,7 @@ msgstr "Enable EPEL repository on any environment::"
 #: ../../../source/install/centos.txt:135
 #: ../../../source/install/debian.txt:47 ../../../source/install/debian.txt:87
 #: ../../../source/install/debian.txt:127
-#: ../../../source/install/fedora.txt:57 ../../../source/install/ubuntu.txt:54
+#: ../../../source/install/fedora.txt:64 ../../../source/install/ubuntu.txt:54
 #: ../../../source/install/ubuntu.txt:101
 #: ../../../source/install/ubuntu.txt:148
 #: ../../../source/install/ubuntu.txt:195
@@ -276,7 +276,7 @@ msgstr "Install groonga-munin-plugins package::"
 #: ../../../source/install/centos.txt:139
 #: ../../../source/install/debian.txt:51 ../../../source/install/debian.txt:91
 #: ../../../source/install/debian.txt:131
-#: ../../../source/install/fedora.txt:61 ../../../source/install/ubuntu.txt:58
+#: ../../../source/install/fedora.txt:68 ../../../source/install/ubuntu.txt:58
 #: ../../../source/install/ubuntu.txt:105
 #: ../../../source/install/ubuntu.txt:152
 #: ../../../source/install/ubuntu.txt:199
@@ -300,7 +300,7 @@ msgstr ""
 #: ../../../source/install/centos.txt:143
 #: ../../../source/install/debian.txt:55 ../../../source/install/debian.txt:95
 #: ../../../source/install/debian.txt:135
-#: ../../../source/install/fedora.txt:65 ../../../source/install/ubuntu.txt:62
+#: ../../../source/install/fedora.txt:72 ../../../source/install/ubuntu.txt:62
 #: ../../../source/install/ubuntu.txt:109
 #: ../../../source/install/ubuntu.txt:156
 #: ../../../source/install/ubuntu.txt:203
@@ -332,8 +332,8 @@ msgstr ""
 # 6dbe6580cf604af38351363b378f6d40
 #: ../../../source/install/centos.txt:148
 #: ../../../source/install/debian.txt:140
-#: ../../../source/install/fedora.txt:70
-#: ../../../source/install/mac_os_x.txt:33
+#: ../../../source/install/fedora.txt:77
+#: ../../../source/install/mac_os_x.txt:37
 #: ../../../source/install/others.txt:72
 #: ../../../source/install/ubuntu.txt:208
 #: ../../../source/install/windows.txt:65
@@ -347,7 +347,7 @@ msgstr "Build from source"
 # 133fbfb38d284e48887b4275f4ae3de6
 #: ../../../source/install/centos.txt:150
 #: ../../../source/install/debian.txt:142
-#: ../../../source/install/fedora.txt:72
+#: ../../../source/install/fedora.txt:79
 #: ../../../source/install/solaris.txt:14
 #: ../../../source/install/ubuntu.txt:210
 msgid "Install required packages to build groonga::"
@@ -361,8 +361,8 @@ msgstr "Install required packages to build groonga::"
 # 7d18e6ca13674a5691f9e161f70f494b
 #: ../../../source/install/centos.txt:154
 #: ../../../source/install/debian.txt:146
-#: ../../../source/install/fedora.txt:76
-#: ../../../source/install/mac_os_x.txt:37
+#: ../../../source/install/fedora.txt:83
+#: ../../../source/install/mac_os_x.txt:41
 #: ../../../source/install/solaris.txt:18
 #: ../../../source/install/ubuntu.txt:214
 msgid "Download source::"
@@ -375,8 +375,8 @@ msgstr "Download source::"
 # d14e1922ad544ade9efe5a17578cfa6b
 #: ../../../source/install/centos.txt:160
 #: ../../../source/install/debian.txt:152
-#: ../../../source/install/fedora.txt:82
-#: ../../../source/install/mac_os_x.txt:43
+#: ../../../source/install/fedora.txt:89
+#: ../../../source/install/mac_os_x.txt:47
 #: ../../../source/install/ubuntu.txt:220
 msgid "Configure (see :ref:`source-configure` about ``configure`` options)::"
 msgstr "Configure (see :ref:`source-configure` about ``configure`` options)::"
@@ -389,8 +389,8 @@ msgstr "Configure (see :ref:`source-configure` about ``configure`` options)::"
 # 6a6b260a72724a1282902e93f3acc1c8
 #: ../../../source/install/centos.txt:164
 #: ../../../source/install/debian.txt:156
-#: ../../../source/install/fedora.txt:86
-#: ../../../source/install/mac_os_x.txt:47
+#: ../../../source/install/fedora.txt:93
+#: ../../../source/install/mac_os_x.txt:51
 #: ../../../source/install/solaris.txt:31
 #: ../../../source/install/ubuntu.txt:224
 msgid "Build::"
@@ -470,25 +470,28 @@ msgstr ""
 "Fedora. You can install them by ``yum``."
 
 # 1420634be8ad48fdbbab108750730683
-#: ../../../source/install/fedora.txt:11
+#: ../../../source/install/fedora.txt:13
 msgid ""
-"Groonga related RPM pakcages are also in the official Fedora yum repository. "
-"So you can use them instead of the groonga yum repository. The different "
-"between the groonga yum repository and the official Fedora yum repository is "
-"that the groonga yum repository provides the latest version at the release "
-"day but the official Fedora yum repository provides the latest version a few "
-"days later. That is, the different is very small. :-)"
+"Since groonga 3.0.2 release, Groonga related RPM pakcages are in the "
+"official Fedora yum repository (Fedora 18). So you can use them instead of "
+"the groonga yum repository now. There is some exceptions to use the groonga "
+"yum repository because ``groonga-normalizer-mysql`` and mecab dictionaries "
+"(mecab-ipadic or mecab-jumandic) are provided by the groonga yum repository. "
+"But we will also plan to release ``groonga-normalizer-mysql`` in the "
+"official Fedora yum repository in the future."
 msgstr ""
-"Groonga related RPM pakcages are also in the official Fedora yum repository. "
-"So you can use them instead of the groonga yum repository. The different "
-"between the groonga yum repository and the official Fedora yum repository is "
-"that the groonga yum repository provides the latest version at the release "
-"day but the official Fedora yum repository provides the latest version a few "
-"days later. That is, the different is very small. :-)"
 
 # 42ad06b8b53147088e9622d861e034e1
-#: ../../../source/install/fedora.txt:28
+#: ../../../source/install/fedora.txt:30
 msgid "Fedora 18"
+msgstr ""
+
+# e3f85dda4774400ca89c4bf075e9066d
+#: ../../../source/install/fedora.txt:36
+msgid ""
+"Note that additional packages such as ``groonga-normalizer-mysql``, ``mecab-"
+"dic`` and ``mecab-jumandic`` packages require to install ``groonga-release`` "
+"package which provides the groonga yum repository beforehand::"
 msgstr ""
 
 # 802a7c53c7f24630bb3d666c9e423d15
@@ -508,17 +511,17 @@ msgstr ""
 "github.com/homebrew/>`_."
 
 # 4fb446c69efa4b539029ce4702a933ec
-#: ../../../source/install/mac_os_x.txt:19
+#: ../../../source/install/mac_os_x.txt:21
 msgid "MacPorts"
 msgstr "MacPorts"
 
 # 794634aeb06e43359a4ddd0622cf167a
-#: ../../../source/install/mac_os_x.txt:26
+#: ../../../source/install/mac_os_x.txt:30
 msgid "Homebrew"
 msgstr "Homebrew"
 
 # 141772b447f6468ba28bd8c2120be3ec
-#: ../../../source/install/mac_os_x.txt:35
+#: ../../../source/install/mac_os_x.txt:39
 msgid "Install `Xcode <https://developer.apple.com/xcode/>`_."
 msgstr "Install `Xcode <https://developer.apple.com/xcode/>`_."
 
