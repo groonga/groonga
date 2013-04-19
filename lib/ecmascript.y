@@ -355,7 +355,9 @@ property_name_and_value_list ::= property_name_and_value_list COMMA property_nam
 property_name_and_value ::= property_name COLON assignment_expression.
 property_name ::= IDENTIFIER|STRING|DECIMAL.
 
-member_expression_part ::= BRACKETL expression BRACKETR.
+member_expression_part ::= BRACKETL expression BRACKETR. {
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_GET_MEMBER, 2);
+}
 member_expression_part ::= DOT IDENTIFIER.
 
 arguments(A) ::= PARENL argument_list(B) PARENR. { A = B; }
