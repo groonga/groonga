@@ -5990,12 +5990,12 @@ grn_obj_spec_save(grn_ctx *ctx, grn_db_obj *obj)
 }
 
 inline static grn_rc
-grn_obj_set_info_source(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
+grn_obj_set_info_source(grn_ctx *ctx, grn_obj *obj, grn_obj *source_ids)
 {
   {
     grn_obj buf;
-    grn_id *vp = (grn_id *)GRN_BULK_HEAD(value);
-    uint32_t vs = GRN_BULK_VSIZE(value), s = 0;
+    grn_id *vp = (grn_id *)GRN_BULK_HEAD(source_ids);
+    uint32_t vs = GRN_BULK_VSIZE(source_ids), s = 0;
     const char *n = _grn_table_key(ctx, ctx->impl->db, DB_OBJ(obj)->id, &s);
     GRN_TEXT_INIT(&buf, 0);
     GRN_TEXT_PUT(ctx, &buf, n, s);
@@ -6012,8 +6012,8 @@ grn_obj_set_info_source(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
   }
 
   {
-    void *v = GRN_BULK_HEAD(value);
-    uint32_t s = GRN_BULK_VSIZE(value);
+    void *v = GRN_BULK_HEAD(source_ids);
+    uint32_t s = GRN_BULK_VSIZE(source_ids);
     if (s) {
       void *v2 = GRN_MALLOC(s);
       if (!v2) {
