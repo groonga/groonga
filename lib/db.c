@@ -6011,36 +6011,44 @@ grn_obj_set_info_source_log(grn_ctx *ctx, grn_obj *obj, grn_obj *source_ids)
 }
 
 inline static grn_rc
-grn_obj_set_info_source(grn_ctx *ctx, grn_obj *obj, grn_obj *source_ids)
+grn_obj_set_info_source_update(grn_ctx *ctx, grn_obj *obj, grn_obj *source_ids)
 {
-  grn_obj_set_info_source_log(ctx, obj, source_ids);
-
-  {
-    void *v = GRN_BULK_HEAD(source_ids);
-    uint32_t s = GRN_BULK_VSIZE(source_ids);
-    if (s) {
-      void *v2 = GRN_MALLOC(s);
-      if (!v2) {
-        return ctx->rc;
-      }
-      memcpy(v2, v, s);
-      if (DB_OBJ(obj)->source) { GRN_FREE(DB_OBJ(obj)->source); }
-      DB_OBJ(obj)->source = v2;
-      DB_OBJ(obj)->source_size = s;
-
-      if (obj->header.type == GRN_COLUMN_INDEX) {
-        update_source_hook(ctx, obj);
-        build_index(ctx, obj);
-      }
-    } else {
-      DB_OBJ(obj)->source = NULL;
-      DB_OBJ(obj)->source_size = 0;
+  void *v = GRN_BULK_HEAD(source_ids);
+  uint32_t s = GRN_BULK_VSIZE(source_ids);
+  if (s) {
+    void *v2 = GRN_MALLOC(s);
+    if (!v2) {
+      return ctx->rc;
     }
+    memcpy(v2, v, s);
+    if (DB_OBJ(obj)->source) { GRN_FREE(DB_OBJ(obj)->source); }
+    DB_OBJ(obj)->source = v2;
+    DB_OBJ(obj)->source_size = s;
+
+    if (obj->header.type == GRN_COLUMN_INDEX) {
+      update_source_hook(ctx, obj);
+      build_index(ctx, obj);
+    }
+  } else {
+    DB_OBJ(obj)->source = NULL;
+    DB_OBJ(obj)->source_size = 0;
   }
 
-  grn_obj_spec_save(ctx, DB_OBJ(obj));
-
   return GRN_SUCCESS;
+}
+
+inline static grn_rc
+grn_obj_set_info_source(grn_ctx *ctx, grn_obj *obj, grn_obj *source_ids)
+{
+  grn_rc rc;
+
+  grn_obj_set_info_source_log(ctx, obj, source_ids);
+  rc = grn_obj_set_info_source_update(ctx, obj, source_ids);
+  if (rc == GRN_SUCCESS) {
+    grn_obj_spec_save(ctx, DB_OBJ(obj));
+  }
+
+  return rc;
 }
 
 grn_rc
