@@ -6044,9 +6044,10 @@ grn_obj_set_info_source(grn_ctx *ctx, grn_obj *obj, grn_obj *source_ids)
 
   grn_obj_set_info_source_log(ctx, obj, source_ids);
   rc = grn_obj_set_info_source_update(ctx, obj, source_ids);
-  if (rc == GRN_SUCCESS) {
-    grn_obj_spec_save(ctx, DB_OBJ(obj));
+  if (rc != GRN_SUCCESS) {
+    return rc;
   }
+  grn_obj_spec_save(ctx, DB_OBJ(obj));
 
   return rc;
 }
