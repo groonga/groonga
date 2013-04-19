@@ -268,6 +268,41 @@ grn_proc_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 }
 
 static grn_rc
+grn_vector_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *vector)
+{
+  int i;
+  grn_obj *body = vector->u.v.body;;
+
+  GRN_TEXT_PUTS(ctx, buffer, "[");
+  for (i = 0; i < vector->u.v.n_sections; i++) {
+    grn_section *section = &(vector->u.v.sections[i]);
+    const char *value_raw;
+
+    if (i > 0) {
+      GRN_TEXT_PUTS(ctx, buffer, ", ");
+    }
+
+    value_raw = GRN_BULK_HEAD(body) + section->offset;
+    GRN_TEXT_PUTS(ctx, buffer, "{");
+    GRN_TEXT_PUTS(ctx, buffer, "\"value\":");
+    {
+      grn_obj value_object;
+      GRN_OBJ_INIT(&value_object, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY,
+                   section->domain);
+      grn_bulk_write(ctx, &value_object, value_raw, section->length);
+      grn_inspect(ctx, buffer, &value_object);
+      GRN_OBJ_FIN(ctx, &value_object);
+    }
+    GRN_TEXT_PUTS(ctx, buffer, ", \"weight\":");
+    grn_text_itoa(ctx, buffer, section->weight);
+    GRN_TEXT_PUTS(ctx, buffer, "}");
+  }
+  GRN_TEXT_PUTS(ctx, buffer, "]");
+
+  return GRN_SUCCESS;
+}
+
+static grn_rc
 grn_accessor_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 {
   return grn_column_name_(ctx, obj, buf);
@@ -800,8 +835,8 @@ grn_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj)
     /* TODO */
     break;
   case GRN_VECTOR :
-    /* TODO */
-    break;
+    grn_vector_inspect(ctx, buffer, obj);
+    return buffer;
   case GRN_MSG :
     /* TODO */
     break;
