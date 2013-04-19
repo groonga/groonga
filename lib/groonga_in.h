@@ -603,6 +603,15 @@ grn_str_greater(const uint8_t *ap, uint32_t as, const uint8_t *bp, uint32_t bs)
 #endif /* WORDS_BIGENDIAN */
 #define grn_ntoh(buf,key,size) grn_hton(buf,key,size)
 
+#ifndef __GNUC_PREREQ
+# if defined(__GNUC__) && defined(__GNUC_MINOR__)
+#  define __GNUC_PREREQ(maj, min) \
+   ((__GNUC__ << 16) + __GNUC_MINOR__ >= ((maj) << 16) + (min))
+# else
+#  define __GNUC_PREREQ(maj, min) 0
+# endif /* defined(__GNUC__) && defined(__GNUC_MINOR__) */
+#endif /* __GNUC_PREREQ */
+
 #ifdef _MSC_VER
 # define grn_bswap_uint64(in, out) ((out) = _byteswap_uint64(in))
 #else /* _MSC_VER */
