@@ -5989,6 +5989,123 @@ grn_obj_spec_save(grn_ctx *ctx, grn_db_obj *obj)
   grn_obj_close(ctx, &v);
 }
 
+inline static grn_rc
+grn_obj_set_info_source_validate_report_error(grn_ctx *ctx,
+                                              grn_obj *column,
+                                              grn_obj *table_domain,
+                                              grn_obj *source,
+                                              grn_id source_type_id)
+{
+  char column_name[GRN_TABLE_MAX_KEY_SIZE];
+  char table_domain_name[GRN_TABLE_MAX_KEY_SIZE];
+  char source_name[GRN_TABLE_MAX_KEY_SIZE];
+  char source_type_name[GRN_TABLE_MAX_KEY_SIZE];
+  int column_name_size;
+  int table_domain_name_size;
+  int source_name_size;
+  int source_type_name_size;
+  grn_obj *source_type;
+
+  column_name_size = grn_obj_name(ctx, column,
+                                  column_name, GRN_TABLE_MAX_KEY_SIZE);
+  source_name_size = grn_obj_name(ctx, source,
+                                  source_name, GRN_TABLE_MAX_KEY_SIZE);
+  if (GRN_OBJ_TABLEP(source)) {
+    source_name[source_name_size] = '\0';
+    strncat(source_name, "._key",
+            GRN_TABLE_MAX_KEY_SIZE - source_name_size - 1);
+    source_name_size = strlen(source_name);
+  }
+  table_domain_name_size = grn_obj_name(ctx, table_domain,
+                                        table_domain_name,
+                                        GRN_TABLE_MAX_KEY_SIZE);
+  source_type = grn_ctx_at(ctx, source_type_id);
+  if (source_type) {
+    source_type_name_size = grn_obj_name(ctx, source_type,
+                                         source_type_name,
+                                         GRN_TABLE_MAX_KEY_SIZE);
+    grn_obj_unlink(ctx, source_type);
+  } else {
+    strncpy(source_type_name, "(nil)", GRN_TABLE_MAX_KEY_SIZE);
+    source_type_name_size = strlen(source_type_name);
+  }
+  ERR(GRN_INVALID_ARGUMENT,
+      "grn_obj_set_info(): GRN_INFO_SOURCE: "
+      "source type must equal to index table's key type: "
+      "source:<%.*s(%.*s)> index:<%.*s(%.*s)>",
+      source_name_size, source_name,
+      source_type_name_size, source_type_name,
+      column_name_size, column_name,
+      table_domain_name_size, table_domain_name);
+  return ctx->rc;
+}
+
+inline static grn_rc
+grn_obj_set_info_source_validate(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
+{
+  grn_rc rc = GRN_SUCCESS;
+  grn_id table_id;
+  grn_obj *table = NULL;
+  grn_id table_domain_id;
+  grn_obj *table_domain = NULL;
+  grn_id *source_ids;
+  int i, n_source_ids;
+
+  table_id = obj->header.domain;
+  table = grn_ctx_at(ctx, table_id);
+  if (!table) {
+    goto exit;
+  }
+
+  table_domain_id = table->header.domain;
+  table_domain = grn_ctx_at(ctx, table_domain_id);
+  if (!table_domain) {
+    goto exit;
+  }
+
+  if (!GRN_OBJ_TABLEP(table_domain)) {
+    goto exit;
+  }
+
+  source_ids = (grn_id *)GRN_BULK_HEAD(value);
+  n_source_ids = GRN_BULK_VSIZE(value) / sizeof(grn_id);
+  for (i = 0; i < n_source_ids; i++) {
+    grn_id source_id = source_ids[i];
+    grn_obj *source;
+    grn_id source_type_id;
+
+    source = grn_ctx_at(ctx, source_id);
+    if (!source) {
+      continue;
+    }
+    if (GRN_OBJ_TABLEP(source)) {
+      source_type_id = source->header.domain;
+    } else {
+      source_type_id = DB_OBJ(source)->range;
+    }
+    if (table_domain_id != source_type_id) {
+      rc = grn_obj_set_info_source_validate_report_error(ctx,
+                                                         obj,
+                                                         table_domain,
+                                                         source,
+                                                         source_type_id);
+    }
+    grn_obj_unlink(ctx, source);
+    if (rc != GRN_SUCCESS) {
+      goto exit;
+    }
+  }
+
+exit:
+  if (table) {
+    grn_obj_unlink(ctx, table);
+  }
+  if (table_domain) {
+    grn_obj_unlink(ctx, table_domain);
+  }
+  return GRN_SUCCESS;
+}
+
 inline static void
 grn_obj_set_info_source_log(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
 {
@@ -6042,6 +6159,10 @@ grn_obj_set_info_source(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
 {
   grn_rc rc;
 
+  rc = grn_obj_set_info_source_validate(ctx, obj, value);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
   grn_obj_set_info_source_log(ctx, obj, value);
   rc = grn_obj_set_info_source_update(ctx, obj, value);
   if (rc != GRN_SUCCESS) {

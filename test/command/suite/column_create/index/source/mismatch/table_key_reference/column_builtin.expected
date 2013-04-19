@@ -1,0 +1,21 @@
+table_create Tags TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Sites TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Sites tags COLUMN_VECTOR ShortText
+[[0,0.0,0.0],true]
+table_create TagsIndex TABLE_HASH_KEY Tags
+[[0,0.0,0.0],true]
+column_create TagsIndex sites_tags COLUMN_INDEX Sites tags
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "grn_obj_set_info(): GRN_INFO_SOURCE: source type must equal to index table's key type: source:<Sites.tags(ShortText)> index:<Ta"
+  ],
+  false
+]
+#|e| grn_obj_set_info(): GRN_INFO_SOURCE: source type must equal to index table's key type: source:<Sites.tags(ShortText)> index:<TagsIndex.sites_tags(Tags)>
