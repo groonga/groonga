@@ -5989,27 +5989,31 @@ grn_obj_spec_save(grn_ctx *ctx, grn_db_obj *obj)
   grn_obj_close(ctx, &v);
 }
 
+inline static void
+grn_obj_set_info_source_log(grn_ctx *ctx, grn_obj *obj, grn_obj *source_ids)
+{
+  grn_obj buf;
+  grn_id *vp = (grn_id *)GRN_BULK_HEAD(source_ids);
+  uint32_t vs = GRN_BULK_VSIZE(source_ids), s = 0;
+  const char *n = _grn_table_key(ctx, ctx->impl->db, DB_OBJ(obj)->id, &s);
+  GRN_TEXT_INIT(&buf, 0);
+  GRN_TEXT_PUT(ctx, &buf, n, s);
+  GRN_TEXT_PUTC(ctx, &buf, ' ');
+  while (vs) {
+    n = _grn_table_key(ctx, ctx->impl->db, *vp++, &s);
+    GRN_TEXT_PUT(ctx, &buf, n, s);
+    vs -= sizeof(grn_id);
+    if (vs) { GRN_TEXT_PUTC(ctx, &buf, ','); }
+  }
+  GRN_LOG(ctx, GRN_LOG_NOTICE, "DDL:set_source %.*s",
+          (int)GRN_BULK_VSIZE(&buf), GRN_BULK_HEAD(&buf));
+  GRN_OBJ_FIN(ctx, &buf);
+}
+
 inline static grn_rc
 grn_obj_set_info_source(grn_ctx *ctx, grn_obj *obj, grn_obj *source_ids)
 {
-  {
-    grn_obj buf;
-    grn_id *vp = (grn_id *)GRN_BULK_HEAD(source_ids);
-    uint32_t vs = GRN_BULK_VSIZE(source_ids), s = 0;
-    const char *n = _grn_table_key(ctx, ctx->impl->db, DB_OBJ(obj)->id, &s);
-    GRN_TEXT_INIT(&buf, 0);
-    GRN_TEXT_PUT(ctx, &buf, n, s);
-    GRN_TEXT_PUTC(ctx, &buf, ' ');
-    while (vs) {
-      n = _grn_table_key(ctx, ctx->impl->db, *vp++, &s);
-      GRN_TEXT_PUT(ctx, &buf, n, s);
-      vs -= sizeof(grn_id);
-      if (vs) { GRN_TEXT_PUTC(ctx, &buf, ','); }
-    }
-    GRN_LOG(ctx, GRN_LOG_NOTICE, "DDL:set_source %.*s",
-            (int)GRN_BULK_VSIZE(&buf), GRN_BULK_HEAD(&buf));
-    GRN_OBJ_FIN(ctx, &buf);
-  }
+  grn_obj_set_info_source_log(ctx, obj, source_ids);
 
   {
     void *v = GRN_BULK_HEAD(source_ids);
