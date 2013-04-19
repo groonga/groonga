@@ -5989,6 +5989,56 @@ grn_obj_spec_save(grn_ctx *ctx, grn_db_obj *obj)
   grn_obj_close(ctx, &v);
 }
 
+inline static grn_rc
+grn_obj_set_info_source(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
+{
+  {
+    grn_obj buf;
+    grn_id *vp = (grn_id *)GRN_BULK_HEAD(value);
+    uint32_t vs = GRN_BULK_VSIZE(value), s = 0;
+    const char *n = _grn_table_key(ctx, ctx->impl->db, DB_OBJ(obj)->id, &s);
+    GRN_TEXT_INIT(&buf, 0);
+    GRN_TEXT_PUT(ctx, &buf, n, s);
+    GRN_TEXT_PUTC(ctx, &buf, ' ');
+    while (vs) {
+      n = _grn_table_key(ctx, ctx->impl->db, *vp++, &s);
+      GRN_TEXT_PUT(ctx, &buf, n, s);
+      vs -= sizeof(grn_id);
+      if (vs) { GRN_TEXT_PUTC(ctx, &buf, ','); }
+    }
+    GRN_LOG(ctx, GRN_LOG_NOTICE, "DDL:set_source %.*s",
+            (int)GRN_BULK_VSIZE(&buf), GRN_BULK_HEAD(&buf));
+    GRN_OBJ_FIN(ctx, &buf);
+  }
+
+  {
+    void *v = GRN_BULK_HEAD(value);
+    uint32_t s = GRN_BULK_VSIZE(value);
+    if (s) {
+      void *v2 = GRN_MALLOC(s);
+      if (!v2) {
+        return ctx->rc;
+      }
+      memcpy(v2, v, s);
+      if (DB_OBJ(obj)->source) { GRN_FREE(DB_OBJ(obj)->source); }
+      DB_OBJ(obj)->source = v2;
+      DB_OBJ(obj)->source_size = s;
+
+      if (obj->header.type == GRN_COLUMN_INDEX) {
+        update_source_hook(ctx, obj);
+        build_index(ctx, obj);
+      }
+    } else {
+      DB_OBJ(obj)->source = NULL;
+      DB_OBJ(obj)->source_size = 0;
+    }
+  }
+
+  grn_obj_spec_save(ctx, DB_OBJ(obj));
+
+  return GRN_SUCCESS;
+}
+
 grn_rc
 grn_obj_set_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *value)
 {
@@ -6004,50 +6054,7 @@ grn_obj_set_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *value)
       ERR(GRN_INVALID_ARGUMENT, "only db_obj can accept GRN_INFO_SOURCE");
       goto exit;
     }
-    {
-      grn_obj buf;
-      grn_id *vp = (grn_id *)GRN_BULK_HEAD(value);
-      uint32_t vs = GRN_BULK_VSIZE(value), s = 0;
-      const char *n = _grn_table_key(ctx, ctx->impl->db, DB_OBJ(obj)->id, &s);
-      GRN_TEXT_INIT(&buf, 0);
-      GRN_TEXT_PUT(ctx, &buf, n, s);
-      GRN_TEXT_PUTC(ctx, &buf, ' ');
-      while (vs) {
-        n = _grn_table_key(ctx, ctx->impl->db, *vp++, &s);
-        GRN_TEXT_PUT(ctx, &buf, n, s);
-        vs -= sizeof(grn_id);
-        if (vs) { GRN_TEXT_PUTC(ctx, &buf, ','); }
-      }
-      GRN_LOG(ctx, GRN_LOG_NOTICE, "DDL:set_source %.*s",
-              (int)GRN_BULK_VSIZE(&buf), GRN_BULK_HEAD(&buf));
-      GRN_OBJ_FIN(ctx, &buf);
-    }
-    {
-      void *v = GRN_BULK_HEAD(value);
-      uint32_t s = GRN_BULK_VSIZE(value);
-      if (s) {
-        void *v2 = GRN_MALLOC(s);
-        if (!v2) {
-          rc = ctx->rc;
-          goto exit;
-        }
-        memcpy(v2, v, s);
-        if (DB_OBJ(obj)->source) { GRN_FREE(DB_OBJ(obj)->source); }
-        DB_OBJ(obj)->source = v2;
-        DB_OBJ(obj)->source_size = s;
-
-        if (obj->header.type == GRN_COLUMN_INDEX) {
-          update_source_hook(ctx, obj);
-          build_index(ctx, obj);
-        }
-
-      } else {
-        DB_OBJ(obj)->source = NULL;
-        DB_OBJ(obj)->source_size = 0;
-      }
-    }
-    grn_obj_spec_save(ctx, DB_OBJ(obj));
-    rc = GRN_SUCCESS;
+    rc = grn_obj_set_info_source(ctx, obj, value);
     break;
   case GRN_INFO_DEFAULT_TOKENIZER :
     if (!value || DB_OBJ(value)->header.type == GRN_PROC) {
