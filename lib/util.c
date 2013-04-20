@@ -271,7 +271,7 @@ static grn_rc
 grn_vector_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *vector)
 {
   int i;
-  grn_obj *body = vector->u.v.body;;
+  grn_obj *body = vector->u.v.body;
 
   GRN_TEXT_PUTS(ctx, buffer, "[");
   for (i = 0; i < vector->u.v.n_sections; i++) {
