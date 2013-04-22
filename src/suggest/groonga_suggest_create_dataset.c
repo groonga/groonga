@@ -20,10 +20,13 @@
 #include <string.h>
 #include <groonga.h>
 
+/* For grn_str_getopt() */
+#include <str.h>
+
 static void
 usage(FILE *output, int argc, char **argv)
 {
-  fprintf(output, "Usage: %s DB_PATH DATASET_NAME\n", argv[0]);
+  fprintf(output, "Usage: %s [OPTIONS] DB_PATH DATASET_NAME\n", argv[0]);
   fprintf(output, " e.g.: %s /tmp/db shops\n", argv[0]);
 }
 
@@ -80,14 +83,29 @@ main(int argc, char **argv)
   grn_ctx ctx_, *ctx;
   grn_obj *db;
   grn_bool success = GRN_TRUE;
+  int parsed_argc, rest_argc;
+  int flags = 0;
+  const char *default_tokenizer = NULL;
+  static grn_str_getopt_opt opts[] = {
+    {'\0', "default-tokenizer", NULL, 0, GETOPT_OP_NONE}
+  };
 
-  if (argc != 3) {
+  opts[0].arg = &default_tokenizer;
+
+  parsed_argc = grn_str_getopt(argc, argv, opts, &flags);
+  if (parsed_argc < 0) {
     usage(stderr, argc, argv);
-    return(EXIT_FAILURE);
+    return EXIT_FAILURE;
   }
 
-  db_path = argv[1];
-  dataset_name = argv[2];
+  rest_argc = argc - parsed_argc;
+  if (rest_argc != 2) {
+    usage(stderr, argc, argv);
+    return EXIT_FAILURE;
+  }
+
+  db_path = argv[parsed_argc];
+  dataset_name = argv[parsed_argc + 1];
 
   grn_init();
 
@@ -111,8 +129,21 @@ main(int argc, char **argv)
 #define SEND(string) send_command(ctx, &text, string, dataset_name)
     SEND("register suggest/suggest");
     SEND("table_create event_type TABLE_HASH_KEY ShortText");
-    SEND("table_create bigram TABLE_PAT_KEY|KEY_NORMALIZE ShortText "
-         "--default_tokenizer TokenBigram");
+    {
+      grn_obj query;
+      GRN_TEXT_INIT(&query, 0);
+      GRN_TEXT_PUTS(ctx, &query,
+                    "table_create bigram TABLE_PAT_KEY|KEY_NORMALIZE ShortText "
+                    "--default_tokenizer ");
+      if (default_tokenizer) {
+        GRN_TEXT_PUTS(ctx, &query, default_tokenizer);
+      } else {
+        GRN_TEXT_PUTS(ctx, &query, "TokenBigram");
+      }
+      GRN_TEXT_PUTC(ctx, &query, '\0');
+      SEND(GRN_TEXT_VALUE(&query));
+      GRN_OBJ_FIN(ctx, &query);
+    }
     SEND("table_create kana TABLE_PAT_KEY|KEY_NORMALIZE ShortText");
     SEND("table_create item_${DATASET} TABLE_PAT_KEY|KEY_NORMALIZE "
          "ShortText --default_tokenizer TokenDelimit");
