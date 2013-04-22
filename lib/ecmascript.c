@@ -1791,35 +1791,42 @@ static void yy_reduce(
 }
 #line 1793 "ecmascript.c"
         break;
+      case 112: /* member_expression_part ::= BRACKETL expression BRACKETR */
+#line 358 "ecmascript.y"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_GET_MEMBER, 2);
+}
+#line 1800 "ecmascript.c"
+        break;
       case 114: /* arguments ::= PARENL argument_list PARENR */
-#line 361 "ecmascript.y"
+#line 363 "ecmascript.y"
 { yygotominor.yy0 = yymsp[-1].minor.yy0; }
-#line 1798 "ecmascript.c"
+#line 1805 "ecmascript.c"
         break;
       case 115: /* argument_list ::= */
-#line 362 "ecmascript.y"
+#line 364 "ecmascript.y"
 { yygotominor.yy0 = 0; }
-#line 1803 "ecmascript.c"
+#line 1810 "ecmascript.c"
         break;
       case 116: /* argument_list ::= assignment_expression */
-#line 363 "ecmascript.y"
+#line 365 "ecmascript.y"
 { yygotominor.yy0 = 1; }
-#line 1808 "ecmascript.c"
+#line 1815 "ecmascript.c"
         break;
       case 117: /* argument_list ::= argument_list COMMA assignment_expression */
-#line 364 "ecmascript.y"
+#line 366 "ecmascript.y"
 { yygotominor.yy0 = yymsp[-2].minor.yy0 + 1; }
-#line 1813 "ecmascript.c"
+#line 1820 "ecmascript.c"
         break;
       case 118: /* output_columns ::= */
-#line 366 "ecmascript.y"
+#line 368 "ecmascript.y"
 {
   yygotominor.yy0 = 0;
 }
-#line 1820 "ecmascript.c"
+#line 1827 "ecmascript.c"
         break;
       case 119: /* output_columns ::= output_column */
-#line 369 "ecmascript.y"
+#line 371 "ecmascript.y"
 {
   if (yymsp[0].minor.yy0) {
     yygotominor.yy0 = 0;
@@ -1827,10 +1834,10 @@ static void yy_reduce(
     yygotominor.yy0 = 1;
   }
 }
-#line 1831 "ecmascript.c"
+#line 1838 "ecmascript.c"
         break;
       case 120: /* output_columns ::= output_columns COMMA output_column */
-#line 377 "ecmascript.y"
+#line 379 "ecmascript.y"
 {
   if (yymsp[0].minor.yy0) {
     yygotominor.yy0 = yymsp[-2].minor.yy0;
@@ -1841,10 +1848,10 @@ static void yy_reduce(
     yygotominor.yy0 = 1;
   }
 }
-#line 1845 "ecmascript.c"
+#line 1852 "ecmascript.c"
         break;
       case 121: /* output_column ::= STAR */
-#line 388 "ecmascript.y"
+#line 390 "ecmascript.y"
 {
   grn_ctx *ctx = efsi->ctx;
   grn_obj *expr = efsi->e;
@@ -1882,21 +1889,21 @@ static void yy_reduce(
     yygotominor.yy0 = GRN_TRUE;
   }
 }
-#line 1886 "ecmascript.c"
+#line 1893 "ecmascript.c"
         break;
       case 122: /* output_column ::= NONEXISTENT_COLUMN */
-#line 425 "ecmascript.y"
+#line 427 "ecmascript.y"
 {
   yygotominor.yy0 = GRN_TRUE;
 }
-#line 1893 "ecmascript.c"
+#line 1900 "ecmascript.c"
         break;
       case 123: /* output_column ::= assignment_expression */
-#line 428 "ecmascript.y"
+#line 430 "ecmascript.y"
 {
   yygotominor.yy0 = GRN_FALSE;
 }
-#line 1900 "ecmascript.c"
+#line 1907 "ecmascript.c"
         break;
       default:
       /* (0) input ::= query */ yytestcase(yyruleno==0);
@@ -1946,7 +1953,6 @@ static void yy_reduce(
       /* (109) property_name_and_value_list ::= property_name_and_value_list COMMA property_name_and_value */ yytestcase(yyruleno==109);
       /* (110) property_name_and_value ::= property_name COLON assignment_expression */ yytestcase(yyruleno==110);
       /* (111) property_name ::= IDENTIFIER|STRING|DECIMAL */ yytestcase(yyruleno==111);
-      /* (112) member_expression_part ::= BRACKETL expression BRACKETR */ yytestcase(yyruleno==112);
       /* (113) member_expression_part ::= DOT IDENTIFIER */ yytestcase(yyruleno==113);
         break;
   };
@@ -2020,7 +2026,7 @@ static void yy_syntax_error(
       GRN_OBJ_FIN(ctx, &buf);
     }
   }
-#line 2024 "ecmascript.c"
+#line 2030 "ecmascript.c"
   grn_expr_parserARG_STORE; /* Suppress warning about unused %extra_argument variable */
 }
 

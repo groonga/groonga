@@ -1,0 +1,12 @@
+table_create Sites TABLE_PAT_KEY ShortText
+column_create Sites priorities COLUMN_VECTOR UInt32
+
+load --table Sites
+[
+["_key", "priorities"],
+["groonga.org", [9]],
+["mroonga.org", [2, 9]],
+["ranguba.org", [29, 2, 9]]
+]
+
+select Sites --filter 'priorities[1] == 9'
