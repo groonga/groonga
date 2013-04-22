@@ -23,11 +23,29 @@
 /* For grn_str_getopt() */
 #include <str.h>
 
+typedef enum {
+  MODE_NONE,
+  MODE_USAGE
+} ModeFlags;
+
+static const char *DEFAULT_DEFAULT_TOKENIZER = "TokenBigram";
+
 static void
 usage(FILE *output, int argc, char **argv)
 {
-  fprintf(output, "Usage: %s [OPTIONS] DB_PATH DATASET_NAME\n", argv[0]);
-  fprintf(output, " e.g.: %s /tmp/db shops\n", argv[0]);
+#define OUTPUT(...) fprintf(output, __VA_ARGS__)
+
+  OUTPUT("Usage: %s [OPTIONS] DB_PATH DATASET_NAME\n", argv[0]);
+  OUTPUT(" e.g.: %s /tmp/db shops\n", argv[0]);
+  OUTPUT("\n");
+  OUTPUT("Options:\n");
+  OUTPUT("  --default-tokenizer=TOKENIZER   Use TOKENIZER as the default\n");
+  OUTPUT("                                  tokenizer for item name\n");
+  OUTPUT("                                  (default: %s)\n",
+         DEFAULT_DEFAULT_TOKENIZER);
+  OUTPUT("  -h, --help                      Show this message and exit\n");
+
+#undef OUTPUT
 }
 
 static void
@@ -84,10 +102,11 @@ main(int argc, char **argv)
   grn_obj *db;
   grn_bool success = GRN_TRUE;
   int parsed_argc, rest_argc;
-  int flags = 0;
+  int flags = MODE_NONE;
   const char *default_tokenizer = NULL;
   static grn_str_getopt_opt opts[] = {
-    {'\0', "default-tokenizer", NULL, 0, GETOPT_OP_NONE}
+    {'\0', "default-tokenizer", NULL, 0, GETOPT_OP_NONE},
+    {'h', "help", NULL, MODE_USAGE, GETOPT_OP_UPDATE}
   };
 
   opts[0].arg = &default_tokenizer;
@@ -96,6 +115,11 @@ main(int argc, char **argv)
   if (parsed_argc < 0) {
     usage(stderr, argc, argv);
     return EXIT_FAILURE;
+  }
+
+  if (flags & MODE_USAGE) {
+    usage(stdout, argc, argv);
+    return EXIT_SUCCESS;
   }
 
   rest_argc = argc - parsed_argc;
@@ -138,7 +162,7 @@ main(int argc, char **argv)
       if (default_tokenizer) {
         GRN_TEXT_PUTS(ctx, &query, default_tokenizer);
       } else {
-        GRN_TEXT_PUTS(ctx, &query, "TokenBigram");
+        GRN_TEXT_PUTS(ctx, &query, DEFAULT_DEFAULT_TOKENIZER);
       }
       GRN_TEXT_PUTC(ctx, &query, '\0');
       SEND(GRN_TEXT_VALUE(&query));
