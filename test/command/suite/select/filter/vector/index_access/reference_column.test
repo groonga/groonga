@@ -1,0 +1,14 @@
+table_create Tags TABLE_HASH_KEY ShortText
+
+table_create Sites TABLE_PAT_KEY ShortText
+column_create Sites tags COLUMN_VECTOR Tags
+
+load --table Sites
+[
+["_key", "tags"],
+["groonga.org", ["search engine"]],
+["mroonga.org", ["MySQL", "groonga"]],
+["ranguba.org", ["groonga", "Ruby", "search system"]]
+]
+
+select Sites --filter 'tags[1] == "groonga"'

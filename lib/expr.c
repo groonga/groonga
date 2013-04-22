@@ -1208,6 +1208,21 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
     case GRN_OP_COMMA :
       PUSH_CODE(e, op, obj, nargs, code);
       break;
+    case GRN_OP_GET_MEMBER :
+      DFI_POP(e, dfi);
+      DFI_POP(e, dfi);
+      if (dfi) {
+        type = dfi->type;
+        domain = dfi->domain;
+        if (dfi->code) {
+          if (dfi->code->op == GRN_OP_GET_VALUE) {
+            dfi->code->op = GRN_OP_GET_REF;
+          }
+        }
+      }
+      PUSH_CODE(e, op, obj, nargs, code);
+      DFI_PUT(e, type, domain, code);
+      break;
     default :
       break;
     }
@@ -2491,6 +2506,46 @@ pseudo_query_scan(grn_ctx *ctx, grn_obj *x, grn_obj *y, grn_obj *res)
   if (normalizer) { grn_obj_unlink(ctx, normalizer); }
 }
 
+inline static void
+grn_expr_exec_get_member(grn_ctx *ctx,
+                         grn_obj *expr,
+                         grn_obj *column_and_record_id,
+                         grn_obj *index,
+                         grn_obj *result)
+{
+  grn_obj *column;
+  grn_id record_id;
+  grn_obj values;
+  int i;
+
+  column = GRN_PTR_VALUE(column_and_record_id);
+  record_id = *((grn_id *)(&(GRN_PTR_VALUE_AT(column_and_record_id, 1))));
+  GRN_TEXT_INIT(&values, 0);
+  grn_obj_get_value(ctx, column, record_id, &values);
+
+  grn_obj_reinit(ctx, result, DB_OBJ(column)->range, 0);
+  i = GRN_UINT32_VALUE(index);
+  if (values.header.type == GRN_UVECTOR) {
+    int n_elements;
+    n_elements = GRN_BULK_VSIZE(&values) / sizeof(grn_id);
+    if (n_elements > i) {
+      grn_id value;
+      value = GRN_RECORD_VALUE_AT(&values, i);
+      GRN_RECORD_SET(ctx, result, value);
+    }
+  } else {
+    if (values.u.v.n_sections > i) {
+      grn_section *section = &(values.u.v.sections[i]);
+      grn_obj *body = values.u.v.body;
+      const char *value;
+      value = GRN_BULK_HEAD(body) + section->offset;
+      grn_bulk_write(ctx, result, value, section->length);
+    }
+  }
+
+  GRN_OBJ_FIN(ctx, &values);
+}
+
 grn_obj *
 grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
 {
@@ -3634,6 +3689,14 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           GRN_BOOL_SET(ctx, res, !GRN_BOOL_VALUE(res));
         }
         code++;
+        break;
+      case GRN_OP_GET_MEMBER :
+        {
+          grn_obj *column_and_record_id, *index;
+          POP2ALLOC1(column_and_record_id, index, res);
+          grn_expr_exec_get_member(ctx, expr, column_and_record_id, index, res);
+          code++;
+        }
         break;
       default :
         ERR(GRN_FUNCTION_NOT_IMPLEMENTED, "not implemented operator assigned");
