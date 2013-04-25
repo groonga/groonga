@@ -345,3 +345,5 @@ configure_file(groonga.pc.in "${CMAKE_CURRENT_BINARY_DIR}/groonga.pc" @ONLY)
 install(
   FILES "${CMAKE_CURRENT_BINARY_DIR}/groonga.pc"
   DESTINATION "${LIB_DIR}/pkgconfig/")
+
+add_subdirectory(vendor/plugins)
