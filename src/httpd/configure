@@ -85,3 +85,10 @@ if [ "${GROONGA_HTTPD_DEBUG}" = "yes" ]; then
     -e '/^CFLAGS =/ s/ -g / -ggdb3 /' \
     objs/Makefile
 fi
+
+# Consider security by using position independent code (PIE).
+# See http://fedoraproject.org/wiki/Packaging:Guidelines#PIE
+# This is workaround for passing PIE related linker flags.
+if [ -f /etc/redhat-release ]; then
+  sed -i'' -e 's/lz/lz $(RPM_LD_FLAGS)/' objs/Makefile
+fi
