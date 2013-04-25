@@ -1,4 +1,4 @@
-# Copyright(C) 2012 Brazil
+# Copyright(C) 2012-2013 Brazil
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -28,7 +28,7 @@ string(REGEX REPLACE "([^;]+)" "dat/\\1"
 
 add_library(libgroonga SHARED ${LIBGROONGA_SOURCES} ${LIBGRNDAT_SOURCES})
 set_target_properties(libgroonga PROPERTIES OUTPUT_NAME "groonga")
-if(WITH_STATIC)
+if(GRN_WITH_STATIC)
   add_library(libgroonga_static STATIC ${LIBGROONGA_SOURCES} ${LIBGRNDAT_SOURCES})
   set_target_properties(libgroonga_static PROPERTIES OUTPUT_NAME "groonga")
 endif()
@@ -43,7 +43,7 @@ install(TARGETS libgroonga
   ARCHIVE DESTINATION "${LIB_DIR}"
   LIBRARY DESTINATION "${LIB_DIR}"
   RUNTIME DESTINATION "${BIN_DIR}")
-if(WITH_STATIC)
+if(GRN_WITH_STATIC)
   install(TARGETS
     libgroonga_static
     ARCHIVE DESTINATION "${LIB_DIR}"
