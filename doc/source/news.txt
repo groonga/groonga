@@ -21,6 +21,10 @@ Improvements
 * [rpm][centos] Added ``additional_configure_options`` parameter
   for building customized groonga without changing spec file.
 * Supported KyTea 0.4.5.
+* Supported vector index access by "vector[N]" syntax.
+* Added ``--default-tokenizer`` option to :doc:`/reference/executables/groonga-suggest-create-dataset` command.
+* Added ``--help`` option to :doc:`/reference/executables/groonga-suggest-create-dataset` command.
+* Supported Ubuntu 13.04 Raring Ringtail.
 
 .. _release-3-0-2:
 
