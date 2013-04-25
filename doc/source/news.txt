@@ -13,7 +13,6 @@ Release 3.0.3 - 2013/04/29
 Improvements
 ^^^^^^^^^^^^
 
-* [windows] Improved cmake build process with MariaDB 10.0. [#1691]
 * [suggest] Supported to learn with the value of customized weight
   by using ``configuration.weight`` configuration.
 * Improved performance of geo-location search. For example,
