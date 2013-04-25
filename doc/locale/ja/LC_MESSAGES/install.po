@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-04-19 15:41\n"
+"POT-Creation-Date: 2013-04-25 17:59\n"
 "PO-Revision-Date: 2013-04-03 13:30+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -82,7 +82,8 @@ msgstr ""
 #: ../../../source/install/ubuntu.txt:36 ../../../source/install/ubuntu.txt:83
 #: ../../../source/install/ubuntu.txt:130
 #: ../../../source/install/ubuntu.txt:177
-#: ../../../source/install/ubuntu.txt:228
+#: ../../../source/install/ubuntu.txt:224
+#: ../../../source/install/ubuntu.txt:275
 msgid "Install::"
 msgstr "インストール::"
 
@@ -102,6 +103,7 @@ msgstr "インストール::"
 #: ../../../source/install/ubuntu.txt:90
 #: ../../../source/install/ubuntu.txt:137
 #: ../../../source/install/ubuntu.txt:184
+#: ../../../source/install/ubuntu.txt:231
 msgid ""
 "If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a tokenizer, "
 "install groonga-tokenizer-mecab package."
@@ -125,6 +127,7 @@ msgstr ""
 #: ../../../source/install/ubuntu.txt:93
 #: ../../../source/install/ubuntu.txt:140
 #: ../../../source/install/ubuntu.txt:187
+#: ../../../source/install/ubuntu.txt:234
 msgid "Install groonga-tokenizer-mecab package::"
 msgstr "groonga-tokenizer-mecabパッケージのインストール::"
 
@@ -168,6 +171,7 @@ msgstr "あるいはJuman辞書をインストールします::"
 #: ../../../source/install/ubuntu.txt:97
 #: ../../../source/install/ubuntu.txt:144
 #: ../../../source/install/ubuntu.txt:191
+#: ../../../source/install/ubuntu.txt:238
 msgid ""
 "There is a package that provides `Munin <http://munin-monitoring.org/>`_ "
 "plugins. If you want to monitor groonga status by Munin, install groonga-"
@@ -225,6 +229,7 @@ msgstr "EPELリポジトリを有効にする（環境非依存）::"
 #: ../../../source/install/ubuntu.txt:101
 #: ../../../source/install/ubuntu.txt:148
 #: ../../../source/install/ubuntu.txt:195
+#: ../../../source/install/ubuntu.txt:242
 msgid "Install groonga-munin-plugins package::"
 msgstr "groonga-munin-pluginsパッケージのインストール::"
 
@@ -240,6 +245,7 @@ msgstr "groonga-munin-pluginsパッケージのインストール::"
 #: ../../../source/install/ubuntu.txt:105
 #: ../../../source/install/ubuntu.txt:152
 #: ../../../source/install/ubuntu.txt:199
+#: ../../../source/install/ubuntu.txt:246
 msgid ""
 "There is a package that provides MySQL compatible normalizer as groonga "
 "plugins. If you want to use that one, install groonga-normalizer-mysql "
@@ -266,6 +272,7 @@ msgstr ""
 #: ../../../source/install/ubuntu.txt:109
 #: ../../../source/install/ubuntu.txt:156
 #: ../../../source/install/ubuntu.txt:203
+#: ../../../source/install/ubuntu.txt:250
 msgid "Install groonga-normalizer-mysql package::"
 msgstr "groonga-normalizer-mysqlパッケージのインストール::"
 
@@ -299,7 +306,7 @@ msgstr ""
 #: ../../../source/install/fedora.txt:77
 #: ../../../source/install/mac_os_x.txt:37
 #: ../../../source/install/others.txt:72
-#: ../../../source/install/ubuntu.txt:208
+#: ../../../source/install/ubuntu.txt:255
 #: ../../../source/install/windows.txt:65
 msgid "Build from source"
 msgstr "ソースからビルド"
@@ -312,7 +319,7 @@ msgstr "ソースからビルド"
 #: ../../../source/install/debian.txt:142
 #: ../../../source/install/fedora.txt:79
 #: ../../../source/install/solaris.txt:14
-#: ../../../source/install/ubuntu.txt:210
+#: ../../../source/install/ubuntu.txt:257
 msgid "Install required packages to build groonga::"
 msgstr "groongaをビルドするために必要なパッケージをインストールします::"
 
@@ -326,7 +333,7 @@ msgstr "groongaをビルドするために必要なパッケージをインス�
 #: ../../../source/install/fedora.txt:83
 #: ../../../source/install/mac_os_x.txt:41
 #: ../../../source/install/solaris.txt:18
-#: ../../../source/install/ubuntu.txt:214
+#: ../../../source/install/ubuntu.txt:261
 msgid "Download source::"
 msgstr "ソースをダウンロードします::"
 
@@ -339,7 +346,7 @@ msgstr "ソースをダウンロードします::"
 #: ../../../source/install/debian.txt:152
 #: ../../../source/install/fedora.txt:89
 #: ../../../source/install/mac_os_x.txt:47
-#: ../../../source/install/ubuntu.txt:220
+#: ../../../source/install/ubuntu.txt:267
 msgid "Configure (see :ref:`source-configure` about ``configure`` options)::"
 msgstr ""
 "configureを実行します（ ``configure`` のオプションについては :ref:`source-"
@@ -355,7 +362,7 @@ msgstr ""
 #: ../../../source/install/fedora.txt:93
 #: ../../../source/install/mac_os_x.txt:51
 #: ../../../source/install/solaris.txt:31
-#: ../../../source/install/ubuntu.txt:224
+#: ../../../source/install/ubuntu.txt:271
 msgid "Build::"
 msgstr "ビルド::"
 
@@ -389,6 +396,7 @@ msgstr ""
 #: ../../../source/install/ubuntu.txt:29 ../../../source/install/ubuntu.txt:76
 #: ../../../source/install/ubuntu.txt:123
 #: ../../../source/install/ubuntu.txt:170
+#: ../../../source/install/ubuntu.txt:217
 msgid "Add the groonga apt repository."
 msgstr "groongaのaptリポジトリを追加します。"
 
@@ -397,6 +405,7 @@ msgstr "groongaのaptリポジトリを追加します。"
 #: ../../../source/install/ubuntu.txt:31 ../../../source/install/ubuntu.txt:78
 #: ../../../source/install/ubuntu.txt:125
 #: ../../../source/install/ubuntu.txt:172
+#: ../../../source/install/ubuntu.txt:219
 msgid "/etc/apt/sources.list.d/groonga.list::"
 msgstr ""
 
@@ -436,11 +445,10 @@ msgid ""
 msgstr ""
 "3.0.2のリリースから、groonga関連のRPMパッケージはFedoraの公式yumリポジトリで"
 "リリースしています。groongaのyumリポジトリのかわりにFedoraの公式リポジトリを"
-"使います。ただ、いくつか例外があって、 ``groonga-normalizer-mysql`` や"
-" MeCabの辞書 ( ``mecab-ipadic`` や ``mecab-jumandic`` )パッケージを使うには"
-"groongaのyumリポジトリを使います。"
-"将来的には ``groonga-normalizer-mysql`` もFedora公式のyumリポジトリで提供することを"
-"計画しています。"
+"使います。ただ、いくつか例外があって、 ``groonga-normalizer-mysql`` や MeCab"
+"の辞書 ( ``mecab-ipadic`` や ``mecab-jumandic`` )パッケージを使うにはgroonga"
+"のyumリポジトリを使います。将来的には ``groonga-normalizer-mysql`` もFedora公"
+"式のyumリポジトリで提供することを計画しています。"
 
 # 427ca358ad3943ca9c5e8e1c31238b15
 #: ../../../source/install/fedora.txt:30
@@ -454,9 +462,9 @@ msgid ""
 "dic`` and ``mecab-jumandic`` packages require to install ``groonga-release`` "
 "package which provides the groonga yum repository beforehand::"
 msgstr ""
-"``groonga-normalizer-mysql`` や ``mecab-ipadic`` 、 ``mecab-jumandic`` といった"
-"パッケージを使うには groongaのyumリポジトリを提供する ``groonga-release`` パッケージを"
-"あらかじめインストールします。"
+"``groonga-normalizer-mysql`` や ``mecab-ipadic`` 、 ``mecab-jumandic`` といっ"
+"たパッケージを使うには groongaのyumリポジトリを提供する ``groonga-release`` "
+"パッケージをあらかじめインストールします。"
 
 # 65bbef01a2a14d579cb2264a926d1ab7
 #: ../../../source/install/mac_os_x.txt:6
@@ -1183,6 +1191,7 @@ msgstr ""
 #: ../../../source/install/ubuntu.txt:24 ../../../source/install/ubuntu.txt:71
 #: ../../../source/install/ubuntu.txt:118
 #: ../../../source/install/ubuntu.txt:165
+#: ../../../source/install/ubuntu.txt:212
 msgid "Enable the universe repository to install groonga::"
 msgstr ""
 "groongaをインストールするためにuniverseリポジトリを有効にしてください::"
@@ -1200,6 +1209,11 @@ msgstr ""
 # b4dbf30424aa404090cc145aae930f99
 #: ../../../source/install/ubuntu.txt:161
 msgid "12.10 Quantal Quetzal"
+msgstr ""
+
+# 634b5d3f35134ed6bd24e302cd4ca23f
+#: ../../../source/install/ubuntu.txt:208
+msgid "13.04 Raring Ringtail"
 msgstr ""
 
 # 006df75ef60e44d5a293e79addc40daa
