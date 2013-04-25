@@ -122,6 +122,8 @@ Additional normalizers
 Here is a list of additional normalizers provided by ``groonga-normalizer-mysql`` plugins:
 
   * ``NormalizerMySQLGeneralCI``
+  * ``NormalizerMySQLUnicodeCI``
+  * ``NormalizerMySQLGeneralCIExceptKanaCIKanaWithVoicedSoundMark``
 
 ``groonga-normalizer-mysql`` is a groonga plugin.
 It provides MySQL compatible normalizers to groonga.
