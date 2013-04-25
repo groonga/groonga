@@ -6,4 +6,5 @@ SUBDIRS = mruby
 EXTRA_DIST =					\
 	$(NGINX_DIR)				\
 	mruby					\
-	$(MRUBY_DIR)
+	$(MRUBY_DIR)				\
+	plugins/CMakeLists.txt
