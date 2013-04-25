@@ -1,4 +1,4 @@
-# Copyright(C) 2012 Brazil
+# Copyright(C) 2012-2013 Brazil
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -14,7 +14,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 include_directories(
-  ${CMAKE_SOURCE_DIR}/lib
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../lib
   )
 
 set(QUERY_EXPANDERS_DIR "${GRN_PLUGINS_DIR}/query_expanders")

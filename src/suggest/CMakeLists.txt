@@ -1,4 +1,4 @@
-# Copyright(C) 2012 Brazil
+# Copyright(C) 2012-2013 Brazil
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -13,7 +13,7 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-include_directories(${CMAKE_SOURCE_DIR}/lib)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../lib)
 
 read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/create_dataset_sources.am
   GROONGA_SUGGEST_CREATE_DATASET_SOURCES)
