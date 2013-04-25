@@ -94,9 +94,6 @@
 # define GRN_WRITE(fd, buf, count) _write(fd, buf, count)
 #endif /* HAVE_WRITE */
 
-GRN_API void grn_sleep(uint32_t seconds);
-GRN_API void grn_nanosleep(uint64_t nanoseconds);
-
 #ifdef WIN32
 
 #if defined(__GNUC__) && !defined(WINVER)
@@ -720,6 +717,9 @@ grn_str_greater(const uint8_t *ap, uint32_t as, const uint8_t *bp, uint32_t bs)
 #define HOST_NAME_MAX 128
 #endif /* POSIX_HOST_NAME_MAX */
 #endif /* HOST_NAME_MAX */
+
+GRN_API void grn_sleep(uint32_t seconds);
+GRN_API void grn_nanosleep(uint64_t nanoseconds);
 
 #ifndef GROONGA_H
 #include "groonga.h"
