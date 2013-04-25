@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-04-19 15:45\n"
+"POT-Creation-Date: 2013-04-25 17:53\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -109,7 +109,8 @@ msgstr "CentOS 5"
 #: ../../../source/install/ubuntu.txt:36 ../../../source/install/ubuntu.txt:83
 #: ../../../source/install/ubuntu.txt:130
 #: ../../../source/install/ubuntu.txt:177
-#: ../../../source/install/ubuntu.txt:228
+#: ../../../source/install/ubuntu.txt:224
+#: ../../../source/install/ubuntu.txt:275
 msgid "Install::"
 msgstr "Install::"
 
@@ -130,6 +131,7 @@ msgstr "Install::"
 #: ../../../source/install/ubuntu.txt:90
 #: ../../../source/install/ubuntu.txt:137
 #: ../../../source/install/ubuntu.txt:184
+#: ../../../source/install/ubuntu.txt:231
 msgid ""
 "If you want to use `MeCab <http://mecab.sourceforge.net/>`_ as a tokenizer, "
 "install groonga-tokenizer-mecab package."
@@ -154,6 +156,7 @@ msgstr ""
 #: ../../../source/install/ubuntu.txt:93
 #: ../../../source/install/ubuntu.txt:140
 #: ../../../source/install/ubuntu.txt:187
+#: ../../../source/install/ubuntu.txt:234
 msgid "Install groonga-tokenizer-mecab package::"
 msgstr "Install groonga-tokenizer-mecab package::"
 
@@ -202,6 +205,7 @@ msgstr ""
 #: ../../../source/install/ubuntu.txt:97
 #: ../../../source/install/ubuntu.txt:144
 #: ../../../source/install/ubuntu.txt:191
+#: ../../../source/install/ubuntu.txt:238
 msgid ""
 "There is a package that provides `Munin <http://munin-monitoring.org/>`_ "
 "plugins. If you want to monitor groonga status by Munin, install groonga-"
@@ -259,6 +263,7 @@ msgstr "Enable EPEL repository on any environment::"
 #: ../../../source/install/ubuntu.txt:101
 #: ../../../source/install/ubuntu.txt:148
 #: ../../../source/install/ubuntu.txt:195
+#: ../../../source/install/ubuntu.txt:242
 msgid "Install groonga-munin-plugins package::"
 msgstr "Install groonga-munin-plugins package::"
 
@@ -280,6 +285,7 @@ msgstr "Install groonga-munin-plugins package::"
 #: ../../../source/install/ubuntu.txt:105
 #: ../../../source/install/ubuntu.txt:152
 #: ../../../source/install/ubuntu.txt:199
+#: ../../../source/install/ubuntu.txt:246
 msgid ""
 "There is a package that provides MySQL compatible normalizer as groonga "
 "plugins. If you want to use that one, install groonga-normalizer-mysql "
@@ -304,6 +310,7 @@ msgstr ""
 #: ../../../source/install/ubuntu.txt:109
 #: ../../../source/install/ubuntu.txt:156
 #: ../../../source/install/ubuntu.txt:203
+#: ../../../source/install/ubuntu.txt:250
 msgid "Install groonga-normalizer-mysql package::"
 msgstr ""
 
@@ -335,7 +342,7 @@ msgstr ""
 #: ../../../source/install/fedora.txt:77
 #: ../../../source/install/mac_os_x.txt:37
 #: ../../../source/install/others.txt:72
-#: ../../../source/install/ubuntu.txt:208
+#: ../../../source/install/ubuntu.txt:255
 #: ../../../source/install/windows.txt:65
 msgid "Build from source"
 msgstr "Build from source"
@@ -349,7 +356,7 @@ msgstr "Build from source"
 #: ../../../source/install/debian.txt:142
 #: ../../../source/install/fedora.txt:79
 #: ../../../source/install/solaris.txt:14
-#: ../../../source/install/ubuntu.txt:210
+#: ../../../source/install/ubuntu.txt:257
 msgid "Install required packages to build groonga::"
 msgstr "Install required packages to build groonga::"
 
@@ -364,7 +371,7 @@ msgstr "Install required packages to build groonga::"
 #: ../../../source/install/fedora.txt:83
 #: ../../../source/install/mac_os_x.txt:41
 #: ../../../source/install/solaris.txt:18
-#: ../../../source/install/ubuntu.txt:214
+#: ../../../source/install/ubuntu.txt:261
 msgid "Download source::"
 msgstr "Download source::"
 
@@ -377,7 +384,7 @@ msgstr "Download source::"
 #: ../../../source/install/debian.txt:152
 #: ../../../source/install/fedora.txt:89
 #: ../../../source/install/mac_os_x.txt:47
-#: ../../../source/install/ubuntu.txt:220
+#: ../../../source/install/ubuntu.txt:267
 msgid "Configure (see :ref:`source-configure` about ``configure`` options)::"
 msgstr "Configure (see :ref:`source-configure` about ``configure`` options)::"
 
@@ -392,7 +399,7 @@ msgstr "Configure (see :ref:`source-configure` about ``configure`` options)::"
 #: ../../../source/install/fedora.txt:93
 #: ../../../source/install/mac_os_x.txt:51
 #: ../../../source/install/solaris.txt:31
-#: ../../../source/install/ubuntu.txt:224
+#: ../../../source/install/ubuntu.txt:271
 msgid "Build::"
 msgstr "Build::"
 
@@ -427,6 +434,7 @@ msgstr "squeeze"
 #: ../../../source/install/ubuntu.txt:29 ../../../source/install/ubuntu.txt:76
 #: ../../../source/install/ubuntu.txt:123
 #: ../../../source/install/ubuntu.txt:170
+#: ../../../source/install/ubuntu.txt:217
 msgid "Add the groonga apt repository."
 msgstr "Add the groonga apt repository."
 
@@ -442,6 +450,7 @@ msgstr "Add the groonga apt repository."
 #: ../../../source/install/ubuntu.txt:31 ../../../source/install/ubuntu.txt:78
 #: ../../../source/install/ubuntu.txt:125
 #: ../../../source/install/ubuntu.txt:172
+#: ../../../source/install/ubuntu.txt:219
 msgid "/etc/apt/sources.list.d/groonga.list::"
 msgstr "/etc/apt/sources.list.d/groonga.list::"
 
@@ -1201,6 +1210,7 @@ msgstr "10.04 LTS Lucid Lynx"
 #: ../../../source/install/ubuntu.txt:24 ../../../source/install/ubuntu.txt:71
 #: ../../../source/install/ubuntu.txt:118
 #: ../../../source/install/ubuntu.txt:165
+#: ../../../source/install/ubuntu.txt:212
 msgid "Enable the universe repository to install groonga::"
 msgstr "Enable the universe repository to install groonga::"
 
@@ -1217,6 +1227,11 @@ msgstr "12.04 LTS Precise Pangolin"
 # 1c37af31a79b45b4ba1ca501877b7de6
 #: ../../../source/install/ubuntu.txt:161
 msgid "12.10 Quantal Quetzal"
+msgstr ""
+
+# a5a9f89c3b7d4c209b01758d1d8c7d0c
+#: ../../../source/install/ubuntu.txt:208
+msgid "13.04 Raring Ringtail"
 msgstr ""
 
 # ec68ab7b5e5148919d89e771d7d29ac2
