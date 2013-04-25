@@ -14,7 +14,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 cmake_minimum_required(VERSION 2.6)
-project(groonga)
+set(GRN_PROJECT_NAME "groonga")
+project("${GRN_PROJECT_NAME}")
 
 file(READ "${CMAKE_CURRENT_SOURCE_DIR}/base_version" VERSION)
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/version.sh")
@@ -38,12 +39,12 @@ set(LIB_DIR "${CMAKE_INSTALL_PREFIX}/lib")
 set(INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include")
 set(GRN_INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include/groonga")
 set(DATA_DIR "${CMAKE_INSTALL_PREFIX}/share")
-set(GRN_DATA_DIR "${DATA_DIR}/${CMAKE_PROJECT_NAME}")
+set(GRN_DATA_DIR "${DATA_DIR}/${GRN_PROJECT_NAME}")
 set(CONFIG_DIR "${CMAKE_INSTALL_PREFIX}/etc")
-set(GRN_CONFIG_DIR "${CONFIG_DIR}/${CMAKE_PROJECT_NAME}")
+set(GRN_CONFIG_DIR "${CONFIG_DIR}/${GRN_PROJECT_NAME}")
 
 set(GRN_LOG_PATH
-  "${CMAKE_INSTALL_PREFIX}/var/log/${CMAKE_PROJECT_NAME}/${CMAKE_PROJECT_NAME}.log"
+  "${CMAKE_INSTALL_PREFIX}/var/log/${GRN_PROJECT_NAME}/${GRN_PROJECT_NAME}.log"
   CACHE FILEPATH "log file path")
 set(GRN_DEFAULT_MATCH_ESCALATION_THRESHOLD
   0
@@ -52,7 +53,7 @@ set(GRN_DEFAULT_DOCUMENT_ROOT_BASE
   "html/admin"
   CACHE PATH "groonga default document root base path")
 set(GRN_DEFAULT_RELATIVE_DOCUMENT_ROOT
-  "share/${CMAKE_PROJECT_NAME}/${GRN_DEFAULT_DOCUMENT_ROOT_BASE}"
+  "share/${GRN_PROJECT_NAME}/${GRN_DEFAULT_DOCUMENT_ROOT_BASE}"
   CACHE PATH "groonga default relative document root")
 set(GRN_DEFAULT_DOCUMENT_ROOT
   "${GRN_DATA_DIR}/${GRN_DEFAULT_DOCUMENT_ROOT_BASE}"
@@ -62,7 +63,7 @@ set(GRN_STACK_SIZE
   CACHE STRING
   "DANGER!!! groonga stack size. Normarlly, you should not change this variable.")
 set(GRN_RELATIVE_PLUGINS_DIR
-  "${CMAKE_PROJECT_NAME}/plugins"
+  "${GRN_PROJECT_NAME}/plugins"
   CACHE PATH "groonga plugins' relative directory")
 set(GRN_PLUGINS_DIR
   "${LIB_DIR}/${GRN_RELATIVE_PLUGINS_DIR}"
