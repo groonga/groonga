@@ -16,12 +16,12 @@
 cmake_minimum_required(VERSION 2.6)
 project(groonga)
 
-file(READ "${CMAKE_SOURCE_DIR}/base_version" VERSION)
-if(EXISTS "${CMAKE_SOURCE_DIR}/version.sh")
-  file(READ "${CMAKE_SOURCE_DIR}/version.sh" GRN_VERSION)
+file(READ "${CMAKE_CURRENT_SOURCE_DIR}/base_version" VERSION)
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/version.sh")
+  file(READ "${CMAKE_CURRENT_SOURCE_DIR}/version.sh" GRN_VERSION)
 else()
   if(NOT EXISTS "${CMAKE_BINARY_DIR}/version.sh")
-    execute_process(COMMAND "${CMAKE_SOURCE_DIR}/version-gen.sh")
+    execute_process(COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/version-gen.sh")
   endif()
   file(READ "${CMAKE_BINARY_DIR}/version.sh" GRN_VERSION)
 endif()
@@ -31,7 +31,7 @@ include(CheckIncludeFile)
 include(CheckFunctionExists)
 include(CheckLibraryExists)
 include(FindPkgConfig)
-include(${CMAKE_SOURCE_DIR}/build/cmake_modules/ReadFileList.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/build/cmake_modules/ReadFileList.cmake)
 
 set(BIN_DIR "${CMAKE_INSTALL_PREFIX}/bin")
 set(LIB_DIR "${CMAKE_INSTALL_PREFIX}/lib")
@@ -81,8 +81,8 @@ add_definitions(
 
 include_directories(
   ${CMAKE_BINARY_DIR}
-  ${CMAKE_SOURCE_DIR}
-  ${CMAKE_SOURCE_DIR}/include
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/include
   )
 
 macro(ac_check_headers header)
