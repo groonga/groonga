@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-29 18:18\n"
+"POT-Creation-Date: 2013-04-26 10:01\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -830,7 +830,7 @@ msgstr ""
 #: ../../../source/reference/functions/snippet_html.txt:118
 #: ../../../source/reference/functions/sub_filter.txt:120
 #: ../../../source/reference/grn_expr.txt:57
-#: ../../../source/reference/normalizers.txt:144
+#: ../../../source/reference/normalizers.txt:146
 #: ../../../source/reference/query_expanders/tsv.txt:151
 #: ../../../source/reference/tables.txt:163
 msgid "See also"
@@ -13016,8 +13016,18 @@ msgstr ""
 msgid "``NormalizerMySQLGeneralCI``"
 msgstr ""
 
-# 9ce604d359144806bcabe062c3e87053
+# 3ad0308b54de4a838c2e9a8fcec133ec
+#: ../../../source/reference/normalizers.txt:125
+msgid "``NormalizerMySQLUnicodeCI``"
+msgstr ""
+
+# 489afcfeba604ac4b386b39b14cb4add
 #: ../../../source/reference/normalizers.txt:126
+msgid "``NormalizerMySQLGeneralCIExceptKanaCIKanaWithVoicedSoundMark``"
+msgstr ""
+
+# 9ce604d359144806bcabe062c3e87053
+#: ../../../source/reference/normalizers.txt:128
 msgid ""
 "``groonga-normalizer-mysql`` is a groonga plugin. It provides MySQL "
 "compatible normalizers to groonga. ``NormalizerMySQLGeneralCI`` corresponds "
@@ -13025,18 +13035,18 @@ msgid ""
 msgstr ""
 
 # f635555465884cfea2faffac15a2e744
-#: ../../../source/reference/normalizers.txt:130
+#: ../../../source/reference/normalizers.txt:132
 msgid "You need to register ``normalizers/mysql`` plugin in advance."
 msgstr ""
 
 # 6656e3e7cecf483e857e67760b07d7c0
-#: ../../../source/reference/normalizers.txt:136
+#: ../../../source/reference/normalizers.txt:138
 msgid "Here is an example that uses ``NormalizerMySQLGeneralCI`` normalizer:"
 msgstr ""
 
 # 257a8b1e0a424cf3807162e2534d2837
 # 73ec2c3dc21241d5b0b795816605eeb2
-#: ../../../source/reference/normalizers.txt:146
+#: ../../../source/reference/normalizers.txt:148
 #: ../../../source/reference/tables.txt:165
 msgid ":doc:`/reference/commands/table_create`"
 msgstr ""
