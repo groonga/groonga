@@ -159,6 +159,8 @@ grn_tokenizer_query_open(grn_ctx *ctx, int num_args, grn_obj **args,
         if (!normalized_query) {
           GRN_PLUGIN_FREE(ctx, query_buf);
           GRN_PLUGIN_FREE(ctx, query);
+          GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
+                           "[tokenizer] failed to open normalized string");
           return NULL;
         }
         query->normalized_query = normalized_query;
