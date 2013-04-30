@@ -1,0 +1,13 @@
+table_create Documents TABLE_HASH_KEY ShortText
+column_create Documents content COLUMN_SCALAR Text
+
+table_create Terms TABLE_PAT_KEY|KEY_NORMALIZE ShortText --default_tokenizer TokenBigram
+column_create Terms document_index COLUMN_INDEX|WITH_POSITION Documents content
+
+load --table Documents
+[
+["_key", "content"],
+["Groonga overview", "Groonga is a fast and accurate full text search engine based on inverted index. One of the characteristics of groonga is that a newly registered document instantly appears in search results. Also, groonga allows updates without read locks. These characteristics result in superior performance on real-time applications."]
+]
+
+select Documents --filter 'content *S ""' --output_columns '_key, _score, content'

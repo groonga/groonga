@@ -5716,7 +5716,7 @@ grn_ii_similar_search(grn_ctx *ctx, grn_ii *ii,
   grn_token *token;
   unsigned int token_flags = GRN_TOKEN_ENABLE_TOKENIZED_DELIMITER;
   grn_obj *lexicon = ii->lexicon;
-  if (!lexicon || !ii || !string || !s || !optarg) { return GRN_INVALID_ARGUMENT; }
+  if (!lexicon || !ii || !string || !string_len || !s || !optarg) { return GRN_INVALID_ARGUMENT; }
   if (!(h = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(int), 0))) {
     return GRN_NO_MEMORY_AVAILABLE;
   }
