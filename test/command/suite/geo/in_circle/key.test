@@ -1,0 +1,13 @@
+table_create area TABLE_PAT_KEY WGS84GeoPoint
+column_create area index COLUMN_INDEX area _key
+
+load --table area
+[
+{"_key": "128592911x503145263"},
+{"_key": "128565076x502976128"},
+{"_key": "128461363x502772717"},
+{"_key": "128597458x502942345"},
+{"_key": "128573438x502868189"}
+]
+
+select area --filter 'geo_in_circle(_key, "128575000x502960000", 3000)'

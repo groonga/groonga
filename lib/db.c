@@ -8321,6 +8321,7 @@ grn_column_index_accessor(grn_ctx *ctx, grn_obj *obj, grn_operator op,
         case GRN_OP_GREATER :
         case GRN_OP_LESS_EQUAL :
         case GRN_OP_GREATER_EQUAL :
+        case GRN_OP_CALL :
           is_valid_index = is_valid_range_index(ctx, target);
           break;
         default :
@@ -8418,6 +8419,7 @@ grn_column_index(grn_ctx *ctx, grn_obj *obj, grn_operator op,
     case GRN_OP_GREATER :
     case GRN_OP_LESS_EQUAL :
     case GRN_OP_GREATER_EQUAL :
+    case GRN_OP_CALL :
       n = grn_column_index_accessor(ctx, obj, op, indexbuf, buf_size, section);
       break;
     default :
