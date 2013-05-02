@@ -5248,7 +5248,7 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
                 grn_obj value_buf, cast_buf;
                 const char *head = GRN_BULK_HEAD(value->u.v.body);
                 GRN_OBJ_INIT(&value_buf, GRN_BULK, 0, GRN_DB_VOID);
-                GRN_OBJ_INIT(&cast_buf, GRN_BULK, 0, range);
+                GRN_OBJ_INIT(&cast_buf, GRN_BULK, 0, lexicon->header.domain);
                 for (j = value->u.v.n_sections, v = value->u.v.sections; j; j--, v++) {
                   const char *value_ptr = head + v->offset;
                   int value_length = v->length;
