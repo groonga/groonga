@@ -5245,12 +5245,40 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
               if (value->u.v.body) {
                 int j;
                 grn_section *v;
+                grn_obj value_buf, cast_buf;
                 const char *head = GRN_BULK_HEAD(value->u.v.body);
+                GRN_OBJ_INIT(&value_buf, GRN_BULK, 0, GRN_DB_VOID);
+                GRN_OBJ_INIT(&cast_buf, GRN_BULK, 0, range);
                 for (j = value->u.v.n_sections, v = value->u.v.sections; j; j--, v++) {
-                  grn_id tid = grn_table_add(ctx, lexicon,
-                                             head + v->offset, v->length, NULL);
+                  const char *value_ptr = head + v->offset;
+                  int value_length = v->length;
+                  grn_id tid;
+                  if (range != v->domain) {
+                    GRN_BULK_REWIND(&value_buf);
+                    grn_bulk_write(ctx, &value_buf, value_ptr, value_length);
+                    value_buf.header.domain = v->domain;
+                    rc = grn_obj_cast(ctx, &value_buf, &cast_buf, GRN_TRUE);
+                    if (rc) {
+                      grn_obj *range_obj;
+                      range_obj = grn_ctx_at(ctx, range);
+                      REPORT_CAST_ERROR(obj, range_obj, &value_buf);
+                      grn_obj_unlink(ctx, range_obj);
+                    } else {
+                      value_ptr = GRN_BULK_HEAD(&cast_buf);
+                      value_length = GRN_BULK_VSIZE(&cast_buf);
+                    }
+                  } else {
+                    rc = GRN_SUCCESS;
+                  }
+                  if (rc) {
+                    continue;
+                  }
+                  tid = grn_table_add(ctx, lexicon,
+                                      value_ptr, value_length, NULL);
                   grn_bulk_write(ctx, &buf, (char *)&tid, sizeof(grn_id));
                 }
+                GRN_OBJ_FIN(ctx, &value_buf);
+                GRN_OBJ_FIN(ctx, &cast_buf);
               }
               rc = grn_ja_put(ctx, (grn_ja *)obj, id,
                               GRN_BULK_HEAD(&buf), GRN_BULK_VSIZE(&buf), flags, NULL);
