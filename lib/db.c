@@ -7255,7 +7255,7 @@ grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, unsigned char flags)
   } else {
     switch (domain) {
     case GRN_DB_VOID :
-      if (obj->header.type == GRN_VECTOR) { VECTOR_CLEAR(ctx,obj); }
+      if (obj->header.type == GRN_VECTOR) { VECTOR_CLEAR(ctx, obj); }
       obj->header.type = GRN_VOID;
       obj->header.domain = domain;
       GRN_BULK_REWIND(obj);
@@ -7274,7 +7274,7 @@ grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, unsigned char flags)
     case GRN_DB_TIME :
     case GRN_DB_TOKYO_GEO_POINT :
     case GRN_DB_WGS84_GEO_POINT :
-      if (obj->header.type == GRN_VECTOR) { VECTOR_CLEAR(ctx,obj); }
+      if (obj->header.type == GRN_VECTOR) { VECTOR_CLEAR(ctx, obj); }
       obj->header.type = (flags & GRN_OBJ_VECTOR) ? GRN_UVECTOR : GRN_BULK;
       obj->header.domain = domain;
       GRN_BULK_REWIND(obj);
@@ -7290,7 +7290,7 @@ grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, unsigned char flags)
         }
         obj->u.v.n_sections = 0;
       } else {
-        if (obj->header.type == GRN_VECTOR) { VECTOR_CLEAR(ctx,obj); }
+        if (obj->header.type == GRN_VECTOR) { VECTOR_CLEAR(ctx, obj); }
         obj->header.type = GRN_BULK;
       }
       obj->header.domain = domain;
@@ -7307,11 +7307,11 @@ grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, unsigned char flags)
               if (obj->header.type != GRN_VECTOR) { grn_bulk_fin(ctx, obj); }
               obj->header.type = GRN_VECTOR;
             } else {
-              if (obj->header.type == GRN_VECTOR) { VECTOR_CLEAR(ctx,obj); }
+              if (obj->header.type == GRN_VECTOR) { VECTOR_CLEAR(ctx, obj); }
               obj->header.type = GRN_BULK;
             }
           } else {
-            if (obj->header.type == GRN_VECTOR) { VECTOR_CLEAR(ctx,obj); }
+            if (obj->header.type == GRN_VECTOR) { VECTOR_CLEAR(ctx, obj); }
             obj->header.type = (flags & GRN_OBJ_VECTOR) ? GRN_UVECTOR : GRN_BULK;
           }
           obj->header.domain = domain;
