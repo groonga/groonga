@@ -7244,7 +7244,7 @@ static void
 grn_obj_ensure_bulk(grn_ctx *ctx, grn_obj *obj)
 {
   if (obj->header.type == GRN_VECTOR) { VECTOR_CLEAR(ctx, obj); }
-  obj->header.type =  GRN_BULK;
+  obj->header.type = GRN_BULK;
 }
 
 grn_rc
