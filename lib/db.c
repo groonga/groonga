@@ -5254,6 +5254,7 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
                   int value_length = v->length;
                   grn_id tid;
                   if (range != v->domain) {
+                    GRN_BULK_REWIND(&cast_buf);
                     GRN_BULK_REWIND(&value_buf);
                     grn_bulk_write(ctx, &value_buf, value_ptr, value_length);
                     value_buf.header.domain = v->domain;
