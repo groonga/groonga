@@ -1779,6 +1779,17 @@ proc_defrag(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   return NULL;
 }
 
+static grn_obj *
+proc_echo(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  if (GRN_TEXT_LEN(VAR(0))) {
+    GRN_OUTPUT_CSTR(GRN_TEXT_VALUE(VAR(0)));
+  } else {
+    ERR(GRN_INVALID_ARGUMENT, "invalid echo message.");
+  }
+  return NULL;
+}
+
 static char slev[] = " EACewnid-";
 
 static grn_obj *
@@ -3919,6 +3930,9 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[0], "target_name");
   DEF_VAR(vars[1], "threshold");
   DEF_COMMAND("defrag", proc_defrag, 2, vars);
+
+  DEF_VAR(vars[0], "message");
+  DEF_COMMAND("echo", proc_echo, 1, vars);
 
   DEF_VAR(vars[0], "level");
   DEF_COMMAND("log_level", proc_log_level, 1, vars);
