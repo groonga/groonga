@@ -20,7 +20,7 @@
 #define GROONGA_IN_H
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+#include <config.h>
 #endif /* HAVE_CONFIG_H */
 
 #ifdef __cplusplus
