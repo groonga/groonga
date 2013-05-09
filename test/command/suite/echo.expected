@@ -1,0 +1,2 @@
+echo "test echo message"
+[[0,0.0,0.0],"test echo message"]
