@@ -33,6 +33,8 @@ if(GRN_WITH_STATIC)
   set_target_properties(libgroonga_static PROPERTIES OUTPUT_NAME "groonga")
 endif()
 target_link_libraries(libgroonga
+  ${EXECINFO_LIBS}
+  ${RT_LIBS}
   ${PTHREAD_LIBS}
   ${Z_LIBS}
   ${LZO2_LIBS}
