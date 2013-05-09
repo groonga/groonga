@@ -57,7 +57,7 @@
 #cmakedefine USE_SELECT
 
 /* compiler specific build options */
-#cmakedefine _FILE_OFFSET_BITS
+#cmakedefine _FILE_OFFSET_BITS @_FILE_OFFSET_BITS@
 #cmakedefine _GNU_SOURCE
 #cmakedefine _ISOC99_SOURCE
 #cmakedefine _LARGE_FILES
