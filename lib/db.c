@@ -5095,7 +5095,7 @@ call_hook_for_build(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value, int f
   return 0;
 }
 
-inline static grn_rc
+static grn_rc
 grn_obj_set_value_var_size_scalar(grn_ctx *ctx, grn_obj *obj, grn_id id,
                                   grn_obj *value, int flags)
 {
