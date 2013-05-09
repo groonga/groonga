@@ -4703,8 +4703,7 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
       }
       break;
     case GRN_OP_CALL :
-      if (si->flags & SCAN_ACCESSOR) {
-      } else if (selector_proc_p(si->args[0])) {
+      if (selector_proc_p(si->args[0])) {
         grn_rc rc;
         grn_proc *proc = (grn_proc *)(si->args[0]);
         rc = proc->selector(ctx, table, index, si->nargs, si->args,
