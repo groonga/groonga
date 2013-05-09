@@ -464,7 +464,7 @@ AC_ARG_ENABLE(nfkc,
     [use nfkc based utf8 normalization. [default=yes]])],,
   [enable_nfkc="yes"])
 if test "x$enable_nfkc" = "xyes"; then
-  AC_DEFINE(WITH_NFKC, [1], [compile with nfkc.c])
+  AC_DEFINE(GRN_WITH_NFKC, [1], [compile with nfkc.c])
 fi
 
 # coverage
@@ -679,7 +679,7 @@ m4_ifdef([AC_CHECK_CPPCUTTER],
 AM_CONDITIONAL([WITH_CUTTER], [test "$cutter_use_cutter" = "yes"])
 AM_CONDITIONAL([WITH_CPPCUTTER], [test "$cutter_use_cppcutter" = "yes"])
 if test "$cutter_use_cutter" = "yes"; then
-  AC_DEFINE(WITH_CUTTER, 1, [Define to 1 if you use Cutter])
+  AC_DEFINE(GRN_WITH_CUTTER, 1, [Define to 1 if you use Cutter])
 
   ac_cv_have_libmemcached=no
   AC_CHECK_HEADER(libmemcached/memcached.h,
@@ -688,7 +688,7 @@ if test "$cutter_use_cutter" = "yes"; then
   AM_CONDITIONAL([WITH_LIBMEMCACHED],
                  [test "$ac_cv_have_libmemcached" = "yes"])
   if test "$ac_cv_have_libmemcached" = "yes"; then
-    AC_DEFINE(WITH_LIBMEMCACHED, 1, [Define to 1 if you use libmemcached])
+    AC_DEFINE(GRN_WITH_LIBMEMCACHED, 1, [Define to 1 if you use libmemcached])
   fi
 else
   AM_CONDITIONAL([WITH_LIBMEMCACHED], false)
@@ -713,7 +713,7 @@ else
   AC_MSG_RESULT($ac_benchmark_available)
 fi
 if test "$benchmark_available" = "yes"; then
-  AC_DEFINE(WITH_BENCHMARK, 1, [Define to 1 if benchamrk is available])
+  AC_DEFINE(GRN_WITH_BENCHMARK, 1, [Define to 1 if benchamrk is available])
 fi
 AM_CONDITIONAL([WITH_BENCHMARK], [test "$benchmark_available" = "yes"])
 
@@ -816,7 +816,7 @@ if test "x$enable_libedit" != "xno"; then
     ],
     [libedit_available=no])
   if test "x$libedit_available" = "xyes"; then
-    AC_DEFINE(WITH_LIBEDIT, [1], [Use libedit with multibyte support.])
+    AC_DEFINE(GRN_WITH_LIBEDIT, [1], [Use libedit with multibyte support.])
   else
     if test "x$enable_editline" = "xyes"; then
       AC_MSG_ERROR("No libedit found")
@@ -830,14 +830,15 @@ AC_ARG_WITH(zlib,
     [use zlib for data compression. [default=no]])],
   [with_zlib="$withval"],
   [with_zlib="no"])
-WITH_ZLIB=no
+GRN_WITH_ZLIB=no
 if test "x$with_zlib" = "xyes"; then
-  AC_DEFINE(WITH_ZLIB, [1], [with zlib])
-  AC_SEARCH_LIBS(compress, z, [WITH_ZLIB=yes], [AC_MSG_ERROR("No libz found")])
+  AC_DEFINE(GRN_WITH_ZLIB, [1], [with zlib])
+  AC_SEARCH_LIBS(compress, z, [GRN_WITH_ZLIB=yes],
+                 [AC_MSG_ERROR("No libz found")])
 else
-  AC_SEARCH_LIBS(compress, z, [WITH_ZLIB=yes], [])
+  AC_SEARCH_LIBS(compress, z, [GRN_WITH_ZLIB=yes], [])
 fi
-AC_SUBST(WITH_ZLIB)
+AC_SUBST(GRN_WITH_ZLIB)
 
 # LZO
 AC_ARG_WITH(lzo,
@@ -846,7 +847,7 @@ AC_ARG_WITH(lzo,
   [with_lzo="$withval"],
   [with_lzo="no"])
 if test "x$with_lzo" = "xyes"; then
-  AC_DEFINE(WITH_LZO, [1], [with lzo])
+  AC_DEFINE(GRN_WITH_LZO, [1], [with lzo])
   AC_SEARCH_LIBS(lzo1_compress, lzo2, [], [AC_MSG_ERROR("No liblzo2 found")])
 fi
 
@@ -901,7 +902,7 @@ if test "x$with_mecab" = "xyes"; then
   fi
 fi
 if test "x$with_mecab" = "xyes"; then
-  AC_DEFINE(WITH_MECAB, [1], [use MeCab])
+  AC_DEFINE(GRN_WITH_MECAB, [1], [use MeCab])
 fi
 AM_CONDITIONAL(WITH_MECAB, test "x$with_mecab" = "xyes")
 
@@ -928,7 +929,7 @@ if test "x$with_kytea" != "xno"; then
   with_kytea="$kytea_exists"
 fi
 if test "x$with_kytea" = "xyes"; then
-  AC_DEFINE(WITH_KYTEA, [1], [use KyTea])
+  AC_DEFINE(GRN_WITH_KYTEA, [1], [use KyTea])
 fi
 AM_CONDITIONAL(WITH_KYTEA, test "x$with_kytea" = "xyes")
 
@@ -963,7 +964,7 @@ if test "x$enable_zeromq" != "xno"; then
     ],
     [zeromq_available=no])
   if test "x$zeromq_available" = "xyes"; then
-    AC_DEFINE(WITH_ZEROMQ, [1], [Define to 1 if ZeroMQ is available.])
+    AC_DEFINE(GRN_WITH_ZEROMQ, [1], [Define to 1 if ZeroMQ is available.])
   else
     if test "x$enable_zeromq" = "xyes"; then
       AC_MSG_ERROR("No ZeroMQ found")
@@ -1009,7 +1010,7 @@ if test "x$with_libevent" != "xno"; then
   LDFLAGS="$_SAVE_LDFLAGS"
   LIBS="$_SAVE_LIBS"
   if test "$libevent_available" = "yes"; then
-    AC_DEFINE(WITH_LIBEVENT, [1], [Define to 1 if libevent is available.])
+    AC_DEFINE(GRN_WITH_LIBEVENT, [1], [Define to 1 if libevent is available.])
     LIBEVENT_CFLAGS="$libevent_cflags"
     LIBEVENT_LIBS="$libevent_ldflags"
   else
@@ -1040,7 +1041,8 @@ if test "x$with_message_pack" != "xno"; then
   LDFLAGS="$_SAVE_LDFLAGS"
   LIBS="$_SAVE_LIBS"
   if test "x$message_pack_available" = "xyes"; then
-    AC_DEFINE(WITH_MESSAGE_PACK, [1], [Define to 1 if MessagePack is available.])
+    AC_DEFINE(GRN_WITH_MESSAGE_PACK, [1],
+              [Define to 1 if MessagePack is available.])
     MESSAGE_PACK_CFLAGS="-I$with_message_pack/include"
     MESSAGE_PACK_LIBS="-L$with_message_pack/lib -lmsgpack"
   else
@@ -1273,7 +1275,7 @@ MRUBY_VERSION=mruby_version
 AC_SUBST(MRUBY_VERSION)
 
 if test "$enable_mruby" = "yes"; then
-  AC_DEFINE(WITH_MRUBY, [1], [Define to 1 if mruby is enabled.])
+  AC_DEFINE(GRN_WITH_MRUBY, [1], [Define to 1 if mruby is enabled.])
   MRUBY_CFLAGS="-I\$(top_srcdir)/vendor/mruby-${MRUBY_VERSION}/include"
   MRUBY_LIBS="\$(top_builddir)/vendor/mruby/libmruby.la"
 else
@@ -1285,7 +1287,7 @@ AC_SUBST(MRUBY_LIBS)
 AM_CONDITIONAL(WITH_MRUBY, test "$enable_mruby" = "yes")
 
 # PCRE
-WITH_PCRE=no
+GRN_WITH_PCRE=no
 AC_ARG_WITH(pcre,
   [AS_HELP_STRING([--without-pcre],
     [use PCRE for groonga-httpd. [default=auto-detect]])],
@@ -1296,15 +1298,15 @@ if test "x$with_pcre" != "xno"; then
     PKG_CHECK_MODULES([PCRE], [libpcre],
       [_PKG_CONFIG(PCRE_LIBS_ONLY_L, [libs-only-L], [libpcre])
        PCRE_LIBS_ONLY_L="$pkg_cv_PCRE_LIBS_ONLY_L"
-       WITH_PCRE=yes],
-      [WITH_PCRE=no])
+       GRN_WITH_PCRE=yes],
+      [GRN_WITH_PCRE=no])
     ],
-    [WITH_PCRE=no])
-  if test "x$with_pcre" = "xyes" -a "$WITH_PCRE" != "yes"; then
+    [GRN_WITH_PCRE=no])
+  if test "x$with_pcre" = "xyes" -a "$GRN_WITH_PCRE" != "yes"; then
     AC_MSG_ERROR("No PCRE found")
   fi
 fi
-AC_SUBST(WITH_PCRE)
+AC_SUBST(GRN_WITH_PCRE)
 AC_SUBST(PCRE_CFLAGS)
 AC_SUBST(PCRE_LIBS_ONLY_L)
 

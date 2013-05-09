@@ -89,7 +89,7 @@ data_is_builtin(void)
                  NULL)
 
   ADD_DATUM(TRUE, "TokenBigram");
-#ifdef WITH_MECAB
+#ifdef GRN_WITH_MECAB
   ADD_DATUM(TRUE, "TokenMecab");
 #endif
   ADD_DATUM(FALSE, "Users");

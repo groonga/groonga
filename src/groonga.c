@@ -103,7 +103,7 @@ grn_rc_to_exit_code(grn_rc rc)
   }
 }
 
-#ifdef WITH_LIBEDIT
+#ifdef GRN_WITH_LIBEDIT
 #include <locale.h>
 #include <histedit.h>
 static EditLine   *line_editor = NULL;
@@ -192,7 +192,7 @@ line_editor_fgets(grn_ctx *ctx, grn_obj *buf)
   }
   return rc;
 }
-#endif /* WITH_LIBEDIT */
+#endif /* GRN_WITH_LIBEDIT */
 
 inline static grn_rc
 read_next_line(grn_ctx *ctx, grn_obj *buf)
@@ -200,7 +200,7 @@ read_next_line(grn_ctx *ctx, grn_obj *buf)
   static int the_first_read = GRN_TRUE;
   grn_rc rc = GRN_SUCCESS;
   if (!batchmode) {
-#ifdef WITH_LIBEDIT
+#ifdef GRN_WITH_LIBEDIT
     rc = line_editor_fgets(ctx, buf);
 #else
     fprintf(stderr, "> ");
@@ -1930,10 +1930,10 @@ show_version(void)
 #ifndef NO_NFKC
   printf(",nfkc");
 #endif
-#ifdef WITH_MECAB
+#ifdef GRN_WITH_MECAB
   printf(",mecab");
 #endif
-#ifdef WITH_MESSAGE_PACK
+#ifdef GRN_WITH_MESSAGE_PACK
   printf(",msgpack");
 #endif
 #ifndef NO_ZLIB
@@ -2415,7 +2415,7 @@ main(int argc, char **argv)
     cache_limit = default_cache_limit;
   }
 
-#ifdef WITH_LIBEDIT
+#ifdef GRN_WITH_LIBEDIT
   if (!batchmode) {
     line_editor_init(argc, argv);
   }
@@ -2460,7 +2460,7 @@ main(int argc, char **argv)
     break;
   }
 
-#ifdef WITH_LIBEDIT
+#ifdef GRN_WITH_LIBEDIT
   if (!batchmode) {
     line_editor_fin();
   }

@@ -19,12 +19,12 @@
 #include "mrb.h"
 #include "ctx_impl.h"
 
-#ifdef WITH_MRUBY
+#ifdef GRN_WITH_MRUBY
 # include <mruby/proc.h>
 # include <mruby/compile.h>
 #endif
 
-#ifdef WITH_MRUBY
+#ifdef GRN_WITH_MRUBY
 void
 grn_ctx_impl_mrb_init(grn_ctx *ctx)
 {

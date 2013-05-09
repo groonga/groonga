@@ -253,7 +253,7 @@ grn_db_open(grn_ctx *ctx, const char *path)
           DB_OBJ(&s->obj)->range = GRN_ID_NIL;
           grn_ctx_use(ctx, (grn_obj *)s);
           grn_ctx_use(ctx_, (grn_obj *)s);
-#ifdef WITH_MECAB
+#ifdef GRN_WITH_MECAB
           if (grn_db_init_mecab_tokenizer(ctx)) {
             ERRCLR(ctx);
           }
@@ -3406,16 +3406,16 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
     if (ja_p) {
       grn_bool zlib_p = GRN_FALSE;
       grn_bool lzo_p = GRN_FALSE;
-#ifdef WITH_ZLIB
+#ifdef GRN_WITH_ZLIB
       if (flags & GRN_OBJ_COMPRESS_ZLIB) {
         zlib_p = GRN_TRUE;
       }
-#endif /* WITH_ZLIB */
-#ifdef WITH_LZO
+#endif /* GRN_WITH_ZLIB */
+#ifdef GRN_WITH_LZO
       if (flags & GRN_OBJ_COMPRESS_LZO) {
         lzo_p = GRN_TRUE;
       }
-#endif /* WITH_LZO */
+#endif /* GRN_WITH_LZO */
       if (zlib_p || lzo_p) {
         int table_name_len;
         char table_name[GRN_TABLE_MAX_KEY_SIZE];
@@ -5733,7 +5733,7 @@ grn_obj_get_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *valueb
           "failed to open value buffer for GRN_INFO_ZLIB_SUPPORT");
       goto exit;
     }
-#ifdef WITH_ZLIB
+#ifdef GRN_WITH_ZLIB
     GRN_BOOL_PUT(ctx, valuebuf, GRN_TRUE);
 #else
     GRN_BOOL_PUT(ctx, valuebuf, GRN_FALSE);
@@ -5745,11 +5745,11 @@ grn_obj_get_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *valueb
           "failed to open value buffer for GRN_INFO_LZO_SUPPORT");
       goto exit;
     }
-#ifdef WITH_LZO
+#ifdef GRN_WITH_LZO
     GRN_BOOL_PUT(ctx, valuebuf, GRN_TRUE);
-#else /* WITH_LZO */
+#else /* GRN_WITH_LZO */
     GRN_BOOL_PUT(ctx, valuebuf, GRN_FALSE);
-#endif /* WITH_LZO */
+#endif /* GRN_WITH_LZO */
     break;
   default :
     if (!obj) {
@@ -8226,12 +8226,12 @@ grn_db_init_builtin_types(grn_ctx *ctx)
     grn_itoh(id, buf + 3, 2);
     grn_obj_register(ctx, db, buf, 5);
   }
-#ifdef WITH_MECAB
+#ifdef GRN_WITH_MECAB
   if (grn_db_init_mecab_tokenizer(ctx)) {
     ERRCLR(ctx);
 #endif
     grn_obj_register(ctx, db, "TokenMecab", 10);
-#ifdef WITH_MECAB
+#ifdef GRN_WITH_MECAB
   }
 #endif
   grn_db_init_builtin_tokenizers(ctx);

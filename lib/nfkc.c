@@ -23,7 +23,7 @@ don't edit this file by hand. it generated automatically by nfkc.rb
 
 #include <groonga/nfkc.h>
 
-#ifdef WITH_NFKC
+#ifdef GRN_WITH_NFKC
 
 grn_char_type
 grn_nfkc_char_type(const unsigned char *str)
@@ -80245,5 +80245,5 @@ case 0xE3 :
   return 0;
 }
 
-#endif /* WITH_NFKC */
+#endif /* GRN_WITH_NFKC */
 

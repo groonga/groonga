@@ -1058,7 +1058,7 @@ grn_ja_element_info(grn_ctx *ctx, grn_ja *ja, grn_id id,
   return GRN_SUCCESS;
 }
 
-#ifdef WITH_ZLIB
+#ifdef GRN_WITH_ZLIB
 #include <zlib.h>
 
 static void *
@@ -1102,9 +1102,9 @@ grn_ja_ref_zlib(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *v
   }
   return value;
 }
-#endif /* WITH_ZLIB */
+#endif /* GRN_WITH_ZLIB */
 
-#ifdef WITH_LZO
+#ifdef GRN_WITH_LZO
 #include <lzo/lzo1x.h>
 
 static void *
@@ -1140,21 +1140,21 @@ grn_ja_ref_lzo(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *va
   *value_len = lout_len;
   return value;
 }
-#endif /* WITH_LZO */
+#endif /* GRN_WITH_LZO */
 
 void *
 grn_ja_ref(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *value_len)
 {
-#ifdef WITH_ZLIB
+#ifdef GRN_WITH_ZLIB
   if (ja->header->flags & GRN_OBJ_COMPRESS_ZLIB) {
     return grn_ja_ref_zlib(ctx, ja, id, iw, value_len);
   }
-#endif /* WITH_ZLIB */
-#ifdef WITH_LZO
+#endif /* GRN_WITH_ZLIB */
+#ifdef GRN_WITH_LZO
   if (ja->header->flags & GRN_OBJ_COMPRESS_LZO) {
     return grn_ja_ref_lzo(ctx, ja, id, iw, value_len);
   }
-#endif /* WITH_LZO */
+#endif /* GRN_WITH_LZO */
   return grn_ja_ref_raw(ctx, ja, id, iw, value_len);
 }
 
@@ -1188,7 +1188,7 @@ exit :
   return value;
 }
 
-#ifdef WITH_ZLIB
+#ifdef GRN_WITH_ZLIB
 inline static grn_rc
 grn_ja_put_zlib(grn_ctx *ctx, grn_ja *ja, grn_id id,
                 void *value, uint32_t value_len, int flags, uint64_t *cas)
@@ -1234,9 +1234,9 @@ grn_ja_put_zlib(grn_ctx *ctx, grn_ja *ja, grn_id id,
   GRN_FREE(zvalue);
   return rc;
 }
-#endif /* WITH_ZLIB */
+#endif /* GRN_WITH_ZLIB */
 
-#ifdef WITH_LZO
+#ifdef GRN_WITH_LZO
 inline static grn_rc
 grn_ja_put_lzo(grn_ctx *ctx, grn_ja *ja, grn_id id,
                void *value, uint32_t value_len, int flags, uint64_t *cas)
@@ -1263,22 +1263,22 @@ grn_ja_put_lzo(grn_ctx *ctx, grn_ja *ja, grn_id id,
   GRN_FREE(lvalue);
   return rc;
 }
-#endif /* WITH_LZO */
+#endif /* GRN_WITH_LZO */
 
 grn_rc
 grn_ja_put(grn_ctx *ctx, grn_ja *ja, grn_id id, void *value, uint32_t value_len,
            int flags, uint64_t *cas)
 {
-#ifdef WITH_ZLIB
+#ifdef GRN_WITH_ZLIB
   if (ja->header->flags & GRN_OBJ_COMPRESS_ZLIB) {
     return grn_ja_put_zlib(ctx, ja, id, value, value_len, flags, cas);
   }
-#endif /* WITH_ZLIB */
-#ifdef WITH_LZO
+#endif /* GRN_WITH_ZLIB */
+#ifdef GRN_WITH_LZO
   if (ja->header->flags & GRN_OBJ_COMPRESS_LZO) {
     return grn_ja_put_lzo(ctx, ja, id, value, value_len, flags, cas);
   }
-#endif /* WITH_LZO */
+#endif /* GRN_WITH_LZO */
   return grn_ja_put_raw(ctx, ja, id, value, value_len, flags, cas);
 }
 

@@ -70,16 +70,16 @@
 #cmakedefine WORDS_BIGENDIAN
 
 /* packages */
-#cmakedefine WITH_BENCHMARK
-#cmakedefine WITH_CUTTER
-#cmakedefine WITH_KYTEA
-#cmakedefine WITH_LIBMEMCACHED
-#cmakedefine WITH_LZO
-#cmakedefine WITH_MECAB
-#cmakedefine WITH_MESSAGE_PACK
-#cmakedefine WITH_NFKC
-#cmakedefine WITH_ZEROMQ
-#cmakedefine WITH_ZLIB
+#cmakedefine GRN_WITH_BENCHMARK
+#cmakedefine GRN_WITH_CUTTER
+#cmakedefine GRN_WITH_KYTEA
+#cmakedefine GRN_WITH_LIBMEMCACHED
+#cmakedefine GRN_WITH_LZO
+#cmakedefine GRN_WITH_MECAB
+#cmakedefine GRN_WITH_MESSAGE_PACK
+#cmakedefine GRN_WITH_NFKC
+#cmakedefine GRN_WITH_ZEROMQ
+#cmakedefine GRN_WITH_ZLIB
 
 /* headers */
 #cmakedefine HAVE_DLFCN_H

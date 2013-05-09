@@ -558,7 +558,7 @@ sjis_normalize(grn_ctx *ctx, grn_string *nstr)
   return NULL;
 }
 
-#ifdef WITH_NFKC
+#ifdef GRN_WITH_NFKC
 const char *grn_nfkc_map1(const unsigned char *str);
 const char *grn_nfkc_map2(const unsigned char *prefix, const unsigned char *suffix);
 
@@ -752,7 +752,7 @@ utf8_normalize(grn_ctx *ctx, grn_string *nstr)
   nstr->normalized_length_in_bytes = (size_t)(d - (unsigned char *)nstr->normalized);
   return NULL;
 }
-#endif /* WITH_NFKC */
+#endif /* GRN_WITH_NFKC */
 
 inline static grn_obj *
 ascii_normalize(grn_ctx *ctx, grn_string *nstr)
@@ -1124,11 +1124,11 @@ auto_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     eucjp_normalize(ctx, string);
     break;
   case GRN_ENC_UTF8 :
-#ifdef WITH_NFKC
+#ifdef GRN_WITH_NFKC
     utf8_normalize(ctx, string);
-#else /* WITH_NFKC */
+#else /* GRN_WITH_NFKC */
     ascii_normalize(ctx, string);
-#endif /* WITH_NFKC */
+#endif /* GRN_WITH_NFKC */
     break;
   case GRN_ENC_SJIS :
     sjis_normalize(ctx, string);
@@ -1146,7 +1146,7 @@ auto_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   return NULL;
 }
 
-#ifdef WITH_NFKC
+#ifdef GRN_WITH_NFKC
 static grn_obj *
 nfkc51_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
@@ -1154,7 +1154,7 @@ nfkc51_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   utf8_normalize(ctx, string);
   return NULL;
 }
-#endif /* WITH_NFKC */
+#endif /* GRN_WITH_NFKC */
 
 grn_rc
 grn_normalizer_normalize(grn_ctx *ctx, grn_obj *normalizer, grn_obj *string)
@@ -1178,13 +1178,13 @@ grn_db_init_builtin_normalizers(grn_ctx *ctx)
   grn_normalizer_register(ctx, GRN_NORMALIZER_AUTO_NAME, -1,
                           NULL, auto_next, NULL);
 
-#ifdef WITH_NFKC
+#ifdef GRN_WITH_NFKC
   grn_normalizer_register(ctx, normalizer_nfkc51_name, -1,
                           NULL, nfkc51_next, NULL);
-#else /* WITH_NFKC */
+#else /* GRN_WITH_NFKC */
   grn_normalizer_register(ctx, normalizer_nfkc51_name, -1,
                           NULL, NULL, NULL);
-#endif /* WITH_NFKC */
+#endif /* GRN_WITH_NFKC */
 /*
   grn_normalizer_register(ctx, "NormalizerUCA", -1,
                           NULL, uca_next, NULL);

@@ -80,7 +80,7 @@ grn_output_array_open(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_typ
     if (DEPTH > 2) { GRN_TEXT_PUTS(ctx, outbuf, "[\t"); }
     break;
   case GRN_CONTENT_MSGPACK :
-#ifdef WITH_MESSAGE_PACK
+#ifdef GRN_WITH_MESSAGE_PACK
     if (nelements < 0) {
       GRN_LOG(ctx, GRN_LOG_DEBUG,
               "grn_output_array_open nelements (%d) for <%s>",
@@ -147,7 +147,7 @@ grn_output_map_open(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     if (DEPTH > 2) { GRN_TEXT_PUTS(ctx, outbuf, "{\t"); }
     break;
   case GRN_CONTENT_MSGPACK :
-#ifdef WITH_MESSAGE_PACK
+#ifdef GRN_WITH_MESSAGE_PACK
     if (nelements < 0) {
       GRN_LOG(ctx, GRN_LOG_DEBUG,
               "grn_output_map_open nelements (%d) for <%s>",
@@ -212,7 +212,7 @@ grn_output_int32(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, in
     GRN_TEXT_PUTS(ctx, outbuf, "</INT>");
     break;
   case GRN_CONTENT_MSGPACK :
-#ifdef WITH_MESSAGE_PACK
+#ifdef GRN_WITH_MESSAGE_PACK
     msgpack_pack_int32(&ctx->impl->msgpacker, value);
 #endif
     break;
@@ -239,7 +239,7 @@ grn_output_int64(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, in
     GRN_TEXT_PUTS(ctx, outbuf, "</INT>");
     break;
   case GRN_CONTENT_MSGPACK :
-#ifdef WITH_MESSAGE_PACK
+#ifdef GRN_WITH_MESSAGE_PACK
     msgpack_pack_int64(&ctx->impl->msgpacker, value);
 #endif
     break;
@@ -266,7 +266,7 @@ grn_output_uint64(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, i
     GRN_TEXT_PUTS(ctx, outbuf, "</INT>");
     break;
   case GRN_CONTENT_MSGPACK :
-#ifdef WITH_MESSAGE_PACK
+#ifdef GRN_WITH_MESSAGE_PACK
     msgpack_pack_uint64(&ctx->impl->msgpacker, value);
 #endif
     break;
@@ -293,7 +293,7 @@ grn_output_float(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, do
     GRN_TEXT_PUTS(ctx, outbuf, "</FLOAT>");
     break;
   case GRN_CONTENT_MSGPACK :
-#ifdef WITH_MESSAGE_PACK
+#ifdef GRN_WITH_MESSAGE_PACK
     msgpack_pack_double(&ctx->impl->msgpacker, value);
 #endif
     break;
@@ -321,7 +321,7 @@ grn_output_str(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     GRN_TEXT_PUTS(ctx, outbuf, "</TEXT>");
     break;
   case GRN_CONTENT_MSGPACK :
-#ifdef WITH_MESSAGE_PACK
+#ifdef GRN_WITH_MESSAGE_PACK
     msgpack_pack_raw(&ctx->impl->msgpacker, value_len);
     msgpack_pack_raw_body(&ctx->impl->msgpacker, value, value_len);
 #endif
@@ -356,7 +356,7 @@ grn_output_bool(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, grn
     GRN_TEXT_PUTS(ctx, outbuf, "</BOOL>");
     break;
   case GRN_CONTENT_MSGPACK :
-#ifdef WITH_MESSAGE_PACK
+#ifdef GRN_WITH_MESSAGE_PACK
     if (value) {
       msgpack_pack_true(&ctx->impl->msgpacker);
     } else {
@@ -384,7 +384,7 @@ grn_output_null(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type)
     GRN_TEXT_PUTS(ctx, outbuf, "<NULL/>");
     break;
   case GRN_CONTENT_MSGPACK :
-#ifdef WITH_MESSAGE_PACK
+#ifdef GRN_WITH_MESSAGE_PACK
     msgpack_pack_nil(&ctx->impl->msgpacker);
 #endif
     break;
@@ -424,7 +424,7 @@ grn_output_time(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, int
     GRN_TEXT_PUTS(ctx, outbuf, "</DATE>");
     break;
   case GRN_CONTENT_MSGPACK :
-#ifdef WITH_MESSAGE_PACK
+#ifdef GRN_WITH_MESSAGE_PACK
     msgpack_pack_double(&ctx->impl->msgpacker, dv);
 #endif
     break;
@@ -472,7 +472,7 @@ grn_output_geo_point(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type
     GRN_TEXT_PUTS(ctx, outbuf, "</GEO_POINT>");
     break;
   case GRN_CONTENT_MSGPACK :
-#ifdef WITH_MESSAGE_PACK
+#ifdef GRN_WITH_MESSAGE_PACK
     if (value) {
       grn_obj buf;
       GRN_TEXT_INIT(&buf, 0);
@@ -1559,7 +1559,7 @@ transform_xml(grn_ctx *ctx, grn_obj *output, grn_obj *transformed)
   GRN_OBJ_FIN(ctx, &columns);
 }
 
-#ifdef WITH_MESSAGE_PACK
+#ifdef GRN_WITH_MESSAGE_PACK
 typedef struct {
   grn_ctx *ctx;
   grn_obj *buffer;
@@ -1713,7 +1713,7 @@ grn_output_envelope(grn_ctx *ctx,
     }
     break;
   case GRN_CONTENT_MSGPACK:
-#ifdef WITH_MESSAGE_PACK
+#ifdef GRN_WITH_MESSAGE_PACK
     {
       msgpack_writer_ctx head_writer_ctx;
       msgpack_packer header_packer;

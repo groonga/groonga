@@ -26,11 +26,11 @@
 #include "com.h"
 #endif /* GRN_COM_H */
 
-#ifdef WITH_MESSAGE_PACK
+#ifdef GRN_WITH_MESSAGE_PACK
 #include <msgpack.h>
 #endif
 
-#ifdef WITH_MRUBY
+#ifdef GRN_WITH_MRUBY
 # include <mruby.h>
 #endif
 
@@ -169,10 +169,10 @@ struct _grn_ctx_impl {
     uint64_t u64;
   } data;
 
-#ifdef WITH_MESSAGE_PACK
+#ifdef GRN_WITH_MESSAGE_PACK
   msgpack_packer msgpacker;
 #endif
-#ifdef WITH_MRUBY
+#ifdef GRN_WITH_MRUBY
   mrb_state *mrb;
 #endif
 };

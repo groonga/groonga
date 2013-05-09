@@ -349,7 +349,7 @@ don't edit this file by hand. it generated automatically by nfkc.rb
 
 #include "nfkc.h"
 
-#ifdef WITH_NFKC
+#ifdef GRN_WITH_NFKC
 
 unsigned char
 grn_nfkc_char_type(const unsigned char *str)
@@ -369,7 +369,7 @@ grn_nfkc_map2(const unsigned char *prefix, const unsigned char *suffix)
 %  return 0;
 }
 
-#endif /* WITH_NFKC */
+#endif /* GRN_WITH_NFKC */
 
 END
 

@@ -1453,7 +1453,7 @@ proc_column_list(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
     grn_hash *cols;
     grn_obj *col;
     int column_list_size = -1;
-#ifdef WITH_MESSAGE_PACK
+#ifdef GRN_WITH_MESSAGE_PACK
     column_list_size = 1; /* [header, (key), (COLUMNS)] */
     if ((col = grn_obj_column(ctx, table, KEY_NAME, sizeof(KEY_NAME)-1))) {
       column_list_size++;
