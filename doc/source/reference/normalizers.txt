@@ -123,7 +123,7 @@ Here is a list of additional normalizers provided by ``groonga-normalizer-mysql`
 
   * ``NormalizerMySQLGeneralCI``
   * ``NormalizerMySQLUnicodeCI``
-  * ``NormalizerMySQLGeneralCIExceptKanaCIKanaWithVoicedSoundMark``
+  * ``NormalizerMySQLUnicodeCIExceptKanaCIKanaWithVoicedSoundMark``
 
 ``groonga-normalizer-mysql`` is a groonga plugin.
 It provides MySQL compatible normalizers to groonga.
