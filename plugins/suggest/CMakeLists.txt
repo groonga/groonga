@@ -19,6 +19,9 @@ include_directories(
 
 read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/sources.am SUGGEST_SOURCES)
 add_library(suggest MODULE ${SUGGEST_SOURCES})
+set_source_files_properties(${SUGGEST_SOURCES}
+  PROPERTIES
+  COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
 set_target_properties(suggest PROPERTIES PREFIX "")
 target_link_libraries(suggest libgroonga)
 install(TARGETS suggest DESTINATION "${GRN_PLUGINS_DIR}/suggest")

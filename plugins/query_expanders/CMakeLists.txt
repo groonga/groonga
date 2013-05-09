@@ -19,6 +19,9 @@ include_directories(
 
 set(QUERY_EXPANDERS_DIR "${GRN_PLUGINS_DIR}/query_expanders")
 read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/tsv_sources.am TSV_SOURCES)
+set_source_files_properties(${TSV_SOURCES}
+  PROPERTIES
+  COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
 add_library(tsv_query_expander MODULE ${TSV_SOURCES})
 set_target_properties(tsv_query_expander PROPERTIES
   PREFIX ""

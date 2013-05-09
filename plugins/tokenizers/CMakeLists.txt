@@ -23,6 +23,9 @@ if(WITH_MECAB)
   include_directories(${MECAB_INCLUDE_DIRS})
   link_directories(${MECAB_LIBRARY_DIRS})
   add_library(mecab_tokenizer MODULE ${MECAB_SOURCES})
+  set_source_files_properties(${MECAB_SOURCES}
+    PROPERTIES
+    COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
   set_target_properties(mecab_tokenizer PROPERTIES
     PREFIX ""
     OUTPUT_NAME "mecab")
@@ -35,6 +38,9 @@ if(WITH_KYTEA)
   include_directories(${KYTEA_INCLUDE_DIRS})
   link_directories(${KYTEA_LIBRARY_DIRS})
   add_library(kytea_tokenizer MODULE ${KYTEA_SOURCES})
+  set_source_files_properties(${KYTEA_SOURCES}
+    PROPERTIES
+    COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
   set_target_properties(kytea_tokenizer PROPERTIES
     PREFIX ""
     OUTPUT_NAME "kytea")

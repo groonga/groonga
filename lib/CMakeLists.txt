@@ -26,10 +26,12 @@ read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/dat/sources.am LIBGRNDAT_SOURCES)
 string(REGEX REPLACE "([^;]+)" "dat/\\1"
   LIBGRNDAT_SOURCES "${LIBGRNDAT_SOURCES}")
 
-if(CMAKE_COMPILER_IS_GNUCXX)
-  set_source_files_properties(dat.cpp ${LIBGRNDAT_SOURCES} PROPERTIES
-    COMPILE_FLAGS "-fexceptions")
-endif()
+set_source_files_properties(${LIBGROONGA_SOURCES}
+  PROPERTIES
+  COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
+set_source_files_properties(dat.cpp ${LIBGRNDAT_SOURCES}
+  PROPERTIES
+  COMPILE_FLAGS "${GRN_CXX_COMPILE_FLAGS}")
 
 add_library(libgroonga SHARED ${LIBGROONGA_SOURCES} ${LIBGRNDAT_SOURCES})
 set_target_properties(libgroonga PROPERTIES OUTPUT_NAME "groonga")
