@@ -5187,6 +5187,10 @@ grn_obj_set_value_column_var_size_scalar(grn_ctx *ctx, grn_obj *obj, grn_id id,
   grn_obj buf;
   grn_id buf_domain = GRN_DB_VOID;
 
+  if (call_hook(ctx, obj, id, value, flags)) {
+    return rc;
+  }
+
   switch (flags & GRN_OBJ_SET_MASK) {
   case GRN_OBJ_INCR :
   case GRN_OBJ_DECR :
@@ -5233,6 +5237,11 @@ grn_obj_set_value_column_var_size_vector(grn_ctx *ctx, grn_obj *obj, grn_id id,
   void *v = GRN_BULK_HEAD(value);
   unsigned int s = grn_obj_size(ctx, value);
   grn_obj *lexicon = grn_ctx_at(ctx, range);
+
+  if (call_hook(ctx, obj, id, value, flags)) {
+    return rc;
+  }
+
   if (GRN_OBJ_TABLEP(lexicon)) {
     grn_obj buf;
     GRN_TEXT_INIT(&buf, 0);
@@ -5438,7 +5447,6 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
       rc = grn_obj_set_value_table_no_key(ctx, obj, id, value, flags);
       break;
     case GRN_COLUMN_VAR_SIZE :
-      if (call_hook(ctx, obj, id, value, flags)) { goto exit; }
       switch (obj->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) {
       case GRN_OBJ_COLUMN_SCALAR :
         rc = grn_obj_set_value_column_var_size_scalar(ctx, obj, id, value,
@@ -5461,7 +5469,6 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
       break;
     }
   }
-exit :
   GRN_API_RETURN(rc);
 }
 
