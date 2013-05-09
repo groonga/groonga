@@ -1,0 +1,49 @@
+.. -*- rst -*-
+
+.. highlightlang:: none
+
+``grn_ctx``
+===========
+
+Summary
+-------
+
+:c:type:`grn_ctx` is the most important object. :c:type:`grn_ctx`
+keeps the current infomation such as:
+
+* The last occurred error.
+* The current encoding.
+* The default thresholds. (e.g. :ref:`match-escalation-threshold`)
+* The default command version. (See :doc:`/reference/command/command_version`)
+
+:c:type:`grn_ctx` provides platform features such as:
+
+* Memory management.
+* Logging.
+
+Most APIs receive :c:type:`grn_ctx` as the first argument.
+
+You can't use the same :c:type:`grn_ctx` from two or more threads. You
+need to create a :c:type:`grn_ctx` for a thread. You can use two or
+more :c:type:`grn_ctx` in a thread but it is not needed for usual
+use-case.
+
+Example
+-------
+
+TODO...
+
+Reference
+---------
+
+.. c:type:: grn_ctx
+
+   TODO...
+
+.. c:function:: grn_rc grn_ctx_init(grn_ctx *ctx, int flags)
+
+   ctxを初期化します。
+
+   :param ctx: 初期化するctx構造体へのポインタを指定します。
+   :param flags: 初期化する ``ctx`` のオプションを指定します。
+   :return: ``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error.

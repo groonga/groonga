@@ -215,14 +215,6 @@ struct _grn_ctx {
 
 #define GRN_CTX_USER_DATA(ctx) (&((ctx)->user_data))
 
-/**
- * grn_ctx_init:
- * @ctx: 初期化するctx構造体へのポインタを指定します。
- * @flags: 初期化するctxのオプションを指定します。
- *
- * ctxを初期化します。
- **/
-
 #define GRN_CTX_USE_QL                 (0x03)
 #define GRN_CTX_BATCH_MODE             (0x04)
 #define GRN_CTX_PER_DB                 (0x08)
