@@ -5096,6 +5096,33 @@ call_hook_for_build(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value, int f
 }
 
 static grn_rc
+grn_obj_set_value_table_hash_key(grn_ctx *ctx, grn_obj *obj, grn_id id,
+                                 grn_obj *value, int flags)
+{
+  grn_rc rc = GRN_INVALID_ARGUMENT;
+  grn_id range = DB_OBJ(obj)->range;
+  void *v = GRN_BULK_HEAD(value);
+  grn_obj buf;
+
+  if (call_hook(ctx, obj, id, value, flags)) {
+    return rc;
+  }
+
+  if (range != value->header.domain) {
+    GRN_OBJ_INIT(&buf, GRN_BULK, 0, range);
+    if (grn_obj_cast(ctx, value, &buf, GRN_TRUE) == GRN_SUCCESS) {
+      v = GRN_BULK_HEAD(&buf);
+    }
+  }
+  rc = grn_hash_set_value(ctx, (grn_hash *)obj, id, v, flags);
+  if (range != value->header.domain) {
+    grn_obj_close(ctx, &buf);
+  }
+
+  return rc;
+}
+
+static grn_rc
 grn_obj_set_value_table_no_key(grn_ctx *ctx, grn_obj *obj, grn_id id,
                                grn_obj *value, int flags)
 {
@@ -5393,20 +5420,7 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
       rc = GRN_OPERATION_NOT_SUPPORTED;
       break;
     case GRN_TABLE_HASH_KEY :
-      {
-        grn_obj buf;
-        if (call_hook(ctx, obj, id, value, flags)) { goto exit; }
-        if (range != value->header.domain) {
-          GRN_OBJ_INIT(&buf, GRN_BULK, 0, range);
-          if (grn_obj_cast(ctx, value, &buf, GRN_TRUE) == GRN_SUCCESS) {
-            v = GRN_BULK_HEAD(&buf);
-          }
-        }
-        rc = grn_hash_set_value(ctx, (grn_hash *)obj, id, v, flags);
-        if (range != value->header.domain) {
-          grn_obj_close(ctx, &buf);
-        }
-      }
+      rc = grn_obj_set_value_table_hash_key(ctx, obj, id, value, flags);
       break;
     case GRN_TABLE_NO_KEY :
       rc = grn_obj_set_value_table_no_key(ctx, obj, id, value, flags);
