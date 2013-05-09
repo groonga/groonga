@@ -18,7 +18,7 @@ don't edit this file by hand. it generated automatically by nfkc.rb
 */
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+#include <config.h>
 #endif /* HAVE_CONFIG_H */
 
 #include <groonga/nfkc.h>
