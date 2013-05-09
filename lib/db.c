@@ -5096,8 +5096,8 @@ call_hook_for_build(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value, int f
 }
 
 static grn_rc
-grn_obj_set_value_var_size_scalar(grn_ctx *ctx, grn_obj *obj, grn_id id,
-                                  grn_obj *value, int flags)
+grn_obj_set_value_column_var_size_scalar(grn_ctx *ctx, grn_obj *obj, grn_id id,
+                                         grn_obj *value, int flags)
 {
   grn_rc rc = GRN_INVALID_ARGUMENT;
   grn_id range = DB_OBJ(obj)->range;
@@ -5144,8 +5144,8 @@ grn_obj_set_value_var_size_scalar(grn_ctx *ctx, grn_obj *obj, grn_id id,
 }
 
 static grn_rc
-grn_obj_set_value_var_size_vector(grn_ctx *ctx, grn_obj *obj, grn_id id,
-                                  grn_obj *value, int flags)
+grn_obj_set_value_column_var_size_vector(grn_ctx *ctx, grn_obj *obj, grn_id id,
+                                         grn_obj *value, int flags)
 {
   grn_rc rc = GRN_INVALID_ARGUMENT;
   grn_id range = DB_OBJ(obj)->range;
@@ -5253,8 +5253,8 @@ grn_obj_set_value_var_size_vector(grn_ctx *ctx, grn_obj *obj, grn_id id,
 }
 
 static grn_rc
-grn_obj_set_value_fix_size(grn_ctx *ctx, grn_obj *obj, grn_id id,
-                           grn_obj *value, int flags)
+grn_obj_set_value_column_fix_size(grn_ctx *ctx, grn_obj *obj, grn_id id,
+                                  grn_obj *value, int flags)
 {
   grn_rc rc = GRN_INVALID_ARGUMENT;
   grn_id range = DB_OBJ(obj)->range;
@@ -5401,10 +5401,12 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
       if (call_hook(ctx, obj, id, value, flags)) { goto exit; }
       switch (obj->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) {
       case GRN_OBJ_COLUMN_SCALAR :
-        rc = grn_obj_set_value_var_size_scalar(ctx, obj, id, value, flags);
+        rc = grn_obj_set_value_column_var_size_scalar(ctx, obj, id, value,
+                                                      flags);
         break;
       case GRN_OBJ_COLUMN_VECTOR :
-        rc = grn_obj_set_value_var_size_vector(ctx, obj, id, value, flags);
+        rc = grn_obj_set_value_column_var_size_vector(ctx, obj, id, value,
+                                                      flags);
         break;
       default :
         ERR(GRN_FILE_CORRUPT, "invalid GRN_OBJ_COLUMN_TYPE");
@@ -5412,7 +5414,7 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
       }
       break;
     case GRN_COLUMN_FIX_SIZE :
-      rc = grn_obj_set_value_fix_size(ctx, obj, id, value, flags);
+      rc = grn_obj_set_value_column_fix_size(ctx, obj, id, value, flags);
       break;
     case GRN_COLUMN_INDEX :
       // todo : how??
