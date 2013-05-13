@@ -8484,14 +8484,16 @@ grn_column_index(grn_ctx *ctx, grn_obj *obj, grn_operator op,
     switch (op) {
     case GRN_OP_EQUAL :
     case GRN_OP_TERM_EXTRACT :
-      if (buf_size) { indexbuf[n++] = obj; }
+      if (buf_size) { indexbuf[n] = obj; }
+      n++;
       break;
     case GRN_OP_PREFIX :
       {
         grn_accessor *a = (grn_accessor *)obj;
         if (a->action == GRN_ACCESSOR_GET_KEY) {
           if (a->obj->header.type == GRN_TABLE_PAT_KEY) {
-            if (buf_size) { indexbuf[n++] = obj; }
+            if (buf_size) { indexbuf[n] = obj; }
+            n++;
           }
           /* FIXME: GRN_TABLE_DAT_KEY should be supported */
         }
@@ -8503,7 +8505,8 @@ grn_column_index(grn_ctx *ctx, grn_obj *obj, grn_operator op,
         if (a->action == GRN_ACCESSOR_GET_KEY) {
           if (a->obj->header.type == GRN_TABLE_PAT_KEY &&
               a->obj->header.flags & GRN_OBJ_KEY_WITH_SIS) {
-            if (buf_size) { indexbuf[n++] = obj; }
+            if (buf_size) { indexbuf[n] = obj; }
+            n++;
           }
         }
       }
