@@ -47,10 +47,7 @@ namespace
     void create(GThreadFunc func, gpointer data) {
       join();
 
-      GError *glib_error = NULL;
-      thread_ = g_thread_create(func, data, TRUE, &glib_error);
-      gcut_assert_error(glib_error, cut_message("g_thread_create() failed"));
-      cppcut_assert_not_null(thread_);
+      thread_ = g_thread_new("test-trie", func, data);
     }
 
     void join() {

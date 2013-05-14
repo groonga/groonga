@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2008-2010  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2008-2013  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -42,6 +42,11 @@ extern "C" {
 
 #define GRN_TEST_GEO_POINT_STRING(latitude, longitude) \
   g_strdup_printf("%dx%d", latitude, longitude)
+
+#if !GLIB_CHECK_VERSION(2, 32, 0)
+#  define g_thread_new(name, func, data) \
+  g_thread_create(func, data, TRUE, NULL)
+#endif
 
 typedef void (*grn_test_set_parameters_func) (void);
 
