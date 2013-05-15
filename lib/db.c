@@ -8370,6 +8370,29 @@ is_valid_range_index(grn_ctx *ctx, grn_obj *index_column)
   return GRN_TRUE;
 }
 
+static grn_bool
+is_valid_index(grn_ctx *ctx, grn_obj *index_column, grn_operator op)
+{
+  switch (op) {
+  case GRN_OP_MATCH :
+  case GRN_OP_NEAR :
+  case GRN_OP_NEAR2 :
+  case GRN_OP_SIMILAR :
+    return is_valid_match_index(ctx, index_column);
+    break;
+  case GRN_OP_LESS :
+  case GRN_OP_GREATER :
+  case GRN_OP_LESS_EQUAL :
+  case GRN_OP_GREATER_EQUAL :
+  case GRN_OP_CALL :
+    return is_valid_range_index(ctx, index_column);
+    break;
+  default :
+    return GRN_FALSE;
+    break;
+  }
+}
+
 static inline int
 grn_column_index_accessor(grn_ctx *ctx, grn_obj *obj, grn_operator op,
                           grn_obj **indexbuf, int buf_size, int *section)
@@ -8406,26 +8429,7 @@ grn_column_index_accessor(grn_ctx *ctx, grn_obj *obj, grn_operator op,
 
       found = GRN_TRUE;
       if (!a->next) {
-        grn_bool is_valid_index = GRN_FALSE;
-        switch (op) {
-        case GRN_OP_MATCH :
-        case GRN_OP_NEAR :
-        case GRN_OP_NEAR2 :
-        case GRN_OP_SIMILAR :
-          is_valid_index = is_valid_match_index(ctx, target);
-          break;
-        case GRN_OP_LESS :
-        case GRN_OP_GREATER :
-        case GRN_OP_LESS_EQUAL :
-        case GRN_OP_GREATER_EQUAL :
-        case GRN_OP_CALL :
-          is_valid_index = is_valid_range_index(ctx, target);
-          break;
-        default :
-          break;
-        }
-
-        if (!is_valid_index) {
+        if (!is_valid_index(ctx, target, op)) {
           continue;
         }
 
