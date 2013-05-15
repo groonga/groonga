@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2008  Kouhei Sutou <kou@cozmixng.org>
+  Copyright (C) 2008-2013  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -21,10 +21,12 @@
 void
 bench_init(gint *argc, gchar ***argv)
 {
+#if !GLIB_CHECK_VERSION(2, 36, 0)
   if (!g_thread_supported())
     g_thread_init(NULL);
 
   g_type_init();
+#endif
 }
 
 void
