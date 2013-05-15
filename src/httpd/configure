@@ -39,8 +39,8 @@ if [ "${found_libdir_in_search_path}" = "no" ]; then
   export GROONGA_HTTPD_RPATH="${libdir}"
 fi
 
+nginx_directory_in_build_directory="${abs_top_builddir}/${relative_nginx_directory}"
 if [ "${abs_top_srcdir}/src/httpd" != "$(pwd)" ]; then
-  nginx_directory_in_build_directory="${abs_top_builddir}/${relative_nginx_directory}"
   mkdir -p "${nginx_directory_in_build_directory}"
   rm -rf "${nginx_directory_in_build_directory}"
   cp -rp \
@@ -66,7 +66,7 @@ if [ "${GROONGA_HTTPD_WITH_ZLIB}" != "yes" ]; then
 fi
 
 
-cd "${relative_nginx_directory}"
+cd "${nginx_directory_in_build_directory}"
 
 ./configure \
   --prefix="${GROONGA_HTTPD_PREFIX}" \
