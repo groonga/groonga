@@ -1,0 +1,54 @@
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos title COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Lexicon TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram
+[[0,0.0,0.0],true]
+column_create Lexicon memo_index COLUMN_INDEX|WITH_POSITION|WITH_SECTION   Memos title,content
+[[0,0.0,0.0],true]
+load --table Memos
+[
+["title", "content"],
+["groonga", "Start groonga!"],
+["mroonga", "Start mroonga!"],
+["rroonga", "Start rroonga!"],
+["Ruby", "Start Ruby!"],
+["learn", "Learning Ruby and groonga..."]
+]
+[[0,0.0,0.0],5]
+select Memos   --match_columns "Lexicon.memo_index.title * 10 || Lexicon.memo_index.content"   --query rroonga   --output_columns "title, content, _score"
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "title",
+          "ShortText"
+        ],
+        [
+          "content",
+          "ShortText"
+        ],
+        [
+          "_score",
+          "Int32"
+        ]
+      ],
+      [
+        "rroonga",
+        "Start rroonga!",
+        11
+      ]
+    ]
+  ]
+]

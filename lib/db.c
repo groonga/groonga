@@ -2557,12 +2557,17 @@ grn_obj_search_accessor(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
   grn_obj *last_obj = NULL;
   int n_accessors;
 
-  n_accessors = 0;
   for (a = (grn_accessor *)obj; a; a = a->next) {
     if (!a->next) {
       last_obj = a->obj;
     }
+  }
+  n_accessors = 0;
+  for (a = (grn_accessor *)obj; a; a = a->next) {
     n_accessors++;
+    if (a->obj->header.type == GRN_COLUMN_INDEX) {
+      break;
+    }
   }
 
   {
@@ -8393,6 +8398,63 @@ is_valid_index(grn_ctx *ctx, grn_obj *index_column, grn_operator op)
   }
 }
 
+static int
+find_section(grn_ctx *ctx, grn_obj *index_column, grn_obj *indexed_column)
+{
+  int section = 0;
+  grn_id indexed_column_id;
+  grn_id *source_ids;
+  int i, n_source_ids;
+
+  indexed_column_id = DB_OBJ(indexed_column)->id;
+
+  source_ids = DB_OBJ(index_column)->source;
+  n_source_ids = DB_OBJ(index_column)->source_size / sizeof(grn_id);
+  for (i = 0; i < n_source_ids; i++) {
+    grn_id source_id = source_ids[i];
+    if (source_id == indexed_column_id) {
+      section = i + 1;
+      break;
+    }
+  }
+
+  return section;
+}
+
+static int
+grn_column_index_accessor_index_column(grn_ctx *ctx, grn_accessor *a,
+                                       grn_operator op,
+                                       grn_obj **indexbuf, int buf_size,
+                                       int *section)
+{
+  grn_obj *index_column = a->obj;
+
+  if (!is_valid_index(ctx, index_column, op)) {
+    return 0;
+  }
+
+  if (a->next) {
+    int specified_section;
+    grn_bool is_invalid_section;
+    if (a->next->next) {
+      return 0;
+    }
+    specified_section = find_section(ctx, index_column, a->next->obj);
+    is_invalid_section = (specified_section == 0);
+    if (is_invalid_section) {
+      return 0;
+    }
+    if (section) {
+      *section = specified_section;
+    }
+  }
+  if (buf_size > 0) {
+    *indexbuf = index_column;
+  }
+
+  return 1;
+}
+
 static inline int
 grn_column_index_accessor(grn_ctx *ctx, grn_obj *obj, grn_operator op,
                           grn_obj **indexbuf, int buf_size, int *section)
@@ -8405,6 +8467,12 @@ grn_column_index_accessor(grn_ctx *ctx, grn_obj *obj, grn_operator op,
     grn_hook *hooks;
     grn_bool found = GRN_FALSE;
     grn_hook_entry entry = -1;
+
+    if (a->action == GRN_ACCESSOR_GET_COLUMN_VALUE &&
+        a->obj->header.type == GRN_COLUMN_INDEX) {
+      return grn_column_index_accessor_index_column(ctx, a, op, indexbuf,
+                                                    buf_size, section);
+    }
 
     switch (a->action) {
     case GRN_ACCESSOR_GET_KEY :

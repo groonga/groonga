@@ -4667,9 +4667,19 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
           uint32_t sid = (uint32_t) wp[0];
           int32_t weight = wp[1];
           if (sid) {
-            GRN_INT32_SET_AT(ctx, &wv, sid - 1, weight);
+            int weight_index = sid - 1;
+            GRN_INT32_SET_AT(ctx, &wv, weight_index, weight);
             optarg.weight_vector = &GRN_INT32_VALUE(&wv);
             optarg.vector_size = GRN_BULK_VSIZE(&wv)/sizeof(int32_t);
+            {
+              int i;
+              for (i = 0; i < optarg.vector_size; i++) {
+                if (i == weight_index) {
+                  continue;
+                }
+                GRN_INT32_SET_AT(ctx, &wv, i, 0);
+              }
+            }
           } else {
             optarg.weight_vector = NULL;
             optarg.vector_size = weight;
@@ -5679,6 +5689,41 @@ get_string(grn_ctx *ctx, efs_info *q)
   return rc;
 }
 
+static grn_obj *
+resolve_top_level_name(grn_ctx *ctx, const char *name, unsigned int name_size)
+{
+  unsigned int i;
+  unsigned int first_delimiter_position = 0;
+  unsigned int n_delimiters = 0;
+  grn_obj *top_level_object;
+  grn_obj *object;
+
+  for (i = 0; i < name_size; i++) {
+    if (name[i] != GRN_DB_DELIMITER) {
+      continue;
+    }
+
+    if (n_delimiters == 0) {
+      first_delimiter_position = i;
+    }
+    n_delimiters++;
+  }
+
+  if (n_delimiters < 2) {
+    return grn_ctx_get(ctx, name, name_size);
+  }
+
+  top_level_object = grn_ctx_get(ctx, name, first_delimiter_position);
+  if (!top_level_object) {
+    return NULL;
+  }
+  object = grn_obj_column(ctx, top_level_object,
+                          name + first_delimiter_position + 1,
+                          name_size - first_delimiter_position - 1);
+  grn_obj_unlink(ctx, top_level_object);
+  return object;
+}
+
 static grn_rc
 get_identifier(grn_ctx *ctx, efs_info *q)
 {
@@ -5767,7 +5812,8 @@ done :
       grn_expr_append_obj(ctx, q->e, obj, GRN_OP_GET_VALUE, 1);
       goto exit;
     }
-    if ((obj = grn_ctx_get(ctx, name, name_size))) {
+    if ((obj = resolve_top_level_name(ctx, name, name_size))) {
+      GRN_PTR_PUT(ctx, &((grn_expr *)q->e)->objs, obj);
       PARSE(GRN_EXPR_TOKEN_IDENTIFIER);
       grn_expr_append_obj(ctx, q->e, obj, GRN_OP_PUSH, 1);
       goto exit;
