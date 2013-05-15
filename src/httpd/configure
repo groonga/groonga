@@ -40,7 +40,8 @@ if [ "${found_libdir_in_search_path}" = "no" ]; then
 fi
 
 if [ "${abs_top_srcdir}/src/httpd" != "$(pwd)" ]; then
-  nginx_directory_in_build_directory="${abs_top_builddir}/${nginx_directory}"
+  nginx_directory_in_build_directory="${abs_top_builddir}/${relative_nginx_directory}"
+  mkdir -p "${nginx_directory_in_build_directory}"
   rm -rf "${nginx_directory_in_build_directory}"
   cp -rp \
       "${abs_top_srcdir}/${relative_nginx_directory}" \
