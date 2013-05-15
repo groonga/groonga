@@ -5679,6 +5679,41 @@ get_string(grn_ctx *ctx, efs_info *q)
   return rc;
 }
 
+static grn_obj *
+resolve_top_level_name(grn_ctx *ctx, const char *name, unsigned int name_size)
+{
+  unsigned int i;
+  unsigned int first_delimiter_position = 0;
+  unsigned int n_delimiters = 0;
+  grn_obj *top_level_object;
+  grn_obj *object;
+
+  for (i = 0; i < name_size; i++) {
+    if (name[i] != GRN_DB_DELIMITER) {
+      continue;
+    }
+
+    if (n_delimiters == 0) {
+      first_delimiter_position = i;
+    }
+    n_delimiters++;
+  }
+
+  if (n_delimiters < 2) {
+    return grn_ctx_get(ctx, name, name_size);
+  }
+
+  top_level_object = grn_ctx_get(ctx, name, first_delimiter_position);
+  if (!top_level_object) {
+    return NULL;
+  }
+  object = grn_obj_column(ctx, top_level_object,
+                          name + first_delimiter_position + 1,
+                          name_size - first_delimiter_position - 1);
+  grn_obj_unlink(ctx, top_level_object);
+  return object;
+}
+
 static grn_rc
 get_identifier(grn_ctx *ctx, efs_info *q)
 {
@@ -5767,7 +5802,7 @@ done :
       grn_expr_append_obj(ctx, q->e, obj, GRN_OP_GET_VALUE, 1);
       goto exit;
     }
-    if ((obj = grn_ctx_get(ctx, name, name_size))) {
+    if ((obj = resolve_top_level_name(ctx, name, name_size))) {
       PARSE(GRN_EXPR_TOKEN_IDENTIFIER);
       grn_expr_append_obj(ctx, q->e, obj, GRN_OP_PUSH, 1);
       goto exit;
