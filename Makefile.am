@@ -38,14 +38,11 @@ $(srcdir)/version.sh: FORCE
 
 include $(srcdir)/version.sh
 
+ChangeLog:
+	touch $@
+
 dist-hook:
 	echo "$(GRN_VERSION)" > $(distdir)/version
-	@if test -d $(top_srcdir)/.git; then			\
-	  cd $(top_srcdir) && release/gitlog2changelog.py >	\
-	    $(distdir)/ChangeLog;				\
-	else							\
-	  :;							\
-	fi
 
 benchmark:
 	cd test/benchmark && $(MAKE) benchmark
