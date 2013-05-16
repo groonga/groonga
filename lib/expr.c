@@ -4063,7 +4063,17 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
                   }
                   break;
                 case GRN_COLUMN_INDEX :
-                  scan_info_put_index(ctx, si, ec->value, 0, get_weight(ctx, ec));
+                  sid = 0;
+                  index = ec->value;
+                  if (j > 2 &&
+                      ec[1].value &&
+                      ec[1].value->header.domain == GRN_DB_UINT32 &&
+                      ec[2].op == GRN_OP_GET_MEMBER) {
+                    sid = GRN_UINT32_VALUE(ec[1].value) + 1;
+                    j -= 2;
+                    ec += 2;
+                  }
+                  scan_info_put_index(ctx, si, index, sid, get_weight(ctx, ec));
                   break;
                 }
               }
