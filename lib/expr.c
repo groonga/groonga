@@ -4671,15 +4671,6 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
             GRN_INT32_SET_AT(ctx, &wv, weight_index, weight);
             optarg.weight_vector = &GRN_INT32_VALUE(&wv);
             optarg.vector_size = GRN_BULK_VSIZE(&wv)/sizeof(int32_t);
-            {
-              int i;
-              for (i = 0; i < optarg.vector_size; i++) {
-                if (i == weight_index) {
-                  continue;
-                }
-                GRN_INT32_SET_AT(ctx, &wv, i, 0);
-              }
-            }
           } else {
             optarg.weight_vector = NULL;
             optarg.vector_size = weight;
@@ -4690,6 +4681,12 @@ grn_table_select_index(grn_ctx *ctx, grn_obj *table, scan_info *si,
             ctx->flags &= ~GRN_CTX_TEMPORARY_DISABLE_II_RESOLVE_SEL_AND;
           }
           grn_obj_search(ctx, ip[0], si->query, res, si->logical_op, &optarg);
+          if (optarg.weight_vector) {
+            int i;
+            for (i = 0; i < optarg.vector_size; i++) {
+              optarg.weight_vector[i] = 0;
+            }
+          }
           GRN_BULK_REWIND(&wv);
         }
         GRN_OBJ_FIN(ctx, &wv);
