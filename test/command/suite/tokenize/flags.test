@@ -1,0 +1,1 @@
+tokenize TokenDelimit "aB￾cDe 1￾23" NormalizerAuto ENABLE_TOKENIZED_DELIMITER

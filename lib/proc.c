@@ -23,6 +23,7 @@
 #include "output.h"
 #include "pat.h"
 #include "geo.h"
+#include "token.h"
 
 #include <string.h>
 #include <stdlib.h>
@@ -2898,6 +2899,210 @@ proc_normalize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
   return NULL;
 }
 
+static unsigned int
+parse_tokenize_flags(grn_ctx *ctx, grn_obj *flag_names)
+{
+  unsigned int flags = 0;
+  const char *names, *names_end;
+  int length;
+
+  names = GRN_TEXT_VALUE(flag_names);
+  length = GRN_TEXT_LEN(flag_names);
+  names_end = names + length;
+  while (names < names_end) {
+    if (*names == '|' || *names == ' ') {
+      names += 1;
+      continue;
+    }
+
+#define CHECK_FLAG(name)\
+    if (((names_end - names) >= (sizeof(#name) - 1)) &&\
+        (!memcmp(names, #name, sizeof(#name) - 1))) {\
+      flags |= GRN_TOKEN_ ## name;\
+      names += sizeof(#name);\
+      continue;\
+    }
+
+    CHECK_FLAG(ENABLE_TOKENIZED_DELIMITER);
+
+#define GRN_TOKEN_NONE 0
+    CHECK_FLAG(NONE);
+#undef GRN_TOKEN_NONE
+
+    ERR(GRN_INVALID_ARGUMENT, "[tokenize] invalid flag: <%.*s>",
+        (int)(names_end - names), names);
+    return 0;
+#undef CHECK_FLAG
+  }
+
+  return flags;
+}
+
+typedef struct {
+  grn_id id;
+  int32_t position;
+} tokenize_token;
+
+static void
+output_tokens(grn_ctx *ctx, grn_obj *tokens, grn_hash *lexicon)
+{
+  int i, n_tokens = 0;
+
+  if (tokens) {
+    n_tokens = GRN_BULK_VSIZE(tokens) / sizeof(tokenize_token);
+  }
+
+  GRN_OUTPUT_ARRAY_OPEN("tokens", n_tokens);
+  for (i = 0; i < n_tokens; i++) {
+    tokenize_token *token;
+    char value[GRN_TABLE_MAX_KEY_SIZE];
+    unsigned int value_size;
+
+    token = ((tokenize_token *)(GRN_BULK_HEAD(tokens))) + i;
+
+    GRN_OUTPUT_MAP_OPEN("token", 2);
+
+    GRN_OUTPUT_CSTR("value");
+    value_size = grn_hash_get_key(ctx, lexicon, token->id,
+                                  value, GRN_TABLE_MAX_KEY_SIZE);
+    GRN_OUTPUT_STR(value, value_size);
+
+    GRN_OUTPUT_CSTR("position");
+    GRN_OUTPUT_INT32(token->position);
+
+    GRN_OUTPUT_MAP_CLOSE();
+  }
+  GRN_OUTPUT_ARRAY_CLOSE();
+}
+
+static grn_hash *
+create_lexicon_for_tokenize(grn_ctx *ctx,
+                            grn_obj *tokenizer_name,
+                            grn_obj *normalizer_name)
+{
+  grn_hash *lexicon;
+  grn_obj *tokenizer;
+  grn_obj *normalizer = NULL;
+
+  tokenizer = grn_ctx_get(ctx,
+                          GRN_TEXT_VALUE(tokenizer_name),
+                          GRN_TEXT_LEN(tokenizer_name));
+  if (!tokenizer) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[tokenize] unknown tokenizer: <%.*s>",
+        (int)GRN_TEXT_LEN(tokenizer_name),
+        GRN_TEXT_VALUE(tokenizer_name));
+    return NULL;
+  }
+
+  if (GRN_TEXT_LEN(normalizer_name) > 0) {
+    normalizer = grn_ctx_get(ctx,
+                             GRN_TEXT_VALUE(normalizer_name),
+                             GRN_TEXT_LEN(normalizer_name));
+    if (!normalizer) {
+      grn_obj_unlink(ctx, tokenizer);
+      ERR(GRN_INVALID_ARGUMENT,
+          "[tokenize] unknown normalizer: <%.*s>",
+          (int)GRN_TEXT_LEN(normalizer_name),
+          GRN_TEXT_VALUE(normalizer_name));
+      return NULL;
+    }
+  }
+
+  lexicon = grn_hash_create(ctx, NULL, GRN_TABLE_MAX_KEY_SIZE, 0,
+                            GRN_OBJ_TABLE_HASH_KEY | GRN_OBJ_KEY_VAR_SIZE);
+  grn_obj_set_info(ctx, (grn_obj *)lexicon,
+                   GRN_INFO_DEFAULT_TOKENIZER, tokenizer);
+  grn_obj_unlink(ctx, tokenizer);
+  if (normalizer) {
+    grn_obj_set_info(ctx, (grn_obj *)lexicon,
+                     GRN_INFO_NORMALIZER, normalizer);
+    grn_obj_unlink(ctx, normalizer);
+  }
+
+  return lexicon;
+}
+
+static void
+tokenize(grn_ctx *ctx, grn_hash *lexicon, grn_obj *string, unsigned int flags,
+         grn_obj *tokens)
+{
+  grn_token *token;
+
+  token = grn_token_open(ctx, (grn_obj *)lexicon,
+                         GRN_TEXT_VALUE(string), GRN_TEXT_LEN(string),
+                         GRN_TOKEN_ADD, flags);
+  if (!token) {
+    return;
+  }
+
+  while (token->status == GRN_TOKEN_DOING) {
+    grn_id token_id = grn_token_next(ctx, token);
+    tokenize_token *current_token;
+    if (token_id == GRN_ID_NIL) {
+      continue;
+    }
+    grn_bulk_space(ctx, tokens, sizeof(tokenize_token));
+    current_token = ((tokenize_token *)(GRN_BULK_CURR(tokens))) - 1;
+    current_token->id = token_id;
+    current_token->position = token->pos;
+  }
+  grn_token_close(ctx, token);
+}
+
+static grn_obj *
+proc_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  grn_obj *tokenizer_name;
+  grn_obj *string;
+  grn_obj *normalizer_name;
+  grn_obj *flag_names;
+
+  tokenizer_name = VAR(0);
+  string = VAR(1);
+  normalizer_name = VAR(2);
+  flag_names = VAR(3);
+
+  if (GRN_TEXT_LEN(tokenizer_name) == 0) {
+    ERR(GRN_INVALID_ARGUMENT, "[tokenize] tokenizer name is missing");
+    output_tokens(ctx, NULL, NULL);
+    return NULL;
+  }
+
+  if (GRN_TEXT_LEN(string) == 0) {
+    ERR(GRN_INVALID_ARGUMENT, "[tokenize] string is missing");
+    output_tokens(ctx, NULL, NULL);
+    return NULL;
+  }
+
+  {
+    unsigned int flags;
+    grn_hash *lexicon;
+    grn_obj tokens;
+
+    flags = parse_tokenize_flags(ctx, flag_names);
+    if (ctx->rc != GRN_SUCCESS) {
+      output_tokens(ctx, NULL, NULL);
+      return NULL;
+    }
+
+    lexicon = create_lexicon_for_tokenize(ctx, tokenizer_name, normalizer_name);
+    if (!lexicon) {
+      output_tokens(ctx, NULL, NULL);
+      return NULL;
+    }
+
+    GRN_VALUE_FIX_SIZE_INIT(&tokens, GRN_OBJ_VECTOR, GRN_ID_NIL);
+    tokenize(ctx, lexicon, string, flags, &tokens);
+    output_tokens(ctx, &tokens, lexicon);
+    GRN_OBJ_FIN(ctx, &tokens);
+
+    grn_hash_close(ctx, lexicon);
+  }
+
+  return NULL;
+}
+
 static grn_obj *
 func_rand(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
@@ -3954,6 +4159,12 @@ grn_db_init_builtin_query(grn_ctx *ctx)
   DEF_VAR(vars[1], "string");
   DEF_VAR(vars[2], "flags");
   DEF_COMMAND("normalize", proc_normalize, 3, vars);
+
+  DEF_VAR(vars[0], "tokenizer");
+  DEF_VAR(vars[1], "string");
+  DEF_VAR(vars[2], "normalizer");
+  DEF_VAR(vars[3], "flags");
+  DEF_COMMAND("tokenize", proc_tokenize, 4, vars);
 
   DEF_VAR(vars[0], "seed");
   grn_proc_create(ctx, "rand", -1, GRN_PROC_FUNCTION, func_rand,

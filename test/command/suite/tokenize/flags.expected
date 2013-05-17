@@ -1,0 +1,22 @@
+tokenize TokenDelimit "aB￾cDe 1￾23" NormalizerAuto ENABLE_TOKENIZED_DELIMITER
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "ab",
+      "position": 0
+    },
+    {
+      "value": "cde 1",
+      "position": 1
+    },
+    {
+      "value": "23",
+      "position": 2
+    }
+  ]
+]

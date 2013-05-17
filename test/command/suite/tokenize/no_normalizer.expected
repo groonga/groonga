@@ -1,0 +1,46 @@
+tokenize TokenBigram "aBcDe 123"
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "aB",
+      "position": 0
+    },
+    {
+      "value": "Bc",
+      "position": 1
+    },
+    {
+      "value": "cD",
+      "position": 2
+    },
+    {
+      "value": "De",
+      "position": 3
+    },
+    {
+      "value": "e ",
+      "position": 4
+    },
+    {
+      "value": " 1",
+      "position": 5
+    },
+    {
+      "value": "12",
+      "position": 6
+    },
+    {
+      "value": "23",
+      "position": 7
+    },
+    {
+      "value": "3",
+      "position": 8
+    }
+  ]
+]
