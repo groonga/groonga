@@ -277,6 +277,7 @@ typedef pthread_cond_t grn_cond;
 #define COND_INIT(c)   pthread_cond_init(&c, NULL)
 #define COND_SIGNAL(c) pthread_cond_signal(&c)
 #define COND_WAIT(c,m) pthread_cond_wait(&c, &m)
+#define COND_BROADCAST(c) pthread_cond_broadcast(&c)
 #define COND_INIT_SHARED(c) do {\
   pthread_condattr_t condattr;\
   pthread_condattr_init(&condattr);\
@@ -354,12 +355,14 @@ typedef struct
   HANDLE waiters_count_lock_;
   HANDLE sema_;
   HANDLE waiters_done_;
+  size_t was_broadcast_; 
 } grn_cond;
 
 #define COND_INIT(c) do { \
   (c).waiters_count_ = 0; \
   (c).sema_ = CreateSemaphore(NULL, 0, 0x7fffffff, NULL); \
   MUTEX_INIT((c).waiters_count_lock_); \
+  (c).waiters_done_ = CreateEvent(NULL, FALSE, FALSE, NULL);\
 } while (0)
 
 #define COND_SIGNAL(c) do { \
@@ -373,6 +376,27 @@ typedef struct
   } \
 } while (0)
 
+#define COND_BROADCAST(c) do { \
+  MUTEX_LOCK((c).waiters_count_lock_); \
+  { \
+    int have_waiters = (c).waiters_count_ > 0; \
+    if ((c).waiters_count_ > 0) {  \
+      (c).was_broadcast_ = 1; \
+      have_waiters = 1; \
+    } \
+    if (have_waiters) {\
+      ReleaseSemaphore((c).sema_, (c).waiters_count_, 0); \
+      MUTEX_UNLOCK((c).waiters_count_lock_); \
+      WaitForSingleObject((c).waiters_done_, INFINITE); \
+      (c).was_broadcast_ = 0; \
+    } \
+    else { \
+      MUTEX_UNLOCK((c).waiters_count_lock_); \
+    }\
+  }\
+} while (0)
+      
+  
 #define COND_WAIT(c,m) do { \
   MUTEX_LOCK((c).waiters_count_lock_); \
   (c).waiters_count_++; \
@@ -380,8 +404,16 @@ typedef struct
   SignalObjectAndWait((m), (c).sema_, INFINITE, FALSE); \
   MUTEX_LOCK((c).waiters_count_lock_); \
   (c).waiters_count_--; \
-  MUTEX_UNLOCK((c).waiters_count_lock_); \
-  WaitForSingleObject((m), INFINITE); \
+  { \
+    int last_waiter = (c).was_broadcast_ && (c).waiters_count_ == 0; \
+    MUTEX_UNLOCK((c).waiters_count_lock_); \
+    if (last_waiter)  { \
+      SignalObjectAndWait((c).waiters_done_, (m), INFINITE, FALSE); \
+    } \
+    else { \
+      WaitForSingleObject((m), FALSE); \
+    }\
+  }\
 } while (0)
 
 #else /* WIN32 */
