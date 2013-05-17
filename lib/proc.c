@@ -2780,7 +2780,7 @@ parse_normalize_flags(grn_ctx *ctx, grn_obj *flag_names)
     ERR(GRN_INVALID_ARGUMENT, "[normalize] invalid flag: <%.*s>",
         (int)(names_end - names), names);
     return 0;
-#undef CHECK_EXPR_FLAG
+#undef CHECK_FLAG
   }
 
   return flags;
