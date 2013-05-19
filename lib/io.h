@@ -21,6 +21,10 @@
 #include "groonga_in.h"
 #endif /* GROONGA_IN_H */
 
+#ifndef GRN_ERROR_H
+#include "error.h"
+#endif /* GRN_ERROR_H */
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -196,7 +200,9 @@ void grn_io_seg_map_(grn_ctx *ctx, grn_io *io, uint32_t segno, grn_io_mapinfo *i
           if (!info->map) {\
             grn_io_seg_map_(ctx, io, segno, info);\
             if (!info->map) {\
-              GRN_LOG(ctx, GRN_LOG_CRIT, "mmap failed! in GRN_IO_SEG_REF(%p, %u)", io, segno);\
+              GRN_LOG(ctx, GRN_LOG_CRIT,\
+                      "mmap failed! in GRN_IO_SEG_REF(%p, %u): %s",\
+                      io, segno, grn_current_error_message());\
             }\
           }\
           GRN_ATOMIC_ADD_EX(pnref, -1, nref);\
@@ -233,7 +239,9 @@ void grn_io_seg_map_(grn_ctx *ctx, grn_io *io, uint32_t segno, grn_io_mapinfo *i
             grn_io_seg_map_(ctx, io, segno, info);\
             if (!info->map) {\
               GRN_ATOMIC_ADD_EX(pnref, -1, nref);\
-              GRN_LOG(ctx, GRN_LOG_CRIT, "mmap failed!!! in GRN_IO_SEG_REF(%p, %u, %u)", io, segno, nref);\
+              GRN_LOG(ctx, GRN_LOG_CRIT,\
+                      "mmap failed!!! in GRN_IO_SEG_REF(%p, %u, %u): %s",\
+                      io, segno, nref, grn_current_error_message());\
             }\
             \
             GRN_FUTEX_WAKE(pnref);\
@@ -257,7 +265,9 @@ void grn_io_seg_map_(grn_ctx *ctx, grn_io *io, uint32_t segno, grn_io_mapinfo *i
         if (!info->map) {\
           grn_io_seg_map_(ctx, io, segno, info);\
           if (!info->map) {\
-            GRN_LOG(ctx, GRN_LOG_CRIT, "mmap failed!!!! in GRN_IO_SEG_REF(%p, %u)", io, segno);\
+            GRN_LOG(ctx, GRN_LOG_CRIT,\
+                    "mmap failed!!!! in GRN_IO_SEG_REF(%p, %u): %s",\
+                    io, segno, grn_current_error_message());\
           }\
         }\
         GRN_ATOMIC_ADD_EX(pnref, -1, nref);\

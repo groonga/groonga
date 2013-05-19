@@ -8,6 +8,8 @@ libgroonga_la_SOURCES =				\
 	dat.h					\
 	db.c					\
 	db.h					\
+	error.c					\
+	error.h					\
 	expr.c					\
 	geo.c					\
 	geo.h					\
