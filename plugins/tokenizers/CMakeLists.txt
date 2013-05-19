@@ -18,7 +18,7 @@ include_directories(
   )
 
 set(TOKENIZERS_DIR "${GRN_PLUGINS_DIR}/tokenizers")
-if(WITH_MECAB)
+if(GRN_WITH_MECAB)
   read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/mecab_sources.am MECAB_SOURCES)
   include_directories(${MECAB_INCLUDE_DIRS})
   link_directories(${MECAB_LIBRARY_DIRS})
@@ -33,7 +33,7 @@ if(WITH_MECAB)
   install(TARGETS mecab_tokenizer DESTINATION "${TOKENIZERS_DIR}")
 endif()
 
-if(WITH_KYTEA)
+if(GRN_WITH_KYTEA)
   read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/kytea_sources.am KYTEA_SOURCES)
   include_directories(${KYTEA_INCLUDE_DIRS})
   link_directories(${KYTEA_LIBRARY_DIRS})
