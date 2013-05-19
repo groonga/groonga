@@ -93,23 +93,13 @@ parameter instead::
 
   groonga-3.0.3> cmake . -G "Visual Studio 10 Win64" -DCMAKE_INSTALL_PREFIX=C:\groonga
 
-Build by Visual C++ 2010 Express::
+Build::
 
-  groonga-3.0.3> msbuild groonga.sln /p:Configuration=Release
+  groonga-3.0.3> cmake --build . --config Release
 
-Install by Visual C++ 2010 Express::
+Install::
 
-  groonga-3.0.3> msbuild groonga.sln /p:Configuration=Release /t:Install
-
-If you installed Visual Studio 2010, use can use devenv instead.
-
-Build by Visual Studio 2010::
-
-  groonga-3.0.3> devenv groonga.sln /Build Release
-
-Install by Visual Studio 2010::
-
-  groonga-3.0.3> devenv groonga.sln /Build Release /Project Install
+  groonga-3.0.3> cmake --build . --config Release --target Install
 
 After the above steps, :doc:`/reference/executables/groonga` is found in
 ``c:\groonga\bin\groonga.exe``.
