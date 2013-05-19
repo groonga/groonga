@@ -34,7 +34,7 @@ grn_current_error_message(void)
   FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM |
                 FORMAT_MESSAGE_IGNORE_INSERTS,
                 NULL,
-                error_codee,
+                error_code,
                 MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
                 message,
                 ERROR_MESSAGE_BUFFER_SIZE,
@@ -42,7 +42,7 @@ grn_current_error_message(void)
 
   return message;
 
-# undef ERROR_MESSAGE_BUFFER_SIZE 4096
+# undef ERROR_MESSAGE_BUFFER_SIZE
 }
 #else
 const char *
