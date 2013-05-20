@@ -3139,14 +3139,15 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
       case GRN_OP_OR :
         {
           grn_obj *x, *y;
+          int result;
           POP2ALLOC1(x, y, res);
           if (GRN_INT32_VALUE(x) == 0 && GRN_INT32_VALUE(y) == 0) {
-            GRN_INT32_SET(ctx, res, 0);
+            result = 0;
           } else {
-            GRN_INT32_SET(ctx, res, 1);
+            result = 1;
           }
-          res->header.type = GRN_BULK;
-          res->header.domain = GRN_DB_INT32;
+          grn_obj_reinit(ctx, res, GRN_DB_INT32, 0);
+          GRN_INT32_SET(ctx, res, result);
         }
         code++;
         break;
