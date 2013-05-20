@@ -298,25 +298,22 @@ grn_plugin_register_by_path(grn_ctx *ctx, const char *path)
 
 #ifdef WIN32
 static char *win32_plugins_dir = NULL;
+static char win32_plugins_dir_buffer[PATH_MAX];
 const char *
 grn_plugin_get_system_plugins_dir(void)
 {
   if (!win32_plugins_dir) {
     const char *base_dir;
     const char *relative_path = GRN_RELATIVE_PLUGINS_DIR;
-    char *plugins_dir;
     char *path;
     size_t base_dir_length;
 
     base_dir = grn_win32_base_dir();
     base_dir_length = strlen(base_dir);
-    plugins_dir = malloc(base_dir_length +
-                         strlen("/lib/") +
-                         strlen(relative_path));
-    strcpy(plugins_dir, base_dir);
-    strcat(plugins_dir, "/lib/");
-    strcat(plugins_dir, relative_path);
-    win32_plugins_dir = plugins_dir;
+    strcpy(win32_plugins_dir_buffer, base_dir);
+    strcat(win32_plugins_dir_buffer, "/lib/");
+    strcat(win32_plugins_dir_buffer, relative_path);
+    win32_plugins_dir = win32_plugins_dir_buffer;
   }
   return win32_plugins_dir;
 }
