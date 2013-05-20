@@ -3140,12 +3140,15 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
       case GRN_OP_OR :
         {
           grn_obj *x, *y;
+          unsigned int x_boolean, y_boolean;
           int result;
           POP2ALLOC1(x, y, res);
-          if (GRN_INT32_VALUE(x) == 0 && GRN_INT32_VALUE(y) == 0) {
-            result = 0;
-          } else {
+          GRN_TRUEP(ctx, x, x_boolean);
+          GRN_TRUEP(ctx, y, y_boolean);
+          if (x_boolean || y_boolean) {
             result = 1;
+          } else {
+            result = 0;
           }
           grn_obj_reinit(ctx, res, GRN_DB_INT32, 0);
           GRN_INT32_SET(ctx, res, result);
