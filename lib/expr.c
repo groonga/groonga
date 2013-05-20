@@ -3186,9 +3186,8 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
           grn_obj *x, *y;
           POP2ALLOC1(x, y, res);
           DO_EQ(x, y, r);
+          grn_obj_reinit(ctx, res, GRN_DB_INT32, 0);
           GRN_INT32_SET(ctx, res, r);
-          res->header.type = GRN_BULK;
-          res->header.domain = GRN_DB_INT32;
         }
         code++;
         break;
