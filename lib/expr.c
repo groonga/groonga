@@ -3123,16 +3123,17 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
         {
           grn_obj *x, *y;
           unsigned int x_boolean, y_boolean;
+          int result;
           POP2ALLOC1(x, y, res);
           GRN_TRUEP(ctx, x, x_boolean);
           GRN_TRUEP(ctx, y, y_boolean);
           if (x_boolean && y_boolean) {
-            GRN_INT32_SET(ctx, res, 1);
+            result = 1;
           } else {
-            GRN_INT32_SET(ctx, res, 0);
+            result = 0;
           }
-          res->header.type = GRN_BULK;
-          res->header.domain = GRN_DB_INT32;
+          grn_obj_reinit(ctx, res, GRN_DB_INT32, 0);
+          GRN_INT32_SET(ctx, res, result);
         }
         code++;
         break;
