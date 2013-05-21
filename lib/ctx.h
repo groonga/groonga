@@ -97,6 +97,7 @@ extern "C" {
 
 GRN_API void grn_ctx_impl_err(grn_ctx *ctx);
 GRN_API grn_bool grn_ctx_impl_should_log(grn_ctx *ctx);
+GRN_API void grn_ctx_impl_set_current_error_message(grn_ctx *ctx);
 
 #ifdef HAVE_BACKTRACE
 #define LOGTRACE(ctx,lvl) do {\
@@ -123,6 +124,7 @@ GRN_API grn_bool grn_ctx_impl_should_log(grn_ctx *ctx);
   grn_ctx_impl_err(ctx);\
   grn_ctx_log(ctx, __VA_ARGS__);\
   if (grn_ctx_impl_should_log(ctx)) {\
+    grn_ctx_impl_set_current_error_message(ctx);\
     GRN_LOG(ctx, lvl, __VA_ARGS__);\
     BACKTRACE(ctx);\
     if (lvl <= GRN_LOG_ERROR) { LOGTRACE(ctx, lvl); }\

@@ -554,11 +554,18 @@ grn_ctx_impl_should_log(grn_ctx *ctx)
     return GRN_FALSE;
   }
 
-  grn_ctx_impl_clear_n_same_error_mssagges(ctx);
-
-  strcpy(ctx->impl->previous_errbuf, ctx->errbuf);
-
   return GRN_TRUE;
+}
+
+void
+grn_ctx_impl_set_current_error_message(grn_ctx *ctx)
+{
+  if (!ctx->impl) {
+    return;
+  }
+
+  grn_ctx_impl_clear_n_same_error_mssagges(ctx);
+  strcpy(ctx->impl->previous_errbuf, ctx->errbuf);
 }
 
 grn_rc
