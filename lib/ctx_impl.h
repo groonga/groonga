@@ -169,6 +169,9 @@ struct _grn_ctx_impl {
     uint64_t u64;
   } data;
 
+  char previous_errbuf[GRN_CTX_MSGSIZE];
+  unsigned int n_same_error_messages;
+
 #ifdef GRN_WITH_MESSAGE_PACK
   msgpack_packer msgpacker;
 #endif

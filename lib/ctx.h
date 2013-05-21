@@ -96,6 +96,7 @@ extern "C" {
 #endif /* HAVE_BACKTRACE */
 
 GRN_API void grn_ctx_impl_err(grn_ctx *ctx);
+GRN_API grn_bool grn_ctx_impl_should_log(grn_ctx *ctx);
 
 #ifdef HAVE_BACKTRACE
 #define LOGTRACE(ctx,lvl) do {\
@@ -121,9 +122,11 @@ GRN_API void grn_ctx_impl_err(grn_ctx *ctx);
   ctx_->errfunc = __FUNCTION__;\
   grn_ctx_impl_err(ctx);\
   grn_ctx_log(ctx, __VA_ARGS__);\
-  GRN_LOG(ctx, lvl, __VA_ARGS__);\
-  BACKTRACE(ctx);\
-  if (lvl <= GRN_LOG_ERROR) { LOGTRACE(ctx, lvl); }\
+  if (grn_ctx_impl_should_log(ctx)) {\
+    GRN_LOG(ctx, lvl, __VA_ARGS__);\
+    BACKTRACE(ctx);\
+    if (lvl <= GRN_LOG_ERROR) { LOGTRACE(ctx, lvl); }\
+  }\
 } while (0)
 
 #define ERRP(ctx,lvl) \

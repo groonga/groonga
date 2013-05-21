@@ -505,6 +505,9 @@ grn_ctx_impl_init(grn_ctx *ctx)
   grn_loader_init(&ctx->impl->loader);
   ctx->impl->plugin_path = NULL;
 
+  ctx->impl->previous_errbuf[0] = '\0';
+  ctx->impl->n_same_error_messages = 0;
+
 #ifdef GRN_WITH_MESSAGE_PACK
   msgpack_packer_init(&ctx->impl->msgpacker, ctx, grn_msgpack_buffer_write);
 #endif
@@ -525,6 +528,37 @@ grn_ctx_impl_err(grn_ctx *ctx)
     ctx->impl->cur = ctx->impl->str_end;
     ctx->impl->op = GRN_OP_ERR0;
   }
+}
+
+static void
+grn_ctx_impl_clear_n_same_error_mssagges(grn_ctx *ctx)
+{
+  if (ctx->impl->n_same_error_messages == 0) {
+    return;
+  }
+
+  GRN_LOG(ctx, GRN_LOG_NOTICE, "(%u same messages are truncated)",
+          ctx->impl->n_same_error_messages);
+  ctx->impl->n_same_error_messages = 0;
+}
+
+grn_bool
+grn_ctx_impl_should_log(grn_ctx *ctx)
+{
+  if (!ctx->impl) {
+    return GRN_TRUE;
+  }
+
+  if (strcmp(ctx->errbuf, ctx->impl->previous_errbuf) == 0) {
+    ctx->impl->n_same_error_messages++;
+    return GRN_FALSE;
+  }
+
+  grn_ctx_impl_clear_n_same_error_mssagges(ctx);
+
+  strcpy(ctx->impl->previous_errbuf, ctx->errbuf);
+
+  return GRN_TRUE;
 }
 
 grn_rc
@@ -592,6 +626,7 @@ grn_ctx_fin(grn_ctx *ctx)
     CRITICAL_SECTION_LEAVE(grn_glock);
   }
   if (ctx->impl) {
+    grn_ctx_impl_clear_n_same_error_mssagges(ctx);
     if (ctx->impl->finalizer) {
       ctx->impl->finalizer(ctx, 0, NULL, &(ctx->user_data));
     }
