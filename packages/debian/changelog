@@ -1,3 +1,9 @@
+groonga (3.0.4-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- HAYASHI Kentaro <hayashi@clear-code.com>  Wed, 29 May 2013 00:00:00 +0900
+
 groonga (3.0.3-1) unstable; urgency=low
 
   * New upstream release.

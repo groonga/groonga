@@ -355,6 +355,9 @@ fi
 %config(noreplace) %{_sysconfdir}/munin/plugin-conf.d/*
 
 %changelog
+* Wed May 29 2013 HAYASHI Kentaro <hayashi@clear-code.com> - 3.0.4-0
+- new upstream release.
+
 * Mon Apr 29 2013 HAYASHI Kentaro <hayashi@clear-code.com> - 3.0.3-0
 - Add additional_configure_options parameter.
 - Make MeCab optional. Use use_mecab parameter for it.
