@@ -5,6 +5,49 @@
 News
 ====
 
+.. _release-3-0-4:
+
+Release 3.0.4 - 2013/05/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [tokenizer] Improved to show log message when normalized string is not given.
+  when? how to avoid?
+* Supported ``_key`` as an argument of ``geo_in_circle``. [Reported by @ceekz]
+* Supported to cast vector elements when groonga is used as a library.
+* Dropped Ubuntu 11.10 (Oneiric Ocelot) support.
+* Supported multiple index section in ``match_columns``.
+* Supported ``tokenize`` command.
+* Supported to show system error message when ``mmap()`` is failed.
+* [doc][windows] Simplified build procedures by "cmake --build".
+* Improved to restrict max execution time to prevent hanging service script.
+  [GitHub#61] [Reported by firewood]
+* Supported to evaluate vector as boolean.
+  By this change, empty vector is evaluated as false.
+* Improved not to log too many needless log messages.
+  Too many log messages are truncated as "(N same messages are truncated)".
+* [munin][groonga_n_records] Added ``exclude_tables`` option.
+  It supports to exclude specific tables from monitoring results.
+* Supported Debian 8.0 (jessie).
+
+Fixes
+^^^^^
+
+* [tokenizer] Fixed a memory leak on error.
+* Fixed a bug that empty string for similar search causes SEGV.
+  [groonga-dev,01346] [Reported by Nakai Kanako]
+* Fixed a memory leak when "VECTOR_COLUMN != xxx", "VECTOR_COLUMN && xxx"
+  expressions are used.
+
+Thanks
+^^^^^^
+
+* @ceekz
+* Nakai Kanako
+* firewood
+
 .. _release-3-0-3:
 
 Release 3.0.3 - 2013/04/29
