@@ -1011,6 +1011,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/news/senna.txt \
 	html/_sources/reference.txt \
 	html/_sources/reference/api.txt \
+	html/_sources/reference/api/grn_ctx.txt \
 	html/_sources/reference/api/grn_expr.txt \
 	html/_sources/reference/cast.txt \
 	html/_sources/reference/command.txt \
@@ -1169,6 +1170,7 @@ html_files_relative_from_locale_dir = \
 	html/objects.inv \
 	html/reference.html \
 	html/reference/api.html \
+	html/reference/api/grn_ctx.html \
 	html/reference/api/grn_expr.html \
 	html/reference/cast.html \
 	html/reference/command.html \
