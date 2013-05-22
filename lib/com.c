@@ -576,6 +576,9 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
   ctx->errlvl = GRN_OK;
   ctx->rc = GRN_SUCCESS;
   nevents = epoll_wait(ev->epfd, ev->events, ev->max_nevents, timeout);
+  if (nevents < 0) {
+    SERR("epoll_wait");
+  }
 #else /* USE_EPOLL */
 #ifdef USE_KQUEUE
   struct kevent *ep;
@@ -585,6 +588,9 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
     tv.tv_nsec = (timeout % 1000) * 1000;
   }
   nevents = kevent(ev->kqfd, NULL, 0, ev->events, ev->max_nevents, &tv);
+  if (nevents < 0) {
+    SERR("kevent");
+  }
 #else /* USE_KQUEUE */
   uint32_t dummy;
   int nfd = 0, *pfd;
@@ -600,13 +606,14 @@ grn_com_event_poll(grn_ctx *ctx, grn_com_event *ev, int timeout)
     nfd++;
   });
   nevents = poll(ev->events, nfd, timeout);
+  if (nevents < 0) {
+    SERR("poll");
+  }
 #endif /* USE_KQUEUE */
 #endif /* USE_EPOLL */
-  if (nevents < 0) {
+  if (ctx->rc != GRN_SUCCESS) {
     if (ctx->rc == GRN_INTERRUPTED_FUNCTION_CALL) {
       ERRCLR(ctx);
-    } else {
-      SERR("poll");
     }
     return ctx->rc;
   }
