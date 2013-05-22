@@ -1,0 +1,100 @@
+.. -*- rst -*-
+
+.. highlightlang:: none
+
+.. groonga-command
+.. database: commands_tokenize
+
+``tokenize``
+=============
+
+.. Caution::
+
+  ``tokenize`` command is the experimental feature.
+  This command may be changed in the future.
+
+Summary
+-------
+
+``tokenize`` command tokenizes text by the specified tokenizer.
+
+There is no need to create table to use ``tokenize`` command.
+It is usefull for you to check the results of tokenizer.
+
+Syntax
+--------
+
+``tokenize`` commands takes two parameters - ``tokenizer`` and ``string``.
+Both of them are required.
+
+::
+
+ tokenize tokenizer string
+
+
+Usage
+-----
+
+Here is a simple example of ``tokenize`` command.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/tokenize/tokenizer_tokenbigram.log
+.. tokenize TokenBigram "fulltext search"
+
+Parameters
+----------
+
+This section describes parameters of ``tokenizer``.
+
+Required parameter
+^^^^^^^^^^^^^^^^^^
+
+There are required parameters, ``tokenizer`` and ``string``.
+
+``tokenizer``
+""""""""""""""
+
+It specifies the name of tokenizer.
+
+Here are the list of built-in tokenizer:
+
+* TokenBigram
+* TokenBigramSplitSymbol
+* TokenBigramSplitSymbolAlpha
+* TokenBigramSplitSymbolAlphaDigit
+* TokenBigramIgnoreBlank
+* TokenBigramIgnoreBlankSplitSymbol
+* TokenBigramIgnoreBlankSplitAlpha
+* TokenBigramIgnoreBlankSplitAlphaDigit
+* TokenDelimit
+* TokenDelimitNull
+* TokenTrigram
+* TokenUnigram
+
+If you want to try another tokenizer, you need to register additional tokenizer plugin by ``register`` command.
+
+``string``
+""""""""""
+
+It specifies any string which you want to tokenize.
+
+Return value
+------------
+
+::
+
+ [HEADER, tokenized]
+
+``HEADER``
+
+  The format of HEADER is [0, UNIX_TIME_WHEN_COMMAND_IS_STARTED, ELAPSED_TIME].
+  See :doc:`/reference/command/output_format` about HEADER.
+
+``tokenized``
+
+  tokenized is the tokenized text by the specified tokenizer.
+
+See also
+--------
+
+* :doc:`/reference/tokenizers`
