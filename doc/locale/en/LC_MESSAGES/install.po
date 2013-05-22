@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-04-25 17:53\n"
+"POT-Creation-Date: 2013-05-22 14:27\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -111,6 +111,7 @@ msgstr "CentOS 5"
 #: ../../../source/install/ubuntu.txt:177
 #: ../../../source/install/ubuntu.txt:224
 #: ../../../source/install/ubuntu.txt:275
+#: ../../../source/install/windows.txt:100
 msgid "Install::"
 msgstr "Install::"
 
@@ -400,6 +401,7 @@ msgstr "Configure (see :ref:`source-configure` about ``configure`` options)::"
 #: ../../../source/install/mac_os_x.txt:51
 #: ../../../source/install/solaris.txt:31
 #: ../../../source/install/ubuntu.txt:271
+#: ../../../source/install/windows.txt:96
 msgid "Build::"
 msgstr "Build::"
 
@@ -1402,33 +1404,8 @@ msgstr ""
 "Configure by ``cmake``. The following commnad line is for 64-bit version. To "
 "build 32-bit version, use ``-G \"Visual Studio 10\"`` parameter instead::"
 
-# de6c533d58894e3691dd8ae016ca6607
-#: ../../../source/install/windows.txt:96
-msgid "Build by Visual C++ 2010 Express::"
-msgstr ""
-
-# 909d6ceebe2c403f899d21e7d8b0618c
-#: ../../../source/install/windows.txt:100
-msgid "Install by Visual C++ 2010 Express::"
-msgstr ""
-
-# 2575312e031142c2a7017eb93ee5be6f
-#: ../../../source/install/windows.txt:104
-msgid "If you installed Visual Studio 2010, use can use devenv instead."
-msgstr ""
-
-# de6c533d58894e3691dd8ae016ca6607
-#: ../../../source/install/windows.txt:106
-msgid "Build by Visual Studio 2010::"
-msgstr ""
-
-# de6c533d58894e3691dd8ae016ca6607
-#: ../../../source/install/windows.txt:110
-msgid "Install by Visual Studio 2010::"
-msgstr ""
-
 # 58228c67497644cdbb85e90fb3c8d284
-#: ../../../source/install/windows.txt:114
+#: ../../../source/install/windows.txt:104
 msgid ""
 "After the above steps, :doc:`/reference/executables/groonga` is found in ``c:"
 "\\groonga\\bin\\groonga.exe``."

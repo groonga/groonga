@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-22 10:52\n"
+"POT-Creation-Date: 2013-05-22 14:27\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -38,13 +38,8 @@ msgstr ""
 "projects."
 
 # 7f35526bb683452ea9e4fb3cd8149e17
-#: ../../../source/contribution.txt:13
+#: ../../../source/contribution.txt:14
 msgid "As a user:"
-msgstr ""
-
-# 444ed91249a94068b945c2a1a36a3228
-#: ../../../source/contribution.txt:15
-msgid "As a spokesman:"
 msgstr ""
 
 # 6d182801f1e44dfd9041b516643550cd
@@ -53,13 +48,18 @@ msgid "If you are interested in groonga, please read this document and try it."
 msgstr ""
 "If you are interested in groonga, please read this document and try it."
 
+# 444ed91249a94068b945c2a1a36a3228
+#: ../../../source/contribution.txt:16
+msgid "As a spokesman:"
+msgstr ""
+
 # 70327910e5d6460da01bc9353c25497e
 #: ../../../source/contribution.txt:17
 msgid "Please introduce groonga to your friends and colleagues."
 msgstr "Please introduce groonga to your friends and colleagues."
 
 # 8c9cadbb55a0434f913434d9aa471f68
-#: ../../../source/contribution.txt:18
+#: ../../../source/contribution.txt:19
 msgid "As a developer: Bug report, development and documentation"
 msgstr ""
 
@@ -2476,7 +2476,7 @@ msgstr ""
 "list."
 
 # 3083a5c2823148bab482b8cc733a1d85
-#: ../../../source/contribution/documentation/i18n.txt:93
+#: ../../../source/contribution/documentation/i18n.txt:94
 msgid "Emacs's po-mode_"
 msgstr ""
 
@@ -2485,25 +2485,25 @@ msgstr ""
 msgid "It is bundled in gettext."
 msgstr "It is bundled in gettext."
 
-# bc09e13cfeff483281af6bc347b5120a
-#: ../../../source/contribution/documentation/i18n.txt:96
-msgid "Poedit_"
-msgstr ""
-
 # 41fe7e5d5a4947dbba7c181a51a8c0bf
 #: ../../../source/contribution/documentation/i18n.txt:97
 msgid "It is a .po editor and works on many platform."
 msgstr "It is a .po editor and works on many platform."
 
-# 5d648cc6ec084e44877706c2b9dd758d
-#: ../../../source/contribution/documentation/i18n.txt:99
-msgid "gted"
+# bc09e13cfeff483281af6bc347b5120a
+#: ../../../source/contribution/documentation/i18n.txt:97
+msgid "Poedit_"
 msgstr ""
 
 # c9e06e70349c4a078d2821963b71ee5e
 #: ../../../source/contribution/documentation/i18n.txt:100
 msgid "It is also a .po editor and is implemented as Eclipse plugin."
 msgstr "It is also a .po editor and is implemented as Eclipse plugin."
+
+# 5d648cc6ec084e44877706c2b9dd758d
+#: ../../../source/contribution/documentation/i18n.txt:100
+msgid "gted"
+msgstr ""
 
 # 08365072bba64f8dae8f47d4bdaa7d48
 #: ../../../source/contribution/documentation/i18n.txt:107
@@ -2611,6 +2611,13 @@ msgid ""
 msgstr ""
 "You can find 000X-YYY.patch files in the current directory. Please send "
 "those files to us!"
+
+# 911d4aef014a4dc9a6bd8ee9327d30d2
+# e704be885daa47a4b459fa77d306bff5
+#: ../../../source/contribution/documentation/i18n.txt:173
+#: ../../../source/contribution/documentation/i18n.txt:183
+msgid ":doc:`/community` describes our contact information."
+msgstr ""
 
 # ee1b6997084142ec8c8a644e3b096c0a
 #: ../../../source/contribution/documentation/i18n.txt:176
