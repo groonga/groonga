@@ -34,6 +34,12 @@
 
 #define NEXT_ADDR(p) (((byte *)(p)) + sizeof *(p))
 
+#define GRN_TABLE_GROUPED 1
+#define GRN_TABLE_IS_GROUPED(table)\
+  (((grn_hash *)(table))->obj.header.impl_flags & GRN_TABLE_GROUPED)
+#define GRN_TABLE_GROUPED_ON(table)\
+  (((grn_hash *)(table))->obj.header.impl_flags |= GRN_TABLE_GROUPED)
+
 #define WITH_NORMALIZE(table,key,key_size,block) do {\
   if ((table)->normalizer && key && key_size > 0) {\
     grn_obj *nstr;\
@@ -2897,6 +2903,7 @@ grn_table_group_with_range_gap(grn_ctx *ctx, grn_obj *table,
           return 0;
         }
         grn_table_cursor_close(ctx, tc);
+        GRN_TABLE_GROUPED_ON(res);
         return 1;
       }
     }
@@ -3016,6 +3023,7 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
     }
     grn_obj_close(ctx, &bulk);
   }
+  GRN_TABLE_GROUPED_ON(results);
 exit :
   GRN_API_RETURN(rc);
 }
@@ -4050,7 +4058,7 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
         for (rp = &res; !done; rp = &(*rp)->next) {
           *rp = accessor_new(ctx);
           (*rp)->obj = obj;
-          if (DB_OBJ(obj)->header.flags & GRN_OBJ_WITH_SUBREC) {
+          if (GRN_TABLE_IS_GROUPED(obj)) {
             (*rp)->action = GRN_ACCESSOR_GET_NSUBRECS;
             done++;
           } else {
