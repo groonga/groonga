@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-04-26 10:02\n"
+"POT-Creation-Date: 2013-05-22 14:45\n"
 "PO-Revision-Date: 2013-04-07 11:38+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -204,12 +204,169 @@ msgstr ""
 msgid "API"
 msgstr ""
 
-# 9f921a5dc6934fa29011fa9292971e5e
+# 9030bc7659214ae08e550f35e6b39d95
 #: ../../../source/reference/api.txt:8
+msgid ""
+"Groonga can be used as a fulltext search library. This section describes "
+"APIs that are provided by groonga."
+msgstr ""
+"groongaを全文検索ライブラリとして使うことができます。この節ではgroongaが提供しているAPIを示します。"
+
+# d1ea813848c844dba8034915b3a515ab
+#: ../../../source/reference/api/grn_ctx.txt:6
+msgid "``grn_ctx``"
+msgstr ""
+
+# 74adee8c09fc46bd8d72994ab949faca
+# 909fc52b77cf4244b8ee8f95ca993b33
+# bb58728aaf864b5e9f38e3b2ca5f1eea
+#: ../../../source/reference/api/grn_ctx.txt:9
+#: ../../../source/reference/command/output_format.txt:9
+#: ../../../source/reference/command/return_code.txt:9
+#: ../../../source/reference/commands/column_rename.txt:12
+#: ../../../source/reference/commands/load.txt:12
+#: ../../../source/reference/commands/normalize.txt:17
+#: ../../../source/reference/commands/register.txt:12
+#: ../../../source/reference/commands/select.txt:12
+#: ../../../source/reference/commands/table_create.txt:12
+#: ../../../source/reference/commands/truncate.txt:12
+#: ../../../source/reference/executables/groonga-httpd.txt:9
+#: ../../../source/reference/functions/geo_distance.txt:13
+#: ../../../source/reference/functions/query.txt:12
+#: ../../../source/reference/functions/snippet_html.txt:16
+#: ../../../source/reference/functions/sub_filter.txt:12
+#: ../../../source/reference/normalizers.txt:12
+#: ../../../source/reference/query_expanders/tsv.txt:9
+#: ../../../source/reference/tables.txt:9
+msgid "Summary"
+msgstr "概要"
+
+# 0cdb0f675c744c3c9aa0763f008fa5fb
+#: ../../../source/reference/api/grn_ctx.txt:11
+msgid ""
+":c:type:`grn_ctx` is the most important object. :c:type:`grn_ctx` keeps the "
+"current infomation such as:"
+msgstr ":c:type:`grn_ctx` は最も重要なオブジェクトです。"
+":c:type:`grn_ctx` はその時点の情報を保持します:"
+
+# cd9001c316424bc697883b9d7cd1f165
+#: ../../../source/reference/api/grn_ctx.txt:14
+msgid "The last occurred error."
+msgstr "最後に発生したエラー。"
+
+# 219b3f424bab44e193cf7fbfafb48dcc
+#: ../../../source/reference/api/grn_ctx.txt:15
+msgid "The current encoding."
+msgstr "その時点のエンコーディング。"
+
+# 675fc4a79e804027ab5e440e851382e4
+#: ../../../source/reference/api/grn_ctx.txt:16
+msgid "The default thresholds. (e.g. :ref:`match-escalation-threshold`)"
+msgstr "デフォルトの閾値。（例: :ref:`match-escalation-threshold`）"
+
+# 36e989ebd0744bf2a1cfc82b3d88dfa8
+#: ../../../source/reference/api/grn_ctx.txt:17
+msgid ""
+"The default command version. (See :doc:`/reference/command/command_version`)"
+msgstr ""
+"デフォルトのコマンドバージョン。（ :doc:`/reference/commands/command_version` ）を参照のこと。"
+
+# 0c018e54a85b40b8814a7d8e3229411f
+#: ../../../source/reference/api/grn_ctx.txt:19
+msgid ":c:type:`grn_ctx` provides platform features such as:"
+msgstr ":c:type:`grn_ctx` は基盤となる機能を提供します:"
+
+# ad98f4b20c8347129c08aa38f1ee319a
+#: ../../../source/reference/api/grn_ctx.txt:21
+msgid "Memory management."
+msgstr "メモリ管理機能"
+
+# 9f0a8a1fb75a46219e56ba8e4dcca7a1
+#: ../../../source/reference/api/grn_ctx.txt:22
+msgid "Logging."
+msgstr "ロギング機能"
+
+# 18e6856d4cf44bd59a53d1a5f77f9aec
+#: ../../../source/reference/api/grn_ctx.txt:24
+msgid "Most APIs receive :c:type:`grn_ctx` as the first argument."
+msgstr "ほとんどのAPIは :c:type:`grn_ctx` を最初の引数にとります。"
+
+# bae6fc33ca06409dbb6b390cf1783375
+#: ../../../source/reference/api/grn_ctx.txt:26
+msgid ""
+"You can't use the same :c:type:`grn_ctx` from two or more threads. You need "
+"to create a :c:type:`grn_ctx` for a thread. You can use two or more :c:type:"
+"`grn_ctx` in a thread but it is not needed for usual use-case."
+msgstr ""
+"同じ :c:type:`grn_ctx` を二つ以上のスレッドからは扱えません。"
+":c:type:`grn_ctx` はスレッドごとに作成する必要があります。"
+"一つのスレッドでは :c:type:`grn_ctx` を二つ以上扱えますが、通常はその必要はありません。"
+
+# 5b7e3a9725304092bc80446f05f14c67
+# d9d1d176bb2043f7862e0ebd6c89eed4
+# 3da949c390874b228fa113ad7f7c58a8
+# 59fa57b3dcd34c44ba22a7a0c101dd6d
+# 2f69d6caf83a4ccc8ea80b5d00544083
+# 97536a90b315475493af7e77c9a44974
+# a7faad5abee943ffa15c270be72143a0
+# 3392b32e511a4f20a46da2e8576073e9
+# 61b6840e2cfb41f09230c9749f993a62
+# 597d3462f6a2410abe487fc1aa3fc3f7
+# 2e19d38532be4727b2b6b0a2544b3c95
+# 1bbd6840ea1b418689ad9aa41fca8bcf
+# ccbba423f0bf48b395557a4fab8b8799
+# f22db1880d5e405e8ebfedf90252d8c4
+# cb4eb1fd1e924afb914e225e6714f75d
+# fa553d9ecb014133abab1153f57a2d5d
+# bd11b63239864329881e23b5ef6b42e5
+# ff578594c5a94003a5d6522524c7f4bd
+# cda6456ff53f4271b26146c23c538afe
+# fadee70a933e4646887eeef59b67e396
+# d5c5bc5a1a89411d856ee6e9c34a4992
+# 5e3715c8e36743e480ed5085e5d6da3f
+# 5a13686b01c941ea820721445bf8f646
+# dd483ba16adc460d81c7eba34584fd74
+# d1095ef4efeb4475b33e435f44da6fb1
+# 30ea10bac07849499bbd2503e9b6c1db
+# 7b8a404a642d45d3a9f5087a8b6b0663
+# 88d7c6252ccb429da20f5339c8f93636
+# c3c3a11dd629453b8ef82804046dcf60
+#: ../../../source/reference/api/grn_ctx.txt:32
+msgid "Example"
+msgstr "実行例::"
+
+# 9f921a5dc6934fa29011fa9292971e5e
+#: ../../../source/reference/api/grn_ctx.txt:34
+#: ../../../source/reference/api/grn_ctx.txt:41
 #: ../../../source/reference/api/grn_expr.txt:8
 #: ../../../source/reference/cast.txt:8
 msgid "TODO..."
 msgstr ""
+
+# ccceb51ece3b4a4abd24220952445114
+#: ../../../source/reference/api/grn_ctx.txt:37
+msgid "Reference"
+msgstr "リファレンス"
+
+# a129c1a08a3d4f729a2986d760a6f741
+#: ../../../source/reference/api/grn_ctx.txt:45
+msgid "ctxを初期化します。"
+msgstr ""
+
+# a7b6642d2d384b588a377fddd6b52caf
+#: ../../../source/reference/api/grn_ctx.txt:47
+msgid "初期化するctx構造体へのポインタを指定します。"
+msgstr ""
+
+# b126789df2c04beea0ec0bb5d51d0728
+#: ../../../source/reference/api/grn_ctx.txt:48
+msgid "初期化する ``ctx`` のオプションを指定します。"
+msgstr ""
+
+# 490b223f82204cc3b2e7b260586dc4cc
+#: ../../../source/reference/api/grn_ctx.txt:49
+msgid "``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error."
+msgstr "成功時は ``GRN_SUCCESS`` 、エラー時は ``GRN_SUCCESS`` 以外。"
 
 # d66d2fddf4b1414fa272d497d3a919e0
 #: ../../../source/reference/api/grn_expr.txt:6
@@ -296,7 +453,7 @@ msgid ""
 msgstr ""
 
 # d5f2fed5b5784adea5f7c79e822adde8
-#: ../../../source/reference/command/command_version.txt:23
+#: ../../../source/reference/command/command_version.txt:24
 msgid "develop"
 msgstr ""
 
@@ -306,7 +463,7 @@ msgid "まだ開発中であり、仕様が変更される可能性がありま�
 msgstr ""
 
 # 9bd8b7c7aa8a44b6a21c742d189981f4
-#: ../../../source/reference/command/command_version.txt:26
+#: ../../../source/reference/command/command_version.txt:27
 msgid "stable"
 msgstr ""
 
@@ -317,7 +474,7 @@ msgid ""
 msgstr ""
 
 # 3a3310368c5b4722b81af65b5cdad32a
-#: ../../../source/reference/command/command_version.txt:29
+#: ../../../source/reference/command/command_version.txt:30
 msgid "deprecated"
 msgstr ""
 
@@ -434,29 +591,6 @@ msgstr ""
 #: ../../../source/reference/command/output_format.txt:6
 msgid "Output format"
 msgstr "出力形式"
-
-# 74adee8c09fc46bd8d72994ab949faca
-# 909fc52b77cf4244b8ee8f95ca993b33
-# bb58728aaf864b5e9f38e3b2ca5f1eea
-#: ../../../source/reference/command/output_format.txt:9
-#: ../../../source/reference/command/return_code.txt:9
-#: ../../../source/reference/commands/column_rename.txt:12
-#: ../../../source/reference/commands/load.txt:12
-#: ../../../source/reference/commands/normalize.txt:17
-#: ../../../source/reference/commands/register.txt:12
-#: ../../../source/reference/commands/select.txt:12
-#: ../../../source/reference/commands/table_create.txt:12
-#: ../../../source/reference/commands/truncate.txt:12
-#: ../../../source/reference/executables/groonga-httpd.txt:9
-#: ../../../source/reference/functions/geo_distance.txt:13
-#: ../../../source/reference/functions/query.txt:12
-#: ../../../source/reference/functions/snippet_html.txt:16
-#: ../../../source/reference/functions/sub_filter.txt:12
-#: ../../../source/reference/normalizers.txt:12
-#: ../../../source/reference/query_expanders/tsv.txt:9
-#: ../../../source/reference/tables.txt:9
-msgid "Summary"
-msgstr "概要"
 
 # 2ced4ba5985245e5895a3acea3c2208c
 #: ../../../source/reference/command/output_format.txt:11
@@ -2110,13 +2244,13 @@ msgstr ""
 # f0fd2e0b92354366941290b775af4c39
 # 944e784a3c9b427fbec761f39fbac9e3
 #: ../../../source/reference/commands/column_create.txt:29
-#: ../../../source/reference/commands/column_list.txt:29
-#: ../../../source/reference/commands/column_remove.txt:30
+#: ../../../source/reference/commands/column_list.txt:30
+#: ../../../source/reference/commands/column_remove.txt:31
 #: ../../../source/reference/commands/define_selector.txt:35
 #: ../../../source/reference/commands/delete.txt:29
 #: ../../../source/reference/commands/load.txt:49
 #: ../../../source/reference/commands/select.txt:209
-#: ../../../source/reference/commands/suggest.txt:74
+#: ../../../source/reference/commands/suggest.txt:75
 #: ../../../source/reference/commands_not_implemented/add.txt:31
 #: ../../../source/reference/commands_not_implemented/get.txt:29
 #: ../../../source/reference/commands_not_implemented/set.txt:29
@@ -2135,11 +2269,11 @@ msgstr ""
 # 78c32c1feeeb4c60981315a8a567ec29
 #: ../../../source/reference/commands/column_create.txt:33
 #: ../../../source/reference/commands/column_list.txt:51
-#: ../../../source/reference/commands/column_remove.txt:33
+#: ../../../source/reference/commands/column_remove.txt:34
 #: ../../../source/reference/commands/define_selector.txt:31
 #: ../../../source/reference/commands/table_create.txt:159
 #: ../../../source/reference/commands/table_list.txt:50
-#: ../../../source/reference/commands/table_remove.txt:29
+#: ../../../source/reference/commands/table_remove.txt:30
 msgid "``name``"
 msgstr ""
 
@@ -2165,18 +2299,18 @@ msgid ""
 msgstr ""
 
 # aed31e764ea14d109bac9fd28e36eb31
-#: ../../../source/reference/commands/column_create.txt:42
+#: ../../../source/reference/commands/column_create.txt:43
 msgid "0, ``COLUMN_SCALAR``"
-msgstr ""
-
-# 1838d16669ff4c589136d20b19f49c26
-#: ../../../source/reference/commands/column_create.txt:44
-msgid "1, ``COLUMN_VECTOR``"
 msgstr ""
 
 # 308c9f59dc7747c182758c899d385c22
 #: ../../../source/reference/commands/column_create.txt:44
 msgid "単一の値が格納できるカラムを作成します。"
+msgstr ""
+
+# 1838d16669ff4c589136d20b19f49c26
+#: ../../../source/reference/commands/column_create.txt:45
+msgid "1, ``COLUMN_VECTOR``"
 msgstr ""
 
 # 708faddbc21f4b5fa47bc0f0121ad3d1
@@ -2185,7 +2319,7 @@ msgid "複数の値の配列を格納できるカラムを作成します。"
 msgstr ""
 
 # 3b3f2654a9f7402fa82a832d6926b48f
-#: ../../../source/reference/commands/column_create.txt:47
+#: ../../../source/reference/commands/column_create.txt:48
 msgid "2, ``COLUMN_INDEX``"
 msgstr ""
 
@@ -2202,7 +2336,7 @@ msgid ""
 msgstr ""
 
 # 93f0ec334deb4f23ac58885fa40cabcd
-#: ../../../source/reference/commands/column_create.txt:53
+#: ../../../source/reference/commands/column_create.txt:54
 msgid "128, ``WITH_SECTION``"
 msgstr ""
 
@@ -2212,7 +2346,7 @@ msgid "段落情報を格納するインデックスを作成します。"
 msgstr ""
 
 # b9ea530fb27545d1aa21ce9e2d8c5335
-#: ../../../source/reference/commands/column_create.txt:56
+#: ../../../source/reference/commands/column_create.txt:57
 msgid "256, ``WITH_WEIGHT``"
 msgstr ""
 
@@ -2222,7 +2356,7 @@ msgid "ウェイト情報を格納するインデックスを作成します。"
 msgstr ""
 
 # ba732d16c66246388c87d407e590e4d0
-#: ../../../source/reference/commands/column_create.txt:59
+#: ../../../source/reference/commands/column_create.txt:60
 msgid "512, ``WITH_POSITION``"
 msgstr ""
 
@@ -2685,7 +2819,7 @@ msgstr ""
 # 11adb5281de04fd69ef129a58505d3bb
 #: ../../../source/reference/commands/define_selector.txt:43
 #: ../../../source/reference/commands/select.txt:303
-#: ../../../source/reference/commands/suggest.txt:82
+#: ../../../source/reference/commands/suggest.txt:83
 msgid "``query``"
 msgstr ""
 
@@ -2724,7 +2858,7 @@ msgstr ""
 # cceb06c4e46c481abab4e24e609c81f0
 #: ../../../source/reference/commands/define_selector.txt:55
 #: ../../../source/reference/commands/select.txt:679
-#: ../../../source/reference/commands/suggest.txt:88
+#: ../../../source/reference/commands/suggest.txt:89
 msgid "``sortby``"
 msgstr ""
 
@@ -2740,7 +2874,7 @@ msgstr ""
 # 6cbb461c2de74b98bfa845a6069fee02
 #: ../../../source/reference/commands/define_selector.txt:59
 #: ../../../source/reference/commands/select.txt:649
-#: ../../../source/reference/commands/suggest.txt:94
+#: ../../../source/reference/commands/suggest.txt:95
 #: ../../../source/reference/commands_not_implemented/add.txt:57
 #: ../../../source/reference/commands_not_implemented/get.txt:37
 #: ../../../source/reference/commands_not_implemented/set.txt:55
@@ -2757,7 +2891,7 @@ msgstr ""
 # 4583dc7bb4d741d88a919aad56982d0d
 #: ../../../source/reference/commands/define_selector.txt:63
 #: ../../../source/reference/commands/select.txt:720
-#: ../../../source/reference/commands/suggest.txt:100
+#: ../../../source/reference/commands/suggest.txt:101
 msgid "``offset``"
 msgstr ""
 
@@ -2770,7 +2904,7 @@ msgstr ""
 # 9b1e828d9a2240e8b37bf1951958a1fe
 #: ../../../source/reference/commands/define_selector.txt:67
 #: ../../../source/reference/commands/select.txt:747
-#: ../../../source/reference/commands/suggest.txt:106
+#: ../../../source/reference/commands/suggest.txt:107
 msgid "``limit``"
 msgstr ""
 
@@ -3049,7 +3183,7 @@ msgstr ""
 
 # c4ef53521aa74d0e804ccd440321b2c5
 #: ../../../source/reference/commands/load.txt:9
-#: ../../../source/reference/executables/groonga.txt:195
+#: ../../../source/reference/executables/groonga.txt:196
 msgid "``load``"
 msgstr ""
 
@@ -3087,14 +3221,6 @@ msgstr ""
 "input_typeに指定する形式で登録するレコードの値を表現した文字列を渡します。\n"
 "input_typeがjsonである場合には、以下のいずれかの形式が使用できます。"
 
-# e358257302304c979973feb1c4796709
-# aba8bb75c32749a49bfc68c2f91f9830
-# d09b1e9287994e71adeff900ee81cda2
-# 2b9dc857e851450197d6991dc06598fa
-#: ../../../source/reference/commands/load.txt:34
-msgid "``Format 1:``"
-msgstr "``形式1:``"
-
 # 707b4c0412dd42aa8cec68d97ab50c23
 #: ../../../source/reference/commands/load.txt:35
 msgid ""
@@ -3108,9 +3234,9 @@ msgstr ""
 # aba8bb75c32749a49bfc68c2f91f9830
 # d09b1e9287994e71adeff900ee81cda2
 # 2b9dc857e851450197d6991dc06598fa
-#: ../../../source/reference/commands/load.txt:37
-msgid "``Format 2:``"
-msgstr "``形式2:``"
+#: ../../../source/reference/commands/load.txt:35
+msgid "``Format 1:``"
+msgstr "``形式1:``"
 
 # 9ca2e3e33ea2476c82dc82dc81e52d25
 #: ../../../source/reference/commands/load.txt:38
@@ -3120,6 +3246,14 @@ msgid ""
 msgstr ""
 "[{カラム名1: カラム値1, カラム名2: カラム値2}, {カラム名1: カラム値1, カラム"
 "名2: カラム値2},..]"
+
+# e358257302304c979973feb1c4796709
+# aba8bb75c32749a49bfc68c2f91f9830
+# d09b1e9287994e71adeff900ee81cda2
+# 2b9dc857e851450197d6991dc06598fa
+#: ../../../source/reference/commands/load.txt:38
+msgid "``Format 2:``"
+msgstr "``形式2:``"
 
 # 00dbb758af8044809f86f61f5407af99
 #: ../../../source/reference/commands/load.txt:40
@@ -3599,7 +3733,7 @@ msgstr ""
 
 # e9574c3225e149989e5c56875a3bf7a7
 #: ../../../source/reference/commands/select.txt:9
-#: ../../../source/reference/executables/groonga.txt:198
+#: ../../../source/reference/executables/groonga.txt:199
 msgid "``select``"
 msgstr ""
 
@@ -5011,8 +5145,8 @@ msgstr ""
 
 # 6dfee24a730d4c1f8935c395f0900494
 #: ../../../source/reference/commands/select.txt:831
-#: ../../../source/reference/commands/suggest.txt:137
-#: ../../../source/reference/commands/suggest.txt:156
+#: ../../../source/reference/commands/suggest.txt:138
+#: ../../../source/reference/commands/suggest.txt:157
 msgid "``no``"
 msgstr ""
 
@@ -5369,19 +5503,14 @@ msgstr "suggestコマンドでどの種類の候補を返すかを指定しま�
 msgid "Here are available types:"
 msgstr "指定できる種類は以下の通りです。"
 
-# 412d8f936c1d4ff8a198e1d636cb5368
-#: ../../../source/reference/commands/suggest.txt:46
-msgid "``complete``"
-msgstr ""
-
 # bf4547e3857c413b9ffd3b54b1253050
 #: ../../../source/reference/commands/suggest.txt:47
 msgid "The suggest command does completion."
 msgstr "補完を実行します。"
 
-# 29b9cf2680ee430ab4cacb536f373cbf
-#: ../../../source/reference/commands/suggest.txt:49
-msgid "``correct``"
+# 412d8f936c1d4ff8a198e1d636cb5368
+#: ../../../source/reference/commands/suggest.txt:47
+msgid "``complete``"
 msgstr ""
 
 # c48e12132c3a4894a59bec8f90aceb10
@@ -5389,15 +5518,20 @@ msgstr ""
 msgid "The suggest command does correction."
 msgstr "補正を実行します。"
 
-# c8a27fb971cd4b00ad37c153d7c1519a
-#: ../../../source/reference/commands/suggest.txt:52
-msgid "``suggest``"
+# 29b9cf2680ee430ab4cacb536f373cbf
+#: ../../../source/reference/commands/suggest.txt:50
+msgid "``correct``"
 msgstr ""
 
 # 0ec670d3a67e433f9c59096cd97c130b
 #: ../../../source/reference/commands/suggest.txt:53
 msgid "The suggest command does suggestion."
 msgstr "提案を実行します。"
+
+# c8a27fb971cd4b00ad37c153d7c1519a
+#: ../../../source/reference/commands/suggest.txt:53
+msgid "``suggest``"
+msgstr ""
 
 # 6fc76dcf2ecf4f1eb4154773e683279a
 #: ../../../source/reference/commands/suggest.txt:55
@@ -5423,7 +5557,7 @@ msgid "It returns complete, correction and suggestion::"
 msgstr "補完候補と補正候補と提案候補を返します::"
 
 # c6705133119f484883c843674750b307
-#: ../../../source/reference/commands/suggest.txt:67
+#: ../../../source/reference/commands/suggest.txt:68
 msgid "``types``"
 msgstr ""
 
@@ -5447,7 +5581,7 @@ msgstr ""
 "がなはカタカナで指定します。"
 
 # c6aaa5526d434a8fbe37a5c5e377b82a
-#: ../../../source/reference/commands/suggest.txt:78
+#: ../../../source/reference/commands/suggest.txt:79
 msgid "``column``"
 msgstr ""
 
@@ -5469,14 +5603,14 @@ msgstr "ソートキーを指定します。"
 # ba408555555c45c89ec5b6fc791d440f
 # 917bec5334ae4486a3d80b80cb7d2dbb
 # 677b038132ab4229a4a552be922b44f6
-#: ../../../source/reference/commands/suggest.txt:88
-#: ../../../source/reference/commands/suggest.txt:94
-#: ../../../source/reference/commands/suggest.txt:100
-#: ../../../source/reference/commands/suggest.txt:106
-#: ../../../source/reference/commands/suggest.txt:113
-#: ../../../source/reference/commands/suggest.txt:125
-#: ../../../source/reference/commands/suggest.txt:144
-#: ../../../source/reference/commands/suggest.txt:163
+#: ../../../source/reference/commands/suggest.txt:89
+#: ../../../source/reference/commands/suggest.txt:95
+#: ../../../source/reference/commands/suggest.txt:101
+#: ../../../source/reference/commands/suggest.txt:107
+#: ../../../source/reference/commands/suggest.txt:114
+#: ../../../source/reference/commands/suggest.txt:126
+#: ../../../source/reference/commands/suggest.txt:145
+#: ../../../source/reference/commands/suggest.txt:164
 msgid "Default:"
 msgstr ""
 
@@ -5528,15 +5662,15 @@ msgstr ""
 "出現頻度に対する閾値を指定します。返されるレコードの ``_score`` 値は "
 "``frequency_threshold`` 以上になります。"
 
-# ca57cb8de9f9466ebb85cf593b04754f
-#: ../../../source/reference/commands/suggest.txt:113
-msgid "``frequency_threshold``"
-msgstr ""
-
 # fc546ec2fc2a43cc9f4a75047e893212
 # 9f4f75b3b75a4b4eb864557ed5d1959d
 #: ../../../source/reference/commands/suggest.txt:114
 msgid "``100``"
+msgstr ""
+
+# ca57cb8de9f9466ebb85cf593b04754f
+#: ../../../source/reference/commands/suggest.txt:114
+msgid "``frequency_threshold``"
 msgstr ""
 
 # 4961e22444b941529ab15807e9852d14
@@ -5570,17 +5704,17 @@ msgid ""
 "It specifies whether optional prefix search is used or not in completion."
 msgstr "補完時に前方一致検索を実行するかどうかを指定します。"
 
-# e621f92afd6c4d4b9a317c30208be0fe
-# 09f04da64b084e0797d1a2d5913b36a3
-#: ../../../source/reference/commands/suggest.txt:134
-#: ../../../source/reference/commands/suggest.txt:153
-msgid "``yes``"
-msgstr ""
-
 # 5db279e0f9214776bb9ca618f1fd5dff
 #: ../../../source/reference/commands/suggest.txt:135
 msgid "Prefix search is always used."
 msgstr "常に前方一致検索を実行します。"
+
+# e621f92afd6c4d4b9a317c30208be0fe
+# 09f04da64b084e0797d1a2d5913b36a3
+#: ../../../source/reference/commands/suggest.txt:135
+#: ../../../source/reference/commands/suggest.txt:154
+msgid "``yes``"
+msgstr ""
 
 # 438823df94bb4fa0a191f62272fdf842
 #: ../../../source/reference/commands/suggest.txt:138
@@ -5595,15 +5729,15 @@ msgstr "他の検索でレコードが見つからない場合のみ前方一致
 # 3a582bc2433b4642ad4a38f3c0e5ad51
 # 16008bfbca8740c88a8dd72ea45f6be7
 # 505007fef66f4168951b2c0f2f50d9ed
-#: ../../../source/reference/commands/suggest.txt:141
+#: ../../../source/reference/commands/suggest.txt:142
 #: ../../../source/reference/commands/suggest.txt:145
-#: ../../../source/reference/commands/suggest.txt:160
+#: ../../../source/reference/commands/suggest.txt:161
 #: ../../../source/reference/commands/suggest.txt:164
 msgid "``auto``"
 msgstr ""
 
 # 7478854a1e084eb3990ab5d623fb5c31
-#: ../../../source/reference/commands/suggest.txt:144
+#: ../../../source/reference/commands/suggest.txt:145
 msgid "``prefix_search``"
 msgstr ""
 
@@ -5629,7 +5763,7 @@ msgid "Similar search is used only when other search can't find any records."
 msgstr "他の検索でレコードが見つからない場合のみ類似検索を実行します。"
 
 # 5f1a4a1c092b4593bf1cb9d6d423bccf
-#: ../../../source/reference/commands/suggest.txt:163
+#: ../../../source/reference/commands/suggest.txt:164
 msgid "``similar_search``"
 msgstr ""
 
@@ -5735,7 +5869,7 @@ msgstr ""
 
 # d827d2fda1df4a8c889e4b3639316a94
 #: ../../../source/reference/commands/table_create.txt:9
-#: ../../../source/reference/executables/groonga.txt:180
+#: ../../../source/reference/executables/groonga.txt:181
 msgid "``table_create``"
 msgstr ""
 
@@ -6579,14 +6713,6 @@ msgstr ""
 msgid "以下のいずれかの形式が使用できます。"
 msgstr ""
 
-# c0c2ad84b33f488a85a4ca7d975daa6e
-# d1382d9779a941069222048843030902
-# e0e13804a9284b3386fad9e1833ab8b8
-#: ../../../source/reference/commands_not_implemented/add.txt:49
-#: ../../../source/reference/commands_not_implemented/set.txt:47
-msgid "``形式1``"
-msgstr ""
-
 # 1e777c2c8adb433d9a9eb1aec8a4a08e
 # 30cf2c86f8d5412db5669764dcbc6044
 #: ../../../source/reference/commands_not_implemented/add.txt:50
@@ -6594,11 +6720,19 @@ msgstr ""
 msgid "[カラム値1, カラム値2,..]"
 msgstr ""
 
+# c0c2ad84b33f488a85a4ca7d975daa6e
+# d1382d9779a941069222048843030902
+# e0e13804a9284b3386fad9e1833ab8b8
+#: ../../../source/reference/commands_not_implemented/add.txt:50
+#: ../../../source/reference/commands_not_implemented/set.txt:48
+msgid "``形式1``"
+msgstr ""
+
 # f430086ceac74705868aae903683e3f8
 # 28ca2b4cb6ed40f093ed9a4fedbd535d
 # 9c90960fa31440d69e33b87fe78ece76
-#: ../../../source/reference/commands_not_implemented/add.txt:52
-#: ../../../source/reference/commands_not_implemented/set.txt:50
+#: ../../../source/reference/commands_not_implemented/add.txt:53
+#: ../../../source/reference/commands_not_implemented/set.txt:51
 msgid "``形式2``"
 msgstr ""
 
@@ -7094,17 +7228,17 @@ msgid ""
 "す。"
 msgstr ""
 
-# 0d99864e708b4c9aac5d76bbbd2ff9da
-#: ../../../source/reference/executables/grntest.txt:131
-msgid "test_local コマンドファイル 入力ファイル名"
-msgstr ""
-
 # d365a7ef0c294ee6a241c116940e868a
 #: ../../../source/reference/executables/grntest.txt:131
 msgid ""
 "コマンドファイルをgrntest単体で実行し、各コマンドの実行結果を入力ファイルと比"
 "較します。処理時間など本質的要素以外に差分があった場合、差分を、入力ファイル."
 "diffというファイルに書きだします。"
+msgstr ""
+
+# 0d99864e708b4c9aac5d76bbbd2ff9da
+#: ../../../source/reference/executables/grntest.txt:132
+msgid "test_local コマンドファイル 入力ファイル名"
 msgstr ""
 
 # e67bce8548cc445a825991f7f8c05c50
@@ -7131,13 +7265,8 @@ msgid "上記の意味は以下のとおりです。"
 msgstr ""
 
 # c13cdff049fb4ce19cd0b53a48ed868f
-#: ../../../source/reference/executables/grntest.txt:151
+#: ../../../source/reference/executables/grntest.txt:152
 msgid "1行目"
-msgstr ""
-
-# 25e262f62217441dbbd37851d9b3b107
-#: ../../../source/reference/executables/grntest.txt:153
-msgid "2行目"
 msgstr ""
 
 # 6f5b25cdef574ba5b2efffe21b7280f9
@@ -7145,14 +7274,19 @@ msgstr ""
 msgid "コメント行。"
 msgstr ""
 
-# 8d38048608944e1cb6e537a4763a6a3d
-#: ../../../source/reference/executables/grntest.txt:155
-msgid "3行目"
+# 25e262f62217441dbbd37851d9b3b107
+#: ../../../source/reference/executables/grntest.txt:154
+msgid "2行目"
 msgstr ""
 
 # b27cc5da45ff4904a59b847cf01a2ba6
 #: ../../../source/reference/executables/grntest.txt:155
 msgid "test.dll というコマンドファイルをgroonga単体で実行し、詳細に報告する。"
+msgstr ""
+
+# 8d38048608944e1cb6e537a4763a6a3d
+#: ../../../source/reference/executables/grntest.txt:156
+msgid "3行目"
 msgstr ""
 
 # ebf8f5d878f443198f39ca2f9702034c
@@ -7164,7 +7298,7 @@ msgid ""
 msgstr ""
 
 # f0422d8f5b17434399f4b581f1ca5db2
-#: ../../../source/reference/executables/grntest.txt:158
+#: ../../../source/reference/executables/grntest.txt:159
 msgid "4行目"
 msgstr ""
 
@@ -7189,7 +7323,7 @@ msgid ""
 msgstr ""
 
 # da2d340ae21b4cd5aaaf71ad4c036fe3
-#: ../../../source/reference/executables/grntest.txt:166
+#: ../../../source/reference/executables/grntest.txt:167
 msgid "#SET_HOST <ip/hostname>"
 msgstr ""
 
@@ -7203,17 +7337,17 @@ msgid ""
 "ションで指定した場合と同様です。"
 msgstr ""
 
-# 7f2bed48e87143e289c63db3f0f4d48d
-#: ../../../source/reference/executables/grntest.txt:170
-msgid "#SET_PORT <port number>"
-msgstr ""
-
 # 72f2c08e1cb14c95b9e6d49dbfb1d481
 #: ../../../source/reference/executables/grntest.txt:170
 msgid ""
 "-p, --port オプションと同等の機能です。コマンドラインオプションに指定したポー"
 "ト番号とSET_PORTで指定したポート番号が異なる場合、またコマンドラインオプショ"
 "ンを指定しなかった場合にもSET_PORTが優先されます。"
+msgstr ""
+
+# 7f2bed48e87143e289c63db3f0f4d48d
+#: ../../../source/reference/executables/grntest.txt:171
+msgid "#SET_PORT <port number>"
 msgstr ""
 
 # b099b7f1642443e7903ffbb2e27dfb06
@@ -7465,9 +7599,9 @@ msgstr "書式::"
 # 1a6615a00aac4d48b2f84c85748395c7
 # 0e705bfe8f6747a8aabd7db84e5379bc
 # fd94a3ad9d884e4d86821964d24c1fda
-#: ../../../source/reference/executables/groonga-httpd.txt:104
-#: ../../../source/reference/executables/groonga-httpd.txt:130
-#: ../../../source/reference/executables/groonga-httpd.txt:146
+#: ../../../source/reference/executables/groonga-httpd.txt:105
+#: ../../../source/reference/executables/groonga-httpd.txt:131
+#: ../../../source/reference/executables/groonga-httpd.txt:147
 msgid "Default"
 msgstr ""
 
@@ -7479,9 +7613,9 @@ msgstr ""
 # 227ecde5093e454db02e101b06760445
 # 96fe775c88874ee7a925defef7af9e49
 # 5a9d60ad2b34426f896d17f93bf8d3b0
-#: ../../../source/reference/executables/groonga-httpd.txt:107
-#: ../../../source/reference/executables/groonga-httpd.txt:133
-#: ../../../source/reference/executables/groonga-httpd.txt:149
+#: ../../../source/reference/executables/groonga-httpd.txt:108
+#: ../../../source/reference/executables/groonga-httpd.txt:134
+#: ../../../source/reference/executables/groonga-httpd.txt:150
 msgid "Context"
 msgstr ""
 
@@ -8059,7 +8193,7 @@ msgid "以下のコマンドは組み込みコマンドとして予め定義さ�
 msgstr ""
 
 # 183ef3302d6642dd814efc4e09d8227b
-#: ../../../source/reference/executables/groonga.txt:171
+#: ../../../source/reference/executables/groonga.txt:172
 msgid "``status``"
 msgstr ""
 
@@ -8068,18 +8202,18 @@ msgstr ""
 msgid "groongaプロセスの状態を表示します。"
 msgstr ""
 
-# 609ce72b00dd4ab3b5ebf05b87481814
-#: ../../../source/reference/executables/groonga.txt:174
-msgid "``table_list``"
-msgstr ""
-
 # 0b4594a8cd92413a8033c412e7e0642c
 #: ../../../source/reference/executables/groonga.txt:175
 msgid "DBに定義されているテーブルのリストを表示します。"
 msgstr ""
 
+# 609ce72b00dd4ab3b5ebf05b87481814
+#: ../../../source/reference/executables/groonga.txt:175
+msgid "``table_list``"
+msgstr ""
+
 # 37f1f09fd7b849788ae7383256a2e2bb
-#: ../../../source/reference/executables/groonga.txt:177
+#: ../../../source/reference/executables/groonga.txt:178
 msgid "``column_list``"
 msgstr ""
 
@@ -8094,7 +8228,7 @@ msgid "DBにテーブルを追加します。"
 msgstr ""
 
 # 9c80808ad62d48409033004ef7a23ea6
-#: ../../../source/reference/executables/groonga.txt:183
+#: ../../../source/reference/executables/groonga.txt:184
 msgid "``column_create``"
 msgstr ""
 
@@ -8103,18 +8237,18 @@ msgstr ""
 msgid "テーブルにカラムを追加します。"
 msgstr ""
 
-# 15e0aa0995144e3fa447e233cf171049
-#: ../../../source/reference/executables/groonga.txt:186
-msgid "``table_remove``"
-msgstr ""
-
 # b825e1da34fa42e6be1eb1a320b4c011
 #: ../../../source/reference/executables/groonga.txt:187
 msgid "DBに定義されているテーブルを削除します。"
 msgstr ""
 
+# 15e0aa0995144e3fa447e233cf171049
+#: ../../../source/reference/executables/groonga.txt:187
+msgid "``table_remove``"
+msgstr ""
+
 # 4fc5f0073ee14209b81c4314e193d763
-#: ../../../source/reference/executables/groonga.txt:189
+#: ../../../source/reference/executables/groonga.txt:190
 msgid "``column_remove``"
 msgstr ""
 
@@ -8123,14 +8257,14 @@ msgstr ""
 msgid "テーブルに定義されているカラムを削除します。"
 msgstr ""
 
-# f6b5ce493bd245628116df39f4546e98
-#: ../../../source/reference/executables/groonga.txt:192
-msgid "``view_add``"
-msgstr ""
-
 # e190153bb37e4d2184b76656f6adfe51
 #: ../../../source/reference/executables/groonga.txt:193
 msgid "VIEW型のテーブルに要素となるテーブルを定義します。"
+msgstr ""
+
+# f6b5ce493bd245628116df39f4546e98
+#: ../../../source/reference/executables/groonga.txt:193
+msgid "``view_add``"
 msgstr ""
 
 # 411c946f0be94778b817f9be372129bd
@@ -8144,7 +8278,7 @@ msgid "テーブルに含まれるレコードを検索して表示します。"
 msgstr ""
 
 # cdd902a03b304d2c833322d00abb623d
-#: ../../../source/reference/executables/groonga.txt:201
+#: ../../../source/reference/executables/groonga.txt:202
 msgid "``define_selector``"
 msgstr ""
 
@@ -8154,7 +8288,7 @@ msgid "検索条件をカスタマイズした新たな検索コマンドを定�
 msgstr ""
 
 # 5dafe59394484572812e1fb2f5520b52
-#: ../../../source/reference/executables/groonga.txt:204
+#: ../../../source/reference/executables/groonga.txt:205
 msgid "``quit``"
 msgstr ""
 
@@ -8164,7 +8298,7 @@ msgid "データベースとのセッションを終了します。"
 msgstr ""
 
 # e762fdaa976844d99174991e15d79eea
-#: ../../../source/reference/executables/groonga.txt:207
+#: ../../../source/reference/executables/groonga.txt:208
 msgid "``shutdown``"
 msgstr ""
 
@@ -8174,7 +8308,7 @@ msgid "サーバ(デーモン)プロセスを停止します。"
 msgstr ""
 
 # 95a64dab455740f99ea4b34cb8041acc
-#: ../../../source/reference/executables/groonga.txt:210
+#: ../../../source/reference/executables/groonga.txt:211
 msgid "``log_level``"
 msgstr ""
 
@@ -8184,7 +8318,7 @@ msgid "ログ出力レベルを設定します。"
 msgstr ""
 
 # b34bd800ce73496fa78e7ae32f6873c5
-#: ../../../source/reference/executables/groonga.txt:213
+#: ../../../source/reference/executables/groonga.txt:214
 msgid "``log_put``"
 msgstr ""
 
@@ -8193,14 +8327,14 @@ msgstr ""
 msgid "ログ出力を行います。"
 msgstr ""
 
-# 65ed7729797341a3a814345d71d70367
-#: ../../../source/reference/executables/groonga.txt:217
-msgid "``clearlock``"
-msgstr ""
-
 # cbb234a59df94393b473d409c8044244
 #: ../../../source/reference/executables/groonga.txt:217
 msgid "ロックを解除します。"
+msgstr ""
+
+# 65ed7729797341a3a814345d71d70367
+#: ../../../source/reference/executables/groonga.txt:218
+msgid "``clearlock``"
 msgstr ""
 
 # bc4b67998f6344c8bef819afa6fb59cf
@@ -9500,7 +9634,7 @@ msgstr ""
 "です。"
 
 # 7d814fc88d7a41bb85aea541094f0f4f
-#: ../../../source/reference/functions/sub_filter.txt:68
+#: ../../../source/reference/functions/sub_filter.txt:69
 msgid ""
 "Here is the simple usage of ``sub_filter`` function which extracts the blog "
 "entry"
@@ -12419,7 +12553,7 @@ msgstr ""
 
 # 0121df256ec346a0a6d8d6f7f7cebee7
 # b5a5e140e04548dbb6a48c8708fddb84
-#: ../../../source/reference/log.txt:35 ../../../source/reference/log.txt:130
+#: ../../../source/reference/log.txt:36 ../../../source/reference/log.txt:131
 msgid "YYYY"
 msgstr ""
 
@@ -12433,7 +12567,7 @@ msgstr ""
 
 # 6eed8dbcd2754622947a3940c1d1c82f
 # 24465667ee564028acac7099635bd14a
-#: ../../../source/reference/log.txt:38 ../../../source/reference/log.txt:133
+#: ../../../source/reference/log.txt:39 ../../../source/reference/log.txt:134
 msgid "MM"
 msgstr ""
 
@@ -12447,7 +12581,7 @@ msgstr ""
 
 # d40853c8637441f39f44153d225218ba
 # b138067807394d9eb23de94ba4ff5707
-#: ../../../source/reference/log.txt:41 ../../../source/reference/log.txt:136
+#: ../../../source/reference/log.txt:42 ../../../source/reference/log.txt:137
 msgid "DD"
 msgstr ""
 
@@ -12459,12 +12593,6 @@ msgstr ""
 msgid "Day with two digits."
 msgstr ""
 
-# 634a3e537d5b40d98ecba5da42bbb4d7
-# 64a317d4e62f49b0b26e537a367340df
-#: ../../../source/reference/log.txt:44 ../../../source/reference/log.txt:139
-msgid "hh"
-msgstr ""
-
 # bb94937a919b4ee1a17b14013346fca1
 # 1d5ec62419344f45bf28859207113488
 # 37c7ab40251a4fd4929bf11b0c3e20be
@@ -12473,10 +12601,10 @@ msgstr ""
 msgid "Hour with two digits."
 msgstr ""
 
-# 717f0d8a781049428aef1a76ac19bb0a
-# 0ee8cb454b9d45a38572e0fca0d6ca8b
-#: ../../../source/reference/log.txt:47 ../../../source/reference/log.txt:142
-msgid "mm"
+# 634a3e537d5b40d98ecba5da42bbb4d7
+# 64a317d4e62f49b0b26e537a367340df
+#: ../../../source/reference/log.txt:45 ../../../source/reference/log.txt:140
+msgid "hh"
 msgstr ""
 
 # a1a057d877f943e7aa940ffe1f824577
@@ -12487,10 +12615,10 @@ msgstr ""
 msgid "Minute with two digits."
 msgstr ""
 
-# 08dc21a3b2324f698251b6510cc2ba4a
-# 8b1003d0a87a467fa11fcac3afb10447
-#: ../../../source/reference/log.txt:50 ../../../source/reference/log.txt:145
-msgid "ss"
+# 717f0d8a781049428aef1a76ac19bb0a
+# 0ee8cb454b9d45a38572e0fca0d6ca8b
+#: ../../../source/reference/log.txt:48 ../../../source/reference/log.txt:143
+msgid "mm"
 msgstr ""
 
 # 3ea29c92867848f9ae45c4e9c3fca3c5
@@ -12501,10 +12629,10 @@ msgstr ""
 msgid "Second with two digits."
 msgstr ""
 
-# 7747c10bf77d4ef0bdc4cd289f644550
-# babc7e541fca44a5b09bf1faeb4dfbac
-#: ../../../source/reference/log.txt:53 ../../../source/reference/log.txt:148
-msgid "SSSSSS"
+# 08dc21a3b2324f698251b6510cc2ba4a
+# 8b1003d0a87a467fa11fcac3afb10447
+#: ../../../source/reference/log.txt:51 ../../../source/reference/log.txt:146
+msgid "ss"
 msgstr ""
 
 # df7e80cab29c49c9916adc0308014265
@@ -12513,6 +12641,12 @@ msgstr ""
 # d5776fc58dfe46099dfcdfc4709e35fe
 #: ../../../source/reference/log.txt:54 ../../../source/reference/log.txt:149
 msgid "Microsecond with six digits."
+msgstr ""
+
+# 7747c10bf77d4ef0bdc4cd289f644550
+# babc7e541fca44a5b09bf1faeb4dfbac
+#: ../../../source/reference/log.txt:54 ../../../source/reference/log.txt:149
+msgid "SSSSSS"
 msgstr ""
 
 # 5b7e3a9725304092bc80446f05f14c67
@@ -12555,7 +12689,7 @@ msgstr "実行例::"
 
 # 028c1865481047039395ef293758e3c7
 # cbfe6761aae143f2b281f18f39292f4d
-#: ../../../source/reference/log.txt:57 ../../../source/reference/log.txt:152
+#: ../../../source/reference/log.txt:58 ../../../source/reference/log.txt:153
 msgid "TIME_STAMP"
 msgstr ""
 
@@ -12566,7 +12700,7 @@ msgid "Log level with a character. Here is a character and log level map."
 msgstr ""
 
 # a301418ea12244b7b0299e288df3d3a6
-#: ../../../source/reference/log.txt:64
+#: ../../../source/reference/log.txt:65
 msgid "E"
 msgstr ""
 
@@ -12577,7 +12711,7 @@ msgid "Emergency"
 msgstr ""
 
 # 01711cbe518b474e8f8244dbe079d327
-#: ../../../source/reference/log.txt:67
+#: ../../../source/reference/log.txt:68
 msgid "A"
 msgstr ""
 
@@ -12588,7 +12722,7 @@ msgid "Alert"
 msgstr ""
 
 # 29beabaf8d8c49cc8dd1062856ba9e28
-#: ../../../source/reference/log.txt:70
+#: ../../../source/reference/log.txt:71
 msgid "C"
 msgstr ""
 
@@ -12598,20 +12732,15 @@ msgstr ""
 msgid "Critical"
 msgstr ""
 
-# 882b18c9ce1e40519b126220beb5ad69
-#: ../../../source/reference/log.txt:73
-msgid "e"
-msgstr ""
-
 # 3f53a169d27443e1bac59ceec5276bc2
 # f65197c879b14fa6bd63157ab1611c09
 #: ../../../source/reference/log.txt:74
 msgid "Error"
 msgstr ""
 
-# eeb7bae781194436a3cd7c16bff063c0
-#: ../../../source/reference/log.txt:76
-msgid "w"
+# 882b18c9ce1e40519b126220beb5ad69
+#: ../../../source/reference/log.txt:74
+msgid "e"
 msgstr ""
 
 # 7d2b02bc68fa41659921f32aa3df9e2c
@@ -12620,9 +12749,9 @@ msgstr ""
 msgid "Warning"
 msgstr ""
 
-# 03978b317b7c466eabd12e19720ac8d9
-#: ../../../source/reference/log.txt:79
-msgid "n"
+# eeb7bae781194436a3cd7c16bff063c0
+#: ../../../source/reference/log.txt:77
+msgid "w"
 msgstr ""
 
 # a6e17cf5ef6d468bb1c3a6d5d952e462
@@ -12631,9 +12760,9 @@ msgstr ""
 msgid "Notification"
 msgstr ""
 
-# 6b5e78e0d86d483f86cce4e073d06304
-#: ../../../source/reference/log.txt:82
-msgid "i"
+# 03978b317b7c466eabd12e19720ac8d9
+#: ../../../source/reference/log.txt:80
+msgid "n"
 msgstr ""
 
 # 7e7a2bc9d75a42ec896796d9fce1c086
@@ -12642,9 +12771,9 @@ msgstr ""
 msgid "Information"
 msgstr ""
 
-# f1946c422ed44c7cac2bbf37338a53d0
-#: ../../../source/reference/log.txt:85
-msgid "d"
+# 6b5e78e0d86d483f86cce4e073d06304
+#: ../../../source/reference/log.txt:83
+msgid "i"
 msgstr ""
 
 # 7d249620a1074052bf00b49d3182b484
@@ -12653,14 +12782,9 @@ msgstr ""
 msgid "Debug"
 msgstr ""
 
-# 330383ca6e1e4e33bb2cad62f6a99202
-#: ../../../source/reference/log.txt:88
-#: ../../../source/reference/tables.txt:42
-#: ../../../source/reference/tables.txt:58
-#: ../../../source/reference/tables.txt:61
-#: ../../../source/reference/tables.txt:65
-#: ../../../source/reference/tables.txt:68
-msgid "\\-"
+# f1946c422ed44c7cac2bbf37338a53d0
+#: ../../../source/reference/log.txt:86
+msgid "d"
 msgstr ""
 
 # adf8eee57cd34d2090814f6c24e8d5b7
@@ -12669,8 +12793,18 @@ msgstr ""
 msgid "Dump"
 msgstr ""
 
+# 330383ca6e1e4e33bb2cad62f6a99202
+#: ../../../source/reference/log.txt:89
+#: ../../../source/reference/tables.txt:42
+#: ../../../source/reference/tables.txt:58
+#: ../../../source/reference/tables.txt:61
+#: ../../../source/reference/tables.txt:65
+#: ../../../source/reference/tables.txt:68
+msgid "\\-"
+msgstr ""
+
 # 1a7e9d4dada14ea788dd80c1346b3196
-#: ../../../source/reference/log.txt:92
+#: ../../../source/reference/log.txt:93
 msgid "L"
 msgstr ""
 
@@ -12684,7 +12818,7 @@ msgstr ""
 
 # 978453b25fd64662a6521fbb07e68db2
 # e0cbc0cf96c94ec5962109c2d2f2ed80
-#: ../../../source/reference/log.txt:99 ../../../source/reference/log.txt:178
+#: ../../../source/reference/log.txt:100 ../../../source/reference/log.txt:179
 msgid "MESSAGE"
 msgstr ""
 
@@ -12718,12 +12852,12 @@ msgid ""
 msgstr ""
 
 # 917ca27dd1184102a51efbfecd12e3e8
-#: ../../../source/reference/log.txt:162
+#: ../../../source/reference/log.txt:163
 msgid "ID"
 msgstr ""
 
 # 68edd34cd896408f8eafe18dd35969e4
-#: ../../../source/reference/log.txt:165
+#: ../../../source/reference/log.txt:166
 msgid ">"
 msgstr ""
 
@@ -12734,7 +12868,7 @@ msgid "A character that indicates query is started."
 msgstr ""
 
 # f4df392a331843f4bacf49431b2bc488
-#: ../../../source/reference/log.txt:168
+#: ../../../source/reference/log.txt:169
 msgid ":"
 msgstr ""
 
@@ -12745,7 +12879,7 @@ msgid "A character that indicates query is processing."
 msgstr ""
 
 # 0358a0845bc9499aac33af685655e0b0
-#: ../../../source/reference/log.txt:171
+#: ../../../source/reference/log.txt:172
 msgid "<"
 msgstr ""
 
@@ -12762,7 +12896,7 @@ msgid "A query to be processed."
 msgstr ""
 
 # d2a8c106f29047e49db364c0fd709f48
-#: ../../../source/reference/log.txt:185
+#: ../../../source/reference/log.txt:186
 msgid "QUERY"
 msgstr ""
 
@@ -12773,7 +12907,7 @@ msgid "Elapsed time in nanoseconds since query is started."
 msgstr ""
 
 # ddbfad67dc3849cba8565553c9b823fc
-#: ../../../source/reference/log.txt:193
+#: ../../../source/reference/log.txt:194
 msgid "ELAPSED_TIME"
 msgstr ""
 
@@ -12784,7 +12918,7 @@ msgid "A processed work at the time."
 msgstr ""
 
 # 018ee45e359f444a89506331b86d3c55
-#: ../../../source/reference/log.txt:201
+#: ../../../source/reference/log.txt:202
 msgid "PROGRESS"
 msgstr ""
 
@@ -12795,7 +12929,7 @@ msgid "A return code for the query."
 msgstr ""
 
 # d0742adf4f42420b9247bde497ec24cc
-#: ../../../source/reference/log.txt:209
+#: ../../../source/reference/log.txt:210
 msgid "RETURN_CODE"
 msgstr "RETURN_CODE"
 
@@ -13021,7 +13155,7 @@ msgstr ""
 
 # d624507009f144399bec66106a8683eb
 #: ../../../source/reference/normalizers.txt:126
-msgid "``NormalizerMySQLGeneralCIExceptKanaCIKanaWithVoicedSoundMark``"
+msgid "``NormalizerMySQLUnicodeCIExceptKanaCIKanaWithVoicedSoundMark``"
 msgstr ""
 
 # d2c072ab7418466a92acafab279039b6

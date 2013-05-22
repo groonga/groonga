@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-04-25 17:59\n"
+"POT-Creation-Date: 2013-05-22 15:22\n"
 "PO-Revision-Date: 2013-04-03 13:30+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -84,6 +84,7 @@ msgstr ""
 #: ../../../source/install/ubuntu.txt:177
 #: ../../../source/install/ubuntu.txt:224
 #: ../../../source/install/ubuntu.txt:275
+#: ../../../source/install/windows.txt:100
 msgid "Install::"
 msgstr "インストール::"
 
@@ -363,6 +364,7 @@ msgstr ""
 #: ../../../source/install/mac_os_x.txt:51
 #: ../../../source/install/solaris.txt:31
 #: ../../../source/install/ubuntu.txt:271
+#: ../../../source/install/windows.txt:96
 msgid "Build::"
 msgstr "ビルド::"
 
@@ -1404,36 +1406,12 @@ msgstr ""
 "groongaをビルドするためのものです。32-bit用のgroongaをビルドする場合は代わり"
 "に ``-G \"Visual Studio 10\"`` パラメーターを指定してください::"
 
-# 28bc8ed2cf2c4f4bb92811c864540a6f
-#: ../../../source/install/windows.txt:96
-msgid "Build by Visual C++ 2010 Express::"
-msgstr "Visual C++ 2010 Expressでビルドします::"
-
-# 28bc8ed2cf2c4f4bb92811c864540a6f
-#: ../../../source/install/windows.txt:100
-msgid "Install by Visual C++ 2010 Express::"
-msgstr "Visual C++ 2010 Expressでインストールします::"
-
-# 0c057d1a82a043a6bd3a4a35dca18301
-#: ../../../source/install/windows.txt:104
-msgid "If you installed Visual Studio 2010, use can use devenv instead."
-msgstr "Visual Studio 2010をインストールした場合、devenvを使うことができます。"
-
-# 28bc8ed2cf2c4f4bb92811c864540a6f
-#: ../../../source/install/windows.txt:106
-msgid "Build by Visual Studio 2010::"
-msgstr "Visual Studio 2010でビルドします::"
-
-# 28bc8ed2cf2c4f4bb92811c864540a6f
-#: ../../../source/install/windows.txt:110
-msgid "Install by Visual Studio 2010::"
-msgstr "Visual Studio 2010でインストールします::"
-
 # 607b3624ab724f1eb01bfef59b92d8c9
-#: ../../../source/install/windows.txt:114
+#: ../../../source/install/windows.txt:104
 msgid ""
 "After the above steps, :doc:`/reference/executables/groonga` is found in ``c:"
 "\\groonga\\bin\\groonga.exe``."
 msgstr ""
 "以上の手順で :doc:`/reference/executables/groonga` が ``c:\\groonga\\bin"
 "\\groonga.exe`` にインストールされます。"
+

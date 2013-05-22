@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-06 18:13\n"
+"POT-Creation-Date: 2013-05-22 14:45\n"
 "PO-Revision-Date: 2013-03-06 18:18+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -36,25 +36,25 @@ msgstr ""
 "リビュートも歓迎します！"
 
 # 6f5c5091870541e489531bfc933e6196
-#: ../../../source/contribution.txt:13
+#: ../../../source/contribution.txt:14
 msgid "As a user:"
 msgstr "ユーザーの立場で:"
-
-# 98e45ec9a24745e2bb749f364d4b5b82
-#: ../../../source/contribution.txt:15
-msgid "As a spokesman:"
-msgstr "布教する立場で:"
 
 #: ../../../source/contribution.txt:15
 msgid "If you are interested in groonga, please read this document and try it."
 msgstr "このドキュメントを読んでください。"
+
+# 98e45ec9a24745e2bb749f364d4b5b82
+#: ../../../source/contribution.txt:16
+msgid "As a spokesman:"
+msgstr "布教する立場で:"
 
 #: ../../../source/contribution.txt:17
 msgid "Please introduce groonga to your friends and colleagues."
 msgstr "groongaについてまわりの人に話してください。"
 
 # 2d16a62eebd34fa68b33b44197342be9
-#: ../../../source/contribution.txt:18
+#: ../../../source/contribution.txt:19
 msgid "As a developer: Bug report, development and documentation"
 msgstr "開発者の立場で: 不具合報告や開発、ドキュメント"
 
@@ -1870,7 +1870,9 @@ msgstr ""
 msgid ""
 "There is `the list of related projects of groonga <https://github.com/"
 "groonga>`_ (grntest, fluent-plugin-groonga and so on)."
-msgstr "`groonga関係のプロジェクト（grntest, fluent-plugin-groongaなど） <https://github.com/groonga>`_ のリストはリンク先をごらんください。"
+msgstr ""
+"`groonga関係のプロジェクト（grntest, fluent-plugin-groongaなど） <https://"
+"github.com/groonga>`_ のリストはリンク先をごらんください。"
 
 #: ../../../source/contribution/development/test.txt:6
 msgid "テスト方法"
@@ -2192,7 +2194,7 @@ msgstr ""
 "ストです。"
 
 # 5c9381c8f2aa484582f94321397298d7
-#: ../../../source/contribution/documentation/i18n.txt:93
+#: ../../../source/contribution/documentation/i18n.txt:94
 msgid "Emacs's po-mode_"
 msgstr ""
 
@@ -2200,23 +2202,23 @@ msgstr ""
 msgid "It is bundled in gettext."
 msgstr "gettextに同梱されています。"
 
-# 8f3ae63e407e4fffaedc22eac67f699a
-#: ../../../source/contribution/documentation/i18n.txt:96
-msgid "Poedit_"
-msgstr ""
-
 #: ../../../source/contribution/documentation/i18n.txt:97
 msgid "It is a .po editor and works on many platform."
 msgstr ".po専用エディタです。たくさんのプラットフォームで動作します。"
 
-# 5d46cf9b309140338f7dac53dd500dc9
-#: ../../../source/contribution/documentation/i18n.txt:99
-msgid "gted"
+# 8f3ae63e407e4fffaedc22eac67f699a
+#: ../../../source/contribution/documentation/i18n.txt:97
+msgid "Poedit_"
 msgstr ""
 
 #: ../../../source/contribution/documentation/i18n.txt:100
 msgid "It is also a .po editor and is implemented as Eclipse plugin."
 msgstr "これも.po専用エディタです。Eclipseプラグインとして実装されています。"
+
+# 5d46cf9b309140338f7dac53dd500dc9
+#: ../../../source/contribution/documentation/i18n.txt:100
+msgid "gted"
+msgstr ""
 
 #: ../../../source/contribution/documentation/i18n.txt:107
 msgid "How to generate HTML files"
@@ -2309,6 +2311,13 @@ msgid ""
 msgstr ""
 "カレントディレクトリに000X-YYY.patchという名前のファイルができていると思いま"
 "す。これをgroongaプロジェクトに送ってください！"
+
+# e58b1b4fa7e3480395ece1915626b72c
+# d2f54e2851444803a0c147a1d75dea2c
+#: ../../../source/contribution/documentation/i18n.txt:173
+#: ../../../source/contribution/documentation/i18n.txt:183
+msgid ":doc:`/community` describes our contact information."
+msgstr ":doc:`/community` に連絡先の情報があります。"
 
 #: ../../../source/contribution/documentation/i18n.txt:176
 msgid "How to send .po files"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-22 10:59\n"
+"POT-Creation-Date: 2013-05-22 14:45\n"
 "PO-Revision-Date: 2013-01-19 10:52+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -805,13 +805,8 @@ msgid "Basic commands"
 msgstr "主なコマンド"
 
 # 10881436a2754b049191709023275136
-#: ../../../source/tutorial/introduction.txt:73
+#: ../../../source/tutorial/introduction.txt:74
 msgid ":doc:`/reference/commands/status`"
-msgstr ""
-
-# 1e74fb8068674cafb7c2776d998e7ce8
-#: ../../../source/tutorial/introduction.txt:75
-msgid ":doc:`/reference/commands/table_list`"
 msgstr ""
 
 # 602f9e43757345a1b0bc3a57a5b595ea
@@ -819,9 +814,9 @@ msgstr ""
 msgid "shows status of a groonga process."
 msgstr "groongaプロセスの状態を表示します。"
 
-# 4e5488d852844f238c41dfc94e49fa73
-#: ../../../source/tutorial/introduction.txt:77
-msgid ":doc:`/reference/commands/column_list`"
+# 1e74fb8068674cafb7c2776d998e7ce8
+#: ../../../source/tutorial/introduction.txt:76
+msgid ":doc:`/reference/commands/table_list`"
 msgstr ""
 
 # f35fc92dd787414ebd0561453131adb4
@@ -829,9 +824,9 @@ msgstr ""
 msgid "shows a list of tables in a database."
 msgstr "データベースに定義されているテーブルのリストを表示します。"
 
-# 1e74fb8068674cafb7c2776d998e7ce8
-#: ../../../source/tutorial/introduction.txt:79
-msgid ":doc:`/reference/commands/table_create`"
+# 4e5488d852844f238c41dfc94e49fa73
+#: ../../../source/tutorial/introduction.txt:78
+msgid ":doc:`/reference/commands/column_list`"
 msgstr ""
 
 # e18aeb6cbc8b4c28b0cb38508c6c8b00
@@ -839,9 +834,9 @@ msgstr ""
 msgid "shows a list of columns in a table."
 msgstr "テーブルに定義されているカラムのリストを表示します。"
 
-# 4e5488d852844f238c41dfc94e49fa73
-#: ../../../source/tutorial/introduction.txt:81
-msgid ":doc:`/reference/commands/column_create`"
+# 1e74fb8068674cafb7c2776d998e7ce8
+#: ../../../source/tutorial/introduction.txt:80
+msgid ":doc:`/reference/commands/table_create`"
 msgstr ""
 
 # 0d2bb03bc0114bbb8ad3a1b9670c865d
@@ -849,9 +844,9 @@ msgstr ""
 msgid "adds a table to a database."
 msgstr "データベースにテーブルを追加します。"
 
-# 8cb3ff01469d48e28b6875b2554741e8
-#: ../../../source/tutorial/introduction.txt:83
-msgid ":doc:`/reference/commands/select`"
+# 4e5488d852844f238c41dfc94e49fa73
+#: ../../../source/tutorial/introduction.txt:82
+msgid ":doc:`/reference/commands/column_create`"
 msgstr ""
 
 # 714cfb440b37481d81291c5386fce6b1
@@ -859,12 +854,17 @@ msgstr ""
 msgid "adds a column to a table."
 msgstr "テーブルにカラムを追加します。"
 
+# 8cb3ff01469d48e28b6875b2554741e8
+#: ../../../source/tutorial/introduction.txt:84
+msgid ":doc:`/reference/commands/select`"
+msgstr ""
+
 #: ../../../source/tutorial/introduction.txt:85
 msgid "searches records from a table and shows the result."
 msgstr "テーブルに含まれるレコードを検索して表示します。"
 
 # f908b90d86ec43d8885d86d0e7965874
-#: ../../../source/tutorial/introduction.txt:86
+#: ../../../source/tutorial/introduction.txt:87
 msgid ":doc:`/reference/commands/load`"
 msgstr ""
 
@@ -1642,10 +1642,10 @@ msgstr ""
 # e9d00623b2614b16b3a2fa041b59ba64
 # e62dc91528bf4f539d679d0b07d46d4a
 # bd904851aebc4c63acb8eea013c236cf
-#: ../../../source/tutorial/micro_blog.txt:52
-#: ../../../source/tutorial/micro_blog.txt:82
-#: ../../../source/tutorial/micro_blog.txt:115
-#: ../../../source/tutorial/micro_blog.txt:127
+#: ../../../source/tutorial/micro_blog.txt:53
+#: ../../../source/tutorial/micro_blog.txt:83
+#: ../../../source/tutorial/micro_blog.txt:116
+#: ../../../source/tutorial/micro_blog.txt:128
 msgid "``_key``"
 msgstr ""
 
@@ -1654,7 +1654,7 @@ msgid "ユーザーID"
 msgstr ""
 
 # e136832d91a944e68f8e08b218d10012
-#: ../../../source/tutorial/micro_blog.txt:55
+#: ../../../source/tutorial/micro_blog.txt:56
 msgid "``name``"
 msgstr ""
 
@@ -1663,7 +1663,7 @@ msgid "ユーザー名"
 msgstr ""
 
 # bb65f10f639c49a7811210e960c7c930
-#: ../../../source/tutorial/micro_blog.txt:58
+#: ../../../source/tutorial/micro_blog.txt:59
 msgid "``follower``"
 msgstr ""
 
@@ -1672,7 +1672,7 @@ msgid "フォローしているユーザーの一覧"
 msgstr ""
 
 # 9203a37b57f84bd580fa13051ea5cdba
-#: ../../../source/tutorial/micro_blog.txt:61
+#: ../../../source/tutorial/micro_blog.txt:62
 msgid "``favorites``"
 msgstr ""
 
@@ -1682,8 +1682,8 @@ msgstr ""
 
 # 11df9202207d4977ad6fec28f9ff9783
 # 3bb76a5eeb404bc7a73d3ed879981064
-#: ../../../source/tutorial/micro_blog.txt:64
-#: ../../../source/tutorial/micro_blog.txt:100
+#: ../../../source/tutorial/micro_blog.txt:65
+#: ../../../source/tutorial/micro_blog.txt:101
 msgid "``location``"
 msgstr ""
 
@@ -1692,7 +1692,7 @@ msgid "ユーザーの現在地（緯度経度座標）"
 msgstr ""
 
 # efb082a21873494faf0c0a3ac7605614
-#: ../../../source/tutorial/micro_blog.txt:67
+#: ../../../source/tutorial/micro_blog.txt:68
 msgid "``location_str``"
 msgstr ""
 
@@ -1701,7 +1701,7 @@ msgid "ユーザーの現在地（文字列）"
 msgstr ""
 
 # 0e94f3b1566b4680b678cedd1bfa0bc2
-#: ../../../source/tutorial/micro_blog.txt:70
+#: ../../../source/tutorial/micro_blog.txt:71
 msgid "``description``"
 msgstr ""
 
@@ -1716,7 +1716,7 @@ msgid ""
 msgstr ""
 
 # 8e0b44b9cb794f03a4286c9a316b7ba6
-#: ../../../source/tutorial/micro_blog.txt:74
+#: ../../../source/tutorial/micro_blog.txt:75
 msgid "``followee``"
 msgstr ""
 
@@ -1735,7 +1735,7 @@ msgid "コメントID"
 msgstr ""
 
 # 6d5c1ced6a41481f862054601e7da56d
-#: ../../../source/tutorial/micro_blog.txt:85
+#: ../../../source/tutorial/micro_blog.txt:86
 msgid "``comment``"
 msgstr ""
 
@@ -1744,7 +1744,7 @@ msgid "コメント内容"
 msgstr ""
 
 # 2f6786c053524a22aa0f29395ae94b8f
-#: ../../../source/tutorial/micro_blog.txt:88
+#: ../../../source/tutorial/micro_blog.txt:89
 msgid "``last_modified``"
 msgstr ""
 
@@ -1753,7 +1753,7 @@ msgid "投稿日時"
 msgstr ""
 
 # 1ae7eb9d5ac44b178a2f746891505bb0
-#: ../../../source/tutorial/micro_blog.txt:91
+#: ../../../source/tutorial/micro_blog.txt:92
 msgid "``replied_to``"
 msgstr ""
 
@@ -1762,7 +1762,7 @@ msgid "返信元のコメント内容"
 msgstr ""
 
 # fc3ac6a2a2054ab1a50cb94fc6cf71ef
-#: ../../../source/tutorial/micro_blog.txt:94
+#: ../../../source/tutorial/micro_blog.txt:95
 msgid "``replied_users``"
 msgstr ""
 
@@ -1771,7 +1771,7 @@ msgid "返信先のユーザーの一覧"
 msgstr ""
 
 # 5fe5b6ba7bc240498a40863dc9d5298e
-#: ../../../source/tutorial/micro_blog.txt:97
+#: ../../../source/tutorial/micro_blog.txt:98
 msgid "``hash_tags``"
 msgstr ""
 
@@ -1784,7 +1784,7 @@ msgid "投稿場所(緯度経度座標のため)"
 msgstr ""
 
 # 5538160167b34634a5f9e12d84c34a53
-#: ../../../source/tutorial/micro_blog.txt:103
+#: ../../../source/tutorial/micro_blog.txt:104
 msgid "``posted_by``"
 msgstr ""
 
@@ -1800,7 +1800,7 @@ msgid ""
 msgstr ""
 
 # 01cae5d7fe484b1f9f5d812052c05827
-#: ../../../source/tutorial/micro_blog.txt:107
+#: ../../../source/tutorial/micro_blog.txt:108
 msgid "``favorited_by``"
 msgstr ""
 
@@ -1816,16 +1816,16 @@ msgstr ""
 msgid "ハッシュタグ"
 msgstr ""
 
-# d3c55eb0d8db454d8a4fd3b1b652a879
-#: ../../../source/tutorial/micro_blog.txt:119
-msgid "``hash_index``"
-msgstr ""
-
 # 5e188c51bec24646954e58a55b1d5ec5
 #: ../../../source/tutorial/micro_blog.txt:119
 msgid ""
 "「Comments.hash_tags」のインデックス。 このインデックスを作ることで、指定した"
 "ハッシュタグのついているコメントの一覧を出すことが出来るようになります。"
+msgstr ""
+
+# d3c55eb0d8db454d8a4fd3b1b652a879
+#: ../../../source/tutorial/micro_blog.txt:120
+msgid "``hash_index``"
 msgstr ""
 
 #: ../../../source/tutorial/micro_blog.txt:123
@@ -1843,11 +1843,6 @@ msgstr ""
 msgid "単語"
 msgstr ""
 
-# 2cb1972156164a5b9c50543d53e22cc0
-#: ../../../source/tutorial/micro_blog.txt:131
-msgid "``users_index``"
-msgstr ""
-
 #: ../../../source/tutorial/micro_blog.txt:131
 msgid ""
 "ユーザー情報のインデックス。 このカラムは、ユーザー名「Users.name」、現在地"
@@ -1855,8 +1850,13 @@ msgid ""
 "います。"
 msgstr ""
 
+# 2cb1972156164a5b9c50543d53e22cc0
+#: ../../../source/tutorial/micro_blog.txt:132
+msgid "``users_index``"
+msgstr ""
+
 # 325efced20a64be28eeb4b809dff9a50
-#: ../../../source/tutorial/micro_blog.txt:134
+#: ../../../source/tutorial/micro_blog.txt:135
 msgid "``comment_index``"
 msgstr ""
 
