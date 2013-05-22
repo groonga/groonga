@@ -69,10 +69,11 @@ echo_packages_repository_address ()
     code=$2
     arch=$3
     address=`grep "packages.groonga.org" $root_dir/etc/hosts | grep -v "#"`
+    nameserver=`grep "nameserver" $root_dir/etc/resolv.conf | grep -v "#" | cut -d ' ' -f 2`
     if [ -z "$address" ]; then
-	echo "$code-$arch: default"
+	echo "$code-$arch: default nameserver:$nameserver"
     else
-	echo "$code-$arch: $address"
+	echo "$code-$arch: $address nameserver:$nameserver"
     fi
 }
 
