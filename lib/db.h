@@ -393,7 +393,7 @@ grn_rc grn_db_obj_init(grn_ctx *ctx, grn_obj *db, grn_id id, grn_db_obj *obj);
     }                                                   \
     break;                                              \
   case GRN_VECTOR :                                     \
-    result = grn_vector_size(ctx, v) > 0;               \
+    result = GRN_TRUE;                                  \
     break;                                              \
   default :                                             \
     result = GRN_FALSE;                                 \
