@@ -59,6 +59,19 @@ def parse_list(header, list)
   end
 end
 
+def table_list
+  success, body = run("table_list")
+  unless success
+    puts "error: #{body}"
+    exit(false)
+  end
+  tables = parse_list(body[0], body[1..-1])
+  tables.reject do |table|
+    name = table["name"]
+    @exclude_tables.include?(name)
+  end
+end
+
 case command
 when "autoconf", "detect"
   success, body = run("status")
@@ -81,12 +94,7 @@ graph_vlabel records
 graph_category groonga
 graph_info number of records in groonga table
 EOF
-  success, body = run("table_list")
-  unless success
-    puts "error: #{body}"
-    exit(false)
-  end
-  parse_list(body[0], body[1..-1]).each do |table|
+  table_list.each do |table|
     name = table["name"]
     puts <<EOF
 
@@ -97,14 +105,8 @@ EOF
   exit(true)
 end
 
-success, body = run("table_list")
-unless success
-  puts("error: #{body}")
-  exit(false)
-end
-parse_list(body[0], body[1..-1]).each do |table|
+table_list.each do |table|
   name = table["name"]
-  next if @exclude_tables.include?(name)
   success, body = run("select", "#{name} --limit 0")
   unless success
     puts("error: #{body}")
