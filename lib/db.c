@@ -34,7 +34,7 @@
 
 #define NEXT_ADDR(p) (((byte *)(p)) + sizeof *(p))
 
-#define GRN_TABLE_GROUPED 1
+#define GRN_TABLE_GROUPED (0x01<<0)
 #define GRN_TABLE_IS_GROUPED(table)\
   (((grn_hash *)(table))->obj.header.impl_flags & GRN_TABLE_GROUPED)
 #define GRN_TABLE_GROUPED_ON(table)\
