@@ -15,8 +15,3 @@ load --table Entries
 select Entries --filter 'content *N "I fast"' --output_columns '_score, content'
 [[[-38,0.0,0.0],"not implemented operator assigned"],[]]
 #|e| not implemented operator assigned
-#|e| not implemented operator assigned
-#|e| not implemented operator assigned
-#|e| not implemented operator assigned
-#|e| not implemented operator assigned
-#|e| not implemented operator assigned
