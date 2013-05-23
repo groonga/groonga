@@ -10,7 +10,7 @@
 
 .. Caution::
 
-  ``tokenize`` command is the experimental feature.
+  ``tokenize`` command is an experimental feature.
   This command may be changed in the future.
 
 Summary
@@ -18,8 +18,7 @@ Summary
 
 ``tokenize`` command tokenizes text by the specified tokenizer.
 
-There is no need to create table to use ``tokenize`` command.
-It is usefull for you to check the results of tokenizer.
+There is no need to create a table to use ``tokenize`` command.
 
 Syntax
 --------
@@ -56,7 +55,7 @@ There are required parameters, ``tokenizer`` and ``string``.
 
 It specifies the name of tokenizer.
 
-Here are the list of built-in tokenizer:
+Here are the list of built-in tokenizers:
 
 * TokenBigram
 * TokenBigramSplitSymbol
@@ -71,7 +70,7 @@ Here are the list of built-in tokenizer:
 * TokenTrigram
 * TokenUnigram
 
-If you want to try another tokenizer, you need to register additional tokenizer plugin by ``register`` command.
+If you want to use other tokenizers, you need to register additional tokenizer plugin by ``register`` command.
 
 ``string``
 """"""""""
