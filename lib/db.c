@@ -7092,7 +7092,7 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
                   break;
                 case GRN_PROC :
                   GET_PATH(spec, buffer, s, id);
-                  grn_plugin_register_by_path(ctx, buffer);
+                  grn_plugin_register(ctx, buffer);
                   break;
                 case GRN_EXPR :
                   {

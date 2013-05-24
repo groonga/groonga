@@ -59,8 +59,24 @@ grn_plugin_get(grn_ctx *ctx, const char *filename)
 const char *
 grn_plugin_path(grn_ctx *ctx, grn_id id)
 {
+  const char *path;
   uint32_t key_size;
-  return _grn_hash_key(ctx, grn_plugins, id, &key_size);
+  const char *system_plugins_dir;
+  size_t system_plugins_dir_size;
+
+  path = _grn_hash_key(ctx, grn_plugins, id, &key_size);
+  system_plugins_dir = grn_plugin_get_system_plugins_dir();
+  system_plugins_dir_size = strlen(system_plugins_dir);
+  if (strncmp(system_plugins_dir, path, system_plugins_dir_size) == 0) {
+    const char *plugin_name = path + system_plugins_dir_size;
+    while (plugin_name[0] == '/') {
+      plugin_name++;
+    }
+    /* TODO: remove suffix too? */
+    return plugin_name;
+  } else {
+    return path;
+  }
 }
 
 #define GRN_PLUGIN_FUNC_PREFIX "grn_plugin_impl_"
