@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-22 14:27\n"
+"POT-Creation-Date: 2013-05-24 17:11\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -983,8 +983,13 @@ msgid "Basic commands"
 msgstr "Basic commands"
 
 # 38faaca0f0b042de9dc31522c3590099
-#: ../../../source/tutorial/introduction.txt:74
+#: ../../../source/tutorial/introduction.txt:73
 msgid ":doc:`/reference/commands/status`"
+msgstr ""
+
+# a296dfd2c7644f52afa892d4183d040a
+#: ../../../source/tutorial/introduction.txt:75
+msgid ":doc:`/reference/commands/table_list`"
 msgstr ""
 
 # ef2818e6664d402cb3ff68d3ac335ece
@@ -992,9 +997,9 @@ msgstr ""
 msgid "shows status of a groonga process."
 msgstr "shows status of a groonga process."
 
-# a296dfd2c7644f52afa892d4183d040a
-#: ../../../source/tutorial/introduction.txt:76
-msgid ":doc:`/reference/commands/table_list`"
+# bd690b460c0f46dc9b7a1844480c92bf
+#: ../../../source/tutorial/introduction.txt:77
+msgid ":doc:`/reference/commands/column_list`"
 msgstr ""
 
 # 9c730529bdca40ebabf1b60c4575f355
@@ -1002,9 +1007,9 @@ msgstr ""
 msgid "shows a list of tables in a database."
 msgstr "shows a list of tables in a database."
 
-# bd690b460c0f46dc9b7a1844480c92bf
-#: ../../../source/tutorial/introduction.txt:78
-msgid ":doc:`/reference/commands/column_list`"
+# a296dfd2c7644f52afa892d4183d040a
+#: ../../../source/tutorial/introduction.txt:79
+msgid ":doc:`/reference/commands/table_create`"
 msgstr ""
 
 # b289d08e588f4afeb3232026cf3ef8ed
@@ -1012,9 +1017,9 @@ msgstr ""
 msgid "shows a list of columns in a table."
 msgstr "shows a list of columns in a table."
 
-# a296dfd2c7644f52afa892d4183d040a
-#: ../../../source/tutorial/introduction.txt:80
-msgid ":doc:`/reference/commands/table_create`"
+# bd690b460c0f46dc9b7a1844480c92bf
+#: ../../../source/tutorial/introduction.txt:81
+msgid ":doc:`/reference/commands/column_create`"
 msgstr ""
 
 # 481ee24f927a4c1ca2ebacedd35f4607
@@ -1022,9 +1027,9 @@ msgstr ""
 msgid "adds a table to a database."
 msgstr "adds a table to a database."
 
-# bd690b460c0f46dc9b7a1844480c92bf
-#: ../../../source/tutorial/introduction.txt:82
-msgid ":doc:`/reference/commands/column_create`"
+# 946760b02059413eab8d255a43fd5009
+#: ../../../source/tutorial/introduction.txt:83
+msgid ":doc:`/reference/commands/select`"
 msgstr ""
 
 # 7ba6b39c8bed49718f390a0a86bad043
@@ -1032,18 +1037,13 @@ msgstr ""
 msgid "adds a column to a table."
 msgstr "adds a column to a table."
 
-# 946760b02059413eab8d255a43fd5009
-#: ../../../source/tutorial/introduction.txt:84
-msgid ":doc:`/reference/commands/select`"
-msgstr ""
-
 # fb26a99b01254e6f9aca345821e9ae6a
 #: ../../../source/tutorial/introduction.txt:85
 msgid "searches records from a table and shows the result."
 msgstr "searches records from a table and shows the result."
 
 # cea0e3083f8d4da7b8937d07989e238c
-#: ../../../source/tutorial/introduction.txt:87
+#: ../../../source/tutorial/introduction.txt:86
 msgid ":doc:`/reference/commands/load`"
 msgstr ""
 
@@ -1856,10 +1856,10 @@ msgstr ""
 # a47511f549514db4a8b193e27a899004
 # 792191d5bea748d7a3ffd7aea9e630ca
 # f82bb1482b0c43368ffb1d097f68425f
-#: ../../../source/tutorial/micro_blog.txt:53
-#: ../../../source/tutorial/micro_blog.txt:83
-#: ../../../source/tutorial/micro_blog.txt:116
-#: ../../../source/tutorial/micro_blog.txt:128
+#: ../../../source/tutorial/micro_blog.txt:52
+#: ../../../source/tutorial/micro_blog.txt:82
+#: ../../../source/tutorial/micro_blog.txt:115
+#: ../../../source/tutorial/micro_blog.txt:127
 msgid "``_key``"
 msgstr ""
 
@@ -1869,7 +1869,7 @@ msgid "ユーザーID"
 msgstr "ユーザーID"
 
 # 5bdae7d53f8e4d60aa5057c390834a39
-#: ../../../source/tutorial/micro_blog.txt:56
+#: ../../../source/tutorial/micro_blog.txt:55
 msgid "``name``"
 msgstr ""
 
@@ -1879,7 +1879,7 @@ msgid "ユーザー名"
 msgstr "ユーザー名"
 
 # caebe8f2a2004ecd88d3a504167d2d3b
-#: ../../../source/tutorial/micro_blog.txt:59
+#: ../../../source/tutorial/micro_blog.txt:58
 msgid "``follower``"
 msgstr ""
 
@@ -1889,7 +1889,7 @@ msgid "フォローしているユーザーの一覧"
 msgstr "フォローしているユーザーの一覧"
 
 # 534291d9c77844c78ac3e7c6d2abfb22
-#: ../../../source/tutorial/micro_blog.txt:62
+#: ../../../source/tutorial/micro_blog.txt:61
 msgid "``favorites``"
 msgstr ""
 
@@ -1900,8 +1900,8 @@ msgstr "お気に入りのコメント一覧"
 
 # 281d6e66c9f841aa96c09f6740cff51f
 # 1bb5c0dfb66f4421ba656000a1627829
-#: ../../../source/tutorial/micro_blog.txt:65
-#: ../../../source/tutorial/micro_blog.txt:101
+#: ../../../source/tutorial/micro_blog.txt:64
+#: ../../../source/tutorial/micro_blog.txt:100
 msgid "``location``"
 msgstr ""
 
@@ -1911,7 +1911,7 @@ msgid "ユーザーの現在地（緯度経度座標）"
 msgstr "ユーザーの現在地（緯度経度座標）"
 
 # 830faeeb68404a7caefb54975d34499e
-#: ../../../source/tutorial/micro_blog.txt:68
+#: ../../../source/tutorial/micro_blog.txt:67
 msgid "``location_str``"
 msgstr ""
 
@@ -1921,7 +1921,7 @@ msgid "ユーザーの現在地（文字列）"
 msgstr "ユーザーの現在地（文字列）"
 
 # b24110485f904782bfff9ecb73d31c77
-#: ../../../source/tutorial/micro_blog.txt:71
+#: ../../../source/tutorial/micro_blog.txt:70
 msgid "``description``"
 msgstr ""
 
@@ -1940,7 +1940,7 @@ msgstr ""
 "とで、あるユーザーをフォローしているユーザーを検索できるようになります。"
 
 # 5841d64947d84305b35f27663672e766
-#: ../../../source/tutorial/micro_blog.txt:75
+#: ../../../source/tutorial/micro_blog.txt:74
 msgid "``followee``"
 msgstr ""
 
@@ -1964,7 +1964,7 @@ msgid "コメントID"
 msgstr "コメントID"
 
 # 6ed888f1178346aaa0a3869114554a90
-#: ../../../source/tutorial/micro_blog.txt:86
+#: ../../../source/tutorial/micro_blog.txt:85
 msgid "``comment``"
 msgstr ""
 
@@ -1974,7 +1974,7 @@ msgid "コメント内容"
 msgstr "コメント内容"
 
 # 363b1b4d772746cea185250df2380792
-#: ../../../source/tutorial/micro_blog.txt:89
+#: ../../../source/tutorial/micro_blog.txt:88
 msgid "``last_modified``"
 msgstr ""
 
@@ -1984,7 +1984,7 @@ msgid "投稿日時"
 msgstr "投稿日時"
 
 # babc8a9bdb314a96b41764b511b61387
-#: ../../../source/tutorial/micro_blog.txt:92
+#: ../../../source/tutorial/micro_blog.txt:91
 msgid "``replied_to``"
 msgstr ""
 
@@ -1994,7 +1994,7 @@ msgid "返信元のコメント内容"
 msgstr "返信元のコメント内容"
 
 # 2f3b8752f5e9455493e9a1690d95800e
-#: ../../../source/tutorial/micro_blog.txt:95
+#: ../../../source/tutorial/micro_blog.txt:94
 msgid "``replied_users``"
 msgstr ""
 
@@ -2004,7 +2004,7 @@ msgid "返信先のユーザーの一覧"
 msgstr "返信先のユーザーの一覧"
 
 # 60de5abeff0e4dacbca7ffa487610584
-#: ../../../source/tutorial/micro_blog.txt:98
+#: ../../../source/tutorial/micro_blog.txt:97
 msgid "``hash_tags``"
 msgstr ""
 
@@ -2019,7 +2019,7 @@ msgid "投稿場所(緯度経度座標のため)"
 msgstr "投稿場所(緯度経度座標のため)"
 
 # 2869a974442c42c0a9682dbed5eba4bd
-#: ../../../source/tutorial/micro_blog.txt:104
+#: ../../../source/tutorial/micro_blog.txt:103
 msgid "``posted_by``"
 msgstr ""
 
@@ -2040,7 +2040,7 @@ msgstr ""
 "ます。"
 
 # c72b045c0150486d9c86e68abf6f84b6
-#: ../../../source/tutorial/micro_blog.txt:108
+#: ../../../source/tutorial/micro_blog.txt:107
 msgid "``favorited_by``"
 msgstr ""
 
@@ -2059,6 +2059,11 @@ msgstr "コメントのハッシュタグを一覧で保存するためのテー
 msgid "ハッシュタグ"
 msgstr "ハッシュタグ"
 
+# 4b863204554c4e0bb54b8d91ef8dd9a6
+#: ../../../source/tutorial/micro_blog.txt:119
+msgid "``hash_index``"
+msgstr ""
+
 # 924ca8953e48479a904d57c216297eaa
 #: ../../../source/tutorial/micro_blog.txt:119
 msgid ""
@@ -2067,11 +2072,6 @@ msgid ""
 msgstr ""
 "「Comments.hash_tags」のインデックス。 このインデックスを作ることで、指定した"
 "ハッシュタグのついているコメントの一覧を出すことが出来るようになります。"
-
-# 4b863204554c4e0bb54b8d91ef8dd9a6
-#: ../../../source/tutorial/micro_blog.txt:120
-msgid "``hash_index``"
-msgstr ""
 
 # d9ba319ca7f24c2da206f18510263bec
 #: ../../../source/tutorial/micro_blog.txt:123
@@ -2092,6 +2092,11 @@ msgstr ""
 msgid "単語"
 msgstr "単語"
 
+# c5a79f2ff1934e76ae89c0f5563b4e20
+#: ../../../source/tutorial/micro_blog.txt:131
+msgid "``users_index``"
+msgstr ""
+
 # 71763ea4e257480886d215dc008f8dde
 #: ../../../source/tutorial/micro_blog.txt:131
 msgid ""
@@ -2103,13 +2108,8 @@ msgstr ""
 "「Users.location_str」、自己紹介文「Users.description」のインデックスになって"
 "います。"
 
-# c5a79f2ff1934e76ae89c0f5563b4e20
-#: ../../../source/tutorial/micro_blog.txt:132
-msgid "``users_index``"
-msgstr ""
-
 # ed13f7ff2c9c4462ac0c377227210702
-#: ../../../source/tutorial/micro_blog.txt:135
+#: ../../../source/tutorial/micro_blog.txt:134
 msgid "``comment_index``"
 msgstr ""
 
