@@ -907,7 +907,7 @@ grn_logger_get_max_level(grn_ctx *ctx)
   return current_logger.max_level;
 }
 
-int
+grn_bool
 grn_logger_pass(grn_ctx *ctx, grn_log_level level)
 {
   return level <= current_logger.max_level;

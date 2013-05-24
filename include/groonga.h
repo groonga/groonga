@@ -2091,7 +2091,7 @@ GRN_API void grn_logger_put(grn_ctx *ctx, grn_log_level level,
                             const char *file, int line, const char *func, const char *fmt, ...) GRN_ATTRIBUTE_PRINTF(6);
 GRN_API void grn_logger_reopen(grn_ctx *ctx);
 
-GRN_API int grn_logger_pass(grn_ctx *ctx, grn_log_level level);
+GRN_API grn_bool grn_logger_pass(grn_ctx *ctx, grn_log_level level);
 
 #ifndef GRN_LOG_DEFAULT_LEVEL
 #define GRN_LOG_DEFAULT_LEVEL GRN_LOG_NOTICE
