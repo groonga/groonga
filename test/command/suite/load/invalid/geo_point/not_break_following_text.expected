@@ -18,19 +18,12 @@ load --table Shops
 [[0,0.0,0.0],8]
 #|e| <Shops.location>: failed to cast to <WGS84GeoPoint>: <"x">
 #|e| [table][load] failed to set column value: <Shops.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"a">, column: <location>, value: <"x">
-#|e| <Shops.location>: failed to cast to <WGS84GeoPoint>: <"x">
 #|e| [table][load] failed to set column value: <Shops.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"b">, column: <location>, value: <"x">
-#|e| <Shops.location>: failed to cast to <WGS84GeoPoint>: <"x">
 #|e| [table][load] failed to set column value: <Shops.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"b">, column: <location>, value: <"x">
-#|e| <Shops.location>: failed to cast to <WGS84GeoPoint>: <"x">
 #|e| [table][load] failed to set column value: <Shops.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"b">, column: <location>, value: <"x">
-#|e| <Shops.location>: failed to cast to <WGS84GeoPoint>: <"x">
 #|e| [table][load] failed to set column value: <Shops.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"b">, column: <location>, value: <"x">
-#|e| <Shops.location>: failed to cast to <WGS84GeoPoint>: <"x">
 #|e| [table][load] failed to set column value: <Shops.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"b">, column: <location>, value: <"x">
-#|e| <Shops.location>: failed to cast to <WGS84GeoPoint>: <"x">
 #|e| [table][load] failed to set column value: <Shops.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"b">, column: <location>, value: <"x">
-#|e| <Shops.location>: failed to cast to <WGS84GeoPoint>: <"x">
 #|e| [table][load] failed to set column value: <Shops.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"b">, column: <location>, value: <"x">
 select Shops --filter 'code == "a0000000"' --output_columns _key
 [[0,0.0,0.0],[[[1],[["_key","ShortText"]],["a"]]]]
