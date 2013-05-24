@@ -3023,7 +3023,7 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
     }
     grn_obj_close(ctx, &bulk);
   }
-  GRN_TABLE_GROUPED_ON(results);
+  GRN_TABLE_GROUPED_ON(results->table);
 exit :
   GRN_API_RETURN(rc);
 }
