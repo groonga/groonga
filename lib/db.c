@@ -36,9 +36,9 @@
 
 #define GRN_TABLE_GROUPED (0x01<<0)
 #define GRN_TABLE_IS_GROUPED(table)\
-  (((grn_hash *)(table))->obj.header.impl_flags & GRN_TABLE_GROUPED)
+  ((table)->header.impl_flags & GRN_TABLE_GROUPED)
 #define GRN_TABLE_GROUPED_ON(table)\
-  (((grn_hash *)(table))->obj.header.impl_flags |= GRN_TABLE_GROUPED)
+  ((table)->header.impl_flags |= GRN_TABLE_GROUPED)
 
 #define WITH_NORMALIZE(table,key,key_size,block) do {\
   if ((table)->normalizer && key && key_size > 0) {\
