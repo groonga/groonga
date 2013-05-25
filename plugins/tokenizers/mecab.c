@@ -141,6 +141,10 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     tokenizer->buf = NULL;
     tokenizer->next = normalized_string;
     tokenizer->end = tokenizer->next + normalized_string_length;
+  } else if (normalized_string_length == 0) {
+    tokenizer->buf = NULL;
+    tokenizer->next = "";
+    tokenizer->end = tokenizer->next;
   } else {
     grn_plugin_mutex_lock(ctx, sole_mecab_mutex);
     s = mecab_sparse_tostr2(tokenizer->mecab,
