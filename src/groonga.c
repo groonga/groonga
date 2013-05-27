@@ -86,6 +86,10 @@ static const char *pid_file_path = NULL;
 static const char *input_path = NULL;
 static FILE *output = NULL;
 
+static int ready_notify_pipe[2];
+#define PIPE_READ  0
+#define PIPE_WRITE 1
+
 static grn_encoding encoding;
 static grn_command_version default_command_version;
 static int64_t default_match_escalation_threshold;
@@ -413,12 +417,47 @@ static grn_mutex q_mutex;
 static grn_cond q_cond;
 static uint32_t nthreads = 0, nfthreads = 0, max_nfthreads;
 
+static void
+reset_ready_notify_pipe(void)
+{
+  ready_notify_pipe[PIPE_READ]  = 0;
+  ready_notify_pipe[PIPE_WRITE] = 0;
+}
+
+static void
+close_ready_notify_pipe(void)
+{
+  if (ready_notify_pipe[PIPE_READ] > 0) {
+    close(ready_notify_pipe[PIPE_READ]);
+  }
+  if (ready_notify_pipe[PIPE_WRITE] > 0) {
+    close(ready_notify_pipe[PIPE_WRITE]);
+  }
+  reset_ready_notify_pipe();
+}
+
+static void
+send_ready_notify(void)
+{
+  if (ready_notify_pipe[PIPE_WRITE] > 0) {
+    const char *ready_notify_message = "ready";
+    write(ready_notify_pipe[PIPE_WRITE],
+          ready_notify_message,
+          strlen(ready_notify_message));
+  }
+  close_ready_notify_pipe();
+}
+
 static int
 daemonize(void)
 {
   int exit_code = EXIT_SUCCESS;
 #ifndef WIN32
   pid_t pid;
+
+  if (pipe(ready_notify_pipe) == -1) {
+    reset_ready_notify_pipe();
+  }
 
   switch (fork()) {
   case 0:
@@ -428,6 +467,15 @@ daemonize(void)
     return EXIT_FAILURE;
   default:
     wait(NULL);
+    if (ready_notify_pipe[PIPE_READ] > 0) {
+      int max_fd;
+      fd_set read_fds;
+      FD_ZERO(&read_fds);
+      FD_SET(ready_notify_pipe[PIPE_READ], &read_fds);
+      max_fd = ready_notify_pipe[PIPE_READ] + 1;
+      select(max_fd, &read_fds, NULL, NULL, NULL);
+    }
+    close_ready_notify_pipe();
     _exit(EXIT_SUCCESS);
   }
   switch (fork()) {
@@ -451,6 +499,7 @@ daemonize(void)
     perror("fork");
     return EXIT_FAILURE;
   default:
+    close_ready_notify_pipe();
     _exit(EXIT_SUCCESS);
   }
   {
@@ -533,22 +582,17 @@ run_server(grn_ctx *ctx, grn_obj *db, grn_com_event *ev,
   int exit_code = EXIT_SUCCESS;
   struct hostent *he;
   if (!(he = gethostbyname(hostname))) {
+    send_ready_notify();
     SERR("gethostbyname");
   } else {
     ev->opaque = db;
     grn_edges_init(ctx, dispatcher);
     if (!grn_com_sopen(ctx, ev, bind_address, port, handler, he)) {
-      if (is_daemon_mode) {
-        exit_code = daemonize();
-      }
-      if (exit_code == EXIT_SUCCESS) {
-        run_server_loop(ctx, ev);
-      }
-      if (is_daemon_mode) {
-        clean_pid_file();
-      }
+      send_ready_notify();
+      run_server_loop(ctx, ev);
       exit_code = EXIT_SUCCESS;
     } else {
+      send_ready_notify();
       fprintf(stderr, "grn_com_sopen failed (%s:%d): %s\n",
               bind_address, port, ctx->errbuf);
     }
@@ -567,7 +611,13 @@ start_service(grn_ctx *ctx, const char *db_path,
     grn_obj *db;
     db = (newdb || !db_path) ? grn_db_create(ctx, db_path, NULL) : grn_db_open(ctx, db_path);
     if (db) {
+      if (is_daemon_mode) {
+        daemonize();
+      }
       exit_code = run_server(ctx, db, &ev, dispatcher, handler);
+      if (is_daemon_mode) {
+        clean_pid_file();
+      }
       grn_obj_close(ctx, db);
     } else {
       fprintf(stderr, "db open failed (%s)\n", db_path);
@@ -2106,6 +2156,8 @@ main(int argc, char **argv)
   opts[24].arg = &input_fd_arg;
   opts[25].arg = &output_fd_arg;
   opts[26].arg = &working_directory_arg;
+
+  reset_ready_notify_pipe();
 
   init_default_settings();
 
