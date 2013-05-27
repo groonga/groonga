@@ -82,7 +82,6 @@ static int useql;
 static grn_bool is_daemon_mode = GRN_FALSE;
 static int (*do_client)(int argc, char **argv);
 static int (*do_server)(char *path);
-static FILE *pid_file = NULL;
 static const char *pid_file_path = NULL;
 static const char *input_path = NULL;
 static FILE *output = NULL;
@@ -433,6 +432,8 @@ daemonize(void)
   }
   switch (fork()) {
   case 0:
+    {
+      FILE *pid_file = NULL;
     if (pid_file_path) {
       pid_file = fopen(pid_file_path, "w");
     }
@@ -443,6 +444,7 @@ daemonize(void)
       fprintf(pid_file, "%d\n", pid);
       fclose(pid_file);
       pid_file = NULL;
+    }
     }
     break;
   case -1:
