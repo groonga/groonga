@@ -25,12 +25,14 @@ Improvements
 * Improved to restrict max execution time to prevent hanging service script.
   [GitHub#61] [Reported by firewood]
 * Supported to evaluate vector as boolean.
-  By this change, empty vector is evaluated as false.
+  By this change, empty vector is evaluated as true.
 * Improved not to log too many needless log messages.
   Too many log messages are truncated as "(N same messages are truncated)".
 * [munin][groonga_n_records] Added ``exclude_tables`` option.
   It supports to exclude specific tables from monitoring results.
 * Supported Debian 8.0 (jessie).
+* Improved database portability by eliminating directory path of
+  system plugins.
 
 Fixes
 ^^^^^
@@ -40,6 +42,11 @@ Fixes
   [groonga-dev,01346] [Reported by Nakai Kanako]
 * Fixed a memory leak when "VECTOR_COLUMN != xxx", "VECTOR_COLUMN && xxx"
   expressions are used.
+* Fixed a bug that SIGSTOP and SIGCONT stops groonga server.
+* Fixed a crash bug when normalizer returns NULL as normalized string.
+  [Reported by Y.Kentaro]
+* Fixed a bug that daemonize process doesn't work on OS X.
+  [groonga-dev,01440] [Reported by Masahiro KONISHI]
 
 Thanks
 ^^^^^^
@@ -47,6 +54,8 @@ Thanks
 * @ceekz
 * Nakai Kanako
 * firewood
+* Y.Kentaro
+* Masahiro KONISHI
 
 .. _release-3-0-3:
 
