@@ -77,11 +77,13 @@ m4_ifdef([PKG_PROG_PKG_CONFIG],
          [PKG_PROG_PKG_CONFIG([0.19])
           m4_pattern_allow(PKG_CONFIG_LIBDIR)])
 
+AC_MSG_CHECKING([for clang])
 if test "$CC" = "clang"; then
   CLANG=yes
 else
   CLANG=no
 fi
+AC_MSG_RESULT([$CLANG])
 
 AC_DEFUN([CHECK_CFLAG], [
   AC_MSG_CHECKING([if gcc supports $1])
