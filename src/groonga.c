@@ -607,17 +607,19 @@ start_service(grn_ctx *ctx, const char *db_path,
 {
   int exit_code = EXIT_SUCCESS;
   grn_com_event ev;
+
+  if (is_daemon_mode) {
+    exit_code = daemonize();
+    if (exit_code != EXIT_SUCCESS) {
+      return exit_code;
+    }
+  }
+
   if (!grn_com_event_init(ctx, &ev, MAX_CON, sizeof(grn_com))) {
     grn_obj *db;
     db = (newdb || !db_path) ? grn_db_create(ctx, db_path, NULL) : grn_db_open(ctx, db_path);
     if (db) {
-      if (is_daemon_mode) {
-        daemonize();
-      }
       exit_code = run_server(ctx, db, &ev, dispatcher, handler);
-      if (is_daemon_mode) {
-        clean_pid_file();
-      }
       grn_obj_close(ctx, db);
     } else {
       fprintf(stderr, "db open failed (%s)\n", db_path);
@@ -628,6 +630,11 @@ start_service(grn_ctx *ctx, const char *db_path,
     fprintf(stderr, "grn_com_event_init failed\n");
     exit_code = EXIT_FAILURE;
   }
+
+  if (is_daemon_mode) {
+    clean_pid_file();
+  }
+
   return exit_code;
 }
 
