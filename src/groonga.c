@@ -557,6 +557,30 @@ run_server(grn_ctx *ctx, grn_obj *db, grn_com_event *ev,
   return exit_code;
 }
 
+static int
+start_service(grn_ctx *ctx, const char *db_path,
+              grn_edge_dispatcher_func dispatcher, grn_handler_func handler)
+{
+  int exit_code = EXIT_SUCCESS;
+  grn_com_event ev;
+  if (!grn_com_event_init(ctx, &ev, MAX_CON, sizeof(grn_com))) {
+    grn_obj *db;
+    db = (newdb || !db_path) ? grn_db_create(ctx, db_path, NULL) : grn_db_open(ctx, db_path);
+    if (db) {
+      exit_code = run_server(ctx, db, &ev, dispatcher, handler);
+      grn_obj_close(ctx, db);
+    } else {
+      fprintf(stderr, "db open failed (%s)\n", db_path);
+      exit_code = EXIT_FAILURE;
+    }
+    grn_com_event_fin(ctx, &ev);
+  } else {
+    fprintf(stderr, "grn_com_event_init failed\n");
+    exit_code = EXIT_FAILURE;
+  }
+  return exit_code;
+}
+
 typedef struct {
   grn_obj body;
   grn_msg *msg;
@@ -1320,7 +1344,6 @@ static int
 h_server(char *path)
 {
   int exit_code = EXIT_FAILURE;
-  grn_com_event ev;
   grn_ctx ctx_, *ctx = &ctx_;
   grn_ctx_init(ctx, 0);
   MUTEX_INIT(q_mutex);
@@ -1342,19 +1365,7 @@ h_server(char *path)
             (long long int)lim.rlim_cur, (long long int)lim.rlim_max);
   }
 #endif /* WIN32 */
-  if (!grn_com_event_init(ctx, &ev, MAX_CON, sizeof(grn_com))) {
-    grn_obj *db;
-    db = (newdb || !path) ? grn_db_create(ctx, path, NULL) : grn_db_open(ctx, path);
-    if (db) {
-      exit_code = run_server(ctx, db, &ev, NULL, h_handler);
-      grn_obj_close(ctx, db);
-    } else {
-      fprintf(stderr, "db open failed (%s)\n", path);
-    }
-    grn_com_event_fin(ctx, &ev);
-  } else {
-    fprintf(stderr, "grn_com_event_init failed\n");
-  }
+  exit_code = start_service(ctx, path, NULL, h_handler);
   grn_ctx_fin(ctx);
   return exit_code;
 }
@@ -1507,7 +1518,6 @@ static int
 g_server(char *path)
 {
   int exit_code = EXIT_FAILURE;
-  grn_com_event ev;
   grn_ctx ctx_, *ctx = &ctx_;
   grn_ctx_init(ctx, 0);
   MUTEX_INIT(q_mutex);
@@ -1534,19 +1544,7 @@ g_server(char *path)
             (long long int)limit.rlim_cur, (long long int)limit.rlim_max);
   }
 #endif /* WIN32 */
-  if (!grn_com_event_init(ctx, &ev, MAX_CON, sizeof(grn_com))) {
-    grn_obj *db;
-    db = (newdb || !path) ? grn_db_create(ctx, path, NULL) : grn_db_open(ctx, path);
-    if (db) {
-      exit_code = run_server(ctx, db, &ev, g_dispatcher, g_handler);
-      grn_obj_close(ctx, db);
-    } else {
-      fprintf(stderr, "db open failed (%s)\n", path);
-    }
-    grn_com_event_fin(ctx, &ev);
-  } else {
-    fprintf(stderr, "grn_com_event_init failed\n");
-  }
+  exit_code = start_service(ctx, path, g_dispatcher, g_handler);
   grn_ctx_fin(ctx);
   return exit_code;
 }
