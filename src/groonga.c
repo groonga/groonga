@@ -434,17 +434,17 @@ daemonize(void)
   case 0:
     {
       FILE *pid_file = NULL;
-    if (pid_file_path) {
-      pid_file = fopen(pid_file_path, "w");
-    }
-    pid = getpid();
-    if (!pid_file) {
-      fprintf(stderr, "%d\n", pid);
-    } else {
-      fprintf(pid_file, "%d\n", pid);
-      fclose(pid_file);
-      pid_file = NULL;
-    }
+      if (pid_file_path) {
+        pid_file = fopen(pid_file_path, "w");
+      }
+      pid = getpid();
+      if (!pid_file) {
+        fprintf(stderr, "%d\n", pid);
+      } else {
+        fprintf(pid_file, "%d\n", pid);
+        fclose(pid_file);
+        pid_file = NULL;
+      }
     }
     break;
   case -1:
