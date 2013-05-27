@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-22 14:45\n"
+"POT-Creation-Date: 2013-05-27 16:26\n"
 "PO-Revision-Date: 2013-04-07 11:38+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -210,7 +210,8 @@ msgid ""
 "Groonga can be used as a fulltext search library. This section describes "
 "APIs that are provided by groonga."
 msgstr ""
-"groongaを全文検索ライブラリとして使うことができます。この節ではgroongaが提供しているAPIを示します。"
+"groongaを全文検索ライブラリとして使うことができます。この節ではgroongaが提供"
+"しているAPIを示します。"
 
 # d1ea813848c844dba8034915b3a515ab
 #: ../../../source/reference/api/grn_ctx.txt:6
@@ -229,6 +230,7 @@ msgstr ""
 #: ../../../source/reference/commands/register.txt:12
 #: ../../../source/reference/commands/select.txt:12
 #: ../../../source/reference/commands/table_create.txt:12
+#: ../../../source/reference/commands/tokenize.txt:17
 #: ../../../source/reference/commands/truncate.txt:12
 #: ../../../source/reference/executables/groonga-httpd.txt:9
 #: ../../../source/reference/functions/geo_distance.txt:13
@@ -246,8 +248,9 @@ msgstr "概要"
 msgid ""
 ":c:type:`grn_ctx` is the most important object. :c:type:`grn_ctx` keeps the "
 "current infomation such as:"
-msgstr ":c:type:`grn_ctx` は最も重要なオブジェクトです。"
-":c:type:`grn_ctx` はその時点の情報を保持します:"
+msgstr ""
+":c:type:`grn_ctx` は最も重要なオブジェクトです。:c:type:`grn_ctx` はその時点"
+"の情報を保持します:"
 
 # cd9001c316424bc697883b9d7cd1f165
 #: ../../../source/reference/api/grn_ctx.txt:14
@@ -269,7 +272,8 @@ msgstr "デフォルトの閾値。（例: :ref:`match-escalation-threshold`）"
 msgid ""
 "The default command version. (See :doc:`/reference/command/command_version`)"
 msgstr ""
-"デフォルトのコマンドバージョン。（ :doc:`/reference/commands/command_version` ）を参照のこと。"
+"デフォルトのコマンドバージョン。（ :doc:`/reference/commands/"
+"command_version` ）を参照のこと。"
 
 # 0c018e54a85b40b8814a7d8e3229411f
 #: ../../../source/reference/api/grn_ctx.txt:19
@@ -298,9 +302,9 @@ msgid ""
 "to create a :c:type:`grn_ctx` for a thread. You can use two or more :c:type:"
 "`grn_ctx` in a thread but it is not needed for usual use-case."
 msgstr ""
-"同じ :c:type:`grn_ctx` を二つ以上のスレッドからは扱えません。"
-":c:type:`grn_ctx` はスレッドごとに作成する必要があります。"
-"一つのスレッドでは :c:type:`grn_ctx` を二つ以上扱えますが、通常はその必要はありません。"
+"同じ :c:type:`grn_ctx` を二つ以上のスレッドからは扱えません。:c:type:"
+"`grn_ctx` はスレッドごとに作成する必要があります。一つのスレッドでは :c:type:"
+"`grn_ctx` を二つ以上扱えますが、通常はその必要はありません。"
 
 # 5b7e3a9725304092bc80446f05f14c67
 # d9d1d176bb2043f7862e0ebd6c89eed4
@@ -684,6 +688,7 @@ msgstr "``BODY`` に相当する部分は以下です::"
 #: ../../../source/reference/command/output_format.txt:115
 #: ../../../source/reference/commands/column_rename.txt:71
 #: ../../../source/reference/commands/normalize.txt:73
+#: ../../../source/reference/commands/tokenize.txt:87
 #: ../../../source/reference/commands/truncate.txt:65
 msgid "``HEADER``"
 msgstr ""
@@ -902,6 +907,7 @@ msgstr ""
 #: ../../../source/reference/commands/normalize.txt:83
 #: ../../../source/reference/commands/select.txt:904
 #: ../../../source/reference/commands/table_create.txt:280
+#: ../../../source/reference/commands/tokenize.txt:97
 #: ../../../source/reference/functions/query.txt:162
 #: ../../../source/reference/functions/snippet_html.txt:118
 #: ../../../source/reference/functions/sub_filter.txt:120
@@ -2624,6 +2630,7 @@ msgstr "``column_rename`` コマンドは指定したテーブルのカラム名
 #: ../../../source/reference/commands/register.txt:27
 #: ../../../source/reference/commands/select.txt:21
 #: ../../../source/reference/commands/table_create.txt:18
+#: ../../../source/reference/commands/tokenize.txt:24
 #: ../../../source/reference/commands/truncate.txt:17
 #: ../../../source/reference/functions/geo_distance.txt:18
 #: ../../../source/reference/functions/query.txt:26
@@ -2652,6 +2659,7 @@ msgstr "``table`` と ``column_name`` が必須の引数です。"
 #: ../../../source/reference/commands/register.txt:34
 #: ../../../source/reference/commands/select.txt:47
 #: ../../../source/reference/commands/table_create.txt:31
+#: ../../../source/reference/commands/tokenize.txt:35
 #: ../../../source/reference/commands/truncate.txt:26
 #: ../../../source/reference/executables/groonga-httpd.txt:30
 #: ../../../source/reference/functions/geo_distance.txt:31
@@ -2675,6 +2683,7 @@ msgstr "以下は ``column_rename`` コマンドの簡単な使用例です。"
 #: ../../../source/reference/commands/normalize.txt:45
 #: ../../../source/reference/commands/select.txt:199
 #: ../../../source/reference/commands/table_create.txt:154
+#: ../../../source/reference/commands/tokenize.txt:44
 #: ../../../source/reference/commands/truncate.txt:44
 #: ../../../source/reference/functions/geo_distance.txt:146
 #: ../../../source/reference/functions/query.txt:107
@@ -2692,6 +2701,7 @@ msgstr "このセクションでは ``column_rename`` の引数について説�
 #: ../../../source/reference/commands/column_rename.txt:50
 #: ../../../source/reference/commands/normalize.txt:50
 #: ../../../source/reference/commands/select.txt:204
+#: ../../../source/reference/commands/tokenize.txt:49
 #: ../../../source/reference/commands/truncate.txt:49
 #: ../../../source/reference/functions/geo_distance.txt:149
 #: ../../../source/reference/functions/query.txt:110
@@ -2732,6 +2742,7 @@ msgstr "カラムの名前を指定します。"
 #: ../../../source/reference/commands/normalize.txt:67
 #: ../../../source/reference/commands/register.txt:51
 #: ../../../source/reference/commands/table_create.txt:269
+#: ../../../source/reference/commands/tokenize.txt:81
 #: ../../../source/reference/commands/truncate.txt:59
 #: ../../../source/reference/functions/geo_distance.txt:293
 #: ../../../source/reference/functions/query.txt:152
@@ -2743,6 +2754,7 @@ msgstr "戻り値"
 # cdd462ed19424427982fabc0de88064d
 #: ../../../source/reference/commands/column_rename.txt:73
 #: ../../../source/reference/commands/normalize.txt:75
+#: ../../../source/reference/commands/tokenize.txt:89
 #: ../../../source/reference/commands/truncate.txt:67
 msgid ""
 "The format of HEADER is [0, UNIX_TIME_WHEN_COMMAND_IS_STARTED, "
@@ -3599,6 +3611,7 @@ msgstr ""
 
 # cb0a853b357a4c649782dcd24af78d02
 #: ../../../source/reference/commands/normalize.txt:62
+#: ../../../source/reference/commands/tokenize.txt:76
 msgid "``string``"
 msgstr ""
 
@@ -6489,6 +6502,7 @@ msgstr ""
 
 # bde897b0ca22430eb927c3f3d85d70d2
 #: ../../../source/reference/commands/table_create.txt:284
+#: ../../../source/reference/commands/tokenize.txt:99
 msgid ":doc:`/reference/tokenizers`"
 msgstr ""
 
@@ -6613,6 +6627,154 @@ msgid ""
 "table_removeはテーブルと定義されているカラムを削除します。カラムに付随するイ"
 "ンデックスも再帰的に削除されます。"
 msgstr ""
+
+# 5163c78871024651b16f77db3817d128
+#: ../../../source/reference/commands/tokenize.txt:9
+msgid "``tokenize``"
+msgstr ""
+
+# 50d4a5927b81445f840f51e9605db852
+#: ../../../source/reference/commands/tokenize.txt:13
+msgid ""
+"``tokenize`` command is an experimental feature. This command may be changed "
+"in the future."
+msgstr ""
+"``tokenize`` コマンドは実験的な機能です。このコマンドは将来的に変更されるか"
+"も知れません。"
+
+# f21982b8504d499fa39e4e6c4be6923e
+#: ../../../source/reference/commands/tokenize.txt:19
+msgid "``tokenize`` command tokenizes text by the specified tokenizer."
+msgstr ""
+"``tokenize`` コマンドは指定したトークナイザーでテキストをトークナイズします。"
+
+# c91014bfde6f49d88b266f07400015cb
+#: ../../../source/reference/commands/tokenize.txt:21
+msgid "There is no need to create a table to use ``tokenize`` command."
+msgstr ""
+"``tokenize`` コマンドを使うのにテーブルを作成する必要はありません。"
+
+# 175ddfb1298649878c537595a2683fc5
+#: ../../../source/reference/commands/tokenize.txt:26
+msgid ""
+"``tokenize`` commands takes two parameters - ``tokenizer`` and ``string``. "
+"Both of them are required."
+msgstr ""
+"``tokenize`` コマンドは ``tokenizer`` と ``string`` という二つの引数をとり"
+"ます。これらの引数はどちらも必須です。"
+
+# 1ccd84b3f15a4567b23bb0e7d8c66fcd
+#: ../../../source/reference/commands/tokenize.txt:37
+msgid "Here is a simple example of ``tokenize`` command."
+msgstr "以下は ``tokenize`` コマンドの簡単な使用例です。"
+
+# e92758beef824130ab42669342c10d50
+#: ../../../source/reference/commands/tokenize.txt:46
+msgid "This section describes parameters of ``tokenizer``."
+msgstr "このセクションでは ``tokenizer`` の引数について説明します。"
+
+# b90bfd8b177440e6b2a2ff7f128303f9
+#: ../../../source/reference/commands/tokenize.txt:51
+msgid "There are required parameters, ``tokenizer`` and ``string``."
+msgstr "必須引数は二つあります。 ``tokenizer`` と ``string`` です。"
+
+# d6b1af16de344cbbaf10b3b63561ff81
+#: ../../../source/reference/commands/tokenize.txt:54
+msgid "``tokenizer``"
+msgstr ""
+
+# ffa8ab8997a74ec381047804746e748d
+#: ../../../source/reference/commands/tokenize.txt:56
+msgid "It specifies the name of tokenizer."
+msgstr "トークナイザーの名前を指定します。"
+
+# c106f475dbfe4969832e83838689d0db
+#: ../../../source/reference/commands/tokenize.txt:58
+msgid "Here are the list of built-in tokenizers:"
+msgstr "以下は組み込みのトークナイザーのリストです。"
+
+# 67647f8e8f404adab5e3827620894a0d
+#: ../../../source/reference/commands/tokenize.txt:60
+msgid "TokenBigram"
+msgstr ""
+
+# 604fa7a4b02846968cfd7e2813122e7c
+#: ../../../source/reference/commands/tokenize.txt:61
+msgid "TokenBigramSplitSymbol"
+msgstr ""
+
+# 4a33755d54774c0fb6b1b2a9cf8e09b4
+#: ../../../source/reference/commands/tokenize.txt:62
+msgid "TokenBigramSplitSymbolAlpha"
+msgstr ""
+
+# 2a7f2580688f4952a7e085bbf3bdf52d
+#: ../../../source/reference/commands/tokenize.txt:63
+msgid "TokenBigramSplitSymbolAlphaDigit"
+msgstr ""
+
+# a9308fba93cd419fb2c305afe6206116
+#: ../../../source/reference/commands/tokenize.txt:64
+msgid "TokenBigramIgnoreBlank"
+msgstr ""
+
+# ec38d72a482840f99a9465489e452a44
+#: ../../../source/reference/commands/tokenize.txt:65
+msgid "TokenBigramIgnoreBlankSplitSymbol"
+msgstr ""
+
+# ab39af2de53741e786cee7fb9103f6c6
+#: ../../../source/reference/commands/tokenize.txt:66
+msgid "TokenBigramIgnoreBlankSplitAlpha"
+msgstr ""
+
+# 5b05a8d8ca1347f7bbc545f037547814
+#: ../../../source/reference/commands/tokenize.txt:67
+msgid "TokenBigramIgnoreBlankSplitAlphaDigit"
+msgstr ""
+
+# 98b3b00c1e164dbe82a2063763c07507
+#: ../../../source/reference/commands/tokenize.txt:68
+msgid "TokenDelimit"
+msgstr ""
+
+# 9df65d7820d6465e84d097d632ead84e
+#: ../../../source/reference/commands/tokenize.txt:69
+msgid "TokenDelimitNull"
+msgstr ""
+
+# 7da334e545b641e78d9e181e0f1587f3
+#: ../../../source/reference/commands/tokenize.txt:70
+msgid "TokenTrigram"
+msgstr ""
+
+# fe33f02959114d479e18aa04cfcfa34a
+#: ../../../source/reference/commands/tokenize.txt:71
+msgid "TokenUnigram"
+msgstr ""
+
+# 392c6fdee04a4182890e3f03600b4d60
+#: ../../../source/reference/commands/tokenize.txt:73
+msgid ""
+"If you want to use other tokenizers, you need to register additional "
+"tokenizer plugin by ``register`` command."
+msgstr ""
+"他のトークナイザーを使い場合、トークナイズ用の追加プラグインをregisterコマンドで登録します。"
+
+# b0b25f3e15764cb184fbc1aad1979089
+#: ../../../source/reference/commands/tokenize.txt:78
+msgid "It specifies any string which you want to tokenize."
+msgstr "トークナイズしたい文字列を指定します。"
+
+# 9bff304d6a51441f93f9a83a445cf696
+#: ../../../source/reference/commands/tokenize.txt:92
+msgid "``tokenized``"
+msgstr ""
+
+# f21982b8504d499fa39e4e6c4be6923e
+#: ../../../source/reference/commands/tokenize.txt:94
+msgid "tokenized is the tokenized text by the specified tokenizer."
+msgstr "tokenizedは指定したトークナイザーによりトークナイズされたオブジェクトです。"
 
 # 02dd86874f7d4d838d7fe8eb4688be7f
 #: ../../../source/reference/commands/truncate.txt:9
