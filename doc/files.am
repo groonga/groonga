@@ -67,6 +67,13 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/table_create/lexicon_table_pat_key.log \
 	$(top_srcdir)/doc/source/example/reference/commands/table_create/tag_index_table_hash_key.log \
 	$(top_srcdir)/doc/source/example/reference/commands/table_list.log \
+	$(top_srcdir)/doc/source/example/reference/commands/tokenize/flags_enable_tokenized_delimiter.log \
+	$(top_srcdir)/doc/source/example/reference/commands/tokenize/normalizer_none.log \
+	$(top_srcdir)/doc/source/example/reference/commands/tokenize/normalizer_use.log \
+	$(top_srcdir)/doc/source/example/reference/commands/tokenize/normalizer_use_with_split_symbol_alpha.log \
+	$(top_srcdir)/doc/source/example/reference/commands/tokenize/simple_example.log \
+	$(top_srcdir)/doc/source/example/reference/commands/tokenize/string_include_spaces.log \
+	$(top_srcdir)/doc/source/example/reference/commands/tokenize/tokenizer_token_trigram.log \
 	$(top_srcdir)/doc/source/example/reference/commands/truncate/truncate.log \
 	$(top_srcdir)/doc/source/example/reference/executables/groonga-httpd.log \
 	$(top_srcdir)/doc/source/example/reference/functions/geo_distance_distance_ellipsoid.log \
@@ -517,6 +524,13 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/table_create/lexicon_table_pat_key.log \
 	source/example/reference/commands/table_create/tag_index_table_hash_key.log \
 	source/example/reference/commands/table_list.log \
+	source/example/reference/commands/tokenize/flags_enable_tokenized_delimiter.log \
+	source/example/reference/commands/tokenize/normalizer_none.log \
+	source/example/reference/commands/tokenize/normalizer_use.log \
+	source/example/reference/commands/tokenize/normalizer_use_with_split_symbol_alpha.log \
+	source/example/reference/commands/tokenize/simple_example.log \
+	source/example/reference/commands/tokenize/string_include_spaces.log \
+	source/example/reference/commands/tokenize/tokenizer_token_trigram.log \
 	source/example/reference/commands/truncate/truncate.log \
 	source/example/reference/executables/groonga-httpd.log \
 	source/example/reference/functions/geo_distance_distance_ellipsoid.log \
