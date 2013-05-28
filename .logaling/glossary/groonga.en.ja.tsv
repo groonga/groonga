@@ -13,3 +13,4 @@ query expander	クエリー展開オブジェクト
 value	バリュー	「keyとvalue」という関係で出てくるとき。column valueとかは「カラムの値」というように「値」にする。
 predictive search	前方一致検索
 table	テーブル	「tableとcolumn」という関係で出てくるとき。hash tableとかは「ハッシュ表」というように「表」にする。
+tokenized delimiter	トークナイズ済み区切り文字

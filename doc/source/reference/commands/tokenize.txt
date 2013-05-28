@@ -155,7 +155,7 @@ Here is an example that uses ``ENABLE_TOKENIZED_DELIMITER``.
 ``TokenDelimit`` tokenizer is one of tokenized delimiter supported
 tokenizer. ``ENABLE_TOKENIZED_DELIMITER`` enables tokenized delimiter.
 Tokenized delimiter is special character that indicates token
-border. It is `U+FFFE`. The character is not assigned any
+border. It is ``U+FFFE``. The character is not assigned any
 character. It means that the character is not appeared in normal
 string. So the character is good character for this puropose. If
 ``ENABLE_TOKENIZED_DELIMITER`` is enabled, the target string is
@@ -177,7 +177,7 @@ the feature::
 
 ``tokens``
 
-  Tokens is an array of token. Token is an object that has the following
+  ``tokens`` is an array of token. Token is an object that has the following
   attributes.
 
   .. list-table::

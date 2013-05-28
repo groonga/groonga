@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-28 13:02\n"
-"PO-Revision-Date: 2013-04-07 11:38+0900\n"
+"POT-Creation-Date: 2013-05-28 15:59\n"
+"PO-Revision-Date: 2013-05-28 16:03+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -6644,22 +6644,21 @@ msgstr ""
 
 # f21982b8504d499fa39e4e6c4be6923e
 #: ../../../source/reference/commands/tokenize.txt:14
-#, fuzzy
 msgid ""
 "``tokenize`` command tokenizes text by the specified tokenizer. It is useful "
 "to debug tokenization."
 msgstr ""
 "``tokenize`` コマンドは指定したトークナイザーでテキストをトークナイズします。"
+"これはトークナイズ処理のデバッグに便利です。"
 
 # 175ddfb1298649878c537595a2683fc5
 #: ../../../source/reference/commands/tokenize.txt:20
-#, fuzzy
 msgid ""
 "``tokenize`` command has required parameters and optional parameters. "
 "``tokenizer`` and ``string`` are required parameters. Others are optional::"
 msgstr ""
-"``tokenize`` コマンドは ``tokenizer`` と ``string`` という二つの引数をとりま"
-"す。これらの引数はどちらも必須です。"
+"``tokenize`` コマンドには必須の引数と省略可能な引数があります。 "
+"``tokenizer`` と ``string`` が必須の引数で、他の引数はすべて省略可能です。"
 
 # 66118ec4f5df49de8fe063dccd69c0fb
 # c42ed95cabcd456da899b9f068eba075
@@ -6703,11 +6702,15 @@ msgid ""
 "by tokenizing ``\"Fulltext Search\"`` with ``TokenBigram`` tokenizer. It "
 "doesn't normalize ``\"Fulltext Search\"``."
 msgstr ""
+"この例では必須のパラメーターだけ使っています。 ``tokenizer`` には "
+"``TokenBigram`` を、 ``string`` には ``\"Fulltext Search\"`` を指定していま"
+"す。この例は ``TokenBigram`` トークナイザーで ``\"Fulltext Search\"`` をトー"
+"クナイズしたトークンを返します。この例では ``\"Fulltext Search\"`` を正規化し"
+"ていません。"
 
 # 41a5ec8bf94e4a5a87e2cbcb48e5a10e
 # 852d1057fa6546bc9ab1ff1a04d6f857
 #: ../../../source/reference/commands/tokenize.txt:49
-#, fuzzy
 msgid "Required parameters"
 msgstr "必須引数"
 
@@ -6727,18 +6730,20 @@ msgid ""
 "It specifies the tokenizer name. ``tokenize`` command uses the tokenizer "
 "that is named ``tokenizer``."
 msgstr ""
+"トークナイザー名を指定します。 ``tokenize`` コマンドは ``tokenizer`` で指定さ"
+"れた名前のトークナイザーを使います。"
 
 # bde897b0ca22430eb927c3f3d85d70d2
 #: ../../../source/reference/commands/tokenize.txt:59
-#, fuzzy
 msgid "See :doc:`/reference/tokenizers` about built-in tokenizers."
-msgstr "トークナイザーの一覧は :doc:`/reference/tokenizers` にあります。"
+msgstr ""
+"組み込みのトークナイザーについては :doc:`/reference/tokenizers` を参照してく"
+"ださい。"
 
 # b993c6521463466f8f42d9a4e7e5107f
 #: ../../../source/reference/commands/tokenize.txt:61
-#, fuzzy
 msgid "Here is an example to use ``TokenTrigram`` tokenizer."
-msgstr "以下は ``NormalizerAuto`` ノーマライザーを使う例です。"
+msgstr "以下は ``TokenTrigram`` トークナイザーを使う例です。"
 
 # b686f5c8ed164c7799a1941e4e17f8d3
 #: ../../../source/reference/commands/tokenize.txt:67
@@ -6748,6 +6753,10 @@ msgid ""
 "compatible normalizer by registering `groonga-normalizer-mysql <https://"
 "github.com/groonga/groonga-normalizer-mysql>`_."
 msgstr ""
+"他のトークナイザーを使いたい場合は、 :doc:`register` コマンドでトークナイザー"
+"プラグインを登録する必要があります。例えば、 `groonga-normalizer-mysql "
+"<https://github.com/groonga/groonga-normalizer-mysql>`_ を登録することでMySQL"
+"互換の正規化方法を使うことができます。"
 
 # c5230aa2d8c347f594cc9829a4362cc4
 #: ../../../source/reference/commands/tokenize.txt:75
@@ -6756,24 +6765,24 @@ msgid ""
 "spaces in ``string``, you need to quote ``string`` by single quotation "
 "(``'``) or double quotation (``\"``)."
 msgstr ""
+"トークナイズしたい文字列を指定します。 ``string`` の中に文字列を含める場合"
+"は、シングルクォート（ ``'`` ）またはダブルクォート（ ``\"`` ）で ``string`` "
+"をクォートする必要があります。"
 
 # b993c6521463466f8f42d9a4e7e5107f
 #: ../../../source/reference/commands/tokenize.txt:79
-#, fuzzy
 msgid "Here is an example to use spaces in ``string``."
-msgstr "クエリーが ``groonga`` のときのクエリー展開の例です::"
+msgstr "``string`` の中で空白を使う例です。"
 
 # 063b335227cc45469a645aec28feca86
 #: ../../../source/reference/commands/tokenize.txt:86
-#, fuzzy
 msgid "Optional parameters"
 msgstr "省略可能引数"
 
 # 063b335227cc45469a645aec28feca86
 #: ../../../source/reference/commands/tokenize.txt:88
-#, fuzzy
 msgid "There are optional parameters."
-msgstr "省略可能引数"
+msgstr "いくつか省略可能な引数があります。"
 
 # 4db07dbb92534c5b89959390e506bda8
 #: ../../../source/reference/commands/tokenize.txt:93
@@ -6782,6 +6791,9 @@ msgid ""
 "that is named ``normalizer``. Normalizer is important for N-gram family "
 "tokenizers such as ``TokenBigram``."
 msgstr ""
+"ノーマライザー名を指定します。 ``tokenize`` コマンドは ``normalizer`` という"
+"名前のノーまライザーを使います。ノーまライザーは ``TokenBigrma`` など、N-gram"
+"関連のトークナイザーにとってとても重要です。"
 
 # 990c75c1519a44df8c7f9ffc24611218
 #: ../../../source/reference/commands/tokenize.txt:97
@@ -6789,12 +6801,13 @@ msgid ""
 "Normalizer detects character type for each character while normalizing. N-"
 "gram family tokenizers use character types while tokenizing."
 msgstr ""
+"ノーマライザーはノーマライズ中にそれぞれの文字の種類を検出します。N-gram系の"
+"トークナイザーはトークナイズ中に文字の種類を利用します。"
 
 # b993c6521463466f8f42d9a4e7e5107f
 #: ../../../source/reference/commands/tokenize.txt:101
-#, fuzzy
 msgid "Here is an example that doesn't use normalizer."
-msgstr "以下は ``NormalizerAuto`` ノーマライザーを使う例です。"
+msgstr "以下はノーマライザーを使わない例です。"
 
 # 4dfb6f69a82340d0b6340ff1ca1ff7f7
 #: ../../../source/reference/commands/tokenize.txt:107
@@ -6802,12 +6815,13 @@ msgid ""
 "All alphabets are tokenized by two characters. For example, ``Fu`` is a "
 "token."
 msgstr ""
+"すべてのアルファベットが2文字ごとトークナイズされています。例えば、 ``Fu`` で"
+"1つのトークンになっています。"
 
 # b993c6521463466f8f42d9a4e7e5107f
 #: ../../../source/reference/commands/tokenize.txt:110
-#, fuzzy
 msgid "Here is an example that uses normalizer."
-msgstr "以下は ``NormalizerAuto`` ノーマライザーを使う例です。"
+msgstr "以下はノーマライザーを使う例です。"
 
 # 5ec8bb421d6e4d60b42d4ae53129662c
 #: ../../../source/reference/commands/tokenize.txt:116
@@ -6815,6 +6829,8 @@ msgid ""
 "Continuous alphabets are tokenized as one token. For example, ``fulltext`` "
 "is a token."
 msgstr ""
+"連続するアルファベットが1つのトークンにトークナイズされています。例えば、 "
+"``fulltext`` で1つのトークンになっています。"
 
 # aac9904bc11742e395cd0e474741cf7b
 #: ../../../source/reference/commands/tokenize.txt:119
@@ -6822,6 +6838,8 @@ msgid ""
 "If you want to tokenize by two characters with noramlizer, use "
 "``TokenBigramSplitSymbolAlpha``."
 msgstr ""
+"ノーマライザーを使いながら2文字でトークナイズしたい場合は "
+"``TokenBigramSplitSymbolAlpha`` を使って下さい。"
 
 # c5d76668782f4cd8ad4b9cd6ca272ff1
 #: ../../../source/reference/commands/tokenize.txt:126
@@ -6829,6 +6847,9 @@ msgid ""
 "All alphabets are tokenized by two characters. And they are normalized to "
 "lower case characters. For example, ``fu`` is a token."
 msgstr ""
+"すべてのアルファベットが2文字ごとにトークナイズされています。そして、すべての"
+"文字が小文字にノーマライズされています。例えば、 ``fu`` で1つのトークンになっ"
+"ています。"
 
 # 43f9006f36dc46c5a8dec760dfb216c7
 #: ../../../source/reference/commands/tokenize.txt:132
@@ -6837,29 +6858,30 @@ msgid ""
 "options separated by \"``|``\". For example, ``NONE|"
 "ENABLE_TOKENIZED_DELIMITER``."
 msgstr ""
+"トークナイズ処理をカスタマイズするオプションを指定します。「 ``|`` 」で区切っ"
+"て複数のオプションを指定することができます。例えば、 ``NONE|"
+"ENABLE_TOKENIZED_DELIMITER`` というように指定できます。"
 
 # 77b120c7869549b5855bc906a84570a2
 #: ../../../source/reference/commands/tokenize.txt:136
-#, fuzzy
 msgid "Here are available flags."
 msgstr "指定可能なフラグは以下の通りです。"
 
 # c6b62e53fc90490f8a62f874d7dfcb0c
 #: ../../../source/reference/commands/tokenize.txt:141
 msgid "Flag"
-msgstr ""
+msgstr "フラグ"
 
 # 071bf66b5e09468dbeb9affc7997a57f
 #: ../../../source/reference/commands/tokenize.txt:142
 #: ../../../source/reference/commands/tokenize.txt:187
-#, fuzzy
 msgid "Description"
 msgstr "説明"
 
 # f46c1572d71d462f89c7a301846c604e
 #: ../../../source/reference/commands/tokenize.txt:144
 msgid "Just ignored."
-msgstr ""
+msgstr "無視されます。"
 
 # bbb723ca24b64e95a8785cd43461e8d1
 #: ../../../source/reference/commands/tokenize.txt:145
@@ -6868,17 +6890,17 @@ msgstr ""
 
 # bde897b0ca22430eb927c3f3d85d70d2
 #: ../../../source/reference/commands/tokenize.txt:146
-#, fuzzy
 msgid ""
 "Enables tokenized delimiter. See :doc:`/reference/tokenizers` about "
 "tokenized delimiter details."
-msgstr "トークナイザーの一覧は :doc:`/reference/tokenizers` にあります。"
+msgstr ""
+"トークナイズ済み区切り文字を有効にします。トークナイズ済み区切り文字の詳細"
+"は :doc:`/reference/tokenizers` を参照してください。"
 
 # 1ccd84b3f15a4567b23bb0e7d8c66fcd
 #: ../../../source/reference/commands/tokenize.txt:149
-#, fuzzy
 msgid "Here is an example that uses ``ENABLE_TOKENIZED_DELIMITER``."
-msgstr "以下は ``TABLE_NO_KEY`` テーブルを使う例です。"
+msgstr "以下は ``ENABLE_TOKENIZED_DELIMITER`` を使った例です。"
 
 # de4e1da50f6545629623eb92dc5f5a0c
 #: ../../../source/reference/commands/tokenize.txt:155
@@ -6886,12 +6908,21 @@ msgid ""
 "``TokenDelimit`` tokenizer is one of tokenized delimiter supported "
 "tokenizer. ``ENABLE_TOKENIZED_DELIMITER`` enables tokenized delimiter. "
 "Tokenized delimiter is special character that indicates token border. It is "
-"`U+FFFE`. The character is not assigned any character. It means that the "
+"``U+FFFE``. The character is not assigned any character. It means that the "
 "character is not appeared in normal string. So the character is good "
 "character for this puropose. If ``ENABLE_TOKENIZED_DELIMITER`` is enabled, "
 "the target string is treated as already tokenized string. Tokenizer just "
 "tokenizes by tokenized delimiter."
 msgstr ""
+"``TokenDelimit`` トークナイザーはトークナイズ済み区切り文字をサポートしている"
+"トークナイザーの1つです。 ``ENABLE_TOKENIZED_DELIMITER`` でトークナイズ済み区"
+"切り文字を有効に出来ます。トークナイズ済み区切り文字はトークンの区切りを表す"
+"特別な文字です。この文字は ``U+FFFE`` です。この文字コードはどの文字にも割り"
+"当てられていません。つまり、通常の文字列にはこの文字は現れません。よって、"
+"トークンの区切りを表すという目的には適切な文字です。 "
+"``ENABLE_TOKENIZED_DELIMITER`` が有効のときは、対象文字列はすでにトークナイズ"
+"済みであると扱われます。トークナイザーは単にトークナイズ済み区切り文字で区"
+"切ってトークナイズします。"
 
 # 8c5b89736ac54de3baaf7ae793b13102
 #: ../../../source/reference/commands/tokenize.txt:168
@@ -6899,11 +6930,10 @@ msgid ""
 "``tokenize`` command returns tokenized tokens. Each token has some "
 "attributes except token itself. The attributes will be increased in the "
 "feature::"
-msgstr ""
+msgstr "``tokenize`` コマンドはトークナイズしたトークンをすべて返します。各トークンはトークン自身の文字列情報以外にいくつかの属性を持ちます。属性は今後増えていく可能性があります::"
 
 # 7076e42ec8ef4557b5a1a22d51cab92d
 #: ../../../source/reference/commands/tokenize.txt:176
-#, fuzzy
 msgid "See :doc:`/reference/command/output_format` about ``HEADER``."
 msgstr ""
 "``HEADER`` については :doc:`/reference/command/output_format` を参照してくだ"
@@ -6917,14 +6947,16 @@ msgstr ""
 # 4db16b20796047df8b95c3c9e628be0f
 #: ../../../source/reference/commands/tokenize.txt:180
 msgid ""
-"Tokens is an array of token. Token is an object that has the following "
+"``tokens`` is an array of token. Token is an object that has the following "
 "attributes."
 msgstr ""
+"``tokens`` はトークンの配列です。トークンは以下の属性を持ったオブジェクトで"
+"す。"
 
 # db62dc6e491a46edb2b609114cfae5f8
 #: ../../../source/reference/commands/tokenize.txt:186
 msgid "Name"
-msgstr ""
+msgstr "名前"
 
 # e141def53e0546c8bbaa927921aba648
 #: ../../../source/reference/commands/tokenize.txt:188
@@ -6934,7 +6966,7 @@ msgstr ""
 # bf16170a23664153b8943d26f928a91a
 #: ../../../source/reference/commands/tokenize.txt:189
 msgid "Token itself."
-msgstr ""
+msgstr "トークン自身"
 
 # fafc24576e02466ab1847b4119009a82
 #: ../../../source/reference/commands/tokenize.txt:190
@@ -6944,7 +6976,7 @@ msgstr ""
 # 3eafa658ce6847d5833a2fa280a0a74d
 #: ../../../source/reference/commands/tokenize.txt:191
 msgid "The N-th token."
-msgstr ""
+msgstr "N番目のトークン。"
 
 # 02dd86874f7d4d838d7fe8eb4688be7f
 #: ../../../source/reference/commands/truncate.txt:9
@@ -14885,15 +14917,29 @@ msgstr ""
 msgid "Object型はv1.2でサポートされます。"
 msgstr ""
 
-# f21982b8504d499fa39e4e6c4be6923e
-#~ msgid "tokenized is the tokenized text by the specified tokenizer."
+# 50d4a5927b81445f840f51e9605db852
+#~ msgid ""
+#~ "``tokenize`` command is an experimental feature. This command may be "
+#~ "changed in the future."
 #~ msgstr ""
-#~ "tokenizedは指定したトークナイザーによりトークナイズされたオブジェクトで"
-#~ "す。"
+#~ "``tokenize`` コマンドは実験的な機能です。このコマンドは将来的に変更される"
+#~ "かも知れません。"
 
-# b0b25f3e15764cb184fbc1aad1979089
-#~ msgid "It specifies any string which you want to tokenize."
-#~ msgstr "トークナイズしたい文字列を指定します。"
+# c91014bfde6f49d88b266f07400015cb
+#~ msgid "There is no need to create a table to use ``tokenize`` command."
+#~ msgstr "``tokenize`` コマンドを使うのにテーブルを作成する必要はありません。"
+
+# 1ccd84b3f15a4567b23bb0e7d8c66fcd
+#~ msgid "Here is a simple example of ``tokenize`` command."
+#~ msgstr "以下は ``tokenize`` コマンドの簡単な使用例です。"
+
+# e92758beef824130ab42669342c10d50
+#~ msgid "This section describes parameters of ``tokenizer``."
+#~ msgstr "このセクションでは ``tokenizer`` の引数について説明します。"
+
+# ffa8ab8997a74ec381047804746e748d
+#~ msgid "It specifies the name of tokenizer."
+#~ msgstr "トークナイザーの名前を指定します。"
 
 # 392c6fdee04a4182890e3f03600b4d60
 #~ msgid ""
@@ -14903,26 +14949,12 @@ msgstr ""
 #~ "他のトークナイザーを使い場合、トークナイズ用の追加プラグインをregisterコマ"
 #~ "ンドで登録します。"
 
-# ffa8ab8997a74ec381047804746e748d
-#~ msgid "It specifies the name of tokenizer."
-#~ msgstr "トークナイザーの名前を指定します。"
+# b0b25f3e15764cb184fbc1aad1979089
+#~ msgid "It specifies any string which you want to tokenize."
+#~ msgstr "トークナイズしたい文字列を指定します。"
 
-# e92758beef824130ab42669342c10d50
-#~ msgid "This section describes parameters of ``tokenizer``."
-#~ msgstr "このセクションでは ``tokenizer`` の引数について説明します。"
-
-# 1ccd84b3f15a4567b23bb0e7d8c66fcd
-#~ msgid "Here is a simple example of ``tokenize`` command."
-#~ msgstr "以下は ``tokenize`` コマンドの簡単な使用例です。"
-
-# c91014bfde6f49d88b266f07400015cb
-#~ msgid "There is no need to create a table to use ``tokenize`` command."
-#~ msgstr "``tokenize`` コマンドを使うのにテーブルを作成する必要はありません。"
-
-# 50d4a5927b81445f840f51e9605db852
-#~ msgid ""
-#~ "``tokenize`` command is an experimental feature. This command may be "
-#~ "changed in the future."
+# f21982b8504d499fa39e4e6c4be6923e
+#~ msgid "tokenized is the tokenized text by the specified tokenizer."
 #~ msgstr ""
-#~ "``tokenize`` コマンドは実験的な機能です。このコマンドは将来的に変更される"
-#~ "かも知れません。"
+#~ "tokenizedは指定したトークナイザーによりトークナイズされたオブジェクトで"
+#~ "す。"
