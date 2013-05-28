@@ -65,7 +65,7 @@ if [ -n "${USER}" ]; then
 	exit 1
     fi
     chown -R ${USER} $(dirname ${PIDFILE})
-    START_STOP_DAEMON_ARGS="${START_STOP_DAEMON_ARGS} --user ${USER}"
+    START_STOP_DAEMON_ARGS="${START_STOP_DAEMON_ARGS} --chuid ${USER}"
 fi
 if [ -n "${GROUP}" ]; then
     if ! getent group | grep -q "^${GROUP}:"; then
