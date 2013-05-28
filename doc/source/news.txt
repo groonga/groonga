@@ -14,7 +14,6 @@ Improvements
 ^^^^^^^^^^^^
 
 * [tokenizer] Improved to show log message when normalized string is not given.
-  when? how to avoid?
 * Supported ``_key`` as an argument of ``geo_in_circle``. [Reported by @ceekz]
 * Supported to cast vector elements when groonga is used as a library.
 * Dropped Ubuntu 11.10 (Oneiric Ocelot) support.
