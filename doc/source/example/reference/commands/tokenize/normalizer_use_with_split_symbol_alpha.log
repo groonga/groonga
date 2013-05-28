@@ -1,0 +1,68 @@
+Execution example::
+
+  tokenize TokenBigramSplitSymbolAlpha "Fulltext Search" NormalizerAuto
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     {
+  #       "position": 0, 
+  #       "value": "fu"
+  #     }, 
+  #     {
+  #       "position": 1, 
+  #       "value": "ul"
+  #     }, 
+  #     {
+  #       "position": 2, 
+  #       "value": "ll"
+  #     }, 
+  #     {
+  #       "position": 3, 
+  #       "value": "lt"
+  #     }, 
+  #     {
+  #       "position": 4, 
+  #       "value": "te"
+  #     }, 
+  #     {
+  #       "position": 5, 
+  #       "value": "ex"
+  #     }, 
+  #     {
+  #       "position": 6, 
+  #       "value": "xt"
+  #     }, 
+  #     {
+  #       "position": 7, 
+  #       "value": "t"
+  #     }, 
+  #     {
+  #       "position": 8, 
+  #       "value": "se"
+  #     }, 
+  #     {
+  #       "position": 9, 
+  #       "value": "ea"
+  #     }, 
+  #     {
+  #       "position": 10, 
+  #       "value": "ar"
+  #     }, 
+  #     {
+  #       "position": 11, 
+  #       "value": "rc"
+  #     }, 
+  #     {
+  #       "position": 12, 
+  #       "value": "ch"
+  #     }, 
+  #     {
+  #       "position": 13, 
+  #       "value": "h"
+  #     }
+  #   ]
+  # ]

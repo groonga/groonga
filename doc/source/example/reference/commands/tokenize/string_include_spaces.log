@@ -1,0 +1,172 @@
+Execution example::
+
+  tokenize TokenBigram "Groonga is a fast fulltext earch engine!"
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     {
+  #       "position": 0, 
+  #       "value": "Gr"
+  #     }, 
+  #     {
+  #       "position": 1, 
+  #       "value": "ro"
+  #     }, 
+  #     {
+  #       "position": 2, 
+  #       "value": "oo"
+  #     }, 
+  #     {
+  #       "position": 3, 
+  #       "value": "on"
+  #     }, 
+  #     {
+  #       "position": 4, 
+  #       "value": "ng"
+  #     }, 
+  #     {
+  #       "position": 5, 
+  #       "value": "ga"
+  #     }, 
+  #     {
+  #       "position": 6, 
+  #       "value": "a "
+  #     }, 
+  #     {
+  #       "position": 7, 
+  #       "value": " i"
+  #     }, 
+  #     {
+  #       "position": 8, 
+  #       "value": "is"
+  #     }, 
+  #     {
+  #       "position": 9, 
+  #       "value": "s "
+  #     }, 
+  #     {
+  #       "position": 10, 
+  #       "value": " a"
+  #     }, 
+  #     {
+  #       "position": 11, 
+  #       "value": "a "
+  #     }, 
+  #     {
+  #       "position": 12, 
+  #       "value": " f"
+  #     }, 
+  #     {
+  #       "position": 13, 
+  #       "value": "fa"
+  #     }, 
+  #     {
+  #       "position": 14, 
+  #       "value": "as"
+  #     }, 
+  #     {
+  #       "position": 15, 
+  #       "value": "st"
+  #     }, 
+  #     {
+  #       "position": 16, 
+  #       "value": "t "
+  #     }, 
+  #     {
+  #       "position": 17, 
+  #       "value": " f"
+  #     }, 
+  #     {
+  #       "position": 18, 
+  #       "value": "fu"
+  #     }, 
+  #     {
+  #       "position": 19, 
+  #       "value": "ul"
+  #     }, 
+  #     {
+  #       "position": 20, 
+  #       "value": "ll"
+  #     }, 
+  #     {
+  #       "position": 21, 
+  #       "value": "lt"
+  #     }, 
+  #     {
+  #       "position": 22, 
+  #       "value": "te"
+  #     }, 
+  #     {
+  #       "position": 23, 
+  #       "value": "ex"
+  #     }, 
+  #     {
+  #       "position": 24, 
+  #       "value": "xt"
+  #     }, 
+  #     {
+  #       "position": 25, 
+  #       "value": "t "
+  #     }, 
+  #     {
+  #       "position": 26, 
+  #       "value": " e"
+  #     }, 
+  #     {
+  #       "position": 27, 
+  #       "value": "ea"
+  #     }, 
+  #     {
+  #       "position": 28, 
+  #       "value": "ar"
+  #     }, 
+  #     {
+  #       "position": 29, 
+  #       "value": "rc"
+  #     }, 
+  #     {
+  #       "position": 30, 
+  #       "value": "ch"
+  #     }, 
+  #     {
+  #       "position": 31, 
+  #       "value": "h "
+  #     }, 
+  #     {
+  #       "position": 32, 
+  #       "value": " e"
+  #     }, 
+  #     {
+  #       "position": 33, 
+  #       "value": "en"
+  #     }, 
+  #     {
+  #       "position": 34, 
+  #       "value": "ng"
+  #     }, 
+  #     {
+  #       "position": 35, 
+  #       "value": "gi"
+  #     }, 
+  #     {
+  #       "position": 36, 
+  #       "value": "in"
+  #     }, 
+  #     {
+  #       "position": 37, 
+  #       "value": "ne"
+  #     }, 
+  #     {
+  #       "position": 38, 
+  #       "value": "e!"
+  #     }, 
+  #     {
+  #       "position": 39, 
+  #       "value": "!"
+  #     }
+  #   ]
+  # ]
