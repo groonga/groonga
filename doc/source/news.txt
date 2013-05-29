@@ -46,6 +46,7 @@ Fixes
   [Reported by Y.Kentaro]
 * Fixed a bug that daemonize process doesn't work on OS X.
   [groonga-dev,01440] [Reported by Masahiro KONISHI]
+* [deb] Fixed a bug that HTTP/GQTP process is excuted as root user.
 
 Thanks
 ^^^^^^
@@ -55,6 +56,7 @@ Thanks
 * firewood
 * Y.Kentaro
 * Masahiro KONISHI
+* @orangain
 
 .. _release-3-0-3:
 
