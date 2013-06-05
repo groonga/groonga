@@ -870,6 +870,10 @@ grn_table_create(grn_ctx *ctx, const char *name, unsigned int name_size,
   }
   calc_rec_size(flags, &max_n_subrecs, &subrec_size,
                 &subrec_offset, &key_size, &value_size);
+  {
+    grn_io *db_io;
+    db_io = grn_obj_io(db);
+    if (!grn_io_lock(ctx, db_io, 10000000)) {
   switch (flags & GRN_OBJ_TABLE_TYPE_MASK) {
   case GRN_OBJ_TABLE_HASH_KEY :
     res = (grn_obj *)grn_hash_create(ctx, path, key_size, value_size, flags);
@@ -884,6 +888,9 @@ grn_table_create(grn_ctx *ctx, const char *name, unsigned int name_size,
     domain = range;
     res = (grn_obj *)grn_array_create(ctx, path, value_size, flags);
     break;
+  }
+      grn_io_unlock(db_io);
+    }
   }
   if (res) {
     DB_OBJ(res)->header.impl_flags = 0;
