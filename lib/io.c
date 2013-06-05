@@ -155,10 +155,15 @@ static void
 grn_io_register(grn_io *io)
 {
   if (io->fis && (io->flags & (GRN_IO_EXPIRE_GTICK|GRN_IO_EXPIRE_SEGMENT))) {
+    grn_bool succeeded = GRN_FALSE;
+    CRITICAL_SECTION_ENTER(grn_glock);
     if (grn_gctx.impl && grn_gctx.impl->ios &&
         grn_hash_add(&grn_gctx, grn_gctx.impl->ios, io->path, strlen(io->path),
                      (void **)&io, NULL)) {
-    } else {
+      succeeded = GRN_TRUE;
+    }
+    CRITICAL_SECTION_LEAVE(grn_glock);
+    if (!succeeded) {
       GRN_LOG(&grn_gctx, GRN_LOG_WARNING,
               "grn_io_register(%s) failed", io->path);
     }
@@ -169,10 +174,15 @@ static void
 grn_io_unregister(grn_io *io)
 {
   if (io->fis && (io->flags & (GRN_IO_EXPIRE_GTICK|GRN_IO_EXPIRE_SEGMENT))) {
+    grn_bool succeeded = GRN_FALSE;
+    CRITICAL_SECTION_ENTER(grn_glock);
     if (grn_gctx.impl && grn_gctx.impl->ios) {
       grn_hash_delete(&grn_gctx, grn_gctx.impl->ios,
                       io->path, strlen(io->path), NULL);
-    } else {
+      succeeded = GRN_TRUE;
+    }
+    CRITICAL_SECTION_LEAVE(grn_glock);
+    if (!succeeded) {
       GRN_LOG(&grn_gctx, GRN_LOG_WARNING,
               "grn_io_unregister(%s) failed", io->path);
     }
