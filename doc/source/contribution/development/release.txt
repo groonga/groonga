@@ -531,7 +531,7 @@ cloneしたWebサイトのソースに対して以下のファイルを新規追
 
 jekyllのインストールを行ったら、以下のコマンドでローカルにwebサーバを起動します。::
 
-    % jekyll --server --auto
+    % jekyll serve --watch
 
 あとはブラウザにてhttp://localhost:4000にアクセスして内容に問題がないかを確認します。
 
