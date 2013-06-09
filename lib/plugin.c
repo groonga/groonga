@@ -161,6 +161,13 @@ grn_plugin_initialize(grn_ctx *ctx, grn_plugin *plugin,
   return ctx->rc;
 }
 
+static grn_id
+grn_plugin_find(grn_ctx *ctx, const char *filename, grn_plugin **plugin)
+{
+  return grn_hash_get(ctx, grn_plugins, filename, PATHLEN(filename),
+                      (void **)&plugin);
+}
+
 grn_id
 grn_plugin_open(grn_ctx *ctx, const char *filename)
 {
@@ -168,8 +175,7 @@ grn_plugin_open(grn_ctx *ctx, const char *filename)
   grn_dl dl;
   grn_plugin **plugin;
 
-  if ((id = grn_hash_get(ctx, grn_plugins, filename, PATHLEN(filename),
-                         (void **)&plugin))) {
+  if ((id = grn_plugin_find(ctx, filename, plugin))) {
     if (plugin && *plugin) {
       (*plugin)->refcount++;
     }
@@ -297,12 +303,17 @@ grn_plugin_register_by_path(grn_ctx *ctx, const char *path)
   GRN_API_ENTER;
   if (GRN_DB_P(db)) {
     grn_id id;
-    id = grn_plugin_open(ctx, path);
+    grn_bool opened = GRN_FALSE;
+    id = grn_plugin_find(ctx, path, NULL);
+    if (id == GRN_ID_NIL) {
+      id = grn_plugin_open(ctx, path);
+      opened = GRN_TRUE;
+    }
     if (id) {
       ctx->impl->plugin_path = path;
       ctx->rc = grn_plugin_call_register(ctx, id);
       ctx->impl->plugin_path = NULL;
-      if (ctx->rc) {
+      if (ctx->rc && opened) {
         grn_plugin_close(ctx, id);
       }
     }
