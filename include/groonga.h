@@ -3008,10 +3008,11 @@ GRN_API grn_rc grn_dat_cursor_delete(grn_ctx *ctx, grn_dat_cursor *c,
   grn_dat_cursor *_sc = grn_dat_cursor_open(ctx, dat, NULL, 0, NULL, 0, 0, -1, 0);\
   if (_sc) {\
     grn_id id;\
-    int *_ks = (key_size);\
+    unsigned int *_ks = (key_size);\
     if (_ks) {\
       while ((id = grn_dat_cursor_next(ctx, _sc))) {\
-        *(_ks) = grn_dat_cursor_get_key(ctx, _sc, (const void **)(key));\
+        int _ks_raw = grn_dat_cursor_get_key(ctx, _sc, (const void **)(key));\
+        *(_ks) = (unsigned int)_ks_raw;\
         block\
       }\
     } else {\
