@@ -8,7 +8,7 @@ list_paths()
     sed \
       -e 's,^,\t,' \
       -e 's,$, \\,'
-    echo "\t\$(NULL)"
+    echo "	\$(NULL)"
     echo
 }
 
