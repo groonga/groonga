@@ -682,7 +682,6 @@ data_accessor_dynamic_pseudo_column_name(void)
                  NULL)
 
   ADD_DATUM("_score");
-  ADD_DATUM("_nsubrecs");
 
 #undef ADD_DATUM
 }
