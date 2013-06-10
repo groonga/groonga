@@ -7846,13 +7846,16 @@ compare_value(grn_ctx *ctx, sort_entry *a, sort_entry *b,
   const unsigned char *ap, *bp;
   for (i = 0; i < n_keys; i++, keys++) {
     if (i) {
+      const char *ap_raw, *bp_raw;
       if (keys->flags & GRN_TABLE_SORT_DESC) {
-        ap = grn_obj_get_value_(ctx, keys->key, b->id, &as);
-        bp = grn_obj_get_value_(ctx, keys->key, a->id, &bs);
+        ap_raw = grn_obj_get_value_(ctx, keys->key, b->id, &as);
+        bp_raw = grn_obj_get_value_(ctx, keys->key, a->id, &bs);
       } else {
-        ap = grn_obj_get_value_(ctx, keys->key, a->id, &as);
-        bp = grn_obj_get_value_(ctx, keys->key, b->id, &bs);
+        ap_raw = grn_obj_get_value_(ctx, keys->key, a->id, &as);
+        bp_raw = grn_obj_get_value_(ctx, keys->key, b->id, &bs);
       }
+      ap = (const unsigned char *)ap_raw;
+      bp = (const unsigned char *)bp_raw;
     } else {
       if (keys->flags & GRN_TABLE_SORT_DESC) {
         ap = b->value; as = b->size;
