@@ -90,7 +90,6 @@ data_column_name(void)
   ADD_DATA("_key");
   ADD_DATA("_value");
   ADD_DATA("_score");
-  ADD_DATA("_nsubrecs");
 
 #undef ADD_DATA
 }
