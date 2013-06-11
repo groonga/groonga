@@ -377,7 +377,7 @@ grn_obj_unpack(grn_ctx *ctx, const uint8_t *p, const uint8_t *pe, uint8_t type, 
     ERR(GRN_INVALID_FORMAT, "benced image is corrupt");
     return p;
   }
-  grn_bulk_write(ctx, obj, p, vs);
+  grn_bulk_write(ctx, obj, (const char *)p, vs);
   return p + vs;
 }
 
