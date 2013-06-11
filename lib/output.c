@@ -499,7 +499,7 @@ static void
 grn_text_atoj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
               grn_obj *obj, grn_id id)
 {
-  int vs;
+  uint32_t vs;
   grn_obj buf;
   if (obj->header.type == GRN_ACCESSOR) {
     grn_accessor *a = (grn_accessor *)obj;
