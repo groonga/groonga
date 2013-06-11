@@ -2883,7 +2883,7 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
   grn_io_win sw, dw;
   buffer *sb, *db = NULL;
   uint8_t *dc, *sc = NULL;
-  uint32_t ds, pseg, scn, dcn;
+  uint32_t ds, pseg, scn, dcn = 0;
   if (ii->header->binfo[seg] == NOT_ASSIGNED) { return GRN_FILE_CORRUPT; }
   if ((ds = segment_get(ctx, ii)) == MAX_PSEG) { return GRN_NO_MEMORY_AVAILABLE; }
   pseg = buffer_open(ctx, ii, SEG2POS(seg, 0), NULL, &sb);
