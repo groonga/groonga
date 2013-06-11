@@ -784,7 +784,7 @@ do_load_command(grn_ctx *ctx, char *command, int type, int task_id,
       }
 
       if (report_p(grntest_task[task_id].jobtype)) {
-        unsigned char tmpbuf[BUF_LEN];
+        char tmpbuf[BUF_LEN];
 
         if (res_len < BUF_LEN) {
           strncpy(tmpbuf, res, res_len);
@@ -869,7 +869,7 @@ do_command(grn_ctx *ctx, char *command, int type, int task_id)
       }
 
       if (report_p(grntest_task[task_id].jobtype)) {
-        unsigned char tmpbuf[BUF_LEN];
+        char tmpbuf[BUF_LEN];
 
         if (res_len < BUF_LEN) {
           strncpy(tmpbuf, res, res_len);
