@@ -4171,7 +4171,7 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
         sis[i++] = si;
         /* better index resolving framework for functions should be implemented */
         {
-          uint32_t sid;
+          int sid;
           grn_obj *index, **p = si->args, **pe = si->args + si->nargs;
           for (; p < pe; p++) {
             if (GRN_DB_OBJP(*p)) {
