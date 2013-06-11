@@ -2502,7 +2502,7 @@ grn_substring(grn_ctx *ctx, char **str, char **str_end, int start, int end, grn_
 static void
 grn_text_atoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_id id)
 {
-  int vs;
+  uint32_t vs;
   grn_obj buf;
   if (obj->header.type == GRN_ACCESSOR) {
     grn_accessor *a = (grn_accessor *)obj;
