@@ -466,16 +466,16 @@ grn_expr_unpack(grn_ctx *ctx, const uint8_t *p, const uint8_t *pe, grn_obj *expr
     case GRN_EXPR_PACK_TYPE_OTHERS :
       {
         uint32_t object_type;
-      GRN_B_DEC(object_type, p);
-      if (GRN_TYPE <= object_type && object_type <= GRN_COLUMN_INDEX) {
-        grn_id id;
-        GRN_B_DEC(id, p);
-        code->value = grn_ctx_at(ctx, id);
-      } else {
-        if (!(v = const_new(ctx, e))) { return NULL; }
-        p = grn_obj_unpack(ctx, p, pe, object_type, GRN_OBJ_EXPRCONST, v);
-        code->value = v;
-      }
+        GRN_B_DEC(object_type, p);
+        if (GRN_TYPE <= object_type && object_type <= GRN_COLUMN_INDEX) {
+          grn_id id;
+          GRN_B_DEC(id, p);
+          code->value = grn_ctx_at(ctx, id);
+        } else {
+          if (!(v = const_new(ctx, e))) { return NULL; }
+          p = grn_obj_unpack(ctx, p, pe, object_type, GRN_OBJ_EXPRCONST, v);
+          code->value = v;
+        }
       }
       break;
     }
