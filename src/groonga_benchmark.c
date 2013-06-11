@@ -845,7 +845,8 @@ static int
 do_command(grn_ctx *ctx, char *command, int type, int task_id)
 {
   char *res;
-  int res_len, flags;
+  unsigned int res_len;
+  int flags;
   grn_obj start_time, end_time;
 
   GRN_TIME_INIT(&start_time, 0);
