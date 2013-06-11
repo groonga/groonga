@@ -160,11 +160,12 @@ delimited_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
     unsigned int rest_length;
     rest_length = tokenizer->end - tokenizer->next;
     tokenizer->next =
-      grn_tokenizer_tokenized_delimiter_next(ctx,
-                                             &(tokenizer->token),
-                                             (const char *)tokenizer->next,
-                                             rest_length,
-                                             tokenizer->query->encoding);
+      (unsigned char *)grn_tokenizer_tokenized_delimiter_next(
+        ctx,
+        &(tokenizer->token),
+        (const char *)tokenizer->next,
+        rest_length,
+        tokenizer->query->encoding);
   } else {
     size_t cl;
     const unsigned char *p = tokenizer->next, *r;
@@ -187,7 +188,11 @@ delimited_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
     } else {
       status = GRN_TOKENIZER_CONTINUE;
     }
-    grn_tokenizer_token_push(ctx, &(tokenizer->token), p, r - p, status);
+    grn_tokenizer_token_push(ctx,
+                             &(tokenizer->token),
+                             (const char *)p,
+                             r - p,
+                             status);
   }
 
   return NULL;
