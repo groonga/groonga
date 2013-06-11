@@ -162,7 +162,7 @@ delimited_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
     tokenizer->next =
       grn_tokenizer_tokenized_delimiter_next(ctx,
                                              &(tokenizer->token),
-                                             tokenizer->next,
+                                             (const char *)tokenizer->next,
                                              rest_length,
                                              tokenizer->query->encoding);
   } else {
