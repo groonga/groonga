@@ -700,7 +700,7 @@ utf8_normalize(grn_ctx *ctx, grn_string *nstr)
           }
           de = normalized + ds;
           d = normalized + (d - (unsigned char *)nstr->normalized);
-          nstr->normalized = normalized;
+          nstr->normalized = (char *)normalized;
           if (ch) {
             int16_t *checks;
             if (!(checks = GRN_REALLOC(nstr->checks, ds * sizeof(int16_t) + 1))) {
