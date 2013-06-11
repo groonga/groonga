@@ -434,7 +434,7 @@ grn_expr_unpack(grn_ctx *ctx, const uint8_t *p, const uint8_t *pe, grn_obj *expr
   GRN_B_DEC(n, p);
   for (i = 0; i < n; i++) {
     GRN_B_DEC(ns, p);
-    v = grn_expr_add_var(ctx, expr, ns ? p : NULL, ns);
+    v = grn_expr_add_var(ctx, expr, ns ? (const char *)p : NULL, ns);
     p += ns;
     GRN_B_DEC(type, p);
     if (GRN_TYPE <= type && type <= GRN_COLUMN_INDEX) { /* error */ }
