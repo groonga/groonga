@@ -3260,7 +3260,7 @@ grn_text_fgets(grn_ctx *ctx, grn_obj *buf, FILE *fp)
 grn_bool
 grn_bulk_is_zero(grn_ctx *ctx, grn_obj *obj)
 {
-  byte *v = GRN_BULK_HEAD(obj);
+  const char *v = GRN_BULK_HEAD(obj);
   unsigned int s = GRN_BULK_VSIZE(obj);
   for (; s; s--, v++) {
     if (*v) { return GRN_FALSE; }
