@@ -58,7 +58,9 @@
 
 /* compiler specific build options */
 #cmakedefine _FILE_OFFSET_BITS @_FILE_OFFSET_BITS@
-#cmakedefine _GNU_SOURCE
+#ifndef _GNU_SOURCE
+ #cmakedefine _GNU_SOURCE
+#endif
 #cmakedefine _ISOC99_SOURCE
 #cmakedefine _LARGE_FILES
 #cmakedefine _NETBSD_SOURCE

@@ -91,6 +91,10 @@ add_definitions(
   -DHAVE_CONFIG_H
   )
 
+if(CMAKE_COMPILER_IS_GNUC OR CMAKE_C_COMPILER_ID STREQUAL "Clang")
+  set(_GNU_SOURCE TRUE)
+endif()
+
 include_directories(
   BEFORE
   ${CMAKE_CURRENT_BINARY_DIR}
