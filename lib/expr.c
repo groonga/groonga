@@ -433,12 +433,13 @@ grn_expr_unpack(grn_ctx *ctx, const uint8_t *p, const uint8_t *pe, grn_obj *expr
   grn_expr *e = (grn_expr *)expr;
   GRN_B_DEC(n, p);
   for (i = 0; i < n; i++) {
+    uint32_t object_type;
     GRN_B_DEC(ns, p);
     v = grn_expr_add_var(ctx, expr, ns ? (const char *)p : NULL, ns);
     p += ns;
-    GRN_B_DEC(type, p);
-    if (GRN_TYPE <= type && type <= GRN_COLUMN_INDEX) { /* error */ }
-    p = grn_obj_unpack(ctx, p, pe, type, 0, v);
+    GRN_B_DEC(object_type, p);
+    if (GRN_TYPE <= object_type && object_type <= GRN_COLUMN_INDEX) { /* error */ }
+    p = grn_obj_unpack(ctx, p, pe, object_type, 0, v);
     if (pe < p) {
       ERR(GRN_INVALID_FORMAT, "benced image is corrupt");
       return p;
@@ -463,15 +464,18 @@ grn_expr_unpack(grn_ctx *ctx, const uint8_t *p, const uint8_t *pe, grn_obj *expr
       }
       break;
     case GRN_EXPR_PACK_TYPE_OTHERS :
-      GRN_B_DEC(type, p);
-      if (GRN_TYPE <= type && type <= GRN_COLUMN_INDEX) {
+      {
+        uint32_t object_type;
+      GRN_B_DEC(object_type, p);
+      if (GRN_TYPE <= object_type && object_type <= GRN_COLUMN_INDEX) {
         grn_id id;
         GRN_B_DEC(id, p);
         code->value = grn_ctx_at(ctx, id);
       } else {
         if (!(v = const_new(ctx, e))) { return NULL; }
-        p = grn_obj_unpack(ctx, p, pe, type, GRN_OBJ_EXPRCONST, v);
+        p = grn_obj_unpack(ctx, p, pe, object_type, GRN_OBJ_EXPRCONST, v);
         code->value = v;
+      }
       }
       break;
     }
