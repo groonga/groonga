@@ -71,7 +71,7 @@ uvector_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   byte *p = tokenizer->curr + tokenizer->unit;
   if (tokenizer->tail < p) {
     grn_tokenizer_token_push(ctx, &(tokenizer->token),
-                             tokenizer->curr, 0,
+                             (const char *)tokenizer->curr, 0,
                              GRN_TOKENIZER_TOKEN_LAST);
   } else {
     grn_tokenizer_status status;
@@ -81,7 +81,7 @@ uvector_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       status = GRN_TOKENIZER_TOKEN_CONTINUE;
     }
     grn_tokenizer_token_push(ctx, &(tokenizer->token),
-                             tokenizer->curr, tokenizer->unit,
+                             (const char *)tokenizer->curr, tokenizer->unit,
                              status);
     tokenizer->curr = p;
   }
