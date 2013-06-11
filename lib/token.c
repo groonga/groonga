@@ -58,7 +58,7 @@ uvector_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   user_data->ptr = tokenizer;
 
   grn_tokenizer_token_init(ctx, &(tokenizer->token));
-  tokenizer->curr = GRN_TEXT_VALUE(str);
+  tokenizer->curr = (byte *)GRN_TEXT_VALUE(str);
   tokenizer->tail = tokenizer->curr + GRN_TEXT_LEN(str);
   tokenizer->unit = sizeof(grn_id);
   return NULL;
