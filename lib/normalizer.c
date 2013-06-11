@@ -657,7 +657,8 @@ utf8_normalize(grn_ctx *ctx, grn_string *nstr)
       break;
     }
     if (remove_tokenized_delimiter_p &&
-        grn_tokenizer_is_tokenized_delimiter(ctx, s, ls, GRN_ENC_UTF8)) {
+        grn_tokenizer_is_tokenized_delimiter(ctx, (const char *)s, ls,
+                                             GRN_ENC_UTF8)) {
       continue;
     }
     if ((p = (unsigned char *)grn_nfkc_map1(s))) {
