@@ -549,7 +549,7 @@ grn_token_next(grn_ctx *ctx, grn_token *token)
       ((grn_proc *)tokenizer)->funcs[PROC_NEXT](ctx, 1, &table, &token->pctx.user_data);
       stat_ = grn_ctx_pop(ctx);
       curr_ = grn_ctx_pop(ctx);
-      token->curr = GRN_TEXT_VALUE(curr_);
+      token->curr = (const unsigned char *)GRN_TEXT_VALUE(curr_);
       token->curr_size = GRN_TEXT_LEN(curr_);
       status = GRN_UINT32_VALUE(stat_);
       token->status = ((status & GRN_TOKENIZER_TOKEN_LAST) ||
