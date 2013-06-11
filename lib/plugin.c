@@ -173,7 +173,7 @@ grn_plugin_open(grn_ctx *ctx, const char *filename)
 {
   grn_id id;
   grn_dl dl;
-  grn_plugin **plugin;
+  grn_plugin **plugin = NULL;
 
   if ((id = grn_plugin_find(ctx, filename, plugin))) {
     if (plugin && *plugin) {
