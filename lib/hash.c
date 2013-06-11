@@ -1318,22 +1318,22 @@ grn_hash_entry_get_key(grn_ctx *ctx, grn_hash *hash, grn_hash_entry *entry)
   if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
     if (grn_hash_is_io_hash(hash)) {
       if (entry->io_entry.flag & HASH_IMMEDIATE) {
-        return entry->io_entry.key.buf;
+        return (char *)entry->io_entry.key.buf;
       } else {
         return (char *)grn_io_hash_key_at(ctx, hash, entry->io_entry.key.offset);
       }
     } else {
       if (entry->tiny_entry.flag & HASH_IMMEDIATE) {
-        return entry->tiny_entry.key.buf;
+        return (char *)entry->tiny_entry.key.buf;
       } else {
         return entry->tiny_entry.key.ptr;
       }
     }
   } else {
     if (hash->key_size == sizeof(uint32_t)) {
-      return entry->plain_entry.key;
+      return (char *)entry->plain_entry.key;
     } else {
-      return entry->rich_entry.key_and_value;
+      return (char *)entry->rich_entry.key_and_value;
     }
   }
 }
