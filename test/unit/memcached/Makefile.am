@@ -5,7 +5,7 @@ noinst_LTLIBRARIES =				\
 endif
 endif
 
-INCLUDES =			\
+AM_CPPFLAGS =			\
 	-I$(top_srcdir)/include	\
 	-I$(top_srcdir)/lib	\
 	$(GROONGA_INCLUDEDIR)

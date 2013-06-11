@@ -11,7 +11,7 @@ noinst_LTLIBRARIES =				\
 	suite-groonga-test-fixtures.la
 endif
 
-INCLUDES =			\
+AM_CPPFLAGS =			\
 	-I$(srcdir)		\
 	-I$(srcdir)/../lib	\
 	-I$(top_srcdir)/include	\

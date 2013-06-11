@@ -11,7 +11,7 @@ noinst_PROGRAMS =		\
 	bench-geo-select
 endif
 
-INCLUDES =			\
+AM_CPPFLAGS =			\
 	-I$(srcdir)		\
 	-I$(srcdir)/lib		\
 	-I$(top_srcdir)/include	\

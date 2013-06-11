@@ -12,7 +12,7 @@ noinst_LTLIBRARIES +=				\
 endif
 endif
 
-INCLUDES =					\
+AM_CPPFLAGS =					\
 	-I$(srcdir)				\
 	-I$(top_srcdir)/include			\
 	-I$(top_srcdir)/lib			\

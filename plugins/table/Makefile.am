@@ -5,7 +5,7 @@ AM_CFLAGS =					\
 	$(MESSAGE_PACK_CFLAGS)			\
 	$(MRUBY_CFLAGS)
 
-INCLUDES =			\
+AM_CPPFLAGS =			\
 	-I$(top_builddir)	\
 	-I$(top_srcdir)/include	\
 	-I$(top_srcdir)/lib

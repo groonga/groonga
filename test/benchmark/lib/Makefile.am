@@ -3,7 +3,7 @@ noinst_LTLIBRARIES =		\
 	libbenchmark.la
 endif
 
-INCLUDES =			\
+AM_CPPFLAGS =			\
 	-I$(srcdir)
 
 AM_CFLAGS =			\

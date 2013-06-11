@@ -4,7 +4,7 @@ noinst_LTLIBRARIES =				\
 	test-stress-patricia-trie.la
 endif
 
-INCLUDES =				\
+AM_CPPFLAGS =				\
 	-I$(srcdir)			\
 	-I$(top_srcdir)/test/unit/lib	\
 	-I$(top_srcdir)/include		\

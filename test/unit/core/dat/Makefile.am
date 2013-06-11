@@ -22,7 +22,7 @@ noinst_LTLIBRARIES =				\
 	test-vector.la
 endif
 
-INCLUDES =					\
+AM_CPPFLAGS =					\
 	-I$(top_srcdir)/include			\
 	-I$(top_srcdir)/lib			\
 	-I$(top_srcdir)/test/unit/lib		\

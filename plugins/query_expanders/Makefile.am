@@ -1,7 +1,7 @@
 EXTRA_DIST =					\
 	CMakeLists.txt
 
-INCLUDES =			\
+AM_CPPFLAGS =			\
 	-I$(top_builddir)	\
 	-I$(top_srcdir)/include	\
 	-I$(top_srcdir)/lib

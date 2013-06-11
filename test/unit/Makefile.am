@@ -35,7 +35,7 @@ EXTRA_DIST =					\
 	run-test.rb				\
 	Gemfile
 
-INCLUDES =			\
+AM_CPPFLAGS =			\
 	-I$(srcdir)		\
 	-I$(top_srcdir)/include	\
 	-I$(top_srcdir)/lib	\
