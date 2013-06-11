@@ -3219,7 +3219,7 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h)
   grn_io_win sw, dw0, dw1;
   buffer *sb, *db0 = NULL, *db1 = NULL;
   uint8_t *sc = NULL, *dc0, *dc1;
-  uint32_t dps0, dps1, dls0, dls1, sps, scn, dcn0, dcn1;
+  uint32_t dps0, dps1, dls0, dls1, sps, scn, dcn0 = 0, dcn1 = 0;
   if (ii->header->binfo[seg] == NOT_ASSIGNED) { return GRN_FILE_CORRUPT; }
   if ((rc = buffer_segment_reserve(ctx, ii, &dls0, &dps0, &dls1, &dps1))) {
     return rc;
