@@ -432,7 +432,11 @@ ngram_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     tokenizer->skip = tokenizer->overlap ? 1 : len;
   }
   if (r == e) { status |= GRN_TOKENIZER_TOKEN_REACH_END; }
-  grn_tokenizer_token_push(ctx, &(tokenizer->token), p, r - p, status);
+  grn_tokenizer_token_push(ctx,
+                           &(tokenizer->token),
+                           (const char *)p,
+                           r - p,
+                           status);
   return NULL;
 }
 
