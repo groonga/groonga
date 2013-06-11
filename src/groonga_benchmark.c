@@ -658,7 +658,7 @@ command_send(grn_ctx *ctx, const char *command, int type, int task_id)
 
 static void
 command_recv_http(grn_ctx *ctx, int type, int task_id,
-                  char **res, int *res_len, int *flags)
+                  char **res, unsigned int *res_len, int *flags)
 {
   int len;
   char buf[BUF_LEN];
@@ -705,7 +705,7 @@ command_recv_http(grn_ctx *ctx, int type, int task_id,
 
 static void
 command_recv_ctx(grn_ctx *ctx, int type, int task_id,
-                 char **res, int *res_len, int *flags)
+                 char **res, unsigned int *res_len, int *flags)
 {
   grn_ctx_recv(ctx, res, res_len, flags);
   if (ctx->rc) {
@@ -716,7 +716,7 @@ command_recv_ctx(grn_ctx *ctx, int type, int task_id,
 
 static void
 command_recv(grn_ctx *ctx, int type, int task_id,
-             char **res, int *res_len, int *flags)
+             char **res, unsigned int *res_len, int *flags)
 {
   if (http_p(type)) {
     command_recv_http(ctx, type, task_id, res, res_len, flags);
@@ -729,7 +729,8 @@ static int
 shutdown_server(void)
 {
   char *res;
-  int flags, res_len;
+  int flags;
+  unsigned int res_len;
   int job_type;
   int task_id = 0;
 
@@ -753,7 +754,8 @@ do_load_command(grn_ctx *ctx, char *command, int type, int task_id,
                 long long int *load_start)
 {
   char *res;
-  int res_len, flags, ret;
+  unsigned int res_len;
+  int flags, ret;
   grn_obj start_time, end_time;
 
   GRN_TIME_INIT(&start_time, 0);
