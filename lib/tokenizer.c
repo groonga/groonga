@@ -54,8 +54,6 @@ grn_tokenizer_is_tokenized_delimiter(grn_ctx *ctx,
                                      unsigned int str_length,
                                      grn_encoding encoding)
 {
-  const unsigned char *binary_string = str_ptr;
-
   if (encoding != GRN_ENC_UTF8) {
     return GRN_FALSE;
   }
@@ -64,7 +62,7 @@ grn_tokenizer_is_tokenized_delimiter(grn_ctx *ctx,
     return GRN_FALSE;
   }
 
-  return memcmp(binary_string,
+  return memcmp(str_ptr,
                 GRN_TOKENIZER_TOKENIZED_DELIMITER_UTF8,
                 GRN_TOKENIZER_TOKENIZED_DELIMITER_UTF8_LEN) == 0;
 }
