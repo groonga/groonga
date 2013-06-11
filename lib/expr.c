@@ -4042,7 +4042,7 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
       si->end = c - e->codes;
       sis[i++] = si;
       {
-        uint32_t sid;
+        int sid;
         grn_obj *index, **p = si->args, **pe = si->args + si->nargs;
         for (; p < pe; p++) {
           if ((*p)->header.type == GRN_EXPR) {
