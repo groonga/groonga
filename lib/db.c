@@ -2426,7 +2426,7 @@ grn_table_search(grn_ctx *ctx, grn_obj *table, const void *key, uint32_t key_siz
   case GRN_TABLE_HASH_KEY :
     {
       grn_hash *hash = (grn_hash *)table;
-      grn_id id;
+      grn_id id = GRN_ID_NIL;
       WITH_NORMALIZE(hash, key, key_size, {
         id = grn_hash_get(ctx, hash, key, key_size, NULL);
       });
