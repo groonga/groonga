@@ -251,9 +251,9 @@ grn_tokenizer_tokenized_delimiter_next(grn_ctx *ctx,
                                        grn_encoding encoding)
 {
   size_t char_length = 0;
-  const unsigned char *start = str_ptr;
-  const unsigned char *current;
-  const unsigned char *end = str_ptr + str_length;
+  const char *start = str_ptr;
+  const char *current;
+  const char *end = str_ptr + str_length;
   const char *next_start = NULL;
   unsigned int token_length;
   grn_tokenizer_status status;
