@@ -2777,12 +2777,13 @@ rk_emit(rk_tree_node *rn, char **str)
 } while (0)
 
 static uint32_t
-rk_conv(const char *str, uint32_t str_len, char *buf, uint32_t buf_size, uint8_t *statep)
+rk_conv(const char *str, uint32_t str_len, uint8_t *buf, uint32_t buf_size, uint8_t *statep)
 {
   uint32_t l;
   uint8_t state = 0;
   rk_tree_node *rn;
-  char *e, *oc = buf, *oe = oc + buf_size;
+  char *e;
+  uint8_t *oc = buf, *oe = oc + buf_size;
   const uint8_t *ic = (uint8_t *)str, *ic_ = ic, *ie = ic + str_len;
   while (ic < ie) {
     if ((rn = rk_lookup(state, *ic))) {
