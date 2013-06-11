@@ -238,7 +238,7 @@ typedef struct {
   const unsigned char *next;
   const unsigned char *end;
   const uint_least8_t *ctypes;
-  int32_t len;
+  uint32_t len;
   uint32_t tail;
 } grn_ngram_tokenizer;
 
