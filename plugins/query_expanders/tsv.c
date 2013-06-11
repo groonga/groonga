@@ -76,7 +76,7 @@ is_comment_mark(char character)
 static inline grn_encoding
 detect_coding_part(grn_ctx *ctx, const char *line, size_t line_length)
 {
-  grn_encoding encoding;
+  grn_encoding encoding = GRN_ENC_NONE;
   grn_obj null_terminated_line_buffer;
   const char *c_line;
   const char *coding_part_keyword = "coding: ";
