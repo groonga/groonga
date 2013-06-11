@@ -23,11 +23,11 @@ tokenizers_plugins_LTLIBRARIES += kytea.la
 endif
 
 include mecab_sources.am
-mecab_la_CPPFLAGS = $(MECAB_CPPFLAGS)
+mecab_la_CPPFLAGS = $(AM_CPPFLAGS) $(MECAB_CPPFLAGS)
 mecab_la_LIBADD = $(LIBS) $(MECAB_LIBS)
 mecab_la_LDFLAGS = $(AM_LDFLAGS) $(MECAB_LDFLAGS)
 
 include kytea_sources.am
-kytea_la_CPPFLAGS = $(KYTEA_CFLAGS)
+kytea_la_CPPFLAGS = $(AM_CPPFLAGS) $(KYTEA_CFLAGS)
 kytea_la_LIBADD = $(LIBS) $(KYTEA_LIBS)
 kytea_la_LDFLAGS = $(AM_LDFLAGS) $(KYTEA_LDFLAGS)
