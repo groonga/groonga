@@ -123,8 +123,8 @@ Return value
 ------------
 
 ``sub_filter`` returns whether any record is matched or not. If one or
-more records are matched, ``true`` is returned. Otherwise, ``false``
-is returned.
+more records are matched, it returns ``true``. Otherwise, it returns
+``false``.
 
 See also
 --------
