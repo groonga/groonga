@@ -151,7 +151,9 @@ See :ref:`query-expander` about details.
 Return value
 ------------
 
-``query`` returns a value of boolean (true or false).
+``query`` returns whther any record is matched or not. If one or
+more records are matched, ``true`` is returned. Otherwise, ``false``
+is returned.
 
 TODO
 ----
