@@ -114,16 +114,22 @@ There are two required parameter, ``match_column`` and ``query_string``.
 ``match_column``
 """"""""""""""""
 
-  It specifies ``match_column`` equivalent parameter.
+It specifies the default target column for fulltext search by
+``query_string`` parameter value. It is the same role as
+``match_column`` parameter in ``select``.
 
-See :ref:`select-match-columns` about match_column.
+See :ref:`select-match-columns` about ``match_column`` parameter in
+``select``.
 
 ``query_string``
 """"""""""""""""
 
-  It specifies ``query`` equivalent parameter.
+It specifies the search condition in
+:doc:`/reference/grn_expr/query_syntax`. It is the same role as
+``query`` parameter in ``select``.
 
-See :ref:`select-query` about query string.
+See :ref:`select-match-columns` about ``query`` parameter in
+``select``.
 
 Optional parameter
 ^^^^^^^^^^^^^^^^^^
