@@ -122,7 +122,7 @@ context.
 Return value
 ------------
 
-``sub_filter`` returns whther any record is matched or not. If one or
+``sub_filter`` returns whether any record is matched or not. If one or
 more records are matched, ``true`` is returned. Otherwise, ``false``
 is returned.
 
