@@ -1,0 +1,47 @@
+table_create Users TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Users full_name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Bookmarks TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Bookmarks user COLUMN_SCALAR Users
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"_key": "mori", "full_name": "Daijiro MORI"}
+]
+[[0,0.0,0.0],1]
+load --table Bookmarks
+[
+{"_key": "http://groonga.org/", "user": "mori"}
+]
+[[0,0.0,0.0],1]
+select Bookmarks --output_columns _key,user.full_name
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "user.full_name",
+          "ShortText"
+        ]
+      ],
+      [
+        "http://groonga.org/",
+        "Daijiro MORI"
+      ]
+    ]
+  ]
+]

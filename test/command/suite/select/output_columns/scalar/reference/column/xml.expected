@@ -1,0 +1,34 @@
+table_create Users TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Users full_name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Bookmarks TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Bookmarks user COLUMN_SCALAR Users
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"_key": "mori", "full_name": "Daijiro MORI"}
+]
+[[0,0.0,0.0],1]
+load --table Bookmarks
+[
+{"_key": "http://groonga.org/", "user": "mori"}
+]
+[[0,0.0,0.0],1]
+select Bookmarks --output_columns _key,user.full_name --output_type xml
+<?xml version="1.0" encoding="utf-8"?>
+<SEGMENTS>
+<SEGMENT>
+<RESULTPAGE>
+<RESULTSET OFFSET="0" LIMIT="1" NHITS="1">
+<HIT NO="1">
+<FIELD NAME="_key">http://groonga.org/</FIELD>
+<FIELD NAME="user.full_name">Daijiro MORI</FIELD>
+</HIT>
+</RESULTSET>
+</RESULTPAGE>
+</SEGMENT>
+</SEGMENTS>
+
+
