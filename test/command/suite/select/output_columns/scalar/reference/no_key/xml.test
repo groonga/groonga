@@ -1,0 +1,11 @@
+table_create Users TABLE_HASH_KEY ShortText
+
+table_create Bookmarks TABLE_HASH_KEY ShortText
+column_create Bookmarks user COLUMN_SCALAR Users
+
+load --table Bookmarks
+[
+{"_key": "http://groonga.org/", "user": "mori"}
+]
+
+select Bookmarks --output_columns _key,user --output_type xml
