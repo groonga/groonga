@@ -1,0 +1,18 @@
+table_create Users TABLE_HASH_KEY ShortText
+column_create Users full_name COLUMN_SCALAR ShortText
+
+table_create Bookmarks TABLE_HASH_KEY ShortText
+column_create Bookmarks users COLUMN_VECTOR Users
+
+load --table Users
+[
+{"_key": "mori", "full_name": "Daijiro MORI"},
+{"_key": "s-yata", "full_name": "Susumu Yata"}
+]
+
+load --table Bookmarks
+[
+{"_key": "http://groonga.org/", "users": ["mori", "s-yata"]}
+]
+
+select Bookmarks --output_columns _key,users.full_name --output_type xml
