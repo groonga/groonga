@@ -113,8 +113,6 @@ GRN_API void grn_str_url_path_normalize(grn_ctx *ctx,
                                         const char *path, size_t path_len,
                                         char *buf, size_t buf_len);
 
-GRN_API grn_rc grn_text_otoxml(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj,
-                                grn_obj_format *format);
 #define GRN_OBJ_FORMAT_XML_ELEMENT_MASK             (0x01<<1)
 #define GRN_OBJ_FORMAT_XML_ELEMENT_RESULTSET        (0x00<<1)
 #define GRN_OBJ_FORMAT_XML_ELEMENT_NAVIGATIONENTRY  (0x01<<1)
