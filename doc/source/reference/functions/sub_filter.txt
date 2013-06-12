@@ -11,18 +11,20 @@ sub_filter
 Summary
 -------
 
-``sub_filter`` evaluates ``query_string`` in ``match_column`` context.
+``sub_filter`` evaluates ``filter_string`` in ``scope`` context.
 
-``sub_filter`` can be used in only ``--filter`` in :doc:`/reference/commands/select`.
+``sub_filter`` can be used in only ``--filter`` in
+:doc:`/reference/commands/select`.
 
 Syntax
 ------
 
-``sub_filter`` requires two arguments - ``match_column`` and ``query_string``.
+``sub_filter`` requires two arguments. They are ``scope`` and
+``filter_string``.
 
 ::
 
-  sub_filter(match_column, query_string)
+  sub_filter(scope, filter_string)
 
 
 Usage
@@ -72,7 +74,7 @@ Here is the simple usage of ``sub_filter`` function which extracts the blog entr
 .. include:: ../../example/reference/functions/sub_filter/usage_without_sub_filter.log
 .. select Blog --output_columns _key --filter "comments.name @ \"A\" && comments.content @ \"groonga\""
 
-When executing above query, not only "groonga's blog", but also "mroonga's blog".
+When executing the above query, not only "groonga's blog", but also "mroonga's blog".
 This is not what you want because user "A" does not mention "groonga" to "mroonga's blog".
 
 Without sub_filter, it means that following conditions are met.
@@ -84,10 +86,10 @@ Without sub_filter, it means that following conditions are met.
 .. include:: ../../example/reference/functions/sub_filter/usage_with_sub_filter.log
 .. select Blog --output_columns _key --filter 'sub_filter(comments, "name @ \\"A\\" && content @ \\"groonga\\"")'
 
-On the other hand, executing above query returns the intended result.
+On the other hand, executing the above query returns the intended result.
 Because the arguments of sub_filter is evaluated in comments column's context.
 
-It means that sub_filter requires following condition is met.
+It means that sub_filter requires the following condition is met.
 
 * There are the records that user "A" mentions about "groonga".
 
@@ -95,28 +97,37 @@ It means that sub_filter requires following condition is met.
 Parameters
 ----------
 
-There are two required parameter, ``match_column`` and ``query_string``.
+There are two required parameter, ``scope`` and ``filter_string``.
 
-``match_column``
-^^^^^^^^^^^^^^^^
+``scope``
+^^^^^^^^^
 
-  It specifies ``match_column`` equivalent parameter.
+It specifies a column of the table that is specified by ``table``
+parameter in ``select``. ``filter_string`` is evaluated in the column
+context. It means that ``filter_string`` is evaluated like
+``select --table TYPE_OF_THE_COLUMN --filter FILTER_STRING``.
 
-See :ref:`select-match-columns` about match_column.
+The specified column type must be a table. In other words, the column
+type must be reference type.
 
-``query_string``
-^^^^^^^^^^^^^^^^
+See :ref:`select-table` about ``table`` parameter in ``select``.
 
-  It specifies ``query`` equivalent parameter.
+``filter_string``
+^^^^^^^^^^^^^^^^^
 
-See :ref:`select-query` about query string.
+It specifies a search condition in
+:doc:`/reference/grn_expr/script_syntax`. It is evaluated in ``scope``
+context.
 
 Return value
 ------------
 
-``sub_filter`` returns a value of boolean (true or false).
+``sub_filter`` returns whther any record is matched or not. If one or
+more records are matched, ``true`` is returned. Otherwise, ``false``
+is returned.
 
 See also
 --------
 
 * :doc:`/reference/commands/select`
+* :doc:`/reference/grn_expr/script_syntax`
