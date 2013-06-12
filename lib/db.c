@@ -2496,7 +2496,6 @@ grn_accessor_resolve(grn_ctx *ctx, grn_obj *accessor, int deep,
       grn_id *tid;
       grn_obj *domain;
       grn_obj *next_res;
-      grn_operator next_op;
       grn_search_optarg next_optarg;
       grn_rset_recinfo *recinfo;
       if (optarg) {
@@ -2505,10 +2504,7 @@ grn_accessor_resolve(grn_ctx *ctx, grn_obj *accessor, int deep,
       } else {
         memset(&next_optarg, 0, sizeof(grn_search_optarg));
       }
-      if (i == 1) {
-        next_res = res;
-        next_op = op;
-      } else {
+      {
         grn_obj *range = grn_ctx_at(ctx, DB_OBJ(index)->range);
         next_res = grn_table_create(ctx, NULL, 0, NULL,
                                     GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
@@ -2521,7 +2517,6 @@ grn_accessor_resolve(grn_ctx *ctx, grn_obj *accessor, int deep,
           }
           break;
         }
-        next_op = GRN_OP_OR;
       }
       domain = grn_ctx_at(ctx, index->header.domain);
       GRN_HASH_EACH(ctx, (grn_hash *)current_res, id, &tid, NULL, &recinfo, {
@@ -2530,7 +2525,7 @@ grn_accessor_resolve(grn_ctx *ctx, grn_obj *accessor, int deep,
         if (domain->header.type == GRN_TABLE_NO_KEY) {
           rc = grn_ii_sel(ctx, (grn_ii *)index,
                           (const char *)tid, sizeof(grn_id),
-                          (grn_hash *)next_res, next_op,
+                          (grn_hash *)next_res, GRN_OP_OR,
                           &next_optarg);
         } else {
           char key[GRN_TABLE_MAX_KEY_SIZE];
@@ -2538,7 +2533,7 @@ grn_accessor_resolve(grn_ctx *ctx, grn_obj *accessor, int deep,
           key_len = grn_table_get_key(ctx, domain, *tid,
                                       key, GRN_TABLE_MAX_KEY_SIZE);
           rc = grn_ii_sel(ctx, (grn_ii *)index, key, key_len,
-                          (grn_hash *)next_res, next_op,
+                          (grn_hash *)next_res, GRN_OP_OR,
                           &next_optarg);
         }
         if (rc != GRN_SUCCESS) {
@@ -2550,13 +2545,15 @@ grn_accessor_resolve(grn_ctx *ctx, grn_obj *accessor, int deep,
         grn_obj_unlink(ctx, current_res);
       }
       if (rc != GRN_SUCCESS) {
-        if (res != next_res) {
-          grn_obj_unlink(ctx, next_res);
-        }
+        grn_obj_unlink(ctx, next_res);
         break;
       }
       current_res = next_res;
     }
+  }
+
+  if (rc == GRN_SUCCESS) {
+    rc = grn_table_setoperation(ctx, res, current_res, res, op);
   }
 
   GRN_OBJ_FIN(ctx, &accessor_stack);
