@@ -25,6 +25,7 @@ select Bookmarks --output_columns _key,users.full_name --output_type xml
 <RESULTSET OFFSET="0" LIMIT="1" NHITS="1">
 <HIT NO="1">
 <FIELD NAME="_key">http://groonga.org/</FIELD>
+<FIELD NAME="users.full_name">Daijiro MORI, Susumu Yata</FIELD>
 </HIT>
 </RESULTSET>
 </RESULTPAGE>
