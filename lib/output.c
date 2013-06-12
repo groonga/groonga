@@ -542,7 +542,7 @@ grn_text_atoj(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
             grn_obj_get_value(ctx, a->obj, id, &buf);
             idp = (grn_id *)GRN_BULK_HEAD(&buf);
             vs = GRN_BULK_VSIZE(&buf) / sizeof(grn_id);
-            grn_output_array_open(ctx, outbuf, output_type, "COLUMN", vs);
+            grn_output_array_open(ctx, outbuf, output_type, "VECTOR", vs);
             for (; vs--; idp++) {
               grn_text_atoj(ctx, outbuf, output_type, (grn_obj *)a->next, *idp);
             }

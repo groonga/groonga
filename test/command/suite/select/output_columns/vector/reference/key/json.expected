@@ -1,0 +1,43 @@
+table_create Users TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Bookmarks TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Bookmarks users COLUMN_VECTOR Users
+[[0,0.0,0.0],true]
+load --table Bookmarks
+[
+{"_key": "http://groonga.org/", "users": ["mori", "s-yata"]}
+]
+[[0,0.0,0.0],1]
+select Bookmarks --output_columns _key,users._key
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "users._key",
+          "ShortText"
+        ]
+      ],
+      [
+        "http://groonga.org/",
+        [
+          "mori",
+          "s-yata"
+        ]
+      ]
+    ]
+  ]
+]
