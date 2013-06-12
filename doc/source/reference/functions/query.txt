@@ -134,7 +134,7 @@ See :ref:`select-match-columns` about ``query`` parameter in
 Optional parameter
 ^^^^^^^^^^^^^^^^^^
 
-There is a optional parameter, ``approximate_type``.
+There are some optional parameters.
 
 ``query_expander``
 """"""""""""""""""
