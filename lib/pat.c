@@ -1087,7 +1087,7 @@ grn_pat_lcp_search(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_siz
 }
 
 inline static grn_rc
-__grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, int shared,
+_grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, int shared,
              grn_table_delete_optarg *optarg)
 {
   grn_pat_delinfo *di;
@@ -1226,7 +1226,7 @@ _grn_pat_delete(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_size,
     }
     return GRN_INVALID_ARGUMENT;
   }
-  return __grn_pat_del(ctx, pat, key, key_size, 0, optarg);
+  return _grn_pat_del(ctx, pat, key, key_size, 0, optarg);
 }
 
 grn_rc
@@ -1457,7 +1457,7 @@ grn_pat_delete_with_sis(grn_ctx *ctx, grn_pat *pat, grn_id id,
       shared = 0;
     }
     key_size = PAT_LEN(rn);
-    if (key && key_size) { __grn_pat_del(ctx, pat, key, key_size, shared, NULL); }
+    if (key && key_size) { _grn_pat_del(ctx, pat, key, key_size, shared, NULL); }
     if (si) {
       grn_id *p, sid;
       uint32_t lkey = 0;
