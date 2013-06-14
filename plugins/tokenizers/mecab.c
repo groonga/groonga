@@ -241,6 +241,9 @@ static grn_obj *
 mecab_fin(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_mecab_tokenizer *tokenizer = user_data->ptr;
+  if (!tokenizer) {
+    return NULL;
+  }
   grn_tokenizer_token_fin(ctx, &(tokenizer->token));
   grn_tokenizer_query_close(ctx, tokenizer->query);
   if (tokenizer->buf) {

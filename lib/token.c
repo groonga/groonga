@@ -92,6 +92,9 @@ static grn_obj *
 uvector_fin(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_uvector_tokenizer *tokenizer = user_data->ptr;
+  if (!tokenizer) {
+    return NULL;
+  }
   grn_tokenizer_token_fin(ctx, &(tokenizer->token));
   GRN_FREE(tokenizer);
   return NULL;
@@ -202,6 +205,9 @@ static grn_obj *
 delimited_fin(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_delimited_tokenizer *tokenizer = user_data->ptr;
+  if (!tokenizer) {
+    return NULL;
+  }
   grn_tokenizer_query_close(ctx, tokenizer->query);
   grn_tokenizer_token_fin(ctx, &(tokenizer->token));
   GRN_FREE(tokenizer);
@@ -444,6 +450,9 @@ static grn_obj *
 ngram_fin(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_ngram_tokenizer *tokenizer = user_data->ptr;
+  if (!tokenizer) {
+    return NULL;
+  }
   grn_tokenizer_token_fin(ctx, &(tokenizer->token));
   grn_tokenizer_query_close(ctx, tokenizer->query);
   GRN_FREE(tokenizer);
