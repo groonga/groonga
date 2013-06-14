@@ -5532,6 +5532,7 @@ grn_obj_get_value_(grn_ctx *ctx, grn_obj *obj, grn_id id, uint32_t *size)
 grn_obj *
 grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
 {
+  unsigned int len = 0;
   GRN_API_ENTER;
   if (!id) { goto exit; }
   if (!obj) {
@@ -5572,6 +5573,10 @@ grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
         MERR("grn_bulk_space failed");
         goto exit;
       }
+      {
+        char *curr = GRN_BULK_CURR(value);
+        len = grn_pat_get_value(ctx, pat, id, curr - size);
+      }
       value->header.type = GRN_BULK;
       value->header.domain = grn_obj_get_range(ctx, obj);
     }
@@ -5588,6 +5593,10 @@ grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
         MERR("grn_bulk_space failed");
         goto exit;
       }
+      {
+        char *curr = GRN_BULK_CURR(value);
+        len = grn_hash_get_value(ctx, hash, id, curr - size);
+      }
       value->header.type = GRN_BULK;
       value->header.domain = grn_obj_get_range(ctx, obj);
     }
@@ -5600,6 +5609,10 @@ grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
       if (grn_bulk_space(ctx, value, size)) {
         MERR("grn_bulk_space failed");
         goto exit;
+      }
+      {
+        char *curr = GRN_BULK_CURR(value);
+        len = grn_array_get_value(ctx, array, id, curr - size);
       }
       value->header.type = GRN_BULK;
       value->header.domain = grn_obj_get_range(ctx, obj);
