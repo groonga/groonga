@@ -177,6 +177,7 @@ struct _grn_table_queue {
   grn_id head;
   grn_id tail;
   grn_id cap;
+  grn_bool unblock_requested;
 };
 
 GRN_API void grn_array_queue_lock_clear(grn_ctx *ctx, grn_array *array);

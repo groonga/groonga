@@ -336,6 +336,7 @@ grn_table_queue_init(grn_ctx *ctx, grn_table_queue *queue)
   queue->head = 0;
   queue->tail = 0;
   queue->cap = GRN_ARRAY_MAX;
+  queue->unblock_requested = GRN_FALSE;
   grn_table_queue_lock_init(ctx, queue);
 }
 
@@ -1130,8 +1131,9 @@ grn_array_pull(grn_ctx *ctx, grn_array *array, grn_bool blockp,
   grn_table_queue *queue = grn_array_queue(ctx, array);
   if (queue) {
     MUTEX_LOCK(queue->mutex);
+    queue->unblock_requested = GRN_FALSE;
     while (grn_table_queue_size(queue) == 0) {
-      if (!blockp) {
+      if (!blockp || queue->unblock_requested) {
         MUTEX_UNLOCK(queue->mutex);
         GRN_OUTPUT_BOOL(0);
         return id;
@@ -1148,6 +1150,18 @@ grn_array_pull(grn_ctx *ctx, grn_array *array, grn_bool blockp,
     ERR(GRN_OPERATION_NOT_SUPPORTED, "only persistent arrays support pull");
   }
   return id;
+}
+
+void
+grn_array_unblock(grn_ctx *ctx, grn_array *array)
+{
+  grn_table_queue *queue = grn_array_queue(ctx, array);
+  if (!queue) {
+    return;
+  }
+
+  queue->unblock_requested = GRN_TRUE;
+  COND_BROADCAST(queue->cond);
 }
 
 /* grn_hash : hash table */
