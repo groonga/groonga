@@ -362,7 +362,7 @@ typedef struct
   (c).waiters_count_ = 0; \
   (c).sema_ = CreateSemaphore(NULL, 0, 0x7fffffff, NULL); \
   MUTEX_INIT((c).waiters_count_lock_); \
-  (c).waiters_done_ = CreateEvent(NULL, FALSE, FALSE, NULL);\
+  (c).waiters_done_ = CreateEvent(NULL, FALSE, FALSE, NULL); \
 } while (0)
 
 #define COND_SIGNAL(c) do { \
