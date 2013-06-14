@@ -355,7 +355,7 @@ typedef struct
   HANDLE waiters_count_lock_;
   HANDLE sema_;
   HANDLE waiters_done_;
-  size_t was_broadcast_; 
+  size_t was_broadcast_;
 } grn_cond;
 
 #define COND_INIT(c) do { \
@@ -395,8 +395,7 @@ typedef struct
     }\
   }\
 } while (0)
-      
-  
+
 #define COND_WAIT(c,m) do { \
   MUTEX_LOCK((c).waiters_count_lock_); \
   (c).waiters_count_++; \
