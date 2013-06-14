@@ -380,11 +380,11 @@ typedef struct
   MUTEX_LOCK((c).waiters_count_lock_); \
   { \
     int have_waiters = (c).waiters_count_ > 0; \
-    if ((c).waiters_count_ > 0) {  \
+    if ((c).waiters_count_ > 0) { \
       (c).was_broadcast_ = 1; \
       have_waiters = 1; \
     } \
-    if (have_waiters) {\
+    if (have_waiters) { \
       ReleaseSemaphore((c).sema_, (c).waiters_count_, 0); \
       MUTEX_UNLOCK((c).waiters_count_lock_); \
       WaitForSingleObject((c).waiters_done_, INFINITE); \
@@ -392,8 +392,8 @@ typedef struct
     } \
     else { \
       MUTEX_UNLOCK((c).waiters_count_lock_); \
-    }\
-  }\
+    } \
+  } \
 } while (0)
 
 #define COND_WAIT(c,m) do { \
@@ -411,8 +411,8 @@ typedef struct
     } \
     else { \
       WaitForSingleObject((m), FALSE); \
-    }\
-  }\
+    } \
+  } \
 } while (0)
 
 #else /* WIN32 */
