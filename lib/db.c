@@ -4837,7 +4837,6 @@ grn_accessor_set_value(grn_ctx *ctx, grn_accessor *a, grn_id id,
   if (value) {
     grn_obj buf;
     void *vp = NULL;
-    size_t vs;
     GRN_TEXT_INIT(&buf, 0);
     for (;;) {
       GRN_BULK_REWIND(&buf);
@@ -4845,13 +4844,11 @@ grn_accessor_set_value(grn_ctx *ctx, grn_accessor *a, grn_id id,
       case GRN_ACCESSOR_GET_KEY :
         grn_table_get_key2(ctx, a->obj, id, &buf);
         vp = GRN_BULK_HEAD(&buf);
-        vs = GRN_BULK_VSIZE(&buf);
         break;
       case GRN_ACCESSOR_GET_VALUE :
         if (a->next) {
           grn_obj_get_value(ctx, a->obj, id, &buf);
           vp = GRN_BULK_HEAD(&buf);
-          vs = GRN_BULK_VSIZE(&buf);
         } else {
           rc = grn_obj_set_value(ctx, a->obj, id, value, flags);
         }
@@ -4863,7 +4860,6 @@ grn_accessor_set_value(grn_ctx *ctx, grn_accessor *a, grn_id id,
             grn_obj_get_value(ctx, a->obj, id, &buf);
             ri = (grn_rset_recinfo *)GRN_BULK_HEAD(&buf);
             vp = &ri->score;
-            vs = sizeof(int);
           } else {
             uint32_t size;
             if ((ri = (grn_rset_recinfo *) grn_obj_get_value_(ctx, a->obj, id, &size))) {
@@ -4887,7 +4883,6 @@ grn_accessor_set_value(grn_ctx *ctx, grn_accessor *a, grn_id id,
         {
           grn_rset_recinfo *ri = (grn_rset_recinfo *)GRN_BULK_HEAD(&buf);
           vp = &ri->n_subrecs;
-          vs = sizeof(int);
         }
         break;
       case GRN_ACCESSOR_GET_COLUMN_VALUE :
@@ -4895,7 +4890,6 @@ grn_accessor_set_value(grn_ctx *ctx, grn_accessor *a, grn_id id,
         if (a->next) {
           grn_obj_get_value(ctx, a->obj, id, &buf);
           vp = GRN_BULK_HEAD(&buf);
-          vs = GRN_BULK_VSIZE(&buf);
         } else {
           rc = grn_obj_set_value(ctx, a->obj, id, value, flags);
         }
