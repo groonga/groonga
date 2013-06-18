@@ -8879,6 +8879,15 @@ grn_table_is_grouped(grn_ctx *ctx, grn_obj *table)
   return GRN_FALSE;
 }
 
+unsigned int
+grn_table_max_n_subrecs(grn_ctx *ctx, grn_obj *table)
+{
+  if (GRN_OBJ_TABLEP(table)) {
+    return DB_OBJ(table)->max_n_subrecs;
+  }
+  return 0;
+}
+
 /* grn_load */
 
 static grn_obj *
