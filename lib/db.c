@@ -633,11 +633,10 @@ grn_proc_create(grn_ctx *ctx, const char *name, int name_size, grn_proc_type typ
 /* grn_table */
 
 static void
-calc_rec_size(grn_obj_flags flags, uint32_t *max_n_subrecs,
+calc_rec_size(grn_obj_flags flags, uint32_t max_n_subrecs, uint32_t range_size,
               uint8_t *subrec_size, uint8_t *subrec_offset,
               uint32_t *key_size, uint32_t *value_size)
 {
-  *max_n_subrecs = 0;
   *subrec_size = 0;
   *subrec_offset = 0;
   if (flags & GRN_OBJ_WITH_SUBREC) {
@@ -645,12 +644,10 @@ calc_rec_size(grn_obj_flags flags, uint32_t *max_n_subrecs,
     case GRN_OBJ_UNIT_DOCUMENT_NONE :
       break;
     case GRN_OBJ_UNIT_DOCUMENT_SECTION :
-      *max_n_subrecs = *value_size;
       *subrec_offset = sizeof(grn_id);
       *subrec_size = sizeof(uint32_t);
       break;
     case GRN_OBJ_UNIT_DOCUMENT_POSITION :
-      *max_n_subrecs = *value_size;
       *subrec_offset = sizeof(grn_id);
       *subrec_size = sizeof(uint32_t) + sizeof(uint32_t);
       break;
@@ -659,7 +656,6 @@ calc_rec_size(grn_obj_flags flags, uint32_t *max_n_subrecs,
       break;
     case GRN_OBJ_UNIT_SECTION_POSITION :
       *key_size += sizeof(uint32_t);
-      *max_n_subrecs = *value_size;
       *subrec_offset = sizeof(grn_id) + sizeof(uint32_t);
       *subrec_size = sizeof(uint32_t);
       break;
@@ -667,20 +663,17 @@ calc_rec_size(grn_obj_flags flags, uint32_t *max_n_subrecs,
       *key_size += sizeof(uint32_t) + sizeof(uint32_t);
       break;
     case GRN_OBJ_UNIT_USERDEF_DOCUMENT :
-      *max_n_subrecs = *value_size;
-      *subrec_size = sizeof(grn_id);
+      *subrec_size = range_size;
       break;
     case GRN_OBJ_UNIT_USERDEF_SECTION :
-      *max_n_subrecs = *value_size;
-      *subrec_size = sizeof(grn_id) + sizeof(uint32_t);
+      *subrec_size = range_size + sizeof(uint32_t);
       break;
     case GRN_OBJ_UNIT_USERDEF_POSITION :
-      *max_n_subrecs = *value_size;
-      *subrec_size = sizeof(grn_id) + sizeof(uint32_t) + sizeof(uint32_t);
+      *subrec_size = range_size + sizeof(uint32_t) + sizeof(uint32_t);
       break;
     }
     *value_size = (uintptr_t)GRN_RSET_SUBRECS_NTH((((grn_rset_recinfo *)0)->subrecs),
-                                                  *subrec_size, *max_n_subrecs);
+                                                  *subrec_size, max_n_subrecs);
   }
 }
 
@@ -731,14 +724,14 @@ grn_table_create_validate(grn_ctx *ctx, const char *name, unsigned int name_size
 }
 
 static grn_obj *
-grn_table_create_with_value_size(grn_ctx *ctx, const char *name,
-                                 unsigned int name_size, const char *path,
-                                 grn_obj_flags flags, grn_obj *key_type,
-                                 grn_obj *value_type, uint32_t value_size)
+grn_table_create_with_max_n_subrecs(grn_ctx *ctx, const char *name,
+                                    unsigned int name_size, const char *path,
+                                    grn_obj_flags flags, grn_obj *key_type,
+                                    grn_obj *value_type, uint32_t max_n_subrecs)
 {
   grn_id id;
   grn_id domain = GRN_ID_NIL, range = GRN_ID_NIL;
-  uint32_t key_size, max_n_subrecs;
+  uint32_t key_size, value_size, range_size = 0;
   uint8_t subrec_size, subrec_offset;
   grn_obj *res = NULL;
   grn_obj *db;
@@ -819,14 +812,14 @@ grn_table_create_with_value_size(grn_ctx *ctx, const char *name,
               name_size, name, type_name_size, type_name);
           return NULL;
         }
-        value_size = GRN_TYPE_SIZE(t);
+        range_size = GRN_TYPE_SIZE(t);
       }
       break;
     case GRN_TABLE_HASH_KEY :
     case GRN_TABLE_PAT_KEY :
     case GRN_TABLE_DAT_KEY :
     case GRN_TABLE_NO_KEY :
-      value_size = sizeof(grn_id);
+      range_size = sizeof(grn_id);
       break;
     default :
       {
@@ -868,7 +861,7 @@ grn_table_create_with_value_size(grn_ctx *ctx, const char *name,
       return NULL;
     }
   }
-  calc_rec_size(flags, &max_n_subrecs, &subrec_size,
+  calc_rec_size(flags, max_n_subrecs, range_size, &subrec_size,
                 &subrec_offset, &key_size, &value_size);
   {
     grn_io *db_io;
@@ -916,24 +909,28 @@ grn_table_create(grn_ctx *ctx, const char *name, unsigned int name_size,
 {
   grn_obj *res;  
   GRN_API_ENTER;
-  res = grn_table_create_with_value_size(ctx, name, name_size, path,
-                                         flags, key_type, value_type, 0);
+  res = grn_table_create_with_max_n_subrecs(ctx, name, name_size, path,
+                                            flags, key_type, value_type, 0);
   GRN_API_RETURN(res);  
 }
 
 grn_obj *
 grn_table_create_for_group(grn_ctx *ctx, const char *name,
                            unsigned int name_size, const char *path,
-                           grn_obj *group_key, unsigned int max_n_subrecs)
+                           grn_obj *group_key, grn_obj *value_type,
+                           unsigned int max_n_subrecs)
 {
-  grn_obj *res;  
-  grn_obj *key_type = grn_ctx_at(ctx, grn_obj_get_range(ctx, group_key));
+  grn_obj *res = NULL;
+  grn_obj *key_type;
   GRN_API_ENTER;
-  res = grn_table_create_with_value_size(ctx, name, name_size, path,
-                                         GRN_TABLE_HASH_KEY|
-                                         GRN_OBJ_WITH_SUBREC|
-                                         GRN_OBJ_UNIT_USERDEF_DOCUMENT, 
-                                         key_type, NULL, max_n_subrecs);
+  key_type = grn_ctx_at(ctx, grn_obj_get_range(ctx, group_key));
+  if (key_type) {
+    res = grn_table_create_with_max_n_subrecs(ctx, name, name_size, path,
+                                              GRN_TABLE_HASH_KEY|
+                                              GRN_OBJ_WITH_SUBREC|
+                                              GRN_OBJ_UNIT_USERDEF_DOCUMENT, 
+                                              key_type, value_type, max_n_subrecs);
+  }
   GRN_API_RETURN(res);  
 }
 

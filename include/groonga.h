@@ -2735,6 +2735,7 @@ GRN_API grn_obj *grn_table_create_for_group(grn_ctx *ctx,
                                             unsigned int name_size,
                                             const char *path,
                                             grn_obj *group_key,
+                                            grn_obj *value_type,
                                             unsigned int max_n_subrecs);
 
 GRN_API grn_rc grn_load(grn_ctx *ctx, grn_content_type input_type,
