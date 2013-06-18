@@ -8871,7 +8871,7 @@ grn_table_sort_key_close(grn_ctx *ctx, grn_table_sort_key *keys, unsigned int nk
 }
 
 grn_bool
-grn_table_is_grouped(grn_obj *table)
+grn_table_is_grouped(grn_ctx *ctx, grn_obj *table)
 {
   if (GRN_OBJ_TABLEP(table) && GRN_TABLE_IS_GROUPED(table)) {
     return GRN_TRUE;
