@@ -424,9 +424,8 @@ GRN_API grn_obj *grn_table_create_for_group(grn_ctx *ctx,
                                             const char *name,
                                             unsigned int name_size,
                                             const char *path,
-                                            grn_obj_flags flags,
                                             grn_obj *group_key,
-                                            grn_obj *value_type);
+                                            unsigned int max_n_subrecs);
 
 #define KEY_NAME "_key"
 #define ID_NAME "_id"

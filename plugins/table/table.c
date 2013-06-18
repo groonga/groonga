@@ -248,10 +248,7 @@ command_group(grn_ctx *ctx, int nargs, grn_obj **args,
       if (set_len) {
         set_ = grn_ctx_get_table_by_name_or_id(ctx, set, set_len);
       } else {
-        set_ = grn_table_create_for_group(ctx, NULL, 0, NULL,
-                                          GRN_TABLE_HASH_KEY|
-                                          GRN_OBJ_WITH_SUBREC,
-                                          gkeys[0].key, NULL);
+        set_ = grn_table_create_for_group(ctx, NULL, 0, NULL, gkeys[0].key, 0);
       }
       if (set_) {
         if (GRN_TEXT_LEN(VAR(3))) {

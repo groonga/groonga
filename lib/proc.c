@@ -701,8 +701,7 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
         if (gkeys) {
           for (i = 0; i < ngkeys; i++) {
             if ((g.table = grn_table_create_for_group(ctx, NULL, 0, NULL,
-                                                      GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
-                                                      gkeys[i].key, NULL))) {
+                                                      gkeys[i].key, 0))) {
               int n_drilldown_offset = drilldown_offset,
                   n_drilldown_limit = drilldown_limit;
 
