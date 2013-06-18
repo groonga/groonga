@@ -8870,6 +8870,15 @@ grn_table_sort_key_close(grn_ctx *ctx, grn_table_sort_key *keys, unsigned int nk
   return ctx->rc;
 }
 
+grn_bool
+grn_table_is_grouped(grn_obj *table)
+{
+  if (GRN_OBJ_TABLEP(table) && GRN_TABLE_IS_GROUPED(table)) {
+    return GRN_TRUE;
+  }
+  return GRN_FALSE;
+}
+
 /* grn_load */
 
 static grn_obj *

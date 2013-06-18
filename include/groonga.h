@@ -2726,6 +2726,9 @@ GRN_API grn_table_sort_key *grn_table_sort_key_from_str(grn_ctx *ctx,
 GRN_API grn_rc grn_table_sort_key_close(grn_ctx *ctx,
                                         grn_table_sort_key *keys, unsigned int nkeys);
 
+GRN_API grn_bool grn_table_is_grouped(grn_obj *table);
+
+
 GRN_API grn_rc grn_load(grn_ctx *ctx, grn_content_type input_type,
                         const char *table, unsigned int table_len,
                         const char *columns, unsigned int columns_len,
