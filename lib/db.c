@@ -3061,8 +3061,10 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
       }
     }
     grn_obj_close(ctx, &bulk);
+    for (r = 0, rp = results; r < n_results; r++, rp++) {
+      GRN_TABLE_GROUPED_ON(rp->table);
+    }
   }
-  GRN_TABLE_GROUPED_ON(results->table);
 exit :
   GRN_API_RETURN(rc);
 }
