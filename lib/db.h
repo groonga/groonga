@@ -420,13 +420,6 @@ void grn_expr_pack(grn_ctx *ctx, grn_obj *buf, grn_obj *expr);
 GRN_API grn_rc grn_expr_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *expr);
 grn_obj *grn_expr_open(grn_ctx *ctx, grn_obj_spec *spec, const uint8_t *p, const uint8_t *pe);
 
-GRN_API grn_obj *grn_table_create_for_group(grn_ctx *ctx,
-                                            const char *name,
-                                            unsigned int name_size,
-                                            const char *path,
-                                            grn_obj *group_key,
-                                            unsigned int max_n_subrecs);
-
 #define KEY_NAME "_key"
 #define ID_NAME "_id"
 

@@ -2728,6 +2728,12 @@ GRN_API grn_rc grn_table_sort_key_close(grn_ctx *ctx,
 
 GRN_API grn_bool grn_table_is_grouped(grn_obj *table);
 
+GRN_API grn_obj *grn_table_create_for_group(grn_ctx *ctx,
+                                            const char *name,
+                                            unsigned int name_size,
+                                            const char *path,
+                                            grn_obj *group_key,
+                                            unsigned int max_n_subrecs);
 
 GRN_API grn_rc grn_load(grn_ctx *ctx, grn_content_type input_type,
                         const char *table, unsigned int table_len,
