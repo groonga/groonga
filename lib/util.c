@@ -572,17 +572,17 @@ grn_table_ids_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 static grn_rc
 grn_table_default_tokenizer_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 {
-    grn_obj *default_tokenizer;
+  grn_obj *default_tokenizer;
 
-    GRN_TEXT_PUTS(ctx, buf, "default_tokenizer:");
-    default_tokenizer = grn_obj_get_info(ctx, obj,
-                                         GRN_INFO_DEFAULT_TOKENIZER, NULL);
-    if (default_tokenizer) {
-      grn_inspect_name(ctx, buf, default_tokenizer);
-      grn_obj_unlink(ctx, default_tokenizer);
-    } else {
-      GRN_TEXT_PUTS(ctx, buf, "(nil)");
-    }
+  GRN_TEXT_PUTS(ctx, buf, "default_tokenizer:");
+  default_tokenizer = grn_obj_get_info(ctx, obj,
+                                       GRN_INFO_DEFAULT_TOKENIZER, NULL);
+  if (default_tokenizer) {
+    grn_inspect_name(ctx, buf, default_tokenizer);
+    grn_obj_unlink(ctx, default_tokenizer);
+  } else {
+    GRN_TEXT_PUTS(ctx, buf, "(nil)");
+  }
 
   return GRN_SUCCESS;
 }
