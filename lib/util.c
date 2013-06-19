@@ -592,14 +592,14 @@ grn_table_normalizer_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 {
   grn_obj *normalizer;
 
-    GRN_TEXT_PUTS(ctx, buf, "normalizer:");
-    normalizer = grn_obj_get_info(ctx, obj, GRN_INFO_NORMALIZER, NULL);
-    if (normalizer) {
-      grn_inspect_name(ctx, buf, normalizer);
-      grn_obj_unlink(ctx, normalizer);
-    } else {
-      GRN_TEXT_PUTS(ctx, buf, "(nil)");
-    }
+  GRN_TEXT_PUTS(ctx, buf, "normalizer:");
+  normalizer = grn_obj_get_info(ctx, obj, GRN_INFO_NORMALIZER, NULL);
+  if (normalizer) {
+    grn_inspect_name(ctx, buf, normalizer);
+    grn_obj_unlink(ctx, normalizer);
+  } else {
+    GRN_TEXT_PUTS(ctx, buf, "(nil)");
+  }
 
   return GRN_SUCCESS;
 }
