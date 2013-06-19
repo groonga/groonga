@@ -1,7 +1,6 @@
 notifications:
   recipients:
     - groonga-commit@lists.sourceforge.jp
-    - travis@clear-code.com
 language: cpp
 compiler:
   - gcc
