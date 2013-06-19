@@ -521,9 +521,35 @@ grn_table_key_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 }
 
 static grn_rc
-grn_table_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
+grn_table_columns_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 {
   grn_hash *cols;
+
+  GRN_TEXT_PUTS(ctx, buf, "columns:[");
+  if ((cols = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
+                              GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY))) {
+    if (grn_table_columns(ctx, obj, "", 0, (grn_obj *)cols)) {
+      int i = 0;
+      grn_id *key;
+      GRN_HASH_EACH(ctx, cols, id, &key, NULL, NULL, {
+          grn_obj *col = grn_ctx_at(ctx, *key);
+          if (col) {
+            if (i++ > 0) { GRN_TEXT_PUTS(ctx, buf, ", "); }
+            grn_column_name_(ctx, col, buf);
+            grn_obj_unlink(ctx, col);
+          }
+        });
+    }
+    grn_hash_close(ctx, cols);
+  }
+  GRN_TEXT_PUTS(ctx, buf, "]");
+
+  return GRN_SUCCESS;
+}
+
+static grn_rc
+grn_table_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
+{
   grn_id range_id;
   grn_obj *range;
 
@@ -552,24 +578,8 @@ grn_table_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
   GRN_TEXT_PUTS(ctx, buf, " size:");
   grn_text_lltoa(ctx, buf, grn_table_size(ctx, obj));
 
-  GRN_TEXT_PUTS(ctx, buf, " columns:[");
-  if ((cols = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
-                              GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY))) {
-    if (grn_table_columns(ctx, obj, "", 0, (grn_obj *)cols)) {
-      int i = 0;
-      grn_id *key;
-      GRN_HASH_EACH(ctx, cols, id, &key, NULL, NULL, {
-          grn_obj *col = grn_ctx_at(ctx, *key);
-          if (col) {
-            if (i++ > 0) { GRN_TEXT_PUTS(ctx, buf, ", "); }
-            grn_column_name_(ctx, col, buf);
-            grn_obj_unlink(ctx, col);
-          }
-        });
-    }
-    grn_hash_close(ctx, cols);
-  }
-  GRN_TEXT_PUTS(ctx, buf, "]");
+  GRN_TEXT_PUTS(ctx, buf, " ");
+  grn_table_columns_inspect(ctx, buf, obj);
 
   if (obj->header.type == GRN_TABLE_NO_KEY) {
     grn_table_cursor *tc;
