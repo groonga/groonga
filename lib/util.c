@@ -550,20 +550,20 @@ grn_table_columns_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 static grn_rc
 grn_table_ids_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 {
-    grn_table_cursor *tc;
-    GRN_TEXT_PUTS(ctx, buf, "ids:[");
-    tc = grn_table_cursor_open(ctx, obj, NULL, 0, NULL, 0,
-                               0, -1, GRN_CURSOR_ASCENDING);
-    if (tc) {
-      int i = 0;
-      grn_id id;
-      while ((id = grn_table_cursor_next(ctx, tc))) {
-        if (i++ > 0) { GRN_TEXT_PUTS(ctx, buf, ", "); }
-        grn_text_lltoa(ctx, buf, id);
-      }
-      grn_table_cursor_close(ctx, tc);
+  grn_table_cursor *tc;
+  GRN_TEXT_PUTS(ctx, buf, "ids:[");
+  tc = grn_table_cursor_open(ctx, obj, NULL, 0, NULL, 0,
+                             0, -1, GRN_CURSOR_ASCENDING);
+  if (tc) {
+    int i = 0;
+    grn_id id;
+    while ((id = grn_table_cursor_next(ctx, tc))) {
+      if (i++ > 0) { GRN_TEXT_PUTS(ctx, buf, ", "); }
+      grn_text_lltoa(ctx, buf, id);
     }
-    GRN_TEXT_PUTS(ctx, buf, "]");
+    grn_table_cursor_close(ctx, tc);
+  }
+  GRN_TEXT_PUTS(ctx, buf, "]");
 
   return GRN_SUCCESS;
 }
