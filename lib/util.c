@@ -628,7 +628,6 @@ grn_table_keys_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
   }
   GRN_TEXT_PUTS(ctx, buf, "]");
 
-
   return GRN_SUCCESS;
 }
 
