@@ -548,6 +548,27 @@ grn_table_columns_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 }
 
 static grn_rc
+grn_table_ids_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
+{
+    grn_table_cursor *tc;
+    GRN_TEXT_PUTS(ctx, buf, "ids:[");
+    tc = grn_table_cursor_open(ctx, obj, NULL, 0, NULL, 0,
+                               0, -1, GRN_CURSOR_ASCENDING);
+    if (tc) {
+      int i = 0;
+      grn_id id;
+      while ((id = grn_table_cursor_next(ctx, tc))) {
+        if (i++ > 0) { GRN_TEXT_PUTS(ctx, buf, ", "); }
+        grn_text_lltoa(ctx, buf, id);
+      }
+      grn_table_cursor_close(ctx, tc);
+    }
+    GRN_TEXT_PUTS(ctx, buf, "]");
+
+  return GRN_SUCCESS;
+}
+
+static grn_rc
 grn_table_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 {
   grn_id range_id;
@@ -582,20 +603,8 @@ grn_table_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
   grn_table_columns_inspect(ctx, buf, obj);
 
   if (obj->header.type == GRN_TABLE_NO_KEY) {
-    grn_table_cursor *tc;
-    GRN_TEXT_PUTS(ctx, buf, " ids:[");
-    tc = grn_table_cursor_open(ctx, obj, NULL, 0, NULL, 0,
-                               0, -1, GRN_CURSOR_ASCENDING);
-    if (tc) {
-      int i = 0;
-      grn_id id;
-      while ((id = grn_table_cursor_next(ctx, tc))) {
-        if (i++ > 0) { GRN_TEXT_PUTS(ctx, buf, ", "); }
-        grn_text_lltoa(ctx, buf, id);
-      }
-      grn_table_cursor_close(ctx, tc);
-    }
-    GRN_TEXT_PUTS(ctx, buf, "]");
+    GRN_TEXT_PUTS(ctx, buf, " ");
+    grn_table_ids_inspect(ctx, buf, obj);
   } else {
     grn_table_cursor *tc;
     grn_obj *default_tokenizer;
