@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
-  Copyright (C) 2010-2012  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2010-2013  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -386,7 +386,8 @@ test_array_empty(void)
                           "value:(nil) "
                           "size:0 "
                           "columns:[] "
-                          "ids:[]"
+                          "ids:[] "
+                          "subrec:none"
                           ">",
                           inspected_string());
 }
@@ -405,7 +406,8 @@ test_array_with_records(void)
                           "value:(nil) "
                           "size:2 "
                           "columns:[name] "
-                          "ids:[1, 2]"
+                          "ids:[1, 2] "
+                          "subrec:none"
                           ">",
                           inspected_string());
 }
@@ -423,7 +425,8 @@ test_hash_empty(void)
                           "columns:[] "
                           "default_tokenizer:(nil) "
                           "normalizer:(nil) "
-                          "keys:[]"
+                          "keys:[] "
+                          "subrec:none"
                           ">",
                           inspected_string());
 }
@@ -449,7 +452,8 @@ test_hash_with_records(void)
                           "columns:[name] "
                           "default_tokenizer:(nil) "
                           "normalizer:(nil) "
-                          "keys:[\"groonga.org\", \"razil.jp\"]"
+                          "keys:[\"groonga.org\", \"razil.jp\"] "
+                          "subrec:none"
                           ">",
                           inspected_string());
 }
@@ -468,6 +472,7 @@ test_patricia_trie_empty(void)
                           "default_tokenizer:(nil) "
                           "normalizer:(nil) "
                           "keys:[] "
+                          "subrec:none "
                           "nodes:{}"
                           ">",
                           inspected_string());
@@ -496,6 +501,7 @@ test_patricia_trie_with_records(void)
     "default_tokenizer:(nil) "
     "normalizer:(nil) "
     "keys:[\"groonga.org\", \"razil.jp\"] "
+    "subrec:none "
     "nodes:{\n"
     "2(\"razil.jp\"){0,3,0}[01110010 01100001 01111010 01101001 "
                            "01101100 00101110 01101010 01110000]\n"
