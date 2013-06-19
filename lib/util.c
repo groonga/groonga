@@ -607,6 +607,7 @@ grn_table_normalizer_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 static grn_rc
 grn_table_keys_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 {
+  grn_table_cursor *tc;
 
     GRN_TEXT_PUTS(ctx, buf, "keys:[");
     tc = grn_table_cursor_open(ctx, obj, NULL, 0, NULL, 0,
@@ -626,6 +627,9 @@ grn_table_keys_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
       grn_table_cursor_close(ctx, tc);
     }
     GRN_TEXT_PUTS(ctx, buf, "]");
+
+
+  return GRN_SUCCESS;
 }
 
 static grn_rc
@@ -666,8 +670,6 @@ grn_table_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
     GRN_TEXT_PUTS(ctx, buf, " ");
     grn_table_ids_inspect(ctx, buf, obj);
   } else {
-    grn_table_cursor *tc;
-
     GRN_TEXT_PUTS(ctx, buf, " ");
     grn_table_default_tokenizer_inspect(ctx, buf, obj);
 
