@@ -2212,6 +2212,9 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
   grn_obj *x, *y;                                                       \
                                                                         \
   POP2ALLOC1(x, y, res);                                                \
+  if (y != res) {                                                       \
+    res->header.domain = x->header.domain;                              \
+  }                                                                     \
   ARITHMETIC_OPERATION_DISPATCH(x, y, res,                              \
                                 integer8_operation,                     \
                                 integer16_operation,                    \
@@ -2222,7 +2225,9 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
                                 right_expression_check,                 \
                                 text_operation,                         \
                                 invalid_type_error);                    \
-  res->header.domain = x->header.domain;                                \
+  if (y == res) {                                                       \
+    res->header.domain = x->header.domain;                              \
+  }                                                                     \
 } while (0)
 
 #define ARITHMETIC_UNARY_OPERATION_DISPATCH(integer_operation,          \
