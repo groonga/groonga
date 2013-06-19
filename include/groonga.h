@@ -2738,6 +2738,10 @@ GRN_API grn_obj *grn_table_create_for_group(grn_ctx *ctx,
                                             grn_obj *value_type,
                                             unsigned int max_n_subrecs);
 
+GRN_API unsigned int grn_table_get_subrecs(grn_ctx *ctx, grn_obj *table,
+                                           grn_id id, grn_id *subrecbuf,
+                                           int *scorebuf, int buf_size);
+
 GRN_API grn_rc grn_load(grn_ctx *ctx, grn_content_type input_type,
                         const char *table, unsigned int table_len,
                         const char *columns, unsigned int columns_len,

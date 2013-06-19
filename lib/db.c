@@ -907,11 +907,11 @@ grn_table_create(grn_ctx *ctx, const char *name, unsigned int name_size,
                  const char *path, grn_obj_flags flags,
                  grn_obj *key_type, grn_obj *value_type)
 {
-  grn_obj *res;  
+  grn_obj *res;
   GRN_API_ENTER;
   res = grn_table_create_with_max_n_subrecs(ctx, name, name_size, path,
                                             flags, key_type, value_type, 0);
-  GRN_API_RETURN(res);  
+  GRN_API_RETURN(res);
 }
 
 grn_obj *
@@ -928,10 +928,53 @@ grn_table_create_for_group(grn_ctx *ctx, const char *name,
     res = grn_table_create_with_max_n_subrecs(ctx, name, name_size, path,
                                               GRN_TABLE_HASH_KEY|
                                               GRN_OBJ_WITH_SUBREC|
-                                              GRN_OBJ_UNIT_USERDEF_DOCUMENT, 
+                                              GRN_OBJ_UNIT_USERDEF_DOCUMENT,
                                               key_type, value_type, max_n_subrecs);
   }
-  GRN_API_RETURN(res);  
+  GRN_API_RETURN(res);
+}
+
+unsigned int
+grn_table_get_subrecs(grn_ctx *ctx, grn_obj *table, grn_id id,
+                      grn_id *subrecbuf, int *scorebuf, int buf_size)
+{
+  unsigned int count = 0;
+  GRN_API_ENTER;
+  if (GRN_OBJ_TABLEP(table)) {
+    uint32_t value_size;
+    grn_rset_recinfo *ri;
+    uint32_t subrec_size = DB_OBJ(table)->subrec_size;
+    uint32_t max_n_subrecs = DB_OBJ(table)->max_n_subrecs;
+    if (subrec_size < sizeof(grn_id)) { goto exit; }
+    if (!max_n_subrecs) { goto exit; }
+    ri = (grn_rset_recinfo *)grn_obj_get_value_(ctx, table, id, &value_size);
+    if (ri) {
+      byte *psubrec = (byte *)ri->subrecs;
+      uint32_t n_subrecs = (uint32_t)GRN_RSET_N_SUBRECS(ri);
+      uint32_t limit = value_size / (GRN_RSET_SCORE_SIZE + subrec_size);
+      if (limit > buf_size) {
+        limit = buf_size;
+      }
+      if (limit > n_subrecs) {
+        limit = n_subrecs;
+      }
+      if (limit > max_n_subrecs) {
+        limit = max_n_subrecs;
+      }
+      for (; count < limit; count++) {
+        if (scorebuf) {
+          scorebuf[count] = *((int *)psubrec);
+        }
+        psubrec += GRN_RSET_SCORE_SIZE;
+        if (subrecbuf) {
+          subrecbuf[count] = *((grn_id *)psubrec);
+        }
+        psubrec += subrec_size;
+      }
+    }
+  }
+exit :
+  GRN_API_RETURN(count);
 }
 
 grn_obj *
