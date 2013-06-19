@@ -219,6 +219,7 @@ case "$1" in
 	;;
     status)
 	do_status
+	exit $?
 	;;
     *)
 	echo "Usage: $SCRIPTNAME {start|stop|restart|reload|force-reload|status}" >&2
