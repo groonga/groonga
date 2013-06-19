@@ -5683,7 +5683,7 @@ exit :
 }
 
 static grn_rc
-get_string(grn_ctx *ctx, efs_info *q)
+get_string(grn_ctx *ctx, efs_info *q, char quote)
 {
   const char *s;
   unsigned int len;
@@ -5692,7 +5692,7 @@ get_string(grn_ctx *ctx, efs_info *q)
   for (s = q->cur + 1; s < q->str_end; s += len) {
     if (!(len = grn_charlen(ctx, s, q->str_end))) { break; }
     if (len == 1) {
-      if (*s == GRN_QUERY_QUOTER) {
+      if (*s == quote) {
         s++;
         rc = GRN_SUCCESS;
         break;
@@ -5933,7 +5933,12 @@ parse_script(grn_ctx *ctx, efs_info *q)
       grn_expr_append_op(ctx, q->e, GRN_OP_CJUMP, 0);
       break;
     case '"' :
-      if ((rc = get_string(ctx, q))) { goto exit; }
+      if ((rc = get_string(ctx, q, '"'))) { goto exit; }
+      PARSE(GRN_EXPR_TOKEN_STRING);
+      grn_expr_append_const(ctx, q->e, &q->buf, GRN_OP_PUSH, 1);
+      break;
+    case '\'' :
+      if ((rc = get_string(ctx, q, '\''))) { goto exit; }
       PARSE(GRN_EXPR_TOKEN_STRING);
       grn_expr_append_const(ctx, q->e, &q->buf, GRN_OP_PUSH, 1);
       break;
