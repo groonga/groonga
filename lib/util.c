@@ -632,6 +632,47 @@ grn_table_keys_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 }
 
 static grn_rc
+grn_table_subrec_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
+{
+  GRN_TEXT_PUTS(ctx, buf, "subrec:");
+  if (obj->header.flags & GRN_OBJ_WITH_SUBREC) {
+    switch (obj->header.flags & GRN_OBJ_UNIT_MASK) {
+    case GRN_OBJ_UNIT_DOCUMENT_NONE :
+      GRN_TEXT_PUTS(ctx, buf, "document:none");
+      break;
+    case GRN_OBJ_UNIT_DOCUMENT_SECTION :
+      GRN_TEXT_PUTS(ctx, buf, "document:section");
+      break;
+    case GRN_OBJ_UNIT_DOCUMENT_POSITION :
+      GRN_TEXT_PUTS(ctx, buf, "document:position");
+      break;
+    case GRN_OBJ_UNIT_SECTION_NONE :
+      GRN_TEXT_PUTS(ctx, buf, "section:none");
+      break;
+    case GRN_OBJ_UNIT_SECTION_POSITION :
+      GRN_TEXT_PUTS(ctx, buf, "section:popsition");
+      break;
+    case GRN_OBJ_UNIT_POSITION_NONE :
+      GRN_TEXT_PUTS(ctx, buf, "section:none");
+      break;
+    case GRN_OBJ_UNIT_USERDEF_DOCUMENT :
+      GRN_TEXT_PUTS(ctx, buf, "userdef:document");
+      break;
+    case GRN_OBJ_UNIT_USERDEF_SECTION :
+      GRN_TEXT_PUTS(ctx, buf, "userdef:section");
+      break;
+    case GRN_OBJ_UNIT_USERDEF_POSITION :
+      GRN_TEXT_PUTS(ctx, buf, "userdef:position");
+      break;
+    }
+  } else {
+    GRN_TEXT_PUTS(ctx, buf, "none");
+  }
+
+  return GRN_SUCCESS;
+}
+
+static grn_rc
 grn_table_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 {
   grn_id range_id;
@@ -679,40 +720,8 @@ grn_table_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
     grn_table_keys_inspect(ctx, buf, obj);
   }
 
-  GRN_TEXT_PUTS(ctx, buf, " subrec:");
-  if (obj->header.flags & GRN_OBJ_WITH_SUBREC) {
-    switch (obj->header.flags & GRN_OBJ_UNIT_MASK) {
-    case GRN_OBJ_UNIT_DOCUMENT_NONE :
-      GRN_TEXT_PUTS(ctx, buf, "document:none");
-      break;
-    case GRN_OBJ_UNIT_DOCUMENT_SECTION :
-      GRN_TEXT_PUTS(ctx, buf, "document:section");
-      break;
-    case GRN_OBJ_UNIT_DOCUMENT_POSITION :
-      GRN_TEXT_PUTS(ctx, buf, "document:position");
-      break;
-    case GRN_OBJ_UNIT_SECTION_NONE :
-      GRN_TEXT_PUTS(ctx, buf, "section:none");
-      break;
-    case GRN_OBJ_UNIT_SECTION_POSITION :
-      GRN_TEXT_PUTS(ctx, buf, "section:popsition");
-      break;
-    case GRN_OBJ_UNIT_POSITION_NONE :
-      GRN_TEXT_PUTS(ctx, buf, "section:none");
-      break;
-    case GRN_OBJ_UNIT_USERDEF_DOCUMENT :
-      GRN_TEXT_PUTS(ctx, buf, "userdef:document");
-      break;
-    case GRN_OBJ_UNIT_USERDEF_SECTION :
-      GRN_TEXT_PUTS(ctx, buf, "userdef:section");
-      break;
-    case GRN_OBJ_UNIT_USERDEF_POSITION :
-      GRN_TEXT_PUTS(ctx, buf, "userdef:position");
-      break;
-    }
-  } else {
-    GRN_TEXT_PUTS(ctx, buf, "none");
-  }
+  GRN_TEXT_PUTS(ctx, buf, " ");
+  grn_table_subrec_inspect(ctx, buf, obj);
 
   if (obj->header.type == GRN_TABLE_PAT_KEY) {
     GRN_TEXT_PUTS(ctx, buf, " nodes:");
