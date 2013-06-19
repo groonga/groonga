@@ -674,6 +674,8 @@ calc_rec_size(grn_obj_flags flags, uint32_t max_n_subrecs, uint32_t range_size,
     }
     *value_size = (uintptr_t)GRN_RSET_SUBRECS_NTH((((grn_rset_recinfo *)0)->subrecs),
                                                   *subrec_size, max_n_subrecs);
+  } else {
+    *value_size = range_size;
   }
 }
 
@@ -731,7 +733,7 @@ grn_table_create_with_max_n_subrecs(grn_ctx *ctx, const char *name,
 {
   grn_id id;
   grn_id domain = GRN_ID_NIL, range = GRN_ID_NIL;
-  uint32_t key_size, value_size, range_size = 0;
+  uint32_t key_size, value_size = 0, range_size = 0;
   uint8_t subrec_size, subrec_offset;
   grn_obj *res = NULL;
   grn_obj *db;
