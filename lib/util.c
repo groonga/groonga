@@ -502,19 +502,19 @@ grn_table_type_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 static grn_rc
 grn_table_key_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 {
-    grn_obj *domain;
-    grn_id domain_id;
-    GRN_TEXT_PUTS(ctx, buf, "key:");
-    domain_id = obj->header.domain;
-    domain = grn_ctx_at(ctx, domain_id);
-    if (domain) {
-      grn_inspect_name(ctx, buf, domain);
-      grn_obj_unlink(ctx, domain);
-    } else if (domain_id) {
-      grn_text_lltoa(ctx, buf, domain_id);
-    } else {
-      GRN_TEXT_PUTS(ctx, buf, "(nil)");
-    }
+  grn_obj *domain;
+  grn_id domain_id;
+  GRN_TEXT_PUTS(ctx, buf, "key:");
+  domain_id = obj->header.domain;
+  domain = grn_ctx_at(ctx, domain_id);
+  if (domain) {
+    grn_inspect_name(ctx, buf, domain);
+    grn_obj_unlink(ctx, domain);
+  } else if (domain_id) {
+    grn_text_lltoa(ctx, buf, domain_id);
+  } else {
+    GRN_TEXT_PUTS(ctx, buf, "(nil)");
+  }
 
   return GRN_SUCCESS;
 }
