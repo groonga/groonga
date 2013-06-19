@@ -551,6 +551,7 @@ static grn_rc
 grn_table_ids_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 {
   grn_table_cursor *tc;
+
   GRN_TEXT_PUTS(ctx, buf, "ids:[");
   tc = grn_table_cursor_open(ctx, obj, NULL, 0, NULL, 0,
                              0, -1, GRN_CURSOR_ASCENDING);
