@@ -1,0 +1,14 @@
+table_create Values TABLE_NO_KEY
+column_create Values uint8 COLUMN_SCALAR UInt8
+
+load --table Values
+[
+{"uint8": 1},
+{"uint8": 2},
+{"uint8": 3}
+]
+
+select Values \
+  --filter 'true' \
+  --output_columns 'uint8,_score' \
+  --scorer '_score = 1000 * uint8 * 12 / 15'

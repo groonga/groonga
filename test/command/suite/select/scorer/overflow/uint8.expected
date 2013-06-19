@@ -1,0 +1,48 @@
+table_create Values TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Values uint8 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+load --table Values
+[
+{"uint8": 1},
+{"uint8": 2},
+{"uint8": 3}
+]
+[[0,0.0,0.0],3]
+select Values   --filter 'true'   --output_columns 'uint8,_score'   --scorer '_score = 1000 * uint8 * 12 / 15'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "uint8",
+          "UInt8"
+        ],
+        [
+          "_score",
+          "Int32"
+        ]
+      ],
+      [
+        1,
+        800
+      ],
+      [
+        2,
+        1600
+      ],
+      [
+        3,
+        2400
+      ]
+    ]
+  ]
+]
