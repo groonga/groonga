@@ -56,7 +56,7 @@ typedef struct {
 
 #define GRN_RSET_N_SUBRECS(ri) ((ri)->n_subrecs & ~GRN_RSET_UTIL_BIT)
 
-#define GRN_RSET_SUBRECS_CMP(a,b,dir) (((a) - (b))*(dir) > 0)
+#define GRN_RSET_SUBRECS_CMP(a,b,dir) (((a) - (b))*(dir))
 #define GRN_RSET_SUBRECS_NTH(subrecs,size,n) \
   ((int *)((byte *)subrecs + n * (size + GRN_RSET_SCORE_SIZE)))
 #define GRN_RSET_SUBRECS_COPY(subrecs,size,n,src) \

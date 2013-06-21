@@ -3146,7 +3146,7 @@ subrecs_push(byte *subrecs, int size, int n_subrecs, int score, void *body, int 
   while (n) {
     n2 = (n - 1) >> 1;
     c2 = GRN_RSET_SUBRECS_NTH(subrecs,size,n2);
-    if (GRN_RSET_SUBRECS_CMP(score, *c2, dir)) { break; }
+    if (GRN_RSET_SUBRECS_CMP(score, *c2, dir) > 0) { break; }
     GRN_RSET_SUBRECS_COPY(subrecs,size,n,c2);
     n = n2;
   }
@@ -3165,10 +3165,10 @@ subrecs_replace_min(byte *subrecs, int size, int n_subrecs, int score, void *bod
     n2 = n1 + 1;
     c1 = n1 < n_subrecs ? GRN_RSET_SUBRECS_NTH(subrecs,size,n1) : NULL;
     c2 = n2 < n_subrecs ? GRN_RSET_SUBRECS_NTH(subrecs,size,n2) : NULL;
-    if (c1 && GRN_RSET_SUBRECS_CMP(score, *c1, dir)) {
+    if (c1 && GRN_RSET_SUBRECS_CMP(score, *c1, dir) > 0) {
       if (c2 &&
-          GRN_RSET_SUBRECS_CMP(score, *c2, dir) &&
-          GRN_RSET_SUBRECS_CMP(*c1, *c2, dir)) {
+          GRN_RSET_SUBRECS_CMP(score, *c2, dir) > 0 &&
+          GRN_RSET_SUBRECS_CMP(*c1, *c2, dir) > 0) {
         GRN_RSET_SUBRECS_COPY(subrecs,size,n,c2);
         n = n2;
       } else {
@@ -3176,7 +3176,7 @@ subrecs_replace_min(byte *subrecs, int size, int n_subrecs, int score, void *bod
         n = n1;
       }
     } else {
-      if (c2 && GRN_RSET_SUBRECS_CMP(score, *c2, dir)) {
+      if (c2 && GRN_RSET_SUBRECS_CMP(score, *c2, dir) > 0) {
         GRN_RSET_SUBRECS_COPY(subrecs,size,n,c2);
         n = n2;
       } else {
@@ -3199,7 +3199,7 @@ grn_rhash_add_subrec(grn_hash *s, grn_rset_recinfo *ri, int score, void *body, i
     int ssize = s->subrec_size;
     int n_subrecs = GRN_RSET_N_SUBRECS(ri);
     if (limit < n_subrecs) {
-      if (GRN_RSET_SUBRECS_CMP(score, *ri->subrecs, dir)) {
+      if (GRN_RSET_SUBRECS_CMP(score, *ri->subrecs, dir) > 0) {
         subrecs_replace_min(ri->subrecs, ssize, limit, score, body, dir);
       }
     } else {
