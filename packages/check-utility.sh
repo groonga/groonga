@@ -278,7 +278,7 @@ sudo rpm -ivh http://packages.groonga.org/centos/groonga-release-1.1.0-1.noarch.
 sudo yum makecache
 sudo yum install -y groonga
 sudo yum install -y groonga-tokenizer-mecab
-sudo rpm -ivh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-7.noarch.rpm
+sudo rpm -ivh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm
 #sudo yum install -y groonga-munin-plugins
 EOF
     cat > tmp/install-fedora-groonga.sh <<EOF
