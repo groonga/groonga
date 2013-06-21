@@ -458,8 +458,7 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
            const char *cache, unsigned int cache_len,
            const char *match_escalation_threshold, unsigned int match_escalation_threshold_len,
            const char *query_expander, unsigned int query_expander_len,
-           const char *query_flags, unsigned int query_flags_len,
-           grn_obj *condition_ptr, grn_obj *match_columns_ptr)
+           const char *query_flags, unsigned int query_flags_len)
 {
   uint32_t nkeys, nhits;
   uint16_t cacheable = 1, taintable = 0;
@@ -467,7 +466,7 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
   grn_table_sort_key *keys;
   grn_obj *outbuf = ctx->impl->outbuf;
   grn_content_type output_type = ctx->impl->output_type;
-  grn_obj *table_, *match_columns_ = NULL, *cond, *scorer_, *res = NULL, *sorted;
+  grn_obj *table_, *match_columns_ = NULL, *cond = NULL, *scorer_, *res = NULL, *sorted;
   char cache_key[GRN_TABLE_MAX_KEY_SIZE];
   uint32_t cache_key_size = table_len + 1 + match_columns_len + 1 + query_len + 1 +
     filter_len + 1 + scorer_len + 1 + sortby_len + 1 + output_columns_len + 1 +
@@ -534,11 +533,9 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
       grn_obj *v;
       GRN_EXPR_CREATE_FOR_QUERY(ctx, table_, cond, v);
       if (cond) {
-        GRN_PTR_SET(ctx, condition_ptr, cond);
         if (match_columns_len) {
           GRN_EXPR_CREATE_FOR_QUERY(ctx, table_, match_columns_, v);
           if (match_columns_) {
-            GRN_PTR_SET(ctx, match_columns_ptr, match_columns_);
             grn_expr_parse(ctx, match_columns_, match_columns, match_columns_len,
                            NULL, GRN_OP_MATCH, GRN_OP_AND,
                            GRN_EXPR_SYNTAX_SCRIPT);
@@ -661,11 +658,18 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
                             &format.columns);
           } else {
             grn_obj *v;
+            grn_obj *condition_ptr;
             GRN_EXPR_CREATE_FOR_QUERY(ctx, sorted, format.expression, v);
             grn_expr_parse(ctx, format.expression,
                            output_columns, output_columns_len, NULL,
                            GRN_OP_MATCH, GRN_OP_AND,
                            GRN_EXPR_SYNTAX_OUTPUT_COLUMNS);
+            condition_ptr =
+              grn_expr_get_or_add_var(ctx, format.expression,
+                                      GRN_SELECT_INTERNAL_VAR_CONDITION,
+                                      strlen(GRN_SELECT_INTERNAL_VAR_CONDITION));
+            GRN_PTR_INIT(condition_ptr, 0, GRN_DB_OBJECT);
+            GRN_PTR_SET(ctx, condition_ptr, cond);
           }
           GRN_OUTPUT_OBJ(sorted, &format);
           GRN_OBJ_FORMAT_FIN(ctx, &format);
@@ -683,11 +687,18 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
                             &format.columns);
           } else {
             grn_obj *v;
+            grn_obj *condition_ptr;
             GRN_EXPR_CREATE_FOR_QUERY(ctx, res, format.expression, v);
             grn_expr_parse(ctx, format.expression,
                            output_columns, output_columns_len, NULL,
                            GRN_OP_MATCH, GRN_OP_AND,
                            GRN_EXPR_SYNTAX_OUTPUT_COLUMNS);
+            condition_ptr =
+              grn_expr_get_or_add_var(ctx, format.expression,
+                                      GRN_SELECT_INTERNAL_VAR_CONDITION,
+                                      strlen(GRN_SELECT_INTERNAL_VAR_CONDITION));
+            GRN_PTR_INIT(condition_ptr, 0, GRN_DB_OBJECT);
+            GRN_PTR_SET(ctx, condition_ptr, cond);
           }
           GRN_OUTPUT_OBJ(res, &format);
           GRN_OBJ_FORMAT_FIN(ctx, &format);
@@ -770,6 +781,12 @@ exit:
   if (match_escalation_threshold_len) {
     grn_ctx_set_match_escalation_threshold(ctx, original_threshold);
   }
+  if (match_columns_) {
+    grn_obj_unlink(ctx, match_columns_);
+  }
+  if (cond) {
+    grn_obj_unlink(ctx, cond);
+  }
   /* GRN_LOG(ctx, GRN_LOG_NONE, "%d", ctx->seqno); */
   return ctx->rc;
 }
@@ -793,7 +810,6 @@ proc_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   int drilldown_limit = GRN_TEXT_LEN(VAR(13))
     ? grn_atoi(GRN_TEXT_VALUE(VAR(13)), GRN_BULK_CURR(VAR(13)), NULL)
     : DEFAULT_DRILLDOWN_LIMIT;
-  grn_obj *condition_ptr, *match_columns_ptr;
   grn_obj *query_expansion = VAR(16);
   grn_obj *query_expander = VAR(18);
   if (GRN_TEXT_LEN(query_expander) == 0 && GRN_TEXT_LEN(query_expansion) > 0) {
@@ -807,10 +823,6 @@ proc_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     drilldown_output_columns = DEFAULT_DRILLDOWN_OUTPUT_COLUMNS;
     drilldown_output_columns_len = strlen(DEFAULT_DRILLDOWN_OUTPUT_COLUMNS);
   }
-  condition_ptr = GRN_PROC_GET_OR_ADD_VAR(GRN_SELECT_INTERNAL_VAR_CONDITION);
-  GRN_PTR_INIT(condition_ptr, 0, GRN_DB_OBJECT);
-  match_columns_ptr = GRN_PROC_GET_OR_ADD_VAR(GRN_SELECT_INTERNAL_VAR_MATCH_COLUMNS);
-  GRN_PTR_INIT(match_columns_ptr, 0, GRN_DB_OBJECT);
   if (grn_select(ctx, GRN_TEXT_VALUE(VAR(0)), GRN_TEXT_LEN(VAR(0)),
                  GRN_TEXT_VALUE(VAR(1)), GRN_TEXT_LEN(VAR(1)),
                  GRN_TEXT_VALUE(VAR(2)), GRN_TEXT_LEN(VAR(2)),
@@ -826,16 +838,7 @@ proc_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                  GRN_TEXT_VALUE(VAR(14)), GRN_TEXT_LEN(VAR(14)),
                  GRN_TEXT_VALUE(VAR(15)), GRN_TEXT_LEN(VAR(15)),
                  GRN_TEXT_VALUE(query_expander), GRN_TEXT_LEN(query_expander),
-                 GRN_TEXT_VALUE(VAR(17)), GRN_TEXT_LEN(VAR(17)),
-                 condition_ptr, match_columns_ptr)) {
-  }
-  if (GRN_BULK_VSIZE(match_columns_ptr) > 0) {
-    grn_obj *match_columns = GRN_PTR_VALUE(match_columns_ptr);
-    grn_obj_unlink(ctx, match_columns);
-  }
-  if (GRN_BULK_VSIZE(condition_ptr) > 0) {
-    grn_obj *condition = GRN_PTR_VALUE(condition_ptr);
-    grn_obj_unlink(ctx, condition);
+                 GRN_TEXT_VALUE(VAR(17)), GRN_TEXT_LEN(VAR(17)))) {
   }
   return NULL;
 }
@@ -3609,7 +3612,7 @@ func_snippet_html(grn_ctx *ctx, int nargs, grn_obj **args,
   /* TODO: support parameters */
   if (nargs == 1) {
     grn_obj *text = args[0];
-    grn_obj *command = ctx->impl->curr_expr;
+    grn_obj *expression = NULL;
     grn_obj *condition_ptr = NULL;
     grn_obj *condition = NULL;
     grn_snip *snip = NULL;
@@ -3626,7 +3629,8 @@ func_snippet_html(grn_ctx *ctx, int nargs, grn_obj **args,
     open_tag_lengths[0] = strlen(open_tags[0]);
     close_tag_lengths[0] = strlen(close_tags[0]);
 
-    condition_ptr = grn_expr_get_var(ctx, command,
+    grn_proc_get_info(ctx, user_data, NULL, NULL, &expression);
+    condition_ptr = grn_expr_get_var(ctx, expression,
                                      GRN_SELECT_INTERNAL_VAR_CONDITION,
                                      strlen(GRN_SELECT_INTERNAL_VAR_CONDITION));
     if (condition_ptr) {
