@@ -5,6 +5,43 @@
 News
 ====
 
+.. _release-3-0-5:
+
+Release 3.0.5 - 2013/06/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [doc] Added summary about ``match_column`` and ``query_string`` parameters in ``query()``.
+* Added subrecord information to table inspection.
+* Supported single quoted string literal in ``output_columns`` expression.
+  This means that "XXX, '...'" expression is supported.
+
+Fixes
+^^^^^
+
+* Fixed a crash bug of mroonga which is caused by missing lock for table creation.
+  [Reported by Y.Kentaro]
+* Fixed a lot of compilation warnings by clang and gcc.
+* Fixed a bug that ``sub_filter(...)`` is ignored if you use "XXX && sub_filter(...)"
+  expression.
+* Fixed a bug that wrong tag name is used in XML output.
+  This bug affects the case if you use "REFERENCE_VECTOR_COLUMN._key" expression
+  for ``output_columns``. Reference column isn't contained in XML ouput.
+* [doc] Fixed wrong arguments in ``sub_filter()`` documentation.
+* [deb] Fixed a bug that status action returns wrong exit code
+  when services are stopped. [GitHub#62] [Patch by @orangain]
+* Fixed a bug that the value of arithmetic operation is broken.
+  This bug affects the case if you assign calculated value to
+  ``_score`` pseudo column for example.
+
+Thanks
+^^^^^^
+
+* Y.Kentaro
+* @orangain
+
 .. _release-3-0-4:
 
 Release 3.0.4 - 2013/05/29
