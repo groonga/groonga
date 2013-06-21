@@ -115,8 +115,8 @@ Execution example::
   %
 
 .. note::
-  Note that you must have root privileges if you listen on the port number 80 (well known port).
-  There is no such a limitation about the port number 1024 or over.
+   Note that you must have root privileges if you listen on the port number 80 (well known port).
+   There is no such a limitation about the port number 1024 or over.
 
 How to send a command to an HTTP server
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
