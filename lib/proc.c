@@ -3775,8 +3775,6 @@ static grn_obj *
 func_query(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_obj *found;
-  grn_obj *command = ctx->impl->curr_expr;
-  grn_obj *condition_ptr = NULL;
   grn_obj *condition = NULL;
   grn_obj *variable;
   grn_obj *table = NULL;
