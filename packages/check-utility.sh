@@ -356,6 +356,14 @@ EOF
 
 enable_temporary_groonga_repository ()
 {
+    SCRIPT=enable-repository.sh
+    cat > tmp/$SCRIPT <<EOF
+#!/bin/sh
+
+grep -v "packages.groonga.org" /etc/hosts > /tmp/hosts
+echo "$HOST_ADDRESS packages.groonga.org" >> /tmp/hosts
+cp -f /tmp/hosts /etc/hosts
+EOF
     common_deb_procedure "enable_temporary_groonga_deb_repository"
     common_rpm_procedure "enable_temporary_groonga_rpm_repository"
     check_packages_repository_address
@@ -367,13 +375,6 @@ enable_temporary_groonga_deb_repository ()
     arch=$2
     root_dir=$3
     SCRIPT=enable-repository.sh
-    cat > tmp/$SCRIPT <<EOF
-#!/bin/sh
-
-grep -v "packages.groonga.org" /etc/hosts > /tmp/hosts
-echo "$HOST_ADDRESS packages.groonga.org" >> /tmp/hosts
-cp -f /tmp/hosts /etc/hosts
-EOF
     today=`date '+%Y%m%d.%s'`
     copy_and_exec_script $code-$arch $root_dir $SCRIPT
 }
