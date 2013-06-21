@@ -186,7 +186,7 @@ grn_obj *grn_proc_get_var(grn_ctx *ctx, grn_user_data *user_data,
 
 GRN_API grn_obj *grn_proc_get_var_by_offset(grn_ctx *ctx, grn_user_data *user_data,
                                             unsigned int offset);
-  GRN_API grn_obj *grn_proc_get_or_add_var(grn_ctx *ctx, grn_user_data *user_data,
+GRN_API grn_obj *grn_proc_get_or_add_var(grn_ctx *ctx, grn_user_data *user_data,
                                          const char *name, unsigned int name_size);
 
 GRN_API grn_obj *grn_proc_alloc(grn_ctx *ctx, grn_user_data *user_data,
