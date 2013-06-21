@@ -111,8 +111,12 @@ The following command runs an HTTP server that listens on the port number 80.
 
 Execution example::
 
-  % groonga -p 80 -d --protocol http /tmp/groonga-databases/introduction.db
+  % sudo groonga -p 80 -d --protocol http /tmp/groonga-databases/introduction.db
   %
+
+.. note::
+  Note that you must have root privileges if you listen on the port number 80 (well known port).
+  There is no such a limitation about the port number 1024 or over.
 
 How to send a command to an HTTP server
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
