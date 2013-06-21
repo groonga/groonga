@@ -3943,8 +3943,6 @@ static grn_obj *
 func_sub_filter(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_obj *found;
-  grn_obj *command = ctx->impl->curr_expr;
-  grn_obj *condition_ptr = NULL;
   grn_obj *condition = NULL;
   grn_obj *variable;
   grn_obj *table = NULL;
@@ -3956,14 +3954,7 @@ func_sub_filter(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
   }
   GRN_BOOL_SET(ctx, found, GRN_FALSE);
 
-  condition_ptr = grn_expr_get_var(ctx, command,
-                                   GRN_SELECT_INTERNAL_VAR_CONDITION,
-                                   strlen(GRN_SELECT_INTERNAL_VAR_CONDITION));
-  if (!condition_ptr) {
-    goto exit;
-  }
-
-  condition = GRN_PTR_VALUE(condition_ptr);
+  grn_proc_get_info(ctx, user_data, NULL, NULL, &condition);
   if (!condition) {
     goto exit;
   }
