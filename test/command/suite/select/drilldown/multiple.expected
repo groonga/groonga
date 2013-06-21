@@ -1,0 +1,127 @@
+table_create Tags TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos tag COLUMN_SCALAR Tags
+[[0,0.0,0.0],true]
+column_create Memos date COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "groonga is fast!", "tag": "groonga", "date": "2013-06-21"},
+{"_key": "mroonga is fast!", "tag": "mroonga", "date": "2013-06-21"},
+{"_key": "groonga sticker!", "tag": "groonga", "date": "2013-06-22"},
+{"_key": "rroonga is fast!", "tag": "rroonga", "date": "2013-06-23"}
+]
+[[0,0.0,0.0],4]
+select Memos --drilldown tag,date
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        4
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "date",
+          "ShortText"
+        ],
+        [
+          "tag",
+          "Tags"
+        ]
+      ],
+      [
+        1,
+        "groonga is fast!",
+        "2013-06-21",
+        "groonga"
+      ],
+      [
+        2,
+        "mroonga is fast!",
+        "2013-06-21",
+        "mroonga"
+      ],
+      [
+        3,
+        "groonga sticker!",
+        "2013-06-22",
+        "groonga"
+      ],
+      [
+        4,
+        "rroonga is fast!",
+        "2013-06-23",
+        "rroonga"
+      ]
+    ],
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "_nsubrecs",
+          "Int32"
+        ]
+      ],
+      [
+        "groonga",
+        2
+      ],
+      [
+        "mroonga",
+        1
+      ],
+      [
+        "rroonga",
+        1
+      ]
+    ],
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "_nsubrecs",
+          "Int32"
+        ]
+      ],
+      [
+        "2013-06-21",
+        2
+      ],
+      [
+        "2013-06-22",
+        1
+      ],
+      [
+        "2013-06-23",
+        1
+      ]
+    ]
+  ]
+]

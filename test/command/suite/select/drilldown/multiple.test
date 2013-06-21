@@ -1,0 +1,15 @@
+table_create Tags TABLE_PAT_KEY ShortText
+
+table_create Memos TABLE_HASH_KEY ShortText
+column_create Memos tag COLUMN_SCALAR Tags
+column_create Memos date COLUMN_SCALAR ShortText
+
+load --table Memos
+[
+{"_key": "groonga is fast!", "tag": "groonga", "date": "2013-06-21"},
+{"_key": "mroonga is fast!", "tag": "mroonga", "date": "2013-06-21"},
+{"_key": "groonga sticker!", "tag": "groonga", "date": "2013-06-22"},
+{"_key": "rroonga is fast!", "tag": "rroonga", "date": "2013-06-23"}
+]
+
+select Memos --drilldown tag,date

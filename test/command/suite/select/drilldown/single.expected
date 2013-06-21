@@ -1,0 +1,90 @@
+table_create Tags TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos tag COLUMN_SCALAR Tags
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "groonga is fast!", "tag": "groonga"},
+{"_key": "mroonga is fast!", "tag": "mroonga"},
+{"_key": "groonga sticker!", "tag": "groonga"},
+{"_key": "rroonga is fast!", "tag": "rroonga"}
+]
+[[0,0.0,0.0],4]
+select Memos --drilldown tag
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        4
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "tag",
+          "Tags"
+        ]
+      ],
+      [
+        1,
+        "groonga is fast!",
+        "groonga"
+      ],
+      [
+        2,
+        "mroonga is fast!",
+        "mroonga"
+      ],
+      [
+        3,
+        "groonga sticker!",
+        "groonga"
+      ],
+      [
+        4,
+        "rroonga is fast!",
+        "rroonga"
+      ]
+    ],
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "_nsubrecs",
+          "Int32"
+        ]
+      ],
+      [
+        "groonga",
+        2
+      ],
+      [
+        "mroonga",
+        1
+      ],
+      [
+        "rroonga",
+        1
+      ]
+    ]
+  ]
+]
