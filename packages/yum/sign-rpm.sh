@@ -21,9 +21,16 @@ run()
     fi
 }
 
+unsigned_rpms()
+{
+    while read rpm; do
+	rpm --checksig "$rpm" | grep -v 'gpg OK' | cut -d":" -f1
+    done
+}
+
 rpms=""
 for distribution in ${DISTRIBUTIONS}; do
-    rpms="${rpms} $(echo ${DESTINATION}${distribution}/*/*/*/*.rpm)"
+    rpms="${rpms} $(find ${DESTINATION}${distribution} -name '*.rpm' | unsigned_rpms)"
 done
 
 echo "NOTE: YOU JUST ENTER! YOU DON'T NEED TO INPUT PASSWORD!"
