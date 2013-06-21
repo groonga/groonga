@@ -1867,7 +1867,7 @@ subrecs_push(byte *subrecs, int size, int n_subrecs, int score, void *body, int 
   while (n) {
     n2 = (n - 1) >> 1;
     c2 = GRN_RSET_SUBRECS_NTH(subrecs,size,n2);
-    if (GRN_RSET_SUBRECS_CMP(score, *c2, dir) > 0) { break; }
+    if (GRN_RSET_SUBRECS_CMP(score, *c2, dir) >= 0) { break; }
     GRN_RSET_SUBRECS_COPY(subrecs,size,n,c2);
     n = n2;
   }
