@@ -2837,7 +2837,7 @@ accelerated_table_group(grn_ctx *ctx, grn_obj *table, grn_obj *key, grn_obj *res
               if ((!idp || *((grn_id *)v)) &&
                   grn_table_add_v_inline(ctx, res, v, element_size, &value, NULL)) {
                 grn_table_add_subrec_inline(res, value, ri ? ri->score : 0,
-                                            (grn_rset_posinfo *)id_, 0);
+                                            (grn_rset_posinfo *)&id, 0);
               }
             }
             GRN_RA_CACHE_FIN(ra, &cache);
@@ -2863,7 +2863,7 @@ accelerated_table_group(grn_ctx *ctx, grn_obj *table, grn_obj *key, grn_obj *res
                   if ((*v != GRN_ID_NIL) &&
                       grn_table_add_v_inline(ctx, res, v, sizeof(grn_id), &value, NULL)) {
                     grn_table_add_subrec_inline(res, value, ri ? ri->score : 0,
-                                                (grn_rset_posinfo *)id_, 0);
+                                                (grn_rset_posinfo *)&id, 0);
                   }
                   v++;
                   len -= sizeof(grn_id);
@@ -2965,7 +2965,7 @@ grn_table_group_with_range_gap(grn_ctx *ctx, grn_obj *table,
                   if ((*v != GRN_ID_NIL) &&
                       grn_table_add_v_inline(ctx, res, v, sizeof(grn_id), &value, NULL)) {
                     grn_table_add_subrec_inline(res, value, ri ? ri->score : 0,
-                                                (grn_rset_posinfo *)id_, 0);
+                                                (grn_rset_posinfo *)&id, 0);
                   }
                   v++;
                   len -= sizeof(grn_id);
