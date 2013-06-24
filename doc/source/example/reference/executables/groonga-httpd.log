@@ -12,10 +12,10 @@ Execution example::
       "max_command_version": 2, 
       "n_queries": 0, 
       "cache_hit_rate": 0.0, 
-      "version": "3.0.2", 
-      "alloc_count": 150, 
+      "version": "3.0.5", 
+      "alloc_count": 157, 
       "command_version": 1, 
-      "starttime": 1364461070, 
+      "starttime": 1372040796, 
       "default_command_version": 1
     }
   ]
