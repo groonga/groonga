@@ -225,7 +225,19 @@ case "$1" in
 	;;
     status)
 	do_status
-	exit $?
+	case "$?" in
+	    0) 
+		# service is OK
+		;;
+	    1|2|3|4|5|6|7)
+		# curl can't connect to host, service status is unknown
+		exit 4
+		;;
+	    *)
+		# treat as program is not running
+		exit 3
+		;;
+	esac
 	;;
     *)
 	echo "Usage: $SCRIPTNAME {start|stop|restart|reload|force-reload|status}" >&2

@@ -174,7 +174,10 @@ case "$1" in
 	;;
     status)
 	do_status
-	exit $?
+	case "$?" in
+	    0) ;; # service is OK
+	    *) exit 3 ;; # program is not running
+	esac
 	;;
     *)
 	echo "Usage: $SCRIPTNAME {start|stop|restart|reload|force-reload|status}" >&2
