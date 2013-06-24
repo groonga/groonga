@@ -229,13 +229,13 @@ case "$1" in
 	    0) 
 		# service is OK
 		;;
-	    1|2|3|4|5|6|7)
-		# curl can't connect to host, service status is unknown
-		exit 4
+	    7)
+		# curl can't connect to host, program is not running
+		exit 3
 		;;
 	    *)
-		# treat as program is not running
-		exit 3
+		# service status is unknown
+		exit 4
 		;;
 	esac
 	;;
