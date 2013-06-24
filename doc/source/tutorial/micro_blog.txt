@@ -21,6 +21,7 @@
  table_create --name Comments --flags TABLE_HASH_KEY --key_type ShortText
  table_create --name HashTags --flags TABLE_HASH_KEY --key_type ShortText
  table_create --name Bigram --flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type ShortText --default_tokenizer TokenBigram
+ table_create --name GeoIndex --flags TABLE_PAT_KEY --key_type WGS84GeoPoint
 
  column_create --table Users --name name --flags COLUMN_SCALAR --type ShortText
  column_create --table Users --name follower --flags COLUMN_VECTOR --type Users
@@ -43,6 +44,9 @@
 
  column_create --table Bigram --name users_index --flags COLUMN_INDEX|WITH_POSITION|WITH_SECTION --type Users --source name,location_str,description
  column_create --table Bigram --name comment_index --flags COLUMN_INDEX|WITH_POSITION --type Comments --source comment
+
+ column_create --table GeoIndex --name users_location --type Users --flags COLUMN_INDEX --source location
+ column_create --table GeoIndex --name comments_location --type Comments --flags COLUMN_INDEX --source location
 
 Usersテーブル
 ^^^^^^^^^^^^^
@@ -249,6 +253,7 @@ Commentsテーブルのlast_modifiedカラムは、Time型です。この型で�
  table_create --name Comments --flags TABLE_HASH_KEY --key_type ShortText
  table_create --name HashTags --flags TABLE_HASH_KEY --key_type ShortText
  table_create --name Bigram --flags TABLE_PAT_KEY|KEY_NORMALIZE --key_type ShortText --default_tokenizer TokenBigram
+ table_create --name GeoIndex --flags TABLE_PAT_KEY --key_type WGS84GeoPoint
  
  column_create --table Users --name name --flags COLUMN_SCALAR --type ShortText
  column_create --table Users --name follower --flags COLUMN_VECTOR --type Users
@@ -271,6 +276,9 @@ Commentsテーブルのlast_modifiedカラムは、Time型です。この型で�
  
  column_create --table Bigram --name users_index --flags COLUMN_INDEX|WITH_POSITION|WITH_SECTION --type Users --source name,location_str,description
  column_create --table Bigram --name comment_index --flags COLUMN_INDEX|WITH_POSITION --type Comments --source comment
+ 
+ column_create --table GeoIndex --name users_location --type Users --flags COLUMN_INDEX --source location
+ column_create --table GeoIndex --name comments_location --type Comments --flags COLUMN_INDEX --source location
  
  load --table Users
  [

@@ -23,16 +23,16 @@ Execution example::
   #         ]
   #       ], 
   #       [
-  #         "OffGao", 
-  #         "@daijiro @tasukuchan 登録してみましたよー！"
+  #         "グニャラくん", 
+  #         "groonga開発合宿のため羽田空港に来ました！ #groonga #travel"
   #       ], 
   #       [
   #         "グニャラくん", 
   #         "groongaなう #groonga"
   #       ], 
   #       [
-  #         "グニャラくん", 
-  #         "groonga開発合宿のため羽田空港に来ました！ #groonga #travel"
+  #         "OffGao", 
+  #         "@daijiro @tasukuchan 登録してみましたよー！"
   #       ], 
   #       [
   #         "OffGao", 
@@ -77,11 +77,11 @@ Execution example::
   #         ]
   #       ], 
   #       [
-  #         "OffGao", 
+  #         "tasukuchan", 
   #         2
   #       ], 
   #       [
-  #         "tasukuchan", 
+  #         "OffGao", 
   #         2
   #       ]
   #     ]
