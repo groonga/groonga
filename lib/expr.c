@@ -2643,6 +2643,9 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
             WITH_SPSAVE({
               grn_proc_call(ctx, proc, code->nargs, expr);
             });
+            if (ctx->rc) {
+              goto exit;
+            }
             POP1(res);
             {
               grn_obj *proc_;
