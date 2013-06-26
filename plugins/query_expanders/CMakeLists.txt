@@ -17,7 +17,7 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/../../lib
   )
 
-set(QUERY_EXPANDERS_DIR "${GRN_PLUGINS_DIR}/query_expanders")
+set(QUERY_EXPANDERS_DIR "${GRN_RELATIVE_PLUGINS_DIR}/query_expanders")
 read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/tsv_sources.am TSV_SOURCES)
 set_source_files_properties(${TSV_SOURCES}
   PROPERTIES

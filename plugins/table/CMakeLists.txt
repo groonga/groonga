@@ -24,4 +24,4 @@ set_source_files_properties(${TABLE_SOURCES}
   COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
 set_target_properties(table PROPERTIES PREFIX "")
 target_link_libraries(table libgroonga)
-install(TARGETS table DESTINATION "${GRN_PLUGINS_DIR}/table")
+install(TARGETS table DESTINATION "${GRN_RELATIVE_PLUGINS_DIR}/table")
