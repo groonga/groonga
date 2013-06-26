@@ -138,6 +138,17 @@ Bigramテーブル
 ``comment_index``
   コメント内容「Comments.comment」のインデックス
 
+GeoIndex table
+^^^^^^^^^^^^^^
+
+This is the table which stores indexes to enable full-text search for location column.
+
+``users_location``
+  Indexes of location column for Users table
+
+``comments_location``
+  Indexes of location column for Comments table
+
 データのロード
 --------------
 
