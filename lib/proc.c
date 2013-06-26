@@ -4066,7 +4066,11 @@ func_html_untag(grn_ctx *ctx, int nargs, grn_obj **args,
       in_tag = GRN_TRUE;
       break;
     case '>' :
-      in_tag = GRN_FALSE;
+      if (in_tag) {
+        in_tag = GRN_FALSE;
+      } else {
+        GRN_TEXT_PUTC(ctx, text, html_raw[i]);
+      }
       break;
     default :
       if (!in_tag) {
