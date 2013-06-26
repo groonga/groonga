@@ -1,0 +1,11 @@
+table_create Entries TABLE_NO_KEY
+column_create Entries content COLUMN_SCALAR Text
+
+load --table Entries
+[
+{"content": "I <em class=\"important\">am</em> a boy."}
+]
+
+select Entries \
+  --output_columns "html_untag(content)" \
+  --command_version 2
