@@ -1,0 +1,11 @@
+table_create Entries TABLE_NO_KEY
+column_create Entries id COLUMN_SCALAR Int32
+
+load --table Entries
+[
+{"id": 29}
+]
+
+select Entries \
+  --output_columns "html_untag(id)" \
+  --command_version 2

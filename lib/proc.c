@@ -4015,7 +4015,9 @@ static grn_obj *
 func_html_untag(grn_ctx *ctx, int nargs, grn_obj **args,
                 grn_user_data *user_data)
 {
-  grn_obj *html;
+  grn_obj *html_arg;
+  int html_arg_domain;
+  grn_obj html;
   grn_obj *text;
   const char *html_raw;
   int i, length;
@@ -4026,16 +4028,38 @@ func_html_untag(grn_ctx *ctx, int nargs, grn_obj **args,
     return NULL;
   }
 
-  /* TODO: type check */
-  html = args[0];
+  html_arg = args[0];
+  html_arg_domain = html_arg->header.domain;
+  switch (html_arg_domain) {
+  case GRN_DB_SHORT_TEXT :
+  case GRN_DB_TEXT :
+  case GRN_DB_LONG_TEXT :
+    GRN_VALUE_VAR_SIZE_INIT(&html, GRN_OBJ_DO_SHALLOW_COPY, html_arg_domain);
+    GRN_TEXT_SET(ctx, &html, GRN_TEXT_VALUE(html_arg), GRN_TEXT_LEN(html_arg));
+    break;
+  default :
+    GRN_TEXT_INIT(&html, 0);
+    if (grn_obj_cast(ctx, html_arg, &html, GRN_FALSE)) {
+      grn_obj inspected;
+      GRN_TEXT_INIT(&inspected, 0);
+      grn_inspect(ctx, &inspected, html_arg);
+      ERR(GRN_INVALID_ARGUMENT, "failed to cast to text: <%.*s>",
+          (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));
+      GRN_OBJ_FIN(ctx, &inspected);
+      GRN_OBJ_FIN(ctx, &html);
+      return NULL;
+    }
+    break;
+  }
 
-  text = GRN_PROC_ALLOC(html->header.domain, 0);
+  text = GRN_PROC_ALLOC(html.header.domain, 0);
   if (!text) {
+    GRN_OBJ_FIN(ctx, &html);
     return NULL;
   }
 
-  html_raw = GRN_TEXT_VALUE(html);
-  length = GRN_TEXT_LEN(html);
+  html_raw = GRN_TEXT_VALUE(&html);
+  length = GRN_TEXT_LEN(&html);
   for (i = 0; i < length; i++) {
     switch (html_raw[i]) {
     case '<' :
@@ -4051,6 +4075,8 @@ func_html_untag(grn_ctx *ctx, int nargs, grn_obj **args,
       break;
     }
   }
+
+  GRN_OBJ_FIN(ctx, &html);
 
   return text;
 }

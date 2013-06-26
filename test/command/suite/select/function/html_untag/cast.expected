@@ -1,0 +1,11 @@
+table_create Entries TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Entries id COLUMN_SCALAR Int32
+[[0,0.0,0.0],true]
+load --table Entries
+[
+{"id": 29}
+]
+[[0,0.0,0.0],1]
+select Entries   --output_columns "html_untag(id)"   --command_version 2
+[[0,0.0,0.0],[[[1],[["html_untag","null"]],["29"]]]]
