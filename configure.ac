@@ -1157,14 +1157,16 @@ AM_CONDITIONAL([FEDORA_PLATFORM],
                [test "${package_platform}" = "fedora"])
 
 # plugins check
-relative_pluginsdir="\$(PACKAGE)/plugins"
-AC_SUBST(relative_pluginsdir)
-expanded_relative_pluginsdir="${PACKAGE}/plugins"
-AC_SUBST(expanded_relative_pluginsdir)
+relative_pluginsdir_base="\$(PACKAGE)/plugins"
+AC_SUBST(relative_pluginsdir_base)
+expanded_relative_pluginsdir_base="${PACKAGE}/plugins"
+AC_SUBST(expanded_relative_pluginsdir_base)
 
-pluginsdir="\${libdir}/\$(relative_pluginsdir)"
+relative_pluginsdir="lib/\$(relative_pluginsdir_base)"
+
+pluginsdir="\${libdir}/\$(relative_pluginsdir_base)"
 AC_SUBST(pluginsdir)
-expanded_pluginsdir="\${libdir}/${expanded_relative_pluginsdir}"
+expanded_pluginsdir="\${libdir}/${expanded_relative_pluginsdir_base}"
 AC_SUBST(expanded_pluginsdir)
 
 tokenizers_pluginsdir="\${pluginsdir}/tokenizers"
@@ -1224,7 +1226,7 @@ AC_SUBST(GRN_CFLAGS)
 GRN_DEFS=""
 GRN_DEFS="$GRN_DEFS -DGRN_DLL_FILENAME=L\\\"\"\$(GRN_DLL_FILENAME)\"\\\""
 GRN_DEFS="$GRN_DEFS -DGRN_PLUGINS_DIR=\\\"\"\$(pluginsdir)\"\\\""
-GRN_DEFS="$GRN_DEFS -DGRN_RELATIVE_PLUGINS_DIR=\\\"\"lib/\$(relative_pluginsdir)\"\\\""
+GRN_DEFS="$GRN_DEFS -DGRN_RELATIVE_PLUGINS_DIR=\\\"\"\$(relative_pluginsdir)\"\\\""
 GRN_DEFS="$GRN_DEFS -DGRN_LOG_PATH=\\\"\"\$(grn_log_path)\"\\\""
 GRN_DEFS="$GRN_DEFS -DGRN_DEFAULT_DOCUMENT_ROOT=\\\"\"\$(GRN_DEFAULT_DOCUMENT_ROOT)\"\\\""
 GRN_DEFS="$GRN_DEFS -DGRN_DEFAULT_RELATIVE_DOCUMENT_ROOT=\\\"\"\$(GRN_DEFAULT_RELATIVE_DOCUMENT_ROOT)\"\\\""

@@ -338,7 +338,7 @@ grn_plugin_get_system_plugins_dir(void)
     base_dir = grn_win32_base_dir();
     base_dir_length = strlen(base_dir);
     strcpy(win32_plugins_dir_buffer, base_dir);
-    strcat(win32_plugins_dir_buffer, "/lib/");
+    strcat(win32_plugins_dir_buffer, "/");
     strcat(win32_plugins_dir_buffer, relative_path);
     win32_plugins_dir = win32_plugins_dir_buffer;
   }
