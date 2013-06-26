@@ -1,0 +1,11 @@
+table_create Entries TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Entries content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+load --table Entries
+[
+{"content": "I <em>am</em> a boy."}
+]
+[[0,0.0,0.0],1]
+select Entries   --output_columns "html_untag(content)"   --command_version 2
+[[0,0.0,0.0],[[[1],[["html_untag","null"]],["I am a boy."]]]]

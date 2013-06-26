@@ -4011,6 +4011,50 @@ selector_sub_filter(grn_ctx *ctx, grn_obj *table, grn_obj *index,
   return run_sub_filter(ctx, table, nargs - 1, args + 1, res, op);
 }
 
+static grn_obj *
+func_html_untag(grn_ctx *ctx, int nargs, grn_obj **args,
+                grn_user_data *user_data)
+{
+  grn_obj *html;
+  grn_obj *text;
+  const char *html_raw;
+  int i, length;
+  grn_bool in_tag = GRN_FALSE;
+
+  if (nargs != 1) {
+    ERR(GRN_INVALID_ARGUMENT, "HTML is missing");
+    return NULL;
+  }
+
+  /* TODO: type check */
+  html = args[0];
+
+  text = GRN_PROC_ALLOC(html->header.domain, 0);
+  if (!text) {
+    return NULL;
+  }
+
+  html_raw = GRN_TEXT_VALUE(html);
+  length = GRN_TEXT_LEN(html);
+  for (i = 0; i < length; i++) {
+    switch (html_raw[i]) {
+    case '<' :
+      in_tag = GRN_TRUE;
+      break;
+    case '>' :
+      in_tag = GRN_FALSE;
+      break;
+    default :
+      if (!in_tag) {
+        GRN_TEXT_PUTC(ctx, text, html_raw[i]);
+      }
+      break;
+    }
+  }
+
+  return text;
+}
+
 #define DEF_VAR(v,name_str) do {\
   (v).name = (name_str);\
   (v).name_size = GRN_STRLEN(name_str);\
@@ -4217,4 +4261,7 @@ grn_db_init_builtin_query(grn_ctx *ctx)
                                     func_sub_filter, NULL, NULL, 0, NULL);
     grn_proc_set_selector(ctx, selector_proc, selector_sub_filter);
   }
+
+  grn_proc_create(ctx, "html_untag", -1, GRN_PROC_FUNCTION,
+                  func_html_untag, NULL, NULL, 0, NULL);
 }
