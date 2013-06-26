@@ -141,7 +141,7 @@ Bigramテーブル
 GeoIndex table
 ^^^^^^^^^^^^^^
 
-This is the table which stores indexes to enable full-text search for location column.
+This is the table which stores indexes of location column to search geo location effectively.
 
 ``users_location``
   Indexes of location column for Users table
