@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-06-21 11:32+0900\n"
+"POT-Creation-Date: 2013-06-27 15:15+0900\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -182,6 +182,9 @@ msgstr ""
 #: ../../../source/example/reference/functions/geo_distance_location_sphere.log:1
 #: ../../../source/example/reference/functions/geo_distance_setup_distance.log:1
 #: ../../../source/example/reference/functions/geo_distance_setup_location.log:1
+#: ../../../source/example/reference/functions/html_untag/usage_html_untag.log:1
+#: ../../../source/example/reference/functions/html_untag/usage_setup_data.log:1
+#: ../../../source/example/reference/functions/html_untag/usage_setup_schema.log:1
 #: ../../../source/example/reference/functions/query/usage_basic.log:1
 #: ../../../source/example/reference/functions/query/usage_setup_data.log:1
 #: ../../../source/example/reference/functions/query/usage_setup_schema.log:1
@@ -301,6 +304,7 @@ msgstr ""
 #: ../../../source/reference/commands/truncate.txt:12
 #: ../../../source/reference/executables/groonga-httpd.txt:9
 #: ../../../source/reference/functions/geo_distance.txt:13
+#: ../../../source/reference/functions/html_untag.txt:12
 #: ../../../source/reference/functions/query.txt:12
 #: ../../../source/reference/functions/snippet_html.txt:16
 #: ../../../source/reference/functions/sub_filter.txt:12
@@ -2711,6 +2715,7 @@ msgstr ""
 #: ../../../source/reference/commands/tokenize.txt:18
 #: ../../../source/reference/commands/truncate.txt:17
 #: ../../../source/reference/functions/geo_distance.txt:18
+#: ../../../source/reference/functions/html_untag.txt:19
 #: ../../../source/reference/functions/query.txt:26
 #: ../../../source/reference/functions/snippet_html.txt:27
 #: ../../../source/reference/functions/sub_filter.txt:20
@@ -2741,6 +2746,7 @@ msgstr ""
 #: ../../../source/reference/commands/truncate.txt:26
 #: ../../../source/reference/executables/groonga-httpd.txt:30
 #: ../../../source/reference/functions/geo_distance.txt:31
+#: ../../../source/reference/functions/html_untag.txt:29
 #: ../../../source/reference/functions/query.txt:40
 #: ../../../source/reference/functions/snippet_html.txt:37
 #: ../../../source/reference/functions/sub_filter.txt:31
@@ -2779,6 +2785,7 @@ msgstr ""
 #: ../../../source/reference/commands/tokenize.txt:44
 #: ../../../source/reference/commands/truncate.txt:44
 #: ../../../source/reference/functions/geo_distance.txt:146
+#: ../../../source/reference/functions/html_untag.txt:62
 #: ../../../source/reference/functions/query.txt:107
 #: ../../../source/reference/functions/sub_filter.txt:98
 msgid "Parameters"
@@ -2846,6 +2853,7 @@ msgstr ""
 #: ../../../source/reference/commands/tokenize.txt:166
 #: ../../../source/reference/commands/truncate.txt:59
 #: ../../../source/reference/functions/geo_distance.txt:293
+#: ../../../source/reference/functions/html_untag.txt:72
 #: ../../../source/reference/functions/query.txt:158
 #: ../../../source/reference/functions/snippet_html.txt:93
 #: ../../../source/reference/functions/sub_filter.txt:123
@@ -3905,6 +3913,7 @@ msgstr ""
 # dbd7ce67af4b4096b4caa3111a1a9d90
 # 16c671e139ff4fdb986ae5142c5aa3d8
 #: ../../../source/reference/commands/select.txt:52
+#: ../../../source/reference/functions/html_untag.txt:31
 #: ../../../source/reference/functions/query.txt:42
 #: ../../../source/reference/functions/snippet_html.txt:39
 #: ../../../source/reference/functions/sub_filter.txt:33
@@ -5713,6 +5722,7 @@ msgstr ""
 # fc658bcbdc244395a315bc123ec1f1ff
 # 4614e1fa49044fae9d94d0979334d9f1
 #: ../../../source/reference/commands/suggest.txt:79
+#: ../../../source/reference/functions/html_untag.txt:67
 msgid "``column``"
 msgstr ""
 
@@ -9658,6 +9668,76 @@ msgid "pointに指定した座標が矩形の範囲内にあるかどうかをBo
 msgstr ""
 "pointに指定した座標が矩形の範囲内にあるかどうかをBool型の値で返します。"
 
+# b7eaa688207945a5be51ce35e950609d
+#: ../../../source/reference/functions/html_untag.txt:9
+msgid "html_untag"
+msgstr ""
+
+# 164bfdbdaa0e47439a01601a7fe5c05a
+#: ../../../source/reference/functions/html_untag.txt:14
+msgid "``html_untag`` strips HTML tags from HTML and outputs plain text."
+msgstr ""
+
+# e69485a4441244be9c634bee7f664546
+#: ../../../source/reference/functions/html_untag.txt:16
+msgid ""
+"``html_untag`` is used in ``--output_columns`` described at :doc:`/reference/"
+"commands/select`."
+msgstr ""
+
+# 03114b0339ad470699c17748c6ab8cb0
+#: ../../../source/reference/functions/html_untag.txt:21
+msgid "``html_untag`` requires only one argument. It is ``column``."
+msgstr ""
+
+# 3a8233a365154ae693896a4c5becc3e3
+# cb222ca16b7545e580558c441d3e9349
+#: ../../../source/reference/functions/html_untag.txt:33
+#: ../../../source/reference/functions/query.txt:44
+#: ../../../source/reference/functions/sub_filter.txt:35
+msgid "Sample schema:"
+msgstr ""
+
+# 3a8233a365154ae693896a4c5becc3e3
+# cb222ca16b7545e580558c441d3e9349
+#: ../../../source/reference/functions/html_untag.txt:42
+#: ../../../source/reference/functions/query.txt:61
+#: ../../../source/reference/functions/sub_filter.txt:52
+msgid "Sample data:"
+msgstr ""
+
+# da96f5a001984fa6afb936a84830cb57
+#: ../../../source/reference/functions/html_untag.txt:52
+msgid ""
+"Here is the simple usage of ``html_untag`` function which strips HTML tags "
+"from content of column."
+msgstr ""
+
+# c8f122450c0d46bb847219d69641e854
+#: ../../../source/reference/functions/html_untag.txt:58
+msgid ""
+"When executing the above query, you can see \"span\" tag with \"class\" "
+"attribute is stripped. Note that you must specify ``--command_version 2`` to "
+"use ``html_untag`` function."
+msgstr ""
+
+# 1eb1184cdea4464ca9cc8a73c9deecf7
+#: ../../../source/reference/functions/html_untag.txt:64
+msgid "There is one required parameter, ``column``."
+msgstr ""
+
+# 4cbd35ee174e45658e8becbb0e0a5ade
+#: ../../../source/reference/functions/html_untag.txt:69
+msgid "It specifies a column of the table."
+msgstr ""
+
+# e3339e1730fb4a979c8e4a78fbe2295a
+#: ../../../source/reference/functions/html_untag.txt:74
+msgid ""
+"``html_untag`` returns plain text which is stripped HTML tags from content "
+"of column."
+msgstr ""
+
 # 0b1fbf0c37c44d17bc5fc953f002de93
 #: ../../../source/reference/functions/now.txt:6
 msgid "now"
@@ -9730,20 +9810,6 @@ msgstr ""
 # f6d48d9af4814e1e962667fa9c0b34ea
 #: ../../../source/reference/functions/query.txt:30
 msgid "The parameter ``query_expander`` or ``substitution_table`` is optional."
-msgstr ""
-
-# 3a8233a365154ae693896a4c5becc3e3
-# cb222ca16b7545e580558c441d3e9349
-#: ../../../source/reference/functions/query.txt:44
-#: ../../../source/reference/functions/sub_filter.txt:35
-msgid "Sample schema:"
-msgstr ""
-
-# 3a8233a365154ae693896a4c5becc3e3
-# cb222ca16b7545e580558c441d3e9349
-#: ../../../source/reference/functions/query.txt:61
-#: ../../../source/reference/functions/sub_filter.txt:52
-msgid "Sample data:"
 msgstr ""
 
 # b831ac9a71e444f9a20d50d3a5b08727
