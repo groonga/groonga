@@ -43,6 +43,7 @@ Thanks
 ^^^^^^
 
 * Y.Kentaro
+* Kosuke Asami
 * @orangain
 
 .. _release-3-0-4:
