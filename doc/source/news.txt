@@ -17,6 +17,9 @@ Improvements
 * Added subrecord information to table inspection.
 * Supported single quoted string literal in ``output_columns`` expression.
   This means that "XXX, '...'" expression is supported.
+* [doc] Added notification about root privileges and well known port
+  when starting groonga server. [Reported by Kosuke Asami]
+* [experimental] Added :doc:``/reference/functions/html_untag`` function.
 
 Fixes
 ^^^^^
