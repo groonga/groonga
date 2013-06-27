@@ -87,6 +87,9 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/functions/geo_distance_location_sphere.log \
 	$(top_srcdir)/doc/source/example/reference/functions/geo_distance_setup_distance.log \
 	$(top_srcdir)/doc/source/example/reference/functions/geo_distance_setup_location.log \
+	$(top_srcdir)/doc/source/example/reference/functions/html_untag/usage_html_untag.log \
+	$(top_srcdir)/doc/source/example/reference/functions/html_untag/usage_setup_data.log \
+	$(top_srcdir)/doc/source/example/reference/functions/html_untag/usage_setup_schema.log \
 	$(top_srcdir)/doc/source/example/reference/functions/query/usage_basic.log \
 	$(top_srcdir)/doc/source/example/reference/functions/query/usage_setup_data.log \
 	$(top_srcdir)/doc/source/example/reference/functions/query/usage_setup_schema.log \
@@ -392,6 +395,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/functions/geo_distance.txt \
 	$(top_srcdir)/doc/source/reference/functions/geo_in_circle.txt \
 	$(top_srcdir)/doc/source/reference/functions/geo_in_rectangle.txt \
+	$(top_srcdir)/doc/source/reference/functions/html_untag.txt \
 	$(top_srcdir)/doc/source/reference/functions/now.txt \
 	$(top_srcdir)/doc/source/reference/functions/query.txt \
 	$(top_srcdir)/doc/source/reference/functions/rand.txt \
@@ -544,6 +548,9 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/functions/geo_distance_location_sphere.log \
 	source/example/reference/functions/geo_distance_setup_distance.log \
 	source/example/reference/functions/geo_distance_setup_location.log \
+	source/example/reference/functions/html_untag/usage_html_untag.log \
+	source/example/reference/functions/html_untag/usage_setup_data.log \
+	source/example/reference/functions/html_untag/usage_setup_schema.log \
 	source/example/reference/functions/query/usage_basic.log \
 	source/example/reference/functions/query/usage_setup_data.log \
 	source/example/reference/functions/query/usage_setup_schema.log \
@@ -849,6 +856,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/functions/geo_distance.txt \
 	source/reference/functions/geo_in_circle.txt \
 	source/reference/functions/geo_in_rectangle.txt \
+	source/reference/functions/html_untag.txt \
 	source/reference/functions/now.txt \
 	source/reference/functions/query.txt \
 	source/reference/functions/rand.txt \
@@ -1076,6 +1084,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/functions/geo_distance.txt \
 	html/_sources/reference/functions/geo_in_circle.txt \
 	html/_sources/reference/functions/geo_in_rectangle.txt \
+	html/_sources/reference/functions/html_untag.txt \
 	html/_sources/reference/functions/now.txt \
 	html/_sources/reference/functions/query.txt \
 	html/_sources/reference/functions/rand.txt \
@@ -1236,6 +1245,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/functions/geo_distance.html \
 	html/reference/functions/geo_in_circle.html \
 	html/reference/functions/geo_in_rectangle.html \
+	html/reference/functions/html_untag.html \
 	html/reference/functions/now.html \
 	html/reference/functions/query.html \
 	html/reference/functions/rand.html \
