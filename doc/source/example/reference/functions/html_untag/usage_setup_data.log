@@ -1,0 +1,8 @@
+Execution example::
+
+  load --table WebClips
+  [
+  {"_key": 1, "url": "http://groonga.org", "tag": ["groonga"], "content": "groonga is <span class='emphasize'>fast</span>"},
+  {"_key": 2, "url": "http://mroonga.org", "tag": ["mroonga"], "content": "mroonga is <span class=\"emphasize\">fast</span>"},
+  ]
+  # [[0, 1337566253.89858, 0.000355720520019531], 2]

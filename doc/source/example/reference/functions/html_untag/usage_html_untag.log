@@ -1,0 +1,29 @@
+Execution example::
+
+  select WebClips --output_columns "_key, html_untag(content)" --command_version 2
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         2
+  #       ], 
+  #       [
+  #         [
+  #           "html_untag", 
+  #           "null"
+  #         ]
+  #       ], 
+  #       [
+  #         "groonga is fast"
+  #       ], 
+  #       [
+  #         "mroonga is fast"
+  #       ]
+  #     ]
+  #   ]
+  # ]
