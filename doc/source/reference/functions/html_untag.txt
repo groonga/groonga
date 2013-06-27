@@ -64,7 +64,7 @@ Parameters
 There is one required parameter, ``column``.
 
 ``column``
-^^^^^^^^^
+^^^^^^^^^^
 
 It specifies a column of the table.
 
