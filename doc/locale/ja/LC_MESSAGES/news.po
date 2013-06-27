@@ -80,9 +80,9 @@ msgstr ""
 
 # e146c3c5e41d47b0991d8553a98cf1bf
 #: ../../../source/news.txt:22
-msgid "[experimental] Added :doc:``/reference/functions/html_untag`` function."
+msgid "[experimental] Added :doc:`/reference/functions/html_untag` function."
 msgstr ""
-"[実験的] :doc:``/reference/functions/html_untag`` 関数を追加しました。"
+"[実験的] :doc:`/reference/functions/html_untag` 関数を追加しました。"
 
 #: ../../../source/news.txt:25 ../../../source/news.txt:77
 #: ../../../source/news.txt:151 ../../../source/news.txt:196
