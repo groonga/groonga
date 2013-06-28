@@ -645,6 +645,8 @@ is equal to or more than ``10`` from ``Entries`` table.
 Output related parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
+.. _output_columns:
+
 ``output_columns``
 """"""""""""""""""
 
