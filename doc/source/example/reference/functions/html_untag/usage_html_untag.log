@@ -1,6 +1,6 @@
 Execution example::
 
-  select WebClips --output_columns "_key, html_untag(content)" --command_version 2
+  select WebClips --output_columns "html_untag(content)" --command_version 2
   # [
   #   [
   #     0, 

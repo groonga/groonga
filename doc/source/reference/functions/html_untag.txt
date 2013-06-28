@@ -45,15 +45,15 @@ Sample data:
 .. include:: ../../example/reference/functions/html_untag/usage_setup_data.log
 .. load --table WebClips
 .. [
-.. {"_key": 1, "url": "http://groonga.org", "tag": ["groonga"], "content": "groonga is <span class='emphasize'>fast</span>"},
-.. {"_key": 2, "url": "http://mroonga.org", "tag": ["mroonga"], "content": "mroonga is <span class=\"emphasize\">fast</span>"},
+.. {"url": "http://groonga.org", "tag": ["groonga"], "content": "groonga is <span class='emphasize'>fast</span>"},
+.. {"url": "http://mroonga.org", "tag": ["mroonga"], "content": "mroonga is <span class=\"emphasize\">fast</span>"},
 .. ]
 
 Here is the simple usage of ``html_untag`` function which strips HTML tags from content of column.
 
 .. groonga-command
 .. include:: ../../example/reference/functions/html_untag/usage_html_untag.log
-.. select WebClips --output_columns "_key, html_untag(content)" --command_version 2
+.. select WebClips --output_columns "html_untag(content)" --command_version 2
 
 When executing the above query, you can see "span" tag with "class" attribute is stripped.
 Note that you must specify ``--command_version 2`` to use ``html_untag`` function.
