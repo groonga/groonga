@@ -18,11 +18,11 @@ Summary
 Syntax
 ------
 
-``html_untag`` requires only one argument. It is ``column``.
+``html_untag`` requires only one argument. It is ``html``.
 
 ::
 
-  html_untag(column)
+  html_untag(html)
 
 
 Usage
@@ -61,15 +61,14 @@ Note that you must specify ``--command_version 2`` to use ``html_untag`` functio
 Parameters
 ----------
 
-There is one required parameter, ``column``.
+There is one required parameter, ``html``.
 
-``column``
-^^^^^^^^^^
+``html``
+^^^^^^^^
 
-It specifies a column of the table.
+It specifies HTML text to be untagged.
 
 Return value
 ------------
 
-``html_untag`` returns plain text which is stripped HTML tags from content of column.
-
+``html_untag`` returns plain text which is stripped HTML tags from HTML text.
