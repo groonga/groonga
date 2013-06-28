@@ -41,10 +41,8 @@ Sample schema:
 
 .. groonga-command
 .. include:: ../../example/reference/functions/html_untag/usage_setup_schema.log
-.. table_create WebClips TABLE_NO_KEY
-.. column_create WebClips url COLUMN_SCALAR ShortText
+.. table_create WebClips TABLE_HASH_KEY ShortText
 .. column_create WebClips content COLUMN_SCALAR ShortText
-.. column_create WebClips tag COLUMN_VECTOR ShortText
 
 Sample data:
 
@@ -52,8 +50,8 @@ Sample data:
 .. include:: ../../example/reference/functions/html_untag/usage_setup_data.log
 .. load --table WebClips
 .. [
-.. {"url": "http://groonga.org", "tag": ["groonga"], "content": "groonga is <span class='emphasize'>fast</span>"},
-.. {"url": "http://mroonga.org", "tag": ["mroonga"], "content": "mroonga is <span class=\"emphasize\">fast</span>"},
+.. {"_key": "http://groonga.org", "content": "groonga is <span class='emphasize'>fast</span>"},
+.. {"_key": "http://mroonga.org", "content": "mroonga is <span class=\"emphasize\">fast</span>"},
 .. ]
 
 Here is the simple usage of ``html_untag`` function which strips HTML tags from content of column.
