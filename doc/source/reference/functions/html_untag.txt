@@ -24,6 +24,13 @@ Syntax
 
   html_untag(html)
 
+Requirements
+------------
+
+``html_untag`` requires groonga 3.0.5 or later.
+
+``html_untag`` requires :doc:`/reference/command/command_version` 2 or
+later.
 
 Usage
 -----
