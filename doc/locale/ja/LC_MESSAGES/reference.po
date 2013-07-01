@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-06-28 14:02+0900\n"
-"PO-Revision-Date: 2013-07-01 11:03+0900\n"
+"PO-Revision-Date: 2013-07-01 13:24+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -10176,14 +10176,14 @@ msgid ""
 "in ``select``. ``filter_string`` is evaluated in the column context. It "
 "means that ``filter_string`` is evaluated like ``select --table "
 "TYPE_OF_THE_COLUMN --filter FILTER_STRING``."
-msgstr ""
+msgstr "``select`` コマンドの ``table`` パラメーターで指定したテーブルが持つカラムを指定します。 ``filter_string`` はそのカラムの文脈で評価されます。これは、 ``filter_string`` は ``select --table カラムの型 --filter フィルター文字列`` というように評価されるということです。"
 
 # 2694738ef84b47ff9d0b18ac445949e3
 #: ../../../source/reference/functions/sub_filter.txt:110
 msgid ""
 "The specified column type must be a table. In other words, the column type "
 "must be reference type."
-msgstr ""
+msgstr "指定したカラムの型はテーブルでなければいけません。言いかえると、カラムの型は参照型でなければいけないということです。"
 
 # 39447ee4e33c494fbf94bbc90a69e720
 #: ../../../source/reference/functions/sub_filter.txt:113
