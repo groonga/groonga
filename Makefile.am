@@ -76,8 +76,8 @@ update-latest-release: misc
 	  doc/source/install.txt				\
 	  doc/source/install/*.txt				\
 	  doc/locale/*/LC_MESSAGES/install.po			\
-	  $(GROONGA_GITHUB_COM_PATH)/index.html			\
-	  $(GROONGA_GITHUB_COM_PATH)/ja/index.html
+	  $(GROONGA_ORG_PATH)/index.html			\
+	  $(GROONGA_ORG_PATH)/ja/index.html
 
 update-po:
 	@for lang in $(LOCALES); do						\
@@ -85,8 +85,8 @@ update-po:
 	done
 
 update-document:
-	@if test -z "$(GROONGA_GITHUB_COM_PATH)"; then			\
-	  echo "\$$(GROONGA_GITHUB_COM_PATH) is missing";		\
+	@if test -z "$(GROONGA_ORG_PATH)"; then				\
+	  echo "\$$(GROONGA_ORG_PATH) is missing";			\
 	  echo "add --with-groonga-github-com-path in configure";	\
 	  exit 1;							\
 	fi
@@ -95,10 +95,10 @@ update-document:
 	(cd doc && $(MAKE) clean-html)
 	(cd doc && $(MAKE) install docdir=$(abs_srcdir)/tmp-doc/install)
 	ruby $(srcdir)/tools/prepare-sphinx-html.rb tmp-doc/install tmp-doc/dist
-	rm -rf $(GROONGA_GITHUB_COM_PATH)/docs
-	mv tmp-doc/dist/en $(GROONGA_GITHUB_COM_PATH)/docs
+	rm -rf $(GROONGA_ORG_PATH)/docs
+	mv tmp-doc/dist/en $(GROONGA_ORG_PATH)/docs
 	for locale in `cd tmp-doc/dist; echo *`; do		\
-	  dest_base_dir=$(GROONGA_GITHUB_COM_PATH)/$${locale};	\
+	  dest_base_dir=$(GROONGA_ORG_PATH)/$${locale};		\
 	  mkdir -p $${dest_base_dir};				\
 	  dest_dir=$${dest_base_dir}/docs;			\
 	  rm -rf $${dest_dir};					\

@@ -1236,12 +1236,12 @@ LIBS="$LIBS $WINDOWS_LIBS"
 AC_DEFINE_UNQUOTED(CONFIGURE_OPTIONS, "$ac_configure_args", "specified configure options")
 
 # For groonga.org
-AC_ARG_WITH(groonga-github-com-path,
-            [AS_HELP_STRING([--with-groonga-github-com-path=PATH],
-            [specify groonga.github.com path to update groonga.org.])],
-            [GROONGA_GITHUB_COM_PATH="$withval"],
-            [GROONGA_GITHUB_COM_PATH=""])
-AC_SUBST(GROONGA_GITHUB_COM_PATH)
+AC_ARG_WITH(groonga-org-path,
+            [AS_HELP_STRING([--with-groonga-org-path=PATH],
+              [specify a path of the groonga.org repository to update groonga.org.])],
+            [GROONGA_ORG_PATH="$withval"],
+            [GROONGA_ORG_PATH=""])
+AC_SUBST(GROONGA_ORG_PATH)
 
 # groonga-httpd
 m4_define([nginx_version], m4_include(nginx_version))
