@@ -103,12 +103,16 @@ There are two required parameter, ``scope`` and ``filter_string``.
 ^^^^^^^^^
 
 It specifies a column of the table that is specified by ``table``
-parameter in ``select``. ``filter_string`` is evaluated in the column
+parameter in ``select``. The column has a limitation. The limitation
+is described later. ``filter_string`` is evaluated in the column
 context. It means that ``filter_string`` is evaluated like
 ``select --table TYPE_OF_THE_COLUMN --filter FILTER_STRING``.
 
 The specified column type must be a table. In other words, the column
 type must be reference type.
+
+You can chain columns by ``COLUMN_1.COLUMN_2.COLUMN_3...COLUMN_N``
+syntax. For example, ``user.group.name``.
 
 See :ref:`select-table` about ``table`` parameter in ``select``.
 
