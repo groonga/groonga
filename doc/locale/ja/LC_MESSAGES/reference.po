@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-06-28 14:02+0900\n"
-"PO-Revision-Date: 2013-06-28 16:15+0900\n"
+"PO-Revision-Date: 2013-07-01 11:03+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -9679,9 +9679,9 @@ msgstr ""
 # 7a239964b6e644b69f1959938a1996e3
 #: ../../../source/reference/functions/query.txt:28
 msgid ""
-"``query`` requires two arguments - ``match_column`` and ``query_string``."
+"``query`` requires two arguments - ``match_columns`` and ``query_string``."
 msgstr ""
-"``query`` は2つの引数が必要です。 ``match_column`` と ``query_string`` です。"
+"``query`` は2つの引数が必要です。 ``match_columns`` と ``query_string`` です。"
 
 # d57cd698860542ed8c3a71905b169b9c
 #: ../../../source/reference/functions/query.txt:30
@@ -9692,7 +9692,7 @@ msgstr "引数の ``query_expander`` や ``substitution_table`` は省略可能�
 #: ../../../source/reference/functions/query.txt:74
 msgid ""
 "Here is the simple usage of ``query`` function which execute full text "
-"search by keyword 'alice' without using ``--match_column`` and ``--query`` "
+"search by keyword 'alice' without using ``--match_columns`` and ``--query`` "
 "arguments in ``--filter``."
 msgstr ""
 "``--match_columns`` と ``--query`` 引数を使わずにキーワード'alice'を "
@@ -9743,29 +9743,29 @@ msgstr ""
 # b90bfd8b177440e6b2a2ff7f128303f9
 #: ../../../source/reference/functions/query.txt:112
 msgid ""
-"There are two required parameter, ``match_column`` and ``query_string``."
-msgstr "必須引数は二つあります。 ``match_column`` と ``query_string`` です。"
+"There are two required parameter, ``match_columns`` and ``query_string``."
+msgstr "必須引数は二つあります。 ``match_columns`` と ``query_string`` です。"
 
 # 2e1f48eaa31d4367bf2a5d5978c0c8c6
 #: ../../../source/reference/functions/query.txt:115
-msgid "``match_column``"
+msgid "``match_columns``"
 msgstr ""
 
 # 881dde1deaca4eb284c9af5e72e1c785
 #: ../../../source/reference/functions/query.txt:117
 msgid ""
 "It specifies the default target column for fulltext search by "
-"``query_string`` parameter value. It is the same role as ``match_column`` "
+"``query_string`` parameter value. It is the same role as ``match_columns`` "
 "parameter in ``select``."
-msgstr ""
+msgstr "``query_string`` パラメーターの値で全文検索するときのデフォルトの検索対象カラムを指定します。このパラメーターは ``select`` の ``match_columns`` パラメーターと同じ役割です。"
 
 # 91d037f3751d4a1a8714c5c9ae532295
 #: ../../../source/reference/functions/query.txt:121
 msgid ""
-"See :ref:`select-match-columns` about ``match_column`` parameter in "
+"See :ref:`select-match-columns` about ``match_columns`` parameter in "
 "``select``."
 msgstr ""
-"``select`` コマンドの ``match_column`` については :ref:`select-match-"
+"``select`` コマンドの ``match_columns`` については :ref:`select-match-"
 "columns` を参照してください。"
 
 # 73d40a44eaa6442c92c17a0cd09231b0
@@ -9778,7 +9778,7 @@ msgstr ""
 msgid ""
 "It specifies the search condition in :doc:`/reference/grn_expr/"
 "query_syntax`. It is the same role as ``query`` parameter in ``select``."
-msgstr ""
+msgstr ":doc:`/reference/grn_expr/query_syntax` で検索条件を指定します。このパラメーターは ``select`` コマンドの ``query`` パラメーターと同じ役割です。"
 
 # 91d037f3751d4a1a8714c5c9ae532295
 #: ../../../source/reference/functions/query.txt:131
