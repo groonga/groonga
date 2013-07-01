@@ -116,10 +116,7 @@ There are two required parameter, ``match_columns`` and ``query_string``.
 
 It specifies the default target column for fulltext search by
 ``query_string`` parameter value. It is the same role as
-:ref:``match_columns`` parameter in ``select``.
-
-See :ref:`select-match-columns` about ``match_columns`` parameter in
-``select``.
+:ref:`select-match-columns` parameter in ``select``.
 
 ``query_string``
 """"""""""""""""
