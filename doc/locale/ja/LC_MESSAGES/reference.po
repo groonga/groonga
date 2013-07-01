@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-07-01 13:29+0900\n"
-"PO-Revision-Date: 2013-07-01 13:29+0900\n"
+"PO-Revision-Date: 2013-07-01 13:53+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -10194,7 +10194,7 @@ msgstr ""
 msgid ""
 "You can chain columns by ``COLUMN_1.COLUMN_2.COLUMN_3...COLUMN_N`` syntax. "
 "For example, ``user.group.name``."
-msgstr ""
+msgstr "``カラム1.カラム2.カラム3...カラムN`` という構文でカラムを数珠つなぎにできます。例えば、 ``user.group.name`` とできます。"
 
 # 39447ee4e33c494fbf94bbc90a69e720
 #: ../../../source/reference/functions/sub_filter.txt:117
@@ -10222,7 +10222,7 @@ msgstr ""
 msgid ""
 "``sub_filter`` returns whether any record is matched or not. If one or more "
 "records are matched, it returns ``true``. Otherwise, it returns ``false``."
-msgstr ""
+msgstr "``sub_filter`` は1つでもレコードがマッチしたかどうかを返します。もし、1つ以上のレコードがマッチしたら ``true`` を返します。1つもマッチしなかったら ``false`` を返します。"
 
 # 746285e8bd6c4ef5926a1b7f90f14da9
 #: ../../../source/reference/grn_expr.txt:8
