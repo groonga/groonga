@@ -63,7 +63,8 @@ noinst_LTLIBRARIES =				\
 	test-accessor.la			\
 	test-object.la				\
 	test-rename.la				\
-	test-tokenizer.la
+	test-tokenizer.la			\
+	test-proc.la
 endif
 
 AM_CPPFLAGS =			\
@@ -152,3 +153,4 @@ test_accessor_la_SOURCES		= test-accessor.c
 test_object_la_SOURCES			= test-object.c
 test_rename_la_SOURCES			= test-rename.c
 test_tokenizer_la_SOURCES		= test-tokenizer.c
+test_proc_la_SOURCES			= test-proc.c

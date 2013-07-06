@@ -65,6 +65,10 @@ grn_plugin_path(grn_ctx *ctx, grn_id id)
   size_t system_plugins_dir_size;
 
   path = _grn_hash_key(ctx, grn_plugins, id, &key_size);
+  if (!path) {
+    return NULL;
+  }
+
   system_plugins_dir = grn_plugin_get_system_plugins_dir();
   system_plugins_dir_size = strlen(system_plugins_dir);
   if (strncmp(system_plugins_dir, path, system_plugins_dir_size) == 0) {
