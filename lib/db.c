@@ -7530,11 +7530,12 @@ const char *
 grn_obj_path(grn_ctx *ctx, grn_obj *obj)
 {
   grn_io *io;
-  char *path = NULL;
-  if (obj->header.type == GRN_PROC) {
-    return grn_plugin_path(ctx, DB_OBJ(obj)->range);
-  }
+  const char *path = NULL;
   GRN_API_ENTER;
+  if (obj->header.type == GRN_PROC) {
+    path = grn_plugin_path(ctx, DB_OBJ(obj)->range);
+    GRN_API_RETURN(path);
+  }
   io = grn_obj_io(obj);
   if (io && !(io->flags & GRN_IO_TEMPORARY)) { path = io->path; }
   GRN_API_RETURN(path);
