@@ -14,7 +14,7 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#include <zmq.h>
+#include "zmq_compatible.h"
 #include <stdio.h>
 #include <signal.h>
 #include <unistd.h>
@@ -29,17 +29,6 @@
 #include "util.h"
 
 #include <evhttp.h>
-
-#ifndef ZMQ_SNDHWM
-#   define ZMQ_SNDHWM ZMQ_HWM
-#endif
-
-#if ZMQ_VERSION_MAJOR == 2
-#  define zmq_msg_send(message, socket, flags) \
-  zmq_send((socket), (message), (flags))
-#  define zmq_msg_recv(message, socket, flags) \
-  zmq_recv((socket), (message), (flags))
-#endif
 
 #define DEFAULT_RECV_ENDPOINT "tcp://*:1234"
 #define DEFAULT_SEND_ENDPOINT "tcp://*:1235"
