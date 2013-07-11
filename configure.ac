@@ -455,6 +455,8 @@ if test "$os_win32" != "yes"; then
   AC_SEARCH_LIBS(pthread_create, pthread,
                  [],
                  [AC_MSG_ERROR("No libpthread found")])
+  AC_CHECK_FUNCS(pthread_mutexattr_setpshared)
+  AC_CHECK_FUNCS(pthread_condattr_setpshared)
 fi
 AC_SEARCH_LIBS(gethostbyname, nsl)
 AC_SEARCH_LIBS(socket, socket)

@@ -151,6 +151,8 @@ if(UNIX)
   if(NOT ${HAVE_LIBPTHREAD} EQUAL 1)
     message(FATAL_ERROR "No libpthread found")
   endif()
+  ac_check_funcs(pthread_mutexattr_setpshared)
+  ac_check_funcs(pthread_condattr_setpshared)
 endif()
 
 option(GRN_WITH_NFKC "use NFKC based UTF8 normalization." ON)
