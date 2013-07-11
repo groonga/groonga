@@ -33,6 +33,8 @@
 #if ZMQ_VERSION_MAJOR == 2
 #  define zmq_msg_send(message, socket, flags) \
   zmq_send((socket), (message), (flags))
+#  define zmq_msg_recv(message, socket, flags) \
+  zmq_recv((socket), (message), (flags))
 #endif
 
 #define DEFAULT_RECV_ENDPOINT "tcp://*:1234"
@@ -465,7 +467,7 @@ recv_event_loop(msgpack_zone *mempool, void *zmq_sock, grn_ctx *ctx)
       if (zmq_msg_init(&msg)) {
         print_error("cannot init zmq message.");
       } else {
-        if (zmq_recv(zmq_sock, &msg, 0)) {
+        if (zmq_msg_recv(&msg, zmq_sock, 0)) {
           print_error("cannot recv zmq message.");
         } else {
           msgpack_object obj;
