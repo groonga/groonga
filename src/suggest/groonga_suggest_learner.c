@@ -30,6 +30,10 @@
 
 #include <evhttp.h>
 
+#ifndef ZMQ_SNDHWM
+#   define ZMQ_SNDHWM ZMQ_HWM
+#endif
+
 #if ZMQ_VERSION_MAJOR == 2
 #  define zmq_msg_send(message, socket, flags) \
   zmq_send((socket), (message), (flags))
@@ -376,7 +380,7 @@ send_to_httpd(void *arg)
         grn_obj *db;
         if ((db = grn_db_open(&ctx, thd->db_path))) {
           uint64_t hwm = 1;
-          zmq_setsockopt(zmq_send_sock, ZMQ_HWM, &hwm, sizeof(uint64_t));
+          zmq_setsockopt(zmq_send_sock, ZMQ_SNDHWM, &hwm, sizeof(uint64_t));
           while (loop) {
             send_handler(zmq_send_sock, &ctx);
           }
