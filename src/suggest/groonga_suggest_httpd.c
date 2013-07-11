@@ -593,7 +593,7 @@ serve_threads(int nthreads, int port, const char *db_path, void *zmq_ctx,
               threads[i].zmq_sock = NULL;
             } else {
               uint64_t hwm = 1;
-              zmq_setsockopt(threads[i].zmq_sock, ZMQ_HWM, &hwm, sizeof(uint64_t));
+              zmq_setsockopt(threads[i].zmq_sock, ZMQ_SNDHWM, &hwm, sizeof(uint64_t));
             }
           } else {
             threads[i].zmq_sock = NULL;
