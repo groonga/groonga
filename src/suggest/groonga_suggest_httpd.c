@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2010-2012 Brazil
+/* Copyright(C) 2010-2013 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -35,7 +35,7 @@
 #include <netinet/in.h>
 #include <sys/resource.h>
 
-#include <zmq.h>
+#include "zmq_compatible.h"
 #include <event.h>
 #include <evhttp.h>
 #include <msgpack.h>
@@ -212,8 +212,8 @@ log_send(struct evkeyvalq *output_headers, struct evbuffer *res_buf,
       zmq_msg_t msg;
       if (!zmq_msg_init_size(&msg, sbuf.size)) {
         memcpy((void *)zmq_msg_data(&msg), sbuf.data, sbuf.size);
-        if (zmq_send(thd->zmq_sock, &msg, 0)) {
-          print_error("zmq_send() error");
+        if (zmq_msg_send(&msg, thd->zmq_sock, 0)) {
+          print_error("zmq_msg_send() error");
         }
         zmq_msg_close(&msg);
       }
@@ -494,7 +494,7 @@ recv_handler(grn_ctx *ctx, void *zmq_recv_sock, msgpack_zone *mempool, grn_obj *
   if (zmq_msg_init(&msg)) {
     print_error("cannot init zmq message.");
   } else {
-    if (zmq_recv(zmq_recv_sock, &msg, 0)) {
+    if (zmq_msg_recv(&msg, zmq_recv_sock, 0)) {
       print_error("cannot recv zmq message.");
     } else {
       msgpack_object obj;
