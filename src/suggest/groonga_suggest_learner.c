@@ -1,5 +1,5 @@
 /* -*- c-basic-offset: 2 -*- */
-/* Copyright(C) 2010-2012 Brazil
+/* Copyright(C) 2010-2013 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -29,6 +29,11 @@
 #include "util.h"
 
 #include <evhttp.h>
+
+#if ZMQ_VERSION_MAJOR == 2
+#  define zmq_msg_send(message, socket, flags) \
+  zmq_send((socket), (message), (flags))
+#endif
 
 #define DEFAULT_RECV_ENDPOINT "tcp://*:1234"
 #define DEFAULT_SEND_ENDPOINT "tcp://*:1235"
@@ -194,7 +199,7 @@ zmq_send_to_httpd(void *zmq_send_sock, void *data, size_t size)
   zmq_msg_t msg;
   if (!zmq_msg_init_size(&msg, size)) {
     memcpy((void *)zmq_msg_data(&msg), data, size);
-    if (zmq_send(zmq_send_sock, &msg, 0)) {
+    if (zmq_msg_send(&msg, zmq_send_sock, 0)) {
       print_error("zmq_send() error");
       return -1;
     }
