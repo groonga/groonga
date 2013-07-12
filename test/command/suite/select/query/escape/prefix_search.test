@@ -1,0 +1,14 @@
+table_create Memos TABLE_PAT_KEY ShortText
+
+table_create Contents TABLE_PAT_KEY ShortText \
+  --normalizer NormalizerAuto
+column_create Contents entries_key_index COLUMN_INDEX Memos _key
+
+load --table Memos
+[
+{"_key": "(groonga) Start to try!"},
+{"_key": "(mroonga) Installed"},
+{"_key": "(groonga) Upgraded!"}
+]
+
+select Memos --match_columns _key --query '\\(groonga\\)*'

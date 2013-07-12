@@ -1,0 +1,46 @@
+table_create Memos TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Contents TABLE_PAT_KEY ShortText   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Contents entries_key_index COLUMN_INDEX Memos _key
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "(groonga) Start to try!"},
+{"_key": "(mroonga) Installed"},
+{"_key": "(groonga) Upgraded!"}
+]
+[[0,0.0,0.0],3]
+select Memos --match_columns _key --query '\\(groonga\\)*'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ]
+      ],
+      [
+        3,
+        "(groonga) Upgraded!"
+      ],
+      [
+        1,
+        "(groonga) Start to try!"
+      ]
+    ]
+  ]
+]
