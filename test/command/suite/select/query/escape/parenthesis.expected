@@ -1,0 +1,41 @@
+table_create Memos TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Contents TABLE_PAT_KEY ShortText   --default_tokenizer TokenDelimit   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Contents entries_key_index COLUMN_INDEX|WITH_POSITION Memos _key
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "Tritonn (mroonga) is fast"},
+{"_key": "Mroonga and Tritonn"}
+]
+[[0,0.0,0.0],2]
+select Memos --match_columns _key --query '\\(mroonga\\)'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "Tritonn (mroonga) is fast"
+      ]
+    ]
+  ]
+]

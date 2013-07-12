@@ -5468,8 +5468,9 @@ accept_query_string(grn_ctx *ctx, efs_info *efsi,
 static grn_rc
 get_word_(grn_ctx *ctx, efs_info *q)
 {
-  const char *start = q->cur, *end;
+  const char *end;
   unsigned int len;
+  GRN_BULK_REWIND(&q->buf);
   for (end = q->cur;; ) {
     /* null check and length check */
     if (!(len = grn_charlen(ctx, end, q->str_end))) {
@@ -5483,7 +5484,9 @@ get_word_(grn_ctx *ctx, efs_info *q)
     }
     if (q->flags & GRN_EXPR_ALLOW_COLUMN && *end == GRN_QUERY_COLUMN) {
       grn_operator mode;
-      grn_obj *c = grn_obj_column(ctx, q->table, start, end - start);
+      grn_obj *c = grn_obj_column(ctx, q->table,
+                                  GRN_TEXT_VALUE(&q->buf),
+                                  GRN_TEXT_LEN(&q->buf));
       if (c && end + 1 < q->str_end) {
         //        efs_op op;
         switch (end[1]) {
@@ -5552,10 +5555,17 @@ get_word_(grn_ctx *ctx, efs_info *q)
       q->cur = end + 1;
       GRN_INT32_PUT(ctx, &q->mode_stack, GRN_OP_PREFIX);
       break;
+    } else if (*end == GRN_QUERY_ESCAPE) {
+      end += len;
+      if (!(len = grn_charlen(ctx, end, q->str_end))) {
+        q->cur = q->str_end;
+        break;
+      }
     }
+    GRN_TEXT_PUT(ctx, &q->buf, end, len);
     end += len;
   }
-  accept_query_string(ctx, q, start, end - start);
+  accept_query_string(ctx, q, GRN_TEXT_VALUE(&q->buf), GRN_TEXT_LEN(&q->buf));
 
   return GRN_SUCCESS;
 }
