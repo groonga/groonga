@@ -3,7 +3,7 @@ table_create Memos TABLE_PAT_KEY ShortText
 table_create Contents TABLE_PAT_KEY ShortText \
   --default_tokenizer TokenDelimit \
   --normalizer NormalizerAuto
-column_create Contents entries_key_index COLUMN_INDEX|WITH_POSITION Memos _key
+column_create Contents entries_key_index COLUMN_INDEX Memos _key
 
 load --table Memos
 [
