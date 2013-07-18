@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-07-01 13:29+0900\n"
+"POT-Creation-Date: 2013-07-18 17:28+0900\n"
 "PO-Revision-Date: 2013-07-01 13:53+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -8880,10 +8880,10 @@ msgstr ""
 "groongaは三つの組み込み関数を距離の計算のために提供しています。 "
 "``geo_distance()`` 、 ``geo_distance2()`` 、 ``geo_distance3()`` です。これら"
 "の違いは距離の計算アルゴリズムにあります。 ``geo_distance2()`` と "
-"``geo_distance3()`` はバージョン1.2.9より非推奨となりました。 "
-"``geo_distance2(point1, point2)`` の代りに ``geo_distance(point1, point2, "
-"\"sphere\")`` を使用してください。 ``geo_distance3(point1, point2)`` の代り"
-"に ``geo_distance(point1, point2, \"ellipsoid\")`` を使用してください。"
+"``geo_distance3()`` はバージョン1.2.9より非推奨となりました。 ``geo_distance2"
+"(point1, point2)`` の代りに ``geo_distance(point1, point2, \"sphere\")`` を使"
+"用してください。 ``geo_distance3(point1, point2)`` の代りに ``geo_distance"
+"(point1, point2, \"ellipsoid\")`` を使用してください。"
 
 # e104cc660d534e88a06a49ffa76f81d6
 #: ../../../source/reference/functions/geo_distance.txt:49
@@ -9175,12 +9175,12 @@ msgstr ""
 #: ../../../source/reference/functions/geo_distance.txt:226
 msgid ""
 "This sample shows the value of distance across meridian. The return value of "
-"``geo_distance(\"175904000x8464000\", \"145508000x-13291000\", \"rectangle"
-"\")`` is the value of distance from Paris, Flance to Madrid, Spain."
+"``geo_distance(\"175904000x8464000\", \"145508000x-13291000\", \"rectangle\")"
+"`` is the value of distance from Paris, Flance to Madrid, Spain."
 msgstr ""
-"このサンプルは子午線をまたいだ場合の距離を示します。 "
-"``geo_distance(\"175904000x8464000\", \"145508000x-13291000\", \"rectangle"
-"\")`` はパリ(フランス)からマドリード(スペイン)間の距離を返します。"
+"このサンプルは子午線をまたいだ場合の距離を示します。 ``geo_distance"
+"(\"175904000x8464000\", \"145508000x-13291000\", \"rectangle\")`` はパリ(フラ"
+"ンス)からマドリード(スペイン)間の距離を返します。"
 
 # 3da492876e11411b85efe3c8d6ab6d9f
 #: ../../../source/reference/functions/geo_distance.txt:233
@@ -9190,10 +9190,9 @@ msgid ""
 "\"rectangle\")`` is the value of distance from New York, The United Status "
 "to Brasillia, Brasil."
 msgstr ""
-"このサンプルは赤道をまたいだ場合の距離を示します。 "
-"``geo_distance(\"146566000x-266422000\", \"-56880000x-172310000\", "
-"\"rectangle\")`` はニューヨーク(アメリカ)からブラジリア(ブラジル)間の距離を返"
-"します。"
+"このサンプルは赤道をまたいだ場合の距離を示します。 ``geo_distance"
+"(\"146566000x-266422000\", \"-56880000x-172310000\", \"rectangle\")`` は"
+"ニューヨーク(アメリカ)からブラジリア(ブラジル)間の距離を返します。"
 
 # 25a3e01452314176a4e613e60ee14524
 #: ../../../source/reference/functions/geo_distance.txt:240
@@ -9203,9 +9202,9 @@ msgid ""
 "\"rectangle\")`` is the value of distance from Beijin, China to San "
 "Francisco, The United States."
 msgstr ""
-"このサンプルは日付変更線をまたいだ場合の距離を示します。 "
-"``geo_distance(\"143660000x419009000\", \"135960000x-440760000\", \"rectangle"
-"\")`` は北京(中国)からサンフランシスコ(アメリカ)間の距離を返します。"
+"このサンプルは日付変更線をまたいだ場合の距離を示します。 ``geo_distance"
+"(\"143660000x419009000\", \"135960000x-440760000\", \"rectangle\")`` は北京"
+"(中国)からサンフランシスコ(アメリカ)間の距離を返します。"
 
 # 09f03cbda1dd47ab816d7837212ddce6
 #: ../../../source/reference/functions/geo_distance.txt:245
@@ -9760,7 +9759,10 @@ msgid ""
 "It specifies the default target column for fulltext search by "
 "``query_string`` parameter value. It is the same role as :ref:`select-match-"
 "columns` parameter in ``select``."
-msgstr "``query_string`` パラメーターの値で全文検索するときのデフォルトの検索対象カラムを指定します。このパラメーターは ``select`` の :ref:`select-match-columns` パラメーターと同じ役割です。"
+msgstr ""
+"``query_string`` パラメーターの値で全文検索するときのデフォルトの検索対象カラ"
+"ムを指定します。このパラメーターは ``select`` の :ref:`select-match-columns` "
+"パラメーターと同じ役割です。"
 
 # 73d40a44eaa6442c92c17a0cd09231b0
 #: ../../../source/reference/functions/query.txt:122
@@ -10194,7 +10196,9 @@ msgstr ""
 msgid ""
 "You can chain columns by ``COLUMN_1.COLUMN_2.COLUMN_3...COLUMN_N`` syntax. "
 "For example, ``user.group.name``."
-msgstr "``カラム1.カラム2.カラム3...カラムN`` という構文でカラムを数珠つなぎにできます。例えば、 ``user.group.name`` とできます。"
+msgstr ""
+"``カラム1.カラム2.カラム3...カラムN`` という構文でカラムを数珠つなぎにできま"
+"す。例えば、 ``user.group.name`` とできます。"
 
 # 39447ee4e33c494fbf94bbc90a69e720
 #: ../../../source/reference/functions/sub_filter.txt:117
@@ -10222,7 +10226,10 @@ msgstr ""
 msgid ""
 "``sub_filter`` returns whether any record is matched or not. If one or more "
 "records are matched, it returns ``true``. Otherwise, it returns ``false``."
-msgstr "``sub_filter`` は1つでもレコードがマッチしたかどうかを返します。もし、1つ以上のレコードがマッチしたら ``true`` を返します。1つもマッチしなかったら ``false`` を返します。"
+msgstr ""
+"``sub_filter`` は1つでもレコードがマッチしたかどうかを返します。もし、1つ以上"
+"のレコードがマッチしたら ``true`` を返します。1つもマッチしなかったら "
+"``false`` を返します。"
 
 # 746285e8bd6c4ef5926a1b7f90f14da9
 #: ../../../source/reference/grn_expr.txt:8
@@ -10403,9 +10410,9 @@ msgstr "以下が特別な文字のリストです:"
 # 5a7b374cb3a74a998ab08a146adaade0
 #: ../../../source/reference/grn_expr/query_syntax.txt:81
 msgid ""
-"``[space]`` (escaped as ``[backquote][space]``) (You should substitute "
-"``[space]`` with a white space character that is 0x20 in ASCII and "
-"``[backquote]`` with ``\\\\``.)"
+"``[space]`` (escaped as ``[backquote][space]``) (You should substitute ``"
+"[space]`` with a white space character that is 0x20 in ASCII and ``"
+"[backquote]`` with ``\\\\``.)"
 msgstr ""
 "``[space]`` （ ``[backquote][space]`` とエスケープする。）（ ``[space]`` を"
 "ASCIIで言えば0x20の空白文字に置き換えて、 ``[backquote]`` を ``\\\\`` に置き"
@@ -10722,8 +10729,8 @@ msgid ""
 "search condition`` and ``full text search condition (with explicit match "
 "column)``. ``Phrase search condition`` supports advanced match columns but "
 "``phrase search condition (with explicit match column)`` isn't supported. "
-"See description of ``full text search condition (with explicit match "
-"column)`` about advanced match columns."
+"See description of ``full text search condition (with explicit match column)"
+"`` about advanced match columns."
 msgstr ""
 "``フレーズ検索条件`` と ``フレーズ検索条件（マッチカラム指定あり）`` は ``全"
 "文検索条件`` と ``全文検索条件（マッチカラム指定あり）`` の関係と似ていま"
@@ -14068,8 +14075,8 @@ msgstr "クエリーが ``mroonga search`` のときのクエリー展開の例�
 msgid ""
 "It is important that registered words (``groonga`` and ``mroonga``) are only "
 "expanded to synonyms and not registered words (``search``) are not expanded. "
-"Query expansion isn't occurred recursively. ``groonga`` is appeared in "
-"``(mroonga OR (groonga MySQL))`` as query expansion result but it isn't "
+"Query expansion isn't occurred recursively. ``groonga`` is appeared in ``"
+"(mroonga OR (groonga MySQL))`` as query expansion result but it isn't "
 "expanded."
 msgstr ""
 "登録されている単語だけ（ここでは ``groonga`` と ``mroonga`` ）クエリー展開さ"
@@ -15081,72 +15088,3 @@ msgstr ""
 msgid "Object型はv1.2でサポートされます。"
 msgstr ""
 
-# 19c0a971f31d469f940d93c9f303237e
-#~ msgid "It specifies ``match_column`` equivalent parameter."
-#~ msgstr "``match_columns`` と同様のパラメータを指定します。"
-
-# ffa8ab8997a74ec381047804746e748d
-#~ msgid "It specifies ``query`` equivalent parameter."
-#~ msgstr "``query`` と同様のパラメータを指定します。"
-
-# 9f61dde9a9fe411f896b48d0d1ff6740
-#~ msgid "``query`` returns a value of boolean (true or false)."
-#~ msgstr "``query`` は真偽値(trueもしくはfalse)を返します。"
-
-# 9f61dde9a9fe411f896b48d0d1ff6740
-#~ msgid "``sub_filter`` returns a value of boolean (true or false)."
-#~ msgstr "``sub_filter`` は真偽値(trueもしくはfalse)を返します。"
-
-# 50d4a5927b81445f840f51e9605db852
-#~ msgid ""
-#~ "``tokenize`` command is an experimental feature. This command may be "
-#~ "changed in the future."
-#~ msgstr ""
-#~ "``tokenize`` コマンドは実験的な機能です。このコマンドは将来的に変更される"
-#~ "かも知れません。"
-
-# c91014bfde6f49d88b266f07400015cb
-#~ msgid "There is no need to create a table to use ``tokenize`` command."
-#~ msgstr "``tokenize`` コマンドを使うのにテーブルを作成する必要はありません。"
-
-# 1ccd84b3f15a4567b23bb0e7d8c66fcd
-#~ msgid "Here is a simple example of ``tokenize`` command."
-#~ msgstr "以下は ``tokenize`` コマンドの簡単な使用例です。"
-
-# e92758beef824130ab42669342c10d50
-#~ msgid "This section describes parameters of ``tokenizer``."
-#~ msgstr "このセクションでは ``tokenizer`` の引数について説明します。"
-
-# ffa8ab8997a74ec381047804746e748d
-#~ msgid "It specifies the name of tokenizer."
-#~ msgstr "トークナイザーの名前を指定します。"
-
-# 392c6fdee04a4182890e3f03600b4d60
-#~ msgid ""
-#~ "If you want to use other tokenizers, you need to register additional "
-#~ "tokenizer plugin by ``register`` command."
-#~ msgstr ""
-#~ "他のトークナイザーを使い場合、トークナイズ用の追加プラグインをregisterコマ"
-#~ "ンドで登録します。"
-
-# b0b25f3e15764cb184fbc1aad1979089
-#~ msgid "It specifies any string which you want to tokenize."
-#~ msgstr "トークナイズしたい文字列を指定します。"
-
-# f21982b8504d499fa39e4e6c4be6923e
-#~ msgid "tokenized is the tokenized text by the specified tokenizer."
-#~ msgstr ""
-#~ "tokenizedは指定したトークナイザーによりトークナイズされたオブジェクトで"
-#~ "す。"
-
-# ffa8ab8997a74ec381047804746e748d
-#~ msgid "It specifies a column of the table."
-#~ msgstr "テーブルのカラムを指定します。"
-
-# 91d037f3751d4a1a8714c5c9ae532295
-#~ msgid ""
-#~ "See :ref:`select-match-columns` about ``match_columns`` parameter in "
-#~ "``select``."
-#~ msgstr ""
-#~ "``select`` コマンドの ``match_columns`` については :ref:`select-match-"
-#~ "columns` を参照してください。"

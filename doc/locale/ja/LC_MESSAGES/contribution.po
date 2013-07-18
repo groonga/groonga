@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-22 14:45\n"
+"POT-Creation-Date: 2013-07-18 17:28+0900\n"
 "PO-Revision-Date: 2013-03-06 18:18+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -115,6 +115,134 @@ msgid ""
 "msgはcomによって、edgeのqueueにenqueueされる。 edgeがworkerに結びついていない"
 "ときは、同時に、ctx_newというqueueに、msgをenqueueした対象のedgeをenqueueす"
 "る。"
+msgstr ""
+
+# 35a33651a31f469493fe8dca9ae22f67
+#: ../../../source/contribution/development/cooperation.txt:6
+msgid "ユーザーと協力して開発をうまく進めていくための指針"
+msgstr ""
+
+# cd40c312d3d749c3a90bbfa75ed150f0
+#: ../../../source/contribution/development/cooperation.txt:8
+msgid ""
+"groongaを使ってくれているユーザーと協力して 開発をうまく進めていくためにこう"
+"するといい、という事柄をまとめました。 まとめておくと、新しく開発に加わる人と"
+"も共有することができます。"
+msgstr ""
+
+# 90d64ce56fa74ac48ebf95a6670328fc
+#: ../../../source/contribution/development/cooperation.txt:13
+msgid "twitter編"
+msgstr ""
+
+# 66da76bc562b43d3b29c64342d12dacf
+#: ../../../source/contribution/development/cooperation.txt:15
+msgid ""
+"groongaを使ってもらえるようにtwitterのアカウントgroongaを取得して 日々、リ"
+"リースの案内をしたり、ユーザーサポートをしたりしています。"
+msgstr ""
+
+# aaacebff89b941edbdc0486a4394de57
+#: ../../../source/contribution/development/cooperation.txt:18
+msgid ""
+"リリースの案内に利用する場合には、やりとりを考えなくて良いですが、 複数人によ"
+"るサポートをgroongaで行う場合に、どうサポートするのが 良いのか/どうしてそうす"
+"るのかという共通認識を持っていないと一貫性のないサポートとなってしま います。"
+msgstr ""
+
+# 0ce13c4ad9a9483ea6d26221d509bf18
+#: ../../../source/contribution/development/cooperation.txt:23
+msgid ""
+"twitterでサポートされている安心感からgroongaユーザーの拡大に繋げる ことができ"
+"るようにサポートの際に気をつけることをまとめます。"
+msgstr ""
+
+# ad82b3aa00ba403086c83a7140fbd951
+#: ../../../source/contribution/development/cooperation.txt:27
+msgid "過去のツイートはおさらいしておく"
+msgstr ""
+
+# bddd0c9000414189a90b0b17797bcf47
+# b5d91ff06685411fb799a17af0c9ccb2
+# f1bdd24acec54b3bb657ad5356f22632
+#: ../../../source/contribution/development/cooperation.txt:30
+#: ../../../source/contribution/development/cooperation.txt:45
+#: ../../../source/contribution/development/cooperation.txt:62
+msgid "理由"
+msgstr ""
+
+# 3dcb066e1a6e4404b3c79b4f25447f97
+#: ../../../source/contribution/development/cooperation.txt:32
+msgid ""
+"自分がツイートした内容を把握していない返信をされたら普通いい気はしません。"
+msgstr ""
+
+# 345ff86a42e84c368b5d19f78cbdaf75
+# 01f0db9eb269422a8f835972e7795b74
+# 95b6e9ef676941dd91145db0365ecef0
+#: ../../../source/contribution/development/cooperation.txt:35
+#: ../../../source/contribution/development/cooperation.txt:52
+#: ../../../source/contribution/development/cooperation.txt:74
+msgid "対応"
+msgstr ""
+
+# 2eedf9fa239942b587f20fda6935d879
+#: ../../../source/contribution/development/cooperation.txt:37
+msgid ""
+"過去のツイートをおさらいし、こうすれば良いという提案をできるのが望ましいで"
+"す。::"
+msgstr ""
+
+# 2a21cf0f962a46feb88f40d7515176d2
+#: ../../../source/contribution/development/cooperation.txt:42
+msgid "こちらから情報を提供する"
+msgstr ""
+
+# 07d89b8a585d449eb4e0c06d8299168e
+#: ../../../source/contribution/development/cooperation.txt:47
+msgid ""
+"困っているユーザーが複数回ツイートして限られたなかで情報を提供してくれている"
+"ことがあります。 その限られたツイートから解決方法が見つかればユーザーにとって"
+"余計な手間が少なくて済みます。 あれこれ情報提供を要求すると、ユーザーはそのぶ"
+"ん確認する作業が必要になります。"
+msgstr ""
+
+# 4c7a9b64da17474d94a8076b5897f8ac
+#: ../../../source/contribution/development/cooperation.txt:54
+msgid ""
+"最初に声をかけるときに解決策を1つか2つ提案できると望ましいです。ユーザーにあ"
+"まり負担を感じさせないようにすると良いです。::"
+msgstr ""
+
+# f74e3cba366443d79635fd6910fcf42a
+#: ../../../source/contribution/development/cooperation.txt:59
+msgid "twitterでのやりとりはできるだけ他の場所(例えばredmine)へと誘導しない"
+msgstr ""
+
+# da35c389979f4689b7fbaa9653abf3e5
+#: ../../../source/contribution/development/cooperation.txt:64
+msgid ""
+"twitterは気軽につぶやけることが重要なので、気軽にできないことを相手に要求する"
+"と萎縮されてしまう可能性があります。"
+msgstr ""
+
+# 0e5fa455d0c94a01b845f1d18a984d42
+#: ../../../source/contribution/development/cooperation.txt:66
+msgid ""
+"いきなりredmineでバグ報告をお願いすると、しりごみしてしまうかも知れません。::"
+msgstr ""
+
+# 793cba76ebc345b0a4a7d5a816f2d17f
+#: ../../../source/contribution/development/cooperation.txt:70
+msgid ""
+"groonga関連で気軽につぶやけないとなると開発者は困っている人を見つけられない"
+"し、利用者は困ったままとなるので、双方にとって嬉しくない状態になっ てしまいま"
+"す。"
+msgstr ""
+
+# 0d65888ff719428ebae90fc712f9fe21
+#: ../../../source/contribution/development/cooperation.txt:76
+msgid "twitterでやりとりを完結できるようにします。"
 msgstr ""
 
 #: ../../../source/contribution/development/document.txt:6
