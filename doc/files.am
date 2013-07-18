@@ -6,6 +6,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/contribution.txt \
 	$(top_srcdir)/doc/source/contribution/development.txt \
 	$(top_srcdir)/doc/source/contribution/development/com.txt \
+	$(top_srcdir)/doc/source/contribution/development/cooperation.txt \
 	$(top_srcdir)/doc/source/contribution/development/document.txt \
 	$(top_srcdir)/doc/source/contribution/development/query.txt \
 	$(top_srcdir)/doc/source/contribution/development/release.txt \
@@ -467,6 +468,7 @@ source_files_relative_from_doc_dir = \
 	source/contribution.txt \
 	source/contribution/development.txt \
 	source/contribution/development/com.txt \
+	source/contribution/development/cooperation.txt \
 	source/contribution/development/document.txt \
 	source/contribution/development/query.txt \
 	source/contribution/development/release.txt \
@@ -1004,6 +1006,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/contribution.txt \
 	html/_sources/contribution/development.txt \
 	html/_sources/contribution/development/com.txt \
+	html/_sources/contribution/development/cooperation.txt \
 	html/_sources/contribution/development/document.txt \
 	html/_sources/contribution/development/query.txt \
 	html/_sources/contribution/development/release.txt \
@@ -1163,6 +1166,7 @@ html_files_relative_from_locale_dir = \
 	html/contribution.html \
 	html/contribution/development.html \
 	html/contribution/development/com.html \
+	html/contribution/development/cooperation.html \
 	html/contribution/development/document.html \
 	html/contribution/development/query.html \
 	html/contribution/development/release.html \
