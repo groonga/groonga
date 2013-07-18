@@ -5,6 +5,36 @@
 News
 ====
 
+.. _release-3-0-6:
+
+Release 3.0.6 - 2013/07/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [doc] Added documentation about parameter of :doc:`/reference/functions/sub_filter`
+  function.
+* [suggest] Supported 0MQ 3.x. [GitHub#63] [Reported by Naoya Inada]
+* Added availability check for NetBSD about ``pthread_{mutex,cond}attr_setpshared()``
+  [Reported by OBATA Akio]
+* Supported backslash escape in query syntax. [groonga-dev,01520]
+  [Reported by Kouhei Tanabe]
+
+Fixes
+^^^^^
+
+* Fixed a crash bug when specific internal function (``grn_obj_path()``) is called
+  for built-in proc function such as ``select``. [Reported by Genki Takiuchi]
+
+Thanks
+^^^^^^
+
+* Naoya Inada
+* OBATA Akio
+* Kouhei Tanabe
+* Genki Takiuchi
+
 .. _release-3-0-5:
 
 Release 3.0.5 - 2013/06/29
