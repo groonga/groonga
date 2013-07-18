@@ -30,6 +30,7 @@
 /ltmain.sh
 /lt*.m4
 /missing
+/test-driver
 /groonga.pc
 /groonga-httpd-conf.sh
 /data/groonga-httpd.conf
