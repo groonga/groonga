@@ -120,7 +120,7 @@ cmake_install.cmake
 /examples/dictionary/db/
 /examples/dictionary/*.gz
 /examples/dictionary/gene95-dictionary/
-/misc/
+/misc
 /src/suggest/groonga-suggest-httpd
 /src/suggest/groonga-suggest-learner
 /src/suggest/groonga-suggest-create-dataset
