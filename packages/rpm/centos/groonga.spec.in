@@ -7,7 +7,7 @@
 
 Name:		groonga
 Version:	@VERSION@
-Release:	0%{?dist}
+Release:	1%{?dist}
 Summary:	An Embeddable Fulltext Search Engine
 
 Group:		Applications/Text
