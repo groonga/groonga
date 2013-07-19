@@ -1980,6 +1980,9 @@ proc_delete(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                        result_id, &key, NULL, NULL, {
           grn_id id = *(grn_id *)key;
           grn_table_delete_by_id(ctx, table, id);
+          if (ctx->rc == GRN_OPERATION_NOT_PERMITTED) {
+            ERRCLR(ctx);
+          }
         });
         grn_obj_unlink(ctx, records);
       }

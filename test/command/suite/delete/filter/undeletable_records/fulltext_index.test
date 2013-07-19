@@ -1,0 +1,32 @@
+table_create Users TABLE_HASH_KEY ShortText
+column_create Users name COLUMN_SCALAR ShortText
+
+table_create Bookmarks TABLE_NO_KEY
+column_create Bookmarks url COLUMN_SCALAR Text
+column_create Bookmarks user COLUMN_SCALAR Users
+
+column_create Users bookmakrs COLUMN_INDEX Bookmarks user
+
+table_create Names TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram --normalizer NormalizerAuto
+column_create Names users_name COLUMN_INDEX|WITH_POSITION Users name
+
+load --table Users
+[
+["_key", "name"],
+["mori", "Daijiro MORI"],
+["kou", "Kouhei Sutou"],
+["s-yata", "Susumu Yata"]
+]
+
+load --table Bookmarks
+[
+["url", "user"],
+["http://groonga.org/", "mori"],
+["http://mroonga.org/", "mori"],
+["http://groonga.org/", "s-yata"]
+]
+
+delete --table Users --filter 'true'
+select --table Users
+select --table Names
