@@ -1528,10 +1528,10 @@ clear_column_values(grn_ctx *ctx, grn_obj *table, grn_id rid)
   }
 }
 
-static int
+static grn_bool
 is_deletable(grn_ctx *ctx, grn_obj *table, grn_id id)
 {
-  int res = 1;
+  grn_bool res = GRN_TRUE;
   if (id) {
     grn_hash *cols;
     if ((cols = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
@@ -1557,14 +1557,14 @@ is_deletable(grn_ctx *ctx, grn_obj *table, grn_id id)
             ERR(GRN_OPERATION_NOT_PERMITTED,
                 "undeletable record (%s:%d) has value (%s:%d)",
                 table_name, id, column_name, esize);
-            res = 0;
+            res = GRN_FALSE;
           }
         });
       }
       grn_hash_close(ctx, cols);
     }
   } else {
-    res = 0;
+    res = GRN_FALSE;
   }
   return res;
 }
