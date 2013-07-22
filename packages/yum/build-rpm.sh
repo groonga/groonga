@@ -78,6 +78,13 @@ fi
 rpmbuild_options="${BUILD_OPTIONS}"
 
 run yum update ${yum_options} -y
+case "$(cat /etc/redhat-release)" in
+    CentOS*5*)
+	;;
+    *)
+	DEPENDED_PACKAGES=$(echo "$DEPENDED_PACKAGES" | sed -e 's/zeromq-devel/zeromq3-devel/')
+	;;
+esac
 run yum install ${yum_options} -y rpm-build rpmdevtools tar ${DEPENDED_PACKAGES}
 if ! rpm -q mecab-devel > /dev/null; then
     run yum install -y wget
