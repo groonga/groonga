@@ -20,6 +20,9 @@ Improvements
   [Reported by OBATA Akio]
 * Supported backslash escape in query syntax. [groonga-dev,01520]
   [Reported by Kouhei Tanabe]
+* [rpm][fedora] Supported Fedora 19.
+* [rpm][fedora] Dropped Fedora 18 support.
+* [httpd] Updated bundled nginx version to 1.4.2.
 
 Fixes
 ^^^^^
