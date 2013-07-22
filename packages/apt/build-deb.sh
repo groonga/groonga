@@ -68,11 +68,17 @@ else
     ruby -i'' -ne 'print $_ unless /libmsgpack/' /tmp/${PACKAGE}-debian/control
 fi
 
-if aptitude show libzmq-dev > /dev/null 2>&1; then
-    DEPENDED_PACKAGES="${DEPENDED_PACKAGES} libzmq-dev"
-else
-    ruby -i'' -ne 'print $_ unless /libzmq/' /tmp/${PACKAGE}-debian/control
-fi
+case $(lsb_release -s -c) in
+    squeeze|lucid)
+	ruby -i'' -ne 'print $_ unless /libzmq/' /tmp/${PACKAGE}-debian/control
+	;;
+    jessie|sid)
+	DEPENDED_PACKAGES="${DEPENDED_PACKAGES} libzmq3-dev"
+	;;
+    *)
+	DEPENDED_PACKAGES="${DEPENDED_PACKAGES} libzmq-dev"
+	;;
+esac
 
 if aptitude show libevent-dev > /dev/null 2>&1; then
     DEPENDED_PACKAGES="${DEPENDED_PACKAGES} libevent-dev"
