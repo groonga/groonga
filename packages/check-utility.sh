@@ -34,7 +34,7 @@ common_rpm_procedure ()
     for dist in $DISTRIBUTIONS; do
 	case $dist in
 	    "fedora")
-		DISTRIBUTIONS_VERSION="18"
+		DISTRIBUTIONS_VERSION="19"
 		;;
 	    "centos")
 		DISTRIBUTIONS_VERSION="5 6"
