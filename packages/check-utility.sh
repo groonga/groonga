@@ -295,7 +295,7 @@ EOF
 	centos-6)
 	    INSTALL_SCRIPT=install-centos6-groonga.sh
 	    ;;
-	fedora-18)
+	fedora-19)
 	    INSTALL_SCRIPT=install-fedora-groonga.sh
 	    ;;
 	*)
@@ -331,7 +331,7 @@ EOF
     for dist in $DISTRIBUTIONS; do
 	case $dist in
 	    "fedora")
-		DISTRIBUTIONS_VERSION="18"
+		DISTRIBUTIONS_VERSION="19"
 		;;
 	    "centos")
 		DISTRIBUTIONS_VERSION="5 6"
