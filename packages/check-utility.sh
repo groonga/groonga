@@ -231,7 +231,8 @@ sudo aptitude -V -D -y --allow-untrusted install groonga-keyring
 sudo aptitude update
 sudo aptitude -V -D -y install groonga
 sudo aptitude -V -D -y install groonga-tokenizer-mecab
-sudo aptitude -V -D -y install groonga-munin-plugins
+sudo apt-get -y install libgroonga-dev
+#sudo aptitude -V -D -y install groonga-munin-plugins
 EOF
     cat > tmp/install-aptget-groonga.sh <<EOF
 #!/bin/sh
@@ -243,7 +244,8 @@ sudo apt-get -y --allow-unauthenticated install groonga-keyring
 sudo apt-get update
 sudo apt-get -y install groonga
 sudo apt-get -y install groonga-tokenizer-mecab
-sudo apt-get -y install groonga-munin-plugins
+sudo apt-get -y install libgroonga-dev
+#sudo apt-get -y install groonga-munin-plugins
 EOF
     INSTALL_SCRIPT=""
     case $code in
@@ -271,6 +273,7 @@ sudo yum install -y groonga-tokenizer-mecab
 rm -f epel-release-*.rpm
 wget http://download.fedoraproject.org/pub/epel/5/i386/epel-release-5-4.noarch.rpm
 sudo rpm -ivh epel-release-5-4.noarch.rpm
+sudo yum install -y groonga-devel
 #sudo yum install -y groonga-munin-plugins
 EOF
     cat > tmp/install-centos6-groonga.sh <<EOF
@@ -279,6 +282,7 @@ sudo yum makecache
 sudo yum install -y groonga
 sudo yum install -y groonga-tokenizer-mecab
 sudo rpm -ivh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm
+sudo yum install -y groonga-devel
 #sudo yum install -y groonga-munin-plugins
 EOF
     cat > tmp/install-fedora-groonga.sh <<EOF
@@ -286,6 +290,7 @@ sudo rpm -ivh http://packages.groonga.org/fedora/groonga-release-1.1.0-1.noarch.
 sudo yum makecache
 sudo yum install -y groonga
 sudo yum install -y groonga-tokenizer-mecab
+sudo yum install -y groonga-devel
 #sudo yum install -y groonga-munin-plugins
 EOF
     case "$dist-$ver" in
