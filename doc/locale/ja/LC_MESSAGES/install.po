@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-27 16:26\n"
+"POT-Creation-Date: 2013-07-26 09:58+0900\n"
 "PO-Revision-Date: 2013-04-03 13:30+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -459,7 +459,7 @@ msgstr ""
 
 # 427ca358ad3943ca9c5e8e1c31238b15
 #: ../../../source/install/fedora.txt:30
-msgid "Fedora 18"
+msgid "Fedora 19"
 msgstr ""
 
 # 80ad432285074eecb34524a8eaf53cca
