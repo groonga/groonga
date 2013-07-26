@@ -619,9 +619,8 @@ msgstr ""
 # 203a3a3af84d4728af390bbaf90e84d0
 # b8fe45cb84ba49599fd15fb3a69724e0
 #: ../../../source/server/package.txt:34
-#, fuzzy
 msgid "Access log path"
-msgstr "Access log"
+msgstr ""
 
 # 444935818eb640b586745f25797d4ffd
 # 86ef9e9ff93a48e7b1e45b211e1229e8
@@ -646,15 +645,13 @@ msgstr ""
 # 802cf469fad54df7b067b7b7d919a125
 #: ../../../source/server/package.txt:38 ../../../source/server/package.txt:92
 #: ../../../source/server/package.txt:150
-#, fuzzy
 msgid "Database"
-msgstr "Multi databases"
+msgstr ""
 
 # fd4a09baf8414fb0b0ed41c38ccfc915
 #: ../../../source/server/package.txt:40
-#, fuzzy
 msgid "/etc/groonga/httpd/groonga-httpd.conf"
-msgstr ":doc:`http/groonga-httpd`"
+msgstr ""
 
 # 3dd040d7bc414b65a06de360498c6cee
 # 3dd040d7bc414b65a06de360498c6cee
@@ -721,9 +718,8 @@ msgstr ""
 # 83dfd6267c6c46f2bd331ffc43befa09
 # 03f919d64f904e0c935a7eb1e0d844e6
 #: ../../../source/server/package.txt:77
-#, fuzzy
 msgid "groonga-server-http"
-msgstr "groonga-httpd"
+msgstr ""
 
 # 2ad0f8b094304b9d894e7af72faa1ef1
 #: ../../../source/server/package.txt:79
@@ -771,9 +767,8 @@ msgstr ""
 # 83dfd6267c6c46f2bd331ffc43befa09
 # 03f919d64f904e0c935a7eb1e0d844e6
 #: ../../../source/server/package.txt:137
-#, fuzzy
 msgid "groonga-server-gqtp"
-msgstr "groonga-httpd"
+msgstr ""
 
 # 6a94a2aae23d4b2db8c34986fc9e5de7
 #: ../../../source/server/package.txt:139

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-24 17:11\n"
+"POT-Creation-Date: 2013-07-26 09:51+0900\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -497,10 +497,10 @@ msgid ""
 "official Fedora yum repository in the future."
 msgstr ""
 
-# 42ad06b8b53147088e9622d861e034e1
+# 2293d519a57d42f195ec5cd8118dfbc3
 #: ../../../source/install/fedora.txt:30
-msgid "Fedora 18"
-msgstr ""
+msgid "Fedora 19"
+msgstr "Fedora"
 
 # e3f85dda4774400ca89c4bf075e9066d
 #: ../../../source/install/fedora.txt:36
