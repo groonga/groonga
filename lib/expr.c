@@ -3723,15 +3723,15 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
   }
   if (ctx->impl->stack_curr + nargs > stack_curr) {
     val = grn_ctx_pop(ctx);
-    if (ctx->impl->stack_curr + nargs > stack_curr) {
-      /*
-        GRN_LOG(ctx, GRN_LOG_WARNING, "nargs=%d stack balance=%d",
-        nargs, stack_curr - ctx->impl->stack_curr);
-      */
-      ctx->impl->stack_curr = stack_curr - nargs;
-    }
   }
 exit :
+  if (ctx->impl->stack_curr + nargs > stack_curr) {
+    /*
+      GRN_LOG(ctx, GRN_LOG_WARNING, "nargs=%d stack balance=%d",
+      nargs, stack_curr - ctx->impl->stack_curr);
+    */
+    ctx->impl->stack_curr = stack_curr - nargs;
+  }
   GRN_API_RETURN(val);
 }
 
