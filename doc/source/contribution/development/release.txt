@@ -558,6 +558,23 @@ doc/source以下のドキュメントを更新、翻訳まで完了している�
 
 生成されているドキュメントに問題のないことを確認できたら、コミット、pushしてgroonga.orgへと反映します。
 
+Homebrewの更新
+------------------------------------------------------------
+
+OS Xでのパッケージ管理方法として `Homebrew <http://brew.sh/>`_ があります。
+
+groongaを簡単にインストールできるようにするために、Homebrewへpull requestを送ります。
+
+  https://github.com/mxcl/homebrew
+
+すでにgroongaのFormulaは取り込まれているので、リリースのたびにFormulaの内容を更新する作業を実施します。
+
+groonga 3.0.6のときは以下のように更新してpull requestを送りました。
+
+  https://github.com/mxcl/homebrew/pull/21456/files
+
+上記URLを参照するとわかるようにソースアーカイブのurlとsha1チェックサムを更新します。
+
 リリースアナウンス
 ------------------------------------------------------------
 
