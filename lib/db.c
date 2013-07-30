@@ -5690,7 +5690,7 @@ grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
     case GRN_OBJ_COLUMN_VECTOR :
       {
         grn_obj *lexicon = grn_ctx_at(ctx, DB_OBJ(obj)->range);
-        if (!GRN_OBJ_TABLEP(lexicon) &&
+        if (lexicon && !GRN_OBJ_TABLEP(lexicon) &&
             (lexicon->header.flags & GRN_OBJ_KEY_VAR_SIZE)) {
           grn_obj v_;
           grn_obj_ensure_vector(ctx, value);
