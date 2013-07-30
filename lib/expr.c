@@ -2468,11 +2468,12 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
   }                                                                     \
 } while (0)
 
-void
-pseudo_query_scan(grn_ctx *ctx, grn_obj *x, grn_obj *y, grn_obj *res)
+grn_bool
+pseudo_query_scan(grn_ctx *ctx, grn_obj *x, grn_obj *y)
 {
   grn_obj *normalizer;
   grn_obj *a = NULL, *b = NULL;
+  grn_bool matched = GRN_FALSE;
 
   normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
   switch (x->header.domain) {
@@ -2502,17 +2503,15 @@ pseudo_query_scan(grn_ctx *ctx, grn_obj *x, grn_obj *y, grn_obj *res)
     const char *a_norm, *b_norm;
     grn_string_get_normalized(ctx, a, &a_norm, NULL, NULL);
     grn_string_get_normalized(ctx, b, &b_norm, NULL, NULL);
-    GRN_INT32_SET(ctx, res, strstr(a_norm, b_norm) != NULL);
-  } else {
-    GRN_INT32_SET(ctx, res, 0);
+    matched = (strstr(a_norm, b_norm) != NULL);
   }
-  res->header.type = GRN_BULK;
-  res->header.domain = GRN_DB_INT32;
 
   if (a) { grn_obj_close(ctx, a); }
   if (b) { grn_obj_close(ctx, b); }
 
   if (normalizer) { grn_obj_unlink(ctx, normalizer); }
+
+  return matched;
 }
 
 inline static void
@@ -3190,10 +3189,15 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
       case GRN_OP_MATCH :
         {
           grn_obj *x, *y;
-          POP2ALLOC1(x, y, res);
+          grn_bool matched;
+          POP1(y);
+          POP1(x);
           WITH_SPSAVE({
-            pseudo_query_scan(ctx, x, y, res);
+            matched = pseudo_query_scan(ctx, x, y);
           });
+          ALLOC1(res);
+          grn_obj_reinit(ctx, res, GRN_DB_INT32, 0);
+          GRN_INT32_SET(ctx, res, matched ? 1 : 0);
         }
         code++;
         break;
