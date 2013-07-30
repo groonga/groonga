@@ -6554,7 +6554,14 @@ remove_index(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry)
   while (hooks) {
     default_set_value_hook_data *data = (void *)NEXT_ADDR(hooks);
     grn_obj *target = grn_ctx_at(ctx, data->target);
-    if (target->header.type == GRN_COLUMN_INDEX) {
+    if (!target) {
+      char name[GRN_TABLE_MAX_KEY_SIZE];
+      int length;
+      length = grn_obj_name(ctx, obj, name, GRN_TABLE_MAX_KEY_SIZE);
+      ERR(GRN_UNKNOWN_ERROR,
+          "[column][remove][index] "
+          "hook has a dangling reference: %.*s", length, name);
+    } else if (target->header.type == GRN_COLUMN_INDEX) {
       //TODO: multicolumn  MULTI_COLUMN_INDEXP
       _grn_obj_remove(ctx, target);
     } else {
