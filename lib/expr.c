@@ -2468,7 +2468,7 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
   }                                                                     \
 } while (0)
 
-grn_bool
+static grn_bool
 pseudo_query_scan(grn_ctx *ctx, grn_obj *x, grn_obj *y)
 {
   grn_obj *normalizer;
