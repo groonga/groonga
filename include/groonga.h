@@ -232,19 +232,6 @@ GRN_API grn_rc grn_ctx_init(grn_ctx *ctx, int flags);
  **/
 GRN_API grn_rc grn_ctx_fin(grn_ctx *ctx);
 
-/**
- * grn_ctx_open:
- * @flags: 初期化するctxのオプションを指定します。
- *
- *
- * 初期化されたgrn_ctxオブジェクトを返します。
- * grn_ctx_initで初期化されたgrn_ctxオブジェクトは構造体の実体を
- * APIの呼び元で確保するのに対して、grn_ctx_openではgroongaライブラリの内部で、
- * 実体を確保します。どちらで初期化されたgrn_ctxも、grn_ctx_fin()で解放できます。
- * grn_ctx_openで確保したgrn_ctx構造体に関しては、grn_ctx_fin()で解放した後に、
- * そのgrn_ctxで作成したgrn_objをgrn_obj_close()によって解放しても問題ありません。
- **/
-
 GRN_API grn_ctx *grn_ctx_open(int flags);
 
 /**
