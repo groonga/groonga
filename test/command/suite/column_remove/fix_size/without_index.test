@@ -1,0 +1,8 @@
+table_create Users TABLE_PAT_KEY ShortText
+column_create Users age COLUMN_SCALAR UInt8
+
+dump
+
+column_remove Users age
+
+dump
