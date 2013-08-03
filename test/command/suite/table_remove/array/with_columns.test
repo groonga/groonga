@@ -1,0 +1,8 @@
+table_create Users TABLE_NO_KEY
+column_create Users name COLUMN_SCALAR ShortText
+
+dump
+
+table_remove Users
+
+dump
