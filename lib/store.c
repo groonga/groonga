@@ -1214,7 +1214,7 @@ grn_ja_put_zlib(grn_ctx *ctx, grn_ja *ja, grn_id id,
     return ctx->rc;
   }
   zvalue_len = deflateBound(&zstream, value_len);
-  if (!(zvalue = GRN_MALLOC(zvalue_len + sizeof (uint64_t)))) { deflateEnd(&zstream); return GRN_NO_MEMORY_AVAILABLE; }
+  if (!(zvalue = GRN_MALLOC(zvalue_len + sizeof(uint64_t)))) { deflateEnd(&zstream); return GRN_NO_MEMORY_AVAILABLE; }
   zstream.next_out = (Bytef *)(((uint64_t *)zvalue) + 1);
   zstream.avail_out = zvalue_len;
   if (deflate(&zstream, Z_FINISH) != Z_STREAM_END) {
@@ -1230,7 +1230,7 @@ grn_ja_put_zlib(grn_ctx *ctx, grn_ja *ja, grn_id id,
     return ctx->rc;
   }
   *(uint64_t *)zvalue = value_len;
-  rc = grn_ja_put_raw(ctx, ja, id, zvalue, zvalue_len + sizeof (uint64_t), flags, cas);
+  rc = grn_ja_put_raw(ctx, ja, id, zvalue, zvalue_len + sizeof(uint64_t), flags, cas);
   GRN_FREE(zvalue);
   return rc;
 }
@@ -1249,7 +1249,7 @@ grn_ja_put_lzo(grn_ctx *ctx, grn_ja *ja, grn_id id,
     return grn_ja_put_raw(ctx, ja, id, value, value_len, flags, cas);
   }
 
-  if (!(lvalue = GRN_MALLOC(lvalue_len + sizeof (uint64_t)))) { return GRN_NO_MEMORY_AVAILABLE; }
+  if (!(lvalue = GRN_MALLOC(lvalue_len + sizeof(uint64_t)))) { return GRN_NO_MEMORY_AVAILABLE; }
   if (!(lwork = GRN_MALLOC(LZO1X_1_MEM_COMPRESS))) { GRN_FREE(lvalue); return GRN_NO_MEMORY_AVAILABLE; }
   if (lzo1x_1_compress(value, value_len, (lzo_bytep)((uint64_t *)lvalue + 1), &lvalue_len, lwork) != LZO_E_OK) {
     GRN_FREE(lwork);
@@ -1259,7 +1259,7 @@ grn_ja_put_lzo(grn_ctx *ctx, grn_ja *ja, grn_id id,
   }
   GRN_FREE(lwork);
   *(uint64_t *)lvalue = value_len;
-  rc = grn_ja_put_raw(ctx, ja, id, lvalue, lvalue_len + sizeof (uint64_t), flags, cas);
+  rc = grn_ja_put_raw(ctx, ja, id, lvalue, lvalue_len + sizeof(uint64_t), flags, cas);
   GRN_FREE(lvalue);
   return rc;
 }

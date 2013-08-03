@@ -1004,8 +1004,8 @@ retry:
             iw->diff = pos - voffset;
 
             dp ("pos: %lu, allocate: %d, really needed: %d\n", voffset, vsize, size);
-            memset(&oper[count], 0, sizeof (CacheIOOper));
-            memset(&iocb[count], 0, sizeof (struct aiocb));
+            memset(&oper[count], 0, sizeof(CacheIOOper));
+            memset(&iocb[count], 0, sizeof(struct aiocb));
             oper[count].iocb = &iocb[count];
             iocb[count].aio_fildes = fi->fd;
             iocb[count].aio_lio_opcode = LIO_READ;
