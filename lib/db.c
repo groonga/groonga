@@ -6663,6 +6663,7 @@ is_removable_table(grn_ctx *ctx, grn_obj *table, grn_obj *db)
       }
 
       switch (object->header.type) {
+      case GRN_TABLE_HASH_KEY :
       case GRN_TABLE_PAT_KEY :
       case GRN_TABLE_DAT_KEY :
         if (DB_OBJ(object)->id == table_id) {
