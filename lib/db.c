@@ -6663,6 +6663,7 @@ is_removable_table(grn_ctx *ctx, grn_obj *table, grn_obj *db)
       }
 
       switch (object->header.type) {
+      case GRN_COLUMN_VAR_SIZE :
       case GRN_COLUMN_FIX_SIZE :
         if (object->header.domain == table_id) {
           break;
