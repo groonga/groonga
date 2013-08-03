@@ -220,18 +220,7 @@ struct _grn_ctx {
 #define GRN_CTX_PER_DB                 (0x08)
 
 GRN_API grn_rc grn_ctx_init(grn_ctx *ctx, int flags);
-
-/**
- * grn_ctx_fin:
- * @ctx: 解放するctx構造体へのポインタを指定します。
- *
- * ctxの管理するメモリを解放し、使用を終了します。
- *
- * If @ctx is initialized by grn_ctx_open() not
- * grn_ctx_init(). You need also to call grn_ctx_close().
- **/
 GRN_API grn_rc grn_ctx_fin(grn_ctx *ctx);
-
 GRN_API grn_ctx *grn_ctx_open(int flags);
 
 /**
