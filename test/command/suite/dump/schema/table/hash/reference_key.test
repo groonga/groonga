@@ -1,0 +1,4 @@
+table_create Names TABLE_PAT_KEY ShortText
+table_create Users TABLE_HASH_KEY Names
+
+dump
