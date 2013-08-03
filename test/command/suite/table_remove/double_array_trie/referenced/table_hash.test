@@ -1,0 +1,6 @@
+table_create Names TABLE_DAT_KEY ShortText
+table_create Users TABLE_HASH_KEY Names
+
+table_remove Names
+
+dump

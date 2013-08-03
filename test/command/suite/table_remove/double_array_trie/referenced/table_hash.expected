@@ -1,0 +1,21 @@
+table_create Names TABLE_DAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Users TABLE_HASH_KEY Names
+[[0,0.0,0.0],true]
+table_remove Names
+[
+  [
+    [
+      -2,
+      0.0,
+      0.0
+    ],
+    "[table][remove] a table that references the table exists: <Users._key> -> <Names>"
+  ],
+  false
+]
+#|e| [table][remove] a table that references the table exists: <Users._key> -> <Names>
+dump
+table_create Names TABLE_DAT_KEY ShortText
+table_create Users TABLE_HASH_KEY Names
+
