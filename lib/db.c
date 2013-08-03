@@ -6663,6 +6663,25 @@ is_removable_table(grn_ctx *ctx, grn_obj *table, grn_obj *db)
       }
 
       switch (object->header.type) {
+      case GRN_TABLE_PAT_KEY :
+        if (DB_OBJ(object)->id == table_id) {
+          break;
+        }
+
+        if (object->header.domain == table_id) {
+          char reference_table_name[GRN_TABLE_MAX_KEY_SIZE];
+          int reference_table_name_size;
+          reference_table_name_size =
+            grn_obj_name(ctx, object, reference_table_name,
+                         GRN_TABLE_MAX_KEY_SIZE);
+          ERR(GRN_OPERATION_NOT_PERMITTED,
+              "[table][remove] a table that references the table exists: "
+              "<%.*s._key> -> <%.*s>",
+              reference_table_name_size, reference_table_name,
+              table_name_size, table_name);
+          removable = GRN_FALSE;
+        }
+        break;
       case GRN_COLUMN_VAR_SIZE :
       case GRN_COLUMN_FIX_SIZE :
         if (object->header.domain == table_id) {
