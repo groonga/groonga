@@ -233,14 +233,6 @@ GRN_API grn_rc grn_ctx_init(grn_ctx *ctx, int flags);
 GRN_API grn_rc grn_ctx_fin(grn_ctx *ctx);
 
 GRN_API grn_ctx *grn_ctx_open(int flags);
-
-/**
- * grn_ctx_close:
- * @ctx: no longer needed grn_ctx.
- *
- * It calls grn_ctx_fin() and frees allocated memory for
- * @ctx by grn_ctx_open().
- **/
 GRN_API grn_rc grn_ctx_close(grn_ctx *ctx);
 
 /**

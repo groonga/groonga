@@ -58,3 +58,11 @@ Reference
 
    :param flags: 初期化する ``ctx`` のオプションを指定します。
    :return: 初期化された :c:type:`grn_ctx` オブジェクトを返します。
+
+.. c:function:: grn_rc grn_ctx_close(grn_ctx *ctx)
+
+   It calls :c:func:`grn_ctx_fin()` and frees allocated memory for ``ctx`` by :c:func:`grn_ctx_open()`.
+
+   :param ctx: no longer needed :c:type:`grn_ctx`.
+   :return: ``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error.
+
