@@ -3,19 +3,5 @@ table_create Names TABLE_PAT_KEY ShortText
 column_create Names nick_name COLUMN_SCALAR Names
 [[0,0.0,0.0],true]
 table_remove Names
-[
-  [
-    [
-      -2,
-      0.0,
-      0.0
-    ],
-    "[table][remove] a column that references the table exists: <Names.nick_name> -> <Names>"
-  ],
-  false
-]
-#|e| [table][remove] a column that references the table exists: <Names.nick_name> -> <Names>
+[[0,0.0,0.0],true]
 dump
-table_create Names TABLE_PAT_KEY ShortText
-column_create Names nick_name COLUMN_SCALAR Names
-
