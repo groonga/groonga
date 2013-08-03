@@ -1,0 +1,7 @@
+table_create Names TABLE_DAT_KEY ShortText
+
+dump
+
+table_remove Names
+
+dump
