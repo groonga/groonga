@@ -6639,10 +6639,69 @@ _grn_obj_remove_db(grn_ctx *ctx, grn_obj *obj, grn_obj *db, grn_id id,
   if (path) { grn_pat_remove(ctx, path); }
 }
 
+static grn_bool
+is_removable_table(grn_ctx *ctx, grn_obj *table, grn_obj *db)
+{
+  grn_bool removable = GRN_TRUE;
+  grn_id table_id;
+  char table_name[GRN_TABLE_MAX_KEY_SIZE];
+  int table_name_size;
+  grn_table_cursor *cursor;
+
+  table_id = DB_OBJ(table)->id;
+  table_name_size = grn_obj_name(ctx, table, table_name, GRN_TABLE_MAX_KEY_SIZE);
+  if ((cursor = grn_table_cursor_open(ctx, db, NULL, 0, NULL, 0, 0, -1,
+                                      GRN_CURSOR_BY_ID))) {
+    grn_id id;
+    while ((id = grn_table_cursor_next(ctx, cursor)) != GRN_ID_NIL) {
+      grn_obj *object;
+
+      object = grn_ctx_at(ctx, id);
+      if (!object) {
+        ERRCLR(ctx);
+        continue;
+      }
+
+      switch (object->header.type) {
+      case GRN_COLUMN_FIX_SIZE :
+        if (object->header.domain == table_id) {
+          break;
+        }
+        if (DB_OBJ(object)->range == table_id) {
+          char column_name[GRN_TABLE_MAX_KEY_SIZE];
+          int column_name_size;
+          column_name_size = grn_obj_name(ctx, object, column_name,
+                                          GRN_TABLE_MAX_KEY_SIZE);
+          ERR(GRN_OPERATION_NOT_PERMITTED,
+              "[table][remove] column that references the table exists: "
+              "<%.*s> -> <%.*s>",
+              column_name_size, column_name,
+              table_name_size, table_name);
+          removable = GRN_FALSE;
+        }
+        break;
+      default:
+        break;
+      }
+      grn_obj_unlink(ctx, object);
+
+      if (!removable) {
+        break;
+      }
+    }
+    grn_table_cursor_close(ctx, cursor);
+  }
+
+  return removable;
+}
+
 static void
 _grn_obj_remove_pat(grn_ctx *ctx, grn_obj *obj, grn_obj *db, grn_id id,
                     const char *path)
 {
+  if (!is_removable_table(ctx, obj, db)) {
+    return;
+  }
   remove_index(ctx, obj, GRN_HOOK_INSERT);
   remove_columns(ctx, obj);
   grn_obj_close(ctx, obj);
