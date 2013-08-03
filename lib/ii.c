@@ -50,7 +50,7 @@
 #define LPOS(pos) (((pos) & 0xffff) << 2)
 #define SEG2POS(seg,pos) ((((uint32_t)(seg)) << 16) + (((uint32_t)(pos)) >> 2))
 
-#define NEXT_ADDR(p) (((byte *)(p)) + sizeof *(p))
+#define NEXT_ADDR(p) (((byte *)(p)) + sizeof(*(p)))
 
 #ifndef S_IRUSR
 # define S_IRUSR 0400
