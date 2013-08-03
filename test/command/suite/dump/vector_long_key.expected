@@ -6,7 +6,7 @@ column_create Users tags COLUMN_VECTOR Tags
 [[0,0.0,0.0],true]
 load --table Users
 [
-{"_key": "alice",  "tags": ["long (24byte > 0 is long)"]}
+{"_key": "alice",  "tags": ["long (larger than 24byte)"]}
 ]
 [[0,0.0,0.0],1]
 dump
@@ -16,11 +16,11 @@ column_create Users tags COLUMN_VECTOR Tags
 load --table Tags
 [
 ["_key"],
-["long (24byte > 0 is long)"]
+["long (larger than 24byte)"]
 ]
 load --table Users
 [
 ["_key","tags"],
-["alice",["long (24byte > 0 is long)"]]
+["alice",["long (larger than 24byte)"]]
 ]
 
