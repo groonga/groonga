@@ -1,0 +1,24 @@
+table_create Names TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Users TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Users name COLUMN_SCALAR Names
+[[0,0.0,0.0],true]
+table_remove Names
+[
+  [
+    [
+      -2,
+      0.0,
+      0.0
+    ],
+    "[table][remove] a column that references the table exists: <Users.name> -> <Names>"
+  ],
+  false
+]
+#|e| [table][remove] a column that references the table exists: <Users.name> -> <Names>
+dump
+table_create Names TABLE_HASH_KEY ShortText
+table_create Users TABLE_HASH_KEY ShortText
+column_create Users name COLUMN_SCALAR Names
+
