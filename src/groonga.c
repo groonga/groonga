@@ -94,7 +94,6 @@ static grn_encoding encoding;
 static grn_command_version default_command_version;
 static int64_t default_match_escalation_threshold;
 static int log_level;
-static uint32_t cache_limit;
 
 static int
 grn_rc_to_exit_code(grn_rc rc)
@@ -1849,7 +1848,6 @@ static const char * const default_dest = "localhost";
 static const char *default_log_path = "";
 static const char *default_query_log_path = "";
 static const char *default_config_path = "";
-static uint32_t default_cache_limit = 0;
 static const char *default_document_root = "";
 static grn_command_version default_default_command_version =
     GRN_COMMAND_VERSION_DEFAULT;
@@ -1905,8 +1903,6 @@ init_default_settings(void)
       default_config_path = "";
     }
   }
-
-  default_cache_limit = *grn_cache_max_nentries();
 
 #ifdef WIN32
   {
@@ -2021,6 +2017,8 @@ show_version(void)
 static void
 show_usage(FILE *output)
 {
+  uint32_t default_cache_limit = GRN_CACHE_DEFAULT_MAX_N_ENTRIES;
+
   fprintf(output,
           "Usage: groonga [options...] [dest]\n"
           "\n"
@@ -2116,6 +2114,7 @@ main(int argc, char **argv)
   const char *config_path = NULL;
   int exit_code = EXIT_SUCCESS;
   int i, mode = mode_alone;
+  uint32_t cache_limit = 0;
   static grn_str_getopt_opt opts[] = {
     {'p', "port", NULL, 0, GETOPT_OP_NONE},
     {'e', "encoding", NULL, 0, GETOPT_OP_NONE},
@@ -2472,8 +2471,6 @@ main(int argc, char **argv)
       return EXIT_FAILURE;
     }
     cache_limit = value;
-  } else {
-    cache_limit = default_cache_limit;
   }
 
 #ifdef GRN_WITH_LIBEDIT

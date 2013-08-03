@@ -469,6 +469,8 @@ typedef struct {
 
 /**** cache ****/
 
+#define GRN_CACHE_DEFAULT_MAX_N_ENTRIES 100
+
 typedef struct {
   uint32_t nentries;
   uint32_t max_nentries;

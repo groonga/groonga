@@ -2001,7 +2001,7 @@ grn_cache_init(void)
   grn_gcache.hash = grn_hash_create(&grn_gctx, NULL, GRN_TABLE_MAX_KEY_SIZE,
                                     sizeof(grn_cache_entry), GRN_OBJ_KEY_VAR_SIZE);
   MUTEX_INIT(grn_gcache.mutex);
-  grn_gcache.max_nentries = 100;
+  grn_gcache.max_nentries = GRN_CACHE_DEFAULT_MAX_N_ENTRIES;
 }
 
 uint32_t *
