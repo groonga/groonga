@@ -1,0 +1,6 @@
+table_create Names TABLE_PAT_KEY ShortText
+column_create Names nick_name COLUMN_SCALAR Names
+
+table_remove Names
+
+dump
