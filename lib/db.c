@@ -6596,7 +6596,7 @@ remove_columns(grn_ctx *ctx, grn_obj *obj)
 }
 
 static void
-_grn_obj_remove_db(grn_ctx *ctx, grn_obj *db, grn_obj *obj, grn_id id,
+_grn_obj_remove_db(grn_ctx *ctx, grn_obj *obj, grn_obj *db, grn_id id,
                    const char *path)
 {
   const char *io_spath;
