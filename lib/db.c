@@ -6596,6 +6596,50 @@ remove_columns(grn_ctx *ctx, grn_obj *obj)
 }
 
 static void
+_grn_obj_remove_db(grn_ctx *ctx, grn_obj *db, grn_obj *obj, grn_id id,
+                   const char *path)
+{
+  const char *io_spath;
+  char *spath;
+  grn_table_cursor *cur;
+  grn_db *s = (grn_db *)db;
+
+  if (s->specs &&
+      (io_spath = grn_obj_path(ctx, (grn_obj *)s->specs)) && *io_spath != '\0') {
+    if (!(spath = GRN_STRDUP(io_spath))) {
+      ERR(GRN_NO_MEMORY_AVAILABLE, "cannot duplicate path: <%s>", io_spath);
+      return;
+    }
+  } else {
+    spath = NULL;
+  }
+
+  if ((cur = grn_table_cursor_open(ctx, obj, NULL, 0, NULL, 0, 0, -1, 0))) {
+    while ((id = grn_table_cursor_next_inline(ctx, cur)) != GRN_ID_NIL) {
+      grn_obj *tbl = grn_ctx_at(ctx, id);
+      if (tbl) {
+        switch (tbl->header.type) {
+        case GRN_TABLE_HASH_KEY :
+        case GRN_TABLE_PAT_KEY:
+        case GRN_TABLE_DAT_KEY:
+        case GRN_TABLE_NO_KEY:
+          _grn_obj_remove(ctx, tbl);
+        }
+      }
+    }
+    grn_table_cursor_close(ctx, cur);
+  }
+  grn_obj_close(ctx, obj);
+
+  if (spath) {
+    grn_ja_remove(ctx, spath);
+    GRN_FREE(spath);
+  }
+
+  if (path) { grn_pat_remove(ctx, path); }
+}
+
+static void
 _grn_obj_remove(grn_ctx *ctx, grn_obj *obj)
 {
   grn_id id = GRN_ID_NIL;
@@ -6621,43 +6665,7 @@ _grn_obj_remove(grn_ctx *ctx, grn_obj *obj)
   }
   switch (obj->header.type) {
   case GRN_DB :
-    {
-      const char *io_spath;
-      char *spath;
-      grn_table_cursor *cur;
-      grn_db *s = (grn_db *)db;
-      if (s->specs &&
-          (io_spath = grn_obj_path(ctx, (grn_obj *)s->specs)) && *io_spath != '\0') {
-        if (!(spath = GRN_STRDUP(io_spath))) {
-          ERR(GRN_NO_MEMORY_AVAILABLE, "cannot duplicate path: <%s>", io_spath);
-          if (path) { GRN_FREE(path); }
-          return;
-        }
-      } else {
-        spath = NULL;
-      }
-      if ((cur = grn_table_cursor_open(ctx, obj, NULL, 0, NULL, 0, 0, -1, 0))) {
-        while ((id = grn_table_cursor_next_inline(ctx, cur)) != GRN_ID_NIL) {
-          grn_obj *tbl = grn_ctx_at(ctx, id);
-          if (tbl) {
-            switch (tbl->header.type) {
-            case GRN_TABLE_HASH_KEY :
-            case GRN_TABLE_PAT_KEY:
-            case GRN_TABLE_DAT_KEY:
-            case GRN_TABLE_NO_KEY:
-              _grn_obj_remove(ctx, tbl);
-            }
-          }
-        }
-        grn_table_cursor_close(ctx, cur);
-      }
-      grn_obj_close(ctx, obj);
-      if (spath) {
-        grn_ja_remove(ctx, spath);
-        GRN_FREE(spath);
-      }
-      if (path) { grn_pat_remove(ctx, path); }
-    }
+    _grn_obj_remove_db(ctx, obj, db, id, path);
     break;
   case GRN_TABLE_PAT_KEY :
     remove_index(ctx, obj, GRN_HOOK_INSERT);
