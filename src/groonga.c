@@ -624,11 +624,13 @@ start_service(grn_ctx *ctx, const char *db_path,
     } else {
       fprintf(stderr, "db open failed (%s)\n", db_path);
       exit_code = EXIT_FAILURE;
+      send_ready_notify();
     }
     grn_com_event_fin(ctx, &ev);
   } else {
     fprintf(stderr, "grn_com_event_init failed\n");
     exit_code = EXIT_FAILURE;
+    send_ready_notify();
   }
 
   if (is_daemon_mode) {
