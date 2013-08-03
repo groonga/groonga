@@ -2347,9 +2347,6 @@ dump_table(grn_ctx *ctx, grn_obj *outbuf, grn_obj *table,
   case GRN_TABLE_PAT_KEY:
   case GRN_TABLE_DAT_KEY:
     domain = grn_ctx_at(ctx, table->header.domain);
-    if (domain) {
-      default_flags |= domain->header.flags;
-    }
     break;
   default:
     break;
