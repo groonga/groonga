@@ -6727,6 +6727,20 @@ _grn_obj_remove_ra(grn_ctx *ctx, grn_obj *obj, grn_obj *db, grn_id id,
 }
 
 static void
+_grn_obj_remove_index(grn_ctx *ctx, grn_obj *obj, grn_obj *db, grn_id id,
+                      const char *path)
+{
+  delete_source_hook(ctx, obj);
+  grn_obj_close(ctx, obj);
+  if (path) {
+    grn_ja_put(ctx, ((grn_db *)db)->specs, id, NULL, 0, GRN_OBJ_SET, NULL);
+    grn_obj_delete_by_id(ctx, db, id, GRN_TRUE);
+    grn_ii_remove(ctx, path);
+  }
+  grn_obj_touch(ctx, db, NULL);
+}
+
+static void
 _grn_obj_remove(grn_ctx *ctx, grn_obj *obj)
 {
   grn_id id = GRN_ID_NIL;
@@ -6773,14 +6787,7 @@ _grn_obj_remove(grn_ctx *ctx, grn_obj *obj)
     _grn_obj_remove_ra(ctx, obj, db, id, path);
     break;
   case GRN_COLUMN_INDEX :
-    delete_source_hook(ctx, obj);
-    grn_obj_close(ctx, obj);
-    if (path) {
-      grn_ja_put(ctx, ((grn_db *)db)->specs, id, NULL, 0, GRN_OBJ_SET, NULL);
-      grn_obj_delete_by_id(ctx, db, id, GRN_TRUE);
-      grn_ii_remove(ctx, path);
-    }
-    grn_obj_touch(ctx, db, NULL);
+    _grn_obj_remove_index(ctx, obj, db, id, path);
     break;
   default :
     if (GRN_DB_OBJP(obj)) {
