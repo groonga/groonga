@@ -1,0 +1,3 @@
+table_create Users TABLE_PAT_KEY ShortText
+
+dump

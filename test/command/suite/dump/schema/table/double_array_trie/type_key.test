@@ -1,0 +1,3 @@
+table_create Users TABLE_DAT_KEY ShortText
+
+dump
