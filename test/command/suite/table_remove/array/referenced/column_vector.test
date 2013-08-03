@@ -1,0 +1,7 @@
+table_create Names TABLE_NO_KEY
+table_create Users TABLE_HASH_KEY ShortText
+column_create Users name COLUMN_VECTOR Names
+
+table_remove Names
+
+dump

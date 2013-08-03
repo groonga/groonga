@@ -6775,6 +6775,9 @@ static void
 _grn_obj_remove_array(grn_ctx *ctx, grn_obj *obj, grn_obj *db, grn_id id,
                       const char *path)
 {
+  if (!is_removable_table(ctx, obj, db)) {
+    return;
+  }
   remove_columns(ctx, obj);
   grn_obj_close(ctx, obj);
   if (path) {
