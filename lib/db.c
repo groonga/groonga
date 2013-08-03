@@ -6693,7 +6693,7 @@ is_removable_table(grn_ctx *ctx, grn_obj *table, grn_obj *db)
           column_name_size = grn_obj_name(ctx, object, column_name,
                                           GRN_TABLE_MAX_KEY_SIZE);
           ERR(GRN_OPERATION_NOT_PERMITTED,
-              "[table][remove] column that references the table exists: "
+              "[table][remove] a column that references the table exists: "
               "<%.*s> -> <%.*s>",
               column_name_size, column_name,
               table_name_size, table_name);

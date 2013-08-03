@@ -12,11 +12,11 @@ table_remove Names
       0.0,
       0.0
     ],
-    "[table][remove] column that references the table exists: <Users.name> -> <Names>"
+    "[table][remove] a column that references the table exists: <Users.name> -> <Names>"
   ],
   false
 ]
-#|e| [table][remove] column that references the table exists: <Users.name> -> <Names>
+#|e| [table][remove] a column that references the table exists: <Users.name> -> <Names>
 dump
 table_create Names TABLE_PAT_KEY ShortText
 table_create Users TABLE_HASH_KEY ShortText
