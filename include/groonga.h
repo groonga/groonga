@@ -273,38 +273,9 @@ GRN_API grn_command_version grn_get_default_command_version(void);
  **/
 GRN_API grn_rc grn_set_default_command_version(grn_command_version version);
 
-/**
- * grn_ctx_get_command_version:
- *
- * command_versionを返します。
- **/
 GRN_API grn_command_version grn_ctx_get_command_version(grn_ctx *ctx);
-
-/**
- * grn_ctx_set_command_version:
- * @version: 変更後のcommand_versionを指定します。
- *
- * command_versionを変更します。
- **/
 GRN_API grn_rc grn_ctx_set_command_version(grn_ctx *ctx, grn_command_version version);
-
-/**
- * grn_ctx_get_match_escalation_threshold:
- *
- * 検索の挙動をエスカレーションする閾値を返します。エスカレー
- * ションの詳細は検索の仕様に関するドキュメントを参照してく
- * ださい。
- **/
 GRN_API long long int grn_ctx_get_match_escalation_threshold(grn_ctx *ctx);
-
-/**
- * grn_ctx_set_match_escalation_threshold:
- * @threshold: 変更後の検索の挙動をエスカレーションする閾値を指定します。
- *
- * 検索の挙動をエスカレーションする閾値を変更します。エスカレー
- * ションの詳細は検索の仕様に関するドキュメントを参照してくだ
- * さい。
- **/
 GRN_API grn_rc grn_ctx_set_match_escalation_threshold(grn_ctx *ctx, long long int threshold);
 
 /**
