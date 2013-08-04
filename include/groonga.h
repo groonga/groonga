@@ -531,43 +531,9 @@ GRN_API grn_obj *grn_db_open(grn_ctx *ctx, const char *path);
  **/
 GRN_API void grn_db_touch(grn_ctx *ctx, grn_obj *db);
 
-/**
- * grn_ctx_use:
- * @db: ctxが使用するdbを指定します。
- *
- * ctxが操作対象とするdbを指定します。NULLを指定した場合は、
- * dbを操作しない状態(init直後の状態)になります。
- *
- * Don't use it with grn_ctx that has GRN_CTX_PER_DB flag.
- **/
 GRN_API grn_rc grn_ctx_use(grn_ctx *ctx, grn_obj *db);
-
-/**
- * grn_ctx_db:
- *
- * ctxが現在操作対象としているdbを返します。
- * dbを使用していない場合はNULLを返します。
- **/
 GRN_API grn_obj *grn_ctx_db(grn_ctx *ctx);
-
-/**
- * grn_ctx_get:
- * @name: 検索しようとするオブジェクトの名前。
- * @name_size: The number of bytes of @name. If negative value is specified,
- *   @name is assumed that NULL-terminated string.
- *
- * ctxが使用するdbからnameに対応するオブジェクトを検索して返す。
- * nameに一致するオブジェクトが存在しなければNULLを返す。
- **/
 GRN_API grn_obj *grn_ctx_get(grn_ctx *ctx, const char *name, int name_size);
-
-/**
- * grn_ctx_at:
- * @id: 検索しようとするオブジェクトのid。
- *
- * ctx、またはctxが使用するdbからidに対応するオブジェクトを検索して返す。
- * idに一致するオブジェクトが存在しなければNULLを返す。
- **/
 
 typedef enum {
   GRN_DB_VOID = 0,
