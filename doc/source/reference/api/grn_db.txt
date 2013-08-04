@@ -30,7 +30,7 @@ TODO...
 
    組み込み型の名前となるnul終端文字列の配列を指定する。
 
-.. c:member:: int grn_db_create_optarg..n_builtin_type_names
+.. c:member:: int grn_db_create_optarg.n_builtin_type_names
 
    n_builtin_type_namesには、optarg.builtin_type_namesで指定する文字列の数を
    指定する。配列のoffsetはenum型grn_builtin_typeの値に対応する。
