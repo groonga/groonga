@@ -26,13 +26,13 @@ TODO...
 
 .. c:type:: grn_db_create_optarg
 
-.. c:member:: builtin_type_names
+.. c:member:: char **grn_db_create_optarg.builtin_type_names
 
-   :c:type:`grn_db_create_optarg` のメンバ。組み込み型の名前となるnul終端文字列の配列を指定する。
+   組み込み型の名前となるnul終端文字列の配列を指定する。
 
-.. c:member:: n_builtin_type_names
+.. c:member:: int grn_db_create_optarg..n_builtin_type_names
 
-   :c:type:`grn_db_create_optarg` のメンバ。n_builtin_type_namesには、optarg.builtin_type_namesで指定する文字列の数を
+   n_builtin_type_namesには、optarg.builtin_type_namesで指定する文字列の数を
    指定する。配列のoffsetはenum型grn_builtin_typeの値に対応する。
 
 .. c:function:: grn_obj *grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg)
