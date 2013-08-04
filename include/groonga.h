@@ -234,14 +234,6 @@ GRN_API grn_rc grn_ctx_fin(grn_ctx *ctx);
 
 GRN_API grn_ctx *grn_ctx_open(int flags);
 GRN_API grn_rc grn_ctx_close(grn_ctx *ctx);
-
-/**
- * grn_ctx_set_finalizer:
- * @ctx: 対象ctx
- * @func: @ctxを破棄するときに呼ばれる関数
- *
- * @ctxを破棄するときに呼ばれる関数を設定する。
- **/
 GRN_API grn_rc grn_ctx_set_finalizer(grn_ctx *ctx, grn_proc_func *func);
 
 /**
