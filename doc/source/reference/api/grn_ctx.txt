@@ -66,3 +66,10 @@ Reference
    :param ctx: no longer needed :c:type:`grn_ctx`.
    :return: ``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error.
 
+.. c:function:: grn_rc grn_ctx_set_finalizer(grn_ctx *ctx, grn_proc_func *func)
+
+   ctxを破棄するときに呼ばれる関数を設定します。
+
+   :param ctx: 対象ctxを指定します。
+   :param func: ``ctx`` を破棄するときに呼ばれる関数を指定します。
+   :return: ``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error.
