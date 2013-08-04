@@ -26,6 +26,8 @@ TODO...
 
 .. c:type:: grn_db_create_optarg
 
+   It is used for specifying options for :c:function:`grn_db_create`.
+
 .. c:member:: char **grn_db_create_optarg.builtin_type_names
 
    組み込み型の名前となるnul終端文字列の配列を指定する。
@@ -42,6 +44,8 @@ TODO...
    :param ctx: 初期化済みの :c:type:`grn_ctx` を指定します。
    :param path: 作成するdbを格納するファイルパスを指定します。NULLならtemporary dbとなります。NULL以外のパスを指定した場合はpersistent dbとなります。
    :param optarg:
+      Currently, it is not used. It is just ignored.
+
       作成するdbの組み込み型の名前を変更する時に指定します。
 
       optarg.builtin_type_namesには、組み込み型の名前となるnull終端文字列の配列を指定します。optarg.n_builtin_type_namesには、optarg.builtin_type_namesで指定する文字列の数を指定します。配列のoffsetはenum型grn_builtin_typeの値に対応します。
