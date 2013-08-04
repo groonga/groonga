@@ -442,18 +442,6 @@ struct _grn_obj {
 
 #define GRN_OBJ_FIN(ctx,obj) (grn_obj_close((ctx), (obj)))
 
-/**
- * grn_db_create:
- * @path: 作成するdbを格納するファイルパス。NULLならtemporary dbとなる。
- * NULL以外のパスを指定した場合はpersistent dbとなる。
- * @optarg: 作成するdbの組み込み型の名前を変更する時に指定する。
- * optarg.builtin_type_namesには組み込み型の名前となるnul終端文字列の配列を指定する。
- * optarg.n_builtin_type_namesには、optarg.builtin_type_namesで指定する文字列の数を
- * 指定する。配列のoffsetはenum型grn_builtin_typeの値に対応する。
- *
- * 新たなdbを作成する。
- **/
-
 typedef struct _grn_db_create_optarg grn_db_create_optarg;
 
 struct _grn_db_create_optarg {
