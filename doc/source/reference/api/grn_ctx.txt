@@ -106,3 +106,28 @@ Reference
    エスカレーションの詳細は検索の仕様に関するドキュメントを参照してください。
 
    :param threshold: 変更後の検索の挙動をエスカレーションする閾値を指定します。
+
+.. c:function:: grn_rc grn_ctx_use(grn_ctx *ctx, grn_obj *db)
+
+   ctxが操作対象とするdbを指定します。NULLを指定した場合は、dbを操作しない状態(init直後の状態)になります。
+
+   Don't use it with :c:type:`grn_ctx` that has ``GRN_CTX_PER_DB`` flag.
+
+   :param db: ctxが使用するdbを指定します。
+
+.. c:function:: grn_obj *grn_ctx_db(grn_ctx *ctx)
+
+   ctxが現在操作対象としているdbを返します。dbを使用していない場合はNULLを返します。
+
+.. c:function:: grn_obj *grn_ctx_get(grn_ctx *ctx, const char *name, int name_size)
+
+   ctxが使用するdbからnameに対応するオブジェクトを検索して返す。nameに一致するオブジェクトが存在しなければNULLを返す。
+
+   :param name: 検索しようとするオブジェクトの名前。
+   :param name_size: The number of bytes of name. If negative value is specified, name is assumed that NULL-terminated string.
+
+.. c:function:: grn_obj *grn_ctx_at(grn_ctx *ctx, grn_id id)
+
+   ctx、またはctxが使用するdbからidに対応するオブジェクトを検索して返す。idに一致するオブジェクトが存在しなければNULLを返す。
+
+   :param id: 検索しようとするオブジェクトのidを指定します。
