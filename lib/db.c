@@ -2624,6 +2624,10 @@ grn_accessor_resolve(grn_ctx *ctx, grn_obj *accessor, int deep,
     rc = grn_table_setoperation(ctx, res, current_res, res, op);
   }
 
+  if (current_res != base_res) {
+    grn_obj_unlink(ctx, current_res);
+  }
+
   GRN_OBJ_FIN(ctx, &accessor_stack);
   return rc;
 }
