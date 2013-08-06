@@ -6487,3 +6487,60 @@ grn_column_filter(grn_ctx *ctx, grn_obj *column,
   grn_ii_resolve_sel_and(ctx, (grn_hash *)result_set, set_operation);
   return ctx->rc;
 }
+
+grn_rc
+grn_expr_syntax_escape_query(grn_ctx *ctx, const char *query, int query_size,
+                             grn_obj *escaped_query)
+{
+  grn_rc rc = GRN_SUCCESS;
+  const char *current, *query_end;
+
+  if (!query) {
+    return GRN_INVALID_ARGUMENT;
+  }
+
+  GRN_API_ENTER;
+  if (query_size < 0) {
+    query_size = strlen(query);
+  }
+  query_end = query + query_size;
+
+  current = query;
+  while (current < query_end) {
+    unsigned int char_size;
+    char_size = grn_charlen(ctx, current, query_end);
+    switch (char_size) {
+    case 0 :
+      /* query includes malformed multibyte character. */
+      return GRN_INVALID_ARGUMENT;
+      break;
+    case 1 :
+      switch (*current) {
+      case GRN_QUERY_AND :
+      case GRN_QUERY_AND_NOT :
+      case GRN_QUERY_ADJ_INC :
+      case GRN_QUERY_ADJ_DEC :
+      case GRN_QUERY_ADJ_NEG :
+      case GRN_QUERY_PREFIX :
+      case GRN_QUERY_PARENL :
+      case GRN_QUERY_PARENR :
+      case GRN_QUERY_QUOTEL :
+      case GRN_QUERY_ESCAPE :
+      case GRN_QUERY_COLUMN :
+        GRN_TEXT_PUTC(ctx, escaped_query, GRN_QUERY_ESCAPE);
+        break;
+      default:
+        break;
+      }
+      GRN_TEXT_PUT(ctx, escaped_query, current, char_size);
+      current += char_size;
+      break;
+    default :
+      GRN_TEXT_PUT(ctx, escaped_query, current, char_size);
+      current += char_size;
+      break;
+    }
+  }
+
+  GRN_API_RETURN(rc);
+}

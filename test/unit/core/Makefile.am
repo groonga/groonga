@@ -29,6 +29,7 @@ noinst_LTLIBRARIES =				\
 	test-expr-script.la			\
 	test-expr-query.la			\
 	test-expr-parse.la			\
+	test-expr-syntax.la			\
 	test-text.la				\
 	test-cast-basic.la			\
 	test-cast-table.la			\
@@ -118,6 +119,7 @@ test_expr_la_SOURCES			= test-expr.c
 test_expr_script_la_SOURCES		= test-expr-script.c
 test_expr_query_la_SOURCES		= test-expr-query.c
 test_expr_parse_la_SOURCES		= test-expr-parse.c
+test_expr_syntax_la_SOURCES		= test-expr-syntax.c
 test_text_la_SOURCES			= test-text.c
 test_cast_basic_la_SOURCES		= test-cast-basic.c
 test_cast_table_la_SOURCES		= test-cast-table.c
