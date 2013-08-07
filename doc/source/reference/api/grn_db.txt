@@ -26,7 +26,7 @@ TODO...
 
 .. c:type:: grn_db_create_optarg
 
-   It is used for specifying options for :c:function:`grn_db_create`.
+   It is used for specifying options for :c:func:`grn_db_create`.
 
 .. c:member:: char **grn_db_create_optarg.builtin_type_names
 
