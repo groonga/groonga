@@ -577,120 +577,21 @@ GRN_API grn_obj *grn_table_create(grn_ctx *ctx,
 /* TODO: int *added -> grn_bool *added */
 GRN_API grn_id grn_table_add(grn_ctx *ctx, grn_obj *table,
                              const void *key, unsigned int key_size, int *added);
-
-/**
- * grn_table_get:
- * @table: The table or database
- * @key: The record or object key to be found
- *
- * It finds a record that has @key and returns ID of the
- * found record. If @table is a database, it finds an object
- * (table, column and so on) that has @key and returns ID of
- * the found object.
- **/
 GRN_API grn_id grn_table_get(grn_ctx *ctx, grn_obj *table,
                              const void *key, unsigned int key_size);
-
-
-/**
- * grn_table_at:
- * @table: 対象table
- * @id: 検索id
- *
- * tableにidに対応するrecordが存在するか確認し、存在すれば指定されたIDを、
- * 存在しなければGRN_ID_NILを返します。
- * 注意: 実行には相応のコストがかかるのであまり頻繁に呼ばないようにして下さい。
- **/
 GRN_API grn_id grn_table_at(grn_ctx *ctx, grn_obj *table, grn_id id);
-
-
-/**
- * grn_table_lcp_search:
- * @table: 対象table
- * @key: 検索key
- *
- * tableがGRN_TABLE_PAT_KEYもしくはGRN_TABLE_DAT_KEYを指定して作ったtableなら、
- * longest common prefix searchを行い、対応するIDを返す。
- * tableがGRN_TABLE_HASH_KEYを指定して作ったtableなら、
- * 完全に一致するキーを検索し、対応するIDを返す。
- **/
 GRN_API grn_id grn_table_lcp_search(grn_ctx *ctx, grn_obj *table,
                                     const void *key, unsigned int key_size);
-
-/**
- * grn_table_get_key:
- * @table: 対象table
- * @id: 対象レコードのID
- * @keybuf: keyを格納するバッファ(呼出側で準備する)
- * @buf_size: keybufのサイズ(byte長)
- *
- * tableのIDに対応するレコードのkeyを取得する。対応するレコードが存在する場合はkey長を返す。
- * 見つからない場合は0を返す。
- * 対応するキーの検索に成功し、またbuf_sizeの長さがkey長以上であった場合は、
- * keybufに該当するkeyをコピーする。
- *
- **/
 GRN_API int grn_table_get_key(grn_ctx *ctx, grn_obj *table,
                               grn_id id, void *keybuf, int buf_size);
-
-/**
- * grn_table_delete:
- * @table: 対象table
- * @key: 検索key
- * @key_size: 検索keyのサイズ
- *
- * tableのkeyに対応するレコードを削除する。
- * 対応するレコードが存在しない場合はGRN_INVALID_ARGUMENTを返す。
- **/
 GRN_API grn_rc grn_table_delete(grn_ctx *ctx, grn_obj *table,
                                 const void *key, unsigned int key_size);
-
-/**
- * grn_table_delete_by_id:
- * @table: 対象table
- * @id: レコードID
- *
- * tableのidに対応するレコードを削除する。
- * 対応するレコードが存在しない場合はGRN_INVALID_ARGUMENTを返す。
- **/
 GRN_API grn_rc grn_table_delete_by_id(grn_ctx *ctx, grn_obj *table, grn_id id);
-
-/**
- * grn_table_update_by_id:
- * @table: 対象table
- * @id: レコードID
- *
- * tableのidに対応するレコードのkeyを変更する。
- * 新しいkeyとそのbyte長をdest_keyとdest_key_sizeに指定する。
- * この操作は、GRN_TABLE_DAT_KEY型のテーブルのみ使用できる。
- **/
 GRN_API grn_rc grn_table_update_by_id(grn_ctx *ctx, grn_obj *table, grn_id id,
                                       const void *dest_key, unsigned int dest_key_size);
-
-/**
- * grn_table_update:
- * @table: 対象table
- * @src_key: 対象レコードのkey
- * @src_key_size: 対象レコードのkeyの長さ(byte)
- * @dest_key: 変更後のkey
- * @dest_key_size: 変更後のkeyの長さ(byte)
- *
- * tableのsrc_keyに対応するレコードのkeyを変更する。
- * 新しいkeyとそのbyte長をdest_keyとdest_key_sizeに指定する。
- * この操作は、GRN_TABLE_DAT_KEY型のテーブルのみ使用できる。
- **/
 GRN_API grn_rc grn_table_update(grn_ctx *ctx, grn_obj *table,
                                 const void *src_key, unsigned int src_key_size,
                                 const void *dest_key, unsigned int dest_key_size);
-
-/**
- * grn_table_truncate:
- * @table: 対象table
- *
- * tableの全レコードを一括して削除する。
- * 注意: multithread環境では他のthreadのアクセスによって
- *       存在しないアドレスへアクセスし、SIGSEGVが発生する可能性がある。
- **/
 GRN_API grn_rc grn_table_truncate(grn_ctx *ctx, grn_obj *table);
 
 typedef grn_obj grn_table_cursor;
