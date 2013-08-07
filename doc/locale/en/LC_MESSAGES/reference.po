@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-07-22 17:02+0900\n"
+"POT-Creation-Date: 2013-08-07 13:35+0900\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -292,6 +292,8 @@ msgstr ""
 # 8e4c52515c554cdaa329c0739e17f94c
 # 6113f4f60edf40d785b4df6daec7db75
 #: ../../../source/reference/api/grn_ctx.txt:9
+#: ../../../source/reference/api/grn_db.txt:9
+#: ../../../source/reference/api/grn_table_cursor.txt:9
 #: ../../../source/reference/command/output_format.txt:9
 #: ../../../source/reference/command/return_code.txt:9
 #: ../../../source/reference/commands/column_rename.txt:12
@@ -383,6 +385,8 @@ msgstr ""
 # 08d03411c4b5418b8db31591c1d7b59d
 # f6b8093f5a4f4cd89e30878bedd1c37f
 #: ../../../source/reference/api/grn_ctx.txt:32
+#: ../../../source/reference/api/grn_db.txt:14
+#: ../../../source/reference/api/grn_table_cursor.txt:14
 msgid "Example"
 msgstr ""
 
@@ -391,13 +395,22 @@ msgstr ""
 # b2c80038fe264d2f857b67ffd695d62c
 #: ../../../source/reference/api/grn_ctx.txt:34
 #: ../../../source/reference/api/grn_ctx.txt:41
+#: ../../../source/reference/api/grn_db.txt:11
+#: ../../../source/reference/api/grn_db.txt:16
+#: ../../../source/reference/api/grn_db.txt:21
+#: ../../../source/reference/api/grn_db.txt:25
 #: ../../../source/reference/api/grn_expr.txt:8
+#: ../../../source/reference/api/grn_table_cursor.txt:11
+#: ../../../source/reference/api/grn_table_cursor.txt:16
+#: ../../../source/reference/api/grn_table_cursor.txt:23
 #: ../../../source/reference/cast.txt:8
 msgid "TODO..."
 msgstr "TODO..."
 
 # 7a55e4786dd348d286e9872d75a24369
 #: ../../../source/reference/api/grn_ctx.txt:37
+#: ../../../source/reference/api/grn_db.txt:19
+#: ../../../source/reference/api/grn_table_cursor.txt:19
 msgid "Reference"
 msgstr ""
 
@@ -413,12 +426,264 @@ msgstr ""
 
 # ec50c5ed197e495b8615b8cf51f53406
 #: ../../../source/reference/api/grn_ctx.txt:48
+#: ../../../source/reference/api/grn_ctx.txt:68
 msgid "初期化する ``ctx`` のオプションを指定します。"
 msgstr ""
 
 # b12b3107735244579a9a949d71cd2daa
 #: ../../../source/reference/api/grn_ctx.txt:49
+#: ../../../source/reference/api/grn_ctx.txt:58
+#: ../../../source/reference/api/grn_ctx.txt:76
+#: ../../../source/reference/api/grn_ctx.txt:84
 msgid "``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error."
+msgstr ""
+
+# 4c2861acf7e44aa597f11b25459e154c
+#: ../../../source/reference/api/grn_ctx.txt:53
+msgid "ctxの管理するメモリを解放し、使用を終了します。"
+msgstr ""
+
+# dc5ec4ae81464bffaaa9f8b74f1f0e65
+#: ../../../source/reference/api/grn_ctx.txt:55
+msgid ""
+"If ``ctx`` is initialized by :c:func:`grn_ctx_open()` not :c:func:"
+"`grn_ctx_init()`. You need also to call :c:func:`grn_ctx_close()`."
+msgstr ""
+
+# 65eb2f34dab44c7cb9a82b94f8742d15
+#: ../../../source/reference/api/grn_ctx.txt:57
+msgid "解放するctx構造体へのポインタを指定します。"
+msgstr ""
+
+# b64f2ad3c7cb4583a4bf8e4d343d87ac
+#: ../../../source/reference/api/grn_ctx.txt:62
+#: ../../../source/reference/api/grn_ctx.txt:69
+msgid "初期化された :c:type:`grn_ctx` オブジェクトを返します。"
+msgstr ""
+
+# b718d6ddad4f49fe90ec61df3f391ea2
+#: ../../../source/reference/api/grn_ctx.txt:64
+msgid ""
+":c:func:`grn_ctx_init()` で初期化された :c:type:`grn_ctx` オブジェクトは構造"
+"体の実体をAPIの呼び元で確保するのに対して、 :c:func:`grn_ctx_open()` では"
+"groongaライブラリの内部で、実体を確保します。 どちらで初期化された :c:type:"
+"`grn_ctx` も、 :c:func:`grn_ctx_fin()` で解放できます。 :c:func:`grn_ctx_open"
+"()` で確保した :c:type:`grn_ctx` 構造体に関しては、:c:func:`grn_ctx_fin()` で"
+"解放した後に、その :c:type:`grn_ctx` で作成した :c:type:`grn_obj` を :c:func:"
+"`grn_obj_close()` によって解放しても問題ありません。"
+msgstr ""
+
+# a834af6fd9d54fb3818bef8be8cc5351
+#: ../../../source/reference/api/grn_ctx.txt:73
+msgid ""
+"It calls :c:func:`grn_ctx_fin()` and frees allocated memory for ``ctx`` by :"
+"c:func:`grn_ctx_open()`."
+msgstr ""
+
+# b07fd311189b4e038384cb0314f0b10e
+#: ../../../source/reference/api/grn_ctx.txt:75
+msgid "no longer needed :c:type:`grn_ctx`."
+msgstr ""
+
+# ac75b0558db348a8aa4310b9265a97a9
+#: ../../../source/reference/api/grn_ctx.txt:80
+msgid "ctxを破棄するときに呼ばれる関数を設定します。"
+msgstr ""
+
+# 928290e83045469685a30d9059938b69
+#: ../../../source/reference/api/grn_ctx.txt:82
+msgid "対象ctxを指定します。"
+msgstr ""
+
+# b94b05ad070e4ce1aae302c5b55bdbb5
+#: ../../../source/reference/api/grn_ctx.txt:83
+msgid "``ctx`` を破棄するときに呼ばれる関数を指定します。"
+msgstr ""
+
+# daa1b26a6cef4154bb1a9688ce752836
+#: ../../../source/reference/api/grn_ctx.txt:88
+msgid "command_versionを返します。"
+msgstr ""
+
+# daa1b26a6cef4154bb1a9688ce752836
+#: ../../../source/reference/api/grn_ctx.txt:92
+msgid "command_versionを変更します。"
+msgstr ""
+
+# 72350cbc93dd4ff69b3ce7ed1953c817
+#: ../../../source/reference/api/grn_ctx.txt:94
+msgid "変更後のcommand_versionを指定します。"
+msgstr ""
+
+# 9fba2e28497a4791878667fe06e32747
+#: ../../../source/reference/api/grn_ctx.txt:98
+msgid "検索の挙動をエスカレーションする閾値を返します。"
+msgstr ""
+
+# 49ef33df1b5e41d68ee4a72b5ba2d6ff
+# 1d715128350047bcbd4391da25ef144a
+#: ../../../source/reference/api/grn_ctx.txt:100
+#: ../../../source/reference/api/grn_ctx.txt:106
+msgid ""
+"エスカレーションの詳細は検索の仕様に関するドキュメントを参照してください。"
+msgstr ""
+
+# 9fba2e28497a4791878667fe06e32747
+#: ../../../source/reference/api/grn_ctx.txt:104
+msgid "検索の挙動をエスカレーションする閾値を変更します。"
+msgstr ""
+
+# 9fba2e28497a4791878667fe06e32747
+#: ../../../source/reference/api/grn_ctx.txt:108
+msgid "変更後の検索の挙動をエスカレーションする閾値を指定します。"
+msgstr ""
+
+# 2194b3980e4f45ceb510d956e362ad59
+#: ../../../source/reference/api/grn_ctx.txt:112
+msgid ""
+"ctxが操作対象とするdbを指定します。NULLを指定した場合は、dbを操作しない状態"
+"(init直後の状態)になります。"
+msgstr ""
+
+# 5a92d8bc8bc34363825e39927ded5cf7
+#: ../../../source/reference/api/grn_ctx.txt:114
+msgid "Don't use it with :c:type:`grn_ctx` that has ``GRN_CTX_PER_DB`` flag."
+msgstr ""
+
+# bb7610ccb9ff4dd7a5a472fabe8c0701
+#: ../../../source/reference/api/grn_ctx.txt:116
+msgid "ctxが使用するdbを指定します。"
+msgstr ""
+
+# 95c176828c624b8bb53804d086cb8535
+#: ../../../source/reference/api/grn_ctx.txt:120
+msgid ""
+"ctxが現在操作対象としているdbを返します。dbを使用していない場合はNULLを返しま"
+"す。"
+msgstr ""
+
+# a018293c7489433dadcd1076a8b3cf74
+#: ../../../source/reference/api/grn_ctx.txt:124
+msgid ""
+"ctxが使用するdbからnameに対応するオブジェクトを検索して返す。nameに一致するオ"
+"ブジェクトが存在しなければNULLを返す。"
+msgstr ""
+
+# 63fa6e7a229d4a5d8952ba88e5f4d79b
+#: ../../../source/reference/api/grn_ctx.txt:126
+msgid "検索しようとするオブジェクトの名前。"
+msgstr ""
+
+# 747e7623e9be40ecadf5eb84d1ef2fb9
+#: ../../../source/reference/api/grn_ctx.txt:127
+msgid ""
+"The number of bytes of name. If negative value is specified, name is assumed "
+"that NULL-terminated string."
+msgstr ""
+
+# 9c305c530df9474f9481a38936f6a299
+#: ../../../source/reference/api/grn_ctx.txt:131
+msgid ""
+"ctx、またはctxが使用するdbからidに対応するオブジェクトを検索して返す。idに一"
+"致するオブジェクトが存在しなければNULLを返す。"
+msgstr ""
+
+# 63fa6e7a229d4a5d8952ba88e5f4d79b
+#: ../../../source/reference/api/grn_ctx.txt:133
+msgid "検索しようとするオブジェクトのidを指定します。"
+msgstr ""
+
+# 9579ad0b3efb4199bd5ee9cc26be46ea
+#: ../../../source/reference/api/grn_db.txt:6
+msgid "``grn_db``"
+msgstr ""
+
+# cd2ca3db76ad4a2cbb2e0ce8c17fdce1
+#: ../../../source/reference/api/grn_db.txt:29
+msgid "It is used for specifying options for :c:function:`grn_db_create`."
+msgstr ""
+
+# fd97b20dce3f48a3a1558312af2b2a85
+#: ../../../source/reference/api/grn_db.txt:33
+msgid "組み込み型の名前となるnul終端文字列の配列を指定する。"
+msgstr ""
+
+# ef859b66253247f9ac2d79f1beca1366
+#: ../../../source/reference/api/grn_db.txt:37
+msgid ""
+"n_builtin_type_namesには、optarg.builtin_type_namesで指定する文字列の数を 指"
+"定する。配列のoffsetはenum型grn_builtin_typeの値に対応する。"
+msgstr ""
+
+# 04bdc06ed6dc4e848582d2cf203c2859
+#: ../../../source/reference/api/grn_db.txt:42
+msgid "新たなdbを作成します。"
+msgstr ""
+
+# cf4901d7a48e42668b158ba3aa277736
+#: ../../../source/reference/api/grn_db.txt:44
+msgid "初期化済みの :c:type:`grn_ctx` を指定します。"
+msgstr ""
+
+# 77fb9a382ff84c748cf170fdfc4a930e
+#: ../../../source/reference/api/grn_db.txt:45
+msgid ""
+"作成するdbを格納するファイルパスを指定します。NULLならtemporary dbとなりま"
+"す。NULL以外のパスを指定した場合はpersistent dbとなります。"
+msgstr ""
+
+# c8f1468440cf4c729f020be9b993e032
+#: ../../../source/reference/api/grn_db.txt:46
+msgid ""
+"Currently, it is not used. It is just ignored.  作成するdbの組み込み型の名前"
+"を変更する時に指定します。  optarg.builtin_type_namesには、組み込み型の名前と"
+"なるnull終端文字列の配列を指定します。optarg.n_builtin_type_namesには、"
+"optarg.builtin_type_namesで指定する文字列の数を指定します。配列のoffsetはenum"
+"型grn_builtin_typeの値に対応します。"
+msgstr ""
+
+# 5853be4d2a4447378d190a5bc79584fc
+#: ../../../source/reference/api/grn_db.txt:47
+msgid "Currently, it is not used. It is just ignored."
+msgstr ""
+
+# 76e18b643b3b4551b36229496f46cbc7
+#: ../../../source/reference/api/grn_db.txt:49
+msgid "作成するdbの組み込み型の名前を変更する時に指定します。"
+msgstr ""
+
+# 8caa1d407be64d2794c281790349183b
+#: ../../../source/reference/api/grn_db.txt:51
+msgid ""
+"optarg.builtin_type_namesには、組み込み型の名前となるnull終端文字列の配列を指"
+"定します。optarg.n_builtin_type_namesには、optarg.builtin_type_namesで指定す"
+"る文字列の数を指定します。配列のoffsetはenum型grn_builtin_typeの値に対応しま"
+"す。"
+msgstr ""
+
+# 2f816a2e6f574a5ea06a973c694ba5ae
+#: ../../../source/reference/api/grn_db.txt:55
+msgid "既存のdbを開きます。"
+msgstr ""
+
+# 65eb2f34dab44c7cb9a82b94f8742d15
+#: ../../../source/reference/api/grn_db.txt:57
+msgid "開こうとするdbを格納するファイルパスを指定します。"
+msgstr ""
+
+# 92b203bf288b4dd29219098074d14a28
+#: ../../../source/reference/api/grn_db.txt:61
+msgid "dbの内容の最終更新時刻を現在時刻にします。"
+msgstr ""
+
+# 489e78cf246f4e7a83e398ab63c86b0f
+#: ../../../source/reference/api/grn_db.txt:63
+msgid "最終更新時刻はキャッシュが有効かどうかの判断などに利用されます。"
+msgstr ""
+
+# bb7610ccb9ff4dd7a5a472fabe8c0701
+#: ../../../source/reference/api/grn_db.txt:65
+msgid "内容が変更されたdbを指定します。"
 msgstr ""
 
 # 2cd696ac332b4625990f92d5219f4968
@@ -427,6 +692,221 @@ msgstr ""
 #: ../../../source/reference/grn_expr.txt:6
 msgid "grn_expr"
 msgstr "grn_expr"
+
+# 0da809ee0de94f4c9d176627712966f9
+#: ../../../source/reference/api/grn_table_cursor.txt:6
+msgid "``grn_table_cursor``"
+msgstr ""
+
+# ef1549096241455997e7f8963acf23f6
+#: ../../../source/reference/api/grn_table_cursor.txt:27
+msgid ""
+"tableに登録されているレコードを順番に取り出すためのカーソルを生成して返しま"
+"す。"
+msgstr ""
+
+# 928290e83045469685a30d9059938b69
+#: ../../../source/reference/api/grn_table_cursor.txt:29
+msgid "対象tableを指定します。"
+msgstr ""
+
+# 5e07fe59ee4c4cc285c18cf7ed05b2ae
+#: ../../../source/reference/api/grn_table_cursor.txt:30
+msgid ""
+"keyの下限を指定します。（NULLは下限なしと見なします。） "
+"``GRN_CURSOR_PREFIX`` については後述。"
+msgstr ""
+
+# 451ea30fe8304699882929b0f18e178d
+#: ../../../source/reference/api/grn_table_cursor.txt:31
+msgid "minのsizeを指定します。``GRN_CURSOR_PREFIX`` については後述。"
+msgstr ""
+
+# 1b631c071b7e42e09a37c9e3427d4b89
+#: ../../../source/reference/api/grn_table_cursor.txt:32
+msgid ""
+"keyの上限を指定します。（NULLは上限なしと見なします。） "
+"``GRN_CURSOR_PREFIX`` については後述。"
+msgstr ""
+
+# 2ff9ef7670494e7fa79f37c40ba3180d
+#: ../../../source/reference/api/grn_table_cursor.txt:33
+msgid ""
+"maxのsizeを指定します。``GRN_CURSOR_PREFIX`` については無視される場合がありま"
+"す。"
+msgstr ""
+
+# 81ac6cb7e73b4f0b926bcc2cf4d8ce8b
+#: ../../../source/reference/api/grn_table_cursor.txt:34
+msgid ""
+"``GRN_CURSOR_ASCENDING`` を指定すると昇順にレコードを取り出します。  "
+"``GRN_CURSOR_DESCENDING`` を指定すると降順にレコードを取り出します。(下記 "
+"``GRN_CURSOR_PREFIX`` を指定し、keyが近いレコードを取得する場合、もしくは、"
+"common prefix searchを行う場合には、``GRN_CURSOR_ASCENDING`` / "
+"``GRN_CURSOR_DESCENDING`` は無視されます。)  ``GRN_CURSOR_GT`` を指定すると"
+"minに一致したkeyをcursorの範囲に含みません。(minがNULLの場合もしくは、下記 "
+"``GRN_CURSOR_PREFIX`` を指定し、keyが近いレコードを取得する場合、もしくは、"
+"common prefix searchを行う場合には、``GRN_CURSOR_GT`` は無視されます。)  "
+"``GRN_CURSOR_LT`` を指定するとmaxに一致したkeyをcursorの範囲に含みません。"
+"(maxがNULLの場合もしくは、下記 ``GRN_CURSOR_PREFIX`` を指定した場合には、"
+"``GRN_CURSOR_LT`` は無視されます。)  ``GRN_CURSOR_BY_ID`` を指定するとID順に"
+"レコードを取り出します。(下記 ``GRN_CURSOR_PREFIX`` を指定した場合には、"
+"``GRN_CURSOR_BY_ID`` は無視されます。) ``GRN_OBJ_TABLE_PAT_KEY`` を指定した"
+"tableについては、``GRN_CURSOR_BY_KEY`` を指定するとkey順にレコードを取り出し"
+"ます。( ``GRN_OBJ_TABLE_HASH_KEY`` , ``GRN_OBJ_TABLE_NO_KEY`` を指定したテー"
+"ブルでは ``GRN_CURSOR_BY_KEY`` は無視されます。)  ``GRN_CURSOR_PREFIX`` を指"
+"定すると、 ``GRN_OBJ_TABLE_PAT_KEY`` を指定したテーブルに関する下記のレコード"
+"を取り出すカーソルが作成されます。maxがNULLの場合には、keyがminと前方一致する"
+"レコードを取り出します。max_sizeパラメータは無視されます。  maxとmax_sizeが指"
+"定され、かつ、テーブルのkeyがShortText型である場合、maxとcommon prefix search"
+"を行い、common prefixがmin_sizeバイト以上のレコードを取り出します。minは無視"
+"されます。  maxとmax_sizeが指定され、かつ、テーブルのkeyが固定長型の場合、max"
+"とPAT木上で近い位置にあるノードから順番にレコードを取り出します。ただし、key"
+"のパトリシア木で、min_sizeバイト未満のビットに対するノードで、maxと異なった方"
+"向にあるノードに対応するレコードについては取り出しません。PAT木上で位置が近い"
+"こととkeyの値が近いことは同一ではありません。この場合、maxで与えられるポイン"
+"タが指す値は、対象テーブルのkeyサイズと同じか超える幅である必要があります。"
+"minは無視されます。  ``GRN_CURSOR_BY_ID`` / ``GRN_CURSOR_BY_KEY`` / "
+"``GRN_CURSOR_PREFIX`` の3フラグは、同時に指定することができません。  "
+"``GRN_OBJ_TABLE_PAT_KEY`` を指定して作ったテーブルで、``GRN_CURSOR_PREFIX`` "
+"と ``GRN_CURSOR_RK`` を指定すると、半角小文字のアルファベット文字列から、それ"
+"を旧JIS X 4063:2000規格に従って全角カタカナに変換した文字列に前方一致する値を"
+"keyとするレコードを取り出します。``GRN_ENC_UTF8`` のみをサポートしています。"
+"``GRN_CURSOR_ASCENDING`` / ``GRN_CURSOR_DESCENDING`` は無効であり、レコードを"
+"key値の昇降順で取り出すことはできません。"
+msgstr ""
+
+# 59bea544fab24458a8a1ae1861f2e9d5
+#: ../../../source/reference/api/grn_table_cursor.txt:35
+msgid "``GRN_CURSOR_ASCENDING`` を指定すると昇順にレコードを取り出します。"
+msgstr ""
+
+# f8ef22103a89400cb0e4a820b11f5ef2
+#: ../../../source/reference/api/grn_table_cursor.txt:37
+msgid ""
+"``GRN_CURSOR_DESCENDING`` を指定すると降順にレコードを取り出します。(下記 "
+"``GRN_CURSOR_PREFIX`` を指定し、keyが近いレコードを取得する場合、もしくは、"
+"common prefix searchを行う場合には、``GRN_CURSOR_ASCENDING`` / "
+"``GRN_CURSOR_DESCENDING`` は無視されます。)"
+msgstr ""
+
+# 39217299bde34d3d833d6870d7926ad9
+#: ../../../source/reference/api/grn_table_cursor.txt:39
+msgid ""
+"``GRN_CURSOR_GT`` を指定するとminに一致したkeyをcursorの範囲に含みません。"
+"(minがNULLの場合もしくは、下記 ``GRN_CURSOR_PREFIX`` を指定し、keyが近いレ"
+"コードを取得する場合、もしくは、common prefix searchを行う場合には、"
+"``GRN_CURSOR_GT`` は無視されます。)"
+msgstr ""
+
+# 84475aab5cc84cde8c460c0d6c219470
+#: ../../../source/reference/api/grn_table_cursor.txt:41
+msgid ""
+"``GRN_CURSOR_LT`` を指定するとmaxに一致したkeyをcursorの範囲に含みません。"
+"(maxがNULLの場合もしくは、下記 ``GRN_CURSOR_PREFIX`` を指定した場合には、"
+"``GRN_CURSOR_LT`` は無視されます。)"
+msgstr ""
+
+# 303ffad1b5194297b0f72f59b82e0085
+#: ../../../source/reference/api/grn_table_cursor.txt:43
+msgid ""
+"``GRN_CURSOR_BY_ID`` を指定するとID順にレコードを取り出します。(下記 "
+"``GRN_CURSOR_PREFIX`` を指定した場合には、``GRN_CURSOR_BY_ID`` は無視されま"
+"す。) ``GRN_OBJ_TABLE_PAT_KEY`` を指定したtableについては、"
+"``GRN_CURSOR_BY_KEY`` を指定するとkey順にレコードを取り出します。"
+"( ``GRN_OBJ_TABLE_HASH_KEY`` , ``GRN_OBJ_TABLE_NO_KEY`` を指定したテーブルで"
+"は ``GRN_CURSOR_BY_KEY`` は無視されます。)"
+msgstr ""
+
+# e528512ecc6344e89884c5ce4713ba04
+#: ../../../source/reference/api/grn_table_cursor.txt:45
+msgid ""
+"``GRN_CURSOR_PREFIX`` を指定すると、 ``GRN_OBJ_TABLE_PAT_KEY`` を指定したテー"
+"ブルに関する下記のレコードを取り出すカーソルが作成されます。maxがNULLの場合に"
+"は、keyがminと前方一致するレコードを取り出します。max_sizeパラメータは無視さ"
+"れます。"
+msgstr ""
+
+# 08eafc1c958f4adcb8e41509eee12b1d
+#: ../../../source/reference/api/grn_table_cursor.txt:47
+msgid ""
+"maxとmax_sizeが指定され、かつ、テーブルのkeyがShortText型である場合、maxと"
+"common prefix searchを行い、common prefixがmin_sizeバイト以上のレコードを取り"
+"出します。minは無視されます。"
+msgstr ""
+
+# 8a8958f518824a2ab2295e4d0a8d9b0f
+#: ../../../source/reference/api/grn_table_cursor.txt:49
+msgid ""
+"maxとmax_sizeが指定され、かつ、テーブルのkeyが固定長型の場合、maxとPAT木上で"
+"近い位置にあるノードから順番にレコードを取り出します。ただし、keyのパトリシア"
+"木で、min_sizeバイト未満のビットに対するノードで、maxと異なった方向にあるノー"
+"ドに対応するレコードについては取り出しません。PAT木上で位置が近いこととkeyの"
+"値が近いことは同一ではありません。この場合、maxで与えられるポインタが指す値"
+"は、対象テーブルのkeyサイズと同じか超える幅である必要があります。minは無視さ"
+"れます。"
+msgstr ""
+
+# 1202aed331e5433fb432183c3c402005
+#: ../../../source/reference/api/grn_table_cursor.txt:51
+msgid ""
+"``GRN_CURSOR_BY_ID`` / ``GRN_CURSOR_BY_KEY`` / ``GRN_CURSOR_PREFIX`` の3フラ"
+"グは、同時に指定することができません。"
+msgstr ""
+
+# 1f3bf00586984b5e8a8df49f0f6d0984
+#: ../../../source/reference/api/grn_table_cursor.txt:53
+msgid ""
+"``GRN_OBJ_TABLE_PAT_KEY`` を指定して作ったテーブルで、``GRN_CURSOR_PREFIX`` "
+"と ``GRN_CURSOR_RK`` を指定すると、半角小文字のアルファベット文字列から、それ"
+"を旧JIS X 4063:2000規格に従って全角カタカナに変換した文字列に前方一致する値を"
+"keyとするレコードを取り出します。``GRN_ENC_UTF8`` のみをサポートしています。"
+"``GRN_CURSOR_ASCENDING`` / ``GRN_CURSOR_DESCENDING`` は無効であり、レコードを"
+"key値の昇降順で取り出すことはできません。"
+msgstr ""
+
+# c630937a1b8f45b1add67fa59ac7c59d
+#: ../../../source/reference/api/grn_table_cursor.txt:55
+msgid ""
+"該当する範囲のレコードのうち、(0ベースで)offset番目からレコードを取り出しま"
+"す。  ``GRN_CURSOR_PREFIX`` を指定したときは負の数を指定することはできませ"
+"ん。"
+msgstr ""
+
+# 18b23ca6610c41f9884c7056b147fbb6
+#: ../../../source/reference/api/grn_table_cursor.txt:56
+msgid ""
+"該当する範囲のレコードのうち、(0ベースで)offset番目からレコードを取り出しま"
+"す。"
+msgstr ""
+
+# 7b710f76ade34e9e9f4eec94650959b6
+#: ../../../source/reference/api/grn_table_cursor.txt:58
+msgid ""
+"``GRN_CURSOR_PREFIX`` を指定したときは負の数を指定することはできません。"
+msgstr ""
+
+# c834ea53574c4d66b599f25ecb07bcc4
+#: ../../../source/reference/api/grn_table_cursor.txt:60
+msgid ""
+"該当する範囲のレコードのうち、limit件のみを取り出します。-1が指定された場合"
+"は、全件が指定されたものとみなします。  ``GRN_CURSOR_PREFIX`` を指定したとき"
+"は-1より小さい負の数を指定することはできません。"
+msgstr ""
+
+# 8210ba3f10d34170812519e5875e8bbc
+#: ../../../source/reference/api/grn_table_cursor.txt:61
+msgid ""
+"該当する範囲のレコードのうち、limit件のみを取り出します。-1が指定された場合"
+"は、全件が指定されたものとみなします。"
+msgstr ""
+
+# 685d27ea4d3b401380239bd60123bd38
+#: ../../../source/reference/api/grn_table_cursor.txt:63
+msgid ""
+"``GRN_CURSOR_PREFIX`` を指定したときは-1より小さい負の数を指定することはでき"
+"ません。"
+msgstr ""
 
 # 2f8dadf32bc6472ca99969c356e5dcea
 #: ../../../source/reference/cast.txt:6
@@ -3125,10 +3605,10 @@ msgstr ":doc:`/reference/grn_expr`"
 msgid "defrag"
 msgstr "defrag"
 
-# e01a951738374e78bac1ee97b2d67538
+# 732ce44ee1544437a9edbe2588a5d144
 #: ../../../source/reference/commands/defrag.txt:11
-msgid "defrag - オブジェクトにセットされたロックを解除する"
-msgstr "defrag - オブジェクトにセットされたロックを解除する"
+msgid "``defrag`` command resolves fragmentation of specified objects."
+msgstr ""
 
 # d1541ef364cb4b9191899c2ed8035daf
 #: ../../../source/reference/commands/defrag.txt:22
@@ -14975,3 +15455,4 @@ msgstr ""
 #: ../../../source/reference/types.txt:129
 msgid "Object型はv1.2でサポートされます。"
 msgstr "Object型はv1.2でサポートされます。"
+
