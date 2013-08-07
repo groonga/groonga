@@ -8,7 +8,7 @@ defrag
 名前
 ----
 
-defrag - オブジェクトにセットされたロックを解除する
+``defrag`` command resolves fragmentation of specified objects.
 
 書式
 ----
