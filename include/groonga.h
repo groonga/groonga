@@ -512,21 +512,6 @@ GRN_API grn_rc grn_plugin_register_by_path(grn_ctx *ctx, const char *path);
 GRN_API const char *grn_plugin_get_system_plugins_dir(void);
 GRN_API const char *grn_plugin_get_suffix(void);
 
-/**
- * grn_proc_create:
- * @name: 作成するprocの名前。
- * @name_size: The number of bytes of @name. If negative value is specified,
- *   @name is assumed that NULL-terminated string.
- * @type: procの種類。
- * @init: 初期化関数のポインタ
- * @next: 実処理関数のポインタ
- * @fin: 終了関数のポインタ
- * @nvars: procで使用する変数の数
- * @vars: procで使用する変数の定義(grn_expr_var構造体の配列)
- *
- * nameに対応する新たなproc(手続き)をctxが使用するdbに定義する。
- **/
-
 typedef struct {
   const char *name;
   unsigned int name_size;
@@ -547,15 +532,6 @@ GRN_API grn_obj *grn_proc_create(grn_ctx *ctx,
                                  const char *name, int name_size, grn_proc_type type,
                                  grn_proc_func *init, grn_proc_func *next, grn_proc_func *fin,
                                  unsigned int nvars, grn_expr_var *vars);
-/**
- * grn_proc_vars:
- * @user_data: grn_proc_funcに渡されたuser_data
- * @nvars: 変数の数
- *
- * user_dataをキーとして、現在実行中のgrn_proc_func関数および
- * 定義されている変数(grn_expr_var)の配列とその数を取得する。
- **/
-
 GRN_API grn_obj *grn_proc_get_info(grn_ctx *ctx, grn_user_data *user_data,
                                    grn_expr_var **vars, unsigned int *nvars, grn_obj **caller);
 
