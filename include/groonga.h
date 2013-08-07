@@ -1010,31 +1010,6 @@ GRN_API unsigned int grn_table_size(grn_ctx *ctx, grn_obj *table);
  * column操作のための関数
  */
 
-/**
- * grn_column_create:
- * @table: 対象table
- * @name: カラム名
- * @name_size: @nameのsize(byte)
- * @path: カラムを格納するファイルパス。
- *        flagsにGRN_OBJ_PERSISTENTが指定されている場合のみ有効。
- *        NULLなら自動的にファイルパスが付与される。
- * @flags: GRN_OBJ_PERSISTENTを指定すると永続columnとなる。
- *         GRN_OBJ_COLUMN_INDEXを指定すると転置インデックスとなる。
- *         GRN_OBJ_COLUMN_SCALARを指定するとスカラ値(単独の値)を格納する。
- *         GRN_OBJ_COLUMN_VECTORを指定すると値の配列を格納する。
- *         GRN_OBJ_COMPRESS_ZLIBを指定すると値をzlib圧縮して格納する。
- *         GRN_OBJ_COMPRESS_LZOを指定すると値をlzo圧縮して格納する。
- *         GRN_OBJ_COLUMN_INDEXと共にGRN_OBJ_WITH_SECTIONを指定すると、
- *         転置索引にsection(段落情報)を合わせて格納する。
- *         GRN_OBJ_COLUMN_INDEXと共にGRN_OBJ_WITH_WEIGHTを指定すると、
- *         転置索引にweight情報を合わせて格納する。
- *         GRN_OBJ_COLUMN_INDEXと共にGRN_OBJ_WITH_POSITIONを指定すると、
- *         転置索引に出現位置情報を合わせて格納する。
- * @type: カラム値の型。定義済みのtypeあるいはtableを指定できる。
- *
- * tableに新たなカラムを定義する。nameは省略できない。
- * 一つのtableに同一のnameのcolumnを複数定義することはできない。
- **/
 GRN_API grn_obj *grn_column_create(grn_ctx *ctx, grn_obj *table,
                                    const char *name, unsigned int name_size,
                                    const char *path, grn_obj_flags flags, grn_obj *type);
@@ -1043,18 +1018,6 @@ GRN_API grn_obj *grn_column_create(grn_ctx *ctx, grn_obj *table,
   (((column) = grn_obj_column((ctx), (table), (name), (name_size))) ||\
    ((column) = grn_column_create((ctx), (table), (name), (name_size), (path), (flags), (type))))
 
-/**
- * grn_column_index_update
- * @column: 対象column
- * @id: 対象レコードのID
- * @section: 対象レコードのセクション番号
- * @oldvalue: 更新前の値
- * @newvalue: 更新後の値
- *
- * oldvalue, newvalueの値から得られるキーに対応するcolumnの値の中の、
- * id, sectionに対応するエントリを更新する。
- * columnはGRN_OBJ_COLUMN_INDEX型のカラムでなければならない。
- **/
 GRN_API grn_rc grn_column_index_update(grn_ctx *ctx, grn_obj *column,
                                        grn_id id, unsigned int section,
                                        grn_obj *oldvalue, grn_obj *newvalue);
