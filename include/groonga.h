@@ -565,27 +565,6 @@ GRN_API grn_obj *grn_proc_get_info(grn_ctx *ctx, grn_user_data *user_data,
 
 #define GRN_TABLE_MAX_KEY_SIZE         (0x1000)
 
-/**
- * grn_table_create:
- * @name: 作成するtableの名前。NULLなら無名tableとなる。
- *        persistent dbに対して名前をありのtableを作成するときには、
- *        flagsにGRN_OBJ_PERSISTENTが指定されていなければならない。
- * @path: 作成するtableのファイルパス。
- *        flagsにGRN_OBJ_PERSISTENTが指定されている場合のみ有効。
- *        NULLなら自動的にファイルパスが付与される。
- * @flags: GRN_OBJ_PERSISTENTを指定すると永続tableとなる。
- *         GRN_OBJ_TABLE_PAT_KEY,GRN_OBJ_TABLE_HASH_KEY,GRN_OBJ_TABLE_NO_KEY
- *         のいずれかを指定する。
- *         GRN_OBJ_KEY_NORMALIZEを指定すると正規化された文字列がkeyとなる。
- *         GRN_OBJ_KEY_WITH_SISを指定するとkey文字列の全suffixが自動的に登録される。
- * @key_type: keyの型を指定する。GRN_OBJ_TABLE_NO_KEYが指定された場合は無効。
- *            既存のtypeあるいはtableを指定できる。
- *            key_typeにtable Aを指定してtable Bを作成した場合、Bは必ずAのサブセットとなる。
- * @value_type: keyに対応する値を格納する領域の型。tableはcolumnとは別に、
- *              keyに対応する値を格納する領域を一つだけ持つことができる。
- *
- * nameに対応する新たなtableをctxが使用するdbに定義する。
- **/
 GRN_API grn_obj *grn_table_create(grn_ctx *ctx,
                                   const char *name, unsigned int name_size,
                                   const char *path, grn_obj_flags flags,
@@ -595,17 +574,6 @@ GRN_API grn_obj *grn_table_create(grn_ctx *ctx,
   (((table) = grn_ctx_get((ctx), (name), (name_size))) ||\
    ((table) = grn_table_create((ctx), (name), (name_size), (path), (flags), (key_type), (value_type))))
 
-/**
- * grn_table_add:
- * @table: 対象table
- * @key: 検索key
- * @added: NULL以外の値が指定された場合、
- * 新たにrecordが追加された時には1が、既存recordだった時には0がセットされる。
- *
- * keyに対応する新しいrecordをtableに追加し、そのIDを返す。
- * keyに対応するrecordがすでにtableに存在するならば、そのrecordのIDを返す。
- * GRN_OBJ_TABLE_NO_KEYが指定されたtableでは、key, key_size は無視される。
- **/
 /* TODO: int *added -> grn_bool *added */
 GRN_API grn_id grn_table_add(grn_ctx *ctx, grn_obj *table,
                              const void *key, unsigned int key_size, int *added);
