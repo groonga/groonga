@@ -1,0 +1,58 @@
+.. -*- rst -*-
+
+.. highlightlang:: none
+
+``grn_table``
+=============
+
+Summary
+-------
+
+TODO...
+
+Example
+-------
+
+TODO...
+
+Reference
+---------
+
+.. c:function:: grn_obj *grn_table_create(grn_ctx *ctx, const char *name, unsigned int name_size, const char *path, grn_obj_flags flags, grn_obj *key_type, grn_obj *value_type)
+
+   nameパラメータに対応する新たなtableをctxが使用するdbに定義します。
+
+   :param name:
+      作成するtableの名前を指定します。NULLなら無名tableとなります。
+
+      persistent dbに対して名前をありのtableを作成するときには、flagsに ``GRN_OBJ_PERSISTENT`` が指定されていなけれなりません。
+   :param path:
+      作成するtableのファイルパスを指定します。
+      flagsに ``GRN_OBJ_PERSISTENT`` が指定されている場合のみ有効です。
+      NULLなら自動的にファイルパスが付与されます。
+   :param flags:
+      ``GRN_OBJ_PERSISTENT`` を指定すると永続tableとなります。
+
+      ``GRN_OBJ_TABLE_PAT_KEY``, ``GRN_OBJ_TABLE_HASH_KEY``, ``GRN_OBJ_TABLE_NO_KEY`` のいずれかを指定します。
+
+      ``GRN_OBJ_KEY_NORMALIZE`` を指定すると正規化された文字列がkeyとなります。
+
+      ``GRN_OBJ_KEY_WITH_SIS`` を指定するとkey文字列の全suffixが自動的に登録されます。
+   :param key_type:
+      keyの型を指定します。``GRN_OBJ_TABLE_NO_KEY`` が指定された場合は無効です。
+      既存のtypeあるいはtableを指定できます。
+
+      key_typeにtable Aを指定してtable Bを作成した場合、Bは必ずAのサブセットとなります。
+   :param value_type:
+      keyに対応する値を格納する領域の型を指定します。
+      tableはcolumnとは別に、keyに対応する値を格納する領域を一つだけ持つことができます。
+
+.. c:function:: grn_id grn_table_add(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key_size, int *added)
+
+   keyに対応する新しいrecordをtableに追加し、そのIDを返します。keyに対応するrecordがすでにtableに存在するならば、そのrecordのIDを返します。
+
+   ``GRN_OBJ_TABLE_NO_KEY`` が指定されたtableでは、key, key_size は無視されます。
+
+   :param table: 対象tableを指定します。
+   :param key: 検索keyを指定します。
+   :param added: NULL以外の値が指定された場合、新たにrecordが追加された時には1が、既存recordだった時には0がセットされます。
