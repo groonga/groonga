@@ -2358,9 +2358,9 @@ msgid ""
 "doc/locale/${LANGUAGE}. (Please substitute `${LANGUAGE}` with your language "
 "code such as 'ja'.)::"
 msgstr ""
-"doc/locale/${LANGUAGE}/LC_MESSAGESディレクトリで `make update` を実行すると."
-"poファイルを更新できます。（`${LANGUAGE}` は'ja'など自分の言語の言語コードに"
-"置き換えてください。）::"
+"doc/locale/${LANGUAGE}ディレクトリで `make html` を実行すると更新した.poファ"
+"イルを使ってHTMLファイルを生成できます。（`${LANGUAGE}` は'ja'など自分の言語"
+"の言語コードに置き換えてください。）::"
 
 #: ../../../source/contribution/documentation/i18n.txt:117
 msgid ""
