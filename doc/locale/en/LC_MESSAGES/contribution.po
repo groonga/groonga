@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-07-18 17:36+0900\n"
+"POT-Creation-Date: 2013-08-07 22:49+0900\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -1928,73 +1928,120 @@ msgid ""
 "groonga.orgへと反映します。"
 msgstr ""
 
-# f753108e35404faca0119bd6dc5457dc
+# 5c9a71800b2d4c4f8d3d69bd416faa11
 #: ../../../source/contribution/development/release.txt:562
+msgid "Homebrewの更新"
+msgstr ""
+
+# 22a5ca91cf5849f4876843cc627a7b69
+#: ../../../source/contribution/development/release.txt:564
+msgid ""
+"OS Xでのパッケージ管理方法として `Homebrew <http://brew.sh/>`_ があります。"
+msgstr ""
+
+# cde50d636f1748e3b12502c415883d7a
+#: ../../../source/contribution/development/release.txt:566
+msgid ""
+"groongaを簡単にインストールできるようにするために、Homebrewへpull requestを送"
+"ります。"
+msgstr ""
+
+# 3e3275f80f6143fdb6dd83385535962c
+#: ../../../source/contribution/development/release.txt:568
+msgid "https://github.com/mxcl/homebrew"
+msgstr ""
+
+# 9dc89b2080354308b819a4b81390bd5a
+#: ../../../source/contribution/development/release.txt:570
+msgid ""
+"すでにgroongaのFormulaは取り込まれているので、リリースのたびにFormulaの内容を"
+"更新する作業を実施します。"
+msgstr ""
+
+# 4bcc8345c5634db5b5fb8001642f0158
+#: ../../../source/contribution/development/release.txt:572
+msgid "groonga 3.0.6のときは以下のように更新してpull requestを送りました。"
+msgstr ""
+
+# ee0dce743b46474aa308a17e74286467
+#: ../../../source/contribution/development/release.txt:574
+msgid "https://github.com/mxcl/homebrew/pull/21456/files"
+msgstr ""
+
+# c1eed974bcf44b50921227fbfaed76bd
+#: ../../../source/contribution/development/release.txt:576
+msgid ""
+"上記URLを参照するとわかるようにソースアーカイブのurlとsha1チェックサムを更新"
+"します。"
+msgstr ""
+
+# f753108e35404faca0119bd6dc5457dc
+#: ../../../source/contribution/development/release.txt:579
 msgid "リリースアナウンス"
 msgstr "リリースアナウンス"
 
 # 9d31b02e3b0645fea0c1dff19ab3f7bc
-#: ../../../source/contribution/development/release.txt:564
+#: ../../../source/contribution/development/release.txt:581
 msgid "作成したリリースアナウンスをメーリングリストへと流します。"
 msgstr "作成したリリースアナウンスをメーリングリストへと流します。"
 
 # 1686dc403ed74f68a80bd6715b45cd44
-#: ../../../source/contribution/development/release.txt:566
+#: ../../../source/contribution/development/release.txt:583
 msgid "groonga-dev groonga-dev@lists.sourceforge.jp"
 msgstr "groonga-dev groonga-dev@lists.sourceforge.jp"
 
 # bdc472794b294f7fa1af12d285fc7b8f
-#: ../../../source/contribution/development/release.txt:567
+#: ../../../source/contribution/development/release.txt:584
 msgid "Groonga-talk groonga-talk@lists.sourceforge.net"
 msgstr "Groonga-talk groonga-talk@lists.sourceforge.net"
 
 # 62e92e03ba5846e7a21b5d836578b98f
-#: ../../../source/contribution/development/release.txt:570
+#: ../../../source/contribution/development/release.txt:587
 msgid "freecode.comへリリース情報を登録"
 msgstr ""
 
 # e89589b7a0ff473fbf2ad2f06ac22e08
-#: ../../../source/contribution/development/release.txt:572
+#: ../../../source/contribution/development/release.txt:589
 msgid "groongaプロジェクトではfreecode.comでもリリース情報を発信しています。"
 msgstr ""
 
 # 7795165785ac4fc7a7de5a31da2c484e
 # b25a9264a8864d59aabce088719387a2
-#: ../../../source/contribution/development/release.txt:574
+#: ../../../source/contribution/development/release.txt:591
 msgid "freecode.comのプロジェクトページは以下の通りです。"
 msgstr ""
 
 # 442ff041a31b4816b20f31d97c2e8bdf
-#: ../../../source/contribution/development/release.txt:576
+#: ../../../source/contribution/development/release.txt:593
 msgid "https://freecode.com/projects/groonga"
 msgstr ""
 
 # 5b07f1e393494bb5801dc46d240f70c9
-#: ../../../source/contribution/development/release.txt:578
+#: ../../../source/contribution/development/release.txt:595
 msgid ""
 "プロジェクトの管理メニューから「Submit a release」をクリックし、 新規リリース"
 "情報を登録します。"
 msgstr ""
 
 # 9c0001242a36411296cf23fb6cd6997a
-#: ../../../source/contribution/development/release.txt:581
+#: ../../../source/contribution/development/release.txt:598
 msgid "https://freecode.com/projects/groonga/releases/new"
 msgstr ""
 
 # 4219976bebf44d9cad3da2fa3462ea72
-#: ../../../source/contribution/development/release.txt:584
+#: ../../../source/contribution/development/release.txt:601
 msgid ""
 "投稿した内容に対するレビューが運営側で実施されるので、反映されるまでしばらく"
 "時間がかかります。"
 msgstr ""
 
 # f753108e35404faca0119bd6dc5457dc
-#: ../../../source/contribution/development/release.txt:587
+#: ../../../source/contribution/development/release.txt:604
 msgid "Twitterでリリースアナウンスをする"
 msgstr ""
 
 # 325471715bcf4d6e9cdb2fa66913407b
-#: ../../../source/contribution/development/release.txt:589
+#: ../../../source/contribution/development/release.txt:606
 msgid ""
 "blogroongaのリリースエントリには「リンクをあなたのフォロワーに共有する」ため"
 "のツイートボタンがあるので、そのボタンを使ってリリースアナウンスします。(画面"
@@ -2002,149 +2049,149 @@ msgid ""
 msgstr ""
 
 # a499540db0af4488b8a9345c476ac8b5
-#: ../../../source/contribution/development/release.txt:591
+#: ../../../source/contribution/development/release.txt:608
 msgid ""
 "このボタンを経由する場合、ツイート内容に自動的にリリースタイトル(「groonga "
 "2.0.8リリース」など)とblogroongaのリリースエントリのURLが挿入されます。"
 msgstr ""
 
 # 807b1879c8cd409c9dd6c96ec4dd1414
-#: ../../../source/contribution/development/release.txt:593
+#: ../../../source/contribution/development/release.txt:610
 msgid ""
 "この作業はblogroongaの英語版、日本語版それぞれで行います。 あらかじめgroonga"
 "アカウントでログインしておくとアナウンスを円滑に行うことができます。"
 msgstr ""
 
 # 0537316593a04d11b0284b85dd47237f
-#: ../../../source/contribution/development/release.txt:596
+#: ../../../source/contribution/development/release.txt:613
 msgid "以上でリリース作業は終了です。"
 msgstr "以上でリリース作業は終了です。"
 
 # f753108e35404faca0119bd6dc5457dc
-#: ../../../source/contribution/development/release.txt:599
+#: ../../../source/contribution/development/release.txt:616
 msgid "リリース後にやること"
 msgstr ""
 
 # 9d31b02e3b0645fea0c1dff19ab3f7bc
-#: ../../../source/contribution/development/release.txt:601
+#: ../../../source/contribution/development/release.txt:618
 msgid "リリースアナウンスを流し終えたら、次期バージョンの開発が始まります。"
 msgstr ""
 
 # dcefe0f3a15045bda615e32cdcd972e6
 # ac002494dc0143598f591e3dcd54dc5b
-#: ../../../source/contribution/development/release.txt:603
-#: ../../../source/contribution/development/release.txt:607
+#: ../../../source/contribution/development/release.txt:620
+#: ../../../source/contribution/development/release.txt:624
 msgid "groonga プロジェクトの新規バージョン追加"
 msgstr ""
 
 # 095de9f14f024a68aba18e37c903470f
-#: ../../../source/contribution/development/release.txt:604
+#: ../../../source/contribution/development/release.txt:621
 msgid "groonga のbase_versionの更新"
 msgstr ""
 
 # 993185973ca84c8c81d315fdc901cec2
-#: ../../../source/contribution/development/release.txt:609
+#: ../../../source/contribution/development/release.txt:626
 msgid ""
 "`groonga プロジェクトの設定ページ <http://redmine.groonga.org/projects/"
 "groonga/settings>`_ にて新規バージョンを追加します。(例: release-2.0.6)"
 msgstr ""
 
 # 573930c22f104589894568eea7c1c7c9
-#: ../../../source/contribution/development/release.txt:612
+#: ../../../source/contribution/development/release.txt:629
 msgid "groonga バージョン更新"
 msgstr ""
 
 # 488a22db1da845439bb2af68136bdb87
-#: ../../../source/contribution/development/release.txt:614
+#: ../../../source/contribution/development/release.txt:631
 msgid "$GROONGA_CLONE_DIRにて以下のコマンドを実行します。::"
 msgstr ""
 
 # 4ade501742734636a8e7aba334f1edfa
-#: ../../../source/contribution/development/release.txt:618
+#: ../../../source/contribution/development/release.txt:635
 msgid ""
 "これにより$GROONGA_CLONE_DIR/base_versionが更新されるのでコミットしておきま"
 "す。"
 msgstr ""
 
 # 71e741d3a96040c5a638e49aca786115
-#: ../../../source/contribution/development/release.txt:621
+#: ../../../source/contribution/development/release.txt:638
 msgid "base_versionはtar.gzなどのリリース用のファイル名で使用します。"
 msgstr ""
 
 # 75a828b356b8438e99134accfe5bcf62
-#: ../../../source/contribution/development/release.txt:625
+#: ../../../source/contribution/development/release.txt:642
 msgid "ビルド時のTIPS"
 msgstr "ビルド時のTIPS"
 
 # 897e399c3f064a77bd7a34f70a1cfa22
-#: ../../../source/contribution/development/release.txt:628
+#: ../../../source/contribution/development/release.txt:645
 msgid "ビルドを並列化したい"
 msgstr "ビルドを並列化したい"
 
 # 54585f1a8eed476e97cc0d842920f566
-#: ../../../source/contribution/development/release.txt:630
+#: ../../../source/contribution/development/release.txt:647
 msgid ""
 "make build PALALLES=yesを指定するとchroot環境で並列にビルドを 実行できます。"
 msgstr ""
 "make build PALALLES=yesを指定するとchroot環境で並列にビルドを 実行できます。"
 
 # 52c1140b79f942fb91428e7ce10b0bfe
-#: ../../../source/contribution/development/release.txt:635
+#: ../../../source/contribution/development/release.txt:652
 msgid "特定の環境向けのみビルドしたい"
 msgstr "特定の環境向けのみビルドしたい"
 
 # 88a16095a2bf4c6c9e2c16ece78f4715
-#: ../../../source/contribution/development/release.txt:637
+#: ../../../source/contribution/development/release.txt:654
 msgid ""
 "Debian系の場合、CODES,ARCHITECTURESオプションを明示的に指定することで、特定の"
 "リリース、アーキテクチャのみビルドすることができます。"
 msgstr ""
 
 # f37d2393e4dc437084cf0bf9ed252367
-#: ../../../source/contribution/development/release.txt:639
+#: ../../../source/contribution/development/release.txt:656
 msgid "squeezeのi386のみビルドしたい場合には以下のコマンドを実行します。::"
 msgstr "squeezeのi386のみビルドしたい場合には以下のコマンドを実行します。::"
 
 # 2b7f1236226e4a329dba4ef5609bd72b
-#: ../../../source/contribution/development/release.txt:643
+#: ../../../source/contribution/development/release.txt:660
 msgid ""
 "buildコマンド以外でも build-package-deb build-repository-debなどのサブタスク"
 "でもARCHITECTURES,CODES指定は有効です。"
 msgstr ""
 
 # aa72178533184b64889e3c7a6c3ad5fe
-#: ../../../source/contribution/development/release.txt:645
+#: ../../../source/contribution/development/release.txt:662
 msgid ""
 "Red Hat系の場合、ARCHITECTURES,DISTRIBUTIONSオプションを明示的に指定すること"
 "で、特定のリリース、アーキテクチャのみビルドすることができます。"
 msgstr ""
 
 # 7f836d59d71d420381a7dbb6739dc026
-#: ../../../source/contribution/development/release.txt:647
+#: ../../../source/contribution/development/release.txt:664
 msgid "fedoraのi386のみビルドしたい場合には以下のコマンドを実行します。::"
 msgstr "fedoraのi386のみビルドしたい場合には以下のコマンドを実行します。::"
 
 # 09db01dadfd940f491d48fedd2696cd4
-#: ../../../source/contribution/development/release.txt:651
+#: ../../../source/contribution/development/release.txt:668
 msgid ""
 "buildコマンド以外でも build-in-chroot build-repository-rpmなどのサブタスクで"
 "もARCHITECTURES,DISTRIBUTIONSの指定は有効です。"
 msgstr ""
 
 # 88a16095a2bf4c6c9e2c16ece78f4715
-#: ../../../source/contribution/development/release.txt:653
+#: ../../../source/contribution/development/release.txt:670
 msgid ""
 "centosの場合、CENTOS_VERSIONSを指定することで特定のバージョンのみビルドするこ"
 "とができます。"
 msgstr ""
 
 # af7c72d306a64401ae285ad64022762a
-#: ../../../source/contribution/development/release.txt:657
+#: ../../../source/contribution/development/release.txt:674
 msgid "パッケージの署名用のパスフレーズを知りたい"
 msgstr "パッケージの署名用のパスフレーズを知りたい"
 
 # ac14fc4342d74338a71babbb2f539e8e
-#: ../../../source/contribution/development/release.txt:659
+#: ../../../source/contribution/development/release.txt:676
 msgid ""
 "パッケージの署名に必要な秘密鍵のパスフレーズについては リリース担当者向けの秘"
 "密鍵を復号したテキストの1行目に記載してあります。"
@@ -2153,12 +2200,12 @@ msgstr ""
 "密鍵を復号したテキストの1行目に記載してあります。"
 
 # 072a48c84af14f499ed0a991c740dac7
-#: ../../../source/contribution/development/release.txt:664
+#: ../../../source/contribution/development/release.txt:681
 msgid "バージョンを明示的に指定してドキュメントを生成したい"
 msgstr ""
 
 # aa45cd5e3f004f8e9726918967b16cce
-#: ../../../source/contribution/development/release.txt:666
+#: ../../../source/contribution/development/release.txt:683
 msgid ""
 "リリース後にドキュメントの一部を差し替えたい場合、特に何も指定しないと生成し"
 "たHTMLに埋め込まれるバージョンが「v3.0.1-xxxxxドキュメント」となってしまうこ"
@@ -2166,7 +2213,7 @@ msgid ""
 msgstr ""
 
 # 4ad9208c77ae424ab0ca79abab0f341b
-#: ../../../source/contribution/development/release.txt:668
+#: ../../../source/contribution/development/release.txt:685
 msgid ""
 "これを回避するには、以下のようにDOCUMENT_VERSIONやDOCUMENT_VERSION_FULLを明示"
 "的に指定します。::"
