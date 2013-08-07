@@ -743,67 +743,13 @@ GRN_API grn_table_cursor *grn_table_cursor_open(grn_ctx *ctx, grn_obj *table,
                                                 const void *min, unsigned int min_size,
                                                 const void *max, unsigned int max_size,
                                                 int offset, int limit, int flags);
-
-/**
- * grn_table_cursor_close:
- * @tc: 対象cursor
- *
- * grn_table_cursor_openで生成したcursorを解放する。
- **/
 GRN_API grn_rc grn_table_cursor_close(grn_ctx *ctx, grn_table_cursor *tc);
-
-/**
- * grn_table_cursor_next:
- * @tc: 対象cursor
- *
- * cursorのカレントレコードを一件進めてそのIDを返す。
- * cursorの対象範囲の末尾に達するとGRN_ID_NILを返す。
- **/
 GRN_API grn_id grn_table_cursor_next(grn_ctx *ctx, grn_table_cursor *tc);
-
-/**
- * grn_table_cursor_get_key:
- * @tc: 対象cursor
- * @key: カレントレコードのkeyへのポインタがセットされる。
- * cursorのカレントレコードのkeyを@keyにセットし、その長さを返す。
- **/
 GRN_API int grn_table_cursor_get_key(grn_ctx *ctx, grn_table_cursor *tc, void **key);
-
-/**
- * grn_table_cursor_get_value:
- * @tc: 対象cursor
- * @value: カレントレコードのvalueへのポインタがセットされる。
- * cursorのカレントレコードのvalueを@valueにセットし、その長さを返す。
- **/
 GRN_API int grn_table_cursor_get_value(grn_ctx *ctx, grn_table_cursor *tc, void **value);
-
-/**
- * grn_table_cursor_set_value:
- * @tc: 対象cursor
- * @value: 新しいvalueの値。
- * @flags: grn_obj_set_valueのflagsと同様の値を指定できる。
- *
- * cursorのカレントレコードのvalueを引数の内容に置き換える。
- * cursorのカレントレコードが存在しない場合はGRN_INVALID_ARGUMENTを返す。
- **/
 GRN_API grn_rc grn_table_cursor_set_value(grn_ctx *ctx, grn_table_cursor *tc,
                                           const void *value, int flags);
-
-/**
- * grn_table_cursor_delete:
- * @tc: 対象cursor
- *
- * cursorのカレントレコードを削除する。
- * cursorのカレントレコードが存在しない場合はGRN_INVALID_ARGUMENTを返す。
- **/
 GRN_API grn_rc grn_table_cursor_delete(grn_ctx *ctx, grn_table_cursor *tc);
-
-/**
- * grn_table_cursor_table:
- * @tc: 対象cursor
- *
- * cursorが属するtableを返す。
- **/
 GRN_API grn_obj *grn_table_cursor_table(grn_ctx *ctx, grn_table_cursor *tc);
 
 typedef struct {
