@@ -815,31 +815,8 @@ typedef struct {
   unsigned int rest;
 } grn_posting;
 
-/**
- * grn_index_cursor_open
- * @tc: 対象cursor
- * @index: 対象インデックスカラム
- * @rid_min: 出力するレコードidの下限
- * @rid_max: 出力するレコードidの上限
- *
- * grn_table_cursorから取得できるそれぞれのレコードについて、
- * GRN_OBJ_COLUMN_INDEX型のカラムの値を順番に取り出すためのカーソルを生成して返す。
- * rid_min,rid_maxを指定して取得するレコードidの値を制限することができる。
- * 戻り値であるgrn_index_cursorはgrn_obj_closeを使って解放する。
- **/
 GRN_API grn_obj *grn_index_cursor_open(grn_ctx *ctx, grn_table_cursor *tc, grn_obj *index,
                                        grn_id rid_min, grn_id rid_max, int flags);
-
-/**
- * grn_index_cursor_next
- * @ic: 対象cursor
- * @tid: テーブルレコードID
- *
- * cursorの範囲内のインデックスの値を順番に取り出す。
- * tidにNULL以外を指定した場合は、
- * index_cursorを作成するときに指定したtable_cursorの現在の対象レコードのidを返す。
- * 戻り値であるgrn_posting構造体は解放する必要はない。
- **/
 GRN_API grn_posting *grn_index_cursor_next(grn_ctx *ctx, grn_obj *ic, grn_id *tid);
 
 #define GRN_TABLE_EACH(ctx,table,head,tail,id,key,key_size,value,block) do {\
