@@ -26,3 +26,42 @@ Example
 -------
 
 TODO...
+
+Reference
+---------
+
+.. c:function:: grn_rc grn_expr_syntax_escape(grn_ctx *ctx, const char *string, int string_size, const char *target_characters, char escape_character, grn_obj *escaped_string)
+
+   Escapes ``target_characters`` in ``string`` by ``escape_character``.
+
+   :param ctx: Its encoding must be the same encoding of ``string``.
+               It is used for allocating buffer for ``escaped_string``.
+   :param string: String expression representation.
+   :param string_size: The byte size of ``string``. ``-1`` means ``string``
+                       is NULL terminated string.
+   :param target_characters: NULL terminated escape target characters.
+                             For example, ``"+-><~*()\"\\:"`` is
+                             ``target_characters`` for
+                             :doc:`/reference/grn_expr/query_syntax`.
+   :param escape_character: The character to use escape a character in
+                            ``target_characters``. For example, ``\\``
+                            (backslash) is ``escaped_character`` for
+                             :doc:`/reference/grn_expr/query_syntax`.
+   :param escaped_string: The output of escaped ``string``. It should be
+                          text typed bulk.
+   :return: ``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error.
+
+.. c:function:: grn_rc grn_expr_syntax_escape_query(grn_ctx *ctx, const char *query, int query_size, grn_obj *escaped_query)
+
+   Escapes special characters in
+   :doc:`/reference/grn_expr/query_syntax`.
+
+   :param ctx: Its encoding must be the same encoding of ``query``.
+               It is used for allocating buffer for ``escaped_query``.
+   :param query: String expression representation in
+                 :doc:`/reference/grn_expr/query_syntax`.
+   :param query_size: The byte size of ``query``. ``-1`` means ``query``
+                      is NULL terminated string.
+   :param escaped_query: The output of escaped ``query``. It should be
+                         text typed bulk.
+   :return: ``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error.
