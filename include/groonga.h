@@ -1022,19 +1022,6 @@ GRN_API grn_obj *grn_obj_db(grn_ctx *ctx, grn_obj *obj);
  **/
 GRN_API grn_id grn_obj_id(grn_ctx *ctx, grn_obj *obj);
 
-
-/**
- * grn_obj_search:
- * @obj: 検索対象のobject
- * @query: 検索クエリ
- * @res: 検索結果を格納するテーブル
- * @op: GRN_OP_OR, GRN_OP_AND, GRN_OP_AND_NOT, GRN_OP_ADJUSTのいずれかを指定する
- * @optarg: 詳細検索条件
- *
- * objを対象としてqueryにマッチするレコードを検索し、
- * opの指定に従ってresにレコードを追加あるいは削除する。
- **/
-
 typedef struct _grn_search_optarg grn_search_optarg;
 
 struct _grn_search_optarg {
