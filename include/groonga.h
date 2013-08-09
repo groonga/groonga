@@ -812,42 +812,9 @@ GRN_API grn_obj *grn_obj_get_element_info(grn_ctx *ctx, grn_obj *obj, grn_id id,
 GRN_API grn_rc grn_obj_set_element_info(grn_ctx *ctx, grn_obj *obj, grn_id id,
                                         grn_info_type type, grn_obj *value);
 
-/**
- * c:function:: grn_bool grn_obj_is_builtin(grn_ctx *ctx, grn_obj *obj)
- *
- * Check whether groonga built-in object.
- *
- * :param ctx: context
- * :param obj: target object
- * :retype: ``GRN_TRUE`` for built-in groonga object, ``GRN_FALSE`` otherwise.
- **/
 GRN_API grn_bool grn_obj_is_builtin(grn_ctx *ctx, grn_obj *obj);
 
-/**
- * grn_obj_get_value:
- * @obj: 対象object
- * @id: 対象レコードのID
- * @value: 値を格納するバッファ(呼出側で準備する)
- *
- * objのIDに対応するレコードのvalueを取得する。
- * valueを戻り値として返す。
- **/
 GRN_API grn_obj *grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value);
-
-/**
- * grn_obj_get_values:
- * @obj: 対象object
- * @offset: 値を取得する範囲の開始位置となるレコードID
- * @values: 値の配列がセットされる
- *
- * objに指定されたカラムについて、offsetに指定されたレコードIDを開始位置として、IDが連続
- * するレコードに対応するカラム値が昇順に格納された配列へのポインタをvaluesにセットします。
- * 取得できた件数が戻り値として返される。エラーが発生した場合は -1 が返されます。
- * 注意: 値が固定長であるカラムのみがobjに指定できます。
- *       範囲内のIDに対応するレコードが有効であるとは限りません。
- *       delete操作を実行したことのあるテーブルに対しては、
- *       grn_table_at()などによって各レコードの存否を別途確認しなければなりません。
- **/
 GRN_API int grn_obj_get_values(grn_ctx *ctx, grn_obj *obj, grn_id offset, void **values);
 
 #define GRN_COLUMN_EACH(ctx,column,id,value,block) do {\
@@ -859,27 +826,6 @@ GRN_API int grn_obj_get_values(grn_ctx *ctx, grn_obj *obj, grn_id offset, void *
     }\
   }\
 } while (0)
-
-/**
- * grn_obj_set_value:
- * @obj: 対象object
- * @id: 対象レコードのID
- * @value: 格納する値
- * @flags: 以下の値を指定できる
- *  GRN_OBJ_SET: レコードの値をvalueと置き換える。
- *  GRN_OBJ_INCR: レコードの値にvalueを加算する。
- *  GRN_OBJ_DECR: レコードの値にvalueを減算する。
- *  GRN_OBJ_APPEND: レコードの値の末尾にvalueを追加する。
- *  GRN_OBJ_PREPEND: レコードの値の先頭にvalueを追加する。
- *  GRN_OBJ_GET: 新しいレコードの値をvalueにセットする。
- *  GRN_OBJ_COMPARE: レコードの値とvalueが等しいか調べる。
- *  GRN_OBJ_LOCK: 当該レコードをロックする。GRN_OBJ_COMPAREと共に指定された場合は、
- *                レコードの値とvalueが等しい場合に限ってロックする。
- *  GRN_OBJ_UNLOCK: 当該レコードのロックを解除する。
- *
- * objのIDに対応するレコードの値を更新する。
- * 対応するレコードが存在しない場合はGRN_INVALID_ARGUMENTを返す。
- **/
 
 #define GRN_OBJ_SET_MASK               (0x07)
 #define GRN_OBJ_SET                    (0x01)
@@ -893,28 +839,9 @@ GRN_API int grn_obj_get_values(grn_ctx *ctx, grn_obj *obj, grn_id offset, void *
 #define GRN_OBJ_UNLOCK                 (0x01<<7)
 
 GRN_API grn_rc grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value, int flags);
-
-/**
- * grn_obj_remove:
- * @obj: 対象object
- *
- * objをメモリから解放し、それが永続オブジェクトであった場合は、
- * 該当するファイル一式を削除する。
- **/
 GRN_API grn_rc grn_obj_remove(grn_ctx *ctx, grn_obj *obj);
-
-/**
- * grn_obj_rename:
- * @obj: 対象object
- * @name: 新しい名前
- * @name_size: @nameのsize(byte)
- *
- * ctxが使用するdbにおいてobjに対応する名前をnameに更新する。
- * objは永続オブジェクトでなければならない。
- **/
 GRN_API grn_rc grn_obj_rename(grn_ctx *ctx, grn_obj *obj,
                               const char *name, unsigned int name_size);
-
 GRN_API grn_rc grn_table_rename(grn_ctx *ctx, grn_obj *table,
                                 const char *name, unsigned int name_size);
 

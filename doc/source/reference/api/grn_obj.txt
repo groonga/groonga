@@ -31,3 +31,105 @@ Reference
    :param table: 対象tableを指定します。
    :param name: カラム名を指定します。
 
+.. c:function:: grn_bool grn_obj_is_builtin(grn_ctx *ctx, grn_obj *obj)
+
+   Check whether groonga built-in object.
+
+   :param ctx: context
+   :param obj: target object
+   :return: ``GRN_TRUE`` for built-in groonga object, ``GRN_FALSE`` otherwise.
+
+.. c:function:: grn_obj *grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
+
+   objのIDに対応するレコードのvalueを取得します。valueを戻り値として返します。
+
+   :param obj: 対象objectを指定します。
+   :param id: 対象レコードのIDを指定します。
+   :param value: 値を格納するバッファ（呼出側で準備する）を指定します。
+
+.. c:function:: int grn_obj_get_values(grn_ctx *ctx, grn_obj *obj, grn_id offset, void **values)
+
+   objに指定されたカラムについて、offsetに指定されたレコードIDを開始位置として、IDが連続するレコードに対応するカラム値が昇順に格納された配列へのポインタをvaluesにセットします。
+
+   取得できた件数が戻り値として返されます。エラーが発生した場合は -1 が返されます。
+
+   .. note:: 値が固定長であるカラムのみがobjに指定できます。範囲内のIDに対応するレコードが有効であるとは限りません。delete操作を実行したことのあるテーブルに対しては、:c:func:`grn_table_at()` などによって各レコードの存否を別途確認しなければなりません。
+
+   :param obj: 対象objectを指定します。
+   :param offset: 値を取得する範囲の開始位置となるレコードIDを指定します。
+   :param values: 値の配列がセットされます。
+ 
+.. c:function:: grn_rc grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value, int flags)
+
+   objのIDに対応するレコードの値を更新します。対応するレコードが存在しない場合は ``GRN_INVALID_ARGUMENT`` を返します。
+
+   :param obj: 対象objectを指定します。
+   :param id: 対象レコードのIDを指定します。
+   :param value: 格納する値を指定します。
+   :param flags:
+      以下の値を指定できます。
+
+      .. hlist::
+         :columns: 3
+
+         * :c:macro:`GRN_OBJ_SET`
+         * :c:macro:`GRN_OBJ_INCR`
+         * :c:macro:`GRN_OBJ_DECR`
+         * :c:macro:`GRN_OBJ_APPEND`
+         * :c:macro:`GRN_OBJ_PREPEND`
+         * :c:macro:`GRN_OBJ_GET`
+         * :c:macro:`GRN_OBJ_COMPARE`
+         * :c:macro:`GRN_OBJ_LOCK`
+         * :c:macro:`GRN_OBJ_UNLOCK`
+
+.. c:macro:: GRN_OBJ_SET_MASK
+
+.. c:macro:: GRN_OBJ_SET
+
+   レコードの値をvalueと置き換えます。
+
+.. c:macro:: GRN_OBJ_INCR
+
+   レコードの値にvalueを加算します。
+
+.. c:macro:: GRN_OBJ_DECR
+
+   レコードの値にvalueを減算します。
+
+.. c:macro:: GRN_OBJ_APPEND
+
+   レコードの値の末尾にvalueを追加します。
+
+.. c:macro:: GRN_OBJ_PREPEND
+
+   レコードの値の先頭にvalueを追加します。
+
+.. c:macro:: GRN_OBJ_GET
+
+   新しいレコードの値をvalueにセットします。
+
+.. c:macro:: GRN_OBJ_COMPARE
+
+   レコードの値とvalueが等しいか調べます。
+
+.. c:macro:: GRN_OBJ_LOCK
+
+   当該レコードをロックします。:c:macro:`GRN_OBJ_COMPARE` と共に指定された場合は、レコードの値とvalueが等しい場合に限ってロックします。
+
+.. c:macro:: GRN_OBJ_UNLOCK
+
+   当該レコードのロックを解除します。
+
+.. c:function:: grn_rc grn_obj_remove(grn_ctx *ctx, grn_obj *obj)
+
+   objをメモリから解放し、それが永続オブジェクトであった場合は、該当するファイル一式を削除します。
+
+   :param obj: 対象objectを指定します。
+
+.. c:function:: grn_rc grn_obj_rename(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int name_size)
+
+   ctxが使用するdbにおいてobjに対応する名前をnameに更新します。objは永続オブジェクトでなければいけません。
+
+   :param obj: 対象objectを指定します。
+   :param name: 新しい名前を指定します。
+   :param name_size: nameパラメータのsize（byte）を指定します。
