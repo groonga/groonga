@@ -2345,7 +2345,6 @@ GRN_API grn_rc grn_dat_cursor_delete(grn_ctx *ctx, grn_dat_cursor *c,
 } while (0)
 
 /* buffered index builder */
-/* 特定のアプリケーション用に準備した内部APIです。 */
 
 typedef struct _grn_ii grn_ii;
 typedef struct _grn_ii_buffer grn_ii_buffer;
