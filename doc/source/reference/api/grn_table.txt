@@ -56,3 +56,72 @@ Reference
    :param table: 対象tableを指定します。
    :param key: 検索keyを指定します。
    :param added: NULL以外の値が指定された場合、新たにrecordが追加された時には1が、既存recordだった時には0がセットされます。
+
+.. c:type:: grn_table_sort_key
+
+   TODO...
+
+.. c:type:: grn_table_sort_flags
+
+   TODO...
+
+.. c:function:: int grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit, grn_obj *result, grn_table_sort_key *keys, int n_keys)
+
+   table内のレコードをソートし、上位limit個の要素をresultに格納します。
+
+   keys.keyには、tableのcolumn,accessor,procのいずれかが指定できます。keys.flagsには、``GRN_TABLE_SORT_ASC`` / ``GRN_TABLE_SORT_DESC`` のいずれかを指定できます。``GRN_TABLE_SORT_ASC`` では昇順、``GRN_TABLE_SORT_DESC`` では降順でソートされます。keys.offsetは、内部利用のためのメンバです。
+
+   :param table: 対象tableを指定します。
+   :param offset: sortされたレコードのうち、(0ベースで)offset番目から順にresにレコードを格納します。
+   :param limit: resに格納するレコードの上限を指定します。
+   :param result: 結果を格納するtableを指定します。
+   :param keys: ソートキー配列へのポインタを指定します。
+   :param n_keys: ソートキー配列のサイズを指定します。
+ 
+.. c:type:: grn_table_group_result
+
+   TODO...
+
+.. c:type:: grn_table_group_flags
+
+   TODO...
+
+.. c:function:: grn_rc grn_table_group(grn_ctx *ctx, grn_obj *table, grn_table_sort_key *keys, int n_keys, grn_table_group_result *results, int n_results)
+
+   tableのレコードを特定の条件でグループ化します。
+
+   :param table: 対象tableを指定します。
+   :param keys: group化キー構造体の配列へのポインタを指定します。
+   :param n_keys: group化キー構造体の配列のサイズを指定します。
+   :param results: group化の結果を格納する構造体の配列へのポインタを指定します。
+   :param n_results: group化の結果を格納する構造体の配列のサイズを指定します。
+
+.. c:function:: grn_rc grn_table_setoperation(grn_ctx *ctx, grn_obj *table1, grn_obj *table2, grn_obj *res, grn_operator op)
+
+   table1とtable2をopの指定に従って集合演算した結果をresに格納します。
+
+   resにtable1あるいはtable2そのものを指定した場合を除けば、table1, table2は破壊されません。
+
+   :param table1: 対象table1を指定します。
+   :param table2: 対象table2を指定します。
+   :param res: 結果を格納するtableを指定します。
+   :param op: 実行する演算の種類を指定します。
+
+.. c:function:: grn_rc grn_table_difference(grn_ctx *ctx, grn_obj *table1, grn_obj *table2, grn_obj *res1, grn_obj *res2)
+
+   table1とtable2から重複するレコードを取り除いた結果をそれぞれres1, res2に格納します。
+
+   :param table1: 対象table1を指定します。
+   :param table2: 対象table2を指定します。
+   :param res1: 結果を格納するtableを指定します。
+   :param res2: 結果を格納するtableを指定します。
+
+.. c:function:: int grn_table_columns(grn_ctx *ctx, grn_obj *table, const char *name, unsigned int name_size, grn_obj *res)
+ 
+   nameパラメータから始まるtableのカラムIDをresパラメータに格納します。name_sizeパラメータが0の場合はすべてのカラムIDを格納します。
+
+   :param table: 対象tableを指定します。
+   :param name: 取得したいカラム名のprefixを指定します。
+   :param name_size: nameパラメータの長さを指定します。
+   :param res: 結果を格納する ``GRN_TABLE_HASH_KEY`` のtableを指定します。
+   :return: 格納したカラムIDの数を返します。
