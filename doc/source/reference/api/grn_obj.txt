@@ -133,3 +133,26 @@ Reference
    :param obj: 対象objectを指定します。
    :param name: 新しい名前を指定します。
    :param name_size: nameパラメータのsize（byte）を指定します。
+
+.. c:function:: grn_id grn_obj_id(grn_ctx *ctx, grn_obj *obj)
+
+   objのidを返します。
+
+   :param obj: 対象objectを指定します。
+
+.. c:function:: grn_rc grn_obj_delete_by_id(grn_ctx *ctx, grn_obj *db, grn_id id, grn_bool removep)
+
+   dbからidに対応するテーブルやカラムなどを削除します。mroonga向けに用意した内部APIです。
+
+   :param db: The target database.
+   :param id: The object (table, column and so on) ID to be deleted.
+   :param removep: If ``GRN_TRUE``, clear object cache and remove relation between ID and key in database. Otherwise, just clear object cache.
+
+.. c:function:: grn_rc grn_obj_path_by_id(grn_ctx *ctx, grn_obj *db, grn_id id, char *buffer)
+
+   dbのidに対応するpathを返します。mroonga向けに用意した内部APIです。
+
+   :param db: The target database.
+   :param id: The object (table, column and so on) ID to be deleted.
+   :param buffer: path string corresponding to the id will be set in this buffer.
+
