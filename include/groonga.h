@@ -1080,54 +1080,11 @@ typedef enum {
   GRN_HOOK_SELECT
 } grn_hook_entry;
 
-/**
- * grn_obj_add_hook:
- * @obj: 対象object
- * @entry: GRN_HOOK_GETは、objectの参照時に呼び出されるhookを定義する。
-          GRN_HOOK_SETは、objectの更新時に呼び出されるhookを定義する。
-          GRN_HOOK_SELECTは、検索処理の実行中に適時呼び出され、
-          処理の実行状況を調べたり、実行の中断を指示することができる。
- * @offset: hookの実行順位。offsetに対応するhookの直前に新たなhookを挿入する。
-            0を指定した場合は先頭に挿入される。-1を指定した場合は末尾に挿入される。
-            objectに複数のhookが定義されている場合は順位の順に呼び出される。
- * @proc: 手続き
- * @data: hook固有情報
- *
- * objに対してhookを追加する。
- **/
 GRN_API grn_rc grn_obj_add_hook(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry,
                                 int offset, grn_obj *proc, grn_obj *data);
-
-/**
- * grn_obj_get_nhooks:
- * @obj: 対象object
- * @entry: hookタイプ
- *
- * objに定義されているhookの数を返す。
- **/
 GRN_API int grn_obj_get_nhooks(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry);
-
-/**
- * grn_obj_get_hook:
- * @obj: 対象object
- * @entry: hookタイプ
- * @offset: 実行順位
- * @data: hook固有情報格納バッファ
- *
- * objに定義されているhookの手続き(proc)を返す。hook固有情報が定義されている場合は、
- * その内容をdataにコピーして返す。
- **/
 GRN_API grn_obj *grn_obj_get_hook(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry,
                                   int offset, grn_obj *data);
-
-/**
- * grn_obj_delete_hook:
- * @obj: 対象object
- * @entry: hookタイプ
- * @offset: 実行順位
- *
- * objに定義されているhookを削除する。
- **/
 GRN_API grn_rc grn_obj_delete_hook(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry, int offset);
 
 GRN_API grn_obj *grn_obj_open(grn_ctx *ctx, unsigned char type, grn_obj_flags flags, grn_id domain);
