@@ -56,3 +56,15 @@ Reference
    :param table: 対象tableを指定します。
    :param key: 検索keyを指定します。
    :param added: NULL以外の値が指定された場合、新たにrecordが追加された時には1が、既存recordだった時には0がセットされます。
+
+.. c:function:: unsigned int grn_table_size(grn_ctx *ctx, grn_obj *table)
+
+   tableに登録されているレコードの件数を返します。
+
+   :param table: 対象tableを指定します。
+
+.. c:function:: grn_rc grn_table_rename(grn_ctx *ctx, grn_obj *table, const char *name, unsigned int name_size)
+
+   ctxが使用するdbにおいてtableに対応する名前をnameに更新します。tableの全てのcolumnも同時に名前が変更されます。tableは永続オブジェクトでなければいけません。
+
+   :param name_size: nameパラメータのsize(byte)を指定します。
