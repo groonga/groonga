@@ -641,22 +641,6 @@ GRN_API grn_posting *grn_index_cursor_next(grn_ctx *ctx, grn_obj *ic, grn_id *ti
   }\
 } while (0)
 
-/**
- * grn_table_sort:
- * @table: 対象table
- * @offset: sortされたレコードのうち、(0ベースで)offset番目から順にresにレコードを格納する
- * @limit: resに格納するレコードの上限
- * @result: 結果を格納するtable
- * @keys: ソートキー配列へのポインタ
- * @n_keys: ソートキー配列のサイズ
- *
- * table内のレコードをソートし、上位limit個の要素をresultに格納する。
- * keys.keyには、tableのcolumn,accessor,procのいずれかが指定できる。
- * keys.flagsには、GRN_TABLE_SORT_ASC/GRN_TABLE_SORT_DESCのいずれかを指定できる。
- * GRN_TABLE_SORT_ASCでは昇順、GRN_TABLE_SORT_DESCでは降順でソートされる。
- * keys.offsetは、内部利用のためのメンバである。
- **/
-
 typedef struct _grn_table_sort_key grn_table_sort_key;
 typedef unsigned char grn_table_sort_flags;
 
@@ -671,17 +655,6 @@ struct _grn_table_sort_key {
 
 GRN_API int grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
                            grn_obj *result, grn_table_sort_key *keys, int n_keys);
-
-/**
- * grn_table_group:
- * @table: 対象table
- * @keys: group化キー構造体の配列へのポインタ
- * @n_keys: group化キー構造体の配列のサイズ
- * @results: group化の結果を格納する構造体の配列へのポインタ
- * @n_results:group化の結果を格納する構造体の配列のサイズ
- *
- * tableのレコードを特定の条件でグループ化する
- **/
 
 typedef struct _grn_table_group_result grn_table_group_result;
 typedef unsigned int grn_table_group_flags;
@@ -786,43 +759,10 @@ struct _grn_table_group_result {
 GRN_API grn_rc grn_table_group(grn_ctx *ctx, grn_obj *table,
                                grn_table_sort_key *keys, int n_keys,
                                grn_table_group_result *results, int n_results);
-
-/**
- * grn_table_setoperation:
- * @table1: 対象table1
- * @table2: 対象table2
- * @res: 結果を格納するtable
- * @op: 実行する演算の種類
- *
- * table1とtable2をopの指定に従って集合演算した結果をresに格納する。
- * resにtable1あるいはtable2そのものを指定した場合を除けば、table1, table2は破壊されない。
- **/
 GRN_API grn_rc grn_table_setoperation(grn_ctx *ctx, grn_obj *table1, grn_obj *table2,
                                       grn_obj *res, grn_operator op);
-
-/**
- * grn_table_difference:
- * @table1: 対象table1
- * @table2: 対象table2
- * @res1: 結果を格納するtable
- * @res2: 結果を格納するtable
- *
- * table1とtable2から重複するレコードを取り除いた結果をそれぞれres1, res2に格納する。
- **/
 GRN_API grn_rc grn_table_difference(grn_ctx *ctx, grn_obj *table1, grn_obj *table2,
                                     grn_obj *res1, grn_obj *res2);
-
-/**
- * grn_table_columns:
- * @table: 対象table
- * @name: 取得したいカラム名のprefix
- * @name_size: @nameの長さ
- * @res: 結果を格納するGRN_TABLE_HASH_KEYのtable
- *
- * @nameから始まるtableのカラムIDを@resに格納する。
- * @name_sizeが0の場合はすべてのカラムIDを格納する。格納した
- * カラムIDの数を返す。
- **/
 GRN_API int grn_table_columns(grn_ctx *ctx, grn_obj *table,
                               const char *name, unsigned int name_size,
                               grn_obj *res);
