@@ -1045,24 +1045,7 @@ GRN_API grn_user_data *grn_obj_user_data(grn_ctx *ctx, grn_obj *obj);
  **/
 GRN_API grn_rc grn_obj_set_finalizer(grn_ctx *ctx, grn_obj *obj, grn_proc_func *func);
 
-/**
- * grn_obj_path:
- * @obj: 対象object
- *
- * objに対応するファイルパスを返す。一時objectならNULLを返す。
- **/
 GRN_API const char *grn_obj_path(grn_ctx *ctx, grn_obj *obj);
-
-/**
- * grn_obj_name:
- * @obj: 対象object
- * @namebuf: 名前を格納するバッファ(呼出側で準備する)
- * @buf_size: namebufのサイズ(byte長)
- *
- * objの名前の長さを返す。無名objectなら0を返す。
- * 名前付きのobjectであり、buf_sizeの長さが名前の長以上であった場合は、
- * namebufに該当する名前をコピーする。
- **/
 GRN_API int grn_obj_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_size);
 
 /**
@@ -1077,74 +1060,17 @@ GRN_API int grn_obj_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_size
  **/
 GRN_API int grn_column_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_size);
 
-/**
- * grn_obj_get_range:
- * @obj: 対象object
- *
- * @objのとる値の範囲を表わしているオブジェクトのIDを返す。
- * 例えば、grn_builtin_typeにあるGRN_DB_INTなどを返す。
- **/
 GRN_API grn_id grn_obj_get_range(grn_ctx *ctx, grn_obj *obj);
 
 #define GRN_OBJ_GET_DOMAIN(obj) \
   ((obj)->header.type == GRN_TABLE_NO_KEY ? GRN_ID_NIL : (obj)->header.domain)
 
-/**
- * grn_obj_expire:
- * @obj: 対象object
- *
- * objの占有するメモリのうち、可能な領域をthresholdを指標として解放する。
- **/
 GRN_API int grn_obj_expire(grn_ctx *ctx, grn_obj *obj, int threshold);
-
-/**
- * grn_obj_check:
- * @obj: 対象object
- *
- * objに対応するファイルの整合性を検査する。
- **/
 GRN_API int grn_obj_check(grn_ctx *ctx, grn_obj *obj);
-
-/**
- * grn_obj_lock:
- * @obj: 対象object
- *
- * objをlockする。timeout(秒)経過してもlockを取得できない場合は
- * GRN_RESOURCE_DEADLOCK_AVOIDEDを返す。
- **/
 GRN_API grn_rc grn_obj_lock(grn_ctx *ctx, grn_obj *obj, grn_id id, int timeout);
-
-/**
- * grn_obj_unlock:
- * @obj: 対象object
- *
- * objをunlockする。
- **/
 GRN_API grn_rc grn_obj_unlock(grn_ctx *ctx, grn_obj *obj, grn_id id);
-
-/**
- * grn_obj_clear_lock:
- * @obj: 対象object
- *
- * 強制的にロックをクリアする。
- **/
 GRN_API grn_rc grn_obj_clear_lock(grn_ctx *ctx, grn_obj *obj);
-
-/**
- * grn_obj_is_locked;
- * @obj: 対象object
- *
- * objが現在lockされていれば0以外の値を返す。
- **/
 GRN_API unsigned int grn_obj_is_locked(grn_ctx *ctx, grn_obj *obj);
-
-/**
- * grn_obj_defrag;
- * @obj: 対象object
- *
- * objの占有するDBファイル領域のうち、可能な領域をthresholdを指標としてフラグメントの解消を行う。
- * フラグメント解消が実行されたセグメントの数を返す。
- **/
 GRN_API int grn_obj_defrag(grn_ctx *ctx, grn_obj *obj, int threshold);
 
 /**

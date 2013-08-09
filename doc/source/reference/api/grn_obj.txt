@@ -31,3 +31,68 @@ Reference
    :param table: 対象tableを指定します。
    :param name: カラム名を指定します。
 
+.. c:function:: const char *grn_obj_path(grn_ctx *ctx, grn_obj *obj)
+
+   objに対応するファイルパスを返します。一時objectならNULLを返します。
+
+   :param obj: 対象objectを指定します。
+
+.. c:function:: int grn_obj_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_size)
+
+   objの名前の長さを返します。無名objectなら0を返します。
+
+   名前付きのobjectであり、buf_sizeの長さが名前の長以上であった場合は、namebufに該当する名前をコピーします。
+
+   :param obj: 対象objectを指定します。
+   :param namebuf: 名前を格納するバッファ（呼出側で準備する）を指定します。
+   :param buf_size: namebufのサイズ（byte長）を指定します。
+
+.. c:function:: grn_id grn_obj_get_range(grn_ctx *ctx, grn_obj *obj)
+
+   objパラメータのとる値の範囲を表わしているオブジェクトのIDを返します。例えば、:c:type:`grn_builtin_type` にある ``GRN_DB_INT`` などを返します。
+
+   :param obj: 対象objectを指定します。
+
+.. c:function:: int grn_obj_expire(grn_ctx *ctx, grn_obj *obj, int threshold)
+
+   objの占有するメモリのうち、可能な領域をthresholdを指標として解放します。
+
+   :param obj: 対象objectを指定します。
+
+.. c:function:: int grn_obj_check(grn_ctx *ctx, grn_obj *obj)
+
+   objに対応するファイルの整合性を検査します。
+
+   :param obj: 対象objectを指定します。
+
+.. c:function:: grn_rc grn_obj_lock(grn_ctx *ctx, grn_obj *obj, grn_id id, int timeout)
+
+   objをlockします。timeout（秒）経過してもlockを取得できない場合は ``GRN_RESOURCE_DEADLOCK_AVOIDED`` を返します。
+
+   :param obj: 対象objectを指定します。
+
+.. c:function:: grn_rc grn_obj_unlock(grn_ctx *ctx, grn_obj *obj, grn_id id)
+
+   objをunlockします。
+
+   :param obj: 対象objectを指定します。
+
+.. c:function:: grn_rc grn_obj_clear_lock(grn_ctx *ctx, grn_obj *obj)
+
+   強制的にロックをクリアします。
+
+   :param obj: 対象objectを指定します。
+
+.. c:function:: unsigned int grn_obj_is_locked(grn_ctx *ctx, grn_obj *obj)
+
+   objが現在lockされていれば0以外の値を返します。
+
+   :param obj: 対象objectを指定します。
+
+.. c:function:: int grn_obj_defrag(grn_ctx *ctx, grn_obj *obj, int threshold)
+
+   objの占有するDBファイル領域のうち、可能な領域をthresholdを指標としてフラグメントの解消を行います。
+
+   フラグメント解消が実行されたセグメントの数を返します。
+
+   :param obj: 対象objectを指定します。
