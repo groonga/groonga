@@ -348,6 +348,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference.txt \
 	$(top_srcdir)/doc/source/reference/api.txt \
 	$(top_srcdir)/doc/source/reference/api/grn_column.txt \
+	$(top_srcdir)/doc/source/reference/api/grn_command_version.txt \
 	$(top_srcdir)/doc/source/reference/api/grn_ctx.txt \
 	$(top_srcdir)/doc/source/reference/api/grn_db.txt \
 	$(top_srcdir)/doc/source/reference/api/grn_encoding.txt \
@@ -819,6 +820,7 @@ source_files_relative_from_doc_dir = \
 	source/reference.txt \
 	source/reference/api.txt \
 	source/reference/api/grn_column.txt \
+	source/reference/api/grn_command_version.txt \
 	source/reference/api/grn_ctx.txt \
 	source/reference/api/grn_db.txt \
 	source/reference/api/grn_encoding.txt \
@@ -1057,6 +1059,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference.txt \
 	html/_sources/reference/api.txt \
 	html/_sources/reference/api/grn_column.txt \
+	html/_sources/reference/api/grn_command_version.txt \
 	html/_sources/reference/api/grn_ctx.txt \
 	html/_sources/reference/api/grn_db.txt \
 	html/_sources/reference/api/grn_encoding.txt \
@@ -1228,6 +1231,7 @@ html_files_relative_from_locale_dir = \
 	html/reference.html \
 	html/reference/api.html \
 	html/reference/api/grn_column.html \
+	html/reference/api/grn_command_version.html \
 	html/reference/api/grn_ctx.html \
 	html/reference/api/grn_db.html \
 	html/reference/api/grn_encoding.html \
