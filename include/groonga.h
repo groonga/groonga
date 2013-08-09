@@ -1036,13 +1036,6 @@ GRN_API void grn_obj_unlink(grn_ctx *ctx, grn_obj *obj);
  **/
 GRN_API grn_user_data *grn_obj_user_data(grn_ctx *ctx, grn_obj *obj);
 
-/**
- * grn_obj_set_finalizer
- * @obj: 対象object
- * @func: objectを破棄するときに呼ばれる関数
- *
- * objectを破棄するときに呼ばれる関数を設定する。table, column, proc, exprのみ設定可能。
- **/
 GRN_API grn_rc grn_obj_set_finalizer(grn_ctx *ctx, grn_obj *obj, grn_proc_func *func);
 
 /**
