@@ -835,48 +835,10 @@ typedef enum {
   GRN_INFO_NORMALIZER
 } grn_info_type;
 
-/**
- * grn_obj_get_info:
- * @obj: 対象obj
- * @type: 取得する情報の種類
- * @valuebuf: 値を格納するバッファ(呼出側で準備)
- *
- * objのtypeに対応する情報をvaluebufに格納する。
- **/
 GRN_API grn_obj *grn_obj_get_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *valuebuf);
-
-/**
- * grn_obj_set_info:
- * @obj: 対象obj
- * @type: 設定する情報の種類
- * @value: 設定しようとする値
- *
- * objのtypeに対応する情報をvalueの内容に更新する。
- **/
 GRN_API grn_rc grn_obj_set_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *value);
-
-/**
- * grn_obj_get_element_info:
- * @obj: 対象obj
- * @id: 対象ID
- * @type: 取得する情報の種類
- * @value: 値を格納するバッファ(呼出側で準備)
- *
- * objのidに対応するレコードの、typeに対応する情報をvaluebufに格納する。
- * 呼出側ではtypeに応じて十分なサイズのバッファを確保しなければならない。
- **/
 GRN_API grn_obj *grn_obj_get_element_info(grn_ctx *ctx, grn_obj *obj, grn_id id,
                                           grn_info_type type, grn_obj *value);
-
-/**
- * grn_obj_set_element_info:
- * @obj: 対象object
- * @id: 対象ID
- * @type: 設定する情報の種類
- * @value: 設定しようとする値
- *
- * objのidに対応するレコードのtypeに対応する情報をvalueの内容に更新する。
- **/
 GRN_API grn_rc grn_obj_set_element_info(grn_ctx *ctx, grn_obj *obj, grn_id id,
                                         grn_info_type type, grn_obj *value);
 
