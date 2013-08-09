@@ -770,12 +770,6 @@ GRN_API int grn_table_columns(grn_ctx *ctx, grn_obj *table,
 GRN_API grn_obj *grn_obj_column(grn_ctx *ctx, grn_obj *table,
                                 const char *name, unsigned int name_size);
 
-/**
- * grn_table_size:
- * @table: 対象table
- *
- * tableに登録されているレコードの件数を返す。
- **/
 GRN_API unsigned int grn_table_size(grn_ctx *ctx, grn_obj *table);
 
 /*-------------------------------------------------------------
@@ -989,16 +983,6 @@ GRN_API grn_rc grn_obj_remove(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_rc grn_obj_rename(grn_ctx *ctx, grn_obj *obj,
                               const char *name, unsigned int name_size);
 
-/**
- * grn_table_rename:
- * @table: 対象table
- * @name: 新しい名前
- * @name_size: @nameのsize(byte)
- *
- * ctxが使用するdbにおいてtableに対応する名前をnameに更新する。
- * tableの全てのcolumnも同時に名前が変更される。
- * tableは永続オブジェクトでなければならない。
- **/
 GRN_API grn_rc grn_table_rename(grn_ctx *ctx, grn_obj *table,
                                 const char *name, unsigned int name_size);
 
