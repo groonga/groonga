@@ -56,3 +56,83 @@ Reference
    :param table: 対象tableを指定します。
    :param key: 検索keyを指定します。
    :param added: NULL以外の値が指定された場合、新たにrecordが追加された時には1が、既存recordだった時には0がセットされます。
+
+.. c:function:: grn_id grn_table_get(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key_size)
+
+   It finds a record that has key parameter and returns ID of the found record. If table parameter is a database, it finds an object (table, column and so on) that has key parameter  and returns ID of the found object.
+
+   :param table: The table or database.
+   :param key: The record or object key to be found.
+ 
+.. c:function:: grn_id grn_table_at(grn_ctx *ctx, grn_obj *table, grn_id id)
+
+   tableにidに対応するrecordが存在するか確認し、存在すれば指定されたIDを、存在しなければ ``GRN_ID_NIL`` を返します。
+
+   注意: 実行には相応のコストがかかるのであまり頻繁に呼ばないようにして下さい。
+
+   :param table: 対象tableを指定します。
+   :param id: 検索idを指定します。
+
+.. c:function:: grn_id grn_table_lcp_search(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key_size)
+
+   tableが ``GRN_TABLE_PAT_KEY`` もしくは ``GRN_TABLE_DAT_KEY`` を指定して作ったtableなら、longest common prefix searchを行い、対応するIDを返します。
+
+   tableが ``GRN_TABLE_HASH_KEY`` を指定して作ったtableなら、完全に一致するキーを検索し、対応するIDを返します。
+
+   :param table: 対象tableを指定します。
+   :param key: 検索keyを指定します。
+
+.. c:function:: int grn_table_get_key(grn_ctx *ctx, grn_obj *table, grn_id id, void *keybuf, int buf_size)
+
+   tableのIDに対応するレコードのkeyを取得します。
+
+   対応するレコードが存在する場合はkey長を返します。見つからない場合は0を返します。対応するキーの検索に成功し、またbuf_sizeの長さがkey長以上であった場合は、keybufに該当するkeyをコピーします。
+
+   :param table: 対象tableを指定します。
+   :param id: 対象レコードのIDを指定します。
+   :param keybuf: keyを格納するバッファ(呼出側で準備する)を指定します。
+   :param buf_size: keybufのサイズ(byte長)を指定します。
+ 
+.. c:function:: grn_rc grn_table_delete(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key_size)
+
+   tableのkeyに対応するレコードを削除します。対応するレコードが存在しない場合は ``GRN_INVALID_ARGUMENT`` を返します。
+ 
+   :param table: 対象tableを指定します。
+   :param key: 検索keyを指定します。
+   :param key_size: 検索keyのサイズを指定します。
+
+.. c:function:: grn_rc grn_table_delete_by_id(grn_ctx *ctx, grn_obj *table, grn_id id)
+
+   tableのidに対応するレコードを削除します。対応するレコードが存在しない場合は ``GRN_INVALID_ARGUMENT`` を返します。
+
+   :param table: 対象tableを指定します。
+   :param id: レコードIDを指定します。
+
+.. c:function:: grn_rc grn_table_update_by_id(grn_ctx *ctx, grn_obj *table, grn_id id, const void *dest_key, unsigned int dest_key_size)
+
+   tableのidに対応するレコードのkeyを変更します。新しいkeyとそのbyte長をdest_keyとdest_key_sizeに指定します。
+
+   この操作は、``GRN_TABLE_DAT_KEY`` 型のテーブルのみ使用できます。
+
+   :param table: 対象tableを指定します。
+   :param id: レコードIDを指定します。
+
+.. c:function:: grn_rc grn_table_update(grn_ctx *ctx, grn_obj *table, const void *src_key, unsigned int src_key_size, const void *dest_key, unsigned int dest_key_size)
+ 
+   tableのsrc_keyに対応するレコードのkeyを変更します。新しいkeyとそのbyte長をdest_keyとdest_key_sizeに指定します。
+
+   この操作は、``GRN_TABLE_DAT_KEY`` 型のテーブルのみ使用できます。
+
+   :param table: 対象tableを指定します。
+   :param src_key: 対象レコードのkeyを指定します。
+   :param src_key_size: 対象レコードのkeyの長さ(byte)を指定します。
+   :param dest_key: 変更後のkeyを指定します。
+   :param dest_key_size: 変更後のkeyの長さ(byte)を指定します。
+
+.. c:function:: grn_rc grn_table_truncate(grn_ctx *ctx, grn_obj *table)
+
+   tableの全レコードを一括して削除します。
+
+   注意: multithread環境では他のthreadのアクセスによって、存在しないアドレスへアクセスし、SIGSEGVが発生する可能性があります。
+
+   :param table: 対象tableを指定します。
