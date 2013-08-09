@@ -225,19 +225,7 @@ GRN_API grn_ctx *grn_ctx_open(int flags);
 GRN_API grn_rc grn_ctx_close(grn_ctx *ctx);
 GRN_API grn_rc grn_ctx_set_finalizer(grn_ctx *ctx, grn_proc_func *func);
 
-/**
- * grn_get_default_encoding:
- *
- * デフォルトのencodingを返します。
- **/
 GRN_API grn_encoding grn_get_default_encoding(void);
-
-/**
- * grn_set_default_encoding:
- * @encoding: 変更後のデフォルトのencodingを指定します。
- *
- * デフォルトのencodingを変更します。
- **/
 GRN_API grn_rc grn_set_default_encoding(grn_encoding encoding);
 
 #define GRN_CTX_GET_ENCODING(ctx) ((ctx)->encoding)
@@ -287,26 +275,8 @@ GRN_API long long int grn_get_default_match_escalation_threshold(void);
 GRN_API grn_rc grn_set_default_match_escalation_threshold(long long int threshold);
 
 /* grn_encoding */
-/**
- * grn_encoding_to_string:
- * @encoding: The encoding.
- *
- * Returns string representation for the encoding. For example,
- * 'grn_encoding_to_string(GRN_ENC_UTF8)' returns '"utf8"'.
- *
- * "unknown" is returned for invalid encoding.
- **/
-GRN_API const char *grn_encoding_to_string(grn_encoding encoding);
 
-/**
- * grn_encoding_parse:
- * @name: The encoding name.
- *
- * Parses encoding name and returns grn_encoding.
- * For example, 'grn_encoding_to_string("UTF8")' returns 'GRN_ENC_UTF8'.
- *
- * 'GRN_ENC_UTF8' is returned for invalid encoding name.
- **/
+GRN_API const char *grn_encoding_to_string(grn_encoding encoding);
 GRN_API grn_encoding grn_encoding_parse(const char *name);
 
 /* obj */
