@@ -887,12 +887,6 @@ GRN_API grn_rc grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, unsigne
  **/
 GRN_API void grn_obj_unlink(grn_ctx *ctx, grn_obj *obj);
 
-/**
- * grn_obj_user_data
- * @obj: 対象object
- *
- * objectに登録できるユーザデータへのポインタを返す。table, column, proc, exprのみ使用可能。
- **/
 GRN_API grn_user_data *grn_obj_user_data(grn_ctx *ctx, grn_obj *obj);
 
 /**
