@@ -51,9 +51,18 @@ static grn_hash *grn_plugins = NULL;
 #endif
 
 grn_id
-grn_plugin_get(grn_ctx *ctx, const char *filename)
+grn_plugin_reference(grn_ctx *ctx, const char *filename)
 {
-  return grn_hash_get(ctx, grn_plugins, filename, PATHLEN(filename), NULL);
+  grn_id id;
+  grn_plugin **plugin = NULL;
+
+  id = grn_hash_get(ctx, grn_plugins, filename, PATHLEN(filename),
+                    (void **)&plugin);
+  if (plugin) {
+    (*plugin)->refcount++;
+  }
+
+  return id;
 }
 
 const char *
@@ -165,13 +174,6 @@ grn_plugin_initialize(grn_ctx *ctx, grn_plugin *plugin,
   return ctx->rc;
 }
 
-static grn_id
-grn_plugin_find(grn_ctx *ctx, const char *filename, grn_plugin **plugin)
-{
-  return grn_hash_get(ctx, grn_plugins, filename, PATHLEN(filename),
-                      (void **)&plugin);
-}
-
 grn_id
 grn_plugin_open(grn_ctx *ctx, const char *filename)
 {
@@ -179,12 +181,12 @@ grn_plugin_open(grn_ctx *ctx, const char *filename)
   grn_dl dl;
   grn_plugin **plugin = NULL;
 
-  if ((id = grn_plugin_find(ctx, filename, plugin))) {
-    if (plugin && *plugin) {
-      (*plugin)->refcount++;
-    }
+  if ((id = grn_hash_get(ctx, grn_plugins, filename, PATHLEN(filename),
+                         (void **)&plugin))) {
+    (*plugin)->refcount++;
     return id;
   }
+
   if ((dl = grn_dl_open(filename))) {
     if ((id = grn_hash_add(ctx, grn_plugins, filename, PATHLEN(filename),
                            (void **)&plugin, NULL))) {
@@ -307,19 +309,12 @@ grn_plugin_register_by_path(grn_ctx *ctx, const char *path)
   GRN_API_ENTER;
   if (GRN_DB_P(db)) {
     grn_id id;
-    grn_bool opened = GRN_FALSE;
-    id = grn_plugin_find(ctx, path, NULL);
-    if (id == GRN_ID_NIL) {
-      id = grn_plugin_open(ctx, path);
-      opened = GRN_TRUE;
-    }
+    id = grn_plugin_open(ctx, path);
     if (id) {
       ctx->impl->plugin_path = path;
       ctx->rc = grn_plugin_call_register(ctx, id);
       ctx->impl->plugin_path = NULL;
-      if (ctx->rc && opened) {
-        grn_plugin_close(ctx, id);
-      }
+      grn_plugin_close(ctx, id);
     }
   } else {
     ERR(GRN_INVALID_ARGUMENT, "invalid db assigned");

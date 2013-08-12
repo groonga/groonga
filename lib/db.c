@@ -551,7 +551,7 @@ grn_proc_create(grn_ctx *ctx, const char *name, int name_size, grn_proc_type typ
 {
   grn_proc *res = NULL;
   grn_id id = GRN_ID_NIL;
-  grn_id range;
+  grn_id range = GRN_ID_NIL;
   int added = 0;
   grn_obj *db;
   const char *path = ctx->impl->plugin_path;
@@ -560,7 +560,9 @@ grn_proc_create(grn_ctx *ctx, const char *name, int name_size, grn_proc_type typ
     return NULL;
   }
   GRN_API_ENTER;
-  range = path ? grn_plugin_get(ctx, path) : GRN_ID_NIL;
+  if (path) {
+    range = grn_plugin_reference(ctx, path);
+  }
   if (name_size < 0) {
     name_size = strlen(name);
   }

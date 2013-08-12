@@ -57,7 +57,7 @@ grn_rc grn_plugins_init(void);
 grn_rc grn_plugins_fin(void);
 grn_id grn_plugin_open(grn_ctx *ctx, const char *filename);
 grn_rc grn_plugin_close(grn_ctx *ctx, grn_id id);
-grn_id grn_plugin_get(grn_ctx *ctx, const char *filename);
+grn_id grn_plugin_reference(grn_ctx *ctx, const char *filename);
 const char *grn_plugin_path(grn_ctx *ctx, grn_id id);
 char *grn_plugin_find_path(grn_ctx *ctx, const char *name);
 
