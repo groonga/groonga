@@ -62,7 +62,7 @@ void
 cut_teardown(void)
 {
   grn_obj_close(&context, &escaped_query);
-  grn_db_close(&context, database);
+  grn_obj_close(&context, database);
   grn_ctx_fin(&context);
   cut_remove_path(tmp_directory, NULL);
   g_free(path);
