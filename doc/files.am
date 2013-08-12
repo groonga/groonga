@@ -353,6 +353,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/api/grn_db.txt \
 	$(top_srcdir)/doc/source/reference/api/grn_encoding.txt \
 	$(top_srcdir)/doc/source/reference/api/grn_expr.txt \
+	$(top_srcdir)/doc/source/reference/api/grn_geo.txt \
 	$(top_srcdir)/doc/source/reference/api/grn_hook.txt \
 	$(top_srcdir)/doc/source/reference/api/grn_ii.txt \
 	$(top_srcdir)/doc/source/reference/api/grn_index_cursor.txt \
@@ -831,6 +832,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/api/grn_db.txt \
 	source/reference/api/grn_encoding.txt \
 	source/reference/api/grn_expr.txt \
+	source/reference/api/grn_geo.txt \
 	source/reference/api/grn_hook.txt \
 	source/reference/api/grn_ii.txt \
 	source/reference/api/grn_index_cursor.txt \
@@ -1076,6 +1078,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/api/grn_db.txt \
 	html/_sources/reference/api/grn_encoding.txt \
 	html/_sources/reference/api/grn_expr.txt \
+	html/_sources/reference/api/grn_geo.txt \
 	html/_sources/reference/api/grn_hook.txt \
 	html/_sources/reference/api/grn_ii.txt \
 	html/_sources/reference/api/grn_index_cursor.txt \
@@ -1254,6 +1257,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/api/grn_db.html \
 	html/reference/api/grn_encoding.html \
 	html/reference/api/grn_expr.html \
+	html/reference/api/grn_geo.html \
 	html/reference/api/grn_hook.html \
 	html/reference/api/grn_ii.html \
 	html/reference/api/grn_index_cursor.html \

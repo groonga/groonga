@@ -897,83 +897,22 @@ typedef struct {
   int longitude;
 } grn_geo_point;
 
-
-/**
- * grn_geo_select_in_rectangle:
- * @index: the index column for TokyoGeoPoint or WGS84GeoPpoint type.
- * @top_left_point: the top left point of the target
- * rectangle. (ShortText, Text, LongText, TokyoGeoPoint or
- * WGS84GeoPoint)
- * @bottom_right_point: the bottom right point of the target
- * rectangle. (ShortText, Text, LongText, TokyoGeoPoint or
- * WGS84GeoPoint)
- * @res: the table to store found record IDs. It must be
- * GRN_TABLE_HASH_KEY type table.
- * @op: the operator for matched records.
- *
- * It selects records that are in the rectangle specified by
- * @top_left_point and @bottom_right_point. Records are
- * searched by @index. Found records are added to @res table
- * with @op operation.
- **/
 GRN_API grn_rc grn_geo_select_in_rectangle(grn_ctx *ctx,
                                            grn_obj *index,
                                            grn_obj *top_left_point,
                                            grn_obj *bottom_right_point,
                                            grn_obj *res,
                                            grn_operator op);
-
-/**
- * grn_geo_estimate_in_rectangle:
- * @index: the index column for TokyoGeoPoint or WGS84GeoPpoint type.
- * @top_left_point: the top left point of the target
- * rectangle. (ShortText, Text, LongText, TokyoGeoPoint or
- * WGS84GeoPoint)
- * @bottom_right_point: the bottom right point of the target
- * rectangle. (ShortText, Text, LongText, TokyoGeoPoint or
- * WGS84GeoPoint)
- *
- * It estimates number of records in the rectangle specified
- * by @top_left_point and @bottom_right_point. Number of
- * records is estimated by @index. If an error is occurred,
- * -1 is returned.
- **/
 GRN_API int grn_geo_estimate_in_rectangle(grn_ctx *ctx,
                                           grn_obj *index,
                                           grn_obj *top_left_point,
                                           grn_obj *bottom_right_point);
-
-/**
- * grn_geo_cursor_open_in_rectangle:
- * @index: the index column for TokyoGeoPoint or WGS84GeoPpoint type.
- * @top_left_point: the top left point of the target
- * rectangle. (ShortText, Text, LongText, TokyoGeoPoint or
- * WGS84GeoPoint)
- * @bottom_right_point: the bottom right point of the target
- * rectangle. (ShortText, Text, LongText, TokyoGeoPoint or
- * WGS84GeoPoint)
- * @offset: the cursor returns records from @offset
- * position. @offset is based on 0.
- * @limit: the cursor returns at most @limit records. -1
- * means no limit.
- *
- * It opens a cursor to get records in the rectangle
- * specfied by @top_left_point and @bottom_right_point.
- **/
 GRN_API grn_obj *grn_geo_cursor_open_in_rectangle(grn_ctx *ctx,
                                                   grn_obj *index,
                                                   grn_obj *top_left_point,
                                                   grn_obj *bottom_right_point,
                                                   int offset,
                                                   int limit);
-
-/**
- * grn_geo_cursor_next:
- * @cursor: the geo cursor.
- *
- * It returns the next posting that has record ID. It
- * returns NULL after all records are returned.
- **/
 GRN_API grn_posting *grn_geo_cursor_next(grn_ctx *ctx, grn_obj *cursor);
 
 
