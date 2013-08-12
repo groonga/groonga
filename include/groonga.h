@@ -857,34 +857,8 @@ GRN_API grn_rc grn_table_rename(grn_ctx *ctx, grn_obj *table,
 GRN_API grn_rc grn_column_rename(grn_ctx *ctx, grn_obj *column,
                                  const char *name, unsigned int name_size);
 
-/**
- * grn_obj_close:
- * @obj: 対象object
- *
- * 一時的なobjectであるobjをメモリから解放する。
- * objに属するobjectも再帰的にメモリから解放される。
- * 永続的な、table・column・exprなどは解放してはならない。
- * 一般的には、一時的か永続的かを気にしなくてよいgrn_obj_unlinkを用いるべき。
- **/
 GRN_API grn_rc grn_obj_close(grn_ctx *ctx, grn_obj *obj);
-
-/**
- * grn_obj_reinit:
- * @obj: 対象object
- * @domain: 変更後のobjの型
- * @flags: GRN_OBJ_VECTORを指定するとdomain型の値のベクタを格納するオブジェクトになる。
- *
- * objの型を変更する。objはGRN_OBJ_INITマクロなどで初期化済みでなければならない。
- **/
 GRN_API grn_rc grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, unsigned char flags);
-
-/**
- * grn_obj_unlink:
- * @obj: 対象object
- *
- * objをメモリから解放する。
- * objに属するobjectも再帰的にメモリから解放される。
- **/
 GRN_API void grn_obj_unlink(grn_ctx *ctx, grn_obj *obj);
 
 /**
