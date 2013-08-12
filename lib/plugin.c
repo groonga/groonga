@@ -285,8 +285,8 @@ grn_plugins_fin(void)
   grn_ctx *ctx = &grn_gctx;
   if (!grn_plugins) { return GRN_INVALID_ARGUMENT; }
   GRN_HASH_EACH(ctx, grn_plugins, id, NULL, NULL, NULL, {
-      grn_plugin_close(ctx, id);
-    });
+    grn_plugin_close(ctx, id);
+  });
   return grn_hash_close(&grn_gctx, grn_plugins);
 }
 
