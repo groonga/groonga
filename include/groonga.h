@@ -450,17 +450,6 @@ typedef enum {
 
 GRN_API grn_obj *grn_ctx_at(grn_ctx *ctx, grn_id id);
 
-/**
- * grn_type_create:
- * @name: 作成するtypeの名前。
- * @flags: GRN_OBJ_KEY_VAR_SIZE, GRN_OBJ_KEY_FLOAT, GRN_OBJ_KEY_INT, GRN_OBJ_KEY_UINT
- *        のいずれかを指定
- * @size: GRN_OBJ_KEY_VAR_SIZEの場合は最大長、
- *        それ以外の場合は長さを指定(単位:byte)
- *
- * nameに対応する新たなtype(型)をdbに定義する。
- **/
-
 GRN_API grn_obj *grn_type_create(grn_ctx *ctx, const char *name, unsigned int name_size,
                                  grn_obj_flags flags, unsigned int size);
 
