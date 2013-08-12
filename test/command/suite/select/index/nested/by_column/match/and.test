@@ -1,0 +1,28 @@
+table_create Users TABLE_PAT_KEY ShortText
+column_create Users hobby COLUMN_SCALAR ShortText
+
+table_create Files TABLE_PAT_KEY ShortText
+column_create Files owner COLUMN_SCALAR Users
+
+column_create Users files_owner_index COLUMN_INDEX Files owner
+
+table_create Hobbies TABLE_PAT_KEY ShortText
+column_create Hobbies users_hobby COLUMN_INDEX Users hobby
+
+load --table Users
+[
+{"_key": "Alice",  "hobby": "programming"},
+{"_key": "Bob",    "hobby": "system administration"},
+{"_key": "Carlos", "hobby": "running"}
+]
+
+load --table Files
+[
+{"_key": "/home/alice/.zshrc",                  "owner": "Alice"},
+{"_key": "/home/bob/.bashrc",                   "owner": "Bob"},
+{"_key": "/home/calros/public_html/index.html", "owner": "Carlos"}
+]
+
+select Files \
+  --filter '_key @^ "/home/" && owner.hobby @ "programming"' \
+  --output_columns '_key, owner, owner.hobby'

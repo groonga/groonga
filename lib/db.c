@@ -2681,7 +2681,7 @@ grn_obj_search_accessor(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
       if (!base_res) {
         goto exit;
       }
-      rc = grn_obj_search(ctx, index, query, base_res, op, optarg);
+      rc = grn_obj_search(ctx, index, query, base_res, GRN_OP_OR, optarg);
       if (rc != GRN_SUCCESS) {
         grn_obj_unlink(ctx, base_res);
         goto exit;
