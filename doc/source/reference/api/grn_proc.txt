@@ -46,3 +46,11 @@ Reference
    :param user_data: :c:type:`grn_proc_func` に渡されたuser_dataを指定します。
    :param nvars: 変数の数を取得します。
 
+.. c:function:: grn_rc grn_obj_set_finalizer(grn_ctx *ctx, grn_obj *obj, grn_proc_func *func)
+
+   objectを破棄するときに呼ばれる関数を設定します。
+
+   table, column, proc, exprのみ設定可能です。
+
+   :param obj: 対象objectを指定します。
+   :param func: objectを破棄するときに呼ばれる関数を指定します。
