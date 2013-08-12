@@ -716,13 +716,6 @@ GRN_API grn_obj *grn_column_create(grn_ctx *ctx, grn_obj *table,
 GRN_API grn_rc grn_column_index_update(grn_ctx *ctx, grn_obj *column,
                                        grn_id id, unsigned int section,
                                        grn_obj *oldvalue, grn_obj *newvalue);
-
-/**
- * grn_column_table:
- * @column: 対象column
- *
- * columnが属するtableを返す。
- **/
 GRN_API grn_obj *grn_column_table(grn_ctx *ctx, grn_obj *column);
 
 /*-------------------------------------------------------------
@@ -804,15 +797,6 @@ GRN_API grn_rc grn_obj_rename(grn_ctx *ctx, grn_obj *obj,
 GRN_API grn_rc grn_table_rename(grn_ctx *ctx, grn_obj *table,
                                 const char *name, unsigned int name_size);
 
-/**
- * grn_column_rename:
- * @column: 対象column
- * @name: 新しい名前
- * @name_size: @nameのsize(byte)
- *
- * ctxが使用するdbにおいてcolumnに対応する名前をnameに更新する。
- * columnは永続オブジェクトでなければならない。
- **/
 GRN_API grn_rc grn_column_rename(grn_ctx *ctx, grn_obj *column,
                                  const char *name, unsigned int name_size);
 
@@ -827,16 +811,6 @@ GRN_API grn_rc grn_obj_set_finalizer(grn_ctx *ctx, grn_obj *obj, grn_proc_func *
 GRN_API const char *grn_obj_path(grn_ctx *ctx, grn_obj *obj);
 GRN_API int grn_obj_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_size);
 
-/**
- * grn_column_name:
- * @obj: 対象object
- * @namebuf: 名前を格納するバッファ(呼出側で準備する)
- * @buf_size: namebufのサイズ(byte長)
- *
- * カラムobjの名前の長さを返す。
- * buf_sizeの長さが名前の長以上であった場合は、
- * namebufに該当する名前をコピーする。
- **/
 GRN_API int grn_column_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_size);
 
 GRN_API grn_id grn_obj_get_range(grn_ctx *ctx, grn_obj *obj);
@@ -910,17 +884,6 @@ GRN_API grn_rc grn_obj_delete_hook(grn_ctx *ctx, grn_obj *obj, grn_hook_entry en
 
 GRN_API grn_obj *grn_obj_open(grn_ctx *ctx, unsigned char type, grn_obj_flags flags, grn_id domain);
 
-/**
- * grn_column_index:
- * @column: 対象のcolumn
- * @op: indexで実行したい操作
- * @indexbuf: indexを格納するバッファ(呼出側で準備する)
- * @buf_size: namebufのサイズ(byte長)
- * @section: section番号を格納するint長バッファ(呼出側で準備する)
- *
- * columnに張られているindexのうち、opの操作を実行可能なものの数を返す。
- * またそれらのidを、buf_sizeに指定された個数を上限としてindexbufに返す。
- **/
 GRN_API int grn_column_index(grn_ctx *ctx, grn_obj *column, grn_operator op,
                              grn_obj **indexbuf, int buf_size, int *section);
 
