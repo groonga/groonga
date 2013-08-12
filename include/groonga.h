@@ -899,12 +899,6 @@ GRN_API grn_rc grn_obj_clear_lock(grn_ctx *ctx, grn_obj *obj);
 GRN_API unsigned int grn_obj_is_locked(grn_ctx *ctx, grn_obj *obj);
 GRN_API int grn_obj_defrag(grn_ctx *ctx, grn_obj *obj, int threshold);
 
-/**
- * grn_obj_db:
- * @obj: 対象object
- *
- * objの属するdbを返す。
- **/
 GRN_API grn_obj *grn_obj_db(grn_ctx *ctx, grn_obj *obj);
 
 GRN_API grn_id grn_obj_id(grn_ctx *ctx, grn_obj *obj);

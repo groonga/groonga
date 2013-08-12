@@ -63,3 +63,9 @@ TODO...
    最終更新時刻はキャッシュが有効かどうかの判断などに利用されます。
 
    :param db: 内容が変更されたdbを指定します。
+
+.. c:function:: grn_obj *grn_obj_db(grn_ctx *ctx, grn_obj *obj)
+
+   objの属するdbを返します。
+
+   :param obj: 対象objectを指定します。
