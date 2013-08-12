@@ -32,7 +32,9 @@ load --table Bookmarks
 [[0,0.0,0.0],3]
 delete --table Users --filter 'true'
 [[0,0.0,0.0],true]
+#|w| undeletable record (Users:1) has value (bookmakrs:4)
 #|e| undeletable record (Users:1) has value (bookmakrs:4)
+#|w| undeletable record (Users:3) has value (bookmakrs:1)
 #|e| undeletable record (Users:3) has value (bookmakrs:1)
 select --table Users
 [
