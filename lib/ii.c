@@ -3813,7 +3813,15 @@ exit :
   array_unref(ii, tid);
   if (bs) { GRN_FREE(bs); }
   if (u->tf != u->atf) {
-    GRN_LOG(ctx, GRN_LOG_WARNING, "too many postings(%d) on %u. discarded %d.", u->atf, tid, u->atf - u->tf);
+    char term[GRN_TABLE_MAX_KEY_SIZE];
+    int term_size;
+    term_size = grn_table_get_key(ctx, ii->lexicon, tid,
+                                  term, GRN_TABLE_MAX_KEY_SIZE);
+    GRN_LOG(ctx, GRN_LOG_WARNING,
+            "too many postings(%d). %d postings are discarded. "
+            "term: <%d>(<%.*s>)",
+            u->atf, u->atf - u->tf,
+            tid, term_size, term);
   }
   grn_ii_expire(ctx, ii);
   return rc;
