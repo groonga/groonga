@@ -343,7 +343,7 @@ ngx_http_groonga_handler_process_body(ngx_http_request_t *r,
 
   context = &(data->context);
 
-  body = r->request_body->buf;
+  body = r->request_body->bufs->buf;
   if (!body) {
     ngx_http_groonga_handler_set_content_type(r, "text/plain");
     GRN_TEXT_PUTS(context, &(data->body), "must send load data as body");
