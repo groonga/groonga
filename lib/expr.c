@@ -2945,8 +2945,8 @@ grn_expr_exec(grn_ctx *ctx, grn_obj *expr, int nargs)
               col = grn_obj_column(ctx, table, GRN_BULK_HEAD(col), GRN_BULK_VSIZE(col));
               if (col) { GRN_PTR_PUT(ctx, &e->objs, col); }
             }
-            grn_obj_reinit_for(ctx, res, col);
             if (col) {
+              grn_obj_reinit_for(ctx, res, col);
               if (col->header.type == GRN_ACCESSOR &&
                   ((grn_accessor *)col)->action == GRN_ACCESSOR_GET_KEY &&
                   ((grn_accessor *)col)->obj->header.type == GRN_TABLE_PAT_KEY) {
