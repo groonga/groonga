@@ -374,6 +374,8 @@ ngx_http_groonga_handler_process_body(ngx_http_request_t *r,
   grn_ctx *context;
 
   ngx_buf_t *body;
+  u_char *file_contents;
+  size_t file_size;
 
   context = &(data->context);
 
@@ -384,12 +386,18 @@ ngx_http_groonga_handler_process_body(ngx_http_request_t *r,
     return NGX_HTTP_BAD_REQUEST;
   }
 
-  rc = ngx_http_groonga_send_lines(context, r, body->pos, body->last);
-  if (rc != NGX_OK) {
-    return rc;
+  if (body->file) {
+    file_size = body->file->offset;
+    file_contents = ngx_palloc(r->pool, file_size);
+    rc = ngx_read_file(body->file, file_contents, file_size, 0);
+
+    rc = ngx_http_groonga_send_lines(context, r, file_contents, file_contents + file_size);
+    ngx_pfree(r->pool, file_contents);
+  } else {
+    rc = ngx_http_groonga_send_lines(context, r, body->pos, body->last);
   }
 
-  return NGX_OK;
+  return rc;
 }
 
 
