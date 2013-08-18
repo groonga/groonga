@@ -331,26 +331,16 @@ ngx_http_groonga_handler_validate_post_command(ngx_http_request_t *r,
 }
 
 static ngx_int_t
-ngx_http_groonga_handler_process_body(ngx_http_request_t *r,
-                                      ngx_http_groonga_handler_data_t *data)
+ngx_http_groonga_send_lines(grn_ctx *context,
+                            ngx_http_request_t *r,
+                            u_char *current,
+                            u_char *last)
 {
   ngx_int_t rc;
 
-  grn_ctx *context;
+  u_char *line_start;
 
-  ngx_buf_t *body;
-  u_char *line_start, *current;
-
-  context = &(data->context);
-
-  body = r->request_body->buf;
-  if (!body) {
-    ngx_http_groonga_handler_set_content_type(r, "text/plain");
-    GRN_TEXT_PUTS(context, &(data->body), "must send load data as body");
-    return NGX_HTTP_BAD_REQUEST;
-  }
-
-  for (line_start = current = body->pos; current < body->last; current++) {
+  for (line_start = current; current < last; current++) {
     if (*current != '\n') {
       continue;
     }
@@ -373,6 +363,41 @@ ngx_http_groonga_handler_process_body(ngx_http_request_t *r,
   }
 
   return NGX_OK;
+}
+
+static ngx_int_t
+ngx_http_groonga_handler_process_body(ngx_http_request_t *r,
+                                      ngx_http_groonga_handler_data_t *data)
+{
+  ngx_int_t rc;
+
+  grn_ctx *context;
+
+  ngx_buf_t *body;
+  u_char *file_contents;
+  size_t file_size;
+
+  context = &(data->context);
+
+  body = r->request_body->bufs->buf;
+  if (!body) {
+    ngx_http_groonga_handler_set_content_type(r, "text/plain");
+    GRN_TEXT_PUTS(context, &(data->body), "must send load data as body");
+    return NGX_HTTP_BAD_REQUEST;
+  }
+
+  if (body->file) {
+    file_size = body->file->offset;
+    file_contents = ngx_palloc(r->pool, file_size);
+    rc = ngx_read_file(body->file, file_contents, file_size, 0);
+
+    rc = ngx_http_groonga_send_lines(context, r, file_contents, file_contents + file_size);
+    ngx_pfree(r->pool, file_contents);
+  } else {
+    rc = ngx_http_groonga_send_lines(context, r, body->pos, body->last);
+  }
+
+  return rc;
 }
 
 
