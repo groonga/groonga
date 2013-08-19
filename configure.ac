@@ -658,10 +658,6 @@ AC_SUBST(WINDOWS_LIBS)
 GROONGA="\$(abs_top_builddir)/src/groonga"
 AC_SUBST(GROONGA)
 
-# groonga-httpd binary path
-GROONGA_HTTPD="\$(abs_top_builddir)/vendor/nginx-1.2.1/objs/nginx"
-AC_SUBST(GROONGA_HTTPD)
-
 # groonga-benchmark binary path
 GROONGA_BENCHMARK="\$(abs_top_builddir)/src/groonga-benchmark"
 AC_SUBST(GROONGA_BENCHMARK)
@@ -1249,6 +1245,10 @@ AC_SUBST(GROONGA_ORG_PATH)
 m4_define([nginx_version], m4_include(nginx_version))
 NGINX_VERSION=nginx_version
 AC_SUBST(NGINX_VERSION)
+
+# groonga-httpd binary path
+GROONGA_HTTPD="\$(abs_top_builddir)/vendor/nginx-${NGINX_VERSION}/objs/nginx"
+AC_SUBST(GROONGA_HTTPD)
 
 AC_ARG_ENABLE(groonga_httpd,
   [AS_HELP_STRING([--enable-groonga-httpd],
