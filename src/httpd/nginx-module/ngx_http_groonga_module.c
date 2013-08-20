@@ -36,6 +36,7 @@ typedef struct {
   ngx_str_t base_path;
   ngx_str_t log_path;
   ngx_open_file_t *log_file;
+  grn_log_level log_level;
   char *config_file;
   int config_line;
   char *name;
@@ -158,6 +159,7 @@ ngx_http_groonga_context_init(grn_ctx *context,
   }
 
   logger_data->file = location_conf->log_file;
+  ngx_http_groonga_logger.max_level = location_conf->log_level;
   ngx_http_groonga_logger.user_data = logger_data;
   grn_logger_set(context, &ngx_http_groonga_logger);
 
@@ -740,6 +742,43 @@ ngx_http_groonga_conf_set_log_path_slot(ngx_conf_t *cf, ngx_command_t *cmd,
   return NGX_CONF_OK;
 }
 
+static char *
+ngx_http_groonga_conf_set_log_level_slot(ngx_conf_t *cf, ngx_command_t *cmd,
+                                         void *conf)
+{
+  ngx_http_groonga_loc_conf_t *groonga_location_conf = conf;
+  const char *value;
+
+  value = ngx_str_null_terminate(cf->cycle->pool,
+                                 ((ngx_str_t *)cf->args->elts) + 1);
+  if (strcasecmp(value, "none") == 0) {
+    groonga_location_conf->log_level = GRN_LOG_NONE;
+  } else if (strcasecmp(value, "emergency") == 0) {
+    groonga_location_conf->log_level = GRN_LOG_EMERG;
+  } else if (strcasecmp(value, "alert") == 0) {
+    groonga_location_conf->log_level = GRN_LOG_ALERT;
+  } else if (strcasecmp(value, "critical") == 0) {
+    groonga_location_conf->log_level = GRN_LOG_CRIT;
+  } else if (strcasecmp(value, "error") == 0) {
+    groonga_location_conf->log_level = GRN_LOG_ERROR;
+  } else if (strcasecmp(value, "warning") == 0) {
+    groonga_location_conf->log_level = GRN_LOG_WARNING;
+  } else if (strcasecmp(value, "notice") == 0) {
+    groonga_location_conf->log_level = GRN_LOG_NOTICE;
+  } else if (strcasecmp(value, "info") == 0) {
+    groonga_location_conf->log_level = GRN_LOG_INFO;
+  } else if (strcasecmp(value, "debug") == 0) {
+    groonga_location_conf->log_level = GRN_LOG_DEBUG;
+  } else if (strcasecmp(value, "dump") == 0) {
+    groonga_location_conf->log_level = GRN_LOG_DUMP;
+  } else {
+    return "must be one of 'none', 'emergency', 'alert', "
+      "'ciritical', 'error', 'warning', 'notice', 'info', 'debug' and 'dump'";
+  }
+
+  return NGX_CONF_OK;
+}
+
 static void *
 ngx_http_groonga_create_loc_conf(ngx_conf_t *cf)
 {
@@ -759,6 +798,7 @@ ngx_http_groonga_create_loc_conf(ngx_conf_t *cf)
   conf->log_path.data = NULL;
   conf->log_path.len = 0;
   conf->log_file = NULL;
+  conf->log_level = GRN_LOG_DEFAULT_LEVEL;
   conf->config_file = NULL;
   conf->config_line = 0;
 
@@ -1040,6 +1080,13 @@ static ngx_command_t ngx_http_groonga_commands[] = {
     ngx_http_groonga_conf_set_log_path_slot,
     NGX_HTTP_LOC_CONF_OFFSET,
     offsetof(ngx_http_groonga_loc_conf_t, log_path),
+    NULL },
+
+  { ngx_string("groonga_log_level"),
+    NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
+    ngx_http_groonga_conf_set_log_level_slot,
+    NGX_HTTP_LOC_CONF_OFFSET,
+    0,
     NULL },
 
   ngx_null_command
