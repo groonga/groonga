@@ -58,6 +58,7 @@ typedef struct {
 } ngx_http_groonga_handler_data_t;
 
 typedef struct {
+  ngx_pool_t *pool;
   ngx_open_file_t *file;
 } ngx_http_groonga_logger_data_t;
 
@@ -126,6 +127,9 @@ ngx_http_groonga_logger_reopen(grn_ctx *ctx, void *user_data)
 static void
 ngx_http_groonga_logger_fin(grn_ctx *ctx, void *user_data)
 {
+  ngx_http_groonga_logger_data_t *logger_data = user_data;
+
+  ngx_pfree(logger_data->pool, logger_data);
 }
 
 static grn_logger ngx_http_groonga_logger = {
@@ -158,6 +162,7 @@ ngx_http_groonga_context_init(grn_ctx *context,
     return NGX_OK;
   }
 
+  logger_data->pool = pool;
   logger_data->file = location_conf->log_file;
   ngx_http_groonga_logger.max_level = location_conf->log_level;
   ngx_http_groonga_logger.user_data = logger_data;
