@@ -746,8 +746,9 @@ static char *
 ngx_http_groonga_conf_set_log_level_slot(ngx_conf_t *cf, ngx_command_t *cmd,
                                          void *conf)
 {
+  char *status = NGX_CONF_OK;
   ngx_http_groonga_loc_conf_t *groonga_location_conf = conf;
-  const char *value;
+  char *value;
 
   value = ngx_str_null_terminate(cf->cycle->pool,
                                  ((ngx_str_t *)cf->args->elts) + 1);
@@ -772,11 +773,12 @@ ngx_http_groonga_conf_set_log_level_slot(ngx_conf_t *cf, ngx_command_t *cmd,
   } else if (strcasecmp(value, "dump") == 0) {
     groonga_location_conf->log_level = GRN_LOG_DUMP;
   } else {
-    return "must be one of 'none', 'emergency', 'alert', "
+    status = "must be one of 'none', 'emergency', 'alert', "
       "'ciritical', 'error', 'warning', 'notice', 'info', 'debug' and 'dump'";
   }
+  ngx_pfree(cf->cycle->pool, value);
 
-  return NGX_CONF_OK;
+  return status;
 }
 
 static void *
