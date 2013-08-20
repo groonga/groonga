@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2012 Brazil
+  Copyright(C) 2012-2013 Brazil
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -34,6 +34,8 @@ typedef struct {
   char *database_path_cstr;
   ngx_flag_t database_auto_create;
   ngx_str_t base_path;
+  ngx_str_t log_path;
+  ngx_open_file_t *log_file;
   char *config_file;
   int config_line;
   char *name;
@@ -47,11 +49,16 @@ typedef struct {
 } ngx_http_groonga_database_callback_data_t;
 
 typedef struct {
+  grn_bool initialized;
   grn_ctx context;
   grn_obj head;
   grn_obj body;
   grn_obj foot;
 } ngx_http_groonga_handler_data_t;
+
+typedef struct {
+  ngx_open_file_t *file;
+} ngx_http_groonga_logger_data_t;
 
 typedef void (*ngx_http_groonga_loc_conf_callback_pt)(ngx_http_groonga_loc_conf_t *conf, void *user_data);
 
@@ -81,6 +88,80 @@ ngx_str_equal_c_string(ngx_str_t *string, const char *c_string)
   }
 
   return memcmp(c_string, string->data, string->len) == 0;
+}
+
+static void
+ngx_http_groonga_logger_log(grn_ctx *ctx, grn_log_level level,
+                            const char *timestamp, const char *title,
+                            const char *message, const char *location,
+                            void *user_data)
+{
+  ngx_http_groonga_logger_data_t *logger_data = user_data;
+  const char level_marks[] = " EACewnid-";
+  u_char buffer[NGX_MAX_ERROR_STR];
+  u_char *last;
+
+  if (location && *location) {
+    last = ngx_slprintf(buffer, buffer + NGX_MAX_ERROR_STR,
+                        "%s|%c|%s %s %s\n",
+                        timestamp, *(level_marks + level), title, message,
+                        location);
+  } else {
+    last = ngx_slprintf(buffer, buffer + NGX_MAX_ERROR_STR,
+                        "%s|%c|%s %s\n",
+                        timestamp, *(level_marks + level), title, message);
+  }
+  ngx_write_fd(logger_data->file->fd, buffer, last - buffer);
+}
+
+static void
+ngx_http_groonga_logger_reopen(grn_ctx *ctx, void *user_data)
+{
+  GRN_LOG(ctx, GRN_LOG_NOTICE, "log will be closed.");
+  ngx_reopen_files((ngx_cycle_t *)ngx_cycle, -1);
+  GRN_LOG(ctx, GRN_LOG_NOTICE, "log opened.");
+}
+
+static void
+ngx_http_groonga_logger_fin(grn_ctx *ctx, void *user_data)
+{
+}
+
+static grn_logger ngx_http_groonga_logger = {
+  GRN_LOG_DEFAULT_LEVEL,
+  GRN_LOG_TIME | GRN_LOG_MESSAGE,
+  NULL,
+  ngx_http_groonga_logger_log,
+  ngx_http_groonga_logger_reopen,
+  ngx_http_groonga_logger_fin
+};
+
+static ngx_int_t
+ngx_http_groonga_context_init(grn_ctx *context,
+                              ngx_http_groonga_loc_conf_t *location_conf,
+                              ngx_pool_t *pool,
+                              ngx_log_t *log)
+{
+  ngx_http_groonga_logger_data_t *logger_data;
+
+  logger_data = ngx_pcalloc(pool, sizeof(ngx_http_groonga_logger_data_t));
+  if (!logger_data) {
+    ngx_log_error(NGX_LOG_ERR, log, 0,
+                  "http_groonga: failed to allocate memory for logger");
+    return NGX_ERROR;
+  }
+
+  grn_ctx_init(context, GRN_NO_FLAGS);
+
+  if (!location_conf->log_file) {
+    return NGX_OK;
+  }
+
+  logger_data->file = location_conf->log_file;
+  ngx_http_groonga_logger.user_data = logger_data;
+  grn_logger_set(context, &ngx_http_groonga_logger);
+
+  return NGX_OK;
 }
 
 static void
@@ -126,6 +207,10 @@ ngx_http_groonga_handler_cleanup(void *user_data)
 {
   ngx_http_groonga_handler_data_t *data = user_data;
   grn_ctx *context;
+
+  if (!data->initialized) {
+    return;
+  }
 
   context = &(data->context);
   GRN_OBJ_FIN(context, &(data->head));
@@ -266,7 +351,12 @@ ngx_http_groonga_handler_create_data(ngx_http_request_t *r,
   *data_return = data;
 
   context = &(data->context);
-  grn_ctx_init(context, GRN_NO_FLAGS);
+  rc = ngx_http_groonga_context_init(context, location_conf,
+                                     r->pool, r->connection->log);
+  if (rc != NGX_OK) {
+    return rc;
+  }
+  data->initialized = GRN_TRUE;
   GRN_TEXT_INIT(&(data->head), GRN_NO_FLAGS);
   GRN_TEXT_INIT(&(data->body), GRN_NO_FLAGS);
   GRN_TEXT_INIT(&(data->foot), GRN_NO_FLAGS);
@@ -616,6 +706,40 @@ ngx_http_groonga_conf_set_groonga_slot(ngx_conf_t *cf, ngx_command_t *cmd,
   return NGX_CONF_OK;
 }
 
+static char *
+ngx_http_groonga_conf_set_log_path_slot(ngx_conf_t *cf, ngx_command_t *cmd,
+                                        void *conf)
+{
+  char *status;
+  ngx_http_groonga_loc_conf_t *groonga_location_conf = conf;
+
+  status = ngx_conf_set_str_slot(cf, cmd, conf);
+  if (status != NGX_CONF_OK) {
+    return status;
+  }
+
+  if (!groonga_location_conf->log_path.data) {
+    return NGX_CONF_OK;
+  }
+
+  if (strncmp((const char *)(groonga_location_conf->log_path.data),
+              "off",
+              groonga_location_conf->log_path.len) == 0) {
+    return NGX_CONF_OK;
+  }
+
+  groonga_location_conf->log_file =
+    ngx_conf_open_file(cf->cycle, &(groonga_location_conf->log_path));
+  if (!groonga_location_conf->log_file) {
+    ngx_log_error(NGX_LOG_ERR, cf->cycle->log, 0,
+                  "http_groonga: failed to open groonga log file: <%V>",
+                  &(groonga_location_conf->log_path));
+    return NGX_CONF_ERROR;
+  }
+
+  return NGX_CONF_OK;
+}
+
 static void *
 ngx_http_groonga_create_loc_conf(ngx_conf_t *cf)
 {
@@ -632,6 +756,9 @@ ngx_http_groonga_create_loc_conf(ngx_conf_t *cf)
   conf->database_auto_create = NGX_CONF_UNSET;
   conf->base_path.data = NULL;
   conf->base_path.len = 0;
+  conf->log_path.data = NULL;
+  conf->log_path.len = 0;
+  conf->log_file = NULL;
   conf->config_file = NULL;
   conf->config_line = 0;
 
@@ -645,6 +772,23 @@ ngx_http_groonga_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child)
   ngx_http_groonga_loc_conf_t *conf = child;
 
   ngx_conf_merge_str_value(conf->database_path, prev->database_path, NULL);
+#ifdef NGX_HTTP_GROONGA_LOG_PATH
+  {
+    ngx_str_t default_log_path;
+    default_log_path.data = (u_char *)NGX_HTTP_GROONGA_LOG_PATH;
+    default_log_path.len = strlen(NGX_HTTP_GROONGA_LOG_PATH);
+    conf->log_file = ngx_conf_open_file(cf->cycle, &default_log_path);
+    if (!conf->log_file) {
+      ngx_log_error(NGX_LOG_ERR, cf->cycle->log, 0,
+                    "http_groonga: "
+                    "failed to open the default groonga log file: <%V>",
+                    &default_log_path);
+      return NGX_CONF_ERROR;
+    }
+  }
+#else
+  conf->log_file = NULL;
+#endif
 
   return NGX_CONF_OK;
 }
@@ -768,7 +912,11 @@ ngx_http_groonga_open_database_callback(ngx_http_groonga_loc_conf_t *location_co
   grn_ctx *context;
 
   context = &(location_conf->context);
-  grn_ctx_init(context, GRN_NO_FLAGS);
+  data->rc = ngx_http_groonga_context_init(context, location_conf,
+                                           data->pool, data->log);
+  if (data->rc != NGX_OK) {
+    return;
+  }
 
   if (!location_conf->database_path.data) {
     ngx_log_error(NGX_LOG_EMERG, data->log, 0,
@@ -885,6 +1033,13 @@ static ngx_command_t ngx_http_groonga_commands[] = {
     ngx_conf_set_str_slot,
     NGX_HTTP_LOC_CONF_OFFSET,
     offsetof(ngx_http_groonga_loc_conf_t, base_path),
+    NULL },
+
+  { ngx_string("groonga_log_path"),
+    NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
+    ngx_http_groonga_conf_set_log_path_slot,
+    NGX_HTTP_LOC_CONF_OFFSET,
+    offsetof(ngx_http_groonga_loc_conf_t, log_path),
     NULL },
 
   ngx_null_command
