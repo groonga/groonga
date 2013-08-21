@@ -1,4 +1,5 @@
 #!/bin/sh
+# -*- indent-tabs-mode: nil -*-
 
 GROONGA_HTTPD=groonga-httpd
 PIDFILE=/var/run/groonga/${GROONGA_HTTPD}.pid
@@ -9,35 +10,35 @@ STATUS_TIMEOUT=3
 if [ -f /lib/lsb/init-functions ]; then
     . /lib/lsb/init-functions
     if [ -f /etc/default/$GROONGA_HTTPD ]; then
-	. /etc/default/$GROONGA_HTTPD
+        . /etc/default/$GROONGA_HTTPD
     fi
 elif [ -f /etc/init.d/functions ]; then
     . /etc/init.d/functions
     if [ -f /etc/sysconfig/$GROONGA_HTTPD ]; then
-	. /etc/sysconfig/$GROONGA_HTTPD
+        . /etc/sysconfig/$GROONGA_HTTPD
     fi
 fi
 
 wait_until_file_is_created () {
-	timeout $STATUS_TIMEOUT tail -F $1 --quiet 2> /dev/null | read 2> /dev/null
+        timeout $STATUS_TIMEOUT tail -F $1 --quiet 2> /dev/null | read 2> /dev/null
 }
 
 wait_until_process_is_finished () {
-	timeout $STATUS_TIMEOUT tail -F /dev/null --pid=$1
+        timeout $STATUS_TIMEOUT tail -F /dev/null --pid=$1
 }
 
 if [ "$1" = "try-restart" ]; then
-	if [ ! -f "$PIDFILE" ]; then
-		exit 0
-	fi
+        if [ ! -f "$PIDFILE" ]; then
+                exit 0
+        fi
 fi
 
 killproc -p $PIDFILE ${GROONGA_HTTPD} -USR2
 
 wait_until_file_is_created $OLD_PIDFILE
 if [ ! -f "$OLD_PIDFILE" ]; then
-	echo "Failed to start new groonga-httpd master."
-	exit 1
+        echo "Failed to start new groonga-httpd master."
+        exit 1
 fi
 
 OLD_PID=`cat $OLD_PIDFILE`
@@ -47,21 +48,21 @@ kill -WINCH `cat $OLD_PIDFILE`
 
 wait_until_file_is_created $PIDFILE
 if [ ! -f "$PIDFILE" ]; then
-	echo "Failed to switch worker process."
-	exit 2
+        echo "Failed to switch worker process."
+        exit 2
 fi
 PID=`cat $PIDFILE`
 
 OLD_WORKER_PROCESS=`pgrep -P $OLD_PID | grep -v $PID`
 for pid in $OLD_WORKER_PROCESS; do
-	wait_until_process_is_finished $pid
+        wait_until_process_is_finished $pid
 done
 OLD_WORKER_PROCESS=`pgrep -P $OLD_PID | grep -v $PID`
 if [ -n "$OLD_WORKER_PROCESS" ]; then
-	echo "Failed to stop old groonga-httpd worker process."
-	killproc -p $PIDFILE ${GROONGA_HTTPD} -QUIT
-	echo "Rollback to old groonga-httpd master."
-	exit 2
+        echo "Failed to stop old groonga-httpd worker process."
+        killproc -p $PIDFILE ${GROONGA_HTTPD} -QUIT
+        echo "Rollback to old groonga-httpd master."
+        exit 2
 fi
 
 # Stop old master process.
