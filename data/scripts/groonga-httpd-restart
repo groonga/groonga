@@ -40,6 +40,16 @@ wait_until () {
     return 1
 }
 
+wait_while () {
+    for n in $(seq ${TIMEOUT}); do
+        if ! "$@"; then
+            return 0
+        fi
+        sleep 1
+    done
+    return 1
+}
+
 start_master () {
     local pid=$1
     kill -USR2 ${pid}
@@ -78,7 +88,7 @@ NEW_PID=$(cat ${PID_FILE})
 OLD_WORKER_PROCESSES=$(pgrep -P ${OLD_PID} | grep -v ${NEW_PID})
 switch_worker ${OLD_PID}
 for pid in ${OLD_WORKER_PROCESSES}; do
-    wait_until ps --pid=${pid} > /dev/null
+    wait_while ps --pid=${pid} > /dev/null
 done
 OLD_WORKER_PROCESSES=$(pgrep -P ${OLD_PID} | grep -v ${NEW_PID})
 if [ -n "${OLD_WORKER_PROCESSES}" ]; then
