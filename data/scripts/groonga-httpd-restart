@@ -73,12 +73,12 @@ if ! wait_until [ -f "${PID_FILE}" ]; then
 fi
 PID=$(cat ${PID_FILE})
 
-OLD_WORKER_PROCESS=$(pgrep -P ${OLD_PID} | grep -v ${PID})
-for pid in ${OLD_WORKER_PROCESS}; do
+OLD_WORKER_PROCESSES=$(pgrep -P ${OLD_PID} | grep -v ${PID})
+for pid in ${OLD_WORKER_PROCESSES}; do
     wait_until ps --pid=${pid} > /dev/null
 done
-OLD_WORKER_PROCESS=$(pgrep -P ${OLD_PID} | grep -v ${PID})
-if [ -n "${OLD_WORKER_PROCESS}" ]; then
+OLD_WORKER_PROCESSES=$(pgrep -P ${OLD_PID} | grep -v ${PID})
+if [ -n "${OLD_WORKER_PROCESSES}" ]; then
     echo "Failed to stop old groonga-httpd worker process."
     killproc -p ${PID_FILE} ${GROONGA_HTTPD} -QUIT
     echo "Rollback to old groonga-httpd master."
