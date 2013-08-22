@@ -23,17 +23,11 @@ PID_FILE=/var/run/groonga/${GROONGA_HTTPD}.pid
 OLD_PID_FILE=${PID_FILE}.oldbin
 STATUS_TIMEOUT=3
 
-# Source function library.
-if [ -f /lib/lsb/init-functions ]; then
-    . /lib/lsb/init-functions
-    if [ -f /etc/default/${SERVICE_NAME} ]; then
-        . /etc/default/${SERVICE_NAME}
-    fi
-elif [ -f /etc/init.d/functions ]; then
-    . /etc/init.d/functions
-    if [ -f /etc/sysconfig/${SERVICE_NAME} ]; then
-        . /etc/sysconfig/${SERVICE_NAME}
-    fi
+# Source configuration.
+if [ -f /etc/default/${SERVICE_NAME} ]; then
+    . /etc/default/${SERVICE_NAME}
+elif [ -f /etc/sysconfig/${SERVICE_NAME} ]; then
+    . /etc/sysconfig/${SERVICE_NAME}
 fi
 
 wait_until () {
@@ -55,14 +49,13 @@ if [ "$1" = "try-restart" ]; then
     fi
 fi
 
-killproc -p ${PID_FILE} ${GROONGA_HTTPD} -USR2
+OLD_PID=$(cat ${PID_FILE})
+kill -USR2 ${OLD_PID}
 
 if ! wait_until [ -f ${OLD_PID_FILE} ]; then
     echo "Failed to start new groonga-httpd master."
     exit 1
 fi
-
-OLD_PID=$(cat ${OLD_PID_FILE})
 
 # Switch worker process.
 kill -WINCH ${OLD_PID}
@@ -71,21 +64,21 @@ if ! wait_until [ -f "${PID_FILE}" ]; then
     echo "Failed to switch worker process."
     exit 2
 fi
-PID=$(cat ${PID_FILE})
+NEW_PID=$(cat ${PID_FILE})
 
-OLD_WORKER_PROCESSES=$(pgrep -P ${OLD_PID} | grep -v ${PID})
+OLD_WORKER_PROCESSES=$(pgrep -P ${OLD_PID} | grep -v ${NEW_PID})
 for pid in ${OLD_WORKER_PROCESSES}; do
     wait_until ps --pid=${pid} > /dev/null
 done
-OLD_WORKER_PROCESSES=$(pgrep -P ${OLD_PID} | grep -v ${PID})
+OLD_WORKER_PROCESSES=$(pgrep -P ${OLD_PID} | grep -v ${NEW_PID})
 if [ -n "${OLD_WORKER_PROCESSES}" ]; then
     echo "Failed to stop old groonga-httpd worker process."
-    killproc -p ${PID_FILE} ${GROONGA_HTTPD} -QUIT
+    kill -QUIT ${NEW_PID}
     echo "Rollback to old groonga-httpd master."
     exit 2
 fi
 
 # Stop old master process.
-killproc -p ${OLD_PID_FILE} ${GROONGA_HTTPD} -QUIT
+kill -QUIT ${OLD_PID}
 exit $?
 
