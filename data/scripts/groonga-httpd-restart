@@ -42,6 +42,21 @@ wait_until () {
     return 1
 }
 
+start_master () {
+    local pid=$1
+    kill -USR2 ${pid}
+}
+
+switch_worker () {
+    local pid=$1
+    kill -WINCH ${pid}
+}
+
+stop_master () {
+    local pid=$1
+    kill -QUIT ${pid}
+}
+
 if [ "$1" = "try-restart" ]; then
     if [ ! -f "${PID_FILE}" ]; then
         exit 0
@@ -49,15 +64,14 @@ if [ "$1" = "try-restart" ]; then
 fi
 
 OLD_PID=$(cat ${PID_FILE})
-kill -USR2 ${OLD_PID}
+start_master ${OLD_PID}
 
 if ! wait_until [ -f ${OLD_PID_FILE} ]; then
     echo "Failed to start new groonga-httpd master."
     exit 1
 fi
 
-# Switch worker process.
-kill -WINCH ${OLD_PID}
+switch_worker ${OLD_PID}
 
 if ! wait_until [ -f "${PID_FILE}" ]; then
     echo "Failed to switch worker process."
@@ -72,12 +86,11 @@ done
 OLD_WORKER_PROCESSES=$(pgrep -P ${OLD_PID} | grep -v ${NEW_PID})
 if [ -n "${OLD_WORKER_PROCESSES}" ]; then
     echo "Failed to stop old groonga-httpd worker process."
-    kill -QUIT ${NEW_PID}
+    stop_master ${NEW_PID}
     echo "Rollback to old groonga-httpd master."
     exit 2
 fi
 
-# Stop old master process.
-kill -QUIT ${OLD_PID}
+stop_master ${OLD_PID}
 exit $?
 
