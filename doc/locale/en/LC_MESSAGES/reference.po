@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-07 22:49+0900\n"
+"POT-Creation-Date: 2013-08-22 18:25+0900\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -294,11 +294,23 @@ msgstr ""
 # 8e4c52515c554cdaa329c0739e17f94c
 # 6113f4f60edf40d785b4df6daec7db75
 #: ../../../source/reference/api/grn_column.txt:9
+#: ../../../source/reference/api/grn_command_version.txt:9
 #: ../../../source/reference/api/grn_ctx.txt:9
 #: ../../../source/reference/api/grn_db.txt:9
+#: ../../../source/reference/api/grn_encoding.txt:9
+#: ../../../source/reference/api/grn_geo.txt:9
+#: ../../../source/reference/api/grn_hook.txt:9
+#: ../../../source/reference/api/grn_ii.txt:9
 #: ../../../source/reference/api/grn_index_cursor.txt:9
+#: ../../../source/reference/api/grn_info.txt:9
+#: ../../../source/reference/api/grn_match_escalation.txt:9
+#: ../../../source/reference/api/grn_obj.txt:9
+#: ../../../source/reference/api/grn_proc.txt:9
+#: ../../../source/reference/api/grn_search.txt:9
 #: ../../../source/reference/api/grn_table.txt:9
 #: ../../../source/reference/api/grn_table_cursor.txt:9
+#: ../../../source/reference/api/grn_type.txt:9
+#: ../../../source/reference/api/grn_user_data.txt:9
 #: ../../../source/reference/command/output_format.txt:9
 #: ../../../source/reference/command/return_code.txt:9
 #: ../../../source/reference/commands/column_rename.txt:12
@@ -326,20 +338,56 @@ msgstr "Summary"
 # b2c80038fe264d2f857b67ffd695d62c
 #: ../../../source/reference/api/grn_column.txt:11
 #: ../../../source/reference/api/grn_column.txt:16
+#: ../../../source/reference/api/grn_command_version.txt:11
+#: ../../../source/reference/api/grn_command_version.txt:16
 #: ../../../source/reference/api/grn_ctx.txt:34
 #: ../../../source/reference/api/grn_ctx.txt:41
 #: ../../../source/reference/api/grn_db.txt:11
 #: ../../../source/reference/api/grn_db.txt:16
 #: ../../../source/reference/api/grn_db.txt:21
 #: ../../../source/reference/api/grn_db.txt:25
-#: ../../../source/reference/api/grn_expr.txt:8
+#: ../../../source/reference/api/grn_encoding.txt:11
+#: ../../../source/reference/api/grn_encoding.txt:16
+#: ../../../source/reference/api/grn_encoding.txt:23
+#: ../../../source/reference/api/grn_expr.txt:28
+#: ../../../source/reference/api/grn_geo.txt:11
+#: ../../../source/reference/api/grn_geo.txt:16
+#: ../../../source/reference/api/grn_hook.txt:11
+#: ../../../source/reference/api/grn_hook.txt:16
+#: ../../../source/reference/api/grn_hook.txt:23
+#: ../../../source/reference/api/grn_ii.txt:15
+#: ../../../source/reference/api/grn_ii.txt:20
 #: ../../../source/reference/api/grn_index_cursor.txt:11
 #: ../../../source/reference/api/grn_index_cursor.txt:16
+#: ../../../source/reference/api/grn_info.txt:11
+#: ../../../source/reference/api/grn_info.txt:16
+#: ../../../source/reference/api/grn_info.txt:23
+#: ../../../source/reference/api/grn_match_escalation.txt:11
+#: ../../../source/reference/api/grn_match_escalation.txt:16
+#: ../../../source/reference/api/grn_obj.txt:11
+#: ../../../source/reference/api/grn_obj.txt:16
+#: ../../../source/reference/api/grn_obj.txt:23
+#: ../../../source/reference/api/grn_proc.txt:11
+#: ../../../source/reference/api/grn_proc.txt:16
+#: ../../../source/reference/api/grn_proc.txt:23
+#: ../../../source/reference/api/grn_proc.txt:27
+#: ../../../source/reference/api/grn_search.txt:11
+#: ../../../source/reference/api/grn_search.txt:16
 #: ../../../source/reference/api/grn_table.txt:11
 #: ../../../source/reference/api/grn_table.txt:16
+#: ../../../source/reference/api/grn_table.txt:142
+#: ../../../source/reference/api/grn_table.txt:146
+#: ../../../source/reference/api/grn_table.txt:163
+#: ../../../source/reference/api/grn_table.txt:167
 #: ../../../source/reference/api/grn_table_cursor.txt:11
 #: ../../../source/reference/api/grn_table_cursor.txt:16
 #: ../../../source/reference/api/grn_table_cursor.txt:23
+#: ../../../source/reference/api/grn_type.txt:11
+#: ../../../source/reference/api/grn_type.txt:16
+#: ../../../source/reference/api/grn_type.txt:23
+#: ../../../source/reference/api/grn_user_data.txt:11
+#: ../../../source/reference/api/grn_user_data.txt:16
+#: ../../../source/reference/api/grn_user_data.txt:23
 #: ../../../source/reference/cast.txt:8
 msgid "TODO..."
 msgstr "TODO..."
@@ -357,21 +405,47 @@ msgstr "TODO..."
 # 08d03411c4b5418b8db31591c1d7b59d
 # f6b8093f5a4f4cd89e30878bedd1c37f
 #: ../../../source/reference/api/grn_column.txt:14
+#: ../../../source/reference/api/grn_command_version.txt:14
 #: ../../../source/reference/api/grn_ctx.txt:32
 #: ../../../source/reference/api/grn_db.txt:14
+#: ../../../source/reference/api/grn_encoding.txt:14
+#: ../../../source/reference/api/grn_expr.txt:26
+#: ../../../source/reference/api/grn_geo.txt:14
+#: ../../../source/reference/api/grn_hook.txt:14
+#: ../../../source/reference/api/grn_ii.txt:18
 #: ../../../source/reference/api/grn_index_cursor.txt:14
+#: ../../../source/reference/api/grn_info.txt:14
+#: ../../../source/reference/api/grn_match_escalation.txt:14
+#: ../../../source/reference/api/grn_obj.txt:14
+#: ../../../source/reference/api/grn_proc.txt:14
+#: ../../../source/reference/api/grn_search.txt:14
 #: ../../../source/reference/api/grn_table.txt:14
 #: ../../../source/reference/api/grn_table_cursor.txt:14
+#: ../../../source/reference/api/grn_type.txt:14
+#: ../../../source/reference/api/grn_user_data.txt:14
 msgid "Example"
 msgstr ""
 
 # 7a55e4786dd348d286e9872d75a24369
 #: ../../../source/reference/api/grn_column.txt:19
+#: ../../../source/reference/api/grn_command_version.txt:19
 #: ../../../source/reference/api/grn_ctx.txt:37
 #: ../../../source/reference/api/grn_db.txt:19
+#: ../../../source/reference/api/grn_encoding.txt:19
+#: ../../../source/reference/api/grn_expr.txt:31
+#: ../../../source/reference/api/grn_geo.txt:19
+#: ../../../source/reference/api/grn_hook.txt:19
+#: ../../../source/reference/api/grn_ii.txt:23
 #: ../../../source/reference/api/grn_index_cursor.txt:19
+#: ../../../source/reference/api/grn_info.txt:19
+#: ../../../source/reference/api/grn_match_escalation.txt:19
+#: ../../../source/reference/api/grn_obj.txt:19
+#: ../../../source/reference/api/grn_proc.txt:19
+#: ../../../source/reference/api/grn_search.txt:19
 #: ../../../source/reference/api/grn_table.txt:19
 #: ../../../source/reference/api/grn_table_cursor.txt:19
+#: ../../../source/reference/api/grn_type.txt:19
+#: ../../../source/reference/api/grn_user_data.txt:19
 msgid "Reference"
 msgstr ""
 
@@ -384,18 +458,33 @@ msgstr ""
 
 # 928290e83045469685a30d9059938b69
 #: ../../../source/reference/api/grn_column.txt:25
+#: ../../../source/reference/api/grn_obj.txt:31
 #: ../../../source/reference/api/grn_table.txt:56
+#: ../../../source/reference/api/grn_table.txt:73
+#: ../../../source/reference/api/grn_table.txt:82
+#: ../../../source/reference/api/grn_table.txt:91
+#: ../../../source/reference/api/grn_table.txt:100
+#: ../../../source/reference/api/grn_table.txt:108
+#: ../../../source/reference/api/grn_table.txt:117
+#: ../../../source/reference/api/grn_table.txt:126
+#: ../../../source/reference/api/grn_table.txt:138
+#: ../../../source/reference/api/grn_table.txt:154
+#: ../../../source/reference/api/grn_table.txt:173
+#: ../../../source/reference/api/grn_table.txt:203
+#: ../../../source/reference/api/grn_table.txt:213
 #: ../../../source/reference/api/grn_table_cursor.txt:29
 msgid "対象tableを指定します。"
 msgstr ""
 
 # 928290e83045469685a30d9059938b69
 #: ../../../source/reference/api/grn_column.txt:26
+#: ../../../source/reference/api/grn_obj.txt:32
 msgid "カラム名を指定します。"
 msgstr ""
 
 # 65eb2f34dab44c7cb9a82b94f8742d15
 #: ../../../source/reference/api/grn_column.txt:27
+#: ../../../source/reference/api/grn_table.txt:219
 msgid "nameパラメータのsize(byte)を指定します。"
 msgstr ""
 
@@ -488,11 +577,16 @@ msgstr ""
 
 # 928290e83045469685a30d9059938b69
 #: ../../../source/reference/api/grn_column.txt:56
+#: ../../../source/reference/api/grn_column.txt:66
+#: ../../../source/reference/api/grn_column.txt:72
 msgid "対象columnを指定します。"
 msgstr ""
 
 # ec50c5ed197e495b8615b8cf51f53406
 #: ../../../source/reference/api/grn_column.txt:57
+#: ../../../source/reference/api/grn_obj.txt:47
+#: ../../../source/reference/api/grn_obj.txt:67
+#: ../../../source/reference/api/grn_table.txt:92
 msgid "対象レコードのIDを指定します。"
 msgstr ""
 
@@ -509,6 +603,135 @@ msgstr ""
 # 9ff13e3fccf14788903877412638ac4f
 #: ../../../source/reference/api/grn_column.txt:60
 msgid "更新後の値を指定します。"
+msgstr ""
+
+# 1a23964c638d4c35879e342ae9097a1e
+#: ../../../source/reference/api/grn_column.txt:64
+msgid "columnが属するtableを返します。"
+msgstr ""
+
+# edd95123dd5441ee95a90cd2384e246a
+#: ../../../source/reference/api/grn_column.txt:70
+msgid ""
+"ctxが使用するdbにおいてcolumnに対応する名前をnameに更新します。columnは永続オ"
+"ブジェクトでなければいけません。"
+msgstr ""
+
+# 9ff13e3fccf14788903877412638ac4f
+#: ../../../source/reference/api/grn_column.txt:73
+#: ../../../source/reference/api/grn_obj.txt:134
+msgid "新しい名前を指定します。"
+msgstr ""
+
+# be29349de7804bb4a97b2d6a977331fe
+# 1b0adba19cf14b3cb6ae64f226c1fec0
+#: ../../../source/reference/api/grn_column.txt:74
+#: ../../../source/reference/api/grn_obj.txt:135
+msgid "nameパラメータのsize（byte）を指定します。"
+msgstr ""
+
+# 1c0a1c8972a84efdb8e5d34ba662c1b4
+#: ../../../source/reference/api/grn_column.txt:78
+msgid ""
+"カラムobjの名前の長さを返します。buf_sizeの長さが名前の長さ以上であった場合"
+"は、namebufに該当する名前をコピーします。"
+msgstr ""
+
+# 928290e83045469685a30d9059938b69
+#: ../../../source/reference/api/grn_column.txt:80
+#: ../../../source/reference/api/grn_db.txt:71
+#: ../../../source/reference/api/grn_hook.txt:29
+#: ../../../source/reference/api/grn_hook.txt:49
+#: ../../../source/reference/api/grn_hook.txt:56
+#: ../../../source/reference/api/grn_hook.txt:65
+#: ../../../source/reference/api/grn_info.txt:53
+#: ../../../source/reference/api/grn_obj.txt:46
+#: ../../../source/reference/api/grn_obj.txt:58
+#: ../../../source/reference/api/grn_obj.txt:66
+#: ../../../source/reference/api/grn_obj.txt:127
+#: ../../../source/reference/api/grn_obj.txt:133
+#: ../../../source/reference/api/grn_obj.txt:143
+#: ../../../source/reference/api/grn_obj.txt:151
+#: ../../../source/reference/api/grn_obj.txt:163
+#: ../../../source/reference/api/grn_obj.txt:171
+#: ../../../source/reference/api/grn_obj.txt:179
+#: ../../../source/reference/api/grn_obj.txt:185
+#: ../../../source/reference/api/grn_obj.txt:191
+#: ../../../source/reference/api/grn_obj.txt:197
+#: ../../../source/reference/api/grn_obj.txt:203
+#: ../../../source/reference/api/grn_obj.txt:209
+#: ../../../source/reference/api/grn_obj.txt:215
+#: ../../../source/reference/api/grn_obj.txt:223
+#: ../../../source/reference/api/grn_obj.txt:229
+#: ../../../source/reference/api/grn_proc.txt:55
+#: ../../../source/reference/api/grn_user_data.txt:29
+msgid "対象objectを指定します。"
+msgstr ""
+
+# c9c1a193c6b94823923ecff6d32138dc
+# 1e175659195148279e4c959532f0f662
+#: ../../../source/reference/api/grn_column.txt:81
+#: ../../../source/reference/api/grn_obj.txt:172
+msgid "名前を格納するバッファ（呼出側で準備する）を指定します。"
+msgstr ""
+
+# afecc961bfcd48e3bdf9ed88498560a8
+# 0346d0bbd9e648318d46abfaca94bb42
+#: ../../../source/reference/api/grn_column.txt:82
+#: ../../../source/reference/api/grn_obj.txt:173
+msgid "namebufのサイズ（byte長）を指定します。"
+msgstr ""
+
+# 674b31d96e574a57b3d9f09f7ba1be1d
+#: ../../../source/reference/api/grn_column.txt:86
+msgid ""
+"columnに張られているindexのうち、opの操作を実行可能なものの数を返します。また"
+"それらのidを、buf_sizeに指定された個数を上限としてindexbufに返します。"
+msgstr ""
+
+# 928290e83045469685a30d9059938b69
+#: ../../../source/reference/api/grn_column.txt:88
+msgid "対象のcolumnを指定します。"
+msgstr ""
+
+# 81a14ee12eb44b0eb705e8ccf431a59b
+#: ../../../source/reference/api/grn_column.txt:89
+msgid "indexで実行したい操作を指定します。"
+msgstr ""
+
+# eeb87f22defd4f329717c7dd58349e75
+#: ../../../source/reference/api/grn_column.txt:90
+msgid "indexを格納するバッファ（呼出側で準備する）を指定します。"
+msgstr ""
+
+# 15935b9ce1fb437e8de67fa0b7cb015b
+#: ../../../source/reference/api/grn_column.txt:91
+msgid "indexbufのサイズ（byte長）を指定します。"
+msgstr ""
+
+# c917dc2a15474d9bb3e608b1192f1cee
+#: ../../../source/reference/api/grn_column.txt:92
+msgid "section番号を格納するint長バッファ（呼出側で準備する）を指定します。"
+msgstr ""
+
+# 1a2e9f3067bd46f7a2c9414a96ed759f
+#: ../../../source/reference/api/grn_command_version.txt:6
+msgid "``grn_command_version``"
+msgstr ""
+
+# 17528d083d444a74b4330726fd22b6b0
+#: ../../../source/reference/api/grn_command_version.txt:31
+msgid "デフォルトのcommand_versionを返します。"
+msgstr ""
+
+# 4f95bbcc7b9d4562942297ede802fd16
+#: ../../../source/reference/api/grn_command_version.txt:35
+msgid "デフォルトのcommand_versionを変更します。"
+msgstr ""
+
+# ec50c5ed197e495b8615b8cf51f53406
+#: ../../../source/reference/api/grn_command_version.txt:37
+msgid "変更後のデフォルトのcommand_versionを指定します。"
 msgstr ""
 
 # 239c88c24b0443edab6950357bb7cfc7
@@ -593,6 +816,8 @@ msgstr ""
 #: ../../../source/reference/api/grn_ctx.txt:58
 #: ../../../source/reference/api/grn_ctx.txt:76
 #: ../../../source/reference/api/grn_ctx.txt:84
+#: ../../../source/reference/api/grn_expr.txt:52
+#: ../../../source/reference/api/grn_expr.txt:67
 msgid "``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error."
 msgstr ""
 
@@ -673,81 +898,58 @@ msgstr ""
 msgid "変更後のcommand_versionを指定します。"
 msgstr ""
 
-# 9fba2e28497a4791878667fe06e32747
-#: ../../../source/reference/api/grn_ctx.txt:98
-msgid "検索の挙動をエスカレーションする閾値を返します。"
-msgstr ""
-
-# 49ef33df1b5e41d68ee4a72b5ba2d6ff
-# 1d715128350047bcbd4391da25ef144a
-#: ../../../source/reference/api/grn_ctx.txt:100
-#: ../../../source/reference/api/grn_ctx.txt:106
-msgid ""
-"エスカレーションの詳細は検索の仕様に関するドキュメントを参照してください。"
-msgstr ""
-
-# 9fba2e28497a4791878667fe06e32747
-#: ../../../source/reference/api/grn_ctx.txt:104
-msgid "検索の挙動をエスカレーションする閾値を変更します。"
-msgstr ""
-
-# 9fba2e28497a4791878667fe06e32747
-#: ../../../source/reference/api/grn_ctx.txt:108
-msgid "変更後の検索の挙動をエスカレーションする閾値を指定します。"
-msgstr ""
-
 # 2194b3980e4f45ceb510d956e362ad59
-#: ../../../source/reference/api/grn_ctx.txt:112
+#: ../../../source/reference/api/grn_ctx.txt:98
 msgid ""
 "ctxが操作対象とするdbを指定します。NULLを指定した場合は、dbを操作しない状態"
 "(init直後の状態)になります。"
 msgstr ""
 
 # 5a92d8bc8bc34363825e39927ded5cf7
-#: ../../../source/reference/api/grn_ctx.txt:114
+#: ../../../source/reference/api/grn_ctx.txt:100
 msgid "Don't use it with :c:type:`grn_ctx` that has ``GRN_CTX_PER_DB`` flag."
 msgstr ""
 
 # bb7610ccb9ff4dd7a5a472fabe8c0701
-#: ../../../source/reference/api/grn_ctx.txt:116
+#: ../../../source/reference/api/grn_ctx.txt:102
 msgid "ctxが使用するdbを指定します。"
 msgstr ""
 
 # 95c176828c624b8bb53804d086cb8535
-#: ../../../source/reference/api/grn_ctx.txt:120
+#: ../../../source/reference/api/grn_ctx.txt:106
 msgid ""
 "ctxが現在操作対象としているdbを返します。dbを使用していない場合はNULLを返しま"
 "す。"
 msgstr ""
 
 # a018293c7489433dadcd1076a8b3cf74
-#: ../../../source/reference/api/grn_ctx.txt:124
+#: ../../../source/reference/api/grn_ctx.txt:110
 msgid ""
 "ctxが使用するdbからnameに対応するオブジェクトを検索して返す。nameに一致するオ"
 "ブジェクトが存在しなければNULLを返す。"
 msgstr ""
 
 # 63fa6e7a229d4a5d8952ba88e5f4d79b
-#: ../../../source/reference/api/grn_ctx.txt:126
+#: ../../../source/reference/api/grn_ctx.txt:112
 msgid "検索しようとするオブジェクトの名前。"
 msgstr ""
 
 # 747e7623e9be40ecadf5eb84d1ef2fb9
-#: ../../../source/reference/api/grn_ctx.txt:127
+#: ../../../source/reference/api/grn_ctx.txt:113
 msgid ""
 "The number of bytes of name. If negative value is specified, name is assumed "
 "that NULL-terminated string."
 msgstr ""
 
 # 9c305c530df9474f9481a38936f6a299
-#: ../../../source/reference/api/grn_ctx.txt:131
+#: ../../../source/reference/api/grn_ctx.txt:117
 msgid ""
 "ctx、またはctxが使用するdbからidに対応するオブジェクトを検索して返す。idに一"
 "致するオブジェクトが存在しなければNULLを返す。"
 msgstr ""
 
 # 63fa6e7a229d4a5d8952ba88e5f4d79b
-#: ../../../source/reference/api/grn_ctx.txt:133
+#: ../../../source/reference/api/grn_ctx.txt:119
 msgid "検索しようとするオブジェクトのidを指定します。"
 msgstr ""
 
@@ -844,12 +1046,422 @@ msgstr ""
 msgid "内容が変更されたdbを指定します。"
 msgstr ""
 
+# 51ec3260fbb0429b899a2d4738546ce0
+#: ../../../source/reference/api/grn_db.txt:69
+msgid "objの属するdbを返します。"
+msgstr ""
+
+# 1a9b0c591b57494ab57116846c260947
+#: ../../../source/reference/api/grn_encoding.txt:6
+msgid "``grn_encoding``"
+msgstr ""
+
+# 1cf238009043408087088ed70616bb57
+#: ../../../source/reference/api/grn_encoding.txt:27
+msgid "デフォルトのencodingを返します。"
+msgstr ""
+
+# 21cc068a28f44701848921b25ad5875e
+#: ../../../source/reference/api/grn_encoding.txt:31
+msgid "デフォルトのencodingを変更します。"
+msgstr ""
+
+# ec50c5ed197e495b8615b8cf51f53406
+#: ../../../source/reference/api/grn_encoding.txt:33
+msgid "変更後のデフォルトのencodingを指定します。"
+msgstr ""
+
+# 59c4a6905bfc41609fb9ed90380ca52f
+#: ../../../source/reference/api/grn_encoding.txt:37
+msgid ""
+"Returns string representation for the encoding. For example, "
+"'grn_encoding_to_string(``GRN_ENC_UTF8``)' returns '\"utf8\"'."
+msgstr ""
+
+# 50fc2c0b06eb4e2583e6ced491d885db
+#: ../../../source/reference/api/grn_encoding.txt:39
+msgid "\"unknown\" is returned for invalid encoding."
+msgstr ""
+
+# e8f5222efe264d8394c1e946f8bef49c
+#: ../../../source/reference/api/grn_encoding.txt:41
+msgid "The encoding."
+msgstr ""
+
+# 2ca2c435a4fe45ad83237b6c378d7da5
+#: ../../../source/reference/api/grn_encoding.txt:45
+msgid ""
+"Parses encoding name and returns grn_encoding. For example, "
+"'grn_encoding_parse(\"UTF8\")' returns '``GRN_ENC_UTF8``'."
+msgstr ""
+
+# a804fa077ae34507ba921fd0208e050e
+#: ../../../source/reference/api/grn_encoding.txt:47
+msgid "``GRN_ENC_UTF8`` is returned for invalid encoding name."
+msgstr ""
+
+# b596e610262e411eaf1179ec2ad1fe84
+#: ../../../source/reference/api/grn_encoding.txt:49
+msgid "The encoding name."
+msgstr ""
+
 # 2cd696ac332b4625990f92d5219f4968
 # 68c08455a69847a79d64d1a1338bc74b
 #: ../../../source/reference/api/grn_expr.txt:6
 #: ../../../source/reference/grn_expr.txt:6
 msgid "grn_expr"
 msgstr "grn_expr"
+
+# b0780d14615e4695a4898b39784f594b
+#: ../../../source/reference/api/grn_expr.txt:8
+msgid ""
+"`grn_expr` is an :c:type:`grn_obj` that represents an expression. Here is a "
+"list of what expression can do:"
+msgstr ""
+
+# fcc1fb06bb4446e6a850a1fccca5b6a4
+#: ../../../source/reference/api/grn_expr.txt:11
+msgid ""
+"Expression can apply some operations to a record by :c:function:"
+"`grn_expr_exec`."
+msgstr ""
+
+# 4d7f128a7c054034916464ce7e6506d0
+#: ../../../source/reference/api/grn_expr.txt:13
+msgid ""
+"Expression can represents search condition. :c:function:`grn_table_select` "
+"can select records that match against the search condition represented by "
+"expression."
+msgstr ""
+
+# 80fcaf3d64cd4ea0bc39f9677ee5b983
+#: ../../../source/reference/api/grn_expr.txt:17
+msgid "There are two string representations of expression:"
+msgstr ""
+
+# e8444044dfa741d3b70dc4687921d3ff
+#: ../../../source/reference/api/grn_expr.txt:19
+#: ../../../source/reference/commands/select.txt:908
+msgid ":doc:`/reference/grn_expr/query_syntax`"
+msgstr ":doc:`/reference/grn_expr/query_syntax`"
+
+# db86abe681294dcc8cebc9e06a274d6c
+#: ../../../source/reference/api/grn_expr.txt:20
+#: ../../../source/reference/commands/select.txt:909
+#: ../../../source/reference/functions/sub_filter.txt:137
+msgid ":doc:`/reference/grn_expr/script_syntax`"
+msgstr ":doc:`/reference/grn_expr/script_syntax`"
+
+# 9f97e26202bb49a9b15b8e3f061927ea
+#: ../../../source/reference/api/grn_expr.txt:22
+msgid ""
+":c:function:`grn_expr_parse` parses string represented expression and "
+"appends the parsed expression to another expression."
+msgstr ""
+
+# 099c393bca7f43f29231ee95ae38d7cc
+#: ../../../source/reference/api/grn_expr.txt:35
+msgid "Escapes ``target_characters`` in ``string`` by ``escape_character``."
+msgstr ""
+
+# a26b30dc9b0743e5951fabc27082731f
+#: ../../../source/reference/api/grn_expr.txt:37
+msgid ""
+"Its encoding must be the same encoding of ``string``. It is used for "
+"allocating buffer for ``escaped_string``."
+msgstr ""
+
+# 76e0d62611a24dd49b21d98cb805a16a
+#: ../../../source/reference/api/grn_expr.txt:39
+msgid "String expression representation."
+msgstr ""
+
+# c42750f87258418782f38749a9ada8ac
+#: ../../../source/reference/api/grn_expr.txt:40
+msgid ""
+"The byte size of ``string``. ``-1`` means ``string`` is NULL terminated "
+"string."
+msgstr ""
+
+# 250b4196bf6243efabf2e78b7a67c74d
+#: ../../../source/reference/api/grn_expr.txt:42
+msgid ""
+"NULL terminated escape target characters. For example, ``\"+-><~*()\\\"\\\\:"
+"\"`` is ``target_characters`` for :doc:`/reference/grn_expr/query_syntax`."
+msgstr ""
+
+# dff2ee1348f249f7a186f9156581429d
+#: ../../../source/reference/api/grn_expr.txt:46
+msgid ""
+"The character to use escape a character in ``target_characters``. For "
+"example, ``\\\\`` (backslash) is ``escaped_character`` for"
+msgstr ""
+
+# 6cbd8aa8637847a791895db6c39eafd7
+#: ../../../source/reference/api/grn_expr.txt:46
+msgid ""
+"The character to use escape a character in ``target_characters``. For "
+"example, ``\\\\`` (backslash) is ``escaped_character`` for  :doc:`/reference/"
+"grn_expr/query_syntax`."
+msgstr ""
+
+# e8444044dfa741d3b70dc4687921d3ff
+#: ../../../source/reference/api/grn_expr.txt:49
+msgid ":doc:`/reference/grn_expr/query_syntax`."
+msgstr ""
+
+# 715e11ab39d94b6096f4ad93eaa4917c
+#: ../../../source/reference/api/grn_expr.txt:50
+msgid "The output of escaped ``string``. It should be text typed bulk."
+msgstr ""
+
+# b17e3310c7854707a28db8413e229e2c
+#: ../../../source/reference/api/grn_expr.txt:56
+msgid "Escapes special characters in :doc:`/reference/grn_expr/query_syntax`."
+msgstr ""
+
+# 8fc94853600845daa0a2e0ed7358d43c
+#: ../../../source/reference/api/grn_expr.txt:59
+msgid ""
+"Its encoding must be the same encoding of ``query``. It is used for "
+"allocating buffer for ``escaped_query``."
+msgstr ""
+
+# b17e3310c7854707a28db8413e229e2c
+#: ../../../source/reference/api/grn_expr.txt:61
+msgid ""
+"String expression representation in :doc:`/reference/grn_expr/query_syntax`."
+msgstr ""
+
+# 249bd87a8dee4c6ea2c36838c31bf133
+#: ../../../source/reference/api/grn_expr.txt:63
+msgid ""
+"The byte size of ``query``. ``-1`` means ``query`` is NULL terminated string."
+msgstr ""
+
+# aa5c98b382e84883882209296839d035
+#: ../../../source/reference/api/grn_expr.txt:65
+msgid "The output of escaped ``query``. It should be text typed bulk."
+msgstr ""
+
+# b9a825c1ecf74c0bb5434906b79eed40
+#: ../../../source/reference/api/grn_geo.txt:6
+msgid "``grn_geo``"
+msgstr ""
+
+# 5a3b213408ad4f10b9bfeb7977f9b818
+#: ../../../source/reference/api/grn_geo.txt:25
+msgid ""
+"It selects records that are in the rectangle specified by top_left_point "
+"parameter and bottom_right_point parameter. Records are searched by index "
+"parameter. Found records are added to res parameter table with op parameter "
+"operation."
+msgstr ""
+
+# 980538abb363453d8badd5e2d6067cd7
+#: ../../../source/reference/api/grn_geo.txt:27
+#: ../../../source/reference/api/grn_geo.txt:37
+#: ../../../source/reference/api/grn_geo.txt:45
+msgid "the index column for TokyoGeoPoint or WGS84GeoPpoint type."
+msgstr ""
+
+# adf748fe60314529a5965babe6621a9c
+#: ../../../source/reference/api/grn_geo.txt:28
+msgid ""
+"the top left point of the target rectangle. (ShortText, Text, LongText, "
+"TokyoGeoPoint or  WGS84GeoPoint)"
+msgstr ""
+
+# 0fc82afebf184ab8a21a429db1524106
+# de4e400b750847ada482b5140dc955d8
+# da31573a858040a28516820a4f231b4f
+#: ../../../source/reference/api/grn_geo.txt:29
+#: ../../../source/reference/api/grn_geo.txt:39
+#: ../../../source/reference/api/grn_geo.txt:47
+msgid ""
+"the bottom right point of the target rectangle. (ShortText, Text, LongText, "
+"TokyoGeoPoint or WGS84GeoPoint)"
+msgstr ""
+
+# 57907214cc48400bbae341568ed6a565
+#: ../../../source/reference/api/grn_geo.txt:30
+msgid ""
+"the table to store found record IDs. It must be ``GRN_TABLE_HASH_KEY`` type "
+"table."
+msgstr ""
+
+# 59fae738f0a94d3ab101510a0eb171bc
+#: ../../../source/reference/api/grn_geo.txt:31
+msgid "the operator for matched records."
+msgstr ""
+
+# 40f85674c3d84801bc9ee2db16ca1fe7
+#: ../../../source/reference/api/grn_geo.txt:35
+msgid ""
+"It estimates number of records in the rectangle specified by top_left_point "
+"parameter and bottom_right_point parameter. Number of records is estimated "
+"by index parameter. If an error is occurred, -1 is returned."
+msgstr ""
+
+# be9557850c19438b88fca92b56f752fe
+# 1ee5d670c69e45b9884ba1822ec4dbe7
+#: ../../../source/reference/api/grn_geo.txt:38
+#: ../../../source/reference/api/grn_geo.txt:46
+msgid ""
+"the top left point of the target rectangle. (ShortText, Text, LongText, "
+"TokyoGeoPoint or WGS84GeoPoint)"
+msgstr ""
+
+# c3840bfc6f43402286f8d2fb8a83bbcb
+#: ../../../source/reference/api/grn_geo.txt:43
+msgid ""
+"It opens a cursor to get records in the rectangle specfied by top_left_point "
+"parameter and bottom_right_point parameter."
+msgstr ""
+
+# 422406c8fc8644a998ca4de50f665e42
+#: ../../../source/reference/api/grn_geo.txt:48
+msgid ""
+"the cursor returns records from offset parameter position. offset parameter "
+"is based on 0."
+msgstr ""
+
+# 2b113e1ff098437c8b5bd6a8ca3b8628
+#: ../../../source/reference/api/grn_geo.txt:49
+msgid "the cursor returns at most limit parameter records. -1 means no limit."
+msgstr ""
+
+# bacc218b8bbb4a078237220b51f39dc8
+#: ../../../source/reference/api/grn_geo.txt:53
+msgid ""
+"It returns the next posting that has record ID. It returns NULL after all "
+"records are returned."
+msgstr ""
+
+# 1cfd076ed5974fe1a5e8f254cdb20f55
+#: ../../../source/reference/api/grn_geo.txt:55
+msgid "the geo cursor."
+msgstr ""
+
+# f279de22eb064fb1a98d4c5bf36d89e6
+#: ../../../source/reference/api/grn_hook.txt:6
+msgid "``grn_hook``"
+msgstr ""
+
+# 3e33d26ca8544b209fbc7f9d81971461
+#: ../../../source/reference/api/grn_hook.txt:27
+msgid "objに対してhookを追加します。"
+msgstr ""
+
+# 0ddbccf08ea249f5bcc417d00bc75800
+#: ../../../source/reference/api/grn_hook.txt:30
+msgid ""
+"``GRN_HOOK_GET`` は、objectの参照時に呼び出されるhookを定義します。  "
+"``GRN_HOOK_SET`` は、objectの更新時に呼び出されるhookを定義します。  "
+"``GRN_HOOK_SELECT`` は、検索処理の実行中に適時呼び出され、処理の実行状況を調"
+"べたり、実行の中断を指示することができます。"
+msgstr ""
+
+# e6cef77fd7d745e783b257dc786f5c3a
+#: ../../../source/reference/api/grn_hook.txt:31
+msgid "``GRN_HOOK_GET`` は、objectの参照時に呼び出されるhookを定義します。"
+msgstr ""
+
+# f2cab3c010cf4f9eaf056d57de101a22
+#: ../../../source/reference/api/grn_hook.txt:33
+msgid "``GRN_HOOK_SET`` は、objectの更新時に呼び出されるhookを定義します。"
+msgstr ""
+
+# 763afe00e6dc4d9db0b7feb24cb4c757
+#: ../../../source/reference/api/grn_hook.txt:35
+msgid ""
+"``GRN_HOOK_SELECT`` は、検索処理の実行中に適時呼び出され、処理の実行状況を調"
+"べたり、実行の中断を指示することができます。"
+msgstr ""
+
+# 206d74b57ca549bf966ecfcbe55d7592
+#: ../../../source/reference/api/grn_hook.txt:36
+msgid ""
+"hookの実行順位。offsetに対応するhookの直前に新たなhookを挿入します。  0を指定"
+"した場合は先頭に挿入されます。-1を指定した場合は末尾に挿入されます。  object"
+"に複数のhookが定義されている場合は順位の順に呼び出されます。"
+msgstr ""
+
+# d95c918857314831a6e375f887dbe944
+#: ../../../source/reference/api/grn_hook.txt:37
+msgid "hookの実行順位。offsetに対応するhookの直前に新たなhookを挿入します。"
+msgstr ""
+
+# 3f23bba66e0146568f7f6cbfdfd1040a
+#: ../../../source/reference/api/grn_hook.txt:39
+msgid ""
+"0を指定した場合は先頭に挿入されます。-1を指定した場合は末尾に挿入されます。"
+msgstr ""
+
+# b36ed5055486431d9dad08cb5e3dfdc3
+#: ../../../source/reference/api/grn_hook.txt:41
+msgid "objectに複数のhookが定義されている場合は順位の順に呼び出されます。"
+msgstr ""
+
+# 9ff13e3fccf14788903877412638ac4f
+#: ../../../source/reference/api/grn_hook.txt:42
+msgid "手続きを指定します。"
+msgstr ""
+
+# bb7610ccb9ff4dd7a5a472fabe8c0701
+#: ../../../source/reference/api/grn_hook.txt:43
+msgid "hook固有情報を指定します。"
+msgstr ""
+
+# 28eb95f281cf4647923740acde44b623
+#: ../../../source/reference/api/grn_hook.txt:47
+msgid "objに定義されているhookの数を返します。"
+msgstr ""
+
+# bb7610ccb9ff4dd7a5a472fabe8c0701
+#: ../../../source/reference/api/grn_hook.txt:50
+#: ../../../source/reference/api/grn_hook.txt:57
+#: ../../../source/reference/api/grn_hook.txt:66
+msgid "hookタイプを指定します。"
+msgstr ""
+
+# cb63bbcb3d4d42e5b093184eef229b97
+#: ../../../source/reference/api/grn_hook.txt:54
+msgid ""
+"objに定義されているhookの手続き（proc）を返します。hook固有情報が定義されてい"
+"る場合は、その内容をdataにコピーして返します。"
+msgstr ""
+
+# 928290e83045469685a30d9059938b69
+#: ../../../source/reference/api/grn_hook.txt:58
+#: ../../../source/reference/api/grn_hook.txt:67
+msgid "実行順位を指定します。"
+msgstr ""
+
+# ec50c5ed197e495b8615b8cf51f53406
+#: ../../../source/reference/api/grn_hook.txt:59
+msgid "hook固有情報格納バッファを指定します。"
+msgstr ""
+
+# 28eb95f281cf4647923740acde44b623
+#: ../../../source/reference/api/grn_hook.txt:63
+msgid "objに定義されているhookを削除します。"
+msgstr ""
+
+# 9e39cc162afe4c92bc0004615b4db74f
+#: ../../../source/reference/api/grn_ii.txt:6
+msgid "``grn_ii``"
+msgstr ""
+
+# ded2fcd6d93c48adbf75b23e0d056cf8
+#: ../../../source/reference/api/grn_ii.txt:11
+msgid "buffered index builder"
+msgstr ""
+
+# e9d2338160ca4084bfdc94632e855a36
+#: ../../../source/reference/api/grn_ii.txt:13
+msgid "特定のアプリケーション用に準備した内部APIです。"
+msgstr ""
 
 # c8b27b1b3a344134b491966bc812a757
 #: ../../../source/reference/api/grn_index_cursor.txt:6
@@ -924,6 +1536,616 @@ msgstr ""
 # ff7998336e2943c78c2ae9adf7eb56ed
 #: ../../../source/reference/api/grn_index_cursor.txt:43
 msgid "テーブルレコードIDを指定します。"
+msgstr ""
+
+# cf9c6c1336ee4757adca5c3dd29f5a71
+#: ../../../source/reference/api/grn_info.txt:6
+msgid "``grn_info``"
+msgstr ""
+
+# e89583313324460f9f1773508fa93de3
+#: ../../../source/reference/api/grn_info.txt:27
+msgid "objのtypeに対応する情報をvaluebufに格納します。"
+msgstr ""
+
+# 928290e83045469685a30d9059938b69
+#: ../../../source/reference/api/grn_info.txt:29
+#: ../../../source/reference/api/grn_info.txt:37
+#: ../../../source/reference/api/grn_info.txt:44
+msgid "対象objを指定します。"
+msgstr ""
+
+# bb7610ccb9ff4dd7a5a472fabe8c0701
+#: ../../../source/reference/api/grn_info.txt:30
+#: ../../../source/reference/api/grn_info.txt:46
+msgid "取得する情報の種類を指定します。"
+msgstr ""
+
+# 27c35a44dec14325846350c3be05b811
+#: ../../../source/reference/api/grn_info.txt:31
+#: ../../../source/reference/api/grn_info.txt:47
+msgid "値を格納するバッファ（呼出側で準備）を指定します。"
+msgstr ""
+
+# d5f3654d16bc47699547664777392998
+#: ../../../source/reference/api/grn_info.txt:35
+msgid "objのtypeに対応する情報をvalueの内容に更新します。"
+msgstr ""
+
+# bb7610ccb9ff4dd7a5a472fabe8c0701
+#: ../../../source/reference/api/grn_info.txt:38
+#: ../../../source/reference/api/grn_info.txt:55
+msgid "設定する情報の種類を指定します。"
+msgstr ""
+
+# 3088a86e9efb483ab344e68d09a0f6f2
+#: ../../../source/reference/api/grn_info.txt:42
+msgid ""
+"objのidに対応するレコードの、typeに対応する情報をvaluebufに格納します。呼出側"
+"ではtypeに応じて十分なサイズのバッファを確保しなければいけません。"
+msgstr ""
+
+# 928290e83045469685a30d9059938b69
+#: ../../../source/reference/api/grn_info.txt:45
+#: ../../../source/reference/api/grn_info.txt:54
+msgid "対象IDを指定します。"
+msgstr ""
+
+# 41152b2a449a44a295b464cd8dcc6b62
+#: ../../../source/reference/api/grn_info.txt:51
+msgid ""
+"objのidに対応するレコードのtypeに対応する情報をvalueの内容に更新します。"
+msgstr ""
+
+# 3966ea7c3b75482cb5b8079635359011
+# beda75c5d1474f5db4c72caacbb44ef8
+#: ../../../source/reference/api/grn_info.txt:56
+msgid "設定しようとする値を指定します。"
+msgstr ""
+
+# a2f0c526d8a14116a31b9af58a5eaa2c
+#: ../../../source/reference/api/grn_match_escalation.txt:6
+msgid "``grn_match_escalation``"
+msgstr ""
+
+# 9fba2e28497a4791878667fe06e32747
+#: ../../../source/reference/api/grn_match_escalation.txt:23
+msgid ""
+"検索の挙動をエスカレーションする閾値を返します。エスカレーションの詳細は検索"
+"の仕様に関するドキュメントを参照してください。"
+msgstr ""
+
+# 9fba2e28497a4791878667fe06e32747
+#: ../../../source/reference/api/grn_match_escalation.txt:27
+msgid ""
+"検索の挙動をエスカレーションする閾値を変更します。エスカレーションの詳細は検"
+"索の仕様に関するドキュメントを参照してください。"
+msgstr ""
+
+# 9fba2e28497a4791878667fe06e32747
+#: ../../../source/reference/api/grn_match_escalation.txt:29
+msgid "変更後の検索の挙動をエスカレーションする閾値を指定します。"
+msgstr ""
+
+# 71fbb5a30e4a4911a2fe8399b5e7695c
+#: ../../../source/reference/api/grn_match_escalation.txt:33
+msgid ""
+"デフォルトの検索の挙動をエスカレーションする閾値を返します。エスカレーション"
+"の詳細は検索の仕様に関するドキュメントを参照してください。"
+msgstr ""
+
+# e09f510654b6406da16e132fd8105d83
+#: ../../../source/reference/api/grn_match_escalation.txt:37
+msgid ""
+"デフォルトの検索の挙動をエスカレーションする閾値を変更します。エスカレーショ"
+"ンの詳細は詳細は検索の仕様に関するドキュメントを参照してください。"
+msgstr ""
+
+# 9fba2e28497a4791878667fe06e32747
+#: ../../../source/reference/api/grn_match_escalation.txt:39
+msgid "変更後のデフォルトの検索の挙動をエスカレーションする閾値を指定します。"
+msgstr ""
+
+# 2b7bb67dc3d844fa859200553e7bb338
+#: ../../../source/reference/api/grn_obj.txt:6
+msgid "``grn_obj``"
+msgstr ""
+
+# 1f5c6f825fbd4360b03c08748d5a6cb9
+#: ../../../source/reference/api/grn_obj.txt:27
+msgid ""
+"nameがカラム名の場合、それに対応するtableのカラムを返します。対応するカラムが"
+"存在しなければNULLを返します。"
+msgstr ""
+
+# f8e55584ca0b47888c871736db262f09
+#: ../../../source/reference/api/grn_obj.txt:29
+msgid ""
+"nameはアクセサ文字列の場合、それに対応するaccessorを返します。アクセサ文字列"
+"とは、カラム名等を'.'で連結した文字列です。'_id', '_key'は特殊なアクセサで、"
+"それぞれレコードID/keyを返します。例) 'col1' / 'col2.col3' / 'col2._id'"
+msgstr ""
+
+# 6413573de0af4847a036c4d4f3c285d6
+#: ../../../source/reference/api/grn_obj.txt:36
+msgid "Check whether groonga built-in object."
+msgstr ""
+
+# 0a29623759704c8197315bb47f6d1322
+#: ../../../source/reference/api/grn_obj.txt:38
+msgid "context"
+msgstr ""
+
+# b83d63bc422f43979cd927cac24576ff
+#: ../../../source/reference/api/grn_obj.txt:39
+msgid "target object"
+msgstr ""
+
+# 95e0a0a58e2c4364977d14861fe6df49
+#: ../../../source/reference/api/grn_obj.txt:40
+msgid "``GRN_TRUE`` for built-in groonga object, ``GRN_FALSE`` otherwise."
+msgstr ""
+
+# b92b0b74b2a547cdb37c947d9c18cf6e
+#: ../../../source/reference/api/grn_obj.txt:44
+msgid ""
+"objのIDに対応するレコードのvalueを取得します。valueを戻り値として返します。"
+msgstr ""
+
+# 33c8132f169d458885879dc04a8eebb3
+#: ../../../source/reference/api/grn_obj.txt:48
+msgid "値を格納するバッファ（呼出側で準備する）を指定します。"
+msgstr ""
+
+# da54539f48434e82857695cfaf83fada
+#: ../../../source/reference/api/grn_obj.txt:52
+msgid ""
+"objに指定されたカラムについて、offsetに指定されたレコードIDを開始位置として、"
+"IDが連続するレコードに対応するカラム値が昇順に格納された配列へのポインタを"
+"valuesにセットします。"
+msgstr ""
+
+# c91ab59e51c74012b8577c1d10019e8e
+#: ../../../source/reference/api/grn_obj.txt:54
+msgid ""
+"取得できた件数が戻り値として返されます。エラーが発生した場合は -1 が返されま"
+"す。"
+msgstr ""
+
+# 4f3be6330e54446b989d8b6c4a9914d8
+#: ../../../source/reference/api/grn_obj.txt:56
+msgid ""
+"値が固定長であるカラムのみがobjに指定できます。範囲内のIDに対応するレコードが"
+"有効であるとは限りません。delete操作を実行したことのあるテーブルに対しては、:"
+"c:func:`grn_table_at()` などによって各レコードの存否を別途確認しなければなり"
+"ません。"
+msgstr ""
+
+# 27c35a44dec14325846350c3be05b811
+#: ../../../source/reference/api/grn_obj.txt:59
+msgid "値を取得する範囲の開始位置となるレコードIDを指定します。"
+msgstr ""
+
+# 96f48220ef714a3f8241befcca87b4e2
+#: ../../../source/reference/api/grn_obj.txt:60
+msgid "値の配列がセットされます。"
+msgstr ""
+
+# 17a52bcd62a74b5689ce4f5eaf8950d5
+#: ../../../source/reference/api/grn_obj.txt:64
+msgid ""
+"objのIDに対応するレコードの値を更新します。対応するレコードが存在しない場合"
+"は ``GRN_INVALID_ARGUMENT`` を返します。"
+msgstr ""
+
+# bb7610ccb9ff4dd7a5a472fabe8c0701
+#: ../../../source/reference/api/grn_obj.txt:68
+msgid "格納する値を指定します。"
+msgstr ""
+
+# 2056573507794a4ba2445c9925ff1d51
+#: ../../../source/reference/api/grn_obj.txt:69
+msgid ""
+"以下の値を指定できます。  .. hlist::    :columns: 3     * :c:macro:"
+"`GRN_OBJ_SET`    * :c:macro:`GRN_OBJ_INCR`    * :c:macro:`GRN_OBJ_DECR`    "
+"* :c:macro:`GRN_OBJ_APPEND`    * :c:macro:`GRN_OBJ_PREPEND`    * :c:macro:"
+"`GRN_OBJ_GET`    * :c:macro:`GRN_OBJ_COMPARE`    * :c:macro:"
+"`GRN_OBJ_LOCK`    * :c:macro:`GRN_OBJ_UNLOCK`"
+msgstr ""
+
+# 1e238c91e2bf40cbb6a3c2206e30a8ab
+# d0bda985cbe144d789e283f4356e4c68
+#: ../../../source/reference/api/grn_obj.txt:70
+msgid "以下の値を指定できます。"
+msgstr "以下のいずれかの形式が使用できます。"
+
+# 561d2bb317bb49f4aa5e502ee4540194
+#: ../../../source/reference/api/grn_obj.txt:75
+msgid ":c:macro:`GRN_OBJ_SET`"
+msgstr ""
+
+# b508346fac2e4928b8d60f0f907000e9
+#: ../../../source/reference/api/grn_obj.txt:76
+msgid ":c:macro:`GRN_OBJ_INCR`"
+msgstr ""
+
+# 5814c18bcd6840628db385a39dfed973
+#: ../../../source/reference/api/grn_obj.txt:77
+msgid ":c:macro:`GRN_OBJ_DECR`"
+msgstr ""
+
+# 0b2ef6d83964413e87a676b0fbcc33c0
+#: ../../../source/reference/api/grn_obj.txt:78
+msgid ":c:macro:`GRN_OBJ_APPEND`"
+msgstr ""
+
+# 7c102e3ad6e04553b63f8fab12bf5c73
+#: ../../../source/reference/api/grn_obj.txt:79
+msgid ":c:macro:`GRN_OBJ_PREPEND`"
+msgstr ""
+
+# b40cd2ea4db645f1841fc137b3b16a40
+#: ../../../source/reference/api/grn_obj.txt:80
+msgid ":c:macro:`GRN_OBJ_GET`"
+msgstr ""
+
+# dc95e1a7dd3e4e5e9ab467b0beefb66b
+#: ../../../source/reference/api/grn_obj.txt:81
+msgid ":c:macro:`GRN_OBJ_COMPARE`"
+msgstr ""
+
+# 4f031fa10f8f49acb947680a4df51d3b
+#: ../../../source/reference/api/grn_obj.txt:82
+msgid ":c:macro:`GRN_OBJ_LOCK`"
+msgstr ""
+
+# 6e53d5a79188462e92efd79eac338331
+#: ../../../source/reference/api/grn_obj.txt:83
+msgid ":c:macro:`GRN_OBJ_UNLOCK`"
+msgstr ""
+
+# 52b94e87f0fc4133b584ad7c2c2fea7b
+# 7dea56b8504a4d1d86ccee57819076fb
+#: ../../../source/reference/api/grn_obj.txt:89
+msgid "レコードの値をvalueと置き換えます。"
+msgstr ""
+
+# 3e33d26ca8544b209fbc7f9d81971461
+#: ../../../source/reference/api/grn_obj.txt:93
+msgid "レコードの値にvalueを加算します。"
+msgstr ""
+
+# 52b94e87f0fc4133b584ad7c2c2fea7b
+# 7dea56b8504a4d1d86ccee57819076fb
+#: ../../../source/reference/api/grn_obj.txt:97
+msgid "レコードの値にvalueを減算します。"
+msgstr ""
+
+# 1cf238009043408087088ed70616bb57
+#: ../../../source/reference/api/grn_obj.txt:101
+msgid "レコードの値の末尾にvalueを追加します。"
+msgstr ""
+
+# 1cf238009043408087088ed70616bb57
+#: ../../../source/reference/api/grn_obj.txt:105
+msgid "レコードの値の先頭にvalueを追加します。"
+msgstr ""
+
+# d07a85896a294bfb97bd6aadbf91f3d2
+#: ../../../source/reference/api/grn_obj.txt:109
+msgid "新しいレコードの値をvalueにセットします。"
+msgstr ""
+
+# 62652c2357614df8b6f368116646291d
+# 90cbe0f03286487abc4cf49227d7608e
+#: ../../../source/reference/api/grn_obj.txt:113
+msgid "レコードの値とvalueが等しいか調べます。"
+msgstr ""
+
+# e59f618ec2744a03aece17e76b5f3192
+#: ../../../source/reference/api/grn_obj.txt:117
+msgid ""
+"当該レコードをロックします。:c:macro:`GRN_OBJ_COMPARE` と共に指定された場合"
+"は、レコードの値とvalueが等しい場合に限ってロックします。"
+msgstr ""
+
+# 51ec3260fbb0429b899a2d4738546ce0
+#: ../../../source/reference/api/grn_obj.txt:121
+msgid "当該レコードのロックを解除します。"
+msgstr ""
+
+# 3d2ce098021545fd8b90c42eb38963b8
+#: ../../../source/reference/api/grn_obj.txt:125
+msgid ""
+"objをメモリから解放し、それが永続オブジェクトであった場合は、該当するファイル"
+"一式を削除します。"
+msgstr ""
+
+# cdd5bb3b6d8a495eab0c45f2d2660dfa
+#: ../../../source/reference/api/grn_obj.txt:131
+msgid ""
+"ctxが使用するdbにおいてobjに対応する名前をnameに更新します。objは永続オブジェ"
+"クトでなければいけません。"
+msgstr ""
+
+# 153394c7eaf24d50a5898f4c811f7cc3
+#: ../../../source/reference/api/grn_obj.txt:139
+msgid ""
+"一時的なobjectであるobjをメモリから解放します。objに属するobjectも再帰的にメ"
+"モリから解放されます。"
+msgstr ""
+
+# 3d552ff2a1b4433cbb2ed7fe4dc00ef2
+#: ../../../source/reference/api/grn_obj.txt:141
+msgid ""
+"永続的な、table, column, exprなどは解放してはいけません。一般的には、一時的か"
+"永続的かを気にしなくてよい :c:func:`grn_obj_unlink()` を用いるべきです。"
+msgstr ""
+
+# b8bb848759914bea9512a980988ddad7
+#: ../../../source/reference/api/grn_obj.txt:147
+msgid "objの型を変更します。"
+msgstr ""
+
+# dd3a348a8af04ca295390ef954fa1ffb
+#: ../../../source/reference/api/grn_obj.txt:149
+msgid ""
+"objは :c:func:`GRN_OBJ_INIT()` マクロなどで初期化済みでなければいけません。"
+msgstr ""
+
+# 928290e83045469685a30d9059938b69
+#: ../../../source/reference/api/grn_obj.txt:152
+msgid "変更後のobjの型を指定します。"
+msgstr ""
+
+# 6a82baa3d0b6407283bcab7a766e0eec
+#: ../../../source/reference/api/grn_obj.txt:153
+msgid ""
+"``GRN_OBJ_VECTOR`` を指定するとdomain型の値のベクタを格納するオブジェクトにな"
+"ります。"
+msgstr ""
+
+# 3cb4e58dcd334bf2af5ad0575fd82579
+#: ../../../source/reference/api/grn_obj.txt:157
+msgid ""
+"objをメモリから解放します。objに属するobjectも再帰的にメモリから解放されま"
+"す。"
+msgstr ""
+
+# 2e238f1299f84428a668d28a860081a0
+#: ../../../source/reference/api/grn_obj.txt:161
+msgid "objに対応するファイルパスを返します。一時objectならNULLを返します。"
+msgstr ""
+
+# 8838106d76b24a398c970363c98dc950
+#: ../../../source/reference/api/grn_obj.txt:167
+msgid "objの名前の長さを返します。無名objectなら0を返します。"
+msgstr ""
+
+# 9e09f73c4fc2432fa92634774e21c881
+#: ../../../source/reference/api/grn_obj.txt:169
+msgid ""
+"名前付きのobjectであり、buf_sizeの長さが名前の長以上であった場合は、namebufに"
+"該当する名前をコピーします。"
+msgstr ""
+
+# d654b11ff0b4413e826e32d5d3b7cf9b
+#: ../../../source/reference/api/grn_obj.txt:177
+msgid ""
+"objパラメータのとる値の範囲を表わしているオブジェクトのIDを返します。例え"
+"ば、:c:type:`grn_builtin_type` にある ``GRN_DB_INT`` などを返します。"
+msgstr ""
+
+# 6c2a4904cf464d2ab04d0cd001f962d7
+#: ../../../source/reference/api/grn_obj.txt:183
+msgid ""
+"objの占有するメモリのうち、可能な領域をthresholdを指標として解放します。"
+msgstr ""
+
+# 7b3b33cdc5514bb69bd0d761acbbc8e7
+#: ../../../source/reference/api/grn_obj.txt:189
+msgid "objに対応するファイルの整合性を検査します。"
+msgstr ""
+
+# 0478bc04e76b40c0a303ed9607ac5421
+#: ../../../source/reference/api/grn_obj.txt:195
+msgid ""
+"objをlockします。timeout（秒）経過してもlockを取得できない場合は "
+"``GRN_RESOURCE_DEADLOCK_AVOIDED`` を返します。"
+msgstr ""
+
+# 98a1f2f52a0e4b97aeb0fa3d9e1bd991
+#: ../../../source/reference/api/grn_obj.txt:201
+msgid "objをunlockします。"
+msgstr ""
+
+# 51ec3260fbb0429b899a2d4738546ce0
+#: ../../../source/reference/api/grn_obj.txt:207
+msgid "強制的にロックをクリアします。"
+msgstr ""
+
+# 19141846570f4cb29501fce8677f14b6
+#: ../../../source/reference/api/grn_obj.txt:213
+msgid "objが現在lockされていれば0以外の値を返します。"
+msgstr ""
+
+# 5fef4a6f20e445b6ac5c0862c20610b9
+#: ../../../source/reference/api/grn_obj.txt:219
+msgid ""
+"objの占有するDBファイル領域のうち、可能な領域をthresholdを指標としてフラグメ"
+"ントの解消を行います。"
+msgstr ""
+
+# 05c4393fe375439c8c51f4d7c713901a
+#: ../../../source/reference/api/grn_obj.txt:221
+msgid "フラグメント解消が実行されたセグメントの数を返します。"
+msgstr ""
+
+# 51ec3260fbb0429b899a2d4738546ce0
+#: ../../../source/reference/api/grn_obj.txt:227
+msgid "objのidを返します。"
+msgstr ""
+
+# db2fc6f5c8184be0906c4daf91294cc2
+#: ../../../source/reference/api/grn_obj.txt:233
+msgid ""
+"dbからidに対応するテーブルやカラムなどを削除します。mroonga向けに用意した内部"
+"APIです。"
+msgstr ""
+
+# 6a6f954de8fd4e9f9bb7f08dca55cef4
+# 98374a011c2146788bfd94bf398d3dc4
+#: ../../../source/reference/api/grn_obj.txt:235
+#: ../../../source/reference/api/grn_obj.txt:243
+msgid "The target database."
+msgstr ""
+
+# 3e10ef7c0b2f47718925999e740e8091
+# 71e2ec8aafb843b19fe1f21e4cb98817
+#: ../../../source/reference/api/grn_obj.txt:236
+#: ../../../source/reference/api/grn_obj.txt:244
+msgid "The object (table, column and so on) ID to be deleted."
+msgstr ""
+
+# 7e18a2fdbe1c46c59b2ac3272338ca26
+#: ../../../source/reference/api/grn_obj.txt:237
+msgid ""
+"If ``GRN_TRUE``, clear object cache and remove relation between ID and key "
+"in database. Otherwise, just clear object cache."
+msgstr ""
+
+# 174bc3a518404caf8fb9efa35656b9c8
+#: ../../../source/reference/api/grn_obj.txt:241
+msgid "dbのidに対応するpathを返します。mroonga向けに用意した内部APIです。"
+msgstr ""
+
+# 9e4fedef451a44068685d0ea336f2d3c
+#: ../../../source/reference/api/grn_obj.txt:245
+msgid "path string corresponding to the id will be set in this buffer."
+msgstr ""
+
+# dc35e446557f43659f04dbdb958fdb4f
+#: ../../../source/reference/api/grn_proc.txt:6
+msgid "``grn_proc``"
+msgstr ""
+
+# 6f352b2c089c45c4aa714864bac5ce74
+#: ../../../source/reference/api/grn_proc.txt:31
+msgid "nameに対応する新たなproc(手続き)をctxが使用するdbに定義します。"
+msgstr ""
+
+# 5fb361ddb8814073831a31adea828363
+#: ../../../source/reference/api/grn_proc.txt:33
+msgid "作成するprocの名前を指定します。"
+msgstr ""
+
+# dd69a1e5891e4a18a53a8a0d4e1ac8b4
+#: ../../../source/reference/api/grn_proc.txt:34
+msgid ""
+"The number of bytes of name parameter. If negative value is specified, name "
+"parameter is assumed that NULL-terminated string."
+msgstr ""
+
+# bb7610ccb9ff4dd7a5a472fabe8c0701
+#: ../../../source/reference/api/grn_proc.txt:35
+msgid "procの種類を指定します。"
+msgstr ""
+
+# ec50c5ed197e495b8615b8cf51f53406
+#: ../../../source/reference/api/grn_proc.txt:36
+msgid "初期化関数のポインタを指定します。"
+msgstr ""
+
+# ec50c5ed197e495b8615b8cf51f53406
+#: ../../../source/reference/api/grn_proc.txt:37
+msgid "実処理関数のポインタを指定します。"
+msgstr ""
+
+# ec50c5ed197e495b8615b8cf51f53406
+#: ../../../source/reference/api/grn_proc.txt:38
+msgid "終了関数のポインタを指定します。"
+msgstr ""
+
+# 65eb2f34dab44c7cb9a82b94f8742d15
+#: ../../../source/reference/api/grn_proc.txt:39
+msgid "procで使用する変数の数を指定します。"
+msgstr ""
+
+# 46fb1ac8428a446aa64ea9a621db23b8
+#: ../../../source/reference/api/grn_proc.txt:40
+msgid ""
+"procで使用する変数の定義を指定します。( :c:type:`grn_expr_var` 構造体の配列)"
+msgstr ""
+
+# 82e5ad534ad24cc98dea91bcd23592a4
+#: ../../../source/reference/api/grn_proc.txt:44
+msgid ""
+"user_dataをキーとして、現在実行中の :c:type:`grn_proc_func` 関数および定義さ"
+"れている変数( :c:type:`grn_expr_var` )の配列とその数を取得します。"
+msgstr ""
+
+# 902ade0cebe347acaf1ef03eef4bffd9
+#: ../../../source/reference/api/grn_proc.txt:46
+msgid ":c:type:`grn_proc_func` に渡されたuser_dataを指定します。"
+msgstr ""
+
+# c3dfc935e9344b1aaae6a58d038304ee
+#: ../../../source/reference/api/grn_proc.txt:47
+msgid "変数の数を取得します。"
+msgstr ""
+
+# ed9a439d939f4b6db9178ce75385b633
+#: ../../../source/reference/api/grn_proc.txt:51
+msgid "objectを破棄するときに呼ばれる関数を設定します。"
+msgstr ""
+
+# 6dcd44396ab5425793879d1ce3cf27dd
+#: ../../../source/reference/api/grn_proc.txt:53
+msgid "table, column, proc, exprのみ設定可能です。"
+msgstr ""
+
+# 0691651d819a4c2db058e2ad26de92a0
+#: ../../../source/reference/api/grn_proc.txt:56
+msgid "objectを破棄するときに呼ばれる関数を指定します。"
+msgstr ""
+
+# fbda98bbb6d34f9fb1a303c0257b55fd
+#: ../../../source/reference/api/grn_search.txt:6
+msgid "``grn_search``"
+msgstr ""
+
+# 950a3565906f44a7b6b0ba9b56c5ebb5
+#: ../../../source/reference/api/grn_search.txt:25
+msgid ""
+"objを対象としてqueryにマッチするレコードを検索し、opの指定に従ってresにレコー"
+"ドを追加あるいは削除します。"
+msgstr ""
+
+# ec50c5ed197e495b8615b8cf51f53406
+#: ../../../source/reference/api/grn_search.txt:27
+msgid "検索対象のobjectを指定します。"
+msgstr ""
+
+# ec50c5ed197e495b8615b8cf51f53406
+#: ../../../source/reference/api/grn_search.txt:28
+msgid "検索クエリを指定します。"
+msgstr ""
+
+# ec50c5ed197e495b8615b8cf51f53406
+#: ../../../source/reference/api/grn_search.txt:29
+msgid "検索結果を格納するテーブルを指定します。"
+msgstr ""
+
+# e539e13a2cb446868c1b8a6129cdda3b
+#: ../../../source/reference/api/grn_search.txt:30
+msgid ""
+"``GRN_OP_OR``, ``GRN_OP_AND``, ``GRN_OP_AND_NOT``, ``GRN_OP_ADJUST`` のいずれ"
+"かを指定します。"
+msgstr ""
+
+# ec50c5ed197e495b8615b8cf51f53406
+#: ../../../source/reference/api/grn_search.txt:31
+msgid "詳細検索条件を指定します。"
 msgstr ""
 
 # 4c822f633bee43819cb7a8fcd50a5781
@@ -1051,6 +2273,8 @@ msgstr ""
 
 # ec50c5ed197e495b8615b8cf51f53406
 #: ../../../source/reference/api/grn_table.txt:57
+#: ../../../source/reference/api/grn_table.txt:83
+#: ../../../source/reference/api/grn_table.txt:101
 msgid "検索keyを指定します。"
 msgstr ""
 
@@ -1059,6 +2283,305 @@ msgstr ""
 msgid ""
 "NULL以外の値が指定された場合、新たにrecordが追加された時には1が、既存record"
 "だった時には0がセットされます。"
+msgstr ""
+
+# d8255c5e61a7424b8b92899bfb4d8403
+#: ../../../source/reference/api/grn_table.txt:62
+msgid ""
+"It finds a record that has key parameter and returns ID of the found record. "
+"If table parameter is a database, it finds an object (table, column and so "
+"on) that has key parameter  and returns ID of the found object."
+msgstr ""
+
+# cb1330a9581642c99fd69e586401dc5c
+#: ../../../source/reference/api/grn_table.txt:64
+msgid "The table or database."
+msgstr ""
+
+# ce76d4614b7e4c618cb8cef5facf528f
+#: ../../../source/reference/api/grn_table.txt:65
+msgid "The record or object key to be found."
+msgstr ""
+
+# d3d2bcc67bbe425ba0e7974e2e50eb3a
+#: ../../../source/reference/api/grn_table.txt:69
+msgid ""
+"tableにidに対応するrecordが存在するか確認し、存在すれば指定されたIDを、存在し"
+"なければ ``GRN_ID_NIL`` を返します。"
+msgstr ""
+
+# 41465a63b7e145f9acdf7ffdcaae360b
+#: ../../../source/reference/api/grn_table.txt:71
+msgid ""
+"注意: 実行には相応のコストがかかるのであまり頻繁に呼ばないようにして下さい。"
+msgstr ""
+
+# ec50c5ed197e495b8615b8cf51f53406
+#: ../../../source/reference/api/grn_table.txt:74
+msgid "検索idを指定します。"
+msgstr ""
+
+# 002ecfafefb8452fa3c101a23b23c53b
+#: ../../../source/reference/api/grn_table.txt:78
+msgid ""
+"tableが ``GRN_TABLE_PAT_KEY`` もしくは ``GRN_TABLE_DAT_KEY`` を指定して作った"
+"tableなら、longest common prefix searchを行い、対応するIDを返します。"
+msgstr ""
+
+# cd11395565864c4b88d39288a385f462
+#: ../../../source/reference/api/grn_table.txt:80
+msgid ""
+"tableが ``GRN_TABLE_HASH_KEY`` を指定して作ったtableなら、完全に一致するキー"
+"を検索し、対応するIDを返します。"
+msgstr ""
+
+# 787ac91f45414d6a9e1ef3f53ecdf414
+#: ../../../source/reference/api/grn_table.txt:87
+msgid "tableのIDに対応するレコードのkeyを取得します。"
+msgstr ""
+
+# 2b4e325463604ec58ca2d38de9551dfc
+#: ../../../source/reference/api/grn_table.txt:89
+msgid ""
+"対応するレコードが存在する場合はkey長を返します。見つからない場合は0を返しま"
+"す。対応するキーの検索に成功し、またbuf_sizeの長さがkey長以上であった場合は、"
+"keybufに該当するkeyをコピーします。"
+msgstr ""
+
+# 65eb2f34dab44c7cb9a82b94f8742d15
+#: ../../../source/reference/api/grn_table.txt:93
+msgid "keyを格納するバッファ(呼出側で準備する)を指定します。"
+msgstr ""
+
+# 247c740f5384459cb81bb6bafc971200
+#: ../../../source/reference/api/grn_table.txt:94
+msgid "keybufのサイズ(byte長)を指定します。"
+msgstr ""
+
+# 28441cc42a4f41b99f7fe7e6b4c0f6dc
+#: ../../../source/reference/api/grn_table.txt:98
+msgid ""
+"tableのkeyに対応するレコードを削除します。対応するレコードが存在しない場合は "
+"``GRN_INVALID_ARGUMENT`` を返します。"
+msgstr ""
+
+# ec50c5ed197e495b8615b8cf51f53406
+#: ../../../source/reference/api/grn_table.txt:102
+msgid "検索keyのサイズを指定します。"
+msgstr ""
+
+# 16b44f750c0d4da29039b3965d3174c1
+#: ../../../source/reference/api/grn_table.txt:106
+msgid ""
+"tableのidに対応するレコードを削除します。対応するレコードが存在しない場合は "
+"``GRN_INVALID_ARGUMENT`` を返します。"
+msgstr ""
+
+# ff7998336e2943c78c2ae9adf7eb56ed
+#: ../../../source/reference/api/grn_table.txt:109
+#: ../../../source/reference/api/grn_table.txt:118
+msgid "レコードIDを指定します。"
+msgstr ""
+
+# 143d41775fdc4d4cb447d9241ec1ced0
+#: ../../../source/reference/api/grn_table.txt:113
+msgid ""
+"tableのidに対応するレコードのkeyを変更します。新しいkeyとそのbyte長をdest_key"
+"とdest_key_sizeに指定します。"
+msgstr ""
+
+# 84e691d76fcf440e869740ce74af5569
+# b1742a7d02ef487a89f87ac1ca3b5ad6
+#: ../../../source/reference/api/grn_table.txt:115
+#: ../../../source/reference/api/grn_table.txt:124
+msgid "この操作は、``GRN_TABLE_DAT_KEY`` 型のテーブルのみ使用できます。"
+msgstr ""
+
+# 0e959fe93b3e4cab9d04550eb34b58f2
+#: ../../../source/reference/api/grn_table.txt:122
+msgid ""
+"tableのsrc_keyに対応するレコードのkeyを変更します。新しいkeyとそのbyte長を"
+"dest_keyとdest_key_sizeに指定します。"
+msgstr ""
+
+# ec50c5ed197e495b8615b8cf51f53406
+#: ../../../source/reference/api/grn_table.txt:127
+msgid "対象レコードのkeyを指定します。"
+msgstr ""
+
+# ec50c5ed197e495b8615b8cf51f53406
+#: ../../../source/reference/api/grn_table.txt:128
+msgid "対象レコードのkeyの長さ(byte)を指定します。"
+msgstr ""
+
+# 928290e83045469685a30d9059938b69
+#: ../../../source/reference/api/grn_table.txt:129
+msgid "変更後のkeyを指定します。"
+msgstr ""
+
+# 928290e83045469685a30d9059938b69
+#: ../../../source/reference/api/grn_table.txt:130
+msgid "変更後のkeyの長さ(byte)を指定します。"
+msgstr ""
+
+# bb54bdbab7684c0e940229f834bdfe82
+#: ../../../source/reference/api/grn_table.txt:134
+msgid "tableの全レコードを一括して削除します。"
+msgstr ""
+
+# 0dac3dacc79d410c9f9b588345a56fc6
+#: ../../../source/reference/api/grn_table.txt:136
+msgid ""
+"注意: multithread環境では他のthreadのアクセスによって、存在しないアドレスへア"
+"クセスし、SIGSEGVが発生する可能性があります。"
+msgstr ""
+
+# e9ec6bfaeb4249adb22300633314e8f2
+#: ../../../source/reference/api/grn_table.txt:150
+msgid "table内のレコードをソートし、上位limit個の要素をresultに格納します。"
+msgstr ""
+
+# cf50956d694744a68f254caa6dc25ba7
+#: ../../../source/reference/api/grn_table.txt:152
+msgid ""
+"keys.keyには、tableのcolumn,accessor,procのいずれかが指定できます。keys.flags"
+"には、``GRN_TABLE_SORT_ASC`` / ``GRN_TABLE_SORT_DESC`` のいずれかを指定できま"
+"す。``GRN_TABLE_SORT_ASC`` では昇順、``GRN_TABLE_SORT_DESC`` では降順でソート"
+"されます。keys.offsetは、内部利用のためのメンバです。"
+msgstr ""
+
+# 6f85621aa8f54e6b933bdcfcb55f44ad
+#: ../../../source/reference/api/grn_table.txt:155
+msgid ""
+"sortされたレコードのうち、(0ベースで)offset番目から順にresにレコードを格納し"
+"ます。"
+msgstr ""
+
+# ebb652715b054e77a2e5e54242d7ecd0
+#: ../../../source/reference/api/grn_table.txt:156
+msgid "resに格納するレコードの上限を指定します。"
+msgstr ""
+
+# bb7610ccb9ff4dd7a5a472fabe8c0701
+#: ../../../source/reference/api/grn_table.txt:157
+#: ../../../source/reference/api/grn_table.txt:187
+#: ../../../source/reference/api/grn_table.txt:196
+#: ../../../source/reference/api/grn_table.txt:197
+msgid "結果を格納するtableを指定します。"
+msgstr ""
+
+# d38a23db1ad14ed1a63068e06ea71130
+#: ../../../source/reference/api/grn_table.txt:158
+msgid "ソートキー配列へのポインタを指定します。"
+msgstr ""
+
+# d38a23db1ad14ed1a63068e06ea71130
+#: ../../../source/reference/api/grn_table.txt:159
+msgid "ソートキー配列のサイズを指定します。"
+msgstr ""
+
+# 0d291ec8d275471eae17430188ef7bd5
+#: ../../../source/reference/api/grn_table.txt:171
+msgid "tableのレコードを特定の条件でグループ化します。"
+msgstr ""
+
+# 14b6baee04ed49bcbd755aacbb72dc04
+#: ../../../source/reference/api/grn_table.txt:174
+msgid "group化キー構造体の配列へのポインタを指定します。"
+msgstr ""
+
+# d2e113f9ba95466c8f07aaed7726bc1a
+#: ../../../source/reference/api/grn_table.txt:175
+msgid "group化キー構造体の配列のサイズを指定します。"
+msgstr ""
+
+# a4af45cc25f04909afb95c419afeeff9
+#: ../../../source/reference/api/grn_table.txt:176
+msgid "group化の結果を格納する構造体の配列へのポインタを指定します。"
+msgstr ""
+
+# 1dc01f141319467dbba1720406edd454
+#: ../../../source/reference/api/grn_table.txt:177
+msgid "group化の結果を格納する構造体の配列のサイズを指定します。"
+msgstr ""
+
+# 0204efca0bd74e05b8aeadc7e4804b9c
+#: ../../../source/reference/api/grn_table.txt:181
+msgid "table1とtable2をopの指定に従って集合演算した結果をresに格納します。"
+msgstr ""
+
+# a67c3ed403ad472dbd5746a3b77559c5
+#: ../../../source/reference/api/grn_table.txt:183
+msgid ""
+"resにtable1あるいはtable2そのものを指定した場合を除けば、table1, table2は破壊"
+"されません。"
+msgstr ""
+
+# 928290e83045469685a30d9059938b69
+#: ../../../source/reference/api/grn_table.txt:185
+#: ../../../source/reference/api/grn_table.txt:194
+msgid "対象table1を指定します。"
+msgstr ""
+
+# 928290e83045469685a30d9059938b69
+#: ../../../source/reference/api/grn_table.txt:186
+#: ../../../source/reference/api/grn_table.txt:195
+msgid "対象table2を指定します。"
+msgstr ""
+
+# bb7610ccb9ff4dd7a5a472fabe8c0701
+#: ../../../source/reference/api/grn_table.txt:188
+msgid "実行する演算の種類を指定します。"
+msgstr ""
+
+# 21f1f9278c9549198be8660d88ce53d8
+#: ../../../source/reference/api/grn_table.txt:192
+msgid ""
+"table1とtable2から重複するレコードを取り除いた結果をそれぞれres1, res2に格納"
+"します。"
+msgstr ""
+
+# 6c091293a7ba4139b7a975a9b9b0518d
+#: ../../../source/reference/api/grn_table.txt:201
+msgid ""
+"nameパラメータから始まるtableのカラムIDをresパラメータに格納します。name_size"
+"パラメータが0の場合はすべてのカラムIDを格納します。"
+msgstr ""
+
+# 928290e83045469685a30d9059938b69
+#: ../../../source/reference/api/grn_table.txt:204
+msgid "取得したいカラム名のprefixを指定します。"
+msgstr ""
+
+# 65eb2f34dab44c7cb9a82b94f8742d15
+#: ../../../source/reference/api/grn_table.txt:205
+msgid "nameパラメータの長さを指定します。"
+msgstr ""
+
+# ef030fc1e77444a5bc934872a03564f9
+#: ../../../source/reference/api/grn_table.txt:206
+msgid "結果を格納する ``GRN_TABLE_HASH_KEY`` のtableを指定します。"
+msgstr ""
+
+# d8489eafb35e403ca89900815668aefe
+# 7df8088d5d60475dbdf3f1be58812cb6
+# 3903b83c01624043be5d7e0778586b73
+# 33d8ac2ff7164b24900c816b73dff275
+#: ../../../source/reference/api/grn_table.txt:207
+msgid "格納したカラムIDの数を返します。"
+msgstr ""
+
+# 28eb95f281cf4647923740acde44b623
+#: ../../../source/reference/api/grn_table.txt:211
+msgid "tableに登録されているレコードの件数を返します。"
+msgstr ""
+
+# 69d2ad797ce043c3bc935b659d059c65
+#: ../../../source/reference/api/grn_table.txt:217
+msgid ""
+"ctxが使用するdbにおいてtableに対応する名前をnameに更新します。tableの全ての"
+"columnも同時に名前が変更されます。tableは永続オブジェクトでなければいけませ"
+"ん。"
 msgstr ""
 
 # 0da809ee0de94f4c9d176627712966f9
@@ -1333,6 +2856,49 @@ msgstr ""
 # 27aebe1ed081499693305cfbbc2a93c6
 #: ../../../source/reference/api/grn_table_cursor.txt:107
 msgid "cursorが属するtableを返します。"
+msgstr ""
+
+# c8ce7ea2d7d64c01abb79185a10abcd9
+# c8a5faac538d40b485d1a18933b45db6
+# c1ec9388c59842e4b656bf0ffd8838e3
+#: ../../../source/reference/api/grn_type.txt:6
+msgid "``grn_type``"
+msgstr ""
+
+# e958de840df14e3499e71e9baa4260f1
+#: ../../../source/reference/api/grn_type.txt:27
+msgid "nameに対応する新たなtype（型）をdbに定義します。"
+msgstr ""
+
+# 5fb361ddb8814073831a31adea828363
+#: ../../../source/reference/api/grn_type.txt:29
+msgid "作成するtypeの名前を指定します。"
+msgstr ""
+
+# 1d5ef75093144002afd0cfaeea993d13
+#: ../../../source/reference/api/grn_type.txt:30
+msgid ""
+"``GRN_OBJ_KEY_VAR_SIZE``, ``GRN_OBJ_KEY_FLOAT``, ``GRN_OBJ_KEY_INT``, "
+"``GRN_OBJ_KEY_UINT`` のいずれかを指定します。"
+msgstr ""
+
+# 9d135fd22cb947199e2945cfbf4f527c
+#: ../../../source/reference/api/grn_type.txt:31
+msgid ""
+"``GRN_OBJ_KEY_VAR_SIZE`` の場合は最大長、それ以外の場合は長さ（単位:byte）を"
+"指定します。"
+msgstr ""
+
+# 9579ad0b3efb4199bd5ee9cc26be46ea
+#: ../../../source/reference/api/grn_user_data.txt:6
+msgid "``grn_user_data``"
+msgstr ""
+
+# c32c5ec8ffa04f1f8ccad922a1199ad5
+#: ../../../source/reference/api/grn_user_data.txt:27
+msgid ""
+"objectに登録できるユーザデータへのポインタを返します。table, column, proc, "
+"exprのみ使用可能です。"
 msgstr ""
 
 # 2f8dadf32bc6472ca99969c356e5dcea
@@ -6376,17 +7942,6 @@ msgstr ""
 "drilldown_output_columns, drilldown_offset, drilldown_limitによって指定された"
 "条件に従って各レコードの値が出力されます。"
 
-# e8444044dfa741d3b70dc4687921d3ff
-#: ../../../source/reference/commands/select.txt:908
-msgid ":doc:`/reference/grn_expr/query_syntax`"
-msgstr ":doc:`/reference/grn_expr/query_syntax`"
-
-# db86abe681294dcc8cebc9e06a274d6c
-#: ../../../source/reference/commands/select.txt:909
-#: ../../../source/reference/functions/sub_filter.txt:137
-msgid ":doc:`/reference/grn_expr/script_syntax`"
-msgstr ":doc:`/reference/grn_expr/script_syntax`"
-
 # ac43fa35b77e4ac7a322326a79c05bf0
 #: ../../../source/reference/commands/shutdown.txt:6
 msgid "shutdown"
@@ -11384,13 +12939,10 @@ msgstr "Here is a special character list:"
 # 88d7ee90d2db46f79d537405822136e4
 #: ../../../source/reference/grn_expr/query_syntax.txt:81
 msgid ""
-"``[space]`` (escaped as ``[backquote][space]``) (You should substitute ``"
+"``[space]`` (escaped as ``[backslash][space]``) (You should substitute ``"
 "[space]`` with a white space character that is 0x20 in ASCII and ``"
-"[backquote]`` with ``\\\\``.)"
+"[backslash]`` with ``\\\\``.)"
 msgstr ""
-"``[space]`` (escaped as ``[backquote][space]``) (You should substitute ``"
-"[space]`` with a white space character that is 0x20 in ASCII and ``"
-"[backquote]`` with ``\\\\``.)"
 
 # f141f2696dcc4bf49e2604d5613774a3
 #: ../../../source/reference/grn_expr/query_syntax.txt:84
