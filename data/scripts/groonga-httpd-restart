@@ -1,7 +1,8 @@
 #!/bin/sh
 # -*- indent-tabs-mode: nil; sh-indentation: 4 -*-
 
-GROONGA_HTTPD=groonga-httpd
+SERVICE_NAME=groonga-httpd
+GROONGA_HTTPD=${SERVICE_NAME}
 PIDFILE=/var/run/groonga/${GROONGA_HTTPD}.pid
 OLD_PIDFILE=$PIDFILE.oldbin
 STATUS_TIMEOUT=3
@@ -9,13 +10,13 @@ STATUS_TIMEOUT=3
 # Source function library.
 if [ -f /lib/lsb/init-functions ]; then
     . /lib/lsb/init-functions
-    if [ -f /etc/default/$GROONGA_HTTPD ]; then
-        . /etc/default/$GROONGA_HTTPD
+    if [ -f /etc/default/${SERVICE_NAME} ]; then
+        . /etc/default/${SERVICE_NAME}
     fi
 elif [ -f /etc/init.d/functions ]; then
     . /etc/init.d/functions
-    if [ -f /etc/sysconfig/$GROONGA_HTTPD ]; then
-        . /etc/sysconfig/$GROONGA_HTTPD
+    if [ -f /etc/sysconfig/${SERVICE_NAME} ]; then
+        . /etc/sysconfig/${SERVICE_NAME}
     fi
 fi
 
