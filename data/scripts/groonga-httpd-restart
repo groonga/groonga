@@ -65,7 +65,7 @@ fi
 OLD_PID=`cat ${OLD_PID_FILE}`
 
 # Switch worker process.
-kill -WINCH `cat ${OLD_PID_FILE}`
+kill -WINCH ${OLD_PID}
 
 if ! wait_until [ -f "${PID_FILE}" ]; then
     echo "Failed to switch worker process."
