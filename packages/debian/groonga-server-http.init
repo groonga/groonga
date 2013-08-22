@@ -31,7 +31,7 @@ PIDFILE=/var/run/groonga/$NAME-$PROTOCOL.pid
 SCRIPTNAME=/etc/init.d/$NAME-server-$PROTOCOL
 OPTION_ARGS=""
 START_STOP_DAEMON_ARGS=""
-COMMAND_TIMEOUT=5
+TIMEOUT=5
 ENABLE="no"
 
 DEFAULT_FILE=/etc/default/groonga-server-http
@@ -107,7 +107,7 @@ send_command()
 {
     command=$1
     if [ "${PROTOCOL}" = "http" ]; then
-	$CURL --max-time $COMMAND_TIMEOUT "http://${ADDRESS}:${PORT}/d/${command}"
+	$CURL --max-time $TIMEOUT "http://${ADDRESS}:${PORT}/d/${command}"
     else
         $DAEMON --port ${PORT} -c ${ADDRESS} ${command}
     fi

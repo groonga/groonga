@@ -69,7 +69,7 @@ send_command()
 {
     command=$1
     if [ "$command" = "status" ]; then
-	$CURL --max-time $STATUS_TIMEOUT "http://${ADDRESS}:${PORT}/d/${command}"
+	$CURL --max-time $TIMEOUT "http://${ADDRESS}:${PORT}/d/${command}"
     else
 	$CURL "http://${ADDRESS}:${PORT}/d/${command}"
     fi

@@ -8,7 +8,7 @@
 #QUERY_LOG_PATH=/var/log/groonga/query-http.log
 #PROTOCOL=http
 #GRN_QUERY_EXPANDER_TSV_SYNONYMS_FILE=/usr/share/groonga/synonyms.tsv
-#COMMAND_TIMEOUT=5
+#TIMEOUT=5
 
 # Comment out this to disable groonga daemon.
 ENABLE=yes

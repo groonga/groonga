@@ -21,7 +21,7 @@ SERVICE_NAME=groonga-httpd
 GROONGA_HTTPD=${SERVICE_NAME}
 PID_FILE=/var/run/groonga/${GROONGA_HTTPD}.pid
 OLD_PID_FILE=${PID_FILE}.oldbin
-STATUS_TIMEOUT=3
+TIMEOUT=3
 
 # Source configuration.
 if [ -f /etc/default/${SERVICE_NAME} ]; then
@@ -31,7 +31,7 @@ elif [ -f /etc/sysconfig/${SERVICE_NAME} ]; then
 fi
 
 wait_until () {
-    local rest=${STATUS_TIMEOUT}
+    local rest=${TIMEOUT}
     local duration=1
     while [ ${rest} -ge 0 ]; do
         if "$@"; then
