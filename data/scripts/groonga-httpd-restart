@@ -31,14 +31,11 @@ elif [ -f /etc/sysconfig/${SERVICE_NAME} ]; then
 fi
 
 wait_until () {
-    local rest=${TIMEOUT}
-    local duration=1
-    while [ ${rest} -ge 0 ]; do
+    for n in $(seq ${TIMEOUT}); do
         if "$@"; then
             return 0
         fi
-        rest=$((${rest} - ${duration}))
-        sleep ${duration}
+        sleep 1
     done
     return 1
 }
