@@ -62,7 +62,7 @@ if ! wait_until [ -f ${OLD_PID_FILE} ]; then
     exit 1
 fi
 
-OLD_PID=`cat ${OLD_PID_FILE}`
+OLD_PID=$(cat ${OLD_PID_FILE})
 
 # Switch worker process.
 kill -WINCH ${OLD_PID}
@@ -71,13 +71,13 @@ if ! wait_until [ -f "${PID_FILE}" ]; then
     echo "Failed to switch worker process."
     exit 2
 fi
-PID=`cat ${PID_FILE}`
+PID=$(cat ${PID_FILE})
 
-OLD_WORKER_PROCESS=`pgrep -P ${OLD_PID} | grep -v ${PID}`
+OLD_WORKER_PROCESS=$(pgrep -P ${OLD_PID} | grep -v ${PID})
 for pid in ${OLD_WORKER_PROCESS}; do
     wait_until ps --pid=${pid} > /dev/null
 done
-OLD_WORKER_PROCESS=`pgrep -P ${OLD_PID} | grep -v ${PID}`
+OLD_WORKER_PROCESS=$(pgrep -P ${OLD_PID} | grep -v ${PID})
 if [ -n "${OLD_WORKER_PROCESS}" ]; then
     echo "Failed to stop old groonga-httpd worker process."
     killproc -p ${PID_FILE} ${GROONGA_HTTPD} -QUIT
