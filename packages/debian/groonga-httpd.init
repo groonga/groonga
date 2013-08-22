@@ -165,7 +165,11 @@ case "$1" in
 	;;
     restart)
 	log_daemon_msg "Restarting $DESC" "$NAME"
-	$DAEMON_RESTART
+	if [ -f ${PIDFILE} ]; then
+		$DAEMON_RESTART
+	else
+		do_start
+	fi
 	case "$?" in
 	    0) log_end_msg 0 ;;
 	    *) log_end_msg 1 ;;

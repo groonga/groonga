@@ -121,7 +121,11 @@ case "$1" in
 		stop
 		;;
 	restart)
-		${GROONGA_HTTPD_RESTART}
+		if [ -f /var/lock/subsys/$prog ]; then
+			${GROONGA_HTTPD_RESTART}
+		else
+			start
+		fi
 		;;
 	reload)
 		killproc $groonga -HUP
