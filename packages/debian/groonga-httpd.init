@@ -25,7 +25,6 @@ GROUP=groonga
 ADDRESS=127.0.0.1
 PORT=10041
 PIDFILE=/var/run/groonga/$NAME.pid
-OLD_PIDFILE=/var/run/groonga/$NAME.pid.oldbin
 SCRIPTNAME=/etc/init.d/$NAME
 OPTION_ARGS=""
 START_STOP_DAEMON_ARGS=""
