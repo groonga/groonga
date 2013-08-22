@@ -73,10 +73,6 @@ fi
 
 switch_worker ${OLD_PID}
 
-if ! wait_until [ -f "${PID_FILE}" ]; then
-    echo "Failed to switch worker process."
-    exit 2
-fi
 NEW_PID=$(cat ${PID_FILE})
 
 OLD_WORKER_PROCESSES=$(pgrep -P ${OLD_PID} | grep -v ${NEW_PID})
