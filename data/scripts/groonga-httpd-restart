@@ -71,11 +71,10 @@ if ! wait_until [ -f ${OLD_PID_FILE} ]; then
     exit 1
 fi
 
-switch_worker ${OLD_PID}
-
 NEW_PID=$(cat ${PID_FILE})
 
 OLD_WORKER_PROCESSES=$(pgrep -P ${OLD_PID} | grep -v ${NEW_PID})
+switch_worker ${OLD_PID}
 for pid in ${OLD_WORKER_PROCESSES}; do
     wait_until ps --pid=${pid} > /dev/null
 done
