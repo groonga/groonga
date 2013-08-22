@@ -5,6 +5,64 @@
 News
 ====
 
+.. _release-3-0-7:
+
+Release 3.0.7 - 2013/08/29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [doc] Added API documentation. [groonga-dev,01593]
+  [GitHub#79,#80,#81,#82,#83,#84,#85,#86,#87,#88,#89,#90,#91,#92,#93,#95,#96,#97,#98,#99,#100]
+  [Patch by whombx]
+* [table_remove] Improved not to remove patricia trie table or hash table
+   which is still referenced. This change avoids that referenced table is removed accidentally.
+* Improved to just ignore too long token (4096 bytes or more).
+  This change affects when it is registered. In the previous version, it is treated as an
+  error instead of a warning. [groonga-dev,01571] [Suggested by Naoya Murakami]
+* Improved to show actual discarded posting term in log message.
+  [groonga-dev,01621] [Reported by Naoya Murakami]
+* [httpd] Supported loading data using POST method. [GitHub#101]
+  [Patch by Motoi Washida]
+* [httpd] Supported groonga log as ``groonga_log_path`` directive.
+* [httpd] Supported groonga log level as ``groonga_log_level`` directive.
+
+Fixes
+^^^^^
+
+* Fixed a bug that error in expression may cause stack overflow.
+  This change avoids that groonga crashes suddenly as a result of error accumlation.
+* Fixed a crash bug that offline index construction for vector column which has
+  orphan reference causes.
+* Fixed a but that groonga doesn't exit on error while daemon mode starts.
+  For example, ``groonga -d /tmp/non-existence.db`` reproduce this bug.
+* [dump] Fixed a bug that wrong table type is dumped.
+  This bug occurs when table type is TABLE_PAT_KEY and key is reference type.
+* Fixed a bug that the default ``--cache-limit`` value is 0.
+  The default value is changed to '100'.
+* Fixed a memory leak when :doc:`/reference/functions/sub_filter` is used.
+* [doc] Fixed description of defrag command. [Reported by @naoina]
+* [doc] Fixed description about the way to contribute. [GitHub#77]
+  [Patch by Masafumi Yokoyama]
+* [plugin] Fixed a crash bug on multiple DB open case.
+  This bug affects the case that multiple plugin is used and the same database is opened from
+  multiple process. [groonga-dev,01596] [Reported by Naoya Murakami]
+* Fixed a bug that nested match operation after ``AND`` operator doesn't work.
+  The ``select ... --filter '... && nested.column @ "keyword"'`` query reproduces this bug.
+  [groonga-dev,01599] [Reported by Motoi Washida]
+* [doc] Fixed a typo about documentation of special characters.
+  [Reported by Genki Takiuchi]
+
+Thanks
+^^^^^^
+
+* whombx
+* @naoina
+* Masafumi Yokoyama
+* Motoi Washida
+* Genki Takiuchi
+
 .. _release-3-0-6:
 
 Release 3.0.6 - 2013/07/29
