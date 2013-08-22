@@ -20,7 +20,7 @@
 SERVICE_NAME=groonga-httpd
 GROONGA_HTTPD=${SERVICE_NAME}
 PID_FILE=/var/run/groonga/${GROONGA_HTTPD}.pid
-OLD_PID_FILE=$PID_FILE.oldbin
+OLD_PID_FILE=${PID_FILE}.oldbin
 STATUS_TIMEOUT=3
 
 # Source function library.
@@ -37,55 +37,55 @@ elif [ -f /etc/init.d/functions ]; then
 fi
 
 wait_until () {
-    local rest=$STATUS_TIMEOUT
+    local rest=${STATUS_TIMEOUT}
     local duration=1
-    while [ $rest -ge 0 ]; do
+    while [ ${rest} -ge 0 ]; do
         if "$@"; then
             return 0
         fi
-        rest=$(($rest - $duration))
-        sleep $duration
+        rest=$((${rest} - ${duration}))
+        sleep ${duration}
     done
     return 1
 }
 
 if [ "$1" = "try-restart" ]; then
-    if [ ! -f "$PID_FILE" ]; then
+    if [ ! -f "${PID_FILE}" ]; then
         exit 0
     fi
 fi
 
-killproc -p $PID_FILE ${GROONGA_HTTPD} -USR2
+killproc -p ${PID_FILE} ${GROONGA_HTTPD} -USR2
 
-if ! wait_until [ -f $OLD_PID_FILE ]; then
+if ! wait_until [ -f ${OLD_PID_FILE} ]; then
     echo "Failed to start new groonga-httpd master."
     exit 1
 fi
 
-OLD_PID=`cat $OLD_PID_FILE`
+OLD_PID=`cat ${OLD_PID_FILE}`
 
 # Switch worker process.
-kill -WINCH `cat $OLD_PID_FILE`
+kill -WINCH `cat ${OLD_PID_FILE}`
 
-if ! wait_until [ -f "$PID_FILE" ]; then
+if ! wait_until [ -f "${PID_FILE}" ]; then
     echo "Failed to switch worker process."
     exit 2
 fi
-PID=`cat $PID_FILE`
+PID=`cat ${PID_FILE}`
 
-OLD_WORKER_PROCESS=`pgrep -P $OLD_PID | grep -v $PID`
-for pid in $OLD_WORKER_PROCESS; do
-    wait_until ps --pid=$pid > /dev/null
+OLD_WORKER_PROCESS=`pgrep -P ${OLD_PID} | grep -v ${PID}`
+for pid in ${OLD_WORKER_PROCESS}; do
+    wait_until ps --pid=${pid} > /dev/null
 done
-OLD_WORKER_PROCESS=`pgrep -P $OLD_PID | grep -v $PID`
-if [ -n "$OLD_WORKER_PROCESS" ]; then
+OLD_WORKER_PROCESS=`pgrep -P ${OLD_PID} | grep -v ${PID}`
+if [ -n "${OLD_WORKER_PROCESS}" ]; then
     echo "Failed to stop old groonga-httpd worker process."
-    killproc -p $PID_FILE ${GROONGA_HTTPD} -QUIT
+    killproc -p ${PID_FILE} ${GROONGA_HTTPD} -QUIT
     echo "Rollback to old groonga-httpd master."
     exit 2
 fi
 
 # Stop old master process.
-killproc -p $OLD_PID_FILE ${GROONGA_HTTPD} -QUIT
+killproc -p ${OLD_PID_FILE} ${GROONGA_HTTPD} -QUIT
 exit $?
 
