@@ -210,6 +210,7 @@ mv $RPM_BUILD_ROOT%{_datadir}/doc/groonga groonga-doc
 mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/run/groonga
 mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/lib/groonga/db
 mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/log/groonga
+mkdir -p $RPM_BUILD_ROOT%{_libdir}/groonga/plugins/normalizers
 
 mv $RPM_BUILD_ROOT%{_datadir}/groonga/munin/ $RPM_BUILD_ROOT%{_datadir}/
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/munin/plugin-conf.d/
@@ -324,6 +325,10 @@ fi
 %{_libdir}/*.so.*
 %dir %{_libdir}/groonga
 %dir %{_libdir}/groonga/plugins
+%dir %{_libdir}/groonga/plugins/normalizers
+%dir %{_libdir}/groonga/plugins/query_expanders
+%dir %{_libdir}/groonga/plugins/suggest
+%dir %{_libdir}/groonga/plugins/table
 %dir %{_libdir}/groonga/plugins/tokenizers
 %{_libdir}/groonga/plugins/table/table.so
 %{_libdir}/groonga/plugins/query_expanders/tsv.so
@@ -375,7 +380,6 @@ fi
 %files plugin-suggest
 %defattr(-,root,root,-)
 %{_bindir}/groonga-suggest-*
-%dir %{_libdir}/groonga/plugins
 %{_libdir}/groonga/plugins/suggest/suggest.so
 
 %files munin-plugins
