@@ -20,6 +20,7 @@
 SERVICE_NAME=groonga-httpd
 GROONGA_HTTPD=${SERVICE_NAME}
 PID_FILE=/var/run/groonga/${GROONGA_HTTPD}.pid
+OLD_PID_FILE=${PID_FILE}.oldbin
 STATUS_TIMEOUT=3
 
 # Source configuration.
