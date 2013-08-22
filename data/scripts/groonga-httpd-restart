@@ -19,12 +19,17 @@ elif [ -f /etc/init.d/functions ]; then
     fi
 fi
 
-wait_until_file_is_created () {
-    timeout $STATUS_TIMEOUT tail -F $1 --quiet 2> /dev/null | read 2> /dev/null
-}
-
-wait_until_process_is_finished () {
-    timeout $STATUS_TIMEOUT tail -F /dev/null --pid=$1
+wait_until () {
+    local rest=$STATUS_TIMEOUT
+    local duration=1
+    while [ $rest -ge 0 ]; do
+        if "$@"; then
+            return 0
+        fi
+        rest=$(($rest - $duration))
+        sleep $duration
+    done
+    return 1
 }
 
 if [ "$1" = "try-restart" ]; then
@@ -35,8 +40,7 @@ fi
 
 killproc -p $PIDFILE ${GROONGA_HTTPD} -USR2
 
-wait_until_file_is_created $OLD_PIDFILE
-if [ ! -f "$OLD_PIDFILE" ]; then
+if ! wait_until [ -f $OLD_PIDFILE ]; then
     echo "Failed to start new groonga-httpd master."
     exit 1
 fi
@@ -46,8 +50,7 @@ OLD_PID=`cat $OLD_PIDFILE`
 # Switch worker process.
 kill -WINCH `cat $OLD_PIDFILE`
 
-wait_until_file_is_created $PIDFILE
-if [ ! -f "$PIDFILE" ]; then
+if ! wait_until [ -f "$PIDFILE" ]; then
     echo "Failed to switch worker process."
     exit 2
 fi
@@ -55,7 +58,7 @@ PID=`cat $PIDFILE`
 
 OLD_WORKER_PROCESS=`pgrep -P $OLD_PID | grep -v $PID`
 for pid in $OLD_WORKER_PROCESS; do
-    wait_until_process_is_finished $pid
+    wait_until ps --pid=$pid > /dev/null
 done
 OLD_WORKER_PROCESS=`pgrep -P $OLD_PID | grep -v $PID`
 if [ -n "$OLD_WORKER_PROCESS" ]; then
