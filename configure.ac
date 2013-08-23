@@ -1356,6 +1356,7 @@ AC_OUTPUT([
   groonga.pc
   groonga-httpd-conf.sh
   data/groonga-httpd.conf
+  data/scripts/groonga-httpd-restart
   ])
 
 echo "$PACKAGE_NAME $PACKAGE_VERSION configuration:"

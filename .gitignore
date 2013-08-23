@@ -34,6 +34,7 @@
 /groonga.pc
 /groonga-httpd-conf.sh
 /data/groonga-httpd.conf
+/data/scripts/groonga-httpd-restart
 /vendor/nginx-*/objs
 /vendor/mruby/parse.c
 /vendor/plugins/*/
