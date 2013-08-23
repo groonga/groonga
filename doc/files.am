@@ -839,12 +839,12 @@ source_files_relative_from_doc_dir = \
 	source/reference/api/grn_info.txt \
 	source/reference/api/grn_match_escalation.txt \
 	source/reference/api/grn_obj.txt \
+	source/reference/api/grn_proc.txt \
 	source/reference/api/grn_search.txt \
 	source/reference/api/grn_table.txt \
 	source/reference/api/grn_table_cursor.txt \
 	source/reference/api/grn_type.txt \
 	source/reference/api/grn_user_data.txt \
-	source/reference/api/grn_proc.txt \
 	source/reference/cast.txt \
 	source/reference/command.txt \
 	source/reference/command/command_version.txt \
