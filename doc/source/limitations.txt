@@ -27,3 +27,11 @@ A full-text index has the following limitations.
 * The maximum index size: 256GBytes
 
 Keep in mind that these limitations may vary depending on conditions.
+
+Limitations of column
+---------------------
+
+A column has the following limitation.
+
+* The maximum stored data size of each column: 256GiB
+
