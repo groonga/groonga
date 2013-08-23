@@ -26,6 +26,10 @@ http {
   # groonga-httpd, you should do it.
   groonga_database_auto_create on;
 
+  # The default groonga cache limit. The cache limit can be set
+  # for each worker. It can't be set for each groonga database.
+  # groonga_cache_limit 100;
+
   server {
     listen 10041;
     server_name localhost;
