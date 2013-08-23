@@ -244,6 +244,10 @@ GRN_API grn_rc grn_ctx_set_match_escalation_threshold(grn_ctx *ctx, long long in
 GRN_API long long int grn_get_default_match_escalation_threshold(void);
 GRN_API grn_rc grn_set_default_match_escalation_threshold(long long int threshold);
 
+/* cache */
+#define GRN_CACHE_DEFAULT_MAX_N_ENTRIES 100
+GRN_API unsigned int *grn_cache_max_nentries(void);
+
 /* grn_encoding */
 
 GRN_API const char *grn_encoding_to_string(grn_encoding encoding);
