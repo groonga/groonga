@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-25 17:30\n"
+"POT-Creation-Date: 2013-08-26 17:15+0900\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -77,3 +77,18 @@ msgstr ""
 #: ../../../source/limitations.txt:27
 msgid "The maximum index size: 256GBytes"
 msgstr "The maximum index size: 256GBytes"
+
+# 0fd4eb74e2624ab19cab63ffe14d78f4
+#: ../../../source/limitations.txt:32
+msgid "Limitations of column"
+msgstr ""
+
+# af2dd3ee474744eaa6c6fdb5a9d1dc40
+#: ../../../source/limitations.txt:34
+msgid "A column has the following limitation."
+msgstr ""
+
+# 98937bb421c043d991c73e839ddc990e
+#: ../../../source/limitations.txt:36
+msgid "The maximum stored data size of each column: 256GiB"
+msgstr ""
