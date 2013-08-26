@@ -199,7 +199,7 @@ Default
   ``/var/log/groonga/httpd/groonga.log``
 
 Context
-  ``location``
+  ``http``, ``server``, ``location``
 
 Specifies groonga log path in the ``location`` block. The
 default is ``/var/log/groonga/httpd/groonga.log``.
@@ -224,7 +224,7 @@ Default
   ``notice``
 
 Context
-  ``location``
+  ``http``, ``server``, ``location``
 
 Specifies groonga log level in the ``location`` block. The
 default is ``notice``. You can disable logging by specifying ``none`` as log level.
