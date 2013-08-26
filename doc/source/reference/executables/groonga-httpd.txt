@@ -183,6 +183,32 @@ Here is an example configuration to add authorization to
     # Because location name is the base path.
   }
 
+``groonga_log_path``
+"""""""""""""""""""""
+
+Synopsis::
+
+  groonga_log_path path | off;
+
+Default
+  ``/var/log/groonga/httpd/groonga.log``
+
+Context
+  ``location``
+
+Specifies groonga log path in the ``location`` block. The
+default is ``/var/log/groonga/httpd/groonga.log``.
+You can disable logging to specify ``off``.
+
+Examples::
+
+  location /d/ {
+    groonga on;
+    # You can disable log for groonga.
+    groonga_log_path off;
+  }
+
+
 Performance related directives
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
