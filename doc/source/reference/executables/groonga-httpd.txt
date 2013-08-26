@@ -188,6 +188,8 @@ Here is an example configuration to add authorization to
     # Because location name is the base path.
   }
 
+.. _groonga_log_path:
+
 ``groonga_log_path``
 """""""""""""""""""""
 
@@ -212,6 +214,8 @@ Examples::
     # You can disable log for groonga.
     groonga_log_path off;
   }
+
+.. _groonga_log_level:
 
 ``groonga_log_level``
 """""""""""""""""""""
