@@ -10,7 +10,7 @@ export DH_OPTIONS
 	dh $@
 
 override_dh_auto_configure:
-	dh_auto_configure -- --with-zlib --with-lzo --with-munin-plugins
+	dh_auto_configure -- --with-munin-plugins
 
 # disable 'make check'.
 override_dh_auto_test:
