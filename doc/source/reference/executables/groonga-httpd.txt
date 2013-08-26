@@ -208,6 +208,30 @@ Examples::
     groonga_log_path off;
   }
 
+``groonga_log_level``
+"""""""""""""""""""""
+
+Synopsis::
+
+  groonga_log_level none | emergency | alert | ciritical | error | warning | notice | info | debug | dump;
+
+Default
+  ``notice``
+
+Context
+  ``location``
+
+Specifies groonga log level in the ``location`` block. The
+default is ``notice``. You can disable logging by specifying ``none`` as log level.
+
+Examples::
+
+  location /d/ {
+    groonga on;
+    # You can customize log level for groonga.
+    groonga_log_level notice;
+  }
+
 
 Performance related directives
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
