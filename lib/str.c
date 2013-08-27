@@ -46,7 +46,7 @@ grn_str_charlen_utf8(grn_ctx *ctx, const unsigned char *str, const unsigned char
     }
     if (str + len > end) {
       GRN_LOG(ctx, GRN_LOG_WARNING,
-              "grn_str_charlen_utf8(): imcomplete character");
+              "grn_str_charlen_utf8(): incomplete character");
       return 0;
     }
     for (i = 1; i < len; ++i) {
