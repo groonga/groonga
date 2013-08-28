@@ -27,6 +27,7 @@ Improvements
   [Patch by Motoi Washida]
 * [httpd] Supported groonga log as ``groonga_log_path`` directive.
 * [httpd] Supported groonga log level as ``groonga_log_level`` directive.
+* [httpd] Supported customizing cache limit as ``groonga_cache_limit`` directive.
 
 Fixes
 ^^^^^
@@ -53,6 +54,8 @@ Fixes
   [groonga-dev,01599] [Reported by Motoi Washida]
 * [doc] Fixed a typo about documentation of special characters.
   [Reported by Genki Takiuchi]
+* Fixed a typo in error message when invalid character is given.
+  [Reported by YOSHIDA Mitsuo]
 
 Thanks
 ^^^^^^
@@ -62,6 +65,7 @@ Thanks
 * Masafumi Yokoyama
 * Motoi Washida
 * Genki Takiuchi
+* YOSHIDA Mitsuo
 
 .. _release-3-0-6:
 
