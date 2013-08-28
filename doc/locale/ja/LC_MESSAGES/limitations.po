@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-25 17:32\n"
+"POT-Creation-Date: 2013-08-26 17:16+0900\n"
 "PO-Revision-Date: 2011-05-09 00:36+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -65,3 +65,15 @@ msgstr "最大語彙数: 268,435,455 (約2億6千万)"
 #: ../../../source/limitations.txt:27
 msgid "The maximum index size: 256GBytes"
 msgstr "最大インデックスサイズ: 256GByte"
+
+#: ../../../source/limitations.txt:32
+msgid "Limitations of column"
+msgstr "カラムの制限"
+
+#: ../../../source/limitations.txt:34
+msgid "A column has the following limitation."
+msgstr "カラムには以下の制限があります。"
+
+#: ../../../source/limitations.txt:36
+msgid "The maximum stored data size of each column: 256GiB"
+msgstr "カラムごとのサイズを合計した上限値: 256GiB"
