@@ -36,7 +36,7 @@ Fixes
   This change avoids that groonga crashes suddenly as a result of error accumlation.
 * Fixed a crash bug that offline index construction for vector column which has
   orphan reference causes.
-* Fixed a but that groonga doesn't exit on error while daemon mode starts.
+* Fixed a bug that groonga doesn't exit on error while daemon mode starts.
   For example, ``groonga -d /tmp/non-existence.db`` reproduce this bug.
 * [dump] Fixed a bug that wrong table type is dumped.
   This bug occurs when table type is TABLE_PAT_KEY and key is reference type.
