@@ -1757,7 +1757,10 @@ grn_p_decv(grn_ctx *ctx, uint8_t *data, uint32_t data_size, datavec *dv, uint32_
     df >>= 1;
     size = nreq == dvlen ? data_size : df * nreq;
     if (dv[dvlen].data < dv[0].data + size) {
-      if (dv[0].data) { GRN_FREE(dv[0].data); }
+      if (dv[0].data) {
+        GRN_FREE(dv[0].data);
+        dv[0].data = NULL;
+      }
       if (!(rp = GRN_MALLOC(size * sizeof(uint32_t)))) { return 0; }
       dv[dvlen].data = rp + size;
     } else {
@@ -1783,7 +1786,10 @@ grn_p_decv(grn_ctx *ctx, uint8_t *data, uint32_t data_size, datavec *dv, uint32_
     }
     size = df * nreq + (nreq == dvlen ? rest : 0);
     if (dv[dvlen].data < dv[0].data + size) {
-      if (dv[0].data) { GRN_FREE(dv[0].data); }
+      if (dv[0].data) {
+        GRN_FREE(dv[0].data);
+        dv[0].data = NULL;
+      }
       if (!(rp = GRN_MALLOC(size * sizeof(uint32_t)))) { return 0; }
       dv[dvlen].data = rp + size;
     } else {
