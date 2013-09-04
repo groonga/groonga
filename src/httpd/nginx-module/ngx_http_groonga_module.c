@@ -302,7 +302,7 @@ ngx_http_groonga_extract_command_path(ngx_http_request_t *r,
   if (location_conf->base_path.len > 0) {
     if (command_path->len < location_conf->base_path.len) {
       ngx_log_error(NGX_LOG_WARN, r->connection->log, 0,
-                    "requestd URI is shorter than groonga_base_path: "
+                    "requested URI is shorter than groonga_base_path: "
                     "URI: <%V>, groonga_base_path: <%V>",
                     &(r->unparsed_uri), &(location_conf->base_path));
     } else if (strncmp((const char *)command_path->data,
