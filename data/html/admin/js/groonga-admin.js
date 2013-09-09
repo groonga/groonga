@@ -908,6 +908,7 @@ jQuery.extend(GroongaAdmin.prototype, {
     return ret;
   },
   update_createrecord_loadcomplete: function(d_sel, d_col) {
+    var that = this;
     var b = d_sel[1][0];
     var columns = $('<tbody />');
     var listofs = b[1].length - (d_col[1].length - 1);
@@ -950,8 +951,8 @@ jQuery.extend(GroongaAdmin.prototype, {
               .click(function() {
                 var target = $(this).parent();
                 target
-                  .append(this.add_record_inputbox($(this).parent().prev().children().text()))
-                  .append(this.add_record_deletebutton())
+                  .append(that.add_record_inputbox($(this).parent().prev().children().text()))
+                  .append(that.add_record_deletebutton())
                   .append("<br />");
                 $(this).appendTo(target);
               })
