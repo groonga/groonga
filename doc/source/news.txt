@@ -108,7 +108,7 @@ Release 3.0.5 - 2013/06/29
 Improvements
 ^^^^^^^^^^^^
 
-* [doc] Added summary about ``match_column`` and ``query_string`` parameters in ``query()``.
+* [doc] Added summary about ``match_columns`` and ``query_string`` parameters in ``query()``.
 * Added subrecord information to table inspection.
 * Supported single quoted string literal in ``output_columns`` expression.
   This means that "XXX, '...'" expression is supported.

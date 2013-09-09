@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-08-28 10:50+0900\n"
-"PO-Revision-Date: 2013-09-09 23:25+0900\n"
+"PO-Revision-Date: 2013-09-09 23:31+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -363,10 +363,10 @@ msgstr "3.0.5リリース - 2013/06/29"
 # 52480a40b2da4a63aa6d88f04cda79ec
 #: ../../../source/news.txt:111
 msgid ""
-"[doc] Added summary about ``match_column`` and ``query_string`` parameters "
+"[doc] Added summary about ``match_columns`` and ``query_string`` parameters "
 "in ``query()``."
 msgstr ""
-"[doc] ``match_column`` と ``query()`` の ``query_string`` 引数のサマリを追加"
+"[doc] ``match_columns`` と ``query()`` の ``query_string`` 引数のサマリを追加"
 "しました。"
 
 # c0f734d184694dbea264e4bbb0eb1a1d
