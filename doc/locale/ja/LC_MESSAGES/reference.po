@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-08-28 10:50+0900\n"
-"PO-Revision-Date: 2013-08-18 09:15+0900\n"
+"PO-Revision-Date: 2013-09-09 23:33+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -12214,10 +12214,10 @@ msgstr ""
 # de1a8b000c33432a8e1a6b6725024fff
 #: ../../../source/reference/functions/query.txt:14
 msgid ""
-"``query`` enables you to specify ``--match_columns`` and ``--query`` "
+"``query`` enables you to specify ``--match_columns`` and ``--query_string`` "
 "parameters as function arguments."
 msgstr ""
-"``query`` は ``--match_columns`` と ``--query`` のパラメータを関数の引数とし"
+"``query`` は ``--match_columns`` と ``--query_string`` のパラメータを関数の引数とし"
 "て指定することを可能にします。"
 
 # 6c1acb54542f42a98d506c8a04ebbae7

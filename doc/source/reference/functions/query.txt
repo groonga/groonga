@@ -11,7 +11,7 @@ query
 Summary
 -------
 
-``query`` enables you to specify ``--match_columns`` and ``--query`` parameters as
+``query`` enables you to specify ``--match_columns`` and ``--query_string`` parameters as
 function arguments.
 
 ``query`` is one of the groonga builtin functions, so you can specify
