@@ -11,16 +11,16 @@ query
 Summary
 -------
 
-``query`` enables you to specify ``--match_columns`` and ``--query_string`` parameters as
-function arguments.
-
-``query`` is one of the groonga builtin functions, so you can specify
-multiple ``query`` function as parameters of ``--filter`` option.
+``query`` provides ``--match_columns`` and ``--query`` parameters of
+:doc:`/reference/commands/select` feature as function. You can specify
+multiple ``query`` functions in ``--filter`` parameter in
+:doc:`/reference/commands/select`.
 
 Because of such flexibility, you can control full text search behavior
-by combination of multiple ``query`` function.
+by combination of multiple ``query`` functions.
 
-``query`` can be used in only ``--filter`` in :doc:`/reference/commands/select`.
+``query`` can be used in only ``--filter`` in
+:doc:`/reference/commands/select`.
 
 Syntax
 ------
