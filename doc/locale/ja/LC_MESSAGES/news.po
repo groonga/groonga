@@ -366,7 +366,7 @@ msgid ""
 "[doc] Added summary about ``match_columns`` and ``query_string`` parameters "
 "in ``query()``."
 msgstr ""
-"[doc] ``match_columns`` と ``query()`` の ``query_string`` 引数のサマリを追加"
+"[doc] ``query()`` の ``match_columns`` と ``query_string`` 引数のサマリを追加"
 "しました。"
 
 # c0f734d184694dbea264e4bbb0eb1a1d
