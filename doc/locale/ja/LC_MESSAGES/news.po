@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-08-28 10:50+0900\n"
-"PO-Revision-Date: 2013-08-29 23:13+0900\n"
+"PO-Revision-Date: 2013-09-09 23:24+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -60,17 +60,13 @@ msgstr ""
 
 # c16545e3eee745c8a0d4e646b0b61a63
 #: ../../../source/news.txt:19
-msgid "[table_remove] Improved not to remove patricia trie table or hash table"
+msgid "[table_remove] Improved not to remove patricia trie table or hash table "
+"which is still referenced. This change avoids that referenced table is "
+"removed accidentally."
 msgstr ""
 "[table_remove] 参照されているパトリシアトライもしくはハッシュテーブルが削除さ"
 "れないようにした。"
-
-# 67bfadb4b2d74d85ba6c07f194755d34
-#: ../../../source/news.txt:20
-msgid ""
-"which is still referenced. This change avoids that referenced table is "
-"removed accidentally."
-msgstr "この変更は参照されているテーブルがうっかり削除されないようにします。"
+"この変更は参照されているテーブルがうっかり削除されないようにします。"
 
 # 0ad55eab2de14c24a89b504f0ef9e639
 #: ../../../source/news.txt:21
