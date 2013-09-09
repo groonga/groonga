@@ -17,7 +17,7 @@ Improvements
   [GitHub#79,#80,#81,#82,#83,#84,#85,#86,#87,#88,#89,#90,#91,#92,#93,#95,#96,#97,#98,#99,#100]
   [Patch by whombx]
 * [table_remove] Improved not to remove patricia trie table or hash table
-   which is still referenced. This change avoids that referenced table is removed accidentally.
+  which is still referenced. This change avoids that referenced table is removed accidentally.
 * Improved to just ignore too long token (4096 bytes or more).
   This change affects when it is registered. In the previous version, it is treated as an
   error instead of a warning. [groonga-dev,01571] [Suggested by Naoya Murakami]
