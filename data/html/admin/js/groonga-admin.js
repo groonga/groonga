@@ -773,7 +773,8 @@ jQuery.extend(GroongaAdmin.prototype, {
           if (that.validateajax(d, hide_dialog) < 0) { return; }
           var rc = d.shift();
           if (rc[0] != 0) {
-            alert('error');
+            alert('error: ' + rc[3]);
+            that.hideloading();
             return false;
           }
           var body = d.shift();
