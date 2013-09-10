@@ -171,7 +171,7 @@ function GroongaAdmin() {
   $('#tablelist-remove-table').click(function() {
     that.removetable();
   });
-  $('#tab-recordlist-submit').click(function() {
+  $('#tab-recordlist-form').submit(function() {
     if ($('#table-tab-recordlist-full-checkbox').attr('checked')) {
       // full
       var d = {
@@ -192,6 +192,7 @@ function GroongaAdmin() {
         $('#tab-recordlist-simplequerytype').val(),
         1);
     }
+    return false;
   });
   this._initializeSideMenu();
   this.update_tablelist();
@@ -1161,7 +1162,7 @@ jQuery.extend(GroongaAdmin.prototype, {
                     dataType: 'json',
                     success: function() {
                       if (--completecount == 0) {
-                        $('#tab-recordlist-submit').click();
+                        $('#tab-recordlist-form').submit();
                         alert('レコードを削除しました。');
                       } else if (completecount < 0){
                         that.hideloading();
