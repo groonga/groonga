@@ -228,6 +228,11 @@ function GroongaAdmin() {
       $('#tab-recordlist-incremental-label').show();
     }
     $('#tab-recordlist-incremental').change();
+
+    var selectedOption = $(this).find(':selected');
+    $('#tab-recordlist-simplequery').attr(
+      'placeholder', selectedOption.data('placeholder')
+    );
   }).change();
 
   $('#table-tab-recordlist-full-checkbox').change(function() {
