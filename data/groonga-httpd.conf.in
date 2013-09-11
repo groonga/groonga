@@ -38,6 +38,8 @@ http {
       groonga on;
       # You can disable log for groonga.
       # groonga_log_path off;
+      # You can disable query log for groonga.
+      # groonga_query_log_path off;
       # You can custom database path.
       # groonga_database /path/to/groonga/db;
     }
