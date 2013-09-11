@@ -28,6 +28,10 @@ input {
   border: 1px solid;
 }
 
+input[type="text"] {
+  width: 12em;
+}
+
 #header {
   height: 80px;
   background: url(../images/groonga.png) no-repeat left center;
