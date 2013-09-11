@@ -171,7 +171,7 @@ function GroongaAdmin() {
   $('#tablelist-remove-table').click(function() {
     that.removetable();
   });
-  $('#tab-recordlist-submit').click(function() {
+  $('#tab-recordlist-form').submit(function() {
     if ($('#table-tab-recordlist-full-checkbox').attr('checked')) {
       // full
       var d = {
@@ -192,6 +192,7 @@ function GroongaAdmin() {
         $('#tab-recordlist-simplequerytype').val(),
         1);
     }
+    return false;
   });
   this._initializeSideMenu();
   this.update_tablelist();
@@ -227,6 +228,11 @@ function GroongaAdmin() {
       $('#tab-recordlist-incremental-label').show();
     }
     $('#tab-recordlist-incremental').change();
+
+    var selectedOption = $(this).find(':selected');
+    $('#tab-recordlist-simplequery').attr(
+      'placeholder', selectedOption.data('placeholder')
+    );
   }).change();
 
   $('#table-tab-recordlist-full-checkbox').change(function() {
@@ -773,7 +779,8 @@ jQuery.extend(GroongaAdmin.prototype, {
           if (that.validateajax(d, hide_dialog) < 0) { return; }
           var rc = d.shift();
           if (rc[0] != 0) {
-            alert('error');
+            alert('error: ' + rc[3]);
+            that.hideloading();
             return false;
           }
           var body = d.shift();
@@ -908,6 +915,7 @@ jQuery.extend(GroongaAdmin.prototype, {
     return ret;
   },
   update_createrecord_loadcomplete: function(d_sel, d_col) {
+    var that = this;
     var b = d_sel[1][0];
     var columns = $('<tbody />');
     var listofs = b[1].length - (d_col[1].length - 1);
@@ -950,8 +958,8 @@ jQuery.extend(GroongaAdmin.prototype, {
               .click(function() {
                 var target = $(this).parent();
                 target
-                  .append(this.add_record_inputbox($(this).parent().prev().children().text()))
-                  .append(this.add_record_deletebutton())
+                  .append(that.add_record_inputbox($(this).parent().prev().children().text()))
+                  .append(that.add_record_deletebutton())
                   .append("<br />");
                 $(this).appendTo(target);
               })
@@ -1159,7 +1167,7 @@ jQuery.extend(GroongaAdmin.prototype, {
                     dataType: 'json',
                     success: function() {
                       if (--completecount == 0) {
-                        $('#tab-recordlist-submit').click();
+                        $('#tab-recordlist-form').submit();
                         alert('レコードを削除しました。');
                       } else if (completecount < 0){
                         that.hideloading();

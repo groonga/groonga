@@ -140,32 +140,34 @@
           </ul>
           <div id="table-tab-recordlist">
             <input type="checkbox" id="table-tab-recordlist-full-checkbox" /><label for="table-tab-recordlist-full-checkbox">管理モード</label>
-            <div id="table-tab-recordlist-form-simple">
-              <label for="tab-recordlist-simplequery">検索クエリ: </label><input type="text" id="tab-recordlist-simplequery">
-              <select id="tab-recordlist-simplequerytype">
-                <option value="query">query</option>
-                <option value="filter">filter</option>
-              </select>
-              <input type="checkbox" id="tab-recordlist-incremental" /><label for="tab-recordlist-incremental" id="tab-recordlist-incremental-label">インクリメンタル検索</label>
-            </div>
-            <div id="table-tab-recordlist-form-full">
-              <table>
-                <tr><td>match_columns</td><td><input type="text" id="tab-recordlist-match_columns" /></td></tr>
-                <tr><td>query</td><td><input type="text" id="tab-recordlist-query" /></td></tr>
-                <tr><td>filter</td><td><input type="text" id="tab-recordlist-filter" /></td></tr>
-                <tr><td>scorer</td><td><input type="text" id="tab-recordlist-scorer" /></td></tr>
-                <tr><td>sortby</td><td><input type="text" id="tab-recordlist-sortby" /></td></tr>
-                <tr><td>output_columns</td><td><input type="text" id="tab-recordlist-output_columns" /></td></tr>
-                <tr><td>offset</td><td><input type="text" id="tab-recordlist-offset" /></td></tr>
-                <tr><td>limit</td><td><input type="text" id="tab-recordlist-limit" /></td></tr>
-                <tr><td>drilldown</td><td><input type="text" id="tab-recordlist-drilldown" /></td></tr>
-                <tr><td>drilldown_sortby</td><td><input type="text" id="tab-recordlist-drilldown_sortby" /></td></tr>
-                <tr><td>drilldown_output_columns</td><td><input type="text" id="tab-recordlist-drilldown_output_columns" /></td></tr>
-                <tr><td>drilldown_offset</td><td><input type="text" id="tab-recordlist-drilldown_offset" /></td></tr>
-                <tr><td>drilldown_limit</td><td><input type="text" id="tab-recordlist-drilldown_limit" /></td></tr>
-              </table>
-            </div>
-            <input type="button" id="tab-recordlist-submit" value="検索"/>
+            <form id="tab-recordlist-form">
+              <div id="table-tab-recordlist-form-simple">
+                <label for="tab-recordlist-simplequery">検索クエリ: </label><input type="text" id="tab-recordlist-simplequery">
+                <select id="tab-recordlist-simplequerytype">
+                  <option value="query" data-placeholder="例）column:@value">query</option>
+                  <option value="filter" data-placeholder="例）column == &quot;value&quot;">filter</option>
+                </select>
+                <input type="checkbox" id="tab-recordlist-incremental" /><label for="tab-recordlist-incremental" id="tab-recordlist-incremental-label">インクリメンタル検索</label>
+              </div>
+              <div id="table-tab-recordlist-form-full">
+                <table>
+                  <tr><td>match_columns</td><td><input type="text" id="tab-recordlist-match_columns" /></td></tr>
+                  <tr><td>query</td><td><input type="text" id="tab-recordlist-query" /></td></tr>
+                  <tr><td>filter</td><td><input type="text" id="tab-recordlist-filter" /></td></tr>
+                  <tr><td>scorer</td><td><input type="text" id="tab-recordlist-scorer" /></td></tr>
+                  <tr><td>sortby</td><td><input type="text" id="tab-recordlist-sortby" /></td></tr>
+                  <tr><td>output_columns</td><td><input type="text" id="tab-recordlist-output_columns" /></td></tr>
+                  <tr><td>offset</td><td><input type="text" id="tab-recordlist-offset" /></td></tr>
+                  <tr><td>limit</td><td><input type="text" id="tab-recordlist-limit" /></td></tr>
+                  <tr><td>drilldown</td><td><input type="text" id="tab-recordlist-drilldown" /></td></tr>
+                  <tr><td>drilldown_sortby</td><td><input type="text" id="tab-recordlist-drilldown_sortby" /></td></tr>
+                  <tr><td>drilldown_output_columns</td><td><input type="text" id="tab-recordlist-drilldown_output_columns" /></td></tr>
+                  <tr><td>drilldown_offset</td><td><input type="text" id="tab-recordlist-drilldown_offset" /></td></tr>
+                  <tr><td>drilldown_limit</td><td><input type="text" id="tab-recordlist-drilldown_limit" /></td></tr>
+                </table>
+              </div>
+              <input type="submit" id="tab-recordlist-submit" value="検索"/>
+            </form>
             <div id="tab-recordlist-table">
             </div>
             <input type="button" id="recordlist-remove-record" value="選択レコード削除">
