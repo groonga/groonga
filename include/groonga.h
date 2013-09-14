@@ -1709,6 +1709,10 @@ GRN_API unsigned int grn_table_get_subrecs(grn_ctx *ctx, grn_obj *table,
                                            grn_id id, grn_id *subrecbuf,
                                            int *scorebuf, int buf_size);
 
+GRN_API grn_obj *grn_table_tokenize(grn_ctx *ctx, grn_obj *table,
+                                    const char *str, unsigned int str_len,
+                                    grn_obj *buf, grn_bool addp);
+
 GRN_API grn_rc grn_load(grn_ctx *ctx, grn_content_type input_type,
                         const char *table, unsigned int table_len,
                         const char *columns, unsigned int columns_len,

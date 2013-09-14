@@ -9107,6 +9107,37 @@ grn_table_max_n_subrecs(grn_ctx *ctx, grn_obj *table)
   return 0;
 }
 
+grn_obj *
+grn_table_tokenize(grn_ctx *ctx, grn_obj *table,
+                   const char *str, unsigned int str_len,
+                   grn_obj *buf, grn_bool addp)
+{
+  grn_token *token = NULL;
+  grn_token_mode mode = addp ? GRN_TOKEN_ADD : GRN_TOKEN_GET;
+  GRN_API_ENTER;
+  if (!(token = grn_token_open(ctx, table, str, str_len, mode, 0))) {
+    goto exit;
+  }
+  if (buf) {
+    GRN_BULK_REWIND(buf);
+  } else {
+    if (!(buf = grn_obj_open(ctx, GRN_UVECTOR, 0, DB_OBJ(table)->id))) {
+      goto exit;
+    }
+  }
+  while (!token->status) {
+    grn_id tid;
+    if ((tid = grn_token_next(ctx, token))) {
+      GRN_RECORD_PUT(ctx, buf, tid);
+    }
+  }
+exit :
+  if (token) {
+    grn_token_close(ctx, token);
+  }
+  GRN_API_RETURN(buf);
+}
+
 /* grn_load */
 
 static grn_obj *
