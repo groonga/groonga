@@ -566,6 +566,10 @@ grn_token_next(grn_ctx *ctx, grn_token *token)
                         (status & GRN_TOKENIZER_TOKEN_REACH_END)))
         ? GRN_TOKEN_DONE : GRN_TOKEN_DOING;
       token->force_prefix = 0;
+      if (token->curr_size == 0) {
+        GRN_LOG(ctx, GRN_WARN, "[token_next] ignore an empty token.");
+        continue;
+      }
       if (token->curr_size > GRN_TABLE_MAX_KEY_SIZE) {
         GRN_LOG(ctx, GRN_WARN,
                 "[token_next] ignore too long token. "
