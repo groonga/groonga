@@ -1258,7 +1258,6 @@ grn_init(void)
   }
   if (grn_aio_enabled) {
     GRN_LOG(ctx, GRN_LOG_NOTICE, "AIO and DIO enabled");
-    grn_cache_open();
   }
 #endif /* USE_AIO */
 #ifdef USE_FAIL_MALLOC
