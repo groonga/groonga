@@ -1,0 +1,22 @@
+tokenize TokenDelimit "a b c"
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "a",
+      "position": 0
+    },
+    {
+      "value": "b",
+      "position": 1
+    },
+    {
+      "value": "c",
+      "position": 2
+    }
+  ]
+]
