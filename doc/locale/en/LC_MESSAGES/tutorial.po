@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-06-26 19:22+0900\n"
+"POT-Creation-Date: 2013-09-18 15:34+0900\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -1648,37 +1648,59 @@ msgstr ""
 msgid "実際に検索してみましょう。結果は上の例と同じになります。"
 msgstr "実際に検索してみましょう。結果は上の例と同じになります。"
 
+# e07680f1f1b34582bfb15e2d3d8ff7bc
+#: ../../../source/tutorial/match_columns.txt:81
+msgid ""
+"There may be a question that \"which is the better solution for indexing.\" "
+"It depends on the case."
+msgstr ""
+
+# 3800e4dd945649adbcacda1d141ca6ec
+#: ../../../source/tutorial/match_columns.txt:84
+msgid ""
+"Indexes for each column - The update performance tends to be better than"
+msgstr ""
+
+# b4308fc44f144fb58cb9f026065e4948
+#: ../../../source/tutorial/match_columns.txt:85
+msgid ""
+"multiple colum index because there is enough buffer for updating. On the "
+"other hand, the efficiency of disk usage is not so good. * Indexes for "
+"multiple column - It saves disk usage because it shares common buffer. On "
+"the other hand, the update performance is not so good."
+msgstr ""
+
 # f6754860a4814da1b5a58353bafa2b7b
-#: ../../../source/tutorial/match_columns.txt:80
+#: ../../../source/tutorial/match_columns.txt:90
 msgid "インデックス名を指定した全文検索"
 msgstr "インデックス名を指定した全文検索"
 
 # 7026bc5fc11740ada2580bcbb5fdf4f4
 # b11d8defd8b34f29a5742f36c5d99504
-#: ../../../source/tutorial/match_columns.txt:82
-#: ../../../source/tutorial/match_columns.txt:218
+#: ../../../source/tutorial/match_columns.txt:92
+#: ../../../source/tutorial/match_columns.txt:228
 msgid "執筆中です。"
 msgstr "執筆中です。"
 
 # 158255a549314f9e9c18b7c5aba6183e
-#: ../../../source/tutorial/match_columns.txt:90
+#: ../../../source/tutorial/match_columns.txt:100
 msgid "Nested index search among related table by column index"
 msgstr ""
 
 # 7514e4802eef498080a819cd21605735
-#: ../../../source/tutorial/match_columns.txt:92
+#: ../../../source/tutorial/match_columns.txt:102
 msgid ""
 "If there are relationships among multiple table with column index, you can "
 "search multiple table by specifying reference column name."
 msgstr ""
 
 # 2bdd410d00a648f09758db11fc6bcbdb
-#: ../../../source/tutorial/match_columns.txt:95
+#: ../../../source/tutorial/match_columns.txt:105
 msgid "Here is the concrete example."
 msgstr ""
 
 # 7aa66ee3d560462a99dec73f850935cc
-#: ../../../source/tutorial/match_columns.txt:97
+#: ../../../source/tutorial/match_columns.txt:107
 msgid ""
 "There are tables which store blog articles, comments for articles. The table "
 "which stores articles has columns for article and comment. And the comment "
@@ -1687,7 +1709,7 @@ msgid ""
 msgstr ""
 
 # 6c97ae232b3d456a9fb386e65dc7af4a
-#: ../../../source/tutorial/match_columns.txt:102
+#: ../../../source/tutorial/match_columns.txt:112
 msgid ""
 "if you want to search the articles which contain specified keyword in "
 "comment, you need to execute fulltext search for table of comment, then "
@@ -1695,26 +1717,26 @@ msgid ""
 msgstr ""
 
 # e05deb6742a44977b29d04bb7fe636a9
-#: ../../../source/tutorial/match_columns.txt:105
+#: ../../../source/tutorial/match_columns.txt:115
 msgid ""
 "But, you can search the records by specifying the reference column index at "
 "once."
 msgstr ""
 
 # 1381ec850ddb4d26927c1ddb76873e25
-#: ../../../source/tutorial/match_columns.txt:107
+#: ../../../source/tutorial/match_columns.txt:117
 msgid "Here is the sample schema."
 msgstr ""
 
 # 98a56eac703a4547aca76f2805f96295
 # 20b9b78c40514b04bd41172a3263c693
-#: ../../../source/tutorial/match_columns.txt:121
-#: ../../../source/tutorial/match_columns.txt:176
+#: ../../../source/tutorial/match_columns.txt:131
+#: ../../../source/tutorial/match_columns.txt:186
 msgid "Here is the sample data."
 msgstr ""
 
 # 3daa396145d344e995671784b35aec9f
-#: ../../../source/tutorial/match_columns.txt:138
+#: ../../../source/tutorial/match_columns.txt:148
 msgid ""
 "You can write the query that search the records which contains specified "
 "keyword as a comment, then fetch the articles which refers to it."
@@ -1722,20 +1744,20 @@ msgstr ""
 
 # bb909041bda04b0f825990429c0e0c6d
 # 916d2d541e014a7687bec78fa8fe082e
-#: ../../../source/tutorial/match_columns.txt:140
-#: ../../../source/tutorial/match_columns.txt:199
+#: ../../../source/tutorial/match_columns.txt:150
+#: ../../../source/tutorial/match_columns.txt:209
 msgid "Query for searching the records described above::"
 msgstr ""
 
 # 2ae1b2c15ec64e87b4575551c0591790
-#: ../../../source/tutorial/match_columns.txt:144
+#: ../../../source/tutorial/match_columns.txt:154
 msgid ""
 "You need to concatenate comment column of Articles table and content column "
 "of Comments table with period(.) as --match_columns arguments."
 msgstr ""
 
 # 3ae489e66a0344479e5e6ed3607782dd
-#: ../../../source/tutorial/match_columns.txt:146
+#: ../../../source/tutorial/match_columns.txt:156
 msgid ""
 "At first, this query execute fulltext search from content of Comments table, "
 "then fetch the records of Articles table which refers to already searched "
@@ -1745,27 +1767,27 @@ msgid ""
 msgstr ""
 
 # 18381e3bd2f54aa68d3b12570c6ebb93
-#: ../../../source/tutorial/match_columns.txt:153
+#: ../../../source/tutorial/match_columns.txt:163
 msgid ""
 "Now, you can search articles which contains specific keywords as a comment."
 msgstr ""
 
 # 702a096b1fc8448f81fb1bb413cd87d9
-#: ../../../source/tutorial/match_columns.txt:155
+#: ../../../source/tutorial/match_columns.txt:165
 msgid ""
 "The feature of nested index search is not limited to the relationship "
 "between two table only."
 msgstr ""
 
 # 16ec1265a8c8450aa4acf8dec0f5c1c4
-#: ../../../source/tutorial/match_columns.txt:157
+#: ../../../source/tutorial/match_columns.txt:167
 msgid ""
 "Here is the sample schema similar to previous one. The difference is added "
 "table which express 'Reply' and relationship is extended to three tables."
 msgstr ""
 
 # 6624d752c89942c58b85d589334b101e
-#: ../../../source/tutorial/match_columns.txt:204
+#: ../../../source/tutorial/match_columns.txt:214
 msgid ""
 "The first query searches 'mroonga' from Comments2 table, the second one "
 "searches 'mroonga' from Replies2 and Comment2 table by using reference "
@@ -1773,14 +1795,14 @@ msgid ""
 msgstr ""
 
 # f1ca7a8f0e9145b8b218475e8076933a
-#: ../../../source/tutorial/match_columns.txt:211
+#: ../../../source/tutorial/match_columns.txt:221
 msgid ""
 "As a result, the first query matches two article because of Comments2 table "
 "has two records which contains 'mroonga' as keyword."
 msgstr ""
 
 # 5c54d47aab8e4cd6a09e021fa7b2448c
-#: ../../../source/tutorial/match_columns.txt:213
+#: ../../../source/tutorial/match_columns.txt:223
 msgid ""
 "On the other hand, the second one matches one article only because of "
 "Replies2 table has only one record which contains 'mroonga' as keyword, and "
@@ -1789,7 +1811,7 @@ msgid ""
 msgstr ""
 
 # 134cc02862134fd7b615c8e26031984d
-#: ../../../source/tutorial/match_columns.txt:216
+#: ../../../source/tutorial/match_columns.txt:226
 msgid "インデックスの重み"
 msgstr "インデックスの重み"
 

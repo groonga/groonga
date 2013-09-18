@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-06-27 15:38+0900\n"
+"POT-Creation-Date: 2013-09-18 15:40+0900\n"
 "PO-Revision-Date: 2013-01-19 10:52+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -1451,22 +1451,50 @@ msgstr ""
 msgid "実際に検索してみましょう。結果は上の例と同じになります。"
 msgstr ""
 
-#: ../../../source/tutorial/match_columns.txt:80
+# ad07ee763a854a27b361f8e2be9049ae
+#: ../../../source/tutorial/match_columns.txt:81
+msgid ""
+"There may be a question that \"which is the better solution for indexing.\" "
+"It depends on the case."
+msgstr ""
+"\"インデックスはどちらがよい方法なのか\"と疑問に思うかも知れません。"
+"それは場合によります。"
+
+# 903c86cd2046489eb792aa062074ab64
+#: ../../../source/tutorial/match_columns.txt:84
+msgid ""
+"Indexes for each column - The update performance tends to be better than "
+"multiple colum index because there is enough buffer for updating. On the "
+"other hand, the efficiency of disk usage is not so good."
+msgstr ""
+"カラムごとのインデックス - マルチカラムインデックスよりも更新性能が良い傾向があります。"
+"一方、ディスク使用効率はあまり良くありません。"
+
+# 58c56a1cee6c4caf94d026bf3d116b36
+#: ../../../source/tutorial/match_columns.txt:85
+msgid ""
+"Indexes for multiple column - It saves disk usage because it shares common "
+"buffer. On the other hand, the update performance is not so good."
+msgstr ""
+"マルチカラムインデックス - バッファを共有するためディスク使用効率が良いです。"
+"一方、更新性能があまり良くありません。"
+
+#: ../../../source/tutorial/match_columns.txt:89
 msgid "インデックス名を指定した全文検索"
 msgstr ""
 
-#: ../../../source/tutorial/match_columns.txt:82
-#: ../../../source/tutorial/match_columns.txt:218
+#: ../../../source/tutorial/match_columns.txt:91
+#: ../../../source/tutorial/match_columns.txt:227
 msgid "執筆中です。"
 msgstr ""
 
 # 4da5c716f8d64beaab327bbc1ffba50f
-#: ../../../source/tutorial/match_columns.txt:90
+#: ../../../source/tutorial/match_columns.txt:99
 msgid "Nested index search among related table by column index"
 msgstr "カラムインデックスによる関連テーブルをまたぐ検索"
 
 # 7bced8fbc8cd4f219fb6b102f84fc5fa
-#: ../../../source/tutorial/match_columns.txt:92
+#: ../../../source/tutorial/match_columns.txt:101
 msgid ""
 "If there are relationships among multiple table with column index, you can "
 "search multiple table by specifying reference column name."
@@ -1475,12 +1503,12 @@ msgstr ""
 "定して複数のテーブルにまたがって検索することができます。"
 
 # e405f76fd24a4e7f847ddb62b6b94316
-#: ../../../source/tutorial/match_columns.txt:95
+#: ../../../source/tutorial/match_columns.txt:104
 msgid "Here is the concrete example."
 msgstr "具体的な例を示します。"
 
 # 6bf0db0e541048c8ab646ff029a51e37
-#: ../../../source/tutorial/match_columns.txt:97
+#: ../../../source/tutorial/match_columns.txt:106
 msgid ""
 "There are tables which store blog articles, comments for articles. The table "
 "which stores articles has columns for article and comment. And the comment "
@@ -1493,7 +1521,7 @@ msgstr ""
 "事テーブルに対するカラムインデックスが設定されています。"
 
 # 3ed9c4432a0c4fc88278e81ee05a6ffb
-#: ../../../source/tutorial/match_columns.txt:102
+#: ../../../source/tutorial/match_columns.txt:111
 msgid ""
 "if you want to search the articles which contain specified keyword in "
 "comment, you need to execute fulltext search for table of comment, then "
@@ -1503,7 +1531,7 @@ msgstr ""
 "る必要があり、全文検索結果を含むレコードをさらに検索する必要があります。"
 
 # d706c5de7ea9451eb30998a02101e583
-#: ../../../source/tutorial/match_columns.txt:105
+#: ../../../source/tutorial/match_columns.txt:114
 msgid ""
 "But, you can search the records by specifying the reference column index at "
 "once."
@@ -1512,19 +1540,19 @@ msgstr ""
 "ます。"
 
 # af08271eff8749f28d7327ea73e92bf6
-#: ../../../source/tutorial/match_columns.txt:107
+#: ../../../source/tutorial/match_columns.txt:116
 msgid "Here is the sample schema."
 msgstr "サンプルのスキーマ定義はこちらです。"
 
 # db81d2adc91d4c04bcf315cfdcda138a
 # 6980dd1b2928452790e163f1c40239c0
-#: ../../../source/tutorial/match_columns.txt:121
-#: ../../../source/tutorial/match_columns.txt:176
+#: ../../../source/tutorial/match_columns.txt:130
+#: ../../../source/tutorial/match_columns.txt:185
 msgid "Here is the sample data."
 msgstr "サンプルデータはこちらです。"
 
 # 6f3aebf07960425c8f7fd639a5cac4ee
-#: ../../../source/tutorial/match_columns.txt:138
+#: ../../../source/tutorial/match_columns.txt:147
 msgid ""
 "You can write the query that search the records which contains specified "
 "keyword as a comment, then fetch the articles which refers to it."
@@ -1534,13 +1562,13 @@ msgstr ""
 
 # ccaec950af944b2f9eda01b0495a1e58
 # 361bca53d8fd44c49dfb57f0e0a72457
-#: ../../../source/tutorial/match_columns.txt:140
-#: ../../../source/tutorial/match_columns.txt:199
+#: ../../../source/tutorial/match_columns.txt:149
+#: ../../../source/tutorial/match_columns.txt:208
 msgid "Query for searching the records described above::"
 msgstr "これまでに記述したレコードを検索するクエリ::"
 
 # 224fa73233d14d0d9e0094cd1aac2938
-#: ../../../source/tutorial/match_columns.txt:144
+#: ../../../source/tutorial/match_columns.txt:153
 msgid ""
 "You need to concatenate comment column of Articles table and content column "
 "of Comments table with period(.) as --match_columns arguments."
@@ -1549,7 +1577,7 @@ msgstr ""
 "で連結し ``--match_columns`` の引数とする必要があります。"
 
 # edfe46cbd9b346b29e3c7da2c5bc9066
-#: ../../../source/tutorial/match_columns.txt:146
+#: ../../../source/tutorial/match_columns.txt:155
 msgid ""
 "At first, this query execute fulltext search from content of Comments table, "
 "then fetch the records of Articles table which refers to already searched "
@@ -1563,13 +1591,13 @@ msgstr ""
 "コメントアウトすると、意図した検索結果が得られません。)"
 
 # 0ac728a05da94dc794d12d99b38ed5dd
-#: ../../../source/tutorial/match_columns.txt:153
+#: ../../../source/tutorial/match_columns.txt:162
 msgid ""
 "Now, you can search articles which contains specific keywords as a comment."
 msgstr "これで、特定のキーワードをコメントとして含む記事を検索できます。"
 
 # 1e5ff72886ba4f099a8ff658e079570b
-#: ../../../source/tutorial/match_columns.txt:155
+#: ../../../source/tutorial/match_columns.txt:164
 msgid ""
 "The feature of nested index search is not limited to the relationship "
 "between two table only."
@@ -1578,7 +1606,7 @@ msgstr ""
 "されません。"
 
 # 2915df73547147a8a0244afdf11067c4
-#: ../../../source/tutorial/match_columns.txt:157
+#: ../../../source/tutorial/match_columns.txt:166
 msgid ""
 "Here is the sample schema similar to previous one. The difference is added "
 "table which express 'Reply' and relationship is extended to three tables."
@@ -1587,7 +1615,7 @@ msgstr ""
 "加と関連するテーブルが3つに増えたことです。"
 
 # 1b348cc0bb0b4ac3bb99975d8dab5491
-#: ../../../source/tutorial/match_columns.txt:204
+#: ../../../source/tutorial/match_columns.txt:213
 msgid ""
 "The first query searches 'mroonga' from Comments2 table, the second one "
 "searches 'mroonga' from Replies2 and Comment2 table by using reference "
@@ -1598,7 +1626,7 @@ msgstr ""
 "て'mroonga'を検索します。"
 
 # 5ba3f540f2a94408aac518d891ae66c8
-#: ../../../source/tutorial/match_columns.txt:211
+#: ../../../source/tutorial/match_columns.txt:220
 msgid ""
 "As a result, the first query matches two article because of Comments2 table "
 "has two records which contains 'mroonga' as keyword."
@@ -1607,7 +1635,7 @@ msgstr ""
 "レコードが2つあるので、該当する記事2つにマッチします。"
 
 # 1619ff8d5bc343c2879ceec89bcb8087
-#: ../../../source/tutorial/match_columns.txt:213
+#: ../../../source/tutorial/match_columns.txt:222
 msgid ""
 "On the other hand, the second one matches one article only because of "
 "Replies2 table has only one record which contains 'mroonga' as keyword, and "
@@ -1618,7 +1646,7 @@ msgstr ""
 "レコードが1つしかなく、Comments2テーブルでそのキーワードを含むレコードを参照"
 "するコメントが1つなので、該当する記事は1つだけとなります。"
 
-#: ../../../source/tutorial/match_columns.txt:216
+#: ../../../source/tutorial/match_columns.txt:225
 msgid "インデックスの重み"
 msgstr ""
 
@@ -1888,7 +1916,8 @@ msgid ""
 "This is the table which stores indexes of location column to search geo "
 "location effectively."
 msgstr ""
-"位置情報検索を効果的に行うための locationカラムのインデックスを保持するテーブルです。"
+"位置情報検索を効果的に行うための locationカラムのインデックスを保持するテーブ"
+"ルです。"
 
 # a037907f07214650ab2fbeb9eb090fd1
 #: ../../../source/tutorial/micro_blog.txt:147
