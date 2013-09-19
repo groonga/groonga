@@ -396,6 +396,9 @@ fi
 %{php_extdir}/groonga.so
 
 %changelog
+* Sun Sep 29 2013 HAYASHI Kentaro <hayashi@clear-code.com> - 3.0.8-1
+- new upstream release.
+
 * Thu Aug 29 2013 HAYASHI Kentaro <hayashi@clear-code.com> - 3.0.7-1
 - new upstream release.
 
