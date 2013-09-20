@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-28 10:43+0900\n"
+"POT-Creation-Date: 2013-09-20 11:58+0900\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -7839,15 +7839,18 @@ msgstr "``検索結果``"
 msgid "drilldown条件が実行される前の検索結果が以下のように出力されます。::"
 msgstr "drilldown条件が実行される前の検索結果が以下のように出力されます。::"
 
-# 8e8ac3f060b742ecb0b042ac050e3e36
+# 9eedc56547d54b46ab1bec965ae4b256
 #: ../../../source/reference/commands/select.txt:867
-msgid "``検索件数``"
-msgstr "``検索件数``"
+msgid "``ヒット数``"
+msgstr ""
 
-# dc7f4eebe3cc424e995f8cb68bb70564
+# 702365b437954216b6757949cd68a6db
 #: ../../../source/reference/commands/select.txt:869
-msgid "検索件数が出力されます。"
-msgstr "検索件数が出力されます。"
+msgid ""
+"検索条件にヒットしたレコードの数が出力されます。 ``--limit`` オプションで出力"
+"件数を制限した場合は出力するレコード数と一致しません。 ``ヒット数`` は ``--"
+"limit`` オプションに関係なく常にヒットしたレコードの数になります。"
+msgstr ""
 
 # cca6768c7da141d783cb03a456b7d05e
 # 757b9b4867b94eb3bfa41ee72110a92c
@@ -10704,8 +10707,9 @@ msgstr ""
 # 556ba36a35ae4caaa77b987f58495546
 #: ../../../source/reference/executables/groonga-httpd.txt:206
 msgid ""
-"Specifies groonga log path in the ``location`` block. The default is ``/var/"
-"log/groonga/httpd/groonga.log``. You can disable logging to specify ``off``."
+"Specifies groonga log path in the ``http``, ``server`` or ``location`` "
+"block. The default is ``/var/log/groonga/httpd/groonga.log``. You can "
+"disable logging to specify ``off``."
 msgstr ""
 
 # 9579ad0b3efb4199bd5ee9cc26be46ea
@@ -10721,8 +10725,9 @@ msgstr ""
 # 7de1b908d5ab4af3ad7909ab2f6f1b58
 #: ../../../source/reference/executables/groonga-httpd.txt:233
 msgid ""
-"Specifies groonga log level in the ``location`` block. The default is "
-"``notice``. You can disable logging by specifying ``none`` as log level."
+"Specifies groonga log level in the ``http``, ``server`` or ``location`` "
+"block. The default is ``notice``. You can disable logging by specifying "
+"``none`` as log level."
 msgstr ""
 
 # 723ec18bf5454137a8231898c00bc1d4
@@ -12306,29 +12311,24 @@ msgstr "現在時刻に対応するTime型のオブジェクトを返します�
 msgid "query"
 msgstr ""
 
-# 622cfc4907ec41b99000e9d257b4c31e
+# b79c5af0eba544fca29ccd8f0272df22
 #: ../../../source/reference/functions/query.txt:14
 msgid ""
-"``query`` enables you to specify ``--match_columns`` and ``--query`` "
-"parameters as function arguments."
-msgstr ""
-
-# 350240f8c6ea476da7ea80337b4606f6
-#: ../../../source/reference/functions/query.txt:17
-msgid ""
-"``query`` is one of the groonga builtin functions, so you can specify "
-"multiple ``query`` function as parameters of ``--filter`` option."
+"``query`` provides ``--match_columns`` and ``--query`` parameters of :doc:`/"
+"reference/commands/select` feature as function. You can specify multiple "
+"``query`` functions in ``--filter`` parameter in :doc:`/reference/commands/"
+"select`."
 msgstr ""
 
 # caeb62f387d04db1824feda4d2bddddd
-#: ../../../source/reference/functions/query.txt:20
+#: ../../../source/reference/functions/query.txt:19
 msgid ""
 "Because of such flexibility, you can control full text search behavior by "
-"combination of multiple ``query`` function."
+"combination of multiple ``query`` functions."
 msgstr ""
 
 # e69485a4441244be9c634bee7f664546
-#: ../../../source/reference/functions/query.txt:23
+#: ../../../source/reference/functions/query.txt:22
 msgid ""
 "``query`` can be used in only ``--filter`` in :doc:`/reference/commands/"
 "select`."
