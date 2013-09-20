@@ -1270,7 +1270,7 @@ AM_CONDITIONAL(WITH_GROONGA_HTTPD, test "$enable_groonga_httpd" = "yes")
 # mruby
 AC_ARG_ENABLE(mruby,
   [AS_HELP_STRING([--enable-mruby],
-    [enable mruby. [default=auto]])],
+    [enable mruby. [default=no]])],
   [enable_mruby="$enableval"],
   [enable_mruby="no"])
 
