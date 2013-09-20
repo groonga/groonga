@@ -1530,45 +1530,129 @@ clear_column_values(grn_ctx *ctx, grn_obj *table, grn_id rid)
   }
 }
 
-static grn_bool
-is_deletable(grn_ctx *ctx, grn_obj *table, grn_id id)
+static void
+delete_reference_records_in_index(grn_ctx *ctx, grn_obj *table, grn_id id,
+                                  grn_obj *index)
 {
-  grn_bool deletable = GRN_TRUE;
-  if (id) {
-    grn_hash *cols;
-    if ((cols = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
-                                GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY))) {
-      if (grn_table_columns(ctx, table, "", 0, (grn_obj *)cols)) {
-        grn_id *key;
-        uint32_t esize;
-        GRN_HASH_EACH(ctx, cols, tid, &key, NULL, NULL, {
-          grn_obj *col = grn_ctx_at(ctx, *key);
-          if (col && col->header.type == GRN_COLUMN_INDEX &&
-              (esize = grn_ii_estimate_size(ctx, (grn_ii *)col, id))) {
-            int len;
-            char table_name[GRN_TABLE_MAX_KEY_SIZE];
-            char column_name[GRN_TABLE_MAX_KEY_SIZE];
-            len = grn_obj_name(ctx, table, table_name, GRN_TABLE_MAX_KEY_SIZE);
-            table_name[len] = '\0';
-            len = grn_column_name(ctx, col, column_name, GRN_TABLE_MAX_KEY_SIZE);
-            column_name[len] = '\0';
-            GRN_LOG(ctx, GRN_WARN,
-                    "undeletable record (%s:%d) has value (%s:%d)",
-                    table_name, id, column_name, esize);
-            LOGTRACE(ctx, GRN_WARN);
-            ERR(GRN_OPERATION_NOT_PERMITTED,
-                "undeletable record (%s:%d) has value (%s:%d)",
-                table_name, id, column_name, esize);
-            deletable = GRN_FALSE;
-          }
-        });
-      }
-      grn_hash_close(ctx, cols);
-    }
-  } else {
-    deletable = GRN_FALSE;
+  grn_ii *ii = (grn_ii *)index;
+  grn_ii_cursor *ii_cursor;
+  grn_ii_posting *posting;
+  grn_obj source_ids;
+  unsigned int i, n_ids;
+  grn_obj sources;
+
+  GRN_UINT32_INIT(&source_ids, GRN_OBJ_VECTOR);
+  GRN_PTR_INIT(&sources, GRN_OBJ_VECTOR, 0);
+
+  grn_obj_get_info(ctx, index, GRN_INFO_SOURCE, &source_ids);
+  n_ids = GRN_BULK_VSIZE(&source_ids) / sizeof(grn_id);
+  if (n_ids == 0) {
+    goto exit;
   }
-  return deletable;
+
+  for (i = 0; i < n_ids; i++) {
+    grn_id source_id;
+    grn_obj *source;
+
+    source_id = GRN_UINT32_VALUE_AT(&source_ids, i);
+    source = grn_ctx_at(ctx, source_id);
+    GRN_PTR_PUT(ctx, &sources, source);
+  }
+
+  ii_cursor = grn_ii_cursor_open(ctx, ii, id, GRN_ID_NIL, GRN_ID_MAX,
+                                 ii->n_elements, 0);
+  if (!ii_cursor) {
+    goto exit;
+  }
+
+  while ((posting = grn_ii_cursor_next(ctx, ii_cursor))) {
+    grn_obj *source = GRN_PTR_VALUE_AT(&sources, posting->sid - 1);
+    switch (source->header.type) {
+    case GRN_COLUMN_VAR_SIZE :
+      switch (source->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) {
+      case GRN_OBJ_COLUMN_SCALAR :
+        grn_obj_clear_value(ctx, source, posting->rid);
+        break;
+      case GRN_OBJ_COLUMN_VECTOR :
+        {
+          grn_obj value;
+          GRN_TEXT_INIT(&value, 0);
+          grn_obj_get_value(ctx, source, posting->rid, &value);
+          if (value.header.type == GRN_UVECTOR) {
+            int i, n_ids;
+            grn_obj new_value;
+            GRN_RECORD_INIT(&new_value, GRN_OBJ_VECTOR, value.header.domain);
+            n_ids = GRN_BULK_VSIZE(&value) / sizeof(grn_id);
+            for (i = 0; i < n_ids; i++) {
+              grn_id reference_id = GRN_RECORD_VALUE_AT(&value, i);
+              if (reference_id == id) {
+                continue;
+              }
+              GRN_RECORD_PUT(ctx, &new_value, reference_id);
+            }
+            grn_obj_set_value(ctx, source, posting->rid, &new_value,
+                              GRN_OBJ_SET);
+            GRN_OBJ_FIN(ctx, &new_value);
+          } else {
+            /* TODO */
+          }
+          GRN_OBJ_FIN(ctx, &value);
+        }
+        break;
+      }
+      break;
+    case GRN_COLUMN_FIX_SIZE :
+      grn_obj_clear_value(ctx, source, posting->rid);
+      break;
+    }
+  }
+
+exit:
+  if (ii_cursor) {
+    grn_ii_cursor_close(ctx, ii_cursor);
+  }
+  grn_obj_unlink(ctx, &source_ids);
+  {
+    int i, n_sources;
+    n_sources = GRN_BULK_VSIZE(&sources) / sizeof(grn_obj *);
+    for (i = 0; i < n_sources; i++) {
+      grn_obj *source = GRN_RECORD_VALUE_AT(&sources, i);
+      grn_obj_unlink(ctx, source);
+    }
+    grn_obj_unlink(ctx, &sources);
+  }
+}
+
+static grn_rc
+delete_reference_records(grn_ctx *ctx, grn_obj *table, grn_id id)
+{
+  grn_hash *cols;
+  grn_id *key;
+
+  cols = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
+                         GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY);
+  if (!cols) {
+    return ctx->rc;
+  }
+
+  if (!grn_table_columns(ctx, table, "", 0, (grn_obj *)cols)) {
+    grn_hash_close(ctx, cols);
+    return ctx->rc;
+  }
+
+  GRN_HASH_EACH(ctx, cols, tid, &key, NULL, NULL, {
+    grn_obj *col = grn_ctx_at(ctx, *key);
+    if (col && col->header.type == GRN_COLUMN_INDEX) {
+      delete_reference_records_in_index(ctx, table, id, col);
+      if (ctx->rc != GRN_SUCCESS) {
+        break;
+      }
+    }
+  });
+
+  grn_hash_close(ctx, cols);
+
+  return ctx->rc;
 }
 
 grn_rc
@@ -1579,7 +1663,11 @@ grn_table_delete(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key
   GRN_API_ENTER;
   if (table) {
     if (key && key_size) { rid = grn_table_get(ctx, table, key, key_size); }
-    if (is_deletable(ctx, table, rid)) {
+    if (rid) {
+      rc = delete_reference_records(ctx, table, rid);
+      if (rc != GRN_SUCCESS) {
+        goto exit;
+      }
       call_delete_hook(ctx, table, rid, key, key_size);
       clear_column_values(ctx, table, rid);
       switch (table->header.type) {
@@ -1629,6 +1717,7 @@ grn_table_delete(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key
       grn_obj_touch(ctx, table, NULL);
     }
   }
+exit:
   GRN_API_RETURN(rc);
 }
 
@@ -1640,7 +1729,11 @@ _grn_table_delete_by_id(grn_ctx *ctx, grn_obj *table, grn_id id,
   if (table) {
     const void *key;
     unsigned int key_size;
-    if (is_deletable(ctx, table, id)) {
+    if (id) {
+      rc = delete_reference_records(ctx, table, id);
+      if (rc != GRN_SUCCESS) {
+        goto exit;
+      }
       if ((key = _grn_table_key(ctx, table, id, &key_size))) {
         call_delete_hook(ctx, table, id, key, key_size);
       }
@@ -1664,6 +1757,7 @@ _grn_table_delete_by_id(grn_ctx *ctx, grn_obj *table, grn_id id,
       }
     }
   }
+exit:
   return rc;
 }
 
