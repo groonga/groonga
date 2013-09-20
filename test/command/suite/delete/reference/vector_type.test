@@ -1,0 +1,21 @@
+table_create Users TABLE_HASH_KEY ShortText
+table_create URLs TABLE_HASH_KEY ShortText
+
+column_create Users bookmarks COLUMN_VECTOR ShortText
+column_create URLs author COLUMN_SCALAR Users
+
+column_create URLs bookmarks_index COLUMN_INDEX Users bookmarks
+
+load --table Users
+[
+{"_key": "mori", "bookmarks": ["http://mroonga.org/", "http://groonga.org/", "http://ranguba.org/"]}
+]
+
+load --table URLs
+[
+{"_key": "http://groonga.org/", "author": "mori"}
+]
+
+delete URLs --key "http://groonga.org/"
+
+dump

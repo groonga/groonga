@@ -1576,11 +1576,11 @@ delete_reference_records_in_index(grn_ctx *ctx, grn_obj *table, grn_id id,
       case GRN_OBJ_COLUMN_VECTOR :
         {
           grn_obj value;
+          grn_obj new_value;
           GRN_TEXT_INIT(&value, 0);
           grn_obj_get_value(ctx, source, posting->rid, &value);
           if (value.header.type == GRN_UVECTOR) {
             int i, n_ids;
-            grn_obj new_value;
             GRN_RECORD_INIT(&new_value, GRN_OBJ_VECTOR, value.header.domain);
             n_ids = GRN_BULK_VSIZE(&value) / sizeof(grn_id);
             for (i = 0; i < n_ids; i++) {
@@ -1590,12 +1590,28 @@ delete_reference_records_in_index(grn_ctx *ctx, grn_obj *table, grn_id id,
               }
               GRN_RECORD_PUT(ctx, &new_value, reference_id);
             }
-            grn_obj_set_value(ctx, source, posting->rid, &new_value,
-                              GRN_OBJ_SET);
-            GRN_OBJ_FIN(ctx, &new_value);
           } else {
-            /* TODO */
+            unsigned int i, n_elements;
+            GRN_TEXT_INIT(&new_value, GRN_OBJ_VECTOR);
+            n_elements = grn_vector_size(ctx, &value);
+            for (i = 0; i < n_elements; i++) {
+              const char *content;
+              unsigned int content_length;
+              unsigned int weight;
+              grn_id domain;
+              content_length =
+                grn_vector_get_element(ctx, &value, i,
+                                       &content, &weight, &domain);
+              if (grn_table_get(ctx, table, content, content_length) == id) {
+                continue;
+              }
+              grn_vector_add_element(ctx, &new_value, content, content_length,
+                                     weight, domain);
+            }
           }
+          grn_obj_set_value(ctx, source, posting->rid, &new_value,
+                            GRN_OBJ_SET);
+          GRN_OBJ_FIN(ctx, &new_value);
           GRN_OBJ_FIN(ctx, &value);
         }
         break;
