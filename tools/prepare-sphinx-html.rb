@@ -48,7 +48,7 @@ def fix_html_link(html, language)
 end
 
 def fix_source_label(html)
-  html = html.gsub(/>(ソースコードを表示)</) do
+  html.gsub(/>(ソースコードを表示)</) do
     label = $1
     ">#{label}(英語)<"
   end
