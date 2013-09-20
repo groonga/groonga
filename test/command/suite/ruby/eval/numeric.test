@@ -1,2 +1,5 @@
+#@on-error omit
 register ruby/ruby
+#@on-error default
+
 ruby "1"
