@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# -*- coding: utf-8 -*-
 
 if ARGV.size != 2
   puts "Usage: #{$0} SOURCE_DIR DEST_DIR"
