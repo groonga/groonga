@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-28 10:50+0900\n"
+"POT-Creation-Date: 2013-09-19 19:13+0900\n"
 "PO-Revision-Date: 2013-09-09 23:33+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -1203,7 +1203,6 @@ msgstr ""
 
 # 0d40d6ee346244419bf47608a9d4fa25
 #: ../../../source/reference/api/grn_expr.txt:49
-#, fuzzy
 msgid ":doc:`/reference/grn_expr/query_syntax`."
 msgstr ":doc:`/reference/grn_expr/query_syntax` も見てください。"
 
@@ -1214,9 +1213,9 @@ msgstr ""
 
 # 0d40d6ee346244419bf47608a9d4fa25
 #: ../../../source/reference/api/grn_expr.txt:56
-#, fuzzy
 msgid "Escapes special characters in :doc:`/reference/grn_expr/query_syntax`."
-msgstr ":doc:`/reference/grn_expr/query_syntax` も見てください。"
+msgstr ":doc:`/reference/grn_expr/query_syntax` にある特別な文字をエス"
+"ケープします。"
 
 # a262cdf2975d461db7a02ba906260b50
 #: ../../../source/reference/api/grn_expr.txt:59
@@ -1227,10 +1226,9 @@ msgstr ""
 
 # 0d40d6ee346244419bf47608a9d4fa25
 #: ../../../source/reference/api/grn_expr.txt:61
-#, fuzzy
 msgid ""
 "String expression representation in :doc:`/reference/grn_expr/query_syntax`."
-msgstr ":doc:`/reference/grn_expr/query_syntax` も見てください。"
+msgstr ":doc:`/reference/grn_expr/query_syntax` にある文字列式の表現。"
 
 # 0f522c2f9c5b47b1bd7791bd85e85dd7
 #: ../../../source/reference/api/grn_expr.txt:63
@@ -7804,14 +7802,17 @@ msgstr ""
 msgid "drilldown条件が実行される前の検索結果が以下のように出力されます。::"
 msgstr ""
 
-# 7ee1f3ffdaf14ba0b92ce62a06f8a036
+# 279467d502a5476fad1ba0a22a65d215
 #: ../../../source/reference/commands/select.txt:867
-msgid "``検索件数``"
+msgid "``ヒット数``"
 msgstr ""
 
-# cd1874e6c05b4d2c8cb1d106667452e4
+# e1589287965b480fa46d422736cede1b
 #: ../../../source/reference/commands/select.txt:869
-msgid "検索件数が出力されます。"
+msgid ""
+"検索条件にヒットしたレコードの数が出力されます。 ``--limit`` オプションで出力"
+"件数を制限した場合は出力するレコード数と一致しません。 ``ヒット数`` は ``--"
+"limit`` オプションに関係なく常にヒットしたレコードの数になります。"
 msgstr ""
 
 # fb0e8d2705794430a948bca3ec53f647
@@ -10653,13 +10654,14 @@ msgstr ""
 
 # 84e5794178ca41398059200480d2dc7a
 #: ../../../source/reference/executables/groonga-httpd.txt:206
-#, fuzzy
 msgid ""
-"Specifies groonga log path in the ``location`` block. The default is ``/var/"
-"log/groonga/httpd/groonga.log``. You can disable logging to specify ``off``."
+"Specifies groonga log path in the ``http``, ``server`` or ``location`` "
+"block. The default is ``/var/log/groonga/httpd/groonga.log``. You can "
+"disable logging to specify ``off``."
 msgstr ""
-"この ``location`` ブロックでgroongaを使うかどうかを指定します。デフォルトは "
-"``off`` です。groongaを使うためには ``on`` を指定してください。"
+"groongaのログ保存先を ``http`` 、``server`` もしくは ``location`` ブ"
+"ロックで指定します。デフォルトは ``/var/log/groonga/httpd/groonga.log`` です。"
+"ログを無効にするには ``off`` を指定します。"
 
 # cb690f10ae4f46b78e0f36f19ecc2ee8
 #: ../../../source/reference/executables/groonga-httpd.txt:221
@@ -10673,13 +10675,14 @@ msgstr ""
 
 # 84e5794178ca41398059200480d2dc7a
 #: ../../../source/reference/executables/groonga-httpd.txt:233
-#, fuzzy
 msgid ""
-"Specifies groonga log level in the ``location`` block. The default is "
-"``notice``. You can disable logging by specifying ``none`` as log level."
+"Specifies groonga log level in the ``http``, ``server`` or ``location`` "
+"block. The default is ``notice``. You can disable logging by specifying "
+"``none`` as log level."
 msgstr ""
-"この ``location`` ブロックでgroongaを使うかどうかを指定します。デフォルトは "
-"``off`` です。groongaを使うためには ``on`` を指定してください。"
+"groongaのログレベルを ``http`` 、 ``server`` もしくは ``location`` ブ"
+"ロックで指定します。デフォルトは ``notice`` です。 "
+"``none`` を指定することでログを無効にできます。"
 
 # e071414d35f94a4bbc0b26a58ea9d666
 #: ../../../source/reference/executables/groonga-httpd.txt:246
@@ -12211,35 +12214,26 @@ msgstr ""
 msgid "query"
 msgstr ""
 
-# de1a8b000c33432a8e1a6b6725024fff
+# 8267273b4a2d4a1da93a2ecba05a74b4
 #: ../../../source/reference/functions/query.txt:14
 msgid ""
-"``query`` enables you to specify ``--match_columns`` and ``--query_string`` "
-"parameters as function arguments."
+"``query`` provides ``--match_columns`` and ``--query`` parameters of :doc:`/"
+"reference/commands/select` feature as function. You can specify multiple "
+"``query`` functions in ``--filter`` parameter in :doc:`/reference/commands/"
+"select`."
 msgstr ""
-"``query`` は ``--match_columns`` と ``--query_string`` のパラメータを関数の引数とし"
-"て指定することを可能にします。"
-
-# 6c1acb54542f42a98d506c8a04ebbae7
-#: ../../../source/reference/functions/query.txt:17
-msgid ""
-"``query`` is one of the groonga builtin functions, so you can specify "
-"multiple ``query`` function as parameters of ``--filter`` option."
-msgstr ""
-"``query`` はgroongaの組み込み関数の1つで、複数の ``query`` 関数を ``--"
-"filter`` オプションのパラメータとして指定することができます。"
 
 # 2843a19a801a49628315430c74072222
-#: ../../../source/reference/functions/query.txt:20
+#: ../../../source/reference/functions/query.txt:19
 msgid ""
 "Because of such flexibility, you can control full text search behavior by "
-"combination of multiple ``query`` function."
+"combination of multiple ``query`` functions."
 msgstr ""
 "そのような柔軟性があるので、 複数の ``query`` 関数を組合せることで全文検索の"
 "振舞いを制御することができます。"
 
 # bbc4ba5a3444421aaf1048616acc13b3
-#: ../../../source/reference/functions/query.txt:23
+#: ../../../source/reference/functions/query.txt:22
 msgid ""
 "``query`` can be used in only ``--filter`` in :doc:`/reference/commands/"
 "select`."
@@ -17671,3 +17665,19 @@ msgstr ""
 #: ../../../source/reference/types.txt:129
 msgid "Object型はv1.2でサポートされます。"
 msgstr ""
+
+# 6c1acb54542f42a98d506c8a04ebbae7
+#~ msgid ""
+#~ "``query`` is one of the groonga builtin functions, so you can specify "
+#~ "multiple ``query`` function as parameters of ``--filter`` option."
+#~ msgstr ""
+#~ "``query`` はgroongaの組み込み関数の1つで、複数の ``query`` 関数を ``--"
+#~ "filter`` オプションのパラメータとして指定することができます。"
+
+# de1a8b000c33432a8e1a6b6725024fff
+#~ msgid ""
+#~ "``query`` enables you to specify ``--match_columns`` and ``--"
+#~ "query_string`` parameters as function arguments."
+#~ msgstr ""
+#~ "``query`` は ``--match_columns`` と ``--query_string`` のパラメータを関数"
+#~ "の引数として指定することを可能にします。"
