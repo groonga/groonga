@@ -1616,7 +1616,7 @@ exit:
     int i, n_sources;
     n_sources = GRN_BULK_VSIZE(&sources) / sizeof(grn_obj *);
     for (i = 0; i < n_sources; i++) {
-      grn_obj *source = GRN_RECORD_VALUE_AT(&sources, i);
+      grn_obj *source = GRN_PTR_VALUE_AT(&sources, i);
       grn_obj_unlink(ctx, source);
     }
     grn_obj_unlink(ctx, &sources);
