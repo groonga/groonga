@@ -50,7 +50,7 @@ end
 def fix_source_label(html)
   html.gsub(/>(ソースコードを表示)</) do
     label = $1
-    ">#{label}(英語)<"
+    ">#{label}（英語）<"
   end
 end
 
