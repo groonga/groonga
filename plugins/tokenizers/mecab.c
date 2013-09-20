@@ -31,7 +31,7 @@ static grn_encoding sole_mecab_encoding = GRN_ENC_NONE;
 
 typedef struct {
   mecab_t *mecab;
-  char *buf;
+  grn_obj buf;
   const char *next;
   const char *end;
   grn_tokenizer_query *query;
@@ -76,10 +76,8 @@ get_mecab_encoding(mecab_t *mecab)
 static grn_obj *
 mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  char *buf, *p;
   const char *s;
   grn_mecab_tokenizer *tokenizer;
-  unsigned int bufsize;
   unsigned int normalizer_flags = 0;
   grn_tokenizer_query *query;
   grn_obj *normalized_query;
@@ -137,12 +135,11 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                             &normalized_string,
                             &normalized_string_length,
                             NULL);
+  GRN_TEXT_INIT(&(tokenizer->buf), 0);
   if (query->have_tokenized_delimiter) {
-    tokenizer->buf = NULL;
     tokenizer->next = normalized_string;
     tokenizer->end = tokenizer->next + normalized_string_length;
   } else if (normalized_string_length == 0) {
-    tokenizer->buf = NULL;
     tokenizer->next = "";
     tokenizer->end = tokenizer->next;
   } else {
@@ -157,28 +154,27 @@ mecab_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                        normalized_string_length,
                        mecab_strerror(tokenizer->mecab));
     } else {
-      bufsize = strlen(s) + 1;
-      if (!(buf = GRN_PLUGIN_MALLOC(ctx, bufsize))) {
-        GRN_PLUGIN_LOG(ctx, GRN_LOG_ALERT,
-                       "[tokenizer][mecab] "
-                       "buffer allocation on mecab_init failed !");
-      } else {
-        memcpy(buf, s, bufsize);
-      }
+      GRN_TEXT_PUTS(ctx, &(tokenizer->buf), s);
     }
     grn_plugin_mutex_unlock(ctx, sole_mecab_mutex);
-    if (!s || !buf) {
+    if (!s) {
       grn_tokenizer_query_close(ctx, tokenizer->query);
       GRN_PLUGIN_FREE(ctx, tokenizer);
       return NULL;
     }
-    /* A certain version of mecab returns trailing lf or spaces. */
-    for (p = buf + bufsize - 2;
-         buf <= p && isspace(*(unsigned char *)p);
-         p--) { *p = '\0'; }
-    tokenizer->buf = buf;
-    tokenizer->next = buf;
-    tokenizer->end = p + 1;
+    {
+      char *buf, *p;
+      unsigned int bufsize;
+
+      buf = GRN_TEXT_VALUE(&(tokenizer->buf));
+      bufsize = GRN_TEXT_LEN(&(tokenizer->buf));
+      /* A certain version of mecab returns trailing lf or spaces. */
+      for (p = buf + bufsize - 2;
+           buf <= p && isspace(*(unsigned char *)p);
+           p--) { *p = '\0'; }
+      tokenizer->next = buf;
+      tokenizer->end = p + 1;
+    }
   }
   user_data->ptr = tokenizer;
 
@@ -246,9 +242,7 @@ mecab_fin(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   }
   grn_tokenizer_token_fin(ctx, &(tokenizer->token));
   grn_tokenizer_query_close(ctx, tokenizer->query);
-  if (tokenizer->buf) {
-    GRN_PLUGIN_FREE(ctx, tokenizer->buf);
-  }
+  grn_obj_unlink(ctx, &(tokenizer->buf));
   GRN_PLUGIN_FREE(ctx, tokenizer);
   return NULL;
 }
