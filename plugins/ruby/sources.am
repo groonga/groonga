@@ -1,0 +1,2 @@
+ruby_la_SOURCES =				\
+	ruby.c

@@ -2,7 +2,8 @@ SUBDIRS =					\
 	tokenizers				\
 	suggest					\
 	table					\
-	query_expanders
+	query_expanders				\
+	ruby
 
 EXTRA_DIST =					\
 	CMakeLists.txt

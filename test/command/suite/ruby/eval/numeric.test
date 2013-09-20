@@ -1,0 +1,2 @@
+register ruby/ruby
+ruby "1"

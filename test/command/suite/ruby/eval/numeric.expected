@@ -1,0 +1,4 @@
+register ruby/ruby
+[[0,0.0,0.0],true]
+ruby "1"
+[[0,0.0,0.0],{"value":1}]
