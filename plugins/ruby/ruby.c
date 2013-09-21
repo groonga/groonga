@@ -43,7 +43,8 @@ output_result(grn_ctx *ctx, mrb_value result)
 }
 
 static grn_obj *
-command_ruby(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+command_ruby_eval(grn_ctx *ctx, int nargs, grn_obj **args,
+                  grn_user_data *user_data)
 {
   grn_obj *script;
   mrb_value result;
@@ -95,7 +96,7 @@ GRN_PLUGIN_REGISTER(grn_ctx *ctx)
   grn_expr_var vars[1];
 
   DEF_VAR(vars[0], "script");
-  DEF_COMMAND("ruby", command_ruby, 1, vars);
+  DEF_COMMAND("ruby_eval", command_ruby_eval, 1, vars);
 
   return ctx->rc;
 }

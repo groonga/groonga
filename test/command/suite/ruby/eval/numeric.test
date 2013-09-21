@@ -2,4 +2,4 @@
 register ruby/ruby
 #@on-error default
 
-ruby "1"
+ruby_eval "1"
