@@ -18,10 +18,10 @@ include_directories(
   )
 
 read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/sources.am RUBY_SOURCES)
-add_library(ruby MODULE ${RUBY_SOURCES})
+add_library(eval MODULE ${RUBY_SOURCES})
 set_source_files_properties(${RUBY_SOURCES}
   PROPERTIES
   COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
-set_target_properties(ruby PROPERTIES PREFIX "")
-target_link_libraries(ruby libgroonga)
-install(TARGETS ruby DESTINATION "${GRN_RELATIVE_PLUGINS_DIR}/ruby")
+set_target_properties(eval PROPERTIES PREFIX "")
+target_link_libraries(eval libgroonga)
+install(TARGETS eval DESTINATION "${GRN_RELATIVE_PLUGINS_DIR}/ruby")

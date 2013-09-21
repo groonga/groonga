@@ -1,5 +1,5 @@
 #@on-error omit
-register ruby/ruby
+register ruby/eval
 #@on-error default
 
 ruby_eval "1"

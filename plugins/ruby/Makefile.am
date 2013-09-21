@@ -20,7 +20,7 @@ LIBS =						\
 	$(MESSAGE_PACK_LIBS)
 
 if WITH_MRUBY
-ruby_plugins_LTLIBRARIES = ruby.la
+ruby_plugins_LTLIBRARIES = eval.la
 endif
 
 include sources.am
