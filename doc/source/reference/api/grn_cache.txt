@@ -26,7 +26,7 @@ an important problem.
 
 If you open multiple databases and use
 :doc:`/reference/commands/select` command, you need to use
-``grn_cache`` object. It is :doc:`/reference/executable/groonga-httpd`
+``grn_cache`` object. It is :doc:`/reference/executables/groonga-httpd`
 case. If you open only one database or don't use
 :doc:`/reference/commands/select` command, you don't need to use
 ``grn_cache`` object. It is `rroonga
