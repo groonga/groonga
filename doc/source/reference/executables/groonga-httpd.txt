@@ -241,6 +241,35 @@ Examples::
     groonga_log_level notice;
   }
 
+.. _groonga_query_log_path:
+
+``groonga_query_log_path``
+""""""""""""""""""""""""""
+
+Synopsis::
+
+  groonga_query_log_path path | off;
+
+Default
+  ``/var/log/groonga/httpd/groonga-query.log``
+
+Context
+  ``http``, ``server``, ``location``
+
+Specifies groonga log path in the ``http``, ``server`` or ``location`` block. The
+default is ``/var/log/groonga/httpd/groonga-query.log``.
+You can disable logging to specify ``off``.
+
+Examples::
+
+  location /d/ {
+    groonga on;
+    # You can disable query log for groonga.
+    groonga_query_log_path off;
+  }
+
+Use ``groonga_query_log_path`` for investigating the query which is related to
+the issue such as crashed worker process for example.
 
 Performance related directives
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
