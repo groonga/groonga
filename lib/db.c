@@ -1539,7 +1539,7 @@ delete_reference_records_in_index(grn_ctx *ctx, grn_obj *table, grn_id id,
                                   grn_obj *index)
 {
   grn_ii *ii = (grn_ii *)index;
-  grn_ii_cursor *ii_cursor;
+  grn_ii_cursor *ii_cursor = NULL;
   grn_ii_posting *posting;
   grn_obj source_ids;
   unsigned int i, n_ids;
