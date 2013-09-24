@@ -32,10 +32,6 @@ load --table Bookmarks
 [[0,0.0,0.0],3]
 delete --table Users --filter 'true'
 [[0,0.0,0.0],true]
-#|w| undeletable record (Users:1) has value (bookmakrs:4)
-#|e| undeletable record (Users:1) has value (bookmakrs:4)
-#|w| undeletable record (Users:3) has value (bookmakrs:1)
-#|e| undeletable record (Users:3) has value (bookmakrs:1)
 select --table Users
 [
   [
@@ -46,7 +42,7 @@ select --table Users
   [
     [
       [
-        2
+        0
       ],
       [
         [
@@ -65,18 +61,6 @@ select --table Users
           "name",
           "ShortText"
         ]
-      ],
-      [
-        1,
-        "mori",
-        4,
-        "Daijiro MORI"
-      ],
-      [
-        3,
-        "s-yata",
-        1,
-        "Susumu Yata"
       ]
     ]
   ]
@@ -110,7 +94,7 @@ select --table Names
       [
         1,
         "daijiro",
-        1
+        0
       ],
       [
         3,
@@ -120,12 +104,12 @@ select --table Names
       [
         2,
         "mori",
-        1
+        0
       ],
       [
         5,
         "susumu",
-        1
+        0
       ],
       [
         4,
@@ -135,7 +119,7 @@ select --table Names
       [
         6,
         "yata",
-        1
+        0
       ]
     ]
   ]
