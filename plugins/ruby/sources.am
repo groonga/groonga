@@ -1,2 +1,2 @@
-ruby_la_SOURCES =				\
+eval_la_SOURCES =				\
 	eval.c
