@@ -43,6 +43,7 @@ typedef struct {
   int config_line;
   char *name;
   grn_ctx context;
+  grn_cache *cache;
 } ngx_http_groonga_loc_conf_t;
 
 typedef struct {
@@ -255,6 +256,10 @@ ngx_http_groonga_context_init(grn_ctx *context,
                                                       log);
   if (status == NGX_ERROR) {
     grn_ctx_fin(context);
+  }
+
+  if (location_conf->cache) {
+    grn_cache_current_set(context, location_conf->cache);
   }
 
   return status;
@@ -935,6 +940,7 @@ ngx_http_groonga_create_loc_conf(ngx_conf_t *cf)
   conf->query_log_file = NULL;
   conf->config_file = NULL;
   conf->config_line = 0;
+  conf->cache = NULL;
 
   return conf;
 }
@@ -1134,6 +1140,15 @@ ngx_http_groonga_open_database_callback(ngx_http_groonga_loc_conf_t *location_co
       return;
     }
   }
+
+  location_conf->cache = grn_cache_open(context);
+  if (!location_conf->cache) {
+    ngx_log_error(NGX_LOG_EMERG, data->log, 0,
+                  "failed to open groonga cache: %s",
+                  context->errbuf);
+    data->rc = NGX_ERROR;
+    return;
+  }
 }
 
 static void
@@ -1144,9 +1159,14 @@ ngx_http_groonga_close_database_callback(ngx_http_groonga_loc_conf_t *location_c
   grn_ctx *context;
 
   context = &(location_conf->context);
+  grn_cache_current_set(context, location_conf->cache);
 
   grn_obj_close(context, grn_ctx_db(context));
   ngx_http_groonga_context_log_error(data->log, context);
+
+  grn_cache_current_set(context, NULL);
+  grn_cache_close(context, location_conf->cache);
+
   grn_ctx_fin(context);
 }
 
