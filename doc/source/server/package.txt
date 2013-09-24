@@ -15,9 +15,18 @@ There are three packages for server use.
 * ``groonga-server-http`` (simple HTTP protocol based server package)
 * ``groonga-server-gqtp`` (GQTP protocol based server package)
 
-Note that there is a conflict between ``groonga-httpd`` and ``groonga-server-http``
-package because of port number.
-See :doc:`/server/http/comparison` if you want to know which package meets your demands.
+.. note::
+
+   There is a conflict between ``groonga-httpd`` and ``groonga-server-http``
+   package because of port number.
+   See :doc:`/server/http/comparison` if you want to know which package meets your demands.
+
+.. note::
+
+   ``groonga-server-gqtp`` is based on groonga specific protocol (GQTP - Groonga Query Transfer
+   Protocol). This protocol is designed to reduce overheads and improve performance. The weak
+   point of GQTP is less support of client library than HTTP protocol does.
+
 
 groonga-httpd
 -------------
