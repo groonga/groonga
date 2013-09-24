@@ -477,12 +477,16 @@ typedef struct {
 } grn_cache_statistics;
 
 void grn_cache_init(void);
-grn_obj *grn_cache_fetch(grn_ctx *ctx, const char *str, uint32_t str_size);
-void grn_cache_unref(const char *str, uint32_t str_size);
-void grn_cache_update(grn_ctx *ctx, const char *str, uint32_t str_size, grn_obj *value);
-void grn_cache_expire(int32_t size);
+grn_obj *grn_cache_fetch(grn_ctx *ctx, grn_cache *cache,
+                         const char *str, uint32_t str_size);
+void grn_cache_unref(grn_ctx *ctx, grn_cache *cache,
+                     const char *str, uint32_t str_size);
+void grn_cache_update(grn_ctx *ctx, grn_cache *cache,
+                      const char *str, uint32_t str_size, grn_obj *value);
+void grn_cache_expire(grn_cache *cache, int32_t size);
 void grn_cache_fin(void);
-void grn_cache_get_statistics(grn_ctx *ctx, grn_cache_statistics *statistics);
+void grn_cache_get_statistics(grn_ctx *ctx, grn_cache *cache,
+                              grn_cache_statistics *statistics);
 
 /**** receive handler ****/
 

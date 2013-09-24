@@ -475,8 +475,9 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
     query_expander_len + 1 + query_flags_len + 1 +
     sizeof(grn_content_type) + sizeof(int) * 4;
   long long int threshold, original_threshold = 0;
+  grn_cache *cache_obj = grn_cache_current_get(ctx);
   if (cache_key_size <= GRN_TABLE_MAX_KEY_SIZE) {
-    grn_obj *cache;
+    grn_obj *cache_value;
     char *cp = cache_key;
     memcpy(cp, table, table_len);
     cp += table_len; *cp++ = '\0';
@@ -509,12 +510,15 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
     memcpy(cp, &limit, sizeof(int)); cp += sizeof(int);
     memcpy(cp, &drilldown_offset, sizeof(int)); cp += sizeof(int);
     memcpy(cp, &drilldown_limit, sizeof(int)); cp += sizeof(int);
-    if ((cache = grn_cache_fetch(ctx, cache_key, cache_key_size))) {
-      GRN_TEXT_PUT(ctx, outbuf, GRN_TEXT_VALUE(cache), GRN_TEXT_LEN(cache));
-      grn_cache_unref(cache_key, cache_key_size);
+    cache_value = grn_cache_fetch(ctx, cache_obj, cache_key, cache_key_size);
+    if (cache_value) {
+      GRN_TEXT_PUT(ctx, outbuf,
+                   GRN_TEXT_VALUE(cache_value),
+                   GRN_TEXT_LEN(cache_value));
+      grn_cache_unref(ctx, cache_obj, cache_key, cache_key_size);
       GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_CACHE,
                     ":", "cache(%" GRN_FMT_LLD ")",
-                    (long long int)GRN_TEXT_LEN(cache));
+                    (long long int)GRN_TEXT_LEN(cache_value));
       return ctx->rc;
     }
   }
@@ -770,7 +774,7 @@ grn_select(grn_ctx *ctx, const char *table, unsigned int table_len,
     GRN_OUTPUT_ARRAY_CLOSE();
     if (!ctx->rc && cacheable && cache_key_size <= GRN_TABLE_MAX_KEY_SIZE
         && (!cache || cache_len != 2 || *cache != 'n' || *(cache + 1) != 'o')) {
-      grn_cache_update(ctx, cache_key, cache_key_size, outbuf);
+      grn_cache_update(ctx, cache_obj, cache_key, cache_key_size, outbuf);
     }
     if (taintable) { grn_db_touch(ctx, DB_OBJ(table_)->db); }
     grn_obj_unlink(ctx, table_);
@@ -885,9 +889,12 @@ static grn_obj *
 proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_timeval now;
+  grn_cache *cache;
   grn_cache_statistics statistics;
+
   grn_timeval_now(ctx, &now);
-  grn_cache_get_statistics(ctx, &statistics);
+  cache = grn_cache_current_get(ctx);
+  grn_cache_get_statistics(ctx, cache, &statistics);
   GRN_OUTPUT_MAP_OPEN("RESULT", 18);
   GRN_OUTPUT_CSTR("alloc_count");
   GRN_OUTPUT_INT32(grn_alloc_count());
@@ -2569,14 +2576,15 @@ proc_dump(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 static grn_obj *
 proc_cache_limit(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  uint32_t *mp = grn_cache_max_nentries();
-  GRN_OUTPUT_INT64(*mp);
+  grn_cache *cache;
+  cache = grn_cache_current_get(ctx);
+  GRN_OUTPUT_INT64(grn_cache_get_max_n_entries(ctx, cache));
   if (GRN_TEXT_LEN(VAR(0))) {
     const char *rest;
     uint32_t max = grn_atoui(GRN_TEXT_VALUE(VAR(0)),
                              GRN_BULK_CURR(VAR(0)), &rest);
     if (GRN_BULK_CURR(VAR(0)) == rest) {
-      *mp = max;
+      grn_cache_set_max_n_entries(ctx, cache, max);
     } else {
       ERR(GRN_INVALID_ARGUMENT,
           "max value is invalid unsigned integer format: <%.*s>",

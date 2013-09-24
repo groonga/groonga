@@ -2495,7 +2495,9 @@ main(int argc, char **argv)
   grn_set_term_handler();
 
   if (cache_limit_arg) {
-    *grn_cache_max_nentries() = cache_limit;
+    grn_cache *cache;
+    cache = grn_cache_current_get(&grn_gctx);
+    grn_cache_set_max_n_entries(&grn_gctx, cache, cache_limit);
   }
 
   newdb = (mode & MODE_NEW_DB);

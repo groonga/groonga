@@ -352,7 +352,11 @@ grn_db_close(grn_ctx *ctx, grn_obj *db)
   if (s->specs) { grn_ja_close(ctx, s->specs); }
   GRN_FREE(s);
   if (ctx_used_db) {
-    grn_cache_expire(-1);
+    grn_cache *cache;
+    cache = grn_cache_current_get(ctx);
+    if (cache) {
+      grn_cache_expire(cache, -1);
+    }
     ctx->impl->db = NULL;
   }
   GRN_API_RETURN(GRN_SUCCESS);
