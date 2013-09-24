@@ -347,6 +347,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/rdoc.py \
 	$(top_srcdir)/doc/source/reference.txt \
 	$(top_srcdir)/doc/source/reference/api.txt \
+	$(top_srcdir)/doc/source/reference/api/grn_cache.txt \
 	$(top_srcdir)/doc/source/reference/api/grn_column.txt \
 	$(top_srcdir)/doc/source/reference/api/grn_command_version.txt \
 	$(top_srcdir)/doc/source/reference/api/grn_ctx.txt \
@@ -826,6 +827,7 @@ source_files_relative_from_doc_dir = \
 	source/rdoc.py \
 	source/reference.txt \
 	source/reference/api.txt \
+	source/reference/api/grn_cache.txt \
 	source/reference/api/grn_column.txt \
 	source/reference/api/grn_command_version.txt \
 	source/reference/api/grn_ctx.txt \
@@ -1072,6 +1074,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/news/senna.txt \
 	html/_sources/reference.txt \
 	html/_sources/reference/api.txt \
+	html/_sources/reference/api/grn_cache.txt \
 	html/_sources/reference/api/grn_column.txt \
 	html/_sources/reference/api/grn_command_version.txt \
 	html/_sources/reference/api/grn_ctx.txt \
@@ -1251,6 +1254,7 @@ html_files_relative_from_locale_dir = \
 	html/objects.inv \
 	html/reference.html \
 	html/reference/api.html \
+	html/reference/api/grn_cache.html \
 	html/reference/api/grn_column.html \
 	html/reference/api/grn_command_version.html \
 	html/reference/api/grn_ctx.html \
