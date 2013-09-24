@@ -1,0 +1,3 @@
+cache_limit --max -1
+[[[-22,0.0,0.0],"max value is invalid unsigned integer format: <-1>"],100]
+#|e| max value is invalid unsigned integer format: <-1>
