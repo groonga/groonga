@@ -26,7 +26,6 @@
 void test_id(void);
 void test_filter(void);
 void test_key(void);
-void test_referenced_record(void);
 void test_uint64(void);
 void test_last_token(void);
 void test_no_key_twice(void);
@@ -160,23 +159,6 @@ test_key(void)
                             "[\"tasukuchan\"]]]",
                           send_command("select Users "
                                        "--output_columns _key"));
-}
-
-void
-test_referenced_record(void)
-{
-  assert_send_command_error(GRN_OPERATION_NOT_PERMITTED,
-                            "undeletable record (Users:4) "
-                            "has value (bookmarks:1)",
-                            "delete Users tasukuchan");
-  cut_assert_equal_string("[[[2],"
-                            "[[\"_key\",\"ShortText\"]],"
-                            "[\"tapo\"],"
-                            "[\"tasukuchan\"]]]",
-                          send_command("select Users "
-                                       "--output_columns _key "
-                                       "--match_columns \"_key\" "
-                                       "--query \"ta\""));
 }
 
 void
