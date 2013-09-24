@@ -13,7 +13,7 @@ There are three packages for server use.
 
 * ``groonga-httpd`` (nginx and HTTP protocol based server package)
 * ``groonga-server-http`` (simple HTTP protocol based server package)
-* ``groonga-server-gqtp`` (GQTP protocol based server package)
+* ``groonga-server-gqtp`` (:doc:`/spec/gqtp` protocol based server package)
 
 .. note::
 
@@ -23,7 +23,7 @@ There are three packages for server use.
 
 .. note::
 
-   ``groonga-server-gqtp`` is based on groonga specific protocol (GQTP - Groonga Query Transfer
+   ``groonga-server-gqtp`` is based on groonga specific protocol (:doc:`/spec/gqtp` - Groonga Query Transfer
    Protocol). This protocol is designed to reduce overheads and improve performance. The weak
    point of GQTP is less support of client library than HTTP protocol does.
 
@@ -145,7 +145,7 @@ Restarting groonga HTTP server(Fedora)::
 groonga-server-gqtp
 -------------------
 
-``groonga-server-gqtp`` is a GQTP protocol based server package.
+``groonga-server-gqtp`` is a :doc:`/spec/gqtp` protocol based server package.
 
 +--------------------+---------------------------------------+
 | Item               | Default value                         |
