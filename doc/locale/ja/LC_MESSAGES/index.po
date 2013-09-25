@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-28 10:23\n"
+"POT-Creation-Date: 2013-09-25 11:22+0900\n"
 "PO-Revision-Date: 2011-05-09 00:36+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -25,14 +25,26 @@ msgstr "groonga ドキュメント"
 msgid ":doc:`news`"
 msgstr ""
 
-#: ../../../source/index.txt:31
+# cb1069c77ee54184acacd8fba8f79daa
+#: ../../../source/index.txt:15
+msgid ""
+"This document is also ditributed in forms of release source archive and "
+"updated time to time. If you want to refer latest documentation in source "
+"form, you can view such files via GitHub repository browser (https://github."
+"com/groonga/groonga/tree/master/doc/source)."
+msgstr ""
+"このドキュメントはソースアーカイブの形式で配布され、随時更新していま"
+"す。最新のドキュメントをソース形式で参照したいなら、GitHubのリポ"
+"ジトリブラウザ経由で閲覧できます。(https://github.com/groonga/groonga/tree/master/doc/source)"
+
+#: ../../../source/index.txt:36
 msgid ":ref:`genindex`"
 msgstr ""
 
-#: ../../../source/index.txt:32
+#: ../../../source/index.txt:37
 msgid ":ref:`modindex`"
 msgstr ""
 
-#: ../../../source/index.txt:33
+#: ../../../source/index.txt:38
 msgid ":ref:`search`"
 msgstr ""
