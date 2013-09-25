@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-28 14:44\n"
+"POT-Creation-Date: 2013-09-24 18:23+0900\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -27,17 +27,26 @@ msgstr "groonga documentation"
 msgid ":doc:`news`"
 msgstr ":doc:`news`"
 
+# 8d6219d8ab9f4c2f8244685e39e90777
+#: ../../../source/index.txt:15
+msgid ""
+"This document is also ditributed in forms of release source archive and "
+"updated time to time. If you want to refer latest documentation in source "
+"form, you can view such files via GitHub repository browser (https://github."
+"com/groonga/groonga/tree/master/doc/source)."
+msgstr ""
+
 # 7a50acfe86d1429f9185bb5737388a3e
-#: ../../../source/index.txt:31
+#: ../../../source/index.txt:36
 msgid ":ref:`genindex`"
 msgstr ":ref:`genindex`"
 
 # ac699e10a3df408caa3cc7f645b42e0a
-#: ../../../source/index.txt:32
+#: ../../../source/index.txt:37
 msgid ":ref:`modindex`"
 msgstr ":ref:`modindex`"
 
 # 8f96e6490e024a1981f8acece6bcc598
-#: ../../../source/index.txt:33
+#: ../../../source/index.txt:38
 msgid ":ref:`search`"
 msgstr ":ref:`search`"

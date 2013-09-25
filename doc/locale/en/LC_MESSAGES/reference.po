@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-09-20 11:58+0900\n"
+"POT-Creation-Date: 2013-09-25 11:16+0900\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -283,16 +283,15 @@ msgid ""
 "APIs that are provided by groonga."
 msgstr ""
 
-# 1bb85c12ead941fc9337f692e1d0a405
-# fc658bcbdc244395a315bc123ec1f1ff
-# 4614e1fa49044fae9d94d0979334d9f1
-#: ../../../source/reference/api/grn_column.txt:6
-msgid "``grn_column``"
+# 8820d997f92c4fbb9cee896aa11e3694
+#: ../../../source/reference/api/grn_cache.txt:6
+msgid "``grn_cache``"
 msgstr ""
 
 # 98cc3b12e0034f3ead32d8658048ada4
 # 8e4c52515c554cdaa329c0739e17f94c
 # 6113f4f60edf40d785b4df6daec7db75
+#: ../../../source/reference/api/grn_cache.txt:9
 #: ../../../source/reference/api/grn_column.txt:9
 #: ../../../source/reference/api/grn_command_version.txt:9
 #: ../../../source/reference/api/grn_ctx.txt:9
@@ -332,6 +331,235 @@ msgstr ""
 #: ../../../source/reference/tables.txt:9
 msgid "Summary"
 msgstr "Summary"
+
+# 12f98dcc9a544805b5da241424f52c20
+#: ../../../source/reference/api/grn_cache.txt:13
+msgid "This API is experimental."
+msgstr ""
+
+# e5f96fbe2d314ec89ff722d83efa2ae1
+#: ../../../source/reference/api/grn_cache.txt:15
+msgid ""
+"``grn_cache`` is a data store that keeps responses of :doc:`/reference/"
+"commands/select` command. It is not general use cache object. It is only "
+"for :doc:`/reference/commands/select` command."
+msgstr ""
+
+# 215e6cc2301c450e86534b9fb52503b6
+#: ../../../source/reference/api/grn_cache.txt:19
+msgid ""
+"You can just change the current cache object by :c:func:"
+"`grn_cache_current_set()`. :doc:`/reference/commands/select` command "
+"response cache is done internally."
+msgstr ""
+
+# 48f56b7eaffd4f378fc88983ef25a176
+#: ../../../source/reference/api/grn_cache.txt:23
+msgid ""
+":doc:`/reference/commands/select` command uses one global cache object. If "
+"you open multiple databases, the one cache is shared. It is an important "
+"problem."
+msgstr ""
+
+# 78402ea7a83c40eda58a2d1fd7ca0fcc
+#: ../../../source/reference/api/grn_cache.txt:27
+msgid ""
+"If you open multiple databases and use :doc:`/reference/commands/select` "
+"command, you need to use ``grn_cache`` object. It is :doc:`/reference/"
+"executables/groonga-httpd` case. If you open only one database or don't use :"
+"doc:`/reference/commands/select` command, you don't need to use "
+"``grn_cache`` object. It is `rroonga <http://ranguba.org/#about-rroonga>`_ "
+"case."
+msgstr ""
+
+# f65970f3a4264e33b0ed18b5521f53ae
+# c41e9a5775254864920a3c5d413bc3f0
+# dbae9c01ac594defa0f2e485e76c0929
+# b07bab7cb2fd41b0998402e48dcf382b
+# 091b051231aa46808e77dacc6fc5032e
+# a3d0d9e778ae4795ae25444729bacc43
+# c718f34b2a0b454896badee8ac487d5b
+# 11d6f67d10cf49079fc7504fe656d181
+# 5f705ad5205b47bba758a79939864e9c
+# 63706a8aa5aa4123ba3331add4d09cea
+# 08d03411c4b5418b8db31591c1d7b59d
+# f6b8093f5a4f4cd89e30878bedd1c37f
+#: ../../../source/reference/api/grn_cache.txt:36
+#: ../../../source/reference/api/grn_column.txt:14
+#: ../../../source/reference/api/grn_command_version.txt:14
+#: ../../../source/reference/api/grn_ctx.txt:32
+#: ../../../source/reference/api/grn_db.txt:14
+#: ../../../source/reference/api/grn_encoding.txt:14
+#: ../../../source/reference/api/grn_expr.txt:26
+#: ../../../source/reference/api/grn_geo.txt:14
+#: ../../../source/reference/api/grn_hook.txt:14
+#: ../../../source/reference/api/grn_ii.txt:18
+#: ../../../source/reference/api/grn_index_cursor.txt:14
+#: ../../../source/reference/api/grn_info.txt:14
+#: ../../../source/reference/api/grn_match_escalation.txt:14
+#: ../../../source/reference/api/grn_obj.txt:14
+#: ../../../source/reference/api/grn_proc.txt:14
+#: ../../../source/reference/api/grn_search.txt:14
+#: ../../../source/reference/api/grn_table.txt:14
+#: ../../../source/reference/api/grn_table_cursor.txt:14
+#: ../../../source/reference/api/grn_type.txt:14
+#: ../../../source/reference/api/grn_user_data.txt:14
+msgid "Example"
+msgstr ""
+
+# 85716c321ab14a7884052c5eccf358bc
+#: ../../../source/reference/api/grn_cache.txt:38
+msgid "Here is an example that change the current cache object."
+msgstr ""
+
+# 7a55e4786dd348d286e9872d75a24369
+#: ../../../source/reference/api/grn_cache.txt:52
+#: ../../../source/reference/api/grn_column.txt:19
+#: ../../../source/reference/api/grn_command_version.txt:19
+#: ../../../source/reference/api/grn_ctx.txt:37
+#: ../../../source/reference/api/grn_db.txt:19
+#: ../../../source/reference/api/grn_encoding.txt:19
+#: ../../../source/reference/api/grn_expr.txt:31
+#: ../../../source/reference/api/grn_geo.txt:19
+#: ../../../source/reference/api/grn_hook.txt:19
+#: ../../../source/reference/api/grn_ii.txt:23
+#: ../../../source/reference/api/grn_index_cursor.txt:19
+#: ../../../source/reference/api/grn_info.txt:19
+#: ../../../source/reference/api/grn_match_escalation.txt:19
+#: ../../../source/reference/api/grn_obj.txt:19
+#: ../../../source/reference/api/grn_proc.txt:19
+#: ../../../source/reference/api/grn_search.txt:19
+#: ../../../source/reference/api/grn_table.txt:19
+#: ../../../source/reference/api/grn_table_cursor.txt:19
+#: ../../../source/reference/api/grn_type.txt:19
+#: ../../../source/reference/api/grn_user_data.txt:19
+msgid "Reference"
+msgstr ""
+
+# 78e137080c6c4b94a79f5e4c8e5baa31
+#: ../../../source/reference/api/grn_cache.txt:56
+msgid ""
+"It is an opaque cache object. You can create a ``grn_cache`` by :c:func:"
+"`grn_cache_open()` and free the created object by :c:func:`grn_cache_close()"
+"`."
+msgstr ""
+
+# 11cfbccd570a4ea39f66b899086a1e62
+#: ../../../source/reference/api/grn_cache.txt:62
+msgid "Creates a new cache object."
+msgstr ""
+
+# 989891ab4cc84e5ca1c95fce41e31d69
+#: ../../../source/reference/api/grn_cache.txt:64
+msgid ""
+"If memory allocation for the new cache object is failed, ``NULL`` is "
+"returned. Error information is stored into the ``ctx``."
+msgstr ""
+
+# 11f1389dffec43c49ff34f6697010680
+# 11f1389dffec43c49ff34f6697010680
+# 11f1389dffec43c49ff34f6697010680
+# 11f1389dffec43c49ff34f6697010680
+# 11f1389dffec43c49ff34f6697010680
+# 11f1389dffec43c49ff34f6697010680
+#: ../../../source/reference/api/grn_cache.txt:67
+#: ../../../source/reference/api/grn_cache.txt:76
+#: ../../../source/reference/api/grn_cache.txt:85
+#: ../../../source/reference/api/grn_cache.txt:95
+#: ../../../source/reference/api/grn_cache.txt:103
+#: ../../../source/reference/api/grn_cache.txt:112
+msgid "The context."
+msgstr ""
+
+# 53fead701bc44abb8b10381fad72113b
+#: ../../../source/reference/api/grn_cache.txt:68
+msgid ""
+"A newly allocated cache object on success, ``NULL`` otherwise. The returned "
+"cache object must be freed by :c:func:`grn_cache_close()`."
+msgstr ""
+
+# db36a5b3386f46df9e90612155e9f61e
+#: ../../../source/reference/api/grn_cache.txt:74
+msgid "Frees resourses of the ``cache``."
+msgstr ""
+
+# 77849051c4db4925a22d109db25deffd
+#: ../../../source/reference/api/grn_cache.txt:77
+msgid "The cache object to be freed."
+msgstr ""
+
+# 68f27871b92b4fef976a7e1a4e74b75d
+# 68f27871b92b4fef976a7e1a4e74b75d
+# 68f27871b92b4fef976a7e1a4e74b75d
+#: ../../../source/reference/api/grn_cache.txt:78
+#: ../../../source/reference/api/grn_cache.txt:88
+#: ../../../source/reference/api/grn_cache.txt:106
+msgid "``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` otherwise."
+msgstr ""
+
+# e69485a4441244be9c634bee7f664546
+#: ../../../source/reference/api/grn_cache.txt:82
+msgid ""
+"Sets the cache object that is used in :doc:`/reference/commands/select` "
+"command."
+msgstr ""
+
+# e69485a4441244be9c634bee7f664546
+#: ../../../source/reference/api/grn_cache.txt:86
+msgid ""
+"The cache object that is used in :doc:`/reference/commands/select` command."
+msgstr ""
+
+# ad0f52354e9e42f7af8c27266f60000a
+#: ../../../source/reference/api/grn_cache.txt:92
+msgid ""
+"Gets the cache object that is used in :doc:`/reference/commands/select` "
+"command."
+msgstr ""
+
+# 54a2bc60bc0241b5be1c7291e7751da9
+#: ../../../source/reference/api/grn_cache.txt:96
+msgid ""
+"The cache object that is used in :doc:`/reference/commands/select` command. "
+"It may be ``NULL``."
+msgstr ""
+
+# f085cc1f495c47c8b745ababaad366ed
+#: ../../../source/reference/api/grn_cache.txt:101
+msgid "Sets the max number of entries of the cache object."
+msgstr ""
+
+# 079339ce8b51494baf884067b6adb68b
+#: ../../../source/reference/api/grn_cache.txt:104
+msgid "The cache object to be changed."
+msgstr ""
+
+# 46621f4a93c04a188ff35d4882f6941e
+#: ../../../source/reference/api/grn_cache.txt:105
+msgid "The new max number of entries of the cache object."
+msgstr ""
+
+# c478cd4d46444a4fb1f94b317d814473
+#: ../../../source/reference/api/grn_cache.txt:110
+msgid "Gets the max number of entries of the cache object."
+msgstr ""
+
+# df857434d0d6472a958c3f2920b39675
+#: ../../../source/reference/api/grn_cache.txt:113
+msgid "The target cache object."
+msgstr ""
+
+# 7f384872c8a1492e97498a02e304cb41
+#: ../../../source/reference/api/grn_cache.txt:114
+msgid "The max number of entries of the cache object."
+msgstr ""
+
+# 1bb85c12ead941fc9337f692e1d0a405
+# fc658bcbdc244395a315bc123ec1f1ff
+# 4614e1fa49044fae9d94d0979334d9f1
+#: ../../../source/reference/api/grn_column.txt:6
+msgid "``grn_column``"
+msgstr ""
 
 # 2c695e93867f43e1a8ee7a2e284e70c2
 # 753e9e02d72d4dbc9d9cdd8aea4dd06e
@@ -391,63 +619,6 @@ msgstr "Summary"
 #: ../../../source/reference/cast.txt:8
 msgid "TODO..."
 msgstr "TODO..."
-
-# f65970f3a4264e33b0ed18b5521f53ae
-# c41e9a5775254864920a3c5d413bc3f0
-# dbae9c01ac594defa0f2e485e76c0929
-# b07bab7cb2fd41b0998402e48dcf382b
-# 091b051231aa46808e77dacc6fc5032e
-# a3d0d9e778ae4795ae25444729bacc43
-# c718f34b2a0b454896badee8ac487d5b
-# 11d6f67d10cf49079fc7504fe656d181
-# 5f705ad5205b47bba758a79939864e9c
-# 63706a8aa5aa4123ba3331add4d09cea
-# 08d03411c4b5418b8db31591c1d7b59d
-# f6b8093f5a4f4cd89e30878bedd1c37f
-#: ../../../source/reference/api/grn_column.txt:14
-#: ../../../source/reference/api/grn_command_version.txt:14
-#: ../../../source/reference/api/grn_ctx.txt:32
-#: ../../../source/reference/api/grn_db.txt:14
-#: ../../../source/reference/api/grn_encoding.txt:14
-#: ../../../source/reference/api/grn_expr.txt:26
-#: ../../../source/reference/api/grn_geo.txt:14
-#: ../../../source/reference/api/grn_hook.txt:14
-#: ../../../source/reference/api/grn_ii.txt:18
-#: ../../../source/reference/api/grn_index_cursor.txt:14
-#: ../../../source/reference/api/grn_info.txt:14
-#: ../../../source/reference/api/grn_match_escalation.txt:14
-#: ../../../source/reference/api/grn_obj.txt:14
-#: ../../../source/reference/api/grn_proc.txt:14
-#: ../../../source/reference/api/grn_search.txt:14
-#: ../../../source/reference/api/grn_table.txt:14
-#: ../../../source/reference/api/grn_table_cursor.txt:14
-#: ../../../source/reference/api/grn_type.txt:14
-#: ../../../source/reference/api/grn_user_data.txt:14
-msgid "Example"
-msgstr ""
-
-# 7a55e4786dd348d286e9872d75a24369
-#: ../../../source/reference/api/grn_column.txt:19
-#: ../../../source/reference/api/grn_command_version.txt:19
-#: ../../../source/reference/api/grn_ctx.txt:37
-#: ../../../source/reference/api/grn_db.txt:19
-#: ../../../source/reference/api/grn_encoding.txt:19
-#: ../../../source/reference/api/grn_expr.txt:31
-#: ../../../source/reference/api/grn_geo.txt:19
-#: ../../../source/reference/api/grn_hook.txt:19
-#: ../../../source/reference/api/grn_ii.txt:23
-#: ../../../source/reference/api/grn_index_cursor.txt:19
-#: ../../../source/reference/api/grn_info.txt:19
-#: ../../../source/reference/api/grn_match_escalation.txt:19
-#: ../../../source/reference/api/grn_obj.txt:19
-#: ../../../source/reference/api/grn_proc.txt:19
-#: ../../../source/reference/api/grn_search.txt:19
-#: ../../../source/reference/api/grn_table.txt:19
-#: ../../../source/reference/api/grn_table_cursor.txt:19
-#: ../../../source/reference/api/grn_type.txt:19
-#: ../../../source/reference/api/grn_user_data.txt:19
-msgid "Reference"
-msgstr ""
 
 # a3f1211c264a4bf48e40b943774940ef
 #: ../../../source/reference/api/grn_column.txt:23
@@ -816,8 +987,8 @@ msgstr ""
 #: ../../../source/reference/api/grn_ctx.txt:58
 #: ../../../source/reference/api/grn_ctx.txt:76
 #: ../../../source/reference/api/grn_ctx.txt:84
-#: ../../../source/reference/api/grn_expr.txt:52
-#: ../../../source/reference/api/grn_expr.txt:67
+#: ../../../source/reference/api/grn_expr.txt:70
+#: ../../../source/reference/api/grn_expr.txt:85
 msgid "``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error."
 msgstr ""
 
@@ -1122,15 +1293,14 @@ msgstr ""
 # fcc1fb06bb4446e6a850a1fccca5b6a4
 #: ../../../source/reference/api/grn_expr.txt:11
 msgid ""
-"Expression can apply some operations to a record by :c:function:"
-"`grn_expr_exec`."
+"Expression can apply some operations to a record by :c:func:`grn_expr_exec`."
 msgstr ""
 
 # 4d7f128a7c054034916464ce7e6506d0
 #: ../../../source/reference/api/grn_expr.txt:13
 msgid ""
-"Expression can represents search condition. :c:function:`grn_table_select` "
-"can select records that match against the search condition represented by "
+"Expression can represents search condition. :c:func:`grn_table_select` can "
+"select records that match against the search condition represented by "
 "expression."
 msgstr ""
 
@@ -1155,92 +1325,80 @@ msgstr ":doc:`/reference/grn_expr/script_syntax`"
 # 9f97e26202bb49a9b15b8e3f061927ea
 #: ../../../source/reference/api/grn_expr.txt:22
 msgid ""
-":c:function:`grn_expr_parse` parses string represented expression and "
-"appends the parsed expression to another expression."
+":c:func:`grn_expr_parse` parses string represented expression and appends "
+"the parsed expression to another expression."
 msgstr ""
 
 # 099c393bca7f43f29231ee95ae38d7cc
-#: ../../../source/reference/api/grn_expr.txt:35
+#: ../../../source/reference/api/grn_expr.txt:53
 msgid "Escapes ``target_characters`` in ``string`` by ``escape_character``."
 msgstr ""
 
 # a26b30dc9b0743e5951fabc27082731f
-#: ../../../source/reference/api/grn_expr.txt:37
+#: ../../../source/reference/api/grn_expr.txt:55
 msgid ""
 "Its encoding must be the same encoding of ``string``. It is used for "
 "allocating buffer for ``escaped_string``."
 msgstr ""
 
 # 76e0d62611a24dd49b21d98cb805a16a
-#: ../../../source/reference/api/grn_expr.txt:39
+#: ../../../source/reference/api/grn_expr.txt:57
 msgid "String expression representation."
 msgstr ""
 
 # c42750f87258418782f38749a9ada8ac
-#: ../../../source/reference/api/grn_expr.txt:40
+#: ../../../source/reference/api/grn_expr.txt:58
 msgid ""
 "The byte size of ``string``. ``-1`` means ``string`` is NULL terminated "
 "string."
 msgstr ""
 
 # 250b4196bf6243efabf2e78b7a67c74d
-#: ../../../source/reference/api/grn_expr.txt:42
+#: ../../../source/reference/api/grn_expr.txt:60
 msgid ""
 "NULL terminated escape target characters. For example, ``\"+-><~*()\\\"\\\\:"
 "\"`` is ``target_characters`` for :doc:`/reference/grn_expr/query_syntax`."
 msgstr ""
 
-# dff2ee1348f249f7a186f9156581429d
-#: ../../../source/reference/api/grn_expr.txt:46
-msgid ""
-"The character to use escape a character in ``target_characters``. For "
-"example, ``\\\\`` (backslash) is ``escaped_character`` for"
-msgstr ""
-
 # 6cbd8aa8637847a791895db6c39eafd7
-#: ../../../source/reference/api/grn_expr.txt:46
+#: ../../../source/reference/api/grn_expr.txt:64
 msgid ""
 "The character to use escape a character in ``target_characters``. For "
-"example, ``\\\\`` (backslash) is ``escaped_character`` for  :doc:`/reference/"
+"example, ``\\\\`` (backslash) is ``escaped_character`` for :doc:`/reference/"
 "grn_expr/query_syntax`."
 msgstr ""
 
-# e8444044dfa741d3b70dc4687921d3ff
-#: ../../../source/reference/api/grn_expr.txt:49
-msgid ":doc:`/reference/grn_expr/query_syntax`."
-msgstr ""
-
 # 715e11ab39d94b6096f4ad93eaa4917c
-#: ../../../source/reference/api/grn_expr.txt:50
+#: ../../../source/reference/api/grn_expr.txt:68
 msgid "The output of escaped ``string``. It should be text typed bulk."
 msgstr ""
 
 # b17e3310c7854707a28db8413e229e2c
-#: ../../../source/reference/api/grn_expr.txt:56
+#: ../../../source/reference/api/grn_expr.txt:74
 msgid "Escapes special characters in :doc:`/reference/grn_expr/query_syntax`."
 msgstr ""
 
 # 8fc94853600845daa0a2e0ed7358d43c
-#: ../../../source/reference/api/grn_expr.txt:59
+#: ../../../source/reference/api/grn_expr.txt:77
 msgid ""
 "Its encoding must be the same encoding of ``query``. It is used for "
 "allocating buffer for ``escaped_query``."
 msgstr ""
 
 # b17e3310c7854707a28db8413e229e2c
-#: ../../../source/reference/api/grn_expr.txt:61
+#: ../../../source/reference/api/grn_expr.txt:79
 msgid ""
 "String expression representation in :doc:`/reference/grn_expr/query_syntax`."
 msgstr ""
 
 # 249bd87a8dee4c6ea2c36838c31bf133
-#: ../../../source/reference/api/grn_expr.txt:63
+#: ../../../source/reference/api/grn_expr.txt:81
 msgid ""
 "The byte size of ``query``. ``-1`` means ``query`` is NULL terminated string."
 msgstr ""
 
 # aa5c98b382e84883882209296839d035
-#: ../../../source/reference/api/grn_expr.txt:65
+#: ../../../source/reference/api/grn_expr.txt:83
 msgid "The output of escaped ``query``. It should be text typed bulk."
 msgstr ""
 
@@ -10568,6 +10726,7 @@ msgstr ""
 #: ../../../source/reference/executables/groonga-httpd.txt:147
 #: ../../../source/reference/executables/groonga-httpd.txt:196
 #: ../../../source/reference/executables/groonga-httpd.txt:223
+#: ../../../source/reference/executables/groonga-httpd.txt:249
 msgid "Synopsis::"
 msgstr ""
 
@@ -10579,6 +10738,7 @@ msgstr ""
 #: ../../../source/reference/executables/groonga-httpd.txt:152
 #: ../../../source/reference/executables/groonga-httpd.txt:201
 #: ../../../source/reference/executables/groonga-httpd.txt:228
+#: ../../../source/reference/executables/groonga-httpd.txt:254
 msgid "Default"
 msgstr ""
 
@@ -10595,6 +10755,7 @@ msgstr ""
 #: ../../../source/reference/executables/groonga-httpd.txt:155
 #: ../../../source/reference/executables/groonga-httpd.txt:204
 #: ../../../source/reference/executables/groonga-httpd.txt:231
+#: ../../../source/reference/executables/groonga-httpd.txt:257
 msgid "Context"
 msgstr ""
 
@@ -10627,6 +10788,7 @@ msgstr ""
 #: ../../../source/reference/executables/groonga-httpd.txt:113
 #: ../../../source/reference/executables/groonga-httpd.txt:210
 #: ../../../source/reference/executables/groonga-httpd.txt:236
+#: ../../../source/reference/executables/groonga-httpd.txt:263
 msgid "Examples::"
 msgstr ""
 
@@ -10644,6 +10806,7 @@ msgstr ""
 #: ../../../source/reference/executables/groonga-httpd.txt:134
 #: ../../../source/reference/executables/groonga-httpd.txt:204
 #: ../../../source/reference/executables/groonga-httpd.txt:231
+#: ../../../source/reference/executables/groonga-httpd.txt:257
 msgid "``http``, ``server``, ``location``"
 msgstr ""
 
@@ -10730,25 +10893,50 @@ msgid ""
 "``none`` as log level."
 msgstr ""
 
+# 9579ad0b3efb4199bd5ee9cc26be46ea
+#: ../../../source/reference/executables/groonga-httpd.txt:247
+msgid "``groonga_query_log_path``"
+msgstr ""
+
+# d79ab69fbddc4323aa26d01ef85f19b8
+#: ../../../source/reference/executables/groonga-httpd.txt:254
+msgid "``/var/log/groonga/httpd/groonga-query.log``"
+msgstr ""
+
+# 4e2f3b5df26d4ecd8923ff1b1a0f2e01
+#: ../../../source/reference/executables/groonga-httpd.txt:259
+msgid ""
+"Specifies groonga log path in the ``http``, ``server`` or ``location`` "
+"block. The default is ``/var/log/groonga/httpd/groonga-query.log``. You can "
+"disable logging to specify ``off``."
+msgstr ""
+
+# 7dc2de3e61a646929d0785f9cac05b2d
+#: ../../../source/reference/executables/groonga-httpd.txt:271
+msgid ""
+"Use ``groonga_query_log_path`` for investigating the query which is related "
+"to the issue such as crashed worker process for example."
+msgstr ""
+
 # 723ec18bf5454137a8231898c00bc1d4
-#: ../../../source/reference/executables/groonga-httpd.txt:246
+#: ../../../source/reference/executables/groonga-httpd.txt:275
 msgid "Performance related directives"
 msgstr ""
 
 # 8aa355587214422b8970d46bfa635365
-#: ../../../source/reference/executables/groonga-httpd.txt:248
+#: ../../../source/reference/executables/groonga-httpd.txt:277
 msgid ""
 "The following directives are related to the performance of groonga-httpd."
 msgstr ""
 "The following directives are related to the performance of groonga-httpd."
 
 # dc35e446557f43659f04dbdb958fdb4f
-#: ../../../source/reference/executables/groonga-httpd.txt:251
+#: ../../../source/reference/executables/groonga-httpd.txt:280
 msgid "``worker_processes``"
 msgstr "``worker_processes``"
 
 # 17df48c3426142ec91dffdd6376a94f6
-#: ../../../source/reference/executables/groonga-httpd.txt:253
+#: ../../../source/reference/executables/groonga-httpd.txt:282
 msgid ""
 "For optimum performance, set this to be equal to the number of CPUs or "
 "cores. In many cases, groonga queries may be CPU-intensive work, so to fully "
@@ -10759,7 +10947,7 @@ msgstr ""
 "utilize multi-CPU/core systems, it's essential to set this accordingly."
 
 # 1b6f66a5e61f4760a2fb5133b687423d
-#: ../../../source/reference/executables/groonga-httpd.txt:257
+#: ../../../source/reference/executables/groonga-httpd.txt:286
 msgid ""
 "This isn't a groonga-httpd specific directive, but an nginx's one. For "
 "details, see http://wiki.nginx.org/CoreModule#worker_processes."
@@ -10768,17 +10956,17 @@ msgstr ""
 "details, see http://wiki.nginx.org/CoreModule#worker_processes."
 
 # dcb5cf07f3f44cb88da1becb68a60ed2
-#: ../../../source/reference/executables/groonga-httpd.txt:260
+#: ../../../source/reference/executables/groonga-httpd.txt:289
 msgid "By default, this is set to 1. It is nginx's default."
 msgstr "By default, this is set to 1. It is nginx's default."
 
 # b889cdac2da04de299d1584d4756abad
-#: ../../../source/reference/executables/groonga-httpd.txt:263
+#: ../../../source/reference/executables/groonga-httpd.txt:292
 msgid "Available nginx modules"
 msgstr "Available nginx modules"
 
 # e8d176cec8db4336ad2cff6ad712dabf
-#: ../../../source/reference/executables/groonga-httpd.txt:265
+#: ../../../source/reference/executables/groonga-httpd.txt:294
 msgid ""
 "All standard HTTP modules is available. HttpRewriteModule is disabled when "
 "you don't have PCRE (Perl Compatible Regular Expressions). For the list of "
