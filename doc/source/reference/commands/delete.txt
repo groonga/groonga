@@ -2,29 +2,35 @@
 
 .. highlightlang:: none
 
-delete
-======
+``delete``
+==========
 
-名前
-----
+Summary
+-------
 
 delete - 一件のレコードの削除
-
-書式
-----
-::
-
- delete table [key [id [filter]]]
-
-説明
-----
 
 groonga組込コマンドの一つであるdeleteについて説明します。組込コマンドは、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。
 
 deleteは、使用しているデータベースのテーブルに1件のレコードを削除します。
 
-引数
-----
+Syntax
+------
+::
+
+ delete table [key [id [filter]]]
+
+Usage
+-----
+
+テーブルEntryからレコードを削除します。::
+
+ delete Entry abandon
+
+ [true]
+
+Parameters
+----------
 
 ``table``
 
@@ -42,8 +48,8 @@ deleteは、使用しているデータベースのテーブルに1件のレコ�
 
   script形式のgrn_expr文字列によってレコードを指定します。filterパラメータを指定する場合は、id及びkeyパラメータを指定してはいけません。
 
-返値
----
+Return value
+------------
 
 json形式
 ^^^^^^^^
@@ -56,14 +62,6 @@ json形式
 
   エラーが生じなかった場合にはtrue、エラーが生じた場合にはfalseを返す。
 
-例
---
-
-テーブルEntryからレコードを削除します。::
-
- delete Entry abandon
-
- [true]
 
 関連項目
 --------
