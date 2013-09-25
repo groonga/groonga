@@ -37,7 +37,7 @@ Example
 
 Here is an example that change the current cache object.
 
-.. code-block::
+.. code-block:: c
 
    grn_cache *cache;
    grn_cache *cache_previous;
