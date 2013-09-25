@@ -26,6 +26,12 @@ Improvements
 * [token delimit] Improved to treat continuous spaces as a space.
   The tokenizer regards 2 or more spaces are valid input.
 * [doc] Added note about indexes for each column vs indexes for multiple column.
+* [doc] Added language annotation to source label. [groonga-dev,01751] [Suggested by Kazuhiro Isobe]
+* Supported cascade delete to referenced records. In previous version,
+  You got an error for the operation.
+* [doc] Updated documentation location in README. [groonga-dev,01800] [Reported by Kazuhiro Isobe]
+* [experimental] Added :doc:`/reference/commands/ruby_eval` command.
+* [doc] Added note about GQTP and HTTP for server use. [groonga-dev,01810] [Reported by Kazuhiro Isobe]
 
 Fixes
 ^^^^^
@@ -37,6 +43,7 @@ Thanks
 
 * orangain
 * Naoya Murakami
+* Kazuhiro Isobe
 
 .. _release-3-0-7:
 
