@@ -64,7 +64,7 @@ Reference
    :param escape_character: The character to use escape a character in
                             ``target_characters``. For example, ``\\``
                             (backslash) is ``escaped_character`` for
-                             :doc:`/reference/grn_expr/query_syntax`.
+                            :doc:`/reference/grn_expr/query_syntax`.
    :param escaped_string: The output of escaped ``string``. It should be
                           text typed bulk.
    :return: ``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error.
