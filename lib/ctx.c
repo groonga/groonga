@@ -1971,7 +1971,7 @@ grn_ctx_info_get(grn_ctx *ctx, grn_ctx_info *info)
 
 typedef struct _grn_cache_entry grn_cache_entry;
 
-typedef struct _grn_cache {
+struct _grn_cache {
   grn_cache_entry *next;
   grn_cache_entry *prev;
   grn_hash *hash;
@@ -1979,7 +1979,7 @@ typedef struct _grn_cache {
   uint32_t max_nentries;
   uint32_t nfetches;
   uint32_t nhits;
-} grn_cache;
+};
 
 struct _grn_cache_entry {
   grn_cache_entry *next;
