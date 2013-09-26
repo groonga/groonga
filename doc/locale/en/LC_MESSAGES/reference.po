@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-09-25 11:16+0900\n"
+"POT-Creation-Date: 2013-09-26 16:13+0900\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -116,6 +116,8 @@ msgstr ""
 # 5941cc215b36491b921321e40257d039
 # 560546aa132c40bcbe7f39ecacaad414
 # b7d6effd757d44c2961ac412a77bac40
+#: ../../../source/example/reference/commands/cache_limit/get.log:1
+#: ../../../source/example/reference/commands/cache_limit/set.log:1
 #: ../../../source/example/reference/commands/column_rename/column_rename.log:1
 #: ../../../source/example/reference/commands/normalize/normalizer_auto_ascii.log:1
 #: ../../../source/example/reference/commands/register/query_expanders_tsv.log:1
@@ -312,7 +314,9 @@ msgstr ""
 #: ../../../source/reference/api/grn_user_data.txt:9
 #: ../../../source/reference/command/output_format.txt:9
 #: ../../../source/reference/command/return_code.txt:9
+#: ../../../source/reference/commands/cache_limit.txt:12
 #: ../../../source/reference/commands/column_rename.txt:12
+#: ../../../source/reference/commands/delete.txt:9
 #: ../../../source/reference/commands/load.txt:12
 #: ../../../source/reference/commands/normalize.txt:17
 #: ../../../source/reference/commands/register.txt:12
@@ -440,8 +444,8 @@ msgstr ""
 #: ../../../source/reference/api/grn_cache.txt:56
 msgid ""
 "It is an opaque cache object. You can create a ``grn_cache`` by :c:func:"
-"`grn_cache_open()` and free the created object by :c:func:`grn_cache_close()"
-"`."
+"`grn_cache_open()` and free the created object by :c:func:"
+"`grn_cache_close()`."
 msgstr ""
 
 # 11cfbccd570a4ea39f66b899086a1e62
@@ -1021,10 +1025,10 @@ msgid ""
 ":c:func:`grn_ctx_init()` で初期化された :c:type:`grn_ctx` オブジェクトは構造"
 "体の実体をAPIの呼び元で確保するのに対して、 :c:func:`grn_ctx_open()` では"
 "groongaライブラリの内部で、実体を確保します。 どちらで初期化された :c:type:"
-"`grn_ctx` も、 :c:func:`grn_ctx_fin()` で解放できます。 :c:func:`grn_ctx_open"
-"()` で確保した :c:type:`grn_ctx` 構造体に関しては、:c:func:`grn_ctx_fin()` で"
-"解放した後に、その :c:type:`grn_ctx` で作成した :c:type:`grn_obj` を :c:func:"
-"`grn_obj_close()` によって解放しても問題ありません。"
+"`grn_ctx` も、 :c:func:`grn_ctx_fin()` で解放できます。 :c:func:"
+"`grn_ctx_open()` で確保した :c:type:`grn_ctx` 構造体に関しては、:c:func:"
+"`grn_ctx_fin()` で解放した後に、その :c:type:`grn_ctx` で作成した :c:type:"
+"`grn_obj` を :c:func:`grn_obj_close()` によって解放しても問題ありません。"
 msgstr ""
 
 # a834af6fd9d54fb3818bef8be8cc5351
@@ -3397,6 +3401,7 @@ msgstr ""
 
 # 1bb58676a6024b1ea200d6d95cdc5005
 #: ../../../source/reference/command/output_format.txt:115
+#: ../../../source/reference/commands/cache_limit.txt:74
 #: ../../../source/reference/commands/column_rename.txt:71
 #: ../../../source/reference/commands/normalize.txt:73
 #: ../../../source/reference/commands/tokenize.txt:174
@@ -3578,6 +3583,7 @@ msgstr ""
 # 2c4b346efda24fabbe7822b6e2fdafcf
 #: ../../../source/reference/command/output_format.txt:225
 #: ../../../source/reference/command/return_code.txt:102
+#: ../../../source/reference/commands/cache_limit.txt:84
 #: ../../../source/reference/commands/load.txt:98
 #: ../../../source/reference/commands/normalize.txt:83
 #: ../../../source/reference/commands/select.txt:906
@@ -4015,9 +4021,200 @@ msgid ""
 msgstr ""
 
 # c3035d8da7e748579353efbe88b43ef4
-#: ../../../source/reference/commands/cache_limit.txt:6
-msgid "cache_limit"
+#: ../../../source/reference/commands/cache_limit.txt:9
+#, fuzzy
+msgid "``cache_limit``"
 msgstr "cache_limit"
+
+# ba07909599204c98969bb07c5fbd464f
+#: ../../../source/reference/commands/cache_limit.txt:14
+msgid ""
+"``cache_limit`` gets or sets the max number of query cache entries. Query "
+"cache is used only by :doc:`select` command."
+msgstr ""
+
+# 868504e51b834883a858880f307d9c9c
+#: ../../../source/reference/commands/cache_limit.txt:17
+msgid ""
+"If the max number of query cache entries is 100, the recent 100 ``select`` "
+"commands are only cached. The cache expire algorithm is LRU (least recently "
+"used)."
+msgstr ""
+
+# 5cbbff425bb64b799046e859afe82e40
+# c0a4e0d8ea844f4baf64feb8bcf7fc8b
+#: ../../../source/reference/commands/cache_limit.txt:22
+#: ../../../source/reference/commands/column_rename.txt:17
+#: ../../../source/reference/commands/delete.txt:18
+#: ../../../source/reference/commands/load.txt:18
+#: ../../../source/reference/commands/normalize.txt:25
+#: ../../../source/reference/commands/register.txt:27
+#: ../../../source/reference/commands/select.txt:21
+#: ../../../source/reference/commands/table_create.txt:18
+#: ../../../source/reference/commands/tokenize.txt:18
+#: ../../../source/reference/commands/truncate.txt:17
+#: ../../../source/reference/functions/geo_distance.txt:18
+#: ../../../source/reference/functions/html_untag.txt:19
+#: ../../../source/reference/functions/query.txt:26
+#: ../../../source/reference/functions/snippet_html.txt:27
+#: ../../../source/reference/functions/sub_filter.txt:20
+msgid "Syntax"
+msgstr "Syntax"
+
+# b76b7b637f024c2ba7d7fd55e1d88b4e
+#: ../../../source/reference/commands/cache_limit.txt:24
+msgid "``cache_limit`` has one optional parameter::"
+msgstr ""
+
+# 01b0b039140f48fba5d8399e45b7e55b
+# bb5ff6008bb34d7a92afba885c915628
+# faedf5338e484fc0a97463c0bff0f56b
+# 9bad6106d7164a318df4447c81e7a85c
+#: ../../../source/reference/commands/cache_limit.txt:29
+#: ../../../source/reference/commands/column_rename.txt:26
+#: ../../../source/reference/commands/delete.txt:24
+#: ../../../source/reference/commands/load.txt:70
+#: ../../../source/reference/commands/normalize.txt:36
+#: ../../../source/reference/commands/register.txt:34
+#: ../../../source/reference/commands/select.txt:47
+#: ../../../source/reference/commands/table_create.txt:31
+#: ../../../source/reference/commands/tokenize.txt:30
+#: ../../../source/reference/commands/truncate.txt:26
+#: ../../../source/reference/executables/groonga-httpd.txt:30
+#: ../../../source/reference/functions/geo_distance.txt:31
+#: ../../../source/reference/functions/html_untag.txt:36
+#: ../../../source/reference/functions/query.txt:40
+#: ../../../source/reference/functions/snippet_html.txt:37
+#: ../../../source/reference/functions/sub_filter.txt:31
+#: ../../../source/reference/output.txt:18
+#: ../../../source/reference/query_expanders/tsv.txt:28
+msgid "Usage"
+msgstr "Usage"
+
+# 2723570238624b828c21cf69adacaa63
+#: ../../../source/reference/commands/cache_limit.txt:31
+msgid ""
+"You can get the current max number of cache entries by calling "
+"``cache_limit`` without parameter."
+msgstr ""
+
+# b544b1c2199941f592d2800d17740218
+#: ../../../source/reference/commands/cache_limit.txt:38
+msgid ""
+"You can set the max number of cache entries by calling ``cache_limit`` with "
+"``max`` parameter."
+msgstr ""
+
+# c08b3035268248c29a50839e92a20c9d
+#: ../../../source/reference/commands/cache_limit.txt:41
+msgid "Here is an example that sets ``10`` as the max number of cache entries."
+msgstr ""
+
+# da72a4138732478a80f0af7a0a9e894d
+#: ../../../source/reference/commands/cache_limit.txt:49
+msgid ""
+"If ``max`` parameter is used, the return value is the max number of cache "
+"entries before ``max`` parameter is set."
+msgstr ""
+
+# 91088f986b41452d882d125e6ed028e7
+# 64c1379301424498b45f520d7bab67bd
+#: ../../../source/reference/commands/cache_limit.txt:54
+#: ../../../source/reference/commands/column_rename.txt:45
+#: ../../../source/reference/commands/delete.txt:33
+#: ../../../source/reference/commands/load.txt:24
+#: ../../../source/reference/commands/normalize.txt:45
+#: ../../../source/reference/commands/select.txt:199
+#: ../../../source/reference/commands/table_create.txt:154
+#: ../../../source/reference/commands/tokenize.txt:44
+#: ../../../source/reference/commands/truncate.txt:44
+#: ../../../source/reference/functions/geo_distance.txt:146
+#: ../../../source/reference/functions/html_untag.txt:67
+#: ../../../source/reference/functions/query.txt:107
+#: ../../../source/reference/functions/sub_filter.txt:98
+msgid "Parameters"
+msgstr "Parameters"
+
+# aa6c5a1abc844a978f87b2dd33b26dc6
+#: ../../../source/reference/commands/cache_limit.txt:56
+#: ../../../source/reference/commands/load.txt:26
+#: ../../../source/reference/commands/table_create.txt:156
+msgid "This section describes all parameters."
+msgstr ""
+
+# b0f263ad3e6b42e08486047890401704
+# 0440c20bd123498889aba1be24af580c
+#: ../../../source/reference/commands/cache_limit.txt:59
+#: ../../../source/reference/functions/rand.txt:29
+msgid "``max``"
+msgstr "``max``"
+
+# 062998fef3444f42a3e16bb386caaefa
+#: ../../../source/reference/commands/cache_limit.txt:61
+#, fuzzy
+msgid "It specifies the max number of query cache entries as a number."
+msgstr "It specifies number of returned records."
+
+# 192a10455b484fedaa12300f966fb7fb
+#: ../../../source/reference/commands/cache_limit.txt:63
+msgid ""
+"If ``max`` parameter isn't specified, the current max number of query cache "
+"entries isn't changed. ``cache_limit`` just returns the current max number "
+"of query cache entries."
+msgstr ""
+
+# b28391d763334d68a7b2c6a1731c878c
+#: ../../../source/reference/commands/cache_limit.txt:68
+#: ../../../source/reference/commands/column_rename.txt:65
+#: ../../../source/reference/commands/delete.txt:52
+#: ../../../source/reference/commands/load.txt:88
+#: ../../../source/reference/commands/normalize.txt:67
+#: ../../../source/reference/commands/register.txt:51
+#: ../../../source/reference/commands/table_create.txt:269
+#: ../../../source/reference/commands/tokenize.txt:166
+#: ../../../source/reference/commands/truncate.txt:59
+#: ../../../source/reference/functions/geo_distance.txt:293
+#: ../../../source/reference/functions/html_untag.txt:77
+#: ../../../source/reference/functions/query.txt:155
+#: ../../../source/reference/functions/snippet_html.txt:93
+#: ../../../source/reference/functions/sub_filter.txt:127
+msgid "Return value"
+msgstr "Return value"
+
+# 0cf6f0ddac3d400484779aa3eb5db0b9
+#: ../../../source/reference/commands/cache_limit.txt:70
+msgid "``cache_limit`` returns the current max number of query cache entries::"
+msgstr ""
+
+# 302f21aa293641d195a24eb6074efbc6
+#: ../../../source/reference/commands/cache_limit.txt:76
+#: ../../../source/reference/commands/tokenize.txt:176
+msgid "See :doc:`/reference/command/output_format` about ``HEADER``."
+msgstr ""
+
+# 0da809ee0de94f4c9d176627712966f9
+#: ../../../source/reference/commands/cache_limit.txt:78
+#, fuzzy
+msgid "``n_entries``"
+msgstr "``tables``"
+
+# 6964bd6aa6aa486a9f2d4700719dbe6b
+#: ../../../source/reference/commands/cache_limit.txt:80
+msgid ""
+"``n_entries`` is the current max number of query cache entries. It is a "
+"number."
+msgstr ""
+
+# 3b77ec6d9bb94fd8a22b8da8a1a29d37
+#: ../../../source/reference/commands/cache_limit.txt:86
+#, fuzzy
+msgid ":doc:`select`"
+msgstr ":doc:`/suggest`"
+
+# c7e5066f7ffe4decb39e82f074bd3a5e
+#: ../../../source/reference/commands/check.txt:6
+msgid "check"
+msgstr "check"
 
 # fae636b0cce542b09cccd876ba50aea9
 # 205814b0a3b242f8bf84de20f5d596d0
@@ -4054,7 +4251,6 @@ msgstr "cache_limit"
 # 3359e46828154d4c846606cb2d27e5ab
 # 876012cd15cb419f911c507513deea16
 # c84a609b98e64119a7be4864cc5845e0
-#: ../../../source/reference/commands/cache_limit.txt:9
 #: ../../../source/reference/commands/check.txt:9
 #: ../../../source/reference/commands/clearlock.txt:9
 #: ../../../source/reference/commands/column_create.txt:9
@@ -4062,7 +4258,6 @@ msgstr "cache_limit"
 #: ../../../source/reference/commands/column_remove.txt:9
 #: ../../../source/reference/commands/define_selector.txt:9
 #: ../../../source/reference/commands/defrag.txt:9
-#: ../../../source/reference/commands/delete.txt:9
 #: ../../../source/reference/commands/dump.txt:9
 #: ../../../source/reference/commands/log_level.txt:9
 #: ../../../source/reference/commands/log_put.txt:9
@@ -4089,10 +4284,10 @@ msgstr "cache_limit"
 msgid "名前"
 msgstr "名前"
 
-# 1fa38310321a4d9f8f5dcb5d3b9ebe5e
-#: ../../../source/reference/commands/cache_limit.txt:11
-msgid "cache_limit - cacheサイズの設定・取得"
-msgstr "cache_limit - cacheサイズの設定・取得"
+# b29e65e0be33420fb9f6696f9f92143b
+#: ../../../source/reference/commands/check.txt:11
+msgid "check - オブジェクトの状態表示"
+msgstr "check - オブジェクトの状態表示"
 
 # 665d98ed00f440a4b7193d4f6fbb2680
 # 90596cb8d2794d73a123a7b84d7536d9
@@ -4127,7 +4322,6 @@ msgstr "cache_limit - cacheサイズの設定・取得"
 # e78d9913fd284e4cab78198be853cf0e
 # a8eb96fdc9c841baae6ab0afaaf058bf
 # 9f3340b03fd04742bd8783fd7e27183e
-#: ../../../source/reference/commands/cache_limit.txt:14
 #: ../../../source/reference/commands/check.txt:14
 #: ../../../source/reference/commands/clearlock.txt:14
 #: ../../../source/reference/commands/column_create.txt:14
@@ -4135,7 +4329,6 @@ msgstr "cache_limit - cacheサイズの設定・取得"
 #: ../../../source/reference/commands/column_remove.txt:14
 #: ../../../source/reference/commands/define_selector.txt:14
 #: ../../../source/reference/commands/defrag.txt:14
-#: ../../../source/reference/commands/delete.txt:14
 #: ../../../source/reference/commands/dump.txt:14
 #: ../../../source/reference/commands/log_level.txt:14
 #: ../../../source/reference/commands/log_put.txt:14
@@ -4195,7 +4388,6 @@ msgstr "書式"
 # c91bbc89845649fab92a5456b8f1e33f
 # 365191c7302743b1929512f016a84abc
 # 4083ea358a694489b903894227053ee3
-#: ../../../source/reference/commands/cache_limit.txt:20
 #: ../../../source/reference/commands/check.txt:20
 #: ../../../source/reference/commands/clearlock.txt:20
 #: ../../../source/reference/commands/column_create.txt:20
@@ -4203,7 +4395,6 @@ msgstr "書式"
 #: ../../../source/reference/commands/column_remove.txt:20
 #: ../../../source/reference/commands/define_selector.txt:22
 #: ../../../source/reference/commands/defrag.txt:20
-#: ../../../source/reference/commands/delete.txt:20
 #: ../../../source/reference/commands/dump.txt:20
 #: ../../../source/reference/commands/log_level.txt:20
 #: ../../../source/reference/commands/log_put.txt:20
@@ -4230,22 +4421,29 @@ msgstr "書式"
 msgid "説明"
 msgstr "説明"
 
-# 782f01979fbc4d54b4b22525168fdcb3
-#: ../../../source/reference/commands/cache_limit.txt:22
+# ae35576b01bf4d4fbf06be9731c1bf99
+#: ../../../source/reference/commands/check.txt:22
 msgid ""
-"groonga組込コマンドの一つであるcache_limitについて説明します。組込コマンド"
-"は、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバに"
-"リクエストを送信することによって実行します。"
+"groonga組込コマンドの一つであるcheckについて説明します。組込コマンドは、"
+"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
+"エストを送信することによって実行します。"
 msgstr ""
-"groonga組込コマンドの一つであるcache_limitについて説明します。組込コマンド"
-"は、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバに"
-"リクエストを送信することによって実行します。"
+"groonga組込コマンドの一つであるcheckについて説明します。組込コマンドは、"
+"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
+"エストを送信することによって実行します。"
 
-# 31ae96ec89454ccd8461b3be13376d57
-#: ../../../source/reference/commands/cache_limit.txt:24
-msgid "cache_limitは、クエリキャッシュの最大件数を取得したり設定したりします。"
+# 4d30b784c4784924b741e59cf6279e3f
+#: ../../../source/reference/commands/check.txt:24
+msgid ""
+"checkコマンドは、groongaプロセス内の指定したオブジェクトの状態を表示します。"
+"主にデータベースが壊れた場合など異常時の問題解決のために使用することを想定し"
+"ています。デバッグ用のため、返値のフォーマットが安定しているということは保証"
+"されません。（フォーマットが変更される可能性が高い）"
 msgstr ""
-"cache_limitは、クエリキャッシュの最大件数を取得したり設定したりします。"
+"checkコマンドは、groongaプロセス内の指定したオブジェクトの状態を表示します。"
+"主にデータベースが壊れた場合など異常時の問題解決のために使用することを想定し"
+"ています。デバッグ用のため、返値のフォーマットが安定しているということは保証"
+"されません。（フォーマットが変更される可能性が高い）"
 
 # 0cdf35bebda046879cb5ca882b8bf569
 # c025242e06b24194b6a901f7093d97ba
@@ -4278,7 +4476,6 @@ msgstr ""
 # 03aa8e0d1d72458d8eb96a227b48f792
 # 2a2d6adf148a409db7c7f80163944b51
 # 34bdbc361c6146189040e729e47ac407
-#: ../../../source/reference/commands/cache_limit.txt:27
 #: ../../../source/reference/commands/check.txt:27
 #: ../../../source/reference/commands/clearlock.txt:27
 #: ../../../source/reference/commands/column_create.txt:27
@@ -4286,7 +4483,6 @@ msgstr ""
 #: ../../../source/reference/commands/column_remove.txt:28
 #: ../../../source/reference/commands/define_selector.txt:29
 #: ../../../source/reference/commands/defrag.txt:27
-#: ../../../source/reference/commands/delete.txt:27
 #: ../../../source/reference/commands/dump.txt:33
 #: ../../../source/reference/commands/log_level.txt:27
 #: ../../../source/reference/commands/log_put.txt:27
@@ -4309,21 +4505,15 @@ msgstr ""
 msgid "引数"
 msgstr "引数"
 
-# b0f263ad3e6b42e08486047890401704
-# 0440c20bd123498889aba1be24af580c
-#: ../../../source/reference/commands/cache_limit.txt:29
-#: ../../../source/reference/functions/rand.txt:29
-msgid "``max``"
-msgstr "``max``"
+# 2b7bb67dc3d844fa859200553e7bb338
+#: ../../../source/reference/commands/check.txt:29
+msgid "``obj``"
+msgstr "``obj``"
 
-# 5422fde6ce3d4b03926ae9c28a568c8e
-#: ../../../source/reference/commands/cache_limit.txt:31
-msgid ""
-"クエリキャッシュの最大件数を整数で指定します。 maxが指定されなかった場合に"
-"は、クエリキャッシュの最大件数は変更せず、 現在の設定値のみが返されます。"
-msgstr ""
-"クエリキャッシュの最大件数を整数で指定します。 maxが指定されなかった場合に"
-"は、クエリキャッシュの最大件数は変更せず、 現在の設定値のみが返されます。"
+# 63fa6e7a229d4a5d8952ba88e5f4d79b
+#: ../../../source/reference/commands/check.txt:31
+msgid "状態を表示するオブジェクトの名前を指定します。"
+msgstr "状態を表示するオブジェクトの名前を指定します。"
 
 # f33248cf736549da969b191ca7dc1335
 # 68ab992e8dd44a9aa239112132b5a4b7
@@ -4351,7 +4541,6 @@ msgstr ""
 # e4a1183635eb4e3384fb6c5d2e60ef19
 # 457b50418fda4099a92991824b008fd4
 # ba89c6121b2241ac99029d0a440be1f9
-#: ../../../source/reference/commands/cache_limit.txt:36
 #: ../../../source/reference/commands/check.txt:34
 #: ../../../source/reference/commands/clearlock.txt:34
 #: ../../../source/reference/commands/column_create.txt:71
@@ -4378,123 +4567,6 @@ msgstr ""
 msgid "返値"
 msgstr "返値"
 
-# 8e91fbc2746341169c27948089409f5c
-#: ../../../source/reference/commands/cache_limit.txt:39
-msgid "json"
-msgstr "json"
-
-# 267d2aeaa619407cbab30c23fdbeb15a
-#: ../../../source/reference/commands/cache_limit.txt:45
-msgid "``以前の設定値``"
-msgstr ""
-
-# 98f34a1c516e48528cd2a026a6305528
-#: ../../../source/reference/commands/cache_limit.txt:47
-msgid "すでに設定されていたクエリキャッシュの最大件数を返す。"
-msgstr ""
-
-# 7ca49eb251834eaaafc54ffbe0ebbba0
-# 08325622a48540e9ac1f4b44f2c86c4e
-# 31182730a9724ee095a568199e05971e
-# 6c328438e0f04def890531d2c9dde6f9
-# 7d8c719df891410c810c00357d6ecf85
-# a736ad76ab484e0991a36701969b468f
-# df156aa841e64176b760eef1c4fbe9a0
-# 3343a4a1cd1841ecb1537aa46bf018b8
-# a6e7dc0632944558aeab616699bb0f39
-# e539da8b12cd4d8f9bf7c2782c6bbe71
-# 7fd8a61d54624c198cf8d5f58cc633c3
-# ea567d4f11fa4e0f8a64351210af041f
-# 6b997f0d44284a0db7cc43fae7a5da86
-# ba3b8d4860b24d9887b3b17a8bec49f1
-# c3758a2797ae4e2a914454f515321d00
-# 8b2e54960631473bb3d90212374c7a0c
-# 61d37a13fea64353a023f8c673c4f065
-# df9b0da94a124e0eb6af34d231b4d035
-# 03631e859e3046b19bfb14a102bd07a1
-# 8e9be7b2c03940d49db0a1fc1772c7b4
-# 8df8105658ba4d1da53ca6b932eb9e5b
-# 23587eec46d04914ad1692fcdc4f6120
-# 2bc4ce15a16344ceabb1e20653822411
-# 6d1a76a7b65645bb8362f561458d637d
-# 8f046b72cc364fcf89679654baa02dde
-# cacd01ab7e6240b9bfafbb54ce78595a
-# fb388626cbc5445db457c6488177be3b
-# beab1552a5c94ed389b4a538298b01c2
-# e44a92101aed4a289a8b5b4511156045
-#: ../../../source/reference/commands/cache_limit.txt:50
-#: ../../../source/reference/commands/check.txt:130
-#: ../../../source/reference/commands/clearlock.txt:48
-#: ../../../source/reference/commands/column_create.txt:85
-#: ../../../source/reference/commands/column_list.txt:89
-#: ../../../source/reference/commands/column_remove.txt:51
-#: ../../../source/reference/commands/define_selector.txt:106
-#: ../../../source/reference/commands/defrag.txt:48
-#: ../../../source/reference/commands/delete.txt:60
-#: ../../../source/reference/commands/dump.txt:45
-#: ../../../source/reference/commands/log_level.txt:57
-#: ../../../source/reference/commands/log_put.txt:61
-#: ../../../source/reference/commands/log_reopen.txt:48
-#: ../../../source/reference/commands/quit.txt:37
-#: ../../../source/reference/commands/shutdown.txt:37
-#: ../../../source/reference/commands/status.txt:56
-#: ../../../source/reference/commands/table_remove.txt:47
-#: ../../../source/reference/commands_not_implemented/add.txt:92
-#: ../../../source/reference/commands_not_implemented/get.txt:68
-#: ../../../source/reference/commands_not_implemented/set.txt:94
-#: ../../../source/reference/executables/groonga.txt:221
-#: ../../../source/reference/functions/edit_distance.txt:44
-#: ../../../source/reference/functions/geo_in_circle.txt:73
-#: ../../../source/reference/functions/geo_in_rectangle.txt:47
-#: ../../../source/reference/functions/now.txt:32
-#: ../../../source/reference/functions/rand.txt:39
-msgid "例"
-msgstr "例"
-
-# c7e5066f7ffe4decb39e82f074bd3a5e
-#: ../../../source/reference/commands/check.txt:6
-msgid "check"
-msgstr "check"
-
-# b29e65e0be33420fb9f6696f9f92143b
-#: ../../../source/reference/commands/check.txt:11
-msgid "check - オブジェクトの状態表示"
-msgstr "check - オブジェクトの状態表示"
-
-# ae35576b01bf4d4fbf06be9731c1bf99
-#: ../../../source/reference/commands/check.txt:22
-msgid ""
-"groonga組込コマンドの一つであるcheckについて説明します。組込コマンドは、"
-"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
-"エストを送信することによって実行します。"
-msgstr ""
-"groonga組込コマンドの一つであるcheckについて説明します。組込コマンドは、"
-"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
-"エストを送信することによって実行します。"
-
-# 4d30b784c4784924b741e59cf6279e3f
-#: ../../../source/reference/commands/check.txt:24
-msgid ""
-"checkコマンドは、groongaプロセス内の指定したオブジェクトの状態を表示します。"
-"主にデータベースが壊れた場合など異常時の問題解決のために使用することを想定し"
-"ています。デバッグ用のため、返値のフォーマットが安定しているということは保証"
-"されません。（フォーマットが変更される可能性が高い）"
-msgstr ""
-"checkコマンドは、groongaプロセス内の指定したオブジェクトの状態を表示します。"
-"主にデータベースが壊れた場合など異常時の問題解決のために使用することを想定し"
-"ています。デバッグ用のため、返値のフォーマットが安定しているということは保証"
-"されません。（フォーマットが変更される可能性が高い）"
-
-# 2b7bb67dc3d844fa859200553e7bb338
-#: ../../../source/reference/commands/check.txt:29
-msgid "``obj``"
-msgstr "``obj``"
-
-# 63fa6e7a229d4a5d8952ba88e5f4d79b
-#: ../../../source/reference/commands/check.txt:31
-msgid "状態を表示するオブジェクトの名前を指定します。"
-msgstr "状態を表示するオブジェクトの名前を指定します。"
-
 # dfa99391fbb045d4a5dceee67eea9eb4
 # 9c31dd6d71244645b4b578e786dd4222
 # f33ccb9a71b34ce782af5e6ef36dbb62
@@ -4518,7 +4590,7 @@ msgstr "状態を表示するオブジェクトの名前を指定します。"
 #: ../../../source/reference/commands/column_remove.txt:40
 #: ../../../source/reference/commands/define_selector.txt:95
 #: ../../../source/reference/commands/defrag.txt:37
-#: ../../../source/reference/commands/delete.txt:49
+#: ../../../source/reference/commands/delete.txt:55
 #: ../../../source/reference/commands/log_level.txt:46
 #: ../../../source/reference/commands/log_put.txt:50
 #: ../../../source/reference/commands/log_reopen.txt:37
@@ -4758,6 +4830,62 @@ msgstr ""
 msgid "バッファ内にある語のうち、チャンクを使っている語の数です。"
 msgstr ""
 
+# 7ca49eb251834eaaafc54ffbe0ebbba0
+# 08325622a48540e9ac1f4b44f2c86c4e
+# 31182730a9724ee095a568199e05971e
+# 6c328438e0f04def890531d2c9dde6f9
+# 7d8c719df891410c810c00357d6ecf85
+# a736ad76ab484e0991a36701969b468f
+# df156aa841e64176b760eef1c4fbe9a0
+# 3343a4a1cd1841ecb1537aa46bf018b8
+# a6e7dc0632944558aeab616699bb0f39
+# e539da8b12cd4d8f9bf7c2782c6bbe71
+# 7fd8a61d54624c198cf8d5f58cc633c3
+# ea567d4f11fa4e0f8a64351210af041f
+# 6b997f0d44284a0db7cc43fae7a5da86
+# ba3b8d4860b24d9887b3b17a8bec49f1
+# c3758a2797ae4e2a914454f515321d00
+# 8b2e54960631473bb3d90212374c7a0c
+# 61d37a13fea64353a023f8c673c4f065
+# df9b0da94a124e0eb6af34d231b4d035
+# 03631e859e3046b19bfb14a102bd07a1
+# 8e9be7b2c03940d49db0a1fc1772c7b4
+# 8df8105658ba4d1da53ca6b932eb9e5b
+# 23587eec46d04914ad1692fcdc4f6120
+# 2bc4ce15a16344ceabb1e20653822411
+# 6d1a76a7b65645bb8362f561458d637d
+# 8f046b72cc364fcf89679654baa02dde
+# cacd01ab7e6240b9bfafbb54ce78595a
+# fb388626cbc5445db457c6488177be3b
+# beab1552a5c94ed389b4a538298b01c2
+# e44a92101aed4a289a8b5b4511156045
+#: ../../../source/reference/commands/check.txt:130
+#: ../../../source/reference/commands/clearlock.txt:48
+#: ../../../source/reference/commands/column_create.txt:85
+#: ../../../source/reference/commands/column_list.txt:89
+#: ../../../source/reference/commands/column_remove.txt:51
+#: ../../../source/reference/commands/define_selector.txt:106
+#: ../../../source/reference/commands/defrag.txt:48
+#: ../../../source/reference/commands/dump.txt:45
+#: ../../../source/reference/commands/log_level.txt:57
+#: ../../../source/reference/commands/log_put.txt:61
+#: ../../../source/reference/commands/log_reopen.txt:48
+#: ../../../source/reference/commands/quit.txt:37
+#: ../../../source/reference/commands/shutdown.txt:37
+#: ../../../source/reference/commands/status.txt:56
+#: ../../../source/reference/commands/table_remove.txt:47
+#: ../../../source/reference/commands_not_implemented/add.txt:92
+#: ../../../source/reference/commands_not_implemented/get.txt:68
+#: ../../../source/reference/commands_not_implemented/set.txt:94
+#: ../../../source/reference/executables/groonga.txt:221
+#: ../../../source/reference/functions/edit_distance.txt:44
+#: ../../../source/reference/functions/geo_in_circle.txt:73
+#: ../../../source/reference/functions/geo_in_rectangle.txt:47
+#: ../../../source/reference/functions/now.txt:32
+#: ../../../source/reference/functions/rand.txt:39
+msgid "例"
+msgstr "例"
+
 # a4ea4a614ad04aac8f6276a29d47a7f5
 #: ../../../source/reference/commands/check.txt:132
 msgid "テーブルTermsのインデックスカラムnameの状態を表示します。::"
@@ -4824,7 +4952,7 @@ msgstr ""
 #: ../../../source/reference/commands/column_create.txt:80
 #: ../../../source/reference/commands/column_remove.txt:46
 #: ../../../source/reference/commands/define_selector.txt:101
-#: ../../../source/reference/commands/delete.txt:55
+#: ../../../source/reference/commands/delete.txt:61
 #: ../../../source/reference/commands/log_level.txt:52
 #: ../../../source/reference/commands/log_put.txt:56
 #: ../../../source/reference/commands/log_reopen.txt:43
@@ -4845,7 +4973,7 @@ msgstr ""
 #: ../../../source/reference/commands/column_create.txt:82
 #: ../../../source/reference/commands/column_remove.txt:48
 #: ../../../source/reference/commands/define_selector.txt:103
-#: ../../../source/reference/commands/delete.txt:57
+#: ../../../source/reference/commands/delete.txt:63
 #: ../../../source/reference/commands/log_level.txt:54
 #: ../../../source/reference/commands/log_put.txt:58
 #: ../../../source/reference/commands/log_reopen.txt:45
@@ -4875,7 +5003,7 @@ msgstr "テーブル名 Entry のカラム body のロックを解除する::"
 # 45f0ca805b464988a3c88563fae4f3bb
 #: ../../../source/reference/commands/clearlock.txt:61
 #: ../../../source/reference/commands/define_selector.txt:114
-#: ../../../source/reference/commands/delete.txt:69
+#: ../../../source/reference/commands/delete.txt:67
 #: ../../../source/reference/commands/log_level.txt:64
 #: ../../../source/reference/commands/log_put.txt:68
 #: ../../../source/reference/commands/log_reopen.txt:65
@@ -4891,7 +5019,7 @@ msgstr "関連項目"
 # 78b56ef6a1014c8389b6c712bd79c0b0
 # 1922aa51da5847a7ba262d42ff224693
 #: ../../../source/reference/commands/clearlock.txt:63
-#: ../../../source/reference/commands/delete.txt:71
+#: ../../../source/reference/commands/delete.txt:69
 #: ../../../source/reference/commands_not_implemented/add.txt:103
 #: ../../../source/reference/commands_not_implemented/get.txt:80
 #: ../../../source/reference/commands_not_implemented/set.txt:105
@@ -4941,7 +5069,7 @@ msgstr ""
 #: ../../../source/reference/commands/column_list.txt:30
 #: ../../../source/reference/commands/column_remove.txt:31
 #: ../../../source/reference/commands/define_selector.txt:35
-#: ../../../source/reference/commands/delete.txt:29
+#: ../../../source/reference/commands/delete.txt:35
 #: ../../../source/reference/commands/load.txt:49
 #: ../../../source/reference/commands/select.txt:209
 #: ../../../source/reference/commands/suggest.txt:75
@@ -5170,7 +5298,7 @@ msgstr ""
 # 09ee6652100f41b0a72514a7bef7eb56
 # 401e9097289b49128ee3a12e432d2e40
 #: ../../../source/reference/commands/column_list.txt:47
-#: ../../../source/reference/commands/delete.txt:37
+#: ../../../source/reference/commands/delete.txt:43
 #: ../../../source/reference/commands/table_list.txt:46
 #: ../../../source/reference/commands_not_implemented/set.txt:59
 msgid "``id``"
@@ -5336,24 +5464,6 @@ msgstr ""
 msgid "``column_rename`` command renames specified column name of table."
 msgstr ""
 
-# 5cbbff425bb64b799046e859afe82e40
-# c0a4e0d8ea844f4baf64feb8bcf7fc8b
-#: ../../../source/reference/commands/column_rename.txt:17
-#: ../../../source/reference/commands/load.txt:18
-#: ../../../source/reference/commands/normalize.txt:25
-#: ../../../source/reference/commands/register.txt:27
-#: ../../../source/reference/commands/select.txt:21
-#: ../../../source/reference/commands/table_create.txt:18
-#: ../../../source/reference/commands/tokenize.txt:18
-#: ../../../source/reference/commands/truncate.txt:17
-#: ../../../source/reference/functions/geo_distance.txt:18
-#: ../../../source/reference/functions/html_untag.txt:19
-#: ../../../source/reference/functions/query.txt:26
-#: ../../../source/reference/functions/snippet_html.txt:27
-#: ../../../source/reference/functions/sub_filter.txt:20
-msgid "Syntax"
-msgstr "Syntax"
-
 # 432e1247681b4bfb965d443c28e91369
 #: ../../../source/reference/commands/column_rename.txt:19
 msgid "``column_rename`` command takes two parameters."
@@ -5363,29 +5473,6 @@ msgstr ""
 #: ../../../source/reference/commands/column_rename.txt:21
 msgid "The required parameter is ``table`` and ``column_name``::"
 msgstr ""
-
-# 01b0b039140f48fba5d8399e45b7e55b
-# bb5ff6008bb34d7a92afba885c915628
-# faedf5338e484fc0a97463c0bff0f56b
-# 9bad6106d7164a318df4447c81e7a85c
-#: ../../../source/reference/commands/column_rename.txt:26
-#: ../../../source/reference/commands/load.txt:70
-#: ../../../source/reference/commands/normalize.txt:36
-#: ../../../source/reference/commands/register.txt:34
-#: ../../../source/reference/commands/select.txt:47
-#: ../../../source/reference/commands/table_create.txt:31
-#: ../../../source/reference/commands/tokenize.txt:30
-#: ../../../source/reference/commands/truncate.txt:26
-#: ../../../source/reference/executables/groonga-httpd.txt:30
-#: ../../../source/reference/functions/geo_distance.txt:31
-#: ../../../source/reference/functions/html_untag.txt:36
-#: ../../../source/reference/functions/query.txt:40
-#: ../../../source/reference/functions/snippet_html.txt:37
-#: ../../../source/reference/functions/sub_filter.txt:31
-#: ../../../source/reference/output.txt:18
-#: ../../../source/reference/query_expanders/tsv.txt:28
-msgid "Usage"
-msgstr "Usage"
 
 # bf1e94eb0b5a4d81b818a2a97c5a39ad
 # bf1e94eb0b5a4d81b818a2a97c5a39ad
@@ -5406,22 +5493,6 @@ msgstr "Usage"
 #: ../../../source/reference/commands/column_rename.txt:28
 msgid "Here is a simple example of ``column_rename`` command."
 msgstr ""
-
-# 91088f986b41452d882d125e6ed028e7
-# 64c1379301424498b45f520d7bab67bd
-#: ../../../source/reference/commands/column_rename.txt:45
-#: ../../../source/reference/commands/load.txt:24
-#: ../../../source/reference/commands/normalize.txt:45
-#: ../../../source/reference/commands/select.txt:199
-#: ../../../source/reference/commands/table_create.txt:154
-#: ../../../source/reference/commands/tokenize.txt:44
-#: ../../../source/reference/commands/truncate.txt:44
-#: ../../../source/reference/functions/geo_distance.txt:146
-#: ../../../source/reference/functions/html_untag.txt:67
-#: ../../../source/reference/functions/query.txt:107
-#: ../../../source/reference/functions/sub_filter.txt:98
-msgid "Parameters"
-msgstr "Parameters"
 
 # aa6c5a1abc844a978f87b2dd33b26dc6
 #: ../../../source/reference/commands/column_rename.txt:47
@@ -5475,22 +5546,6 @@ msgstr ""
 #: ../../../source/reference/commands/column_rename.txt:62
 msgid "It specifies the name of column."
 msgstr ""
-
-# b28391d763334d68a7b2c6a1731c878c
-#: ../../../source/reference/commands/column_rename.txt:65
-#: ../../../source/reference/commands/load.txt:88
-#: ../../../source/reference/commands/normalize.txt:67
-#: ../../../source/reference/commands/register.txt:51
-#: ../../../source/reference/commands/table_create.txt:269
-#: ../../../source/reference/commands/tokenize.txt:166
-#: ../../../source/reference/commands/truncate.txt:59
-#: ../../../source/reference/functions/geo_distance.txt:293
-#: ../../../source/reference/functions/html_untag.txt:77
-#: ../../../source/reference/functions/query.txt:155
-#: ../../../source/reference/functions/snippet_html.txt:93
-#: ../../../source/reference/functions/sub_filter.txt:127
-msgid "Return value"
-msgstr "Return value"
 
 # 1db91fbbb08d4b97b9a35033e3dd178d
 #: ../../../source/reference/commands/column_rename.txt:73
@@ -5584,7 +5639,7 @@ msgstr "追加するselectorコマンドのquery引数のデフォルト値を�
 # e8d4d9add48b4cbd941c6eb1f6377566
 # ceeb45cb2b5042b998a38d790093fd65
 #: ../../../source/reference/commands/define_selector.txt:47
-#: ../../../source/reference/commands/delete.txt:41
+#: ../../../source/reference/commands/delete.txt:47
 #: ../../../source/reference/commands/select.txt:362
 msgid "``filter``"
 msgstr "``filter``"
@@ -5804,7 +5859,8 @@ msgstr "テーブル名 Entry のカラム body のフラグメンテーショ�
 
 # 59ccf7c2bb4f4901b85a0d8fa48584bf
 #: ../../../source/reference/commands/delete.txt:6
-msgid "delete"
+#, fuzzy
+msgid "``delete``"
 msgstr "delete"
 
 # 17b5fc3339cb402db375a8fb03389871
@@ -5813,7 +5869,7 @@ msgid "delete - 一件のレコードの削除"
 msgstr "delete - 一件のレコードの削除"
 
 # 9ee33aa44c21410eb720de969556dde0
-#: ../../../source/reference/commands/delete.txt:22
+#: ../../../source/reference/commands/delete.txt:13
 msgid ""
 "groonga組込コマンドの一つであるdeleteについて説明します。組込コマンドは、"
 "groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
@@ -5824,14 +5880,19 @@ msgstr ""
 "エストを送信することによって実行します。"
 
 # d295da1d724849a8a4c12e499c4e5ef1
-#: ../../../source/reference/commands/delete.txt:24
+#: ../../../source/reference/commands/delete.txt:15
 msgid ""
 "deleteは、使用しているデータベースのテーブルに1件のレコードを削除します。"
 msgstr ""
 "deleteは、使用しているデータベースのテーブルに1件のレコードを削除します。"
 
+# bb54bdbab7684c0e940229f834bdfe82
+#: ../../../source/reference/commands/delete.txt:26
+msgid "テーブルEntryからレコードを削除します。::"
+msgstr "テーブルEntryからレコードを削除します。::"
+
 # 43e0750371c644d8833d1a01a72e4ced
-#: ../../../source/reference/commands/delete.txt:31
+#: ../../../source/reference/commands/delete.txt:37
 msgid "レコードを削除しようとするテーブルの名前を指定します。"
 msgstr "レコードを削除しようとするテーブルの名前を指定します。"
 
@@ -5839,7 +5900,7 @@ msgstr "レコードを削除しようとするテーブルの名前を指定し
 # de228aad746b4f2dbfccec9137768c36
 # 1d2cfbb2aa3d42ab9cb8850d00d81c07
 # a584382efce74ba1b3aa4fee8cd22bf5
-#: ../../../source/reference/commands/delete.txt:33
+#: ../../../source/reference/commands/delete.txt:39
 #: ../../../source/reference/commands_not_implemented/add.txt:35
 #: ../../../source/reference/commands_not_implemented/get.txt:33
 #: ../../../source/reference/commands_not_implemented/set.txt:33
@@ -5847,7 +5908,7 @@ msgid "``key``"
 msgstr "``key``"
 
 # 1348fc0305b9412b840d4a9371faa2da
-#: ../../../source/reference/commands/delete.txt:35
+#: ../../../source/reference/commands/delete.txt:41
 msgid ""
 "削除するレコードの主キー値を指定します。主キーなしのテーブルの場合はこのパラ"
 "メータを指定しても無視されます(idパラメータを代わりに指定します)。"
@@ -5857,7 +5918,7 @@ msgstr ""
 
 # de6f4a54f8fc44289992732f85bfbaf1
 # 9cd6e37e1868427899a45d779ab55265
-#: ../../../source/reference/commands/delete.txt:39
+#: ../../../source/reference/commands/delete.txt:45
 #: ../../../source/reference/commands_not_implemented/set.txt:61
 msgid ""
 "レコードIDによってレコードを指定します。idパラメータを指定する場合は、keyパラ"
@@ -5867,30 +5928,13 @@ msgstr ""
 "メータを指定してはいけません。"
 
 # ae3fed01f9fd4e7e9a541995a8dcf986
-#: ../../../source/reference/commands/delete.txt:43
+#: ../../../source/reference/commands/delete.txt:49
 msgid ""
 "script形式のgrn_expr文字列によってレコードを指定します。filterパラメータを指"
 "定する場合は、id及びkeyパラメータを指定してはいけません。"
 msgstr ""
 "script形式のgrn_expr文字列によってレコードを指定します。filterパラメータを指"
 "定する場合は、id及びkeyパラメータを指定してはいけません。"
-
-# 433584f15b3544da8f8c1baf083b5c97
-# e7b9846c318f4e7f9f94a19604ac2b68
-# e0bb8b55b5a1444fac8d43923a752037
-# dd902af7bda34c7f8a396f391e2cd219
-# b1c424e90d0342398bc36dd5a5c900a2
-#: ../../../source/reference/commands/delete.txt:45
-#: ../../../source/reference/commands_not_implemented/add.txt:61
-#: ../../../source/reference/commands_not_implemented/get.txt:41
-#: ../../../source/reference/commands_not_implemented/set.txt:63
-msgid "返値 ---"
-msgstr "返値 ---"
-
-# bb54bdbab7684c0e940229f834bdfe82
-#: ../../../source/reference/commands/delete.txt:62
-msgid "テーブルEntryからレコードを削除します。::"
-msgstr "テーブルEntryからレコードを削除します。::"
 
 # 664485faed9a4017a3cec608d5e4d81f
 #: ../../../source/reference/commands/dump.txt:6
@@ -5977,12 +6021,6 @@ msgstr ""
 msgid ""
 "``load`` loads data as records in the current database and updates values of "
 "each columns."
-msgstr ""
-
-# aa6c5a1abc844a978f87b2dd33b26dc6
-#: ../../../source/reference/commands/load.txt:26
-#: ../../../source/reference/commands/table_create.txt:156
-msgid "This section describes all parameters."
 msgstr ""
 
 # e61662d3ce254a80b8f07959d48c7b17
@@ -9571,11 +9609,6 @@ msgid ""
 "feature::"
 msgstr ""
 
-# 302f21aa293641d195a24eb6074efbc6
-#: ../../../source/reference/commands/tokenize.txt:176
-msgid "See :doc:`/reference/command/output_format` about ``HEADER``."
-msgstr ""
-
 # 1bb85c12ead941fc9337f692e1d0a405
 # fc658bcbdc244395a315bc123ec1f1ff
 # 4614e1fa49044fae9d94d0979334d9f1
@@ -9789,6 +9822,17 @@ msgstr ""
 #: ../../../source/reference/commands_not_implemented/set.txt:57
 msgid "出力するカラム名のリストをカンマ(',')区切りで指定します。"
 msgstr "出力するカラム名のリストをカンマ(',')区切りで指定します。"
+
+# 433584f15b3544da8f8c1baf083b5c97
+# e7b9846c318f4e7f9f94a19604ac2b68
+# e0bb8b55b5a1444fac8d43923a752037
+# dd902af7bda34c7f8a396f391e2cd219
+# b1c424e90d0342398bc36dd5a5c900a2
+#: ../../../source/reference/commands_not_implemented/add.txt:61
+#: ../../../source/reference/commands_not_implemented/get.txt:41
+#: ../../../source/reference/commands_not_implemented/set.txt:63
+msgid "返値 ---"
+msgstr "返値 ---"
 
 # 17d824062dc04a0e99563df5643790e2
 # 378303c58cea48ef8f57d67daa22aaf1
@@ -10960,15 +11004,100 @@ msgstr ""
 msgid "By default, this is set to 1. It is nginx's default."
 msgstr "By default, this is set to 1. It is nginx's default."
 
-# b889cdac2da04de299d1584d4756abad
+# 8820d997f92c4fbb9cee896aa11e3694
 #: ../../../source/reference/executables/groonga-httpd.txt:292
+#, fuzzy
+msgid "``proxy_cache``"
+msgstr "``cache``"
+
+# 50c1b0b6a5e14a1389e355132fd668cf
+#: ../../../source/reference/executables/groonga-httpd.txt:294
+msgid ""
+"In short, you can use nginx's reverse proxy and cache mechanism instead of "
+"groonga's built-in query cache feature."
+msgstr ""
+
+# 27cb760cec714088b6fda733b9aa2ddc
+#: ../../../source/reference/executables/groonga-httpd.txt:298
+#, fuzzy
+msgid "Query cache"
+msgstr "Query syntax"
+
+# dbe31d92446141108800a1c883ee45d0
+#: ../../../source/reference/executables/groonga-httpd.txt:300
+msgid ""
+"Groonga has query cache feature for :doc:`/reference/commands/select` "
+"command. The feature improves performance in many cases."
+msgstr ""
+
+# 379b8cd27f7f40cf98ed0d6b1838328d
+#: ../../../source/reference/executables/groonga-httpd.txt:303
+msgid ""
+"Query cache feature works well for 1 worker configuration. But it doesn't "
+"work well for 2 or more workers configuration."
+msgstr ""
+
+# 395c2aa5765c4416a2a23b72954587ab
+#: ../../../source/reference/executables/groonga-httpd.txt:306
+msgid ""
+"Groonga's query cache is available in the same process. It means that "
+"workers can't share the cache. If you don't change cache size, it isn't a "
+"big problem. If you want to change cache size by :doc:`/reference/commands/"
+"cache_limit` command, there is a problem."
+msgstr ""
+
+# b27d8fb9d60e46bf86e13af9c700cc7f
+#: ../../../source/reference/executables/groonga-httpd.txt:311
+msgid "There is no portable ways to change change cache size for all workers."
+msgstr ""
+
+# 129f10a46ac3418aaa2afcdb0aaa2411
+#: ../../../source/reference/executables/groonga-httpd.txt:313
+msgid "For example, there are 3 workers::"
+msgstr ""
+
+# dbe31d92446141108800a1c883ee45d0
+#: ../../../source/reference/executables/groonga-httpd.txt:319
+msgid ""
+"The client requests :doc:`/reference/commands/cache_limit` command and the "
+"worker 1 receives it::"
+msgstr ""
+
+# dbe31d92446141108800a1c883ee45d0
+#: ../../../source/reference/executables/groonga-httpd.txt:326
+msgid ""
+"The client requests :doc:`/reference/commands/cache_limit` command again and "
+"the worker 1 receives it again::"
+msgstr ""
+
+# c323820ea36846c1947103d0fd967940
+#: ../../../source/reference/executables/groonga-httpd.txt:333
+msgid ""
+"In this case, the worker 2 and the worker 3 aren't received any requests. So "
+"they don't change cache size."
+msgstr ""
+
+# 395c2aa5765c4416a2a23b72954587ab
+#: ../../../source/reference/executables/groonga-httpd.txt:336
+msgid ""
+"You can't choose a worker. So you can't change cache sizes of all workers "
+"by :doc:`/reference/commands/cache_limit` command."
+msgstr ""
+
+# 6c461c2d2b0f49159c0223b24ec59304
+#: ../../../source/reference/executables/groonga-httpd.txt:340
+msgid "Reverse proxy and cache"
+msgstr ""
+
+# b889cdac2da04de299d1584d4756abad
+#: ../../../source/reference/executables/groonga-httpd.txt:346
 msgid "Available nginx modules"
 msgstr "Available nginx modules"
 
 # e8d176cec8db4336ad2cff6ad712dabf
-#: ../../../source/reference/executables/groonga-httpd.txt:294
+#: ../../../source/reference/executables/groonga-httpd.txt:348
 msgid ""
-"All standard HTTP modules is available. HttpRewriteModule is disabled when "
+"All standard HTTP modules are available. HttpRewriteModule is disabled when "
 "you don't have PCRE (Perl Compatible Regular Expressions). For the list of "
 "standard HTTP modules, see http://wiki.nginx.org/Modules."
 msgstr ""
@@ -12024,8 +12153,8 @@ msgstr ""
 #: ../../../source/reference/functions/geo_distance.txt:226
 msgid ""
 "This sample shows the value of distance across meridian. The return value of "
-"``geo_distance(\"175904000x8464000\", \"145508000x-13291000\", \"rectangle\")"
-"`` is the value of distance from Paris, Flance to Madrid, Spain."
+"``geo_distance(\"175904000x8464000\", \"145508000x-13291000\", \"rectangle"
+"\")`` is the value of distance from Paris, Flance to Madrid, Spain."
 msgstr ""
 
 # bd6c8c7ac29640a391b6c69cb74b0b1b
@@ -13177,9 +13306,9 @@ msgstr "Here is a special character list:"
 # 88d7ee90d2db46f79d537405822136e4
 #: ../../../source/reference/grn_expr/query_syntax.txt:81
 msgid ""
-"``[space]`` (escaped as ``[backslash][space]``) (You should substitute ``"
-"[space]`` with a white space character that is 0x20 in ASCII and ``"
-"[backslash]`` with ``\\\\``.)"
+"``[space]`` (escaped as ``[backslash][space]``) (You should substitute "
+"``[space]`` with a white space character that is 0x20 in ASCII and "
+"``[backslash]`` with ``\\\\``.)"
 msgstr ""
 
 # f141f2696dcc4bf49e2604d5613774a3
@@ -13519,16 +13648,16 @@ msgid ""
 "search condition`` and ``full text search condition (with explicit match "
 "column)``. ``Phrase search condition`` supports advanced match columns but "
 "``phrase search condition (with explicit match column)`` isn't supported. "
-"See description of ``full text search condition (with explicit match column)"
-"`` about advanced match columns."
+"See description of ``full text search condition (with explicit match "
+"column)`` about advanced match columns."
 msgstr ""
 "The different between ``phrase search condition`` and ``phrase search "
 "condition (with explicit match column)`` is similar to between ``full text "
 "search condition`` and ``full text search condition (with explicit match "
 "column)``. ``Phrase search condition`` supports advanced match columns but "
 "``phrase search condition (with explicit match column)`` isn't supported. "
-"See description of ``full text search condition (with explicit match column)"
-"`` about advanced match columns."
+"See description of ``full text search condition (with explicit match "
+"column)`` about advanced match columns."
 
 # a266b4cf513243cdb4cc5629fafc311e
 #: ../../../source/reference/grn_expr/query_syntax.txt:251
@@ -16711,8 +16840,8 @@ msgstr ""
 msgid ""
 "It is important that registered words (``groonga`` and ``mroonga``) are only "
 "expanded to synonyms and not registered words (``search``) are not expanded. "
-"Query expansion isn't occurred recursively. ``groonga`` is appeared in ``"
-"(mroonga OR (groonga MySQL))`` as query expansion result but it isn't "
+"Query expansion isn't occurred recursively. ``groonga`` is appeared in "
+"``(mroonga OR (groonga MySQL))`` as query expansion result but it isn't "
 "expanded."
 msgstr ""
 
@@ -17672,3 +17801,35 @@ msgstr ""
 #: ../../../source/reference/types.txt:129
 msgid "Object型はv1.2でサポートされます。"
 msgstr "Object型はv1.2でサポートされます。"
+
+# 1fa38310321a4d9f8f5dcb5d3b9ebe5e
+#~ msgid "cache_limit - cacheサイズの設定・取得"
+#~ msgstr "cache_limit - cacheサイズの設定・取得"
+
+# 782f01979fbc4d54b4b22525168fdcb3
+#~ msgid ""
+#~ "groonga組込コマンドの一つであるcache_limitについて説明します。組込コマンド"
+#~ "は、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバ"
+#~ "にリクエストを送信することによって実行します。"
+#~ msgstr ""
+#~ "groonga組込コマンドの一つであるcache_limitについて説明します。組込コマンド"
+#~ "は、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバ"
+#~ "にリクエストを送信することによって実行します。"
+
+# 31ae96ec89454ccd8461b3be13376d57
+#~ msgid ""
+#~ "cache_limitは、クエリキャッシュの最大件数を取得したり設定したりします。"
+#~ msgstr ""
+#~ "cache_limitは、クエリキャッシュの最大件数を取得したり設定したりします。"
+
+# 5422fde6ce3d4b03926ae9c28a568c8e
+#~ msgid ""
+#~ "クエリキャッシュの最大件数を整数で指定します。 maxが指定されなかった場合に"
+#~ "は、クエリキャッシュの最大件数は変更せず、 現在の設定値のみが返されます。"
+#~ msgstr ""
+#~ "クエリキャッシュの最大件数を整数で指定します。 maxが指定されなかった場合に"
+#~ "は、クエリキャッシュの最大件数は変更せず、 現在の設定値のみが返されます。"
+
+# 8e91fbc2746341169c27948089409f5c
+#~ msgid "json"
+#~ msgstr "json"

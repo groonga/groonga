@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-09-25 11:16+0900\n"
+"POT-Creation-Date: 2013-09-26 15:53+0900\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -136,11 +136,11 @@ msgid ""
 "[Suggested by Kazuhiro Isobe]"
 msgstr ""
 
-# 958a35efa01e474e985df68c0c893df2
+# 24744427afa946b1aeaab624a802e034
 #: ../../../source/news.txt:30
 msgid ""
-"Supported cascade delete to referenced records. In previous version, You got "
-"an error for the operation."
+"Supported :ref:`cascade-delete` to referenced records. In previous version, "
+"You got an error for the operation."
 msgstr ""
 
 # 1ac9062608694e87a1f1193899664329
@@ -1060,9 +1060,9 @@ msgstr ""
 # e8fce2e489904b128f0d644db14029a9
 #: ../../../source/news.txt:384
 msgid ""
-"Added ``grn_default_logger_set_path()`` and ``grn_default_logger_get_path()"
-"`` API. Note that global ``grn_log_path`` variable was removed. Use above "
-"API."
+"Added ``grn_default_logger_set_path()`` and "
+"``grn_default_logger_get_path()`` API. Note that global ``grn_log_path`` "
+"variable was removed. Use above API."
 msgstr ""
 
 # 65efe83b90bd4fcf91da57e41158f73a
@@ -4804,11 +4804,11 @@ msgstr "suggest: Added prefix_search parameter to suggest command. #909"
 # 4f213fd748a540e5b88348d97f7ccbc4
 #: ../../../source/news/1.2.x.txt:304
 msgid ""
-"plugin: Added grn_plugin_get_system_plugins_dir() and grn_plugin_get_suffix"
-"() API."
+"plugin: Added grn_plugin_get_system_plugins_dir() and "
+"grn_plugin_get_suffix() API."
 msgstr ""
-"plugin: Added grn_plugin_get_system_plugins_dir() and grn_plugin_get_suffix"
-"() API."
+"plugin: Added grn_plugin_get_system_plugins_dir() and "
+"grn_plugin_get_suffix() API."
 
 # bbfa963d7c7945f19be18115d77bff57
 #: ../../../source/news/1.2.x.txt:306
