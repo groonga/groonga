@@ -325,7 +325,7 @@ workers can't share the cache. If you don't change cache size, it
 isn't a big problem. If you want to change cache size by
 :doc:`/reference/commands/cache_limit` command, there is a problem.
 
-There is no portable ways to change change cache size for all workers.
+There is no portable ways to change cache size for all workers.
 
 For example, there are 3 workers::
 

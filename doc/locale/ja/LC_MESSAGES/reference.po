@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-09-26 16:50+0900\n"
-"PO-Revision-Date: 2013-09-26 18:36+0900\n"
+"POT-Creation-Date: 2013-09-26 18:52+0900\n"
+"PO-Revision-Date: 2013-09-26 19:07+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -58,8 +58,11 @@ msgstr ""
 #: ../../../source/example/reference/commands/cache_limit/get.log:1
 #: ../../../source/example/reference/commands/cache_limit/set.log:1
 #: ../../../source/example/reference/commands/column_rename/column_rename.log:1
+#: ../../../source/example/reference/commands/delete_cascade.log:1
+#: ../../../source/example/reference/commands/delete_status.log:1
 #: ../../../source/example/reference/commands/normalize/normalizer_auto_ascii.log:1
 #: ../../../source/example/reference/commands/register/query_expanders_tsv.log:1
+#: ../../../source/example/reference/commands/ruby_eval/calc.log:1
 #: ../../../source/example/reference/commands/select/filter_equal.log:1
 #: ../../../source/example/reference/commands/select/filter_less_than.log:1
 #: ../../../source/example/reference/commands/select/limit_negative.log:1
@@ -256,10 +259,11 @@ msgstr ""
 #: ../../../source/reference/command/return_code.txt:9
 #: ../../../source/reference/commands/cache_limit.txt:12
 #: ../../../source/reference/commands/column_rename.txt:12
-#: ../../../source/reference/commands/delete.txt:9
+#: ../../../source/reference/commands/delete.txt:12
 #: ../../../source/reference/commands/load.txt:12
 #: ../../../source/reference/commands/normalize.txt:17
 #: ../../../source/reference/commands/register.txt:12
+#: ../../../source/reference/commands/ruby_eval.txt:12
 #: ../../../source/reference/commands/select.txt:12
 #: ../../../source/reference/commands/table_create.txt:12
 #: ../../../source/reference/commands/tokenize.txt:12
@@ -3384,7 +3388,9 @@ msgstr "``BODY`` に相当する部分は以下です::"
 #: ../../../source/reference/command/output_format.txt:115
 #: ../../../source/reference/commands/cache_limit.txt:74
 #: ../../../source/reference/commands/column_rename.txt:71
+#: ../../../source/reference/commands/delete.txt:109
 #: ../../../source/reference/commands/normalize.txt:73
+#: ../../../source/reference/commands/ruby_eval.txt:57
 #: ../../../source/reference/commands/tokenize.txt:174
 #: ../../../source/reference/commands/truncate.txt:65
 msgid "``HEADER``"
@@ -3602,8 +3608,10 @@ msgstr ""
 #: ../../../source/reference/command/output_format.txt:225
 #: ../../../source/reference/command/return_code.txt:102
 #: ../../../source/reference/commands/cache_limit.txt:84
+#: ../../../source/reference/commands/delete.txt:120
 #: ../../../source/reference/commands/load.txt:98
 #: ../../../source/reference/commands/normalize.txt:83
+#: ../../../source/reference/commands/ruby_eval.txt:66
 #: ../../../source/reference/commands/select.txt:906
 #: ../../../source/reference/commands/table_create.txt:280
 #: ../../../source/reference/commands/tokenize.txt:194
@@ -4065,7 +4073,9 @@ msgstr ""
 msgid ""
 "``cache_limit`` gets or sets the max number of query cache entries. Query "
 "cache is used only by :doc:`select` command."
-msgstr "``cache_limit`` は最大クエリーキャッシュエントリー数を取得・設定します。クエリーキャッシュを使っているのは :doc:`select` コマンドだけです。"
+msgstr ""
+"``cache_limit`` は最大クエリーキャッシュエントリー数を取得・設定します。クエ"
+"リーキャッシュを使っているのは :doc:`select` コマンドだけです。"
 
 # 685401eebe664ad6907a39d783ecd228
 #: ../../../source/reference/commands/cache_limit.txt:17
@@ -4073,17 +4083,21 @@ msgid ""
 "If the max number of query cache entries is 100, the recent 100 ``select`` "
 "commands are only cached. The cache expire algorithm is LRU (least recently "
 "used)."
-msgstr "最大クエリーキャッシュエントリー数が100の場合は、最新の100 ``select`` コマンドの結果だけキャッシュします。キャッシュを失効するアルゴリズムはLRU（Least Recently Used）です。"
+msgstr ""
+"最大クエリーキャッシュエントリー数が100の場合は、最新の100 ``select`` コマン"
+"ドの結果だけキャッシュします。キャッシュを失効するアルゴリズムはLRU（Least "
+"Recently Used）です。"
 
 # 47dc2b34beb1410495604199c7f24873
 # eaadf83a10cc4718bfa95e2aca8b7206
 # 22e16b231eb94001863c7769e59e4b47
 #: ../../../source/reference/commands/cache_limit.txt:22
 #: ../../../source/reference/commands/column_rename.txt:17
-#: ../../../source/reference/commands/delete.txt:18
+#: ../../../source/reference/commands/delete.txt:26
 #: ../../../source/reference/commands/load.txt:18
 #: ../../../source/reference/commands/normalize.txt:25
 #: ../../../source/reference/commands/register.txt:27
+#: ../../../source/reference/commands/ruby_eval.txt:17
 #: ../../../source/reference/commands/select.txt:21
 #: ../../../source/reference/commands/table_create.txt:18
 #: ../../../source/reference/commands/tokenize.txt:18
@@ -4107,10 +4121,11 @@ msgstr "``cache_limit`` には省略可能な引数が1つあります::"
 # 41271dbb3fa340a8a33cb610678460bb
 #: ../../../source/reference/commands/cache_limit.txt:29
 #: ../../../source/reference/commands/column_rename.txt:26
-#: ../../../source/reference/commands/delete.txt:24
+#: ../../../source/reference/commands/delete.txt:32
 #: ../../../source/reference/commands/load.txt:70
 #: ../../../source/reference/commands/normalize.txt:36
 #: ../../../source/reference/commands/register.txt:34
+#: ../../../source/reference/commands/ruby_eval.txt:24
 #: ../../../source/reference/commands/select.txt:47
 #: ../../../source/reference/commands/table_create.txt:31
 #: ../../../source/reference/commands/tokenize.txt:30
@@ -4131,14 +4146,18 @@ msgstr "使い方"
 msgid ""
 "You can get the current max number of cache entries by executing "
 "``cache_limit`` without parameter."
-msgstr "引数なしで ``cache_limit`` を実行すると現在の最大キャッシュエントリー数を取得できます。"
+msgstr ""
+"引数なしで ``cache_limit`` を実行すると現在の最大キャッシュエントリー数を取得"
+"できます。"
 
 # 1072ca2fe6814810968fb9735080df3a
 #: ../../../source/reference/commands/cache_limit.txt:38
 msgid ""
-"You can set the max number of cache entries by executing ``cache_limit`` with "
-"``max`` parameter."
-msgstr "``max`` 引数つきで ``cache_limit`` を実行すると最大キャッシュエントリー数を設定できます。"
+"You can set the max number of cache entries by executing ``cache_limit`` "
+"with ``max`` parameter."
+msgstr ""
+"``max`` 引数つきで ``cache_limit`` を実行すると最大キャッシュエントリー数を設"
+"定できます。"
 
 # b993c6521463466f8f42d9a4e7e5107f
 #: ../../../source/reference/commands/cache_limit.txt:41
@@ -4150,15 +4169,18 @@ msgstr "次の例は最大キャッシュエントリー数を ``10`` に設定�
 msgid ""
 "If ``max`` parameter is used, the return value is the max number of cache "
 "entries before ``max`` parameter is set."
-msgstr "``max`` 引数を使うと、指定したあたいに設定される前の最大キャッシュエントリー数が戻り値になります。"
+msgstr ""
+"``max`` 引数を使うと、指定したあたいに設定される前の最大キャッシュエントリー"
+"数が戻り値になります。"
 
 # 3ed1ed0a3bb349fa8db4eccf86029d9f
 # 18532e03e38c4f96970d5935b7432cba
 #: ../../../source/reference/commands/cache_limit.txt:54
 #: ../../../source/reference/commands/column_rename.txt:45
-#: ../../../source/reference/commands/delete.txt:33
+#: ../../../source/reference/commands/delete.txt:82
 #: ../../../source/reference/commands/load.txt:24
 #: ../../../source/reference/commands/normalize.txt:45
+#: ../../../source/reference/commands/ruby_eval.txt:41
 #: ../../../source/reference/commands/select.txt:199
 #: ../../../source/reference/commands/table_create.txt:154
 #: ../../../source/reference/commands/tokenize.txt:44
@@ -4173,6 +4195,7 @@ msgstr "引数"
 # e92758beef824130ab42669342c10d50
 #: ../../../source/reference/commands/cache_limit.txt:56
 #: ../../../source/reference/commands/load.txt:26
+#: ../../../source/reference/commands/ruby_eval.txt:43
 #: ../../../source/reference/commands/table_create.txt:156
 msgid "This section describes all parameters."
 msgstr "このセクションではすべての引数について説明します。"
@@ -4195,15 +4218,19 @@ msgid ""
 "If ``max`` parameter isn't specified, the current max number of query cache "
 "entries isn't changed. ``cache_limit`` just returns the current max number "
 "of query cache entries."
-msgstr "``max`` 引数が指定されていない場合は、現在の最大クエリーキャッシュエントリー数は変わりません。 ``cache_limit`` は単に現在の最大クエリーキャッシュエントリー数を返します。"
+msgstr ""
+"``max`` 引数が指定されていない場合は、現在の最大クエリーキャッシュエントリー"
+"数は変わりません。 ``cache_limit`` は単に現在の最大クエリーキャッシュエント"
+"リー数を返します。"
 
 # f18ad5e74b9c45f783d38e24995b3abe
 #: ../../../source/reference/commands/cache_limit.txt:68
 #: ../../../source/reference/commands/column_rename.txt:65
-#: ../../../source/reference/commands/delete.txt:52
+#: ../../../source/reference/commands/delete.txt:103
 #: ../../../source/reference/commands/load.txt:88
 #: ../../../source/reference/commands/normalize.txt:67
 #: ../../../source/reference/commands/register.txt:51
+#: ../../../source/reference/commands/ruby_eval.txt:51
 #: ../../../source/reference/commands/table_create.txt:269
 #: ../../../source/reference/commands/tokenize.txt:166
 #: ../../../source/reference/commands/truncate.txt:59
@@ -4222,6 +4249,7 @@ msgstr "``cache_limit`` は現在の最大クエリーキャッシュエント�
 
 # 7076e42ec8ef4557b5a1a22d51cab92d
 #: ../../../source/reference/commands/cache_limit.txt:76
+#: ../../../source/reference/commands/ruby_eval.txt:59
 #: ../../../source/reference/commands/tokenize.txt:176
 msgid "See :doc:`/reference/command/output_format` about ``HEADER``."
 msgstr ""
@@ -4238,7 +4266,9 @@ msgstr ""
 msgid ""
 "``n_entries`` is the current max number of query cache entries. It is a "
 "number."
-msgstr "``n_entries`` は現在の最大クエリーキャッシュエントリー数です。これは数値です。"
+msgstr ""
+"``n_entries`` は現在の最大クエリーキャッシュエントリー数です。これは数値で"
+"す。"
 
 # 1bcba209f5f3464bbaa1919ec54732d7
 #: ../../../source/reference/commands/cache_limit.txt:86
@@ -4617,7 +4647,6 @@ msgstr ""
 #: ../../../source/reference/commands/column_remove.txt:40
 #: ../../../source/reference/commands/define_selector.txt:95
 #: ../../../source/reference/commands/defrag.txt:37
-#: ../../../source/reference/commands/delete.txt:55
 #: ../../../source/reference/commands/log_level.txt:46
 #: ../../../source/reference/commands/log_put.txt:50
 #: ../../../source/reference/commands/log_reopen.txt:37
@@ -4968,7 +4997,6 @@ msgstr ""
 #: ../../../source/reference/commands/column_create.txt:80
 #: ../../../source/reference/commands/column_remove.txt:46
 #: ../../../source/reference/commands/define_selector.txt:101
-#: ../../../source/reference/commands/delete.txt:61
 #: ../../../source/reference/commands/log_level.txt:52
 #: ../../../source/reference/commands/log_put.txt:56
 #: ../../../source/reference/commands/log_reopen.txt:43
@@ -4989,7 +5017,6 @@ msgstr ""
 #: ../../../source/reference/commands/column_create.txt:82
 #: ../../../source/reference/commands/column_remove.txt:48
 #: ../../../source/reference/commands/define_selector.txt:103
-#: ../../../source/reference/commands/delete.txt:63
 #: ../../../source/reference/commands/log_level.txt:54
 #: ../../../source/reference/commands/log_put.txt:58
 #: ../../../source/reference/commands/log_reopen.txt:45
@@ -5019,7 +5046,6 @@ msgstr ""
 # 29f6cee53f7c44ebaa38a208dc3b8199
 #: ../../../source/reference/commands/clearlock.txt:61
 #: ../../../source/reference/commands/define_selector.txt:114
-#: ../../../source/reference/commands/delete.txt:67
 #: ../../../source/reference/commands/log_level.txt:64
 #: ../../../source/reference/commands/log_put.txt:68
 #: ../../../source/reference/commands/log_reopen.txt:65
@@ -5035,7 +5061,7 @@ msgstr ""
 # 1133dfbac6fd496e987bafedccfa5e15
 # c77d1897b0fb494c9f555645a52312ab
 #: ../../../source/reference/commands/clearlock.txt:63
-#: ../../../source/reference/commands/delete.txt:69
+#: ../../../source/reference/commands/delete.txt:122
 #: ../../../source/reference/commands_not_implemented/add.txt:103
 #: ../../../source/reference/commands_not_implemented/get.txt:80
 #: ../../../source/reference/commands_not_implemented/set.txt:105
@@ -5080,7 +5106,7 @@ msgstr ""
 #: ../../../source/reference/commands/column_list.txt:30
 #: ../../../source/reference/commands/column_remove.txt:31
 #: ../../../source/reference/commands/define_selector.txt:35
-#: ../../../source/reference/commands/delete.txt:35
+#: ../../../source/reference/commands/delete.txt:84
 #: ../../../source/reference/commands/load.txt:49
 #: ../../../source/reference/commands/select.txt:209
 #: ../../../source/reference/commands/suggest.txt:75
@@ -5290,7 +5316,7 @@ msgstr ""
 # 80c18f661c474d8d8d2f59e90c7c0e2d
 # 4f2111d63f51499791275c579b3e0893
 #: ../../../source/reference/commands/column_list.txt:47
-#: ../../../source/reference/commands/delete.txt:43
+#: ../../../source/reference/commands/delete.txt:93
 #: ../../../source/reference/commands/table_list.txt:46
 #: ../../../source/reference/commands_not_implemented/set.txt:59
 msgid "``id``"
@@ -5509,6 +5535,7 @@ msgstr "カラムの名前を指定します。"
 
 # cdd462ed19424427982fabc0de88064d
 #: ../../../source/reference/commands/column_rename.txt:73
+#: ../../../source/reference/commands/delete.txt:111
 #: ../../../source/reference/commands/normalize.txt:75
 #: ../../../source/reference/commands/truncate.txt:67
 msgid ""
@@ -5522,6 +5549,7 @@ msgstr ""
 # 7d108ca6104e420496ebfc993cf97944
 # e81cb9040a3b46088211ff1a1bf0dc21
 #: ../../../source/reference/commands/column_rename.txt:76
+#: ../../../source/reference/commands/delete.txt:114
 #: ../../../source/reference/commands/truncate.txt:70
 msgid "``SUCCEEDED_OR_NOT``"
 msgstr ""
@@ -5529,6 +5557,7 @@ msgstr ""
 # b4c2d2eac3a8464994477107d6cd11eb
 # 30c269e4bd054949b890b77cc0df99cd
 #: ../../../source/reference/commands/column_rename.txt:78
+#: ../../../source/reference/commands/delete.txt:116
 #: ../../../source/reference/commands/truncate.txt:72
 msgid ""
 "If command succeeded, it returns true, otherwise it returns false on error."
@@ -5600,7 +5629,7 @@ msgstr ""
 # 5f94c80b518a454796ede41be8e69ac1
 # 31a59e604b9145f386874eeddd10c92e
 #: ../../../source/reference/commands/define_selector.txt:47
-#: ../../../source/reference/commands/delete.txt:47
+#: ../../../source/reference/commands/delete.txt:97
 #: ../../../source/reference/commands/select.txt:362
 msgid "``filter``"
 msgstr ""
@@ -5809,72 +5838,109 @@ msgid "テーブル名 Entry のカラム body のフラグメンテーション
 msgstr ""
 
 # 99121af1c570436289b5e45eaf5e243c
-#: ../../../source/reference/commands/delete.txt:6
+#: ../../../source/reference/commands/delete.txt:9
 msgid "``delete``"
 msgstr ""
 
-# fb91cc3057a845edb85b891033634a45
-#: ../../../source/reference/commands/delete.txt:11
-msgid "delete - 一件のレコードの削除"
+# e8e779bcb974490195fc71a1f760789e
+#: ../../../source/reference/commands/delete.txt:14
+#, fuzzy
+msgid "``delete`` command deletes specified record of table."
+msgstr "``column_rename`` コマンドは指定したテーブルのカラム名を変更します。"
+
+# cc72200b2ad54783970d59756ca921fc
+#: ../../../source/reference/commands/delete.txt:19
+msgid "Cascade delete"
 msgstr ""
 
-# a94a00fd188e4536a330fa94db11da04
-#: ../../../source/reference/commands/delete.txt:13
+# 44f7fb0276134d75ad653baa3d78a50f
+#: ../../../source/reference/commands/delete.txt:21
 msgid ""
-"groonga組込コマンドの一つであるdeleteについて説明します。組込コマンドは、"
-"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
-"エストを送信することによって実行します。"
+"There is a case that multiple table is associated. For example, the key of "
+"one table are referenced by other table's records. In such a case, if you "
+"delete the key of one table, other table's records are also removed."
 msgstr ""
 
-# 5a4f39a3281949d3b50707ccdf05d3ef
-#: ../../../source/reference/commands/delete.txt:15
+# 743012d7b6f64e7b8054e8123ca26ce2
+#: ../../../source/reference/commands/delete.txt:23
 msgid ""
-"deleteは、使用しているデータベースのテーブルに1件のレコードを削除します。"
+"Note that the type of other table's column is COLUMN_VECTOR, only the value "
+"of referencing key is removed from the vector value."
 msgstr ""
 
-# 50b3e5ae812f4aa385769ca84c5a858b
-#: ../../../source/reference/commands/delete.txt:26
-msgid "テーブルEntryからレコードを削除します。::"
+# 8f5aa6b4c71346a684b9ec9be85d9d41
+# a9f9574e54ea478b870c3a2372048a11
+#: ../../../source/reference/commands/delete.txt:34
+#: ../../../source/reference/commands/select.txt:52
+#: ../../../source/reference/functions/html_untag.txt:38
+#: ../../../source/reference/functions/query.txt:42
+#: ../../../source/reference/functions/snippet_html.txt:39
+#: ../../../source/reference/functions/sub_filter.txt:33
+#: ../../../source/reference/grn_expr/query_syntax.txt:32
+#: ../../../source/reference/grn_expr/script_syntax.txt:28
+msgid "Here are a schema definition and sample data to show usage."
+msgstr "使い方を示すために使うスキーマ定義とサンプルデータは以下の通りです。"
+
+# 2d8ec0eedb6547558f7e89d35166025a
+#: ../../../source/reference/commands/delete.txt:45
+msgid "Delete the record from Entry table which has \"2\" as the key."
 msgstr ""
 
-# dafce24333f94473a243b6e866a42a4c
-#: ../../../source/reference/commands/delete.txt:37
-msgid "レコードを削除しようとするテーブルの名前を指定します。"
+# b993c6521463466f8f42d9a4e7e5107f
+#: ../../../source/reference/commands/delete.txt:52
+#, fuzzy
+msgid "Here is the example about cascaded delete."
+msgstr "以下はノーマライザーを使う例です。"
+
+# 4c2e1674d4d947658698616a19d11b19
+#: ../../../source/reference/commands/delete.txt:54
+msgid "The country column of Users table associates with Country table."
 msgstr ""
+
+# 1b215601dfba4574bba3b4cba719696d
+#: ../../../source/reference/commands/delete.txt:56
+msgid ""
+"\"Cascaded delete\" removes the records which matches specified key and "
+"refers that key."
+msgstr ""
+
+# ffa8ab8997a74ec381047804746e748d
+#: ../../../source/reference/commands/delete.txt:86
+#, fuzzy
+msgid "It specifies the name of table to delete the records."
+msgstr "テーブルの名前を指定します。"
 
 # 7d950efd31854960bd5806ac07070091
 # 67220f6cc5d3406fb63eef88c6ec37d5
 # 57f5f9a442ff45f5a67224bee15932c1
 # c072bcb3b05f42bd811573a43f04d375
-#: ../../../source/reference/commands/delete.txt:39
+#: ../../../source/reference/commands/delete.txt:88
 #: ../../../source/reference/commands_not_implemented/add.txt:35
 #: ../../../source/reference/commands_not_implemented/get.txt:33
 #: ../../../source/reference/commands_not_implemented/set.txt:33
 msgid "``key``"
 msgstr ""
 
-# c0e6c581541446cab7121b2de0e5635d
-#: ../../../source/reference/commands/delete.txt:41
+# 129daaaf45154af0b6dc0fddbaa6e993
+#: ../../../source/reference/commands/delete.txt:90
 msgid ""
-"削除するレコードの主キー値を指定します。主キーなしのテーブルの場合はこのパラ"
-"メータを指定しても無視されます(idパラメータを代わりに指定します)。"
+"It specifies the key of record to delete. If you use the table with "
+"TABLE_NO_KEY, the key is just ignored. (Use ``id`` parameter in such a case)"
 msgstr ""
 
-# 462ec25834524e078c9dfd78acfd1b8e
-# 4d468ace799945f08da3f6b5a5255ee4
-#: ../../../source/reference/commands/delete.txt:45
-#: ../../../source/reference/commands_not_implemented/set.txt:61
+# 7a2545d7edaf4fabbf9edf17f8bd1d40
+#: ../../../source/reference/commands/delete.txt:95
 msgid ""
-"レコードIDによってレコードを指定します。idパラメータを指定する場合は、keyパラ"
-"メータを指定してはいけません。"
+"It specifies the id of record to delete. If you specify ``id`` parameter, "
+"you must not specify ``key`` parameter."
 msgstr ""
 
-# b47ea60974ee4200a06e7db186d68fd8
-# 5babd211f9924888951c974f7631df13
-#: ../../../source/reference/commands/delete.txt:49
+# 94b92aad746d47349856787b64df9f78
+#: ../../../source/reference/commands/delete.txt:99
 msgid ""
-"script形式のgrn_expr文字列によってレコードを指定します。filterパラメータを指"
-"定する場合は、id及びkeyパラメータを指定してはいけません。"
+"It specifies the expression of grn_expr to identify the record. If you "
+"specify ``filter`` parameter, you must not specify ``key`` and ``id`` "
+"parameter."
 msgstr ""
 
 # 156321a80085413d86ca869f5a2669a8
@@ -6485,6 +6551,78 @@ msgstr ""
 "``HEADER`` については :doc:`/reference/command/output_format` を参照してくだ"
 "さい。"
 
+# 774eec088b36453da7334f632543728a
+#: ../../../source/reference/commands/ruby_eval.txt:9
+msgid "``ruby_eval``"
+msgstr ""
+
+# 4b887280bc14406bb347a8db86e92288
+#: ../../../source/reference/commands/ruby_eval.txt:14
+msgid "``ruby_eval`` command evaluates ruby script and returns the result."
+msgstr ""
+
+# 1ce42bdc29594a019e7d0db71d6a3135
+#: ../../../source/reference/commands/ruby_eval.txt:19
+#, fuzzy
+msgid "``ruby_eval`` has one required parameter::"
+msgstr "``cache_limit`` には省略可能な引数が1つあります::"
+
+# 1ca86d31dd914c139975cc3b00975b48
+#: ../../../source/reference/commands/ruby_eval.txt:26
+msgid ""
+"You can execute any scripts which mruby supports by calling ``ruby_eval``."
+msgstr ""
+
+# b993c6521463466f8f42d9a4e7e5107f
+#: ../../../source/reference/commands/ruby_eval.txt:28
+#, fuzzy
+msgid "Here is an example that just calculate ``1 + 2`` by mruby plugin."
+msgstr "``string`` の中で空白を使う例です。"
+
+# 51e9eb242fd7459da73e52b9ec34fdd2
+#: ../../../source/reference/commands/ruby_eval.txt:35
+msgid "Register ``ruby/eval`` plugin to use ``ruby_eval`` command in advance."
+msgstr ""
+
+# 50d4a5927b81445f840f51e9605db852
+#: ../../../source/reference/commands/ruby_eval.txt:37
+#, fuzzy
+msgid ""
+"Note that ``ruby_eval`` is implemented as an experimental plugin, and the "
+"specification may be changed in the future."
+msgstr ""
+"``normalize`` コマンドは実験的な機能です。このコマンドは将来的に変更されるか"
+"も知れません。"
+
+# 56c6f5e7719c4d16912fa4ec846463d0
+#: ../../../source/reference/commands/ruby_eval.txt:46
+msgid "``ruby_script``"
+msgstr ""
+
+# b0b25f3e15764cb184fbc1aad1979089
+#: ../../../source/reference/commands/ruby_eval.txt:48
+#, fuzzy
+msgid "It specifies the ruby script which you want to evaluate."
+msgstr "正規化したい文字列を指定します。"
+
+# 7fa3b97d468c4e9a95d3daff9d9b0806
+#: ../../../source/reference/commands/ruby_eval.txt:53
+msgid ""
+"``ruby_eval`` returns the evaluated result which key is \"value\" as json "
+"format::"
+msgstr ""
+
+# cdfa3d64a86d4a7da75a360653c0645a
+#: ../../../source/reference/commands/ruby_eval.txt:61
+msgid "``json``"
+msgstr ""
+
+# 9b7e11368db648899bff25e929e34731
+#: ../../../source/reference/commands/ruby_eval.txt:63
+msgid ""
+"The key of ``json`` is \"value\". The value of ``json`` must be a number."
+msgstr ""
+
 # e9574c3225e149989e5c56875a3bf7a7
 #: ../../../source/reference/commands/select.txt:9
 #: ../../../source/reference/executables/groonga.txt:199
@@ -6526,18 +6664,6 @@ msgid ""
 msgstr ""
 "例を使いながら ``select`` の使い方を学びましょう。このセクションではよく使わ"
 "れる使い方を紹介します。"
-
-# 8f5aa6b4c71346a684b9ec9be85d9d41
-# a9f9574e54ea478b870c3a2372048a11
-#: ../../../source/reference/commands/select.txt:52
-#: ../../../source/reference/functions/html_untag.txt:38
-#: ../../../source/reference/functions/query.txt:42
-#: ../../../source/reference/functions/snippet_html.txt:39
-#: ../../../source/reference/functions/sub_filter.txt:33
-#: ../../../source/reference/grn_expr/query_syntax.txt:32
-#: ../../../source/reference/grn_expr/script_syntax.txt:28
-msgid "Here are a schema definition and sample data to show usage."
-msgstr "使い方を示すために使うスキーマ定義とサンプルデータは以下の通りです。"
 
 # fc1abb5337ca4b508cfab8490c65a053
 # 6cf6adc0a2064db59d4c80c6d7854f78
@@ -9980,6 +10106,14 @@ msgid ""
 "パラメータを指定しても無視されます(idパラメータを代わりに指定します)。"
 msgstr ""
 
+# 462ec25834524e078c9dfd78acfd1b8e
+# 4d468ace799945f08da3f6b5a5255ee4
+#: ../../../source/reference/commands_not_implemented/set.txt:61
+msgid ""
+"レコードIDによってレコードを指定します。idパラメータを指定する場合は、keyパラ"
+"メータを指定してはいけません。"
+msgstr ""
+
 # ac0787b5e7e343c8aa04b261bd058858
 #: ../../../source/reference/executables.txt:6
 msgid "実行ファイル"
@@ -10773,7 +10907,7 @@ msgstr ""
 #: ../../../source/reference/executables/groonga-httpd.txt:113
 #: ../../../source/reference/executables/groonga-httpd.txt:210
 #: ../../../source/reference/executables/groonga-httpd.txt:236
-#: ../../../source/reference/executables/groonga-httpd.txt:263
+#: ../../../source/reference/executables/groonga-httpd.txt:264
 msgid "Examples::"
 msgstr "例::"
 
@@ -10909,42 +11043,62 @@ msgstr ""
 
 # 84e5794178ca41398059200480d2dc7a
 #: ../../../source/reference/executables/groonga-httpd.txt:259
-#, fuzzy
 msgid ""
-"Specifies groonga log path in the ``http``, ``server`` or ``location`` "
-"block. The default is ``/var/log/groonga/httpd/groonga-query.log``. You can "
-"disable logging to specify ``off``."
-msgstr ""
-"groongaのログ保存先を ``http`` 、``server`` もしくは ``location`` ブロックで"
-"指定します。デフォルトは ``/var/log/groonga/httpd/groonga.log`` です。ログを"
-"無効にするには ``off`` を指定します。"
+"Specifies groonga's query log path in the ``http``, ``server`` or "
+"``location`` block. The default is ``/var/log/groonga/httpd/groonga-query."
+"log``.  You can disable logging to specify ``off``."
+msgstr "groongaのクエリーログの保存先を ``http`` 、``server`` もしくは ``location`` ブロックで指定します。デフォルトは ``/var/log/groonga/httpd/groonga-query.log`` です。ログを無効にするには ``off`` を指定します。"
 
-# 609cc2866a054373aeec9b23180133e8
-#: ../../../source/reference/executables/groonga-httpd.txt:271
+# e66cf87090b848429bfa44803be4f256
+#: ../../../source/reference/executables/groonga-httpd.txt:272
+msgid "Query log is useful for the following cases:"
+msgstr "クエリーログは以下のようなケースで有用です:"
+
+# 4da3b55827e142fc8d96ff45e4c5c12d
+#: ../../../source/reference/executables/groonga-httpd.txt:274
+msgid "Detecting slow query."
+msgstr "スロークエリーを見つける。"
+
+# 9f0a8a1fb75a46219e56ba8e4dcca7a1
+#: ../../../source/reference/executables/groonga-httpd.txt:275
+msgid "Debugging."
+msgstr "デバッグ。"
+
+# 06c019bf49594d49b4dd749c7ae589da
+#: ../../../source/reference/executables/groonga-httpd.txt:277
 msgid ""
-"Use ``groonga_query_log_path`` for investigating the query which is related "
-"to the issue such as crashed worker process for example."
-msgstr ""
+"You can analyze your query log by `groonga-query-log package <https://github."
+"com/groonga/groonga-query-log>`_. The package provides useful tools."
+msgstr "`groonga-query-log パッケージ <https://github.com/groonga/groonga-query-log>`_ でクエリーログを解析できます。このパッケージは有用なツールを提供しています。"
+
+# 587ecdca941749e6aa6fc86bb8b32e24
+#: ../../../source/reference/executables/groonga-httpd.txt:281
+msgid ""
+"For example, there is a tool that analyzing your query log. It can detect "
+"slow queries from your query log. There is a tool that replaying same "
+"queries in your query log. It can test the new groonga before updating "
+"production environment."
+msgstr "例えば、クエリーログを解析するツールがあります。これを使えば、スロークエリーを見つけることができます。クエリーログ内のすべてのクエリーを再生するツールもあります。これを使えば、新しいgroongaをプロダクション環境にデプロイする前に網羅的にテストすることができます。"
 
 # e071414d35f94a4bbc0b26a58ea9d666
-#: ../../../source/reference/executables/groonga-httpd.txt:275
+#: ../../../source/reference/executables/groonga-httpd.txt:287
 msgid "Performance related directives"
 msgstr "性能関連のディレクティブ"
 
 # cd4956eac02746dc8b3ab4dd7282db93
-#: ../../../source/reference/executables/groonga-httpd.txt:277
+#: ../../../source/reference/executables/groonga-httpd.txt:289
 msgid ""
 "The following directives are related to the performance of groonga-httpd."
 msgstr ""
 "以下のディレクティブはgronoga-httpdの性能に関連しているディレクティブです。"
 
 # 4ee50b0026474705abd02b957d01935a
-#: ../../../source/reference/executables/groonga-httpd.txt:280
+#: ../../../source/reference/executables/groonga-httpd.txt:292
 msgid "``worker_processes``"
 msgstr ""
 
 # fe1cf4dcd10b4524891de86128eba10d
-#: ../../../source/reference/executables/groonga-httpd.txt:282
+#: ../../../source/reference/executables/groonga-httpd.txt:294
 msgid ""
 "For optimum performance, set this to be equal to the number of CPUs or "
 "cores. In many cases, groonga queries may be CPU-intensive work, so to fully "
@@ -10956,7 +11110,7 @@ msgstr ""
 "る必要があります。"
 
 # 270d574b530641ff92d7e897cffc775f
-#: ../../../source/reference/executables/groonga-httpd.txt:286
+#: ../../../source/reference/executables/groonga-httpd.txt:298
 msgid ""
 "This isn't a groonga-httpd specific directive, but an nginx's one. For "
 "details, see http://wiki.nginx.org/CoreModule#worker_processes."
@@ -10966,171 +11120,168 @@ msgstr ""
 "してください。"
 
 # 1c978a3757964495a15bfe4d776e5274
-#: ../../../source/reference/executables/groonga-httpd.txt:289
+#: ../../../source/reference/executables/groonga-httpd.txt:301
 msgid "By default, this is set to 1. It is nginx's default."
 msgstr "デフォルトで、このディレクティブには1が設定されています。"
 
 # 3a18063520a04acc9a107d556534610e
-#: ../../../source/reference/executables/groonga-httpd.txt:292
+#: ../../../source/reference/executables/groonga-httpd.txt:304
 msgid "``proxy_cache``"
 msgstr ""
 
 # 96b0a4d9d766453bacf0aecc3a657d34
-#: ../../../source/reference/executables/groonga-httpd.txt:294
+#: ../../../source/reference/executables/groonga-httpd.txt:306
 msgid ""
 "In short, you can use nginx's reverse proxy and cache mechanism instead of "
 "groonga's built-in query cache feature."
-msgstr ""
+msgstr "まとめると、groonga組み込みのクエリーキャッシュ機能の代わりにnginxのリバースプロ機とキャッシュの仕組みを使うこともできます。"
 
 # 8f1c2a65616e4af7ad52a4d83386d102
-#: ../../../source/reference/executables/groonga-httpd.txt:298
-#, fuzzy
+#: ../../../source/reference/executables/groonga-httpd.txt:310
 msgid "Query cache"
-msgstr "クエリー展開オブジェクト一覧"
+msgstr "クエリーキャッシュ"
 
 # a31cd12b3d704dda9e9ec73fef1a9f42
-#: ../../../source/reference/executables/groonga-httpd.txt:300
+#: ../../../source/reference/executables/groonga-httpd.txt:312
 msgid ""
 "Groonga has query cache feature for :doc:`/reference/commands/select` "
 "command. The feature improves performance in many cases."
-msgstr ""
+msgstr "groongaは :doc:`/reference/commands/select` コマンド用にクエリーキャッシュ機能を提供しています。この機能は多くのケースで性能向上を実現します。"
 
 # a1446ef2c2954634aea7c0109b5b43fa
-#: ../../../source/reference/executables/groonga-httpd.txt:303
+#: ../../../source/reference/executables/groonga-httpd.txt:315
 msgid ""
 "Query cache feature works well on groonga-httpd except you use :doc:`/"
 "reference/commands/cache_limit` command on 2 or more workers. Normally, :doc:"
 "`/reference/commands/cache_limit` command isn't used. So there is no problem "
 "on many cases."
-msgstr ""
+msgstr "クエリーキャッシュ機能は :doc:`/reference/commands/cache_limit` コマンドを使っていないあるいはワーカー数が1だけの場合はgroonga-httpd上でもきちんと動作します。通常、 :doc:`/reference/commands/cache_limit` コマンドは使わないので、多くの場合は問題がありません。"
 
 # 8f24cd4ac2cc4aeeb4a7cba5f789664d
-#: ../../../source/reference/executables/groonga-httpd.txt:308
+#: ../../../source/reference/executables/groonga-httpd.txt:320
 msgid ""
 "Here is a description about a problem of using :doc:`/reference/commands/"
 "cache_limit` command on 2 or more workers."
-msgstr ""
+msgstr "2ワーカー以上で:doc:`/reference/commands/cache_limit` コマンドを使ったときの問題点を説明します。"
 
 # 78187cb2bed34a22afe01b83d35787d7
-#: ../../../source/reference/executables/groonga-httpd.txt:311
+#: ../../../source/reference/executables/groonga-httpd.txt:323
 msgid ""
 "Groonga's query cache is available in the same process. It means that "
 "workers can't share the cache. If you don't change cache size, it isn't a "
 "big problem. If you want to change cache size by :doc:`/reference/commands/"
 "cache_limit` command, there is a problem."
-msgstr ""
+msgstr "groongaのクエリーキャッシュは同じプロセス内で有効です。これは、同じキャッシュを複数のワーカー間で共有できないということです。キャッシュサイズを変更しないならこれは大きな問題ではありません。もし、 :doc:`/reference/commands/cache_limit`コマンドでキャッシュサイズを変更したいなら問題になります。"
 
 # 1445fa92c2ec4be193aad7b62134b061
-#: ../../../source/reference/executables/groonga-httpd.txt:316
-msgid "There is no portable ways to change change cache size for all workers."
-msgstr ""
+#: ../../../source/reference/executables/groonga-httpd.txt:328
+msgid "There is no portable ways to change cache size for all workers."
+msgstr "すべてのワーカーのキャッシュサイズを変更する汎用的な方法がないのです。"
 
 # 71805bb14b824fd78e52ee84a65b09f8
-#: ../../../source/reference/executables/groonga-httpd.txt:318
+#: ../../../source/reference/executables/groonga-httpd.txt:330
 msgid "For example, there are 3 workers::"
-msgstr ""
+msgstr "例えば、3ワーカーいるとします::"
 
 # fe56b7e376264663865b5f991f5cde47
-#: ../../../source/reference/executables/groonga-httpd.txt:324
+#: ../../../source/reference/executables/groonga-httpd.txt:336
 msgid ""
 "The client requests :doc:`/reference/commands/cache_limit` command and the "
 "worker 1 receives it::"
-msgstr ""
+msgstr "クライアントが :doc:`/reference/commands/cache_limit` コマンドをリクエストし、worker 1が受け取りました::"
 
 # 65e71d2f631942cdb22b4476ff600ef9
-#: ../../../source/reference/executables/groonga-httpd.txt:331
+#: ../../../source/reference/executables/groonga-httpd.txt:343
 msgid ""
 "The client requests :doc:`/reference/commands/cache_limit` command again and "
 "the worker 1 receives it again::"
-msgstr ""
+msgstr "クライアントがもう一度 :doc:`/reference/commands/cache_limit` コマンドをリクエストし、またworker 1が受け取りました::"
 
 # d1440d7432af404f9e4702df39142148
-#: ../../../source/reference/executables/groonga-httpd.txt:338
+#: ../../../source/reference/executables/groonga-httpd.txt:350
 msgid ""
 "In this case, the worker 2 and the worker 3 aren't received any requests. So "
 "they don't change cache size."
-msgstr ""
+msgstr "この場合、worker 2とworker 3は1つもリクエストを受けとっていません。そのため、これらのワーカーのキャッシュサイズは変更されていません。"
 
 # 9a69a015b5214b5582aa6cd97e2b610c
-#: ../../../source/reference/executables/groonga-httpd.txt:341
+#: ../../../source/reference/executables/groonga-httpd.txt:353
 msgid ""
 "You can't choose a worker. So you can't change cache sizes of all workers "
 "by :doc:`/reference/commands/cache_limit` command."
-msgstr ""
+msgstr "クライアントはワーカーを選ぶことができないので、 :doc:`/reference/commands/cache_limit` コマンドですべてのワーカのキャッシュサイズを変更することができないのです。"
 
 # ca97235766774a6f9210802caef1121b
-#: ../../../source/reference/executables/groonga-httpd.txt:345
+#: ../../../source/reference/executables/groonga-httpd.txt:357
 msgid "Reverse proxy and cache"
-msgstr ""
+msgstr "リバースプロキシとキャッシュ"
 
 # 325d8679b6fc479692e93d04c3d68c4d
-#: ../../../source/reference/executables/groonga-httpd.txt:347
+#: ../../../source/reference/executables/groonga-httpd.txt:359
 msgid "You can use nginx's reverse proxy and cache feature for query cache::"
-msgstr ""
+msgstr "nginxのリバースプロキシ機能とキャッシュ機能を使ってクエリーキャッシュを実現できます::"
 
 # 379c5d9eabcb485897f5ff72253d8deb
-#: ../../../source/reference/executables/groonga-httpd.txt:353
+#: ../../../source/reference/executables/groonga-httpd.txt:365
 msgid ""
 "You can use the same cache configuration for all workers but you can't "
 "change cache configuration dynamically by HTTP."
-msgstr ""
+msgstr "この方法ではすべてのワーカーで同じキャッシュの設定をりようできますが、HTTPで動的にキャッシュの設定を変更することはできません。"
 
 # b7ad6340acde466e9b4d1006f2f4bac3
-#: ../../../source/reference/executables/groonga-httpd.txt:356
-#, fuzzy
+#: ../../../source/reference/executables/groonga-httpd.txt:368
 msgid "Here is a sample configuration::"
-msgstr "以下が特別な文字のリストです:"
+msgstr "以下はサンプルの設定です::"
 
 # 9478dbe384944871a05d6fc19adb519b
-#: ../../../source/reference/executables/groonga-httpd.txt:391
+#: ../../../source/reference/executables/groonga-httpd.txt:403
 msgid "See the following nginx documentations for parameter details:"
-msgstr ""
+msgstr "パラメーターの詳細は以下のnginxのドキュメントを見てください:"
 
 # 6c22e62e3c324fda854b6e0e73cfb590
-#: ../../../source/reference/executables/groonga-httpd.txt:393
+#: ../../../source/reference/executables/groonga-httpd.txt:405
 msgid ""
 "http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_cache_path"
 msgstr ""
 
 # 6bb2037c2d3a4a4a812b5bc71468a0c2
-#: ../../../source/reference/executables/groonga-httpd.txt:394
+#: ../../../source/reference/executables/groonga-httpd.txt:406
 msgid ""
 "http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_cache_valid"
 msgstr ""
 
 # 1d369724db0546f2ba3c7dbe508057a0
-#: ../../../source/reference/executables/groonga-httpd.txt:395
+#: ../../../source/reference/executables/groonga-httpd.txt:407
 msgid "http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_cache"
 msgstr ""
 
 # 1d76d5a973b24a65b1996c83ad3a9f1c
-#: ../../../source/reference/executables/groonga-httpd.txt:396
+#: ../../../source/reference/executables/groonga-httpd.txt:408
 msgid "http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_pass"
 msgstr ""
 
 # 41e80cb945b946b898844ae9f82955ed
-#: ../../../source/reference/executables/groonga-httpd.txt:398
+#: ../../../source/reference/executables/groonga-httpd.txt:410
 msgid ""
 "Note that you need to remove cache files created by nginx by hand after you "
 "load new data to groonga. For the above sample configuration, run the "
 "following command to remove cache files::"
-msgstr ""
+msgstr "groongaに新しいデータをロードしたときは自分でnginxが作ったキャッシュファイルを削除しなければいけないことに注意してください。前述のサンプル設定では、以下のコマンドでキャッシュを消せます::"
 
 # 149997d06c0f46f5936b538583c037b9
-#: ../../../source/reference/executables/groonga-httpd.txt:405
+#: ../../../source/reference/executables/groonga-httpd.txt:417
 msgid ""
 "If you use groonga's query cache feature, you don't need to expire cache by "
 "hand. It is done automatically."
-msgstr ""
+msgstr "groongaのクエリーキャッシュ機能を使うと、手動でキャッシュを失効する必要はありません。自動で失効します。"
 
 # e914b6c5fd6143e684506e61b4b424d4
-#: ../../../source/reference/executables/groonga-httpd.txt:409
+#: ../../../source/reference/executables/groonga-httpd.txt:421
 msgid "Available nginx modules"
 msgstr "利用可能なnginxモジュール"
 
 # 177bb78187954c29b18c36cef58b6745
-#: ../../../source/reference/executables/groonga-httpd.txt:411
-#, fuzzy
+#: ../../../source/reference/executables/groonga-httpd.txt:423
 msgid ""
 "All standard HTTP modules are available. HttpRewriteModule is disabled when "
 "you don't have PCRE (Perl Compatible Regular Expressions). For the list of "
@@ -18063,13 +18214,9 @@ msgstr ""
 msgid "Object型はv1.2でサポートされます。"
 msgstr ""
 
-# de1a8b000c33432a8e1a6b6725024fff
-#~ msgid ""
-#~ "``query`` enables you to specify ``--match_columns`` and ``--"
-#~ "query_string`` parameters as function arguments."
-#~ msgstr ""
-#~ "``query`` は ``--match_columns`` と ``--query_string`` のパラメータを関数"
-#~ "の引数として指定することを可能にします。"
+# 0d40d6ee346244419bf47608a9d4fa25
+#~ msgid ":doc:`/reference/grn_expr/query_syntax`."
+#~ msgstr ":doc:`/reference/grn_expr/query_syntax` も見てください。"
 
 # 6c1acb54542f42a98d506c8a04ebbae7
 #~ msgid ""
@@ -18079,6 +18226,10 @@ msgstr ""
 #~ "``query`` はgroongaの組み込み関数の1つで、複数の ``query`` 関数を ``--"
 #~ "filter`` オプションのパラメータとして指定することができます。"
 
-# 0d40d6ee346244419bf47608a9d4fa25
-#~ msgid ":doc:`/reference/grn_expr/query_syntax`."
-#~ msgstr ":doc:`/reference/grn_expr/query_syntax` も見てください。"
+# de1a8b000c33432a8e1a6b6725024fff
+#~ msgid ""
+#~ "``query`` enables you to specify ``--match_columns`` and ``--"
+#~ "query_string`` parameters as function arguments."
+#~ msgstr ""
+#~ "``query`` は ``--match_columns`` と ``--query_string`` のパラメータを関数"
+#~ "の引数として指定することを可能にします。"
