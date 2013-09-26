@@ -339,6 +339,8 @@ ngx_http_groonga_handler_cleanup(void *user_data)
   GRN_OBJ_FIN(context, &(data->head));
   GRN_OBJ_FIN(context, &(data->body));
   GRN_OBJ_FIN(context, &(data->foot));
+  grn_logger_set(context, NULL);
+  grn_query_logger_set(context, NULL);
   grn_ctx_fin(context);
 }
 
