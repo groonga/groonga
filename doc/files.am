@@ -23,8 +23,11 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/cache_limit/get.log \
 	$(top_srcdir)/doc/source/example/reference/commands/cache_limit/set.log \
 	$(top_srcdir)/doc/source/example/reference/commands/column_rename/column_rename.log \
+	$(top_srcdir)/doc/source/example/reference/commands/delete/cascade.log \
+	$(top_srcdir)/doc/source/example/reference/commands/delete/status.log \
 	$(top_srcdir)/doc/source/example/reference/commands/normalize/normalizer_auto_ascii.log \
 	$(top_srcdir)/doc/source/example/reference/commands/register/query_expanders_tsv.log \
+	$(top_srcdir)/doc/source/example/reference/commands/ruby_eval/calc.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/filter_equal.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/filter_less_than.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/limit_negative.log \
@@ -392,6 +395,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/commands/normalize.txt \
 	$(top_srcdir)/doc/source/reference/commands/quit.txt \
 	$(top_srcdir)/doc/source/reference/commands/register.txt \
+	$(top_srcdir)/doc/source/reference/commands/ruby_eval.txt \
 	$(top_srcdir)/doc/source/reference/commands/select.txt \
 	$(top_srcdir)/doc/source/reference/commands/shutdown.txt \
 	$(top_srcdir)/doc/source/reference/commands/status.txt \
@@ -505,8 +509,11 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/cache_limit/get.log \
 	source/example/reference/commands/cache_limit/set.log \
 	source/example/reference/commands/column_rename/column_rename.log \
+	source/example/reference/commands/delete/cascade.log \
+	source/example/reference/commands/delete/status.log \
 	source/example/reference/commands/normalize/normalizer_auto_ascii.log \
 	source/example/reference/commands/register/query_expanders_tsv.log \
+	source/example/reference/commands/ruby_eval/calc.log \
 	source/example/reference/commands/select/filter_equal.log \
 	source/example/reference/commands/select/filter_less_than.log \
 	source/example/reference/commands/select/limit_negative.log \
@@ -874,6 +881,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/commands/normalize.txt \
 	source/reference/commands/quit.txt \
 	source/reference/commands/register.txt \
+	source/reference/commands/ruby_eval.txt \
 	source/reference/commands/select.txt \
 	source/reference/commands/shutdown.txt \
 	source/reference/commands/status.txt \
@@ -1121,6 +1129,7 @@ html_files_relative_from_locale_dir = \
 	html/_sources/reference/commands/normalize.txt \
 	html/_sources/reference/commands/quit.txt \
 	html/_sources/reference/commands/register.txt \
+	html/_sources/reference/commands/ruby_eval.txt \
 	html/_sources/reference/commands/select.txt \
 	html/_sources/reference/commands/shutdown.txt \
 	html/_sources/reference/commands/status.txt \
@@ -1301,6 +1310,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/commands/normalize.html \
 	html/reference/commands/quit.html \
 	html/reference/commands/register.html \
+	html/reference/commands/ruby_eval.html \
 	html/reference/commands/select.html \
 	html/reference/commands/shutdown.html \
 	html/reference/commands/status.html \
