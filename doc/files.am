@@ -20,6 +20,8 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/development/travis-ci.txt \
 	$(top_srcdir)/doc/source/example/completion-1.log \
 	$(top_srcdir)/doc/source/example/correction-1.log \
+	$(top_srcdir)/doc/source/example/reference/commands/cache_limit/get.log \
+	$(top_srcdir)/doc/source/example/reference/commands/cache_limit/set.log \
 	$(top_srcdir)/doc/source/example/reference/commands/column_rename/column_rename.log \
 	$(top_srcdir)/doc/source/example/reference/commands/normalize/normalizer_auto_ascii.log \
 	$(top_srcdir)/doc/source/example/reference/commands/register/query_expanders_tsv.log \
@@ -500,6 +502,8 @@ source_files_relative_from_doc_dir = \
 	source/development/travis-ci.txt \
 	source/example/completion-1.log \
 	source/example/correction-1.log \
+	source/example/reference/commands/cache_limit/get.log \
+	source/example/reference/commands/cache_limit/set.log \
 	source/example/reference/commands/column_rename/column_rename.log \
 	source/example/reference/commands/normalize/normalizer_auto_ascii.log \
 	source/example/reference/commands/register/query_expanders_tsv.log \
