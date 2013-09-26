@@ -288,6 +288,123 @@ see http://wiki.nginx.org/CoreModule#worker_processes.
 
 By default, this is set to 1. It is nginx's default.
 
+``proxy_cache``
+"""""""""""""""
+
+In short, you can use nginx's reverse proxy and cache mechanism
+instead of groonga's built-in query cache feature.
+
+Query cache
++++++++++++
+
+Groonga has query cache feature for :doc:`/reference/commands/select`
+command. The feature improves performance in many cases.
+
+Query cache feature works well on groonga-httpd except you use
+:doc:`/reference/commands/cache_limit` command on 2 or more
+workers. Normally, :doc:`/reference/commands/cache_limit` command
+isn't used. So there is no problem on many cases.
+
+Here is a description about a problem of using
+:doc:`/reference/commands/cache_limit` command on 2 or more workers.
+
+Groonga's query cache is available in the same process. It means that
+workers can't share the cache. If you don't change cache size, it
+isn't a big problem. If you want to change cache size by
+:doc:`/reference/commands/cache_limit` command, there is a problem.
+
+There is no portable ways to change change cache size for all workers.
+
+For example, there are 3 workers::
+
+                                     +-- worker 1
+  client -- groonga-httpd (master) --+-- worker 2
+                                     +-- worker 3
+
+The client requests :doc:`/reference/commands/cache_limit` command and
+the worker 1 receives it::
+
+                                     +-> worker 1 (changed!)
+  client -> groonga-httpd (master) --+-- worker 2
+                                     +-- worker 3
+
+The client requests :doc:`/reference/commands/cache_limit` command
+again and the worker 1 receives it again::
+
+                                     +-> worker 1 (changed again!!!)
+  client -> groonga-httpd (master) --+-- worker 2
+                                     +-- worker 3
+
+In this case, the worker 2 and the worker 3 aren't received any
+requests. So they don't change cache size.
+
+You can't choose a worker. So you can't change cache sizes of all
+workers by :doc:`/reference/commands/cache_limit` command.
+
+Reverse proxy and cache
++++++++++++++++++++++++
+
+You can use nginx's reverse proxy and cache feature for query cache::
+
+                                                              +-- worker 1
+  client -- groonga-httpd (master) -- reverse proxy + cache --+-- worker 2
+                                                              +-- worker 3
+
+You can use the same cache configuration for all workers but you can't
+change cache configuration dynamically by HTTP.
+
+Here is a sample configuration::
+
+   ...
+   http {
+     proxy_cache_path /var/cache/groonga-httpd levels=1:2 keys_zone=groonga:10m;
+     proxy_cache_valid 10m;
+     ...
+     # Reverse proxy and cache
+     server {
+       listen 10041;
+       ...
+       # Only select command
+       location /d/select {
+         # Pass through groonga with cache
+         proxy_cache groonga;
+         proxy_pass http://localhost:20041;
+       }
+
+       location / {
+         # Pass through groonga
+         proxy_pass http://localhost:20041;
+       }
+     }
+
+     # groonga
+     server {
+       location 20041;
+       location /d/ {
+         groonga on;
+         groonga_database /var/lib/groonga/db/db;
+       }
+     }
+     ...
+   }
+
+See the following nginx documentations for parameter details:
+
+  * http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_cache_path
+  * http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_cache_valid
+  * http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_cache
+  * http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_pass
+
+Note that you need to remove cache files created by nginx by hand
+after you load new data to groonga. For the above sample
+configuration, run the following command to remove cache files::
+
+  % groonga DB_PATH < load.grn
+  % rm -rf /var/cache/groonga-httpd/*
+
+If you use groonga's query cache feature, you don't need to expire
+cache by hand. It is done automatically.
+
 Available nginx modules
 -----------------------
 
