@@ -2,53 +2,85 @@
 
 .. highlightlang:: none
 
-cache_limit
-===========
+.. groonga-command
+.. database: commands_cache_limit
 
-名前
-----
+``cache_limit``
+===============
 
-cache_limit - cacheサイズの設定・取得
+Summary
+-------
 
-書式
-----
-::
+``cache_limit`` gets or sets the max number of query cache
+entries. Query cache is used only by :doc:`select` command.
 
- cache_limit max
+If the max number of query cache entries is 100, the recent 100
+``select`` commands are only cached. The cache expire algorithm is LRU
+(least recently used).
 
-説明
-----
+Syntax
+------
 
-groonga組込コマンドの一つであるcache_limitについて説明します。組込コマンドは、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。
+``cache_limit`` has one optional parameter::
 
-cache_limitは、クエリキャッシュの最大件数を取得したり設定したりします。
+  cache_limit [max=null]
 
-引数
-----
+Usage
+-----
+
+You can get the current max number of cache entries by calling
+``cache_limit`` without parameter.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/cache_limit/get.log
+.. cache_limit
+
+You can set the max number of cache entries by calling ``cache_limit``
+with ``max`` parameter.
+
+Here is an example that sets ``10`` as the max number of cache
+entries.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/cache_limit/set.log
+.. cache_limit 10
+.. cache_limit
+
+If ``max`` parameter is used, the return value is the max number of
+cache entries before ``max`` parameter is set.
+
+
+Parameters
+----------
+
+This section describes all parameters.
 
 ``max``
+"""""""
 
-  クエリキャッシュの最大件数を整数で指定します。
-  maxが指定されなかった場合には、クエリキャッシュの最大件数は変更せず、
-  現在の設定値のみが返されます。
+It specifies the max number of query cache entries as a number.
 
-返値
-----
+If ``max`` parameter isn't specified, the current max number of query
+cache entries isn't changed. ``cache_limit`` just returns the current
+max number of query cache entries.
 
-json
-^^^^
+Return value
+------------
 
-::
+``cache_limit`` returns the current max number of query cache entries::
 
- [以前の設定値]
+  [[HEADER, n_entries]]
 
-``以前の設定値``
+``HEADER``
 
-  すでに設定されていたクエリキャッシュの最大件数を返す。
+  See :doc:`/reference/command/output_format` about ``HEADER``.
 
-例
---
-::
+``n_entries``
 
- cache_limit 4
- [100]
+  ``n_entries`` is the current max number of query cache entries. It
+  is a number.
+
+See also
+--------
+
+* :doc:`select`
