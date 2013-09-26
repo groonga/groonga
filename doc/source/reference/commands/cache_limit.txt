@@ -28,14 +28,14 @@ Syntax
 Usage
 -----
 
-You can get the current max number of cache entries by calling
+You can get the current max number of cache entries by executing
 ``cache_limit`` without parameter.
 
 .. groonga-command
 .. include:: ../../example/reference/commands/cache_limit/get.log
 .. cache_limit
 
-You can set the max number of cache entries by calling ``cache_limit``
+You can set the max number of cache entries by executing ``cache_limit``
 with ``max`` parameter.
 
 Here is an example that sets ``10`` as the max number of cache

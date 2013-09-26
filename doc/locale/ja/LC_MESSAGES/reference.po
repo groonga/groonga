@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-09-26 16:50+0900\n"
-"PO-Revision-Date: 2013-09-26 16:48+0900\n"
+"PO-Revision-Date: 2013-09-26 18:36+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -4065,7 +4065,7 @@ msgstr ""
 msgid ""
 "``cache_limit`` gets or sets the max number of query cache entries. Query "
 "cache is used only by :doc:`select` command."
-msgstr ""
+msgstr "``cache_limit`` は最大クエリーキャッシュエントリー数を取得・設定します。クエリーキャッシュを使っているのは :doc:`select` コマンドだけです。"
 
 # 685401eebe664ad6907a39d783ecd228
 #: ../../../source/reference/commands/cache_limit.txt:17
@@ -4073,7 +4073,7 @@ msgid ""
 "If the max number of query cache entries is 100, the recent 100 ``select`` "
 "commands are only cached. The cache expire algorithm is LRU (least recently "
 "used)."
-msgstr ""
+msgstr "最大クエリーキャッシュエントリー数が100の場合は、最新の100 ``select`` コマンドの結果だけキャッシュします。キャッシュを失効するアルゴリズムはLRU（Least Recently Used）です。"
 
 # 47dc2b34beb1410495604199c7f24873
 # eaadf83a10cc4718bfa95e2aca8b7206
@@ -4098,9 +4098,8 @@ msgstr "構文"
 
 # 1ce42bdc29594a019e7d0db71d6a3135
 #: ../../../source/reference/commands/cache_limit.txt:24
-#, fuzzy
 msgid "``cache_limit`` has one optional parameter::"
-msgstr "``snippet_html`` の引数は1つだけです::"
+msgstr "``cache_limit`` には省略可能な引数が1つあります::"
 
 # 2874da1d881b448992bb7c4fd1cf7e34
 # 09d40eac91774db29b40ff7e960663da
@@ -4130,29 +4129,28 @@ msgstr "使い方"
 # 4a9a2a4770824722af912b5db7981823
 #: ../../../source/reference/commands/cache_limit.txt:31
 msgid ""
-"You can get the current max number of cache entries by calling "
+"You can get the current max number of cache entries by executing "
 "``cache_limit`` without parameter."
-msgstr ""
+msgstr "引数なしで ``cache_limit`` を実行すると現在の最大キャッシュエントリー数を取得できます。"
 
 # 1072ca2fe6814810968fb9735080df3a
 #: ../../../source/reference/commands/cache_limit.txt:38
 msgid ""
-"You can set the max number of cache entries by calling ``cache_limit`` with "
+"You can set the max number of cache entries by executing ``cache_limit`` with "
 "``max`` parameter."
-msgstr ""
+msgstr "``max`` 引数つきで ``cache_limit`` を実行すると最大キャッシュエントリー数を設定できます。"
 
 # b993c6521463466f8f42d9a4e7e5107f
 #: ../../../source/reference/commands/cache_limit.txt:41
-#, fuzzy
 msgid "Here is an example that sets ``10`` as the max number of cache entries."
-msgstr "以下は ``NormalizerAuto`` ノーマライザーを使う例です。"
+msgstr "次の例は最大キャッシュエントリー数を ``10`` に設定する例です。"
 
 # c689794b47f447d2a50f00f937e79050
 #: ../../../source/reference/commands/cache_limit.txt:49
 msgid ""
 "If ``max`` parameter is used, the return value is the max number of cache "
 "entries before ``max`` parameter is set."
-msgstr ""
+msgstr "``max`` 引数を使うと、指定したあたいに設定される前の最大キャッシュエントリー数が戻り値になります。"
 
 # 3ed1ed0a3bb349fa8db4eccf86029d9f
 # 18532e03e38c4f96970d5935b7432cba
@@ -4188,9 +4186,8 @@ msgstr ""
 
 # 4beb7f0f3d704fd0b3176496d7f55eb9
 #: ../../../source/reference/commands/cache_limit.txt:61
-#, fuzzy
 msgid "It specifies the max number of query cache entries as a number."
-msgstr "クエリ展開に使うプラグイン名を指定します。"
+msgstr "数値で最大クエリーキャッシュエントリー数を指定します。"
 
 # 2ea44862edc74fed84506ae2936f18b4
 #: ../../../source/reference/commands/cache_limit.txt:63
@@ -4198,7 +4195,7 @@ msgid ""
 "If ``max`` parameter isn't specified, the current max number of query cache "
 "entries isn't changed. ``cache_limit`` just returns the current max number "
 "of query cache entries."
-msgstr ""
+msgstr "``max`` 引数が指定されていない場合は、現在の最大クエリーキャッシュエントリー数は変わりません。 ``cache_limit`` は単に現在の最大クエリーキャッシュエントリー数を返します。"
 
 # f18ad5e74b9c45f783d38e24995b3abe
 #: ../../../source/reference/commands/cache_limit.txt:68
@@ -4221,7 +4218,7 @@ msgstr "戻り値"
 # a44f32b6df0640fdafd36376d7a6c663
 #: ../../../source/reference/commands/cache_limit.txt:70
 msgid "``cache_limit`` returns the current max number of query cache entries::"
-msgstr ""
+msgstr "``cache_limit`` は現在の最大クエリーキャッシュエントリー数を返します::"
 
 # 7076e42ec8ef4557b5a1a22d51cab92d
 #: ../../../source/reference/commands/cache_limit.txt:76
@@ -4241,7 +4238,7 @@ msgstr ""
 msgid ""
 "``n_entries`` is the current max number of query cache entries. It is a "
 "number."
-msgstr ""
+msgstr "``n_entries`` は現在の最大クエリーキャッシュエントリー数です。これは数値です。"
 
 # 1bcba209f5f3464bbaa1919ec54732d7
 #: ../../../source/reference/commands/cache_limit.txt:86
