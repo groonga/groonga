@@ -45,7 +45,7 @@ Here are a schema definition and sample data to show usage.
 Delete the record from Entry table which has "2" as the key.
 
 .. groonga-command
-.. include:: ../../example/reference/commands/delete_status.log
+.. include:: ../../example/reference/commands/delete/status.log
 .. delete Entry 2
 .. select Entry
 
@@ -56,7 +56,7 @@ The country column of Users table associates with Country table.
 "Cascaded delete" removes the records which matches specified key and refers that key.
 
 .. groonga-command
-.. include:: ../../example/reference/commands/delete_cascade.log
+.. include:: ../../example/reference/commands/delete/cascade.log
 .. table_create Country TABLE_HASH_KEY ShortText
 .. table_create Users TABLE_HASH_KEY UInt32
 .. column_create Users name COLUMN_SCALAR ShortText
