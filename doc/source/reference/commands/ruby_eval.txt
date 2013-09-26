@@ -6,7 +6,7 @@
 .. database: commands_ruby_eval
 
 ``ruby_eval``
-===============
+=============
 
 Summary
 -------
