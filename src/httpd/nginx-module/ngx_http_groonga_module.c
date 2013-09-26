@@ -1183,6 +1183,14 @@ ngx_http_groonga_close_database_callback(ngx_http_groonga_loc_conf_t *location_c
   grn_ctx *context;
 
   context = &(location_conf->context);
+  ngx_http_groonga_context_init_logger(context,
+                                       location_conf,
+                                       data->pool,
+                                       data->log);
+  ngx_http_groonga_context_init_query_logger(context,
+                                             location_conf,
+                                             data->pool,
+                                             data->log);
   grn_cache_current_set(context, location_conf->cache);
 
   grn_obj_close(context, grn_ctx_db(context));
