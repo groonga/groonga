@@ -150,6 +150,34 @@ static grn_logger ngx_http_groonga_logger = {
   ngx_http_groonga_logger_fin
 };
 
+static ngx_int_t
+ngx_http_groonga_context_init_logger(grn_ctx *context,
+                                     ngx_http_groonga_loc_conf_t *location_conf,
+                                     ngx_pool_t *pool,
+                                     ngx_log_t *log)
+{
+  ngx_http_groonga_logger_data_t *logger_data;
+
+  if (!location_conf->log_file) {
+    return NGX_OK;
+  }
+
+  logger_data = ngx_pcalloc(pool, sizeof(ngx_http_groonga_logger_data_t));
+  if (!logger_data) {
+    ngx_log_error(NGX_LOG_ERR, log, 0,
+                  "http_groonga: failed to allocate memory for logger");
+    return NGX_ERROR;
+  }
+
+  logger_data->pool = pool;
+  logger_data->file = location_conf->log_file;
+  ngx_http_groonga_logger.max_level = location_conf->log_level;
+  ngx_http_groonga_logger.user_data = logger_data;
+  grn_logger_set(context, &ngx_http_groonga_logger);
+
+  return NGX_OK;
+}
+
 static void
 ngx_http_groonga_query_logger_log(grn_ctx *ctx, unsigned int flag,
                                   const char *timestamp, const char *info,
@@ -231,23 +259,16 @@ ngx_http_groonga_context_init(grn_ctx *context,
                               ngx_log_t *log)
 {
   ngx_int_t status;
-  ngx_http_groonga_logger_data_t *logger_data;
-
-  logger_data = ngx_pcalloc(pool, sizeof(ngx_http_groonga_logger_data_t));
-  if (!logger_data) {
-    ngx_log_error(NGX_LOG_ERR, log, 0,
-                  "http_groonga: failed to allocate memory for logger");
-    return NGX_ERROR;
-  }
 
   grn_ctx_init(context, GRN_NO_FLAGS);
 
-  if (location_conf->log_file) {
-    logger_data->pool = pool;
-    logger_data->file = location_conf->log_file;
-    ngx_http_groonga_logger.max_level = location_conf->log_level;
-    ngx_http_groonga_logger.user_data = logger_data;
-    grn_logger_set(context, &ngx_http_groonga_logger);
+  status = ngx_http_groonga_context_init_logger(context,
+                                                location_conf,
+                                                pool,
+                                                log);
+  if (status == NGX_ERROR) {
+    grn_ctx_fin(context);
+    return status;
   }
 
   status = ngx_http_groonga_context_init_query_logger(context,
