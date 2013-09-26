@@ -256,9 +256,10 @@ Default
 Context
   ``http``, ``server``, ``location``
 
-Specifies groonga log path in the ``http``, ``server`` or ``location`` block. The
-default is ``/var/log/groonga/httpd/groonga-query.log``.
-You can disable logging to specify ``off``.
+Specifies groonga's query log path in the ``http``, ``server`` or
+``location`` block. The default is
+``/var/log/groonga/httpd/groonga-query.log``.  You can disable logging
+to specify ``off``.
 
 Examples::
 
@@ -268,8 +269,19 @@ Examples::
     groonga_query_log_path off;
   }
 
-Use ``groonga_query_log_path`` for investigating the query which is related to
-the issue such as crashed worker process for example.
+Query log is useful for the following cases:
+
+  * Detecting slow query.
+  * Debugging.
+
+You can analyze your query log by `groonga-query-log package
+<https://github.com/groonga/groonga-query-log>`_. The package provides
+useful tools.
+
+For example, there is a tool that analyzing your query log. It can
+detect slow queries from your query log. There is a tool that
+replaying same queries in your query log. It can test the new groonga
+before updating production environment.
 
 Performance related directives
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
