@@ -277,6 +277,7 @@ ngx_http_groonga_context_init(grn_ctx *context,
                                                       log);
   if (status == NGX_ERROR) {
     grn_ctx_fin(context);
+    return status;
   }
 
   if (location_conf->cache) {
