@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-09-27 12:40+0900\n"
-"PO-Revision-Date: 2013-09-27 11:59+0900\n"
+"PO-Revision-Date: 2013-09-27 12:46+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -10967,20 +10967,20 @@ msgid ""
 "value is ``on`` and the groonga database specified by :ref:`groonga-"
 "database` doesn't exist, the groonga database is created automatically. If "
 "the groonga database exists, groonga-httpd does nothing."
-msgstr ""
+msgstr "groongaのデータベースを自動で作成するかどうかを指定します。もし、この値が ``on`` で :ref:`groonga-database` に指定したgroongaのデータベースが存在しない場合は自動でgroongaのデータベースを作成します。groongaのデータベースが存在している場合は何もしません。"
 
 # 206cb401e9b6450ab20a4aea52e980db
 #: ../../../source/reference/executables/groonga-httpd.txt:160
 msgid ""
 "If parent directory doesn't exist, parent directory is also created "
 "recursively."
-msgstr ""
+msgstr "もし、親ディレクトリが存在しな場合は再帰的に親ディレクトリも作成します。"
 
 # fc4f04d4a8024bbab90a7f57766ec620
 #: ../../../source/reference/executables/groonga-httpd.txt:163
 msgid ""
 "The default value is ``on``. Normally, the value doesn't need to be changed."
-msgstr ""
+msgstr "デフォルト値は ``on`` です。通常、この値を変更する必要はありません。"
 
 # ae6fd0bed9f44cef821a1287f3971e34
 #: ../../../source/reference/executables/groonga-httpd.txt:168
