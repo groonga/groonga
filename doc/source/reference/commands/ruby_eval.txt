@@ -52,7 +52,7 @@ Return value
 
 ``ruby_eval`` returns the evaluated result which key is "value" as json format::
 
-  [[HEADER, EVALUATED]]
+  [HEADER, EVALUATED]
 
 ``HEADER``
 
