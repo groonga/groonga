@@ -643,10 +643,12 @@ grn_ctx_fin(grn_ctx *ctx)
       grn_expr_parser_close(ctx);
     }
     if (ctx->impl->values) {
+#ifndef USE_MEMORY_DEBUG
       grn_db_obj *o;
       GRN_ARRAY_EACH(ctx, ctx->impl->values, 0, 0, id, &o, {
         grn_obj_close(ctx, *((grn_obj **)o));
       });
+#endif
       grn_array_close(ctx, ctx->impl->values);
     }
     if (ctx->impl->ios) {
