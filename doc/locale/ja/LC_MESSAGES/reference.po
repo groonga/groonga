@@ -5910,18 +5910,6 @@ msgstr ""
 msgid "It specifies the name of table to delete the records."
 msgstr "レコードを削除するテーブルの名前を指定します。"
 
-# 1b215601dfba4574bba3b4cba719696d
-#: ../../../source/reference/commands/delete.txt:56
-msgid ""
-"\"Cascaded delete\" removes the records which matches specified key and "
-"refers that key."
-msgstr ""
-
-# ffa8ab8997a74ec381047804746e748d
-#: ../../../source/reference/commands/delete.txt:86
-msgid "It specifies the name of table to delete the records."
-msgstr "レコードを削除するテーブルの名前を指定します。"
-
 # 7d950efd31854960bd5806ac07070091
 # 67220f6cc5d3406fb63eef88c6ec37d5
 # 57f5f9a442ff45f5a67224bee15932c1
