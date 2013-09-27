@@ -50,27 +50,21 @@ It specifies the ruby script which you want to evaluate.
 Return value
 ------------
 
-``ruby_eval`` returns the evaluated result which key is "value" as json format::
+``ruby_eval`` returns the evaluated result with metadata such as
+exception information (Including metadata isn't implemented yet)::
 
-  [HEADER, EVALUATED]
+  [HEADER, {"value": EVALUATED_VALUE}]
 
 ``HEADER``
 
   See :doc:`/reference/command/output_format` about ``HEADER``.
 
-``EVALUATED``
+``EVALUATED_VALUE``
 
-  ``EVALUATED`` consists of pair of key and value in forms of {key:value}.
+  ``EVALUATED_VALUE`` is the evaludated value of ``ruby_script``.
 
-  .. list-table::
-     :header-rows: 1
-
-     * - Name
-       - Description
-     * - ``key``
-       - reserved word 'value'.
-     * - ``value``
-       - the value of evaluated script. It must be a number.
+  ``ruby_eval`` supports only a number for evaluated value for now.
+  Supported types will be increased in the future.
 
 See also
 --------
