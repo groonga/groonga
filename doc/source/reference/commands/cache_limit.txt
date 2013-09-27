@@ -69,15 +69,15 @@ Return value
 
 ``cache_limit`` returns the current max number of query cache entries::
 
-  [[HEADER, n_entries]]
+  [[HEADER, N_ENTRIES]]
 
 ``HEADER``
 
   See :doc:`/reference/command/output_format` about ``HEADER``.
 
-``n_entries``
+``N_ENTRIES``
 
-  ``n_entries`` is the current max number of query cache entries. It
+  ``N_ENTRIES`` is the current max number of query cache entries. It
   is a number.
 
 See also
