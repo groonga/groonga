@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-09-26 18:52+0900\n"
+"POT-Creation-Date: 2013-09-27 11:52+0900\n"
 "PO-Revision-Date: 2013-09-26 19:07+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -405,8 +405,8 @@ msgstr "リファレンス"
 #: ../../../source/reference/api/grn_cache.txt:56
 msgid ""
 "It is an opaque cache object. You can create a ``grn_cache`` by :c:func:"
-"`grn_cache_open()` and free the created object by :c:func:`grn_cache_close()"
-"`."
+"`grn_cache_open()` and free the created object by :c:func:"
+"`grn_cache_close()`."
 msgstr ""
 
 # d63c7815788f435abe531c85072637c7
@@ -461,16 +461,15 @@ msgid ""
 "Sets the cache object that is used in :doc:`/reference/commands/select` "
 "command."
 msgstr ""
-":doc:`/reference/commands/select` コマンドで使われるキャ"
-"ッシュオブジェクトを設定します。"
+":doc:`/reference/commands/select` コマンドで使われるキャッシュオブジェクトを"
+"設定します。"
 
 # b58131dc80f1422aabd04ed4e3d46244
 #: ../../../source/reference/api/grn_cache.txt:86
 msgid ""
 "The cache object that is used in :doc:`/reference/commands/select` command."
 msgstr ""
-":doc:`/reference/commands/select` コマンドで使われるキャッシュオブジェ"
-"クト。"
+":doc:`/reference/commands/select` コマンドで使われるキャッシュオブジェクト。"
 
 # b58131dc80f1422aabd04ed4e3d46244
 #: ../../../source/reference/api/grn_cache.txt:92
@@ -478,8 +477,8 @@ msgid ""
 "Gets the cache object that is used in :doc:`/reference/commands/select` "
 "command."
 msgstr ""
-":doc:`/reference/commands/select` コマンドで使われるキャッシュオブジェ"
-"クトを取得します。"
+":doc:`/reference/commands/select` コマンドで使われるキャッシュオブジェクトを"
+"取得します。"
 
 # b58131dc80f1422aabd04ed4e3d46244
 #: ../../../source/reference/api/grn_cache.txt:96
@@ -487,8 +486,8 @@ msgid ""
 "The cache object that is used in :doc:`/reference/commands/select` command. "
 "It may be ``NULL``."
 msgstr ""
-":doc:`/reference/commands/select` コマンドで使われるキャッシュオブジェ"
-"クト。 ``NULL`` のこともあります。"
+":doc:`/reference/commands/select` コマンドで使われるキャッシュオブジェクト。 "
+"``NULL`` のこともあります。"
 
 # 6ed636c740c54ef6bbdf783d0dbb05fc
 #: ../../../source/reference/api/grn_cache.txt:101
@@ -1025,10 +1024,10 @@ msgid ""
 ":c:func:`grn_ctx_init()` で初期化された :c:type:`grn_ctx` オブジェクトは構造"
 "体の実体をAPIの呼び元で確保するのに対して、 :c:func:`grn_ctx_open()` では"
 "groongaライブラリの内部で、実体を確保します。 どちらで初期化された :c:type:"
-"`grn_ctx` も、 :c:func:`grn_ctx_fin()` で解放できます。 :c:func:`grn_ctx_open"
-"()` で確保した :c:type:`grn_ctx` 構造体に関しては、:c:func:`grn_ctx_fin()` で"
-"解放した後に、その :c:type:`grn_ctx` で作成した :c:type:`grn_obj` を :c:func:"
-"`grn_obj_close()` によって解放しても問題ありません。"
+"`grn_ctx` も、 :c:func:`grn_ctx_fin()` で解放できます。 :c:func:"
+"`grn_ctx_open()` で確保した :c:type:`grn_ctx` 構造体に関しては、:c:func:"
+"`grn_ctx_fin()` で解放した後に、その :c:type:`grn_ctx` で作成した :c:type:"
+"`grn_obj` を :c:func:`grn_obj_close()` によって解放しても問題ありません。"
 msgstr ""
 
 # 8d8f6d02f9e342449659ad873ed4bde0
@@ -3384,7 +3383,7 @@ msgstr "``BODY`` に相当する部分は以下です::"
 #: ../../../source/reference/commands/column_rename.txt:71
 #: ../../../source/reference/commands/delete.txt:109
 #: ../../../source/reference/commands/normalize.txt:73
-#: ../../../source/reference/commands/ruby_eval.txt:57
+#: ../../../source/reference/commands/ruby_eval.txt:58
 #: ../../../source/reference/commands/tokenize.txt:174
 #: ../../../source/reference/commands/truncate.txt:65
 msgid "``HEADER``"
@@ -3605,7 +3604,7 @@ msgstr ""
 #: ../../../source/reference/commands/delete.txt:120
 #: ../../../source/reference/commands/load.txt:98
 #: ../../../source/reference/commands/normalize.txt:83
-#: ../../../source/reference/commands/ruby_eval.txt:76
+#: ../../../source/reference/commands/ruby_eval.txt:70
 #: ../../../source/reference/commands/select.txt:906
 #: ../../../source/reference/commands/table_create.txt:280
 #: ../../../source/reference/commands/tokenize.txt:194
@@ -4243,22 +4242,23 @@ msgstr "``cache_limit`` は現在の最大クエリーキャッシュエント�
 
 # 7076e42ec8ef4557b5a1a22d51cab92d
 #: ../../../source/reference/commands/cache_limit.txt:76
-#: ../../../source/reference/commands/ruby_eval.txt:59
+#: ../../../source/reference/commands/ruby_eval.txt:60
 #: ../../../source/reference/commands/tokenize.txt:176
 msgid "See :doc:`/reference/command/output_format` about ``HEADER``."
 msgstr ""
 "``HEADER`` については :doc:`/reference/command/output_format` を参照してくだ"
 "さい。"
 
-# b5b305d811d2486ca764a50d1805113f
+# 58708fa8f6874e6297b726145266e152
 #: ../../../source/reference/commands/cache_limit.txt:78
-msgid "``n_entries``"
+msgid "``N_ENTRIES``"
 msgstr ""
 
 # df6153e959314f60a7172b3838081304
 #: ../../../source/reference/commands/cache_limit.txt:80
+#, fuzzy
 msgid ""
-"``n_entries`` is the current max number of query cache entries. It is a "
+"``N_ENTRIES`` is the current max number of query cache entries. It is a "
 "number."
 msgstr ""
 "``n_entries`` は現在の最大クエリーキャッシュエントリー数です。これは数値で"
@@ -5853,10 +5853,9 @@ msgid ""
 "one table are referenced by other table's records. In such a case, if you "
 "delete the key of one table, other table's records are also removed."
 msgstr ""
-"複数のテーブルが関連付けられていることがあります。例えば、あるテーブ"
-"ルのキーが他のテーブルのレコードで参照されているような場合です。"
-"そのような場合にそのテーブルのキーを削除するなら、他のテーブルのレコー"
-"ドも削除されます。"
+"複数のテーブルが関連付けられていることがあります。例えば、あるテーブルのキー"
+"が他のテーブルのレコードで参照されているような場合です。そのような場合にその"
+"テーブルのキーを削除するなら、他のテーブルのレコードも削除されます。"
 
 # d4569f4fb5db42ee8d5a19932d0a7a36
 #: ../../../source/reference/commands/delete.txt:23
@@ -5864,8 +5863,8 @@ msgid ""
 "Note that the type of other table's column is COLUMN_VECTOR, only the value "
 "of referencing key is removed from the vector value."
 msgstr ""
-"他のテーブルのカラムの型がCOLUMN_VECTORなら、ベクターで参照しているキー"
-"だけが削除されます。"
+"他のテーブルのカラムの型がCOLUMN_VECTORなら、ベクターで参照しているキーだけが"
+"削除されます。"
 
 # 8f5aa6b4c71346a684b9ec9be85d9d41
 # a9f9574e54ea478b870c3a2372048a11
@@ -5883,8 +5882,7 @@ msgstr "使い方を示すために使うスキーマ定義とサンプルデー
 # b60bb79a101e49a8bba1475387eac07f
 #: ../../../source/reference/commands/delete.txt:45
 msgid "Delete the record from Entry table which has \"2\" as the key."
-msgstr ""
-"\"2\"をキーとしてもつEntryテーブルからレコードを削除します。"
+msgstr "\"2\"をキーとしてもつEntryテーブルからレコードを削除します。"
 
 # b993c6521463466f8f42d9a4e7e5107f
 #: ../../../source/reference/commands/delete.txt:52
@@ -5902,8 +5900,8 @@ msgid ""
 "\"Cascaded delete\" removes the records which matches specified key and "
 "refers that key."
 msgstr ""
-"\"カスケード削除\"は指定されたキーやそのキーを参照しているレコードを"
-"削除します。"
+"\"カスケード削除\"は指定されたキーやそのキーを参照しているレコードを削除しま"
+"す。"
 
 # ffa8ab8997a74ec381047804746e748d
 #: ../../../source/reference/commands/delete.txt:86
@@ -5915,7 +5913,6 @@ msgstr "レコードを削除するテーブルの名前を指定します。"
 # 57f5f9a442ff45f5a67224bee15932c1
 # c072bcb3b05f42bd811573a43f04d375
 #: ../../../source/reference/commands/delete.txt:88
-#: ../../../source/reference/commands/ruby_eval.txt:70
 #: ../../../source/reference/commands_not_implemented/add.txt:35
 #: ../../../source/reference/commands_not_implemented/get.txt:33
 #: ../../../source/reference/commands_not_implemented/set.txt:33
@@ -5928,9 +5925,9 @@ msgid ""
 "It specifies the key of record to delete. If you use the table with "
 "TABLE_NO_KEY, the key is just ignored. (Use ``id`` parameter in such a case)"
 msgstr ""
-"削除するレコードのキーを指定します。TABLE_NO_KEYを対象となるテーブル"
-"に使用しているなら、指定したキーは無視されます。(そのような場合には "
-"引数 ``id`` を使います。)"
+"削除するレコードのキーを指定します。TABLE_NO_KEYを対象となるテーブルに使用し"
+"ているなら、指定したキーは無視されます。(そのような場合には 引数 ``id`` を使"
+"います。)"
 
 # 0ef205bfc1064491b91fa2580797171c
 #: ../../../source/reference/commands/delete.txt:95
@@ -5938,8 +5935,8 @@ msgid ""
 "It specifies the id of record to delete. If you specify ``id`` parameter, "
 "you must not specify ``key`` parameter."
 msgstr ""
-"削除するレコードのIDを指定します。 引数 ``id`` を指定する場合、"
-"引数 ``key`` を指定してはいけません。"
+"削除するレコードのIDを指定します。 引数 ``id`` を指定する場合、引数 ``key`` "
+"を指定してはいけません。"
 
 # decb824ea2e5408994b21418b80ca68b
 #: ../../../source/reference/commands/delete.txt:99
@@ -5948,8 +5945,8 @@ msgid ""
 "specify ``filter`` parameter, you must not specify ``key`` and ``id`` "
 "parameter."
 msgstr ""
-"レコードを特定するためのgrn_exprの式を指定します。引数 ``filter`` を"
-"指定するなら、引数 ``key`` や ``id`` を指定してはいけません。"
+"レコードを特定するためのgrn_exprの式を指定します。引数 ``filter`` を指定する"
+"なら、引数 ``key`` や ``id`` を指定してはいけません。"
 
 # 156321a80085413d86ca869f5a2669a8
 #: ../../../source/reference/commands/dump.txt:6
@@ -6588,8 +6585,8 @@ msgstr "プラグインで ``1 + 2`` を計算するだけの例です。"
 # 1af70f334ecb48259529332b1844c52d
 #: ../../../source/reference/commands/ruby_eval.txt:35
 msgid "Register ``ruby/eval`` plugin to use ``ruby_eval`` command in advance."
-msgstr "``ruby_eval`` コマンドを使うには事前に ``ruby/eval`` プラグイ"
-"ンを登録します。"
+msgstr ""
+"``ruby_eval`` コマンドを使うには事前に ``ruby/eval`` プラグインを登録します。"
 
 # 50d4a5927b81445f840f51e9605db852
 #: ../../../source/reference/commands/ruby_eval.txt:37
@@ -6597,8 +6594,8 @@ msgid ""
 "Note that ``ruby_eval`` is implemented as an experimental plugin, and the "
 "specification may be changed in the future."
 msgstr ""
-"``ruby_eval`` コマンドは実験的なプラグインです。このコマンドは将来的に変更されるか"
-"も知れません。"
+"``ruby_eval`` コマンドは実験的なプラグインです。このコマンドは将来的に変更さ"
+"れるかも知れません。"
 
 # a5788c0ce60a4ccc8d309f5c938f8418
 #: ../../../source/reference/commands/ruby_eval.txt:46
@@ -6610,51 +6607,28 @@ msgstr ""
 msgid "It specifies the ruby script which you want to evaluate."
 msgstr "評価したいrubyスクリプトの文字列を指定します。"
 
-# 31032a4c011d4cacb15ccad06579866d
+# 8f711b2d68dd419491c7265e713b66d6
 #: ../../../source/reference/commands/ruby_eval.txt:53
 msgid ""
-"``ruby_eval`` returns the evaluated result which key is \"value\" as json "
-"format::"
+"``ruby_eval`` returns the evaluated result with metadata such as exception "
+"information (Including metadata isn't implemented yet)::"
 msgstr ""
 
-# 419aacdf8542409eb73db75f3934ea5f
-#: ../../../source/reference/commands/ruby_eval.txt:61
-msgid "``EVALUATED``"
+# b1eddd69eb1445c8ad622f1ff2b692f0
+#: ../../../source/reference/commands/ruby_eval.txt:62
+msgid "``EVALUATED_VALUE``"
 msgstr ""
 
-# dcbf5ff081d442389fb8d87c3be86a8a
-#: ../../../source/reference/commands/ruby_eval.txt:63
+# 6690fd57ac564fd7a989f873a34cc773
+#: ../../../source/reference/commands/ruby_eval.txt:64
+msgid "``EVALUATED_VALUE`` is the evaludated value of ``ruby_script``."
+msgstr ""
+
+# 418d1f2e8de9489e963b8fee32110eff
+#: ../../../source/reference/commands/ruby_eval.txt:66
 msgid ""
-"``EVALUATED`` consists of pair of key and value in forms of {key:value}."
-msgstr ""
-
-# db62dc6e491a46edb2b609114cfae5f8
-#: ../../../source/reference/commands/ruby_eval.txt:68
-#: ../../../source/reference/commands/tokenize.txt:186
-msgid "Name"
-msgstr "名前"
-
-# 071bf66b5e09468dbeb9affc7997a57f
-#: ../../../source/reference/commands/ruby_eval.txt:69
-#: ../../../source/reference/commands/tokenize.txt:142
-#: ../../../source/reference/commands/tokenize.txt:187
-msgid "Description"
-msgstr "説明"
-
-# 8c0c7fe469674eac9c6555c9c49688d3
-#: ../../../source/reference/commands/ruby_eval.txt:71
-msgid "reserved word 'value'."
-msgstr ""
-
-# e141def53e0546c8bbaa927921aba648
-#: ../../../source/reference/commands/ruby_eval.txt:72
-#: ../../../source/reference/commands/tokenize.txt:188
-msgid "``value``"
-msgstr ""
-
-# 5776dd7ddbd2493fac91422d44591aad
-#: ../../../source/reference/commands/ruby_eval.txt:73
-msgid "the value of evaluated script. It must be a number."
+"``ruby_eval`` supports only a number for evaluated value for now. Supported "
+"types will be increased in the future."
 msgstr ""
 
 # e9574c3225e149989e5c56875a3bf7a7
@@ -9758,6 +9732,12 @@ msgstr "指定可能なフラグは以下の通りです。"
 msgid "Flag"
 msgstr "フラグ"
 
+# 071bf66b5e09468dbeb9affc7997a57f
+#: ../../../source/reference/commands/tokenize.txt:142
+#: ../../../source/reference/commands/tokenize.txt:187
+msgid "Description"
+msgstr "説明"
+
 # f46c1572d71d462f89c7a301846c604e
 #: ../../../source/reference/commands/tokenize.txt:144
 msgid "Just ignored."
@@ -9828,6 +9808,16 @@ msgid ""
 msgstr ""
 "``tokens`` はトークンの配列です。トークンは以下の属性を持ったオブジェクトで"
 "す。"
+
+# db62dc6e491a46edb2b609114cfae5f8
+#: ../../../source/reference/commands/tokenize.txt:186
+msgid "Name"
+msgstr "名前"
+
+# e141def53e0546c8bbaa927921aba648
+#: ../../../source/reference/commands/tokenize.txt:188
+msgid "``value``"
+msgstr ""
 
 # bf16170a23664153b8943d26f928a91a
 #: ../../../source/reference/commands/tokenize.txt:189
@@ -11065,7 +11055,10 @@ msgid ""
 "Specifies groonga's query log path in the ``http``, ``server`` or "
 "``location`` block. The default is ``/var/log/groonga/httpd/groonga-query."
 "log``.  You can disable logging to specify ``off``."
-msgstr "groongaのクエリーログの保存先を ``http`` 、``server`` もしくは ``location`` ブロックで指定します。デフォルトは ``/var/log/groonga/httpd/groonga-query.log`` です。ログを無効にするには ``off`` を指定します。"
+msgstr ""
+"groongaのクエリーログの保存先を ``http`` 、``server`` もしくは ``location`` "
+"ブロックで指定します。デフォルトは ``/var/log/groonga/httpd/groonga-query."
+"log`` です。ログを無効にするには ``off`` を指定します。"
 
 # e66cf87090b848429bfa44803be4f256
 #: ../../../source/reference/executables/groonga-httpd.txt:272
@@ -11087,7 +11080,10 @@ msgstr "デバッグ。"
 msgid ""
 "You can analyze your query log by `groonga-query-log package <https://github."
 "com/groonga/groonga-query-log>`_. The package provides useful tools."
-msgstr "`groonga-query-log パッケージ <https://github.com/groonga/groonga-query-log>`_ でクエリーログを解析できます。このパッケージは有用なツールを提供しています。"
+msgstr ""
+"`groonga-query-log パッケージ <https://github.com/groonga/groonga-query-"
+"log>`_ でクエリーログを解析できます。このパッケージは有用なツールを提供してい"
+"ます。"
 
 # 587ecdca941749e6aa6fc86bb8b32e24
 #: ../../../source/reference/executables/groonga-httpd.txt:281
@@ -11096,7 +11092,11 @@ msgid ""
 "slow queries from your query log. There is a tool that replaying same "
 "queries in your query log. It can test the new groonga before updating "
 "production environment."
-msgstr "例えば、クエリーログを解析するツールがあります。これを使えば、スロークエリーを見つけることができます。クエリーログ内のすべてのクエリーを再生するツールもあります。これを使えば、新しいgroongaをプロダクション環境にデプロイする前に網羅的にテストすることができます。"
+msgstr ""
+"例えば、クエリーログを解析するツールがあります。これを使えば、スロークエリー"
+"を見つけることができます。クエリーログ内のすべてのクエリーを再生するツールも"
+"あります。これを使えば、新しいgroongaをプロダクション環境にデプロイする前に網"
+"羅的にテストすることができます。"
 
 # e071414d35f94a4bbc0b26a58ea9d666
 #: ../../../source/reference/executables/groonga-httpd.txt:287
@@ -11152,7 +11152,9 @@ msgstr ""
 msgid ""
 "In short, you can use nginx's reverse proxy and cache mechanism instead of "
 "groonga's built-in query cache feature."
-msgstr "まとめると、groonga組み込みのクエリーキャッシュ機能の代わりにnginxのリバースプロ機とキャッシュの仕組みを使うこともできます。"
+msgstr ""
+"まとめると、groonga組み込みのクエリーキャッシュ機能の代わりにnginxのリバース"
+"プロ機とキャッシュの仕組みを使うこともできます。"
 
 # 8f1c2a65616e4af7ad52a4d83386d102
 #: ../../../source/reference/executables/groonga-httpd.txt:310
@@ -11164,7 +11166,9 @@ msgstr "クエリーキャッシュ"
 msgid ""
 "Groonga has query cache feature for :doc:`/reference/commands/select` "
 "command. The feature improves performance in many cases."
-msgstr "groongaは :doc:`/reference/commands/select` コマンド用にクエリーキャッシュ機能を提供しています。この機能は多くのケースで性能向上を実現します。"
+msgstr ""
+"groongaは :doc:`/reference/commands/select` コマンド用にクエリーキャッシュ機"
+"能を提供しています。この機能は多くのケースで性能向上を実現します。"
 
 # a1446ef2c2954634aea7c0109b5b43fa
 #: ../../../source/reference/executables/groonga-httpd.txt:315
@@ -11173,14 +11177,20 @@ msgid ""
 "reference/commands/cache_limit` command on 2 or more workers. Normally, :doc:"
 "`/reference/commands/cache_limit` command isn't used. So there is no problem "
 "on many cases."
-msgstr "クエリーキャッシュ機能は :doc:`/reference/commands/cache_limit` コマンドを使っていないあるいはワーカー数が1だけの場合はgroonga-httpd上でもきちんと動作します。通常、 :doc:`/reference/commands/cache_limit` コマンドは使わないので、多くの場合は問題がありません。"
+msgstr ""
+"クエリーキャッシュ機能は :doc:`/reference/commands/cache_limit` コマンドを"
+"使っていないあるいはワーカー数が1だけの場合はgroonga-httpd上でもきちんと動作"
+"します。通常、 :doc:`/reference/commands/cache_limit` コマンドは使わないの"
+"で、多くの場合は問題がありません。"
 
 # 8f24cd4ac2cc4aeeb4a7cba5f789664d
 #: ../../../source/reference/executables/groonga-httpd.txt:320
 msgid ""
 "Here is a description about a problem of using :doc:`/reference/commands/"
 "cache_limit` command on 2 or more workers."
-msgstr "2ワーカー以上で:doc:`/reference/commands/cache_limit` コマンドを使ったときの問題点を説明します。"
+msgstr ""
+"2ワーカー以上で:doc:`/reference/commands/cache_limit` コマンドを使ったときの"
+"問題点を説明します。"
 
 # 78187cb2bed34a22afe01b83d35787d7
 #: ../../../source/reference/executables/groonga-httpd.txt:323
@@ -11189,7 +11199,11 @@ msgid ""
 "workers can't share the cache. If you don't change cache size, it isn't a "
 "big problem. If you want to change cache size by :doc:`/reference/commands/"
 "cache_limit` command, there is a problem."
-msgstr "groongaのクエリーキャッシュは同じプロセス内で有効です。これは、同じキャッシュを複数のワーカー間で共有できないということです。キャッシュサイズを変更しないならこれは大きな問題ではありません。もし、 :doc:`/reference/commands/cache_limit`コマンドでキャッシュサイズを変更したいなら問題になります。"
+msgstr ""
+"groongaのクエリーキャッシュは同じプロセス内で有効です。これは、同じキャッシュ"
+"を複数のワーカー間で共有できないということです。キャッシュサイズを変更しない"
+"ならこれは大きな問題ではありません。もし、 :doc:`/reference/commands/"
+"cache_limit`コマンドでキャッシュサイズを変更したいなら問題になります。"
 
 # 1445fa92c2ec4be193aad7b62134b061
 #: ../../../source/reference/executables/groonga-httpd.txt:328
@@ -11206,28 +11220,37 @@ msgstr "例えば、3ワーカーいるとします::"
 msgid ""
 "The client requests :doc:`/reference/commands/cache_limit` command and the "
 "worker 1 receives it::"
-msgstr "クライアントが :doc:`/reference/commands/cache_limit` コマンドをリクエストし、worker 1が受け取りました::"
+msgstr ""
+"クライアントが :doc:`/reference/commands/cache_limit` コマンドをリクエスト"
+"し、worker 1が受け取りました::"
 
 # 65e71d2f631942cdb22b4476ff600ef9
 #: ../../../source/reference/executables/groonga-httpd.txt:343
 msgid ""
 "The client requests :doc:`/reference/commands/cache_limit` command again and "
 "the worker 1 receives it again::"
-msgstr "クライアントがもう一度 :doc:`/reference/commands/cache_limit` コマンドをリクエストし、またworker 1が受け取りました::"
+msgstr ""
+"クライアントがもう一度 :doc:`/reference/commands/cache_limit` コマンドをリク"
+"エストし、またworker 1が受け取りました::"
 
 # d1440d7432af404f9e4702df39142148
 #: ../../../source/reference/executables/groonga-httpd.txt:350
 msgid ""
 "In this case, the worker 2 and the worker 3 aren't received any requests. So "
 "they don't change cache size."
-msgstr "この場合、worker 2とworker 3は1つもリクエストを受けとっていません。そのため、これらのワーカーのキャッシュサイズは変更されていません。"
+msgstr ""
+"この場合、worker 2とworker 3は1つもリクエストを受けとっていません。そのため、"
+"これらのワーカーのキャッシュサイズは変更されていません。"
 
 # 9a69a015b5214b5582aa6cd97e2b610c
 #: ../../../source/reference/executables/groonga-httpd.txt:353
 msgid ""
 "You can't choose a worker. So you can't change cache sizes of all workers "
 "by :doc:`/reference/commands/cache_limit` command."
-msgstr "クライアントはワーカーを選ぶことができないので、 :doc:`/reference/commands/cache_limit` コマンドですべてのワーカのキャッシュサイズを変更することができないのです。"
+msgstr ""
+"クライアントはワーカーを選ぶことができないので、 :doc:`/reference/commands/"
+"cache_limit` コマンドですべてのワーカのキャッシュサイズを変更することができな"
+"いのです。"
 
 # ca97235766774a6f9210802caef1121b
 #: ../../../source/reference/executables/groonga-httpd.txt:357
@@ -11237,14 +11260,18 @@ msgstr "リバースプロキシとキャッシュ"
 # 325d8679b6fc479692e93d04c3d68c4d
 #: ../../../source/reference/executables/groonga-httpd.txt:359
 msgid "You can use nginx's reverse proxy and cache feature for query cache::"
-msgstr "nginxのリバースプロキシ機能とキャッシュ機能を使ってクエリーキャッシュを実現できます::"
+msgstr ""
+"nginxのリバースプロキシ機能とキャッシュ機能を使ってクエリーキャッシュを実現で"
+"きます::"
 
 # 379c5d9eabcb485897f5ff72253d8deb
 #: ../../../source/reference/executables/groonga-httpd.txt:365
 msgid ""
 "You can use the same cache configuration for all workers but you can't "
 "change cache configuration dynamically by HTTP."
-msgstr "この方法ではすべてのワーカーで同じキャッシュの設定をりようできますが、HTTPで動的にキャッシュの設定を変更することはできません。"
+msgstr ""
+"この方法ではすべてのワーカーで同じキャッシュの設定をりようできますが、HTTPで"
+"動的にキャッシュの設定を変更することはできません。"
 
 # b7ad6340acde466e9b4d1006f2f4bac3
 #: ../../../source/reference/executables/groonga-httpd.txt:368
@@ -11284,14 +11311,19 @@ msgid ""
 "Note that you need to remove cache files created by nginx by hand after you "
 "load new data to groonga. For the above sample configuration, run the "
 "following command to remove cache files::"
-msgstr "groongaに新しいデータをロードしたときは自分でnginxが作ったキャッシュファイルを削除しなければいけないことに注意してください。前述のサンプル設定では、以下のコマンドでキャッシュを消せます::"
+msgstr ""
+"groongaに新しいデータをロードしたときは自分でnginxが作ったキャッシュファイル"
+"を削除しなければいけないことに注意してください。前述のサンプル設定では、以下"
+"のコマンドでキャッシュを消せます::"
 
 # 149997d06c0f46f5936b538583c037b9
 #: ../../../source/reference/executables/groonga-httpd.txt:417
 msgid ""
 "If you use groonga's query cache feature, you don't need to expire cache by "
 "hand. It is done automatically."
-msgstr "groongaのクエリーキャッシュ機能を使うと、手動でキャッシュを失効する必要はありません。自動で失効します。"
+msgstr ""
+"groongaのクエリーキャッシュ機能を使うと、手動でキャッシュを失効する必要はあり"
+"ません。自動で失効します。"
 
 # e914b6c5fd6143e684506e61b4b424d4
 #: ../../../source/reference/executables/groonga-httpd.txt:421
@@ -12013,10 +12045,10 @@ msgstr ""
 "groongaは三つの組み込み関数を距離の計算のために提供しています。 "
 "``geo_distance()`` 、 ``geo_distance2()`` 、 ``geo_distance3()`` です。これら"
 "の違いは距離の計算アルゴリズムにあります。 ``geo_distance2()`` と "
-"``geo_distance3()`` はバージョン1.2.9より非推奨となりました。 ``geo_distance2"
-"(point1, point2)`` の代りに ``geo_distance(point1, point2, \"sphere\")`` を使"
-"用してください。 ``geo_distance3(point1, point2)`` の代りに ``geo_distance"
-"(point1, point2, \"ellipsoid\")`` を使用してください。"
+"``geo_distance3()`` はバージョン1.2.9より非推奨となりました。 "
+"``geo_distance2(point1, point2)`` の代りに ``geo_distance(point1, point2, "
+"\"sphere\")`` を使用してください。 ``geo_distance3(point1, point2)`` の代り"
+"に ``geo_distance(point1, point2, \"ellipsoid\")`` を使用してください。"
 
 # e104cc660d534e88a06a49ffa76f81d6
 #: ../../../source/reference/functions/geo_distance.txt:49
@@ -12308,12 +12340,12 @@ msgstr ""
 #: ../../../source/reference/functions/geo_distance.txt:226
 msgid ""
 "This sample shows the value of distance across meridian. The return value of "
-"``geo_distance(\"175904000x8464000\", \"145508000x-13291000\", \"rectangle\")"
-"`` is the value of distance from Paris, Flance to Madrid, Spain."
+"``geo_distance(\"175904000x8464000\", \"145508000x-13291000\", \"rectangle"
+"\")`` is the value of distance from Paris, Flance to Madrid, Spain."
 msgstr ""
-"このサンプルは子午線をまたいだ場合の距離を示します。 ``geo_distance"
-"(\"175904000x8464000\", \"145508000x-13291000\", \"rectangle\")`` はパリ(フラ"
-"ンス)からマドリード(スペイン)間の距離を返します。"
+"このサンプルは子午線をまたいだ場合の距離を示します。 "
+"``geo_distance(\"175904000x8464000\", \"145508000x-13291000\", \"rectangle"
+"\")`` はパリ(フランス)からマドリード(スペイン)間の距離を返します。"
 
 # 3da492876e11411b85efe3c8d6ab6d9f
 #: ../../../source/reference/functions/geo_distance.txt:233
@@ -12323,9 +12355,10 @@ msgid ""
 "\"rectangle\")`` is the value of distance from New York, The United Status "
 "to Brasillia, Brasil."
 msgstr ""
-"このサンプルは赤道をまたいだ場合の距離を示します。 ``geo_distance"
-"(\"146566000x-266422000\", \"-56880000x-172310000\", \"rectangle\")`` は"
-"ニューヨーク(アメリカ)からブラジリア(ブラジル)間の距離を返します。"
+"このサンプルは赤道をまたいだ場合の距離を示します。 "
+"``geo_distance(\"146566000x-266422000\", \"-56880000x-172310000\", "
+"\"rectangle\")`` はニューヨーク(アメリカ)からブラジリア(ブラジル)間の距離を返"
+"します。"
 
 # 25a3e01452314176a4e613e60ee14524
 #: ../../../source/reference/functions/geo_distance.txt:240
@@ -12335,9 +12368,9 @@ msgid ""
 "\"rectangle\")`` is the value of distance from Beijin, China to San "
 "Francisco, The United States."
 msgstr ""
-"このサンプルは日付変更線をまたいだ場合の距離を示します。 ``geo_distance"
-"(\"143660000x419009000\", \"135960000x-440760000\", \"rectangle\")`` は北京"
-"(中国)からサンフランシスコ(アメリカ)間の距離を返します。"
+"このサンプルは日付変更線をまたいだ場合の距離を示します。 "
+"``geo_distance(\"143660000x419009000\", \"135960000x-440760000\", \"rectangle"
+"\")`` は北京(中国)からサンフランシスコ(アメリカ)間の距離を返します。"
 
 # 09f03cbda1dd47ab816d7837212ddce6
 #: ../../../source/reference/functions/geo_distance.txt:245
@@ -13534,9 +13567,9 @@ msgstr "以下が特別な文字のリストです:"
 # 5a7b374cb3a74a998ab08a146adaade0
 #: ../../../source/reference/grn_expr/query_syntax.txt:81
 msgid ""
-"``[space]`` (escaped as ``[backslash][space]``) (You should substitute ``"
-"[space]`` with a white space character that is 0x20 in ASCII and ``"
-"[backslash]`` with ``\\\\``.)"
+"``[space]`` (escaped as ``[backslash][space]``) (You should substitute "
+"``[space]`` with a white space character that is 0x20 in ASCII and "
+"``[backslash]`` with ``\\\\``.)"
 msgstr ""
 "``[space]`` （ ``[backslash][space]`` とエスケープする。）（ ``[space]`` を"
 "ASCIIで言えば0x20の空白文字に置き換えて、 ``[backslash]`` を ``\\\\`` に置き"
@@ -13872,8 +13905,8 @@ msgid ""
 "search condition`` and ``full text search condition (with explicit match "
 "column)``. ``Phrase search condition`` supports advanced match columns but "
 "``phrase search condition (with explicit match column)`` isn't supported. "
-"See description of ``full text search condition (with explicit match column)"
-"`` about advanced match columns."
+"See description of ``full text search condition (with explicit match "
+"column)`` about advanced match columns."
 msgstr ""
 "``フレーズ検索条件`` と ``フレーズ検索条件（マッチカラム指定あり）`` は ``全"
 "文検索条件`` と ``全文検索条件（マッチカラム指定あり）`` の関係と似ていま"
@@ -17218,8 +17251,8 @@ msgstr "クエリーが ``mroonga search`` のときのクエリー展開の例�
 msgid ""
 "It is important that registered words (``groonga`` and ``mroonga``) are only "
 "expanded to synonyms and not registered words (``search``) are not expanded. "
-"Query expansion isn't occurred recursively. ``groonga`` is appeared in ``"
-"(mroonga OR (groonga MySQL))`` as query expansion result but it isn't "
+"Query expansion isn't occurred recursively. ``groonga`` is appeared in "
+"``(mroonga OR (groonga MySQL))`` as query expansion result but it isn't "
 "expanded."
 msgstr ""
 "登録されている単語だけ（ここでは ``groonga`` と ``mroonga`` ）クエリー展開さ"
@@ -18231,9 +18264,13 @@ msgstr ""
 msgid "Object型はv1.2でサポートされます。"
 msgstr ""
 
-# 0d40d6ee346244419bf47608a9d4fa25
-#~ msgid ":doc:`/reference/grn_expr/query_syntax`."
-#~ msgstr ":doc:`/reference/grn_expr/query_syntax` も見てください。"
+# de1a8b000c33432a8e1a6b6725024fff
+#~ msgid ""
+#~ "``query`` enables you to specify ``--match_columns`` and ``--"
+#~ "query_string`` parameters as function arguments."
+#~ msgstr ""
+#~ "``query`` は ``--match_columns`` と ``--query_string`` のパラメータを関数"
+#~ "の引数として指定することを可能にします。"
 
 # 6c1acb54542f42a98d506c8a04ebbae7
 #~ msgid ""
@@ -18243,10 +18280,6 @@ msgstr ""
 #~ "``query`` はgroongaの組み込み関数の1つで、複数の ``query`` 関数を ``--"
 #~ "filter`` オプションのパラメータとして指定することができます。"
 
-# de1a8b000c33432a8e1a6b6725024fff
-#~ msgid ""
-#~ "``query`` enables you to specify ``--match_columns`` and ``--"
-#~ "query_string`` parameters as function arguments."
-#~ msgstr ""
-#~ "``query`` は ``--match_columns`` と ``--query_string`` のパラメータを関数"
-#~ "の引数として指定することを可能にします。"
+# 0d40d6ee346244419bf47608a9d4fa25
+#~ msgid ":doc:`/reference/grn_expr/query_syntax`."
+#~ msgstr ":doc:`/reference/grn_expr/query_syntax` も見てください。"
