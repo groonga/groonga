@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-09-27 11:52+0900\n"
-"PO-Revision-Date: 2013-09-26 19:07+0900\n"
+"POT-Creation-Date: 2013-09-27 11:58+0900\n"
+"PO-Revision-Date: 2013-09-27 11:59+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -4256,12 +4256,11 @@ msgstr ""
 
 # df6153e959314f60a7172b3838081304
 #: ../../../source/reference/commands/cache_limit.txt:80
-#, fuzzy
 msgid ""
 "``N_ENTRIES`` is the current max number of query cache entries. It is a "
 "number."
 msgstr ""
-"``n_entries`` は現在の最大クエリーキャッシュエントリー数です。これは数値で"
+"``N_ENTRIES`` は現在の最大クエリーキャッシュエントリー数です。これは数値で"
 "す。"
 
 # 1bcba209f5f3464bbaa1919ec54732d7
@@ -6563,8 +6562,8 @@ msgstr ""
 
 # edfe14cb4e384c2dbdcba6901bfa7b33
 #: ../../../source/reference/commands/ruby_eval.txt:14
-msgid "``ruby_eval`` command evaluates ruby script and returns the result."
-msgstr ""
+msgid "``ruby_eval`` command evaluates Ruby script and returns the result."
+msgstr "``ruby_eval`` コマンドはRubyスクリプトを評価して評価結果を返します。"
 
 # 1ce42bdc29594a019e7d0db71d6a3135
 #: ../../../source/reference/commands/ruby_eval.txt:19
@@ -6576,11 +6575,12 @@ msgstr "``ruby_eval`` には必須な引数が1つあります::"
 msgid ""
 "You can execute any scripts which mruby supports by calling ``ruby_eval``."
 msgstr ""
+"``ruby_eval`` を使うと、mrubyがサポートしているスクリプトを実行できます。"
 
 # b993c6521463466f8f42d9a4e7e5107f
 #: ../../../source/reference/commands/ruby_eval.txt:28
-msgid "Here is an example that just calculate ``1 + 2`` by mruby plugin."
-msgstr "プラグインで ``1 + 2`` を計算するだけの例です。"
+msgid "Here is an example that just calculate ``1 + 2`` as Ruby script."
+msgstr "Ruby ``1 + 2`` という計算するだけの例です。"
 
 # 1af70f334ecb48259529332b1844c52d
 #: ../../../source/reference/commands/ruby_eval.txt:35
@@ -6604,8 +6604,8 @@ msgstr ""
 
 # b0b25f3e15764cb184fbc1aad1979089
 #: ../../../source/reference/commands/ruby_eval.txt:48
-msgid "It specifies the ruby script which you want to evaluate."
-msgstr "評価したいrubyスクリプトの文字列を指定します。"
+msgid "It specifies the Ruby script which you want to evaluate."
+msgstr "評価したいrubyスクリプトを指定します。"
 
 # 8f711b2d68dd419491c7265e713b66d6
 #: ../../../source/reference/commands/ruby_eval.txt:53
@@ -6613,6 +6613,8 @@ msgid ""
 "``ruby_eval`` returns the evaluated result with metadata such as exception "
 "information (Including metadata isn't implemented yet)::"
 msgstr ""
+"``ruby_eval`` は例外情報などのメタデータつきで評価結果を返します（メタデータ"
+"はまだ実装されていないので今のところ含まれません）::"
 
 # b1eddd69eb1445c8ad622f1ff2b692f0
 #: ../../../source/reference/commands/ruby_eval.txt:62
@@ -6622,7 +6624,7 @@ msgstr ""
 # 6690fd57ac564fd7a989f873a34cc773
 #: ../../../source/reference/commands/ruby_eval.txt:64
 msgid "``EVALUATED_VALUE`` is the evaludated value of ``ruby_script``."
-msgstr ""
+msgstr "``EVALUATED_VALUE`` は ``ruby_script`` を評価した値です。"
 
 # 418d1f2e8de9489e963b8fee32110eff
 #: ../../../source/reference/commands/ruby_eval.txt:66
@@ -6630,6 +6632,8 @@ msgid ""
 "``ruby_eval`` supports only a number for evaluated value for now. Supported "
 "types will be increased in the future."
 msgstr ""
+"今のところ、 ``ruby_eval`` は評価された値として数値だけサポートしています。サ"
+"ポートしている型は今後増えていく予定です。"
 
 # e9574c3225e149989e5c56875a3bf7a7
 #: ../../../source/reference/commands/select.txt:9
@@ -18263,23 +18267,3 @@ msgstr ""
 #: ../../../source/reference/types.txt:129
 msgid "Object型はv1.2でサポートされます。"
 msgstr ""
-
-# de1a8b000c33432a8e1a6b6725024fff
-#~ msgid ""
-#~ "``query`` enables you to specify ``--match_columns`` and ``--"
-#~ "query_string`` parameters as function arguments."
-#~ msgstr ""
-#~ "``query`` は ``--match_columns`` と ``--query_string`` のパラメータを関数"
-#~ "の引数として指定することを可能にします。"
-
-# 6c1acb54542f42a98d506c8a04ebbae7
-#~ msgid ""
-#~ "``query`` is one of the groonga builtin functions, so you can specify "
-#~ "multiple ``query`` function as parameters of ``--filter`` option."
-#~ msgstr ""
-#~ "``query`` はgroongaの組み込み関数の1つで、複数の ``query`` 関数を ``--"
-#~ "filter`` オプションのパラメータとして指定することができます。"
-
-# 0d40d6ee346244419bf47608a9d4fa25
-#~ msgid ":doc:`/reference/grn_expr/query_syntax`."
-#~ msgstr ":doc:`/reference/grn_expr/query_syntax` も見てください。"

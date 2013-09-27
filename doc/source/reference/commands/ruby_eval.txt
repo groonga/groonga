@@ -11,7 +11,7 @@
 Summary
 -------
 
-``ruby_eval`` command evaluates ruby script and returns the result.
+``ruby_eval`` command evaluates Ruby script and returns the result.
 
 Syntax
 ------
@@ -25,7 +25,7 @@ Usage
 
 You can execute any scripts which mruby supports by calling ``ruby_eval``.
 
-Here is an example that just calculate ``1 + 2`` by mruby plugin.
+Here is an example that just calculate ``1 + 2`` as Ruby script.
 
 .. groonga-command
 .. include:: ../../example/reference/commands/ruby_eval/calc.log
@@ -45,7 +45,7 @@ This section describes all parameters.
 ``ruby_script``
 """""""""""""""
 
-It specifies the ruby script which you want to evaluate.
+It specifies the Ruby script which you want to evaluate.
 
 Return value
 ------------
