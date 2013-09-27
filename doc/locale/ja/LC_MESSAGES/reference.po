@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-09-27 11:58+0900\n"
+"POT-Creation-Date: 2013-09-27 12:40+0900\n"
 "PO-Revision-Date: 2013-09-27 11:59+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -3582,7 +3582,6 @@ msgstr "XML"
 # 08dc9ef73719413c94ae0d5f08ba39d3
 #: ../../../source/reference/command/output_format.txt:217
 #: ../../../source/reference/command/output_format.txt:222
-#: ../../../source/reference/executables/groonga-httpd.txt:142
 #: ../../../source/reference/executables/groonga-suggest-create-dataset.txt:33
 #: ../../../source/reference/executables/groonga-suggest-create-dataset.txt:38
 #: ../../../source/reference/executables/groonga-suggest-create-dataset.txt:43
@@ -10834,11 +10833,12 @@ msgstr ""
 
 # d4b690f7a4614baaa6dc658020f511fd
 #: ../../../source/reference/executables/groonga-httpd.txt:100
-#: ../../../source/reference/executables/groonga-httpd.txt:126
-#: ../../../source/reference/executables/groonga-httpd.txt:147
-#: ../../../source/reference/executables/groonga-httpd.txt:196
-#: ../../../source/reference/executables/groonga-httpd.txt:223
-#: ../../../source/reference/executables/groonga-httpd.txt:249
+#: ../../../source/reference/executables/groonga-httpd.txt:128
+#: ../../../source/reference/executables/groonga-httpd.txt:144
+#: ../../../source/reference/executables/groonga-httpd.txt:170
+#: ../../../source/reference/executables/groonga-httpd.txt:219
+#: ../../../source/reference/executables/groonga-httpd.txt:246
+#: ../../../source/reference/executables/groonga-httpd.txt:272
 msgid "Synopsis::"
 msgstr "書式::"
 
@@ -10846,11 +10846,12 @@ msgstr "書式::"
 # 0e705bfe8f6747a8aabd7db84e5379bc
 # fd94a3ad9d884e4d86821964d24c1fda
 #: ../../../source/reference/executables/groonga-httpd.txt:105
-#: ../../../source/reference/executables/groonga-httpd.txt:131
-#: ../../../source/reference/executables/groonga-httpd.txt:152
-#: ../../../source/reference/executables/groonga-httpd.txt:201
-#: ../../../source/reference/executables/groonga-httpd.txt:228
-#: ../../../source/reference/executables/groonga-httpd.txt:254
+#: ../../../source/reference/executables/groonga-httpd.txt:133
+#: ../../../source/reference/executables/groonga-httpd.txt:149
+#: ../../../source/reference/executables/groonga-httpd.txt:175
+#: ../../../source/reference/executables/groonga-httpd.txt:224
+#: ../../../source/reference/executables/groonga-httpd.txt:251
+#: ../../../source/reference/executables/groonga-httpd.txt:277
 msgid "Default"
 msgstr ""
 
@@ -10863,18 +10864,19 @@ msgstr ""
 # 96fe775c88874ee7a925defef7af9e49
 # 5a9d60ad2b34426f896d17f93bf8d3b0
 #: ../../../source/reference/executables/groonga-httpd.txt:108
-#: ../../../source/reference/executables/groonga-httpd.txt:134
-#: ../../../source/reference/executables/groonga-httpd.txt:155
-#: ../../../source/reference/executables/groonga-httpd.txt:204
-#: ../../../source/reference/executables/groonga-httpd.txt:231
-#: ../../../source/reference/executables/groonga-httpd.txt:257
+#: ../../../source/reference/executables/groonga-httpd.txt:136
+#: ../../../source/reference/executables/groonga-httpd.txt:152
+#: ../../../source/reference/executables/groonga-httpd.txt:178
+#: ../../../source/reference/executables/groonga-httpd.txt:227
+#: ../../../source/reference/executables/groonga-httpd.txt:254
+#: ../../../source/reference/executables/groonga-httpd.txt:280
 msgid "Context"
 msgstr ""
 
 # 2b493a9f157e42c79fb981e45da3700b
 # 2b493a9f157e42c79fb981e45da3700b
 #: ../../../source/reference/executables/groonga-httpd.txt:108
-#: ../../../source/reference/executables/groonga-httpd.txt:155
+#: ../../../source/reference/executables/groonga-httpd.txt:178
 msgid "``location``"
 msgstr ""
 
@@ -10917,53 +10919,81 @@ msgstr ""
 # 88d7c6252ccb429da20f5339c8f93636
 # c3c3a11dd629453b8ef82804046dcf60
 #: ../../../source/reference/executables/groonga-httpd.txt:113
-#: ../../../source/reference/executables/groonga-httpd.txt:210
-#: ../../../source/reference/executables/groonga-httpd.txt:236
-#: ../../../source/reference/executables/groonga-httpd.txt:264
+#: ../../../source/reference/executables/groonga-httpd.txt:233
+#: ../../../source/reference/executables/groonga-httpd.txt:259
+#: ../../../source/reference/executables/groonga-httpd.txt:287
 msgid "Examples::"
 msgstr "例::"
 
 # ae6fd0bed9f44cef821a1287f3971e34
-#: ../../../source/reference/executables/groonga-httpd.txt:124
+#: ../../../source/reference/executables/groonga-httpd.txt:126
 msgid "``groonga_database``"
 msgstr ""
 
 # 6d803fac006e48929208a7d209b1cfa4
-#: ../../../source/reference/executables/groonga-httpd.txt:131
+#: ../../../source/reference/executables/groonga-httpd.txt:133
 msgid "``groonga_database /usr/local/var/lib/groonga/db/db;``"
 msgstr ""
 
 # 1ecf5b2d084d4f448328f0e24a654a19
-#: ../../../source/reference/executables/groonga-httpd.txt:134
-#: ../../../source/reference/executables/groonga-httpd.txt:204
-#: ../../../source/reference/executables/groonga-httpd.txt:231
-#: ../../../source/reference/executables/groonga-httpd.txt:257
+#: ../../../source/reference/executables/groonga-httpd.txt:136
+#: ../../../source/reference/executables/groonga-httpd.txt:152
+#: ../../../source/reference/executables/groonga-httpd.txt:227
+#: ../../../source/reference/executables/groonga-httpd.txt:254
+#: ../../../source/reference/executables/groonga-httpd.txt:280
 msgid "``http``, ``server``, ``location``"
 msgstr ""
 
 # 6fcfa307e73a4d958ab3dce70d1b854e
-#: ../../../source/reference/executables/groonga-httpd.txt:136
+#: ../../../source/reference/executables/groonga-httpd.txt:138
 msgid ""
 "Specifies the path to a groonga database. This is the required directive."
 msgstr "groongaデータベースのパスを指定します。このディレクティブは必須です。"
 
 # 40f769141df54214b46343425b704c1e
-#: ../../../source/reference/executables/groonga-httpd.txt:140
+#: ../../../source/reference/executables/groonga-httpd.txt:142
 msgid "``groonga_database_auto_create``"
 msgstr ""
 
+# 076c01a1596947eaa5fd974dab509feb
+#: ../../../source/reference/executables/groonga-httpd.txt:149
+msgid "``groonga_database_auto_create on;``"
+msgstr ""
+
+# c323d1eb984b4352b38edd382e611b73
+#: ../../../source/reference/executables/groonga-httpd.txt:154
+msgid ""
+"Specifies whether groonga database is created automatically or not. If the "
+"value is ``on`` and the groonga database specified by :ref:`groonga-"
+"database` doesn't exist, the groonga database is created automatically. If "
+"the groonga database exists, groonga-httpd does nothing."
+msgstr ""
+
+# 206cb401e9b6450ab20a4aea52e980db
+#: ../../../source/reference/executables/groonga-httpd.txt:160
+msgid ""
+"If parent directory doesn't exist, parent directory is also created "
+"recursively."
+msgstr ""
+
+# fc4f04d4a8024bbab90a7f57766ec620
+#: ../../../source/reference/executables/groonga-httpd.txt:163
+msgid ""
+"The default value is ``on``. Normally, the value doesn't need to be changed."
+msgstr ""
+
 # ae6fd0bed9f44cef821a1287f3971e34
-#: ../../../source/reference/executables/groonga-httpd.txt:145
+#: ../../../source/reference/executables/groonga-httpd.txt:168
 msgid "``groonga_base_path``"
 msgstr ""
 
 # 75c38df430b54c44844526068cb9d03b
-#: ../../../source/reference/executables/groonga-httpd.txt:152
+#: ../../../source/reference/executables/groonga-httpd.txt:175
 msgid "The same value as ``location`` name."
 msgstr "``location`` の名前と同じ値。"
 
 # c752e5e56eef45c1a362b9e949053639
-#: ../../../source/reference/executables/groonga-httpd.txt:157
+#: ../../../source/reference/executables/groonga-httpd.txt:180
 msgid ""
 "Specifies the base path in URI. groonga uses ``/d/command?"
 "parameter1=value1&...`` path to run ``command``. The form of path in used in "
@@ -10984,7 +11014,7 @@ msgstr ""
 "できます。"
 
 # 0d2844180960454fa14c4e7c5c196c79
-#: ../../../source/reference/executables/groonga-httpd.txt:166
+#: ../../../source/reference/executables/groonga-httpd.txt:189
 msgid ""
 "Nomally, this directive isn't needed. It is needed for per command "
 "configuration."
@@ -10993,7 +11023,7 @@ msgstr ""
 "毎に設定をしたい場合に使います。"
 
 # b58131dc80f1422aabd04ed4e3d46244
-#: ../../../source/reference/executables/groonga-httpd.txt:169
+#: ../../../source/reference/executables/groonga-httpd.txt:192
 msgid ""
 "Here is an example configuration to add authorization to :doc:`/reference/"
 "commands/shutdown` command::"
@@ -11002,17 +11032,17 @@ msgstr ""
 "す。::"
 
 # 40f769141df54214b46343425b704c1e
-#: ../../../source/reference/executables/groonga-httpd.txt:194
+#: ../../../source/reference/executables/groonga-httpd.txt:217
 msgid "``groonga_log_path``"
 msgstr ""
 
 # 99f878b51f2344e0a2b25054b7feca08
-#: ../../../source/reference/executables/groonga-httpd.txt:201
+#: ../../../source/reference/executables/groonga-httpd.txt:224
 msgid "``/var/log/groonga/httpd/groonga.log``"
 msgstr ""
 
 # 84e5794178ca41398059200480d2dc7a
-#: ../../../source/reference/executables/groonga-httpd.txt:206
+#: ../../../source/reference/executables/groonga-httpd.txt:229
 msgid ""
 "Specifies groonga log path in the ``http``, ``server`` or ``location`` "
 "block. The default is ``/var/log/groonga/httpd/groonga.log``. You can "
@@ -11023,17 +11053,17 @@ msgstr ""
 "無効にするには ``off`` を指定します。"
 
 # cb690f10ae4f46b78e0f36f19ecc2ee8
-#: ../../../source/reference/executables/groonga-httpd.txt:221
+#: ../../../source/reference/executables/groonga-httpd.txt:244
 msgid "``groonga_log_level``"
 msgstr ""
 
 # 8bc8ecf3b5b742bfac7c21ba17dce19a
-#: ../../../source/reference/executables/groonga-httpd.txt:228
+#: ../../../source/reference/executables/groonga-httpd.txt:251
 msgid "``notice``"
 msgstr ""
 
 # 84e5794178ca41398059200480d2dc7a
-#: ../../../source/reference/executables/groonga-httpd.txt:233
+#: ../../../source/reference/executables/groonga-httpd.txt:256
 msgid ""
 "Specifies groonga log level in the ``http``, ``server`` or ``location`` "
 "block. The default is ``notice``. You can disable logging by specifying "
@@ -11044,17 +11074,17 @@ msgstr ""
 "効にできます。"
 
 # 9f74414de2b24e62ba5128b57b7ce8ba
-#: ../../../source/reference/executables/groonga-httpd.txt:247
+#: ../../../source/reference/executables/groonga-httpd.txt:270
 msgid "``groonga_query_log_path``"
 msgstr ""
 
 # effdeb698fd646d6a982f4d9dc72c565
-#: ../../../source/reference/executables/groonga-httpd.txt:254
+#: ../../../source/reference/executables/groonga-httpd.txt:277
 msgid "``/var/log/groonga/httpd/groonga-query.log``"
 msgstr ""
 
 # 84e5794178ca41398059200480d2dc7a
-#: ../../../source/reference/executables/groonga-httpd.txt:259
+#: ../../../source/reference/executables/groonga-httpd.txt:282
 msgid ""
 "Specifies groonga's query log path in the ``http``, ``server`` or "
 "``location`` block. The default is ``/var/log/groonga/httpd/groonga-query."
@@ -11065,22 +11095,22 @@ msgstr ""
 "log`` です。ログを無効にするには ``off`` を指定します。"
 
 # e66cf87090b848429bfa44803be4f256
-#: ../../../source/reference/executables/groonga-httpd.txt:272
+#: ../../../source/reference/executables/groonga-httpd.txt:295
 msgid "Query log is useful for the following cases:"
 msgstr "クエリーログは以下のようなケースで有用です:"
 
 # 4da3b55827e142fc8d96ff45e4c5c12d
-#: ../../../source/reference/executables/groonga-httpd.txt:274
+#: ../../../source/reference/executables/groonga-httpd.txt:297
 msgid "Detecting slow query."
 msgstr "スロークエリーを見つける。"
 
 # 9f0a8a1fb75a46219e56ba8e4dcca7a1
-#: ../../../source/reference/executables/groonga-httpd.txt:275
+#: ../../../source/reference/executables/groonga-httpd.txt:298
 msgid "Debugging."
 msgstr "デバッグ。"
 
 # 06c019bf49594d49b4dd749c7ae589da
-#: ../../../source/reference/executables/groonga-httpd.txt:277
+#: ../../../source/reference/executables/groonga-httpd.txt:300
 msgid ""
 "You can analyze your query log by `groonga-query-log package <https://github."
 "com/groonga/groonga-query-log>`_. The package provides useful tools."
@@ -11090,7 +11120,7 @@ msgstr ""
 "ます。"
 
 # 587ecdca941749e6aa6fc86bb8b32e24
-#: ../../../source/reference/executables/groonga-httpd.txt:281
+#: ../../../source/reference/executables/groonga-httpd.txt:304
 msgid ""
 "For example, there is a tool that analyzing your query log. It can detect "
 "slow queries from your query log. There is a tool that replaying same "
@@ -11103,24 +11133,24 @@ msgstr ""
 "羅的にテストすることができます。"
 
 # e071414d35f94a4bbc0b26a58ea9d666
-#: ../../../source/reference/executables/groonga-httpd.txt:287
+#: ../../../source/reference/executables/groonga-httpd.txt:310
 msgid "Performance related directives"
 msgstr "性能関連のディレクティブ"
 
 # cd4956eac02746dc8b3ab4dd7282db93
-#: ../../../source/reference/executables/groonga-httpd.txt:289
+#: ../../../source/reference/executables/groonga-httpd.txt:312
 msgid ""
 "The following directives are related to the performance of groonga-httpd."
 msgstr ""
 "以下のディレクティブはgronoga-httpdの性能に関連しているディレクティブです。"
 
 # 4ee50b0026474705abd02b957d01935a
-#: ../../../source/reference/executables/groonga-httpd.txt:292
+#: ../../../source/reference/executables/groonga-httpd.txt:315
 msgid "``worker_processes``"
 msgstr ""
 
 # fe1cf4dcd10b4524891de86128eba10d
-#: ../../../source/reference/executables/groonga-httpd.txt:294
+#: ../../../source/reference/executables/groonga-httpd.txt:317
 msgid ""
 "For optimum performance, set this to be equal to the number of CPUs or "
 "cores. In many cases, groonga queries may be CPU-intensive work, so to fully "
@@ -11132,7 +11162,7 @@ msgstr ""
 "る必要があります。"
 
 # 270d574b530641ff92d7e897cffc775f
-#: ../../../source/reference/executables/groonga-httpd.txt:298
+#: ../../../source/reference/executables/groonga-httpd.txt:321
 msgid ""
 "This isn't a groonga-httpd specific directive, but an nginx's one. For "
 "details, see http://wiki.nginx.org/CoreModule#worker_processes."
@@ -11142,17 +11172,17 @@ msgstr ""
 "してください。"
 
 # 1c978a3757964495a15bfe4d776e5274
-#: ../../../source/reference/executables/groonga-httpd.txt:301
+#: ../../../source/reference/executables/groonga-httpd.txt:324
 msgid "By default, this is set to 1. It is nginx's default."
 msgstr "デフォルトで、このディレクティブには1が設定されています。"
 
 # 3a18063520a04acc9a107d556534610e
-#: ../../../source/reference/executables/groonga-httpd.txt:304
+#: ../../../source/reference/executables/groonga-httpd.txt:327
 msgid "``proxy_cache``"
 msgstr ""
 
 # 96b0a4d9d766453bacf0aecc3a657d34
-#: ../../../source/reference/executables/groonga-httpd.txt:306
+#: ../../../source/reference/executables/groonga-httpd.txt:329
 msgid ""
 "In short, you can use nginx's reverse proxy and cache mechanism instead of "
 "groonga's built-in query cache feature."
@@ -11161,12 +11191,12 @@ msgstr ""
 "プロ機とキャッシュの仕組みを使うこともできます。"
 
 # 8f1c2a65616e4af7ad52a4d83386d102
-#: ../../../source/reference/executables/groonga-httpd.txt:310
+#: ../../../source/reference/executables/groonga-httpd.txt:333
 msgid "Query cache"
 msgstr "クエリーキャッシュ"
 
 # a31cd12b3d704dda9e9ec73fef1a9f42
-#: ../../../source/reference/executables/groonga-httpd.txt:312
+#: ../../../source/reference/executables/groonga-httpd.txt:335
 msgid ""
 "Groonga has query cache feature for :doc:`/reference/commands/select` "
 "command. The feature improves performance in many cases."
@@ -11175,7 +11205,7 @@ msgstr ""
 "能を提供しています。この機能は多くのケースで性能向上を実現します。"
 
 # a1446ef2c2954634aea7c0109b5b43fa
-#: ../../../source/reference/executables/groonga-httpd.txt:315
+#: ../../../source/reference/executables/groonga-httpd.txt:338
 msgid ""
 "Query cache feature works well on groonga-httpd except you use :doc:`/"
 "reference/commands/cache_limit` command on 2 or more workers. Normally, :doc:"
@@ -11188,7 +11218,7 @@ msgstr ""
 "で、多くの場合は問題がありません。"
 
 # 8f24cd4ac2cc4aeeb4a7cba5f789664d
-#: ../../../source/reference/executables/groonga-httpd.txt:320
+#: ../../../source/reference/executables/groonga-httpd.txt:343
 msgid ""
 "Here is a description about a problem of using :doc:`/reference/commands/"
 "cache_limit` command on 2 or more workers."
@@ -11197,7 +11227,7 @@ msgstr ""
 "問題点を説明します。"
 
 # 78187cb2bed34a22afe01b83d35787d7
-#: ../../../source/reference/executables/groonga-httpd.txt:323
+#: ../../../source/reference/executables/groonga-httpd.txt:346
 msgid ""
 "Groonga's query cache is available in the same process. It means that "
 "workers can't share the cache. If you don't change cache size, it isn't a "
@@ -11210,17 +11240,17 @@ msgstr ""
 "cache_limit`コマンドでキャッシュサイズを変更したいなら問題になります。"
 
 # 1445fa92c2ec4be193aad7b62134b061
-#: ../../../source/reference/executables/groonga-httpd.txt:328
+#: ../../../source/reference/executables/groonga-httpd.txt:351
 msgid "There is no portable ways to change cache size for all workers."
 msgstr "すべてのワーカーのキャッシュサイズを変更する汎用的な方法がないのです。"
 
 # 71805bb14b824fd78e52ee84a65b09f8
-#: ../../../source/reference/executables/groonga-httpd.txt:330
+#: ../../../source/reference/executables/groonga-httpd.txt:353
 msgid "For example, there are 3 workers::"
 msgstr "例えば、3ワーカーいるとします::"
 
 # fe56b7e376264663865b5f991f5cde47
-#: ../../../source/reference/executables/groonga-httpd.txt:336
+#: ../../../source/reference/executables/groonga-httpd.txt:359
 msgid ""
 "The client requests :doc:`/reference/commands/cache_limit` command and the "
 "worker 1 receives it::"
@@ -11229,7 +11259,7 @@ msgstr ""
 "し、worker 1が受け取りました::"
 
 # 65e71d2f631942cdb22b4476ff600ef9
-#: ../../../source/reference/executables/groonga-httpd.txt:343
+#: ../../../source/reference/executables/groonga-httpd.txt:366
 msgid ""
 "The client requests :doc:`/reference/commands/cache_limit` command again and "
 "the worker 1 receives it again::"
@@ -11238,7 +11268,7 @@ msgstr ""
 "エストし、またworker 1が受け取りました::"
 
 # d1440d7432af404f9e4702df39142148
-#: ../../../source/reference/executables/groonga-httpd.txt:350
+#: ../../../source/reference/executables/groonga-httpd.txt:373
 msgid ""
 "In this case, the worker 2 and the worker 3 aren't received any requests. So "
 "they don't change cache size."
@@ -11247,7 +11277,7 @@ msgstr ""
 "これらのワーカーのキャッシュサイズは変更されていません。"
 
 # 9a69a015b5214b5582aa6cd97e2b610c
-#: ../../../source/reference/executables/groonga-httpd.txt:353
+#: ../../../source/reference/executables/groonga-httpd.txt:376
 msgid ""
 "You can't choose a worker. So you can't change cache sizes of all workers "
 "by :doc:`/reference/commands/cache_limit` command."
@@ -11257,19 +11287,19 @@ msgstr ""
 "いのです。"
 
 # ca97235766774a6f9210802caef1121b
-#: ../../../source/reference/executables/groonga-httpd.txt:357
+#: ../../../source/reference/executables/groonga-httpd.txt:380
 msgid "Reverse proxy and cache"
 msgstr "リバースプロキシとキャッシュ"
 
 # 325d8679b6fc479692e93d04c3d68c4d
-#: ../../../source/reference/executables/groonga-httpd.txt:359
+#: ../../../source/reference/executables/groonga-httpd.txt:382
 msgid "You can use nginx's reverse proxy and cache feature for query cache::"
 msgstr ""
 "nginxのリバースプロキシ機能とキャッシュ機能を使ってクエリーキャッシュを実現で"
 "きます::"
 
 # 379c5d9eabcb485897f5ff72253d8deb
-#: ../../../source/reference/executables/groonga-httpd.txt:365
+#: ../../../source/reference/executables/groonga-httpd.txt:388
 msgid ""
 "You can use the same cache configuration for all workers but you can't "
 "change cache configuration dynamically by HTTP."
@@ -11278,39 +11308,39 @@ msgstr ""
 "動的にキャッシュの設定を変更することはできません。"
 
 # b7ad6340acde466e9b4d1006f2f4bac3
-#: ../../../source/reference/executables/groonga-httpd.txt:368
+#: ../../../source/reference/executables/groonga-httpd.txt:391
 msgid "Here is a sample configuration::"
 msgstr "以下はサンプルの設定です::"
 
 # 9478dbe384944871a05d6fc19adb519b
-#: ../../../source/reference/executables/groonga-httpd.txt:403
+#: ../../../source/reference/executables/groonga-httpd.txt:426
 msgid "See the following nginx documentations for parameter details:"
 msgstr "パラメーターの詳細は以下のnginxのドキュメントを見てください:"
 
 # 6c22e62e3c324fda854b6e0e73cfb590
-#: ../../../source/reference/executables/groonga-httpd.txt:405
+#: ../../../source/reference/executables/groonga-httpd.txt:428
 msgid ""
 "http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_cache_path"
 msgstr ""
 
 # 6bb2037c2d3a4a4a812b5bc71468a0c2
-#: ../../../source/reference/executables/groonga-httpd.txt:406
+#: ../../../source/reference/executables/groonga-httpd.txt:429
 msgid ""
 "http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_cache_valid"
 msgstr ""
 
 # 1d369724db0546f2ba3c7dbe508057a0
-#: ../../../source/reference/executables/groonga-httpd.txt:407
+#: ../../../source/reference/executables/groonga-httpd.txt:430
 msgid "http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_cache"
 msgstr ""
 
 # 1d76d5a973b24a65b1996c83ad3a9f1c
-#: ../../../source/reference/executables/groonga-httpd.txt:408
+#: ../../../source/reference/executables/groonga-httpd.txt:431
 msgid "http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_pass"
 msgstr ""
 
 # 41e80cb945b946b898844ae9f82955ed
-#: ../../../source/reference/executables/groonga-httpd.txt:410
+#: ../../../source/reference/executables/groonga-httpd.txt:433
 msgid ""
 "Note that you need to remove cache files created by nginx by hand after you "
 "load new data to groonga. For the above sample configuration, run the "
@@ -11321,7 +11351,7 @@ msgstr ""
 "のコマンドでキャッシュを消せます::"
 
 # 149997d06c0f46f5936b538583c037b9
-#: ../../../source/reference/executables/groonga-httpd.txt:417
+#: ../../../source/reference/executables/groonga-httpd.txt:440
 msgid ""
 "If you use groonga's query cache feature, you don't need to expire cache by "
 "hand. It is done automatically."
@@ -11330,12 +11360,12 @@ msgstr ""
 "ません。自動で失効します。"
 
 # e914b6c5fd6143e684506e61b4b424d4
-#: ../../../source/reference/executables/groonga-httpd.txt:421
+#: ../../../source/reference/executables/groonga-httpd.txt:444
 msgid "Available nginx modules"
 msgstr "利用可能なnginxモジュール"
 
 # 177bb78187954c29b18c36cef58b6745
-#: ../../../source/reference/executables/groonga-httpd.txt:423
+#: ../../../source/reference/executables/groonga-httpd.txt:446
 msgid ""
 "All standard HTTP modules are available. HttpRewriteModule is disabled when "
 "you don't have PCRE (Perl Compatible Regular Expressions). For the list of "
