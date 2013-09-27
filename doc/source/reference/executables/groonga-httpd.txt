@@ -367,38 +367,38 @@ change cache configuration dynamically by HTTP.
 
 Here is a sample configuration::
 
-   ...
-   http {
-     proxy_cache_path /var/cache/groonga-httpd levels=1:2 keys_zone=groonga:10m;
-     proxy_cache_valid 10m;
-     ...
-     # Reverse proxy and cache
-     server {
-       listen 10041;
-       ...
-       # Only select command
-       location /d/select {
-         # Pass through groonga with cache
-         proxy_cache groonga;
-         proxy_pass http://localhost:20041;
-       }
+  ...
+  http {
+    proxy_cache_path /var/cache/groonga-httpd levels=1:2 keys_zone=groonga:10m;
+    proxy_cache_valid 10m;
+    ...
+    # Reverse proxy and cache
+    server {
+      listen 10041;
+      ...
+      # Only select command
+      location /d/select {
+        # Pass through groonga with cache
+        proxy_cache groonga;
+        proxy_pass http://localhost:20041;
+      }
 
-       location / {
-         # Pass through groonga
-         proxy_pass http://localhost:20041;
-       }
-     }
+      location / {
+        # Pass through groonga
+        proxy_pass http://localhost:20041;
+      }
+    }
 
-     # groonga
-     server {
-       location 20041;
-       location /d/ {
-         groonga on;
-         groonga_database /var/lib/groonga/db/db;
-       }
-     }
-     ...
-   }
+    # groonga
+    server {
+      location 20041;
+      location /d/ {
+        groonga on;
+        groonga_database /var/lib/groonga/db/db;
+      }
+    }
+    ...
+  }
 
 See the following nginx documentations for parameter details:
 
