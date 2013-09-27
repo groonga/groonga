@@ -120,6 +120,8 @@ Examples::
     groonga off; # Disables groonga under /d/... path
   }
 
+.. _groonga-database:
+
 ``groonga_database``
 """"""""""""""""""""
 
@@ -139,7 +141,28 @@ directive.
 ``groonga_database_auto_create``
 """"""""""""""""""""""""""""""""
 
-TODO
+Synopsis::
+
+  groonga_database_auto_create on | off;
+
+Default
+  ``groonga_database_auto_create on;``
+
+Context
+  ``http``, ``server``, ``location``
+
+Specifies whether groonga database is created automatically or not. If
+the value is ``on`` and the groonga database specified by
+:ref:`groonga-database` doesn't exist, the groonga database is created
+automatically. If the groonga database exists, groonga-httpd does
+nothing.
+
+If parent directory doesn't exist, parent directory is also created
+recursively.
+
+The default value is ``on``. Normally, the value doesn't need to be
+changed.
+
 
 ``groonga_base_path``
 """""""""""""""""""""
