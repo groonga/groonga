@@ -33,12 +33,11 @@ set_source_files_properties(dat.cpp ${LIBGRNDAT_SOURCES}
   PROPERTIES
   COMPILE_FLAGS "${GRN_CXX_COMPILE_FLAGS}")
 
-add_library(libgroonga SHARED ${LIBGROONGA_SOURCES} ${LIBGRNDAT_SOURCES})
+add_library(libgroonga SHARED
+  ${LIBGROONGA_SOURCES}
+  ${LIBGRNDAT_SOURCES}
+  $<TARGET_OBJECTS:mruby>)
 set_target_properties(libgroonga PROPERTIES OUTPUT_NAME "groonga")
-if(GRN_WITH_STATIC)
-  add_library(libgroonga_static STATIC ${LIBGROONGA_SOURCES} ${LIBGRNDAT_SOURCES})
-  set_target_properties(libgroonga_static PROPERTIES OUTPUT_NAME "groonga")
-endif()
 target_link_libraries(libgroonga
   ${EXECINFO_LIBS}
   ${RT_LIBS}
