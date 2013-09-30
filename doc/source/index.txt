@@ -10,11 +10,6 @@ groonga documentation
 
 * :doc:`news`
 
-.. note::
-
-   This document is also ditributed in forms of release source archive and updated time to time.
-   If you want to refer latest documentation in source form, you can view such files via GitHub repository browser (https://github.com/groonga/groonga/tree/master/doc/source).
-
 .. toctree::
    :maxdepth: 3
    :numbered:

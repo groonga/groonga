@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-26 17:16+0900\n"
+"POT-Creation-Date: 2013-09-30 11:07+0900\n"
 "PO-Revision-Date: 2013-03-06 18:18+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -267,26 +267,39 @@ msgstr ""
 msgid "以下のコマンドでhtmlが作成されます。::"
 msgstr ""
 
-#: ../../../source/contribution/development/document.txt:24
-#: ../../../source/contribution/development/document.txt:36
+# f7cb183fe04142768083fee54a91e772
+#: ../../../source/contribution/development/document.txt:23
+msgid ""
+"This document is also ditributed in forms of release source archive and "
+"updated time to time. If you want to refer latest documentation in source "
+"form, you can view such files via GitHub repository browser (https://github."
+"com/groonga/groonga/tree/master/doc/source)."
+msgstr ""
+"このドキュメントはソースアーカイブの形式で配布され、随時更新しています。最"
+"新のドキュメントをソース形式で参照したいなら、GitHubのリポジトリブラウザ経"
+"由で閲覧できます。(https://github.com/groonga/groonga/tree/master/doc/"
+"source)"
+
+#: ../../../source/contribution/development/document.txt:27
+#: ../../../source/contribution/development/document.txt:39
 msgid "pdfの作成"
 msgstr ""
 
-#: ../../../source/contribution/development/document.txt:26
+#: ../../../source/contribution/development/document.txt:29
 msgid ""
 "groongaのドキュメントは、pdf出力することもできます。rst2pdfと、IPAフォント"
 "(IPA Gothic/IPAexGothic)が必要となります。"
 msgstr ""
 
-#: ../../../source/contribution/development/document.txt:29
+#: ../../../source/contribution/development/document.txt:32
 msgid "rst2pdfのインストール"
 msgstr ""
 
-#: ../../../source/contribution/development/document.txt:31
+#: ../../../source/contribution/development/document.txt:34
 msgid "以下のようにしてインストールできます。::"
 msgstr ""
 
-#: ../../../source/contribution/development/document.txt:38
+#: ../../../source/contribution/development/document.txt:41
 msgid "以下のコマンドでpdfが作成されます。::"
 msgstr ""
 
