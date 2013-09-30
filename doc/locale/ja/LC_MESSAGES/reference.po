@@ -11223,7 +11223,7 @@ msgid ""
 "Here is a description about a problem of using :doc:`/reference/commands/"
 "cache_limit` command on 2 or more workers."
 msgstr ""
-"2ワーカー以上で:doc:`/reference/commands/cache_limit` コマンドを使ったときの"
+"2ワーカー以上で :doc:`/reference/commands/cache_limit` コマンドを使ったときの"
 "問題点を説明します。"
 
 # 78187cb2bed34a22afe01b83d35787d7
@@ -11237,7 +11237,7 @@ msgstr ""
 "groongaのクエリーキャッシュは同じプロセス内で有効です。これは、同じキャッシュ"
 "を複数のワーカー間で共有できないということです。キャッシュサイズを変更しない"
 "ならこれは大きな問題ではありません。もし、 :doc:`/reference/commands/"
-"cache_limit`コマンドでキャッシュサイズを変更したいなら問題になります。"
+"cache_limit` コマンドでキャッシュサイズを変更したいなら問題になります。"
 
 # 1445fa92c2ec4be193aad7b62134b061
 #: ../../../source/reference/executables/groonga-httpd.txt:351
