@@ -177,6 +177,12 @@ Here is an example that enables column value compression by zlib::
 
   % ./configure --with-zlib
 
+.. note::
+
+   The disabled reason is that memory leak occurs when it refers column value.
+   This is already known issue as GitHub#6. This issue is not nothing to do with
+   updating column value.
+
 ``--with-lzo``
 ++++++++++++++
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-07-26 09:58+0900\n"
+"POT-Creation-Date: 2013-09-30 17:36+0900\n"
 "PO-Revision-Date: 2013-04-03 13:30+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: Japanese\n"
@@ -911,7 +911,7 @@ msgstr "zlibを使ってカラム値を圧縮する機能を有効にします�
 # 57556a2dbc4f4e429ec2514f5b6ca5b6
 # 0a24899a6c98417d965d932d71f78727
 #: ../../../source/install/others.txt:174
-#: ../../../source/install/others.txt:185
+#: ../../../source/install/others.txt:191
 msgid "The default is disabled."
 msgstr "デフォルトでは無効です。"
 
@@ -920,28 +920,39 @@ msgstr "デフォルトでは無効です。"
 msgid "Here is an example that enables column value compression by zlib::"
 msgstr "以下はzlibを使ってカラム値を圧縮する機能を有効にする例です::"
 
+# 64408dc3361f4fb29ce9f611ee368436
+#: ../../../source/install/others.txt:182
+msgid ""
+"The disabled reason is that memory leak occurs when it refers column value. "
+"This is already known issue as GitHub#6. This issue is not nothing to do "
+"with updating column value."
+msgstr ""
+"無効となっている理由は、カラムの値を参照するときにメモリリークするた"
+"めです。これは既知の問題 GitHub#6 です。この問題はカラムの更新とは関"
+"係ありません。"
+
 # bfdc5fa9f86041bfa8b673142dc66c9a
-#: ../../../source/install/others.txt:181
+#: ../../../source/install/others.txt:187
 msgid "``--with-lzo``"
 msgstr ""
 
 # be3380808bbd4344bdf6001333301f68
-#: ../../../source/install/others.txt:183
+#: ../../../source/install/others.txt:189
 msgid "Enables column value compression by LZO."
 msgstr "LZOを使ってカラム値を圧縮する機能を有効にします。"
 
 # 9acae393caa447c1bb9fb820ec2a41eb
-#: ../../../source/install/others.txt:187
+#: ../../../source/install/others.txt:193
 msgid "Here is an example that enables column value compression by LZO::"
 msgstr "以下はLZOを使ってカラム値を圧縮する機能を有効にする例です::"
 
 # bdca8f0b3e5847a4989772a201d0d813
-#: ../../../source/install/others.txt:192
+#: ../../../source/install/others.txt:198
 msgid "``--with-message-pack=MESSAGE_PACK_INSTALL_PREFIX``"
 msgstr ""
 
 # d2181e7152bd43f1bd82f17c59efdeff
-#: ../../../source/install/others.txt:194
+#: ../../../source/install/others.txt:200
 msgid ""
 "Specifies where MessagePack is installed. If MessagePack isn't installed "
 "with ``--prefix=/usr``, you need to specify this option with path that you "
@@ -952,7 +963,7 @@ msgstr ""
 "MessagePackをビルドするときに指定したパスをこのオプションで指定してください。"
 
 # d67cbcb778af4f41aef5366b0b203438
-#: ../../../source/install/others.txt:198
+#: ../../../source/install/others.txt:204
 msgid ""
 "If you installed MessagePack with ``--prefix=$HOME/local`` option, you "
 "sholud specify ``--with-message-pack=$HOME/local`` to groonga's "
@@ -963,12 +974,12 @@ msgstr ""
 "$HOME/local`` と指定してください。"
 
 # 7acfab88eaf04c9ea99d205ebfb40e61
-#: ../../../source/install/others.txt:202
+#: ../../../source/install/others.txt:208
 msgid "The default is ``/usr``."
 msgstr "デフォルトは ``/usr`` です。"
 
 # e7804f95bc574cf2acc25d280a8f0536
-#: ../../../source/install/others.txt:204
+#: ../../../source/install/others.txt:210
 msgid ""
 "Here is an example that uses MessagePack built with ``--prefix=$HOME/local`` "
 "option::"
@@ -977,12 +988,12 @@ msgstr ""
 "でインストールされている場合の例です::"
 
 # 206843aeb29845c0907e0477435e576e
-#: ../../../source/install/others.txt:210
+#: ../../../source/install/others.txt:216
 msgid "``--with-munin-plugins``"
 msgstr ""
 
 # 1aa15578cbfa4bebb34ec27673e4ef3e
-#: ../../../source/install/others.txt:212
+#: ../../../source/install/others.txt:218
 msgid ""
 "Installs Munin plugins for groonga. They are installed into ``${PREFIX}/"
 "share/groonga/munin/plugins/``."
@@ -992,22 +1003,22 @@ msgstr ""
 
 # caf44b2f903748b8991cf84c2c177a9f
 # add2e5642cfe4e3a83ac17e91ddbd6ce
-#: ../../../source/install/others.txt:215
+#: ../../../source/install/others.txt:221
 msgid "Those plugins are not installed by default."
 msgstr "デフォルトではプラグインはインストールされません。"
 
 # 43e0e10730b24e0f9f2869aab377cfb1
-#: ../../../source/install/others.txt:217
+#: ../../../source/install/others.txt:223
 msgid "Here is an example that installs Munin plugins for groonga::"
 msgstr "以下はgroonga用のMuninプラグインをインストールする例です::"
 
 # 5c45044affbf41a8848fe14246583e1f
-#: ../../../source/install/others.txt:222
+#: ../../../source/install/others.txt:228
 msgid "``--with-package-platform=PLATFORM``"
 msgstr ""
 
 # ed8c55297cd54e9d95df6654e846de0f
-#: ../../../source/install/others.txt:224
+#: ../../../source/install/others.txt:230
 msgid ""
 "Installs platform specific system management files such as init script. "
 "Available platforms are ``redhat`` and ``fedora``. ``redhat`` is for Red Hat "
@@ -1020,38 +1031,38 @@ msgstr ""
 
 # caf44b2f903748b8991cf84c2c177a9f
 # add2e5642cfe4e3a83ac17e91ddbd6ce
-#: ../../../source/install/others.txt:229
+#: ../../../source/install/others.txt:235
 msgid "Those system management files are not installed by default."
 msgstr "デフォルトではシステム管理ファイルはインストールされません。"
 
 # d8d224952a5e40668c64bf6aed70c52c
-#: ../../../source/install/others.txt:231
+#: ../../../source/install/others.txt:237
 msgid ""
 "Here is an example that installs CentOS specific system management files::"
 msgstr "以下はCentOS用のシステム管理ファイルをインストールする例です::"
 
 # 73ce9a1e58ae487883e2cd13e15efecb
-#: ../../../source/install/others.txt:237
+#: ../../../source/install/others.txt:243
 msgid "``--help``"
 msgstr ""
 
 # 4eb9c8a0156848e192bd849c4016051b
-#: ../../../source/install/others.txt:239
+#: ../../../source/install/others.txt:245
 msgid "Shows all ``configure`` options."
 msgstr "すべての ``configure`` オプションを表示します。"
 
 # 3ccc49c4e940422490eb17e6434d8cce
-#: ../../../source/install/others.txt:242
+#: ../../../source/install/others.txt:248
 msgid "``make``"
 msgstr ""
 
 # f6547787aee44f09865d72c73ae7334c
-#: ../../../source/install/others.txt:244
+#: ../../../source/install/others.txt:250
 msgid "``configure`` is succeeded, you can build groonga by ``make``::"
 msgstr "``configure`` が成功したら ``make`` でgroongaをビルドします::"
 
 # 5ce9a2ae5dc546e98e9be192052b9c57
-#: ../../../source/install/others.txt:248
+#: ../../../source/install/others.txt:254
 msgid ""
 "If you have multi cores CPU, you can make faster by using ``-j`` option. If "
 "you have 4 cores CPU, it's good for using ``-j4`` option::"
@@ -1061,7 +1072,7 @@ msgstr ""
 "速くビルドできます::"
 
 # 0722f0e621ae45a6abf6cc6324fbe5b3
-#: ../../../source/install/others.txt:253
+#: ../../../source/install/others.txt:259
 msgid ""
 "If you get some errors by ``make``, please report them to us: :doc:`/"
 "contribution/report`"
@@ -1070,17 +1081,17 @@ msgstr ""
 "doc:`/contribution/report`"
 
 # aa8898373a0a49658c7fc85618e00bc9
-#: ../../../source/install/others.txt:257
+#: ../../../source/install/others.txt:263
 msgid "``make install``"
 msgstr ""
 
 # 8c1d42a847964a629f8ebeff72f93110
-#: ../../../source/install/others.txt:259
+#: ../../../source/install/others.txt:265
 msgid "Now, you can install built groonga!::"
 msgstr "これでビルドしたgroongaをインストールできます！::"
 
 # 714ab1fb1c3240458fa00571dfde7b07
-#: ../../../source/install/others.txt:263
+#: ../../../source/install/others.txt:269
 msgid ""
 "If you have write permission for ``${PREFIX}``, you don't need to use "
 "``sudo``. e.g. ``--prefix=$HOME/local`` case. In this case, use ``make "
