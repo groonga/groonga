@@ -19,7 +19,7 @@ add_definitions(
 
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/dat
-  )
+  ${MRUBY_INCLUDE_DIRS})
 
 read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/sources.am LIBGROONGA_SOURCES)
 read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/dat/sources.am LIBGRNDAT_SOURCES)
@@ -36,7 +36,7 @@ set_source_files_properties(dat.cpp ${LIBGRNDAT_SOURCES}
 add_library(libgroonga SHARED
   ${LIBGROONGA_SOURCES}
   ${LIBGRNDAT_SOURCES}
-  $<TARGET_OBJECTS:mruby>)
+  ${MRUBY_LIBS})
 set_target_properties(libgroonga PROPERTIES OUTPUT_NAME "groonga")
 target_link_libraries(libgroonga
   ${EXECINFO_LIBS}

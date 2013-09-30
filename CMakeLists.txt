@@ -348,6 +348,18 @@ else()
   set(GRN_WITH_MESSAGE_PACK FALSE)
 endif()
 
+option(GRN_WITH_MRUBY "use mruby" OFF)
+file(READ "${CMAKE_CURRENT_SOURCE_DIR}/mruby_version" MRUBY_VERSION)
+if(GRN_WITH_MRUBY)
+  set(MRUBY_INCLUDE_DIRS
+    "${CMAKE_CURRENT_SOURCE_DIR}/vendor/mruby-${MRUBY_VERSION}/include")
+  set(MRUBY_LIBS "$<TARGET_OBJECTS:mruby>")
+else()
+  set(MRUBY_INCLUDE_DIRS "")
+  set(MRUBY_LIBS "")
+endif()
+
+add_subdirectory(vendor)
 add_subdirectory(lib)
 add_subdirectory(src)
 add_subdirectory(plugins)
