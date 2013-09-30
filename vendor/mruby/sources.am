@@ -32,6 +32,5 @@ libmruby_la_SOURCES = \
 	../mruby-eeac4be/src/symbol.c \
 	../mruby-eeac4be/src/value_array.h \
 	../mruby-eeac4be/src/variable.c \
-	../mruby-eeac4be/src/vm.c \
-	$(NULL)
+	../mruby-eeac4be/src/vm.c
 
