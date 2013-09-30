@@ -39,6 +39,7 @@ typedef struct {
   grn_log_level log_level;
   ngx_str_t query_log_path;
   ngx_open_file_t *query_log_file;
+  size_t cache_limit;
   char *config_file;
   int config_line;
   char *name;
@@ -962,6 +963,7 @@ ngx_http_groonga_create_loc_conf(ngx_conf_t *cf)
   conf->query_log_path.data = NULL;
   conf->query_log_path.len = 0;
   conf->query_log_file = NULL;
+  conf->cache_limit = NGX_CONF_UNSET_SIZE;
   conf->config_file = NULL;
   conf->config_line = 0;
   conf->cache = NULL;
@@ -976,6 +978,8 @@ ngx_http_groonga_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child)
   ngx_http_groonga_loc_conf_t *conf = child;
 
   ngx_conf_merge_str_value(conf->database_path, prev->database_path, NULL);
+  ngx_conf_merge_size_value(conf->cache_limit, prev->cache_limit,
+                            GRN_CACHE_DEFAULT_MAX_N_ENTRIES);
 
 #ifdef NGX_HTTP_GROONGA_LOG_PATH
   {
@@ -1173,6 +1177,11 @@ ngx_http_groonga_open_database_callback(ngx_http_groonga_loc_conf_t *location_co
     data->rc = NGX_ERROR;
     return;
   }
+  if (location_conf->cache_limit != NGX_CONF_UNSET_SIZE) {
+    grn_cache_set_max_n_entries(context,
+                                location_conf->cache,
+                                location_conf->cache_limit);
+  }
 }
 
 static void
@@ -1295,6 +1304,13 @@ static ngx_command_t ngx_http_groonga_commands[] = {
     ngx_http_groonga_conf_set_query_log_path_slot,
     NGX_HTTP_LOC_CONF_OFFSET,
     offsetof(ngx_http_groonga_loc_conf_t, query_log_path),
+    NULL },
+
+  { ngx_string("groonga_cache_limit"),
+    NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
+    ngx_conf_set_size_slot,
+    NGX_HTTP_LOC_CONF_OFFSET,
+    offsetof(ngx_http_groonga_loc_conf_t, cache_limit),
     NULL },
 
   ngx_null_command
