@@ -24,6 +24,7 @@
 #include "geo.h"
 #include "util.h"
 #include "normalizer_in.h"
+#include "expr.h"
 
 static inline int
 function_proc_p(grn_obj *obj)
@@ -3786,12 +3787,7 @@ res_add(grn_ctx *ctx, grn_hash *s, grn_rset_posinfo *pi, uint32_t score,
   }
 }
 
-#define SCAN_ACCESSOR                  (0x01)
-#define SCAN_PUSH                      (0x02)
-#define SCAN_POP                       (0x04)
-#define SCAN_PRE_CONST                 (0x08)
-
-typedef struct {
+struct _grn_scan_info {
   uint32_t start;
   uint32_t end;
   int32_t nargs;
@@ -3802,15 +3798,7 @@ typedef struct {
   grn_obj index;
   grn_obj *query;
   grn_obj *args[8];
-} scan_info;
-
-typedef enum {
-  SCAN_START = 0,
-  SCAN_VAR,
-  SCAN_COL1,
-  SCAN_COL2,
-  SCAN_CONST
-} scan_stat;
+};
 
 #define SI_FREE(si) do {\
   GRN_OBJ_FIN(ctx, &(si)->wv);\
