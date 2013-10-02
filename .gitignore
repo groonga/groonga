@@ -37,6 +37,7 @@
 /data/scripts/groonga-httpd-restart
 /vendor/nginx-*/objs
 /vendor/mruby/parse.c
+/vendor/mruby/mrbc
 /vendor/plugins/*/
 /groonga.spec
 /stamp-h1

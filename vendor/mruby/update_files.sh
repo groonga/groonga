@@ -15,3 +15,5 @@ list_paths()
 mruby_dir=$1
 find "${mruby_dir}/src" -type f -name '*.[ch]' | \
 	list_paths "libmruby_la_SOURCES"
+find "${mruby_dir}/tools/mrbc" -type f -name '*.[ch]' | \
+	list_paths "mrbc_SOURCES"

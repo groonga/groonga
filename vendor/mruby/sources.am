@@ -35,3 +35,7 @@ libmruby_la_SOURCES = \
 	../mruby-eeac4be/src/vm.c \
 	$(NULL)
 
+mrbc_SOURCES = \
+	../mruby-eeac4be/tools/mrbc/mrbc.c \
+	$(NULL)
+
