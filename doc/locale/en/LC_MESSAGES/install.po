@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-09-30 17:21+0900\n"
+"POT-Creation-Date: 2013-10-02 15:22+0900\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -945,12 +945,14 @@ msgstr "The default is disabled."
 msgid "Here is an example that enables column value compression by zlib::"
 msgstr "Here is an example that enables column value compression by zlib::"
 
-# 714d9113db04480182154c928eac2fe9
+# 669ed7b800b6491db45aa8e7e05a14f8
+# d9e9a26038924db8b56a4cc6c617edef
 #: ../../../source/install/others.txt:182
+#: ../../../source/install/others.txt:199
 msgid ""
 "The disabled reason is that memory leak occurs when it refers column value. "
-"This is already known issue as GitHub#6. This issue is not nothing to do "
-"with updating column value."
+"This is already known issue as `GitHub#6 <https://github.com/groonga/groonga/"
+"issues/6>`_. This issue is not nothing to do with updating column value."
 msgstr ""
 
 # 702a4bec259e46de8a614240a3e12a8d
@@ -969,12 +971,12 @@ msgid "Here is an example that enables column value compression by LZO::"
 msgstr "Here is an example that enables column value compression by LZO::"
 
 # d27846de25f64371b4da256393477c6d
-#: ../../../source/install/others.txt:198
+#: ../../../source/install/others.txt:204
 msgid "``--with-message-pack=MESSAGE_PACK_INSTALL_PREFIX``"
 msgstr "``--with-message-pack=MESSAGE_PACK_INSTALL_PREFIX``"
 
 # f7d2b806844f4608a706d5263554dc30
-#: ../../../source/install/others.txt:200
+#: ../../../source/install/others.txt:206
 msgid ""
 "Specifies where MessagePack is installed. If MessagePack isn't installed "
 "with ``--prefix=/usr``, you need to specify this option with path that you "
@@ -985,7 +987,7 @@ msgstr ""
 "use for building MessagePack."
 
 # a7651cab195d4fc3bafad4b707dcb781
-#: ../../../source/install/others.txt:204
+#: ../../../source/install/others.txt:210
 msgid ""
 "If you installed MessagePack with ``--prefix=$HOME/local`` option, you "
 "sholud specify ``--with-message-pack=$HOME/local`` to groonga's "
@@ -996,12 +998,12 @@ msgstr ""
 "``configure``."
 
 # 965d4ff5ac6342a6a17269f238cc12e6
-#: ../../../source/install/others.txt:208
+#: ../../../source/install/others.txt:214
 msgid "The default is ``/usr``."
 msgstr "The default is ``/usr``."
 
 # 7db3fa8ae9774dbcadf2a3a4dc490b12
-#: ../../../source/install/others.txt:210
+#: ../../../source/install/others.txt:216
 msgid ""
 "Here is an example that uses MessagePack built with ``--prefix=$HOME/local`` "
 "option::"
@@ -1010,12 +1012,12 @@ msgstr ""
 "option::"
 
 # 79db055dd5ab49bf863205807add6f78
-#: ../../../source/install/others.txt:216
+#: ../../../source/install/others.txt:222
 msgid "``--with-munin-plugins``"
 msgstr "``--with-munin-plugins``"
 
 # 4e4369e6960c40de885a6e8ec8434963
-#: ../../../source/install/others.txt:218
+#: ../../../source/install/others.txt:224
 msgid ""
 "Installs Munin plugins for groonga. They are installed into ``${PREFIX}/"
 "share/groonga/munin/plugins/``."
@@ -1024,22 +1026,22 @@ msgstr ""
 "share/groonga/munin/plugins/``."
 
 # cee7fdaca2f74c0eb01c7e54a4a25eaf
-#: ../../../source/install/others.txt:221
+#: ../../../source/install/others.txt:227
 msgid "Those plugins are not installed by default."
 msgstr "Those plugins are not installed by default."
 
 # bb863636e38a4db5a46f9c2bdde41d75
-#: ../../../source/install/others.txt:223
+#: ../../../source/install/others.txt:229
 msgid "Here is an example that installs Munin plugins for groonga::"
 msgstr "Here is an example that installs Munin plugins for groonga::"
 
 # c5c4c455c0d4407e86f18b5ea6abca50
-#: ../../../source/install/others.txt:228
+#: ../../../source/install/others.txt:234
 msgid "``--with-package-platform=PLATFORM``"
 msgstr "``--with-package-platform=PLATFORM``"
 
 # 2a1ef94a44e645169070e0d6627b5583
-#: ../../../source/install/others.txt:230
+#: ../../../source/install/others.txt:236
 msgid ""
 "Installs platform specific system management files such as init script. "
 "Available platforms are ``redhat`` and ``fedora``. ``redhat`` is for Red Hat "
@@ -1050,39 +1052,39 @@ msgstr ""
 "and Red Hat clone distributions such as CentOS. ``fedora`` is for Fedora."
 
 # e2d8a371d3e047299c2ea6a36ce97d99
-#: ../../../source/install/others.txt:235
+#: ../../../source/install/others.txt:241
 msgid "Those system management files are not installed by default."
 msgstr "Those system management files are not installed by default."
 
 # db698039aa0f423f8f26c839e1fcf7ac
-#: ../../../source/install/others.txt:237
+#: ../../../source/install/others.txt:243
 msgid ""
 "Here is an example that installs CentOS specific system management files::"
 msgstr ""
 "Here is an example that installs CentOS specific system management files::"
 
 # e8c7eba377514721a55f87604caec24d
-#: ../../../source/install/others.txt:243
+#: ../../../source/install/others.txt:249
 msgid "``--help``"
 msgstr "``--help``"
 
 # 4b427295c97b4b6fb04cf4855d255b85
-#: ../../../source/install/others.txt:245
+#: ../../../source/install/others.txt:251
 msgid "Shows all ``configure`` options."
 msgstr "Shows all ``configure`` options."
 
 # 89671237a9c34d928bd59092edc23c15
-#: ../../../source/install/others.txt:248
+#: ../../../source/install/others.txt:254
 msgid "``make``"
 msgstr "``make``"
 
 # 4a7636a3e36b448c9aa9194bc8cc65eb
-#: ../../../source/install/others.txt:250
+#: ../../../source/install/others.txt:256
 msgid "``configure`` is succeeded, you can build groonga by ``make``::"
 msgstr "``configure`` is succeeded, you can build groonga by ``make``::"
 
 # 2a1b9a96dc5f4b52adcf4d4d6532aec5
-#: ../../../source/install/others.txt:254
+#: ../../../source/install/others.txt:260
 msgid ""
 "If you have multi cores CPU, you can make faster by using ``-j`` option. If "
 "you have 4 cores CPU, it's good for using ``-j4`` option::"
@@ -1091,7 +1093,7 @@ msgstr ""
 "you have 4 cores CPU, it's good for using ``-j4`` option::"
 
 # 5b5231ae3c754f0fa5cd77ac437c59f5
-#: ../../../source/install/others.txt:259
+#: ../../../source/install/others.txt:265
 msgid ""
 "If you get some errors by ``make``, please report them to us: :doc:`/"
 "contribution/report`"
@@ -1100,17 +1102,17 @@ msgstr ""
 "contribution/report`"
 
 # e14b4ffbbaf64092826e4c766262606c
-#: ../../../source/install/others.txt:263
+#: ../../../source/install/others.txt:269
 msgid "``make install``"
 msgstr "``make install``"
 
 # 568a8858183f4cb5b6c48627fae3f139
-#: ../../../source/install/others.txt:265
+#: ../../../source/install/others.txt:271
 msgid "Now, you can install built groonga!::"
 msgstr "Now, you can install built groonga!::"
 
 # 0cbaa9cf4fbd4d5896df9616a3eebff4
-#: ../../../source/install/others.txt:269
+#: ../../../source/install/others.txt:275
 msgid ""
 "If you have write permission for ``${PREFIX}``, you don't need to use "
 "``sudo``. e.g. ``--prefix=$HOME/local`` case. In this case, use ``make "

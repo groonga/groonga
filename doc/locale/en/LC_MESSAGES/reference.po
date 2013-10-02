@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-09-30 11:09+0900\n"
+"POT-Creation-Date: 2013-10-02 15:22+0900\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -318,6 +318,7 @@ msgstr ""
 #: ../../../source/reference/command/output_format.txt:9
 #: ../../../source/reference/command/return_code.txt:9
 #: ../../../source/reference/commands/cache_limit.txt:12
+#: ../../../source/reference/commands/column_create.txt:9
 #: ../../../source/reference/commands/column_rename.txt:12
 #: ../../../source/reference/commands/delete.txt:12
 #: ../../../source/reference/commands/load.txt:12
@@ -3406,6 +3407,7 @@ msgstr ""
 # 1bb58676a6024b1ea200d6d95cdc5005
 #: ../../../source/reference/command/output_format.txt:115
 #: ../../../source/reference/commands/cache_limit.txt:74
+#: ../../../source/reference/commands/column_create.txt:95
 #: ../../../source/reference/commands/column_rename.txt:71
 #: ../../../source/reference/commands/delete.txt:109
 #: ../../../source/reference/commands/normalize.txt:73
@@ -4050,6 +4052,7 @@ msgstr ""
 # 5cbbff425bb64b799046e859afe82e40
 # c0a4e0d8ea844f4baf64feb8bcf7fc8b
 #: ../../../source/reference/commands/cache_limit.txt:22
+#: ../../../source/reference/commands/column_create.txt:19
 #: ../../../source/reference/commands/column_rename.txt:17
 #: ../../../source/reference/commands/delete.txt:26
 #: ../../../source/reference/commands/load.txt:18
@@ -4078,6 +4081,7 @@ msgstr ""
 # faedf5338e484fc0a97463c0bff0f56b
 # 9bad6106d7164a318df4447c81e7a85c
 #: ../../../source/reference/commands/cache_limit.txt:29
+#: ../../../source/reference/commands/column_create.txt:25
 #: ../../../source/reference/commands/column_rename.txt:26
 #: ../../../source/reference/commands/delete.txt:32
 #: ../../../source/reference/commands/load.txt:70
@@ -4128,6 +4132,7 @@ msgstr ""
 # 91088f986b41452d882d125e6ed028e7
 # 64c1379301424498b45f520d7bab67bd
 #: ../../../source/reference/commands/cache_limit.txt:54
+#: ../../../source/reference/commands/column_create.txt:38
 #: ../../../source/reference/commands/column_rename.txt:45
 #: ../../../source/reference/commands/delete.txt:82
 #: ../../../source/reference/commands/load.txt:24
@@ -4174,6 +4179,7 @@ msgstr ""
 
 # b28391d763334d68a7b2c6a1731c878c
 #: ../../../source/reference/commands/cache_limit.txt:68
+#: ../../../source/reference/commands/column_create.txt:89
 #: ../../../source/reference/commands/column_rename.txt:65
 #: ../../../source/reference/commands/delete.txt:103
 #: ../../../source/reference/commands/load.txt:88
@@ -4262,7 +4268,6 @@ msgstr "check"
 # c84a609b98e64119a7be4864cc5845e0
 #: ../../../source/reference/commands/check.txt:9
 #: ../../../source/reference/commands/clearlock.txt:9
-#: ../../../source/reference/commands/column_create.txt:9
 #: ../../../source/reference/commands/column_list.txt:9
 #: ../../../source/reference/commands/column_remove.txt:9
 #: ../../../source/reference/commands/define_selector.txt:9
@@ -4333,7 +4338,6 @@ msgstr "check - オブジェクトの状態表示"
 # 9f3340b03fd04742bd8783fd7e27183e
 #: ../../../source/reference/commands/check.txt:14
 #: ../../../source/reference/commands/clearlock.txt:14
-#: ../../../source/reference/commands/column_create.txt:14
 #: ../../../source/reference/commands/column_list.txt:14
 #: ../../../source/reference/commands/column_remove.txt:14
 #: ../../../source/reference/commands/define_selector.txt:14
@@ -4399,7 +4403,6 @@ msgstr "書式"
 # 4083ea358a694489b903894227053ee3
 #: ../../../source/reference/commands/check.txt:20
 #: ../../../source/reference/commands/clearlock.txt:20
-#: ../../../source/reference/commands/column_create.txt:20
 #: ../../../source/reference/commands/column_list.txt:20
 #: ../../../source/reference/commands/column_remove.txt:20
 #: ../../../source/reference/commands/define_selector.txt:22
@@ -4487,7 +4490,6 @@ msgstr ""
 # 34bdbc361c6146189040e729e47ac407
 #: ../../../source/reference/commands/check.txt:27
 #: ../../../source/reference/commands/clearlock.txt:27
-#: ../../../source/reference/commands/column_create.txt:27
 #: ../../../source/reference/commands/column_list.txt:27
 #: ../../../source/reference/commands/column_remove.txt:28
 #: ../../../source/reference/commands/define_selector.txt:29
@@ -4552,7 +4554,6 @@ msgstr "状態を表示するオブジェクトの名前を指定します。"
 # ba89c6121b2241ac99029d0a440be1f9
 #: ../../../source/reference/commands/check.txt:34
 #: ../../../source/reference/commands/clearlock.txt:34
-#: ../../../source/reference/commands/column_create.txt:71
 #: ../../../source/reference/commands/column_list.txt:33
 #: ../../../source/reference/commands/column_remove.txt:37
 #: ../../../source/reference/commands/define_selector.txt:92
@@ -4594,7 +4595,6 @@ msgstr "返値"
 # 6f66e4153c4a49ecabc6a50c51efd0e2
 #: ../../../source/reference/commands/check.txt:37
 #: ../../../source/reference/commands/clearlock.txt:37
-#: ../../../source/reference/commands/column_create.txt:74
 #: ../../../source/reference/commands/column_list.txt:36
 #: ../../../source/reference/commands/column_remove.txt:40
 #: ../../../source/reference/commands/define_selector.txt:95
@@ -4628,7 +4628,7 @@ msgstr ""
 # 3663a61eb37a45a7b35671577635e5f0
 # 0df8e7d57bb640bf9e19e7678fc45333
 #: ../../../source/reference/commands/check.txt:49
-#: ../../../source/reference/commands/column_create.txt:39
+#: ../../../source/reference/commands/column_create.txt:50
 #: ../../../source/reference/commands/column_list.txt:63
 #: ../../../source/reference/commands/table_create.txt:179
 #: ../../../source/reference/commands/table_list.txt:58
@@ -4869,7 +4869,6 @@ msgstr ""
 # e44a92101aed4a289a8b5b4511156045
 #: ../../../source/reference/commands/check.txt:130
 #: ../../../source/reference/commands/clearlock.txt:48
-#: ../../../source/reference/commands/column_create.txt:85
 #: ../../../source/reference/commands/column_list.txt:89
 #: ../../../source/reference/commands/column_remove.txt:51
 #: ../../../source/reference/commands/define_selector.txt:106
@@ -4957,7 +4956,6 @@ msgstr ""
 # 0abaaa35b02a4fc0a0b6c8a4e79798c3
 # 4a4057ba5fcf443a9e6002149dffe9f5
 #: ../../../source/reference/commands/clearlock.txt:43
-#: ../../../source/reference/commands/column_create.txt:80
 #: ../../../source/reference/commands/column_remove.txt:46
 #: ../../../source/reference/commands/define_selector.txt:101
 #: ../../../source/reference/commands/log_level.txt:52
@@ -4977,7 +4975,6 @@ msgstr ""
 # 8f2c7090bca247f1b9f4ea23c51a7e8b
 # 7fc39b6f4a3e484bb3f73f3706b42ecf
 #: ../../../source/reference/commands/clearlock.txt:45
-#: ../../../source/reference/commands/column_create.txt:82
 #: ../../../source/reference/commands/column_remove.txt:48
 #: ../../../source/reference/commands/define_selector.txt:103
 #: ../../../source/reference/commands/log_level.txt:54
@@ -5033,8 +5030,9 @@ msgstr ":doc:`load`"
 
 # 68baf1cf0b444232a1fa7299c43fc58a
 #: ../../../source/reference/commands/column_create.txt:6
-msgid "column_create"
-msgstr "column_create"
+#: ../../../source/reference/executables/groonga.txt:184
+msgid "``column_create``"
+msgstr ""
 
 # 0e3ffa40e635429d90eeb3510e0cd267
 #: ../../../source/reference/commands/column_create.txt:11
@@ -5042,7 +5040,7 @@ msgid "column_create - カラムの追加"
 msgstr "column_create - カラムの追加"
 
 # cd05d201183f4cb2bd153fc77b836ab0
-#: ../../../source/reference/commands/column_create.txt:22
+#: ../../../source/reference/commands/column_create.txt:13
 msgid ""
 "groonga組込コマンドの一つであるcolumn_createについて説明します。組込コマンド"
 "は、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバに"
@@ -5053,13 +5051,27 @@ msgstr ""
 "リクエストを送信することによって実行します。"
 
 # e4423b2fdb65431fbc70c22ff9b27322
-#: ../../../source/reference/commands/column_create.txt:24
+#: ../../../source/reference/commands/column_create.txt:15
 msgid ""
 "column_createは、使用しているデータベースのテーブルに対してカラムを追加しま"
 "す。"
 msgstr ""
 "column_createは、使用しているデータベースのテーブルに対してカラムを追加しま"
 "す。"
+
+# c280214f31844ca3a7a96c86f0b0c225
+#: ../../../source/reference/commands/column_create.txt:27
+msgid "テーブルEntryに、ShortText型の値を格納するカラム、bodyを作成します。::"
+msgstr "テーブルEntryに、ShortText型の値を格納するカラム、bodyを作成します。::"
+
+# 529fe8364fe147aab094559b7c214ae4
+#: ../../../source/reference/commands/column_create.txt:32
+msgid ""
+"テーブルTermに、Entryテーブルのbodyカラムの値を対象とする完全転置インデックス"
+"型カラム、entry_bodyを作成します。::"
+msgstr ""
+"テーブルTermに、Entryテーブルのbodyカラムの値を対象とする完全転置インデックス"
+"型カラム、entry_bodyを作成します。::"
 
 # 4c822f633bee43819cb7a8fcd50a5781
 # 3047f898526246e289d6a57de93684b3
@@ -5070,7 +5082,7 @@ msgstr ""
 # 015920903ac547129ca05cbe4721009e
 # 56b6b4f8187e4a2aa23f98bf54d5b690
 # 707fa8edf67c4a4aa4ae507ba918ea66
-#: ../../../source/reference/commands/column_create.txt:29
+#: ../../../source/reference/commands/column_create.txt:40
 #: ../../../source/reference/commands/column_list.txt:30
 #: ../../../source/reference/commands/column_remove.txt:31
 #: ../../../source/reference/commands/define_selector.txt:35
@@ -5085,7 +5097,7 @@ msgid "``table``"
 msgstr "``table``"
 
 # a685d02f362243f297a26c2e356f2672
-#: ../../../source/reference/commands/column_create.txt:31
+#: ../../../source/reference/commands/column_create.txt:42
 msgid "カラムを追加するテーブルの名前を指定します。"
 msgstr "カラムを追加するテーブルの名前を指定します。"
 
@@ -5094,7 +5106,7 @@ msgstr "カラムを追加するテーブルの名前を指定します。"
 # 61e5f3b1454f4c57ab58006f7ab493fd
 # 2ce0e395d9c741c1ac88f9637d7d3ae3
 # 6d23df314d834de0b90c3079f825c1a0
-#: ../../../source/reference/commands/column_create.txt:33
+#: ../../../source/reference/commands/column_create.txt:44
 #: ../../../source/reference/commands/column_list.txt:51
 #: ../../../source/reference/commands/column_remove.txt:34
 #: ../../../source/reference/commands/define_selector.txt:31
@@ -5105,7 +5117,7 @@ msgid "``name``"
 msgstr "``name``"
 
 # 45225cedb4da45e3a917cd00cf0340ec
-#: ../../../source/reference/commands/column_create.txt:35
+#: ../../../source/reference/commands/column_create.txt:46
 msgid ""
 "作成するカラムの名前を指定します。カラム名は、テーブルの中で一意でなければな"
 "りません。"
@@ -5114,7 +5126,7 @@ msgstr ""
 "りません。"
 
 # 39effbd63c644679bc1264f69f5ed87d
-#: ../../../source/reference/commands/column_create.txt:37
+#: ../../../source/reference/commands/column_create.txt:48
 msgid ""
 "ピリオド('.'), コロン(':')を含む名前のカラムは作成できません。また、アンダー"
 "スコア('_')で始まる名前は予約済みであり、使用できません。"
@@ -5123,7 +5135,7 @@ msgstr ""
 "スコア('_')で始まる名前は予約済みであり、使用できません。"
 
 # 7102c865571d4aa082866a971a8740dc
-#: ../../../source/reference/commands/column_create.txt:41
+#: ../../../source/reference/commands/column_create.txt:52
 msgid ""
 "カラムの属性を表す以下の数値か、パイプ('|')で組み合わせたシンボル名を指定しま"
 "す。"
@@ -5132,37 +5144,70 @@ msgstr ""
 "す。"
 
 # f4911db8f8f14941adaf444a9016f100
-#: ../../../source/reference/commands/column_create.txt:43
+#: ../../../source/reference/commands/column_create.txt:54
 msgid "0, ``COLUMN_SCALAR``"
 msgstr ""
 
 # a78b2bf4af8848afb525ab91ac8bacc4
-#: ../../../source/reference/commands/column_create.txt:44
+#: ../../../source/reference/commands/column_create.txt:55
 msgid "単一の値が格納できるカラムを作成します。"
 msgstr "単一の値が格納できるカラムを作成します。"
 
 # 6327d8fb28ba4ad3ab41e81d3abdd526
-#: ../../../source/reference/commands/column_create.txt:45
+#: ../../../source/reference/commands/column_create.txt:56
 msgid "1, ``COLUMN_VECTOR``"
 msgstr ""
 
 # 96b9757a7f76484b894e20b9e03547b2
-#: ../../../source/reference/commands/column_create.txt:46
+#: ../../../source/reference/commands/column_create.txt:57
 msgid "複数の値の配列を格納できるカラムを作成します。"
 msgstr "複数の値の配列を格納できるカラムを作成します。"
 
 # 83c99de57ade4c578328e4bead06cb09
-#: ../../../source/reference/commands/column_create.txt:48
+#: ../../../source/reference/commands/column_create.txt:59
 msgid "2, ``COLUMN_INDEX``"
 msgstr ""
 
 # 17ed72374b2f416ba2894055ca627950
-#: ../../../source/reference/commands/column_create.txt:48
+#: ../../../source/reference/commands/column_create.txt:59
 msgid "インデックス型のカラムを作成します。"
 msgstr "インデックス型のカラムを作成します。"
 
+# 71faa9ae8fa841d0b009dc543b7d05ae
+#: ../../../source/reference/commands/column_create.txt:61
+msgid ""
+"There are two flags to compress the value of column, but you can't specify "
+"these flags for now because there are memory leaks issue `GitHub#6 <https://"
+"github.com/groonga/groonga/issues/6>`_ when refers the value of column. This "
+"issue occurs both of them (zlib and lzo)."
+msgstr ""
+
+# 6be0bc755fa44d598e4f76d8cfb29da8
+#: ../../../source/reference/commands/column_create.txt:63
+msgid "16, ``COMPRESS_ZLIB``"
+msgstr ""
+
+# b946c2ebb6324359840cdd8dee14e770
+#: ../../../source/reference/commands/column_create.txt:64
+msgid ""
+"Reserved. Compress the value of column by using zlib. This flag is disabled "
+"feature even if you build groonga with ``--with-zlib``."
+msgstr ""
+
+# a2b411050c834ddd8a018fb5fc6551cf
+#: ../../../source/reference/commands/column_create.txt:66
+msgid "32, ``COMPRESS_LZO``"
+msgstr ""
+
+# 6d3f133caa71430da8fc7f3f141bb12a
+#: ../../../source/reference/commands/column_create.txt:66
+msgid ""
+"Reserved. Compress the value of column by using lzo. This flag is disabled "
+"feature even if you build groonga with ``--with-lzo``."
+msgstr ""
+
 # 0bc1063383054558a0e8c8d896adade5
-#: ../../../source/reference/commands/column_create.txt:50
+#: ../../../source/reference/commands/column_create.txt:68
 msgid ""
 "インデックス型のカラムについては、flagsの値に以下の値を加えることによって、追"
 "加の属 性を指定することができます。"
@@ -5171,46 +5216,46 @@ msgstr ""
 "加の属 性を指定することができます。"
 
 # 9637784cf4fe42dbbb66f950be403c92
-#: ../../../source/reference/commands/column_create.txt:54
+#: ../../../source/reference/commands/column_create.txt:72
 msgid "128, ``WITH_SECTION``"
 msgstr ""
 
 # 823e5922c9de459eb7a513ac8a963ac2
-#: ../../../source/reference/commands/column_create.txt:54
+#: ../../../source/reference/commands/column_create.txt:72
 msgid "段落情報を格納するインデックスを作成します。"
 msgstr "段落情報を格納するインデックスを作成します。"
 
 # 7be12e6f12a745c29bab7a9a3ca38173
-#: ../../../source/reference/commands/column_create.txt:57
+#: ../../../source/reference/commands/column_create.txt:75
 msgid "256, ``WITH_WEIGHT``"
 msgstr ""
 
 # 35ba2e8b1aaa449b983962f2c3d63a3f
-#: ../../../source/reference/commands/column_create.txt:57
+#: ../../../source/reference/commands/column_create.txt:75
 msgid "ウェイト情報を格納するインデックスを作成します。"
 msgstr "ウェイト情報を格納するインデックスを作成します。"
 
 # 66ef8d4840ae44a9ba842e339eafdc3d
-#: ../../../source/reference/commands/column_create.txt:60
+#: ../../../source/reference/commands/column_create.txt:78
 msgid "512, ``WITH_POSITION``"
 msgstr ""
 
 # 332c1e6c9fcc40ee8dd16cb319ec88c3
-#: ../../../source/reference/commands/column_create.txt:60
+#: ../../../source/reference/commands/column_create.txt:78
 msgid "位置情報を格納するインデックス(完全転置インデックス)を作成します。"
 msgstr "位置情報を格納するインデックス(完全転置インデックス)を作成します。"
 
 # c8ce7ea2d7d64c01abb79185a10abcd9
 # c8a5faac538d40b485d1a18933b45db6
 # c1ec9388c59842e4b656bf0ffd8838e3
-#: ../../../source/reference/commands/column_create.txt:62
+#: ../../../source/reference/commands/column_create.txt:80
 #: ../../../source/reference/commands/column_list.txt:59
 #: ../../../source/reference/commands/suggest.txt:182
 msgid "``type``"
 msgstr "``type``"
 
 # 495c22a2f9924d33afd4075edc38e288
-#: ../../../source/reference/commands/column_create.txt:64
+#: ../../../source/reference/commands/column_create.txt:82
 msgid ""
 "値の型を指定します。groongaの組込型か、同一データベースに定義済みのユーザ定義"
 "型、定義済みのテーブルを指定することができます。"
@@ -5220,13 +5265,13 @@ msgstr ""
 
 # a92879b045a646e38405bfcef882a005
 # f99bd6c47b584fb2b4a7d823158a2fb0
-#: ../../../source/reference/commands/column_create.txt:66
+#: ../../../source/reference/commands/column_create.txt:84
 #: ../../../source/reference/commands/column_list.txt:75
 msgid "``source``"
 msgstr "``source``"
 
 # b7c14ca764274e5e9e5dbea2cf05ea5d
-#: ../../../source/reference/commands/column_create.txt:68
+#: ../../../source/reference/commands/column_create.txt:86
 msgid ""
 "インデックス型のカラムを作成した場合は、インデックス対象となるカラムをsource"
 "引数に指定します。"
@@ -5234,19 +5279,26 @@ msgstr ""
 "インデックス型のカラムを作成した場合は、インデックス対象となるカラムをsource"
 "引数に指定します。"
 
-# c280214f31844ca3a7a96c86f0b0c225
-#: ../../../source/reference/commands/column_create.txt:87
-msgid "テーブルEntryに、ShortText型の値を格納するカラム、bodyを作成します。::"
-msgstr "テーブルEntryに、ShortText型の値を格納するカラム、bodyを作成します。::"
-
-# 529fe8364fe147aab094559b7c214ae4
-#: ../../../source/reference/commands/column_create.txt:92
+# 1db91fbbb08d4b97b9a35033e3dd178d
+#: ../../../source/reference/commands/column_create.txt:97
+#: ../../../source/reference/commands/column_rename.txt:73
+#: ../../../source/reference/commands/delete.txt:111
+#: ../../../source/reference/commands/normalize.txt:75
+#: ../../../source/reference/commands/truncate.txt:67
 msgid ""
-"テーブルTermに、Entryテーブルのbodyカラムの値を対象とする完全転置インデックス"
-"型カラム、entry_bodyを作成します。::"
+"The format of HEADER is [0, UNIX_TIME_WHEN_COMMAND_IS_STARTED, "
+"ELAPSED_TIME]. See :doc:`/reference/command/output_format` about HEADER."
 msgstr ""
-"テーブルTermに、Entryテーブルのbodyカラムの値を対象とする完全転置インデックス"
-"型カラム、entry_bodyを作成します。::"
+
+# a1cec3bba1e6452b9740b3c94cd9bdb4
+#: ../../../source/reference/commands/column_create.txt:100
+msgid "``SUCCEEDED``"
+msgstr ""
+
+# 3c318e26bdc34c608850713c91e7c44c
+#: ../../../source/reference/commands/column_create.txt:102
+msgid "If command is succeeded, it returns true on success, false otherwise."
+msgstr ""
 
 # ea997739b57e4c90934ad82e43a8418c
 #: ../../../source/reference/commands/column_list.txt:6
@@ -5550,16 +5602,6 @@ msgstr ""
 # 4cbd35ee174e45658e8becbb0e0a5ade
 #: ../../../source/reference/commands/column_rename.txt:62
 msgid "It specifies the name of column."
-msgstr ""
-
-# 1db91fbbb08d4b97b9a35033e3dd178d
-#: ../../../source/reference/commands/column_rename.txt:73
-#: ../../../source/reference/commands/delete.txt:111
-#: ../../../source/reference/commands/normalize.txt:75
-#: ../../../source/reference/commands/truncate.txt:67
-msgid ""
-"The format of HEADER is [0, UNIX_TIME_WHEN_COMMAND_IS_STARTED, "
-"ELAPSED_TIME]. See :doc:`/reference/command/output_format` about HEADER."
 msgstr ""
 
 # 9e065ab6ae2a4351b5fe8a91405db992
@@ -11816,11 +11858,6 @@ msgstr "テーブルに定義されているカラムのリストを表示しま
 msgid "DBにテーブルを追加します。"
 msgstr "DBにテーブルを追加します。"
 
-# 68baf1cf0b444232a1fa7299c43fc58a
-#: ../../../source/reference/executables/groonga.txt:184
-msgid "``column_create``"
-msgstr ""
-
 # 1cf238009043408087088ed70616bb57
 #: ../../../source/reference/executables/groonga.txt:184
 msgid "テーブルにカラムを追加します。"
@@ -18025,53 +18062,23 @@ msgstr ""
 msgid "Object型はv1.2でサポートされます。"
 msgstr "Object型はv1.2でサポートされます。"
 
-# 17b5fc3339cb402db375a8fb03389871
-#~ msgid "delete - 一件のレコードの削除"
-#~ msgstr "delete - 一件のレコードの削除"
+# 8e91fbc2746341169c27948089409f5c
+#~ msgid "json"
+#~ msgstr "json"
 
-# 9ee33aa44c21410eb720de969556dde0
+# 5422fde6ce3d4b03926ae9c28a568c8e
 #~ msgid ""
-#~ "groonga組込コマンドの一つであるdeleteについて説明します。組込コマンドは、"
-#~ "groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリ"
-#~ "クエストを送信することによって実行します。"
+#~ "クエリキャッシュの最大件数を整数で指定します。 maxが指定されなかった場合に"
+#~ "は、クエリキャッシュの最大件数は変更せず、 現在の設定値のみが返されます。"
 #~ msgstr ""
-#~ "groonga組込コマンドの一つであるdeleteについて説明します。組込コマンドは、"
-#~ "groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリ"
-#~ "クエストを送信することによって実行します。"
+#~ "クエリキャッシュの最大件数を整数で指定します。 maxが指定されなかった場合に"
+#~ "は、クエリキャッシュの最大件数は変更せず、 現在の設定値のみが返されます。"
 
-# d295da1d724849a8a4c12e499c4e5ef1
+# 31ae96ec89454ccd8461b3be13376d57
 #~ msgid ""
-#~ "deleteは、使用しているデータベースのテーブルに1件のレコードを削除します。"
+#~ "cache_limitは、クエリキャッシュの最大件数を取得したり設定したりします。"
 #~ msgstr ""
-#~ "deleteは、使用しているデータベースのテーブルに1件のレコードを削除します。"
-
-# bb54bdbab7684c0e940229f834bdfe82
-#~ msgid "テーブルEntryからレコードを削除します。::"
-#~ msgstr "テーブルEntryからレコードを削除します。::"
-
-# 43e0750371c644d8833d1a01a72e4ced
-#~ msgid "レコードを削除しようとするテーブルの名前を指定します。"
-#~ msgstr "レコードを削除しようとするテーブルの名前を指定します。"
-
-# 1348fc0305b9412b840d4a9371faa2da
-#~ msgid ""
-#~ "削除するレコードの主キー値を指定します。主キーなしのテーブルの場合はこのパ"
-#~ "ラメータを指定しても無視されます(idパラメータを代わりに指定します)。"
-#~ msgstr ""
-#~ "削除するレコードの主キー値を指定します。主キーなしのテーブルの場合はこのパ"
-#~ "ラメータを指定しても無視されます(idパラメータを代わりに指定します)。"
-
-# ae3fed01f9fd4e7e9a541995a8dcf986
-#~ msgid ""
-#~ "script形式のgrn_expr文字列によってレコードを指定します。filterパラメータを"
-#~ "指定する場合は、id及びkeyパラメータを指定してはいけません。"
-#~ msgstr ""
-#~ "script形式のgrn_expr文字列によってレコードを指定します。filterパラメータを"
-#~ "指定する場合は、id及びkeyパラメータを指定してはいけません。"
-
-# 1fa38310321a4d9f8f5dcb5d3b9ebe5e
-#~ msgid "cache_limit - cacheサイズの設定・取得"
-#~ msgstr "cache_limit - cacheサイズの設定・取得"
+#~ "cache_limitは、クエリキャッシュの最大件数を取得したり設定したりします。"
 
 # 782f01979fbc4d54b4b22525168fdcb3
 #~ msgid ""
@@ -18083,20 +18090,54 @@ msgstr "Object型はv1.2でサポートされます。"
 #~ "は、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバ"
 #~ "にリクエストを送信することによって実行します。"
 
-# 31ae96ec89454ccd8461b3be13376d57
-#~ msgid ""
-#~ "cache_limitは、クエリキャッシュの最大件数を取得したり設定したりします。"
-#~ msgstr ""
-#~ "cache_limitは、クエリキャッシュの最大件数を取得したり設定したりします。"
+# 1fa38310321a4d9f8f5dcb5d3b9ebe5e
+#~ msgid "cache_limit - cacheサイズの設定・取得"
+#~ msgstr "cache_limit - cacheサイズの設定・取得"
 
-# 5422fde6ce3d4b03926ae9c28a568c8e
+# ae3fed01f9fd4e7e9a541995a8dcf986
 #~ msgid ""
-#~ "クエリキャッシュの最大件数を整数で指定します。 maxが指定されなかった場合に"
-#~ "は、クエリキャッシュの最大件数は変更せず、 現在の設定値のみが返されます。"
+#~ "script形式のgrn_expr文字列によってレコードを指定します。filterパラメータを"
+#~ "指定する場合は、id及びkeyパラメータを指定してはいけません。"
 #~ msgstr ""
-#~ "クエリキャッシュの最大件数を整数で指定します。 maxが指定されなかった場合に"
-#~ "は、クエリキャッシュの最大件数は変更せず、 現在の設定値のみが返されます。"
+#~ "script形式のgrn_expr文字列によってレコードを指定します。filterパラメータを"
+#~ "指定する場合は、id及びkeyパラメータを指定してはいけません。"
 
-# 8e91fbc2746341169c27948089409f5c
-#~ msgid "json"
-#~ msgstr "json"
+# 1348fc0305b9412b840d4a9371faa2da
+#~ msgid ""
+#~ "削除するレコードの主キー値を指定します。主キーなしのテーブルの場合はこのパ"
+#~ "ラメータを指定しても無視されます(idパラメータを代わりに指定します)。"
+#~ msgstr ""
+#~ "削除するレコードの主キー値を指定します。主キーなしのテーブルの場合はこのパ"
+#~ "ラメータを指定しても無視されます(idパラメータを代わりに指定します)。"
+
+# 43e0750371c644d8833d1a01a72e4ced
+#~ msgid "レコードを削除しようとするテーブルの名前を指定します。"
+#~ msgstr "レコードを削除しようとするテーブルの名前を指定します。"
+
+# bb54bdbab7684c0e940229f834bdfe82
+#~ msgid "テーブルEntryからレコードを削除します。::"
+#~ msgstr "テーブルEntryからレコードを削除します。::"
+
+# d295da1d724849a8a4c12e499c4e5ef1
+#~ msgid ""
+#~ "deleteは、使用しているデータベースのテーブルに1件のレコードを削除します。"
+#~ msgstr ""
+#~ "deleteは、使用しているデータベースのテーブルに1件のレコードを削除します。"
+
+# 9ee33aa44c21410eb720de969556dde0
+#~ msgid ""
+#~ "groonga組込コマンドの一つであるdeleteについて説明します。組込コマンドは、"
+#~ "groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリ"
+#~ "クエストを送信することによって実行します。"
+#~ msgstr ""
+#~ "groonga組込コマンドの一つであるdeleteについて説明します。組込コマンドは、"
+#~ "groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリ"
+#~ "クエストを送信することによって実行します。"
+
+# 17b5fc3339cb402db375a8fb03389871
+#~ msgid "delete - 一件のレコードの削除"
+#~ msgstr "delete - 一件のレコードの削除"
+
+# 68baf1cf0b444232a1fa7299c43fc58a
+#~ msgid "column_create"
+#~ msgstr "column_create"

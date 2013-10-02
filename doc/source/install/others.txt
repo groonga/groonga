@@ -180,8 +180,8 @@ Here is an example that enables column value compression by zlib::
 .. note::
 
    The disabled reason is that memory leak occurs when it refers column value.
-   This is already known issue as GitHub#6. This issue is not nothing to do with
-   updating column value.
+   This is already known issue as `GitHub#6 <https://github.com/groonga/groonga/issues/6>`_.
+   This issue is not nothing to do with updating column value.
 
 ``--with-lzo``
 ++++++++++++++
@@ -193,6 +193,12 @@ The default is disabled.
 Here is an example that enables column value compression by LZO::
 
   % ./configure --with-lzo
+
+.. note::
+
+   The disabled reason is that memory leak occurs when it refers column value.
+   This is already known issue as `GitHub#6 <https://github.com/groonga/groonga/issues/6>`_.
+   This issue is not nothing to do with updating column value.
 
 ``--with-message-pack=MESSAGE_PACK_INSTALL_PREFIX``
 +++++++++++++++++++++++++++++++++++++++++++++++++++
