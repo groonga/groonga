@@ -40,6 +40,8 @@
 # define mrb_voidp_value(p) mrb_cptr_value(mrb, (p))
 #endif
 
+extern const uint8_t grn_mrb_irepdata_scaninfo[];
+
 static mrb_value
 mrb_grn_err(mrb_state *mrb, mrb_value self)
 {
@@ -359,7 +361,7 @@ mrb_grn_expr_aref(mrb_state *mrb, mrb_value self)
   mrb_get_args(mrb, "i", &i);
   e = DATA_PTR(self);
   if (i >= e->codes_curr) { return mrb_nil_value(); }
-  return grn_mrb_obj_new(mrb, "ExprCode", e->codes + i);
+  return grn_mrb_obj_new(mrb, "ExprCode", &e->codes[i]);
 }
 
 static mrb_value
@@ -544,7 +546,14 @@ grn_ctx_impl_mrb_init(grn_ctx *ctx)
   if (grn_mruby_enabled && strcmp(grn_mruby_enabled, "no") == 0) {
     ctx->impl->mrb = NULL;
   } else {
+    int32_t n;
     ctx->impl->mrb = mrb_open();
+    ctx->impl->mrb->ud = ctx;
+    grn_mrb_init_expr(ctx);
+    n = mrb_read_irep(ctx->impl->mrb, grn_mrb_irepdata_scaninfo);
+    mrb_run(ctx->impl->mrb,
+            mrb_proc_new(ctx->impl->mrb, ctx->impl->mrb->irep[n]),
+            mrb_top_self(ctx->impl->mrb));
   }
 }
 

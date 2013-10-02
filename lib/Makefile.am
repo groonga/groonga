@@ -33,4 +33,4 @@ EXTRA_DIST =					\
 CLEANFILES = *.gcno *.gcda
 
 .rb.c:
-	$(MRUBY_MRBC_PATH) -B$* $<
+	$(MRUBY_MRBC_PATH) -Bgrn_mrb_irepdata_$* $<

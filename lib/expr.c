@@ -25,6 +25,7 @@
 #include "util.h"
 #include "normalizer_in.h"
 #include "expr.h"
+#include "mrb.h"
 
 static inline int
 function_proc_p(grn_obj *obj)
@@ -4098,6 +4099,29 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
   }
   if (stat || m != o + 1) { return NULL; }
   if (!(sis = GRN_MALLOCN(scan_info *, m + m + o))) { return NULL; }
+#ifdef GRN_WITH_MRUBY
+  if (ctx->impl->mrb) {
+    grn_obj ret, argv[6];
+    GRN_PTR_INIT(&argv[0], 0, GRN_ID_NIL);
+    GRN_PTR_SET(ctx, &argv[0], sis);
+    GRN_TEXT_INIT(&argv[1], GRN_OBJ_DO_SHALLOW_COPY);
+    GRN_TEXT_SETS(ctx, &argv[1], "ScaninfoVector");
+    GRN_PTR_INIT(&argv[2], 0, GRN_ID_NIL);
+    GRN_PTR_SET(ctx, &argv[2], var);
+    GRN_TEXT_INIT(&argv[3], GRN_OBJ_DO_SHALLOW_COPY);
+    GRN_TEXT_SETS(ctx, &argv[3], "Obj");
+    GRN_INT32_INIT(&argv[4], 0);
+    GRN_INT32_SET(ctx, &argv[4], op);
+    GRN_INT32_INIT(&argv[5], 0);
+    GRN_INT32_SET(ctx, &argv[5], size);
+    if (grn_mrb_send(ctx, (grn_obj *)e, "build", 4, argv, &ret) || ret.header.domain != GRN_DB_INT32) {
+      sis = NULL;
+    } else {
+      *n = GRN_INT32_VALUE(&ret);
+    }
+    return sis;
+  }
+#endif
   for (i = 0, stat = SCAN_START, c = e->codes, ce = &e->codes[e->codes_curr]; c < ce; c++) {
     switch (c->op) {
     case GRN_OP_MATCH :
