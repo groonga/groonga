@@ -3806,20 +3806,35 @@ struct _grn_scan_info {
   GRN_FREE(si);\
 } while (0)
 
+scan_info *
+grn_scan_info_alloc(grn_ctx *ctx, int st)
+{
+  scan_info *si = GRN_MALLOCN(scan_info, 1);
+  if (si) {
+    GRN_INT32_INIT(&si->wv, GRN_OBJ_VECTOR);
+    GRN_PTR_INIT(&si->index, GRN_OBJ_VECTOR, GRN_ID_NIL);
+    si->logical_op = GRN_OP_OR;
+    si->flags = SCAN_PUSH;
+    si->nargs = 0;
+    si->start = st;
+  }
+  return si;
+}
+
 #define SI_ALLOC(si, i, st) do {\
-  if (!((si) = GRN_MALLOCN(scan_info, 1))) {\
+  if (!((si) = grn_scan_info_alloc(ctx, st))) {\
     int j;\
     for (j = 0; j < i; j++) { SI_FREE(sis[j]); }\
     GRN_FREE(sis);\
     return NULL;\
   }\
-  GRN_INT32_INIT(&(si)->wv, GRN_OBJ_VECTOR);\
-  GRN_PTR_INIT(&(si)->index, GRN_OBJ_VECTOR, GRN_ID_NIL);\
-  (si)->logical_op = GRN_OP_OR;\
-  (si)->flags = SCAN_PUSH;\
-  (si)->nargs = 0;\
-  (si)->start = (st);\
 } while (0)
+
+void
+grn_scan_info_free(grn_ctx *ctx, scan_info *si)
+{
+  SI_FREE(si);
+}
 
 static scan_info **
 put_logical_op(grn_ctx *ctx, scan_info **sis, int *ip, grn_operator op, int start)
@@ -3895,8 +3910,8 @@ put_logical_op(grn_ctx *ctx, scan_info **sis, int *ip, grn_operator op, int star
   GRN_OBJ_FIN(ctx, &strbuf);\
 } while (0)
 
-static void
-scan_info_put_index(grn_ctx *ctx, scan_info *si, grn_obj *index, uint32_t sid, int32_t weight)
+void
+grn_scan_info_put_index(grn_ctx *ctx, scan_info *si, grn_obj *index, uint32_t sid, int32_t weight)
 {
   GRN_PTR_PUT(ctx, &si->index, index);
   GRN_UINT32_PUT(ctx, &si->wv, sid);
@@ -3920,8 +3935,8 @@ scan_info_put_index(grn_ctx *ctx, scan_info *si, grn_obj *index, uint32_t sid, i
   }
 }
 
-static int32_t
-get_weight(grn_ctx *ctx, grn_expr_code *ec)
+int32_t
+grn_expr_code_get_weight(grn_ctx *ctx, grn_expr_code *ec)
 {
   if (ec->modify == 2 && ec[2].op == GRN_OP_STAR &&
       ec[1].value && ec[1].value->header.type == GRN_BULK) {
@@ -3940,6 +3955,70 @@ get_weight(grn_ctx *ctx, grn_expr_code *ec)
     }
   } else {
     return 1;
+  }
+}
+
+int
+grn_scan_info_get_flags(scan_info *si)
+{
+  return si->flags;
+}
+
+void
+grn_scan_info_set_flags(scan_info *si, int flags)
+{
+  si->flags = flags;
+}
+
+grn_operator
+grn_scan_info_get_logical_op(scan_info *si)
+{
+  return si->logical_op;
+}
+
+void
+grn_scan_info_set_logical_op(scan_info *si, grn_operator logical_op)
+{
+  si->logical_op = logical_op;
+}
+
+void
+grn_scan_info_set_op(scan_info *si, grn_operator op)
+{
+  si->op = op;
+}
+
+void
+grn_scan_info_set_end(scan_info *si, uint32_t end)
+{
+  si->end = end;
+}
+
+void
+grn_scan_info_set_query(scan_info *si, grn_obj *query)
+{
+  si->query = query;
+}
+
+grn_bool
+grn_scan_info_push_arg(scan_info *si, grn_obj *arg)
+{
+  if (si->nargs < 8) {
+    si->args[si->nargs++] = arg;
+    return GRN_TRUE;
+  }
+  return GRN_FALSE;
+}
+
+void
+grn_scan_info_each_arg(grn_ctx *ctx, scan_info *si,
+                       grn_scan_info_each_arg_callback callback, void *user_data)
+{
+  grn_obj **p, **pe;
+  p = si->args;
+  pe = si->args + si->nargs;
+  for (; p < pe; p++) {
+    callback(ctx, *p, user_data);
   }
 }
 
@@ -4054,19 +4133,19 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
                 switch (ec->value->header.type) {
                 case GRN_ACCESSOR :
                   if (grn_column_index(ctx, ec->value, c->op, &index, 1, &sid)) {
-                    int32_t weight = get_weight(ctx, ec);
+                    int32_t weight = grn_expr_code_get_weight(ctx, ec);
                     si->flags |= SCAN_ACCESSOR;
                     if (((grn_accessor *)ec->value)->next) {
-                      scan_info_put_index(ctx, si, ec->value, sid, weight);
+                      grn_scan_info_put_index(ctx, si, ec->value, sid, weight);
                     } else {
-                      scan_info_put_index(ctx, si, index, sid, weight);
+                      grn_scan_info_put_index(ctx, si, index, sid, weight);
                     }
                   }
                   break;
                 case GRN_COLUMN_FIX_SIZE :
                 case GRN_COLUMN_VAR_SIZE :
                   if (grn_column_index(ctx, ec->value, c->op, &index, 1, &sid)) {
-                    scan_info_put_index(ctx, si, index, sid, get_weight(ctx, ec));
+                    grn_scan_info_put_index(ctx, si, index, sid, grn_expr_code_get_weight(ctx, ec));
                   }
                   break;
                 case GRN_COLUMN_INDEX :
@@ -4080,22 +4159,22 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
                     j -= 2;
                     ec += 2;
                   }
-                  scan_info_put_index(ctx, si, index, sid, get_weight(ctx, ec));
+                  grn_scan_info_put_index(ctx, si, index, sid, grn_expr_code_get_weight(ctx, ec));
                   break;
                 }
               }
             }
           } else if (GRN_DB_OBJP(*p)) {
             if (grn_column_index(ctx, *p, c->op, &index, 1, &sid)) {
-              scan_info_put_index(ctx, si, index, sid, 1);
+              grn_scan_info_put_index(ctx, si, index, sid, 1);
             }
           } else if (GRN_ACCESSORP(*p)) {
             si->flags |= SCAN_ACCESSOR;
             if (grn_column_index(ctx, *p, c->op, &index, 1, &sid)) {
               if (((grn_accessor *)(*p))->next) {
-                scan_info_put_index(ctx, si, *p, sid, 1);
+                grn_scan_info_put_index(ctx, si, *p, sid, 1);
               } else {
-                scan_info_put_index(ctx, si, index, sid, 1);
+                grn_scan_info_put_index(ctx, si, index, sid, 1);
               }
             }
           } else {
@@ -4176,12 +4255,12 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
           for (; p < pe; p++) {
             if (GRN_DB_OBJP(*p)) {
               if (grn_column_index(ctx, *p, c->op, &index, 1, &sid)) {
-                scan_info_put_index(ctx, si, index, sid, 1);
+                grn_scan_info_put_index(ctx, si, index, sid, 1);
               }
             } else if (GRN_ACCESSORP(*p)) {
               si->flags |= SCAN_ACCESSOR;
               if (grn_column_index(ctx, *p, c->op, &index, 1, &sid)) {
-                scan_info_put_index(ctx, si, index, sid, 1);
+                grn_scan_info_put_index(ctx, si, index, sid, 1);
               }
             } else {
               si->query = *p;
