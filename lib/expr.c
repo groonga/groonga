@@ -3943,6 +3943,103 @@ get_weight(grn_ctx *ctx, grn_expr_code *ec)
   }
 }
 
+scan_info *
+grn_scan_info_alloc(grn_ctx *ctx, int st)
+{
+  scan_info *si = GRN_MALLOCN(scan_info, 1);
+  if (si) {
+    GRN_INT32_INIT(&si->wv, GRN_OBJ_VECTOR);
+    GRN_PTR_INIT(&si->index, GRN_OBJ_VECTOR, GRN_ID_NIL);
+    si->logical_op = GRN_OP_OR;
+    si->flags = SCAN_PUSH;
+    si->nargs = 0;
+    si->start = st;
+  }
+  return si;
+}
+
+void
+grn_scan_info_free(grn_ctx *ctx, scan_info *si)
+{
+  SI_FREE(si);
+}
+
+void
+grn_scan_info_put_index(grn_ctx *ctx, scan_info *si, grn_obj *index, uint32_t sid, int32_t weight)
+{
+  scan_info_put_index(ctx, si, index, sid, weight);
+}
+
+int32_t
+grn_expr_code_get_weight(grn_ctx *ctx, grn_expr_code *ec)
+{
+  return get_weight(ctx, ec);
+}
+
+int
+grn_scan_info_get_flags(scan_info *si)
+{
+  return si->flags;
+}
+
+void
+grn_scan_info_set_flags(scan_info *si, int flags)
+{
+  si->flags = flags;
+}
+
+grn_operator
+grn_scan_info_get_logical_op(scan_info *si)
+{
+  return si->logical_op;
+}
+
+void
+grn_scan_info_set_logical_op(scan_info *si, grn_operator logical_op)
+{
+  si->logical_op = logical_op;
+}
+
+void
+grn_scan_info_set_op(scan_info *si, grn_operator op)
+{
+  si->op = op;
+}
+
+void
+grn_scan_info_set_end(scan_info *si, uint32_t end)
+{
+  si->end = end;
+}
+
+void
+grn_scan_info_set_query(scan_info *si, grn_obj *query)
+{
+  si->query = query;
+}
+
+grn_bool
+grn_scan_info_push_arg(scan_info *si, grn_obj *arg)
+{
+  if (si->nargs < 8) {
+    si->args[si->nargs++] = arg;
+    return GRN_TRUE;
+  }
+  return GRN_FALSE;
+}
+
+void
+grn_scan_info_each_arg(grn_ctx *ctx, scan_info *si,
+                       grn_scan_info_each_arg_callback callback, void *user_data)
+{
+  grn_obj **p, **pe;
+  p = si->args;
+  pe = si->args + si->nargs;
+  for (; p < pe; p++) {
+    callback(ctx, *p, user_data);
+  }
+}
+
 static scan_info **
 scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
                 grn_operator op, uint32_t size)
