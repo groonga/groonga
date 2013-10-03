@@ -1431,20 +1431,7 @@ h_server(char *path)
   CRITICAL_SECTION_INIT(cache_lock);
   GRN_COM_QUEUE_INIT(&ctx_new);
   GRN_COM_QUEUE_INIT(&ctx_old);
-#ifndef WIN32
-  {
-    struct rlimit lim;
-    lim.rlim_cur = 4096;
-    lim.rlim_max = 4096;
-    /* RLIMIT_OFILE */
-    setrlimit(RLIMIT_NOFILE, &lim);
-    lim.rlim_cur = 0;
-    lim.rlim_max = 0;
-    getrlimit(RLIMIT_NOFILE, &lim);
-    GRN_LOG(ctx, GRN_LOG_NOTICE, "RLIMIT_NOFILE(%" GRN_FMT_LLD ",%" GRN_FMT_LLD ")",
-            (long long int)lim.rlim_cur, (long long int)lim.rlim_max);
-  }
-#endif /* WIN32 */
+  check_rlimit_nofile(ctx);
   exit_code = start_service(ctx, path, NULL, h_handler);
   grn_ctx_fin(ctx);
   return exit_code;
