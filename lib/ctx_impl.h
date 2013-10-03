@@ -178,6 +178,7 @@ struct _grn_ctx_impl {
 #ifdef GRN_WITH_MRUBY
   struct {
     mrb_state *state;
+    struct RClass *module;
   } mrb;
 #endif
 };

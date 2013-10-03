@@ -22,6 +22,7 @@
 #ifdef GRN_WITH_MRUBY
 # include <mruby/proc.h>
 # include <mruby/compile.h>
+# include <mruby/string.h>
 #endif
 
 #ifdef GRN_WITH_MRUBY
@@ -59,6 +60,12 @@ grn_mrb_to_grn(grn_ctx *ctx, mrb_value mrb_object, grn_obj *grn_object)
   case MRB_TT_FIXNUM :
     grn_obj_reinit(ctx, grn_object, GRN_DB_INT32, 0);
     GRN_INT32_SET(ctx, grn_object, mrb_fixnum(mrb_object));
+    break;
+  case MRB_TT_STRING :
+    grn_obj_reinit(ctx, grn_object, GRN_DB_TEXT, 0);
+    GRN_TEXT_SET(ctx, grn_object,
+                 RSTRING_PTR(mrb_object),
+                 RSTRING_LEN(mrb_object));
     break;
   default :
     rc = GRN_INVALID_ARGUMENT;

@@ -20,6 +20,14 @@
 #include "ctx_impl.h"
 
 #ifdef GRN_WITH_MRUBY
+static void
+grn_ctx_impl_mrb_init_bindings(grn_ctx *ctx)
+{
+  mrb_state *mrb = ctx->impl->mrb.state;
+
+  ctx->impl->mrb.module = mrb_define_module(mrb, "Groonga");
+}
+
 void
 grn_ctx_impl_mrb_init(grn_ctx *ctx)
 {
@@ -27,8 +35,10 @@ grn_ctx_impl_mrb_init(grn_ctx *ctx)
   grn_mruby_enabled = getenv("GRN_MRUBY_ENABLED");
   if (grn_mruby_enabled && strcmp(grn_mruby_enabled, "no") == 0) {
     ctx->impl->mrb.state = NULL;
+    ctx->impl->mrb.module = NULL;
   } else {
     ctx->impl->mrb.state = mrb_open();
+    grn_ctx_impl_mrb_init_bindings(ctx);
   }
 }
 
