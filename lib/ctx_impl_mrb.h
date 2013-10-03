@@ -16,27 +16,21 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef GRN_MRB_H
-#define GRN_MRB_H
+#ifndef GRN_CTX_IMPL_MRB_H
+#define GRN_CTX_IMPL_MRB_H
 
 #include "groonga_in.h"
 #include "ctx.h"
-
-#ifdef GRN_WITH_MRUBY
-# include <mruby.h>
-#endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#ifdef GRN_WITH_MRUBY
-mrb_value grn_mrb_eval(grn_ctx *ctx, const char *script, int script_length);
-grn_rc grn_mrb_to_grn(grn_ctx *ctx, mrb_value mrb_object, grn_obj *grn_object);
-#endif
+void grn_ctx_impl_mrb_init(grn_ctx *ctx);
+void grn_ctx_impl_mrb_fin(grn_ctx *ctx);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* GRN_MRB_H */
+#endif /* GRN_CTX_IMPL_MRB_H */

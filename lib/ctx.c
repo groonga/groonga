@@ -25,7 +25,7 @@
 #include "snip.h"
 #include "output.h"
 #include "normalizer_in.h"
-#include "mrb.h"
+#include "ctx_impl_mrb.h"
 #include <stdio.h>
 #include <stdarg.h>
 #include <time.h>

@@ -25,27 +25,6 @@
 #endif
 
 #ifdef GRN_WITH_MRUBY
-void
-grn_ctx_impl_mrb_init(grn_ctx *ctx)
-{
-  const char *grn_mruby_enabled;
-  grn_mruby_enabled = getenv("GRN_MRUBY_ENABLED");
-  if (grn_mruby_enabled && strcmp(grn_mruby_enabled, "no") == 0) {
-    ctx->impl->mrb = NULL;
-  } else {
-    ctx->impl->mrb = mrb_open();
-  }
-}
-
-void
-grn_ctx_impl_mrb_fin(grn_ctx *ctx)
-{
-  if (ctx->impl->mrb) {
-    mrb_close(ctx->impl->mrb);
-    ctx->impl->mrb = NULL;
-  }
-}
-
 mrb_value
 grn_mrb_eval(grn_ctx *ctx, const char *script, int script_length)
 {
@@ -87,15 +66,5 @@ grn_mrb_to_grn(grn_ctx *ctx, mrb_value mrb_object, grn_obj *grn_object)
   }
 
   return rc;
-}
-#else
-void
-grn_ctx_impl_mrb_init(grn_ctx *ctx)
-{
-}
-
-void
-grn_ctx_impl_mrb_fin(grn_ctx *ctx)
-{
 }
 #endif
