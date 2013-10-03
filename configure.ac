@@ -220,6 +220,7 @@ AC_CONFIG_FILES([
   src/httpd/Makefile
   lib/Makefile
   lib/dat/Makefile
+  lib/mrb/Makefile
   include/Makefile
   include/groonga/Makefile
   plugins/Makefile

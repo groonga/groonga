@@ -25,8 +25,11 @@ read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/sources.am LIBGROONGA_SOURCES)
 read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/dat/sources.am LIBGRNDAT_SOURCES)
 string(REGEX REPLACE "([^;]+)" "dat/\\1"
   LIBGRNDAT_SOURCES "${LIBGRNDAT_SOURCES}")
+read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/mrb/sources.am LIBGRNMRB_SOURCES)
+string(REGEX REPLACE "([^;]+)" "mrn/\\1"
+  LIBGRNMRB_SOURCES "${LIBGRNMRB_SOURCES}")
 
-set_source_files_properties(${LIBGROONGA_SOURCES}
+set_source_files_properties(${LIBGROONGA_SOURCES} ${LIBGRNMRB_SOURCES}
   PROPERTIES
   COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
 set_source_files_properties(dat.cpp ${LIBGRNDAT_SOURCES}
@@ -36,6 +39,7 @@ set_source_files_properties(dat.cpp ${LIBGRNDAT_SOURCES}
 add_library(libgroonga SHARED
   ${LIBGROONGA_SOURCES}
   ${LIBGRNDAT_SOURCES}
+  ${LIBGRNMRB_SOURCES}
   ${MRUBY_LIBS})
 set_target_properties(libgroonga PROPERTIES OUTPUT_NAME "groonga")
 target_link_libraries(libgroonga
