@@ -13,6 +13,7 @@ libgroonga_la_SOURCES =				\
 	error.c					\
 	error.h					\
 	expr.c					\
+	expr.h					\
 	geo.c					\
 	geo.h					\
 	groonga_in.h				\

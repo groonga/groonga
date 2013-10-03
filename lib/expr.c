@@ -22,6 +22,7 @@
 #include <float.h>
 #include "ii.h"
 #include "geo.h"
+#include "expr.h"
 #include "util.h"
 #include "normalizer_in.h"
 
