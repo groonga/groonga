@@ -26,18 +26,18 @@ grn_ctx_impl_mrb_init(grn_ctx *ctx)
   const char *grn_mruby_enabled;
   grn_mruby_enabled = getenv("GRN_MRUBY_ENABLED");
   if (grn_mruby_enabled && strcmp(grn_mruby_enabled, "no") == 0) {
-    ctx->impl->mrb = NULL;
+    ctx->impl->mrb.state = NULL;
   } else {
-    ctx->impl->mrb = mrb_open();
+    ctx->impl->mrb.state = mrb_open();
   }
 }
 
 void
 grn_ctx_impl_mrb_fin(grn_ctx *ctx)
 {
-  if (ctx->impl->mrb) {
-    mrb_close(ctx->impl->mrb);
-    ctx->impl->mrb = NULL;
+  if (ctx->impl->mrb.state) {
+    mrb_close(ctx->impl->mrb.state);
+    ctx->impl->mrb.state = NULL;
   }
 }
 #else

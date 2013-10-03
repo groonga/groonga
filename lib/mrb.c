@@ -28,7 +28,7 @@
 mrb_value
 grn_mrb_eval(grn_ctx *ctx, const char *script, int script_length)
 {
-  mrb_state *mrb = ctx->impl->mrb;
+  mrb_state *mrb = ctx->impl->mrb.state;
   int n;
   mrb_value result;
   struct mrb_parser_state *parser;
