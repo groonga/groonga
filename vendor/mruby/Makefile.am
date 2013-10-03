@@ -4,6 +4,10 @@ DEFAULT_INCLUDES =					\
 
 if WITH_MRUBY
 noinst_LTLIBRARIES = libmruby.la
+noinst_PROGRAMS = mrbc
+
+mrbc_LDADD =					\
+	$(MRUBY_LIBS)
 
 AM_CFLAGS =					\
 	-DDISABLE_GEMS

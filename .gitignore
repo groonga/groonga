@@ -37,6 +37,7 @@
 /data/scripts/groonga-httpd-restart
 /vendor/nginx-*/objs
 /vendor/mruby/parse.c
+/vendor/mruby/mrbc
 /vendor/plugins/*/
 /groonga.spec
 /stamp-h1
@@ -73,6 +74,7 @@ cmake_install.cmake
 /doc/commands_not_implemented/
 /doc/sphinx/
 /lib/icudump
+/lib/scaninfo.c
 /coverage
 /coverage.info
 /test/unit/lib/*-*.*.*/

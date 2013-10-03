@@ -31,3 +31,6 @@ EXTRA_DIST =					\
 	CMakeLists.txt
 
 CLEANFILES = *.gcno *.gcda
+
+.rb.c:
+	$(MRUBY_MRBC_PATH) -Bgrn_mrb_irepdata_$* $<

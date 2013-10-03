@@ -33,6 +33,7 @@ libgroonga_la_SOURCES =				\
 	plugin_in.h				\
 	proc.c					\
 	proc.h					\
+	scaninfo.rb				\
 	snip.c					\
 	snip.h					\
 	store.c					\
