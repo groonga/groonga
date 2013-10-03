@@ -1337,6 +1337,28 @@ enum {
   EDGE_ABORT = 0x03,
 };
 
+static void
+check_rlimit_nofile(grn_ctx *ctx)
+{
+#ifndef WIN32
+  struct rlimit limit;
+  limit.rlim_cur = 0;
+  limit.rlim_max = 0;
+  getrlimit(RLIMIT_NOFILE, &limit);
+  if (limit.rlim_cur < RLIMIT_NOFILE_MINIMUM) {
+    limit.rlim_cur = RLIMIT_NOFILE_MINIMUM;
+    limit.rlim_max = RLIMIT_NOFILE_MINIMUM;
+    setrlimit(RLIMIT_NOFILE, &limit);
+    limit.rlim_cur = 0;
+    limit.rlim_max = 0;
+    getrlimit(RLIMIT_NOFILE, &limit);
+  }
+  GRN_LOG(ctx, GRN_LOG_NOTICE,
+          "RLIMIT_NOFILE(%" GRN_FMT_LLD ",%" GRN_FMT_LLD ")",
+          (long long int)limit.rlim_cur, (long long int)limit.rlim_max);
+#endif /* WIN32 */
+}
+
 static void * CALLBACK
 h_worker(void *arg)
 {
@@ -1583,25 +1605,7 @@ g_server(char *path)
   CRITICAL_SECTION_INIT(cache_lock);
   GRN_COM_QUEUE_INIT(&ctx_new);
   GRN_COM_QUEUE_INIT(&ctx_old);
-#ifndef WIN32
-  {
-    struct rlimit limit;
-    limit.rlim_cur = 0;
-    limit.rlim_max = 0;
-    getrlimit(RLIMIT_NOFILE, &limit);
-    if (limit.rlim_cur < RLIMIT_NOFILE_MINIMUM) {
-      limit.rlim_cur = RLIMIT_NOFILE_MINIMUM;
-      limit.rlim_max = RLIMIT_NOFILE_MINIMUM;
-      setrlimit(RLIMIT_NOFILE, &limit);
-      limit.rlim_cur = 0;
-      limit.rlim_max = 0;
-      getrlimit(RLIMIT_NOFILE, &limit);
-    }
-    GRN_LOG(ctx, GRN_LOG_NOTICE,
-            "RLIMIT_NOFILE(%" GRN_FMT_LLD ",%" GRN_FMT_LLD ")",
-            (long long int)limit.rlim_cur, (long long int)limit.rlim_max);
-  }
-#endif /* WIN32 */
+  check_rlimit_nofile(ctx);
   exit_code = start_service(ctx, path, g_dispatcher, g_handler);
   grn_ctx_fin(ctx);
   return exit_code;
