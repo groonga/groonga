@@ -3944,7 +3944,7 @@ get_weight(grn_ctx *ctx, grn_expr_code *ec)
 }
 
 scan_info *
-grn_scan_info_open(grn_ctx *ctx, int st)
+grn_scan_info_open(grn_ctx *ctx, int start)
 {
   scan_info *si = GRN_MALLOCN(scan_info, 1);
   if (si) {
@@ -3953,7 +3953,7 @@ grn_scan_info_open(grn_ctx *ctx, int st)
     si->logical_op = GRN_OP_OR;
     si->flags = SCAN_PUSH;
     si->nargs = 0;
-    si->start = st;
+    si->start = start;
   }
   return si;
 }
