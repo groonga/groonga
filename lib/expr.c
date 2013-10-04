@@ -3952,14 +3952,13 @@ grn_scan_info_open(grn_ctx *ctx, int start)
     return NULL;
   }
 
-  {
-    GRN_INT32_INIT(&si->wv, GRN_OBJ_VECTOR);
-    GRN_PTR_INIT(&si->index, GRN_OBJ_VECTOR, GRN_ID_NIL);
-    si->logical_op = GRN_OP_OR;
-    si->flags = SCAN_PUSH;
-    si->nargs = 0;
-    si->start = start;
-  }
+  GRN_INT32_INIT(&si->wv, GRN_OBJ_VECTOR);
+  GRN_PTR_INIT(&si->index, GRN_OBJ_VECTOR, GRN_ID_NIL);
+  si->logical_op = GRN_OP_OR;
+  si->flags = SCAN_PUSH;
+  si->nargs = 0;
+  si->start = start;
+
   return si;
 }
 
