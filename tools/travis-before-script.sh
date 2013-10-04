@@ -14,6 +14,7 @@ case "${BUILD_TOOL}" in
 	./configure --with-ruby19 ${configure_args}
 	;;
     cmake)
+	cmake --version
 	cmake . -DGRN_WITH_DEBUG=yes -DGRN_WITH_MRUBY=yes
 	;;
 esac
