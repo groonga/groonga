@@ -15,7 +15,4 @@ before_script:
   - rvm use 1.9.3
   - tools/travis-before-script.sh
 script:
-  - [ ${BUILD_TOOL} == "autotools" ] && NO_RUBY=yes test/unit/run-test.sh
-  - test/command/run-test.sh
-#  - test/command/run-test.sh --interface http
-#  - test/command/run-test.sh --interface http --testee groonga-httpd
+  - tools/travis-script.sh
