@@ -106,28 +106,6 @@ update-document:
 	done
 
 
-echo-cutter:
-	@echo $(CUTTER)
-
-if WITH_RUBY
-echo-ruby:
-	@echo $(RUBY)
-else
-echo-ruby:
-endif
-
-echo-groonga:
-	@echo $(GROONGA)
-
-echo-groonga-httpd:
-	@echo $(GROONGA_HTTPD)
-
-echo-groonga-suggest-create-dataset:
-	@echo $(GROONGA_SUGGEST_CREATE_DATASET)
-
-echo-groonga-benchmark:
-	@echo $(GROONGA_BENCHMARK)
-
 update-version:
 	@if test -z "$(NEW_VERSION)"; then	\
 	  echo "\$$(NEW_VERSION) is missing";	\

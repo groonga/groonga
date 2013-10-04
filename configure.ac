@@ -657,15 +657,15 @@ AC_SUBST(WINDOWS_LDFLAGS)
 AC_SUBST(WINDOWS_LIBS)
 
 # groonga binary path
-GROONGA="\$(abs_top_builddir)/src/groonga"
+GROONGA="${ac_pwd}/src/groonga"
 AC_SUBST(GROONGA)
 
 # groonga-benchmark binary path
-GROONGA_BENCHMARK="\$(abs_top_builddir)/src/groonga-benchmark"
+GROONGA_BENCHMARK="${ac_pwd}/src/groonga-benchmark"
 AC_SUBST(GROONGA_BENCHMARK)
 
 # groonga-suggest-create-dataset binary path
-GROONGA_SUGGEST_CREATE_DATASET="\$(abs_top_builddir)/src/suggest/groonga-suggest-create-dataset"
+GROONGA_SUGGEST_CREATE_DATASET="${ac_pwd}/src/suggest/groonga-suggest-create-dataset"
 AC_SUBST(GROONGA_SUGGEST_CREATE_DATASET)
 
 # check Cutter with GLib support if available
@@ -1252,7 +1252,7 @@ NGINX_VERSION=nginx_version
 AC_SUBST(NGINX_VERSION)
 
 # groonga-httpd binary path
-GROONGA_HTTPD="\$(abs_top_builddir)/vendor/nginx-${NGINX_VERSION}/objs/nginx"
+GROONGA_HTTPD="${ac_pwd}/vendor/nginx-${NGINX_VERSION}/objs/nginx"
 AC_SUBST(GROONGA_HTTPD)
 
 AC_ARG_ENABLE(groonga_httpd,
@@ -1359,6 +1359,7 @@ AC_OUTPUT([
   packages/rpm/fedora/groonga.spec
   packages/apt/debian/groonga-keyring.postrm
   groonga.pc
+  config.sh
   groonga-httpd-conf.sh
   data/groonga-httpd.conf
   data/scripts/groonga-httpd-restart

@@ -25,25 +25,7 @@ if test x"$NO_MAKE" != x"yes"; then
     make $MAKE_ARGS -C $top_dir > /dev/null || exit 1
 fi
 
-if test -z "$CUTTER"; then
-    CUTTER="`make -s -C $top_dir echo-cutter`"
-fi
-export CUTTER
-
-if test -z "$RUBY"; then
-    RUBY="`make -s -C $top_dir echo-ruby`"
-fi
-export RUBY
-
-if test -z "$GROONGA"; then
-    GROONGA="`make -s -C $top_dir echo-groonga`"
-fi
-export GROONGA
-
-if test -z "$GROONGA_BENCHMARK"; then
-    GROONGA_BENCHMARK="`make -s -C $top_dir echo-groonga-benchmark`"
-fi
-export GROONGA_BENCHMARK
+. "${top_dir}/config.sh"
 
 TZ=Asia/Tokyo
 export TZ
