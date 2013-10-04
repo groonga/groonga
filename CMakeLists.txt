@@ -13,7 +13,7 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8.8)
 set(GRN_PROJECT_NAME "groonga")
 project("${GRN_PROJECT_NAME}")
 
