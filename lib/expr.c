@@ -4029,10 +4029,8 @@ grn_scan_info_push_arg(scan_info *si, grn_obj *arg)
     return GRN_FALSE;
   }
 
-  {
-    si->args[si->nargs++] = arg;
-    return GRN_TRUE;
-  }
+  si->args[si->nargs++] = arg;
+  return GRN_TRUE;
 }
 
 void
