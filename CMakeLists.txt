@@ -87,6 +87,14 @@ if(CMAKE_COMPILER_IS_GNUCXX)
   set(GRN_CXX_COMPILE_FLAGS "${GRN_NO_WARNING_COMPILE_FLAGS} -fexceptions")
 endif()
 
+option(GRN_WITH_DEBUG "enable debug build." OFF)
+if(GRN_WITH_DEBUG)
+  if(CMAKE_COMPILER_IS_GNUCXX)
+    set(GRN_C_COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS} -g3 -O0")
+    set(GRN_CXX_COMPILE_FLAGS "${GRN_CXX_COMPILE_FLAGS} -g3 -O0")
+  endif()
+endif()
+
 add_definitions(
   -DHAVE_CONFIG_H
   )
