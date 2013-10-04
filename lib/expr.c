@@ -3947,7 +3947,12 @@ scan_info *
 grn_scan_info_open(grn_ctx *ctx, int start)
 {
   scan_info *si = GRN_MALLOCN(scan_info, 1);
-  if (si) {
+
+  if (!si) {
+    return NULL;
+  }
+
+  {
     GRN_INT32_INIT(&si->wv, GRN_OBJ_VECTOR);
     GRN_PTR_INIT(&si->index, GRN_OBJ_VECTOR, GRN_ID_NIL);
     si->logical_op = GRN_OP_OR;
