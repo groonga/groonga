@@ -7,7 +7,7 @@ compiler:
   - clang
 env:
   - BUILD_TOOL=autotools
-  - BUILD_TOOL=cmake
+#  - BUILD_TOOL=cmake
 install:
   - curl https://raw.github.com/clear-code/cutter/master/data/travis/setup.sh | sh
   - sudo apt-get install -qq -y autotools-dev zlib1g-dev liblzo2-dev libmsgpack-dev libevent-dev libmecab-dev mecab-naist-jdic cmake
