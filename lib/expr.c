@@ -4025,11 +4025,14 @@ grn_scan_info_set_query(scan_info *si, grn_obj *query)
 grn_bool
 grn_scan_info_push_arg(scan_info *si, grn_obj *arg)
 {
-  if (si->nargs < 8) {
+  if (si->nargs >= 8) {
+    return GRN_FALSE;
+  }
+
+  {
     si->args[si->nargs++] = arg;
     return GRN_TRUE;
   }
-  return GRN_FALSE;
 }
 
 void
