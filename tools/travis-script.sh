@@ -2,7 +2,7 @@
 
 set -e
 
-case "${BUILD_TOOLS}" in
+case "${BUILD_TOOL}" in
     autotools)
 	NO_RUBY=yes test/unit/run-test.sh
 	test/command/run-test.sh
