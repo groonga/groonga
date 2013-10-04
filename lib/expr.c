@@ -3944,7 +3944,7 @@ get_weight(grn_ctx *ctx, grn_expr_code *ec)
 }
 
 scan_info *
-grn_scan_info_alloc(grn_ctx *ctx, int st)
+grn_scan_info_open(grn_ctx *ctx, int st)
 {
   scan_info *si = GRN_MALLOCN(scan_info, 1);
   if (si) {
@@ -3959,7 +3959,7 @@ grn_scan_info_alloc(grn_ctx *ctx, int st)
 }
 
 void
-grn_scan_info_free(grn_ctx *ctx, scan_info *si)
+grn_scan_info_close(grn_ctx *ctx, scan_info *si)
 {
   SI_FREE(si);
 }

@@ -41,8 +41,8 @@ typedef enum {
 typedef struct _grn_scan_info scan_info;
 typedef grn_bool (*grn_scan_info_each_arg_callback)(grn_ctx *ctx, grn_obj *obj, void *user_data);
 
-scan_info *grn_scan_info_alloc(grn_ctx *ctx, int start);
-void grn_scan_info_free(grn_ctx *ctx, scan_info *si);
+scan_info *grn_scan_info_open(grn_ctx *ctx, int start);
+void grn_scan_info_close(grn_ctx *ctx, scan_info *si);
 void grn_scan_info_put_index(grn_ctx *ctx, scan_info *si, grn_obj *index,
                              uint32_t sid, int32_t weight);
 grn_bool grn_scan_info_check_flags(scan_info *si, int flags);
