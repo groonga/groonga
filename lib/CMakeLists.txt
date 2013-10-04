@@ -26,7 +26,7 @@ read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/dat/sources.am LIBGRNDAT_SOURCES)
 string(REGEX REPLACE "([^;]+)" "dat/\\1"
   LIBGRNDAT_SOURCES "${LIBGRNDAT_SOURCES}")
 read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/mrb/sources.am LIBGRNMRB_SOURCES)
-string(REGEX REPLACE "([^;]+)" "mrn/\\1"
+string(REGEX REPLACE "([^;]+)" "mrb/\\1"
   LIBGRNMRB_SOURCES "${LIBGRNMRB_SOURCES}")
 
 set_source_files_properties(${LIBGROONGA_SOURCES} ${LIBGRNMRB_SOURCES}
