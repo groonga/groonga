@@ -368,6 +368,13 @@ add_subdirectory(data)
 
 configure_file(config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
+set(RUBY "ruby") # TODO: support customization
+set(GROONGA "${CMAKE_CURRENT_BINARY_DIR}/src/groonga")
+set(GROONGA_SUGGEST_CREATE_DATASET
+  "${CMAKE_CURRENT_BINARY_DIR}/src/suggest/groonga-suggest-create-dataset")
+set(GROONGA_BENCHMARK "${CMAKE_CURRENT_BINARY_DIR}/src/groonga-benchmark")
+configure_file(config.sh.in "${CMAKE_CURRENT_BINARY_DIR}/config.sh" @ONLY)
+
 set(prefix "${CMAKE_INSTALL_PREFIX}")
 set(exec_prefix "${prefix}")
 set(bindir "${CMAKE_INSTALL_PREFIX}/${BIN_DIR}")
