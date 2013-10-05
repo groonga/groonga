@@ -28,6 +28,7 @@ grn_ctx_impl_mrb_init_bindings(grn_ctx *ctx)
 {
   mrb_state *mrb = ctx->impl->mrb.state;
 
+  mrb->ud = ctx;
   ctx->impl->mrb.module = mrb_define_module(mrb, "Groonga");
 
   grn_mrb_obj_init(ctx);

@@ -22,6 +22,7 @@
 #include <mruby.h>
 #include <mruby/class.h>
 
+#include "../expr.h"
 #include "../util.h"
 #include "mrb_expr.h"
 
@@ -319,17 +320,46 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
   return sis;
 }
 
+static mrb_value
+mrb_grn_expr_build(mrb_state *mrb, mrb_value self)
+{
+  int *n;
+  uint32_t size;
+  scan_info ***psis;
+  grn_operator op;
+  grn_obj *expr;
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  mrb_value mexpr, mpsis, mn;
+
+  mrb_get_args(mrb, "oooii", &mexpr, &mpsis, &mn, &op, &size);
+  expr = mrb_cptr(mexpr);
+  psis = mrb_cptr(mpsis);
+  n = mrb_cptr(mn);
+
+  *psis = scan_info_build(ctx, expr, n, op, size);
+  return self;
+}
+
 void
 grn_mrb_expr_init(grn_ctx *ctx)
 {
   mrb_state *mrb = ctx->impl->mrb.state;
   struct RClass *module = ctx->impl->mrb.module;
+
+  mrb_define_class_method(mrb, module, "build", mrb_grn_expr_build, MRB_ARGS_REQ(4));
 }
 
 scan_info **
 grn_mrb_scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
                         grn_operator op, uint32_t size)
 {
-  return scan_info_build(ctx, expr, n, op, size);
+  scan_info **sis;
+  mrb_state *mrb = ctx->impl->mrb.state;
+
+  mrb_funcall(mrb, mrb_obj_value(ctx->impl->mrb.module), "build", 5,
+              mrb_cptr_value(mrb, expr), mrb_cptr_value(mrb, &sis),
+              mrb_cptr_value(mrb, n), mrb_fixnum_value(op),
+              mrb_fixnum_value(size));
+  return sis;
 }
 #endif
