@@ -3974,6 +3974,13 @@ grn_scan_info_put_index(grn_ctx *ctx, scan_info *si, grn_obj *index, uint32_t si
   scan_info_put_index(ctx, si, index, sid, weight);
 }
 
+scan_info **
+grn_scan_info_put_logical_op(grn_ctx *ctx, scan_info **sis, int *ip,
+                             grn_operator op, int start)
+{
+  return put_logical_op(ctx, sis, ip, op, start);
+}
+
 int32_t
 grn_expr_code_get_weight(grn_ctx *ctx, grn_expr_code *ec)
 {
@@ -4043,6 +4050,15 @@ grn_scan_info_each_arg(grn_ctx *ctx, scan_info *si,
   for (; p < pe; p++) {
     callback(ctx, *p, user_data);
   }
+}
+
+grn_obj *
+grn_scan_info_get_arg(grn_ctx *ctx, scan_info *si, int i)
+{
+  if (i >= si->nargs) {
+    return NULL;
+  }
+  return si->args[i];
 }
 
 static scan_info **
