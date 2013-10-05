@@ -1289,12 +1289,15 @@ if test "$enable_mruby" = "yes"; then
   AC_DEFINE(GRN_WITH_MRUBY, [1], [Define to 1 if mruby is enabled.])
   MRUBY_CFLAGS="-I\$(top_srcdir)/vendor/mruby-${MRUBY_VERSION}/include"
   MRUBY_LIBS="\$(top_builddir)/vendor/mruby/libmruby.la"
+  MRUBY_MRBC_PATH="\$(top_builddir)/vendor/mruby/mrbc"
 else
   MRUBY_CFLAGS=
   MRUBY_LIBS=
+  MRUBY_MRBC_PATH=
 fi
 AC_SUBST(MRUBY_CFLAGS)
 AC_SUBST(MRUBY_LIBS)
+AC_SUBST(MRUBY_MRBC_PATH)
 AM_CONDITIONAL(WITH_MRUBY, test "$enable_mruby" = "yes")
 
 # PCRE
