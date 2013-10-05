@@ -4041,18 +4041,6 @@ grn_scan_info_push_arg(scan_info *si, grn_obj *arg)
   return GRN_TRUE;
 }
 
-void
-grn_scan_info_each_arg(grn_ctx *ctx, scan_info *si,
-                       grn_scan_info_each_arg_callback callback, void *user_data)
-{
-  grn_obj **p, **pe;
-  p = si->args;
-  pe = si->args + si->nargs;
-  for (; p < pe; p++) {
-    callback(ctx, *p, user_data);
-  }
-}
-
 grn_obj *
 grn_scan_info_get_arg(grn_ctx *ctx, scan_info *si, int i)
 {

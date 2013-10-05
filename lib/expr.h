@@ -47,11 +47,8 @@ void grn_scan_info_put_index(grn_ctx *ctx, scan_info *si, grn_obj *index,
                              uint32_t sid, int32_t weight);
 scan_info **grn_scan_info_put_logical_op(grn_ctx *ctx, scan_info **sis, int *ip,
                                          grn_operator op, int start);
-grn_bool grn_scan_info_check_flags(scan_info *si, int flags);
-void grn_scan_info_reset_flags(scan_info *si, int flags);
 int grn_scan_info_get_flags(scan_info *si);
 void grn_scan_info_set_flags(scan_info *si, int flags);
-void grn_scan_info_unset_flags(scan_info *si, int flags);
 grn_operator grn_scan_info_get_logical_op(scan_info *si);
 void grn_scan_info_set_logical_op(scan_info *si, grn_operator logical_op);
 grn_operator grn_scan_info_get_op(scan_info *si);
@@ -60,9 +57,6 @@ void grn_scan_info_set_end(scan_info *si, uint32_t end);
 void grn_scan_info_set_query(scan_info *si, grn_obj *query);
 grn_bool grn_scan_info_push_arg(scan_info *si, grn_obj *arg);
 grn_obj *grn_scan_info_get_arg(grn_ctx *ctx, scan_info *si, int i);
-void grn_scan_info_each_arg(grn_ctx *ctx, scan_info *si,
-                                grn_scan_info_each_arg_callback callback,
-                                void *user_data);
 
 int32_t grn_expr_code_get_weight(grn_ctx *ctx, grn_expr_code *ec);
 
