@@ -1,3 +1,5 @@
 libgrnmrb_la_SOURCES =				\
+	mrb_expr.c				\
+	mrb_expr.h				\
 	mrb_obj.c				\
 	mrb_obj.h
