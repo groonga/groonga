@@ -26,6 +26,7 @@
 #include "util.h"
 #include "normalizer_in.h"
 #include "mrb.h"
+#include "mrb/mrb_expr.h"
 
 static inline int
 function_proc_p(grn_obj *obj)
