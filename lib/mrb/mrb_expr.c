@@ -346,7 +346,8 @@ grn_mrb_expr_init(grn_ctx *ctx)
   mrb_state *mrb = ctx->impl->mrb.state;
   struct RClass *module = ctx->impl->mrb.module;
 
-  mrb_define_class_method(mrb, module, "build", mrb_grn_expr_build, MRB_ARGS_REQ(4));
+  mrb_define_class_method(mrb, module,
+                          "build", mrb_grn_expr_build, MRB_ARGS_REQ(4));
 }
 
 scan_info **
