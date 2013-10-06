@@ -325,19 +325,18 @@ mrb_grn_expr_build(mrb_state *mrb, mrb_value self)
 {
   int *n;
   uint32_t size;
-  scan_info ***psis;
+  scan_info **sis;
   grn_operator op;
   grn_obj *expr;
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
-  mrb_value mrb_expr, mrb_psis, mrb_n;
+  mrb_value mrb_expr, mrb_n;
 
-  mrb_get_args(mrb, "oooii", &mrb_expr, &mrb_psis, &mrb_n, &op, &size);
+  mrb_get_args(mrb, "ooii", &mrb_expr, &mrb_n, &op, &size);
   expr = mrb_cptr(mrb_expr);
-  psis = mrb_cptr(mrb_psis);
   n = mrb_cptr(mrb_n);
 
-  *psis = scan_info_build(ctx, expr, n, op, size);
-  return self;
+  sis = scan_info_build(ctx, expr, n, op, size);
+  return mrb_cptr_value(mrb, sis);
 }
 
 void
@@ -347,7 +346,7 @@ grn_mrb_expr_init(grn_ctx *ctx)
   struct RClass *module = ctx->impl->mrb.module;
 
   mrb_define_class_method(mrb, module,
-                          "build", mrb_grn_expr_build, MRB_ARGS_REQ(4));
+                          "build", mrb_grn_expr_build, MRB_ARGS_REQ(3));
 }
 
 scan_info **
@@ -356,11 +355,13 @@ grn_mrb_scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
 {
   scan_info **sis;
   mrb_state *mrb = ctx->impl->mrb.state;
+  mrb_value mrb_sis;
 
-  mrb_funcall(mrb, mrb_obj_value(ctx->impl->mrb.module), "build", 5,
-              mrb_cptr_value(mrb, expr), mrb_cptr_value(mrb, &sis),
-              mrb_cptr_value(mrb, n), mrb_fixnum_value(op),
-              mrb_fixnum_value(size));
+  mrb_sis = mrb_funcall(mrb, mrb_obj_value(ctx->impl->mrb.module), "build", 4,
+                        mrb_cptr_value(mrb, expr),
+                        mrb_cptr_value(mrb, n), mrb_fixnum_value(op),
+                        mrb_fixnum_value(size));
+  sis = mrb_cptr(mrb_sis);
   return sis;
 }
 #endif
