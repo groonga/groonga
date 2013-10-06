@@ -359,7 +359,8 @@ grn_mrb_scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
 
   mrb_sis = mrb_funcall(mrb, mrb_obj_value(ctx->impl->mrb.module), "build", 4,
                         mrb_cptr_value(mrb, expr),
-                        mrb_cptr_value(mrb, n), mrb_fixnum_value(op),
+                        mrb_cptr_value(mrb, n),
+                        mrb_fixnum_value(op),
                         mrb_fixnum_value(size));
   sis = mrb_cptr(mrb_sis);
   return sis;
