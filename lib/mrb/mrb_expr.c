@@ -329,12 +329,12 @@ mrb_grn_expr_build(mrb_state *mrb, mrb_value self)
   grn_operator op;
   grn_obj *expr;
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
-  mrb_value mexpr, mpsis, mn;
+  mrb_value mrb_expr, mrb_psis, mrb_n;
 
-  mrb_get_args(mrb, "oooii", &mexpr, &mpsis, &mn, &op, &size);
-  expr = mrb_cptr(mexpr);
-  psis = mrb_cptr(mpsis);
-  n = mrb_cptr(mn);
+  mrb_get_args(mrb, "oooii", &mrb_expr, &mrb_psis, &mrb_n, &op, &size);
+  expr = mrb_cptr(mrb_expr);
+  psis = mrb_cptr(mrb_psis);
+  n = mrb_cptr(mrb_n);
 
   *psis = scan_info_build(ctx, expr, n, op, size);
   return self;
