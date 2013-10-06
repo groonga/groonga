@@ -25,6 +25,7 @@
 #include "expr.h"
 #include "util.h"
 #include "normalizer_in.h"
+#include "mrb.h"
 
 static inline int
 function_proc_p(grn_obj *obj)
@@ -3974,6 +3975,13 @@ grn_scan_info_put_index(grn_ctx *ctx, scan_info *si, grn_obj *index, uint32_t si
   scan_info_put_index(ctx, si, index, sid, weight);
 }
 
+scan_info **
+grn_scan_info_put_logical_op(grn_ctx *ctx, scan_info **sis, int *ip,
+                             grn_operator op, int start)
+{
+  return put_logical_op(ctx, sis, ip, op, start);
+}
+
 int32_t
 grn_expr_code_get_weight(grn_ctx *ctx, grn_expr_code *ec)
 {
@@ -4033,16 +4041,13 @@ grn_scan_info_push_arg(scan_info *si, grn_obj *arg)
   return GRN_TRUE;
 }
 
-void
-grn_scan_info_each_arg(grn_ctx *ctx, scan_info *si,
-                       grn_scan_info_each_arg_callback callback, void *user_data)
+grn_obj *
+grn_scan_info_get_arg(grn_ctx *ctx, scan_info *si, int i)
 {
-  grn_obj **p, **pe;
-  p = si->args;
-  pe = si->args + si->nargs;
-  for (; p < pe; p++) {
-    callback(ctx, *p, user_data);
+  if (i >= si->nargs) {
+    return NULL;
   }
+  return si->args[i];
 }
 
 static scan_info **
@@ -4055,6 +4060,11 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
   scan_info **sis, *si = NULL;
   grn_expr_code *c, *ce;
   grn_expr *e = (grn_expr *)expr;
+#ifdef GRN_WITH_MRUBY
+  if (ctx->impl->mrb.state) {
+    return grn_mrb_scan_info_build(ctx, expr, n, op, size);
+  }
+#endif
   if (!(var = grn_expr_get_var_by_offset(ctx, expr, 0))) { return NULL; }
   for (stat = SCAN_START, c = e->codes, ce = &e->codes[e->codes_curr]; c < ce; c++) {
     switch (c->op) {
