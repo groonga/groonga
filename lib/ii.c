@@ -1516,7 +1516,7 @@ datavec_fin(grn_ctx *ctx, datavec *dv)
   if (dv[0].data) { GRN_FREE(dv[0].data); }
 }
 
-int
+size_t
 grn_p_encv(grn_ctx *ctx, datavec *dv, uint32_t dvlen, uint8_t *res)
 {
   uint8_t *rp = res, freq[33];
@@ -6508,12 +6508,12 @@ struct _grn_ii_buffer {
   // stuff for parsing
   off_t filepos;
   grn_id *block_buf;
-  uint32_t block_buf_size;
-  uint32_t block_pos;
+  size_t block_buf_size;
+  size_t block_pos;
   ii_buffer_counter *counters;
   uint32_t ncounters;
-  uint64_t total_size;
-  uint64_t curr_size;
+  size_t total_size;
+  size_t curr_size;
   // stuff for merging
   grn_ii *ii;
   uint32_t lseg;
@@ -6521,9 +6521,9 @@ struct _grn_ii_buffer {
   buffer *term_buffer;
   datavec data_vectors[MAX_N_ELEMENTS + 1];
   uint8_t *packed_buf;
-  uint32_t packed_buf_size;
-  uint32_t packed_len;
-  uint64_t total_chunk_size;
+  size_t packed_buf_size;
+  size_t packed_len;
+  size_t total_chunk_size;
 };
 
 static ii_buffer_block *
@@ -6735,7 +6735,7 @@ grn_ii_buffer_flush(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
   size_t encsize;
   uint8_t *outbuf;
   ii_buffer_block *block;
-  GRN_LOG(ctx, GRN_LOG_NOTICE, "flushing:%d npostings:%u",
+  GRN_LOG(ctx, GRN_LOG_NOTICE, "flushing:%d npostings:%zu",
           ii_buffer->nblocks, ii_buffer->block_pos);
   if (!(block = block_new(ctx, ii_buffer))) { return; }
   if (!(outbuf = allocate_outbuf(ctx, ii_buffer))) { return; }
@@ -6954,7 +6954,7 @@ grn_ii_buffer_chunk_flush(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
   grn_io_win io_win;
   uint32_t chunk_number;
   chunk_new(ctx, ii_buffer->ii, &chunk_number, ii_buffer->packed_len);
-  GRN_LOG(ctx, GRN_LOG_INFO, "chunk:%d, packed_len:%d",
+  GRN_LOG(ctx, GRN_LOG_INFO, "chunk:%d, packed_len:%zu",
           chunk_number, ii_buffer->packed_len);
   fake_map2(ctx, ii_buffer->ii->chunk, &io_win, ii_buffer->packed_buf,
             chunk_number, ii_buffer->packed_len);
@@ -6980,14 +6980,14 @@ grn_ii_buffer_chunk_flush(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
   ii_buffer->curr_size = 0;
 }
 
-static uint32_t
+static size_t
 merge_hit_blocks(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
                  ii_buffer_block *hits[], int nhits)
 {
-  uint32_t nrecs = 0;
-  uint32_t nposts = 0;
-  uint32_t max_size;
-  uint32_t flags = ii_buffer->ii->header->flags;
+  uint64_t nrecs = 0;
+  uint64_t nposts = 0;
+  size_t max_size;
+  uint64_t flags = ii_buffer->ii->header->flags;
   int i;
   for (i = 0; i < nhits; i++) {
     ii_buffer_block *block = hits[i];
@@ -7149,13 +7149,13 @@ grn_ii_buffer_merge(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
                     grn_id tid, ii_buffer_block *hits[], int nhits)
 {
   if (!try_in_place_packing(ctx, ii_buffer, tid, hits, nhits)) {
-    uint32_t max_size = merge_hit_blocks(ctx, ii_buffer, hits, nhits);
+    size_t max_size = merge_hit_blocks(ctx, ii_buffer, hits, nhits);
     if (ii_buffer->packed_buf &&
         ii_buffer->packed_buf_size < ii_buffer->packed_len + max_size) {
       grn_ii_buffer_chunk_flush(ctx, ii_buffer);
     }
     if (!ii_buffer->packed_buf) {
-      uint32_t buf_size = (max_size > II_BUFFER_PACKED_BUF_SIZE)
+      size_t buf_size = (max_size > II_BUFFER_PACKED_BUF_SIZE)
         ? max_size : II_BUFFER_PACKED_BUF_SIZE;
       if ((ii_buffer->packed_buf = GRN_MALLOC(buf_size))) {
         ii_buffer->packed_buf_size = buf_size;
@@ -7163,7 +7163,7 @@ grn_ii_buffer_merge(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
     }
     {
       uint16_t nterm;
-      int packed_len;
+      size_t packed_len;
       buffer_term *bt;
       uint32_t *a = array_get(ctx, ii_buffer->ii, tid);
       buffer *term_buffer = get_term_buffer(ctx, ii_buffer);
