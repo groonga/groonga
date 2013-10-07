@@ -21,4 +21,5 @@
    reference/function
    reference/indexing
    reference/log
+   reference/tuning
    reference/api
