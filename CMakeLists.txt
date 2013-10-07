@@ -13,7 +13,7 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8.8)
 set(GRN_PROJECT_NAME "groonga")
 project("${GRN_PROJECT_NAME}")
 
@@ -87,6 +87,14 @@ if(CMAKE_COMPILER_IS_GNUCXX)
   set(GRN_CXX_COMPILE_FLAGS "${GRN_NO_WARNING_COMPILE_FLAGS} -fexceptions")
 endif()
 
+option(GRN_WITH_DEBUG "enable debug build." OFF)
+if(GRN_WITH_DEBUG)
+  if(CMAKE_COMPILER_IS_GNUCXX)
+    set(GRN_C_COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS} -g3 -O0")
+    set(GRN_CXX_COMPILE_FLAGS "${GRN_CXX_COMPILE_FLAGS} -g3 -O0")
+  endif()
+endif()
+
 add_definitions(
   -DHAVE_CONFIG_H
   )
@@ -156,7 +164,6 @@ if(UNIX)
 endif()
 
 option(GRN_WITH_NFKC "use NFKC based UTF8 normalization." ON)
-option(GRN_WITH_STATIC "build static library." OFF)
 
 if(WIN32)
   ac_check_headers(winsock2.h)
@@ -349,6 +356,18 @@ else()
   set(GRN_WITH_MESSAGE_PACK FALSE)
 endif()
 
+option(GRN_WITH_MRUBY "use mruby" OFF)
+file(READ "${CMAKE_CURRENT_SOURCE_DIR}/mruby_version" MRUBY_VERSION)
+if(GRN_WITH_MRUBY)
+  set(MRUBY_INCLUDE_DIRS
+    "${CMAKE_CURRENT_SOURCE_DIR}/vendor/mruby-${MRUBY_VERSION}/include")
+  set(MRUBY_LIBS "$<TARGET_OBJECTS:mruby>")
+else()
+  set(MRUBY_INCLUDE_DIRS "")
+  set(MRUBY_LIBS "")
+endif()
+
+add_subdirectory(vendor)
 add_subdirectory(lib)
 add_subdirectory(src)
 add_subdirectory(plugins)
@@ -356,6 +375,13 @@ add_subdirectory(include)
 add_subdirectory(data)
 
 configure_file(config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
+
+set(RUBY "ruby") # TODO: support customization
+set(GROONGA "${CMAKE_CURRENT_BINARY_DIR}/src/groonga")
+set(GROONGA_SUGGEST_CREATE_DATASET
+  "${CMAKE_CURRENT_BINARY_DIR}/src/suggest/groonga-suggest-create-dataset")
+set(GROONGA_BENCHMARK "${CMAKE_CURRENT_BINARY_DIR}/src/groonga-benchmark")
+configure_file(config.sh.in "${CMAKE_CURRENT_BINARY_DIR}/config.sh" @ONLY)
 
 set(prefix "${CMAKE_INSTALL_PREFIX}")
 set(exec_prefix "${prefix}")

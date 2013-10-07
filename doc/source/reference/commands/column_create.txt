@@ -2,29 +2,40 @@
 
 .. highlightlang:: none
 
-column_create
-=============
+``column_create``
+=================
 
-名前
-----
+Summary
+-------
 
 column_create - カラムの追加
-
-書式
-----
-::
-
- column_create table name flags type [source]
-
-説明
-----
 
 groonga組込コマンドの一つであるcolumn_createについて説明します。組込コマンドは、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。
 
 column_createは、使用しているデータベースのテーブルに対してカラムを追加します。
 
-引数
-----
+
+Syntax
+------
+::
+
+ column_create table name flags type [source]
+
+Usage
+-----
+
+テーブルEntryに、ShortText型の値を格納するカラム、bodyを作成します。::
+
+  column_create Entry body --type ShortText
+  [true]
+
+テーブルTermに、Entryテーブルのbodyカラムの値を対象とする完全転置インデックス型カラム、entry_bodyを作成します。::
+
+  column_create Term entry_body COLUMN_INDEX|WITH_POSITION Entry body
+  [true]
+
+Parameters
+----------
 
 ``table``
 
@@ -47,6 +58,13 @@ column_createは、使用しているデータベースのテーブルに対し�
   2, ``COLUMN_INDEX``
     インデックス型のカラムを作成します。
 
+  There are two flags to compress the value of column, but you can't specify these flags for now because there are memory leaks issue `GitHub#6 <https://github.com/groonga/groonga/issues/6>`_ when refers the value of column. This issue occurs both of them (zlib and lzo).
+
+  16, ``COMPRESS_ZLIB``
+    Reserved. Compress the value of column by using zlib. This flag is disabled feature even if you build groonga with ``--with-zlib``.
+  32, ``COMPRESS_LZO``
+    Reserved. Compress the value of column by using lzo. This flag is disabled feature even if you build groonga with ``--with-lzo``.
+
   インデックス型のカラムについては、flagsの値に以下の値を加えることによって、追加の属
   性を指定することができます。
 
@@ -67,29 +85,19 @@ column_createは、使用しているデータベースのテーブルに対し�
 
   インデックス型のカラムを作成した場合は、インデックス対象となるカラムをsource引数に指定します。
 
-返値
-----
-
-json形式
-^^^^^^^^
+Return value
+------------
 
 ::
 
- [成功かどうかのフラグ]
+ [HEADER, SUCCEEDED]
 
-``成功かどうかのフラグ``
+``HEADER``
 
-  エラーが生じなかった場合にはtrue、エラーが生じた場合にはfalseを返す。
+  The format of HEADER is [0, UNIX_TIME_WHEN_COMMAND_IS_STARTED, ELAPSED_TIME].
+  See :doc:`/reference/command/output_format` about HEADER.
 
-例
---
+``SUCCEEDED``
 
-テーブルEntryに、ShortText型の値を格納するカラム、bodyを作成します。::
+  If command is succeeded, it returns true on success, false otherwise.
 
-  column_create Entry body --type ShortText
-  [true]
-
-テーブルTermに、Entryテーブルのbodyカラムの値を対象とする完全転置インデックス型カラム、entry_bodyを作成します。::
-
-  column_create Term entry_body COLUMN_INDEX|WITH_POSITION Entry body
-  [true]

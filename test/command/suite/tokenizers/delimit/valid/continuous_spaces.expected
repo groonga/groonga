@@ -1,0 +1,2 @@
+tokenize TokenDelimit "A  B"
+[[0,0.0,0.0],[{"value":"A","position":0},{"value":"B","position":1}]]

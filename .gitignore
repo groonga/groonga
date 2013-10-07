@@ -22,6 +22,7 @@
 /config.lt
 /config.status
 /config.sub
+/config.sh
 /configure
 /depcomp
 /dist

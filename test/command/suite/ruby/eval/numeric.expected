@@ -1,0 +1,4 @@
+register ruby/eval
+[[0,0.0,0.0],true]
+ruby_eval "1"
+[[0,0.0,0.0],{"value":1}]

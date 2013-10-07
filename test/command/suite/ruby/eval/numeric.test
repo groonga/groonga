@@ -1,0 +1,5 @@
+#@on-error omit
+register ruby/eval
+#@on-error default
+
+ruby_eval "1"

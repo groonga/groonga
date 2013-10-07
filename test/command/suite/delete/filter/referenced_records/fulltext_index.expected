@@ -1,0 +1,126 @@
+table_create Users TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Users name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Bookmarks TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Bookmarks url COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+column_create Bookmarks user COLUMN_SCALAR Users
+[[0,0.0,0.0],true]
+column_create Users bookmakrs COLUMN_INDEX Bookmarks user
+[[0,0.0,0.0],true]
+table_create Names TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Names users_name COLUMN_INDEX|WITH_POSITION Users name
+[[0,0.0,0.0],true]
+load --table Users
+[
+["_key", "name"],
+["mori", "Daijiro MORI"],
+["kou", "Kouhei Sutou"],
+["s-yata", "Susumu Yata"]
+]
+[[0,0.0,0.0],3]
+load --table Bookmarks
+[
+["url", "user"],
+["http://groonga.org/", "mori"],
+["http://mroonga.org/", "mori"],
+["http://groonga.org/", "s-yata"]
+]
+[[0,0.0,0.0],3]
+delete --table Users --filter 'true'
+[[0,0.0,0.0],true]
+select --table Users
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        0
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "bookmakrs",
+          "Bookmarks"
+        ],
+        [
+          "name",
+          "ShortText"
+        ]
+      ]
+    ]
+  ]
+]
+select --table Names
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        6
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "users_name",
+          "Users"
+        ]
+      ],
+      [
+        1,
+        "daijiro",
+        0
+      ],
+      [
+        3,
+        "kouhei",
+        0
+      ],
+      [
+        2,
+        "mori",
+        0
+      ],
+      [
+        5,
+        "susumu",
+        0
+      ],
+      [
+        4,
+        "sutou",
+        0
+      ],
+      [
+        6,
+        "yata",
+        0
+      ]
+    ]
+  ]
+]

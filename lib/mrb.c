@@ -22,37 +22,56 @@
 #ifdef GRN_WITH_MRUBY
 # include <mruby/proc.h>
 # include <mruby/compile.h>
+# include <mruby/string.h>
 #endif
 
 #ifdef GRN_WITH_MRUBY
-void
-grn_ctx_impl_mrb_init(grn_ctx *ctx)
+mrb_value
+grn_mrb_eval(grn_ctx *ctx, const char *script, int script_length)
 {
-  const char *grn_mruby_enabled;
-  grn_mruby_enabled = getenv("GRN_MRUBY_ENABLED");
-  if (grn_mruby_enabled && strcmp(grn_mruby_enabled, "yes") == 0) {
-    ctx->impl->mrb = mrb_open();
-  } else {
-    ctx->impl->mrb = NULL;
+  mrb_state *mrb = ctx->impl->mrb.state;
+  int n;
+  mrb_value result;
+  struct mrb_parser_state *parser;
+
+  if (!mrb) {
+    return mrb_nil_value();
   }
+
+  if (script_length < 0) {
+    script_length = strlen(script);
+  }
+  parser = mrb_parse_nstring(mrb, script, script_length, NULL);
+  n = mrb_generate_code(mrb, parser);
+  result = mrb_run(mrb,
+                   mrb_proc_new(mrb, mrb->irep[n]),
+                   mrb_top_self(mrb));
+  mrb_parser_free(parser);
+
+  return result;
 }
 
-void
-grn_ctx_impl_mrb_fin(grn_ctx *ctx)
+grn_rc
+grn_mrb_to_grn(grn_ctx *ctx, mrb_value mrb_object, grn_obj *grn_object)
 {
-  if (ctx->impl->mrb) {
-    mrb_close(ctx->impl->mrb);
-    ctx->impl->mrb = NULL;
-  }
-}
-#else
-void
-grn_ctx_impl_mrb_init(grn_ctx *ctx)
-{
-}
+  grn_rc rc = GRN_SUCCESS;
 
-void
-grn_ctx_impl_mrb_fin(grn_ctx *ctx)
-{
+  switch (mrb_type(mrb_object)) {
+  case MRB_TT_FIXNUM :
+    grn_obj_reinit(ctx, grn_object, GRN_DB_INT32, 0);
+    GRN_INT32_SET(ctx, grn_object, mrb_fixnum(mrb_object));
+    break;
+  case MRB_TT_STRING :
+    grn_obj_reinit(ctx, grn_object, GRN_DB_TEXT, 0);
+    GRN_TEXT_SET(ctx, grn_object,
+                 RSTRING_PTR(mrb_object),
+                 RSTRING_LEN(mrb_object));
+    break;
+  default :
+    rc = GRN_INVALID_ARGUMENT;
+    break;
+  }
+
+  return rc;
 }
 #endif

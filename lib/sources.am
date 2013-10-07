@@ -4,6 +4,8 @@ libgroonga_la_SOURCES =				\
 	ctx.c					\
 	ctx.h					\
 	ctx_impl.h				\
+	ctx_impl_mrb.c				\
+	ctx_impl_mrb.h				\
 	dat.cpp					\
 	dat.h					\
 	db.c					\
@@ -11,6 +13,7 @@ libgroonga_la_SOURCES =				\
 	error.c					\
 	error.h					\
 	expr.c					\
+	expr.h					\
 	geo.c					\
 	geo.h					\
 	groonga_in.h				\

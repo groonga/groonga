@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: groonga 2.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-07 22:49+0900\n"
+"POT-Creation-Date: 2013-09-30 11:09+0900\n"
 "PO-Revision-Date: 2012-07-23 17:58+0900\n"
 "Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
 "Language-Team: English\n"
@@ -296,15 +296,24 @@ msgstr "htmlの作成"
 msgid "以下のコマンドでhtmlが作成されます。::"
 msgstr "以下のコマンドでhtmlが作成されます。::"
 
+# 8d4e2300b2fc488fbd3297674f1e7dbf
+#: ../../../source/contribution/development/document.txt:23
+msgid ""
+"This document is also ditributed in forms of release source archive and "
+"updated time to time. If you want to refer latest documentation in source "
+"form, you can view such files via GitHub repository browser (https://github."
+"com/groonga/groonga/tree/master/doc/source)."
+msgstr ""
+
 # e1e9872bf31d4c428864aaa3a2869a4c
 # 62dcfa5796a642dda7bade7db0ae3170
-#: ../../../source/contribution/development/document.txt:24
-#: ../../../source/contribution/development/document.txt:36
+#: ../../../source/contribution/development/document.txt:27
+#: ../../../source/contribution/development/document.txt:39
 msgid "pdfの作成"
 msgstr "pdfの作成"
 
 # f935bdc93ed040f2bdaaa10f7baa5b3b
-#: ../../../source/contribution/development/document.txt:26
+#: ../../../source/contribution/development/document.txt:29
 msgid ""
 "groongaのドキュメントは、pdf出力することもできます。rst2pdfと、IPAフォント"
 "(IPA Gothic/IPAexGothic)が必要となります。"
@@ -313,17 +322,17 @@ msgstr ""
 "(IPA Gothic/IPAexGothic)が必要となります。"
 
 # efde2d7e5d5541e59884a0b6fcfecbdc
-#: ../../../source/contribution/development/document.txt:29
+#: ../../../source/contribution/development/document.txt:32
 msgid "rst2pdfのインストール"
 msgstr "rst2pdfのインストール"
 
 # f0bf4a8ebf58472193bc825cee8c4974
-#: ../../../source/contribution/development/document.txt:31
+#: ../../../source/contribution/development/document.txt:34
 msgid "以下のようにしてインストールできます。::"
 msgstr "以下のようにしてインストールできます。::"
 
 # d894374c5817453f878e48f04ee93c5b
-#: ../../../source/contribution/development/document.txt:38
+#: ../../../source/contribution/development/document.txt:41
 msgid "以下のコマンドでpdfが作成されます。::"
 msgstr "以下のコマンドでpdfが作成されます。::"
 

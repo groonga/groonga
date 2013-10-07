@@ -1,0 +1,40 @@
+table_create Users TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+table_create URLs TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Users bookmarks COLUMN_VECTOR URLs
+[[0,0.0,0.0],true]
+column_create URLs author COLUMN_SCALAR Users
+[[0,0.0,0.0],true]
+column_create URLs bookmarks_index COLUMN_INDEX Users bookmarks
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"_key": "mori", "bookmarks": ["http://mroonga.org/", "http://groonga.org/", "http://ranguba.org/"]}
+]
+[[0,0.0,0.0],1]
+load --table URLs
+[
+{"_key": "http://groonga.org/", "author": "mori"}
+]
+[[0,0.0,0.0],1]
+delete URLs --key "http://groonga.org/"
+[[0,0.0,0.0],true]
+dump
+table_create Users TABLE_HASH_KEY ShortText
+table_create URLs TABLE_HASH_KEY ShortText
+column_create URLs bookmarks_index COLUMN_INDEX Users bookmarks
+column_create URLs author COLUMN_SCALAR Users
+column_create Users bookmarks COLUMN_VECTOR URLs
+load --table Users
+[
+["_key","bookmarks"],
+["mori",["http://mroonga.org/","http://ranguba.org/"]]
+]
+load --table URLs
+[
+["_key","author"],
+["http://mroonga.org/",""],
+["http://ranguba.org/",""]
+]
+

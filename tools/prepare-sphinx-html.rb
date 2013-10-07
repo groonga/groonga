@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# -*- coding: utf-8 -*-
 
 if ARGV.size != 2
   puts "Usage: #{$0} SOURCE_DIR DEST_DIR"
@@ -43,6 +44,14 @@ def fix_html_link(html, language)
     top_path = $2.gsub(/\/index\.html\z/, '/')
     top_path = "./" if ["index.html", "#"].include?(top_path)
     "#{prefix}\"#{top_path}../\""
+  end
+end
+
+def add_language_annotation_to_source_label(html, language)
+  return html unless language == "ja"
+  html.gsub(/>(ソースコードを表示)</) do
+    label = $1
+    ">#{label}（英語）<"
   end
 end
 
@@ -147,6 +156,7 @@ language_dirs.each do |language_dir|
         content = fix_link(content, extension, language)
         if extension == "html"
           content = insert_facebook_html(content, language)
+          content = add_language_annotation_to_source_label(content, language)
         end
         dest_path.open("wb") do |dest|
           dest.print(content.strip)

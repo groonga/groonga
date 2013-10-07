@@ -176,7 +176,10 @@ struct _grn_ctx_impl {
   msgpack_packer msgpacker;
 #endif
 #ifdef GRN_WITH_MRUBY
-  mrb_state *mrb;
+  struct {
+    mrb_state *state;
+    struct RClass *module;
+  } mrb;
 #endif
 };
 

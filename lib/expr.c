@@ -22,8 +22,11 @@
 #include <float.h>
 #include "ii.h"
 #include "geo.h"
+#include "expr.h"
 #include "util.h"
 #include "normalizer_in.h"
+#include "mrb.h"
+#include "mrb/mrb_expr.h"
 
 static inline int
 function_proc_p(grn_obj *obj)
@@ -3786,12 +3789,7 @@ res_add(grn_ctx *ctx, grn_hash *s, grn_rset_posinfo *pi, uint32_t score,
   }
 }
 
-#define SCAN_ACCESSOR                  (0x01)
-#define SCAN_PUSH                      (0x02)
-#define SCAN_POP                       (0x04)
-#define SCAN_PRE_CONST                 (0x08)
-
-typedef struct {
+struct _grn_scan_info {
   uint32_t start;
   uint32_t end;
   int32_t nargs;
@@ -3802,15 +3800,7 @@ typedef struct {
   grn_obj index;
   grn_obj *query;
   grn_obj *args[8];
-} scan_info;
-
-typedef enum {
-  SCAN_START = 0,
-  SCAN_VAR,
-  SCAN_COL1,
-  SCAN_COL2,
-  SCAN_CONST
-} scan_stat;
+};
 
 #define SI_FREE(si) do {\
   GRN_OBJ_FIN(ctx, &(si)->wv);\
@@ -3955,6 +3945,112 @@ get_weight(grn_ctx *ctx, grn_expr_code *ec)
   }
 }
 
+scan_info *
+grn_scan_info_open(grn_ctx *ctx, int start)
+{
+  scan_info *si = GRN_MALLOCN(scan_info, 1);
+
+  if (!si) {
+    return NULL;
+  }
+
+  GRN_INT32_INIT(&si->wv, GRN_OBJ_VECTOR);
+  GRN_PTR_INIT(&si->index, GRN_OBJ_VECTOR, GRN_ID_NIL);
+  si->logical_op = GRN_OP_OR;
+  si->flags = SCAN_PUSH;
+  si->nargs = 0;
+  si->start = start;
+
+  return si;
+}
+
+void
+grn_scan_info_close(grn_ctx *ctx, scan_info *si)
+{
+  SI_FREE(si);
+}
+
+void
+grn_scan_info_put_index(grn_ctx *ctx, scan_info *si, grn_obj *index, uint32_t sid, int32_t weight)
+{
+  scan_info_put_index(ctx, si, index, sid, weight);
+}
+
+scan_info **
+grn_scan_info_put_logical_op(grn_ctx *ctx, scan_info **sis, int *ip,
+                             grn_operator op, int start)
+{
+  return put_logical_op(ctx, sis, ip, op, start);
+}
+
+int32_t
+grn_expr_code_get_weight(grn_ctx *ctx, grn_expr_code *ec)
+{
+  return get_weight(ctx, ec);
+}
+
+int
+grn_scan_info_get_flags(scan_info *si)
+{
+  return si->flags;
+}
+
+void
+grn_scan_info_set_flags(scan_info *si, int flags)
+{
+  si->flags = flags;
+}
+
+grn_operator
+grn_scan_info_get_logical_op(scan_info *si)
+{
+  return si->logical_op;
+}
+
+void
+grn_scan_info_set_logical_op(scan_info *si, grn_operator logical_op)
+{
+  si->logical_op = logical_op;
+}
+
+void
+grn_scan_info_set_op(scan_info *si, grn_operator op)
+{
+  si->op = op;
+}
+
+void
+grn_scan_info_set_end(scan_info *si, uint32_t end)
+{
+  si->end = end;
+}
+
+void
+grn_scan_info_set_query(scan_info *si, grn_obj *query)
+{
+  si->query = query;
+}
+
+grn_bool
+grn_scan_info_push_arg(scan_info *si, grn_obj *arg)
+{
+  if (si->nargs >= 8) {
+    return GRN_FALSE;
+  }
+
+  si->args[si->nargs++] = arg;
+  return GRN_TRUE;
+}
+
+grn_obj *
+grn_scan_info_get_arg(grn_ctx *ctx, scan_info *si, int i)
+{
+  if (i >= si->nargs) {
+    return NULL;
+  }
+  return si->args[i];
+}
+
 static scan_info **
 scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
                 grn_operator op, uint32_t size)
@@ -3965,6 +4061,11 @@ scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
   scan_info **sis, *si = NULL;
   grn_expr_code *c, *ce;
   grn_expr *e = (grn_expr *)expr;
+#ifdef GRN_WITH_MRUBY
+  if (ctx->impl->mrb.state) {
+    return grn_mrb_scan_info_build(ctx, expr, n, op, size);
+  }
+#endif
   if (!(var = grn_expr_get_var_by_offset(ctx, expr, 0))) { return NULL; }
   for (stat = SCAN_START, c = e->codes, ce = &e->codes[e->codes_curr]; c < ce; c++) {
     switch (c->op) {

@@ -35,6 +35,6 @@ find ${new_mruby_clone_dir}/build/host -name y.tab.c \
 
 rm -rf ${new_mruby_clone_dir}
 
-echo "${new_mruby_version}" > "${mruby_version_file}"
+echo -n "${new_mruby_version}" > "${mruby_version_file}"
 
 (cd "${base_dir}" && ./update_files.sh "${new_mruby_dir}" > sources.am)

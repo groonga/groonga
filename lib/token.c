@@ -180,10 +180,19 @@ delimited_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
         tokenizer->next = (unsigned char *)e;
         break;
       }
-      if (r + tokenizer->delimiter_len <= e &&
-          !memcmp(r, tokenizer->delimiter, tokenizer->delimiter_len)) {
-        tokenizer->next = r + tokenizer->delimiter_len;
-        break;
+      {
+        grn_bool found_delimiter = GRN_FALSE;
+        const unsigned char *current_end = r;
+        while (current_end + tokenizer->delimiter_len <= e &&
+               !memcmp(current_end,
+                       tokenizer->delimiter, tokenizer->delimiter_len)) {
+          current_end += tokenizer->delimiter_len;
+          tokenizer->next = current_end;
+          found_delimiter = GRN_TRUE;
+        }
+        if (found_delimiter) {
+          break;
+        }
       }
     }
     if (r == e) {

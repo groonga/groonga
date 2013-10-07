@@ -246,7 +246,19 @@ GRN_API grn_rc grn_set_default_match_escalation_threshold(long long int threshol
 
 /* cache */
 #define GRN_CACHE_DEFAULT_MAX_N_ENTRIES 100
-GRN_API unsigned int *grn_cache_max_nentries(void);
+typedef struct _grn_cache grn_cache;
+
+GRN_API grn_cache *grn_cache_open(grn_ctx *ctx);
+GRN_API grn_rc grn_cache_close(grn_ctx *ctx, grn_cache *cache);
+
+GRN_API grn_rc grn_cache_current_set(grn_ctx *ctx, grn_cache *cache);
+GRN_API grn_cache *grn_cache_current_get(grn_ctx *ctx);
+
+GRN_API grn_rc grn_cache_set_max_n_entries(grn_ctx *ctx,
+                                           grn_cache *cache,
+                                           unsigned int n);
+GRN_API unsigned int grn_cache_get_max_n_entries(grn_ctx *ctx,
+                                                 grn_cache *cache);
 
 /* grn_encoding */
 

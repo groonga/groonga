@@ -79,6 +79,7 @@
 #cmakedefine GRN_WITH_LZO
 #cmakedefine GRN_WITH_MECAB
 #cmakedefine GRN_WITH_MESSAGE_PACK
+#cmakedefine GRN_WITH_MRUBY
 #cmakedefine GRN_WITH_NFKC
 #cmakedefine GRN_WITH_ZEROMQ
 #cmakedefine GRN_WITH_ZLIB

@@ -7,9 +7,9 @@ list_paths()
     sort | \
     sed \
       -e 's,^,\t,' \
-      -e 's,$, \\,'
-    echo "\t\$(NULL)"
-    echo
+      -e 's,$, \\,' | \
+    sed \
+      -e '$s, \\$,,'
 }
 
 mruby_dir=$1

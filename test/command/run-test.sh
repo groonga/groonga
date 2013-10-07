@@ -30,25 +30,7 @@ if test x"$NO_MAKE" != x"yes"; then
     make -C $top_dir ${MAKE_ARGS} > /dev/null || exit 1
 fi
 
-if test -z "$RUBY"; then
-    RUBY="`make -s -C $top_dir echo-ruby`"
-fi
-export RUBY
-
-if test -z "$GROONGA"; then
-    GROONGA="`make -s -C $top_dir echo-groonga`"
-fi
-export GROONGA
-
-if test -z "$GROONGA_HTTPD"; then
-    GROONGA_HTTPD="`make -s -C $top_dir echo-groonga-httpd`"
-fi
-export GROONGA_HTTPD
-
-if test -z "$GROONGA_SUGGEST_CREATE_DATASET"; then
-    GROONGA_SUGGEST_CREATE_DATASET="`make -s -C $top_dir echo-groonga-suggest-create-dataset`"
-fi
-export GROONGA_SUGGEST_CREATE_DATASET
+. "${top_dir}/config.sh"
 
 GRN_PLUGINS_DIR="$top_dir/plugins"
 export GRN_PLUGINS_DIR

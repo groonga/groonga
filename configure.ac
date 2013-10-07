@@ -220,6 +220,7 @@ AC_CONFIG_FILES([
   src/httpd/Makefile
   lib/Makefile
   lib/dat/Makefile
+  lib/mrb/Makefile
   include/Makefile
   include/groonga/Makefile
   plugins/Makefile
@@ -227,6 +228,7 @@ AC_CONFIG_FILES([
   plugins/suggest/Makefile
   plugins/table/Makefile
   plugins/query_expanders/Makefile
+  plugins/ruby/Makefile
   examples/Makefile
   examples/dictionary/Makefile
   examples/dictionary/edict/Makefile
@@ -655,15 +657,15 @@ AC_SUBST(WINDOWS_LDFLAGS)
 AC_SUBST(WINDOWS_LIBS)
 
 # groonga binary path
-GROONGA="\$(abs_top_builddir)/src/groonga"
+GROONGA="${ac_pwd}/src/groonga"
 AC_SUBST(GROONGA)
 
 # groonga-benchmark binary path
-GROONGA_BENCHMARK="\$(abs_top_builddir)/src/groonga-benchmark"
+GROONGA_BENCHMARK="${ac_pwd}/src/groonga-benchmark"
 AC_SUBST(GROONGA_BENCHMARK)
 
 # groonga-suggest-create-dataset binary path
-GROONGA_SUGGEST_CREATE_DATASET="\$(abs_top_builddir)/src/suggest/groonga-suggest-create-dataset"
+GROONGA_SUGGEST_CREATE_DATASET="${ac_pwd}/src/suggest/groonga-suggest-create-dataset"
 AC_SUBST(GROONGA_SUGGEST_CREATE_DATASET)
 
 # check Cutter with GLib support if available
@@ -1179,6 +1181,9 @@ AC_SUBST(suggest_pluginsdir)
 table_pluginsdir="\${pluginsdir}/table"
 AC_SUBST(table_pluginsdir)
 
+ruby_pluginsdir="\${pluginsdir}/ruby"
+AC_SUBST(ruby_pluginsdir)
+
 AC_MSG_CHECKING(for the suffix of plugin shared libraries)
 shrext_cmds=$(./libtool --config | grep '^shrext_cmds=')
 eval $shrext_cmds
@@ -1247,7 +1252,7 @@ NGINX_VERSION=nginx_version
 AC_SUBST(NGINX_VERSION)
 
 # groonga-httpd binary path
-GROONGA_HTTPD="\$(abs_top_builddir)/vendor/nginx-${NGINX_VERSION}/objs/nginx"
+GROONGA_HTTPD="${ac_pwd}/vendor/nginx-${NGINX_VERSION}/objs/nginx"
 AC_SUBST(GROONGA_HTTPD)
 
 AC_ARG_ENABLE(groonga_httpd,
@@ -1266,7 +1271,7 @@ AM_CONDITIONAL(WITH_GROONGA_HTTPD, test "$enable_groonga_httpd" = "yes")
 # mruby
 AC_ARG_ENABLE(mruby,
   [AS_HELP_STRING([--enable-mruby],
-    [enable mruby. [default=auto]])],
+    [enable mruby. [default=no]])],
   [enable_mruby="$enableval"],
   [enable_mruby="no"])
 
@@ -1354,6 +1359,7 @@ AC_OUTPUT([
   packages/rpm/fedora/groonga.spec
   packages/apt/debian/groonga-keyring.postrm
   groonga.pc
+  config.sh
   groonga-httpd-conf.sh
   data/groonga-httpd.conf
   data/scripts/groonga-httpd-restart

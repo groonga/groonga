@@ -44,6 +44,7 @@ typedef struct {
   int config_line;
   char *name;
   grn_ctx context;
+  grn_cache *cache;
 } ngx_http_groonga_loc_conf_t;
 
 typedef struct {
@@ -150,6 +151,34 @@ static grn_logger ngx_http_groonga_logger = {
   ngx_http_groonga_logger_fin
 };
 
+static ngx_int_t
+ngx_http_groonga_context_init_logger(grn_ctx *context,
+                                     ngx_http_groonga_loc_conf_t *location_conf,
+                                     ngx_pool_t *pool,
+                                     ngx_log_t *log)
+{
+  ngx_http_groonga_logger_data_t *logger_data;
+
+  if (!location_conf->log_file) {
+    return NGX_OK;
+  }
+
+  logger_data = ngx_pcalloc(pool, sizeof(ngx_http_groonga_logger_data_t));
+  if (!logger_data) {
+    ngx_log_error(NGX_LOG_ERR, log, 0,
+                  "http_groonga: failed to allocate memory for logger");
+    return NGX_ERROR;
+  }
+
+  logger_data->pool = pool;
+  logger_data->file = location_conf->log_file;
+  ngx_http_groonga_logger.max_level = location_conf->log_level;
+  ngx_http_groonga_logger.user_data = logger_data;
+  grn_logger_set(context, &ngx_http_groonga_logger);
+
+  return NGX_OK;
+}
+
 static void
 ngx_http_groonga_query_logger_log(grn_ctx *ctx, unsigned int flag,
                                   const char *timestamp, const char *info,
@@ -231,23 +260,16 @@ ngx_http_groonga_context_init(grn_ctx *context,
                               ngx_log_t *log)
 {
   ngx_int_t status;
-  ngx_http_groonga_logger_data_t *logger_data;
-
-  logger_data = ngx_pcalloc(pool, sizeof(ngx_http_groonga_logger_data_t));
-  if (!logger_data) {
-    ngx_log_error(NGX_LOG_ERR, log, 0,
-                  "http_groonga: failed to allocate memory for logger");
-    return NGX_ERROR;
-  }
 
   grn_ctx_init(context, GRN_NO_FLAGS);
 
-  if (location_conf->log_file) {
-    logger_data->pool = pool;
-    logger_data->file = location_conf->log_file;
-    ngx_http_groonga_logger.max_level = location_conf->log_level;
-    ngx_http_groonga_logger.user_data = logger_data;
-    grn_logger_set(context, &ngx_http_groonga_logger);
+  status = ngx_http_groonga_context_init_logger(context,
+                                                location_conf,
+                                                pool,
+                                                log);
+  if (status == NGX_ERROR) {
+    grn_ctx_fin(context);
+    return status;
   }
 
   status = ngx_http_groonga_context_init_query_logger(context,
@@ -256,6 +278,11 @@ ngx_http_groonga_context_init(grn_ctx *context,
                                                       log);
   if (status == NGX_ERROR) {
     grn_ctx_fin(context);
+    return status;
+  }
+
+  if (location_conf->cache) {
+    grn_cache_current_set(context, location_conf->cache);
   }
 
   return status;
@@ -313,6 +340,8 @@ ngx_http_groonga_handler_cleanup(void *user_data)
   GRN_OBJ_FIN(context, &(data->head));
   GRN_OBJ_FIN(context, &(data->body));
   GRN_OBJ_FIN(context, &(data->foot));
+  grn_logger_set(context, NULL);
+  grn_query_logger_set(context, NULL);
   grn_ctx_fin(context);
 }
 
@@ -937,6 +966,7 @@ ngx_http_groonga_create_loc_conf(ngx_conf_t *cf)
   conf->cache_limit = NGX_CONF_UNSET_SIZE;
   conf->config_file = NULL;
   conf->config_line = 0;
+  conf->cache = NULL;
 
   return conf;
 }
@@ -1037,20 +1067,6 @@ ngx_http_groonga_each_loc_conf(ngx_http_conf_ctx_t *http_conf,
   }
 }
 
-static void
-ngx_http_groonga_set_cache_limit(ngx_http_groonga_loc_conf_t *location_conf,
-                                 void *user_data)
-{
-  unsigned int *max_n_cache_entries;
-
-  if (location_conf->cache_limit == NGX_CONF_UNSET_SIZE) {
-    return;
-  }
-
-  max_n_cache_entries = grn_cache_max_nentries();
-  *max_n_cache_entries = location_conf->cache_limit;
-}
-
 static ngx_int_t
 ngx_http_groonga_mkdir_p(ngx_log_t *log, const char *dir_name)
 {
@@ -1141,17 +1157,30 @@ ngx_http_groonga_open_database_callback(ngx_http_groonga_loc_conf_t *location_co
   }
 
   grn_db_open(context, location_conf->database_path_cstr);
-  if (context->rc == GRN_SUCCESS) {
-    return;
+  if (context->rc != GRN_SUCCESS) {
+    if (location_conf->database_auto_create) {
+      ngx_http_groonga_create_database(location_conf, data);
+    } else {
+      ngx_log_error(NGX_LOG_EMERG, data->log, 0,
+                    "failed to open groonga database: %s",
+                    context->errbuf);
+      data->rc = NGX_ERROR;
+      return;
+    }
   }
 
-  if (location_conf->database_auto_create) {
-    ngx_http_groonga_create_database(location_conf, data);
-  } else {
+  location_conf->cache = grn_cache_open(context);
+  if (!location_conf->cache) {
     ngx_log_error(NGX_LOG_EMERG, data->log, 0,
-                  "failed to open groonga database: %s",
+                  "failed to open groonga cache: %s",
                   context->errbuf);
     data->rc = NGX_ERROR;
+    return;
+  }
+  if (location_conf->cache_limit != NGX_CONF_UNSET_SIZE) {
+    grn_cache_set_max_n_entries(context,
+                                location_conf->cache,
+                                location_conf->cache_limit);
   }
 }
 
@@ -1163,9 +1192,22 @@ ngx_http_groonga_close_database_callback(ngx_http_groonga_loc_conf_t *location_c
   grn_ctx *context;
 
   context = &(location_conf->context);
+  ngx_http_groonga_context_init_logger(context,
+                                       location_conf,
+                                       data->pool,
+                                       data->log);
+  ngx_http_groonga_context_init_query_logger(context,
+                                             location_conf,
+                                             data->pool,
+                                             data->log);
+  grn_cache_current_set(context, location_conf->cache);
 
   grn_obj_close(context, grn_ctx_db(context));
   ngx_http_groonga_context_log_error(data->log, context);
+
+  grn_cache_current_set(context, NULL);
+  grn_cache_close(context, location_conf->cache);
+
   grn_ctx_fin(context);
 }
 
@@ -1183,10 +1225,6 @@ ngx_http_groonga_init_process(ngx_cycle_t *cycle)
 
   http_conf =
     (ngx_http_conf_ctx_t *)ngx_get_conf(cycle->conf_ctx, ngx_http_module);
-
-  ngx_http_groonga_each_loc_conf(http_conf,
-                                 ngx_http_groonga_set_cache_limit,
-                                 NULL);
 
   data.log = cycle->log;
   data.pool = cycle->pool;
@@ -1269,7 +1307,7 @@ static ngx_command_t ngx_http_groonga_commands[] = {
     NULL },
 
   { ngx_string("groonga_cache_limit"),
-    NGX_HTTP_MAIN_CONF|NGX_CONF_TAKE1,
+    NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
     ngx_conf_set_size_slot,
     NGX_HTTP_LOC_CONF_OFFSET,
     offsetof(ngx_http_groonga_loc_conf_t, cache_limit),

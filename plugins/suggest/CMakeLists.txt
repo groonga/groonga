@@ -15,7 +15,7 @@
 
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/../../lib
-  )
+  ${MRUBY_INCLUDE_DIRS})
 
 read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/sources.am SUGGEST_SOURCES)
 add_library(suggest MODULE ${SUGGEST_SOURCES})
