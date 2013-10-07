@@ -7,6 +7,7 @@ compiler:
   - clang
 env:
   - BUILD_TOOL=autotools
+  - BUILD_TOOL=autotools ENABLE_MRUBY=yes
 #  - BUILD_TOOL=cmake
 install:
   - curl https://raw.github.com/clear-code/cutter/master/data/travis/setup.sh | sh
