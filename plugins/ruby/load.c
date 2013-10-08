@@ -50,15 +50,15 @@ output_result(grn_ctx *ctx, mrb_value result)
     grn_obj_unlink(ctx, &grn_message);
     GRN_OUTPUT_MAP_CLOSE();
   } else {
-  grn_obj grn_result;
-  GRN_OUTPUT_CSTR("value");
-  GRN_VOID_INIT(&grn_result);
-  if (grn_mrb_to_grn(ctx, result, &grn_result) == GRN_SUCCESS) {
-    GRN_OUTPUT_OBJ(&grn_result, NULL);
-  } else {
-    GRN_OUTPUT_CSTR("unsupported return value");
-  }
-  grn_obj_unlink(ctx, &grn_result);
+    grn_obj grn_result;
+    GRN_OUTPUT_CSTR("value");
+    GRN_VOID_INIT(&grn_result);
+    if (grn_mrb_to_grn(ctx, result, &grn_result) == GRN_SUCCESS) {
+      GRN_OUTPUT_OBJ(&grn_result, NULL);
+    } else {
+      GRN_OUTPUT_CSTR("unsupported return value");
+    }
+    grn_obj_unlink(ctx, &grn_result);
   }
   GRN_OUTPUT_MAP_CLOSE();
 }
