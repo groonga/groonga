@@ -1,0 +1,4 @@
+register ruby/eval
+[[0,0.0,0.0],true]
+ruby_eval "raise 'Error'"
+[[0,0.0,0.0],{"exception":{"message":"Error"}}]

@@ -16,31 +16,7 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include <mrb.h>
-#include <output.h>
-#include <db.h>
-#include <util.h>
-
-#include <groonga/plugin.h>
-
-#define VAR GRN_PROC_GET_VAR_BY_OFFSET
-
-static void
-output_result(grn_ctx *ctx, mrb_value result)
-{
-  grn_obj grn_result;
-
-  GRN_OUTPUT_MAP_OPEN("result", 1);
-  GRN_OUTPUT_CSTR("value");
-  GRN_VOID_INIT(&grn_result);
-  if (grn_mrb_to_grn(ctx, result, &grn_result) == GRN_SUCCESS) {
-    GRN_OUTPUT_OBJ(&grn_result, NULL);
-  } else {
-    GRN_OUTPUT_CSTR("unsupported return value");
-  }
-  grn_obj_unlink(ctx, &grn_result);
-  GRN_OUTPUT_MAP_CLOSE();
-}
+#include "ruby_plugin.h"
 
 static grn_obj *
 command_ruby_eval(grn_ctx *ctx, int nargs, grn_obj **args,
@@ -75,22 +51,6 @@ command_ruby_eval(grn_ctx *ctx, int nargs, grn_obj **args,
 }
 
 grn_rc
-GRN_PLUGIN_INIT(grn_ctx *ctx)
-{
-  return GRN_SUCCESS;
-}
-
-#define DEF_VAR(v,x) do {\
-  (v).name = (x);\
-  (v).name_size = (x) ? sizeof(x) - 1 : 0;\
-  GRN_TEXT_INIT(&(v).value, 0);\
-} while (0)
-
-#define DEF_COMMAND(name, func, nvars, vars)\
-  (grn_proc_create(ctx, (name), (sizeof(name) - 1),\
-                   GRN_PROC_COMMAND, (func), NULL, NULL, (nvars), (vars)))
-
-grn_rc
 GRN_PLUGIN_REGISTER(grn_ctx *ctx)
 {
   grn_expr_var vars[1];
@@ -99,10 +59,4 @@ GRN_PLUGIN_REGISTER(grn_ctx *ctx)
   DEF_COMMAND("ruby_eval", command_ruby_eval, 1, vars);
 
   return ctx->rc;
-}
-
-grn_rc
-GRN_PLUGIN_FIN(grn_ctx *ctx)
-{
-  return GRN_SUCCESS;
 }
