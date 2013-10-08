@@ -158,7 +158,8 @@ grn_mrb_to_grn(grn_ctx *ctx, mrb_value mrb_object, grn_obj *grn_object)
     if (mrb_nil_p(mrb_object)) {
       grn_obj_reinit(ctx, grn_object, GRN_DB_VOID, 0);
     } else {
-      rc = GRN_INVALID_ARGUMENT;
+      grn_obj_reinit(ctx, grn_object, GRN_DB_BOOL, 0);
+      GRN_BOOL_SET(ctx, grn_object, GRN_FALSE);
     }
     break;
   case MRB_TT_FIXNUM :
