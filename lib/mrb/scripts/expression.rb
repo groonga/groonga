@@ -1,4 +1,4 @@
 module Groonga
-  class Expr
+  class Expression
   end
 end

@@ -348,7 +348,7 @@ grn_mrb_expr_init(grn_ctx *ctx)
 
   mrb_define_class_method(mrb, module,
                           "build", mrb_grn_expr_build, MRB_ARGS_REQ(4));
-  grn_mrb_load(ctx, "expr.rb");
+  grn_mrb_load(ctx, "expression.rb");
 }
 
 scan_info **

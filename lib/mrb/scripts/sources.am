@@ -1,2 +1,2 @@
 ruby_scripts_DATA =				\
-	expr.rb
+	expression.rb
